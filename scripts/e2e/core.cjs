@@ -1138,6 +1138,187 @@ async function vaultPasswordSuite(browser) {
  * A だけなら「常に警告」で通り、B だけなら「常に沈黙」で通る。両方あって
  * はじめて「問い合わせた値で出し分けている」と言える。
  */
+/**
+ * **預かった資格情報が、保存された姿で読めないこと。**
+ *
+ * これはこのアプリの中核の主張である。単体検査は `vault.ts` の暗号化・復号を
+ * 留めているが、**実際にブラウザへ残る物**を見てはいない。保存の経路が
+ * 1 つ増えた日 (下書き・キャッシュ・ログ) に、同じトークンが別の場所へ
+ * 平文で落ちても、単体検査は全部緑で通る。
+ *
+ * ## 不在の主張には、陽性対照を添える
+ *
+ * 「平文が見つからない」は、探し方が壊れていても同じ結果になる。直列化が
+ * 変わって中身が文字列に出なくなれば、**どんな漏れも見つからなくなる**。
+ * だから同じ探し方で**植えた物が見つかること**を、同じ検査の中で確かめる。
+ * これが無い「見つかりませんでした」は、報せであって合格ではない。
+ */
+async function vaultOpacitySuite(browser) {
+  console.log('--- 保存された資格情報が読めないこと ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  const SECRET = 'E2E-SECRET-TOKEN-0d0a1b2c3d4e5f-DO-NOT-LEAK';
+
+  await page.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+
+  // アプリ自身の経路で預ける。
+  const saved = await page.evaluate(async (s) => {
+    const hub = window.serviceHub;
+    if (hub === undefined || typeof hub.setToken !== 'function') return 'no-bridge';
+    await hub.setToken('github', s);
+    return 'ok';
+  }, SECRET);
+  ok(saved === 'ok', 'vaultOpacity: アプリの経路でトークンを預けられる');
+
+  const listed = await page.evaluate(async () => (await window.serviceHub.listConfigured()).join(','));
+  ok(listed.includes('github'), `vaultOpacity: 預けたものが設定済みとして見える (${listed})`);
+
+  /**
+   * 全 IndexedDB を素で舐めて 1 本の文字列にする。
+   *
+   * **バイト列は文字へ開いてから足す。** `JSON.stringify(new Uint8Array(...))` は
+   * `{"0":69,"1":50,…}` になるので、平文をバイトで保存されると
+   * **文字列として一致しない**。2026-08-26 の対照で実際にこれを踏んだ ——
+   * 暗号化をやめて平文をバイトで書き込んでも「平文が無い」は通り、
+   * 鳴ったのは暗号文の長さを見る検査だけだった。
+   * 探し方が届いていない不在の主張は、何も言っていないのと同じである。
+   */
+  const dumpIdb = () =>
+    page.evaluate(async () => {
+      const dec = new TextDecoder('utf-8', { fatal: false });
+      const open = (v) => {
+        if (ArrayBuffer.isView(v)) return dec.decode(new Uint8Array(v.buffer, v.byteOffset, v.byteLength));
+        if (v instanceof ArrayBuffer) return dec.decode(new Uint8Array(v));
+        return null;
+      };
+      const walk = (v, sink) => {
+        const asText = open(v);
+        if (asText !== null) {
+          sink.push(asText);
+          return;
+        }
+        if (Array.isArray(v)) {
+          for (const x of v) walk(x, sink);
+          return;
+        }
+        if (v !== null && typeof v === 'object') {
+          for (const x of Object.values(v)) walk(x, sink);
+          return;
+        }
+        if (typeof v === 'string') sink.push(v);
+      };
+      let all = '';
+      const names = (await indexedDB.databases()).map((d) => d.name).filter(Boolean);
+      for (const name of names) {
+        const db = await new Promise((res) => {
+          const r = indexedDB.open(name);
+          r.onsuccess = () => res(r.result);
+        });
+        for (const st of Array.from(db.objectStoreNames)) {
+          const rows = await new Promise((res) => {
+            const tx = db.transaction(st, 'readonly');
+            const q = tx.objectStore(st).getAll();
+            q.onsuccess = () => res(q.result);
+            q.onerror = () => res([]);
+          });
+          const sink = [];
+          walk(rows, sink);
+          all += JSON.stringify(rows) + '\u0000' + sink.join('\u0000');
+        }
+        db.close();
+      }
+      return all;
+    });
+  const dumpLs = () => page.evaluate(() => JSON.stringify(Object.fromEntries(Object.entries(localStorage))));
+  const dumpSs = () => page.evaluate(() => JSON.stringify(Object.fromEntries(Object.entries(sessionStorage))));
+
+  const idb = await dumpIdb();
+  const ls = await dumpLs();
+  const ss = await dumpSs();
+  ok(!idb.includes(SECRET), '★ vaultOpacity: IndexedDB に平文のトークンが無い');
+  ok(!ls.includes(SECRET), '★ vaultOpacity: localStorage に平文のトークンが無い');
+  ok(!ss.includes(SECRET), '★ vaultOpacity: sessionStorage に平文のトークンが無い');
+
+  // 残っている姿が「IV + 暗号文」であること (中身が読めないだけでなく、形も確かめる)。
+  const shape = await page.evaluate(async () => {
+    const db = await new Promise((res) => {
+      const r = indexedDB.open('business-hub-vault');
+      r.onsuccess = () => res(r.result);
+    });
+    const rows = await new Promise((res) => {
+      const tx = db.transaction('tokens', 'readonly');
+      const q = tx.objectStore('tokens').getAll();
+      q.onsuccess = () => res(q.result);
+      q.onerror = () => res([]);
+    });
+    db.close();
+    const r = rows[0] ?? {};
+    return { keys: Object.keys(r).sort().join(','), ivLen: r.iv?.byteLength ?? -1, ctLen: r.ciphertext?.byteLength ?? -1 };
+  });
+  ok(shape.ivLen === 12, `★ vaultOpacity: IV は 12 バイト (実際 ${shape.ivLen})`);
+  ok(shape.ctLen >= SECRET.length + 16, `vaultOpacity: 暗号文は平文 + GCM タグ以上 (実際 ${shape.ctLen})`);
+  ok(shape.keys === 'ciphertext,iv,v', `vaultOpacity: 残るのは iv/ciphertext/v だけ (実際 ${shape.keys})`);
+
+  // ---- 陽性対照 ---- 同じ探し方が「本当に在るとき」に当たるか。
+  await page.evaluate((s) => localStorage.setItem('__e2e_probe__', s), SECRET);
+  ok((await dumpLs()).includes(SECRET), '★ vaultOpacity 対照: localStorage へ植えたら見つかる');
+  await page.evaluate(async (s) => {
+    const db = await new Promise((res) => {
+      const r = indexedDB.open('business-hub-data');
+      r.onsuccess = () => res(r.result);
+    });
+    const st = Array.from(db.objectStoreNames)[0];
+    if (st !== undefined) {
+      await new Promise((res) => {
+        const tx = db.transaction(st, 'readwrite');
+        const store = tx.objectStore(st);
+        const rec = store.keyPath !== null ? { [String(store.keyPath)]: '__e2e_probe__', leak: s } : { leak: s };
+        const q = store.keyPath !== null ? store.put(rec) : store.put(rec, '__e2e_probe__');
+        q.onsuccess = () => res();
+        q.onerror = () => res();
+      });
+    }
+    db.close();
+  }, SECRET);
+  ok((await dumpIdb()).includes(SECRET), '★ vaultOpacity 対照: IndexedDB へ文字列で植えたら見つかる');
+
+  /*
+   * **バイト列で植える対照。** 上の文字列の対照だけでは、探し方が
+   * 「文字列しか見ない」状態でも通ってしまう —— 実際そうだった。
+   * 保管庫が平文をバイトで書けば、こちらの形になる。
+   */
+  await page.evaluate(async (s) => {
+    const db = await new Promise((res) => {
+      const r = indexedDB.open('business-hub-data');
+      r.onsuccess = () => res(r.result);
+    });
+    const st = Array.from(db.objectStoreNames)[0];
+    if (st !== undefined) {
+      await new Promise((res) => {
+        const tx = db.transaction(st, 'readwrite');
+        const store = tx.objectStore(st);
+        const bytes = new TextEncoder().encode(s);
+        const rec = store.keyPath !== null ? { [String(store.keyPath)]: '__e2e_probe_bytes__', leak: bytes } : { leak: bytes };
+        const q = store.keyPath !== null ? store.put(rec) : store.put(rec, '__e2e_probe_bytes__');
+        q.onsuccess = () => res();
+        q.onerror = () => res();
+      });
+    }
+    db.close();
+  }, SECRET);
+  ok(
+    (await dumpIdb()).includes(SECRET),
+    '★ vaultOpacity 対照: IndexedDB へ**バイト列で**植えても見つかる (探し方が文字列だけを見ていないこと)',
+  );
+
+  ok(errs.length === 0, `vaultOpacity: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
 async function storageDurabilitySuite(browser) {
   console.log('--- 保管領域が消えうることを名乗る ---');
 
@@ -1643,6 +1824,7 @@ async function businessComparisonSuite(browser) {
   if (run('frameGuard')) await frameGuardSuite(browser);
   if (run('noBeacon')) await noBeaconSuite(browser);
   if (run('vaultPassword')) await vaultPasswordSuite(browser);
+  if (run('vaultOpacity')) await vaultOpacitySuite(browser);
   if (run('storageDurability')) await storageDurabilitySuite(browser);
   if (run('securityPosture')) await securityPostureSuite(browser);
   if (run('thirdPartyDisclosure')) await thirdPartyDisclosureSuite(browser);

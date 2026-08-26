@@ -131,6 +131,9 @@ const FORBIDDEN_PATTERNS = [
         'scripts/runtime-security-exp.cjs',
         'scripts/soak-test.cjs',
         'scripts/screenshot.cjs',
+        // 実機 E2E の vaultOpacity suite。アプリの層を通しては見えない
+        // (通せば復号された値が返る) ので、生のまま舐めるのが目的そのもの。
+        'scripts/e2e/core.cjs',
       ].includes(rel),
     rationale:
       '保管層のモジュール越しに使うこと。画面が保管庫の内部を組み立てると、' +
@@ -730,6 +733,10 @@ const KNOWN_SUPPRESSIONS = [
   // 外から保管領域を覗いて検証する道具 (アプリの層とは逆向き)。
   '保管領域 (IndexedDB) の内部を直接触っている :: scripts/runtime-security-exp.cjs :: 1',
   '保管領域 (IndexedDB) の内部を直接触っている :: scripts/soak-test.cjs :: 2',
+  // 実機 E2E の vaultOpacity suite。**預けた資格情報が保存された姿で読めないこと**を
+  // 外から確かめる。アプリの層を通しては見えない (通せば復号された値が返る) ので、
+  // 生のまま舐めるのがこの検査の目的そのものである。
+  '保管領域 (IndexedDB) の内部を直接触っている :: scripts/e2e/core.cjs :: 13',
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/data/store.ts :: 27',
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/fs/fsa.ts :: 7',
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/library/library.ts :: 11',
