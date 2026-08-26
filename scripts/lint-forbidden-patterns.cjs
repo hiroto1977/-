@@ -1076,6 +1076,51 @@ function selfTest() {
   return 0;
 }
 
+/**
+ * **1 ファイル分の走査。純粋関数として外へ出す。**
+ *
+ * 2026-08-26 まで、この処理は `main()` の中の閉包だった。外から呼べないので、
+ * 「規則表が正しいか」は測れても「**その表で実際に走査しているか**」は
+ * ゲートの外から一切測れなかった。実測で、走査ループを空配列へ差し替えても
+ * (規則表はそのまま) すべての検査が緑のままだと確かめている。
+ *
+ * `violations` と `suppressions` を受け取って書き込む形にしてあるのは、
+ * 呼び出し側 (main / 証人) が集計の仕方を選べるようにするため。
+ */
+function scanText(rel, text, violations, suppressions, patterns = FORBIDDEN_PATTERNS) {
+  const lines = text.split('\n');
+  for (const fp of patterns) {
+    if (fp.allowFile && fp.allowFile(rel)) {
+      // **握り潰した事実を記録する。** 例外は穴なので、要らなくなったら
+      // 閉じなければならない。記録しないと「もう鳴らない規則に対する
+      // 例外」が永久に残り、そのファイルだけ規則の外に居続ける。
+      const hits = lines.filter((l) =>
+        fp.codeOnly && isCommentLine(l) ? false : fp.pattern.test(l),
+      ).length;
+      if (hits > 0) {
+        // **件数まで記録する。** ファイル名だけで台帳を突き合わせると、
+        // 例外の効いているファイルに**新しい違反を足しても鳴らない** ——
+        // 規則がそのファイルで丸ごと無効になる (実測で確認: web-shim.ts へ
+        // `noopener` 無しの `window.open` を足しても緑のままだった)。
+        suppressions.add(`${fp.name} :: ${rel} :: ${hits}`);
+      }
+      continue;
+    }
+    for (let i = 0; i < lines.length; i++) {
+      if (fp.codeOnly && isCommentLine(lines[i])) continue;
+      if (fp.pattern.test(lines[i])) {
+        violations.push({
+          file: rel,
+          line: i + 1,
+          name: fp.name,
+          rationale: fp.rationale,
+          content: lines[i].trim().slice(0, 120),
+        });
+      }
+    }
+  }
+}
+
 function main() {
   if (process.argv.includes('--self-test')) return selfTest();
   const violations = [];
@@ -1101,37 +1146,7 @@ function main() {
     } catch {
       return;
     }
-    const lines = text.split('\n');
-    for (const fp of FORBIDDEN_PATTERNS) {
-      if (fp.allowFile && fp.allowFile(rel)) {
-        // **握り潰した事実を記録する。** 例外は穴なので、要らなくなったら
-        // 閉じなければならない。記録しないと「もう鳴らない規則に対する
-        // 例外」が永久に残り、そのファイルだけ規則の外に居続ける。
-        const hits = lines.filter((l) =>
-          fp.codeOnly && isCommentLine(l) ? false : fp.pattern.test(l),
-        ).length;
-        if (hits > 0) {
-          // **件数まで記録する。** ファイル名だけで台帳を突き合わせると、
-          // 例外の効いているファイルに**新しい違反を足しても鳴らない** ——
-          // 規則がそのファイルで丸ごと無効になる (実測で確認: web-shim.ts へ
-          // `noopener` 無しの `window.open` を足しても緑のままだった)。
-          suppressions.add(`${fp.name} :: ${rel} :: ${hits}`);
-        }
-        continue;
-      }
-      for (let i = 0; i < lines.length; i++) {
-        if (fp.codeOnly && isCommentLine(lines[i])) continue;
-        if (fp.pattern.test(lines[i])) {
-          violations.push({
-            file: rel,
-            line: i + 1,
-            name: fp.name,
-            rationale: fp.rationale,
-            content: lines[i].trim().slice(0, 120),
-          });
-        }
-      }
-    }
+    scanText(rel, text, violations, suppressions);
   }
 
   console.log(
@@ -1162,4 +1177,25 @@ function main() {
   return 1;
 }
 
-process.exit(main());
+/*
+ * **外側の証人のために公開する。**
+ *
+ * 2026-08-26 の実測: このファイルを丸ごと骨抜きにする —— 走査ループを空配列へ、
+ * `selfTest` を自称合格へ、`KNOWN_SUPPRESSIONS` を `[]` へ —— と、
+ * `src/renderer/pages/A8netPage.tsx` に本物の `innerHTML =` を植えたまま
+ * **lint:forbidden / self-test / chain:verify / verify:arch / eslint /
+ * 10,947 tests がすべて緑**になった。
+ *
+ * 原因は `make-live-usb.sh` と同じ形 —— **証人が、証人の対象と同じ紙に在る**。
+ * 自己テストはこのファイルの中に在り、外から見ている物が無かった。
+ * (`KNOWN_SUPPRESSIONS` の双方向照合が偶然の錨になっていたが、
+ *  同じファイルなので同じ編集で外れる。)
+ *
+ * そこで `src/shared/__tests__/forbiddenPatternWitness.test.ts` が
+ * ここを読んで、既知の悪い標本が実際に当たることを確かめる。
+ * **別のファイルに在り、`npm test` で走り、変異検査の対象でもある。**
+ * 規則表を空にすれば、そちらが鳴る。
+ */
+module.exports = { FORBIDDEN_PATTERNS, KNOWN_SUPPRESSIONS, isCommentLine, EXCLUDE_PATTERNS, scanText };
+
+if (require.main === module) process.exit(main());
