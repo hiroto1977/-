@@ -1190,6 +1190,141 @@ async function vaultPasswordSuite(browser) {
  * `noBeaconSuite` は「開いただけで出ていかない」を見る。こちらは
  * 「操作したときに、宣言どおりの 1 か所へだけ、宣言どおりの形で出る」。
  */
+/**
+ * **利用者の Worker を通すとき、封筒に何が載るか。**
+ *
+ * CORS で直接叩けない連携は利用者の Cloudflare Worker へ POST し、本当の
+ * 宛先・ヘッダ・本文を JSON の「封筒」に入れて渡す。ここで確かめるのは:
+ *
+ *   - 第三者へ**直接**行かないこと (行けば Worker を挟む意味が消える)
+ *   - 共有秘密が **URL でなくヘッダ**に載ること (URL は中間のログに残る)
+ *   - 第三者の API キーが外側の URL に出ないこと
+ *
+ * 逆に、**封筒の本文には載る**。それは仕様であって欠陥ではない —— Worker が
+ * 中継するには本当の宛先と鍵が要る。だからこのアプリは画面で
+ * 「プロキシの運用者からも見える」と明記している (thirdPartyDisclosure suite が
+ * その文面を留めている)。**載ることも検査に書く** —— 将来 URL 側へ移したら、
+ * ここが鳴る。
+ *
+ * ## 符号化で空振りしないこと (2026-08-26 に踏んだ)
+ *
+ * 封筒の中の宛先は `probe-user%40example.com` と percent-encode されている。
+ * 生の文字列で探すと「本文に無い」と出て、**在るのに無いと言う**。
+ * 復号してから探す。バイト列のときと同じ形の間違いである。
+ */
+async function proxyEnvelopeSuite(browser) {
+  console.log('--- プロキシの封筒に何が載るか ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  const EMAIL = 'probe-user@example.com';
+  const HIBPKEY = 'E2E-HIBP-PROBE-NOT-REAL-1234';
+  const PROXY_URL = 'https://proxy.example.com/relay';
+  const PROXY_SECRET = 'E2E-PROXY-SECRET-NOT-REAL-9876';
+
+  const seen = [];
+  await page.route('**/*', async (route) => {
+    const r = route.request();
+    const u = r.url();
+    if (u.startsWith('file://') || u.startsWith('data:') || u.startsWith('blob:')) return route.continue();
+    seen.push({ url: u, headers: r.headers(), body: r.postData() ?? '' });
+    return route.abort();
+  });
+
+  await page.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await gotoService(page, '#settings', 'text=BYO プロキシ');
+
+  const urlBox = page.locator('input[placeholder="https://my-worker.example.com/proxy"]');
+  /*
+   * **index を先に控えない。** ボタンを押すとその欄は 保存/キャンセル へ
+   * 変わり集合が縮むので、`nth(i)` は別のボタンを指す (実際に空振りした)。
+   * 毎回「先頭」を押す —— 押した物は集合から消えるので必ず進む。
+   */
+  for (let i = 0; i < 15 && (await urlBox.count()) === 0; i++) {
+    const setBtns = page.getByRole('button', { name: /^(設定する|変更)$/ });
+    if ((await setBtns.count()) === 0) break;
+    await setBtns.first().click().catch(() => {});
+    await page.waitForTimeout(350);
+  }
+  ok((await urlBox.count()) > 0, 'proxyEnvelope: プロキシの入力欄を開ける');
+  await urlBox.first().fill(PROXY_URL);
+  const secBox = page.locator('input[placeholder^="共有秘密"]');
+  if ((await secBox.count()) > 0) await secBox.first().fill(PROXY_SECRET);
+
+  /*
+   * **同名のボタンを名前だけで押さない。** 「保存」は 4 つ在り、先頭を押すと
+   * 別の欄を保存してしまう (最初そうして、プロキシは未設定のままだった)。
+   * 入力欄から DOM を遡って、同じ入れ物の中の「保存」を押す。
+   */
+  const savedAt = await page.evaluate(() => {
+    const input = document.querySelector('input[placeholder="https://my-worker.example.com/proxy"]');
+    if (input === null) return 'no-input';
+    let node = input;
+    for (let i = 0; i < 8 && node !== null; i++) {
+      node = node.parentElement;
+      if (node === null) break;
+      const btn = Array.from(node.querySelectorAll('button')).find((b) => (b.textContent ?? '').trim() === '保存');
+      if (btn !== undefined) {
+        btn.click();
+        return 'depth' + String(i);
+      }
+    }
+    return 'not-found';
+  });
+  ok(savedAt.startsWith('depth'), `proxyEnvelope: プロキシ欄の保存を押せた (${savedAt})`);
+  await page.waitForTimeout(1200);
+
+  await page.evaluate(async (k) => {
+    await window.serviceHub.setToken('security', JSON.stringify({ hibp: k, vt: 'E2E-VT-PROBE-NOT-REAL' }));
+  }, HIBPKEY);
+
+  const before = seen.length;
+  await page.evaluate(async (e) => {
+    const r = await window.serviceHub.invoke('security', 'check-email-breach', { email: e });
+    return JSON.stringify(r);
+  }, EMAIL);
+  const sent = seen.slice(before);
+
+  ok(sent.length === 1, `★ proxyEnvelope: 飛ぶ要求は 1 件だけ (実際 ${sent.length})`);
+  const hosts = [...new Set(sent.map((x) => new URL(x.url).host))];
+  ok(hosts.join(',') === 'proxy.example.com', `★ proxyEnvelope: 宛先はプロキシだけ (実際 ${hosts.join(',') || 'なし'})`);
+  ok(!hosts.includes('haveibeenpwned.com'), '★ proxyEnvelope: 第三者へ直接は行かない');
+
+  ok(!sent.some((x) => x.url.includes(PROXY_SECRET)), '★ proxyEnvelope: 共有秘密が URL に出ない');
+  ok(
+    sent.some((x) => Object.entries(x.headers).some(([k, v]) => /x-proxy-auth/i.test(k) && String(v).includes(PROXY_SECRET))),
+    '★ proxyEnvelope: 共有秘密は x-proxy-auth ヘッダに載る',
+  );
+  ok(!sent.some((x) => x.url.includes(HIBPKEY)), '★ proxyEnvelope: 第三者の API キーが外側の URL に出ない');
+  ok(!sent.some((x) => x.url.includes(EMAIL)), '★ proxyEnvelope: 入力したメールが外側の URL に出ない');
+
+  /*
+   * **載ることも書く。** 封筒の本文には宛先も鍵も入る —— Worker が中継する
+   * ために要るので仕様である。将来 URL 側へ移したら上の 2 行が鳴り、
+   * 本文から消えたらこの 2 行が鳴る。どちらへ動いても気付ける。
+   */
+  const decode = (t) => {
+    try {
+      return decodeURIComponent(t);
+    } catch {
+      return t;
+    }
+  };
+  ok(
+    sent.some((x) => decode(x.body).includes(EMAIL)),
+    '★ proxyEnvelope: メールは封筒の本文に載る (運用者から見える。画面で開示済み)',
+  );
+  ok(sent.some((x) => x.body.includes(HIBPKEY)), '★ proxyEnvelope: API キーも封筒の本文に載る (同上)');
+
+  ok(sent.length > 0, '★ proxyEnvelope 対照: 捕捉が効いている');
+  const unexpected = errs.filter((e) => !/Failed to fetch|ERR_FAILED|ERR_ABORTED|net::/i.test(e));
+  ok(unexpected.length === 0, `proxyEnvelope: 遮断由来を除くページエラー 0 (実際 ${unexpected.length})`);
+  await ctx.close();
+}
+
 async function credentialEgressSuite(browser) {
   console.log('--- 資格情報がどこへ出ていくか ---');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -2096,6 +2231,7 @@ async function businessComparisonSuite(browser) {
   if (run('noBeacon')) await noBeaconSuite(browser);
   if (run('vaultPassword')) await vaultPasswordSuite(browser);
   if (run('credentialEgress')) await credentialEgressSuite(browser);
+  if (run('proxyEnvelope')) await proxyEnvelopeSuite(browser);
   if (run('cspEnforced')) await cspEnforcedSuite(browser);
   if (run('vaultOpacity')) await vaultOpacitySuite(browser);
   if (run('storageDurability')) await storageDurabilitySuite(browser);
