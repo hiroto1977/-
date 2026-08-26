@@ -122,10 +122,28 @@ function evaluate(profile, html, label) {
           "'unsafe-inline' に戻すと、アプリは動いたまま注入された <script> も動きます",
       );
     }
+    /*
+     * 2026-08-26 に足した 2 つ。**出荷物はどちらも既に正しい値を持っていたが、
+     * 留めている物が無かった** —— この門は 5 つしか見ておらず、
+     * 緩めても緑を返した (実測)。
+     *
+     *   frame-src   `'none'` を `https:` に緩めると、乗っ取られたレンダラーが
+     *               任意の遠隔ページを埋め込める。さらに **iframe の遷移は
+     *               `connect-src` の管轄外の送出路**である —— `<img>` の画素
+     *               ビーコン (lint:forbidden の 35 番目の規則) と同じ族で、
+     *               資格情報の流出経路の台帳にも載らない。
+     *   worker-src  `'self'` を緩めると blob:/遠隔 URL から Worker を作れる。
+     *               Worker は `script-src` の判断を迂回する古典的な経路。
+     *
+     * 出荷している値 (`scripts/inline-html.cjs` の `buildCsp`) と同じなので、
+     * 受理すべき対象は落ちない。変えたいならここも直す —— それがこの門の仕事。
+     */
     for (const [name, want] of [
       ['object-src', "'none'"],
       ['base-uri', "'self'"],
       ['form-action', "'none'"],
+      ['frame-src', "'none'"],
+      ['worker-src', "'self'"],
     ]) {
       const got = d.get(name);
       if (got === undefined || got.join(' ') !== want) {
@@ -150,10 +168,17 @@ function evaluate(profile, html, label) {
   return problems;
 }
 
+/*
+ * 合成標本は**出荷している形と同じ並び**にしておく (`inline-html.cjs` の
+ * `buildCsp`)。ここが実物より短いと、実物にしか無いディレクティブを
+ * 門へ足したときに自己テストだけが落ちる —— 2026-08-26 に
+ * `frame-src` / `worker-src` を足して実際にそうなった。
+ */
 const APP_OK =
   '<meta http-equiv="Content-Security-Policy" content="default-src \'self\'; ' +
-  "script-src 'sha256-AAAA'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; " +
-  "connect-src 'self' https:; object-src 'none'; frame-src 'none'; base-uri 'self'; " +
+  "script-src 'sha256-AAAA'; worker-src 'self'; style-src 'self' 'unsafe-inline'; " +
+  "img-src 'self' data:; connect-src 'self' https:; object-src 'none'; " +
+  "frame-src 'none'; base-uri 'self'; " +
   'form-action \'none\'">';
 
 function selfTest() {
