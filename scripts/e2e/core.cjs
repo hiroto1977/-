@@ -1255,6 +1255,43 @@ async function credentialEgressSuite(browser) {
   );
 
   /*
+   * **プロキシが要る連携は、未設定なら「出さずに」止まること。**
+   *
+   * CORS で直接叩けない SaaS (Notion / Atlassian / Cloudflare / HIBP /
+   * VirusTotal …) は利用者の Worker を通す。未設定のまま実行したときに
+   * 「とりあえず直接投げてみる」実装だと、**鍵と入力が第三者へ出てから**
+   * CORS で失敗する —— ブラウザから見れば失敗でも、送信は済んでいる。
+   *
+   * 実測 (2026-08-26): 未設定で `check-email-breach` を呼ぶと外向き要求は
+   * 0 件で、理由つきの not_configured が返る。送る前に止まっている。
+   */
+  /*
+   * **鍵を先に入れる。** 入れないと「鍵が未設定」で手前が止まり、
+   * プロキシの関門まで到達しない —— 最初そう書いて、通った理由が
+   * 意図と違っていた (メッセージを読んで気付いた)。関門を測るなら、
+   * その手前を全部通してから叩く。
+   */
+  const beforeProxyless = seen.length;
+  const proxyless = await page.evaluate(async () => {
+    await window.serviceHub.setToken(
+      'security',
+      JSON.stringify({ hibp: 'E2E-HIBP-PROBE-NOT-REAL', vt: 'E2E-VT-PROBE-NOT-REAL' }),
+    );
+    const r = await window.serviceHub.invoke('security', 'check-email-breach', {
+      email: 'probe-user@example.com',
+    });
+    return JSON.stringify(r);
+  });
+  ok(
+    seen.length === beforeProxyless,
+    `★ egress: プロキシ未設定なら第三者へ 1 件も出さない (実際 ${seen.length - beforeProxyless} 件)`,
+  );
+  ok(
+    /"code"\s*:\s*"not_configured"/.test(proxyless),
+    `★ egress: 送らずに理由つきで止まる — ${proxyless.slice(0, 90)}`,
+  );
+
+  /*
    * **陽性対照。** 上の「出ない」は、捕捉が効いていなければ全部成立する。
    * 1 件でも捕まえていることを見て初めて意味を持つ。
    */
