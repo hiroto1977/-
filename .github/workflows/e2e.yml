@@ -76,6 +76,24 @@ jobs:
           inputs.target == 'both' || inputs.target == 'lite'
         run: npm run e2e:lite
 
+      # **実物のデスクトップアプリを起動する。**
+      #
+      # 2026-08-26 まで、これを誰もやっていなかった。smoke は
+      # `scripts/screenshot.cjs` を主プロセスにして自前で窓を作るので
+      # `dist-electron/main.js` を一度も通らず、e2e はブラウザ版の HTML を
+      # 読み、release.yml はインストーラを作るが起動はしない。
+      # その結果 `electron .` は 2026-08-12 から
+      # 「Cannot find module '../../shared/serviceId'」で落ち続けていた
+      # (バンドラが実行時 require を書き換えないため)。全 CI は緑のまま。
+      #
+      # デスクトップ用の成果物 (dist/index.html + dist-electron/) は
+      # build:web が作らないので、ここで build:renderer を通す。
+      - name: Build desktop renderer
+        run: npm run build:renderer
+
+      - name: Smoke (real desktop app starts)
+        run: xvfb-run -a npm run smoke:app
+
       # 起動性能。巨大な JSON.parse が起動時に戻っていないかを見る。
       - name: Startup performance
         run: npm run perf

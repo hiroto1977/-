@@ -710,6 +710,10 @@ const KNOWN_SUPPRESSIONS = [
   // 直した結果、これまで素通りしていた import 形が全部当たるようになり、
   // scripts/ 側で例外が効く場所が可視化された (2026-08-23)。
   'child_process exec/spawn :: scripts/check-import-boundaries.cjs :: 2',
+  // 実物のデスクトップアプリを起動する道具。`electron .` を子プロセスで
+  // 立ち上げ、8 秒生きているかと致命的な出力の有無を見る。起動そのものを
+  // 確かめるのが目的なので、プロセスを作らずには成り立たない。
+  'child_process exec/spawn :: scripts/smoke-app.cjs :: 1',
   'child_process exec/spawn :: scripts/knowledge-autopilot.cjs :: 1',
   'child_process exec/spawn :: scripts/lint-repo-size.cjs :: 1',
   'child_process exec/spawn :: scripts/lint-shell.cjs :: 1',

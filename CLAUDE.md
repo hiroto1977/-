@@ -59,6 +59,8 @@ npm test                 # vitest run (src/**/__tests__/ 。件数は docs/ARCHI
 npm run test:watch       # vitest watch mode
 npm run lint             # eslint . --max-warnings 0 (flat config in eslint.config.js, ESLint 9 + typescript-eslint)
 npm run smoke            # xvfb + Electron screenshot smoke test of every page
+npm run smoke:app        # 実物の `electron .` を起動して 8 秒生きているか
+                         #   (主プロセス dist-electron/main.js を通す唯一の検査)
 npm run scaffold -- <id> "<Label>" <ICON> [bearer|oauth|json]   # generate a new service end-to-end
 ```
 
@@ -116,9 +118,12 @@ existing but guarding nothing, which is exactly what happened to `lint:citations
 `lint:knowledge-refs` and `verify:knowledge` (the provenance gate) until 2026-07-30.
 `.github/workflows/release.yml` builds Mac/Win/Linux installers on `v*` tags;
 `mutation.yml` runs Stryker (weekly + on pushes to `main` that touch `stryker.config.json`,
-`vitest.config.ts`, `src/main/clients/**` or `src/main/oauth.ts`). `e2e` / `e2e:lite` / `perf` **are** wired into `.github/workflows/e2e.yml`, but it does **not run by
+`vitest.config.ts`, `src/main/clients/**` or `src/main/oauth.ts`). `e2e` / `e2e:lite` / `perf` / `smoke:app` **are** wired into `.github/workflows/e2e.yml`, but it does **not run by
 default** (Actions 分の節約): trigger it from the Actions tab (`workflow_dispatch`) or by putting the
-**`run-e2e` label** on a PR. `e2e:ollama` / `smoke` are **not** in CI at all. All of them need a real
+**`run-e2e` label** on a PR. `e2e:ollama` / `smoke` are **not** in CI at all.
+`smoke:app` は 2026-08-26 に足した —— **実物の `electron .` を起動する唯一の検査**で、
+それまで誰も主プロセスを通しておらず、`dist-electron/main.js` は 2 週間ほど起動不能なまま
+全 CI が緑だった (`scripts/smoke-app.cjs` の冒頭に経緯)。 All of them need a real
 browser or Electron — run them locally before shipping renderer or startup-performance changes.
 
 ## Architecture

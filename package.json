@@ -71,6 +71,7 @@
     "quality": "npm run typecheck && npm run test && npm run test:cov",
     "quality:report": "node scripts/quality-report.cjs",
     "scaffold": "node scripts/scaffold-service.cjs",
+    "smoke:app": "node scripts/smoke-app.cjs && node scripts/smoke-app.cjs --self-test",
     "smoke": "xvfb-run -a electron --no-sandbox scripts/screenshot.cjs",
     "test": "vitest run",
     "test:cov": "vitest run src/main --coverage --coverage.include=src/main/** --coverage.reporter=text --coverage.reporter=json-summary",
