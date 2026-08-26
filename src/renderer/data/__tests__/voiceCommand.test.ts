@@ -5,6 +5,7 @@ import {
   parseVoiceCommand,
   routeCommand,
   requiresConfirmation,
+  isExecutableIntent,
   PARSEABLE_ACTIONS,
   disambiguate,
   isQuestion,
@@ -541,9 +542,20 @@ describe('requiresConfirmation', () => {
     expect(requiresConfirmation({ kind: 'action', action: '', confidence: 0.5 })).toBe(false);
   });
 
-  it('navigate that carries a dangerous-looking action field → still false (kind gate)', () => {
-    // kind!=='action' のゲートが先に効くため、action='delete' でも確認不要。
-    expect(requiresConfirmation({ kind: 'navigate', action: 'delete', confidence: 0.7 })).toBe(false);
+  /*
+   * 2026-08-26 に**期待を反転**した。以前はここが `false` で、コメントは
+   * 「kind!=='action' のゲートが先に効くため確認不要」と書いていた。
+   * ところが `ChatbotWidget` の実行側 (`runIntent`) は **kind を見ておらず**、
+   * `serviceId` と `action` が在れば invoke していた ——
+   * **確認の門と実行の門が別々の物を見ていた**。この検査は、その不一致を
+   * 「正しい挙動」として書き留めてしまっていた。
+   *
+   * 両側を `action` の有無へ揃えたので、`action` を持つ intent は kind に
+   * かかわらず確認を要する。実行側にも `kind === 'action'` の門を足してある
+   * (兄弟の `VoiceCommandBar` は最初からそうしていた)。
+   */
+  it('action フィールドを持つなら kind によらず確認を要する (実行側と同じ単位)', () => {
+    expect(requiresConfirmation({ kind: 'navigate', action: 'delete', confidence: 0.7 })).toBe(true);
   });
 
   it('send-message requires confirmation (external send)', () => {
@@ -574,8 +586,59 @@ describe('requiresConfirmation', () => {
     expect(requiresConfirmation({ kind: 'action', action: 'SendInvoice', confidence: 0.9 })).toBe(true);
   });
 
-  it('read-only / internal action → false (advise)', () => {
-    expect(requiresConfirmation({ kind: 'action', serviceId: 'uber-eats', action: 'advise', confidence: 0.9 })).toBe(false);
+  /*
+   * 既定を fail closed へ倒したので、`advise` のような**見覚えのない action** も
+   * 確認を要する。`PARSEABLE_ACTIONS`(= 動詞ルール由来の 6 つ) に `advise` は
+   * 無いので、発話・チャットからは到達しない。到達しない物の既定を
+   * 「無確認で実行」に置く理由が無く、しかも `advise` は**有料 LLM API** を叩く。
+   */
+  it('見覚えのない action は既定で確認を要する (fail closed)', () => {
+    expect(requiresConfirmation({ kind: 'action', serviceId: 'uber-eats', action: 'advise', confidence: 0.9 })).toBe(true);
+  });
+
+  /*
+   * **不変条件そのものを留める。** 「確認を求めないなら、実行もされない」。
+   * 2 つの門が別々の物を見ていたときは、この関係が破れていた。
+   */
+  /*
+   * 述語そのものを留める。上の不変条件だけでは `kind` の判定を消しても鳴らない
+   * ——揃えた後は「navigate + action」も**確認を経て**実行されるので安全側では
+   * あるからである (対照で実測した)。だが navigate が invoke するのは意味として
+   * 誤りなので、ここで別に留める。**安全と意味は別々に固定する。**
+   */
+  it.each([
+    ['action + serviceId + action 名', { kind: 'action', serviceId: 'github', action: 'create-issue', confidence: 0.9 }, true],
+    ['navigate は action を持っていても実行しない', { kind: 'navigate', serviceId: 'sales', action: 'delete', confidence: 0.7 }, false],
+    ['query も実行しない', { kind: 'query', serviceId: 'overview', action: 'delete', confidence: 0.7 }, false],
+    ['unknown も実行しない', { kind: 'unknown', action: 'delete', confidence: 0 }, false],
+    ['serviceId が無ければ実行しない', { kind: 'action', action: 'create-issue', confidence: 0.9 }, false],
+    ['action 名が無ければ実行しない', { kind: 'action', serviceId: 'github', confidence: 0.9 }, false],
+    ['action 名が空なら実行しない', { kind: 'action', serviceId: 'github', action: '', confidence: 0.9 }, false],
+  ])('isExecutableIntent: %s', (_n, intent, want) => {
+    expect(isExecutableIntent(intent as VoiceIntent)).toBe(want);
+  });
+
+  it('★ 確認不要と判定される intent は、実行側の門も通らない', () => {
+    // **実行側と同じ述語を呼ぶ。** ここで判定を書き直すと、実物の門が
+    // 変わっても検査は自分の写しを回るだけになる (CLAUDE.md の
+    // 「検査が、留めるべき表を読んで回っていた」)。
+    const executable = isExecutableIntent;
+    const samples: VoiceIntent[] = [
+      { kind: 'navigate', serviceId: 'sales', confidence: 0.7 },
+      { kind: 'query', serviceId: 'overview', confidence: 0.7 },
+      { kind: 'unknown', confidence: 0 },
+      { kind: 'action', serviceId: 'slack', confidence: 0.5 },
+      { kind: 'action', serviceId: 'slack', action: '', confidence: 0.5 },
+      { kind: 'navigate', serviceId: 'sales', action: 'delete', confidence: 0.7 },
+      { kind: 'action', serviceId: 'github', action: 'create-issue', confidence: 0.9 },
+      { kind: 'action', serviceId: 'uber-eats', action: 'advise', confidence: 0.9 },
+    ];
+    for (const s of samples) {
+      if (!requiresConfirmation(s)) expect(executable(s)).toBe(false);
+    }
+    // 空撃ちでないこと: 標本には実行される物も確認を要する物も居る。
+    expect(samples.some(executable)).toBe(true);
+    expect(samples.some((s) => requiresConfirmation(s))).toBe(true);
   });
 
   it('record-entry requires confirmation (writes data)', () => {

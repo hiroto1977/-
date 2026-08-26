@@ -504,23 +504,60 @@ const DANGEROUS_STEMS: readonly string[] = [
 
 /**
  * intent が実行前に確認を要するか。
- * - kind !== 'action' → false (navigate / query は副作用なし)
- * - action が CONFIRM_ACTIONS に含まれる → true
- * - action 名に破壊的/外部送信語幹を含む → 安全側で true
- * - それ以外の action → false
+ *
+ * **判定の単位は `action` の有無**であって `kind` ではない。実行側が見るのが
+ * それだからである。2026-08-26 まで冒頭が `kind !== 'action' → false` で、
+ * `ChatbotWidget` の実行側は `kind` を見ずに `serviceId` と `action` が在れば
+ * invoke していた —— **2 つの門が別々の物を見ていた**。実害は無かった
+ * (解析器が navigate に `action` を付けない) が、それは**どこにも書かれて
+ * いない不変条件**に依っていた。両側を `action` の有無へ揃える。
+ *
+ * - `action` が無い → false (実行するものが無い)
+ * - `action` が `CONFIRM_ACTIONS` にある → true
+ * - `action` 名に破壊的/外部送信の語幹を含む → true
+ * - **それ以外の `action` → true (fail closed)**
+ *
+ * 最後の 1 行が 2026-08-26 の変更点。以前は false (= 無確認で実行) だった。
+ * `PARSEABLE_ACTIONS ⊆ CONFIRM_ACTIONS` はゲートが強制しているので、
+ * この既定に落ちるのは**解析器が今日は作れない action** —— つまり
+ * 「見覚えのない action」である。見覚えのない物を無確認で実行する既定は、
+ * 安全側ではない。
  */
+/**
+ * intent が**実際に invoke されうる**か。
+ *
+ * 実行経路は 2 つある (`VoiceCommandBar.performIntent` と
+ * `ChatbotWidget.runIntent`)。2026-08-26 まで**片方は `kind` を見て、もう片方は
+ * 見ていなかった**。さらに `requiresConfirmation` は 3 つ目の基準で判定して
+ * いた。3 か所が別々の物を見ている状態では、「確認を求めないなら実行もされない」
+ * を誰も保証できない。
+ *
+ * **1 つの述語にして、3 か所ともここを通す。** そうすれば不変条件は
+ * 「`isExecutableIntent(i) && !requiresConfirmation(i)` が空であること」という
+ * **1 行の検査**になる。
+ */
+export type ExecutableIntent = VoiceIntent & { readonly serviceId: ServiceId; readonly action: string };
+
+export function isExecutableIntent(intent: VoiceIntent): intent is ExecutableIntent {
+  return (
+    intent.kind === 'action' &&
+    intent.serviceId !== undefined &&
+    intent.action !== undefined &&
+    intent.action !== ''
+  );
+}
+
 export function requiresConfirmation(intent: VoiceIntent): boolean {
-  if (intent.kind !== 'action') return false;
   const action = intent.action;
-  // 空文字は CONFIRM_ACTIONS にもどの語幹にもマッチしないため undefined のみガードすれば足りる。
-  if (action === undefined) return false;
+  // 空文字と undefined は「実行するものが無い」。実行側の門も同じ形で止まる。
+  if (action === undefined || action === '') return false;
   if (CONFIRM_ACTIONS.has(action)) return true;
   // ヒューリスティック: 破壊的/外部送信を示す語幹を含むなら安全側で確認。
   const lowered = action.toLowerCase();
   for (const stem of DANGEROUS_STEMS) {
     if (lowered.includes(stem)) return true;
   }
-  return false;
+  return true;
 }
 
 // ---------------------------------------------------------------------------

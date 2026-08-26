@@ -19,7 +19,7 @@ import { SERVICES } from '../services';
 import { replyTo, type ChatReply } from '../data/chatbot';
 import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
 import { CAPABILITIES } from './VoiceCommandBar';
-import type { VoiceIntent } from '../data/voiceCommand';
+import { isExecutableIntent, type VoiceIntent } from '../data/voiceCommand';
 import { org as registryOrg, teams as registryTeams } from '../../../orchestration/registry.json';
 
 /** チャット履歴 1 件。 */
@@ -176,8 +176,23 @@ export function ChatbotWidget() {
 
   const append = (msg: ChatMessage) => setMessages((prev) => [...prev, msg].slice(-HISTORY_MAX));
 
+  /*
+   * **確認の門と同じものを見る。**
+   *
+   * 2026-08-26 の実測: ここは `intent.kind` を見ておらず、`serviceId` と
+   * `action` が在れば実行していた。一方 `requiresConfirmation` は
+   * `kind !== 'action'` で**即座に false** を返す。つまり
+   * `{ kind: 'navigate', serviceId, action: 'delete' }` は
+   * **確認を求められないまま invoke される**形だった
+   * (`voiceCommand.test.ts` はこの向きを「kind ゲートが先に効くため確認不要」
+   *  として**正しい挙動と書き留めて**いた)。
+   *
+   * 解析器が今そういう intent を作らないので実害は無かったが、**2 つの門が
+   * 別々の物を見ている**状態そのものが穴である。兄弟の `VoiceCommandBar`
+   * (`performIntent`) は最初から `kind === 'action'` を見ている。揃える。
+   */
   const runIntent = async (intent: VoiceIntent) => {
-    if (!window.serviceHub || intent.serviceId === undefined || intent.action === undefined) return;
+    if (!window.serviceHub || !isExecutableIntent(intent)) return;
     setBusy(true);
     const res = await window.serviceHub.invoke(intent.serviceId, intent.action, intent.params ?? {});
     setBusy(false);
