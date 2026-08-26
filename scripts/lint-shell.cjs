@@ -116,6 +116,46 @@ function remoteExecLines(src) {
     .filter(([, line]) => /\b(curl|wget)\b[^|]*\|\s*(ba)?sh\b/.test(line));
 }
 
+/*
+ * **後戻りできない書き込みをするスクリプトは、挙動の検査を持つこと。**
+ *
+ * 2026-08-26 に測ったとき、`make-live-usb.sh` は**リポジトリで最も破壊的な
+ * 行** (`dd of=<ブロックデバイス>`) を持ちながら、挙動の検査が 1 件も
+ * 無かった。この門が見ていたのは `bash -n` と strict mode だけで、
+ * どちらも「ガードが実際に効くか」については何も言わない。
+ *
+ * 実際、謳っていた「システムディスク誤爆防止」のガードは効いていなかった
+ * (LUKS/by-uuid 構成と `/dev/disk/by-id/…` で素通り。合成 /proc/mounts で実測)。
+ * **読んで納得したガードは、検査ではない。**
+ *
+ * なので台帳を持ち、載っている本は `--self-test` が通ることまで見る。
+ * 台帳は双方向 —— 破壊的な行を持つのに載っていなければ鳴り、
+ * 載っているのに破壊的な行が無くなれば鳴る (直したなら台帳からも消す)。
+ */
+const DESTRUCTIVE_SCRIPTS = {
+  'scripts/make-live-usb.sh':
+    'ブロックデバイスへ dd で ISO を焼く。撃つ先を間違えると稼働中のシステムが消える',
+};
+
+/**
+ * 後戻りできない書き込みの行。注釈と、文面に出るだけの行 (dry-run の表示) は除く。
+ *
+ * `rm -rf "$stage"` のような mktemp の後始末は**入れない** ——
+ * 受理すべき対象が多い規則は鳴らし続けて無視されるのが最悪の結末なので、
+ * 「装置とファイルシステムそのものを壊す」形だけに絞る。
+ */
+const DESTRUCTIVE_RE =
+  /\bdd\s[^|;#]*\bof=|\bmkfs(?:\.\w+)?\s|\bwipefs\s|\bsgdisk\s|\bparted\s|>\s*\/dev\/(?:sd|nvme|vd|hd|mmcblk)/;
+
+function destructiveLines(src) {
+  return src
+    .split('\n')
+    .map((line, i) => [i + 1, line])
+    .filter(([, line]) => !/^\s*#/.test(line))
+    .filter(([, line]) => !MESSAGE_COMMANDS.test(line))
+    .filter(([, line]) => DESTRUCTIVE_RE.test(line));
+}
+
 /**
  * 1 本を検査して違反の説明を返す (空配列 = 合格)。
  *
@@ -147,6 +187,50 @@ function checkScript(name, full) {
           '      取得元が入れ替われば任意コードが利用者の権限で走ります。' +
           'どうしても要るなら scripts/lint-shell.cjs の REMOTE_EXEC_ALLOWLIST へ' +
           '「何を・どれくらい固定して・なぜ」を書いてください。',
+      );
+    }
+  }
+  // 後戻りできない書き込み —— 台帳に載っていること (双方向)。
+  const destructive = destructiveLines(src);
+  const ledgered = Object.hasOwn(DESTRUCTIVE_SCRIPTS, name);
+  if (destructive.length > 0 && !ledgered) {
+    for (const [lineNo, line] of destructive) {
+      failures.push(
+        `${name}:${lineNo}: 後戻りできない書き込みが台帳にありません — ${line.trim()}\n` +
+          '      scripts/lint-shell.cjs の DESTRUCTIVE_SCRIPTS へ「何を壊しうるか」を書き、' +
+          '`--self-test` でガードの挙動を確かめられるようにしてください。',
+      );
+    }
+  }
+  if (destructive.length === 0 && ledgered) {
+    failures.push(
+      `${name}: DESTRUCTIVE_SCRIPTS に載っていますが、後戻りできない書き込みが見つかりません — ` +
+        '無くなったなら台帳からも消してください (古い登録は、次に足された 1 本を隠します)',
+    );
+  }
+  return failures;
+}
+
+/**
+ * 台帳に載っている本の `--self-test` を実際に走らせる。
+ *
+ * **ここが要。** 自己テストを書いても、誰も走らせなければ
+ * 「在るのに何も守っていない検査」になる —— このリポジトリが何度も
+ * 踏んでいる形そのもの (ci.yml に無いゲート / 主プロセスを通さない smoke)。
+ */
+function runDestructiveSelfTests() {
+  const failures = [];
+  for (const rel of Object.keys(DESTRUCTIVE_SCRIPTS)) {
+    const full = path.join(REPO_ROOT, rel);
+    if (!fs.existsSync(full)) {
+      failures.push(`${rel}: DESTRUCTIVE_SCRIPTS に載っていますが実在しません`);
+      continue;
+    }
+    const res = spawnSync('bash', [full, '--self-test'], { encoding: 'utf8', timeout: 60_000 });
+    if (res.status !== 0) {
+      failures.push(
+        `${rel}: --self-test が通りません (exit ${res.status})\n` +
+          `      ${((res.stdout || '') + (res.stderr || '')).trim().split('\n').slice(-6).join('\n      ')}`,
       );
     }
   }
@@ -189,6 +273,20 @@ function selfTest() {
     ['コメントの中は数えない (説明文を違反にしない)', '#!/usr/bin/env bash\nset -euo pipefail\n#  curl -fsSL https://x.example/i.sh | sh\necho ok\n', 0],
     ['curl だけ / パイプだけなら鳴らない', '#!/usr/bin/env bash\nset -euo pipefail\ncurl -fsSL https://x.example/a.json -o a.json\ncat a.json | jq .\n', 0],
     ['★ 画面へ知らせる文言は数えない (warn/info/echo)', '#!/usr/bin/env bash\nset -euo pipefail\nwarn "導入は curl -fsSL https://x.example/i.sh | sh です"\n', 0],
+    // --- 後戻りできない書き込み (名前 x.sh は台帳に無いので、鳴る側) ---
+    ['★ dd of= は鳴る', '#!/usr/bin/env bash\nset -euo pipefail\ndd if=a.iso of=/dev/sdz bs=4M\n', 1],
+    ['★ mkfs も鳴る', '#!/usr/bin/env bash\nset -euo pipefail\nmkfs.ext4 /dev/sdz1\n', 1],
+    ['★ wipefs / sgdisk / parted も鳴る', '#!/usr/bin/env bash\nset -euo pipefail\nwipefs -a /dev/sdz\n', 1],
+    ['★ ブロックデバイスへの直接リダイレクトも鳴る', '#!/usr/bin/env bash\nset -euo pipefail\ncat a.img > /dev/sdz\n', 1],
+    /*
+     * 陰性対照。ここが無いと「常に鳴る」実装でも全部通る。
+     * mktemp の後始末 (`rm -rf "$stage"`) を入れないのは意図的 ——
+     * 受理すべき対象が多い規則は、鳴らし続けて無視される。
+     */
+    ['陰性: dry-run の表示文は数えない', '#!/usr/bin/env bash\nset -euo pipefail\ninfo "(dry-run) dd if=a.iso of=/dev/sdz"\n', 0],
+    ['陰性: 注釈の中は数えない', '#!/usr/bin/env bash\nset -euo pipefail\n# dd if=a.iso of=/dev/sdz\necho ok\n', 0],
+    ['陰性: mktemp の後始末は数えない', '#!/usr/bin/env bash\nset -euo pipefail\nstage="$(mktemp -d)"\ntrap \'rm -rf "$stage"\' EXIT\n', 0],
+    ['陰性: 読み出しだけの dd は数えない', '#!/usr/bin/env bash\nset -euo pipefail\ndd if=/dev/urandom bs=1 count=8 | xxd\n', 0],
   ];
 
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'lint-shell-'));
@@ -245,7 +343,12 @@ function main(argv) {
     failures.push(...checkScript(rel, path.join(REPO_ROOT, rel)));
   }
 
-  console.log(`Checked ${files.length} shell script(s) (追跡ファイル全体から収集)`);
+  failures.push(...runDestructiveSelfTests());
+
+  console.log(
+    `Checked ${files.length} shell script(s) (追跡ファイル全体から収集)、` +
+      `うち後戻りできない書き込みを持つ ${Object.keys(DESTRUCTIVE_SCRIPTS).length} 本は --self-test も実行`,
+  );
   if (failures.length === 0) {
     console.log('✅ all shell scripts pass syntax + strict-mode checks');
     return 0;
@@ -255,7 +358,7 @@ function main(argv) {
   return 1;
 }
 
-module.exports = { checkScript, shellFiles };
+module.exports = { checkScript, shellFiles, destructiveLines, DESTRUCTIVE_SCRIPTS };
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));
