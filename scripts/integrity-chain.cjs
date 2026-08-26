@@ -116,6 +116,32 @@ const PROTECTED = [
   // 何も配らない。`knowledge-auto.yml` は issues: write を持つが、書けるのは
   // 課題票で、配布物にも実行環境にも触れない。
   '.github/workflows/pages.yml',
+  // 2026-08-26 に足した 3 つ。**同じ順番の逆転が、もう一段内側に残っていた。**
+  //
+  // `pages.yml` を足した理由はこう書いてある ——「sw.js を『公開版のオリジンで
+  // 全てのページ読み込みに介入する』として守っているのに、**その sw.js を
+  // 置きに行く側**が守られていなかった」。その基準をそのまま当てると、
+  // **公開する HTML そのものを作る側／書き換える側**が外に残っている。
+  //
+  //   inline-html.cjs  CSS/JS を畳んで dist/standalone.html を作る。
+  //                    全訪問者が読む単一ファイルの中身を決めるのはここ。
+  //                    ハッシュ固定した <script> 以外を弾く assertPinnedScripts も
+  //                    ここに在り、1 行外せば任意のスクリプトが載る
+  //   inject-pwa.cjs   公開直前 (pages.yml の upload 直前) に manifest /
+  //                    apple-touch-icon / SW 登録を注入する。書き換える側
+  //   manifest.webmanifest  公開オリジンへそのまま置かれる。start_url /
+  //                    scope を書き換えると、ホーム画面から開く先が変わる
+  //
+  // 出荷物への検査 (lint:sample-data --artifact / lint:artifact-csp) は
+  // **結果**を見る。鎖が見るのは「気付かぬ変更」で、役割が違う。
+  'scripts/inline-html.cjs',
+  'scripts/inject-pwa.cjs',
+  'assets/manifest.webmanifest',
+  //
+  // `vite.config.ts` は足していない。バンドルの作り方を決めるので配布経路では
+  // あるが、**通常の開発で動く**ファイルで、鎖に入れると日常の変更すべてに
+  // chain:append が要る。上の 3 つは「出す物を直接書く/置く」side で、
+  // かつ滅多に動かない —— そこが線引き。動かした結果は出荷物の検査が見る。
   // electronFuses (runAsNode / NODE_OPTIONS / inspect / cookie 暗号化) の置き場。
   // `runAsNode: true` に戻すだけで、署名済みの自分自身を Node として起動して
   // アプリとして `safeStorage.decryptString` を呼べる状態に戻る。

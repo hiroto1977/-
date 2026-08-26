@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 108
+- ブロック数: 109
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `22de0027a1373b636522f11b97a30d309049fd51b146a9c62a71503097b3b9a0`
-- 保護対象: 49 ファイル
+- 末尾(tip)ハッシュ: `981d7c69db7aa3a37550b01ee3ed159204cbccd363ba24913fc6acb5191ed370`
+- 保護対象: 52 ファイル
 
 ## ブロック
 
@@ -121,15 +121,19 @@
 | 105 | `553015cbe05446f0` | `799bb36e1c1beaae` | `b8506ca1e4e8eea7` | update pages.yml |
 | 106 | `7c2d93a93f04cada` | `b8506ca1e4e8eea7` | `2a2548b94c15b3ce` | update release.yml |
 | 107 | `89f05c9e3292912e` | `2a2548b94c15b3ce` | `22de0027a1373b63` | update ci.yml |
+| 108 | `99a8724e19507999` | `22de0027a1373b63` | `981d7c69db7aa3a3` | update manifest.webmanifest,inject-pwa.cjs,inline-html.cjs,integrity-chain.cjs |
 
 ## 保護対象ファイル
 
 - `.github/workflows/ci.yml`
 - `.github/workflows/pages.yml`
 - `.github/workflows/release.yml`
+- `assets/manifest.webmanifest`
 - `assets/sw.js`
 - `docs/SECURITY_CHAIN.md`
 - `electron-builder.json`
+- `scripts/inject-pwa.cjs`
+- `scripts/inline-html.cjs`
 - `scripts/integrity-chain.cjs`
 - `scripts/security-audit.sh`
 - `scripts/setup-linux.sh`
