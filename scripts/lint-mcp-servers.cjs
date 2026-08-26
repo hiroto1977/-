@@ -114,7 +114,33 @@ const LEDGER = {
  */
 const UNSCOPED_BUDGET = 10;
 
-/** 設定から `{name, launcher, pkg}` を取り出す。 */
+/**
+ * 環境変数の名前が**資格情報**を指しているか。値は `${...}` の参照なので
+ * 中身は見えない —— 見るのは名前だけでよい (何を渡す口が開いているか)。
+ */
+const SECRET_ENV = /TOKEN|KEY|SECRET|PASSWORD|CREDENTIAL/i;
+
+/**
+ * **素の名前 かつ 資格情報を受け取る**サーバ。ここがいちばん鋭い集合である。
+ *
+ * 版が固定されていないので、そのパッケージの次の版は今日と別の人が出せる。
+ * そこへ生きた鍵を渡しているのだから、悪い版が 1 つ出た時点で鍵はそのまま
+ * 外へ出る。名前空間つき (`@stripe/…` など) なら公開できる者が組織に
+ * 限られるので、同じ「未固定」でも面がまるで違う。
+ *
+ * 実測 2026-08-25 (registry へ読み取りで確認):
+ *
+ *   atlassian → mcp-atlassian      (vijay_duke)   ATLASSIAN_API_TOKEN ほか 6
+ *   linear    → mcp-server-linear  (dvcrn)        LINEAR_API_KEY
+ *   discord   → mcp-discord        (barry99625)   DISCORD_BOT_TOKEN
+ *   youtube   → youtube-mcp-server (hk4crprasad)  YOUTUBE_API_KEY
+ *
+ * 減らすのは持ち主の裁量 (版を固定する / 公式のものへ替える / 外す)。
+ * この門が約束するのは**増えたら鳴る**ことだけである。
+ */
+const CREDENTIALED_UNSCOPED = ['mcp-atlassian', 'mcp-server-linear', 'mcp-discord', 'youtube-mcp-server'];
+
+/** 設定から `{name, launcher, pkg, env}` を取り出す。 */
 function readServers(json) {
   const out = [];
   const servers = json?.mcpServers;
@@ -123,12 +149,13 @@ function readServers(json) {
     const args = Array.isArray(def?.args) ? def.args : [];
     // `npx -y <pkg>` / `uvx <pkg>` のどちらでも、旗でない最初の引数が名前。
     const pkg = args.find((a) => typeof a === 'string' && !a.startsWith('-')) ?? null;
-    out.push({ name, launcher: typeof def?.command === 'string' ? def.command : null, pkg });
+    const env = def?.env !== null && typeof def?.env === 'object' ? Object.keys(def.env) : [];
+    out.push({ name, launcher: typeof def?.command === 'string' ? def.command : null, pkg, env });
   }
   return out;
 }
 
-function check(servers, ledger = LEDGER, budget = UNSCOPED_BUDGET) {
+function check(servers, ledger = LEDGER, budget = UNSCOPED_BUDGET, credentialedUnscoped = CREDENTIALED_UNSCOPED) {
   const problems = [];
   const seen = new Set();
   for (const { name, launcher, pkg } of servers) {
@@ -158,6 +185,25 @@ function check(servers, ledger = LEDGER, budget = UNSCOPED_BUDGET) {
         `${unscoped.map((s) => s.pkg).join(', ')} —— 素の名前は取り違え・乗っ取りが効く面です`,
     );
   }
+
+  // **素の名前 かつ 資格情報を受け取る**もの。名指しで固定する。
+  const risky = unscoped
+    .filter((s) => (s.env ?? []).some((k) => SECRET_ENV.test(k)))
+    .map((s) => s.pkg)
+    .sort();
+  const allowed = [...credentialedUnscoped].sort();
+  const added = risky.filter((p) => !allowed.includes(p));
+  const gone = allowed.filter((p) => !risky.includes(p));
+  for (const p of added) {
+    problems.push(
+      `${p}: 名前空間が無く、しかも資格情報を受け取ります —— 版は固定されていないので、` +
+        `悪い版が 1 つ出た時点で鍵がそのまま外へ出ます。固定する / 公式のものへ替える / ` +
+        `外す のどれかを選び、残すなら台帳 CREDENTIALED_UNSCOPED へ理由つきで足してください`,
+    );
+  }
+  for (const p of gone) {
+    problems.push(`${p}: CREDENTIALED_UNSCOPED に在りますが、もう当てはまりません — 台帳を掃除してください`);
+  }
   return problems;
 }
 
@@ -178,10 +224,37 @@ function selfTest() {
   let bad = 0;
   console.log('self-test:');
   for (const [label, servers, ledger, budget, expected] of cases) {
-    const n = check(servers, ledger, budget).length;
+    // **第 4 引数を明示する。** 省くと既定で実物の CREDENTIALED_UNSCOPED が
+    // 入り、合成の標本には無い 4 件が「消し忘れ」として毎回鳴る (実測)。
+    // 検査の差し込み口は、既定値が実物を指すぶんだけ漏れる。
+    const n = check(servers, ledger, budget, []).length;
     const ok = n === expected;
     if (!ok) bad++;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${n} 件 (期待 ${expected})`);
+  }
+
+  // 素の名前 かつ 資格情報 の集合。
+  {
+    const E = (name, pkg, env) => ({ name, launcher: 'npx', pkg, env });
+    const L2 = { a: { registry: 'npm', pkg: 'plain-a', why: 'これは理由です' } };
+    for (const [label, servers, allow, expected] of [
+      ['台帳どおりなら通る', [E('a', 'plain-a', ['A_TOKEN'])], ['plain-a'], 0],
+      ['★ 素の名前へ鍵を渡す新顔は鳴る', [E('a', 'plain-a', ['A_TOKEN'])], [], 1],
+      ['★ 台帳の消し忘れは鳴る', [E('a', 'plain-a', ['NOTHING_HERE'])], ['plain-a'], 1],
+      ['鍵を受け取らない素の名前は対象外', [E('a', 'plain-a', ['LOCAL_TIMEZONE'])], [], 0],
+      ['env が無くても落ちない', [E('a', 'plain-a', [])], [], 0],
+      ['★ KEY / SECRET / PASSWORD / CREDENTIAL も拾う', [E('a', 'plain-a', ['X_SECRET'])], [], 1],
+    ]) {
+      const n = check(servers, L2, 99, allow).length;
+      const ok = n === expected;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} ${label}: ${n} 件 (期待 ${expected})`);
+    }
+    // 名前空間つきは、鍵を渡していてもこの集合に入らない (面が違う)。
+    const scopedOk = check([{ name: 'a', launcher: 'npx', pkg: '@x/a', env: ['A_TOKEN'] }],
+      { a: { registry: 'npm', pkg: '@x/a', why: 'これは理由です' } }, 99, []).length === 0;
+    if (!scopedOk) bad++;
+    console.log(`  ${scopedOk ? '✓' : '✗'} 名前空間つきは鍵を渡していても対象外`);
   }
 
   // 取り出しが実物に当たること。設定の書き方が変わって 0 件になれば、
@@ -217,9 +290,13 @@ function main(argv) {
   const servers = readServers(JSON.parse(fs.readFileSync(SETTINGS, 'utf8')));
   const problems = check(servers);
   const unscoped = servers.filter((s) => typeof s.pkg === 'string' && !s.pkg.startsWith('@')).length;
+  const risky = servers.filter(
+    (s) => typeof s.pkg === 'string' && !s.pkg.startsWith('@') && (s.env ?? []).some((k) => SECRET_ENV.test(k)),
+  ).length;
   console.log(
     `MCP サーバ ${servers.length} 件を台帳と照合 ` +
-      `(名前空間なし ${unscoped} / 上限 ${UNSCOPED_BUDGET}・版は全件が起動時取得)`,
+      `(名前空間なし ${unscoped} / 上限 ${UNSCOPED_BUDGET}、` +
+      `うち資格情報を受け取るもの ${risky} / 台帳 ${CREDENTIALED_UNSCOPED.length}・版は全件が起動時取得)`,
   );
   if (problems.length === 0) {
     console.log('✅ 起動時に走る遠隔コードはすべて台帳どおりです');
@@ -230,6 +307,6 @@ function main(argv) {
   return 1;
 }
 
-module.exports = { readServers, check, LEDGER, UNSCOPED_BUDGET, ALLOWED_LAUNCHERS };
+module.exports = { readServers, check, LEDGER, UNSCOPED_BUDGET, CREDENTIALED_UNSCOPED, SECRET_ENV, ALLOWED_LAUNCHERS };
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));
