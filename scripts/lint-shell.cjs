@@ -132,10 +132,16 @@ function remoteExecLines(src) {
  * 台帳は双方向 —— 破壊的な行を持つのに載っていなければ鳴り、
  * 載っているのに破壊的な行が無くなれば鳴る (直したなら台帳からも消す)。
  */
-const DESTRUCTIVE_SCRIPTS = {
+const SELF_TEST_REQUIRED = {
   'scripts/make-live-usb.sh':
     'ブロックデバイスへ dd で ISO を焼く。撃つ先を間違えると稼働中のシステムが消える',
+  'scripts/make-autoinstall.sh':
+    'ログインパスワードを受け取り、インストール時に root で走る autoinstall 設定を生成する',
+  'scripts/migrate.sh':
+    '暗号化パスフレーズを受け取り、信用できない書庫を $HOME へ展開する',
 };
+
+/* 旧名。他所から読まれていないが、意味を変えずに残す意図は無いので別名は張らない。 */
 
 /**
  * 後戻りできない書き込みの行。注釈と、文面に出るだけの行 (dry-run の表示) は除く。
@@ -146,6 +152,29 @@ const DESTRUCTIVE_SCRIPTS = {
  */
 const DESTRUCTIVE_RE =
   /\bdd\s[^|;#]*\bof=|\bmkfs(?:\.\w+)?\s|\bwipefs\s|\bsgdisk\s|\bparted\s|>\s*\/dev\/(?:sd|nvme|vd|hd|mmcblk)/;
+
+/*
+ * **秘密を扱う行。**
+ *
+ * 2026-08-26 に `make-autoinstall.sh` を測ったら、`openssl passwd -6 "$pw"` で
+ * 平文を**引数**として渡していた。argv は `/proc/<pid>/cmdline` (モード 444)
+ * 経由で同じ機械の誰からでも読める —— 走行中の argv を捕まえて実測した。
+ * スクリプトのヘッダは「平文はどこにも保存されない」と書いてあった。
+ * **保存先はファイルだけではない。**
+ *
+ * 危ないのは「秘密を扱うこと」ではなく「扱い方を誰も測っていないこと」なので、
+ * 検出したら台帳 + `--self-test` を要求する (壊す側の規則とは分ける)。
+ */
+const SECRET_RE = /\bread\s+-[a-zA-Z]*s[a-zA-Z]*\b|\bopenssl\s+passwd\b|\bgpg\b[^|;#]*--passphrase\b|\bsshpass\b/;
+
+function secretLines(src) {
+  return src
+    .split('\n')
+    .map((line, i) => [i + 1, line])
+    .filter(([, line]) => !/^\s*#/.test(line))
+    .filter(([, line]) => !MESSAGE_COMMANDS.test(line))
+    .filter(([, line]) => SECRET_RE.test(line));
+}
 
 function destructiveLines(src) {
   return src
@@ -190,21 +219,24 @@ function checkScript(name, full) {
       );
     }
   }
-  // 後戻りできない書き込み —— 台帳に載っていること (双方向)。
-  const destructive = destructiveLines(src);
-  const ledgered = Object.hasOwn(DESTRUCTIVE_SCRIPTS, name);
-  if (destructive.length > 0 && !ledgered) {
-    for (const [lineNo, line] of destructive) {
+  // 後戻りできない書き込み / 秘密の扱い —— 台帳に載っていること (双方向)。
+  const risky = [
+    ...destructiveLines(src).map((e) => [...e, '後戻りできない書き込み']),
+    ...secretLines(src).map((e) => [...e, '秘密の扱い']),
+  ];
+  const ledgered = Object.hasOwn(SELF_TEST_REQUIRED, name);
+  if (risky.length > 0 && !ledgered) {
+    for (const [lineNo, line, kind] of risky) {
       failures.push(
-        `${name}:${lineNo}: 後戻りできない書き込みが台帳にありません — ${line.trim()}\n` +
-          '      scripts/lint-shell.cjs の DESTRUCTIVE_SCRIPTS へ「何を壊しうるか」を書き、' +
+        `${name}:${lineNo}: ${kind}が台帳にありません — ${line.trim()}\n` +
+          '      scripts/lint-shell.cjs の SELF_TEST_REQUIRED へ「何を壊しうるか」を書き、' +
           '`--self-test` でガードの挙動を確かめられるようにしてください。',
       );
     }
   }
-  if (destructive.length === 0 && ledgered) {
+  if (risky.length === 0 && ledgered) {
     failures.push(
-      `${name}: DESTRUCTIVE_SCRIPTS に載っていますが、後戻りできない書き込みが見つかりません — ` +
+      `${name}: SELF_TEST_REQUIRED に載っていますが、危ない操作が見つかりません — ` +
         '無くなったなら台帳からも消してください (古い登録は、次に足された 1 本を隠します)',
     );
   }
@@ -220,10 +252,10 @@ function checkScript(name, full) {
  */
 function runDestructiveSelfTests() {
   const failures = [];
-  for (const rel of Object.keys(DESTRUCTIVE_SCRIPTS)) {
+  for (const rel of Object.keys(SELF_TEST_REQUIRED)) {
     const full = path.join(REPO_ROOT, rel);
     if (!fs.existsSync(full)) {
-      failures.push(`${rel}: DESTRUCTIVE_SCRIPTS に載っていますが実在しません`);
+      failures.push(`${rel}: SELF_TEST_REQUIRED に載っていますが実在しません`);
       continue;
     }
     const res = spawnSync('bash', [full, '--self-test'], { encoding: 'utf8', timeout: 60_000 });
@@ -287,6 +319,13 @@ function selfTest() {
     ['陰性: 注釈の中は数えない', '#!/usr/bin/env bash\nset -euo pipefail\n# dd if=a.iso of=/dev/sdz\necho ok\n', 0],
     ['陰性: mktemp の後始末は数えない', '#!/usr/bin/env bash\nset -euo pipefail\nstage="$(mktemp -d)"\ntrap \'rm -rf "$stage"\' EXIT\n', 0],
     ['陰性: 読み出しだけの dd は数えない', '#!/usr/bin/env bash\nset -euo pipefail\ndd if=/dev/urandom bs=1 count=8 | xxd\n', 0],
+    // --- 秘密の扱い (名前 x.sh は台帳に無いので、鳴る側) ---
+    ['★ read -rs (パスワード入力) は鳴る', '#!/usr/bin/env bash\nset -euo pipefail\nread -rs pw\n', 1],
+    ['★ read -s の並びが違っても鳴る', '#!/usr/bin/env bash\nset -euo pipefail\nread -sr pw\n', 1],
+    ['★ openssl passwd も鳴る', '#!/usr/bin/env bash\nset -euo pipefail\nopenssl passwd -6 -stdin\n', 1],
+    ['★ sshpass も鳴る', '#!/usr/bin/env bash\nset -euo pipefail\nsshpass -p "$P" ssh h\n', 1],
+    ['陰性: 素の read は秘密ではない', '#!/usr/bin/env bash\nset -euo pipefail\nread -r answer\n', 0],
+    ['陰性: 注釈の中の read -rs は数えない', '#!/usr/bin/env bash\nset -euo pipefail\n# read -rs pw\necho ok\n', 0],
   ];
 
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'lint-shell-'));
@@ -347,7 +386,7 @@ function main(argv) {
 
   console.log(
     `Checked ${files.length} shell script(s) (追跡ファイル全体から収集)、` +
-      `うち後戻りできない書き込みを持つ ${Object.keys(DESTRUCTIVE_SCRIPTS).length} 本は --self-test も実行`,
+      `うち危ない操作を持つ ${Object.keys(SELF_TEST_REQUIRED).length} 本は --self-test も実行`,
   );
   if (failures.length === 0) {
     console.log('✅ all shell scripts pass syntax + strict-mode checks');
@@ -358,7 +397,7 @@ function main(argv) {
   return 1;
 }
 
-module.exports = { checkScript, shellFiles, destructiveLines, DESTRUCTIVE_SCRIPTS };
+module.exports = { checkScript, shellFiles, destructiveLines, secretLines, SELF_TEST_REQUIRED };
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));
