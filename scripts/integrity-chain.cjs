@@ -100,6 +100,33 @@ const PROTECTED = [
   'scripts/setup-linux.sh',
   'scripts/setup-obsidian-docker.sh',
   'scripts/security-audit.sh',
+  /*
+   * --- 2026-08-26: 利用者の機械で強い権限で走る 3 本 ---
+   *
+   * 上の 3 本は「7 本の柱」の検証装置として保護されている (`SECURITY_CHAIN.md`
+   * の表)。以下の 3 本はそれとは別の理由 —— **`httpLimits.ts` を昇格させたときと
+   * 同じ試験**に掛かる。「1 行書き換えるだけで、実装を触らずに守りが消えるか」。
+   *
+   *   make-live-usb.sh    ブロックデバイスへ dd で焼く。システムディスク判定を
+   *                       `false` にするだけで、稼働中のディスクへ書ける
+   *   make-autoinstall.sh ログインパスワードを受け取り、**インストール時に root で
+   *                       走る** autoinstall 設定を生成する。ホスト名の検証を
+   *                       緩めるだけで early-commands を差し込める
+   *   migrate.sh          暗号化パスフレーズを受け取り、信用できない書庫を
+   *                       $HOME へ展開する。`-pass env:` を `pass:` へ戻すだけで
+   *                       平文が /proc/<pid>/cmdline (444) に載る
+   *
+   * **なぜ自己テストでは足りないか。** `src/` のファイルは検査が別ファイル
+   * (`__tests__/`) に在り、両方が変異検査に載っているので、守りだけを消せば
+   * 必ず鳴る。この 3 本の検査は**スクリプト自身の中**に在る ——
+   * 実測 (2026-08-26): ガードを `false` にし、自己テスト節を
+   * `ok "self-test 全件一致"; exit 0` へ差し替えたら、**self-test・lint:shell・
+   * chain:verify・lint:forbidden がすべて緑**になった。
+   * **証人が、証人の対象と同じ紙に書かれている。** 外側の錨は鎖しかない。
+   */
+  'scripts/make-live-usb.sh',
+  'scripts/make-autoinstall.sh',
+  'scripts/migrate.sh',
   '.github/workflows/ci.yml',
   // ci.yml (contents: read) は守られていたのに、**唯一 contents: write を持ち、
   // 利用者がダウンロードするインストーラを公開する** release.yml が入って

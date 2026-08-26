@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 110
+- ブロック数: 112
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `97f5c79e5f3ffca8aa82732af3b077e39c211fd848fc824ceeeab0247ecf6987`
-- 保護対象: 52 ファイル
+- 末尾(tip)ハッシュ: `ee534ceb03de590a09aa7a07f83a236e8bcd8650d01ef34398ded284c5847e45`
+- 保護対象: 55 ファイル
 
 ## ブロック
 
@@ -123,6 +123,8 @@
 | 107 | `89f05c9e3292912e` | `2a2548b94c15b3ce` | `22de0027a1373b63` | update ci.yml |
 | 108 | `99a8724e19507999` | `22de0027a1373b63` | `981d7c69db7aa3a3` | update manifest.webmanifest,inject-pwa.cjs,inline-html.cjs,integrity-chain.cjs |
 | 109 | `e63ba4b38732a2cd` | `981d7c69db7aa3a3` | `97f5c79e5f3ffca8` | update release.yml |
+| 110 | `f03d68a5406a3188` | `97f5c79e5f3ffca8` | `f6565ab1a87350db` | update integrity-chain.cjs,make-autoinstall.sh,make-live-usb.sh,migrate.sh |
+| 111 | `f44413e6c060daae` | `f6565ab1a87350db` | `ee534ceb03de590a` | update SECURITY_CHAIN.md |
 
 ## 保護対象ファイル
 
@@ -136,6 +138,9 @@
 - `scripts/inject-pwa.cjs`
 - `scripts/inline-html.cjs`
 - `scripts/integrity-chain.cjs`
+- `scripts/make-autoinstall.sh`
+- `scripts/make-live-usb.sh`
+- `scripts/migrate.sh`
 - `scripts/security-audit.sh`
 - `scripts/setup-linux.sh`
 - `scripts/setup-obsidian-docker.sh`
