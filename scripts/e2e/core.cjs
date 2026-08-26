@@ -1357,6 +1357,47 @@ async function vaultOpacitySuite(browser) {
   ok(shape.ctLen >= SECRET.length + 16, `vaultOpacity: 暗号文は平文 + GCM タグ以上 (実際 ${shape.ctLen})`);
   ok(shape.keys === 'ciphertext,iv,v', `vaultOpacity: 残るのは iv/ciphertext/v だけ (実際 ${shape.keys})`);
 
+  /*
+   * **順序が意味を持つ。** 下の陽性対照は保存層へ平文を植えるので、
+   * それを先にやると「施錠中も平文が無い」が自分の植えた物を拾って落ちる
+   * (2026-08-26 に実際に踏んだ)。**無いことを測ってから、在るときに
+   * 当たることを測る。**
+   */
+  /*
+   * **施錠された状態の不変条件。**
+   *
+   * 派生鍵はメモリだけに持ち、`extractable: false` で作る —— という約束は
+   * 単体検査が留めている。だが「**再読み込みしたら本当に開かないのか**」は
+   * 保存層まで含めた話で、鍵がどこかへ写っていれば黙って開く。
+   *
+   * ここは**在ることの検査**にしてある (ロック画面が出る / 残る)。
+   * 無いことの検査と違い、守りが消えれば必ず鳴る。
+   */
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  const lockShown = await page
+    .waitForSelector('text=ロック解除', { timeout: 20000 })
+    .then(() => true)
+    .catch(() => false);
+  ok(lockShown, '★ vaultOpacity: 再読み込みすると施錠されている (鍵が保存層へ写っていない)');
+
+  ok(!(await dumpLs()).includes(SECRET), '★ vaultOpacity: 施錠中も localStorage に平文が無い');
+  ok(!(await dumpIdb()).includes(SECRET), '★ vaultOpacity: 施錠中も IndexedDB に平文が無い');
+
+  await page.locator('input[type="password"]').first().fill('WRONG-PASSWORD-xxxx');
+  await page.getByRole('button', { name: 'ロック解除' }).click();
+  await page.waitForTimeout(1500);
+  ok((await page.locator('text=ロック解除').count()) > 0, '★ vaultOpacity: 誤ったパスワードでは開かない');
+
+  await page.locator('input[type="password"]').first().fill(PASS);
+  await page.getByRole('button', { name: 'ロック解除' }).click();
+  const opened = await page
+    .waitForSelector('.sidebar', { timeout: 20000 })
+    .then(() => true)
+    .catch(() => false);
+  ok(opened, 'vaultOpacity: 正しいパスワードで開く');
+  const after = await page.evaluate(async () => (await window.serviceHub.listConfigured()).join(','));
+  ok(after.includes('github'), `★ vaultOpacity: 解錠後も預けたものが残っている (${after})`);
+
   // ---- 陽性対照 ---- 同じ探し方が「本当に在るとき」に当たるか。
   await page.evaluate((s) => localStorage.setItem('__e2e_probe__', s), SECRET);
   ok((await dumpLs()).includes(SECRET), '★ vaultOpacity 対照: localStorage へ植えたら見つかる');
