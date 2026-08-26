@@ -1153,6 +1153,100 @@ async function vaultPasswordSuite(browser) {
  * だから同じ探し方で**植えた物が見つかること**を、同じ検査の中で確かめる。
  * これが無い「見つかりませんでした」は、報せであって合格ではない。
  */
+/**
+ * **CSP が「書いてある」ではなく「効いている」こと。**
+ *
+ * `lint:artifact-csp` は出荷 HTML の meta の**文面**を見る。だが文面が
+ * 正しくてもブラウザが受け取らない形はある —— meta が最初のスクリプトより
+ * 後ろに在る、2 枚目の CSP が先に効く、といった配置の問題は文面からは
+ * 分からない。実物のページで**注入が実際に落ちるか**を見る。
+ *
+ * ## 計測の道具を測らないこと (2026-08-26 に踏んだ)
+ *
+ * `page.evaluate` は CDP 経由なので **CSP を迂回する**。実測:
+ *
+ * ```
+ *   script-src 'none' のページで evaluate から動的コード生成を呼ぶ → 2 (通る)
+ *   同じページで DOM 経由のインライン注入                          → 落ちる
+ *   ページ自身の <script> から同じ生成 (unsafe-eval 無し)          → EvalError
+ * ```
+ *
+ * つまり `evaluate` の中で直に `eval` を試すと**アプリではなく道具を測る**。
+ * ここで見るのは DOM 経由の注入 (これは CSP に服する) だけにし、
+ * eval については文面の検査 (`lint:artifact-csp`) に任せる。
+ */
+async function cspEnforcedSuite(browser) {
+  console.log('--- CSP が実際に効いているか ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const refusals = [];
+  page.on('console', (m) => {
+    if (/Content Security Policy|Refused to/i.test(m.text())) refusals.push(m.text());
+  });
+
+  await page.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('text=はじめてのご利用', { timeout: 30000 });
+
+  const inline = await page.evaluate(() => {
+    const w = window;
+    w.__cspProbeInline = false;
+    const s = document.createElement('script');
+    s.textContent = 'window.__cspProbeInline = true;';
+    document.head.appendChild(s);
+    return w.__cspProbeInline === true;
+  });
+  ok(inline === false, '★ csp: 注入したインラインスクリプトが走らない');
+
+  const remote = await page.evaluate(
+    async () =>
+      await new Promise((res) => {
+        const s = document.createElement('script');
+        s.src = 'https://example.com/probe.js';
+        s.onload = () => res('loaded');
+        s.onerror = () => res('blocked');
+        document.head.appendChild(s);
+        setTimeout(() => res('timeout'), 4000);
+      }),
+  );
+  /*
+   * **「読み込まれなかった」では CSP を測れない。** `file://` から
+   * `https://` は元々届かないので、CSP を外しても同じ結果になる
+   * (2026-08-26 の対照で実際にそうだった —— CSP を消しても この行だけ通った)。
+   * 見るのは**拒否の理由**のほう。
+   */
+  ok(
+    remote !== 'loaded' && refusals.some((r) => /probe\.js|Refused to load the script/i.test(r)),
+    `★ csp: 遠隔スクリプトが CSP 違反として拒否される (実際 ${remote} / 拒否 ${refusals.length} 件)`,
+  );
+
+  ok(
+    refusals.some((r) => /inline script/i.test(r)),
+    '★ csp: ブラウザが実際に CSP 違反として拒否している (文面だけでなく)',
+  );
+  // **`|| true` を書かない。** 一度そう書いて、常に真になる空の検査を作った
+  // (この suite が捕まえようとしている形そのもの)。数えるだけなら console.log
+  // にすればよく、ok() に渡すのは落ちうる条件だけにする。
+  ok(refusals.length >= 2, `★ csp: 違反 2 種 (inline / remote) が拒否として記録される (実際 ${refusals.length})`);
+
+  /*
+   * **陽性対照。** CSP が無いページでは同じ注入が通ること —— これが無いと
+   * 「注入が走らなかった」が、注入の書き方を間違えただけでも成立する。
+   */
+  const bare = await ctx.newPage();
+  await bare.setContent('<html><body>control</body></html>');
+  const bareInline = await bare.evaluate(() => {
+    const w = window;
+    w.__cspProbeInline = false;
+    const s = document.createElement('script');
+    s.textContent = 'window.__cspProbeInline = true;';
+    document.head.appendChild(s);
+    return w.__cspProbeInline === true;
+  });
+  ok(bareInline === true, '★ csp 対照: CSP の無いページでは同じ注入が通る (注入の書き方が正しい証拠)');
+
+  await ctx.close();
+}
+
 async function vaultOpacitySuite(browser) {
   console.log('--- 保存された資格情報が読めないこと ---');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -1824,6 +1918,7 @@ async function businessComparisonSuite(browser) {
   if (run('frameGuard')) await frameGuardSuite(browser);
   if (run('noBeacon')) await noBeaconSuite(browser);
   if (run('vaultPassword')) await vaultPasswordSuite(browser);
+  if (run('cspEnforced')) await cspEnforcedSuite(browser);
   if (run('vaultOpacity')) await vaultOpacitySuite(browser);
   if (run('storageDurability')) await storageDurabilitySuite(browser);
   if (run('securityPosture')) await securityPostureSuite(browser);
