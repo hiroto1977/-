@@ -91,8 +91,10 @@ npm run lint:csp           # 出荷 HTML の CSP を**実物**に当てる (self
 npm run lint:deps          # 依存の供給網 (本番依存の閉包 5 件 / インストール時コード 3 件 の台帳・
                            #   取得元は registry のみ・integrity 必須。本番依存は単一 HTML へ
                            #   畳み込まれ保管庫と同じオリジンで走るので、増やすなら理由を書く)
-npm run lint:storage       # ブラウザに残す物の台帳 (IndexedDB 4 / localStorage 20 / sessionStorage 4)。
-                           #   新しい保存先が黙って増えないこと・バックアップが覆うのは 1 つだけ
+npm run lint:storage       # ブラウザに残す物の台帳 (IndexedDB 4 / Cache Storage 1 /
+                           #   localStorage 20 / sessionStorage 4。cookie と OPFS は 0 件だが走査はする)。
+                           #   新しい保存先が黙って増えないこと・バックアップが覆うのは 1 つだけ・
+                           #   **媒体そのものが `docs/DATA_PROTECTION.md` の在庫に載っていること**
 npm run lint:shell         # scripts/*.sh: bash -n syntax + strict mode (set -euo pipefail)
 npm run lint:mutation-scope # 変異検査の「測っていない範囲」の台帳 (広い Stryker disable)
 npm run lint:regex         # 正規表現の破滅的バックトラック (ReDoS) を実測。worker + 番犬つき

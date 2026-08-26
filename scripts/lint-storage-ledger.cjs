@@ -74,6 +74,25 @@ const BACKED_UP_STORE = 'business-hub-data';
  * 平文で持つ preferences。sessionStorage は媒体ごと無かった。
  * 配色や銘柄一覧まで載せろという話ではないので、基準を書いて線を引く。
  */
+/*
+ * 媒体の表示名。**監査報告と突き合わせるために要る。**
+ *
+ * 規則 9 は「sensitive な保存先が名前で載っているか」を見るが、
+ * `service-hub-v2` (Cache Storage) は sensitive でないので**規則 9 では
+ * 呼ばれない** —— 2026-08-26 に測ったとき、Cache Storage は
+ * `docs/DATA_PROTECTION.md` に**媒体ごと**在庫から抜けていた。
+ * 個々の行ではなく**媒体**を数える規則が要る (規則 10)。
+ * 在庫の欠落は評価の欠落で、それは行の単位でも媒体の単位でも起きる。
+ */
+const MEDIUM_LABELS = {
+  indexeddb: 'IndexedDB',
+  cachestorage: 'Cache Storage',
+  localstorage: 'localStorage',
+  sessionstorage: 'sessionStorage',
+  cookie: 'cookie',
+  opfs: 'OPFS',
+};
+
 const STORES = {
   // -- IndexedDB --
   'business-hub-data': {
@@ -102,6 +121,20 @@ const STORES = {
     holds: 'プロキシ設定 (共有秘密を含む・平文) / 保存先フォルダの許可',
     backedUp: false,
     sensitive: true,
+  },
+
+  // -- Cache Storage (Service Worker) --
+  'service-hub-v2': {
+    medium: 'cachestorage',
+    /*
+     * **同一オリジンの成功応答だけ**が入る。第三者 API の応答 (業務データ・
+     * 漏洩調査の結果) が入らないことは `assets/sw.js` の `sameOrigin` 判定と
+     * `src/shared/__tests__/serviceWorker.test.ts` が留めている。
+     * ここが `sensitive: true` に変わるとしたら、その 2 つが同時に壊れたとき。
+     */
+    holds: 'アプリシェル (HTML / アイコン / manifest)',
+    backedUp: false,
+    sensitive: false,
   },
 
   // -- localStorage --
@@ -173,6 +206,32 @@ const CONST_RE = /const\s+([A-Za-z_$][\w$]*)\s*=\s*'([^']*)'\s*;/g;
 const IDB_OPEN_RE = /indexedDB\.open\(/;
 const DB_NAME_RE = /const\s+DB_NAME\s*=\s*'([^']+)'/;
 const WEB_STORAGE_RE = /\b(localStorage|sessionStorage)\.(?:setItem|getItem|removeItem)\(/g;
+
+/*
+ * ブラウザが生成元ごとに持つ**残る場所**は、この 3 つで終わりではない。
+ * 2026-08-26 に測ったら、`caches.open(` も `document.cookie =` も OPFS も
+ * 走査の外に在り、renderer に足しても**この門は ✅ を返した** ——
+ * 「保存先は台帳どおりです」という文が、3 媒体についてしか真でなかった。
+ *
+ * Cache Storage は実在する (Service Worker が使う)。しかも 2026-07 に
+ * 一度事故っている —— 全 GET を焼いていて第三者 API の応答が平文で
+ * 端末に残っていた。直したのは `assets/sw.js` の側だけで、**戻されても
+ * 鳴る物が無かった**。台帳へ入れて、媒体ごと数える。
+ */
+const CACHES_OPEN_RE = /\bcaches\.open\(/g;
+/** 代入だけを見る。`document.cookie` の**字面**は XSS の標本にも出る (`securityRange.ts`)。 */
+const COOKIE_WRITE_RE = /\bdocument\.cookie\s*=(?!=)/g;
+/** OPFS は生成元に 1 つきりなので名前を持たない。台帳では `opfs` と呼ぶ。 */
+const OPFS_RE = /\bnavigator\.storage\.getDirectory\(/;
+
+/**
+ * `document.cookie = 'name=value; …'` の `name` を取る。
+ * 先頭が文字列リテラルでなければ解決しない (→ INDIRECT_SITES 行き)。
+ */
+function cookieName(text, from) {
+  const m = /^\s*['"`]([A-Za-z0-9_.~-]+)=/.exec(text.slice(from, from + 200));
+  return m === null ? null : m[1];
+}
 
 /**
  * 第 1 引数を切り出す。`[^,)]+` で済ませると `storageKey(k)` の**内側の
@@ -254,6 +313,18 @@ function scan(files) {
       if (key === null) unresolved.push({ file: p, expr: arg });
       else add(key, medium);
     }
+    for (const m of text.matchAll(CACHES_OPEN_RE)) {
+      const arg = firstArg(text, m.index + m[0].length).trim();
+      const key = resolveKey(byPath, p, text, arg);
+      if (key === null) unresolved.push({ file: p, expr: 'caches.open(' + arg + ')' });
+      else add(key, 'cachestorage');
+    }
+    for (const m of text.matchAll(COOKIE_WRITE_RE)) {
+      const key = cookieName(text, m.index + m[0].length);
+      if (key === null) unresolved.push({ file: p, expr: 'document.cookie =' });
+      else add(key, 'cookie');
+    }
+    if (OPFS_RE.test(text)) add('opfs', 'opfs');
   }
   return { found, unresolved, siteCount };
 }
@@ -268,6 +339,7 @@ function evaluate(input) {
   // 監査報告の本文。渡されなければ照合しない (self-test が合成を流せるように
   // 純関数のまま置く —— IO は main が持つ)。
   const auditDoc = input.auditDoc;
+  const labels = input.labels ?? MEDIUM_LABELS;
   const problems = [];
   const scanned = scan(files);
   const found = scanned.found;
@@ -363,12 +435,44 @@ function evaluate(input) {
     }
   }
 
+  /*
+   * 10. **媒体そのものが在庫に載っている。**
+   *
+   * 規則 9 は sensitive な行しか見ないので、`sensitive: false` の行しか
+   * 持たない媒体は**丸ごと抜けても鳴らない**。実際に Cache Storage が
+   * そうなっていた。媒体の側から数え直す (0-a-18 と同じ形 —— 数える単位を
+   * 守りたい物の単位に合わせる)。
+   */
+  const mediums = new Set(Object.values(stores).map((r) => r.medium));
+  for (const m of mediums) {
+    const label = labels[m];
+    if (label === undefined) {
+      problems.push(
+        '媒体に表示名が無い: ' + m + ' — MEDIUM_LABELS に足すこと (名前が無ければ監査報告と突き合わせられない)',
+      );
+      continue;
+    }
+    if (typeof auditDoc === 'string' && !auditDoc.includes(label)) {
+      problems.push(
+        '監査報告に載っていない媒体: ' + label + ' — docs/DATA_PROTECTION.md の在庫に節を足すこと ' +
+          '(媒体ごと抜けていると、その中の行は 1 つも問われない)',
+      );
+    }
+  }
+
   return problems;
 }
 
 // --- IO -------------------------------------------------------------------
 
-function readSources(dir = SCAN_DIR) {
+/*
+ * renderer に加えて **`assets/sw.js`** も読む。Service Worker が Cache Storage
+ * へ書く物は、利用者のブラウザに残る物そのものである —— 置き場所が
+ * `src/renderer` の外だからという理由で台帳から外れていた。
+ */
+const EXTRA_FILES = ['assets/sw.js'];
+
+function readSources(dir = SCAN_DIR, extra = EXTRA_FILES) {
   const out = [];
   const walk = (d) => {
     for (const ent of fs.readdirSync(d, { withFileTypes: true })) {
@@ -385,6 +489,11 @@ function readSources(dir = SCAN_DIR) {
     }
   };
   walk(dir);
+  for (const rel of extra) {
+    const full = path.join(REPO_ROOT, rel);
+    if (!fs.existsSync(full)) throw new Error('走査対象が消えている: ' + rel);
+    out.push({ path: rel, text: fs.readFileSync(full, 'utf8') });
+  }
   return out;
 }
 
@@ -434,6 +543,91 @@ function selfTest() {
       1,
     ],
     ['台帳にあるのに実在しなければ鳴る', { files: [BASE_FILES[0]], ...opts, minSites: 1 }, 1],
+
+    /*
+     * 2026-08-26 に足した媒体。どれも「足しても ✅ が出た」実測から来ている。
+     * **陰性対照 (最後の 2 つ) が要る** —— 読み出しと XSS の標本まで鳴らす
+     * 規則にすると、受理すべき物が出て無視されるようになる。
+     */
+    [
+      'Cache Storage も見る',
+      {
+        files: [...BASE_FILES, SRC('src/renderer/f.ts', "caches.open('probe-cache-v1');")],
+        ...opts,
+      },
+      1,
+    ],
+    [
+      'cookie も見る',
+      {
+        files: [...BASE_FILES, SRC('src/renderer/g.ts', "document.cookie = 'probe_tok=1; path=/';")],
+        ...opts,
+      },
+      1,
+    ],
+    [
+      'OPFS も見る',
+      {
+        files: [...BASE_FILES, SRC('src/renderer/h.ts', 'navigator.storage.getDirectory();')],
+        ...opts,
+      },
+      1,
+    ],
+    [
+      'Cache Storage の名前が定数でなければ、登録が無いかぎり鳴る',
+      { files: [...BASE_FILES, SRC('src/renderer/i.ts', 'caches.open(dyn);')], ...opts },
+      1,
+    ],
+    [
+      '台帳に在る Cache Storage は鳴らない',
+      {
+        files: [...BASE_FILES, SRC('assets/sw.js', "const CACHE = 'sh-v9';\ncaches.open(CACHE);")],
+        ...opts,
+        stores: { ...BASE_STORES, 'sh-v9': { medium: 'cachestorage', holds: 'アプリシェル', backedUp: false } },
+      },
+      0,
+    ],
+    [
+      '陰性対照: cookie の**読み出し**は保存ではない',
+      { files: [...BASE_FILES, SRC('src/renderer/j.ts', 'export const c = document.cookie;')], ...opts },
+      0,
+    ],
+    /* 規則 10 — 媒体そのものが在庫に載っているか。 */
+    [
+      '媒体が監査報告に無ければ鳴る',
+      { files: BASE_FILES, ...opts, auditDoc: 'business-hub-data と k.one は書いてある' },
+      2,
+    ],
+    [
+      '媒体が監査報告に在れば通る',
+      {
+        files: BASE_FILES,
+        ...opts,
+        auditDoc: '### IndexedDB\nbusiness-hub-data\n### localStorage\nk.one',
+      },
+      0,
+    ],
+    [
+      '表示名の無い媒体は鳴る (黙って媒体を足せない)',
+      {
+        files: BASE_FILES,
+        ...opts,
+        labels: { indexeddb: 'IndexedDB' },
+        auditDoc: '### IndexedDB\nbusiness-hub-data\nk.one',
+      },
+      1,
+    ],
+    [
+      '陰性対照: XSS 標本の中の document.cookie は鳴らない',
+      {
+        files: [
+          ...BASE_FILES,
+          SRC('src/renderer/k.ts', "export const P = ['javascript:alert(document.cookie)'];"),
+        ],
+        ...opts,
+      },
+      0,
+    ],
     ['鍵が定数でなければ、登録が無いかぎり鳴る', { files: [...BASE_FILES, dyn], ...opts }, 1],
     [
       '登録すれば通る',
@@ -524,6 +718,11 @@ function selfTest() {
     /*
      * 監査報告との突き合わせ。**`auditDoc` を渡さなければ照合しない**ので、
      * 「渡したのに素通り」と「そもそも見ていない」を別々に固定する。
+     *
+     * 以下の合成 `auditDoc` が媒体の見出しを持っているのは**規則 10 を
+     * 満たすため**であって飾りではない。1 件が 2 つの規則を測ると、
+     * どちらが鳴ったのか読めなくなる (規則 10 を足したとき実際に
+     * この 3 件が落ち、原因を取り違えかけた)。
      */
     [
       '監査報告に名前が無ければ鳴る',
@@ -531,7 +730,7 @@ function selfTest() {
         files: BASE_FILES,
         ...opts,
         stores: { ...BASE_STORES, 'k.one': { medium: 'localstorage', holds: '何か', backedUp: false, sensitive: true } },
-        auditDoc: '在庫: business-hub-data のみ',
+        auditDoc: '### IndexedDB / ### localStorage — 在庫: business-hub-data のみ',
       },
       1,
     ],
@@ -541,13 +740,13 @@ function selfTest() {
         files: BASE_FILES,
         ...opts,
         stores: { ...BASE_STORES, 'k.one': { medium: 'localstorage', holds: '何か', backedUp: false, sensitive: true } },
-        auditDoc: '在庫: business-hub-data と k.one',
+        auditDoc: '### IndexedDB / ### localStorage — 在庫: business-hub-data と k.one',
       },
       0,
     ],
     [
       'sensitive でない行は監査報告に無くてよい',
-      { files: BASE_FILES, ...opts, auditDoc: '何も書いていない' },
+      { files: BASE_FILES, ...opts, auditDoc: '### IndexedDB / ### localStorage (行の名前は書いていない)' },
       0,
     ],
     [
@@ -646,4 +845,4 @@ function main(argv) {
 }
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));
-module.exports = { evaluate, scan, STORES, INDIRECT_SITES, BACKED_UP_STORE };
+module.exports = { evaluate, scan, STORES, INDIRECT_SITES, BACKED_UP_STORE, MEDIUM_LABELS };
