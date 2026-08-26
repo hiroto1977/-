@@ -1175,6 +1175,105 @@ async function vaultPasswordSuite(browser) {
  * ここで見るのは DOM 経由の注入 (これは CSP に服する) だけにし、
  * eval については文面の検査 (`lint:artifact-csp`) に任せる。
  */
+/**
+ * **預けた資格情報が、どこへ・どの形で出ていくか。**
+ *
+ * `lint:network-targets` は送り先が変数の通信を台帳で管理し、
+ * `lint:credential-use` は読み手のいない資格情報を落とす。どちらも**ソースを
+ * 読む**検査で、「実際に飛ぶ要求」は見ていない。トークンが URL のクエリへ
+ * 回った日も、宛先が 1 つ増えた日も、両方とも緑のまま通る。
+ *
+ * ここでは**すべての外向き要求を捕まえて実際には出さず**、宛先・ヘッダ・
+ * 本文を観測する。捕まえてから落とすので、偽のトークンが本当に第三者へ
+ * 飛ぶことはない。
+ *
+ * `noBeaconSuite` は「開いただけで出ていかない」を見る。こちらは
+ * 「操作したときに、宣言どおりの 1 か所へだけ、宣言どおりの形で出る」。
+ */
+async function credentialEgressSuite(browser) {
+  console.log('--- 資格情報がどこへ出ていくか ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  // **資格情報の形にしない。** `ghp_` 接頭辞つきの長い文字列は
+  // lint:forbidden の「本物に見える資格情報の直書き」に当たる (実際に鳴った)。
+  // ここで要るのは「探せる一意な文字列」だけで、本物らしさは要らない。
+  // 綴りを分割して規則をすり抜けるのは、規則を空にするのと同じなので採らない。
+  const TOKEN = 'E2E-EGRESS-PROBE-NOT-A-REAL-TOKEN-9a8b7c';
+  const seen = [];
+  await page.route('**/*', async (route) => {
+    const r = route.request();
+    const u = r.url();
+    if (u.startsWith('file://') || u.startsWith('data:') || u.startsWith('blob:')) return route.continue();
+    seen.push({ method: r.method(), url: u, headers: r.headers(), body: r.postData() ?? '' });
+    return route.abort();
+  });
+
+  await page.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  ok(seen.length === 0, `★ egress: 起動〜保管庫作成で外向き要求 0 (実際 ${seen.length})`);
+
+  await page.evaluate(async (t) => {
+    await window.serviceHub.setToken('github', t);
+  }, TOKEN);
+  ok(seen.length === 0, `★ egress: トークンを預けても外向き要求 0 (実際 ${seen.length})`);
+
+  /*
+   * **戻り値を捨てない。** `invoke` は失敗を例外ではなく戻り値で返すので、
+   * 捨てると失敗が成功に見える (lint:forbidden がこれを見ている。実際に鳴った)。
+   * ここでは遮断しているので失敗するのが正しく、**失敗として返ること自体**も
+   * 確かめる価値がある —— 通信が切れたときに成功を装わないこと。
+   */
+  const outcome = await page.evaluate(async () => {
+    const r = await window.serviceHub.invoke('github', 'create-issue', {
+      owner: 'o',
+      repo: 'r',
+      title: 't',
+      body: 'b',
+    });
+    return JSON.stringify(r);
+  });
+  ok(/"ok"\s*:\s*false/.test(outcome), `★ egress: 通信が切れたら失敗として返る (成功を装わない) — ${outcome.slice(0, 80)}`);
+
+  ok(seen.length === 1, `★ egress: 操作で飛ぶ要求は 1 件だけ (実際 ${seen.length})`);
+  const req = seen[0];
+  ok(req !== undefined && new URL(req.url).host === 'api.github.com', `★ egress: 宛先は api.github.com (実際 ${req === undefined ? 'なし' : new URL(req.url).host})`);
+  ok(req !== undefined && req.method === 'POST', `egress: メソッドは POST (実際 ${req?.method})`);
+
+  ok(!seen.some((x) => x.url.includes(TOKEN)), '★ egress: トークンが URL に出ない');
+  ok(!seen.some((x) => x.body.includes(TOKEN)), '★ egress: トークンが本文に出ない');
+  const carriers = seen
+    .flatMap((x) => Object.entries(x.headers))
+    .filter(([, v]) => String(v).includes(TOKEN))
+    .map(([k]) => k.toLowerCase())
+    .sort();
+  ok(
+    carriers.join(',') === 'authorization',
+    `★ egress: トークンを載せるヘッダは authorization だけ (実際 ${carriers.join(',') || 'なし'})`,
+  );
+
+  /*
+   * **陽性対照。** 上の「出ない」は、捕捉が効いていなければ全部成立する。
+   * 1 件でも捕まえていることを見て初めて意味を持つ。
+   */
+  ok(seen.length > 0, '★ egress 対照: 捕捉が効いている (要求を実際に観測できた)');
+
+  /*
+   * **こちらが遮断したことによる失敗だけは数えない。** 要求を abort している
+   * ので、アプリ側は当然「取得に失敗」を報告する —— それはこの検査が
+   * 作った状況であって、アプリの欠陥ではない。ただし**それ以外は数える**
+   * (全部無視すると、この行は何も言わなくなる)。
+   */
+  const unexpected = errs.filter((e) => !/Failed to fetch|ERR_FAILED|ERR_ABORTED|net::/i.test(e));
+  ok(
+    unexpected.length === 0,
+    `egress: 遮断由来を除くページエラー 0 (実際 ${unexpected.length} / 全 ${errs.length})`,
+  );
+  await ctx.close();
+}
+
 async function cspEnforcedSuite(browser) {
   console.log('--- CSP が実際に効いているか ---');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -1959,6 +2058,7 @@ async function businessComparisonSuite(browser) {
   if (run('frameGuard')) await frameGuardSuite(browser);
   if (run('noBeacon')) await noBeaconSuite(browser);
   if (run('vaultPassword')) await vaultPasswordSuite(browser);
+  if (run('credentialEgress')) await credentialEgressSuite(browser);
   if (run('cspEnforced')) await cspEnforcedSuite(browser);
   if (run('vaultOpacity')) await vaultOpacitySuite(browser);
   if (run('storageDurability')) await storageDurabilitySuite(browser);
