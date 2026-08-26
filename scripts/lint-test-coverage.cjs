@@ -474,6 +474,70 @@ function checkVerifiedFloors(sources, tests) {
   return failures;
 }
 
+/**
+ * **走らない検査ファイルが置かれていないか。**
+ *
+ * `vitest.config.ts` の include は `src/**\/__tests__/**\/*.test.ts` である。
+ * React の部品を試すときに自然に付けたくなる名前は `*.test.tsx` で、
+ * そちらは**一致しない**。ファイルは在り、中身も書かれ、`npx vitest run <path>`
+ * では「No test files found」と出るだけで、`npm test` は緑のまま通る。
+ *
+ * 2026-08-25 に実際に踏んだ (RealtimeTicker の描画検査を .tsx で置いた)。
+ * 走らない検査は、鳴らない対照より悪い —— 在ることが安心の根拠になる。
+ *
+ * include は**設定から読む**。ここへ書き写すと、設定を変えた日にこの判定
+ * だけが古い規則で動く。
+ */
+function checkUncollectedTests(failures, configOverride, filesOverride) {
+  const cfg =
+    configOverride === undefined ? read(path.join(REPO_ROOT, 'vitest.config.ts')) : configOverride;
+  if (cfg === null) {
+    failures.push({ kind: 'uncollected-test', reason: 'vitest.config.ts を読めません — 走査の的が空になります' });
+    return 0;
+  }
+  const m = /include:\s*\[([^\]]*)\]/.exec(cfg);
+  if (m === null) {
+    failures.push({ kind: 'uncollected-test', reason: 'vitest.config.ts の include を読み取れません' });
+    return 0;
+  }
+  const patterns = [...m[1].matchAll(/['"]([^'"]+)['"]/g)].map((x) => x[1]);
+  // glob を正規表現へ。`**` はどの深さでも、`*` は区切りを越えない。
+  const toRe = (g) =>
+    new RegExp(
+      '^' +
+        g
+          .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+          // 置き換えの目印は**制御文字を使わない** (no-control-regex に当たる)。
+          // 私用領域の符号位置は glob にも実パスにも現れない。
+          .replace(/\*\*\//g, '\uFFF0')
+          .replace(/\*\*/g, '\uFFF1')
+          .replace(/\*/g, '[^/]*')
+          .replace(/\uFFF0/g, '(?:.*/)?')
+          .replace(/\uFFF1/g, '.*') +
+        '$',
+    );
+  const res = patterns.map(toRe);
+  const all =
+    filesOverride === undefined
+      ? walkAll(path.join(REPO_ROOT, 'src'), /\.(test|spec)\.tsx?$/, true).map((f) =>
+          path.relative(REPO_ROOT, f.file).split(path.sep).join('/'),
+        )
+      : filesOverride;
+  let checked = 0;
+  for (const rel of all) {
+    checked += 1;
+    if (!res.some((re) => re.test(rel))) {
+      failures.push({
+        kind: 'uncollected-test',
+        reason:
+          `${rel} は検査ファイルの形なのに vitest の include に一致しません ` +
+          `(${patterns.join(' / ')}) —— 置いても走らず、npm test は緑のまま通ります`,
+      });
+    }
+  }
+  return checked;
+}
+
 function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
   const ids = serviceIds();
@@ -486,6 +550,8 @@ function main(argv) {
   const verified = verifiedDatasets(srcFiles);
   failures.push(...checkVerifiedFloors(srcFiles, testFiles));
 
+  const uncollectedChecked = checkUncollectedTests(failures);
+
   const withActions = clientsExportingActions();
   failures.push(
     ...collectRegistrationFailures(read(path.join(REPO_ROOT, 'src/main/clients/index.ts')) ?? '', withActions),
@@ -495,6 +561,7 @@ function main(argv) {
     `Checked ${ids.length} services for test files + action coverage`
       + `, ${jsdomChecked} jsdom test file(s) for actual DOM use`
       + `, ${verified.length} VERIFIED_* dataset(s) for a non-empty floor`
+      + `, ${uncollectedChecked} test-shaped file(s) against the vitest include`
       + `, and ${withActions.length} client ACTIONS map(s) for registration in LIVE_ACTIONS`,
   );
   if (failures.length === 0) {

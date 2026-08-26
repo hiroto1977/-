@@ -51,6 +51,8 @@ import { sparklinePoints } from '../data/sparkline';
 import { cashForecastTrajectory } from '../data/cashForecast';
 import { combineCashflowDebtService } from '../data/cashflowDebtService';
 import { useServiceData } from '../hooks/useServiceData';
+import { RealtimeTicker, type RealtimeRow } from '../components/RealtimeTicker';
+import { annualizedPace } from '../../shared/realtimeProjection';
 import { FinancialAnalysis } from '../components/FinancialAnalysis';
 import { SNAPSHOT } from '../data/snapshot';
 
@@ -500,6 +502,39 @@ export function OverviewPage() {
   const highlightSummary = useMemo(() => summarizeHighlights(highlights), [highlights]);
 
   const monthlyTrend = useMemo(() => monthlyTrendSeries(kpiRecords.map((r) => r.data)), [kpiRecords]);
+
+  /*
+   * 秒単位の帯に出す行。
+   *
+   * **ここに渡すのは「年額」である。** 集計値 (総売上・営業利益) は年初来の
+   * 実績なので、そのまま渡すと「年額を按分し直した値」になり、実績より
+   * 小さい数が出てしまう。年換算のペースへ直してから渡す。
+   *
+   * 年初のうちは経過が小さく、わずかな実績が莫大な年換算に化ける。
+   * `annualizedPace` は下限 (既定 1%) 未満なら `null` を返すので、
+   * その間は帯に出さない —— 0 除算の Infinity を画面へ流すより、
+   * 出さないほうが正しい。
+   */
+  const realtimeRows: RealtimeRow[] = useMemo(() => {
+    const now = new Date();
+    const rows: RealtimeRow[] = [];
+    const salesPace = annualizedPace(overview.sales.totalAmount, now);
+    if (salesPace !== null && salesPace > 0) {
+      rows.push({
+        label: '売上 (年換算ペース)',
+        annual: salesPace,
+        color: '#3ec98a',
+        hint: '年初来の実績を経過で割り戻した年換算',
+      });
+    }
+    if (overview.kpi.hasData) {
+      const opPace = annualizedPace(overview.kpi.operatingProfit, now);
+      if (opPace !== null && opPace !== 0) {
+        rows.push({ label: '営業利益 (年換算ペース)', annual: opPace, color: '#4f9cf9' });
+      }
+    }
+    return rows;
+  }, [overview.sales.totalAmount, overview.kpi.hasData, overview.kpi.operatingProfit]);
   const fundamentals = useMemo(() => summarizeFundamentals(kpiRecords.map((r) => r.data)), [kpiRecords]);
   const sensitivity = useMemo(() => {
     if (!overview.kpi.hasData) return null;
@@ -717,6 +752,15 @@ export function OverviewPage() {
           <p style={{ color: 'var(--text-mute)', fontSize: 13, marginBottom: 12 }}>
             売上集計・KPI 実績・チーム管理にデータを入力すると、ここに経営概況がまとまって表示されます。
           </p>
+        )}
+
+        {realtimeRows.length > 0 && (
+          <div style={{ marginBottom: 14 }}>
+            <RealtimeTicker
+              rows={realtimeRows}
+              note="年初来の実績を経過で割り戻した年換算ペースを、さらに経過で按分した「ここまでの発生見込み」です。集計の元データはこの刻みでは取り直しません (上流の API 上限を守るため) — 取り直しは上の更新ボタンから。"
+            />
+          </div>
         )}
 
         <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>売上</div>

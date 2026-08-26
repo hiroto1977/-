@@ -4,6 +4,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
 import { tableStyle, thStyle, tdStyle } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
+import { RealtimeTicker, type RealtimeRow } from '../components/RealtimeTicker';
 import { jpy } from '../../shared/formatters';
 import { parseAmountInput } from '../components/serviceActionUtils';
 import { GuardSummary, GuardedNumber } from '../components/GuardedNumber';
@@ -168,6 +169,28 @@ export function TaxPage() {
     [netAmount, reduced],
   );
   const tips = useMemo(() => suggestTaxTips(taxableIncome), [taxableIncome]);
+
+  /*
+   * 秒単位の帯に出す行。**年額を渡すだけ** —— 按分も刻みも
+   * `RealtimeTicker` / `shared/realtimeProjection.ts` が持つ。
+   * ここで按分を書くと、経営サマリー側と 2 つになってずれる。
+   *
+   * 消費税は「預かった額」であって費用ではないので、色を分けて並べる。
+   */
+  const realtimeRows: RealtimeRow[] = useMemo(
+    () => [
+      { label: '所得税 (課税所得ベース)', annual: incomeTax, color: '#f7768e' },
+      { label: '住民税 (課税所得ベース)', annual: residentTax, color: '#e0af68' },
+      { label: '手取り (額面年収ベース)', annual: netSalary.takeHome, color: '#3ec98a' },
+      {
+        label: '消費税 (預かり)',
+        annual: consumptionTax * 12,
+        color: '#7aa2f7',
+        hint: '入力した税抜額が毎月発生する前提',
+      },
+    ],
+    [incomeTax, residentTax, netSalary.takeHome, consumptionTax],
+  );
 
   // --- ③ 全控除込みの精密試算 ---
   const [dGrossStr, setDGrossStr] = useState('6000000');
@@ -714,6 +737,13 @@ export function TaxPage() {
       </div>
 
       <GuardSummary issues={inputIssues} title="入力の確認 (試算の前提)" />
+
+      <Section title="いま この瞬間 (秒単位)">
+        <RealtimeTicker
+          rows={realtimeRows}
+          note="下の各試算の年額を、年内の経過で按分した「ここまでの発生見込み」です。実際の課税・納付の時点とは一致しません (所得税・住民税は申告/特別徴収の時期に、消費税は課税期間ごとに確定します)。"
+        />
+      </Section>
 
       <Section title="① 課税所得から所得税・住民税を試算" count={2}>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
