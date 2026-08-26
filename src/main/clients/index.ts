@@ -74,7 +74,7 @@ import { fetchDocstudioSnapshot, ACTIONS as DOCSTUDIO_ACTIONS } from './docstudi
 import { fetchCursorSnapshot, ACTIONS as CURSOR_ACTIONS } from './cursor';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
-import type { ServiceId } from '../../shared/serviceId';
+import { SERVICE_IDS, type ServiceId } from '../../shared/serviceId';
 
 export type { ServiceId };
 
@@ -162,9 +162,27 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
 // loud, deterministic crash rather than an opaque "unknown service id"
 // at first user interaction.
 {
-  // Import lazily to avoid widening the circular-import surface.
-   
-  const { SERVICE_IDS } = require('../../shared/serviceId') as typeof import('../../shared/serviceId');
+  /*
+   * **静的 import で読む。**
+   *
+   * ここは 2026-08-26 まで `require('../../shared/serviceId')` だった
+   * ——「循環 import の面を広げないため」という理由が添えてあったが、
+   * `shared/serviceId.ts` は import を 1 つも持たない葉なので循環は起きない。
+   *
+   * そして実行時 `require()` は**バンドラが書き換えない**。出来上がった
+   * `dist-electron/main.js` にはそのまま `require("../../shared/serviceId")`
+   * が残り、`dist-electron/` から見て repo の外を指すので解決できない。
+   * 実測 (2026-08-26):
+   *
+   *   electron .  →  App threw an error during load
+   *                  Cannot find module '../../shared/serviceId'
+   *
+   * **デスクトップ版が起動しない。** しかも落ちているのは、まさに
+   * 「新しい id にフェッチャを足し忘れたら起動時に大きく落とす」ための
+   * 不変条件そのものだった。CI はここを一度も通らない —— smoke は
+   * `scripts/screenshot.cjs` を主プロセスにして自前で窓を作り、e2e は
+   * ブラウザ版の HTML を読み、release.yml はインストーラを作るが起動はしない。
+   */
   for (const id of SERVICE_IDS) {
     if (!Object.hasOwn(LIVE_FETCHERS, id)) {
       throw new Error(
