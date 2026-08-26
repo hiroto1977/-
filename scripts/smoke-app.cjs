@@ -90,6 +90,59 @@ function isFatalLine(line) {
   return FATAL.some((re) => re.test(line));
 }
 
+/**
+ * **梱包後に解決できる require だけが残っているか。**
+ *
+ * `electron-builder.json` の `files` は `dist/**` `dist-electron/**`
+ * `build/icon.png` `package.json` だけ。出来上がった `dist-electron/*.js` に
+ * それ以外を指す `require()` が残っていると、**梱包したときだけ落ちる**。
+ *
+ * 2026-08-26 の不具合はまさにこれで、`require("../../shared/serviceId")` が
+ * バンドル後も残っていた。`lint:imports` に足した検査は「src の相対 require」を
+ * 名指しで止めるが、**綴りを名指しする規則は名指しした綴りしか止められない**。
+ * こちらは出来上がった物を見るので、形が違っても捕まえる。
+ *
+ * 許すのは `electron` と `node:` 組み込みだけ —— 本番依存は 5 件で、
+ * どれも主プロセスからは呼ばれない (呼ぶなら台帳を足す判断が要る)。
+ */
+const ALLOWED_BUNDLE_REQUIRES = new Set(['electron']);
+
+function bundleRequireProblems(text, label) {
+  const problems = [];
+  const re = /require\(\s*["']([^"']+)["']\s*\)/g;
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    const spec = m[1];
+    if (spec.startsWith('node:')) continue;
+    if (ALLOWED_BUNDLE_REQUIRES.has(spec)) continue;
+    problems.push(`${label}: require(${JSON.stringify(spec)}) —— 梱包後に解決できません`);
+  }
+  return problems;
+}
+
+function checkBundle() {
+  const targets = ['dist-electron/main.js', 'dist-electron/preload.js'];
+  const problems = [];
+  let scanned = 0;
+  for (const rel of targets) {
+    const full = path.join(REPO_ROOT, rel);
+    if (!fs.existsSync(full)) {
+      console.error(`❌ ${rel} がありません。先に npm run build:renderer を通してください`);
+      return 1;
+    }
+    scanned += 1;
+    problems.push(...bundleRequireProblems(fs.readFileSync(full, 'utf8'), rel));
+  }
+  console.log(`ビルド成果物 ${scanned} 本の require を検査 (許可: node: 組み込み / ${[...ALLOWED_BUNDLE_REQUIRES].join(', ')})`);
+  if (problems.length > 0) {
+    console.error(`❌ ${problems.length} 件:`);
+    for (const p of problems) console.error(`  ${p}`);
+    return 1;
+  }
+  console.log('✅ 梱包後も解決できる require だけです');
+  return 0;
+}
+
 function electronBinary() {
   // `require('electron')` は実行ファイルのパスを返す (Node から読んだとき)。
   try {
@@ -109,6 +162,9 @@ async function run() {
       return 1;
     }
   }
+  // 静的な検査を先に通す —— 起動する前に分かることは、起動せずに言う。
+  if (checkBundle() !== 0) return 1;
+
   const bin = electronBinary();
   if (bin === null) {
     console.error('❌ electron の実行ファイルが見つかりません (npm ci を通してください)');
@@ -162,6 +218,20 @@ function selfTest() {
     if (!ok) bad += 1;
     console.log(`  ${ok ? '✓' : '✗'} 雑音と判定: ${s.slice(0, 62)}`);
   }
+  // 梱包後の require の検査。**実際に残っていた綴り**を標本に置く。
+  for (const [label, text, expected] of [
+    ['実際に残っていた相対 require を捕まえる', 'const x=require("../../shared/serviceId");', 1],
+    ['electron は許す', 'const $=require("electron");', 0],
+    ['node: 組み込みは許す', 'const v=require("node:path"),S=require("node:fs");', 0],
+    ['npm パッケージも捕まえる (主プロセスは持ち込まない前提)', 'const z=require("lodash");', 1],
+    ['複数あれば全部挙げる', 'require("./a");require("../b");', 2],
+  ]) {
+    const n = bundleRequireProblems(text, 'x').length;
+    const ok = n === expected;
+    if (!ok) bad += 1;
+    console.log(`  ${ok ? '✓' : '✗'} 梱包 require: ${label}: ${n} 件 (期待 ${expected})`);
+  }
+
   // 走査の的が空でないこと。
   if (FATAL.length < 4 || FATAL_SAMPLES.length < 3) {
     bad += 1;
@@ -179,10 +249,12 @@ function selfTest() {
 
 if (require.main === module) {
   if (process.argv.includes('--self-test')) process.exit(selfTest());
+  // 静的な検査だけ (Electron も画面も要らない。release.yml から呼べる)。
+  if (process.argv.includes('--check-bundle')) process.exit(checkBundle());
   run().then((c) => process.exit(c)).catch((e) => {
     console.error('❌', e && e.message);
     process.exit(1);
   });
 }
 
-module.exports = { isFatalLine, FATAL, NOISE, FATAL_SAMPLES, NOISE_SAMPLES };
+module.exports = { isFatalLine, bundleRequireProblems, checkBundle, FATAL, NOISE, FATAL_SAMPLES, NOISE_SAMPLES };

@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 109
+- ブロック数: 110
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `981d7c69db7aa3a37550b01ee3ed159204cbccd363ba24913fc6acb5191ed370`
+- 末尾(tip)ハッシュ: `97f5c79e5f3ffca8aa82732af3b077e39c211fd848fc824ceeeab0247ecf6987`
 - 保護対象: 52 ファイル
 
 ## ブロック
@@ -122,6 +122,7 @@
 | 106 | `7c2d93a93f04cada` | `b8506ca1e4e8eea7` | `2a2548b94c15b3ce` | update release.yml |
 | 107 | `89f05c9e3292912e` | `2a2548b94c15b3ce` | `22de0027a1373b63` | update ci.yml |
 | 108 | `99a8724e19507999` | `22de0027a1373b63` | `981d7c69db7aa3a3` | update manifest.webmanifest,inject-pwa.cjs,inline-html.cjs,integrity-chain.cjs |
+| 109 | `e63ba4b38732a2cd` | `981d7c69db7aa3a3` | `97f5c79e5f3ffca8` | update release.yml |
 
 ## 保護対象ファイル
 

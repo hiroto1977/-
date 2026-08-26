@@ -105,6 +105,16 @@ jobs:
       # 突き合わせる。glob 一致では足りない —— dmg を x64/arm64 で宣言していても
       # `release/*.dmg` は arm64 だけで一致してしまうため。
       # RUNNER_OS は runner の組み込み変数なので ${{ }} の展開は要らない。
+      # 梱包後に解決できない require が主プロセスの束に残っていないか。
+      #
+      # electron-builder が入れるのは dist/** dist-electron/** build/icon.png
+      # package.json だけ。それ以外を指す require が残っていると、**梱包した
+      # ときだけ落ちる**。2026-08-26 に実際にそうなっていた (バンドラが
+      # 実行時 require を書き換えないため) —— 画面も Electron も要らない
+      # 静的な検査なので、ここで先に通す。
+      - name: Verify bundled requires resolve after packaging
+        run: node scripts/smoke-app.cjs --check-bundle
+
       - name: Verify release artifacts
         run: node scripts/verify-release-artifacts.cjs
 
