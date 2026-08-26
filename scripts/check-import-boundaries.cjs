@@ -312,18 +312,25 @@ function selfTest() {
   return 0;
 }
 
-function main() {
-  if (process.argv.includes('--self-test')) return selfTest();
+/**
+ * **1 ファイル分の境界検査。純粋関数として外へ出す。**
+ *
+ * 2026-08-26 まで、この処理は `main()` の中に直書きされていて外から呼べなかった。
+ * 実測: `main()` の冒頭へ「常に成功」を差し込み、`src/renderer/pages/A8netPage.tsx` に
+ * `import { ipcRenderer } from 'electron'` と `import { readFileSync } from 'node:fs'` を
+ * 足したところ、**lint:imports ・ self-test ・ lint:forbidden ・ chain:verify ・ eslint が
+ * すべて緑**になった。ここは main / preload / renderer の**信頼境界**そのものである。
+ *
+ * 証人 (`src/shared/__tests__/importBoundaryWitness.test.ts`) はこの関数へ
+ * 合成のファイルを流す。
+ *
+ * @returns 違反の配列 (空 = 合格)。件数だけでなく `reason` も返すので、
+ *          証人は「何の規則で鳴ったか」まで見られる。
+ */
+function boundaryViolations(rel, text) {
   const violations = [];
-  let fileCount = 0;
-  let importCount = 0;
-
-  for (const full of walkSrc(SRC)) {
-    const rel = path.relative(REPO_ROOT, full).replace(/\\/g, '/');
-    const zone = detectZone(rel);
-    if (!zone) continue;
-    fileCount++;
-    const text = fs.readFileSync(full, 'utf8');
+  const zone = detectZone(rel);
+  if (!zone) return violations;
     for (const { line, spec } of relativeRequires(text)) {
       violations.push({
         file: rel,
@@ -334,7 +341,6 @@ function main() {
       });
     }
     for (const m of text.matchAll(IMPORT_RE)) {
-      importCount++;
       const spec = m.groups.spec;
       const typeOnly = Boolean(m.groups.typeOnly);
       const cls = classifyTarget(spec, rel);
@@ -346,13 +352,34 @@ function main() {
         continue;
       }
 
-      // Renderer forbids electron + node-builtin entirely.
-      if (zone === 'renderer') {
+      /*
+       * Renderer forbids electron + node-builtin entirely —— **shared も同じ**。
+       *
+       * このファイルの冒頭はこう書いている: 「Renderer must NOT import from
+       * src/main/**, electron, node:*, **anything that drags Node API into the
+       * sandboxed renderer**」。そして renderer が読んでよい区画として
+       * `src/shared/**` を挙げている。**つまり shared が持ち込んだ物は
+       * renderer が持ち込んだ物である。** 禁止が推移的でなければ意味がない。
+       *
+       * 2026-08-26 まで shared には electron / node 組み込みの制限が無かった。
+       * 実測: `src/shared/` に `import { readFileSync } from 'node:fs'` を置き、
+       * renderer のページから読むと —— **lint:imports ・ lint:forbidden ・
+       * typecheck ・ eslint ・ `build:web` がすべて通り、出荷物 (standalone.html)
+       * が出来上がった。**
+       *
+       * 実在は 0 件 (型のみの import も含めて確認済み) なので、この規則が
+       * 受理すべき対象を落とすことはない。Node が要る処理は `src/main/` に置く。
+       */
+      if (zone === 'renderer' || zone === 'shared') {
+        const via =
+          zone === 'shared'
+            ? ' — shared は renderer が読む区画なので、ここへ入れると renderer へ持ち込まれる'
+            : '';
         if (cls.kind === 'electron') {
           violations.push({
             file: rel,
             spec,
-            reason: 'renderer cannot import electron (sandboxed)',
+            reason: `${zone} cannot import electron (sandboxed)${via}`,
           });
           continue;
         }
@@ -360,7 +387,7 @@ function main() {
           violations.push({
             file: rel,
             spec,
-            reason: `renderer cannot import Node built-in '${spec}' (sandboxed)`,
+            reason: `${zone} cannot import Node built-in '${spec}' (sandboxed)${via}`,
           });
           continue;
         }
@@ -387,6 +414,22 @@ function main() {
         }
       }
     }
+  return violations;
+}
+
+function main() {
+  if (process.argv.includes('--self-test')) return selfTest();
+  const violations = [];
+  let fileCount = 0;
+  let importCount = 0;
+
+  for (const full of walkSrc(SRC)) {
+    const rel = path.relative(REPO_ROOT, full).replace(/\\/g, '/');
+    if (!detectZone(rel)) continue;
+    fileCount++;
+    const text = fs.readFileSync(full, 'utf8');
+    importCount += (text.match(IMPORT_RE) || []).length;
+    violations.push(...boundaryViolations(rel, text));
   }
 
   console.log(
@@ -403,4 +446,10 @@ function main() {
   return 1;
 }
 
-process.exit(main());
+/*
+ * **外側の証人のために公開する。** `require.main` の番をつけないと、
+ * require した瞬間に CLI が走って process ごと落ちる。
+ */
+module.exports = { boundaryViolations, detectZone, classifyTarget, isAllowedZoneTransition };
+
+if (require.main === module) process.exit(main());
