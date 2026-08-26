@@ -372,14 +372,18 @@ function selfTest() {
   return 0;
 }
 
-function collect() {
+/**
+ * **1 ファイル分。純粋関数として外へ出す** (証人が合成を流せるように)。
+ *
+ * 2026-08-26 の実測: `main()` の冒頭へ「常に成功」を差し込むと、
+ * `src/main/clients/` へ **`Authorization: Bearer` を載せて可変ホストへ送る**
+ * 経路を足しても、この門も self-test も lint:credential-use も lint:forbidden も
+ * 全部緑になった。走査が `main()` の中にしか無く、証人を置く場所が無かった。
+ */
+function templateFindings(rel, lines) {
   const found = [];
-  for (const root of ROOTS) {
-    const abs = path.join(REPO_ROOT, root);
-    if (!fs.existsSync(abs)) continue;
-    for (const file of walk(abs)) {
-      const rel = path.relative(REPO_ROOT, file).split(path.sep).join('/');
-      const lines = fs.readFileSync(file, 'utf8').split('\n');
+  {
+    {
       for (let i = 0; i < lines.length; i++) {
         const m = /`(https?:\/\/[^`]*|\$\{[^`]*)`/.exec(lines[i]);
         if (!m) continue;
@@ -397,15 +401,24 @@ function collect() {
   return found;
 }
 
-/** 送り先が丸ごと変数の送信を集める（BARE_SEND の説明を参照）。 */
-function collectBareSends() {
+function collect() {
   const found = [];
   for (const root of ROOTS) {
     const abs = path.join(REPO_ROOT, root);
     if (!fs.existsSync(abs)) continue;
     for (const file of walk(abs)) {
       const rel = path.relative(REPO_ROOT, file).split(path.sep).join('/');
-      const lines = fs.readFileSync(file, 'utf8').split('\n');
+      found.push(...templateFindings(rel, fs.readFileSync(file, 'utf8').split('\n')));
+    }
+  }
+  return found;
+}
+
+/** 送り先が丸ごと変数の送信を、1 ファイル分だけ集める（BARE_SEND の説明を参照）。 */
+function bareSendFindings(rel, lines) {
+  const found = [];
+  {
+    {
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         // 文字列 / コメントの中の `f(a.b, …)` を拾わない（学術コーパスの
@@ -429,6 +442,19 @@ function collectBareSends() {
         if (/^\s*['"`]/.test(line) || /['"]\s*$/.test(trimmed)) continue;
         found.push({ file: rel, line: i + 1, dest: m[1] });
       }
+    }
+  }
+  return found;
+}
+
+function collectBareSends() {
+  const found = [];
+  for (const root of ROOTS) {
+    const abs = path.join(REPO_ROOT, root);
+    if (!fs.existsSync(abs)) continue;
+    for (const file of walk(abs)) {
+      const rel = path.relative(REPO_ROOT, file).split(path.sep).join('/');
+      found.push(...bareSendFindings(rel, fs.readFileSync(file, 'utf8').split('\n')));
     }
   }
   return found;
@@ -542,4 +568,17 @@ function main() {
   return 1;
 }
 
-process.exit(main());
+/*
+ * **外側の証人のために公開する。** `require.main` の番が無いと、require した
+ * 瞬間に CLI が走って process ごと落ちる。
+ */
+module.exports = {
+  templateFindings,
+  bareSendFindings,
+  hasConstantHost,
+  REVIEWED,
+  REVIEWED_VARIABLE_DESTINATIONS,
+  NETWORK_CALL_NAMES,
+};
+
+if (require.main === module) process.exit(main());
