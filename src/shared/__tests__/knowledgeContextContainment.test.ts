@@ -1,4 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
+import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 
@@ -64,5 +66,60 @@ describe('knowledge-context の new Function は data/ の外を実行しない'
   it('`..` を挟んでも data/ の中へ戻るなら読める (正規化して判定している)', () => {
     const round = path.join(DATA, 'sub', '..', 'academicKnowledge.ts');
     expect(() => loadModuleExports(round)).not.toThrow();
+  });
+
+  /*
+   * **symlink まで見る。**
+   *
+   * 2026-08-27 の実測: 閉じ込めは `path.resolve` の**字面**で見ていた ——
+   * `..` は畳むが symlink は辿らない。`data/` の中に外を指す link を置くと、
+   * 字面の検査は通り、`readFileSync` が link を辿り、transpile して
+   * **`new Function` で外のファイルが実行された**。
+   *
+   * この関数の注記は「外を許すと**任意コード実行になります**」と書いている。
+   * その当のことが symlink 一本で起きていた。しかも `ci.yml` は
+   * `pull_request` で `verify:orchestration` を走らせるので、
+   * **fork からの PR が link と標的の両方を持ち込めば CI で任意コードが走る**
+   * (どちらも git が保存できる)。
+   *
+   * 兄弟の `exportPaths` を前日に同じ理由で直している ——
+   * **字面の閉じ込めは symlink を見ない。**
+   */
+  describe('symlink', () => {
+    const linkPath = path.join(DATA, '__containmentProbe.ts');
+    const outsideTs = path.join(REPO_ROOT, '__containmentProbeTarget.ts');
+    afterEach(() => {
+      for (const f of [linkPath, outsideTs]) {
+        try {
+          fs.unlinkSync(f);
+        } catch {
+          /* 無ければよい */
+        }
+      }
+    });
+
+    it('★ data/ の中から外を指す symlink は評価しない', () => {
+      fs.writeFileSync(outsideTs, "export const PWNED = 'x';\n", 'utf8');
+      fs.symlinkSync(path.relative(DATA, outsideTs), linkPath);
+      // 前提の確認: 字面では data/ の中に見える (でなければ検査が空になる)。
+      expect(path.resolve(linkPath).startsWith(DATA + path.sep)).toBe(true);
+      expect(() => loadModuleExports(linkPath)).toThrow(/外は評価しません/);
+    });
+
+    it('★ リポジトリの外を指す symlink も評価しない', () => {
+      const outside = path.join(os.tmpdir(), `containment-probe-${process.pid}.ts`);
+      fs.writeFileSync(outside, "export const PWNED = 'x';\n", 'utf8');
+      fs.symlinkSync(outside, linkPath);
+      try {
+        expect(() => loadModuleExports(linkPath)).toThrow(/外は評価しません/);
+      } finally {
+        fs.unlinkSync(outside);
+      }
+    });
+
+    it('陰性: data/ の中を指す symlink は読める (締めすぎていない)', () => {
+      fs.symlinkSync('academicKnowledge.ts', linkPath);
+      expect(() => loadModuleExports(linkPath)).not.toThrow();
+    });
   });
 });

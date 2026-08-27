@@ -55,10 +55,39 @@ const REGISTRY = path.join(REPO_ROOT, 'orchestration/registry.json');
  * 例外にする。ここを緩めることは「任意のファイルを実行できる」に等しい。
  */
 function loadModuleExports(file) {
-  const resolved = path.resolve(file);
+  let resolved = path.resolve(file);
   if (resolved !== path.normalize(file) && !path.isAbsolute(file)) {
     // 相対指定は呼び出し口の作業ディレクトリに依存する。受け付けない。
     throw new Error(`loadModuleExports: 絶対パスで渡してください (${file})`);
+  }
+  /*
+   * **閉じ込めを見る前に symlink を実体まで辿る。**
+   *
+   * `path.resolve` は `..` を畳むが **symlink は辿らない**。2026-08-27 の実測:
+   *
+   * ```
+   *   src/renderer/data/x.ts -> ../../../payload.ts      (どちらも PR で足せる)
+   *   loadModuleExports('<repo>/src/renderer/data/x.ts')
+   *     → 字面の閉じ込めは通り、readFileSync が link を辿り、
+   *       transpile して new Function で **payload.ts が実行される**
+   * ```
+   *
+   * この関数の下の注記は「外を許すと**任意コード実行になります**」と書いている。
+   * その当のことが symlink 一本で起きていた。`ci.yml` は `pull_request` で
+   * `verify:orchestration` を走らせるので、**fork からの PR が CI で任意コードを
+   * 実行できる**経路だった (`contents: read` なので被害範囲は限られるが、
+   * runner とネットワークには届く)。
+   *
+   * 兄弟の `exportPaths.assertExportTargetContained` を 2026-08-26 に同じ理由で
+   * 直している —— **字面の閉じ込めは symlink を見ない**。
+   *
+   * 存在しないパスは realpath が投げるので、そのときは字面のまま進める
+   * (後段の `readFileSync` が ENOENT で落ちる)。
+   */
+  try {
+    resolved = fs.realpathSync(resolved);
+  } catch {
+    /* 実体が無い — 下の readFileSync が落ちる。閉じ込めは字面で見る。 */
   }
   if (resolved !== DATA && !resolved.startsWith(DATA + path.sep)) {
     throw new Error(
