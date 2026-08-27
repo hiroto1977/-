@@ -127,6 +127,11 @@ const PROTECTED = [
   'scripts/make-live-usb.sh',
   'scripts/make-autoinstall.sh',
   'scripts/migrate.sh',
+  // 7,543 ファイルの書き込みが保管庫の外へ出ないことを決めている唯一の関門。
+  // 逃げ道 (symlink) を 2026-08-27 に塞いだ。書き出し先の封じ込めという意味で
+  // `src/main/clients/exportPaths.ts` と同じ役どころで、`vault:check` として
+  // CI でも走る。守る基準が同じなら、扱いも同じにする。
+  'scripts/safe-vault-write.cjs',
   '.github/workflows/ci.yml',
   // ci.yml (contents: read) は守られていたのに、**唯一 contents: write を持ち、
   // 利用者がダウンロードするインストーラを公開する** release.yml が入って
@@ -294,8 +299,12 @@ const DEP_EXCLUSIONS = {
 function resolveRelativeImport(fromRel, spec) {
   if (!spec.startsWith('.')) return null;
   const base = path.join(path.dirname(fromRel), spec);
-  for (const ext of ['.ts', '.tsx', '/index.ts', '.js']) {
-    if (fs.existsSync(path.join(REPO_ROOT, base + ext))) return (base + ext).split(path.sep).join('/');
+  // 末尾の `''` は「綴りが既に拡張子を持っている」場合 (`require('./x.cjs')`)。
+  // ディレクトリに当たらないよう、ファイルであることまで確かめる —— これが
+  // 無かったため `inject-pwa.cjs` の require は解決できず、黙って飛ばされていた。
+  for (const ext of ['.ts', '.tsx', '/index.ts', '.js', '.cjs', '']) {
+    const abs = path.join(REPO_ROOT, base + ext);
+    if (fs.existsSync(abs) && fs.statSync(abs).isFile()) return (base + ext).split(path.sep).join('/');
   }
   return null;
 }
@@ -318,18 +327,43 @@ function resolveRelativeImport(fromRel, spec) {
  *
  * @returns 問題の説明の配列 (空なら健全)
  */
+/**
+ * 1 ファイルが読んでいる相対パスの列。**言語ごとに綴りが違う**。
+ *
+ * 2026-08-27 まで、閉包検査は `.ts|.tsx` 以外を丸ごと飛ばしていた。保護対象
+ * 55 件のうち 16 件 —— `.cjs` 3 件・`.sh` 6 件・ワークフロー 3 件・`sw.js`
+ * ほか —— が「中身は守るが、何を読んでいるかは見ない」状態だった。上の注記が
+ * 約束していること (材料の方も守らないと保護は素通し) が、29% に効いていない。
+ *
+ * 実害は今のところ無い —— 走査したところ、飛ばされていた 16 件が読んでいる
+ * リポジトリ内のファイルは `inject-pwa.cjs → inline-html.cjs` の 1 本だけで、
+ * それは既に保護対象だった。**偶然そうだっただけ**なので、次に誰かが助けを
+ * 別ファイルへ切り出したときに鳴る形にしておく。
+ */
+function dependencySpecs(text, kind) {
+  const out = [];
+  if (kind === 'esm') {
+    for (const m of text.matchAll(/^\s*(?:import|export)[\s\S]*?from\s+'([^']+)'/gm)) out.push(m[1]);
+    return out;
+  }
+  for (const m of text.matchAll(/\brequire\(\s*['"]([^'"]+)['"]\s*\)/g)) out.push(m[1]);
+  for (const m of text.matchAll(/\bimportScripts\(\s*['"]([^'"]+)['"]\s*\)/g)) out.push(m[1]);
+  return out;
+}
+
 function collectClosureProblems(protectedList, exclusions) {
   const problems = [];
   const set = new Set(protectedList);
   const used = new Set();
 
   for (const rel of protectedList) {
-    if (!/\.(ts|tsx)$/.test(rel)) continue;
+    const kind = /\.(ts|tsx)$/.test(rel) ? 'esm' : /\.(cjs|js)$/.test(rel) ? 'cjs' : null;
+    if (kind === null) continue;
     const abs = path.join(REPO_ROOT, rel);
     if (!fs.existsSync(abs)) continue;
     const text = fs.readFileSync(abs, 'utf8');
-    for (const m of text.matchAll(/^\s*(?:import|export)[\s\S]*?from\s+'([^']+)'/gm)) {
-      const target = resolveRelativeImport(rel, m[1]);
+    for (const spec of dependencySpecs(text, kind)) {
+      const target = resolveRelativeImport(rel, spec);
       if (target === null || set.has(target)) continue;
       if (Object.hasOwn(exclusions, target)) {
         used.add(target);
@@ -634,7 +668,7 @@ function cmdSelfTest() {
  * 併せて CLI の起動を `require.main` で守る —— export しても、require した
  * 瞬間にコマンドが走っては読めない。
  */
-module.exports = { PROTECTED, DEP_EXCLUSIONS };
+module.exports = { PROTECTED, DEP_EXCLUSIONS, collectClosureProblems, dependencySpecs, resolveRelativeImport };
 
 if (require.main === module) {
   const cmd = process.argv[2] || 'verify';

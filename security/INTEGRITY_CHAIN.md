@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 116
+- ブロック数: 119
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `ac11ce83296ebf172501cb43a05b5e2f53209991d2ba7b89ec2879314eb0e8c5`
-- 保護対象: 55 ファイル
+- 末尾(tip)ハッシュ: `1e845491ca358c0837dff004c1ac71b5e7388eab512a5a3feaacd3f3f6d12811`
+- 保護対象: 56 ファイル
 
 ## ブロック
 
@@ -129,6 +129,9 @@
 | 113 | `f5ca43b4a203083a` | `854dbbbc470a4114` | `08670d9986839cdd` | update dataCrypto.ts,vault.ts |
 | 114 | `ec4cf0ebe755a053` | `08670d9986839cdd` | `a3c506b433488138` | update proxy.ts |
 | 115 | `cf1fe661aac6b08f` | `a3c506b433488138` | `ac11ce83296ebf17` | update inject-pwa.cjs,inline-html.cjs |
+| 116 | `1278d07bf02bb85b` | `ac11ce83296ebf17` | `7128afd9d23124e0` | update integrity-chain.cjs,safe-vault-write.cjs |
+| 117 | `fce93a383e3a5521` | `7128afd9d23124e0` | `f5a376e5e8c16518` | update SECURITY_CHAIN.md |
+| 118 | `85bb93031d8ad922` | `f5a376e5e8c16518` | `1e845491ca358c08` | update SECURITY_CHAIN.md |
 
 ## 保護対象ファイル
 
@@ -145,6 +148,7 @@
 - `scripts/make-autoinstall.sh`
 - `scripts/make-live-usb.sh`
 - `scripts/migrate.sh`
+- `scripts/safe-vault-write.cjs`
 - `scripts/security-audit.sh`
 - `scripts/setup-linux.sh`
 - `scripts/setup-obsidian-docker.sh`

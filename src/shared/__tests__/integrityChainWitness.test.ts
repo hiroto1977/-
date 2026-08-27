@@ -125,3 +125,62 @@ describe('chain:verify — 外側の証人 (ゲートを呼ばずに検証をや
     expect(rootOf({})).not.toBe(chain.blocks[chain.blocks.length - 1]?.merkleRoot);
   });
 });
+
+/*
+ * 閉包検査の**言語ごとの守備範囲**。
+ *
+ * 2026-08-27 の実測: 閉包検査は `.ts|.tsx` 以外を丸ごと飛ばしていた ——
+ * 当時の保護対象 55 件のうち 16 件 (`.cjs` 3 / `.sh` 6 / workflow 3 / `sw.js` ほか)。
+ * 上の注記が約束している「材料の方も守らないと保護は素通し」が、その 29% に
+ * 効いていなかった。実害は無かった (飛ばされていた側が読むリポジトリ内の
+ * ファイルは 1 本だけで、たまたま保護対象だった) が、**偶然だった**。
+ */
+describe('閉包検査 — CommonJS も見ているか', () => {
+  const chain = req('../../../scripts/integrity-chain.cjs') as {
+    PROTECTED: string[];
+    DEP_EXCLUSIONS: Record<string, string>;
+    collectClosureProblems: (list: string[], excl: Record<string, string>) => string[];
+    dependencySpecs: (text: string, kind: string) => string[];
+    resolveRelativeImport: (fromRel: string, spec: string) => string | null;
+  };
+
+  it('実物の一覧では閉包の問題が 0 件', () => {
+    expect(chain.collectClosureProblems(chain.PROTECTED, chain.DEP_EXCLUSIONS)).toEqual([]);
+  });
+
+  it('★ `require()` を依存として読む (以前は綴りごと見えていなかった)', () => {
+    const text = "const { a } = require('./inline-html.cjs');\nrequire('node:fs');";
+    expect(chain.dependencySpecs(text, 'cjs')).toContain('./inline-html.cjs');
+  });
+
+  it('★ 拡張子を含む綴りが解決できる', () => {
+    // これが無いと `require('./x.cjs')` は解決に失敗し、**黙って飛ばされる**。
+    expect(chain.resolveRelativeImport('scripts/inject-pwa.cjs', './inline-html.cjs')).toBe(
+      'scripts/inline-html.cjs',
+    );
+  });
+
+  it('ディレクトリを掴まない (末尾の空拡張子が効きすぎないこと)', () => {
+    expect(chain.resolveRelativeImport('scripts/integrity-chain.cjs', '../src')).toBeNull();
+  });
+
+  it('★ 保護されていない CommonJS 依存があれば鳴る', () => {
+    const without = chain.PROTECTED.filter((f) => f !== 'scripts/inline-html.cjs');
+    const problems = chain.collectClosureProblems(without, chain.DEP_EXCLUSIONS);
+    expect(problems.some((p) => p.includes('inject-pwa.cjs') && p.includes('inline-html.cjs'))).toBe(
+      true,
+    );
+  });
+
+  it('保管庫への書き込みを閉じ込める関門が保護対象に居る', () => {
+    // exportPaths.ts と同じ役どころ (書き出し先の封じ込め) で、CI でも走る。
+    expect(chain.PROTECTED).toContain('scripts/safe-vault-write.cjs');
+    expect(chain.PROTECTED).toContain('src/main/clients/exportPaths.ts');
+  });
+
+  it('ESM 側の読み取りは変わっていない (対照)', () => {
+    const text = "import { x } from './foo';\nexport { y } from './bar';";
+    expect(chain.dependencySpecs(text, 'esm')).toEqual(['./foo', './bar']);
+    expect(chain.dependencySpecs(text, 'cjs')).toEqual([]);
+  });
+});

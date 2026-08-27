@@ -15,6 +15,7 @@
     "scripts/make-autoinstall.sh",
     "scripts/make-live-usb.sh",
     "scripts/migrate.sh",
+    "scripts/safe-vault-write.cjs",
     "scripts/security-audit.sh",
     "scripts/setup-linux.sh",
     "scripts/setup-obsidian-docker.sh",
@@ -986,6 +987,30 @@
       "leafCount": 55,
       "note": "update inject-pwa.cjs,inline-html.cjs",
       "hash": "ac11ce83296ebf172501cb43a05b5e2f53209991d2ba7b89ec2879314eb0e8c5"
+    },
+    {
+      "index": 116,
+      "prevHash": "ac11ce83296ebf172501cb43a05b5e2f53209991d2ba7b89ec2879314eb0e8c5",
+      "merkleRoot": "1278d07bf02bb85bcf983d0e53b4d683bac80693c19a79e93c06511625f985e9",
+      "leafCount": 56,
+      "note": "update integrity-chain.cjs,safe-vault-write.cjs",
+      "hash": "7128afd9d23124e069001efba7da5d51eaf40681bc20ccb70d5355fa8d5dc0d7"
+    },
+    {
+      "index": 117,
+      "prevHash": "7128afd9d23124e069001efba7da5d51eaf40681bc20ccb70d5355fa8d5dc0d7",
+      "merkleRoot": "fce93a383e3a5521dae10f3a434c81e87cccab507cedef2d055ae01adb29cca3",
+      "leafCount": 56,
+      "note": "update SECURITY_CHAIN.md",
+      "hash": "f5a376e5e8c1651872ab054280d3b76687bc54101750fa0b7a3a17dcb9f7a7f9"
+    },
+    {
+      "index": 118,
+      "prevHash": "f5a376e5e8c1651872ab054280d3b76687bc54101750fa0b7a3a17dcb9f7a7f9",
+      "merkleRoot": "85bb93031d8ad922f1cc9df44b3e72ef02488d875d8c7cdfd228c1c582631e8f",
+      "leafCount": 56,
+      "note": "update SECURITY_CHAIN.md",
+      "hash": "1e845491ca358c0837dff004c1ac71b5e7388eab512a5a3feaacd3f3f6d12811"
     }
   ],
   "tipManifest": {
@@ -994,14 +1019,15 @@
     ".github/workflows/release.yml": "accdf90477c9a6fbaaca919eac05c121b8b0714bc44d0f4a9b32578013b185db",
     "assets/manifest.webmanifest": "d423e6a706360f1f119bfe307833c3dc1f3523c871621e72f67b09496556fcf1",
     "assets/sw.js": "21435c404d1d2cdc02102e1de04a6683bc6027726dea44fbc2af04f64a742dd1",
-    "docs/SECURITY_CHAIN.md": "8b4a7641662de8f852ecb62c7e3b2ec2421c78552f59467ff9a6b1e2e97a4e78",
+    "docs/SECURITY_CHAIN.md": "20a16f9292fe208a95632968930f759f8494fe00e780b7e0517f1cd149ad6993",
     "electron-builder.json": "bf1de6e2b48e13444b527f8796af3636ab5061795fd772070e6f5dcfecfdf305",
     "scripts/inject-pwa.cjs": "c17438d4b9933c620747ad2b2aee492a5329299325f44024fb6d9ab4cd3db7c5",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "9bde5fa653ce8766cd9343a5128a1404c77d7976d8d60f5b1d42d6bccf171e6c",
+    "scripts/integrity-chain.cjs": "e05dc9a080beee22eb5241bb3cdddb10f3e343f68dcaa83178e798dd15a053d8",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
     "scripts/make-live-usb.sh": "ece38ba927100fc42f4227fd149f88b9ffbdd67b9fc9d3a37dcbfebff74ca2b1",
     "scripts/migrate.sh": "78d13dcde6a78953eb57c4f70f300c61fdb6b26df05ff1781e6c1e84647388e9",
+    "scripts/safe-vault-write.cjs": "263ad4e8e52952769cda1be6e25b31025e0f023439e93f6eccdc996ec15215f3",
     "scripts/security-audit.sh": "c50257fabca4b4c6def121dfc676539bd5db97679da6db4ef4961a48c6993064",
     "scripts/setup-linux.sh": "d759d679007975cf3cfbf9a26eb01a3240741ba769d6da9d886e9d57a17b5cba",
     "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
