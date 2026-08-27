@@ -10,6 +10,47 @@
 
 ---
 
+## 疑って外れた調査 — 拡張子・許可リスト・色/SVG の補間 (2026-08-27)
+
+「字面の閉じ込め」を 3 か所直した流れで、**同じ「字面と実体がずれる」形が
+他の判定にも無いか**を数え直した。**無かった。**
+
+### 1. 拡張子で安全性を決めている箇所 (4 件)
+
+- `shellOpenGate.ts:77` — `path.extname(real)` と **realpath 後**の実体で判定する。
+  `notes/x.md -> evil.desktop` のような link は `.desktop` として弾かれる
+- `shopify.ts:329` (`.salesforce.com`) / `atlassianSite.ts:47` (`.atlassian.net`) —
+  ホスト名の接尾辞。`evil-salesforce.com` も `salesforce.com.evil.com` も通らない。
+  **末尾ドット (FQDN) は判定を厳しくする側**に働くので fail closed
+- `aiEndpoint.ts:73` — 末尾ドットを**先に剥がしている** (正しい向き)
+
+### 2. `SHELL_OPEN_EXTS` に `.html` / `.svg` が入っている
+
+どちらもブラウザで開けば**スクリプトが動く**形式なので、書き出しに
+第三者由来のデータが素通しで入ると「開いた瞬間に実行」になる。3 経路を見た:
+
+| 生成元 | 色 | 文字列 |
+|---|---|---|
+| `main/clients/templates.ts` | `isHexColor` で検証 | `escapeXml` |
+| `renderer/web-templates.ts` (ブラウザ版) | `safeColor(…, 既定値)` | `escapeXml` |
+| `renderer/pages/TemplatesPage.tsx` (**プレビュー**) | **素の補間** | `escapeXml` |
+
+3 つ目だけ色が素だが、**出力は `<img src="data:image/svg+xml,…">` にしか
+渡らない** (`renderPreview` の唯一の呼び出しは 174 行の `svgPreview`)。
+`<img>` 経由の SVG は**スクリプトも外部参照も実行しない**ので届かない。
+書き出しは別経路 (`exportSvg`) で、送る前に `isHexColor`、main 側でも再検証する
+(二重)。`teamradar` の SVG は数値と `escapeXml` のみ、ブラウザ版の書き出しは
+**React が描いた DOM を serialize するだけ**なので、データが markup になる場所が
+そもそも 1 つしかない。
+
+### 3. 色をマークアップへ補間している箇所
+
+`business.ts:815` は 2 つのリテラルの三項、`VillagePage.tsx:554` の `ring` は
+`statusColor()` の固定パレット。**どちらもデータ由来ではない。**
+
+**結論: 何も直していない。** 上の 3 つの経路は既に正しく、
+プレビューの素の補間も届く先が無い。
+
 ## 疑って外れた調査 — AI プロバイダ経路と原型汚染 (2026-08-26)
 
 **次の人が同じ時間を使わないために書く。** どちらも「穴がありそう」と踏んで
