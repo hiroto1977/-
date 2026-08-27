@@ -166,3 +166,52 @@ describe('liveRead — 揃っていれば実データを返す', () => {
     direct.mockRestore();
   });
 });
+
+/*
+ * **本当の方針をここで留める。**
+ *
+ * 2026-08-27 まで `network/proxy.ts` に `PROXY_REQUIRED_SERVICES` という表が
+ * あり、「proxy 必須なのは notion / atlassian / cloudflare の 3 つ」と述べて
+ * いた。だが `liveRead` は**実データを読むサービスを必ずプロキシへ通す** ——
+ * 表のほうが実装より緩く、しかも検査が「github は proxy 必須では**ない**」と
+ * 固定していた。さらに表が挙げていた 3 つは `LIVE_READERS` に無く、
+ * ブラウザ版では**そもそも読めない**。二重に陳腐化していた。表は消し、
+ * 方針はこの 1 か所で留める。
+ *
+ * 緩めると何が起きるか: 資格情報 (`token`) を第三者のホストへ**プロキシの
+ * 宛先検査を通さずに**送る経路が生まれる。`liveRead.ts` の注記が
+ * 「動かないまま置いておくほうが危ない」と言っているのはそのことである。
+ */
+describe('プロキシを通さない経路が無いこと', () => {
+  it('★ 実データを読む経路は、プロキシが無ければ読まない', async () => {
+    const r = await liveRead('cursor', deps({ getProxyJsonFetch: () => Promise.reject(new Error('未設定')) }));
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.code).toBe('proxy_required');
+  });
+
+  it('★ 読めるときに渡る fetch は、プロキシが用意したものだけ', async () => {
+    let handedProxyFetch = false;
+    await liveRead(
+      'cursor',
+      deps({
+        getProxyJsonFetch: async () => {
+          handedProxyFetch = true;
+          return async () => ({}) as never;
+        },
+      }),
+    );
+    // 直接 fetch を作る枝が戻れば、ここは false のままになる。
+    expect(handedProxyFetch).toBe(true);
+  });
+
+  /*
+   * 陰性対照 —— 「常に proxy_required を返す」実装でも上の 1 件目は緑になる。
+   * reader を持たないサービスが**別の符号**で返ることを見て、
+   * 経路が実際に分かれていることを示す。
+   */
+  it('陰性: reader を持たないサービスは別の符号で断る', async () => {
+    const r = await liveRead('github', deps({ getProxyJsonFetch: () => Promise.reject(new Error('未設定')) }));
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.code).toBe('live_read_unsupported');
+  });
+});

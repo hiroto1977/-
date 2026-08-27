@@ -636,10 +636,23 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
   });
 }
 
-/** Service id → CORS 直接呼び出しが不可能で proxy 必須かどうか。 */
-export const PROXY_REQUIRED_SERVICES: ReadonlySet<string> = new Set([
-  'notion',
-  'atlassian',
-  'cloudflare',
-]);
+/*
+ * `PROXY_REQUIRED_SERVICES` は 2026-08-27 に**削除した**。
+ *
+ * 「CORS 直接呼び出しが不可能で proxy 必須なのは notion / atlassian /
+ * cloudflare の 3 つ」という表だったが、**実装はその方針をやめている**。
+ * `network/liveRead.ts` は全サービスを**必ずプロキシへ通す**:
+ *
+ *   > CORS を許す相手なら直接 fetch でもよいが、その分岐は今どのサービスも
+ *   > 通らない = 検査で確かめられない。資格情報を第三者のホストへ送る経路を、
+ *   > 動かないまま置いておくほうが危ない。
+ *
+ * つまりこの表は**実装より緩い方針**を述べたまま残っており、しかも検査が
+ * 「github は proxy 必須では**ない**」と固定していた。読んだ人が
+ * 「github は直接 fetch してよい」と受け取ると、上の注記がまさに危ないと
+ * 言っている直接経路を戻すことになる。**production からの参照は 0 件**
+ * だった (定義と検査だけが生きていた)。
+ *
+ * 方針は `liveRead.ts` の 1 か所に置く。表を 2 つ持たない。
+ */
 // Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression

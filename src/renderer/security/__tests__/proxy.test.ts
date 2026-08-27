@@ -8,7 +8,6 @@ import {
   setProxyConfig,
   isPrivateOrReservedTarget,
   MAX_PROXY_RESPONSE_BYTES,
-  PROXY_REQUIRED_SERVICES,
 } from '../../network/proxy';
 
 function clearIdb(): Promise<void> {
@@ -1166,15 +1165,12 @@ describe('isPrivateOrReservedTarget', () => {
   });
 });
 
-describe('PROXY_REQUIRED_SERVICES', () => {
-  it('lists the 3 CORS-blocked services', () => {
-    expect(PROXY_REQUIRED_SERVICES.has('notion')).toBe(true);
-    expect(PROXY_REQUIRED_SERVICES.has('atlassian')).toBe(true);
-    expect(PROXY_REQUIRED_SERVICES.has('cloudflare')).toBe(true);
-  });
-
-  it('does NOT mark CORS-friendly services', () => {
-    expect(PROXY_REQUIRED_SERVICES.has('github')).toBe(false);
-    expect(PROXY_REQUIRED_SERVICES.has('anthropic')).toBe(false);
-  });
-});
+/*
+ * `PROXY_REQUIRED_SERVICES` の検査は 2026-08-27 に**消した**。
+ *
+ * 「github は proxy 必須ではない」と固定していたが、実装は全サービスを
+ * 必ずプロキシへ通す (`liveRead.ts`)。**実装より緩い方針を検査が留めていた**
+ * ことになり、そのまま従えば資格情報を第三者ホストへ直接送る経路が戻る。
+ * 本当の方針は `liveRead.test.ts` の「プロキシを用意できなければ読まない」で
+ * 留める。
+ */
