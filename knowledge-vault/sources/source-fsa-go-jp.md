@@ -15,7 +15,7 @@ tags:
 ## このドメインを出典とする項目
 
 - [[bizlaw-act-on-prevention-of-criminal-proceeds|犯罪収益移転防止法]] — 金融庁—犯罪による収益の移転防止に関する法律
-- [[bizlaw-corporate-governance-code|コーポレートガバナンス・コード]] — 金融庁—Japan'sCorporateGovernanceCode[FinalProposal](2015-03)
+- [[bizlaw-corporate-governance-code|コーポレートガバナンス・コード]] — 金融庁—Japan'sCorporateGovernanceCode\[FinalProposal\](2015-03)
 - [[bizlaw-corporate-governance-code|コーポレートガバナンス・コード]] — 金融庁—コーポレートガバナンス改革に向けた取組みについて
 - [[bizlaw-corporate-governance-stewardship|スチュワードシップ・コードと機関投資家の責任投資——コーポレートガバナンス改革の法的枠組み]] — 金融庁(2020)「責任ある機関投資家」の諸原則《日本版スチュワードシップ・コード》（改訂版）
 - [[bizlaw-corporate-governance-structures|コーポレート・ガバナンス構造の比較制度分析]] — 金融庁CGコード改訂関連会議資料（2025年10月）—東証上場会社の機関設計データ（監査等委員会設置会社がプライムで最多）
