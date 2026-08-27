@@ -978,6 +978,14 @@
       "leafCount": 55,
       "note": "update proxy.ts",
       "hash": "a3c506b433488138b740e6c2fac4db386c2df90f0743a7ab46e109929c290da5"
+    },
+    {
+      "index": 115,
+      "prevHash": "a3c506b433488138b740e6c2fac4db386c2df90f0743a7ab46e109929c290da5",
+      "merkleRoot": "cf1fe661aac6b08f638fe3c5f4357ab43f2f1b9841deae3770fc120b44de550e",
+      "leafCount": 55,
+      "note": "update inject-pwa.cjs,inline-html.cjs",
+      "hash": "ac11ce83296ebf172501cb43a05b5e2f53209991d2ba7b89ec2879314eb0e8c5"
     }
   ],
   "tipManifest": {
@@ -988,8 +996,8 @@
     "assets/sw.js": "21435c404d1d2cdc02102e1de04a6683bc6027726dea44fbc2af04f64a742dd1",
     "docs/SECURITY_CHAIN.md": "8b4a7641662de8f852ecb62c7e3b2ec2421c78552f59467ff9a6b1e2e97a4e78",
     "electron-builder.json": "bf1de6e2b48e13444b527f8796af3636ab5061795fd772070e6f5dcfecfdf305",
-    "scripts/inject-pwa.cjs": "f34086b18ac20ede0d91d136640db427e73ec8442a30fb80baba7eb1d902aeb2",
-    "scripts/inline-html.cjs": "6e06e66df10ccfef5802c54aa2f7596be79e45ce18c005755cbc2ac55823cbfc",
+    "scripts/inject-pwa.cjs": "c17438d4b9933c620747ad2b2aee492a5329299325f44024fb6d9ab4cd3db7c5",
+    "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
     "scripts/integrity-chain.cjs": "9bde5fa653ce8766cd9343a5128a1404c77d7976d8d60f5b1d42d6bccf171e6c",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
     "scripts/make-live-usb.sh": "ece38ba927100fc42f4227fd149f88b9ffbdd67b9fc9d3a37dcbfebff74ca2b1",

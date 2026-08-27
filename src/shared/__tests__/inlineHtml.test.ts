@@ -167,9 +167,15 @@ describe('inline-html — script-src の sha256 ピン留め', () => {
 describe('inline-html — バンドルが素の </script> を持ったとき', () => {
   const withClose = (js: string): (() => string) => inlineStandalone.bind(null, INDEX_HTML, () => js);
 
+  // 落ちる場所は 2026-08-27 に**前へ移した**。以前はハッシュ検算 (`未ピン留め`) が
+  // 最後に捕まえていたが、それは `</script>` を字面どおり持つ場合しか鳴らない。
+  // `</script ` や `<!--` + `<script` は素の indexOf をすり抜けるので、綴じ込む
+  // **前**に `assertRawTextInert` で落とすようにした (rawTextElementInert.test.ts)。
   it('ビルドを落とす (要素が途中で閉じ、ピン留めしたハッシュと実テキストがずれる)', () => {
-    expect(withClose('const p = "<script>alert(1)' + '</' + 'script>' + '";')).toThrow(/未ピン留め/);
-    expect(withClose('const p = "' + '</' + 'script>' + '";')).toThrow(/未ピン留め/);
+    expect(withClose('const p = "<script>alert(1)' + '</' + 'script>' + '";')).toThrow(
+      /インライン JS .* が `<\/script` \+ 区切り を含む/,
+    );
+    expect(withClose('const p = "' + '</' + 'script>' + '";')).toThrow(/inline-html/);
   });
 
   it('落とす理由は「早期終了で別テキストになる」こと — ずれの中身まで確かめる', () => {

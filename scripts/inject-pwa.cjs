@@ -17,11 +17,15 @@ const crypto = require('node:crypto');
 const fs = require('node:fs');
 // 仕上がり文書の検算は **inline-html.cjs の実物**を借りる。同じ判定を書き写すと、
 // 比べているのが写しになる (このリポジトリで何度も出た形)。
-const { assertPinnedScripts } = require('./inline-html.cjs');
+const { assertPinnedScripts, assertRawTextInert } = require('./inline-html.cjs');
 
 /** SW 登録スニペット本体。CSP ハッシュはこの定数から導出するので両者はズレない。 */
 const SW_REGISTER_JS =
   "if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){})});}";
+
+// このスニペットは手書きの定数で、esbuild の生テキスト逃がしを一切通っていない。
+// 生テキスト要素へ入れる文字列は、書いた者が誰であれ同じ関門を通す。
+assertRawTextInert(SW_REGISTER_JS, 'script', 'SW 登録スニペット');
 
 const PWA_HEAD_TAGS = [
   '<link rel="manifest" href="./manifest.webmanifest">',
