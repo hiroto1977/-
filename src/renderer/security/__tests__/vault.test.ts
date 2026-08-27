@@ -801,6 +801,29 @@ describe('Vault — 保存された反復回数の検証', () => {
     await expect(getVault().unlock('correct-horse-battery-staple')).rejects.toThrow(/反復回数/);
   });
 
+  /*
+   * **隣の欄も同じ出どころである。**
+   *
+   * 上の 2 件は `meta.iterations` を留めている。だが `meta.salt` も同じ
+   * IndexedDB から来て、同じ `deriveKey` へそのまま渡っていた ——
+   * 2026-08-27 まで長さを見る物が無く、そのために書かれた定数
+   * `MIN_SALT_BYTES` は**どこからも参照されていなかった** (grep で 0 件)。
+   *
+   * 短いソルトは鍵そのものを壊さないが、**利用者をまたいだ事前計算**を
+   * 成り立たせる。保管領域へ書ける相手 (拡張機能・同一生成元の別ページ) が
+   * salt を固定値へ差し替えれば、KCV への総当たりを使い回せる。
+   */
+  it('★ 短いソルトへ差し替えられたメタは断る', async () => {
+    const vault = getVault();
+    await vault.initialize('correct-horse-battery-staple');
+    vault.lock();
+    _resetVaultForTests();
+    await tamperMeta((meta) => {
+      meta.salt = new Uint8Array(4);
+    });
+    await expect(getVault().unlock('correct-horse-battery-staple')).rejects.toThrow(/ソルト/);
+  });
+
   // ネガティブコントロール: 正規のメタは今までどおり解錠できる
   // (「常に断る」実装になっていないことの確認)。
   it('手を加えていないメタは解錠できる', async () => {

@@ -18,7 +18,7 @@
  */
 
 import { decodeMnemonic, encodeMnemonic, generateEntropy, normalizeMnemonic } from './mnemonic';
-import { assertKdfIterations } from './dataCrypto';
+import { assertKdfIterations, assertSaltBytes } from './dataCrypto';
 import { AES_GCM_IV_BYTES, PBKDF2_ITERATIONS as SHARED_ITERATIONS } from '../../shared/cryptoParams';
 
 // Constants below are pinned by integration behavior (DB name / iterations
@@ -603,6 +603,8 @@ class BrowserVault implements Vault {
     // **利用者が自分の資格情報から永久に締め出される**。dataCrypto は同じ検査を
     // 最初から持っていたのに、資格情報そのものを持つこちらが素通しだった。
     assertKdfIterations(meta.iterations);
+    // 隣の欄も同じ出どころ (IndexedDB)。2026-08-27 まで salt だけ素通しだった。
+    assertSaltBytes(meta.salt);
     const passwordKey = await deriveKey(password, meta.salt, meta.iterations);
     try {
       const plain = await decryptString(passwordKey, { iv: meta.iv, ciphertext: meta.kcv });
@@ -816,6 +818,8 @@ class BrowserVault implements Vault {
 
       // 旧パスワードの検証は unlock と同じ手順 (反復回数の範囲確認 → KCV)。
       assertKdfIterations(meta.iterations);
+    // 隣の欄も同じ出どころ (IndexedDB)。2026-08-27 まで salt だけ素通しだった。
+    assertSaltBytes(meta.salt);
       const oldPasswordKey = await deriveKey(oldPassword, meta.salt, meta.iterations);
       try {
         const plain = await decryptString(oldPasswordKey, { iv: meta.iv, ciphertext: meta.kcv });

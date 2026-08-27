@@ -161,7 +161,9 @@ describe('encrypted backup', () => {
   it('中身 (ct) が壊れている場合は従来どおり「復号に失敗」', async () => {
     const bundle = {
       v: 1, kdf: 'PBKDF2-SHA256', iterations: 600_000,
-      salt: 'AAAA', iv: 'AAAAAAAAAAAAAAAA', ct: 'AAAAAAAAAAAAAAAAAAAAAAAA',
+      // salt は**正規の長さ** (16B)。短いと 2026-08-27 に足した下限検査が先に鳴り、
+      // 「ct だけが壊れている」という当の場面を測れなくなる。
+      salt: 'AAAAAAAAAAAAAAAAAAAAAA==', iv: 'AAAAAAAAAAAAAAAA', ct: 'AAAAAAAAAAAAAAAAAAAAAAAA',
     };
     await expect(
       parseBackup(JSON.stringify({ encrypted: true, payload: bundle }), 'pw-123'),

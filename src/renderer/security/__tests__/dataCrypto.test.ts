@@ -8,7 +8,9 @@ import {
   deriveAesKey,
   sealWithKey,
   openWithKey,
+  assertSaltBytes,
 } from '../dataCrypto';
+import { MIN_SALT_BYTES } from '../../../shared/cryptoParams';
 
 const VALID_BUNDLE = { v: 1, kdf: 'PBKDF2-SHA256', iterations: 210_000, salt: 'a', iv: 'b', ct: 'c' };
 
@@ -120,5 +122,42 @@ describe('low-level key reuse (deriveAesKey / sealWithKey / openWithKey)', () =>
     expect(isSealed({ iv: 'a' })).toBe(false); // ct 欠落
     expect(isSealed({ ct: 'b' })).toBe(false); // iv 欠落
     expect(isSealed({ iv: 1, ct: 'b' })).toBe(false); // iv 非文字列
+  });
+});
+
+/*
+ * ソルト長の下限。
+ *
+ * `MIN_SALT_BYTES` は 2026-08-27 まで**定義されているだけで、どこからも
+ * 参照されていなかった** (`grep` で 0 件)。定数の説明は「これを下回らせない」と
+ * 不変条件を書いているのに、守る側が無かった。
+ *
+ * 効く形は `assertKdfIterations` と同じ —— `vault.ts` は IndexedDB から読んだ
+ * `meta.salt` をそのまま `deriveKey` へ渡す。反復回数のほうは
+ * 「資格情報そのものを持つ vault 側が素通しだった」として塞がれたが、
+ * **隣の欄である salt は残っていた**。
+ */
+describe('assertSaltBytes — 保存側から読んだソルトの長さ', () => {
+  it('★ 下限ちょうどは通す', () => {
+    expect(() => assertSaltBytes(new Uint8Array(MIN_SALT_BYTES))).not.toThrow();
+  });
+
+  it('陰性: 長いソルトも通す (用途ごとに増やすのは自由)', () => {
+    expect(() => assertSaltBytes(new Uint8Array(32))).not.toThrow();
+  });
+
+  it.each([0, 1, 8, MIN_SALT_BYTES - 1])('★ %i バイトは弾く', (n) => {
+    expect(() => assertSaltBytes(new Uint8Array(n))).toThrow(/ソルト/);
+  });
+
+  it('★ 短いソルトの封緘データは復号を拒む (関門が経路に居ること)', async () => {
+    const bundle = await encryptString('secret', 'pw-correct-horse');
+    const shortSalt = { ...bundle, salt: btoa(String.fromCharCode(0, 1, 2, 3)) };
+    await expect(decryptString(shortSalt, 'pw-correct-horse')).rejects.toThrow(/ソルト/);
+  });
+
+  it('陰性: 正規の封緘データは往復できる (締めすぎていない)', async () => {
+    const bundle = await encryptString('secret', 'pw-correct-horse');
+    await expect(decryptString(bundle, 'pw-correct-horse')).resolves.toBe('secret');
   });
 });
