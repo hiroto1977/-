@@ -142,7 +142,56 @@ export async function repairExportPermissions(root: string = exportRoot()): Prom
   return fixed;
 }
 
-export async function writeExportFile(filePath: string, content: string): Promise<void> {
+/**
+ * 書き出し先が**実体として**書き出し根の中に居ることを確かめる。
+ *
+ * `isSafeExportPath` は**字面**の検査である —— `path.resolve` は `..` を畳むが
+ * **symlink は辿らない**。2026-08-26 に実測した:
+ *
+ * ```
+ *   ~/.local/business-hub/link -> /tmp/outside   を置いてから
+ *   isSafeExportPath('~/.local/business-hub/link/pwned.svg', home, '.svg')
+ *     → true
+ *   writeExportFile(同じパス)
+ *     → /tmp/outside/pwned.svg が出来る (根の外)
+ * ```
+ *
+ * **兄弟の門は最初からこれを見ていた。** `shellOpenGate.shellTargetOrNull` は
+ * 「閉じ込めを見る前に symlink を実体まで辿る」と書いて `fs.realpath` を通す。
+ * 同じ根に対する 2 つの門で、**開く側は辿り、書く側は辿っていなかった**。
+ *
+ * 字面の検査を非同期にはしない (ゲートと呼び出し側が同期のまま使える価値が
+ * ある) ので、**実体の検査は実際にディスクへ触る側に置く**。
+ *
+ * 書き出し先はまだ存在しないのが普通なので、**親ディレクトリ**の実体を見る。
+ * 最後の 1 要素が既に symlink である場合も別に弾く (`fs.writeFile` は辿る)。
+ */
+export async function assertExportTargetContained(
+  filePath: string,
+  home: string = os.homedir(),
+): Promise<void> {
+  const resolved = path.resolve(filePath);
+  const lexicalRoot = exportRoot(home);
+  // 根がまだ無ければ辿る先も無い。字面の根で比べる (書き込み自体は失敗する)。
+  const realRoot = await fs.realpath(lexicalRoot).catch(() => lexicalRoot);
+  const dir = path.dirname(resolved);
+  const realDir = await fs.realpath(dir).catch(() => dir);
+  if (realDir !== realRoot && !realDir.startsWith(realRoot + path.sep)) {
+    throw new Error('書き出し先が許可された領域の外を指しています (symlink の可能性)');
+  }
+  // 既存の symlink を上書きすると、その指す先へ書いてしまう。
+  const st = await fs.lstat(resolved).catch(() => null);
+  if (st !== null && st.isSymbolicLink()) {
+    throw new Error('書き出し先が symlink です — 指す先へ書き込むため拒否します');
+  }
+}
+
+export async function writeExportFile(
+  filePath: string,
+  content: string,
+  home: string = os.homedir(),
+): Promise<void> {
+  await assertExportTargetContained(filePath, home);
   await fs.writeFile(filePath, content, { mode: 0o600 });
   // 新規作成でしか効かない `mode` を、既存ファイルにも当てる。
   await fs.chmod(filePath, 0o600);

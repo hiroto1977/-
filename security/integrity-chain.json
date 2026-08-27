@@ -954,6 +954,14 @@
       "leafCount": 55,
       "note": "update SECURITY_CHAIN.md",
       "hash": "ee534ceb03de590a09aa7a07f83a236e8bcd8650d01ef34398ded284c5847e45"
+    },
+    {
+      "index": 112,
+      "prevHash": "ee534ceb03de590a09aa7a07f83a236e8bcd8650d01ef34398ded284c5847e45",
+      "merkleRoot": "0c62d527ce4e905ad4d17ba1c375534d227c27f2137f899b20b666ce9036af7d",
+      "leafCount": 55,
+      "note": "update exportPaths.ts",
+      "hash": "854dbbbc470a41149819ec6489047a55c35aa74918e85497b9cbd9e913be6b51"
     }
   ],
   "tipManifest": {
@@ -974,7 +982,7 @@
     "scripts/setup-linux.sh": "d759d679007975cf3cfbf9a26eb01a3240741ba769d6da9d886e9d57a17b5cba",
     "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
     "src/main/atomicWrite.ts": "bf8b56c514456eb2e34a47753ec493f877c94b901cb19038a8f238fe6cea022f",
-    "src/main/clients/exportPaths.ts": "1d7bad5e48f3f223da9b7b67e17022c9ffd67ace2145de92582f6bd55633565b",
+    "src/main/clients/exportPaths.ts": "4788462baaa1c48478b917204c5966b6a83a19c64a37340c736e7304ed76ee90",
     "src/main/clients/types.ts": "124a6ca165286f17b4542c0fddab5a3aacccc7d3bf8d8f3a82b53c3ee38c66a2",
     "src/main/main.ts": "f27de831233e0e34be4538212bc6959ec6f971b4744bdf9216689e7f06b01b56",
     "src/main/oauth.ts": "b32102aa5ce7f47066b305d393cc0bdeb0291006c1457ee8f4bfee70055370a1",

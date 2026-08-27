@@ -105,15 +105,25 @@ describe('isSafeExportPath', () => {
  * 片側に付いていた。**
  */
 describe('writeExportFile — 書き出しの権限', () => {
-  const mkDir = async (): Promise<string> =>
-    fs.mkdtemp(path.join(os.tmpdir(), 'export-mode-'));
+  /*
+   * **書き出し根の中に作る。** 2026-08-26 に `writeExportFile` が実体での
+   * 封じ込め (`assertExportTargetContained`) を通すようになったので、
+   * 素の一時ディレクトリへは書けない。`home` を渡して「その一時ディレクトリが
+   * 書き出し根になる」形にする —— 検査の対象は権限のままで、
+   * **書く場所がアプリの実際の書き先と揃う**という副産物がつく。
+   */
+  const mkHome = async (): Promise<string> => {
+    const home = await fs.mkdtemp(path.join(os.tmpdir(), 'export-mode-'));
+    await fs.mkdir(exportRoot(home), { recursive: true });
+    return home;
+  };
   const modeOf = async (p: string): Promise<string> =>
     ((await fs.stat(p)).mode & 0o777).toString(8);
 
   it('★ 新しく書き出したファイルは 0600', async () => {
-    const dir = await mkDir();
-    const f = path.join(dir, 'dash.html');
-    await writeExportFile(f, '<html>売上 1,234,567 円</html>');
+    const home = await mkHome();
+    const f = path.join(exportRoot(home), 'dash.html');
+    await writeExportFile(f, '<html>売上 1,234,567 円</html>', home);
     expect(await modeOf(f)).toBe('600');
   });
 
@@ -124,20 +134,20 @@ describe('writeExportFile — 書き出しの権限', () => {
    * `chmod` で明示的に直していることをここで留める。
    */
   it('★ 既に 0644 で在るファイルも、書き直すと 0600 になる', async () => {
-    const dir = await mkDir();
-    const f = path.join(dir, 'dash.html');
+    const home = await mkHome();
+    const f = path.join(exportRoot(home), 'dash.html');
     await fs.writeFile(f, 'old', 'utf8');
     await fs.chmod(f, 0o644);
     expect(await modeOf(f)).toBe('644');
 
-    await writeExportFile(f, 'new');
+    await writeExportFile(f, 'new', home);
     expect(await modeOf(f)).toBe('600');
   });
 
   it('中身は書けている (権限だけ直して書き損ねない)', async () => {
-    const dir = await mkDir();
-    const f = path.join(dir, 'dash.md');
-    await writeExportFile(f, '# 売上\n1,234,567 円\n');
+    const home = await mkHome();
+    const f = path.join(exportRoot(home), 'dash.md');
+    await writeExportFile(f, '# 売上\n1,234,567 円\n', home);
     expect(await fs.readFile(f, 'utf8')).toBe('# 売上\n1,234,567 円\n');
   });
 });
