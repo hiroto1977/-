@@ -419,6 +419,69 @@ function checkPublishScanCoverage(failures, ciOverride, overrides) {
 }
 
 /**
+ * **dist/ を掃除するビルドの順序。**
+ *
+ * vite は `emptyOutDir` で `dist/` を丸ごと掃除する。`.github/workflows/e2e.yml`
+ * は 3 つの vite ビルドを走らせるので、順序を間違えると**後ろのビルドが
+ * 前の成果物を消す**。実測 (2026-08-26):
+ *
+ * ```
+ *   build:web → 退避 → build:web:lite → 戻す   (両方そろう)
+ *   → build:renderer                            (dist/ が掃除され両方消える)
+ *   → perf                                      ★ 「ファイルがありません」で落ちる
+ * ```
+ *
+ * `build:renderer` と `smoke:app` は 2026-08-26 にこのファイルへ足したもので、
+ * **足した位置が後ろだった**。`e2e.yml` は既定で走らない (手動起動か `run-e2e`
+ * ラベル) ので、**誰も落ちるところを見ていなかった** —— 「在るが一度も
+ * 成功しないゲート」の形である。
+ *
+ * 直したうえで、順序そのものを機械で留める。
+ *
+ * @param textOverride self-test の差し込み口。
+ */
+function checkE2eBuildOrder(failures, textOverride) {
+  // `??` にすると `null` が「読めない」を表せない (null ?? x は x になり、
+  // **実ファイルを読みに行ってしまう**)。self-test で気付いた。
+  const text =
+    textOverride === undefined ? read(path.join(REPO_ROOT, '.github/workflows/e2e.yml')) : textOverride;
+  if (text === null) {
+    failures.push({ fact: 'e2e build order', reason: '.github/workflows/e2e.yml を読めない' });
+    return 0;
+  }
+  // ブラウザ版の成果物を要求する段。これらより後ろで dist/ を掃除してはいけない。
+  const consumers = ['npm run e2e', 'npm run e2e:lite', 'npm run perf'];
+  const firstConsumer = consumers
+    .map((c) => text.indexOf(c))
+    .filter((i) => i !== -1)
+    .sort((a, b) => a - b)[0];
+  const rendererAt = text.indexOf('npm run build:renderer');
+  const webAt = text.indexOf('npm run build:web');
+  if (rendererAt === -1 || webAt === -1) {
+    failures.push({
+      fact: 'e2e build order',
+      reason: 'e2e.yml に build:renderer / build:web が見当たらない — 順序を確かめられない',
+    });
+    return 0;
+  }
+  if (rendererAt > webAt) {
+    failures.push({
+      fact: 'e2e build order',
+      reason:
+        'build:renderer が build:web より後ろに在る —— vite の emptyOutDir が ' +
+        'standalone.html / standalone-lite.html を消すので、後段の e2e / perf が必ず落ちる',
+    });
+  }
+  if (firstConsumer !== undefined && rendererAt > firstConsumer) {
+    failures.push({
+      fact: 'e2e build order',
+      reason: 'build:renderer が e2e / perf より後ろに在る —— 成果物を消してから測ることになる',
+    });
+  }
+  return 1;
+}
+
+/**
  * 逆向きの照合 — **「CI に無い」と書いてあるものが、本当に無いか。**
  *
  * `checkCiGateCoverage` は「ゲートを足したのに CI へ繋ぎ忘れた」を見る。
@@ -883,6 +946,36 @@ function selfTest() {
     if (noWhy.length > 0) bad++;
     console.log(`  ${noWhy.length === 0 ? '✓' : '✗'} 出荷物検査の台帳 ${ARTIFACT_SCANNERS.length} 件に理由がある`);
   }
+
+  /*
+   * dist/ を掃除するビルドの順序。2026-08-26 に実在した形 ——
+   * `build:renderer` を `perf` の前に足したら、vite の emptyOutDir が
+   * ブラウザ版の成果物を消し、`perf` が「ファイルがありません」で落ちた。
+   * `e2e.yml` は既定で走らないので、誰も落ちるところを見ていなかった。
+   */
+  {
+    const R = '      - run: npm run build:renderer\n';
+    const W = '      - run: npm run build:web\n';
+    const P = '      - run: npm run perf\n';
+    const E = '      - run: npm run e2e\n';
+    for (const [label, text, expected] of [
+      ['正しい順 (renderer → web → e2e → perf) なら鳴らない', R + W + E + P, 0],
+      // renderer が web の後ろでも e2e より前なら、鳴るのは「web より後ろ」の 1 件だけ。
+      // 最初は 2 件と書いて落ちた —— **期待のほうが誤っていた**。
+      ['★ renderer が web の後ろなら鳴る', W + R + E + P, 1],
+      ['★ renderer が perf の後ろなら鳴る', W + E + P + R, 2],
+      ['★ renderer が e2e の後ろなら鳴る (perf が無くても)', W + E + R, 2],
+      ['build:renderer が無ければ「確かめられない」で鳴る', W + E + P, 1],
+      ['build:web が無ければ「確かめられない」で鳴る', R + E + P, 1],
+      ['読めなければ鳴る', null, 1],
+    ]) {
+      const f = [];
+      checkE2eBuildOrder(f, text);
+      const ok = f.length === expected;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} ビルド順: ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+  }
   /*
    * `selfTestFailed` は `checkNotInCiClaims` 側のケースが立てる旗である。
    * **2026-08-25 まで、この旗はどこからも読まれていなかった** ——
@@ -944,11 +1037,13 @@ function main() {
   checkNotInCiClaims(failures);
   const catCount = checkReadmeCategories(failures);
   const pubCount = checkPublishScanCoverage(failures);
+  const orderCount = checkE2eBuildOrder(failures);
 
   console.log(
     `Checked ${factCount} cross-doc facts against canonical source + ${gateCount} verify:all gate(s) against ci.yml` +
       ` + README ${catCount} カテゴリの内訳を services.ts と照合` +
-      ` + 出荷物検査 ${pubCount} 件が pages.yml でも公開前に走ることを照合`,
+      ` + 出荷物検査 ${pubCount} 件が pages.yml でも公開前に走ることを照合` +
+      ` + e2e.yml のビルド順 ${orderCount} 件 (dist/ を掃除する側が後ろに来ていないこと)`,
   );
   if (failures.length === 0) {
     console.log('✅ all docs agree with source, and every gate runs in CI');

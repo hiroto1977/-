@@ -46,7 +46,11 @@ npm run dev              # Vite + Electron, hot reload (desktop dev)
 npm run build:web        # → dist/standalone.html (browser build; runs inline-html.cjs)
 npm run build:web:lite   # → dist/standalone-lite.html (~2MB モバイル版・学術コーパス非搭載)
 npm run e2e              # Playwright 実機 E2E (desktop/phone/tablet)。e2e:lite で LITE 版を検証
-npm run perf             # 起動性能ゲート (実 chromium)。起動時の巨大 JSON.parse を検出。要 build:web + build:web:lite
+npm run perf             # 起動性能ゲート (実 chromium)。起動時の巨大 JSON.parse を検出。
+                         #   フル版と LITE 版の**両方**が要る。vite の emptyOutDir が dist/ を掃除するので
+                         #   `build:web && build:web:lite` と続けると**フル版が消えて perf が落ちる** ——
+                         #   フル版を退避してから lite を作ること (e2e.yml がその順序を持っている)。
+                         #   `build:renderer` も vite なので、走らせるならブラウザ版より**前に**
 npm run e2e:ollama       # Ollama 連携 E2E (スタブ Ollama + 実 chromium)。未起動/CORS未許可/接続成功の3状態
 npm run ollama           # Ollama CLI (ブラウザ不要・CORS 無縁)。`-- chat <model> "..."` で対話
 npm run ollama:setup     # 導入→モデル取得→起動→1往復して確認。足りない段だけ埋める

@@ -54,6 +54,28 @@ jobs:
       - name: Install Playwright chromium
         run: npx playwright install --with-deps chromium
 
+      # **実物のデスクトップアプリを起動する。**
+      #
+      # 2026-08-26 まで、これを誰もやっていなかった。smoke は
+      # `scripts/screenshot.cjs` を主プロセスにして自前で窓を作るので
+      # `dist-electron/main.js` を一度も通らず、e2e はブラウザ版の HTML を
+      # 読み、release.yml はインストーラを作るが起動はしない。
+      # その結果 `electron .` は 2026-08-12 から
+      # 「Cannot find module '../../shared/serviceId'」で落ち続けていた
+      # (バンドラが実行時 require を書き換えないため)。全 CI は緑のまま。
+      #
+      # **ブラウザ版のビルドより前に置く。** `build:renderer` も vite なので
+      # `emptyOutDir` で `dist/` を掃除する —— 後ろに置くと、せっかく退避して
+      # 戻した `standalone.html` / `standalone-lite.html` を消してしまい、
+      # 最後の `perf` が「ファイルがありません」で必ず落ちる。
+      # 2026-08-26 にこの 2 段を足したときは後ろに置いていて、実測で気付いた
+      # (e2e.yml は既定で走らないので、誰も落ちるところを見ていなかった)。
+      - name: Build desktop renderer
+        run: npm run build:renderer
+
+      - name: Smoke (real desktop app starts)
+        run: xvfb-run -a npm run smoke:app
+
       # フル版 → 退避 → LITE 版 → フル版を戻す。`build:web` は emptyOutDir で
       # dist/ を掃除するため、この順序でないと片方が消える (pages.yml と同じ罠)。
       - name: Build both browser targets
@@ -75,24 +97,6 @@ jobs:
           github.event_name != 'workflow_dispatch' ||
           inputs.target == 'both' || inputs.target == 'lite'
         run: npm run e2e:lite
-
-      # **実物のデスクトップアプリを起動する。**
-      #
-      # 2026-08-26 まで、これを誰もやっていなかった。smoke は
-      # `scripts/screenshot.cjs` を主プロセスにして自前で窓を作るので
-      # `dist-electron/main.js` を一度も通らず、e2e はブラウザ版の HTML を
-      # 読み、release.yml はインストーラを作るが起動はしない。
-      # その結果 `electron .` は 2026-08-12 から
-      # 「Cannot find module '../../shared/serviceId'」で落ち続けていた
-      # (バンドラが実行時 require を書き換えないため)。全 CI は緑のまま。
-      #
-      # デスクトップ用の成果物 (dist/index.html + dist-electron/) は
-      # build:web が作らないので、ここで build:renderer を通す。
-      - name: Build desktop renderer
-        run: npm run build:renderer
-
-      - name: Smoke (real desktop app starts)
-        run: xvfb-run -a npm run smoke:app
 
       # 起動性能。巨大な JSON.parse が起動時に戻っていないかを見る。
       - name: Startup performance

@@ -151,8 +151,12 @@ async function measure(browser, port, file) {
   if (missing.length > 0) {
     console.error(
       `perf: ${missing.map((m) => m.file).join(', ')} がありません — ` +
-        'npm run build:web && npm run build:web:lite を先に実行してください ' +
-        '(build:web は dist/ を空にするため、フル版を退避してから lite を作る順序が必要)',
+        '両方のブラウザ版を先に作ってください。**この順でないと片方が消えます** ' +
+        '(vite の emptyOutDir が dist/ を掃除するため):\n' +
+        '    npm run build:web && cp dist/standalone.html /tmp/full.html \\\n' +
+        '      && npm run build:web:lite && cp /tmp/full.html dist/standalone.html\n' +
+        '  `npm run build:renderer` も vite なので、走らせるならブラウザ版より**前に** ' +
+        '(後ろだと両方消える。2026-08-26 に e2e.yml で実際にそうなっていた)',
     );
     process.exit(2);
   }
