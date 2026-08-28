@@ -145,6 +145,12 @@ export interface TalentSnapshot {
   readonly achievement: AchievementStatus;
   readonly ladder: LadderReview;
   readonly initiatives: readonly Initiative[];
+  /**
+   * 保存されている申告そのもの。`diagnosis.tallies` は病→部署の集計なので、
+   * **画面が編集し直すには元の形が要る**。集計から復元すると、病を 1 つも
+   * 挙げていない部署が消えるなど情報が落ちる。
+   */
+  readonly reports: readonly DeptReport[];
   readonly updatedAt: string;
   readonly disqualifiersSource: SourceStrength;
   readonly stepsSource: SourceStrength;
@@ -167,6 +173,7 @@ export async function fetchTalentSnapshotImpl(
     achievement: achievementGap(state.initiatives),
     ladder: reviewLadder(state.members),
     initiatives: state.initiatives,
+    reports: state.reports,
     updatedAt: state.updatedAt,
     disqualifiersSource: LEADER_DISQUALIFIERS_SOURCE,
     stepsSource: SKILL_STEPS_SOURCE,

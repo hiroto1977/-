@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
@@ -40,10 +40,18 @@ interface DiseaseTally {
   readonly systemic: boolean;
 }
 interface LadderMember {
-  readonly id: string;
-  readonly name: string;
-  readonly step: number;
-  readonly yearsInStep: number;
+  id: string;
+  name: string;
+  step: number;
+  yearsInStep: number;
+}
+interface DeptReport {
+  department: string;
+  diseases: string[];
+}
+interface Initiative {
+  name: string;
+  probability: number;
 }
 interface TalentSnapshot {
   readonly diseases: readonly OrganDisease[];
@@ -61,11 +69,12 @@ interface TalentSnapshot {
     readonly counted: number;
   };
   readonly ladder: {
-    readonly members: readonly LadderMember[];
-    readonly stalled: readonly LadderMember[];
+    readonly members: readonly Readonly<LadderMember>[];
+    readonly stalled: readonly Readonly<LadderMember>[];
     readonly byStep: Readonly<Record<number, number>>;
   };
-  readonly initiatives: readonly { readonly name: string; readonly probability: number }[];
+  readonly initiatives: readonly Readonly<Initiative>[];
+  readonly reports: readonly Readonly<DeptReport>[];
   readonly updatedAt: string;
   /** 表ごとの出典の強さ。病は項ごと、10ヶ条と STEP は表まるごと 1 つ。 */
   readonly disqualifiersSource: SourceStrength;
@@ -102,6 +111,9 @@ function SourceBadge({ source }: { source: SourceStrength }): React.JSX.Element 
     </span>
   );
 }
+
+/** 入力欄の見た目。画面の配色に合わせる (他ページと同じ値)。 */
+const INPUT = { fontSize: 13, padding: '4px 6px', background: '#0f1117', color: '#e6e8ee', border: '1px solid #232936', borderRadius: 4 };
 
 export function TalentPage(): React.JSX.Element {
   // 資格情報が要らないので、マウント時に 1 度取る。取得できなくても定義表
@@ -145,6 +157,62 @@ export function TalentPage(): React.JSX.Element {
     [snap.diagnosis.tallies],
   );
 
+  // --- 入力 --------------------------------------------------------------
+  //
+  // 下書きは画面が持ち、**判定は持たない**。保存すると main (ブラウザ版は
+  // web-shim) が同じ `sanitize*` を通してから書き、`refresh()` が判定し直した
+  // 結果を返す。つまり画面に出る診断・不足・滞留は、**必ず保存された値から
+  // 計算されたもの**になる。手元で計算して見せると、保存前の値と保存後の値が
+  // 食い違ったときにどちらが本物か分からなくなる。
+  const [reports, setReports] = useState<DeptReport[]>([]);
+  const [initiatives, setInitiatives] = useState<Initiative[]>([]);
+  const [members, setMembers] = useState<LadderMember[]>([]);
+  const [loaded, setLoaded] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveMsg, setSaveMsg] = useState<string | null>(null);
+
+  // 取得できた保存値を 1 度だけ下書きへ写す。以後は利用者の編集を上書きしない。
+  useEffect(() => {
+    if (loaded) return;
+    if (source !== 'live') return;
+    setReports(snap.reports.map((r) => ({ department: r.department, diseases: [...r.diseases] })));
+    setInitiatives(snap.initiatives.map((i) => ({ ...i })));
+    setMembers(snap.ladder.members.map((m) => ({ ...m })));
+    setLoaded(true);
+  }, [source, loaded, snap]);
+
+  const save = async (): Promise<void> => {
+    setSaving(true);
+    setSaveMsg(null);
+    try {
+      const r = await window.serviceHub.invoke('talent', 'save-state', {
+        reports,
+        initiatives,
+        members,
+        updatedAt: new Date().toISOString().slice(0, 10),
+      });
+      if (r.ok) {
+        setSaveMsg('保存しました');
+        refresh();
+      } else {
+        setSaveMsg(`保存できませんでした: ${r.message}`);
+      }
+    } catch (e) {
+      setSaveMsg(`保存できませんでした: ${e instanceof Error ? e.message : String(e)}`);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const saveBar = (
+    <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 14, flexWrap: 'wrap' }}>
+      <button type="button" onClick={() => void save()} disabled={saving}>
+        {saving ? '保存中…' : '入力を保存して判定し直す'}
+      </button>
+      {saveMsg !== null && <span style={{ fontSize: 13, color: '#8a93a6' }}>{saveMsg}</span>}
+    </div>
+  );
+
   return (
     <div>
       <StatusBar
@@ -169,6 +237,7 @@ export function TalentPage(): React.JSX.Element {
         ) : (
           <p style={{ fontSize: 13, color: '#8a93a6' }}>まだ申告がありません。</p>
         )}
+
         <ul style={{ paddingLeft: 0, listStyle: 'none', display: 'grid', gap: 10 }}>
           {diseases.map((d) => {
             const tally = snap.diagnosis.tallies.find((t) => t.id === d.id);
@@ -188,6 +257,67 @@ export function TalentPage(): React.JSX.Element {
             );
           })}
         </ul>
+
+        <div style={{ display: 'grid', gap: 10, margin: '14px 0' }}>
+          {reports.map((r, idx) => (
+            <div key={idx} style={{ border: '1px solid #232936', borderRadius: 6, padding: '10px 12px' }}>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                <input
+                  type="text"
+                  value={r.department}
+                  placeholder="部署名"
+                  aria-label={`申告 ${idx + 1} の部署名`}
+                  onChange={(e) =>
+                    setReports((prev) =>
+                      prev.map((x, i) => (i === idx ? { ...x, department: e.target.value } : x)),
+                    )
+                  }
+                  style={INPUT}
+                />
+                <button
+                  type="button"
+                  onClick={() => setReports((prev) => prev.filter((_, i) => i !== idx))}
+                >
+                  削除
+                </button>
+              </div>
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 8 }}>
+                {diseases.map((d) => (
+                  <label key={d.id} style={{ display: 'flex', gap: 4, alignItems: 'center', fontSize: 13 }}>
+                    <input
+                      type="checkbox"
+                      checked={r.diseases.includes(d.id)}
+                      onChange={() =>
+                        setReports((prev) =>
+                          prev.map((x, i) =>
+                            i === idx
+                              ? {
+                                  ...x,
+                                  diseases: x.diseases.includes(d.id)
+                                    ? x.diseases.filter((y) => y !== d.id)
+                                    : [...x.diseases, d.id],
+                                }
+                              : x,
+                          ),
+                        )
+                      }
+                    />
+                    {d.name}
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+          <div>
+            <button
+              type="button"
+              onClick={() => setReports((prev) => [...prev, { department: '', diseases: [] }])}
+            >
+              部署の申告を追加
+            </button>
+          </div>
+        </div>
+        {saveBar}
       </Section>
 
       <Section title="達成確率100%キープの法則">
@@ -214,15 +344,55 @@ export function TalentPage(): React.JSX.Element {
             </div>
           </div>
         </div>
-        {snap.initiatives.length > 0 && (
-          <ul style={{ marginTop: 12, fontSize: 13 }}>
-            {snap.initiatives.map((i, idx) => (
-              <li key={`${i.name}-${idx}`}>
-                {i.name} — {i.probability}%
-              </li>
-            ))}
-          </ul>
-        )}
+        <div style={{ display: 'grid', gap: 8, marginTop: 14 }}>
+          {initiatives.map((it, idx) => (
+            <div key={idx} style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+              <input
+                type="text"
+                value={it.name}
+                placeholder="施策名"
+                aria-label={`施策 ${idx + 1} の名前`}
+                onChange={(e) =>
+                  setInitiatives((prev) =>
+                    prev.map((x, i) => (i === idx ? { ...x, name: e.target.value } : x)),
+                  )
+                }
+                style={{ ...INPUT, minWidth: 260 }}
+              />
+              <input
+                type="number"
+                min={0}
+                max={100}
+                value={it.probability}
+                aria-label={`施策 ${idx + 1} の達成確率 (%)`}
+                onChange={(e) =>
+                  setInitiatives((prev) =>
+                    prev.map((x, i) =>
+                      i === idx ? { ...x, probability: Number(e.target.value) } : x,
+                    ),
+                  )
+                }
+                style={{ ...INPUT, width: 90 }}
+              />
+              <span style={{ fontSize: 13, color: '#8a93a6' }}>%</span>
+              <button
+                type="button"
+                onClick={() => setInitiatives((prev) => prev.filter((_, i) => i !== idx))}
+              >
+                削除
+              </button>
+            </div>
+          ))}
+          <div>
+            <button
+              type="button"
+              onClick={() => setInitiatives((prev) => [...prev, { name: '', probability: 0 }])}
+            >
+              施策を追加
+            </button>
+          </div>
+        </div>
+        {saveBar}
       </Section>
 
       <Section title="登用判定 — 絶対にリーダーにしてはいけない人10ヶ条">
@@ -280,6 +450,80 @@ export function TalentPage(): React.JSX.Element {
             {snap.ladder.stalled.map((m) => `${m.name}（${m.yearsInStep}年）`).join('、')}
           </p>
         )}
+
+        <div style={{ display: 'grid', gap: 8, marginTop: 14 }}>
+          {members.map((m, idx) => (
+            <div key={idx} style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+              <input
+                type="text"
+                value={m.id}
+                placeholder="id (英小文字・数字・ハイフン)"
+                aria-label={`メンバー ${idx + 1} の id`}
+                onChange={(e) =>
+                  setMembers((prev) => prev.map((x, i) => (i === idx ? { ...x, id: e.target.value } : x)))
+                }
+                style={{ ...INPUT, width: 200 }}
+              />
+              <input
+                type="text"
+                value={m.name}
+                placeholder="氏名"
+                aria-label={`メンバー ${idx + 1} の氏名`}
+                onChange={(e) =>
+                  setMembers((prev) => prev.map((x, i) => (i === idx ? { ...x, name: e.target.value } : x)))
+                }
+                style={{ ...INPUT, width: 160 }}
+              />
+              <select
+                value={m.step}
+                aria-label={`メンバー ${idx + 1} の STEP`}
+                onChange={(e) =>
+                  setMembers((prev) =>
+                    prev.map((x, i) => (i === idx ? { ...x, step: Number(e.target.value) } : x)),
+                  )
+                }
+                style={INPUT}
+              >
+                {steps.map((st) => (
+                  <option key={st.step} value={st.step}>
+                    STEP{st.step} {st.name}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                min={0}
+                max={60}
+                value={m.yearsInStep}
+                aria-label={`メンバー ${idx + 1} の滞留年数`}
+                onChange={(e) =>
+                  setMembers((prev) =>
+                    prev.map((x, i) => (i === idx ? { ...x, yearsInStep: Number(e.target.value) } : x)),
+                  )
+                }
+                style={{ ...INPUT, width: 80 }}
+              />
+              <span style={{ fontSize: 13, color: '#8a93a6' }}>年</span>
+              <button type="button" onClick={() => setMembers((prev) => prev.filter((_, i) => i !== idx))}>
+                削除
+              </button>
+            </div>
+          ))}
+          <div>
+            <button
+              type="button"
+              onClick={() =>
+                setMembers((prev) => [
+                  ...prev,
+                  { id: `m${prev.length + 1}`, name: '', step: 1, yearsInStep: 0 },
+                ])
+              }
+            >
+              メンバーを追加
+            </button>
+          </div>
+        </div>
+        {saveBar}
       </Section>
     </div>
   );

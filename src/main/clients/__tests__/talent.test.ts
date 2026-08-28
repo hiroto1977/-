@@ -393,6 +393,63 @@ describe('状態の保存と読み込み', () => {
   });
 });
 
+describe('入力 → 保存 → 判定 の一巡', () => {
+  it('★ 保存した申告が snapshot から編集できる形で返る', async () => {
+    // 画面は `diagnosis.tallies` (病→部署の集計) を編集し直せない。
+    // 元の `reports` が返らないと、入力 UI は保存値を復元できず、
+    // 開くたびに空から入れ直すことになる。
+    const state: TalentState = {
+      reports: [
+        { department: '営業', diseases: ['imprint'] },
+        // 病を 1 つも挙げていない部署。集計から復元すると**消える**ので、
+        // 生の reports が要ることの標本にもなっている。
+        { department: '管理', diseases: [] },
+      ],
+      initiatives: [{ name: 'a', probability: 40 }],
+      members: [{ id: 'm1', name: '山田', step: 1, yearsInStep: 9 }],
+      updatedAt: '2026-08-28',
+    };
+    const snap = await fetchTalentSnapshotImpl(CTX, { loadState: async () => state });
+    expect(snap.reports).toEqual(state.reports);
+    // 集計側には「管理」が現れない (病を挙げていないため) ことも確かめる。
+    expect(snap.diagnosis.tallies.flatMap((t) => t.departments)).not.toContain('管理');
+    // それでも申告部署としては数えられている。
+    expect(snap.diagnosis.reportedDepartments).toBe(2);
+  });
+
+  it('★ 画面から保存 → 判定し直した値が返る (口が繋がっている)', async () => {
+    let stored: TalentState | null = null;
+    await saveTalentStateImpl(
+      {
+        token: '',
+        payload: {
+          reports: [
+            { department: '営業', diseases: ['imprint'] },
+            { department: '開発', diseases: ['imprint'] },
+          ],
+          initiatives: [{ name: '広告の入れ替え', probability: 40 }],
+          members: [{ id: 'm1', name: '山田', step: 1, yearsInStep: 9 }],
+          updatedAt: '2026-08-28',
+        },
+      },
+      {
+        save: async (st) => {
+          stored = st;
+          return st;
+        },
+      },
+    );
+    expect(stored).not.toBeNull();
+    const snap = await fetchTalentSnapshotImpl(CTX, {
+      loadState: async () => stored as unknown as TalentState,
+    });
+    // 保存した値から判定が出ていること。
+    expect(snap.diagnosis.systemic).toEqual(['imprint']);
+    expect(snap.achievement.shortfall).toBe(60);
+    expect(snap.ladder.stalled).toHaveLength(1);
+  });
+});
+
 describe('スナップショット', () => {
   it('保存された状態から判定済みの値を組み立てる', async () => {
     const snap = await fetchTalentSnapshotImpl(CTX, {

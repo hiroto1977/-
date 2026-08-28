@@ -1132,6 +1132,7 @@ export const SNAPSHOT = {
       byStep: {} as Record<number, number>,
     },
     initiatives: [] as { name: string; probability: number }[],
+    reports: [] as { department: string; diseases: string[] }[],
     updatedAt: '',
     disqualifiersSource: LEADER_DISQUALIFIERS_SOURCE,
     stepsSource: SKILL_STEPS_SOURCE,
