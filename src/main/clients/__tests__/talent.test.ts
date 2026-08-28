@@ -43,10 +43,10 @@ describe('5つの企業組織病 — 定義表', () => {
     expect(ORGAN_DISEASES.filter((d) => d.source === 'confirmed').map((d) => d.id)).toEqual([
       'imprint',
       'model-dependence',
+      'number-worship',
     ]);
     expect(ORGAN_DISEASES.filter((d) => d.source === 'secondary').map((d) => d.id)).toEqual([
       'shrinking',
-      'number-worship',
       'format-trust',
     ]);
   });
@@ -62,7 +62,10 @@ describe('5つの企業組織病 — 定義表', () => {
     // 実際の定義に含まれる語で留める (綴りが戻ったら鳴る)。
     const by = (id: string): string => ORGAN_DISEASES.find((d) => d.id === id)?.summary ?? '';
     expect(by('shrinking')).toContain('外部要因');
-    expect(by('number-worship')).toContain('万能');
+    // 「万能ではない」だけでは足りない —— 1 度目の訂正はここで止まっていて、
+    // 7 割 / 3 割という肝心の構造が抜けていた。構造のほうを留める。
+    expect(by('number-worship')).toContain('7割');
+    expect(by('number-worship')).toContain('3割');
     expect(by('format-trust')).toContain('勝ちパターン');
     // 旧語釈の綴りが残っていないこと。
     expect(by('format-trust')).not.toContain('埋めること自体が目的化');
