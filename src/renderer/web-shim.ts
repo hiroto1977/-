@@ -62,10 +62,11 @@ import {
 } from '../shared/assistantLimits';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import {
-  isValidLadderMember,
+  EMPTY_TALENT_STATE,
+  TALENT_STORAGE_KEY,
+  buildTalentSnapshot,
   judgeLeaderFitness,
-  sanitizeInitiatives,
-  sanitizeReports,
+  sanitizeTalentState,
 } from '../shared/talent';
 import { getVault } from './security/vault';
 import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_LENGTH } from '../shared/redact';
@@ -1142,6 +1143,25 @@ const shim = {
       return ok(buildEmotionsSnapshot(keyConfigured)) as ActionResult<T>;
     }
     /*
+     * talent は保存した申告・施策・滞留から**判定し直した物**を返す。
+     *
+     * ここが無いまま `not_implemented` へ落ちていた (2026-08-28 に e2e が
+     * 検出): 保存の口は動くのに、画面は同梱の空スナップショットを見続けるので
+     * 「入力しても診断が変わらない」。デスクトップ版と同じ
+     * `buildTalentSnapshot` を通すので、答えは 2 つの実行形態で一致する。
+     */
+    if (serviceId === 'talent') {
+      let state = EMPTY_TALENT_STATE;
+      try {
+        const raw = localStorage.getItem(TALENT_STORAGE_KEY);
+        if (raw !== null) state = sanitizeTalentState(JSON.parse(raw) as unknown);
+      } catch {
+        // 壊れた保存値と未保存を区別しても画面ですることは同じ。空で続ける。
+        state = EMPTY_TALENT_STATE;
+      }
+      return ok(buildTalentSnapshot(state)) as ActionResult<T>;
+    }
+    /*
      * security は「鍵が入っているか」だけがブラウザでも観測できる。
      *
      * ## ここが `not_implemented` を返し続けていた影響 (2026-08-25 実測)
@@ -1282,15 +1302,9 @@ const shim = {
     // 書くが、ブラウザ版はファイルを持たないので localStorage に置く。
     // **保存する前に main 側と同じ正規化を通す** (共有関数なのでズレない)。
     if (serviceId === 'talent' && action === 'save-state') {
-      const p = payload as Record<string, unknown>;
-      const clean = {
-        reports: sanitizeReports(p['reports']),
-        initiatives: sanitizeInitiatives(p['initiatives']),
-        members: Array.isArray(p['members']) ? p['members'].filter(isValidLadderMember) : [],
-        updatedAt: typeof p['updatedAt'] === 'string' ? p['updatedAt'].slice(0, 32) : '',
-      };
+      const clean = sanitizeTalentState(payload);
       try {
-        localStorage.setItem('servicehub.talent.state.v1', JSON.stringify(clean));
+        localStorage.setItem(TALENT_STORAGE_KEY, JSON.stringify(clean));
         return ok(clean) as ActionResult<T>;
       } catch {
         return err('action_failed', 'localStorage への保存に失敗しました');

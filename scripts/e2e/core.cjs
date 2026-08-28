@@ -2209,6 +2209,107 @@ async function businessComparisonSuite(browser) {
   await ctx.close();
 }
 
+
+/**
+ * 人材育成 —— **入力から判定までが実際に繋がっているか**。
+ *
+ * 単体検査は判定 (`src/shared/talent.ts`) と口 (`ACTIONS`) をそれぞれ留めて
+ * いるが、**画面で入力した値がその口へ届いているか**は誰も見ていない。
+ * `save-state` は一度「口も検査も揃っているのに画面から呼べない」状態で
+ * 出荷しかけた (2026-08-28)。ここが繋がっていることは実物でしか確かめられない。
+ *
+ * ブラウザ版なので保存先は localStorage で、判定は web-shim が
+ * shared の同じ関数を呼ぶ。デスクトップ版は同じ口が
+ * `~/.local/business-hub/talent.json` へ書く。
+ */
+async function talentSuite(browser) {
+  console.log('\n=== talent (人材育成: 入力 → 保存 → 判定) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE + '#/talent', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('text=5つの企業組織病', { timeout: 30000 });
+
+  // --- 定義表は取得の成否に関わらず出る (snapshot が shared の実物を指す) ---
+  ok(await page.locator('text=職務定義の刷り込み誤認').count() > 0,
+    'talent: 5つの病が出る');
+  ok(await page.locator('text=うそをついてごまかす').count() > 0,
+    'talent: 10ヶ条が出る');
+  ok(await page.locator('text=しくみをつくるスキル').count() > 0,
+    'talent: 4つの STEP が出る');
+  // 出典の強さが**画面に出ている**こと。読み解きと確認済みを混ぜて配らない。
+  ok(await page.locator('text=定義確認済み').count() > 0,
+    'talent: 出典の札が出る (定義確認済み)');
+  ok(await page.locator('text=第三者の解説で確認').count() > 0,
+    'talent: 出典の札が段で分かれている (第三者)');
+
+  // --- 登用判定: 1 つでも該当したら不可 ---
+  await page.getByRole('button', { name: '登用可否を判定' }).click();
+  await page.waitForSelector('text=該当なし', { timeout: 15000 });
+  ok(await page.locator('text=リーダーとして登用できます').count() > 0,
+    'talent: 該当ゼロなら登用できる');
+
+  await page.locator('label', { hasText: 'うそをついてごまかす' }).locator('input[type="checkbox"]').check();
+  await page.getByRole('button', { name: '登用可否を判定' }).click();
+  await page.waitForSelector('text=リーダーには据えず', { timeout: 15000 });
+  ok(await page.locator('text=1 件該当').count() > 0,
+    'talent: ★ 1 つでも該当したら不可 (閾値を置かない)');
+
+  // --- 入力 → 保存 → 判定 ---
+  // 2 部署が同じ病を挙げる = 仕組みの問題、という判定が出るところまで通す。
+  await page.getByRole('button', { name: '部署の申告を追加' }).click();
+  await page.getByLabel('申告 1 の部署名').fill('営業');
+  await page.locator('div').filter({ hasText: /^営業$/ }).first().waitFor({ state: 'attached' }).catch(() => {});
+  const firstCard = page.locator('input[aria-label="申告 1 の部署名"]').locator('xpath=../..');
+  await firstCard.locator('label', { hasText: '職務定義の刷り込み誤認' }).locator('input').check();
+
+  await page.getByRole('button', { name: '部署の申告を追加' }).click();
+  await page.getByLabel('申告 2 の部署名').fill('開発');
+  const secondCard = page.locator('input[aria-label="申告 2 の部署名"]').locator('xpath=../..');
+  await secondCard.locator('label', { hasText: '職務定義の刷り込み誤認' }).locator('input').check();
+
+  // 施策 40% だけ入れる → 不足 60% が出るはず。
+  await page.getByRole('button', { name: '施策を追加' }).click();
+  await page.getByLabel('施策 1 の名前').fill('広告の入れ替え');
+  await page.getByLabel('施策 1 の達成確率 (%)').fill('40');
+
+  // STEP1 に 9 年 → 滞留として挙がるはず (目安 5 年を超えている)。
+  await page.getByRole('button', { name: 'メンバーを追加' }).click();
+  await page.getByLabel('メンバー 1 の氏名').fill('山田');
+  await page.getByLabel('メンバー 1 の滞留年数').fill('9');
+
+  await page.getByRole('button', { name: '入力を保存して判定し直す' }).first().click();
+  await page.waitForSelector('text=保存しました', { timeout: 20000 });
+  ok(true, 'talent: 保存が成功する (口が画面から呼べている)');
+
+  // 保存された値から**判定し直された**結果が出ること。
+  await page.waitForSelector('text=仕組みの問題と判定', { timeout: 20000 });
+  const systemicLine = await page.locator('text=仕組みの問題と判定').first().innerText();
+  ok(systemicLine.includes('職務定義の刷り込み誤認'),
+    `talent: ★ 2 部署で重なった病が「仕組みの問題」と判定される — 実際 ${JSON.stringify(systemicLine)}`);
+
+  const shortfall = await page.evaluate(() => {
+    const els = [...document.querySelectorAll('div')];
+    const hit = els.find((e) => e.textContent?.trim() === '不足（この分の施策を足す）');
+    return hit?.previousElementSibling?.textContent?.trim() ?? null;
+  });
+  ok(shortfall === '60%', `talent: ★ 施策 40% なら不足 60% と出る — 実際 ${shortfall}`);
+
+  ok(await page.locator('text=STEP1 に習得目安を超えて滞留').count() > 0,
+    'talent: ★ STEP1 に 9 年の滞留が挙がる');
+
+  // --- 保存先が localStorage の台帳どおりであること ---
+  const stored = await page.evaluate(() => localStorage.getItem('servicehub.talent.state.v1'));
+  ok(stored !== null && stored.includes('営業'),
+    'talent: 台帳に載せた鍵 (servicehub.talent.state.v1) へ保存されている');
+
+  ok(errs.length === 0, `talent: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
 (async () => {
   console.log(`E2E 対象: ${targetAbs} (${(fs.statSync(targetAbs).size / 1048576).toFixed(2)} MB)`);
   const browser = await pw.chromium.launch({
@@ -2239,6 +2340,7 @@ async function businessComparisonSuite(browser) {
   if (run('thirdPartyDisclosure')) await thirdPartyDisclosureSuite(browser);
   if (run('realtime')) await realtimeSuite(browser);
   if (run('phone')) await phoneSuite(browser);
+  if (run('talent')) await talentSuite(browser);
   if (run('tablet')) await tabletSuite(browser);
   await browser.close();
   if (failures.length > 0) {

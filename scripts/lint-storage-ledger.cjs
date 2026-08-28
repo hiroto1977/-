@@ -202,6 +202,12 @@ const INDIRECT_SITES = [
     keys: ['pkce.verifier', 'pkce.state', 'pkce.clientId', 'pkce.redirectUri'],
     why: '`KEY_PREFIX + k` を組み立てる。`KEYS` は 4 つに固定で、増やすならその配列だけ (同ファイルにそう書いてある)。',
   },
+  {
+    file: 'src/renderer/web-shim.ts',
+    expr: 'TALENT_STORAGE_KEY',
+    keys: ['servicehub.talent.state.v1'],
+    why: '`src/shared/talent.ts` の定数を import している。デスクトップ版と読み書きの入口を 1 つにするため、鍵の定義も shared 側に置いた (走査は同一ファイル内の const しか解決しない)。',
+  },
 ];
 
 // --- 走査 -----------------------------------------------------------------

@@ -2,29 +2,13 @@ import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {
-  LEADER_DISQUALIFIERS,
-  LEADER_DISQUALIFIERS_SOURCE,
-  ORGAN_DISEASES,
-  SKILL_STEPS,
-  SKILL_STEPS_SOURCE,
-  achievementGap,
-  diagnoseOrg,
-  isValidLadderMember,
+  EMPTY_TALENT_STATE,
+  buildTalentSnapshot,
   judgeLeaderFitness,
-  reviewLadder,
-  sanitizeInitiatives,
-  sanitizeReports,
-  type AchievementStatus,
-  type Disqualifier,
-  type Initiative,
-  type LadderMember,
-  type LadderReview,
+  sanitizeTalentState,
   type LeaderFitness,
-  type OrganDisease,
-  type OrgDiagnosis,
-  type SkillStep,
-  type SourceStrength,
-  type DeptReport,
+  type TalentSnapshot,
+  type TalentState,
 } from '../../shared/talent';
 import type { ActionContext, ActionMap, FetchContext } from './types';
 
@@ -63,13 +47,6 @@ export * from '../../shared/talent';
 
 // --- 状態の保存 --------------------------------------------------------
 
-export interface TalentState {
-  readonly reports: readonly DeptReport[];
-  readonly initiatives: readonly Initiative[];
-  readonly members: readonly LadderMember[];
-  readonly updatedAt: string;
-}
-
 export function defaultStatePath(): string {
   return path.join(os.homedir(), '.local', 'business-hub', 'talent.json');
 }
@@ -81,13 +58,6 @@ export interface StateDeps {
   statePath?: () => string;
 }
 
-const EMPTY_STATE: TalentState = {
-  reports: [],
-  initiatives: [],
-  members: [],
-  updatedAt: '',
-};
-
 /**
  * 保存された状態を読む。読めなければ空で返す —— 初回起動と壊れたファイルを
  * 区別しても画面ですることが同じなので、分けない。
@@ -96,18 +66,9 @@ export async function loadTalentState(deps: StateDeps = {}): Promise<TalentState
   const p = (deps.statePath ?? defaultStatePath)();
   const read = deps.readFile ?? ((q: string) => fs.readFile(q, 'utf8'));
   try {
-    const parsed = JSON.parse(await read(p)) as unknown;
-    if (parsed === null || typeof parsed !== 'object') return EMPTY_STATE;
-    const o = parsed as Record<string, unknown>;
-    const updatedAt = o['updatedAt'];
-    return {
-      reports: sanitizeReports(o['reports']),
-      initiatives: sanitizeInitiatives(o['initiatives']),
-      members: Array.isArray(o['members']) ? o['members'].filter(isValidLadderMember) : [],
-      updatedAt: typeof updatedAt === 'string' ? updatedAt.slice(0, 32) : '',
-    };
+    return sanitizeTalentState(JSON.parse(await read(p)) as unknown);
   } catch {
-    return EMPTY_STATE;
+    return EMPTY_TALENT_STATE;
   }
 }
 
@@ -124,37 +85,13 @@ export async function saveTalentState(state: TalentState, deps: StateDeps = {}):
     await fs.writeFile(q, c, { mode: 0o600 });
     await fs.chmod(q, 0o600);
   });
-  const clean: TalentState = {
-    reports: sanitizeReports(state.reports),
-    initiatives: sanitizeInitiatives(state.initiatives),
-    members: Array.isArray(state.members) ? state.members.filter(isValidLadderMember) : [],
-    updatedAt: typeof state.updatedAt === 'string' ? state.updatedAt.slice(0, 32) : '',
-  };
+  const clean = sanitizeTalentState(state);
   await mkdir(path.dirname(p));
   await write(p, JSON.stringify(clean, null, 2));
   return clean;
 }
 
 // --- スナップショット --------------------------------------------------
-
-export interface TalentSnapshot {
-  readonly diseases: readonly OrganDisease[];
-  readonly steps: readonly SkillStep[];
-  readonly disqualifiers: readonly Disqualifier[];
-  readonly diagnosis: OrgDiagnosis;
-  readonly achievement: AchievementStatus;
-  readonly ladder: LadderReview;
-  readonly initiatives: readonly Initiative[];
-  /**
-   * 保存されている申告そのもの。`diagnosis.tallies` は病→部署の集計なので、
-   * **画面が編集し直すには元の形が要る**。集計から復元すると、病を 1 つも
-   * 挙げていない部署が消えるなど情報が落ちる。
-   */
-  readonly reports: readonly DeptReport[];
-  readonly updatedAt: string;
-  readonly disqualifiersSource: SourceStrength;
-  readonly stepsSource: SourceStrength;
-}
 
 export interface SnapshotDeps {
   loadState?: (deps?: StateDeps) => Promise<TalentState>;
@@ -164,20 +101,7 @@ export async function fetchTalentSnapshotImpl(
   _ctx: FetchContext,
   deps: SnapshotDeps = {},
 ): Promise<TalentSnapshot> {
-  const state = await (deps.loadState ?? loadTalentState)();
-  return {
-    diseases: ORGAN_DISEASES,
-    steps: SKILL_STEPS,
-    disqualifiers: LEADER_DISQUALIFIERS,
-    diagnosis: diagnoseOrg(state.reports),
-    achievement: achievementGap(state.initiatives),
-    ladder: reviewLadder(state.members),
-    initiatives: state.initiatives,
-    reports: state.reports,
-    updatedAt: state.updatedAt,
-    disqualifiersSource: LEADER_DISQUALIFIERS_SOURCE,
-    stepsSource: SKILL_STEPS_SOURCE,
-  };
+  return buildTalentSnapshot(await (deps.loadState ?? loadTalentState)());
 }
 
 export async function fetchTalentSnapshot(ctx: FetchContext): Promise<TalentSnapshot> {
@@ -194,14 +118,7 @@ export async function saveTalentStateImpl(
   ctx: ActionContext,
   deps: SaveStateDeps = {},
 ): Promise<TalentState> {
-  const p = ctx.payload;
-  const state: TalentState = {
-    reports: sanitizeReports(p['reports']),
-    initiatives: sanitizeInitiatives(p['initiatives']),
-    members: Array.isArray(p['members']) ? p['members'].filter(isValidLadderMember) : [],
-    updatedAt: typeof p['updatedAt'] === 'string' ? p['updatedAt'].slice(0, 32) : '',
-  };
-  return (deps.save ?? saveTalentState)(state, deps);
+  return (deps.save ?? saveTalentState)(sanitizeTalentState(ctx.payload), deps);
 }
 
 async function saveStateAction(ctx: ActionContext): Promise<TalentState> {

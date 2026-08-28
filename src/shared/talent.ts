@@ -382,3 +382,79 @@ export function sanitizeInitiatives(raw: unknown): readonly Initiative[] {
   }
   return out;
 }
+
+// --- 状態とスナップショット (両方の実行形態が同じ物を組む) --------------
+//
+// 保存先だけが違う。デスクトップ版は `~/.local/business-hub/talent.json`、
+// ブラウザ版は `localStorage['servicehub.talent.state.v1']`。
+// **読んだ後に何を計算するかは、ここ 1 か所しかない。**
+// 2026-08-28 に e2e が捕まえた: ブラウザ版は `fetchSnapshot` に talent の
+// 枝が無く `not_implemented` へ落ちていたので、保存はできるのに画面は
+// 同梱の空スナップショットのままだった —— 保存した申告が一度も判定に
+// 通らない、という「口はあるが繋がっていない」状態。
+
+export interface TalentState {
+  readonly reports: readonly DeptReport[];
+  readonly initiatives: readonly Initiative[];
+  readonly members: readonly LadderMember[];
+  readonly updatedAt: string;
+}
+
+export const EMPTY_TALENT_STATE: TalentState = {
+  reports: [],
+  initiatives: [],
+  members: [],
+  updatedAt: '',
+};
+
+/** ブラウザ版の保存先。台帳 (`lint:storage`) に載る鍵はこれ 1 つ。 */
+export const TALENT_STORAGE_KEY = 'servicehub.talent.state.v1';
+
+/** どこから来た値でも、判定へ渡す前にこれを通す。 */
+export function sanitizeTalentState(raw: unknown): TalentState {
+  if (raw === null || typeof raw !== 'object') return EMPTY_TALENT_STATE;
+  const o = raw as Record<string, unknown>;
+  const updatedAt = o['updatedAt'];
+  return {
+    reports: sanitizeReports(o['reports']),
+    initiatives: sanitizeInitiatives(o['initiatives']),
+    members: Array.isArray(o['members']) ? o['members'].filter(isValidLadderMember) : [],
+    updatedAt: typeof updatedAt === 'string' ? updatedAt.slice(0, 32) : '',
+  };
+}
+
+export interface TalentSnapshot {
+  readonly diseases: readonly OrganDisease[];
+  readonly steps: readonly SkillStep[];
+  readonly disqualifiers: readonly Disqualifier[];
+  readonly diagnosis: OrgDiagnosis;
+  readonly achievement: AchievementStatus;
+  readonly ladder: LadderReview;
+  readonly initiatives: readonly Initiative[];
+  /**
+   * 保存されている申告そのもの。`diagnosis.tallies` は病→部署の集計なので、
+   * **画面が編集し直すには元の形が要る**。集計から復元すると、病を 1 つも
+   * 挙げていない部署が消えるなど情報が落ちる。
+   */
+  readonly reports: readonly DeptReport[];
+  readonly updatedAt: string;
+  readonly disqualifiersSource: SourceStrength;
+  readonly stepsSource: SourceStrength;
+}
+
+/** 保存された状態から画面が出す物を組む。**判定はここでしか走らない。** */
+export function buildTalentSnapshot(state: TalentState): TalentSnapshot {
+  return {
+    diseases: ORGAN_DISEASES,
+    steps: SKILL_STEPS,
+    disqualifiers: LEADER_DISQUALIFIERS,
+    diagnosis: diagnoseOrg(state.reports),
+    achievement: achievementGap(state.initiatives),
+    ladder: reviewLadder(state.members),
+    initiatives: state.initiatives,
+    reports: state.reports,
+    updatedAt: state.updatedAt,
+    disqualifiersSource: LEADER_DISQUALIFIERS_SOURCE,
+    stepsSource: SKILL_STEPS_SOURCE,
+  };
+}

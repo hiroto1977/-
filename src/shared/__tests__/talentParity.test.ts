@@ -5,11 +5,14 @@ import {
   LEADER_DISQUALIFIERS,
   ORGAN_DISEASES,
   SKILL_STEPS,
+  TALENT_STORAGE_KEY,
   achievementGap,
+  buildTalentSnapshot,
   diagnoseOrg,
   judgeLeaderFitness,
   sanitizeInitiatives,
   sanitizeReports,
+  sanitizeTalentState,
 } from '../talent';
 
 /**
@@ -85,5 +88,56 @@ describe('取得が失敗しても画面が使えること', () => {
     expect(SNAPSHOT.talent.diseases).toBe(ORGAN_DISEASES);
     expect(SNAPSHOT.talent.disqualifiers).toBe(LEADER_DISQUALIFIERS);
     expect(SNAPSHOT.talent.steps).toBe(SKILL_STEPS);
+  });
+});
+
+/**
+ * 保存した物が**読み戻されて判定に通る**こと。
+ *
+ * 2026-08-28、e2e (`SERVICE_HUB_E2E_ONLY=talent`) が実機で捕まえた:
+ * ブラウザ版の `fetchSnapshot` に talent の枝が無く `not_implemented` へ
+ * 落ちていたので、`save-state` は localStorage へ正しく書けているのに
+ * 画面は同梱の空スナップショットを見続けた —— 「入力しても診断が変わらない」。
+ * 書ける口があることと、書いた物が読まれることは、別の主張である。
+ */
+describe('保存した物が読み戻されること', () => {
+  it('★ web-shim の fetchSnapshot が talent を扱う (not_implemented へ落ちない)', () => {
+    const shim = read('src/renderer/web-shim.ts');
+    const fetchPart = shim.slice(shim.indexOf('  fetchSnapshot:'), shim.indexOf('  invoke:'));
+    // 肯定形 — 枝が消えれば必ず鳴る。
+    expect(fetchPart).toContain("serviceId === 'talent'");
+    expect(fetchPart).toContain('buildTalentSnapshot');
+    expect(fetchPart).toContain('TALENT_STORAGE_KEY');
+    // 標本: 切り出しが空振りしていないことを、在るはずの物で確かめる。
+    expect(fetchPart).toContain('not_implemented');
+    expect(fetchPart.length).toBeGreaterThan(500);
+  });
+
+  it('★ 保存 → 読み戻し で判定が動く (両方の実行形態が通る経路)', () => {
+    // save-state が書く形をそのまま文字列にして、読み戻す。
+    const written = JSON.stringify(
+      sanitizeTalentState({
+        reports: [
+          { department: '営業', diseases: ['imprint'] },
+          { department: '開発', diseases: ['imprint'] },
+        ],
+        initiatives: [{ name: '広告の入れ替え', probability: 40 }],
+        members: [{ id: 'm1', name: '山田', step: 1, yearsInStep: 9 }],
+        updatedAt: '2026-08-28',
+      }),
+    );
+    const snap = buildTalentSnapshot(sanitizeTalentState(JSON.parse(written) as unknown));
+    expect(snap.diagnosis.reportedDepartments).toBe(2);
+    expect(snap.diagnosis.systemic).toEqual(['imprint']);
+    expect(snap.achievement.shortfall).toBe(60);
+    expect(snap.ladder.stalled).toHaveLength(1);
+    // 元の申告が残っていること (画面が編集し直せる形)。
+    expect(snap.reports).toHaveLength(2);
+  });
+
+  it('鍵は 1 つ、両方の実行形態が同じ物を使う', () => {
+    expect(TALENT_STORAGE_KEY).toBe('servicehub.talent.state.v1');
+    const ledger = read('scripts/lint-storage-ledger.cjs');
+    expect(ledger).toContain(TALENT_STORAGE_KEY);
   });
 });
