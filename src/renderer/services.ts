@@ -688,9 +688,9 @@ export const SERVICES: ServiceDefinition[] = [
     id: 'talent',
     label: '人材育成',
     icon: 'JI',
-    category: 'tools',
     description: '組織病の診断・登用判定・達成確率100%キープ・育成ロードマップ',
     page: TalentPage,
+    category: 'tools',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];

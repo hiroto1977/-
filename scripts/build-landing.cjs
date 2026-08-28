@@ -278,4 +278,8 @@ function main() {
   console.log(`Wrote ${OUT} (${(html.length / 1024).toFixed(1)} KB) — ${services.length} services, ${tests} tests`);
 }
 
-main();
+// 読み込むだけで dist/ へ書き出していたので、外から証人を立てられなかった。
+// (build-knowledge-vault.cjs と同じ形。2026-08-28 に両方へ番をつけた。)
+module.exports = { parseServices, countEntries };
+
+if (require.main === module) main();
