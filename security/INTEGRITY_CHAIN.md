@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 123
+- ブロック数: 127
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `f93a4f1b4f28a2c20a82295f27defd4ec1d17f96653171b536a19fc1cf6a9a6c`
-- 保護対象: 56 ファイル
+- 末尾(tip)ハッシュ: `70868e145be8be655fcee085eb40b45612f8710f937d80b46ae40d8addd747b6`
+- 保護対象: 61 ファイル
 
 ## ブロック
 
@@ -136,6 +136,10 @@
 | 120 | `eda1181974cfa51c` | `f2210321e55a6838` | `0aee7468bb3a0750` | update release.yml |
 | 121 | `4f4f4818cebddc6e` | `0aee7468bb3a0750` | `e72a3eedfc053c48` | update release.yml,types.ts,oauth.ts,pkce.ts,vault.ts,httpLimits.ts |
 | 122 | `1ebdc946a82a5d0c` | `e72a3eedfc053c48` | `f93a4f1b4f28a2c2` | update types.ts |
+| 123 | `c0c67fa03bc8b0a1` | `f93a4f1b4f28a2c2` | `0eca7aa51e1d1156` | update integrity-chain.cjs |
+| 124 | `0e00cb7c4c616f07` | `0eca7aa51e1d1156` | `0cf58b147a316eea` | update checksum-release.cjs,integrity-chain.cjs,lint-artifact-csp.cjs,lint-sample-data.cjs,smoke-app.cjs,verify-release-artifacts.cjs |
+| 125 | `1f3273938b4f1a1f` | `0cf58b147a316eea` | `477bcacac053e527` | update integrity-chain.cjs |
+| 126 | `f575eab48833ed49` | `477bcacac053e527` | `70868e145be8be65` | update SECURITY_CHAIN.md |
 
 ## 保護対象ファイル
 
@@ -146,9 +150,12 @@
 - `assets/sw.js`
 - `docs/SECURITY_CHAIN.md`
 - `electron-builder.json`
+- `scripts/checksum-release.cjs`
 - `scripts/inject-pwa.cjs`
 - `scripts/inline-html.cjs`
 - `scripts/integrity-chain.cjs`
+- `scripts/lint-artifact-csp.cjs`
+- `scripts/lint-sample-data.cjs`
 - `scripts/make-autoinstall.sh`
 - `scripts/make-live-usb.sh`
 - `scripts/migrate.sh`
@@ -156,6 +163,8 @@
 - `scripts/security-audit.sh`
 - `scripts/setup-linux.sh`
 - `scripts/setup-obsidian-docker.sh`
+- `scripts/smoke-app.cjs`
+- `scripts/verify-release-artifacts.cjs`
 - `src/main/atomicWrite.ts`
 - `src/main/clients/exportPaths.ts`
 - `src/main/clients/types.ts`

@@ -174,6 +174,38 @@ const PROTECTED = [
   // あるが、**通常の開発で動く**ファイルで、鎖に入れると日常の変更すべてに
   // chain:append が要る。上の 3 つは「出す物を直接書く/置く」side で、
   // かつ滅多に動かない —— そこが線引き。動かした結果は出荷物の検査が見る。
+  //
+  // 2026-08-28 に足した 5 本。**同じ順番の逆転が、もう一段外側に残っていた。**
+  //
+  // 保護対象の workflow が「公開してよいか」を決めるために `run:` で直接
+  // 起こす本が、1 つも守られていなかった。実測: 鎖を tip まで採掘したうえで
+  // `lint-sample-data.cjs` の `main()` 冒頭に `return 0;` を差しても
+  // **`chain:verify` は緑のまま**だった —— 出荷物に本人の個人データが
+  // 載るのを止める門を骨抜きにして、鎖が何も言わない状態である。
+  // (閉包が追うのが import / require の辺だけで、`run:` を数えていなかった。
+  //  #73 で広げたのは*言語*で、*辺の種類*ではなかった。)
+  //
+  //   lint-sample-data.cjs        出荷物に実データが載るのを止める門。
+  //                               この PR で最も重い発見 (§1) の恒久対策で、
+  //                               ci / release / pages の 3 本すべてが呼ぶ。
+  //   lint-artifact-csp.cjs       公開 HTML の CSP を**注入後の実物**に当てる。
+  //                               雛形側は shippedCsp.test.ts が留めるが、
+  //                               公開されるファイルを見るのはこちらだけ。
+  //   verify-release-artifacts.cjs 宣言した数のインストーラが出たか。
+  //                               `fail_on_unmatched_files: false` と
+  //                               `fail-fast: false` の組み合わせで
+  //                               「1 プラットフォーム欠けたリリース」が
+  //                               全ジョブ緑のまま出るのを、これだけが防ぐ。
+  //   checksum-release.cjs        公開する物の SHA-256 を同じランで書く。
+  //                               ここが黙れば「チェックサムはあります」が嘘になる。
+  //   smoke-app.cjs               梱包後に解決できない require を捕まえる
+  //                               (`--check-bundle`)。デスクトップ版が 2 週間
+  //                               起動しなかった事故の再発を止める唯一の検査。
+  'scripts/lint-sample-data.cjs',
+  'scripts/lint-artifact-csp.cjs',
+  'scripts/verify-release-artifacts.cjs',
+  'scripts/checksum-release.cjs',
+  'scripts/smoke-app.cjs',
   // electronFuses (runAsNode / NODE_OPTIONS / inspect / cookie 暗号化) の置き場。
   // `runAsNode: true` に戻すだけで、署名済みの自分自身を Node として起動して
   // アプリとして `safeStorage.decryptString` を呼べる状態に戻る。
@@ -346,6 +378,30 @@ function dependencySpecs(text, kind) {
     for (const m of text.matchAll(/^\s*(?:import|export)[\s\S]*?from\s+'([^']+)'/gm)) out.push(m[1]);
     return out;
   }
+  if (kind === 'workflow') {
+    /*
+     * **workflow が `run:` で直接起こす本**を辺として数える。
+     *
+     * 2026-08-28 に測って分かったこと: `release.yml` は保護対象なのに、
+     * それが「公開してよいか」を決めるために呼ぶ本は 1 つも守られておらず、
+     * `lint-sample-data.cjs` (個人データが出荷物に載るのを止める門) の
+     * `main()` 冒頭に `return 0;` を差しても **`chain:verify` は緑のまま**
+     * だった。閉包が追っていたのは import / require の辺だけで、
+     * **辺の種類**が足りていなかった (#73 で広げたのは*言語*のほうだった)。
+     *
+     * `npm run X` は辿らない。package.json 越しの間接なので追えなくはないが、
+     * `verify:all` から 34 本が芋づるで入り、鎖が「編集のたびに採掘し直す」
+     * だけの装置になる。そして**直接呼びを `npm run` へ書き換える**には
+     * 保護対象の workflow 自身を触ることになり、そちらが鳴る ——
+     * つまり逃げ道にはならない。追わない理由はそこに在る。
+     */
+    for (const m of text.matchAll(
+      /(?:^|[\s;&|(])(?:node|bash|sh|python3?)\s+((?:scripts|orchestration)\/[A-Za-z0-9_./-]+)/g,
+    )) {
+      out.push(m[1]);
+    }
+    return out;
+  }
   for (const m of text.matchAll(/\brequire\(\s*['"]([^'"]+)['"]\s*\)/g)) out.push(m[1]);
   for (const m of text.matchAll(/\bimportScripts\(\s*['"]([^'"]+)['"]\s*\)/g)) out.push(m[1]);
   return out;
@@ -357,13 +413,25 @@ function collectClosureProblems(protectedList, exclusions) {
   const used = new Set();
 
   for (const rel of protectedList) {
-    const kind = /\.(ts|tsx)$/.test(rel) ? 'esm' : /\.(cjs|js)$/.test(rel) ? 'cjs' : null;
+    const kind = /\.(ts|tsx)$/.test(rel)
+      ? 'esm'
+      : /\.(cjs|js)$/.test(rel)
+        ? 'cjs'
+        : /^\.github\/workflows\/.*\.ya?ml$/.test(rel)
+          ? 'workflow'
+          : null;
     if (kind === null) continue;
     const abs = path.join(REPO_ROOT, rel);
     if (!fs.existsSync(abs)) continue;
     const text = fs.readFileSync(abs, 'utf8');
     for (const spec of dependencySpecs(text, kind)) {
-      const target = resolveRelativeImport(rel, spec);
+      // workflow の `run:` はリポジトリ直下からの相対で書く (`node scripts/x.cjs`)。
+      // ファイル位置からの相対解決を通すと `.github/workflows/scripts/...` を
+      // 探しに行って必ず null になる ——**辺を足したのに何も増えない**形。
+      const target =
+        kind === 'workflow'
+          ? (fs.existsSync(path.join(REPO_ROOT, spec)) ? spec : null)
+          : resolveRelativeImport(rel, spec);
       if (target === null || set.has(target)) continue;
       if (Object.hasOwn(exclusions, target)) {
         used.add(target);
@@ -636,6 +704,38 @@ function cmdSelfTest() {
     check(
       '保護を 1 つ外すと、それを読んでいる側から鳴る',
       found.length > 0 && found.every((m) => m.includes('cryptoParams.ts')),
+    );
+  }
+  {
+    /*
+     * **workflow の `run:` を辺として数えているか。**
+     *
+     * ここが無かったせいで、`release.yml` は保護対象なのに、それが
+     * 「公開してよいか」を決めるために呼ぶ本が 1 つも守られていなかった。
+     * 骨抜きにしても `chain:verify` は緑のまま —— 2026-08-28 に実測。
+     */
+    const weakened = PROTECTED.filter((rel) => rel !== 'scripts/lint-sample-data.cjs');
+    const found = collectClosureProblems(weakened, DEP_EXCLUSIONS);
+    check(
+      '★ workflow が run: で呼ぶ本を外すと鳴る (辺の種類が足りているか)',
+      found.length > 0 && found.every((m) => m.includes('lint-sample-data.cjs')),
+    );
+  }
+  {
+    // 辺そのものが取れていること。**「0 件だから通る」を避ける標本。**
+    const wfPath = path.join(REPO_ROOT, '.github/workflows/release.yml');
+    const wf = fs.existsSync(wfPath) ? fs.readFileSync(wfPath, 'utf8') : '';
+    const edges = dependencySpecs(wf, 'workflow');
+    check(
+      '★ release.yml から run: の辺が実際に取れる',
+      edges.includes('scripts/verify-release-artifacts.cjs') && edges.includes('scripts/lint-sample-data.cjs'),
+    );
+    // 種別の判定が効いていること (cjs として読めば require しか見ないので 0 件)
+    check('workflow を cjs として読めば辺は取れない (種別が効いている)', dependencySpecs(wf, 'cjs').length === 0);
+    // `npm run` は辿らない —— 追わない判断を、字面ではなく**挙動**で留める。
+    check(
+      'npm run は辺にしない (verify:all から 34 本が芋づるにならない)',
+      !dependencySpecs('        run: npm run verify:all\n', 'workflow').some((e) => e.includes('scripts/')),
     );
   }
   check(
