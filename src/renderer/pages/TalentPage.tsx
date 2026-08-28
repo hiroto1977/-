@@ -16,11 +16,13 @@ import { useServiceData } from '../hooks/useServiceData';
  * それを原文に対して留めている。
  */
 
+type SourceStrength = 'confirmed' | 'secondary' | 'gloss';
+
 interface OrganDisease {
   readonly id: string;
   readonly name: string;
   readonly summary: string;
-  readonly source: 'confirmed' | 'gloss';
+  readonly source: SourceStrength;
 }
 interface SkillStep {
   readonly step: number;
@@ -67,9 +69,20 @@ interface TalentSnapshot {
   readonly updatedAt: string;
 }
 
-/** 出典の強さを画面に出す。読み解きを確認済みと混ぜて配ると事故る。 */
-function SourceBadge({ source }: { source: 'confirmed' | 'gloss' }): React.JSX.Element {
-  const confirmed = source === 'confirmed';
+/**
+ * 出典の強さを画面に出す。**3 段を 3 色で出す。**
+ *
+ * 読み解きを確認済みと混ぜて配ると事故る。2 段だった頃は「第三者の解説で
+ * 確認した」が「当方の読み解き」と同じ札になっていて、区別が落ちていた。
+ */
+const BADGE: Readonly<Record<SourceStrength, { label: string; color: string }>> = {
+  confirmed: { label: '定義確認済み', color: '#0E5C6B' },
+  secondary: { label: '第三者の解説で確認', color: '#7A6320' },
+  gloss: { label: '語釈は読み解き', color: '#9C4A3C' },
+};
+
+function SourceBadge({ source }: { source: SourceStrength }): React.JSX.Element {
+  const b = BADGE[source];
   return (
     <span
       style={{
@@ -78,11 +91,11 @@ function SourceBadge({ source }: { source: 'confirmed' | 'gloss' }): React.JSX.E
         borderRadius: 3,
         marginLeft: 8,
         whiteSpace: 'nowrap',
-        border: `1px solid ${confirmed ? '#0E5C6B' : '#9C4A3C'}`,
-        color: confirmed ? '#0E5C6B' : '#9C4A3C',
+        border: `1px solid ${b.color}`,
+        color: b.color,
       }}
     >
-      {confirmed ? '定義確認済み' : '語釈は読み解き'}
+      {b.label}
     </span>
   );
 }

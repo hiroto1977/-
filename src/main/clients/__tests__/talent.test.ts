@@ -33,16 +33,41 @@ describe('5つの企業組織病 — 定義表', () => {
     expect(new Set(ORGAN_DISEASES.map((d) => d.id)).size).toBe(5);
   });
 
-  it('★ 出典の強さを全項が持つ — 読み解きを確認済みと混ぜない', () => {
+  it('★ 出典の強さを全項が持つ — 精度の違う物を同じ札で配らない', () => {
     for (const d of ORGAN_DISEASES) {
-      expect(['confirmed', 'gloss']).toContain(d.source);
+      expect(['confirmed', 'secondary', 'gloss']).toContain(d.source);
       expect(d.summary.length).toBeGreaterThan(0);
     }
-    // 著者側の解説を確認できたのは 2 件だけ。ここが増えたら出典も添えて増やすこと。
+    // 著者側で確認できたのは 2 件、第三者の解説で確認できたのが 3 件。
+    // ここを動かすときは出典も一緒に足すこと (docs 側の一覧と対応している)。
     expect(ORGAN_DISEASES.filter((d) => d.source === 'confirmed').map((d) => d.id)).toEqual([
       'imprint',
       'model-dependence',
     ]);
+    expect(ORGAN_DISEASES.filter((d) => d.source === 'secondary').map((d) => d.id)).toEqual([
+      'shrinking',
+      'number-worship',
+      'format-trust',
+    ]);
+  });
+
+  it('★ 読み解きのままの項が残っていない', () => {
+    // 2026-08-28 に 03〜05 を当たり直して 0 件にした。増えたら、それは
+    // 「名称から推測した語釈」が新しく入ったということ。
+    expect(ORGAN_DISEASES.filter((d) => d.source === 'gloss')).toEqual([]);
+  });
+
+  it('★ 当たり直した 3 件が、旧い読み解きのままでないこと', () => {
+    // 旧語釈は名称の字面からの推測で、3 つとも意味を外していた。
+    // 実際の定義に含まれる語で留める (綴りが戻ったら鳴る)。
+    const by = (id: string): string => ORGAN_DISEASES.find((d) => d.id === id)?.summary ?? '';
+    expect(by('shrinking')).toContain('外部要因');
+    expect(by('number-worship')).toContain('万能');
+    expect(by('format-trust')).toContain('勝ちパターン');
+    // 旧語釈の綴りが残っていないこと。
+    expect(by('format-trust')).not.toContain('埋めること自体が目的化');
+    // 上の not.toContain が空振りでないことを、同じ検査の中で確かめる。
+    expect('フォーマットを埋めること自体が目的化する').toContain('埋めること自体が目的化');
   });
 });
 
