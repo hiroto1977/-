@@ -31,8 +31,15 @@
  * どちらが正規のビルドか利用者には判定できない。
  *
  * このスクリプトはランの中で「今回のビルドが何を出したか」しか見ないので、
- * **前のランの残骸は検出できない**。そちらは docs/REMAINING_WORK.md に
- * 「公開済みリリースの棚卸し」として残してある (公開物の削除は持ち主の判断)。
+ * **前のランの残骸は検出できない**。公開済み資産の削除は GitHub の API を
+ * 持たないと出来ず、持ち主の判断でもあるので、そちらは docs/REMAINING_WORK.md
+ * に残してある。
+ *
+ * ただし「どちらが正規か判定できない」ほうは 2026-08-28 に塞いだ ——
+ * `scripts/checksum-release.cjs` が**同じランの中で** SHA-256 を書き、
+ * `release.yml` がそれも一緒に公開する。以後は並んだ資産のどちらを取るかが
+ * 決まる。**これは改竄検知ではない** (署名の無いチェックサムが見つけられるのは
+ * 破損と取り違えまで) —— その区別は checksum-release.cjs の冒頭に書いた。
  *
  * Run via:  RUNNER_OS=Linux node scripts/verify-release-artifacts.cjs
  *           node scripts/verify-release-artifacts.cjs --self-test

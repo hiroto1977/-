@@ -1019,12 +1019,20 @@
       "leafCount": 56,
       "note": "update manifest.webmanifest",
       "hash": "f2210321e55a68388264cf27b5757d227a22a5b5b81150d0a51757d098dee645"
+    },
+    {
+      "index": 120,
+      "prevHash": "f2210321e55a68388264cf27b5757d227a22a5b5b81150d0a51757d098dee645",
+      "merkleRoot": "eda1181974cfa51c06e258173f9013569afc735c3b1ad25a27779056c2a7c17d",
+      "leafCount": 56,
+      "note": "update release.yml",
+      "hash": "0aee7468bb3a0750f39e7e626b11d62bb40ddc84979d43d85ca46dde78e76b58"
     }
   ],
   "tipManifest": {
     ".github/workflows/ci.yml": "deed9201f049f6ee190f78031fa525d9fd12e8f1595538d2f55460b7b793b77f",
     ".github/workflows/pages.yml": "3b3202789c03c79a7d55129027327cd52f0ad3189ebf2c2478af09a5c98f2a39",
-    ".github/workflows/release.yml": "accdf90477c9a6fbaaca919eac05c121b8b0714bc44d0f4a9b32578013b185db",
+    ".github/workflows/release.yml": "56a841ef2d7454c88c252b1d70b0cc2a3ae3330fa634570ce7183f954db70ff6",
     "assets/manifest.webmanifest": "e23432bb858936404e7661559be8a8f95e5842569f13162c0f7a2e5cc3fd412b",
     "assets/sw.js": "21435c404d1d2cdc02102e1de04a6683bc6027726dea44fbc2af04f64a742dd1",
     "docs/SECURITY_CHAIN.md": "20a16f9292fe208a95632968930f759f8494fe00e780b7e0517f1cd149ad6993",

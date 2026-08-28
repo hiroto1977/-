@@ -52,7 +52,7 @@
     "lint:shell": "node scripts/lint-shell.cjs && node scripts/lint-shell.cjs --self-test",
     "lint:sample-data": "node scripts/lint-sample-data.cjs && node scripts/lint-sample-data.cjs --self-test",
     "lint:test-coverage": "node scripts/lint-test-coverage.cjs && node scripts/lint-test-coverage.cjs --self-test",
-    "verify:release-artifacts": "node scripts/verify-release-artifacts.cjs --self-test",
+    "verify:release-artifacts": "node scripts/verify-release-artifacts.cjs --self-test && node scripts/checksum-release.cjs --self-test",
     "mcp:check": "node scripts/mcp-check.cjs",
     "mutate": "stryker run",
     "mutate:next": "node scripts/suggest-next-kill.cjs",

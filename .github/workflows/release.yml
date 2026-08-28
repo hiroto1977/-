@@ -27,16 +27,19 @@ jobs:
             artifact_glob: |
               release/*.AppImage
               release/*.deb
+              release/SHA256SUMS-*.txt
           - os: macos-latest
             # arch を x64/arm64 の両方に指定したので dmg が 2 つ出る
             # (`-x64.dmg` / `-arm64.dmg`)。glob はどちらも拾う。
             artifact_glob: |
               release/*.dmg
               release/*.dmg.blockmap
+              release/SHA256SUMS-*.txt
           - os: windows-latest
             artifact_glob: |
               release/*.exe
               release/*.exe.blockmap
+              release/SHA256SUMS-*.txt
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -117,6 +120,21 @@ jobs:
 
       - name: Verify release artifacts
         run: node scripts/verify-release-artifacts.cjs
+
+      # 公開する物の SHA-256 を、**同じランの中で**書き出す。
+      #
+      # v0.1.0 では 16 時間差の 2 ランが同じ版の AppImage を上げ、
+      # 最初のぶんが消されないまま今も 2 つ並んでいる (サイズ差 36 バイト)。
+      # チェックサムが無いので、**どちらが正規のビルドか利用者に判定する
+      # 材料が無かった**。同じランで出しておけば、少なくとも
+      # 「この SHA256SUMS を出したランは、この AppImage を出した」が言える。
+      #
+      # **これは改竄検知ではない。** 署名の無いチェックサムが見つけられるのは
+      # 転送中の破損と上のような取り違えまでで、リリース資産を書き換え
+      # られる者は隣の SHA256SUMS も書き換えられる。本当の改竄耐性は署名で、
+      # それは上の `CSC_LINK` 系 secrets が入っている時だけ効く。
+      - name: Write checksums for the published artifacts
+        run: node scripts/checksum-release.cjs
 
       # 出す物そのものに個人データが混ざっていないか。
       #
