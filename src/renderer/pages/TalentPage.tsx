@@ -7,9 +7,13 @@ import { useServiceData } from '../hooks/useServiceData';
  * 人材育成 — 手引きを「判定できる画面」にしたもの。
  *
  * 判定の本体 (`diagnoseOrg` / `achievementGap` / `judgeLeaderFitness` /
- * `reviewLadder`) は main 側 `clients/talent.ts` にあり、ここは入力と表示だけを
+ * `reviewLadder`) は `src/shared/talent.ts` にあり、ここは入力と表示だけを
  * 持つ。同じ判定を画面側でも書くと、二重管理になったうえ**どちらが本物か
  * 分からなくなる**ので、閾値も定義表もこちらには置かない。
+ *
+ * shared に在るのは、デスクトップ版 (`main/clients/talent.ts`) とブラウザ版
+ * (`web-shim.ts`) の**両方が同じ関数を読む**ため。`talentParity.test.ts` が
+ * それを原文に対して留めている。
  */
 
 interface OrganDisease {
@@ -84,9 +88,10 @@ function SourceBadge({ source }: { source: 'confirmed' | 'gloss' }): React.JSX.E
 }
 
 export function TalentPage(): React.JSX.Element {
-  // 資格情報が要らないので、マウント時に 1 度取る。定義表 (病・STEP・10ヶ条) は
-  // main 側が唯一の出所なので、取得前は表が空になる —— 画面側に控えを置くと
-  // 二重管理になり、どちらが本物か分からなくなる。
+  // 資格情報が要らないので、マウント時に 1 度取る。取得できなくても定義表
+  // (病・STEP・10ヶ条) は出る —— snapshot が shared の実物を**写しではなく
+  // 参照**しているため。ここを空にしていたら、取得を stub した smoke で
+  // 診断票も 10ヶ条も STEP も全部消えた (2026-08-28 実測)。
   const { data, source, status, errorMessage, refresh } = useServiceData(
     'talent',
     SNAPSHOT.talent as unknown as TalentSnapshot,
