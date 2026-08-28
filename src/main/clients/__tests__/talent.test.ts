@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   ACTIONS,
   LEADER_DISQUALIFIERS,
+  LEADER_DISQUALIFIERS_SOURCE,
+  SKILL_STEPS_SOURCE,
   ORGAN_DISEASES,
   SKILL_STEPS,
   STEP1_MASTERY_YEARS,
@@ -38,7 +40,8 @@ describe('5つの企業組織病 — 定義表', () => {
       expect(['confirmed', 'secondary', 'gloss']).toContain(d.source);
       expect(d.summary.length).toBeGreaterThan(0);
     }
-    // 著者側で確認できたのは 2 件、第三者の解説で確認できたのが 3 件。
+    // 著者側で確認できたのは 3 件、第三者の解説で確認できたのが 2 件。
+    // (数字万能病は 2 度目の訂正で著者の連載記事に当たれたので confirmed へ移した。)
     // ここを動かすときは出典も一緒に足すこと (docs 側の一覧と対応している)。
     expect(ORGAN_DISEASES.filter((d) => d.source === 'confirmed').map((d) => d.id)).toEqual([
       'imprint',
@@ -49,6 +52,17 @@ describe('5つの企業組織病 — 定義表', () => {
       'shrinking',
       'format-trust',
     ]);
+  });
+
+  it('★ どの表も出典の強さを示している — 無印を残さない', () => {
+    // 病だけが札を持ち、10ヶ条と STEP は無印だった。どちらも出典はあるのに
+    // 「在ることを示していない」状態で、無印を弱いと読むか強いと読むかが割れる。
+    expect(LEADER_DISQUALIFIERS_SOURCE).toBe('confirmed');
+    expect(SKILL_STEPS_SOURCE).toBe('confirmed');
+    // 札の語彙は病と共通であること (別の段を勝手に作らない)。
+    for (const v of [LEADER_DISQUALIFIERS_SOURCE, SKILL_STEPS_SOURCE]) {
+      expect(['confirmed', 'secondary', 'gloss']).toContain(v);
+    }
   });
 
   it('★ 読み解きのままの項が残っていない', () => {

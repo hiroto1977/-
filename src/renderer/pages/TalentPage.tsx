@@ -67,6 +67,9 @@ interface TalentSnapshot {
   };
   readonly initiatives: readonly { readonly name: string; readonly probability: number }[];
   readonly updatedAt: string;
+  /** 表ごとの出典の強さ。病は項ごと、10ヶ条と STEP は表まるごと 1 つ。 */
+  readonly disqualifiersSource: SourceStrength;
+  readonly stepsSource: SourceStrength;
 }
 
 /**
@@ -224,6 +227,7 @@ export function TalentPage(): React.JSX.Element {
 
       <Section title="登用判定 — 絶対にリーダーにしてはいけない人10ヶ条">
         <p style={{ color: '#8a93a6', fontSize: 13, marginTop: 0 }}>
+          <SourceBadge source={snap.disqualifiersSource} />{' '}
           該当するものを選んで判定します。<strong>1つでも該当すればリーダーには据えません</strong>
           （能力の項目が1つも無いのが要点です）。
         </p>
@@ -255,6 +259,7 @@ export function TalentPage(): React.JSX.Element {
 
       <Section title="育成ロードマップ — 年代ごとの4つのスキル">
         <p style={{ color: '#8a93a6', fontSize: 13, marginTop: 0 }}>
+          <SourceBadge source={snap.stepsSource} />{' '}
           STEP を飛ばして上には行けません。業務スキルは通常 3〜5 年でマスターできる領域とされ、
           <strong>大きく超えて留まっている場合は本人ではなく配置と任せ方を疑います</strong>。
         </p>

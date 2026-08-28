@@ -3,7 +3,13 @@
 // until each ServiceClient is wired up to call the live REST APIs.
 
 import type { ShigyoSnapshot } from '../../shared/shigyoTypes';
-import { LEADER_DISQUALIFIERS, ORGAN_DISEASES, SKILL_STEPS } from '../../shared/talent';
+import {
+  LEADER_DISQUALIFIERS,
+  LEADER_DISQUALIFIERS_SOURCE,
+  ORGAN_DISEASES,
+  SKILL_STEPS,
+  SKILL_STEPS_SOURCE,
+} from '../../shared/talent';
 
 /**
  * 見本の画像は **インライン (`data:`) にする**。
@@ -1127,6 +1133,8 @@ export const SNAPSHOT = {
     },
     initiatives: [] as { name: string; probability: number }[],
     updatedAt: '',
+    disqualifiersSource: LEADER_DISQUALIFIERS_SOURCE,
+    stepsSource: SKILL_STEPS_SOURCE,
   },
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)

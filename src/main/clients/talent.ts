@@ -3,8 +3,10 @@ import os from 'node:os';
 import path from 'node:path';
 import {
   LEADER_DISQUALIFIERS,
+  LEADER_DISQUALIFIERS_SOURCE,
   ORGAN_DISEASES,
   SKILL_STEPS,
+  SKILL_STEPS_SOURCE,
   achievementGap,
   diagnoseOrg,
   isValidLadderMember,
@@ -21,6 +23,7 @@ import {
   type OrganDisease,
   type OrgDiagnosis,
   type SkillStep,
+  type SourceStrength,
   type DeptReport,
 } from '../../shared/talent';
 import type { ActionContext, ActionMap, FetchContext } from './types';
@@ -143,6 +146,8 @@ export interface TalentSnapshot {
   readonly ladder: LadderReview;
   readonly initiatives: readonly Initiative[];
   readonly updatedAt: string;
+  readonly disqualifiersSource: SourceStrength;
+  readonly stepsSource: SourceStrength;
 }
 
 export interface SnapshotDeps {
@@ -163,6 +168,8 @@ export async function fetchTalentSnapshotImpl(
     ladder: reviewLadder(state.members),
     initiatives: state.initiatives,
     updatedAt: state.updatedAt,
+    disqualifiersSource: LEADER_DISQUALIFIERS_SOURCE,
+    stepsSource: SKILL_STEPS_SOURCE,
   };
 }
 
