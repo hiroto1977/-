@@ -3,6 +3,7 @@
 // until each ServiceClient is wired up to call the live REST APIs.
 
 import type { ShigyoSnapshot } from '../../shared/shigyoTypes';
+import { LEADER_DISQUALIFIERS, ORGAN_DISEASES, SKILL_STEPS } from '../../shared/talent';
 
 /**
  * 見本の画像は **インライン (`data:`) にする**。
@@ -1102,6 +1103,30 @@ export const SNAPSHOT = {
       hardLimitUsd: number | null;
     }[],
     totals: { members: 3, activeDays: 2, spendUsd: 59.95 },
+  },
+
+  talent: {
+    // 定義表 (病・STEP・10ヶ条) は **定数であってデータではない**。
+    // 取得の成否に関わらず読めなければならないので、shared の実物をそのまま
+    // 指す。ここを空にしていたら、取得が失敗した画面から診断票も 10ヶ条も
+    // 消えて何も出来なくなった (smoke で実測)。写しではなく参照なので、
+    // 定義が増えても両方を直す必要は無い。
+    diseases: ORGAN_DISEASES,
+    steps: SKILL_STEPS,
+    disqualifiers: LEADER_DISQUALIFIERS,
+    diagnosis: {
+      tallies: [] as { id: string; name: string; departments: string[]; systemic: boolean }[],
+      systemic: [] as string[],
+      reportedDepartments: 0,
+    },
+    achievement: { total: 0, shortfall: 100, ok: false, counted: 0 },
+    ladder: {
+      members: [] as { id: string; name: string; step: number; yearsInStep: number }[],
+      stalled: [] as { id: string; name: string; step: number; yearsInStep: number }[],
+      byStep: {} as Record<number, number>,
+    },
+    initiatives: [] as { name: string; probability: number }[],
+    updatedAt: '',
   },
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)

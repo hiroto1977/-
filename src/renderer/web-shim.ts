@@ -61,6 +61,12 @@ import {
   MAX_ASSISTANT_SYSTEM_CHARS,
 } from '../shared/assistantLimits';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
+import {
+  isValidLadderMember,
+  judgeLeaderFitness,
+  sanitizeInitiatives,
+  sanitizeReports,
+} from '../shared/talent';
 import { getVault } from './security/vault';
 import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_LENGTH } from '../shared/redact';
 import {
@@ -1255,6 +1261,42 @@ const shim = {
      * 出す必要がある。**今は書いた物を誰も読まないので実害は無いが、
      * ここを読む人が現れたら先に揃えること。**
      */
+    /**
+     * 人材育成の登用判定。**判定そのものは `shared/talent.ts` の同じ関数**を
+     * 呼ぶ —— デスクトップ版 (`clients/talent.ts`) と同じ答えが返る。
+     * ここで判定を書き直すと、teamradar の `save-state` で起きている
+     * 「main は検証するのにブラウザ版は素通し」という非対称を新しく作ることになる。
+     */
+    if (serviceId === 'talent' && action === 'judge-leader') {
+      const p = payload as { flagged?: unknown; candidate?: unknown };
+      const flagged = Array.isArray(p.flagged)
+        ? p.flagged.filter((f): f is string => typeof f === 'string')
+        : [];
+      return ok({
+        fitness: judgeLeaderFitness(flagged),
+        candidate: typeof p.candidate === 'string' ? p.candidate.slice(0, 64) : '',
+      }) as ActionResult<T>;
+    }
+
+    // 人材育成の状態保存。デスクトップ版は ~/.local/business-hub/talent.json へ
+    // 書くが、ブラウザ版はファイルを持たないので localStorage に置く。
+    // **保存する前に main 側と同じ正規化を通す** (共有関数なのでズレない)。
+    if (serviceId === 'talent' && action === 'save-state') {
+      const p = payload as Record<string, unknown>;
+      const clean = {
+        reports: sanitizeReports(p['reports']),
+        initiatives: sanitizeInitiatives(p['initiatives']),
+        members: Array.isArray(p['members']) ? p['members'].filter(isValidLadderMember) : [],
+        updatedAt: typeof p['updatedAt'] === 'string' ? p['updatedAt'].slice(0, 32) : '',
+      };
+      try {
+        localStorage.setItem('servicehub.talent.state.v1', JSON.stringify(clean));
+        return ok(clean) as ActionResult<T>;
+      } catch {
+        return err('action_failed', 'localStorage への保存に失敗しました');
+      }
+    }
+
     if (serviceId === 'teamradar' && action === 'save-state') {
       try {
         localStorage.setItem('teamradar.state', JSON.stringify(payload));

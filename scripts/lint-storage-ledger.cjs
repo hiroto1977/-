@@ -155,6 +155,10 @@ const STORES = {
   'servicehub.ollama.endpoint': { medium: 'localstorage', holds: 'Ollama の接続先', backedUp: false },
   'servicehub.ollama.port': { medium: 'localstorage', holds: 'Ollama の待ち受けポート', backedUp: false },
   'teamradar.state': { medium: 'localstorage', holds: 'Team Radar の状態 (web-shim 経由)', backedUp: false },
+  // 人材育成の入力 (部署ごとの組織病の申告・施策の達成確率・メンバーの STEP)。
+  // 部署名と個人名が入るので sensitive。デスクトップ版は
+  // ~/.local/business-hub/talent.json (0600) で、こちらはブラウザ版の置き場。
+  'servicehub.talent.state.v1': { medium: 'localstorage', holds: '人材育成の入力 (組織病の申告 / 施策 / メンバーの STEP)', backedUp: false, sensitive: true },
   'assistant-history': { medium: 'localstorage', holds: 'アシスタントの会話履歴', backedUp: false, sensitive: true },
   'assistant-theme': { medium: 'localstorage', holds: 'アシスタントの配色', backedUp: false },
   'assistant-provider': { medium: 'localstorage', holds: 'アシスタントの提供元の選択', backedUp: false },

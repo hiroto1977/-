@@ -72,6 +72,7 @@ import { fetchDockerSnapshot } from './docker';
 import { fetchAssistantSnapshot, ACTIONS as ASSISTANT_ACTIONS } from './assistant';
 import { fetchDocstudioSnapshot, ACTIONS as DOCSTUDIO_ACTIONS } from './docstudio';
 import { fetchCursorSnapshot, ACTIONS as CURSOR_ACTIONS } from './cursor';
+import { fetchTalentSnapshot, ACTIONS as TALENT_ACTIONS } from './talent';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import { SERVICE_IDS, type ServiceId } from '../../shared/serviceId';
@@ -153,6 +154,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   assistant: fetchAssistantSnapshot,
   docstudio: fetchDocstudioSnapshot,
   cursor: fetchCursorSnapshot,
+  talent: fetchTalentSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -213,6 +215,8 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'business',
   'funding',
   'teamradar',
+  // 人材育成: 判定はすべて純粋関数、状態は ~/.local/business-hub/。認証・通信なし。
+  'talent',
   'templates',
   'library',
   'settings',
@@ -301,6 +305,7 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   assistant: ASSISTANT_ACTIONS,
   docstudio: DOCSTUDIO_ACTIONS,
   cursor: CURSOR_ACTIONS,
+  talent: TALENT_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 

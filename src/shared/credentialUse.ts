@@ -53,6 +53,8 @@ export const SERVICE_CREDENTIAL_USE: Record<ServiceId, CredentialUse> = {
   stocks: 'action',
   business: 'action',
   teamradar: 'action',
+  // 判定はすべて純粋関数。資格情報を読む経路が無いので入力欄も出さない。
+  talent: 'none',
   templates: 'none',
   library: 'none',
   settings: 'none',

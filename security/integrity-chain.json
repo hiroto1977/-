@@ -1011,13 +1011,21 @@
       "leafCount": 56,
       "note": "update SECURITY_CHAIN.md",
       "hash": "1e845491ca358c0837dff004c1ac71b5e7388eab512a5a3feaacd3f3f6d12811"
+    },
+    {
+      "index": 119,
+      "prevHash": "1e845491ca358c0837dff004c1ac71b5e7388eab512a5a3feaacd3f3f6d12811",
+      "merkleRoot": "4f8c4d777803e6647d4f83ce32ad9006a0df5f71b7e2064d8682c6fcd920b576",
+      "leafCount": 56,
+      "note": "update manifest.webmanifest",
+      "hash": "f2210321e55a68388264cf27b5757d227a22a5b5b81150d0a51757d098dee645"
     }
   ],
   "tipManifest": {
     ".github/workflows/ci.yml": "deed9201f049f6ee190f78031fa525d9fd12e8f1595538d2f55460b7b793b77f",
     ".github/workflows/pages.yml": "3b3202789c03c79a7d55129027327cd52f0ad3189ebf2c2478af09a5c98f2a39",
     ".github/workflows/release.yml": "accdf90477c9a6fbaaca919eac05c121b8b0714bc44d0f4a9b32578013b185db",
-    "assets/manifest.webmanifest": "d423e6a706360f1f119bfe307833c3dc1f3523c871621e72f67b09496556fcf1",
+    "assets/manifest.webmanifest": "e23432bb858936404e7661559be8a8f95e5842569f13162c0f7a2e5cc3fd412b",
     "assets/sw.js": "21435c404d1d2cdc02102e1de04a6683bc6027726dea44fbc2af04f64a742dd1",
     "docs/SECURITY_CHAIN.md": "20a16f9292fe208a95632968930f759f8494fe00e780b7e0517f1cd149ad6993",
     "electron-builder.json": "bf1de6e2b48e13444b527f8796af3636ab5061795fd772070e6f5dcfecfdf305",

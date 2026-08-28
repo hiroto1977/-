@@ -96,13 +96,17 @@ renderer に `caches.open(…)` を足しても ✅ を返した（実測）。
 `src/renderer/fs/fsa.ts` の `createWritable()` は File System Access API で
 **利用者が選んだ場所**へ書くもので、生成元に紐づくブラウザ保存領域ではない。
 
-### localStorage（20 キー・すべて平文・すべて立ち退きの対象・バックアップに入らない）
+### localStorage（21 キー・すべて平文・すべて立ち退きの対象・バックアップに入らない）
 
 利用者が書いた内容が入るもの（**秘密ではないが、漏れれば中身が読まれる**）:
 
 - `assistant-history` / `chatbot-history` / `chatbot-requests` — 会話の中身
 - `servicehub.docstudio.v1` / `servicehub.teamradar.draft.v1` — 下書き
 - `emotions.store` — 気分の記録
+- `servicehub.talent.state.v1` — 人材育成の入力。**部署名と個人名が入る**
+  （組織病の申告 / 施策と達成確率 / メンバーの STEP と滞留年数）。
+  デスクトップ版は `~/.local/business-hub/talent.json` (0600) に置くが、
+  ブラウザ版はここ。平文でバックアップにも入らない。
 
 鍵材料:
 

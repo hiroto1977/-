@@ -33,6 +33,7 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, CredentialUse]> = [
   ['stocks', 'action'],
   ['business', 'action'],
   ['teamradar', 'action'],
+  ['talent', 'none'],
   ['templates', 'none'],
   ['library', 'none'],
   ['settings', 'none'],
@@ -117,7 +118,7 @@ describe('SERVICE_CREDENTIAL_USE', () => {
     const count = (u: CredentialUse) => EXPECTED.filter(([, v]) => v === u).length;
     expect(count('fetch')).toBe(15);
     expect(count('action')).toBe(8);
-    expect(count('none')).toBe(51);
+    expect(count('none')).toBe(52);
   });
 
   it('監査で見つかった 8 件は none のままである', () => {

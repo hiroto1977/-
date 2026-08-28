@@ -55,6 +55,7 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   stocks: 'local',
   business: 'local',
   teamradar: 'local',
+  talent: 'local',
   templates: 'local',
   library: 'local',
   settings: 'local',

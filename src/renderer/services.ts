@@ -70,6 +70,7 @@ import { VillagePage } from './pages/VillagePage';
 import { DocstudioPage } from './pages/DocstudioPage';
 import { CursorPage } from './pages/CursorPage';
 import { ChartsPage } from './pages/ChartsPage';
+import { TalentPage } from './pages/TalentPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -682,6 +683,14 @@ export const SERVICES: ServiceDefinition[] = [
     description: '折れ線・円・レーダーで数値を可視化 (仮想データ + 自己検査つき)',
     page: ChartsPage,
     category: 'tools',
+  },
+  {
+    id: 'talent',
+    label: '人材育成',
+    icon: 'JI',
+    category: 'tools',
+    description: '組織病の診断・登用判定・達成確率100%キープ・育成ロードマップ',
+    page: TalentPage,
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];
