@@ -124,16 +124,18 @@ async function postExpectOk(
   // 本文は読まないが**打ち切りと Content-Length の門は要る** ——
   // `jsonFetch` を使えない理由は「JSON を返さない」ことだけなので、
   // 打ち切りまで一緒に落とすのは筋が違う (2026-08-23)。
-  const res = await limitedFetch(url, init, ctx);
-  if (!res.ok) {
-    const body = await readCapped(res, ctx).catch(() => '');
-    // redactSecrets: 連携先が応答にトークンを反射しても、エラー経由で漏らさない。
-    throw new FetchError(
-      `${ctx.serviceId} ${res.status}: ${redactForMessage(body, 200)}`,
-      res.status,
-      ctx.serviceId,
-    );
-  }
+  await limitedFetch(url, init, ctx, async (res) => {
+    if (!res.ok) {
+      const body = await readCapped(res, ctx).catch(() => '');
+      // redactSecrets: 連携先が応答にトークンを反射しても、エラー経由で漏らさない。
+      throw new FetchError(
+        `${ctx.serviceId} ${res.status}: ${redactForMessage(body, 200)}`,
+        res.status,
+        ctx.serviceId,
+      );
+    }
+    // 成功時は 204 などで読むものが無い。未読の本文は limitedFetch が捨てる。
+  });
 }
 
 // --- connectors ----------------------------------------------------------

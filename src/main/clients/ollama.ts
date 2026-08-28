@@ -95,12 +95,13 @@ interface OllamaVersionResponse {
 
 /** Wraps fetch in a per-request timeout. Returns the response, throws
  *  if the timeout fires or the server is unreachable. */
-async function withTimeout(
+async function withTimeout<T>(
   fetchFn: typeof fetch,
   url: string,
-  init: RequestInit = {},
+  init: RequestInit,
+  consume: (res: Response) => Promise<T>,
   timeoutMs: number = REQUEST_TIMEOUT_MS,
-): Promise<Response> {
+): Promise<T> {
   // Stryker disable next-line ConditionalExpression: belt-and-braces.
   // The only callers feed URLs from `${OLLAMA_BASE}/api/...` constants
   // that are all in ALLOWED_ENDPOINTS by construction. The runtime check
@@ -125,14 +126,20 @@ async function withTimeout(
   // hanging connection, which only an integration test could supply.
   // Stryker disable next-line ArrowFunction
   const timer = setTimeout(() => controller.abort(), timeoutMs);
-  // Equivalent mutant on the finally body: emptying `{ clearTimeout }`
-  // to `{}` leaves the 5-second abort timer pending. By the time it
-  // fires the await has already resolved, so no consumer of
-  // controller.signal observes the abort. Vitest's afterEach cleanup
-  // mops up the pending timer.
+  /*
+   * **本文を使い終えるところまでを締切の中に入れる。**
+   *
+   * ここは 2026-08-28 まで `Promise<Response>` を返しており、`res.json()` /
+   * `res.text()` は呼び出し側 —— つまり `clearTimeout` の**後**で走っていた。
+   * その時点のコメントは「timer が発火する頃には await は解決済みなので、
+   * controller.signal を見ている者は居ない」と書いていたが、**居た**。
+   * 本文を読んでいる最中の reader がそれである。相手が loopback でも、
+   * ヘッダだけ返して本文を垂れ流さないモデルには当たりうる。
+   */
   // Stryker disable BlockStatement
   try {
-    return await fetchFn(url, { ...init, signal: controller.signal });
+    const res = await fetchFn(url, { ...init, signal: controller.signal });
+    return await consume(res);
   } finally {
     clearTimeout(timer);
   }
@@ -146,14 +153,15 @@ export async function fetchOllamaSnapshot(ctx: FetchContext): Promise<OllamaSnap
   let running = false;
 
   try {
-    const res = await withTimeout(f, `${OLLAMA_BASE}/api/version`);
-    if (res.ok) {
-      const body = (await res.json()) as OllamaVersionResponse;
-      version = body.version ?? '';
-      running = true;
-    } else {
-      warnings.push(`Ollama /api/version returned HTTP ${res.status}`);
-    }
+    await withTimeout(f, `${OLLAMA_BASE}/api/version`, {}, async (res) => {
+      if (res.ok) {
+        const body = (await res.json()) as OllamaVersionResponse;
+        version = body.version ?? '';
+        running = true;
+      } else {
+        warnings.push(`Ollama /api/version returned HTTP ${res.status}`);
+      }
+    });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     // `warnings[]` も renderer へ届く文言なので**伏字の合流点を通す**。
@@ -176,26 +184,27 @@ export async function fetchOllamaSnapshot(ctx: FetchContext): Promise<OllamaSnap
   const models: OllamaSnapshot['models'] = [];
   if (running) {
     try {
-      const tagsRes = await withTimeout(f, `${OLLAMA_BASE}/api/tags`);
-      if (!tagsRes.ok) {
-        // Equivalent mutant on the third arg ('ollama' → ''): this
-        // FetchError is caught by the surrounding try/catch on the very
-        // next lines and only `.message` propagates into warnings, so
-        // the serviceId is never observable from outside the function.
-        // Stryker disable next-line StringLiteral
-        throw new FetchError(`tags HTTP ${tagsRes.status}`, tagsRes.status, 'ollama');
-      }
-      const tags = (await tagsRes.json()) as OllamaTagsResponse;
-      for (const m of tags.models ?? []) {
-        models.push({
-          name: m.name,
-          family: m.details?.family ?? '',
-          parameterSize: m.details?.parameter_size ?? '',
-          quantization: m.details?.quantization_level ?? '',
-          sizeMb: Math.round((m.size ?? 0) / (1024 * 1024)),
-          modifiedAt: (m.modified_at ?? '').slice(0, 10),
-        });
-      }
+      await withTimeout(f, `${OLLAMA_BASE}/api/tags`, {}, async (tagsRes) => {
+        if (!tagsRes.ok) {
+          // Equivalent mutant on the third arg ('ollama' → ''): this
+          // FetchError is caught by the surrounding try/catch on the very
+          // next lines and only `.message` propagates into warnings, so
+          // the serviceId is never observable from outside the function.
+          // Stryker disable next-line StringLiteral
+          throw new FetchError(`tags HTTP ${tagsRes.status}`, tagsRes.status, 'ollama');
+        }
+        const tags = (await tagsRes.json()) as OllamaTagsResponse;
+        for (const m of tags.models ?? []) {
+          models.push({
+            name: m.name,
+            family: m.details?.family ?? '',
+            parameterSize: m.details?.parameter_size ?? '',
+            quantization: m.details?.quantization_level ?? '',
+            sizeMb: Math.round((m.size ?? 0) / (1024 * 1024)),
+            modifiedAt: (m.modified_at ?? '').slice(0, 10),
+          });
+        }
+      });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       warnings.push(`Listing models failed: ${redactForMessage(msg, 100)}`);
@@ -260,7 +269,7 @@ async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: nu
   messages.push({ role: 'user', content: promptStr.slice(0, MAX_OLLAMA_PROMPT_CHARS) });
 
   const f = ctx.fetch ?? fetch;
-  const res = await withTimeout(
+  return withTimeout(
     f,
     `${OLLAMA_BASE}/api/chat`,
     {
@@ -272,8 +281,7 @@ async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: nu
         stream: false, // streaming intentionally not supported — see OLLAMA_SECURITY.md
       }),
     },
-  );
-
+    async (res) => {
   if (!res.ok) {
     // 本文が読めない経路 (接続断) もあるので、空文字から始めて上書きする。
     let body = '';
@@ -314,6 +322,8 @@ async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: nu
     reply: parsed.message?.content ?? '',
     durationMs: Math.round((parsed.total_duration ?? 0) / 1_000_000),
   };
+    },
+  );
 }
 
 export const ACTIONS: ActionMap = {

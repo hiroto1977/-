@@ -78,9 +78,21 @@ export function CloudSyncPanel() {
   const lastSync: number | null = null;
   const state: SyncState = INITIAL_SYNC_STATE;
 
-  // スケジューラ判定 (純粋核): 送信路が入ったときに「そろそろ同期」を出す口。
-  // dirty=true 固定なのは、まだ一度も同期していないため。
-  const due = enabled && shouldSync(Date.now(), lastSync, intervalMin * 60_000, true);
+  /*
+   * スケジューラ判定 (純粋核) は**送信路が入ってから**出す。
+   *
+   * `lastSync` が null 固定・`dirty` が true 固定なので `shouldSync` は
+   * 常に真になり、トグルを入れた瞬間から「次回同期のタイミングです」が
+   * **永久に**出ていた —— 隣の「今すぐ同期」は常時 disabled で、同じ枠が
+   * 「データは送信されません」と書いている。偽の成功トーストは取り除いたのに、
+   * その場所に**満たされ得ない催促**が残っていた (2026-08-28)。
+   *
+   * 判定そのものは残す (送信路が入ったら `lastSync` を繋ぐだけでよい) が、
+   * **送る先が無いあいだは出さない**。
+   */
+  const CLOUD_SYNC_WIRED = false;
+  const due =
+    CLOUD_SYNC_WIRED && enabled && shouldSync(Date.now(), lastSync, intervalMin * 60_000, true);
 
   const pct = Math.round(state.progress * 100);
 

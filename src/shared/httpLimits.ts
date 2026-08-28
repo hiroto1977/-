@@ -153,6 +153,42 @@ export function declaredLengthExceeds(res: Response, maxBytes: number): number |
  * 足したせいで、上位の打ち切りが効かなくなるのを避ける。
  * (`AbortSignal.any` は Node 20+ / Electron 43 のどちらにも在る。)
  */
+/**
+ * **`Response` を返さねばならない経路のための締切。**
+ *
+ * `withTimeout` は `fn` が解決した時点で timer を落とす。これは「本文を
+ * 使い終えるところまで `fn` の中に入っている」ことが前提で、そうでない
+ * 呼び出しは打ち切りが本文に掛からない (だから `withTimeout` は `Response`
+ * を返されたら落ちる)。
+ *
+ * ところが `Response` を**返さないと成り立たない**経路が実際に在る ——
+ * ブラウザ版の `Transport` (プロキシ経由の 14 経路が共有する関数型) と、
+ * その上に載る `timedFetch` / `timedFetchAi`。呼び出し側が本文の扱いを
+ * 決めるので、締切の中へ畳み込めない。
+ *
+ * そこで**timer を落とさない**。応答が済んでいれば abort は何にも当たらず
+ * 無害で、本文がまだ流れていれば stream が壊れて読み手が落ちる ——
+ * つまり「本文にも締切が掛かる」が成り立つ。代償は要求 1 本につき
+ * `timeoutMs` のあいだ timer が 1 つ残ること。Node では `unref()` して
+ * プロセスを起こし続けないようにする (ブラウザの timer は数値なので何もしない)。
+ */
+export function withBodyDeadline(
+  timeoutMs: number,
+  caller: AbortSignal | null | undefined,
+  doFetch: (signal: AbortSignal) => Promise<Response>,
+): Promise<Response> {
+  const controller = new AbortController();
+  const timer: unknown = setTimeout(() => controller.abort(), timeoutMs);
+  (timer as { unref?: () => void }).unref?.();
+  /* Stryker disable ConditionalExpression */
+  const signal =
+    caller && typeof AbortSignal.any === 'function'
+      ? AbortSignal.any([caller, controller.signal])
+      : controller.signal;
+  /* Stryker restore ConditionalExpression */
+  return doFetch(signal);
+}
+
 export async function withTimeout<T>(
   timeoutMs: number,
   caller: AbortSignal | null | undefined,
@@ -175,7 +211,32 @@ export async function withTimeout<T>(
       : controller.signal;
   /* Stryker restore ConditionalExpression */
   try {
-    return await fn(signal);
+    const out = await fn(signal);
+    /*
+     * **`Response` を返させない。**
+     *
+     * `fetch` はヘッダを受け取った時点で解決する。だから `fn` が `Response`
+     * を返してきたということは、**本文はまだ読まれていない**ということで、
+     * 下の `finally` が唯一の abort 源を落とした後で本文が読まれる ——
+     * つまり打ち切りが本文に掛からない。
+     *
+     * 2026-08-28 に実測した: ヘッダを flush して本文を途中で止めるサーバに
+     * `timeoutMs: 1000` で当てると、4000ms を超えても返らなかった。
+     * このリポジトリは「`init.signal` が渡っているか」を打ち切りの検査に
+     * していたが、**その等価はここで成り立っていない** —— signal は本文を
+     * 読む前に武装解除されるので、渡っていても打ち切れない。
+     *
+     * 直し方は「本文を使い終えるところまで `fn` の中に入れる」であり、
+     * それを忘れられないように**型ではなく実行時で大声で落とす**。
+     * 静かに直すより、`fn` の書き方を強制するほうが再発しない。
+     */
+    if (typeof Response !== 'undefined' && out instanceof Response) {
+      throw new Error(
+        'withTimeout が Response を返しています —— 本文の読み取りが締切の外へ出ます。'
+        + '本文を使い終えるところまで fn の中に入れてください (src/shared/httpLimits.ts の注記を参照)。',
+      );
+    }
+    return out;
   } finally {
     clearTimeout(timer);
   }

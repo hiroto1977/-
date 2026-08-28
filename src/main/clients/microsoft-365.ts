@@ -150,7 +150,7 @@ async function sendMail(ctx: ActionContext): Promise<{ ok: true; to: string; sub
   }
   // 202 Accepted・本文なしなので `jsonFetch` は使えない (必ず JSON を読む)。
   // だが**打ち切りは本文の形に関係なく要る** —— `limitedFetch` で掛ける。
-  const res = await limitedFetch(
+  await limitedFetch(
     `${GRAPH_BASE}/me/sendMail`,
     {
       method: 'POST',
@@ -165,10 +165,13 @@ async function sendMail(ctx: ActionContext): Promise<{ ok: true; to: string; sub
       }),
     },
     { fetch: ctx.fetch, serviceId: 'microsoft-365' },
+    // 202 Accepted・本文なし。読まない本文は limitedFetch が捨てる。
+    async (res) => {
+      if (!res.ok) {
+        throw new FetchError(`microsoft-365 sendMail failed (${res.status})`, res.status, 'microsoft-365');
+      }
+    },
   );
-  if (!res.ok) {
-    throw new FetchError(`microsoft-365 sendMail failed (${res.status})`, res.status, 'microsoft-365');
-  }
   return { ok: true, to, subject };
 }
 

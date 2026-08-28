@@ -208,7 +208,7 @@ async function checkEmailBreach(
   // 必ず投げるのでここでは使えないが、**打ち切りと応答サイズの上限は要る**
   // ので `limitedFetch` + `readCapped` を通す (2026-08-23)。
   const hctx = { fetch: ctx.fetch, serviceId: 'security' };
-  const res = await limitedFetch(
+  return limitedFetch(
     url,
     {
       headers: {
@@ -218,29 +218,33 @@ async function checkEmailBreach(
       },
     },
     hctx,
+    // HIBP は 404 が「どの侵害にも含まれない」という**正常応答**。
+    // その枝は本文を読まないので、limitedFetch が捨てる。
+    async (res) => {
+      if (res.status === 404) return { email, breaches: [] };
+      if (!res.ok) {
+        const body = await readCapped(res, hctx).catch(() => '');
+        throw new FetchError(`HIBP ${res.status}: ${redactForMessage(body, 200)}`, res.status, 'security');
+      }
+      const bodyText = await readCapped(res, hctx);
+      let data: HibpBreach[];
+      try {
+        data = JSON.parse(bodyText) as HibpBreach[];
+      } catch {
+        throw new FetchError('HIBP の応答が JSON ではありません', res.status, 'security');
+      }
+      return {
+        email,
+        breaches: data.map((b) => ({
+          name: b.Name,
+          title: b.Title,
+          date: b.BreachDate,
+          pwnCount: b.PwnCount,
+          dataClasses: b.DataClasses,
+        })),
+      };
+    },
   );
-  if (res.status === 404) return { email, breaches: [] };
-  if (!res.ok) {
-    const body = await readCapped(res, hctx).catch(() => '');
-    throw new FetchError(`HIBP ${res.status}: ${redactForMessage(body, 200)}`, res.status, 'security');
-  }
-  const bodyText = await readCapped(res, hctx);
-  let data: HibpBreach[];
-  try {
-    data = JSON.parse(bodyText) as HibpBreach[];
-  } catch {
-    throw new FetchError('HIBP の応答が JSON ではありません', res.status, 'security');
-  }
-  return {
-    email,
-    breaches: data.map((b) => ({
-      name: b.Name,
-      title: b.Title,
-      date: b.BreachDate,
-      pwnCount: b.PwnCount,
-      dataClasses: b.DataClasses,
-    })),
-  };
 }
 
 interface ScanUrlPayload {

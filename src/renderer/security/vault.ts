@@ -746,22 +746,26 @@ class BrowserVault implements Vault {
    * 解錠は成功させる) だが、通常の利用で 1 回解錠すれば窓は閉じる。
    */
   private async rebindLegacyTokens(): Promise<void> {
+    /*
+     * **接続は 1 本で済ませる。** 以前は id ごとに `openDb()`/`close()` して
+     * おり、しかも「もう v1 だから何もしない」の判定はその**後**だった ——
+     * 設定済みサービスが 20 件なら、解錠 1 回につき 21 往復が全部空振りする
+     * (自動施錠からのタブ復帰・再読込のたび)。id ごとの `openDb` は、
+     * アプリの他所が使っている DB に対する `versionchange` / `blocked` の
+     * 窓も広げていた (2026-08-28)。
+     */
     const db = await openDb();
-    let ids: string[];
+    const pending: { id: string; blob: EncryptedToken }[] = [];
     try {
-      ids = await idbKeys(db, TOKEN_STORE);
+      for (const id of await idbKeys(db, TOKEN_STORE)) {
+        const found = await idbGet<EncryptedToken>(db, TOKEN_STORE, id);
+        // 既に v1 なら読み替える物が無い。**ここで落とすので I/O も起きない。**
+        if (found && found.v !== TOKEN_RECORD_V1) pending.push({ id, blob: found });
+      }
     } finally {
       db.close();
     }
-    for (const id of ids) {
-      const db2 = await openDb();
-      let blob: EncryptedToken | undefined;
-      try {
-        blob = await idbGet<EncryptedToken>(db2, TOKEN_STORE, id);
-      } finally {
-        db2.close();
-      }
-      if (!blob || blob.v === TOKEN_RECORD_V1) continue;
+    for (const { id, blob } of pending) {
       const key = this.currentKey;
       if (!key) return; // 途中で施錠されたら止める
       try {
@@ -855,6 +859,11 @@ class BrowserVault implements Vault {
             },
           ]);
           this.currentKey = await importNonExtractable(masterRaw);
+          // newPassword は下限を強制済み —— ここで「短い」状態は解消する。
+          // **この 1 行が下の枝にしか無かった** (2026-08-28)。master-wrap 枝は
+          // Phase E の保管庫すべてが通る通常路なので、利用者が案内どおりに
+          // 直しても診断が同じ指摘を出し続けていた (施錠→解錠まで消えない)。
+          this.policyOk = true;
         } finally {
           masterRaw.fill(0);
         }

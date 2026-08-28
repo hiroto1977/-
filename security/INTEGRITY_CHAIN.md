@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 121
+- ブロック数: 123
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `0aee7468bb3a0750f39e7e626b11d62bb40ddc84979d43d85ca46dde78e76b58`
+- 末尾(tip)ハッシュ: `f93a4f1b4f28a2c20a82295f27defd4ec1d17f96653171b536a19fc1cf6a9a6c`
 - 保護対象: 56 ファイル
 
 ## ブロック
@@ -134,6 +134,8 @@
 | 118 | `85bb93031d8ad922` | `f5a376e5e8c16518` | `1e845491ca358c08` | update SECURITY_CHAIN.md |
 | 119 | `4f8c4d777803e664` | `1e845491ca358c08` | `f2210321e55a6838` | update manifest.webmanifest |
 | 120 | `eda1181974cfa51c` | `f2210321e55a6838` | `0aee7468bb3a0750` | update release.yml |
+| 121 | `4f4f4818cebddc6e` | `0aee7468bb3a0750` | `e72a3eedfc053c48` | update release.yml,types.ts,oauth.ts,pkce.ts,vault.ts,httpLimits.ts |
+| 122 | `1ebdc946a82a5d0c` | `e72a3eedfc053c48` | `f93a4f1b4f28a2c2` | update types.ts |
 
 ## 保護対象ファイル
 

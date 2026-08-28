@@ -88,39 +88,92 @@ export interface LimitedFetchCtx {
  *
  * 「JSON を返さないから素の fetch」で正しいのは**本文の扱い**だけで、
  * **打ち切りは形に関係なく要る**。そこをこの関数で分ける。
+ *
+ * ## なぜ `Response` を返さず callback を取るのか (2026-08-28)
+ *
+ * 最初は `Promise<Response>` を返していた。**それだと打ち切りが本文に
+ * 掛からない** —— `fetch` はヘッダで解決するので、`withTimeout` の
+ * `finally` が唯一の abort 源を落とした後に呼び出し側が本文を読むことになる。
+ *
+ * 実測: ヘッダを flush して本文を途中で止めるサーバに `timeoutMs: 1000` で
+ * 当てると、4000ms を超えても返らなかった。既存の検査 (`fetchTimeouts.test.ts`)
+ * は**要求時点で `init.signal` が非 null か**しか見ないので、全部通っていた。
+ *
+ * 使い終えるところまで `consume` の中へ入れることで、締切が本文にも掛かる。
+ * `withTimeout` 自身も `Response` を返されたら大声で落とすようにした。
  */
-export async function limitedFetch(
+/**
+ * 読まなかった本文を捨てる。
+ *
+ * 未消費の応答本文を放置すると undici (Electron main / Node) はソケットを
+ * プールへ返さず、GC の finalization まで借りたままにする。対になる
+ * `readBodyWithCap` は上限超過で `reader.cancel()` してから投げるのに、
+ * `limitedFetch` の先手の門と「本文を読まない応答」だけが非対称だった
+ * (2026-08-28 のレビューで発見)。
+ *
+ * 既に読み終えた本文や、掴まれたままの stream に `cancel()` すると投げるので
+ * 握り潰す —— **ここでの失敗は呼び出し側の結果に影響しない**。
+ */
+async function discardBody(res: Response): Promise<void> {
+  try {
+    if (!res.bodyUsed && res.body && !res.body.locked) await res.body.cancel();
+  } catch {
+    /* 既に読み終えている / 別の reader が掴んでいる */
+  }
+}
+
+export async function limitedFetch<T>(
   url: string,
   init: RequestInit,
   ctx: LimitedFetchCtx,
-): Promise<Response> {
+  consume: (res: Response) => Promise<T>,
+): Promise<T> {
   const f = ctx.fetch ?? fetch;
   const maxBytes = ctx.maxBytes ?? MAX_HTTP_RESPONSE_BYTES;
-  const res = await withTimeout(
+  return withTimeout(
     ctx.timeoutMs ?? DEFAULT_HTTP_TIMEOUT_MS,
     init.signal,
     async (signal) => {
+      let res: Response;
       try {
-        return await f(url, { ...init, signal });
+        res = await f(url, { ...init, signal });
       } catch (e) {
         if (signal.aborted) {
           throw new FetchError(`${ctx.serviceId} が時間内に応答しませんでした`, 0, ctx.serviceId);
         }
         throw e;
       }
+
+      // 宣言された長さが上限を超えていれば、本文を読む前に落とす (先手の門)。
+      const declared = declaredLengthExceeds(res, maxBytes);
+      if (declared !== null) {
+        await discardBody(res);
+        throw new FetchError(
+          `${ctx.serviceId} response too large (${declared} > ${maxBytes} bytes)`,
+          res.status,
+          ctx.serviceId,
+        );
+      }
+
+      try {
+        return await consume(res);
+      } catch (e) {
+        // 締切で切られたなら、本文の読み取り途中でも「時間内に応答しなかった」
+        // と言う。ここを素通しにすると `AbortError` がそのまま画面へ出る。
+        if (signal.aborted && !(e instanceof FetchError)) {
+          throw new FetchError(
+            `${ctx.serviceId} が時間内に応答しませんでした`,
+            res.status,
+            ctx.serviceId,
+          );
+        }
+        throw e;
+      } finally {
+        // `consume` が本文を読まなかったら捨てる (202 Accepted / 204 / HIBP の 404)。
+        await discardBody(res);
+      }
     },
   );
-
-  // 宣言された長さが上限を超えていれば、本文を読む前に落とす (先手の門)。
-  const declared = declaredLengthExceeds(res, maxBytes);
-  if (declared !== null) {
-    throw new FetchError(
-      `${ctx.serviceId} response too large (${declared} > ${maxBytes} bytes)`,
-      res.status,
-      ctx.serviceId,
-    );
-  }
-  return res;
 }
 
 /** `limitedFetch` と同じ上限で本文を読む (呼び出し側が本文を自分で扱う場合)。 */
@@ -134,22 +187,22 @@ export async function jsonFetch<T>(
   ctx: LimitedFetchCtx,
 ): Promise<T> {
   const maxBytes = ctx.maxBytes ?? MAX_HTTP_RESPONSE_BYTES;
-  const res = await limitedFetch(url, init, ctx);
+  return limitedFetch(url, init, ctx, async (res) => {
+    if (!res.ok) {
+      // 失敗の本文も上限つきで読む。落ちている相手ほど大きなものを返しうる。
+      const body = await readBodyWithCap(res, maxBytes, ctx.serviceId).catch(() => '');
+      throw new FetchError(
+        `${ctx.serviceId} ${res.status}: ${redactForMessage(body, 200)}`,
+        res.status,
+        ctx.serviceId,
+      );
+    }
 
-  if (!res.ok) {
-    // 失敗の本文も上限つきで読む。落ちている相手ほど大きなものを返しうる。
-    const body = await readBodyWithCap(res, maxBytes, ctx.serviceId).catch(() => '');
-    throw new FetchError(
-      `${ctx.serviceId} ${res.status}: ${redactForMessage(body, 200)}`,
-      res.status,
-      ctx.serviceId,
-    );
-  }
-
-  const text = await readBodyWithCap(res, maxBytes, ctx.serviceId);
-  try {
-    return JSON.parse(text) as T;
-  } catch {
-    throw new FetchError(`${ctx.serviceId} の応答が JSON ではありません`, res.status, ctx.serviceId);
-  }
+    const text = await readBodyWithCap(res, maxBytes, ctx.serviceId);
+    try {
+      return JSON.parse(text) as T;
+    } catch {
+      throw new FetchError(`${ctx.serviceId} の応答が JSON ではありません`, res.status, ctx.serviceId);
+    }
+  });
 }

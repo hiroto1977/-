@@ -41,6 +41,25 @@ jobs:
               release/*.exe.blockmap
               release/SHA256SUMS-*.txt
     runs-on: ${{ matrix.os }}
+    # **3 OS すべてで bash を使う。**
+    #
+    # 既定の shell は windows-latest だけ pwsh になる。この workflow の
+    # `run:` は最初から bash 前提で書かれており (`if [ -n "${APPLE_ID:-}" ]`、
+    # `ls -la`、`dist/assets/*.js` の glob)、pwsh では
+    #   - `ls -la` が Get-ChildItem に束縛されて -la を解決できない
+    #   - native コマンドの引数を **glob 展開しない**ので `dist/assets/*.js`
+    #     がリテラルで渡り、lint-sample-data.cjs が「成果物が見つかりません」
+    #     で exit 1 (実測)
+    # となり、**Windows ジョブが softprops の手前で落ちる**。
+    # `fail-fast: false` なので Linux/macOS は公開まで進み、
+    # **Windows インストーラだけ欠けたリリース**が出る ——
+    # `verify-release-artifacts.cjs` が防ぐために書かれた当の失敗で、
+    # 同じジョブの手前で走るあの門からは見えない。
+    #
+    # リリースはタグでしか走らないので未発火だった (2026-08-28 のレビューで検出)。
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
 

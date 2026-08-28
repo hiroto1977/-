@@ -205,24 +205,26 @@ export async function exchangeGoogleCode(
   // 掛けていて、ここだけ素の fetch だった (2026-08-23)。相手は既知ホストだが、
   // 守るのは攻撃より**事故**である: 応答しない端点で「交換中…」のまま
   // 固まるか、巨大な応答をそのまま読む。
-  const res = await withTimeout(DEFAULT_HTTP_TIMEOUT_MS, null, (signal) =>
-    fetchImpl('https://oauth2.googleapis.com/token', {
+  // **本文を読み終えるまでを締切の中に入れる。** `fetch` はヘッダで解決するので、
+  // Response を外へ出すと打ち切りが本文に掛からない (2026-08-28)。
+  const raw = await withTimeout(DEFAULT_HTTP_TIMEOUT_MS, null, async (signal) => {
+    const res = await fetchImpl('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
       body: params.toString(),
       signal,
-    }),
-  );
-  if (!res.ok) {
-    const body = await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'token exchange').catch(
-      () => '',
-    );
-    // 連携先が応答に資格情報を反射しても、エラー経由で漏らさない
-    // (jsonFetch / proxy.ts と同じ規律)。この文字列は画面にそのまま出て、
-    // 不具合報告に貼られる。
-    throw new Error(`token exchange ${res.status}: ${redactForMessage(body, 200)}`);
-  }
-  const raw = await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'token exchange');
+    });
+    if (!res.ok) {
+      const body = await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'token exchange').catch(
+        () => '',
+      );
+      // 連携先が応答に資格情報を反射しても、エラー経由で漏らさない
+      // (jsonFetch / proxy.ts と同じ規律)。この文字列は画面にそのまま出て、
+      // 不具合報告に貼られる。
+      throw new Error(`token exchange ${res.status}: ${redactForMessage(body, 200)}`);
+    }
+    return readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'token exchange');
+  });
   let data: {
     access_token?: string;
     refresh_token?: string;

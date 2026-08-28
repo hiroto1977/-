@@ -349,12 +349,31 @@ export function reviewLadder(raw: readonly unknown[]): LadderReview {
 }
 
 // --- 入力の正規化 (画面から来た値を判定へ渡す前に通す) ---------------
+//
+// **件数にも上限を置く。** 文字列長だけ切って件数を野放しにすると、
+// `talent.save-state` は IPC 境界で無制限の書き込み口になる ——
+// 乗っ取られた renderer が 200 万件の配列を渡せば、`saveTalentState` が
+// それを丸ごと JSON にしてディスクへ書く (2026-08-28 のレビューで検出)。
+// この PR が触った他の境界はすべて明示的な上限を得ている
+// (MAX_MOOD_NOTE_CHARS / MAX_ANALYZE_TEXT_CHARS / MAX_RECORD_NOTE_CHARS /
+//  MAX_ASSISTANT_MESSAGES) ので、ここだけ例外にしない。
+//
+// 値は「人間が運用で入れうる数」から採る。部署も施策も、1 期に 200 を
+// 超えるなら道具立てのほうが間違っている。
+
+/** 部署の申告の上限。 */
+export const MAX_DEPT_REPORTS = 200;
+/** 施策の上限。 */
+export const MAX_INITIATIVES = 200;
+/** 育成ロードマップに載せるメンバーの上限。 */
+export const MAX_LADDER_MEMBERS = 500;
+
 
 /** 部署の申告として受け付けられる形か。 */
 export function sanitizeReports(raw: unknown): readonly DeptReport[] {
   if (!Array.isArray(raw)) return [];
   const out: DeptReport[] = [];
-  for (const r of raw) {
+  for (const r of raw.slice(0, MAX_DEPT_REPORTS)) {
     if (r === null || typeof r !== 'object') continue;
     const o = r as Record<string, unknown>;
     const dept = o['department'];
@@ -372,7 +391,7 @@ export function sanitizeReports(raw: unknown): readonly DeptReport[] {
 export function sanitizeInitiatives(raw: unknown): readonly Initiative[] {
   if (!Array.isArray(raw)) return [];
   const out: Initiative[] = [];
-  for (const i of raw) {
+  for (const i of raw.slice(0, MAX_INITIATIVES)) {
     if (i === null || typeof i !== 'object') continue;
     const o = i as Record<string, unknown>;
     const name = o['name'];
@@ -418,7 +437,9 @@ export function sanitizeTalentState(raw: unknown): TalentState {
   return {
     reports: sanitizeReports(o['reports']),
     initiatives: sanitizeInitiatives(o['initiatives']),
-    members: Array.isArray(o['members']) ? o['members'].filter(isValidLadderMember) : [],
+    members: Array.isArray(o['members'])
+      ? o['members'].slice(0, MAX_LADDER_MEMBERS).filter(isValidLadderMember)
+      : [],
     updatedAt: typeof updatedAt === 'string' ? updatedAt.slice(0, 32) : '',
   };
 }

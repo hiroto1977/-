@@ -1299,7 +1299,7 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
   // business-advisor と同じ理由で `limitedFetch` を通す —— 2026-08-23 まで
   // 素の fetch で打ち切りも上限も無かった。補完は長いので 2 分。
   const hctx = { fetch: ctx.fetch, serviceId: 'stocks', timeoutMs: AI_CHAT_TIMEOUT_MS };
-  const res = await limitedFetch(
+  const parsed = await limitedFetch(
     'https://api.anthropic.com/v1/messages',
     {
       method: 'POST',
@@ -1322,19 +1322,19 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
       }),
     },
     hctx,
+    async (res) => {
+      if (!res.ok) {
+        // Defensive catch on the capped read — the HTTP-429 test gives a normal
+        // response body, so the catch path is unreachable from tests. The
+        // `body.slice(0, 200)` length cap is also unreachable since test
+        // bodies are short.
+        // Stryker disable next-line ArrowFunction,MethodExpression
+        const body = await readCapped(res, hctx).catch(() => '');
+        throw new Error(`stocks-advisor ${res.status}: ${redactForMessage(body, 200)}`);
+      }
+      return JSON.parse(await readCapped(res, hctx)) as AnthropicMessagesResponse;
+    },
   );
-
-  if (!res.ok) {
-    // Defensive catch on the capped read — the HTTP-429 test gives a normal
-    // response body, so the catch path is unreachable from tests. The
-    // `body.slice(0, 200)` length cap is also unreachable since test
-    // bodies are short.
-    // Stryker disable next-line ArrowFunction,MethodExpression
-    const body = await readCapped(res, hctx).catch(() => '');
-    throw new Error(`stocks-advisor ${res.status}: ${redactForMessage(body, 200)}`);
-  }
-
-  const parsed = JSON.parse(await readCapped(res, hctx)) as AnthropicMessagesResponse;
   // The Anthropic response contract: `content` is a (possibly empty)
   // array. The empty-content test exercises the next throw; the
   // `?.find((b) => true)` mutant would still find a (different) block

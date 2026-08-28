@@ -18,6 +18,10 @@ import {
   reviewLadder,
   sanitizeInitiatives,
   sanitizeReports,
+  sanitizeTalentState,
+  MAX_DEPT_REPORTS,
+  MAX_INITIATIVES,
+  MAX_LADDER_MEMBERS,
   saveTalentState,
   saveTalentStateImpl,
   type LadderMember,
@@ -505,5 +509,67 @@ describe('アクション', () => {
 
   it('★ 公開している口は save-state と judge-leader の 2 つだけ', () => {
     expect(Object.keys(ACTIONS).sort()).toEqual(['judge-leader', 'save-state']);
+  });
+});
+
+
+/**
+ * **IPC 境界での件数上限。**
+ *
+ * 文字列長だけ切って件数を野放しにすると、`talent.save-state` は
+ * 無制限の書き込み口になる —— 乗っ取られた renderer が巨大な配列を渡せば
+ * `saveTalentState` が丸ごとディスクへ書く (2026-08-28 のレビューで検出)。
+ */
+describe('件数の上限 — 無制限の書き込み口にしない', () => {
+  it('★ 部署の申告は MAX_DEPT_REPORTS で切る', () => {
+    const many = Array.from({ length: MAX_DEPT_REPORTS + 50 }, (_, i) => ({
+      department: `d${i}`,
+      diseases: ['imprint'],
+    }));
+    expect(sanitizeReports(many)).toHaveLength(MAX_DEPT_REPORTS);
+  });
+
+  it('★ 施策は MAX_INITIATIVES で切る', () => {
+    const many = Array.from({ length: MAX_INITIATIVES + 50 }, (_, i) => ({
+      name: `p${i}`,
+      probability: 1,
+    }));
+    expect(sanitizeInitiatives(many)).toHaveLength(MAX_INITIATIVES);
+  });
+
+  it('★ メンバーは MAX_LADDER_MEMBERS で切る', () => {
+    const many = Array.from({ length: MAX_LADDER_MEMBERS + 50 }, (_, i) => ({
+      id: `m${i}`,
+      name: `n${i}`,
+      step: 1,
+      yearsInStep: 0,
+    }));
+    expect(sanitizeTalentState({ members: many }).members).toHaveLength(MAX_LADDER_MEMBERS);
+  });
+
+  it('上限以内はそのまま通る (締めすぎていないこと)', () => {
+    const ok = Array.from({ length: 10 }, (_, i) => ({ department: `d${i}`, diseases: [] }));
+    expect(sanitizeReports(ok)).toHaveLength(10);
+  });
+
+  it('★ 保存の口を通しても上限が効く (action → sanitize → 書き込み)', async () => {
+    let written: unknown = null;
+    await saveTalentStateImpl(
+      {
+        payload: {
+          reports: Array.from({ length: MAX_DEPT_REPORTS + 10 }, (_, i) => ({
+            department: `d${i}`,
+            diseases: [],
+          })),
+        },
+      } as unknown as Parameters<typeof saveTalentStateImpl>[0],
+      {
+        save: async (state) => {
+          written = state;
+          return state;
+        },
+      },
+    );
+    expect((written as { reports: unknown[] }).reports).toHaveLength(MAX_DEPT_REPORTS);
   });
 });

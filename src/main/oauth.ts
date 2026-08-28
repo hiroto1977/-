@@ -729,21 +729,23 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
 
   const { code } = await listener;
 
-  const res = await withTimeout(DEFAULT_HTTP_TIMEOUT_MS, null, (signal) =>
-    fetchFn(config.tokenUrl, {
+  // **本文を読み終えるまでを締切の中に入れる。** `fetch` はヘッダで解決するので、
+  // Response を外へ出すと打ち切りが本文に掛からない (2026-08-28)。
+  const raw = await withTimeout(DEFAULT_HTTP_TIMEOUT_MS, null, async (signal) => {
+    const res = await fetchFn(config.tokenUrl, {
       method: 'POST',
       headers: buildTokenRequestHeaders(config),
       body: serializeTokenBody(config, buildTokenExchangeBody(config, redirectUri, code, verifier)),
       signal,
-    }),
-  );
-  if (!res.ok) {
-    const body = await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth').catch(() => '');
-    throw new Error(`Token exchange failed (${res.status}): ${redactForMessage(body, 200)}`);
-  }
-  const raw = JSON.parse(
-    await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth'),
-  ) as TokenResponse;
+    });
+    if (!res.ok) {
+      const body = await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth').catch(() => '');
+      throw new Error(`Token exchange failed (${res.status}): ${redactForMessage(body, 200)}`);
+    }
+    return JSON.parse(
+      await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth'),
+    ) as TokenResponse;
+  });
   return tokenResponseToSet(raw);
 }
 
@@ -762,20 +764,20 @@ export async function refresh(
   // クロージャの中では `current.refreshToken` の絞り込みが効かないので、
   // 上の guard を通った値をここで確定させる。
   const refreshToken = current.refreshToken;
-  const res = await withTimeout(DEFAULT_HTTP_TIMEOUT_MS, null, (signal) =>
-    fetchFn(config.tokenUrl, {
+  const raw = await withTimeout(DEFAULT_HTTP_TIMEOUT_MS, null, async (signal) => {
+    const res = await fetchFn(config.tokenUrl, {
       method: 'POST',
       headers: buildTokenRequestHeaders(config),
       body: serializeTokenBody(config, buildRefreshBody(config, refreshToken)),
       signal,
-    }),
-  );
-  if (!res.ok) {
-    const body = await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth').catch(() => '');
-    throw new Error(`Token refresh failed (${res.status}): ${redactForMessage(body, 200)}`);
-  }
-  const raw = JSON.parse(
-    await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth'),
-  ) as TokenResponse;
+    });
+    if (!res.ok) {
+      const body = await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth').catch(() => '');
+      throw new Error(`Token refresh failed (${res.status}): ${redactForMessage(body, 200)}`);
+    }
+    return JSON.parse(
+      await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth'),
+    ) as TokenResponse;
+  });
   return tokenResponseToSet(raw, current.refreshToken);
 }

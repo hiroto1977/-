@@ -690,7 +690,7 @@ export async function askBusinessAdvisorImpl(
   // equivalent because Number.isFinite(0)=true and the `> 0` test rejects 0.
   // Block-form pragma covers the whole body builder.
   // Stryker disable ConditionalExpression,LogicalOperator,EqualityOperator
-  const res = await limitedFetch(
+  const parsed = await limitedFetch(
     'https://api.anthropic.com/v1/messages',
     {
       method: 'POST',
@@ -707,18 +707,19 @@ export async function askBusinessAdvisorImpl(
       }),
     },
     hctx,
+    async (res) => {
+      if (!res.ok) {
+        // Defensive catch on the capped read — unreachable from current tests but
+        // mirrors stocks-advisor pattern for symmetry.
+        // Stryker disable next-line ArrowFunction,MethodExpression
+        const body = await readCapped(res, hctx).catch(() => '');
+        throw new Error(`business-advisor ${res.status}: ${redactForMessage(body, 200)}`);
+      }
+      return JSON.parse(await readCapped(res, hctx)) as AnthropicMessagesResponse;
+    },
   );
   // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator
 
-  if (!res.ok) {
-    // Defensive catch on the capped read — unreachable from current tests but
-    // mirrors stocks-advisor pattern for symmetry.
-    // Stryker disable next-line ArrowFunction,MethodExpression
-    const body = await readCapped(res, hctx).catch(() => '');
-    throw new Error(`business-advisor ${res.status}: ${redactForMessage(body, 200)}`);
-  }
-
-  const parsed = JSON.parse(await readCapped(res, hctx)) as AnthropicMessagesResponse;
   // Optional chain + find: see stocks-advisor for the same justification.
   // Stryker disable next-line OptionalChaining,ConditionalExpression
   const textBlock = parsed.content?.find((b) => b.type === 'text');

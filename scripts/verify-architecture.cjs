@@ -491,6 +491,31 @@ const METRICS = [
     },
     mode: 'gte',
   },
+  /*
+   * **保存先の台帳の件数。**
+   *
+   * この数は台帳 (`lint-storage-ledger.cjs` の `STORES`) と
+   * `docs/DATA_PROTECTION.md` と CLAUDE.md の 3 か所に書かれている。
+   * 2026-08-28、talent の鍵を足したときに CLAUDE.md だけ 20 のまま残り、
+   * `lint:docs` は数を照合しないので**何も鳴らなかった**。
+   * CLAUDE.md はすぐ上の行で「数を 2 か所に書くと必ず食い違うので、
+   * ここには書かない」と書いており、その直下で破れていた。
+   *
+   * 消すのではなく**機械に見せる**ことにした —— この行は
+   * 「lint:storage は何を見ているのか」を読む人に伝える価値があり、
+   * 腐らせない手立てのほうを足すのが筋である。
+   */
+  {
+    name: 'CLAUDE.md: localStorage ledger entry count',
+    docFile: 'CLAUDE.md',
+    docPattern: /localStorage (\d+) \/ sessionStorage/,
+    compute: () => {
+      const src = readFileSafe(path.join(REPO_ROOT, 'scripts/lint-storage-ledger.cjs')) ?? '';
+      const m = src.match(/const STORES = \{([\s\S]*?)\n\};/);
+      if (!m) return null;
+      return (m[1].match(/medium: 'localstorage'/g) ?? []).length;
+    },
+  },
   {
     name: 'CLAUDE.md: forbidden pattern count',
     docFile: 'CLAUDE.md',

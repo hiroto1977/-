@@ -71,7 +71,7 @@ import {
 import { getVault } from './security/vault';
 import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_LENGTH } from '../shared/redact';
 import {
-  withTimeout,
+  withBodyDeadline,
   DEFAULT_HTTP_TIMEOUT_MS,
   MAX_HTTP_RESPONSE_BYTES,
   readBodyWithCap,
@@ -178,7 +178,7 @@ async function getProxyTransport(): Promise<Transport> {
   // 2026-08-22 から `init.signal` を**捨てずに転送する**が、渡す側が誰も
   // 付けていなかった —— 関門は在るのに、通す物が無い形。
   return (url, init) =>
-    withTimeout(DEFAULT_HTTP_TIMEOUT_MS, init.signal, (signal) =>
+    withBodyDeadline(DEFAULT_HTTP_TIMEOUT_MS, init.signal, (signal) =>
       fetchViaProxy(url, { ...init, signal }, cfg),
     );
 }
@@ -351,14 +351,16 @@ async function readCappedText(res: Response, label: string): Promise<string> {
 }
 
 function timedFetch(url: string, init: RequestInit): Promise<Response> {
-  return withTimeout(DEFAULT_HTTP_TIMEOUT_MS, init.signal, (signal) =>
+  // `Response` を返す口なので `withBodyDeadline` —— 締切を早く落とすと
+  // 呼び出し側の本文読み取りに掛からない (2026-08-28)。
+  return withBodyDeadline(DEFAULT_HTTP_TIMEOUT_MS, init.signal, (signal) =>
     fetch(url, { ...init, signal }),
   );
 }
 
 /** 有料 LLM への直呼び出し。main と同じく 2 分 (通常の 30 秒では足りない)。 */
 function timedFetchAi(url: string, init: RequestInit): Promise<Response> {
-  return withTimeout(AI_CHAT_TIMEOUT_MS, init.signal, (signal) =>
+  return withBodyDeadline(AI_CHAT_TIMEOUT_MS, init.signal, (signal) =>
     fetch(url, { ...init, signal }),
   );
 }
