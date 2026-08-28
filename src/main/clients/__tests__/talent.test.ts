@@ -263,8 +263,14 @@ describe('reviewLadder — 育成ロードマップ', () => {
     expect(r.stalled).toHaveLength(1);
   });
 
-  it('習得目安ちょうどは滞留ではない (境界)', () => {
+  it('★ 習得目安ちょうどは滞留ではない — 「以上」ではなく「超過」', () => {
+    // ここを「以上」と読み違えると、5 年ちょうどの人まで挙がる。
+    // 手引き側の文面が実際に一度「5 年以上」になっていて食い違っていた。
     expect(reviewLadder([member({ yearsInStep: STEP1_MASTERY_YEARS })]).stalled).toHaveLength(0);
+    // 1 つ超えたら挙がること (境界の両側を押さえる)。
+    expect(reviewLadder([member({ yearsInStep: STEP1_MASTERY_YEARS + 1 })]).stalled).toHaveLength(1);
+    // 目安の内側も挙がらないこと。
+    expect(reviewLadder([member({ yearsInStep: STEP1_MASTERY_YEARS - 1 })]).stalled).toHaveLength(0);
   });
 
   it('STEP2 以降は年数が長くても滞留に数えない', () => {
