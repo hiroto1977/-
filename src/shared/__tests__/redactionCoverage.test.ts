@@ -165,3 +165,100 @@ describe('走査そのものの対照 (scan-credential-headers.cjs の self-test
     expect(lines.filter((l) => l.includes('✓')).length).toBeGreaterThanOrEqual(10);
   });
 });
+
+/**
+ * **接頭辞の網羅。** 上のヘッダ側の検査と対になる。
+ *
+ * ## なぜ別に要るのか (2026-08-29 実測)
+ *
+ * 上の検査は「**送っている側**のヘッダ名」から数えるので、
+ * `x-api-key: sk-proj-…` の形はきちんと捕まる。ところが秘密は
+ * **ヘッダ名を伴わずに現れることがある** —— 相手の API が本文へ
+ * 「Incorrect API key provided: sk-proj-…」と書き返す形である。
+ * そこを拾うのは `redact.ts` の接頭辞の列挙で、**そちらは誰も数えて
+ * いなかった**。
+ *
+ * 数えたら 5 形が抜けていた:
+ *
+ * ```
+ *   sk-proj- / sk-   OpenAI     ← 5 社の 1 つ。このアプリが預かる
+ *   sk_live_ / rk_live_  Stripe ← サービス一覧に在る
+ *   shpat_           Shopify    ← 同上
+ * ```
+ *
+ * `sk-ant-` は在った。2026-08-23 に「`sk-ant-…` を含む例外がそのまま
+ * renderer へ届いていた」のを直したときに、**その事故の接頭辞だけを足して
+ * 一般化しなかった**跡である。同じ事故が OpenAI の鍵で起きれば、
+ * 今日でもそのまま漏れていた。
+ *
+ * ## この台帳は手で保つ (ヘッダ側と違う)
+ *
+ * ヘッダ名は送信側の実装から機械的に採れるが、**接頭辞はソースのどこにも
+ * 書かれていない** (鍵の形は発行元が決めるので、こちらのコードには現れない)。
+ * だから列挙するしかない。列挙である以上ずれるので、**ずれたときに鳴る**
+ * よう検査の側に置く —— プロバイダを足す人はここも足すことになる。
+ */
+describe('伏字の網羅 — 発行元が分かる接頭辞', () => {
+  /** 実在する形。値は伏せられれば何でもよいので固定の埋め草を使う。 */
+  const FILLER = 'A'.repeat(28);
+  const PREFIXED: readonly [string, string][] = [
+    ['Anthropic', `sk-ant-api03-${FILLER}`],
+    ['OpenAI (プロジェクト鍵)', `sk-proj-${FILLER}`],
+    ['OpenAI (旧形式)', `sk-${FILLER}${FILLER}`],
+    ['Stripe (秘密鍵)', `sk_live_${FILLER}`],
+    ['Stripe (制限鍵)', `rk_live_${FILLER}`],
+    ['Stripe (試験鍵)', `sk_test_${FILLER}`],
+    ['Shopify (管理 API)', `shpat_${FILLER}`],
+    ['Shopify (共有秘密)', `shpss_${FILLER}`],
+    ['GitHub (PAT)', `ghp_${FILLER}`],
+    ['Slack (bot)', `xoxb-1111-2222-${FILLER}`],
+    ['Google (API キー)', `AIzaSy${FILLER}`],
+    ['Google (OAuth)', `ya29.${FILLER}`],
+    ['Atlassian', `ATATT3xFfGF0${FILLER}`],
+    ['Notion', `secret_${FILLER}`],
+  ];
+
+  it.each(PREFIXED)('★ %s の鍵は、ヘッダ名が無くても伏せられる', (_label, secret) => {
+    const out = redactSecrets(`API error: ${secret} is invalid`);
+    expect(out).not.toContain(secret);
+    expect(out).toContain('[REDACTED]');
+  });
+
+  /*
+   * **誤って伏せないこと。** 伏字が広すぎると 401 の説明が消え、
+   * 読めば分かるはずの不具合が読めなくなる (`Bearer|Basic` の 16 字下限が
+   * 同じ理由で在る)。裸の `sk-` は 20 字を要求してあるので、散文には
+   * 当たらない。**`\b` は日本語の直後でも立つ** (CJK は `\w` ではない) ので、
+   * 和文の標本も混ぜて確かめる。
+   */
+  it.each([
+    'risk-management-framework を見直す',
+    'task-oriented-architecture の話',
+    'disk-usage-monitor が落ちた',
+    'Basic authentication failed',
+    'the sk- prefix is documented',
+    'ask-me-anything-session-notes',
+    'あsk-short',
+  ])('★ 散文は伏せない: %s', (prose) => {
+    expect(redactSecrets(prose)).toBe(prose);
+  });
+
+  /*
+   * **覆えない形を名前で残す。**
+   *
+   * LINE のチャネルアクセストークンは接頭辞の無い base64 風の文字列で、
+   * **形だけでは秘密と散文を区別できない**。ここを拾おうとすると
+   * 「長い英数字」を全部伏せることになり、ID・ハッシュ・スタックトレースまで
+   * 消えて不具合報告が読めなくなる。
+   *
+   * 覆えないので、この形はヘッダ側の検査 (`x-line-…` / `Authorization`) と
+   * **送る前に値を組まない**設計で守る。ここに書いておくのは、次に読む人が
+   * 「網羅している」と誤解しないためである。
+   */
+  it('LINE 形式 (接頭辞なし) は接頭辞では覆えない — 覆えないことを記録する', () => {
+    const bare = `${'A'.repeat(43)}=`;
+    expect(redactSecrets(`error: ${bare}`)).toContain(bare);
+    // ただしヘッダ名が付いていれば、ヘッダ側の規則が拾う。
+    expect(redactSecrets(`authorization: Bearer ${bare}`)).not.toContain(bare);
+  });
+});

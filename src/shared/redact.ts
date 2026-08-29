@@ -115,10 +115,40 @@ export function redactSecrets(input: string): string {
       // 区切り文字を値から除いてあるので、伏せたあとの `[REDACTED]` (10 字)
       // に再び当たることもない (`[` も除外文字に入っている)。
       .replace(/\b(Bearer|Basic)\s+[^\s"'\\,;)[\]}]{16,}/g, '$1 [REDACTED]')
-      // 発行元が分かる接頭辞。`AIza…` は Google の API キー — このアプリは
-      // YouTube で `?key=…` の形の URL に載せて送るので、URL ごとどこかへ
-      // 書き出されたときに備えてここでも拾う。
-      .replace(/\b(sk-ant-|ghp_|ghs_|ghu_|gho_|ghr_|xoxp-|xoxb-|xoxa-|secret_|AIza)[A-Za-z0-9_-]{8,}/g, '$1[REDACTED]')
+      /*
+       * 発行元が分かる接頭辞。`AIza…` は Google の API キー — このアプリは
+       * YouTube で `?key=…` の形の URL に載せて送るので、URL ごとどこかへ
+       * 書き出されたときに備えてここでも拾う。
+       *
+       * **2026-08-29: 数えたら 5 形が抜けていた。**
+       *
+       * ここには `sk-ant-` が在って **OpenAI の `sk-` / `sk-proj-` が無かった**。
+       * 2026-08-23 に「`sk-ant-…` を含む例外がそのまま renderer へ届いていた」
+       * のを直したときに、**その事故の接頭辞だけを足して一般化しなかった**
+       * 跡である。同じ事故が OpenAI の鍵で起きれば、今日でもそのまま漏れる。
+       * 実測して素通りを確認した形: `sk-proj-` / `sk-` / `sk_live_` /
+       * `rk_live_` / `shpat_`。このアプリはどれも預かる
+       * (OpenAI は 5 社の 1 つ、Stripe と Shopify はサービス一覧に在る)。
+       *
+       * 経路は塞がっていない —— `shared/ai/chat.ts` は失敗応答の本文を
+       * `redactForMessage(body, 200)` に通して画面へ出す。`compat`
+       * (LiteLLM / LM Studio / 自前サーバ) が本文に鍵を書き返せば、
+       * 伏字を通り抜けて表示される。
+       */
+      .replace(
+        /\b(sk-ant-|sk-proj-|ghp_|ghs_|ghu_|gho_|ghr_|xoxp-|xoxb-|xoxa-|secret_|AIza|shpat_|shpss_|shpca_|sk_live_|sk_test_|rk_live_|rk_test_)[A-Za-z0-9_-]{8,}/g,
+        '$1[REDACTED]',
+      )
+      /*
+       * 接頭辞の付かない旧 OpenAI 鍵 (`sk-` + 英数)。**上の規則より後に置く** ——
+       * `sk-ant-` / `sk-proj-` は既に伏せてあり、残りの `ant-[REDACTED]` は
+       * `[` で止まって 20 字に届かないので二重には当たらない。
+       *
+       * 20 字を要求するのは英文を巻き込まないため。`\b` は日本語の直後でも
+       * 立つ (CJK は `\w` ではない) ので、短くすると散文を伏せかねない。
+       * 実在の OpenAI 鍵は 40 字を超える。
+       */
+      .replace(/\bsk-[A-Za-z0-9_-]{20,}/g, 'sk-[REDACTED]')
       .replace(/\bya29\.[A-Za-z0-9_-]{10,}/g, 'ya29.[REDACTED]')
       // Atlassian API token (Jira/Confluence PAT) — always begins `ATATT`.
       .replace(/\bATATT[A-Za-z0-9_=.-]{16,}/g, 'ATATT[REDACTED]')

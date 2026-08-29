@@ -1104,6 +1104,14 @@
       "leafCount": 61,
       "note": "update assistantMarkdown.ts",
       "hash": "24b8addc0d5b5f1d456e6c6afd02dbc9f755efd20f778f587c73bd9b02457409"
+    },
+    {
+      "index": 130,
+      "prevHash": "24b8addc0d5b5f1d456e6c6afd02dbc9f755efd20f778f587c73bd9b02457409",
+      "merkleRoot": "53dda0437603aaf5c4c981244a929fd021e71b466a0c4feb7d0e8d9fc0cb12a4",
+      "leafCount": 61,
+      "note": "update redact.ts",
+      "hash": "bd88542958788ad268b66b548b370592cfc35881dfbc3090c745eb871b741fd4"
     }
   ],
   "tipManifest": {
@@ -1163,7 +1171,7 @@
     "src/shared/imageUrlGate.ts": "c7b928e51fdbac71b154f9d0f97aa51a341eb8db3203105292cf47f79eda6760",
     "src/shared/ollama.ts": "61fe2b61be79c2a5bb7a5f54a952ca882a72b04796ab3af3b3cd84c2f204ed15",
     "src/shared/proxyEndpoint.ts": "1bb5bf73ca41bd73770a16531740ae0738e1cacdb21945c517adefe9aa4091c7",
-    "src/shared/redact.ts": "61cbdb5b2d43979fd6cd8a4ab8db1bc2ebf9bd26fb3d52e0e238ecdc2f802033",
+    "src/shared/redact.ts": "b4e8d450e5952f756ad6849a7b6965734572dda56e9f6d0c0e746da479a6a3ea",
     "src/shared/safeFilename.ts": "6c054facd96b064715f9e50ebeada09645486d5c599a3058f1b253a73ba7ff57",
     "src/shared/scanTarget.ts": "6876e63b0a0feff527d9cea3066736eb7b7c4a2143cffe855b49de1d19993299",
     "src/shared/tokenInput.ts": "f6d58a447a515abb4ddddb3b68d96aeed6a543cffd76a200e22c9077452b35be",
