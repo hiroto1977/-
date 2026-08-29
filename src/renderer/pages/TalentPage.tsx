@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import type { SourceStrength } from '../../shared/provenance';
 
 /**
  * 人材育成 — 手引きを「判定できる画面」にしたもの。
@@ -16,7 +17,8 @@ import { useServiceData } from '../hooks/useServiceData';
  * それを原文に対して留めている。
  */
 
-type SourceStrength = 'confirmed' | 'secondary' | 'gloss';
+// 語彙は `src/shared/provenance.ts` が持つ。ここで書き写すと、段が増えた日に
+// 画面だけ古い union を持つ (2026-08-29 に実際そうなっていた)。
 
 interface OrganDisease {
   readonly id: string;

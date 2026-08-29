@@ -34,6 +34,7 @@
     "gen:econ-asset-chart": "node scripts/gen-econ-asset-chart.cjs",
     "gen:econ-chart": "node scripts/gen-econ-history-chart.cjs",
     "graph:build": "node scripts/build-knowledge-graph.cjs",
+    "ingest:check": "node scripts/ingest-transcripts.cjs && node scripts/ingest-transcripts.cjs --self-test",
     "knowledge:auto": "node scripts/knowledge-autopilot.cjs",
     "knowledge:export": "node scripts/export-notebooklm.cjs",
     "lint": "eslint . --max-warnings 0",

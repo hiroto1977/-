@@ -32,7 +32,12 @@
  * - `secondary` … 第三者の解説で内容を確認した (著者の原文は未確認)
  * - `gloss`     … 名称のみ確認、語釈は当方の読み解き
  */
-export type SourceStrength = 'confirmed' | 'secondary' | 'gloss';
+// 出典の強さは `provenance.ts` が唯一の定義を持つ (2026-08-29 に切り出した)。
+// ここは既存の利用者のために再エクスポートするだけ —— **同じ union を
+// 2 か所に書かない**。
+export type { SourceStrength } from './provenance';
+export { SOURCE_STRENGTH_ORDER, atLeastAsStrong, isSourceStrength } from './provenance';
+import type { SourceStrength } from './provenance';
 
 export interface OrganDisease {
   readonly id: string;
