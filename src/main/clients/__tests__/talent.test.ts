@@ -573,3 +573,121 @@ describe('件数の上限 — 無制限の書き込み口にしない', () => {
     expect((written as { reports: unknown[] }).reports).toHaveLength(MAX_DEPT_REPORTS);
   });
 });
+
+
+/**
+ * **IPC 境界の上限と許可リスト。**
+ *
+ * 2026-08-29、`src/shared/talent.ts` を変異検査の対象へ入れて実測したところ
+ * 65.83%。生存 121 件の大半は定義表の「覆われた static 変異体」で、手で
+ * 当てると実際は殺されていた (帰属ずれ) —— **が、3 件は本物だった**。
+ * どれも payload が乗っ取られた renderer から来る経路で、外しても
+ * 11,277 件の検査が 1 つも落ちなかった。
+ */
+describe('境界の上限と許可リスト — 外しても誰も気付かなかった 3 件', () => {
+  /*
+   * `sanitizeReports` の許可リストは**元から守られていた**。
+   *
+   * 最初「無防備だ」と報告しかけたが、そのとき潰したのは同じ綴りを持つ
+   * **別の行** (`diagnoseOrg` の中の読み飛ばし) だった —— 置換が先頭一致で
+   * 当たっていた。**鳴らない対照は、まず対照自身を疑う。**
+   * 疑って正解で、無防備だったのは下の `diagnoseOrg` のほうである。
+   * この検査は元から在った守りを、行を名指しして留め直すもの。
+   */
+  it('未知の病 id は落とす (sanitizeReports の許可リスト)', () => {
+    const got = sanitizeReports([
+      { department: '営業', diseases: ['imprint', 'not-a-real-disease', '<script>'] },
+    ]);
+    expect(got).toHaveLength(1);
+    expect(got[0]?.diseases).toEqual(['imprint']);
+  });
+
+  it('未知の id しか無ければ、その部署は病 0 件になる (部署自体は残る)', () => {
+    const got = sanitizeReports([{ department: '開発', diseases: ['nope'] }]);
+    expect(got).toHaveLength(1);
+    expect(got[0]?.diseases).toEqual([]);
+  });
+
+  /*
+   * **`diagnoseOrg` は生の入力でも未知の id を出さない。**
+   *
+   * かつてここには `if (!DISEASE_IDS.has(d)) continue;` という 2 つ目の
+   * 守りが在ったが、変異検査で**外しても何も変わらない**ことが分かり、
+   * 消した (2026-08-29)。理由は構造にある —— `tallies` は
+   * `ORGAN_DISEASES` を回して作るので、知らない id は `byDisease` に
+   * 入っても二度と読まれない。
+   *
+   * つまり許可リストは**構造そのもの**である。この検査はその構造を留める:
+   * `tallies` を `byDisease` 由来に変えると 3 件落ちる (対照で確認済み)。
+   */
+  it('★ diagnoseOrg は生の入力でも未知の病 id を出さない (許可リストは構造)', () => {
+    const d = diagnoseOrg([
+      { department: '営業', diseases: ['imprint', 'bogus'] },
+      { department: '開発', diseases: ['imprint', 'bogus'] },
+    ]);
+    // 未知の id は集計に現れない
+    expect(d.tallies.map((t) => t.id)).not.toContain('bogus');
+    // 知っている id はちゃんと 2 部署で数えられている
+    const imprint = d.tallies.find((t) => t.id === 'imprint');
+    expect(imprint?.departments).toEqual(['営業', '開発']);
+    expect(d.systemic).toEqual(['imprint']);
+  });
+
+  /*
+   * 施策名の上限。他の欄 (部署名 64 / 氏名 64) は留めてあったのに、
+   * ここだけ抜けていた —— **同じ形の欄が並んでいると、1 つ抜けても目で
+   * 気付かない**。
+   */
+  it('★ 施策名は 128 文字を超えたら落とす', () => {
+    expect(sanitizeInitiatives([{ name: 'あ'.repeat(128), probability: 10 }])).toHaveLength(1);
+    expect(sanitizeInitiatives([{ name: 'あ'.repeat(129), probability: 10 }])).toHaveLength(0);
+  });
+
+  /*
+   * `updatedAt` は画面が作る日付文字列だが、payload なので長さを信じない。
+   * 切っていることを誰も見ていなかった。
+   */
+  it('★ updatedAt は 32 文字で切る', () => {
+    const long = 'x'.repeat(100);
+    expect(sanitizeTalentState({ updatedAt: long }).updatedAt).toHaveLength(32);
+    expect(sanitizeTalentState({ updatedAt: '2026-08-29' }).updatedAt).toBe('2026-08-29');
+  });
+
+  it('updatedAt が文字列でなければ空にする', () => {
+    expect(sanitizeTalentState({ updatedAt: 12345 }).updatedAt).toBe('');
+    expect(sanitizeTalentState({}).updatedAt).toBe('');
+  });
+});
+
+
+/**
+ * **メンバー id の形。**
+ *
+ * `MEMBER_ID_RE = /^[a-z0-9][a-z0-9-]{0,63}$/` の 2 つの制約
+ * (先頭は英数字・全体で 64 文字まで) は、変異検査で**どちらも外しても
+ * 誰も気付かなかった** (2026-08-29 実測)。
+ *
+ * id は保存され、画面が key に使う。先頭の `-` を許すと見た目が壊れ、
+ * 長さを許すと payload の上限が 1 つ抜ける。
+ */
+describe('メンバー id の形 — 外しても誰も気付かなかった 2 件', () => {
+  const member = (id: string) => ({ id, name: '山田', step: 1, yearsInStep: 0 });
+
+  it('★ 先頭は英数字でなければならない', () => {
+    expect(isValidLadderMember(member('m1'))).toBe(true);
+    expect(isValidLadderMember(member('1m'))).toBe(true);
+    expect(isValidLadderMember(member('-m1')), '先頭のハイフンは許さない').toBe(false);
+  });
+
+  it('★ 全体で 64 文字まで', () => {
+    expect(isValidLadderMember(member('a'.repeat(64))), '64 は通す').toBe(true);
+    expect(isValidLadderMember(member('a'.repeat(65))), '65 は落とす').toBe(false);
+  });
+
+  it('使える字は小文字英数字とハイフンだけ', () => {
+    expect(isValidLadderMember(member('m-1'))).toBe(true);
+    expect(isValidLadderMember(member('M1')), '大文字は落とす').toBe(false);
+    expect(isValidLadderMember(member('m_1')), 'アンダースコアは落とす').toBe(false);
+    expect(isValidLadderMember(member('')), '空文字は落とす').toBe(false);
+  });
+});

@@ -213,6 +213,7 @@
     "src/shared/seededNoise.ts",
     "src/shared/serviceId.ts",
     "src/shared/shigyoTypes.ts",
+    "src/shared/talent.ts",
     "src/shared/taxAutomobile.ts",
     "src/shared/taxBusinessOffice.ts",
     "src/shared/taxCalc.ts",

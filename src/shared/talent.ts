@@ -132,8 +132,9 @@ export interface OrgDiagnosis {
  * 「複数の管理職が同じ病に印をつけたなら、それは個人の問題ではなく
  * 仕組みの問題」をそのまま判定にしている。
  *
- * 未知の病 id と、同一部署内の重複は黙って落とす —— 画面から来る値なので
- * 落とすほうが安全で、落としたことが判定を歪めることはない (数が減るだけ)。
+ * 未知の病 id は集計に現れない —— `tallies` を `ORGAN_DISEASES` から作るので、
+ * 知らない id は構造的に読まれない。同一部署内の重複も Set で落ちる。
+ * どちらも画面から来る値なので、落とすほうが安全である。
  */
 export function diagnoseOrg(reports: readonly DeptReport[]): OrgDiagnosis {
   const byDisease = new Map<string, Set<string>>();
@@ -143,7 +144,12 @@ export function diagnoseOrg(reports: readonly DeptReport[]): OrgDiagnosis {
     if (typeof r.department !== 'string' || r.department.length === 0) continue;
     departments.add(r.department);
     for (const d of r.diseases) {
-      if (!DISEASE_IDS.has(d)) continue;
+      // 未知の id を here で弾く必要は無い —— 下の `tallies` は
+      // **`ORGAN_DISEASES` を回して作る**ので、知らない id は `byDisease` に
+      // 入っても二度と読まれない。かつて `if (!DISEASE_IDS.has(d)) continue;`
+      // を置いていたが、変異検査で**外しても何も変わらない**ことが分かった
+      // (2026-08-29)。効いていない防御は、pragma で黙らせるより消すほうが正しい。
+      // 許可リストは構造そのもの (`ORGAN_DISEASES.map`) が持っている。
       const set = byDisease.get(d) ?? new Set<string>();
       set.add(r.department);
       byDisease.set(d, set);

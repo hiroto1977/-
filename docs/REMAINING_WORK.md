@@ -9193,3 +9193,68 @@ CI が緑で、`verify:all` 34 門・`npm test`・e2e 240 検査・smoke 73 ペ�
 - **`npm run X` は辿らない**という判断も、self-test で**挙動として**留めた。
   直接呼びを `npm run` へ書き換えるには保護対象の workflow 自身を触ることに
   なり、そちらが鳴るので逃げ道にはならない。
+
+---
+
+## `src/shared/talent.ts` を変異検査へ入れた (2026-08-29)
+
+### なぜ入れたか
+
+`src/shared/` の 104 ファイルのうち 90 が `stryker.config.json` の `mutate` に
+在るが、**載っていない中で最大が `talent.ts` (22.6KB)** だった。中身は 4 つの
+判定 (`diagnoseOrg` / `achievementGap` / `judgeLeaderFitness` / `reviewLadder`)
+と **IPC 境界の正規化**で、載せない理由が無い。
+
+### 見つけた実穴 4 件
+
+外しても **11,277 件の検査が 1 つも落ちなかった**もの:
+
+| 場所 | 何が守られていなかったか |
+|---|---|
+| `sanitizeInitiatives` | 施策名の **128 文字上限** |
+| `sanitizeTalentState` | `updatedAt` の **32 文字切り** |
+| `MEMBER_ID_RE` | id の**先頭が英数字**という制限 |
+| `MEMBER_ID_RE` | id の**64 文字上限** |
+
+どれも payload が乗っ取られた renderer から来る経路。検査を足し、
+4 件とも対照で鳴ることを確かめた。
+
+### 消したもの
+
+`diagnoseOrg` の `if (!DISEASE_IDS.has(d)) continue;` は**構造的に等価**だった
+—— `tallies` は `ORGAN_DISEASES` を回して作るので、知らない id は `byDisease`
+に入っても二度と読まれない。効いていない防御は pragma で黙らせるより消す。
+許可リストは構造そのものが持っており、そちらを壊すと 3 件落ちる (対照済み)。
+
+### 定義表を字面で留めた
+
+`ORGAN_DISEASES` / `LEADER_DISQUALIFIERS` / `SKILL_STEPS` はモジュール直下の
+定数なので、静的 import では変異体が届かない。`vi.resetModules()` + 動的
+`import()` で読み直す形にしたら **66.95% → 83.62%** (59 件が死んだ)。
+手順は `stryker.config.json` の注記どおり (`oauth.ts` の `OAUTH_CONFIGS` で
+70.05% → 92.13% を出した実績がある)。
+
+これは社内基準として配られる文言でもある。10ヶ条の 1 つが静かに書き換わっても
+判定の形は変わらないので、既存の検査は全部通ってしまう。
+
+> **記憶で書いて 3 件外した。** 5つの病の id を記憶から書いたら
+> `job-shrink` / `number-omnipotence` / `cost-blindness` と誤り、最後の 1 つは
+> そもそも存在しなかった (実際は「フォーマット過信病」)。2026-08-27 に語釈を
+> 3 件とも間違えたのと**同じ誤り方**で、この検査がその場で捕まえた。
+
+### 残る 57 件の扱い —— **この数字は信用していない**
+
+`--mutate` で絞ると perTest の帰属がずれる (記録済みの罠)。今回それが
+**決定的に確かめられた**:
+
+```
+対照で 4 件の変異体を確実に殺した (どれも 1 件ずつ検査が落ちる)
+→ 絞り込みの再測定は 83.62% のまま 1 ミリも動かなかった
+```
+
+新しい検査は `src/main/clients/__tests__/talent.test.ts` に在り、絞り込み時は
+帰属されない。**したがって 83.62% は測りたい物を測っていない。**
+
+本当の数字は `npm run mutate` (全 245 件) でしか出ない。`stryker.config.json`
+を触ったので `mutation.yml` が main への push で走る —— **そこで出る数字が
+権威**である。赤になったらそれは正しい信号で、偽の警報ではない。
