@@ -1,0 +1,67 @@
+{
+  "channel": {
+    "name": "越水はるか弁護士-守りの経営ch",
+    "handle": "@koshimizuharuka",
+    "channelId": "UC-KK_-m-w-Jr73bvbgQJSzQ",
+    "url": "https://www.youtube.com/@koshimizuharuka",
+    "topic": "中小企業の経営者向けの企業法務 (倒産・資金繰り・契約・労務)",
+    "identityStrength": "confirmed",
+    "identityNote": "複数の独立した検索が同じチャンネル名・ハンドル・チャンネル ID を返した (2026-08-29)。"
+  },
+  "complete": false,
+  "completeNote": "検索は上位しか返さないので、これで全部という保証は無い。動画ページを開けない環境では網羅を確かめる手段が無く、`complete` は字幕とともに一覧を受け取った日に true へ上げる。",
+  "collectedAt": "2026-08-29",
+  "method": "WebSearch を youtube.com に限定して収集し、リポジトリの持ち主が一覧を確認した。",
+  "videos": [
+    {
+      "videoId": "7coHgD8zyJk",
+      "title": "【東大法学部卒】越水はるか弁護士の自己紹介",
+      "attribution": "owner-confirmed"
+    },
+    {
+      "videoId": "9_T4YcQyApo",
+      "title": "倒産したダメ経営者の特徴。企業法務のプロが解説します【越水遥弁護士】",
+      "attribution": "owner-confirmed"
+    },
+    {
+      "videoId": "8S6safZh0H0",
+      "title": "経営トラブル発生！弁護士に依頼する際に気をつけてほしいこと【越水遥弁護士】",
+      "attribution": "owner-confirmed"
+    },
+    {
+      "videoId": "Zvlgv3ELLjQ",
+      "title": "契約書のたった一言で会社の明暗が分かれる。損失を最小限に抑え利益を最大化する契約書を弁護士が解説【中小企業/経営者/取引】",
+      "attribution": "owner-confirmed"
+    },
+    {
+      "videoId": "ZnqjOyoDF14",
+      "title": "指示してないから残業代払わないはアリ？労働時間の正しいルールを弁護士が解説【中小企業/未払い残業】",
+      "attribution": "owner-confirmed"
+    },
+    {
+      "videoId": "KP3M6hEBCGc",
+      "title": "資金繰り悪化を防ぐために不可欠なこと #倒産 #資金調達",
+      "attribution": "owner-confirmed"
+    },
+    {
+      "videoId": "BgU-mnai6a0",
+      "title": "倒産を回避する方法について #資金繰り",
+      "attribution": "owner-confirmed"
+    },
+    {
+      "videoId": "OFNdngtyNw8",
+      "title": "業務委託契約はトラブルが多いです…このポイントを押さえてください！",
+      "attribution": "owner-confirmed"
+    },
+    {
+      "videoId": "ZoYLB2oyn-w",
+      "title": "越水遥氏紹介動画",
+      "attribution": "owner-confirmed"
+    },
+    {
+      "videoId": "V5-BnwM1xbc",
+      "title": "越水法律事務所の越水先生に聞いてみた。",
+      "attribution": "owner-confirmed"
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
 
@@ -26,8 +27,16 @@ import { join } from 'node:path';
 const REPO_ROOT = join(__dirname, '..', '..', '..');
 const SCRIPT = join(REPO_ROOT, 'scripts', 'ingest-transcripts.cjs');
 
+interface CatalogueFile {
+  readonly channel: { readonly channelId: string; readonly identityStrength: string };
+  readonly complete: boolean;
+  readonly videos: readonly { readonly videoId: string; readonly title: string; readonly attribution: string }[];
+}
+
 interface IngestModule {
   collapseSpace(s: string): string;
+  validateCatalogueEntry(e: unknown, idx: number): string[];
+  CATALOGUE_ATTRIBUTION: readonly string[];
   checkQuoteAnchors(
     claims: readonly unknown[],
     transcripts: Map<string, string>,
@@ -96,5 +105,43 @@ describe('字幕の取り込み — 引用が原文に在ることを確かめ�
 
   it('語彙は provenance.ts と同じ 3 段', () => {
     expect([...mod.SOURCE_STRENGTH]).toEqual(['confirmed', 'secondary', 'gloss']);
+  });
+});
+
+/**
+ * **実物の台帳を留める。**
+ *
+ * `ingest/koshimizuharuka/catalogue.json` は、検索で集めて**リポジトリの
+ * 持ち主が確認した**動画一覧 (2026-08-29)。ここで見るのは中身の正しさでは
+ * なく、**正直さの印が消えていないこと** —— とくに `complete: false`。
+ *
+ * 検索は上位しか返さないので、この一覧が全部という保証は無い。その但し書きが
+ * 落ちた瞬間、次の読み手は「これがチャンネルの全動画だ」と受け取る。
+ */
+describe('実物の台帳 (越水はるか弁護士-守りの経営ch)', () => {
+  const cat = JSON.parse(
+    readFileSync(join(REPO_ROOT, 'ingest', 'koshimizuharuka', 'catalogue.json'), 'utf8'),
+  ) as CatalogueFile;
+
+  it('★ 網羅していないことが記録されている (complete: false)', () => {
+    expect(cat.complete).toBe(false);
+  });
+
+  it('★ すべての動画に「どう確かめたか」が付いている', () => {
+    expect(cat.videos.length).toBeGreaterThan(0);
+    for (const [i, v] of cat.videos.entries()) {
+      expect(mod.validateCatalogueEntry(v, i), `videos[${i}] ${v.title}`).toEqual([]);
+      expect(mod.CATALOGUE_ATTRIBUTION).toContain(v.attribution);
+    }
+  });
+
+  it('videoId が重複していない', () => {
+    const ids = cat.videos.map((v) => v.videoId);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('チャンネルの同定が記録されている', () => {
+    expect(cat.channel.channelId).toMatch(/^UC[A-Za-z0-9_-]{22}$/);
+    expect(cat.channel.identityStrength).toBe('confirmed');
   });
 });

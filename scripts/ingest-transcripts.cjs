@@ -46,6 +46,16 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 const SOURCE_STRENGTH = ['confirmed', 'secondary', 'gloss'];
 
 /**
+ * 動画がそのチャンネルの物だと、**どうやって確かめたか**。
+ *
+ * 検索は別の事務所のチャンネルの動画も大量に混ぜて返す。動画ページを
+ * 開けない環境では、どれがどのチャンネルかを当方では判定できない ——
+ * だから「誰がどう確かめたか」を欄として持つ。`search-only` のまま
+ * 中身を書き始めると、**別のチャンネルの主張をこのチャンネルに帰属させる**。
+ */
+const CATALOGUE_ATTRIBUTION = ['owner-confirmed', 'search-only'];
+
+/**
  * 空白だけを潰す。**文字は触らない。**
  *
  * 明示するのは**ゼロ幅スペース (U+200B) だけ**。全角空白 (U+3000) も
@@ -86,6 +96,21 @@ function validateTranscript(rel, parsed) {
   }
   // 本文が空の字幕は「取り込んだ」と言えない。0 件を静かに通すのと同じ形。
   if (collapseSpace(parsed.body).length === 0) problems.push(`${rel}: 字幕の本文が空です`);
+  return problems;
+}
+
+/** 台帳の 1 件として成立しているか。 */
+function validateCatalogueEntry(e, idx) {
+  const at = `catalogue[${idx}]`;
+  const problems = [];
+  for (const key of ['videoId', 'title']) {
+    if (typeof e?.[key] !== 'string' || e[key] === '') problems.push(`${at}: ${key} がありません`);
+  }
+  if (!CATALOGUE_ATTRIBUTION.includes(e?.attribution)) {
+    problems.push(
+      `${at}: attribution は ${CATALOGUE_ATTRIBUTION.join(' / ')} のいずれか (実際 ${JSON.stringify(e?.attribution)})`,
+    );
+  }
   return problems;
 }
 
@@ -156,11 +181,47 @@ function ingest(dir, io = {}) {
     transcripts.set(id, parsed.body);
   }
 
-  const claimsPath = path.join(dir, 'claims.json');
   const names = readdir(dir);
+
+  // --- 台帳 (既知の動画一覧) ------------------------------------------
+  let catalogue = [];
+  if (names.includes('catalogue.json')) {
+    try {
+      const parsed = JSON.parse(readFile(path.join(dir, 'catalogue.json')));
+      if (!Array.isArray(parsed?.videos)) problems.push('catalogue.json の videos が配列ではありません');
+      else catalogue = parsed.videos;
+    } catch (e) {
+      problems.push(`catalogue.json を読めません: ${e.message}`);
+    }
+  }
+  const known = new Set();
+  catalogue.forEach((e, i) => {
+    const bad = validateCatalogueEntry(e, i);
+    if (bad.length > 0) {
+      problems.push(...bad);
+      return;
+    }
+    if (known.has(e.videoId)) problems.push(`catalogue[${i}]: videoId ${e.videoId} が重複しています`);
+    known.add(e.videoId);
+  });
+
+  /*
+   * **字幕は、台帳に載っている動画のものしか受け付けない。**
+   *
+   * 台帳を置いた以上、そこに無い videoId の字幕が現れたら、どちらかが
+   * 間違っている —— 別チャンネルの動画を混ぜたか、台帳の更新を忘れたか。
+   * どちらも「このチャンネルはこう言っている」を壊すので、静かに通さない。
+   */
+  if (catalogue.length > 0) {
+    for (const id of transcripts.keys()) {
+      if (!known.has(id)) problems.push(`videoId ${id} の字幕がありますが、catalogue.json に載っていません`);
+    }
+  }
+
+  // --- 主張 ------------------------------------------------------------
   if (names.includes('claims.json')) {
     try {
-      const parsed = JSON.parse(readFile(claimsPath));
+      const parsed = JSON.parse(readFile(path.join(dir, 'claims.json')));
       if (!Array.isArray(parsed)) problems.push('claims.json が配列ではありません');
       else claims = parsed;
     } catch (e) {
@@ -169,7 +230,7 @@ function ingest(dir, io = {}) {
   }
 
   problems.push(...checkQuoteAnchors(claims, transcripts));
-  return { transcripts, claims, problems };
+  return { transcripts, claims, catalogue, problems };
 }
 
 // --- self-test ------------------------------------------------------------
@@ -247,6 +308,39 @@ function selfTest() {
   const brokenJson = ingest('/d', io({ 'claims.json': '{' }));
   check('壊れた claims.json は鳴る', brokenJson.problems.some((p) => p.includes('読めません')));
 
+  // --- 台帳 ---
+  const cat = (videos) => JSON.stringify({ videos });
+  const entry = (id, attribution = 'owner-confirmed') => ({ videoId: id, title: 'T', attribution });
+
+  check('台帳の項目が揃っていれば通る', validateCatalogueEntry(entry('a'), 0).length === 0);
+  check('台帳の欄が欠けたら鳴る', validateCatalogueEntry({ videoId: 'a' }, 0).length >= 2);
+  check(
+    '★ attribution が語彙外なら鳴る (確かめ方を空欄にさせない)',
+    validateCatalogueEntry(entry('a', 'たぶん'), 0).some((p) => p.includes('attribution')),
+  );
+  check('search-only も語彙のうち', validateCatalogueEntry(entry('a', 'search-only'), 0).length === 0);
+
+  const catDup = ingest('/d', io({ 'catalogue.json': cat([entry('a'), entry('a')]) }));
+  check('台帳の videoId が重複したら鳴る', catDup.problems.some((p) => p.includes('重複')));
+
+  const catOk = ingest('/d', io({ 'catalogue.json': cat([entry('a'), entry('b')]), 'a.md': md('a', 'ほんぶん') }));
+  check('台帳に載っている字幕は通る', catOk.problems.length === 0 && catOk.catalogue.length === 2);
+
+  const stray = ingest('/d', io({ 'catalogue.json': cat([entry('a')]), 'b.md': md('b', 'ほんぶん') }));
+  check(
+    '★ 台帳に無い videoId の字幕は鳴る (別チャンネルの混入を止める)',
+    stray.problems.some((p) => p.includes('catalogue.json に載っていません')),
+  );
+
+  const noCat = ingest('/d', io({ 'b.md': md('b', 'ほんぶん') }));
+  check('台帳が無ければ字幕の照合はしない (段階的に育てられる)', noCat.problems.length === 0);
+
+  const catBroken = ingest('/d', io({ 'catalogue.json': '{"videos": 1}' }));
+  check('videos が配列でなければ鳴る', catBroken.problems.some((p) => p.includes('配列ではありません')));
+
+  const catPendingOnly = ingest('/d', io({ 'catalogue.json': cat([entry('a'), entry('b')]) }));
+  check('★ 字幕がまだ 0 本でも台帳だけで通る (未取得は異常ではない)', catPendingOnly.problems.length === 0);
+
   // --- 語彙が provenance.ts と一致していること ---
   const pv = fs.readFileSync(path.join(REPO_ROOT, 'src/shared/provenance.ts'), 'utf8');
   check(
@@ -275,21 +369,38 @@ function main(argv) {
 
   const channels = fs.readdirSync(root).filter((d) => fs.statSync(path.join(root, d)).isDirectory());
   let bad = 0;
+  let totalClaims = 0;
   for (const ch of channels.sort()) {
-    const { transcripts, claims, problems } = ingest(path.join(root, ch));
-    console.log(`${ch}: 字幕 ${transcripts.size} 本 / 主張 ${claims.length} 件`);
+    const { transcripts, claims, catalogue, problems } = ingest(path.join(root, ch));
+    const pending = catalogue.filter((e) => !transcripts.has(e?.videoId)).length;
+    console.log(
+      `${ch}: 台帳 ${catalogue.length} 本 / 字幕 ${transcripts.size} 本 (未取得 ${pending}) / 主張 ${claims.length} 件`,
+    );
     for (const p of problems) console.error(`  ❌ ${p}`);
     bad += problems.length;
+    totalClaims += claims.length;
   }
   if (bad > 0) {
     console.error(`\n❌ ${bad} 件`);
     return 1;
   }
-  console.log('✅ 引用はすべて字幕に見つかりました');
+  /*
+   * **0 件を「合格」と言わない。**
+   *
+   * 主張がまだ無いのに「引用はすべて字幕に見つかりました」と出すのは、
+   * 何も照合していないことを合格の顔で報せることになる。この PR は
+   * 同じ形を何度も見つけている (空配列への `every()` / 発火しない規則)。
+   * 数えた物を数えたとおりに言う。
+   */
+  if (totalClaims === 0) {
+    console.log('主張はまだ 0 件です (引用の照合は対象なし)。');
+  } else {
+    console.log(`✅ 引用 ${totalClaims} 件はすべて字幕に見つかりました`);
+  }
   return 0;
 }
 
-module.exports = { parseTranscript, validateTranscript, validateClaimShape, checkQuoteAnchors, collapseSpace, ingest, SOURCE_STRENGTH };
+module.exports = { parseTranscript, validateTranscript, validateClaimShape, validateCatalogueEntry, checkQuoteAnchors, collapseSpace, ingest, SOURCE_STRENGTH, CATALOGUE_ATTRIBUTION };
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));

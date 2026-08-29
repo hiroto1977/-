@@ -19,9 +19,43 @@
 ## 置き場所
 
 ```
+ingest/<channel>/catalogue.json  既知の動画一覧 (任意)
 ingest/<channel>/<videoId>.md    字幕 (frontmatter + 本文)
 ingest/<channel>/claims.json     抽出した主張 (任意)
 ```
+
+### 台帳 (`catalogue.json`)
+
+字幕より先に「どの動画が在るか」だけ分かることがある。そのための一覧。
+
+```json
+{
+  "channel": { "name": "…", "handle": "@…", "channelId": "UC…", "identityStrength": "confirmed" },
+  "complete": false,
+  "videos": [
+    { "videoId": "…", "title": "…", "attribution": "owner-confirmed" }
+  ]
+}
+```
+
+**`attribution` は「そのチャンネルの動画だと、どうやって確かめたか」。**
+
+| 値 | 意味 |
+|---|---|
+| `owner-confirmed` | リポジトリの持ち主が一覧を確認した |
+| `search-only` | 検索が返しただけ。**別チャンネルの動画が混ざりうる** |
+
+検索は別の法律事務所や別業種のチャンネルの動画も大量に混ぜて返す。
+動画ページを開けない環境では、どれがどのチャンネルかを当方では判定できない。
+`search-only` のまま中身を書き始めると、**別のチャンネルの主張をこの
+チャンネルに帰属させる**ことになる。
+
+**`complete` は「これで全部か」。** 検索は上位しか返さないので、既定は `false`。
+この但し書きが落ちた瞬間、次の読み手は「これがチャンネルの全動画だ」と受け取る。
+
+台帳を置くと 1 つ規則が増える —— **字幕は台帳に載っている動画のものしか
+受け付けない**。載っていない videoId の字幕が現れたら、別チャンネルの動画を
+混ぜたか、台帳の更新を忘れたかのどちらかである。
 
 字幕の形:
 
@@ -86,6 +120,18 @@ npm run ingest:check
 
 self-test は `src/shared/__tests__/ingestTranscripts.test.ts` から**実際に走る**ので、
 孤児にはなっていない。字幕が入った日に門へ昇格させる。
+
+## 現在の取り込み状況
+
+```
+koshimizuharuka: 台帳 10 本 / 字幕 0 本 (未取得 10) / 主張 0 件
+```
+
+越水はるか弁護士-守りの経営ch (`@koshimizuharuka` / `UC-KK_-m-w-Jr73bvbgQJSzQ`)。
+チャンネルの同定は複数の独立した検索が一致して `confirmed`、動画一覧は検索で
+集めて持ち主が確認 (`owner-confirmed`)。**字幕は 1 本も無いので、中身については
+何も言えない。** タイトルから内容を書き起こすことはしない —— それは
+2026-08-27 に語釈 3 件を間違えたのと同じやり方である。
 
 ## この環境から YouTube は取れない (2026-08-29 実測)
 
