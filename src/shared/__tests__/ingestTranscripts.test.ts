@@ -140,6 +140,26 @@ describe('実物の台帳 (越水はるか弁護士-守りの経営ch)', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
+  /*
+   * **確かめ方の内訳が消えていないこと。**
+   *
+   * 一覧には持ち主が確認した物と、検索が返しただけの物が混在している。
+   * 後者を黙って `owner-confirmed` へ格上げすると、**別チャンネルの動画を
+   * このチャンネルの物として扱う**下地になる (検索は他事務所の動画も
+   * 大量に混ぜて返す)。混在そのものを検査で見えるようにしておく。
+   */
+  it('★ 確かめ方が 1 件ずつ記録されていて、格上げされていない', () => {
+    const byAttribution = new Map<string, number>();
+    for (const v of cat.videos) {
+      byAttribution.set(v.attribution, (byAttribution.get(v.attribution) ?? 0) + 1);
+    }
+    // 語彙の外は無い
+    for (const k of byAttribution.keys()) expect(mod.CATALOGUE_ATTRIBUTION).toContain(k);
+    // 実物には search-only が現に在る (全部 owner-confirmed に見せない)
+    expect(byAttribution.get('search-only') ?? 0).toBeGreaterThan(0);
+    expect(byAttribution.get('owner-confirmed') ?? 0).toBeGreaterThan(0);
+  });
+
   it('チャンネルの同定が記録されている', () => {
     expect(cat.channel.channelId).toMatch(/^UC[A-Za-z0-9_-]{22}$/);
     expect(cat.channel.identityStrength).toBe('confirmed');

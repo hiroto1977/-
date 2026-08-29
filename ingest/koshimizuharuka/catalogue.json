@@ -11,7 +11,7 @@
   "complete": false,
   "completeNote": "検索は上位しか返さないので、これで全部という保証は無い。動画ページを開けない環境では網羅を確かめる手段が無く、`complete` は字幕とともに一覧を受け取った日に true へ上げる。",
   "collectedAt": "2026-08-29",
-  "method": "WebSearch を youtube.com に限定して収集し、リポジトリの持ち主が一覧を確認した。",
+  "method": "WebSearch を youtube.com に限定して収集し、リポジトリの持ち主が一覧を確認した。一部は持ち主が動画 URL を直接示した (2026-08-29)。attribution が search-only の項目は**検索が返しただけ**で、タイトルの付け方 (【中小企業/…】) がこのチャンネルの他の動画と一致する、というこちらの推測に留まる。動画ページを開けないので判定はできない。",
   "videos": [
     {
       "videoId": "7coHgD8zyJk",
@@ -62,6 +62,21 @@
       "videoId": "V5-BnwM1xbc",
       "title": "越水法律事務所の越水先生に聞いてみた。",
       "attribution": "owner-confirmed"
+    },
+    {
+      "videoId": "vzE1Tn3Uc8g",
+      "title": "実はうっかりやりがちな行為です！知らないでやると怖い非弁行為について解説します【中小企業/経営者】",
+      "attribution": "owner-confirmed"
+    },
+    {
+      "videoId": "EnW6BrMRsEs",
+      "title": "スクショも録音も意味ないの！？裁判所が本当に見ているポイントを弁護士が教えます【中小企業/証拠】",
+      "attribution": "search-only"
+    },
+    {
+      "videoId": "JFu8TWNcTV8",
+      "title": "こんなことまで！？経営者が無意識にやりがちな意外なハラスメント10選を弁護士が解説します【中小企業/カスハラ/義務化】",
+      "attribution": "search-only"
     }
   ]
 }
