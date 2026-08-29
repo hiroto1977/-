@@ -14,6 +14,10 @@
 import { redactForMessage } from '../redact';
 import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap, withTimeout } from '../httpLimits';
 import {
+  ASSISTANT_REPLY_TRUNCATED_NOTICE,
+  MAX_ASSISTANT_REPLY_CHARS,
+} from '../assistantLimits';
+import {
   AI_PROVIDERS,
   resolveModel,
   type AiChatRequest,
@@ -152,6 +156,26 @@ export async function runAiChat(opts: RunAiChatOptions): Promise<AiChatResult> {
     const text = spec.parseText(json);
     if (text.length === 0) {
       throw new Error(`${spec.label} がテキスト応答を返しませんでした`);
+    }
+    /*
+     * **受け取った応答にも上限を掛ける。** 理由と実測は
+     * `shared/assistantLimits.ts` の `MAX_ASSISTANT_REPLY_CHARS` に書いた ——
+     * 10MiB の応答は `parseMarkdown` を通ると 150 万ブロックになり、
+     * 画面が 15 秒死ぬ。byte の上限 (`readBodyWithCap`) だけでは足りない:
+     * 10MiB は「本文として妥当」でも「画面に出す量」としては論外である。
+     *
+     * ここに置くのは、**両ビルドと chat / chatAll が必ず通る唯一の場所**
+     * だから。画面の手前 (`AssistantPage`) に置くと、会話履歴には巨大な
+     * ままの物が積まれ、ブラウザ版の別の呼び出し口が素通しになる。
+     *
+     * 黙って切らない —— 切った事実を本文に残す。
+     */
+    if (text.length > MAX_ASSISTANT_REPLY_CHARS) {
+      return {
+        text: text.slice(0, MAX_ASSISTANT_REPLY_CHARS) + ASSISTANT_REPLY_TRUNCATED_NOTICE,
+        model,
+        provider: spec.id,
+      };
     }
     return { text, model, provider: spec.id };
   });

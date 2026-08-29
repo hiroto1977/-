@@ -3,6 +3,10 @@ import { createServer, type Server } from 'node:http';
 import { AddressInfo } from 'node:net';
 import { runAiChat } from '../chat';
 import { MAX_HTTP_RESPONSE_BYTES } from '../../httpLimits';
+import {
+  ASSISTANT_REPLY_TRUNCATED_NOTICE,
+  MAX_ASSISTANT_REPLY_CHARS,
+} from '../../assistantLimits';
 import type { AiChatRequest } from '../providers';
 
 /**
@@ -58,6 +62,12 @@ beforeAll(async () => {
         res.flushHeaders();
         res.write('{"choices":[{"message":{"content":"');
         return; // ...そして黙る。閉じない。
+      }
+      if (mode === 'flood') {
+        // byte の上限には収まるが、**画面に出す量としては論外**な応答。
+        res.writeHead(200, { 'content-type': 'application/json' });
+        res.end(JSON.stringify({ choices: [{ message: { content: '#### x\n'.repeat(60_000) } }] }));
+        return;
       }
       if (mode === 'huge') {
         res.writeHead(200, { 'content-type': 'application/json' });
@@ -155,5 +165,44 @@ describe('AI の応答 — 本文にも締切と上限が掛かる (実サーバ
 
   it('上限は共有の定数を見ている (二つ目の台帳を作らない)', () => {
     expect(MAX_HTTP_RESPONSE_BYTES).toBe(10 * 1024 * 1024);
+  });
+});
+
+/**
+ * **受け取った応答を画面へ出す量にも上限が要る。**
+ *
+ * byte の上限 (10MiB) を通ってもなお、`parseMarkdown` に渡せば 150 万
+ * ブロックになる応答が作れる。実測 (2026-08-29):
+ *
+ * ```
+ *    10MiB → 1,497,965 blocks / parse 746ms / render 15,630ms / html 134MiB
+ * ```
+ *
+ * レンダラーは 1 スレッドなので、これは**画面が 15 秒死ぬ**ということである。
+ * `lint:regex` の頭が名指ししている攻撃者 (「乗っ取られた proxy」) が
+ * そのまま使える経路で、あちらは*指数時間の正規表現*だけを見張っていた。
+ */
+describe('AI の応答 — 画面へ出す量の上限', () => {
+  it('★ 上限を超える応答は切り詰められる', async () => {
+    const res = await call('flood', 30000);
+    // 元は 42 万字。上限 + 注記の長さちょうどに収まる。
+    expect(res.text.length).toBe(MAX_ASSISTANT_REPLY_CHARS + ASSISTANT_REPLY_TRUNCATED_NOTICE.length);
+  });
+
+  it('★ 切ったことを黙らせない (注記が本文に残る)', async () => {
+    const res = await call('flood', 30000);
+    expect(res.text.endsWith(ASSISTANT_REPLY_TRUNCATED_NOTICE)).toBe(true);
+  });
+
+  /*
+   * **対照。** 上 2 件は「切られること」を見るので、実装が何でも切るように
+   * なっても気付けない。正当な長さの応答が**そのまま**通ることを確かめる。
+   * 上限は正当な応答 (maxTokens 2048) の 12 倍以上に取ってあるので、
+   * ここが発火するようになったら値の取り方が間違っている。
+   */
+  it('★ 正当な長さの応答は 1 文字も変えない (対照)', async () => {
+    const res = await call('ok', 5000);
+    expect(res.text).toBe('ok');
+    expect(res.text).not.toContain('打ち切りました');
   });
 });

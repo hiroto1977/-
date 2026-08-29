@@ -1096,6 +1096,14 @@
       "leafCount": 61,
       "note": "update httpLimits.ts",
       "hash": "93a92f590da7623874d727da7bee4f0cdc87cee1cd12f1d2e6eb6b9d63991a4d"
+    },
+    {
+      "index": 129,
+      "prevHash": "93a92f590da7623874d727da7bee4f0cdc87cee1cd12f1d2e6eb6b9d63991a4d",
+      "merkleRoot": "e1390ffa2f146ddfa3fd45bc5a4b19c6ec1e8cbcd9cca227e195a42f56b8d16a",
+      "leafCount": 61,
+      "note": "update assistantMarkdown.ts",
+      "hash": "24b8addc0d5b5f1d456e6c6afd02dbc9f755efd20f778f587c73bd9b02457409"
     }
   ],
   "tipManifest": {
@@ -1129,7 +1137,7 @@
     "src/main/secrets.ts": "7f5b381cf809c86354a263d81b78ca868579fc82459dbf1e54aa68dd16a44ff8",
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
     "src/preload/preload.ts": "ec4bcd1283a8cb949dbb92857727d2a84c98e788a0bfd78c4b5cb718663a4027",
-    "src/renderer/data/assistantMarkdown.ts": "fa5d923a3b160d7c99ae2edfc73d78d823789204d6275a9904d8d9a15e44dd2d",
+    "src/renderer/data/assistantMarkdown.ts": "7d08dc362233f8ca3d52257e84c2bd6c95ad34d3ea97d5208359aa730d969d6b",
     "src/renderer/data/recordCipher.ts": "dcc3aaaec7f027e62791e2bfb0a8f56f799363a2a11b475cc5cf7e941ee61551",
     "src/renderer/fs/fsa.ts": "1c08898772900ac0dba49054456188f50823b6380c5f4d789d66a5513aae39d4",
     "src/renderer/network/liveRead.ts": "aae9f14472c4442ddc482d11ed4843557a47c67b75d1a832800abaf387b424e1",

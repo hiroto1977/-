@@ -56,7 +56,56 @@ function isTableSeparator(line: string): boolean {
   return splitTableRow(line).every((c) => /^:?-{1,}:?$/.test(c));
 }
 
-/** Markdown 文字列をブロック配列へ変換する。 */
+/**
+ * **描画するブロック数の上限** (2026-08-29)。
+ *
+ * ## なぜ要るか —— 固まる原因は正規表現ではなく**量**だった
+ *
+ * このファイルは `lint:regex` が見張っている当の場所で、あちらの頭には
+ * 「応答は攻撃者が誘導しうる (プロンプト注入、乗っ取られた proxy、悪意ある
+ * MCP サーバ) ので、指数時間の正規表現が 1 本入るだけで画面が固まる」と
+ * ある。**指数の式は 1 本も無い** (実測、下記) —— それでも画面は固まる。
+ *
+ * `#### x\n` を並べた応答を通した実測 (2026-08-29):
+ *
+ * ```
+ *   0.1MiB   14,979 blocks   parse  13ms   render    108ms   html   1.3MiB
+ *     1MiB  149,796 blocks   parse  74ms   render    803ms   html  13.4MiB
+ *    10MiB 1,497,965 blocks  parse 746ms   render 15,630ms   html 134.3MiB
+ * ```
+ *
+ * **解析は線形** (10MiB で 746ms)。溢れるのは**その先の描画**で、
+ * レンダラーは 1 スレッドなので 15 秒画面が死に、134MiB の DOM が残る。
+ * 上は文字列化 (`renderToString`) の数字なので、実際の DOM はもっと重い。
+ *
+ * ## なぜ**ここ**に置くか
+ *
+ * 応答を作る口は 1 つではない —— `shared/ai/chat.ts` (5 社) と
+ * `chatOllama` (main / ブラウザで 2 実装) がある。産地ごとに上限を書くと、
+ * **口が増えた日に片方だけ守られる** (このリポジトリが何度も踏んだ形で、
+ * `clients/ollama.ts` の timeout はまさにそれだった)。
+ * ここは**全部が必ず通る沈み先**なので、1 か所で閉じられる。
+ *
+ * 産地側の上限 (`MAX_ASSISTANT_REPLY_CHARS`) と二重になるが、あちらは
+ * 会話履歴に積む量を、こちらは描く量を縛る。役割が違う。
+ *
+ * ## 値の決め方 (判断であって、典拠のある数字ではない)
+ *
+ * 正当な応答は `maxTokens: 2048` で縛られていて、1 行 1 ブロックに割っても
+ * 数百に届かない。2 万は**その 2 桁上**で正当な応答では発火せず、当たれば
+ * 上の表で 100ms 台に収まる。
+ */
+export const MAX_RENDER_BLOCKS = 20_000;
+
+/** 打ち切ったことを黙らせない。最後の段落として必ず見える形で残す。 */
+export const BLOCKS_TRUNCATED_NOTICE = '…（応答が長すぎたため、ここで表示を打ち切りました）';
+
+/**
+ * Markdown 文字列をブロック配列へ変換する。
+ *
+ * 返すブロック数は `MAX_RENDER_BLOCKS` で頭打ちになり、打ち切った場合は
+ * 末尾に `BLOCKS_TRUNCATED_NOTICE` の段落が 1 つ足される。
+ */
 export function parseMarkdown(src: string): Block[] {
   const lines = src.replace(/\r\n/g, '\n').split('\n');
   const blocks: Block[] = [];
@@ -162,5 +211,12 @@ export function parseMarkdown(src: string): Block[] {
     i++;
   }
   flushParagraph(para);
+  if (blocks.length > MAX_RENDER_BLOCKS) {
+    // `slice` してから注記を足す。上限**ちょうど**の応答は 1 つも欠けない。
+    return [
+      ...blocks.slice(0, MAX_RENDER_BLOCKS),
+      { type: 'paragraph', spans: [{ text: BLOCKS_TRUNCATED_NOTICE }] },
+    ];
+  }
   return blocks;
 }

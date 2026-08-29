@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { parseInline, parseMarkdown, type Block, type InlineToken } from '../assistantMarkdown';
+import {
+  BLOCKS_TRUNCATED_NOTICE,
+  MAX_RENDER_BLOCKS,
+  parseInline,
+  parseMarkdown,
+  type Block,
+  type InlineToken,
+} from '../assistantMarkdown';
 
 describe('parseInline', () => {
   it('parses bold and inline code', () => {
@@ -407,5 +414,49 @@ describe('parseMarkdown — 箇条書きの終わり方', () => {
     const b = parseMarkdown(md('1. a', 'x 2. b'));
     expect(asList(b).items.length).toBe(1);
     expect(b.filter((x) => x.type === 'paragraph').length).toBe(1);
+  });
+});
+
+/**
+ * **描く量の上限。** 固まる原因は正規表現ではなく量だった。
+ *
+ * `lint:regex` はこのファイルを名指しで見張っているが、見ているのは
+ * *指数時間の式*である。実測すると式は全部線形で、それでも 10MiB の応答は
+ * 150 万ブロックになり **描画に 15.6 秒**掛かった (`renderToString` 実測。
+ * 実 DOM はもっと重い)。レンダラーは 1 スレッドなので画面ごと止まる。
+ *
+ * 上限は沈み先に置いてある —— 応答を作る口は `shared/ai/chat.ts` と
+ * `chatOllama` (main / ブラウザ) に分かれており、産地ごとに書くと
+ * **口が増えた日に片方だけ守られる**。
+ */
+describe('描く量の上限 — 量で画面を止めさせない', () => {
+  it('★ 上限を超えるとブロック数が頭打ちになる', () => {
+    const blocks = parseMarkdown('#### x\n'.repeat(MAX_RENDER_BLOCKS * 2));
+    // 上限ぶん + 注記 1 つ
+    expect(blocks).toHaveLength(MAX_RENDER_BLOCKS + 1);
+  });
+
+  it('★ 打ち切ったことが見える形で残る', () => {
+    const blocks = parseMarkdown('#### x\n'.repeat(MAX_RENDER_BLOCKS * 2));
+    const last = blocks[blocks.length - 1]!;
+    expect(last.type).toBe('paragraph');
+    expect(JSON.stringify(last)).toContain(BLOCKS_TRUNCATED_NOTICE);
+  });
+
+  /*
+   * **対照。** 上 2 件は「切られること」しか見ないので、実装が何でも切る
+   * ようになっても気付けない。上限**ちょうど**が 1 つも欠けずに通ることを
+   * 確かめる —— 境界を 1 つ間違えれば (`>=` にすれば) ここが鳴る。
+   */
+  it('★ 上限ちょうどは 1 つも欠けず、注記も付かない (対照)', () => {
+    const blocks = parseMarkdown('#### x\n'.repeat(MAX_RENDER_BLOCKS));
+    expect(blocks).toHaveLength(MAX_RENDER_BLOCKS);
+    expect(JSON.stringify(blocks)).not.toContain(BLOCKS_TRUNCATED_NOTICE);
+  });
+
+  it('★ 普通の長さの応答は素通し (正当な応答では発火しない)', () => {
+    const blocks = parseMarkdown('# 見出し\n\n本文です。\n\n- a\n- b\n');
+    expect(blocks.length).toBeLessThan(10);
+    expect(JSON.stringify(blocks)).not.toContain(BLOCKS_TRUNCATED_NOTICE);
   });
 });
