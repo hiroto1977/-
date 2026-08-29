@@ -126,6 +126,21 @@ export async function readBodyWithCap(
 }
 
 /**
+ * その例外は `readBodyWithCap` の**上限超過**か。
+ *
+ * 呼び出し側には「大きすぎた」を独自の文言・種別へ翻訳する経路が在る
+ * (`clients/ollama.ts` の `FetchError`、`network/ollamaWeb.ts` の
+ * `kind: 'too-large'`)。そこで `catch {}` と一括りにすると、**打ち切りや
+ * 接続断まで「大きすぎます」と報せてしまう** —— 利用者は的外れな対処をする。
+ *
+ * 判定を投げる側の隣に置く。文言と判定が別のファイルに離れると、
+ * `readBodyWithCap` の一言を直した日に翻訳側が黙って外れる。
+ */
+export function isOverCap(e: unknown): boolean {
+  return e instanceof Error && e.message.includes(' response too large');
+}
+
+/**
  * `Content-Length` が上限を超えていれば、本文を読む前に落とす。
  *
  * これは**先手の門**であって、これだけでは守りにならない ——

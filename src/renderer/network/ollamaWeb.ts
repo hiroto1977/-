@@ -41,6 +41,7 @@ import {
   type OllamaErrorAdvice,
   type OllamaSnapshot,
 } from '../../shared/ollama';
+import { isOverCap, readBodyWithCap, withBodyDeadline } from '../../shared/httpLimits';
 
 /** 接続先設定の保存キー (localStorage)。UI と web-shim が共有する。
  *  値は「ポート番号のみ」または `http(s)://host:port`。旧 `…ollama.port` の値も読む。 */
@@ -155,20 +156,32 @@ const emptySnapshot = (): OllamaSnapshot => ({
   warnings: [],
 });
 
-/** タイムアウト付き fetch。中断・ネットワーク失敗は例外で伝える。 */
-async function fetchWithTimeout(
+/**
+ * タイムアウト付き fetch。中断・ネットワーク失敗は例外で伝える。
+ *
+ * **締切は本文にも掛かる** (2026-08-29)。以前はここで
+ * `finally { clearTimeout(timer) }` としていたが、`fetch` は**ヘッダーで
+ * 解決する**ので、本文は呼び出し側が —— つまり**唯一の中断源を外した後で**
+ * 読んでいた。ヘッダーだけ返して黙る相手には打ち切りが掛からず、
+ * レンダラーは 1 スレッドなので**画面ごと止まる**。
+ *
+ * 接続先は loopback とは限らない。`probeOllama` の注記どおり
+ * 「このページと同じホストの http (例 `http://192.168.1.10:11434`)」も
+ * 通るので、**相手は LAN 上の別の機械**でありうる。
+ *
+ * `withBodyDeadline` は timer を落とさない —— 応答が済んでいれば abort は
+ * 何にも当たらず、本文がまだ流れていれば stream が壊れて読み手が落ちる。
+ * `Response` を返さねばならないこの形のために在る道具で、**呼び出し 5 か所を
+ * 触らずに直せる**。同じ欠陥を `shared/ai/chat.ts` と `clients/ollama.ts`
+ * でも直している (同じ形が 3 か所に在った)。
+ */
+function fetchWithTimeout(
   fetchFn: typeof fetch,
   url: string,
   init: RequestInit,
   timeoutMs: number = REQUEST_TIMEOUT_MS,
 ): Promise<Response> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    return await fetchFn(url, { ...init, signal: controller.signal });
-  } finally {
-    clearTimeout(timer);
-  }
+  return withBodyDeadline(timeoutMs, undefined, (signal) => fetchFn(url, { ...init, signal }));
 }
 
 /**
@@ -199,10 +212,22 @@ export async function readTextOrEmpty(res: Response): Promise<string> {
   return read!.status === 'fulfilled' ? read!.value : '';
 }
 
-/** サイズ上限つき JSON 読み取り。上限超過・非 JSON は null。 */
+/**
+ * サイズ上限つき JSON 読み取り。上限超過・非 JSON は null。
+ *
+ * **上限は「読む前」に効かせる** (2026-08-29)。以前は `res.text()` で
+ * **全部読んでから** `text.length` を見ていたので、上限は*解析*を防ぐだけで
+ * *確保*は防いでいなかった —— 2GiB を返す相手には、2MiB の上限が在っても
+ * 2GiB を確保してからそれを捨てることになる。レンダラーのメモリで起きるので
+ * タブごと落ちうる。`readBodyWithCap` は塊ごとに数えて**超えた時点で
+ * reader を止める**。
+ *
+ * 投げずに null を返す約束は変えない —— 呼び出し 3 か所が「読めなければ
+ * 詳細なし」として扱っており、そこは上限超過も非 JSON も同じ扱いでよい。
+ */
 async function readJsonCapped(res: Response): Promise<unknown> {
-  const text = await res.text();
-  if (text.length > MAX_RESPONSE_BYTES) return null;
+  const text = await readBodyWithCap(res, MAX_RESPONSE_BYTES, 'ollama').catch(() => null);
+  if (text === null) return null;
   return parseJsonOrNull(text);
 }
 
@@ -492,9 +517,20 @@ export async function chatOllama(
     return { ok: false, kind: withModels.kind, message: joinAdvice(withModels) };
   }
 
-  const text = await res.text();
-  if (text.length > MAX_RESPONSE_BYTES) {
-    return { ok: false, kind: 'too-large', message: '応答が大きすぎたため中断しました。' };
+  // `readJsonCapped` と同じ理由で、上限は**読む前**に効かせる。ここは
+  // 「大きすぎた」を利用者へ別文言で伝える経路なので、null に潰さず分ける。
+  //
+  // **上限超過だけを 'too-large' にする。** 打ち切り (締切) や接続断を
+  // 「大きすぎます」と報せると、利用者は的外れな対処をする —— 判定は
+  // `isOverCap` に 1 つだけ置いて、投げる側の文言と結び付けてある。
+  let text: string;
+  try {
+    text = await readBodyWithCap(res, MAX_RESPONSE_BYTES, 'ollama');
+  } catch (e) {
+    if (isOverCap(e)) {
+      return { ok: false, kind: 'too-large', message: '応答が大きすぎたため中断しました。' };
+    }
+    throw e;
   }
   let parsed: unknown = null;
   try {

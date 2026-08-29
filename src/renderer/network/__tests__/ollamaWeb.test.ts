@@ -10,7 +10,9 @@ import {
   OLLAMA_PORT_KEY,
   desktopSetupCommands,
   originsSetupSteps,
+  MAX_RESPONSE_BYTES,
   probeOllama,
+  REQUEST_TIMEOUT_MS,
   setupCommands,
 } from '../ollamaWeb';
 import { DEFAULT_SETUP_MODEL, MIN_SAFE_VERSION } from '../../../shared/ollama';
@@ -1397,7 +1399,26 @@ describe('時間切れと後始末', () => {
     expect(r.status).toBe('not-running');
   });
 
-  it('終わったら見張りを解除する (時計を残さない)', async () => {
+  /*
+   * **この検査は 2026-08-29 に約束を差し替えた。** 経緯を残す。
+   *
+   * 元は「応答が済んだ時点で timer が 0 本」を見ていた (`getTimerCount() === 0`)。
+   * 解除し忘れを捕まえるための検査で、意図は正しかった。**ところがその
+   * 「解除」自体が欠陥だった** —— `fetch` はヘッダーで解決するので、
+   * 解除した時点で**本文はまだ流れていない**。ヘッダーだけ返して黙る相手には
+   * 打ち切りが掛からず、レンダラーは 1 スレッドなので画面ごと止まる。
+   *
+   * つまり旧い約束は「画面が止まらないこと」と**両立しない**。
+   * `withBodyDeadline` は本文を読み終えるまで timer を生かす道具で、
+   * ブラウザ版では既に 3 経路 (`web-shim.ts` の `timedFetch` ほか) が
+   * 同じ代償を払っている。
+   *
+   * そこで見る物を「0 本であること」から**「溜まらないこと」**へ移す。
+   * 残った timer が締切とともに自分で消えることを実際に進めて確かめる ——
+   * こちらのほうが強い検査でもある。**締切の窓の間、見張りが実際に
+   * 起きていること**まで言えるからで、旧い検査はそれを言えなかった。
+   */
+  it('★ 見張りは本文の間だけ残り、締切とともに自分で消える', async () => {
     vi.useFakeTimers();
     const f = vi.fn(async (url: string | URL | Request) => {
       if (String(url).endsWith('/api/version')) return json({ version: '0.5.4' });
@@ -1405,7 +1426,11 @@ describe('時間切れと後始末', () => {
     }) as unknown as typeof fetch;
     const r = await probeOllama(11434, f, '', noCsp);
     expect(r.status).toBe('ok');
-    // 解除し忘れると、成功後もタイマーが残り続ける。
+    // 応答が済んでも見張りは**わざと**残っている。本文がまだ流れている
+    // かもしれないため —— ここが 0 なら、黙る相手を打ち切れない。
+    expect(vi.getTimerCount()).toBeGreaterThan(0);
+    // そして締切が過ぎれば自分で消える (要求ごとに溜まり続けない)。
+    await vi.advanceTimersByTimeAsync(REQUEST_TIMEOUT_MS + 1);
     expect(vi.getTimerCount()).toBe(0);
   });
 
@@ -1424,6 +1449,35 @@ describe('時間切れと後始末', () => {
   it('上限を 1 バイト超えたら、読める JSON でも読まない', async () => {
     const pad = 'y'.repeat(2 * 1024 * 1024 - JSON.stringify({ version: '' }).length + 1);
     const body = JSON.stringify({ version: pad });
+    const f = vi.fn(async (url: string | URL | Request) => {
+      if (String(url).endsWith('/api/version')) return new Response(body, { status: 200 });
+      return json({ models: [] });
+    }) as unknown as typeof fetch;
+    const r = await probeOllama(11434, f, '', noCsp);
+    expect(r.snapshot.version).toBe('');
+  });
+
+  /*
+   * **上限は byte で数える。以前は文字で数えていた。**
+   *
+   * 定数の名前は `MAX_RESPONSE_BYTES` で、画面の「セキュリティポリシー」欄にも
+   * byte として出ている。ところが実装は `res.text()` の結果に `.length` を
+   * 当てており、これは **UTF-16 の符号単位の数**であって byte ではない。
+   * 日本語は 1 文字 3 byte なので、**名乗っている上限の約 3 倍**が通っていた。
+   *
+   * 上の 2 件 (ちょうど / 1 超え) が気付けなかったのは、標本が `'y'` の
+   * 繰り返し —— **ASCII では文字数と byte 数が一致する**ため。境界の検査は
+   * 在ったが、境界が何の境界かを分ける標本が無かった。
+   *
+   * `readBodyWithCap` へ移して byte で数えるようにした。**厳しくなる側**の
+   * 変化で、名前と実体が揃う。
+   */
+  it('★ 上限は byte で数える (日本語で 3 倍通っていた)', async () => {
+    const pad = 'あ'.repeat(1_000_000);
+    const body = JSON.stringify({ version: pad });
+    // 文字数は上限以下だが、byte 数は上限を超える —— ここが分かれ目。
+    expect(body.length).toBeLessThan(MAX_RESPONSE_BYTES);
+    expect(new TextEncoder().encode(body).byteLength).toBeGreaterThan(MAX_RESPONSE_BYTES);
     const f = vi.fn(async (url: string | URL | Request) => {
       if (String(url).endsWith('/api/version')) return new Response(body, { status: 200 });
       return json({ models: [] });

@@ -36,6 +36,7 @@ import {
   isVersionSafe,
   type OllamaSnapshot,
 } from '../../shared/ollama';
+import { isOverCap, readBodyWithCap } from '../../shared/httpLimits';
 
 // 既存の import 元 (このモジュール) を維持するため再 export する。
 export { MIN_SAFE_VERSION, UNPATCHED_OOB_NOTICE, compareVersions, isSafeModelName, isVersionSafe };
@@ -301,14 +302,39 @@ async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: nu
     );
   }
 
-  // Defense against an unbounded response: read as text up to a cap.
-  const text = await res.text();
-  if (text.length > MAX_RESPONSE_BYTES) {
-    throw new FetchError(
-      `ollama response exceeded ${MAX_RESPONSE_BYTES} bytes`,
-      0,
-      'ollama',
-    );
+  /*
+   * **上限は「読む前」に、byte で効かせる** (2026-08-29)。
+   *
+   * ここは `res.text()` で**全部読んでから** `text.length` を見ていた。
+   * 二重に名前負けしていた:
+   *
+   *  1. コメントは "read as text up to a cap" と言うが、上限まで読むのではなく
+   *     **全部読んでから捨てる**。10MB の上限が在っても 2GiB は確保される ——
+   *     ここは main プロセスなので、落ちればタブではなく**アプリ全体**が落ちる。
+   *  2. `.length` は UTF-16 の符号単位の数で **byte ではない**。文言は
+   *     "exceeded ... bytes" と言っているのに、日本語では名乗った上限の
+   *     約 3 倍が通っていた。
+   *
+   * `readBodyWithCap` は塊ごとに数えて超えた時点で reader を止める。
+   * 文言は既存の検査が留めているので変えない。
+   * ブラウザ版 (`renderer/network/ollamaWeb.ts`) の同じ 2 か所も同日に直した。
+   */
+  let text: string;
+  try {
+    text = await readBodyWithCap(res, MAX_RESPONSE_BYTES, 'ollama');
+  } catch (e) {
+    // **上限超過だけを既存の文言へ翻訳し、他はそのまま通す。** 打ち切りや
+    // 接続断を「大きすぎます」と報せると、利用者は的外れな対処をする
+    // (`catch {}` で一括りにして 1 度そう書いた)。文言の結び付きは
+    // `isOverCap` を通して 1 か所にし、検査で留める。
+    if (isOverCap(e)) {
+      throw new FetchError(
+        `ollama response exceeded ${MAX_RESPONSE_BYTES} bytes`,
+        0,
+        'ollama',
+      );
+    }
+    throw e;
   }
 
   let parsed: OllamaChatResponse;

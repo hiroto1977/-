@@ -3,6 +3,7 @@ import {
   DEFAULT_HTTP_TIMEOUT_MS,
   MAX_HTTP_RESPONSE_BYTES,
   declaredLengthExceeds,
+  isOverCap,
   readBodyWithCap,
   withBodyDeadline,
   withTimeout,
@@ -321,5 +322,63 @@ describe('withBodyDeadline — 本文を読み終えるまで締切を生かす'
       return new Response(null, { status: 204 }); // 204 は本文を持てない
     });
     expect(seen).toBeInstanceOf(AbortSignal);
+  });
+});
+
+/**
+ * **`isOverCap` は「上限超過」だけを真にする。**
+ *
+ * 呼び出し側にはこれを独自の文言・種別へ翻訳する経路が在る
+ * (`clients/ollama.ts` の `FetchError`、`network/ollamaWeb.ts` の
+ * `kind: 'too-large'`)。最初そこを `catch {}` と一括りに書いたので、
+ * **打ち切りも接続断も「大きすぎます」になっていた** —— 利用者を
+ * 的外れな対処へ導く文言である。
+ *
+ * ## 標本は**書かずに、起こして採る**
+ *
+ * ここで文字列を手で書くと、留まるのは「`readBodyWithCap` の文言は
+ * こうだったはず」という**こちらの記憶**であって、実装ではない。記憶が
+ * ずれた日に検査も一緒にずれる —— 本 PR で 3 度踏んだ形なので、
+ * 実際に上限を超えさせて**投げられた例外そのもの**を材料にする。
+ * 文言を直した日に、ここが鳴って翻訳側の見落としを教える。
+ */
+describe('isOverCap — 上限超過とそれ以外を分ける', () => {
+  /** 実際に上限を超えさせて、投げられた例外を採る。 */
+  async function thrownBy(res: Response): Promise<unknown> {
+    try {
+      await readBodyWithCap(res, 4, 'ollama');
+      return null;
+    } catch (e) {
+      return e;
+    }
+  }
+
+  it('★ stream 経路の上限超過を真と判定する (文言を書かずに起こして採る)', async () => {
+    const e = await thrownBy(new Response('0123456789'));
+    expect(e).toBeInstanceOf(Error);
+    expect(isOverCap(e)).toBe(true);
+  });
+
+  it('★ body なし (素朴なモック) の経路でも真と判定する', async () => {
+    const mock = { text: () => Promise.resolve('0123456789') } as unknown as Response;
+    const e = await thrownBy(mock);
+    expect(e).toBeInstanceOf(Error);
+    expect(isOverCap(e)).toBe(true);
+  });
+
+  it('★ 上限以内なら投げない (対照: 何でも真になっていない)', async () => {
+    expect(await thrownBy(new Response('abc'))).toBeNull();
+  });
+
+  it('★ 打ち切り・接続断は偽 (これを真にすると文言が的外れになる)', () => {
+    expect(isOverCap(new DOMException('aborted', 'AbortError'))).toBe(false);
+    expect(isOverCap(new TypeError('fetch failed'))).toBe(false);
+    expect(isOverCap(new Error('ollama response too small'))).toBe(false);
+  });
+
+  it('Error でない物は偽', () => {
+    expect(isOverCap('ollama response too large')).toBe(false);
+    expect(isOverCap(null)).toBe(false);
+    expect(isOverCap(undefined)).toBe(false);
   });
 });

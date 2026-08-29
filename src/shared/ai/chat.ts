@@ -12,6 +12,7 @@
 // golden で固定する。
 
 import { redactForMessage } from '../redact';
+import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap, withTimeout } from '../httpLimits';
 import {
   AI_PROVIDERS,
   resolveModel,
@@ -68,43 +69,90 @@ export async function runAiChat(opts: RunAiChatOptions): Promise<AiChatResult> {
   const httpReq = spec.buildRequest({ ...opts.request, model }, opts.cfg);
 
   const f = opts.fetchFn ?? fetch;
-  // **注入された fetch にも渡す。** ブラウザ版は `fetchViaProxy` を差し込む
-  // ので、あちらが signal を捨てていると「timeout を入れたのに効かない」
-  // 形になる (実際に捨てていたので、あわせて直した)。
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), opts.timeoutMs ?? AI_CHAT_TIMEOUT_MS);
-  let res: Response;
-  try {
-    res = await f(httpReq.url, {
-      method: 'POST',
-      headers: httpReq.headers,
-      body: httpReq.body,
-      signal: controller.signal,
-    });
-  } catch (e) {
-    if (controller.signal.aborted) {
-      throw new Error(`${spec.label} が時間内に応答しませんでした`);
+
+  /*
+   * **締切の中で本文まで読み切る** (2026-08-29)。
+   *
+   * ここは 2026-08-22 に timeout を足した場所で、その理由は
+   * `AI_CHAT_TIMEOUT_MS` の頭に書いてある ——「接続だけ受け付けて応答を
+   * 返さない相手だと永久に返らず、画面が『読込中…』のまま止まる」。
+   * **その症状は直っていなかった。**
+   *
+   * `fetch` は**ヘッダーで解決する**。本文はまだ流れていない。旧実装は
+   * `finally { clearTimeout(timer) }` で **本文を読む前に唯一の中断源を
+   * 外して**いたので、ヘッダーだけ返してから黙る相手には打ち切りが一切
+   * 掛からなかった。実サーバで再現している —— `flushHeaders()` の後に
+   * 本文を途中まで書いて黙る鯖に、2 秒の締切を入れて投げると 6 秒後にも
+   * まだ待っていた。**足した守りが、守るはずの症状に届いていなかった。**
+   *
+   * 同じ形は本 PR で既に `clients/types.ts` の `limitedFetch` で直している。
+   * こちらが取り残されたのは、**`withTimeout` を使わず自前で
+   * `AbortController` を組んでいた**ため —— `withTimeout` の fail-closed
+   * 番人 (`Response` を返したら落とす) は、通らない経路は見張れない。
+   * 畳み込んで、次からは番人の側に入るようにする。
+   *
+   * 注入された fetch にも signal を渡す。ブラウザ版は `fetchViaProxy` を
+   * 差し込むので、あちらが signal を捨てていると「timeout を入れたのに
+   * 効かない」形になる (実際に捨てていたので、あわせて直した)。
+   */
+  return withTimeout(opts.timeoutMs ?? AI_CHAT_TIMEOUT_MS, undefined, async (signal) => {
+    let res: Response;
+    try {
+      res = await f(httpReq.url, {
+        method: 'POST',
+        headers: httpReq.headers,
+        body: httpReq.body,
+        signal,
+      });
+    } catch (e) {
+      if (signal.aborted) {
+        throw new Error(`${spec.label} が時間内に応答しませんでした`);
+      }
+      throw e;
     }
-    throw e;
-  } finally {
-    clearTimeout(timer);
-  }
 
-  if (!res.ok) {
-    const body = await res.text().catch(() => '');
-    throw new Error(`${spec.label} API ${res.status}: ${redactForMessage(body, 200)}`);
-  }
+    /*
+     * **本文に上限を掛ける** (同日)。`res.json()` には上限が無く、300MiB を
+     * 返す鯖で実測すると**全部読んだ** (heap +627MB)。宛先は利用者が決められる
+     * (`compat` の `baseUrl` / BYO プロキシ) ので、これは「壊れた相手」だけの
+     * 話ではない。他の通信はすべて `readBodyWithCap` を通っているのに、
+     * **AI の応答だけが素通しだった** —— 一番大きい物が来る口である。
+     *
+     * `declaredLengthExceeds` の先手は入れない。本文をこの場で読み切るので
+     * byte 単位の門が最初の塊で止め、header の先読みは何も早めない
+     * (`limitedFetch` は `Response` を外へ渡すため両方要る)。
+     */
+    let body: string;
+    try {
+      body = await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, spec.label);
+    } catch (e) {
+      // 本文の途中で締切が来たのなら、それも「時間内に応答しなかった」である。
+      // `limitedFetch` と同じ言い換えをする —— undici の内部例外をそのまま
+      // 画面へ出しても、利用者には何が起きたか分からない。
+      if (signal.aborted) throw new Error(`${spec.label} が時間内に応答しませんでした`);
+      // 失敗応答の本文は**文言のためだけ**に読んでいる。読めなくても状態番号は
+      // 伝えられるので、空として続ける —— 旧実装の `.catch(() => '')` と
+      // **同じ文言**になるようにする (末尾の `: ` ごと検査が留めている)。
+      // 守りを足すついでに画面の文言を変えない。
+      if (!res.ok) body = '';
+      else throw e;
+    }
 
-  let json: unknown;
-  try {
-    json = await res.json();
-  } catch {
-    throw new Error(`${spec.label} の応答が JSON ではありません`);
-  }
+    if (!res.ok) {
+      throw new Error(`${spec.label} API ${res.status}: ${redactForMessage(body, 200)}`);
+    }
 
-  const text = spec.parseText(json);
-  if (text.length === 0) {
-    throw new Error(`${spec.label} がテキスト応答を返しませんでした`);
-  }
-  return { text, model, provider: spec.id };
+    let json: unknown;
+    try {
+      json = JSON.parse(body);
+    } catch {
+      throw new Error(`${spec.label} の応答が JSON ではありません`);
+    }
+
+    const text = spec.parseText(json);
+    if (text.length === 0) {
+      throw new Error(`${spec.label} がテキスト応答を返しませんでした`);
+    }
+    return { text, model, provider: spec.id };
+  });
 }
