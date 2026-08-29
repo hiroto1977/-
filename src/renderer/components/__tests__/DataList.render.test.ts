@@ -7,7 +7,7 @@
 import { describe, expect, it } from 'vitest';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { DataList } from '../DataList';
+import { DataList, MAX_LIST_ITEMS, listTruncatedNotice } from '../DataList';
 import type { DataListItem } from '../DataList';
 
 describe('DataList — empty state', () => {
@@ -132,5 +132,66 @@ describe('DataList — does not crash with edge-case inputs', () => {
       thumbnailUrl: `https://example.com/${i}.png`,
     }));
     expect(() => renderToStaticMarkup(createElement(DataList, { items }))).not.toThrow();
+  });
+});
+
+/**
+ * **一覧に描く件数の上限。**
+ *
+ * `DataList` は 35 ページが共有する沈み先で、**そのうち 31 ページが件数を
+ * 絞らずに渡している** (実測)。件数を決めるのは第三者 API の応答で、
+ * 上限は本文の byte 上限しか無かった。実測 (2026-08-29):
+ *
+ * ```
+ *      100 件   render     8ms   html  0.0MiB
+ *   10,000 件   render   222ms   html  1.8MiB
+ *  200,000 件   render 3,917ms   html 36.1MiB
+ * ```
+ *
+ * レンダラーは 1 スレッドなので、画面が 4 秒死ぬということである。
+ * ブラウザ版は利用者が用意した Cloudflare Worker を経由する経路があり、
+ * このリポジトリは「乗っ取られた proxy」を攻撃者として既に数えている。
+ */
+describe('一覧の件数上限 — 量で画面を止めさせない', () => {
+  const many = (n: number): DataListItem[] =>
+    Array.from({ length: n }, (_, i) => ({ key: `k${i}`, title: `件名 ${i}` }));
+
+  /** `<li` の数を数える。上限が効いているかは行数で見る。 */
+  const rows = (html: string): number => html.split('<li').length - 1;
+
+  it('★ 上限を超えると行数が頭打ちになる', () => {
+    const html = renderToStaticMarkup(createElement(DataList, { items: many(MAX_LIST_ITEMS * 2) }));
+    // 上限ぶん + 注記の 1 行
+    expect(rows(html)).toBe(MAX_LIST_ITEMS + 1);
+  });
+
+  it('★ 打ち切ったことと件数が見える形で残る', () => {
+    const total = MAX_LIST_ITEMS + 37;
+    const html = renderToStaticMarkup(createElement(DataList, { items: many(total) }));
+    expect(html).toContain('他 37 件は表示していません');
+    expect(html).toContain(listTruncatedNotice(total));
+  });
+
+  /*
+   * **対照。** 上 2 件は「切られること」しか見ないので、実装が何でも切る
+   * ようになっても気付けない。上限**ちょうど**が 1 件も欠けず、注記も
+   * 付かないことを見る。
+   *
+   * **最後の 1 件まで名指しする。** 件数だけを数えていた最初の版は、
+   * `slice(0, MAX_LIST_ITEMS - 1)` の対照で**鳴らなかった** ——
+   * 上限ちょうどでは三項が `slice` を呼ばず、境界がすり抜けていたためである。
+   * 最後の要素を名指しすると、切る位置がずれた瞬間に鳴る。
+   */
+  it('★ 上限ちょうどは 1 件も欠けず、注記も付かない (対照)', () => {
+    const html = renderToStaticMarkup(createElement(DataList, { items: many(MAX_LIST_ITEMS) }));
+    expect(rows(html)).toBe(MAX_LIST_ITEMS);
+    expect(html).toContain(`件名 ${MAX_LIST_ITEMS - 1}`);
+    expect(html).not.toContain('表示していません');
+  });
+
+  it('★ 普通の件数は素通し (正当な一覧では発火しない)', () => {
+    const html = renderToStaticMarkup(createElement(DataList, { items: many(10) }));
+    expect(rows(html)).toBe(10);
+    expect(html).not.toContain('表示していません');
   });
 });
