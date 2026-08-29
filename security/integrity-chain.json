@@ -1080,6 +1080,14 @@
       "leafCount": 61,
       "note": "update SECURITY_CHAIN.md",
       "hash": "70868e145be8be655fcee085eb40b45612f8710f937d80b46ae40d8addd747b6"
+    },
+    {
+      "index": 127,
+      "prevHash": "70868e145be8be655fcee085eb40b45612f8710f937d80b46ae40d8addd747b6",
+      "merkleRoot": "79e35118e89838544d14420faae8a752933b2239056d5029d010b45ab673e814",
+      "leafCount": 61,
+      "note": "update types.ts,httpLimits.ts",
+      "hash": "72f858d415bcb6d3e0136750e069559def4ca68943e1b85bdd3c58c08e4a6613"
     }
   ],
   "tipManifest": {
@@ -1107,7 +1115,7 @@
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
     "src/main/atomicWrite.ts": "bf8b56c514456eb2e34a47753ec493f877c94b901cb19038a8f238fe6cea022f",
     "src/main/clients/exportPaths.ts": "4788462baaa1c48478b917204c5966b6a83a19c64a37340c736e7304ed76ee90",
-    "src/main/clients/types.ts": "09515138d7ddd4ac06239d89eeeea53afc8bfa5f244b545ff781923200cf70d4",
+    "src/main/clients/types.ts": "17566fb0225201500a996d5c47926cc8fc0426d2f1b54f603dc973d021656134",
     "src/main/main.ts": "f27de831233e0e34be4538212bc6959ec6f971b4744bdf9216689e7f06b01b56",
     "src/main/oauth.ts": "4a797e9dbfe35f351b5750b04c250d173208390a4146c399b02700021391af3b",
     "src/main/secrets.ts": "7f5b381cf809c86354a263d81b78ca868579fc82459dbf1e54aa68dd16a44ff8",
@@ -1135,7 +1143,7 @@
     "src/shared/cryptoParams.ts": "fd68954c1be30280b89ba4e99e270515b44a7b27ff199f8efd891d20876e21c7",
     "src/shared/escape.ts": "299bf45c6c3ee84efda7245c0e5bff24c2abfc39b48c82406b01eee0c22dc7ab",
     "src/shared/externalUrlGate.ts": "01b2f3904381ca98950ac331aa0558b1a6fda14e2a7e7c85b6b5bd1b6f9b9ce6",
-    "src/shared/httpLimits.ts": "e80d6efa6ddc3e7f541b230f9ea58123d20f56d90c21d05f79d3617f8d913d79",
+    "src/shared/httpLimits.ts": "12bd000a871ea3a038c1ba39d77a0199153e80e5f5a6fe319b51c1f42964e2ec",
     "src/shared/imageUrlGate.ts": "c7b928e51fdbac71b154f9d0f97aa51a341eb8db3203105292cf47f79eda6760",
     "src/shared/ollama.ts": "61fe2b61be79c2a5bb7a5f54a952ca882a72b04796ab3af3b3cd84c2f204ed15",
     "src/shared/proxyEndpoint.ts": "1bb5bf73ca41bd73770a16531740ae0738e1cacdb21945c517adefe9aa4091c7",

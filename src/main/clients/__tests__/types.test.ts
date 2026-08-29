@@ -576,6 +576,19 @@ describe('limitedFetch', () => {
     expect(cancelled, '読まなかった本文が捨てられていない').toBe(true);
   });
 
+  /*
+   * **本文が無い応答 (204 / 304) を踏む。**
+   *
+   * `discardBody` の `body === null` のガードは、これが無いと**観測できない**
+   * (変異検査で分かった)。潰すと `null.locked` で投げ、呼び出し側まで漏れる。
+   */
+  it('★ 本文が無い応答 (204) でも落ちない', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(new Response(null, { status: 204 }));
+    expect(
+      await limitedFetch('https://example.com', {}, { fetch: fetchMock, serviceId: 'demo' }, status),
+    ).toBe(204);
+  });
+
   it('Content-Length が ctx.maxBytes 以下なら通す (境界)', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response('x', { status: 200, headers: { 'content-length': '10' } }),

@@ -111,15 +111,29 @@ export interface LimitedFetchCtx {
  * `limitedFetch` の先手の門と「本文を読まない応答」だけが非対称だった
  * (2026-08-28 のレビューで発見)。
  *
- * 既に読み終えた本文や、掴まれたままの stream に `cancel()` すると投げるので
- * 握り潰す —— **ここでの失敗は呼び出し側の結果に影響しない**。
+ * **判定を try で包まない。** 最初は `if (!res.bodyUsed && res.body &&
+ * !res.body.locked)` を丸ごと try の中に置いていたが、変異検査で 4 件が生き
+ * 残った —— どのガードを潰しても catch が同じように差を飲むので、**外から
+ * 観測できない**。防御が厚いのではなく、**効いているかどうか誰にも分からない**
+ * 形だった (2026-08-29)。
+ *
+ * 早期 return にすると、どのガードを潰しても観測できる:
+ *   - 条件を `true` へ → 捨てなくなる      → 「本文を捨てる」検査が落ちる
+ *   - `locked` を `false` へ → 掴まれた stream に cancel して**同期で投げる**
+ *     (`.catch` は同期の throw を拾わない) → 呼び出し側まで漏れて落ちる
+ *   - `body === null` を `false` へ → `null.locked` で投げる
+ *     → 本文なし (204) の検査が落ちる
  */
 async function discardBody(res: Response): Promise<void> {
-  try {
-    if (!res.bodyUsed && res.body && !res.body.locked) await res.body.cancel();
-  } catch {
-    /* 既に読み終えている / 別の reader が掴んでいる */
-  }
+  const body = res.body;
+  // `body` が無いのは 204/304 と、**本文を持たない素朴な fetch モック**。
+  // 後者を許すのはこの repo の既定の方針で、`readBodyWithCap` が
+  // 「`res.body` が無い実行環境 (テストの素朴な fetch モック) では `text()` に
+  //  落とす」と明記している。最初 `=== null` で書いて 7 件落とした ——
+  // **片方の関数だけ厳しくしても、モックが変わるわけではない。**
+  // 読み終えていれば stream は reader に掴まれたままなので、捨てるものも無い。
+  if (!body || body.locked) return;
+  await body.cancel().catch(() => {});
 }
 
 export async function limitedFetch<T>(

@@ -230,7 +230,12 @@ export async function withTimeout<T>(
      * それを忘れられないように**型ではなく実行時で大声で落とす**。
      * 静かに直すより、`fn` の書き方を強制するほうが再発しない。
      */
-    if (typeof Response !== 'undefined' && out instanceof Response) {
+    // `typeof Response !== 'undefined' &&` は付けない。**等価変異になる** ——
+    // このアプリが載る実行環境 (Node 20+ / Electron 43 / 近年のブラウザ) には
+    // 必ず `Response` が在るので、付けても外しても観測できる差が無く、
+    // 変異検査で 2 件が生き残るだけだった (2026-08-29)。
+    // 黙らせる pragma を足すより、**効いていない防御を消す**ほうが正しい。
+    if (out instanceof Response) {
       throw new Error(
         'withTimeout が Response を返しています —— 本文の読み取りが締切の外へ出ます。'
         + '本文を使い終えるところまで fn の中に入れてください (src/shared/httpLimits.ts の注記を参照)。',

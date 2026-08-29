@@ -4,6 +4,7 @@ import {
   MAX_HTTP_RESPONSE_BYTES,
   declaredLengthExceeds,
   readBodyWithCap,
+  withBodyDeadline,
   withTimeout,
 } from '../httpLimits';
 
@@ -191,5 +192,134 @@ describe('既定値', () => {
   it('静的 import 側とも一致している (2 つの読み方でずれない)', () => {
     expect(MAX_HTTP_RESPONSE_BYTES).toBe(10485760);
     expect(DEFAULT_HTTP_TIMEOUT_MS).toBe(30000);
+  });
+});
+
+
+/**
+ * **`withTimeout` は `Response` を返させない。**
+ *
+ * `fetch` はヘッダを受け取った時点で解決するので、`fn` が `Response` を
+ * 返してきたということは本文がまだ読まれていないということで、`finally` が
+ * 唯一の abort 源を落とした後に本文が読まれる —— 打ち切りが本文に掛からない。
+ *
+ * この検査は `clients/__tests__/types.test.ts` にも在るが、**変異検査を
+ * `--mutate src/shared/httpLimits.ts` で絞ると、そちらのテストが変異体に
+ * 帰属されず「生存」と誤報される** (記録済みの罠)。測定を正直にするために、
+ * 守っている当のファイルの隣にも置く。
+ */
+describe('withTimeout は Response を返させない', () => {
+  it('★ fn が Response を返したら投げる', async () => {
+    await expect(withTimeout(1000, null, async () => new Response('x', { status: 200 })))
+      .rejects.toThrow(/Response を返しています/);
+  });
+
+  it('★ 文言が「本文を読み終えるまで入れる」と案内している', async () => {
+    await expect(withTimeout(1000, null, async () => new Response('x', { status: 200 })))
+      .rejects.toThrow(/本文を使い終えるところまで/);
+  });
+
+  it('Response でない値はそのまま通す (締めすぎていない)', async () => {
+    expect(await withTimeout(1000, null, async () => ({ status: 200 }))).toEqual({ status: 200 });
+    expect(await withTimeout(1000, null, async () => 'text')).toBe('text');
+    expect(await withTimeout(1000, null, async () => null)).toBe(null);
+  });
+});
+
+/**
+ * **`withBodyDeadline` —— `Response` を返さねばならない経路のための締切。**
+ *
+ * `withTimeout` は `fn` が解決した時点で timer を落とす。それは「本文を
+ * 使い終えるところまで `fn` の中に入っている」ことが前提で、`Response` を
+ * 外へ返す経路 (ブラウザ版の `Transport` / `timedFetch` / `timedFetchAi`) には
+ * 使えない。こちらは **timer を落とさない**ので、応答が済んでいれば abort は
+ * 何にも当たらず、本文がまだ流れていれば stream が壊れる。
+ *
+ * 2026-08-29: この関数を足したとき**検査を 1 つも書いていなかった**。
+ * 変異検査が「abort の呼び出しを消しても誰も気付かない」と報告して分かった。
+ */
+describe('withBodyDeadline — 本文を読み終えるまで締切を生かす', () => {
+  /** ヘッダは返るが本文が終わらない応答。実物 (undici) は abort で本文を error させる。 */
+  const stallingFetch = () =>
+    async (_url: string, init?: RequestInit): Promise<Response> => {
+      const body = new ReadableStream<Uint8Array>({
+        start(controller) {
+          controller.enqueue(new TextEncoder().encode('{'));
+          init?.signal?.addEventListener('abort', () => {
+            controller.error(new DOMException('The operation was aborted.', 'AbortError'));
+          });
+        },
+      });
+      return new Response(body, { status: 200 });
+    };
+
+  it('★ 応答が返った後でも、本文の読み取りが締切で切られる', async () => {
+    const f = stallingFetch();
+    const res = await withBodyDeadline(20, null, (signal) => f('https://example.com', { signal }));
+    // ここで既に `withBodyDeadline` は解決している (= timer を落としていたら効かない)
+    await expect(readBodyWithCap(res, 1024, 'demo')).rejects.toThrow(/aborted/i);
+  }, 5000);
+
+  it('★ 締切の中で読み終えれば普通に返る (締めすぎていない)', async () => {
+    const f = async (_u: string, init?: RequestInit): Promise<Response> => {
+      void init;
+      return new Response('{"ok":true}', { status: 200 });
+    };
+    const res = await withBodyDeadline(5000, null, (signal) => f('https://example.com', { signal }));
+    expect(await readBodyWithCap(res, 1024, 'demo')).toBe('{"ok":true}');
+  });
+
+  it('★ 呼び出し側の signal と合成する (上位の打ち切りを殺さない)', async () => {
+    const caller = new AbortController();
+    const f = stallingFetch();
+    const res = await withBodyDeadline(60_000, caller.signal, (signal) =>
+      f('https://example.com', { signal }),
+    );
+    const reading = readBodyWithCap(res, 1024, 'demo');
+    caller.abort();
+    await expect(reading).rejects.toThrow(/aborted/i);
+  }, 5000);
+
+  it('呼び出し側の signal を渡さなくても自前の締切は効く', async () => {
+    const f = stallingFetch();
+    const res = await withBodyDeadline(20, undefined, (signal) =>
+      f('https://example.com', { signal }),
+    );
+    await expect(readBodyWithCap(res, 1024, 'demo')).rejects.toThrow(/aborted/i);
+  }, 5000);
+
+  /*
+   * **`unref?.()` の `?.` はブラウザで効く。**
+   *
+   * Node の `setTimeout` は `Timeout` オブジェクト (= `unref` を持つ) を返すが、
+   * ブラウザは**数値**を返す。`?.` を外すと `(5).unref()` で TypeError になり、
+   * ブラウザ版のプロキシ経路 (`Transport` / `timedFetch`) が全部落ちる。
+   * Node の実行環境では差が出ないので、**ブラウザの形を作って当てる**。
+   */
+  it('★ timer が数値で返る環境 (ブラウザ) でも落ちない', async () => {
+    const real = globalThis.setTimeout;
+    let cleared: unknown = null;
+    // ブラウザの形: setTimeout は数値を返す
+    (globalThis as { setTimeout: unknown }).setTimeout = ((fn: () => void, ms: number) => {
+      void fn;
+      void ms;
+      return 12345;
+    }) as unknown as typeof globalThis.setTimeout;
+    try {
+      const res = await withBodyDeadline(1000, null, async () => new Response('x', { status: 200 }));
+      cleared = res.status;
+    } finally {
+      globalThis.setTimeout = real;
+    }
+    expect(cleared).toBe(200);
+  });
+
+  it('fetch へ signal を必ず渡す', async () => {
+    let seen: AbortSignal | null = null;
+    await withBodyDeadline(1000, null, async (signal) => {
+      seen = signal;
+      return new Response(null, { status: 204 }); // 204 は本文を持てない
+    });
+    expect(seen).toBeInstanceOf(AbortSignal);
   });
 });
