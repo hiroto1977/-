@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
 import { describe, expect, it, beforeEach } from 'vitest';
 import 'fake-indexeddb/auto';
-import { _resetVaultForTests, getVault } from '../vault';
+import { MIN_PASSWORD_LENGTH, _resetVaultForTests, getVault } from '../vault';
 import { webcrypto } from 'node:crypto';
 if (!('subtle' in globalThis.crypto)) {
   Object.defineProperty(globalThis, 'crypto', { value: webcrypto, configurable: true });
@@ -278,5 +278,93 @@ describe('Phase E 以前の保管庫 (master-wrap が無い)', () => {
     v.lock();
     await v.unlock(NEW_PW);
     expect(await v.listConfigured()).toEqual([]);
+  });
+});
+
+/**
+ * **パスワードの受け入れ条件。**
+ *
+ * `changePassword` の入口には 3 つの門がある (現在のパスワードが空でない /
+ * 新しいパスワードが `MIN_PASSWORD_LENGTH` 以上 / 256 字以内)。
+ * 上の検査は**正しい入力での往復**と**間違った現在パスワード**を見ていて、
+ * そこは十分だった。しかし**門そのものは 1 つも当てられていなかった** ——
+ * 変異検査で 9 件が生存した (2026-08-30 実測)。
+ *
+ * ```
+ *   L808  typeof oldPassword !== 'string' || oldPassword.length === 0
+ *   L811  typeof newPassword !== 'string' || newPassword.length < MIN_…
+ *   L814  newPassword.length > 256
+ * ```
+ *
+ * この門は**保管庫そのものの強度**である。下限が消えれば 1 文字の
+ * パスワードで全資格情報が守られることになり、しかも**画面は成功として
+ * 何事もなく進む**。鍵の導出 (600k 回の PBKDF2) は弱いパスワードを
+ * 補ってくれない。
+ *
+ * 上限 (256) の側も要る —— PBKDF2 は入力長に比例して時間がかかるので、
+ * 長大な入力は解錠のたびに画面を止める。
+ */
+describe('vault.changePassword — 受け入れ条件', () => {
+  /*
+   * **文言は「入口の門」のものを名指しする。**
+   *
+   * 最初は `toThrow('現在のパスワード')` と書いた。**効かなかった** ——
+   * 門を外しても、奥の復号が `現在のパスワードが違います` で落ちるので
+   * **同じ部分文字列に当たってしまう**。門の有無で答えが変わらない検査は、
+   * 何も守っていない (対照で実測: 門を `if (false)` にしても 19 件全部通った)。
+   *
+   * 入口でしか出ない文面を丸ごと当てる。
+   */
+  it('★ 現在のパスワードが空なら、入口で断る', async () => {
+    const { v } = await seed();
+    await expect(v.changePassword('', NEW_PW)).rejects.toThrow(
+      /現在のパスワードを入力してください/,
+    );
+  });
+
+  it('★ 新しいパスワードが下限を割れば断る', async () => {
+    const { v } = await seed();
+    const short = 'a'.repeat(MIN_PASSWORD_LENGTH - 1);
+    await expect(v.changePassword(OLD_PW, short)).rejects.toThrow(String(MIN_PASSWORD_LENGTH));
+  });
+
+  /*
+   * **対照。** 上の 2 本は「断ること」しか見ないので、実装が何でも断るように
+   * なっても気付けない。下限**ちょうど**が通ることを見る。
+   */
+  it('★ 下限ちょうどは通す (対照)', async () => {
+    const { v } = await seed();
+    const exact = 'a'.repeat(MIN_PASSWORD_LENGTH);
+    await expect(v.changePassword(OLD_PW, exact)).resolves.toBeUndefined();
+  });
+
+  it('★ 256 字を超えたら断る', async () => {
+    const { v } = await seed();
+    await expect(v.changePassword(OLD_PW, 'a'.repeat(257))).rejects.toThrow('長すぎます');
+  });
+
+  it('★ 256 字ちょうどは通す (対照)', async () => {
+    const { v } = await seed();
+    await expect(v.changePassword(OLD_PW, 'a'.repeat(256))).resolves.toBeUndefined();
+  });
+
+  /*
+   * 保管領域から来る値は型が保証されない (IndexedDB / 画面の入力欄)。
+   * `typeof` の枝が消えると、文字列でない値が下の `length` へ落ちる。
+   */
+  it('★ 文字列でない入力は断る', async () => {
+    const { v } = await seed();
+    const bad = v as unknown as { changePassword(a: unknown, b: unknown): Promise<void> };
+    // **入口の文面を名指しする。** 素の `toThrow()` だと、門を外して奥で
+    // `TypeError: Cannot read properties of null` になっても通ってしまう。
+    await expect(bad.changePassword(null, NEW_PW)).rejects.toThrow(
+      /現在のパスワードを入力してください/,
+    );
+    await expect(bad.changePassword(OLD_PW, null)).rejects.toThrow(
+      /新しいパスワードは .* 文字以上/,
+    );
+    await expect(bad.changePassword(OLD_PW, 42)).rejects.toThrow(
+      /新しいパスワードは .* 文字以上/,
+    );
   });
 });
