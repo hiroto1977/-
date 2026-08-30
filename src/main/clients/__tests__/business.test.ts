@@ -2102,3 +2102,131 @@ describe('exportBusinessDashboardMdImpl — 配列の中身が壊れた助言', 
     expect(out).toContain('AI 経営アドバイザー提案');
   });
 });
+
+/**
+ * **事業カテゴリ表を、読み直して留める。**
+ *
+ * 上の `describe('BUSINESS_CATEGORIES')` は id を字面で留め、label /
+ * description が空でないことも見ている —— **論理としては十分**である。
+ * それでも変異検査では 52 件すべてが生存していた (84.10%、2026-08-30 実測)。
+ *
+ * `BUSINESS_CATEGORIES` はモジュール直下の配列リテラルで、**読み込み時に
+ * 1 度だけ評価される**。静的 import のままでは、Stryker が変異を有効に
+ * する前に評価が済んでいる (覆われた static 変異体)。
+ *
+ * `stryker.config.json` の注記どおり `vi.resetModules()` + 動的 `import()`
+ * で読み直す。本 PR で 6 度目の同じ手当て (`MEMBER_ID_RE` / 橋 /
+ * `INTERNAL_TLDS` / `EMPTY_TALENT_STATE` / テンプレート表 / ここ)。
+ *
+ * ## 何を字面で留めるか
+ *
+ * - `id` —— `CATEGORY_BY_ID` の鍵であり、`validateBusinessAdvisorJson` が
+ *   受理する集合でもある。変われば助言の宛先が黙って外れる
+ * - `trafficKind` —— 画面がどの指標 (session / view / impression / project)
+ *   を出すかを決める。取り違えても数字は出るので、**間違いが見えない**
+ * - `label` —— 利用者が選ぶ選択肢そのもの
+ * - `description` は字面で留めない (10 行の説明文を写しても目を滑らせる)。
+ *   **空でないこと・重複しないこと**で押さえる —— 空文字への変異はこれで死ぬ
+ */
+describe('BUSINESS_CATEGORIES — 読み直して static 変異体を届かせる', () => {
+  const fresh = async () => {
+    vi.resetModules();
+    return (await import('../business')).BUSINESS_CATEGORIES;
+  };
+
+  it('★ id は 10 件、順序込みで固定', async () => {
+    const c = await fresh();
+    expect(c.map((x) => x.id)).toEqual([
+      'ec',
+      'dropship',
+      'oem-odm',
+      'blog',
+      'blog-affiliate',
+      'ppc-affiliate',
+      'video-production',
+      'video-upload',
+      'video-distribution',
+      'sns-ops',
+    ]);
+  });
+
+  it('★ label (利用者が選ぶ選択肢)', async () => {
+    const c = await fresh();
+    expect(c.map((x) => x.label)).toEqual([
+      'EC / ネットショップ',
+      'ドロップシッピング',
+      'OEM / ODM',
+      '自社ブログ',
+      'ブログアフィリエイト',
+      'PPC アフィリエイト',
+      '動画制作 (受託)',
+      '動画投稿 (自社チャンネル)',
+      '動画配信 (有料広告)',
+      'SNS 運用',
+    ]);
+  });
+
+  /*
+   * **取り違えても数字は出る。** だから検査でしか気付けない。
+   */
+  it('★ trafficKind (画面が出す指標を決める)', async () => {
+    const c = await fresh();
+    expect(c.map((x) => [x.id, x.trafficKind])).toEqual([
+      ['ec', 'session'],
+      ['dropship', 'session'],
+      ['oem-odm', 'project'],
+      ['blog', 'session'],
+      ['blog-affiliate', 'session'],
+      ['ppc-affiliate', 'impression'],
+      ['video-production', 'project'],
+      ['video-upload', 'view'],
+      ['video-distribution', 'impression'],
+      ['sns-ops', 'impression'],
+    ]);
+  });
+
+  /*
+   * 説明文は字面で留めない代わりに、**空でないこと**と**重複しないこと**で
+   * 押さえる。空文字への変異はここで死に、10 行の写経も要らない。
+   */
+  it('★ description は空でなく、重複しない', async () => {
+    const c = await fresh();
+    for (const x of c) expect(x.description.length, x.id).toBeGreaterThan(0);
+    expect(new Set(c.map((x) => x.description)).size).toBe(c.length);
+  });
+
+  /*
+   * `FETCHED_AT` もモジュール直下の定数である。上の
+   * 「returns 10 units + aggregate + isMock=true」が既に字面で見ているが、
+   * **静的 import なので変異が届いていなかった**。読み直して当て直す。
+   */
+  it('★ 見本スナップショットの取得日時', async () => {
+    vi.resetModules();
+    const m = await import('../business');
+    const snap = await m.fetchBusinessOpsSnapshot({ token: '' });
+    expect(snap.fetchedAt).toBe('2026-05-14T00:00:00.000Z');
+  });
+
+  /*
+   * 項目の集合を留める。要素が `{}` に潰れる変異 (ObjectLiteral) は
+   * 上の id 検査でも死ぬが、**項目が 1 つ消える**形はここでしか鳴らない。
+   */
+  it('★ 各カテゴリの項目が揃っている', async () => {
+    const c = await fresh();
+    for (const x of c) {
+      expect(Object.keys(x).sort(), x.id).toEqual([
+        'baseContentOutput',
+        'baseConversionRate',
+        'baseRevenue',
+        'baseRoas',
+        'baseTraffic',
+        'description',
+        'fixedCost',
+        'id',
+        'label',
+        'trafficKind',
+        'variableRatio',
+      ]);
+    }
+  });
+});
