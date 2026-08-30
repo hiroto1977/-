@@ -9593,6 +9593,48 @@ L329 の 5 件は正規表現そのものへの変異 (`^` を外す・`$` を�
 要る」の 2 つが、推測ではなく実測として立った。**shared のモジュールを
 測りたいなら、検査は `src/shared/__tests__/` に置いて直接 import する。**
 
+### 同じ罠が `preload/preload.ts` にも在った —— 50% → 100% (2026-08-30)
+
+上の 2 つ (再輸出 / static 変異体) が分かったので、**同じ形が他にも無いか**を
+生存の多い順に当たった。**橋そのものに在った。**
+
+```
+  src/preload/preload.ts   50.00%   killed 14 / survived 14
+```
+
+生存 14 件の中身は**橋のメソッド 13 本すべて** (`ArrowFunction`: 中身を
+`undefined` に潰す) と `exposeInMainWorld('serviceHub')` の名前
+(`StringLiteral`) だった。`api` はモジュール直下のオブジェクトリテラルで、
+`exposeInMainWorld` も読み込み時に走る —— **覆われた static 変異体**である。
+
+既存の `bridgeContract.test.ts` は**論理としては十分**で、橋の全メソッドを
+呼んで `ipcRenderer.invoke` が 1 回だけ走ることを確かめている。ただし
+`beforeAll` で 1 度だけ import するので、変異が有効になる前に評価が済む。
+
+**同じ罠と同じ直し方が `stryker.config.json` に既に書いてあった** ——
+「beforeAll で 1 回だけ読んでいたのを beforeEach へ移しただけで
+78.96% → 85.55%」。それは `main/main.ts` に対して行われ
+(`mainWindow.test.ts` が `vi.resetModules()` + 動的 `import()` を使い 342 件
+すべてを殺している)、**同じ `beforeAll` に同居していた `preload.ts` には
+行われなかった**。
+
+直し方は `src/preload/__tests__/bridgeStatic.test.ts` (17 件)。既存の契約検査は
+作り替えない —— あちらは preload と main の**突き合わせ**という別の目的を
+持っており、壊すと失う物のほうが大きい。隣に読み直す形を足した。
+
+```
+  src/preload/preload.ts   50.00%  →  100.00%   killed 28 / survived 0
+```
+
+**製品コードは 1 行も変えていない。** 対照 3 本 (メソッドの中身を潰す /
+露出名を空文字にする / チャンネル名を取り違える) はいずれも鳴る。
+
+橋は「レンダラーが main に対してできること」の定義そのもので、中身が黙って
+空になっても画面は「押しても何も起きない」になるだけである。**ここが
+半分しか測れていなかったのは、測り方の問題であって守りの問題ではなかった。**
+
+---
+
 ### 全体の権威ある数字 (全 245 件・68 分・incremental キャッシュを消して実行)
 
 ```
