@@ -862,6 +862,158 @@ describe('isPrivateOrReservedTarget', () => {
     expect(pri('http://192.88.100.1/')).toBe(false); // 直後
   });
 
+  /*
+   * **3 つのオクテットが「全部」一致することを要求しているか。**
+   *
+   * 上の 2 本は第 3 オクテットだけを動かしている。だから「c が効いている」
+   * ことは言えるが、**「a と b も要る」ことは言えない**。
+   *
+   * 変異検査で実際に穴が出た (2026-08-30 実測)。`a === 192 && b === 0` を
+   * **`a === 192 || b === 0` に書き換えても、どの検査も落ちなかった** ——
+   * 部分式への変異が 8 件生存していた:
+   *
+   * ```
+   *   L323 c9-29  LogicalOperator       → a === 192 || b === 0
+   *   L323 c9-18  ConditionalExpression → true          (a の比較を潰す)
+   *   L324 c9-30  LogicalOperator       → a === 198 || b === 51
+   *   …
+   * ```
+   *
+   * 効き方は**塞ぎすぎ**の側である —— `1.0.2.5` のような公開アドレスまで
+   * 塞ぐ。SSRF としては安全側に転ぶが、**正当な中継が黙って壊れる**。
+   * このリポジトリは誤爆も欠陥として数える (「誤って鳴る門は、鳴らない門より
+   * 悪い」)。塞ぎすぎは利用者から見れば「動かない」であり、理由も出ない。
+   *
+   * 第 2・第 3 オクテットだけを合わせ、**第 1 だけ変えた**標本を置く。
+   */
+  it('★ 第 1 オクテットが違えば通す (3 つ全部の一致を要求している)', () => {
+    expect(pri('http://1.0.2.5/'), 'b,c は TEST-NET-1 と同じ').toBe(false);
+    expect(pri('http://1.51.100.5/'), 'b,c は TEST-NET-2 と同じ').toBe(false);
+    expect(pri('http://1.0.113.5/'), 'b,c は TEST-NET-3 と同じ').toBe(false);
+    expect(pri('http://1.88.99.5/'), 'b,c は 6to4 リレーと同じ').toBe(false);
+    expect(pri('http://1.0.0.5/'), 'b,c は 192.0.0/24 と同じ').toBe(false);
+  });
+
+  /*
+   * 第 2 オクテットだけを変えた側も置く。上と合わせて
+   * 「a・b・c のどれを緩めても鳴る」が揃う。
+   */
+  it('★ 第 2 オクテットが違えば通す', () => {
+    expect(pri('http://192.9.2.5/'), 'a,c は TEST-NET-1 と同じ').toBe(false);
+    expect(pri('http://198.9.100.5/'), 'a,c は TEST-NET-2 と同じ').toBe(false);
+    expect(pri('http://203.9.113.5/'), 'a,c は TEST-NET-3 と同じ').toBe(false);
+    expect(pri('http://192.9.99.5/'), 'a,c は 6to4 リレーと同じ').toBe(false);
+    expect(pri('http://192.9.0.5/'), 'a,c は 192.0.0/24 と同じ').toBe(false);
+  });
+
+  /**
+   * **保管先の名前を、実物の IndexedDB に当てて留める。**
+   *
+   * `DB_NAME` / `STORE` / `KEY` はモジュール直下の文字列定数で、
+   * **空文字に潰しても検査は 1 つも落ちなかった** (2026-08-30 実測)。
+   * 保存も読み出しも同じ定数を使うので、**両方が同時にずれると往復は成立して
+   * しまう** —— 壊れるのは「前の版で保存した設定が読めなくなる」ときだけで、
+   * それは検査の外で起きる。
+   *
+   * だから往復ではなく、**素の IndexedDB を名前で直接開いて**中身を見る。
+   * これは `lint:storage` が持つ保管先の台帳 (IndexedDB 4 件) と同じ物を
+   * 別の角度から留めることでもある。
+   */
+  describe('保管先の名前 — 台帳と実物を突き合わせる', () => {
+    /** 素の IndexedDB を、字面の名前で開いて値を取る。 */
+    function readRaw(dbName: string, store: string, key: string): Promise<unknown> {
+      return new Promise((resolve, reject) => {
+        const open = indexedDB.open(dbName);
+        open.onerror = () => reject(open.error);
+        open.onsuccess = () => {
+          const db = open.result;
+          if (!db.objectStoreNames.contains(store)) {
+            db.close();
+            resolve(undefined);
+            return;
+          }
+          const req = db.transaction(store, 'readonly').objectStore(store).get(key);
+          req.onerror = () => reject(req.error);
+          req.onsuccess = () => {
+            db.close();
+            resolve(req.result);
+          };
+        };
+      });
+    }
+
+    /*
+     * **書く側もモジュールを読み直す。** 定数は読み込み時に 1 度だけ評価
+     * されるので、静的 import のままでは変異が届かない (最初そう書いて、
+     * 3 件が生存したまま動かなかった)。
+     */
+    async function freshSet(cfg: { url: string }): Promise<void> {
+      vi.resetModules();
+      const m = await import('../../network/proxy');
+      await m.setProxyConfig(cfg);
+    }
+
+    it('★ business-hub-preferences / kv / proxy に保存される', async () => {
+      await freshSet({ url: 'https://w.example.com/proxy' });
+      const raw = (await readRaw('business-hub-preferences', 'kv', 'proxy')) as
+        | { url?: string }
+        | undefined;
+      expect(raw, '台帳どおりの名前で読めること').toBeTruthy();
+      expect(raw?.url).toBe('https://w.example.com/proxy');
+    });
+
+    /*
+     * **対照。** 上は「その名前で読める」ことしか見ないので、どの名前でも
+     * 読めてしまう実装になっても気付けない。違う名前では読めないことを見る。
+     */
+    it('★ 違う名前では読めない (名前が効いていることの確認)', async () => {
+      await freshSet({ url: 'https://w.example.com/proxy' });
+      expect(await readRaw('business-hub-preferences', 'kv', 'other-key')).toBeUndefined();
+      expect(await readRaw('business-hub-preferences', 'other-store', 'proxy')).toBeUndefined();
+      expect(await readRaw('other-db', 'kv', 'proxy')).toBeUndefined();
+    });
+  });
+
+  /**
+   * **内部 TLD の一覧を、読み直して留める。**
+   *
+   * `INTERNAL_TLDS` はモジュール直下の `new Set([...])` で、**読み込み時に
+   * 1 度だけ評価される**。静的 import のままだと変異が有効になる前に評価が
+   * 済んでいるため、`'corp'` を空文字に潰しても・一覧を丸ごと空配列にしても
+   * **どの検査も落ちなかった** (2026-08-30 実測: 8 件が生存)。
+   *
+   * 覆われた static 変異体で、同じ罠を本 PR で `MEMBER_ID_RE` と
+   * `preload.ts` の橋でも踏んでいる。`vi.resetModules()` + 動的 `import()`
+   * で読み直す。
+   *
+   * ここは SSRF の遮断表そのものである —— 1 語落ちれば `*.corp` や `*.lan`
+   * が利用者の Worker 経由で触れるようになる。
+   */
+  describe('内部 TLD の一覧 — 読み直して static 変異体を届かせる', () => {
+    async function fresh() {
+      vi.resetModules();
+      return await import('../../network/proxy');
+    }
+
+    const TLDS = ['local', 'lan', 'corp', 'intranet', 'home', 'private', 'internal'] as const;
+
+    it.each(TLDS)('★ *.%s は塞ぐ', async (tld) => {
+      const m = await fresh();
+      expect(m.isPrivateOrReservedTarget(new URL(`http://host.${tld}/`))).toBe(true);
+    });
+
+    /*
+     * **対照。** 上の 7 本は「塞ぐこと」しか見ないので、実装が何でも塞ぐように
+     * なっても気付けない。一覧に無い TLD が通ることを同じ形で確かめる。
+     */
+    it('★ 一覧に無い TLD は通す (対照)', async () => {
+      const m = await fresh();
+      expect(m.isPrivateOrReservedTarget(new URL('http://host.example/'))).toBe(false);
+      expect(m.isPrivateOrReservedTarget(new URL('https://api.notion.com/v1/x'))).toBe(false);
+      expect(m.isPrivateOrReservedTarget(new URL('https://internal-tools.example.com/'))).toBe(false);
+    });
+  });
+
   // 10 進 / 16 進 / 8 進の IPv4 表記。`isPrivateOrReservedTarget` の v4 判定は
   // ドット付き 4 組しか見ないので、これらが素通りするかどうかは
   // **`new URL()` がドット付きに正規化してくれること**に依存している。
