@@ -5,7 +5,6 @@ import {
   sanitizeInitiatives,
   sanitizeReports,
   sanitizeTalentState,
-  EMPTY_TALENT_STATE,
 } from '../talent';
 
 /**
@@ -181,10 +180,42 @@ describe('部署申告の正規化 — 上限と形', () => {
 });
 
 describe('状態全体の正規化 — 根の番人', () => {
-  it('★ オブジェクトでなければ空の状態', () => {
+  /*
+   * **定数と比べない。字面で比べる。**
+   *
+   * 最初は `toEqual(EMPTY_TALENT_STATE)` と書いた。**効かなかった** ——
+   * 変異が `EMPTY_TALENT_STATE` そのものを書き換えるので、
+   * **変異した定数を変異した定数と比べる**ことになり、常に一致する
+   * (実測: `reports: []` を潰しても 5 件とも生存)。
+   *
+   * 同じ形を本 PR の `vault.ts` でも踏んでいる (奥の文言と接頭辞を共有する
+   * `toThrow` を書いた)。**検査の期待値が、検査対象から来てはいけない。**
+   */
+  it('★ オブジェクトでなければ空の状態 (期待値は字面で置く)', async () => {
+    // `EMPTY_TALENT_STATE` は**モジュール直下の定数**なので、静的 import の
+    // ままでは変異が届かない (実測: 字面で比べる形に直しても 5 件生存した)。
+    // 読み直す —— 本 PR で 4 度目の同じ手当てである。
+    vi.resetModules();
+    const m = await import('../talent');
     for (const v of [null, undefined, 'x', 42, true]) {
-      expect(sanitizeTalentState(v)).toEqual(EMPTY_TALENT_STATE);
+      expect(m.sanitizeTalentState(v)).toEqual({
+        reports: [],
+        initiatives: [],
+        members: [],
+        updatedAt: '',
+      });
     }
+  });
+
+  it('★ EMPTY_TALENT_STATE 自体の中身も字面で留める', async () => {
+    vi.resetModules();
+    const m = await import('../talent');
+    expect(m.EMPTY_TALENT_STATE).toEqual({
+      reports: [],
+      initiatives: [],
+      members: [],
+      updatedAt: '',
+    });
   });
 
   it('★ 配列は object だが、中身が無いので空の状態に落ちる', () => {

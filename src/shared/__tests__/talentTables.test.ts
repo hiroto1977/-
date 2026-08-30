@@ -72,6 +72,36 @@ describe('定義表 — 文言そのものを留める', () => {
     `);
   });
 
+  /*
+   * **id も留める。文言だけでは足りない。**
+   *
+   * 上は `text` を字面で留めているが、**`id` は誰も見ていなかった**
+   * (2026-08-30 実測: 10 件すべて空文字に潰しても検査は通った)。
+   *
+   * id は飾りではない —— `DISQUALIFIER_IDS` はこの表から作られ、
+   * `judgeLeaderFitness` は画面から来た旗を**その集合で濾す**。
+   * id が 1 つ変われば、対応する旗は**黙って捨てられ**、該当者が
+   * 「登用できる」と判定される。文言と違って画面には何も現れない。
+   *
+   * **記憶で書かない** —— ソースから読み出して貼った (この検査ファイル自身が、
+   * 記憶で書いて 3 件外した事故から生まれている)。
+   */
+  it('★ リーダー失格の10ヶ条 (id) —— 判定が濾しに使う鍵', async () => {
+    const m = await fresh();
+    expect(m.LEADER_DISQUALIFIERS.map((d) => d.id)).toEqual([
+      'gives-up',
+      'excuses',
+      'no-urgency',
+      'blames-external',
+      'avoids-duty',
+      'no-apology',
+      'hides-mistakes',
+      'slacks-unseen',
+      'lies',
+      'flees-trouble',
+    ]);
+  });
+
   it('★ 育成の4つの STEP (順番と名前)', async () => {
     const m = await fresh();
     expect(m.SKILL_STEPS.map((s) => [s.step, s.name])).toMatchInlineSnapshot(`
@@ -105,6 +135,22 @@ describe('定義表 — 文言そのものを留める', () => {
     expect(m.MAX_LADDER_MEMBERS).toBe(500);
     expect(m.LEADER_DISQUALIFIERS_SOURCE).toBe('confirmed');
     expect(m.SKILL_STEPS_SOURCE).toBe('confirmed');
+  });
+
+  /*
+   * **STEP の説明文も配られる文言である。** 上は `step` と `name` を
+   * 留めているが `detail` は素通しだった (実測: 4 件すべて空文字に
+   * 潰しても通った)。画面に出るのはむしろこちらで、静かに書き換わっても
+   * 判定の形は何も変わらない。
+   */
+  it('★ 育成の4つの STEP (説明文)', async () => {
+    const m = await fresh();
+    expect(m.SKILL_STEPS.map((s) => s.detail)).toEqual([
+      '実業務を行うスキル。通常 3〜5 年でマスターできる領域。',
+      '自分ではなく組織・チームを動かして成果を出す。',
+      '前例もお手本もない問題を解く。お手本依存症の克服が前提。',
+      '個別の問題解決ではなく、問題が起きない構造をつくる。',
+    ]);
   });
 
   it('id は表の中で重複しない', async () => {
