@@ -111,6 +111,11 @@ function resolveBase(label: string, raw: string, credentialed: boolean): string 
  */
 function assertOllamaHostAllowed(label: string, base: string): void {
   const loc = (globalThis as { location?: { hostname?: string } }).location;
+  // Stryker disable next-line StringLiteral: 既定値を別の文字列にしても観測差が
+  // 出ない (等価変異・2026-08-31 に対照で確認)。経路 (2) は
+  // `hostname === pageHostname` の完全一致で、**http URL の hostname は必ず
+  // 非空**だから、空文字でも他の文字列でも「一致しない」点は同じ。
+  // `??` を `&&` に変える側は経路 (2) を殺すので、そちらは検査で留めてある。
   const pageHostname = loc?.hostname ?? '';
   const u = new URL(base);
   if (u.protocol !== 'http:') return; // https は経路 (3) で任意ホスト可

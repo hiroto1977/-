@@ -438,6 +438,51 @@ describe('ベース URL の検証が buildRequest まで効く', () => {
     }
   });
 
+  /*
+   * **断り文句は「どうすれば通るか」まで含めて出す。**
+   *
+   * 上の検査は `/平文/` にしか当てていないので、文面の後半 (直し方の案内) が
+   * 空文字に潰れても鳴らなかった (2026-08-31 実測)。この文言は設定画面に
+   * そのまま出る —— 前半だけでは「では何なら通るのか」が分からない。
+   */
+  it('★ 断り文句が「何なら通るか」まで言う', () => {
+    const call = () =>
+      AI_PROVIDERS.ollama.buildRequest(req, { baseUrl: 'http://evil.example.com', model: 'm' });
+    expect(call).toThrow(/ループバック/);
+    expect(call).toThrow(/このページと同じホスト/);
+    expect(call).toThrow(/https/);
+  });
+
+  /*
+   * **経路 (2)「ページ自身と同じホスト」が生きている。**
+   *
+   * `globalThis.location?.hostname ?? ''` の `??` を `&&` に変えると
+   * pageHostname が常に空 (または undefined) になり、**この経路が丸ごと
+   * 死ぬ** —— PC で配信した画面をスマホから開く構成が、理由の分からない
+   * 「許可されていません」で止まる。デスクトップ (location 無し) では
+   * 空のままで正しいので、**ブラウザ側だけが壊れる**。
+   *
+   * node 環境には `location` が無いので、その場で生やして戻す。
+   */
+  it('★ ページと同じホストなら平文 http でも通る (location がある場合)', () => {
+    const g = globalThis as { location?: { hostname?: string } };
+    const had = 'location' in g;
+    const prev = g.location;
+    g.location = { hostname: 'pc.local' };
+    try {
+      expect(() =>
+        AI_PROVIDERS.ollama.buildRequest(req, { baseUrl: 'http://pc.local:11434', model: 'm' }),
+      ).not.toThrow();
+      // 対照: 同じ構成でも別ホストは通らない (全部通す壊れ方を弾く)
+      expect(() =>
+        AI_PROVIDERS.ollama.buildRequest(req, { baseUrl: 'http://other.local:11434', model: 'm' }),
+      ).toThrow(/平文/);
+    } finally {
+      if (had) g.location = prev;
+      else delete g.location;
+    }
+  });
+
   it('userinfo で送り先を隠す形はどのプロバイダでも弾く', () => {
     for (const id of AI_PROVIDER_IDS) {
       const cfg = { apiKey: 'k', baseUrl: 'https://u:p@evil.example.com', model: 'm' };

@@ -276,6 +276,12 @@ class IndexedDBRecordStore implements RecordStore {
     patch: Partial<T>,
   ): Promise<StoredRecord<T> | null> {
     // 検証は鎖に載せる前に。不正な引数は待たずに落とす (従来どおり)。
+    //
+    // Stryker disable next-line ConditionalExpression: **id 側だけは等価変異**。
+    // この先の `get()` が同じガードを持ち (L321)、そちらは独立した公開の
+    // 入口なので消せない。外しても戻り値は null のままで観測差が出ない。
+    // 鎖 (`serialize`) に載せずに落とす意味はあるので残す。
+    // patch 側 (下の行) は等価ではなく、検査が留めている。
     if (typeof id !== 'string' || id.length === 0) return null;
     if (!isPlainJsonObject(patch)) throw new Error('patch はプレーンなオブジェクトである必要があります');
     return this.serialize(id, () => this.updateUnserialized<T>(id, patch));
@@ -285,10 +291,23 @@ class IndexedDBRecordStore implements RecordStore {
     id: string,
     patch: Partial<T>,
   ): Promise<StoredRecord<T> | null> {
-    // Stryker disable next-line ConditionalExpression: この先の get() が同じガードを持つため、外しても戻り値は null のままで観測差が出ない（等価変異）。get() の内部実装に依存しないための防御として残す。
-    if (typeof id !== 'string' || id.length === 0) return null;
-    if (!isPlainJsonObject(patch)) throw new Error('patch はプレーンなオブジェクトである必要があります');
-
+    /*
+     * **ここに在った重複ガードは消した** (2026-08-31)。
+     *
+     * `updateUnserialized` の呼び出し元は `update()` **1 つだけ**で、
+     * あちらが同じ検証を先に済ませている。変異検査はそれを
+     * `NoCoverage` (どの検査も到達しない) として報告していた。
+     *
+     * 消す理由は「死んでいるから」だけではない。**重複が公開側の
+     * ガードを測れなくしていた** —— 片方を潰しても、もう片方が同じ結果を
+     * 返すので検査が鳴らない。実測した対照:
+     *
+     *   重複が在るまま公開側の patch 検証を潰す → 鳴らない
+     *   重複を消してから同じ変異を当てる       → 鳴る (1 件)
+     *
+     * 効いていない防御は pragma で黙らせるより消すほうが正しい
+     * (本セッションの `diagnoseOrg` / `exportPaths` と同じ判断)。
+     */
     const existing = await this.get<T>(id); // get() decrypts
     if (!existing) return null;
 
