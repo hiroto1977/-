@@ -164,6 +164,11 @@ async function sendMail(ctx: ActionContext): Promise<{ ok: true; to: string; sub
         saveToSentItems: true,
       }),
     },
+    // Stryker disable next-line StringLiteral: この `serviceId` は
+    // `limitedFetch` の内部 (打ち切りと本文の始末) にしか渡らない。
+    // ここは**本文を読まない**経路なので `readBodyWithCap` の文言にも出ず、
+    // 下の `FetchError` は同じ綴りを別に持っている (そちらは検査が留めている)。
+    // 空文字にしても観測できる差が無い (等価変異)。
     { fetch: ctx.fetch, serviceId: 'microsoft-365' },
     // 202 Accepted・本文なし。読まない本文は limitedFetch が捨てる。
     async (res) => {

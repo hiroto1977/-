@@ -63,6 +63,12 @@ beforeAll(async () => {
         res.write('{"choices":[{"message":{"content":"');
         return; // ...そして黙る。閉じない。
       }
+      if (mode === 'exact') {
+        // ちょうど上限 —— `>` を `>=` にすると、ここで切り詰めが起きる。
+        res.writeHead(200, { 'content-type': 'application/json' });
+        res.end(JSON.stringify({ choices: [{ message: { content: 'x'.repeat(MAX_ASSISTANT_REPLY_CHARS) } }] }));
+        return;
+      }
       if (mode === 'flood') {
         // byte の上限には収まるが、**画面に出す量としては論外**な応答。
         res.writeHead(200, { 'content-type': 'application/json' });
@@ -204,5 +210,17 @@ describe('AI の応答 — 画面へ出す量の上限', () => {
     const res = await call('ok', 5000);
     expect(res.text).toBe('ok');
     expect(res.text).not.toContain('打ち切りました');
+  });
+
+  /*
+   * **境界ちょうどは切らない。** 判定は `text.length > MAX` であって `>=` では
+   * ない —— 上限ちょうどの応答は「上限を超えていない」ので、注記を足す理由が
+   * 無い (足すと**上限を超える文字列**が出来てしまう)。
+   * 実測 2026-08-31 でこの境界の変異体が生き残っていた。
+   */
+  it('★ ちょうど上限の応答は切らない (境界)', async () => {
+    const res = await call('exact', 30000);
+    expect(res.text).toHaveLength(MAX_ASSISTANT_REPLY_CHARS);
+    expect(res.text.endsWith(ASSISTANT_REPLY_TRUNCATED_NOTICE)).toBe(false);
   });
 });

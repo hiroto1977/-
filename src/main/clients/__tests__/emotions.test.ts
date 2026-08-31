@@ -468,6 +468,13 @@ describe('ACTIONS["analyze-text"] — 送り先と中身', () => {
     expect(body.max_tokens).toBe(512);
     expect(typeof body.system).toBe('string');
     expect(body.system.length).toBeGreaterThan(0);
+    // **中身も見る。** `length > 0` は空文字だけしか捕まえない —— 実測
+    // 2026-08-31 でこの指示文を丸ごと空にする変異が生き残った (静的な
+    // テンプレート文字列なので、下の「読み直して問う」も併せて要る)。
+    // 指示文が消えると、モデルは JSON を返さなくなり `extractJson` が失敗する。
+    expect(body.system).toContain('valid JSON');
+    expect(body.system).toContain('"sentiment"');
+    expect(body.system).toContain('"dominant"');
     expect(body.messages).toEqual([{ role: 'user', content: '今日はいい日だった' }]);
   });
 
@@ -860,5 +867,36 @@ describe('emotions の入力上限 (両ビルドで同じ値)', () => {
   it('上限は共有の定数から来ている (2 か所に数字を持たない)', () => {
     expect(MAX_ANALYZE_TEXT_CHARS).toBe(5000);
     expect(MAX_MOOD_NOTE_CHARS).toBe(2000);
+  });
+});
+
+/*
+ * **静的なテンプレート文字列は、読み直さないと測れない。**
+ *
+ * `ANALYZE_SYSTEM` はモジュール本体で一度だけ評価されるので、ファイル先頭の
+ * 静的 import では変異が効く前に評価が済む (実測 2026-08-31: 生存)。
+ * ここが空になると Anthropic への指示が消え、モデルは自由文で返し、
+ * `extractJson` → `normalizeAnalysis` が黙って既定値に倒れる。
+ */
+describe('解析の指示文 —— 読み直して問う', () => {
+  it('★ 指示文は JSON の形を名指しする', async () => {
+    vi.resetModules();
+    const m = await import('../emotions');
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({ content: [{ type: 'text', text: '{"scores":{},"sentiment":"neutral","dominant":"joy"}' }] }),
+        { status: 200 },
+      ),
+    );
+    await m.ACTIONS['analyze-text']!({
+      token: 'sk-ant-secret',
+      fetch: fetchMock,
+      payload: { text: 'hello' },
+    });
+    const [, init] = fetchMock.mock.calls[0]! as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as { system: string };
+    expect(body.system).toContain('valid JSON');
+    expect(body.system).toContain('"sentiment"');
+    expect(body.system.length).toBeGreaterThan(100);
   });
 });

@@ -117,6 +117,10 @@ async function readStore(): Promise<EmotionsStore> {
  * 同じ個人情報の写しがもう 1 つディスクに残るだけになる。
  */
 async function writeStore(store: EmotionsStore): Promise<void> {
+  // Stryker disable next-line ObjectLiteral: `atomicWriteFile` の既定が
+  // `opts.mode ?? 0o600` なので、落としても同じ 600 で作られる (等価変異)。
+  // 明示を残すのは意図の表明 —— 個人情報を持つファイルの権限を、
+  // 呼び出し側の既定値に委ねない。
   await atomicWriteFile(storePath(), JSON.stringify(store), { mode: 0o600 });
 }
 

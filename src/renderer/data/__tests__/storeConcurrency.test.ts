@@ -89,6 +89,51 @@ describe('同じ record への同時書き換えで、書いたものが消え�
     expect((await store.get(rec.id))?.data, '後続が巻き添えで落ちている').toEqual({ base: 1, ok: true });
   });
 
+  /*
+   * **鎖の掃除が、鎖そのものを切ってはいけない。**
+   *
+   * `serialize` は最後尾を `perId` に覚え、決着したら「自分がまだ最後尾なら」
+   * 外す (地図を無制限に育てないため)。この **「まだ最後尾なら」** の判定が
+   * 測られていなかった (実測 2026-08-31: 3 変異体が生存)。
+   *
+   * 上の `Promise.all` 群では捕まらない —— 12 件を一度に投げると全部が
+   * 先に繋がってしまうので、途中で地図を消しても順番は変わらない。
+   * **決着した後に新しい操作が来る**形にして初めて差が出る:
+   *
+   *   A 決着 → (無条件に消すと) B の記録まで消える
+   *          → 直後の C は「誰も走っていない」と判断して B と同時に走る
+   *          → B と C が同じ値を読み、片方の patch が消える
+   */
+  it('★ 決着した操作の掃除が、後続の鎖を切らない', async () => {
+    const store = getRecordStore();
+    const rec = await store.insert('t', { base: 0 });
+    // 各操作を遅くして、A が決着しても B がまだ走っている状態を作る。
+    store.configureCipher({
+      encrypt: async (d) => {
+        await new Promise((r) => setTimeout(r, 15));
+        return { ...d };
+      },
+      decrypt: async (d) => {
+        await new Promise((r) => setTimeout(r, 15));
+        return { ...d };
+      },
+    });
+
+    const a = store.update(rec.id, { a: 1 } as never);
+    const b = store.update(rec.id, { b: 2 } as never);
+    await a; // ここで掃除が走る
+    const c = store.update(rec.id, { c: 3 } as never);
+    await Promise.all([b, c]);
+
+    const after = await store.get(rec.id);
+    expect(after?.data, '掃除が鎖を切って patch が消えた (lost update)').toEqual({
+      base: 0,
+      a: 1,
+      b: 2,
+      c: 3,
+    });
+  });
+
   it('存在しない id の update は null を返す (鎖に載せても変わらない)', async () => {
     const store = getRecordStore();
     expect(await store.update('no-such-id', { a: 1 } as never)).toBeNull();

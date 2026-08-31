@@ -209,8 +209,21 @@ class IndexedDBRecordStore implements RecordStore {
       () => undefined,
     );
     this.perId.set(id, settled);
+    /*
+     * 自分が最後尾のままなら地図から外す (無制限に育てない)。
+     *
+     * **「最後尾なら」の判定は効いている** —— 無条件に消すと、決着した操作の
+     * 掃除が**まだ走っている後続の記録まで消し**、次の操作が鎖に載らずに
+     * 同時実行される (lost update)。`storeConcurrency.test.ts` の
+     * 「★ 決着した操作の掃除が、後続の鎖を切らない」が留めている。
+     *
+     * 一方**掃除そのものを止める**変異 (ブロックを空にする / 判定を false に
+     * 固定する) は、地図が育つだけで**観測できる差が無い** —— `perId` は
+     * private で、順序にも結果にも影響しない。等価変異として黙らせる。
+     */
+    // Stryker disable next-line BlockStatement
     void settled.then(() => {
-      // 自分が最後尾のままなら地図から外す (無制限に育てない)。
+      // Stryker disable next-line ConditionalExpression
       if (this.perId.get(id) === settled) this.perId.delete(id);
     });
     return started;

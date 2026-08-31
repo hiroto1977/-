@@ -414,6 +414,10 @@ export async function loadTeamRadarState(
  * 留めているのは `main/__tests__/staleTmpMode.test.ts`。
  */
 async function writeTight(target: string, contents: string): Promise<void> {
+  // Stryker disable next-line ObjectLiteral: `mode` を落としても**直後の
+  // `chmod` が同じ 600 を掛ける**ので、最終状態は変わらない (等価変異)。
+  // 明示を残すのは、作成→chmod の隙間を狭めるため (上の注記のとおり
+  // `mode` は新規作成のときしか効かず、既存ファイルには chmod が要る)。
   await fs.writeFile(target, contents, { mode: 0o600 });
   await fs.chmod(target, 0o600);
 }

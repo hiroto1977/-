@@ -240,6 +240,10 @@ ipcMain.handle('app:checkUpdate', async (): Promise<UpdateVerdict> => {
     // 2 つある状態を残さない —— 実行対象が違うだけで判断が変わる理由が無い。
     return evaluateUpdate(
       current,
+        // Stryker disable next-line StringLiteral: この標識はエラー本文にしか
+      // 現れず、上限超過も含めて**すべての失敗を下の catch が「判定不能」へ
+      // 寄せる** (更新確認の失敗でアプリが使えなくならないため)。空文字に
+      // しても観測できる差が無い (等価変異)。
       parseLatestRelease(JSON.parse(await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'update'))),
     );
   } catch {

@@ -614,7 +614,12 @@ describe('消費税の科目 (税抜経理方式)', () => {
     const hit = checkStatements(v, BALANCED_OPT).filter((i) => i.field === 'consumptionTaxPayable');
     expect(hit).toHaveLength(1);
     expect(hit[0]!.level).toBe('warn');
+    // 文言は 3 片の連結。**片ごとに固有の言い回しを取る** —— `どちらか一方` は
+    // 真ん中の片にしか当たらず、前後 2 片を空にする変異が素通りしていた
+    // (実測 2026-08-31)。何が起きているか / なぜか / どう直すか の 3 つを見る。
+    expect(hit[0]!.message).toContain('両方に残高があります');
     expect(hit[0]!.message).toContain('どちらか一方');
+    expect(hit[0]!.message).toContain('片方だけに振り替えてください');
   });
 
   it('片方だけなら鳴らない (負の対照)', () => {
