@@ -187,7 +187,12 @@ const KNOWN_UNMEASURED = {
     + '配線は変異検査ではなく振る舞いの検査で留めてある: '
     + 'webShimInvokeNeverRejects / webShimPayloadRedaction / webShimTimeouts / '
     + 'dualBuildActionSurface / webShimBridge / webShimCredentials。'
-    + '**判断そのものをこのファイルへ書き足すなら、共有側へ出すか mutate に載せること。**',
+    + '**判断そのものをこのファイルへ書き足すなら、共有側へ出すか mutate に載せること。**'
+    + ' なお **`mutate` に載せると dry run で落ちる** (2026-08-31 実測): '
+    + '`webShimCredentials.test.ts` の「鍵を載せて直接叩く送り先は、字面で 1 つだけ」は'
+    + '**このファイルを本文として走査する**ので、Stryker が計装した源を読むと'
+    + '`timedFetchAi` が 0 件になる。載せたい日は、字面の検査を先に'
+    + '「字面ではない形」へ書き換えること。',
 };
 
 /** `KNOWN_UNMEASURED` に載っているのに `mutate` へ入ったものを返す (台帳の消し忘れ)。 */

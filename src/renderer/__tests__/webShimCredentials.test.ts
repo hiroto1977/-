@@ -311,6 +311,13 @@ describe('API キーの送り先とヘッダ', () => {
    * 上の 3 本は今ある 3 経路を留めるが、**4 本目**には何も言わない。
    * 鍵を載せて直接叩く口の**集合**も留める。
    */
+  /*
+   * **この検査は本文を字面で走査する。** そのため `web-shim.ts` を変異検査へ
+   * 載せると、Stryker が計装した源を読むことになり `timedFetchAi` が 0 件に
+   * なって dry run ごと落ちる (2026-08-31 実測)。理由は
+   * `scripts/lint-mutation-scope.cjs` の `KNOWN_UNMEASURED` にも書いてある ——
+   * **載せたい日は、まずこの検査を字面ではない形へ書き換えること。**
+   */
   it('★ 鍵を載せて直接叩く送り先は、字面で 1 つだけ', async () => {
     const src = readFileSync(join(__dirname, '..', 'web-shim.ts'), 'utf8')
       .replace(/\/\*[\s\S]*?\*\//g, '')
