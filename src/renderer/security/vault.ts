@@ -33,10 +33,32 @@ const TOKEN_STORE = 'tokens';
 const PBKDF2_ITERATIONS = SHARED_ITERATIONS;
 /** Minimum master-password length for new vaults / password resets. */
 export const MIN_PASSWORD_LENGTH = 12;
+
 const SALT_BYTES = 32;
 const IV_BYTES = AES_GCM_IV_BYTES;
 const KCV_PLAINTEXT = 'service-hub-v1'; // 復号検証用固定文字列
 // Stryker restore StringLiteral
+
+/**
+ * パスワードが**現在の**下限を満たすか。
+ *
+ * 判定は 1 行だが、**関数にして外へ出してある**。理由は測れるようにするため:
+ * 以前この式は `unlock` の途中に埋まっていて、`false` になる枝へ検査から
+ * 到達する手段が無かった (短いパスワードの保管庫は `initialize` /
+ * `changePassword` / `recoverWithMnemonic` がどれも下限を強制するので、
+ * 現在の API では作れない —— `false` に届くのは 2026-07 に下限を 8 → 12 へ
+ * 上げる前に作られた実在の保管庫だけである)。
+ *
+ * その結果、**下限そのものを撃ち抜く変異が 2 件生き残っていた**
+ * (`>=` → `>` / 式ごと `true`。実測 2026-08-31)。式を外へ出せば、
+ * 保管庫を作らずに 11 / 12 / 13 字を直接問える。
+ *
+ * 長さの**上限** (256 字) はここに含めない —— あちらは「強制する」側の規則で、
+ * `unlock` は通さない。混ぜると `unlock` が既存の保管庫を閉め出す。
+ */
+export function meetsPasswordPolicy(password: string): boolean {
+  return password.length >= MIN_PASSWORD_LENGTH;
+}
 
 export type VaultStatus = 'uninitialized' | 'locked' | 'unlocked';
 
@@ -193,6 +215,10 @@ function idbPutAll(
   // **空なら何もしない。** `db.transaction([], …)` は仕様上 InvalidAccessError を
   // 投げる (実測で確認)。呼び出し側は今どこも空を渡さないが、「書くものが無い」を
   // 例外で返すヘルパは、後から使う人が踏む。無害な no-op に倒す。
+  // Stryker disable next-line ConditionalExpression: 呼び出し側は今どこも空を
+  // 渡さない (上の注記のとおり「後から使う人」のための備え)。条件を潰すと
+  // `db.transaction([], …)` が InvalidAccessError を投げるが、そこへ到達する
+  // 経路が無いので観測差が出ない (等価変異)。
   if (entries.length === 0) return Promise.resolve();
   return new Promise((resolve, reject) => {
     const stores = [...new Set(entries.map((e) => e.store))];
@@ -336,6 +362,11 @@ async function encryptString(
   const iv = crypto.getRandomValues(new Uint8Array(IV_BYTES));
   const ciphertext = new Uint8Array(
     await crypto.subtle.encrypt(
+      // Stryker disable next-line ConditionalExpression: WebIDL では辞書の項目に
+      // `undefined` を入れることと**項目を書かないこと**が同じ扱いになるので、
+      // 条件を潰して常に `additionalData: undefined` を渡しても結果が変わらない
+      // (等価変異)。実測 2026-08-31: 同じ鍵・同じ iv で暗号文が完全に一致し、
+      // 交差して復号もできた。三項を残すのは意図を読める形にしておくため。
       aad === undefined
         ? { name: 'AES-GCM', iv: iv as BufferSource }
         : { name: 'AES-GCM', iv: iv as BufferSource, additionalData: aad as BufferSource },
@@ -352,6 +383,8 @@ async function decryptString(
   aad?: Uint8Array,
 ): Promise<string> {
   const plain = await crypto.subtle.decrypt(
+    // Stryker disable next-line ConditionalExpression: 上の `encryptString` と同じ
+    // 理由 (`additionalData: undefined` == 項目を書かない)。実測で確認済み。
     aad === undefined
       ? { name: 'AES-GCM', iv: blob.iv as BufferSource }
       : { name: 'AES-GCM', iv: blob.iv as BufferSource, additionalData: aad as BufferSource },
@@ -510,7 +543,7 @@ class BrowserVault implements Vault {
     // stolen browser profile and every SaaS token in the vault; 600k PBKDF2
     // slows each guess but cannot rescue an 8-char human-chosen password.
     // Existing vaults are unaffected — `unlock()` never re-checks policy.
-    if (typeof password !== 'string' || password.length < MIN_PASSWORD_LENGTH) {
+    if (typeof password !== 'string' || !meetsPasswordPolicy(password)) {
       throw new Error(`パスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください`);
     }
     if (password.length > 256) {
@@ -587,7 +620,7 @@ class BrowserVault implements Vault {
      * 2026-07 に 8 → 12 へ上げる前に作られたヴォールトは短いままで、
      * 利用者はそれを知る術が無かった。診断がこの値を見て伝える。
      */
-    const meetsPolicy = password.length >= MIN_PASSWORD_LENGTH;
+    const meetsPolicy = meetsPasswordPolicy(password);
     const db = await openDb();
     let meta: VaultMeta | undefined;
     let masterWrap: EncryptedToken | undefined;
@@ -707,12 +740,22 @@ class BrowserVault implements Vault {
     // 下の catch は**復号の失敗** (鍵違い・壊れた blob) だけを飲む。
     this.requireKey();
     if (blob.v === TOKEN_RECORD_V1) {
-      try {
-        return await decryptString(key, blob, tokenAad(serviceId));
-      } catch {
-        // AAD が合わない = **置き場所が違う**。鍵違いと同じ扱いで黙って断る。
-        return null;
-      }
+      // AAD が合わない = **置き場所が違う**。鍵違いと同じ扱いで黙って断る。
+      //
+      // `try/catch` ではなく `.catch()` で書く理由 (2026-08-31): catch の
+      // **中身を空にする変異が等価**だった —— 空にすると下の「版の無いレコード」
+      // 経路へ落ちるが、AAD つきで封緘された物を AAD 無しで開こうとして必ず
+      // 失敗する (GCM が AAD まで認証するのが、まさにこの AAD の目的である)
+      // ので、結局 null を返す。**同じ結果に 2 つの道がある形**が変異体を
+      // 測れなくしていた。
+      //
+      // `next-line` の pragma では黙らせられなかった —— 指示は次の**文**の
+      // 先頭に付くので、try ブロックの末尾に書いた注記は catch 節へ届かない
+      // (このリポジトリで 3 度目)。ブロック形で囲むと try 側の測定まで
+      // 落ちるので、**分岐そのものを 1 本にした**。
+      // `.catch(() => null)` の `null` は `vaultRecordBinding.test.ts` の
+      // `toBeNull()` が留めている (undefined へ変えると鳴る)。
+      return await decryptString(key, blob, tokenAad(serviceId)).catch(() => null);
     }
     // 版の無いレコードは AAD を導入する前のもの。読めたらその場で束ね直す
     // (この 1 回だけ付け替え攻撃が通る窓が残るので、解錠時にも一括で直す)。
@@ -755,11 +798,31 @@ class BrowserVault implements Vault {
      * 窓も広げていた (2026-08-28)。
      */
     const db = await openDb();
+    /*
+     * **この関数の変異は、下のループの `catch {}` がまとめて飲む。**
+     *
+     * 束ね直しは best-effort (失敗しても解錠は成功させる) なので、選び方を
+     * どう狂わせても「読めなかったレコードは触らない」に落ちて、外からは
+     * 何も変わらない。実測 2026-08-31 で 5 件が等価と分かった:
+     *
+     *   - 初期値の配列に異物が入る → 分割代入が undefined になり復号が投げる
+     *   - 条件を `true` に      → v1 のレコードまで積むが、AAD 無しで開こうと
+     *                             して必ず失敗する (GCM が AAD を認証する)
+     *   - `&&` を `||` に        → `found` が undefined なら TypeError だが、
+     *                             `idbKeys` が返した鍵なので undefined は無い。
+     *                             仮に投げても呼び出し側が `.catch(() => {})`
+     *     
+     * 飲む側 (`catch {}`) を外すのは**直しではない** —— 解錠が旧レコード 1 本の
+     * 破損で失敗するようになる。選び方の側を測れる形にするには書き込み結果を
+     * 数える口が要り、それは検査のためだけの API になる。
+     */
+    // Stryker disable next-line ArrayDeclaration
     const pending: { id: string; blob: EncryptedToken }[] = [];
     try {
       for (const id of await idbKeys(db, TOKEN_STORE)) {
         const found = await idbGet<EncryptedToken>(db, TOKEN_STORE, id);
         // 既に v1 なら読み替える物が無い。**ここで落とすので I/O も起きない。**
+        // Stryker disable next-line ConditionalExpression,LogicalOperator
         if (found && found.v !== TOKEN_RECORD_V1) pending.push({ id, blob: found });
       }
     } finally {
@@ -767,6 +830,9 @@ class BrowserVault implements Vault {
     }
     for (const { id, blob } of pending) {
       const key = this.currentKey;
+      // Stryker disable next-line ConditionalExpression: 早期 return を外しても
+      // `decryptString(null, …)` が投げて下の catch が飲むので、観測できる差が
+      // 無い (等価変異)。意図 —— 施錠された後は仕事を続けない —— を残すために書く。
       if (!key) return; // 途中で施錠されたら止める
       try {
         const plain = await decryptString(key, blob);
@@ -808,7 +874,7 @@ class BrowserVault implements Vault {
     if (typeof oldPassword !== 'string' || oldPassword.length === 0) {
       throw new Error('現在のパスワードを入力してください');
     }
-    if (typeof newPassword !== 'string' || newPassword.length < MIN_PASSWORD_LENGTH) {
+    if (typeof newPassword !== 'string' || !meetsPasswordPolicy(newPassword)) {
       throw new Error(`新しいパスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください`);
     }
     if (newPassword.length > 256) {
@@ -880,6 +946,9 @@ class BrowserVault implements Vault {
       ];
       for (const id of ids) {
         const blob = await idbGet<EncryptedToken>(db, TOKEN_STORE, id);
+        // Stryker disable next-line ConditionalExpression: `ids` は直前の
+        // `idbKeys` が返した実在の鍵なので `blob` が空になる経路が無い。
+        // 潰すと `blob.v` で TypeError になるが、そこへ到達できない (等価変異)。
         if (!blob) continue;
         // **読む側は 2 つの形を扱う。** `getToken` と同じ判定 —— 版が付いて
         // いるものは AAD つきで封緘されており、版の無いものは AAD 導入前
@@ -908,7 +977,7 @@ class BrowserVault implements Vault {
   }
 
   async recoverWithMnemonic(mnemonic: string, newPassword: string): Promise<void> {
-    if (typeof newPassword !== 'string' || newPassword.length < MIN_PASSWORD_LENGTH) {
+    if (typeof newPassword !== 'string' || !meetsPasswordPolicy(newPassword)) {
       throw new Error(`新しいパスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください`);
     }
     if (newPassword.length > 256) {

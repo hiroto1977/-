@@ -143,47 +143,16 @@ describe('すべての外向き要求に signal が付いている (実測)', ()
 });
 
 /*
- * **素の `fetch` を新しく足せないようにする。**
+ * **素の `fetch` を束ねている場所の台帳は `src/shared/__tests__/bareFetchLedger.test.ts`
+ * へ移した (2026-08-31)。**
  *
- * 上の実測は「今在る経路」しか見ない。新しい action が
- * `ctx.fetch ?? fetch` を書けば、また同じ穴が開く ——
- * しかも既存の検査は全部通ったままになる。
+ * ここに在ったものは 3 つ穴が空いていた: 注記が言う `= fetch` を判定が見て
+ * いなかった (走査範囲に在る `src/main/oauth.ts` が素通りしていた) / 走査が
+ * `src/main` の 2 段だけでブラウザ版と共有層が視界の外だった / 負の対照が
+ * 走査を通らず手作りの `Set` を比べるだけだったので、判定が壊れても
+ * 鳴らなかった。
  *
- * そこで**字面のほうも留める**: `?? fetch` / `= fetch` は
- * 下の 2 つの口だけに在ってよい。増えたらここが落ちる。
+ * 移した先では `src/` 全体を歩き、両方の綴りを見て、対照は実際の走査関数へ
+ * 標本を通す。この検査ファイルは**実測** (`init.signal` が渡っているか) の
+ * ほうを引き続き持つ —— 字面と実測は別の問いなので、両方要る。
  */
-describe('素の fetch を握る場所は 2 つだけ', () => {
-  const ALLOWED = new Set([
-    // 中心の口。ここが `?? fetch` を持つのは当然で、ここだけが持つべき。
-    'src/main/clients/types.ts',
-    // ollama は自前の allowlist + 打ち切りを持つ別の口 (loopback 固定)。
-    'src/main/clients/ollama.ts',
-  ]);
-
-  it('main の中で素の fetch を束ねているファイルは allowlist と一致する', async () => {
-    const { readdirSync, readFileSync } = await import('node:fs');
-    const { join } = await import('node:path');
-    const roots = ['src/main', 'src/main/clients'];
-    const found = new Set<string>();
-    for (const dir of roots) {
-      for (const name of readdirSync(dir)) {
-        if (!name.endsWith('.ts')) continue;
-        const rel = `${dir}/${name}`;
-        const text = readFileSync(join(dir, name), 'utf8');
-        // コメントを落としてから見る (説明文の中の `?? fetch` で鳴らさない)。
-        const code = text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
-        if (/\?\?\s*fetch\b/.test(code)) found.add(rel);
-      }
-    }
-    expect([...found].sort()).toEqual([...ALLOWED].sort());
-  });
-
-  /*
-   * **この検査自身が効いているか** —— allowlist に無いファイルを混ぜたら
-   * 落ちることを、判定そのものを取り出して確かめる。
-   */
-  it('allowlist に無いファイルが在れば落ちる (負の対照)', () => {
-    const found = new Set(['src/main/clients/types.ts', 'src/main/clients/newthing.ts']);
-    expect([...found].sort()).not.toEqual([...ALLOWED].sort());
-  });
-});

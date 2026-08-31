@@ -1144,6 +1144,22 @@
       "leafCount": 61,
       "note": "update proxy.ts,httpLimits.ts",
       "hash": "84063d8cdda12e5adc8242da77e1a4a2e484f791fc7fcff2709a2262a23e907d"
+    },
+    {
+      "index": 135,
+      "prevHash": "84063d8cdda12e5adc8242da77e1a4a2e484f791fc7fcff2709a2262a23e907d",
+      "merkleRoot": "043a76d9af502aee3ae09d59722aa5bbd8036f894e62faf4d7a4bd378ca4d704",
+      "leafCount": 61,
+      "note": "update vault.ts",
+      "hash": "3c2d0c9785f177881030288c48cbb3719f9eb54a43865b513b4af5ceced79747"
+    },
+    {
+      "index": 136,
+      "prevHash": "3c2d0c9785f177881030288c48cbb3719f9eb54a43865b513b4af5ceced79747",
+      "merkleRoot": "c3152c18ec46ead4f733206d4b8a4b9040070d1a802a49c6d806091b591a6747",
+      "leafCount": 61,
+      "note": "update vault.ts",
+      "hash": "9f3b1eedd3df38b392b43880385853560665559ec1ed14cbc8008b0e9a81d6d8"
     }
   ],
   "tipManifest": {
@@ -1191,7 +1207,7 @@
     "src/renderer/security/frameGuard.ts": "66ad10cf7e5a48fcc4a406aa66b9de544609877944fd073c7bf3af8190991559",
     "src/renderer/security/lockWorkspace.ts": "a6ebfe22324acc0a4cfd02a12262001d49c23963c02f03460bb9aefcd0e701c2",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
-    "src/renderer/security/vault.ts": "e7917c79ebff8f743f65d231c6e5bd8ac260bd1659765db41edb4af1273e63ab",
+    "src/renderer/security/vault.ts": "723dbb27ec8409092ecb1932d624156c793b7af501b831be7ddbc0155c5f002f",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
     "src/shared/aiEndpoint.ts": "03c50a6cb3c2b777f128edd5fc0f752745ba21d4440404cf80b14fe704517438",
     "src/shared/atlassianSite.ts": "5810fde838f479ba095ec4dad9774020ee87c6e980bf7bff4a3c61bb2c4c0b90",
