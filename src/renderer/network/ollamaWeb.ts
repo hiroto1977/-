@@ -226,7 +226,21 @@ export async function readTextOrEmpty(res: Response): Promise<string> {
  * 詳細なし」として扱っており、そこは上限超過も非 JSON も同じ扱いでよい。
  */
 async function readJsonCapped(res: Response): Promise<unknown> {
+  /*
+   * **ここの 3 つは等価変異である** (2026-08-31 に実測して確かめた)。
+   * 単純化して消せないのは、どちらの番人も**型のために要る**から ——
+   * `parseJsonOrNull(text: string)` は null を受け取れない。
+   *
+   *   ラベル `'ollama'` → `""`   … 文言は直後の `.catch` が捨てるので届かない
+   *   `() => null` → `() => undefined` … `parseJsonOrNull(undefined)` も null
+   *   `text === null` → `false`  … `parseJsonOrNull(null)` も null
+   *
+   * 実測: parseJsonOrNull(undefined) === parseJsonOrNull(null) === null。
+   * どの経路でも観測できる差が出ないので、pragma で意図を残す。
+   */
+  // Stryker disable next-line ArrowFunction,StringLiteral: 上の注記 (等価・実測済み)
   const text = await readBodyWithCap(res, MAX_RESPONSE_BYTES, 'ollama').catch(() => null);
+  // Stryker disable next-line ConditionalExpression: 同上 (parseJsonOrNull(null) も null)
   if (text === null) return null;
   return parseJsonOrNull(text);
 }
@@ -525,6 +539,9 @@ export async function chatOllama(
   // `isOverCap` に 1 つだけ置いて、投げる側の文言と結び付けてある。
   let text: string;
   try {
+    // Stryker disable next-line StringLiteral: ラベルを空にしても `isOverCap` は
+    // `' response too large'` (先頭の空白込み) で当たるため、分岐が変わらない
+    // (実測済みの等価変異)。
     text = await readBodyWithCap(res, MAX_RESPONSE_BYTES, 'ollama');
   } catch (e) {
     if (isOverCap(e)) {
@@ -581,6 +598,10 @@ async function listInstalledModels(
   // catch で [] を返すと、中身を空にしても undefined が「モデル無し」と同じ
   // 扱いになって観測できない。失敗を null にしてから 1 か所で判定する。
   const res = await fetchWithTimeout(fetchFn, url, { cache: 'no-store' }).catch(() => null);
+  // Stryker disable next-line ConditionalExpression: 等価変異 (2026-08-31 に対照で確認)。
+  // この番人を外しても `readJsonCapped` の `.catch` と `normalizeModels(null)` が
+  // 受け止めて同じ `[]` になる。消せないのは**型のため** —— `readJsonCapped` は
+  // `Response` を受け取る。速い道と意図の表明として残す。
   if (res === null || !res.ok) return [];
   return normalizeModels(await readJsonCapped(res)).map((m) => m.name);
 }

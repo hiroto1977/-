@@ -495,6 +495,37 @@ describe('ACTIONS["chat"]', () => {
     expect((err as { serviceId: string }).serviceId).toBe('ollama');
   });
 
+  /*
+   * **上限超過「だけ」を「大きすぎます」にする。**
+   *
+   * `isOverCap` を足したのは、打ち切りや接続断まで同じ文言で報せないため
+   * だった。ところが**その区別を確かめる検査が無く**、`isOverCap(e)` を
+   * `true` に潰しても鳴らなかった (2026-08-31 実測)。自分で足した分岐の穴で、
+   * ブラウザ版 (`ollamaWeb.ts`) にも同じ穴が空いていた。
+   *
+   * 本文の途中で壊れる応答を作る。読み出しの失敗は上限とは無関係なので、
+   * 「exceeded … bytes」で報せてはいけない。
+   */
+  it('★ 上限とは無関係な読み出し失敗を「大きすぎます」と言わない', async () => {
+    const broken = new Response(
+      new ReadableStream({
+        start(c) {
+          c.enqueue(new TextEncoder().encode('{"message":'));
+          c.error(new Error('stream broke'));
+        },
+      }),
+      { status: 200, headers: { 'content-type': 'application/json' } },
+    );
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(broken);
+    const err = await ACTIONS['chat']!({
+      token: '',
+      fetch: fetchMock,
+      payload: { model: 'llama3.2', prompt: 'hi' },
+    }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).message, '大きすぎる扱いにしない').not.toMatch(/exceeded/);
+  });
+
   it('throws the literal "ollama returned non-JSON" error when the body fails to parse', async () => {
     // Pin the exact wording (StringLiteral mutant kill on ollama.ts:330).
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(

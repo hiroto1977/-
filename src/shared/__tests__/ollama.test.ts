@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   DEFAULT_OLLAMA_PORT,
   MIN_SAFE_VERSION,
@@ -1103,5 +1103,79 @@ describe('isAllowedOllamaPlaintextHost — 平文 http を許す相手', () => {
     // 前提そのもの: http スキームで空ホストの URL は作れない。
     expect(new URL('http:///x').hostname).toBe('x');
     expect(() => new URL('http://')).toThrow();
+  });
+});
+
+/**
+ * **モジュール直下の値を、読み直して留める。**
+ *
+ * 変異検査で 11 件が生存していた (2026-08-31 実測)。すべて static 変異体で、
+ * 既存の検査は論理としては当たっているのに**静的 import なので届いて
+ * いなかった**。`vi.resetModules()` + 動的 `import()` で読み直す。
+ *
+ * **`UNPATCHED_OOB_NOTICE` は輪をかけて悪かった** —— 既存の検査が
+ * `expect(buildWarnings('0.5.0')).toEqual([UNPATCHED_OOB_NOTICE])` と
+ * **定数を定数自身と比べていた**ので、空文字に潰れても両辺が同時に空になり
+ * 通ってしまう。本 PR の `EMPTY_TALENT_STATE` と同じ形である。
+ * **検査の期待値が、検査対象から来てはいけない。**
+ */
+describe('モジュール直下の値 — 読み直して static 変異体を届かせる', () => {
+  const fresh = async () => {
+    vi.resetModules();
+    return import('../ollama');
+  };
+
+  /*
+   * ループバックの許可表。1 つでも空文字に潰れると、そのホスト名が
+   * **ループバックと見なされなくなり**、平文 http の許可判定が変わる
+   * (`isAllowedOllamaPlaintextHost`)。表そのものは export していないので
+   * 述語から当てる。
+   */
+  it.each(['127.0.0.1', 'localhost', '[::1]', '::1'])(
+    '★ %s はループバックと判定する',
+    async (host) => {
+      const m = await fresh();
+      expect(m.isLoopbackHostname(host)).toBe(true);
+    },
+  );
+
+  it('★ ループバックでないものは通さない (対照)', async () => {
+    const m = await fresh();
+    expect(m.isLoopbackHostname('127.0.0.2')).toBe(false);
+    expect(m.isLoopbackHostname('evil.example')).toBe(false);
+    expect(m.isLoopbackHostname('127.0.0.1.evil.example')).toBe(false);
+    expect(m.isLoopbackHostname('')).toBe(false);
+  });
+
+  it('★ 既定のセットアップ用モデル名', async () => {
+    const m = await fresh();
+    expect(m.DEFAULT_SETUP_MODEL).toBe('llama3.2:1b');
+  });
+
+  /*
+   * 未パッチ OOB read の注意書き。**中身を字面で当てる** —— 定数と比べると
+   * 空文字への変異で両辺が同時に空になり、検査が意味を失う。
+   * 空になれば利用者は「CLI で野良モデルを引くな」という警告を受け取れない。
+   */
+  it('★ 未パッチ OOB read の注意書きが中身を持っている', async () => {
+    const m = await fresh();
+    const n = m.UNPATCHED_OOB_NOTICE;
+    expect(n).toContain('out-of-bounds read');
+    expect(n).toContain('/api/pull');
+    expect(n).toContain('/api/create');
+    expect(n).toContain('/api/push');
+    // 連結された 5 片すべてに当てる。1 片だけ空になっても鳴るように、
+    // 各片から固有の語を採る (最初は中ほどの 1 片が素通りした)。
+    expect(n).toContain('攻撃ベクトルを遮断');
+    expect(n).toContain('CLI からモデルを取得');
+    expect(n).toContain('検証済みソース');
+    expect(n).toContain('docs/OLLAMA_SECURITY.md');
+    expect(n.length).toBeGreaterThan(120);
+  });
+
+  it('★ 警告に載るのはその注意書きそのもの (経路の確認)', async () => {
+    const m = await fresh();
+    expect(m.buildWarnings('0.5.0')).toEqual([m.UNPATCHED_OOB_NOTICE]);
+    expect(m.buildWarnings('0.5.0')[0]).toContain('out-of-bounds read');
   });
 });

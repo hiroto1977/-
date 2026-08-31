@@ -911,6 +911,39 @@ describe('chatOllama — 応答の解釈', () => {
     });
   });
 
+  /*
+   * **上限超過「だけ」を too-large にする。**
+   *
+   * 本 PR で `isOverCap` を足したのは、打ち切りや接続断まで「大きすぎます」と
+   * 報せないためだった。ところが**その区別を確かめる検査を書いていなかった**
+   * —— 変異検査で `isOverCap(e)` を `true` に潰しても鳴らなかった
+   * (2026-08-31 実測)。自分で足した分岐の穴である。
+   *
+   * 本文の途中で壊れる応答を作る。読み出しは上限とは無関係に失敗するので、
+   * `too-large` ではない種別で返らなければならない。
+   */
+  it('★ 上限とは無関係な読み出し失敗は too-large にしない', async () => {
+    const broken = () =>
+      new Response(
+        new ReadableStream({
+          start(c) {
+            c.enqueue(new TextEncoder().encode('{"message":'));
+            c.error(new Error('stream broke'));
+          },
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      );
+    const f = vi.fn(async (url: string | URL | Request) => {
+      const u = String(url);
+      if (u.endsWith('/api/tags')) return json({ models: [] });
+      if (u.endsWith('/api/chat')) return broken();
+      throw new Error(`unexpected url: ${u}`);
+    }) as unknown as typeof fetch;
+
+    const r = await chatOllama(base, f, '').catch((e: Error) => ({ thrown: e.message }));
+    expect(JSON.stringify(r), '大きすぎる扱いにしない').not.toContain('too-large');
+  });
+
   it('HTTP エラーは分類して「次の一手」まで返す', async () => {
     const r = await chatOllama(base, chatFetch({ error: 'no such model' }, 404), '');
     expect(r.ok).toBe(false);
@@ -1839,5 +1872,106 @@ describe('readTextOrEmpty', () => {
     const r = await readTextOrEmpty(broken);
     expect(r).toBe('');
     expect(typeof r).toBe('string');
+  });
+});
+
+/**
+ * **モジュール直下の値を、読み直して留める。**
+ *
+ * 保存キー・上限・空スナップショットは上の検査群が既に字面で見ているが、
+ * **静的 import なので変異が届いていなかった** (2026-08-31 実測で 5 件生存)。
+ * `vi.resetModules()` + 動的 `import()` で読み直す。
+ * 本 PR で 7 度目の同じ手当てである。
+ */
+describe('モジュール直下の値 — 読み直して static 変異体を届かせる', () => {
+  const fresh = async () => {
+    vi.resetModules();
+    return import('../ollamaWeb');
+  };
+
+  /*
+   * 保存キーが変われば、**利用者が前の版で保存した接続先が読めなくなる**。
+   * 旧キー (`…ollama.port`) は後方互換のためだけに残っているので、
+   * 綴りが崩れると移行が静かに壊れる。`lint:storage` の台帳とも対になる。
+   */
+  it('★ localStorage の保存キー (新・旧)', async () => {
+    const m = await fresh();
+    expect(m.OLLAMA_ENDPOINT_KEY).toBe('servicehub.ollama.endpoint');
+    expect(m.OLLAMA_PORT_KEY).toBe('servicehub.ollama.port');
+  });
+
+  /*
+   * 上限は掛け算で書いてあるので、`*` が `/` に変わると **2 バイト**になる
+   * (`2 * 1024 / 1024`)。そうなると正常な応答まで全部 too-large で弾かれる。
+   * 画面の「セキュリティポリシー」欄にも出る値なので、実寸で留める。
+   */
+  /*
+   * 繋がらないときに返す**空のスナップショット**。中身が `undefined` に
+   * なると、画面は「Ollama の状態」欄を描けずに落ちる。4 か所から返るので
+   * 形そのものを留める。
+   */
+  it('★ 繋がらないときの空スナップショットの形', async () => {
+    const m = await fresh();
+    const f = vi.fn(async () => {
+      throw new Error('ECONNREFUSED');
+    }) as unknown as typeof fetch;
+    const noCspLocal = () => ({ hit: () => false, stop: () => undefined });
+    const r = await m.probeOllama(11434, f, '', noCspLocal);
+    expect(r.snapshot).toEqual({
+      running: false,
+      version: '',
+      versionSafe: false,
+      versionMinRecommended: MIN_SAFE_VERSION,
+      models: [],
+      warnings: [],
+    });
+  });
+
+  it('★ 応答の上限は 2MiB ちょうど', async () => {
+    const m = await fresh();
+    expect(m.MAX_RESPONSE_BYTES).toBe(2 * 1024 * 1024);
+    expect(m.MAX_RESPONSE_BYTES).toBe(2097152);
+  });
+});
+
+/**
+ * **モデル一覧が取れなくても、助言まで辿り着く。**
+ *
+ * `chatOllama` は「モデルが無い」と分かったとき、実在するモデルを添えるために
+ * 一覧を取りに行く (`listInstalledModels`)。その一覧の取得が失敗しても
+ * **助言そのものは返らなければならない** —— ここで投げると、利用者は
+ * 「モデル名が違う」という肝心の案内を受け取れないまま例外を見る。
+ *
+ * `res === null || !res.ok` を `false` に潰しても鳴っていなかった。
+ * 潰すと失敗した応答をそのまま読みに行き、実際には例外になる。
+ * 一覧の取得口は export されていないので、**本物の経路 (chatOllama) から**
+ * 当てる。
+ */
+describe('モデル一覧が取れなくても助言は返る', () => {
+  const base = { endpoint: '11434', model: 'llama3.2:1b', prompt: 'こんにちは' };
+  const notFound = { error: 'model "llama9" not found, try pulling it first' };
+
+  it('★ 一覧の取得が失敗しても、助言を返す (投げない)', async () => {
+    const f = vi.fn(async (url: string | URL | Request) => {
+      const u = String(url);
+      if (u.endsWith('/api/tags')) throw new Error('ECONNREFUSED');
+      if (u.endsWith('/api/chat')) return json(notFound, 404);
+      throw new Error(`unexpected url: ${u}`);
+    }) as unknown as typeof fetch;
+    const r = await chatOllama(base, f, '');
+    expect(r.ok).toBe(false);
+    expect(r.ok === false && r.kind).toBe('model-not-found');
+  });
+
+  it('★ 一覧が HTTP エラーでも、助言を返す', async () => {
+    const f = vi.fn(async (url: string | URL | Request) => {
+      const u = String(url);
+      if (u.endsWith('/api/tags')) return new Response('nope', { status: 500 });
+      if (u.endsWith('/api/chat')) return json(notFound, 404);
+      throw new Error(`unexpected url: ${u}`);
+    }) as unknown as typeof fetch;
+    const r = await chatOllama(base, f, '');
+    expect(r.ok).toBe(false);
+    expect(r.ok === false && r.kind).toBe('model-not-found');
   });
 });

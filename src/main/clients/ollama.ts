@@ -321,6 +321,9 @@ async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: nu
    */
   let text: string;
   try {
+    // Stryker disable next-line StringLiteral: ラベルを空にしても `isOverCap` は
+    // `' response too large'` (先頭の空白込み) で当たるので分岐が変わらない。
+    // ブラウザ版の同じ箇所と揃えてある (2026-08-31 に実測して等価と確認)。
     text = await readBodyWithCap(res, MAX_RESPONSE_BYTES, 'ollama');
   } catch (e) {
     // **上限超過だけを既存の文言へ翻訳し、他はそのまま通す。** 打ち切りや
