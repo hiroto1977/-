@@ -86,6 +86,30 @@ describe('ブラウザ版の外向き通信には打ち切りが付く', () => {
     void call.catch(() => {});
   });
 
+  /*
+   * **プロキシを通らない書き込み経路が 1 本だけある。**
+   *
+   * `api.github.com` は CORS を許可しているので、課題作成だけは
+   * `getProxyTransport` を通らない —— つまり「プロキシ経由の 14 経路に
+   * まとめて掛けた打ち切り」が掛からない。上の 2 本 (LLM / 更新確認) は
+   * 直呼びとして数えられていたが、**この 1 本は数え漏れていた**
+   * (2026-08-31 に発見。既定引数の `fetch` をそのまま使っていた)。
+   */
+  it('GitHub の課題作成 (プロキシを通らない唯一の書き込み) にも signal が渡る', async () => {
+    const spy = hangingFetchSpy();
+    const hub = await loadHub();
+    const p = hub.invoke('github', 'create-issue', { owner: 'o', repo: 'r', title: 't' });
+    for (let i = 0; i < 100 && spy.seen.length === 0; i += 1) {
+      await new Promise((r) => setTimeout(r, 10));
+    }
+    expect(spy.seen.length, '送信に到達していない — 検査が空虚').toBeGreaterThanOrEqual(1);
+    const gh = spy.seen.find((s) => s.url.includes('api.github.com/repos/o/r/issues'));
+    expect(gh, '課題作成の送信が見えていない').toBeTruthy();
+    expect(gh?.signal, '打ち切りの手段 (AbortSignal) が渡っていない').toBeInstanceOf(AbortSignal);
+    expect(gh?.signal?.aborted, 'まだ打ち切られてはいない').toBe(false);
+    void p.catch(() => {});
+  });
+
   it('更新確認にも signal が渡る', async () => {
     const spy = hangingFetchSpy();
     const hub = await loadHub();

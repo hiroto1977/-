@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   encryptString,
   decryptString,
@@ -159,5 +159,32 @@ describe('assertSaltBytes — 保存側から読んだソルトの長さ', () =>
   it('陰性: 正規の封緘データは往復できる (締めすぎていない)', async () => {
     const bundle = await encryptString('secret', 'pw-correct-horse');
     await expect(decryptString(bundle, 'pw-correct-horse')).resolves.toBe('secret');
+  });
+});
+
+/**
+ * `const KDF = 'PBKDF2-SHA256'` はモジュール本体で一度だけ評価される「静的」な
+ * 定数なので、ファイル先頭の静的 import では変異した状態を観測できない
+ * (実測: `'PBKDF2-SHA256'` → `""` が生き残る。上の isEncryptedBundle 検査は
+ * 正しい主張だが、モジュールは変異が効く前に評価済み)。
+ *
+ * KDF 名は**封緘データの外形そのもの**である —— 空文字になれば、既存の
+ * 封緘データが一斉に「形が違う」と判定され、開けなくなる。
+ * `vi.resetModules()` + `await import()` で読み直して問う。
+ */
+describe('KDF 名 —— 静的定数を測れる形で問う', () => {
+  it('再読込したモジュールでも kdf:"PBKDF2-SHA256" の封緘データを受け入れる', async () => {
+    vi.resetModules();
+    const mod = await import('../dataCrypto');
+    expect(mod.isEncryptedBundle({ ...VALID_BUNDLE })).toBe(true);
+    expect(mod.isEncryptedBundle({ ...VALID_BUNDLE, kdf: 'OTHER' })).toBe(false);
+    expect(mod.isEncryptedBundle({ ...VALID_BUNDLE, kdf: '' })).toBe(false);
+  });
+
+  it('再読込したモジュールが書き出す封緘データも "PBKDF2-SHA256" を名乗る', async () => {
+    vi.resetModules();
+    const mod = await import('../dataCrypto');
+    const bundle = await mod.encryptString('x', 'pw');
+    expect(bundle.kdf).toBe('PBKDF2-SHA256');
   });
 });

@@ -53,8 +53,11 @@ export async function atomicWriteFile(
         //   本体 644 → rename で本体は 600 に直るが、控えは 644 のまま
         //
         // 本体だけ直して控えを緩いまま残すのは、鍵を掛けた扉の横に
-        // 窓を開けておくのと同じ。mode の指定があるときは明示的に揃える。
-        if (opts.mode !== undefined) await fs.chmod(`${target}.prev`, opts.mode);
+        // 窓を開けておくのと同じ。**本体を作るときと同じ mode に揃える** ——
+        // 上の `fs.open(tmp, 'w', opts.mode ?? 0o600)` と同じ式なので、mode 無指定
+        // でも本体は 0o600 になる。「指定があるときだけ揃える」だと、まさにその
+        // 無指定の場合に本体 600 / 控え 644 という窓が開いたままになっていた。
+        await fs.chmod(`${target}.prev`, opts.mode ?? 0o600);
       } catch {
         // no existing target yet — nothing to back up
       }

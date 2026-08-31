@@ -266,6 +266,14 @@ describe('壊れたメタを上書きしない', () => {
 
     await expect(enableEncryption('new-passphrase')).rejects.toThrow(/読めませんでした/);
 
+    // 文言は 3 片の連結でできている。`/読めませんでした/` は**先頭の 1 片にしか
+    // 当たらない**ので、2 片目・3 片目を空にする変異が素通りしていた (実測)。
+    // 「何が失われるか」と「どうすればよいか」は、この警告の**用途そのもの**
+    // なので、片ごとに固有の言い回しを取って別々に確かめる。
+    await expect(enableEncryption('new-passphrase')).rejects.toThrow(/salt が失われます/);
+    await expect(enableEncryption('new-passphrase')).rejects.toThrow(/レコードを書き出してから/);
+    await expect(enableEncryption('new-passphrase')).rejects.toThrow(/やり直してください/);
+
     // ★ ここが本体 —— 壊れた値がそのまま残っていること。
     expect(localStorage.getItem(LS_KEY)).toBe(broken);
     expect(localStorage.getItem(LS_KEY)).toContain('OLD-SALT-KEEP-ME');

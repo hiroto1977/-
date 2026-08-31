@@ -739,7 +739,15 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
       signal,
     });
     if (!res.ok) {
-      const body = await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth').catch(() => '');
+      const body = await readBodyWithCap(
+        res,
+        MAX_HTTP_RESPONSE_BYTES,
+        // 読めなかったときは直後の .catch が中身を捨て、この標識はエラー本文にも
+        // 記録にも現れない —— 空文字に変えても観測できる違いが無い (equivalent)。
+        // 746/779 行目 (捨てない方) の同じ標識は撃墜済みなので、そちらは開けておく。
+        // Stryker disable next-line StringLiteral
+        'oauth',
+      ).catch(() => '');
       throw new Error(`Token exchange failed (${res.status}): ${redactForMessage(body, 200)}`);
     }
     return JSON.parse(
@@ -772,7 +780,15 @@ export async function refresh(
       signal,
     });
     if (!res.ok) {
-      const body = await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth').catch(() => '');
+      const body = await readBodyWithCap(
+        res,
+        MAX_HTTP_RESPONSE_BYTES,
+        // 読めなかったときは直後の .catch が中身を捨て、この標識はエラー本文にも
+        // 記録にも現れない —— 空文字に変えても観測できる違いが無い (equivalent)。
+        // 746/779 行目 (捨てない方) の同じ標識は撃墜済みなので、そちらは開けておく。
+        // Stryker disable next-line StringLiteral
+        'oauth',
+      ).catch(() => '');
       throw new Error(`Token refresh failed (${res.status}): ${redactForMessage(body, 200)}`);
     }
     return JSON.parse(

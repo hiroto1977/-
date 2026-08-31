@@ -150,4 +150,25 @@ describe('atomicWriteFile と権限', () => {
     expect(await modeOf(`${target}.prev`)).toBe('600');
     expect(await fs.readFile(`${target}.prev`, 'utf8')).toBe('{"old":1}');
   });
+
+  /*
+   * mode **無指定**のときも同じ窓が開いていた (2026-08-31)。
+   *
+   * 一時ファイルは `opts.mode ?? 0o600` で作られるので、mode を渡さなくても
+   * 本体は rename 後に 600 になる。ところが控えを揃える側だけが
+   * `if (opts.mode !== undefined)` で守られていて、**まさにその無指定の場合に**
+   * 本体 600 / 控え 644 が残った。控えも同じ既定値へ揃える。
+   */
+  it('mode 無指定でも、控えは本体と同じ 600 に揃う', async () => {
+    const target = path.join(dir, 'withprev-nomode.json');
+    await fs.writeFile(target, '{"old":1}');
+    await fs.chmod(target, 0o644);
+
+    await atomicWriteFile(target, '{"new":1}', { keepBackup: true });
+
+    expect(await modeOf(target)).toBe('600');
+    // ★ ここが本体 —— 以前はここが 644 のまま残っていた。
+    expect(await modeOf(`${target}.prev`)).toBe('600');
+    expect(await fs.readFile(`${target}.prev`, 'utf8')).toBe('{"old":1}');
+  });
 });

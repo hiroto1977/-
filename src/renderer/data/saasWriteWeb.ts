@@ -15,6 +15,7 @@ import {
   type AtlassianSiteFailure,
 } from '../../shared/atlassianSite';
 import { redactForMessage } from '../../shared/redact';
+import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../../shared/httpLimits';
 
 export type FetchFn = typeof fetch;
 
@@ -22,10 +23,28 @@ export type FetchFn = typeof fetch;
  *  プロキシ (fetchViaProxy をバインドしたもの) でも差し替えられる。 */
 export type Transport = (url: string, init: RequestInit) => Promise<Response>;
 
+/**
+ * 応答本文を上限つきで読む。
+ *
+ * **プロキシ経由の道と直接叩く道で、判定を違えない。**
+ * `network/proxy.ts` の `fetchViaProxy` は上限つきで読んだ本文から
+ * `Response` を組み直して返すので、プロキシ経由で来た応答は既に 10MiB 以下
+ * である。ところが CORS 許可済みで**直接叩く道** (GitHub) だけは素の
+ * `fetch` から来た `Response` をそのまま読んでいた —— 相手が巨大な本文を
+ * 返せばタブの記憶を使い切る (2026-08-31 に発見)。
+ *
+ * `web-shim.ts` は同じ理由で `readCappedText` を持っているが、こちらの
+ * モジュールには渡っていなかった。**同じ問いには同じ答えを置く。**
+ */
+export async function readCapped(res: Response, label: string): Promise<string> {
+  return readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, label);
+}
+
 /** API 応答が ok でなければ本文の一部を添えて throw する共通ヘルパ。 */
 async function ensureOk(res: Response, label: string): Promise<void> {
   if (res.ok) return;
-  const body = await res.text().catch(() => '');
+  // 落ちている相手ほど大きなものを返しうるので、失敗の本文も上限つきで読む。
+  const body = await readCapped(res, label).catch(() => '');
   throw new Error(`${label} ${res.status}: ${redactForMessage(body, 200)}`);
 }
 
@@ -83,7 +102,10 @@ export async function createGithubIssue(
     },
   );
   await ensureOk(res, 'GitHub API');
-  const data = (await res.json()) as GithubIssueApiResponse;
+  // ここは**プロキシを通らない唯一の書き込み経路** (api.github.com は CORS
+  // 許可済み)。上限を掛けるのはこの読み出しだけで、他の create-* は
+  // `fetchViaProxy` が組み直した 10MiB 以下の `Response` を受け取っている。
+  const data = JSON.parse(await readCapped(res, 'GitHub API')) as GithubIssueApiResponse;
   return { number: data.number, url: data.html_url, title: data.title };
 }
 
