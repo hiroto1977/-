@@ -141,6 +141,11 @@ export function diagnoseOrg(reports: readonly DeptReport[]): OrgDiagnosis {
   const departments = new Set<string>();
 
   for (const r of reports) {
+    // `typeof r.department !== 'string'` の項に当たる変異体は等価になる ——
+    // 型が保証しているので実行時に非文字列は来ず、仮に来ても `.length === 0` が
+    // `undefined === 0` で false になるだけで、下流は空の部署名を 1 つ数えない
+    // (`sanitizeReports` が入口で長さも見る)。空文字の側は下の検査が留めている。
+    // Stryker disable next-line ConditionalExpression
     if (typeof r.department !== 'string' || r.department.length === 0) continue;
     departments.add(r.department);
     for (const d of r.diseases) {
@@ -189,8 +194,19 @@ export interface AchievementStatus {
   readonly counted: number;
 }
 
-/** 達成確率として受け付ける値か (有限の 0–100)。 */
+/**
+ * 達成確率として受け付ける値か (有限の 0–100)。
+ *
+ * `typeof n === 'number'` は**実行時には冗長**である —— `Number.isFinite(x)` は
+ * `typeof x === 'number'` を含意する (実測 2026-08-31: `'50'` / `new Number(50)` /
+ * `true` / `[50]` / `{valueOf:()=>50}` のいずれも `false`)。残しているのは
+ * **TypeScript の絞り込みのため**で、これが無いと `unknown` に `>=` を書けない。
+ * したがってこの項に当たる変異体は等価になる。
+ */
 export function isValidProbability(n: unknown): n is number {
+  // (`next-line` は**次の 1 行**にしか掛からない。関数宣言の上に置くと
+  //  中の `return` には届かないので、判定の直前に置く。)
+  // Stryker disable next-line ConditionalExpression,LogicalOperator
   return typeof n === 'number' && Number.isFinite(n) && n >= 0 && n <= 100;
 }
 
@@ -215,7 +231,11 @@ export function achievementGap(initiatives: readonly Initiative[]): AchievementS
   }
   // 浮動小数の誤差で 99.999… を不足と呼ばないように丸める。
   const rounded = Math.round(total * 100) / 100;
-  const shortfall = rounded >= 100 ? 0 : Math.round((100 - rounded) * 100) / 100;
+  // **`rounded >= 100 ? 0 : …` と書かない。** 境界ちょうど (100) では else 側も
+  // 0 を返すので、`>=` と `>` に**観測できる差が無かった** (2026-08-31 に対照が
+  // 鳴らず判明)。等価変異を pragma で黙らせるより、比較そのものを消す。
+  // 超過 (100 超) は負の不足になるので、下限で切れば同じ結果になる。
+  const shortfall = Math.max(0, Math.round((100 - rounded) * 100) / 100);
   return { total: rounded, shortfall, ok: shortfall === 0, counted };
 }
 
@@ -259,7 +279,6 @@ export const LEADER_DISQUALIFIERS: readonly Disqualifier[] = [
   { id: 'flees-trouble', text: 'トラブルから逃げる' },
 ];
 
-const DISQUALIFIER_IDS: ReadonlySet<string> = new Set(LEADER_DISQUALIFIERS.map((d) => d.id));
 
 export interface LeaderFitness {
   readonly eligible: boolean;
@@ -276,10 +295,14 @@ export interface LeaderFitness {
  * マイナスは大きくなるので、閾値を設けると制度の意味が消える。
  */
 export function judgeLeaderFitness(flagged: readonly string[]): LeaderFitness {
-  const seen = new Set<string>();
-  for (const f of flagged) {
-    if (DISQUALIFIER_IDS.has(f)) seen.add(f);
-  }
+  // 未知の id を here で弾く必要は無い —— `hits` は **`LEADER_DISQUALIFIERS` を
+  // 回して作る**ので、知らない id が `seen` に入っても二度と読まれない。
+  // かつて `if (DISQUALIFIER_IDS.has(f))` を置いていたが、変異検査で
+  // **外しても何も変わらない**ことが分かった (2026-08-31)。効いていない防御は
+  // pragma で黙らせるより消すほうが正しい —— 許可リストは構造そのもの
+  // (`LEADER_DISQUALIFIERS.filter`) が持っている。
+  // `diagnoseOrg` が 2026-08-29 に同じ理由で同じ形を消している。
+  const seen = new Set<string>(flagged);
   const hits = LEADER_DISQUALIFIERS.filter((d) => seen.has(d.id));
   return { eligible: hits.length === 0, hits, checked: LEADER_DISQUALIFIERS.length };
 }
@@ -335,8 +358,13 @@ export function isValidLadderMember(m: unknown): m is LadderMember {
   if (typeof o['id'] !== 'string' || !MEMBER_ID_RE.test(o['id'])) return false;
   if (typeof o['name'] !== 'string' || o['name'].length === 0 || o['name'].length > 64) return false;
   const step = o['step'];
+  // `typeof step !== 'number'` は実行時には冗長 —— `Number.isInteger(x)` は
+  // `typeof x === 'number'` を含意する (実測)。残すのは TS の絞り込みのため。
+  // Stryker disable next-line ConditionalExpression
   if (typeof step !== 'number' || !Number.isInteger(step) || step < 1 || step > 4) return false;
   const years = o['yearsInStep'];
+  // 同上 (`Number.isFinite`)。
+  // Stryker disable next-line ConditionalExpression
   if (typeof years !== 'number' || !Number.isFinite(years) || years < 0 || years > 60) return false;
   return true;
 }
@@ -385,13 +413,24 @@ export function sanitizeReports(raw: unknown): readonly DeptReport[] {
   if (!Array.isArray(raw)) return [];
   const out: DeptReport[] = [];
   for (const r of raw.slice(0, MAX_DEPT_REPORTS)) {
+    // `typeof r !== 'object'` の項は実行時には冗長 —— 非オブジェクト (数値・
+    // 文字列・関数) への添字は例外にならず `undefined` を返すので、次の行の
+    // `typeof dept !== 'string'` が同じように弾く (実測)。`r === null` のほうは
+    // **必要** (null への添字は TypeError) で、そちらは検査が留めている。
+    // Stryker disable next-line ConditionalExpression
     if (r === null || typeof r !== 'object') continue;
     const o = r as Record<string, unknown>;
     const dept = o['department'];
     if (typeof dept !== 'string' || dept.length === 0 || dept.length > 64) continue;
+    // 既定の `[]` を別の配列に変えても、中身が病名の許可リストに載らない限り
+    // 下の filter が全部落とすので等価。
+    // Stryker disable next-line ArrayDeclaration
     const list = Array.isArray(o['diseases']) ? o['diseases'] : [];
     out.push({
       department: dept,
+      // `typeof d === 'string'` は実行時には冗長 —— `Set.has` は非文字列に
+      // 対して常に false を返す (実測)。残すのは型述語のため。
+      // Stryker disable next-line ConditionalExpression
       diseases: list.filter((d): d is string => typeof d === 'string' && DISEASE_IDS.has(d)),
     });
   }
@@ -403,6 +442,9 @@ export function sanitizeInitiatives(raw: unknown): readonly Initiative[] {
   if (!Array.isArray(raw)) return [];
   const out: Initiative[] = [];
   for (const i of raw.slice(0, MAX_INITIATIVES)) {
+    // `typeof i !== 'object'` の項は上の `sanitizeReports` と同じ理由で等価。
+    // `i === null` のほうは必要。
+    // Stryker disable next-line ConditionalExpression
     if (i === null || typeof i !== 'object') continue;
     const o = i as Record<string, unknown>;
     const name = o['name'];
