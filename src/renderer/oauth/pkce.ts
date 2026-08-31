@@ -215,6 +215,10 @@ export async function exchangeGoogleCode(
       signal,
     });
     if (!res.ok) {
+      // Stryker disable next-line StringLiteral: ここのラベルは**直後の `.catch` が
+      // 捨てる**ので、空にしても観測できる差が出ない (等価変異・2026-08-31 に
+      // 対照で確認)。成功側 (下の `return`) は catch していないため文言が
+      // 利用者に届き、そちらは検査で留めてある。
       const body = await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'token exchange').catch(
         () => '',
       );

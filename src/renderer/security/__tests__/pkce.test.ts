@@ -123,6 +123,43 @@ describe('exchangeGoogleCode', () => {
     expect(r.expiresAt).toBeGreaterThan(Date.now() + 3500_000);
   });
 
+  /*
+   * **「非有限」の側は、名前だけで実際には試されていなかった。**
+   *
+   * 上の検査は題に「missing / non-finite」とあるが、標本は `expires_in` が
+   * **無い**場合だけである。そのため `typeof === 'number' && isFinite(…)` の
+   * `&&` を `||` に変えても鳴らなかった (2026-08-31 実測)。
+   *
+   * `||` になると **Infinity がそのまま通り**、`Date.now() + Infinity * 1000`
+   * で `expiresAt` が Infinity になる —— 期限切れの判定が永久に来ない。
+   *
+   * `JSON.stringify` は Infinity を書けない (null になる) ので、本文を
+   * **生の文字列**で組む。`1e999` は JSON.parse で Infinity になる。
+   */
+  it('★ expires_in が非有限 (Infinity) なら 3600 に落とす', async () => {
+    const raw = '{"access_token":"ya29.x","expires_in":1e999}';
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(new Response(raw, { status: 200 }));
+    const r = await exchangeGoogleCode(baseArgs, fetchMock);
+    expect(Number.isFinite(r.expiresAt), 'expiresAt が有限であること').toBe(true);
+    expect(r.expiresAt).toBeLessThan(Date.now() + 3700_000);
+    expect(r.expiresAt).toBeGreaterThan(Date.now() + 3500_000);
+  });
+
+  /*
+   * 成功応答が上限を超えたときの文言。ここは `.catch` していないので
+   * **そのまま利用者に出る** —— どの段で落ちたかが分からないと切り分けが
+   * できない。ラベルを空にしても鳴っていなかった。
+   */
+  it('★ 成功応答が大きすぎるとき、どの段で落ちたかを言う', async () => {
+    const huge = '{"access_token":"' + 'x'.repeat(11 * 1024 * 1024) + '"}';
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(new Response(huge, { status: 200 }));
+    await expect(exchangeGoogleCode(baseArgs, fetchMock)).rejects.toThrow(/token exchange/);
+  });
+
   it('throws on HTTP error', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
       mockResponse({ error: 'invalid_grant' }, false, 400),

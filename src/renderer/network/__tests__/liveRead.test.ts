@@ -215,3 +215,44 @@ describe('プロキシを通さない経路が無いこと', () => {
     if (!r.ok) expect(r.code).toBe('live_read_unsupported');
   });
 });
+
+/**
+ * **対応表そのものを、読み直して留める。**
+ *
+ * `LIVE_READERS` はモジュール直下のオブジェクトリテラルなので、
+ * 静的 import では変異が届かない (2026-08-31 実測で 3 件生存 —— 表を空に、
+ * 項目を空に、`read` を `undefined` に潰しても鳴らなかった)。
+ *
+ * この表は「ブラウザ版で実データにできるサービス」の一覧である。
+ * 空に潰れれば**全サービスが黙って同梱サンプルへ落ちる** —— 画面には
+ * 「未対応です」と出るだけで、壊れたとは分からない。
+ */
+describe('LIVE_READERS — 読み直して static 変異体を届かせる', () => {
+  const fresh = async () => {
+    vi.resetModules();
+    return import('../liveRead');
+  };
+
+  it('★ 表に載っているのは cursor だけ (増減に気付く)', async () => {
+    const m = await fresh();
+    expect(Object.keys(m.LIVE_READERS)).toEqual(['cursor']);
+    expect(m.canLiveRead('cursor')).toBe(true);
+    expect(m.canLiveRead('github')).toBe(false);
+  });
+
+  /*
+   * 項目が `{}` に潰れると `read` が無くなる。`liveRead` はそこまで進んでから
+   * 落ちるので、**呼び出しの最後まで通して**確かめる。
+   */
+  it('★ cursor の read が実際に呼ばれて実データを返す', async () => {
+    const m = await fresh();
+    const jsonFetch = vi.fn(async () => ({ usage: [] }));
+    const r = await m.liveRead('cursor', {
+      readCredential: async () => 'tok',
+      getProxyJsonFetch: async () => jsonFetch as never,
+      now: () => 1_700_000_000_000,
+    });
+    expect(r.ok, JSON.stringify(r)).toBe(true);
+    expect(jsonFetch, 'read が実際に取りに行っている').toHaveBeenCalled();
+  });
+});
