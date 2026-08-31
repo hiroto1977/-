@@ -1454,11 +1454,8 @@ const shim = {
       }
       if (!token) return err('not_configured', 'GitHub の PAT が未設定です。「PAT を設定」から登録してください');
       try {
-        return ok(
-          await createGithubIssue(payload, token, (input, init) =>
-            timedFetch(String(input), init ?? {}),
-          ),
-        ) as ActionResult<T>;
+        // `timedFetch` は `Transport` そのものの形をしている (url, init) → Response。
+        return ok(await createGithubIssue(payload, token, timedFetch)) as ActionResult<T>;
       } catch (e) {
         return err('action_failed', e instanceof Error ? e.message : String(e));
       }

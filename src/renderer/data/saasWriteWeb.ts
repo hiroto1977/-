@@ -17,6 +17,14 @@ import {
 import { redactForMessage } from '../../shared/redact';
 import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../../shared/httpLimits';
 
+/**
+ * 素の `fetch` と同じ形。
+ *
+ * **このモジュールの書き込み口はもうこれを使わない** —— 2026-08-31 に
+ * `createGithubIssue` を `Transport` 必須へ揃えたので、13 本すべてが
+ * 「呼び出し側が渡す」形になった。型は外向けに残してある (呼び出し側が
+ * 自分の口を組み立てるときの記述用)。
+ */
 export type FetchFn = typeof fetch;
 
 /** url + init を受け取り Response を返すトランスポート。直接 fetch でも、
@@ -71,10 +79,27 @@ interface GithubIssueApiResponse {
   title: string;
 }
 
+/**
+ * GitHub の課題を作る。
+ *
+ * ## `transport` を**必須**にしてある理由 (2026-08-31)
+ *
+ * このモジュールの書き込み口は 13 本あり、**12 本は `transport: Transport` を
+ * 必須の第 3 引数に取る** —— 呼び出し側は忘れようがない。ところがここだけが
+ * `fetchFn: FetchFn = fetch` という**省略可の既定つき**だった。
+ *
+ * `api.github.com` は CORS を許可しているのでプロキシを通らず、その分
+ * 「素の `fetch` でも動いてしまう」。実際 `web-shim.ts` は既定のまま呼んで
+ * おり、**プロキシ経由の 14 経路にまとめて掛けている打ち切りが、この 1 本にだけ
+ * 掛かっていなかった** (応答しない相手に対して `busy` が戻らない)。
+ *
+ * 検査で見張るより**忘れられない形にする**ほうが強い。兄弟 12 本と同じ
+ * 引数の並びに揃えたので、渡し忘れは型検査で落ちる。
+ */
 export async function createGithubIssue(
   input: CreateGithubIssueInput,
   token: string,
-  fetchFn: FetchFn = fetch,
+  transport: Transport,
 ): Promise<CreateGithubIssueResult> {
   const owner = typeof input.owner === 'string' ? input.owner.trim() : '';
   const repo = typeof input.repo === 'string' ? input.repo.trim() : '';
@@ -87,7 +112,7 @@ export async function createGithubIssue(
     ? input.labels.filter((l): l is string => typeof l === 'string')
     : undefined;
 
-  const res = await fetchFn(
+  const res = await transport(
     `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues`,
     {
       method: 'POST',

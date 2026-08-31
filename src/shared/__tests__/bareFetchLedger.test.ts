@@ -64,13 +64,12 @@ const LEDGER: Record<string, { why: string; guard: RegExp }> = {
     why: 'ブラウザ版のトークン交換。withTimeout の中で本文まで読む。',
     guard: /withTimeout\(/,
   },
-  'src/renderer/data/saasWriteWeb.ts': {
-    why:
-      '既定は素の fetch だが、**締切は呼び出し側 (web-shim の timedFetch) が渡す**。'
-      + ' 上限はこのファイルの readCapped が掛ける。2026-08-31 まで createGithubIssue'
-      + ' だけ呼び出し側が渡し忘れていた (webShimTimeouts.test.ts が留めている)。',
-    guard: /readCapped\(/,
-  },
+  // `src/renderer/data/saasWriteWeb.ts` は 2026-08-31 に**この台帳から外れた**。
+  // 書き込み口 13 本のうち `createGithubIssue` だけが `fetchFn: FetchFn = fetch`
+  // という省略可の既定を持っており、実際に呼び出し側が渡し忘れていた。
+  // 兄弟 12 本と同じ **必須の `transport: Transport`** に揃えたので、
+  // 渡し忘れは型検査で落ちる —— 台帳で見張る必要が無くなった。
+  // **忘れられない形にするほうが、忘れたことを検知するより強い。**
 };
 
 /** 素の `fetch` を既定値として束ねている綴り。両方見る。 */
