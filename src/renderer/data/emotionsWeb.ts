@@ -59,6 +59,9 @@ export const EMOTIONS_STORE_KEY = 'emotions.store';
  * `ENOENT` (ファイルが無い) だけを飲み、壊れた JSON は投げ直す。
  * ブラウザ版だけが全部飲んでいた。`main/secrets.ts` で見つけたのと同じ形。
  */
+// Stryker disable next-line BooleanLiteral: 初期値は**一度も観測されない** ——
+// 唯一の読み手 `loadStoreForWrite` は必ず `loadStore()` を先に呼び、その冒頭が
+// この変数を毎回 false へ戻す。true にしても差が出ない (等価変異)。
 let lastLoadDegraded = false;
 
 export function loadStore(): EmotionsStore {
