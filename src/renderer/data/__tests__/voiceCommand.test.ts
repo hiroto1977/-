@@ -4,6 +4,7 @@ import {
   matchServices,
   parseVoiceCommand,
   routeCommand,
+  isKnownDangerousAction,
   requiresConfirmation,
   isExecutableIntent,
   PARSEABLE_ACTIONS,
@@ -663,11 +664,65 @@ describe('requiresConfirmation', () => {
    * `advise` のように確認不要な action が在ってよい設計は変えていない ——
    * 縛るのは「**発話から到達できる**もの」だけ。
    */
+  /*
+   * **この検査は 2026-08-31 まで空虚だった。**
+   *
+   * `requiresConfirmation` を呼んでいたが、2026-08-26 に既定が fail closed へ
+   * 倒れて以降は **action が在れば必ず `true`** なので、名簿に載せ忘れても
+   * `notConfirmed` は空のままだった。上の注記が言う閉包 (`PARSEABLE_ACTIONS ⊆
+   * 危険と分かっている action) を、**検査が確かめていなかった**。
+   *
+   * 名簿そのものへ問い直す。確認の要否 (下の検査) とは別の主張である。
+   */
+  it('発話から生まれうる action は 1 つ残らず「危険と分かっている」側に載る', () => {
+    const unlisted = PARSEABLE_ACTIONS.filter((action) => !isKnownDangerousAction(action));
+    expect(unlisted, `名簿にも語幹にも当たらない action: ${JSON.stringify(unlisted)}`).toEqual([]);
+  });
+
   it('発話から生まれうる action は 1 つ残らず確認必須', () => {
     const notConfirmed = PARSEABLE_ACTIONS.filter(
       (action) => !requiresConfirmation({ kind: 'action', action, confidence: 1 }),
     );
     expect(notConfirmed, `確認なしで実行される action: ${JSON.stringify(notConfirmed)}`).toEqual([]);
+  });
+
+  /*
+   * **名簿の判定そのものを留める。** 上の閉包だけでは、判定が「常に true」に
+   * なっても鳴らない —— まさにそれが `requiresConfirmation` に起きたことである。
+   * 陰性 (載っていない action) を必ず添える。
+   */
+  describe('isKnownDangerousAction', () => {
+    it('名簿に在る action は true', () => {
+      expect(isKnownDangerousAction('delete')).toBe(true);
+      expect(isKnownDangerousAction('send-message')).toBe(true);
+      expect(isKnownDangerousAction('checkout')).toBe(true);
+    });
+
+    it('語幹で拾う (名簿に無い派生形)', () => {
+      expect(isKnownDangerousAction('remove-foo')).toBe(true);
+      expect(isKnownDangerousAction('buy-credits')).toBe(true);
+    });
+
+    it('語幹の判定は大小文字を区別しない', () => {
+      expect(isKnownDangerousAction('SendInvoice')).toBe(true);
+      // toLowerCase を toUpperCase にすると、語幹 (小文字) に当たらなくなる。
+      expect(isKnownDangerousAction('DELETE-ALL')).toBe(true);
+    });
+
+    it('★ 名簿にも語幹にも当たらない action は false (陰性 — 何でも true ではない)', () => {
+      expect(isKnownDangerousAction('advise')).toBe(false);
+      expect(isKnownDangerousAction('refresh')).toBe(false);
+      expect(isKnownDangerousAction('')).toBe(false);
+    });
+
+    /*
+     * **確認の要否とは別の問いであること**を、両方が食い違う標本で留める。
+     * `advise` は危険と分かってはいないが、既定が fail closed なので確認は要る。
+     */
+    it('★ 危険と分かっていなくても確認は要る (2 つは別の問い)', () => {
+      expect(isKnownDangerousAction('advise')).toBe(false);
+      expect(requiresConfirmation({ kind: 'action', action: 'advise', confidence: 1 })).toBe(true);
+    });
   });
 
   it('その一覧が空でない (空なら上の検査は空虚に通る)', () => {

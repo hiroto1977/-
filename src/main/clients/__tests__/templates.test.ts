@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import {
@@ -567,5 +567,57 @@ describe('exportTemplateImpl — path を渡さないとき', () => {
     // 空文字をそのまま採用すると安全判定で弾かれて書き出しごと失敗する。
     const { result } = await exportWith({ templateId: 'business-card', path: '' });
     expect(result.path).toBe(defaultExportPath('business-card'));
+  });
+});
+
+/**
+ * **モジュール本体で一度だけ評価される表を、測れる形で問う。**
+ *
+ * `TEMPLATE_IDS` / `RENDERERS` / `FETCHED_AT` / `ACTIONS` はどれも import 時に
+ * 一度だけ評価される「静的」な値である。ファイル先頭の静的 import では、
+ * 変異が有効になる前にモジュールが読み込まれ**評価が済んでしまう**ので、
+ * 上の検査群が正しい主張をしていても変異を観測できない
+ * (実測 2026-08-31: 4 件が生き残っていた —— 一覧を `undefined` の配列にしても、
+ *  描画関数の表と action の表を空にしても、取得時刻を空文字にしても鳴らない)。
+ *
+ * `vi.resetModules()` + `await import()` で、変異が効いた状態のモジュールを
+ * 読み直してから同じことを問う。
+ */
+describe('静的な表 —— 読み直して問う', () => {
+  const fresh = async (): Promise<typeof import('../templates')> => {
+    vi.resetModules();
+    return import('../templates');
+  };
+
+  it('TEMPLATE_IDS は目録の id と 1 件ずつ一致する', async () => {
+    const m = await fresh();
+    expect(m.TEMPLATE_IDS.length).toBe(m.TEMPLATE_CATALOG.length);
+    expect([...m.TEMPLATE_IDS]).toEqual(m.TEMPLATE_CATALOG.map((t) => t.id));
+    // `undefined` の配列になっていないこと (`() => undefined` 変異への標本)。
+    for (const id of m.TEMPLATE_IDS) expect(typeof id).toBe('string');
+    expect(m.TEMPLATE_IDS).toContain('business-card');
+  });
+
+  it('描画関数の表は全 id を埋めている (空の表なら描けない)', async () => {
+    const m = await fresh();
+    for (const id of m.TEMPLATE_IDS) {
+      const svg = m.renderTemplate(id, {});
+      // 出力は XML 宣言から始まる (上の検査群と同じ形)。
+      expect(svg.startsWith('<?xml'), `${id} が描けていない`).toBe(true);
+      expect(svg, `${id} の svg 要素が無い`).toContain('<svg');
+    }
+  });
+
+  it('取得時刻は決まった値を名乗る (空文字にしない)', async () => {
+    const m = await fresh();
+    const snap = await m.fetchTemplatesSnapshotImpl({} as Parameters<typeof m.fetchTemplatesSnapshotImpl>[0]);
+    expect(snap.fetchedAt).toBe('2035-05-15T00:00:00.000Z');
+    expect(snap.isMock).toBe(true);
+  });
+
+  it('action の表に export-template が居る (空の表なら呼べない)', async () => {
+    const m = await fresh();
+    expect(Object.keys(m.ACTIONS)).toEqual(['export-template']);
+    expect(typeof m.ACTIONS['export-template']).toBe('function');
   });
 });

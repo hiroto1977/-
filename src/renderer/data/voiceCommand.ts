@@ -237,8 +237,12 @@ const ACTION_RULES: readonly ActionRule[] = [
  * つまり「発話・入力から生まれうる action」は 1 つ残らず確認必須でなければならない。
  *
  * 今日は 6 つとも `CONFIRM_ACTIONS` に載っているが、この 2 つは別々に手で
- * 保たれている表なので、7 つ目の動詞ルールを足した人が名簿に載せ忘れると
- * **その瞬間に無確認で実行される側へ倒れる**。機械で留める。
+ * 保たれている表なので、7 つ目の動詞ルールを足した人が名簿に載せ忘れうる。
+ * 既定が fail closed である限り即座の危険ではないが、**既定を戻したい日に
+ * 名簿が現実と合っていないと戻せない**。機械で留める
+ * (閉包のゲートは `isKnownDangerousAction` を呼ぶ —— 2026-08-31 まで
+ * `requiresConfirmation` を呼んでいて、常に `true` なので載せ忘れても
+ * 鳴らなかった)。
  */
 export const PARSEABLE_ACTIONS: readonly string[] = ACTION_RULES.map((r) => r.action);
 
@@ -476,7 +480,26 @@ function resolveResolved(
 // ---------------------------------------------------------------------------
 
 /**
- * 破壊的 / 外部送信 / 課金系 action は確認必須 (安全側 = true)。
+ * 破壊的 / 外部送信 / 課金と**分かっている** action の名簿。
+ *
+ * ## 「確認が要るか」とは別の問いになった (2026-08-31)
+ *
+ * 2026-08-26 に `requiresConfirmation` の既定が fail closed (= action が在れば
+ * 必ず確認) へ倒れた。その時点で、この名簿も下の語幹表も **`requiresConfirmation`
+ * の結果を一切変えなくなった** —— どちらに当たっても、当たらなくても `true` である。
+ *
+ * 実測 (2026-08-31) でそれが出た: `requiresConfirmation` の 6 変異体が全部生き残り、
+ * `CONFIRM_ACTIONS.has(action)` を `true` にしても `false` にしても、語幹の
+ * ループを丸ごと空にしても、**何も落ちなかった**。死んだ枝は測れない。
+ *
+ * さらに、この上の注記は「`PARSEABLE_ACTIONS ⊆ CONFIRM_ACTIONS` はゲートが
+ * 強制している」と書いていたが、**そのゲートは `requiresConfirmation` を呼んで
+ * いた** —— つまり常に `true` が返るので、載せ忘れても鳴らない。
+ * **書いてある不変条件を、検査が確かめていなかった。**
+ *
+ * 直し方: 死んだ枝を `requiresConfirmation` から外し、名簿の主張は
+ * `isKnownDangerousAction` という**別の問い**として残す。閉包のゲートは
+ * そちらを呼ぶので、載せ忘れが実際に鳴るようになる。
  */
 const CONFIRM_ACTIONS: ReadonlySet<string> = new Set([
   'delete',
@@ -514,15 +537,15 @@ const DANGEROUS_STEMS: readonly string[] = [
  * いない不変条件**に依っていた。両側を `action` の有無へ揃える。
  *
  * - `action` が無い → false (実行するものが無い)
- * - `action` が `CONFIRM_ACTIONS` にある → true
- * - `action` 名に破壊的/外部送信の語幹を含む → true
  * - **それ以外の `action` → true (fail closed)**
  *
- * 最後の 1 行が 2026-08-26 の変更点。以前は false (= 無確認で実行) だった。
- * `PARSEABLE_ACTIONS ⊆ CONFIRM_ACTIONS` はゲートが強制しているので、
- * この既定に落ちるのは**解析器が今日は作れない action** —— つまり
- * 「見覚えのない action」である。見覚えのない物を無確認で実行する既定は、
- * 安全側ではない。
+ * 2 行目が 2026-08-26 の変更点。以前は false (= 無確認で実行) だった。
+ * 見覚えのない物を無確認で実行する既定は、安全側ではない。
+ *
+ * 2026-08-31 まで、この間に「名簿にある → true」「危険な語幹を含む → true」の
+ * 2 段が挟まっていた。**既定が `true` になった時点でどちらも結果を変えられず**、
+ * 変異検査で 6 件が生き残っていた (死んだ枝は測れない)。名簿の主張は
+ * `isKnownDangerousAction` へ移した。
  */
 /**
  * intent が**実際に invoke されうる**か。
@@ -549,16 +572,37 @@ export function isExecutableIntent(intent: VoiceIntent): intent is ExecutableInt
 }
 
 export function requiresConfirmation(intent: VoiceIntent): boolean {
-  const action = intent.action;
   // 空文字と undefined は「実行するものが無い」。実行側の門も同じ形で止まる。
-  if (action === undefined || action === '') return false;
+  // それ以外は**すべて確認を要する** (2026-08-26 に fail closed へ倒した)。
+  //
+  // 名簿と語幹の判定はここから外した (2026-08-31) —— 既定が `true` になった
+  // 時点でどちらも結果を変えられず、**死んだ枝**になっていた。名簿の主張は
+  // `isKnownDangerousAction` に移してある。
+  const action = intent.action;
+  return action !== undefined && action !== '';
+}
+
+/**
+ * その action が、破壊的 / 外部送信 / 課金と**分かっている**ものか。
+ *
+ * **`requiresConfirmation` とは別の問い。** 確認は 2026-08-26 から全 action に
+ * 要る (fail closed) ので、こちらは「要るか」ではなく「名簿と語幹が
+ * 追いつけているか」を測るためにある —— 発話から到達できる action
+ * (`PARSEABLE_ACTIONS`) が 1 つ残らずここに載ることを、検査が留める。
+ *
+ * 2 つの表はどちらも手で保たれているので、7 つ目の動詞ルールを足した人が
+ * 名簿に載せ忘れうる。既定が fail closed である限りそれは即座の危険では
+ * ないが、**既定を戻したい日が来たときに、名簿が現実と合っていないと
+ * 戻せない**。合っていることを測り続ける。
+ */
+export function isKnownDangerousAction(action: string): boolean {
   if (CONFIRM_ACTIONS.has(action)) return true;
-  // ヒューリスティック: 破壊的/外部送信を示す語幹を含むなら安全側で確認。
+  // ヒューリスティック: 破壊的/外部送信を示す語幹を含むなら危険側。
   const lowered = action.toLowerCase();
   for (const stem of DANGEROUS_STEMS) {
     if (lowered.includes(stem)) return true;
   }
-  return true;
+  return false;
 }
 
 // ---------------------------------------------------------------------------

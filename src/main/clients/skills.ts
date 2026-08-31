@@ -127,6 +127,10 @@ export async function scanSkills(
    * 根の側も実体に直す —— ホームや `.claude` が symlink 越しにあると
    * (実体だけ直したのでは) **正当なスキルまで弾く**ため。
    */
+  // Stryker disable next-line ArrowFunction: この `.catch` へは到達しない ——
+  // 直前の `readdir(dir)` が成功しているので `dir` は実在し、`realpath` は
+  // 失敗しない (読み取りの合間に消された場合だけで、検査から作れない)。
+  // 退避を残すのはその競合で落とさないため。
   const baseReal = await fs.realpath(dir).catch(() => path.resolve(dir));
   const baseResolved = baseReal + path.sep;
 
@@ -168,7 +172,11 @@ export async function scanSkills(
     const realFile = await fs.realpath(skillFile).catch(() => null);
     if (realFile === null || !realFile.startsWith(baseResolved)) continue;
 
-    let content = '';
+    // 初期値を置かない —— `catch` が `continue` するので、ここから先へ進む道は
+    // 「代入が成功した」場合しかない (TS の確定代入解析もそれを認める)。
+    // 初期値 `''` は**一度も観測されず**、変異検査で生き残っていた
+    // (実測 2026-08-31)。読まれない値を置かない。
+    let content: string;
     try {
       content = await fs.readFile(realFile, 'utf8');
     } catch {
@@ -259,6 +267,10 @@ async function readSkillBody(name: string): Promise<string> {
    * (実体だけ直したのでは) **正当なスキルまで弾く**ため。
    * 同じ手当ては `shellOpenGate.ts` が先に入れている (あちらの注記参照)。
    */
+  // Stryker disable next-line ArrowFunction: `base` が実体に直せないのは
+  // `~/.claude/skills` 自体が無いときで、そのとき**候補も 1 つも実在しない**
+  // ので、退避の値が何であっても全候補が `realpath` で落ちて「見つからない」に
+  // なる —— 観測できる差が無い (等価変異)。
   const baseReal = await fs.realpath(base).catch(() => path.resolve(base));
   const baseResolved = baseReal + path.sep;
   for (const c of candidates) {

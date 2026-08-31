@@ -471,6 +471,57 @@ describe('readDevEnv — 実際のファイルから読む', () => {
     expect(JSON.stringify(snap)).not.toContain('SECRET-OUTSIDE-ROOT');
   });
 
+  /*
+   * **字面の門と実体の門は、別々の物を止めている。**
+   *
+   * 上の 2 本は実体 (`realpath`) の門しか測っておらず、字面の門
+   * (`target.startsWith(gitDir + path.sep)`) を外しても鳴らなかった
+   * (実測 2026-08-31: 変異体が生存)。2 つの門が互いを覆っていて、
+   * **どちらが効いているのか誰にも分からない**状態だった。
+   *
+   * 字面の門だけが止める場面はこれ: ref が `.git` の**外**を字面で指し、
+   * その先が `.git` の中へ戻る symlink になっている形。実体だけを見れば
+   * 「根の中」なので通ってしまう。読める中身自体は `.git` の中なので
+   * 実害は小さいが、**「`.git` の外を指す ref は読まない」という規則が
+   * 効いているかどうか**は、これでしか分からない。
+   */
+  it('★ 字面で .git の外を指す ref は、実体が中へ戻っていても読まない', async () => {
+    await fsp.mkdir(nodePath.join(dir, '.git', 'refs', 'heads'), { recursive: true });
+    await fsp.writeFile(nodePath.join(dir, '.git', 'refs', 'heads', 'main'), 'abc1234\n');
+    // `.git` の外に、`.git` の中へ戻る symlink を置く。
+    await fsp.symlink(
+      nodePath.join(dir, '.git', 'refs', 'heads', 'main'),
+      nodePath.join(dir, 'decoy'),
+    );
+    // ref は `.git` から見て 1 つ上を指す = 字面では外。
+    await write('.git/HEAD', 'ref: ../decoy\n');
+
+    const snap = readDevEnv(dir);
+    expect(snap.git?.branch).toBe('../decoy');
+    // 実体は `.git` の中なので、字面の門を外すと 'abc1234' が読めてしまう。
+    expect(snap.git?.sha).toBe('');
+  });
+
+  /*
+   * **ref がディレクトリを指していたら、落ちずに空で返す。**
+   *
+   * `realpath` は通る (実在する) が `readFileSync` は EISDIR で投げるので、
+   * `readFileOrNull` は null を返す。`raw === null ? null : raw.trim()` の
+   * 判定を外すと `null.trim()` で TypeError になり、`readDevEnv` ごと落ちる。
+   *
+   * (`.git` そのものが無い場合の早期 return は**ここからは測れない** ——
+   *  `resolveRef` は `.git/HEAD` が読めたときにしか呼ばれないので、
+   *  `.git` は必ず在る。実装側に理由つきの pragma を置いた。)
+   */
+  it('★ ref がディレクトリを指していても落ちない (sha は空)', async () => {
+    await fsp.mkdir(nodePath.join(dir, '.git', 'refs', 'heads'), { recursive: true });
+    await write('.git/HEAD', 'ref: refs/heads\n'); // ディレクトリを指す
+
+    const snap = readDevEnv(dir);
+    expect(snap.git?.branch).toBe('refs/heads');
+    expect(snap.git?.sha).toBe('');
+  });
+
   it('作業ディレクトリ自体が symlink 越しでも、正当な ref は読める', async () => {
     // `/tmp/link` → `/tmp/actual` の形。根の側も realpath しないとここで落ちる。
     await fsp.mkdir(nodePath.join(dir, '.git', 'refs', 'heads'), { recursive: true });

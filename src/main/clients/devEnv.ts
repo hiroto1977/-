@@ -318,6 +318,12 @@ export function readDevEnv(cwd: string = process.cwd()): DevEnvSnapshot {
        * **正当な ref まで弾いてしまう**ため。両側を同じ土俵に乗せる。
        */
       const gitDir = realpathOrNull(path.resolve(at('.git')));
+      // Stryker disable next-line ConditionalExpression: `resolveRef` は
+      // `.git/HEAD` が読めたときにしか呼ばれない (`readDevEnv` の
+      // `i.gitHead !== null` 判定) ので、ここで `.git` が消えているのは
+      // 読み取りの合間に消された場合だけで、検査から到達できない。
+      // 外すと `path.resolve(null, ref)` が TypeError になる (等価変異ではなく
+      // **到達しない**枝である —— 消さずに残すのは、その競合で落とさないため)。
       if (gitDir === null) return null;
       const target = path.resolve(gitDir, ref);
       if (!target.startsWith(gitDir + path.sep)) return null;
