@@ -117,3 +117,64 @@ describe('読めなかった保管ファイルの上には書かない', () => {
     expect(await getToken('github')).toBeNull();
   });
 });
+
+/**
+ * **断った理由を、原因ごとに見分ける。**
+ *
+ * 上の検査群は `rejects.toThrow(/保存を中止/)` を使っている。これは文面の
+ * **固定の後半**に当たるので、断ること自体は見えるが、**なぜ断ったのか
+ * (大きすぎる / JSON が壊れている) を運ぶ前半は誰も見ていなかった** ——
+ * 変異検査で 4 件生存 (2026-08-30 実測)。
+ *
+ * 理由が空文字に潰れると、画面には「保存を中止しました」だけが出る。
+ * 利用者は**何を直せばいいか分からない**まま、資格情報を保存できない状態に
+ * 置かれる。ここは行き止まりを作らないための文面である。
+ *
+ * 本 PR で 3 度目の同じ形 (`vault.ts` の接頭辞共有、`exportPaths.ts` の
+ * 2 つの門、ここ)。**「投げること」ではなく「どこで・なぜ投げたか」を当てる。**
+ */
+describe('断った理由を運ぶ', () => {
+  it('★ 大きすぎるときは、実寸と上限を添える', async () => {
+    const { setToken } = await import('../secrets');
+    await setToken('github', 'ghp_real');
+    await growBeyondLimit();
+    await expect(setToken('notion', 'secret_notion')).rejects.toThrow(
+      /バイト \/ 上限 \d+ バイト/,
+    );
+  });
+
+  it('★ JSON が壊れているときは、そう言う', async () => {
+    const { setToken } = await import('../secrets');
+    await setToken('github', 'ghp_real');
+    await fs.writeFile(storePath(), '{ this is not json', 'utf8');
+    await fs.rm(`${storePath()}.prev`, { force: true });
+    await expect(setToken('notion', 'secret_notion')).rejects.toThrow(
+      /JSON として読めず、使える控えも無い/,
+    );
+  });
+
+  it('★ 文面の前半 (何が起きたか) も落ちていない', async () => {
+    const { setToken } = await import('../secrets');
+    await setToken('github', 'ghp_real');
+    await growBeyondLimit();
+    await expect(setToken('notion', 'secret_notion')).rejects.toThrow(
+      /保管ファイルを読めませんでした \(/,
+    );
+  });
+
+  /*
+   * 例外の `name` は記録と切り分けに使う。既定の `Error` に戻っても
+   * 文面は変わらないので、**名前そのものを当てないと気付けない**。
+   */
+  it('★ 例外の name で種別が分かる', async () => {
+    const { setToken } = await import('../secrets');
+    await setToken('github', 'ghp_real');
+    await growBeyondLimit();
+    const err = await setToken('notion', 'x').then(
+      () => null,
+      (e: Error) => e,
+    );
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).name).toBe('SecretsUnreadableError');
+  });
+});

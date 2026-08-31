@@ -1112,6 +1112,14 @@
       "leafCount": 61,
       "note": "update redact.ts",
       "hash": "bd88542958788ad268b66b548b370592cfc35881dfbc3090c745eb871b741fd4"
+    },
+    {
+      "index": 131,
+      "prevHash": "bd88542958788ad268b66b548b370592cfc35881dfbc3090c745eb871b741fd4",
+      "merkleRoot": "ba33405371f29494b94a294792ada4f0f5d8cace6857f0ec9ba4105e2e3c76fa",
+      "leafCount": 61,
+      "note": "update exportPaths.ts",
+      "hash": "05b2f8fffdd9e9bd904056a8ec2d275753da4b78fc52c7a6dd6458fd4da61db2"
     }
   ],
   "tipManifest": {
@@ -1138,7 +1146,7 @@
     "scripts/smoke-app.cjs": "3308303649279f4ca49640e00f61f2451fea881e506005c51a97c3cbca2bd827",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
     "src/main/atomicWrite.ts": "bf8b56c514456eb2e34a47753ec493f877c94b901cb19038a8f238fe6cea022f",
-    "src/main/clients/exportPaths.ts": "4788462baaa1c48478b917204c5966b6a83a19c64a37340c736e7304ed76ee90",
+    "src/main/clients/exportPaths.ts": "bcf8712b41e9ee1682472ca1a67a067d0ed7d1d6a96b8f4e3c9ec6fe69d22419",
     "src/main/clients/types.ts": "17566fb0225201500a996d5c47926cc8fc0426d2f1b54f603dc973d021656134",
     "src/main/main.ts": "f27de831233e0e34be4538212bc6959ec6f971b4744bdf9216689e7f06b01b56",
     "src/main/oauth.ts": "4a797e9dbfe35f351b5750b04c250d173208390a4146c399b02700021391af3b",

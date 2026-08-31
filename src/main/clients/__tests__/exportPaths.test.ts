@@ -173,6 +173,27 @@ describe('repairExportPermissions — 既存の書き出しを均す', () => {
     expect(await modeOf(f)).toBe('600');
   });
 
+  /**
+   * **symlink は辿らない。**
+   *
+   * `fs.chmod` は symlink を**辿って指す先の権限を変える**。根の中に外を
+   * 指す symlink があれば、権限を直すつもりで**根の外のファイルを書き換える**
+   * ことになる。走査は `isSymbolicLink()` と `!isFile()` の 2 段で弾いていて、
+   * どちらか一方だけでも弾ける (だから変異検査では互いに隠し合って 2 件とも
+   * 生存する)。ここで留めるのは**行ではなく振る舞い**である。
+   */
+  it('★ symlink は辿らない (指す先の権限を変えない)', async () => {
+    const root = await mkDir();
+    const outside = await fs.mkdtemp(path.join(os.tmpdir(), 'export-outside-'));
+    const victim = path.join(outside, 'victim.html');
+    await fs.writeFile(victim, 'secret', 'utf8');
+    await fs.chmod(victim, 0o644);
+    await fs.symlink(victim, path.join(root, 'alias.html'));
+
+    expect(await repairExportPermissions(root), '数えない').toBe(0);
+    expect(await modeOf(victim), '指す先は 0644 のまま').toBe('644');
+  });
+
   it('既に 0600 のものは触らない (直した数に数えない)', async () => {
     const root = await mkDir();
     const f = path.join(root, 'ok.html');

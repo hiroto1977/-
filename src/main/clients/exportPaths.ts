@@ -120,8 +120,18 @@ export async function repairExportPermissions(root: string = exportRoot()): Prom
     }
     for (const e of entries) {
       const full = path.join(dir, e.name);
-      // 効いているのは下の `!e.isFile()` (上の注記)。意図として残す。
-      if (e.isSymbolicLink()) continue;
+      // **`isSymbolicLink()` は消した** (2026-08-30)。下の `!e.isFile()` が
+      // 真に広い —— `readdir(withFileTypes)` の `Dirent` は symlink を
+      // `DT_LNK` で返すので `isFile()` は false になり、symlink も fifo も
+      // socket もそちらで落ちる。前は「意図として残す」と書いてあったが、
+      // **2 つ在ると互いに隠し合って、どちらも検査で確かめられない**
+      // 状態になっていた (変異検査で 2 件生存)。実測した対照:
+      //
+      //   片方だけ外す → 鳴らない (もう片方が拾う)
+      //   両方外す     → 2 件落ちる
+      //
+      // 効いていない防御は pragma で黙らせるより消すほうが正しい。
+      // 振る舞いは `exportPaths.test.ts` の「symlink は辿らない」が留める。
       if (e.isDirectory()) {
         await walk(full);
         continue;
@@ -192,6 +202,13 @@ export async function writeExportFile(
   home: string = os.homedir(),
 ): Promise<void> {
   await assertExportTargetContained(filePath, home);
+  // Stryker disable next-line ObjectLiteral: `{ mode: 0o600 }` → `{}` は
+  // **観測できる差を持たない**。直後の `chmod` が同じ 0600 を当てるので、
+  // 関数が返った時点の権限はどちらでも 600 になる (実測: 権限を見る検査 2 本を
+  // 当てても鳴らない)。それでも `mode` を残すのは、**作成から chmod までの
+  // 一瞬**を閉じるためである —— これを外すと、その窓の間だけ umask 既定
+  // (通常 0644) で存在する。窓の中を観測する検査は書けないので、
+  // 単純化ではなく pragma で意図を残す (両方とも要る側の等価変異)。
   await fs.writeFile(filePath, content, { mode: 0o600 });
   // 新規作成でしか効かない `mode` を、既存ファイルにも当てる。
   await fs.chmod(filePath, 0o600);

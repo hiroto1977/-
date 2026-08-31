@@ -105,6 +105,16 @@ describe('getStorageProtection', () => {
     ]);
   });
 
+  /*
+   * `durability` は**値まで**留める。上の検査は鍵が在ることを見ているが、
+   * 空文字に潰れても鳴らなかった (変異検査で 1 件生存、2026-08-30 実測)。
+   * 画面の「保存の持続性」欄がこれを読むので、空なら表示が消える。
+   */
+  it("★ durability は 'file' (この保管は実ファイル)", async () => {
+    const { getStorageProtection } = await import('../secrets');
+    expect((await getStorageProtection()).durability).toBe('file');
+  });
+
   it('mechanism は 3 値の列挙しか返さない (自由文字列を載せない)', async () => {
     const { getStorageProtection } = await import('../secrets');
 
