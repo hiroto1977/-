@@ -18,6 +18,7 @@ import { safeErrorMessage } from './clients/types';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { shellTargetOrNull } from './shellOpenGate';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
+import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../shared/httpLimits';
 
 const isDev = !app.isPackaged;
 
@@ -233,7 +234,14 @@ ipcMain.handle('app:checkUpdate', async (): Promise<UpdateVerdict> => {
       signal: AbortSignal.timeout(10_000),
     });
     if (!res.ok) return evaluateUpdate(current, null);
-    return evaluateUpdate(current, parseLatestRelease(await res.json()));
+    // 本文は上限つきで読む。ブラウザ版の同じ口 (`web-shim.ts` の `checkUpdate`)
+    // は `readCappedText` を通しているのに、**こちらだけ `res.json()` の
+    // 素通しだった** (2026-08-31)。宛先は定数で https だが、同じ問いに答えが
+    // 2 つある状態を残さない —— 実行対象が違うだけで判断が変わる理由が無い。
+    return evaluateUpdate(
+      current,
+      parseLatestRelease(JSON.parse(await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'update'))),
+    );
   } catch {
     // 通信できない・応答が JSON でない等はすべて「判定不能」に寄せる。
     // 更新の確認が失敗してアプリが使えなくなる理由は無い。

@@ -735,6 +735,20 @@ describe('app:revealInFolder / app:openPath — 関門の外は開かない', ()
 });
 
 describe('app:checkUpdate — 取得もインストールもしない', () => {
+  /**
+   * `Response` の必要な面だけを持つ替え玉。
+   *
+   * **`text` も持たせる。** 本文は 2026-08-31 から `readBodyWithCap` で読む
+   * (ブラウザ版の同じ口だけが上限つきで、こちらが素通しだった)。あちらは
+   * `res.body` を持たない素朴なモックのために `text()` へ落ちるので、
+   * 替え玉にも `text` が要る。
+   */
+  const res = (body: unknown, ok = true): unknown => ({
+    ok,
+    json: async () => body,
+    text: async () => JSON.stringify(body),
+  });
+
   const withFetch = async (impl: () => Promise<unknown>): Promise<unknown> => {
     const orig = globalThis.fetch;
     globalThis.fetch = impl as typeof fetch;
@@ -750,17 +764,16 @@ describe('app:checkUpdate — 取得もインストールもしない', () => {
     let seen: [string, RequestInit] | null = null;
     await withFetch(async (...a: unknown[]) => {
       seen = a as unknown as [string, RequestInit];
-      return { ok: true, json: async () => ({}) };
+      return res({});
     });
     expect(seen![0]).toBe('https://api.github.com/repos/hiroto1977/-/releases/latest');
     expect((seen![1].headers as Record<string, string>).accept).toBe('application/vnd.github+json');
   });
 
   it('新しい版があれば伝える', async () => {
-    const r = (await withFetch(async () => ({
-      ok: true,
-      json: async () => ({ tag_name: 'v9.9.9', html_url: 'https://github.com/hiroto1977/-/releases/tag/v9.9.9' }),
-    }))) as { status: string };
+    const r = (await withFetch(async () =>
+      res({ tag_name: 'v9.9.9', html_url: 'https://github.com/hiroto1977/-/releases/tag/v9.9.9' }),
+    )) as { status: string };
     expect(r.status).toBe('update-available');
   });
 
@@ -774,22 +787,58 @@ describe('app:checkUpdate — 取得もインストールもしない', () => {
   it('応答が 2xx でなければ、本文が読めても信用しない', async () => {
     // 本文だけ見て判断すると、502 のエラーページに紛れ込ませた JSON や
     // 差し替えられた応答を「新しい版が出ています」として案内してしまう。
+    const r = (await withFetch(async () =>
+      res(
+        { tag_name: 'v99.99.99', html_url: 'https://github.com/hiroto1977/-/releases/tag/v99.99.99' },
+        false,
+      ),
+    )) as { status: string };
+    expect(r.status).toBe('unknown');
+  });
+
+  /*
+   * **上限は実行対象で変わらない。** ブラウザ版の同じ口は `readCappedText` を
+   * 通していたのに、こちらは `res.json()` の素通しだった (2026-08-31)。
+   * 宛先は定数で https だが、同じ問いに答えが 2 つある状態を残さない。
+   */
+  it('上限を超える本文は読み切らずに「判定不能」へ倒す', async () => {
+    /*
+     * **替え玉は「上限を外したら通る」形にする。**
+     *
+     * 最初は `body` だけを持つ替え玉を書いたが、対照が鳴らなかった ——
+     * 上限を外して `res.json()` に戻しても、その替え玉には `json` が無いので
+     * TypeError で落ち、やはり `unknown` になる。**どちらでも通る検査**
+     * だった。`json` は正しい更新情報を返すようにして、上限を外したら
+     * `update-available` になる (= 検査が落ちる) ようにしておく。
+     */
+    const chunk = new TextEncoder().encode('A'.repeat(1024 * 1024));
+    let sent = 0;
     const r = (await withFetch(async () => ({
-      ok: false,
+      ok: true,
       json: async () => ({
-        tag_name: 'v99.99.99',
-        html_url: 'https://github.com/hiroto1977/-/releases/tag/v99.99.99',
+        tag_name: 'v9.9.9',
+        html_url: 'https://github.com/hiroto1977/-/releases/tag/v9.9.9',
+      }),
+      body: new ReadableStream<Uint8Array>({
+        pull(c) {
+          if (sent >= 12) {
+            c.close();
+            return;
+          }
+          sent += 1;
+          c.enqueue(chunk);
+        },
       }),
     }))) as { status: string };
+    // 投げずに「判定不能」へ寄せる (更新確認の失敗でアプリが使えなくならない)。
     expect(r.status).toBe('unknown');
   });
 
   it('応答が JSON でなくても投げない', async () => {
     const r = (await withFetch(async () => ({
       ok: true,
-      json: async () => {
-        throw new Error('not json');
-      },
+      json: async () => ({}),
+      text: async () => 'これは JSON ではない',
     }))) as { status: string };
     expect(r.status).toBe('unknown');
   });
