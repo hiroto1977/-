@@ -84,12 +84,29 @@ export const DEFAULT_HTTP_TIMEOUT_MS = 30_000;
  * `res.body` が無い実行環境 (テストの素朴な fetch モック) では `text()` に
  * 落として**読んだ後**に長さを見る。そこでは「読まずに止める」効果は無いが、
  * 判定そのものは同じに保つ —— モックのときだけ緩い規則にはしない。
+ *
+ * ## 先手の門をここへ畳んだ (2026-08-31)
+ *
+ * `declaredLengthExceeds` の注記は「**必ず `readBodyWithCap` と併用する**」
+ * と書いてある。ところが実際に併用していたのは 7 か所のうち 2 か所
+ * (`web-shim.ts` の `readCappedText` と `network/proxy.ts`) だけで、
+ * 残り 5 か所 —— `main/clients/types.ts` / `shared/ai/chat.ts` /
+ * `main/oauth.ts` ほか —— は byte 単位の門しか通していなかった。
+ *
+ * 守りとしてはそれでも成立する (宣言は嘘をつけるので、本当の門は byte の
+ * ほうである) が、**注記でしか結ばれていない対は必ずほどける**。
+ * ここへ畳めば、今在る呼び出しも今後増える呼び出しも両方の門を通る。
  */
 export async function readBodyWithCap(
   res: Response,
   maxBytes: number,
   label: string,
 ): Promise<string> {
+  // 先手の門: 相手が正直に大きさを宣言しているなら、開ける前に落とす。
+  const declared = declaredLengthExceeds(res, maxBytes);
+  if (declared !== null) {
+    throw new Error(`${label} response too large (${declared} > ${maxBytes} bytes)`);
+  }
   if (!res.body) {
     const t = await res.text();
     if (t.length > maxBytes) {

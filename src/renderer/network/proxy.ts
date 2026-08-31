@@ -608,21 +608,12 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
 
   // Defense-in-depth: cap response body before json() to prevent OOM on
   // a compromised/malicious proxy returning a huge payload.
-  // `proxyRes.headers` is optional in test mocks, hence the `?.get` chain.
-  // We require `cl > 0` (not just `cl > cap`) because:
-  //   - a malicious / buggy proxy could return `Content-Length: -1`, which
-  //     is finite and ≤ cap and would slip past the header gate;
-  //   - real implementations never send a negative or NaN length, so
-  //     ignoring such headers and falling through to `readWithCap` (which
-  //     enforces the cap at the byte-stream level) is the safe behaviour.
-  const clHeader = proxyRes.headers?.get?.('content-length');
-  const cl = clHeader ? Number(clHeader) : 0;
-  // Stryker disable next-line ConditionalExpression,EqualityOperator,LogicalOperator: ヘッダーが無い
-  // ときは cl = 0 で、いずれの部分条件を潰しても `0 > 上限` が false になり素通りする。
-  // 上限そのものの境界は proxy.test.ts の Content-Length 検査 4 本で固定している。
-  if (Number.isFinite(cl) && cl > 0 && cl > MAX_PROXY_RESPONSE_BYTES) {
-    throw new Error(`proxy response too large (${cl} > ${MAX_PROXY_RESPONSE_BYTES} bytes)`);
-  }
+  //
+  // 宣言長 (Content-Length) の先手の門はここに**自前で**書いてあったが、
+  // 2026-08-31 に `readBodyWithCap` へ畳んだ (同じ問いに答えを 2 つ持たない)。
+  // `cl > 0` を要求する理由 —— `Content-Length: -1` は有限かつ上限以下として
+  // すり抜けるので、壊れた宣言は byte 単位の門へ委ねる —— も向こうへ移した。
+  // 文言は同じ (`proxy response too large (N > 上限 bytes)`)。
   const bodyText = await readWithCap(proxyRes, MAX_PROXY_RESPONSE_BYTES);
   // Empty-body fast path: `JSON.parse('')` throws SyntaxError, so when the
   // proxy returns no body we substitute an empty envelope; the Response

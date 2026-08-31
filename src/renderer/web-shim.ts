@@ -75,7 +75,6 @@ import {
   DEFAULT_HTTP_TIMEOUT_MS,
   MAX_HTTP_RESPONSE_BYTES,
   readBodyWithCap,
-  declaredLengthExceeds,
 } from '../shared/httpLimits';
 import { AI_CHAT_TIMEOUT_MS } from '../shared/ai/chat';
 import { bearerFromStoredToken } from '../shared/vaultToken';
@@ -343,10 +342,9 @@ function ok<T>(data: T): ActionResult<T> {
  * 宣言は嘘をつけるので、両方要る。
  */
 async function readCappedText(res: Response, label: string): Promise<string> {
-  const declared = declaredLengthExceeds(res, MAX_HTTP_RESPONSE_BYTES);
-  if (declared !== null) {
-    throw new Error(`${label} response too large (${declared} > ${MAX_HTTP_RESPONSE_BYTES} bytes)`);
-  }
+  // 宣言長 (Content-Length) の先手の門は 2026-08-31 に `readBodyWithCap` へ
+  // 畳んだ。ここに二つ目を置かない —— 同じ問いに答えが 2 つあると、
+  // 片方だけ直した日に食い違う。
   return readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, label);
 }
 

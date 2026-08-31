@@ -116,6 +116,54 @@ describe('declaredLengthExceeds — 読む前の先手の門', () => {
   });
 });
 
+/*
+ * **注記でしか結ばれていない対は、必ずほどける。**
+ *
+ * `declaredLengthExceeds` の注記は「必ず `readBodyWithCap` と併用する」と
+ * 書いてあった。実際に併用していたのは 7 か所のうち 2 か所だけで、残り 5 か所
+ * (`main/clients/types.ts` / `shared/ai/chat.ts` / `main/oauth.ts` ほか) は
+ * byte 単位の門しか通していなかった —— 守りは成立するが、**書いてある規則が
+ * 守られていない**。2026-08-31 に先手の門を `readBodyWithCap` の中へ畳んで、
+ * 呼び出し側が忘れられない形にした。
+ *
+ * ここは畳んだ結果を留める。**中身は嘘 ('x' の 1 バイト) にしてある** ——
+ * 本文を読んでしまえば通る大きさなので、鳴るなら宣言だけを見た証拠になる。
+ */
+describe('readBodyWithCap — 先手の門も通る (宣言長)', () => {
+  it('★ 宣言が上限を超えていれば、本文を読まずに落とす', async () => {
+    // 実物は 1 バイト。宣言だけが 999。
+    await expect(
+      readBodyWithCap(streamed('x', { 'content-length': '999' }), 100, 'svc'),
+    ).rejects.toThrow('svc response too large (999 > 100 bytes)');
+  });
+
+  it('★ 正しい宣言なら素通りする (対照 — 何でも落とすようになっていない)', async () => {
+    expect(await readBodyWithCap(streamed('x', { 'content-length': '1' }), 100, 'svc')).toBe('x');
+  });
+
+  it('★ 壊れた宣言は先手の門で使わず、byte 単位の門へ委ねる', async () => {
+    // `content-length: -1` は有限かつ上限以下ですり抜けるが、実物 65 バイトが
+    // 上限 64 を超えるので byte 側で落ちる。
+    //
+    // **どちらの門が鳴ったかは文言で見分けられる。** 先手の門は宣言された値を
+    // そのまま書く (`(999 > 100 bytes)`) が、byte 側は読むのをやめた時点で
+    // 総量を知らないので `(>64 bytes)` としか書けない。ここが後者であることが、
+    // 壊れた宣言を先手の門が使わなかった証拠になる。
+    await expect(
+      readBodyWithCap(streamed('a'.repeat(65), { 'content-length': '-1' }), 64, 'svc'),
+    ).rejects.toThrow('svc response too large (>64 bytes)');
+  });
+
+  it('★ 上限超過の判定は isOverCap が拾える形のまま', async () => {
+    const e = await readBodyWithCap(
+      streamed('x', { 'content-length': '999' }),
+      100,
+      'svc',
+    ).catch((x: unknown) => x);
+    expect(isOverCap(e)).toBe(true);
+  });
+});
+
 describe('withTimeout — 打ち切り', () => {
   it('間に合えば結果を返す', async () => {
     expect(await withTimeout(1000, null, async () => 'ok')).toBe('ok');
