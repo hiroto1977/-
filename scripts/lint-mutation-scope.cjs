@@ -142,6 +142,10 @@ const MUST_MEASURE = {
   // 実測 42.27% (未到達 78) — 保存時に本当に暗号化されるかを誰も見ていなかった。
   'src/main/shellOpenGate.ts':       '「OS で開く」の唯一の関門 (Windows では拡張子の関連付け次第でそのまま実行される)',
   'src/main/secrets.ts':             '資格情報の暗号化と保存 (キーチェーンが使えるかの判定がここ 1 か所)',
+  // 2026-09-01 追加。`decorativeDisables` が掘り出した ——「広い無効化が在るのに
+  // mutate に無い」形で、14 種を 205 行に理由なしで掛けていた。外して実測すると
+  // 総合 70.73% (生存 38 / 未到達 10)。**送る量の上限が測られていなかった。**
+  'src/main/clients/assistant.ts':   'AI 中継層 (課金される外部 API へ送る量の上限と、どの資格情報を使うかの解決)',
   // preload は「レンダラーが main へ触れる面」そのもの。チャンネル名を呼び出し側に
   // 選ばせる形に一度でも変わると、contextIsolation を掛けている意味が消える。
   // main.ts と違って測れるのは、チャンネル名が**アロー関数の中**にあるため
@@ -187,17 +191,6 @@ const KNOWN_UNMEASURED = {
   'src/shared/connectors/mcpConnectors.ts':
     'MCP コネクタの宣言的カタログ。**`findMcpConnector` / `mcpConnectorCounts` の 2 関数を含む**(id の一致で引く・数える、だけ)。壁ではないので据え置くが、判断をここへ書き足すなら mutate に載せること。',
 
-  // **これは据え置きではなく宿題。** 上の 8 件と違い、判断を持っている:
-  //   - `sanitizeMessages` … role/型の検証、`slice(0, MAX_CONTENT)`、`slice(-MAX_MESSAGES)`
-  //     = **課金される外部 API へ送る量の上限**。緩めても画面上は何も変わらない。
-  //   - `chat` / `chatAll` … 最後の発話が user か、token が在るか、`system` の切り詰め、
-  //     どのプロバイダの資格情報を使うか (`resolveProvider`)。
-  //   - `extractAssistantText` … モデル応答の解析。
-  // しかも無効化は **14 種の mutator を 205 行** (実装のほぼ全体) に掛かっており、
-  // 理由が 1 行も書かれていない。テスト自体は在る (`__tests__/assistant.test.ts`) ので、
-  // 測れば実測値が出る。次の作業として `docs/REMAINING_WORK.md` に載せた。
-  'src/main/clients/assistant.ts':
-    'AI 中継層。**未計測なのは意図ではなく宿題** — 205 行に 14 種の無効化が理由なしで掛かっている。上限 (MAX_CONTENT / MAX_MESSAGES / MAX_SYSTEM) と資格情報の解決を持つので、本来は MUST_MEASURE 側。docs/REMAINING_WORK.md 参照。',
   // 2026-08-25 追加。**保護対象なのに mutate に無い 2 件**を明示する
   // (逆向きの突き合わせで出てきた)。どちらも意図的だが、書いていなければ
   // 「たまたま漏れている」と区別が付かない。
@@ -310,9 +303,11 @@ function missingWalls(files, walls = MUST_MEASURE, checkExists = true) {
  * まま 100% を報告する**。exportPaths.ts はこの形で、名簿を一切見なくても
  * 引っ掛かっていた。
  *
- * 実測 (2026-09-01): 9 ファイル。8 つは確証済みデータの表 (判断が無い)、
- * 残る 1 つ `src/main/clients/assistant.ts` は判断を持っている ——
- * 詳細は `KNOWN_UNMEASURED` のその項を参照。
+ * 初回の実測 (2026-09-01) は 9 ファイル。8 つは確証済みデータの表 (判断が無い)
+ * で台帳へ載せ、残る 1 つ `src/main/clients/assistant.ts` は**判断を持っていた**
+ * ので測るほうへ回した —— 14 種の無効化を外すと 164 変異体 / 生存 38 / 未到達 10
+ * (総合 70.73%) で、送る量の上限も資格情報の解決もほとんど測られていなかった。
+ * テストを足して 100% にし、`mutate` と `MUST_MEASURE` へ移した。
  *
  * 逃げ道は 1 つだけ: `KNOWN_UNMEASURED` に**理由つきで**載せること。
  * (`mutate` へ載せれば、上の `KNOWN_BROAD` 側の規則が代わりに掛かる。)

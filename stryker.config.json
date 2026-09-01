@@ -6,6 +6,7 @@
   "ignoreStatic": true,
   "mutate": [
     "src/main/atomicWrite.ts",
+    "src/main/clients/assistant.ts",
     "src/main/clients/atlassian.ts",
     "src/main/clients/base.ts",
     "src/main/clients/business.ts",

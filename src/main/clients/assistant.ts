@@ -39,7 +39,6 @@ import {
 } from '../../shared/ai/credentials';
 import { runAiChat } from '../../shared/ai/chat';
 
-// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator
 
 /** 既定モデル: Anthropic プロバイダの既定 (後方互換の再エクスポート)。 */
 export const ASSISTANT_MODEL = AI_PROVIDERS.anthropic.defaultModel;
@@ -120,6 +119,9 @@ export function sanitizeMessages(raw: unknown): ChatTurn[] {
 /** Anthropic 応答からアシスタント本文を取り出す (text ブロック連結)。 */
 export function extractAssistantText(res: AnthropicResponse): string {
   const parts: string[] = [];
+  // `?? []` の代替配列は等価 —— 中身が何であれ `block.type` が 'text' に
+  // ならないので 1 つも push されず、結果は空文字のまま変わらない。
+  // Stryker disable next-line ArrayDeclaration
   for (const block of res.content ?? []) {
     if (block.type === 'text' && typeof block.text === 'string') parts.push(block.text);
   }
@@ -132,6 +134,9 @@ async function chat(
   const { messages, system, model, provider } = ctx.payload as unknown as ChatPayload;
   const turns = sanitizeMessages(messages);
   if (turns.length === 0) throw new Error('messages is required (1 件以上の user/assistant 発話)');
+  // 直前の `turns.length === 0` で空を弾いているので末尾は必ず在る。`?.` を
+  // 外しても観測差が無い (`noUncheckedIndexedAccess` が型の上で要求するだけ)。
+  // Stryker disable next-line OptionalChaining
   if (turns[turns.length - 1]?.role !== 'user') {
     throw new Error('最後の発話は user である必要があります');
   }
@@ -146,10 +151,12 @@ async function chat(
   // トークンを資格情報として解析 (生キーは Anthropic として後方互換)、
   // payload.provider (省略時は既定プロバイダ) を解決して共有レイヤで実行する。
   const creds = parseAiCredentials(ctx.token);
-  const resolved = resolveProvider(
-    creds,
-    typeof provider === 'string' && provider.length > 0 ? provider : undefined,
-  );
+  // `provider.length > 0` は書かない —— `resolveProvider` は先頭で
+  // `requested !== undefined && requested !== ''` を見ており、空文字は既に
+  // 「指定なし」として扱われる。ここに二つ目の空文字判定を置くと、
+  // **どちらを外しても振る舞いが変わらない**変異体が生まれる (実測で 2 件
+  // 生存した)。等価変異は pragma で黙らせる前に、まず重複を消す。
+  const resolved = resolveProvider(creds, typeof provider === 'string' ? provider : undefined);
   const result = await runAiChat({
     provider: resolved.id,
     cfg: resolved.cfg,
@@ -191,6 +198,9 @@ async function chatAll(ctx: ActionContext): Promise<{ answers: EnsembleAnswer[] 
   const { messages, system, model } = ctx.payload as unknown as ChatPayload;
   const turns = sanitizeMessages(messages);
   if (turns.length === 0) throw new Error('messages is required (1 件以上の user/assistant 発話)');
+  // 直前の `turns.length === 0` で空を弾いているので末尾は必ず在る。`?.` を
+  // 外しても観測差が無い (`noUncheckedIndexedAccess` が型の上で要求するだけ)。
+  // Stryker disable next-line OptionalChaining
   if (turns[turns.length - 1]?.role !== 'user') {
     throw new Error('最後の発話は user である必要があります');
   }
@@ -244,4 +254,3 @@ export const ACTIONS: ActionMap = {
   chatAll,
   providers,
 };
-// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator

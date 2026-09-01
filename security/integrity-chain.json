@@ -25,6 +25,7 @@
     "scripts/smoke-app.cjs",
     "scripts/verify-release-artifacts.cjs",
     "src/main/atomicWrite.ts",
+    "src/main/clients/assistant.ts",
     "src/main/clients/exportPaths.ts",
     "src/main/clients/types.ts",
     "src/main/main.ts",
@@ -48,6 +49,9 @@
     "src/renderer/security/mnemonic.ts",
     "src/renderer/security/vault.ts",
     "src/renderer/security/webauthn.ts",
+    "src/shared/ai/chat.ts",
+    "src/shared/ai/credentials.ts",
+    "src/shared/ai/providers.ts",
     "src/shared/aiEndpoint.ts",
     "src/shared/atlassianSite.ts",
     "src/shared/controlChars.ts",
@@ -1184,6 +1188,22 @@
       "leafCount": 61,
       "note": "update atomicWrite.ts",
       "hash": "fafa5a0c3110cea91d89fc66e9b2c8487c295f495e576aa39fdcd992cd38096b"
+    },
+    {
+      "index": 140,
+      "prevHash": "fafa5a0c3110cea91d89fc66e9b2c8487c295f495e576aa39fdcd992cd38096b",
+      "merkleRoot": "c776e99e54a7f9bce859c1fae0e31a695afb2c45c3f9e90d426a1ced4ebb7b56",
+      "leafCount": 62,
+      "note": "update integrity-chain.cjs,assistant.ts",
+      "hash": "2601e7c68364cc6bc68aa30faa2279bb33e8cfa4a44060d0f6855fd69ae5ad2c"
+    },
+    {
+      "index": 141,
+      "prevHash": "2601e7c68364cc6bc68aa30faa2279bb33e8cfa4a44060d0f6855fd69ae5ad2c",
+      "merkleRoot": "db33e6606dcb0ff73aaf53536621fdc8b58134dd4d4dc162c2551f374a088bff",
+      "leafCount": 65,
+      "note": "update integrity-chain.cjs,chat.ts,credentials.ts,providers.ts",
+      "hash": "a608dedaf93d15f663b652f90037f18d5b4761a8fd2bd9bcd04d84fdaeb12a36"
     }
   ],
   "tipManifest": {
@@ -1197,7 +1217,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "c17438d4b9933c620747ad2b2aee492a5329299325f44024fb6d9ab4cd3db7c5",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "0484bbfa0d93605bdabdcc3e2749da2fabfa89d3ad87a5d4ec1c13bb1aac13af",
+    "scripts/integrity-chain.cjs": "f78cff3712ea09c058312a4e5807e81d954113938e1e3be9d037763ca4db38e0",
     "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
     "scripts/lint-sample-data.cjs": "f5272803091a7aea49e3db4ddefa1243e88e0d1fed6e17b80f3a391cd2fa167b",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
@@ -1210,6 +1230,7 @@
     "scripts/smoke-app.cjs": "3308303649279f4ca49640e00f61f2451fea881e506005c51a97c3cbca2bd827",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
     "src/main/atomicWrite.ts": "7c4677b4cc87cdd7c4f807133254aa415be10e2f07dec599bcf988e869e43953",
+    "src/main/clients/assistant.ts": "99b4bf38679632e146b0cfd2b0e1c393437064f5f5fd6429be777218abecc3b6",
     "src/main/clients/exportPaths.ts": "bcf8712b41e9ee1682472ca1a67a067d0ed7d1d6a96b8f4e3c9ec6fe69d22419",
     "src/main/clients/types.ts": "17566fb0225201500a996d5c47926cc8fc0426d2f1b54f603dc973d021656134",
     "src/main/main.ts": "f425164c3e2390e71055c331851e6d81ee04c70fe9f67e828401bc0d2b56c282",
@@ -1233,6 +1254,9 @@
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
     "src/renderer/security/vault.ts": "723dbb27ec8409092ecb1932d624156c793b7af501b831be7ddbc0155c5f002f",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
+    "src/shared/ai/chat.ts": "a90292c80854c9feb016141107710d8929179371119dcee830556191a274b80a",
+    "src/shared/ai/credentials.ts": "69603ba457c124794e3e2c38f75eb35bc487e9766eab2d03bd53d035c885d85a",
+    "src/shared/ai/providers.ts": "31e4637844d479c5c6b8c43bdd24e9196c2924e0d3e9b467141cbfb73d335e5b",
     "src/shared/aiEndpoint.ts": "03c50a6cb3c2b777f128edd5fc0f752745ba21d4440404cf80b14fe704517438",
     "src/shared/atlassianSite.ts": "5810fde838f479ba095ec4dad9774020ee87c6e980bf7bff4a3c61bb2c4c0b90",
     "src/shared/controlChars.ts": "cf6992b1d0cc2795de1cc1ed605ad51ca375b56d8426cc5622a219658e5724e7",

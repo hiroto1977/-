@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 140
+- ブロック数: 142
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `fafa5a0c3110cea91d89fc66e9b2c8487c295f495e576aa39fdcd992cd38096b`
-- 保護対象: 61 ファイル
+- 末尾(tip)ハッシュ: `a608dedaf93d15f663b652f90037f18d5b4761a8fd2bd9bcd04d84fdaeb12a36`
+- 保護対象: 65 ファイル
 
 ## ブロック
 
@@ -153,6 +153,8 @@
 | 137 | `9cf1555905826674` | `9f3b1eedd3df38b3` | `900649295e813ac4` | update main.ts |
 | 138 | `e8bc6ccc0afcddab` | `900649295e813ac4` | `ce9a7e0bd30a6c36` | update main.ts |
 | 139 | `a3308a39c2c28954` | `ce9a7e0bd30a6c36` | `fafa5a0c3110cea9` | update atomicWrite.ts |
+| 140 | `c776e99e54a7f9bc` | `fafa5a0c3110cea9` | `2601e7c68364cc6b` | update integrity-chain.cjs,assistant.ts |
+| 141 | `db33e6606dcb0ff7` | `2601e7c68364cc6b` | `a608dedaf93d15f6` | update integrity-chain.cjs,chat.ts,credentials.ts,providers.ts |
 
 ## 保護対象ファイル
 
@@ -179,6 +181,7 @@
 - `scripts/smoke-app.cjs`
 - `scripts/verify-release-artifacts.cjs`
 - `src/main/atomicWrite.ts`
+- `src/main/clients/assistant.ts`
 - `src/main/clients/exportPaths.ts`
 - `src/main/clients/types.ts`
 - `src/main/main.ts`
@@ -202,6 +205,9 @@
 - `src/renderer/security/mnemonic.ts`
 - `src/renderer/security/vault.ts`
 - `src/renderer/security/webauthn.ts`
+- `src/shared/ai/chat.ts`
+- `src/shared/ai/credentials.ts`
+- `src/shared/ai/providers.ts`
 - `src/shared/aiEndpoint.ts`
 - `src/shared/atlassianSite.ts`
 - `src/shared/controlChars.ts`

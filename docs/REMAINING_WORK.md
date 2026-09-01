@@ -96,14 +96,14 @@ catch が動くのは IPC 層そのものが reject したとき (構造化複�
 | `pluginCatalog.ts` | `all` / 34 行 | 宣言的カタログ |
 | `freeConnectors.ts` | `all` / 156 行 | カタログ。`transform` に小さなアロー関数 |
 | `mcpConnectors.ts` | `all` / 91 行 | カタログ + 引く/数えるの 2 関数 |
-| **`src/main/clients/assistant.ts`** | **14 種 / 205 行 (実装のほぼ全体)・理由なし** | **宿題** |
+| **`src/main/clients/assistant.ts`** | **14 種 / 205 行 (実装のほぼ全体)・理由なし** | **測った (下)** |
 
 8 件は理由つきで `KNOWN_UNMEASURED` へ載せた (「たまたま漏れている」と
 区別が付くようにするため)。残る 1 件が本題。
 
-### `src/main/clients/assistant.ts` — 据え置きではなく宿題
+### `src/main/clients/assistant.ts` — 外して測ったら 70.73% だった
 
-AI 中継層。**判断を持っている**:
+AI 中継層。上の 8 件と違い、**判断を持っている**:
 
 - `sanitizeMessages` — role / 型の検証、`slice(0, MAX_CONTENT)`、
   `slice(-MAX_MESSAGES)`。**課金される外部 API へ送る量の上限**であり、
@@ -112,13 +112,35 @@ AI 中継層。**判断を持っている**:
   `system` の切り詰め、どのプロバイダの資格情報を使うか (`resolveProvider`)
 - `extractAssistantText` — モデル応答の解析
 
-テストは在る (`src/main/clients/__tests__/assistant.test.ts`) ので、
-`mutate` に載せれば実測値が出る。**本来は `MUST_MEASURE` 側**。
+**実測**: 無効化を外して `mutate` に載せると
+**164 変異体 / 生存 38 / 未到達 10 = 総合 70.73%**。
+上限も資格情報の解決も、ほとんど測られていなかった。
 
-**次の作業**: 205 行の無効化を外して実測 → 生存を潰す →
-`mutate` と `MUST_MEASURE` へ移し、`KNOWN_UNMEASURED` の項を消す
-(台帳は双方向なので、消し忘れれば落ちる)。
+#### 直した内訳
 
+| 残り方 | 対処 |
+|---|---|
+| 上限 (本文長 / 件数 / system 長) が未測 | 境界で当てる検査を追加 (切詰め後の長さ・末尾が残ること) |
+| `model` / `provider` の既定への倒し方が未測 | 空文字・非文字列の 2 方向で追加 |
+| `chatAll` の入口 3 本が未測 | `chat` と同じ 3 本 + 「1 社も未設定」を追加 |
+| `CAPABILITIES` / `ACTIONS` が **static 変異体** | `vi.resetModules()` + 動的 `await import()` で読み直す |
+| `provider.length > 0` が等価 | **pragma ではなくコードを消した** — `resolveProvider` が既に空文字を「指定なし」として扱う。重複した判定を消すと、残った `typeof` 側の変異体が普通に殺せるようになった |
+| `?.` 2 件 / `?? []` 1 件が等価 | 理由つき `next-line` pragma (3 件) |
+
+**結果: 156 killed / 生存 0 / 未到達 0 / Ignored 3 = 100%。**
+`mutate` と `MUST_MEASURE` と `PROTECTED` (ブロック #140) へ移し、
+`KNOWN_UNMEASURED` の項は消した (台帳は双方向なので、消し忘れれば落ちる)。
+
+#### 検査を書いていて分かったこと
+
+**「文言で確かめる」検査は、関門を外しても隣の関門が同じ語を言うと通る。**
+`chat` の token 検査は `/API キー/` で見ていたが、関門を外すと
+`resolveProvider` の「AI プロバイダが未設定です。API キー…」に当たって
+**そのまま通った**。この関門自身しか言わない語 (`assistant のトークンに`) へ変えた。
+
+**`undefined` は標本に向かない。** `join('')` に混ぜると空文字へ潰れて
+差が出ない。「捨てていること」を見るなら、捨て損ねたときに**残る値**
+(数値など) を渡す。
 ### 1 行 pragma のほうは、数えた上で検査にしない
 
 同じ理屈は `Stryker disable next-line` にも当たる —— `mutate` に無い
