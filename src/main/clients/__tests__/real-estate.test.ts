@@ -43,7 +43,13 @@ describe('real-estate ACTIONS', () => {
       expect(r.phase).toBe('stub');
       expect(r.notForRealMoney).toBe(true);
       // 投資系には特に厳しい disclaimer (BLOCKING-1)
+      // 文言は 3 片の連結。**片ごとに固有の言い回しを取る** —— 真ん中の
+      // 「誰に確かめるか」だけを空にする変異は、前後 2 片に当たる検査では
+      // 捕まらない (このファイルは `mutate` 台帳の外なので、変異検査も
+      // 報せてくれない)。投資系の免責でいちばん行動に結びつく一文である。
       expect(r.disclaimer).toMatch(/投資助言ではありません/);
+      expect(r.disclaimer).toMatch(/ファイナンシャルアドバイザー・税理士・宅建士の確認を経て/);
+      expect(r.disclaimer).toMatch(/ご自身の責任で行ってください/);
       expect(r.disclaimer).toMatch(/Phase 6/);
       expect(r.recommendations.length).toBeGreaterThan(0);
     });
