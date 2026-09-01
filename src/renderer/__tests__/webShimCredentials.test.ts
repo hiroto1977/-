@@ -564,3 +564,87 @@ describe('資格情報の保存 — 弾く規則はデスクトップ版と同�
     expect(vaultClears).toEqual(['github']);
   });
 });
+
+/*
+ * **資格情報が無ければ、外へ 1 度も出ない —— 全部の口で。**
+ *
+ * 既存の検査 (「鍵が未設定なら 1 度も外へ出ない」) は `business/advise` の
+ * 1 本だけを留めていた。同じファイルの中で、**兄弟の口は誰も見ていなかった** ——
+ * これはこのファイルが 2026-08-25 に一度踏んだ形そのもので
+ * (「掃討はファイル単位、危険は関数単位」)、そのときは送り先について直した。
+ * 今回は**資格情報が無いときの振る舞い**について同じことをする。
+ *
+ * 実測 (2026-09-01): `web-shim.ts` を変異検査に掛けると、これらの門を
+ * 「常に通す」へ変える変異体が**軒並み生き残っていた**。門が消えると、
+ * 鍵の無いまま要求が組み立てられて外へ出る —— 相手には「誰かが何かを
+ * 問い合わせた」という事実と、payload の中身が残る。
+ *
+ * 見るのは 3 つ:
+ *   - `ok: false` で `code === 'not_configured'` を返すこと
+ *   - **直接の `fetch` が 0 回**であること
+ *   - **プロキシ経由の送信も 0 回**であること (経路が 2 本あるので両方見る)
+ */
+describe('資格情報が無ければ、外へ 1 度も出ない (全経路)', () => {
+  let fetchCalls: string[] = [];
+  let originalFetch: typeof globalThis.fetch;
+
+  beforeEach(() => {
+    fetchCalls = [];
+    originalFetch = globalThis.fetch;
+    globalThis.fetch = (async (input: unknown) => {
+      fetchCalls.push(String(input));
+      return new Response('{}', { status: 200, headers: { 'content-type': 'application/json' } });
+    }) as typeof globalThis.fetch;
+  });
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  /*
+   * payload は**門より手前の検証を通る**ものにする。通らないと
+   * `action_failed` で先に返り、資格情報の門に届かないまま「合格」になる
+   * (= どの実装でも通る空の検査)。下の `code` の確認がその歯止め。
+   */
+  const CASES: ReadonlyArray<readonly [string, string, Record<string, unknown>]> = [
+    ['business', 'advise', { question: '次に注力すべき事業は？' }],
+    ['stocks', 'advise', { question: '次に買い増すべき銘柄は？' }],
+    ['emotions', 'analyze-text', { text: '今日は落ち着いている' }],
+    ['github', 'create-issue', { title: 'title', body: 'body' }],
+    ['atlassian', 'create-issue', { summary: 'summary' }],
+    ['security', 'scan-url', { url: 'https://example.com/suspicious' }],
+    ['security', 'check-email-breach', { email: 'someone@example.com' }],
+    ['assistant', 'chat', { messages: [{ role: 'user', content: 'hi' }] }],
+    ['assistant', 'chatAll', { messages: [{ role: 'user', content: 'hi' }] }],
+  ];
+
+  it.each(CASES)('%s/%s は鍵が無ければ何も送らない', async (service, action, payload) => {
+    stored = null; // Vault は解錠済みだが、その id のトークンが無い
+    const hub = await loadShim();
+    const r = await invoke(hub, service, action, payload);
+
+    expect(r.ok, `${service}/${action} が鍵無しで成功しました`).toBe(false);
+    expect(
+      r.code,
+      `${service}/${action} の断り方が not_configured ではありません (門より手前で落ちている可能性)`,
+    ).toBe('not_configured');
+    expect(fetchCalls, `${service}/${action} が鍵無しで直接 fetch しました`).toEqual([]);
+    expect(
+      transportCalls.map((c) => c.url),
+      `${service}/${action} が鍵無しでプロキシへ送りました`,
+    ).toEqual([]);
+  });
+
+  /*
+   * **標本 —— 上の検査が「何をしても通る」ものになっていないこと。**
+   * 鍵がある側では実際に外へ出る。ここが鳴らなくなったら、上の 9 本は
+   * 「門が効いている」ではなく「そもそも到達していない」を見ている。
+   */
+  it('★ 対照: 鍵があれば同じ口から実際に外へ出る', async () => {
+    stored = 'sk-ant-test-key-value';
+    const hub = await loadShim();
+    await invoke(hub, 'business', 'advise', { question: '次に注力すべき事業は？' });
+    expect(fetchCalls, '鍵があっても送っていない — 上の 9 本は門を見ていない').toEqual([
+      'https://api.anthropic.com/v1/messages',
+    ]);
+  });
+});
