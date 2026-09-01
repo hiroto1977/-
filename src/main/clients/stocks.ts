@@ -1211,14 +1211,15 @@ export function validateAdvisorJson(
  */
 export const STOCKS_ADVISOR_MAX_TOKENS = 1024;
 
+/**
+ * **`model` / `maxTokens` はここに無い** —— `business.ts` の
+ * `BusinessAdvisorPayload` と同じ理由 (2026-08 に payload から外し、定数を使う)。
+ * 型の宣言だけが 2026-09-01 まで残っていたので消した。
+ */
 interface AdvisorPayload {
   question?: unknown;
   /** Optional override; defaults to MOCK_TICKERS symbols. */
   universe?: unknown;
-  /** Model id; defaults to AI_PROVIDERS.anthropic.defaultModel. */
-  model?: unknown;
-  /** Max output tokens; defaults to 1024. */
-  maxTokens?: unknown;
 }
 
 interface AnthropicContentBlock {
@@ -1308,12 +1309,6 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
         'anthropic-version': '2023-06-01',
         'content-type': 'application/json',
       },
-      // The model / max_tokens fallback ladder is pinned by 4 tests
-      // (custom model, empty-string model → default, NaN maxTokens →
-      // default, zero maxTokens → default). The boundary `maxTokens > 0`
-      // vs `>= 0` is equivalent because `Number.isFinite(0)` is true and
-      // `0 > 0` is false (mutant would also reject 0).
-      // Stryker disable next-line ConditionalExpression,LogicalOperator,EqualityOperator
       body: JSON.stringify({
         model: AI_PROVIDERS.anthropic.defaultModel,
         max_tokens: STOCKS_ADVISOR_MAX_TOKENS,

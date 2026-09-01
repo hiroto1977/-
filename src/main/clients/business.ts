@@ -611,14 +611,22 @@ interface AnthropicMessagesResponse {
  */
 export const BUSINESS_ADVISOR_MAX_TOKENS = 1500;
 
+/**
+ * **`model` / `maxTokens` はここに無い。**
+ *
+ * 2026-08 の監査で payload から外し、定数 (`AI_PROVIDERS.anthropic.defaultModel`
+ * / `BUSINESS_ADVISOR_MAX_TOKENS`) を使うようにした ——「乗っ取られた
+ * renderer が任意のモデル・任意の長さを**利用者の課金で**呼べる」を塞ぐため。
+ *
+ * だが**型の宣言だけが残っていた** (2026-09-01 に発見)。読んでいないので実害は
+ * 無いが、`model?: unknown` が宣言されている限り `payload.model` と書いても
+ * 型検査が通る —— 次に触る人が黙って配線し直せてしまう。
+ * **消してあることが、型で分かる形にする。**
+ */
 interface BusinessAdvisorPayload {
   question?: unknown;
   /** Optional override; defaults to all 10 mock category IDs. */
   categories?: unknown;
-  /** Model id; defaults to AI_PROVIDERS.anthropic.defaultModel. */
-  model?: unknown;
-  /** Max output tokens; defaults to 1500. */
-  maxTokens?: unknown;
 }
 
 /** Test seam: ActionContext usually uses real `fetch`, but tests inject
@@ -684,12 +692,6 @@ export async function askBusinessAdvisorImpl(
   // 補完は普通の REST より長くかかるので、既定 30 秒ではなく
   // `AI_CHAT_TIMEOUT_MS` (2 分) を使う —— `shared/ai/chat.ts` と同じ値。
   const hctx = { fetch: ctx.fetch, serviceId: 'business', timeoutMs: AI_CHAT_TIMEOUT_MS };
-  // The model / max_tokens fallback ladder + boundary `> 0` are pinned by
-  // dedicated tests (custom model, empty model → default, NaN/0 maxTokens →
-  // default, custom maxTokens). Boundary `>= 0` is observationally
-  // equivalent because Number.isFinite(0)=true and the `> 0` test rejects 0.
-  // Block-form pragma covers the whole body builder.
-  // Stryker disable ConditionalExpression,LogicalOperator,EqualityOperator
   const parsed = await limitedFetch(
     'https://api.anthropic.com/v1/messages',
     {
@@ -718,7 +720,6 @@ export async function askBusinessAdvisorImpl(
       return JSON.parse(await readCapped(res, hctx)) as AnthropicMessagesResponse;
     },
   );
-  // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator
 
   // Optional chain + find: see stocks-advisor for the same justification.
   // Stryker disable next-line OptionalChaining,ConditionalExpression
