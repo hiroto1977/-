@@ -221,6 +221,29 @@ const KNOWN_UNMEASURED = {
     + '「字面ではない形」へ書き換えること。',
 };
 
+/**
+ * **台帳の項目に理由が書いてあるか。**
+ *
+ * どちらの台帳も「載せれば通る」形なので、理由を空にすれば黙らせられる。
+ * `integrity-chain.cjs` が `DEP_EXCLUSIONS` に同じ検査を持っている
+ * (「除外の理由が空でない」) ので、こちらも同じ強さに揃える。
+ *
+ * **長さの下限は置かない。** 実在する理由の最短は 6 文字
+ * (`autoLock.ts` の「離席時の施錠」) で、これは短いが**良い理由**である。
+ * 文字数を要求すると、良い理由を水増しさせるだけになる。
+ */
+function ledgerEntriesWithoutReason(ledgers) {
+  const out = [];
+  for (const [name, ledger] of Object.entries(ledgers)) {
+    for (const [rel, why] of Object.entries(ledger)) {
+      if (String(why ?? '').trim().length === 0) {
+        out.push(`${rel}: ${name} に在りますが理由が空です — なぜ測る / 測らないのかを書いてください`);
+      }
+    }
+  }
+  return out;
+}
+
 /** `KNOWN_UNMEASURED` に載っているのに `mutate` へ入ったものを返す (台帳の消し忘れ)。 */
 function staleUnmeasured(mutateList, ledger) {
   const set = new Set(mutateList);
@@ -451,6 +474,26 @@ function selfTest() {
     }
   }
 
+  // 台帳の理由欄。**実物の 2 台帳が空を持っていないこと**も同じ場で見る
+  // (規則だけ足して実物を見ないと、次に足す人が空で通せる)。
+  for (const [label, ledgers, want] of [
+    ['理由が空なら鳴る', { L: { 'a.ts': '' } }, 1],
+    ['空白だけでも鳴る', { L: { 'a.ts': '   \n ' } }, 1],
+    ['undefined でも鳴る', { L: { 'a.ts': undefined } }, 1],
+    ['短くても理由が在れば鳴らない (実在の最短は 6 文字)', { L: { 'a.ts': '離席時の施錠' } }, 0],
+    ['台帳が 2 つでもそれぞれ数える', { A: { 'a.ts': '' }, B: { 'b.ts': '' } }, 2],
+    [
+      '★ 実物の 2 台帳に空は無い',
+      { MUST_MEASURE, KNOWN_UNMEASURED },
+      0,
+    ],
+  ]) {
+    const got = ledgerEntriesWithoutReason(ledgers).length;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} 台帳の理由: ${label}: ${got} 件 (期待 ${want})`);
+  }
+
   // MUST_MEASURE 側 — 「載せなければ無反応」を塞げているか
   const walls = { 'a/guard.ts': '壁 A', 'b/guard.ts': '壁 B' };
   const wallCases = [
@@ -569,6 +612,9 @@ function main(argv) {
   // 名指しの名簿 (MUST_MEASURE) と違い、**形から見つける**ので書き忘れが効かない。
   failures.push(...decorativeDisables());
 
+  // 台帳は「載せれば通る」ので、理由の欄が空なら鳴らす (両方の台帳)。
+  failures.push(...ledgerEntriesWithoutReason({ MUST_MEASURE, KNOWN_UNMEASURED }));
+
   // 「測っていないと分かっている」台帳の双方向。載ったのに消し忘れる /
   // ファイルが消えたのに残る、のどちらでも落とす。
   for (const rel of staleUnmeasured(files, KNOWN_UNMEASURED)) {
@@ -685,6 +731,7 @@ module.exports = {
   checkWallsAreProtected,
   checkProtectedAreMeasured,
   decorativeDisables,
+  ledgerEntriesWithoutReason,
   broadRegionsOf,
   missingWalls,
   staleUnmeasured,
