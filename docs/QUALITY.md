@@ -1,6 +1,6 @@
 # Quality dashboard
 
-最終更新: 2026-09-01 03:05:07
+最終更新: 2026-09-01 05:19:17
 
 > 自動生成: `npm run quality:report`。コミット前に再生成して差分をレビューに含めるのが推奨。
 
@@ -9,30 +9,31 @@
 | 指標 | 値 |
 |---|---|
 | TypeScript 型チェック | ✅ pass |
-| ユニットテスト | 11578 passing (412 files) |
-| Coverage — lines | 98.98% |
-| Coverage — statements | 98.38% |
-| Coverage — branches | 96.50% |
+| ユニットテスト | 11618 passing (412 files) |
+| Coverage — lines | 99.02% |
+| Coverage — statements | 98.45% |
+| Coverage — branches | 96.85% |
 | Coverage — functions | 95.13% |
 | Mutation score (total / covered) | 100.00% / 100.00% |
-| Mutants killed | 27282 |
+| Mutants killed | 27447 |
 | Mutants survived | 0 |
-| Mutants 有効 (分母) | 27282 |
-| Mutants ignored (Stryker disable 宣言) | 8071 |
-| Mutants invalid (評価不成立) | 6 |
+| Mutants 有効 (分母) | 27447 |
+| Mutants ignored (Stryker disable 宣言) | 8081 |
+| Mutants invalid (評価不成立) | 0 |
 
 
 ## Mutation testing (Stryker)
 
-_Report age: 0.2h._
+_Report age: 0.1h._
 
-**Overall: 100.00% total / 100.00% covered** (27282 killed / 0 survived / 0 no-cov / 27282 valid)
+**Overall: 100.00% total / 100.00% covered** (27447 killed / 0 survived / 0 no-cov / 27447 valid)
 
-分母から外れたもの: `Ignored` 8071 (`Stryker disable` で測らないと宣言した分 — 範囲は `npm run lint:mutation-scope` が台帳で押さえている) / `RuntimeError`+`CompileError` 6 (**評価が成立しなかった分。0 でないなら盲点**: `src/renderer/data/cloudBackup.ts` 3, `src/renderer/hooks/useServiceData.ts` 1, `src/shared/depreciation.ts` 2)
+分母から外れたもの: `Ignored` 8081 (`Stryker disable` で測らないと宣言した分 — 範囲は `npm run lint:mutation-scope` が台帳で押さえている) / `RuntimeError`+`CompileError` 0 (**評価が成立しなかった分。0 でないなら盲点**)
 
 | file | score | covered | killed | survived | no-cov | ignored | invalid |
 |------|------:|--------:|-------:|---------:|-------:|--------:|--------:|
 | src/main/atomicWrite.ts | 100.00 | 100.00 | 23 | 0 | 0 | 11 | 0 |
+| src/main/clients/assistant.ts | 100.00 | 100.00 | 156 | 0 | 0 | 3 | 0 |
 | src/main/clients/atlassian.ts | 100.00 | 100.00 | 118 | 0 | 0 | 7 | 0 |
 | src/main/clients/base.ts | 100.00 | 100.00 | 15 | 0 | 0 | 0 | 0 |
 | src/main/clients/business.ts | 100.00 | 100.00 | 329 | 0 | 0 | 287 | 0 |
@@ -99,7 +100,7 @@ _Report age: 0.2h._
 | src/renderer/data/chatbot.ts | 100.00 | 100.00 | 115 | 0 | 0 | 123 | 0 |
 | src/renderer/data/chatCalc.ts | 100.00 | 100.00 | 71 | 0 | 0 | 17 | 0 |
 | src/renderer/data/chatOrg.ts | 100.00 | 100.00 | 159 | 0 | 0 | 3 | 0 |
-| src/renderer/data/cloudBackup.ts | 100.00 | 100.00 | 197 | 0 | 0 | 27 | 3 |
+| src/renderer/data/cloudBackup.ts | 100.00 | 100.00 | 200 | 0 | 0 | 33 | 0 |
 | src/renderer/data/cloudSync.ts | 100.00 | 100.00 | 154 | 0 | 0 | 15 | 0 |
 | src/renderer/data/complianceResearch.ts | 100.00 | 100.00 | 20 | 0 | 0 | 0 | 0 |
 | src/renderer/data/connectionStatus.ts | 100.00 | 100.00 | 23 | 0 | 0 | 0 | 0 |
@@ -166,7 +167,7 @@ _Report age: 0.2h._
 | src/renderer/data/workingCapital.ts | 100.00 | 100.00 | 24 | 0 | 0 | 6 | 0 |
 | src/renderer/fs/fsa.ts | 100.00 | 100.00 | 80 | 0 | 0 | 26 | 0 |
 | src/renderer/hashRoute.ts | 100.00 | 100.00 | 7 | 0 | 0 | 0 | 0 |
-| src/renderer/hooks/useServiceData.ts | 100.00 | 100.00 | 64 | 0 | 0 | 7 | 1 |
+| src/renderer/hooks/useServiceData.ts | 100.00 | 100.00 | 66 | 0 | 0 | 8 | 0 |
 | src/renderer/library/library.ts | 100.00 | 100.00 | 122 | 0 | 0 | 59 | 0 |
 | src/renderer/library/preview.ts | 100.00 | 100.00 | 55 | 0 | 0 | 5 | 0 |
 | src/renderer/network/liveRead.ts | 100.00 | 100.00 | 41 | 0 | 0 | 0 | 0 |
@@ -211,7 +212,7 @@ _Report age: 0.2h._
 | src/shared/cryptoParams.ts | 100.00 | 100.00 | 8 | 0 | 0 | 0 | 0 |
 | src/shared/dataOrigin.ts | 100.00 | 100.00 | 48 | 0 | 0 | 76 | 0 |
 | src/shared/dbSecurityPosture.ts | 100.00 | 100.00 | 71 | 0 | 0 | 49 | 0 |
-| src/shared/depreciation.ts | 100.00 | 100.00 | 262 | 0 | 0 | 26 | 2 |
+| src/shared/depreciation.ts | 100.00 | 100.00 | 266 | 0 | 0 | 26 | 0 |
 | src/shared/employerBenefits.ts | 100.00 | 100.00 | 264 | 0 | 0 | 4 | 0 |
 | src/shared/escape.ts | 100.00 | 100.00 | 35 | 0 | 0 | 0 | 0 |
 | src/shared/externalUrlGate.ts | 100.00 | 100.00 | 22 | 0 | 0 | 0 | 0 |
