@@ -312,22 +312,66 @@ describe('API キーの送り先とヘッダ', () => {
    * 鍵を載せて直接叩く口の**集合**も留める。
    */
   /*
-   * **この検査は本文を字面で走査する。** そのため `web-shim.ts` を変異検査へ
-   * 載せると、Stryker が計装した源を読むことになり `timedFetchAi` が 0 件に
-   * なって dry run ごと落ちる (2026-08-31 実測)。理由は
-   * `scripts/lint-mutation-scope.cjs` の `KNOWN_UNMEASURED` にも書いてある ——
-   * **載せたい日は、まずこの検査を字面ではない形へ書き換えること。**
+   * **走査は、変異検査が書き換えた源の上でも当たること。**
+   *
+   * 以前はこう書いていた: `/timedFetchAi\(\s*'([^']+)'/`。呼び出しと文字列が
+   * **隣り合っていること**に頼っていたので、`web-shim.ts` を変異検査へ載せると
+   * Stryker が間に切替を挟んで 0 件になり、**dry run ごと落ちた** (2026-08-31 実測)。
+   * 計装後の実物はこの形:
+   *
+   *   timedFetchAi(stryMutAct_9fa48("296") ? "" : (stryCov_9fa48("296"),
+   *                'https://api.anthropic.com/v1/messages'), …)
+   *
+   * 直した形は 2 本立てで、どちらも計装に強い:
+   *
+   *   1. **呼び出しの数**を識別子で数える (Stryker は識別子を書き換えない)。
+   *      4 本目が生えたら鳴る —— 送り先を変数で渡す口でも数は増える。
+   *   2. **送り先**は「呼び出しの後ろ 300 文字以内の最初の URL リテラル」で拾う。
+   *      隣接を要求しないので、間に何が挟まっても当たる。
+   *
+   * 走査が的を外すと集合が空になって**黙って通る**ので、下で
+   * **計装済みの形そのものを標本に当てて**、規則が実際に効くことを確かめる。
+   * (前回はこの標本が無く、`>= 3` の下限だけが落ちて理由が分からなかった。)
    */
-  it('★ 鍵を載せて直接叩く送り先は、字面で 1 つだけ', async () => {
+  const CALL_SITES = 3; // business/advise・stocks/advise・emotions/analyze-text
+  /** 定義行を除いた呼び出しから、後続の最初の URL リテラルを拾う。 */
+  const TARGET_RE = /(?<!function\s)\btimedFetchAi\([\s\S]{0,300}?'(https?:\/\/[^']+)'/g;
+
+  it('★ 鍵を載せて直接叩く送り先は 1 つだけ (計装後の源でも数えられる形で)', () => {
     const src = readFileSync(join(__dirname, '..', 'web-shim.ts'), 'utf8')
       .replace(/\/\*[\s\S]*?\*\//g, '')
       .replace(/^\s*\/\/.*$/gm, '');
-    const targets = [...src.matchAll(/timedFetchAi\(\s*'([^']+)'/g)].map((m) => m[1]!);
-    expect(targets.length, '走査が timedFetchAi を 1 つも拾えていない').toBeGreaterThanOrEqual(3);
+
+    // 1. 口の数。定義 1 + 呼び出し 3。
+    const occurrences = [...src.matchAll(/\btimedFetchAi\b/g)];
+    expect(
+      occurrences.length,
+      'timedFetchAi の口が増減しました。鍵が出る先なので、上の it.each にも足してください',
+    ).toBe(CALL_SITES + 1);
+
+    // 2. 送り先の集合。
+    const targets = [...src.matchAll(TARGET_RE)].map((m) => m[1]!);
+    expect(targets.length, '走査が送り先を 1 つも拾えていない (規則が的を外している)').toBe(CALL_SITES);
     expect(
       [...new Set(targets)],
-      'timedFetchAi の送り先が増えました。鍵が出る先なので、上の it.each にも足してください',
+      'timedFetchAi の送り先が増えました。鍵が出る先です',
     ).toEqual(['https://api.anthropic.com/v1/messages']);
+  });
+
+  it('★ 走査の標本 — 変異検査が計装した形でも当たる', () => {
+    // 実物の sandbox から取った形 (`.stryker-tmp/sandbox-*/src/renderer/web-shim.ts`)。
+    const instrumented =
+      '    res = await timedFetchAi(stryMutAct_9fa48("296") ? "" : (stryCov_9fa48("296"), ' +
+      "'https://api.anthropic.com/v1/messages'), stryMutAct_9fa48(\"297\") ? {} : {});";
+    const found = [...instrumented.matchAll(new RegExp(TARGET_RE.source, 'g'))].map((m) => m[1]!);
+    expect(found, '計装後の形で送り先を拾えていない — 上の検査は載せた日に黙って落ちる').toEqual([
+      'https://api.anthropic.com/v1/messages',
+    ]);
+    // 逆向き: 素の形でも当たる (片方だけ通る規則にしない)。
+    const plain = "res = await timedFetchAi('https://api.anthropic.com/v1/messages', {});";
+    expect([...plain.matchAll(new RegExp(TARGET_RE.source, 'g'))].map((m) => m[1]!)).toEqual([
+      'https://api.anthropic.com/v1/messages',
+    ]);
   });
 
   it('鍵が未設定なら 1 度も外へ出ない', async () => {
