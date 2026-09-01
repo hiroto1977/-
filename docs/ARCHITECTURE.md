@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **10184** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **10190** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 366 | 自己検証 |
+| `file:line` 参照数 | 370 | 自己検証 |
 
 ### 統合フロー図
 
@@ -2143,9 +2143,13 @@ Stryker の対象 (`stryker.config.json` の `mutate`) は **245 ファイル**�
 #### 点数の定義 (分母に何を入れないか)
 
 Stryker のスコアは **`Ignored` と評価不成立 (`RuntimeError` / `CompileError`) を
-分母から外す**。有効な変異は `Killed + Timeout + Survived + NoCoverage` だけ:
+分母から外す**。有効な変異は `Killed + Timeout + Survived + NoCoverage` だけ。
 
-| 種別 | 直近の実測 | 分母 |
+**生きた数はここに書かない** (それが今回の腐り方だった)。下の列は
+2026-09-01 に食い違いを見つけたときの実測で、履歴として置いてある。
+現在値は `docs/QUALITY.md` が毎回機械生成する。
+
+| 種別 | 発見時 (2026-09-01) の実測 | 分母 |
 |---|---:|---|
 | `Killed` + `Timeout` | 27,282 | 入る (分子) |
 | `Survived` | 0 | 入る |
@@ -2166,6 +2170,30 @@ Stryker のスコアは **`Ignored` と評価不成立 (`RuntimeError` / `Compil
   `MUST_MEASURE`。§1 の「『測っていない』は『緑』ではない」を参照)
 - 評価不成立 → `docs/QUALITY.md` が件数とファイル名を毎回書き出す。**0 でなければ
   その変異体は一度も評価されていない**ので、スコアが 100% でも盲点が残っている。
+
+#### 評価不成立が出たときの読み方 (2026-09-01 の 6 件)
+
+6 件はすべて**無限ループを止めているガード**の上に載っていた。ガードを外す変異体は
+「間違った答え」ではなく **push し続けてメモリを食い尽くしプロセスが死ぬ** ため、
+Stryker は Killed ではなく RuntimeError と分類し、分母から落としていた。
+
+| 場所 | ガード | 外した変異体の壊れ方 |
+|---|---|---|
+| `src/renderer/data/cloudBackup.ts` `planChunks` | `chunkSize <= 0` | `length` が 0 のまま `while (offset < size)` が回り続ける |
+| `src/shared/depreciation.ts` `decliningBalanceScheduleStrict` / `compareMethods` | 年数 | `usefulLife = Infinity` で行を作り続ける |
+| `src/renderer/hooks/useServiceData.ts` | `window.serviceHub?.` | 例外が unhandled rejection として外へ出る |
+
+直し方は 3 つとも同じ形 —— **壊れ方を「死」から「間違った答え」に変える**:
+
+- `planChunks`: ループ内に前進の不変条件を置き、**ガードとは別の文言**で throw する
+  (同じ文言だと `toThrow(/chunkSize/)` がどちらでも通り、変異体が生き残る)。
+- 償却: 年数ガードを兄弟関数と同じ `isSchedulableLife` (上限 100 年) に揃え、
+  ループ上限も `Math.min(usefulLife, MAX_SCHEDULE_YEARS)` で構造的に有限にした。
+  **上限判定は 4 つある組み立て関数のうち 2 つにしか入っていなかった** ——
+  2026-08 の「描画スレッドを固めない」修正が残り 2 つを覆っていなかった。
+- `useServiceData`: マウント側の IPC reject に受け皿を付けた (同じファイルの
+  `refresh` には最初からあった)。`?.` の変異体は受け皿を通ると観測差が無くなるので、
+  RuntimeError ではなく**宣言された `Ignored`** になる。黙って外れるより台帳に載る。
 
 ### 5.6 Property-based fuzz (`src/main/__tests__/property.test.ts`, 29 tests, 約 5,000 trials)
 

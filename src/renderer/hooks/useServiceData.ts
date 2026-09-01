@@ -92,7 +92,13 @@ export function useServiceData<T>(
     (async () => {
       // `?? []` の代替配列は実 serviceId を含まないため has は常に false となり、フォールバック内容を
       // 変える ArrayDeclaration 変異は equivalent。
-      // Stryker disable next-line ArrayDeclaration
+      // `?.` を外すと `serviceHub` が無い時に throw するが、下の catch が
+      // 拾って同じ `setIsConfigured(false)` に落ちる。橋が無ければ `refresh`
+      // 側も先頭で return するので、観測できる差が無く equivalent。
+      // (受け皿を付ける前は unhandled rejection になり、ランナーごと落として
+      //  RuntimeError = 評価不成立として分母から外れていた。黙って外れるより、
+      //  外すと宣言して台帳に載るほうがよい。)
+      // Stryker disable next-line ArrayDeclaration,OptionalChaining
       const configured = (await window.serviceHub?.listConfigured()) ?? [];
       // Stryker disable next-line ConditionalExpression
       if (cancelled) return;
@@ -104,7 +110,24 @@ export function useServiceData<T>(
         autoRefreshFired.current = true;
         refresh();
       }
-    })();
+    })().catch(() => {
+      /*
+       * IPC が **reject** した場合の受け皿。同じファイルの `refresh` には
+       * 受け皿があるのに (「約束の外で throw されると…」のコメント)、
+       * **マウント側だけ抜けていた** —— `listConfigured` が reject すると
+       * この async IIFE の外に出て unhandled rejection になっていた。
+       *
+       * 見つかり方も書いておく: 変異検査で上の `?.` を外した変異体が
+       * まさにこれを踏み、テストランナーごと落として Stryker が
+       * RuntimeError (= 評価不成立) と分類した。RuntimeError はスコアの
+       * 分母から外れるので、100.00% のまま 1 件が消えていた (2026-09-01)。
+       *
+       * 取れなかったときは「未設定」として扱う —— 上の `?? []` と同じ意図で、
+       * 初期状態と同じ。ここで画面にエラーを出すと、橋がまだ無いだけの
+       * 起動直後にも赤が出る。
+       */
+      setIsConfigured(false);
+    });
     /* Stryker disable all */
     return () => {
       cancelled = true;

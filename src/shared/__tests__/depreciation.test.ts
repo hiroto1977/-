@@ -533,6 +533,34 @@ describe('償却スケジュールの年数上限 (描画スレッドを固め�
     expect(MAX_SCHEDULE_YEARS).toBe(100);
     expect(MAX_SCHEDULE_YEARS).toBeGreaterThan(50);
   });
+
+  /*
+   * **上の 2026-08 の修正は 4 つある組み立て関数のうち 2 つにしか入って
+   * いなかった。** `decliningBalanceScheduleStrict` と `compareMethods` は
+   * `usefulLife > 0 かつ有限` しか見ておらず、99999999 をそのまま回していた
+   * (どちらも画面からは呼ばれていないので実害は出ていなかったが、公開 API で
+   *  兄弟と契約が食い違っていた)。同じ 3 本を、残りの 2 関数にも当てる。
+   */
+  it('上限ちょうどは組み立てる (残る 2 関数)', () => {
+    expect(decliningBalanceScheduleStrict(1_000_000, MAX_SCHEDULE_YEARS, { rate: 0.4 })).toHaveLength(
+      MAX_SCHEDULE_YEARS,
+    );
+    expect(compareMethods(1_000_000, MAX_SCHEDULE_YEARS)).toHaveLength(MAX_SCHEDULE_YEARS);
+  });
+
+  it('上限 +1 は組み立てない (残る 2 関数・黙って切り詰めない)', () => {
+    expect(decliningBalanceScheduleStrict(1_000_000, MAX_SCHEDULE_YEARS + 1, { rate: 0.4 })).toEqual(
+      [],
+    );
+    expect(compareMethods(1_000_000, MAX_SCHEDULE_YEARS + 1)).toEqual([]);
+  });
+
+  it('極端な入力でも即座に空を返す (残る 2 関数)', () => {
+    const started = Date.now();
+    expect(decliningBalanceScheduleStrict(1_000_000, 99_999_999, { rate: 0.4 })).toEqual([]);
+    expect(compareMethods(1_000_000, 99_999_999)).toEqual([]);
+    expect(Date.now() - started).toBeLessThan(1000);
+  });
 });
 
 describe('isSchedulableLife', () => {

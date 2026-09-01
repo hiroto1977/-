@@ -9,6 +9,7 @@ import {
   encryptionEnvelope,
   nextVersion,
   planChunks,
+  INVARIANT_NO_PROGRESS,
   treeHashInput,
   verifyIntegrity,
   verifyManifest,
@@ -154,6 +155,25 @@ describe('planChunks', () => {
     expect(() => planChunks(-1, 100)).toThrow(/size/);
     expect(() => planChunks(NaN, 100)).toThrow(/size/);
     expect(() => planChunks(Number.POSITIVE_INFINITY, 100)).toThrow(/size/);
+  });
+
+  /*
+   * chunkSize ガードを外すと `length = 0` のまま while が回り続け、
+   * push で**メモリを食い尽くしてプロセスが死ぬ**。変異検査ではそれが
+   * Killed ではなく RuntimeError (評価不成立) になり、3 件が総合スコアの
+   * 分母から静かに外れていた。ループ内の不変条件で即座に throw させ、
+   * かつ**文言をガードと分けた**ので、ガードを外した変異体は
+   * `toThrow(/chunkSize/)` を満たせなくなり普通に落ちる。
+   *
+   * この検査は「文言が別であること」に丸ごと乗っている。だから
+   * それ自体を標本つきで留める —— 規則が当たらない側 (不変条件の文言) と
+   * 当たる側 (ガードの文言) の両方を見る。片側だけだと、綴りが 1 つ違えば
+   * どんな入力でも通る空の検査になる。
+   */
+  it('内部不変条件の文言は chunkSize ガードの文言と混ざらない', () => {
+    expect(INVARIANT_NO_PROGRESS).not.toMatch(/chunkSize/);
+    // 標本: 当たる側。これが落ちるなら上の not.toMatch は「空の検査」である。
+    expect('chunkSize は正の有限値が必要です').toMatch(/chunkSize/);
   });
 });
 
