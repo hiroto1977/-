@@ -305,8 +305,18 @@ async function analyzeText(ctx: ActionContext): Promise<AnalysisEntry> {
   return entry;
 }
 
+/**
+ * `clear-history` が renderer から受け取る形。
+ *
+ * 未指定は「気分だけ消す」に倒す (履歴を丸ごと消すのは `'all'` を明示した
+ * ときだけ)。名前を付けてあるのは payload 表と突き合わせるため (2026-09-01)。
+ */
+interface ClearHistoryPayload {
+  kind?: 'moods' | 'analyses' | 'all';
+}
+
 async function clearHistory(ctx: ActionContext): Promise<{ moods: number; analyses: number }> {
-  const { kind } = ctx.payload as unknown as { kind?: 'moods' | 'analyses' | 'all' };
+  const { kind } = ctx.payload as unknown as ClearHistoryPayload;
   const store = await readStore();
   const before = { moods: store.moods.length, analyses: store.analyses.length };
   if (kind === 'moods' || kind === 'all' || kind === undefined) store.moods = [];

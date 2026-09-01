@@ -130,10 +130,21 @@ export interface JudgeResult {
   readonly candidate: string;
 }
 
+/**
+ * `judge-leader` が renderer から受け取る形。
+ *
+ * **型は宣言するが信用しない** —— `unknown` で受けて下で選り分ける。
+ * 名前を付けてあるのは `docs/ARCHITECTURE.md` §3.2 の payload 表と
+ * `verify:arch` が突き合わせる先を作るため (2026-09-01)。
+ */
+interface JudgeLeaderPayload {
+  flagged?: unknown;
+  candidate?: unknown;
+}
+
 export async function judgeLeaderImpl(ctx: ActionContext): Promise<JudgeResult> {
-  const raw = ctx.payload['flagged'];
+  const { flagged: raw, candidate: name } = ctx.payload as unknown as JudgeLeaderPayload;
   const flagged = Array.isArray(raw) ? raw.filter((f): f is string => typeof f === 'string') : [];
-  const name = ctx.payload['candidate'];
   return {
     fitness: judgeLeaderFitness(flagged),
     candidate: typeof name === 'string' ? name.slice(0, 64) : '',

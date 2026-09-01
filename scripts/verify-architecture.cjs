@@ -853,6 +853,62 @@ function selfTest() {
     console.log(`  ${ok ? '✓' : '✗'} payload: ${label}: ${got} 件 (期待 ${want})`);
   }
 
+  /*
+   * **網羅の検査そのものに標本を通す。**
+   *
+   * 「行が無い action を見つける」は不在を主張する検査なので、実物に対して
+   * 緑でも空虚でありうる。空の文書を渡せば**登録されている全部**が鳴り、
+   * 実物の文書を渡せば 0 件になる —— どちらへ動いても差が出ることを見る。
+   */
+  const coverageCases = [
+    ['空の文書なら登録済み action の数だけ鳴る', '', (n) => n > 40],
+    [
+      '実物の文書なら鳴らない',
+      readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md')) ?? '',
+      (n) => n === 0,
+    ],
+    [
+      '1 行だけ消すと、その 1 件が鳴る',
+      (readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md')) ?? '').replace(
+        /^\| shopify \| `sync-to-salesforce` \|.*$/m,
+        '',
+      ),
+      (n) => n === 1,
+    ],
+  ];
+  for (const [label, doc, want] of coverageCases) {
+    const got = verifyActionCoverage(doc).failures.length;
+    const ok = want(got);
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} coverage: ${label}: ${got} 件`);
+  }
+
+  /*
+   * **`readonly` の欄を読めること。** 2026-09-01 まで読めておらず、
+   * `readonly` で書かれた payload interface は欄が空集合になっていた。
+   */
+  const readonlyCase = verifyActionPayloads(
+    '| real-estate | `record-entry` | `{ note, amount }` | x | `real-estate.ts:1` |',
+  ).failures.length;
+  const readonlyOk = readonlyCase === 0;
+  if (!readonlyOk) failed += 1;
+  console.log(
+    `  ${readonlyOk ? '✓' : '✗'} payload: readonly の欄を読む: ${readonlyCase} 件 (期待 0)`,
+  );
+
+  /*
+   * **式で組み立てた ACTIONS も読めること。** `shopify.ts` の 7 件は
+   * 2026-09-01 まで「静的に読めない」として数から落ちており、どの台帳にも
+   * 載っていなかった (連携先の資格情報を payload で受け取る action である)。
+   */
+  const shopifySrc = readFileSafe(path.join(REPO_ROOT, 'src/main/clients/shopify.ts')) ?? '';
+  const shopifyNames = readActionNames(shopifySrc);
+  const shopifyOk = shopifyNames !== null && shopifyNames.has('sync-to-salesforce');
+  if (!shopifyOk) failed += 1;
+  console.log(
+    `  ${shopifyOk ? '✓' : '✗'} coverage: 導出された ACTIONS も読む: ${shopifyNames === null ? 'null' : shopifyNames.size + ' 件'}`,
+  );
+
   if (failed > 0) {
     console.error(`❌ self-test ${failed} 件失敗 — 規則が壊れています`);
     return 1;
@@ -900,8 +956,27 @@ function selfTest() {
  * 組み立てる shopify) は `null` を返し、名前の検査を見送る。
  */
 function readActionNames(src) {
+  // 空の 1 行形 (`= {};`) は「action 0 件」であって「読めない」ではない。
+  // 分けないと `cursor.ts` が静的に読めない側へ数えられる (2026-09-01)。
+  if (/export const ACTIONS[^=]*=\s*\{\s*\};/.test(src)) return new Set();
+
   const m = /export const ACTIONS[^=]*=\s*\{([\s\S]*?)\n\};/.exec(src);
-  if (m === null) return null;
+  if (m === null) {
+    /*
+     * **式で組み立てる形も読む。** `shopify.ts` は
+     * `Object.fromEntries(CONNECTORS.map((c) => [c.action, c.run]))` で
+     * ACTIONS を導出するので、上の正規表現では読めない ——
+     * その結果 7 件 (`sync-to-slack` … `sync-to-stripe`) が
+     * **どの台帳にも載らないまま**になっていた (2026-09-01 に発見)。
+     * どれも連携先の資格情報 (`token` / `webhookUrl` ほか) を payload で
+     * 受け取る、いちばん見える所に置くべき action である。
+     *
+     * 導出元の登録表に在る `action: '…'` を action 名として読む。
+     */
+    if (!/export const ACTIONS[^=]*=\s*Object\.fromEntries/.test(src)) return null;
+    const derived = new Set([...src.matchAll(/\baction:\s*'([^']+)'/g)].map((x) => x[1]));
+    return derived.size > 0 ? derived : null;
+  }
   const body = m[1];
   const names = new Set();
   for (const x of body.matchAll(/^\s*'([^']+)'\s*:/gm)) names.add(x[1]);
@@ -919,7 +994,77 @@ const PAYLOAD_INTERFACE_OVERRIDES = {
   // Jira の課題であることを型名で示している。action 名は Atlassian 製品
   // 横断の総称なので、両方をそのまま残すのが正しい。
   'atlassian.create-issue': 'CreateJiraIssuePayload',
+
+  // --- 2026-09-01 追加 (表を全 action へ広げたときに要った分) ---
+
+  // 1 つの payload を複数の action が共用している所。**別名ではなく共用**
+  // なので、型を action ごとに割るほうがむしろ嘘になる。
+  'assistant.chatAll': 'ChatPayload',
+  'stocks.unregister-ticker': 'RegisterTickerPayload',
+  'business.export-dashboard': 'ExportPayload',
+  'business.export-dashboard-md': 'ExportPayload',
+  'stocks.export-dashboard': 'ExportPayload',
+  'stocks.export-dashboard-md': 'ExportPayload',
+
+  // 型名が「何をするか」ではなく「誰が使うか」で付いている所。
+  'business.advise': 'BusinessAdvisorPayload',
+  'stocks.advise': 'AdvisorPayload',
+
+  // `templates.ts` の中では書き出しが 1 種類しかないので `ExportPayload`。
+  'templates.export-template': 'ExportPayload',
 };
+
+/**
+ * **登録済みの action が 1 つ残らず payload 表に載っているか。**
+ *
+ * ## なぜ要るか (2026-09-01)
+ *
+ * 下の `verifyActionPayloads` は**表に在る行**しか見ない。裏を返すと、
+ * **表に書かなければ何も言われない。** 実測すると、`ACTIONS` に登録された
+ * 47 件のうち表に在ったのは **19 件**で、節の見出しは「(19 actions)」と
+ * 書いてあった —— つまり読む人には*それが全部*に見えた。
+ *
+ * 載っていなかった 28 件には、有料 LLM API を叩くもの (`*.advise` 6 件 +
+ * `assistant.chat` / `chatAll`) と、renderer が渡したパスへ**ファイルを書く**
+ * もの (`export-*` 5 件・`save-state` 2 件) が含まれる。
+ * この表は「レンダラーから main へ何が渡るか」を示す唯一の一覧なので、
+ * 攻撃面の半分が見えていなかったことになる。
+ *
+ * `scripts/lint-mutation-scope.cjs` の `MUST_MEASURE` と同じ形の直し ——
+ * **台帳をすり抜ける道 (載せない) を塞ぐ。**
+ */
+function verifyActionCoverage(archText) {
+  const failures = [];
+  const documented = new Set(
+    [...archText.matchAll(/^\| ([\w-]+) \| `([\w-]+)` \|/gm)].map((m) => `${m[1]}.${m[2]}`),
+  );
+  const dir = path.join(REPO_ROOT, 'src/main/clients');
+  let registered = 0;
+  const unreadable = [];
+  for (const file of fs.readdirSync(dir).sort()) {
+    if (!file.endsWith('.ts')) continue;
+    const svc = file.replace(/\.ts$/, '');
+    const src = readFileSafe(path.join(dir, file));
+    if (src === null || !src.includes('ACTIONS')) continue;
+    const names = readActionNames(src);
+    if (names === null) {
+      // 静的に読めない形 (`Object.fromEntries` で組み立てる等)。
+      // **黙って飛ばさず数える** —— 増えたら見える。
+      if (/export const ACTIONS/.test(src)) unreadable.push(svc);
+      continue;
+    }
+    for (const action of names) {
+      registered += 1;
+      if (!documented.has(`${svc}.${action}`)) {
+        failures.push({
+          ref: `${svc}.${action}`,
+          reason: 'payload 表 (§3.2) に行がありません — 何が renderer から渡るかを書くこと',
+        });
+      }
+    }
+  }
+  return { failures, registered, unreadable };
+}
 
 function verifyActionPayloads(archText) {
   const failures = [];
@@ -968,7 +1113,19 @@ function verifyActionPayloads(archText) {
       .split('\n')
       .filter((l) => !l.trim().startsWith('//'))
       .join('\n');
-    const real = new Set([...body.matchAll(/^\s*(\w+)\??:/gm)].map((x) => x[1]));
+    /*
+     * **`readonly` を飛ばしてから欄名を取る。**
+     *
+     * 2026-09-01 まで `/^\s*(\w+)\??:/` だったので、`readonly note: string;`
+     * からは**何も取れなかった** (`readonly` の直後が空白で `:` が来ない)。
+     * つまり `readonly` で書かれた payload interface は欄が空集合になり、
+     * 文書が何を書いていても「文書にだけ在る」と報告されるか、文書も空なら
+     * **何も比べずに通る**。このリポジトリの他の interface は `readonly` を
+     * 使うのが普通なので、次に payload をそう書いた日に黙る。
+     */
+    const real = new Set(
+      [...body.matchAll(/^\s*(?:readonly\s+)?(\w+)\??:/gm)].map((x) => x[1]),
+    );
     const documented = new Set(
       fields
         .split(',')
@@ -1003,12 +1160,24 @@ function main() {
   const refs = verifyReferences(arch);
   const metrics = verifyMetrics(arch);
   const payloads = verifyActionPayloads(arch);
+  const coverage = verifyActionCoverage(arch);
 
   console.log(`Verified ${refs.successCount} file:line references in docs/ARCHITECTURE.md`);
   console.log(`Verified ${metrics.ok.length} live metric(s): ${metrics.ok.join(', ') || '(none)'}`);
   console.log(`Verified ${payloads.checked} IPC action payload row(s) against their interfaces`);
+  console.log(
+    `Verified ${coverage.registered} registered action(s) all have a payload row`
+      + (coverage.unreadable.length > 0
+        ? ` (静的に読めない ACTIONS: ${coverage.unreadable.join(', ')})`
+        : ''),
+  );
 
-  const allFailures = [...refs.failures, ...metrics.failures, ...payloads.failures];
+  const allFailures = [
+    ...refs.failures,
+    ...metrics.failures,
+    ...payloads.failures,
+    ...coverage.failures,
+  ];
   if (allFailures.length === 0) {
     console.log('✅ all references + metrics resolve');
     return 0;

@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 339 | 自己検証 |
+| `file:line` 参照数 | 374 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1732,7 +1732,7 @@ union を参照する。
 - **LOCAL** = `LOCAL_SERVICES` set (`src/main/clients/index.ts:201-272`)。トークン未設定でも snapshot OK。
 - **OAuth** = `OAUTH_CONFIGS` 登録あり (`src/main/oauth.ts:103-255`)。各プロバイダの `*_OAUTH_CLIENT_ID` 環境変数で有効化。Notion / Canva / WordPress.com / Atlassian は**機密クライアント**なので `*_OAUTH_CLIENT_SECRET` も必須 (未設定なら `isOAuthSupported()` が false を返し、押しても 401 にしかならない ボタンを出さない)。Slack だけは PKCE 対応の公開クライアントで secret 不要。
 
-### 3.2 Action payload スキーマ (19 actions)
+### 3.2 Action payload スキーマ (54 actions —— `ACTIONS` に登録された全部。`verify:arch` が漏れを落とす)
 
 | Service | Action | Payload | 検証 / clamp | 出典 |
 |---|---|---|---|---|
@@ -1755,6 +1755,41 @@ union を参照する。
 | ollama | `chat` | `{ model, prompt, system? }` | **`isSafeModelName(model)`** + `\0` reject + 32KB/8KB clamp | `ollama.ts:211-294` |
 | microsoft-365 | `send-mail` | `{ to, subject, body? }` | to/subject 必須 + Graph message envelope | `microsoft-365.ts:131-169` |
 | microsoft-365 | `create-event` | `{ subject, start, end, location? }` | subject/start/end 必須 + Tokyo TZ | `microsoft-365.ts:199-221` |
+| assistant | `chat` | `{ messages, system, model, provider }` | sanitizeMessages が role を user/assistant に限定し最後は user 必須。system は MAX_SYSTEM で切る。**maxTokens は payload から受けない** (ASSISTANT_MAX_TOKENS)。**model / provider は利用者が選ぶ設計**なので許可リストは掛けない —— provider は設定済み資格情報にしか解決せず、model が URL に入る Gemini 経路だけ encodeURIComponent で包む (shared/ai/providers.ts) | `assistant.ts:242-246` |
+| assistant | `chatAll` | `{ messages, system, model, provider }` | chat と同じ検証。設定済みプロバイダ全部へ同時に投げ、失敗も per-provider に畳んで返す | `assistant.ts:242-246` |
+| assistant | `providers` | (payload なし) | ctx.payload を読まない。資格情報の設定状況だけ返す | `assistant.ts:242-246` |
+| business | `advise` | `{ question, categories }` | **model / maxTokens は payload から受けない** (定数)。有料 API 呼び出しには 2 分の締切と本文上限 | `business.ts:1142-1146` |
+| business | `export-dashboard` | `{ path, advisorResult }` | path は書き出し関門 (clients/exportPaths.ts) を通る | `business.ts:1142-1146` |
+| business | `export-dashboard-md` | `{ path, advisorResult }` | 同上 (Markdown 版) | `business.ts:1142-1146` |
+| stocks | `register-ticker` | `{ symbol }` | **isSafeSymbol(symbol)** —— 英数と . - ^ のみ・空文字拒否 | `stocks.ts:2031-2039` |
+| stocks | `unregister-ticker` | `{ symbol }` | 同上 (RegisterTickerPayload を共用) | `stocks.ts:2031-2039` |
+| stocks | `backtest` | `{ symbol, strategy, initialCash }` | isSafeSymbol + strategy は登録済み戦略名のみ + initialCash は有限の正数 | `stocks.ts:2031-2039` |
+| stocks | `compare-strategies` | `{ symbol, initialCash }` | 同上 (全戦略を同じ足で回す) | `stocks.ts:2031-2039` |
+| stocks | `advise` | `{ question, universe }` | **model / maxTokens は payload から受けない** (定数)。universe 既定は MOCK_TICKERS | `stocks.ts:2031-2039` |
+| stocks | `export-dashboard` | `{ path, advisorResult, strategyComparison }` | path は書き出し関門を通る | `stocks.ts:2031-2039` |
+| stocks | `export-dashboard-md` | `{ path, advisorResult, strategyComparison }` | 同上 (Markdown 版) | `stocks.ts:2031-2039` |
+| templates | `export-template` | `{ templateId, params, path }` | templateId は目録の id のみ、params は既定値へ clamp、path は書き出し関門 | `templates.ts:506-508` |
+| teamradar | `save-state` | `{ department, evaluatedAt, members }` | members は形と件数を検証してから 0600 で保存 | `teamradar.ts:594-597` |
+| teamradar | `export-svg` | `{ path, title }` | path は書き出し関門。図の文字列は escapeXml を通してから書く | `teamradar.ts:594-597` |
+| talent | `save-state` | (payload 全体を sanitize) | src/shared/talent.ts の入力検査 (sanitize) が申告・施策・ロードマップを型と上限で選り分ける。main とブラウザ版で同じ関数を通す | `talent.ts:158-161` |
+| talent | `judge-leader` | `{ flagged, candidate }` | flagged は失格条項の id 以外を落とし、candidate は 64 字で切る | `talent.ts:158-161` |
+| emotions | `clear-history` | `{ kind }` | kind は moods / analyses / all / 未指定 のみ意味を持つ (未指定は気分だけ) | `emotions.ts:328-332` |
+| docstudio | `list-collections` | (payload なし) | ctx.payload を読まない (同梱の書式目録を返すだけ) | `docstudio.ts:34-36` |
+| real-estate | `record-entry` | `{ note, amount }` | note は文字列必須・amount は任意の数値。**保存はしない** (persisted: false) | `real-estate.ts:103-106` |
+| real-estate | `advise` | (payload なし) | payload を読まない stub。定型の助言と免責を返す | `real-estate.ts:103-106` |
+| mutual-funds | `record-entry` | `{ note, amount }` | 同上 | `mutual-funds.ts:106-109` |
+| mutual-funds | `advise` | (payload なし) | 同上 (stub) | `mutual-funds.ts:106-109` |
+| uber-eats | `record-entry` | `{ note, amount }` | 同上 | `uber-eats.ts:113-116` |
+| uber-eats | `advise` | (payload なし) | 同上 (stub) | `uber-eats.ts:113-116` |
+| demae-can | `record-entry` | `{ note, amount }` | 同上 | `demae-can.ts:104-107` |
+| demae-can | `advise` | (payload なし) | 同上 (stub) | `demae-can.ts:104-107` |
+| shopify | `sync-to-slack` | order + token + channel | 送り先は定数 (slack.com)。token は Bearer として載る。必須欄は CONNECTORS の requiredFields が持つ | `shopify.ts:398-406` |
+| shopify | `sync-to-discord` | order + webhookUrl | **送り先が payload 由来**。https かつ hostname が discord.com のものだけ通す | `shopify.ts:398-406` |
+| shopify | `sync-to-line` | order + token + to | 送り先は定数 (api.line.me)。to は宛先 ID | `shopify.ts:398-406` |
+| shopify | `sync-to-gmail` | order + token | 送り先は定数。order.email が無ければ断る | `shopify.ts:398-406` |
+| shopify | `sync-to-notion` | order + token + databaseId | 送り先は定数 (api.notion.com) | `shopify.ts:398-406` |
+| shopify | `sync-to-salesforce` | order + token + instanceUrl | **送り先が payload 由来**。https かつ salesforce.com / *.salesforce.com のみ (2026-08-23 まで https しか見ておらず、トークンと顧客情報が任意のホストへ届いた) | `shopify.ts:398-406` |
+| shopify | `sync-to-stripe` | order + token | 送り先は定数 (api.stripe.com) | `shopify.ts:398-406` |
 
 ### 3.3 ネットワーク egress マトリクス (15 ホスト + ユーザー指定)
 
