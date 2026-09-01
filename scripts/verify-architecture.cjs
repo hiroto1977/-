@@ -544,6 +544,46 @@ const METRICS = [
       return verifyAllGates(pkg.scripts ?? {}).length;
     },
   },
+  {
+    /*
+     * Stryker が変異させるファイル数。
+     *
+     * ARCHITECTURE は §5.5 に **「9 ファイル」**、TL;DR の break threshold 欄に
+     * **「all 11 files」** と書いていた。実体は 245 —— 27 倍ずれても誰も
+     * 気づかなかったのは、この数がどこからも計算されていなかったから。
+     * `mutate` に足すのは 1 行なので、doc 側の数は必ず置いていかれる。
+     */
+    name: 'Stryker mutate scope',
+    docPattern: /Stryker の対象[^|]*?\*\*(\d+) ファイル\*\*/,
+    compute: () => {
+      const raw = readFileSafe(path.join(REPO_ROOT, 'stryker.config.json'));
+      if (raw === null) return null;
+      try {
+        const cfg = JSON.parse(raw);
+        return Array.isArray(cfg.mutate) ? cfg.mutate.length : null;
+      } catch {
+        return null;
+      }
+    },
+  },
+  {
+    /*
+     * break threshold。TL;DR は `stryker.config.json` を出典に挙げながら
+     * 中身を写していたので、§5.1 の本文だけが Phase 4 当時の `break: 85` で
+     * 止まっていた (実体は 99.8)。写した数は出典と繋いでおく。
+     */
+    name: 'Stryker break threshold',
+    docPattern: /Stryker break threshold \| \*\*([\d.]+)%\*\*/,
+    compute: () => {
+      const raw = readFileSafe(path.join(REPO_ROOT, 'stryker.config.json'));
+      if (raw === null) return null;
+      try {
+        return JSON.parse(raw).thresholds?.break ?? null;
+      } catch {
+        return null;
+      }
+    },
+  },
 ];
 
 /*

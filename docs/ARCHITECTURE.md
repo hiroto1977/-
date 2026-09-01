@@ -27,11 +27,11 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
-| Stryker break threshold | **99.8%** (CI fails below — every mutant killed across all 11 files including 6 stocks actions + equity curve + Markdown export) | `stryker.config.json` |
+| Stryker break threshold | **99.8%** (CI fails below。生存 0 / 未到達 0 で到達済み。対象ファイル数と閾値の実数は §5.5) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 385 | 自己検証 |
+| `file:line` 参照数 | 366 | 自己検証 |
 
 ### 統合フロー図
 
@@ -2039,10 +2039,16 @@ flowchart LR
 | **Phase 2 integration** | 83.84% | 87.07% | 371 | 実 HTTP server test (oauth) |
 | **Phase 3 E2E** | 86.10% | 87.85% | 378 | authorize() 完全フロー |
 | **Phase 4 ratchet** | **87.11%** | **88.89%** | **387** | Stryker disable + threshold ratchet |
+| **現在** | **100.00%** | **100.00%** | (TL;DR の表) | scope を 9 → 245 ファイルへ拡大し、生存 0 / 未到達 0 |
 
-ratchet 値 `break: 85` は **これ以上下げない** (上げるのみ)。各 Phase の jump は中央値 +3% で
-安定推移しており、次の jump は **Electron 実起動 integration test** (spectron / playwright) を
-要する領域。ROI が急激に低下するため、まずは現在の precision を ratchet で固定。
+ratchet 値は **これ以上下げない** (上げるのみ)。
+
+**この段落は 2026-09-01 まで「ratchet 値 `break: 85`」と書いていた** —— 実体はとうに
+99.8 まで上がっており、Phase 4 当時の値がそのまま残っていた。閾値もスコアも
+**出典から計算して突き合わせる**ようにした: 閾値と対象ファイル数は
+`npm run verify:arch` が `stryker.config.json` から (`Stryker break threshold` /
+`Stryker mutate scope`)、TL;DR のスコア 2 行は `npm run lint:docs` が
+`docs/QUALITY.md` から。写した数は、繋いでおかないと必ず片方だけ腐る。
 
 ### 5.2 Equivalent-mutants registry
 
@@ -2122,39 +2128,44 @@ $ npm run mutate:next -- --top=5
 (GitHub API 経由で「kill これ」の issue 自動作成) を導入する場合の差し込み口は
 `scripts/suggest-next-kill.cjs` の出力 (markdown) を消費する形で後付けする。
 
-### 5.5 テスト分布 (total 415, mutation total 90.41 / covered 91.81)
+### 5.5 変異検査の範囲と内訳
 
-| ファイル | tests | mutation total | mutation covered |
-|---|---:|---:|---:|
-| `src/main/clients/__tests__/ollama.test.ts` | 52 | 84.58 | 88.29 |
-| `src/main/__tests__/oauth.test.ts` | 51 | **92.92** | 93.75 |
-| `src/main/clients/__tests__/security.test.ts` | 48 | 88.41 | 88.41 |
-| `src/main/clients/__tests__/skills.test.ts` | 35 | 79.07 | 82.42 |
-| `src/main/__tests__/property.test.ts` | 29 | (横断 fuzz) | — |
-| `src/main/clients/__tests__/emotions.test.ts` | 21 | — | — |
-| `src/main/clients/__tests__/gmail.test.ts` | 18 | 89.66 | 90.70 |
-| `src/main/clients/__tests__/atlassian.test.ts` | 16 | 87.36 | 87.36 |
-| `src/main/clients/__tests__/github.test.ts` | 16 | 85.92 | 87.14 |
-| `src/main/clients/__tests__/types.test.ts` | 22 | **94.87** | 94.87 |
-| `src/main/clients/__tests__/slack.test.ts` | 15 | 86.76 | 89.39 |
-| `src/main/clients/__tests__/skills.test.ts` | 32 | 77.19 | 80.49 |
-| `src/main/__tests__/property.test.ts` | 29 | (横断 fuzz) | — |
-| `src/main/clients/__tests__/emotions.test.ts` | 21 | — | — |
-| `src/main/clients/__tests__/gmail.test.ts` | 18 | 87.64 | 88.64 |
-| `src/main/clients/__tests__/atlassian.test.ts` | 16 | 85.39 | 85.39 |
-| `src/main/clients/__tests__/github.test.ts` | 16 | 85.92 | 87.14 |
-| `src/main/clients/__tests__/types.test.ts` | 17 | 84.62 | 84.62 |
-| `src/main/clients/__tests__/slack.test.ts` | 15 | 86.76 | 89.39 |
-| `src/main/clients/__tests__/cloudflare.test.ts` | 12 | — | — |
-| `src/main/clients/__tests__/canva.test.ts` | 9 | — | — |
-| `src/main/clients/__tests__/wordpress.test.ts` | 9 | — | — |
-| `src/main/clients/__tests__/notion.test.ts` | 8 | — | — |
-| `src/main/clients/__tests__/drive.test.ts` | 6 | — | — |
-| `src/main/clients/__tests__/calendar.test.ts` | 5 | — | — |
-| `src/shared/api/__tests__/clients.test.ts` | 5 | — | — |
-| `src/shared/__tests__/serviceId.test.ts` | 4 | — | — |
+**この節は 2026-09-01 まで「total 415, mutation total 90.41 / covered 91.81」という
+見出しと、9 ファイル時代の per-file 表を抱えていた** —— しかも同じテストファイルが
+2 度ずつ、別々のスコアで並んでおり、表そのものが自己矛盾していた。手で写した内訳は
+必ずこうなるので、**per-file の数はここに置かない**。
 
-Stryker scope (`stryker.config.json:5-15`) は **9 ファイル**。
+per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
+Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
+(`npm run quality:report`)。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **245 ファイル**。
+
+#### 点数の定義 (分母に何を入れないか)
+
+Stryker のスコアは **`Ignored` と評価不成立 (`RuntimeError` / `CompileError`) を
+分母から外す**。有効な変異は `Killed + Timeout + Survived + NoCoverage` だけ:
+
+| 種別 | 直近の実測 | 分母 |
+|---|---:|---|
+| `Killed` + `Timeout` | 27,282 | 入る (分子) |
+| `Survived` | 0 | 入る |
+| `NoCoverage` | 0 | 入る |
+| `Ignored` (`Stryker disable`) | 8,071 | **外れる** |
+| `RuntimeError` (test runner が落ちた) | 6 | **外れる** |
+
+`scripts/quality-report.cjs` はここを取り違えて `Ignored` も分母に入れており、
+**同じ 1 つのレポートから Stryker が 100.00%、`docs/QUALITY.md` が 77.16% を出していた**
+(2026-09-01 に修正)。しかも ARCHITECTURE の TL;DR は出典として `docs/QUALITY.md` を
+名指ししながら 100.00% と書いており、出典と 23 ポイント食い違ったまま緑だった ——
+出典を名指しすることと、その出典と一致していることは別である。今は
+`npm run lint:docs` が TL;DR の 2 行を `docs/QUALITY.md` と突き合わせる。
+
+外れる 2 種はどちらも「測っていない」であって「緑」ではないので、台帳で押さえる:
+
+- `Ignored` の範囲 → `npm run lint:mutation-scope` (広い `Stryker disable` の一覧と
+  `MUST_MEASURE`。§1 の「『測っていない』は『緑』ではない」を参照)
+- 評価不成立 → `docs/QUALITY.md` が件数とファイル名を毎回書き出す。**0 でなければ
+  その変異体は一度も評価されていない**ので、スコアが 100% でも盲点が残っている。
 
 ### 5.6 Property-based fuzz (`src/main/__tests__/property.test.ts`, 29 tests, 約 5,000 trials)
 

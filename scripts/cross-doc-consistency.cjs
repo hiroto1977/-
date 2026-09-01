@@ -128,7 +128,53 @@ function canonicalCitationLedgerCount() {
   return total;
 }
 
+/*
+ * Mutation score。**canonical は `docs/QUALITY.md`** —— これが
+ * `npm run quality:report` の生成物で、素材の `reports/mutation/mutation.json`
+ * 自体は `.gitignore` 済み (CI の fresh checkout には無い)。したがって
+ * 「Stryker の報告 → QUALITY.md」の鮮度は quality:report の責任で、
+ * ここが見るのは「QUALITY.md → 他ドキュメント」の一致だけ。
+ *
+ * このファイルの冒頭は最初から "mutation score" を見ていると書いていたが、
+ * **FACTS に項目が無く一度も見ていなかった** (2026-09-01 まで)。その間に
+ * ARCHITECTURE の TL;DR は出典として QUALITY.md を挙げながら 100.00% と書き、
+ * QUALITY.md 側は分母に `Ignored` を混ぜて 77.16% を出していた —— 同じ
+ * 報告書から出た 2 つの数字が、互いを出典に名指ししたまま 23 ポイント違っていた。
+ */
+function canonicalMutationScore(which) {
+  const src = read(path.join(DOCS, 'QUALITY.md'));
+  if (src == null) return null;
+  const m = src.match(/\| Mutation score \(total \/ covered\) \| ([\d.]+)% \/ ([\d.]+)% \|/);
+  if (m == null) return null;
+  return which === 'covered' ? m[2] : m[1];
+}
+
 const FACTS = [
+  {
+    // ARCHITECTURE の TL;DR は出典欄に `docs/QUALITY.md` と書いてある。
+    // 「出典を名指ししている」ことと「その出典と一致している」ことは別なので、
+    // 名指しのほうを機械に確かめさせる。
+    name: 'mutation score (total)',
+    canonical: canonicalMutationScore('total'),
+    claims: [
+      {
+        file: 'docs/ARCHITECTURE.md',
+        pattern: /\| Mutation score \(total\) \| \*\*([\d.]+)%\*\* \|/,
+        parse: (m) => m[1],
+      },
+    ],
+  },
+  {
+    name: 'mutation score (covered)',
+    canonical: canonicalMutationScore('covered'),
+    claims: [
+      {
+        file: 'docs/ARCHITECTURE.md',
+        pattern: /\| Mutation score \(covered\) \| \*\*([\d.]+)%\*\* \|/,
+        parse: (m) => m[1],
+      },
+    ],
+  },
   {
     name: 'citation ledger backlog',
     canonical: canonicalCitationLedgerCount(),
@@ -476,6 +522,71 @@ function checkE2eBuildOrder(failures, textOverride) {
     failures.push({
       fact: 'e2e build order',
       reason: 'build:renderer が e2e / perf より後ろに在る —— 成果物を消してから測ることになる',
+    });
+  }
+  return 1;
+}
+
+/**
+ * 変異スコアの**鮮度**。等値の照合 (FACTS) では捕まらない種類の腐り方を見る。
+ *
+ * `docs/QUALITY.md` は自動生成だが、生成し直さなければ古いまま committed で
+ * 残る。実際 2026-05-13 から 2026-09-01 まで 3 か月半そのままで、その間
+ * ARCHITECTURE の TL;DR は「出典: docs/QUALITY.md」と書きながら、その
+ * QUALITY.md に**存在しない数字**を載せていた。FACTS の等値照合を足しても、
+ * 両方が同じだけ古ければ黙って一致してしまう。
+ *
+ * そこで**設定と突き合わせる**: `stryker.config.json` の `thresholds.break` を
+ * 下回るスコアが doc に書いてあるなら、weekly の mutation CI は赤のはずである。
+ * 緑のまま doc だけが下回っているなら、それは古いか間違っているかのどちらか。
+ * 今回の実物 (doc 77.16% / break 99.8) はこの一本だけでも鳴った。
+ *
+ * 逆向きの誤爆はしない —— スコアが閾値を**上回る**のは正常なので鳴らさない。
+ */
+function checkMutationScoreFresh(failures, qualityOverride, configOverride) {
+  const quality =
+    qualityOverride === undefined ? read(path.join(DOCS, 'QUALITY.md')) : qualityOverride;
+  const rawCfg =
+    configOverride === undefined
+      ? read(path.join(REPO_ROOT, 'stryker.config.json'))
+      : configOverride;
+  if (quality === null || rawCfg === null) {
+    failures.push({
+      fact: 'mutation score freshness',
+      reason: 'docs/QUALITY.md か stryker.config.json を読めない',
+    });
+    return 0;
+  }
+  let breakAt = null;
+  try {
+    breakAt = JSON.parse(rawCfg).thresholds?.break ?? null;
+  } catch {
+    breakAt = null;
+  }
+  if (breakAt === null) {
+    failures.push({
+      fact: 'mutation score freshness',
+      reason: 'stryker.config.json に thresholds.break が無い — 鮮度を確かめられない',
+    });
+    return 0;
+  }
+  const m = quality.match(/\| Mutation score \(total \/ covered\) \| ([\d.]+)% \/ ([\d.]+)% \|/);
+  if (m === null) {
+    failures.push({
+      fact: 'mutation score freshness',
+      reason: 'docs/QUALITY.md に Mutation score の行が無い — `npm run quality:report` で再生成する',
+    });
+    return 0;
+  }
+  const total = Number(m[1]);
+  if (total < breakAt) {
+    failures.push({
+      fact: 'mutation score freshness',
+      reason:
+        `docs/QUALITY.md の総合スコア ${total}% が stryker.config.json の ` +
+        `thresholds.break ${breakAt}% を下回っている —— この値なら weekly の mutation CI は ` +
+        '赤のはず。緑のままなら doc が古いか、点数の出し方が間違っている ' +
+        '(`npm run quality:report` で再生成)',
     });
   }
   return 1;
@@ -976,6 +1087,35 @@ function selfTest() {
       console.log(`  ${ok ? '✓' : '✗'} ビルド順: ${label}: ${f.length} 件 (期待 ${expected})`);
     }
   }
+
+  /*
+   * 変異スコアの鮮度。**2026-09-01 に実在した形を最初のケースに置く** ——
+   * `docs/QUALITY.md` が 77.16% と書き、`stryker.config.json` の break は
+   * 99.8 だった (点数の分母に `Ignored` を混ぜていた)。
+   * 「上回る側では鳴らない」も同じ強さで要る —— 逆向きに誤爆する検査は、
+   * 正常な日に赤を出して信用を失う。
+   */
+  {
+    const cfg = (b) => JSON.stringify({ thresholds: { break: b } });
+    const doc = (t, c) => `| Mutation score (total / covered) | ${t}% / ${c}% |\n`;
+    for (const [label, quality, config, expected] of [
+      ['★ 実在した形 (doc 77.16% / break 99.8) で鳴る', doc('77.16', '77.16'), cfg(99.8), 1],
+      ['閾値ちょうどなら鳴らない', doc('99.8', '99.8'), cfg(99.8), 0],
+      ['上回っていれば鳴らない', doc('100.00', '100.00'), cfg(99.8), 0],
+      ['★ わずかに下回っても鳴る', doc('99.79', '99.79'), cfg(99.8), 1],
+      ['閾値が無ければ「確かめられない」で鳴る', doc('100.00', '100.00'), '{}', 1],
+      ['設定が壊れていれば鳴る', doc('100.00', '100.00'), '{ not json', 1],
+      ['doc に行が無ければ鳴る', '# Quality dashboard\n', cfg(99.8), 1],
+      ['doc が読めなければ鳴る', null, cfg(99.8), 1],
+      ['設定が読めなければ鳴る', doc('100.00', '100.00'), null, 1],
+    ]) {
+      const f = [];
+      checkMutationScoreFresh(f, quality, config);
+      const ok = f.length === expected;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} 変異スコア鮮度: ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+  }
   /*
    * `selfTestFailed` は `checkNotInCiClaims` 側のケースが立てる旗である。
    * **2026-08-25 まで、この旗はどこからも読まれていなかった** ——
@@ -1038,12 +1178,14 @@ function main() {
   const catCount = checkReadmeCategories(failures);
   const pubCount = checkPublishScanCoverage(failures);
   const orderCount = checkE2eBuildOrder(failures);
+  const freshCount = checkMutationScoreFresh(failures);
 
   console.log(
     `Checked ${factCount} cross-doc facts against canonical source + ${gateCount} verify:all gate(s) against ci.yml` +
       ` + README ${catCount} カテゴリの内訳を services.ts と照合` +
       ` + 出荷物検査 ${pubCount} 件が pages.yml でも公開前に走ることを照合` +
       ` + e2e.yml のビルド順 ${orderCount} 件 (dist/ を掃除する側が後ろに来ていないこと)`,
+      `+ 変異スコアの鮮度 ${freshCount} 件 (doc の点数が stryker の break 閾値を下回っていないこと)`,
   );
   if (failures.length === 0) {
     console.log('✅ all docs agree with source, and every gate runs in CI');
