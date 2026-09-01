@@ -648,3 +648,72 @@ describe('資格情報が無ければ、外へ 1 度も出ない (全経路)', (
     ]);
   });
 });
+
+/*
+ * **裏返し —— 資格情報が有れば、その門は通す。**
+ *
+ * 上の 9 本は「門が消える」側 (`if (…) → false`) を殺す。門には裏側があって、
+ * **常に断る** (`if (…) → true`) へ変えても、上の 9 本は全部通ってしまう ——
+ * 鍵が無い場合しか見ていないからである。実測でも `ConditionalExpression → true`
+ * が 9 か所すべてで生き残っていた (2026-09-01)。
+ *
+ * 常に断る門は「静かに壊れた機能」になる: 鍵を正しく設定した利用者が
+ * 「未設定です」と言われ続け、しかもどのログにも異常は出ない。
+ *
+ * 見るのは **`not_configured` を返さないこと**だけにする。要求が実際に外へ
+ * 出るかは相手のモックの作り込み次第で、ここで確かめたい性質ではない
+ * (それは上の 9 本と「送り先」の検査が持っている)。
+ */
+describe('資格情報が有れば、その門は通す (常に断る門を許さない)', () => {
+  let fetchCalls: string[] = [];
+  let originalFetch: typeof globalThis.fetch;
+
+  beforeEach(() => {
+    fetchCalls = [];
+    originalFetch = globalThis.fetch;
+    globalThis.fetch = (async (input: unknown) => {
+      fetchCalls.push(String(input));
+      return new Response(JSON.stringify({ content: [{ type: 'text', text: '{}' }] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      });
+    }) as typeof globalThis.fetch;
+  });
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  const ANTHROPIC = 'sk-ant-test-key-value';
+  /** 口ごとに、その門が求める形の資格情報。Vault のモックは id を見ないので 1 つで足りる。 */
+  const WITH_CRED: ReadonlyArray<readonly [string, string, Record<string, unknown>, string]> = [
+    ['business', 'advise', { question: '次に注力すべき事業は？' }, ANTHROPIC],
+    ['stocks', 'advise', { question: '次に買い増すべき銘柄は？' }, ANTHROPIC],
+    ['emotions', 'analyze-text', { text: '今日は落ち着いている' }, ANTHROPIC],
+    ['github', 'create-issue', { title: 'title', body: 'body' }, 'ghp_testtesttesttest'],
+    [
+      'atlassian',
+      'create-issue',
+      { summary: 'summary', projectKey: 'ABC' },
+      JSON.stringify({ email: 'a@example.com', token: 't', site: 'https://x.atlassian.net' }),
+    ],
+    ['security', 'scan-url', { url: 'https://example.com/suspicious' }, JSON.stringify({ vt: 'VTKEY' })],
+    [
+      'security',
+      'check-email-breach',
+      { email: 'someone@example.com' },
+      JSON.stringify({ hibp: 'HIBPKEY' }),
+    ],
+    ['assistant', 'chat', { messages: [{ role: 'user', content: 'hi' }] }, ANTHROPIC],
+    ['assistant', 'chatAll', { messages: [{ role: 'user', content: 'hi' }] }, ANTHROPIC],
+  ];
+
+  it.each(WITH_CRED)('%s/%s は鍵が有れば not_configured を返さない', async (service, action, payload, cred) => {
+    stored = cred;
+    const hub = await loadShim();
+    const r = await invoke(hub, service, action, payload);
+    expect(
+      r.code,
+      `${service}/${action} が鍵を設定しても「未設定」と断りました (門が常に閉じている)`,
+    ).not.toBe('not_configured');
+  });
+});
