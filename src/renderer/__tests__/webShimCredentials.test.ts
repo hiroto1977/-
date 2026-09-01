@@ -796,3 +796,56 @@ describe('金庫が施錠されていれば、そう言って外へ出ない (�
     expect('Vault がロックされています。再読み込みしてください').toMatch(/ロック/);
   });
 });
+
+/*
+ * **デスクトップ版だけの操作は、ブラウザ版では実行できない。**
+ *
+ * `src/__tests__/dualBuildActionSurface.test.ts` が「**ブラウザだけに**在る操作は
+ * 0 件」を留めている。その不変条件は「ブラウザ ⊆ デスクトップ」であって、
+ * **その中で安全かどうかは何も言っていない。**
+ *
+ * 実測でそこを確かめた (2026-09-01)。ブラウザ版の if 連鎖に
+ * `skills/run-skill` の枝を生やすと、**dualBuildActionSurface は 3 件とも通る** ——
+ * `skills/run-skill` はデスクトップ側に在るので「ブラウザだけに在る操作」では
+ * ないからである。あの検査は自分の定義どおり正しく動いており、
+ * **この形はその定義の外側**に在った。
+ *
+ * だが `skills/run-skill` はデスクトップ版では**ローカルのスキルを実行する**口で、
+ * main プロセスに閉じ込めてあるから安全なのであって、同じ操作をブラウザ版の
+ * shim に置けば**レンダラと同じ文脈で動く**。「⊆ デスクトップ」を満たしたまま、
+ * あの検査の注記が防ぎたいと書いているまさにその事故が起こせる。
+ *
+ * そこで**呼んで確かめる**。デスクトップ側にしか無いと決めた操作は、
+ * ブラウザ版では `action_not_found` であること。
+ */
+describe('デスクトップ版だけの操作は、ブラウザ版では実行できない', () => {
+  const DESKTOP_ONLY: ReadonlyArray<readonly [string, string, string]> = [
+    ['skills', 'run-skill', 'ローカルのスキルを実行する口。ブラウザに同等の能力は無い'],
+    ['microsoft-365', 'send-mail', 'CORS で直接叩けず、プロキシ経路も用意していない'],
+    ['microsoft-365', 'create-event', '同上'],
+    ['stocks', 'backtest', 'デスクトップ側の計算 (ブラウザ版は compare-strategies)'],
+    ['docstudio', 'list-collections', 'ローカルのテンプレート集を読む'],
+  ];
+
+  it.each(DESKTOP_ONLY)('%s/%s は実行されない (%s)', async (service, action) => {
+    stored = 'sk-ant-test-key-value'; // 鍵の有無で断られたのではないことを明示する
+    const hub = await loadShim();
+    const r = await invoke(hub, service, action, {});
+    expect(r.ok).toBe(false);
+    expect(
+      r.code,
+      `${service}/${action} がブラウザ版で処理されています (if 連鎖のどれかが飲み込んでいる)`,
+    ).toBe('action_not_found');
+  });
+
+  /*
+   * 標本 —— 上の 5 本が「何を呼んでも action_not_found」を見ているだけに
+   * なっていないこと。ブラウザ版が持っている口では**別の答え**が返る。
+   */
+  it('★ ブラウザ版が持つ口は action_not_found にならない', async () => {
+    stored = 'sk-ant-test-key-value';
+    const hub = await loadShim();
+    const r = await invoke(hub, 'emotions', 'log-mood', { score: 3 });
+    expect(r.code, '対照が効いていない — 上の 5 本は何も見ていない').not.toBe('action_not_found');
+  });
+});
