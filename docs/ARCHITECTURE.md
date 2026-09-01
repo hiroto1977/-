@@ -193,7 +193,7 @@ form-action 'none';
 
 `localhost:5173` は dev mode Vite HMR 専用。production renderer の外向き HTTP は **ゼロ**。
 
-### 1.4 IPC 契約 (9 チャンネル)
+### 1.4 IPC 契約 (13 チャンネル —— `ipcMain.handle` の全部。`verify:arch` が漏れを落とす)
 
 `src/preload/preload.ts:6-16` で型定義、`src/main/main.ts:99-224` で実装:
 
@@ -201,6 +201,10 @@ form-action 'none';
 |---|---|---|---|---|
 | `app:getVersion` | — | `string` | — | — |
 | `app:openExternal` | `url: string` | `void` | `URL.protocol ∈ {http,https}` | — |
+| `app:revealInFolder` | `filePath: string` | `OsOpResult` | **`shellTargetOrNull`** (realpath して書き出し根の内側か + 拡張子 allowlist) | 弾いた理由を `message` で返す |
+| `app:openPath` | `filePath: string` | `OsOpResult` | 同上。**OS の「開く」動詞**を使うので Windows では関連付け次第で実行される | `shell.openPath` の失敗文字列を返す |
+| `app:checkUpdate` | — | `UpdateVerdict` | 送り先は定数。応答は `parseLatestRelease` が形と案内先ホストまで確かめる | 失敗はすべて `unknown` へ寄せる |
+| `secrets:protection` | — | `StorageProtection` | (出力のみ) 保存先・暗号化の有無・平文の件数を返す。**トークンそのものは返さない** | — |
 | `secrets:set` | `(serviceId, token)` | `void` | `isServiceId` + token 長さ `(0, 65536]` | — |
 | `secrets:clear` | `serviceId` | `void` | `isServiceId` | — |
 | `secrets:list` | — | `ServiceId[]` | (出力のみ) | — |

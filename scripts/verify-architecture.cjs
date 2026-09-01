@@ -884,6 +884,32 @@ function selfTest() {
   }
 
   /*
+   * **IPC チャンネルの網羅にも標本を通す。**
+   */
+  const channelCases = [
+    ['表が空なら登録済みチャンネルが全部鳴る', '', (n) => n === 13],
+    [
+      '実物の文書なら鳴らない',
+      readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md')) ?? '',
+      (n) => n === 0,
+    ],
+    [
+      '1 行だけ消すと、その 1 件が鳴る',
+      (readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md')) ?? '').replace(
+        /^\| `app:openPath` \|.*$/m,
+        '',
+      ),
+      (n) => n === 1,
+    ],
+  ];
+  for (const [label, doc, want] of channelCases) {
+    const got = verifyIpcChannels(doc).failures.length;
+    const ok = want(got);
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ipc: ${label}: ${got} 件`);
+  }
+
+  /*
    * **egress の網羅にも標本を通す。**
    *
    * 「表に無い宛先を見つける」も不在の主張なので、実物に対して緑でも
@@ -1043,6 +1069,53 @@ const PAYLOAD_INTERFACE_OVERRIDES = {
   // `templates.ts` の中では書き出しが 1 種類しかないので `ExportPayload`。
   'templates.export-template': 'ExportPayload',
 };
+
+/**
+ * **`ipcMain.handle` の全チャンネルが IPC 契約表 (§1.4) に載っているか。**
+ *
+ * ## なぜ要るか (2026-09-01)
+ *
+ * §1.4 は renderer と main の境界そのものの一覧である。実測したら
+ * **13 本のうち表に在ったのは 9 本**で、見出しは「(9 チャンネル)」と
+ * 書いてあった (TL;DR の指標は 13 と書いてあり、同じ文書の中で食い違っていた)。
+ *
+ * 抜けていた 4 本には **`app:openPath` / `app:revealInFolder`** が含まれる ——
+ * renderer が渡したパスを OS の「開く」動詞に渡す口で、その関門
+ * (`shellOpenGate.ts`) は変異検査の `MUST_MEASURE` にも改竄検知の保護対象にも
+ * 入っている。**守りは最重要扱いなのに、守られている口が表に無かった。**
+ */
+function verifyIpcChannels(archText) {
+  const failures = [];
+  const src = readFileSafe(path.join(REPO_ROOT, 'src/main/main.ts')) ?? '';
+  // `ipcMain.handle('x'` と、名前が次の行に来る形の両方を読む。
+  const registered = new Set(
+    [...src.matchAll(/ipcMain\.handle\(\s*'([^']+)'/g)].map((m) => m[1]),
+  );
+  /*
+   * **§1.4 の中だけを見る。** 最初は文書全体から拾っていたが、
+   * `app:openPath` は §8 の「直した欠陥」表にも行があるので、
+   * §1.4 から消しても「載っている」ままだった —— **自己検査が捕まえた**
+   * (「1 行消すとその 1 件が鳴る」が 0 件だった)。
+   * 節を跨いで数えると、契約表の網羅を確かめたことにならない。
+   */
+  const lines = archText.split('\n');
+  const start = lines.findIndex((l) => l.startsWith('### 1.4 IPC 契約'));
+  let end = start + 1;
+  while (end < lines.length && !lines[end].startsWith('### ')) end += 1;
+  const section = start < 0 ? '' : lines.slice(start, end).join('\n');
+  const documented = new Set(
+    [...section.matchAll(/^\| `([a-z]+:[A-Za-z]+)` \|/gm)].map((m) => m[1]),
+  );
+  for (const ch of [...registered].sort()) {
+    if (!documented.has(ch)) {
+      failures.push({
+        ref: ch,
+        reason: 'IPC 契約表 (§1.4) に行がありません — 引数・戻り値・検証を書くこと',
+      });
+    }
+  }
+  return { failures, registered: registered.size };
+}
 
 /**
  * **`src/main/**` に字面で書かれた宛先が、egress マトリクス (§3.3) に載っているか。**
@@ -1273,6 +1346,7 @@ function main() {
   const payloads = verifyActionPayloads(arch);
   const coverage = verifyActionCoverage(arch);
   const egress = verifyEgressHosts(arch);
+  const channels = verifyIpcChannels(arch);
 
   console.log(`Verified ${refs.successCount} file:line references in docs/ARCHITECTURE.md`);
   console.log(`Verified ${metrics.ok.length} live metric(s): ${metrics.ok.join(', ') || '(none)'}`);
@@ -1286,6 +1360,7 @@ function main() {
   console.log(
     `Verified ${egress.scanned} literal host(s) in src/main against the §3.3 egress matrix (${egress.documented} documented)`,
   );
+  console.log(`Verified ${channels.registered} IPC channel(s) all have a §1.4 contract row`);
 
   const allFailures = [
     ...refs.failures,
@@ -1293,6 +1368,7 @@ function main() {
     ...payloads.failures,
     ...coverage.failures,
     ...egress.failures,
+    ...channels.failures,
   ];
   if (allFailures.length === 0) {
     console.log('✅ all references + metrics resolve');
