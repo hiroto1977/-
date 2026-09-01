@@ -10,6 +10,72 @@
 
 ---
 
+## 見つけた欠陥 — 作業ファイルを `O_EXCL` で開いていなかった (2026-09-01)
+
+`src/main/atomicWrite.ts` は作業ファイルを `fs.open(tmp, 'w', 0o600)` で
+開いていた。`'w'` は**既に在れば黙って切り詰め、シンボリックリンクなら辿る**。
+
+**踏める経路は見つからなかった** —— tmp 名は `pid + Date.now() + Math.random()`
+で予測できず、置き場は userData 配下 (他人が書けない)。つまり今の防御は
+「名前が読めないこと」と「置き場の権限」の 2 つだけで、
+**ファイルを開く側は何も主張していなかった**。
+
+`'wx'` (O_EXCL) にすると、どちらの心配も「開けずに失敗する」に倒れる。
+正常時の振る舞いは変わらない。
+
+### ついでに直した — 自分が作っていないファイルを消していた
+
+`open` は `try` の**中**に在り、その `catch` は `fs.rm(tmp)` する。
+O_EXCL は「先客が居る」ときにこそ失敗するので、そのままだと
+**先客を消してから throw する**ことになる。`open` を `try` の外へ出した
+(これで catch は「open に成功した後」にしか来ず、tmp は必ず自分のもの)。
+catch 側の「tmp は open 成功後に必ず存在する」というコメントも、
+これで再び本当になった。
+
+### 検査の作り方 — 乱数と時刻を固定して「先客が居る状態」を作る
+
+tmp 名は乱数なので、普通は同じ名前が先に在ることは無い。`Math.random` と
+`Date.now` を固定して**同じ名前を先に作り**、`atomicWriteFile` が
+reject すること・先客が切り詰められていないこと・本体が作られていないことを見る。
+
+対照は 2 本とも取った: `'w'` に戻すと落ちる / `open` を `try` の中へ戻すと落ちる。
+
+---
+
+## 見つけた欠陥 — 伏字を通していない例外が 1 か所 (2026-09-01)
+
+`src/renderer/cloud/cloudProviderAdapter.ts` の `runUploads` が、
+`transport.put` の例外を手書きの三項演算子で受けて素のまま
+`state.error` へ入れていた。**`transport` は Drive / Dropbox へ実際に送る層で、
+OAuth トークンを載せているのはそこだけ**である。
+
+`reduceSyncState` は reason をそのまま `state.error` に入れ、
+`CloudSyncPanel` の注記は「送信路が入ったら state をここへ繋ぐだけでよい」。
+**今は送信路が未配線 (`CLOUD_SYNC_WIRED = false`・`INITIAL_SYNC_STATE` 固定) なので
+実害は出ていない。** 繋いだ日に出る形。
+
+同じ層の兄弟はいずれも通している —— `web-shim` の `err()` /
+`network/proxy.ts` / `oauth/pkce.ts` / `data/saasWriteWeb.ts`。
+`safeErrorMessage` へ寄せ、対照 (素の三項演算子へ戻すと新しい検査が落ちる) を取った。
+
+### 画面側の catch には**足さない** (調べて、足さないと決めた)
+
+`instanceof Error ?` を素で書いている箇所を全部当てた。残りは
+`ServiceActionPanel` / `BackupPanel` / `ShigyoConsole` / `ExportActions` /
+`VoiceCommandBar` / `useServiceData` で、いずれも `window.serviceHub.*` の
+**戻り値**を受ける catch である。
+
+そこへ届く文言は既に伏せられている: `src/main/main.ts` の各 IPC ハンドラは
+失敗を throw ではなく `{ ok: false, message: safeErrorMessage(e) }` で**返す**
+(9 か所)。ブラウザ版も `web-shim` の `err()` が同じことをする。
+catch が動くのは IPC 層そのものが reject したとき (構造化複製の失敗など) で、
+そこに資格情報は乗らない。
+
+**ここへ二つ目の伏字を置かない。** 「同じ問いに答えが 2 つあると、
+片方だけ直した日に食い違う」—— `readCappedText` で同じ判断を既にしている。
+
+---
+
 ## 見つけた欠陥 — 飾りの pragma を、名指しではなく**形**で掘る (2026-09-01)
 
 `lint:mutation-scope` の冒頭に書いてある「事故 その 2」——

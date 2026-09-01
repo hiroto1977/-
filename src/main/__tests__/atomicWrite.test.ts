@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach, afterEach } from 'vitest';
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -18,6 +18,32 @@ describe('atomicWriteFile', () => {
     const target = path.join(dir, 'nested', 'deep', 'secrets.json');
     await atomicWriteFile(target, '{"a":1}');
     expect(await fs.readFile(target, 'utf8')).toBe('{"a":1}');
+  });
+
+  /*
+   * 作業ファイルは `O_EXCL` で開く —— **既に在るなら開かない**。
+   *
+   * tmp 名は `pid + Date.now() + Math.random()` なので、普通は同じ名前が
+   * 先に在ることは無い。だから**両方を固定して、在る状態を作って**確かめる。
+   * `'w'` のままだと先客を黙って切り詰めて成功してしまう (= 片方の書き込みが
+   * 消える・シンボリックリンクなら辿る)。
+   */
+  it('作業ファイルが既に在るなら開かず失敗する (O_EXCL)', async () => {
+    const target = path.join(dir, 'excl.json');
+    const randomSpy = vi.spyOn(Math, 'random').mockReturnValue(0.5);
+    const nowSpy = vi.spyOn(Date, 'now').mockReturnValue(1_700_000_000_000);
+    try {
+      const tmp = `${target}.tmp-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      await fs.writeFile(tmp, 'せんきゃく');
+      await expect(atomicWriteFile(target, 'あたらしい')).rejects.toThrow();
+      // 先客はそのまま (切り詰められていない)。
+      expect(await fs.readFile(tmp, 'utf8')).toBe('せんきゃく');
+      // 本体は作られていない。
+      await expect(fs.stat(target)).rejects.toThrow();
+    } finally {
+      randomSpy.mockRestore();
+      nowSpy.mockRestore();
+    }
   });
 
   it('overwrites an existing file atomically', async () => {

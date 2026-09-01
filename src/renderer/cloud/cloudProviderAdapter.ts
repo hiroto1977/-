@@ -22,6 +22,7 @@ import {
 } from '../data/cloudSync';
 import type { BackupManifest, EncryptionEnvelope } from '../data/cloudBackup';
 import { sealWithKey, type Sealed } from '../security/dataCrypto';
+import { safeErrorMessage } from '../../shared/redact';
 
 /** クラウドへの暗号文 1 件の送受信トランスポート (Drive / Dropbox の薄い口)。 */
 export interface CloudTransport {
@@ -89,8 +90,23 @@ export async function runUploads(
       await transport.put(item.path, sealed, envelope);
       state = reduceSyncState(state, { type: 'file-uploaded' });
     } catch (e) {
-      const reason = e instanceof Error ? e.message : String(e);
-      state = reduceSyncState(state, { type: 'file-failed', reason });
+      /*
+       * **伏字を通す。** ここで受ける例外の出どころは `transport.put` ——
+       * つまり Drive / Dropbox へ実際に送る層で、**OAuth トークンを載せている
+       * のはそこだけ**である。素の文言は `reduceSyncState` が `state.error` に
+       * そのまま入れ、`CloudSyncPanel` がそれを画面へ出す設計になっている
+       * (今は送信路が未配線で `INITIAL_SYNC_STATE` 固定だが、注記は
+       * 「送信路が入ったら state をここへ繋ぐだけでよい」と書いてある)。
+       *
+       * 同じ層の兄弟 —— `web-shim` の `err()` / `network/proxy.ts` /
+       * `oauth/pkce.ts` / `data/saasWriteWeb.ts` —— は全部通している。
+       * ここだけ手書きの三項演算子で素通ししていた。
+       *
+       * 画面の catch (`ServiceActionPanel` ほか) に足さないのは意図的で、
+       * あちらが受けるのは main が既に `safeErrorMessage` で包んだ戻り値
+       * (`main.ts` の各ハンドラ) だから。**同じ問いに答えを 2 つ置かない。**
+       */
+      state = reduceSyncState(state, { type: 'file-failed', reason: safeErrorMessage(e) });
     }
     onState?.(state);
   }

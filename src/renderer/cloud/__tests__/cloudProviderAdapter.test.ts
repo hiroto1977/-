@@ -134,6 +134,41 @@ describe('runUploads', () => {
     expect(final.retriable).toBe(true);
   });
 
+  /*
+   * 失敗の**文言**が画面へ出る経路。`reduceSyncState` は受け取った reason を
+   * `state.error` にそのまま入れ、`CloudSyncPanel` は「送信路が入ったら state を
+   * ここへ繋ぐだけでよい」と書いてある。例外の出どころは `transport.put` ——
+   * OAuth トークンを載せている唯一の層なので、素通しさせない。
+   *
+   * **不在の主張には標本を添える** —— 伏せられた側 (`final.error`) だけを見ると、
+   * 綴りが 1 つ違っても通る空の検査になる。同じ文字列を素で持って、
+   * 「素ならちゃんと現れる」ことも確かめる。
+   */
+  it('失敗の文言は伏字を通してから state に入る', async () => {
+    const key = await makeKey();
+    const secret = 'sk-ant-api03-AAAAAAAABBBBBBBBCCCCCCCC';
+    const { transport } = memoryTransport({
+      put: vi.fn(async () => {
+        throw new Error(`PUT https://www.googleapis.com/upload failed (authorization: Bearer ${secret})`);
+      }),
+    });
+    const local = buildManifest([file({ path: 'a', sha256: '1' })]);
+    const plan = buildPlan(local, null, {
+      chunkSize: 50,
+      sizes: new Map([['a', 10]]),
+      envelopes: new Map([['a', encryptionEnvelope('iv', 10)]]),
+    });
+    const final = await runUploads(plan, key, transport, async () => 'x');
+    expect(final.failed).toBe(1);
+    expect(final.error).toBeDefined();
+    expect(final.error).not.toContain(secret);
+    expect(final.error).not.toContain('sk-ant-api03-AAAAAAAA');
+    // 標本: 伏せる前の文言なら、この検査は当たる (= 上は空の検査ではない)。
+    expect(`authorization: Bearer ${secret}`).toContain(secret);
+    // 何が落ちたかは残っていること (伏せすぎて役に立たない、にしない)。
+    expect(final.error).toContain('failed');
+  });
+
   it('invokes onState callback for progress updates', async () => {
     const key = await makeKey();
     const { transport } = memoryTransport();

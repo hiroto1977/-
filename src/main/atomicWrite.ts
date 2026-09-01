@@ -29,8 +29,24 @@ export async function atomicWriteFile(
   // 衝突確率にしか影響せず結果不変)。
   // Stryker disable next-line MethodExpression
   const tmp = `${target}.tmp-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  /*
+   * `'wx'` (O_EXCL) —— **既に在るなら開かない**。`'w'` だと 2 つのことが起きうる:
+   *
+   *   1. 同じ名前が既に在れば**黙って切り詰めて**上書きする。tmp 名は
+   *      pid + 時刻 + 乱数なので衝突はまず無いが、起きたときの壊れ方が
+   *      「片方の書き込みが消える」= 気付けない形になる。
+   *   2. その名前が**シンボリックリンクだったら辿る**。置き場が userData
+   *      配下 (他人が書けない) なので踏めないが、踏めない理由が
+   *      「置き場の権限」だけなのは薄い。
+   *
+   * O_EXCL にすると、どちらも「開けずに失敗する」に倒れる。呼び出し側から
+   * 見て失敗は失敗のままで、正常時の振る舞いは変わらない。
+   */
+  const fh = await fs.open(tmp, 'wx', opts.mode ?? 0o600);
+  // **open より後ろだけを try で囲う。** 下の catch は tmp を消すので、
+  // open が失敗した場合まで含めると「自分が作っていないファイルを消す」
+  // ことになる (O_EXCL は「先客が居る」ときにこそ失敗する)。
   try {
-    const fh = await fs.open(tmp, 'w', opts.mode ?? 0o600);
     // fh.close はハンドル解放 (リソース後始末)。内容は直前の sync で永続化済みのため、close を
     // 省いても rename/読取の観測結果は変わらない (try/finally の BlockStatement 変異は equivalent)。
     // Stryker disable BlockStatement
@@ -54,7 +70,7 @@ export async function atomicWriteFile(
         //
         // 本体だけ直して控えを緩いまま残すのは、鍵を掛けた扉の横に
         // 窓を開けておくのと同じ。**本体を作るときと同じ mode に揃える** ——
-        // 上の `fs.open(tmp, 'w', opts.mode ?? 0o600)` と同じ式なので、mode 無指定
+        // 上の `fs.open(tmp, 'wx', opts.mode ?? 0o600)` と同じ式なので、mode 無指定
         // でも本体は 0o600 になる。「指定があるときだけ揃える」だと、まさにその
         // 無指定の場合に本体 600 / 控え 644 という窓が開いたままになっていた。
         await fs.chmod(`${target}.prev`, opts.mode ?? 0o600);
@@ -66,8 +82,10 @@ export async function atomicWriteFile(
     await fs.rename(tmp, target);
     await fsyncDir(dir); // make the rename durable
   } catch (err) {
-    // tmp は open 成功後に必ず存在するため rm は常に成功し、force:true↔false / {} は結果不変
-    // (存在しない場合も .catch で吸収) → ObjectLiteral/BooleanLiteral 変異は equivalent。
+    // この catch は **open に成功した後**にしか来ないので、tmp は必ず自分が
+    // 作ったものである (open を try の外へ出したのはそのため)。rm は常に成功し、
+    // force:true↔false / {} は結果不変 (存在しない場合も .catch で吸収) →
+    // ObjectLiteral/BooleanLiteral 変異は equivalent。
     // Stryker disable next-line ObjectLiteral,BooleanLiteral
     await fs.rm(tmp, { force: true }).catch(() => {});
     throw err;
