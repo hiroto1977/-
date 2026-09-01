@@ -165,6 +165,39 @@ const MUST_MEASURE = {
  * 次に読む人が「まだ測っていない」と誤解する)。
  */
 const KNOWN_UNMEASURED = {
+
+  // 2026-09-01 追加。**新しい検査 `decorativeDisables` が形から掘り出した 9 件。**
+  // どれも「広い Stryker disable が書いてあるのに mutate に無い」= pragma が
+  // 飾りの状態だった。8 つは確証済みデータの表で、判断が無いので測る価値も無い
+  // (ただし**書いていなければ「たまたま漏れている」と区別が付かない**)。
+  //
+  // データの表 8 件 —— いずれも出典つきの定数で、値を 1 つ変える変異体は
+  // 「別のデータになる」だけ。中身の正しさは出典側の検査
+  // (`lint:citations` / `lint:doi-prefix` / `vault:check`) が見る。
+  'src/renderer/data/academicKnowledge.ts': '学術概念の確証済みデータ (49,692 行)。判断が無い。',
+  'src/renderer/data/complianceKnowledge.ts': '税務・労務・法務の確証済みデータ。判断が無い。',
+  'src/renderer/data/counselorKnowledge.ts': '相談窓口の確証済みデータ。判断が無い。',
+  'src/renderer/data/economicHistoryKnowledge.ts': '経済史の確証済みデータ。判断が無い。',
+  'src/renderer/data/subsidyKnowledge.ts': '補助金の確証済みデータ。判断が無い。',
+  'src/shared/connectors/pluginCatalog.ts': 'プラグインの宣言的カタログ (表示文字列と識別子の転記)。判断が無い。',
+  'src/shared/connectors/freeConnectors.ts':
+    'コネクタの宣言的カタログ。**厳密には純データではない** — 項目の `transform` に'
+    + '小さなアロー関数が在り、ファイル名や表題を組み立てる。ただしファイル名の関門は'
+    + '`safeFilename.ts` (測っている) 側に在り、ここは表示用の文字列組み立てに留まる。',
+  'src/shared/connectors/mcpConnectors.ts':
+    'MCP コネクタの宣言的カタログ。**`findMcpConnector` / `mcpConnectorCounts` の 2 関数を含む**(id の一致で引く・数える、だけ)。壁ではないので据え置くが、判断をここへ書き足すなら mutate に載せること。',
+
+  // **これは据え置きではなく宿題。** 上の 8 件と違い、判断を持っている:
+  //   - `sanitizeMessages` … role/型の検証、`slice(0, MAX_CONTENT)`、`slice(-MAX_MESSAGES)`
+  //     = **課金される外部 API へ送る量の上限**。緩めても画面上は何も変わらない。
+  //   - `chat` / `chatAll` … 最後の発話が user か、token が在るか、`system` の切り詰め、
+  //     どのプロバイダの資格情報を使うか (`resolveProvider`)。
+  //   - `extractAssistantText` … モデル応答の解析。
+  // しかも無効化は **14 種の mutator を 205 行** (実装のほぼ全体) に掛かっており、
+  // 理由が 1 行も書かれていない。テスト自体は在る (`__tests__/assistant.test.ts`) ので、
+  // 測れば実測値が出る。次の作業として `docs/REMAINING_WORK.md` に載せた。
+  'src/main/clients/assistant.ts':
+    'AI 中継層。**未計測なのは意図ではなく宿題** — 205 行に 14 種の無効化が理由なしで掛かっている。上限 (MAX_CONTENT / MAX_MESSAGES / MAX_SYSTEM) と資格情報の解決を持つので、本来は MUST_MEASURE 側。docs/REMAINING_WORK.md 参照。',
   // 2026-08-25 追加。**保護対象なのに mutate に無い 2 件**を明示する
   // (逆向きの突き合わせで出てきた)。どちらも意図的だが、書いていなければ
   // 「たまたま漏れている」と区別が付かない。
@@ -265,6 +298,67 @@ function missingWalls(files, walls = MUST_MEASURE, checkExists = true) {
 }
 
 /**
+ * **飾りの pragma を、名指しではなく形で見つける。**
+ *
+ * 冒頭の「事故 その 2」(`exportPaths.ts`) の直しは `MUST_MEASURE` ——
+ * 「これは壁だ」と**人が思い付いて名簿へ書いた**ものだけを見る。だから
+ * 同じ事故がもう一度起きても、書き忘れれば同じだけ黙る。
+ *
+ * 同じ事故は**形で見つかる**: 広い `Stryker disable` が書いてあるのに
+ * ファイルが `mutate` に無ければ、その pragma は 1 つも変異体を黙らせて
+ * いない (= 飾り)。そして `mutate` へ載せた日に、**中身を全部黙らせた
+ * まま 100% を報告する**。exportPaths.ts はこの形で、名簿を一切見なくても
+ * 引っ掛かっていた。
+ *
+ * 実測 (2026-09-01): 9 ファイル。8 つは確証済みデータの表 (判断が無い)、
+ * 残る 1 つ `src/main/clients/assistant.ts` は判断を持っている ——
+ * 詳細は `KNOWN_UNMEASURED` のその項を参照。
+ *
+ * 逃げ道は 1 つだけ: `KNOWN_UNMEASURED` に**理由つきで**載せること。
+ * (`mutate` へ載せれば、上の `KNOWN_BROAD` 側の規則が代わりに掛かる。)
+ */
+function decorativeDisables(mutateOverride, ledgerOverride, filesOverride, readOverride) {
+  const mutate = new Set(mutateOverride ?? mutateList());
+  const ledger = new Set(Object.keys(ledgerOverride ?? KNOWN_UNMEASURED));
+  const files = filesOverride ?? sourceFiles();
+  // 読み取りを差し替えられるようにしてある —— 自己検査が実ファイルを
+  // 作らずに済む。**`??` ではなく `undefined` 比較**にするのは、
+  // 「読めない」を表す null を潰さないため (同じ罠を cross-doc 側で踏んでいる)。
+  const readText =
+    readOverride === undefined
+      ? (rel) => { try { return fs.readFileSync(path.join(REPO_ROOT, rel), 'utf8'); } catch { return null; } }
+      : readOverride;
+  const problems = [];
+  for (const rel of files) {
+    if (mutate.has(rel) || ledger.has(rel)) continue;
+    const text = readText(rel);
+    if (text === null || text === undefined) continue;
+    const broad = broadRegionsOf(text);
+    if (broad.length === 0) continue;
+    problems.push(
+      `${rel}: 広い Stryker disable (${broad.length} 箇所) が在りますが mutate に載っていません` +
+      ` — pragma は飾りで、載せた日に「中身を全部黙らせたまま 100%」になります。` +
+      ` 測るか、KNOWN_UNMEASURED に理由つきで載せてください` +
+      `\n      内訳: ` + broad.map((r) => `L${r.start}-L${r.end} (${r.span}行) ${r.mutators}`).join(' / '),
+    );
+  }
+  return problems;
+}
+
+/** 走査対象 — `src/` 配下の TypeScript (テストと型宣言は除く)。 */
+function sourceFiles(dir = path.join(REPO_ROOT, 'src'), out = []) {
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, e.name);
+    if (e.isDirectory()) {
+      if (e.name === '__tests__') continue;
+      sourceFiles(full, out);
+    } else if (/\.tsx?$/.test(e.name) && !/\.d\.ts$/.test(e.name)) {
+      out.push(path.relative(REPO_ROOT, full));
+    }
+  }
+  return out;
+}
+/**
  * 自己検査 — 「常に緑を返すゲートは無いより悪い」。
  * 検出器そのものが壊れていないかを、毎回の実行で確かめる。
  */
@@ -327,6 +421,41 @@ function selfTest() {
     if (!ok) failed += 1;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
   }
+  /*
+   * 飾りの pragma。**最初のケースは 2026-08-18 に実在した形**
+   * (`exportPaths.ts` に広い無効化が在り、ファイルは `mutate` に無い)。
+   * これが鳴るということは、名簿 `MUST_MEASURE` に誰かが書き足さなくても
+   * 同じ事故が捕まる、ということ。
+   *
+   * 逆向きも同じ強さで見る —— `mutate` に在る / 台帳に在る / そもそも
+   * 広い無効化が無い、のいずれでも鳴ってはいけない。誤爆する検査は
+   * 正常な日に赤を出して信用を失う。
+   */
+  {
+    const BROAD = '// Stryker disable ConditionalExpression\n' + body(50);
+    const NARROW = '// Stryker disable next-line ConditionalExpression: 到達不能\n' + body(50);
+    const CLOSED = '// Stryker disable all\n' + body(5) + '\n// Stryker restore all\n' + body(50);
+    const dcases = [
+      [
+        '★ 実在した形 (広い無効化 + mutate に無い) で鳴る',
+        [], {}, ['src/main/clients/exportPaths.ts'], () => BROAD, 1,
+      ],
+      ['mutate に在れば鳴らない', ['src/a.ts'], {}, ['src/a.ts'], () => BROAD, 0],
+      ['台帳に在れば鳴らない', [], { 'src/a.ts': '理由' }, ['src/a.ts'], () => BROAD, 0],
+      ['1 行 pragma は広くないので鳴らない', [], {}, ['src/a.ts'], () => NARROW, 0],
+      ['restore で閉じた短い範囲も鳴らない', [], {}, ['src/a.ts'], () => CLOSED, 0],
+      ['pragma が無ければ鳴らない', [], {}, ['src/a.ts'], () => body(50), 0],
+      ['読めないファイルは飛ばす (ここでは鳴らせない)', [], {}, ['src/gone.ts'], () => null, 0],
+      ['複数あればその数だけ鳴る', [], {}, ['src/a.ts', 'src/b.ts'], () => BROAD, 2],
+    ];
+    for (const [label, mut, led, files, read, want] of dcases) {
+      const got = decorativeDisables(mut, led, files, read).length;
+      const ok = got === want;
+      if (!ok) failed += 1;
+      console.log(`  ${ok ? '✓' : '✗'} 飾りの pragma: ${label}: ${got} 件 (期待 ${want})`);
+    }
+  }
+
   // MUST_MEASURE 側 — 「載せなければ無反応」を塞げているか
   const walls = { 'a/guard.ts': '壁 A', 'b/guard.ts': '壁 B' };
   const wallCases = [
@@ -441,6 +570,10 @@ function main(argv) {
   failures.push(...checkWallsAreProtected());
   failures.push(...checkProtectedAreMeasured());
 
+  // 飾りの pragma —— 広い無効化が在るのに mutate に無いファイル。
+  // 名指しの名簿 (MUST_MEASURE) と違い、**形から見つける**ので書き忘れが効かない。
+  failures.push(...decorativeDisables());
+
   // 「測っていないと分かっている」台帳の双方向。載ったのに消し忘れる /
   // ファイルが消えたのに残る、のどちらでも落とす。
   for (const rel of staleUnmeasured(files, KNOWN_UNMEASURED)) {
@@ -458,6 +591,7 @@ function main(argv) {
     `測っていないと分かっている壁: ${Object.keys(KNOWN_UNMEASURED).length} ファイル (mutate 外・理由つき)`,
   );
   console.log(`広い無効化: ${seen.size} ファイル / ${broadRegions} 箇所 / ${broadLines} 行 (台帳: ${Object.keys(KNOWN_BROAD).length} ファイル)`);
+  console.log(`mutate 外の src ファイル: ${sourceFiles().filter((f) => !mutateList().includes(f)).length} 件 — うち広い無効化を持つものは全て KNOWN_UNMEASURED に在ること`);
 
   if (failures.length === 0) {
     console.log('✅ 測っていない範囲は台帳どおり (増えても減ってもいません)');
@@ -555,6 +689,7 @@ module.exports = {
   scanSource,
   checkWallsAreProtected,
   checkProtectedAreMeasured,
+  decorativeDisables,
   broadRegionsOf,
   missingWalls,
   staleUnmeasured,
