@@ -214,11 +214,14 @@ const KNOWN_UNMEASURED = {
     + 'webShimInvokeNeverRejects / webShimPayloadRedaction / webShimTimeouts / '
     + 'dualBuildActionSurface / webShimBridge / webShimCredentials。'
     + '**判断そのものをこのファイルへ書き足すなら、共有側へ出すか mutate に載せること。**'
-    + ' なお **`mutate` に載せると dry run で落ちる** (2026-08-31 実測): '
-    + '`webShimCredentials.test.ts` の「鍵を載せて直接叩く送り先は、字面で 1 つだけ」は'
-    + '**このファイルを本文として走査する**ので、Stryker が計装した源を読むと'
-    + '`timedFetchAi` が 0 件になる。載せたい日は、字面の検査を先に'
-    + '「字面ではない形」へ書き換えること。',
+    + ' **2026-09-01: dry run の壁は取り除いた。** `webShimCredentials.test.ts` の字面走査が'
+    + 'Stryker の計装後に 0 件になって dry run ごと落としていたので、識別子の数と'
+    + '「後続 300 文字以内の URL」で拾う形へ書き換えた (計装済みの形を標本に添えてある)。'
+    + '`npx stryker run --mutate src/renderer/web-shim.ts` は通る。'
+    + ' **実測 (2026-09-01): 有効 1,497 / Killed 506 / 生存 652 / 未到達 339 ='
+    + ' 総合 33.80% / 覆われた分 43.70%。** 10 日前 (総合 8.34% / 未到達 1,178) から'
+    + '未到達は 83% → 23% へ減った。**据え置く理由は「載せられない」ではなく、'
+    + '生存 652 のまま載せると週次 CI が恒常的に赤になる、の 1 点である。**',
 };
 
 /**
