@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 374 | 自己検証 |
+| `file:line` 参照数 | 385 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1791,7 +1791,7 @@ union を参照する。
 | shopify | `sync-to-salesforce` | order + token + instanceUrl | **送り先が payload 由来**。https かつ salesforce.com / *.salesforce.com のみ (2026-08-23 まで https しか見ておらず、トークンと顧客情報が任意のホストへ届いた) | `shopify.ts:398-406` |
 | shopify | `sync-to-stripe` | order + token | 送り先は定数 (api.stripe.com) | `shopify.ts:398-406` |
 
-### 3.3 ネットワーク egress マトリクス (15 ホスト + ユーザー指定)
+### 3.3 ネットワーク egress マトリクス (26 ホスト + ユーザー指定)
 
 外部接続は **main プロセスからのみ**。下記以外のホストへの接続は存在しない。
 
@@ -1817,6 +1817,17 @@ union を参照する。
 | assistant (AI ハブ・compat) | ユーザー指定 (LiteLLM / Groq / LM Studio 等) | `POST /v1/chat/completions` | Bearer (任意) | `src/shared/ai/providers.ts:245-283` |
 | OAuth (Google) | `accounts.google.com`, `oauth2.googleapis.com` | `GET /o/oauth2/v2/auth`, `POST /token` | — / form-urlencoded | `oauth.ts:58-85` |
 | ollama | **`127.0.0.1:11434`** (hardcoded) | `GET /api/version`, `/api/tags`, `POST /api/chat` (allowlist 限定) | none | `ollama.ts:27, 40-46` |
+| microsoft-365 | `graph.microsoft.com` | `GET /v1.0/me`, `POST /v1.0/me/sendMail`, `POST /v1.0/me/events` | Bearer | `microsoft-365.ts:21` |
+| freee | `api.freee.co.jp` | `GET /api/1/companies`, `GET /api/1/deals` | Bearer | `freee.ts:21` |
+| base | `api.thebase.in` | `GET /1/items` | Bearer | `base.ts:34` |
+| shopify→discord | `discord.com` | `POST` webhook (payload 由来。https + hostname 完全一致で絞る) | webhook URL | `shopify.ts:172-194` |
+| shopify→line | `api.line.me` | `POST /v2/bot/message/push` | Bearer | `shopify.ts:205-215` |
+| shopify→stripe | `api.stripe.com` | `POST /v1/customers` | Bearer | `shopify.ts:354-366` |
+| shopify→salesforce | `*.salesforce.com` | `POST /services/data/v59.0/sobjects/Contact/` (payload 由来。https + `*.salesforce.com` で絞る) | Bearer | `shopify.ts:330-340` |
+| OAuth (Microsoft) | `login.microsoftonline.com` | `GET /common/oauth2/v2.0/authorize`, `POST /common/oauth2/v2.0/token` | — / PKCE | `oauth.ts:168-171` |
+| OAuth (freee) | `accounts.secure.freee.co.jp` | `GET /public_api/authorize`, `POST /public_api/token` | — / PKCE | `oauth.ts:159-162` |
+| OAuth (Atlassian) | `auth.atlassian.com` | `GET /authorize`, `POST /oauth/token` | — / client secret | `oauth.ts:267-270` |
+| OAuth (Canva) | `www.canva.com` | `GET /api/oauth/authorize` (ブラウザで開く。main は fetch しない) | — | `oauth.ts:236-239` |
 
 **Ollama 禁止リスト**: `/api/pull`, `/api/create`, `/api/push`, `/api/copy`, `/api/delete`,
 `/api/blobs`, `/api/upload` — `ALLOWED_ENDPOINTS` (`ollama.ts:61-66`) に含まれず、

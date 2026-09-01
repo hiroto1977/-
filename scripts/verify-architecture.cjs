@@ -884,6 +884,36 @@ function selfTest() {
   }
 
   /*
+   * **egress の網羅にも標本を通す。**
+   *
+   * 「表に無い宛先を見つける」も不在の主張なので、実物に対して緑でも
+   * 空虚でありうる。表を空にすれば**字面で書かれた全部**が鳴り、実物なら
+   * 0 件になる。1 行消せばその 1 件だけが鳴る。
+   */
+  const egressCases = [
+    ['表が空なら字面の宛先が全部鳴る', '### 3.3 ネットワーク egress\n', (n) => n > 15],
+    [
+      '実物の文書なら鳴らない',
+      readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md')) ?? '',
+      (n) => n === 0,
+    ],
+    [
+      '1 行だけ消すと、その 1 件が鳴る',
+      (readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md')) ?? '').replace(
+        /^\| microsoft-365 \| `graph\.microsoft\.com`.*$/m,
+        '',
+      ),
+      (n) => n === 1,
+    ],
+  ];
+  for (const [label, doc, want] of egressCases) {
+    const got = verifyEgressHosts(doc).failures.length;
+    const ok = want(got);
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} egress: ${label}: ${got} 件`);
+  }
+
+  /*
    * **`readonly` の欄を読めること。** 2026-09-01 まで読めておらず、
    * `readonly` で書かれた payload interface は欄が空集合になっていた。
    */
@@ -1013,6 +1043,87 @@ const PAYLOAD_INTERFACE_OVERRIDES = {
   // `templates.ts` の中では書き出しが 1 種類しかないので `ExportPayload`。
   'templates.export-template': 'ExportPayload',
 };
+
+/**
+ * **`src/main/**` に字面で書かれた宛先が、egress マトリクス (§3.3) に載っているか。**
+ *
+ * ## なぜ要るか (2026-09-01)
+ *
+ * §3.3 は「**下記以外のホストへの接続は存在しない**」という**絶対の否定**を
+ * 主張している。資格情報がどこへ出ていきうるかの唯一の一覧なので、これが
+ * 嘘だと読んだ人は攻撃面を狭く見積もる。
+ *
+ * 実測したら **11 ホストが載っていなかった** —— `graph.microsoft.com`
+ * (Bearer で送受信)、shopify コネクタの `api.line.me` / `api.stripe.com` /
+ * `discord.com` (どれも payload で受け取った資格情報を載せる)、`freee` /
+ * `base` の API、OAuth のトークン端点 3 つ。表は「15 ホスト」と数えていた。
+ *
+ * `lint:network-targets` は「**送り先が変数で決まる**通信」を見張る。
+ * こちらはその裏 —— **字面で書いてある宛先が台帳に在るか**。両方要る。
+ *
+ * ## 判定
+ *
+ * `src/main/**` の実行コード (コメントを落とす) から `https?://<host>` を集め、
+ * §3.3 の Host 欄か、下の除外台帳に在ることを求める。
+ */
+const EGRESS_NOT_FETCHED = {
+  'www.youtube.com': '画面に出す視聴 URL を組み立てるだけ (youtube.ts)。main は fetch しない',
+  'www.w3.org': 'SVG / XML の名前空間 URI。通信しない',
+  localhost: 'OAuth の loopback 受け口の説明とローカル開発用。外向きではない',
+  'x.atlassian.net': '検査・注記で使う例示のサイト名 (実際の宛先は `*.atlassian.net` として表に在る)',
+  'attacker.example': '検査の標本 (送り先を絞っていることを確かめるための偽ホスト)',
+};
+
+function verifyEgressHosts(archText) {
+  const failures = [];
+  const lines = archText.split('\n');
+  const start = lines.findIndex((l) => l.startsWith('### 3.3 ネットワーク egress'));
+  let end = start + 1;
+  while (end < lines.length && !lines[end].startsWith('### ')) end += 1;
+  const documented = new Set();
+  for (const row of lines.slice(start, end)) {
+    if (!row.startsWith('| ') || row.startsWith('|---')) continue;
+    const host = row.split(' | ')[1] ?? '';
+    // `:port` 付きの表記も host として読む (`` `127.0.0.1:11434` `` が在る)。
+    for (const m of host.matchAll(/`\*?\.?([A-Za-z0-9.-]+)(?::\d+)?`/g)) documented.add(m[1]);
+    for (const m of host.matchAll(/\*\.([A-Za-z0-9.-]+)/g)) documented.add(m[1]);
+  }
+
+  const found = new Map();
+  const walk = (dir) => {
+    for (const name of fs.readdirSync(dir).sort()) {
+      const p = path.join(dir, name);
+      if (fs.statSync(p).isDirectory()) {
+        if (name !== '__tests__') walk(p);
+      } else if (name.endsWith('.ts')) {
+        const src = readFileSafe(p) ?? '';
+        // コメントを落としてから見る (注記の中の URL で鳴らさない)。
+        const code = src
+          .replace(/\/\*[\s\S]*?\*\//g, '')
+          .split('\n')
+          .filter((l) => !/^\s*(\/\/|\*)/.test(l))
+          .join('\n');
+        for (const m of code.matchAll(/https?:\/\/([A-Za-z0-9._-]+)/g)) {
+          if (!found.has(m[1])) found.set(m[1], new Set());
+          found.get(m[1]).add(path.relative(REPO_ROOT, p));
+        }
+      }
+    }
+  };
+  walk(path.join(REPO_ROOT, 'src/main'));
+
+  for (const [host, files] of [...found].sort()) {
+    if (documented.has(host)) continue;
+    if (Object.prototype.hasOwnProperty.call(EGRESS_NOT_FETCHED, host)) continue;
+    // `*.salesforce.com` のような接尾辞での登録を許す。
+    if ([...documented].some((d) => host === d || host.endsWith(`.${d}`))) continue;
+    failures.push({
+      ref: host,
+      reason: `egress マトリクス (§3.3) に無い宛先です (${[...files].join(', ')}) — 表に足すか、通信しない理由を EGRESS_NOT_FETCHED へ`,
+    });
+  }
+  return { failures, scanned: found.size, documented: documented.size };
+}
 
 /**
  * **登録済みの action が 1 つ残らず payload 表に載っているか。**
@@ -1161,6 +1272,7 @@ function main() {
   const metrics = verifyMetrics(arch);
   const payloads = verifyActionPayloads(arch);
   const coverage = verifyActionCoverage(arch);
+  const egress = verifyEgressHosts(arch);
 
   console.log(`Verified ${refs.successCount} file:line references in docs/ARCHITECTURE.md`);
   console.log(`Verified ${metrics.ok.length} live metric(s): ${metrics.ok.join(', ') || '(none)'}`);
@@ -1171,12 +1283,16 @@ function main() {
         ? ` (静的に読めない ACTIONS: ${coverage.unreadable.join(', ')})`
         : ''),
   );
+  console.log(
+    `Verified ${egress.scanned} literal host(s) in src/main against the §3.3 egress matrix (${egress.documented} documented)`,
+  );
 
   const allFailures = [
     ...refs.failures,
     ...metrics.failures,
     ...payloads.failures,
     ...coverage.failures,
+    ...egress.failures,
   ];
   if (allFailures.length === 0) {
     console.log('✅ all references + metrics resolve');
