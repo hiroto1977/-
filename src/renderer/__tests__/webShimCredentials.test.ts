@@ -1,6 +1,7 @@
 /** @vitest-environment jsdom */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { SERVICE_IDS } from '../../shared/serviceId';
 import { join } from 'node:path';
 
 /*
@@ -847,5 +848,85 @@ describe('デスクトップ版だけの操作は、ブラウザ版では実行�
     const hub = await loadShim();
     const r = await invoke(hub, 'emotions', 'log-mood', { score: 3 });
     expect(r.code, '対照が効いていない — 上の 5 本は何も見ていない').not.toBe('action_not_found');
+  });
+});
+
+/*
+ * **ブラウザ版が処理する口を、呼んで数え上げて固定する。**
+ *
+ * 上の 5 本は名指しである。**名指しの規則は、名指しした綴りしか止められない** ——
+ * このリポジトリが繰り返し踏んでいる形で、上の 5 本自身がその弱点を持つ
+ * (6 つ目の危険な口が生えても何も言わない)。そこで**総当たり**で固定する。
+ *
+ * 75 サービス × 42 行動名を全部 `invoke` して、`action_not_found` 以外を
+ * 返した組を集める。それがブラウザ版の実際の面である。**38 組ちょうど。**
+ *
+ * ## 語彙の限界を書いておく
+ *
+ * 行動名の一覧はここに書き写してある。**まったく新しい行動名**が生えた場合、
+ * この総当たりはそれを試さない。その向きは
+ * `src/__tests__/dualBuildActionSurface.test.ts` が web-shim の
+ * `action === '…'` を字面で拾って `LIVE_ACTIONS` と突き合わせる形で見ている。
+ *
+ * 分担: **字面の走査が「新しい名前」を、こちらが「既知の名前の新しい組」を**
+ * 見る。後者は走査の正規表現が取りこぼす書き方 (`(action === 'a' || …)` や
+ * `RECORD_ENTRY_SERVICES.has(serviceId)` のような集合判定) でも当たる。
+ */
+const PROBE_ACTIONS: readonly string[] = [
+  'advise', 'analyze-text', 'backtest', 'buy', 'chat', 'chatAll', 'check-email-breach',
+  'clear-history', 'compare-strategies', 'create-dns-record', 'create-draft', 'create-event',
+  'create-folder', 'create-issue', 'create-page', 'create-post-draft', 'export-dashboard',
+  'export-dashboard-md', 'export-svg', 'export-template', 'hold', 'judge-leader',
+  'list-collections', 'log-mood', 'providers', 'purge-cache', 'record-entry', 'register-ticker',
+  'run-skill', 'save-state', 'scan-url', 'sell', 'send-mail', 'send-message', 'sync-to-discord',
+  'sync-to-gmail', 'sync-to-line', 'sync-to-notion', 'sync-to-salesforce', 'sync-to-slack',
+  'sync-to-stripe', 'unregister-ticker',
+];
+
+/** ブラウザ版が実際に処理する組 (2026-09-01 実測)。**増減したら鳴る。** */
+const BROWSER_SURFACE: readonly string[] = [
+  'assistant/chat', 'assistant/chatAll', 'assistant/providers',
+  'atlassian/create-issue',
+  'business/advise', 'business/export-dashboard', 'business/export-dashboard-md',
+  'calendar/create-event', 'canva/create-folder',
+  'cloudflare/create-dns-record', 'cloudflare/purge-cache',
+  'demae-can/record-entry', 'drive/create-folder',
+  'emotions/analyze-text', 'emotions/clear-history', 'emotions/log-mood',
+  'github/create-issue', 'gmail/create-draft',
+  'mutual-funds/record-entry', 'notion/create-page', 'ollama/chat',
+  'real-estate/record-entry',
+  'security/check-email-breach', 'security/scan-url',
+  'slack/send-message',
+  'stocks/advise', 'stocks/compare-strategies', 'stocks/export-dashboard',
+  'stocks/export-dashboard-md', 'stocks/register-ticker', 'stocks/unregister-ticker',
+  'talent/judge-leader', 'talent/save-state',
+  'teamradar/export-svg', 'teamradar/save-state',
+  'templates/export-template', 'uber-eats/record-entry', 'wordpress/create-post-draft',
+];
+
+describe('ブラウザ版の面は、この組ちょうど (総当たりで固定)', () => {
+  it('処理される (service, action) は 38 組ちょうど', async () => {
+    stored = null; // 鍵の有無に依らず「処理されるか」だけを見る
+    const hub = await loadShim();
+    const handled: string[] = [];
+    for (const s of SERVICE_IDS) {
+      for (const a of PROBE_ACTIONS) {
+        const r = await invoke(hub, s, a, {});
+        if (r.code !== 'action_not_found') handled.push(`${s}/${a}`);
+      }
+    }
+    expect(
+      handled.sort(),
+      'ブラウザ版の面が変わりました。増えたなら「main に閉じ込めてある処理がレンダラで動く」形になっていないか確かめ、'
+        + '意図した追加ならこの一覧を更新してください',
+    ).toEqual([...BROWSER_SURFACE].sort());
+  }, 60_000);
+
+  it('★ 語彙が面を覆っている (probe に無い行動名を面に書いていない)', () => {
+    // 面の行動名が probe に無ければ、その組は**総当たりで試されない** =
+    // 上の検査はその行を一度も確かめないまま通る。
+    const probe = new Set(PROBE_ACTIONS);
+    const missing = BROWSER_SURFACE.map((p) => p.split('/')[1]!).filter((a) => !probe.has(a));
+    expect(missing, '面に在る行動名が probe の語彙に無い').toEqual([]);
   });
 });
