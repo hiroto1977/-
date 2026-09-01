@@ -717,3 +717,82 @@ describe('資格情報が有れば、その門は通す (常に断る門を許�
     ).not.toBe('not_configured');
   });
 });
+
+/*
+ * **3 つ目の向き —— 金庫が施錠されているとき。**
+ *
+ * 門には状態が 3 つある: 鍵が無い / 鍵が有る / **金庫が開いていない**。
+ * 上の 2 つは前の 2 コミットで留めた。3 つ目は
+ * `catch { return err('not_configured', 'Vault がロックされています…') }` で、
+ * **実測すると 4 つの口で「未到達」だった** (business / stocks / emotions /
+ * github / atlassian のうち、どのテストも `getToken` を投げさせていなかった)。
+ *
+ * 施錠中はいちばん危ない状態ではないが、**いちばん紛らわしい**状態である ——
+ * ここが壊れると「鍵が未設定です」と言われ、利用者は既に保存した鍵を
+ * 上書きしようとする (そして解錠していないので、また同じことになる)。
+ *
+ * そして施錠中でも守るべき性質は鍵が無いときと同じ:
+ * **外へ 1 度も出ない。** 例外が門を素通りして要求が組み立てられたら、
+ * 鍵の無いまま送るのと変わらない。
+ */
+describe('金庫が施錠されていれば、そう言って外へ出ない (全経路)', () => {
+  let fetchCalls: string[] = [];
+  let originalFetch: typeof globalThis.fetch;
+
+  beforeEach(() => {
+    fetchCalls = [];
+    originalFetch = globalThis.fetch;
+    globalThis.fetch = (async (input: unknown) => {
+      fetchCalls.push(String(input));
+      return new Response('{}', { status: 200, headers: { 'content-type': 'application/json' } });
+    }) as typeof globalThis.fetch;
+  });
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  const LOCKED: ReadonlyArray<readonly [string, string, Record<string, unknown>]> = [
+    ['business', 'advise', { question: '次に注力すべき事業は？' }],
+    ['stocks', 'advise', { question: '次に買い増すべき銘柄は？' }],
+    ['emotions', 'analyze-text', { text: '今日は落ち着いている' }],
+    ['github', 'create-issue', { title: 'title', body: 'body' }],
+    ['atlassian', 'create-issue', { summary: 'summary' }],
+    ['security', 'scan-url', { url: 'https://example.com/suspicious' }],
+    ['security', 'check-email-breach', { email: 'someone@example.com' }],
+  ];
+
+  it.each(LOCKED)('%s/%s は施錠中なら何も送らない', async (service, action, payload) => {
+    vaultThrows = new Error('vault is locked');
+    const hub = await loadShim();
+    const r = await invoke(hub, service, action, payload);
+
+    expect(r.ok, `${service}/${action} が施錠中に成功しました`).toBe(false);
+    expect(r.code, `${service}/${action} の断り方が not_configured ではありません`).toBe(
+      'not_configured',
+    );
+    expect(
+      r.message,
+      `${service}/${action} が施錠を「鍵が未設定」と説明しています (利用者は解錠ではなく再設定へ向かいます)`,
+    ).toMatch(/ロック/);
+    expect(fetchCalls, `${service}/${action} が施錠中に直接 fetch しました`).toEqual([]);
+    expect(
+      transportCalls.map((c) => c.url),
+      `${service}/${action} が施錠中にプロキシへ送りました`,
+    ).toEqual([]);
+  });
+
+  /*
+   * 標本 —— 上の `toMatch(/ロック/)` が「何にでも当たる」ものでないこと。
+   * 鍵が無いだけの断り文には**当たらない**。当たってしまうなら、
+   * 施錠と未設定を見分けていないのと同じである。
+   */
+  it('★ 施錠の文言は「鍵が未設定」の文言と混ざらない', async () => {
+    stored = null;
+    const hub = await loadShim();
+    const r = await invoke(hub, 'business', 'advise', { question: 'x' });
+    expect(r.code).toBe('not_configured');
+    expect(r.message, '未設定と施錠が同じ文言になっています').not.toMatch(/ロック/);
+    // 標本: 当たる側 (施錠の文言) はちゃんと当たる。
+    expect('Vault がロックされています。再読み込みしてください').toMatch(/ロック/);
+  });
+});
