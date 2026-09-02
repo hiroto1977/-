@@ -1,6 +1,6 @@
 # Service Hub — 残りの作業手順書
 
-最終更新: 2026-08-17
+最終更新: 2026-09-02
 対象ブランチ: `claude/eager-brown-7cev3c`（既定ブランチは `main`）
 
 このドキュメントは「今の状態から先に何が残っているか」を並べたランブックです。
@@ -894,11 +894,13 @@ chat の成功経路と通信の枠 (時間切れ・サイズ上限・キャッ�
 | ファイル | 実測 | 生存 | 現在 |
 |---|---:|---:|---|
 | `src/shared/waterCyclePlanner.ts` | 74.07% | 39 | **151 変異体 100%**・`mutate` へ登録 |
-| `src/renderer/data/villageLayout.ts` | **13.30%** | 159 | 未着手 |
-| `src/renderer/voice/ttsAdapter.ts` | **44.00%** | 121 | 未着手 |
+| `src/renderer/data/villageLayout.ts` | 13.30% | 159 | **173 変異体 100%**・`mutate` へ登録 (PR #786) |
+| `src/renderer/voice/ttsAdapter.ts` | 44.00% | 121 | **89.73% / 生存 23** (2026-09-02 再測)・`mutate` 未登録 — 残る唯一の未着手 |
 | `src/renderer/data/charts.ts` | 72.01% | 75 | **246 変異体 100%**・`mutate` へ登録 |
-| `src/renderer/voice/speechAdapter.ts` | 78.46% | 13 | 未着手 |
+| `src/renderer/voice/speechAdapter.ts` | 78.46% | 13 | **49 変異体 100%**・`mutate` へ登録 |
 | `src/shared/connectors/freeConnectors.ts` | n/a | 0 | **変異体ゼロ** = 純粋なデータ表。載せる意味が無い |
+
+> **2026-09-02 追記**: この表は 2026-08-20 の実測で、3 行が「未着手」のまま残っていたが**2 行は既に 100% で `mutate` に在籍していた** (villageLayout は PR #786、speechAdapter も登録済み)。残るのは `ttsAdapter.ts` だけで、再測すると 44.00% → **89.73%** (生存 121 → 23) まで自然に上がっていた (`useVoiceQueue` 等の振る舞い検査が増えたため)。**表の「現在」欄は、次に触る人が読む欄なので実測で直す。**
 
 **`waterCyclePlanner.ts` から着手した理由**は、ここが**法規制の答えを出す**
 場所だから。水質汚濁防止法の一律排水基準 (全窒素 120mg/L・全りん 16mg/L) と
