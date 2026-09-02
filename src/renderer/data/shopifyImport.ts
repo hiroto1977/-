@@ -8,6 +8,7 @@
  * (lint:imports) に触れるため、renderer 側で必要最小限の入力型を再定義する。
  */
 import { parseSalesEntry, type SalesEntry } from './sales';
+import { localIsoDate } from '../../shared/localDate';
 
 /** Shopify 注文の最小入力。`total` は "¥12,000" のような表示文字列でも、
  *  数値でも受け付ける。 */
@@ -39,7 +40,8 @@ export function orderToSalesEntry(
 ): SalesEntry | null {
   const amount = parseAmount(order.total);
   if (amount <= 0) return null;
-  const date = opts.date ?? new Date().toISOString().slice(0, 10);
+  // 売上日は利用者の時計で。UTC だと月初未明の注文が前月に付く。
+  const date = opts.date ?? localIsoDate();
   return parseSalesEntry({
     date,
     channel: 'shopify',

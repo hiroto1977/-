@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { localIsoDate } from '../../shared/localDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
@@ -50,7 +51,9 @@ function MoodTrend({ moods }: { moods: MoodLog[] }) {
   for (let i = 29; i >= 0; i--) {
     const d = new Date(today);
     d.setDate(d.getDate() - i);
-    const key = d.toISOString().slice(0, 10);
+    // 保存側 (`logMood`) は利用者の時計で日付を書く。キーも同じ時計で作らないと、
+    // 朝 9 時までは今日の記録が図から消える (UTC の日付は前日)。
+    const key = localIsoDate(d);
     const found = moods.find((m) => m.date === key);
     days.push({ date: key, score: found ? found.score : null });
   }

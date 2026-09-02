@@ -38,6 +38,7 @@ import {
   type FetchContext,
 } from './types';
 import { ANTHROPIC_FAST_MODEL } from '../../shared/ai/providers';
+import { localIsoDate } from '../../shared/localDate';
 
 
 const EMOTION_KEYS = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust'] as const;
@@ -141,12 +142,9 @@ interface LogMoodPayload {
   note?: string;
 }
 
+/** 利用者の時計の今日。共有の `localIsoDate` に寄せた (同じ関数が renderer にもあった)。 */
 function todayLocal(): string {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
+  return localIsoDate();
 }
 
 async function logMood(ctx: ActionContext): Promise<{ date: string; score: number }> {

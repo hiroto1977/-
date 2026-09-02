@@ -8,6 +8,7 @@ import {
   isEncryptedBackup,
 } from '../data/backup';
 import { isEncryptionEnabled } from '../data/recordEncryption';
+import { localIsoDate } from '../../shared/localDate';
 
 /**
  * Backup / restore the entire local record store (sales, KPI actuals, team
@@ -36,7 +37,7 @@ export function BackupPanel() {
       const a = document.createElement('a');
       a.href = url;
       const suffix = encrypted ? '-encrypted' : '';
-      a.download = `service-hub-backup-${new Date().toISOString().slice(0, 10)}${suffix}.json`;
+      a.download = `service-hub-backup-${localIsoDate()}${suffix}.json`;
       a.click();
       URL.revokeObjectURL(url);
       setMsg(`${records.length} 件のレコードをバックアップしました${encrypted ? '（暗号化済み）' : ''}`);

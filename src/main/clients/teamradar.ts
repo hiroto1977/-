@@ -3,6 +3,7 @@ import * as os from 'node:os';
 import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
 import { isSafeExportPath, writeExportFile } from './exportPaths';
+import { localIsoDate } from '../../shared/localDate';
 
 /**
  * Team radar chart — 18 番目のサービス。
@@ -394,7 +395,7 @@ export async function loadTeamRadarState(
       : '営業部';
     const at = typeof o['evaluatedAt'] === 'string' && o['evaluatedAt'].length > 0
       ? (o['evaluatedAt'] as string).slice(0, 32)
-      : new Date().toISOString().slice(0, 10);
+      : localIsoDate();
     const members = validateMembers(o['members'] ?? []);
     return { department: dept, evaluatedAt: at, members };
   } catch {

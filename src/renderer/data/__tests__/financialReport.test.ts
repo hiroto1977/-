@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { localIsoDate } from '../../../shared/localDate';
 import { buildFinancialReportMarkdown } from '../financialReport';
 import { computeFinancialRatios, radarAxes } from '../financialRatios';
 import { diagnoseFinancials } from '../financialDiagnosis';
@@ -20,7 +21,7 @@ describe('buildFinancialReportMarkdown', () => {
   // ガードの ConditionalExpression/EqualityOperator 変異で undefined 経路が throw
   // した場合でも、suite 収集時 (describe 本体) ではなく当該 it 内で fail させ、
   // 確実に mutant を撃墜できる (collection-throw だと survived 扱いになりうるため)。
-  const buildBase = () => buildFinancialReportMarkdown({ label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z') });
+  const buildBase = () => buildFinancialReportMarkdown({ label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date(2026, 5, 2, 12) });
 
   it('includes the title, date and overall grade', () => {
     const md = buildBase();
@@ -104,7 +105,7 @@ describe('buildFinancialReportMarkdown', () => {
     // 売上0 → 多くの比率が null。CCC 行が「| CCC | — |」になることを確認。
     // `if (v == null) return '—'` の条件を false 固定 / '—' を空に変える mutant を殺す。
     const zeroRatios = computeFinancialRatios(deriveBusinessFinancials({ revenue: 0, variableCost: 0, fixedCost: 0, profit: 0, profitMargin: 0 }));
-    const mdNull = buildFinancialReportMarkdown({ label: 'Z', ratios: zeroRatios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z') });
+    const mdNull = buildFinancialReportMarkdown({ label: 'Z', ratios: zeroRatios, diagnosis, trend, generatedAt: new Date(2026, 5, 2, 12) });
     expect(mdNull).toContain('| CCC | — |');
   });
 
@@ -113,13 +114,13 @@ describe('buildFinancialReportMarkdown', () => {
     // mutant は「+0pt」になるため、0pt 表記の検証で殺せる。
     const flat0 = analyzeMarginTrend([{ revenue: 100, profit: 10 }, { revenue: 100, profit: 10 }]);
     expect(flat0.deltaPct).toBe(0);
-    const md0 = buildFinancialReportMarkdown({ label: 'Z', ratios, diagnosis, trend: flat0, generatedAt: new Date('2026-06-02T00:00:00Z') });
+    const md0 = buildFinancialReportMarkdown({ label: 'Z', ratios, diagnosis, trend: flat0, generatedAt: new Date(2026, 5, 2, 12) });
     expect(md0).toContain('（履歴 0pt）');
     expect(md0).not.toContain('+0pt');
   });
 
-  it('defaults generatedAt to now when omitted', () => {
-    const today = new Date().toISOString().slice(0, 10);
+  it('defaults generatedAt to now when omitted (利用者の時計の今日 — UTC だと日本の朝は前日)', () => {
+    const today = localIsoDate();
     const md2 = buildFinancialReportMarkdown({ label: 'X', ratios, diagnosis, trend });
     expect(md2).toContain(`作成日: ${today}`);
   });
@@ -127,7 +128,7 @@ describe('buildFinancialReportMarkdown', () => {
   it('ordinaryProfit 未指定なら法人税等セクションを出力しない (既存出力と不変)', () => {
     // ローカルに組み立て、`if (ordinaryProfit !== undefined)` ガードの
     // ConditionalExpression / EqualityOperator 変異 (true 固定 / === 反転) を撃墜する。
-    const mdNoTax = buildFinancialReportMarkdown({ label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z') });
+    const mdNoTax = buildFinancialReportMarkdown({ label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date(2026, 5, 2, 12) });
     expect(mdNoTax).not.toContain('## 法人税等(概算)');
     expect(mdNoTax).not.toContain('税引後利益');
     // 強い不変条件: 未指定なら golden (既存の税抜きレポート) と完全一致。
@@ -137,7 +138,7 @@ describe('buildFinancialReportMarkdown', () => {
 
   it('golden: ordinaryProfit ありで法人税等セクションを末尾 (disclaimer 直前) に正確に出力する', () => {
     const mdTax = buildFinancialReportMarkdown({
-      label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z'), ordinaryProfit: 5_000_000,
+      label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date(2026, 5, 2, 12), ordinaryProfit: 5_000_000,
     });
     const section = [
       '## 法人税等(概算)',
@@ -173,7 +174,7 @@ describe('buildFinancialReportMarkdown', () => {
 
   it('黒字 (ordinaryProfit>0) は中小法人の区分注記を出す (欠損分岐の > / <= 境界も撃墜)', () => {
     const mdSmall = buildFinancialReportMarkdown({
-      label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z'), ordinaryProfit: 5_000_000,
+      label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date(2026, 5, 2, 12), ordinaryProfit: 5_000_000,
     });
     expect(mdSmall).toContain('> 区分: 中小法人（経常利益を課税所得の概算として使用。資本金等の細目は経営コックピットの法人税カードで調整可）。');
     // 黒字なので欠損注記は出ない (分岐が排他)。
@@ -183,7 +184,7 @@ describe('buildFinancialReportMarkdown', () => {
   it('欠損 (ordinaryProfit<=0) は均等割のみ・税引後=税引前−均等割 の注記を出す', () => {
     const b = calcCorporateTax(-200_000);
     const mdLoss = buildFinancialReportMarkdown({
-      label: 'Z', ratios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z'), ordinaryProfit: -200_000,
+      label: 'Z', ratios, diagnosis, trend, generatedAt: new Date(2026, 5, 2, 12), ordinaryProfit: -200_000,
     });
     expect(mdLoss).toContain('| 税引前利益(経常利益) | -200,000 円 |');
     expect(mdLoss).toContain('| 法人税 | 0 円 |');
@@ -197,7 +198,7 @@ describe('buildFinancialReportMarkdown', () => {
 
   it('ordinaryProfit=0 も欠損扱い (<=0 の境界: > ではなく >=)', () => {
     const md0 = buildFinancialReportMarkdown({
-      label: 'Z', ratios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z'), ordinaryProfit: 0,
+      label: 'Z', ratios, diagnosis, trend, generatedAt: new Date(2026, 5, 2, 12), ordinaryProfit: 0,
     });
     expect(md0).toContain('欠損(税引前利益が0以下)のため');
     expect(md0).not.toContain('区分:');
@@ -205,7 +206,7 @@ describe('buildFinancialReportMarkdown', () => {
 
   it('法人税等は概算・税務助言ではない旨の注記を含む', () => {
     const mdTax = buildFinancialReportMarkdown({
-      label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z'), ordinaryProfit: 5_000_000,
+      label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date(2026, 5, 2, 12), ordinaryProfit: 5_000_000,
     });
     expect(mdTax).toContain('法人税等は概算試算であり、正確な税額計算・税務助言ではありません');
   });
@@ -213,7 +214,7 @@ describe('buildFinancialReportMarkdown', () => {
   it('法定実効税率(参考) の行と、実効税率との違いの注記を出す (round 60)', () => {
     const b = calcCorporateTax(5_000_000);
     const mdTax = buildFinancialReportMarkdown({
-      label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date('2026-06-02T00:00:00Z'), ordinaryProfit: 5_000_000,
+      label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date(2026, 5, 2, 12), ordinaryProfit: 5_000_000,
     });
     // 行は statutoryEffectiveRate を小数1桁% で出す (5M中小→23.2%)。
     const expectedRow = `| 法定実効税率(参考) | ${(b.statutoryEffectiveRate * 100).toFixed(1)}% |`;

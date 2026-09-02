@@ -4,6 +4,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { useCollection } from '../data/useCollection';
 import { latestRecord } from '../data/latestRecord';
+import { localIsoDate } from '../../shared/localDate';
 import {
   KPI_ACTUALS_COLLECTION,
   parseKpiActual,
@@ -326,7 +327,7 @@ function ActualsPanel() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `kpi-actuals-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `kpi-actuals-${localIsoDate()}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }

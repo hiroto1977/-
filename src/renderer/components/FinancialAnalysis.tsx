@@ -26,6 +26,7 @@ import { analyzeMarginTrend, type MarginTrend } from '../data/financialTrend';
 import { buildFinancialReportMarkdown } from '../data/financialReport';
 import { consolidationScope, consolidationLabel } from '../data/consolidation';
 import { buildIncomeStatement, buildBalanceSheet, buildCashflowStatement, buildVariableCostingStatement, buildComprehensiveIncome, buildEquityChangeStatement, buildQuarterlyStatement, buildNotesStatement, buildSupplementarySchedule, buildAccountBreakdown, sumFinancialInputs, type StatementLine } from '../data/financialStatements';
+import { localIsoDate } from '../../shared/localDate';
 
 export interface FinancialUnit {
   readonly id: string;
@@ -665,11 +666,11 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
   }
   const downloadCsv = (csv: string, name: string) => downloadBlob('﻿' + csv, 'text/csv;charset=utf-8', name);
   function onExportCsv() {
-    downloadCsv(ratiosToCsv(perUnit.map((p) => ({ label: p.unit.label, ratios: p.ratios }))), `financial-ratios-${new Date().toISOString().slice(0, 10)}.csv`);
+    downloadCsv(ratiosToCsv(perUnit.map((p) => ({ label: p.unit.label, ratios: p.ratios }))), `financial-ratios-${localIsoDate()}.csv`);
   }
   function onExportReport() {
     const md = buildFinancialReportMarkdown({ label: selected!.unit.label, ratios: selected!.ratios, diagnosis, trend, ordinaryProfit: selected!.fin.ordinaryProfit });
-    downloadBlob(md, 'text/markdown;charset=utf-8', `financial-report-${selected!.unit.id}-${new Date().toISOString().slice(0, 10)}.md`);
+    downloadBlob(md, 'text/markdown;charset=utf-8', `financial-report-${selected!.unit.id}-${localIsoDate()}.md`);
   }
   // 現在表示中の諸表タブのライン項目 (BS は資産+負債純資産を連結) を返す。
   function currentStatementLines(): StatementLine[] {
@@ -689,7 +690,7 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
   function onExportStatement() {
     // 中身がサンプルの合算なら、ファイル名にもそう書く。手元に残った CSV は文脈を失う。
     const name = consolidated ? (scope.isSample ? 'consolidated-sample' : 'consolidated-own') : selected!.unit.id;
-    downloadCsv(statementToCsv(currentStatementLines()), `statement-${stmtTab}-${name}-${new Date().toISOString().slice(0, 10)}.csv`);
+    downloadCsv(statementToCsv(currentStatementLines()), `statement-${stmtTab}-${name}-${localIsoDate()}.csv`);
   }
 
   return (

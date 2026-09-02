@@ -355,6 +355,33 @@ const FORBIDDEN_PATTERNS = [
   },
   {
     /*
+     * **「今日」を UTC で取る。**
+     *
+     * `new Date().toISOString().slice(0, 10)` は UTC の日付で、日本 (UTC+9) では
+     * 0 時から 9 時までの間**前日**になる。2026-09-02 の総当たりで 13 か所が
+     * これを「今日」として使っていた —— 経営レポートの作成日、Shopify 取り込みの
+     * 売上日 (月初未明の注文が前月に付く)、福祉の説明資料の日付、気分ログの
+     * 折れ線の日付キー (保存側は利用者の時計なので朝は今日の記録が図から消える)。
+     * `shared/localDate.ts` の `localIsoDate()` を使うこと。
+     *
+     * 当てるのは引数なしの `new Date()` に続く形だけ。瞬間 (epoch) を UTC の
+     * 日付にする `new Date(ms).toISOString()` は API の都合で正しいことがある。
+     */
+    name: '今日を UTC で取る (new Date().toISOString().slice(0, 10))',
+    pattern: /\bnew Date\(\)\s*\.toISOString\(\)\s*\.(?:slice\(0,\s*10\)|substring\(0,\s*10\)|split\(['"]T['"]\)\[0\])/,
+    codeOnly: true,
+    rationale: 'UTC の日付は日本の朝 9 時まで前日。`localIsoDate()` (src/shared/localDate.ts) を使う',
+    allowFile: (rel) =>
+      [
+        // 注記の中で禁止の字面そのものを説明している (この門と同じ形)。
+        'src/shared/localDate.ts',
+        // 生成物の実行 ID (YYYYMMDD) の刻印。利用者に見せる日付ではなく、
+        // 走るのは UTC の CI。TS の helper を .cjs から import できない。
+        'scripts/orchestrate.cjs',
+      ].includes(rel),
+  },
+  {
+    /*
      * **`fetch` 以外の送信手段。**
      *
      * 2026-08-26 の実測: 資格情報の流出経路の台帳 (`lint:network-targets`) が
@@ -760,6 +787,9 @@ const KNOWN_SUPPRESSIONS = [
   'child_process exec/spawn :: scripts/progress.cjs :: 1',
   'child_process exec/spawn :: scripts/quality-report.cjs :: 1',
   'child_process exec/spawn :: scripts/session-context.cjs :: 1',
+  // 生成物の実行 ID (YYYYMMDD) の刻印。利用者に見せる日付ではなく、走るのは UTC の CI。
+  // TS の helper (`localIsoDate`) を .cjs から import できない (2026-09-02)。
+  '今日を UTC で取る (new Date().toISOString().slice(0, 10)) :: scripts/orchestrate.cjs :: 1',
   'Ollama write-side endpoints in network code :: scripts/ollama-cli.cjs :: 1',
   'Ollama write-side endpoints in network code :: src/main/clients/ollama.ts :: 3',
   'Ollama write-side endpoints in network code :: src/renderer/pages/OllamaPage.tsx :: 2',
@@ -862,6 +892,13 @@ function diffSuppressions(actual, known) {
 function selfTest() {
   const cases = [
     ['nodeIntegration: true を弾く', 'webPreferences: { nodeIntegration: true },', 1],
+    // 「今日」を UTC で取る形 (2026-09-02 に 13 か所で実在した)。
+    ['今日を UTC で取るのを弾く (slice)', "const today = new Date().toISOString().slice(0, 10);", 1],
+    ['今日を UTC で取るのを弾く (split)', "const today = new Date().toISOString().split('T')[0];", 1],
+    ['今日を UTC で取るのを弾く (substring)', 'a.download = `x-${new Date().toISOString().substring(0, 10)}.csv`;', 1],
+    ['利用者の時計で取れば鳴らない', 'const today = localIsoDate();', 0],
+    ['瞬間を UTC の日付にする形は当てない (API の都合で正しいことがある)', 'return new Date(epochMs).toISOString().slice(0, 10);', 0],
+    ['toISOString だけ (時刻まで使う) は当てない', 'const stamp = new Date().toISOString();', 0],
     ['nodeIntegrationInWorker も弾く', 'nodeIntegrationInWorker: true,', 1],
     ['contextIsolation: false を弾く', 'contextIsolation: false,', 1],
     // CSS url() への補間 (2026-08-24 に実在した形)

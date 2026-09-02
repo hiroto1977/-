@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { localIsoDate } from '../../shared/localDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
@@ -191,7 +192,7 @@ export function TalentPage(): React.JSX.Element {
         reports,
         initiatives,
         members,
-        updatedAt: new Date().toISOString().slice(0, 10),
+        updatedAt: localIsoDate(),
       });
       if (r.ok) {
         setSaveMsg('保存しました');

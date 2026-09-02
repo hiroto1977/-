@@ -7,6 +7,7 @@
  */
 
 import { MAX_ANALYSES, MAX_MOODS, MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
+import { localIsoDate } from '../../shared/localDate';
 
 export const EMOTION_KEYS = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust'] as const;
 export type EmotionKey = (typeof EMOTION_KEYS)[number];
@@ -102,12 +103,9 @@ function saveStore(store: EmotionsStore): void {
   localStorage.setItem(EMOTIONS_STORE_KEY, JSON.stringify(store));
 }
 
+/** 利用者の時計の今日。共有の `localIsoDate` に寄せた (同じ関数が main にもあった)。 */
 function todayLocal(now: number = Date.now()): string {
-  const d = new Date(now);
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
+  return localIsoDate(new Date(now));
 }
 
 interface LogMoodPayload {

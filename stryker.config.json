@@ -198,6 +198,7 @@
     "src/shared/hydroponics.ts",
     "src/shared/imageUrlGate.ts",
     "src/shared/invoiceTax.ts",
+    "src/shared/localDate.ts",
     "src/shared/issueLevel.ts",
     "src/shared/managementScorecard.ts",
     "src/shared/mutualFundsMetrics.ts",

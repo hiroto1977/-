@@ -10,6 +10,7 @@ import type { FinancialRatios } from './financialRatios';
 import type { FinancialDiagnosis } from './financialDiagnosis';
 import type { MarginTrend } from './financialTrend';
 import { calcCorporateTax } from '../../shared/taxCorporate';
+import { localIsoDate } from '../../shared/localDate';
 
 /** レポートに載せる指標の表示定義 (15指標 + 金額系2)。 */
 const ROWS: { readonly key: keyof FinancialRatios; readonly label: string; readonly unit: string; readonly money?: boolean }[] = [
@@ -111,7 +112,8 @@ function appendCorporateTaxSection(lines: string[], ordinaryProfit: number): voi
 /** 財務分析レポートを Markdown 文字列で組み立てる。純粋。 */
 export function buildFinancialReportMarkdown(input: FinancialReportInput): string {
   const { label, ratios, diagnosis, trend } = input;
-  const date = (input.generatedAt ?? new Date()).toISOString().slice(0, 10);
+  // 作成日は利用者の時計で (UTC だと日本の朝 9 時までは前日になる)。
+  const date = localIsoDate(input.generatedAt ?? new Date());
   const lines: string[] = [];
   lines.push(`# 財務分析レポート — ${label}`);
   lines.push('');

@@ -57,6 +57,7 @@ import {
 import { GuardedNumber } from '../components/GuardedNumber';
 import { readNumberOr0, type NumSpec } from '../data/inputGuards';
 import { usePlan } from '../plan/usePlan';
+import { localIsoDate } from '../../shared/localDate';
 import { buildBusinessOverview } from '../data/overview';
 import {
   MANUAL_OVERRIDES_COLLECTION,
@@ -729,7 +730,7 @@ export function OverviewPage() {
 
   const [reportCopied, setReportCopied] = useState(false);
   const report = useMemo(
-    () => buildManagementReport(overview, scorecard, highlights, new Date().toISOString().slice(0, 10), monthlyTrend, sensitivity?.breakEvenDelta ?? null),
+    () => buildManagementReport(overview, scorecard, highlights, localIsoDate(), monthlyTrend, sensitivity?.breakEvenDelta ?? null),
     [overview, scorecard, highlights, monthlyTrend, sensitivity],
   );
 
@@ -747,7 +748,7 @@ export function OverviewPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `management-report-${new Date().toISOString().slice(0, 10)}.md`;
+    a.download = `management-report-${localIsoDate()}.md`;
     a.click();
     URL.revokeObjectURL(url);
   }
