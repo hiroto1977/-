@@ -895,7 +895,7 @@ chat の成功経路と通信の枠 (時間切れ・サイズ上限・キャッ�
 |---|---:|---:|---|
 | `src/shared/waterCyclePlanner.ts` | 74.07% | 39 | **151 変異体 100%**・`mutate` へ登録 |
 | `src/renderer/data/villageLayout.ts` | 13.30% | 159 | **173 変異体 100%**・`mutate` へ登録 (PR #786) |
-| `src/renderer/voice/ttsAdapter.ts` | 44.00% | 121 | **89.73% / 生存 23** (2026-09-02 再測)・`mutate` 未登録 — 残る唯一の未着手 |
+| `src/renderer/voice/ttsAdapter.ts` | 44.00% | 121 | **206 変異体 100%**・`mutate` へ登録 (2026-09-02。等価とされていた 18 件は、重ね着の量指定子を脱いで観測できる入力を足したら消えた) |
 | `src/renderer/data/charts.ts` | 72.01% | 75 | **246 変異体 100%**・`mutate` へ登録 |
 | `src/renderer/voice/speechAdapter.ts` | 78.46% | 13 | **49 変異体 100%**・`mutate` へ登録 |
 | `src/shared/connectors/freeConnectors.ts` | n/a | 0 | **変異体ゼロ** = 純粋なデータ表。載せる意味が無い |

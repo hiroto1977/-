@@ -214,21 +214,39 @@ describe('normalizeForSpeech — 置換を 1 つずつ固定する', () => {
     expect(normalizeForSpeech('前`code`後')).toBe('前 後');
   });
 
+  it('コードブロックは中身にバッククォートや改行があっても丸ごと落とす', () => {
+    // インラインコードの除去だけでは、中の ` が対を崩して破片が残る。
+    expect(normalizeForSpeech('前 ```\nx`y\n``` 後')).toBe('前 後');
+    expect(normalizeForSpeech('前```a\nb```後')).toBe('前 後');
+  });
+
   it('URL を落とす', () => {
     expect(normalizeForSpeech('詳しくは https://example.com/a?b=1 を見て')).toBe('詳しくは を見て');
     expect(normalizeForSpeech('http://a.example を')).toBe('を');
+    // URL は後ろの空白まで食う (非空白が続けばそこまで URL と読む)。前後の語は
+    // 空白があれば残り、無ければ繋がる。
+    expect(normalizeForSpeech('見てhttps://x.example 次')).toBe('見て 次');
+    expect(normalizeForSpeech('見てhttps://x.example')).toBe('見て');
   });
 
   it('出典・参照の脚注を落とす', () => {
     expect(normalizeForSpeech('本文（出典: 国税庁）')).toBe('本文');
     expect(normalizeForSpeech('本文［参照: No.1199］')).toBe('本文');
     expect(normalizeForSpeech('本文【出典：厚労省】')).toBe('本文');
+    // コロンの前に空白があっても脚注。括弧が無くても脚注。
+    expect(normalizeForSpeech('本文 (出典 : 国税庁)')).toBe('本文');
+    // 閉じ括弧で止まる (括弧の後ろの本文は食わない)。括弧が無ければ行末まで脚注。
+    expect(normalizeForSpeech('本文（出典:国税庁）続き')).toBe('本文 続き');
+    expect(normalizeForSpeech('本文 出典: 国税庁 続き\n次の行')).toBe('本文。次の行');
   });
 
   it('箇条書きのマーカーを落とす (行頭のみ)', () => {
     expect(normalizeForSpeech('- 一つ目\n* 二つ目\n1. 三つ目')).toBe('一つ目。二つ目。三つ目');
     // 行頭でないハイフンは残る。
     expect(normalizeForSpeech('a - b')).toBe('a - b');
+    // 2 桁以上の番号、マーカーの後ろの空白が 2 つ以上 (句点の後ろに空白を残さない)。
+    expect(normalizeForSpeech('10. 十番目\n11) 十一番目')).toBe('十番目。十一番目');
+    expect(normalizeForSpeech('a\n-  b')).toBe('a。b');
   });
 
   it('Markdown の記号を空白にする', () => {
@@ -275,6 +293,9 @@ describe('normalizeForSpeech — 置換を 1 つずつ固定する', () => {
     expect(normalizeForSpeech('、あ')).toBe('あ');
     expect(normalizeForSpeech('。あ')).toBe('あ');
     expect(normalizeForSpeech('あ 、い')).toBe('あ、い');
+    // 先頭に読点と句点が混ざって並んでも全部落とす (種類が違うと均しでは 1 つにならない)。
+    expect(normalizeForSpeech('、。あ')).toBe('あ');
+    expect(normalizeForSpeech('。、 あ')).toBe('あ');
   });
 
   it('空文字・空白だけなら空文字', () => {
@@ -337,6 +358,11 @@ describe('splitIntoUtterances — 分割の境目', () => {
       'あ。',
       'いうえお、かきく。',
     ]);
+  });
+
+  it('押し出した直後に残る片の先頭の空白も落とす (最後の片が空白で始まる形)', () => {
+    // 「あ、」を押し出した時点で buf は " い" になる。最後に積むときに trim が要る。
+    expect(splitIntoUtterances('あ、 い', 2)).toEqual(['あ、', 'い']);
   });
 
   it('割った片の前後の空白も落とす (途中の片も、最後の片も)', () => {
@@ -412,6 +438,13 @@ describe('scoreJaVoice — 加点と減点を 1 つずつ固定する', () => {
 
   it('voiceURI 側の一致も見る', () => {
     expect(scoreJaVoice(V({ name: '無名', voiceURI: 'com.google.ja' }))).toBe(65);
+  });
+
+  it('name と voiceURI は区切って見る (境界をまたいで語を作らない)', () => {
+    // "goo" + "gle" を空白なしで繋ぐと google に見えて +55 になってしまう。
+    expect(scoreJaVoice(V({ name: 'goo', voiceURI: 'gle' }))).toBe(10);
+    // voiceURI が無くても鍵は組める。
+    expect(scoreJaVoice(V({ name: 'google' }))).toBe(65);
   });
 
   it('大文字小文字は区別しない', () => {
