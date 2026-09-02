@@ -224,6 +224,8 @@ describe('guardNumber — 種類ごとの既定と文面', () => {
     expect(at('days', '')?.message).toBe('未入力です。0 日 として計算されています。');
     expect(at('energy', '')?.message).toBe('未入力です。0 kWh/kg として計算されています。');
     expect(at('mgPer100g', '')?.message).toBe('未入力です。0 mg/100g として計算されています。');
+    // 通勤距離。`length` (m・0 を断る) を借りるとマイカー通勤なし = 0 km を断ってしまう。
+    expect(at('km', '')?.message).toBe('未入力です。0 km として計算されています。');
   });
 
   it('null / undefined も未入力として扱う', () => {
@@ -234,7 +236,7 @@ describe('guardNumber — 種類ごとの既定と文面', () => {
 
   it('percent だけはマイナスを fatal にしない（残高の減少率などを許す）', () => {
     expect(at('percent', '-5')).toBeNull();
-    for (const k of ['money', 'years', 'months', 'count', 'area', 'length', 'ratio', 'ppm', 'days', 'energy', 'mgPer100g'] as const) {
+    for (const k of ['money', 'years', 'months', 'count', 'area', 'length', 'ratio', 'ppm', 'days', 'energy', 'mgPer100g', 'km'] as const) {
       expect(at(k, '-5')?.level, k).toBe('fatal');
       expect(at(k, '-5')?.message, k).toBe('マイナスの値（-5）は指定できません。');
     }
@@ -243,7 +245,7 @@ describe('guardNumber — 種類ごとの既定と文面', () => {
   it('0 を fatal にするのは area / length だけ', () => {
     expect(at('area', '0')?.message).toBe('0 ㎡ では計算できません。');
     expect(at('length', '0')?.message).toBe('0 m では計算できません。');
-    for (const k of ['money', 'percent', 'years', 'months', 'count', 'ratio', 'ppm', 'days', 'energy', 'mgPer100g'] as const) {
+    for (const k of ['money', 'percent', 'years', 'months', 'count', 'ratio', 'ppm', 'days', 'energy', 'mgPer100g', 'km'] as const) {
       expect(at(k, '0'), k).toBeNull();
     }
   });
@@ -251,7 +253,7 @@ describe('guardNumber — 種類ごとの既定と文面', () => {
   it('整数を求めるのは count と days だけ', () => {
     expect(at('count', '2.5')?.message).toBe('整数で入力してください（現在 2.5）。小数は切り捨てられます。');
     expect(at('days', '2.5')?.message).toBe('整数で入力してください（現在 2.5）。小数は切り捨てられます。');
-    for (const k of ['money', 'percent', 'years', 'months', 'area', 'length', 'ratio', 'ppm', 'energy', 'mgPer100g'] as const) {
+    for (const k of ['money', 'percent', 'years', 'months', 'area', 'length', 'ratio', 'ppm', 'energy', 'mgPer100g', 'km'] as const) {
       expect(at(k, '2.5'), k).toBeNull();
     }
   });
@@ -276,6 +278,8 @@ describe('guardNumber — 種類ごとの既定と文面', () => {
     expect(at('energy', '100')).toBeNull();
     expect(at('mgPer100g', '10001')?.level).toBe('warn');
     expect(at('mgPer100g', '10000')).toBeNull();
+    expect(at('km', '1001')?.level).toBe('warn');
+    expect(at('km', '1000')).toBeNull();
     expect(at('area', '1000001')?.level).toBe('warn');
     expect(at('money', '10000000000001')?.level).toBe('warn');
     expect(at('money', '10000000000000')).toBeNull();
@@ -399,11 +403,11 @@ describe('残った変異体を狙う — 観測できる差があるもの', ()
 describe('KIND 表と正規表現の static 変異体を測る (動的 import で読み直す)', () => {
   const UNITS = {
     money: '円', percent: '%', years: '年', months: 'か月', count: '件', area: '㎡',
-    length: 'm', ratio: '倍', ppm: 'mg/L', days: '日', energy: 'kWh/kg', mgPer100g: 'mg/100g',
+    length: 'm', ratio: '倍', ppm: 'mg/L', days: '日', energy: 'kWh/kg', mgPer100g: 'mg/100g', km: 'km',
   } as const;
   const SANE = {
     money: 1e13, percent: 100, years: 100, months: 1200, count: 100000, area: 1e6,
-    length: 1000, ratio: 1000, ppm: 100000, days: 3650, energy: 100, mgPer100g: 10000,
+    length: 1000, ratio: 1000, ppm: 100000, days: 3650, energy: 100, mgPer100g: 10000, km: 1000,
   } as const;
   type Kind = keyof typeof UNITS;
   const KINDS = Object.keys(UNITS) as Kind[];

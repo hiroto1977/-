@@ -42,7 +42,8 @@ export type NumKind =
   | 'ppm' // mg/L・ppm など濃度
   | 'days' // 日数（整数）
   | 'energy' // kWh/kg（電力原単位）
-  | 'mgPer100g'; // mg/100g（食品成分）
+  | 'mgPer100g' // mg/100g（食品成分）
+  | 'km'; // 距離 (km)
 
 export interface NumSpec {
   readonly label: string;
@@ -122,6 +123,8 @@ const KIND: Record<NumKind, KindRule> = {
   days: { unit: '日', negativeIsFatal: true, integer: true, sane: 3650 },
   energy: { unit: 'kWh/kg', negativeIsFatal: true, sane: 100 },
   mgPer100g: { unit: 'mg/100g', negativeIsFatal: true, sane: 10000 },
+  // 通勤距離 (片道 km)。`length` は m で 0 を断るが、マイカー通勤なし = 0 km は正当。
+  km: { unit: 'km', negativeIsFatal: true, sane: 1000 },
 };
 
 /**

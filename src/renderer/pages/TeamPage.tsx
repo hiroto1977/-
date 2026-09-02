@@ -14,13 +14,24 @@ import {
 import { MEMBERS_COLLECTION, parseMember, countOwners, type Member } from '../data/members';
 import { publicTransportCommute, carCommuteNonTaxableLimit, bonusWithholdingTax } from '../../shared/payroll';
 import { jpy } from '../../shared/formatters';
+import { GuardedNumber } from '../components/GuardedNumber';
+import { readNumberOr0, type NumSpec } from '../data/inputGuards';
+
+/**
+ * 給与計算の入力欄の性質。読み取り (`readNumberOr0`) と警告 (`GuardedNumber`) が
+ * 同じ関数を使う。以前は `Number(x) || 0` で、全角の「１６０，０００」や「16万」を
+ * 打つと通勤手当 0・賞与 0 のまま「非課税 ¥0 / 源泉徴収税額 ¥0」と自信ありげに出た。
+ * 税額の欄で黙って 0 になるのは、試算の欄より重い。
+ */
+const PAYROLL_SPECS = {
+  commute: { label: '公共交通機関の月額 (円)', kind: 'money', sane: 1_000_000 },
+  km: { label: 'マイカー片道 (km)', kind: 'km' },
+  bonus: { label: '賞与額 (円)', kind: 'money' },
+  si: { label: '社会保険料 (円)', kind: 'money' },
+  prevSalary: { label: '前月給与 (社保控除後・円)', kind: 'money' },
+} as const satisfies Record<string, NumSpec>;
 
 const EMPTY = { name: '', email: '', role: 'member' as Role };
-
-const pInput: React.CSSProperties = {
-  background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6,
-  color: 'var(--text)', padding: '6px 8px', fontSize: 13, width: 120,
-};
 
 function PayrollPanel() {
   const [commute, setCommute] = useState('160000');
@@ -28,13 +39,17 @@ function PayrollPanel() {
   const [bonus, setBonus] = useState('500000');
   const [si, setSi] = useState('75000');
   const [prevSalary, setPrevSalary] = useState('300000');
-  const pt = useMemo(() => publicTransportCommute(Number(commute) || 0), [commute]);
-  const carLimit = useMemo(() => carCommuteNonTaxableLimit(Number(km) || 0), [km]);
+  // 読めない値は 0 になるが、同じ欄の `GuardedNumber` がその旨を出す (黙って 0 にしない)。
+  const pt = useMemo(() => publicTransportCommute(readNumberOr0(commute)), [commute]);
+  const carLimit = useMemo(() => carCommuteNonTaxableLimit(readNumberOr0(km)), [km]);
   const bw = useMemo(
-    () => bonusWithholdingTax({ bonus: Number(bonus) || 0, socialInsurance: Number(si) || 0, prevMonthSalaryAfterSI: Number(prevSalary) || 0 }),
+    () => bonusWithholdingTax({
+      bonus: readNumberOr0(bonus),
+      socialInsurance: readNumberOr0(si),
+      prevMonthSalaryAfterSI: readNumberOr0(prevSalary),
+    }),
     [bonus, si, prevSalary],
   );
-  const label = { fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column' as const, gap: 2 };
   const stat = (l: string, v: string) => (
     <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 12, minWidth: 150 }}>
       <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>{l}</div>
@@ -49,8 +64,8 @@ function PayrollPanel() {
       </p>
       <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>通勤手当 (公共交通機関 / マイカー距離別)</div>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>
-        <label style={label}>公共交通機関の月額<input type="text" inputMode="decimal" value={commute} onChange={(e) => setCommute(e.target.value)} style={pInput} /></label>
-        <label style={label}>マイカー片道(km)<input type="text" inputMode="decimal" value={km} onChange={(e) => setKm(e.target.value)} style={pInput} /></label>
+        <GuardedNumber spec={PAYROLL_SPECS.commute} value={commute} width={120} onChange={setCommute} />
+        <GuardedNumber spec={PAYROLL_SPECS.km} value={km} width={120} onChange={setKm} />
       </div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
         {stat('公共交通: 非課税', jpy(pt.nonTaxable))}
@@ -59,9 +74,9 @@ function PayrollPanel() {
       </div>
       <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>賞与の源泉徴収 (甲欄・扶養0人 概算)</div>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>
-        <label style={label}>賞与額<input type="text" inputMode="decimal" value={bonus} onChange={(e) => setBonus(e.target.value)} style={pInput} /></label>
-        <label style={label}>社会保険料<input type="text" inputMode="decimal" value={si} onChange={(e) => setSi(e.target.value)} style={pInput} /></label>
-        <label style={label}>前月給与(社保控除後)<input type="text" inputMode="decimal" value={prevSalary} onChange={(e) => setPrevSalary(e.target.value)} style={pInput} /></label>
+        <GuardedNumber spec={PAYROLL_SPECS.bonus} value={bonus} width={120} onChange={setBonus} />
+        <GuardedNumber spec={PAYROLL_SPECS.si} value={si} width={120} onChange={setSi} />
+        <GuardedNumber spec={PAYROLL_SPECS.prevSalary} value={prevSalary} width={120} onChange={setPrevSalary} />
       </div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         {stat('課税対象 (賞与−社保)', jpy(bw.taxableBonus))}
