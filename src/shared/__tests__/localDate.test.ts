@@ -37,6 +37,13 @@ describe('localIsoDate', () => {
     expect(localIsoDate(new Date(2026, 8, 2, 12))).toBe('2026-09-02');
   });
 
+  it('読めない時刻は空文字 (NaN-NaN-NaN で日付欄を詐称しない・投げない)', () => {
+    expect(localIsoDate(new Date(NaN))).toBe('');
+    expect(localIsoDate(new Date('not a date'))).toBe('');
+    // 境界: 0 ms (1970-01-01T00:00Z) は有効な時刻 — 空文字にしない。
+    expect(localIsoDate(new Date(0))).toMatch(/^19(69|70)-(12|01)-(31|01)$/);
+  });
+
   it('引数を省くと今日 (呼んだ瞬間の日付)', () => {
     const now = new Date();
     const expected = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
@@ -46,6 +53,7 @@ describe('localIsoDate', () => {
   it('local getter を読み、toISOString を読まない (時間帯に依らない対照)', () => {
     // 2026-09-02 00:30 JST = 2026-09-01T15:30Z。local getter は当日、UTC は前日。
     const jstMidnight = {
+      getTime: () => Date.UTC(2026, 8, 1, 15, 30),
       getFullYear: () => 2026,
       getMonth: () => 8,
       getDate: () => 2,

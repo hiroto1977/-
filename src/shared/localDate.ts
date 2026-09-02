@@ -14,6 +14,10 @@
  * (`localIsoDate(new Date(ms))`)。API へ渡す UTC の日付はここでは扱わない。
  */
 export function localIsoDate(d: Date = new Date()): string {
+  // 読めない時刻 (`new Date(NaN)`) は空文字。`NaN-NaN-NaN` を日付欄に出して詐称しない
+  // (`shared/api/cursor.ts` の `toIsoDate` と同じ方針)。以前の `toISOString()` は
+  // ここで投げていた —— Gmail の 1 通の internalDate が壊れているだけで受信箱ごと落ちる。
+  if (Number.isNaN(d.getTime())) return '';
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
