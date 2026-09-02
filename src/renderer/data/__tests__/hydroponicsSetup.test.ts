@@ -7,7 +7,9 @@
 import { describe, expect, it } from 'vitest';
 import {
   HYDROPONICS_COLLECTION,
+  HYDROPONIC_CROPS_COLLECTION,
   HYDROPONICS_DEFAULTS,
+  cropListFromRecords,
   resolveCrop,
   toFacilityInput,
   toCostInput,
@@ -26,7 +28,23 @@ import {
   ENERGY_INTENSITY_KWH_PER_KG_HIGH,
   LOW_K_SWITCH_DAYS_MIN,
   LOW_K_SWITCH_DAYS_MAX,
+  type HydroponicCrop,
 } from '../../../shared/hydroponics';
+import { DEFAULT_CROP_LIST } from '../../../shared/hydroponicCrops';
+
+/** 利用者が足した品目。定植後 5 日なので年 73 回転 (レタスの 36.5 の 2 倍)。 */
+const MINE: HydroponicCrop = {
+  id: 'custom-1',
+  label: 'ミズナ',
+  nurseryDays: 10,
+  growOutDays: 5,
+  harvestWeightG: 50,
+  ecLow: 1,
+  ecHigh: 1.6,
+  phLow: 5.8,
+  phHigh: 6.4,
+  plantsPerPanel: 8,
+};
 
 const SETUP: HydroponicsSetup = {
   ...HYDROPONICS_DEFAULTS,
@@ -40,6 +58,7 @@ const SETUP: HydroponicsSetup = {
 describe('コレクション名と初期値', () => {
   it('コレクション名は固定 (変わると保存済みの入力が読めなくなる)', () => {
     expect(HYDROPONICS_COLLECTION).toBe('hydroponics-setup');
+    expect(HYDROPONIC_CROPS_COLLECTION).toBe('hydroponics-crops');
   });
 
   it('電力原単位の初期値は参考幅のちょうど中央', () => {
@@ -88,18 +107,48 @@ describe('コレクション名と初期値', () => {
 });
 
 describe('resolveCrop', () => {
-  it('既知の id はそのまま返す', () => {
-    for (const id of Object.keys(HYDROPONIC_CROPS)) {
-      expect(resolveCrop(id)).toBe(id);
+  it('既知の id はその品目の実体を返す (一覧を省略すれば参考値の 5 品目)', () => {
+    for (const c of Object.values(HYDROPONIC_CROPS)) {
+      expect(resolveCrop(c.id)).toBe(c);
     }
   });
 
-  it('壊れた値はリーフレタスに寄せる (落とさない)', () => {
-    expect(resolveCrop('存在しない品目')).toBe('leaf-lettuce');
-    expect(resolveCrop(undefined)).toBe('leaf-lettuce');
-    expect(resolveCrop(null)).toBe('leaf-lettuce');
-    expect(resolveCrop(42)).toBe('leaf-lettuce');
-    expect(resolveCrop({})).toBe('leaf-lettuce');
+  it('壊れた値は一覧の先頭 (リーフレタス) に寄せる (落とさない)', () => {
+    for (const bad of ['存在しない品目', undefined, null, 42, {}]) {
+      expect(resolveCrop(bad), String(bad)).toBe(HYDROPONIC_CROPS['leaf-lettuce']);
+    }
+  });
+
+  it('利用者の一覧を渡すとその中で解決し、無ければその一覧の先頭 (参考値の id でも)', () => {
+    const mine = [MINE, HYDROPONIC_CROPS.basil];
+    expect(resolveCrop('custom-1', mine)).toBe(MINE);
+    expect(resolveCrop('basil', mine)).toBe(HYDROPONIC_CROPS.basil);
+    expect(resolveCrop('leaf-lettuce', mine)).toBe(MINE);
+  });
+});
+
+describe('cropListFromRecords — 保存レコードから品目一覧', () => {
+  const at = (createdAt: number, data: unknown) => ({ createdAt, data });
+
+  it('保存が無ければ参考値の一覧 (同じ実体)', () => {
+    expect(cropListFromRecords([])).toBe(DEFAULT_CROP_LIST);
+  });
+
+  it('保存があればその一覧', () => {
+    expect(cropListFromRecords([at(1, { crops: [MINE] })])).toEqual([MINE]);
+  });
+
+  it('最新は createdAt で選ぶ — 並び順が昇順でも降順でも同じ答え', () => {
+    const older = at(1, { crops: [MINE] });
+    const newer = at(2, { crops: [HYDROPONIC_CROPS.basil] });
+    expect(cropListFromRecords([older, newer])).toEqual([HYDROPONIC_CROPS.basil]);
+    expect(cropListFromRecords([newer, older])).toEqual([HYDROPONIC_CROPS.basil]);
+  });
+
+  it('壊れた保存 (null / 数値 / crops が配列でない / 空) は参考値へ戻る', () => {
+    for (const data of [null, 42, 'x', { crops: 'x' }, { crops: [] }, { crops: [{ id: 'BAD' }] }, {}]) {
+      expect(cropListFromRecords([at(1, data)]), JSON.stringify(data)).toBe(DEFAULT_CROP_LIST);
+    }
   });
 });
 
@@ -113,6 +162,13 @@ describe('% から割合への変換', () => {
   it('品目は参考値の実体を渡す', () => {
     expect(toFacilityInput(SETUP).crop).toBe(HYDROPONIC_CROPS['leaf-lettuce']);
     expect(toFacilityInput({ ...SETUP, cropId: 'basil' }).crop).toBe(HYDROPONIC_CROPS.basil);
+  });
+
+  it('利用者の一覧を渡せば、足した品目の実体を渡す', () => {
+    const mine = [...DEFAULT_CROP_LIST, MINE];
+    expect(toFacilityInput({ ...SETUP, cropId: 'custom-1' }, mine).crop).toBe(MINE);
+    // 一覧を渡さなければ参考値にしか解決できず、先頭へ寄る。
+    expect(toFacilityInput({ ...SETUP, cropId: 'custom-1' }).crop).toBe(HYDROPONIC_CROPS['leaf-lettuce']);
   });
 
   it('費用はそのまま渡す (単位変換なし)', () => {
@@ -156,6 +212,15 @@ describe('economicsFromSetup', () => {
     // バジルは定植後 18 日なので回転が遅い
     expect(basil.production.cyclesPerYear).toBeLessThan(lettuce.production.cyclesPerYear);
     expect(basil.production.shippedPlantsPerYear).toBeLessThan(lettuce.production.shippedPlantsPerYear);
+  });
+
+  it('足した品目は利用者の一覧を渡したときだけ試算に効く', () => {
+    const mine = [...DEFAULT_CROP_LIST, MINE];
+    const withMine = economicsFromSetup({ ...SETUP, cropId: 'custom-1' }, mine)!;
+    // 定植後 5 日 → 365 ÷ 5 = 73 回転
+    expect(withMine.production.cyclesPerYear).toBe(73);
+    // 一覧を渡さないと先頭 (リーフレタス) で計算される
+    expect(economicsFromSetup({ ...SETUP, cropId: 'custom-1' })!.production.cyclesPerYear).toBe(36.5);
   });
 });
 

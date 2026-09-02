@@ -10,20 +10,51 @@
  */
 
 import {
-  HYDROPONIC_CROPS,
   assessLowPotassium,
   type LowPotassiumAssessment,
   ENERGY_INTENSITY_KWH_PER_KG_LOW,
   ENERGY_INTENSITY_KWH_PER_KG_HIGH,
   estimateEconomics,
+  type HydroponicCrop,
   type HydroponicCropId,
   type HydroponicsEconomics,
   type FacilityInput,
   type CostInput,
 } from '../../shared/hydroponics';
+import { DEFAULT_CROP_LIST, cropListOrDefault, resolveCropFrom } from '../../shared/hydroponicCrops';
 import type { BusinessFinancialUnit } from './businessUnits';
+import { latestRecord } from './latestRecord';
 
 export const HYDROPONICS_COLLECTION = 'hydroponics-setup';
+
+/**
+ * 利用者の品目一覧の collection。設定と同じく**最新の 1 件を採用**する
+ * (一覧をまるごと 1 レコードに保存し、変更のたびに 1 件足す)。
+ * 設定レコードとは別に持つ —— 設定を保存するたびに一覧を写すと、品目を
+ * 1 つ足しただけで設定の履歴が増える。
+ */
+export const HYDROPONIC_CROPS_COLLECTION = 'hydroponics-crops';
+
+/** 保存する品目一覧。 */
+export interface HydroponicCropListRecord extends Record<string, unknown> {
+  readonly crops: readonly HydroponicCrop[];
+}
+
+/**
+ * 保存レコードから品目一覧を組む。最新の 1 件 (createdAt で選ぶ —
+ * `latestRecord` の説明を参照) の `crops` を検証して返し、保存が無い・
+ * 壊れている・空のときは参考値の一覧 (空にはならない)。
+ *
+ * `?.crops` の `?.` は、レコードの data が null で保存されていた場合の砦。
+ * 数値や文字列なら `.crops` は undefined になるので `?.` 無しでも落ちないが、
+ * null だけは投げる。
+ */
+export function cropListFromRecords(
+  records: readonly { readonly createdAt: number; readonly data: unknown }[],
+): readonly HydroponicCrop[] {
+  const latest = latestRecord(records)?.data;
+  return cropListOrDefault((latest as { crops?: unknown } | null | undefined)?.crops);
+}
 
 /** 事業間比較での水耕栽培の id。利用者の事業と衝突しないよう接頭辞を付ける。 */
 export const HYDROPONICS_UNIT_ID = 'hydroponics';
@@ -108,25 +139,29 @@ export const HYDROPONICS_DEFAULTS: HydroponicsSetup = {
 };
 
 /**
- * 保存されている品目 id を既知のものへ寄せる (壊れた値で落ちないように)。
+ * 保存されている品目 id を、利用者の一覧の中の品目へ寄せる (壊れた値・消した
+ * 品目の id で落ちないように)。無ければ一覧の先頭。
  *
- * `typeof id === 'string' &&` を前置きしたくなるが、`Set.has` は値を変換せず
- * そのまま照合するので数値・null・オブジェクトはどれも false になる。前置きは
- * 結果を変えない分岐＝観測できない変異体になるので置かない。
+ * 一覧を省略したときは参考値の 5 品目 —— 呼び出し側が一覧を持たない場面
+ * (単体検査・旧い呼び出し) 用で、画面は必ず利用者の一覧を渡す。
  */
-const CROP_IDS: ReadonlySet<unknown> = new Set<unknown>(Object.keys(HYDROPONIC_CROPS));
-
-export function resolveCrop(id: unknown): HydroponicCropId {
-  return CROP_IDS.has(id) ? (id as HydroponicCropId) : 'leaf-lettuce';
+export function resolveCrop(
+  id: unknown,
+  crops: readonly HydroponicCrop[] = DEFAULT_CROP_LIST,
+): HydroponicCrop {
+  return resolveCropFrom(crops, id);
 }
 
 /** レコードを設備入力へ。% は 0..1 の割合に直す。 */
-export function toFacilityInput(s: HydroponicsSetup): FacilityInput {
+export function toFacilityInput(
+  s: HydroponicsSetup,
+  crops: readonly HydroponicCrop[] = DEFAULT_CROP_LIST,
+): FacilityInput {
   return {
     floorAreaSqm: s.floorAreaSqm,
     tiers: s.tiers,
     usableRatio: s.usableRatioPct / 100,
-    crop: HYDROPONIC_CROPS[resolveCrop(s.cropId)],
+    crop: resolveCrop(s.cropId, crops),
     yieldRate: s.yieldRatePct / 100,
   };
 }
@@ -148,9 +183,12 @@ export function toCostInput(s: HydroponicsSetup): CostInput {
 }
 
 /** レコードから経営サマリーへ渡す試算を組む。未入力なら null。 */
-export function economicsFromSetup(s: HydroponicsSetup | null): HydroponicsEconomics | null {
+export function economicsFromSetup(
+  s: HydroponicsSetup | null,
+  crops: readonly HydroponicCrop[] = DEFAULT_CROP_LIST,
+): HydroponicsEconomics | null {
   if (!s) return null;
-  return estimateEconomics(toFacilityInput(s), toCostInput(s));
+  return estimateEconomics(toFacilityInput(s, crops), toCostInput(s));
 }
 
 /**

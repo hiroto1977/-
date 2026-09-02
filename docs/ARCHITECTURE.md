@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **10230** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **10299** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 370 | 自己検証 |
+| `file:line` 参照数 | 372 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1720,7 +1720,7 @@ union を参照する。
 | `sales` | 売上集計 — EC チャネル横断 (実データ・ローカル保存) | 認証不要 (record store) | ✅ | | (read/write — record store collection `sales-entries`) |
 | `team` | チーム管理 — メンバー/権限 (実データ・ローカル保存) | 認証不要 (record store) | ✅ | | (read/write — collection `team-members`; RBAC は `src/shared/team.ts`) |
 | `youtube` | YouTube Data API v3 実連携 | API キー (`{apiKey,channelId}`) | | | (read-only — チャンネル統計 / 最近の動画) |
-| `overview` | 経営サマリー — 売上/KPI/チーム/プラン横断集約 (実データ) + 45 項目の手入力上書き (`data/overviewOverrides.ts`) + 水耕栽培の試算 | 認証不要 (record store) | ✅ | | (read — `data/overview.ts` で純粋集約。水耕栽培は `src/shared/hydroponics.ts` — 栽培条件〔品目別の育苗/定植後日数・養液 EC/pH・1株重量・パネル穴数〕→ 生産量〔床面積×段数×有効率 → 株密度 → 年回転数 → 出荷株数〕→ 月次損益 の 3 段。**電力は歩留まり前の生産量で計算する** — 照明も空調もその株が売り物になるかと無関係に動くので、歩留まりが落ちると売上だけ減って電気代は減らない。電気代は販管費に入れる〔変動費に入れると限界利益が実態より大きく出て損益分岐点を低く見せる〕。入力は `data/hydroponicsSetup.ts` の利用者レコードのみで、参考値は入力欄の初期値としてだけ使う〔サンプルを経営数値に混ぜない〕)。**低カリウム栽培**〔腎臓病の方向け〕は同モジュールの第 4 節 — 収穫前 7〜10 日に培養液の硝酸カリウムを同濃度の硝酸ナトリウムへ置換し、カリウムを抜いた分をナトリウムで補って浸透圧と EC を保つ〔ALIC 野菜情報〕。**成分は実測値でしか受け取らない** — `assessLowPotassium` は実測カリウムが正の有限値のときだけ `measured: true` を返し、0 や未測定を「カリウムが無い」と読み替えない。`servingGramsWithinLimit` は CKD 病期別の 1 日上限〔G3b 2,000mg / G4〜G5 1,500mg・日本腎臓学会〕から食べられる g 数を出すが、制限のない病期と未測定では null を返す〔上限が無いことを数字で塗り潰さない〕 |
+| `overview` | 経営サマリー — 売上/KPI/チーム/プラン横断集約 (実データ) + 45 項目の手入力上書き (`data/overviewOverrides.ts`) + 水耕栽培の試算 | 認証不要 (record store) | ✅ | | (read — `data/overview.ts` で純粋集約。水耕栽培は `src/shared/hydroponics.ts` — 栽培条件〔品目別の育苗/定植後日数・養液 EC/pH・1株重量・パネル穴数〕→ 生産量〔床面積×段数×有効率 → 株密度 → 年回転数 → 出荷株数〕→ 月次損益 の 3 段。**電力は歩留まり前の生産量で計算する** — 照明も空調もその株が売り物になるかと無関係に動くので、歩留まりが落ちると売上だけ減って電気代は減らない。電気代は販管費に入れる〔変動費に入れると限界利益が実態より大きく出て損益分岐点を低く見せる〕。入力は `data/hydroponicsSetup.ts` の利用者レコードのみで、参考値は入力欄の初期値としてだけ使う〔サンプルを経営数値に混ぜない〕)。**品目は固定の一覧ではない** — `src/shared/hydroponicCrops.ts` が追加 / 削除 / 参考値へ戻す を純粋関数で持ち、画面は一覧を `hydroponics-crops` collection に 1 レコードで保存する〔設定レコードとは別 — 品目を足すたびに設定の履歴が増えないように〕。守る不変条件は 3 つ: 一覧は空にならない〔最後の 1 件は消せず、壊れた保存は参考値の 5 品目へ戻る〕・id は機械が振る `custom-<n>`〔空き番号の最小〕・数値は**桁誤りを止める幅**で断る〔定植後日数 0 は 0 除算、pH 99〕— 値の正しさは見ない〔利用者の実測が最も正しい〕。断るときは投げずに理由コードと文言を返す (`CropListChange`)。「最新の 1 件を採用する」collection は `data/latestRecord.ts` が createdAt で選ぶ — `RecordStore.list` は**新しい順**なので `records[records.length - 1]` は**最古**であり、経営サマリーの水耕栽培・貸借対照表・ハイライトしきい値と KPI ページの BS の 4 か所がそれを「最新」と読んでいた〔2 回目の保存から画面が動かなかった。2026-09-02 に品目一覧を同じ書き方で足そうとして発見〕。**低カリウム栽培**〔腎臓病の方向け〕は同モジュールの第 4 節 — 収穫前 7〜10 日に培養液の硝酸カリウムを同濃度の硝酸ナトリウムへ置換し、カリウムを抜いた分をナトリウムで補って浸透圧と EC を保つ〔ALIC 野菜情報〕。**成分は実測値でしか受け取らない** — `assessLowPotassium` は実測カリウムが正の有限値のときだけ `measured: true` を返し、0 や未測定を「カリウムが無い」と読み替えない。`servingGramsWithinLimit` は CKD 病期別の 1 日上限〔G3b 2,000mg / G4〜G5 1,500mg・日本腎臓学会〕から食べられる g 数を出すが、制限のない病期と未測定では null を返す〔上限が無いことを数字で塗り潰さない〕 |
 | `coconala` | ココナラ スキルマーケット (snapshot のみ) | 公開 API なし | ✅ | | (read-only — 出品/受注/評価) |
 | `tiktok` | TikTok — SNS / 動画運用サマリー (snapshot のみ) | 公開 API なし (将来 OAuth) | ✅ | | (read-only — 投稿/広告/フォロワー) |
 | `tax` | 税務試算 — 所得税/住民税/消費税/手取りの概算 + 節税案内 + 公式ツール導線 | 認証不要 (ローカル計算) | ✅ | | (read-only — 納付/申告は公式ツールで手動。42 の数値入力を `data/inputGuards.ts` の `guardAll` でまとめて検査し、読み取れない欄を `GuardSummary` で試算値の手前に表示。⑩-3 本則課税の仕入控除税額は `src/shared/taxConsumptionBusiness.ts` — `calcStandardTax` は課税仕入れの税額を**全額控除できる**前提の式で、成り立つのは課税売上割合 95% 以上かつ課税売上高 5億円以下のときだけ。住宅家賃・利子等の非課税売上があると按分が要り、按分せずに全額を引くと**納付が過少に出る**。`taxableSalesRatio`〔免税売上は分子・分母の両方に入る〕・`canDeductFully`・`itemizedInputCredit`〔個別対応方式 = 課税売上対応分 + 共通対応分 × 割合〕・`proportionalInputCredit`〔一括比例配分方式 = 仕入税額 × 割合・2 年継続適用〕・`calcStandardTaxDetailed`・`compareInputCreditMethods`〔控除が多い方が有利・同額なら縛りの無い個別対応〕。⑩-2 消費税の納付/還付スケジュールは `src/shared/taxConsumptionSchedule.ts` — 税率 0〜50% の掃引・国税/地方の区分と端数処理・中間申告の回数と期限・確定申告額と還付の入金目安。⑫ 貿易の税は `src/shared/tradeTax.ts` — 輸入は CIF 1,000円未満切捨て→関税100円未満切捨て→消費税の課税標準に関税を含める法定順序、少額免税〔1万円以下・革製品等の除外・2028年4月廃止予定〕と個人使用60%特例、輸出は日本に輸出関税なし〔消費税法7条の免税〕＋仕向国の関税と付加価値税〔CIF/FOB 基準の切替・DDP/DAP の負担者〕) |
@@ -2138,7 +2138,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **246 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **248 ファイル**。
 
 #### 点数の定義 (分母に何を入れないか)
 

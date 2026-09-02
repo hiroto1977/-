@@ -3,6 +3,7 @@ import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { useCollection } from '../data/useCollection';
+import { latestRecord } from '../data/latestRecord';
 import {
   KPI_ACTUALS_COLLECTION,
   parseKpiActual,
@@ -571,8 +572,9 @@ function BalanceSheetPanel() {
   const [form, setForm] = useState(EMPTY_BS);
   const [error, setError] = useState<string>();
 
-  // 最新の 1 レコードを採用 (BS は時点情報)。
-  const latest = records.length > 0 ? records[records.length - 1] : undefined;
+  // 最新の 1 レコードを採用 (BS は時点情報)。createdAt で選ぶ — list は新しい順なので
+  // 末尾は最古 (`latestRecord` の説明を参照)。
+  const latest = latestRecord(records) ?? undefined;
   const metrics = useMemo(() => (latest ? computeBalanceSheetMetrics(latest.data) : undefined), [latest]);
 
   async function onAdd() {

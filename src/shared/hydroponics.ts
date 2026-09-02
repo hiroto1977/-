@@ -40,12 +40,19 @@ import { nonNeg, round1, round2, yen } from './num';
 // --- 1. 育てる条件 --------------------------------------------------------
 
 /** 参考値を用意してある品目。 */
-export type HydroponicCropId =
+export type BuiltinHydroponicCropId =
   | 'leaf-lettuce' // リーフレタス（人工光型の主力）
   | 'frill-lettuce' // フリルレタス
   | 'romaine' // ロメインレタス
   | 'baby-leaf' // ベビーリーフ
   | 'basil'; // バジル（ハーブ）
+
+/**
+ * 品目の id。参考値の 5 つに加えて、**利用者が足した品目** (`custom-<n>`) も
+ * 通るので閉じた union ではない。id の形と一覧の増減は
+ * `hydroponicCrops.ts` が持つ。
+ */
+export type HydroponicCropId = string;
 
 /**
  * 品目ごとの栽培条件。
@@ -84,8 +91,12 @@ export const PANEL_AREA_SQM = 0.54;
  * 育苗 10 日 = 24 日、定植後 10 日、パネル 60cm×90cm に 6〜8 穴、収穫 80〜90g/株）。
  * 他の 4 品目はレタスからの相対で置いた**目安**であり、出典で裏付けた値ではない。
  * 実測が取れたら置き換えること。
+ *
+ * **これは出発点であって固定の一覧ではない。** 利用者は品目を足したり消したり
+ * できる (`hydroponicCrops.ts`)。ここに載っている 5 つは「参考値の品目」として
+ * いつでも戻せる。
  */
-export const HYDROPONIC_CROPS: Record<HydroponicCropId, HydroponicCrop> = {
+export const HYDROPONIC_CROPS: Record<BuiltinHydroponicCropId, HydroponicCrop> = {
   'leaf-lettuce': {
     id: 'leaf-lettuce',
     label: 'リーフレタス',
