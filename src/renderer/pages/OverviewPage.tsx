@@ -54,6 +54,8 @@ import {
   type CropListChange,
   type CropNumericField,
 } from '../../shared/hydroponicCrops';
+import { GuardedNumber } from '../components/GuardedNumber';
+import { readNumberOr0, type NumSpec } from '../data/inputGuards';
 import { usePlan } from '../plan/usePlan';
 import { buildBusinessOverview } from '../data/overview';
 import {
@@ -169,6 +171,37 @@ function HighlightSettingsPanel({
   );
 }
 
+/**
+ * 設備・費用・実測値の入力欄の性質。読み取り (`readNumberOr0`) と警告
+ * (`GuardedNumber`) が同じ関数を使うので、「警告は出ないのに 0 で計算されて
+ * いた」が起きない。以前は `Number()` で読めない値を黙って 0 にしていた ——
+ * 全角の「１００」や「10万」を打つと床面積 0 のまま試算が出て、画面には
+ * 自信のある間違った数字が並んだ。
+ *
+ * 0 を断るのは、0 だと試算そのものが意味を失う欄だけ (床面積・段数・割合・
+ * 単価)。費用は 0 が実態のこともある (自己所有なら地代家賃 0)。実測値は
+ * **0 = 未測定** が仕様なので、未入力も 0 も黙って通す。
+ */
+const HYDRO_SPECS = {
+  floorAreaSqm: { label: '床面積 (m²)', kind: 'area' },
+  tiers: { label: '棚の段数', kind: 'count', allowZero: false, sane: 30 },
+  usableRatioPct: { label: '栽培に使える割合 (%)', kind: 'percent', allowZero: false, max: 100 },
+  yieldRatePct: { label: '歩留まり (%)', kind: 'percent', allowZero: false, max: 100 },
+  unitPriceYen: { label: '販売単価 (円/株)', kind: 'money', allowZero: false, sane: 10_000 },
+  electricityYenPerKwh: { label: '電力単価 (円/kWh)', kind: 'money', sane: 200 },
+  energyIntensityKwhPerKg: { label: '電力原単位 (kWh/kg)', kind: 'energy' },
+  seedYenPerPlant: { label: '種苗費 (円/株)', kind: 'money', sane: 1_000 },
+  nutrientYenPerPlant: { label: '肥料・養液 (円/株)', kind: 'money', sane: 1_000 },
+  packagingYenPerPlant: { label: '包装・資材 (円/株)', kind: 'money', sane: 1_000 },
+  laborYenPerMonth: { label: '人件費 (円/月)', kind: 'money' },
+  depreciationYenPerMonth: { label: '減価償却費 (円/月)', kind: 'money' },
+  rentYenPerMonth: { label: '地代家賃 (円/月)', kind: 'money' },
+  otherFixedYenPerMonth: { label: 'その他固定費 (円/月)', kind: 'money' },
+  switchDaysBeforeHarvest: { label: '切替 (収穫前・日)', kind: 'days', allowZero: false },
+  measuredPotassiumMgPer100g: { label: '実測カリウム (mg/100g)', kind: 'mgPer100g', allowEmpty: true },
+  measuredSodiumMgPer100g: { label: '実測ナトリウム (mg/100g)', kind: 'mgPer100g', allowEmpty: true },
+} as const satisfies Record<string, NumSpec>;
+
 /** 品目の入力欄の文字列 (品目名 + 数値の欄)。 */
 type CropDraftForm = Record<'label' | CropNumericField, string>;
 
@@ -268,22 +301,16 @@ function HydroponicsPanel({
     setCropNotice('参考値の品目を戻しました。');
   };
 
-  const n = (v: string): number => {
-    const parsed = Number(v.replace(/,/g, ''));
-    return Number.isFinite(parsed) ? parsed : 0;
-  };
+  // 読めない値は 0 になるが、同じ欄の `GuardedNumber` がその旨を出す (黙って 0 にしない)。
+  const n = readNumberOr0;
 
-  const field = (key: keyof typeof form, label: string) => (
-    <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-      {label}
-      <input
-        type="text"
-        inputMode="decimal"
-        value={form[key]}
-        onChange={(e) => { setForm((f) => ({ ...f, [key]: e.target.value })); setSaved(false); }}
-        style={settingsInput}
-      />
-    </label>
+  const field = (key: keyof typeof form) => (
+    <GuardedNumber
+      spec={HYDRO_SPECS[key]}
+      value={form[key]}
+      width={110}
+      onChange={(v) => { setForm((f) => ({ ...f, [key]: v })); setSaved(false); }}
+    />
   );
 
   const nutrient = ec.trim() !== '' && ph.trim() !== ''
@@ -393,24 +420,24 @@ function HydroponicsPanel({
       </details>
 
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>
-        {field('floorAreaSqm', '床面積 (m²)')}
-        {field('tiers', '棚の段数')}
-        {field('usableRatioPct', '栽培に使える割合 (%)')}
-        {field('yieldRatePct', '歩留まり (%)')}
-        {field('unitPriceYen', '販売単価 (円/株)')}
+        {field('floorAreaSqm')}
+        {field('tiers')}
+        {field('usableRatioPct')}
+        {field('yieldRatePct')}
+        {field('unitPriceYen')}
       </div>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>
-        {field('electricityYenPerKwh', '電力単価 (円/kWh)')}
-        {field('energyIntensityKwhPerKg', '電力原単位 (kWh/kg)')}
-        {field('seedYenPerPlant', '種苗費 (円/株)')}
-        {field('nutrientYenPerPlant', '肥料・養液 (円/株)')}
-        {field('packagingYenPerPlant', '包装・資材 (円/株)')}
+        {field('electricityYenPerKwh')}
+        {field('energyIntensityKwhPerKg')}
+        {field('seedYenPerPlant')}
+        {field('nutrientYenPerPlant')}
+        {field('packagingYenPerPlant')}
       </div>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>
-        {field('laborYenPerMonth', '人件費 (円/月)')}
-        {field('depreciationYenPerMonth', '減価償却費 (円/月)')}
-        {field('rentYenPerMonth', '地代家賃 (円/月)')}
-        {field('otherFixedYenPerMonth', 'その他固定費 (円/月)')}
+        {field('laborYenPerMonth')}
+        {field('depreciationYenPerMonth')}
+        {field('rentYenPerMonth')}
+        {field('otherFixedYenPerMonth')}
         <button
           type="button"
           onClick={async () => {
@@ -475,9 +502,9 @@ function HydroponicsPanel({
         </p>
         {lowK && (
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-            {field('switchDaysBeforeHarvest', '切替 (収穫前・日)')}
-            {field('measuredPotassiumMgPer100g', '実測カリウム (mg/100g)')}
-            {field('measuredSodiumMgPer100g', '実測ナトリウム (mg/100g)')}
+            {field('switchDaysBeforeHarvest')}
+            {field('measuredPotassiumMgPer100g')}
+            {field('measuredSodiumMgPer100g')}
           </div>
         )}
       </div>

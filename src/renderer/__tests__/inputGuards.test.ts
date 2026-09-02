@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   guardAll,
   guardCounts,
@@ -220,6 +220,10 @@ describe('guardNumber — 種類ごとの既定と文面', () => {
     expect(at('length', '')?.message).toBe('未入力です。0 m として計算されています。');
     expect(at('ratio', '')?.message).toBe('未入力です。0 倍 として計算されています。');
     expect(at('ppm', '')?.message).toBe('未入力です。0 mg/L として計算されています。');
+    // 水耕栽培の入力欄が足した 3 種。近い kind を借りると「0 倍」「0 mg/L」と嘘の単位を言う。
+    expect(at('days', '')?.message).toBe('未入力です。0 日 として計算されています。');
+    expect(at('energy', '')?.message).toBe('未入力です。0 kWh/kg として計算されています。');
+    expect(at('mgPer100g', '')?.message).toBe('未入力です。0 mg/100g として計算されています。');
   });
 
   it('null / undefined も未入力として扱う', () => {
@@ -230,7 +234,7 @@ describe('guardNumber — 種類ごとの既定と文面', () => {
 
   it('percent だけはマイナスを fatal にしない（残高の減少率などを許す）', () => {
     expect(at('percent', '-5')).toBeNull();
-    for (const k of ['money', 'years', 'months', 'count', 'area', 'length', 'ratio', 'ppm'] as const) {
+    for (const k of ['money', 'years', 'months', 'count', 'area', 'length', 'ratio', 'ppm', 'days', 'energy', 'mgPer100g'] as const) {
       expect(at(k, '-5')?.level, k).toBe('fatal');
       expect(at(k, '-5')?.message, k).toBe('マイナスの値（-5）は指定できません。');
     }
@@ -239,14 +243,15 @@ describe('guardNumber — 種類ごとの既定と文面', () => {
   it('0 を fatal にするのは area / length だけ', () => {
     expect(at('area', '0')?.message).toBe('0 ㎡ では計算できません。');
     expect(at('length', '0')?.message).toBe('0 m では計算できません。');
-    for (const k of ['money', 'percent', 'years', 'months', 'count', 'ratio', 'ppm'] as const) {
+    for (const k of ['money', 'percent', 'years', 'months', 'count', 'ratio', 'ppm', 'days', 'energy', 'mgPer100g'] as const) {
       expect(at(k, '0'), k).toBeNull();
     }
   });
 
-  it('整数を求めるのは count だけ', () => {
+  it('整数を求めるのは count と days だけ', () => {
     expect(at('count', '2.5')?.message).toBe('整数で入力してください（現在 2.5）。小数は切り捨てられます。');
-    for (const k of ['money', 'percent', 'years', 'months', 'area', 'length', 'ratio', 'ppm'] as const) {
+    expect(at('days', '2.5')?.message).toBe('整数で入力してください（現在 2.5）。小数は切り捨てられます。');
+    for (const k of ['money', 'percent', 'years', 'months', 'area', 'length', 'ratio', 'ppm', 'energy', 'mgPer100g'] as const) {
       expect(at(k, '2.5'), k).toBeNull();
     }
   });
@@ -265,6 +270,12 @@ describe('guardNumber — 種類ごとの既定と文面', () => {
     expect(at('length', '1001')?.level).toBe('warn');
     expect(at('ratio', '1001')?.level).toBe('warn');
     expect(at('ppm', '100001')?.level).toBe('warn');
+    expect(at('days', '3651')?.level).toBe('warn');
+    expect(at('days', '3650')).toBeNull();
+    expect(at('energy', '101')?.message).toBe('101 kWh/kg は想定の範囲を超えています。桁を間違えていないか確認してください。');
+    expect(at('energy', '100')).toBeNull();
+    expect(at('mgPer100g', '10001')?.level).toBe('warn');
+    expect(at('mgPer100g', '10000')).toBeNull();
     expect(at('area', '1000001')?.level).toBe('warn');
     expect(at('money', '10000000000001')?.level).toBe('warn');
     expect(at('money', '10000000000000')).toBeNull();
@@ -375,5 +386,62 @@ describe('残った変異体を狙う — 観測できる差があるもの', ()
       ['あ', { label: 'F1', kind: 'money' }],
     ]);
     expect(issues.map((i) => i.label)).toEqual(['F1', 'W1', 'W2']);
+  });
+});
+
+/**
+ * `KIND` 表と読み取りの正規表現 (全角・単位語・飾り) はモジュール読み込み時に
+ * 確定する static な値で、上の検査では Stryker が「static 変異体」として測らずに
+ * 無視する (2026-09-02 の実測で 202 件中 61 件)。`vi.resetModules()` の後に動的
+ * import で読み直すと、この it の中で表が組み立て直されて変異体が測られる。
+ * 上と同じ主張を、測られる形でもう 1 度置く (hydroponicCrops / assistant と同じ手)。
+ */
+describe('KIND 表と正規表現の static 変異体を測る (動的 import で読み直す)', () => {
+  const UNITS = {
+    money: '円', percent: '%', years: '年', months: 'か月', count: '件', area: '㎡',
+    length: 'm', ratio: '倍', ppm: 'mg/L', days: '日', energy: 'kWh/kg', mgPer100g: 'mg/100g',
+  } as const;
+  const SANE = {
+    money: 1e13, percent: 100, years: 100, months: 1200, count: 100000, area: 1e6,
+    length: 1000, ratio: 1000, ppm: 100000, days: 3650, energy: 100, mgPer100g: 10000,
+  } as const;
+  type Kind = keyof typeof UNITS;
+  const KINDS = Object.keys(UNITS) as Kind[];
+
+  it('kind ごとの単位・マイナス・0・整数・上限・桁ミスの既定が写しと一致する', async () => {
+    vi.resetModules();
+    const m = await import('../data/inputGuards');
+    const at = (kind: Kind, raw: string) => m.guardNumber(raw, { label: 'X', kind });
+    for (const k of KINDS) {
+      expect(at(k, '')?.message, k).toBe(`未入力です。0 ${UNITS[k]} として計算されています。`);
+      expect(at(k, '-5')?.level, k).toBe(k === 'percent' ? undefined : 'fatal');
+      expect(at(k, '0')?.message, k).toBe(k === 'area' || k === 'length' ? `0 ${UNITS[k]} では計算できません。` : undefined);
+      expect(at(k, '2.5')?.level, k).toBe(k === 'count' || k === 'days' ? 'warn' : undefined);
+      expect(at(k, String(SANE[k])), k).toBeNull();
+      expect(at(k, String(SANE[k] + 1))?.message, k).toBe(
+        `${(SANE[k] + 1).toLocaleString('ja-JP')} ${UNITS[k]} は想定の範囲を超えています。桁を間違えていないか確認してください。`,
+      );
+    }
+    // 上限 (max) を持つのは percent だけ: 1001 は fatal、他の kind の 1001 は fatal にならない。
+    expect(at('percent', '1001')?.message).toBe('1000 % 以下で入力してください（現在 1001）。');
+    for (const k of KINDS.filter((k) => k !== 'percent')) expect(at(k, '1001')?.level, k).not.toBe('fatal');
+  });
+
+  it('全角の半角化・単位語・飾りの正規表現が効く', async () => {
+    vi.resetModules();
+    const m = await import('../data/inputGuards');
+    expect(m.readNumber('１，０００')).toBe(1000);
+    expect(m.readNumber('¥1,000円')).toBe(1000);
+    expect(m.readNumber('50％')).toBe(50);
+    expect(m.readNumber(' 10人 ')).toBe(10);
+    expect(m.readNumber('3株')).toBe(3);
+    expect(m.readNumber('20㎡')).toBe(20);
+    expect(m.readNumber('12個')).toBe(12);
+    for (const unitWord of ['1万', '2億', '3兆', '4千', '5k', '6 M', '7b']) {
+      expect(m.readNumber(unitWord), unitWord).toBeNull();
+      expect(m.hasUnitWord(unitWord), unitWord).toBe(true);
+    }
+    expect(m.hasUnitWord('1000')).toBe(false);
+    expect(m.readNumber('abc')).toBeNull();
   });
 });
