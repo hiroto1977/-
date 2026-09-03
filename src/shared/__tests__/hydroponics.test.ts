@@ -4,7 +4,7 @@
  * 数値は手計算で置いている。割り切れる値を選んだ固定具 (`CLEAN_CROP`) で
  * 算術そのものを固定し、参考値 (`HYDROPONIC_CROPS`) は「出典どおりか」を別に見る。
  */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   HYDROPONIC_CROPS,
   PANEL_AREA_SQM,
@@ -575,5 +575,46 @@ describe('食べられる量の上限表 (limits)', () => {
   it('表で制限なし (null) にした病期は null', () => {
     const limits = { ...CKD_POTASSIUM_LIMIT_MG, G3b: null };
     expect(servingGramsWithinLimit(measured, 'G3b', 20, limits)).toBeNull();
+  });
+});
+
+/**
+ * 参考値の表と前提の既定はモジュール読込時に確定する static な値で、通常の検査では
+ * Stryker が測らずに無視する。ところが `hydroponicCrops.test.ts` が `vi.resetModules()`
+ * で読み直すと、その import 連鎖でこのモジュールの表も**組み立て直され、測られる**
+ * (2026-09-03 に生存 19 件として発見 — 品目の文字と数・CKD の上限・前提の既定)。
+ * 測られる以上は殺す: 上の `toEqual` と同じ主張を、読み直した実体に対して置く。
+ */
+describe('表の static 変異体を測る (動的 import で読み直す)', () => {
+  it('品目の参考値・前提の既定・CKD の上限・低カリウムの基準が写しと一致する', async () => {
+    vi.resetModules();
+    const m = await import('../hydroponics');
+    expect(m.HYDROPONIC_CROPS).toEqual({
+      'leaf-lettuce': {
+        id: 'leaf-lettuce', label: 'リーフレタス', nurseryDays: 24, growOutDays: 10, harvestWeightG: 85,
+        ecLow: 0.8, ecHigh: 1.2, phLow: 5.8, phHigh: 6.3, plantsPerPanel: 8,
+      },
+      'frill-lettuce': {
+        id: 'frill-lettuce', label: 'フリルレタス', nurseryDays: 24, growOutDays: 12, harvestWeightG: 90,
+        ecLow: 0.8, ecHigh: 1.2, phLow: 5.8, phHigh: 6.3, plantsPerPanel: 8,
+      },
+      romaine: {
+        id: 'romaine', label: 'ロメインレタス', nurseryDays: 24, growOutDays: 14, harvestWeightG: 120,
+        ecLow: 1.0, ecHigh: 1.4, phLow: 5.8, phHigh: 6.3, plantsPerPanel: 6,
+      },
+      'baby-leaf': {
+        id: 'baby-leaf', label: 'ベビーリーフ', nurseryDays: 10, growOutDays: 8, harvestWeightG: 30,
+        ecLow: 0.8, ecHigh: 1.2, phLow: 5.8, phHigh: 6.3, plantsPerPanel: 12,
+      },
+      basil: {
+        id: 'basil', label: 'バジル', nurseryDays: 18, growOutDays: 18, harvestWeightG: 60,
+        ecLow: 1.2, ecHigh: 1.8, phLow: 5.8, phHigh: 6.5, plantsPerPanel: 8,
+      },
+    });
+    expect(m.DEFAULT_PRODUCTION_PARAMS).toEqual({ panelAreaSqm: 0.54, daysPerYear: 365 });
+    expect(m.CKD_POTASSIUM_LIMIT_MG).toEqual({ G1: null, G2: null, G3a: null, G3b: 2000, G4: 1500, G5: 1500 });
+    expect(m.DEFAULT_LOW_POTASSIUM_PARAMS).toEqual({
+      referencePotassiumMgPer100g: 200, saltEquivalentFactor: 2.54, switchDaysMin: 7, switchDaysMax: 10,
+    });
   });
 });
