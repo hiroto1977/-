@@ -166,6 +166,21 @@ import {
   type HealthBands,
   type RadarBands,
 } from './financialHealthBands';
+import {
+  INTERIM_TIER1,
+  INTERIM_TIER2,
+  INTERIM_TIER3,
+  NATIONAL_SHARE,
+  type ScheduleParams,
+} from './taxConsumptionSchedule';
+import { DIVIDEND_WITHHOLDING_INCOME_BASE_RATE, type DividendParams } from './taxDividend';
+import {
+  LOW_SCORE,
+  RECENT_WINDOW,
+  TREND_HYSTERESIS,
+  TRIGGER_MIN_COUNT,
+  type EmotionThresholds,
+} from './emotionThresholds';
 
 /** 値の性格。画面の印と、変えるときの注意書きが変わる。 */
 export type ParameterKind =
@@ -821,6 +836,47 @@ export function parameterDefinitions() {
     id: 'financeHealth.roeGood', feature: '財務診断', label: 'ROE: 100 点の水準', unit: '%',
     defaultValue: RADAR_AXIS_BANDS.roe.good, min: -1_000, max: 1_000, kind: 'threshold',
   },
+  // --- 消費税 (申告・納付) --------------------------------------------------
+  {
+    id: 'consumptionSchedule.nationalShare', feature: '消費税 (申告・納付)', label: '消費税のうち国税分の割合', unit: '%', scale: 100,
+    defaultValue: NATIONAL_SHARE, min: 0.01, max: 1, kind: 'law', source: '消費税法 29 条・地方税法 72 条の83 (7.8 / 10 = 78%)',
+    note: '地方消費税は (100% − 割合) ÷ 割合 (既定 22/78) で組む。2 割特例の割合は「消費税 (事業者)」の項を共有',
+  },
+  {
+    id: 'consumptionSchedule.interimTier1', feature: '消費税 (申告・納付)', label: '中間申告なしの上限 (前課税期間の国税分)', unit: '円',
+    defaultValue: INTERIM_TIER1, min: 0, max: 1_000_000_000_000, integer: true, kind: 'law', source: '消費税法 42 条 (48 万円以下)',
+  },
+  {
+    id: 'consumptionSchedule.interimTier2', feature: '消費税 (申告・納付)', label: '年 1 回 (6 か月中間申告) の上限', unit: '円',
+    defaultValue: INTERIM_TIER2, min: 0, max: 1_000_000_000_000, integer: true, kind: 'law', source: '消費税法 42 条 (400 万円以下)',
+  },
+  {
+    id: 'consumptionSchedule.interimTier3', feature: '消費税 (申告・納付)', label: '年 3 回 (3 か月中間申告) の上限', unit: '円',
+    defaultValue: INTERIM_TIER3, min: 0, max: 1_000_000_000_000, integer: true, kind: 'law', source: '消費税法 42 条 (4,800 万円以下・超は年 11 回)',
+  },
+  // --- 配当所得 -----------------------------------------------------------
+  {
+    id: 'dividend.withholdingIncomeRate', feature: '配当所得', label: '上場株式等の配当の源泉所得税率 (付加率を掛ける前)', unit: '%', scale: 100,
+    defaultValue: DIVIDEND_WITHHOLDING_INCOME_BASE_RATE, min: 0, max: 1, kind: 'law', source: '租税特別措置法 8 条の4・9 条の3 (15%)',
+    note: '復興特別所得税の付加率・配当割 5%・住民税の所得割率は所得税・税額控除・住民税の項を共有 (合計 20.315%)',
+  },
+  // --- 感情ログ -----------------------------------------------------------
+  {
+    id: 'emotion.recentWindow', feature: '感情ログ', label: '「直近」とみなす記録の件数', unit: '件',
+    defaultValue: RECENT_WINDOW, min: 1, max: 365, integer: true, kind: 'assumption', note: '直近の平均と、それ以前の平均を比べて傾向を出す',
+  },
+  {
+    id: 'emotion.trendHysteresis', feature: '感情ログ', label: '傾向を「上向き / 下向き」と言う平均の差', unit: '点',
+    defaultValue: TREND_HYSTERESIS, min: 0, max: 4, kind: 'threshold', note: 'この差以内なら「横ばい」',
+  },
+  {
+    id: 'emotion.lowScore', feature: '感情ログ', label: '「低調」とみなす気分スコアの上限', unit: '点',
+    defaultValue: LOW_SCORE, min: 1, max: 5, integer: true, kind: 'threshold', note: 'これ以下の日が続くと「連続して低調」',
+  },
+  {
+    id: 'emotion.triggerMinCount', feature: '感情ログ', label: '「よく出る言葉」に拾う最小の出現回数', unit: '回',
+    defaultValue: TRIGGER_MIN_COUNT, min: 1, max: 100, integer: true, kind: 'threshold',
+  },
   ] as const satisfies readonly ParameterDef[];
 }
 
@@ -1114,6 +1170,34 @@ export function radarAxisBands(v: ParameterValues): RadarBands {
     ccc: { bad: v['financeHealth.cccBad'], good: v['financeHealth.cccGood'] },
     roa: { bad: v['financeHealth.roaBad'], good: v['financeHealth.roaGood'] },
     roe: { bad: v['financeHealth.roeBad'], good: v['financeHealth.roeGood'] },
+  };
+}
+
+export function scheduleParams(v: ParameterValues): ScheduleParams {
+  return {
+    nationalShare: v['consumptionSchedule.nationalShare'],
+    twentyPercentRate: v['consumptionBusiness.twentyPercentRate'],
+    interimTier1: v['consumptionSchedule.interimTier1'],
+    interimTier2: v['consumptionSchedule.interimTier2'],
+    interimTier3: v['consumptionSchedule.interimTier3'],
+  };
+}
+
+export function dividendParams(v: ParameterValues): DividendParams {
+  return {
+    withholdingIncomeRate: v['dividend.withholdingIncomeRate'],
+    surtaxRate: v['incomeTax.reconstructionSurtaxRate'],
+    withholdingResidentRate: v['credit.residentLevyWithholdingRate'],
+    residentTaxRate: v['residentTax.incomeRate'],
+  };
+}
+
+export function emotionThresholds(v: ParameterValues): EmotionThresholds {
+  return {
+    recentWindow: v['emotion.recentWindow'],
+    triggerMinCount: v['emotion.triggerMinCount'],
+    lowScore: v['emotion.lowScore'],
+    trendHysteresis: v['emotion.trendHysteresis'],
   };
 }
 

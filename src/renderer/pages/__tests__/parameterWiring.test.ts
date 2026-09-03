@@ -14,6 +14,7 @@ import { SERVICES } from '../../services';
 import { TeamPage } from '../TeamPage';
 import { RealEstatePage } from '../RealEstatePage';
 import { TaxPage } from '../TaxPage';
+import { EmotionsPage } from '../EmotionsPage';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { PARAMETER_OVERRIDES_COLLECTION } from '../../data/parameterOverrides';
@@ -551,5 +552,80 @@ describe('財務診断 — 台帳の下限と水準が経営サマリーの格�
     const m = summary();
     expect(m![2]).toBe('0');
     expect(m![1]).toBe('D');
+  });
+});
+
+// --- 消費税 (申告・納付) と配当 — 税ページ ⑩ / ⑧ ----------------------------
+
+describe('消費税の申告・納付と配当 — 台帳の値が試算と文言に効く', () => {
+  it('対照: 既定の国税 78%・境目 48 万・源泉 15% (+2.1%) + 5%', async () => {
+    await mount(TaxPage);
+    await typeIntoLabeled('前課税期間の確定消費税額', '500000');
+    // 課税ベース 500 万 × 10% = 50 万 → 国税 39 万 / 地方 11 万。前期 50 万は 48 万超なので年 1 回。
+    expect(text()).toContain(`（国税 ${jpy(390_000)} ／ 地方 ${jpy(110_000)}）`);
+    expect(text()).toContain('中間納付 1 回');
+    expect(text()).toContain('48万円超 400万円以下 — 年1回');
+    // 配当 100 万: 源泉の所得税 15.315% = 153,150 円。
+    expect(text()).toContain('源泉徴収20.315%');
+    expect(text()).toContain(`所得税 ${jpy(153_150)}`);
+  });
+
+  it('国税分の割合・中間申告の境目・源泉の所得税率の上書きが数字と文言に出る', async () => {
+    await seed({
+      'consumptionSchedule.nationalShare': 0.8,
+      'consumptionSchedule.interimTier1': 600_000,
+      'dividend.withholdingIncomeRate': 0.2,
+    });
+    await mount(TaxPage);
+    await typeIntoLabeled('前課税期間の確定消費税額', '500000');
+    expect(text()).toContain(`（国税 ${jpy(400_000)} ／ 地方 ${jpy(100_000)}）`);
+    expect(text()).toContain('中間納付 なし');
+    expect(text()).not.toContain('48万円超 400万円以下');
+    // 20% × 1.021 + 5% = 25.42%、所得税 204,200 円。
+    expect(text()).toContain('源泉徴収25.42%');
+    expect(text()).toContain(`所得税 ${jpy(204_200)}`);
+    expect(text()).not.toContain('源泉徴収20.315%');
+  });
+});
+
+// --- 感情ログ — 寄り添いカウンセリングの見立て ---------------------------------
+
+describe('感情ログ — 台帳のしきい値が見立ての文言に効く', () => {
+  // 10 日: 5 が 5 日、2 が 5 日。「会議」は 3 回。
+  const moods = [5, 5, 5, 5, 5, 2, 2, 2, 2, 2].map((score, i) => ({
+    date: `2026-08-${String(i + 1).padStart(2, '0')}`,
+    score,
+    note: i === 0 || i === 5 || i === 7 ? '会議 が長い' : '',
+  }));
+  // 画面は「設定済み」のサービスだけ起動時に取りに行くので、listConfigured にも名乗らせる。
+  const hub = () => (globalThis as unknown as { serviceHub: { fetchSnapshot: unknown; listConfigured: unknown } }).serviceHub;
+  let originalFetch: unknown;
+  let originalConfigured: unknown;
+
+  beforeEach(() => {
+    originalFetch = hub().fetchSnapshot;
+    originalConfigured = hub().listConfigured;
+    hub().listConfigured = () => Promise.resolve(['emotions']);
+    hub().fetchSnapshot = (id: string) =>
+      Promise.resolve(id === 'emotions' ? { ok: true, data: { moods, analyses: [], keyConfigured: false } } : { ok: false, code: 'x', message: 'x' });
+  });
+  afterEach(() => {
+    hub().fetchSnapshot = originalFetch;
+    hub().listConfigured = originalConfigured;
+  });
+
+  it('対照: 既定では下向き・連続して低調 5 日・よく出る言葉「会議」', async () => {
+    await mount(EmotionsPage);
+    expect(text()).toContain('傾向 下向き ↘');
+    expect(text()).toContain('連続して低調 5 日');
+    expect(text()).toContain('よく出る言葉: 会議');
+  });
+
+  it('ヒステリシス・低調の上限・出現回数の上書きで見立てが変わる', async () => {
+    await seed({ 'emotion.trendHysteresis': 4, 'emotion.lowScore': 1, 'emotion.triggerMinCount': 5, 'emotion.recentWindow': 3 });
+    await mount(EmotionsPage);
+    expect(text()).toContain('傾向 横ばい →');
+    expect(text()).not.toContain('連続して低調');
+    expect(text()).not.toContain('よく出る言葉');
   });
 });

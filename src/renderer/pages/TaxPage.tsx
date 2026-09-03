@@ -29,6 +29,7 @@ import {
   capitalGainsParams,
   deductionParams,
   displayValue,
+  dividendParams,
   fixedAssetRates,
   fixedAssetThresholds,
   furusatoParams,
@@ -40,6 +41,7 @@ import {
   netSalaryParams,
   residentTaxOverride,
   salaryTaxParams,
+  scheduleParams,
   socialInsuranceRates,
 } from '../../shared/parameters';
 import { WelfareSchemeCard } from '../components/WelfareSchemeCard';
@@ -88,7 +90,7 @@ import {
 } from '../../shared/taxConsumptionBusiness';
 import { calcSocialInsurance, calcSocialInsuranceWithBonus } from '../../shared/taxSocialInsurance';
 import { calcFurusatoBreakdown, furusatoOneStopEligibility } from '../../shared/taxFurusato';
-import { compareDividendMethods, type DividendMethod } from '../../shared/taxDividend';
+import { compareDividendMethods, withholdingTotalRate, type DividendMethod } from '../../shared/taxDividend';
 import {
   calcFixedAssetTaxTotal,
   fixedAssetTax,
@@ -160,6 +162,8 @@ export function TaxPage() {
   // 台帳の数値パラメータ (設定画面で上書きできる)。計算の関数へ引数で渡し、
   // 表示の % も同じ値から出す (文言だけ古い率のまま、を作らない)。
   const { values: params } = useParameters();
+  const scheduleP = useMemo(() => scheduleParams(params), [params]);
+  const dividendP = useMemo(() => dividendParams(params), [params]);
   const surtaxRate = params['incomeTax.reconstructionSurtaxRate'];
   const surtaxPct = displayValue('incomeTax.reconstructionSurtaxRate', surtaxRate);
   const residentPct = displayValue('residentTax.incomeRate', params['residentTax.incomeRate']);
@@ -401,8 +405,8 @@ export function TaxPage() {
   const [divIncomeStr, setDivIncomeStr] = useState('1000000');
   const dividendComparison = useMemo(() => {
     // 配当以外の課税所得はセクション③の精密試算 (配当を含まない) を使う。
-    return compareDividendMethods(num(divIncomeStr), precise.result.taxableIncomeForIncomeTax, 'stock');
-  }, [divIncomeStr, precise.result.taxableIncomeForIncomeTax]);
+    return compareDividendMethods(num(divIncomeStr), precise.result.taxableIncomeForIncomeTax, 'stock', dividendP);
+  }, [divIncomeStr, precise.result.taxableIncomeForIncomeTax, dividendP]);
 
   const dividendMethodLabel: Record<DividendMethod, string> = {
     withholding: '申告不要 (源泉徴収)',
@@ -466,7 +470,7 @@ export function TaxPage() {
     [csFiler, csEndMonth, csEndYear, csExtended, csMethod, ctSalesStr, ctReducedSalesStr, ctPurchaseStr, ctBizType, csPriorStr, csETax],
   );
   const csRate = useMemo(() => Math.min(MAX_RATE, Math.max(0, num(csRateStr) / 100)), [csRateStr]);
-  const schedule = useMemo(() => buildSchedule(csInput, csRate), [csInput, csRate]);
+  const schedule = useMemo(() => buildSchedule(csInput, csRate, scheduleP), [csInput, csRate, scheduleP]);
 
   // ⑫ 貿易にかかる税 — 輸入（関税＋輸入消費税）／輸出（輸出税＋仕向国の関税・付加価値税）
   const [imGoodsStr, setImGoodsStr] = useState('500000');
@@ -1171,7 +1175,7 @@ export function TaxPage() {
 
       <Section title="⑧ 上場株式の配当 課税方式の有利判定" count={3}>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
-          上場株式等の配当は、<strong>申告不要 (源泉徴収20.315%)・申告分離課税・総合課税</strong>から選べます (国税庁 No.1330)。
+          上場株式等の配当は、<strong>申告不要 (源泉徴収{Number((withholdingTotalRate(dividendP) * 100).toPrecision(12))}%)・申告分離課税・総合課税</strong>から選べます (国税庁 No.1330)。
           総合課税は累進税率ですが<strong>配当控除</strong>が使え、課税所得が低いほど有利になりやすいです。
           ※ 配当以外の課税所得はセクション③の精密試算の値を使用。社会保険料への影響・損益通算は反映しません。
         </div>

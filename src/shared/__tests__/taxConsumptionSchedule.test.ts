@@ -2,10 +2,16 @@ import { floorHundred } from '../num';
 import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_RATE_POINTS,
+  DEFAULT_SCHEDULE_PARAMS,
+  INTERIM_TIER1,
+  INTERIM_TIER2,
+  INTERIM_TIER3,
   LOCAL_RATIO,
   MAX_RATE,
   NATIONAL_SHARE,
   breakEvenRate,
+  interimBandLabel,
+  localRatioOf,
   buildSchedule,
   calcAnnualTax,
   finalDueDate,
@@ -17,6 +23,7 @@ import {
   sweepRates,
   type ScheduleInput,
 } from '../taxConsumptionSchedule';
+import { TWENTY_PERCENT_RATE } from '../taxConsumption';
 
 /** 個人事業者・暦年・本則課税の基本形。 */
 const individual = (over: Partial<ScheduleInput> = {}): ScheduleInput => ({
@@ -542,5 +549,77 @@ describe('nextBusinessDay — 祝日は扱わない (既知の限界)', () => {
     // 2027-05-03 は月曜。祝日だが平日として扱う。
     expect(d(2027, 5, 3).getUTCDay()).toBe(1); // 前提: 月曜であること
     expect(nextBusinessDay(d(2027, 5, 3))).toEqual(d(2027, 5, 3));
+  });
+});
+
+/*
+ * 台帳 (`parameters.ts`) から渡す法定値。省略時は定数と同じ結果、渡せば国税分の割合・
+ * 2 割特例の割合・中間申告の境目のそれぞれが効く。
+ */
+describe('台帳から渡す法定値 (ScheduleParams)', () => {
+  it('既定の引数は定数そのもので、省略時と同じ結果 (地方消費税の比も 22/78 と同じ double)', () => {
+    expect(DEFAULT_SCHEDULE_PARAMS).toEqual({
+      nationalShare: NATIONAL_SHARE,
+      twentyPercentRate: TWENTY_PERCENT_RATE,
+      interimTier1: INTERIM_TIER1,
+      interimTier2: INTERIM_TIER2,
+      interimTier3: INTERIM_TIER3,
+    });
+    expect([INTERIM_TIER1, INTERIM_TIER2, INTERIM_TIER3]).toEqual([480_000, 4_000_000, 48_000_000]);
+    expect(localRatioOf(NATIONAL_SHARE)).toBe(LOCAL_RATIO);
+    expect(localRatioOf(0.8)).toBe(0.25);
+    const input = individual({ priorNationalTax: 6_000_000, method: 'twenty-percent' });
+    expect(buildSchedule(input, 0.1, DEFAULT_SCHEDULE_PARAMS)).toEqual(buildSchedule(input, 0.1));
+    expect(interimCount(600_000, DEFAULT_SCHEDULE_PARAMS)).toBe(1);
+    expect(interimBandLabel(1)).toBe('48万円超 400万円以下 — 年1回（6か月中間申告）');
+  });
+
+  it('国税分の割合が年税額の国税 / 地方の配分に効く', () => {
+    const p = { ...DEFAULT_SCHEDULE_PARAMS, nationalShare: 0.8 };
+    // 課税ベース 2,000 万 × 10% = 200 万。既定 78% → 国税 156 万 / 地方 44 万、80% → 160 万 / 40 万。
+    const base = calcAnnualTax(individual(), 0.1);
+    expect([base.national, base.local]).toEqual([1_560_000, 440_000]);
+    const a = calcAnnualTax(individual(), 0.1, p);
+    expect([a.national, a.local, a.total]).toEqual([1_600_000, 400_000, 2_000_000]);
+    // 還付側も同じ比で組む。
+    const r = calcAnnualTax(individual({ taxableSales: 10_000_000, taxablePurchases: 30_000_000 }), 0.1, p);
+    expect(r.isRefund).toBe(true);
+    expect([r.national, r.local]).toEqual([-1_600_000, -400_000]);
+  });
+
+  it('2 割特例の割合が年税額と分岐税率に効く', () => {
+    const input = individual({ method: 'twenty-percent', priorNationalTax: 600_000 });
+    const p = { ...DEFAULT_SCHEDULE_PARAMS, twentyPercentRate: 0.3 };
+    // 売上 3,000 万 × 10% × 78% = 234 万の 30% = 70.2 万 (既定は 46.8 万)。
+    expect(calcAnnualTax(input, 0.1).national).toBe(468_000);
+    expect(calcAnnualTax(input, 0.1, p).national).toBe(702_000);
+    const beDefault = breakEvenRate(input)!;
+    const beCustom = breakEvenRate(input, p)!;
+    expect(beCustom).toBeCloseTo(beDefault * (0.2 / 0.3), 12);
+  });
+
+  it('中間申告の境目が回数・区分の文言・納付額に効く', () => {
+    const p = { ...DEFAULT_SCHEDULE_PARAMS, interimTier1: 600_000, interimTier2: 5_000_000, interimTier3: 50_000_000 };
+    expect([interimCount(600_000, p), interimCount(600_001, p), interimCount(5_000_000, p), interimCount(5_000_001, p), interimCount(50_000_000, p), interimCount(50_000_001, p)]).toEqual([0, 1, 1, 3, 3, 11]);
+    expect(interimBandLabel(0, p)).toBe('60万円以下 — 中間申告は不要（任意の中間申告制度あり）');
+    expect(interimBandLabel(1, p)).toBe('60万円超 500万円以下 — 年1回（6か月中間申告）');
+    expect(interimBandLabel(3, p)).toBe('500万円超 5,000万円以下 — 年3回（3か月中間申告）');
+    expect(interimBandLabel(11, p)).toBe('5,000万円超 — 年11回（1か月中間申告）');
+    // 万円未満の境目は小数で書く (小数 2 桁まで — 既定の 3 桁だと 50.556 になる)。
+    expect(interimBandLabel(0, { ...p, interimTier1: 505_000 })).toBe('50.5万円以下 — 中間申告は不要（任意の中間申告制度あり）');
+    expect(interimBandLabel(0, { ...p, interimTier1: 505_555 })).toBe('50.56万円以下 — 中間申告は不要（任意の中間申告制度あり）');
+    // 前期 55 万: 既定なら年 1 回、境目を 60 万に上げると中間申告なし。
+    const input = individual({ priorNationalTax: 550_000 });
+    expect(planInterim(input).count).toBe(1);
+    const plan = planInterim(input, p);
+    expect(plan.count).toBe(0);
+    expect(plan.payments).toEqual([]);
+    expect(plan.band).toBe('60万円以下 — 中間申告は不要（任意の中間申告制度あり）');
+    // buildSchedule も同じ境目で組む (中間納付が消えるので確定申告の額が年税額そのものになる)。
+    const s = buildSchedule(input, 0.1, p);
+    expect(s.interim.count).toBe(0);
+    expect(s.settlement.amount).toBe(s.annual.total);
+    expect(s.breakEven).toBeNull();
+    expect(s.sweep.every((row) => row.settlement.interimTotal === 0)).toBe(true);
   });
 });

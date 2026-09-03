@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **10499** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **10515** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 401 | 自己検証 |
+| `file:line` 参照数 | 409 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1681,7 +1681,7 @@ union を参照する。
 | `talent` | 人材育成 (組織病の診断 / 登用判定 / 達成確率100%キープ / 育成ロードマップ) | none | ✅ | | `save-state`, `judge-leader` (判定は `src/shared/talent.ts` — main とブラウザ版が同じ関数を読む) |
 | `templates` | Canva 連動テンプレートギャラリー (8 種) | none | ✅ | | `export-template` (プレゼン / 名刺 / SNS / チラシ / 証明書 / 請求書 / 履歴書、SVG 出力) |
 | `library` | アプリ内ライブラリ (IndexedDB) | none | ✅ | | (read-only — ブラウザ版で全エクスポート結果を保管) |
-| `settings` | 設定 (API キー管理 + Vault + **数値パラメータ**) | none | ✅ | | (read-only — Vault で全 token を AES-GCM-256 で暗号化。数値パラメータは `components/ParametersPanel.tsx` — 台帳 `src/shared/parameters.ts` の 136 件〔法定値 / 参考値 / しきい値 / 前提〕を機能ごとに並べ、上書きは `parameter-overrides` collection の **1 レコード**を書き換える〔`data/parameterOverrides.ts`〕。下の「数値パラメータ」節) |
+| `settings` | 設定 (API キー管理 + Vault + **数値パラメータ**) | none | ✅ | | (read-only — Vault で全 token を AES-GCM-256 で暗号化。数値パラメータは `components/ParametersPanel.tsx` — 台帳 `src/shared/parameters.ts` の 145 件〔法定値 / 参考値 / しきい値 / 前提〕を機能ごとに並べ、上書きは `parameter-overrides` collection の **1 レコード**を書き換える〔`data/parameterOverrides.ts`〕。下の「数値パラメータ」節) |
 | `uber-eats` | Uber Eats (フードデリバリー、snapshot のみ) | Bearer (Eats Merchants API、未配線) | ✅ | | (read-only — 店舗別売上 / 注文数 / 評価 / 人気メニュー) |
 | `demae-can` | 出前館 (フードデリバリー、snapshot のみ) | Bearer (公開 API 無し、scrape 想定) | ✅ | | (read-only — 進行中注文 / 月次サマリ / 人気エリア) |
 | `real-estate` | 不動産投資 (snapshot + 物件の任意追加 = record store) | Bearer (将来 REIT/楽待) | ✅ | | (ローカル編集 — 保有物件の追加/削除 / 月次キャッシュフロー / 利回り / 入居率。数値入力は `data/inputGuards.ts` + `components/GuardedNumber.tsx` で検査し、読み取れない入力が黙って 0 になるのを防ぐ) |
@@ -2138,7 +2138,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **253 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **254 ファイル**。
 
 #### 点数の定義 (分母に何を入れないか)
 
@@ -2613,7 +2613,7 @@ lint:imports → lint:docs → test の順で走り、いずれかが fail す�
 各機能が計算に使う**固定の数字** (通勤手当の非課税限度・消費税率・DSCR のしきい値・
 CKD の 1 日カリウム上限・栽培パネルの面積…) を、利用者が設定画面から任意の値に
 置けるようにしてある (2026-09-03 依頼「全ての機能の数値を任意で設定出来る仕様に」)。
-台帳は `src/shared/parameters.ts` の `PARAMETERS` (136 件、`ParameterId` 合併型)。
+台帳は `src/shared/parameters.ts` の `PARAMETERS` (145 件、`ParameterId` 合併型)。
 
 守っている設計は 4 つ:
 
@@ -2711,6 +2711,26 @@ NOPAT / ROIC。この 2 指標は計算していたのに表に無かったの�
 `FinancialAnalysis` は props (`healthBands` / `radarBands`) で受け、`DiagnosisCard` のカテゴリの帯の色も `levelOf` で
 同じ下限から決める (以前は 70 / 45 を色の分岐に写していた)。配線先は経営サマリーの財務分析 (格付け・総合スコア・
 強み / 要改善・帯の色) と Markdown の診断レポート。
+
+配線先 (wave 2f — 消費税の申告・納付・配当・感情ログ): `taxConsumptionSchedule.ts` は `ScheduleParams` (国税分の割合、
+2 割特例の割合 (「消費税 (事業者)」の項を共有)、中間申告の回数の境目 3 つ) を `calcAnnualTax` / `interimCount` /
+`interimBandLabel` / `planInterim` / `sweepRates` / `breakEvenRate` / `buildSchedule` の末尾引数で受ける。地方消費税の比
+(22/78) は `localRatioOf(share)` が百万分率の整数比で組む (既定で `22 / 78` と同じ double — 1 − 0.78 の丸め誤差を
+持ち込まない)。区分の文言 (「48万円超 400万円以下 — 年1回」) も境目から出す。`taxDividend.ts` は `DividendParams`
+(源泉の所得税率の本体 15%、付加率・配当割 5%・住民税率は所得税・税額控除・住民税の項を共有) を
+`compareDividendMethods(d, other, kind, p)` で受け、率は先に掛け合わせてから配当に掛ける (定数と同じ結合順 — 1 円の
+差を出さない)。「申告分離課税 (20.315%)」の文言は `withholdingTotalRate(p)` から。感情ログは `EmotionThresholds`
+(直近の窓・傾向のヒステリシス・低調の上限・よく出る言葉の出現回数) を `src/shared/emotionThresholds.ts` に置き
+(`src/renderer/data/emotionInsights.ts` が読む — 台帳は `shared` からしか import できない)、`analyzeProfile(moods, analyses, t)` /
+`classifyTrend` / `trailingLowStreak` / `extractTriggers` の末尾引数で受ける。配線先は税ページ ⑩ (年税額の国税 / 地方・
+中間納付の回数と区分の文言) と ⑧ (源泉の税額・「源泉徴収20.315%」の文言)、感情ログの寄り添いカウンセリング
+(傾向・連続して低調・よく出る言葉)。
+
+載せないと決めた物 (wave 2f の走査で残った定数): セキュリティ診断の格付けの境目とバックアップ鮮度の日数
+(`dbSecurityPosture.ts` — 緩めると診断が実態より安全に見える。診断が無いより悪い)、寄り添いカウンセリングの危機検知の
+スコア (`src/renderer/data/counseling.ts` — 同じ理由)、会社負担の社会保険料率 (`payroll.ts` の `calcEmployerCost` は画面が呼んでいない)、
+公的年金等控除の他の所得の段 (`calcPublicPensionIncome` は他の所得を受けない)、寄附金特別控除 (画面が呼んでいない)、
+標準報酬月額の上限 (計算で使っていない)、`taxCalc.ts` の基礎控除の定数 (どこからも読まれていない)。
 
 ## Appendix A. コア型 (verbatim)
 

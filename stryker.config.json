@@ -190,6 +190,7 @@
     "src/shared/dbSecurityPosture.ts",
     "src/shared/depreciation.ts",
     "src/shared/employerBenefits.ts",
+    "src/shared/emotionThresholds.ts",
     "src/shared/escape.ts",
     "src/shared/externalUrlGate.ts",
     "src/shared/financialHealthBands.ts",

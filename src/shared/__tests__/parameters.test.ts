@@ -17,6 +17,9 @@ import {
   effluentStandards,
   financialHealthBands,
   radarAxisBands,
+  scheduleParams,
+  dividendParams,
+  emotionThresholds,
   pensionDeductionParams,
   acquisitionParams,
   businessConsumptionParams,
@@ -194,6 +197,21 @@ import {
   HEALTH_LEVEL_WARN_MIN,
   RADAR_AXIS_BANDS,
 } from '../financialHealthBands';
+import {
+  DEFAULT_SCHEDULE_PARAMS,
+  INTERIM_TIER1,
+  INTERIM_TIER2,
+  INTERIM_TIER3,
+  NATIONAL_SHARE,
+} from '../taxConsumptionSchedule';
+import { DEFAULT_DIVIDEND_PARAMS, DIVIDEND_WITHHOLDING_INCOME_BASE_RATE } from '../taxDividend';
+import {
+  DEFAULT_EMOTION_THRESHOLDS,
+  LOW_SCORE,
+  RECENT_WINDOW,
+  TREND_HYSTERESIS,
+  TRIGGER_MIN_COUNT,
+} from '../emotionThresholds';
 
 const def = (id: ParameterId): ParameterDef => PARAMETER_BY_ID.get(id)!;
 
@@ -338,6 +356,15 @@ const DEFAULT_SOURCE: Readonly<Record<ParameterId, number>> = {
   'financeHealth.roaGood': RADAR_AXIS_BANDS.roa.good,
   'financeHealth.roeBad': RADAR_AXIS_BANDS.roe.bad,
   'financeHealth.roeGood': RADAR_AXIS_BANDS.roe.good,
+  'consumptionSchedule.nationalShare': NATIONAL_SHARE,
+  'consumptionSchedule.interimTier1': INTERIM_TIER1,
+  'consumptionSchedule.interimTier2': INTERIM_TIER2,
+  'consumptionSchedule.interimTier3': INTERIM_TIER3,
+  'dividend.withholdingIncomeRate': DIVIDEND_WITHHOLDING_INCOME_BASE_RATE,
+  'emotion.recentWindow': RECENT_WINDOW,
+  'emotion.trendHysteresis': TREND_HYSTERESIS,
+  'emotion.lowScore': LOW_SCORE,
+  'emotion.triggerMinCount': TRIGGER_MIN_COUNT,
 };
 
 describe('台帳の形', () => {
@@ -375,7 +402,7 @@ describe('台帳の形', () => {
     expect(parameterFeatures()).toEqual([
       '水耕栽培', '給与', '不動産', '税', '所得税・住民税', '所得控除・税額控除', '不動産・登記・印紙の税', '譲渡所得',
       '法人税', '消費税 (事業者)', '年金・一時所得・ふるさと納税', '貿易', '社会保険', '財務',
-      '敷地計画 (建築基準法)', '水循環 (排水基準)', '財務診断',
+      '敷地計画 (建築基準法)', '水循環 (排水基準)', '財務診断', '消費税 (申告・納付)', '配当所得', '感情ログ',
     ]);
   });
 
@@ -814,6 +841,32 @@ describe('機能ごとの取り出し口', () => {
     });
   });
 
+  it('消費税の申告・納付・配当・感情ログの取り出し口 — 既定は各モジュールの既定引数と同じ物、上書きは正しい引数へ届く', () => {
+    expect(scheduleParams(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_SCHEDULE_PARAMS);
+    expect(dividendParams(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_DIVIDEND_PARAMS);
+    expect(emotionThresholds(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_EMOTION_THRESHOLDS);
+    const v = resolveParameters({
+      'consumptionSchedule.nationalShare': 0.8,
+      'consumptionBusiness.twentyPercentRate': 0.3,
+      'consumptionSchedule.interimTier1': 600_000,
+      'consumptionSchedule.interimTier2': 5_000_000,
+      'consumptionSchedule.interimTier3': 50_000_000,
+      'dividend.withholdingIncomeRate': 0.2,
+      'incomeTax.reconstructionSurtaxRate': 0,
+      'credit.residentLevyWithholdingRate': 0.08,
+      'residentTax.incomeRate': 0.2,
+      'emotion.recentWindow': 3,
+      'emotion.trendHysteresis': 4,
+      'emotion.lowScore': 1,
+      'emotion.triggerMinCount': 5,
+    });
+    // 2 割特例の割合は「消費税 (事業者)」の項を共有する。
+    expect(scheduleParams(v)).toEqual({ nationalShare: 0.8, twentyPercentRate: 0.3, interimTier1: 600_000, interimTier2: 5_000_000, interimTier3: 50_000_000 });
+    // 付加率・配当割・住民税率は所得税・税額控除・住民税の項を共有する。
+    expect(dividendParams(v)).toEqual({ withholdingIncomeRate: 0.2, surtaxRate: 0, withholdingResidentRate: 0.08, residentTaxRate: 0.2 });
+    expect(emotionThresholds(v)).toEqual({ recentWindow: 3, triggerMinCount: 5, lowScore: 1, trendHysteresis: 4 });
+  });
+
   it('制限のない病期 (G1〜G3a) の null は上書きしても保たれる', () => {
     const limits = ckdPotassiumLimits(custom);
     expect(limits.G1).toBeNull();
@@ -969,6 +1022,15 @@ describe('台帳の表 (静的な値の固定)', () => {
       ['financeHealth.roaGood', '%', 1, -1_000, 1_000, false, 'threshold'],
       ['financeHealth.roeBad', '%', 1, -1_000, 1_000, false, 'threshold'],
       ['financeHealth.roeGood', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['consumptionSchedule.nationalShare', '%', 100, 0.01, 1, false, 'law'],
+      ['consumptionSchedule.interimTier1', '円', 1, 0, 1_000_000_000_000, true, 'law'],
+      ['consumptionSchedule.interimTier2', '円', 1, 0, 1_000_000_000_000, true, 'law'],
+      ['consumptionSchedule.interimTier3', '円', 1, 0, 1_000_000_000_000, true, 'law'],
+      ['dividend.withholdingIncomeRate', '%', 100, 0, 1, false, 'law'],
+      ['emotion.recentWindow', '件', 1, 1, 365, true, 'assumption'],
+      ['emotion.trendHysteresis', '点', 1, 0, 4, false, 'threshold'],
+      ['emotion.lowScore', '点', 1, 1, 5, true, 'threshold'],
+      ['emotion.triggerMinCount', '回', 1, 1, 100, true, 'threshold'],
     ]);
     expect(m.PARAMETER_KIND_LABEL).toEqual({ law: '法定値', reference: '参考値', threshold: 'しきい値', assumption: '前提' });
     // 出典と注記は空でない (法定値には出典が要る)。

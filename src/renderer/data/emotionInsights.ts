@@ -11,6 +11,14 @@
  */
 
 import type { MoodEntry, AnalysisEntry, Sentiment } from './emotionsWeb';
+import {
+  DEFAULT_EMOTION_THRESHOLDS,
+  LOW_SCORE,
+  RECENT_WINDOW,
+  TREND_HYSTERESIS,
+  TRIGGER_MIN_COUNT,
+  type EmotionThresholds,
+} from '../../shared/emotionThresholds';
 
 /** 気分傾向。 */
 export type MoodTrend = 'improving' | 'declining' | 'stable';
@@ -39,12 +47,8 @@ export interface EmotionProfile {
   readonly topTriggers: readonly string[];
 }
 
-/** 直近ウィンドウのサイズ (日数相当)。 */
-export const RECENT_WINDOW = 7;
-/** トリガー語の最小出現回数。 */
-export const TRIGGER_MIN_COUNT = 2;
-/** 不調とみなすスコアの上限 (これ以下が続くと lowStreak)。 */
-export const LOW_SCORE = 2;
+// しきい値の本体は `shared/emotionThresholds.ts` (台帳から上書きできる)。既存の import 先として再輸出する。
+export { RECENT_WINDOW, TRIGGER_MIN_COUNT, LOW_SCORE };
 
 const mean = (xs: readonly number[]): number =>
   xs.length === 0 ? 0 : xs.reduce((s, x) => s + x, 0) / xs.length;
@@ -66,19 +70,19 @@ export function stddev(xs: readonly number[]): number {
   return Math.sqrt(variance);
 }
 
-/** recent と prior の平均差から傾向を判定する (しきい値 0.3 でヒステリシス)。 */
-export function classifyTrend(recent: number, prior: number): MoodTrend {
+/** recent と prior の平均差から傾向を判定する (既定はしきい値 0.3 でヒステリシス)。 */
+export function classifyTrend(recent: number, prior: number, hysteresis: number = TREND_HYSTERESIS): MoodTrend {
   const delta = recent - prior;
-  if (delta > 0.3) return 'improving';
-  if (delta < -0.3) return 'declining';
+  if (delta > hysteresis) return 'improving';
+  if (delta < -hysteresis) return 'declining';
   return 'stable';
 }
 
-/** 末尾から score<=LOW_SCORE が連続する数を数える。 */
-export function trailingLowStreak(scores: readonly number[]): number {
+/** 末尾から score<=lowScore (既定 LOW_SCORE) が連続する数を数える。 */
+export function trailingLowStreak(scores: readonly number[], lowScore: number = LOW_SCORE): number {
   let n = 0;
   for (let i = scores.length - 1; i >= 0; i -= 1) {
-    if (scores[i]! <= LOW_SCORE) n += 1;
+    if (scores[i]! <= lowScore) n += 1;
     else break;
   }
   return n;
@@ -89,8 +93,8 @@ export function trailingLowStreak(scores: readonly number[]): number {
 // Stryker disable next-line Regex
 const TRIGGER_SPLIT_RE = /[\s、。,.!?！？「」『』()（）・/\\:;~〜＋"'`\-_]+/;
 
-/** ノート群から頻出語 (2文字以上・出現 TRIGGER_MIN_COUNT 以上) を出現順で抽出。 */
-export function extractTriggers(notes: readonly string[]): string[] {
+/** ノート群から頻出語 (2文字以上・出現 minCount 以上、既定 TRIGGER_MIN_COUNT) を出現順で抽出。 */
+export function extractTriggers(notes: readonly string[], minCount: number = TRIGGER_MIN_COUNT): string[] {
   const counts = new Map<string, number>();
   // order は出力順の蓄積。空配列以外で初期化する変異は、最終 filter (count>=2) が
   // 偽の初期要素 (count 0) を必ず落とすため出力不変 (等価)。
@@ -106,7 +110,7 @@ export function extractTriggers(notes: readonly string[]): string[] {
       counts.set(tok, (counts.get(tok) ?? 0) + 1);
     }
   }
-  return order.filter((w) => (counts.get(w) ?? 0) >= TRIGGER_MIN_COUNT);
+  return order.filter((w) => (counts.get(w) ?? 0) >= minCount);
 }
 
 /** dominant のみ必要な分析エントリの最小形。 */
@@ -162,10 +166,11 @@ export function sentimentBalanceOf(analyses: readonly SentimentLike[]): number {
 export function analyzeProfile(
   moods: readonly ScoredNote[],
   analyses: readonly (DominantLike & SentimentLike)[],
+  t: EmotionThresholds = DEFAULT_EMOTION_THRESHOLDS,
 ): EmotionProfile {
   const scores = moods.map((m) => m.score);
-  const recent = scores.slice(-RECENT_WINDOW);
-  const prior = scores.slice(0, Math.max(0, scores.length - RECENT_WINDOW));
+  const recent = scores.slice(-t.recentWindow);
+  const prior = scores.slice(0, Math.max(0, scores.length - t.recentWindow));
   const recentAverage = mean(recent);
   // prior が空 (履歴が浅い) のときは recent を基準に stable とするため prior=recent。
   const priorAverage = prior.length > 0 ? mean(prior) : recentAverage;
@@ -174,11 +179,11 @@ export function analyzeProfile(
     averageScore: mean(scores),
     recentAverage,
     priorAverage,
-    trend: classifyTrend(recentAverage, priorAverage),
+    trend: classifyTrend(recentAverage, priorAverage, t.trendHysteresis),
     volatility: stddev(scores),
-    lowStreak: trailingLowStreak(scores),
+    lowStreak: trailingLowStreak(scores, t.lowScore),
     dominantEmotion: dominantEmotionOf(analyses),
     sentimentBalance: sentimentBalanceOf(analyses),
-    topTriggers: extractTriggers(moods.map((m) => m.note)),
+    topTriggers: extractTriggers(moods.map((m) => m.note), t.triggerMinCount),
   };
 }
