@@ -137,6 +137,24 @@ import {
   type SocialInsuranceRates,
 } from './taxSocialInsurance';
 import { DEFAULT_EFFECTIVE_TAX_RATE } from './funding';
+import {
+  CORNER_LOT_COVERAGE_BONUS_PCT,
+  FIREPROOF_COVERAGE_BONUS_PCT,
+  FIREPROOF_EXEMPTION_COVERAGE_PCT,
+  ROAD_FAR_MULTIPLIER_OTHER,
+  ROAD_FAR_MULTIPLIER_RESIDENTIAL,
+  ROAD_FAR_WIDTH_THRESHOLD_M,
+  ROAD_SLOPE_OTHER,
+  ROAD_SLOPE_RESIDENTIAL,
+  type ZoningRules,
+} from './zoningPlanner';
+import {
+  EFFLUENT_TN_UNIFORM_MG_L,
+  EFFLUENT_TP_UNIFORM_MG_L,
+  GROUNDWATER_NITRATE_N_STANDARD_MG_L,
+  WPCL_NP_APPLICABILITY_M3_PER_DAY,
+  type EffluentStandards,
+} from './waterCyclePlanner';
 
 /** 値の性格。画面の印と、変えるときの注意書きが変わる。 */
 export type ParameterKind =
@@ -575,6 +593,60 @@ export function parameterDefinitions() {
     defaultValue: DEFAULT_EFFECTIVE_TAX_RATE, min: 0, max: 1, kind: 'assumption',
     note: '中小法人の目安 30%。実績の税負担率が分かれば置き換える',
   },
+  // --- 敷地計画 (建築基準法) ----------------------------------------------
+  {
+    id: 'zoning.roadFarWidthThresholdM', feature: '敷地計画 (建築基準法)', label: '容積率が前面道路の幅員で制限される幅員の上限', unit: 'm',
+    defaultValue: ROAD_FAR_WIDTH_THRESHOLD_M, min: 0, max: 100, kind: 'law', source: '建築基準法 52 条 2 項 (12 m 未満)',
+  },
+  {
+    id: 'zoning.roadFarMultiplierResidential', feature: '敷地計画 (建築基準法)', label: '幅員 1 m あたりの容積率 (住居系・4/10)', unit: '%/m',
+    defaultValue: ROAD_FAR_MULTIPLIER_RESIDENTIAL, min: 0, max: 1_000, kind: 'law', source: '建築基準法 52 条 2 項 1 号 (4/10)',
+  },
+  {
+    id: 'zoning.roadFarMultiplierOther', feature: '敷地計画 (建築基準法)', label: '幅員 1 m あたりの容積率 (その他・6/10)', unit: '%/m',
+    defaultValue: ROAD_FAR_MULTIPLIER_OTHER, min: 0, max: 1_000, kind: 'law', source: '建築基準法 52 条 2 項 2・3 号 (6/10)',
+    note: '特定行政庁が指定する区域では 4/10 や 8/10 になる',
+  },
+  {
+    id: 'zoning.cornerLotBonusPct', feature: '敷地計画 (建築基準法)', label: '角地の建ぺい率の緩和', unit: 'ポイント',
+    defaultValue: CORNER_LOT_COVERAGE_BONUS_PCT, min: 0, max: 100, kind: 'law', source: '建築基準法 53 条 3 項 2 号 (+10)',
+  },
+  {
+    id: 'zoning.fireproofBonusPct', feature: '敷地計画 (建築基準法)', label: '防火地域内の耐火建築物等の建ぺい率の緩和', unit: 'ポイント',
+    defaultValue: FIREPROOF_COVERAGE_BONUS_PCT, min: 0, max: 100, kind: 'law', source: '建築基準法 53 条 3 項 1 号 (+10)',
+  },
+  {
+    id: 'zoning.fireproofExemptionCoveragePct', feature: '敷地計画 (建築基準法)', label: '耐火建築物等の建ぺい率が適用除外になる指定値', unit: '%',
+    defaultValue: FIREPROOF_EXEMPTION_COVERAGE_PCT, min: 0, max: 100, kind: 'law', source: '建築基準法 53 条 6 項 1 号 (指定 80% の区域)',
+    note: 'この指定値以上の区域で防火地域内の耐火建築物等なら 100%。建ぺい率と同じ % の数 (率ではない)',
+  },
+  {
+    id: 'zoning.roadSlopeResidential', feature: '敷地計画 (建築基準法)', label: '道路斜線の勾配 (住居系)', unit: '',
+    defaultValue: ROAD_SLOPE_RESIDENTIAL, min: 0.1, max: 10, kind: 'law', source: '建築基準法 別表第三 (に) 欄 (1.25)',
+  },
+  {
+    id: 'zoning.roadSlopeOther', feature: '敷地計画 (建築基準法)', label: '道路斜線の勾配 (その他)', unit: '',
+    defaultValue: ROAD_SLOPE_OTHER, min: 0.1, max: 10, kind: 'law', source: '建築基準法 別表第三 (に) 欄 (1.5)',
+  },
+  // --- 水循環 (排水基準) --------------------------------------------------
+  {
+    id: 'effluent.tnUniformMgL', feature: '水循環 (排水基準)', label: '全窒素の一律排水基準', unit: 'mg/L',
+    defaultValue: EFFLUENT_TN_UNIFORM_MG_L, min: 0.1, max: 10_000, kind: 'law', source: '水質汚濁防止法 一律排水基準 (120 mg/L・日間平均 60)',
+    note: '自治体の上乗せ条例の値に置き換える',
+  },
+  {
+    id: 'effluent.tpUniformMgL', feature: '水循環 (排水基準)', label: '全りんの一律排水基準', unit: 'mg/L',
+    defaultValue: EFFLUENT_TP_UNIFORM_MG_L, min: 0.1, max: 10_000, kind: 'law', source: '水質汚濁防止法 一律排水基準 (16 mg/L・日間平均 8)',
+    note: '自治体の上乗せ条例の値に置き換える',
+  },
+  {
+    id: 'effluent.npApplicabilityM3PerDay', feature: '水循環 (排水基準)', label: '窒素・りん規制の対象になる排出水量', unit: 'm³/日',
+    defaultValue: WPCL_NP_APPLICABILITY_M3_PER_DAY, min: 0.1, max: 1_000_000, kind: 'law', source: '水質汚濁防止法 (50 m³/日以上の特定事業場)',
+  },
+  {
+    id: 'effluent.groundwaterNitrateNMgL', feature: '水循環 (排水基準)', label: '地下水の環境基準 (硝酸性窒素及び亜硝酸性窒素)', unit: 'mg/L',
+    defaultValue: GROUNDWATER_NITRATE_N_STANDARD_MG_L, min: 0.1, max: 10_000, kind: 'law', source: '環境基本法 地下水の水質汚濁に係る環境基準 (10 mg/L)',
+  },
   ] as const satisfies readonly ParameterDef[];
 }
 
@@ -815,6 +887,28 @@ export function importParams(v: ParameterValues): ImportParams {
     nationalReduced: v['trade.nationalReducedRate'],
     smallValueLimit: v['trade.smallValueLimit'],
     personalUseFactor: v['trade.personalUseFactor'],
+  };
+}
+
+export function zoningRules(v: ParameterValues): ZoningRules {
+  return {
+    roadFarWidthThresholdM: v['zoning.roadFarWidthThresholdM'],
+    roadFarMultiplierResidential: v['zoning.roadFarMultiplierResidential'],
+    roadFarMultiplierOther: v['zoning.roadFarMultiplierOther'],
+    cornerLotBonusPct: v['zoning.cornerLotBonusPct'],
+    fireproofBonusPct: v['zoning.fireproofBonusPct'],
+    fireproofExemptionCoveragePct: v['zoning.fireproofExemptionCoveragePct'],
+    roadSlopeResidential: v['zoning.roadSlopeResidential'],
+    roadSlopeOther: v['zoning.roadSlopeOther'],
+  };
+}
+
+export function effluentStandards(v: ParameterValues): EffluentStandards {
+  return {
+    tnUniformMgL: v['effluent.tnUniformMgL'],
+    tpUniformMgL: v['effluent.tpUniformMgL'],
+    npApplicabilityM3PerDay: v['effluent.npApplicabilityM3PerDay'],
+    groundwaterNitrateNMgL: v['effluent.groundwaterNitrateNMgL'],
   };
 }
 

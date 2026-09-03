@@ -453,3 +453,38 @@ describe('税 — 消費税率', () => {
     expect(text()).toContain('消費税 (5%)');
   });
 });
+
+// --- 敷地計画 (建築基準法) と水循環 (排水基準) — 不動産ページ -----------------
+
+describe('敷地計画 (建築基準法) と水循環 (排水基準) — 台帳の値が試算と文言に効く', () => {
+  it('対照: 既定の勾配 1.5・乗数 6/10・角地 +10・12m 未満・基準 120/16・地下水 10', async () => {
+    await mount(RealEstatePage);
+    // 初期値 (道路 6 m・後退 1.5 m・その他・高さ 12.1 m): 限度 = (6 + 3) × 1.5。
+    expect(statValue('道路斜線の高さ限度')).toBe('13.5 m');
+    expect(text()).toContain('商業系ほか (6/10)');
+    expect(text()).toContain('角地 (+10%)');
+    expect(text()).toContain('前面道路 12m 未満');
+    // 濃縮廃液の初期値 (全窒素 400 mg/L) ÷ 地下水基準 10。
+    expect(statValue('地下水基準比 (硝酸性N)')).toBe('40倍');
+    expect(text()).toContain('全窒素 120mg/L・全りん 16mg/L');
+  });
+
+  it('勾配・乗数・緩和・幅員の上限・排水基準の上書きが数字と文言に出る', async () => {
+    await seed({
+      'zoning.roadSlopeOther': 2,
+      'zoning.roadFarMultiplierOther': 50,
+      'zoning.cornerLotBonusPct': 15,
+      'zoning.roadFarWidthThresholdM': 15,
+      'effluent.groundwaterNitrateNMgL': 20,
+      'effluent.tnUniformMgL': 200,
+    });
+    await mount(RealEstatePage);
+    expect(statValue('道路斜線の高さ限度')).toBe('18 m'); // (6 + 3) × 2
+    expect(text()).toContain('商業系ほか (5/10)');
+    expect(text()).not.toContain('商業系ほか (6/10)');
+    expect(text()).toContain('角地 (+15%)');
+    expect(text()).toContain('前面道路 15m 未満');
+    expect(statValue('地下水基準比 (硝酸性N)')).toBe('20倍');
+    expect(text()).toContain('全窒素 200mg/L・全りん 16mg/L');
+  });
+});

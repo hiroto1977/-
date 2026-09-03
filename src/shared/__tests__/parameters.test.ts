@@ -13,6 +13,8 @@ import {
   PARAMETERS,
   furusatoParams,
   importParams,
+  zoningRules,
+  effluentStandards,
   pensionDeductionParams,
   acquisitionParams,
   businessConsumptionParams,
@@ -162,6 +164,24 @@ import {
   PENSION_RATE,
 } from '../taxSocialInsurance';
 import { DEFAULT_EFFECTIVE_TAX_RATE } from '../funding';
+import {
+  CORNER_LOT_COVERAGE_BONUS_PCT,
+  DEFAULT_ZONING_RULES,
+  FIREPROOF_COVERAGE_BONUS_PCT,
+  FIREPROOF_EXEMPTION_COVERAGE_PCT,
+  ROAD_FAR_MULTIPLIER_OTHER,
+  ROAD_FAR_MULTIPLIER_RESIDENTIAL,
+  ROAD_FAR_WIDTH_THRESHOLD_M,
+  ROAD_SLOPE_OTHER,
+  ROAD_SLOPE_RESIDENTIAL,
+} from '../zoningPlanner';
+import {
+  DEFAULT_EFFLUENT_STANDARDS,
+  EFFLUENT_TN_UNIFORM_MG_L,
+  EFFLUENT_TP_UNIFORM_MG_L,
+  GROUNDWATER_NITRATE_N_STANDARD_MG_L,
+  WPCL_NP_APPLICABILITY_M3_PER_DAY,
+} from '../waterCyclePlanner';
 
 const def = (id: ParameterId): ParameterDef => PARAMETER_BY_ID.get(id)!;
 
@@ -258,6 +278,18 @@ const DEFAULT_SOURCE: Readonly<Record<ParameterId, number>> = {
   'socialInsurance.pensionBonusCapPerPayment': PENSION_BONUS_CAP_PER_PAYMENT,
   'socialInsurance.healthBonusCapAnnual': HEALTH_BONUS_CAP_ANNUAL,
   'finance.effectiveTaxRate': DEFAULT_EFFECTIVE_TAX_RATE,
+  'zoning.roadFarWidthThresholdM': ROAD_FAR_WIDTH_THRESHOLD_M,
+  'zoning.roadFarMultiplierResidential': ROAD_FAR_MULTIPLIER_RESIDENTIAL,
+  'zoning.roadFarMultiplierOther': ROAD_FAR_MULTIPLIER_OTHER,
+  'zoning.cornerLotBonusPct': CORNER_LOT_COVERAGE_BONUS_PCT,
+  'zoning.fireproofBonusPct': FIREPROOF_COVERAGE_BONUS_PCT,
+  'zoning.fireproofExemptionCoveragePct': FIREPROOF_EXEMPTION_COVERAGE_PCT,
+  'zoning.roadSlopeResidential': ROAD_SLOPE_RESIDENTIAL,
+  'zoning.roadSlopeOther': ROAD_SLOPE_OTHER,
+  'effluent.tnUniformMgL': EFFLUENT_TN_UNIFORM_MG_L,
+  'effluent.tpUniformMgL': EFFLUENT_TP_UNIFORM_MG_L,
+  'effluent.npApplicabilityM3PerDay': WPCL_NP_APPLICABILITY_M3_PER_DAY,
+  'effluent.groundwaterNitrateNMgL': GROUNDWATER_NITRATE_N_STANDARD_MG_L,
 };
 
 describe('台帳の形', () => {
@@ -295,12 +327,17 @@ describe('台帳の形', () => {
     expect(parameterFeatures()).toEqual([
       '水耕栽培', '給与', '不動産', '税', '所得税・住民税', '所得控除・税額控除', '不動産・登記・印紙の税', '譲渡所得',
       '法人税', '消費税 (事業者)', '年金・一時所得・ふるさと納税', '貿易', '社会保険', '財務',
+      '敷地計画 (建築基準法)', '水循環 (排水基準)',
     ]);
   });
 
   it('割合は % で見せる (scale 100)、それ以外は素のまま', () => {
+    // 内部値が率 (0〜1) ではなく**最初から % の数** (建ぺい率の指定値と比べる境目) の物は
+    // 倍率を持たない。ここに無い '%' の行が倍率なしで増えたら、率を 100 倍で見せ忘れている。
+    const PERCENT_VALUED: ReadonlySet<string> = new Set(['zoning.fireproofExemptionCoveragePct']);
     for (const p of DEFS) {
-      if (p.unit === '%') expect(p.scale, p.id).toBe(100);
+      if (PERCENT_VALUED.has(p.id)) expect([p.unit, p.scale], p.id).toEqual(['%', undefined]);
+      else if (p.unit === '%') expect(p.scale, p.id).toBe(100);
       else expect(p.scale, p.id).toBeUndefined();
     }
   });
@@ -634,6 +671,36 @@ describe('機能ごとの取り出し口', () => {
     expect(importParams(v)).toEqual({ nationalStandard: 0.1, nationalReduced: 0.07, smallValueLimit: 20_000, personalUseFactor: 0.5 });
   });
 
+  it('敷地計画・排水基準の取り出し口 — 既定は各モジュールの既定引数と同じ物、上書きは正しい引数へ届く', () => {
+    expect(zoningRules(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_ZONING_RULES);
+    expect(effluentStandards(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_EFFLUENT_STANDARDS);
+    const v = resolveParameters({
+      'zoning.roadFarWidthThresholdM': 15,
+      'zoning.roadFarMultiplierResidential': 30,
+      'zoning.roadFarMultiplierOther': 50,
+      'zoning.cornerLotBonusPct': 5,
+      'zoning.fireproofBonusPct': 20,
+      'zoning.fireproofExemptionCoveragePct': 70,
+      'zoning.roadSlopeResidential': 1,
+      'zoning.roadSlopeOther': 2,
+      'effluent.tnUniformMgL': 60,
+      'effluent.tpUniformMgL': 8,
+      'effluent.npApplicabilityM3PerDay': 100,
+      'effluent.groundwaterNitrateNMgL': 5,
+    });
+    expect(zoningRules(v)).toEqual({
+      roadFarWidthThresholdM: 15,
+      roadFarMultiplierResidential: 30,
+      roadFarMultiplierOther: 50,
+      cornerLotBonusPct: 5,
+      fireproofBonusPct: 20,
+      fireproofExemptionCoveragePct: 70,
+      roadSlopeResidential: 1,
+      roadSlopeOther: 2,
+    });
+    expect(effluentStandards(v)).toEqual({ tnUniformMgL: 60, tpUniformMgL: 8, npApplicabilityM3PerDay: 100, groundwaterNitrateNMgL: 5 });
+  });
+
   it('制限のない病期 (G1〜G3a) の null は上書きしても保たれる', () => {
     const limits = ckdPotassiumLimits(custom);
     expect(limits.G1).toBeNull();
@@ -741,6 +808,18 @@ describe('台帳の表 (静的な値の固定)', () => {
       ['socialInsurance.pensionBonusCapPerPayment', '円', 1, 0, 100_000_000, true, 'law'],
       ['socialInsurance.healthBonusCapAnnual', '円', 1, 0, 100_000_000, true, 'law'],
       ['finance.effectiveTaxRate', '%', 100, 0, 1, false, 'assumption'],
+      ['zoning.roadFarWidthThresholdM', 'm', 1, 0, 100, false, 'law'],
+      ['zoning.roadFarMultiplierResidential', '%/m', 1, 0, 1_000, false, 'law'],
+      ['zoning.roadFarMultiplierOther', '%/m', 1, 0, 1_000, false, 'law'],
+      ['zoning.cornerLotBonusPct', 'ポイント', 1, 0, 100, false, 'law'],
+      ['zoning.fireproofBonusPct', 'ポイント', 1, 0, 100, false, 'law'],
+      ['zoning.fireproofExemptionCoveragePct', '%', 1, 0, 100, false, 'law'],
+      ['zoning.roadSlopeResidential', '', 1, 0.1, 10, false, 'law'],
+      ['zoning.roadSlopeOther', '', 1, 0.1, 10, false, 'law'],
+      ['effluent.tnUniformMgL', 'mg/L', 1, 0.1, 10_000, false, 'law'],
+      ['effluent.tpUniformMgL', 'mg/L', 1, 0.1, 10_000, false, 'law'],
+      ['effluent.npApplicabilityM3PerDay', 'm³/日', 1, 0.1, 1_000_000, false, 'law'],
+      ['effluent.groundwaterNitrateNMgL', 'mg/L', 1, 0.1, 10_000, false, 'law'],
     ]);
     expect(m.PARAMETER_KIND_LABEL).toEqual({ law: '法定値', reference: '参考値', threshold: 'しきい値', assumption: '前提' });
     // 出典と注記は空でない (法定値には出典が要る)。
