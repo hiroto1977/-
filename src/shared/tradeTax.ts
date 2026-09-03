@@ -40,6 +40,21 @@ export const SMALL_VALUE_LIMIT = 10_000;
 /** 個人的使用に供する物品の課税価格は海外小売価格の 60%。 */
 export const PERSONAL_USE_FACTOR = 0.6;
 
+/** 輸入消費税の率・少額免税の基準・個人使用の係数。省略すると定数。台帳から上書きできる。 */
+export interface ImportParams {
+  readonly nationalStandard: number;
+  readonly nationalReduced: number;
+  readonly smallValueLimit: number;
+  readonly personalUseFactor: number;
+}
+
+export const DEFAULT_IMPORT_PARAMS: ImportParams = {
+  nationalStandard: JP_NATIONAL_STANDARD,
+  nationalReduced: JP_NATIONAL_REDUCED,
+  smallValueLimit: SMALL_VALUE_LIMIT,
+  personalUseFactor: PERSONAL_USE_FACTOR,
+};
+
 /** 課税価格の基準。CIF は運賃・保険料を含み、FOB は含まない（米国など）。 */
 export type CustomsBasis = 'CIF' | 'FOB';
 
@@ -98,7 +113,7 @@ export interface ImportResult {
  * 日本へ輸入するときの関税・輸入消費税を計算する。
  * 端数処理と計算順序は税関・ジェトロの説明に合わせている。
  */
-export function calcJapanImport(input: ImportInput): ImportResult {
+export function calcJapanImport(input: ImportInput, p: ImportParams = DEFAULT_IMPORT_PARAMS): ImportResult {
   const goods = nonNeg(input.goodsValue);
   const freight = nonNeg(input.freight);
   const insurance = nonNeg(input.insurance);
@@ -107,17 +122,17 @@ export function calcJapanImport(input: ImportInput): ImportResult {
 
   // 個人的使用の特例: 課税価格は海外小売価格の 60%（運賃・保険料は加えない）。
   const customsValueRaw = input.personalUse
-    ? goods * PERSONAL_USE_FACTOR
+    ? goods * p.personalUseFactor
     : goods + freight + insurance;
   if (input.personalUse) {
-    notes.push('個人的使用の特例により、課税価格を海外小売価格の60%で計算しました（この特例は2028年4月1日から廃止される予定です）。');
+    notes.push(`個人的使用の特例により、課税価格を海外小売価格の${Number((p.personalUseFactor * 100).toPrecision(12))}%で計算しました（この特例は2028年4月1日から廃止される予定です）。`);
   }
 
   const customsValue = floor1000(customsValueRaw);
 
   // 少額免税: 課税価格の合計額が1万円以下なら関税・消費税が免除される。
   // ただし革製バッグ・ニット製衣類等は除外され、個別消費税は免除されない。
-  const smallValue = customsValue <= SMALL_VALUE_LIMIT;
+  const smallValue = customsValue <= p.smallValueLimit;
   const exempted = (input.smallValueExemption ?? true) && smallValue && !input.exemptionExcluded;
   if (smallValue && input.exemptionExcluded) {
     notes.push('課税価格は1万円以下ですが、革製バッグ・ニット製衣類等は少額免税の対象外のため課税されます。');
@@ -128,7 +143,7 @@ export function calcJapanImport(input: ImportInput): ImportResult {
 
   const duty = exempted ? 0 : floor100(customsValue * Math.max(0, input.dutyRate));
   const consumptionBase = exempted ? 0 : floor1000(customsValue + duty + otherExcise);
-  const rate = input.reducedRate ? JP_NATIONAL_REDUCED : JP_NATIONAL_STANDARD;
+  const rate = input.reducedRate ? p.nationalReduced : p.nationalStandard;
   const nationalTax = exempted ? 0 : floor100(consumptionBase * rate);
   const localTax = exempted ? 0 : floor100(nationalTax * JP_LOCAL_RATIO);
 

@@ -8,7 +8,8 @@
  * **概算であり財務助言ではありません。**
  */
 import { useMemo, useState, type CSSProperties } from 'react';
-import { calcCorporateTax } from '../../shared/taxCorporate';
+import { calcCorporateTax, type CorporateTaxRates } from '../../shared/taxCorporate';
+import type { BusinessConsumptionParams } from '../../shared/taxConsumptionBusiness';
 import {
   compareBusinessTaxMethods,
   isTaxExempt,
@@ -16,7 +17,7 @@ import {
   EXEMPTION_THRESHOLD,
   SIMPLIFIED_ELIGIBILITY_THRESHOLD,
 } from '../../shared/taxConsumptionBusiness';
-import type { SimplifiedBusinessType, ConsumptionTaxMethod } from '../../shared/taxConsumption';
+import { TWENTY_PERCENT_RATE, type SimplifiedBusinessType, type ConsumptionTaxMethod } from '../../shared/taxConsumption';
 import { deriveBusinessFinancials, type MonthlyBusinessKpi } from '../data/businessFinancials';
 import { AxonometricCharts } from './AxonometricCharts';
 import { computeFinancialRatios, radarAxes, type FinancialRatios } from '../data/financialRatios';
@@ -265,8 +266,14 @@ function CorporateTaxCard({
   ordinaryProfit,
   revenue,
   taxablePurchases,
+  corporateTaxRates,
+  businessConsumption,
 }: {
   ordinaryProfit: number;
+  /** 法人税等の率 (台帳の値)。省略すると定数。 */
+  corporateTaxRates?: CorporateTaxRates;
+  /** 事業者の消費税の率と境目 (台帳の値)。省略すると定数。 */
+  businessConsumption?: BusinessConsumptionParams;
   /** 年間課税売上高の既定値 (税抜年商の概算)。 */
   revenue: number;
   /** 年間課税仕入高の既定値 (給与・償却・利息を除いた費用概算)。 */
@@ -291,7 +298,7 @@ function CorporateTaxCard({
       }
     : undefined;
 
-  const breakdown = profile !== undefined ? calcCorporateTax(ordinaryProfit, profile) : calcCorporateTax(ordinaryProfit);
+  const breakdown = calcCorporateTax(ordinaryProfit, profile ?? {}, corporateTaxRates);
   const isLoss = ordinaryProfit <= 0;
   const afterTaxColor = breakdown.afterTaxProfit >= 0 ? '#5cb85c' : '#e36b6b';
 
@@ -308,9 +315,12 @@ function CorporateTaxCard({
   const ct = compareBusinessTaxMethods(
     [{ type: ctBizType, sales: { standard: ctSales, reduced: 0 } }],
     { standard: ctPurchases, reduced: 0 },
+    businessConsumption,
   );
-  const ctExempt = isTaxExempt(ctSales);
-  const ctSimplifiedOk = canUseSimplified(ctSales);
+  const ctExempt = isTaxExempt(ctSales, businessConsumption?.exemptionThreshold);
+  const ctSimplifiedOk = canUseSimplified(ctSales, businessConsumption?.simplifiedEligibilityThreshold);
+  const simplifiedLimit = businessConsumption?.simplifiedEligibilityThreshold ?? SIMPLIFIED_ELIGIBILITY_THRESHOLD;
+  const twentyPct = (businessConsumption?.twentyPercentRate ?? TWENTY_PERCENT_RATE) * 100;
   // 本則が還付見込み (負値) のときは合計に 0 として算入し、還付は注記で伝える。
   const ctBestPayable = Math.max(0, ct.bestAmount);
   const totalTaxBurden = breakdown.totalTax + (ctExempt ? 0 : ctBestPayable);
@@ -487,8 +497,8 @@ function CorporateTaxCard({
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(160px, 100%), 1fr))', gap: 10, marginBottom: 10 }}>
           {([
             ['standard', ct.standard, ct.standard < 0 ? '仕入超過 → 還付見込み' : '売上税額 − 仕入税額'],
-            ['simplified', ct.simplified, `みなし仕入率 ${(ct.appliedDeemedRate * 100).toFixed(0)}%${ctSimplifiedOk ? '' : ' · 基準期間5,000万円超は選択不可'}`],
-            ['twenty-percent', ct.twentyPercent, '売上税額 × 20%（インボイス登録の小規模事業者）'],
+            ['simplified', ct.simplified, `みなし仕入率 ${(ct.appliedDeemedRate * 100).toFixed(0)}%${ctSimplifiedOk ? '' : ` · 基準期間${yen.format(simplifiedLimit)}超は選択不可`}`],
+            ['twenty-percent', ct.twentyPercent, `売上税額 × ${Number(twentyPct.toPrecision(12))}%（インボイス登録の小規模事業者）`],
           ] as const).map(([method, amount, sub]) => (
             <div
               key={method}
@@ -607,10 +617,16 @@ function DiagnosisCard({ diagnosis, label, trend, onExportReport }: { diagnosis:
 export function FinancialAnalysis({
   units,
   effectiveTaxRate,
+  corporateTaxRates,
+  businessConsumption,
 }: {
   units: readonly FinancialUnit[];
   /** NOPAT / ROIC に使う実効税率 (0-1)。省略時は `financialRatios` の既定。台帳の値を画面が渡す。 */
   effectiveTaxRate?: number;
+  /** 法人税等の率 (台帳の値)。省略すると定数。 */
+  corporateTaxRates?: CorporateTaxRates;
+  /** 事業者の消費税の率と境目 (台帳の値)。省略すると定数。 */
+  businessConsumption?: BusinessConsumptionParams;
 }) {
   const [selectedId, setSelectedId] = useState(units[0]?.id ?? '');
   const [barKey, setBarKey] = useState<keyof FinancialRatios>('operatingMarginPct');
@@ -681,7 +697,7 @@ export function FinancialAnalysis({
     downloadCsv(ratiosToCsv(perUnit.map((p) => ({ label: p.unit.label, ratios: p.ratios }))), `financial-ratios-${localIsoDate()}.csv`);
   }
   function onExportReport() {
-    const md = buildFinancialReportMarkdown({ label: selected!.unit.label, ratios: selected!.ratios, diagnosis, trend, ordinaryProfit: selected!.fin.ordinaryProfit });
+    const md = buildFinancialReportMarkdown({ label: selected!.unit.label, ratios: selected!.ratios, diagnosis, trend, ordinaryProfit: selected!.fin.ordinaryProfit, corporateTaxRates });
     downloadBlob(md, 'text/markdown;charset=utf-8', `financial-report-${selected!.unit.id}-${localIsoDate()}.md`);
   }
   // 現在表示中の諸表タブのライン項目 (BS は資産+負債純資産を連結) を返す。
@@ -765,6 +781,8 @@ export function FinancialAnalysis({
 
       <CorporateTaxCard
         ordinaryProfit={fin.ordinaryProfit}
+        corporateTaxRates={corporateTaxRates}
+        businessConsumption={businessConsumption}
         revenue={fin.revenue}
         taxablePurchases={Math.max(0, fin.revenue - fin.ordinaryProfit - fin.laborCost - fin.depreciation - (fin.interestExpense ?? 0))}
       />

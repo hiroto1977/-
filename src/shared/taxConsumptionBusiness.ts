@@ -64,11 +64,8 @@ function nonNegativeFinite(n: number): number {
 }
 
 /** 税率別の税抜金額から消費税額 (標準10% + 軽減8%) を求める。 */
-function taxOf(a: AmountByRate): number {
-  return (
-    nonNegativeFinite(a.standard) * CONSUMPTION_TAX_STANDARD +
-    nonNegativeFinite(a.reduced) * CONSUMPTION_TAX_REDUCED
-  );
+function taxOf(a: AmountByRate, rates: ConsumptionRates): number {
+  return nonNegativeFinite(a.standard) * rates.standard + nonNegativeFinite(a.reduced) * rates.reduced;
 }
 
 // --- 本則課税 (軽減税率混在) ---------------------------------------------
@@ -78,8 +75,12 @@ function taxOf(a: AmountByRate): number {
  *   納付税額 = 売上に係る消費税額 − 仕入に係る消費税額 (仕入税額控除)
  * 仕入が売上を上回る場合は負値 (還付見込み) を返す。
  */
-export function calcStandardTax(sales: AmountByRate, purchases: AmountByRate): number {
-  return yenOr0(taxOf(sales) - taxOf(purchases));
+export function calcStandardTax(
+  sales: AmountByRate,
+  purchases: AmountByRate,
+  rates: ConsumptionRates = DEFAULT_CONSUMPTION_RATES,
+): number {
+  return yenOr0(taxOf(sales, rates) - taxOf(purchases, rates));
 }
 
 // --- 本則課税の仕入控除税額 (全額控除 / 個別対応 / 一括比例配分) ---------
@@ -95,6 +96,39 @@ export const FULL_CREDIT_RATIO_THRESHOLD = 0.95;
 
 /** 全額控除の要件その 2: 課税売上高がこの値**以下** (5億円)。 */
 export const FULL_CREDIT_SALES_THRESHOLD = 500_000_000;
+
+/** 標準 / 軽減の税率 (0..1)。既定は `taxCalc` の定数。 */
+export interface ConsumptionRates {
+  readonly standard: number;
+  readonly reduced: number;
+}
+
+export const DEFAULT_CONSUMPTION_RATES: ConsumptionRates = {
+  standard: CONSUMPTION_TAX_STANDARD,
+  reduced: CONSUMPTION_TAX_REDUCED,
+};
+
+/**
+ * 事業者の消費税の率と境目。省略すると各定数。台帳 (`shared/parameters.ts`) から上書きできる。
+ * 税率は台帳の「消費税率 (標準 / 軽減)」を共有する (同じ法定値を 2 か所で置かせない)。
+ */
+export interface BusinessConsumptionParams {
+  readonly rates: ConsumptionRates;
+  readonly twentyPercentRate: number;
+  readonly exemptionThreshold: number;
+  readonly simplifiedEligibilityThreshold: number;
+  readonly fullCreditRatioThreshold: number;
+  readonly fullCreditSalesThreshold: number;
+}
+
+export const DEFAULT_BUSINESS_CONSUMPTION_PARAMS: BusinessConsumptionParams = {
+  rates: DEFAULT_CONSUMPTION_RATES,
+  twentyPercentRate: TWENTY_PERCENT_RATE,
+  exemptionThreshold: EXEMPTION_THRESHOLD,
+  simplifiedEligibilityThreshold: SIMPLIFIED_ELIGIBILITY_THRESHOLD,
+  fullCreditRatioThreshold: FULL_CREDIT_RATIO_THRESHOLD,
+  fullCreditSalesThreshold: FULL_CREDIT_SALES_THRESHOLD,
+};
 
 /** 仕入控除税額の計算方式。 */
 export type InputCreditMethod =
@@ -117,8 +151,8 @@ export interface PurchaseByUse {
 }
 
 /** 用途区分をまとめて 1 つの税抜金額とみなす (一括比例配分方式で使う)。 */
-function totalPurchaseTax(p: PurchaseByUse): number {
-  return taxOf(p.taxableOnly) + taxOf(p.exemptOnly) + taxOf(p.common);
+function totalPurchaseTax(p: PurchaseByUse, rates: ConsumptionRates): number {
+  return taxOf(p.taxableOnly, rates) + taxOf(p.exemptOnly, rates) + taxOf(p.common, rates);
 }
 
 /**
@@ -154,10 +188,14 @@ export function taxableSalesRatio(taxableAndExportSales: number, exemptSales: nu
  *   課税売上割合 95% 以上 **かつ** 課税売上高 5億円以下 → true
  * どちらか一方でも外れると、個別対応方式か一括比例配分方式で按分する。
  */
-export function canDeductFully(taxableAndExportSales: number, exemptSales: number): boolean {
+export function canDeductFully(
+  taxableAndExportSales: number,
+  exemptSales: number,
+  p: BusinessConsumptionParams = DEFAULT_BUSINESS_CONSUMPTION_PARAMS,
+): boolean {
   return (
-    taxableSalesRatio(taxableAndExportSales, exemptSales) >= FULL_CREDIT_RATIO_THRESHOLD &&
-    nonNegativeFinite(taxableAndExportSales) <= FULL_CREDIT_SALES_THRESHOLD
+    taxableSalesRatio(taxableAndExportSales, exemptSales) >= p.fullCreditRatioThreshold &&
+    nonNegativeFinite(taxableAndExportSales) <= p.fullCreditSalesThreshold
   );
 }
 
@@ -166,8 +204,12 @@ export function canDeductFully(taxableAndExportSales: number, exemptSales: numbe
  *   控除税額 = 課税売上対応分 + 共通対応分 × 課税売上割合
  * 非課税売上にのみ要する仕入れは 1 円も控除できない。
  */
-export function itemizedInputCredit(purchases: PurchaseByUse, ratio: number): number {
-  return taxOf(purchases.taxableOnly) + taxOf(purchases.common) * clampRatio(ratio);
+export function itemizedInputCredit(
+  purchases: PurchaseByUse,
+  ratio: number,
+  rates: ConsumptionRates = DEFAULT_CONSUMPTION_RATES,
+): number {
+  return taxOf(purchases.taxableOnly, rates) + taxOf(purchases.common, rates) * clampRatio(ratio);
 }
 
 /**
@@ -176,8 +218,12 @@ export function itemizedInputCredit(purchases: PurchaseByUse, ratio: number): nu
  * 用途区分をしなくてよい代わりに、**選択したら 2 年間は継続適用**しなければ
  * ならない (消費税法 §30⑤)。翌期の見込みも含めて選ぶこと。
  */
-export function proportionalInputCredit(purchases: PurchaseByUse, ratio: number): number {
-  return totalPurchaseTax(purchases) * clampRatio(ratio);
+export function proportionalInputCredit(
+  purchases: PurchaseByUse,
+  ratio: number,
+  rates: ConsumptionRates = DEFAULT_CONSUMPTION_RATES,
+): number {
+  return totalPurchaseTax(purchases, rates) * clampRatio(ratio);
 }
 
 /** 本則課税の内訳。 */
@@ -225,24 +271,27 @@ export interface StandardTaxInput {
  * 承認、たな卸資産・調整対象固定資産の調整、国税/地方税の按分の端数処理は
  * 反映しません。申告は税理士・国税庁で確定してください。
  */
-export function calcStandardTaxDetailed(input: StandardTaxInput): StandardTaxBreakdown {
-  const salesTax = taxOf(input.taxableSales);
-  const inputTaxTotal = totalPurchaseTax(input.purchases);
+export function calcStandardTaxDetailed(
+  input: StandardTaxInput,
+  p: BusinessConsumptionParams = DEFAULT_BUSINESS_CONSUMPTION_PARAMS,
+): StandardTaxBreakdown {
+  const salesTax = taxOf(input.taxableSales, p.rates);
+  const inputTaxTotal = totalPurchaseTax(input.purchases, p.rates);
   const taxableAndExport =
     nonNegativeFinite(input.taxableSales.standard) +
     nonNegativeFinite(input.taxableSales.reduced) +
     nonNegativeFinite(input.exportSales ?? 0);
   const exemptSales = nonNegativeFinite(input.exemptSales ?? 0);
   const ratio = taxableSalesRatio(taxableAndExport, exemptSales);
-  const fullyDeductible = canDeductFully(taxableAndExport, exemptSales);
+  const fullyDeductible = canDeductFully(taxableAndExport, exemptSales, p);
 
   const method: InputCreditMethod = fullyDeductible ? 'full' : (input.method ?? 'itemized');
   const inputCredit =
     method === 'full'
       ? inputTaxTotal
       : method === 'itemized'
-        ? itemizedInputCredit(input.purchases, ratio)
-        : proportionalInputCredit(input.purchases, ratio);
+        ? itemizedInputCredit(input.purchases, ratio, p.rates)
+        : proportionalInputCredit(input.purchases, ratio, p.rates);
 
   return {
     salesTax: yenOr0(salesTax),
@@ -278,13 +327,14 @@ export function compareInputCreditMethods(
   purchases: PurchaseByUse,
   taxableAndExportSales: number,
   exemptSales: number,
+  p: BusinessConsumptionParams = DEFAULT_BUSINESS_CONSUMPTION_PARAMS,
 ): InputCreditComparison {
   const ratio = taxableSalesRatio(taxableAndExportSales, exemptSales);
-  const itemized = yenOr0(itemizedInputCredit(purchases, ratio));
-  const proportional = yenOr0(proportionalInputCredit(purchases, ratio));
+  const itemized = yenOr0(itemizedInputCredit(purchases, ratio, p.rates));
+  const proportional = yenOr0(proportionalInputCredit(purchases, ratio, p.rates));
   return {
     ratio,
-    fullyDeductible: canDeductFully(taxableAndExportSales, exemptSales),
+    fullyDeductible: canDeductFully(taxableAndExportSales, exemptSales, p),
     itemized,
     proportional,
     better: proportional > itemized ? 'proportional' : 'itemized',
@@ -304,11 +354,14 @@ export interface BusinessSegment {
  *   加重率 = Σ(区分の売上税額 × みなし仕入率) / Σ(区分の売上税額)
  * 売上税額が全区分で 0 (分母 0) の場合は 0 を返す。
  */
-export function weightedDeemedRate(segments: readonly BusinessSegment[]): number {
+export function weightedDeemedRate(
+  segments: readonly BusinessSegment[],
+  rates: ConsumptionRates = DEFAULT_CONSUMPTION_RATES,
+): number {
   let weightedNumerator = 0;
   let totalSalesTax = 0;
   for (const seg of segments) {
-    const salesTax = taxOf(seg.sales);
+    const salesTax = taxOf(seg.sales, rates);
     weightedNumerator += salesTax * DEEMED_PURCHASE_RATES[seg.type];
     totalSalesTax += salesTax;
   }
@@ -320,12 +373,15 @@ export function weightedDeemedRate(segments: readonly BusinessSegment[]): number
  * 簡易課税による納付消費税額を概算する (複数事業対応・軽減税率混在)。
  *   納付税額 = 売上税額 × (1 − 加重平均みなし仕入率)
  */
-export function calcSimplifiedTax(segments: readonly BusinessSegment[]): number {
+export function calcSimplifiedTax(
+  segments: readonly BusinessSegment[],
+  rates: ConsumptionRates = DEFAULT_CONSUMPTION_RATES,
+): number {
   let totalSalesTax = 0;
   for (const seg of segments) {
-    totalSalesTax += taxOf(seg.sales);
+    totalSalesTax += taxOf(seg.sales, rates);
   }
-  const deemed = weightedDeemedRate(segments);
+  const deemed = weightedDeemedRate(segments, rates);
   return yenOr0(totalSalesTax * (1 - deemed));
 }
 
@@ -335,8 +391,11 @@ export function calcSimplifiedTax(segments: readonly BusinessSegment[]): number 
  * 2割特例による納付消費税額を概算する (軽減税率混在対応)。
  *   納付税額 = 売上に係る消費税額 × 20%
  */
-export function calcTwentyPercentTax(sales: AmountByRate): number {
-  return yenOr0(taxOf(sales) * TWENTY_PERCENT_RATE);
+export function calcTwentyPercentTax(
+  sales: AmountByRate,
+  p: BusinessConsumptionParams = DEFAULT_BUSINESS_CONSUMPTION_PARAMS,
+): number {
+  return yenOr0(taxOf(sales, p.rates) * p.twentyPercentRate);
 }
 
 // --- 免税 / 簡易課税の適用判定 ------------------------------------------
@@ -346,16 +405,16 @@ export function calcTwentyPercentTax(sales: AmountByRate): number {
  *   課税売上高 1,000万円以下 → 免税事業者 (true)
  * 非有限・負は 0 とみなす (= 免税)。
  */
-export function isTaxExempt(baseTaxableSales: number): boolean {
-  return nonNegativeFinite(baseTaxableSales) <= EXEMPTION_THRESHOLD;
+export function isTaxExempt(baseTaxableSales: number, threshold = EXEMPTION_THRESHOLD): boolean {
+  return nonNegativeFinite(baseTaxableSales) <= threshold;
 }
 
 /**
  * 基準期間の課税売上高から簡易課税を選択できるか判定する。
  *   課税売上高 5,000万円以下 → 選択可 (true)
  */
-export function canUseSimplified(baseTaxableSales: number): boolean {
-  return nonNegativeFinite(baseTaxableSales) <= SIMPLIFIED_ELIGIBILITY_THRESHOLD;
+export function canUseSimplified(baseTaxableSales: number, threshold = SIMPLIFIED_ELIGIBILITY_THRESHOLD): boolean {
+  return nonNegativeFinite(baseTaxableSales) <= threshold;
 }
 
 // --- 3方式の有利判定 ----------------------------------------------------
@@ -386,6 +445,7 @@ export interface BusinessTaxComparison {
 export function compareBusinessTaxMethods(
   segments: readonly BusinessSegment[],
   purchases: AmountByRate,
+  p: BusinessConsumptionParams = DEFAULT_BUSINESS_CONSUMPTION_PARAMS,
 ): BusinessTaxComparison {
   const totalSales: AmountByRate = segments.reduce<AmountByRate>(
     (acc, seg) => ({
@@ -395,10 +455,10 @@ export function compareBusinessTaxMethods(
     { standard: 0, reduced: 0 },
   );
 
-  const standard = calcStandardTax(totalSales, purchases);
-  const simplified = calcSimplifiedTax(segments);
-  const twentyPercent = calcTwentyPercentTax(totalSales);
-  const appliedDeemedRate = weightedDeemedRate(segments);
+  const standard = calcStandardTax(totalSales, purchases, p.rates);
+  const simplified = calcSimplifiedTax(segments, p.rates);
+  const twentyPercent = calcTwentyPercentTax(totalSales, p);
+  const appliedDeemedRate = weightedDeemedRate(segments, p.rates);
 
   let best: ConsumptionTaxMethod = 'standard';
   let bestAmount = standard;

@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **10447** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **10472** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 390 | 自己検証 |
+| `file:line` 参照数 | 396 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1681,7 +1681,7 @@ union を参照する。
 | `talent` | 人材育成 (組織病の診断 / 登用判定 / 達成確率100%キープ / 育成ロードマップ) | none | ✅ | | `save-state`, `judge-leader` (判定は `src/shared/talent.ts` — main とブラウザ版が同じ関数を読む) |
 | `templates` | Canva 連動テンプレートギャラリー (8 種) | none | ✅ | | `export-template` (プレゼン / 名刺 / SNS / チラシ / 証明書 / 請求書 / 履歴書、SVG 出力) |
 | `library` | アプリ内ライブラリ (IndexedDB) | none | ✅ | | (read-only — ブラウザ版で全エクスポート結果を保管) |
-| `settings` | 設定 (API キー管理 + Vault + **数値パラメータ**) | none | ✅ | | (read-only — Vault で全 token を AES-GCM-256 で暗号化。数値パラメータは `components/ParametersPanel.tsx` — 台帳 `src/shared/parameters.ts` の 59 件〔法定値 / 参考値 / しきい値 / 前提〕を機能ごとに並べ、上書きは `parameter-overrides` collection の **1 レコード**を書き換える〔`data/parameterOverrides.ts`〕。下の「数値パラメータ」節) |
+| `settings` | 設定 (API キー管理 + Vault + **数値パラメータ**) | none | ✅ | | (read-only — Vault で全 token を AES-GCM-256 で暗号化。数値パラメータは `components/ParametersPanel.tsx` — 台帳 `src/shared/parameters.ts` の 88 件〔法定値 / 参考値 / しきい値 / 前提〕を機能ごとに並べ、上書きは `parameter-overrides` collection の **1 レコード**を書き換える〔`data/parameterOverrides.ts`〕。下の「数値パラメータ」節) |
 | `uber-eats` | Uber Eats (フードデリバリー、snapshot のみ) | Bearer (Eats Merchants API、未配線) | ✅ | | (read-only — 店舗別売上 / 注文数 / 評価 / 人気メニュー) |
 | `demae-can` | 出前館 (フードデリバリー、snapshot のみ) | Bearer (公開 API 無し、scrape 想定) | ✅ | | (read-only — 進行中注文 / 月次サマリ / 人気エリア) |
 | `real-estate` | 不動産投資 (snapshot + 物件の任意追加 = record store) | Bearer (将来 REIT/楽待) | ✅ | | (ローカル編集 — 保有物件の追加/削除 / 月次キャッシュフロー / 利回り / 入居率。数値入力は `data/inputGuards.ts` + `components/GuardedNumber.tsx` で検査し、読み取れない入力が黙って 0 になるのを防ぐ) |
@@ -2613,7 +2613,7 @@ lint:imports → lint:docs → test の順で走り、いずれかが fail す�
 各機能が計算に使う**固定の数字** (通勤手当の非課税限度・消費税率・DSCR のしきい値・
 CKD の 1 日カリウム上限・栽培パネルの面積…) を、利用者が設定画面から任意の値に
 置けるようにしてある (2026-09-03 依頼「全ての機能の数値を任意で設定出来る仕様に」)。
-台帳は `src/shared/parameters.ts` の `PARAMETERS` (59 件、`ParameterId` 合併型)。
+台帳は `src/shared/parameters.ts` の `PARAMETERS` (88 件、`ParameterId` 合併型)。
 
 守っている設計は 4 つ:
 
@@ -2673,6 +2673,24 @@ NOPAT / ROIC。この 2 指標は計算していたのに表に無かったの�
 の末尾引数で受ける — 付加率は所得税の項 (`incomeTax.reconstructionSurtaxRate`) を**共有**する (同じ法定値を 2 か所で
 置かせない)。税ページ (a)〜(d) と ⑥ の見出し (「固定資産税 (1.4%)」「本則4%、土地・住宅は軽減3%」「概算取得費5%」
 「居住用財産 (¥30,000,000控除+軽減税率)」) も同じ値から出す。
+
+配線先 (wave 2d-1 — 法人税・事業者の消費税): `taxCorporate.ts` は `CorporateTaxRates` (法人税の軽減 / 本則の
+税率と境目、地方法人税率、法人税割の率、均等割の既定と従業者数の境目、事業税の 3 段階の率と 2 つの境目、
+特別法人事業税率、大法人の資本金の境目、繰越欠損金の控除限度) を `calcCorporateTax(income, profile, r)` で
+受け、内部の各計算へ末尾引数で流す。事業税系の限界率 (`STATUTORY_BUSINESS_RATE_TIER*`) は率から組む
+(既定では定数と同じ値、検査で固定)。`taxConsumptionBusiness.ts` は `BusinessConsumptionParams` (税率 2 つ +
+2 割特例の割合、免税 / 簡易課税の境目、全額控除の 2 要件) を `compareBusinessTaxMethods` /
+`calcStandardTaxDetailed` / `compareInputCreditMethods` / `isTaxExempt` / `canUseSimplified` で受ける — 税率は
+「税」の消費税率 (`tax.consumptionStandardRate` / `ReducedRate`) を**共有**する。配線先は財務分析の法人税
+カードと消費税カード (`FinancialAnalysis` の props → `CorporateTaxCard`、Markdown レポートにも同じ率)、
+税ページ ⑩ (3 方式の比較・免税の注記・簡易課税の境目・仕入税額控除の方式比較)。
+
+配線先 (wave 2d-2 — 年金・一時所得・ふるさと納税・貿易): `taxPublicPension.ts` は最低額 2 つを
+`PensionDeductionParams` で、`taxCasual.ts` は特別控除の上限を末尾引数で、`taxFurusato.ts` は自己負担額と
+付加率を `FurusatoParams` (付加率は所得税の項を共有) と寄附先自治体数の上限を末尾引数で、`tradeTax.ts` は
+国税の率 2 つ・少額免税の基準・個人使用の係数を `ImportParams` で受ける。税ページ ⑤ / ⑦ / ⑨ / ⑫ の文言
+(「特別控除50万円」「自己負担2,000円」「寄附先5自治体以内」「最低110万円」「国税 7.8%」「小売価格の60%」
+「1万円以下の輸入」) も同じ値から出す。
 
 ## Appendix A. コア型 (verbatim)
 

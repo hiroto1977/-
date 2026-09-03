@@ -34,7 +34,13 @@ import {
 } from '../data/hydroponicsSetup';
 import { latestRecord } from '../data/latestRecord';
 import { useParameters } from '../data/parameterOverrides';
-import { ckdPotassiumLimits, hydroponicsProductionParams, lowPotassiumParams } from '../../shared/parameters';
+import {
+  businessConsumptionParams,
+  ckdPotassiumLimits,
+  corporateTaxRates,
+  hydroponicsProductionParams,
+  lowPotassiumParams,
+} from '../../shared/parameters';
 import {
   CKD_POTASSIUM_LIMIT_MG,
   checkNutrientSolution,
@@ -613,6 +619,8 @@ export function OverviewPage() {
   const productionParams = useMemo(() => hydroponicsProductionParams(paramValues), [paramValues]);
   const lowKParams = useMemo(() => lowPotassiumParams(paramValues), [paramValues]);
   const ckdLimits = useMemo(() => ckdPotassiumLimits(paramValues), [paramValues]);
+  const corpRates = useMemo(() => corporateTaxRates(paramValues), [paramValues]);
+  const bizConsumption = useMemo(() => businessConsumptionParams(paramValues), [paramValues]);
   const hydroponics = useMemo(
     () => economicsFromSetup(hydroSetup, crops, productionParams),
     [hydroSetup, crops, productionParams],
@@ -1415,7 +1423,12 @@ export function OverviewPage() {
             <> いまは登録した事業がないため、サンプルのみを表示しています。</>
           )}
         </div>
-        <FinancialAnalysis units={financialUnits} effectiveTaxRate={paramValues['finance.effectiveTaxRate']} />
+        <FinancialAnalysis
+          units={financialUnits}
+          effectiveTaxRate={paramValues['finance.effectiveTaxRate']}
+          corporateTaxRates={corpRates}
+          businessConsumption={bizConsumption}
+        />
       </Section>
     </div>
   );

@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
+  DEFAULT_CORPORATE_TAX_RATES,
+  STATUTORY_BUSINESS_RATE_TIER1,
+  STATUTORY_BUSINESS_RATE_TIER3,
+  selectStatutoryRates,
+  resolveCorporatePerCapita,
+  applyLossCarryforward,
+  calcStatutoryEffectiveRate,
   CORP_TAX_REDUCED_RATE,
   CORP_TAX_STANDARD_RATE,
   CORP_TAX_REDUCED_THRESHOLD,
@@ -21,15 +28,9 @@ import {
   calcResidentCorporateTax,
   calcBusinessTaxIncomePortion,
   calcSpecialBusinessTax,
-  resolveCorporatePerCapita,
   resolvePerCapitaLevy,
-  applyLossCarryforward,
   calcCorporateTax,
-  STATUTORY_BUSINESS_RATE_TIER1,
   STATUTORY_BUSINESS_RATE_TIER2,
-  STATUTORY_BUSINESS_RATE_TIER3,
-  selectStatutoryRates,
-  calcStatutoryEffectiveRate,
 } from '../taxCorporate';
 
 /** 参照実装: 法定実効税率を率から直接組み立てる (テスト用の独立計算)。 */
@@ -815,5 +816,72 @@ describe('year constants (令和6年度)', () => {
     expect(LARGE_CORP_CAPITAL_THRESHOLD).toBe(100_000_000);
     expect(LARGE_CORP_LOSS_DEDUCTION_RATIO).toBe(0.5);
     expect(PER_CAPITA_EMPLOYEE_THRESHOLD).toBe(50);
+  });
+});
+
+describe('台帳から渡す率と境目 (CorporateTaxRates)', () => {
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_CORPORATE_TAX_RATES).toEqual({
+      reducedRate: CORP_TAX_REDUCED_RATE,
+      standardRate: CORP_TAX_STANDARD_RATE,
+      reducedThreshold: CORP_TAX_REDUCED_THRESHOLD,
+      localCorpTaxRate: LOCAL_CORP_TAX_RATE,
+      residentCorpTaxRate: RESIDENT_CORP_TAX_RATE,
+      defaultPerCapitaLevy: DEFAULT_PER_CAPITA_LEVY,
+      perCapitaEmployeeThreshold: PER_CAPITA_EMPLOYEE_THRESHOLD,
+      businessTaxRateTier1: BUSINESS_TAX_RATE_TIER1,
+      businessTaxRateTier2: BUSINESS_TAX_RATE_TIER2,
+      businessTaxRateTier3: BUSINESS_TAX_RATE_TIER3,
+      businessTaxTier1Limit: BUSINESS_TAX_TIER1_LIMIT,
+      businessTaxTier2Limit: BUSINESS_TAX_TIER2_LIMIT,
+      specialBusinessTaxRate: SPECIAL_BUSINESS_TAX_RATE,
+      largeCorpCapitalThreshold: LARGE_CORP_CAPITAL_THRESHOLD,
+      largeCorpLossDeductionRatio: LARGE_CORP_LOSS_DEDUCTION_RATIO,
+    });
+    const profile = { capital: 30_000_000, employees: 12, carryforwardLoss: 1_000_000 };
+    expect(calcCorporateTax(12_000_000, profile)).toEqual(calcCorporateTax(12_000_000, profile, DEFAULT_CORPORATE_TAX_RATES));
+    expect(calcCorporateTax(12_000_000)).toEqual(calcCorporateTax(12_000_000, {}, DEFAULT_CORPORATE_TAX_RATES));
+    // 事業税系の限界率は従来の定数 (所得割率 × (1 + 特別法人事業税率)) と同じ。
+    expect(selectStatutoryRates(3_000_000, true).businessRate).toBe(STATUTORY_BUSINESS_RATE_TIER1);
+    expect(selectStatutoryRates(9_000_000, true).businessRate).toBe(STATUTORY_BUSINESS_RATE_TIER3);
+  });
+
+  it('法人税率・境目・地方法人税・法人税割が各項目に効く (所得 1,200 万・中小)', () => {
+    const r = { ...DEFAULT_CORPORATE_TAX_RATES, reducedRate: 0.1, standardRate: 0.25, reducedThreshold: 10_000_000, localCorpTaxRate: 0.11, residentCorpTaxRate: 0.08 };
+    const b = calcCorporateTax(12_000_000, {}, r);
+    expect(b.corporateIncomeTax).toBe(10_000_000 * 0.1 + 2_000_000 * 0.25); // 1,500,000
+    expect(b.localCorporateTax).toBe(Math.round(1_500_000 * 0.11));
+    expect(b.residentTax).toBe(Math.round(1_500_000 * 0.08) + DEFAULT_PER_CAPITA_LEVY);
+    expect(b.totalTax).toBe(b.corporateIncomeTax + b.localCorporateTax + b.residentTax + b.businessTax + b.specialBusinessTax);
+  });
+
+  it('均等割の既定と従業者数の境目', () => {
+    const r = { ...DEFAULT_CORPORATE_TAX_RATES, defaultPerCapitaLevy: 80_000, perCapitaEmployeeThreshold: 100 };
+    expect(calcCorporateTax(0, {}, r).residentTax).toBe(80_000);
+    // 従業者 60 人: 既定の境目 50 人では大区分、境目を 100 人にすれば小区分。
+    expect(resolveCorporatePerCapita(10_000_000, 60, r)).toBe(resolveCorporatePerCapita(10_000_000, 10));
+    expect(resolveCorporatePerCapita(10_000_000, 60)).not.toBe(resolveCorporatePerCapita(10_000_000, 10));
+  });
+
+  it('事業税の段階の率と境目・特別法人事業税率', () => {
+    const r = { ...DEFAULT_CORPORATE_TAX_RATES, businessTaxRateTier1: 0.04, businessTaxRateTier2: 0.06, businessTaxRateTier3: 0.08, businessTaxTier1Limit: 5_000_000, businessTaxTier2Limit: 9_000_000, specialBusinessTaxRate: 0.4 };
+    const b = calcCorporateTax(12_000_000, {}, r);
+    expect(b.businessTax).toBe(5_000_000 * 0.04 + 4_000_000 * 0.06 + 3_000_000 * 0.08); // 680,000
+    expect(b.specialBusinessTax).toBe(Math.round(680_000 * 0.4));
+    expect(selectStatutoryRates(12_000_000, true, r).businessRate).toBeCloseTo(0.08 * 1.4, 12);
+  });
+
+  it('大法人の境目と繰越欠損金の控除限度', () => {
+    const r = { ...DEFAULT_CORPORATE_TAX_RATES, largeCorpCapitalThreshold: 300_000_000, largeCorpLossDeductionRatio: 0.6 };
+    expect(isSmallBusiness({ capital: 200_000_000 })).toBe(false);
+    expect(isSmallBusiness({ capital: 200_000_000 }, r)).toBe(true);
+    expect(applyLossCarryforward(10_000_000, 8_000_000, false).deductedLoss).toBe(5_000_000);
+    expect(applyLossCarryforward(10_000_000, 8_000_000, false, r).deductedLoss).toBe(6_000_000);
+    const large = calcCorporateTax(10_000_000, { capital: 500_000_000, carryforwardLoss: 8_000_000 }, r);
+    expect(large.smallBusiness).toBe(false);
+    expect(large.deductedLoss).toBe(6_000_000);
+    // 法定実効税率も同じ率で組む。
+    expect(calcStatutoryEffectiveRate(12_000_000, {}, { ...DEFAULT_CORPORATE_TAX_RATES, localCorpTaxRate: 0, residentCorpTaxRate: 0, specialBusinessTaxRate: 0 }))
+      .toBeCloseTo((CORP_TAX_STANDARD_RATE + BUSINESS_TAX_RATE_TIER3) / (1 + BUSINESS_TAX_RATE_TIER3), 12);
   });
 });

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  DEFAULT_BUSINESS_CONSUMPTION_PARAMS,
+  DEFAULT_CONSUMPTION_RATES,
   calcStandardTax,
   calcStandardTaxDetailed,
   compareInputCreditMethods,
@@ -493,5 +495,64 @@ describe('calcStandardTaxDetailed', () => {
     expect(r.fullyDeductible).toBe(false);
     expect(r.inputCredit).toBe(0);
     expect(r.payable).toBe(0);
+  });
+});
+
+describe('台帳から渡す率と境目 (BusinessConsumptionParams)', () => {
+  const sales = { standard: 8_000_000, reduced: 2_000_000 };
+  const purchases = { standard: 3_000_000, reduced: 0 };
+  const segments = [{ type: 'service', sales }] as const;
+
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_CONSUMPTION_RATES).toEqual({ standard: 0.1, reduced: 0.08 });
+    expect(DEFAULT_BUSINESS_CONSUMPTION_PARAMS).toEqual({
+      rates: DEFAULT_CONSUMPTION_RATES,
+      twentyPercentRate: 0.2,
+      exemptionThreshold: EXEMPTION_THRESHOLD,
+      simplifiedEligibilityThreshold: SIMPLIFIED_ELIGIBILITY_THRESHOLD,
+      fullCreditRatioThreshold: FULL_CREDIT_RATIO_THRESHOLD,
+      fullCreditSalesThreshold: FULL_CREDIT_SALES_THRESHOLD,
+    });
+    expect(compareBusinessTaxMethods(segments, purchases)).toEqual(compareBusinessTaxMethods(segments, purchases, DEFAULT_BUSINESS_CONSUMPTION_PARAMS));
+    expect(calcStandardTax(sales, purchases)).toBe(calcStandardTax(sales, purchases, DEFAULT_CONSUMPTION_RATES));
+  });
+
+  it('税率は本則・簡易・2 割特例のすべてに効く (標準 12% / 軽減 5%)', () => {
+    const p = { ...DEFAULT_BUSINESS_CONSUMPTION_PARAMS, rates: { standard: 0.12, reduced: 0.05 } };
+    const salesTax = 8_000_000 * 0.12 + 2_000_000 * 0.05; // 1,060,000
+    expect(calcStandardTax(sales, purchases, p.rates)).toBe(salesTax - 3_000_000 * 0.12);
+    expect(calcTwentyPercentTax(sales, p)).toBe(Math.round(salesTax * 0.2));
+    const cmp = compareBusinessTaxMethods(segments, purchases, p);
+    expect(cmp.standard).toBe(salesTax - 360_000);
+    expect(cmp.twentyPercent).toBe(Math.round(salesTax * 0.2));
+    expect(cmp.simplified).toBe(Math.round(salesTax * (1 - weightedDeemedRate(segments))));
+    expect(cmp.simplified).not.toBe(compareBusinessTaxMethods(segments, purchases).simplified);
+  });
+
+  it('2 割特例の割合と、免税・簡易課税の境目', () => {
+    const p = { ...DEFAULT_BUSINESS_CONSUMPTION_PARAMS, twentyPercentRate: 0.3, exemptionThreshold: 20_000_000, simplifiedEligibilityThreshold: 60_000_000 };
+    expect(calcTwentyPercentTax(sales, p)).toBe(Math.round((800_000 + 160_000) * 0.3));
+    expect(isTaxExempt(15_000_000)).toBe(false);
+    expect(isTaxExempt(15_000_000, p.exemptionThreshold)).toBe(true);
+    expect(canUseSimplified(55_000_000)).toBe(false);
+    expect(canUseSimplified(55_000_000, p.simplifiedEligibilityThreshold)).toBe(true);
+  });
+
+  it('全額控除の要件 (課税売上割合・課税売上高) と仕入税額控除の方式比較', () => {
+    const p = { ...DEFAULT_BUSINESS_CONSUMPTION_PARAMS, fullCreditRatioThreshold: 0.9, fullCreditSalesThreshold: 600_000_000 };
+    expect(canDeductFully(92_000_000, 8_000_000)).toBe(false); // 割合 92% < 95%
+    expect(canDeductFully(92_000_000, 8_000_000, p)).toBe(true);
+    expect(canDeductFully(550_000_000, 0)).toBe(false); // 5 億超
+    expect(canDeductFully(550_000_000, 0, p)).toBe(true);
+    const pu = { taxableOnly: { standard: 1_000_000, reduced: 0 }, exemptOnly: { standard: 500_000, reduced: 0 }, common: { standard: 2_000_000, reduced: 0 } };
+    const cmp = compareInputCreditMethods(pu, 92_000_000, 8_000_000, { ...p, rates: { standard: 0.12, reduced: 0.05 } });
+    expect(cmp.fullyDeductible).toBe(true);
+    expect(cmp.itemized).toBe(Math.round(1_000_000 * 0.12 + 2_000_000 * 0.12 * 0.92));
+    // 課税売上 1,000 万 / 非課税 80 万 → 割合 92.6%: 既定の 95% では按分、90% なら全額控除。
+    const detailedInput = { taxableSales: sales, exemptSales: 800_000, purchases: pu, method: 'itemized' } as const;
+    const detailed = calcStandardTaxDetailed(detailedInput, { ...p, rates: { standard: 0.12, reduced: 0.05 } });
+    expect(detailed.salesTax).toBe(1_060_000);
+    expect(detailed.fullyDeductible).toBe(true);
+    expect(calcStandardTaxDetailed(detailedInput).fullyDeductible).toBe(false);
   });
 });

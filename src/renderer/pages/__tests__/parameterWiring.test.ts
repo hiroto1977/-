@@ -29,6 +29,7 @@ import { calcIncomeTax, calcNetSalary, calcResidentTax } from '../../../shared/t
 import { DEFAULT_SOCIAL_INSURANCE_RATES, calcSocialInsurance } from '../../../shared/taxSocialInsurance';
 import { calcFixedAssetTaxTotal } from '../../../shared/taxFixedAsset';
 import { calcCapitalGainsTax, DEFAULT_CAPITAL_GAINS_PARAMS } from '../../../shared/taxCapitalGains';
+import { compareBusinessTaxMethods, DEFAULT_BUSINESS_CONSUMPTION_PARAMS } from '../../../shared/taxConsumptionBusiness';
 import { jpy } from '../../../shared/formatters';
 import type { ParameterOverrides } from '../../../shared/parameters';
 
@@ -105,8 +106,9 @@ async function typeIntoLabeled(labelText: string, value: string): Promise<void> 
 
 /** ラベル → 値 の 2 段の枠 (Stat / Tile / stat) を読む。 */
 function statValue(label: string): string {
+  // 値の枠は要素を子に持たない — 見出しだけ同じ注記の div (<strong> を含む) を掴まないため。
   const tile = Array.from(container.querySelectorAll('div')).find(
-    (d) => d.firstElementChild?.textContent === label && d.children.length >= 2,
+    (d) => d.firstElementChild?.textContent === label && d.children.length >= 2 && d.children[1]!.children.length === 0,
   );
   if (!tile) throw new Error(`stat "${label}" not found`);
   return tile.children[1]!.textContent ?? '';
@@ -363,6 +365,74 @@ describe('税 — 消費税率', () => {
     });
     await settle();
     expect(statValue('印紙税額')).toBe(jpy(5_000));
+  });
+
+  it('事業者の消費税: 税率・2 割特例の割合・境目の上書きが ⑩ の 3 方式と文言に出る', async () => {
+    await mount(TaxPage);
+    const control = compareBusinessTaxMethods(
+      [{ type: 'service', sales: { standard: 8_000_000, reduced: 0 } }],
+      { standard: 3_000_000, reduced: 0 },
+    );
+    expect(statValue('2割特例')).toBe(jpy(control.twentyPercent));
+    expect(text()).toContain('簡易課税は基準期間の課税売上¥50,000,000以下');
+    expect(text()).toContain('課税売上が¥10,000,000以下です');
+    await unmount();
+
+    await seed({
+      'tax.consumptionStandardRate': 0.12,
+      'consumptionBusiness.twentyPercentRate': 0.3,
+      'consumptionBusiness.exemptionThreshold': 20_000_000,
+      'consumptionBusiness.simplifiedEligibilityThreshold': 60_000_000,
+    });
+    await mount(TaxPage);
+    const p = {
+      ...DEFAULT_BUSINESS_CONSUMPTION_PARAMS,
+      rates: { standard: 0.12, reduced: 0.08 },
+      twentyPercentRate: 0.3,
+      exemptionThreshold: 20_000_000,
+      simplifiedEligibilityThreshold: 60_000_000,
+    };
+    const seeded = compareBusinessTaxMethods(
+      [{ type: 'service', sales: { standard: 8_000_000, reduced: 0 } }],
+      { standard: 3_000_000, reduced: 0 },
+      p,
+    );
+    expect(seeded.twentyPercent).not.toBe(control.twentyPercent);
+    expect(statValue('2割特例')).toBe(jpy(seeded.twentyPercent));
+    expect(statValue('本則課税')).toBe(jpy(seeded.standard));
+    expect(text()).toContain('簡易課税は基準期間の課税売上¥60,000,000以下');
+    expect(text()).toContain('課税売上が¥20,000,000以下です');
+  });
+
+  it('年金・一時所得・ふるさと納税・貿易: 上書きが計算と文言に出る', async () => {
+    await mount(TaxPage);
+    expect(statValue('課税所得への算入額 (×1/2)')).toBe(jpy(250_000)); // (300 万 − 200 万 − 50 万) ÷ 2
+    expect(statValue('公的年金等控除')).toBe(jpy(1_100_000));
+    expect(text()).toContain('自己負担¥2,000');
+    expect(text()).toContain('寄附先5自治体以内');
+    expect(text()).toContain('国税 7.8% (軽減 6.24%)');
+    expect(text()).toContain('¥10,000以下の輸入');
+    await unmount();
+
+    await seed({
+      'casual.specialDeduction': 300_000,
+      'pension.deductionMinOver65': 1_200_000,
+      'furusato.selfPay': 3_000,
+      'furusato.oneStopMaxMunicipalities': 3,
+      'trade.nationalStandardRate': 0.1,
+      'trade.smallValueLimit': 20_000,
+      'trade.personalUseFactor': 0.5,
+    });
+    await mount(TaxPage);
+    expect(statValue('課税所得への算入額 (×1/2)')).toBe(jpy(350_000)); // (300 万 − 200 万 − 30 万) ÷ 2
+    expect(text()).toContain('特別控除¥300,000');
+    expect(statValue('公的年金等控除')).toBe(jpy(1_200_000));
+    expect(text()).toContain('最低¥1,200,000');
+    expect(text()).toContain('自己負担¥3,000');
+    expect(text()).toContain('寄附先3自治体以内');
+    expect(text()).toContain('国税 10% (軽減 6.24%)');
+    expect(text()).toContain('小売価格の50%で計算');
+    expect(text()).toContain('¥20,000以下の輸入');
   });
 
   it('上書きした率で計算し、% の表示も動く', async () => {

@@ -98,6 +98,36 @@ import {
   type CapitalGainsParams,
 } from './taxCapitalGains';
 import {
+  BUSINESS_TAX_RATE_TIER1,
+  BUSINESS_TAX_RATE_TIER2,
+  BUSINESS_TAX_RATE_TIER3,
+  BUSINESS_TAX_TIER1_LIMIT,
+  BUSINESS_TAX_TIER2_LIMIT,
+  CORP_TAX_REDUCED_RATE,
+  CORP_TAX_REDUCED_THRESHOLD,
+  CORP_TAX_STANDARD_RATE,
+  DEFAULT_PER_CAPITA_LEVY,
+  LARGE_CORP_CAPITAL_THRESHOLD,
+  LARGE_CORP_LOSS_DEDUCTION_RATIO,
+  LOCAL_CORP_TAX_RATE,
+  PER_CAPITA_EMPLOYEE_THRESHOLD,
+  RESIDENT_CORP_TAX_RATE,
+  SPECIAL_BUSINESS_TAX_RATE,
+  type CorporateTaxRates,
+} from './taxCorporate';
+import {
+  EXEMPTION_THRESHOLD,
+  FULL_CREDIT_RATIO_THRESHOLD,
+  FULL_CREDIT_SALES_THRESHOLD,
+  SIMPLIFIED_ELIGIBILITY_THRESHOLD,
+  type BusinessConsumptionParams,
+} from './taxConsumptionBusiness';
+import { TWENTY_PERCENT_RATE } from './taxConsumption';
+import { PENSION_DEDUCTION_MIN_OVER65, PENSION_DEDUCTION_MIN_UNDER65, type PensionDeductionParams } from './taxPublicPension';
+import { CASUAL_INCOME_SPECIAL_DEDUCTION } from './taxCasual';
+import { FURUSATO_ONE_STOP_MAX_MUNICIPALITIES, FURUSATO_SELF_PAY, type FurusatoParams } from './taxFurusato';
+import { JP_NATIONAL_REDUCED, JP_NATIONAL_STANDARD, PERSONAL_USE_FACTOR, SMALL_VALUE_LIMIT, type ImportParams } from './tradeTax';
+import {
   PENSION_RATE,
   HEALTH_RATE,
   CARE_RATE,
@@ -391,6 +421,126 @@ export function parameterDefinitions() {
     id: 'capitalGains.estimatedAcquisitionCostRate', feature: '譲渡所得', label: '概算取得費の割合 (譲渡収入に対して)', unit: '%', scale: 100,
     defaultValue: ESTIMATED_ACQUISITION_COST_RATE, min: 0, max: 1, kind: 'law', source: '租税特別措置法 31 条の 4 (5%)',
   },
+  // --- 法人税 ---------------------------------------------------------------
+  {
+    id: 'corporate.reducedRate', feature: '法人税', label: '法人税の軽減税率 (中小・年 800 万円以下の部分)', unit: '%', scale: 100,
+    defaultValue: CORP_TAX_REDUCED_RATE, min: 0, max: 0.5, kind: 'law', source: '租税特別措置法 42 条の 3 の 2 (15%)',
+  },
+  {
+    id: 'corporate.standardRate', feature: '法人税', label: '法人税の本則税率', unit: '%', scale: 100,
+    defaultValue: CORP_TAX_STANDARD_RATE, min: 0, max: 0.5, kind: 'law', source: '法人税法 66 条 (23.2%)',
+  },
+  {
+    id: 'corporate.reducedThreshold', feature: '法人税', label: '軽減税率が適用される所得の上限', unit: '円',
+    defaultValue: CORP_TAX_REDUCED_THRESHOLD, min: 0, max: 1_000_000_000, integer: true, kind: 'law', source: '法人税法 66 条 (年 800 万円)',
+  },
+  {
+    id: 'corporate.localCorpTaxRate', feature: '法人税', label: '地方法人税率 (法人税額に対して)', unit: '%', scale: 100,
+    defaultValue: LOCAL_CORP_TAX_RATE, min: 0, max: 0.5, kind: 'law', source: '地方法人税法 10 条 (10.3%)',
+  },
+  {
+    id: 'corporate.residentCorpTaxRate', feature: '法人税', label: '法人住民税 法人税割の税率', unit: '%', scale: 100,
+    defaultValue: RESIDENT_CORP_TAX_RATE, min: 0, max: 0.5, kind: 'law', source: '地方税法 (標準 7.0%)', note: '超過課税の自治体はその率に',
+  },
+  {
+    id: 'corporate.defaultPerCapitaLevy', feature: '法人税', label: '法人住民税 均等割の既定 (資本金未入力のとき)', unit: '円',
+    defaultValue: DEFAULT_PER_CAPITA_LEVY, min: 0, max: 10_000_000, integer: true, kind: 'assumption', note: '最小区分 7 万円 (都道府県 2 万 + 市町村 5 万)',
+  },
+  {
+    id: 'corporate.perCapitaEmployeeThreshold', feature: '法人税', label: '均等割の従業者数の境目 (超で大区分)', unit: '人',
+    defaultValue: PER_CAPITA_EMPLOYEE_THRESHOLD, min: 0, max: 10_000, integer: true, kind: 'law', source: '地方税法 (50 人)',
+  },
+  {
+    id: 'corporate.businessTaxRateTier1', feature: '法人税', label: '法人事業税 所得割 (年 400 万円以下)', unit: '%', scale: 100,
+    defaultValue: BUSINESS_TAX_RATE_TIER1, min: 0, max: 0.5, kind: 'law', source: '地方税法 72 条の 24 の 7 (標準 3.5%)',
+  },
+  {
+    id: 'corporate.businessTaxRateTier2', feature: '法人税', label: '法人事業税 所得割 (400 万円超 800 万円以下)', unit: '%', scale: 100,
+    defaultValue: BUSINESS_TAX_RATE_TIER2, min: 0, max: 0.5, kind: 'law', source: '地方税法 72 条の 24 の 7 (標準 5.3%)',
+  },
+  {
+    id: 'corporate.businessTaxRateTier3', feature: '法人税', label: '法人事業税 所得割 (800 万円超)', unit: '%', scale: 100,
+    defaultValue: BUSINESS_TAX_RATE_TIER3, min: 0, max: 0.5, kind: 'law', source: '地方税法 72 条の 24 の 7 (標準 7.0%)',
+  },
+  {
+    id: 'corporate.businessTaxTier1Limit', feature: '法人税', label: '法人事業税の所得段階の境目 (下)', unit: '円',
+    defaultValue: BUSINESS_TAX_TIER1_LIMIT, min: 0, max: 1_000_000_000, integer: true, kind: 'law', source: '地方税法 (年 400 万円)',
+  },
+  {
+    id: 'corporate.businessTaxTier2Limit', feature: '法人税', label: '法人事業税の所得段階の境目 (上)', unit: '円',
+    defaultValue: BUSINESS_TAX_TIER2_LIMIT, min: 0, max: 1_000_000_000, integer: true, kind: 'law', source: '地方税法 (年 800 万円)',
+  },
+  {
+    id: 'corporate.specialBusinessTaxRate', feature: '法人税', label: '特別法人事業税率 (基準法人所得割額に対して)', unit: '%', scale: 100,
+    defaultValue: SPECIAL_BUSINESS_TAX_RATE, min: 0, max: 2, kind: 'law', source: '特別法人事業税法 (37%)',
+  },
+  {
+    id: 'corporate.largeCorpCapitalThreshold', feature: '法人税', label: '大法人と判定する資本金の境目 (超)', unit: '円',
+    defaultValue: LARGE_CORP_CAPITAL_THRESHOLD, min: 0, max: 100_000_000_000, integer: true, kind: 'law', source: '法人税法 66 条 (1 億円)',
+  },
+  {
+    id: 'corporate.largeCorpLossDeductionRatio', feature: '法人税', label: '大法人の繰越欠損金の控除限度 (所得に対する割合)', unit: '%', scale: 100,
+    defaultValue: LARGE_CORP_LOSS_DEDUCTION_RATIO, min: 0, max: 1, kind: 'law', source: '法人税法 57 条 (50%)',
+  },
+  // --- 消費税 (事業者) ---------------------------------------------------------
+  {
+    id: 'consumptionBusiness.twentyPercentRate', feature: '消費税 (事業者)', label: '2 割特例の納付割合 (売上税額に対して)', unit: '%', scale: 100,
+    defaultValue: TWENTY_PERCENT_RATE, min: 0, max: 1, kind: 'law', source: '平成 28 年改正法附則 51 条の 2 (20%)',
+  },
+  {
+    id: 'consumptionBusiness.exemptionThreshold', feature: '消費税 (事業者)', label: '免税事業者となる基準期間の課税売上高の上限', unit: '円',
+    defaultValue: EXEMPTION_THRESHOLD, min: 0, max: 10_000_000_000, integer: true, kind: 'law', source: '消費税法 9 条 (1,000 万円)',
+  },
+  {
+    id: 'consumptionBusiness.simplifiedEligibilityThreshold', feature: '消費税 (事業者)', label: '簡易課税を選べる基準期間の課税売上高の上限', unit: '円',
+    defaultValue: SIMPLIFIED_ELIGIBILITY_THRESHOLD, min: 0, max: 10_000_000_000, integer: true, kind: 'law', source: '消費税法 37 条 (5,000 万円)',
+  },
+  {
+    id: 'consumptionBusiness.fullCreditRatioThreshold', feature: '消費税 (事業者)', label: '全額控除の要件: 課税売上割合 (以上)', unit: '%', scale: 100,
+    defaultValue: FULL_CREDIT_RATIO_THRESHOLD, min: 0, max: 1, kind: 'law', source: '消費税法 30 条 (95%)',
+  },
+  {
+    id: 'consumptionBusiness.fullCreditSalesThreshold', feature: '消費税 (事業者)', label: '全額控除の要件: 課税売上高 (以下)', unit: '円',
+    defaultValue: FULL_CREDIT_SALES_THRESHOLD, min: 0, max: 100_000_000_000, integer: true, kind: 'law', source: '消費税法 30 条 (5 億円)',
+  },
+  // --- 年金・一時所得・ふるさと納税 -----------------------------------------------
+  {
+    id: 'pension.deductionMinUnder65', feature: '年金・一時所得・ふるさと納税', label: '公的年金等控除の最低額 (65 歳未満)', unit: '円',
+    defaultValue: PENSION_DEDUCTION_MIN_UNDER65, min: 0, max: 10_000_000, integer: true, kind: 'law', source: '所得税法 35 条 (60 万円)',
+  },
+  {
+    id: 'pension.deductionMinOver65', feature: '年金・一時所得・ふるさと納税', label: '公的年金等控除の最低額 (65 歳以上)', unit: '円',
+    defaultValue: PENSION_DEDUCTION_MIN_OVER65, min: 0, max: 10_000_000, integer: true, kind: 'law', source: '所得税法 35 条 (110 万円)',
+  },
+  {
+    id: 'casual.specialDeduction', feature: '年金・一時所得・ふるさと納税', label: '一時所得の特別控除の上限', unit: '円',
+    defaultValue: CASUAL_INCOME_SPECIAL_DEDUCTION, min: 0, max: 10_000_000, integer: true, kind: 'law', source: '所得税法 34 条 (50 万円)',
+  },
+  {
+    id: 'furusato.selfPay', feature: '年金・一時所得・ふるさと納税', label: 'ふるさと納税の自己負担額', unit: '円',
+    defaultValue: FURUSATO_SELF_PAY, min: 0, max: 100_000, integer: true, kind: 'law', source: '地方税法 37 条の 2 (2,000 円)',
+  },
+  {
+    id: 'furusato.oneStopMaxMunicipalities', feature: '年金・一時所得・ふるさと納税', label: 'ワンストップ特例を使える寄附先自治体数の上限', unit: '自治体',
+    defaultValue: FURUSATO_ONE_STOP_MAX_MUNICIPALITIES, min: 1, max: 100, integer: true, kind: 'law', source: '地方税法附則 7 条 (5 自治体)',
+  },
+  // --- 貿易 -----------------------------------------------------------------
+  {
+    id: 'trade.nationalStandardRate', feature: '貿易', label: '輸入消費税 (国税) の標準税率', unit: '%', scale: 100,
+    defaultValue: JP_NATIONAL_STANDARD, min: 0, max: 0.5, kind: 'law', source: '消費税法 29 条 (7.8%)', note: '地方消費税はその 22/78',
+  },
+  {
+    id: 'trade.nationalReducedRate', feature: '貿易', label: '輸入消費税 (国税) の軽減税率', unit: '%', scale: 100,
+    defaultValue: JP_NATIONAL_REDUCED, min: 0, max: 0.5, kind: 'law', source: '消費税法 29 条 (6.24%)',
+  },
+  {
+    id: 'trade.smallValueLimit', feature: '貿易', label: '少額輸入貨物の免税基準 (課税価格の合計額)', unit: '円',
+    defaultValue: SMALL_VALUE_LIMIT, min: 0, max: 10_000_000, integer: true, kind: 'law', source: '関税定率法 14 条 (1 万円)', note: '2028 年 4 月に廃止予定',
+  },
+  {
+    id: 'trade.personalUseFactor', feature: '貿易', label: '個人的使用の課税価格 (海外小売価格に対する割合)', unit: '%', scale: 100,
+    defaultValue: PERSONAL_USE_FACTOR, min: 0, max: 1, kind: 'law', source: '関税定率法 4 条の 6 (60%)',
+  },
   // --- 社会保険 -------------------------------------------------------------
   {
     id: 'socialInsurance.pensionRate', feature: '社会保険', label: '厚生年金保険料率 (本人負担)', unit: '%', scale: 100,
@@ -615,6 +765,56 @@ export function capitalGainsParams(v: ParameterValues): CapitalGainsParams {
     residentialSpecialDeduction: v['capitalGains.residentialSpecialDeduction'],
     residentialReducedRateCap: v['capitalGains.residentialReducedRateCap'],
     surtaxRate: v['incomeTax.reconstructionSurtaxRate'],
+  };
+}
+
+export function corporateTaxRates(v: ParameterValues): CorporateTaxRates {
+  return {
+    reducedRate: v['corporate.reducedRate'],
+    standardRate: v['corporate.standardRate'],
+    reducedThreshold: v['corporate.reducedThreshold'],
+    localCorpTaxRate: v['corporate.localCorpTaxRate'],
+    residentCorpTaxRate: v['corporate.residentCorpTaxRate'],
+    defaultPerCapitaLevy: v['corporate.defaultPerCapitaLevy'],
+    perCapitaEmployeeThreshold: v['corporate.perCapitaEmployeeThreshold'],
+    businessTaxRateTier1: v['corporate.businessTaxRateTier1'],
+    businessTaxRateTier2: v['corporate.businessTaxRateTier2'],
+    businessTaxRateTier3: v['corporate.businessTaxRateTier3'],
+    businessTaxTier1Limit: v['corporate.businessTaxTier1Limit'],
+    businessTaxTier2Limit: v['corporate.businessTaxTier2Limit'],
+    specialBusinessTaxRate: v['corporate.specialBusinessTaxRate'],
+    largeCorpCapitalThreshold: v['corporate.largeCorpCapitalThreshold'],
+    largeCorpLossDeductionRatio: v['corporate.largeCorpLossDeductionRatio'],
+  };
+}
+
+/** 事業者の消費税 — 税率は「税」の消費税率を共有する。 */
+export function businessConsumptionParams(v: ParameterValues): BusinessConsumptionParams {
+  return {
+    rates: { standard: v['tax.consumptionStandardRate'], reduced: v['tax.consumptionReducedRate'] },
+    twentyPercentRate: v['consumptionBusiness.twentyPercentRate'],
+    exemptionThreshold: v['consumptionBusiness.exemptionThreshold'],
+    simplifiedEligibilityThreshold: v['consumptionBusiness.simplifiedEligibilityThreshold'],
+    fullCreditRatioThreshold: v['consumptionBusiness.fullCreditRatioThreshold'],
+    fullCreditSalesThreshold: v['consumptionBusiness.fullCreditSalesThreshold'],
+  };
+}
+
+export function pensionDeductionParams(v: ParameterValues): PensionDeductionParams {
+  return { minUnder65: v['pension.deductionMinUnder65'], minOver65: v['pension.deductionMinOver65'] };
+}
+
+/** ふるさと納税 — 付加率は所得税の項を共有する。 */
+export function furusatoParams(v: ParameterValues): FurusatoParams {
+  return { selfPay: v['furusato.selfPay'], surtaxRate: v['incomeTax.reconstructionSurtaxRate'] };
+}
+
+export function importParams(v: ParameterValues): ImportParams {
+  return {
+    nationalStandard: v['trade.nationalStandardRate'],
+    nationalReduced: v['trade.nationalReducedRate'],
+    smallValueLimit: v['trade.smallValueLimit'],
+    personalUseFactor: v['trade.personalUseFactor'],
   };
 }
 

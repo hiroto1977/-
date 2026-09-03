@@ -83,6 +83,46 @@ export const LARGE_CORP_CAPITAL_THRESHOLD = 100_000_000;
 /** 大法人の繰越欠損金 控除限度割合 (控除前所得の50%)。 */
 export const LARGE_CORP_LOSS_DEDUCTION_RATIO = 0.5;
 
+/**
+ * 法人税等の率と境目。省略すると上の定数。台帳 (`shared/parameters.ts`) から上書きできる —
+ * 税率は改正で動き、住民税・事業税は自治体の超過課税で標準と違う。
+ */
+export interface CorporateTaxRates {
+  readonly reducedRate: number;
+  readonly standardRate: number;
+  readonly reducedThreshold: number;
+  readonly localCorpTaxRate: number;
+  readonly residentCorpTaxRate: number;
+  readonly defaultPerCapitaLevy: number;
+  readonly perCapitaEmployeeThreshold: number;
+  readonly businessTaxRateTier1: number;
+  readonly businessTaxRateTier2: number;
+  readonly businessTaxRateTier3: number;
+  readonly businessTaxTier1Limit: number;
+  readonly businessTaxTier2Limit: number;
+  readonly specialBusinessTaxRate: number;
+  readonly largeCorpCapitalThreshold: number;
+  readonly largeCorpLossDeductionRatio: number;
+}
+
+export const DEFAULT_CORPORATE_TAX_RATES: CorporateTaxRates = {
+  reducedRate: CORP_TAX_REDUCED_RATE,
+  standardRate: CORP_TAX_STANDARD_RATE,
+  reducedThreshold: CORP_TAX_REDUCED_THRESHOLD,
+  localCorpTaxRate: LOCAL_CORP_TAX_RATE,
+  residentCorpTaxRate: RESIDENT_CORP_TAX_RATE,
+  defaultPerCapitaLevy: DEFAULT_PER_CAPITA_LEVY,
+  perCapitaEmployeeThreshold: PER_CAPITA_EMPLOYEE_THRESHOLD,
+  businessTaxRateTier1: BUSINESS_TAX_RATE_TIER1,
+  businessTaxRateTier2: BUSINESS_TAX_RATE_TIER2,
+  businessTaxRateTier3: BUSINESS_TAX_RATE_TIER3,
+  businessTaxTier1Limit: BUSINESS_TAX_TIER1_LIMIT,
+  businessTaxTier2Limit: BUSINESS_TAX_TIER2_LIMIT,
+  specialBusinessTaxRate: SPECIAL_BUSINESS_TAX_RATE,
+  largeCorpCapitalThreshold: LARGE_CORP_CAPITAL_THRESHOLD,
+  largeCorpLossDeductionRatio: LARGE_CORP_LOSS_DEDUCTION_RATIO,
+};
+
 
 // --- 法人住民税 均等割の区分テーブル (令和6年度・標準税率) ----------------
 //
@@ -172,9 +212,13 @@ export interface CorporateProfile {
  * @param capital   資本金等の額 (円)
  * @param employees 従業者数 (人)。既定 0 (=50人以下)。
  */
-export function resolveCorporatePerCapita(capital: number, employees = 0): number {
+export function resolveCorporatePerCapita(
+  capital: number,
+  employees = 0,
+  r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
+): number {
   const c = Math.max(0, capital);
-  const many = employees > PER_CAPITA_EMPLOYEE_THRESHOLD;
+  const many = employees > r.perCapitaEmployeeThreshold;
   // 上位区分から走査し、最初に「下限以上」(c >= 下限) を満たした区分を採用する。
   // これにより資本金区分の境界と最上位区分の頭打ちを同時に満たす。最下位区分
   // (index 0, capitalLowerBound===0) は c>=0 で必ず一致するため、ループは index 0
@@ -198,12 +242,15 @@ export function resolveCorporatePerCapita(capital: number, employees = 0): numbe
  *   2. なければ capital から区分テーブルで解決 (employees があれば反映)。
  *   3. capital も無ければ最小区分 (DEFAULT_PER_CAPITA_LEVY)。
  */
-export function resolvePerCapitaLevy(profile: CorporateProfile = {}): number {
+export function resolvePerCapitaLevy(
+  profile: CorporateProfile = {},
+  r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
+): number {
   if (profile.perCapitaLevy !== undefined) return profile.perCapitaLevy;
   if (profile.capital !== undefined) {
-    return resolveCorporatePerCapita(profile.capital, profile.employees ?? 0);
+    return resolveCorporatePerCapita(profile.capital, profile.employees ?? 0, r);
   }
-  return DEFAULT_PER_CAPITA_LEVY;
+  return r.defaultPerCapitaLevy;
 }
 
 /**
@@ -211,9 +258,12 @@ export function resolvePerCapitaLevy(profile: CorporateProfile = {}): number {
  * smallBusiness が明示されていればそれを優先。次に capital で判定
  * (1億円超は大法人=false)。どちらも未指定なら保守的に中小 (true)。
  */
-export function isSmallBusiness(profile: CorporateProfile = {}): boolean {
+export function isSmallBusiness(
+  profile: CorporateProfile = {},
+  r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
+): boolean {
   if (profile.smallBusiness !== undefined) return profile.smallBusiness;
-  if (profile.capital !== undefined) return profile.capital <= LARGE_CORP_CAPITAL_THRESHOLD;
+  if (profile.capital !== undefined) return profile.capital <= r.largeCorpCapitalThreshold;
   return true;
 }
 
@@ -250,10 +300,11 @@ export function applyLossCarryforward(
   income: number,
   loss: number,
   small: boolean,
+  r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): LossCarryforwardResult {
   const baseIncome = Math.max(0, income);
   const availableLoss = Math.max(0, loss);
-  const limit = small ? baseIncome : baseIncome * LARGE_CORP_LOSS_DEDUCTION_RATIO;
+  const limit = small ? baseIncome : baseIncome * r.largeCorpLossDeductionRatio;
   const deductedLoss = Math.min(availableLoss, limit);
   return {
     taxableIncome: baseIncome - deductedLoss,
@@ -273,16 +324,20 @@ export function applyLossCarryforward(
  * @param taxableIncome 課税所得 (円)
  * @param small         中小法人か
  */
-export function calcCorporateIncomeTax(taxableIncome: number, small: boolean): number {
+export function calcCorporateIncomeTax(
+  taxableIncome: number,
+  small: boolean,
+  r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
+): number {
   const income = Math.max(0, taxableIncome);
   // Stryker disable next-line ConditionalExpression: income=0 の早期returnを外しても、各項が 0×率=0 を返すため等価。
   if (income === 0) return 0;
   if (!small) {
-    return yen(income * CORP_TAX_STANDARD_RATE);
+    return yen(income * r.standardRate);
   }
-  const reducedPart = Math.min(income, CORP_TAX_REDUCED_THRESHOLD);
-  const standardPart = Math.max(0, income - CORP_TAX_REDUCED_THRESHOLD);
-  return yen(reducedPart * CORP_TAX_REDUCED_RATE + standardPart * CORP_TAX_STANDARD_RATE);
+  const reducedPart = Math.min(income, r.reducedThreshold);
+  const standardPart = Math.max(0, income - r.reducedThreshold);
+  return yen(reducedPart * r.reducedRate + standardPart * r.standardRate);
 }
 
 /**
@@ -290,8 +345,11 @@ export function calcCorporateIncomeTax(taxableIncome: number, small: boolean): n
  *
  * @param corporateIncomeTax 法人税額 (円)
  */
-export function calcLocalCorporateTax(corporateIncomeTax: number): number {
-  return yen(Math.max(0, corporateIncomeTax) * LOCAL_CORP_TAX_RATE);
+export function calcLocalCorporateTax(
+  corporateIncomeTax: number,
+  r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
+): number {
+  return yen(Math.max(0, corporateIncomeTax) * r.localCorpTaxRate);
 }
 
 /**
@@ -305,8 +363,9 @@ export function calcLocalCorporateTax(corporateIncomeTax: number): number {
 export function calcResidentCorporateTax(
   corporateIncomeTax: number,
   perCapitaLevy: number = DEFAULT_PER_CAPITA_LEVY,
+  r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): number {
-  const corporateTaxPortion = yen(Math.max(0, corporateIncomeTax) * RESIDENT_CORP_TAX_RATE);
+  const corporateTaxPortion = yen(Math.max(0, corporateIncomeTax) * r.residentCorpTaxRate);
   return corporateTaxPortion + Math.max(0, perCapitaLevy);
 }
 
@@ -321,20 +380,23 @@ export function calcResidentCorporateTax(
  *
  * @param taxableIncome 課税所得 (円)
  */
-export function calcBusinessTaxIncomePortion(taxableIncome: number): number {
+export function calcBusinessTaxIncomePortion(
+  taxableIncome: number,
+  r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
+): number {
   const income = Math.max(0, taxableIncome);
   // Stryker disable next-line ConditionalExpression: income=0 の早期returnを外しても、各 tier が 0×率=0 を返すため等価。
   if (income === 0) return 0;
-  const tier1 = Math.min(income, BUSINESS_TAX_TIER1_LIMIT);
+  const tier1 = Math.min(income, r.businessTaxTier1Limit);
   const tier2 = Math.min(
-    Math.max(0, income - BUSINESS_TAX_TIER1_LIMIT),
-    BUSINESS_TAX_TIER2_LIMIT - BUSINESS_TAX_TIER1_LIMIT,
+    Math.max(0, income - r.businessTaxTier1Limit),
+    r.businessTaxTier2Limit - r.businessTaxTier1Limit,
   );
-  const tier3 = Math.max(0, income - BUSINESS_TAX_TIER2_LIMIT);
+  const tier3 = Math.max(0, income - r.businessTaxTier2Limit);
   return yen(
-    tier1 * BUSINESS_TAX_RATE_TIER1 +
-      tier2 * BUSINESS_TAX_RATE_TIER2 +
-      tier3 * BUSINESS_TAX_RATE_TIER3,
+    tier1 * r.businessTaxRateTier1 +
+      tier2 * r.businessTaxRateTier2 +
+      tier3 * r.businessTaxRateTier3,
   );
 }
 
@@ -343,8 +405,11 @@ export function calcBusinessTaxIncomePortion(taxableIncome: number): number {
  *
  * @param businessTaxIncomePortion 基準法人所得割額 (円)
  */
-export function calcSpecialBusinessTax(businessTaxIncomePortion: number): number {
-  return yen(Math.max(0, businessTaxIncomePortion) * SPECIAL_BUSINESS_TAX_RATE);
+export function calcSpecialBusinessTax(
+  businessTaxIncomePortion: number,
+  r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
+): number {
+  return yen(Math.max(0, businessTaxIncomePortion) * r.specialBusinessTaxRate);
 }
 
 // --- 法定実効税率 (round 60) --------------------------------------------
@@ -403,19 +468,25 @@ export interface StatutoryRateInputs {
  * @param taxableIncome 課税所得 (円)。帯の判定に使う。負/0 は最小帯。
  * @param small         中小法人か。
  */
-export function selectStatutoryRates(taxableIncome: number, small: boolean): StatutoryRateInputs {
+export function selectStatutoryRates(
+  taxableIncome: number,
+  small: boolean,
+  r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
+): StatutoryRateInputs {
   const income = Math.max(0, taxableIncome);
   const corporateRate =
-    small && income <= CORP_TAX_REDUCED_THRESHOLD
-      ? CORP_TAX_REDUCED_RATE
-      : CORP_TAX_STANDARD_RATE;
+    small && income <= r.reducedThreshold
+      ? r.reducedRate
+      : r.standardRate;
   let businessRate: number;
-  if (income <= BUSINESS_TAX_TIER1_LIMIT) {
-    businessRate = STATUTORY_BUSINESS_RATE_TIER1;
-  } else if (income <= BUSINESS_TAX_TIER2_LIMIT) {
-    businessRate = STATUTORY_BUSINESS_RATE_TIER2;
+  // 事業税系の限界率 = 所得割率 × (1 + 特別法人事業税率)。既定では STATUTORY_BUSINESS_RATE_TIER* と同じ値。
+  const statutory = 1 + r.specialBusinessTaxRate;
+  if (income <= r.businessTaxTier1Limit) {
+    businessRate = r.businessTaxRateTier1 * statutory;
+  } else if (income <= r.businessTaxTier2Limit) {
+    businessRate = r.businessTaxRateTier2 * statutory;
   } else {
-    businessRate = STATUTORY_BUSINESS_RATE_TIER3;
+    businessRate = r.businessTaxRateTier3 * statutory;
   }
   return { corporateRate, businessRate };
 }
@@ -435,11 +506,12 @@ export function selectStatutoryRates(taxableIncome: number, small: boolean): Sta
 export function calcStatutoryEffectiveRate(
   taxableIncome = 0,
   profile: CorporateProfile = {},
+  r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): number {
-  const small = isSmallBusiness(profile);
-  const { corporateRate, businessRate } = selectStatutoryRates(taxableIncome, small);
+  const small = isSmallBusiness(profile, r);
+  const { corporateRate, businessRate } = selectStatutoryRates(taxableIncome, small, r);
   const numerator =
-    corporateRate * (1 + LOCAL_CORP_TAX_RATE + RESIDENT_CORP_TAX_RATE) + businessRate;
+    corporateRate * (1 + r.localCorpTaxRate + r.residentCorpTaxRate) + businessRate;
   const denominator = 1 + businessRate;
   return numerator / denominator;
 }
@@ -509,19 +581,20 @@ export interface CorporateTaxBreakdown {
 export function calcCorporateTax(
   taxableIncome: number,
   profile: CorporateProfile = {},
+  r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): CorporateTaxBreakdown {
-  const small = isSmallBusiness(profile);
-  const perCapitaLevy = Math.max(0, resolvePerCapitaLevy(profile));
+  const small = isSmallBusiness(profile, r);
+  const perCapitaLevy = Math.max(0, resolvePerCapitaLevy(profile, r));
 
   const income = Math.max(0, taxableIncome);
-  const loss = applyLossCarryforward(income, profile.carryforwardLoss ?? 0, small);
+  const loss = applyLossCarryforward(income, profile.carryforwardLoss ?? 0, small, r);
   const incomeAfterLoss = loss.taxableIncome;
 
-  const corporateIncomeTax = calcCorporateIncomeTax(incomeAfterLoss, small);
-  const localCorporateTax = calcLocalCorporateTax(corporateIncomeTax);
-  const residentTax = calcResidentCorporateTax(corporateIncomeTax, perCapitaLevy);
-  const businessTax = calcBusinessTaxIncomePortion(incomeAfterLoss);
-  const specialBusinessTax = calcSpecialBusinessTax(businessTax);
+  const corporateIncomeTax = calcCorporateIncomeTax(incomeAfterLoss, small, r);
+  const localCorporateTax = calcLocalCorporateTax(corporateIncomeTax, r);
+  const residentTax = calcResidentCorporateTax(corporateIncomeTax, perCapitaLevy, r);
+  const businessTax = calcBusinessTaxIncomePortion(incomeAfterLoss, r);
+  const specialBusinessTax = calcSpecialBusinessTax(businessTax, r);
 
   const totalTax =
     corporateIncomeTax +
@@ -532,7 +605,7 @@ export function calcCorporateTax(
 
   const effectiveRate = incomeAfterLoss > 0 ? totalTax / incomeAfterLoss : 0;
   // 法定実効税率 (参考) は控除後所得の限界帯で評価する (損金算入を織り込んだ標準指標)。
-  const statutoryEffectiveRate = calcStatutoryEffectiveRate(incomeAfterLoss, profile);
+  const statutoryEffectiveRate = calcStatutoryEffectiveRate(incomeAfterLoss, profile, r);
   const afterTaxProfit = taxableIncome - totalTax;
 
   return {

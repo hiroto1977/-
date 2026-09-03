@@ -9,7 +9,7 @@
 import type { FinancialRatios } from './financialRatios';
 import type { FinancialDiagnosis } from './financialDiagnosis';
 import type { MarginTrend } from './financialTrend';
-import { calcCorporateTax } from '../../shared/taxCorporate';
+import { calcCorporateTax, type CorporateTaxRates } from '../../shared/taxCorporate';
 import { localIsoDate } from '../../shared/localDate';
 
 /** レポートに載せる指標の表示定義 (15指標 + 金額系2)。 */
@@ -63,6 +63,8 @@ export interface FinancialReportInput {
    * セクションを出力しない (既存出力と完全に一致)。
    */
   readonly ordinaryProfit?: number;
+  /** 法人税等の率 (台帳の値)。省略すると定数。 */
+  readonly corporateTaxRates?: CorporateTaxRates;
 }
 
 /** パーセント (実効税率) を小数1桁で整形。0.2549 → '25.5%'。 */
@@ -78,8 +80,8 @@ function fmtRate(rate: number): string {
  * 税引前利益が 0 以下 (欠損) のときは法人住民税の均等割のみが課され、
  * 税引後利益 = 税引前利益 − 均等割 となる旨を注記する。
  */
-function appendCorporateTaxSection(lines: string[], ordinaryProfit: number): void {
-  const b = calcCorporateTax(ordinaryProfit);
+function appendCorporateTaxSection(lines: string[], ordinaryProfit: number, rates?: CorporateTaxRates): void {
+  const b = calcCorporateTax(ordinaryProfit, {}, rates);
   lines.push('## 法人税等(概算)');
   lines.push('');
   lines.push('| 項目 | 金額 |');
@@ -142,7 +144,7 @@ export function buildFinancialReportMarkdown(input: FinancialReportInput): strin
   lines.push('| --- | ---: |');
   for (const r of ROWS) lines.push(`| ${r.label} | ${fmtValue(ratios[r.key] as number | null, r.unit, r.money)} |`);
   lines.push('');
-  if (input.ordinaryProfit !== undefined) appendCorporateTaxSection(lines, input.ordinaryProfit);
+  if (input.ordinaryProfit !== undefined) appendCorporateTaxSection(lines, input.ordinaryProfit, input.corporateTaxRates);
   lines.push('---');
   lines.push('※ 本レポートは概算データに基づく一般情報であり、財務助言ではありません。');
   return lines.join('\n');

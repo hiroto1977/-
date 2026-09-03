@@ -2358,7 +2358,9 @@ async function parameterSuite(browser) {
 
   // 既定に戻す。
   await gotoService(page, '#settings', '[data-parameters]');
-  ok((await row.getAttribute('data-overridden')) === 'true', '設定: 読み直しても上書きが残っている');
+  // 描画直後は保存先 (IndexedDB) の読み込み前で「上書きなし」に見える瞬間がある — 読み込みを待つ。
+  await page.waitForFunction((id) => document.querySelector(`[data-parameter="${id}"]`)?.getAttribute('data-overridden') === 'true', ID, { timeout: 15000 });
+  ok(true, '設定: 読み直しても上書きが残っている');
   await page.getByRole('button', { name: `${LABEL} を既定に戻す` }).click();
   await page.waitForFunction((id) => document.querySelector(`[data-parameter="${id}"]`)?.getAttribute('data-overridden') === 'false', ID, { timeout: 15000 });
   await gotoService(page, '#team', NOTE);

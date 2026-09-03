@@ -11,8 +11,13 @@ import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_PARAMETER_VALUES,
   PARAMETERS,
+  furusatoParams,
+  importParams,
+  pensionDeductionParams,
   acquisitionParams,
+  businessConsumptionParams,
   capitalGainsParams,
+  corporateTaxRates,
   fixedAssetRates,
   fixedAssetThresholds,
   registrationRates,
@@ -118,6 +123,36 @@ import {
   RESIDENTIAL_SPECIAL_DEDUCTION,
 } from '../taxCapitalGains';
 import {
+  BUSINESS_TAX_RATE_TIER1,
+  BUSINESS_TAX_RATE_TIER2,
+  BUSINESS_TAX_RATE_TIER3,
+  BUSINESS_TAX_TIER1_LIMIT,
+  BUSINESS_TAX_TIER2_LIMIT,
+  CORP_TAX_REDUCED_RATE,
+  CORP_TAX_REDUCED_THRESHOLD,
+  CORP_TAX_STANDARD_RATE,
+  DEFAULT_CORPORATE_TAX_RATES,
+  DEFAULT_PER_CAPITA_LEVY,
+  LARGE_CORP_CAPITAL_THRESHOLD,
+  LARGE_CORP_LOSS_DEDUCTION_RATIO,
+  LOCAL_CORP_TAX_RATE,
+  PER_CAPITA_EMPLOYEE_THRESHOLD,
+  RESIDENT_CORP_TAX_RATE,
+  SPECIAL_BUSINESS_TAX_RATE,
+} from '../taxCorporate';
+import {
+  DEFAULT_BUSINESS_CONSUMPTION_PARAMS,
+  EXEMPTION_THRESHOLD,
+  FULL_CREDIT_RATIO_THRESHOLD,
+  FULL_CREDIT_SALES_THRESHOLD,
+  SIMPLIFIED_ELIGIBILITY_THRESHOLD,
+} from '../taxConsumptionBusiness';
+import { TWENTY_PERCENT_RATE } from '../taxConsumption';
+import { DEFAULT_PENSION_DEDUCTION_PARAMS, PENSION_DEDUCTION_MIN_OVER65, PENSION_DEDUCTION_MIN_UNDER65 } from '../taxPublicPension';
+import { CASUAL_INCOME_SPECIAL_DEDUCTION } from '../taxCasual';
+import { DEFAULT_FURUSATO_PARAMS, FURUSATO_ONE_STOP_MAX_MUNICIPALITIES, FURUSATO_SELF_PAY } from '../taxFurusato';
+import { DEFAULT_IMPORT_PARAMS, JP_NATIONAL_REDUCED, JP_NATIONAL_STANDARD, PERSONAL_USE_FACTOR, SMALL_VALUE_LIMIT } from '../tradeTax';
+import {
   CARE_RATE,
   DEFAULT_SOCIAL_INSURANCE_RATES,
   EMPLOYMENT_INSURANCE_RATE,
@@ -187,6 +222,35 @@ const DEFAULT_SOURCE: Readonly<Record<ParameterId, number>> = {
   'capitalGains.residentialSpecialDeduction': RESIDENTIAL_SPECIAL_DEDUCTION,
   'capitalGains.residentialReducedRateCap': RESIDENTIAL_REDUCED_RATE_CAP,
   'capitalGains.estimatedAcquisitionCostRate': ESTIMATED_ACQUISITION_COST_RATE,
+  'corporate.reducedRate': CORP_TAX_REDUCED_RATE,
+  'corporate.standardRate': CORP_TAX_STANDARD_RATE,
+  'corporate.reducedThreshold': CORP_TAX_REDUCED_THRESHOLD,
+  'corporate.localCorpTaxRate': LOCAL_CORP_TAX_RATE,
+  'corporate.residentCorpTaxRate': RESIDENT_CORP_TAX_RATE,
+  'corporate.defaultPerCapitaLevy': DEFAULT_PER_CAPITA_LEVY,
+  'corporate.perCapitaEmployeeThreshold': PER_CAPITA_EMPLOYEE_THRESHOLD,
+  'corporate.businessTaxRateTier1': BUSINESS_TAX_RATE_TIER1,
+  'corporate.businessTaxRateTier2': BUSINESS_TAX_RATE_TIER2,
+  'corporate.businessTaxRateTier3': BUSINESS_TAX_RATE_TIER3,
+  'corporate.businessTaxTier1Limit': BUSINESS_TAX_TIER1_LIMIT,
+  'corporate.businessTaxTier2Limit': BUSINESS_TAX_TIER2_LIMIT,
+  'corporate.specialBusinessTaxRate': SPECIAL_BUSINESS_TAX_RATE,
+  'corporate.largeCorpCapitalThreshold': LARGE_CORP_CAPITAL_THRESHOLD,
+  'corporate.largeCorpLossDeductionRatio': LARGE_CORP_LOSS_DEDUCTION_RATIO,
+  'consumptionBusiness.twentyPercentRate': TWENTY_PERCENT_RATE,
+  'consumptionBusiness.exemptionThreshold': EXEMPTION_THRESHOLD,
+  'consumptionBusiness.simplifiedEligibilityThreshold': SIMPLIFIED_ELIGIBILITY_THRESHOLD,
+  'consumptionBusiness.fullCreditRatioThreshold': FULL_CREDIT_RATIO_THRESHOLD,
+  'consumptionBusiness.fullCreditSalesThreshold': FULL_CREDIT_SALES_THRESHOLD,
+  'pension.deductionMinUnder65': PENSION_DEDUCTION_MIN_UNDER65,
+  'pension.deductionMinOver65': PENSION_DEDUCTION_MIN_OVER65,
+  'casual.specialDeduction': CASUAL_INCOME_SPECIAL_DEDUCTION,
+  'furusato.selfPay': FURUSATO_SELF_PAY,
+  'furusato.oneStopMaxMunicipalities': FURUSATO_ONE_STOP_MAX_MUNICIPALITIES,
+  'trade.nationalStandardRate': JP_NATIONAL_STANDARD,
+  'trade.nationalReducedRate': JP_NATIONAL_REDUCED,
+  'trade.smallValueLimit': SMALL_VALUE_LIMIT,
+  'trade.personalUseFactor': PERSONAL_USE_FACTOR,
   'socialInsurance.pensionRate': PENSION_RATE,
   'socialInsurance.healthRate': HEALTH_RATE,
   'socialInsurance.careRate': CARE_RATE,
@@ -229,7 +293,8 @@ describe('台帳の形', () => {
 
   it('画面のまとまりは登場順で、重複しない', () => {
     expect(parameterFeatures()).toEqual([
-      '水耕栽培', '給与', '不動産', '税', '所得税・住民税', '所得控除・税額控除', '不動産・登記・印紙の税', '譲渡所得', '社会保険', '財務',
+      '水耕栽培', '給与', '不動産', '税', '所得税・住民税', '所得控除・税額控除', '不動産・登記・印紙の税', '譲渡所得',
+      '法人税', '消費税 (事業者)', '年金・一時所得・ふるさと納税', '貿易', '社会保険', '財務',
     ]);
   });
 
@@ -507,6 +572,68 @@ describe('機能ごとの取り出し口', () => {
     expect(capitalGainsParams(v)).toEqual({ residentialSpecialDeduction: 10_000_000, residentialReducedRateCap: 20_000_000, surtaxRate: 0 });
   });
 
+  it('法人税・事業者の消費税の取り出し口 — 既定は各モジュールの既定引数と同じ物、上書きは正しい引数へ届く', () => {
+    expect(corporateTaxRates(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_CORPORATE_TAX_RATES);
+    expect(businessConsumptionParams(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_BUSINESS_CONSUMPTION_PARAMS);
+    const v = resolveParameters({
+      'corporate.reducedRate': 0.1,
+      'corporate.standardRate': 0.25,
+      'corporate.reducedThreshold': 10_000_000,
+      'corporate.localCorpTaxRate': 0.11,
+      'corporate.residentCorpTaxRate': 0.08,
+      'corporate.defaultPerCapitaLevy': 80_000,
+      'corporate.perCapitaEmployeeThreshold': 100,
+      'corporate.businessTaxRateTier1': 0.04,
+      'corporate.businessTaxRateTier2': 0.06,
+      'corporate.businessTaxRateTier3': 0.08,
+      'corporate.businessTaxTier1Limit': 5_000_000,
+      'corporate.businessTaxTier2Limit': 9_000_000,
+      'corporate.specialBusinessTaxRate': 0.4,
+      'corporate.largeCorpCapitalThreshold': 300_000_000,
+      'corporate.largeCorpLossDeductionRatio': 0.6,
+      'consumptionBusiness.twentyPercentRate': 0.3,
+      'consumptionBusiness.exemptionThreshold': 20_000_000,
+      'consumptionBusiness.simplifiedEligibilityThreshold': 60_000_000,
+      'consumptionBusiness.fullCreditRatioThreshold': 0.9,
+      'consumptionBusiness.fullCreditSalesThreshold': 600_000_000,
+      'tax.consumptionStandardRate': 0.12,
+      'tax.consumptionReducedRate': 0.05,
+    });
+    expect(corporateTaxRates(v)).toEqual({
+      reducedRate: 0.1, standardRate: 0.25, reducedThreshold: 10_000_000, localCorpTaxRate: 0.11, residentCorpTaxRate: 0.08,
+      defaultPerCapitaLevy: 80_000, perCapitaEmployeeThreshold: 100,
+      businessTaxRateTier1: 0.04, businessTaxRateTier2: 0.06, businessTaxRateTier3: 0.08,
+      businessTaxTier1Limit: 5_000_000, businessTaxTier2Limit: 9_000_000, specialBusinessTaxRate: 0.4,
+      largeCorpCapitalThreshold: 300_000_000, largeCorpLossDeductionRatio: 0.6,
+    });
+    // 事業者の消費税の税率は「税」の消費税率を共有する。
+    expect(businessConsumptionParams(v)).toEqual({
+      rates: { standard: 0.12, reduced: 0.05 },
+      twentyPercentRate: 0.3, exemptionThreshold: 20_000_000, simplifiedEligibilityThreshold: 60_000_000,
+      fullCreditRatioThreshold: 0.9, fullCreditSalesThreshold: 600_000_000,
+    });
+  });
+
+  it('年金・一時所得・ふるさと納税・貿易の取り出し口 — 既定は各モジュールの既定引数と同じ物、上書きは正しい引数へ届く', () => {
+    expect(pensionDeductionParams(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_PENSION_DEDUCTION_PARAMS);
+    expect(furusatoParams(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_FURUSATO_PARAMS);
+    expect(importParams(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_IMPORT_PARAMS);
+    const v = resolveParameters({
+      'pension.deductionMinUnder65': 700_000,
+      'pension.deductionMinOver65': 1_200_000,
+      'furusato.selfPay': 3_000,
+      'incomeTax.reconstructionSurtaxRate': 0,
+      'trade.nationalStandardRate': 0.1,
+      'trade.nationalReducedRate': 0.07,
+      'trade.smallValueLimit': 20_000,
+      'trade.personalUseFactor': 0.5,
+    });
+    expect(pensionDeductionParams(v)).toEqual({ minUnder65: 700_000, minOver65: 1_200_000 });
+    // ふるさと納税の付加率は所得税の項を共有する。
+    expect(furusatoParams(v)).toEqual({ selfPay: 3_000, surtaxRate: 0 });
+    expect(importParams(v)).toEqual({ nationalStandard: 0.1, nationalReduced: 0.07, smallValueLimit: 20_000, personalUseFactor: 0.5 });
+  });
+
   it('制限のない病期 (G1〜G3a) の null は上書きしても保たれる', () => {
     const limits = ckdPotassiumLimits(custom);
     expect(limits.G1).toBeNull();
@@ -578,6 +705,35 @@ describe('台帳の表 (静的な値の固定)', () => {
       ['capitalGains.residentialSpecialDeduction', '円', 1, 0, 1_000_000_000, true, 'law'],
       ['capitalGains.residentialReducedRateCap', '円', 1, 0, 1_000_000_000, true, 'law'],
       ['capitalGains.estimatedAcquisitionCostRate', '%', 100, 0, 1, false, 'law'],
+      ['corporate.reducedRate', '%', 100, 0, 0.5, false, 'law'],
+      ['corporate.standardRate', '%', 100, 0, 0.5, false, 'law'],
+      ['corporate.reducedThreshold', '円', 1, 0, 1_000_000_000, true, 'law'],
+      ['corporate.localCorpTaxRate', '%', 100, 0, 0.5, false, 'law'],
+      ['corporate.residentCorpTaxRate', '%', 100, 0, 0.5, false, 'law'],
+      ['corporate.defaultPerCapitaLevy', '円', 1, 0, 10_000_000, true, 'assumption'],
+      ['corporate.perCapitaEmployeeThreshold', '人', 1, 0, 10_000, true, 'law'],
+      ['corporate.businessTaxRateTier1', '%', 100, 0, 0.5, false, 'law'],
+      ['corporate.businessTaxRateTier2', '%', 100, 0, 0.5, false, 'law'],
+      ['corporate.businessTaxRateTier3', '%', 100, 0, 0.5, false, 'law'],
+      ['corporate.businessTaxTier1Limit', '円', 1, 0, 1_000_000_000, true, 'law'],
+      ['corporate.businessTaxTier2Limit', '円', 1, 0, 1_000_000_000, true, 'law'],
+      ['corporate.specialBusinessTaxRate', '%', 100, 0, 2, false, 'law'],
+      ['corporate.largeCorpCapitalThreshold', '円', 1, 0, 100_000_000_000, true, 'law'],
+      ['corporate.largeCorpLossDeductionRatio', '%', 100, 0, 1, false, 'law'],
+      ['consumptionBusiness.twentyPercentRate', '%', 100, 0, 1, false, 'law'],
+      ['consumptionBusiness.exemptionThreshold', '円', 1, 0, 10_000_000_000, true, 'law'],
+      ['consumptionBusiness.simplifiedEligibilityThreshold', '円', 1, 0, 10_000_000_000, true, 'law'],
+      ['consumptionBusiness.fullCreditRatioThreshold', '%', 100, 0, 1, false, 'law'],
+      ['consumptionBusiness.fullCreditSalesThreshold', '円', 1, 0, 100_000_000_000, true, 'law'],
+      ['pension.deductionMinUnder65', '円', 1, 0, 10_000_000, true, 'law'],
+      ['pension.deductionMinOver65', '円', 1, 0, 10_000_000, true, 'law'],
+      ['casual.specialDeduction', '円', 1, 0, 10_000_000, true, 'law'],
+      ['furusato.selfPay', '円', 1, 0, 100_000, true, 'law'],
+      ['furusato.oneStopMaxMunicipalities', '自治体', 1, 1, 100, true, 'law'],
+      ['trade.nationalStandardRate', '%', 100, 0, 0.5, false, 'law'],
+      ['trade.nationalReducedRate', '%', 100, 0, 0.5, false, 'law'],
+      ['trade.smallValueLimit', '円', 1, 0, 10_000_000, true, 'law'],
+      ['trade.personalUseFactor', '%', 100, 0, 1, false, 'law'],
       ['socialInsurance.pensionRate', '%', 100, 0, 0.3, false, 'law'],
       ['socialInsurance.healthRate', '%', 100, 0, 0.3, false, 'reference'],
       ['socialInsurance.careRate', '%', 100, 0, 0.1, false, 'law'],
