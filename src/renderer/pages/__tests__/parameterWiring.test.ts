@@ -27,6 +27,8 @@ import { DEFAULT_CROP_LIST } from '../../../shared/hydroponicCrops';
 import { publicTransportCommute } from '../../../shared/payroll';
 import { calcIncomeTax, calcNetSalary, calcResidentTax } from '../../../shared/taxCalc';
 import { DEFAULT_SOCIAL_INSURANCE_RATES, calcSocialInsurance } from '../../../shared/taxSocialInsurance';
+import { calcFixedAssetTaxTotal } from '../../../shared/taxFixedAsset';
+import { calcCapitalGainsTax, DEFAULT_CAPITAL_GAINS_PARAMS } from '../../../shared/taxCapitalGains';
 import { jpy } from '../../../shared/formatters';
 import type { ParameterOverrides } from '../../../shared/parameters';
 
@@ -307,6 +309,60 @@ describe('税 — 消費税率', () => {
     expect(text()).toContain('(配当×10%)');
     expect(text()).toContain(`配当割控除 約${jpy(100_000)}`); // 配当 100 万 × 10%
     expect(text()).toContain('小規模企業共済 (年・上限¥900,000)');
+  });
+
+  it('不動産・登記・印紙・譲渡: 対照 (既定の率・免税点・特例)', async () => {
+    await mount(TaxPage);
+    const fa = calcFixedAssetTaxTotal({ assessedValue: 30_000_000, areaSqm: 200, dwellings: 1 });
+    expect(statValue('固定資産税 (1.4%)')).toBe(jpy(fa.fixedAssetTax));
+    expect(statValue('都市計画税 (0.3%)')).toBe(jpy(fa.cityPlanningTax));
+    expect(text()).toContain('本則4%、土地・住宅は軽減3%');
+    expect(statValue('適用税率')).toBe('3.0%');
+    expect(statValue('適用税率 (本則)')).toBe('2.0%');
+    expect(statValue('登録免許税')).toBe(jpy(400_000)); // 2,000 万 × 2%
+    expect(text()).toContain('概算取得費5%');
+    expect(text()).toContain('居住用財産 (¥30,000,000控除+軽減税率)');
+    const cg = calcCapitalGainsTax(50_000_000, 30_000_000, 2_000_000, 'real-estate-long');
+    expect(statValue('所得税 (譲渡所得)')).toBe(jpy(cg.incomeTax));
+  });
+
+  it('不動産・登記・印紙・譲渡: 率・免税点・特例・付加率の上書きが計算と文言に出る', async () => {
+    await seed({
+      'fixedAsset.standardRate': 0.02,
+      'fixedAsset.cityPlanningRate': 0.002,
+      'acquisition.reducedRate': 0.02,
+      'registration.rateTransferSale': 0.015,
+      'stamp.continuousBasicContractDuty': 5_000,
+      'capitalGains.estimatedAcquisitionCostRate': 0.1,
+      'capitalGains.residentialSpecialDeduction': 10_000_000,
+      'incomeTax.reconstructionSurtaxRate': 0,
+    });
+    await mount(TaxPage);
+    const fa = calcFixedAssetTaxTotal({ assessedValue: 30_000_000, areaSqm: 200, dwellings: 1, fixedRate: 0.02, cityPlanningRate: 0.002 });
+    expect(statValue('固定資産税 (2%)')).toBe(jpy(fa.fixedAssetTax));
+    expect(statValue('都市計画税 (0.2%)')).toBe(jpy(fa.cityPlanningTax));
+    expect(text()).toContain('本則4%、土地・住宅は軽減2%');
+    expect(statValue('適用税率')).toBe('2.0%');
+    expect(statValue('適用税率 (本則)')).toBe('1.5%');
+    expect(statValue('登録免許税')).toBe(jpy(300_000)); // 2,000 万 × 1.5%
+    expect(text()).toContain('概算取得費10%');
+    expect(text()).toContain('居住用財産 (¥10,000,000控除+軽減税率)');
+    // 付加率 0 は譲渡所得の所得税にも効く (所得税の項と共有)。
+    const cg = calcCapitalGainsTax(50_000_000, 30_000_000, 2_000_000, 'real-estate-long', { ...DEFAULT_CAPITAL_GAINS_PARAMS, surtaxRate: 0 });
+    expect(cg.incomeTax).not.toBe(calcCapitalGainsTax(50_000_000, 30_000_000, 2_000_000, 'real-estate-long').incomeTax);
+    expect(statValue('所得税 (譲渡所得)')).toBe(jpy(cg.incomeTax));
+    // 印紙税: 第 7 号文書に切り替えると一律額が台帳の値になる。
+    const select = Array.from(container.querySelectorAll('select')).find((el) =>
+      Array.from(el.options).some((o) => o.value === 'continuousBasicContract'),
+    );
+    if (!select) throw new Error('stamp document select not found');
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLSelectElement.prototype, 'value')?.set;
+      setter?.call(select, 'continuousBasicContract');
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    await settle();
+    expect(statValue('印紙税額')).toBe(jpy(5_000));
   });
 
   it('上書きした率で計算し、% の表示も動く', async () => {

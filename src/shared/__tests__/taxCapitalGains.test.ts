@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  DEFAULT_CAPITAL_GAINS_PARAMS,
   calcCapitalGainsTax,
   estimatedAcquisitionCost,
   resolveAcquisitionCost,
@@ -383,5 +384,38 @@ describe('replacementPropertyDeferral (特定居住用財産の買換え特例)'
     const r = replacementPropertyDeferral(50_000_000, 20_000_000, 10_000_000, 0);
     expect(r.gain).toBe(20_000_000);
     expect(r.taxableGain).toBe(20_000_000);
+  });
+});
+
+describe('台帳から渡す特例と概算取得費 (CapitalGainsParams)', () => {
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_CAPITAL_GAINS_PARAMS.residentialSpecialDeduction).toBe(RESIDENTIAL_SPECIAL_DEDUCTION);
+    expect(DEFAULT_CAPITAL_GAINS_PARAMS.residentialReducedRateCap).toBe(RESIDENTIAL_REDUCED_RATE_CAP);
+    expect(DEFAULT_CAPITAL_GAINS_PARAMS.surtaxRate).toBe(0.021);
+    expect(calcCapitalGainsTax(50_000_000, 10_000_000, 0, 'residential')).toEqual(
+      calcCapitalGainsTax(50_000_000, 10_000_000, 0, 'residential', DEFAULT_CAPITAL_GAINS_PARAMS),
+    );
+    expect(estimatedAcquisitionCost(50_000_000)).toBe(estimatedAcquisitionCost(50_000_000, ESTIMATED_ACQUISITION_COST_RATE));
+  });
+
+  it('概算取得費の割合を渡す', () => {
+    expect(estimatedAcquisitionCost(50_000_000, 0.1)).toBe(5_000_000);
+    expect(resolveAcquisitionCost(50_000_000, 1_000_000, true, 0.1)).toBe(5_000_000);
+    expect(resolveAcquisitionCost(50_000_000, 1_000_000, true)).toBe(2_500_000);
+    expect(resolveAcquisitionCost(50_000_000, 1_000_000, false, 0.1)).toBe(1_000_000);
+  });
+
+  it('居住用財産の特別控除・軽減税率の上限・付加率を渡す', () => {
+    const p = { residentialSpecialDeduction: 10_000_000, residentialReducedRateCap: 20_000_000, surtaxRate: 0 };
+    const r = calcCapitalGainsTax(50_000_000, 10_000_000, 0, 'residential', p);
+    // 譲渡益 4,000 万 − 特別控除 1,000 万 = 3,000 万。軽減 2,000 万 (10% / 4%) + 超過 1,000 万 (15% / 5%)。付加率 0。
+    expect(r.specialDeduction).toBe(10_000_000);
+    expect(r.taxableGain).toBe(30_000_000);
+    expect(r.incomeTax).toBe(3_500_000);
+    expect(r.residentTax).toBe(1_300_000);
+    // 居住用でなければ特例は効かず、付加率だけが効く。
+    const long = calcCapitalGainsTax(50_000_000, 10_000_000, 0, 'real-estate-long', p);
+    expect(long.specialDeduction).toBe(0);
+    expect(long.incomeTax).toBe(40_000_000 * 0.15);
   });
 });

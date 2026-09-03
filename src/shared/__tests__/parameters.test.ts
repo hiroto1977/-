@@ -11,6 +11,12 @@ import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_PARAMETER_VALUES,
   PARAMETERS,
+  acquisitionParams,
+  capitalGainsParams,
+  fixedAssetRates,
+  fixedAssetThresholds,
+  registrationRates,
+  stampDutyParams,
   PARAMETER_BY_ID,
   PARAMETER_KIND_LABEL,
   ckdPotassiumLimits,
@@ -81,6 +87,37 @@ import {
   RESIDENT_LEVY_WITHHOLDING_RATE,
 } from '../taxCredits';
 import {
+  CITY_PLANNING_MAX_RATE,
+  DEFAULT_FIXED_ASSET_THRESHOLDS,
+  DEPRECIABLE_ASSET_TAX_THRESHOLD,
+  FIXED_ASSET_STANDARD_RATE,
+  HOUSE_TAX_THRESHOLD,
+  LAND_TAX_THRESHOLD,
+} from '../taxFixedAsset';
+import {
+  DEFAULT_ACQUISITION_PARAMS,
+  LAND_THRESHOLD as ACQ_LAND_THRESHOLD,
+  NEW_BUILDING_THRESHOLD as ACQ_NEW_BUILDING_THRESHOLD,
+  OTHER_BUILDING_THRESHOLD as ACQ_OTHER_BUILDING_THRESHOLD,
+  REDUCED_RATE as ACQ_REDUCED_RATE,
+  STANDARD_RATE as ACQ_STANDARD_RATE,
+} from '../taxRealEstateAcquisition';
+import {
+  RATE_MORTGAGE,
+  RATE_PRESERVATION,
+  RATE_TRANSFER_GIFT,
+  RATE_TRANSFER_INHERITANCE,
+  RATE_TRANSFER_SALE,
+  REGISTRATION_TAX_RATES,
+} from '../taxRegistrationLicense';
+import { CONTINUOUS_BASIC_CONTRACT_DUTY, DEFAULT_STAMP_DUTY_PARAMS, NO_AMOUNT_DUTY } from '../taxStampDuty';
+import {
+  DEFAULT_CAPITAL_GAINS_PARAMS,
+  ESTIMATED_ACQUISITION_COST_RATE,
+  RESIDENTIAL_REDUCED_RATE_CAP,
+  RESIDENTIAL_SPECIAL_DEDUCTION,
+} from '../taxCapitalGains';
+import {
   CARE_RATE,
   DEFAULT_SOCIAL_INSURANCE_RATES,
   EMPLOYMENT_INSURANCE_RATE,
@@ -130,6 +167,26 @@ const DEFAULT_SOURCE: Readonly<Record<ParameterId, number>> = {
   'credit.mortgageResidentCapRate': MORTGAGE_RESIDENT_CAP_RATE,
   'credit.mortgageResidentCapMax': MORTGAGE_RESIDENT_CAP_MAX,
   'credit.residentLevyWithholdingRate': RESIDENT_LEVY_WITHHOLDING_RATE,
+  'fixedAsset.standardRate': FIXED_ASSET_STANDARD_RATE,
+  'fixedAsset.cityPlanningRate': CITY_PLANNING_MAX_RATE,
+  'fixedAsset.landThreshold': LAND_TAX_THRESHOLD,
+  'fixedAsset.houseThreshold': HOUSE_TAX_THRESHOLD,
+  'fixedAsset.depreciableThreshold': DEPRECIABLE_ASSET_TAX_THRESHOLD,
+  'acquisition.standardRate': ACQ_STANDARD_RATE,
+  'acquisition.reducedRate': ACQ_REDUCED_RATE,
+  'acquisition.landThreshold': ACQ_LAND_THRESHOLD,
+  'acquisition.newBuildingThreshold': ACQ_NEW_BUILDING_THRESHOLD,
+  'acquisition.otherBuildingThreshold': ACQ_OTHER_BUILDING_THRESHOLD,
+  'registration.rateTransferSale': RATE_TRANSFER_SALE,
+  'registration.ratePreservation': RATE_PRESERVATION,
+  'registration.rateTransferInheritance': RATE_TRANSFER_INHERITANCE,
+  'registration.rateTransferGift': RATE_TRANSFER_GIFT,
+  'registration.rateMortgage': RATE_MORTGAGE,
+  'stamp.continuousBasicContractDuty': CONTINUOUS_BASIC_CONTRACT_DUTY,
+  'stamp.noAmountDuty': NO_AMOUNT_DUTY,
+  'capitalGains.residentialSpecialDeduction': RESIDENTIAL_SPECIAL_DEDUCTION,
+  'capitalGains.residentialReducedRateCap': RESIDENTIAL_REDUCED_RATE_CAP,
+  'capitalGains.estimatedAcquisitionCostRate': ESTIMATED_ACQUISITION_COST_RATE,
   'socialInsurance.pensionRate': PENSION_RATE,
   'socialInsurance.healthRate': HEALTH_RATE,
   'socialInsurance.careRate': CARE_RATE,
@@ -172,7 +229,7 @@ describe('台帳の形', () => {
 
   it('画面のまとまりは登場順で、重複しない', () => {
     expect(parameterFeatures()).toEqual([
-      '水耕栽培', '給与', '不動産', '税', '所得税・住民税', '所得控除・税額控除', '社会保険', '財務',
+      '水耕栽培', '給与', '不動産', '税', '所得税・住民税', '所得控除・税額控除', '不動産・登記・印紙の税', '譲渡所得', '社会保険', '財務',
     ]);
   });
 
@@ -407,6 +464,49 @@ describe('機能ごとの取り出し口', () => {
     expect(mortgageCreditParams(v)).toEqual({ incomeLimit: 30_000_000, residentCapRate: 0.07, residentCapMax: 136_500 });
   });
 
+  it('不動産・登記・印紙・譲渡の取り出し口 — 既定は各モジュールの既定引数と同じ物、上書きは正しい引数へ届く', () => {
+    expect(fixedAssetRates(DEFAULT_PARAMETER_VALUES)).toEqual({ fixedRate: FIXED_ASSET_STANDARD_RATE, cityPlanningRate: CITY_PLANNING_MAX_RATE });
+    expect(fixedAssetThresholds(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_FIXED_ASSET_THRESHOLDS);
+    expect(acquisitionParams(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_ACQUISITION_PARAMS);
+    expect(registrationRates(DEFAULT_PARAMETER_VALUES)).toEqual(REGISTRATION_TAX_RATES);
+    expect(stampDutyParams(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_STAMP_DUTY_PARAMS);
+    expect(capitalGainsParams(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_CAPITAL_GAINS_PARAMS);
+    const v = resolveParameters({
+      'fixedAsset.standardRate': 0.02,
+      'fixedAsset.cityPlanningRate': 0.002,
+      'fixedAsset.landThreshold': 100_000,
+      'fixedAsset.houseThreshold': 150_000,
+      'fixedAsset.depreciableThreshold': 1_000_000,
+      'acquisition.standardRate': 0.05,
+      'acquisition.reducedRate': 0.02,
+      'acquisition.landThreshold': 200_000,
+      'acquisition.newBuildingThreshold': 300_000,
+      'acquisition.otherBuildingThreshold': 150_000,
+      'registration.rateTransferSale': 0.015,
+      'registration.ratePreservation': 0.0015,
+      'registration.rateTransferInheritance': 0.003,
+      'registration.rateTransferGift': 0.025,
+      'registration.rateMortgage': 0.001,
+      'stamp.continuousBasicContractDuty': 5_000,
+      'stamp.noAmountDuty': 300,
+      'capitalGains.residentialSpecialDeduction': 10_000_000,
+      'capitalGains.residentialReducedRateCap': 20_000_000,
+      'capitalGains.estimatedAcquisitionCostRate': 0.1,
+      'incomeTax.reconstructionSurtaxRate': 0,
+    });
+    expect(fixedAssetRates(v)).toEqual({ fixedRate: 0.02, cityPlanningRate: 0.002 });
+    expect(fixedAssetThresholds(v)).toEqual({ land: 100_000, house: 150_000, depreciableAsset: 1_000_000 });
+    expect(acquisitionParams(v)).toEqual({
+      standardRate: 0.05, reducedRate: 0.02, landThreshold: 200_000, newBuildingThreshold: 300_000, otherBuildingThreshold: 150_000,
+    });
+    expect(registrationRates(v)).toEqual({
+      transferSale: 0.015, preservation: 0.0015, transferInheritance: 0.003, transferGift: 0.025, mortgage: 0.001,
+    });
+    expect(stampDutyParams(v)).toEqual({ continuousBasicContractDuty: 5_000, noAmountDuty: 300 });
+    // 譲渡所得の付加率は所得税の項と共有する。
+    expect(capitalGainsParams(v)).toEqual({ residentialSpecialDeduction: 10_000_000, residentialReducedRateCap: 20_000_000, surtaxRate: 0 });
+  });
+
   it('制限のない病期 (G1〜G3a) の null は上書きしても保たれる', () => {
     const limits = ckdPotassiumLimits(custom);
     expect(limits.G1).toBeNull();
@@ -458,6 +558,26 @@ describe('台帳の表 (静的な値の固定)', () => {
       ['credit.mortgageResidentCapRate', '%', 100, 0, 1, false, 'law'],
       ['credit.mortgageResidentCapMax', '円', 1, 0, 1_000_000, true, 'law'],
       ['credit.residentLevyWithholdingRate', '%', 100, 0, 0.5, false, 'law'],
+      ['fixedAsset.standardRate', '%', 100, 0, 0.1, false, 'law'],
+      ['fixedAsset.cityPlanningRate', '%', 100, 0, 0.1, false, 'law'],
+      ['fixedAsset.landThreshold', '円', 1, 0, 100_000_000, true, 'law'],
+      ['fixedAsset.houseThreshold', '円', 1, 0, 100_000_000, true, 'law'],
+      ['fixedAsset.depreciableThreshold', '円', 1, 0, 100_000_000, true, 'law'],
+      ['acquisition.standardRate', '%', 100, 0, 0.2, false, 'law'],
+      ['acquisition.reducedRate', '%', 100, 0, 0.2, false, 'law'],
+      ['acquisition.landThreshold', '円', 1, 0, 100_000_000, true, 'law'],
+      ['acquisition.newBuildingThreshold', '円', 1, 0, 100_000_000, true, 'law'],
+      ['acquisition.otherBuildingThreshold', '円', 1, 0, 100_000_000, true, 'law'],
+      ['registration.rateTransferSale', '%', 100, 0, 0.1, false, 'law'],
+      ['registration.ratePreservation', '%', 100, 0, 0.1, false, 'law'],
+      ['registration.rateTransferInheritance', '%', 100, 0, 0.1, false, 'law'],
+      ['registration.rateTransferGift', '%', 100, 0, 0.1, false, 'law'],
+      ['registration.rateMortgage', '%', 100, 0, 0.1, false, 'law'],
+      ['stamp.continuousBasicContractDuty', '円', 1, 0, 1_000_000, true, 'law'],
+      ['stamp.noAmountDuty', '円', 1, 0, 1_000_000, true, 'law'],
+      ['capitalGains.residentialSpecialDeduction', '円', 1, 0, 1_000_000_000, true, 'law'],
+      ['capitalGains.residentialReducedRateCap', '円', 1, 0, 1_000_000_000, true, 'law'],
+      ['capitalGains.estimatedAcquisitionCostRate', '%', 100, 0, 1, false, 'law'],
       ['socialInsurance.pensionRate', '%', 100, 0, 0.3, false, 'law'],
       ['socialInsurance.healthRate', '%', 100, 0, 0.3, false, 'reference'],
       ['socialInsurance.careRate', '%', 100, 0, 0.1, false, 'law'],

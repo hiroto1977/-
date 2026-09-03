@@ -273,3 +273,20 @@ describe('companyIncorporationTax — 入力検証 (throw)', () => {
     );
   });
 });
+
+describe('台帳から渡す登録免許税の税率表', () => {
+  it('省略時は本則の表と同じ結果', () => {
+    const input = { taxableValue: 20_000_000, registrationType: 'transferSale' } as const;
+    expect(realEstateRegistrationTax(input)).toEqual(realEstateRegistrationTax(input, REGISTRATION_TAX_RATES));
+  });
+
+  it('渡した表の率で計算する (土地売買の軽減 1.5% など)', () => {
+    const rates = { ...REGISTRATION_TAX_RATES, transferSale: 0.015, mortgage: 0.001 };
+    const sale = realEstateRegistrationTax({ taxableValue: 20_000_000, registrationType: 'transferSale' }, rates);
+    expect(sale).toEqual({ rate: 0.015, tax: 300_000 });
+    const mortgage = realEstateRegistrationTax({ taxableValue: 20_000_000, registrationType: 'mortgage' }, rates);
+    expect(mortgage).toEqual({ rate: 0.001, tax: 20_000 });
+    // 触っていない種別は本則のまま。
+    expect(realEstateRegistrationTax({ taxableValue: 20_000_000, registrationType: 'preservation' }, rates).rate).toBe(RATE_PRESERVATION);
+  });
+});

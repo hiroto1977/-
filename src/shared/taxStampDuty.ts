@@ -45,6 +45,17 @@ export const CONTINUOUS_BASIC_CONTRACT_DUTY = 4_000;
 /** 記載金額のない第1号・第2号・第17号文書に課される印紙税額 (円)。 */
 export const NO_AMOUNT_DUTY = 200;
 
+/** 一律の印紙税額。省略すると上の定数。台帳 (`shared/parameters.ts`) から上書きできる。 */
+export interface StampDutyParams {
+  readonly continuousBasicContractDuty: number;
+  readonly noAmountDuty: number;
+}
+
+export const DEFAULT_STAMP_DUTY_PARAMS: StampDutyParams = {
+  continuousBasicContractDuty: CONTINUOUS_BASIC_CONTRACT_DUTY,
+  noAmountDuty: NO_AMOUNT_DUTY,
+};
+
 /**
  * 階段表の 1 区間。
  * `upTo` 以下 (=「以下」側) の記載金額にこの `duty` を適用する。
@@ -176,25 +187,25 @@ export interface StampDutyInput {
  * @throws {Error} contractAmount が負値または非有限の場合。
  * @throws {Error} documentType がホワイトリスト外の場合。
  */
-export function stampDutyAmount(input: StampDutyInput): number {
+export function stampDutyAmount(input: StampDutyInput, p: StampDutyParams = DEFAULT_STAMP_DUTY_PARAMS): number {
   const { documentType, contractAmount, isBusinessRelated = true } = input;
   validateDocumentType(documentType);
   validateAmount(contractAmount);
 
   // 第7号: 記載金額・記載金額の有無にかかわらず一律 4,000 円。
   if (documentType === 'continuousBasicContract') {
-    return CONTINUOUS_BASIC_CONTRACT_DUTY;
+    return p.continuousBasicContractDuty;
   }
 
   // 第17号 (領収書)。営業に関しないものは非課税。
   if (documentType === 'receipt') {
     if (!isBusinessRelated) return 0;
-    if (hasNoAmount(contractAmount)) return NO_AMOUNT_DUTY;
+    if (hasNoAmount(contractAmount)) return p.noAmountDuty;
     return lookupDuty(RECEIPT_BRACKETS, contractAmount);
   }
 
   // 第1号・第2号。記載金額のないものは 200 円。
-  if (hasNoAmount(contractAmount)) return NO_AMOUNT_DUTY;
+  if (hasNoAmount(contractAmount)) return p.noAmountDuty;
   return lookupDuty(DOC1_DOC2_BRACKETS, contractAmount);
 }
 
@@ -215,6 +226,6 @@ export function stampDutyAmount(input: StampDutyInput): number {
  * @throws {Error} contractAmount が負値または非有限の場合。
  * @throws {Error} documentType がホワイトリスト外の場合。
  */
-export function isStampExempt(input: StampDutyInput): boolean {
-  return stampDutyAmount(input) === 0;
+export function isStampExempt(input: StampDutyInput, p: StampDutyParams = DEFAULT_STAMP_DUTY_PARAMS): boolean {
+  return stampDutyAmount(input, p) === 0;
 }

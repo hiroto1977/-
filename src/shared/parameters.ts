@@ -67,6 +67,37 @@ import {
   type MortgageCreditParams,
 } from './taxCredits';
 import {
+  CITY_PLANNING_MAX_RATE,
+  DEPRECIABLE_ASSET_TAX_THRESHOLD,
+  FIXED_ASSET_STANDARD_RATE,
+  HOUSE_TAX_THRESHOLD,
+  LAND_TAX_THRESHOLD,
+  type FixedAssetThresholds,
+} from './taxFixedAsset';
+import {
+  LAND_THRESHOLD as ACQ_LAND_THRESHOLD,
+  NEW_BUILDING_THRESHOLD as ACQ_NEW_BUILDING_THRESHOLD,
+  OTHER_BUILDING_THRESHOLD as ACQ_OTHER_BUILDING_THRESHOLD,
+  REDUCED_RATE as ACQ_REDUCED_RATE,
+  STANDARD_RATE as ACQ_STANDARD_RATE,
+  type AcquisitionParams,
+} from './taxRealEstateAcquisition';
+import {
+  RATE_MORTGAGE,
+  RATE_PRESERVATION,
+  RATE_TRANSFER_GIFT,
+  RATE_TRANSFER_INHERITANCE,
+  RATE_TRANSFER_SALE,
+  type RegistrationType,
+} from './taxRegistrationLicense';
+import { CONTINUOUS_BASIC_CONTRACT_DUTY, NO_AMOUNT_DUTY, type StampDutyParams } from './taxStampDuty';
+import {
+  ESTIMATED_ACQUISITION_COST_RATE,
+  RESIDENTIAL_REDUCED_RATE_CAP,
+  RESIDENTIAL_SPECIAL_DEDUCTION,
+  type CapitalGainsParams,
+} from './taxCapitalGains';
+import {
   PENSION_RATE,
   HEALTH_RATE,
   CARE_RATE,
@@ -273,6 +304,93 @@ export function parameterDefinitions() {
     id: 'credit.residentLevyWithholdingRate', feature: '所得控除・税額控除', label: '配当割・株式等譲渡所得割の源泉率 (住民税)', unit: '%', scale: 100,
     defaultValue: RESIDENT_LEVY_WITHHOLDING_RATE, min: 0, max: 0.5, kind: 'law', source: '地方税法 (5%)',
   },
+  // --- 不動産・登記・印紙の税 -------------------------------------------------
+  {
+    id: 'fixedAsset.standardRate', feature: '不動産・登記・印紙の税', label: '固定資産税の税率', unit: '%', scale: 100,
+    defaultValue: FIXED_ASSET_STANDARD_RATE, min: 0, max: 0.1, kind: 'law', source: '地方税法 350 条 (標準税率 1.4%)',
+    note: '超過課税の自治体はその率に',
+  },
+  {
+    id: 'fixedAsset.cityPlanningRate', feature: '不動産・登記・印紙の税', label: '都市計画税の税率', unit: '%', scale: 100,
+    defaultValue: CITY_PLANNING_MAX_RATE, min: 0, max: 0.1, kind: 'law', source: '地方税法 702 条の 4 (制限税率 0.3%)',
+    note: '市町村の条例の率に (制限税率より低いことがある)',
+  },
+  {
+    id: 'fixedAsset.landThreshold', feature: '不動産・登記・印紙の税', label: '固定資産税の免税点 (土地)', unit: '円',
+    defaultValue: LAND_TAX_THRESHOLD, min: 0, max: 100_000_000, integer: true, kind: 'law', source: '地方税法 351 条 (30 万円)',
+  },
+  {
+    id: 'fixedAsset.houseThreshold', feature: '不動産・登記・印紙の税', label: '固定資産税の免税点 (家屋)', unit: '円',
+    defaultValue: HOUSE_TAX_THRESHOLD, min: 0, max: 100_000_000, integer: true, kind: 'law', source: '地方税法 351 条 (20 万円)',
+  },
+  {
+    id: 'fixedAsset.depreciableThreshold', feature: '不動産・登記・印紙の税', label: '固定資産税の免税点 (償却資産)', unit: '円',
+    defaultValue: DEPRECIABLE_ASSET_TAX_THRESHOLD, min: 0, max: 100_000_000, integer: true, kind: 'law', source: '地方税法 351 条 (150 万円)',
+  },
+  {
+    id: 'acquisition.standardRate', feature: '不動産・登記・印紙の税', label: '不動産取得税の本則税率', unit: '%', scale: 100,
+    defaultValue: ACQ_STANDARD_RATE, min: 0, max: 0.2, kind: 'law', source: '地方税法 73 条の 15 (4%)',
+  },
+  {
+    id: 'acquisition.reducedRate', feature: '不動産・登記・印紙の税', label: '不動産取得税の軽減税率 (土地・住宅)', unit: '%', scale: 100,
+    defaultValue: ACQ_REDUCED_RATE, min: 0, max: 0.2, kind: 'law', source: '地方税法附則 11 条の 2 (3%)',
+  },
+  {
+    id: 'acquisition.landThreshold', feature: '不動産・登記・印紙の税', label: '不動産取得税の免税点 (土地)', unit: '円',
+    defaultValue: ACQ_LAND_THRESHOLD, min: 0, max: 100_000_000, integer: true, kind: 'law', source: '地方税法 73 条の 15 の 2 (10 万円)',
+  },
+  {
+    id: 'acquisition.newBuildingThreshold', feature: '不動産・登記・印紙の税', label: '不動産取得税の免税点 (新築家屋)', unit: '円',
+    defaultValue: ACQ_NEW_BUILDING_THRESHOLD, min: 0, max: 100_000_000, integer: true, kind: 'law', source: '地方税法 73 条の 15 の 2 (23 万円)',
+  },
+  {
+    id: 'acquisition.otherBuildingThreshold', feature: '不動産・登記・印紙の税', label: '不動産取得税の免税点 (その他家屋)', unit: '円',
+    defaultValue: ACQ_OTHER_BUILDING_THRESHOLD, min: 0, max: 100_000_000, integer: true, kind: 'law', source: '地方税法 73 条の 15 の 2 (12 万円)',
+  },
+  {
+    id: 'registration.rateTransferSale', feature: '不動産・登記・印紙の税', label: '登録免許税 所有権移転 (売買)', unit: '%', scale: 100,
+    defaultValue: RATE_TRANSFER_SALE, min: 0, max: 0.1, kind: 'law', source: '登録免許税法 別表第一 (20/1000)',
+    note: '土地売買の軽減 (1.5%) や住宅用家屋の軽減はここに置く',
+  },
+  {
+    id: 'registration.ratePreservation', feature: '不動産・登記・印紙の税', label: '登録免許税 所有権保存 (新築)', unit: '%', scale: 100,
+    defaultValue: RATE_PRESERVATION, min: 0, max: 0.1, kind: 'law', source: '登録免許税法 別表第一 (4/1000)',
+  },
+  {
+    id: 'registration.rateTransferInheritance', feature: '不動産・登記・印紙の税', label: '登録免許税 所有権移転 (相続)', unit: '%', scale: 100,
+    defaultValue: RATE_TRANSFER_INHERITANCE, min: 0, max: 0.1, kind: 'law', source: '登録免許税法 別表第一 (4/1000)',
+  },
+  {
+    id: 'registration.rateTransferGift', feature: '不動産・登記・印紙の税', label: '登録免許税 所有権移転 (贈与)', unit: '%', scale: 100,
+    defaultValue: RATE_TRANSFER_GIFT, min: 0, max: 0.1, kind: 'law', source: '登録免許税法 別表第一 (20/1000)',
+  },
+  {
+    id: 'registration.rateMortgage', feature: '不動産・登記・印紙の税', label: '登録免許税 抵当権設定', unit: '%', scale: 100,
+    defaultValue: RATE_MORTGAGE, min: 0, max: 0.1, kind: 'law', source: '登録免許税法 別表第一 (4/1000)',
+  },
+  {
+    id: 'stamp.continuousBasicContractDuty', feature: '不動産・登記・印紙の税', label: '印紙税 第 7 号文書 (継続的取引の基本契約) の一律額', unit: '円',
+    defaultValue: CONTINUOUS_BASIC_CONTRACT_DUTY, min: 0, max: 1_000_000, integer: true, kind: 'law', source: '印紙税法 別表第一 (4,000 円)',
+  },
+  {
+    id: 'stamp.noAmountDuty', feature: '不動産・登記・印紙の税', label: '印紙税 記載金額のない文書の税額', unit: '円',
+    defaultValue: NO_AMOUNT_DUTY, min: 0, max: 1_000_000, integer: true, kind: 'law', source: '印紙税法 別表第一 (200 円)',
+  },
+  // --- 譲渡所得 -------------------------------------------------------------
+  {
+    id: 'capitalGains.residentialSpecialDeduction', feature: '譲渡所得', label: '居住用財産の特別控除', unit: '円',
+    defaultValue: RESIDENTIAL_SPECIAL_DEDUCTION, min: 0, max: 1_000_000_000, integer: true, kind: 'law',
+    source: '租税特別措置法 35 条 (3,000 万円)',
+  },
+  {
+    id: 'capitalGains.residentialReducedRateCap', feature: '譲渡所得', label: '居住用財産の軽減税率が適用される課税譲渡所得の上限', unit: '円',
+    defaultValue: RESIDENTIAL_REDUCED_RATE_CAP, min: 0, max: 1_000_000_000, integer: true, kind: 'law',
+    source: '租税特別措置法 31 条の 3 (6,000 万円)',
+  },
+  {
+    id: 'capitalGains.estimatedAcquisitionCostRate', feature: '譲渡所得', label: '概算取得費の割合 (譲渡収入に対して)', unit: '%', scale: 100,
+    defaultValue: ESTIMATED_ACQUISITION_COST_RATE, min: 0, max: 1, kind: 'law', source: '租税特別措置法 31 条の 4 (5%)',
+  },
   // --- 社会保険 -------------------------------------------------------------
   {
     id: 'socialInsurance.pensionRate', feature: '社会保険', label: '厚生年金保険料率 (本人負担)', unit: '%', scale: 100,
@@ -452,6 +570,51 @@ export function mortgageCreditParams(v: ParameterValues): MortgageCreditParams {
     incomeLimit: v['credit.mortgageIncomeLimit'],
     residentCapRate: v['credit.mortgageResidentCapRate'],
     residentCapMax: v['credit.mortgageResidentCapMax'],
+  };
+}
+
+export function fixedAssetRates(v: ParameterValues): { readonly fixedRate: number; readonly cityPlanningRate: number } {
+  return { fixedRate: v['fixedAsset.standardRate'], cityPlanningRate: v['fixedAsset.cityPlanningRate'] };
+}
+
+export function fixedAssetThresholds(v: ParameterValues): FixedAssetThresholds {
+  return {
+    land: v['fixedAsset.landThreshold'],
+    house: v['fixedAsset.houseThreshold'],
+    depreciableAsset: v['fixedAsset.depreciableThreshold'],
+  };
+}
+
+export function acquisitionParams(v: ParameterValues): AcquisitionParams {
+  return {
+    standardRate: v['acquisition.standardRate'],
+    reducedRate: v['acquisition.reducedRate'],
+    landThreshold: v['acquisition.landThreshold'],
+    newBuildingThreshold: v['acquisition.newBuildingThreshold'],
+    otherBuildingThreshold: v['acquisition.otherBuildingThreshold'],
+  };
+}
+
+export function registrationRates(v: ParameterValues): Readonly<Record<RegistrationType, number>> {
+  return {
+    transferSale: v['registration.rateTransferSale'],
+    preservation: v['registration.ratePreservation'],
+    transferInheritance: v['registration.rateTransferInheritance'],
+    transferGift: v['registration.rateTransferGift'],
+    mortgage: v['registration.rateMortgage'],
+  };
+}
+
+export function stampDutyParams(v: ParameterValues): StampDutyParams {
+  return { continuousBasicContractDuty: v['stamp.continuousBasicContractDuty'], noAmountDuty: v['stamp.noAmountDuty'] };
+}
+
+/** 譲渡所得の特例と復興特別所得税 (所得税・住民税の項の付加率を共有する)。 */
+export function capitalGainsParams(v: ParameterValues): CapitalGainsParams {
+  return {
+    residentialSpecialDeduction: v['capitalGains.residentialSpecialDeduction'],
+    residentialReducedRateCap: v['capitalGains.residentialReducedRateCap'],
+    surtaxRate: v['incomeTax.reconstructionSurtaxRate'],
   };
 }
 

@@ -24,8 +24,14 @@ import {
 import { guardAll, readNumber } from '../data/inputGuards';
 import { useParameters } from '../data/parameterOverrides';
 import {
+  acquisitionParams,
+  capitalGainsParams,
   deductionParams,
   displayValue,
+  fixedAssetRates,
+  fixedAssetThresholds,
+  registrationRates,
+  stampDutyParams,
   mortgageCreditParams,
   netSalaryParams,
   residentTaxOverride,
@@ -163,6 +169,14 @@ export function TaxPage() {
   // 名前に注意: 下の memo 内の `mortgageParams` は居住年 × 性能区分で決まる率と残高上限 (台帳ではない)。
   const mortgageCreditP = useMemo(() => mortgageCreditParams(params), [params]);
   const levyRate = params['credit.residentLevyWithholdingRate'];
+  const faRates = useMemo(() => fixedAssetRates(params), [params]);
+  const faThresholds = useMemo(() => fixedAssetThresholds(params), [params]);
+  const acqParams = useMemo(() => acquisitionParams(params), [params]);
+  const regRates = useMemo(() => registrationRates(params), [params]);
+  const stampParams = useMemo(() => stampDutyParams(params), [params]);
+  const cgParams = useMemo(() => capitalGainsParams(params), [params]);
+  const cgEstimateRate = params['capitalGains.estimatedAcquisitionCostRate'];
+  const cgEstimatePct = displayValue('capitalGains.estimatedAcquisitionCostRate', cgEstimateRate);
   const incomeTax = useMemo(() => calcIncomeTax(taxableIncome, surtaxRate), [taxableIncome, surtaxRate]);
   const residentTax = useMemo(() => calcResidentTax(taxableIncome, residentOverride), [taxableIncome, residentOverride]);
   const netSalary = useMemo(() => calcNetSalary(grossAnnual, undefined, netParams), [grossAnnual, netParams]);
@@ -347,9 +361,9 @@ export function TaxPage() {
 
   const capitalGains = useMemo(() => {
     // 概算取得費5%特例: 取得費不明 or 概算の方が大きい場合は概算取得費を使う。
-    const cost = resolveAcquisitionCost(num(cgProceedsStr), num(cgCostStr), cgUseEstimate);
-    return calcCapitalGainsTax(num(cgProceedsStr), cost, num(cgFeeStr), cgKind);
-  }, [cgProceedsStr, cgCostStr, cgFeeStr, cgKind, cgUseEstimate]);
+    const cost = resolveAcquisitionCost(num(cgProceedsStr), num(cgCostStr), cgUseEstimate, cgEstimateRate);
+    return calcCapitalGainsTax(num(cgProceedsStr), cost, num(cgFeeStr), cgKind, cgParams);
+  }, [cgProceedsStr, cgCostStr, cgFeeStr, cgKind, cgUseEstimate, cgEstimateRate, cgParams]);
 
   // --- ⑦ ふるさと納税ワンストップ特例の内訳 ---
   const [fsDonationStr, setFsDonationStr] = useState('52000');
@@ -552,13 +566,20 @@ export function TaxPage() {
     const dwellings = Math.max(1, Math.floor(num(faDwellingsStr)) || 1);
     if (faResidential) {
       // 住宅用地特例あり: 課税標準を 1/6・1/3 等に按分して合算する。
-      return calcFixedAssetTaxTotal({ assessedValue, areaSqm, dwellings });
+      return calcFixedAssetTaxTotal({
+        assessedValue,
+        areaSqm,
+        dwellings,
+        fixedRate: faRates.fixedRate,
+        cityPlanningRate: faRates.cityPlanningRate,
+        thresholds: faThresholds,
+      });
     }
     // 特例なし: 評価額をそのまま課税標準として課税。
-    const fixed = fixedAssetTax({ taxableBase: assessedValue });
-    const city = cityPlanningTax({ taxableBase: assessedValue });
+    const fixed = fixedAssetTax({ taxableBase: assessedValue, rate: faRates.fixedRate });
+    const city = cityPlanningTax({ taxableBase: assessedValue, rate: faRates.cityPlanningRate });
     return { fixedAssetTax: fixed, cityPlanningTax: city, total: fixed + city, exempt: false };
-  }, [faAssessedStr, faAreaStr, faDwellingsStr, faResidential]);
+  }, [faAssessedStr, faAreaStr, faDwellingsStr, faResidential, faRates, faThresholds]);
 
   // (b) 不動産取得税
   const [acqAssessedStr, setAcqAssessedStr] = useState('20000000');
@@ -574,16 +595,16 @@ export function TaxPage() {
         applyReduction: acqReduction,
         isUrbanLand: acqUrbanLand,
         isNewBuilding: acqNewBuilding,
-      }),
-    [acqAssessedStr, acqPropertyType, acqUrbanLand, acqNewBuilding, acqReduction],
+      }, acqParams),
+    [acqAssessedStr, acqPropertyType, acqUrbanLand, acqNewBuilding, acqReduction, acqParams],
   );
 
   // (c) 登録免許税
   const [regTaxableStr, setRegTaxableStr] = useState('20000000');
   const [regType, setRegType] = useState<RegistrationType>('transferSale');
   const registration = useMemo(
-    () => realEstateRegistrationTax({ taxableValue: num(regTaxableStr), registrationType: regType }),
-    [regTaxableStr, regType],
+    () => realEstateRegistrationTax({ taxableValue: num(regTaxableStr), registrationType: regType }, regRates),
+    [regTaxableStr, regType, regRates],
   );
 
   // (d) 印紙税
@@ -595,8 +616,8 @@ export function TaxPage() {
     return stampDutyAmount({
       documentType: stampDocType,
       contractAmount: amount > 0 ? amount : undefined,
-    });
-  }, [stampDocType, stampAmountStr]);
+    }, stampParams);
+  }, [stampDocType, stampAmountStr, stampParams]);
 
   // (e) 不動産取得コスト総額 (取得税 + 登録免許税 + 印紙税)
   const [costAssessedStr, setCostAssessedStr] = useState('20000000');
@@ -1034,8 +1055,8 @@ export function TaxPage() {
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
           土地・建物・株式などの売却益は、給与等と分離して課税されます。
           <strong>譲渡益 = 収入 − 取得費 − 譲渡費用</strong>。所有期間 (5年) で短期/長期の税率が変わり、
-          居住用財産は3,000万円特別控除と軽減税率があります (国税庁 No.3202/3305/1463)。
-          取得費が不明な場合は「取得費不明 (概算取得費5%)」にチェックすると、譲渡収入の5%を取得費として計算します (国税庁 No.3258)。
+          居住用財産は{jpy(cgParams.residentialSpecialDeduction)}の特別控除と軽減税率があります (国税庁 No.3202/3305/1463)。
+          取得費が不明な場合は「取得費不明 (概算取得費{cgEstimatePct}%)」にチェックすると、譲渡収入の{cgEstimatePct}%を取得費として計算します (国税庁 No.3258)。
           ※ 買換特例・損益通算・繰越控除は未対応です。
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
@@ -1056,13 +1077,13 @@ export function TaxPage() {
             <select value={cgKind} onChange={(e) => setCgKind(e.target.value as CapitalAssetKind)} style={{ ...inputStyle, width: 220 }}>
               <option value="real-estate-long">土地建物・長期 (5年超 15%+5%)</option>
               <option value="real-estate-short">土地建物・短期 (5年以下 30%+9%)</option>
-              <option value="residential">居住用財産 (3,000万控除+軽減税率)</option>
+              <option value="residential">居住用財産 ({jpy(cgParams.residentialSpecialDeduction)}控除+軽減税率)</option>
               <option value="listed-stock">上場株式等 (20.315%)</option>
             </select>
           </label>
           <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
             <input type="checkbox" checked={cgUseEstimate} onChange={(e) => setCgUseEstimate(e.target.checked)} />
-            取得費不明 (概算取得費5%)
+            取得費不明 (概算取得費{cgEstimatePct}%)
           </label>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
@@ -1625,13 +1646,13 @@ export function TaxPage() {
             </label>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
-            <Stat label="固定資産税 (1.4%)" value={jpy(fixedAsset.fixedAssetTax)} />
-            <Stat label="都市計画税 (0.3%)" value={jpy(fixedAsset.cityPlanningTax)} />
+            <Stat label={`固定資産税 (${displayValue('fixedAsset.standardRate', faRates.fixedRate)}%)`} value={jpy(fixedAsset.fixedAssetTax)} />
+            <Stat label={`都市計画税 (${displayValue('fixedAsset.cityPlanningRate', faRates.cityPlanningRate)}%)`} value={jpy(fixedAsset.cityPlanningTax)} />
             <Stat label="合計 (年)" value={jpy(fixedAsset.total)} />
           </div>
           {fixedAsset.exempt && (
             <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8 }}>
-              ※ 特例適用後の課税標準が免税点 (土地30万円) 未満のため非課税です。
+              ※ 特例適用後の課税標準が免税点 (土地{jpy(faThresholds.land)}) 未満のため非課税です。
             </div>
           )}
         </div>
@@ -1642,7 +1663,7 @@ export function TaxPage() {
             (b) 不動産取得税
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
-            不動産を取得したときに一度だけ課されます。本則4%、土地・住宅は軽減3%。宅地は課税標準1/2特例があります。
+            不動産を取得したときに一度だけ課されます。本則{displayValue('acquisition.standardRate', acqParams.standardRate)}%、土地・住宅は軽減{displayValue('acquisition.reducedRate', acqParams.reducedRate)}%。宅地は課税標準1/2特例があります。
             ※ <strong>住宅の課税標準の特別控除 (新築1,200万円控除等) は未対応</strong>のため、実際より高めに出る概算です (都道府県税事務所に確認してください)。
           </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
@@ -1660,7 +1681,7 @@ export function TaxPage() {
             </label>
             <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
               <input type="checkbox" checked={acqReduction} onChange={(e) => setAcqReduction(e.target.checked)} />
-              軽減税率 (3%)
+              軽減税率 ({displayValue('acquisition.reducedRate', acqParams.reducedRate)}%)
             </label>
             <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
               <input type="checkbox" checked={acqUrbanLand} onChange={(e) => setAcqUrbanLand(e.target.checked)} />

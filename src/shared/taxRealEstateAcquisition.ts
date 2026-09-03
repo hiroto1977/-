@@ -35,6 +35,23 @@ export const NEW_BUILDING_THRESHOLD = 230_000;
 /** その他家屋の免税点 (売買等による取得)。12 万円。 */
 export const OTHER_BUILDING_THRESHOLD = 120_000;
 
+/** 税率と免税点。省略すると上の定数。台帳 (`shared/parameters.ts`) から上書きできる。 */
+export interface AcquisitionParams {
+  readonly standardRate: number;
+  readonly reducedRate: number;
+  readonly landThreshold: number;
+  readonly newBuildingThreshold: number;
+  readonly otherBuildingThreshold: number;
+}
+
+export const DEFAULT_ACQUISITION_PARAMS: AcquisitionParams = {
+  standardRate: STANDARD_RATE,
+  reducedRate: REDUCED_RATE,
+  landThreshold: LAND_THRESHOLD,
+  newBuildingThreshold: NEW_BUILDING_THRESHOLD,
+  otherBuildingThreshold: OTHER_BUILDING_THRESHOLD,
+};
+
 /**
  * 不動産の種別 (ホワイトリスト)。
  * - `land` … 土地 (軽減対象・宅地は 1/2 特例の対象)
@@ -72,11 +89,11 @@ function assertPropertyType(propertyType: PropertyType): void {
  * 土地は {@link LAND_THRESHOLD}、家屋は新築なら {@link NEW_BUILDING_THRESHOLD}、
  * それ以外 (売買等) は {@link OTHER_BUILDING_THRESHOLD}。
  */
-function resolveThreshold(propertyType: PropertyType, isNewBuilding: boolean): number {
+function resolveThreshold(propertyType: PropertyType, isNewBuilding: boolean, p: AcquisitionParams): number {
   if (propertyType === 'land') {
-    return LAND_THRESHOLD;
+    return p.landThreshold;
   }
-  return isNewBuilding ? NEW_BUILDING_THRESHOLD : OTHER_BUILDING_THRESHOLD;
+  return isNewBuilding ? p.newBuildingThreshold : p.otherBuildingThreshold;
 }
 
 // --- 税率 ----------------------------------------------------------------
@@ -106,19 +123,19 @@ export interface AcquisitionTaxRateInput {
  *
  * @throws propertyType がホワイトリスト外のとき
  */
-export function acquisitionTaxRate({
-  propertyType,
-  applyReduction = true,
-}: AcquisitionTaxRateInput): number {
+export function acquisitionTaxRate(
+  { propertyType, applyReduction = true }: AcquisitionTaxRateInput,
+  p: AcquisitionParams = DEFAULT_ACQUISITION_PARAMS,
+): number {
   assertPropertyType(propertyType);
   if (!applyReduction) {
-    return STANDARD_RATE;
+    return p.standardRate;
   }
   // 軽減適用時、非住宅家屋だけは軽減対象外なので本則 4%。
   if (propertyType === 'nonResidentialBuilding') {
-    return STANDARD_RATE;
+    return p.standardRate;
   }
-  return REDUCED_RATE;
+  return p.reducedRate;
 }
 
 // --- 宅地の課税標準 1/2 特例 ---------------------------------------------
@@ -180,14 +197,13 @@ export interface AcquisitionThresholdInput {
  * @returns 免税点 **未満** なら true (非課税)、免税点以上なら false (課税)
  * @throws taxableValue が負値・非有限のとき / propertyType がホワイトリスト外のとき
  */
-export function isBelowAcquisitionThreshold({
-  propertyType,
-  taxableValue,
-  isNewBuilding = false,
-}: AcquisitionThresholdInput): boolean {
+export function isBelowAcquisitionThreshold(
+  { propertyType, taxableValue, isNewBuilding = false }: AcquisitionThresholdInput,
+  p: AcquisitionParams = DEFAULT_ACQUISITION_PARAMS,
+): boolean {
   assertPropertyType(propertyType);
   assertNonNegativeFinite(taxableValue, 'taxableValue');
-  const threshold = resolveThreshold(propertyType, isNewBuilding);
+  const threshold = resolveThreshold(propertyType, isNewBuilding, p);
   return taxableValue < threshold;
 }
 
@@ -239,13 +255,10 @@ export interface RealEstateAcquisitionResult {
  *
  * @throws assessedValue が負値・非有限のとき / propertyType がホワイトリスト外のとき
  */
-export function realEstateAcquisitionTax({
-  assessedValue,
-  propertyType,
-  applyReduction = true,
-  isUrbanLand = false,
-  isNewBuilding = false,
-}: RealEstateAcquisitionInput): RealEstateAcquisitionResult {
+export function realEstateAcquisitionTax(
+  { assessedValue, propertyType, applyReduction = true, isUrbanLand = false, isNewBuilding = false }: RealEstateAcquisitionInput,
+  p: AcquisitionParams = DEFAULT_ACQUISITION_PARAMS,
+): RealEstateAcquisitionResult {
   assertPropertyType(propertyType);
   assertNonNegativeFinite(assessedValue, 'assessedValue');
   // 課税標準: 土地が宅地なら 1/2 特例、それ以外は評価額そのまま。
@@ -253,13 +266,9 @@ export function realEstateAcquisitionTax({
     propertyType === 'land'
       ? residentialLandTaxableBase({ assessedValue, isUrbanLand })
       : assessedValue;
-  const rate = acquisitionTaxRate({ propertyType, applyReduction });
+  const rate = acquisitionTaxRate({ propertyType, applyReduction }, p);
   // 免税点判定 (課税標準で判定)。
-  const exempt = isBelowAcquisitionThreshold({
-    propertyType,
-    taxableValue: taxableBase,
-    isNewBuilding,
-  });
+  const exempt = isBelowAcquisitionThreshold({ propertyType, taxableValue: taxableBase, isNewBuilding }, p);
   if (exempt) {
     return { rate, taxableBase, tax: 0, exempt: true };
   }

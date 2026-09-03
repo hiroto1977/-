@@ -88,14 +88,27 @@ export interface CapitalGainsResult {
 /** 概算取得費の割合 (取得費不明時、譲渡収入の5%を取得費とできる)。 */
 export const ESTIMATED_ACQUISITION_COST_RATE = 0.05;
 
+/** 居住用財産の特例と復興特別所得税。省略すると定数。台帳 (`shared/parameters.ts`) から上書きできる。 */
+export interface CapitalGainsParams {
+  readonly residentialSpecialDeduction: number;
+  readonly residentialReducedRateCap: number;
+  readonly surtaxRate: number;
+}
+
+export const DEFAULT_CAPITAL_GAINS_PARAMS: CapitalGainsParams = {
+  residentialSpecialDeduction: RESIDENTIAL_SPECIAL_DEDUCTION,
+  residentialReducedRateCap: RESIDENTIAL_REDUCED_RATE_CAP,
+  surtaxRate: RECONSTRUCTION_SURTAX_RATE,
+};
+
 /**
  * 概算取得費を計算する = 譲渡収入 × 5% (国税庁 No.3258)。
  * 取得費が不明・実額が概算取得費を下回る場合に取得費として使える。
  *
  * @param proceeds 譲渡収入金額 (円)
  */
-export function estimatedAcquisitionCost(proceeds: number): number {
-  return Math.round(Math.max(0, proceeds) * ESTIMATED_ACQUISITION_COST_RATE);
+export function estimatedAcquisitionCost(proceeds: number, rate = ESTIMATED_ACQUISITION_COST_RATE): number {
+  return Math.round(Math.max(0, proceeds) * rate);
 }
 
 /**
@@ -110,10 +123,11 @@ export function resolveAcquisitionCost(
   proceeds: number,
   actualAcquisitionCost: number,
   useEstimate = true,
+  rate = ESTIMATED_ACQUISITION_COST_RATE,
 ): number {
   const actual = Math.max(0, actualAcquisitionCost);
   if (!useEstimate) return actual;
-  return Math.max(actual, estimatedAcquisitionCost(proceeds));
+  return Math.max(actual, estimatedAcquisitionCost(proceeds, rate));
 }
 
 export function calcCapitalGainsTax(
@@ -121,17 +135,18 @@ export function calcCapitalGainsTax(
   acquisitionCost: number,
   transferCost: number,
   kind: CapitalAssetKind,
+  p: CapitalGainsParams = DEFAULT_CAPITAL_GAINS_PARAMS,
 ): CapitalGainsResult {
   const gain = Math.max(0, Math.max(0, proceeds) - Math.max(0, acquisitionCost) - Math.max(0, transferCost));
-  const specialDeduction = kind === 'residential' ? Math.min(RESIDENTIAL_SPECIAL_DEDUCTION, gain) : 0;
+  const specialDeduction = kind === 'residential' ? Math.min(p.residentialSpecialDeduction, gain) : 0;
   const taxableGain = Math.max(0, gain - specialDeduction);
 
   let incomeTaxBase: number;
   let residentTax: number;
   if (kind === 'residential') {
     // 軽減税率: 6,000万以下は所得税10%/住民税4%、超過部分は15%/5%。
-    const reduced = Math.min(taxableGain, RESIDENTIAL_REDUCED_RATE_CAP);
-    const excess = Math.max(0, taxableGain - RESIDENTIAL_REDUCED_RATE_CAP);
+    const reduced = Math.min(taxableGain, p.residentialReducedRateCap);
+    const excess = Math.max(0, taxableGain - p.residentialReducedRateCap);
     incomeTaxBase = reduced * 0.1 + excess * 0.15;
     residentTax = yen(reduced * 0.04 + excess * 0.05);
   } else {
@@ -139,7 +154,7 @@ export function calcCapitalGainsTax(
     incomeTaxBase = taxableGain * rate.incomeTaxRate;
     residentTax = yen(taxableGain * rate.residentTaxRate);
   }
-  const incomeTax = yen(incomeTaxBase * (1 + RECONSTRUCTION_SURTAX_RATE));
+  const incomeTax = yen(incomeTaxBase * (1 + p.surtaxRate));
   const totalTax = incomeTax + residentTax;
   return {
     gain,

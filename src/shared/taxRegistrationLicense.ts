@@ -130,11 +130,14 @@ function validateNonNegativeAmount(value: number, label: string): void {
 }
 
 /** 登記種別のホワイトリスト検証 → 本則税率を解決する。範囲外は throw。 */
-function resolveRegistrationRate(registrationType: RegistrationType): number {
+function resolveRegistrationRate(
+  registrationType: RegistrationType,
+  rates: Readonly<Record<RegistrationType, number>>,
+): number {
   if (!REGISTRATION_TYPES.includes(registrationType)) {
     throw new Error(`unknown registrationType: ${String(registrationType)}`);
   }
-  return REGISTRATION_TAX_RATES[registrationType];
+  return rates[registrationType];
 }
 
 /** 会社形態のホワイトリスト検証 → 設立登記の最低額を解決する。範囲外は throw。 */
@@ -180,10 +183,11 @@ export interface RealEstateRegistrationResult {
  */
 export function realEstateRegistrationTax(
   input: RealEstateRegistrationInput,
+  rates: Readonly<Record<RegistrationType, number>> = REGISTRATION_TAX_RATES,
 ): RealEstateRegistrationResult {
   const { taxableValue, registrationType } = input;
   validateNonNegativeAmount(taxableValue, 'taxableValue');
-  const rate = resolveRegistrationRate(registrationType);
+  const rate = resolveRegistrationRate(registrationType, rates);
   const tax = floorHundred(taxableValue * rate);
   return { rate, tax };
 }

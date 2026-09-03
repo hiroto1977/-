@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  DEFAULT_STAMP_DUTY_PARAMS,
   CONTINUOUS_BASIC_CONTRACT_DUTY,
   DOC1_DOC2_BRACKETS,
   NO_AMOUNT_DUTY,
@@ -425,5 +426,28 @@ describe('exported tables (本則税額表の整合)', () => {
 
   it('領収書表の最初の区間は 49,999 円以下が非課税 (duty 0)', () => {
     expect(RECEIPT_BRACKETS[0]).toEqual({ upTo: 49_999, duty: 0 });
+  });
+});
+
+describe('台帳から渡す一律の印紙税額 (StampDutyParams)', () => {
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_STAMP_DUTY_PARAMS).toEqual({ continuousBasicContractDuty: CONTINUOUS_BASIC_CONTRACT_DUTY, noAmountDuty: NO_AMOUNT_DUTY });
+    for (const documentType of ['continuousBasicContract', 'realEstateTransfer', 'receipt'] as const) {
+      expect(stampDutyAmount({ documentType })).toBe(stampDutyAmount({ documentType }, DEFAULT_STAMP_DUTY_PARAMS));
+    }
+  });
+
+  it('第 7 号文書の一律額と、記載金額のない文書の税額を渡す', () => {
+    const p = { continuousBasicContractDuty: 5_000, noAmountDuty: 300 };
+    expect(stampDutyAmount({ documentType: 'continuousBasicContract', contractAmount: 100_000_000 }, p)).toBe(5_000);
+    expect(stampDutyAmount({ documentType: 'realEstateTransfer' }, p)).toBe(300);
+    expect(stampDutyAmount({ documentType: 'receipt' }, p)).toBe(300);
+    // 記載金額があれば表で決まる (一律額は効かない)。
+    expect(stampDutyAmount({ documentType: 'realEstateTransfer', contractAmount: 30_000_000 }, p)).toBe(
+      stampDutyAmount({ documentType: 'realEstateTransfer', contractAmount: 30_000_000 }),
+    );
+    // 免税の判定も同じ値で見る (記載金額なしの税額を 0 にすれば免税)。
+    expect(isStampExempt({ documentType: 'realEstateTransfer' }, { ...p, noAmountDuty: 0 })).toBe(true);
+    expect(isStampExempt({ documentType: 'realEstateTransfer' })).toBe(false);
   });
 });
