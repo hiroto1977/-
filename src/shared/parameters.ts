@@ -47,6 +47,26 @@ import {
   type SalaryTaxParams,
 } from './taxCalc';
 import {
+  BASIC_HUMAN_DEDUCTION_DIFF,
+  CASUALTY_DISASTER_FLOOR,
+  CASUALTY_INCOME_RATE,
+  DEPENDENT_INCOME_LIMIT,
+  DONATION_DEDUCTION_FLOOR,
+  DONATION_INCOME_CAP_RATE,
+  SELF_MEDICATION_CAP,
+  SELF_MEDICATION_THRESHOLD,
+  SMALL_BIZ_MUTUAL_ANNUAL_CAP,
+  SPOUSE_SPECIAL_INCOME_LIMIT_YEN,
+  type DeductionParams,
+} from './taxDeductions';
+import {
+  MORTGAGE_INCOME_LIMIT,
+  MORTGAGE_RESIDENT_CAP_MAX,
+  MORTGAGE_RESIDENT_CAP_RATE,
+  RESIDENT_LEVY_WITHHOLDING_RATE,
+  type MortgageCreditParams,
+} from './taxCredits';
+import {
   PENSION_RATE,
   HEALTH_RATE,
   CARE_RATE,
@@ -194,6 +214,64 @@ export function parameterDefinitions() {
     id: 'residentTax.perCapita', feature: '所得税・住民税', label: '住民税の均等割 (森林環境税を含む年額)', unit: '円',
     defaultValue: RESIDENT_TAX_PER_CAPITA, min: 0, max: 100_000, integer: true, kind: 'law',
     source: '地方税法 (基礎 4,000 円) + 森林環境税 1,000 円', note: '上乗せのある自治体はその額に',
+  },
+  // --- 所得控除・税額控除 ---------------------------------------------------
+  {
+    id: 'deduction.spouseSpecialIncomeLimit', feature: '所得控除・税額控除', label: '配偶者特別控除の配偶者所得の上限', unit: '円',
+    defaultValue: SPOUSE_SPECIAL_INCOME_LIMIT_YEN, min: 0, max: 10_000_000, integer: true, kind: 'law',
+    source: '所得税法 (133 万円)', note: '入口 (配偶者控除の所得要件) は年分で決まるので台帳に無い',
+  },
+  {
+    id: 'deduction.dependentIncomeLimit', feature: '所得控除・税額控除', label: '扶養親族の合計所得の上限', unit: '円',
+    defaultValue: DEPENDENT_INCOME_LIMIT, min: 0, max: 10_000_000, integer: true, kind: 'law', source: '所得税法 (48 万円)',
+  },
+  {
+    id: 'deduction.selfMedicationThreshold', feature: '所得控除・税額控除', label: 'セルフメディケーション税制の足切り', unit: '円',
+    defaultValue: SELF_MEDICATION_THRESHOLD, min: 0, max: 1_000_000, integer: true, kind: 'law', source: '租税特別措置法 (12,000 円)',
+  },
+  {
+    id: 'deduction.selfMedicationCap', feature: '所得控除・税額控除', label: 'セルフメディケーション税制の控除上限', unit: '円',
+    defaultValue: SELF_MEDICATION_CAP, min: 0, max: 10_000_000, integer: true, kind: 'law', source: '租税特別措置法 (88,000 円)',
+  },
+  {
+    id: 'deduction.smallBizMutualAnnualCap', feature: '所得控除・税額控除', label: '小規模企業共済の年間拠出上限', unit: '円',
+    defaultValue: SMALL_BIZ_MUTUAL_ANNUAL_CAP, min: 0, max: 10_000_000, integer: true, kind: 'law', source: '小規模企業共済法 (月 7 万円)',
+  },
+  {
+    id: 'deduction.donationFloor', feature: '所得控除・税額控除', label: '寄附金控除の足切り', unit: '円',
+    defaultValue: DONATION_DEDUCTION_FLOOR, min: 0, max: 1_000_000, integer: true, kind: 'law', source: '所得税法 (2,000 円)',
+  },
+  {
+    id: 'deduction.donationIncomeCapRate', feature: '所得控除・税額控除', label: '寄附金控除の上限 (合計所得に対する割合)', unit: '%', scale: 100,
+    defaultValue: DONATION_INCOME_CAP_RATE, min: 0, max: 1, kind: 'law', source: '所得税法 (40%)',
+  },
+  {
+    id: 'deduction.casualtyDisasterFloor', feature: '所得控除・税額控除', label: '雑損控除の災害関連支出の足切り', unit: '円',
+    defaultValue: CASUALTY_DISASTER_FLOOR, min: 0, max: 10_000_000, integer: true, kind: 'law', source: '所得税法 (5 万円)',
+  },
+  {
+    id: 'deduction.casualtyIncomeRate', feature: '所得控除・税額控除', label: '雑損控除の総所得に対する足切り率', unit: '%', scale: 100,
+    defaultValue: CASUALTY_INCOME_RATE, min: 0, max: 1, kind: 'law', source: '所得税法 (10%)',
+  },
+  {
+    id: 'deduction.basicHumanDeductionDiff', feature: '所得控除・税額控除', label: '調整控除の基礎控除分の人的控除差', unit: '円',
+    defaultValue: BASIC_HUMAN_DEDUCTION_DIFF, min: 0, max: 1_000_000, integer: true, kind: 'law', source: '地方税法 (5 万円)',
+  },
+  {
+    id: 'credit.mortgageIncomeLimit', feature: '所得控除・税額控除', label: '住宅ローン控除の合計所得の上限', unit: '円',
+    defaultValue: MORTGAGE_INCOME_LIMIT, min: 0, max: 100_000_000, integer: true, kind: 'law', source: '租税特別措置法 (2,000 万円)',
+  },
+  {
+    id: 'credit.mortgageResidentCapRate', feature: '所得控除・税額控除', label: '住宅ローン控除の住民税側の上限率 (課税総所得に対して)', unit: '%', scale: 100,
+    defaultValue: MORTGAGE_RESIDENT_CAP_RATE, min: 0, max: 1, kind: 'law', source: '地方税法附則 (5%)',
+  },
+  {
+    id: 'credit.mortgageResidentCapMax', feature: '所得控除・税額控除', label: '住宅ローン控除の住民税側の上限額', unit: '円',
+    defaultValue: MORTGAGE_RESIDENT_CAP_MAX, min: 0, max: 1_000_000, integer: true, kind: 'law', source: '地方税法附則 (97,500 円)',
+  },
+  {
+    id: 'credit.residentLevyWithholdingRate', feature: '所得控除・税額控除', label: '配当割・株式等譲渡所得割の源泉率 (住民税)', unit: '%', scale: 100,
+    defaultValue: RESIDENT_LEVY_WITHHOLDING_RATE, min: 0, max: 0.5, kind: 'law', source: '地方税法 (5%)',
   },
   // --- 社会保険 -------------------------------------------------------------
   {
@@ -352,6 +430,29 @@ export function ckdPotassiumLimits(v: ParameterValues): Readonly<Record<CkdStage
 
 export function dscrThresholds(v: ParameterValues): DscrThresholds {
   return { danger: v['realEstate.dscrDangerThreshold'], caution: v['realEstate.dscrCautionThreshold'] };
+}
+
+export function deductionParams(v: ParameterValues): DeductionParams {
+  return {
+    spouseSpecialIncomeLimit: v['deduction.spouseSpecialIncomeLimit'],
+    dependentIncomeLimit: v['deduction.dependentIncomeLimit'],
+    selfMedicationThreshold: v['deduction.selfMedicationThreshold'],
+    selfMedicationCap: v['deduction.selfMedicationCap'],
+    smallBizMutualAnnualCap: v['deduction.smallBizMutualAnnualCap'],
+    donationDeductionFloor: v['deduction.donationFloor'],
+    donationIncomeCapRate: v['deduction.donationIncomeCapRate'],
+    casualtyDisasterFloor: v['deduction.casualtyDisasterFloor'],
+    casualtyIncomeRate: v['deduction.casualtyIncomeRate'],
+    basicHumanDeductionDiff: v['deduction.basicHumanDeductionDiff'],
+  };
+}
+
+export function mortgageCreditParams(v: ParameterValues): MortgageCreditParams {
+  return {
+    incomeLimit: v['credit.mortgageIncomeLimit'],
+    residentCapRate: v['credit.mortgageResidentCapRate'],
+    residentCapMax: v['credit.mortgageResidentCapMax'],
+  };
 }
 
 export function socialInsuranceRates(v: ParameterValues): SocialInsuranceRates {

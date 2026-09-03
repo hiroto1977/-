@@ -142,16 +142,32 @@ export interface MortgageCreditResult {
 export const MORTGAGE_RESIDENT_CAP_RATE = 0.05;
 export const MORTGAGE_RESIDENT_CAP_MAX = 97_500;
 
+/** 住宅ローン控除の所得要件と住民税側の上限。省略すると上の定数。台帳から上書きできる。 */
+export interface MortgageCreditParams {
+  readonly incomeLimit: number;
+  readonly residentCapRate: number;
+  readonly residentCapMax: number;
+}
+
+export const DEFAULT_MORTGAGE_CREDIT_PARAMS: MortgageCreditParams = {
+  incomeLimit: MORTGAGE_INCOME_LIMIT,
+  residentCapRate: MORTGAGE_RESIDENT_CAP_RATE,
+  residentCapMax: MORTGAGE_RESIDENT_CAP_MAX,
+};
+
 /**
  * 住宅ローン控除を計算する。
  * - 控除可能額 = min(年末残高, 残高上限) × 控除率
  * - まず所得税から控除、引ききれない分を住民税から (課税所得×5%・最大97,500円) 控除
  */
-export function calcMortgageCredit(input: MortgageCreditInput): MortgageCreditResult {
+export function calcMortgageCredit(
+  input: MortgageCreditInput,
+  p: MortgageCreditParams = DEFAULT_MORTGAGE_CREDIT_PARAMS,
+): MortgageCreditResult {
   // 合計所得金額が 2,000 万円を超える年は住宅ローン控除の適用なし (国税庁 No.1211)。
   // Stryker disable next-line ConditionalExpression: フルスイートは kill するが
   // perTest カバレッジが帰属を取りこぼすため抑制 (両分岐は上の2テストで検証済)。
-  if (input.totalIncome !== undefined && input.totalIncome > MORTGAGE_INCOME_LIMIT) {
+  if (input.totalIncome !== undefined && input.totalIncome > p.incomeLimit) {
     return { creditable: 0, fromIncomeTax: 0, fromResidentTax: 0, unused: 0 };
   }
   // 控除期間 (新築13年/中古10年) を過ぎた年は控除なし。
@@ -167,8 +183,8 @@ export function calcMortgageCredit(input: MortgageCreditInput): MortgageCreditRe
   const remaining = creditable - fromIncomeTax;
 
   const residentCap = Math.min(
-    MORTGAGE_RESIDENT_CAP_MAX,
-    yen(Math.max(0, input.taxableIncomeForResident) * MORTGAGE_RESIDENT_CAP_RATE),
+    p.residentCapMax,
+    yen(Math.max(0, input.taxableIncomeForResident) * p.residentCapRate),
   );
   const fromResidentTax = Math.min(remaining, residentCap);
   const unused = remaining - fromResidentTax;
@@ -260,8 +276,11 @@ export interface TaxCreditBreakdown {
 }
 
 /** すべての税額控除を集計する。 */
-export function calcAllTaxCredits(input: TaxCreditInput): TaxCreditBreakdown {
-  const mortgage = input.mortgage ? calcMortgageCredit(input.mortgage) : null;
+export function calcAllTaxCredits(
+  input: TaxCreditInput,
+  mortgageParams: MortgageCreditParams = DEFAULT_MORTGAGE_CREDIT_PARAMS,
+): TaxCreditBreakdown {
+  const mortgage = input.mortgage ? calcMortgageCredit(input.mortgage, mortgageParams) : null;
   const dividend = input.dividend ? calcDividendCredit(input.dividend) : null;
 
   const mortgageIncomeTax = mortgage ? mortgage.fromIncomeTax : 0;

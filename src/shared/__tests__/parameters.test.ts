@@ -14,12 +14,14 @@ import {
   PARAMETER_BY_ID,
   PARAMETER_KIND_LABEL,
   ckdPotassiumLimits,
+  deductionParams,
   displayValue,
   dscrThresholds,
   fromDisplayValue,
   hydroponicsProductionParams,
   isParameterId,
   lowPotassiumParams,
+  mortgageCreditParams,
   netSalaryParams,
   overriddenCount,
   parameterDefinitions,
@@ -59,6 +61,26 @@ import {
   SOCIAL_INSURANCE_RATE,
 } from '../taxCalc';
 import {
+  BASIC_HUMAN_DEDUCTION_DIFF,
+  CASUALTY_DISASTER_FLOOR,
+  CASUALTY_INCOME_RATE,
+  DEFAULT_DEDUCTION_PARAMS,
+  DEPENDENT_INCOME_LIMIT,
+  DONATION_DEDUCTION_FLOOR,
+  DONATION_INCOME_CAP_RATE,
+  SELF_MEDICATION_CAP,
+  SELF_MEDICATION_THRESHOLD,
+  SMALL_BIZ_MUTUAL_ANNUAL_CAP,
+  SPOUSE_SPECIAL_INCOME_LIMIT_YEN,
+} from '../taxDeductions';
+import {
+  DEFAULT_MORTGAGE_CREDIT_PARAMS,
+  MORTGAGE_INCOME_LIMIT,
+  MORTGAGE_RESIDENT_CAP_MAX,
+  MORTGAGE_RESIDENT_CAP_RATE,
+  RESIDENT_LEVY_WITHHOLDING_RATE,
+} from '../taxCredits';
+import {
   CARE_RATE,
   DEFAULT_SOCIAL_INSURANCE_RATES,
   EMPLOYMENT_INSURANCE_RATE,
@@ -94,6 +116,20 @@ const DEFAULT_SOURCE: Readonly<Record<ParameterId, number>> = {
   'incomeTax.socialInsuranceEstimateRate': SOCIAL_INSURANCE_RATE,
   'residentTax.incomeRate': RESIDENT_TAX_RATE,
   'residentTax.perCapita': RESIDENT_TAX_PER_CAPITA,
+  'deduction.spouseSpecialIncomeLimit': SPOUSE_SPECIAL_INCOME_LIMIT_YEN,
+  'deduction.dependentIncomeLimit': DEPENDENT_INCOME_LIMIT,
+  'deduction.selfMedicationThreshold': SELF_MEDICATION_THRESHOLD,
+  'deduction.selfMedicationCap': SELF_MEDICATION_CAP,
+  'deduction.smallBizMutualAnnualCap': SMALL_BIZ_MUTUAL_ANNUAL_CAP,
+  'deduction.donationFloor': DONATION_DEDUCTION_FLOOR,
+  'deduction.donationIncomeCapRate': DONATION_INCOME_CAP_RATE,
+  'deduction.casualtyDisasterFloor': CASUALTY_DISASTER_FLOOR,
+  'deduction.casualtyIncomeRate': CASUALTY_INCOME_RATE,
+  'deduction.basicHumanDeductionDiff': BASIC_HUMAN_DEDUCTION_DIFF,
+  'credit.mortgageIncomeLimit': MORTGAGE_INCOME_LIMIT,
+  'credit.mortgageResidentCapRate': MORTGAGE_RESIDENT_CAP_RATE,
+  'credit.mortgageResidentCapMax': MORTGAGE_RESIDENT_CAP_MAX,
+  'credit.residentLevyWithholdingRate': RESIDENT_LEVY_WITHHOLDING_RATE,
   'socialInsurance.pensionRate': PENSION_RATE,
   'socialInsurance.healthRate': HEALTH_RATE,
   'socialInsurance.careRate': CARE_RATE,
@@ -135,7 +171,9 @@ describe('台帳の形', () => {
   });
 
   it('画面のまとまりは登場順で、重複しない', () => {
-    expect(parameterFeatures()).toEqual(['水耕栽培', '給与', '不動産', '税', '所得税・住民税', '社会保険', '財務']);
+    expect(parameterFeatures()).toEqual([
+      '水耕栽培', '給与', '不動産', '税', '所得税・住民税', '所得控除・税額控除', '社会保険', '財務',
+    ]);
   });
 
   it('割合は % で見せる (scale 100)、それ以外は素のまま', () => {
@@ -342,6 +380,33 @@ describe('機能ごとの取り出し口', () => {
     expect(salaryTaxParams(v)).toEqual({ surtaxRate: 0, resident: { incomeRate: 0.05, perCapita: 6000 } });
   });
 
+  it('所得控除・税額控除の取り出し口 — 既定は各モジュールの既定引数と同じ物、上書きは正しい引数へ届く', () => {
+    expect(deductionParams(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_DEDUCTION_PARAMS);
+    expect(mortgageCreditParams(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_MORTGAGE_CREDIT_PARAMS);
+    const v = resolveParameters({
+      'deduction.spouseSpecialIncomeLimit': 1_500_000,
+      'deduction.dependentIncomeLimit': 500_000,
+      'deduction.selfMedicationThreshold': 10_000,
+      'deduction.selfMedicationCap': 100_000,
+      'deduction.smallBizMutualAnnualCap': 900_000,
+      'deduction.donationFloor': 1_000,
+      'deduction.donationIncomeCapRate': 0.5,
+      'deduction.casualtyDisasterFloor': 40_000,
+      'deduction.casualtyIncomeRate': 0.05,
+      'deduction.basicHumanDeductionDiff': 100_000,
+      'credit.mortgageIncomeLimit': 30_000_000,
+      'credit.mortgageResidentCapRate': 0.07,
+      'credit.mortgageResidentCapMax': 136_500,
+    });
+    expect(deductionParams(v)).toEqual({
+      spouseSpecialIncomeLimit: 1_500_000, dependentIncomeLimit: 500_000,
+      selfMedicationThreshold: 10_000, selfMedicationCap: 100_000, smallBizMutualAnnualCap: 900_000,
+      donationDeductionFloor: 1_000, donationIncomeCapRate: 0.5,
+      casualtyDisasterFloor: 40_000, casualtyIncomeRate: 0.05, basicHumanDeductionDiff: 100_000,
+    });
+    expect(mortgageCreditParams(v)).toEqual({ incomeLimit: 30_000_000, residentCapRate: 0.07, residentCapMax: 136_500 });
+  });
+
   it('制限のない病期 (G1〜G3a) の null は上書きしても保たれる', () => {
     const limits = ckdPotassiumLimits(custom);
     expect(limits.G1).toBeNull();
@@ -379,6 +444,20 @@ describe('台帳の表 (静的な値の固定)', () => {
       ['incomeTax.socialInsuranceEstimateRate', '%', 100, 0, 0.5, false, 'assumption'],
       ['residentTax.incomeRate', '%', 100, 0, 0.3, false, 'law'],
       ['residentTax.perCapita', '円', 1, 0, 100_000, true, 'law'],
+      ['deduction.spouseSpecialIncomeLimit', '円', 1, 0, 10_000_000, true, 'law'],
+      ['deduction.dependentIncomeLimit', '円', 1, 0, 10_000_000, true, 'law'],
+      ['deduction.selfMedicationThreshold', '円', 1, 0, 1_000_000, true, 'law'],
+      ['deduction.selfMedicationCap', '円', 1, 0, 10_000_000, true, 'law'],
+      ['deduction.smallBizMutualAnnualCap', '円', 1, 0, 10_000_000, true, 'law'],
+      ['deduction.donationFloor', '円', 1, 0, 1_000_000, true, 'law'],
+      ['deduction.donationIncomeCapRate', '%', 100, 0, 1, false, 'law'],
+      ['deduction.casualtyDisasterFloor', '円', 1, 0, 10_000_000, true, 'law'],
+      ['deduction.casualtyIncomeRate', '%', 100, 0, 1, false, 'law'],
+      ['deduction.basicHumanDeductionDiff', '円', 1, 0, 1_000_000, true, 'law'],
+      ['credit.mortgageIncomeLimit', '円', 1, 0, 100_000_000, true, 'law'],
+      ['credit.mortgageResidentCapRate', '%', 100, 0, 1, false, 'law'],
+      ['credit.mortgageResidentCapMax', '円', 1, 0, 1_000_000, true, 'law'],
+      ['credit.residentLevyWithholdingRate', '%', 100, 0, 0.5, false, 'law'],
       ['socialInsurance.pensionRate', '%', 100, 0, 0.3, false, 'law'],
       ['socialInsurance.healthRate', '%', 100, 0, 0.3, false, 'reference'],
       ['socialInsurance.careRate', '%', 100, 0, 0.1, false, 'law'],

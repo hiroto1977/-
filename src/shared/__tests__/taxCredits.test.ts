@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  DEFAULT_MORTGAGE_CREDIT_PARAMS,
   applyTaxCredits,
   applyTaxCreditsWithSurtax,
   resolveMortgageParams,
@@ -7,6 +8,7 @@ import {
   calcDividendCredit,
   calcMortgageCredit,
   MORTGAGE_RESIDENT_CAP_MAX,
+  MORTGAGE_RESIDENT_CAP_RATE,
   MORTGAGE_INCOME_LIMIT,
   mortgageDeductionPeriod,
   mortgagePeriodStatus,
@@ -382,5 +384,59 @@ describe('calcGeneralDonationCredit (一般寄附金税額控除・住民税)', 
 
   it('clamps negative donation to zero', () => {
     expect(calcGeneralDonationCredit(-500)).toBe(0);
+  });
+});
+
+describe('台帳から渡す住宅ローン控除の要件 (MortgageCreditParams)', () => {
+  const input = {
+    yearEndBalance: 20_000_000,
+    rate: 0.007,
+    balanceCap: 30_000_000,
+    incomeTaxBeforeCredit: 50_000,
+    taxableIncomeForResident: 3_000_000,
+    totalIncome: 21_000_000,
+  } as const;
+
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_MORTGAGE_CREDIT_PARAMS).toEqual({
+      incomeLimit: MORTGAGE_INCOME_LIMIT,
+      residentCapRate: MORTGAGE_RESIDENT_CAP_RATE,
+      residentCapMax: MORTGAGE_RESIDENT_CAP_MAX,
+    });
+    const ok = { ...input, totalIncome: 10_000_000 };
+    expect(calcMortgageCredit(ok)).toEqual(calcMortgageCredit(ok, DEFAULT_MORTGAGE_CREDIT_PARAMS));
+    expect(calcAllTaxCredits({ mortgage: ok })).toEqual(calcAllTaxCredits({ mortgage: ok }, DEFAULT_MORTGAGE_CREDIT_PARAMS));
+  });
+
+  it('所得要件を上げると、2,000 万超でも控除が出る', () => {
+    expect(calcMortgageCredit(input).creditable).toBe(0);
+    const raised = calcMortgageCredit(input, { ...DEFAULT_MORTGAGE_CREDIT_PARAMS, incomeLimit: 30_000_000 });
+    expect(raised.creditable).toBe(140_000);
+    expect(raised.fromIncomeTax).toBe(50_000);
+    // 住民税側の上限は min(97,500, 3,000,000 × 5% = 150,000) = 97,500 だが、残り 90,000 が先に尽きる。
+    expect(raised.fromResidentTax).toBe(90_000);
+    expect(raised.unused).toBe(0);
+  });
+
+  it('住民税側の上限率と上限額を渡す', () => {
+    const ok = { ...input, totalIncome: 10_000_000 };
+    // 率 7% / 上限 136,500 → min(136,500, 210,000) = 136,500 だが残り 90,000 が先に尽きる。
+    const wide = calcMortgageCredit(ok, { ...DEFAULT_MORTGAGE_CREDIT_PARAMS, residentCapRate: 0.07, residentCapMax: 136_500 });
+    expect(wide.fromResidentTax).toBe(90_000);
+    expect(wide.unused).toBe(0);
+    // 率 1% → min(97,500, 30,000) = 30,000。
+    const narrow = calcMortgageCredit(ok, { ...DEFAULT_MORTGAGE_CREDIT_PARAMS, residentCapRate: 0.01 });
+    expect(narrow.fromResidentTax).toBe(30_000);
+    expect(narrow.unused).toBe(60_000);
+    // 上限額を 20,000 に下げると率より額が効く。
+    const capped = calcMortgageCredit(ok, { ...DEFAULT_MORTGAGE_CREDIT_PARAMS, residentCapMax: 20_000 });
+    expect(capped.fromResidentTax).toBe(20_000);
+  });
+
+  it('calcAllTaxCredits は住宅ローン控除の要件をそのまま通す', () => {
+    const all = calcAllTaxCredits({ mortgage: input }, { ...DEFAULT_MORTGAGE_CREDIT_PARAMS, incomeLimit: 30_000_000 });
+    expect(all.mortgageIncomeTax).toBe(50_000);
+    expect(all.mortgageResidentTax).toBe(90_000);
+    expect(calcAllTaxCredits({ mortgage: input }).mortgageIncomeTax).toBe(0);
   });
 });

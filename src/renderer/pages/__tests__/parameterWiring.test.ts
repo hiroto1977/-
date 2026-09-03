@@ -77,6 +77,30 @@ async function unmount(): Promise<void> {
 
 const text = () => container.textContent ?? '';
 
+/** React の onChange を発火させる (native setter を通さないと React が拾わない)。 */
+function changeInput(input: HTMLInputElement, value: string): void {
+  const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+  if (!setter) throw new Error('HTMLInputElement value setter not found');
+  setter.call(input, value);
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+/**
+ * `<label>文言<input/></label>` の形の欄に入れる (税ページ ③ の入力欄)。同じ文言の
+ * ラベルが ② にもある (そちらは input を子に持たない) ので、input を内包する物を選ぶ。
+ */
+async function typeIntoLabeled(labelText: string, value: string): Promise<void> {
+  const label = Array.from(container.querySelectorAll('label')).find(
+    (l) => l.textContent?.startsWith(labelText) && l.querySelector('input') !== null,
+  );
+  const input = label?.querySelector('input');
+  if (!input) throw new Error(`labeled input "${labelText}" not found`);
+  await act(async () => {
+    changeInput(input, value);
+  });
+  await settle();
+}
+
 /** ラベル → 値 の 2 段の枠 (Stat / Tile / stat) を読む。 */
 function statValue(label: string): string {
   const tile = Array.from(container.querySelectorAll('div')).find(
@@ -262,6 +286,27 @@ describe('税 — 消費税率', () => {
     const si = calcSocialInsurance(6_000_000, false, { ...DEFAULT_SOCIAL_INSURANCE_RATES, pensionRate: 0.1 });
     expect(si.pension).not.toBe(calcSocialInsurance(6_000_000).pension);
     expect(text()).toContain(`厚生年金 ${jpy(si.pension)}`);
+  });
+
+  it('所得控除・税額控除: 人的控除差の底が調整控除に、配当割の源泉率が控除額と文言に効く', async () => {
+    // 調整控除は課税所得 200 万以下で min(人的控除差, 課税所得) × 5%。既定の年収 600 万では
+    // 課税所得が 200 万を超えて下限 2,500 円に張り付き、差を変えても動かない — 年収 300 万にして見る。
+    await mount(TaxPage);
+    await typeIntoLabeled('額面年収 (円)', '3000000');
+    const residentByDefault = statValue('住民税 (税額控除後)');
+    expect(text()).toContain('(配当×5%)');
+    expect(text()).toContain('小規模企業共済 (年・上限¥840,000)');
+    await unmount();
+
+    await seed({ 'deduction.basicHumanDeductionDiff': 100_000, 'credit.residentLevyWithholdingRate': 0.1, 'deduction.smallBizMutualAnnualCap': 900_000 });
+    await mount(TaxPage);
+    await typeIntoLabeled('額面年収 (円)', '3000000');
+    // 差が 5 万 → 10 万で調整控除が 2,500 → 5,000 円になり、住民税がその分減る。
+    const toNumber = (s: string) => Number(s.replace(/[^0-9-]/g, ''));
+    expect(toNumber(statValue('住民税 (税額控除後)'))).toBe(toNumber(residentByDefault) - 2_500);
+    expect(text()).toContain('(配当×10%)');
+    expect(text()).toContain(`配当割控除 約${jpy(100_000)}`); // 配当 100 万 × 10%
+    expect(text()).toContain('小規模企業共済 (年・上限¥900,000)');
   });
 
   it('上書きした率で計算し、% の表示も動く', async () => {

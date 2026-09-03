@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **10416** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **10431** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 383 | 自己検証 |
+| `file:line` 参照数 | 385 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1681,7 +1681,7 @@ union を参照する。
 | `talent` | 人材育成 (組織病の診断 / 登用判定 / 達成確率100%キープ / 育成ロードマップ) | none | ✅ | | `save-state`, `judge-leader` (判定は `src/shared/talent.ts` — main とブラウザ版が同じ関数を読む) |
 | `templates` | Canva 連動テンプレートギャラリー (8 種) | none | ✅ | | `export-template` (プレゼン / 名刺 / SNS / チラシ / 証明書 / 請求書 / 履歴書、SVG 出力) |
 | `library` | アプリ内ライブラリ (IndexedDB) | none | ✅ | | (read-only — ブラウザ版で全エクスポート結果を保管) |
-| `settings` | 設定 (API キー管理 + Vault + **数値パラメータ**) | none | ✅ | | (read-only — Vault で全 token を AES-GCM-256 で暗号化。数値パラメータは `components/ParametersPanel.tsx` — 台帳 `src/shared/parameters.ts` の 25 件〔法定値 / 参考値 / しきい値 / 前提〕を機能ごとに並べ、上書きは `parameter-overrides` collection の **1 レコード**を書き換える〔`data/parameterOverrides.ts`〕。下の「数値パラメータ」節) |
+| `settings` | 設定 (API キー管理 + Vault + **数値パラメータ**) | none | ✅ | | (read-only — Vault で全 token を AES-GCM-256 で暗号化。数値パラメータは `components/ParametersPanel.tsx` — 台帳 `src/shared/parameters.ts` の 39 件〔法定値 / 参考値 / しきい値 / 前提〕を機能ごとに並べ、上書きは `parameter-overrides` collection の **1 レコード**を書き換える〔`data/parameterOverrides.ts`〕。下の「数値パラメータ」節) |
 | `uber-eats` | Uber Eats (フードデリバリー、snapshot のみ) | Bearer (Eats Merchants API、未配線) | ✅ | | (read-only — 店舗別売上 / 注文数 / 評価 / 人気メニュー) |
 | `demae-can` | 出前館 (フードデリバリー、snapshot のみ) | Bearer (公開 API 無し、scrape 想定) | ✅ | | (read-only — 進行中注文 / 月次サマリ / 人気エリア) |
 | `real-estate` | 不動産投資 (snapshot + 物件の任意追加 = record store) | Bearer (将来 REIT/楽待) | ✅ | | (ローカル編集 — 保有物件の追加/削除 / 月次キャッシュフロー / 利回り / 入居率。数値入力は `data/inputGuards.ts` + `components/GuardedNumber.tsx` で検査し、読み取れない入力が黙って 0 になるのを防ぐ) |
@@ -2613,7 +2613,7 @@ lint:imports → lint:docs → test の順で走り、いずれかが fail す�
 各機能が計算に使う**固定の数字** (通勤手当の非課税限度・消費税率・DSCR のしきい値・
 CKD の 1 日カリウム上限・栽培パネルの面積…) を、利用者が設定画面から任意の値に
 置けるようにしてある (2026-09-03 依頼「全ての機能の数値を任意で設定出来る仕様に」)。
-台帳は `src/shared/parameters.ts` の `PARAMETERS` (25 件、`ParameterId` 合併型)。
+台帳は `src/shared/parameters.ts` の `PARAMETERS` (39 件、`ParameterId` 合併型)。
 
 守っている設計は 4 つ:
 
@@ -2652,6 +2652,16 @@ NOPAT / ROIC。この 2 指標は計算していたのに表に無かったの�
 `MunicipalityOverride` の形に流し込む)。税ページの見出し (「復興税2.1%」「所得割10%」「約15%」)
 と均等割の内訳文も同じ値から出し、均等割を変えると内訳の文 (基礎 4,000 + 森林環境税 1,000)
 は「設定画面の値で計算」に変わる — 5,000 円でしか正しくない内訳を別の額の下に置かない。
+
+配線先 (wave 2b — 所得控除・税額控除): `taxDeductions.ts` は `DeductionParams` (配偶者特別控除の
+配偶者所得の上限 / 扶養親族の所得上限 / セルフメディケーションの足切りと上限 / 小規模企業共済の
+拠出上限 / 寄附金控除の足切りと所得比の上限 / 雑損控除の 2 つの足切り / 調整控除の基礎控除分の
+人的控除差) を `calcAllDeductions(input, p)` で受け、各サブ関数へ末尾引数で流す。ついでに
+`calcSpouseDeduction` へ `input.taxYear` を渡すようにした (以前は現在の年で固定 — 年分をまたぐ
+試算で配偶者控除の入口だけが動かなかった)。`taxCredits.ts` は `MortgageCreditParams` (合計所得
+の上限 / 住民税側の上限率と上限額) を `calcMortgageCredit` / `calcAllTaxCredits` で受け、配当割
+の源泉率は既存の `withheldRate` 引数へ画面が渡す。税ページ ③ の見出し (「小規模企業共済 (年・
+上限¥840,000)」) と ⑧ の「(配当×5%)」も同じ値から出す。
 
 ## Appendix A. コア型 (verbatim)
 

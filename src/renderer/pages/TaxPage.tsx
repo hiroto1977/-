@@ -24,7 +24,9 @@ import {
 import { guardAll, readNumber } from '../data/inputGuards';
 import { useParameters } from '../data/parameterOverrides';
 import {
+  deductionParams,
   displayValue,
+  mortgageCreditParams,
   netSalaryParams,
   residentTaxOverride,
   salaryTaxParams,
@@ -157,6 +159,10 @@ export function TaxPage() {
   const netParams = useMemo(() => netSalaryParams(params), [params]);
   const salaryParams = useMemo(() => salaryTaxParams(params), [params]);
   const siRates = useMemo(() => socialInsuranceRates(params), [params]);
+  const dedParams = useMemo(() => deductionParams(params), [params]);
+  // 名前に注意: 下の memo 内の `mortgageParams` は居住年 × 性能区分で決まる率と残高上限 (台帳ではない)。
+  const mortgageCreditP = useMemo(() => mortgageCreditParams(params), [params]);
+  const levyRate = params['credit.residentLevyWithholdingRate'];
   const incomeTax = useMemo(() => calcIncomeTax(taxableIncome, surtaxRate), [taxableIncome, surtaxRate]);
   const residentTax = useMemo(() => calcResidentTax(taxableIncome, residentOverride), [taxableIncome, residentOverride]);
   const netSalary = useMemo(() => calcNetSalary(grossAnnual, undefined, netParams), [grossAnnual, netParams]);
@@ -267,7 +273,7 @@ export function TaxPage() {
       donation,
       singleParent,
     };
-    const ded = calcAllDeductions(input);
+    const ded = calcAllDeductions(input, dedParams);
     // 住民税の非課税限度額判定に使う扶養人数 (配偶者 + 扶養親族)。
     const dependentCount = (hasSpouse ? 1 : 0) + dependents.length;
     // ① 所得控除込みの税額 (ふるさと納税の住民税控除・住民税の調整控除・非課税限度額も内部適用済み)。
@@ -299,7 +305,7 @@ export function TaxPage() {
       dividend: dividendIncome > 0
         ? { dividendIncome, taxableTotalIncome: result.taxableIncomeForIncomeTax, kind: dividendKind }
         : undefined,
-    });
+    }, mortgageCreditP);
     const afterCredits = applyTaxCreditsWithSurtax(
       result.baseIncomeTax,
       result.residentTax,
@@ -309,7 +315,7 @@ export function TaxPage() {
     const finalTakeHome = dGross - afterCredits.incomeTax - afterCredits.residentTax;
 
     return { ded, result, credits, afterCredits, finalTakeHome };
-  }, [dGrossStr, dSocialStr, dIdecoStr, idecoOccupation, dSmallBizStr, dLifeStr, dLifeOldStr, dQuakeStr, dMedicalStr, dSelfMedStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent, mortgageBalanceStr, mortgageYear, mortgagePerf, dividendStr, dividendKind, salaryParams, surtaxRate]);
+  }, [dGrossStr, dSocialStr, dIdecoStr, idecoOccupation, dSmallBizStr, dLifeStr, dLifeOldStr, dQuakeStr, dMedicalStr, dSelfMedStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent, mortgageBalanceStr, mortgageYear, mortgagePerf, dividendStr, dividendKind, salaryParams, surtaxRate, dedParams, mortgageCreditP]);
 
   // --- ④ 退職所得の試算 ---
   const [severanceStr, setSeveranceStr] = useState('20000000');
@@ -380,7 +386,7 @@ export function TaxPage() {
     aggregate: '総合課税',
   };
   // 配当を申告した場合に所得割から差し引ける配当割控除 (住民税5%)。
-  const dividendLevyCredit = useMemo(() => calcDividendLevyCredit(num(divIncomeStr)), [divIncomeStr]);
+  const dividendLevyCredit = useMemo(() => calcDividendLevyCredit(num(divIncomeStr), levyRate), [divIncomeStr, levyRate]);
 
   // --- ⑨ 公的年金等の雑所得 ---
   const [pensionIncomeStr, setPensionIncomeStr] = useState('3000000');
@@ -852,7 +858,7 @@ export function TaxPage() {
             ['額面年収 (円)', dGrossStr, setDGrossStr],
             ['支払社会保険料 (実額/年)', dSocialStr, setDSocialStr],
             ['iDeCo 拠出 (年)', dIdecoStr, setDIdecoStr],
-            ['小規模企業共済 (年・上限84万)', dSmallBizStr, setDSmallBizStr],
+            [`小規模企業共済 (年・上限${jpy(dedParams.smallBizMutualAnnualCap)})`, dSmallBizStr, setDSmallBizStr],
             ['一般生命保険料・新制度 (年)', dLifeStr, setDLifeStr],
             ['一般生命保険料・旧制度 (年)', dLifeOldStr, setDLifeOldStr],
             ['地震保険料 (年)', dQuakeStr, setDQuakeStr],
@@ -1180,7 +1186,7 @@ export function TaxPage() {
           ※ 申告分離は申告不要と同じ税率ですが、上場株式等の譲渡損との損益通算・繰越控除ができる点が異なります。
           令和6年度以降、所得税と住民税で異なる課税方式は選べません。
           {dividendLevyCredit > 0 && (
-            <> なお総合課税・申告分離で申告すると、源泉徴収済みの<strong>配当割控除 約{jpy(dividendLevyCredit)}</strong> (配当×5%) を住民税の所得割から差し引けます。</>
+            <> なお総合課税・申告分離で申告すると、源泉徴収済みの<strong>配当割控除 約{jpy(dividendLevyCredit)}</strong> (配当×{displayValue('credit.residentLevyWithholdingRate', levyRate)}%) を住民税の所得割から差し引けます。</>
           )}
         </div>
       </Section>

@@ -228,7 +228,7 @@ describe('数値パラメータの設定画面', () => {
     expect(container.textContent).toContain('不動産');
     expect(container.textContent).not.toContain('水耕栽培');
 
-    await type('パラメータを検索', '所得税法');
+    await type('パラメータを検索', '所得税法施行令');
     expect(q.rows().map((r) => r.dataset.parameter)).toEqual(['payroll.commutePublicTransportCap']);
 
     await type('パラメータを検索', 'zzz');
