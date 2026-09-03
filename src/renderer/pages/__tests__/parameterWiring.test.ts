@@ -488,3 +488,68 @@ describe('敷地計画 (建築基準法) と水循環 (排水基準) — 台帳�
     expect(text()).toContain('全窒素 200mg/L・全りん 16mg/L');
   });
 });
+
+// --- 財務診断 (経営サマリーの財務分析) ----------------------------------------
+
+describe('財務診断 — 台帳の下限と水準が経営サマリーの格付けと総合スコアに効く', () => {
+  const summary = () => /([SABCD])総合 (\d+)\/100/.exec(text());
+
+  it('対照: 既定では格付けと総合スコアが出る (全軸 0 点ではない)', async () => {
+    await mount(OverviewPage);
+    const m = summary();
+    expect(m).not.toBeNull();
+    expect(Number(m![2])).toBeGreaterThan(0);
+  });
+
+  it('格付けの下限を全部 100 にすると D になる', async () => {
+    await seed({ 'financeHealth.gradeSMin': 100, 'financeHealth.gradeAMin': 100, 'financeHealth.gradeBMin': 100, 'financeHealth.gradeCMin': 100 });
+    await mount(OverviewPage);
+    expect(summary()![1]).toBe('D');
+  });
+
+  it('格付けの下限を全部 0 にすると S になる', async () => {
+    await seed({ 'financeHealth.gradeSMin': 0, 'financeHealth.gradeAMin': 0, 'financeHealth.gradeBMin': 0, 'financeHealth.gradeCMin': 0 });
+    await mount(OverviewPage);
+    expect(summary()![1]).toBe('S');
+  });
+
+  it('レーダーの水準で全 15 軸を 0 点にすると総合 0 / D になる', async () => {
+    // 0 点の水準を範囲の上端の手前、100 点を上端に置く: 実測値はどれも上端に届かないので全軸 0 点。
+    await seed({
+      'financeHealth.equityRatioBad': 999,
+      'financeHealth.equityRatioGood': 1_000,
+      'financeHealth.currentRatioBad': 999,
+      'financeHealth.currentRatioGood': 1_000,
+      'financeHealth.fixedLongTermFitBad': 999,
+      'financeHealth.fixedLongTermFitGood': 1_000,
+      'financeHealth.debtToMonthlySalesBad': 1_199,
+      'financeHealth.debtToMonthlySalesGood': 1_200,
+      'financeHealth.debtRepaymentYearsBad': 999,
+      'financeHealth.debtRepaymentYearsGood': 1_000,
+      'financeHealth.operatingMarginBad': 999,
+      'financeHealth.operatingMarginGood': 1_000,
+      'financeHealth.ordinaryMarginBad': 999,
+      'financeHealth.ordinaryMarginGood': 1_000,
+      'financeHealth.netMarginBad': 999,
+      'financeHealth.netMarginGood': 1_000,
+      'financeHealth.laborShareBad': 999,
+      'financeHealth.laborShareGood': 1_000,
+      'financeHealth.ebitdaMarginBad': 999,
+      'financeHealth.ebitdaMarginGood': 1_000,
+      'financeHealth.receivablesTurnoverBad': 9_999,
+      'financeHealth.receivablesTurnoverGood': 10_000,
+      'financeHealth.inventoryTurnoverBad': 9_999,
+      'financeHealth.inventoryTurnoverGood': 10_000,
+      'financeHealth.cccBad': 3_649,
+      'financeHealth.cccGood': 3_650,
+      'financeHealth.roaBad': 999,
+      'financeHealth.roaGood': 1_000,
+      'financeHealth.roeBad': 999,
+      'financeHealth.roeGood': 1_000,
+    });
+    await mount(OverviewPage);
+    const m = summary();
+    expect(m![2]).toBe('0');
+    expect(m![1]).toBe('D');
+  });
+});

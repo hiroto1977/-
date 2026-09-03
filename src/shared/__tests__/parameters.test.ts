@@ -15,6 +15,8 @@ import {
   importParams,
   zoningRules,
   effluentStandards,
+  financialHealthBands,
+  radarAxisBands,
   pensionDeductionParams,
   acquisitionParams,
   businessConsumptionParams,
@@ -182,6 +184,16 @@ import {
   GROUNDWATER_NITRATE_N_STANDARD_MG_L,
   WPCL_NP_APPLICABILITY_M3_PER_DAY,
 } from '../waterCyclePlanner';
+import {
+  DEFAULT_HEALTH_BANDS,
+  HEALTH_GRADE_A_MIN,
+  HEALTH_GRADE_B_MIN,
+  HEALTH_GRADE_C_MIN,
+  HEALTH_GRADE_S_MIN,
+  HEALTH_LEVEL_GOOD_MIN,
+  HEALTH_LEVEL_WARN_MIN,
+  RADAR_AXIS_BANDS,
+} from '../financialHealthBands';
 
 const def = (id: ParameterId): ParameterDef => PARAMETER_BY_ID.get(id)!;
 
@@ -290,6 +302,42 @@ const DEFAULT_SOURCE: Readonly<Record<ParameterId, number>> = {
   'effluent.tpUniformMgL': EFFLUENT_TP_UNIFORM_MG_L,
   'effluent.npApplicabilityM3PerDay': WPCL_NP_APPLICABILITY_M3_PER_DAY,
   'effluent.groundwaterNitrateNMgL': GROUNDWATER_NITRATE_N_STANDARD_MG_L,
+  'financeHealth.levelGoodMin': HEALTH_LEVEL_GOOD_MIN,
+  'financeHealth.levelWarnMin': HEALTH_LEVEL_WARN_MIN,
+  'financeHealth.gradeSMin': HEALTH_GRADE_S_MIN,
+  'financeHealth.gradeAMin': HEALTH_GRADE_A_MIN,
+  'financeHealth.gradeBMin': HEALTH_GRADE_B_MIN,
+  'financeHealth.gradeCMin': HEALTH_GRADE_C_MIN,
+  'financeHealth.equityRatioBad': RADAR_AXIS_BANDS.equityRatio.bad,
+  'financeHealth.equityRatioGood': RADAR_AXIS_BANDS.equityRatio.good,
+  'financeHealth.currentRatioBad': RADAR_AXIS_BANDS.currentRatio.bad,
+  'financeHealth.currentRatioGood': RADAR_AXIS_BANDS.currentRatio.good,
+  'financeHealth.fixedLongTermFitBad': RADAR_AXIS_BANDS.fixedLongTermFit.bad,
+  'financeHealth.fixedLongTermFitGood': RADAR_AXIS_BANDS.fixedLongTermFit.good,
+  'financeHealth.debtToMonthlySalesBad': RADAR_AXIS_BANDS.debtToMonthlySales.bad,
+  'financeHealth.debtToMonthlySalesGood': RADAR_AXIS_BANDS.debtToMonthlySales.good,
+  'financeHealth.debtRepaymentYearsBad': RADAR_AXIS_BANDS.debtRepaymentYears.bad,
+  'financeHealth.debtRepaymentYearsGood': RADAR_AXIS_BANDS.debtRepaymentYears.good,
+  'financeHealth.operatingMarginBad': RADAR_AXIS_BANDS.operatingMargin.bad,
+  'financeHealth.operatingMarginGood': RADAR_AXIS_BANDS.operatingMargin.good,
+  'financeHealth.ordinaryMarginBad': RADAR_AXIS_BANDS.ordinaryMargin.bad,
+  'financeHealth.ordinaryMarginGood': RADAR_AXIS_BANDS.ordinaryMargin.good,
+  'financeHealth.netMarginBad': RADAR_AXIS_BANDS.netMargin.bad,
+  'financeHealth.netMarginGood': RADAR_AXIS_BANDS.netMargin.good,
+  'financeHealth.laborShareBad': RADAR_AXIS_BANDS.laborShare.bad,
+  'financeHealth.laborShareGood': RADAR_AXIS_BANDS.laborShare.good,
+  'financeHealth.ebitdaMarginBad': RADAR_AXIS_BANDS.ebitdaMargin.bad,
+  'financeHealth.ebitdaMarginGood': RADAR_AXIS_BANDS.ebitdaMargin.good,
+  'financeHealth.receivablesTurnoverBad': RADAR_AXIS_BANDS.receivablesTurnover.bad,
+  'financeHealth.receivablesTurnoverGood': RADAR_AXIS_BANDS.receivablesTurnover.good,
+  'financeHealth.inventoryTurnoverBad': RADAR_AXIS_BANDS.inventoryTurnover.bad,
+  'financeHealth.inventoryTurnoverGood': RADAR_AXIS_BANDS.inventoryTurnover.good,
+  'financeHealth.cccBad': RADAR_AXIS_BANDS.ccc.bad,
+  'financeHealth.cccGood': RADAR_AXIS_BANDS.ccc.good,
+  'financeHealth.roaBad': RADAR_AXIS_BANDS.roa.bad,
+  'financeHealth.roaGood': RADAR_AXIS_BANDS.roa.good,
+  'financeHealth.roeBad': RADAR_AXIS_BANDS.roe.bad,
+  'financeHealth.roeGood': RADAR_AXIS_BANDS.roe.good,
 };
 
 describe('台帳の形', () => {
@@ -327,14 +375,18 @@ describe('台帳の形', () => {
     expect(parameterFeatures()).toEqual([
       '水耕栽培', '給与', '不動産', '税', '所得税・住民税', '所得控除・税額控除', '不動産・登記・印紙の税', '譲渡所得',
       '法人税', '消費税 (事業者)', '年金・一時所得・ふるさと納税', '貿易', '社会保険', '財務',
-      '敷地計画 (建築基準法)', '水循環 (排水基準)',
+      '敷地計画 (建築基準法)', '水循環 (排水基準)', '財務診断',
     ]);
   });
 
   it('割合は % で見せる (scale 100)、それ以外は素のまま', () => {
     // 内部値が率 (0〜1) ではなく**最初から % の数** (建ぺい率の指定値と比べる境目) の物は
     // 倍率を持たない。ここに無い '%' の行が倍率なしで増えたら、率を 100 倍で見せ忘れている。
-    const PERCENT_VALUED: ReadonlySet<string> = new Set(['zoning.fireproofExemptionCoveragePct']);
+    const PERCENT_VALUED: ReadonlySet<string> = new Set([
+      'zoning.fireproofExemptionCoveragePct',
+      // 財務診断のレーダーの水準は指標 (%) と同じ数で比べる。
+      'financeHealth.equityRatioBad', 'financeHealth.equityRatioGood', 'financeHealth.currentRatioBad', 'financeHealth.currentRatioGood', 'financeHealth.fixedLongTermFitBad', 'financeHealth.fixedLongTermFitGood', 'financeHealth.operatingMarginBad', 'financeHealth.operatingMarginGood', 'financeHealth.ordinaryMarginBad', 'financeHealth.ordinaryMarginGood', 'financeHealth.netMarginBad', 'financeHealth.netMarginGood', 'financeHealth.laborShareBad', 'financeHealth.laborShareGood', 'financeHealth.ebitdaMarginBad', 'financeHealth.ebitdaMarginGood', 'financeHealth.roaBad', 'financeHealth.roaGood', 'financeHealth.roeBad', 'financeHealth.roeGood',
+    ]);
     for (const p of DEFS) {
       if (PERCENT_VALUED.has(p.id)) expect([p.unit, p.scale], p.id).toEqual(['%', undefined]);
       else if (p.unit === '%') expect(p.scale, p.id).toBe(100);
@@ -701,6 +753,67 @@ describe('機能ごとの取り出し口', () => {
     expect(effluentStandards(v)).toEqual({ tnUniformMgL: 60, tpUniformMgL: 8, npApplicabilityM3PerDay: 100, groundwaterNitrateNMgL: 5 });
   });
 
+  it('財務診断の取り出し口 — 既定は各モジュールの既定引数と同じ物、上書きは正しい引数へ届く', () => {
+    expect(financialHealthBands(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_HEALTH_BANDS);
+    expect(radarAxisBands(DEFAULT_PARAMETER_VALUES)).toEqual(RADAR_AXIS_BANDS);
+    const v = resolveParameters({
+      'financeHealth.levelGoodMin': 90,
+      'financeHealth.levelWarnMin': 60,
+      'financeHealth.gradeSMin': 95,
+      'financeHealth.gradeAMin': 90,
+      'financeHealth.gradeBMin': 70,
+      'financeHealth.gradeCMin': 60,
+      'financeHealth.equityRatioBad': 0,
+      'financeHealth.equityRatioGood': 5,
+      'financeHealth.currentRatioBad': 10,
+      'financeHealth.currentRatioGood': 15,
+      'financeHealth.fixedLongTermFitBad': 20,
+      'financeHealth.fixedLongTermFitGood': 25,
+      'financeHealth.debtToMonthlySalesBad': 30,
+      'financeHealth.debtToMonthlySalesGood': 35,
+      'financeHealth.debtRepaymentYearsBad': 40,
+      'financeHealth.debtRepaymentYearsGood': 45,
+      'financeHealth.operatingMarginBad': 50,
+      'financeHealth.operatingMarginGood': 55,
+      'financeHealth.ordinaryMarginBad': 60,
+      'financeHealth.ordinaryMarginGood': 65,
+      'financeHealth.netMarginBad': 70,
+      'financeHealth.netMarginGood': 75,
+      'financeHealth.laborShareBad': 80,
+      'financeHealth.laborShareGood': 85,
+      'financeHealth.ebitdaMarginBad': 90,
+      'financeHealth.ebitdaMarginGood': 95,
+      'financeHealth.receivablesTurnoverBad': 100,
+      'financeHealth.receivablesTurnoverGood': 105,
+      'financeHealth.inventoryTurnoverBad': 110,
+      'financeHealth.inventoryTurnoverGood': 115,
+      'financeHealth.cccBad': 120,
+      'financeHealth.cccGood': 125,
+      'financeHealth.roaBad': 130,
+      'financeHealth.roaGood': 135,
+      'financeHealth.roeBad': 140,
+      'financeHealth.roeGood': 145,
+    });
+    expect(financialHealthBands(v)).toEqual({ goodMin: 90, warnMin: 60, gradeSMin: 95, gradeAMin: 90, gradeBMin: 70, gradeCMin: 60 });
+    expect(radarAxisBands(v)).toEqual({
+      equityRatio: { bad: 0, good: 5 },
+      currentRatio: { bad: 10, good: 15 },
+      fixedLongTermFit: { bad: 20, good: 25 },
+      debtToMonthlySales: { bad: 30, good: 35 },
+      debtRepaymentYears: { bad: 40, good: 45 },
+      operatingMargin: { bad: 50, good: 55 },
+      ordinaryMargin: { bad: 60, good: 65 },
+      netMargin: { bad: 70, good: 75 },
+      laborShare: { bad: 80, good: 85 },
+      ebitdaMargin: { bad: 90, good: 95 },
+      receivablesTurnover: { bad: 100, good: 105 },
+      inventoryTurnover: { bad: 110, good: 115 },
+      ccc: { bad: 120, good: 125 },
+      roa: { bad: 130, good: 135 },
+      roe: { bad: 140, good: 145 },
+    });
+  });
+
   it('制限のない病期 (G1〜G3a) の null は上書きしても保たれる', () => {
     const limits = ckdPotassiumLimits(custom);
     expect(limits.G1).toBeNull();
@@ -820,6 +933,42 @@ describe('台帳の表 (静的な値の固定)', () => {
       ['effluent.tpUniformMgL', 'mg/L', 1, 0.1, 10_000, false, 'law'],
       ['effluent.npApplicabilityM3PerDay', 'm³/日', 1, 0.1, 1_000_000, false, 'law'],
       ['effluent.groundwaterNitrateNMgL', 'mg/L', 1, 0.1, 10_000, false, 'law'],
+      ['financeHealth.levelGoodMin', '点', 1, 0, 100, true, 'threshold'],
+      ['financeHealth.levelWarnMin', '点', 1, 0, 100, true, 'threshold'],
+      ['financeHealth.gradeSMin', '点', 1, 0, 100, true, 'threshold'],
+      ['financeHealth.gradeAMin', '点', 1, 0, 100, true, 'threshold'],
+      ['financeHealth.gradeBMin', '点', 1, 0, 100, true, 'threshold'],
+      ['financeHealth.gradeCMin', '点', 1, 0, 100, true, 'threshold'],
+      ['financeHealth.equityRatioBad', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['financeHealth.equityRatioGood', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['financeHealth.currentRatioBad', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['financeHealth.currentRatioGood', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['financeHealth.fixedLongTermFitBad', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['financeHealth.fixedLongTermFitGood', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['financeHealth.debtToMonthlySalesBad', 'ヶ月', 1, 0, 1_200, false, 'threshold'],
+      ['financeHealth.debtToMonthlySalesGood', 'ヶ月', 1, 0, 1_200, false, 'threshold'],
+      ['financeHealth.debtRepaymentYearsBad', '年', 1, 0, 1_000, false, 'threshold'],
+      ['financeHealth.debtRepaymentYearsGood', '年', 1, 0, 1_000, false, 'threshold'],
+      ['financeHealth.operatingMarginBad', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['financeHealth.operatingMarginGood', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['financeHealth.ordinaryMarginBad', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['financeHealth.ordinaryMarginGood', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['financeHealth.netMarginBad', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['financeHealth.netMarginGood', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['financeHealth.laborShareBad', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['financeHealth.laborShareGood', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['financeHealth.ebitdaMarginBad', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['financeHealth.ebitdaMarginGood', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['financeHealth.receivablesTurnoverBad', '倍', 1, 0, 10_000, false, 'threshold'],
+      ['financeHealth.receivablesTurnoverGood', '倍', 1, 0, 10_000, false, 'threshold'],
+      ['financeHealth.inventoryTurnoverBad', '倍', 1, 0, 10_000, false, 'threshold'],
+      ['financeHealth.inventoryTurnoverGood', '倍', 1, 0, 10_000, false, 'threshold'],
+      ['financeHealth.cccBad', '日', 1, -3_650, 3_650, false, 'threshold'],
+      ['financeHealth.cccGood', '日', 1, -3_650, 3_650, false, 'threshold'],
+      ['financeHealth.roaBad', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['financeHealth.roaGood', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['financeHealth.roeBad', '%', 1, -1_000, 1_000, false, 'threshold'],
+      ['financeHealth.roeGood', '%', 1, -1_000, 1_000, false, 'threshold'],
     ]);
     expect(m.PARAMETER_KIND_LABEL).toEqual({ law: '法定値', reference: '参考値', threshold: 'しきい値', assumption: '前提' });
     // 出典と注記は空でない (法定値には出典が要る)。

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { diagnoseFinancials } from '../financialDiagnosis';
+import { diagnoseFinancials, gradeOf, levelOf } from '../financialDiagnosis';
+import { DEFAULT_HEALTH_BANDS } from '../../../shared/financialHealthBands';
 import { computeFinancialRatios, radarAxes } from '../financialRatios';
 import { deriveBusinessFinancials } from '../businessFinancials';
 import type { RadarAxis } from '../financialRatios';
@@ -169,5 +170,44 @@ describe('diagnoseFinancials — 強みは点数の高い順に並ぶ', () => {
     ];
     const d = diagnoseFinancials(mixed);
     expect(d.weaknesses.map((w) => w.key)).toEqual(['ccc', 'roe', 'operatingMargin']);
+  });
+});
+
+/*
+ * 台帳 (`parameters.ts`) から渡す評価と格付けの下限。省略時は既定と同じ結果、
+ * 渡せば同じ点数の評価・格付けが変わる (境界は「以上」)。
+ */
+describe('diagnoseFinancials — 台帳から渡す下限 (HealthBands)', () => {
+  const two = [axis('equityRatio', '自己資本比率', 72), axis('operatingMargin', '営業利益率', 72)];
+
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(diagnoseFinancials(two, DEFAULT_HEALTH_BANDS)).toEqual(diagnoseFinancials(two));
+    expect([levelOf(70), levelOf(69), levelOf(45), levelOf(44)]).toEqual(['good', 'warn', 'warn', 'bad']);
+    expect([gradeOf(80), gradeOf(79), gradeOf(35), gradeOf(34)]).toEqual(['S', 'A', 'C', 'D']);
+  });
+
+  it('下限を動かすと同じ点数の評価と格付けが変わる', () => {
+    const b = { goodMin: 90, warnMin: 60, gradeSMin: 95, gradeAMin: 90, gradeBMin: 70, gradeCMin: 60 };
+    expect([levelOf(90, b), levelOf(89, b), levelOf(60, b), levelOf(59, b)]).toEqual(['good', 'warn', 'warn', 'bad']);
+    expect([gradeOf(95, b), gradeOf(94, b), gradeOf(90, b), gradeOf(89, b), gradeOf(70, b), gradeOf(69, b), gradeOf(60, b), gradeOf(59, b)]).toEqual([
+      'S', 'A', 'A', 'B', 'B', 'C', 'C', 'D',
+    ]);
+    const d = diagnoseFinancials(two, b);
+    expect(d.overallScore).toBe(72);
+    expect(d.grade).toBe('B'); // 既定なら A
+    expect(d.strengths).toEqual([]); // 既定なら 2 件が良好
+    expect(d.weaknesses.map((w) => w.level)).toEqual(['warn', 'warn']);
+    expect(diagnoseFinancials(two).grade).toBe('A');
+    expect(diagnoseFinancials(two).strengths).toHaveLength(2);
+  });
+
+  it('下限を 0 にすれば全部が良好・S、100 にすれば全部が要改善・D', () => {
+    const zero = { goodMin: 0, warnMin: 0, gradeSMin: 0, gradeAMin: 0, gradeBMin: 0, gradeCMin: 0 };
+    const hundred = { goodMin: 100, warnMin: 100, gradeSMin: 100, gradeAMin: 100, gradeBMin: 100, gradeCMin: 100 };
+    const low = [axis('equityRatio', '自己資本比率', 10), axis('ccc', 'CCC', 5)];
+    expect(diagnoseFinancials(low, zero).grade).toBe('S');
+    expect(diagnoseFinancials(low, zero).strengths).toHaveLength(2);
+    expect(diagnoseFinancials(two, hundred).grade).toBe('D');
+    expect(diagnoseFinancials(two, hundred).weaknesses.map((w) => w.level)).toEqual(['bad', 'bad']);
   });
 });

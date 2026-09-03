@@ -155,6 +155,17 @@ import {
   WPCL_NP_APPLICABILITY_M3_PER_DAY,
   type EffluentStandards,
 } from './waterCyclePlanner';
+import {
+  HEALTH_GRADE_A_MIN,
+  HEALTH_GRADE_B_MIN,
+  HEALTH_GRADE_C_MIN,
+  HEALTH_GRADE_S_MIN,
+  HEALTH_LEVEL_GOOD_MIN,
+  HEALTH_LEVEL_WARN_MIN,
+  RADAR_AXIS_BANDS,
+  type HealthBands,
+  type RadarBands,
+} from './financialHealthBands';
 
 /** 値の性格。画面の印と、変えるときの注意書きが変わる。 */
 export type ParameterKind =
@@ -647,6 +658,169 @@ export function parameterDefinitions() {
     id: 'effluent.groundwaterNitrateNMgL', feature: '水循環 (排水基準)', label: '地下水の環境基準 (硝酸性窒素及び亜硝酸性窒素)', unit: 'mg/L',
     defaultValue: GROUNDWATER_NITRATE_N_STANDARD_MG_L, min: 0.1, max: 10_000, kind: 'law', source: '環境基本法 地下水の水質汚濁に係る環境基準 (10 mg/L)',
   },
+  // --- 財務診断 (軸の評価・格付け・レーダーの水準) ----------------------------
+  {
+    id: 'financeHealth.levelGoodMin', feature: '財務診断', label: '軸の評価「良好」の下限', unit: '点',
+    defaultValue: HEALTH_LEVEL_GOOD_MIN, min: 0, max: 100, integer: true, kind: 'threshold',
+    note: '点数がこれ以上なら良好 (強み)。カテゴリの帯の色も同じ',
+  },
+  {
+    id: 'financeHealth.levelWarnMin', feature: '財務診断', label: '軸の評価「注意」の下限', unit: '点',
+    defaultValue: HEALTH_LEVEL_WARN_MIN, min: 0, max: 100, integer: true, kind: 'threshold',
+    note: 'これ以上「良好」未満は注意、未満は要改善',
+  },
+  {
+    id: 'financeHealth.gradeSMin', feature: '財務診断', label: '総合格付け S の下限', unit: '点',
+    defaultValue: HEALTH_GRADE_S_MIN, min: 0, max: 100, integer: true, kind: 'threshold',
+  },
+  {
+    id: 'financeHealth.gradeAMin', feature: '財務診断', label: '総合格付け A の下限', unit: '点',
+    defaultValue: HEALTH_GRADE_A_MIN, min: 0, max: 100, integer: true, kind: 'threshold',
+  },
+  {
+    id: 'financeHealth.gradeBMin', feature: '財務診断', label: '総合格付け B の下限', unit: '点',
+    defaultValue: HEALTH_GRADE_B_MIN, min: 0, max: 100, integer: true, kind: 'threshold',
+  },
+  {
+    id: 'financeHealth.gradeCMin', feature: '財務診断', label: '総合格付け C の下限', unit: '点',
+    defaultValue: HEALTH_GRADE_C_MIN, min: 0, max: 100, integer: true, kind: 'threshold',
+    note: '未満は D',
+  },
+  {
+    id: 'financeHealth.equityRatioBad', feature: '財務診断', label: '自己資本比率: 0 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.equityRatio.bad, min: -1_000, max: 1_000, kind: 'threshold',
+    note: '線形に採点し両端の外は 0 / 100 に丸める。0 点と 100 点が同じ値なら既定の水準に戻る',
+  },
+  {
+    id: 'financeHealth.equityRatioGood', feature: '財務診断', label: '自己資本比率: 100 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.equityRatio.good, min: -1_000, max: 1_000, kind: 'threshold',
+  },
+  {
+    id: 'financeHealth.currentRatioBad', feature: '財務診断', label: '流動比率: 0 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.currentRatio.bad, min: -1_000, max: 1_000, kind: 'threshold',
+    note: '線形に採点し両端の外は 0 / 100 に丸める。0 点と 100 点が同じ値なら既定の水準に戻る',
+  },
+  {
+    id: 'financeHealth.currentRatioGood', feature: '財務診断', label: '流動比率: 100 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.currentRatio.good, min: -1_000, max: 1_000, kind: 'threshold',
+  },
+  {
+    id: 'financeHealth.fixedLongTermFitBad', feature: '財務診断', label: '固定長期適合率: 0 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.fixedLongTermFit.bad, min: -1_000, max: 1_000, kind: 'threshold',
+    note: '線形に採点し両端の外は 0 / 100 に丸める。0 点と 100 点が同じ値なら既定の水準に戻る',
+  },
+  {
+    id: 'financeHealth.fixedLongTermFitGood', feature: '財務診断', label: '固定長期適合率: 100 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.fixedLongTermFit.good, min: -1_000, max: 1_000, kind: 'threshold',
+  },
+  {
+    id: 'financeHealth.debtToMonthlySalesBad', feature: '財務診断', label: '借入金月商倍率: 0 点の水準', unit: 'ヶ月',
+    defaultValue: RADAR_AXIS_BANDS.debtToMonthlySales.bad, min: 0, max: 1_200, kind: 'threshold',
+    note: '線形に採点し両端の外は 0 / 100 に丸める。0 点と 100 点が同じ値なら既定の水準に戻る',
+  },
+  {
+    id: 'financeHealth.debtToMonthlySalesGood', feature: '財務診断', label: '借入金月商倍率: 100 点の水準', unit: 'ヶ月',
+    defaultValue: RADAR_AXIS_BANDS.debtToMonthlySales.good, min: 0, max: 1_200, kind: 'threshold',
+  },
+  {
+    id: 'financeHealth.debtRepaymentYearsBad', feature: '財務診断', label: '債務償還年数: 0 点の水準', unit: '年',
+    defaultValue: RADAR_AXIS_BANDS.debtRepaymentYears.bad, min: 0, max: 1_000, kind: 'threshold',
+    note: '線形に採点し両端の外は 0 / 100 に丸める。0 点と 100 点が同じ値なら既定の水準に戻る',
+  },
+  {
+    id: 'financeHealth.debtRepaymentYearsGood', feature: '財務診断', label: '債務償還年数: 100 点の水準', unit: '年',
+    defaultValue: RADAR_AXIS_BANDS.debtRepaymentYears.good, min: 0, max: 1_000, kind: 'threshold',
+  },
+  {
+    id: 'financeHealth.operatingMarginBad', feature: '財務診断', label: '営業利益率: 0 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.operatingMargin.bad, min: -1_000, max: 1_000, kind: 'threshold',
+    note: '線形に採点し両端の外は 0 / 100 に丸める。0 点と 100 点が同じ値なら既定の水準に戻る',
+  },
+  {
+    id: 'financeHealth.operatingMarginGood', feature: '財務診断', label: '営業利益率: 100 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.operatingMargin.good, min: -1_000, max: 1_000, kind: 'threshold',
+  },
+  {
+    id: 'financeHealth.ordinaryMarginBad', feature: '財務診断', label: '経常利益率: 0 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.ordinaryMargin.bad, min: -1_000, max: 1_000, kind: 'threshold',
+    note: '線形に採点し両端の外は 0 / 100 に丸める。0 点と 100 点が同じ値なら既定の水準に戻る',
+  },
+  {
+    id: 'financeHealth.ordinaryMarginGood', feature: '財務診断', label: '経常利益率: 100 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.ordinaryMargin.good, min: -1_000, max: 1_000, kind: 'threshold',
+  },
+  {
+    id: 'financeHealth.netMarginBad', feature: '財務診断', label: '当期純利益率: 0 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.netMargin.bad, min: -1_000, max: 1_000, kind: 'threshold',
+    note: '線形に採点し両端の外は 0 / 100 に丸める。0 点と 100 点が同じ値なら既定の水準に戻る',
+  },
+  {
+    id: 'financeHealth.netMarginGood', feature: '財務診断', label: '当期純利益率: 100 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.netMargin.good, min: -1_000, max: 1_000, kind: 'threshold',
+  },
+  {
+    id: 'financeHealth.laborShareBad', feature: '財務診断', label: '労働分配率: 0 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.laborShare.bad, min: -1_000, max: 1_000, kind: 'threshold',
+    note: '線形に採点し両端の外は 0 / 100 に丸める。0 点と 100 点が同じ値なら既定の水準に戻る',
+  },
+  {
+    id: 'financeHealth.laborShareGood', feature: '財務診断', label: '労働分配率: 100 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.laborShare.good, min: -1_000, max: 1_000, kind: 'threshold',
+  },
+  {
+    id: 'financeHealth.ebitdaMarginBad', feature: '財務診断', label: 'EBITDAマージン: 0 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.ebitdaMargin.bad, min: -1_000, max: 1_000, kind: 'threshold',
+    note: '線形に採点し両端の外は 0 / 100 に丸める。0 点と 100 点が同じ値なら既定の水準に戻る',
+  },
+  {
+    id: 'financeHealth.ebitdaMarginGood', feature: '財務診断', label: 'EBITDAマージン: 100 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.ebitdaMargin.good, min: -1_000, max: 1_000, kind: 'threshold',
+  },
+  {
+    id: 'financeHealth.receivablesTurnoverBad', feature: '財務診断', label: '売上債権回転率: 0 点の水準', unit: '倍',
+    defaultValue: RADAR_AXIS_BANDS.receivablesTurnover.bad, min: 0, max: 10_000, kind: 'threshold',
+    note: '線形に採点し両端の外は 0 / 100 に丸める。0 点と 100 点が同じ値なら既定の水準に戻る',
+  },
+  {
+    id: 'financeHealth.receivablesTurnoverGood', feature: '財務診断', label: '売上債権回転率: 100 点の水準', unit: '倍',
+    defaultValue: RADAR_AXIS_BANDS.receivablesTurnover.good, min: 0, max: 10_000, kind: 'threshold',
+  },
+  {
+    id: 'financeHealth.inventoryTurnoverBad', feature: '財務診断', label: '棚卸資産回転率: 0 点の水準', unit: '倍',
+    defaultValue: RADAR_AXIS_BANDS.inventoryTurnover.bad, min: 0, max: 10_000, kind: 'threshold',
+    note: '線形に採点し両端の外は 0 / 100 に丸める。0 点と 100 点が同じ値なら既定の水準に戻る',
+  },
+  {
+    id: 'financeHealth.inventoryTurnoverGood', feature: '財務診断', label: '棚卸資産回転率: 100 点の水準', unit: '倍',
+    defaultValue: RADAR_AXIS_BANDS.inventoryTurnover.good, min: 0, max: 10_000, kind: 'threshold',
+  },
+  {
+    id: 'financeHealth.cccBad', feature: '財務診断', label: 'CCC (現金化日数): 0 点の水準', unit: '日',
+    defaultValue: RADAR_AXIS_BANDS.ccc.bad, min: -3_650, max: 3_650, kind: 'threshold',
+    note: '線形に採点し両端の外は 0 / 100 に丸める。0 点と 100 点が同じ値なら既定の水準に戻る',
+  },
+  {
+    id: 'financeHealth.cccGood', feature: '財務診断', label: 'CCC (現金化日数): 100 点の水準', unit: '日',
+    defaultValue: RADAR_AXIS_BANDS.ccc.good, min: -3_650, max: 3_650, kind: 'threshold',
+  },
+  {
+    id: 'financeHealth.roaBad', feature: '財務診断', label: 'ROA: 0 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.roa.bad, min: -1_000, max: 1_000, kind: 'threshold',
+    note: '線形に採点し両端の外は 0 / 100 に丸める。0 点と 100 点が同じ値なら既定の水準に戻る',
+  },
+  {
+    id: 'financeHealth.roaGood', feature: '財務診断', label: 'ROA: 100 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.roa.good, min: -1_000, max: 1_000, kind: 'threshold',
+  },
+  {
+    id: 'financeHealth.roeBad', feature: '財務診断', label: 'ROE: 0 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.roe.bad, min: -1_000, max: 1_000, kind: 'threshold',
+    note: '線形に採点し両端の外は 0 / 100 に丸める。0 点と 100 点が同じ値なら既定の水準に戻る',
+  },
+  {
+    id: 'financeHealth.roeGood', feature: '財務診断', label: 'ROE: 100 点の水準', unit: '%',
+    defaultValue: RADAR_AXIS_BANDS.roe.good, min: -1_000, max: 1_000, kind: 'threshold',
+  },
   ] as const satisfies readonly ParameterDef[];
 }
 
@@ -909,6 +1083,37 @@ export function effluentStandards(v: ParameterValues): EffluentStandards {
     tpUniformMgL: v['effluent.tpUniformMgL'],
     npApplicabilityM3PerDay: v['effluent.npApplicabilityM3PerDay'],
     groundwaterNitrateNMgL: v['effluent.groundwaterNitrateNMgL'],
+  };
+}
+
+export function financialHealthBands(v: ParameterValues): HealthBands {
+  return {
+    goodMin: v['financeHealth.levelGoodMin'],
+    warnMin: v['financeHealth.levelWarnMin'],
+    gradeSMin: v['financeHealth.gradeSMin'],
+    gradeAMin: v['financeHealth.gradeAMin'],
+    gradeBMin: v['financeHealth.gradeBMin'],
+    gradeCMin: v['financeHealth.gradeCMin'],
+  };
+}
+
+export function radarAxisBands(v: ParameterValues): RadarBands {
+  return {
+    equityRatio: { bad: v['financeHealth.equityRatioBad'], good: v['financeHealth.equityRatioGood'] },
+    currentRatio: { bad: v['financeHealth.currentRatioBad'], good: v['financeHealth.currentRatioGood'] },
+    fixedLongTermFit: { bad: v['financeHealth.fixedLongTermFitBad'], good: v['financeHealth.fixedLongTermFitGood'] },
+    debtToMonthlySales: { bad: v['financeHealth.debtToMonthlySalesBad'], good: v['financeHealth.debtToMonthlySalesGood'] },
+    debtRepaymentYears: { bad: v['financeHealth.debtRepaymentYearsBad'], good: v['financeHealth.debtRepaymentYearsGood'] },
+    operatingMargin: { bad: v['financeHealth.operatingMarginBad'], good: v['financeHealth.operatingMarginGood'] },
+    ordinaryMargin: { bad: v['financeHealth.ordinaryMarginBad'], good: v['financeHealth.ordinaryMarginGood'] },
+    netMargin: { bad: v['financeHealth.netMarginBad'], good: v['financeHealth.netMarginGood'] },
+    laborShare: { bad: v['financeHealth.laborShareBad'], good: v['financeHealth.laborShareGood'] },
+    ebitdaMargin: { bad: v['financeHealth.ebitdaMarginBad'], good: v['financeHealth.ebitdaMarginGood'] },
+    receivablesTurnover: { bad: v['financeHealth.receivablesTurnoverBad'], good: v['financeHealth.receivablesTurnoverGood'] },
+    inventoryTurnover: { bad: v['financeHealth.inventoryTurnoverBad'], good: v['financeHealth.inventoryTurnoverGood'] },
+    ccc: { bad: v['financeHealth.cccBad'], good: v['financeHealth.cccGood'] },
+    roa: { bad: v['financeHealth.roaBad'], good: v['financeHealth.roaGood'] },
+    roe: { bad: v['financeHealth.roeBad'], good: v['financeHealth.roeGood'] },
   };
 }
 

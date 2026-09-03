@@ -8,6 +8,7 @@
  */
 
 import type { RadarAxis } from './financialRatios';
+import { DEFAULT_HEALTH_BANDS, type HealthBands } from '../../shared/financialHealthBands';
 
 export type HealthGrade = 'S' | 'A' | 'B' | 'C' | 'D';
 export type HealthLevel = 'good' | 'warn' | 'bad';
@@ -63,17 +64,19 @@ const IMPROVE_HINT: Record<string, string> = {
   roe: 'ROE が低め。自己資本に対する収益性を確認。',
 };
 
-function levelOf(score: number): HealthLevel {
-  if (score >= 70) return 'good';
-  if (score >= 45) return 'warn';
+/** 軸の評価 (良好 / 注意 / 要改善)。`b` は下限 (台帳の値・省略時は既定)。画面の色分けも同じ物を使う。 */
+export function levelOf(score: number, b: HealthBands = DEFAULT_HEALTH_BANDS): HealthLevel {
+  if (score >= b.goodMin) return 'good';
+  if (score >= b.warnMin) return 'warn';
   return 'bad';
 }
 
-function gradeOf(score: number): HealthGrade {
-  if (score >= 80) return 'S';
-  if (score >= 65) return 'A';
-  if (score >= 50) return 'B';
-  if (score >= 35) return 'C';
+/** 総合格付け。`b` は各段の下限 (台帳の値・省略時は既定)。 */
+export function gradeOf(score: number, b: HealthBands = DEFAULT_HEALTH_BANDS): HealthGrade {
+  if (score >= b.gradeSMin) return 'S';
+  if (score >= b.gradeAMin) return 'A';
+  if (score >= b.gradeBMin) return 'B';
+  if (score >= b.gradeCMin) return 'C';
   return 'D';
 }
 
@@ -84,15 +87,15 @@ function commentOf(axis: { key: string; label: string }, level: HealthLevel): st
 
 const mean = (xs: number[]) => (xs.length === 0 ? 0 : Math.round(xs.reduce((a, b) => a + b, 0) / xs.length));
 
-/** レーダー軸 (0-100) から総合診断を作る。純粋。 */
-export function diagnoseFinancials(axes: readonly RadarAxis[]): FinancialDiagnosis {
+/** レーダー軸 (0-100) から総合診断を作る。純粋。`bands` は評価と格付けの下限 (台帳の値・省略時は既定)。 */
+export function diagnoseFinancials(axes: readonly RadarAxis[], bands: HealthBands = DEFAULT_HEALTH_BANDS): FinancialDiagnosis {
   const overallScore = mean(axes.map((a) => a.score));
   const categories: CategoryScore[] = CATEGORY_ORDER.map((cat) => {
     const inCat = axes.filter((a) => CATEGORY_OF[a.key] === cat);
     return { category: cat, score: mean(inCat.map((a) => a.score)), axisKeys: inCat.map((a) => a.key) };
   });
   const comments: AxisComment[] = axes.map((a) => {
-    const level = levelOf(a.score);
+    const level = levelOf(a.score, bands);
     return { key: a.key, label: a.label, score: a.score, level, comment: commentOf(a, level) };
   });
   const byScoreDesc = [...comments].sort((x, y) => y.score - x.score);
@@ -101,5 +104,5 @@ export function diagnoseFinancials(axes: readonly RadarAxis[]): FinancialDiagnos
     .filter((c) => c.level !== 'good')
     .sort((x, y) => x.score - y.score)
     .slice(0, 3);
-  return { overallScore, grade: gradeOf(overallScore), categories, strengths, weaknesses };
+  return { overallScore, grade: gradeOf(overallScore, bands), categories, strengths, weaknesses };
 }

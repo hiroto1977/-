@@ -38,8 +38,10 @@ import {
   businessConsumptionParams,
   ckdPotassiumLimits,
   corporateTaxRates,
+  financialHealthBands,
   hydroponicsProductionParams,
   lowPotassiumParams,
+  radarAxisBands,
 } from '../../shared/parameters';
 import {
   CKD_POTASSIUM_LIMIT_MG,
@@ -621,6 +623,8 @@ export function OverviewPage() {
   const ckdLimits = useMemo(() => ckdPotassiumLimits(paramValues), [paramValues]);
   const corpRates = useMemo(() => corporateTaxRates(paramValues), [paramValues]);
   const bizConsumption = useMemo(() => businessConsumptionParams(paramValues), [paramValues]);
+  const healthBands = useMemo(() => financialHealthBands(paramValues), [paramValues]);
+  const radarBands = useMemo(() => radarAxisBands(paramValues), [paramValues]);
   const hydroponics = useMemo(
     () => economicsFromSetup(hydroSetup, crops, productionParams),
     [hydroSetup, crops, productionParams],
@@ -1428,6 +1432,8 @@ export function OverviewPage() {
           effectiveTaxRate={paramValues['finance.effectiveTaxRate']}
           corporateTaxRates={corpRates}
           businessConsumption={bizConsumption}
+          healthBands={healthBands}
+          radarBands={radarBands}
         />
       </Section>
     </div>

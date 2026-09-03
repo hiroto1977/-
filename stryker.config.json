@@ -192,6 +192,7 @@
     "src/shared/employerBenefits.ts",
     "src/shared/escape.ts",
     "src/shared/externalUrlGate.ts",
+    "src/shared/financialHealthBands.ts",
     "src/shared/formatters.ts",
     "src/shared/funding.ts",
     "src/shared/fxCurrency.ts",

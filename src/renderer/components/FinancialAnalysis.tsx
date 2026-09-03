@@ -21,7 +21,8 @@ import { TWENTY_PERCENT_RATE, type SimplifiedBusinessType, type ConsumptionTaxMe
 import { deriveBusinessFinancials, type MonthlyBusinessKpi } from '../data/businessFinancials';
 import { AxonometricCharts } from './AxonometricCharts';
 import { computeFinancialRatios, radarAxes, type FinancialRatios } from '../data/financialRatios';
-import { diagnoseFinancials, type HealthGrade, type HealthLevel } from '../data/financialDiagnosis';
+import { diagnoseFinancials, levelOf, type HealthGrade, type HealthLevel } from '../data/financialDiagnosis';
+import type { HealthBands, RadarBands } from '../../shared/financialHealthBands';
 import { ratiosToCsv, statementToCsv } from '../data/financialCsv';
 import { analyzeMarginTrend, type MarginTrend } from '../data/financialTrend';
 import { buildFinancialReportMarkdown } from '../data/financialReport';
@@ -562,7 +563,7 @@ function TrendBadge({ trend }: { trend: MarginTrend }) {
   );
 }
 
-function DiagnosisCard({ diagnosis, label, trend, onExportReport }: { diagnosis: ReturnType<typeof diagnoseFinancials>; label: string; trend: MarginTrend; onExportReport: () => void }) {
+function DiagnosisCard({ diagnosis, label, trend, onExportReport, healthBands }: { diagnosis: ReturnType<typeof diagnoseFinancials>; label: string; trend: MarginTrend; onExportReport: () => void; healthBands?: HealthBands }) {
   const { overallScore, grade, categories, strengths, weaknesses } = diagnosis;
   return (
     <div style={cardStyle}>
@@ -585,7 +586,7 @@ function DiagnosisCard({ diagnosis, label, trend, onExportReport }: { diagnosis:
             <div key={c.category} style={{ minWidth: 96 }}>
               <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 2 }}>{c.category} {c.score}</div>
               <div style={{ background: 'var(--bg)', borderRadius: 3, height: 8 }}>
-                <div style={{ width: `${c.score}%`, height: '100%', background: c.score >= 70 ? LEVEL_COLOR.good : c.score >= 45 ? LEVEL_COLOR.warn : LEVEL_COLOR.bad, borderRadius: 3 }} />
+                <div style={{ width: `${c.score}%`, height: '100%', background: LEVEL_COLOR[levelOf(c.score, healthBands)], borderRadius: 3 }} />
               </div>
             </div>
           ))}
@@ -619,6 +620,8 @@ export function FinancialAnalysis({
   effectiveTaxRate,
   corporateTaxRates,
   businessConsumption,
+  healthBands,
+  radarBands,
 }: {
   units: readonly FinancialUnit[];
   /** NOPAT / ROIC に使う実効税率 (0-1)。省略時は `financialRatios` の既定。台帳の値を画面が渡す。 */
@@ -627,6 +630,10 @@ export function FinancialAnalysis({
   corporateTaxRates?: CorporateTaxRates;
   /** 事業者の消費税の率と境目 (台帳の値)。省略すると定数。 */
   businessConsumption?: BusinessConsumptionParams;
+  /** 軸の評価と総合格付けの下限 (台帳の値)。省略すると既定。 */
+  healthBands?: HealthBands;
+  /** レーダー 15 軸の 0 点 / 100 点の水準 (台帳の値)。省略すると既定。 */
+  radarBands?: RadarBands;
 }) {
   const [selectedId, setSelectedId] = useState(units[0]?.id ?? '');
   const [barKey, setBarKey] = useState<keyof FinancialRatios>('operatingMarginPct');
@@ -669,8 +676,8 @@ export function FinancialAnalysis({
   const stmtHistory = consolidated ? consolidatedHistory : selected.unit.history;
   const scopeLabel = consolidationLabel(scope.parts.length, scope.isSample);
   const stmtLabel = consolidated ? scopeLabel : `${selected.unit.label}・単体`;
-  const axes = radarAxes(selected.ratios);
-  const diagnosis = diagnoseFinancials(axes);
+  const axes = radarAxes(selected.ratios, radarBands);
+  const diagnosis = diagnoseFinancials(axes, healthBands);
   const trend = analyzeMarginTrend(selected.unit.history);
   const marginHistory = selected.unit.history.map((h) => (h.revenue > 0 ? Math.round((h.profit / h.revenue) * 1000) / 10 : 0));
   const otherCost = Math.max(0, fin.revenue - fin.cogs - fin.laborCost - fin.operatingProfit);
@@ -731,7 +738,7 @@ export function FinancialAnalysis({
         <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>年商 {yen.format(fin.revenue)}（概算 BS/CF）</span>
       </div>
 
-      <DiagnosisCard diagnosis={diagnosis} label={selected.unit.label} trend={trend} onExportReport={onExportReport} />
+      <DiagnosisCard diagnosis={diagnosis} label={selected.unit.label} trend={trend} onExportReport={onExportReport} healthBands={healthBands} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(340px, 100%), 1fr))', gap: 16 }}>
         <div style={cardStyle}>
