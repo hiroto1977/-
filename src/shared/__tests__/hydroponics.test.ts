@@ -21,9 +21,12 @@ import {
   SALT_EQUIVALENT_FACTOR,
   assessLowPotassium,
   servingGramsWithinLimit,
+  DEFAULT_PRODUCTION_PARAMS,
+  DEFAULT_LOW_POTASSIUM_PARAMS,
   type HydroponicCrop,
   type FacilityInput,
   type CostInput,
+  type LowPotassiumParams,
 } from '../hydroponics';
 
 /** 割り切れる値だけで組んだ品目。株密度 27 / 0.54 = 50 株/m² ちょうど。 */
@@ -458,5 +461,119 @@ describe('servingGramsWithinLimit — 何 g 食べられるか', () => {
     expect(servingGramsWithinLimit(measured, 'G4', 20)!).toBeGreaterThan(
       servingGramsWithinLimit(high, 'G4', 20)!,
     );
+  });
+});
+
+// --- 5. 台帳から渡す前提 (数値パラメータ) ---------------------------------------
+
+describe('生産量の前提 (ProductionParams)', () => {
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_PRODUCTION_PARAMS).toEqual({ panelAreaSqm: PANEL_AREA_SQM, daysPerYear: DAYS_PER_YEAR });
+    expect(estimateProduction(CLEAN_FACILITY)).toEqual(estimateProduction(CLEAN_FACILITY, DEFAULT_PRODUCTION_PARAMS));
+    expect(estimateEconomics(CLEAN_FACILITY, CLEAN_COST)).toEqual(
+      estimateEconomics(CLEAN_FACILITY, CLEAN_COST, DEFAULT_PRODUCTION_PARAMS),
+    );
+  });
+
+  it('パネル面積は株密度の分母 (2 倍にすると密度は半分)', () => {
+    const p = estimateProduction(CLEAN_FACILITY, { panelAreaSqm: 1.08, daysPerYear: DAYS_PER_YEAR });
+    expect(p.plantsPerSqm).toBe(25); // 27 ÷ 1.08
+    expect(p.standingPlants).toBe(12_500); // 500 × 25
+  });
+
+  it('稼働日数は回転数の分子と 1 日あたり出荷の分母', () => {
+    const p = estimateProduction(CLEAN_FACILITY, { panelAreaSqm: PANEL_AREA_SQM, daysPerYear: 100 });
+    expect(p.cyclesPerYear).toBe(10); // 100 ÷ 10
+    expect(p.potentialPlantsPerYear).toBe(250_000); // 25,000 × 10
+    expect(p.shippedPlantsPerYear).toBe(200_000); // × 0.8
+    expect(p.shippedPlantsPerDay).toBe(2_000); // 200,000 ÷ 100
+  });
+
+  it('壊れた前提 (面積 0・日数 0・NaN・負) は 0 にする — Infinity 株を立てない', () => {
+    for (const bad of [0, -1, Number.NaN, Number.NEGATIVE_INFINITY]) {
+      const p = estimateProduction(CLEAN_FACILITY, { panelAreaSqm: bad, daysPerYear: DAYS_PER_YEAR });
+      expect(p.plantsPerSqm, `panel ${bad}`).toBe(0);
+      expect(p.standingPlants, `panel ${bad}`).toBe(0);
+      expect(p.shippedPlantsPerYear, `panel ${bad}`).toBe(0);
+      const d = estimateProduction(CLEAN_FACILITY, { panelAreaSqm: PANEL_AREA_SQM, daysPerYear: bad });
+      expect(d.cyclesPerYear, `days ${bad}`).toBe(0);
+      expect(d.shippedPlantsPerYear, `days ${bad}`).toBe(0);
+      expect(d.shippedPlantsPerDay, `days ${bad}`).toBe(0);
+    }
+  });
+
+  it('収支は前提を生産量へ通す (稼働 100 日なら電力も 100 日分)', () => {
+    const e = estimateEconomics(CLEAN_FACILITY, CLEAN_COST, { panelAreaSqm: PANEL_AREA_SQM, daysPerYear: 100 });
+    // 上限 250,000 株 × 100g = 25,000kg × 10kWh
+    expect(e.energyKwhPerYear).toBe(250_000);
+    expect(e.shippedPlantsPerMonth).toBe(Math.floor(200_000 / 12));
+  });
+});
+
+describe('低カリウム評価の基準 (LowPotassiumParams)', () => {
+  const CUSTOM: LowPotassiumParams = {
+    referencePotassiumMgPer100g: 400,
+    saltEquivalentFactor: 2,
+    switchDaysMin: 3,
+    switchDaysMax: 5,
+  };
+  const INPUT = { switchDaysBeforeHarvest: 4, measuredPotassiumMgPer100g: 100, measuredSodiumMgPer100g: 500 };
+
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_LOW_POTASSIUM_PARAMS).toEqual({
+      referencePotassiumMgPer100g: REFERENCE_LETTUCE_POTASSIUM_MG,
+      saltEquivalentFactor: SALT_EQUIVALENT_FACTOR,
+      switchDaysMin: LOW_K_SWITCH_DAYS_MIN,
+      switchDaysMax: LOW_K_SWITCH_DAYS_MAX,
+    });
+    expect(assessLowPotassium(INPUT)).toEqual(assessLowPotassium(INPUT, DEFAULT_LOW_POTASSIUM_PARAMS));
+  });
+
+  it('比較基準・換算係数・切替の目安がそれぞれ効く', () => {
+    const a = assessLowPotassium(INPUT, CUSTOM);
+    expect(a.referenceMgPer100g).toBe(400);
+    expect(a.reductionPct).toBe(75); // (400 − 100) ÷ 400
+    expect(a.saltEquivalentGPer100g).toBe(1); // 500 × 2 ÷ 1000
+    expect(a.switchWindowOk).toBe(true); // 4 日は 3〜5 の内側 (既定 7〜10 なら外)
+    expect(assessLowPotassium(INPUT).switchWindowOk).toBe(false);
+  });
+
+  it('切替の目安は両端を含む', () => {
+    const at = (days: number) => assessLowPotassium({ ...INPUT, switchDaysBeforeHarvest: days }, CUSTOM).switchWindowOk;
+    expect(at(2)).toBe(false);
+    expect(at(3)).toBe(true);
+    expect(at(5)).toBe(true);
+    expect(at(6)).toBe(false);
+  });
+
+  it('入力側の比較基準は台帳の値より優先する', () => {
+    const a = assessLowPotassium({ ...INPUT, referencePotassiumMgPer100g: 350 }, CUSTOM);
+    expect(a.referenceMgPer100g).toBe(350);
+  });
+
+  it('壊れた係数 (負・NaN) は 0 として扱い、食塩相当量は 0', () => {
+    expect(assessLowPotassium(INPUT, { ...CUSTOM, saltEquivalentFactor: -1 }).saltEquivalentGPer100g).toBe(0);
+    expect(assessLowPotassium(INPUT, { ...CUSTOM, saltEquivalentFactor: Number.NaN }).saltEquivalentGPer100g).toBe(0);
+  });
+});
+
+describe('食べられる量の上限表 (limits)', () => {
+  const measured = assessLowPotassium({ switchDaysBeforeHarvest: 8, measuredPotassiumMgPer100g: 100 });
+
+  it('省略時は学会の目安 (G3b 2,000mg の 20% → 400 g)', () => {
+    expect(servingGramsWithinLimit(measured, 'G3b', 20)).toBe(400);
+    expect(servingGramsWithinLimit(measured, 'G3b', 20, CKD_POTASSIUM_LIMIT_MG)).toBe(400);
+  });
+
+  it('渡した上限表で計算する (医師の指示 1,000mg → 200 g)', () => {
+    const limits = { ...CKD_POTASSIUM_LIMIT_MG, G3b: 1000 };
+    expect(servingGramsWithinLimit(measured, 'G3b', 20, limits)).toBe(200);
+    // 他の病期は表のまま。
+    expect(servingGramsWithinLimit(measured, 'G4', 20, limits)).toBe(300);
+  });
+
+  it('表で制限なし (null) にした病期は null', () => {
+    const limits = { ...CKD_POTASSIUM_LIMIT_MG, G3b: null };
+    expect(servingGramsWithinLimit(measured, 'G3b', 20, limits)).toBeNull();
   });
 });

@@ -10588,3 +10588,44 @@ JS では `&&` が先に束縛するので `a === 192 || (b === 0 && c === 2)` �
 引き継ぐ**。`stryker.config.json` の注記が既に警告しているとおりで、
 `rm -rf .stryker-tmp` **だけでは足りない**。今回これを踏みかけ、
 68 分を偽の生存の生成に使うところだった。
+
+
+## 数値パラメータの台帳 — wave 2 以降の残り (2026-09-03)
+
+依頼「全ての機能の数値を任意で設定出来る仕様に」の wave 1 で、台帳
+(`src/shared/parameters.ts`) と設定画面・保存・配線検査の**型**を置いた
+(15 件: 水耕栽培 9 / 給与 1 / 不動産 2 / 消費税 2 / 実効税率 1)。残りは
+「同じ型で 1 件ずつ、**配線と検査を同じコミットで**」足す。
+
+登録の条件 (台帳の冒頭と同じ):
+1. 既定値はモジュールの定数を**参照**する (写さない)。
+2. 計算の関数は省略可の引数で受け、画面が `useParameters()` で読んで渡す。
+3. `parameterWiring.test.ts` に「上書きすると画面が動く」を既定の対照つきで足す。
+4. 安全上限 (timeout / 応答サイズ / 保存の上限 / PBKDF2 反復 / 入力長) は載せない。
+5. 画面の入力欄に**直接ある**値は載せない (2 か所で置けるとどちらが効いているか読めない)。
+
+候補 (モジュール → 定数の性格。画面が使っている物だけ):
+
+| モジュール | 候補 | 種別 |
+|---|---|---|
+| `taxCorporate.ts` | 法人税率 (中小の軽減税率と適用所得の境目)・地方法人税率・事業税率 | 法定値 |
+| `taxDeductions.ts` / `taxCredits.ts` | 基礎控除・給与所得控除の表・配偶者控除の境目・住宅ローン控除率 | 法定値 |
+| `taxSocialInsurance.ts` | 健康保険 / 厚生年金 / 介護保険の料率と標準報酬の上限 | 法定値 (毎年改定) |
+| `taxConsumptionBusiness.ts` | `taxOf()` が内部で持つ税率 (台帳の消費税率と**揃える**) / 簡易課税のみなし仕入率 / 2 割特例の境目 | 法定値 |
+| `taxFixedAsset.ts` / `taxRealEstateAcquisition.ts` / `taxRegistrationLicense.ts` / `taxStampDuty.ts` | 各税率と軽減の境目 | 法定値 |
+| `taxGift.ts` / `taxInheritance.ts` | 基礎控除・税率表 | 法定値 |
+| `taxNationalHealthInsurance.ts` / `taxPublicPension.ts` / `taxNationalPension.ts` | 料率・上限・保険料額 | 法定値 (自治体差あり — 既定は例示と明記) |
+| `taxCapitalGains.ts` / `taxFurusato.ts` / `taxCasual.ts` | 税率・上限の目安 | 法定値 / 参考値 |
+| `welfareScheme.ts` / `employerBenefits.ts` | 非課税限度 (食事補助・社宅・慶弔) | 法定値 |
+| `waterCyclePlanner.ts` | 排水基準 (pH / BOD / SS) | 法定値 (条例で上乗せあり) |
+| `zoningPlanner.ts` | 用途地域ごとの建蔽率 / 容積率の既定 | 法定値 (都市計画で決まる — 既定は例示) |
+| `financialRatios.ts` / `financialDiagnosis.ts` | 健全度の判定しきい値 (自己資本比率 / 流動比率 …) | しきい値 |
+| `depreciation.ts` | 中小の少額減価償却の上限 (30 万 / 300 万) | 法定値 |
+
+やらないと決めた物: `funding.ts` の `monthlyFlow` / `summarize` (実効税率・消費税率を
+引数で受けるが、**呼び出し元が renderer に無い** — 配線先が無い物は台帳に載せない)。
+
+税の候補は 1 件が表 (率の階段) になる物が多い。台帳の `ParameterDef` は**スカラー**しか
+持たないので、表を置く前に「段の境目と率を別々の id にする」か「表を 1 つの id にして
+JSON で受ける」かを決める。前者は画面の行が増えるが、既存の検査・保存・配線の型を
+そのまま使える (推奨)。

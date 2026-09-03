@@ -22,6 +22,8 @@ import {
 import { jpy } from '../../shared/formatters';
 import { GuardedNumber } from '../components/GuardedNumber';
 import { readNumberOr0, type NumSpec } from '../data/inputGuards';
+import { useParameters } from '../data/parameterOverrides';
+import { dscrThresholds } from '../../shared/parameters';
 import {
   calcRealEstateYield,
   calcRealEstateLeverage,
@@ -43,6 +45,11 @@ import {
   SHADOW_HEIGHT_THRESHOLD_M,
 } from '../../shared/zoningPlanner';
 import { buildSchematicFloors } from '../../shared/buildingIso';
+
+/** しきい値の表示: 1 → 1.0、1.2 → 1.2、1.25 → 1.25 (末尾の 0 を 1 つだけ落とす)。 */
+function fmtDscr(x: number): string {
+  return x.toFixed(2).replace(/0$/, '');
+}
 import { BuildingIso } from '../components/BuildingIso';
 import {
   planWaterBalance,
@@ -167,16 +174,19 @@ export function RealEstatePage() {
 
   // 精緻化指標 (NOI 利回り・DSCR・損益分岐入居率) — レバレッジ試算の入力を再利用。
   const [reOccStr, setReOccStr] = useState('95'); // 想定入居率 (%)
+  // DSCR の判定しきい値は台帳の値 (設定画面で金融機関の要求水準に置ける)。
+  const { values: params } = useParameters();
+  const dscrT = useMemo(() => dscrThresholds(params), [params]);
   const refined = useMemo(() => {
     const annualGrossRent = reNum(reRentStr) * 12;
     const occ = Math.min(1, Math.max(0, reNum(reOccStr) / 100));
     const opex = reNum(reExpenseStr);
     const debt = reNum(reDebtStr);
     const noiY = calcNoiYield(annualGrossRent, occ, opex, reNum(rePriceStr));
-    const dscr = calcDscr(noiY.noi, debt);
+    const dscr = calcDscr(noiY.noi, debt, dscrT);
     const ber = calcBreakEvenOccupancyPct(opex, debt, annualGrossRent);
     return { noiY, dscr, ber };
-  }, [reRentStr, reOccStr, reExpenseStr, reDebtStr, rePriceStr]);
+  }, [reRentStr, reOccStr, reExpenseStr, reDebtStr, rePriceStr, dscrT]);
 
   // NPV / IRR — 自己資金を初期投資 (マイナス) とし、各年の税引前CF、最終年に売却ネット手取りを加算。
   const [npvDiscountStr, setNpvDiscountStr] = useState('4.0'); // 割引率 (%)
@@ -523,7 +533,7 @@ export function RealEstatePage() {
       <Section title="精緻化指標 (NOI 利回り・DSCR・損益分岐入居率)">
         <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
           上の試算入力に想定入居率を加え、空室損を控除した NOI ベースで評価します。
-          DSCR は NOI ÷ 年間返済額で、<strong>1.0 未満は危険水域</strong>、1.2 以上が目安。
+          DSCR は NOI ÷ 年間返済額で、<strong>{fmtDscr(dscrT.danger)} 未満は危険水域</strong>、{fmtDscr(dscrT.caution)} 以上が目安。
           損益分岐入居率を実際の入居率が下回ると赤字に転じます。
           <strong>※ 概算であり投資助言ではありません。</strong>
         </div>

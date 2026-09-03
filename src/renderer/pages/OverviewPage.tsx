@@ -33,12 +33,14 @@ import {
   type HydroponicsSetup,
 } from '../data/hydroponicsSetup';
 import { latestRecord } from '../data/latestRecord';
+import { useParameters } from '../data/parameterOverrides';
+import { ckdPotassiumLimits, hydroponicsProductionParams, lowPotassiumParams } from '../../shared/parameters';
 import {
+  CKD_POTASSIUM_LIMIT_MG,
   checkNutrientSolution,
   servingGramsWithinLimit,
-  LOW_K_SWITCH_DAYS_MIN,
-  LOW_K_SWITCH_DAYS_MAX,
   type HydroponicCrop,
+  type LowPotassiumParams,
 } from '../../shared/hydroponics';
 import {
   CROP_FIELD_LABELS,
@@ -227,14 +229,27 @@ const cropFieldLabel: React.CSSProperties = {
  * 別のレコードに保存され、**設定を保存し直すまで試算の品目は変わらない**
  * (足しただけで数字が動くと、何を保存したのか分からなくなる)。
  */
+/** 上限の表示。制限のない病期 (null) は「—」。 */
+function mgOf(v: number | null): string {
+  return v === null ? '—' : num.format(v);
+}
+
+/** 3 病期とも学会の目安のままか (上書きされていれば出典の言い方を変える)。 */
+function ckdLimitsAreDefault(limits: ReturnType<typeof ckdPotassiumLimits>): boolean {
+  return (['G3b', 'G4', 'G5'] as const).every((s) => limits[s] === CKD_POTASSIUM_LIMIT_MG[s]);
+}
+
 function HydroponicsPanel({
   current,
   crops,
+  lowKParams,
   onSave,
   onCropsChange,
 }: {
   current: HydroponicsSetup | null;
   crops: readonly HydroponicCrop[];
+  /** 低カリウム評価の基準 (台帳の値。案内文の日数に使う)。 */
+  lowKParams: LowPotassiumParams;
   onSave: (s: HydroponicsSetup) => Promise<void> | void;
   onCropsChange: (crops: readonly HydroponicCrop[]) => Promise<void> | void;
 }) {
@@ -497,7 +512,7 @@ function HydroponicsPanel({
           低カリウム栽培として扱う（腎臓病の方向け）
         </label>
         <p style={{ color: 'var(--text-mute)', fontSize: 11, lineHeight: 1.6, margin: '6px 0 10px' }}>
-          収穫前 {LOW_K_SWITCH_DAYS_MIN}〜{LOW_K_SWITCH_DAYS_MAX} 日に、培養液の硝酸カリウムを同濃度の硝酸ナトリウムへ置き換えます。
+          収穫前 {lowKParams.switchDaysMin}〜{lowKParams.switchDaysMax} 日に、培養液の硝酸カリウムを同濃度の硝酸ナトリウムへ置き換えます。
           カリウムを抜いた分をナトリウムで補って浸透圧と EC を保つ方法です（培養液にナトリウムが無いと生育不良になります）。
           <strong>カリウム量は出荷ロットごとに実測してください。</strong>測っていない値を「低カリウム」として出すことはできません。
         </p>
@@ -592,7 +607,16 @@ export function OverviewPage() {
   const cropCol = useCollection<HydroponicCropListRecord>(HYDROPONIC_CROPS_COLLECTION);
   const hydroSetup = latestRecord(hydroCol.records)?.data ?? null;
   const crops = useMemo(() => cropListFromRecords(cropCol.records), [cropCol.records]);
-  const hydroponics = useMemo(() => economicsFromSetup(hydroSetup, crops), [hydroSetup, crops]);
+  // 台帳の数値パラメータ (設定画面で上書きできる)。試算の関数へ引数で渡す —
+  // 台帳を読む大域の状態は置かない (`shared/parameters.ts`)。
+  const { values: paramValues } = useParameters();
+  const productionParams = useMemo(() => hydroponicsProductionParams(paramValues), [paramValues]);
+  const lowKParams = useMemo(() => lowPotassiumParams(paramValues), [paramValues]);
+  const ckdLimits = useMemo(() => ckdPotassiumLimits(paramValues), [paramValues]);
+  const hydroponics = useMemo(
+    () => economicsFromSetup(hydroSetup, crops, productionParams),
+    [hydroSetup, crops, productionParams],
+  );
   // 水耕栽培も 1 事業として並べる。別枠の「参考」にすると、全社の数字に
   // 入っているのかどうかが画面から分からない。未入力なら並ばない。
   const hydroUnit = useMemo(() => hydroponicsBusinessUnit(hydroponics), [hydroponics]);
@@ -624,7 +648,7 @@ export function OverviewPage() {
     ],
     [userFinancialUnits, hydroUnit],
   );
-  const lowPotassium = useMemo(() => lowPotassiumFromSetup(hydroSetup), [hydroSetup]);
+  const lowPotassium = useMemo(() => lowPotassiumFromSetup(hydroSetup, lowKParams), [hydroSetup, lowKParams]);
 
   const computedOverview = useMemo(
     () =>
@@ -1197,6 +1221,7 @@ export function OverviewPage() {
         <HydroponicsPanel
           current={hydroSetup}
           crops={crops}
+          lowKParams={lowKParams}
           onSave={(s) => hydroCol.add(s)}
           onCropsChange={(c) => cropCol.add({ crops: c })}
         />
@@ -1279,8 +1304,8 @@ export function OverviewPage() {
                         accent={overview.hydroponics.lowPotassium.switchWindowOk ? undefined : '#f59e0b'}
                         sub={
                           overview.hydroponics.lowPotassium.switchWindowOk
-                            ? `目安 ${LOW_K_SWITCH_DAYS_MIN}〜${LOW_K_SWITCH_DAYS_MAX} 日の範囲内`
-                            : `目安は ${LOW_K_SWITCH_DAYS_MIN}〜${LOW_K_SWITCH_DAYS_MAX} 日です`
+                            ? `目安 ${lowKParams.switchDaysMin}〜${lowKParams.switchDaysMax} 日の範囲内`
+                            : `目安は ${lowKParams.switchDaysMin}〜${lowKParams.switchDaysMax} 日です`
                         }
                       />
                       <Tile
@@ -1295,7 +1320,7 @@ export function OverviewPage() {
                     </div>
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
                       {(['G3b', 'G4'] as const).map((stage) => {
-                        const grams = servingGramsWithinLimit(overview.hydroponics!.lowPotassium!, stage, 20);
+                        const grams = servingGramsWithinLimit(overview.hydroponics!.lowPotassium!, stage, 20, ckdLimits);
                         return (
                           <Tile
                             key={stage}
@@ -1324,8 +1349,11 @@ export function OverviewPage() {
                   </div>
                 )}
                 <p style={{ color: 'var(--text-mute)', fontSize: 11, lineHeight: 1.7, marginBottom: 12 }}>
-                  カリウム制限は慢性腎臓病の <strong>G3b で 2,000 mg/日以下、G4〜G5 で 1,500 mg/日以下</strong>が目安です
-                  （日本腎臓学会）。G3a までは一律の制限を設けません。血清カリウム値が安定していれば制限しないこともあり、
+                  カリウム制限は慢性腎臓病の{' '}
+                  <strong>
+                    G3b で {mgOf(ckdLimits.G3b)} mg/日以下、G4 で {mgOf(ckdLimits.G4)} mg/日以下、G5 で {mgOf(ckdLimits.G5)} mg/日以下
+                  </strong>
+                  が目安です（{ckdLimitsAreDefault(ckdLimits) ? '日本腎臓学会' : '設定画面で上書きした値'}）。G3a までは一律の制限を設けません。血清カリウム値が安定していれば制限しないこともあり、
                   <strong>実際の指示は主治医と管理栄養士が個別に決めます</strong>。ここの数字は栽培側の管理用で、
                   食事指導に代わるものではありません。
                 </p>
@@ -1387,7 +1415,7 @@ export function OverviewPage() {
             <> いまは登録した事業がないため、サンプルのみを表示しています。</>
           )}
         </div>
-        <FinancialAnalysis units={financialUnits} />
+        <FinancialAnalysis units={financialUnits} effectiveTaxRate={paramValues['finance.effectiveTaxRate']} />
       </Section>
     </div>
   );

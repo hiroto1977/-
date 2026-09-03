@@ -22,10 +22,10 @@ import {
   type CustomsBasis,
 } from '../../shared/tradeTax';
 import { guardAll, readNumber } from '../data/inputGuards';
+import { useParameters } from '../data/parameterOverrides';
+import { displayValue } from '../../shared/parameters';
 import { WelfareSchemeCard } from '../components/WelfareSchemeCard';
 import {
-  CONSUMPTION_TAX_REDUCED,
-  CONSUMPTION_TAX_STANDARD,
   RECONSTRUCTION_SURTAX_RATE,
   calcConsumptionTax,
   calcIncomeTax,
@@ -164,9 +164,16 @@ export function TaxPage() {
     }
     return calcSocialInsurance(grossAnnual, careInsurance);
   }, [grossAnnual, careInsurance, bonusPerStr, bonusCountStr]);
+  // 税率は台帳の値 (設定画面で改正後の率に置ける)。表示の % も同じ値から出す。
+  const { values: params } = useParameters();
+  const standardRate = params['tax.consumptionStandardRate'];
+  const reducedRate = params['tax.consumptionReducedRate'];
+  const consumptionRatePct = reduced
+    ? displayValue('tax.consumptionReducedRate', reducedRate)
+    : displayValue('tax.consumptionStandardRate', standardRate);
   const consumptionTax = useMemo(
-    () => calcConsumptionTax(netAmount, reduced ? CONSUMPTION_TAX_REDUCED : CONSUMPTION_TAX_STANDARD),
-    [netAmount, reduced],
+    () => calcConsumptionTax(netAmount, reduced ? reducedRate : standardRate),
+    [netAmount, reduced, reducedRate, standardRate],
   );
   const tips = useMemo(() => suggestTaxTips(taxableIncome), [taxableIncome]);
 
@@ -1199,11 +1206,11 @@ export function TaxPage() {
           />
           <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
             <input type="checkbox" checked={reduced} onChange={(e) => setReduced(e.target.checked)} />
-            軽減税率 (8%)
+            軽減税率 ({displayValue('tax.consumptionReducedRate', reducedRate)}%)
           </label>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
-          <Stat label={`消費税 (${reduced ? '8%' : '10%'})`} value={jpy(consumptionTax)} />
+          <Stat label={`消費税 (${consumptionRatePct}%)`} value={jpy(consumptionTax)} />
           <Stat label="税込合計" value={jpy(netAmount + consumptionTax)} />
         </div>
       </Section>

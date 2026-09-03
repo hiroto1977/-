@@ -4,6 +4,7 @@ import {
   calcRealEstateLeverage,
   calcNoiYield,
   calcDscr,
+  DEFAULT_DSCR_THRESHOLDS,
   calcBreakEvenOccupancyPct,
   calcNpv,
   calcIrr,
@@ -329,5 +330,27 @@ describe('calcIrr (二分法)', () => {
     // bisection refines to integer-rounded NPV; assert well within ¥1.
     expect(Math.abs(npvAtIrr)).toBeLessThanOrEqual(1);
     expect(IRR_TOLERANCE).toBeLessThan(1e-6);
+  });
+});
+
+describe('calcDscr — しきい値を渡す (台帳の値)', () => {
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_DSCR_THRESHOLDS).toEqual({ danger: DSCR_DANGER_THRESHOLD, caution: DSCR_CAUTION_THRESHOLD });
+    expect(calcDscr(1_800_000, 1_500_000)).toEqual(calcDscr(1_800_000, 1_500_000, DEFAULT_DSCR_THRESHOLDS));
+  });
+
+  it('同じ 1.2 でも、しきい値次第で危険・注意・健全になる', () => {
+    expect(calcDscr(1_800_000, 1_500_000, { danger: 1.5, caution: 2 }).band).toBe('danger');
+    expect(calcDscr(1_800_000, 1_500_000, { danger: 1.1, caution: 1.3 }).band).toBe('caution');
+    expect(calcDscr(1_800_000, 1_500_000, { danger: 0.5, caution: 1.0 }).band).toBe('healthy');
+  });
+
+  it('渡したしきい値でも境界は「以上」側 (danger ちょうどは注意、caution ちょうどは健全)', () => {
+    expect(calcDscr(1_500_000, 1_000_000, { danger: 1.5, caution: 2 }).band).toBe('caution');
+    expect(calcDscr(2_000_000, 1_000_000, { danger: 1.5, caution: 2 }).band).toBe('healthy');
+  });
+
+  it('返済額 0 以下はしきい値に関係なく null', () => {
+    expect(calcDscr(1_000_000, 0, { danger: 0.1, caution: 0.2 })).toEqual({ dscr: null, band: null });
   });
 });

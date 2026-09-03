@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **10322** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **10402** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 375 | 自己検証 |
+| `file:line` 参照数 | 381 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1681,7 +1681,7 @@ union を参照する。
 | `talent` | 人材育成 (組織病の診断 / 登用判定 / 達成確率100%キープ / 育成ロードマップ) | none | ✅ | | `save-state`, `judge-leader` (判定は `src/shared/talent.ts` — main とブラウザ版が同じ関数を読む) |
 | `templates` | Canva 連動テンプレートギャラリー (8 種) | none | ✅ | | `export-template` (プレゼン / 名刺 / SNS / チラシ / 証明書 / 請求書 / 履歴書、SVG 出力) |
 | `library` | アプリ内ライブラリ (IndexedDB) | none | ✅ | | (read-only — ブラウザ版で全エクスポート結果を保管) |
-| `settings` | 設定 (API キー管理 + Vault) | none | ✅ | | (read-only — Vault で全 token を AES-GCM-256 で暗号化) |
+| `settings` | 設定 (API キー管理 + Vault + **数値パラメータ**) | none | ✅ | | (read-only — Vault で全 token を AES-GCM-256 で暗号化。数値パラメータは `components/ParametersPanel.tsx` — 台帳 `src/shared/parameters.ts` の 15 件〔法定値 / 参考値 / しきい値 / 前提〕を機能ごとに並べ、上書きは `parameter-overrides` collection の **1 レコード**を書き換える〔`data/parameterOverrides.ts`〕。下の「数値パラメータ」節) |
 | `uber-eats` | Uber Eats (フードデリバリー、snapshot のみ) | Bearer (Eats Merchants API、未配線) | ✅ | | (read-only — 店舗別売上 / 注文数 / 評価 / 人気メニュー) |
 | `demae-can` | 出前館 (フードデリバリー、snapshot のみ) | Bearer (公開 API 無し、scrape 想定) | ✅ | | (read-only — 進行中注文 / 月次サマリ / 人気エリア) |
 | `real-estate` | 不動産投資 (snapshot + 物件の任意追加 = record store) | Bearer (将来 REIT/楽待) | ✅ | | (ローカル編集 — 保有物件の追加/削除 / 月次キャッシュフロー / 利回り / 入居率。数値入力は `data/inputGuards.ts` + `components/GuardedNumber.tsx` で検査し、読み取れない入力が黙って 0 になるのを防ぐ) |
@@ -2138,7 +2138,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **250 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **252 ファイル**。
 
 #### 点数の定義 (分母に何を入れないか)
 
@@ -2607,6 +2607,43 @@ CI (`.github/workflows/ci.yml`) で typecheck → verify:arch → lint:forbidden
 lint:imports → lint:docs → test の順で走り、いずれかが fail すれば PR がブロックされる。
 
 ---
+
+### 数値パラメータ (法定値・参考値・しきい値・前提の上書き)
+
+各機能が計算に使う**固定の数字** (通勤手当の非課税限度・消費税率・DSCR のしきい値・
+CKD の 1 日カリウム上限・栽培パネルの面積…) を、利用者が設定画面から任意の値に
+置けるようにしてある (2026-09-03 依頼「全ての機能の数値を任意で設定出来る仕様に」)。
+台帳は `src/shared/parameters.ts` の `PARAMETERS` (15 件、`ParameterId` 合併型)。
+
+守っている設計は 4 つ:
+
+| 規則 | 形 | 破ると |
+|---|---|---|
+| 既定値は各モジュールの定数**そのもの** | `defaultValue: COMMUTE_PUBLIC_TRANSPORT_CAP` (数字を写さない) | 法改正で定数を直したとき台帳だけ古くなる。`parameters.test.ts` が id ごとに定数と一致することを固定 |
+| 計算は純粋なまま | 関数は**省略可の引数**で値を受け取り、省略時は従来の定数 (`calcDscr(noi, ads, t = DEFAULT_DSCR_THRESHOLDS)` / `publicTransportCommute(monthly, cap = …)` / `estimateProduction(input, p = DEFAULT_PRODUCTION_PARAMS)` / `assessLowPotassium(input, p = …)` / `servingGramsWithinLimit(…, limits = CKD_POTASSIUM_LIMIT_MG)`)。画面が `useParameters()` で有効値を読んで渡す。台帳を読む大域の状態は置かない | 既存の検査を 1 行も変えずに通す。上書きが効かない経路が見えなくなる |
+| **登録した値は必ず配線する** | `pages/__tests__/parameterWiring.test.ts` が id ごとに上書きを record store へ置いてから画面を描き、**数字・文言が動く**ことを既定の描画と対照で見る | 「設定できるのに効かない」— 画面が嘘をつく最悪の形 |
+| 範囲は桁誤りを止める幅 | `min` / `max` / `integer` を**内部値**で検査 (`parameterIssue`)。値の正しさ (この率が今年の法定値か) は見ない — 決めるのは利用者と出典 | 狭くすると改正に追随できず、広くすると 0 除算や pH 99 が通る |
+
+載せないもの: **安全上限** (通信の打ち切り・応答サイズ・保存の上限・暗号の反復回数・
+入力長) と、**画面の入力欄に直接ある値** (水耕栽培の電力原単位・単価)。前者は緩めても
+画面上は何も変わらず気付けない。後者は同じ値を 2 か所で置けると、どちらが効いているか
+画面から読めなくなる。
+
+保存は `parameter-overrides` collection の **1 レコード** (`{ values: { id: number } }`)。
+`useParameters().set/reset/resetAll` は書き込みを 1 本の列に並べ、**保存されている値に**
+変更を重ねる (描画時の閉包に重ねると、2 つの欄を続けて保存したとき 2 つ目が 1 つ目を
+消す)。読むときは `latestRecord` で最新 1 件を選び、`sanitizeParameterOverrides` が
+知らない id と通らない値を捨てる (壊れた保存で画面ごと落ちない)。既定と同じ値も
+「上書き」として残す — 利用者が明示的に置いた値は、既定が改正で動いても動かない。
+
+% で見せる値 (税率) は `scale: 100` で内部値 0.1 を画面では 10 と見せる。
+`toDisplayValue` は有効桁 12 で丸める (0.07 × 100 = 7.000000000000001 を画面に出さない)。
+
+配線先 (wave 1): 水耕栽培 (経営サマリー — パネル面積 / 稼働日数 / 低カリウムの比較基準・
+換算係数・切替の目安 / CKD 3 病期の上限。上書きされていれば案内文の出典が「日本腎臓学会」
+から「設定画面で上書きした値」に変わる)、給与 (通勤手当の非課税限度)、不動産 (DSCR の
+2 しきい値と文言)、税 (消費税率 標準 / 軽減 — 計算と % 表示の両方)、財務分析 (実効税率 →
+NOPAT / ROIC。この 2 指標は計算していたのに表に無かったので、表へ出した)。
 
 ## Appendix A. コア型 (verbatim)
 

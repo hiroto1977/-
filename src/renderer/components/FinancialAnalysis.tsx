@@ -185,6 +185,10 @@ const RATIO_ROWS: { key: keyof FinancialRatios; label: string; unit: string; mon
   { key: 'cccDays', label: 'CCC', unit: '日' },
   { key: 'roaPct', label: 'ROA', unit: '%' },
   { key: 'roePct', label: 'ROE', unit: '%' },
+  // NOPAT / ROIC は round 68 から計算していたが表に無かった (計算しているのに出していない)。
+  // 実効税率 (台帳 `finance.effectiveTaxRate`) が効く唯一の見える場所なので、ここで出す。
+  { key: 'nopat', label: 'NOPAT (税引後営業利益)', unit: '', money: true },
+  { key: 'roicPct', label: 'ROIC', unit: '%' },
 ];
 
 const BAR_OPTIONS: { key: keyof FinancialRatios; label: string; unit: string }[] = [
@@ -600,7 +604,14 @@ function DiagnosisCard({ diagnosis, label, trend, onExportReport }: { diagnosis:
   );
 }
 
-export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }) {
+export function FinancialAnalysis({
+  units,
+  effectiveTaxRate,
+}: {
+  units: readonly FinancialUnit[];
+  /** NOPAT / ROIC に使う実効税率 (0-1)。省略時は `financialRatios` の既定。台帳の値を画面が渡す。 */
+  effectiveTaxRate?: number;
+}) {
   const [selectedId, setSelectedId] = useState(units[0]?.id ?? '');
   const [barKey, setBarKey] = useState<keyof FinancialRatios>('operatingMarginPct');
   const [stmtTab, setStmtTab] = useState<'pl' | 'bs' | 'cf' | 'var' | 'ci' | 'soce' | 'quarter' | 'notes' | 'suppl' | 'breakdown'>('pl');
@@ -609,9 +620,10 @@ export function FinancialAnalysis({ units }: { units: readonly FinancialUnit[] }
   const perUnit = useMemo(
     () => units.map((u) => {
       const finInputs = deriveBusinessFinancials(u.current);
-      return { unit: u, fin: finInputs, ratios: computeFinancialRatios(finInputs) };
+      const ratioInputs = effectiveTaxRate === undefined ? finInputs : { ...finInputs, effectiveTaxRate };
+      return { unit: u, fin: finInputs, ratios: computeFinancialRatios(ratioInputs) };
     }),
-    [units],
+    [units, effectiveTaxRate],
   );
   // 実績とサンプルは足さない。混ぜた合計はどちらの会社の数でもない。
   const scope = useMemo(() => consolidationScope(perUnit, (p) => p.unit.sample === true), [perUnit]);

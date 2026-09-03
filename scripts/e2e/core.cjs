@@ -2310,6 +2310,65 @@ async function talentSuite(browser) {
   await ctx.close();
 }
 
+/**
+ * 数値パラメータ (2026-09-03) — 設定画面で上書きした値が**別の画面の計算と文言**に
+ * 効くことを実機で見る。単体は hook / 画面 / 配線を fake-indexeddb で通しているが、
+ * 束ねた standalone.html で 設定 → 遷移 (リロード) → 保存先から読み直し → 反映 の
+ * 経路が切れていないかは実機でしか分からない。既定 (対照) → 上書き → 既定に戻す の順。
+ */
+async function parameterSuite(browser) {
+  console.log('\n=== parameters (数値パラメータ: 設定 → 別画面へ反映 → 既定に戻す) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+
+  const NOTE = 'text=公共交通機関の非課税限度は月';
+  const ID = 'payroll.commutePublicTransportCap';
+  const LABEL = '通勤手当 (公共交通機関) の非課税限度 / 月';
+
+  // 対照: 既定 (15 万円) で分けている。
+  await page.goto(FILE + '#team', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector(NOTE, { timeout: 30000 });
+  const before = await page.locator(NOTE).first().innerText();
+  ok(/[¥￥]150,000/.test(before), `team: 対照 — 既定の限度 15 万円が文言に出る — 実際 ${JSON.stringify(before)}`);
+
+  // 設定画面で上書き。
+  await gotoService(page, '#settings', '[data-parameters]');
+  const row = page.locator(`[data-parameter="${ID}"]`);
+  ok((await row.count()) === 1, `設定: 台帳の行が出る (${ID})`);
+  ok((await row.getAttribute('data-overridden')) === 'false', '設定: 最初は上書きなし');
+  await page.getByLabel(LABEL, { exact: true }).fill('100000');
+  await page.getByRole('button', { name: `${LABEL} を保存` }).click();
+  await page.waitForFunction((id) => document.querySelector(`[data-parameter="${id}"]`)?.getAttribute('data-overridden') === 'true', ID, { timeout: 15000 });
+  ok(true, '設定: 保存すると上書き中になる');
+  const count = await page.locator('[data-overridden-count]').innerText();
+  ok(count.startsWith('上書き 1 /'), `設定: 見出しの件数が 1 になる — 実際 ${JSON.stringify(count)}`);
+
+  // 別画面 (リロード = 保存先から読み直し) に効く。
+  await gotoService(page, '#team', NOTE);
+  const after = await page.locator(NOTE).first().innerText();
+  ok(/[¥￥]100,000/.test(after), `team: ★ 上書きした限度 10 万円が文言に出る — 実際 ${JSON.stringify(after)}`);
+  const stat = await page.locator('text=公共交通: 非課税').first().locator('xpath=..').innerText();
+  ok(/[¥￥]100,000/.test(stat), `team: ★ 非課税分が 10 万円で切れる (入力 16 万円) — 実際 ${JSON.stringify(stat)}`);
+  const taxable = await page.locator('text=公共交通: 課税(超過)').first().locator('xpath=..').innerText();
+  ok(/[¥￥]60,000/.test(taxable), `team: ★ 超過分が 6 万円になる — 実際 ${JSON.stringify(taxable)}`);
+
+  // 既定に戻す。
+  await gotoService(page, '#settings', '[data-parameters]');
+  ok((await row.getAttribute('data-overridden')) === 'true', '設定: 読み直しても上書きが残っている');
+  await page.getByRole('button', { name: `${LABEL} を既定に戻す` }).click();
+  await page.waitForFunction((id) => document.querySelector(`[data-parameter="${id}"]`)?.getAttribute('data-overridden') === 'false', ID, { timeout: 15000 });
+  await gotoService(page, '#team', NOTE);
+  const restored = await page.locator(NOTE).first().innerText();
+  ok(/[¥￥]150,000/.test(restored), `team: 既定に戻すと 15 万円に戻る — 実際 ${JSON.stringify(restored)}`);
+
+  ok(errs.length === 0, `parameters: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
 (async () => {
   console.log(`E2E 対象: ${targetAbs} (${(fs.statSync(targetAbs).size / 1048576).toFixed(2)} MB)`);
   const browser = await pw.chromium.launch({
@@ -2341,6 +2400,7 @@ async function talentSuite(browser) {
   if (run('realtime')) await realtimeSuite(browser);
   if (run('phone')) await phoneSuite(browser);
   if (run('talent')) await talentSuite(browser);
+  if (run('parameters')) await parameterSuite(browser);
   if (run('tablet')) await tabletSuite(browser);
   await browser.close();
   if (failures.length > 0) {

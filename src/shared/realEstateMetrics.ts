@@ -172,6 +172,19 @@ export interface RealEstateDscr {
 export const DSCR_DANGER_THRESHOLD = 1.0;
 export const DSCR_CAUTION_THRESHOLD = 1.2;
 
+/** DSCR の判定しきい値。省略すると上の定数。台帳 (`shared/parameters.ts`) から上書きできる。 */
+export interface DscrThresholds {
+  /** これ未満は 'danger'。 */
+  readonly danger: number;
+  /** これ未満 (danger 以上) は 'caution'。 */
+  readonly caution: number;
+}
+
+export const DEFAULT_DSCR_THRESHOLDS: DscrThresholds = {
+  danger: DSCR_DANGER_THRESHOLD,
+  caution: DSCR_CAUTION_THRESHOLD,
+};
+
 /**
  * DSCR (Debt Service Coverage Ratio) を計算する。
  *
@@ -183,15 +196,19 @@ export const DSCR_CAUTION_THRESHOLD = 1.2;
  * @param noi 営業純収益 (円)。負値も可 (band は danger になる)。
  * @param annualDebtService 年間元利返済額 (円)。0 以下なら dscr/band は null。
  */
-export function calcDscr(noi: number, annualDebtService: number): RealEstateDscr {
+export function calcDscr(
+  noi: number,
+  annualDebtService: number,
+  t: DscrThresholds = DEFAULT_DSCR_THRESHOLDS,
+): RealEstateDscr {
   if (!(annualDebtService > 0)) {
     return { dscr: null, band: null };
   }
   const dscr = Math.round((noi / annualDebtService) * 100) / 100;
   let band: DscrBand;
-  if (dscr < DSCR_DANGER_THRESHOLD) {
+  if (dscr < t.danger) {
     band = 'danger';
-  } else if (dscr < DSCR_CAUTION_THRESHOLD) {
+  } else if (dscr < t.caution) {
     band = 'caution';
   } else {
     band = 'healthy';

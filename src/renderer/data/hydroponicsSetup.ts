@@ -11,7 +11,11 @@
 
 import {
   assessLowPotassium,
+  DEFAULT_LOW_POTASSIUM_PARAMS,
+  DEFAULT_PRODUCTION_PARAMS,
   type LowPotassiumAssessment,
+  type LowPotassiumParams,
+  type ProductionParams,
   ENERGY_INTENSITY_KWH_PER_KG_LOW,
   ENERGY_INTENSITY_KWH_PER_KG_HIGH,
   estimateEconomics,
@@ -186,9 +190,10 @@ export function toCostInput(s: HydroponicsSetup): CostInput {
 export function economicsFromSetup(
   s: HydroponicsSetup | null,
   crops: readonly HydroponicCrop[] = DEFAULT_CROP_LIST,
+  p: ProductionParams = DEFAULT_PRODUCTION_PARAMS,
 ): HydroponicsEconomics | null {
   if (!s) return null;
-  return estimateEconomics(toFacilityInput(s, crops), toCostInput(s));
+  return estimateEconomics(toFacilityInput(s, crops), toCostInput(s), p);
 }
 
 /**
@@ -197,15 +202,21 @@ export function economicsFromSetup(
  * 実測値が 0 (未測定) でも `assessLowPotassium` が `measured: false` を返すので、
  * 「測っていないのに低カリウムと名乗る」状態は画面側で判別できる。
  */
-export function lowPotassiumFromSetup(s: HydroponicsSetup | null): LowPotassiumAssessment | null {
+export function lowPotassiumFromSetup(
+  s: HydroponicsSetup | null,
+  p: LowPotassiumParams = DEFAULT_LOW_POTASSIUM_PARAMS,
+): LowPotassiumAssessment | null {
   if (!s || s.lowPotassium !== true) return null;
   const sodium = s.measuredSodiumMgPer100g ?? 0;
-  return assessLowPotassium({
-    switchDaysBeforeHarvest: s.switchDaysBeforeHarvest ?? 0,
-    measuredPotassiumMgPer100g: s.measuredPotassiumMgPer100g ?? 0,
-    // 0 は「測っていない」と扱う (0 mg の野菜は無い)。
-    ...(sodium > 0 ? { measuredSodiumMgPer100g: sodium } : {}),
-  });
+  return assessLowPotassium(
+    {
+      switchDaysBeforeHarvest: s.switchDaysBeforeHarvest ?? 0,
+      measuredPotassiumMgPer100g: s.measuredPotassiumMgPer100g ?? 0,
+      // 0 は「測っていない」と扱う (0 mg の野菜は無い)。
+      ...(sodium > 0 ? { measuredSodiumMgPer100g: sodium } : {}),
+    },
+    p,
+  );
 }
 
 /**

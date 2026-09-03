@@ -13,6 +13,7 @@ import {
 } from '../../shared/team';
 import { MEMBERS_COLLECTION, parseMember, countOwners, type Member } from '../data/members';
 import { publicTransportCommute, carCommuteNonTaxableLimit, bonusWithholdingTax } from '../../shared/payroll';
+import { useParameters } from '../data/parameterOverrides';
 import { jpy } from '../../shared/formatters';
 import { GuardedNumber } from '../components/GuardedNumber';
 import { readNumberOr0, type NumSpec } from '../data/inputGuards';
@@ -40,7 +41,10 @@ function PayrollPanel() {
   const [si, setSi] = useState('75000');
   const [prevSalary, setPrevSalary] = useState('300000');
   // 読めない値は 0 になるが、同じ欄の `GuardedNumber` がその旨を出す (黙って 0 にしない)。
-  const pt = useMemo(() => publicTransportCommute(readNumberOr0(commute)), [commute]);
+  // 非課税限度は台帳の値 (設定画面で改正後の額に置ける)。
+  const { values: params } = useParameters();
+  const commuteCap = params['payroll.commutePublicTransportCap'];
+  const pt = useMemo(() => publicTransportCommute(readNumberOr0(commute), commuteCap), [commute, commuteCap]);
   const carLimit = useMemo(() => carCommuteNonTaxableLimit(readNumberOr0(km)), [km]);
   const bw = useMemo(
     () => bonusWithholdingTax({
@@ -71,6 +75,9 @@ function PayrollPanel() {
         {stat('公共交通: 非課税', jpy(pt.nonTaxable))}
         {stat('公共交通: 課税(超過)', jpy(pt.taxable))}
         {stat('マイカー: 非課税限度/月', jpy(carLimit))}
+      </div>
+      <div style={{ fontSize: 11, color: 'var(--text-mute)', margin: '-8px 0 12px' }}>
+        公共交通機関の非課税限度は月 {jpy(commuteCap)} (設定 › 数値パラメータ で変更できます)
       </div>
       <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>賞与の源泉徴収 (甲欄・扶養0人 概算)</div>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>

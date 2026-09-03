@@ -28,6 +28,9 @@ import {
   ENERGY_INTENSITY_KWH_PER_KG_HIGH,
   LOW_K_SWITCH_DAYS_MIN,
   LOW_K_SWITCH_DAYS_MAX,
+  PANEL_AREA_SQM,
+  DEFAULT_LOW_POTASSIUM_PARAMS,
+  estimateEconomics,
   type HydroponicCrop,
 } from '../../../shared/hydroponics';
 import { DEFAULT_CROP_LIST } from '../../../shared/hydroponicCrops';
@@ -388,5 +391,37 @@ describe('hydroponicsBusinessUnit — 変動費の内訳', () => {
     const u = hydroponicsBusinessUnit(withAd)!;
     expect(u.current.variableCost).toBe(base.monthly.cogs + 120_000);
     expect(u.current.variableCost).toBeGreaterThan(hydroponicsBusinessUnit(base)!.current.variableCost);
+  });
+});
+
+describe('台帳の前提を試算へ通す (economicsFromSetup / lowPotassiumFromSetup)', () => {
+  const P = { panelAreaSqm: PANEL_AREA_SQM, daysPerYear: 100 };
+
+  it('economicsFromSetup は前提をそのまま estimateEconomics へ渡す', () => {
+    const viaSetup = economicsFromSetup(SETUP, DEFAULT_CROP_LIST, P)!;
+    const direct = estimateEconomics(toFacilityInput(SETUP, DEFAULT_CROP_LIST), toCostInput(SETUP), P);
+    expect(viaSetup).toEqual(direct);
+    // 前提を変えれば結果も変わる (渡していなければ同じになって落ちる)。
+    // 見るのは年産 — 1 日あたりの出荷は 在圃株数 × 歩留まり ÷ 定植後日数 で、
+    // 稼働日数が分子と分母で打ち消し合って**動かない** (丸めの差だけ)。
+    expect(viaSetup.production.potentialPlantsPerYear).not.toBe(
+      economicsFromSetup(SETUP, DEFAULT_CROP_LIST)!.production.potentialPlantsPerYear,
+    );
+    expect(economicsFromSetup(null, DEFAULT_CROP_LIST, P)).toBeNull();
+  });
+
+  it('lowPotassiumFromSetup は基準をそのまま assessLowPotassium へ渡す', () => {
+    const s = { ...SETUP, lowPotassium: true, measuredPotassiumMgPer100g: 100, switchDaysBeforeHarvest: 4 };
+    const custom = { ...DEFAULT_LOW_POTASSIUM_PARAMS, switchDaysMin: 3, switchDaysMax: 5, referencePotassiumMgPer100g: 400 };
+    const a = lowPotassiumFromSetup(s, custom)!;
+    expect(a.switchWindowOk).toBe(true);
+    expect(a.referenceMgPer100g).toBe(400);
+    expect(a.reductionPct).toBe(75);
+    // 省略時は既定 (4 日は 7〜10 の外)。
+    expect(lowPotassiumFromSetup(s)!.switchWindowOk).toBe(false);
+    expect(lowPotassiumFromSetup(s)).toEqual(lowPotassiumFromSetup(s, DEFAULT_LOW_POTASSIUM_PARAMS));
+    // 低カリウムとして扱っていなければ基準に関係なく null。
+    expect(lowPotassiumFromSetup({ ...s, lowPotassium: false }, custom)).toBeNull();
+    expect(lowPotassiumFromSetup(null, custom)).toBeNull();
   });
 });

@@ -227,6 +227,11 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   `window.open`, so the OS browser handles them.
 - Add new service IDs to `SERVICE_IDS` in `src/shared/serviceId.ts` (not `services.ts`) — the type
   system then flags every dependent switch/lookup, and prefer `npm run scaffold` over manual edits.
+- **計算に使う固定の数字 (法定値・参考値・しきい値・前提) は `src/shared/parameters.ts` の台帳に登録し、
+  画面は `useParameters()` で読んで関数へ引数で渡す。** 既定値はモジュールの定数をそのまま参照する
+  (数字を写さない)。登録した値は**必ず配線し、`parameterWiring.test.ts` で「上書きすると画面が動く」を
+  対照つきで留める** — 「設定できるのに効かない」項目を作らない。安全上限 (timeout / 応答サイズ /
+  PBKDF2 反復 / 入力長) は台帳に載せない。
 - When you change architecture, update `docs/ARCHITECTURE.md` too — `verify:arch` checks its
   `file:line` references and metrics against the real tree.
 - **不在を主張する検査には、標本を添える。** `not.toMatch(/…/)` や

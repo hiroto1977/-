@@ -5,6 +5,8 @@ import { SERVICES, CATEGORY_LABEL, type ServiceCategory } from '../services';
 import { summarizeConnections } from '../data/connectionStatus';
 import { BackupPanel } from '../components/BackupPanel';
 import { CloudSyncPanel } from '../components/CloudSyncPanel';
+import { ParametersPanel } from '../components/ParametersPanel';
+import { PARAMETERS } from '../../shared/parameters';
 import { usePlan } from '../plan/usePlan';
 import { getPlan } from '../../shared/plan';
 import { issueInviteCode } from '../plan/internalLicense';
@@ -801,6 +803,10 @@ export function SettingsPage() {
       <BackupPanel />
 
       <CloudSyncPanel />
+
+      <Section title="数値パラメータ (法定値・参考値・しきい値・前提)" count={PARAMETERS.length}>
+        <ParametersPanel />
+      </Section>
 
       <Section title="API キーとトークン" count={SLOTS.length}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(380px, 100%), 1fr))', gap: 12 }} key={refreshKey}>

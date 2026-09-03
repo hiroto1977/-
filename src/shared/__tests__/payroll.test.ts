@@ -344,3 +344,19 @@ describe('calcEmployerCost (人件費の会社負担総額)', () => {
     expect(c.totalCost).toBe(c.gross + c.employerContributions);
   });
 });
+
+describe('publicTransportCommute — 非課税限度を渡す (台帳の値)', () => {
+  it('省略時は法定値と同じ', () => {
+    expect(publicTransportCommute(180_000)).toEqual(publicTransportCommute(180_000, COMMUTE_PUBLIC_TRANSPORT_CAP));
+  });
+
+  it('渡した限度で分ける', () => {
+    expect(publicTransportCommute(180_000, 200_000)).toEqual({ nonTaxable: 180_000, taxable: 0 });
+    expect(publicTransportCommute(180_000, 100_000)).toEqual({ nonTaxable: 100_000, taxable: 80_000 });
+    expect(publicTransportCommute(100_000, 100_000)).toEqual({ nonTaxable: 100_000, taxable: 0 });
+  });
+
+  it('壊れた限度 (負) は 0 として全額課税', () => {
+    expect(publicTransportCommute(50_000, -1)).toEqual({ nonTaxable: 0, taxable: 50_000 });
+  });
+});
