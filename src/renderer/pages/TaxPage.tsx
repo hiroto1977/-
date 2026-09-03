@@ -23,10 +23,16 @@ import {
 } from '../../shared/tradeTax';
 import { guardAll, readNumber } from '../data/inputGuards';
 import { useParameters } from '../data/parameterOverrides';
-import { displayValue } from '../../shared/parameters';
+import {
+  displayValue,
+  netSalaryParams,
+  residentTaxOverride,
+  salaryTaxParams,
+  socialInsuranceRates,
+} from '../../shared/parameters';
 import { WelfareSchemeCard } from '../components/WelfareSchemeCard';
 import {
-  RECONSTRUCTION_SURTAX_RATE,
+  RESIDENT_TAX_PER_CAPITA,
   calcConsumptionTax,
   calcIncomeTax,
   calcNetSalary,
@@ -139,9 +145,21 @@ export function TaxPage() {
     return p.ok && p.value !== undefined && p.value > 0 ? p.value : 0;
   }, [grossStr]);
 
-  const incomeTax = useMemo(() => calcIncomeTax(taxableIncome), [taxableIncome]);
-  const residentTax = useMemo(() => calcResidentTax(taxableIncome), [taxableIncome]);
-  const netSalary = useMemo(() => calcNetSalary(grossAnnual), [grossAnnual]);
+  // 台帳の数値パラメータ (設定画面で上書きできる)。計算の関数へ引数で渡し、
+  // 表示の % も同じ値から出す (文言だけ古い率のまま、を作らない)。
+  const { values: params } = useParameters();
+  const surtaxRate = params['incomeTax.reconstructionSurtaxRate'];
+  const surtaxPct = displayValue('incomeTax.reconstructionSurtaxRate', surtaxRate);
+  const residentPct = displayValue('residentTax.incomeRate', params['residentTax.incomeRate']);
+  const residentPerCapita = params['residentTax.perCapita'];
+  const siEstimatePct = displayValue('incomeTax.socialInsuranceEstimateRate', params['incomeTax.socialInsuranceEstimateRate']);
+  const residentOverride = useMemo(() => residentTaxOverride(params), [params]);
+  const netParams = useMemo(() => netSalaryParams(params), [params]);
+  const salaryParams = useMemo(() => salaryTaxParams(params), [params]);
+  const siRates = useMemo(() => socialInsuranceRates(params), [params]);
+  const incomeTax = useMemo(() => calcIncomeTax(taxableIncome, surtaxRate), [taxableIncome, surtaxRate]);
+  const residentTax = useMemo(() => calcResidentTax(taxableIncome, residentOverride), [taxableIncome, residentOverride]);
+  const netSalary = useMemo(() => calcNetSalary(grossAnnual, undefined, netParams), [grossAnnual, netParams]);
   const [careInsurance, setCareInsurance] = useState(false);
   const [bonusPerStr, setBonusPerStr] = useState('0');
   const [bonusCountStr, setBonusCountStr] = useState('2');
@@ -160,12 +178,11 @@ export function TaxPage() {
       // 賞与あり: 年収から賞与総額を引いた残りを月額報酬とみなす。
       const annualBonus = bonusPer * bonusCount;
       const monthly = Math.max(0, (grossAnnual - annualBonus) / 12);
-      return calcSocialInsuranceWithBonus(monthly, bonusPer, bonusCount, careInsurance);
+      return calcSocialInsuranceWithBonus(monthly, bonusPer, bonusCount, careInsurance, siRates);
     }
-    return calcSocialInsurance(grossAnnual, careInsurance);
-  }, [grossAnnual, careInsurance, bonusPerStr, bonusCountStr]);
-  // 税率は台帳の値 (設定画面で改正後の率に置ける)。表示の % も同じ値から出す。
-  const { values: params } = useParameters();
+    return calcSocialInsurance(grossAnnual, careInsurance, siRates);
+  }, [grossAnnual, careInsurance, bonusPerStr, bonusCountStr, siRates]);
+  // 消費税率も台帳の値。表示の % も同じ値から出す。
   const standardRate = params['tax.consumptionStandardRate'];
   const reducedRate = params['tax.consumptionReducedRate'];
   const consumptionRatePct = reduced
@@ -256,6 +273,7 @@ export function TaxPage() {
     // ① 所得控除込みの税額 (ふるさと納税の住民税控除・住民税の調整控除・非課税限度額も内部適用済み)。
     const result = calcSalaryWithDeductions(
       dGross, ded.total.incomeTax, ded.total.residentTax, donation, ded.humanDeductionDiff, dependentCount,
+      undefined, salaryParams,
     );
 
     // ② 税額控除 (住宅ローン・配当) を、復興特別所得税の前の「基準所得税額」に
@@ -286,12 +304,12 @@ export function TaxPage() {
       result.baseIncomeTax,
       result.residentTax,
       credits,
-      RECONSTRUCTION_SURTAX_RATE,
+      surtaxRate,
     );
     const finalTakeHome = dGross - afterCredits.incomeTax - afterCredits.residentTax;
 
     return { ded, result, credits, afterCredits, finalTakeHome };
-  }, [dGrossStr, dSocialStr, dIdecoStr, idecoOccupation, dSmallBizStr, dLifeStr, dLifeOldStr, dQuakeStr, dMedicalStr, dSelfMedStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent, mortgageBalanceStr, mortgageYear, mortgagePerf, dividendStr, dividendKind]);
+  }, [dGrossStr, dSocialStr, dIdecoStr, idecoOccupation, dSmallBizStr, dLifeStr, dLifeOldStr, dQuakeStr, dMedicalStr, dSelfMedStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent, mortgageBalanceStr, mortgageYear, mortgagePerf, dividendStr, dividendKind, salaryParams, surtaxRate]);
 
   // --- ④ 退職所得の試算 ---
   const [severanceStr, setSeveranceStr] = useState('20000000');
@@ -765,14 +783,15 @@ export function TaxPage() {
           />
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
-          <Stat label="所得税 (速算表 + 復興税2.1%)" value={jpy(incomeTax)} />
-          <Stat label="住民税 (所得割10% + 均等割)" value={jpy(residentTax)} />
+          <Stat label={`所得税 (速算表 + 復興税${surtaxPct}%)`} value={jpy(incomeTax)} />
+          <Stat label={`住民税 (所得割${residentPct}% + 均等割)`} value={jpy(residentTax)} />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
-          ※ 所得税は国税庁の速算表 (7段階・累進)、住民税は所得割10%+均等割で計算。ここでの「課税所得」は
+          ※ 所得税は国税庁の速算表 (7段階・累進)、住民税は所得割{residentPct}%+均等割で計算。ここでの「課税所得」は
           各種所得控除をすべて差し引いた後の金額を入力してください。
-          均等割5,000円の内訳は、2024年度以降は基礎4,000円+森林環境税1,000円 (それ以前は基礎4,000円+復興特別1,000円) で、
-          総額は変わりません。
+          {residentPerCapita === RESIDENT_TAX_PER_CAPITA
+            ? '均等割5,000円の内訳は、2024年度以降は基礎4,000円+森林環境税1,000円 (それ以前は基礎4,000円+復興特別1,000円) で、総額は変わりません。'
+            : `均等割は設定 › 数値パラメータ の値 ${jpy(residentPerCapita)} で計算しています。`}
         </div>
       </Section>
 
@@ -806,7 +825,7 @@ export function TaxPage() {
           <Stat label="手取り (年)" value={jpy(netSalary.takeHome)} positive />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
-          ※ 給与所得控除・基礎控除・所得税速算表・住民税は<strong>正式テーブル</strong>で計算。手取りの社会保険料は額面比例の概算 (約15%)。
+          ※ 給与所得控除・基礎控除・所得税速算表・住民税は<strong>正式テーブル</strong>で計算。手取りの社会保険料は額面比例の概算 (約{siEstimatePct}%)。
           配偶者・扶養・生命保険料等の控除は含まないため、扶養がある場合は実際より高めに出ます。<br />
           内訳: 給与所得 {jpy(netSalary.employmentIncome)} / 社保 {jpy(netSalary.socialInsurance)} /
           課税所得 {jpy(netSalary.taxableIncome)} / 所得税 {jpy(netSalary.incomeTax)} / 住民税 {jpy(netSalary.residentTax)}。
@@ -816,9 +835,9 @@ export function TaxPage() {
           合計 {jpy(socialInsurancePrecise.total)}（厚生年金 {jpy(socialInsurancePrecise.pension)} /
           健康保険{careInsurance ? '+介護' : ''} {jpy(socialInsurancePrecise.health)} /
           雇用保険 {jpy(socialInsurancePrecise.employment)}）。
-          厚生年金は標準報酬月額65万円、健康保険は139万円で頭打ちになるため、高年収では上の額面比例(15%)より低くなります (令和6年度・協会けんぽ全国平均ベース)。
+          厚生年金は標準報酬月額65万円、健康保険は139万円で頭打ちになるため、高年収では上の額面比例({siEstimatePct}%)より低くなります (料率は設定 › 数値パラメータ の値。既定は令和8年度・協会けんぽ全国平均ベース)。
           {num(bonusPerStr) > 0 && num(bonusCountStr) > 0 && (
-            <> 賞与を入力した場合は、標準賞与額の上限 (厚生年金 1回150万円 / 健康保険 年573万円) を反映し、年収から賞与総額を引いた残りを月額報酬として計算します。</>
+            <> 賞与を入力した場合は、標準賞与額の上限 (厚生年金 1回{jpy(siRates.pensionBonusCapPerPayment)} / 健康保険 年{jpy(siRates.healthBonusCapAnnual)}) を反映し、年収から賞与総額を引いた残りを月額報酬として計算します。</>
           )}
         </div>
       </Section>

@@ -52,8 +52,8 @@ export const RECONSTRUCTION_SURTAX_RATE = 0.021;
  * 課税所得から所得税額 (復興特別所得税込み) を概算する。
  * 負の課税所得は 0 とみなす。
  */
-export function calcIncomeTax(taxableIncome: number): number {
-  return yen(calcBaseIncomeTax(taxableIncome) * (1 + RECONSTRUCTION_SURTAX_RATE));
+export function calcIncomeTax(taxableIncome: number, surtaxRate = RECONSTRUCTION_SURTAX_RATE): number {
+  return yen(calcBaseIncomeTax(taxableIncome) * (1 + surtaxRate));
 }
 
 /**
@@ -411,6 +411,32 @@ export function calcResidentBasicDeduction(totalIncome: number): number {
  *  概算とする (この一点のみ概算で、控除・税額は正式テーブル)。 */
 export const SOCIAL_INSURANCE_RATE = 0.15;
 
+/**
+ * 手取り試算の前提。省略すると上の定数。台帳 (`shared/parameters.ts`) から上書きできる。
+ * `resident` を省略すると住民税は標準 (所得割 10% + 均等割 5,000 円)。
+ */
+export interface NetSalaryParams {
+  /** 社会保険料の概算率 (額面比例)。 */
+  readonly socialInsuranceRate: number;
+  /** 復興特別所得税の付加率。 */
+  readonly surtaxRate: number;
+  /** 住民税の所得割率・均等割 (自治体の値)。 */
+  readonly resident?: MunicipalityOverride;
+}
+
+export const DEFAULT_NET_SALARY_PARAMS: NetSalaryParams = {
+  socialInsuranceRate: SOCIAL_INSURANCE_RATE,
+  surtaxRate: RECONSTRUCTION_SURTAX_RATE,
+};
+
+/** 全控除込みの試算の前提 (社会保険料は実額で受けるので率は無い)。 */
+export interface SalaryTaxParams {
+  readonly surtaxRate: number;
+  readonly resident?: MunicipalityOverride;
+}
+
+export const DEFAULT_SALARY_TAX_PARAMS: SalaryTaxParams = { surtaxRate: RECONSTRUCTION_SURTAX_RATE };
+
 export interface NetSalary {
   readonly gross: number;
   readonly socialInsurance: number;
@@ -434,6 +460,7 @@ export interface NetSalary {
 export function calcNetSalary(
   grossAnnual: number,
   taxYear = new Date().getFullYear(),
+  p: NetSalaryParams = DEFAULT_NET_SALARY_PARAMS,
 ): NetSalary {
   // `<= 0` → `< 0` は等価寄り (0 の挙動差は下流テストで pin 済み)。境界の
   // 等価ミュータントを抑制。
@@ -444,11 +471,11 @@ export function calcNetSalary(
       employmentIncome: 0,
       taxableIncome: 0,
       incomeTax: 0,
-      residentTax: RESIDENT_TAX_PER_CAPITA,
+      residentTax: resolvePerCapita(p.resident),
       takeHome: 0,
     };
   }
-  const socialInsurance = yen(grossAnnual * SOCIAL_INSURANCE_RATE);
+  const socialInsurance = yen(grossAnnual * p.socialInsuranceRate);
   const salaryDeduction = calcSalaryIncomeDeduction(grossAnnual);
   // 給与所得 (= 合計所得金額の近似)。社会保険料控除は所得控除なので、課税所得は
   // 給与所得から社保・基礎控除を引いて求める。
@@ -457,8 +484,8 @@ export function calcNetSalary(
   const residentBasicDeduction = calcResidentBasicDeduction(employmentIncome);
   const taxableIncome = Math.max(0, employmentIncome - socialInsurance - basicDeduction);
   const residentTaxableIncome = Math.max(0, employmentIncome - socialInsurance - residentBasicDeduction);
-  const incomeTax = calcIncomeTax(taxableIncome);
-  const residentTax = calcResidentTax(residentTaxableIncome);
+  const incomeTax = calcIncomeTax(taxableIncome, p.surtaxRate);
+  const residentTax = calcResidentTax(residentTaxableIncome, p.resident);
   const takeHome = grossAnnual - socialInsurance - incomeTax - residentTax;
   return { gross: grossAnnual, socialInsurance, employmentIncome, taxableIncome, incomeTax, residentTax, takeHome };
 }
@@ -529,14 +556,16 @@ export function calcSalaryWithDeductions(
   humanDeductionDiff = 0,
   dependentCount = 0,
   taxYear = new Date().getFullYear(),
+  p: SalaryTaxParams = DEFAULT_SALARY_TAX_PARAMS,
 ): FullSalaryResult {
+  const perCapitaLevy = resolvePerCapita(p.resident);
   if (grossAnnual <= 0) {
     return {
       gross: 0, salaryDeduction: 0, employmentIncome: 0,
       totalDeductionIncomeTax: deductionIncomeTax, totalDeductionResidentTax: deductionResidentTax,
       taxableIncomeForIncomeTax: 0, taxableIncomeForResidentTax: 0,
       baseIncomeTax: 0, incomeTax: 0, residentIncomeLevy: 0,
-      adjustmentCredit: 0, furusatoResidentCredit: 0, residentTax: RESIDENT_TAX_PER_CAPITA, takeHome: 0,
+      adjustmentCredit: 0, furusatoResidentCredit: 0, residentTax: perCapitaLevy, takeHome: 0,
     };
   }
   const salaryDeduction = calcSalaryIncomeDeduction(grossAnnual, taxYear);
@@ -544,15 +573,15 @@ export function calcSalaryWithDeductions(
   const taxableIncomeForIncomeTax = Math.max(0, employmentIncome - deductionIncomeTax);
   const taxableIncomeForResidentTax = Math.max(0, employmentIncome - deductionResidentTax);
   const baseIncomeTax = calcBaseIncomeTax(taxableIncomeForIncomeTax);
-  const incomeTax = yen(baseIncomeTax * (1 + RECONSTRUCTION_SURTAX_RATE));
+  const incomeTax = yen(baseIncomeTax * (1 + p.surtaxRate));
   // 住民税の非課税限度額を判定 (合計所得 = 給与所得 employmentIncome で近似)。
   const exemption = residentTaxExemption(employmentIncome, dependentCount);
   const residentIncomeTaxPortion = exemption.incomeLevyExempt
     ? 0
-    : yen(floorTaxableThousand(taxableIncomeForResidentTax) * RESIDENT_TAX_RATE);
+    : yen(floorTaxableThousand(taxableIncomeForResidentTax) * resolveIncomeRate(p.resident));
   // 住民税の調整控除を所得割から差し引く。
   const adjustmentCredit = calcResidentAdjustmentCredit(taxableIncomeForResidentTax, humanDeductionDiff);
-  const perCapita = exemption.perCapitaExempt ? 0 : RESIDENT_TAX_PER_CAPITA;
+  const perCapita = exemption.perCapitaExempt ? 0 : perCapitaLevy;
   const residentBeforeCredit = Math.max(0, residentIncomeTaxPortion - adjustmentCredit) + perCapita;
   const furusatoResidentCredit = calcFurusatoResidentCredit(
     donation,
@@ -560,7 +589,7 @@ export function calcSalaryWithDeductions(
     marginalIncomeTaxRate(taxableIncomeForIncomeTax),
   );
   // 非課税の場合は均等割の下限を適用しない (0 まで下がる)。
-  const residentFloor = exemption.perCapitaExempt ? 0 : RESIDENT_TAX_PER_CAPITA;
+  const residentFloor = exemption.perCapitaExempt ? 0 : perCapitaLevy;
   const residentTax = Math.max(residentFloor, residentBeforeCredit - furusatoResidentCredit);
   const takeHome = grossAnnual - incomeTax - residentTax;
   return {

@@ -25,6 +25,8 @@ import {
 } from '../../data/hydroponicsSetup';
 import { DEFAULT_CROP_LIST } from '../../../shared/hydroponicCrops';
 import { publicTransportCommute } from '../../../shared/payroll';
+import { calcIncomeTax, calcNetSalary, calcResidentTax } from '../../../shared/taxCalc';
+import { DEFAULT_SOCIAL_INSURANCE_RATES, calcSocialInsurance } from '../../../shared/taxSocialInsurance';
 import { jpy } from '../../../shared/formatters';
 import type { ParameterOverrides } from '../../../shared/parameters';
 
@@ -224,6 +226,42 @@ describe('税 — 消費税率', () => {
     await mount(TaxPage);
     expect(text()).toContain('消費税 (10%)');
     expect(text()).toContain('軽減税率 (8%)');
+  });
+
+  it('対照: 所得税・住民税・手取りの既定 (復興税 2.1% / 所得割 10% / 均等割 5,000 / 社保概算 15%)', async () => {
+    await mount(TaxPage);
+    expect(statValue('所得税 (速算表 + 復興税2.1%)')).toBe(jpy(calcIncomeTax(5_000_000)));
+    expect(statValue('住民税 (所得割10% + 均等割)')).toBe(jpy(calcResidentTax(5_000_000)));
+    expect(text()).toContain('均等割5,000円の内訳');
+    expect(text()).toContain('(約15%)');
+    expect(statValue('手取り (年)')).toBe(jpy(calcNetSalary(6_000_000).takeHome));
+    expect(text()).toContain(`厚生年金 ${jpy(calcSocialInsurance(6_000_000).pension)}`);
+  });
+
+  it('復興税・住民税の自治体の値・社保概算率・厚生年金料率の上書きが計算と文言に出る', async () => {
+    await seed({
+      'incomeTax.reconstructionSurtaxRate': 0,
+      'residentTax.incomeRate': 0.05,
+      'residentTax.perCapita': 6_000,
+      'incomeTax.socialInsuranceEstimateRate': 0.2,
+      'socialInsurance.pensionRate': 0.1,
+    });
+    await mount(TaxPage);
+    expect(statValue('所得税 (速算表 + 復興税0%)')).toBe(jpy(calcIncomeTax(5_000_000, 0)));
+    expect(statValue('住民税 (所得割5% + 均等割)')).toBe(jpy(calcResidentTax(5_000_000, { incomeRate: 0.05, perCapita: 6_000 })));
+    expect(text()).toContain(`均等割は設定 › 数値パラメータ の値 ${jpy(6_000)}`);
+    expect(text()).not.toContain('均等割5,000円の内訳');
+    expect(text()).toContain('(約20%)');
+    const net = calcNetSalary(6_000_000, undefined, {
+      socialInsuranceRate: 0.2,
+      surtaxRate: 0,
+      resident: { incomeRate: 0.05, perCapita: 6_000 },
+    });
+    expect(net.takeHome).not.toBe(calcNetSalary(6_000_000).takeHome);
+    expect(statValue('手取り (年)')).toBe(jpy(net.takeHome));
+    const si = calcSocialInsurance(6_000_000, false, { ...DEFAULT_SOCIAL_INSURANCE_RATES, pensionRate: 0.1 });
+    expect(si.pension).not.toBe(calcSocialInsurance(6_000_000).pension);
+    expect(text()).toContain(`厚生年金 ${jpy(si.pension)}`);
   });
 
   it('上書きした率で計算し、% の表示も動く', async () => {

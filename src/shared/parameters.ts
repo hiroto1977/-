@@ -35,7 +35,26 @@ import {
 } from './hydroponics';
 import { COMMUTE_PUBLIC_TRANSPORT_CAP } from './payroll';
 import { DSCR_DANGER_THRESHOLD, DSCR_CAUTION_THRESHOLD, type DscrThresholds } from './realEstateMetrics';
-import { CONSUMPTION_TAX_STANDARD, CONSUMPTION_TAX_REDUCED } from './taxCalc';
+import {
+  CONSUMPTION_TAX_STANDARD,
+  CONSUMPTION_TAX_REDUCED,
+  RECONSTRUCTION_SURTAX_RATE,
+  RESIDENT_TAX_RATE,
+  RESIDENT_TAX_PER_CAPITA,
+  SOCIAL_INSURANCE_RATE,
+  type MunicipalityOverride,
+  type NetSalaryParams,
+  type SalaryTaxParams,
+} from './taxCalc';
+import {
+  PENSION_RATE,
+  HEALTH_RATE,
+  CARE_RATE,
+  EMPLOYMENT_INSURANCE_RATE,
+  PENSION_BONUS_CAP_PER_PAYMENT,
+  HEALTH_BONUS_CAP_ANNUAL,
+  type SocialInsuranceRates,
+} from './taxSocialInsurance';
 import { DEFAULT_EFFECTIVE_TAX_RATE } from './funding';
 
 /** 値の性格。画面の印と、変えるときの注意書きが変わる。 */
@@ -155,6 +174,55 @@ export function parameterDefinitions() {
     id: 'tax.consumptionReducedRate', feature: '税', label: '消費税率 (軽減)', unit: '%', scale: 100,
     defaultValue: CONSUMPTION_TAX_REDUCED, min: 0, max: 0.5, kind: 'law', source: '消費税法 (8%)',
   },
+  // --- 所得税・住民税 -------------------------------------------------------
+  {
+    id: 'incomeTax.reconstructionSurtaxRate', feature: '所得税・住民税', label: '復興特別所得税の付加率', unit: '%', scale: 100,
+    defaultValue: RECONSTRUCTION_SURTAX_RATE, min: 0, max: 0.2, kind: 'law',
+    source: '復興財源確保法 (基準所得税額 × 2.1%、2037 年分まで)',
+  },
+  {
+    id: 'incomeTax.socialInsuranceEstimateRate', feature: '所得税・住民税', label: '手取り試算の社会保険料率 (額面比例の概算)', unit: '%', scale: 100,
+    defaultValue: SOCIAL_INSURANCE_RATE, min: 0, max: 0.5, kind: 'assumption',
+    note: '簡易な手取り試算だけが使う。精密な社会保険料は等級表と下の料率で別に出す',
+  },
+  {
+    id: 'residentTax.incomeRate', feature: '所得税・住民税', label: '住民税の所得割率 (都道府県 + 市町村)', unit: '%', scale: 100,
+    defaultValue: RESIDENT_TAX_RATE, min: 0, max: 0.3, kind: 'law',
+    source: '地方税法 (標準 4% + 6%)', note: '超過課税の自治体はその率に',
+  },
+  {
+    id: 'residentTax.perCapita', feature: '所得税・住民税', label: '住民税の均等割 (森林環境税を含む年額)', unit: '円',
+    defaultValue: RESIDENT_TAX_PER_CAPITA, min: 0, max: 100_000, integer: true, kind: 'law',
+    source: '地方税法 (基礎 4,000 円) + 森林環境税 1,000 円', note: '上乗せのある自治体はその額に',
+  },
+  // --- 社会保険 -------------------------------------------------------------
+  {
+    id: 'socialInsurance.pensionRate', feature: '社会保険', label: '厚生年金保険料率 (本人負担)', unit: '%', scale: 100,
+    defaultValue: PENSION_RATE, min: 0, max: 0.3, kind: 'law', source: '厚生年金保険法 (18.3% の半分)',
+  },
+  {
+    id: 'socialInsurance.healthRate', feature: '社会保険', label: '健康保険料率 (本人負担・40 歳未満)', unit: '%', scale: 100,
+    defaultValue: HEALTH_RATE, min: 0, max: 0.3, kind: 'reference',
+    source: '協会けんぽ 全国平均 (約 10% の半分)', note: '都道府県別の率に置き換える',
+  },
+  {
+    id: 'socialInsurance.careRate', feature: '社会保険', label: '介護保険料率 (本人負担・40〜64 歳の上乗せ)', unit: '%', scale: 100,
+    defaultValue: CARE_RATE, min: 0, max: 0.1, kind: 'law', source: '協会けんぽ 令和8年度 (1.62% の半分)',
+  },
+  {
+    id: 'socialInsurance.employmentRate', feature: '社会保険', label: '雇用保険料率 (本人負担・一般の事業)', unit: '%', scale: 100,
+    defaultValue: EMPLOYMENT_INSURANCE_RATE, min: 0, max: 0.1, kind: 'law', source: '雇用保険法 令和8年度 (0.5%)',
+  },
+  {
+    id: 'socialInsurance.pensionBonusCapPerPayment', feature: '社会保険', label: '厚生年金の標準賞与額の上限 (1 回あたり)', unit: '円',
+    defaultValue: PENSION_BONUS_CAP_PER_PAYMENT, min: 0, max: 100_000_000, integer: true, kind: 'law',
+    source: '厚生年金保険法 (150 万円)',
+  },
+  {
+    id: 'socialInsurance.healthBonusCapAnnual', feature: '社会保険', label: '健康保険の標準賞与額の上限 (年度累計)', unit: '円',
+    defaultValue: HEALTH_BONUS_CAP_ANNUAL, min: 0, max: 100_000_000, integer: true, kind: 'law',
+    source: '健康保険法 (573 万円)',
+  },
   // --- 財務 ---------------------------------------------------------------
   {
     id: 'finance.effectiveTaxRate', feature: '財務', label: '実効税率 (NOPAT・税引後の試算)', unit: '%', scale: 100,
@@ -192,9 +260,13 @@ export function toDisplayValue(def: ParameterDef, internal: number): number {
   return Number((internal * (def.scale ?? 1)).toPrecision(12));
 }
 
-/** 画面の値 → 内部値 (scale で割る)。 */
+/**
+ * 画面の値 → 内部値 (scale で割る)。こちらも有効桁 12 で丸める —
+ * 0.81 ÷ 100 = 0.008100000000000001 のままだと、既定 0.0081 と「違う値」に
+ * 見えて保存ボタンが立ち、その尾つきの値が保存される。
+ */
 export function fromDisplayValue(def: ParameterDef, display: number): number {
-  return display / (def.scale ?? 1);
+  return Number((display / (def.scale ?? 1)).toPrecision(12));
 }
 
 /** id で引く版 (画面の文言が「いま効いている値」を単位つきで言うため)。 */
@@ -280,4 +352,32 @@ export function ckdPotassiumLimits(v: ParameterValues): Readonly<Record<CkdStage
 
 export function dscrThresholds(v: ParameterValues): DscrThresholds {
   return { danger: v['realEstate.dscrDangerThreshold'], caution: v['realEstate.dscrCautionThreshold'] };
+}
+
+export function socialInsuranceRates(v: ParameterValues): SocialInsuranceRates {
+  return {
+    pensionRate: v['socialInsurance.pensionRate'],
+    healthRate: v['socialInsurance.healthRate'],
+    careRate: v['socialInsurance.careRate'],
+    employmentRate: v['socialInsurance.employmentRate'],
+    pensionBonusCapPerPayment: v['socialInsurance.pensionBonusCapPerPayment'],
+    healthBonusCapAnnual: v['socialInsurance.healthBonusCapAnnual'],
+  };
+}
+
+/** 住民税の自治体の値 (`calcResidentTax` の override の形)。 */
+export function residentTaxOverride(v: ParameterValues): MunicipalityOverride {
+  return { incomeRate: v['residentTax.incomeRate'], perCapita: v['residentTax.perCapita'] };
+}
+
+export function netSalaryParams(v: ParameterValues): NetSalaryParams {
+  return {
+    socialInsuranceRate: v['incomeTax.socialInsuranceEstimateRate'],
+    surtaxRate: v['incomeTax.reconstructionSurtaxRate'],
+    resident: residentTaxOverride(v),
+  };
+}
+
+export function salaryTaxParams(v: ParameterValues): SalaryTaxParams {
+  return { surtaxRate: v['incomeTax.reconstructionSurtaxRate'], resident: residentTaxOverride(v) };
 }

@@ -174,6 +174,29 @@ export const CARE_RATE = 0.0081;
 export const EMPLOYMENT_INSURANCE_RATE = 0.005;
 
 /**
+ * 料率と賞与の上限。省略すると上の定数 (令和8年度・協会けんぽ全国平均)。
+ * 台帳 (`shared/parameters.ts`) から上書きできる — 料率は年度で変わり、
+ * 健康保険は都道府県で違う。画面が `useParameters()` で読んで渡す。
+ */
+export interface SocialInsuranceRates {
+  readonly pensionRate: number;
+  readonly healthRate: number;
+  readonly careRate: number;
+  readonly employmentRate: number;
+  readonly pensionBonusCapPerPayment: number;
+  readonly healthBonusCapAnnual: number;
+}
+
+export const DEFAULT_SOCIAL_INSURANCE_RATES: SocialInsuranceRates = {
+  pensionRate: PENSION_RATE,
+  healthRate: HEALTH_RATE,
+  careRate: CARE_RATE,
+  employmentRate: EMPLOYMENT_INSURANCE_RATE,
+  pensionBonusCapPerPayment: PENSION_BONUS_CAP_PER_PAYMENT,
+  healthBonusCapAnnual: HEALTH_BONUS_CAP_ANNUAL,
+};
+
+/**
  * 報酬月額を等級表に当てはめ、対応する標準報酬月額を返す純粋関数。
  *
  * 「以上〜未満」ルール: 報酬月額 `r` は lowerBound[i] ≤ r < lowerBound[i+1]
@@ -242,7 +265,11 @@ export interface SocialInsuranceBreakdown {
  * @param grossAnnual 額面年収 (円)
  * @param withCare 40歳以上65歳未満 (介護保険料を健康保険に上乗せ) か
  */
-export function calcSocialInsurance(grossAnnual: number, withCare = false): SocialInsuranceBreakdown {
+export function calcSocialInsurance(
+  grossAnnual: number,
+  withCare = false,
+  r: SocialInsuranceRates = DEFAULT_SOCIAL_INSURANCE_RATES,
+): SocialInsuranceBreakdown {
   // grossAnnual===0 では計算経路 (monthly=0) でも全保険料が 0 にならない
   // (標準報酬月額は最下位等級 58,000/88,000 で底打ちされる) ため、0/負は
   // ここで明示的に 0 を返す。境界は「0以下なら無職=保険料なし」とみなす。
@@ -253,11 +280,11 @@ export function calcSocialInsurance(grossAnnual: number, withCare = false): Soci
   // 標準報酬月額を等級表で決定。
   const pensionBaseMonthly = resolvePensionStandardMonthly(monthly);
   const healthBaseMonthly = resolveHealthStandardMonthly(monthly);
-  const pension = yen(pensionBaseMonthly * PENSION_RATE * 12);
-  const healthRate = HEALTH_RATE + (withCare ? CARE_RATE : 0);
+  const pension = yen(pensionBaseMonthly * r.pensionRate * 12);
+  const healthRate = r.healthRate + (withCare ? r.careRate : 0);
   const health = yen(healthBaseMonthly * healthRate * 12);
   // 雇用保険は賃金総額 (上限なし)。
-  const employment = yen(grossAnnual * EMPLOYMENT_INSURANCE_RATE);
+  const employment = yen(grossAnnual * r.employmentRate);
   return { pension, health, employment, total: pension + health + employment };
 }
 
@@ -280,32 +307,33 @@ export function calcSocialInsuranceWithBonus(
   bonusPerPayment: number,
   bonusPaymentsPerYear: number,
   withCare = false,
+  r: SocialInsuranceRates = DEFAULT_SOCIAL_INSURANCE_RATES,
 ): SocialInsuranceBreakdown {
   const monthly = Math.max(0, monthlyRemuneration);
   const bonus = Math.max(0, bonusPerPayment);
   const bonusCount = Math.max(0, Math.floor(bonusPaymentsPerYear));
-  const healthRate = HEALTH_RATE + (withCare ? CARE_RATE : 0);
+  const healthRate = r.healthRate + (withCare ? r.careRate : 0);
 
   // --- 月額報酬部分 (標準報酬月額の等級表) ---
   // monthly===0 (賞与のみ) のときは月額報酬の保険料を 0 にする (最下位等級で
   // 底打ちさせない)。在職の最低標準報酬月額を概算に持ち込まないため。
   const pensionMonthlyBase = monthly > 0 ? resolvePensionStandardMonthly(monthly) : 0;
   const healthMonthlyBase = monthly > 0 ? resolveHealthStandardMonthly(monthly) : 0;
-  let pension = pensionMonthlyBase * PENSION_RATE * 12;
+  let pension = pensionMonthlyBase * r.pensionRate * 12;
   let health = healthMonthlyBase * healthRate * 12;
 
   // --- 賞与部分 (標準賞与額 = 1,000円未満切捨て, 上限あり) ---
   const standardBonusPer = resolveStandardBonus(bonus);
   // 厚生年金: 1回ごとに150万円で頭打ち。
-  const pensionBonusBasePer = Math.min(standardBonusPer, PENSION_BONUS_CAP_PER_PAYMENT);
-  pension += pensionBonusBasePer * PENSION_RATE * bonusCount;
+  const pensionBonusBasePer = Math.min(standardBonusPer, r.pensionBonusCapPerPayment);
+  pension += pensionBonusBasePer * r.pensionRate * bonusCount;
   // 健康保険: 年度累計573万円で頭打ち。
-  const healthBonusBaseAnnual = Math.min(standardBonusPer * bonusCount, HEALTH_BONUS_CAP_ANNUAL);
+  const healthBonusBaseAnnual = Math.min(standardBonusPer * bonusCount, r.healthBonusCapAnnual);
   health += healthBonusBaseAnnual * healthRate;
 
   // 雇用保険は賃金総額 (月額×12 + 賞与×回数, 上限なし)。
   const totalWage = monthly * 12 + bonus * bonusCount;
-  const employment = yen(totalWage * EMPLOYMENT_INSURANCE_RATE);
+  const employment = yen(totalWage * r.employmentRate);
 
   const p = yen(pension);
   const h = yen(health);

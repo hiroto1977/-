@@ -20,12 +20,16 @@ import {
   hydroponicsProductionParams,
   isParameterId,
   lowPotassiumParams,
+  netSalaryParams,
   overriddenCount,
   parameterDefinitions,
   parameterFeatures,
   parameterIssue,
   resolveParameters,
+  residentTaxOverride,
+  salaryTaxParams,
   sanitizeParameterOverrides,
+  socialInsuranceRates,
   toDisplayValue,
   type ParameterDef,
   type ParameterId,
@@ -44,7 +48,25 @@ import {
 } from '../hydroponics';
 import { COMMUTE_PUBLIC_TRANSPORT_CAP } from '../payroll';
 import { DEFAULT_DSCR_THRESHOLDS, DSCR_CAUTION_THRESHOLD, DSCR_DANGER_THRESHOLD } from '../realEstateMetrics';
-import { CONSUMPTION_TAX_REDUCED, CONSUMPTION_TAX_STANDARD } from '../taxCalc';
+import {
+  CONSUMPTION_TAX_REDUCED,
+  CONSUMPTION_TAX_STANDARD,
+  DEFAULT_NET_SALARY_PARAMS,
+  DEFAULT_SALARY_TAX_PARAMS,
+  RECONSTRUCTION_SURTAX_RATE,
+  RESIDENT_TAX_PER_CAPITA,
+  RESIDENT_TAX_RATE,
+  SOCIAL_INSURANCE_RATE,
+} from '../taxCalc';
+import {
+  CARE_RATE,
+  DEFAULT_SOCIAL_INSURANCE_RATES,
+  EMPLOYMENT_INSURANCE_RATE,
+  HEALTH_BONUS_CAP_ANNUAL,
+  HEALTH_RATE,
+  PENSION_BONUS_CAP_PER_PAYMENT,
+  PENSION_RATE,
+} from '../taxSocialInsurance';
 import { DEFAULT_EFFECTIVE_TAX_RATE } from '../funding';
 
 const def = (id: ParameterId): ParameterDef => PARAMETER_BY_ID.get(id)!;
@@ -68,6 +90,16 @@ const DEFAULT_SOURCE: Readonly<Record<ParameterId, number>> = {
   'realEstate.dscrCautionThreshold': DSCR_CAUTION_THRESHOLD,
   'tax.consumptionStandardRate': CONSUMPTION_TAX_STANDARD,
   'tax.consumptionReducedRate': CONSUMPTION_TAX_REDUCED,
+  'incomeTax.reconstructionSurtaxRate': RECONSTRUCTION_SURTAX_RATE,
+  'incomeTax.socialInsuranceEstimateRate': SOCIAL_INSURANCE_RATE,
+  'residentTax.incomeRate': RESIDENT_TAX_RATE,
+  'residentTax.perCapita': RESIDENT_TAX_PER_CAPITA,
+  'socialInsurance.pensionRate': PENSION_RATE,
+  'socialInsurance.healthRate': HEALTH_RATE,
+  'socialInsurance.careRate': CARE_RATE,
+  'socialInsurance.employmentRate': EMPLOYMENT_INSURANCE_RATE,
+  'socialInsurance.pensionBonusCapPerPayment': PENSION_BONUS_CAP_PER_PAYMENT,
+  'socialInsurance.healthBonusCapAnnual': HEALTH_BONUS_CAP_ANNUAL,
   'finance.effectiveTaxRate': DEFAULT_EFFECTIVE_TAX_RATE,
 };
 
@@ -103,7 +135,7 @@ describe('台帳の形', () => {
   });
 
   it('画面のまとまりは登場順で、重複しない', () => {
-    expect(parameterFeatures()).toEqual(['水耕栽培', '給与', '不動産', '税', '財務']);
+    expect(parameterFeatures()).toEqual(['水耕栽培', '給与', '不動産', '税', '所得税・住民税', '社会保険', '財務']);
   });
 
   it('割合は % で見せる (scale 100)、それ以外は素のまま', () => {
@@ -175,6 +207,9 @@ describe('画面の値と内部値の往復', () => {
     expect(0.07 * 100).not.toBe(7); // 標本: 素の掛け算は尾を出す
     expect(toDisplayValue(PCT, 0.07)).toBe(7);
     expect(fromDisplayValue(PCT, 7)).toBe(0.07);
+    // 割り算側にも尾が出る (介護保険料率 0.81% で実際に踏んだ)。
+    expect(0.81 / 100).not.toBe(0.0081); // 標本: 素の割り算は尾を出す
+    expect(fromDisplayValue(PCT, 0.81)).toBe(0.0081);
     expect(displayValue('tax.consumptionStandardRate', 0.1)).toBe(10);
     expect(displayValue('hydroponics.daysPerYear', 300)).toBe(300);
   });
@@ -272,6 +307,41 @@ describe('機能ごとの取り出し口', () => {
     expect(dscrThresholds(custom)).toEqual({ danger: 1.5, caution: 2 });
   });
 
+  it('税・社会保険の取り出し口 — 既定は各モジュールの既定引数と同じ物', () => {
+    expect(socialInsuranceRates(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_SOCIAL_INSURANCE_RATES);
+    expect(residentTaxOverride(DEFAULT_PARAMETER_VALUES)).toEqual({ incomeRate: RESIDENT_TAX_RATE, perCapita: RESIDENT_TAX_PER_CAPITA });
+    expect(netSalaryParams(DEFAULT_PARAMETER_VALUES)).toEqual({
+      ...DEFAULT_NET_SALARY_PARAMS,
+      resident: { incomeRate: RESIDENT_TAX_RATE, perCapita: RESIDENT_TAX_PER_CAPITA },
+    });
+    expect(salaryTaxParams(DEFAULT_PARAMETER_VALUES)).toEqual({
+      ...DEFAULT_SALARY_TAX_PARAMS,
+      resident: { incomeRate: RESIDENT_TAX_RATE, perCapita: RESIDENT_TAX_PER_CAPITA },
+    });
+  });
+
+  it('税・社会保険の取り出し口 — 上書きは正しい引数へ届く', () => {
+    const v = resolveParameters({
+      'incomeTax.reconstructionSurtaxRate': 0,
+      'incomeTax.socialInsuranceEstimateRate': 0.2,
+      'residentTax.incomeRate': 0.05,
+      'residentTax.perCapita': 6000,
+      'socialInsurance.pensionRate': 0.1,
+      'socialInsurance.healthRate': 0.06,
+      'socialInsurance.careRate': 0.01,
+      'socialInsurance.employmentRate': 0.007,
+      'socialInsurance.pensionBonusCapPerPayment': 1_000_000,
+      'socialInsurance.healthBonusCapAnnual': 3_000_000,
+    });
+    expect(socialInsuranceRates(v)).toEqual({
+      pensionRate: 0.1, healthRate: 0.06, careRate: 0.01, employmentRate: 0.007,
+      pensionBonusCapPerPayment: 1_000_000, healthBonusCapAnnual: 3_000_000,
+    });
+    expect(residentTaxOverride(v)).toEqual({ incomeRate: 0.05, perCapita: 6000 });
+    expect(netSalaryParams(v)).toEqual({ socialInsuranceRate: 0.2, surtaxRate: 0, resident: { incomeRate: 0.05, perCapita: 6000 } });
+    expect(salaryTaxParams(v)).toEqual({ surtaxRate: 0, resident: { incomeRate: 0.05, perCapita: 6000 } });
+  });
+
   it('制限のない病期 (G1〜G3a) の null は上書きしても保たれる', () => {
     const limits = ckdPotassiumLimits(custom);
     expect(limits.G1).toBeNull();
@@ -305,6 +375,16 @@ describe('台帳の表 (静的な値の固定)', () => {
       ['realEstate.dscrCautionThreshold', '倍', 1, 0.1, 10, false, 'threshold'],
       ['tax.consumptionStandardRate', '%', 100, 0, 0.5, false, 'law'],
       ['tax.consumptionReducedRate', '%', 100, 0, 0.5, false, 'law'],
+      ['incomeTax.reconstructionSurtaxRate', '%', 100, 0, 0.2, false, 'law'],
+      ['incomeTax.socialInsuranceEstimateRate', '%', 100, 0, 0.5, false, 'assumption'],
+      ['residentTax.incomeRate', '%', 100, 0, 0.3, false, 'law'],
+      ['residentTax.perCapita', '円', 1, 0, 100_000, true, 'law'],
+      ['socialInsurance.pensionRate', '%', 100, 0, 0.3, false, 'law'],
+      ['socialInsurance.healthRate', '%', 100, 0, 0.3, false, 'reference'],
+      ['socialInsurance.careRate', '%', 100, 0, 0.1, false, 'law'],
+      ['socialInsurance.employmentRate', '%', 100, 0, 0.1, false, 'law'],
+      ['socialInsurance.pensionBonusCapPerPayment', '円', 1, 0, 100_000_000, true, 'law'],
+      ['socialInsurance.healthBonusCapAnnual', '円', 1, 0, 100_000_000, true, 'law'],
       ['finance.effectiveTaxRate', '%', 100, 0, 1, false, 'assumption'],
     ]);
     expect(m.PARAMETER_KIND_LABEL).toEqual({ law: '法定値', reference: '参考値', threshold: 'しきい値', assumption: '前提' });
