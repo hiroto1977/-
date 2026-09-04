@@ -4,6 +4,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
 import { tableStyle, thStyle, tdStyle } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
+import { RealtimeTicker, type RealtimeRow } from '../components/RealtimeTicker';
 import { jpy } from '../../shared/formatters';
 import { parseAmountInput } from '../components/serviceActionUtils';
 import { GuardSummary, GuardedNumber } from '../components/GuardedNumber';
@@ -21,11 +22,31 @@ import {
   type CustomsBasis,
 } from '../../shared/tradeTax';
 import { guardAll, readNumber } from '../data/inputGuards';
+import { useParameters } from '../data/parameterOverrides';
+import {
+  acquisitionParams,
+  businessConsumptionParams,
+  capitalGainsParams,
+  deductionParams,
+  displayValue,
+  dividendParams,
+  fixedAssetRates,
+  fixedAssetThresholds,
+  furusatoParams,
+  importParams,
+  pensionDeductionParams,
+  registrationRates,
+  stampDutyParams,
+  mortgageCreditParams,
+  netSalaryParams,
+  residentTaxOverride,
+  salaryTaxParams,
+  scheduleParams,
+  socialInsuranceRates,
+} from '../../shared/parameters';
 import { WelfareSchemeCard } from '../components/WelfareSchemeCard';
 import {
-  CONSUMPTION_TAX_REDUCED,
-  CONSUMPTION_TAX_STANDARD,
-  RECONSTRUCTION_SURTAX_RATE,
+  RESIDENT_TAX_PER_CAPITA,
   calcConsumptionTax,
   calcIncomeTax,
   calcNetSalary,
@@ -69,7 +90,7 @@ import {
 } from '../../shared/taxConsumptionBusiness';
 import { calcSocialInsurance, calcSocialInsuranceWithBonus } from '../../shared/taxSocialInsurance';
 import { calcFurusatoBreakdown, furusatoOneStopEligibility } from '../../shared/taxFurusato';
-import { compareDividendMethods, type DividendMethod } from '../../shared/taxDividend';
+import { compareDividendMethods, withholdingTotalRate, type DividendMethod } from '../../shared/taxDividend';
 import {
   calcFixedAssetTaxTotal,
   fixedAssetTax,
@@ -138,9 +159,41 @@ export function TaxPage() {
     return p.ok && p.value !== undefined && p.value > 0 ? p.value : 0;
   }, [grossStr]);
 
-  const incomeTax = useMemo(() => calcIncomeTax(taxableIncome), [taxableIncome]);
-  const residentTax = useMemo(() => calcResidentTax(taxableIncome), [taxableIncome]);
-  const netSalary = useMemo(() => calcNetSalary(grossAnnual), [grossAnnual]);
+  // 台帳の数値パラメータ (設定画面で上書きできる)。計算の関数へ引数で渡し、
+  // 表示の % も同じ値から出す (文言だけ古い率のまま、を作らない)。
+  const { values: params } = useParameters();
+  const scheduleP = useMemo(() => scheduleParams(params), [params]);
+  const dividendP = useMemo(() => dividendParams(params), [params]);
+  const surtaxRate = params['incomeTax.reconstructionSurtaxRate'];
+  const surtaxPct = displayValue('incomeTax.reconstructionSurtaxRate', surtaxRate);
+  const residentPct = displayValue('residentTax.incomeRate', params['residentTax.incomeRate']);
+  const residentPerCapita = params['residentTax.perCapita'];
+  const siEstimatePct = displayValue('incomeTax.socialInsuranceEstimateRate', params['incomeTax.socialInsuranceEstimateRate']);
+  const residentOverride = useMemo(() => residentTaxOverride(params), [params]);
+  const netParams = useMemo(() => netSalaryParams(params), [params]);
+  const salaryParams = useMemo(() => salaryTaxParams(params), [params]);
+  const siRates = useMemo(() => socialInsuranceRates(params), [params]);
+  const dedParams = useMemo(() => deductionParams(params), [params]);
+  // 名前に注意: 下の memo 内の `mortgageParams` は居住年 × 性能区分で決まる率と残高上限 (台帳ではない)。
+  const mortgageCreditP = useMemo(() => mortgageCreditParams(params), [params]);
+  const levyRate = params['credit.residentLevyWithholdingRate'];
+  const faRates = useMemo(() => fixedAssetRates(params), [params]);
+  const faThresholds = useMemo(() => fixedAssetThresholds(params), [params]);
+  const acqParams = useMemo(() => acquisitionParams(params), [params]);
+  const regRates = useMemo(() => registrationRates(params), [params]);
+  const stampParams = useMemo(() => stampDutyParams(params), [params]);
+  const cgParams = useMemo(() => capitalGainsParams(params), [params]);
+  const cgEstimateRate = params['capitalGains.estimatedAcquisitionCostRate'];
+  const cgEstimatePct = displayValue('capitalGains.estimatedAcquisitionCostRate', cgEstimateRate);
+  const bizParams = useMemo(() => businessConsumptionParams(params), [params]);
+  const pensionP = useMemo(() => pensionDeductionParams(params), [params]);
+  const casualCap = params['casual.specialDeduction'];
+  const furusatoP = useMemo(() => furusatoParams(params), [params]);
+  const furusatoMax = params['furusato.oneStopMaxMunicipalities'];
+  const importP = useMemo(() => importParams(params), [params]);
+  const incomeTax = useMemo(() => calcIncomeTax(taxableIncome, surtaxRate), [taxableIncome, surtaxRate]);
+  const residentTax = useMemo(() => calcResidentTax(taxableIncome, residentOverride), [taxableIncome, residentOverride]);
+  const netSalary = useMemo(() => calcNetSalary(grossAnnual, undefined, netParams), [grossAnnual, netParams]);
   const [careInsurance, setCareInsurance] = useState(false);
   const [bonusPerStr, setBonusPerStr] = useState('0');
   const [bonusCountStr, setBonusCountStr] = useState('2');
@@ -159,15 +212,43 @@ export function TaxPage() {
       // 賞与あり: 年収から賞与総額を引いた残りを月額報酬とみなす。
       const annualBonus = bonusPer * bonusCount;
       const monthly = Math.max(0, (grossAnnual - annualBonus) / 12);
-      return calcSocialInsuranceWithBonus(monthly, bonusPer, bonusCount, careInsurance);
+      return calcSocialInsuranceWithBonus(monthly, bonusPer, bonusCount, careInsurance, siRates);
     }
-    return calcSocialInsurance(grossAnnual, careInsurance);
-  }, [grossAnnual, careInsurance, bonusPerStr, bonusCountStr]);
+    return calcSocialInsurance(grossAnnual, careInsurance, siRates);
+  }, [grossAnnual, careInsurance, bonusPerStr, bonusCountStr, siRates]);
+  // 消費税率も台帳の値。表示の % も同じ値から出す。
+  const standardRate = params['tax.consumptionStandardRate'];
+  const reducedRate = params['tax.consumptionReducedRate'];
+  const consumptionRatePct = reduced
+    ? displayValue('tax.consumptionReducedRate', reducedRate)
+    : displayValue('tax.consumptionStandardRate', standardRate);
   const consumptionTax = useMemo(
-    () => calcConsumptionTax(netAmount, reduced ? CONSUMPTION_TAX_REDUCED : CONSUMPTION_TAX_STANDARD),
-    [netAmount, reduced],
+    () => calcConsumptionTax(netAmount, reduced ? reducedRate : standardRate),
+    [netAmount, reduced, reducedRate, standardRate],
   );
   const tips = useMemo(() => suggestTaxTips(taxableIncome), [taxableIncome]);
+
+  /*
+   * 秒単位の帯に出す行。**年額を渡すだけ** —— 按分も刻みも
+   * `RealtimeTicker` / `shared/realtimeProjection.ts` が持つ。
+   * ここで按分を書くと、経営サマリー側と 2 つになってずれる。
+   *
+   * 消費税は「預かった額」であって費用ではないので、色を分けて並べる。
+   */
+  const realtimeRows: RealtimeRow[] = useMemo(
+    () => [
+      { label: '所得税 (課税所得ベース)', annual: incomeTax, color: '#f7768e' },
+      { label: '住民税 (課税所得ベース)', annual: residentTax, color: '#e0af68' },
+      { label: '手取り (額面年収ベース)', annual: netSalary.takeHome, color: '#3ec98a' },
+      {
+        label: '消費税 (預かり)',
+        annual: consumptionTax * 12,
+        color: '#7aa2f7',
+        hint: '入力した税抜額が毎月発生する前提',
+      },
+    ],
+    [incomeTax, residentTax, netSalary.takeHome, consumptionTax],
+  );
 
   // --- ③ 全控除込みの精密試算 ---
   const [dGrossStr, setDGrossStr] = useState('6000000');
@@ -220,12 +301,13 @@ export function TaxPage() {
       donation,
       singleParent,
     };
-    const ded = calcAllDeductions(input);
+    const ded = calcAllDeductions(input, dedParams);
     // 住民税の非課税限度額判定に使う扶養人数 (配偶者 + 扶養親族)。
     const dependentCount = (hasSpouse ? 1 : 0) + dependents.length;
     // ① 所得控除込みの税額 (ふるさと納税の住民税控除・住民税の調整控除・非課税限度額も内部適用済み)。
     const result = calcSalaryWithDeductions(
       dGross, ded.total.incomeTax, ded.total.residentTax, donation, ded.humanDeductionDiff, dependentCount,
+      undefined, salaryParams,
     );
 
     // ② 税額控除 (住宅ローン・配当) を、復興特別所得税の前の「基準所得税額」に
@@ -251,17 +333,17 @@ export function TaxPage() {
       dividend: dividendIncome > 0
         ? { dividendIncome, taxableTotalIncome: result.taxableIncomeForIncomeTax, kind: dividendKind }
         : undefined,
-    });
+    }, mortgageCreditP);
     const afterCredits = applyTaxCreditsWithSurtax(
       result.baseIncomeTax,
       result.residentTax,
       credits,
-      RECONSTRUCTION_SURTAX_RATE,
+      surtaxRate,
     );
     const finalTakeHome = dGross - afterCredits.incomeTax - afterCredits.residentTax;
 
     return { ded, result, credits, afterCredits, finalTakeHome };
-  }, [dGrossStr, dSocialStr, dIdecoStr, idecoOccupation, dSmallBizStr, dLifeStr, dLifeOldStr, dQuakeStr, dMedicalStr, dSelfMedStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent, mortgageBalanceStr, mortgageYear, mortgagePerf, dividendStr, dividendKind]);
+  }, [dGrossStr, dSocialStr, dIdecoStr, idecoOccupation, dSmallBizStr, dLifeStr, dLifeOldStr, dQuakeStr, dMedicalStr, dSelfMedStr, dDonationStr, hasSpouse, spouseIncomeStr, generalDeps, specificDeps, singleParent, mortgageBalanceStr, mortgageYear, mortgagePerf, dividendStr, dividendKind, salaryParams, surtaxRate, dedParams, mortgageCreditP]);
 
   // --- ④ 退職所得の試算 ---
   const [severanceStr, setSeveranceStr] = useState('20000000');
@@ -281,8 +363,8 @@ export function TaxPage() {
   const [casualExpStr, setCasualExpStr] = useState('2000000');
 
   const casual = useMemo(() => {
-    return calcCasualIncome(num(casualGrossStr), num(casualExpStr));
-  }, [casualGrossStr, casualExpStr]);
+    return calcCasualIncome(num(casualGrossStr), num(casualExpStr), casualCap);
+  }, [casualGrossStr, casualExpStr, casualCap]);
 
   // --- ⑥ 譲渡所得の試算 (申告分離課税) ---
   const [cgProceedsStr, setCgProceedsStr] = useState('50000000');
@@ -293,9 +375,9 @@ export function TaxPage() {
 
   const capitalGains = useMemo(() => {
     // 概算取得費5%特例: 取得費不明 or 概算の方が大きい場合は概算取得費を使う。
-    const cost = resolveAcquisitionCost(num(cgProceedsStr), num(cgCostStr), cgUseEstimate);
-    return calcCapitalGainsTax(num(cgProceedsStr), cost, num(cgFeeStr), cgKind);
-  }, [cgProceedsStr, cgCostStr, cgFeeStr, cgKind, cgUseEstimate]);
+    const cost = resolveAcquisitionCost(num(cgProceedsStr), num(cgCostStr), cgUseEstimate, cgEstimateRate);
+    return calcCapitalGainsTax(num(cgProceedsStr), cost, num(cgFeeStr), cgKind, cgParams);
+  }, [cgProceedsStr, cgCostStr, cgFeeStr, cgKind, cgUseEstimate, cgEstimateRate, cgParams]);
 
   // --- ⑦ ふるさと納税ワンストップ特例の内訳 ---
   const [fsDonationStr, setFsDonationStr] = useState('52000');
@@ -306,25 +388,25 @@ export function TaxPage() {
     // セクション③の精密試算から住民税所得割額・限界税率を引いて使う。
     const levy = precise.result.residentIncomeLevy;
     const marginal = marginalIncomeTaxRate(precise.result.taxableIncomeForIncomeTax);
-    const eligibility = furusatoOneStopEligibility(num(fsMunicipalitiesStr), fsFilesReturn);
+    const eligibility = furusatoOneStopEligibility(num(fsMunicipalitiesStr), fsFilesReturn, furusatoMax);
     // ワンストップが使える かつ 申告しない場合のみ one-stop 計算。
     const useOneStop = eligibility.eligible;
     return {
       eligibility,
-      filing: calcFurusatoBreakdown(num(fsDonationStr), levy, marginal, false),
-      oneStop: calcFurusatoBreakdown(num(fsDonationStr), levy, marginal, true),
+      filing: calcFurusatoBreakdown(num(fsDonationStr), levy, marginal, false, furusatoP),
+      oneStop: calcFurusatoBreakdown(num(fsDonationStr), levy, marginal, true, furusatoP),
       useOneStop,
       levy,
       marginal,
     };
-  }, [fsDonationStr, fsMunicipalitiesStr, fsFilesReturn, precise.result.residentIncomeLevy, precise.result.taxableIncomeForIncomeTax]);
+  }, [fsDonationStr, fsMunicipalitiesStr, fsFilesReturn, precise.result.residentIncomeLevy, precise.result.taxableIncomeForIncomeTax, furusatoMax, furusatoP]);
 
   // --- ⑧ 上場株式配当の課税方式 有利判定 ---
   const [divIncomeStr, setDivIncomeStr] = useState('1000000');
   const dividendComparison = useMemo(() => {
     // 配当以外の課税所得はセクション③の精密試算 (配当を含まない) を使う。
-    return compareDividendMethods(num(divIncomeStr), precise.result.taxableIncomeForIncomeTax, 'stock');
-  }, [divIncomeStr, precise.result.taxableIncomeForIncomeTax]);
+    return compareDividendMethods(num(divIncomeStr), precise.result.taxableIncomeForIncomeTax, 'stock', dividendP);
+  }, [divIncomeStr, precise.result.taxableIncomeForIncomeTax, dividendP]);
 
   const dividendMethodLabel: Record<DividendMethod, string> = {
     withholding: '申告不要 (源泉徴収)',
@@ -332,14 +414,14 @@ export function TaxPage() {
     aggregate: '総合課税',
   };
   // 配当を申告した場合に所得割から差し引ける配当割控除 (住民税5%)。
-  const dividendLevyCredit = useMemo(() => calcDividendLevyCredit(num(divIncomeStr)), [divIncomeStr]);
+  const dividendLevyCredit = useMemo(() => calcDividendLevyCredit(num(divIncomeStr), levyRate), [divIncomeStr, levyRate]);
 
   // --- ⑨ 公的年金等の雑所得 ---
   const [pensionIncomeStr, setPensionIncomeStr] = useState('3000000');
   const [pensionOver65, setPensionOver65] = useState(true);
   const pension = useMemo(
-    () => calcPublicPensionIncome(num(pensionIncomeStr), pensionOver65),
-    [pensionIncomeStr, pensionOver65],
+    () => calcPublicPensionIncome(num(pensionIncomeStr), pensionOver65, pensionP),
+    [pensionIncomeStr, pensionOver65, pensionP],
   );
 
   // --- ⑩ 消費税の納付方式の比較 (本則/簡易/2割特例) ---
@@ -358,8 +440,9 @@ export function TaxPage() {
       compareBusinessTaxMethods(
         [{ type: ctBizType, sales: { standard: num(ctSalesStr), reduced: num(ctReducedSalesStr) } }],
         { standard: num(ctPurchaseStr), reduced: 0 },
+        bizParams,
       ),
-    [ctSalesStr, ctReducedSalesStr, ctPurchaseStr, ctBizType],
+    [ctSalesStr, ctReducedSalesStr, ctPurchaseStr, ctBizType, bizParams],
   );
   // ⑩-2 納付/還付スケジュール — 税率 0%〜50% を範囲に、金額と時期を出す。
   const [csRateStr, setCsRateStr] = useState('10');
@@ -387,7 +470,7 @@ export function TaxPage() {
     [csFiler, csEndMonth, csEndYear, csExtended, csMethod, ctSalesStr, ctReducedSalesStr, ctPurchaseStr, ctBizType, csPriorStr, csETax],
   );
   const csRate = useMemo(() => Math.min(MAX_RATE, Math.max(0, num(csRateStr) / 100)), [csRateStr]);
-  const schedule = useMemo(() => buildSchedule(csInput, csRate), [csInput, csRate]);
+  const schedule = useMemo(() => buildSchedule(csInput, csRate, scheduleP), [csInput, csRate, scheduleP]);
 
   // ⑫ 貿易にかかる税 — 輸入（関税＋輸入消費税）／輸出（輸出税＋仕向国の関税・付加価値税）
   const [imGoodsStr, setImGoodsStr] = useState('500000');
@@ -410,8 +493,8 @@ export function TaxPage() {
         reducedRate: imReduced,
         personalUse: imPersonal,
         exemptionExcluded: imExcluded,
-      }),
-    [imGoodsStr, imFreightStr, imInsuranceStr, imDutyStr, imExciseStr, imReduced, imPersonal, imExcluded],
+      }, importP),
+    [imGoodsStr, imFreightStr, imInsuranceStr, imDutyStr, imExciseStr, imReduced, imPersonal, imExcluded, importP],
   );
 
   const [exGoodsStr, setExGoodsStr] = useState('1000000');
@@ -452,8 +535,8 @@ export function TaxPage() {
   }
 
   const ctExempt = useMemo(
-    () => isTaxExempt(num(ctSalesStr) + num(ctReducedSalesStr)),
-    [ctSalesStr, ctReducedSalesStr],
+    () => isTaxExempt(num(ctSalesStr) + num(ctReducedSalesStr), bizParams.exemptionThreshold),
+    [ctSalesStr, ctReducedSalesStr, bizParams],
   );
 
   // ⑩-3 本則課税の仕入控除税額。売上は ⑩ の入力を使い、非課税・免税売上と
@@ -469,12 +552,12 @@ export function TaxPage() {
     const exemptSales = num(ctExemptSalesStr);
     const taxableAndExport = taxableSales.standard + taxableSales.reduced + exportSales;
     return {
-      compare: compareInputCreditMethods(purchases, taxableAndExport, exemptSales),
-      itemized: calcStandardTaxDetailed({ taxableSales, exportSales, exemptSales, purchases, method: 'itemized' }),
-      proportional: calcStandardTaxDetailed({ taxableSales, exportSales, exemptSales, purchases, method: 'proportional' }),
+      compare: compareInputCreditMethods(purchases, taxableAndExport, exemptSales, bizParams),
+      itemized: calcStandardTaxDetailed({ taxableSales, exportSales, exemptSales, purchases, method: 'itemized' }, bizParams),
+      proportional: calcStandardTaxDetailed({ taxableSales, exportSales, exemptSales, purchases, method: 'proportional' }, bizParams),
       taxableAndExport,
     };
-  }, [ctSalesStr, ctReducedSalesStr, ctExportSalesStr, ctExemptSalesStr, icTaxableOnlyStr, icExemptOnlyStr, icCommonStr]);
+  }, [ctSalesStr, ctReducedSalesStr, ctExportSalesStr, ctExemptSalesStr, icTaxableOnlyStr, icExemptOnlyStr, icCommonStr, bizParams]);
   const ctMethodLabel: Record<ConsumptionTaxMethod, string> = {
     standard: '本則課税',
     simplified: '簡易課税',
@@ -498,13 +581,20 @@ export function TaxPage() {
     const dwellings = Math.max(1, Math.floor(num(faDwellingsStr)) || 1);
     if (faResidential) {
       // 住宅用地特例あり: 課税標準を 1/6・1/3 等に按分して合算する。
-      return calcFixedAssetTaxTotal({ assessedValue, areaSqm, dwellings });
+      return calcFixedAssetTaxTotal({
+        assessedValue,
+        areaSqm,
+        dwellings,
+        fixedRate: faRates.fixedRate,
+        cityPlanningRate: faRates.cityPlanningRate,
+        thresholds: faThresholds,
+      });
     }
     // 特例なし: 評価額をそのまま課税標準として課税。
-    const fixed = fixedAssetTax({ taxableBase: assessedValue });
-    const city = cityPlanningTax({ taxableBase: assessedValue });
+    const fixed = fixedAssetTax({ taxableBase: assessedValue, rate: faRates.fixedRate });
+    const city = cityPlanningTax({ taxableBase: assessedValue, rate: faRates.cityPlanningRate });
     return { fixedAssetTax: fixed, cityPlanningTax: city, total: fixed + city, exempt: false };
-  }, [faAssessedStr, faAreaStr, faDwellingsStr, faResidential]);
+  }, [faAssessedStr, faAreaStr, faDwellingsStr, faResidential, faRates, faThresholds]);
 
   // (b) 不動産取得税
   const [acqAssessedStr, setAcqAssessedStr] = useState('20000000');
@@ -520,16 +610,16 @@ export function TaxPage() {
         applyReduction: acqReduction,
         isUrbanLand: acqUrbanLand,
         isNewBuilding: acqNewBuilding,
-      }),
-    [acqAssessedStr, acqPropertyType, acqUrbanLand, acqNewBuilding, acqReduction],
+      }, acqParams),
+    [acqAssessedStr, acqPropertyType, acqUrbanLand, acqNewBuilding, acqReduction, acqParams],
   );
 
   // (c) 登録免許税
   const [regTaxableStr, setRegTaxableStr] = useState('20000000');
   const [regType, setRegType] = useState<RegistrationType>('transferSale');
   const registration = useMemo(
-    () => realEstateRegistrationTax({ taxableValue: num(regTaxableStr), registrationType: regType }),
-    [regTaxableStr, regType],
+    () => realEstateRegistrationTax({ taxableValue: num(regTaxableStr), registrationType: regType }, regRates),
+    [regTaxableStr, regType, regRates],
   );
 
   // (d) 印紙税
@@ -541,8 +631,8 @@ export function TaxPage() {
     return stampDutyAmount({
       documentType: stampDocType,
       contractAmount: amount > 0 ? amount : undefined,
-    });
-  }, [stampDocType, stampAmountStr]);
+    }, stampParams);
+  }, [stampDocType, stampAmountStr, stampParams]);
 
   // (e) 不動産取得コスト総額 (取得税 + 登録免許税 + 印紙税)
   const [costAssessedStr, setCostAssessedStr] = useState('20000000');
@@ -715,6 +805,13 @@ export function TaxPage() {
 
       <GuardSummary issues={inputIssues} title="入力の確認 (試算の前提)" />
 
+      <Section title="いま この瞬間 (秒単位)">
+        <RealtimeTicker
+          rows={realtimeRows}
+          note="下の各試算の年額を、年内の経過で按分した「ここまでの発生見込み」です。実際の課税・納付の時点とは一致しません (所得税・住民税は申告/特別徴収の時期に、消費税は課税期間ごとに確定します)。"
+        />
+      </Section>
+
       <Section title="① 課税所得から所得税・住民税を試算" count={2}>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
           <label style={{ fontSize: 12, color: 'var(--text-mute)' }}>課税所得 (年, 円)</label>
@@ -728,14 +825,15 @@ export function TaxPage() {
           />
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
-          <Stat label="所得税 (速算表 + 復興税2.1%)" value={jpy(incomeTax)} />
-          <Stat label="住民税 (所得割10% + 均等割)" value={jpy(residentTax)} />
+          <Stat label={`所得税 (速算表 + 復興税${surtaxPct}%)`} value={jpy(incomeTax)} />
+          <Stat label={`住民税 (所得割${residentPct}% + 均等割)`} value={jpy(residentTax)} />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
-          ※ 所得税は国税庁の速算表 (7段階・累進)、住民税は所得割10%+均等割で計算。ここでの「課税所得」は
+          ※ 所得税は国税庁の速算表 (7段階・累進)、住民税は所得割{residentPct}%+均等割で計算。ここでの「課税所得」は
           各種所得控除をすべて差し引いた後の金額を入力してください。
-          均等割5,000円の内訳は、2024年度以降は基礎4,000円+森林環境税1,000円 (それ以前は基礎4,000円+復興特別1,000円) で、
-          総額は変わりません。
+          {residentPerCapita === RESIDENT_TAX_PER_CAPITA
+            ? '均等割5,000円の内訳は、2024年度以降は基礎4,000円+森林環境税1,000円 (それ以前は基礎4,000円+復興特別1,000円) で、総額は変わりません。'
+            : `均等割は設定 › 数値パラメータ の値 ${jpy(residentPerCapita)} で計算しています。`}
         </div>
       </Section>
 
@@ -769,7 +867,7 @@ export function TaxPage() {
           <Stat label="手取り (年)" value={jpy(netSalary.takeHome)} positive />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
-          ※ 給与所得控除・基礎控除・所得税速算表・住民税は<strong>正式テーブル</strong>で計算。手取りの社会保険料は額面比例の概算 (約15%)。
+          ※ 給与所得控除・基礎控除・所得税速算表・住民税は<strong>正式テーブル</strong>で計算。手取りの社会保険料は額面比例の概算 (約{siEstimatePct}%)。
           配偶者・扶養・生命保険料等の控除は含まないため、扶養がある場合は実際より高めに出ます。<br />
           内訳: 給与所得 {jpy(netSalary.employmentIncome)} / 社保 {jpy(netSalary.socialInsurance)} /
           課税所得 {jpy(netSalary.taxableIncome)} / 所得税 {jpy(netSalary.incomeTax)} / 住民税 {jpy(netSalary.residentTax)}。
@@ -779,9 +877,9 @@ export function TaxPage() {
           合計 {jpy(socialInsurancePrecise.total)}（厚生年金 {jpy(socialInsurancePrecise.pension)} /
           健康保険{careInsurance ? '+介護' : ''} {jpy(socialInsurancePrecise.health)} /
           雇用保険 {jpy(socialInsurancePrecise.employment)}）。
-          厚生年金は標準報酬月額65万円、健康保険は139万円で頭打ちになるため、高年収では上の額面比例(15%)より低くなります (令和6年度・協会けんぽ全国平均ベース)。
+          厚生年金は標準報酬月額65万円、健康保険は139万円で頭打ちになるため、高年収では上の額面比例({siEstimatePct}%)より低くなります (料率は設定 › 数値パラメータ の値。既定は令和8年度・協会けんぽ全国平均ベース)。
           {num(bonusPerStr) > 0 && num(bonusCountStr) > 0 && (
-            <> 賞与を入力した場合は、標準賞与額の上限 (厚生年金 1回150万円 / 健康保険 年573万円) を反映し、年収から賞与総額を引いた残りを月額報酬として計算します。</>
+            <> 賞与を入力した場合は、標準賞与額の上限 (厚生年金 1回{jpy(siRates.pensionBonusCapPerPayment)} / 健康保険 年{jpy(siRates.healthBonusCapAnnual)}) を反映し、年収から賞与総額を引いた残りを月額報酬として計算します。</>
           )}
         </div>
       </Section>
@@ -796,7 +894,7 @@ export function TaxPage() {
             ['額面年収 (円)', dGrossStr, setDGrossStr],
             ['支払社会保険料 (実額/年)', dSocialStr, setDSocialStr],
             ['iDeCo 拠出 (年)', dIdecoStr, setDIdecoStr],
-            ['小規模企業共済 (年・上限84万)', dSmallBizStr, setDSmallBizStr],
+            [`小規模企業共済 (年・上限${jpy(dedParams.smallBizMutualAnnualCap)})`, dSmallBizStr, setDSmallBizStr],
             ['一般生命保険料・新制度 (年)', dLifeStr, setDLifeStr],
             ['一般生命保険料・旧制度 (年)', dLifeOldStr, setDLifeOldStr],
             ['地震保険料 (年)', dQuakeStr, setDQuakeStr],
@@ -946,7 +1044,7 @@ export function TaxPage() {
       <Section title="⑤ 一時所得の試算 (総合課税)" count={2}>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
           生命保険の満期返戻金・解約返戻金 (一時金)、懸賞・福引の賞金、競馬の払戻金、法人からの贈与などが一時所得です。
-          <strong>(収入 − 経費 − 特別控除50万円) × 1/2</strong> が総合課税の課税所得に算入されます (国税庁 No.1490)。
+          <strong>(収入 − 経費 − 特別控除{jpy(casualCap)}) × 1/2</strong> が総合課税の課税所得に算入されます (国税庁 No.1490)。
           ※ 算入額は他の所得と合算して課税されます。本欄は算入額のみを計算します。
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
@@ -964,7 +1062,7 @@ export function TaxPage() {
           <Stat label="課税所得への算入額 (×1/2)" value={jpy(casual.taxableAmount)} positive />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
-          特別控除 {jpy(casual.specialDeduction)} (最高50万円)。算入額を ① の課税所得に足して総合課税で試算してください。
+          特別控除 {jpy(casual.specialDeduction)} (最高{jpy(casualCap)})。算入額を ① の課税所得に足して総合課税で試算してください。
         </div>
       </Section>
 
@@ -972,8 +1070,8 @@ export function TaxPage() {
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
           土地・建物・株式などの売却益は、給与等と分離して課税されます。
           <strong>譲渡益 = 収入 − 取得費 − 譲渡費用</strong>。所有期間 (5年) で短期/長期の税率が変わり、
-          居住用財産は3,000万円特別控除と軽減税率があります (国税庁 No.3202/3305/1463)。
-          取得費が不明な場合は「取得費不明 (概算取得費5%)」にチェックすると、譲渡収入の5%を取得費として計算します (国税庁 No.3258)。
+          居住用財産は{jpy(cgParams.residentialSpecialDeduction)}の特別控除と軽減税率があります (国税庁 No.3202/3305/1463)。
+          取得費が不明な場合は「取得費不明 (概算取得費{cgEstimatePct}%)」にチェックすると、譲渡収入の{cgEstimatePct}%を取得費として計算します (国税庁 No.3258)。
           ※ 買換特例・損益通算・繰越控除は未対応です。
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
@@ -994,13 +1092,13 @@ export function TaxPage() {
             <select value={cgKind} onChange={(e) => setCgKind(e.target.value as CapitalAssetKind)} style={{ ...inputStyle, width: 220 }}>
               <option value="real-estate-long">土地建物・長期 (5年超 15%+5%)</option>
               <option value="real-estate-short">土地建物・短期 (5年以下 30%+9%)</option>
-              <option value="residential">居住用財産 (3,000万控除+軽減税率)</option>
+              <option value="residential">居住用財産 ({jpy(cgParams.residentialSpecialDeduction)}控除+軽減税率)</option>
               <option value="listed-stock">上場株式等 (20.315%)</option>
             </select>
           </label>
           <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
             <input type="checkbox" checked={cgUseEstimate} onChange={(e) => setCgUseEstimate(e.target.checked)} />
-            取得費不明 (概算取得費5%)
+            取得費不明 (概算取得費{cgEstimatePct}%)
           </label>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
@@ -1017,8 +1115,8 @@ export function TaxPage() {
 
       <Section title="⑦ ふるさと納税 ワンストップ特例の内訳" count={2}>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
-          ふるさと納税は自己負担2,000円を除いた寄附額が所得税・住民税から控除されます。
-          <strong>ワンストップ特例</strong> (給与所得者・確定申告不要・寄附先5自治体以内) では所得税からの控除を行わず、
+          ふるさと納税は自己負担{jpy(furusatoP.selfPay)}を除いた寄附額が所得税・住民税から控除されます。
+          <strong>ワンストップ特例</strong> (給与所得者・確定申告不要・寄附先{furusatoMax}自治体以内) では所得税からの控除を行わず、
           その相当額を住民税に上乗せします。<strong>控除の総額は確定申告と変わりません</strong> (国税庁 No.1155)。
           ※ 住民税所得割額・限界税率はセクション③の精密試算の値を使用します。
         </div>
@@ -1077,7 +1175,7 @@ export function TaxPage() {
 
       <Section title="⑧ 上場株式の配当 課税方式の有利判定" count={3}>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
-          上場株式等の配当は、<strong>申告不要 (源泉徴収20.315%)・申告分離課税・総合課税</strong>から選べます (国税庁 No.1330)。
+          上場株式等の配当は、<strong>申告不要 (源泉徴収{Number((withholdingTotalRate(dividendP) * 100).toPrecision(12))}%)・申告分離課税・総合課税</strong>から選べます (国税庁 No.1330)。
           総合課税は累進税率ですが<strong>配当控除</strong>が使え、課税所得が低いほど有利になりやすいです。
           ※ 配当以外の課税所得はセクション③の精密試算の値を使用。社会保険料への影響・損益通算は反映しません。
         </div>
@@ -1124,7 +1222,7 @@ export function TaxPage() {
           ※ 申告分離は申告不要と同じ税率ですが、上場株式等の譲渡損との損益通算・繰越控除ができる点が異なります。
           令和6年度以降、所得税と住民税で異なる課税方式は選べません。
           {dividendLevyCredit > 0 && (
-            <> なお総合課税・申告分離で申告すると、源泉徴収済みの<strong>配当割控除 約{jpy(dividendLevyCredit)}</strong> (配当×5%) を住民税の所得割から差し引けます。</>
+            <> なお総合課税・申告分離で申告すると、源泉徴収済みの<strong>配当割控除 約{jpy(dividendLevyCredit)}</strong> (配当×{displayValue('credit.residentLevyWithholdingRate', levyRate)}%) を住民税の所得割から差し引けます。</>
           )}
         </div>
       </Section>
@@ -1133,7 +1231,7 @@ export function TaxPage() {
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
           国民年金・厚生年金・企業年金・iDeCo の年金受取などは「公的年金等」として、
           <strong>公的年金等控除</strong>を差し引いた額が雑所得になります (国税庁 No.1600)。
-          控除額は65歳以上で手厚くなります (最低110万円、65歳未満は最低60万円)。
+          控除額は65歳以上で手厚くなります (最低{jpy(pensionP.minOver65)}、65歳未満は最低{jpy(pensionP.minUnder65)})。
           ※ 算入額は他の所得と合算して総合課税します。本欄は雑所得のみを計算します。
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
@@ -1169,11 +1267,11 @@ export function TaxPage() {
           />
           <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
             <input type="checkbox" checked={reduced} onChange={(e) => setReduced(e.target.checked)} />
-            軽減税率 (8%)
+            軽減税率 ({displayValue('tax.consumptionReducedRate', reducedRate)}%)
           </label>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
-          <Stat label={`消費税 (${reduced ? '8%' : '10%'})`} value={jpy(consumptionTax)} />
+          <Stat label={`消費税 (${consumptionRatePct}%)`} value={jpy(consumptionTax)} />
           <Stat label="税込合計" value={jpy(netAmount + consumptionTax)} />
         </div>
       </Section>
@@ -1181,7 +1279,7 @@ export function TaxPage() {
       <Section title="⑩ 消費税の納付方式の比較 (本則 / 簡易 / 2割特例)" count={3}>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
           消費税の課税事業者は<strong>本則課税・簡易課税・2割特例</strong>から納付方式を選べます。
-          簡易課税は基準期間の課税売上5,000万円以下、2割特例はインボイス登録した免税事業者向けの経過措置 (令和8年分まで) です。
+          簡易課税は基準期間の課税売上{jpy(bizParams.simplifiedEligibilityThreshold)}以下、2割特例はインボイス登録した免税事業者向けの経過措置 (令和8年分まで) です。
           ※ 概算試算であり、適用要件・端数処理の細部は反映しません。確定申告は税理士・国税庁でご確認ください。
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
@@ -1224,7 +1322,7 @@ export function TaxPage() {
           （納付 {jpy(consumptionMethods.bestAmount)}）
           {ctExempt && (
             <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4 }}>
-              ※ 課税売上が1,000万円以下です。基準期間で同水準なら原則<strong>免税事業者</strong>（インボイス登録時を除く）。
+              ※ 課税売上が{jpy(bizParams.exemptionThreshold)}以下です。基準期間で同水準なら原則<strong>免税事業者</strong>（インボイス登録時を除く）。
             </div>
           )}
         </div>
@@ -1563,13 +1661,13 @@ export function TaxPage() {
             </label>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
-            <Stat label="固定資産税 (1.4%)" value={jpy(fixedAsset.fixedAssetTax)} />
-            <Stat label="都市計画税 (0.3%)" value={jpy(fixedAsset.cityPlanningTax)} />
+            <Stat label={`固定資産税 (${displayValue('fixedAsset.standardRate', faRates.fixedRate)}%)`} value={jpy(fixedAsset.fixedAssetTax)} />
+            <Stat label={`都市計画税 (${displayValue('fixedAsset.cityPlanningRate', faRates.cityPlanningRate)}%)`} value={jpy(fixedAsset.cityPlanningTax)} />
             <Stat label="合計 (年)" value={jpy(fixedAsset.total)} />
           </div>
           {fixedAsset.exempt && (
             <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8 }}>
-              ※ 特例適用後の課税標準が免税点 (土地30万円) 未満のため非課税です。
+              ※ 特例適用後の課税標準が免税点 (土地{jpy(faThresholds.land)}) 未満のため非課税です。
             </div>
           )}
         </div>
@@ -1580,7 +1678,7 @@ export function TaxPage() {
             (b) 不動産取得税
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
-            不動産を取得したときに一度だけ課されます。本則4%、土地・住宅は軽減3%。宅地は課税標準1/2特例があります。
+            不動産を取得したときに一度だけ課されます。本則{displayValue('acquisition.standardRate', acqParams.standardRate)}%、土地・住宅は軽減{displayValue('acquisition.reducedRate', acqParams.reducedRate)}%。宅地は課税標準1/2特例があります。
             ※ <strong>住宅の課税標準の特別控除 (新築1,200万円控除等) は未対応</strong>のため、実際より高めに出る概算です (都道府県税事務所に確認してください)。
           </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
@@ -1598,7 +1696,7 @@ export function TaxPage() {
             </label>
             <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
               <input type="checkbox" checked={acqReduction} onChange={(e) => setAcqReduction(e.target.checked)} />
-              軽減税率 (3%)
+              軽減税率 ({displayValue('acquisition.reducedRate', acqParams.reducedRate)}%)
             </label>
             <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}>
               <input type="checkbox" checked={acqUrbanLand} onChange={(e) => setAcqUrbanLand(e.target.checked)} />
@@ -1748,7 +1846,7 @@ export function TaxPage() {
           <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
             課税価格 (CIF＝商品代金＋国際運賃＋保険料) の<strong>1,000円未満を切捨て</strong>→ 関税率を掛けて
             <strong>100円未満を切捨て</strong>→ 課税価格＋関税＋個別消費税の<strong>1,000円未満を切捨て</strong>て消費税の課税標準とし、
-            国税 7.8% (軽減 6.24%) を掛けて<strong>100円未満を切捨て</strong>、地方消費税はその <strong>22/78</strong>。
+            国税 {displayValue('trade.nationalStandardRate', importP.nationalStandard)}% (軽減 {displayValue('trade.nationalReducedRate', importP.nationalReduced)}%) を掛けて<strong>100円未満を切捨て</strong>、地方消費税はその <strong>22/78</strong>。
             関税が消費税の課税標準に入るため、関税が高いほど消費税も増えます。
           </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
@@ -1763,7 +1861,7 @@ export function TaxPage() {
             </label>
             <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4, paddingBottom: 6 }}>
               <input type="checkbox" checked={imPersonal} onChange={(e) => setImPersonal(e.target.checked)} />
-              個人的使用 (課税価格を小売価格の60%で計算)
+              個人的使用 (課税価格を小売価格の{displayValue('trade.personalUseFactor', importP.personalUseFactor)}%で計算)
             </label>
             <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4, paddingBottom: 6 }}>
               <input type="checkbox" checked={imExcluded} onChange={(e) => setImExcluded(e.target.checked)} />
@@ -1854,7 +1952,7 @@ export function TaxPage() {
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 12, lineHeight: 1.7 }}>
           ※ 付加価値税の参考税率は<strong>{VAT_REFERENCE_AS_OF}時点</strong>で確認できたものだけを載せています。網羅表ではなく、
           <strong>改正で変わります</strong>。計算には必ず入力欄の値を使うので、最新の税率に書き換えてください。<br />
-          ※ 課税価格が1万円以下の輸入は関税・消費税が免除されます（革製バッグ・ニット製衣類等を除く。酒税・たばこ税等の個別消費税は免除されません）。
+          ※ 課税価格が{jpy(importP.smallValueLimit)}以下の輸入は関税・消費税が免除されます（革製バッグ・ニット製衣類等を除く。酒税・たばこ税等の個別消費税は免除されません）。
           この免税と、個人的使用の課税価格60%の特例は、<strong>2028年4月1日から廃止・縮小される予定</strong>です。<br />
           ※ 仕向国側には端数処理を仮定していません（規則が国ごとに違うため）。日本側のみ法定の切捨てを行っています。
         </div>

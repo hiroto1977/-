@@ -10,19 +10,15 @@ import {
 } from './secrets';
 import { LIVE_ACTIONS, LIVE_FETCHERS, LOCAL_SERVICES, type ServiceId } from './clients';
 import { authorize, isOAuthSupported, OAUTH_CONFIGS } from './oauth';
+import { repairExportPermissions } from './clients/exportPaths';
 import { isServiceId } from '../shared/serviceId';
 import { checkTokenInput } from '../shared/tokenInput';
 import type { OsOpResult, TokenSaveResult } from '../preload/preload';
-import { redactSecrets } from './clients/types';
-import { exportRoot } from './clients/exportPaths';
+import { safeErrorMessage } from './clients/types';
+import { externalUrlOrNull } from '../shared/externalUrlGate';
+import { shellTargetOrNull } from './shellOpenGate';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
-
-/** All IPC handlers feed user-supplied strings as map keys. Use this
- *  before indexing to defeat prototype-pollution lookups like
- *  __proto__ / constructor. */
-function safeErrorMessage(err: unknown): string {
-  return redactSecrets(err instanceof Error ? err.message : String(err));
-}
+import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../shared/httpLimits';
 
 const isDev = !app.isPackaged;
 
@@ -49,20 +45,87 @@ function createWindow(): BrowserWindow {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
+      /*
+       * **Electron の既定は `true`。** 綴り検査が要る場面がこのアプリに無い
+       * のに、hunspell の辞書は Google がホストする CDN から取りに行く
+       * 設計なので、既定のままだと「打ち始めたら外へ出る」経路を 1 本
+       * 抱えることになる。ブラウザ版には e2e の `noBeacon` 節で
+       * 「開いただけで外へ出ていかない」を留めてあるが、**デスクトップ版に
+       * 同じ主張は無かった**。
+       *
+       * **正直に書く**: 2026-08-25 に実測した範囲では、`<textarea
+       * spellcheck="true">` へ実キーイベントで綴り誤りを 56 文字打ち込み
+       * 6 秒待っても、`session.webRequest` から見える取得は **0 件**だった。
+       * ただし Chromium の部品更新系の取得は `webRequest` を通らないことが
+       * あるので、**「起きない」ことを測り切れてはいない**。
+       *
+       * 日本語の入力は hunspell の対象外で、英字で打つのは URL と資格情報
+       * ばかり —— 綴り検査が付いても波線が出るだけで役に立たない。
+       * **得るものが無く、閉じ切れない経路が 1 本残る**ので切る。
+       */
+      spellcheck: false,
     },
   });
 
+  /**
+   * レンダラーへ許すブラウザ権限。**Electron の既定は「全部承認」である。**
+   *
+   * Electron の security checklist #5 —— ハンドラを置かない限り、
+   * `session` は権限要求を自動で承認する。この窓が読むのは同梱した
+   * `dist/index.html` だけで、遷移も `will-navigate` で止めてあるが、
+   * **万一レンダラーへ任意コードが入った場合に、マイク・カメラ・位置情報が
+   * 確認なしで開くかどうか**はここで決まる。既定のままだと開く。
+   *
+   * 許すのはクリップボードの 2 つだけ:
+   *
+   * - `clipboard-read` —— `LockScreen.tsx` が**復元フレーズを 30 秒後に
+   *   消す**ために使う。「まだ自分がコピーした値のままか」を読んでから
+   *   空にするので、読めないと**消せずに残る**。security のための読み取り。
+   * - `clipboard-sanitized-write` —— 上の消去と、各画面のコピーボタン。
+   *
+   * それ以外 (media / geolocation / notifications / midi / display-capture /
+   * hid / serial / usb / idle-detection / window-management …) は**全部拒否**。
+   * このアプリはどれも使っていない (実測: `getUserMedia` 0 件・
+   * `geolocation` 0 件・`new Notification` 0 件)。`SpeechRecognition` は
+   * ブラウザ版だけで動くもので、Electron には実装が無い。
+   */
+  const ALLOWED_PERMISSIONS: ReadonlySet<string> = new Set([
+    'clipboard-read',
+    'clipboard-sanitized-write',
+  ]);
+  /**
+   * 判定は**ここ 1 つ**。要求側 (`setPermissionRequestHandler`) と
+   * 問い合わせ側 (`setPermissionCheckHandler`) の 2 つの口があり、
+   * 両方が同じ答えを返さないと `navigator.permissions.query()` が
+   * 「granted」と言った権限を実際の要求が拒否する (逆もある)。
+   * 同じ判断を 2 度書かない —— `externalUrlGate.ts` の扉と同じ理由。
+   */
+  const permissionAllowed = (permission: string): boolean => ALLOWED_PERMISSIONS.has(permission);
+  /*
+   * **綴り検査は session 側でも切る。**
+   *
+   * `webPreferences.spellcheck: false` は **webContents ごと**の設定で、
+   * `session.isSpellCheckerEnabled()` には現れない (実測: 未設定でも
+   * `spellcheck: false` でも `true` を返す)。**片方だけでは「切れている」
+   * ことを外から確かめられない。** session 側も切ると観測可能になり、
+   * 窓を増やしたときの取りこぼしも無くなる。
+   *
+   * 最初は webPreferences だけ入れて「効いていない」と読み違えかけた ——
+   * **見ていた物が、設定した物と違っていた。**
+   */
+  win.webContents.session.setSpellCheckerEnabled(false);
+
+  win.webContents.session.setPermissionRequestHandler((_wc, permission, callback) => {
+    callback(permissionAllowed(permission));
+  });
+  win.webContents.session.setPermissionCheckHandler((_wc, permission) => permissionAllowed(permission));
+
   win.webContents.setWindowOpenHandler(({ url }) => {
-    // Same http(s) allowlist as the IPC handler. Anything else (file:,
-    // javascript:, OS schemes) is silently dropped.
-    try {
-      const u = new URL(url);
-      if (u.protocol === 'http:' || u.protocol === 'https:') {
-        shell.openExternal(u.toString());
-      }
-    } catch {
-      // ignore non-URL strings
-    }
+    // IPC の扉と**同じ関門**を通す。以前ここは手書きの http(s) 判定で、
+    // 関門の許可表を締めてもこちらだけ古い規則のまま開いた
+    // (対照実験は externalUrlGate.ts の頭に記録)。
+    const target = externalUrlOrNull(url);
+    if (target !== null) shell.openExternal(target);
     return { action: 'deny' };
   });
 
@@ -74,14 +137,40 @@ function createWindow(): BrowserWindow {
   // main window at whatever local process happened to hold that port
   // (2026-07 audit). `will-redirect` gets the same treatment — otherwise a 3xx
   // during an allowed navigation would land somewhere unvetted.
-  const allowNavigation = (navigationUrl: string): boolean => {
-    if (!isDev || !process.env.VITE_DEV_SERVER_URL) return false;
+  /**
+   * 解析できなかった URL を**空文字**にする。`origin` は絶対に空文字にならない
+   * ので、「読めた」と「読めなかった」が値の上で混ざらない。
+   *
+   * 制御の流れ (try/catch から抜けたか) で表していた頃は、catch の中身を空に
+   * しても暗黙の `undefined` が返り、呼び出し側からは `false` と見分けが
+   * 付かなかった — **守りを外しても誰も気付けない形**だった。読めなかったことを
+   * 値で表すと、下の `target !== ''` がそれを見て落とせる。
+   */
+  const originOrEmpty = (url: string): string => {
     try {
-      const u = new URL(navigationUrl);
-      return u.host === 'localhost:5173' || u.host === '127.0.0.1:5173';
+      return new URL(url).origin;
     } catch {
-      return false;
+      return '';
     }
+  };
+  /**
+   * 実際に読み込んだ開発サーバの **origin** (scheme + host + port) とだけ
+   * 突き合わせる。
+   *
+   * 2026-08-22 の点検まで `u.host === 'localhost:5173'` で見ていたが、`host` に
+   * **スキームは入らない**。`https://localhost:5173/` も `ftp://localhost:5173/`
+   * も同じ host なので素通りしていた — 「そのポートを握った別のプロセスへ窓を
+   * 向けられないようにする」というこの例外の目的が、平文 http の相手にしか
+   * 効いていなかった。ポートの決め打ちも外した (5173 が埋まると Vite は次の
+   * 空き番へずれるので、通すべき本物を止めて通すべきでない相手を通しうる)。
+   */
+  const allowNavigation = (navigationUrl: string): boolean => {
+    const devServer = process.env.VITE_DEV_SERVER_URL;
+    if (!isDev || !devServer) return false;
+    const target = originOrEmpty(navigationUrl);
+    // 空文字どうしを「一致」と読まない。開発サーバの URL 自体が壊れていると、
+    // 同じく壊れた遷移先が「同じ origin」に見えて通ってしまう。
+    return target !== '' && target === originOrEmpty(devServer);
   };
   const guardNavigation = (event: { preventDefault: () => void }, navigationUrl: string): void => {
     if (allowNavigation(navigationUrl)) return;
@@ -102,6 +191,18 @@ function createWindow(): BrowserWindow {
 
 app.whenReady().then(() => {
   createWindow();
+
+  /*
+   * 既に書き出されているファイルの緩い権限を一度だけ均す。
+   *
+   * `writeExportFile` は書くたびに 0600 へ直すが、**書き出しは「一度作って
+   * それきり」になりうる**ので、それだけでは既存の 0644 が永遠に残る
+   * (状態ファイルは保存のたびに書き換わるので、あちらは次の書き込みで足りる)。
+   *
+   * 窓を出してから走らせる —— 起動を待たせる価値のある処理ではない。
+   * 失敗しても起動は続ける (権限を直せないことは、アプリが使えない理由にならない)。
+   */
+  void repairExportPermissions().catch(() => undefined);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
@@ -133,61 +234,45 @@ ipcMain.handle('app:checkUpdate', async (): Promise<UpdateVerdict> => {
       signal: AbortSignal.timeout(10_000),
     });
     if (!res.ok) return evaluateUpdate(current, null);
-    return evaluateUpdate(current, parseLatestRelease(await res.json()));
+    // 本文は上限つきで読む。ブラウザ版の同じ口 (`web-shim.ts` の `checkUpdate`)
+    // は `readCappedText` を通しているのに、**こちらだけ `res.json()` の
+    // 素通しだった** (2026-08-31)。宛先は定数で https だが、同じ問いに答えが
+    // 2 つある状態を残さない —— 実行対象が違うだけで判断が変わる理由が無い。
+    return evaluateUpdate(
+      current,
+        // Stryker disable next-line StringLiteral: この標識はエラー本文にしか
+      // 現れず、上限超過も含めて**すべての失敗を下の catch が「判定不能」へ
+      // 寄せる** (更新確認の失敗でアプリが使えなくならないため)。空文字に
+      // しても観測できる差が無い (等価変異)。
+      parseLatestRelease(JSON.parse(await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'update'))),
+    );
   } catch {
     // 通信できない・応答が JSON でない等はすべて「判定不能」に寄せる。
     // 更新の確認が失敗してアプリが使えなくなる理由は無い。
     return evaluateUpdate(current, null);
   }
 });
-ipcMain.handle('app:openExternal', async (_e, url: string) => {
+ipcMain.handle('app:openExternal', async (_e, url: unknown) => {
   // Defense-in-depth: the renderer is sandboxed and contextIsolated,
-  // but the IPC channel accepts any string. Restrict to http(s) to
-  // block javascript:, data:, file:, and custom-scheme URI handlers
-  // that could escalate (e.g. ssh:// on macOS, ms-windows-store://
-  // on Windows).
-  if (typeof url !== 'string') return;
-  let parsed: URL;
+  // but the IPC channel accepts any value. 関門は `externalUrlGate.ts` に
+  // 1 つだけ置く —— 新窓ハンドラも同じものを通る。
+  const target = externalUrlOrNull(url);
+  if (target === null) return;
+  // `shell` は OS 側が開けないと **reject する** (既定ブラウザ未設定、
+  // Linux で xdg-open が無い等)。この口の約束は `Promise<void>` で、
+  // レンダラー側に受け皿が無い —— reject をそのまま返すと呼び出し元で
+  // 未処理の rejection になる。握り潰さず、main の記録には残す
+  // (`secrets.ts` と同じ扱い。GUI 利用者には見えないが、不具合報告の
+  // ログには出る)。
   try {
-    parsed = new URL(url);
-  } catch {
-    return;
+    await shell.openExternal(target);
+  } catch (e) {
+    console.error(`[openExternal] OS が URL を開けませんでした: ${safeErrorMessage(e)}`);
   }
-  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return;
-  await shell.openExternal(parsed.toString());
 });
 
-/**
- * Gate for the two shell handlers below. The renderer may only ever point them
- * at a file it just produced via an export action, so we require exactly that:
- * inside `~/.local/business-hub/`, with a non-executable extension.
- *
- * Before the 2026-07 audit both handlers accepted **any** path under `$HOME`.
- * `shell.openPath` uses the OS "open" verb, so on Windows that was a code-
- * execution primitive: a compromised renderer could call
- * `openPath('C:\\Users\\me\\Downloads\\installer.exe')` and the shell would run
- * it with no prompt. Confining to the export root plus an extension allowlist
- * removes the primitive; no UI ever passed anything else, so nothing is lost.
- *
- * `realpath` runs first because `path.resolve` is purely lexical — a symlink
- * planted inside the export dir would otherwise redirect the open outside it.
- */
-const SHELL_OPEN_EXTS = new Set(['.html', '.md', '.svg', '.png', '.pdf', '.json', '.csv', '.txt']);
-
-async function shellTargetOrNull(filePath: unknown): Promise<string | null> {
-  if (typeof filePath !== 'string' || filePath.length === 0 || filePath.length > 1024) return null;
-  if (/[\0\r\n]/.test(filePath)) return null;
-  const nodePath = require('node:path') as typeof import('node:path');
-  const nodeFs = require('node:fs/promises') as typeof import('node:fs/promises');
-  const resolved = nodePath.resolve(filePath);
-  // Follow symlinks before the containment check; a missing file keeps the
-  // lexical path so a not-yet-created export still fails closed on the checks.
-  const real = await nodeFs.realpath(resolved).catch(() => resolved);
-  if (!real.startsWith(exportRoot() + nodePath.sep)) return null;
-  if (!SHELL_OPEN_EXTS.has(nodePath.extname(real).toLowerCase())) return null;
-  return real;
-}
-
+// 開く側の関門は `shellOpenGate.ts` に 1 つだけ置く (書き出し側の
+// `exportPaths.ts` と対になる)。ここに直接書いていた頃はテストが一本も無かった。
 const REJECTED_PATH_MESSAGE =
   '指定されたパスは開けません。書き出し先の外にあるか、対応していない拡張子です。';
 
@@ -236,11 +321,21 @@ ipcMain.handle('secrets:set', async (_e, serviceId: unknown, token: unknown): Pr
   try {
     await setToken(serviceId, checked.value);
   } catch (e) {
-    return {
-      ok: false,
-      code: 'write_failed',
-      message: e instanceof Error ? e.message : '資格情報の保存に失敗しました',
-    };
+    // **ここも伏字の合流点を通す。** 13 本のハンドラのうち、生の `e.message` を
+    // 返していたのはここだけだった —— しかも**資格情報が生きている唯一の
+    // ハンドラ**である。今日の `setToken` は fs エラー (userData のパスが載る)
+    // しか投げないが、片側だけ関門の外に居る状態を残さない。
+    // `safeErrorMessage` は伏字に加えて長さも切る。
+    //
+    // **この「13 本のうち」という数え方は足りなかった (2026-08-23)。**
+    // ハンドラの `message` 欄は数えたが、**ハンドラが返す*データの中*に載る
+    // 文言**を数えていない。実測すると 2 経路が関門の外に居た:
+    //   action:invoke  → assistant.chatAll の `answers[].error`
+    //   fetch:snapshot → ollama スナップショットの `warnings[]`
+    // どちらも `sk-ant-...` を含む例外を**逐語で** renderer へ渡していた。
+    // 数える単位は「ハンドラ」ではなく **「外へ出る値に載る文言」**である。
+    // `main/__tests__/rendererBoundMessages.test.ts` が実測で留めている。
+    return { ok: false, code: 'write_failed', message: safeErrorMessage(e) };
   }
   return { ok: true };
 });

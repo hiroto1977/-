@@ -32,6 +32,32 @@ describe('parseVersion', () => {
 
   it('プレリリース識別子を保持する', () => {
     expect(parseVersion('0.2.0-beta.1')?.prerelease).toBe('beta.1');
+  });
+
+  /*
+   * 版の表記は **前後を固定して**読む。ここが緩むと、タグに紛れ込んだ
+   * 余計な文字ごと「読めた」ことになり、更新の有無の判断が別物になる。
+   * (2026-08-23 の変異検査で、この 7 通りがどれも検査を通り抜けていた。)
+   */
+  it('前後に余計な文字があるものは読まない (^ と $ を落とさない)', () => {
+    expect(parseVersion('x1.2.3')).toBeNull();
+    expect(parseVersion('1.2.3junk')).toBeNull();
+    expect(parseVersion('1.2.3.4')).toBeNull();
+  });
+
+  // `\d+` を `\d` に縮めると 2 桁以上の版が読めなくなる。**10 系に上がった
+  // 瞬間、更新が一切案内されなくなる**ので、桁を跨いだ例で固定する。
+  it('2 桁以上の版も読む', () => {
+    expect(parseVersion('10.20.30')).toEqual({ major: 10, minor: 20, patch: 30, prerelease: null });
+    expect(parseVersion('1.0.12')?.patch).toBe(12);
+  });
+
+  // プレリリース識別子は 1 文字ではない。`+` を落とすと `beta.1` が読めない。
+  it('プレリリース識別子は複数文字を読む', () => {
+    expect(parseVersion('1.0.0-rc')?.prerelease).toBe('rc');
+    expect(parseVersion('1.0.0-a')?.prerelease).toBe('a');
+    // 識別子に使えない文字が入っていれば読まない (文字クラスの反転を捕まえる)。
+    expect(parseVersion('1.0.0-β')).toBeNull();
     expect(parseVersion('1.0.0-rc-2')?.prerelease).toBe('rc-2');
   });
 
@@ -146,6 +172,69 @@ describe('isGithubReleaseUrl', () => {
     ]) {
       expect(isGithubReleaseUrl(u), u).toBe(false);
     }
+  });
+
+  /*
+   * **同型異字 (homograph) と userinfo。**
+   *
+   * 判定が `new URL()` で解析した `hostname` を見ていることが、ここで効く。
+   * 生の文字列に `github.com` が含まれるかで見ていたら、下の 4 つは全部通る。
+   */
+  it('見た目が github.com でも、別ホストなら断る', () => {
+    for (const u of [
+      // キリル文字の小文字 i (U+0456)。punycode で xn--gthub-n2e.com になる。
+      // **文字そのものは書かない** — lint:charset が混入として拾うため (実際に拾われた)。
+      'https://g\u0456thub.com/a',
+      // ギリシャ文字の ο (U+03BF)。github.xn--cm-jbc になる。
+      'https://github.c\u03BFm/a',
+      // 上を punycode で直接書いた形。
+      'https://xn--gthub-n2e.com/a',
+      // userinfo で本物に見せる古典。hostname は evil.example。
+      'https://github.com@evil.example/a',
+      // 部分ドメイン。リリースページは github.com 直下にしか無い。
+      'https://sub.github.com/a',
+    ]) {
+      expect(isGithubReleaseUrl(u), u).toBe(false);
+    }
+  });
+
+  /*
+   * **ホストが本物でも、認証情報が付いていたら断る。**
+   *
+   * 上の `github.com@evil.example` は **hostname が evil.example なので
+   * ホスト固定で既に落ちていた**。ここで見るのは逆の形 ——
+   * `https://user:pw@github.com/` は hostname が**本物の github.com** で、
+   * 2026-08-25 まで**通っていた**。
+   *
+   * 案内先として画面に出す値なので、頭から読んだ印象と実際の送り先を
+   * 割らせない (同じ判断を `externalUrlGate.ts` も下している)。
+   */
+  it('★ ホストが本物でも認証情報つきは断る', () => {
+    for (const u of [
+      'https://user:pw@github.com/hiroto1977/-/releases',
+      'https://github.com:secret@github.com/a',
+      'https://user@github.com/a',
+      'https://:pw@www.github.com/a',
+    ]) {
+      expect(isGithubReleaseUrl(u), u).toBe(false);
+    }
+    // 巻き添えの対照 —— パスの `@` は落とさない。
+    expect(isGithubReleaseUrl('https://github.com/@hiroto1977')).toBe(true);
+  });
+
+  /*
+   * **これは通してよい。** 全角の ｇ (U+FF47) は URL の解析時に NFKC で
+   * ASCII の g へ畳まれるので、`hostname` は**本物の github.com** になる。
+   * 実際に開かれるのも本物なので、断る理由が無い。
+   *
+   * この 1 件を固定しておくのは、判定を「生の文字列に github.com が
+   * 含まれるか」へ書き換える改変を止めるため —— そうすると**この行は
+   * 落ちないまま**、上の userinfo の行が通るようになる。
+   * **通す側の標本が、弾く側の設計を守っている。**
+   */
+  it('正規化すると本物になる綴りは通す (判定が解析後のホストを見ている証拠)', () => {
+    expect(new URL('https://\uFF47ithub.com/a').hostname).toBe('github.com');
+    expect(isGithubReleaseUrl('https://\uFF47ithub.com/a')).toBe(true);
   });
 });
 

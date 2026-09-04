@@ -237,6 +237,20 @@ export function buildDevEnv(i: DevEnvInputs): DevEnvSnapshot {
 // fs/process からの読み取り。以前はここを丸ごと変異検査から外していたが、
 // 「どのファイルを読むか」はこの層が決めているので、一時ディレクトリを
 // 作って実際に読ませる形で測る (`__tests__/devEnv.test.ts`)。
+/**
+ * symlink を辿った実体のパス。辿れなければ `null`。
+ *
+ * 封じ込めの判定を**実体**で行うために要る。`path.resolve` は字面の正規化
+ * しかしないので、symlink はそのまま素通りする。
+ */
+function realpathOrNull(p: string): string | null {
+  try {
+    return fs.realpathSync(p);
+  } catch {
+    return null;
+  }
+}
+
 function readFileOrNull(p: string): string | null {
   try {
     return fs.readFileSync(p, 'utf8');
@@ -270,8 +284,52 @@ export function readDevEnv(cwd: string = process.cwd()): DevEnvSnapshot {
     pythonVersion: readFileOrNull(at('.python-version')),
     toolVersions: readFileOrNull(at('.tool-versions')),
     gitHead: readFileOrNull(at('.git/HEAD')),
+    /*
+     * `ref` は **`.git/HEAD` の中身**から来る (`parseGitHead` が
+     * `ref: refs/heads/main` の後半を切り出して渡す)。つまりディスク上の
+     * ファイルの内容がそのままパスの一部になる。封じ込めが無いと
+     *
+     *     ref: ../../../../../../etc/passwd
+     *
+     * と書かれた `.git/HEAD` を置くだけで cwd の外を読み、その 1 行目が
+     * コミット SHA として画面に出る (2026-08-22 の点検で発見)。
+     *
+     * 現状 `readDevEnv()` は引数なしでしか呼ばれず cwd はアプリ自身の作業
+     * ディレクトリなので、悪用には「アプリを起動した場所に細工した `.git` を
+     * 置く」ことが要る —— 遠隔から踏める経路ではない。それでも塞ぐのは、
+     * これが不変条件 #10 (パス走査を含む名前を使わない) そのものの形であり、
+     * 関門 1 つで済むため。
+     *
+     * 判定は `exportPaths.ts` と同じ形 —— 解決してから根の下かを見る
+     * (悪い入力を数え上げるのではなく、行き先で判定する)。
+     */
     resolveRef: (ref) => {
-      const raw = readFileOrNull(at(path.join('.git', ref)));
+      /*
+       * **`path.resolve` は symlink を辿らない。** `../` は閉じたが、
+       * `.git/refs/heads/x` を外へ向けた symlink にすると
+       * `startsWith` は通り、読み出しだけが根の外へ出る。実測 (2026-08-23):
+       *
+       *   関門の判定 (根の下か): true
+       *   実際に読めた中身      : "SECRET-OUTSIDE-ROOT"   ← 根の外
+       *
+       * そこで **realpath で実体に直してからもう一度**判定する。
+       * 根の側も realpath する —— 作業ディレクトリ自体が symlink 越しに
+       * あると (`/tmp/link` → `/tmp/actual`)、実体だけを直したのでは
+       * **正当な ref まで弾いてしまう**ため。両側を同じ土俵に乗せる。
+       */
+      const gitDir = realpathOrNull(path.resolve(at('.git')));
+      // Stryker disable next-line ConditionalExpression: `resolveRef` は
+      // `.git/HEAD` が読めたときにしか呼ばれない (`readDevEnv` の
+      // `i.gitHead !== null` 判定) ので、ここで `.git` が消えているのは
+      // 読み取りの合間に消された場合だけで、検査から到達できない。
+      // 外すと `path.resolve(null, ref)` が TypeError になる (等価変異ではなく
+      // **到達しない**枝である —— 消さずに残すのは、その競合で落とさないため)。
+      if (gitDir === null) return null;
+      const target = path.resolve(gitDir, ref);
+      if (!target.startsWith(gitDir + path.sep)) return null;
+      const real = realpathOrNull(target);
+      if (real === null || !real.startsWith(gitDir + path.sep)) return null;
+      const raw = readFileOrNull(real);
       return raw === null ? null : raw.trim();
     },
     hasNodeModules: existsSafe(at('node_modules')),

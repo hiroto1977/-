@@ -18,7 +18,13 @@
  */
 import { describe, expect, it, beforeEach } from 'vitest';
 import 'fake-indexeddb/auto';
-import { _resetVaultForTests, getVault, MIN_PASSWORD_LENGTH, NoRecoveryBranchError } from '../vault';
+import {
+  _resetVaultForTests,
+  getVault,
+  meetsPasswordPolicy,
+  MIN_PASSWORD_LENGTH,
+  NoRecoveryBranchError,
+} from '../vault';
 import { webcrypto } from 'node:crypto';
 if (!('subtle' in globalThis.crypto)) {
   Object.defineProperty(globalThis, 'crypto', { value: webcrypto, configurable: true });
@@ -481,7 +487,6 @@ describe('生の鍵バイト列を 0 で潰す', () => {
   function countZeroFills(): { count: () => number; restore: () => void } {
     const orig = Uint8Array.prototype.fill;
     let n = 0;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (Uint8Array.prototype as any).fill = function patched(this: Uint8Array, value: number, ...rest: number[]) {
       if (value === 0) n++;
       return (orig as (this: Uint8Array, v: number, ...r: number[]) => Uint8Array).call(this, value, ...rest);
@@ -508,6 +513,23 @@ describe('生の鍵バイト列を 0 で潰す', () => {
     } finally { spy.restore(); }
   });
 
+  /*
+   * **`changePassword` だけ、この検査が無かった** (実測 2026-08-31: 中間鍵を
+   * 潰す `finally` を空にしても全検査が通った)。鍵素材を消す作法は 4 か所に
+   * 書いてあるのに、確かめていたのは 3 か所だった —— 「書いてある」と
+   * 「効いている」は別である。
+   */
+  it('changePassword は生の鍵を 0 で潰す', async () => {
+    const vault = getVault();
+    await vault.initialize(OK_PASSWORD);
+    const spy = countZeroFills();
+    try {
+      const before = spy.count();
+      await vault.changePassword(OK_PASSWORD, 'another-long-password-x');
+      expect(spy.count()).toBeGreaterThan(before);
+    } finally { spy.restore(); }
+  });
+
   it('recoverWithMnemonic は生の鍵を 0 で潰す', async () => {
     const vault = getVault();
     const { mnemonic } = await vault.initialize(OK_PASSWORD);
@@ -517,5 +539,110 @@ describe('生の鍵バイト列を 0 で潰す', () => {
       await vault.recoverWithMnemonic(mnemonic, 'another-long-password-x');
       expect(spy.count()).toBeGreaterThan(0);
     } finally { spy.restore(); }
+  });
+});
+
+/*
+ * **下限そのものを、保管庫を作らずに問う。**
+ *
+ * 判定は `unlock` の中に埋まっていて、`false` になる枝へ検査から到達する
+ * 手段が無かった —— 短いパスワードの保管庫は `initialize` /
+ * `changePassword` / `recoverWithMnemonic` がどれも下限を強制するので、
+ * 現在の API では作れない。その結果、**下限を撃ち抜く変異が 2 件生き残って
+ * いた** (`>=` → `>` と、式ごと `true`。実測 2026-08-31)。
+ *
+ * 式を `meetsPasswordPolicy` として外へ出したので、ここで直接問える。
+ * 境界の 3 点 (11 / 12 / 13) を取る —— `>=` を `>` にすると 12 が落ち、
+ * 式を `true` にすると 11 が落ちる。**片方だけでは両方の変異を捕まえられない。**
+ */
+describe('パスワード下限の判定 (meetsPasswordPolicy)', () => {
+  it('下限ちょうど (12 字) は満たす —— >= を > にすると鳴る', () => {
+    expect('a'.repeat(MIN_PASSWORD_LENGTH)).toHaveLength(12);
+    expect(meetsPasswordPolicy('a'.repeat(MIN_PASSWORD_LENGTH))).toBe(true);
+  });
+
+  it('下限 −1 (11 字) は満たさない —— 判定を true 固定にすると鳴る', () => {
+    expect(meetsPasswordPolicy('a'.repeat(MIN_PASSWORD_LENGTH - 1))).toBe(false);
+  });
+
+  it('下限 +1 (13 字) は満たす', () => {
+    expect(meetsPasswordPolicy('a'.repeat(MIN_PASSWORD_LENGTH + 1))).toBe(true);
+  });
+
+  it('空文字は満たさない', () => {
+    expect(meetsPasswordPolicy('')).toBe(false);
+  });
+
+  /*
+   * **長さの上限 (256 字) はここには無い。** あちらは「強制する」側の規則で、
+   * `unlock` は通さない —— 混ぜると既存の保管庫を閉め出す。
+   * 258 字が `true` を返すことで、混ざっていないことを留める。
+   */
+  it('上限の判定を混ぜていない (258 字も「下限は満たす」)', () => {
+    expect(meetsPasswordPolicy('a'.repeat(258))).toBe(true);
+  });
+
+  it('強制する側は同じ判定を使っている (下限 −1 は initialize が断る)', async () => {
+    const short = 'a'.repeat(MIN_PASSWORD_LENGTH - 1);
+    expect(meetsPasswordPolicy(short)).toBe(false);
+    await expect(getVault().initialize(short)).rejects.toThrow(
+      `パスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください`,
+    );
+  });
+});
+
+/*
+ * **「短い」状態が解消したことを、両方の枝で報せる。**
+ *
+ * `changePassword` は保管庫の形で 2 つの枝に分かれる —— `master-wrap` を
+ * 持つ通常路と、Phase E 以前の旧世代路である。`this.policyOk = true` は
+ * 2026-08-28 まで**旧世代路にしか無かった**ので通常路へ足されたが、
+ * 今度は**旧世代路のほうが誰にも確かめられていなかった** (実測: その 1 行を
+ * `false` にしても全検査が通る)。案内どおりに直したのに診断が同じ指摘を
+ * 出し続ける、という同じ不具合が枝を替えて残っていたことになる。
+ */
+describe('パスワードを変えたら「短い」状態は解消する', () => {
+  const LONG_NEW = 'another-long-password-x';
+
+  it('通常路 (master-wrap あり) —— 変更後は下限を満たす', async () => {
+    const vault = getVault();
+    await vault.initialize(OK_PASSWORD);
+    await vault.changePassword(OK_PASSWORD, LONG_NEW);
+    expect(vault.passwordMeetsPolicy()).toBe(true);
+  });
+
+  /*
+   * 旧世代の保管庫では、パスワード鍵が**そのまま**トークンの鍵である
+   * (`master-wrap` が無いので中間鍵が挟まらない)。だから **master-wrap を
+   * 消してから解錠し、その状態でトークンを書く** —— 先に書くと中間鍵で
+   * 封緘されたトークンが残り、旧世代路の復号 (パスワード鍵) では開けない。
+   * 最初そう書いて `OperationError: Cipher job failed` で落ちた。
+   * **替え玉の保管庫は、形だけでなく中身も辻褄が合っていないといけない。**
+   */
+  it('★ 旧世代路 (master-wrap なし) —— 変更後は下限を満たす', async () => {
+    const vault = getVault();
+    await vault.initialize(OK_PASSWORD);
+    await metaDelete('master-wrap'); // Phase E 以前の形
+    vault.lock();
+    await vault.unlock(OK_PASSWORD);
+    await vault.setToken('github', 'ghp_x');
+    await vault.changePassword(OK_PASSWORD, LONG_NEW);
+    expect(vault.passwordMeetsPolicy()).toBe(true);
+    // 経路が生きていることの確認 (中身も一緒に運ばれ、新しい鍵で開く)。
+    expect(await vault.getToken('github')).toBe('ghp_x');
+    vault.lock();
+    await vault.unlock(LONG_NEW);
+    expect(await vault.getToken('github')).toBe('ghp_x');
+  });
+
+  it('★ 復旧フレーズで開け直したときも下限を満たす', async () => {
+    const vault = getVault();
+    const { mnemonic } = await vault.initialize(OK_PASSWORD);
+    await vault.setToken('github', 'ghp_y');
+    vault.lock();
+    expect(vault.passwordMeetsPolicy(), '施錠で「分からない」に戻る').toBeNull();
+    await vault.recoverWithMnemonic(mnemonic, LONG_NEW);
+    expect(vault.passwordMeetsPolicy()).toBe(true);
+    expect(await vault.getToken('github')).toBe('ghp_y');
   });
 });

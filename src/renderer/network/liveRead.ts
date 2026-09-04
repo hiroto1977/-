@@ -87,7 +87,10 @@ export function canLiveRead(serviceId: string): boolean {
  * 取得そのものの失敗 (`live_read_failed`) は相手側の応答を添えて返す。
  */
 export async function liveRead(serviceId: string, deps: LiveReadDeps): Promise<LiveReadResult> {
-  const reader = LIVE_READERS[serviceId];
+  // `canLiveRead` と同じ判定を通す。素の添字だと `'constructor'` 等が
+  // プロトタイプ側の値を返して「対応済み」に見えてしまう —— 2 行上に
+  // 正しい判定があるのに、こちらだけ素で引いていた。
+  const reader = canLiveRead(serviceId) ? LIVE_READERS[serviceId] : undefined;
   if (reader === undefined) {
     return {
       ok: false,

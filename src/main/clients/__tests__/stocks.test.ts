@@ -1,4 +1,5 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { promises as fsp } from 'node:fs';
 import {
   sma,
   ema,
@@ -40,6 +41,7 @@ import {
   unregisterTickerImpl,
   fetchStocksSnapshotImpl,
   type StateDeps,
+  STOCKS_ADVISOR_MAX_TOKENS,
 } from '../stocks';
 import os from 'node:os';
 import path from 'node:path';
@@ -1545,16 +1547,37 @@ describe('ACTIONS["advise"]', () => {
     ).rejects.toThrow(/no text content/);
   });
 
-  it('honors a custom model + maxTokens override', async () => {
+  /*
+   * **payload は有料 API のパラメータを動かせない** (経緯は `skills.test.ts`)。
+   * ここは以前「上書きを尊重する」ことを確かめる検査だった。
+   */
+  it.each([
+    ['数値', 512],
+    ['巨大な値', 100_000_000],
+    ['負値', -1],
+    ['Infinity', Number.POSITIVE_INFINITY],
+    ['文字列', '999999'],
+    ['null', null],
+  ])('payload の maxTokens (%s) は無視される', async (_label, maxTokens) => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(anthropicMock(goodJson));
     await ACTIONS['advise']!({
       token: 'sk-ant-x',
       fetch: fetchMock,
-      payload: { question: 'q', model: 'claude-opus-4-7', maxTokens: 512 },
+      payload: { question: 'q', maxTokens },
     });
     const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
-    expect(body.model).toBe('claude-opus-4-7');
-    expect(body.max_tokens).toBe(512);
+    expect(body.max_tokens).toBe(STOCKS_ADVISOR_MAX_TOKENS);
+  });
+
+  it('payload の model も無視される (送り先モデルを選ばせない)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(anthropicMock(goodJson));
+    await ACTIONS['advise']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { question: 'q', model: 'claude-opus-4-7' },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.model).toBe('claude-sonnet-4-6');
   });
 
   it('defaults to claude-sonnet-4-6 + 1024 max_tokens', async () => {
@@ -3673,5 +3696,48 @@ describe('exportDashboardImpl — 配列の中身が壊れた助言', () => {
     });
     expect(out).toContain('AI アドバイザー結果');
     expect(out).toContain('ZZZZ');
+  });
+});
+
+/*
+ * **内部状態は 600 で書く。**
+ *
+ * `state.json` に入るのはウォッチリスト —— 利用者が何に関心を持っているかという
+ * 個人の情報。実測 (2026-08-23) では 644 で、`secrets.json` /
+ * `service-hub-emotions.json` / `team-radar.json` がどれも 600 なのに、
+ * 内部状態のうちここだけが緩かった。
+ *
+ * `mode` は新規作成にしか効かないが、tmp を新しく作って rename で被せるので
+ * 既にある 644 のファイルも次の保存で直る (2 本目)。
+ */
+describe('saveStocksState の権限', () => {
+  let dir = '';
+
+  beforeEach(async () => {
+    dir = await fsp.mkdtemp(path.join(os.tmpdir(), 'stocks-mode-'));
+  });
+  afterEach(async () => {
+    await fsp.rm(dir, { recursive: true, force: true });
+  });
+
+  const modeOf = async (p: string) => ((await fsp.stat(p)).mode & 0o777).toString(8);
+
+  it('新しく作るファイルは 0600', async () => {
+    const target = path.join(dir, 'state.json');
+    await saveStocksState({ watchlist: ['AAPL'] }, { statePath: () => target });
+    expect(await modeOf(target)).toBe('600');
+    // 中身も書けていること (権限だけ見ると、書けていなくても通る)。
+    expect(JSON.parse(await fsp.readFile(target, 'utf8')).watchlist).toEqual(['AAPL']);
+  });
+
+  it('既にある 644 のファイルも、次の保存で締まる', async () => {
+    const target = path.join(dir, 'state.json');
+    await fsp.writeFile(target, '{"watchlist":[]}');
+    await fsp.chmod(target, 0o644);
+    expect(await modeOf(target)).toBe('644');
+
+    await saveStocksState({ watchlist: ['MSFT'] }, { statePath: () => target });
+
+    expect(await modeOf(target)).toBe('600');
   });
 });

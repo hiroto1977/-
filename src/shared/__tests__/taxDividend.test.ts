@@ -2,9 +2,13 @@ import { describe, expect, it } from 'vitest';
 import {
   compareDividendMethods,
   dividendMarginalRate,
+  DEFAULT_DIVIDEND_PARAMS,
+  DIVIDEND_WITHHOLDING_INCOME_BASE_RATE,
   DIVIDEND_WITHHOLDING_INCOME_RATE,
   DIVIDEND_WITHHOLDING_RESIDENT_RATE,
+  withholdingTotalRate,
 } from '../taxDividend';
+import { RECONSTRUCTION_SURTAX_RATE, RESIDENT_TAX_RATE } from '../taxCalc';
 
 describe('compareDividendMethods', () => {
   it('withholding and separate methods have identical tax (20.315%)', () => {
@@ -102,5 +106,54 @@ describe('dividendMarginalRate', () => {
     // Math.max(0,dividend) を Math.min(0,dividend) にする mutant → 300万のみ → 10%。
     // いずれも 0.2 にならないため、合算 500万→20% のリテラルで両方殺せる。
     expect(dividendMarginalRate(3_000_000, 2_000_000)).toBe(0.2);
+  });
+});
+
+/*
+ * 台帳 (`parameters.ts`) から渡す率。省略時は定数と同じ結果 (1 円も違わない)、渡せば
+ * 源泉の所得税率・付加率・配当割・住民税率のそれぞれが効く。
+ */
+describe('台帳から渡す率 (DividendParams)', () => {
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_DIVIDEND_PARAMS).toEqual({
+      withholdingIncomeRate: DIVIDEND_WITHHOLDING_INCOME_BASE_RATE,
+      surtaxRate: RECONSTRUCTION_SURTAX_RATE,
+      withholdingResidentRate: DIVIDEND_WITHHOLDING_RESIDENT_RATE,
+      residentTaxRate: RESIDENT_TAX_RATE,
+    });
+    expect(DIVIDEND_WITHHOLDING_INCOME_BASE_RATE).toBe(0.15);
+    expect(DIVIDEND_WITHHOLDING_INCOME_RATE).toBe(0.15 * (1 + RECONSTRUCTION_SURTAX_RATE));
+    expect(withholdingTotalRate()).toBe(0.20315);
+    for (const d of [1, 999, 1_000_000, 1_234_567, 98_765_432]) {
+      expect(compareDividendMethods(d, 5_000_000, 'stock', DEFAULT_DIVIDEND_PARAMS)).toEqual(compareDividendMethods(d, 5_000_000));
+    }
+    expect(compareDividendMethods(1_000_000, 5_000_000).separate.label).toBe('申告分離課税 (20.315%)');
+  });
+
+  it('源泉の所得税率と付加率が申告不要 / 申告分離の税額と文言に効く', () => {
+    const p = { ...DEFAULT_DIVIDEND_PARAMS, withholdingIncomeRate: 0.2, surtaxRate: 0 };
+    const c = compareDividendMethods(1_000_000, 5_000_000, 'stock', p);
+    expect(c.withholding.incomeTax).toBe(200_000);
+    expect(c.withholding.residentTax).toBe(50_000);
+    expect(c.separate.totalTax).toBe(250_000);
+    expect(c.separate.label).toBe('申告分離課税 (25%)');
+    expect(withholdingTotalRate(p)).toBe(0.25);
+    // 付加率だけ変えると、率の結合順 (率 × (1 + 付加率) を先に掛ける) のまま効く。
+    const q = { ...DEFAULT_DIVIDEND_PARAMS, surtaxRate: 0.1 };
+    expect(compareDividendMethods(1_000_000, 5_000_000, 'stock', q).withholding.incomeTax).toBe(Math.round(1_000_000 * (0.15 * 1.1)));
+    expect(compareDividendMethods(1_000_000, 5_000_000, 'stock', q).separate.label).toBe('申告分離課税 (21.5%)');
+  });
+
+  it('配当割と住民税率が申告不要側と総合課税側の住民税に効く', () => {
+    const p = { ...DEFAULT_DIVIDEND_PARAMS, withholdingResidentRate: 0.08, residentTaxRate: 0.2 };
+    const c = compareDividendMethods(1_000_000, 5_000_000, 'stock', p);
+    expect(c.withholding.residentTax).toBe(80_000);
+    // 総合課税の住民税 = 配当 × 20% − 配当控除 (住民税)。既定 (10%) より配当の 10% 分だけ増える。
+    const base = compareDividendMethods(1_000_000, 5_000_000);
+    expect(c.aggregate.residentTax - base.aggregate.residentTax).toBe(100_000);
+    // 付加率は総合課税の所得税にも掛かる。
+    const noSurtax = compareDividendMethods(1_000_000, 5_000_000, 'stock', { ...DEFAULT_DIVIDEND_PARAMS, surtaxRate: 0 });
+    expect(noSurtax.aggregate.incomeTax).toBeLessThan(base.aggregate.incomeTax);
+    expect(base.aggregate.incomeTax).toBe(Math.round(noSurtax.aggregate.incomeTax * (1 + RECONSTRUCTION_SURTAX_RATE)));
   });
 });

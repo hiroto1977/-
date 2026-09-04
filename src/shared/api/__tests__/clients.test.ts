@@ -32,7 +32,10 @@ function res(body: unknown, init: { ok?: boolean; status?: number; text?: string
     ok: init.ok ?? true,
     status: init.status ?? 200,
     json: async () => body,
-    text: async () => init.text ?? '',
+    // `apiFetch` は本文を `readBodyWithCap` で読む (上限を掛けるため)。
+    // `res.body` を持たない素朴なモックでは `text()` に落ちるので、
+    // 成功時の本文はここで直列化して渡す。
+    text: async () => init.text ?? JSON.stringify(body),
   } as unknown as Response;
 }
 

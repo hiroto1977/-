@@ -9,6 +9,7 @@ import { pushRecent, toggleFavorite, keepKnown, RECENTS_MAX } from './recents';
 import { LockScreen } from './security/LockScreen';
 import { getVault } from './security/vault';
 import { startAutoLock } from './security/autoLock';
+import { lockWorkspace } from './security/lockWorkspace';
 import { usePlan } from './plan/usePlan';
 import { VoiceCommandBar } from './components/VoiceCommandBar';
 import { ChatbotWidget } from './components/ChatbotWidget';
@@ -139,10 +140,9 @@ export function App() {
   useEffect(() => {
     if (!browserMode || !vaultUnlocked) return undefined;
     const handle = startAutoLock({
-      onLock: () => {
-        getVault().lock();
-        setVaultUnlocked(false);
-      },
+      // 鍵を落とすのと画面を施錠表示にするのは `lockWorkspace` の中で 1 つ。
+      // 並べて書くと鍵を落とす側だけ消えても全検査が緑のまま通る (実測)。
+      onLock: () => lockWorkspace(() => setVaultUnlocked(false)),
     });
     return () => handle.dispose();
   }, [browserMode, vaultUnlocked]);

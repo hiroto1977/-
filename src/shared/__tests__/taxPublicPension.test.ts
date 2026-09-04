@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  DEFAULT_PENSION_DEDUCTION_PARAMS,
   calcPublicPensionDeduction,
   calcPublicPensionIncome,
   calcPublicPensionDeductionWithOtherIncome,
@@ -173,5 +174,22 @@ describe('calcPublicPensionIncomeWithOtherIncome', () => {
     // 年金80万, 他所得2,500万 → 控除90万 > 収入 → 雑所得0
     const r = calcPublicPensionIncomeWithOtherIncome(800_000, true, 25_000_000);
     expect(r.taxableIncome).toBe(0);
+  });
+});
+
+describe('台帳から渡す公的年金等控除の最低額 (PensionDeductionParams)', () => {
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_PENSION_DEDUCTION_PARAMS).toEqual({ minUnder65: PENSION_DEDUCTION_MIN_UNDER65, minOver65: PENSION_DEDUCTION_MIN_OVER65 });
+    expect(calcPublicPensionIncome(3_000_000, true)).toEqual(calcPublicPensionIncome(3_000_000, true, DEFAULT_PENSION_DEDUCTION_PARAMS));
+    expect(calcPublicPensionDeduction(1_000_000, false)).toBe(calcPublicPensionDeduction(1_000_000, false, DEFAULT_PENSION_DEDUCTION_PARAMS));
+  });
+
+  it('最低額はそれぞれの年齢区分にだけ効き、最低額の帯の外では動かない', () => {
+    const p = { minUnder65: 700_000, minOver65: 1_200_000 };
+    expect(calcPublicPensionDeduction(3_000_000, true, p)).toBe(1_200_000);
+    expect(calcPublicPensionDeduction(1_000_000, false, p)).toBe(700_000);
+    expect(calcPublicPensionIncome(3_000_000, true, p)).toEqual({ deduction: 1_200_000, taxableIncome: 1_800_000 });
+    // 330 万超 (65 歳以上) は率の帯なので最低額は効かない。
+    expect(calcPublicPensionDeduction(4_000_000, true, p)).toBe(calcPublicPensionDeduction(4_000_000, true));
   });
 });

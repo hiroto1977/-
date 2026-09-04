@@ -52,5 +52,12 @@
     ],
     "icon": "build/icon.png",
     "category": "Utility"
+  },
+  "electronFuses": {
+    "runAsNode": false,
+    "enableCookieEncryption": true,
+    "enableNodeOptionsEnvironmentVariable": false,
+    "enableNodeCliInspectArguments": false,
+    "grantFileProtocolExtraPrivileges": false
   }
 }

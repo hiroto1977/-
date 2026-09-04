@@ -572,3 +572,51 @@ a:hover { text-decoration: underline; }
                                padding: 0; font-size: 11.5pt; }
   body.ds-printing .ds-fill.ds-empty { color: #444; }
 }
+
+/* ---------------------------------------------------------------------------
+ * 金融機関等提出用の書面 (.bank-sheet) — 画面では白い紙、印刷では A4 に紙だけを出す。
+ * 数字は等幅の桁 (tabular-nums) で右揃え、罫線は 0.5pt の黒。明朝体は
+ * 決算書・試算表と同じ読み味にするため (画面のテーマ色は使わない)。
+ * ------------------------------------------------------------------------- */
+.bank-toolbar { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; padding: 10px 12px;
+                border: 1px solid var(--border, #334); border-radius: 8px; font-size: 12px; }
+.bank-toolbar-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+.bank-field { display: flex; flex-direction: column; gap: 2px; font-size: 11px; color: var(--text-mute); }
+.bank-hint { color: var(--text-mute); font-size: 11px; }
+.bank-error { color: #f87171; }
+.bank-saved { color: #22c55e; }
+.bank-sheet { background: #fff; color: #111; max-width: 210mm; margin: 0 auto; padding: 16mm 15mm;
+              box-shadow: 0 2px 14px rgba(0, 0, 0, 0.3); border-radius: 3px; font-size: 10.5pt; line-height: 1.5;
+              font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'MS Mincho', 'Noto Serif JP', serif;
+              font-variant-numeric: tabular-nums; }
+.bank-sheet h1 { margin: 0; text-align: center; font-size: 17pt; font-weight: 600; letter-spacing: 0.3em; color: #111; }
+.bank-sheet h2 { margin: 14px 0 4px; font-size: 11pt; font-weight: 600; color: #111;
+                 border-left: 3px solid #111; padding-left: 6px; }
+.bank-sheet-stamp { float: right; border: 1px solid #111; padding: 1px 8px; font-size: 9pt; }
+.bank-sheet-sub { margin: 4px 0 12px; text-align: center; font-size: 10pt; }
+.bank-meta, .bank-table { width: 100%; border-collapse: collapse; }
+.bank-meta th, .bank-meta td, .bank-table th, .bank-table td { border: 0.5pt solid #111; padding: 3px 6px;
+                                                                 vertical-align: middle; font-size: 10pt; }
+.bank-meta th { width: 16%; background: #f0f0f0; font-weight: 600; text-align: left; white-space: nowrap; }
+.bank-meta td { width: 34%; }
+.bank-table th { background: #f0f0f0; font-weight: 600; text-align: center; }
+.bank-table td.bank-num { text-align: right; white-space: nowrap; width: 22%; }
+.bank-table td.bank-note { color: #333; font-size: 9pt; width: 38%; }
+.bank-unit { margin: 8px 0 2px; text-align: right; font-size: 9pt; }
+.bank-caption { margin: 3px 0 0; font-size: 9pt; color: #333; }
+.bank-notes ol { margin: 4px 0; padding-left: 1.6em; font-size: 9pt; }
+.bank-attest { margin-top: 18px; }
+.bank-attest p { margin: 0 0 6px; }
+.bank-attest table { border-collapse: collapse; }
+.bank-attest th { text-align: left; font-weight: 600; padding: 4px 12px 4px 0; white-space: nowrap; }
+.bank-attest td { padding: 4px 0; min-width: 60mm; }
+.bank-seal { display: inline-block; width: 16mm; height: 16mm; margin-left: 8px; border: 0.5pt solid #111;
+             border-radius: 50%; text-align: center; line-height: 16mm; color: #999; font-size: 9pt; vertical-align: middle; }
+
+@media print {
+  @page { size: A4 portrait; margin: 15mm 14mm; }
+  body.ds-printing .bank-toolbar { display: none !important; }
+  body.ds-printing .bank-sheet { box-shadow: none; border-radius: 0; max-width: none; padding: 0; }
+  body.ds-printing .bank-section, body.ds-printing .bank-attest { break-inside: avoid; page-break-inside: avoid; }
+  body.ds-printing .bank-table thead { display: table-header-group; }
+}

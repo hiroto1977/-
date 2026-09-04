@@ -22,6 +22,8 @@ import {
 import { jpy } from '../../shared/formatters';
 import { GuardedNumber } from '../components/GuardedNumber';
 import { readNumberOr0, type NumSpec } from '../data/inputGuards';
+import { useParameters } from '../data/parameterOverrides';
+import { dscrThresholds, effluentStandards, zoningRules } from '../../shared/parameters';
 import {
   calcRealEstateYield,
   calcRealEstateLeverage,
@@ -43,6 +45,11 @@ import {
   SHADOW_HEIGHT_THRESHOLD_M,
 } from '../../shared/zoningPlanner';
 import { buildSchematicFloors } from '../../shared/buildingIso';
+
+/** しきい値の表示: 1 → 1.0、1.2 → 1.2、1.25 → 1.25 (末尾の 0 を 1 つだけ落とす)。 */
+function fmtDscr(x: number): string {
+  return x.toFixed(2).replace(/0$/, '');
+}
 import { BuildingIso } from '../components/BuildingIso';
 import {
   planWaterBalance,
@@ -50,6 +57,8 @@ import {
   planNitrification,
   planAeration,
   checkEffluent,
+  EFFLUENT_TN_DAILY_AVG_MG_L,
+  EFFLUENT_TP_DAILY_AVG_MG_L,
 } from '../../shared/waterCyclePlanner';
 
 const reInputStyle: React.CSSProperties = {
@@ -167,16 +176,21 @@ export function RealEstatePage() {
 
   // 精緻化指標 (NOI 利回り・DSCR・損益分岐入居率) — レバレッジ試算の入力を再利用。
   const [reOccStr, setReOccStr] = useState('95'); // 想定入居率 (%)
+  // DSCR の判定しきい値は台帳の値 (設定画面で金融機関の要求水準に置ける)。
+  const { values: params } = useParameters();
+  const dscrT = useMemo(() => dscrThresholds(params), [params]);
+  const zRules = useMemo(() => zoningRules(params), [params]);
+  const effStd = useMemo(() => effluentStandards(params), [params]);
   const refined = useMemo(() => {
     const annualGrossRent = reNum(reRentStr) * 12;
     const occ = Math.min(1, Math.max(0, reNum(reOccStr) / 100));
     const opex = reNum(reExpenseStr);
     const debt = reNum(reDebtStr);
     const noiY = calcNoiYield(annualGrossRent, occ, opex, reNum(rePriceStr));
-    const dscr = calcDscr(noiY.noi, debt);
+    const dscr = calcDscr(noiY.noi, debt, dscrT);
     const ber = calcBreakEvenOccupancyPct(opex, debt, annualGrossRent);
     return { noiY, dscr, ber };
-  }, [reRentStr, reOccStr, reExpenseStr, reDebtStr, rePriceStr]);
+  }, [reRentStr, reOccStr, reExpenseStr, reDebtStr, rePriceStr, dscrT]);
 
   // NPV / IRR — 自己資金を初期投資 (マイナス) とし、各年の税引前CF、最終年に売却ネット手取りを加算。
   const [npvDiscountStr, setNpvDiscountStr] = useState('4.0'); // 割引率 (%)
@@ -237,7 +251,7 @@ export function RealEstatePage() {
       category: zpCat,
       cornerLot: zpCorner,
       fireproofBonus: zpFireproof,
-    });
+    }, zRules);
     const capRaw = zpCapStr.trim() === '' ? Number.POSITIVE_INFINITY : reNum(zpCapStr);
     const factory = planFactory({
       maxFootprint: site.maxFootprint,
@@ -251,7 +265,7 @@ export function RealEstatePage() {
       setbackM: reNum(zpSetbackStr),
       category: zpCat,
       plannedHeightM: height,
-    });
+    }, zRules);
     const shadow = planShadowRegulation({
       plannedHeightM: height,
       thresholdM: reNum(zpShadowThresholdStr),
@@ -266,7 +280,7 @@ export function RealEstatePage() {
       roadWidthM: reNum(zpRoadStr),
       category: zpCat,
       plannedHeightM: height,
-    });
+    }, zRules);
     // 立体プレビューは「実際に建てられる寸法」で組む。トレードオフが建蔽率で
     // 頭打ちなら、幅はそのままで奥行を建蔽率上限に合わせて詰める。
     const isoWidth = tradeoff.buildableWidthM;
@@ -287,7 +301,7 @@ export function RealEstatePage() {
   }, [
     zpSiteStr, zpCovStr, zpFarStr, zpRoadStr, zpCat, zpCorner, zpFireproof, zpCapStr, zpWorkshopStr,
     zpHeightStr, zpSetbackStr, zpRearStr, zpSideStr, zpSiteDepthStr, zpSiteWidthStr,
-    zpShadowThresholdStr, zpShadowArea,
+    zpShadowThresholdStr, zpShadowArea, zRules,
   ]);
 
   // 水循環プランナー — クローズド水耕の水収支・RO 稼働率・硝化・排水規制を試算。
@@ -328,11 +342,11 @@ export function RealEstatePage() {
       concentrateTpMgL: reNum(wcConcPStr),
       annualDischargeL: balance.annualDischargeL,
       dischargeToPublicWater: wcToPublic,
-    });
+    }, effStd);
     return { balance, ro, nitri, aeration, effluent };
   }, [
     wcVolStr, wcCycleStr, wcRecoveryStr, wcRejectionStr, wcWindowStr, wcRoCapStr,
-    wcTankStr, wcNStr, wcConcNStr, wcConcPStr, wcToPublic,
+    wcTankStr, wcNStr, wcConcNStr, wcConcPStr, wcToPublic, effStd,
   ]);
 
   // 建物の減価償却 (定額法) — 取得後の建物は定額法。RC造の法定耐用年数は 47 年。
@@ -523,7 +537,7 @@ export function RealEstatePage() {
       <Section title="精緻化指標 (NOI 利回り・DSCR・損益分岐入居率)">
         <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
           上の試算入力に想定入居率を加え、空室損を控除した NOI ベースで評価します。
-          DSCR は NOI ÷ 年間返済額で、<strong>1.0 未満は危険水域</strong>、1.2 以上が目安。
+          DSCR は NOI ÷ 年間返済額で、<strong>{fmtDscr(dscrT.danger)} 未満は危険水域</strong>、{fmtDscr(dscrT.caution)} 以上が目安。
           損益分岐入居率を実際の入居率が下回ると赤字に転じます。
           <strong>※ 概算であり投資助言ではありません。</strong>
         </div>
@@ -612,13 +626,13 @@ export function RealEstatePage() {
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             道路乗数の区分
             <select value={zpCat} onChange={(e) => setZpCat(e.target.value as RoadMultiplierCategory)} style={{ ...reInputStyle, width: 150 }}>
-              <option value="other">商業系ほか (6/10)</option>
-              <option value="residential">住居系 (4/10)</option>
+              <option value="other">商業系ほか ({zRules.roadFarMultiplierOther / 10}/10)</option>
+              <option value="residential">住居系 ({zRules.roadFarMultiplierResidential / 10}/10)</option>
             </select>
           </label>
           <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6, paddingBottom: 6 }}>
             <input type="checkbox" checked={zpCorner} onChange={(e) => setZpCorner(e.target.checked)} />
-            角地 (+10%)
+            角地 (+{zRules.cornerLotBonusPct}%)
           </label>
           <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6, paddingBottom: 6 }}>
             <input type="checkbox" checked={zpFireproof} onChange={(e) => setZpFireproof(e.target.checked)} />
@@ -735,8 +749,9 @@ export function RealEstatePage() {
           150 ㎡は栽培室など<strong>実際に作業する部分</strong>で判定され、事務所・直売所などは作業場に算入しない取扱いが
           一般的なため、切り分けが設計の要点です。準住居は 50 ㎡、準工業・工業に面積上限はありません。
           建ぺい率は 60/80% の二択・容積率は 100〜500% から都市計画で指定 (53条1項3号・52条1項2号)。
-          角地 +10%・防火地域内の耐火建築物等 +10% (指定 80% 区域は適用除外 = 100%) は53条3項・6項、
-          前面道路 12m 未満の容積率制限 (幅員 × 住居系 4/10・その他 6/10 の低い方) は52条2項によります。
+          角地 +{zRules.cornerLotBonusPct}%・防火地域内の耐火建築物等 +{zRules.fireproofBonusPct}% (指定 {zRules.fireproofExemptionCoveragePct}% 区域は適用除外 = 100%) は53条3項・6項、
+          前面道路 {zRules.roadFarWidthThresholdM}m 未満の容積率制限 (幅員 × 住居系 {zRules.roadFarMultiplierResidential / 10}/10・その他 {zRules.roadFarMultiplierOther / 10}/10 の低い方) は52条2項、
+          道路斜線の勾配 (住居系 {zRules.roadSlopeResidential}・その他 {zRules.roadSlopeOther}) は別表第三によります。
           <strong>見落としやすい規制:</strong> 近隣商業は条例指定区域で高さ 10m 超に日影規制が適用され (商業地域は対象外・法56条の2)、
           空調室外機・コンプレッサ等は騒音規制法の特定施設届出、一定規模超は駐車場附置義務条例の対象になりえます
           (工場立地法は農業 = 植物工場には不適用)。
@@ -853,13 +868,13 @@ export function RealEstatePage() {
         )}
         {water.effluent.wpclNpApplicable && (
           <div style={{ fontSize: 12, color: '#f87171', marginBottom: 8 }}>
-            排出水量が 50 m³/日以上のため、水質汚濁防止法の窒素・りん規制の対象になりえます。届出と処理設備が必要です。
+            排出水量が {effStd.npApplicabilityM3PerDay} m³/日以上のため、水質汚濁防止法の窒素・りん規制の対象になりえます。届出と処理設備が必要です。
           </div>
         )}
         <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.7 }}>
           ※ 硝化は窒素 1mg あたり CaCO₃ 換算 7.14mg のアルカリ度を消費し、酸素 4.57mg を要します (硝化の化学量論)。
-          地下水の環境基準は硝酸性窒素及び亜硝酸性窒素で 10mg/L、公共用水域への一律排水基準は全窒素 120mg/L・全りん 16mg/L
-          (閉鎖性水域の日間平均は 60 / 8mg/L) が目安です。<strong>実際の適用は自治体の上乗せ条例・地域指定・排出規模で変わる</strong>ため、
+          地下水の環境基準は硝酸性窒素及び亜硝酸性窒素で {effStd.groundwaterNitrateNMgL}mg/L、公共用水域への一律排水基準は全窒素 {effStd.tnUniformMgL}mg/L・全りん {effStd.tpUniformMgL}mg/L
+          (閉鎖性水域の日間平均は {EFFLUENT_TN_DAILY_AVG_MG_L} / {EFFLUENT_TP_DAILY_AVG_MG_L}mg/L) が目安です。<strong>実際の適用は自治体の上乗せ条例・地域指定・排出規模で変わる</strong>ため、
           放流を伴う場合は必ず自治体の環境部局に確認してください。濃縮廃液を捨てずに再利用すれば、これらの規制の多くを回避できます。
         </div>
       </Section>

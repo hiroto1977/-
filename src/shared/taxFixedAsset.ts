@@ -23,6 +23,19 @@ export const LAND_TAX_THRESHOLD = 300_000;
 export const HOUSE_TAX_THRESHOLD = 200_000;
 export const DEPRECIABLE_ASSET_TAX_THRESHOLD = 1_500_000;
 
+/** 免税点。省略すると上の定数。台帳 (`shared/parameters.ts`) から上書きできる。 */
+export interface FixedAssetThresholds {
+  readonly land: number;
+  readonly house: number;
+  readonly depreciableAsset: number;
+}
+
+export const DEFAULT_FIXED_ASSET_THRESHOLDS: FixedAssetThresholds = {
+  land: LAND_TAX_THRESHOLD,
+  house: HOUSE_TAX_THRESHOLD,
+  depreciableAsset: DEPRECIABLE_ASSET_TAX_THRESHOLD,
+};
+
 /** 固定資産の種別 (免税点・特例の分岐に使う)。 */
 export type AssetType = 'land' | 'house' | 'depreciableAsset';
 
@@ -182,18 +195,21 @@ export interface TaxThresholdParams {
  * @returns 免税点 **未満** なら true (非課税)、免税点以上なら false (課税)
  * @throws taxableBase が負・非有限のとき / assetType がホワイトリスト外のとき
  */
-export function isBelowTaxThreshold({ assetType, taxableBase }: TaxThresholdParams): boolean {
+export function isBelowTaxThreshold(
+  { assetType, taxableBase }: TaxThresholdParams,
+  thresholds: FixedAssetThresholds = DEFAULT_FIXED_ASSET_THRESHOLDS,
+): boolean {
   assertNonNegativeFinite(taxableBase, 'taxableBase');
   let threshold: number;
   switch (assetType) {
     case 'land':
-      threshold = LAND_TAX_THRESHOLD;
+      threshold = thresholds.land;
       break;
     case 'house':
-      threshold = HOUSE_TAX_THRESHOLD;
+      threshold = thresholds.house;
       break;
     case 'depreciableAsset':
-      threshold = DEPRECIABLE_ASSET_TAX_THRESHOLD;
+      threshold = thresholds.depreciableAsset;
       break;
     default: {
       // 網羅性チェック (ホワイトリスト外は throw)。
@@ -215,6 +231,8 @@ export interface FixedAssetTaxTotalParams {
   readonly fixedRate?: number;
   /** 都市計画税の税率 (既定・上限 0.3%)。市街化区域外なら 0 を渡す。 */
   readonly cityPlanningRate?: number;
+  /** 免税点。省略すると法定値。 */
+  readonly thresholds?: FixedAssetThresholds;
 }
 
 export interface FixedAssetTaxTotal {
@@ -250,6 +268,7 @@ export function calcFixedAssetTaxTotal({
   dwellings = 1,
   fixedRate = FIXED_ASSET_STANDARD_RATE,
   cityPlanningRate = CITY_PLANNING_MAX_RATE,
+  thresholds = DEFAULT_FIXED_ASSET_THRESHOLDS,
 }: FixedAssetTaxTotalParams): FixedAssetTaxTotal {
   const { fixedAssetBase, cityPlanningBase } = residentialLandTaxableBase({
     assessedValue,
@@ -257,7 +276,7 @@ export function calcFixedAssetTaxTotal({
     dwellings,
   });
   // 土地の免税点判定 (固定資産税用課税標準で判定)。
-  const exempt = isBelowTaxThreshold({ assetType: 'land', taxableBase: fixedAssetBase });
+  const exempt = isBelowTaxThreshold({ assetType: 'land', taxableBase: fixedAssetBase }, thresholds);
   if (exempt) {
     return { fixedAssetTax: 0, cityPlanningTax: 0, total: 0, exempt: true };
   }

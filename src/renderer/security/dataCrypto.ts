@@ -11,7 +11,11 @@
  * salt/iv/ciphertext fails decryption (throws) rather than returning garbage.
  */
 
-import { AES_GCM_IV_BYTES, PBKDF2_ITERATIONS as SHARED_ITERATIONS } from '../../shared/cryptoParams';
+import {
+  AES_GCM_IV_BYTES,
+  MIN_SALT_BYTES,
+  PBKDF2_ITERATIONS as SHARED_ITERATIONS,
+} from '../../shared/cryptoParams';
 
 const KDF = 'PBKDF2-SHA256';
 // OWASP 2023 floor for PBKDF2-**SHA256** is 600,000 (210,000 is the SHA-512
@@ -57,7 +61,33 @@ export function assertKdfIterations(iterations: number): void {
     throw new Error('暗号化データの反復回数が許容範囲外です');
   }
 }
-const SALT_BYTES = 16;
+
+/**
+ * 保存側から読んだソルトの長さを検証する。下限を割っていれば投げる。
+ *
+ * **`MIN_SALT_BYTES` は 2026-08-27 まで、定義されているだけで
+ * どこからも参照されていなかった。** 定数の説明は「用途ごとに増やすのは
+ * 自由だが、**これを下回らせない**」と不変条件を書いているのに、
+ * それを守る側が無かった。
+ *
+ * 効く場面は `assertKdfIterations` と同じ形である —— `vault.ts` は
+ * IndexedDB から読んだ `meta.salt` をそのまま `deriveKey` へ渡す。
+ * 反復回数のほうは「dataCrypto は同じ検査を最初から持っていたのに、
+ * 資格情報そのものを持つこちらが素通しだった」として塞がれたが、
+ * **隣の欄である salt は残っていた**。
+ *
+ * 短いソルトは鍵そのものを壊さないが、**利用者をまたいだ事前計算**を
+ * 成り立たせる。保管領域へ書ける相手 (拡張機能・同一生成元の別ページ) が
+ * salt を固定値へ差し替えれば、KCV に対する総当たりを使い回せる。
+ */
+export function assertSaltBytes(salt: Uint8Array): void {
+  if (salt.length < MIN_SALT_BYTES) {
+    throw new Error('暗号化データのソルトが短すぎます');
+  }
+}
+
+/** 生成側も同じ床から採る。片方だけ動くと「下回らせない」が崩れる。 */
+const SALT_BYTES = MIN_SALT_BYTES;
 const IV_BYTES = AES_GCM_IV_BYTES;
 
 export interface EncryptedBundle {
@@ -86,6 +116,28 @@ function fromBase64(b64: string): Uint8Array {
   // Stryker disable next-line EqualityOperator
   for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
   return out;
+}
+
+/**
+ * base64 として読めない値を **領域のエラー**に変える。
+ *
+ * `atob` は不正な文字で `DOMException('Invalid character')` を投げる。
+ * `decryptString` は salt と iv を **try の外**で復号していたので、利用者が
+ * 選んだバックアップファイルの `salt` が壊れていると、
+ * 「復号に失敗しました（パスワード不一致またはデータ破損）」ではなく
+ * **プラットフォームの生の例外**が画面へ出ていた (2026-08-22 に実測。
+ * `ct` だけは try の中なので正しい文言が出る、という同じ関数内での食い違い)。
+ *
+ * `parseBackup` は他のすべての失敗に日本語の理由を付けているので、ここだけ
+ * 素通しにしない。「パスワードが違う」のか「ファイルが壊れている」のかは
+ * 利用者の次の行動が変わるので、文言も分ける。
+ */
+function decodeBase64Field(b64: string, field: string): Uint8Array {
+  try {
+    return fromBase64(b64);
+  } catch {
+    throw new Error(`暗号化データが壊れています（${field} が base64 として読めません）`);
+  }
 }
 
 async function deriveKey(password: string, salt: Uint8Array, iterations: number): Promise<CryptoKey> {
@@ -136,8 +188,9 @@ export async function encryptString(plaintext: string, password: string): Promis
 
 export async function decryptString(bundle: EncryptedBundle, password: string): Promise<string> {
   if (!isEncryptedBundle(bundle)) throw new Error('暗号化データの形式が不正です');
-  const salt = fromBase64(bundle.salt);
-  const iv = fromBase64(bundle.iv);
+  const salt = decodeBase64Field(bundle.salt, 'salt');
+  const iv = decodeBase64Field(bundle.iv, 'iv');
+  assertSaltBytes(salt);
   assertKdfIterations(bundle.iterations);
   const key = await deriveKey(password, salt, bundle.iterations);
   let plain: ArrayBuffer;
@@ -178,7 +231,7 @@ export function randomSaltB64(): string {
 /** Derive a reusable AES-GCM key from a passphrase + (persisted) salt. */
 export async function deriveAesKey(password: string, saltB64: string, iterations = ITERATIONS): Promise<CryptoKey> {
   if (password.length === 0) throw new Error('パスワードを入力してください');
-  return deriveKey(password, fromBase64(saltB64), iterations);
+  return deriveKey(password, decodeBase64Field(saltB64, 'salt'), iterations);
 }
 
 export async function sealWithKey(key: CryptoKey, plaintext: string): Promise<Sealed> {

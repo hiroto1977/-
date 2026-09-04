@@ -7,7 +7,11 @@ import {
   dominantEmotionOf,
   sentimentBalanceOf,
   analyzeProfile,
+  RECENT_WINDOW,
+  TRIGGER_MIN_COUNT,
+  LOW_SCORE,
 } from '../emotionInsights';
+import { DEFAULT_EMOTION_THRESHOLDS } from '../../../shared/emotionThresholds';
 import type { MoodEntry, AnalysisEntry, EmotionScores } from '../emotionsWeb';
 
 const SCORES: EmotionScores = { joy: 0, sadness: 0, anger: 0, fear: 0, surprise: 0, disgust: 0 };
@@ -153,5 +157,62 @@ describe('analyzeProfile', () => {
   it('threads triggers through from notes', () => {
     const p = analyzeProfile([mood('2026-06-01', 2, '会議 が 多い'), mood('2026-06-02', 2, '会議 疲れ')], []);
     expect(p.topTriggers).toContain('会議');
+  });
+});
+
+/*
+ * 台帳 (`parameters.ts`) から渡すしきい値。省略時は既定と同じ結果、渡せば窓・ヒステリシス・
+ * 低調の上限・出現回数のそれぞれが効く。
+ */
+describe('台帳から渡すしきい値 (EmotionThresholds)', () => {
+  // 10 日: 5 が 5 日、2 が 5 日。「会議」は 3 回、「散歩」は 1 回。
+  const moods = [
+    mood('2026-08-01', 5, '会議 が長い'),
+    mood('2026-08-02', 5, '散歩'),
+    mood('2026-08-03', 5, ''),
+    mood('2026-08-04', 5, ''),
+    mood('2026-08-05', 5, ''),
+    mood('2026-08-06', 2, '会議 で疲れた'),
+    mood('2026-08-07', 2, ''),
+    mood('2026-08-08', 2, '会議'),
+    mood('2026-08-09', 2, ''),
+    mood('2026-08-10', 2, ''),
+  ];
+
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect([RECENT_WINDOW, TRIGGER_MIN_COUNT, LOW_SCORE]).toEqual([7, 2, 2]);
+    expect(analyzeProfile(moods, [], DEFAULT_EMOTION_THRESHOLDS)).toEqual(analyzeProfile(moods, []));
+    expect(classifyTrend(1, 0, 0.3)).toBe(classifyTrend(1, 0));
+    expect(trailingLowStreak([5, 2, 2], 2)).toBe(trailingLowStreak([5, 2, 2]));
+    expect(extractTriggers(['会議 会議'], 2)).toEqual(extractTriggers(['会議 会議']));
+    const p = analyzeProfile(moods, []);
+    expect(p.trend).toBe('declining'); // 直近 7 日の平均 2.86 − それ以前 5 = −2.14
+    expect(p.lowStreak).toBe(5);
+    expect(p.topTriggers).toEqual(['会議']);
+  });
+
+  it('窓・ヒステリシス・低調の上限・出現回数が効く', () => {
+    const t = { recentWindow: 3, trendHysteresis: 4, lowScore: 1, triggerMinCount: 5 };
+    const p = analyzeProfile(moods, [], t);
+    expect(p.recentAverage).toBe(2); // 直近 3 日
+    expect(p.priorAverage).toBeCloseTo(29 / 7, 10); // 残り 7 日
+    expect(p.trend).toBe('stable'); // 差 −2.14 はヒステリシス 4 の内側
+    expect(p.lowStreak).toBe(0); // 2 点は「1 点以下」ではない
+    expect(p.topTriggers).toEqual([]); // 3 回では 5 回に届かない
+    // 1 つずつ: 窓だけ変えると平均だけ動き、傾向は既定のヒステリシスで下向きのまま。
+    expect(analyzeProfile(moods, [], { ...DEFAULT_EMOTION_THRESHOLDS, recentWindow: 3 }).trend).toBe('declining');
+    expect(analyzeProfile(moods, [], { ...DEFAULT_EMOTION_THRESHOLDS, lowScore: 3 }).lowStreak).toBe(5);
+    expect(analyzeProfile(moods, [], { ...DEFAULT_EMOTION_THRESHOLDS, triggerMinCount: 3 }).topTriggers).toEqual(['会議']);
+    expect(analyzeProfile(moods, [], { ...DEFAULT_EMOTION_THRESHOLDS, triggerMinCount: 4 }).topTriggers).toEqual([]);
+  });
+
+  it('個々の関数も引数で受ける (境界は「超える」「以下」「以上」)', () => {
+    expect(classifyTrend(1, 0, 1)).toBe('stable'); // 差 1 は 1 を超えない
+    expect(classifyTrend(1.5, 0, 1)).toBe('improving');
+    expect(classifyTrend(0, 1.5, 1)).toBe('declining');
+    expect(trailingLowStreak([5, 3, 3], 3)).toBe(2);
+    expect(trailingLowStreak([5, 3, 3], 2)).toBe(0);
+    expect(extractTriggers(['会議 会議 会議', '散歩'], 3)).toEqual(['会議']);
+    expect(extractTriggers(['会議 会議 会議', '散歩'], 1)).toEqual(['会議', '散歩']);
   });
 });

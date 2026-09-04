@@ -54,11 +54,19 @@ jobs:
       - name: 対象の割り出しが壊れていないか (対照実験)
         run: node scripts/mutate-changed.cjs --self-test
 
+      # `${{ }}` は run: の**シェル本文へ文字列として展開されてから**シェルが読む。
+      # つまり値の中身がそのままシェル構文になる。env: へ束ねると値は環境変数として
+      # 渡り、シェル構文としては一度も読まれない。ここの 3 つは今どれも GitHub が
+      # 決める値か、リポジトリ内の設定由来だが、**仕組みとして注入できない形**へ
+      # 寄せておく (lint:workflow-security が run: 内の `${{ }}` を一律で落とす)。
       - name: 測る対象を決める
         id: scope
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
         run: |
-          if [ "${{ github.event_name }}" = "push" ]; then
-            TARGETS="$(node scripts/mutate-changed.cjs "${{ github.event.before }}")"
+          if [ "$EVENT_NAME" = "push" ]; then
+            TARGETS="$(node scripts/mutate-changed.cjs "$BEFORE")"
           else
             TARGETS="ALL"
           fi
@@ -91,9 +99,11 @@ jobs:
       # 対象が少ないので、毎回まっさらから測っても数分で終わる。
       - name: Run mutation testing (変わった対象のみ)
         if: steps.scope.outputs.mode == 'some'
+        env:
+          TARGETS: ${{ steps.scope.outputs.targets }}
         run: |
           rm -f .stryker-incremental.json
-          npx stryker run --mutate "${{ steps.scope.outputs.targets }}"
+          npx stryker run --mutate "$TARGETS"
 
       - name: Save Stryker JSON report
         uses: actions/upload-artifact@v4

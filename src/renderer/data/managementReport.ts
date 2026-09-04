@@ -8,13 +8,10 @@
  * **重要 — 概算の経営診断であり財務・税務助言ではありません。**
  */
 import type { BusinessOverview } from './overview';
-import type { ManagementScorecard } from '../../shared/managementScorecard';
+import { VERDICT_LABEL, type ManagementScorecard } from '../../shared/managementScorecard';
 import { summarizeHighlights, RISK_BAND_LABEL, type Highlight } from './managementHighlights';
 import type { MonthlyTrendRow } from './kpiActuals';
 
-const VERDICT_LABEL: Record<ManagementScorecard['verdict'], string> = {
-  poor: '要改善', caution: '注意', good: '良好', excellent: '優良',
-};
 const SEVERITY_MARK: Record<Highlight['severity'], string> = {
   critical: '🔴', warning: '🟡', good: '🟢',
 };

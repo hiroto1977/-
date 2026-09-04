@@ -47,6 +47,27 @@ describe('liveRead — 実データにならない理由を区別する', () => 
     });
   });
 
+  /*
+   * `canLiveRead` には 2026-08 の時点で同じ検査があったのに、**`liveRead` 本体は
+   * 素の添字のまま**だった (`LIVE_READERS[serviceId]`)。`'constructor'` は
+   * `Object` を返すので `reader === undefined` を抜け、理由が
+   * `live_read_unsupported` ではなく `not_configured`（＝「鍵を入れれば
+   * 実データになる」）になっていた —— 入れても永久に実データにならないのに。
+   *
+   * 判定を 1 か所に書いても、隣は直らない (0-a-4)。
+   */
+  it.each(['toString', 'constructor', '__proto__', 'valueOf', 'hasOwnProperty'])(
+    'プロトタイプ由来の名前 %s も live_read_unsupported',
+    async (name) => {
+      const r = await liveRead(name, deps());
+      expect(r).toEqual({
+        ok: false,
+        code: 'live_read_unsupported',
+        message: 'このサービスはブラウザ版からの読み取りに未対応です。同梱のサンプルを表示します。',
+      });
+    },
+  );
+
   it('資格情報が無ければ not_configured (入れれば実データになると言う)', async () => {
     const expected = {
       ok: false,
@@ -143,5 +164,95 @@ describe('liveRead — 揃っていれば実データを返す', () => {
     await liveRead('cursor', deps());
     expect(direct).not.toHaveBeenCalled();
     direct.mockRestore();
+  });
+});
+
+/*
+ * **本当の方針をここで留める。**
+ *
+ * 2026-08-27 まで `network/proxy.ts` に `PROXY_REQUIRED_SERVICES` という表が
+ * あり、「proxy 必須なのは notion / atlassian / cloudflare の 3 つ」と述べて
+ * いた。だが `liveRead` は**実データを読むサービスを必ずプロキシへ通す** ——
+ * 表のほうが実装より緩く、しかも検査が「github は proxy 必須では**ない**」と
+ * 固定していた。さらに表が挙げていた 3 つは `LIVE_READERS` に無く、
+ * ブラウザ版では**そもそも読めない**。二重に陳腐化していた。表は消し、
+ * 方針はこの 1 か所で留める。
+ *
+ * 緩めると何が起きるか: 資格情報 (`token`) を第三者のホストへ**プロキシの
+ * 宛先検査を通さずに**送る経路が生まれる。`liveRead.ts` の注記が
+ * 「動かないまま置いておくほうが危ない」と言っているのはそのことである。
+ */
+describe('プロキシを通さない経路が無いこと', () => {
+  it('★ 実データを読む経路は、プロキシが無ければ読まない', async () => {
+    const r = await liveRead('cursor', deps({ getProxyJsonFetch: () => Promise.reject(new Error('未設定')) }));
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.code).toBe('proxy_required');
+  });
+
+  it('★ 読めるときに渡る fetch は、プロキシが用意したものだけ', async () => {
+    let handedProxyFetch = false;
+    await liveRead(
+      'cursor',
+      deps({
+        getProxyJsonFetch: async () => {
+          handedProxyFetch = true;
+          return async () => ({}) as never;
+        },
+      }),
+    );
+    // 直接 fetch を作る枝が戻れば、ここは false のままになる。
+    expect(handedProxyFetch).toBe(true);
+  });
+
+  /*
+   * 陰性対照 —— 「常に proxy_required を返す」実装でも上の 1 件目は緑になる。
+   * reader を持たないサービスが**別の符号**で返ることを見て、
+   * 経路が実際に分かれていることを示す。
+   */
+  it('陰性: reader を持たないサービスは別の符号で断る', async () => {
+    const r = await liveRead('github', deps({ getProxyJsonFetch: () => Promise.reject(new Error('未設定')) }));
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.code).toBe('live_read_unsupported');
+  });
+});
+
+/**
+ * **対応表そのものを、読み直して留める。**
+ *
+ * `LIVE_READERS` はモジュール直下のオブジェクトリテラルなので、
+ * 静的 import では変異が届かない (2026-08-31 実測で 3 件生存 —— 表を空に、
+ * 項目を空に、`read` を `undefined` に潰しても鳴らなかった)。
+ *
+ * この表は「ブラウザ版で実データにできるサービス」の一覧である。
+ * 空に潰れれば**全サービスが黙って同梱サンプルへ落ちる** —— 画面には
+ * 「未対応です」と出るだけで、壊れたとは分からない。
+ */
+describe('LIVE_READERS — 読み直して static 変異体を届かせる', () => {
+  const fresh = async () => {
+    vi.resetModules();
+    return import('../liveRead');
+  };
+
+  it('★ 表に載っているのは cursor だけ (増減に気付く)', async () => {
+    const m = await fresh();
+    expect(Object.keys(m.LIVE_READERS)).toEqual(['cursor']);
+    expect(m.canLiveRead('cursor')).toBe(true);
+    expect(m.canLiveRead('github')).toBe(false);
+  });
+
+  /*
+   * 項目が `{}` に潰れると `read` が無くなる。`liveRead` はそこまで進んでから
+   * 落ちるので、**呼び出しの最後まで通して**確かめる。
+   */
+  it('★ cursor の read が実際に呼ばれて実データを返す', async () => {
+    const m = await fresh();
+    const jsonFetch = vi.fn(async () => ({ usage: [] }));
+    const r = await m.liveRead('cursor', {
+      readCredential: async () => 'tok',
+      getProxyJsonFetch: async () => jsonFetch as never,
+      now: () => 1_700_000_000_000,
+    });
+    expect(r.ok, JSON.stringify(r)).toBe(true);
+    expect(jsonFetch, 'read が実際に取りに行っている').toHaveBeenCalled();
   });
 });

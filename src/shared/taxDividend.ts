@@ -26,10 +26,36 @@ import {
 } from './taxCalc';
 import { calcDividendCredit, type DividendKind } from './taxCredits';
 
+/** 源泉徴収の所得税率の本体 (15%)。復興特別所得税を掛ける前 (租税特別措置法 8 条の4)。 */
+export const DIVIDEND_WITHHOLDING_INCOME_BASE_RATE = 0.15;
 /** 源泉徴収 (申告不要) の所得税率 (15% × 1.021)。 */
-export const DIVIDEND_WITHHOLDING_INCOME_RATE = 0.15 * (1 + RECONSTRUCTION_SURTAX_RATE);
+export const DIVIDEND_WITHHOLDING_INCOME_RATE = DIVIDEND_WITHHOLDING_INCOME_BASE_RATE * (1 + RECONSTRUCTION_SURTAX_RATE);
 /** 源泉徴収 (申告不要) の住民税率。 */
 export const DIVIDEND_WITHHOLDING_RESIDENT_RATE = 0.05;
+
+/** 配当の税額計算が読む率 (台帳 `parameters.ts` から渡せる)。省略時は定数。 */
+export interface DividendParams {
+  /** 源泉徴収の所得税率の本体 (15%)。 */
+  readonly withholdingIncomeRate: number;
+  /** 復興特別所得税の付加率 (2.1%)。所得税の項を共有する。 */
+  readonly surtaxRate: number;
+  /** 源泉徴収の住民税率 (配当割 5%)。税額控除の項を共有する。 */
+  readonly withholdingResidentRate: number;
+  /** 住民税の所得割率 (10%・総合課税で使う)。住民税の項を共有する。 */
+  readonly residentTaxRate: number;
+}
+
+export const DEFAULT_DIVIDEND_PARAMS: DividendParams = {
+  withholdingIncomeRate: DIVIDEND_WITHHOLDING_INCOME_BASE_RATE,
+  surtaxRate: RECONSTRUCTION_SURTAX_RATE,
+  withholdingResidentRate: DIVIDEND_WITHHOLDING_RESIDENT_RATE,
+  residentTaxRate: RESIDENT_TAX_RATE,
+};
+
+/** 申告不要 / 申告分離の合計税率 (所得税 × (1 + 付加率) + 住民税)。既定で 20.315%。有効桁 12 で丸める。 */
+export function withholdingTotalRate(p: DividendParams = DEFAULT_DIVIDEND_PARAMS): number {
+  return Number((p.withholdingIncomeRate * (1 + p.surtaxRate) + p.withholdingResidentRate).toPrecision(12));
+}
 
 export type DividendMethod = 'withholding' | 'separate' | 'aggregate';
 
@@ -52,11 +78,13 @@ export interface DividendComparison {
   readonly best: DividendMethod;
 }
 
-/** 申告不要 / 申告分離の税額 (どちらも 20.315%)。 */
-function withholdingTax(dividend: number): { incomeTax: number; residentTax: number } {
+/** 申告不要 / 申告分離の税額 (既定でどちらも 20.315%)。 */
+function withholdingTax(dividend: number, p: DividendParams): { incomeTax: number; residentTax: number } {
+  // 率を先に掛け合わせてから配当に掛ける (定数 `DIVIDEND_WITHHOLDING_INCOME_RATE` と同じ結合順 — 1 円の差を出さない)。
+  const incomeRate = p.withholdingIncomeRate * (1 + p.surtaxRate);
   return {
-    incomeTax: yen(dividend * DIVIDEND_WITHHOLDING_INCOME_RATE),
-    residentTax: yen(dividend * DIVIDEND_WITHHOLDING_RESIDENT_RATE),
+    incomeTax: yen(dividend * incomeRate),
+    residentTax: yen(dividend * p.withholdingResidentRate),
   };
 }
 
@@ -75,6 +103,7 @@ function aggregateTax(
   dividend: number,
   otherTaxableIncome: number,
   kind: DividendKind,
+  p: DividendParams,
 ): { incomeTax: number; residentTax: number } {
   const base = Math.max(0, otherTaxableIncome);
   // 配当を上積みした基準所得税額の増分。
@@ -89,9 +118,9 @@ function aggregateTax(
   });
 
   const incomeTaxAfterCredit = Math.max(0, incomeTaxDelta - credit.incomeTax);
-  const incomeTax = yen(incomeTaxAfterCredit * (1 + RECONSTRUCTION_SURTAX_RATE));
+  const incomeTax = yen(incomeTaxAfterCredit * (1 + p.surtaxRate));
   // 住民税: 配当 × 10% − 配当控除(住民税)。
-  const residentTax = Math.max(0, yen(dividend * RESIDENT_TAX_RATE) - credit.residentTax);
+  const residentTax = Math.max(0, yen(dividend * p.residentTaxRate) - credit.residentTax);
   return { incomeTax, residentTax };
 }
 
@@ -106,10 +135,11 @@ export function compareDividendMethods(
   dividend: number,
   otherTaxableIncome: number,
   kind: DividendKind = 'stock',
+  p: DividendParams = DEFAULT_DIVIDEND_PARAMS,
 ): DividendComparison {
   const d = Math.max(0, dividend);
-  const wh = withholdingTax(d);
-  const ag = aggregateTax(d, otherTaxableIncome, kind);
+  const wh = withholdingTax(d, p);
+  const ag = aggregateTax(d, otherTaxableIncome, kind, p);
 
   const withholding: DividendMethodResult = {
     method: 'withholding',
@@ -121,7 +151,7 @@ export function compareDividendMethods(
   // 申告分離は税率は申告不要と同じ (損益通算が使える点が異なるが税額は同じ)。
   const separate: DividendMethodResult = {
     method: 'separate',
-    label: '申告分離課税 (20.315%)',
+    label: `申告分離課税 (${Number((withholdingTotalRate(p) * 100).toPrecision(12))}%)`,
     incomeTax: wh.incomeTax,
     residentTax: wh.residentTax,
     totalTax: wh.incomeTax + wh.residentTax,

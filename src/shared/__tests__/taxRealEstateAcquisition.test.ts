@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  DEFAULT_ACQUISITION_PARAMS,
   STANDARD_RATE,
   REDUCED_RATE,
   LAND_THRESHOLD,
@@ -474,5 +475,41 @@ describe('realEstateAcquisitionTax', () => {
         propertyType: 'vehicle' as unknown as PropertyType,
       }),
     ).toThrow(/unknown propertyType/);
+  });
+});
+
+describe('台帳から渡す税率と免税点 (AcquisitionParams)', () => {
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_ACQUISITION_PARAMS).toEqual({
+      standardRate: STANDARD_RATE,
+      reducedRate: REDUCED_RATE,
+      landThreshold: LAND_THRESHOLD,
+      newBuildingThreshold: NEW_BUILDING_THRESHOLD,
+      otherBuildingThreshold: OTHER_BUILDING_THRESHOLD,
+    });
+    const input = { assessedValue: 20_000_000, propertyType: 'residentialBuilding', isNewBuilding: true } as const;
+    expect(realEstateAcquisitionTax(input)).toEqual(realEstateAcquisitionTax(input, DEFAULT_ACQUISITION_PARAMS));
+  });
+
+  it('本則・軽減の税率を渡す', () => {
+    const p = { ...DEFAULT_ACQUISITION_PARAMS, standardRate: 0.05, reducedRate: 0.02 };
+    expect(acquisitionTaxRate({ propertyType: 'land' }, p)).toBe(0.02);
+    expect(acquisitionTaxRate({ propertyType: 'land', applyReduction: false }, p)).toBe(0.05);
+    expect(acquisitionTaxRate({ propertyType: 'nonResidentialBuilding' }, p)).toBe(0.05);
+    const r = realEstateAcquisitionTax({ assessedValue: 20_000_000, propertyType: 'residentialBuilding' }, p);
+    expect(r.rate).toBe(0.02);
+    expect(r.tax).toBe(realEstateAcquisitionTax({ assessedValue: 20_000_000, propertyType: 'residentialBuilding' }).tax * 2 / 3);
+  });
+
+  it('免税点を渡す (土地 / 新築 / その他家屋)', () => {
+    const p = { ...DEFAULT_ACQUISITION_PARAMS, landThreshold: 200_000, newBuildingThreshold: 300_000, otherBuildingThreshold: 150_000 };
+    expect(isBelowAcquisitionThreshold({ propertyType: 'land', taxableValue: 150_000 })).toBe(false);
+    expect(isBelowAcquisitionThreshold({ propertyType: 'land', taxableValue: 150_000 }, p)).toBe(true);
+    expect(isBelowAcquisitionThreshold({ propertyType: 'residentialBuilding', taxableValue: 250_000, isNewBuilding: true }, p)).toBe(true);
+    expect(isBelowAcquisitionThreshold({ propertyType: 'residentialBuilding', taxableValue: 140_000 }, p)).toBe(true);
+    expect(isBelowAcquisitionThreshold({ propertyType: 'residentialBuilding', taxableValue: 150_000 }, p)).toBe(false);
+    const r = realEstateAcquisitionTax({ assessedValue: 150_000, propertyType: 'land' }, p);
+    expect(r.exempt).toBe(true);
+    expect(realEstateAcquisitionTax({ assessedValue: 150_000, propertyType: 'land' }).exempt).toBe(false);
   });
 });

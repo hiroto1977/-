@@ -1,4 +1,4 @@
-import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { jsonFetch, limitedFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
 
 /**
  * Microsoft 365 (Microsoft Graph API) 連携クライアント (実 API)。
@@ -148,22 +148,35 @@ async function sendMail(ctx: ActionContext): Promise<{ ok: true; to: string; sub
   if (!to || !subject) {
     throw new Error('to, subject are required');
   }
-  const f = ctx.fetch ?? fetch;
-  const res = await f(`${GRAPH_BASE}/me/sendMail`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${ctx.token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      message: {
-        subject,
-        body: { contentType: 'Text', content: body ?? '' },
-        toRecipients: [{ emailAddress: { address: to } }],
-      },
-      saveToSentItems: true,
-    }),
-  });
-  if (!res.ok) {
-    throw new FetchError(`microsoft-365 sendMail failed (${res.status})`, res.status, 'microsoft-365');
-  }
+  // 202 Accepted・本文なしなので `jsonFetch` は使えない (必ず JSON を読む)。
+  // だが**打ち切りは本文の形に関係なく要る** —— `limitedFetch` で掛ける。
+  await limitedFetch(
+    `${GRAPH_BASE}/me/sendMail`,
+    {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${ctx.token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: {
+          subject,
+          body: { contentType: 'Text', content: body ?? '' },
+          toRecipients: [{ emailAddress: { address: to } }],
+        },
+        saveToSentItems: true,
+      }),
+    },
+    // Stryker disable next-line StringLiteral: この `serviceId` は
+    // `limitedFetch` の内部 (打ち切りと本文の始末) にしか渡らない。
+    // ここは**本文を読まない**経路なので `readBodyWithCap` の文言にも出ず、
+    // 下の `FetchError` は同じ綴りを別に持っている (そちらは検査が留めている)。
+    // 空文字にしても観測できる差が無い (等価変異)。
+    { fetch: ctx.fetch, serviceId: 'microsoft-365' },
+    // 202 Accepted・本文なし。読まない本文は limitedFetch が捨てる。
+    async (res) => {
+      if (!res.ok) {
+        throw new FetchError(`microsoft-365 sendMail failed (${res.status})`, res.status, 'microsoft-365');
+      }
+    },
+  );
   return { ok: true, to, subject };
 }
 

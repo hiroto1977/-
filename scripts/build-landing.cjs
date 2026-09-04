@@ -51,6 +51,33 @@ function countEntries() {
 }
 
 /** src 配下の *.test.ts の静的 it( 件数。 */
+/**
+ * 変異検査の**対象モジュール数**を `stryker.config.json` から数える。
+ *
+ * ## なぜ数えるか (2026-08-25)
+ *
+ * この頁は「**100% Mutation スコア**」とだけ出していた。数そのものは
+ * `docs/ARCHITECTURE.md` の記録 (total / covered とも 100.00%) と合っており
+ * **嘘ではない**。だが **100% が何の 100% なのか**が書いていなかった。
+ *
+ * 実測: `mutate` に載っているのは **244 本**で、`lint:forbidden` が走査する
+ * ランタイム資産は **485 本**。つまり測っているのは約半分で、
+ * どれを測るかは `lint:mutation-scope` が台帳 (`MUST_MEASURE` /
+ * `KNOWN_UNMEASURED`) で管理している —— **範囲が有ることは承知の設計**である。
+ *
+ * このリポジトリは同じ理屈を既に別の場所で書いている ——
+ * 「範囲を書かない『保存時暗号化 ✓』は、利用者に『全部暗号化されている』と
+ * 読ませる」。公開する品質の主張にも同じ基準を当てる。
+ *
+ * 数は設定から採る (書き写すと、今日 manifest で見つけたのと同じ形で古くなる)。
+ */
+function countMutatedModules() {
+  const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'stryker.config.json'), 'utf8'));
+  const pats = Array.isArray(cfg.mutate) ? cfg.mutate : [];
+  // 除外パターン (`!...`) は数えない。実体は明示列挙なので glob 展開は要らない。
+  return pats.filter((p) => typeof p === 'string' && !p.startsWith('!')).length;
+}
+
 function countTests() {
   let total = 0;
   const walk = (dir) => {
@@ -66,7 +93,16 @@ function countTests() {
 }
 
 const esc = (s) =>
-  String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    // `'` も落とす。**2 つのスクリプトだけ抜けていた** (2026-08-23 実測)。
+    // 今の出力は属性を全部 `"` で括っているので実害は無いが、`escape.ts` は
+    // 「落とす文字は揃えてある」と書いており、その主張が事実でなかった。
+    // 揃っていない状態を残すと、次に `'` で括る人が踏む。
+    .replace(/'/g, '&#39;');
 
 function faviconDataUri() {
   const svg =
@@ -90,6 +126,7 @@ function buildOgSvg(count) {
 }
 
 function buildHtml(services, tests) {
+  const mutated = countMutatedModules();
   const byCat = (c) => services.filter((s) => s.category === c);
   const counts = Object.fromEntries(CATEGORY_ORDER.map((c) => [c, byCat(c).length]));
   const total = services.length;
@@ -114,6 +151,15 @@ function buildHtml(services, tests) {
 <html lang="ja">
 <head>
 <meta charset="utf-8">
+<!-- **公開版は inject-pwa 適用後の姿**なので、そちらに合わせて書く。
+     inject-pwa は manifest / apple-touch-icon / SW 登録スクリプトを足すため
+     manifest-src・img-src 'self'・worker-src が要る (注入前の姿だけを見て
+     決めたら、注入後に 2 件の CSP 違反が出た — 実測 2026-08-25)。
+     script-src は SW スニペットの sha256 を追記する口でもある。ハッシュが
+     1 つでも入ると仕様上 'unsafe-inline' は無視されるので、公開版では
+     「SW スニペットだけが動く」状態になる。ここに script-src が無いと
+     inject-pwa は「許可できない」と言って落ちる (これも実測済み)。 -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; worker-src 'self'; style-src 'unsafe-inline'; img-src 'self' data:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Service Hub — 業務支援ダッシュボード</title>
 <meta name="description" content="${esc(description)}">
@@ -182,7 +228,7 @@ function buildHtml(services, tests) {
   <div class="wrap"><div class="metrics">
     <div class="metric"><div class="num">${total}</div><div class="lbl">サービス</div></div>
     <div class="metric"><div class="num">${tests}</div><div class="lbl">ユニットテスト</div></div>
-    <div class="metric"><div class="num">100%</div><div class="lbl">Mutation スコア</div></div>
+    <div class="metric"><div class="num">100%</div><div class="lbl">Mutation スコア (対象 ${mutated} モジュール)</div></div>
     <div class="metric"><div class="num">2</div><div class="lbl">実行形態</div></div>
   </div></div>
   <main class="wrap" id="main">
@@ -232,4 +278,8 @@ function main() {
   console.log(`Wrote ${OUT} (${(html.length / 1024).toFixed(1)} KB) — ${services.length} services, ${tests} tests`);
 }
 
-main();
+// 読み込むだけで dist/ へ書き出していたので、外から証人を立てられなかった。
+// (build-knowledge-vault.cjs と同じ形。2026-08-28 に両方へ番をつけた。)
+module.exports = { parseServices, countEntries };
+
+if (require.main === module) main();

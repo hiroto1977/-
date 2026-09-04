@@ -37,15 +37,44 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 // 走査対象。**ここに書き忘れると、そのディレクトリは丸ごと見えない。**
 // 2026-08 に実際そうなっていた: `src/shared/ai` が入っておらず、
 // 5 プロバイダ分の「変数ホスト + Authorization」が 1 件も台帳に載っていなかった。
-const ROOTS = [
-  'src/main/clients',
-  'src/shared/api',
-  'src/shared/ai',
-  'src/renderer/data',
-  'src/renderer/network',
+// 2026-08-22: **一覧をやめて src 全体にした。**
+// 上の注記は「書き忘れるとそのディレクトリは丸ごと見えない」と警告していたが、
+// 直し方は「足りない 1 つを足す」だった —— 一覧である限り同じことが起きる。
+// 実際もう一度起きていて、`src/main/oauth.ts` の**トークン交換と更新**
+// (client secret と認可コード / refresh token を載せる送信) が
+// `config.tokenUrl` という丸ごと変数の宛先へ飛んでいながら、
+// `src/main/clients` の外なので台帳に一度も載っていなかった。
+const ROOTS = ['src'];
+
+// 2026-08-22 の点検で足した: **`fetch` そのものが入っていなかった。**
+// 一覧はこの repo のラッパ (jsonFetch / apiFetch / transport …) だけを見て
+// おり、素の `fetch(\`https://${host}/…\`)` — つまり危ない書き方の中で
+// 一番素直なもの — が丸ごと視界の外だった。`Authorization: Bearer` を
+// 載せた実物を差し込んでも鳴らないことを実測して気付いた。
+//
+// 2026-08-23: **名前の一覧を 1 つにした。** 下の `BARE_SEND` はこれとは別に
+// 4 つ (`fetch|fetchFn|doFetch|f`) しか見ておらず、**この repo で一番使われる
+// ラッパ `jsonFetch` が入っていなかった**。同じ宛先・同じ資格情報でも
+//
+//     fetch(cfg.instanceUrl, …)      → 鳴る
+//     jsonFetch(cfg.instanceUrl, …)  → 鳴らない   ← 実測
+//
+// という差が出る。片方の検出器だけが知っている名前がある状態は、
+// 同じファイルの中で「何が通信か」の定義が 2 つあるということ。一覧から
+// 両方を組み立てて、ずれようがなくする。
+const NETWORK_CALL_NAMES = [
+  'fetch',
+  'fetchFn',
+  'doFetch',
+  'jsonFetch',
+  'apiFetch',
+  'apiFetchOkFlag',
+  'transport',
+  'postExpectOk',
+  'fetchViaProxy',
 ];
 
-const NETWORK_CALL = /\b(jsonFetch|apiFetch|apiFetchOkFlag|transport|postExpectOk|fetchViaProxy)\b/;
+const NETWORK_CALL = new RegExp(`\\b(${NETWORK_CALL_NAMES.join('|')})\\b`);
 
 /**
  * 送信そのものではなく「送り先の組み立て」を捕まえるための印。
@@ -157,13 +186,43 @@ const REVIEWED = [
  * 台帳を書かせるための入口**である。限界を書かずに置くと「見張っているつもり」
  * になるので明記する。
  */
-const BARE_SEND = /\b(?:fetch|fetchFn|doFetch|f)\s*\(\s*([A-Za-z_$][\w$]*\.[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)\s*,/;
+// 名前は `NETWORK_CALL_NAMES` と共有する (上の注記を参照)。`f` だけは
+// こちら専用 —— 転送ヘルパを 1 文字で受ける書き方が実在するため。
+const BARE_SEND = new RegExp(
+  `\\b(?:${[...NETWORK_CALL_NAMES, 'f'].join('|')})\\s*\\(\\s*` +
+    '([A-Za-z_$][\\w$]*\\.[A-Za-z_$][\\w$]*(?:\\.[A-Za-z_$][\\w$]*)*)\\s*,',
+);
 
 const REVIEWED_VARIABLE_DESTINATIONS = [
+  {
+    file: 'src/main/clients/github.ts',
+    dest: 'item.pull_request.url',
+    guard:
+      '**応答本文から来る送り先。** /search/issues の各項目が返す PR の API URL を'
+      + ' そのまま叩き直す形で、値を決めているのは相手のサーバである。'
+      + ' 送信の直前に `new URL()` で解析し、`protocol === https:` かつ'
+      + ' `hostname === api.github.com` でなければ叩かずに fallback を返す。'
+      + ' PAT (Authorization) が乗るので、乗っ取られた検索応答が別ホストを指しても'
+      + ' 出て行かない。2026-08-23 に検出器を広げるまで、この行は台帳の外にいた'
+      + ' (`jsonFetch<T>(` の型引数 + 引数が次の行、の 2 点で素通りしていた)。',
+  },
   {
     file: 'src/shared/ai/chat.ts',
     dest: 'httpReq.url',
     guard: 'buildRequest が組み立てた直後の値。各 provider の base は resolveBase → shared/aiEndpoint.ts を通っている (上の providers.ts の 5 件と同じ絞り)',
+  },
+  {
+    file: 'src/main/oauth.ts',
+    dest: 'config.tokenUrl',
+    guard:
+      'OAUTH_CONFIGS (このファイル内のハードコード表・10 プロバイダ) の値だけ。'
+      + ' 呼び出し口は 2 つで、どちらも表から引いた config を渡す:'
+      + ' main.ts の oauth:authorize は OAUTH_CONFIGS[serviceId] を Object.hasOwn で引き、'
+      + ' renderer から差し替えられるのは clientId だけ (CLIENT_ID_RE で検証)。'
+      + ' secrets.ts の更新経路も同じ表。送信直前に assertHttpsEndpoint で https を強制する (認可 URL 側も同じ関門)。'
+      + ' ただし assertHttpsEndpoint が見るのは**スキームだけでホストは見ない**ので、'
+      + ' 封じ込めは「表がハードコードであること」に依存している —— tokenUrl を'
+      + ' 設定可能にする変更は、client secret の送り先を外部が選べるようにする変更と同義。',
   },
   {
     file: 'src/renderer/network/proxy.ts',
@@ -183,22 +242,148 @@ const REVIEWED_VARIABLE_DESTINATIONS = [
  */
 function hasConstantHost(template) {
   const body = template.slice(1, -1); // 前後のバッククォートを外す
-  // 生のスキームで始まる = ホストはリテラル。
-  if (/^https?:\/\//.test(body)) return true;
   // `${EXPR}/...` で始まる = ホストは EXPR 次第。ALL_CAPS の定数だけ許す。
   const lead = /^\$\{([^}]*)\}/.exec(body);
   if (lead) return /^[A-Z_][A-Z0-9_]*$/.test(lead[1].trim());
-  return false;
+  // スキームで始まるものは、**権限部 (host[:port]) だけ**を見る。
+  //
+  // 2026-08-22 の点検までは「生のスキームで始まる = ホストはリテラル」と
+  // 決めつけていた。ところが `https://${host}/v1/data` はスキームで始まり、
+  // **かつホストが変数**である。つまりこの検査が探している当のものが、
+  // 唯一の素通り口になっていた (`Authorization: Bearer` を載せた実物を
+  // 差し込んでも鳴らないことを実測)。
+  //
+  // 権限部はスキームの後ろから最初の `/` `?` `#` まで。そこに `${` が
+  // あれば送り先は実行時に決まる。
+  const authority = /^https?:\/\/([^/?#]*)/.exec(body);
+  if (!authority) return false;
+  return !authority[1].includes('${');
 }
 
-function collect() {
+/**
+ * 陰性対照 — **このゲートが本当に鳴るか**を毎回確かめる。
+ *
+ * 2026-08-22 に、鳴らない穴が 2 つ同時に見つかった:
+ *   (1) `hasConstantHost` が「スキームで始まる = ホストはリテラル」と決めつけ、
+ *       `https://${host}/…` を定数扱いしていた
+ *   (2) `NETWORK_CALL` に **`fetch` そのものが無く**、素の fetch が視界の外だった
+ * どちらか片方でも残っていると、`Authorization` 付きの変数送り先が素通りする。
+ */
+function selfTest() {
+  const hostCases = [
+    ['スキームの後ろが変数なら「変数の送り先」', '`https://${host}/v1/data`', false],
+    ['サブドメインの補間も変数扱い', '`https://${tenant}.example.com/v1`', false],
+    ['ホストが定数ならパスの補間は無視する', '`https://api.github.com/users/${id}`', true],
+    ['ALL_CAPS の定数で始まるのは許す', '`${API_BASE}/v1/x`', true],
+    ['小文字の変数で始まるのは許さない', '`${base}/v1/x`', false],
+    // ホストが定数でもポートが変数なら「変数の送り先」に倒す。冒頭には
+    // 「見るのはホスト部だけ」と書いてあり、相手が変わらない以上リスクは
+    // 小さいが、権限部 (host:port) の補間は**台帳 1 行で済む**ので閉じる側に
+    // 寄せる。実コードには 1 件も無い (この判定で全件が緑のまま)。
+    ['ホストが定数でもポートが変数なら変数扱い (閉じる側に倒す)', '`https://example.com:${port}/x`', false],
+  ];
+  let bad = 0;
+  for (const [label, tpl, expected] of hostCases) {
+    const got = hasConstantHost(tpl);
+    const ok = got === expected;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got ? '定数' : '変数'} (期待 ${expected ? '定数' : '変数'})`);
+  }
+  const callCases = [
+    ['素の fetch を通信とみなす', 'await fetch(`https://${h}/x`);', true],
+    ['ラッパも通信とみなす', 'await jsonFetch(`https://${h}/x`);', true],
+    ['通信でない行は拾わない', 'const label = `https://${h}/x`;', false],
+  ];
+  for (const [label, line, expected] of callCases) {
+    const got = NETWORK_CALL.test(line);
+    const ok = got === expected;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} (期待 ${expected})`);
+  }
+
+  /*
+   * **名前の一覧が、そのまま `NETWORK_CALL` に載っていること。**
+   *
+   * `NETWORK_CALL` は `NETWORK_CALL_NAMES` を `|` で繋いだ 1 本の正規表現
+   * なので、綴りの取り違え・エスケープ・組み立ての書き換えで**一部の名前
+   * だけが黙って落ちる**ことがありうる。上の表が確かめているのは
+   * `fetch` と `jsonFetch` の 2 つだけだった。
+   *
+   * 実測 (2026-08-25): 9 名を 1 つずつ一覧から外しても、5 つは本番スキャン
+   * ・self-test のどちらも鳴らなかった (検出は名前の**和**なので、同じ行を
+   * 別の名前が拾えば違いが出ない)。**一覧に載っている名前は全部生きている**
+   * ことだけは、ここで押さえる。
+   */
+  const deadNames = NETWORK_CALL_NAMES.filter((n) => !NETWORK_CALL.test(`await ${n}(url, init);`));
+  if (deadNames.length > 0) {
+    bad += deadNames.length;
+    console.log(`  ✗ 一覧にあるのに NETWORK_CALL が拾わない名前が ${deadNames.length} 件: ${deadNames.join(', ')}`);
+  } else {
+    console.log(`  ✓ 一覧の ${NETWORK_CALL_NAMES.length} 名すべてを NETWORK_CALL が拾う`);
+  }
+  // `BARE_SEND` にはこれまで self-test が 1 件も無かった。名前の一覧が
+  // `NETWORK_CALL` とずれていたのも、行をまたぐ書き方と型引数を見ていなかった
+  // のも、**確かめる場所が無かったから**気付けなかった。
+  //
+  // 実測した素通りの形をそのまま並べる。`joined` は collectBareSends と同じ
+  // 前処理 (次の行を繋ぎ、型引数を落とす)。
+  const prep = (a, b = '') => `${a} ${b}`.replace(/<[^<>]*>/g, '');
+  const bareCases = [
+    ['素の fetch + プロパティ参照', prep('await fetch(cfg.url, init);'), true],
+    ['ラッパ jsonFetch でも同じ', prep('await jsonFetch(cfg.url, init);'), true],
+    ['型引数が挟まっても見る', prep('await jsonFetch<Detail>(cfg.url, init);'), true],
+    ['引数が次の行でも見る', prep('const r = await jsonFetch<Detail>(', '  cfg.instanceUrl,'), true],
+    ['postExpectOk も通信', prep('await postExpectOk(payload.webhookUrl, init);'), true],
+    // 素の識別子は**わざと**見ない (転送ヘルパの引数まで拾うと台帳が埋もれる)。
+    ['素の識別子は拾わない (意図)', prep('await jsonFetch(url, init);'), false],
+    ['通信でない呼び出しは拾わない', prep('await render(cfg.url, init);'), false],
+  ];
+  for (const [label, line, expected] of bareCases) {
+    const got = BARE_SEND.test(line);
+    const ok = got === expected;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} (期待 ${expected})`);
+  }
+  /*
+   * **走査の的そのもの。** 規則がどれだけ正しくても、その拡張子を読んで
+   * いなければ 1 件も鳴らない。2026-08-25 に `.tsx` が丸ごと外れていて、
+   * 「変数ホスト + Bearer」を植えても exit 0 だった (walk の注記を参照)。
+   * 検出の中身と違って、これは**外すと静かに効く**ので here で留める。
+   */
+  const extCases = [
+    ['.ts を読む', 'clients/github.ts', true],
+    ['.tsx を読む (2026-08-25 に外れていた)', 'pages/LibraryPage.tsx', true],
+    ['.js は読まない (src はすべて TypeScript)', 'legacy.js', false],
+    ['.json は読まない', 'registry.json', false],
+    ['.tsx を含む名前でも拡張子でなければ読まない', 'notes.tsx.md', false],
+  ];
+  for (const [label, name, expected] of extCases) {
+    const got = SCAN_EXT.test(name);
+    const ok = got === expected;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} 走査の的: ${label}: ${got} (期待 ${expected})`);
+  }
+
+  if (bad > 0) {
+    console.error(`❌ self-test 不一致 ${bad} 件 — ゲートが鳴らない / 鳴りすぎている`);
+    return 1;
+  }
+  console.log('✅ self-test 全件一致');
+  return 0;
+}
+
+/**
+ * **1 ファイル分。純粋関数として外へ出す** (証人が合成を流せるように)。
+ *
+ * 2026-08-26 の実測: `main()` の冒頭へ「常に成功」を差し込むと、
+ * `src/main/clients/` へ **`Authorization: Bearer` を載せて可変ホストへ送る**
+ * 経路を足しても、この門も self-test も lint:credential-use も lint:forbidden も
+ * 全部緑になった。走査が `main()` の中にしか無く、証人を置く場所が無かった。
+ */
+function templateFindings(rel, lines) {
   const found = [];
-  for (const root of ROOTS) {
-    const abs = path.join(REPO_ROOT, root);
-    if (!fs.existsSync(abs)) continue;
-    for (const file of walk(abs)) {
-      const rel = path.relative(REPO_ROOT, file).split(path.sep).join('/');
-      const lines = fs.readFileSync(file, 'utf8').split('\n');
+  {
+    {
       for (let i = 0; i < lines.length; i++) {
         const m = /`(https?:\/\/[^`]*|\$\{[^`]*)`/.exec(lines[i]);
         if (!m) continue;
@@ -216,23 +401,44 @@ function collect() {
   return found;
 }
 
-/** 送り先が丸ごと変数の送信を集める（BARE_SEND の説明を参照）。 */
-function collectBareSends() {
+function collect() {
   const found = [];
   for (const root of ROOTS) {
     const abs = path.join(REPO_ROOT, root);
     if (!fs.existsSync(abs)) continue;
     for (const file of walk(abs)) {
       const rel = path.relative(REPO_ROOT, file).split(path.sep).join('/');
-      const lines = fs.readFileSync(file, 'utf8').split('\n');
+      found.push(...templateFindings(rel, fs.readFileSync(file, 'utf8').split('\n')));
+    }
+  }
+  return found;
+}
+
+/** 送り先が丸ごと変数の送信を、1 ファイル分だけ集める（BARE_SEND の説明を参照）。 */
+function bareSendFindings(rel, lines) {
+  const found = [];
+  {
+    {
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         // 文字列 / コメントの中の `f(a.b, …)` を拾わない（学術コーパスの
         // 本文に `f(A,M,O)` のような記法が実在する）。
         const trimmed = line.trim();
         if (trimmed.startsWith('*') || trimmed.startsWith('//')) continue;
-        const m = BARE_SEND.exec(line);
+        // **1 行だけ見ると、この repo の書き方の大半を取りこぼす。**
+        //
+        //   1. 長い呼び出しは prettier が引数を次の行へ送る:
+        //        const res = await jsonFetch<T>(
+        //          cfg.instanceUrl,
+        //   2. 型引数が名前と `(` の間に入る: `jsonFetch<StripeCustomer>(`
+        //
+        // どちらも実測で素通りした (2026-08-23)。次の行までを 1 つに繋ぎ、
+        // 型引数を落としてから当てる。名前が今の行に在るときだけ数える
+        // ので、次の行を見た分の二重計上は起きない。
+        const joined = `${line} ${lines[i + 1] ?? ''}`.replace(/<[^<>]*>/g, '');
+        const m = BARE_SEND.exec(joined);
         if (!m) continue;
+        if (m.index >= line.replace(/<[^<>]*>/g, '').length) continue;
         if (/^\s*['"`]/.test(line) || /['"]\s*$/.test(trimmed)) continue;
         found.push({ file: rel, line: i + 1, dest: m[1] });
       }
@@ -241,16 +447,50 @@ function collectBareSends() {
   return found;
 }
 
+function collectBareSends() {
+  const found = [];
+  for (const root of ROOTS) {
+    const abs = path.join(REPO_ROOT, root);
+    if (!fs.existsSync(abs)) continue;
+    for (const file of walk(abs)) {
+      const rel = path.relative(REPO_ROOT, file).split(path.sep).join('/');
+      found.push(...bareSendFindings(rel, fs.readFileSync(file, 'utf8').split('\n')));
+    }
+  }
+  return found;
+}
+
+/**
+ * 走査する拡張子。**2026-08-25 まで `.ts` だけで、`.tsx` (94 ファイル) が
+ * 丸ごと視界の外だった。** 上の注記は「一覧をやめて src 全体にした」と
+ * 書いているが、それはディレクトリの話で、範囲はもう一段**拡張子**でも
+ * 絞られていた。対照を回すと差がそのまま出る:
+ *
+ * ```
+ *   LibraryPage.tsx へ
+ *     fetch(`${site}/rest/api/3/issue`, { headers: { Authorization: `Bearer ${token}` } })
+ *   を植える
+ *     .ts$  のとき  → exit 0        (黙る)
+ *     .tsx? のとき  → exit 1 / 1 件 (台帳に無い変数送り先として鳴る)
+ * ```
+ *
+ * ブラウザ版では画面側 (`pages/*.tsx`) が直接 fetch できる —— 実測では
+ * 今 1 件も無いが (`.tsx` を足しても検出は 13 件のまま)、**無いことと
+ * 見えないことは違う**。
+ */
+const SCAN_EXT = /\.tsx?$/;
+
 function* walk(dir) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
     if (e.name === '__tests__' || e.name === 'node_modules') continue;
     const full = path.join(dir, e.name);
     if (e.isDirectory()) yield* walk(full);
-    else if (/\.ts$/.test(e.name)) yield full;
+    else if (SCAN_EXT.test(e.name)) yield full;
   }
 }
 
 function main() {
+  if (process.argv.includes('--self-test')) return selfTest();
   const found = collect();
   const problems = [];
 
@@ -305,7 +545,22 @@ function main() {
       `${bare.length} send(s) whose destination is a variable outright`,
   );
   if (problems.length === 0) {
-    console.log(`✅ 送り先が変数の通信 ${found.length} 件はすべて台帳にあり、ホスト名を絞っています`);
+    /*
+     * **この一文が何について真なのかを、一文の中に書く。**
+     *
+     * 2026-08-26 の実測で、ここは `NETWORK_CALL_NAMES` の 9 つ (fetch 一族)
+     * しか「通信」とみなしていないと分かった。`navigator.sendBeacon` /
+     * `new WebSocket` / `new XMLHttpRequest` / `new Image().src =` に
+     * トークンを載せて可変ホストへ送る 4 本を植えても、この行は
+     * 「すべて台帳にあり」を印字した。**測った範囲を名乗らない ✅ は、
+     * 測っていない範囲についても保証しているように読める。**
+     * それらは `lint:forbidden` の「fetch 以外の送信」規則が 0 件で留める。
+     */
+    console.log(
+      `✅ 送り先が変数の通信 ${found.length} 件はすべて台帳にあり、ホスト名を絞っています ` +
+        `(見ているのは fetch 一族 ${NETWORK_CALL_NAMES.length} 名。` +
+        `sendBeacon / WebSocket / EventSource / XMLHttpRequest / Image は lint:forbidden が 0 件で留める)`,
+    );
     return 0;
   }
   console.error(`❌ ${problems.length} problem(s):`);
@@ -313,4 +568,17 @@ function main() {
   return 1;
 }
 
-process.exit(main());
+/*
+ * **外側の証人のために公開する。** `require.main` の番が無いと、require した
+ * 瞬間に CLI が走って process ごと落ちる。
+ */
+module.exports = {
+  templateFindings,
+  bareSendFindings,
+  hasConstantHost,
+  REVIEWED,
+  REVIEWED_VARIABLE_DESTINATIONS,
+  NETWORK_CALL_NAMES,
+};
+
+if (require.main === module) process.exit(main());

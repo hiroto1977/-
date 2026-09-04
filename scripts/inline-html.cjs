@@ -28,6 +28,111 @@ const CSP_META_TAG = /<meta\s+http-equiv="Content-Security-Policy"[^>]*>/;
 const SCRIPT_CLOSE = '</script>';
 
 /**
+ * 生テキスト要素 (`<script>` / `<style>`) の中身へ**綴じ込めるか**の判定。
+ *
+ * `<script>` の中身は JavaScript として読まれる**前に**、HTML の字句解析器が
+ * 生テキストとして走査する。つまり中身が何を意味するかは JS ではなく HTML の
+ * 状態機械が決める。ここを取り違えると、ビルドは通るのに**出荷物が白画面**になる。
+ *
+ * 実測 (chromium 1194, `--dump-dom` で `script.textContent.length` を報告させた):
+ *
+ * | 中身に含まれる字面        | ブラウザの挙動                        |
+ * |---------------------------|---------------------------------------|
+ * | `</script>`               | そこで閉じる (text が短くなる)        |
+ * | `</script ` / `</script\t`| **そこで閉じる**                      |
+ * | `</script/`               | **そこで閉じる**                      |
+ * | `</SCRIPT>`               | そこで閉じる (大小を問わない)         |
+ * | `</scriptx>`              | 閉じない (英字は区切りではない)       |
+ * | `<!--` だけ               | 閉じ方は変わらない                    |
+ * | `<!--` … `<script>`       | **こちらが書いた終端ごと飲み込む**    |
+ * | `<!-- -->` … `<script>`   | 変わらない (コメントが先に閉じている) |
+ *
+ * 上 4 行は `indexOf('</script>')` では 3 つ取りこぼす。最後から 2 行目
+ * (`<!--` → `<script`) は取りこぼしどころか**終端が消える** —— 要素が EOF まで
+ * 伸び、`</head>` も `<body>` も `<div id="root">` も script の文字列になる。
+ * esbuild は `</script` をあらゆる形で `<\/script` へ逃がすが、**`<!--` は
+ * JS でも CSS でも逃がさない** (実測)。`securityRange.ts` の XSS 標本群は既に
+ * `<script` を 3 つ抱えているので、`<!--` を含む標本が 1 つ増えた日に成立する。
+ *
+ * 見つけたら**ビルドを落とす**。CSP のハッシュ固定があるので実害は白画面に
+ * 留まる (注入にはならない) が、白画面は 34 ゲート全部が緑のまま出ていく。
+ */
+const RAW_TEXT_DELIM = '\\t\\n\\f\\r />';
+
+/** `</tag` + 区切り の最初の位置。無ければ -1。 */
+function endTagHazard(text, tag) {
+  const m = new RegExp(`</${tag}[${RAW_TEXT_DELIM}]`, 'i').exec(text);
+  return m ? m.index : -1;
+}
+
+/**
+ * 終端が飲み込まれる位置 (`<!--` の位置)。無ければ -1。
+ *
+ * `<!--` で「script data escaped」へ入り、閉じないまま `<script` + 区切りに
+ * 出会うと「double escaped」になる。この状態では `</script>` が終端として
+ * 働かない。`-->` が先に来ていれば元の状態に戻るので害は無い (実測済み)。
+ */
+function escapeHazard(text) {
+  const START = /<script[\t\n\f\r />]/gi;
+  let from = 0;
+  for (;;) {
+    const open = text.indexOf('<!--', from);
+    if (open === -1) return -1;
+    const closed = text.indexOf('-->', open + 4);
+    START.lastIndex = open + 4;
+    const start = START.exec(text);
+    if (start === null) return -1;
+    // コメントが `<script` より先に閉じているなら、その先から数え直す。
+    if (closed !== -1 && closed < start.index) {
+      from = closed + 3;
+      continue;
+    }
+    return open;
+  }
+}
+
+/** 落ちたときに「どの字面か」が分かる断片。 */
+function hazardExcerpt(text, index) {
+  return JSON.stringify(text.slice(Math.max(0, index - 30), index + 30));
+}
+
+/**
+ * 生テキスト要素へ綴じ込む前の関門。**肯定形の主張**である ——
+ * 「この文字列は `<tag>…</tag>` に入れても、ブラウザが読む中身が入れた通りになる」。
+ */
+function assertRawTextInert(text, tag, what) {
+  const end = endTagHazard(text, tag);
+  if (end !== -1) {
+    throw new Error(
+      `inline-html: ${what} が \`</${tag}\` + 区切り を含む (offset ${end}) — ` +
+        `ブラウザはそこで ${tag} 要素を閉じ、以降は HTML として読まれます: ${hazardExcerpt(text, end)}`,
+    );
+  }
+  if (tag !== 'script') return;
+  const esc = escapeHazard(text);
+  if (esc !== -1) {
+    throw new Error(
+      `inline-html: ${what} が 閉じていない \`<!--\` のあとに \`<script\` を含む (offset ${esc}) — ` +
+        `終端の </script> が飲み込まれ、頁全体が script の文字列になります: ${hazardExcerpt(text, esc)}`,
+    );
+  }
+}
+
+/**
+ * script 要素の中身が終わる位置。`indexOf('</script>')` では
+ * `</script ` / `</script/` / `</SCRIPT>` を取りこぼす (上の実測表)。
+ *
+ * `<!--` 由来の飲み込みまでは模さない —— そちらは `assertRawTextInert` が
+ * 綴じ込む前に落とすので、この関数へ届かない。
+ */
+function scriptEndIndex(html, from) {
+  const re = new RegExp(`</script[${RAW_TEXT_DELIM}]`, 'gi');
+  re.lastIndex = from;
+  const m = re.exec(html);
+  return m ? m.index : -1;
+}
+
+/**
  * The exact text the browser will see as the <script> element's child text —
  * i.e. what it hashes for CSP. The wrapping newlines ARE part of it: unlike
  * <pre> / <textarea>, a newline right after `<script>` is NOT dropped by the
@@ -79,7 +184,7 @@ function inlineScriptSources(html) {
     if (open === -1) return out;
     const tagEnd = html.indexOf('>', open);
     if (tagEnd === -1) return out;
-    const close = html.indexOf(SCRIPT_CLOSE, tagEnd);
+    const close = scriptEndIndex(html, tagEnd);
     if (close === -1) return out;
     const tag = html.slice(open, tagEnd + 1);
     if (!/\ssrc\s*=/i.test(tag) && isExecutableScriptTag(tag)) {
@@ -164,14 +269,22 @@ function assertPinnedScripts(html) {
  */
 function inlineStandalone(html, readAsset) {
   // 1. Inline external CSS: <link rel="stylesheet" href="./assets/foo.css">
-  html = html.replace(STYLESHEET_TAG, (_, rel) => `<style>\n${readAsset(rel)}\n</style>`);
+  html = html.replace(STYLESHEET_TAG, (_, rel) => {
+    const css = readAsset(rel);
+    assertRawTextInert(css, 'style', `インライン CSS (${rel})`);
+    return `<style>\n${css}\n</style>`;
+  });
 
   // 2. Strip any prefetch/preload modulepreload (they would 404 over file://).
   html = html.replace(MODULEPRELOAD_TAG, '');
 
   // 3. Read the JS that step 5 will inline, and pin its hash. Hashing the very
   //    string we are about to write out is what keeps hash and bytes identical.
-  const sources = [...html.matchAll(SCRIPT_SRC_TAG)].map((m) => scriptSourceFor(readAsset(m[1])));
+  const sources = [...html.matchAll(SCRIPT_SRC_TAG)].map((m) => {
+    const source = scriptSourceFor(readAsset(m[1]));
+    assertRawTextInert(source, 'script', `インライン JS (${m[1]})`);
+    return source;
+  });
 
   // 4. Replace the Electron-oriented CSP (script-src 'self', connect-src for the
   //    dev server) with the standalone one, now pinned to those hashes.
@@ -203,6 +316,10 @@ if (require.main === module) main();
 module.exports = {
   inlineStandalone,
   inlineScriptSources,
+  assertRawTextInert,
+  endTagHazard,
+  escapeHazard,
+  scriptEndIndex,
   isExecutableScriptTag,
   scriptSourceFor,
   cspHash,

@@ -1,10 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   AI_PROVIDERS,
   AI_PROVIDER_IDS,
   isAiProviderId,
   resolveModel,
   type AiChatRequest,
+  type AiProviderId,
 } from '../providers';
 
 const REQ: AiChatRequest = {
@@ -36,6 +37,113 @@ describe('registry invariant', () => {
     expect(isAiProviderId('')).toBe(false);
     expect(isAiProviderId(42)).toBe(false);
     expect(isAiProviderId(null)).toBe(false);
+  });
+});
+
+/*
+ * 提供元の表を **字面で** 留める。
+ *
+ * 上の registry invariant は「id が揃っているか」しか見ていない。中身
+ * (`defaultBaseUrl` / `browserDirect` / `needsApiKey` / `defaultModel`) は
+ * どれも表を読んで確かめる形だったので、**表そのものが変わると一緒に変わる**。
+ * 実測で 25 個の変異体 (5 提供元 × 5 欄) がここを生き延びていた。
+ *
+ * この 5 欄はどれも資格情報の扱いに直結する:
+ *   - `defaultBaseUrl` —— **API キーの送り先**。書き換われば鍵が別のホストへ行く
+ *   - `browserDirect`  —— ブラウザから直接叩いてよいか。`false` の提供元を
+ *     `true` にすると、任意ホストへ鍵を載せた fetch が画面から出る
+ *     (compat は「任意ホストなので CORS 前提にしない」が理由)
+ *   - `needsApiKey`    —— 鍵無しで送ってよいかの判断
+ *   - `defaultModel`   —— 引退したモデルを既定にすると実行時 API エラーでしか出ない
+ *
+ * `vi.resetModules()` + 動的 import なのは、表がモジュール定数だから
+ * (静的 import のままだと読み込み時に評価が済み、変異体が畳み込まれる)。
+ * `fsa.ts` の DB 名・`shellOpenGate.ts` の許可拡張子と同じ形。
+ */
+describe('提供元の表を字面で留める (鍵の送り先と直接続の可否)', () => {
+  interface Pinned {
+    label: string;
+    defaultModel: string;
+    defaultBaseUrl: string;
+    needsApiKey: boolean;
+    browserDirect: boolean;
+  }
+  const EXPECTED: [string, Pinned][] = [
+    ['anthropic', {
+      label: 'Claude (Anthropic)',
+      defaultModel: 'claude-sonnet-4-6',
+      defaultBaseUrl: 'https://api.anthropic.com',
+      needsApiKey: true,
+      browserDirect: true,
+    }],
+    ['openai', {
+      label: 'ChatGPT (OpenAI)',
+      defaultModel: 'gpt-4o-mini',
+      defaultBaseUrl: 'https://api.openai.com',
+      needsApiKey: true,
+      browserDirect: false,
+    }],
+    ['gemini', {
+      label: 'Gemini (Google)',
+      defaultModel: 'gemini-2.0-flash',
+      defaultBaseUrl: 'https://generativelanguage.googleapis.com',
+      needsApiKey: true,
+      browserDirect: true,
+    }],
+    ['ollama', {
+      label: 'Ollama (ローカル)',
+      defaultModel: 'llama3.2',
+      defaultBaseUrl: 'http://127.0.0.1:11434',
+      needsApiKey: false,
+      browserDirect: true,
+    }],
+    // 既定を空にしてあるのは意図 —— 送り先もモデルも資格情報で必ず指定させる。
+    ['compat', {
+      label: 'OpenAI 互換 API',
+      defaultModel: '',
+      defaultBaseUrl: '',
+      needsApiKey: false,
+      browserDirect: false,
+    }],
+  ];
+
+  async function freshProviders(): Promise<typeof import('../providers')> {
+    vi.resetModules();
+    return (await import('../providers')) as typeof import('../providers');
+  }
+
+  it.each(EXPECTED)('%s の 5 欄が変わっていない', async (id, want) => {
+    const { AI_PROVIDERS } = await freshProviders();
+    const spec = AI_PROVIDERS[id as keyof typeof AI_PROVIDERS];
+    expect(spec.label).toBe(want.label);
+    expect(spec.defaultModel).toBe(want.defaultModel);
+    expect(spec.defaultBaseUrl).toBe(want.defaultBaseUrl);
+    expect(spec.needsApiKey).toBe(want.needsApiKey);
+    expect(spec.browserDirect).toBe(want.browserDirect);
+  });
+
+  it('留めた提供元がちょうど 5 つ (増減に気付く)', async () => {
+    const { AI_PROVIDER_IDS } = await freshProviders();
+    expect([...AI_PROVIDER_IDS].sort()).toEqual(EXPECTED.map(([id]) => id).sort());
+  });
+
+  /*
+   * 鍵の送り先は https か loopback だけ。任意ホストを既定にしてはいけない
+   * (compat は既定を空にして、資格情報側の検証に委ねている)。
+   */
+  it('既定の送り先は https か loopback のみ', async () => {
+    const { AI_PROVIDERS, AI_PROVIDER_IDS } = await freshProviders();
+    const bad = [...AI_PROVIDER_IDS].filter((id) => {
+      const u = AI_PROVIDERS[id].defaultBaseUrl;
+      if (u === '') return false;
+      return !/^https:\/\//.test(u) && !/^http:\/\/(127\.0\.0\.1|\[::1\]|localhost)(:|\/|$)/.test(u);
+    });
+    expect(bad).toEqual([]);
+  });
+
+  it('高速モデルの id が変わっていない', async () => {
+    const { ANTHROPIC_FAST_MODEL } = await freshProviders();
+    expect(ANTHROPIC_FAST_MODEL).toBe('claude-haiku-4-5-20251001');
   });
 });
 
@@ -191,13 +299,21 @@ describe('ollama (local)', () => {
     });
   });
 
-  it('honors a custom base URL and model', () => {
+  it('honors a custom base URL and model (loopback)', () => {
     const r = AI_PROVIDERS.ollama.buildRequest(REQ, {
-      baseUrl: 'http://192.168.1.5:11434/',
+      baseUrl: 'http://127.0.0.1:11500/',
       model: 'qwen3',
     });
-    expect(r.url).toBe('http://192.168.1.5:11434/api/chat');
+    expect(r.url).toBe('http://127.0.0.1:11500/api/chat');
     expect((JSON.parse(r.body) as { model: string }).model).toBe('qwen3');
+  });
+
+  it('https なら任意ホストの base URL も受ける (経路 3: トンネル)', () => {
+    const r = AI_PROVIDERS.ollama.buildRequest(REQ, {
+      baseUrl: 'https://tunnel.example/ollama',
+      model: 'qwen3',
+    });
+    expect(r.url).toBe('https://tunnel.example/ollama/api/chat');
   });
 
   it('parseText reads message.content', () => {
@@ -248,10 +364,122 @@ describe('compat (OpenAI-compatible)', () => {
 describe('ベース URL の検証が buildRequest まで効く', () => {
   const req = { messages: [{ role: 'user' as const, content: 'x' }], maxTokens: 16 };
 
-  it('鍵を送るプロバイダは loopback 以外の平文 http を投げて弾く', () => {
-    for (const id of ['anthropic', 'openai', 'gemini'] as const) {
-      const call = () => AI_PROVIDERS[id].buildRequest(req, { apiKey: 'k', baseUrl: 'http://evil.example.com' });
-      expect(call, id).toThrow(/平文/);
+  /*
+   * **「鍵を送る経路」を名前で数えない。**
+   *
+   * `aiEndpoint.ts` は「この経路は API キーを載せない。載る構成
+   * (`credentialed: true`) は loopback 以外の平文を必ず弾く」と書いている。
+   * これは**関数 1 つでは守れない主張**で、呼ぶ側が `credentialed` を
+   * 正しく渡してはじめて成り立つ。
+   *
+   * 2026-08-23 まで、ここは `['anthropic', 'openai', 'gemini']` という
+   * **手書きの 3 つ**を回していた。守りたい境界は「鍵を載せるプロバイダ
+   * 全部」であって名前の一覧ではない (0-a-18)。
+   *
+   * **どこまでが本当に抜けたかを測った。** 6 つめのプロバイダを実際に
+   * 足して実験すると:
+   *
+   *   - 検証を**丸ごと省く**形 (生の baseUrl を使う) は、すぐ下の
+   *     `userinfo` の検査が `AI_PROVIDER_IDS` を回しているので**捕まる**。
+   *   - `resolveBase` は通すが **`credentialed: false` を渡す**形 ——
+   *     鍵を載せない ollama の spec を写して鍵を足す、いちばん有りそうな
+   *     間違い —— は `http://evil.example.com` へ `Authorization: Bearer`
+   *     を載せたまま **122 件すべて通った**。
+   *
+   * 抜けるのは後者。`credentialed` は呼ぶ側の**申告**なので、申告と実際に
+   * 載せる物がずれても関数側からは見えない。
+   *
+   * **`lint:network-targets` は代わりにならない。** あの台帳は確かに
+   * 6 つめを見つけて「台帳にありません」と鳴らす。だが台帳に載せるのは
+   * *人が書く一文*で、`credentialed: false` の 6 つめでも
+   * 「resolveBase を通している」は**本当のこと**なので、登録すれば
+   * ✅ になる (実測)。**台帳は主張を残す。効いているかを見るのはここ。**
+   *
+   * **鍵を載せるかどうかは、実際に組み立てて中を見れば分かる。**
+   * ヘッダ名 (`authorization` / `x-api-key` / `x-goog-api-key`) も
+   * 載せ方 (ヘッダ / クエリ / 本文) も プロバイダごとに違うので、
+   * **印の文字列そのもの**を組み立て結果の全体から探す。
+   */
+  const KEY_SENTINEL = 'sk-SENTINEL-9c1f4a7b';
+
+  /** 鍵を載せるプロバイダを、名前ではなく**組み立て結果**から数える。 */
+  function keyCarryingProviders(): AiProviderId[] {
+    return AI_PROVIDER_IDS.filter((id) => {
+      try {
+        const built = AI_PROVIDERS[id].buildRequest(req, {
+          apiKey: KEY_SENTINEL,
+          baseUrl: 'https://ok.example',
+          model: 'm',
+        });
+        return JSON.stringify(built).includes(KEY_SENTINEL);
+      } catch {
+        return false;
+      }
+    });
+  }
+
+  it('鍵を載せるプロバイダを数えられている (空撃ちでない)', () => {
+    const carriers = keyCarryingProviders();
+    // 数え方が壊れると黙って [] になり、下の規則が空回りする。
+    expect(carriers.length, '鍵を載せるプロバイダが 1 つも数えられていない').toBeGreaterThanOrEqual(4);
+    // 鍵を載せない構成も実在すること (全部 true を返す壊れ方も弾く)。
+    expect(carriers.length).toBeLessThan(AI_PROVIDER_IDS.length + 1);
+  });
+
+  it('鍵を載せるプロバイダは、loopback 以外の平文 http を必ず弾く', () => {
+    for (const id of keyCarryingProviders()) {
+      const call = () =>
+        AI_PROVIDERS[id].buildRequest(req, {
+          apiKey: KEY_SENTINEL,
+          baseUrl: 'http://evil.example.com',
+          model: 'm',
+        });
+      expect(call, `${id} が平文 http の別ホストへ鍵を送ろうとしている`).toThrow(/平文/);
+    }
+  });
+
+  /*
+   * **断り文句は「どうすれば通るか」まで含めて出す。**
+   *
+   * 上の検査は `/平文/` にしか当てていないので、文面の後半 (直し方の案内) が
+   * 空文字に潰れても鳴らなかった (2026-08-31 実測)。この文言は設定画面に
+   * そのまま出る —— 前半だけでは「では何なら通るのか」が分からない。
+   */
+  it('★ 断り文句が「何なら通るか」まで言う', () => {
+    const call = () =>
+      AI_PROVIDERS.ollama.buildRequest(req, { baseUrl: 'http://evil.example.com', model: 'm' });
+    expect(call).toThrow(/ループバック/);
+    expect(call).toThrow(/このページと同じホスト/);
+    expect(call).toThrow(/https/);
+  });
+
+  /*
+   * **経路 (2)「ページ自身と同じホスト」が生きている。**
+   *
+   * `globalThis.location?.hostname ?? ''` の `??` を `&&` に変えると
+   * pageHostname が常に空 (または undefined) になり、**この経路が丸ごと
+   * 死ぬ** —— PC で配信した画面をスマホから開く構成が、理由の分からない
+   * 「許可されていません」で止まる。デスクトップ (location 無し) では
+   * 空のままで正しいので、**ブラウザ側だけが壊れる**。
+   *
+   * node 環境には `location` が無いので、その場で生やして戻す。
+   */
+  it('★ ページと同じホストなら平文 http でも通る (location がある場合)', () => {
+    const g = globalThis as { location?: { hostname?: string } };
+    const had = 'location' in g;
+    const prev = g.location;
+    g.location = { hostname: 'pc.local' };
+    try {
+      expect(() =>
+        AI_PROVIDERS.ollama.buildRequest(req, { baseUrl: 'http://pc.local:11434', model: 'm' }),
+      ).not.toThrow();
+      // 対照: 同じ構成でも別ホストは通らない (全部通す壊れ方を弾く)
+      expect(() =>
+        AI_PROVIDERS.ollama.buildRequest(req, { baseUrl: 'http://other.local:11434', model: 'm' }),
+      ).toThrow(/平文/);
+    } finally {
+      if (had) g.location = prev;
+      else delete g.location;
     }
   });
 
@@ -262,9 +490,39 @@ describe('ベース URL の検証が buildRequest まで効く', () => {
     }
   });
 
-  it('Ollama は鍵を送らないので LAN の平文 http を通す', () => {
-    const out = AI_PROVIDERS.ollama.buildRequest(req, { baseUrl: 'http://192.168.1.5:11434', model: 'm' });
-    expect(out.url).toBe('http://192.168.1.5:11434/api/chat');
+  /*
+   * **2026-08-23 に期待ごと変わった。**
+   *
+   * 以前は「鍵を送らないので LAN の平文 http を通す」ことを確かめていた。
+   * だが `docs/OLLAMA_SECURITY.md` は「**平文 http による別ホスト接続は拒否
+   * する**」と書いており、制約を `shared/ollama.ts` に 1 つ置く理由も
+   * 「片方だけ緩い状態を作らないため」と明記していた。
+   * **実際にはこの経路だけがその絞りを通っていなかった** ——
+   * 文書が語る守りを、検査のほうが「通す」と固定していた形である。
+   *
+   * 平文で別ホストへ出るのは、内部ネットワーク探索の踏み台化と
+   * **プロンプトの平文送信**につながる。文書どおりへ寄せた。
+   */
+  it('Ollama でも平文 http の別ホストは拒否する', () => {
+    expect(() =>
+      AI_PROVIDERS.ollama.buildRequest(req, { baseUrl: 'http://192.168.1.5:11434', model: 'm' }),
+    ).toThrow(/平文 http で別ホストへは接続しません/);
+  });
+
+  it('Ollama の平文 http はループバックなら通る', () => {
+    const out = AI_PROVIDERS.ollama.buildRequest(req, {
+      baseUrl: 'http://127.0.0.1:11434',
+      model: 'm',
+    });
+    expect(out.url).toBe('http://127.0.0.1:11434/api/chat');
+  });
+
+  it('Ollama は https なら任意ホストを通す (トンネル経路は塞がない)', () => {
+    const out = AI_PROVIDERS.ollama.buildRequest(req, {
+      baseUrl: 'https://ollama.example',
+      model: 'm',
+    });
+    expect(out.url).toBe('https://ollama.example/api/chat');
   });
 
   it('互換 API は鍵を入れた途端に平文が弾かれる', () => {

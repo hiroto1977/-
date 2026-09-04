@@ -25,6 +25,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
+const safeWrite = require('./safe-vault-write.cjs');
 const kc = require('../orchestration/knowledge-context.cjs');
 const kg = require('../orchestration/knowledge-graph.cjs');
 const edu = require('../orchestration/education.cjs');
@@ -43,8 +44,101 @@ const EXEC_TITLES = {
 const GENERATED_NOTE =
   '*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*';
 
+/**
+ * YAML の二重引用符スカラー。**制御文字も逃がす**。
+ *
+ * 逆斜線と引用符だけを逃がしていた。改行はそのまま通る —— frontmatter は
+ * 「`---` の行から次の `---` の行まで」なので、値の中の改行のあとに `---` が
+ * 来ると **frontmatter がそこで終わる**。以降はノート本文になり、残りの
+ * キーは本文の文字列に化ける。
+ *
+ * 今の本体データで frontmatter に載る欄 (title / category / asOf / aliases)
+ * に改行は無い。だが summary には 86 件ある —— 同じデータ、同じ編集の手で
+ * ある。「今は無い」は守りではないので、綴りの側で塞ぐ。
+ *
+ * YAML 1.2 の二重引用符スカラーは `\n` `\r` `\t` を escape として解する
+ * (JSON と同じ)。文字を捨てずに 1 行へ収められる。
+ */
 function yamlStr(s) {
-  return `"${String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+  return `"${String(s)
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replace(/\t/g, '\\t')}"`;
+}
+
+/**
+ * この文字列を Markdown のインライン文脈へ置いても、リンクを**作らず・壊さない**か。
+ *
+ * CommonMark のリンクは入れ子にできない。リンク文字列の中に `](` があると
+ * 内側がリンクとして成立し、外側は成立しない。角括弧が釣り合わない場合も同じ。
+ * 判定は文法から出るもので、描画器には依らない。
+ */
+function linkSafe(s) {
+  const t = String(s);
+  let depth = 0;
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i];
+    // 逃がされた括弧はただの字。ここを見落とすと `linkSafe(mdInline(x))` が
+    // 永久に false になり、「逃がせば安全になる」という肯定形の主張が立たない。
+    if (c === '\\') {
+      i++;
+      continue;
+    }
+    if (c === '[') depth++;
+    else if (c === ']') {
+      if (t[i + 1] === '(') return false;
+      depth--;
+      if (depth < 0) return false;
+    }
+  }
+  return depth === 0;
+}
+
+/**
+ * 本体データ由来の文字列を Markdown のインライン文脈へ綴じ込む。
+ *
+ * **壊すときだけ逃がす。** 判例の中立引用は `[1978] ECR 207` のように角括弧を
+ * 正しく含み、CommonMark はこれを読める。無条件に逃がすと数百のノートが
+ * `\[1978\]` になり、直っていない物まで書き換わる。
+ *
+ * 実際に壊れていたのは 1 件だけだった —— mgmt-bass-diffusion-model の出典
+ * ラベルが数式 `dF/dt=[p+qF](1−F)` を持っており、これは字面がそのまま
+ * Markdown のリンク記法である。生成済みの
+ * `knowledge-vault/notes/academic/management/mgmt-bass-diffusion-model.md`
+ * に壊れた行が出荷されていた。
+ */
+function mdInline(s) {
+  const t = String(s);
+  return linkSafe(t) ? t : t.replace(/[[\]]/g, (c) => `\\${c}`);
+}
+
+/**
+ * `[[id|別名]]` の別名として綴じ込めるか。`]]` はリンクを閉じ、`|` は欄を割る。
+ *
+ * こちらは逃がさず**落とす**。今の本体データに該当は無く、出たときは
+ * 見出しそのものを直すべき性質の壊れ方だから (逃がすと字面が変わる)。
+ */
+function assertWikiAliasSafe(s, what) {
+  const t = String(s);
+  if (t.includes(']]') || t.includes('|')) {
+    throw new Error(`vault:build: ${what} が wikilink の別名に置けない字面を含む: ${JSON.stringify(t)}`);
+  }
+  return t;
+}
+
+/**
+ * 引用符を付けずに YAML へ書く値 (id / collection) が、素のスカラーとして
+ * 安全か。付ければ 7,543 ノート全部の frontmatter が変わるので、**変えずに
+ * 確かめる**ほうを採る。
+ */
+function assertBareYamlScalar(v, what) {
+  const t = String(v);
+  if (!/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(t)) {
+    throw new Error(`vault:build: ${what} が素の YAML スカラーとして安全でない: ${JSON.stringify(t)}`);
+  }
+  return t;
 }
 
 // ---------------------------------------------------------------------------
@@ -95,12 +189,14 @@ function buildRelatedMap(graph, entries, relatedTop = 10) {
 }
 
 function entryNote(e, related = []) {
-  const fm = ['---', `collection: ${e.collection}`, `id: ${e.id}`, `category: ${yamlStr(e.category)}`, `category_ja: ${yamlStr(e.categoryLabel)}`, `title: ${yamlStr(e.title)}`];
+  const fm = ['---', `collection: ${assertBareYamlScalar(e.collection, 'collection')}`, `id: ${assertBareYamlScalar(e.id, 'id')}`, `category: ${yamlStr(e.category)}`, `category_ja: ${yamlStr(e.categoryLabel)}`, `title: ${yamlStr(e.title)}`];
   if (e.asOf) fm.push(`as_of: ${yamlStr(e.asOf)}`);
   fm.push(`source_count: ${e.sources.length}`, `authoritative: ${e.authoritative}`, 'tags:', `  - collection/${e.collection}`, `  - ${e.collection}/${e.category}`, '  - knowledge/verified', 'aliases:', `  - ${yamlStr(e.title)}`, '---');
 
   const info = `> [!info] コレクション: [[${e.collectionLabel}]] ・ 区分: ${e.categoryLabel}${e.asOf ? ` ・ asOf: ${e.asOf}` : ''} ・ 出典: ${e.sources.length}件${e.authoritative ? '（うち権威ある出典 ✓）' : ''}`;
-  const sources = e.sources.map((s) => `- [${s.label}](${s.url}) \`${kc.SOURCE_TYPE_LABEL[s.type] || s.type}\``).join('\n');
+  const sources = e.sources
+    .map((s) => `- [${mdInline(s.label)}](${s.url}) \`${kc.SOURCE_TYPE_LABEL[s.type] || s.type}\``)
+    .join('\n');
 
   const parts = [fm.join('\n'), '', `# ${e.title}`, '', info, '', '## 概要', e.summary, ''];
   for (const m of e.meta) parts.push(`## ${m.label}`, m.value, '');
@@ -166,7 +262,8 @@ function thinkerNote(t) {
   }
   for (const [label, items] of [...groups.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1))) {
     parts.push(`## ${label}（${items.length}件）`);
-    for (const e of items) parts.push(`- [[${e.id}|${e.title}]] — ${kc.oneLiner(e.summary, 60)}`);
+    for (const e of items)
+      parts.push(`- [[${e.id}|${assertWikiAliasSafe(e.title, 'title')}]] — ${mdInline(kc.oneLiner(e.summary, 60))}`);
     parts.push('');
   }
   parts.push('## 関連', '- 索引: [[人物索引]]', '- ヴォルト入口: [[Home]]', '', '---', GENERATED_NOTE, '');
@@ -202,7 +299,10 @@ function sourceDomainNote(d) {
     .join(' ・ ');
   const fm = ['---', `title: ${yamlStr(d.host)}`, 'type: source-domain', `host: ${yamlStr(d.host)}`, `cite_count: ${d.items.length}`, 'tags:', '  - source-domain', '  - index', '---'];
   const parts = [fm.join('\n'), '', `# ${d.host}`, '', `> [!info] 出典ドメイン索引 ・ 引用 **${d.items.length} 件**（${typeLine}）`, '', '## このドメインを出典とする項目', ''];
-  for (const it of d.items) parts.push(`- [[${it.entry.id}|${it.entry.title}]] — ${kc.oneLiner(it.label, 70)}`);
+  for (const it of d.items)
+    parts.push(
+      `- [[${it.entry.id}|${assertWikiAliasSafe(it.entry.title, 'title')}]] — ${mdInline(kc.oneLiner(it.label, 70))}`,
+    );
   parts.push('', '## 関連', '- 索引: [[出典ドメイン索引]]', '- ヴォルト入口: [[Home]]', '', '---', GENERATED_NOTE, '');
   return parts.join('\n');
 }
@@ -381,7 +481,8 @@ function mocNote(col, entries) {
   const parts = [fm.join('\n'), '', `# ${col.label} — コレクションMOC`, '', `確証済みエントリ **${entries.length}件**（独立2出典以上・うち1件以上は権威ある出典で確認）。`, ''];
   for (const g of groups) {
     parts.push(`## ${g.label}（${g.items.length}件）`);
-    for (const e of g.items) parts.push(`- [[${e.id}|${e.title}]] — ${kc.oneLiner(e.summary, 60)}`);
+    for (const e of g.items)
+      parts.push(`- [[${e.id}|${assertWikiAliasSafe(e.title, 'title')}]] — ${mdInline(kc.oneLiner(e.summary, 60))}`);
     parts.push('');
   }
   parts.push('## 関連', '- [[Home]]', '- [[AI_ORCHESTRATION_CONTEXT]]', '', '---', GENERATED_NOTE, '');
@@ -450,7 +551,8 @@ function orchestrationContextNote(entries, map) {
     parts.push('');
     for (const g of brief.groups) {
       parts.push(`### ${g.collectionLabel} / ${g.categoryLabel}（${g.count}件）`);
-      for (const it of g.items) parts.push(`- [[${it.id}|${it.title}]] — ${kc.oneLiner(it.oneLiner, 60)}`);
+      for (const it of g.items)
+        parts.push(`- [[${it.id}|${assertWikiAliasSafe(it.title, 'title')}]] — ${mdInline(kc.oneLiner(it.oneLiner, 60))}`);
       if (g.count > g.items.length) parts.push(`- …ほか ${g.count - g.items.length} 件は [[${g.collectionLabel}]] を参照`);
       parts.push('');
     }
@@ -752,16 +854,44 @@ function buildFiles() {
     throw new Error(`ノート basename が重複しています（${baseDups.length} 件）。wikilink が曖昧になります: ${baseDups.slice(0, 20).join(', ')}`);
   }
 
+  /*
+   * 網羅 — 本体データの全項目にノートが在ること (2026-08-22 に足した)。
+   *
+   * `--check` は「再生成した内容 == committed」を見る。ドリフト (committed が
+   * 古い) は捕まえるが、**生成そのものが壊れた場合は捕まえられない** ——
+   * 誰かが `vault:build` を回せば committed も一緒に縮み、差分が消えて通る。
+   * 出力の「7543 ファイル」は本体の 4140 項目と突き合わせていなかった。
+   *
+   * 同じ形を `verify:graph` でも見つけて直した (あちらは対照実験で、
+   * 成果物を再生成すると byte 一致が通ってしまうことを確認済み)。
+   *
+   * ノートのパスは `notes/<collection>/<category>/<id>.md` で決まるので、
+   * 部分一致ではなくパスそのもので確かめる。
+   */
+  const missingNotes = entries.filter(
+    (e) => !(path.join('notes', e.collection, e.category, `${e.id}.md`) in files),
+  );
+  if (missingNotes.length) {
+    throw new Error(
+      `ノートが生成されなかった項目が ${missingNotes.length} 件あります`
+        + ` (例: ${missingNotes.slice(0, 5).map((e) => e.id).join(', ')})。`
+        + ' 本体データの全項目に notes/<collection>/<category>/<id>.md が要ります。',
+    );
+  }
+
   return files;
 }
 
 function writeVault(outDir, files) {
+  // ノート名はデータ由来 (id / collection / category)。`..` が 1 つ混ざると
+  // 書き出し先の外へ出る。関門は `scripts/safe-vault-write.cjs` に 1 つだけ。
+  //
+  // **消す前に確かめる。** 先に rmSync すると、名前がおかしいときに
+  // 「既存の vault を消してから書くのを拒む」ことになり、7500 件が失われた
+  // 状態で止まる (この順序の誤りは、関門を入れた直後の実地試験で踏んだ)。
+  safeWrite.assertAllInside(outDir, files);
   fs.rmSync(outDir, { recursive: true, force: true });
-  for (const [rel, content] of Object.entries(files)) {
-    const full = path.join(outDir, rel);
-    fs.mkdirSync(path.dirname(full), { recursive: true });
-    fs.writeFileSync(full, content);
-  }
+  safeWrite.writeFilesInto(outDir, files);
 }
 
 function walk(dir, base = dir, acc = []) {
@@ -815,4 +945,8 @@ function main() {
   return 0;
 }
 
-process.exit(main());
+// 読み込むだけで生成が走り、しかも process.exit で落ちていた。外から証人を
+// 立てられない構造そのものだったので、CLI として呼ばれたときだけ走らせる。
+module.exports = { yamlStr, linkSafe, mdInline, assertWikiAliasSafe, assertBareYamlScalar, buildFiles };
+
+if (require.main === module) process.exit(main());

@@ -19,17 +19,40 @@ import { AddressInfo } from 'node:net';
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import type { ServiceId } from '../shared/serviceId';
 import { redactForMessage } from '../shared/redact';
+import {
+  DEFAULT_HTTP_TIMEOUT_MS,
+  MAX_HTTP_RESPONSE_BYTES,
+  readBodyWithCap,
+  withTimeout,
+} from '../shared/httpLimits';
 
 /**
- * Refuse to send an authorization code / refresh token to a non-HTTPS token
- * endpoint. Today every OAUTH_CONFIGS entry hardcodes https and the IPC layer
- * only lets the renderer override `clientId`, so this is unreachable — it is a
- * standing guard so a future config (or a test fixture copied into prod) can
- * never exchange credentials in cleartext. RFC 8252 §8.3.
+ * Refuse to talk to a non-HTTPS OAuth endpoint. Today every OAUTH_CONFIGS entry
+ * hardcodes https and the IPC layer only lets the renderer override `clientId`,
+ * so this is unreachable — it is a standing guard so a future config (or a test
+ * fixture copied into prod) can never send credentials in cleartext.
+ * RFC 8252 §8.3.
+ *
+ * ## 2 つの宛先に同じ関門を通す (2026-08-22)
+ *
+ * 以前このガードは**トークン端点にしか掛かっていなかった**。認可 URL は
+ * 「全 config がハードコード https」という検査だけで守られていて、
+ * **常設ガードは無かった** —— 同じ理由書きが片方にしか適用されていない。
+ *
+ * 認可 URL のほうが軽いわけではない:
+ *
+ * - `state` (CSRF トークン) と `client_id` を載せて出ていく
+ * - `shell` へ**そのまま渡す** —— `externalUrlGate.ts` の関門を通る
+ *   2 つの扉と違い、ここは `lint:forbidden` の allowFile で例外にしてある
+ *   唯一の呼び出し口である。その例外の理由は「URL は我々が組み立てたもの」だが、
+ *   **組み立ての材料が https である保証**は今まで検査の中にしか無かった
+ *
+ * 同じ問い (この宛先へ資格情報を載せて出てよいか) なので、実装も 1 つにする。
+ * 引数の `role` は文言のためだけにあり、判定は両方で同一である。
  */
-function assertHttpsTokenUrl(tokenUrl: string): void {
-  if (!tokenUrl.startsWith('https://')) {
-    throw new Error('OAuth token endpoint must use https');
+function assertHttpsEndpoint(url: string, role: 'token' | 'authorization'): void {
+  if (!url.startsWith('https://')) {
+    throw new Error(`OAuth ${role} endpoint must use https`);
   }
 }
 
@@ -397,12 +420,33 @@ export function tokenResponseToSet(raw: TokenResponse, fallbackRefresh?: string)
  *  don't leak via timing either. Closes P1-5 from docs/SECURITY_AUDIT.md. */
 export function safeStateEquals(a: string, b: string): boolean {
   if (typeof a !== 'string' || typeof b !== 'string') return false;
+  // バイト長の判定 (下) を足したことで、この JS 長の判定は**等価変異**になった。
+  // 外すと結果が変わるのは「JS 長が違うのに UTF-8 バイト列が完全一致する 2 つの
+  // 文字列」が在る場合だけで、標本 790,374 組を総当たりして 0 件だった
+  // (孤立サロゲートが U+FFFD に潰れる形も含めて確認、2026-08-22)。
+  // 残すのは速い前置きだから —— 長さ違いのために Buffer を 2 つ確保しない。
+  // Stryker disable next-line ConditionalExpression
   if (a.length !== b.length) return false;
   // Equivalent mutant: Node's Buffer.from(str, '') silently falls back to
   // utf8 when the encoding string is unknown — so 'utf8' → '' produces
   // identical bytes for the strings we encounter here.
   // Stryker disable next-line StringLiteral
-  return timingSafeEqual(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8'));
+  const ab = Buffer.from(a, 'utf8');
+  // Stryker disable next-line StringLiteral
+  const bb = Buffer.from(b, 'utf8');
+  // **バイト長も見る。** JS の length が同じでも UTF-8 のバイト長は違いうる
+  // ('あ' は 1 文字 3 バイト)。`timingSafeEqual` はバイト長が違うと
+  // **RangeError を投げる**ので、この一行が無いと 43 文字の state に全角を
+  // 1 つ混ぜた偽コールバックで例外が出る。実測 (2026-08-22):
+  // ループバックの待受へ投げると応答が返らず `uncaughtException` になり、
+  // main.ts に受け手が無いので **Electron の主プロセスごと落ちる**。
+  // これは classifyCallback の注記が想定している攻撃者そのもの
+  // (「OAuth の窓の間にループバックへ投げ続けるブラウザのタブ」) である。
+  //
+  // 長さで早期に返すこと自体は既存の JS 長の判定と同じ扱い —— state は
+  // 32 バイト乱数の base64url で固定長なので、長さは秘密ではない。
+  if (ab.length !== bb.length) return false;
+  return timingSafeEqual(ab, bb);
 }
 
 /** Strip the port suffix (`:1234`) from a Host header and check whether
@@ -410,6 +454,18 @@ export function safeStateEquals(a: string, b: string): boolean {
  *  ever listens on 127.0.0.1, but a DNS rebinding attack or a request
  *  reaching us via a different name could fool a naive callback handler.
  *  Accept only literal loopback hostnames. */
+/**
+ * **`shared/aiEndpoint.ts` の `isLoopbackHostname` へ寄せないこと (意図的に厳しい)。**
+ *
+ * あちらは 127.0.0.0/8 全体・末尾ドット・`ip6-localhost` まで通す ——
+ * 「平文 http を許してよいローカル相手か」という問いに答えるためで、正しい。
+ * こちらは **DNS リバインディングの番人**で、コールバック待受が実際に bind して
+ * いるのは `127.0.0.1` の 1 本だけ。正規のコールバックが名乗る Host は
+ * `127.0.0.1:<port>` か `localhost:<port>` しかないので、それ以外を通す理由が無い。
+ *
+ * 統合は許可を**広げる方向にしか働かない**。違いが意図的であることは
+ * `shared/__tests__/loopbackChecks.test.ts` が機械で留めている。
+ */
 export function isLoopbackHost(hostHeader: string | undefined): boolean {
   if (typeof hostHeader !== 'string') return false;
   const lowered = hostHeader.toLowerCase();
@@ -518,11 +574,29 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
       if (strayCount >= STRAY_LIMIT) server.close();
       return;
     }
+    // 多層防御: `classifyCallback` が投げたら **400 (非終端) に倒す**。
+    // ここは攻撃者が任意の URL を送れる唯一の入口で、request listener の中の
+    // 同期 throw は `uncaughtException` になり、main.ts に受け手が無いので
+    // アプリごと落ちる。実際 2 通りで落ちていた (2026-08-22 に実測して両方直した):
+    //   - `safeStateEquals` のバイト長 RangeError
+    //   - `GET http://[` —— パーサは受けるが `new URL` が拒む request-target
+    // 判定できない要求は「正規のコールバックではない」ので state 不一致と
+    // 同じ扱い —— 400 を返しつつ待受は続け、本物が後から来れば解決する。
     // Node's http.IncomingMessage.url is always populated by the parser
     // (even '/' for the empty path), so the `?? '/'` fallback is
     // unreachable; the StringLiteral '/' → '' mutant is equivalent.
-    // Stryker disable next-line StringLiteral
-    const outcome = classifyCallback(req.url ?? '/', expectedState);
+    //
+    // pragma は**対象行の直上**に置くこと。この 1 箇所で 2 回間違えた ——
+    // 1 度目は説明文を挟んで、2 度目は `try {` の上に置いて。`next-line` は
+    // 「次の行」しか見ないので、間に何が入っても無言で外れる。
+    let outcome: CallbackOutcome;
+    try {
+      // Stryker disable next-line StringLiteral
+      outcome = classifyCallback(req.url ?? '/', expectedState);
+    } catch {
+      res.writeHead(400).end('bad request');
+      return;
+    }
     switch (outcome.kind) {
       case 'wrong-path':
         res.writeHead(404).end();
@@ -547,7 +621,20 @@ export function listenForCallback(expectedState: string, timeoutMs = 5 * 60_000)
       case 'oauth-error':
         // State already validated before this branch — this IS the
         // legitimate provider responding with an error. Terminal.
-        res.writeHead(400, { 'Content-Type': 'text/plain' }).end(`OAuth error: ${outcome.error}`);
+        //
+        // **この応答だけが要求の値を映して返す** (`error` はクエリ由来)。
+        // 到達には state 一致が要るので任意の相手からは叩けないが、
+        // 「映して返す唯一の口」が「何も映さない成功応答」より弱い頭書きな
+        // のは筋が通らない (成功側は `charset` を明示していて、その理由も
+        // 『ブラウザに中身を推測させない』と書いてある)。揃える:
+        //   - charset を明示 —— 無いと符号化の推測が残る
+        //   - nosniff —— 宣言した text/plain を HTML と読み替えさせない
+        res
+          .writeHead(400, {
+            'Content-Type': 'text/plain; charset=utf-8',
+            'X-Content-Type-Options': 'nosniff',
+          })
+          .end(`OAuth error: ${outcome.error}`);
         reject(new Error(`OAuth provider returned error: ${outcome.error}`));
         break;
       case 'missing-params':
@@ -626,7 +713,10 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
   if (requiresClientSecret(config) && !config.clientSecret) {
     throw new Error('OAuth client secret is not configured for this service');
   }
-  assertHttpsTokenUrl(config.tokenUrl);
+  assertHttpsEndpoint(config.tokenUrl, 'token');
+  // 認可 URL も同じ関門を通す。**ブラウザを開く副作用より前**に落とすこと ——
+  // 平文の宛先へ `state` を投げてから気付いても遅い。
+  assertHttpsEndpoint(config.authorizeUrl, 'authorization');
   const { verifier, challenge } = generatePkce();
   const state = base64url(randomBytes(16));
 
@@ -639,16 +729,31 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
 
   const { code } = await listener;
 
-  const res = await fetchFn(config.tokenUrl, {
-    method: 'POST',
-    headers: buildTokenRequestHeaders(config),
-    body: serializeTokenBody(config, buildTokenExchangeBody(config, redirectUri, code, verifier)),
+  // **本文を読み終えるまでを締切の中に入れる。** `fetch` はヘッダで解決するので、
+  // Response を外へ出すと打ち切りが本文に掛からない (2026-08-28)。
+  const raw = await withTimeout(DEFAULT_HTTP_TIMEOUT_MS, null, async (signal) => {
+    const res = await fetchFn(config.tokenUrl, {
+      method: 'POST',
+      headers: buildTokenRequestHeaders(config),
+      body: serializeTokenBody(config, buildTokenExchangeBody(config, redirectUri, code, verifier)),
+      signal,
+    });
+    if (!res.ok) {
+      const body = await readBodyWithCap(
+        res,
+        MAX_HTTP_RESPONSE_BYTES,
+        // 読めなかったときは直後の .catch が中身を捨て、この標識はエラー本文にも
+        // 記録にも現れない —— 空文字に変えても観測できる違いが無い (equivalent)。
+        // 746/779 行目 (捨てない方) の同じ標識は撃墜済みなので、そちらは開けておく。
+        // Stryker disable next-line StringLiteral
+        'oauth',
+      ).catch(() => '');
+      throw new Error(`Token exchange failed (${res.status}): ${redactForMessage(body, 200)}`);
+    }
+    return JSON.parse(
+      await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth'),
+    ) as TokenResponse;
   });
-  if (!res.ok) {
-    const body = await res.text().catch(() => '');
-    throw new Error(`Token exchange failed (${res.status}): ${redactForMessage(body, 200)}`);
-  }
-  const raw = (await res.json()) as TokenResponse;
   return tokenResponseToSet(raw);
 }
 
@@ -663,16 +768,32 @@ export async function refresh(
   if (!current.refreshToken) {
     throw new Error('no refresh token available');
   }
-  assertHttpsTokenUrl(config.tokenUrl);
-  const res = await fetchFn(config.tokenUrl, {
-    method: 'POST',
-    headers: buildTokenRequestHeaders(config),
-    body: serializeTokenBody(config, buildRefreshBody(config, current.refreshToken)),
+  assertHttpsEndpoint(config.tokenUrl, 'token');
+  // クロージャの中では `current.refreshToken` の絞り込みが効かないので、
+  // 上の guard を通った値をここで確定させる。
+  const refreshToken = current.refreshToken;
+  const raw = await withTimeout(DEFAULT_HTTP_TIMEOUT_MS, null, async (signal) => {
+    const res = await fetchFn(config.tokenUrl, {
+      method: 'POST',
+      headers: buildTokenRequestHeaders(config),
+      body: serializeTokenBody(config, buildRefreshBody(config, refreshToken)),
+      signal,
+    });
+    if (!res.ok) {
+      const body = await readBodyWithCap(
+        res,
+        MAX_HTTP_RESPONSE_BYTES,
+        // 読めなかったときは直後の .catch が中身を捨て、この標識はエラー本文にも
+        // 記録にも現れない —— 空文字に変えても観測できる違いが無い (equivalent)。
+        // 746/779 行目 (捨てない方) の同じ標識は撃墜済みなので、そちらは開けておく。
+        // Stryker disable next-line StringLiteral
+        'oauth',
+      ).catch(() => '');
+      throw new Error(`Token refresh failed (${res.status}): ${redactForMessage(body, 200)}`);
+    }
+    return JSON.parse(
+      await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'oauth'),
+    ) as TokenResponse;
   });
-  if (!res.ok) {
-    const body = await res.text().catch(() => '');
-    throw new Error(`Token refresh failed (${res.status}): ${redactForMessage(body, 200)}`);
-  }
-  const raw = (await res.json()) as TokenResponse;
   return tokenResponseToSet(raw, current.refreshToken);
 }

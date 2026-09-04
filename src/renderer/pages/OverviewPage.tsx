@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { navigateTo, takeNavigationIntent } from '../navigate';
 import { Section } from '../components/StatusBar';
 import { useCollection } from '../data/useCollection';
 import {
@@ -22,41 +23,79 @@ import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceShee
 import { MEMBERS_COLLECTION, type Member } from '../data/members';
 import {
   HYDROPONICS_COLLECTION,
+  HYDROPONIC_CROPS_COLLECTION,
   HYDROPONICS_DEFAULTS,
+  cropListFromRecords,
   economicsFromSetup,
   hydroponicsBusinessUnit,
   lowPotassiumFromSetup,
   resolveCrop,
+  type HydroponicCropListRecord,
   type HydroponicsSetup,
 } from '../data/hydroponicsSetup';
+import { latestRecord } from '../data/latestRecord';
+import { useParameters } from '../data/parameterOverrides';
 import {
-  HYDROPONIC_CROPS,
+  businessConsumptionParams,
+  ckdPotassiumLimits,
+  corporateTaxRates,
+  financialHealthBands,
+  hydroponicsProductionParams,
+  lowPotassiumParams,
+  radarAxisBands,
+} from '../../shared/parameters';
+import {
+  CKD_POTASSIUM_LIMIT_MG,
   checkNutrientSolution,
   servingGramsWithinLimit,
-  LOW_K_SWITCH_DAYS_MIN,
-  LOW_K_SWITCH_DAYS_MAX,
-  type HydroponicCropId,
+  type HydroponicCrop,
+  type LowPotassiumParams,
 } from '../../shared/hydroponics';
+import {
+  CROP_FIELD_LABELS,
+  CROP_NUMERIC_FIELDS,
+  DEFAULT_CROP_LIST,
+  addCrop,
+  findCrop,
+  isBuiltinCropId,
+  missingBuiltinCrops,
+  parseCropNumber,
+  removeCrop,
+  restoreBuiltinCrops,
+  type CropListChange,
+  type CropNumericField,
+} from '../../shared/hydroponicCrops';
+import { GuardedNumber } from '../components/GuardedNumber';
+import { readNumberOr0, type NumSpec } from '../data/inputGuards';
 import { usePlan } from '../plan/usePlan';
+import { localIsoDate } from '../../shared/localDate';
 import { buildBusinessOverview } from '../data/overview';
 import {
   MANUAL_OVERRIDES_COLLECTION,
   applyManualOverrides,
   type ManualOverrideEntry,
 } from '../data/manualData';
-import { buildManagementScorecard } from '../../shared/managementScorecard';
+import { VERDICT_LABEL, buildManagementScorecard } from '../../shared/managementScorecard';
 import { buildManagementHighlights, summarizeHighlights, RISK_BAND_LABEL, type RiskBand } from '../data/managementHighlights';
 import { buildManagementReport } from '../data/managementReport';
 import { sparklinePoints } from '../data/sparkline';
 import { cashForecastTrajectory } from '../data/cashForecast';
 import { combineCashflowDebtService } from '../data/cashflowDebtService';
 import { useServiceData } from '../hooks/useServiceData';
+import { RealtimeTicker, type RealtimeRow } from '../components/RealtimeTicker';
+import { annualizedPace } from '../../shared/realtimeProjection';
 import { FinancialAnalysis } from '../components/FinancialAnalysis';
+import { BankSubmissionPanel } from '../components/BankSubmissionSheet';
+import {
+  BANK_SUBMISSION_COLLECTION,
+  buildBankSubmissionSheet,
+  settingsFromRecord,
+  type BankSubmissionSettings,
+} from '../data/bankSubmission';
 import { SNAPSHOT } from '../data/snapshot';
 
 const SCORE_COLOR = (s: number | null): string =>
   s === null ? 'var(--text-mute)' : s >= 80 ? '#22c55e' : s >= 60 ? '#3ec98a' : s >= 40 ? '#f59e0b' : '#ef4444';
-const VERDICT_LABEL: Record<string, string> = { poor: '要改善', caution: '注意', good: '良好', excellent: '優良' };
 const TREND_LABEL: Record<string, string> = { up: '↗ 上昇', down: '↘ 下降', flat: '→ 横ばい', none: '—' };
 const TREND_COLOR: Record<string, string | undefined> = { up: '#22c55e', down: '#ef4444', flat: undefined, none: undefined };
 const RISK_BAND_COLOR: Record<RiskBand, string> = { high: '#ef4444', medium: '#f59e0b', low: '#22c55e', none: 'var(--text-mute)' };
@@ -151,20 +190,86 @@ function HighlightSettingsPanel({
 }
 
 /**
+ * 設備・費用・実測値の入力欄の性質。読み取り (`readNumberOr0`) と警告
+ * (`GuardedNumber`) が同じ関数を使うので、「警告は出ないのに 0 で計算されて
+ * いた」が起きない。以前は `Number()` で読めない値を黙って 0 にしていた ——
+ * 全角の「１００」や「10万」を打つと床面積 0 のまま試算が出て、画面には
+ * 自信のある間違った数字が並んだ。
+ *
+ * 0 を断るのは、0 だと試算そのものが意味を失う欄だけ (床面積・段数・割合・
+ * 単価)。費用は 0 が実態のこともある (自己所有なら地代家賃 0)。実測値は
+ * **0 = 未測定** が仕様なので、未入力も 0 も黙って通す。
+ */
+const HYDRO_SPECS = {
+  floorAreaSqm: { label: '床面積 (m²)', kind: 'area' },
+  tiers: { label: '棚の段数', kind: 'count', allowZero: false, sane: 30 },
+  usableRatioPct: { label: '栽培に使える割合 (%)', kind: 'percent', allowZero: false, max: 100 },
+  yieldRatePct: { label: '歩留まり (%)', kind: 'percent', allowZero: false, max: 100 },
+  unitPriceYen: { label: '販売単価 (円/株)', kind: 'money', allowZero: false, sane: 10_000 },
+  electricityYenPerKwh: { label: '電力単価 (円/kWh)', kind: 'money', sane: 200 },
+  energyIntensityKwhPerKg: { label: '電力原単位 (kWh/kg)', kind: 'energy' },
+  seedYenPerPlant: { label: '種苗費 (円/株)', kind: 'money', sane: 1_000 },
+  nutrientYenPerPlant: { label: '肥料・養液 (円/株)', kind: 'money', sane: 1_000 },
+  packagingYenPerPlant: { label: '包装・資材 (円/株)', kind: 'money', sane: 1_000 },
+  laborYenPerMonth: { label: '人件費 (円/月)', kind: 'money' },
+  depreciationYenPerMonth: { label: '減価償却費 (円/月)', kind: 'money' },
+  rentYenPerMonth: { label: '地代家賃 (円/月)', kind: 'money' },
+  otherFixedYenPerMonth: { label: 'その他固定費 (円/月)', kind: 'money' },
+  switchDaysBeforeHarvest: { label: '切替 (収穫前・日)', kind: 'days', allowZero: false },
+  measuredPotassiumMgPer100g: { label: '実測カリウム (mg/100g)', kind: 'mgPer100g', allowEmpty: true },
+  measuredSodiumMgPer100g: { label: '実測ナトリウム (mg/100g)', kind: 'mgPer100g', allowEmpty: true },
+} as const satisfies Record<string, NumSpec>;
+
+/** 品目の入力欄の文字列 (品目名 + 数値の欄)。 */
+type CropDraftForm = Record<'label' | CropNumericField, string>;
+
+/** 選んでいる品目の値を入力欄へ写す (似た品目から少し変えて足すのが普通の使い方)。 */
+function cropDraftFrom(c: HydroponicCrop): CropDraftForm {
+  const draft = { label: '' } as CropDraftForm;
+  for (const f of CROP_NUMERIC_FIELDS) draft[f] = String(c[f]);
+  return draft;
+}
+
+const cropFieldLabel: React.CSSProperties = {
+  fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2,
+};
+
+/**
  * 水耕栽培の設備・費用を入力するパネル。
  *
  * 初期値は参考値だが、**保存するまで経営サマリーには載らない**。参考値が
  * そのまま経営数値になると、サンプルと実データの区別がつかなくなる。
+ *
+ * 品目の一覧は利用者が増減できる (`crops` / `onCropsChange`)。一覧は設定とは
+ * 別のレコードに保存され、**設定を保存し直すまで試算の品目は変わらない**
+ * (足しただけで数字が動くと、何を保存したのか分からなくなる)。
  */
+/** 上限の表示。制限のない病期 (null) は「—」。 */
+function mgOf(v: number | null): string {
+  return v === null ? '—' : num.format(v);
+}
+
+/** 3 病期とも学会の目安のままか (上書きされていれば出典の言い方を変える)。 */
+function ckdLimitsAreDefault(limits: ReturnType<typeof ckdPotassiumLimits>): boolean {
+  return (['G3b', 'G4', 'G5'] as const).every((s) => limits[s] === CKD_POTASSIUM_LIMIT_MG[s]);
+}
+
 function HydroponicsPanel({
   current,
+  crops,
+  lowKParams,
   onSave,
+  onCropsChange,
 }: {
   current: HydroponicsSetup | null;
+  crops: readonly HydroponicCrop[];
+  /** 低カリウム評価の基準 (台帳の値。案内文の日数に使う)。 */
+  lowKParams: LowPotassiumParams;
   onSave: (s: HydroponicsSetup) => Promise<void> | void;
+  onCropsChange: (crops: readonly HydroponicCrop[]) => Promise<void> | void;
 }) {
   const base = current ?? HYDROPONICS_DEFAULTS;
-  const [cropId, setCropId] = useState<HydroponicCropId>(resolveCrop(base.cropId));
+  const [cropId, setCropId] = useState<string>(base.cropId);
   const [form, setForm] = useState({
     floorAreaSqm: String(base.floorAreaSqm),
     tiers: String(base.tiers),
@@ -189,23 +294,54 @@ function HydroponicsPanel({
   const [ec, setEc] = useState('');
   const [ph, setPh] = useState('');
 
-  const crop = HYDROPONIC_CROPS[cropId];
-  const n = (v: string): number => {
-    const parsed = Number(v.replace(/,/g, ''));
-    return Number.isFinite(parsed) ? parsed : 0;
+  // 選んだ品目が消されていれば先頭へ寄せる。select の value と試算の品目を
+  // 必ず同じにするため、以降は `crop.id` を使う。
+  const crop = resolveCrop(cropId, crops);
+  const [draft, setDraft] = useState<CropDraftForm>(() => cropDraftFrom(crop));
+  const [cropNotice, setCropNotice] = useState<string | null>(null);
+  const missingBuiltins = missingBuiltinCrops(crops);
+  const savedCrop = current === null ? undefined : findCrop(crops, current.cropId);
+
+  /** 一覧の増減を保存し、新しい一覧を返す。断られたら文言を出して null (投げない)。 */
+  const applyCrops = async (r: CropListChange): Promise<readonly HydroponicCrop[] | null> => {
+    if (!r.ok) {
+      setCropNotice(r.issues.join('。'));
+      return null;
+    }
+    await onCropsChange(r.crops);
+    return r.crops;
+  };
+  const onAddCrop = async () => {
+    const next = await applyCrops(addCrop(crops, {
+      ...draft,
+      ...Object.fromEntries(CROP_NUMERIC_FIELDS.map((f) => [f, parseCropNumber(draft[f])])),
+    }));
+    if (next === null) return;
+    const added = next[next.length - 1]!;
+    setCropId(added.id);
+    setSaved(false);
+    setDraft((d) => ({ ...d, label: '' }));
+    setCropNotice(`「${added.label}」を足して品目に選びました。試算に使うには設定を保存してください。`);
+  };
+  const onRemoveCrop = async (target: HydroponicCrop) => {
+    if ((await applyCrops(removeCrop(crops, target.id))) === null) return;
+    setCropNotice(`「${target.label}」を消しました。`);
+  };
+  const onRestoreCrops = async () => {
+    if ((await applyCrops(restoreBuiltinCrops(crops))) === null) return;
+    setCropNotice('参考値の品目を戻しました。');
   };
 
-  const field = (key: keyof typeof form, label: string) => (
-    <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-      {label}
-      <input
-        type="text"
-        inputMode="decimal"
-        value={form[key]}
-        onChange={(e) => { setForm((f) => ({ ...f, [key]: e.target.value })); setSaved(false); }}
-        style={settingsInput}
-      />
-    </label>
+  // 読めない値は 0 になるが、同じ欄の `GuardedNumber` がその旨を出す (黙って 0 にしない)。
+  const n = readNumberOr0;
+
+  const field = (key: keyof typeof form) => (
+    <GuardedNumber
+      spec={HYDRO_SPECS[key]}
+      value={form[key]}
+      width={110}
+      onChange={(v) => { setForm((f) => ({ ...f, [key]: v })); setSaved(false); }}
+    />
   );
 
   const nutrient = ec.trim() !== '' && ph.trim() !== ''
@@ -220,15 +356,22 @@ function HydroponicsPanel({
         <strong>※ 概算試算であり、事業計画や投資判断の保証ではありません。</strong>
       </p>
 
+      {current !== null && savedCrop === undefined && (
+        <div style={{ color: '#f59e0b', fontSize: 12, lineHeight: 1.6, marginBottom: 8 }}>
+          保存した設定の品目「{current.cropId}」は一覧にありません。先頭の品目（{crops[0]!.label}）で試算しています。
+          品目を選び直して保存してください。
+        </div>
+      )}
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>
-        <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <label style={cropFieldLabel}>
           品目
           <select
-            value={cropId}
-            onChange={(e) => { setCropId(resolveCrop(e.target.value)); setSaved(false); }}
+            value={crop.id}
+            aria-label="品目"
+            onChange={(e) => { setCropId(e.target.value); setSaved(false); }}
             style={{ ...settingsInput, width: 150 }}
           >
-            {Object.values(HYDROPONIC_CROPS).map((c) => (
+            {crops.map((c) => (
               <option key={c.id} value={c.id}>{c.label}</option>
             ))}
           </select>
@@ -239,30 +382,98 @@ function HydroponicsPanel({
         </div>
       </div>
 
+      <details style={{ marginBottom: 10 }}>
+        <summary style={{ fontSize: 12, color: 'var(--text-mute)', cursor: 'pointer' }}>
+          品目を増やす・減らす（現在 {crops.length} 品目）
+        </summary>
+        <div style={{ padding: '8px 0 0', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <p style={{ color: 'var(--text-mute)', fontSize: 11, lineHeight: 1.6, margin: 0 }}>
+            参考値の {DEFAULT_CROP_LIST.length} 品目は出発点です。自分の品目を足し、使わない品目は消せます
+            （最後の 1 品目は消せません）。値は桁と形だけ確かめます — 正しさは実測で置き換えてください。
+          </p>
+          <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, lineHeight: 1.9 }}>
+            {crops.map((c) => (
+              <li key={c.id}>
+                {c.label}
+                <span style={{ color: 'var(--text-mute)', fontSize: 11 }}>
+                  {isBuiltinCropId(c.id) ? '（参考値）' : '（追加）'}
+                  育苗 {c.nurseryDays} 日・定植後 {c.growOutDays} 日・{c.harvestWeightG} g/株・パネル {c.plantsPerPanel} 穴
+                </span>{' '}
+                <button
+                  type="button"
+                  disabled={crops.length <= 1}
+                  aria-label={`${c.label} を消す`}
+                  onClick={async () => { await onRemoveCrop(c); }}
+                  style={{ fontSize: 11 }}
+                >
+                  消す
+                </button>
+              </li>
+            ))}
+          </ul>
+          {missingBuiltins.length > 0 && (
+            <div>
+              <button type="button" onClick={async () => { await onRestoreCrops(); }} style={{ fontSize: 11 }}>
+                参考値の品目を戻す（{missingBuiltins.map((c) => c.label).join('・')}）
+              </button>
+            </div>
+          )}
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+            <label style={cropFieldLabel}>
+              品目名
+              <input
+                type="text"
+                value={draft.label}
+                aria-label="品目名"
+                onChange={(e) => setDraft((d) => ({ ...d, label: e.target.value }))}
+                style={{ ...settingsInput, width: 150 }}
+              />
+            </label>
+            {CROP_NUMERIC_FIELDS.map((f) => (
+              <label key={f} style={cropFieldLabel}>
+                {CROP_FIELD_LABELS[f]}
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={draft[f]}
+                  aria-label={CROP_FIELD_LABELS[f]}
+                  onChange={(e) => setDraft((d) => ({ ...d, [f]: e.target.value }))}
+                  style={settingsInput}
+                />
+              </label>
+            ))}
+            <button type="button" onClick={async () => { await onAddCrop(); }}>
+              この品目を足す
+            </button>
+          </div>
+          {cropNotice && <div role="status" style={{ fontSize: 12, lineHeight: 1.6 }}>{cropNotice}</div>}
+        </div>
+      </details>
+
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>
-        {field('floorAreaSqm', '床面積 (m²)')}
-        {field('tiers', '棚の段数')}
-        {field('usableRatioPct', '栽培に使える割合 (%)')}
-        {field('yieldRatePct', '歩留まり (%)')}
-        {field('unitPriceYen', '販売単価 (円/株)')}
+        {field('floorAreaSqm')}
+        {field('tiers')}
+        {field('usableRatioPct')}
+        {field('yieldRatePct')}
+        {field('unitPriceYen')}
       </div>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>
-        {field('electricityYenPerKwh', '電力単価 (円/kWh)')}
-        {field('energyIntensityKwhPerKg', '電力原単位 (kWh/kg)')}
-        {field('seedYenPerPlant', '種苗費 (円/株)')}
-        {field('nutrientYenPerPlant', '肥料・養液 (円/株)')}
-        {field('packagingYenPerPlant', '包装・資材 (円/株)')}
+        {field('electricityYenPerKwh')}
+        {field('energyIntensityKwhPerKg')}
+        {field('seedYenPerPlant')}
+        {field('nutrientYenPerPlant')}
+        {field('packagingYenPerPlant')}
       </div>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>
-        {field('laborYenPerMonth', '人件費 (円/月)')}
-        {field('depreciationYenPerMonth', '減価償却費 (円/月)')}
-        {field('rentYenPerMonth', '地代家賃 (円/月)')}
-        {field('otherFixedYenPerMonth', 'その他固定費 (円/月)')}
+        {field('laborYenPerMonth')}
+        {field('depreciationYenPerMonth')}
+        {field('rentYenPerMonth')}
+        {field('otherFixedYenPerMonth')}
         <button
           type="button"
           onClick={async () => {
             await onSave({
-              cropId,
+              cropId: crop.id,
               floorAreaSqm: n(form.floorAreaSqm),
               tiers: n(form.tiers),
               usableRatioPct: n(form.usableRatioPct),
@@ -316,15 +527,15 @@ function HydroponicsPanel({
           低カリウム栽培として扱う（腎臓病の方向け）
         </label>
         <p style={{ color: 'var(--text-mute)', fontSize: 11, lineHeight: 1.6, margin: '6px 0 10px' }}>
-          収穫前 {LOW_K_SWITCH_DAYS_MIN}〜{LOW_K_SWITCH_DAYS_MAX} 日に、培養液の硝酸カリウムを同濃度の硝酸ナトリウムへ置き換えます。
+          収穫前 {lowKParams.switchDaysMin}〜{lowKParams.switchDaysMax} 日に、培養液の硝酸カリウムを同濃度の硝酸ナトリウムへ置き換えます。
           カリウムを抜いた分をナトリウムで補って浸透圧と EC を保つ方法です（培養液にナトリウムが無いと生育不良になります）。
           <strong>カリウム量は出荷ロットごとに実測してください。</strong>測っていない値を「低カリウム」として出すことはできません。
         </p>
         {lowK && (
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-            {field('switchDaysBeforeHarvest', '切替 (収穫前・日)')}
-            {field('measuredPotassiumMgPer100g', '実測カリウム (mg/100g)')}
-            {field('measuredSodiumMgPer100g', '実測ナトリウム (mg/100g)')}
+            {field('switchDaysBeforeHarvest')}
+            {field('measuredPotassiumMgPer100g')}
+            {field('measuredSodiumMgPer100g')}
           </div>
         )}
       </div>
@@ -374,7 +585,7 @@ export function OverviewPage() {
   const { records: memberRecords } = useCollection<Member>(MEMBERS_COLLECTION);
   const { records: settingsRecords, add: addSettings } = useCollection<HighlightSettings>(HIGHLIGHT_SETTINGS_COLLECTION);
   // しきい値設定は最新の1レコードを採用 (未設定なら既定値)。
-  const thresholds = settingsRecords.length > 0 ? settingsRecords[settingsRecords.length - 1]!.data : DEFAULT_HIGHLIGHT_THRESHOLDS;
+  const thresholds = latestRecord(settingsRecords)?.data ?? DEFAULT_HIGHLIGHT_THRESHOLDS;
   // 会計連携 (freee): 連携済みなら月次CFが入る。未連携は空 (snapshot)。
   const { data: freeeData } = useServiceData('freee', SNAPSHOT.freee);
   const accountingMonthly = freeeData.monthly;
@@ -405,12 +616,26 @@ export function OverviewPage() {
   );
   const overrideRecords = overridesCol.records;
 
-  // 水耕栽培: 最新の 1 件を採用する (貸借対照表と同じ扱い)。
+  // 水耕栽培: 最新の 1 件を採用する (貸借対照表と同じ扱い)。品目の一覧は
+  // 別 collection に持つ (増減のたびに設定の履歴を増やさない)。
   const hydroCol = useCollection<HydroponicsSetup>(HYDROPONICS_COLLECTION);
-  const hydroSetup = hydroCol.records.length > 0
-    ? hydroCol.records[hydroCol.records.length - 1]!.data
-    : null;
-  const hydroponics = useMemo(() => economicsFromSetup(hydroSetup), [hydroSetup]);
+  const cropCol = useCollection<HydroponicCropListRecord>(HYDROPONIC_CROPS_COLLECTION);
+  const hydroSetup = latestRecord(hydroCol.records)?.data ?? null;
+  const crops = useMemo(() => cropListFromRecords(cropCol.records), [cropCol.records]);
+  // 台帳の数値パラメータ (設定画面で上書きできる)。試算の関数へ引数で渡す —
+  // 台帳を読む大域の状態は置かない (`shared/parameters.ts`)。
+  const { values: paramValues } = useParameters();
+  const productionParams = useMemo(() => hydroponicsProductionParams(paramValues), [paramValues]);
+  const lowKParams = useMemo(() => lowPotassiumParams(paramValues), [paramValues]);
+  const ckdLimits = useMemo(() => ckdPotassiumLimits(paramValues), [paramValues]);
+  const corpRates = useMemo(() => corporateTaxRates(paramValues), [paramValues]);
+  const bizConsumption = useMemo(() => businessConsumptionParams(paramValues), [paramValues]);
+  const healthBands = useMemo(() => financialHealthBands(paramValues), [paramValues]);
+  const radarBands = useMemo(() => radarAxisBands(paramValues), [paramValues]);
+  const hydroponics = useMemo(
+    () => economicsFromSetup(hydroSetup, crops, productionParams),
+    [hydroSetup, crops, productionParams],
+  );
   // 水耕栽培も 1 事業として並べる。別枠の「参考」にすると、全社の数字に
   // 入っているのかどうかが画面から分からない。未入力なら並ばない。
   const hydroUnit = useMemo(() => hydroponicsBusinessUnit(hydroponics), [hydroponics]);
@@ -442,7 +667,7 @@ export function OverviewPage() {
     ],
     [userFinancialUnits, hydroUnit],
   );
-  const lowPotassium = useMemo(() => lowPotassiumFromSetup(hydroSetup), [hydroSetup]);
+  const lowPotassium = useMemo(() => lowPotassiumFromSetup(hydroSetup, lowKParams), [hydroSetup, lowKParams]);
 
   const computedOverview = useMemo(
     () =>
@@ -452,7 +677,7 @@ export function OverviewPage() {
         kpiActuals: kpiRecords.map((r) => r.data),
         kpiBudgets: budgetRecords.map((r) => r.data),
         // BS は最新の 1 レコードを採用。
-        balanceSheet: bsRecords.length > 0 ? bsRecords[bsRecords.length - 1]!.data : null,
+        balanceSheet: latestRecord(bsRecords)?.data ?? null,
         accounting: accountingMonthly,
         members: memberRecords.map((r) => ({ role: r.data.role })),
         hydroponics,
@@ -500,6 +725,39 @@ export function OverviewPage() {
   const highlightSummary = useMemo(() => summarizeHighlights(highlights), [highlights]);
 
   const monthlyTrend = useMemo(() => monthlyTrendSeries(kpiRecords.map((r) => r.data)), [kpiRecords]);
+
+  /*
+   * 秒単位の帯に出す行。
+   *
+   * **ここに渡すのは「年額」である。** 集計値 (総売上・営業利益) は年初来の
+   * 実績なので、そのまま渡すと「年額を按分し直した値」になり、実績より
+   * 小さい数が出てしまう。年換算のペースへ直してから渡す。
+   *
+   * 年初のうちは経過が小さく、わずかな実績が莫大な年換算に化ける。
+   * `annualizedPace` は下限 (既定 1%) 未満なら `null` を返すので、
+   * その間は帯に出さない —— 0 除算の Infinity を画面へ流すより、
+   * 出さないほうが正しい。
+   */
+  const realtimeRows: RealtimeRow[] = useMemo(() => {
+    const now = new Date();
+    const rows: RealtimeRow[] = [];
+    const salesPace = annualizedPace(overview.sales.totalAmount, now);
+    if (salesPace !== null && salesPace > 0) {
+      rows.push({
+        label: '売上 (年換算ペース)',
+        annual: salesPace,
+        color: '#3ec98a',
+        hint: '年初来の実績を経過で割り戻した年換算',
+      });
+    }
+    if (overview.kpi.hasData) {
+      const opPace = annualizedPace(overview.kpi.operatingProfit, now);
+      if (opPace !== null && opPace !== 0) {
+        rows.push({ label: '営業利益 (年換算ペース)', annual: opPace, color: '#4f9cf9' });
+      }
+    }
+    return rows;
+  }, [overview.sales.totalAmount, overview.kpi.hasData, overview.kpi.operatingProfit]);
   const fundamentals = useMemo(() => summarizeFundamentals(kpiRecords.map((r) => r.data)), [kpiRecords]);
   const sensitivity = useMemo(() => {
     if (!overview.kpi.hasData) return null;
@@ -515,8 +773,37 @@ export function OverviewPage() {
 
   const [reportCopied, setReportCopied] = useState(false);
   const report = useMemo(
-    () => buildManagementReport(overview, scorecard, highlights, new Date().toISOString().slice(0, 10), monthlyTrend, sensitivity?.breakEvenDelta ?? null),
+    () => buildManagementReport(overview, scorecard, highlights, localIsoDate(), monthlyTrend, sensitivity?.breakEvenDelta ?? null),
     [overview, scorecard, highlights, monthlyTrend, sensitivity],
+  );
+
+  // 金融機関等提出用の書面。書式と提出者情報は 1 レコードに保存し、最新を採用する
+  // (ハイライトのしきい値と同じ読み方)。数字は上の `overview` / `scorecard` /
+  // `debtService` をそのまま書式に通す — 画面と書面で計算を分けない。
+  const submissionCol = useCollection<BankSubmissionSettings>(BANK_SUBMISSION_COLLECTION);
+  const submissionSettings = useMemo(
+    () => settingsFromRecord(latestRecord(submissionCol.records)?.data),
+    [submissionCol.records],
+  );
+  const [sheetOpen, setSheetOpen] = useState(false);
+  // 士業のページなどから「提出用の書面を開いた状態で」と言われて来たとき。mount 時に 1 度だけ。
+  useEffect(() => {
+    if (takeNavigationIntent('overview')?.action === 'bank-sheet') setSheetOpen(true);
+  }, []);
+  const kpiPeriods = useMemo(() => kpiRecords.map((r) => r.data.period), [kpiRecords]);
+  const balanceSheetAsOf = latestRecord(bsRecords)?.data.asOf ?? null;
+  const sheetModel = useMemo(
+    () =>
+      buildBankSubmissionSheet({
+        overview,
+        scorecard,
+        debtService,
+        kpiPeriods,
+        balanceSheetAsOf,
+        today: localIsoDate(),
+        settings: submissionSettings,
+      }),
+    [overview, scorecard, debtService, kpiPeriods, balanceSheetAsOf, submissionSettings],
   );
 
   async function copyReport() {
@@ -533,7 +820,7 @@ export function OverviewPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `management-report-${new Date().toISOString().slice(0, 10)}.md`;
+    a.download = `management-report-${localIsoDate()}.md`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -541,8 +828,41 @@ export function OverviewPage() {
   const hasData =
     salesRecords.length > 0 || kpiRecords.length > 0 || memberRecords.length > 0;
 
+  if (sheetOpen) {
+    return (
+      <BankSubmissionPanel
+        model={sheetModel}
+        settings={submissionSettings}
+        onSave={(s) => submissionCol.add(s)}
+        onClose={() => setSheetOpen(false)}
+      />
+    );
+  }
+
   return (
     <div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+        <button
+          type="button"
+          onClick={() => navigateTo('docstudio', { doc: 'kessan', action: 'import-overview' })}
+          title="KPI 実績・貸借対照表・提出者情報を書類スタジオの計算書類 (損益計算書・貸借対照表・株主資本等変動計算書・個別注記表) に写します"
+        >
+          書類スタジオで計算書類を作る
+        </button>
+        <button type="button" onClick={() => navigateTo('tax-accountant')} title="税理士のページ (事業仕分け・連絡先・相談履歴) を開きます">
+          税理士に相談
+        </button>
+        <button type="button" onClick={() => navigateTo('cpa')} title="公認会計士のページを開きます">
+          公認会計士に相談
+        </button>
+        <button
+          type="button"
+          onClick={() => setSheetOpen(true)}
+          title="金額を千円単位・負数を △ で表す金融機関等の書式に揃え、A4 で印刷できる書面を開きます"
+        >
+          金融機関等提出用の書式で表示
+        </button>
+      </div>
       {hasData && highlights.length > 0 && (
         <Section title={`経営ハイライト — 総合 ${scorecard.overallScore}/100（${VERDICT_LABEL[scorecard.verdict]}）`}>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 12, fontSize: 13 }}>
@@ -717,6 +1037,15 @@ export function OverviewPage() {
           <p style={{ color: 'var(--text-mute)', fontSize: 13, marginBottom: 12 }}>
             売上集計・KPI 実績・チーム管理にデータを入力すると、ここに経営概況がまとまって表示されます。
           </p>
+        )}
+
+        {realtimeRows.length > 0 && (
+          <div style={{ marginBottom: 14 }}>
+            <RealtimeTicker
+              rows={realtimeRows}
+              note="年初来の実績を経過で割り戻した年換算ペースを、さらに経過で按分した「ここまでの発生見込み」です。集計の元データはこの刻みでは取り直しません (上流の API 上限を守るため) — 取り直しは上の更新ボタンから。"
+            />
+          </div>
         )}
 
         <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>売上</div>
@@ -970,7 +1299,13 @@ export function OverviewPage() {
       )}
 
       <Section title={`水耕栽培の試算${overview.hydroponics ? ` — 日産 ${num.format(overview.hydroponics.shippedPlantsPerDay)} 株` : ''}`}>
-        <HydroponicsPanel current={hydroSetup} onSave={(s) => hydroCol.add(s)} />
+        <HydroponicsPanel
+          current={hydroSetup}
+          crops={crops}
+          lowKParams={lowKParams}
+          onSave={(s) => hydroCol.add(s)}
+          onCropsChange={(c) => cropCol.add({ crops: c })}
+        />
         {overview.hydroponics && (
           <>
             <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '14px 0 4px' }}>
@@ -1050,8 +1385,8 @@ export function OverviewPage() {
                         accent={overview.hydroponics.lowPotassium.switchWindowOk ? undefined : '#f59e0b'}
                         sub={
                           overview.hydroponics.lowPotassium.switchWindowOk
-                            ? `目安 ${LOW_K_SWITCH_DAYS_MIN}〜${LOW_K_SWITCH_DAYS_MAX} 日の範囲内`
-                            : `目安は ${LOW_K_SWITCH_DAYS_MIN}〜${LOW_K_SWITCH_DAYS_MAX} 日です`
+                            ? `目安 ${lowKParams.switchDaysMin}〜${lowKParams.switchDaysMax} 日の範囲内`
+                            : `目安は ${lowKParams.switchDaysMin}〜${lowKParams.switchDaysMax} 日です`
                         }
                       />
                       <Tile
@@ -1066,7 +1401,7 @@ export function OverviewPage() {
                     </div>
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
                       {(['G3b', 'G4'] as const).map((stage) => {
-                        const grams = servingGramsWithinLimit(overview.hydroponics!.lowPotassium!, stage, 20);
+                        const grams = servingGramsWithinLimit(overview.hydroponics!.lowPotassium!, stage, 20, ckdLimits);
                         return (
                           <Tile
                             key={stage}
@@ -1095,8 +1430,11 @@ export function OverviewPage() {
                   </div>
                 )}
                 <p style={{ color: 'var(--text-mute)', fontSize: 11, lineHeight: 1.7, marginBottom: 12 }}>
-                  カリウム制限は慢性腎臓病の <strong>G3b で 2,000 mg/日以下、G4〜G5 で 1,500 mg/日以下</strong>が目安です
-                  （日本腎臓学会）。G3a までは一律の制限を設けません。血清カリウム値が安定していれば制限しないこともあり、
+                  カリウム制限は慢性腎臓病の{' '}
+                  <strong>
+                    G3b で {mgOf(ckdLimits.G3b)} mg/日以下、G4 で {mgOf(ckdLimits.G4)} mg/日以下、G5 で {mgOf(ckdLimits.G5)} mg/日以下
+                  </strong>
+                  が目安です（{ckdLimitsAreDefault(ckdLimits) ? '日本腎臓学会' : '設定画面で上書きした値'}）。G3a までは一律の制限を設けません。血清カリウム値が安定していれば制限しないこともあり、
                   <strong>実際の指示は主治医と管理栄養士が個別に決めます</strong>。ここの数字は栽培側の管理用で、
                   食事指導に代わるものではありません。
                 </p>
@@ -1158,7 +1496,14 @@ export function OverviewPage() {
             <> いまは登録した事業がないため、サンプルのみを表示しています。</>
           )}
         </div>
-        <FinancialAnalysis units={financialUnits} />
+        <FinancialAnalysis
+          units={financialUnits}
+          effectiveTaxRate={paramValues['finance.effectiveTaxRate']}
+          corporateTaxRates={corpRates}
+          businessConsumption={bizConsumption}
+          healthBands={healthBands}
+          radarBands={radarBands}
+        />
       </Section>
     </div>
   );

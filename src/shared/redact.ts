@@ -16,9 +16,35 @@
  *     {"headers":{"authorization":"Bearer key_…"}}
  *
  * この形は `Authorization` の直後が `"` なので、コロン直結を要求する旧規則に
- * 一致せず、鍵がそのまま画面とログに出ていた (2026-08-20 実測)。送っている
- * 資格情報ヘッダは `Authorization` / `x-api-key` / `x-goog-api-key` の 3 種類
- * なので、**名前を起点に、線上の書き方と JSON の書き方の両方**を伏せる。
+ * 一致せず、鍵がそのまま画面とログに出ていた (2026-08-20 実測)。だから
+ * **名前を起点に、線上の書き方と JSON の書き方の両方**を伏せる。
+ *
+ * ## なぜ名前を「列挙」しないのか
+ *
+ * 2026-08-23 まで、その名前は `authorization` / `x-api-key` / `x-goog-api-key` /
+ * `api-key` / `proxy-authorization` の**列挙**だった。列挙は守りの中心にあるが、
+ * **新しいヘッダを足す側には何の強制も無い**。実測で送っている 6 種のうち
+ * 3 種が抜けていた:
+ *
+ *   - `x-apikey`     (VirusTotal)          — どの形でも漏れる
+ *   - `x-proxy-auth` (BYO プロキシの共有秘密) — どの形でも漏れる
+ *   - `hibp-api-key` (HIBP)                — 線上の形は `\bapi-key` に偶然
+ *     当たっていたが、JSON の形は引用符が名前の直前を要求するので漏れる
+ *
+ * `x-proxy-auth` がとくに悪い。本文を返してくるのは上に書いたとおり**利用者が
+ * 用意したプロキシ**で、その共有秘密がそのプロキシ自身の応答経由で画面と
+ * 不具合報告に出ていた。
+ *
+ * そこで名前を「接頭辞つきの形」で書くようにした (`(?:[a-z0-9]+-)*` +
+ * `authorization` / `api-?key` / `proxy-auth`)。`x-`, `hibp-`, `x-goog-`,
+ * `proxy-` のような**仕入れ先ごとの接頭辞は、もう列挙に足さなくてよい**。
+ * 引用符と引用符のあいだ全部に一致することを求めるので、`"author"` /
+ * `"authorization_endpoint"` / `"idempotency-key"` は巻き添えにしない。
+ *
+ * そのうえで、**送っている側から数え直す**検査を置いた
+ * (`scripts/scan-credential-headers.cjs` + `__tests__/redactionCoverage.test.ts`)。
+ * 正規表現の字面ではなく、実物の `redactSecrets` に本文を通して秘密が消えるかを
+ * 見るので、ここを書き換えても検査を欺けない。
  *
  * ここは全経路の最後の関門である (`src/shared/api/http.ts`,
  * `src/renderer/network/proxy.ts`, `src/renderer/web-shim.ts`,
@@ -26,10 +52,12 @@
  *
  * 覆う範囲:
  *   - 資格情報ヘッダの値 — `Authorization: Bearer …` も `"authorization":"Bearer …"` も
+ *     (`x-apikey` / `hibp-api-key` / `x-proxy-auth` のような接頭辞つきも同じ形で)
  *   - 単独の `Bearer …` / `Basic …` (16 字以上。英単語を巻き添えにしない長さ)
  *   - sk-ant-…, ghp_…, ghs_…, ghu_…, ya29.…, xoxb-…, xoxp-…, secret_…, AIza…
  *   - Atlassian ATATT… tokens
- *   - JSON token fields (access_token / refresh_token / token / api_key / …)
+ *   - JSON token fields (access_token / refresh_token / token / api_key /
+ *     client_secret / sharedSecret / password / …)
  */
 
 /**
@@ -61,7 +89,7 @@ export function redactSecrets(input: string): string {
       // `\s+` と書くと「1 個か 2 個以上か」で結果が変わらない = 確かめようの
       // ない指定になる。
       .replace(
-        /(["'])(proxy-authorization|authorization|x-goog-api-key|x-api-key|api-key)\1(\s*:\s*)\1(?:(Bearer|Basic)\s)?(?:\\.|(?!\1)[^\\])*\1/gi,
+        /(["'])((?:[a-z0-9]+-)*(?:authorization|api-?key|proxy-auth))\1(\s*:\s*)\1(?:(Bearer|Basic)\s)?(?:\\.|(?!\1)[^\\])*\1/gi,
         (_m, q: string, name: string, sep: string, scheme?: string) =>
           hideValue(`${q}${name}${q}`, `${sep}${q}`, scheme) + q,
       )
@@ -70,8 +98,15 @@ export function redactSecrets(input: string): string {
       // トークンの尻尾が残る。引用符付きの形は上の規則が先に処理して
       // `"…":"[REDACTED]"` にしてあり、そこでは名前の直後がコロンではない
       // ので、この規則が二度当たって閉じ引用符まで飲み込むことはない。
+      // **こちらには接頭辞のまとめ書きを置かない。** 引用符つきの規則 (上) は
+      // 名前が引用符と引用符に挟まれるので `hibp-` のような仕入れ先接頭辞まで
+      // 一致させる必要があるが、線上の形は `\b` があるので `hibp-api-key:` の
+      // `api-key` から一致でき、**手前の `hibp-` はそのまま残る**ので
+      // 仕上がりの文字列は同じになる。実測 (2026-08-23・10 例): 接頭辞あり/なしで
+      // 出力が違うものは 0、漏れの有無も一致。**書いても効かない指定は、
+      // 効いているように読める分だけ害がある** (変異検査でも生存し続ける)。
       .replace(
-        /\b(proxy-authorization|authorization|x-goog-api-key|x-api-key|api-key)(\s*:\s*)(?:(Bearer|Basic)\s+)?\S+/gi,
+        /\b(authorization|api-?key|proxy-auth)(\s*:\s*)(?:(Bearer|Basic)\s+)?\S+/gi,
         (_m, name: string, sep: string, scheme?: string) => hideValue(name, sep, scheme),
       )
       // ヘッダ名が付いていない裸の `Bearer …` / `Basic …`。16 字以上に限る。
@@ -80,10 +115,40 @@ export function redactSecrets(input: string): string {
       // 区切り文字を値から除いてあるので、伏せたあとの `[REDACTED]` (10 字)
       // に再び当たることもない (`[` も除外文字に入っている)。
       .replace(/\b(Bearer|Basic)\s+[^\s"'\\,;)[\]}]{16,}/g, '$1 [REDACTED]')
-      // 発行元が分かる接頭辞。`AIza…` は Google の API キー — このアプリは
-      // YouTube で `?key=…` の形の URL に載せて送るので、URL ごとどこかへ
-      // 書き出されたときに備えてここでも拾う。
-      .replace(/\b(sk-ant-|ghp_|ghs_|ghu_|gho_|ghr_|xoxp-|xoxb-|xoxa-|secret_|AIza)[A-Za-z0-9_-]{8,}/g, '$1[REDACTED]')
+      /*
+       * 発行元が分かる接頭辞。`AIza…` は Google の API キー — このアプリは
+       * YouTube で `?key=…` の形の URL に載せて送るので、URL ごとどこかへ
+       * 書き出されたときに備えてここでも拾う。
+       *
+       * **2026-08-29: 数えたら 5 形が抜けていた。**
+       *
+       * ここには `sk-ant-` が在って **OpenAI の `sk-` / `sk-proj-` が無かった**。
+       * 2026-08-23 に「`sk-ant-…` を含む例外がそのまま renderer へ届いていた」
+       * のを直したときに、**その事故の接頭辞だけを足して一般化しなかった**
+       * 跡である。同じ事故が OpenAI の鍵で起きれば、今日でもそのまま漏れる。
+       * 実測して素通りを確認した形: `sk-proj-` / `sk-` / `sk_live_` /
+       * `rk_live_` / `shpat_`。このアプリはどれも預かる
+       * (OpenAI は 5 社の 1 つ、Stripe と Shopify はサービス一覧に在る)。
+       *
+       * 経路は塞がっていない —— `shared/ai/chat.ts` は失敗応答の本文を
+       * `redactForMessage(body, 200)` に通して画面へ出す。`compat`
+       * (LiteLLM / LM Studio / 自前サーバ) が本文に鍵を書き返せば、
+       * 伏字を通り抜けて表示される。
+       */
+      .replace(
+        /\b(sk-ant-|sk-proj-|ghp_|ghs_|ghu_|gho_|ghr_|xoxp-|xoxb-|xoxa-|secret_|AIza|shpat_|shpss_|shpca_|sk_live_|sk_test_|rk_live_|rk_test_)[A-Za-z0-9_-]{8,}/g,
+        '$1[REDACTED]',
+      )
+      /*
+       * 接頭辞の付かない旧 OpenAI 鍵 (`sk-` + 英数)。**上の規則より後に置く** ——
+       * `sk-ant-` / `sk-proj-` は既に伏せてあり、残りの `ant-[REDACTED]` は
+       * `[` で止まって 20 字に届かないので二重には当たらない。
+       *
+       * 20 字を要求するのは英文を巻き込まないため。`\b` は日本語の直後でも
+       * 立つ (CJK は `\w` ではない) ので、短くすると散文を伏せかねない。
+       * 実在の OpenAI 鍵は 40 字を超える。
+       */
+      .replace(/\bsk-[A-Za-z0-9_-]{20,}/g, 'sk-[REDACTED]')
       .replace(/\bya29\.[A-Za-z0-9_-]{10,}/g, 'ya29.[REDACTED]')
       // Atlassian API token (Jira/Confluence PAT) — always begins `ATATT`.
       .replace(/\bATATT[A-Za-z0-9_=.-]{16,}/g, 'ATATT[REDACTED]')
@@ -93,7 +158,10 @@ export function redactSecrets(input: string): string {
       // closing-quote past the redactor. Without it, an upstream reply
       // like `{"error_description":"Token \"ATATT3xFfGF0…\" rejected"}`
       // would only redact `Token \` and leave the secret in the rest.
-      .replace(/"(access_token|refresh_token|token|api_key|apikey|password)"\s*:\s*"(?:[^"\\]|\\.)*"/gi, '"$1":"[REDACTED]"')
+      .replace(
+        /"(access_token|refresh_token|token|api_key|apikey|client_?secret|shared_?secret|password)"\s*:\s*"(?:[^"\\]|\\.)*"/gi,
+        '"$1":"[REDACTED]"',
+      )
   );
 }
 
@@ -147,4 +215,27 @@ export const REDACT_SCAN_LIMIT = 8192;
  */
 export function redactForMessage(input: string, maxLength: number): string {
   return redactSecrets(input.slice(0, REDACT_SCAN_LIMIT)).slice(0, maxLength);
+}
+
+/** 利用者へ見せるエラー 1 行の上限。ここを超える説明は画面でも読めない。 */
+export const ERROR_MESSAGE_MAX_LENGTH = 2000;
+
+/**
+ * 例外を「利用者へ見せてよい 1 行」にする。**伏字を通した後**を返す。
+ *
+ * main 側 (`src/main/main.ts`) にだけ置いてあったが、ブラウザ版の
+ * `web-shim.ts` は main の役目をそのまま引き受けているのに、同じ関門が
+ * 無かった (2026-08-22)。この注記は当初
+ * 「個々の呼び出し元は本文を添えるとき `redactForMessage` を通しているので
+ * 実際に漏れてはいなかった」と書いていたが、**それは誤りだった** ——
+ * `web-shim` の `assistant.chatAll` は誤りの文言を `err()` ではなく
+ * `ok({ answers })` の中身として返しており、そこだけ関門を通っていなかった
+ * (2026-08-23 に実測で鍵の逐語到達を確認して塞いだ)。
+ * **最後にもう一度通す口が片側にしか無い**のは、新しい経路が足された
+ * ときに効いてくる非対称である。規則は 1 つだけ持つ。
+ *
+ * 伏字は冪等なので、既に伏せてある文字列を通しても形は変わらない。
+ */
+export function safeErrorMessage(err: unknown): string {
+  return redactForMessage(err instanceof Error ? err.message : String(err), ERROR_MESSAGE_MAX_LENGTH);
 }

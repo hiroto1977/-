@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach, afterEach } from 'vitest';
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -18,6 +18,32 @@ describe('atomicWriteFile', () => {
     const target = path.join(dir, 'nested', 'deep', 'secrets.json');
     await atomicWriteFile(target, '{"a":1}');
     expect(await fs.readFile(target, 'utf8')).toBe('{"a":1}');
+  });
+
+  /*
+   * 作業ファイルは `O_EXCL` で開く —— **既に在るなら開かない**。
+   *
+   * tmp 名は `pid + Date.now() + Math.random()` なので、普通は同じ名前が
+   * 先に在ることは無い。だから**両方を固定して、在る状態を作って**確かめる。
+   * `'w'` のままだと先客を黙って切り詰めて成功してしまう (= 片方の書き込みが
+   * 消える・シンボリックリンクなら辿る)。
+   */
+  it('作業ファイルが既に在るなら開かず失敗する (O_EXCL)', async () => {
+    const target = path.join(dir, 'excl.json');
+    const randomSpy = vi.spyOn(Math, 'random').mockReturnValue(0.5);
+    const nowSpy = vi.spyOn(Date, 'now').mockReturnValue(1_700_000_000_000);
+    try {
+      const tmp = `${target}.tmp-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      await fs.writeFile(tmp, 'せんきゃく');
+      await expect(atomicWriteFile(target, 'あたらしい')).rejects.toThrow();
+      // 先客はそのまま (切り詰められていない)。
+      expect(await fs.readFile(tmp, 'utf8')).toBe('せんきゃく');
+      // 本体は作られていない。
+      await expect(fs.stat(target)).rejects.toThrow();
+    } finally {
+      randomSpy.mockRestore();
+      nowSpy.mockRestore();
+    }
   });
 
   it('overwrites an existing file atomically', async () => {
@@ -101,5 +127,74 @@ describe('readFileWithBackup', () => {
 
   it('returns null when neither exists', async () => {
     expect(await readFileWithBackup(path.join(dir, 'nope.json'))).toBeNull();
+  });
+});
+
+/*
+ * **権限は「作るとき」だけの話ではない。**
+ *
+ * `fs.writeFile(..., { mode })` は**新規作成のときしか効かない** ——
+ * 既にあるファイルの権限は変わらない。実際 `main/clients/emotions.ts` は
+ * 2026-08-13 に `{ mode: 0o600 }` を足したが、それ以前に作られたファイルは
+ * 644 のまま残り、以後どれだけ書いても直らなかった (実測)。
+ *
+ * `atomicWriteFile` は 0600 で作った一時ファイルを `rename` で被せるので、
+ * **次の書き込みで既存の緩い権限も直る**。控えを取るときは控えも揃える ——
+ * 本体だけ直して控えを緩いまま残すのは、鍵を掛けた扉の横に窓を開けておくのと同じ。
+ */
+describe('atomicWriteFile と権限', () => {
+  const modeOf = async (p: string) => ((await fs.stat(p)).mode & 0o777).toString(8);
+
+  it('新しいファイルは指定した権限で作られる', async () => {
+    const target = path.join(dir, 'new.json');
+    await atomicWriteFile(target, '{}', { mode: 0o600 });
+    expect(await modeOf(target)).toBe('600');
+  });
+
+  it('既にある緩いファイルも、次の書き込みで締まる', async () => {
+    const target = path.join(dir, 'legacy.json');
+    // mode を付ける前のバージョンが作った状態
+    await fs.writeFile(target, '{"old":1}');
+    await fs.chmod(target, 0o644);
+    expect(await modeOf(target)).toBe('644');
+
+    await atomicWriteFile(target, '{"new":1}', { mode: 0o600 });
+
+    // ★ ここが本体。writeFile では直らない。
+    expect(await modeOf(target)).toBe('600');
+    expect(await fs.readFile(target, 'utf8')).toBe('{"new":1}');
+  });
+
+  it('控えを本体より緩いまま残さない', async () => {
+    const target = path.join(dir, 'withprev.json');
+    await fs.writeFile(target, '{"old":1}');
+    await fs.chmod(target, 0o644);
+
+    await atomicWriteFile(target, '{"new":1}', { mode: 0o600, keepBackup: true });
+
+    // 控えは複製元 (緩い本体) の権限を引き継ぐので、明示的に揃える必要がある。
+    expect(await modeOf(`${target}.prev`)).toBe('600');
+    expect(await fs.readFile(`${target}.prev`, 'utf8')).toBe('{"old":1}');
+  });
+
+  /*
+   * mode **無指定**のときも同じ窓が開いていた (2026-08-31)。
+   *
+   * 一時ファイルは `opts.mode ?? 0o600` で作られるので、mode を渡さなくても
+   * 本体は rename 後に 600 になる。ところが控えを揃える側だけが
+   * `if (opts.mode !== undefined)` で守られていて、**まさにその無指定の場合に**
+   * 本体 600 / 控え 644 が残った。控えも同じ既定値へ揃える。
+   */
+  it('mode 無指定でも、控えは本体と同じ 600 に揃う', async () => {
+    const target = path.join(dir, 'withprev-nomode.json');
+    await fs.writeFile(target, '{"old":1}');
+    await fs.chmod(target, 0o644);
+
+    await atomicWriteFile(target, '{"new":1}', { keepBackup: true });
+
+    expect(await modeOf(target)).toBe('600');
+    // ★ ここが本体 —— 以前はここが 644 のまま残っていた。
+    expect(await modeOf(`${target}.prev`)).toBe('600');
+    expect(await fs.readFile(`${target}.prev`, 'utf8')).toBe('{"old":1}');
   });
 });

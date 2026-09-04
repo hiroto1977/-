@@ -87,6 +87,19 @@ describe('filterConfirmed', () => {
 });
 
 describe('VERIFIED_SUPPORT_RESOURCES (knowledge base invariant)', () => {
+  /*
+   * 非空の床。この describe の検査はどれも「全件について〜」の形なので、
+   * **配列が空になると全部そのまま通る**。2026-08-22 の走査で、本番データを
+   * 回して expect するのに非空を確かめていない検査が 74 件見つかり、その中で
+   * ここは人命に関わるデータ (相談窓口) だった。
+   *
+   * 対照実験: `VERIFIED_SUPPORT_RESOURCES` を空にすると、この
+   * ファイルの 15 件は**全部通った**。
+   */
+  it('相談窓口が 1 件以上ある (空なら以下の検査は全部空虚に通る)', () => {
+    expect(VERIFIED_SUPPORT_RESOURCES.length).toBeGreaterThanOrEqual(3);
+  });
+
   it('every verified resource is CONFIRMED under the default policy', () => {
     for (const c of VERIFIED_SUPPORT_RESOURCES) {
       expect(verifyClaim(c)).toBe('confirmed');

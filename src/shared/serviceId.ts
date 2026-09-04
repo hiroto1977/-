@@ -81,6 +81,7 @@ export const SERVICE_IDS = [
   'docstudio',
   'cursor',
   'charts',
+  'talent',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 

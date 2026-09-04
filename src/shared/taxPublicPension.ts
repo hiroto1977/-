@@ -18,6 +18,17 @@ export const PENSION_DEDUCTION_MIN_UNDER65 = 600_000;
 /** 公的年金等控除の最低額 (65歳以上)。 */
 export const PENSION_DEDUCTION_MIN_OVER65 = 1_100_000;
 
+/** 公的年金等控除の最低額。省略すると上の定数。台帳 (`shared/parameters.ts`) から上書きできる。 */
+export interface PensionDeductionParams {
+  readonly minUnder65: number;
+  readonly minOver65: number;
+}
+
+export const DEFAULT_PENSION_DEDUCTION_PARAMS: PensionDeductionParams = {
+  minUnder65: PENSION_DEDUCTION_MIN_UNDER65,
+  minOver65: PENSION_DEDUCTION_MIN_OVER65,
+};
+
 /**
  * 公的年金等控除額を計算する (公的年金等以外の所得が1,000万円以下の場合)。
  *
@@ -30,7 +41,11 @@ export const PENSION_DEDUCTION_MIN_OVER65 = 1_100_000;
  * @param pensionIncome 公的年金等の収入金額 (円)
  * @param isOver65 その年12/31時点で65歳以上か
  */
-export function calcPublicPensionDeduction(pensionIncome: number, isOver65: boolean): number {
+export function calcPublicPensionDeduction(
+  pensionIncome: number,
+  isOver65: boolean,
+  p: PensionDeductionParams = DEFAULT_PENSION_DEDUCTION_PARAMS,
+): number {
   const income = Math.max(0, pensionIncome);
   if (income <= 0) return 0;
 
@@ -39,9 +54,9 @@ export function calcPublicPensionDeduction(pensionIncome: number, isOver65: bool
   // `<=` を `<` にする EqualityOperator mutation は equivalent。ブロックで無効化。
   // Stryker disable EqualityOperator
   if (isOver65) {
-    if (income <= 3_300_000) return PENSION_DEDUCTION_MIN_OVER65;
+    if (income <= 3_300_000) return p.minOver65;
   } else {
-    if (income <= 1_300_000) return PENSION_DEDUCTION_MIN_UNDER65;
+    if (income <= 1_300_000) return p.minUnder65;
   }
   // 130万/330万超は年齢共通の速算式。
   if (income <= 4_100_000) return yen(income * 0.25 + 275_000);
@@ -65,9 +80,13 @@ export interface PublicPensionResult {
  * @param pensionIncome 公的年金等の収入金額 (円)
  * @param isOver65 その年12/31時点で65歳以上か
  */
-export function calcPublicPensionIncome(pensionIncome: number, isOver65: boolean): PublicPensionResult {
+export function calcPublicPensionIncome(
+  pensionIncome: number,
+  isOver65: boolean,
+  p: PensionDeductionParams = DEFAULT_PENSION_DEDUCTION_PARAMS,
+): PublicPensionResult {
   const income = Math.max(0, pensionIncome);
-  const deduction = calcPublicPensionDeduction(income, isOver65);
+  const deduction = calcPublicPensionDeduction(income, isOver65, p);
   return { deduction, taxableIncome: Math.max(0, income - deduction) };
 }
 

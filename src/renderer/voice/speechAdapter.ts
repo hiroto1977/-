@@ -99,14 +99,18 @@ export function isSpeechRecognitionSupported(
  * ロジックではなく「データ取り出し」なのでアダプタ内に置く。
  */
 export function extractTranscript(ev: SpeechRecognitionEventLike): string {
+  // `ev.results` は配列ではなく array-like (SpeechRecognitionResultList) なので
+  // `Array.from` で実配列にしてから `resultIndex` 以降を取る。以前は
+  // `for (let i = ev.resultIndex; i < results.length; i++)` と手で回していたが、
+  // **境界をずらしても差が観測できなかった** — 範囲外は `undefined` になり
+  // 下のガードが黙って吸うので、`<` を `<=` にしても結果が同じだった。
+  // 境界計算を標準関数へ委ねると、その穴ごと消える。
   let out = '';
-  const results = ev.results;
-  for (let i = ev.resultIndex; i < results.length; i++) {
-    const result = results[i];
-    if (result && result.length > 0) {
-      const alt = result[0];
-      if (alt) out += alt.transcript;
-    }
+  for (const result of Array.from(ev.results).slice(ev.resultIndex)) {
+    // `result.length > 0` も見ていたが、`length` が 0 なら `[0]` も無いので
+    // すぐ下の `if (alt)` に完全に飲み込まれていた (重複した番人)。
+    const alt = result?.[0];
+    if (alt) out += alt.transcript;
   }
   return out.trim();
 }
@@ -158,17 +162,25 @@ export function startSpeechRecognition(
 
   recog.onresult = (ev) => {
     const text = extractTranscript(ev);
+    // テキストが空なら伝えることが無いので、確定フラグを見る前に降りる。
+    // 先に降りておくと「results が空のときの isFinal」という、**呼び出し側
+    // からは決して観測できない**分岐 (テキストが空 = onTranscript を呼ばない)
+    // を持たずに済む。
+    if (text.length === 0) return;
     // 末尾 result の確定フラグを伝える (UI が確定時に parse を発火するため)。
+    // テキストが非空なら results は 1 件以上あるが、`length` だけ進んで実体が
+    // 欠けたリストを渡す実装があり得るので `?.` で受ける — 取れなければ
+    // 確定扱いにはできないので false。
     const results = ev.results;
-    const last = results.length > 0 ? results[results.length - 1] : undefined;
-    const isFinal = last ? last.isFinal : false;
-    if (text.length > 0) {
-      callbacks.onTranscript(text, isFinal);
-    }
+    const isFinal = results[results.length - 1]?.isFinal ?? false;
+    callbacks.onTranscript(text, isFinal);
   };
 
   recog.onerror = (ev) => {
-    callbacks.onError?.(ev.message && ev.message.length > 0 ? ev.message : ev.error);
+    // `ev.message && ev.message.length > 0 ? ev.message : ev.error` と書いて
+    // いたが、長さ 0 の文字列は `''` だけで、それは既に左の `&&` が落として
+    // いる — 長さの判定は一度も結果を変えていなかった。
+    callbacks.onError?.(ev.message || ev.error);
   };
 
   recog.onend = () => {

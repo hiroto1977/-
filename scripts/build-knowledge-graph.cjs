@@ -18,6 +18,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const safeWrite = require('./safe-vault-write.cjs');
 const kc = require('../orchestration/knowledge-context.cjs');
 const kg = require('../orchestration/knowledge-graph.cjs');
 const edu = require('../orchestration/education.cjs');
@@ -67,7 +68,7 @@ function main() {
 
   fs.mkdirSync(path.join(OUT, 'education'), { recursive: true });
   for (const [rel, content] of Object.entries(files)) {
-    fs.writeFileSync(path.join(OUT, rel), content);
+    safeWrite.writeFilesInto(OUT, { [rel]: content });
   }
   console.log(
     `✅ knowledge-graph 生成: nodes ${stats.nodes} / edges ${stats.edges}（` +

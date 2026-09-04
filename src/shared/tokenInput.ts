@@ -20,7 +20,7 @@
 /** 保存を受け付ける最大長。安全側の上限で、実在のトークンより十分に大きい。 */
 export const TOKEN_MAX_LENGTH = 65536;
 
-export type TokenRejectReason = 'empty' | 'too-long';
+export type TokenRejectReason = 'empty' | 'too-long' | 'control-char';
 
 export type TokenInputCheck =
   | { readonly ok: true; readonly value: string }
@@ -44,6 +44,32 @@ export function checkTokenInput(raw: unknown): TokenInputCheck {
       ok: false,
       reason: 'too-long',
       message: `資格情報が長すぎます (${value.length} 文字 / 上限 ${TOKEN_MAX_LENGTH} 文字)`,
+    };
+  }
+  /*
+   * 改行・制御文字を弾く (2026-08-22 に追加)。
+   *
+   * トークンは `Authorization: Bearer ${token}` に載る。**注入はできない** ——
+   * 実測すると `new Headers()` が CR/LF/NUL を含む値を
+   * 「is an invalid header value」で throw するので、プラットフォームが止める。
+   *
+   * 直す理由はそこではなく、**失敗する場所と文面**である。折り返した PAT を
+   * 貼ると改行が混ざるのはよくあることで、今までは
+   *
+   *   保存は成功 → 次の取得で不可解な TypeError
+   *
+   * になっていた。このモジュールの趣旨は冒頭に書いてあるとおり
+   * 「なぜ保存されなかったかを利用者に出せなければ、黙って捨てるのと同じ」
+   * なので、保存時に理由つきで断る。
+   *
+   * `trim()` は前後しか落とさないので、途中の改行はここまで残る。
+   */
+  // eslint-disable-next-line no-control-regex
+  if (/[\u0000-\u001f\u007f]/.test(value)) {
+    return {
+      ok: false,
+      reason: 'control-char',
+      message: '資格情報に改行や制御文字が含まれています (貼り付け時の折り返しをご確認ください)',
     };
   }
   return { ok: true, value };

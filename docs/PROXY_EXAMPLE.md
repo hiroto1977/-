@@ -256,7 +256,13 @@ async function resolvedIpDenyReason(hostname) {
 
 /** 私設 / 予約レンジなら true。src/renderer/network/proxy.ts の
  *  isPrivateOrReservedTarget と同じレンジを塞ぐ。解析できない入力は
- *  true (deny) を返す — パーサ差異を攻撃者に有利に働かせない。 */
+ *  true (deny) を返す — パーサ差異を攻撃者に有利に働かせない。
+ *
+ *  **この「同じレンジ」は機械が支えている。** 以前は文だけで、実際には
+ *  2026-08-25 の時点で 8 か所ずれていた (client のみ: 192.0.0/24 /
+ *  TEST-NET 3 本 / 192.88.99/24 / 2001:db8::/32、Worker のみ: fec0::/10 /
+ *  ff00::/8)。今はこの関数を md から取り出して client と同じ標本へ当てる
+ *  検査がある: src/renderer/network/__tests__/proxyWorkerParity.test.ts */
 function isBlockedIp(ip) {
   if (typeof ip !== 'string' || ip.length === 0) return true;
   const bare0 = ip.trim().toLowerCase();
@@ -275,6 +281,16 @@ function isBlockedIp(ip) {
     if (a === 192 && b === 168) return true;              // 192.168.0.0/16 (RFC 1918)
     if (a === 100 && b >= 64 && b <= 127) return true;    // 100.64.0.0/10 CGNAT (RFC 6598)
     if (a === 198 && (b === 18 || b === 19)) return true; // 198.18.0.0/15 benchmark (RFC 2544)
+    // 「私設」ではないが公開経路に出ない予約。client 側 (proxy.ts) が
+    // 2026-08-25 にここを足したとき、**この Worker だけ取り残されていた**
+    // (実測: 下の 5 つはすべて素通り)。要求を実際に投げるのはこちらなので、
+    // 片側だけ塞いでも防いだことにならない。
+    const c = oct[2];
+    if (a === 192 && b === 0 && c === 0) return true;     // 192.0.0.0/24 IETF プロトコル割当 (RFC 6890, DS-Lite / NAT64)
+    if (a === 192 && b === 0 && c === 2) return true;     // 192.0.2.0/24 TEST-NET-1 (RFC 5737)
+    if (a === 198 && b === 51 && c === 100) return true;  // 198.51.100.0/24 TEST-NET-2 (RFC 5737)
+    if (a === 203 && b === 0 && c === 113) return true;   // 203.0.113.0/24 TEST-NET-3 (RFC 5737)
+    if (a === 192 && b === 88 && c === 99) return true;   // 192.88.99.0/24 6to4 リレー anycast (RFC 3068 / 7526 で廃止)
     if (a >= 224) return true;                            // 224/4 multicast + 240/4 reserved
     return false;
   }
@@ -305,6 +321,9 @@ function isBlockedIp(ip) {
   if ((g[0] & 0xffc0) === 0xfe80) return true; // fe80::/10 link-local
   if ((g[0] & 0xffc0) === 0xfec0) return true; // fec0::/10 site-local (RFC 3879 で廃止だが実装が残る)
   if ((g[0] & 0xff00) === 0xff00) return true; // ff00::/8 multicast
+  // 2001:db8::/32 文書用 (RFC 3849)。IPv4 の TEST-NET と同じ理由。
+  // client 側と同じく、2001::/16 全体には当てない (2001:4860:: など正当な公開空間が居る)。
+  if (g[0] === 0x2001 && g[1] === 0x0db8) return true;
   return false;
 }
 

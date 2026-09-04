@@ -3,6 +3,37 @@
 // until each ServiceClient is wired up to call the live REST APIs.
 
 import type { ShigyoSnapshot } from '../../shared/shigyoTypes';
+import {
+  LEADER_DISQUALIFIERS,
+  LEADER_DISQUALIFIERS_SOURCE,
+  ORGAN_DISEASES,
+  SKILL_STEPS,
+  SKILL_STEPS_SOURCE,
+} from '../../shared/talent';
+
+/**
+ * 見本の画像は **インライン (`data:`) にする**。
+ *
+ * 以前は `design.canva.ai` と `avatars.githubusercontent.com` の実 URL を
+ * 見本に入れていた。ID は見本化してあったが**ホストは本物**なので、
+ * 実測すると (2026-08-24):
+ *
+ *   起動〜保管庫作成        : 外部通信 0 件
+ *   Canva のページを開く    : design.canva.ai へ 12 件
+ *   GitHub のページを開く   : avatars.githubusercontent.com へ 2 件
+ *
+ * **資格情報を 1 つも設定していない状態で**、ページを開いただけで
+ * 第三者に「この IP がこの時刻にこのアプリを開いた」が伝わっていた。
+ * 見本の画像を取りに行く機能上の理由は無く、オフラインでは壊れるだけである。
+ *
+ * `data:` なら通信そのものが起きない。`components/DataList.tsx` の
+ * `safeImageSrc` は `data:image/*` を許可しており、`<img>` 経由の SVG は
+ * secure static mode でスクリプトが動かない。
+ */
+const SAMPLE_THUMBNAIL =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='180'%3E%3Crect width='320' height='180' fill='%23e5e7eb'/%3E%3Crect x='120' y='66' width='80' height='48' rx='4' fill='%23cbd5e1'/%3E%3Ccircle cx='142' cy='84' r='7' fill='%23e5e7eb'/%3E%3Cpath d='M126 110l22-20 16 14 12-10 20 16z' fill='%23e5e7eb'/%3E%3C/svg%3E";
+const SAMPLE_AVATAR =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23d1d5db'/%3E%3Ccircle cx='32' cy='26' r='11' fill='%239ca3af'/%3E%3Cpath d='M12 60a20 20 0 0140 0z' fill='%239ca3af'/%3E%3C/svg%3E";
 
 export const SNAPSHOT = {
   home: {
@@ -38,7 +69,7 @@ export const SNAPSHOT = {
       login: 'hiroto1977',
       name: 'AMITARIS',
       company: 'アミタリス',
-      avatarUrl: 'https://avatars.githubusercontent.com/u/267496817?v=4',
+      avatarUrl: SAMPLE_AVATAR,
       profileUrl: 'https://github.com/hiroto1977',
       publicRepos: 0,
       followers: 0,
@@ -71,30 +102,30 @@ export const SNAPSHOT = {
   wordpress: {
     sites: [
       {
-        blogId: 230249395,
-        name: '～なごみ館～',
-        description: '今を生きるあなたへ',
-        url: 'https://nagomikan.wordpress.com',
+        blogId: 100000001,
+        name: 'サンプルブログ A',
+        description: 'スナップショットの見本データです',
+        url: 'https://example-blog-a.wordpress.com',
         platform: 'simple',
         status: 'active',
         lastUpdated: '2025-11-18',
         paidPlan: false,
       },
       {
-        blogId: 230495299,
-        name: '笑楽生(しょうがくせい)の独り言',
+        blogId: 100000002,
+        name: 'サンプルブログ B',
         description: '',
-        url: 'https://onceinlifetime2015gmail.wordpress.com',
+        url: 'https://example-blog-b.wordpress.com',
         platform: 'simple',
         status: 'active',
         lastUpdated: '2025-07-01',
         paidPlan: false,
       },
       {
-        blogId: 230242450,
-        name: '介護徒然日記～笑楽生の日々～',
-        description: '日々のブログを通じて、皆様が少しでも笑顔で過ごして頂く為のサイトです。',
-        url: 'https://kaigo17.wordpress.com',
+        blogId: 100000003,
+        name: 'サンプルブログ C',
+        description: '見本データ。実在のサイトではありません。',
+        url: 'https://example-blog-c.wordpress.com',
         platform: 'simple',
         status: 'active',
         lastUpdated: '2024-03-05',
@@ -106,9 +137,9 @@ export const SNAPSHOT = {
   atlassian: {
     sites: [
       {
-        cloudId: 'cd488b16-45f1-4f43-9b53-48bbc0f0b748',
-        name: 'onceinlifetime2015',
-        url: 'https://onceinlifetime2015.atlassian.net',
+        cloudId: '00000000-0000-4000-8000-000000000000',
+        name: 'example-team',
+        url: 'https://example-team.atlassian.net',
         scopes: ['read:jira-work', 'write:jira-work'],
       },
     ],
@@ -132,60 +163,60 @@ export const SNAPSHOT = {
   drive: {
     files: [
       {
-        id: '1Wv5ioEERsYR_LozadFLm9uSD6emuQA1IrzJDDbDbVDk',
+        id: '1ExampleDocumentIdAAAAAAAAAAAAAAAAAAAAAAAAAA',
         title: 'SYSTEM_BLUEPRINT.md',
         mimeType: 'application/vnd.google-apps.document',
         modifiedTime: '2026-04-24',
         viewUrl:
-          'https://docs.google.com/document/d/1Wv5ioEERsYR_LozadFLm9uSD6emuQA1IrzJDDbDbVDk/edit',
+          'https://docs.google.com/document/d/1ExampleDocumentIdAAAAAAAAAAAAAAAAAAAAAAAAAA/edit',
       },
       {
-        id: '15BsNdLk-MUwv7zC0iZc-JbcToBZCzZXErqFenen7Tvw',
+        id: '1ExampleDocumentIdBBBBBBBBBBBBBBBBBBBBBBBBBB',
         title: 'ROLLBACK.md',
         mimeType: 'application/vnd.google-apps.document',
         modifiedTime: '2026-04-23',
         viewUrl:
-          'https://docs.google.com/document/d/15BsNdLk-MUwv7zC0iZc-JbcToBZCzZXErqFenen7Tvw/edit',
+          'https://docs.google.com/document/d/1ExampleDocumentIdBBBBBBBBBBBBBBBBBBBBBBBBBB/edit',
       },
       {
-        id: '1KgiNBuy9Ck2oEZF62JRtm_guNQR0hkkTcnZQFrPRFW0',
+        id: '1ExampleSpreadsheetIdCCCCCCCCCCCCCCCCCCCCCCC',
         title: 'キャッシュフロー計画書',
         mimeType: 'application/vnd.google-apps.spreadsheet',
         modifiedTime: '2026-04-21',
         viewUrl:
-          'https://docs.google.com/spreadsheets/d/1KgiNBuy9Ck2oEZF62JRtm_guNQR0hkkTcnZQFrPRFW0/edit',
+          'https://docs.google.com/spreadsheets/d/1ExampleSpreadsheetIdCCCCCCCCCCCCCCCCCCCCCCC/edit',
       },
       {
-        id: '17TRYAnchZpSc8-u5VaIpoctIyuQLzV48V55ASnwKKSY',
-        title: '全スキル_ルール_カテゴリ別カタログ',
+        id: '1ExampleDocumentIdDDDDDDDDDDDDDDDDDDDDDDDDDD',
+        title: 'サンプル資料_カタログ',
         mimeType: 'application/vnd.google-apps.document',
         modifiedTime: '2026-04-17',
         viewUrl:
-          'https://docs.google.com/document/d/17TRYAnchZpSc8-u5VaIpoctIyuQLzV48V55ASnwKKSY/edit',
+          'https://docs.google.com/document/d/1ExampleDocumentIdDDDDDDDDDDDDDDDDDDDDDDDDDD/edit',
       },
       {
-        id: '1Yldcys5yrIaokY8FMV2EhHIhVLAstNJtj_8vRvr0v74',
-        title: 'AI最強環境_構築完全手順書',
+        id: '1ExampleDocumentIdEEEEEEEEEEEEEEEEEEEEEEEEEE',
+        title: 'サンプル資料_手順書',
         mimeType: 'application/vnd.google-apps.document',
         modifiedTime: '2026-04-16',
         viewUrl:
-          'https://docs.google.com/document/d/1Yldcys5yrIaokY8FMV2EhHIhVLAstNJtj_8vRvr0v74/edit',
+          'https://docs.google.com/document/d/1ExampleDocumentIdEEEEEEEEEEEEEEEEEEEEEEEEEE/edit',
       },
       {
-        id: '1tWFgZKW-o_JyP8W1mRpqdtW5OFU8X0Jp',
-        title: 'video_scripts_3本.docx',
+        id: '1ExampleDriveFileIdFFFFFFFFFFFFFF',
+        title: 'sample_scripts.docx',
         mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         modifiedTime: '2026-04-09',
-        viewUrl: 'https://drive.google.com/file/d/1tWFgZKW-o_JyP8W1mRpqdtW5OFU8X0Jp/view',
+        viewUrl: 'https://drive.google.com/file/d/1ExampleDriveFileIdFFFFFFFFFFFFFF/view',
       },
     ],
   },
 
   calendar: {
     calendars: [
-      { id: 'onceinlifetime2015@gmail.com', summary: 'プライマリ', timeZone: 'Asia/Tokyo' },
+      { id: 'taro.yamada@example.com', summary: 'プライマリ', timeZone: 'Asia/Tokyo' },
       {
-        id: 'family04474762199381740224@group.calendar.google.com',
+        id: 'family000000000000000000@group.calendar.google.com',
         summary: '家族',
         timeZone: 'Asia/Tokyo',
       },
@@ -212,48 +243,51 @@ export const SNAPSHOT = {
     ],
   },
 
+  // 見本データ。**実在の受信箱から採らないこと** —— 差出人と件名は
+  // 「どのサービスを使っているか」「どの地域に居るか」「いま何を探しているか」を
+  // まとめて明かす。ここは公開ビルド (GitHub Pages) にそのまま載る。
   gmail: {
     threads: [
       {
-        id: '19e16a59c2898dab',
-        sender: 'enquete@info.macromill.jp',
-        subject: '［マクロミル］アンケートのお願い <おまとめメール05/11>',
+        id: '19e1000000000001',
+        sender: 'noreply@example.com',
+        subject: '［お知らせ］アンケートご協力のお願い <まとめ 05/11>',
         date: '2026-05-11',
       },
       {
-        id: '19e168686032d310',
-        sender: 'support@coincheck.com',
-        subject: '「ピザポテト」が当たる！「ビットコインピザポテト・デー キャンペーン」',
+        id: '19e1000000000002',
+        sender: 'support@example.com',
+        subject: '【サンプル】キャンペーンのご案内',
         date: '2026-05-11',
       },
       {
-        id: '19e1677d28418488',
-        sender: 'career-mail@cosme.net',
-        subject: '【平均勤続年数約10年・賞与年3回】美容部員・セラピスト募集ほか',
+        id: '19e1000000000003',
+        sender: 'news@example.com',
+        subject: '【サンプル】今週のニュースレター',
         date: '2026-05-11',
       },
       {
-        id: '19e166c5628d148f',
-        sender: 'noreply@kaigoagent.com',
-        subject: '【新着】糟屋郡志免町周辺の求人 (2026/5/11)',
+        id: '19e1000000000004',
+        sender: 'billing@example.com',
+        subject: '【サンプル】ご請求内容のお知らせ (2026/5)',
         date: '2026-05-11',
       },
       {
-        id: '19e1666d61958768',
-        sender: 'info-send-only@info.kabu.com',
-        subject: 'FXマーケット動画のご案内',
+        id: '19e1000000000005',
+        sender: 'info@example.com',
+        subject: '【サンプル】マーケット週次レポート',
         date: '2026-05-11',
       },
       {
-        id: '19e164f1590a3312',
-        sender: 'info@qiita.com',
-        subject: '【参加無料】Qiita Conference 2026 特別ご招待',
+        id: '19e1000000000006',
+        sender: 'events@example.com',
+        subject: '【参加無料】サンプルカンファレンス 2026 のご招待',
         date: '2026-05-11',
       },
       {
-        id: '19e16334b0933527',
-        sender: 'no-reply@rakumachi.jp',
-        subject: '【楽待】福岡県で近日開催の不動産投資セミナー',
+        id: '19e1000000000007',
+        sender: 'no-reply@example.com',
+        subject: '【サンプル】近日開催のセミナーのご案内',
         date: '2026-05-11',
       },
     ],
@@ -262,12 +296,12 @@ export const SNAPSHOT = {
   slack: {
     channels: [
       {
-        id: 'C0AL7N42GBH',
+        id: 'C0EXAMPLE01',
         name: 'general',
         purpose:
           'このチャンネルには、常にすべてのメンバーが含まれます。社内通知やチーム全体の会話にぴったりです。',
         isArchived: false,
-        permalink: 'https://w1773561847-p42622301.slack.com/archives/C0AL7N42GBH',
+        permalink: 'https://example-team.slack.com/archives/C0EXAMPLE01',
       },
     ],
   },
@@ -1077,6 +1111,33 @@ export const SNAPSHOT = {
     totals: { members: 3, activeDays: 2, spendUsd: 59.95 },
   },
 
+  talent: {
+    // 定義表 (病・STEP・10ヶ条) は **定数であってデータではない**。
+    // 取得の成否に関わらず読めなければならないので、shared の実物をそのまま
+    // 指す。ここを空にしていたら、取得が失敗した画面から診断票も 10ヶ条も
+    // 消えて何も出来なくなった (smoke で実測)。写しではなく参照なので、
+    // 定義が増えても両方を直す必要は無い。
+    diseases: ORGAN_DISEASES,
+    steps: SKILL_STEPS,
+    disqualifiers: LEADER_DISQUALIFIERS,
+    diagnosis: {
+      tallies: [] as { id: string; name: string; departments: string[]; systemic: boolean }[],
+      systemic: [] as string[],
+      reportedDepartments: 0,
+    },
+    achievement: { total: 0, shortfall: 100, ok: false, counted: 0 },
+    ladder: {
+      members: [] as { id: string; name: string; step: number; yearsInStep: number }[],
+      stalled: [] as { id: string; name: string; step: number; yearsInStep: number }[],
+      byStep: {} as Record<number, number>,
+    },
+    initiatives: [] as { name: string; probability: number }[],
+    reports: [] as { department: string; diseases: string[] }[],
+    updatedAt: '',
+    disqualifiersSource: LEADER_DISQUALIFIERS_SOURCE,
+    stepsSource: SKILL_STEPS_SOURCE,
+  },
+
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
   funding: {
@@ -1481,55 +1542,55 @@ export const SNAPSHOT = {
     },
 
   canva: {
-    brandKits: [{ id: 'kAGWm36LGZk' }],
+    brandKits: [{ id: 'kAGEXAMPLE1' }],
     designs: [
       {
-        id: 'DAG2yKvS8Os',
-        title: '「ミニマル自動業務連携（POS・会計・CRM連携コード例）」のコピー',
+        id: 'DAGEXAMPLE1',
+        title: '「サンプル業務連携メモ」のコピー',
         updatedAt: 1774314452,
         pageCount: 1,
-        thumbnailUrl: 'https://design.canva.ai/Zbgju-da6LVUe0P',
-        viewUrl: 'https://www.canva.com/design/DAG2yKvS8Os',
+        thumbnailUrl: SAMPLE_THUMBNAIL,
+        viewUrl: 'https://www.canva.com/design/DAGEXAMPLE1',
       },
       {
-        id: 'DAHDtNxb1bw',
+        id: 'DAGEXAMPLE2',
         title: '紫 緑 黄色 シンプル レーダーチャート ホワイトボード',
         updatedAt: 1773289908,
         pageCount: 1,
-        thumbnailUrl: 'https://design.canva.ai/w2-Bcvz7hCt130e',
-        viewUrl: 'https://www.canva.com/design/DAHDtNxb1bw',
+        thumbnailUrl: SAMPLE_THUMBNAIL,
+        viewUrl: 'https://www.canva.com/design/DAGEXAMPLE2',
       },
       {
-        id: 'DAG9PRY1zjY',
-        title: '「SCM-OP 利益率80%革命Webページ構成」のコピー',
+        id: 'DAGEXAMPLE3',
+        title: '「サンプル Web ページ構成」のコピー',
         updatedAt: 1769305850,
         pageCount: 2,
-        thumbnailUrl: 'https://design.canva.ai/4zaspuCbOqdzoLy',
-        viewUrl: 'https://www.canva.com/design/DAG9PRY1zjY',
+        thumbnailUrl: SAMPLE_THUMBNAIL,
+        viewUrl: 'https://www.canva.com/design/DAGEXAMPLE3',
       },
       {
-        id: 'DAG_Yaj8LqQ',
+        id: 'DAGEXAMPLE4',
         title: '家計簿 白黒 記録 シンプル A4文書',
         updatedAt: 1769305945,
         pageCount: 4,
-        thumbnailUrl: 'https://design.canva.ai/r53kVHEyjOn19_y',
-        viewUrl: 'https://www.canva.com/design/DAG_Yaj8LqQ',
+        thumbnailUrl: SAMPLE_THUMBNAIL,
+        viewUrl: 'https://www.canva.com/design/DAGEXAMPLE4',
       },
       {
-        id: 'DAGWm1FKPBw',
+        id: 'DAGEXAMPLE5',
         title: 'グリーン ホワイト シンプル お知らせ Instagram投稿画像',
         updatedAt: 1731729931,
         pageCount: 1,
-        thumbnailUrl: 'https://design.canva.ai/TX38mlBwpwdmX6Y',
-        viewUrl: 'https://www.canva.com/design/DAGWm1FKPBw',
+        thumbnailUrl: SAMPLE_THUMBNAIL,
+        viewUrl: 'https://www.canva.com/design/DAGEXAMPLE5',
       },
       {
-        id: 'DAF-6u3Ei-E',
+        id: 'DAGEXAMPLE6',
         title: 'ネイビーと白と黒 落書き風 ビジネス計画 プレゼンテーション',
         updatedAt: 1709893109,
         pageCount: 20,
-        thumbnailUrl: 'https://design.canva.ai/CRcf5KDfLiHuc0H',
-        viewUrl: 'https://www.canva.com/design/DAF-6u3Ei-E',
+        thumbnailUrl: SAMPLE_THUMBNAIL,
+        viewUrl: 'https://www.canva.com/design/DAGEXAMPLE6',
       },
     ],
   },

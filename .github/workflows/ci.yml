@@ -6,6 +6,13 @@ on:
   pull_request:
     branches: [main]
 
+# GITHUB_TOKEN は読み取りだけでよい (このワークフローは何も書かない)。
+# 明示しないと、組織/リポジトリの既定 — 環境によっては contents: write —
+# を継ぐ。他の 4 ワークフローは宣言済みで、ここと e2e だけが抜けていた
+# (2026-08-22 の点検)。**一番よく走るものが一番広い権限**という状態だった。
+permissions:
+  contents: read
+
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -28,20 +35,44 @@ jobs:
           cache: 'npm'
       - run: npm ci
 
+
+      # 依存の既知脆弱性。**出荷される依存 (prod) の high / critical だけ**を落とす。
+      #
+      # `ARCHITECTURE.md` は「npm audit (prod) 0 件」を表に載せていたが、
+      # **それを確かめる物がどこにも無かった** (verify:arch の live metric にも
+      # 入っていない)。2026-08-24 に実測したら実際 0 件だったが、明日新しい勧告が
+      # 出れば静かに嘘になる。
+      #
+      # dev 依存と moderate 未満を落とさないのは意図的:
+      #   - dev 依存 (ビルド道具) は出荷物に入らない
+      #   - moderate 以下は推移依存で頻繁に出る。無関係な PR が赤くなると
+      #     「赤を無視する習慣」がつき、門が門でなくなる
+      # 落とす範囲を狭くする代わり、落ちたら本物として扱う。
+      - run: npm audit --omit=dev --audit-level=high
+
       # quality: typecheck + arch/verify + lint
       - run: npm run typecheck
       - run: npm run verify:arch
       - run: npm run lint:forbidden
+      - run: npm run lint:workflow-security
       - run: npm run lint:network-targets
+      - run: npm run lint:url-encoding
+      - run: npm run lint:regex
       - run: npm run lint:imports
       - run: npm run lint:docs
       - run: npm run lint:citations
       - run: npm run lint:doi-prefix
       - run: npm run lint:charset
       - run: npm run lint:knowledge-refs
+      - run: npm run lint:sample-data
       - run: npm run lint:test-coverage
+      - run: npm run verify:release-artifacts
       - run: npm run lint:shell
       - run: npm run lint:repo-size
+      - run: npm run lint:deps
+      - run: npm run lint:mcp-servers
+      - run: npm run lint:storage
+      - run: npm run lint:csp
       - run: npm run lint:data-origin
       - run: npm run lint:credential-use
       - run: npm run lint:ipc-handlers
@@ -83,15 +114,55 @@ jobs:
             echo "standalone.html exceeds 16MB — 巨大アセットの誤同梱か遅延ロードの解除を疑う" >&2
             exit 1
           fi
+          # LITE 側と同じ先触れ。85% (13.6MB) を超えたら警告を出し、天井に
+          # 当たってから「無関係な変更なのに落ちた」に見える事故を先に知らせる。
+          # **落とさない** — 警告で落とすと結局同じ事故になる。
+          if [ "$SIZE" -gt 13600000 ]; then
+            PCT=$((SIZE * 100 / 16000000))
+            echo "::warning::standalone.html が上限 16MB の ${PCT}% ($SIZE B) に達しています。知識コーパスの増分か巨大アセットの誤同梱かを、次の増加で天井に当たる前に確認してください。"
+          fi
+
+      # 公開経路と同じ後段 (inject-pwa) を、**実物**に当てる。
+      #
+      # 2026-07-24 の Pages 障害 (PWA タグがバンドルの真ん中へ splice されて
+      # 公開版が開けなくなった) は、e2e もアーティファクト検査も**注入前の**
+      # ファイルを見ていたため公開して初めて分かった。inject-pwa 自身は
+      # 3 つのガード (注入位置 / SW ハッシュ / 既存ハッシュの保全) を持つが、
+      # pages.yml は main でしか走らないので、それが実物に当たるのは
+      # merge 後になる。ここで当てておけば PR の段階で落ちる。
+      # dist/ は build:web:lite が空にするので、その前に控えを取る。
+      - name: Verify PWA injection on the real artifacts
+        run: |
+          mkdir -p /tmp/inject-check
+          cp dist/standalone.html /tmp/inject-check/app.html
+          node scripts/inject-pwa.cjs /tmp/inject-check/app.html
+          # 冪等であること (pages.yml は同じファイルに 2 度当たりうる)。
+          node scripts/inject-pwa.cjs /tmp/inject-check/app.html
 
       # Pages 専用ビルド (pages.yml は main でしか走らない) を PR 段階で検証する。
       # 2026-07 の landing 自己検証落ち (士業カテゴリ追従漏れ) の再発防止。
       # 各スクリプトは自己検証付きなので、走らせること自体がテストになる。
       # build:web:lite は dist/ を空にして standalone.html を消費するため最後に実行。
       - run: npm run build:landing
+      # ランディングにも同じ後段を当てる。**ここで当てる**のは、次の
+      # build:web:lite が dist/ を空にして landing.html ごと消すため
+      # (この順序を読み違えて 1 度 CI を落とした — 手元では build:landing を
+      # 直前に走らせていたので再現しなかった)。ランディングは CSP を持たない
+      # ので CSP 追記は起きない。その「起きないこと」も経路の一部。
+      - name: Verify PWA injection on the landing page
+        run: |
+          mkdir -p /tmp/inject-check
+          cp dist/landing.html /tmp/inject-check/index.html
+          node scripts/inject-pwa.cjs /tmp/inject-check/index.html
       - run: npm run build:demo
       - run: npm run build:deliberation-demo
       - run: npm run build:research-demo
+      # デモ 3 本も **次の build:web:lite が dist/ ごと消す**ので、ここで控える。
+      # (landing で同じ順序を読み違えて 1 度 CI を落としている。同じ罠。)
+      - name: Stash demo artifacts before dist/ is emptied
+        run: |
+          mkdir -p /tmp/inject-check
+          cp dist/counseling-demo.html dist/deliberation-demo.html dist/research-demo.html /tmp/inject-check/
       - run: npm run build:web:lite
       - name: Verify standalone-lite.html size
         run: |
@@ -116,3 +187,57 @@ jobs:
             PCT=$((SIZE * 100 / 4000000))
             echo "::warning::standalone-lite.html が上限 4MB の ${PCT}% ($SIZE B) に達しています。LITE はスマホ回線向けなので、次の増加で天井に当たる前に何を積んでいるか確認してください。"
           fi
+
+      # 残る公開対象 (LITE) にも同じ後段を当てる。
+      - name: Verify PWA injection on the lite build
+        run: |
+          cp dist/standalone-lite.html /tmp/inject-check/lite.html
+          node scripts/inject-pwa.cjs /tmp/inject-check/lite.html
+
+      # 出荷する実物に個人データが混ざっていないかを見る。
+      #
+      # `lint:sample-data` (上流) が見ているのは src / scripts / orchestration で、
+      # **出た物そのものは見ていなかった**。今のビルド構成ではバンドルはその
+      # 3 つから作られるので取りこぼしは無い —— が、それは構成が保証している
+      # だけで、規則が保証していることではない。inject-pwa を実物に当てている
+      # のと同じ理由で、ここでも実物に当てる。
+      #
+      # その「取りこぼしは無い」は 2026-08-25 に**実測で外れた**。上流は
+      # ディレクトリでは足りていたが**拡張子で `.json` を落として**いて、
+      # 出荷物に載る orchestration/registry.json (286KB) を一度も読んで
+      # いなかった。この段は出た HTML を読むので鳴ったが、手元で回す上流は
+      # 黙る。上流に `.json` を足して塞いだ (lint-sample-data.cjs の冒頭)。
+      #
+      # 規則は同じ `check()` を借りる (判定を書き写すと、比べているのが写しに
+      # なる)。11MB の standalone.html に対して実測 169ms。
+      # 渡したファイルが無ければ落ちるので、ビルド忘れも黙らない。
+      - name: Scan shipped artifacts for real personal data
+        run: |
+          ls -la /tmp/inject-check/
+          node scripts/lint-sample-data.cjs --artifact \
+            /tmp/inject-check/app.html \
+            /tmp/inject-check/index.html \
+            /tmp/inject-check/lite.html \
+            /tmp/inject-check/counseling-demo.html \
+            /tmp/inject-check/deliberation-demo.html \
+            /tmp/inject-check/research-demo.html
+
+      # 出荷する実物の CSP を見る。
+      #
+      # **注入後の姿**に当てる。`inject-pwa` は manifest / apple-touch-icon /
+      # SW 登録スクリプトを足すので、注入前の CSP で足りていても注入後に
+      # 足りないことがある (2026-08-25 に landing で実測: 注入前は違反 0、
+      # 注入後に img-src と worker-src で 2 件出た)。
+      #
+      # `script-src` がハッシュ固定を失って `'unsafe-inline'` に戻る回帰は、
+      # **アプリが完全に動いたまま**注入された <script> も動く形なので、
+      # e2e もサイズ検査も鳴らない。ここでしか捕まらない。
+      - name: Verify CSP on the shipped artifacts
+        run: |
+          node scripts/lint-artifact-csp.cjs \
+            --app /tmp/inject-check/app.html \
+            --app /tmp/inject-check/lite.html \
+            --document /tmp/inject-check/index.html \
+            --document /tmp/inject-check/counseling-demo.html \
+            --document /tmp/inject-check/deliberation-demo.html \
+            --document /tmp/inject-check/research-demo.html

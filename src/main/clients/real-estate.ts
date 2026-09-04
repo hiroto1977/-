@@ -1,4 +1,5 @@
 import type { ActionContext, ActionMap, FetchContext, ServiceAdvisorResponse } from './types';
+import { MAX_RECORD_NOTE_CHARS } from '../../shared/recordEntryLimits';
 
 /**
  * 不動産投資 — 投資ポートフォリオ (snapshot 専用)。
@@ -65,8 +66,8 @@ export interface RecordEntryResult {
 async function recordEntry(ctx: ActionContext): Promise<RecordEntryResult> {
   const p = (ctx.payload ?? {}) as Partial<RecordEntryPayload>;
   // Stryker disable all
-  if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > 2000) {
-    throw new Error('real-estate.record-entry: note は 1-2000 文字で指定してください');
+  if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > MAX_RECORD_NOTE_CHARS) {
+    throw new Error(`real-estate.record-entry: note は 1-${MAX_RECORD_NOTE_CHARS} 文字で指定してください`);
   }
   if (p.amount !== undefined && (typeof p.amount !== 'number' || !Number.isFinite(p.amount))) {
     throw new Error('real-estate.record-entry: amount は finite な数値で指定してください');

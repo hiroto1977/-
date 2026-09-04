@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  DEFAULT_FURUSATO_PARAMS,
   furusatoOneStopEligibility,
   calcFurusatoBreakdown,
   FURUSATO_SELF_PAY,
@@ -105,5 +106,30 @@ describe('calcFurusatoBreakdown', () => {
     const r = calcFurusatoBreakdown(1_000_000, 100_000, 0.2, true);
     expect(r.residentOneStopAddon).toBeGreaterThanOrEqual(0);
     expect(Number.isFinite(r.residentOneStopAddon)).toBe(true);
+  });
+});
+
+describe('台帳から渡す自己負担額・付加率・ワンストップの上限', () => {
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_FURUSATO_PARAMS).toEqual({ selfPay: FURUSATO_SELF_PAY, surtaxRate: 0.021 });
+    expect(calcFurusatoBreakdown(52_000, 300_000, 0.1, true)).toEqual(calcFurusatoBreakdown(52_000, 300_000, 0.1, true, DEFAULT_FURUSATO_PARAMS));
+    expect(furusatoOneStopEligibility(3, false)).toEqual(furusatoOneStopEligibility(3, false, FURUSATO_ONE_STOP_MAX_MUNICIPALITIES));
+  });
+
+  it('自己負担額と付加率が控除の内訳に効く', () => {
+    const p = { selfPay: 3_000, surtaxRate: 0 };
+    const r = calcFurusatoBreakdown(52_000, 300_000, 0.1, false, p);
+    expect(r.eligibleAmount).toBe(49_000);
+    expect(r.residentBasic).toBe(49_000 * 0.1);
+    // 付加率 0 なら特例分は 49,000 × (0.9 − 0.1)。
+    expect(r.residentSpecial).toBe(49_000 * 0.8);
+    expect(calcFurusatoBreakdown(3_000, 300_000, 0.1, false, p).eligibleAmount).toBe(0);
+  });
+
+  it('寄附先自治体数の上限を渡すと判定と文言が動く', () => {
+    expect(furusatoOneStopEligibility(4, false).eligible).toBe(true);
+    expect(furusatoOneStopEligibility(4, false, 3).eligible).toBe(false);
+    expect(furusatoOneStopEligibility(4, false, 3).reason).toContain('3 自治体を超える');
+    expect(furusatoOneStopEligibility(3, false, 3).reason).toContain('3自治体以内');
   });
 });

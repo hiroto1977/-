@@ -191,7 +191,11 @@ export function Microsoft365Page() {
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>
             ※ ライブ接続（実データ取得・送信）はデスクトップ版の機能です。ブラウザ版は同梱スナップショットを表示します。
-            サインインはあなたの Microsoft アカウントでのブラウザ認証で、トークンは OS キーチェーンに暗号化保存されます。
+            サインインはあなたの Microsoft アカウントでのブラウザ認証です。
+            トークンの保存方法はビルドと環境で変わります —— デスクトップ版は OS キーチェーン由来の鍵で暗号化、
+            ブラウザ版は Vault（AES-GCM-256）で暗号化します。<strong>OS キーチェーンが無い環境
+            （gnome-keyring / kwallet 不在の Linux 等）では base64 の難読化のみ</strong>になります。
+            いまどちらなのかは「設定」ページに出ます。
           </div>
         </div>
       </Section>

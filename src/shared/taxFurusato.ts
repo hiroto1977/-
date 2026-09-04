@@ -22,6 +22,17 @@ export const FURUSATO_SELF_PAY = 2_000;
 /** ワンストップ特例を使える寄附先自治体数の上限。 */
 export const FURUSATO_ONE_STOP_MAX_MUNICIPALITIES = 5;
 
+/** 自己負担額と復興特別所得税の付加率。省略すると定数。台帳 (`shared/parameters.ts`) から上書きできる。 */
+export interface FurusatoParams {
+  readonly selfPay: number;
+  readonly surtaxRate: number;
+}
+
+export const DEFAULT_FURUSATO_PARAMS: FurusatoParams = {
+  selfPay: FURUSATO_SELF_PAY,
+  surtaxRate: RECONSTRUCTION_SURTAX_RATE,
+};
+
 export interface FurusatoOneStopEligibility {
   readonly eligible: boolean;
   readonly reason: string;
@@ -36,6 +47,7 @@ export interface FurusatoOneStopEligibility {
 export function furusatoOneStopEligibility(
   municipalityCount: number,
   filesTaxReturn: boolean,
+  maxMunicipalities = FURUSATO_ONE_STOP_MAX_MUNICIPALITIES,
 ): FurusatoOneStopEligibility {
   if (filesTaxReturn) {
     return { eligible: false, reason: '確定申告を行う場合はワンストップ特例を使えません (申告に寄附金控除を含めます)' };
@@ -43,10 +55,10 @@ export function furusatoOneStopEligibility(
   if (municipalityCount <= 0) {
     return { eligible: false, reason: '寄附先がありません' };
   }
-  if (municipalityCount > FURUSATO_ONE_STOP_MAX_MUNICIPALITIES) {
-    return { eligible: false, reason: `寄附先が ${FURUSATO_ONE_STOP_MAX_MUNICIPALITIES} 自治体を超えるためワンストップ特例の対象外です (確定申告が必要)` };
+  if (municipalityCount > maxMunicipalities) {
+    return { eligible: false, reason: `寄附先が ${maxMunicipalities} 自治体を超えるためワンストップ特例の対象外です (確定申告が必要)` };
   }
-  return { eligible: true, reason: 'ワンストップ特例の対象です (給与所得者・確定申告不要・5自治体以内)' };
+  return { eligible: true, reason: `ワンストップ特例の対象です (給与所得者・確定申告不要・${maxMunicipalities}自治体以内)` };
 }
 
 export interface FurusatoBreakdown {
@@ -81,6 +93,7 @@ export function calcFurusatoBreakdown(
   residentIncomeLevy: number,
   marginalRate: number,
   oneStop: boolean,
+  p: FurusatoParams = DEFAULT_FURUSATO_PARAMS,
 ): FurusatoBreakdown {
   const empty: FurusatoBreakdown = {
     eligibleAmount: 0,
@@ -95,11 +108,11 @@ export function calcFurusatoBreakdown(
   // donation===FURUSATO_SELF_PAY では eligibleAmount=0 となり計算経路でも全額0に
   // 畳まれるため、<= を < にする EqualityOperator mutation は equivalent。無効化する。
   // Stryker disable next-line EqualityOperator
-  if (donation <= FURUSATO_SELF_PAY) return empty;
+  if (donation <= p.selfPay) return empty;
 
-  const eligibleAmount = donation - FURUSATO_SELF_PAY;
+  const eligibleAmount = donation - p.selfPay;
   // 所得税率に復興特別所得税を上乗せした実効率。
-  const surtaxRate = marginalRate * (1 + RECONSTRUCTION_SURTAX_RATE);
+  const surtaxRate = marginalRate * (1 + p.surtaxRate);
   const residentBasic = eligibleAmount * 0.1;
   const specialRaw = eligibleAmount * (0.9 - surtaxRate);
   const specialCap = Math.max(0, residentIncomeLevy * 0.2);

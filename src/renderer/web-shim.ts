@@ -51,16 +51,42 @@
  */
 
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
+import { MAX_ADVISOR_QUESTION_CHARS, checkAdvisorQuestion } from '../shared/advisorQuestionLimits';
+import { MAX_ADVISOR_ACTION_ITEMS, MAX_ADVISOR_ITEM_CHARS, MAX_ADVISOR_RATIONALE_CHARS, MAX_ADVISOR_RECOMMENDATIONS, MAX_ADVISOR_RISK_FACTORS } from '../shared/advisorResponseLimits';
+import { MAX_ANALYZE_TEXT_CHARS } from '../shared/emotionsLimits';
+import { MAX_RECORD_NOTE_CHARS } from '../shared/recordEntryLimits';
+import {
+  MAX_ASSISTANT_CONTENT_CHARS,
+  MAX_ASSISTANT_MESSAGES,
+  MAX_ASSISTANT_SYSTEM_CHARS,
+} from '../shared/assistantLimits';
+import { externalUrlOrNull } from '../shared/externalUrlGate';
+import {
+  EMPTY_TALENT_STATE,
+  TALENT_STORAGE_KEY,
+  buildTalentSnapshot,
+  judgeLeaderFitness,
+  sanitizeTalentState,
+} from '../shared/talent';
 import { getVault } from './security/vault';
-import { redactForMessage } from '../shared/redact';
+import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_LENGTH } from '../shared/redact';
+import {
+  withBodyDeadline,
+  DEFAULT_HTTP_TIMEOUT_MS,
+  MAX_HTTP_RESPONSE_BYTES,
+  readBodyWithCap,
+} from '../shared/httpLimits';
+import { AI_CHAT_TIMEOUT_MS } from '../shared/ai/chat';
 import { bearerFromStoredToken } from '../shared/vaultToken';
 import { getLibrary } from './library/library';
 import { loadFolderHandle, writeBlobToFolder } from './fs/fsa';
+import { filenameFromTitle } from '../shared/safeFilename';
 import { chatOllama, loadEndpointSetting, probeOllama } from './network/ollamaWeb';
 import {
   registerSymbol,
   unregisterSymbol,
   buildStocksSnapshot,
+  isSafeSymbol,
   loadWatchlistSymbols,
 } from './data/stocksWatchlistWeb';
 import {
@@ -105,7 +131,7 @@ import {
 } from './data/saasWriteWeb';
 import { getProxyConfig, fetchViaProxy } from './network/proxy';
 import { liveRead, canLiveRead } from './network/liveRead';
-import { AI_PROVIDERS } from '../shared/ai/providers';
+import { AI_PROVIDERS, ANTHROPIC_FAST_MODEL } from '../shared/ai/providers';
 import {
   configForProvider,
   configuredProviders,
@@ -118,6 +144,24 @@ import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../share
 
 // ブラウザ版で record-entry をサポートする業務記録サービス (ステートレス:
 // Electron 版も検証して結果を返すだけで永続化しない)。
+/**
+ * 保管庫の領域が立ち退きから守られているかを、**実際に問い合わせて**返す。
+ *
+ * 先に `persist()` を試すのは best effort。断られても投げず、
+ * 最後に `persisted()` の**実際の値**で名乗る (要求の成否ではなく状態を返す)。
+ * API そのものが無い環境では、嘘をつかず `best-effort` に倒す。
+ */
+async function requestAndReadDurability(): Promise<'persistent' | 'best-effort'> {
+  const st = typeof navigator !== 'undefined' ? navigator.storage : undefined;
+  if (st === undefined || typeof st.persisted !== 'function') return 'best-effort';
+  try {
+    if (typeof st.persist === 'function' && !(await st.persisted())) await st.persist();
+    return (await st.persisted()) ? 'persistent' : 'best-effort';
+  } catch {
+    return 'best-effort';
+  }
+}
+
 const RECORD_ENTRY_SERVICES = new Set(['uber-eats', 'demae-can', 'real-estate', 'mutual-funds']);
 
 /** CORS をブロックする SaaS 用のトランスポート。ユーザー設定のプロキシ
@@ -129,7 +173,13 @@ async function getProxyTransport(): Promise<Transport> {
       'この連携はブラウザの制約 (CORS) でプロキシが必要です。設定でプロキシ (Cloudflare Worker) のURLを登録してください',
     );
   }
-  return (url, init) => fetchViaProxy(url, init, cfg);
+  // プロキシ経由の 14 経路にまとめて打ち切りを掛ける。`fetchViaProxy` は
+  // 2026-08-22 から `init.signal` を**捨てずに転送する**が、渡す側が誰も
+  // 付けていなかった —— 関門は在るのに、通す物が無い形。
+  return (url, init) =>
+    withBodyDeadline(DEFAULT_HTTP_TIMEOUT_MS, init.signal, (signal) =>
+      fetchViaProxy(url, { ...init, signal }, cfg),
+    );
 }
 
 /** Bearer トークン + プロキシが必要な create 系アクションの共通処理。
@@ -178,17 +228,40 @@ async function runProxyBearer<R>(
 const vault = getVault();
 const library = getLibrary();
 
-function downloadBlob(filename: string, content: string, mime: string): void {
-  const blob = new Blob([content], { type: mime + ';charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  // Defer revocation so the download has time to start.
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+/**
+ * 生成物をダウンロードさせる。**投げない** —— 開始できたかを返す。
+ *
+ * `URL.createObjectURL` は環境によって失敗する (blob: を塞ぐ拡張・厳しい
+ * プライバシー設定・大きな blob でのメモリ不足)。ここが投げると `invoke`
+ * ごと reject し、**ブラウザ版だけが「失敗は戻り値で表す」という約束を
+ * 破る**。実測: `createObjectURL` を投げさせると 37 組のうち 4 組が reject
+ * した (`stocks` / `business` の export-dashboard(-md))。
+ *
+ * reject の行き先は呼び出し側の `busy` フラグで、`finally` で戻していない
+ * 画面ではボタンが押せないまま残る —— `useServiceData` が読み取り側で
+ * 同じ事故を防いでいるのと同じ形。`lint:ipc-handlers` は `src/main` しか
+ * 見ないので、この経路は台帳の外にいた。
+ *
+ * ライブラリへの保存は別に済んでいるので、始まらなくても生成物は
+ * 失われない。**始まらなかったことは戻り値で伝える** —— 黙って成功と
+ * 言わない。
+ */
+function downloadBlob(filename: string, content: string, mime: string): boolean {
+  try {
+    const blob = new Blob([content], { type: mime + ';charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    // Defer revocation so the download has time to start.
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /** Save an artifact to the in-app Library and optionally to the user's
@@ -233,8 +306,65 @@ function ok<T>(data: T): ActionResult<T> {
   return { ok: true, data };
 }
 
+/**
+ * 失敗の結果。**ここで最後にもう一度伏字を通す。**
+ *
+ * 応答本文を添える側 (`ensureOk` / `fetchViaProxy`) は既に
+ * `redactForMessage` を通しているので、今のところ二度手間である。それでも
+ * 置くのは、main 側の `safeErrorMessage` と同じ理由 — この関数は
+ * ブラウザ版の**全ての失敗**が通る 1 本の口で、新しく足された経路が伏字を
+ * 忘れても、ここで止まる。片側にしか関門が無い状態を残さない。
+ * 伏字は冪等なので、既に伏せてある文字列を通しても形は変わらない。
+ */
+/**
+ * ブラウザ版の外向き通信に**打ち切りを付ける**。
+ *
+ * main 側は `limitedFetch` が全経路に打ち切りを掛けているが、ブラウザ版には
+ * それが無かった。実測 (2026-08-23): 応答しない相手に対して
+ * `invoke('business','advise')` は**いつまでも解決しない** —— 呼び出し側の
+ * `busy` が戻らないので、ボタンが押せないまま残る。`invoke` が reject しない
+ * ようにしたのとは別の話で、**そもそも決着しない**。
+ *
+ * 値は main と同じものを使う (`shared/httpLimits.ts` / `shared/ai/chat.ts`)。
+ * 2 つの版で別々の数字を持たない。
+ */
+/**
+ * 応答本文を**上限つきで**読む。main の `readCapped` と同じ値を使う。
+ *
+ * プロキシ経由の道は `fetchViaProxy` が既に `readWithCap` で切っていて、
+ * 注記にも「Defense-in-depth: cap response body before json() to prevent
+ * OOM」と書いてある。**直接叩く道にだけ同じ切りが無かった** —— 応答を
+ * `res.json()` でそのまま読むので、相手が巨大な本文を返せばタブの記憶を
+ * 使い切る。https の一次 API 相手なので踏むには相手側が壊れている必要が
+ * あるが、**同じ判断が経路によって違う**状態を残さない。
+ *
+ * 宣言長 (Content-Length) を先に見てから、実際の読み出しでも切る ——
+ * 宣言は嘘をつけるので、両方要る。
+ */
+async function readCappedText(res: Response, label: string): Promise<string> {
+  // 宣言長 (Content-Length) の先手の門は 2026-08-31 に `readBodyWithCap` へ
+  // 畳んだ。ここに二つ目を置かない —— 同じ問いに答えが 2 つあると、
+  // 片方だけ直した日に食い違う。
+  return readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, label);
+}
+
+function timedFetch(url: string, init: RequestInit): Promise<Response> {
+  // `Response` を返す口なので `withBodyDeadline` —— 締切を早く落とすと
+  // 呼び出し側の本文読み取りに掛からない (2026-08-28)。
+  return withBodyDeadline(DEFAULT_HTTP_TIMEOUT_MS, init.signal, (signal) =>
+    fetch(url, { ...init, signal }),
+  );
+}
+
+/** 有料 LLM への直呼び出し。main と同じく 2 分 (通常の 30 秒では足りない)。 */
+function timedFetchAi(url: string, init: RequestInit): Promise<Response> {
+  return withBodyDeadline(AI_CHAT_TIMEOUT_MS, init.signal, (signal) =>
+    fetch(url, { ...init, signal }),
+  );
+}
+
 function err<T = never>(code: string, message: string): ActionResult<T> {
-  return { ok: false, code, message };
+  return { ok: false, code, message: redactForMessage(message, ERROR_MESSAGE_MAX_LENGTH) };
 }
 
 interface ExportTemplatePayload {
@@ -283,28 +413,45 @@ function advisorSystemPrompt(allowed: readonly string[]): string {
   ].join('\n');
 }
 
-function validateAdvisorJson(raw: unknown, allowed: ReadonlySet<string>): BusinessAdvisorRecommendation[] {
+/**
+ * AI の応答 (外部 LLM が返した JSON) を、画面と書き出しに載せてよい形へ絞る。
+ *
+ * **同じ判断が main 側の `validateBusinessAdvisorJson` にもある。** あちらは
+ * 公開されていて検査も変異検査も 100% だが、こちらは非公開のまま **1 件も
+ * 検査が無く、変異体 126 件がどのテストにも触られていなかった** (2026-08-22 実測)。
+ * ここは**外部 LLM の応答**という信用できない入力の関門なので、片方だけ
+ * 測られていない状態を残さない。
+ *
+ * export しているのは検査から直に叩くため —— `window.serviceHub` の表面は
+ * 変わらない (`bridgeSurface.security.test.ts` が見ているのはそちら)。
+ *
+ * 本来は `src/shared/` へ 1 つに寄せるのが正しい (両方 pure で、共有できない
+ * 理由が無い)。今そうしていないのは、main 側の例外文言を検査が字面で固定して
+ * いて、統合すると両側の文言を同時に動かすことになるため。**ずれを検知する
+ * パリティ検査を先に置いて**、統合は独立した作業として残す。
+ */
+export function validateAdvisorJson(raw: unknown, allowed: ReadonlySet<string>): BusinessAdvisorRecommendation[] {
   if (raw === null || typeof raw !== 'object') throw new Error('response is not an object');
   const o = raw as { recommendations?: unknown };
   if (!Array.isArray(o.recommendations)) throw new Error('missing recommendations');
-  if (o.recommendations.length === 0 || o.recommendations.length > 5) throw new Error('recommendations must be 1-5');
+  if (o.recommendations.length === 0 || o.recommendations.length > MAX_ADVISOR_RECOMMENDATIONS) throw new Error('recommendations must be 1-5');
   const out: BusinessAdvisorRecommendation[] = [];
   for (const item of o.recommendations) {
     if (item === null || typeof item !== 'object') throw new Error('entry is not an object');
     const r = item as Record<string, unknown>;
     if (typeof r.categoryId !== 'string' || !allowed.has(r.categoryId)) throw new Error('invalid categoryId: ' + String(r.categoryId));
     if (typeof r.rank !== 'number' || !Number.isFinite(r.rank) || r.rank < 1) throw new Error('invalid rank');
-    if (typeof r.rationale !== 'string' || r.rationale.length === 0 || r.rationale.length > 600) throw new Error('invalid rationale');
-    if (!Array.isArray(r.actionItems) || r.actionItems.length === 0 || r.actionItems.length > 5) throw new Error('invalid actionItems');
+    if (typeof r.rationale !== 'string' || r.rationale.length === 0 || r.rationale.length > MAX_ADVISOR_RATIONALE_CHARS) throw new Error('invalid rationale');
+    if (!Array.isArray(r.actionItems) || r.actionItems.length === 0 || r.actionItems.length > MAX_ADVISOR_ACTION_ITEMS) throw new Error('invalid actionItems');
     const actionItems: string[] = [];
     for (const a of r.actionItems) {
-      if (typeof a !== 'string' || a.length === 0 || a.length > 240) throw new Error('invalid actionItem entry');
+      if (typeof a !== 'string' || a.length === 0 || a.length > MAX_ADVISOR_ITEM_CHARS) throw new Error('invalid actionItem entry');
       actionItems.push(a);
     }
-    if (!Array.isArray(r.riskFactors) || r.riskFactors.length === 0 || r.riskFactors.length > 3) throw new Error('invalid riskFactors');
+    if (!Array.isArray(r.riskFactors) || r.riskFactors.length === 0 || r.riskFactors.length > MAX_ADVISOR_RISK_FACTORS) throw new Error('invalid riskFactors');
     const riskFactors: string[] = [];
     for (const f of r.riskFactors) {
-      if (typeof f !== 'string' || f.length === 0 || f.length > 240) throw new Error('invalid riskFactor entry');
+      if (typeof f !== 'string' || f.length === 0 || f.length > MAX_ADVISOR_ITEM_CHARS) throw new Error('invalid riskFactor entry');
       riskFactors.push(f);
     }
     out.push({ categoryId: r.categoryId, rank: r.rank, rationale: r.rationale, actionItems, riskFactors });
@@ -314,15 +461,12 @@ function validateAdvisorJson(raw: unknown, allowed: ReadonlySet<string>): Busine
 
 async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
   const question = payload['question'];
-  if (typeof question !== 'string' || question.length === 0) {
-    return err('action_failed', '質問を入力してください');
-  }
-  if (question.length > 1000) {
-    return err('action_failed', '質問が長すぎます (1000 字以内)');
-  }
-  if (/[\r\n\0]/.test(question)) {
+  const qProblem = checkAdvisorQuestion(question);
+  if (qProblem === 'empty') return err('action_failed', '質問を入力してください');
+  if (qProblem === 'too-long')
+    return err('action_failed', `質問が長すぎます (${MAX_ADVISOR_QUESTION_CHARS} 字以内)`);
+  if (qProblem === 'control-chars')
     return err('action_failed', '質問に改行・制御文字を含めることはできません');
-  }
 
   // Read the Anthropic key from Vault.
   let apiKey: string | null = null;
@@ -353,7 +497,7 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
 
   let res: Response;
   try {
-    res = await fetch('https://api.anthropic.com/v1/messages', {
+    res = await timedFetchAi('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'x-api-key': apiKey,
@@ -362,7 +506,7 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: AI_PROVIDERS.anthropic.defaultModel,
         max_tokens: 1500,
         system: systemPrompt,
         messages: [{ role: 'user', content: userPrompt }],
@@ -373,13 +517,22 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
   }
 
   if (!res.ok) {
-    const body = await res.text().catch(() => '');
+    const body = await readCappedText(res, 'Anthropic').catch(() => '');
     return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, 200)}`);
   }
 
+  // **大きさで断ったことを、JSON の失敗と混ぜない。** 読み出しを try の外へ
+  // 出す。中に入れると `catch` が「API 応答が JSON ではありません」と言い、
+  // 本当の理由 (大きすぎる) が消える。
+  let raw: string;
+  try {
+    raw = await readCappedText(res, 'Anthropic');
+  } catch (e) {
+    return err('action_failed', e instanceof Error ? e.message : String(e));
+  }
   let parsed: { content?: { type: string; text?: string }[] };
   try {
-    parsed = (await res.json()) as { content?: { type: string; text?: string }[] };
+    parsed = JSON.parse(raw) as { content?: { type: string; text?: string }[] };
   } catch {
     return err('action_failed', 'API 応答が JSON ではありません');
   }
@@ -416,9 +569,12 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
 // system prompt で制約し、固定の免責を必ず付ける。
 async function callStocksAdvisor(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
   const question = payload['question'];
-  if (typeof question !== 'string' || question.length === 0) return err('action_failed', '質問を入力してください');
-  if (question.length > 1000) return err('action_failed', '質問が長すぎます (1000 字以内)');
-  if (/[\r\n\0]/.test(question)) return err('action_failed', '質問に改行・制御文字を含めることはできません');
+  const qProblem = checkAdvisorQuestion(question);
+  if (qProblem === 'empty') return err('action_failed', '質問を入力してください');
+  if (qProblem === 'too-long')
+    return err('action_failed', `質問が長すぎます (${MAX_ADVISOR_QUESTION_CHARS} 字以内)`);
+  if (qProblem === 'control-chars')
+    return err('action_failed', '質問に改行・制御文字を含めることはできません');
 
   let apiKey: string | null = null;
   try {
@@ -444,7 +600,7 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
 
   let res: Response;
   try {
-    res = await fetch('https://api.anthropic.com/v1/messages', {
+    res = await timedFetchAi('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'x-api-key': apiKey,
@@ -453,7 +609,7 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: AI_PROVIDERS.anthropic.defaultModel,
         max_tokens: 1500,
         system: systemPrompt,
         messages: [{ role: 'user', content: userPrompt }],
@@ -463,12 +619,21 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
     return err('action_failed', 'ネットワークエラー: ' + (e instanceof Error ? e.message : String(e)));
   }
   if (!res.ok) {
-    const body = await res.text().catch(() => '');
+    const body = await readCappedText(res, 'Anthropic').catch(() => '');
     return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, 200)}`);
+  }
+  // **大きさで断ったことを、JSON の失敗と混ぜない。** 読み出しを try の外へ
+  // 出す。中に入れると `catch` が「API 応答が JSON ではありません」と言い、
+  // 本当の理由 (大きすぎる) が消える。
+  let raw: string;
+  try {
+    raw = await readCappedText(res, 'Anthropic');
+  } catch (e) {
+    return err('action_failed', e instanceof Error ? e.message : String(e));
   }
   let parsed: { content?: { type: string; text?: string }[] };
   try {
-    parsed = (await res.json()) as { content?: { type: string; text?: string }[] };
+    parsed = JSON.parse(raw) as { content?: { type: string; text?: string }[] };
   } catch {
     return err('action_failed', 'API 応答が JSON ではありません');
   }
@@ -495,7 +660,8 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
   const text = payload['text'];
   const source = typeof payload['source'] === 'string' ? (payload['source'] as string) : undefined;
   if (typeof text !== 'string' || text.trim().length === 0) return err('action_failed', 'text を入力してください');
-  if (text.length > 5000) return err('action_failed', 'text が長すぎます (5000 字以内)');
+  if (text.length > MAX_ANALYZE_TEXT_CHARS)
+    return err('action_failed', `text が長すぎます (${MAX_ANALYZE_TEXT_CHARS} 字以内)`);
 
   let apiKey: string | null = null;
   try {
@@ -507,7 +673,7 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
 
   let res: Response;
   try {
-    res = await fetch('https://api.anthropic.com/v1/messages', {
+    res = await timedFetchAi('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'x-api-key': apiKey,
@@ -516,7 +682,7 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+        model: ANTHROPIC_FAST_MODEL,
         max_tokens: 512,
         system: EMOTIONS_ANALYZE_SYSTEM,
         messages: [{ role: 'user', content: text }],
@@ -526,12 +692,21 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
     return err('action_failed', 'ネットワークエラー: ' + (e instanceof Error ? e.message : String(e)));
   }
   if (!res.ok) {
-    const body = await res.text().catch(() => '');
+    const body = await readCappedText(res, 'Anthropic').catch(() => '');
     return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, 200)}`);
+  }
+  // **大きさで断ったことを、JSON の失敗と混ぜない。** 読み出しを try の外へ
+  // 出す。中に入れると `catch` が「API 応答が JSON ではありません」と言い、
+  // 本当の理由 (大きすぎる) が消える。
+  let raw: string;
+  try {
+    raw = await readCappedText(res, 'Anthropic');
+  } catch (e) {
+    return err('action_failed', e instanceof Error ? e.message : String(e));
   }
   let parsed: { content?: { type: string; text?: string }[] };
   try {
-    parsed = (await res.json()) as { content?: { type: string; text?: string }[] };
+    parsed = JSON.parse(raw) as { content?: { type: string; text?: string }[] };
   } catch {
     return err('action_failed', 'API 応答が JSON ではありません');
   }
@@ -557,8 +732,17 @@ interface AssistantTurnWeb {
   content: string;
 }
 
-/** payload.messages を user/assistant の非空文字列発話だけに整形する。 */
-function sanitizeAssistantTurns(raw: unknown): AssistantTurnWeb[] {
+/**
+ * payload.messages を user/assistant の非空文字列発話だけに整形する。
+ *
+ * ここは**外部 API へ送る会話履歴を決める関門**である。1 発話 8000 字・
+ * 直近 40 発話という上限が、壊れた/悪意ある呼び出しから送信量 (と課金) を
+ * 止めている唯一の場所で、main 側に対になる実装は無い (ブラウザ版だけの経路)。
+ *
+ * export しているのは検査から直に叩くため —— `window.serviceHub` の表面は
+ * 変わらない。2026-08-22 まで変異体 38 件がどのテストにも触られていなかった。
+ */
+export function sanitizeAssistantTurns(raw: unknown): AssistantTurnWeb[] {
   if (!Array.isArray(raw)) return [];
   const out: AssistantTurnWeb[] = [];
   for (const item of raw) {
@@ -566,10 +750,10 @@ function sanitizeAssistantTurns(raw: unknown): AssistantTurnWeb[] {
     const r = (item as { role?: unknown }).role;
     const c = (item as { content?: unknown }).content;
     if ((r !== 'user' && r !== 'assistant') || typeof c !== 'string') continue;
-    const content = c.trim().slice(0, 8000);
+    const content = c.trim().slice(0, MAX_ASSISTANT_CONTENT_CHARS);
     if (content.length > 0) out.push({ role: r, content });
   }
-  return out.slice(-40);
+  return out.slice(-MAX_ASSISTANT_MESSAGES);
 }
 
 /** Vault の assistant (fallback: anthropic) スロットから資格情報文字列を読む。 */
@@ -595,7 +779,7 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
   if (turns.length === 0 || turns[turns.length - 1]?.role !== 'user') {
     return err('action_failed', '最後の発話は user である必要があります');
   }
-  const system = typeof payload['system'] === 'string' ? (payload['system'] as string).slice(0, 60000) : '';
+  const system = typeof payload['system'] === 'string' ? (payload['system'] as string).slice(0, MAX_ASSISTANT_SYSTEM_CHARS) : '';
 
   const credsRead = await readAssistantCredsRaw();
   if (!credsRead.ok) return credsRead.res;
@@ -660,7 +844,7 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
   if (turns.length === 0 || turns[turns.length - 1]?.role !== 'user') {
     return err('action_failed', '最後の発話は user である必要があります');
   }
-  const system = typeof payload['system'] === 'string' ? (payload['system'] as string).slice(0, 60000) : '';
+  const system = typeof payload['system'] === 'string' ? (payload['system'] as string).slice(0, MAX_ASSISTANT_SYSTEM_CHARS) : '';
 
   const credsRead = await readAssistantCredsRaw();
   if (!credsRead.ok) return credsRead.res;
@@ -710,8 +894,19 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
         });
         return { provider: id, model: result.model, text: result.text, ok: true };
       } catch (e) {
+        // **`err()` を通らない誤りの文言。** ここは `ok({ answers })` の中身
+        // として返るので、`err()` が持っている伏字の関門を通らない。
+        // 実測 (2026-08-23): 送信が
+        // `Authorization: Bearer sk-ant-…` を含む例外で落ちると、その鍵が
+        // **そのまま `answers[].error` に載って画面へ届いた**。
+        //
+        // main 側の `assistant.chatAll` で同じ穴を塞いだのに、ブラウザ版は
+        // そのままだった —— 2 実装あるものは、片方だけ直しても終わらない。
+        //
+        // `slice` だけでは伏せられない。`redactForMessage` は
+        // **伏せてから切る** (先に切ると模様の終わりが落ちて規則が外れる)。
         const msg = e instanceof Error ? e.message : String(e);
-        return { provider: id, model: '', text: '', ok: false, error: msg.slice(0, 300) };
+        return { provider: id, model: '', text: '', ok: false, error: redactForMessage(msg, 300) };
       }
     }),
   );
@@ -812,19 +1007,40 @@ const shim = {
   checkUpdate: async (): Promise<UpdateVerdict> => {
     const current = '0.1.0';
     try {
-      const res = await fetch('https://api.github.com/repos/hiroto1977/-/releases/latest', {
+      const res = await timedFetch('https://api.github.com/repos/hiroto1977/-/releases/latest', {
         headers: { accept: 'application/vnd.github+json' },
       });
       if (!res.ok) return evaluateUpdate(current, null);
-      return evaluateUpdate(current, parseLatestRelease(await res.json()));
+      return evaluateUpdate(current, parseLatestRelease(JSON.parse(await readCappedText(res, 'update'))));
     } catch {
       return evaluateUpdate(current, null);
     }
   },
 
   openExternal: (url: string): Promise<void> => {
-    if (typeof url === 'string' && /^https?:\/\//i.test(url)) {
-      window.open(url, '_blank', 'noopener,noreferrer');
+    /*
+     * **デスクトップ版と同じ関門を通す** (2026-08-23)。
+     *
+     * 以前はここだけ `/^https?:\/\//i` の字面検査だった。同じ判断の 2 実装で、
+     * 攻撃入力 29 種で突き合わせると **6 種で答えが割れた**:
+     *
+     * ```
+     *   "https://\njavascript:alert(1)"  main=false browser=true
+     *   "http://\u0000evil"              main=false browser=true
+     *   "https:/\\evil.com"              main=true  browser=false
+     *   "https:example.com"              main=true  browser=false
+     * ```
+     *
+     * 前 2 つが効く: 字面は `https://` で始まるので通るが、**実際に開かれる
+     * のは解析後の URL** で、検査したものとは別物である。
+     * 後ろ 4 つは逆に、正当なリンクを黙って開かない。
+     *
+     * `externalUrlOrNull` は**解析してから判定し、正規化した形を返す** ので、
+     * 「調べたもの」と「開くもの」が一致する。実装を 1 つにして差を消した。
+     */
+    const safe = externalUrlOrNull(url);
+    if (safe !== null) {
+      window.open(safe, '_blank', 'noopener,noreferrer');
     }
     return Promise.resolve();
   },
@@ -841,11 +1057,11 @@ const shim = {
     try {
       await vault.setToken(serviceId, checked.value);
     } catch (e) {
-      return {
-        ok: false,
-        code: 'write_failed',
-        message: e instanceof Error ? e.message : '資格情報の保存に失敗しました',
-      };
+      // `err()` の説明は「ブラウザ版の全ての失敗が通る 1 本の口」と書いていたが、
+      // `setToken` / `clearToken` は戻り値の型が違うので **通っていなかった** ——
+      // しかも資格情報が生きている 2 経路である。`safeErrorMessage` は同じ
+      // `redactForMessage` を呼ぶので、伏字と長さ切りの扱いは err() と揃う。
+      return { ok: false, code: 'write_failed', message: safeErrorMessage(e) };
     }
     return { ok: true };
   },
@@ -853,7 +1069,7 @@ const shim = {
     try {
       await vault.clearToken(serviceId);
     } catch (e) {
-      return { ok: false, message: e instanceof Error ? e.message : '資格情報の削除に失敗しました' };
+      return { ok: false, message: safeErrorMessage(e) };
     }
     return { ok: true };
   },
@@ -866,10 +1082,34 @@ const shim = {
   },
   // ブラウザ版は常に WebCrypto Vault (AES-GCM-256 + PBKDF2 600k) を通るため、
   // Electron 版のような「OS キーチェーン不在で平文」状態は原理的に起きない。
-  storageProtection: async (): Promise<{ encrypted: boolean; plainCount: number; file: string }> => ({
+  storageProtection: async (): Promise<{
+    encrypted: boolean;
+    plainCount: number;
+    file: string;
+    mechanism: 'os-keychain' | 'webcrypto-vault' | 'obfuscated';
+    durability: 'file' | 'persistent' | 'best-effort';
+  }> => ({
     encrypted: true,
     plainCount: 0,
     file: 'IndexedDB (business-hub-vault)',
+    /*
+     * **消えないかは、名乗るのではなく毎回問い合わせる。**
+     *
+     * ブラウザ版の保管庫は IndexedDB に在り、既定では best-effort の領域
+     * である。実測 (2026-08-25) では `persisted()` も `persist()` も
+     * `false` —— **空き容量の都合や無操作でブラウザが立ち退かせうる**
+     * (Safari の ITP は無操作 7 日)。
+     *
+     * `persist()` は**当てにしない**。Chromium は「導入済み / 関与が高い」
+     * ときだけ認めるので、呼んでも断られることがある (実測がまさにそれ)。
+     * それでも呼ぶのは、**認められる利用者には効く**からで、費用は 0 である。
+     * 断られたことを `best-effort` として**画面へ伝える**ほうが本体。
+     */
+    durability: await requestAndReadDurability(),
+    // **ブラウザ版に OS キーチェーンは無い。** 鍵はマスターパスワードから
+    // PBKDF2 で導出している。画面が「OS が守っている」と書かないよう、
+    // 何が守っているかをここで名乗る (2026-08-23)。
+    mechanism: 'webcrypto-vault',
   }),
 
   fetchSnapshot: async <T>(serviceId?: string): Promise<ActionResult<T>> => {
@@ -901,6 +1141,61 @@ const shim = {
         keyConfigured = false;
       }
       return ok(buildEmotionsSnapshot(keyConfigured)) as ActionResult<T>;
+    }
+    /*
+     * talent は保存した申告・施策・滞留から**判定し直した物**を返す。
+     *
+     * ここが無いまま `not_implemented` へ落ちていた (2026-08-28 に e2e が
+     * 検出): 保存の口は動くのに、画面は同梱の空スナップショットを見続けるので
+     * 「入力しても診断が変わらない」。デスクトップ版と同じ
+     * `buildTalentSnapshot` を通すので、答えは 2 つの実行形態で一致する。
+     */
+    if (serviceId === 'talent') {
+      let state = EMPTY_TALENT_STATE;
+      try {
+        const raw = localStorage.getItem(TALENT_STORAGE_KEY);
+        if (raw !== null) state = sanitizeTalentState(JSON.parse(raw) as unknown);
+      } catch {
+        // 壊れた保存値と未保存を区別しても画面ですることは同じ。空で続ける。
+        state = EMPTY_TALENT_STATE;
+      }
+      return ok(buildTalentSnapshot(state)) as ActionResult<T>;
+    }
+    /*
+     * security は「鍵が入っているか」だけがブラウザでも観測できる。
+     *
+     * ## ここが `not_implemented` を返し続けていた影響 (2026-08-25 実測)
+     *
+     * ページは `keysConfigured` で HIBP / VirusTotal のボタンを
+     * `disabled` にする。ブラウザ版では live fetch が無いので、この値は
+     * **同梱スナップショットの `{hibp:false, vt:false}` から永久に動かない**。
+     *
+     * つまり利用者は、画面の言うとおり「API キー設定」から鍵を保存し
+     * (**保存は成功する**)、それでも**ボタンは永久に押せない**。
+     * 画面はそのあいだずっと「API キーが未設定。…保存してください」と
+     * 出し続ける —— **指示どおりにやったのに、何も変わらない。**
+     *
+     * 送信側 (`scan-url` / `check-email-breach`) は**この shim に実装済み**で
+     * プロキシ経由で動く。**動く機能が、開かない門の向こうに在った。**
+     *
+     * Norton の検出だけは端末固有でブラウザからは見られないので、
+     * 同梱スナップショット (`installed: false`) のまま返す —— これは嘘ではない。
+     * すぐ上の `emotions` と同じ形である。
+     */
+    if (serviceId === 'security') {
+      let keys: ReturnType<typeof parseSecurityKeys> = {};
+      try {
+        keys = parseSecurityKeys((await vault.getToken('security')) ?? '');
+      } catch {
+        keys = {};
+      }
+      const mod = (await import('./data/snapshot')) as unknown as {
+        SNAPSHOT: { security: Record<string, unknown> };
+      };
+      return ok({
+        ...mod.SNAPSHOT.security,
+        keysConfigured: { hibp: Boolean(keys.hibp), vt: Boolean(keys.vt) },
+      }) as ActionResult<T>;
     }
     // 資格情報 (と必要ならプロキシ) が揃っていれば、読み取りも実データにする。
     // ここが `not_implemented` を返し続けていたせいで、キーを入れても画面は
@@ -946,8 +1241,8 @@ const shim = {
       }
       const filename = `${def.id}-${Date.now()}.svg`;
       await saveToLibrary('templates', filename, 'image/svg+xml', svg);
-      downloadBlob(filename, svg, 'image/svg+xml');
-      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString() }) as ActionResult<T>;
+      const downloaded = downloadBlob(filename, svg, 'image/svg+xml');
+      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded }) as ActionResult<T>;
     }
 
     // TeamRadar export: grab the inline svg already rendered on the page.
@@ -958,13 +1253,64 @@ const shim = {
       }
       const p = payload as ExportSvgPayload;
       const title = typeof p.title === 'string' && p.title.length > 0 ? p.title : 'team-radar';
-      const filename = title.replace(/[^\w.-]+/g, '-').slice(0, 64) + '-' + Date.now() + '.svg';
+      const filename = filenameFromTitle(title, Date.now(), '.svg');
       await saveToLibrary('teamradar', filename, 'image/svg+xml', svg);
-      downloadBlob(filename, svg, 'image/svg+xml');
-      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString() }) as ActionResult<T>;
+      const downloaded = downloadBlob(filename, svg, 'image/svg+xml');
+      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded }) as ActionResult<T>;
     }
 
-    // TeamRadar save-state: persist into localStorage so reloads keep edits.
+    /*
+     * TeamRadar save-state (ブラウザ版)。
+     *
+     * **注意: ここが書く `teamradar.state` を読む所は無い。** 実測
+     * (2026-08-23): この鍵は `src/` 全体で**この 1 行にしか現れない** (検査にも無い)。
+     * リロードで編集が残るのは、`TeamRadarPage` 自身が別の鍵
+     * (`servicehub.teamradar.draft.v1`) へ下書きを保存しているためで、
+     * **この action のおかげではない**。元は「persist into localStorage so
+     * reloads keep edits」と書いてあったが、それは事実ではなかった。
+     *
+     * **なぜ消さないか**: デスクトップ版では `save-state` が
+     * `team-radar.json` を書き、`loadTeamRadarState` → `fetchSnapshot` が
+     * それを読む。つまり action 自体は意味を持つ口で、ブラウザ版の実装だけが
+     * 行き止まりになっている。消すのは口の意味を変える話なので触らない。
+     *
+     * **検証の非対称**: main 側は `validateMembers` (最大 50 人・scores は
+     * 長さ 5・id 重複なし) と department/evaluatedAt の長さを見るが、
+     * こちらは素通し。`validateMembers` は `src/main` にあり renderer からは
+     * import できない (`lint:imports` の境界)。揃えるなら `src/shared` へ
+     * 出す必要がある。**今は書いた物を誰も読まないので実害は無いが、
+     * ここを読む人が現れたら先に揃えること。**
+     */
+    /**
+     * 人材育成の登用判定。**判定そのものは `shared/talent.ts` の同じ関数**を
+     * 呼ぶ —— デスクトップ版 (`clients/talent.ts`) と同じ答えが返る。
+     * ここで判定を書き直すと、teamradar の `save-state` で起きている
+     * 「main は検証するのにブラウザ版は素通し」という非対称を新しく作ることになる。
+     */
+    if (serviceId === 'talent' && action === 'judge-leader') {
+      const p = payload as { flagged?: unknown; candidate?: unknown };
+      const flagged = Array.isArray(p.flagged)
+        ? p.flagged.filter((f): f is string => typeof f === 'string')
+        : [];
+      return ok({
+        fitness: judgeLeaderFitness(flagged),
+        candidate: typeof p.candidate === 'string' ? p.candidate.slice(0, 64) : '',
+      }) as ActionResult<T>;
+    }
+
+    // 人材育成の状態保存。デスクトップ版は ~/.local/business-hub/talent.json へ
+    // 書くが、ブラウザ版はファイルを持たないので localStorage に置く。
+    // **保存する前に main 側と同じ正規化を通す** (共有関数なのでズレない)。
+    if (serviceId === 'talent' && action === 'save-state') {
+      const clean = sanitizeTalentState(payload);
+      try {
+        localStorage.setItem(TALENT_STORAGE_KEY, JSON.stringify(clean));
+        return ok(clean) as ActionResult<T>;
+      } catch {
+        return err('action_failed', 'localStorage への保存に失敗しました');
+      }
+    }
+
     if (serviceId === 'teamradar' && action === 'save-state') {
       try {
         localStorage.setItem('teamradar.state', JSON.stringify(payload));
@@ -1009,8 +1355,32 @@ const shim = {
     if (serviceId === 'stocks' && action === 'compare-strategies') {
       try {
         const p = payload as { symbol?: unknown; initialCash?: unknown };
+        /*
+         * **判定は `isSafeSymbol` に任せる。同じ規則の 3 本目だった。**
+         *
+         * ここには `/^[A-Za-z0-9.\-^]{1,16}$/` が直に書いてあり、
+         * `main/clients/stocks.ts` と `data/stocksWatchlistWeb.ts` の
+         * `isSafeSymbol` と合わせて**同じ決まりが 3 か所**にあった。
+         * 前 2 つは `dualBuildParity.test.ts` が突き合わせているが、
+         * **この 3 本目だけが網の外**だった (関門は在るが経路が通っていない形)。
+         *
+         * 実測 (2026-08-23) で 15 通りを当てると **5 通りで答えが割れた** ——
+         * どれもこちらが `trim()` してから見るため:
+         *
+         * ```
+         *   " AAPL "   main=false web=false inline=true
+         *   "AAPL\n"   main=false web=false inline=true
+         * ```
+         *
+         * 危険ではない (使うのは trim 済みの値) が、**同じティッカーが
+         * 比較では通り登録では弾かれる**。表から改行つきで貼ると起きる。
+         *
+         * 寛容な側の振る舞いは変えない —— `trim()` はここに残し、
+         * **規則の判定だけを共有の 1 本に寄せる**。これで 3 本目も
+         * パリティ検査の中に入る。
+         */
         const symbol = typeof p.symbol === 'string' ? p.symbol.trim() : '';
-        if (!/^[A-Za-z0-9.\-^]{1,16}$/.test(symbol)) {
+        if (!isSafeSymbol(symbol)) {
           return err('action_failed', 'symbol must be 1-16 chars from [A-Za-z0-9.-^]');
         }
         const initialCash = typeof p.initialCash === 'number' ? p.initialCash : 1_000_000;
@@ -1052,8 +1422,8 @@ const shim = {
       const ext = isMd ? '.md' : '.html';
       const filename = 'stocks-dashboard-' + Date.now() + ext;
       await saveToLibrary('stocks', filename, isMd ? 'text/markdown' : 'text/html', content);
-      downloadBlob(filename, content, isMd ? 'text/markdown' : 'text/html');
-      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: input.generatedAt }) as ActionResult<T>;
+      const downloaded = downloadBlob(filename, content, isMd ? 'text/markdown' : 'text/html');
+      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: input.generatedAt, downloaded }) as ActionResult<T>;
     }
 
     // Emotions: 気分ログ / 履歴クリアは localStorage で完結。
@@ -1084,7 +1454,8 @@ const shim = {
       }
       if (!token) return err('not_configured', 'GitHub の PAT が未設定です。「PAT を設定」から登録してください');
       try {
-        return ok(await createGithubIssue(payload, token)) as ActionResult<T>;
+        // `timedFetch` は `Transport` そのものの形をしている (url, init) → Response。
+        return ok(await createGithubIssue(payload, token, timedFetch)) as ActionResult<T>;
       } catch (e) {
         return err('action_failed', e instanceof Error ? e.message : String(e));
       }
@@ -1213,8 +1584,11 @@ const shim = {
     // 業務記録 (record-entry): ステートレス検証のみ (Electron 版と同じ挙動)。
     if (action === 'record-entry' && RECORD_ENTRY_SERVICES.has(serviceId)) {
       const p = (payload ?? {}) as { note?: unknown; amount?: unknown };
-      if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > 2000) {
-        return err('action_failed', `${serviceId}.record-entry: note は 1-2000 文字で指定してください`);
+      if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > MAX_RECORD_NOTE_CHARS) {
+        return err(
+          'action_failed',
+          `${serviceId}.record-entry: note は 1-${MAX_RECORD_NOTE_CHARS} 文字で指定してください`,
+        );
       }
       if (p.amount !== undefined && (typeof p.amount !== 'number' || !Number.isFinite(p.amount))) {
         return err('action_failed', `${serviceId}.record-entry: amount は finite な数値で指定してください`);
@@ -1249,8 +1623,8 @@ const shim = {
         : '<!doctype html><html><head><meta charset="utf-8"><title>事業ダッシュボード</title></head><body style="font-family:sans-serif;padding:24px;background:#0f1117;color:#e6e8ec"><h1>事業ダッシュボード (ブラウザ版)</h1><p>ブラウザ版では完全な事業データのエクスポートに対応していません。</p><p>Electron 版または <code>npm run dev</code> で完全な機能をお試しください。</p></body></html>';
       const filename = 'business-dashboard-' + Date.now() + ext;
       await saveToLibrary('business', filename, isMd ? 'text/markdown' : 'text/html', content);
-      downloadBlob(filename, content, isMd ? 'text/markdown' : 'text/html');
-      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: new Date().toISOString() }) as ActionResult<T>;
+      const downloaded = downloadBlob(filename, content, isMd ? 'text/markdown' : 'text/html');
+      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: new Date().toISOString(), downloaded }) as ActionResult<T>;
     }
 
     return err(

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   DEFAULT_OLLAMA_PORT,
   MIN_SAFE_VERSION,
@@ -14,6 +14,7 @@ import {
   extractOllamaError,
   suggestInstalledModel,
   isAllowedOllamaBase,
+  isAllowedOllamaPlaintextHost,
   adviseFromBody,
   parseOllamaEndpoint,
   isSafeModelName,
@@ -1028,5 +1029,153 @@ describe('壊れた入力で落とさない — 一覧・エラー本文の防�
     expect(parseOllamaEndpoint(undefined as unknown as string)).toBe(
       `http://127.0.0.1:${DEFAULT_OLLAMA_PORT}`,
     );
+  });
+});
+
+/*
+ * **平文 http を許してよいホストか** —— この判定を誤ると、プロンプトと
+ * API キーが暗号化されないまま任意のホストへ出ていく (モジュール冒頭に
+ * 「内部ネットワーク探索の踏み台化と、プロンプトの平文送信を防ぐため」と
+ * 書いてある)。
+ *
+ * それでいて**直接の検査が 1 本も無かった** —— 使っているのは
+ * `ai/providers.ts` だけで、そちらは常に pageHostname を渡すため、
+ * **既定値の経路 (第 2 引数を省いた呼び出し) はどのテストも通っていなかった**
+ * (2026-08-24 の変異検査が NoCoverage として指した)。呼び出し側越しにしか
+ * 測られていない壁は、呼び出し側が変われば黙って測られなくなる。
+ */
+describe('isAllowedOllamaPlaintextHost — 平文 http を許す相手', () => {
+  it('ループバックは許す (手元の Ollama / LM Studio)', () => {
+    for (const h of ['127.0.0.1', 'localhost', '::1', '[::1]']) {
+      expect(isAllowedOllamaPlaintextHost(h, 'example.com'), h).toBe(true);
+    }
+  });
+
+  it('ページ自身と同じホストは許す (PC で配信した頁をスマホから開く)', () => {
+    expect(isAllowedOllamaPlaintextHost('192.168.1.10', '192.168.1.10')).toBe(true);
+    expect(isAllowedOllamaPlaintextHost('mypc.local', 'mypc.local')).toBe(true);
+  });
+
+  it('ページ側の大文字小文字は揃えて比べる', () => {
+    expect(isAllowedOllamaPlaintextHost('mypc.local', 'MyPC.local')).toBe(true);
+  });
+
+  it('別ホストは許さない (踏み台化と平文送信を防ぐ)', () => {
+    for (const [host, page] of [
+      ['example.com', 'mypc.local'],
+      ['169.254.169.254', 'mypc.local'],
+      ['10.0.0.5', 'mypc.local'],
+      ['evil.example', 'mypc.local'],
+    ] as const) {
+      expect(isAllowedOllamaPlaintextHost(host, page), host).toBe(false);
+    }
+  });
+
+  // **第 2 引数を省いた経路。** 既定は空文字なので、ループバック以外は
+  // どれも一致しない = 許さない。ここが既定で真になる形へ壊れると、
+  // 「ページのホストが分からないとき」に全部通ることになる。
+  it('ページのホストが分からないときはループバックだけ許す', () => {
+    expect(isAllowedOllamaPlaintextHost('127.0.0.1')).toBe(true);
+    expect(isAllowedOllamaPlaintextHost('localhost')).toBe(true);
+    expect(isAllowedOllamaPlaintextHost('example.com')).toBe(false);
+    expect(isAllowedOllamaPlaintextHost('192.168.1.10')).toBe(false);
+  });
+
+  /*
+   * 空のホスト名は `'' === ''` で **true になる**。本体はそれを承知で
+   * 「http URL の hostname は必ず非空なので、pageHostname が空なら一致
+   * しようがない」と書いている。**その前提を実際に確かめた** (2026-08-24):
+   *
+   *   'http:///x'   → hostname 'x'      (空にならず次の区間がホストになる)
+   *   'http:/x'     → hostname 'x'
+   *   'http://'     → throw             'http://:80/' → throw
+   *   'http://@/x'  → throw             'http://%00/x' → throw
+   *
+   * WHATWG の URL は http スキームで空ホストを作れない。呼び出し側
+   * (`ai/providers.ts`) も `protocol !== 'http:'` を先に返しているので、
+   * この関数へ空文字が届く経路は無い。**だから false を期待する検査は
+   * 書かない** —— 到達しない入力に期待値を置くと、次の人が本体を
+   * 「直し」に来てしまう。前提が崩れたとき (別の呼び出し側が増える等) に
+   * 効くよう、確かめた事実のほうを残す。
+   */
+  it('空のホスト名は到達しない前提 (本体は既定と一致して true を返す)', () => {
+    expect(isAllowedOllamaPlaintextHost('')).toBe(true);
+    // 前提そのもの: http スキームで空ホストの URL は作れない。
+    expect(new URL('http:///x').hostname).toBe('x');
+    expect(() => new URL('http://')).toThrow();
+  });
+});
+
+/**
+ * **モジュール直下の値を、読み直して留める。**
+ *
+ * 変異検査で 11 件が生存していた (2026-08-31 実測)。すべて static 変異体で、
+ * 既存の検査は論理としては当たっているのに**静的 import なので届いて
+ * いなかった**。`vi.resetModules()` + 動的 `import()` で読み直す。
+ *
+ * **`UNPATCHED_OOB_NOTICE` は輪をかけて悪かった** —— 既存の検査が
+ * `expect(buildWarnings('0.5.0')).toEqual([UNPATCHED_OOB_NOTICE])` と
+ * **定数を定数自身と比べていた**ので、空文字に潰れても両辺が同時に空になり
+ * 通ってしまう。本 PR の `EMPTY_TALENT_STATE` と同じ形である。
+ * **検査の期待値が、検査対象から来てはいけない。**
+ */
+describe('モジュール直下の値 — 読み直して static 変異体を届かせる', () => {
+  const fresh = async () => {
+    vi.resetModules();
+    return import('../ollama');
+  };
+
+  /*
+   * ループバックの許可表。1 つでも空文字に潰れると、そのホスト名が
+   * **ループバックと見なされなくなり**、平文 http の許可判定が変わる
+   * (`isAllowedOllamaPlaintextHost`)。表そのものは export していないので
+   * 述語から当てる。
+   */
+  it.each(['127.0.0.1', 'localhost', '[::1]', '::1'])(
+    '★ %s はループバックと判定する',
+    async (host) => {
+      const m = await fresh();
+      expect(m.isLoopbackHostname(host)).toBe(true);
+    },
+  );
+
+  it('★ ループバックでないものは通さない (対照)', async () => {
+    const m = await fresh();
+    expect(m.isLoopbackHostname('127.0.0.2')).toBe(false);
+    expect(m.isLoopbackHostname('evil.example')).toBe(false);
+    expect(m.isLoopbackHostname('127.0.0.1.evil.example')).toBe(false);
+    expect(m.isLoopbackHostname('')).toBe(false);
+  });
+
+  it('★ 既定のセットアップ用モデル名', async () => {
+    const m = await fresh();
+    expect(m.DEFAULT_SETUP_MODEL).toBe('llama3.2:1b');
+  });
+
+  /*
+   * 未パッチ OOB read の注意書き。**中身を字面で当てる** —— 定数と比べると
+   * 空文字への変異で両辺が同時に空になり、検査が意味を失う。
+   * 空になれば利用者は「CLI で野良モデルを引くな」という警告を受け取れない。
+   */
+  it('★ 未パッチ OOB read の注意書きが中身を持っている', async () => {
+    const m = await fresh();
+    const n = m.UNPATCHED_OOB_NOTICE;
+    expect(n).toContain('out-of-bounds read');
+    expect(n).toContain('/api/pull');
+    expect(n).toContain('/api/create');
+    expect(n).toContain('/api/push');
+    // 連結された 5 片すべてに当てる。1 片だけ空になっても鳴るように、
+    // 各片から固有の語を採る (最初は中ほどの 1 片が素通りした)。
+    expect(n).toContain('攻撃ベクトルを遮断');
+    expect(n).toContain('CLI からモデルを取得');
+    expect(n).toContain('検証済みソース');
+    expect(n).toContain('docs/OLLAMA_SECURITY.md');
+    expect(n.length).toBeGreaterThan(120);
+  });
+
+  it('★ 警告に載るのはその注意書きそのもの (経路の確認)', async () => {
+    const m = await fresh();
+    expect(m.buildWarnings('0.5.0')).toEqual([m.UNPATCHED_OOB_NOTICE]);
+    expect(m.buildWarnings('0.5.0')[0]).toContain('out-of-bounds read');
   });
 });

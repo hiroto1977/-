@@ -58,3 +58,44 @@ describe('TOKEN_MAX_LENGTH', () => {
     expect(TOKEN_MAX_LENGTH).toBe(65536);
   });
 });
+
+/*
+ * 改行・制御文字 (2026-08-22 に追加)。
+ *
+ * 注入はできない —— 実測で `new Headers()` が CR/LF/NUL を含む値を
+ * 「is an invalid header value」で throw する。直す理由は**失敗する場所**で、
+ * 折り返した PAT を貼ると「保存は成功 → 次の取得で不可解な TypeError」に
+ * なっていた。保存時に理由つきで断る。
+ */
+describe('checkTokenInput — 改行・制御文字', () => {
+  const CR = String.fromCharCode(13);
+  const LF = String.fromCharCode(10);
+  const NUL = String.fromCharCode(0);
+
+  it.each([
+    ['CRLF が途中にある', 'ghp_aaa' + CR + LF + 'bbb'],
+    ['LF だけ', 'ghp_aaa' + LF + 'bbb'],
+    ['CR だけ', 'ghp_aaa' + CR + 'bbb'],
+    ['NUL', 'ghp_aaa' + NUL + 'bbb'],
+    ['タブ', 'ghp_aaa\tbbb'],
+    ['DEL (0x7f)', 'ghp_aaa' + String.fromCharCode(127) + 'bbb'],
+  ])('%s は断る', (_label, raw) => {
+    const r = checkTokenInput(raw);
+    expect(r.ok).toBe(false);
+    if (!r.ok) {
+      expect(r.reason).toBe('control-char');
+      expect(r.message).toContain('制御文字');
+    }
+  });
+
+  it('前後の改行は trim で落ちるので受理する (折り返しではなく余白)', () => {
+    const r = checkTokenInput(LF + '  ghp_valid  ' + CR + LF);
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.value).toBe('ghp_valid');
+  });
+
+  it('通常のトークンは今までどおり通る', () => {
+    const r = checkTokenInput('ghp_' + 'a'.repeat(36));
+    expect(r.ok).toBe(true);
+  });
+});

@@ -1,11 +1,15 @@
+import { MAX_ADVISOR_QUESTION_CHARS, checkAdvisorQuestion } from '../../shared/advisorQuestionLimits';
+import { MAX_ADVISOR_ACTION_ITEMS, MAX_ADVISOR_ITEM_CHARS, MAX_ADVISOR_RATIONALE_CHARS, MAX_ADVISOR_RECOMMENDATIONS, MAX_ADVISOR_RISK_FACTORS } from '../../shared/advisorResponseLimits';
 import { seededNoise } from '../../shared/seededNoise';
 import { escapeXml, escapeMarkdownInline, escapeMarkdownText } from '../../shared/escape';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
-import { redactForMessage } from './types';
-import { isSafeExportPath } from './exportPaths';
+import { limitedFetch, readCapped, redactForMessage } from './types';
+import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
+import { isSafeExportPath, writeExportFile } from './exportPaths';
+import { AI_PROVIDERS } from '../../shared/ai/providers';
 
 /**
  * Business operations dashboard — 17 番目のサービス。
@@ -383,14 +387,19 @@ export function getCategoryDef(id: BusinessCategoryId): BusinessCategoryDef {
   return CATEGORY_BY_ID[id];
 }
 
-// `typeof value === 'string'` short-circuit is required for the `in`
-// operator below (`in` throws TypeError on non-objects but accepts strings
-// vacuously). 6 tests cover string/number/null/undefined/object/known —
-// Stryker mis-attributes per-test coverage. Block-form pragma covers the
-// return statement itself.
+// `in` ではなく `Object.hasOwn` を使う。`in` はプロトタイプ鎖まで辿るので、
+// 表に無い 'constructor' / 'toString' / '__proto__' 等が **8 個とも通っていた**
+// (2026-08-22 実測)。ここは `askBusinessAdvisor` の `categories` を IPC 境界で
+// 絞る唯一の番人で、抜けた名前は外部 API へ送るプロンプトに載り、しかも
+// `allowedSet` にどの事業も一致しないので KPI 0 件のまま助言させてしまう。
+// 同じ判断は `templates.ts` の `isTemplateId` に先に書いてあった。
+//
+// `typeof value === 'string'` は型述語のための絞り込みで、安全性には要らない
+// (`Object.hasOwn` は非文字列でも throw せず false を返す)。この等価変異と、
+// 6 本の負のケースに対する perTest の帰属ずれを併せて黙らせる。
 // Stryker disable ConditionalExpression
 export function isBusinessCategoryId(value: unknown): value is BusinessCategoryId {
-  return typeof value === 'string' && value in CATEGORY_BY_ID;
+  return typeof value === 'string' && Object.hasOwn(CATEGORY_BY_ID, value);
 }
 // Stryker restore ConditionalExpression
 
@@ -522,7 +531,7 @@ export function validateBusinessAdvisorJson(
   if (obj.recommendations.length === 0) {
     throw new Error('business-advisor response has zero recommendations');
   }
-  if (obj.recommendations.length > 5) {
+  if (obj.recommendations.length > MAX_ADVISOR_RECOMMENDATIONS) {
     throw new Error('business-advisor response exceeds 5 recommendations');
   }
   // 各 guard 句は negative テストで固定してある。残る `typeof` の前置きは
@@ -548,18 +557,18 @@ export function validateBusinessAdvisorJson(
       throw new Error('business-advisor recommendation has empty rationale');
     }
     // Stryker restore ConditionalExpression
-    if (rec.rationale.length > 600) {
+    if (rec.rationale.length > MAX_ADVISOR_RATIONALE_CHARS) {
       throw new Error('business-advisor recommendation rationale exceeds 600 chars');
     }
     if (!Array.isArray(rec.actionItems) || rec.actionItems.length === 0) {
       throw new Error('business-advisor recommendation has no actionItems');
     }
-    if (rec.actionItems.length > 5) {
+    if (rec.actionItems.length > MAX_ADVISOR_ACTION_ITEMS) {
       throw new Error('business-advisor recommendation actionItems exceeds 5');
     }
     const actionItems: string[] = [];
     for (const ai of rec.actionItems) {
-      if (typeof ai !== 'string' || ai.length === 0 || ai.length > 240) {
+      if (typeof ai !== 'string' || ai.length === 0 || ai.length > MAX_ADVISOR_ITEM_CHARS) {
         throw new Error('business-advisor actionItem entry is not a 1-240 char string');
       }
       actionItems.push(ai);
@@ -567,12 +576,12 @@ export function validateBusinessAdvisorJson(
     if (!Array.isArray(rec.riskFactors) || rec.riskFactors.length === 0) {
       throw new Error('business-advisor recommendation has no riskFactors');
     }
-    if (rec.riskFactors.length > 3) {
+    if (rec.riskFactors.length > MAX_ADVISOR_RISK_FACTORS) {
       throw new Error('business-advisor recommendation riskFactors exceeds 3');
     }
     const riskFactors: string[] = [];
     for (const rf of rec.riskFactors) {
-      if (typeof rf !== 'string' || rf.length === 0 || rf.length > 240) {
+      if (typeof rf !== 'string' || rf.length === 0 || rf.length > MAX_ADVISOR_ITEM_CHARS) {
         throw new Error('business-advisor riskFactor entry is not a 1-240 char string');
       }
       riskFactors.push(rf);
@@ -596,14 +605,28 @@ interface AnthropicMessagesResponse {
   content?: AnthropicContentBlock[];
 }
 
+/**
+ * この呼び出しの `max_tokens`。**レンダラーからは変えられない**
+ * (経緯は `skills.ts` の `SKILLS_MAX_TOKENS`)。`model` も payload から外した。
+ */
+export const BUSINESS_ADVISOR_MAX_TOKENS = 1500;
+
+/**
+ * **`model` / `maxTokens` はここに無い。**
+ *
+ * 2026-08 の監査で payload から外し、定数 (`AI_PROVIDERS.anthropic.defaultModel`
+ * / `BUSINESS_ADVISOR_MAX_TOKENS`) を使うようにした ——「乗っ取られた
+ * renderer が任意のモデル・任意の長さを**利用者の課金で**呼べる」を塞ぐため。
+ *
+ * だが**型の宣言だけが残っていた** (2026-09-01 に発見)。読んでいないので実害は
+ * 無いが、`model?: unknown` が宣言されている限り `payload.model` と書いても
+ * 型検査が通る —— 次に触る人が黙って配線し直せてしまう。
+ * **消してあることが、型で分かる形にする。**
+ */
 interface BusinessAdvisorPayload {
   question?: unknown;
   /** Optional override; defaults to all 10 mock category IDs. */
   categories?: unknown;
-  /** Model id; defaults to claude-sonnet-4-6. */
-  model?: unknown;
-  /** Max output tokens; defaults to 1500. */
-  maxTokens?: unknown;
 }
 
 /** Test seam: ActionContext usually uses real `fetch`, but tests inject
@@ -617,17 +640,18 @@ export async function askBusinessAdvisorImpl(
   ctx: ActionContext,
   deps: AdvisorDeps = {},
 ): Promise<BusinessAdvisorResponse> {
-  const { question, categories, model, maxTokens } = ctx.payload as BusinessAdvisorPayload;
+  const { question, categories } = ctx.payload as BusinessAdvisorPayload;
 
   // question is required and bounded; control chars rejected to keep prompt clean.
   // Stryker disable ConditionalExpression
-  if (typeof question !== 'string' || question.length === 0) {
+  const problem = checkAdvisorQuestion(question);
+  if (problem === 'empty') {
     throw new Error('question is required');
   }
-  if (question.length > 1000) {
-    throw new Error('question exceeds 1000 chars');
+  if (problem === 'too-long') {
+    throw new Error(`question exceeds ${MAX_ADVISOR_QUESTION_CHARS} chars`);
   }
-  if (/[\r\n\0]/.test(question)) {
+  if (problem === 'control-chars') {
     throw new Error('question contains control characters');
   }
   // Stryker restore ConditionalExpression
@@ -663,41 +687,40 @@ export async function askBusinessAdvisorImpl(
     JSON.stringify(analyses),
   ].join('\n');
 
-  const f = ctx.fetch ?? fetch;
-  // The model / max_tokens fallback ladder + boundary `> 0` are pinned by
-  // dedicated tests (custom model, empty model → default, NaN/0 maxTokens →
-  // default, custom maxTokens). Boundary `>= 0` is observationally
-  // equivalent because Number.isFinite(0)=true and the `> 0` test rejects 0.
-  // Block-form pragma covers the whole body builder.
-  // Stryker disable ConditionalExpression,LogicalOperator,EqualityOperator
-  const res = await f('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': ctx.token,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
+  // 有料 API への呼び出しにも**打ち切りと応答サイズの上限**を掛ける。
+  // 2026-08-23 まで素の fetch で、`signal` も上限も無かった (実測)。
+  // 補完は普通の REST より長くかかるので、既定 30 秒ではなく
+  // `AI_CHAT_TIMEOUT_MS` (2 分) を使う —— `shared/ai/chat.ts` と同じ値。
+  const hctx = { fetch: ctx.fetch, serviceId: 'business', timeoutMs: AI_CHAT_TIMEOUT_MS };
+  const parsed = await limitedFetch(
+    'https://api.anthropic.com/v1/messages',
+    {
+      method: 'POST',
+      headers: {
+        'x-api-key': ctx.token,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: AI_PROVIDERS.anthropic.defaultModel,
+        max_tokens: BUSINESS_ADVISOR_MAX_TOKENS,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }],
+      }),
     },
-    body: JSON.stringify({
-      model: typeof model === 'string' && model.length > 0 ? model : 'claude-sonnet-4-6',
-      max_tokens:
-        typeof maxTokens === 'number' && Number.isFinite(maxTokens) && maxTokens > 0
-          ? maxTokens
-          : 1500,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userPrompt }],
-    }),
-  });
-  // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator
+    hctx,
+    async (res) => {
+      if (!res.ok) {
+        // Defensive catch on the capped read — unreachable from current tests but
+        // mirrors stocks-advisor pattern for symmetry.
+        // Stryker disable next-line ArrowFunction,MethodExpression
+        const body = await readCapped(res, hctx).catch(() => '');
+        throw new Error(`business-advisor ${res.status}: ${redactForMessage(body, 200)}`);
+      }
+      return JSON.parse(await readCapped(res, hctx)) as AnthropicMessagesResponse;
+    },
+  );
 
-  if (!res.ok) {
-    // Defensive catch on text() — unreachable from current tests but
-    // mirrors stocks-advisor pattern for symmetry.
-    // Stryker disable next-line ArrowFunction,MethodExpression
-    const body = await res.text().catch(() => '');
-    throw new Error(`business-advisor ${res.status}: ${redactForMessage(body, 200)}`);
-  }
-
-  const parsed = (await res.json()) as AnthropicMessagesResponse;
   // Optional chain + find: see stocks-advisor for the same justification.
   // Stryker disable next-line OptionalChaining,ConditionalExpression
   const textBlock = parsed.content?.find((b) => b.type === 'text');
@@ -1068,7 +1091,7 @@ export async function exportBusinessDashboardImpl(
     generatedAt,
   });
   await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await (deps.writeFile ?? ((p, c) => fs.writeFile(p, c, 'utf8')))(filePath, html);
+  await (deps.writeFile ?? writeExportFile)(filePath, html);
   return { path: filePath, bytes: Buffer.byteLength(html, 'utf8'), generatedAt };
 }
 // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction,ObjectLiteral
@@ -1105,7 +1128,7 @@ export async function exportBusinessDashboardMdImpl(
     generatedAt,
   });
   await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await (deps.writeFile ?? ((p, c) => fs.writeFile(p, c, 'utf8')))(filePath, md);
+  await (deps.writeFile ?? writeExportFile)(filePath, md);
   return { path: filePath, bytes: Buffer.byteLength(md, 'utf8'), generatedAt };
 }
 // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction,ObjectLiteral

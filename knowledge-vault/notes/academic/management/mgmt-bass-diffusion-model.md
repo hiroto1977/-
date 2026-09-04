@@ -27,7 +27,7 @@ Frank M. Bass（提唱者, 1969年） ／ Management Science 15(5):215-227（初
 
 ## 出典
 - [Bass, F. M. (1969) "A New Product Growth for Model Consumer Durables", Management Science, 15(5), 215-227, DOI 10.1287/mnsc.15.5.215](https://doi.org/10.1287/mnsc.15.5.215) `学術`
-- [Wikipedia, "Bass diffusion model" — p（革新係数）, q（模倣係数）, 微分方程式 dF/dt=[p+qF](1−F), S字曲線](https://en.wikipedia.org/wiki/Bass_diffusion_model) `リファレンス`
+- [Wikipedia, "Bass diffusion model" — p（革新係数）, q（模倣係数）, 微分方程式 dF/dt=\[p+qF\](1−F), S字曲線](https://en.wikipedia.org/wiki/Bass_diffusion_model) `リファレンス`
 - [INFORMS, Biographical Profile: Frank M. Bass (1926–2006) — 1969年論文を Management Science 50年史の最重要論文10件に選出（2004年）](https://www.informs.org/Explore/History-of-O.R.-Excellence/Biographical-Profiles/Bass-Frank-M) `リファレンス`
 
 ## 関連概念

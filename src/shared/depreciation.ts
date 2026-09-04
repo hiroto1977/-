@@ -238,7 +238,8 @@ export interface DecliningBalanceFactors {
  * 最終年は備忘価額 1 円を残す。
  *
  * 既存の {@link decliningBalanceSchedule} (均等償却近似) とは別関数。
- * acquisitionCost ≤ 0 / 非有限、usefulLife ≤ 0 / 非有限、rate ≤ 0 / 非有限なら []。
+ * acquisitionCost ≤ 0 / 非有限、rate ≤ 0 / 非有限なら []。usefulLife は
+ * {@link isSchedulableLife} (1〜{@link MAX_SCHEDULE_YEARS}) を満たさなければ [] —— 黙って切り詰めない。
  */
 export function decliningBalanceScheduleStrict(
   acquisitionCost: number,
@@ -246,7 +247,10 @@ export function decliningBalanceScheduleStrict(
   factors: DecliningBalanceFactors = {},
 ): DepreciationYear[] {
   if (!isPositiveFinite(acquisitionCost)) return [];
-  if (!isPositiveFinite(usefulLife)) return [];
+  // 年数の上限も含めて 1 か所で判定する。**上限判定はこの 2 関数だけ
+  // 抜けていた** —— 兄弟の straightLineSchedule / decliningBalanceSchedule は
+  // 2026-08 の「描画スレッドを固めない」修正で既に持っている。
+  if (!isSchedulableLife(usefulLife)) return [];
   const multiplier = factors.multiplier ?? 2;
   const rate = factors.rate ?? multiplier / usefulLife;
   const revisedRate = factors.revisedRate ?? rate;
@@ -259,7 +263,21 @@ export function decliningBalanceScheduleStrict(
   let revisedBase = 0; // 改定取得価額 (切替時に期首簿価で固定)
   let switched = false;
 
-  for (let y = 1; y <= usefulLife; y += 1) {
+  /*
+   * ループ上限を**構造的に有限**にする。上の `isSchedulableLife` が既に
+   * `usefulLife <= MAX_SCHEDULE_YEARS` を保証しているので、この頭打ちは
+   * 到達しない防御である (同ファイルの `if (dep < 0) dep = 0;` と同じ性格)。
+   *
+   * 置く理由は、年数ガードを 1 つ落としたときの壊れ方が「間違った答え」では
+   * なく**プロセスの死**だったから。テストが `usefulLife = Infinity` を渡すので、
+   * ガードを外した変異体は行を push し続けてメモリを食い尽くし、Stryker は
+   * それを Killed ではなく RuntimeError (= 評価不成立) と分類する ——
+   * RuntimeError はスコアの分母から外れるため、総合 100.00% のまま 2 件が
+   * 数えられていなかった (2026-09-01 に判明)。頭打ちにしておけば同じ変異体は
+   * 100 行を返し、普通に「答えが違う」で落ちる。
+   */
+  const years = Math.min(usefulLife, MAX_SCHEDULE_YEARS);
+  for (let y = 1; y <= years; y += 1) {
     let dep: number;
     if (!switched) {
       const beforeAdjust = book * rate;
@@ -301,7 +319,8 @@ export interface MethodComparisonYear {
 /**
  * 同一資産について定額法と定率法 (200% 既定) の各年償却額・帳簿価額を並べて比較する。
  * 定率法は既存の {@link decliningBalanceSchedule} (均等償却近似) を用いる。
- * acquisitionCost ≤ 0 / 非有限、usefulLife ≤ 0 / 非有限なら []。
+ * acquisitionCost ≤ 0 / 非有限なら []。usefulLife は {@link isSchedulableLife}
+ * (1〜{@link MAX_SCHEDULE_YEARS}) を満たさなければ [] —— 黙って切り詰めない。
  */
 export function compareMethods(
   acquisitionCost: number,
@@ -309,11 +328,28 @@ export function compareMethods(
   multiplier = 2,
 ): MethodComparisonYear[] {
   if (!isPositiveFinite(acquisitionCost)) return [];
-  if (!isPositiveFinite(usefulLife)) return [];
+  // 年数の上限も含めて 1 か所で判定する。**上限判定はこの 2 関数だけ
+  // 抜けていた** —— 兄弟の straightLineSchedule / decliningBalanceSchedule は
+  // 2026-08 の「描画スレッドを固めない」修正で既に持っている。
+  if (!isSchedulableLife(usefulLife)) return [];
   const sl = straightLineSchedule(acquisitionCost, usefulLife);
   const db = decliningBalanceSchedule(acquisitionCost, usefulLife, multiplier);
   const rows: MethodComparisonYear[] = [];
-  for (let y = 1; y <= usefulLife; y += 1) {
+  /*
+   * ループ上限を**構造的に有限**にする。上の `isSchedulableLife` が既に
+   * `usefulLife <= MAX_SCHEDULE_YEARS` を保証しているので、この頭打ちは
+   * 到達しない防御である (同ファイルの `if (dep < 0) dep = 0;` と同じ性格)。
+   *
+   * 置く理由は、年数ガードを 1 つ落としたときの壊れ方が「間違った答え」では
+   * なく**プロセスの死**だったから。テストが `usefulLife = Infinity` を渡すので、
+   * ガードを外した変異体は行を push し続けてメモリを食い尽くし、Stryker は
+   * それを Killed ではなく RuntimeError (= 評価不成立) と分類する ——
+   * RuntimeError はスコアの分母から外れるため、総合 100.00% のまま 2 件が
+   * 数えられていなかった (2026-09-01 に判明)。頭打ちにしておけば同じ変異体は
+   * 100 行を返し、普通に「答えが違う」で落ちる。
+   */
+  const years = Math.min(usefulLife, MAX_SCHEDULE_YEARS);
+  for (let y = 1; y <= years; y += 1) {
     const slRow = sl[y - 1];
     const dbRow = db[y - 1];
     rows.push({

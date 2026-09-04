@@ -561,3 +561,82 @@ describe('決算公告（貸借対照表の要旨）', () => {
     expect(rows.filter((r) => r.kind !== 'item').every((r) => r.indent === undefined)).toBe(true);
   });
 });
+
+describe('消費税の科目 (税抜経理方式)', () => {
+  /*
+   * 期中は仮払 (資産) と仮受 (負債) で両建てし、決算で相殺した差額を
+   * 未払 (負債) か未収還付 (資産) のどちらか一方へ振り替える。
+   * **区分を取り違えると貸借が合わなくなる**ので、位置を検査で固定する。
+   */
+  it.each([
+    ['consumptionTaxPaid', '仮払消費税等', 'current-asset', '仕入れ税額 — 支払った消費税は返ってくるので資産'],
+    ['consumptionTaxRefundReceivable', '未収還付消費税等', 'current-asset', '還付金 — 受け取る権利なので資産'],
+    ['consumptionTaxReceived', '仮受消費税等', 'current-liability', '販売価格消費税 — 預かって納める義務なので負債'],
+    ['consumptionTaxPayable', '未払消費税等', 'current-liability', '納付額 — 納める義務なので負債'],
+  ])('%s (%s) は %s に置く (%s)', (k, name, section) => {
+    const a = ACCOUNTS.find((x) => x.k === k);
+    expect(a, `${k} が科目一覧にありません`).toBeDefined();
+    expect(a!.name).toBe(name);
+    expect(a!.section).toBe(section);
+    expect(a!.contra).toBeUndefined(); // 控除科目ではない
+  });
+
+  it('資産側は借方・負債側は貸方に分類される', () => {
+    expect(sideOf('current-asset')).toBe('debit');
+    expect(sideOf('current-liability')).toBe('credit');
+  });
+
+  it('仮払・未収還付は流動資産の合計に足される', () => {
+    const v: Amounts = { cash: '1000', consumptionTaxPaid: '80', consumptionTaxRefundReceivable: '20' };
+    expect(sectionTotal(v, 'current-asset')).toBe(1100);
+  });
+
+  it('仮受・未払は流動負債の合計に足される', () => {
+    const v: Amounts = { accountsPayable: '500', consumptionTaxReceived: '100', consumptionTaxPayable: '30' };
+    expect(sectionTotal(v, 'current-liability')).toBe(630);
+  });
+
+  it('★ 貸借対照表の表示行に、資産の部と負債の部それぞれへ出る', () => {
+    const v: Amounts = {
+      ...BALANCED,
+      consumptionTaxPaid: '80',
+      consumptionTaxReceived: '80', // 資産・負債を同額増やして貸借は保つ
+    };
+    const rows = buildBalanceRows(v, BALANCED_OPT, incomeTotals(v).netIncome);
+    expect(rows.assets.some((r) => r.label === '仮払消費税等' && r.amount === 80)).toBe(true);
+    expect(rows.liabilitiesEquity.some((r) => r.label === '仮受消費税等' && r.amount === 80)).toBe(true);
+    // 両建てしても貸借は崩れない
+    expect(balanceTotals(v, BALANCED_OPT, incomeTotals(v).netIncome).difference).toBe(0);
+  });
+
+  it('★ 納付と還付を両建てすると鳴る (どちらか一方にしかならない)', () => {
+    const v: Amounts = { ...BALANCED, consumptionTaxPayable: '30', consumptionTaxRefundReceivable: '30' };
+    const hit = checkStatements(v, BALANCED_OPT).filter((i) => i.field === 'consumptionTaxPayable');
+    expect(hit).toHaveLength(1);
+    expect(hit[0]!.level).toBe('warn');
+    // 文言は 3 片の連結。**片ごとに固有の言い回しを取る** —— `どちらか一方` は
+    // 真ん中の片にしか当たらず、前後 2 片を空にする変異が素通りしていた
+    // (実測 2026-08-31)。何が起きているか / なぜか / どう直すか の 3 つを見る。
+    expect(hit[0]!.message).toContain('両方に残高があります');
+    expect(hit[0]!.message).toContain('どちらか一方');
+    expect(hit[0]!.message).toContain('片方だけに振り替えてください');
+  });
+
+  it('片方だけなら鳴らない (負の対照)', () => {
+    for (const k of ['consumptionTaxPayable', 'consumptionTaxRefundReceivable']) {
+      const v: Amounts = { ...BALANCED, [k]: '30' };
+      const hit = checkStatements(v, BALANCED_OPT).filter((i) =>
+        i.message.includes('未払消費税等と未収還付消費税等'),
+      );
+      expect(hit, `${k} だけで鳴ってはいけない`).toHaveLength(0);
+    }
+  });
+
+  it('仮払と仮受の両建ては鳴らない (期中は正常な状態)', () => {
+    const v: Amounts = { ...BALANCED, consumptionTaxPaid: '80', consumptionTaxReceived: '100' };
+    const hit = checkStatements(v, BALANCED_OPT).filter((i) =>
+      i.message.includes('未払消費税等と未収還付消費税等'),
+    );
+    expect(hit).toHaveLength(0);
+  });
+});

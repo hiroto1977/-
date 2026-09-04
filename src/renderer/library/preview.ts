@@ -47,6 +47,30 @@ export const MAX_IMAGE_PREVIEW_BYTES = MAX_IMAGE_PREVIEW_MB * 1024 * 1024;
 export const MAX_TEXT_PREVIEW_CHARS = 200_000;
 
 /**
+ * テキストを **読む前に切る** バイト数。
+ *
+ * `MAX_TEXT_PREVIEW_CHARS` は「見せる量」しか縛らない —— `blob.text()` で
+ * 全体を文字列にしてから切っていたので、**読む量は縛られていなかった**。
+ * `library.put()` の 1 件上限は 50 MB なので、実測 (2026-08-23):
+ *
+ * ```
+ *   50 MB を全部読む      158ms / 5240 万文字 (約 105 MB のメモリ)
+ *   先に切ってから読む      9ms /   80 万文字
+ * ```
+ *
+ * 20 万文字を見せるために 5240 万文字を作っていた (**262 倍**)。画像側は
+ * `previewBlocker` が読む前に 8 MB で断っているのに、テキスト側だけ
+ * 読んでから切っていた —— **同じ意図が片側にしか掛かっていない**形。
+ *
+ * 値は `文字数 × 4 + 8`。UTF-8 の 1 文字は最大 4 バイトなので、このバイト数を
+ * 復号すれば **必ず `MAX_TEXT_PREVIEW_CHARS` 文字より多く** 得られる
+ * (4 バイト文字は JS の `.length` では 2 を数えるので、実際は更に余裕がある)。
+ * 余分に読むのは、境界で切れた文字が `U+FFFD` になっても、その後の
+ * `truncateForPreview` で**必ず切り落とされる**ようにするため。
+ */
+export const MAX_TEXT_PREVIEW_BYTES = MAX_TEXT_PREVIEW_CHARS * 4 + 8;
+
+/**
  * テキストとして読める `text/*` 以外の唯一の型。
  *
  * コネクタ実行の書き出し (`data/connectorSinks.ts`) が使う。**アプリが実際に
@@ -83,6 +107,20 @@ export interface TruncatedText {
 export function truncateForPreview(text: string, limit = MAX_TEXT_PREVIEW_CHARS): TruncatedText {
   if (text.length <= limit) return { text, truncated: false };
   return { text: text.slice(0, limit), truncated: true };
+}
+
+/**
+ * テキストプレビュー用に blob を読む —— **切ってから読む**。
+ *
+ * 「先に切る」を呼び出し側 (`LibraryPage`) に書くと、消されたことを
+ * 留める術が無い。`truncateForPreview` を呼んでいる限り**見た目は正しく**
+ * 動くので、検査も気づけない (実測: 先に切る 1 行を消しても、切り詰めの
+ * 検査は全部通った)。読む所と切る所を 1 つの関数にすれば、
+ * 「どれだけ読んだか」を振る舞いで留められる。
+ */
+export async function readTextForPreview(blob: Blob): Promise<TruncatedText> {
+  const head = blob.slice(0, MAX_TEXT_PREVIEW_BYTES);
+  return truncateForPreview(await head.text());
 }
 
 /**

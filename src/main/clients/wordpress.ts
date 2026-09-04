@@ -67,7 +67,7 @@ export async function fetchWordPressSnapshot(ctx: FetchContext): Promise<WordPre
 
 // --- write-side actions --------------------------------------------------
 
-interface CreatePostPayload {
+interface CreatePostDraftPayload {
   siteId: string; // blog id or hostname
   title: string;
   content?: string;
@@ -85,7 +85,7 @@ interface WpCreatePostResponse {
 async function createPostDraft(
   ctx: ActionContext,
 ): Promise<{ id: number; url: string; title: string }> {
-  const { siteId, title, content, status } = ctx.payload as unknown as CreatePostPayload;
+  const { siteId, title, content, status } = ctx.payload as unknown as CreatePostDraftPayload;
   if (!siteId || !title) throw new Error('siteId and title are required');
 
   const res = await jsonFetch<WpCreatePostResponse>(

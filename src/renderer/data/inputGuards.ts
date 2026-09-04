@@ -39,7 +39,11 @@ export type NumKind =
   | 'area' // ㎡
   | 'length' // m
   | 'ratio' // 倍率
-  | 'ppm'; // mg/L・ppm など濃度
+  | 'ppm' // mg/L・ppm など濃度
+  | 'days' // 日数（整数）
+  | 'energy' // kWh/kg（電力原単位）
+  | 'mgPer100g' // mg/100g（食品成分）
+  | 'km'; // 距離 (km)
 
 export interface NumSpec {
   readonly label: string;
@@ -114,6 +118,13 @@ const KIND: Record<NumKind, KindRule> = {
   length: { unit: 'm', negativeIsFatal: true, zeroIsFatal: true, sane: 1000 },
   ratio: { unit: '倍', negativeIsFatal: true, sane: 1000 },
   ppm: { unit: 'mg/L', negativeIsFatal: true, sane: 100000 },
+  // 水耕栽培の入力欄が足した 3 種。単位語は「0 X として計算されています」の
+  // 文面にそのまま出るので、近い kind を借りると (倍・mg/L) 嘘の単位を言う。
+  days: { unit: '日', negativeIsFatal: true, integer: true, sane: 3650 },
+  energy: { unit: 'kWh/kg', negativeIsFatal: true, sane: 100 },
+  mgPer100g: { unit: 'mg/100g', negativeIsFatal: true, sane: 10000 },
+  // 通勤距離 (片道 km)。`length` は m で 0 を断るが、マイカー通勤なし = 0 km は正当。
+  km: { unit: 'km', negativeIsFatal: true, sane: 1000 },
 };
 
 /**

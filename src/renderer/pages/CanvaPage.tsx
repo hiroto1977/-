@@ -3,6 +3,7 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { localIsoDate } from '../../shared/localDate';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -15,7 +16,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 function ts(unix: number): string {
-  return new Date(unix * 1000).toISOString().slice(0, 10);
+  return localIsoDate(new Date(unix * 1000));
 }
 
 export function CanvaPage() {

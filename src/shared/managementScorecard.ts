@@ -42,6 +42,14 @@ export interface CategoryScore {
   readonly components: ReadonlyArray<{ readonly label: string; readonly score: number }>;
 }
 
+/** 総合評価の表示名 (画面と提出用の書面で同じ言葉を使う)。 */
+export const VERDICT_LABEL: Readonly<Record<ManagementScorecard['verdict'], string>> = {
+  poor: '要改善',
+  caution: '注意',
+  good: '良好',
+  excellent: '優良',
+};
+
 /** 総合スコアカード。 */
 export interface ManagementScorecard {
   readonly categories: readonly CategoryScore[];

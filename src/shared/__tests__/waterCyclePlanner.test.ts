@@ -10,6 +10,7 @@ import {
   EFFLUENT_TN_UNIFORM_MG_L,
   EFFLUENT_TP_UNIFORM_MG_L,
   WPCL_NP_APPLICABILITY_M3_PER_DAY,
+  DEFAULT_EFFLUENT_STANDARDS,
 } from '../waterCyclePlanner';
 
 /*
@@ -468,5 +469,56 @@ describe('waterCyclePlanner — 残りの境界', () => {
     const r = planAeration({ tankVolumeL: 200, inflowLPerDay: 200, minRequiredHrtHours: 24 });
     expect(r.hrtHours).toBe(24);
     expect(r.adequate).toBe(true);
+  });
+});
+
+/*
+ * 台帳 (`parameters.ts`) から渡す排水の基準。一律排水基準は自治体の上乗せ条例で
+ * 厳しくなるので、同じ排水が基準の側で超過に変わることを見る。
+ */
+describe('台帳から渡す基準 (EffluentStandards)', () => {
+  // 100 / 10 mg/L は既定 (120 / 16) の内側、年 2,000 万 L (約 54.8 m³/日) は既定の 50 m³/日以上。
+  const input = { concentrateTnMgL: 100, concentrateTpMgL: 10, annualDischargeL: 20_000_000, dischargeToPublicWater: true };
+
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_EFFLUENT_STANDARDS).toEqual({
+      tnUniformMgL: EFFLUENT_TN_UNIFORM_MG_L,
+      tpUniformMgL: EFFLUENT_TP_UNIFORM_MG_L,
+      npApplicabilityM3PerDay: WPCL_NP_APPLICABILITY_M3_PER_DAY,
+      groundwaterNitrateNMgL: GROUNDWATER_NITRATE_N_STANDARD_MG_L,
+    });
+    expect(checkEffluent(input, DEFAULT_EFFLUENT_STANDARDS)).toEqual(checkEffluent(input));
+  });
+
+  it('基準を厳しくすると同じ排水が超過・再利用推奨に変わり、対象水量と地下水比も動く', () => {
+    const base = checkEffluent(input);
+    expect(base.exceedsTn).toBe(false);
+    expect(base.exceedsTp).toBe(false);
+    expect(base.recommendReuse).toBe(false);
+    expect(base.wpclNpApplicable).toBe(true);
+    expect(base.nitrateVsGroundwaterFactor).toBe(10);
+    const strict = checkEffluent(input, { tnUniformMgL: 60, tpUniformMgL: 8, npApplicabilityM3PerDay: 100, groundwaterNitrateNMgL: 5 });
+    expect(strict.exceedsTn).toBe(true);
+    expect(strict.exceedsTp).toBe(true);
+    expect(strict.recommendReuse).toBe(true);
+    expect(strict.wpclNpApplicable).toBe(false);
+    expect(strict.nitrateVsGroundwaterFactor).toBe(20);
+    // 排出量そのものは基準に依らない。
+    expect(strict.dailyDischargeM3).toBe(base.dailyDischargeM3);
+    expect(strict.annualNitrogenKg).toBe(base.annualNitrogenKg);
+  });
+
+  it('りんの基準だけ厳しくしても再利用推奨になる (窒素 または りん)', () => {
+    const r = checkEffluent(input, { ...DEFAULT_EFFLUENT_STANDARDS, tpUniformMgL: 5 });
+    expect(r.exceedsTn).toBe(false);
+    expect(r.exceedsTp).toBe(true);
+    expect(r.recommendReuse).toBe(true);
+    // 基準ちょうどは超過ではない (「超える」が要件)。
+    expect(checkEffluent(input, { ...DEFAULT_EFFLUENT_STANDARDS, tnUniformMgL: 100 }).exceedsTn).toBe(false);
+    expect(checkEffluent(input, { ...DEFAULT_EFFLUENT_STANDARDS, tnUniformMgL: 99.9 }).exceedsTn).toBe(true);
+    // 対象水量ちょうどは対象 (「以上」が要件)。
+    const daily = 20_000_000 / 365 / 1000;
+    expect(checkEffluent(input, { ...DEFAULT_EFFLUENT_STANDARDS, npApplicabilityM3PerDay: daily }).wpclNpApplicable).toBe(true);
+    expect(checkEffluent(input, { ...DEFAULT_EFFLUENT_STANDARDS, npApplicabilityM3PerDay: daily + 0.001 }).wpclNpApplicable).toBe(false);
   });
 });

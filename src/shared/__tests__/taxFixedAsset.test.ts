@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  DEFAULT_FIXED_ASSET_THRESHOLDS,
   FIXED_ASSET_STANDARD_RATE,
   CITY_PLANNING_MAX_RATE,
   LAND_TAX_THRESHOLD,
@@ -480,5 +481,39 @@ describe('calcFixedAssetTaxTotal', () => {
     expect(() =>
       calcFixedAssetTaxTotal({ assessedValue: 60_000_000, areaSqm: 200, cityPlanningRate: 0.0031 }),
     ).toThrow(/cap/);
+  });
+});
+
+describe('台帳から渡す免税点 (FixedAssetThresholds)', () => {
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_FIXED_ASSET_THRESHOLDS).toEqual({
+      land: LAND_TAX_THRESHOLD,
+      house: HOUSE_TAX_THRESHOLD,
+      depreciableAsset: DEPRECIABLE_ASSET_TAX_THRESHOLD,
+    });
+    for (const assetType of ['land', 'house', 'depreciableAsset'] as const) {
+      expect(isBelowTaxThreshold({ assetType, taxableBase: 250_000 })).toBe(
+        isBelowTaxThreshold({ assetType, taxableBase: 250_000 }, DEFAULT_FIXED_ASSET_THRESHOLDS),
+      );
+    }
+  });
+
+  it('資産種別ごとの免税点をそれぞれ渡す', () => {
+    const t = { land: 100_000, house: 150_000, depreciableAsset: 1_000_000 };
+    expect(isBelowTaxThreshold({ assetType: 'land', taxableBase: 250_000 })).toBe(true);
+    expect(isBelowTaxThreshold({ assetType: 'land', taxableBase: 250_000 }, t)).toBe(false);
+    expect(isBelowTaxThreshold({ assetType: 'house', taxableBase: 140_000 }, t)).toBe(true);
+    expect(isBelowTaxThreshold({ assetType: 'house', taxableBase: 150_000 }, t)).toBe(false);
+    expect(isBelowTaxThreshold({ assetType: 'depreciableAsset', taxableBase: 999_999 }, t)).toBe(true);
+    expect(isBelowTaxThreshold({ assetType: 'depreciableAsset', taxableBase: 1_000_000 }, t)).toBe(false);
+  });
+
+  it('calcFixedAssetTaxTotal は免税点を通す (小規模住宅用地 1/6 で 30 万未満 → 非課税、免税点を下げれば課税)', () => {
+    // 評価額 150 万 × 1/6 = 250,000 → 既定の免税点 30 万未満で非課税。
+    const byDefault = calcFixedAssetTaxTotal({ assessedValue: 1_500_000, areaSqm: 100 });
+    expect(byDefault.exempt).toBe(true);
+    const lowered = calcFixedAssetTaxTotal({ assessedValue: 1_500_000, areaSqm: 100, thresholds: { ...DEFAULT_FIXED_ASSET_THRESHOLDS, land: 200_000 } });
+    expect(lowered.exempt).toBe(false);
+    expect(lowered.fixedAssetTax).toBe(fixedAssetTax({ taxableBase: 250_000 }));
   });
 });

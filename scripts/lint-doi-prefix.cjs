@@ -516,6 +516,19 @@ function main() {
   const isbnFresh = isbnFindings.filter((f) => !ISBN_ALLOWLIST.has(f.key));
   const isbnStale = [...ISBN_ALLOWLIST.keys()].filter((k) => !isbnSeen.has(k)).sort();
 
+  /*
+   * 検査した件数の床。0 件でも「✅」になる状態を塞ぐ (2026-08-22)。
+   * 対照実験で、抽出の絞りを 1 行壊すと件数を表示したまま exit 0 になった。
+   * 厳密値ではなく床にするのは `verify:arch` の「追跡行数 (下限)」と同じ考え方。
+   */
+  const MIN_ISBN_CHECKED = 100; // 実測 316 (2026-08-22)
+  if (isbnChecked < MIN_ISBN_CHECKED) {
+    console.error(
+      `❌ 書籍 DOI を ${isbnChecked} 件しか拾えませんでした (${MIN_ISBN_CHECKED} 件以上を期待)。`
+        + ' 抽出が壊れている可能性があります。',
+    );
+    process.exit(1);
+  }
   console.log(
     `Checked ${isbnChecked} book DOI(s) の ISBN-13 チェックディジット` +
       `（既知 ${ISBN_ALLOWLIST.size} 件は台帳で除外）`,
@@ -607,6 +620,19 @@ function main() {
   const fresh = findings.filter((f) => !ALLOWLIST.has(f.key));
   const stale = [...ALLOWLIST.keys()].filter((k) => !seen.has(k)).sort();
 
+  /*
+   * こちらが本体の照合 (出版社ラベル × DOI プレフィックス)。上の ISBN の床とは
+   * **別の抽出経路**なので別に床が要る —— 対照実験で出典ループを壊したとき、
+   * ISBN 側の床は当たらず素通りした。数を出すだけの行を、突き合わせのある行にする。
+   */
+  const MIN_LABEL_CHECKED = 300; // 実測 919 (2026-08-22)
+  if (checked < MIN_LABEL_CHECKED) {
+    console.error(
+      `❌ 出版社名を含むラベルの DOI を ${checked} 件しか拾えませんでした`
+        + ` (${MIN_LABEL_CHECKED} 件以上を期待)。抽出が壊れている可能性があります。`,
+    );
+    process.exit(1);
+  }
   console.log(
     `Checked ${checked} DOI citation(s) whose label names a publisher, across ${entries.length} entries ` +
       `(既知 ${ALLOWLIST.size} 件は台帳で除外)`,

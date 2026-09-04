@@ -29,6 +29,7 @@ import {
   type BusinessCategoryId,
   type BusinessAdvisorRecommendation,
   type BusinessAdvisorResponse,
+  BUSINESS_ADVISOR_MAX_TOKENS,
 } from '../business';
 
 // --- Category taxonomy ------------------------------------------------
@@ -92,6 +93,30 @@ describe('getCategoryDef + isBusinessCategoryId', () => {
     expect(isBusinessCategoryId(undefined)).toBe(false);
     expect(isBusinessCategoryId({})).toBe(false);
   });
+
+  /*
+   * プロトタイプ側の名前を通さない。
+   *
+   * `value in CATEGORY_BY_ID` はプロトタイプ鎖まで辿るので、表に無い
+   * `'constructor'` / `'toString'` / `'__proto__'` が **8 個とも true** になる
+   * (2026-08-22 実測)。この関数は `askBusinessAdvisor` の `categories` を
+   * IPC 境界で絞る唯一の番人で、抜けたものは
+   *   - `businessAdvisorSystemPrompt` を通って外部 API へ送るプロンプトに載り、
+   *   - `allowedSet` にどの事業も一致しないので **KPI 0 件のまま助言させる**
+   * (「そのカテゴリはある」と言いながら中身が空、という食い違いが起きる)。
+   *
+   * 同じ形は `templates.ts` の `isTemplateId` で先に直してあり、そこには
+   * 「`in` ではなく `Object.hasOwn` を使う」と書いてあった。**判断を 1 か所に
+   * 書いても、隣は直らない** —— 走査したら型ガード 38 個のうちここだけが
+   * 残っていた。
+   */
+  it.each(['constructor', 'toString', '__proto__', 'valueOf', 'hasOwnProperty',
+    'isPrototypeOf', 'propertyIsEnumerable', 'toLocaleString'])(
+    'プロトタイプ側の名前 %s を id として通さない',
+    (name) => {
+      expect(isBusinessCategoryId(name)).toBe(false);
+    },
+  );
 });
 
 // --- computeCategoryKpi ----------------------------------------------
@@ -569,17 +594,16 @@ describe('validateBusinessAdvisorJson', () => {
 // --- askBusinessAdvisorImpl --------------------------------------------
 
 describe('askBusinessAdvisorImpl', () => {
+  /*
+   * **本物の `Response` を作る。** 以前は `json()` が payload を返すのに
+   * `text()` が空文字を返す手作りの物だった —— 本物の `Response` では
+   * ありえない形で、`readBodyWithCap` を通すようにした途端に落ちた
+   * (2026-08-23)。モックが実物と違う形をしていると、**検査は実装ではなく
+   * モックの挙動を留めてしまう**。stocks 側は最初から本物を使っていて、
+   * 同じ変更で落ちなかった。
+   */
   function mockResponse(payload: unknown, ok = true, status = 200): Response {
-    return {
-      ok,
-      status,
-      async text() {
-        return ok ? '' : JSON.stringify(payload);
-      },
-      async json() {
-        return payload;
-      },
-    } as Response;
+    return new Response(JSON.stringify(payload), { status: ok ? status : status });
   }
 
   function llmReply(recs: BusinessAdvisorRecommendation[]): unknown {
@@ -683,36 +707,47 @@ describe('askBusinessAdvisorImpl', () => {
     expect(body.max_tokens).toBe(1500);
   });
 
-  it('respects custom model + max_tokens overrides', async () => {
+  /*
+   * **payload は有料 API のパラメータを動かせない** (経緯は `skills.test.ts`)。
+   * ここは以前「上書きを尊重する」ことを確かめる検査だった —— 使われていない
+   * 受け口を仕様として固定していた形なので、期待ごと反転させてある。
+   */
+  it.each([
+    ['数値', 2000],
+    ['巨大な値', 100_000_000],
+    ['負値', -1],
+    ['Infinity', Number.POSITIVE_INFINITY],
+    ['文字列', '999999'],
+    ['null', null],
+  ])('payload の maxTokens (%s) は無視される', async (_label, maxTokens) => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(mockResponse(llmReply([goodRec])));
     await askBusinessAdvisorImpl({
       token: 't',
       fetch: fetchMock,
-      payload: { question: 'q', model: 'claude-opus-4-7', maxTokens: 2000 },
+      payload: { question: 'q', maxTokens },
     });
-    const body = JSON.parse(fetchMock.mock.calls[0]![1]!.body as string) as { model: string; max_tokens: number };
-    expect(body.model).toBe('claude-opus-4-7');
-    expect(body.max_tokens).toBe(2000);
+    const body = JSON.parse(fetchMock.mock.calls[0]![1]!.body as string) as { max_tokens: number };
+    expect(body.max_tokens).toBe(BUSINESS_ADVISOR_MAX_TOKENS);
   });
 
-  it('falls back to default when model is empty string or maxTokens is 0 / NaN', async () => {
+  it('payload の model も無視される (送り先モデルを選ばせない)', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(mockResponse(llmReply([goodRec])));
     await askBusinessAdvisorImpl({
       token: 't',
       fetch: fetchMock,
-      payload: { question: 'q', model: '', maxTokens: 0 },
+      payload: { question: 'q', model: 'claude-opus-4-7' },
     });
-    const body1 = JSON.parse(fetchMock.mock.calls[0]![1]!.body as string) as { model: string; max_tokens: number };
-    expect(body1.model).toBe('claude-sonnet-4-6');
-    expect(body1.max_tokens).toBe(1500);
-    fetchMock.mockResolvedValueOnce(mockResponse(llmReply([goodRec])));
-    await askBusinessAdvisorImpl({
-      token: 't',
-      fetch: fetchMock,
-      payload: { question: 'q', maxTokens: Number.NaN },
-    });
-    const body2 = JSON.parse(fetchMock.mock.calls[1]![1]!.body as string) as { max_tokens: number };
-    expect(body2.max_tokens).toBe(1500);
+    const body = JSON.parse(fetchMock.mock.calls[0]![1]!.body as string) as { model: string };
+    expect(body.model).toBe('claude-sonnet-4-6');
+  });
+
+  it('既定のモデルと max_tokens を送る (定数が動いていない)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(mockResponse(llmReply([goodRec])));
+    await askBusinessAdvisorImpl({ token: 't', fetch: fetchMock, payload: { question: 'q' } });
+    const body = JSON.parse(fetchMock.mock.calls[0]![1]!.body as string) as { model: string; max_tokens: number };
+    expect(body.model).toBe('claude-sonnet-4-6');
+    expect(body.max_tokens).toBe(1500);
+    expect(BUSINESS_ADVISOR_MAX_TOKENS).toBe(1500);
   });
 
   it('throws on HTTP non-2xx response', async () => {
@@ -883,7 +918,7 @@ describe('business advisor boundary pins', () => {
       ok: true,
       status: 200,
       async text() {
-        return '';
+        return JSON.stringify(await this.json());
       },
       async json() {
         return {
@@ -924,7 +959,7 @@ describe('business advisor boundary pins', () => {
       ok: true,
       status: 200,
       async text() {
-        return '';
+        return JSON.stringify(await this.json());
       },
       async json() {
         return {
@@ -966,7 +1001,7 @@ describe('business advisor boundary pins', () => {
       ok: true,
       status: 200,
       async text() {
-        return '';
+        return JSON.stringify(await this.json());
       },
       async json() {
         return {
@@ -1006,7 +1041,7 @@ describe('business advisor boundary pins', () => {
       ok: true,
       status: 200,
       async text() {
-        return '';
+        return JSON.stringify(await this.json());
       },
       async json() {
         return {
@@ -1103,7 +1138,7 @@ describe('business advisor boundary pins', () => {
       ok: true,
       status: 200,
       async text() {
-        return '';
+        return JSON.stringify(await this.json());
       },
       async json() {
         return {
@@ -2065,5 +2100,133 @@ describe('exportBusinessDashboardMdImpl — 配列の中身が壊れた助言', 
       notForRealMoney: true,
     });
     expect(out).toContain('AI 経営アドバイザー提案');
+  });
+});
+
+/**
+ * **事業カテゴリ表を、読み直して留める。**
+ *
+ * 上の `describe('BUSINESS_CATEGORIES')` は id を字面で留め、label /
+ * description が空でないことも見ている —— **論理としては十分**である。
+ * それでも変異検査では 52 件すべてが生存していた (84.10%、2026-08-30 実測)。
+ *
+ * `BUSINESS_CATEGORIES` はモジュール直下の配列リテラルで、**読み込み時に
+ * 1 度だけ評価される**。静的 import のままでは、Stryker が変異を有効に
+ * する前に評価が済んでいる (覆われた static 変異体)。
+ *
+ * `stryker.config.json` の注記どおり `vi.resetModules()` + 動的 `import()`
+ * で読み直す。本 PR で 6 度目の同じ手当て (`MEMBER_ID_RE` / 橋 /
+ * `INTERNAL_TLDS` / `EMPTY_TALENT_STATE` / テンプレート表 / ここ)。
+ *
+ * ## 何を字面で留めるか
+ *
+ * - `id` —— `CATEGORY_BY_ID` の鍵であり、`validateBusinessAdvisorJson` が
+ *   受理する集合でもある。変われば助言の宛先が黙って外れる
+ * - `trafficKind` —— 画面がどの指標 (session / view / impression / project)
+ *   を出すかを決める。取り違えても数字は出るので、**間違いが見えない**
+ * - `label` —— 利用者が選ぶ選択肢そのもの
+ * - `description` は字面で留めない (10 行の説明文を写しても目を滑らせる)。
+ *   **空でないこと・重複しないこと**で押さえる —— 空文字への変異はこれで死ぬ
+ */
+describe('BUSINESS_CATEGORIES — 読み直して static 変異体を届かせる', () => {
+  const fresh = async () => {
+    vi.resetModules();
+    return (await import('../business')).BUSINESS_CATEGORIES;
+  };
+
+  it('★ id は 10 件、順序込みで固定', async () => {
+    const c = await fresh();
+    expect(c.map((x) => x.id)).toEqual([
+      'ec',
+      'dropship',
+      'oem-odm',
+      'blog',
+      'blog-affiliate',
+      'ppc-affiliate',
+      'video-production',
+      'video-upload',
+      'video-distribution',
+      'sns-ops',
+    ]);
+  });
+
+  it('★ label (利用者が選ぶ選択肢)', async () => {
+    const c = await fresh();
+    expect(c.map((x) => x.label)).toEqual([
+      'EC / ネットショップ',
+      'ドロップシッピング',
+      'OEM / ODM',
+      '自社ブログ',
+      'ブログアフィリエイト',
+      'PPC アフィリエイト',
+      '動画制作 (受託)',
+      '動画投稿 (自社チャンネル)',
+      '動画配信 (有料広告)',
+      'SNS 運用',
+    ]);
+  });
+
+  /*
+   * **取り違えても数字は出る。** だから検査でしか気付けない。
+   */
+  it('★ trafficKind (画面が出す指標を決める)', async () => {
+    const c = await fresh();
+    expect(c.map((x) => [x.id, x.trafficKind])).toEqual([
+      ['ec', 'session'],
+      ['dropship', 'session'],
+      ['oem-odm', 'project'],
+      ['blog', 'session'],
+      ['blog-affiliate', 'session'],
+      ['ppc-affiliate', 'impression'],
+      ['video-production', 'project'],
+      ['video-upload', 'view'],
+      ['video-distribution', 'impression'],
+      ['sns-ops', 'impression'],
+    ]);
+  });
+
+  /*
+   * 説明文は字面で留めない代わりに、**空でないこと**と**重複しないこと**で
+   * 押さえる。空文字への変異はここで死に、10 行の写経も要らない。
+   */
+  it('★ description は空でなく、重複しない', async () => {
+    const c = await fresh();
+    for (const x of c) expect(x.description.length, x.id).toBeGreaterThan(0);
+    expect(new Set(c.map((x) => x.description)).size).toBe(c.length);
+  });
+
+  /*
+   * `FETCHED_AT` もモジュール直下の定数である。上の
+   * 「returns 10 units + aggregate + isMock=true」が既に字面で見ているが、
+   * **静的 import なので変異が届いていなかった**。読み直して当て直す。
+   */
+  it('★ 見本スナップショットの取得日時', async () => {
+    vi.resetModules();
+    const m = await import('../business');
+    const snap = await m.fetchBusinessOpsSnapshot({ token: '' });
+    expect(snap.fetchedAt).toBe('2026-05-14T00:00:00.000Z');
+  });
+
+  /*
+   * 項目の集合を留める。要素が `{}` に潰れる変異 (ObjectLiteral) は
+   * 上の id 検査でも死ぬが、**項目が 1 つ消える**形はここでしか鳴らない。
+   */
+  it('★ 各カテゴリの項目が揃っている', async () => {
+    const c = await fresh();
+    for (const x of c) {
+      expect(Object.keys(x).sort(), x.id).toEqual([
+        'baseContentOutput',
+        'baseConversionRate',
+        'baseRevenue',
+        'baseRoas',
+        'baseTraffic',
+        'description',
+        'fixedCost',
+        'id',
+        'label',
+        'trafficKind',
+        'variableRatio',
+      ]);
+    }
   });
 });

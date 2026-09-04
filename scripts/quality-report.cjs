@@ -56,41 +56,69 @@ if (!SKIP_COVERAGE) {
 }
 
 // Mutation report — use whatever is already on disk.
+//
+// **点数の定義は Stryker に合わせる。** Stryker は分母から 2 種類を外す:
+//   - `Ignored`   … `Stryker disable` で意図的に測らないと宣言した変異
+//   - `RuntimeError` / `CompileError` … 変異体が壊れて**評価そのものが成立しなかった**もの
+// 残り (Killed + Timeout + Survived + NoCoverage) だけが「有効な変異」で、
+// 分子は Killed + Timeout。以前ここは `Ignored` も分母に入れていたので、
+// Stryker が 100.00% と言っている同じ報告書から 77.16% を出していた
+// (35,359 のうち 8,071 が Ignored)。同じ数字を 2 か所で作らないよう、
+// 表と要約は下の `mutTotal` が持つ**同一の文字列**を読む。
 const mutPath = path.join(ROOT, 'reports', 'mutation', 'mutation.json');
 let mutSection = '_no mutation report found — run `npm run mutate`._';
 let mutTotal = null;
+const DETECTED = new Set(['Killed', 'Timeout']);
+const INVALID = new Set(['RuntimeError', 'CompileError']);
+function scorePct(detected, denom) {
+  return denom > 0 ? (100 * detected / denom).toFixed(2) : '0.00';
+}
 if (fs.existsSync(mutPath)) {
   const stat = fs.statSync(mutPath);
   const ageH = (Date.now() - stat.mtimeMs) / 3.6e6;
   const mut = JSON.parse(fs.readFileSync(mutPath, 'utf8'));
   const perFile = [];
-  let killed = 0, survived = 0, noCov = 0, total = 0;
+  let detected = 0, survived = 0, noCov = 0, ignored = 0, invalid = 0;
+  const invalidFiles = [];
   for (const [file, info] of Object.entries(mut.files ?? {})) {
-    let fk = 0, fs2 = 0, fnc = 0, ftot = 0;
+    let fd = 0, fs2 = 0, fnc = 0, fig = 0, fiv = 0;
     for (const m of info.mutants ?? []) {
-      total += 1; ftot += 1;
-      if (m.status === 'Killed' || m.status === 'Timeout') { killed += 1; fk += 1; }
+      if (DETECTED.has(m.status)) { detected += 1; fd += 1; }
       else if (m.status === 'Survived') { survived += 1; fs2 += 1; }
       else if (m.status === 'NoCoverage') { noCov += 1; fnc += 1; }
+      else if (m.status === 'Ignored') { ignored += 1; fig += 1; }
+      else if (INVALID.has(m.status)) { invalid += 1; fiv += 1; }
     }
+    if (fiv > 0) invalidFiles.push({ file: file.replace(ROOT + '/', ''), invalid: fiv });
+    const fValid = fd + fs2 + fnc;
     perFile.push({
       file: file.replace(ROOT + '/', ''),
-      killed: fk, survived: fs2, noCov: fnc, total: ftot,
-      pct: ftot > 0 ? (100 * fk / ftot).toFixed(2) : '0.00',
-      covered: (ftot - fnc) > 0 ? (100 * fk / (ftot - fnc)).toFixed(2) : '0.00',
+      killed: fd, survived: fs2, noCov: fnc, ignored: fig, invalid: fiv, total: fValid,
+      pct: scorePct(fd, fValid),
+      covered: scorePct(fd, fd + fs2),
     });
   }
   perFile.sort((a, b) => a.file.localeCompare(b.file));
-  mutTotal = { killed, survived, noCov, total };
-  const totalPct = total > 0 ? (100 * killed / total).toFixed(2) : '0.00';
-  const coveredPct = (total - noCov) > 0 ? (100 * killed / (total - noCov)).toFixed(2) : '0.00';
+  const valid = detected + survived + noCov;
+  mutTotal = {
+    killed: detected, survived, noCov, ignored, invalid, valid,
+    totalPct: scorePct(detected, valid),
+    coveredPct: scorePct(detected, detected + survived),
+  };
   mutSection = '';
   mutSection += `_Report age: ${ageH.toFixed(1)}h._\n\n`;
-  mutSection += `**Overall: ${totalPct}% total / ${coveredPct}% covered** (${killed} killed / ${survived} survived / ${noCov} no-cov)\n\n`;
-  mutSection += '| file | score | covered | killed | survived | no-cov |\n';
-  mutSection += '|------|------:|--------:|-------:|---------:|-------:|\n';
+  mutSection += `**Overall: ${mutTotal.totalPct}% total / ${mutTotal.coveredPct}% covered** `;
+  mutSection += `(${detected} killed / ${survived} survived / ${noCov} no-cov / ${valid} valid)\n\n`;
+  mutSection += `分母から外れたもの: \`Ignored\` ${ignored} (\`Stryker disable\` で測らないと宣言した分 — `;
+  mutSection += `範囲は \`npm run lint:mutation-scope\` が台帳で押さえている) / `;
+  mutSection += `\`RuntimeError\`+\`CompileError\` ${invalid} (**評価が成立しなかった分。0 でないなら盲点**`;
+  mutSection += invalidFiles.length > 0
+    ? `: ${invalidFiles.map((f) => `\`${f.file}\` ${f.invalid}`).join(', ')})\n\n`
+    : ')\n\n';
+  mutSection += '| file | score | covered | killed | survived | no-cov | ignored | invalid |\n';
+  mutSection += '|------|------:|--------:|-------:|---------:|-------:|--------:|--------:|\n';
   for (const r of perFile) {
-    mutSection += `| ${r.file} | ${r.pct} | ${r.covered} | ${r.killed} | ${r.survived} | ${r.noCov} |\n`;
+    mutSection += `| ${r.file} | ${r.pct} | ${r.covered} | ${r.killed} | ${r.survived} | ${r.noCov} | ${r.ignored} | ${r.invalid} |\n`;
   }
 }
 
@@ -107,7 +135,7 @@ const md = `# Quality dashboard
 |---|---|
 | TypeScript 型チェック | ${tcOk ? '✅ pass' : '❌ FAIL'} |
 | ユニットテスト | ${passed} passing${failed ? ` / ${failed} FAILING` : ''} (${testFiles} files) |
-${lineCov !== null ? `| Coverage — lines | ${lineCov.toFixed(2)}% |\n| Coverage — statements | ${stmtCov.toFixed(2)}% |\n| Coverage — branches | ${branchCov.toFixed(2)}% |\n| Coverage — functions | ${funcCov.toFixed(2)}% |\n` : '| Coverage | _skipped_ |\n'}${mutTotal ? `| Mutation score (total / covered) | ${(100 * mutTotal.killed / mutTotal.total).toFixed(2)}% / ${(100 * mutTotal.killed / (mutTotal.total - mutTotal.noCov)).toFixed(2)}% |\n| Mutants killed | ${mutTotal.killed} |\n| Mutants survived | ${mutTotal.survived} |\n` : ''}
+${lineCov !== null ? `| Coverage — lines | ${lineCov.toFixed(2)}% |\n| Coverage — statements | ${stmtCov.toFixed(2)}% |\n| Coverage — branches | ${branchCov.toFixed(2)}% |\n| Coverage — functions | ${funcCov.toFixed(2)}% |\n` : '| Coverage | _skipped_ |\n'}${mutTotal ? `| Mutation score (total / covered) | ${mutTotal.totalPct}% / ${mutTotal.coveredPct}% |\n| Mutants killed | ${mutTotal.killed} |\n| Mutants survived | ${mutTotal.survived} |\n| Mutants 有効 (分母) | ${mutTotal.valid} |\n| Mutants ignored (Stryker disable 宣言) | ${mutTotal.ignored} |\n| Mutants invalid (評価不成立) | ${mutTotal.invalid} |\n` : ''}
 
 ## Mutation testing (Stryker)
 

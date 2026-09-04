@@ -46,13 +46,17 @@ export interface CasualIncomeResult {
  * @param grossIncome 総収入金額 (満期返戻金・賞金等)
  * @param expenses 収入を得るための支出 (払込保険料・馬券購入額等)
  */
-export function calcCasualIncome(grossIncome: number, expenses = 0): CasualIncomeResult {
+export function calcCasualIncome(
+  grossIncome: number,
+  expenses = 0,
+  specialDeductionCap = CASUAL_INCOME_SPECIAL_DEDUCTION,
+): CasualIncomeResult {
   const gross = Math.max(0, grossIncome);
   const cost = Math.max(0, expenses);
   // 特別控除前の利益 (収入 − 経費)。
   const profit = Math.max(0, gross - cost);
   // 特別控除は利益額が上限 (最高50万円)。
-  const specialDeduction = Math.min(CASUAL_INCOME_SPECIAL_DEDUCTION, profit);
+  const specialDeduction = Math.min(Math.max(0, specialDeductionCap), profit);
   const casualIncome = Math.max(0, profit - specialDeduction);
   return {
     grossIncome: gross,

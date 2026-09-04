@@ -407,14 +407,53 @@ describe('ACTIONS["sync-to-gmail"]', () => {
     const decoded = Buffer.from(raw.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8');
     const subject = `=?UTF-8?B?${Buffer.from('ご注文ありがとうございます #1001', 'utf8').toString('base64')}?=`;
     expect(decoded).toBe(
+      // 2026-08-22: 手組みをやめて gmail.ts の `buildRfc2822` に寄せた。
+      // charset が引用符つきになり、`MIME-Version: 1.0` が入る (RFC 2045 が要求する)。
       [
         'To: taro@example.com',
         `Subject: ${subject}`,
-        'Content-Type: text/plain; charset=UTF-8',
+        'Content-Type: text/plain; charset="UTF-8"',
+        'MIME-Version: 1.0',
         '',
         '山田太郎様\n\nご注文を承りました。\n\n・Tシャツ × 2\n・マグカップ × 1\n\n合計: ¥12,000',
       ].join('\r\n'),
     );
+  });
+
+  /*
+   * 不変条件 #11 (RFC 2822 ヘッダに CR/LF/NUL を入れない) が**この経路にも**
+   * 効いていること。2026-08-22 まで shopify は gmail と同じ組み立てを手で
+   * 写しており、`To:` の関門だけが抜けていた。`assertOrder` は id と name しか
+   * 見ないので、`order.email` は型も改行も無検査で renderer から届く。
+   */
+  it.each([
+    ['CRLF で Bcc を注ぎ込む', 'a@b.example\r\nBcc: attacker@evil.example'],
+    ['LF だけでも', 'a@b.example\nBcc: attacker@evil.example'],
+    ['CR だけでも', 'a@b.example\rBcc: attacker@evil.example'],
+    ['NUL', 'a@b.example\u0000'],
+  ])('%s は下書きを作らずに落とす', async (_label, email) => {
+    const fetchMock = okJson({ id: 'd' });
+    await expect(
+      ACTIONS['sync-to-gmail']!({
+        token: 's',
+        fetch: fetchMock,
+        payload: { order: { ...ORDER, email }, token: 'ya29' },
+      }),
+    ).rejects.toThrow(/CR\/LF\/NUL/);
+    // **要求そのものが飛んでいない**ことまで見る (投げてから送っては意味が無い)。
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('email が文字列でなければ落とす (assertOrder は型を見ていない)', async () => {
+    const fetchMock = okJson({ id: 'd' });
+    await expect(
+      ACTIONS['sync-to-gmail']!({
+        token: 's',
+        fetch: fetchMock,
+        payload: { order: { ...ORDER, email: 12345 }, token: 'ya29' },
+      }),
+    ).rejects.toThrow();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it.each([

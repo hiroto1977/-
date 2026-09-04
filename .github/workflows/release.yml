@@ -27,17 +27,39 @@ jobs:
             artifact_glob: |
               release/*.AppImage
               release/*.deb
+              release/SHA256SUMS-*.txt
           - os: macos-latest
             # arch を x64/arm64 の両方に指定したので dmg が 2 つ出る
             # (`-x64.dmg` / `-arm64.dmg`)。glob はどちらも拾う。
             artifact_glob: |
               release/*.dmg
               release/*.dmg.blockmap
+              release/SHA256SUMS-*.txt
           - os: windows-latest
             artifact_glob: |
               release/*.exe
               release/*.exe.blockmap
+              release/SHA256SUMS-*.txt
     runs-on: ${{ matrix.os }}
+    # **3 OS すべてで bash を使う。**
+    #
+    # 既定の shell は windows-latest だけ pwsh になる。この workflow の
+    # `run:` は最初から bash 前提で書かれており (`if [ -n "${APPLE_ID:-}" ]`、
+    # `ls -la`、`dist/assets/*.js` の glob)、pwsh では
+    #   - `ls -la` が Get-ChildItem に束縛されて -la を解決できない
+    #   - native コマンドの引数を **glob 展開しない**ので `dist/assets/*.js`
+    #     がリテラルで渡り、lint-sample-data.cjs が「成果物が見つかりません」
+    #     で exit 1 (実測)
+    # となり、**Windows ジョブが softprops の手前で落ちる**。
+    # `fail-fast: false` なので Linux/macOS は公開まで進み、
+    # **Windows インストーラだけ欠けたリリース**が出る ——
+    # `verify-release-artifacts.cjs` が防ぐために書かれた当の失敗で、
+    # 同じジョブの手前で走るあの門からは見えない。
+    #
+    # リリースはタグでしか走らないので未発火だった (2026-08-28 のレビューで検出)。
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
 
@@ -50,10 +72,16 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Typecheck + test
+      # **タグはどのコミットも指せる。** trigger は `tags: v*` なので、
+      # CI が一度も通っていないコミットにタグを打っても、ここは動いて
+      # 署名済みインストーラを公開まで運ぶ。ci.yml は push: main / PR にしか
+      # 起動しないので、リリース経路には効かない (2026-08-25 に構成を確認)。
+      # だから 33 ゲートもここで回す —— 出すのはこのワークフローである。
+      - name: Typecheck + test + gates
         run: |
           npm run typecheck
           npm test
+          npm run verify:all
 
       # electron-builder は CI を検知すると **暗黙に** GitHub Releases へ publish
       # しようとする (v0.1.0 の失敗ランで実際に発火し、softprops ステップと二重
@@ -89,6 +117,59 @@ jobs:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
+      # electron-builder は「失敗せずに何も出さない」ことがある (target 設定の
+      # 取り違え、arch の取りこぼしなど)。下の softprops は
+      # fail_on_unmatched_files: false なので、そのまま **配布物ゼロでも緑**に
+      # なり、fail-fast: false と噛み合うと **1 プラットフォーム欠けたリリースが
+      # 全ジョブ緑で公開される**。
+      #
+      # electron-builder.json の宣言 (target と arch) から必要本数を出して
+      # 突き合わせる。glob 一致では足りない —— dmg を x64/arm64 で宣言していても
+      # `release/*.dmg` は arm64 だけで一致してしまうため。
+      # RUNNER_OS は runner の組み込み変数なので ${{ }} の展開は要らない。
+      # 梱包後に解決できない require が主プロセスの束に残っていないか。
+      #
+      # electron-builder が入れるのは dist/** dist-electron/** build/icon.png
+      # package.json だけ。それ以外を指す require が残っていると、**梱包した
+      # ときだけ落ちる**。2026-08-26 に実際にそうなっていた (バンドラが
+      # 実行時 require を書き換えないため) —— 画面も Electron も要らない
+      # 静的な検査なので、ここで先に通す。
+      - name: Verify bundled requires resolve after packaging
+        run: node scripts/smoke-app.cjs --check-bundle
+
+      - name: Verify release artifacts
+        run: node scripts/verify-release-artifacts.cjs
+
+      # 公開する物の SHA-256 を、**同じランの中で**書き出す。
+      #
+      # v0.1.0 では 16 時間差の 2 ランが同じ版の AppImage を上げ、
+      # 最初のぶんが消されないまま今も 2 つ並んでいる (サイズ差 36 バイト)。
+      # チェックサムが無いので、**どちらが正規のビルドか利用者に判定する
+      # 材料が無かった**。同じランで出しておけば、少なくとも
+      # 「この SHA256SUMS を出したランは、この AppImage を出した」が言える。
+      #
+      # **これは改竄検知ではない。** 署名の無いチェックサムが見つけられるのは
+      # 転送中の破損と上のような取り違えまでで、リリース資産を書き換え
+      # られる者は隣の SHA256SUMS も書き換えられる。本当の改竄耐性は署名で、
+      # それは上の `CSC_LINK` 系 secrets が入っている時だけ効く。
+      - name: Write checksums for the published artifacts
+        run: node scripts/checksum-release.cjs
+
+      # 出す物そのものに個人データが混ざっていないか。
+      #
+      # `ci.yml` / `pages.yml` はブラウザ版の HTML に当てているが、
+      # **デスクトップ版のバンドルには誰も当てていなかった** (2026-08-25)。
+      # `electron-builder.json` の `files` は `dist/**/*` を含むので、
+      # `dist/assets/index-*.js` (実測 11.4MB) は**全インストーラの中に入る**。
+      # 中身はブラウザ版と同じレンダラー束なので「今の構成なら同じ物」だが、
+      # それは構成が保証しているだけで、規則が保証していることではない ——
+      # 同じ理屈で `.json` の取りこぼしを見逃したのが今日の朝である。
+      # 実測 11.4MB に対して 0.7 秒。
+      - name: Scan the desktop bundle for real personal data
+        run: |
+          ls -la dist/ dist/assets/
+          node scripts/lint-sample-data.cjs --artifact dist/index.html dist/assets/*.js
+
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -96,5 +177,9 @@ jobs:
           # 無ければこのランの SHA に新規作成される。
           tag_name: ${{ github.event.inputs.tag_name || github.ref_name }}
           files: ${{ matrix.artifact_glob }}
+          # blockmap は electron-builder が必ず出すとは限らないので、
+          # 不一致で落とさない。「主要インストーラが宣言どおり出たか」は
+          # 上の Verify ステップが先に確かめている (ここを true にすると
+          # blockmap の有無で **正しいリリースが赤になる**)。
           fail_on_unmatched_files: false
           generate_release_notes: true

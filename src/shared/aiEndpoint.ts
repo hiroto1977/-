@@ -109,7 +109,26 @@ export function normalizeAiBaseUrl(raw: string, opts: AiEndpointOptions): AiEndp
   if (parsed.username !== '' || parsed.password !== '') return { ok: false, reason: 'has-userinfo' };
   if (parsed.search !== '' || parsed.hash !== '') return { ok: false, reason: 'has-query-or-fragment' };
   // 平文で資格情報を送れるのはローカルの推論サーバだけ。
-  // 鍵を送らない構成 (Ollama や キー無しの互換サーバ) は LAN の http を許す。
+  //
+  // 鍵を送らない構成 (Ollama や キー無しの互換サーバ) は**宛先を絞らない**。
+  // 2026-08-23 まで「LAN の http を許す」と書いていたが、実装は LAN に
+  // 限っていない —— 実測すると `credentialed: false` では
+  // `http://example.com` も `http://169.254.169.254` も通る。
+  //
+  // **絞らない理由**: LAN かどうかを静的に判定できない。`http://ollama.lan`
+  // のような名前は正当な LAN 構成だが、`http://evil.com` と字面で区別が
+  // 付かない (プロキシ側は DNS 解決後の IP を見て判定できるが、ここには
+  // その委譲先が無い)。IP リテラルだけ許すと実在の LAN 構成を壊す。
+  //
+  // **代わりに何が守られているか**: この経路は API キーを載せない。
+  // 載る構成 (`credentialed: true`) は loopback 以外の平文を必ず弾く。
+  // 送られるのはプロンプト (質問 + 注入された業務文脈) なので、
+  // **利用者が公開ホストを平文で指定すればその内容は経路上で読める**。
+  // 設定するのは利用者自身だが、それを承知で選べるよう `docs/SECURITY.md`
+  // に明記してある。
+  //
+  // 絞る (loopback + RFC1918 のみ許す) 案は検討したうえで採っていない ——
+  // 名前ベースの LAN 構成を壊すため。採るなら利用者の判断で。
   if (opts.credentialed && parsed.protocol === 'http:' && !isLoopbackHostname(parsed.hostname)) {
     return { ok: false, reason: 'insecure-remote' };
   }

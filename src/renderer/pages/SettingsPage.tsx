@@ -5,11 +5,14 @@ import { SERVICES, CATEGORY_LABEL, type ServiceCategory } from '../services';
 import { summarizeConnections } from '../data/connectionStatus';
 import { BackupPanel } from '../components/BackupPanel';
 import { CloudSyncPanel } from '../components/CloudSyncPanel';
+import { ParametersPanel } from '../components/ParametersPanel';
+import { PARAMETERS } from '../../shared/parameters';
 import { usePlan } from '../plan/usePlan';
 import { getPlan } from '../../shared/plan';
 import { issueInviteCode } from '../plan/internalLicense';
-import { getVault } from '../security/vault';
+import { getVault, MIN_PASSWORD_LENGTH } from '../security/vault';
 import { credentialUseOf, unusedStoredCredentials } from '../../shared/credentialUse';
+import { EVICTION_RECOVERY, isEvictableStorage } from '../../shared/storageDurability';
 import type { ServiceId } from '../../shared/serviceId';
 import { inspectStoredProxyConfig, setProxyConfig, type ProxyConfig } from '../network/proxy';
 import {
@@ -33,6 +36,7 @@ import {
   GOOGLE_SCOPES,
   parseGoogleCallback,
 } from '../oauth/pkce';
+import { clearPkceSession, readPkceSession, savePkceSession } from '../oauth/pkceSession';
 
 /**
  * Settings — 22 番目のサービス。
@@ -305,37 +309,37 @@ function VaultControls({ onLocked }: { onLocked: () => void }) {
       setErr('新しいパスワードが一致しません');
       return;
     }
-    if (newPw.length < 8) {
-      setErr('新しいパスワードは 8 文字以上にしてください');
+    // **強制しているのは `vault.ts` の `MIN_PASSWORD_LENGTH` (12)。**
+    // ここは長らく `< 8` で「8 文字以上にしてください」と出しており、
+    // 10 文字を入れると「8 文字以上」と言われた後に vault が「12 文字以上」で
+    // 弾く、という二段の食い違いになっていた (2026-08-23)。
+    // 数字を 2 か所に持たない —— 実物の定数から出す。
+    if (newPw.length < MIN_PASSWORD_LENGTH) {
+      setErr(`新しいパスワードは ${MIN_PASSWORD_LENGTH} 文字以上にしてください`);
       return;
     }
     setBusy(true);
     try {
-      const vault = getVault();
-      // Verify old password by attempting unlock
-      await vault.unlock(oldPw);
-      // Read all tokens, lock, re-init with new password, re-set tokens
-      const ids = await vault.listConfigured();
-      const tokens: Record<string, string> = {};
-      for (const id of ids) {
-        const t = await vault.getToken(id);
-        if (t) tokens[id] = t;
-      }
-      // Delete the vault DB and re-initialize. We need an explicit IndexedDB drop.
-      vault.lock();
-      await new Promise<void>((resolve) => {
-        const req = indexedDB.deleteDatabase('business-hub-vault');
-        req.onsuccess = () => resolve();
-        req.onerror = () => resolve();
-        req.onblocked = () => resolve();
-      });
-      // The singleton still references the now-deleted vault. Use `unlock`
-      // pattern via re-imported module — for simplicity here, we just call
-      // initialize() on the same instance (it re-creates meta in IndexedDB).
-      await vault.initialize(newPw);
-      for (const [id, tok] of Object.entries(tokens)) {
-        await vault.setToken(id, tok);
-      }
+      /*
+       * 保管庫へ委ねる。**画面が保管庫の内部を組み立てない。**
+       *
+       * 以前ここには「全トークンを平文で読む → `indexedDB.deleteDatabase` で
+       * 保管庫ごと消す → `initialize()` → ループで書き戻す」が書かれていた。
+       * 2026-08-24 に実測して 2 つの結果が確認できた:
+       *
+       *  1. **消してから書き戻すまでが失窓** —— その間、資格情報の唯一の複製は
+       *     メモリ上の平文だけ。中断 (書き込み失敗・自動施錠・タブを閉じる・
+       *     再読込) で、まだ書き戻していない分は永久に失われる
+       *  2. **`initialize()` は新しい 24 語を生成して返す**のに、その戻り値を
+       *     捨てていた → 利用者が控えたフレーズは通らなくなり、通るフレーズは
+       *     どこにも存在しない = リカバリー枝が永久に使えなくなる
+       *
+       * トークンはマスター鍵で暗号化されており、パスワードはそのマスター鍵を
+       * 包んでいるだけなので、**包み直すだけでよい**。`vault.changePassword` が
+       * meta と master-wrap を 1 トランザクションで差し替える。
+       * トークンもリカバリー枝も触らないので、控えた 24 語は生き続ける。
+       */
+      await getVault().changePassword(oldPw, newPw);
       setOldPw('');
       setNewPw('');
       setConfirm('');
@@ -381,7 +385,7 @@ function VaultControls({ onLocked }: { onLocked: () => void }) {
             type="password"
             value={newPw}
             onChange={(e) => setNewPw(e.target.value)}
-            placeholder="新しいパスワード (8 文字以上)"
+            placeholder={`新しいパスワード (${MIN_PASSWORD_LENGTH} 文字以上)`}
             style={pwInput}
           />
           <input
@@ -800,6 +804,10 @@ export function SettingsPage() {
 
       <CloudSyncPanel />
 
+      <Section title="数値パラメータ (法定値・参考値・しきい値・前提)" count={PARAMETERS.length}>
+        <ParametersPanel />
+      </Section>
+
       <Section title="API キーとトークン" count={SLOTS.length}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(380px, 100%), 1fr))', gap: 12 }} key={refreshKey}>
           {SLOTS.map((s) => (
@@ -842,8 +850,55 @@ export function SettingsPage() {
  * ため「本人が判断すべきリスクが本人に届かない」状態だった (2026-07 監査の
  * フォローアップ)。ここで可視化して、暗号化を有効にする手順まで案内する。
  */
+/**
+ * 立ち退きの注意。**暗号化できる場合とできない場合の両方から呼ばれる**ので、
+ * 文言はここ 1 か所にしかない (2 か所に書くと黙って食い違う)。
+ *
+ * **「バックアップを書き出してください」とだけ言ってはいけない。**
+ * 最初の実装はそう書いており、それは「暗号化されたトークンごと失われます」の
+ * 直後に置かれていたので、**書き出せばトークンも戻ると読める**。実際には
+ * このアプリのバックアップは業務レコードだけで、API キーは構造的に入らない
+ * (`BACKUP_EXCLUSIONS` の 1 番目)。**守られたつもりで失う**のがいちばん悪い。
+ * 何が戻って何が戻らないかは `EVICTION_RECOVERY` が持つ。
+ */
+function EvictionNotice() {
+  return (
+    <>
+      <br />
+      <strong style={{ color: 'var(--warn, #fbbf24)' }}>
+        ⚠️ この保管庫は「消えうる」領域にあります
+      </strong>
+      <br />
+      ブラウザが空き容量の都合や長期の無操作でこの領域を消すことがあります
+      (Safari は無操作 7 日で消します)。消えるときは
+      <strong>この生成元の保存領域ごと</strong>消えるため、保管庫だけでなく
+      ライブラリの書類やブラウザ内の設定も一緒に失われます。
+      <br />
+      <strong>控えた 24 語では戻せません</strong> ——
+      フレーズは保管庫を開けるためのもので、消えたときは暗号化された
+      トークンごと失われるため、開ける対象が残りません。
+      {EVICTION_RECOVERY.map((r) => (
+        <span key={r.what}>
+          <br />
+          ・<strong>{r.what}</strong>:{' '}
+          {r.recoverable ? '戻せます' : <strong>戻せません</strong>} — {r.note}
+        </span>
+      ))}
+      <br />
+      アプリとして<strong>インストール</strong>すると、ブラウザが
+      この領域を保護対象に格上げすることがあります。
+    </>
+  );
+}
+
 function StorageProtectionNotice() {
-  const [state, setState] = useState<{ encrypted: boolean; plainCount: number; file: string } | null>(
+  const [state, setState] = useState<{
+    encrypted: boolean;
+    plainCount: number;
+    file: string;
+    mechanism?: 'os-keychain' | 'webcrypto-vault' | 'obfuscated';
+    durability?: 'file' | 'persistent' | 'best-effort';
+  } | null>(
     null,
   );
   const [failed, setFailed] = useState(false);
@@ -873,11 +928,58 @@ function StorageProtectionNotice() {
   if (state.encrypted && state.plainCount === 0) {
     return (
       <div style={{ fontSize: 13, lineHeight: 1.7 }}>
-        <strong style={{ color: 'var(--ok, #4ade80)' }}>✅ 暗号化されています</strong>
+        {/*
+          **見出しも範囲を名乗る。** 本文は元から「トークンは」と書いており、
+          警告側も「トークンを暗号化できません」と書いているのに、成功側の
+          見出しだけが範囲を落としていた。節の題が「保存時の保護状態」なので、
+          範囲の無い ✅ は「保存する物は全部暗号化されている」と読める。
+          実際には proxy の共有秘密 (`business-hub-preferences`)・ライブラリの
+          書類・localStorage の各ストアは平文のまま (2026-08-23 実測)。
+        */}
+        <strong style={{ color: 'var(--ok, #4ade80)' }}>✅ トークンは暗号化されています</strong>
         <p style={{ margin: '4px 0 0', color: 'var(--mute)' }}>
-          トークンは OS のキーチェーン由来の鍵で暗号化して保存されています。
+          {/*
+            **何が鍵を握っているかを取り違えない。** 2026-08-23 まで、ここは
+            `encrypted` が true なら無条件に「OS のキーチェーン由来の鍵で」と
+            書いていた。ブラウザ版には OS キーチェーンが無く、鍵は
+            **マスターパスワード**から導出している。「OS が守る」と
+            「あなたのパスフレーズが守る」は利用者にとって別の話で、
+            後者はパスフレーズの強さがそのまま強度になる。
+          */}
+          {state.mechanism === 'webcrypto-vault' ? (
+            <>
+              トークンは<strong>マスターパスワードから導出した鍵</strong>で暗号化
+              (AES-GCM-256 / PBKDF2-SHA-256 60 万回) して保存されています。
+              <br />
+              <strong>強度はパスフレーズの強さで決まります</strong> ——
+              OS のキーチェーンは使っていません (ブラウザには存在しません)。
+            </>
+          ) : (
+            <>トークンは OS のキーチェーン由来の鍵で暗号化して保存されています。</>
+          )}
           <br />
           保存先: <code>{state.file}</code>
+          {/*
+            **暗号化と、消えないことは別の話である。**
+
+            ブラウザ版の保管庫は IndexedDB に在り、既定では best-effort の
+            領域になる (実測 2026-08-25: `persisted()` も `persist()` も false)。
+            この状態では**空き容量の都合や無操作でブラウザが立ち退かせうる**
+            —— Safari の ITP は無操作 7 日で消す。
+
+            **控えた 24 語では戻せない。** リカバリーフレーズは保管庫を
+            *開ける*ための物で、立ち退きでは暗号化されたトークンごと消える
+            ため、開ける物が残らない。
+
+            **バックアップでも戻らない** —— このアプリのバックアップは
+            業務レコードだけで、API キーは `BACKUP_EXCLUSIONS` の 1 番目が
+            言うとおり構造的に入らない。文言は `EVICTION_RECOVERY` が持つ
+            (`shared/storageDurability.ts` の注記に経緯)。
+
+            暗号化の状態 (`encrypted`) とは独立に出す —— 暗号化されていても
+            消えるときは消える。
+          */}
+          {isEvictableStorage(state.durability) && <EvictionNotice />}
         </p>
       </div>
     );
@@ -900,6 +1002,27 @@ function StorageProtectionNotice() {
         )}
         <br />
         保存先: <code>{state.file}</code>
+        {/*
+          **暗号化と、消えないことは別の話である。**
+
+          ブラウザ版の保管庫は IndexedDB に在り、既定では best-effort の
+          領域になる (実測 2026-08-25: `persisted()` も `persist()` も false)。
+          この状態では**空き容量の都合や無操作でブラウザが立ち退かせうる**
+          —— Safari の ITP は無操作 7 日で消す。
+
+          **控えた 24 語では戻せない。** リカバリーフレーズは保管庫を
+          *開ける*ための物で、立ち退きでは暗号化されたトークンごと消える
+          ため、開ける物が残らない。
+
+          **バックアップでも戻らない** —— このアプリのバックアップは
+          業務レコードだけで、API キーは `BACKUP_EXCLUSIONS` の 1 番目が
+          言うとおり構造的に入らない。文言は `EVICTION_RECOVERY` が持つ
+          (`shared/storageDurability.ts` の注記に経緯)。
+
+          暗号化の状態 (`encrypted`) とは独立に出す —— 暗号化されていても
+          消えるときは消える。
+        */}
+        {isEvictableStorage(state.durability) && <EvictionNotice />}
       </p>
       <p style={{ margin: '8px 0 0' }}>
         <strong>対処:</strong> Linux では <code>gnome-keyring</code> または{' '}
@@ -1035,6 +1158,35 @@ function ProxySection() {
             Notion / Atlassian / Cloudflare は CORS でブラウザ直接呼び出し不可。
             自前で Cloudflare Worker 等を立てて URL を指定すると経由できます。
             設定方法は docs/PROXY_EXAMPLE.md を参照。
+            {/*
+              **「自前で」は前提であって、警告ではなかった。**
+
+              この欄は自由入力の URL で、他人の Worker を入れても止まらない
+              (止めようも無い —— どの URL が「あなたの物」かは判定できない)。
+              そして経由するとき渡るのは宛先だけではない ——
+              `fetchViaProxy` は呼び出し側のヘッダをそのまま封筒に載せる
+              (`headers: flatHeaders`) ので、**`Authorization: Bearer <トークン>`
+              が Worker の運用者に見える**。HIBP のメールアドレスや
+              VirusTotal の URL も同じ経路を通る (同日、その 2 つには
+              経路の説明を足した)。
+
+              すぐ下には、秘密を省いたときに他人が中継できることが
+              書いてある —— **他人があなたの Worker を使う**側の話である。
+              (画面の文言はここへ引き写さない。写すと、字面で位置を探す
+               検査にとって**囮**になる —— 実際この注記が検査の窓を
+               ずらして落とした。)
+              **あなたが他人の Worker を使う**側は、帯域ではなく資格情報を
+              失うので明らかに重い。片側だけ書いてあった。
+
+              判定できない以上、**言うことが唯一の対策**になる。
+            */}
+            <br />
+            <strong style={{ color: 'var(--warn, #fbbf24)' }}>
+              入れてよいのは、あなたが管理している Worker だけです。
+            </strong>
+            {' '}
+            経由する要求には <strong>API トークン (Authorization ヘッダ) がそのまま乗ります</strong>。
+            他人の URL を入れると、その運用者に登録済みの資格情報が渡ります。
           </div>
         </div>
       </div>
@@ -1053,10 +1205,22 @@ function ProxySection() {
             type="password"
             value={secret}
             onChange={(e) => setSecret(e.target.value)}
-            placeholder="共有秘密 (任意・空欄可)"
+            placeholder="共有秘密 (空欄にすると誰でも中継できます)"
             maxLength={MAX_PROXY_SECRET_LENGTH}
             style={pwInput}
           />
+          {/*
+            「任意・空欄可」とだけ書いてあると、省いても何も起きないように読める。
+            省くと Worker は URL を知っている誰からでも要求を受ける (docs/
+            PROXY_EXAMPLE.md は「公開サーバとして第三者に開放しないでください」と
+            書いているが、画面には出ていなかった)。宛先は Worker の allowlist に
+            限られるので他人の資格情報は盗れないが、帯域と割り当ては使われる。
+          */}
+          <div style={{ fontSize: 10, color: 'var(--text-mute)', lineHeight: 1.5 }}>
+            共有秘密を空欄にすると、URL を知っている人なら誰でもあなたの Worker を
+            経由できます (中継先は Worker 側の allowlist に限られ、あなたの
+            資格情報は渡りませんが、帯域と割り当ては消費されます)。
+          </div>
           <div style={{ display: 'flex', gap: 6 }}>
             <button type="button" onClick={save} style={btn('accent')}>保存</button>
             <button type="button" onClick={() => { setEditing(false); refresh(); }} style={btn()}>キャンセル</button>
@@ -1067,7 +1231,11 @@ function ProxySection() {
           {cfg && (
             <div style={{ fontSize: 11, color: 'var(--text-mute)', wordBreak: 'break-all', marginBottom: 6, width: '100%' }}>
               URL: <code>{cfg.url}</code>
-              {cfg.sharedSecret ? ' · 共有秘密あり' : ''}
+              {cfg.sharedSecret ? (
+                ' · 共有秘密あり'
+              ) : (
+                <span style={{ color: '#f59e0b' }}> · 共有秘密なし (誰でも中継できます)</span>
+              )}
             </div>
           )}
           <button type="button" onClick={() => setEditing(true)} style={btn(cfg ? undefined : 'accent')}>
@@ -1219,11 +1387,14 @@ function GoogleOAuthSection() {
       return;
     }
     const secrets = await generatePkce();
-    // 必須: token exchange まで verifier を保持
-    sessionStorage.setItem('pkce.verifier', secrets.verifier);
-    sessionStorage.setItem('pkce.state', secrets.state);
-    sessionStorage.setItem('pkce.clientId', clientId);
-    sessionStorage.setItem('pkce.redirectUri', redirectUri);
+    // 必須: token exchange まで verifier を保持。置き場所と消し方は
+    // `oauth/pkceSession.ts` に 1 つだけ持つ (2026-08-23)。
+    savePkceSession({
+      verifier: secrets.verifier,
+      state: secrets.state,
+      clientId,
+      redirectUri,
+    });
     const url = buildGoogleAuthUrl(
       { clientId, scopes: [...GOOGLE_SCOPES.drive, ...GOOGLE_SCOPES.calendar, ...GOOGLE_SCOPES.gmail], redirectUri },
       secrets,
@@ -1239,14 +1410,12 @@ function GoogleOAuthSection() {
       setErr('Google から受け取った code (またはコールバック URL 全体) を貼り付けてください');
       return;
     }
-    const verifier = sessionStorage.getItem('pkce.verifier');
-    const cid = sessionStorage.getItem('pkce.clientId');
-    const ruri = sessionStorage.getItem('pkce.redirectUri');
-    const expectedState = sessionStorage.getItem('pkce.state');
-    if (!verifier || !cid || !ruri || !expectedState) {
+    const session = readPkceSession();
+    if (!session) {
       setErr('セッションが切れました。「認可ページを開く」からやり直してください');
       return;
     }
+    const { verifier, clientId: cid, redirectUri: ruri, state: expectedState } = session;
     // Accept either the raw code (legacy, requires manual state below) or
     // a full callback URL like `https://localhost:.../?code=...&state=...`.
     // Parsing the full URL is preferred since it carries both fields and
@@ -1274,16 +1443,17 @@ function GoogleOAuthSection() {
       await v.setToken('calendar', tok.accessToken);
       await v.setToken('gmail', tok.accessToken);
       await v.setToken('google-access', tok.accessToken); // 後方互換 / 単独参照用
-      sessionStorage.removeItem('pkce.verifier');
-      sessionStorage.removeItem('pkce.state');
-      sessionStorage.removeItem('pkce.clientId');
-      sessionStorage.removeItem('pkce.redirectUri');
       setCode('');
       setAuthUrl(null);
       setMsg('Google 連携を有効化しました (Drive / Calendar / Gmail)');
     } catch (e) {
       setErr(e instanceof Error ? e.message : String(e));
     } finally {
+      // **成否によらず一時秘密を捨てる。** 以前は try の中の成功経路にしか
+      // 掃除が無く、`state` 不一致 (= CSRF の疑い) や通信断で落ちたときに
+      // **いちばん消したい verifier が残った**。verifier は単回使用なので、
+      // ここで消しても正常系は失われない (やり直しは認可からになる)。
+      clearPkceSession();
       setBusy(false);
     }
   }
@@ -1348,7 +1518,8 @@ function GoogleOAuthSection() {
               onClick={() => {
                 setAuthUrl(null);
                 setCode('');
-                sessionStorage.removeItem('pkce.verifier');
+                // 4 つまとめて消す。以前は verifier だけ消して 3 つ残していた。
+                clearPkceSession();
               }}
               style={btn()}
             >

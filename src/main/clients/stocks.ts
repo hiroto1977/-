@@ -1,11 +1,14 @@
+import { MAX_ADVISOR_QUESTION_CHARS, checkAdvisorQuestion } from '../../shared/advisorQuestionLimits';
 import { seededNoise } from '../../shared/seededNoise';
 import { escapeXml, escapeMarkdownInline, escapeMarkdownText } from '../../shared/escape';
 import type { FetchContext, ActionContext, ActionMap } from './types';
-import { redactForMessage } from './types';
+import { limitedFetch, readCapped, redactForMessage } from './types';
+import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { isSafeExportPath } from './exportPaths';
+import { isSafeExportPath, writeExportFile } from './exportPaths';
+import { AI_PROVIDERS } from '../../shared/ai/providers';
 
 /**
  * Stocks analytics + paper trading.
@@ -1202,14 +1205,21 @@ export function validateAdvisorJson(
   return out;
 }
 
+/**
+ * この呼び出しの `max_tokens`。**レンダラーからは変えられない**
+ * (経緯は `skills.ts` の `SKILLS_MAX_TOKENS`)。`model` も payload から外した。
+ */
+export const STOCKS_ADVISOR_MAX_TOKENS = 1024;
+
+/**
+ * **`model` / `maxTokens` はここに無い** —— `business.ts` の
+ * `BusinessAdvisorPayload` と同じ理由 (2026-08 に payload から外し、定数を使う)。
+ * 型の宣言だけが 2026-09-01 まで残っていたので消した。
+ */
 interface AdvisorPayload {
   question?: unknown;
   /** Optional override; defaults to MOCK_TICKERS symbols. */
   universe?: unknown;
-  /** Model id; defaults to claude-sonnet-4-6. */
-  model?: unknown;
-  /** Max output tokens; defaults to 1024. */
-  maxTokens?: unknown;
 }
 
 interface AnthropicContentBlock {
@@ -1222,19 +1232,20 @@ interface AnthropicMessagesResponse {
 }
 
 async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
-  const { question, universe, model, maxTokens } = ctx.payload as AdvisorPayload;
+  const { question, universe } = ctx.payload as AdvisorPayload;
   // Each input-validation branch is exhaustively tested (empty, oversize,
   // control-char). ConditionalExpression `false` would skip the throw;
   // downstream code would fail differently. Stryker mis-attributes; pin
   // via pragma.
   // Stryker disable ConditionalExpression
-  if (typeof question !== 'string' || question.length === 0) {
+  const problem = checkAdvisorQuestion(question);
+  if (problem === 'empty') {
     throw new Error('question is required');
   }
-  if (question.length > 1000) {
-    throw new Error('question exceeds 1000 chars');
+  if (problem === 'too-long') {
+    throw new Error(`question exceeds ${MAX_ADVISOR_QUESTION_CHARS} chars`);
   }
-  if (/[\r\n\0]/.test(question)) {
+  if (problem === 'control-chars') {
     throw new Error('question contains control characters');
   }
   // Stryker restore ConditionalExpression
@@ -1286,40 +1297,39 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
     JSON.stringify(analyses),
   ].join('\n');
 
-  const f = ctx.fetch ?? fetch;
-  const res = await f('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': ctx.token,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
+  // business-advisor と同じ理由で `limitedFetch` を通す —— 2026-08-23 まで
+  // 素の fetch で打ち切りも上限も無かった。補完は長いので 2 分。
+  const hctx = { fetch: ctx.fetch, serviceId: 'stocks', timeoutMs: AI_CHAT_TIMEOUT_MS };
+  const parsed = await limitedFetch(
+    'https://api.anthropic.com/v1/messages',
+    {
+      method: 'POST',
+      headers: {
+        'x-api-key': ctx.token,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: AI_PROVIDERS.anthropic.defaultModel,
+        max_tokens: STOCKS_ADVISOR_MAX_TOKENS,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }],
+      }),
     },
-    // The model / max_tokens fallback ladder is pinned by 4 tests
-    // (custom model, empty-string model → default, NaN maxTokens →
-    // default, zero maxTokens → default). The boundary `maxTokens > 0`
-    // vs `>= 0` is equivalent because `Number.isFinite(0)` is true and
-    // `0 > 0` is false (mutant would also reject 0).
-    // Stryker disable next-line ConditionalExpression,LogicalOperator,EqualityOperator
-    body: JSON.stringify({
-      model: typeof model === 'string' && model.length > 0 ? model : 'claude-sonnet-4-6',
-      // Stryker disable next-line ConditionalExpression,LogicalOperator,EqualityOperator
-      max_tokens: typeof maxTokens === 'number' && Number.isFinite(maxTokens) && maxTokens > 0 ? maxTokens : 1024,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userPrompt }],
-    }),
-  });
-
-  if (!res.ok) {
-    // Defensive catch on res.text() — the HTTP-429 test gives a normal
-    // response body, so the catch path is unreachable from tests. The
-    // `body.slice(0, 200)` length cap is also unreachable since test
-    // bodies are short.
-    // Stryker disable next-line ArrowFunction,MethodExpression
-    const body = await res.text().catch(() => '');
-    throw new Error(`stocks-advisor ${res.status}: ${redactForMessage(body, 200)}`);
-  }
-
-  const parsed = (await res.json()) as AnthropicMessagesResponse;
+    hctx,
+    async (res) => {
+      if (!res.ok) {
+        // Defensive catch on the capped read — the HTTP-429 test gives a normal
+        // response body, so the catch path is unreachable from tests. The
+        // `body.slice(0, 200)` length cap is also unreachable since test
+        // bodies are short.
+        // Stryker disable next-line ArrowFunction,MethodExpression
+        const body = await readCapped(res, hctx).catch(() => '');
+        throw new Error(`stocks-advisor ${res.status}: ${redactForMessage(body, 200)}`);
+      }
+      return JSON.parse(await readCapped(res, hctx)) as AnthropicMessagesResponse;
+    },
+  );
   // The Anthropic response contract: `content` is a (possibly empty)
   // array. The empty-content test exercises the next throw; the
   // `?.find((b) => true)` mutant would still find a (different) block
@@ -1624,10 +1634,60 @@ function shape(raw: unknown): StocksState {
 
 /** Load state from disk. Returns DEFAULT_STATE on missing file / parse error /
  *  shape mismatch. Never throws. */
+/*
+ * `saveStocksState` が **0600** で書く理由 —— `team-radar.json` と同じ扱いに
+ * 揃える (2026-08-23)。
+ *
+ * ここに入るのはウォッチリスト = 利用者が何に関心を持っているかという個人の
+ * 情報で、同じ機械の他の利用者に見せる理由が無い。実測では 644 で、
+ * `secrets.json` / `service-hub-emotions.json` / (同日直した) `team-radar.json`
+ * がどれも 600 なのに、**内部状態のうちここだけが緩かった**。
+ *
+ * `mode` は新規作成にしか効かないが、`tmp` を新しく作って `rename` で被せるので
+ * **既にある 644 のファイルも次の保存で直る** (実測で確認)。
+ *
+ * (書き出し物 = `dashboard.html` / `.md` はここでは触らない。あちらは利用者が
+ *  見る・渡すために作る成果物で、内部状態とは性質が違う。)
+ *
+ * **この注記は `Stryker disable` の外に置くこと。** 中に入れると黙らせる範囲が
+ * その分だけ広がり、`lint:mutation-scope` が鳴る (実際に鳴らして気付いた)。
+ */
+/*
+ * **`mode` は新規作成のときしか効かない。** 保存は固定名の `.tmp` へ書いて
+ * `rename` で被せる形なので、古い版が権限を付ける前に残した `.tmp` が 644 で
+ * 居ると、`writeFile(..., { mode: 0o600 })` はその 644 を**変えないまま**
+ * 上書きし、`rename` がそれを本体へ被せる —— 保存した本体が 644 になる。
+ *
+ * 実測 (2026-08-25):
+ *
+ * ```
+ *   事前の .tmp = 644 → 保存後の本体 = 644
+ *   .tmp 無し          → 保存後の本体 = 600
+ * ```
+ *
+ * 同じ形は `emotions.ts` と `exportPaths.ts` の注記が既に書いており、
+ * `exportPaths.ts` は `writeFile` の後に `chmod` を置いて閉じている。
+ * ここだけ閉じていなかった。**締めるのは書いた後である。**
+ * `saveStocksState` の `writeFn` が既定の実装の中で `chmod` する ——
+ * 検査が差し替える `deps.writeFile` は実ファイルを作らないことがあるので、
+ * 外へ出すと注入側が壊れる。留めているのは
+ * `main/__tests__/staleTmpMode.test.ts`。
+ */
 // The default-fallback arrow functions below are exercised only when
 // callers omit the corresponding dep (production path). The tests always
 // inject deps to keep file I/O hermetic. `recursive: true` on mkdir is
 // part of that production-only path.
+/**
+ * 0600 で書いて、**書いた後に締める**。理由は直上の注記。
+ *
+ * `Stryker disable` の**外**に置く —— 中に入れると chmod ごと黙らされ、
+ * 「測っていない」が 100% として報告される。ここは実際に測られる。
+ */
+async function writeTight(target: string, contents: string): Promise<void> {
+  await fs.writeFile(target, contents, { mode: 0o600 });
+  await fs.chmod(target, 0o600);
+}
+
 // Stryker disable ArrowFunction,BooleanLiteral
 export async function loadStocksState(deps: StateDeps = {}): Promise<StocksState> {
   const p = (deps.statePath ?? defaultStatePath)();
@@ -1646,7 +1706,8 @@ export async function saveStocksState(state: StocksState, deps: StateDeps = {}):
   const p = (deps.statePath ?? defaultStatePath)();
   const tmp = p + '.tmp';
   const mkdirFn = deps.mkdir ?? ((dir: string) => fs.mkdir(dir, { recursive: true }).then(() => undefined));
-  const writeFn = deps.writeFile ?? ((path: string, c: string) => fs.writeFile(path, c, 'utf8'));
+  // 0600 で書く理由は上の `Stryker disable` の手前の注記を参照。
+  const writeFn = deps.writeFile ?? writeTight;
   const renameFn = deps.rename ?? ((a: string, b: string) => fs.rename(a, b));
   await mkdirFn(path.dirname(p));
   await writeFn(tmp, JSON.stringify(state, null, 2));
@@ -1909,7 +1970,7 @@ export async function exportDashboardImpl(
     generatedAt,
   });
   await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await (deps.writeFile ?? ((p, c) => fs.writeFile(p, c, 'utf8')))(filePath, html);
+  await (deps.writeFile ?? writeExportFile)(filePath, html);
   return { path: filePath, bytes: Buffer.byteLength(html, 'utf8'), generatedAt };
 }
 // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction
@@ -1957,7 +2018,7 @@ export async function exportDashboardMdImpl(
     generatedAt,
   });
   await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await (deps.writeFile ?? ((p, c) => fs.writeFile(p, c, 'utf8')))(filePath, md);
+  await (deps.writeFile ?? writeExportFile)(filePath, md);
   return { path: filePath, bytes: Buffer.byteLength(md, 'utf8'), generatedAt };
 }
 // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction

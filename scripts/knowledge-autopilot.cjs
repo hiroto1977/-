@@ -28,6 +28,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const hostGuard = require('./public-host-guard.cjs');
 const crypto = require('node:crypto');
 const { execFileSync } = require('node:child_process');
 const kc = require('../orchestration/knowledge-context.cjs');
@@ -233,7 +234,83 @@ function graphDedupeSuspects(entries, distinct) {
 // ---------------------------------------------------------------------------
 // 1b. 出典 URL の死活（オプション・週替わりシャード）
 // ---------------------------------------------------------------------------
-async function checkLinks(entries, today, shardSize) {
+/**
+ * 死活を「取りに行ってよい」URL か。
+ *
+ * ## なぜ要るか（実測）
+ *
+ * `fetch` はスキームを選ばないので、コーパスに `data:text/plain,x` が混ざると
+ * **status 200 が返り、その出典は永久に「生きている」と報告される**。
+ * リンク切れ検査の目的そのものが無効になる。実測で確認した:
+ *
+ *     file:///etc/hostname  → throw (読めはしない)
+ *     data:text/plain,hi    → **status 200**
+ *     ftp://example.test/   → throw
+ *
+ * 副次的に、`redirect: 'follow'` で外部へ出る経路を http(s) に限る意味もある
+ * （応答本文は読まず状態コードしか残さないので帯域の狭い oracle ではあるが、
+ * 取りに行く先をデータが決める以上、スキームだけは絞っておく）。
+ *
+ * **ホストの絞り込みはここでは書かない。** loopback / private の判定は
+ * `src/shared/aiEndpoint.ts` の `isLoopbackHostname` が持っており、
+ * 同じ判断を 2 か所に書くと必ずどちらかが先に古くなる
+ * (`src/shared/proxyEndpoint.ts` の冒頭に明記されている方針)。
+ * ここは .cjs で TS を import できないため、写経せず**スキームだけ**にする。
+ *
+ * 2026-08-22 時点のコーパス 12,229 URL は全て http(s) (https 12,207 / http 22)
+ * なので、この関門は今日は 1 件も落とさない。
+ */
+/**
+ * 取りに行ってよい URL か。
+ *
+ * **2026-08-25 まで scheme しか見ていなかった。** この関数の直後で
+ * `fetch(url, { redirect: 'follow' })` が走る —— GitHub の runner から
+ * 第三者 1,500 ホストへ、リダイレクトを追って繋ぎに行く経路である。
+ * `docs/PROXY_EXAMPLE.md` の頭で名指ししている
+ * 「`302 Location: http://169.254.169.254/` を返す経路」が、
+ * **利用者へ配るプロキシでは塞いであるのに自分の CI では素通り**だった。
+ * ホストの判定は `scripts/public-host-guard.cjs` に 1 つだけ置く。
+ */
+function isCheckableUrl(url) {
+  return hostGuard.isFetchableUrl(url);
+}
+
+/**
+ * リダイレクトを**自分で追う**。1 ホップごとにホストを見直す。
+ *
+ * `redirect: 'follow'` は最初の 1 回しか検査の機会を与えない ——
+ * 通ったのは初回の宛先で、実際に繋ぐ先は第三者が決める。
+ * 利用者へ配る Worker が `redirect: 'manual'` + ホップ毎の再検査に
+ * している (docs/PROXY_EXAMPLE.md §3) のと同じ理由。
+ */
+const MAX_LINK_REDIRECTS = 5;
+
+async function fetchWithCheckedRedirects(url, init, deps = {}) {
+  const fetchImpl = deps.fetchImpl ?? fetch;
+  const lookup = deps.lookup; // undefined なら public-host-guard の既定 (実 DNS)
+  let current = url;
+  for (let hop = 0; hop <= MAX_LINK_REDIRECTS; hop++) {
+    if (!hostGuard.isFetchableUrl(current)) {
+      throw new Error(`redirect target is not a public http(s) URL: ${current}`);
+    }
+    const host = new URL(current).hostname;
+    const publicHost =
+      lookup === undefined
+        ? await hostGuard.resolvesToPublicHost(host)
+        : await hostGuard.resolvesToPublicHost(host, lookup);
+    if (!publicHost) {
+      throw new Error(`redirect target resolves to a private/reserved address: ${current}`);
+    }
+    const res = await fetchImpl(current, { ...init, redirect: 'manual' });
+    if (res.status < 300 || res.status > 399) return res;
+    const loc = res.headers.get('location');
+    if (loc === null || loc === '') return res; // 3xx だが行き先が無い → そのまま返す
+    current = new URL(loc, current).href;
+  }
+  throw new Error(`too many redirects (> ${MAX_LINK_REDIRECTS})`);
+}
+
+async function checkLinks(entries, today, shardSize, deps = {}) {
   const byUrl = new Map();
   for (const e of entries) {
     for (const s of e.sources || []) {
@@ -253,12 +330,17 @@ async function checkLinks(entries, today, shardSize) {
   async function worker() {
     while (idx < shard.length) {
       const url = shard[idx++];
+      if (!isCheckableUrl(url)) {
+        // 取りに行かない。`data:` は 200 を返すので「生きている」と誤報する。
+        suspect.push({ url, id: byUrl.get(url), status: 'unsupported-scheme' });
+        continue;
+      }
       try {
         const ctl = new AbortController();
         const timer = setTimeout(() => ctl.abort(), 8000);
-        let res = await fetch(url, { method: 'HEAD', redirect: 'follow', signal: ctl.signal });
+        let res = await fetchWithCheckedRedirects(url, { method: 'HEAD', signal: ctl.signal }, deps);
         if (res.status === 405 || res.status === 501) {
-          res = await fetch(url, { method: 'GET', redirect: 'follow', signal: ctl.signal });
+          res = await fetchWithCheckedRedirects(url, { method: 'GET', signal: ctl.signal }, deps);
         }
         clearTimeout(timer);
         if (res.status === 404 || res.status === 410) dead.push({ url, id: byUrl.get(url), status: res.status });
@@ -468,4 +550,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { corpusFingerprint, staleQueueReport, weekIndex, shardOffset };
+module.exports = { corpusFingerprint, staleQueueReport, weekIndex, shardOffset, isCheckableUrl, checkLinks, fetchWithCheckedRedirects, MAX_LINK_REDIRECTS };

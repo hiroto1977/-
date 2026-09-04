@@ -82,7 +82,40 @@ function targetsFor(changed, mutate) {
       if (set.has(cand)) out.add(cand);
     }
   }
-  return [...out].sort();
+  const targets = [...out].sort();
+  assertPlainPaths(targets);
+  return targets;
+}
+
+/** リポジトリのソースパスとして普通の形。`,` は区切りに使うので含めない。 */
+const PLAIN_PATH = /^[A-Za-z0-9._/-]+$/;
+
+/**
+ * 出す前に形を確かめる。
+ *
+ * 出力は `mutate` 一覧 (= `stryker.config.json` の値) から来るので、変わった
+ * ファイル名がそのまま出るわけではない。それでも**設定に 1 行足すだけで
+ * 中身を決められる**ことに変わりはなく、この文字列は CI で
+ * `$GITHUB_OUTPUT` へ書かれ、次の段のコマンド引数になる。
+ *
+ * - `$(…)` / バッククォート / `"` … シェルへ渡る形だと構文になる
+ *   (`mutation.yml` は env: 経由にしたので今は渡らないが、**渡らない形を
+ *   保証しているのは別ファイル**なので、ここでも塞ぐ)
+ * - 改行 … `key=value` を 1 行で書く `$GITHUB_OUTPUT` の形式を壊し、
+ *   後続行が別の出力として解釈されうる (`mode` を上書きできる)
+ * - `,` … 呼び出し側が `--mutate` の区切りとして読む
+ *
+ * 黙って捨てると「対象が減った」ことに気付けないので、落とす。
+ */
+function assertPlainPaths(targets) {
+  const bad = targets.filter((t) => !PLAIN_PATH.test(t));
+  if (bad.length > 0) {
+    throw new Error(
+      `変異検査の対象に、パスとして普通でない名前が ${bad.length} 件あります ` +
+        `(stryker.config.json の mutate を確認してください): ` +
+        bad.map((t) => JSON.stringify(t)).join(' , '),
+    );
+  }
 }
 
 /**
@@ -103,14 +136,41 @@ function selfTest() {
     ['重複しても 1 度だけ', ['src/a/foo.ts', 'src/a/__tests__/foo.test.ts'], ['src/a/foo.ts']],
     ['何も変わっていなければ空', [], []],
     ['複数は並べ替えて返す', ['src/b/bar.ts', 'src/a/foo.ts'], ['src/a/foo.ts', 'src/b/bar.ts']],
+    // 形の検査 (want が文字列 = 例外を期待。mutate 一覧は changed をそのまま使う)。
+    ['コマンド置換を含む名前は出さない', ['src/$(id).ts'], 'パスとして普通でない'],
+    ['バッククォートを含む名前は出さない', ['src/' + String.fromCharCode(96) + 'id' + String.fromCharCode(96) + '.ts'], 'パスとして普通でない'],
+    ['二重引用符を含む名前は出さない', ['src/a".ts'], 'パスとして普通でない'],
+    ['改行を含む名前は出さない ($GITHUB_OUTPUT の形式を壊す)', ['src/a\nmode=all.ts'], 'パスとして普通でない'],
+    ['カンマを含む名前は出さない (--mutate の区切り)', ['src/a,b.ts'], 'パスとして普通でない'],
+    ['空白を含む名前は出さない', ['src/a b.ts'], 'パスとして普通でない'],
   ];
   let failed = 0;
   console.log('self-test:');
   for (const [label, changed, want] of cases) {
-    const got = targetsFor(changed, mutate);
-    const ok = JSON.stringify(got) === JSON.stringify(want);
+    // `want` が文字列のときは「その語を含む例外で落ちること」を期待する。
+    let got;
+    try {
+      got = JSON.stringify(targetsFor(changed, typeof want === 'string' ? changed : mutate));
+    } catch (e) {
+      got = `例外: ${e.message}`;
+    }
+    const ok = typeof want === 'string' ? got.startsWith('例外:') && got.includes(want) : got === JSON.stringify(want);
     if (!ok) failed += 1;
-    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${JSON.stringify(got)} (期待 ${JSON.stringify(want)})`);
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} (期待 ${JSON.stringify(want)})`);
+  }
+  // 規則が広すぎない対照 — 実在する `mutate` 一覧を 1 件も弾かないこと。
+  // 合成ケースだけだと「全部落とす」規則でも緑になる。
+  const real = mutateList();
+  try {
+    assertPlainPaths(real);
+    console.log(`  ✓ 実在する mutate ${real.length} 件はすべて通る (規則が広すぎない対照)`);
+  } catch (e) {
+    failed += 1;
+    console.log(`  ✗ 実在する mutate を弾いた: ${e.message}`);
+  }
+  if (real.length === 0) {
+    failed += 1;
+    console.log('  ✗ mutate 一覧が空 — 上の対照は何も測っていない');
   }
   if (failed > 0) {
     console.error(`❌ self-test ${failed} 件失敗 — 対応付けが壊れています`);
@@ -134,7 +194,15 @@ function main(argv) {
     process.stdout.write('ALL\n');
     return 0;
   }
-  const targets = targetsFor(changed, mutateList());
+  let targets;
+  try {
+    targets = targetsFor(changed, mutateList());
+  } catch (e) {
+    // 形がおかしいものを黙って落として「対象なし」にすると、CI は何も測らずに
+    // 緑になる。読める形で落とす。
+    process.stderr.write(`${e.message}\n`);
+    return 1;
+  }
   process.stderr.write(`変更 ${changed.length} ファイル → 変異検査の対象 ${targets.length} ファイル\n`);
   for (const t of targets) process.stderr.write(`  ${t}\n`);
   if (targets.length > 0) process.stdout.write(`${targets.join(',')}\n`);

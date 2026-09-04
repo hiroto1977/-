@@ -16,6 +16,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const esbuild = require('esbuild');
+const { scriptSafeJs } = require('./lib/json-for-script.cjs');
 
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'dist/counseling-demo.html');
@@ -211,6 +212,7 @@ function htmlShell(js) {
 <html lang="ja">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:;">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>寄り添いカウンセリング — 会話デモ (実エンジン)</title>
 <style>${CSS}</style>
@@ -256,7 +258,7 @@ async function main() {
   });
   let js = result.outputFiles[0].text;
   // <script> 内に閉じタグ列が現れると HTML が壊れるためエスケープ (防御)。
-  js = js.replace(/<\/script/gi, '<\\/script');
+  js = scriptSafeJs(js); // 退避は scripts/lib/json-for-script.cjs に 1 つだけ
 
   const html = htmlShell(js);
   fs.mkdirSync(path.dirname(OUT), { recursive: true });

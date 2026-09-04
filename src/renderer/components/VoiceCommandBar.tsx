@@ -19,7 +19,7 @@ import {
   type VoiceSessionEvent,
   type VoiceSessionState,
 } from '../data/voiceSession';
-import type { AvailableCapabilities, VoiceIntent } from '../data/voiceCommand';
+import { isExecutableIntent, type AvailableCapabilities, VoiceIntent } from '../data/voiceCommand';
 import { SERVICE_IDS } from '../../shared/serviceId';
 import { classifyActionResult } from '../data/actionOutcome';
 import {
@@ -84,7 +84,9 @@ const NOTHING_TO_SAY: IntentOutcome = { ok: true, message: '' };
  */
 async function performIntent(intent: VoiceIntent): Promise<IntentOutcome> {
   if (intent.serviceId === undefined) return NOTHING_TO_SAY;
-  if (intent.kind === 'action' && intent.action !== undefined) {
+  // **確認の門と同じ述語を通す** (`isExecutableIntent`)。3 か所が別々の基準で
+  // 判定していると「確認を求めないなら実行もされない」を誰も保証できない。
+  if (isExecutableIntent(intent)) {
     const result = await window.serviceHub.invoke(intent.serviceId, intent.action, intent.params ?? {});
     const classified = classifyActionResult(result);
     if (classified.verdict === 'failed') {

@@ -193,6 +193,68 @@ describe('RecordStore — exportAll + importAll (backup/restore)', () => {
     expect(imported).toBe(1);
     expect(await store.count('sales')).toBe(1);
   });
+
+  /*
+   * `isPlainJsonObject` が**原型を見ている**理由を、実物で留める。
+   *
+   * 2026-08-26 に測った: `JSON.parse('{"__proto__":{…}}')` は `__proto__` を
+   * **自前の列挙可能プロパティ**として作るので、そこから浅くコピーすると
+   * **コピー先の原型が差し替わる** (`Object.prototype` は汚れない ——
+   * 汚れるのは再帰マージのときで、この repo に再帰マージは無い)。
+   * 原型の差し替わった record が保存されると、以後その record への
+   * `hasOwnProperty` 等の呼び出しが攻撃者の値を通る。
+   *
+   * 守りは在ったが**証人が居なかった** —— 上の「malformed」検査は
+   * 空 id / 不正なコレクション名 / `data: null` しか見ていない。
+   * `isPlainJsonObject` の原型検査を消しても、この 1 件しか鳴らない。
+   */
+  it('原型を差し替えられた record を落とす (__proto__ 入りのバックアップ)', async () => {
+    const store = getRecordStore();
+    // 敵対的なバックアップ本文をそのまま解析する (手で書くと原型は差し替わらない)。
+    const hostile = JSON.parse('{"__proto__":{"polluted":"yes"},"amount":1}') as Record<string, unknown>;
+    const reparented: Record<string, unknown> = {};
+    for (const k of Object.keys(hostile)) reparented[k] = hostile[k];
+
+    // 前提の確認: この形は本当に原型が差し替わっている (でなければ検査は空撃ち)。
+    expect(Object.getPrototypeOf(reparented)).not.toBe(Object.prototype);
+    expect((reparented as { polluted?: string }).polluted).toBe('yes');
+    // Object.prototype 自体は汚れていない (汚染の器は再帰マージであってここではない)。
+    expect(({} as { polluted?: string }).polluted).toBeUndefined();
+
+    const imported = await store.importAll([
+      { id: 'ok', collection: 'sales', createdAt: 1, updatedAt: 1, data: { amount: 1 } },
+      { id: 'bad-data', collection: 'sales', createdAt: 1, updatedAt: 1, data: reparented } as never,
+    ]);
+    expect(imported).toBe(1);
+    expect(await store.count('sales')).toBe(1);
+  });
+
+  /*
+   * **通してよい側も書く。** 最初にここを「落とすはず」と書いて落ちた ——
+   * 実装ではなく**期待のほうが誤っていた**。
+   *
+   * スプレッドは新しい平オブジェクトを作る (原型は `Object.prototype`) ので、
+   * 原型が差し替わった物を撒き直しても結果は素直な record である。
+   * `__proto__` という**名前の自前キー**が残るが、それはただのデータで、
+   * 読み出しても原型は辿らない。ここで落とすと、正当なバックアップの
+   * 「`__proto__` という列名」まで消える (`csv.test.ts` が同じ線を引いている)。
+   */
+  it('__proto__ という名前の自前キーは、ただのデータとして通す', async () => {
+    const store = getRecordStore();
+    const hostile = JSON.parse('{"__proto__":{"polluted":"yes"},"amount":1}') as Record<string, unknown>;
+    const spread = { ...hostile };
+    expect(Object.getPrototypeOf(spread)).toBe(Object.prototype); // 撒き直しで素直に戻る
+
+    const imported = await store.importAll([
+      { id: 'plain', collection: 'sales', createdAt: 1, updatedAt: 1, data: spread } as never,
+    ]);
+    expect(imported).toBe(1);
+
+    const [back] = await store.list('sales');
+    expect(back?.data.amount).toBe(1);
+    expect(Object.getPrototypeOf(back?.data as object)).toBe(Object.prototype);
+    expect(({} as { polluted?: string }).polluted).toBeUndefined();
+  });
 });
 
 describe('RecordStore — save-time encryption (RecordCipher)', () => {

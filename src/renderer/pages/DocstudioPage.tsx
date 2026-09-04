@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
+import { printDocument } from '../data/printDocument';
+import { localIsoDate } from '../../shared/localDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
@@ -28,6 +30,15 @@ import { checkDoc, countBlank, toNum, type DocIssue } from '../data/docStudioChe
 import { LEVEL_COLOR, LEVEL_MARK, LEVEL_NAME, borderColorFor } from '../components/issueLevelUi';
 import { byIssueLevel, countByLevel } from '../../shared/issueLevel';
 import { labelOf, lawOf, triageFor } from '../data/businessTriage';
+import { navigateTo, takeNavigationIntent } from '../navigate';
+import { useCollection } from '../data/useCollection';
+import { latestRecord } from '../data/latestRecord';
+import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../data/kpiActuals';
+import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceSheet';
+import { BANK_SUBMISSION_COLLECTION, settingsFromRecord, type BankSubmissionSettings } from '../data/bankSubmission';
+import { buildKessanImport } from '../data/kessanImport';
+import { buildBusinessPlanImport, buildCashPlanImport, type ImportPreview } from '../data/docImports';
+import { tableStyle, thStyle, tdStyle, tdNum } from '../components/tableStyles';
 import {
   STATUS_DESCRIPTION,
   STATUS_LABEL,
@@ -223,7 +234,9 @@ function readTaxLines(values: Values, max = 6): TaxLine[] {
   const out: TaxLine[] = [];
   for (let n = 1; n <= max; n += 1) {
     const kindLabel = values[`i${n}kind`] ?? '';
-    const kind = KIND_BY_LABEL[kindLabel];
+    // 素の添字だと `'constructor'` 等がプロトタイプ側の値を返す。`values` は
+    // 保存された書類レコード (JSON) なので、画面の選択肢以外も入りうる。
+    const kind = Object.hasOwn(KIND_BY_LABEL, kindLabel) ? KIND_BY_LABEL[kindLabel] : undefined;
     if (!kind) continue; // 未選択 / （使わない）
     const name = values[`i${n}name`] ?? '';
     const qtyRaw = values[`i${n}qty`] ?? '';
@@ -1113,6 +1126,16 @@ function TriagePanel({ doc }: { doc: string }) {
         </div>
       )}
 
+      {(t.exclusiveTo.length > 0 || t.consult.length > 0) && (
+        <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+          {[...t.exclusiveTo, ...t.consult.filter((id) => !t.exclusiveTo.includes(id))].map((id) => (
+            <button key={id} type="button" onClick={() => navigateTo(id)} style={{ fontSize: 11 }}>
+              {labelOf(id)}のページへ →
+            </button>
+          ))}
+        </div>
+      )}
+
       <div style={{ marginTop: 8, color: 'var(--text-mute)', fontSize: 11 }}>
         独占規定はいずれも「他人の求めに応じ」「業として」を要件に置くため、自社の書類を自社の名で
         出す分は制限されません。ただし形式だけ本人名義にして実質が他人からの依頼なら、同じく制限を受けます。
@@ -1200,6 +1223,76 @@ function matches(doc: StudioDoc, query: string): boolean {
   return q.split(/\s+/).every((term) => hay.includes(term));
 }
 
+/**
+ * 経営サマリーから書式へ取り込むパネル (計算書類 / 資金繰り表 / 事業計画書)。取り込む前に
+ * 「どの欄に・いくら・どこから」を全部見せ、置き方の注記と取り込めない物を並べる。押すまで何も書かない。
+ */
+function OverviewImportPanel({
+  intro,
+  result,
+  applied,
+  onApply,
+}: {
+  intro: string;
+  result: Pick<ImportPreview, 'rows' | 'notes' | 'skipped'>;
+  applied: number | null;
+  onApply: () => void;
+}) {
+  const hasRows = result.rows.length > 0;
+  return (
+    <Section title="経営サマリーから取り込む" count={result.rows.length}>
+      <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 8 }}>{intro}</div>
+      {hasRows && (
+        <div style={{ overflowX: 'auto' }}>
+          <table style={tableStyle} data-kessan-import>
+            <thead>
+              <tr>
+                <th style={thStyle}>入力欄</th>
+                <th style={thStyle}>取り込む値</th>
+                <th style={thStyle}>出所</th>
+              </tr>
+            </thead>
+            <tbody>
+              {result.rows.map((r) => (
+                <tr key={r.k}>
+                  <td style={tdStyle}>{r.label}</td>
+                  <td style={tdNum}>{/^-?\d+$/.test(r.value) ? Number(r.value).toLocaleString('ja-JP') : r.value}</td>
+                  <td style={{ ...tdStyle, color: 'var(--text-mute)' }}>{r.source}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {result.skipped.length > 0 && (
+        <ul style={{ fontSize: 12, color: 'var(--text-mute)', margin: '8px 0 0', paddingLeft: '1.4em' }}>
+          {result.skipped.map((t) => (
+            <li key={t}>取り込めない: {t}</li>
+          ))}
+        </ul>
+      )}
+      {result.notes.length > 0 && (
+        <ul style={{ fontSize: 12, color: 'var(--text-mute)', margin: '8px 0 0', paddingLeft: '1.4em' }}>
+          {result.notes.map((t) => (
+            <li key={t}>{t}</li>
+          ))}
+        </ul>
+      )}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 10 }}>
+        <button type="button" className="primary" disabled={!hasRows} onClick={onApply}>
+          この内容で取り込む
+        </button>
+        <button type="button" onClick={() => navigateTo('overview')}>経営サマリーを開く →</button>
+      </div>
+      {applied !== null && (
+        <div role="status" style={{ color: '#22c55e', fontSize: 12, marginTop: 6 }}>
+          {applied} 件を取り込みました。差込フォームと右の書面に反映されています。
+        </div>
+      )}
+    </Section>
+  );
+}
+
 export function DocstudioPage() {
   const { source, status, errorMessage, refresh } = useServiceData('docstudio', SNAPSHOT.docstudio);
   const [store, setStore] = useState<StoreShape>(() => loadStore());
@@ -1210,6 +1303,89 @@ export function DocstudioPage() {
   const [cat, setCat] = useState<string>('すべて');
 
   useEffect(() => saveStore(store), [store]);
+
+  // 経営サマリー → 計算書類。KPI 実績・貸借対照表・提出者情報は record store に
+  // あり、書類スタジオの入力は localStorage にある。ここで読んで写す (押すまで書かない)。
+  const kpiCol = useCollection<KpiActual>(KPI_ACTUALS_COLLECTION);
+  const bsCol = useCollection<BalanceSheet>(BALANCE_SHEET_COLLECTION);
+  const submissionCol = useCollection<BankSubmissionSettings>(BANK_SUBMISSION_COLLECTION);
+  const kessanImport = useMemo(
+    () =>
+      buildKessanImport({
+        kpiActuals: kpiCol.records.map((r) => r.data),
+        balanceSheet: latestRecord(bsCol.records)?.data ?? null,
+        profile: settingsFromRecord(latestRecord(submissionCol.records)?.data).profile,
+        existing: store.kessan ?? {},
+      }),
+    [kpiCol.records, bsCol.records, submissionCol.records, store.kessan],
+  );
+  // 資金繰り表は会計連携 (freee) の月次キャッシュフローから。未連携なら空 (snapshot は空)。
+  const { data: freeeData } = useServiceData('freee', SNAPSHOT.freee);
+  const submissionProfile = useMemo(
+    () => settingsFromRecord(latestRecord(submissionCol.records)?.data).profile,
+    [submissionCol.records],
+  );
+  const cashPlanImport = useMemo(
+    () =>
+      buildCashPlanImport({
+        accounting: freeeData.monthly,
+        balanceSheet: latestRecord(bsCol.records)?.data ?? null,
+        profile: submissionProfile,
+        existing: store.studio?.['shikin-guri'] ?? {},
+      }),
+    [freeeData.monthly, bsCol.records, submissionProfile, store.studio],
+  );
+  const businessPlanImport = useMemo(
+    () =>
+      buildBusinessPlanImport({
+        kpiActuals: kpiCol.records.map((r) => r.data),
+        profile: submissionProfile,
+        today: localIsoDate(),
+        existing: store.studio?.['jigyo-keikaku'] ?? {},
+      }),
+    [kpiCol.records, submissionProfile, store.studio],
+  );
+  /** 取り込んだ件数 (書類ごと)。別の書類へ移ると消える。 */
+  const [importApplied, setImportApplied] = useState<{ doc: string; n: number } | null>(null);
+  const appliedFor = (doc: string): number | null => (importApplied !== null && importApplied.doc === doc ? importApplied.n : null);
+  /** 下書きの行だけを書く (出所の無い欄は触らない)。 */
+  function applyImport(doc: string, rows: readonly { k: string; value: string }[]) {
+    const patch: Record<string, string> = {};
+    for (const r of rows) patch[r.k] = r.value;
+    if (doc === 'kessan') {
+      setStore((prev) => ({ ...prev, kessan: { ...prev.kessan, ...patch } }));
+    } else {
+      setStore((prev) => ({ ...prev, studio: { ...prev.studio, [doc]: { ...prev.studio?.[doc], ...patch } } }));
+    }
+    setImportApplied({ doc, n: rows.length });
+  }
+
+  /** 書類 id から画面の状態へ (士業のページや経営サマリーからの遷移)。知らない id は何もしない。 */
+  function openDoc(doc: string) {
+    if (doc === 'kessan') {
+      setCollection('kessan');
+    } else if (doc === 'shugyo') {
+      setCollection('shugyo');
+    } else if (doc === 'teikan-kk' || doc === 'teikan-gk') {
+      setCollection('teikan');
+      setTeikanType(doc === 'teikan-kk' ? 'kk' : 'gk');
+    } else if (STUDIO_TEMPLATES.some((d) => d.id === doc)) {
+      setCollection('studio');
+      pickDoc(doc);
+    }
+  }
+
+  // 他の画面からの「開いたら最初にすること」。mount 時に 1 度だけ受け取る。
+  useEffect(() => {
+    const intent = takeNavigationIntent('docstudio');
+    if (intent === null) return;
+    if (intent.doc !== undefined) openDoc(intent.doc);
+    if (intent.query !== undefined) {
+      setCollection('studio');
+      setQuery(intent.query);
+    }
+    if (intent.action === 'import-overview') setCollection('kessan');
+  }, []);
 
   const studioDoc = useMemo(() => STUDIO_TEMPLATES.find((d) => d.id === docId) ?? STUDIO_TEMPLATES[0]!, [docId]);
 
@@ -1272,13 +1448,7 @@ export function DocstudioPage() {
   );
 
   function printDoc() {
-    document.body.classList.add('ds-printing');
-    const cleanup = () => {
-      document.body.classList.remove('ds-printing');
-      window.removeEventListener('afterprint', cleanup);
-    };
-    window.addEventListener('afterprint', cleanup);
-    window.print();
+    printDocument();
   }
 
   const notes = collection === 'studio' ? studioDoc.note
@@ -1500,6 +1670,31 @@ export function DocstudioPage() {
                 </button>
               </div>
             </Section>
+          )}
+
+          {collection === 'kessan' && (
+            <OverviewImportPanel
+              intro="経営サマリーの KPI 実績・貸借対照表・提出者情報を計算書類の科目残高に写します。出所の無い科目 (資本金・役員報酬・地代家賃など) は今の値のまま残します。内訳の無い額は「その他」の科目に置き、置いた理由を下に出します。"
+              result={kessanImport}
+              applied={appliedFor('kessan')}
+              onApply={() => applyImport('kessan', kessanImport.rows)}
+            />
+          )}
+          {collection === 'studio' && docId === 'shikin-guri' && (
+            <OverviewImportPanel
+              intro="会計連携 (freee) の月次キャッシュフロー (直近 12 か月) を入出金の表へ、貸借対照表の現預金を期首残高へ写します。月次は収入・支出の合計しか無いので、収入は売上入金、支出はその他経費に置きます。"
+              result={cashPlanImport}
+              applied={appliedFor('shikin-guri')}
+              onApply={() => applyImport('shikin-guri', cashPlanImport.rows)}
+            />
+          )}
+          {collection === 'studio' && docId === 'jigyo-keikaku' && (
+            <OverviewImportPanel
+              intro="提出者情報の会社名・代表者と、直近の事業年度の KPI 実績を 1 年目の売上高・経常利益に写します。計画の出発点として置くので、数字は計画値へ直してください。"
+              result={businessPlanImport}
+              applied={appliedFor('jigyo-keikaku')}
+              onApply={() => applyImport('jigyo-keikaku', businessPlanImport.rows)}
+            />
           )}
 
           <LegalPanel

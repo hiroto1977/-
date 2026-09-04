@@ -237,3 +237,19 @@ describe('calcAggregatedCasualIncome (複数の一時所得の合算)', () => {
     expect(agg!.specialDeduction).toBe(single.specialDeduction);
   });
 });
+
+describe('台帳から渡す一時所得の特別控除の上限', () => {
+  it('省略時は定数と同じ結果', () => {
+    expect(calcCasualIncome(3_000_000, 2_000_000)).toEqual(calcCasualIncome(3_000_000, 2_000_000, CASUAL_INCOME_SPECIAL_DEDUCTION));
+  });
+
+  it('上限を渡すと特別控除と算入額が動く (負の上限は 0 扱い)', () => {
+    const r = calcCasualIncome(3_000_000, 2_000_000, 300_000);
+    expect(r.specialDeduction).toBe(300_000);
+    expect(r.casualIncome).toBe(700_000);
+    expect(r.taxableAmount).toBe(350_000);
+    expect(calcCasualIncome(3_000_000, 2_000_000, -1).specialDeduction).toBe(0);
+    // 利益が上限より小さければ利益まで。
+    expect(calcCasualIncome(2_100_000, 2_000_000, 300_000).specialDeduction).toBe(100_000);
+  });
+});

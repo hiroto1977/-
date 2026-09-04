@@ -28,6 +28,7 @@ import { replyTo } from '../data/chatbot';
 import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
 import { CAPABILITIES } from '../components/VoiceCommandBar';
 import { org as registryOrg, teams as registryTeams } from '../../../orchestration/registry.json';
+import { safeCssUrl } from '../../shared/imageUrlGate';
 
 interface ChatMessage {
   readonly role: 'user' | 'assistant';
@@ -478,7 +479,9 @@ export function AssistantPage() {
 
   const pageStyle: React.CSSProperties = {
     background: theme.bg,
-    backgroundImage: theme.image ? `url(${theme.image})` : undefined,
+    // 生の文字列を url() へ差し込まない。スキーム検証と引用は safeCssUrl に 1 つだけ置く
+    // (safeImageSrc の冒頭が「CSS url() へ流れた瞬間に危険」と書いていた当の経路)。
+    backgroundImage: safeCssUrl(theme.image),
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     color: theme.fg,

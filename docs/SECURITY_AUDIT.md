@@ -132,9 +132,16 @@ main プロセス OOM。
 作る → 理論上タイミング攻撃で state 推測可能。実用上は OAuth 5 分タイムアウト
 + 1 attempt しか無いため exploit 困難だが、防御深層原則として `timingSafeEqual` 推奨。
 
-**修正方針 (低リスクと判断、未実装)**:
-- 現状の 16 バイト randomBytes + 5 分制限で実害なし → 文書化で済ます
-- 状況: **受容**（後述 P2 と同様の判断）
+**状況: 修正済み** (この文書が古かった — 2026-08-24 に実装を確認して更新)
+
+当初は「16 バイト randomBytes + 5 分制限で実害なし」として**受容**と書いたが、
+その後 `safeStateEquals` として実装されている (`src/main/oauth.ts` — `timingSafeEqual`
+にバイト長を揃えてから渡す)。検査も在る: `oauth.test.ts` と、main の
+`timingSafeEqual` とブラウザ版の手書き XOR ループが同じ答えを返すことを見る
+`stateEqualsParity.test.ts`。
+
+**文書が「受容」のままなのは危ない** —— 次に触る人が「監査が許容と判断した」
+と読んで `!==` へ戻せてしまう。実装のほうが先に進んでいた。
 
 ## P2: 中優先度
 
@@ -163,6 +170,15 @@ main プロセス OOM。
 
 ### P3-1: OAuth callback HTML はテンプレートリテラル
 `CALLBACK_HTML` 定数として直接記述、変数挿入なし。XSS リスク無し。文書化のみ。
+
+**追記 (2026-08-24)**: 成功応答は確かに何も映さないが、**同じサーバの
+`oauth-error` 応答だけは要求の値を映して返す** (`error` はクエリ由来)。
+到達には state 一致が要るので任意の相手からは叩けない。ただし
+「映して返す唯一の口」が「何も映さない成功応答」より頭書きが弱い
+(成功側は `charset` を明示していて、理由も『ブラウザに中身を推測させない』と
+書いてある) のは筋が通らないので、`charset=utf-8` と
+`X-Content-Type-Options: nosniff` を揃えた。検査は
+`oauth.test.ts`（頭書きを戻すと落ちる対照つき）。
 
 ### P3-2: secrets.json の `mode 0o600`
 read+write owner only. 既存実装で対応。

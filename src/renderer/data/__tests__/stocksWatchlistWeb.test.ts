@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   STOCKS_WATCHLIST_KEY,
   isSafeSymbol,
@@ -221,5 +221,24 @@ describe('buildStocksSnapshot', () => {
   it('seeds the portfolio with an empty history array', () => {
     // history: [] を ["Stryker was here"] にする ArrayDeclaration mutant を kill。
     expect(buildStocksSnapshot(NOW).portfolio.history).toEqual([]);
+  });
+});
+
+/*
+ * **保管の鍵は、読み直さないと測れない。**
+ *
+ * 上の `expect(STOCKS_WATCHLIST_KEY).toBe('stocks.watchlist')` は正しい主張だが、
+ * モジュール本体で一度だけ評価される定数なので、静的 import では変異が効く前に
+ * 評価が済む (実測 2026-08-31: 生存)。空文字になれば**保存先が変わり**、
+ * 既存のウォッチリストは読めなくなる。
+ */
+describe('保管の鍵 —— 読み直して問う', () => {
+  it('★ 鍵は "stocks.watchlist" で、実際にその下へ書く', async () => {
+    vi.resetModules();
+    const m = await import('../stocksWatchlistWeb');
+    expect(m.STOCKS_WATCHLIST_KEY).toBe('stocks.watchlist');
+    localStorage.clear();
+    m.registerSymbol('AAPL');
+    expect(localStorage.getItem('stocks.watchlist')).toContain('AAPL');
   });
 });

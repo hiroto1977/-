@@ -15,12 +15,26 @@
  * 「登録漏れプロバイダ」を起動時に大声で検出する。
  */
 
+import { isAllowedOllamaPlaintextHost } from '../ollama';
 import { normalizeAiBaseUrl, describeAiEndpointFailure } from '../aiEndpoint';
 
 // 対向 API 仕様の転記であり、golden テスト (providers.test.ts) が完全一致で
 // 固定する。変異は等価 or テストで撃墜済みのため計測ノイズを避ける。
 
 export type AiProviderId = 'anthropic' | 'openai' | 'gemini' | 'ollama' | 'compat';
+
+/**
+ * 短文向けの高速・低コストモデル。**既定モデルとは役割が違う**ので別に持つ
+ * (感情分析のように「短いテキストに即答が要る」用途で意図的に選んでいる)。
+ *
+ * ここに 1 か所だけ置くのは、既定モデルと同じ理由 —— 2026-08-22 の点検で
+ * このモデル ID が `web-shim.ts` と `clients/emotions.ts` に写経されており、
+ * 既定モデルのほうは **5 か所**に散っていた (`AI_PROVIDERS.anthropic.defaultModel`
+ * という正典が在り、`assistant.ts` だけが正しく参照していた)。
+ * モデルが引退したとき、直し忘れた側は**実行時の API エラーでしか分からない**。
+ * `lint:forbidden` にモデル ID リテラルの規則を足して再発を止めている。
+ */
+export const ANTHROPIC_FAST_MODEL = 'claude-haiku-4-5-20251001';
 
 export interface AiChatMessage {
   role: 'user' | 'assistant';
@@ -85,6 +99,31 @@ function resolveBase(label: string, raw: string, credentialed: boolean): string 
   const r = normalizeAiBaseUrl(raw, { credentialed });
   if (!r.ok) throw new Error(`${label} のベース URL が不正です: ${describeAiEndpointFailure(r.reason)}`);
   return r.base;
+}
+
+/**
+ * Ollama の宛先を `shared/ollama.ts` の絞りに掛ける。
+ *
+ * `pageHostname` はブラウザなら配信元。Electron main には `location` が無いので
+ * 空文字になり、経路 (2)「ページ自身と同じホスト」は自動的に無効化される
+ * —— デスクトップでは loopback と https だけが残る。これは意図どおりで、
+ * main プロセスには「アプリを配信したホスト」という概念が無い。
+ */
+function assertOllamaHostAllowed(label: string, base: string): void {
+  const loc = (globalThis as { location?: { hostname?: string } }).location;
+  // Stryker disable next-line StringLiteral: 既定値を別の文字列にしても観測差が
+  // 出ない (等価変異・2026-08-31 に対照で確認)。経路 (2) は
+  // `hostname === pageHostname` の完全一致で、**http URL の hostname は必ず
+  // 非空**だから、空文字でも他の文字列でも「一致しない」点は同じ。
+  // `??` を `&&` に変える側は経路 (2) を殺すので、そちらは検査で留めてある。
+  const pageHostname = loc?.hostname ?? '';
+  const u = new URL(base);
+  if (u.protocol !== 'http:') return; // https は経路 (3) で任意ホスト可
+  if (isAllowedOllamaPlaintextHost(u.hostname, pageHostname)) return;
+  throw new Error(
+    `${label} の接続先が許可されていません: 平文 http で別ホストへは接続しません ` +
+      `(ループバック / このページと同じホスト / https のいずれかにしてください)`,
+  );
 }
 
 /** モデル解決: 明示指定 → 資格情報の既定 → プロバイダ既定。 */
@@ -237,7 +276,12 @@ const ollama: AiProviderSpec = {
   needsApiKey: false,
   browserDirect: true, // ローカル呼び出し (要 OLLAMA_ORIGINS 設定。UI にヒント表示)
   buildRequest(req, cfg) {
-    const base = resolveBase(this.label, cfg.baseUrl || this.defaultBaseUrl, false); // Ollama は鍵を送らないので LAN の平文 http も許す
+    // 鍵を送らないので `credentialed: false` (平文 http 自体は許す) だが、
+    // **宛先は `shared/ollama.ts` の絞りを通す** —— 平文で別ホストへは出さない。
+    // 2026-08-23 まで通っておらず、`docs/OLLAMA_SECURITY.md` の
+    // 「平文 http による別ホスト接続は拒否する」がこの経路だけ効いていなかった。
+    const base = resolveBase(this.label, cfg.baseUrl || this.defaultBaseUrl, false);
+    assertOllamaHostAllowed(this.label, base);
     const messages: Array<{ role: string; content: string }> = [];
     if (req.system) messages.push({ role: 'system', content: req.system });
     for (const m of req.messages) messages.push({ role: m.role, content: m.content });
@@ -309,21 +353,24 @@ export const AI_PROVIDERS: Record<AiProviderId, AiProviderSpec> = {
 
 // 起動時不変条件: ID リストとレジストリの完全一致 + id フィールドの整合。
 // 追加漏れ・タイポは初回 import で必ず throw する (LIVE_FETCHERS と同じ流儀)。
+//
+// この 3 本の番人は**正しいレジストリの上では等価変異**にしかならない
+// —— 条件を `false` に潰しても throw しない側は元から通っているし、
+// 壊れたレジストリはテストから作れない (作れたとしても import 時に throw して
+// 全テストが落ちるので、検査になっていない)。条件・ブロック・文言をまとめて
+// 外す。**表の中身のほうは字面で留めてある** (providers.test.ts の
+// 「提供元の表を字面で留める」) ので、ここを外しても測っていない訳ではない。
+/* Stryker disable ConditionalExpression,BlockStatement,StringLiteral */
 for (const id of AI_PROVIDER_IDS) {
   const spec: AiProviderSpec | undefined = AI_PROVIDERS[id];
-  // 起動時の不変条件。壊れたレジストリを作る手段がテストに無いため到達しない
-  // (作れたとしても import 時に throw して全テストが落ちる = 検査にならない)。
-  // Stryker disable next-line StringLiteral
   if (!spec) throw new Error(`AI_PROVIDERS missing spec for provider id: ${id}`);
-  // Stryker disable next-line StringLiteral
   if (spec.id !== id) throw new Error(`AI_PROVIDERS[${id}].id mismatch: ${spec.id}`);
 }
 // 同上 (レジストリ側に余分な項目が無いこと)。
-/* Stryker disable BlockStatement,StringLiteral */
 if (Object.keys(AI_PROVIDERS).length !== AI_PROVIDER_IDS.length) {
   throw new Error('AI_PROVIDERS has entries not listed in AI_PROVIDER_IDS');
 }
-/* Stryker restore BlockStatement,StringLiteral */
+/* Stryker restore ConditionalExpression,BlockStatement,StringLiteral */
 
 export function isAiProviderId(v: unknown): v is AiProviderId {
   // Stryker disable next-line ConditionalExpression: 型検査を落としても `includes` が

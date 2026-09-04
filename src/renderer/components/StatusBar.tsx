@@ -6,7 +6,7 @@ import type { ServiceId } from '../../preload/preload';
 import type { ErrorKind, Source, Status } from '../hooks/useServiceData';
 // 画像 URL のスキーム検証は 1 箇所だけに置く（2026-07 監査・多層防御）。
 // 3 つ目の呼び出し元が出たら components/ の共有ユーティリティへ切り出す。
-import { safeImageSrc } from './DataList';
+import { safeImageSrc } from '../../shared/imageUrlGate';
 
 interface Props {
   who: ReactNode;

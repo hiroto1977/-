@@ -15,7 +15,9 @@ function res(body: unknown, init: { ok?: boolean; status?: number; text?: string
     ok: init.ok ?? true,
     status: init.status ?? 200,
     json: async () => body,
-    text: async () => init.text ?? '',
+    // `readBodyWithCap` は本文を **text() から**読む (`res.body` を持たない
+    // 素朴なモックのための退避路)。成功時の本文は body を直列化して渡す。
+    text: async () => init.text ?? JSON.stringify(body),
   } as unknown as Response;
 }
 
@@ -83,7 +85,8 @@ describe('apiFetch', () => {
   it('2xx なら JSON を返す', async () => {
     const f = vi.fn<typeof fetch>().mockResolvedValue(res({ a: 1 }));
     await expect(apiFetch<{ a: number }>('https://x.test', {}, { fetch: f, serviceId: 's' })).resolves.toEqual({ a: 1 });
-    expect(f).toHaveBeenCalledWith('https://x.test', {});
+    // `signal` が乗る —— 締切は本文を読み終えるまで掛かる (下の専用の検査を見よ)。
+    expect(f).toHaveBeenCalledWith('https://x.test', { signal: expect.any(AbortSignal) });
   });
 
   it('fetch を渡さなければグローバルの fetch を使う', async () => {

@@ -65,6 +65,9 @@ const STUBS = {
     code: 'action_not_found',
     message: `smoke test does not invoke ${id}/${action}`,
   }),
+  // smoke 中に GitHub の releases API を叩かせない (ネットワーク待ちで
+  // 撮影が遅れるうえ、応答内容で結果が揺れる)。判定不能に倒す。
+  'app:checkUpdate': () => ({ status: 'unknown', current: '0.1.0-smoke', latest: null, url: null }),
   'oauth:isSupported': () => false,
   'oauth:authorize': () => ({ ok: false, code: 'not_supported', message: 'smoke test' }),
 };
@@ -79,7 +82,9 @@ function mainProcessChannels() {
   return [...src.matchAll(/ipcMain\.handle\(\s*'([^']+)'/g)].map((m) => m[1]);
 }
 
-const missing = mainProcessChannels().filter((c) => !(c in STUBS));
+// `in` はプロトタイプ鎖まで辿るので、`toString` という名のチャンネルが
+// 「スタブ済み」に見える。ここは**不足を数える**検査なので、見落とす側に倒れる。
+const missing = mainProcessChannels().filter((c) => !Object.hasOwn(STUBS, c));
 const extra = Object.keys(STUBS).filter((c) => !mainProcessChannels().includes(c));
 if (missing.length > 0 || extra.length > 0) {
   console.error('smoke: IPC スタブが main.ts とズレています');
@@ -133,7 +138,65 @@ async function run() {
     },
   });
 
+  // 存在も鮮度もここまで誰も見ていなかった。古い dist/ を撮って
+  // 「全ページ描画できた」と報告するのが一番まずい。
+  require('./lib/artifact-freshness.cjs').assertFreshArtifacts(
+    [path.join(__dirname, '..', 'dist', 'index.html')],
+    {
+      srcDir: path.join(__dirname, '..', 'src'),
+      repoRoot: path.join(__dirname, '..'),
+      tool: 'smoke',
+      allowEnv: 'SERVICE_HUB_SMOKE_ALLOW_STALE',
+    },
+  );
+  /*
+   * **描画できた** と **エラーが出ていない** は別の問い。
+   *
+   * ここまで smoke は「撮れたか」「前ページの残像でないか」しか見ておらず、
+   * ページが描画中に例外を投げても素通りしていた。全 74 面を回る道具は
+   * これ 1 つなので (e2e が触るのは 10 面ほど)、**誰も読んでいない console を
+   * ここで拾う**。どのページで出たかまで持つ。
+   */
+  const pageErrors = [];
+  let currentPage = '(起動)';
+  win.webContents.on('console-message', (...args) => {
+    // Electron 43 は第 1 引数がイベント詳細オブジェクト、旧版は (e, level, message)。
+    const first = args[0];
+    const detail =
+      first && typeof first === 'object' && 'message' in first
+        ? { level: first.level, message: first.message }
+        : { level: args[1], message: args[2] };
+    // level: 旧版は数値 (2=warning, 3=error)、新版は 'error' 等の文字列。
+    const isError = detail.level === 3 || detail.level === 'error';
+    if (isError) pageErrors.push(`${currentPage}: ${String(detail.message).slice(0, 200)}`);
+  });
+  win.webContents.on('render-process-gone', (_e, d) => {
+    pageErrors.push(`${currentPage}: レンダラープロセスが落ちた (${d.reason})`);
+  });
+
   await win.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
+
+  /*
+   * **収集器が本当に動いているかを毎回確かめる。**
+   *
+   * Electron の `console-message` は版によって引数の形が違う (43 は詳細
+   * オブジェクト、旧版は `(e, level, message)`)。取り違えても例外は出ず、
+   * **黙って 0 件になる** —— つまり「エラー 0 件」という報告が、
+   * 健全なのか収集できていないのか区別が付かなくなる。
+   *
+   * 既知のエラーを 1 本出して、拾えたことを確かめてから本番に入る。
+   */
+  await win.webContents.executeJavaScript("console.error('SMOKE_COLLECTOR_SELFTEST')");
+  await new Promise((r) => setTimeout(r, 300));
+  if (!pageErrors.some((e) => e.includes('SMOKE_COLLECTOR_SELFTEST'))) {
+    console.error(
+      'smoke: console エラーの収集器が動いていません — ' +
+        'Electron の console-message の引数の形が変わった可能性があります。\n' +
+        '       このまま流すと「エラー 0 件」が意味を持たないので止めます。',
+    );
+    process.exit(2);
+  }
+  pageErrors.length = 0; // 自己検査の分は数えない
   await new Promise((r) => setTimeout(r, 1500));
 
   // サイドバーの 'tools' / 'integrations' は既定で畳まれており
@@ -157,6 +220,8 @@ async function run() {
   const duplicates = [];
 
   for (const id of SERVICES) {
+
+    currentPage = String(id?.id ?? id);
     // クリック対象が無いことを **黙って見逃さない**。以前は
     // `if (target) target.click();` で握り潰しており、畳まれたカテゴリの
     // 16 件がホーム画面のまま撮られて「smoke green」になっていた。
@@ -227,7 +292,21 @@ async function run() {
 
   process.stdout.write(`\n${digests.size} 件をすべて別画像として撮影した\n`);
 
-  app.quit();
+  // 撮れたことと、エラーが出ていないことは別。ページ別に出す —— 件数だけだと
+  // どこを見ればいいか分からない。
+  if (pageErrors.length > 0) {
+    console.error(`\n❌ 描画中に ${pageErrors.length} 件のエラーが出ました (ページ別):`);
+    for (const e of pageErrors) console.error('   ' + e);
+    console.error('\n   撮影は成功していますが、例外を投げた面は中身が欠けている可能性があります。');
+  } else {
+    console.log('描画中の console エラー 0 件 (全面)');
+  }
+
+  // **`app.quit()` は `process.exitCode` を見ない** —— 何を入れても 0 で終わる。
+  // 実測 (2026-08-24): 報告は赤字で出るのに呼び出し側は成功と受け取っていた。
+  // 終了コードは `app.exit(code)` で渡す (このファイルの catch 側は元から
+  // `app.exit(1)` を使っており、こちらだけ揃っていなかった)。
+  app.exit(pageErrors.length > 0 ? 1 : 0);
 }
 
 app.whenReady().then(run).catch((err) => {

@@ -16,7 +16,7 @@
  * the two persistence modules stay consistent.
  */
 
-import { IDENTITY_CIPHER, type RecordCipher } from './recordCipher';
+import { IDENTITY_CIPHER, isSealedData, type RecordCipher } from './recordCipher';
 
 const DB_NAME = 'business-hub-data';
 const DB_VERSION = 1;
@@ -161,6 +161,74 @@ class IndexedDBRecordStore implements RecordStore {
   /** Save-time encryption layer. Default = plaintext (identity). */
   private cipher: RecordCipher = IDENTITY_CIPHER;
 
+  /**
+   * **同じ id への書き換えを直列化する鎖。**
+   *
+   * `update` は「読む → 復号 → 混ぜる → 暗号化 → 書く」で、読みと書きが
+   * **別のトランザクション**になる (暗号化が非同期なので 1 つの IndexedDB
+   * トランザクションの中に収まらない —— await を挟むとトランザクションが
+   * 勝手に閉じる)。その隙に別の書き換えが挟まると、後から書いた側が
+   * **古い写しの上に**混ぜた結果を書く。
+   *
+   * 実測 (2026-08-23):
+   *
+   * ```
+   *   await Promise.all([update(id, {a:2}), update(id, {b:3})]);
+   *   → {base:1, b:3}        ← a:2 が消える。両方 resolve する
+   *
+   *   await Promise.all([update(id, {a:2}), remove(id)]);
+   *   → 消したはずの record が {base:1, a:2} で復活する
+   * ```
+   *
+   * どちらも**呼んだ側には成功として返る**ので、失われたことに気付けない。
+   *
+   * id ごとに鎖を持ち、前の処理が終わってから次を始める。別の id は
+   * 待たせない。`remove` も同じ鎖に載せる —— 載せないと「消す」と
+   * 「書き換える」の間で復活が起きる。
+   */
+  private readonly perId = new Map<string, Promise<unknown>>();
+
+  /** 保存されている行をそのまま読む (復号しない)。`reencryptAll` 用。 */
+  private async readRawRow(id: string): Promise<StoredRecord | undefined> {
+    return withDb((db) => new Promise<StoredRecord | undefined>((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).get(id);
+      req.onsuccess = () => resolve(req.result as StoredRecord | undefined);
+      // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では読み出し要求を失敗させられず到達しない防御。
+      req.onerror = () => reject(req.error ?? new Error('readRawRow failed'));
+    }));
+  }
+
+  /** `id` の鎖の最後尾に `run` を繋いで、その結果を返す。 */
+  private serialize<R>(id: string, run: () => Promise<R>): Promise<R> {
+    const prev = this.perId.get(id) ?? Promise.resolve();
+    // 前が失敗しても後続は動かす (失敗は呼んだ側が受け取っている)。
+    const started = prev.then(run, run);
+    const settled = started.then(
+      () => undefined,
+      () => undefined,
+    );
+    this.perId.set(id, settled);
+    /*
+     * 自分が最後尾のままなら地図から外す (無制限に育てない)。
+     *
+     * **「最後尾なら」の判定は効いている** —— 無条件に消すと、決着した操作の
+     * 掃除が**まだ走っている後続の記録まで消し**、次の操作が鎖に載らずに
+     * 同時実行される (lost update)。`storeConcurrency.test.ts` の
+     * 「★ 決着した操作の掃除が、後続の鎖を切らない」が留めている。
+     *
+     * 一方**掃除そのものを止める**変異 (ブロックを空にする / 判定を false に
+     * 固定する) は、地図が育つだけで**観測できる差が無い** —— `perId` は
+     * private で、順序にも結果にも影響しない。等価変異として黙らせる。
+     */
+    // Stryker disable next-line BlockStatement
+    void settled.then(() => {
+      // Stryker disable next-line ConditionalExpression
+      if (this.perId.get(id) === settled) this.perId.delete(id);
+    });
+    return started;
+  }
+
   configureCipher(cipher: RecordCipher): void {
     this.cipher = cipher;
   }
@@ -220,16 +288,59 @@ class IndexedDBRecordStore implements RecordStore {
     id: string,
     patch: Partial<T>,
   ): Promise<StoredRecord<T> | null> {
-    // Stryker disable next-line ConditionalExpression: この先の get() が同じガードを持つため、外しても戻り値は null のままで観測差が出ない（等価変異）。get() の内部実装に依存しないための防御として残す。
+    // 検証は鎖に載せる前に。不正な引数は待たずに落とす (従来どおり)。
+    //
+    // Stryker disable next-line ConditionalExpression: **id 側だけは等価変異**。
+    // この先の `get()` が同じガードを持ち (L321)、そちらは独立した公開の
+    // 入口なので消せない。外しても戻り値は null のままで観測差が出ない。
+    // 鎖 (`serialize`) に載せずに落とす意味はあるので残す。
+    // patch 側 (下の行) は等価ではなく、検査が留めている。
     if (typeof id !== 'string' || id.length === 0) return null;
     if (!isPlainJsonObject(patch)) throw new Error('patch はプレーンなオブジェクトである必要があります');
+    return this.serialize(id, () => this.updateUnserialized<T>(id, patch));
+  }
 
+  private async updateUnserialized<T extends Record<string, unknown>>(
+    id: string,
+    patch: Partial<T>,
+  ): Promise<StoredRecord<T> | null> {
+    /*
+     * **ここに在った重複ガードは消した** (2026-08-31)。
+     *
+     * `updateUnserialized` の呼び出し元は `update()` **1 つだけ**で、
+     * あちらが同じ検証を先に済ませている。変異検査はそれを
+     * `NoCoverage` (どの検査も到達しない) として報告していた。
+     *
+     * 消す理由は「死んでいるから」だけではない。**重複が公開側の
+     * ガードを測れなくしていた** —— 片方を潰しても、もう片方が同じ結果を
+     * 返すので検査が鳴らない。実測した対照:
+     *
+     *   重複が在るまま公開側の patch 検証を潰す → 鳴らない
+     *   重複を消してから同じ変異を当てる       → 鳴る (1 件)
+     *
+     * 効いていない防御は pragma で黙らせるより消すほうが正しい
+     * (本セッションの `diagnoseOrg` / `exportPaths` と同じ判断)。
+     */
     const existing = await this.get<T>(id); // get() decrypts
     if (!existing) return null;
 
     const mergedData = { ...existing.data, ...patch };
     const updatedAt = monotonicNow();
     const storedData = await this.cipher.encrypt(mergedData);
+    // **書く直前にもう一度だけ在ることを確かめる。**
+    //
+    // id ごとの鎖は `update` と `remove` を並べるが、**全件を入れ替える
+    // 操作は鎖に載らない**。`importAll({ replace: true })` (バックアップの
+    // 復元) は 1 つのトランザクションで全消し + 書き直しをするので、
+    // 「読んだ後・書く前」に挟まると、復元で消えたはずの record を
+    // こちらが書き戻してしまう。実測 (2026-08-23):
+    //
+    //   update を投げっぱなしにして importAll({replace:true}) を挟む
+    //   → 復元後の一覧に、復元ファイルに無い古い record が残る
+    //
+    // 消えていたら書かない。戻り値は `null` —— 「その id はもう無い」で
+    // 既にある契約なので、呼んだ側の扱いは変わらない。
+    if (!(await this.readRawRow(id))) return null;
     await withDb(async (db) => {
       const tx = db.transaction(STORE, 'readwrite');
       tx.objectStore(STORE).put({ id, collection: existing.collection, createdAt: existing.createdAt, updatedAt, data: storedData });
@@ -282,10 +393,14 @@ class IndexedDBRecordStore implements RecordStore {
 
   async remove(id: string): Promise<void> {
     if (typeof id !== 'string' || id.length === 0) return;
-    await withDb(async (db) => {
-      const tx = db.transaction(STORE, 'readwrite');
-      tx.objectStore(STORE).delete(id);
-      await txDone(tx);
+    // `update` と同じ鎖に載せる。載せないと「読む → 書く」の隙に削除が
+    // 入り、消したはずの record が書き戻される (実測)。
+    await this.serialize(id, async () => {
+      await withDb(async (db) => {
+        const tx = db.transaction(STORE, 'readwrite');
+        tx.objectStore(STORE).delete(id);
+        await txDone(tx);
+      });
     });
   }
 
@@ -324,16 +439,45 @@ class IndexedDBRecordStore implements RecordStore {
     return all;
   }
 
+  /**
+   * 復元。**平文で入ってきたレコードは現在の cipher で封緘してから入れる。**
+   *
+   * 以前は受け取った物をそのまま `put` していた。他の書き込み口
+   * (`insert` / `insertMany` / `update`) は全部 `cipher.encrypt` を通るのに、
+   * **ここだけ素通しだった**。実測 (2026-08-23) —— 暗号化を有効にした状態で
+   * 平文時代のバックアップを復元し、IndexedDB の生の中身を見ると:
+   *
+   * ```
+   *   通常書き込み : 封緘=true   {"__enc":{"iv":"…","ct":"…"}}
+   *   復元レコード : 封緘=false  {"amount":999,"memo":"RESTORED-SECRET"}
+   * ```
+   *
+   * 読み出しは cipher の平文素通しで成功するので**画面上は何も起きない**が、
+   * ディスクには平文が残る。利用者は診断画面が「暗号化されています」と
+   * 言うのを見ており、災害復旧のつもりで**保護を外していた**ことになる。
+   *
+   * **封緘済みはそのまま入れる。** 二重封緘は開けなくなるし、別のパスフレーズで
+   * 封緘された物 (鍵が違うので開けない) も、そのまま置いておけば正しい
+   * パスフレーズでやり直せる。
+   *
+   * 封緘は**トランザクションを開ける前に**全部済ませる —— IndexedDB の
+   * トランザクションは待っている間に自動で閉じるため。
+   */
   async importAll(records: readonly StoredRecord[], opts?: { replace?: boolean }): Promise<number> {
     const valid = records.filter(isValidStoredRecord);
+    const prepared = await Promise.all(
+      valid.map(async (rec) =>
+        isSealedData(rec.data) ? rec : { ...rec, data: await this.cipher.encrypt(rec.data) },
+      ),
+    );
     await withDb(async (db) => {
       const tx = db.transaction(STORE, 'readwrite');
       const store = tx.objectStore(STORE);
       if (opts?.replace) store.clear();
-      for (const rec of valid) store.put(rec); // put = upsert by id
+      for (const rec of prepared) store.put(rec); // put = upsert by id
       await txDone(tx);
     });
-    return valid.length;
+    return prepared.length;
   }
 
   async reencryptAll(from?: RecordCipher): Promise<number> {
@@ -351,16 +495,34 @@ class IndexedDBRecordStore implements RecordStore {
       req.onerror = () => reject(req.error ?? new Error('reencryptAll read failed'));
     }));
 
+    // **一覧は写しでよいが、中身は書く直前に読み直す。**
+    //
+    // 上の `getAll()` は移行開始時点の写しである。この写しをそのまま書き
+    // 戻すと、移行中に入った書き換えを**古い中身で上書きする**。実測
+    // (2026-08-23、20 件を遅い cipher で移行しながら 19 番目を触る):
+    //
+    //   移行中の update → `edited: true` が消える (update は成功を返す)
+    //   移行中の remove → 消したはずの record が写しから復活する
+    //
+    // どちらも `store.update` で直したのと同じ形 —— 読みと書きの間に
+    // 隙がある。ここは隙が「移行の全体」なので、もっと広い。
+    //
+    // 直し方も同じ: id ごとの鎖に載せ、**その中で現在の行を読み直す**。
+    // 読み直して無ければ、その間に消されたということなので書き戻さない。
     let migrated = 0;
     for (const rec of raw) {
-      const plain = await reader.decrypt(rec.data);
-      const sealed = await this.cipher.encrypt(plain);
-      await withDb(async (db2) => {
-        const tx = db2.transaction(STORE, 'readwrite');
-        tx.objectStore(STORE).put({ ...rec, data: sealed });
-        await txDone(tx);
+      await this.serialize(rec.id, async () => {
+        const current = await this.readRawRow(rec.id);
+        if (!current) return; // 移行中に消された → 復活させない
+        const plain = await reader.decrypt(current.data);
+        const sealed = await this.cipher.encrypt(plain);
+        await withDb(async (db2) => {
+          const tx = db2.transaction(STORE, 'readwrite');
+          tx.objectStore(STORE).put({ ...current, data: sealed });
+          await txDone(tx);
+        });
+        migrated++;
       });
-      migrated++;
     }
     return migrated;
   }

@@ -117,8 +117,11 @@ export function GoogleConnectCard({ serviceId, onConnected }: GoogleConnectCardP
         <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>
           ※ クライアント ID は Drive / Calendar / Gmail で共通（1 回貼れば各ページで使えます）。
           サインインはサービスごとに行い、必要スコープのみ同意します。ライブ接続（実データ取得・送信）は
-          デスクトップ版の機能で、ブラウザ版は同梱スナップショットを表示します。トークンは OS キーチェーンに
-          暗号化保存されます。
+          デスクトップ版の機能で、ブラウザ版は同梱スナップショットを表示します。
+          トークンの保存方法はビルドと環境で変わります —— デスクトップ版は OS キーチェーン由来の鍵で暗号化、
+          ブラウザ版は Vault（AES-GCM-256）で暗号化します。<strong>OS キーチェーンが無い環境
+          （gnome-keyring / kwallet 不在の Linux 等）では base64 の難読化のみ</strong>になります。
+          いまどちらなのかは「設定」ページに出ます。
         </div>
       </div>
     </Section>

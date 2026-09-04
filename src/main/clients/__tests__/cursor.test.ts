@@ -39,7 +39,10 @@ const SPEND = {
   ],
 };
 
-const ok = (body: unknown) => ({ ok: true, json: async () => body }) as Response;
+// 本物の `Response` は必ず `text()` を持つ。モックが持っていないと、
+// 応答サイズの上限判定 (jsonFetch → readBodyWithCap) が通れない。
+const ok = (body: unknown) =>
+  ({ ok: true, status: 200, json: async () => body, text: async () => JSON.stringify(body) ?? '' }) as Response;
 
 /** 3 本の呼び出しを URL で振り分けるスタブ。呼ばれた順序に依存しない。 */
 function stub(bodies: { members?: unknown; usage?: unknown; spend?: unknown } = {}) {
@@ -215,8 +218,32 @@ describe('スナップショットの取得', () => {
     ]);
   });
 
-  it('body が undefined でも落ちない', async () => {
+  /*
+   * **この検査は 2026-08-22 に期待ごと変わった。**
+   *
+   * 以前は「本文が undefined でも空配列を返す」ことを確かめていたが、
+   * それが通っていたのは**モックの `json()` が undefined を返していた**
+   * からで、本物の `Response` は本文が空だと `.json()` が
+   * `SyntaxError: Unexpected end of JSON input` で reject する
+   * (実測済み)。つまり production には一度も無い挙動を仕様として
+   * 固定していた —— 検査がコードではなくモックを見ていた形である。
+   *
+   * いまは `jsonFetch` が本文を読んでから `JSON.parse` するので、
+   * 同じ状況で**サービス名つきの読める失敗**になる。生の SyntaxError が
+   * 上まで飛んでいた頃より扱いやすい。
+   *
+   * なお本文の**中の項目**が欠けている場合 (`{}` が返る等) に空配列へ
+   * 倒すことは、下の「欠けている数値は 0 …」以降の検査が見ている。
+   */
+  it('本文が空なら、サービス名つきの読める失敗になる', async () => {
     const f = stub({ members: undefined, usage: undefined, spend: undefined });
+    await expect(fetchCursorSnapshot({ token: 'key', fetch: f })).rejects.toThrow(
+      /応答が JSON ではありません/,
+    );
+  });
+
+  it('本文が空オブジェクトなら空配列に倒れる (項目の欠けは許す)', async () => {
+    const f = stub({ members: {}, usage: {}, spend: {} });
     const snap = await fetchCursorSnapshot({ token: 'key', fetch: f });
     expect(snap.usage).toEqual([]);
     expect(snap.spend).toEqual([]);

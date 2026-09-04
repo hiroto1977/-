@@ -1,0 +1,625 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import path from 'node:path';
+import { readFileSync } from 'node:fs';
+import { externalUrlOrNull } from '../../shared/externalUrlGate';
+
+/*
+ * BrowserWindow の作られ方と、窓に張った 3 つの番人。
+ *
+ * `lint:forbidden` は `nodeIntegration: true` のような**字面**を禁じますが、
+ * 実際に組み立てられた設定が何かは見ていません。ここでは main.ts を読み込んで
+ * `new BrowserWindow(...)` に渡った実物を確かめます。あわせて:
+ *
+ *   - `setWindowOpenHandler` — 新しい窓は常に拒否し、http(s) だけ OS へ渡す
+ *   - `will-navigate` / `will-redirect` — アプリ内の遷移を全部止める
+ *
+ * 2 つ目と 3 つ目が緩むと、乗っ取られたレンダラーが main の窓を任意の URL へ
+ * 向けられます (2026-07 監査の Vite HMR 例外もここ)。
+ */
+
+interface Captured {
+  opts: Record<string, unknown>;
+  windowOpenHandler: ((d: { url: string }) => unknown) | null;
+  permissionRequest:
+    | ((wc: unknown, permission: string, cb: (ok: boolean) => void) => void)
+    | null;
+  permissionCheck: ((wc: unknown, permission: string) => boolean) | null;
+  listeners: Map<string, (ev: { preventDefault: () => void }, url: string) => void>;
+  loadedFile: string | null;
+  loadedUrl: string | null;
+  devToolsOpened: boolean;
+  devToolsMode: string | null;
+  spellChecker: boolean | null;
+}
+
+let captured: Captured;
+let openedExternal: string[] = [];
+let isPackaged = true;
+let windowsMade = 0;
+let allWindows: unknown[] = [];
+let quitCalls = 0;
+const appListeners = new Map<string, () => void>();
+
+function freshCapture(): Captured {
+  return {
+    opts: {},
+    windowOpenHandler: null,
+    permissionRequest: null,
+    permissionCheck: null,
+    listeners: new Map(),
+    loadedFile: null,
+    loadedUrl: null,
+    devToolsOpened: false,
+    devToolsMode: null,
+    spellChecker: null,
+  };
+}
+
+vi.mock('electron', () => ({
+  app: {
+    getVersion: () => '1.2.3',
+    getPath: () => '/tmp/does-not-matter',
+    get isPackaged() {
+      return isPackaged;
+    },
+    whenReady: async () => undefined,
+    on: (name: string, fn: () => void) => {
+      appListeners.set(name, fn);
+    },
+    quit: () => {
+      quitCalls += 1;
+    },
+  },
+  BrowserWindow: class {
+    static getAllWindows() {
+      return allWindows;
+    }
+    webContents = {
+      session: {
+        setPermissionRequestHandler: (
+          fn: (wc: unknown, permission: string, cb: (ok: boolean) => void) => void,
+        ) => {
+          captured.permissionRequest = fn;
+        },
+        setPermissionCheckHandler: (fn: (wc: unknown, permission: string) => boolean) => {
+          captured.permissionCheck = fn;
+        },
+        setSpellCheckerEnabled: (v: boolean) => {
+          captured.spellChecker = v;
+        },
+      },
+      setWindowOpenHandler: (fn: (d: { url: string }) => unknown) => {
+        captured.windowOpenHandler = fn;
+      },
+      on: (name: string, fn: (ev: { preventDefault: () => void }, url: string) => void) => {
+        captured.listeners.set(name, fn);
+      },
+      openDevTools: (opts?: { mode?: string }) => {
+        captured.devToolsOpened = true;
+        captured.devToolsMode = opts?.mode ?? null;
+      },
+    };
+    constructor(opts: Record<string, unknown>) {
+      captured.opts = opts;
+      windowsMade += 1;
+    }
+    loadFile(p: string) {
+      captured.loadedFile = p;
+    }
+    loadURL(u: string) {
+      captured.loadedUrl = u;
+    }
+  },
+  ipcMain: { handle: () => {} },
+  shell: {
+    openExternal: async (url: string) => {
+      openedExternal.push(url);
+    },
+    showItemInFolder: () => {},
+    openPath: async () => '',
+  },
+  safeStorage: {
+    isEncryptionAvailable: () => true,
+    encryptString: (v: string) => Buffer.from(v, 'utf8'),
+    decryptString: (b: Buffer) => b.toString('utf8'),
+  },
+}));
+
+vi.mock('../secrets', () => ({
+  getValidToken: async () => ({ ok: true, token: 't' }),
+  setToken: async () => {},
+  clearToken: async () => {},
+  listConfiguredServices: async () => [],
+  getStorageProtection: async () => ({ encrypted: true, plainCount: 0, file: '/tmp/x' }),
+  setOAuthTokens: async () => {},
+}));
+vi.mock('../clients', () => ({ LIVE_FETCHERS: {}, LIVE_ACTIONS: {}, LOCAL_SERVICES: new Set() }));
+vi.mock('../oauth', () => ({
+  authorize: async () => ({ accessToken: 'a' }),
+  isOAuthSupported: () => false,
+  OAUTH_CONFIGS: {},
+}));
+
+/** main.ts を読み直して、窓が作られるまで待つ。 */
+async function loadMain(opts: { packaged: boolean; devServerUrl?: string }): Promise<Captured> {
+  captured = freshCapture();
+  isPackaged = opts.packaged;
+  if (opts.devServerUrl === undefined) delete process.env.VITE_DEV_SERVER_URL;
+  else process.env.VITE_DEV_SERVER_URL = opts.devServerUrl;
+  vi.resetModules();
+  await import('../main');
+  // `app.whenReady().then(createWindow)` が走るまでマイクロタスクを流す。
+  await new Promise((r) => setTimeout(r, 0));
+  return captured;
+}
+
+beforeEach(() => {
+  openedExternal = [];
+  windowsMade = 0;
+  allWindows = [];
+  quitCalls = 0;
+  appListeners.clear();
+});
+
+describe('BrowserWindow の設定 — 隔離の三点セット', () => {
+  it('contextIsolation / nodeIntegration / sandbox が固定される', async () => {
+    const c = await loadMain({ packaged: true });
+    const wp = c.opts.webPreferences as Record<string, unknown>;
+    // どれか一つでも緩むと、レンダラー側の任意コードが Node へ届く。
+    expect(wp.contextIsolation).toBe(true);
+    expect(wp.nodeIntegration).toBe(false);
+    expect(wp.sandbox).toBe(true);
+    // Electron の既定は true。辞書を外から取りに行く経路を残さない。
+    expect(wp.spellcheck, '綴り検査は既定 true — 明示的に切る').toBe(false);
+
+    /*
+     * **欄の一覧を字面で固定する。**
+     *
+     * 上の 4 件は「危ない既定を切ってあるか」を見るが、**新しい欄が黙って
+     * 増えたこと**は見ていない。`lint:forbidden` は危険な既定を 6 種
+     * 名指しで禁じており強いが、**名指しした物しか止められない**
+     * (2026-08-25 実測で `enableBlinkFeatures` は 1 件も規則が無かった)。
+     *
+     * 欄の一覧そのものを留めれば、**未知の欄でも人の目を通る** ——
+     * `secrets.ts` の `storageProtection` が同じ形で守られており、
+     * 今日その仕掛けが私の変更 (`durability` 追加) を実際に止めた。
+     *
+     * 増やすときは「その欄はレンダラーに何を許すのか」を人が見ることになる。
+     */
+    expect(
+      Object.keys(wp).sort(),
+      'webPreferences に欄が増減した — その欄がレンダラーへ何を許すのかを確かめてから、この一覧を更新すること',
+    ).toEqual(['contextIsolation', 'nodeIntegration', 'preload', 'sandbox', 'spellcheck']);
+  });
+
+  it('preload を必ず読ませる (bridge が無ければ何も呼べない)', async () => {
+    const c = await loadMain({ packaged: true });
+    const wp = c.opts.webPreferences as Record<string, string>;
+    expect(wp.preload).toMatch(/preload\.js$/);
+  });
+
+  it('本番では同梱の index.html を読み、開発サーバへは行かない', async () => {
+    const c = await loadMain({ packaged: true, devServerUrl: 'http://localhost:5173' });
+    // 署名済みの配布物が、環境変数一つで外のサーバを読み込んではいけない。
+    expect(c.loadedFile).toMatch(/index\.html$/);
+    expect(c.loadedUrl).toBeNull();
+    expect(c.devToolsOpened).toBe(false);
+  });
+
+  it('開発時だけ開発サーバを読み、DevTools を開く', async () => {
+    const c = await loadMain({ packaged: false, devServerUrl: 'http://localhost:5173' });
+    expect(c.loadedUrl).toBe('http://localhost:5173');
+    expect(c.loadedFile).toBeNull();
+    expect(c.devToolsOpened).toBe(true);
+  });
+
+  it('開発でも環境変数が無ければ同梱を読む', async () => {
+    const c = await loadMain({ packaged: false });
+    expect(c.loadedFile).toMatch(/index\.html$/);
+    expect(c.loadedUrl).toBeNull();
+  });
+});
+
+describe('setWindowOpenHandler — 新しい窓は必ず拒否する', () => {
+  it('どんな URL でも window.open は拒否する', async () => {
+    const c = await loadMain({ packaged: true });
+    for (const url of ['https://example.com', 'javascript:alert(1)', 'nonsense']) {
+      expect(c.windowOpenHandler!({ url })).toEqual({ action: 'deny' });
+    }
+  });
+
+  it('http(s) だけ OS のブラウザへ回す', async () => {
+    const c = await loadMain({ packaged: true });
+    c.windowOpenHandler!({ url: 'https://example.com/a' });
+    c.windowOpenHandler!({ url: 'http://example.com/b' });
+    expect(openedExternal).toEqual(['https://example.com/a', 'http://example.com/b']);
+  });
+
+  it('http(s) 以外は OS へ回さない', async () => {
+    const c = await loadMain({ packaged: true });
+    for (const url of [
+      'javascript:alert(1)',
+      'file:///etc/passwd',
+      'data:text/html,<script>1</script>',
+      'ssh://evil.example',
+      'ms-windows-store://x',
+      'not a url',
+      '',
+    ]) {
+      c.windowOpenHandler!({ url });
+    }
+    expect(openedExternal).toEqual([]);
+  });
+
+  /*
+   * **窓の扉と関門が、同じ答えを返すことを性質として留める。**
+   *
+   * このファイルの上 3 本は「http(s) は通す / それ以外は通さない」を
+   * **両方の実装が同じ答えを出す入力**でしか試していない。だから
+   * `setWindowOpenHandler` を手書きの `/^https?:\/\//i` に戻しても
+   * **3 本とも緑のまま**である —— 2026-08 に実際に起きた形がこれで、
+   * `externalUrlGate.ts` の冒頭がその対照実験を記録している
+   * (許可表を締めても窓の扉だけ古い規則で開き続け、検査は全部緑だった)。
+   *
+   * ここでは**関門そのものを期待値にする**。標本ごとの正解を手で書かず、
+   * 「窓が OS へ回した物 == 関門が通した物」を突き合わせるので、
+   * 関門の規則が変わればこの検査の期待値も自動で追随し、
+   * **窓の扉だけが取り残されたときにだけ鳴る**。
+   */
+  it('★ 窓の扉は関門と同じ答えを返す (実装が割れたら鳴る)', async () => {
+    const c = await loadMain({ packaged: true });
+    const probes = [
+      // 字面は https:// で始まるが、解析すると別物 (旧実装は通していた)
+      'https://\njavascript:alert(1)',
+      'http://\u0000evil',
+      // 逆に、旧実装が黙って落としていた正当な形
+      'https:/\\evil.com',
+      'https:example.com',
+      'https\t://example.com',
+      // 送り先を見せかけで隠す形 (2026-08-25 に関門へ足した)
+      'https://accounts.google.com@evil.example/',
+      'https://user:pw@example.com/',
+      // パスの @ は巻き添えにしない
+      'https://github.com/@handle',
+      // 正規化の差 (既定ポート・大文字スキーム・前後の空白)
+      'HTTPS://example.com/',
+      'https://example.com:443/',
+      '  https://example.com/  ',
+      // 通らない側
+      'javascript:alert(1)',
+      'file:///etc/passwd',
+      'mailto:a@b.example',
+      '',
+    ];
+    for (const url of probes) c.windowOpenHandler!({ url });
+
+    const expected = probes.map((u) => externalUrlOrNull(u)).filter((v): v is string => v !== null);
+    expect(openedExternal).toEqual(expected);
+
+    // 空撃ちでないこと —— 1 つも通らなければ、この検査は何も言っていない。
+    expect(expected.length, '標本が 1 つも通っていない (検査が空撃ち)').toBeGreaterThan(0);
+    // 落とす側も測っていること。
+    expect(probes.length - expected.length, '落ちる標本が 1 つも無い').toBeGreaterThan(0);
+  });
+});
+
+/*
+ * **Electron の既定は「権限要求を全部承認」である** (security checklist #5)。
+ * ハンドラを置かないと、乗っ取られたレンダラーがマイク・カメラ・位置情報を
+ * 確認なしで開ける。ここでは実際に登録された判定を呼んで確かめる。
+ */
+describe('権限要求 — 既定は拒否、クリップボードだけ許す', () => {
+  const ask = (c: Captured, permission: string): boolean => {
+    let got: boolean | null = null;
+    c.permissionRequest!({}, permission, (ok) => {
+      got = ok;
+    });
+    expect(got, 'callback が呼ばれていない (要求が宙に浮く)').not.toBeNull();
+    return got!;
+  };
+
+  it('2 つの口の両方にハンドラを付けている', async () => {
+    const c = await loadMain({ packaged: true });
+    expect(c.permissionRequest, 'setPermissionRequestHandler が無い').not.toBeNull();
+    expect(c.permissionCheck, 'setPermissionCheckHandler が無い').not.toBeNull();
+    // 綴り検査は webPreferences だけでは外から確かめられない —— session 側は
+    // 別勘定で `isSpellCheckerEnabled()` に現れない (実測)。両方切る。
+    expect(c.spellChecker, 'session 側の綴り検査を切っていない').toBe(false);
+  });
+
+  it.each([
+    ['マイク・カメラ', 'media'],
+    ['画面共有', 'display-capture'],
+    ['位置情報', 'geolocation'],
+    ['通知', 'notifications'],
+    ['MIDI', 'midi'],
+    ['MIDI (SysEx)', 'midiSysex'],
+    ['全画面', 'fullscreen'],
+    ['ポインタロック', 'pointerLock'],
+    ['キーボードロック', 'keyboardLock'],
+    ['在席検知', 'idle-detection'],
+    ['ウィンドウ配置', 'window-management'],
+    ['HID', 'hid'],
+    ['シリアル', 'serial'],
+    ['USB', 'usb'],
+    ['ファイルシステム', 'fileSystem'],
+    ['スピーカ選択', 'speaker-selection'],
+    ['storage-access', 'storage-access'],
+    ['外部を開く', 'openExternal'],
+    ['未知の権限', 'unknown'],
+    ['見たことのない名前', 'some-future-permission'],
+  ])('%s (%s) は拒否する', async (_label, permission) => {
+    const c = await loadMain({ packaged: true });
+    expect(ask(c, permission), '要求側が通した').toBe(false);
+    expect(c.permissionCheck!({}, permission), '問い合わせ側が granted と答えた').toBe(false);
+  });
+
+  /*
+   * **名指しの一覧は、名指しした綴りしか守れない。**
+   *
+   * 上の `it.each` は 20 個の権限を「拒否する」と留めているが、
+   * **許可側 (`ALLOWED_PERMISSIONS`) の一覧そのものは留めていない**。
+   * つまり上の一覧に**無い**名前を許可側へ足しても、どのテストも鳴らない。
+   *
+   * 実測 (2026-08-25): 入れている Electron の型が挙げる 20 個のうち、
+   * 上の一覧は **`mediaKeySystem` と `top-level-storage-access` を欠いて
+   * いた** (どちらも今は許可されていないので実害は無い。ただし
+   * `top-level-storage-access` はサイトを跨ぐ保存領域への許可である)。
+   *
+   * **一覧は Electron の型定義から採る。** 自分の記憶から書き写すと、
+   * 今日 2 度やったように「実物と違う綴り」で空の検査になる。
+   * この形なら Electron を上げて権限が増えたときも自動で対象に入り、
+   * **既定拒否のままであることが毎回確かめられる**。
+   */
+  const ALLOWED = ['clipboard-read', 'clipboard-sanitized-write'];
+
+  function electronPermissionNames(): string[] {
+    const dts = readFileSync(path.join(__dirname, '../../../node_modules/electron/electron.d.ts'), 'utf8');
+    const m = /setPermissionRequestHandler\(handler: \(\(webContents: WebContents, permission: ([^,]+),/.exec(dts);
+    expect(m, 'electron.d.ts から権限の一覧を読めない — 走査が壊れている').not.toBeNull();
+    return [...m![1]!.matchAll(/'([a-zA-Z-]+)'/g)].map((x) => x[1]!);
+  }
+
+  it('★ Electron が挙げる権限のうち、許すのはクリップボードの 2 つだけ', async () => {
+    const names = electronPermissionNames();
+    // 走査が死んで 0 件になったのを「違反なし」と読まない。
+    expect(names.length, '権限の一覧が短すぎる — 型定義の書式が変わった可能性').toBeGreaterThanOrEqual(15);
+    expect(names).toContain('geolocation');
+
+    const c = await loadMain({ packaged: true });
+    const granted = names.filter((n) => ask(c, n));
+    expect(
+      granted.sort(),
+      '許す権限が増減した — その権限がレンダラーへ何を許すのかを確かめてから、この一覧を更新すること',
+    ).toEqual(ALLOWED);
+
+    // 問い合わせ側も同じ答えであること (片方だけ緩いと query() が嘘をつく)。
+    for (const n of names) {
+      expect(c.permissionCheck!({}, n), `${n}: 問い合わせ側の答えが要求側と違う`).toBe(
+        ALLOWED.includes(n),
+      );
+    }
+  });
+
+  /*
+   * クリップボードだけ許す。`LockScreen.tsx` は復元フレーズを 30 秒後に
+   * 消すため、「まだ自分がコピーした値のままか」を **読んでから** 空にする。
+   * 読めないと消せずに残るので、これは security のための読み取りである。
+   */
+  it.each([['読み取り', 'clipboard-read'], ['書き込み', 'clipboard-sanitized-write']])(
+    'クリップボードの%s (%s) は許す',
+    async (_label, permission) => {
+      const c = await loadMain({ packaged: true });
+      expect(ask(c, permission)).toBe(true);
+      expect(c.permissionCheck!({}, permission)).toBe(true);
+    },
+  );
+
+  /*
+   * **2 つの口が同じ答えを返すこと。** ずれると
+   * `navigator.permissions.query()` が「granted」と言った権限を実際の要求が
+   * 拒否する (逆もある)。`externalUrlGate` の扉が 2 つあった話と同じ形なので、
+   * 判定そのものを 1 つに寄せてあることをここで留める。
+   */
+  it('要求側と問い合わせ側で答えが一致する', async () => {
+    const c = await loadMain({ packaged: true });
+    const ALL = [
+      'media',
+      'geolocation',
+      'notifications',
+      'midi',
+      'midiSysex',
+      'display-capture',
+      'fullscreen',
+      'pointerLock',
+      'idle-detection',
+      'window-management',
+      'hid',
+      'serial',
+      'usb',
+      'openExternal',
+      'unknown',
+      'clipboard-read',
+      'clipboard-sanitized-write',
+    ];
+    for (const p of ALL) {
+      expect(c.permissionCheck!({}, p), `${p} で 2 つの口の答えが違う`).toBe(ask(c, p));
+    }
+    // 「全部同じ値」で一致していないこと。
+    expect(ALL.filter((p) => ask(c, p)).length).toBe(2);
+  });
+});
+
+describe('will-navigate / will-redirect — アプリ内の遷移を止める', () => {
+  const ev = () => {
+    let prevented = false;
+    return {
+      ev: {
+        preventDefault: () => {
+          prevented = true;
+        },
+      },
+      was: () => prevented,
+    };
+  };
+
+  it('両方に番人が付いている', async () => {
+    const c = await loadMain({ packaged: true });
+    expect([...c.listeners.keys()].sort()).toEqual(['will-navigate', 'will-redirect']);
+  });
+
+  it('本番では何処へも遷移させない (開発サーバの URL でも)', async () => {
+    const c = await loadMain({ packaged: true, devServerUrl: 'http://localhost:5173' });
+    for (const name of ['will-navigate', 'will-redirect']) {
+      for (const url of [
+        'https://evil.example',
+        'http://localhost:5173/',
+        'http://127.0.0.1:5173/',
+        'file:///etc/passwd',
+      ]) {
+        const e = ev();
+        c.listeners.get(name)!(e.ev, url);
+        expect(e.was()).toBe(true);
+      }
+    }
+  });
+
+  it('開発時は読み込んだ開発サーバと同じ origin だけ通す', async () => {
+    const c = await loadMain({ packaged: false, devServerUrl: 'http://localhost:5173' });
+    for (const url of ['http://localhost:5173/', 'http://localhost:5173/src/main.tsx']) {
+      const e = ev();
+      c.listeners.get('will-navigate')!(e.ev, url);
+      expect(e.was()).toBe(false);
+    }
+    // 窓は `VITE_DEV_SERVER_URL` そのものを読み込むので、レンダラーの origin は
+    // 常にこちら。別名 (127.0.0.1) は同じ機械でも別 origin なので通さない。
+    const alias = ev();
+    c.listeners.get('will-navigate')!(alias.ev, 'http://127.0.0.1:5173/x');
+    expect(alias.was()).toBe(true);
+  });
+
+  it('開発時でも開発サーバ以外は止める (ポート違い・ホスト違い・スキーム違い)', async () => {
+    const c = await loadMain({ packaged: false, devServerUrl: 'http://localhost:5173' });
+    for (const url of [
+      'http://localhost:5174/',
+      'http://localhost/',
+      // スキーム違い。`host` だけを見ていた頃はここが素通りしていた —
+      // 同じポートで TLS を話す別のプロセスへ窓を向けられた。
+      'https://localhost:5173/',
+      'ftp://localhost:5173/x',
+      'ws://localhost:5173/',
+      'http://evil.example:5173/',
+      'http://localhost.evil.example:5173/',
+      'not a url',
+    ]) {
+      const e = ev();
+      c.listeners.get('will-navigate')!(e.ev, url);
+      expect(e.was()).toBe(true);
+    }
+  });
+
+  it('開発サーバが別ポートへずれても、その origin だけを通す', async () => {
+    // 5173 が埋まっていると Vite は次の空き番へずれる。ポートを決め打ちして
+    // いた頃は、本物 (5174) を止めて、5173 を握った相手を通していた。
+    const c = await loadMain({ packaged: false, devServerUrl: 'http://localhost:5174' });
+    const good = ev();
+    c.listeners.get('will-navigate')!(good.ev, 'http://localhost:5174/src/main.tsx');
+    expect(good.was()).toBe(false);
+    const stale = ev();
+    c.listeners.get('will-navigate')!(stale.ev, 'http://localhost:5173/');
+    expect(stale.was()).toBe(true);
+  });
+
+  it('開発サーバの URL 自体が壊れていれば何も通さない', async () => {
+    const c = await loadMain({ packaged: false, devServerUrl: 'not a url' });
+    for (const url of [
+      'http://localhost:5173/',
+      // **遷移先も読めない**場合。読めなかったことを「空文字」で表さずに
+      // 制御の流れだけで表していると、壊れたもの同士が「同じ origin」に
+      // 見えて通ってしまう。
+      'also not a url',
+      '',
+    ]) {
+      const e = ev();
+      c.listeners.get('will-navigate')!(e.ev, url);
+      expect(e.was(), url).toBe(true);
+    }
+  });
+
+  it('開発でも環境変数が無ければ全部止める', async () => {
+    const c = await loadMain({ packaged: false });
+    const e = ev();
+    c.listeners.get('will-navigate')!(e.ev, 'http://localhost:5173/');
+    expect(e.was()).toBe(true);
+  });
+
+  it('リダイレクトにも同じ規則が効く (3xx で外へ抜けない)', async () => {
+    const c = await loadMain({ packaged: false, devServerUrl: 'http://localhost:5173' });
+    const ok = ev();
+    c.listeners.get('will-redirect')!(ok.ev, 'http://localhost:5173/');
+    expect(ok.was()).toBe(false);
+    const bad = ev();
+    c.listeners.get('will-redirect')!(bad.ev, 'https://evil.example/');
+    expect(bad.was()).toBe(true);
+  });
+});
+
+describe('窓の見た目とアイコン', () => {
+  it('題名と背景色を決めて出す', async () => {
+    const c = await loadMain({ packaged: true });
+    expect(c.opts.title).toBe('Service Hub');
+    expect(c.opts.backgroundColor).toBe('#0f1117');
+  });
+
+  it('同梱のアイコンを、束ねた場所からの相対で指す', async () => {
+    // `dist-electron/main.js` から見て `../build/icon.png`。段数がずれると
+    // 存在しないパスになり、既定の Electron アイコンで出荷される。
+    const c = await loadMain({ packaged: true });
+    // main.js のあるディレクトリから見た相対で確かめる。段数・フォルダ名・
+    // ファイル名のどれが変わっても落ちる。
+    expect(path.relative(path.resolve('src/main'), String(c.opts.icon))).toBe(
+      path.join('..', 'build', 'icon.png'),
+    );
+  });
+
+  it('開発時の DevTools は別窓で開く (画面を狭めない)', async () => {
+    const c = await loadMain({ packaged: false, devServerUrl: 'http://localhost:5173' });
+    expect(c.devToolsOpened).toBe(true);
+    expect(c.devToolsMode).toBe('detach');
+  });
+});
+
+describe('アプリの寿命', () => {
+  it('起動時に窓を 1 つだけ作る', async () => {
+    await loadMain({ packaged: true });
+    expect(windowsMade).toBe(1);
+  });
+
+  it('activate は窓が無いときだけ作り直す (Dock から戻る道)', async () => {
+    await loadMain({ packaged: true });
+    expect(windowsMade).toBe(1);
+    // 既に窓があるなら増やさない。
+    allWindows = [{}];
+    appListeners.get('activate')!();
+    expect(windowsMade).toBe(1);
+    // 全部閉じたあとなら作り直す。
+    allWindows = [];
+    appListeners.get('activate')!();
+    expect(windowsMade).toBe(2);
+  });
+
+  it('macOS 以外では全部の窓を閉じたら終了する', async () => {
+    await loadMain({ packaged: true });
+    const orig = process.platform;
+    try {
+      Object.defineProperty(process, 'platform', { value: 'linux', configurable: true });
+      appListeners.get('window-all-closed')!();
+      expect(quitCalls).toBe(1);
+      Object.defineProperty(process, 'platform', { value: 'darwin', configurable: true });
+      appListeners.get('window-all-closed')!();
+      expect(quitCalls).toBe(1);
+    } finally {
+      Object.defineProperty(process, 'platform', { value: orig, configurable: true });
+    }
+  });
+});

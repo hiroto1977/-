@@ -47,7 +47,19 @@ function main() {
   const problems = [];
 
   // 1. 必須キー。
-  for (const key of ['version', 'policy', 'teams', 'rounds', 'backlog']) {
+  /*
+   * `org` を必須にしたのは 2026-08-22。それまで下の組織階層の検証は
+   * `if (reg.org)` で丸ごと囲まれていて、**`org` を消すと不変条件 7〜11 が
+   * 静かに検査対象外**になった。対照実験で確認: CEO / COO / 役員 5 /
+   * 秘書室 5 室 / 管理職 8 と「全 active team は管理職に 1 つだけ属する」を
+   * まとめて消しても、このゲートは
+   *
+   *   ✅ orchestration registry OK — 組織: CEO 1 / COO 0 / 役員 0 / 管理職 0 …
+   *
+   * と exit 0 を返した。`org` を残したまま中身を空にした場合は 108 件鳴る
+   * (検査自体は生きている) ので、穴は外側の条件 1 つだけだった。
+   */
+  for (const key of ['version', 'policy', 'teams', 'rounds', 'backlog', 'org']) {
     if (!(key in reg)) problems.push(`必須キー "${key}" がありません`);
   }
   if (problems.length) fail(problems);
@@ -65,7 +77,9 @@ function main() {
   // 7. CEO は AI に配置しない (人間=オーナー)。8. COO は CEO 直属で AI 非配置
   //    (実装本体)。9. 役員は COO 直属。10. 各管理職は実在の役員 or COO直轄に属し、
   //    束ねる teams は実在。11. 全 active team は実在の管理職に 1 つだけ属する。
-  if (reg.org) {
+  // `org` は上で必須キーとして検証済み (欠けていれば fail 済み)。
+  // 条件で囲むと「消せば検査が消える」形に戻るので、素のブロックにする。
+  {
     const org = reg.org;
     const ceoId = org.ceo && org.ceo.id;
     if (org.ceo && org.ceo.staffedByAI === true) {
@@ -203,7 +217,16 @@ function main() {
   // 12. サイクル定義 (v3): policy.cycles があれば、各サイクルは非空のステージ配列で、
   //     各ステージは stage / owner / desc(文字列) を持つ (parallel は任意 boolean)。
   //     実行ランタイム (orchestrate.cjs) が依存するため構造を強制する。
-  if (reg.policy && reg.policy.cycles) {
+  /*
+   * `policy.cycles` を必須にしたのは 2026-08-22。上のコメントが
+   * 「実行ランタイム (orchestrate.cjs) が依存するため構造を強制する」と
+   * 言っているのに、**キーごと消せば検査が丸ごと飛んで緑になった**
+   * (対照実験で確認)。`orchestrate.cjs` は `|| {}` で落ちはしないが、
+   * 使えるサイクルが 0 件になり dispatch が全部 "未知のサイクル" になる。
+   */
+  if (!reg.policy || !reg.policy.cycles) {
+    problems.push('policy.cycles がありません (orchestrate.cjs が依存する構造)');
+  } else {
     for (const [name, stages] of Object.entries(reg.policy.cycles)) {
       if (name === 'description') continue;
       if (!Array.isArray(stages) || stages.length === 0) {
@@ -232,7 +255,16 @@ function main() {
   const cooCount = reg.org && reg.org.coo ? 1 : 0;
   const secList = reg.org ? reg.org.secretaries || [] : [];
   const secMembers = secList.reduce((s, x) => s + (x.members || 0), 0);
-  const secLabel = secList.length > 0 ? `秘書室 ${secList.length}室(計${secMembers}体) / ` : '';
+  /*
+   * 0 室でも表示する。以前は `length > 0` のときだけ出していたので、
+   * **全室を消すと出力から消えるだけで緑のまま**だった (対照実験で確認)。
+   *
+   * 秘書室を必須にはしない —— 検査側のコメントは「秘書室を導入する場合」と
+   * 任意扱いなのに、不変条件の文面は「各役員に 1 室を常設」と書いており、
+   * どちらが意図かはコードからは決まらない。**勝手に決めずに、数を見える所へ
+   * 出す**。0 室になったら CI の出力でそう分かる。
+   */
+  const secLabel = `秘書室 ${secList.length}室(計${secMembers}体) / `;
   console.log(
     `✅ orchestration registry OK — 組織: CEO 1 / COO ${cooCount} / 役員 ${execCount} / ${secLabel}管理職 ${mgrCount} / 一般職(teams) ${reg.teams.length} / ` +
     `rounds: ${reg.rounds.length} / 直近 round ${lastRound} は ${lastCount} チーム / backlog 未着手: ` +

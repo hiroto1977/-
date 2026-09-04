@@ -92,6 +92,12 @@ export interface ChunkPlan {
 }
 
 /**
+ * `planChunks` の内部不変条件違反。**`planChunks` の chunkSize ガードの文言とは別にする** ——
+ * 同じにすると、ガードを外した変異体をテストが見分けられなくなる。
+ */
+export const INVARIANT_NO_PROGRESS = 'planChunks: 分割が前進しません (内部不変条件違反)';
+
+/**
  * サイズ `size` のファイルを `chunkSize` バイト単位に分割する計画を返す。
  * 端数は最後のチャンクへ。決定論的でオフセットは連続・非重複。
  *
@@ -99,6 +105,7 @@ export interface ChunkPlan {
  *  - `size === 0` は空配列 (送るものが無い)。
  *  - 非有限 / 負の `size` は throw。
  */
+
 export function planChunks(size: number, chunkSize: number): ChunkPlan[] {
   if (!Number.isFinite(size) || size < 0) {
     throw new Error('size が不正です (0 以上の有限値が必要)');
@@ -111,6 +118,34 @@ export function planChunks(size: number, chunkSize: number): ChunkPlan[] {
   let index = 0;
   while (offset < size) {
     const length = Math.min(chunkSize, size - offset);
+    /*
+     * 前進しない分割は**無限ループ + 無制限の push** になる —— タブが固まり、
+     * やがてメモリを食い尽くして落ちる。上の chunkSize ガードを通っていれば
+     * length > 0 は必ず成り立つので、ここは到達しない防御である。
+     *
+     * それでも置くのは、ガードを 1 つ落としたときの壊れ方が「間違った答え」
+     * ではなく「プロセスが死ぬ」だったから。変異検査で実際にそうなり、
+     * Stryker はそれを Killed ではなく RuntimeError (= 評価不成立) として
+     * **スコアの分母から外していた**。3 件が数えられないまま総合 100.00% で、
+     * 報告書はその 3 件の存在すら書いていなかった (2026-09-01 に判明)。
+     *
+     * 文言は上のガードと**別にしてある**。同じ文言にすると
+     * `toThrow(/chunkSize/)` がどちらの経路でも通り、ガードを外した変異体が
+     * 生き残る (= この防御が検査を鈍らせる) ことになる。
+     */
+    /*
+     * ここは到達しない防御なので、「throw しない側」へ変える変異体は
+     * どのテストでも観測差を出せない。**実測して出た 3 件ちょうどを外す**:
+     *   ConditionalExpression → false   (条件が消えて throw しない)
+     *   EqualityOperator      → length < 0 (正の length では成立しない)
+     *   BlockStatement        → {}      (throw 本体が消える。未到達)
+     * 逆に「常に throw する側」(→ true / length >= 0) は普通のテストが落ちて
+     * 殺せるが、next-line は変異子単位までしか絞れないので一緒に外れる。
+     */
+    // Stryker disable next-line ConditionalExpression,EqualityOperator,BlockStatement
+    if (length <= 0) {
+      throw new Error(INVARIANT_NO_PROGRESS);
+    }
     plans.push({ index, offset, length });
     offset += length;
     index += 1;

@@ -8,7 +8,6 @@ import {
   setProxyConfig,
   isPrivateOrReservedTarget,
   MAX_PROXY_RESPONSE_BYTES,
-  PROXY_REQUIRED_SERVICES,
 } from '../../network/proxy';
 
 function clearIdb(): Promise<void> {
@@ -184,6 +183,46 @@ describe('fetchViaProxy', () => {
       async json() { return body; },
     } as unknown as Response;
   }
+
+  /*
+   * **呼び出し側の signal を捨てない。**
+   *
+   * 2026-08-22 まで `fetchViaProxy` は `init` から url / method / headers /
+   * body だけを取り出しており、`signal` は envelope にも下の fetch にも
+   * 渡っていなかった。呼び出し側 (`runAiChat`) が timeout を付けても、
+   * **プロキシ経由の道だけ効かない** —— 「守っているつもりの守り」になる。
+   */
+  it('呼び出し側の signal を実際の fetch へ中継する', async () => {
+    let seen: AbortSignal | null | undefined;
+    const mockFetch = vi.fn<typeof fetch>(async (_u, init) => {
+      seen = (init as RequestInit).signal;
+      return envelope({ status: 200, body: '{}' });
+    });
+    globalThis.fetch = mockFetch;
+
+    const controller = new AbortController();
+    await fetchViaProxy(
+      'https://api.notion.com/v1/x',
+      { method: 'POST', signal: controller.signal },
+      { url: 'https://my-worker.example.com/proxy' },
+    );
+    expect(seen, 'signal が捨てられている (timeout が効かない)').toBe(controller.signal);
+  });
+
+  it('signal を渡さない呼び出しでも壊れない', async () => {
+    const mockFetch = vi.fn<typeof fetch>(async (_u, init) => {
+      expect((init as RequestInit).signal).toBeUndefined();
+      return envelope({ status: 200, body: '{}' });
+    });
+    globalThis.fetch = mockFetch;
+    await expect(
+      fetchViaProxy(
+        'https://api.notion.com/v1/x',
+        { method: 'GET' },
+        { url: 'https://my-worker.example.com/proxy' },
+      ),
+    ).resolves.toBeDefined();
+  });
 
   it('wraps target URL + method + headers + body in JSON envelope', async () => {
     const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(
@@ -765,7 +804,214 @@ describe('isPrivateOrReservedTarget', () => {
     expect(pri('http://[fd12::1]/')).toBe(true);
     expect(pri('http://[fe80::1]/')).toBe(true);
     expect(pri('http://[::ffff:127.0.0.1]/')).toBe(true);
-    expect(pri('http://[2001:db8::1]/')).toBe(false); // public documentation range
+    /*
+     * **2026-08-25 に判断を変えた。**
+     *
+     * ここは以前 `false` を期待し、注記に「public documentation range」と
+     * 書いていた。**この呼び方が正しくない** —— `2001:db8::/32` は RFC 3849 の
+     * **文書用**で、公開経路へ出さないことになっている番号である。
+     *
+     * この関数の名は `isPrivateOrReservedTarget` で、既に
+     * CGNAT (100.64/10) とベンチマーク用 (198.18/15) を遮断している ——
+     * どちらも「私的」ではなく**予約**で、しかも「公開に出ないから何も居ない」
+     * という点は文書用と同じである。**同じ理由の範囲を片方だけ通していた。**
+     *
+     * 遮断して失う正当な行き先は無い (公開経路に出ないので)。
+     */
+    expect(pri('http://[2001:db8::1]/')).toBe(true); // RFC 3849 文書用 = 予約
+    // 過剰に塞いでいないこと —— 2001::/16 は正当な公開空間である。
+    expect(pri('http://[2001:4860:4860::8888]/')).toBe(false); // Google Public DNS
+    expect(pri('http://[2001:db9::1]/')).toBe(false); // 隣の /32 は公開
+  });
+
+  /*
+   * **予約されているが「私的」ではない範囲。**
+   *
+   * 2026-08-25 に実測したところ、この関数は 10 進/16 進/8 進表記も
+   * IPv4-mapped も NAT64 も cloud metadata も全部遮断していたのに、
+   * **下の 5 つだけ素通りしていた**。どれも公開経路には出ない番号なので、
+   * 要求が届くとすれば**その番号を内部で流用している網の中**である。
+   */
+  it('★ 予約範囲 (文書用 / プロトコル割当 / 6to4 リレー) も遮断する', () => {
+    // 192.0.0.0/24 IETF プロトコル割当 (RFC 6890)。DS-Lite の 192.0.0.0/29 を
+    // 含み、CPE 上で実際に応答することがある。
+    expect(pri('http://192.0.0.1/')).toBe(true);
+    expect(pri('http://192.0.0.8/')).toBe(true);   // IPv4 dummy address
+    expect(pri('http://192.0.0.170/')).toBe(true); // NAT64 well-known
+    // 文書用 TEST-NET-1/2/3 (RFC 5737)
+    expect(pri('http://192.0.2.1/')).toBe(true);
+    expect(pri('http://198.51.100.1/')).toBe(true);
+    expect(pri('http://203.0.113.1/')).toBe(true);
+    // 6to4 リレー anycast (RFC 3068 / 廃止 RFC 7526)
+    expect(pri('http://192.88.99.1/')).toBe(true);
+  });
+
+  /*
+   * **境界 —— 隣の /24 は公開である。**
+   * この 5 本が無いと、上の規則が広すぎても誰も見ていないことになる
+   * (`a === 192 && b === 0` だけで書けば 192.0.x.x を全部塞げてしまう)。
+   */
+  it('★ 隣接する公開範囲は通す (新しい規則が広すぎない)', () => {
+    expect(pri('http://192.0.1.1/')).toBe(false);    // 192.0.0/24 と 192.0.2/24 の間
+    expect(pri('http://192.0.3.1/')).toBe(false);
+    expect(pri('http://198.51.99.1/')).toBe(false);  // TEST-NET-2 の直前
+    expect(pri('http://198.51.101.1/')).toBe(false); // 直後
+    expect(pri('http://203.0.112.1/')).toBe(false);  // TEST-NET-3 の直前
+    expect(pri('http://203.0.114.1/')).toBe(false);  // 直後
+    expect(pri('http://192.88.98.1/')).toBe(false);  // 6to4 リレーの直前
+    expect(pri('http://192.88.100.1/')).toBe(false); // 直後
+  });
+
+  /*
+   * **3 つのオクテットが「全部」一致することを要求しているか。**
+   *
+   * 上の 2 本は第 3 オクテットだけを動かしている。だから「c が効いている」
+   * ことは言えるが、**「a と b も要る」ことは言えない**。
+   *
+   * 変異検査で実際に穴が出た (2026-08-30 実測)。`a === 192 && b === 0` を
+   * **`a === 192 || b === 0` に書き換えても、どの検査も落ちなかった** ——
+   * 部分式への変異が 8 件生存していた:
+   *
+   * ```
+   *   L323 c9-29  LogicalOperator       → a === 192 || b === 0
+   *   L323 c9-18  ConditionalExpression → true          (a の比較を潰す)
+   *   L324 c9-30  LogicalOperator       → a === 198 || b === 51
+   *   …
+   * ```
+   *
+   * 効き方は**塞ぎすぎ**の側である —— `1.0.2.5` のような公開アドレスまで
+   * 塞ぐ。SSRF としては安全側に転ぶが、**正当な中継が黙って壊れる**。
+   * このリポジトリは誤爆も欠陥として数える (「誤って鳴る門は、鳴らない門より
+   * 悪い」)。塞ぎすぎは利用者から見れば「動かない」であり、理由も出ない。
+   *
+   * 第 2・第 3 オクテットだけを合わせ、**第 1 だけ変えた**標本を置く。
+   */
+  it('★ 第 1 オクテットが違えば通す (3 つ全部の一致を要求している)', () => {
+    expect(pri('http://1.0.2.5/'), 'b,c は TEST-NET-1 と同じ').toBe(false);
+    expect(pri('http://1.51.100.5/'), 'b,c は TEST-NET-2 と同じ').toBe(false);
+    expect(pri('http://1.0.113.5/'), 'b,c は TEST-NET-3 と同じ').toBe(false);
+    expect(pri('http://1.88.99.5/'), 'b,c は 6to4 リレーと同じ').toBe(false);
+    expect(pri('http://1.0.0.5/'), 'b,c は 192.0.0/24 と同じ').toBe(false);
+  });
+
+  /*
+   * 第 2 オクテットだけを変えた側も置く。上と合わせて
+   * 「a・b・c のどれを緩めても鳴る」が揃う。
+   */
+  it('★ 第 2 オクテットが違えば通す', () => {
+    expect(pri('http://192.9.2.5/'), 'a,c は TEST-NET-1 と同じ').toBe(false);
+    expect(pri('http://198.9.100.5/'), 'a,c は TEST-NET-2 と同じ').toBe(false);
+    expect(pri('http://203.9.113.5/'), 'a,c は TEST-NET-3 と同じ').toBe(false);
+    expect(pri('http://192.9.99.5/'), 'a,c は 6to4 リレーと同じ').toBe(false);
+    expect(pri('http://192.9.0.5/'), 'a,c は 192.0.0/24 と同じ').toBe(false);
+  });
+
+  /**
+   * **保管先の名前を、実物の IndexedDB に当てて留める。**
+   *
+   * `DB_NAME` / `STORE` / `KEY` はモジュール直下の文字列定数で、
+   * **空文字に潰しても検査は 1 つも落ちなかった** (2026-08-30 実測)。
+   * 保存も読み出しも同じ定数を使うので、**両方が同時にずれると往復は成立して
+   * しまう** —— 壊れるのは「前の版で保存した設定が読めなくなる」ときだけで、
+   * それは検査の外で起きる。
+   *
+   * だから往復ではなく、**素の IndexedDB を名前で直接開いて**中身を見る。
+   * これは `lint:storage` が持つ保管先の台帳 (IndexedDB 4 件) と同じ物を
+   * 別の角度から留めることでもある。
+   */
+  describe('保管先の名前 — 台帳と実物を突き合わせる', () => {
+    /** 素の IndexedDB を、字面の名前で開いて値を取る。 */
+    function readRaw(dbName: string, store: string, key: string): Promise<unknown> {
+      return new Promise((resolve, reject) => {
+        const open = indexedDB.open(dbName);
+        open.onerror = () => reject(open.error);
+        open.onsuccess = () => {
+          const db = open.result;
+          if (!db.objectStoreNames.contains(store)) {
+            db.close();
+            resolve(undefined);
+            return;
+          }
+          const req = db.transaction(store, 'readonly').objectStore(store).get(key);
+          req.onerror = () => reject(req.error);
+          req.onsuccess = () => {
+            db.close();
+            resolve(req.result);
+          };
+        };
+      });
+    }
+
+    /*
+     * **書く側もモジュールを読み直す。** 定数は読み込み時に 1 度だけ評価
+     * されるので、静的 import のままでは変異が届かない (最初そう書いて、
+     * 3 件が生存したまま動かなかった)。
+     */
+    async function freshSet(cfg: { url: string }): Promise<void> {
+      vi.resetModules();
+      const m = await import('../../network/proxy');
+      await m.setProxyConfig(cfg);
+    }
+
+    it('★ business-hub-preferences / kv / proxy に保存される', async () => {
+      await freshSet({ url: 'https://w.example.com/proxy' });
+      const raw = (await readRaw('business-hub-preferences', 'kv', 'proxy')) as
+        | { url?: string }
+        | undefined;
+      expect(raw, '台帳どおりの名前で読めること').toBeTruthy();
+      expect(raw?.url).toBe('https://w.example.com/proxy');
+    });
+
+    /*
+     * **対照。** 上は「その名前で読める」ことしか見ないので、どの名前でも
+     * 読めてしまう実装になっても気付けない。違う名前では読めないことを見る。
+     */
+    it('★ 違う名前では読めない (名前が効いていることの確認)', async () => {
+      await freshSet({ url: 'https://w.example.com/proxy' });
+      expect(await readRaw('business-hub-preferences', 'kv', 'other-key')).toBeUndefined();
+      expect(await readRaw('business-hub-preferences', 'other-store', 'proxy')).toBeUndefined();
+      expect(await readRaw('other-db', 'kv', 'proxy')).toBeUndefined();
+    });
+  });
+
+  /**
+   * **内部 TLD の一覧を、読み直して留める。**
+   *
+   * `INTERNAL_TLDS` はモジュール直下の `new Set([...])` で、**読み込み時に
+   * 1 度だけ評価される**。静的 import のままだと変異が有効になる前に評価が
+   * 済んでいるため、`'corp'` を空文字に潰しても・一覧を丸ごと空配列にしても
+   * **どの検査も落ちなかった** (2026-08-30 実測: 8 件が生存)。
+   *
+   * 覆われた static 変異体で、同じ罠を本 PR で `MEMBER_ID_RE` と
+   * `preload.ts` の橋でも踏んでいる。`vi.resetModules()` + 動的 `import()`
+   * で読み直す。
+   *
+   * ここは SSRF の遮断表そのものである —— 1 語落ちれば `*.corp` や `*.lan`
+   * が利用者の Worker 経由で触れるようになる。
+   */
+  describe('内部 TLD の一覧 — 読み直して static 変異体を届かせる', () => {
+    async function fresh() {
+      vi.resetModules();
+      return await import('../../network/proxy');
+    }
+
+    const TLDS = ['local', 'lan', 'corp', 'intranet', 'home', 'private', 'internal'] as const;
+
+    it.each(TLDS)('★ *.%s は塞ぐ', async (tld) => {
+      const m = await fresh();
+      expect(m.isPrivateOrReservedTarget(new URL(`http://host.${tld}/`))).toBe(true);
+    });
+
+    /*
+     * **対照。** 上の 7 本は「塞ぐこと」しか見ないので、実装が何でも塞ぐように
+     * なっても気付けない。一覧に無い TLD が通ることを同じ形で確かめる。
+     */
+    it('★ 一覧に無い TLD は通す (対照)', async () => {
+      const m = await fresh();
+      expect(m.isPrivateOrReservedTarget(new URL('http://host.example/'))).toBe(false);
+      expect(m.isPrivateOrReservedTarget(new URL('https://api.notion.com/v1/x'))).toBe(false);
+      expect(m.isPrivateOrReservedTarget(new URL('https://internal-tools.example.com/'))).toBe(false);
+    });
   });
 
   // 10 進 / 16 進 / 8 進の IPv4 表記。`isPrivateOrReservedTarget` の v4 判定は
@@ -1071,15 +1317,12 @@ describe('isPrivateOrReservedTarget', () => {
   });
 });
 
-describe('PROXY_REQUIRED_SERVICES', () => {
-  it('lists the 3 CORS-blocked services', () => {
-    expect(PROXY_REQUIRED_SERVICES.has('notion')).toBe(true);
-    expect(PROXY_REQUIRED_SERVICES.has('atlassian')).toBe(true);
-    expect(PROXY_REQUIRED_SERVICES.has('cloudflare')).toBe(true);
-  });
-
-  it('does NOT mark CORS-friendly services', () => {
-    expect(PROXY_REQUIRED_SERVICES.has('github')).toBe(false);
-    expect(PROXY_REQUIRED_SERVICES.has('anthropic')).toBe(false);
-  });
-});
+/*
+ * `PROXY_REQUIRED_SERVICES` の検査は 2026-08-27 に**消した**。
+ *
+ * 「github は proxy 必須ではない」と固定していたが、実装は全サービスを
+ * 必ずプロキシへ通す (`liveRead.ts`)。**実装より緩い方針を検査が留めていた**
+ * ことになり、そのまま従えば資格情報を第三者ホストへ直接送る経路が戻る。
+ * 本当の方針は `liveRead.test.ts` の「プロキシを用意できなければ読まない」で
+ * 留める。
+ */

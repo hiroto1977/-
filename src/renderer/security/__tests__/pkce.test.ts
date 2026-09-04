@@ -69,13 +69,16 @@ describe('buildGoogleAuthUrl', () => {
 });
 
 describe('exchangeGoogleCode', () => {
+  /*
+   * **本物の `Response` を作る。** 以前は `json()` が payload を返すのに
+   * `text()` が空文字を返す手作りの物だった —— 本物ではありえない形で、
+   * 交換の本文を `readBodyWithCap` で読むようにした途端に落ちた
+   * (2026-08-23)。**モックが実物と違う形をしていると、検査は実装ではなく
+   * モックの挙動を留めてしまう。** 同じ誤りをこのリポジトリで 3 度踏んでいる
+   * (`cursor.test.ts` / `business.test.ts` / ここ)。
+   */
   function mockResponse(payload: unknown, ok = true, status = 200): Response {
-    return {
-      ok,
-      status,
-      async text() { return ok ? '' : JSON.stringify(payload); },
-      async json() { return payload; },
-    } as Response;
+    return new Response(JSON.stringify(payload), { status: ok ? status : status });
   }
 
   const baseArgs = {
@@ -120,6 +123,43 @@ describe('exchangeGoogleCode', () => {
     expect(r.expiresAt).toBeGreaterThan(Date.now() + 3500_000);
   });
 
+  /*
+   * **「非有限」の側は、名前だけで実際には試されていなかった。**
+   *
+   * 上の検査は題に「missing / non-finite」とあるが、標本は `expires_in` が
+   * **無い**場合だけである。そのため `typeof === 'number' && isFinite(…)` の
+   * `&&` を `||` に変えても鳴らなかった (2026-08-31 実測)。
+   *
+   * `||` になると **Infinity がそのまま通り**、`Date.now() + Infinity * 1000`
+   * で `expiresAt` が Infinity になる —— 期限切れの判定が永久に来ない。
+   *
+   * `JSON.stringify` は Infinity を書けない (null になる) ので、本文を
+   * **生の文字列**で組む。`1e999` は JSON.parse で Infinity になる。
+   */
+  it('★ expires_in が非有限 (Infinity) なら 3600 に落とす', async () => {
+    const raw = '{"access_token":"ya29.x","expires_in":1e999}';
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(new Response(raw, { status: 200 }));
+    const r = await exchangeGoogleCode(baseArgs, fetchMock);
+    expect(Number.isFinite(r.expiresAt), 'expiresAt が有限であること').toBe(true);
+    expect(r.expiresAt).toBeLessThan(Date.now() + 3700_000);
+    expect(r.expiresAt).toBeGreaterThan(Date.now() + 3500_000);
+  });
+
+  /*
+   * 成功応答が上限を超えたときの文言。ここは `.catch` していないので
+   * **そのまま利用者に出る** —— どの段で落ちたかが分からないと切り分けが
+   * できない。ラベルを空にしても鳴っていなかった。
+   */
+  it('★ 成功応答が大きすぎるとき、どの段で落ちたかを言う', async () => {
+    const huge = '{"access_token":"' + 'x'.repeat(11 * 1024 * 1024) + '"}';
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(new Response(huge, { status: 200 }));
+    await expect(exchangeGoogleCode(baseArgs, fetchMock)).rejects.toThrow(/token exchange/);
+  });
+
   it('throws on HTTP error', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
       mockResponse({ error: 'invalid_grant' }, false, 400),
@@ -134,6 +174,33 @@ describe('exchangeGoogleCode', () => {
 
   it('rejects empty verifier', async () => {
     await expect(exchangeGoogleCode({ ...baseArgs, verifier: '' })).rejects.toThrow(/verifier が不正/);
+  });
+
+  /*
+   * **打ち切りと応答サイズの上限。** 2026-08-23 に `withTimeout` +
+   * `readBodyWithCap` を通したが、**駆動する検査が無かった**。
+   * 兄弟の `network/proxy.ts` は掛けていて、ここだけ素の fetch だった。
+   *
+   * fetch を打ち切る手段は `AbortSignal` しか無いので、`signal` が渡って
+   * いるかで「打ち切りが在るか」を測れる (値そのものは httpLimits の検査が持つ)。
+   */
+  it('トークン交換に打ち切りが掛かっている (signal を渡す)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      mockResponse({ access_token: 'at', expires_in: 3600 }),
+    );
+    await exchangeGoogleCode(baseArgs, fetchMock);
+    expect(fetchMock.mock.calls[0]?.[1]?.signal).toBeInstanceOf(AbortSignal);
+  });
+
+  it('応答が上限を超えていれば読み切らずに落とす', async () => {
+    const huge = new Response('a'.repeat(11 * 1024 * 1024), { status: 200 });
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(huge);
+    await expect(exchangeGoogleCode(baseArgs, fetchMock)).rejects.toThrow(/too large/);
+  });
+
+  it('JSON でない応答は専用の文言で落とす (生の SyntaxError を出さない)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(new Response('<html>', { status: 200 }));
+    await expect(exchangeGoogleCode(baseArgs, fetchMock)).rejects.toThrow(/JSON ではありません/);
   });
 
   it('throws when response missing access_token', async () => {

@@ -15,17 +15,44 @@ import {
   type AtlassianSiteFailure,
 } from '../../shared/atlassianSite';
 import { redactForMessage } from '../../shared/redact';
+import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../../shared/httpLimits';
 
+/**
+ * 素の `fetch` と同じ形。
+ *
+ * **このモジュールの書き込み口はもうこれを使わない** —— 2026-08-31 に
+ * `createGithubIssue` を `Transport` 必須へ揃えたので、13 本すべてが
+ * 「呼び出し側が渡す」形になった。型は外向けに残してある (呼び出し側が
+ * 自分の口を組み立てるときの記述用)。
+ */
 export type FetchFn = typeof fetch;
 
 /** url + init を受け取り Response を返すトランスポート。直接 fetch でも、
  *  プロキシ (fetchViaProxy をバインドしたもの) でも差し替えられる。 */
 export type Transport = (url: string, init: RequestInit) => Promise<Response>;
 
+/**
+ * 応答本文を上限つきで読む。
+ *
+ * **プロキシ経由の道と直接叩く道で、判定を違えない。**
+ * `network/proxy.ts` の `fetchViaProxy` は上限つきで読んだ本文から
+ * `Response` を組み直して返すので、プロキシ経由で来た応答は既に 10MiB 以下
+ * である。ところが CORS 許可済みで**直接叩く道** (GitHub) だけは素の
+ * `fetch` から来た `Response` をそのまま読んでいた —— 相手が巨大な本文を
+ * 返せばタブの記憶を使い切る (2026-08-31 に発見)。
+ *
+ * `web-shim.ts` は同じ理由で `readCappedText` を持っているが、こちらの
+ * モジュールには渡っていなかった。**同じ問いには同じ答えを置く。**
+ */
+export async function readCapped(res: Response, label: string): Promise<string> {
+  return readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, label);
+}
+
 /** API 応答が ok でなければ本文の一部を添えて throw する共通ヘルパ。 */
 async function ensureOk(res: Response, label: string): Promise<void> {
   if (res.ok) return;
-  const body = await res.text().catch(() => '');
+  // 落ちている相手ほど大きなものを返しうるので、失敗の本文も上限つきで読む。
+  const body = await readCapped(res, label).catch(() => '');
   throw new Error(`${label} ${res.status}: ${redactForMessage(body, 200)}`);
 }
 
@@ -52,10 +79,27 @@ interface GithubIssueApiResponse {
   title: string;
 }
 
+/**
+ * GitHub の課題を作る。
+ *
+ * ## `transport` を**必須**にしてある理由 (2026-08-31)
+ *
+ * このモジュールの書き込み口は 13 本あり、**12 本は `transport: Transport` を
+ * 必須の第 3 引数に取る** —— 呼び出し側は忘れようがない。ところがここだけが
+ * `fetchFn: FetchFn = fetch` という**省略可の既定つき**だった。
+ *
+ * `api.github.com` は CORS を許可しているのでプロキシを通らず、その分
+ * 「素の `fetch` でも動いてしまう」。実際 `web-shim.ts` は既定のまま呼んで
+ * おり、**プロキシ経由の 14 経路にまとめて掛けている打ち切りが、この 1 本にだけ
+ * 掛かっていなかった** (応答しない相手に対して `busy` が戻らない)。
+ *
+ * 検査で見張るより**忘れられない形にする**ほうが強い。兄弟 12 本と同じ
+ * 引数の並びに揃えたので、渡し忘れは型検査で落ちる。
+ */
 export async function createGithubIssue(
   input: CreateGithubIssueInput,
   token: string,
-  fetchFn: FetchFn = fetch,
+  transport: Transport,
 ): Promise<CreateGithubIssueResult> {
   const owner = typeof input.owner === 'string' ? input.owner.trim() : '';
   const repo = typeof input.repo === 'string' ? input.repo.trim() : '';
@@ -68,7 +112,7 @@ export async function createGithubIssue(
     ? input.labels.filter((l): l is string => typeof l === 'string')
     : undefined;
 
-  const res = await fetchFn(
+  const res = await transport(
     `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues`,
     {
       method: 'POST',
@@ -83,7 +127,10 @@ export async function createGithubIssue(
     },
   );
   await ensureOk(res, 'GitHub API');
-  const data = (await res.json()) as GithubIssueApiResponse;
+  // ここは**プロキシを通らない唯一の書き込み経路** (api.github.com は CORS
+  // 許可済み)。上限を掛けるのはこの読み出しだけで、他の create-* は
+  // `fetchViaProxy` が組み直した 10MiB 以下の `Response` を受け取っている。
+  const data = JSON.parse(await readCapped(res, 'GitHub API')) as GithubIssueApiResponse;
   return { number: data.number, url: data.html_url, title: data.title };
 }
 
@@ -613,7 +660,7 @@ export async function scanUrlVirusTotal(
   await ensureOk(submit, 'VirusTotal API');
 
   const id = vtBase64(url);
-  const report = await transport(`https://www.virustotal.com/api/v3/urls/${id}`, {
+  const report = await transport(`https://www.virustotal.com/api/v3/urls/${encodeURIComponent(id)}`, {
     method: 'GET',
     headers: { 'x-apikey': vtKey },
   });

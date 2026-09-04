@@ -10,6 +10,14 @@ import {
   ROAD_SLOPE_RESIDENTIAL,
   SHADOW_HEIGHT_THRESHOLD_M,
   NEIGHBORHOOD_COMMERCIAL_WORKSHOP_CAP,
+  DEFAULT_ZONING_RULES,
+  ROAD_FAR_WIDTH_THRESHOLD_M,
+  ROAD_FAR_MULTIPLIER_RESIDENTIAL,
+  ROAD_FAR_MULTIPLIER_OTHER,
+  CORNER_LOT_COVERAGE_BONUS_PCT,
+  FIREPROOF_COVERAGE_BONUS_PCT,
+  FIREPROOF_EXEMPTION_COVERAGE_PCT,
+  roadFarMultiplier,
 } from '../zoningPlanner';
 
 // 想定ケース: 近隣商業地域 (建ぺい80% / 容積200%)・敷地300㎡・前面道路6m。
@@ -364,5 +372,81 @@ describe('planRoadSlope — 適用距離は「両方揃ったときだけ」判�
     expect(r.applicationDistanceChecked).toBe(false);
     expect(r.beyondApplicationDistance).toBe(false);
     expect(r.ok).toBe(false);
+  });
+});
+
+/*
+ * 台帳 (`parameters.ts`) から渡す建築基準法の数値。省略時は定数と同じ結果、
+ * 渡せば幅員の上限・乗数・緩和・適用除外・勾配のそれぞれが効く。
+ */
+describe('台帳から渡す規則 (ZoningRules)', () => {
+  const site = { siteArea: 300, coverageRatioPct: 80, farPct: 200, roadWidthM: 6, category: 'other' as const, cornerLot: true };
+
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_ZONING_RULES).toEqual({
+      roadFarWidthThresholdM: ROAD_FAR_WIDTH_THRESHOLD_M,
+      roadFarMultiplierResidential: ROAD_FAR_MULTIPLIER_RESIDENTIAL,
+      roadFarMultiplierOther: ROAD_FAR_MULTIPLIER_OTHER,
+      cornerLotBonusPct: CORNER_LOT_COVERAGE_BONUS_PCT,
+      fireproofBonusPct: FIREPROOF_COVERAGE_BONUS_PCT,
+      fireproofExemptionCoveragePct: FIREPROOF_EXEMPTION_COVERAGE_PCT,
+      roadSlopeResidential: ROAD_SLOPE_RESIDENTIAL,
+      roadSlopeOther: ROAD_SLOPE_OTHER,
+    });
+    expect([ROAD_FAR_WIDTH_THRESHOLD_M, ROAD_FAR_MULTIPLIER_RESIDENTIAL, ROAD_FAR_MULTIPLIER_OTHER]).toEqual([12, 40, 60]);
+    expect([CORNER_LOT_COVERAGE_BONUS_PCT, FIREPROOF_COVERAGE_BONUS_PCT, FIREPROOF_EXEMPTION_COVERAGE_PCT]).toEqual([10, 10, 80]);
+    expect(planSite(site, DEFAULT_ZONING_RULES)).toEqual(planSite(site));
+    expect(roadFarMultiplier('residential')).toBe(40);
+    expect(roadFarMultiplier('other')).toBe(60);
+    const slopeIn = { roadWidthM: 6, setbackM: 1.5, category: 'other' as const, plannedHeightM: 12.1 };
+    expect(planRoadSlope(slopeIn, DEFAULT_ZONING_RULES)).toEqual(planRoadSlope(slopeIn));
+    expect(roadSlopeFactor('residential', DEFAULT_ZONING_RULES)).toBe(ROAD_SLOPE_RESIDENTIAL);
+  });
+
+  it('幅員の上限と乗数が容積率の道路制限に効く', () => {
+    const rules = { ...DEFAULT_ZONING_RULES, roadFarWidthThresholdM: 15, roadFarMultiplierOther: 50, roadFarMultiplierResidential: 30 };
+    const wide = { siteArea: 100, coverageRatioPct: 60, farPct: 800, roadWidthM: 13, category: 'other' as const };
+    // 13 m: 既定 (12 m 未満が対象) なら制限なし。上限を 15 m にすると 13 × 50 = 650% が効く。
+    expect(planSite(wide).roadLimitedFarPct).toBeNull();
+    const r = planSite(wide, rules);
+    expect(r.roadLimitedFarPct).toBe(650);
+    expect(r.effectiveFarPct).toBe(650);
+    expect(r.maxTotalFloor).toBe(650);
+    expect(roadFarMultiplier('other', rules)).toBe(50);
+    expect(roadFarMultiplier('residential', rules)).toBe(30);
+    expect(planSite({ ...wide, roadWidthM: 4, category: 'residential' }, rules).roadLimitedFarPct).toBe(120);
+    // 上限ちょうどは「未満」ではないので制限なし。
+    expect(planSite({ ...wide, roadWidthM: 15 }, rules).roadLimitedFarPct).toBeNull();
+  });
+
+  it('角地・耐火の緩和幅と、適用除外になる指定値が効く', () => {
+    const rules = { ...DEFAULT_ZONING_RULES, cornerLotBonusPct: 5, fireproofBonusPct: 20, fireproofExemptionCoveragePct: 70 };
+    const base = { siteArea: 100, coverageRatioPct: 60, farPct: 200, roadWidthM: 12, category: 'other' as const };
+    expect(planSite({ ...base, cornerLot: true }, rules).effectiveCoveragePct).toBe(65);
+    expect(planSite({ ...base, fireproofBonus: true }, rules).effectiveCoveragePct).toBe(80);
+    expect(planSite({ ...base, cornerLot: true, fireproofBonus: true }, rules).effectiveCoveragePct).toBe(85);
+    // 指定 70% × 耐火: 既定 (80% 以上が適用除外) では 70 + 10 = 80、指定値を 70 に下げると 100。
+    const seventy = { ...base, coverageRatioPct: 70, fireproofBonus: true };
+    expect(planSite(seventy).effectiveCoveragePct).toBe(80);
+    expect(planSite(seventy, rules).effectiveCoveragePct).toBe(100);
+    // 69% は適用除外にならず 69 + 20 = 89 (境目は「以上」)。
+    expect(planSite({ ...seventy, coverageRatioPct: 69 }, rules).effectiveCoveragePct).toBe(89);
+  });
+
+  it('道路斜線の勾配が限度・必要後退・トレードオフに効く', () => {
+    const rules = { ...DEFAULT_ZONING_RULES, roadSlopeResidential: 1, roadSlopeOther: 2 };
+    expect(roadSlopeFactor('residential', rules)).toBe(1);
+    expect(roadSlopeFactor('other', rules)).toBe(2);
+    const slope = planRoadSlope({ roadWidthM: 6, setbackM: 1.5, category: 'other', plannedHeightM: 12.1 }, rules);
+    expect(slope.slopeFactor).toBe(2);
+    expect(slope.limitM).toBe(18); // (6 + 1.5 × 2) × 2
+    expect(slope.minSetbackM).toBe(0.03); // (12.1 ÷ 2 − 6) ÷ 2 = 0.025 → 切り上げ
+    expect(planRoadSlope({ roadWidthM: 6, setbackM: 0, category: 'residential', plannedHeightM: 12.1 }, rules).limitM).toBe(6);
+    const tradeoff = planSetbackTradeoff(
+      { siteDepthM: 20, siteWidthM: 15, rearSetbackM: 0.5, sideSetbackTotalM: 3, maxFootprint: 240, roadWidthM: 6, category: 'other', plannedHeightM: 12.1 },
+      rules,
+    );
+    expect(tradeoff.requiredSetbackM).toBe(0.03);
+    expect(tradeoff.buildableDepthM).toBe(19.47); // 20 − 0.03 − 0.5 (既定の勾配 1.5 では 18.46)
   });
 });

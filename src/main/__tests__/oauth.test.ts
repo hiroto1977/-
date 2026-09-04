@@ -801,7 +801,7 @@ describe('OAUTH_CONFIGS shape', () => {
     expect(cfg?.clientSecret).toBe('');
   });
 
-  it('pins every token endpoint to https (assertHttpsTokenUrl can never fire in prod)', () => {
+  it('pins every endpoint to https (assertHttpsEndpoint can never fire in prod)', () => {
     for (const [id, cfg] of Object.entries(OAUTH_CONFIGS)) {
       expect(cfg, id).toBeDefined();
       expect(cfg!.tokenUrl.startsWith('https://'), id).toBe(true);
@@ -937,7 +937,12 @@ describe('listenForCallback (integration — real HTTP server)', () => {
     port: number,
     path: string,
     hostHeader?: string,
-  ): Promise<{ status: number; body: string; contentType: string | undefined }> {
+  ): Promise<{
+    status: number;
+    body: string;
+    contentType: string | undefined;
+    nosniff: string | undefined;
+  }> {
     return new Promise((resolve, reject) => {
       const headers: Record<string, string> = {};
       if (hostHeader !== undefined) headers.Host = hostHeader;
@@ -957,6 +962,8 @@ describe('listenForCallback (integration — real HTTP server)', () => {
               status: res.statusCode ?? 0,
               body,
               contentType: res.headers['content-type'],
+              // Node は同名ヘッダを配列で返しうるので、比較しやすい形に潰す。
+              nosniff: ([] as string[]).concat(res.headers['x-content-type-options'] ?? [])[0],
             }),
           );
         },
@@ -991,6 +998,31 @@ describe('listenForCallback (integration — real HTTP server)', () => {
   function trap(p: ReturnType<typeof listenForCallback>): Promise<Error | { code: string; state: string }> {
     return p.then((r) => r as { code: string; state: string }).catch((e) => e as Error);
   }
+
+  /*
+   * **要求の値を映して返す唯一の応答**。`error` はクエリ由来で、そのまま
+   * 本文に入る。到達には state 一致が要る (state を先に照合する) ので
+   * 任意の相手からは叩けないが、映す以上は頭書きを固める:
+   *
+   *   - `charset` 明示 —— 成功応答は元から明示していて、理由も
+   *     「ブラウザに中身を推測させない」と書いてある。映す側が弱いのは逆。
+   *   - `nosniff` —— 宣言した `text/plain` を HTML と読み替えさせない。
+   *
+   * (2026-08-24 の点検で、映さない成功応答のほうが頭書きが強いという
+   *  非対称に気付いた。)
+   */
+  it('プロバイダのエラーを映して返す応答は、推測されない頭書きで返す', async () => {
+    const STATE = 'integ-test-state-err-000000001';
+    const listener = listenForCallback(STATE);
+    const port = await listener.port();
+    const trapped = trap(listener);
+    const res = await fireGet(port, `/oauth/callback?state=${STATE}&error=access_denied`);
+    expect(res.status).toBe(400);
+    expect(res.contentType).toBe('text/plain; charset=utf-8');
+    expect(res.nosniff).toBe('nosniff');
+    expect(res.body).toContain('access_denied');
+    expect(await trapped).toBeInstanceOf(Error);
+  });
 
   it('responds 400 on state mismatch but does NOT terminate the flow (CSRF DoS defense)', async () => {
     // After the hardening: a forged callback with wrong/missing state
@@ -1245,6 +1277,18 @@ describe('authorize (end-to-end flow with real loopback + mocked electron + mock
     expect(body.get('client_id')).toBe(CFG.clientId);
     expect(body.get('redirect_uri')).toBe(`http://127.0.0.1:${port}/oauth/callback`);
     expect(body.get('code_verifier')).toMatch(/^[A-Za-z0-9_-]{43}$/);
+
+    /*
+     * **打ち切りが掛かっていること。** トークン端点が応答しないと、
+     * `authorize()` は永久に返らない —— 利用者から見ると「認可したのに
+     * 何も起きない」状態になる。fetch を打ち切る手段は `AbortSignal` しか
+     * 無いので、`signal` が渡っているかで測れる (値は httpLimits の検査が持つ)。
+     *
+     * この経路は 2026-08-23 に `withTimeout` を通したが、**駆動する検査が
+     * 無かった**。同じ日に「直したはずの修正が別の関数に入っていた」のを
+     * 見つけたので、入れた先を字面で確かめるだけでなく**実際に叩いて**留める。
+     */
+    expect((init as RequestInit).signal, 'トークン交換に打ち切りが無い').toBeInstanceOf(AbortSignal);
   });
 
   it('throws when the token endpoint returns non-2xx, including the truncated body', async () => {
@@ -1561,7 +1605,7 @@ describe('refresh', () => {
   });
 });
 
-describe('assertHttpsTokenUrl (RFC 8252 §8.3 — トークン交換を平文で行わせない)', () => {
+describe('assertHttpsEndpoint (RFC 8252 §8.3 — 平文の宛先へ資格情報を出さない)', () => {
   // authorize() / refresh() の冒頭ガード。現行の OAUTH_CONFIGS は全て https を
   // ハードコードしており IPC 層も clientId しか上書きさせないため到達しないが、
   // 将来の設定追加やテスト用 fixture の混入で平文交換が起きないための常設ガード。
@@ -1595,6 +1639,49 @@ describe('assertHttpsTokenUrl (RFC 8252 §8.3 — トークン交換を平文で
     const set = await refresh(CFG, { accessToken: 'old', refreshToken: 'rt' }, fetchSpy);
     expect(set.accessToken).toBe('at');
     expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
+  /*
+   * **認可 URL 側 (2026-08-22 に足した)。**
+   *
+   * 以前は「全 config がハードコード https」という検査だけで守られていて、
+   * 常設ガードはトークン端点にしか無かった。認可 URL のほうが軽いわけではない:
+   * `state` (CSRF トークン) を載せて出ていくうえ、`shell` へ**そのまま渡す**
+   * —— `externalUrlGate.ts` の関門を通る 2 つの扉と違い、ここは
+   * `lint:forbidden` の allowFile で例外にしてある唯一の呼び出し口である。
+   */
+  it.each([
+    ['平文 http', 'http://accounts.example.com/authorize'],
+    ['スキーム無し', 'accounts.example.com/authorize'],
+    ['file', 'file:///etc/passwd'],
+    ['大文字 (URL 解析ではなく前置き一致なので弾く側)', 'HTTPS://accounts.example.com/authorize'],
+    ['空', ''],
+  ])('authorize は %s の認可エンドポイントを拒否する (%s)', async (_label, authorizeUrl) => {
+    const before = openExternalMock.mock.calls.length;
+    await expect(authorize({ ...CFG, authorizeUrl })).rejects.toThrow(
+      'OAuth authorization endpoint must use https',
+    );
+    // **ブラウザを開く副作用より前**に落ちること。平文の宛先へ state を
+    // 投げてから気付いても遅い。
+    expect(openExternalMock.mock.calls.length, 'ブラウザを開いてしまっている').toBe(before);
+  });
+
+  it('トークン端点が平文なら、認可 URL を見るより前に落ちる (順序)', async () => {
+    // 両方が平文のとき、先に鳴るのはトークン側 —— 文言で確かめる。
+    await expect(
+      authorize({ ...CFG, tokenUrl: 'http://t.example/token', authorizeUrl: 'http://a.example/auth' }),
+    ).rejects.toThrow('OAuth token endpoint must use https');
+  });
+
+  it('2 つの宛先は同じ判定を通る (片方だけ緩んでいない)', async () => {
+    const before = openExternalMock.mock.calls.length;
+    for (const cfg of [
+      { ...CFG, tokenUrl: 'http://x.example/token' },
+      { ...CFG, authorizeUrl: 'http://x.example/auth' },
+    ]) {
+      await expect(authorize(cfg)).rejects.toThrow(/must use https/);
+    }
+    expect(openExternalMock.mock.calls.length).toBe(before);
   });
 });
 
@@ -1685,6 +1772,129 @@ describe('ループバックサーバの結び先と応答本文', () => {
       proto.listen = original;
     }
   });
+
+  /*
+   * **偽コールバックで主プロセスを落とせないこと。**
+   *
+   * `classifyCallback` の注記は「OAuth の窓の間にループバックへ投げ続ける
+   * ブラウザのタブ」を脅威として名指しし、そういう要求は state 不一致として
+   * 非終端の 400 に落ちる、と書いてある。2026-08-22 の実測で **その保証が
+   * 破れている入力**が見つかった:
+   *
+   *   /oauth/callback?state=<JS 長 43・UTF-8 45 バイト>
+   *
+   * `safeStateEquals` が JS の length しか見ずに `timingSafeEqual` へ渡して
+   * いたため RangeError が出て、request listener の中の同期 throw が
+   * `uncaughtException` になった。応答は返らず (実測 3 秒待っても無応答)、
+   * main.ts に受け手が無いので **アプリごと落ちる**。
+   *
+   * 直したのは 2 段: (1) バイト長も見る、(2) classifyCallback を try で囲む。
+   * ここは**外から見える振る舞い**で両方まとめて固定する。
+   */
+  it.each([
+    ['43 文字のうち 1 つだけ全角', `${'a'.repeat(42)}あ`],
+    ['全部全角の 43 文字', 'あ'.repeat(43)],
+    ['サロゲートペア混じり', `${'a'.repeat(41)}\u{1F600}`],
+  ])('偽コールバック (%s) は 400 を返し、落ちない', async (_label, forged) => {
+    const listen = await freshListen();
+    const STATE = 'a'.repeat(43);
+    const uncaught: Error[] = [];
+    const onUncaught = (e: Error): void => { uncaught.push(e); };
+    process.on('uncaughtException', onUncaught);
+    const listener = listen(STATE, 5000);
+    try {
+      const port = await listener.port();
+      const http = await import('node:http');
+      const status = await new Promise<number | string>((resolve) => {
+        const req = http.request(
+          { host: '127.0.0.1', port, path: `/oauth/callback?code=X&state=${encodeURIComponent(forged)}` },
+          (res) => { res.resume(); resolve(res.statusCode ?? 0); },
+        );
+        req.on('error', (e) => resolve(`socket error: ${e.message}`));
+        setTimeout(() => resolve('無応答'), 2000);
+        req.end();
+      });
+      expect(status).toBe(400);
+      expect(uncaught.map((e) => e.message)).toEqual([]);
+
+      // 非終端であること —— 本物が後から来れば解決する。
+      const ok = await new Promise<number | string>((resolve) => {
+        const req = http.request(
+          { host: '127.0.0.1', port, path: `/oauth/callback?code=real&state=${STATE}` },
+          (res) => { res.resume(); resolve(res.statusCode ?? 0); },
+        );
+        req.on('error', (e) => resolve(`socket error: ${e.message}`));
+        setTimeout(() => resolve('無応答'), 2000);
+        req.end();
+      });
+      expect(ok).toBe(200);
+      await expect(listener).resolves.toEqual({ code: 'real', state: STATE });
+    } finally {
+      process.off('uncaughtException', onUncaught);
+      listener.cancel();
+      await listener.catch(() => undefined);
+    }
+  }, 15000);
+
+  /*
+   * **URL として読めない request-target でも落ちないこと。**
+   *
+   * Node の HTTP パーサは `GET http://[ HTTP/1.1` を受け取って
+   * `req.url === 'http://['` を渡してくるが、`new URL(req.url, base)` は
+   * これを TypeError で拒む (2026-08-22 に生のソケットで実測。
+   * `http://[::1` / `//[` / `http://%%` も同じ)。
+   *
+   * つまり `classifyCallback` が投げる経路は `safeStateEquals` のバイト長
+   * だけではなかった —— **URL の解析そのものが 2 本目の入口**だった。
+   * どちらも request listener の中の同期 throw = `uncaughtException` なので、
+   * try で囲む多層防御はここで意味を持つ。
+   */
+  it('URL として読めない request-target でも 400 を返し、落ちない', async () => {
+    const listen = await freshListen();
+    const STATE = 'b'.repeat(43);
+    const uncaught: Error[] = [];
+    const onUncaught = (e: Error): void => { uncaught.push(e); };
+    process.on('uncaughtException', onUncaught);
+    const listener = listen(STATE, 5000);
+    try {
+      const port = await listener.port();
+      const net = await import('node:net');
+      const raw = await new Promise<string>((resolve) => {
+        const sock = net.connect(port, '127.0.0.1', () => {
+          sock.write(`GET http://[ HTTP/1.1\r\nHost: 127.0.0.1:${port}\r\nConnection: close\r\n\r\n`);
+        });
+        let buf = '';
+        sock.on('data', (d) => { buf += String(d); });
+        sock.on('close', () => resolve(buf));
+        sock.on('error', (e) => resolve(`socket error: ${e.message}`));
+        setTimeout(() => { sock.destroy(); resolve(buf || '無応答'); }, 2000);
+      });
+      expect(raw.startsWith('HTTP/1.1 400'), `応答: ${raw.slice(0, 60)}`).toBe(true);
+      // 本文まで見る。空にしても 400 は 400 なので、状態行だけでは
+      // 「理由を返している」ことが留まらない。
+      // (chunked で返るので `endsWith` ではなく含有で見る。)
+      expect(raw.includes('bad request'), `本文: ${JSON.stringify(raw.slice(-40))}`).toBe(true);
+      expect(uncaught.map((e) => e.message)).toEqual([]);
+
+      // 非終端であること — 本物が後から来れば解決する。
+      const http = await import('node:http');
+      const ok = await new Promise<number | string>((resolve) => {
+        const req = http.request(
+          { host: '127.0.0.1', port, path: `/oauth/callback?code=real2&state=${STATE}` },
+          (res) => { res.resume(); resolve(res.statusCode ?? 0); },
+        );
+        req.on('error', (e) => resolve(`socket error: ${e.message}`));
+        setTimeout(() => resolve('無応答'), 2000);
+        req.end();
+      });
+      expect(ok).toBe(200);
+      await expect(listener).resolves.toEqual({ code: 'real2', state: STATE });
+    } finally {
+      process.off('uncaughtException', onUncaught);
+      listener.cancel();
+      await listener.catch(() => undefined);
+    }
+  }, 15000);
 
   it('認証完了ページの中身を返す (定数が空になっていない)', async () => {
     const listen = await freshListen();
@@ -1887,6 +2097,39 @@ describe('OAUTH_CONFIGS — 全サービス完全一致 (golden)', () => {
       .map(([k]) => k)
       .sort();
     expect(noPkce).toEqual(['atlassian', 'notion', 'wordpress']);
+  });
+
+  /*
+   * **PKCE を切るなら、代わりに client secret で守られていること。**
+   *
+   * 「傍受した `code` を交換できない」を成り立たせている仕組みは 2 つある:
+   *
+   *   PKCE あり      verifier を知らないと交換できない (public client でも可)
+   *   PKCE なし      client secret を知らないと交換できない (confidential client)
+   *
+   * どちらも無い構成 = **secret を持たない public client で PKCE も切る** は、
+   * `code` を傍受しただけでトークンを取られる。今日はそんな構成は無いが、
+   * それを保証していたのは「3 つだけ」という名前の一覧だけで、
+   * **なぜ安全なのか**は誰も留めていなかった (2026-08-23)。
+   *
+   * `SECURITY.md` の「OAuth リダイレクト改ざん → PKCE で verifier 必須化」も
+   * この 3 つに触れていなかったので、あわせて直した。
+   */
+  it('PKCE を切っている構成は、必ず client secret を要求する', async () => {
+    const offenders: string[] = [];
+    for (const [id, cfg] of Object.entries(await freshConfigs())) {
+      if (!cfg) continue;
+      if (cfg.pkce === false && !requiresClientSecret(cfg as unknown as OAuthConfig)) offenders.push(id);
+    }
+    expect(
+      offenders,
+      `PKCE も client secret も無い構成がある (code 傍受でトークンを取られる): ${offenders.join(', ')}`,
+    ).toEqual([]);
+  });
+
+  it('逆向き: PKCE ありの構成が 1 つ以上ある (検査が空虚に通っていない)', async () => {
+    const withPkce = Object.entries(await freshConfigs()).filter(([, c]) => c?.pkce !== false);
+    expect(withPkce.length).toBeGreaterThanOrEqual(6);
   });
 
   it('すべての authorizeUrl / tokenUrl が https', async () => {

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { computeFinancialRatios, radarAxes, type FinancialInputs } from '../financialRatios';
+import { axisBand, computeFinancialRatios, radarAxes, type FinancialInputs } from '../financialRatios';
+import { RADAR_AXIS_BANDS } from '../../../shared/financialHealthBands';
 
 const SAMPLE: FinancialInputs = {
   revenue: 12_000,
@@ -261,5 +262,50 @@ describe('computeFinancialRatios — CCC partial-null guards', () => {
   });
   it('computes CCC when receivables are 0 (arDays=0, still defined)', () => {
     expect(computeFinancialRatios({ ...SAMPLE, accountsReceivable: 0 }).cccDays).toBe(-30.4); // 0 + 60.83 − 91.25
+  });
+});
+
+/*
+ * 台帳 (`parameters.ts`) から渡す 0 点 / 100 点の水準。省略時は既定の表と同じ結果、
+ * 渡せばその軸だけが動く。幅 0 の帯は既定へ戻す (NaN の点を出さない)。
+ */
+describe('radarAxes — 台帳から渡す帯 (RadarBands)', () => {
+  const ratios = () => computeFinancialRatios(SAMPLE);
+  const equity = (bands: typeof RADAR_AXIS_BANDS) => radarAxes(ratios(), bands).find((a) => a.key === 'equityRatio')!.score;
+
+  it('既定の引数は表そのもので、省略時と同じ結果', () => {
+    expect(radarAxes(ratios(), RADAR_AXIS_BANDS)).toEqual(radarAxes(ratios()));
+    expect(axisBand('equityRatio', RADAR_AXIS_BANDS)).toEqual({ bad: 0, good: 50 });
+    expect(equity(RADAR_AXIS_BANDS)).toBe(80); // 自己資本比率 40% を 0〜50 で採点
+  });
+
+  it('100 点の水準を動かすと同じ 40% の点が変わり、向きを逆にも取れ、他の軸は動かない', () => {
+    expect(equity({ ...RADAR_AXIS_BANDS, equityRatio: { bad: 0, good: 100 } })).toBe(40);
+    expect(equity({ ...RADAR_AXIS_BANDS, equityRatio: { bad: 20, good: 40 } })).toBe(100);
+    expect(equity({ ...RADAR_AXIS_BANDS, equityRatio: { bad: 30, good: 50 } })).toBe(50);
+    expect(equity({ ...RADAR_AXIS_BANDS, equityRatio: { bad: 50, good: 0 } })).toBe(20); // 低いほど良い向き
+    const moved = radarAxes(ratios(), { ...RADAR_AXIS_BANDS, equityRatio: { bad: 0, good: 100 } });
+    expect(moved.filter((a) => a.key !== 'equityRatio')).toEqual(radarAxes(ratios()).filter((a) => a.key !== 'equityRatio'));
+  });
+
+  it('幅 0 の帯 (0 点と 100 点が同じ) は既定の帯に戻す', () => {
+    const degenerate = { ...RADAR_AXIS_BANDS, equityRatio: { bad: 40, good: 40 } };
+    expect(axisBand('equityRatio', degenerate)).toEqual(RADAR_AXIS_BANDS.equityRatio);
+    expect(equity(degenerate)).toBe(80);
+    // 幅があれば (どんなに狭くても) その帯を使う。
+    expect(axisBand('equityRatio', { ...RADAR_AXIS_BANDS, equityRatio: { bad: 40, good: 40.5 } })).toEqual({ bad: 40, good: 40.5 });
+  });
+
+  it('全 15 軸がそれぞれ自分の帯を読む (1 軸ずつ「実測値で 100 点」にすると、その軸だけ 100 になる)', () => {
+    const base = radarAxes(ratios());
+    expect(base).toHaveLength(15);
+    for (const a of base) {
+      expect(a.raw, a.key).not.toBeNull();
+      const raw = a.raw!;
+      const bands = { ...RADAR_AXIS_BANDS, [a.key]: { bad: raw - 1, good: raw } };
+      const moved = radarAxes(ratios(), bands);
+      expect(moved.find((x) => x.key === a.key)!.score, a.key).toBe(100);
+      expect(moved.filter((x) => x.key !== a.key), a.key).toEqual(base.filter((x) => x.key !== a.key));
+    }
   });
 });

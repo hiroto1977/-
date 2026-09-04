@@ -36,10 +36,36 @@ export const DEFAULT_OLLAMA_PORT = 11434;
  */
 export const DEFAULT_SETUP_MODEL = 'llama3.2:1b';
 
-/** 許可するループバックホスト。これ以外は base URL として受け付けない。 */
+/**
+ * 許可するループバックホスト。これ以外は base URL として受け付けない。
+ *
+ * **`shared/aiEndpoint.ts` の同名関数へ寄せないこと (意図的に厳しい)。**
+ * あちらは 127.0.0.0/8 全体・末尾ドット・`ip6-localhost`・展開形の `0:0:…:1`
+ * まで通す —— 「平文 http を許してよいローカル相手か」という広い問いに答える
+ * ためで、正しい。こちらは **Ollama の接続先として受け付ける先の許可リスト**
+ * で、Ollama の既定 bind は 127.0.0.1 なのでこの 4 つで足りる。
+ *
+ * `proxyEndpoint.ts` が「判定そのものを borrow して書き写さない」と書いている
+ * ので、素直に読むと 3 つとも統合すべきに見える。**が、統合は許可リストを
+ * 緩める方向にしか働かない。** 一貫性のために security の許可を広げるのは
+ * 逆で、違いが意図的であることを機械で留めてある
+ * (`shared/__tests__/loopbackChecks.test.ts`)。
+ */
 const LOOPBACK_HOSTS = new Set(['127.0.0.1', 'localhost', '[::1]', '::1']);
 
 /** 呼んでよいパス。書き込み系は意図的に含めない。 */
+/**
+ * チャットに載せる入力の上限 —— **両ビルドで 1 つだけ持つ。**
+ *
+ * 2026-08-23 まで、ブラウザ版は `MAX_SYSTEM_CHARS` / `MAX_PROMPT_CHARS` と
+ * いう名前で持ち、main は `slice(0, 8192)` / `slice(0, 32768)` と**字面で
+ * 書いていた**。値は一致していたので壊れてはいないが、片方を動かしても
+ * もう片方は動かない —— `emotionsLimits` / `recordEntryLimits` /
+ * `assistantLimits` と同じ形なので、同じ扱いにする。
+ */
+export const MAX_OLLAMA_SYSTEM_CHARS = 8_192;
+export const MAX_OLLAMA_PROMPT_CHARS = 32_768;
+
 export const OLLAMA_READ_PATHS = ['/api/version', '/api/tags', '/api/chat'] as const;
 export type OllamaReadPath = (typeof OLLAMA_READ_PATHS)[number];
 
@@ -104,13 +130,39 @@ export function isAllowedOllamaBase(base: string, pageHostname = ''): boolean {
   //     ホスト名を絞らなくても内部探索には使えない。
   if (u.protocol === 'https:') return true;
   if (u.protocol !== 'http:') return false;
+  return isAllowedOllamaPlaintextHost(u.hostname, pageHostname);
+}
+
+/**
+ * **平文 http の宛先として許してよいホストか** —— 経路 (1) と (2) だけ。
+ *
+ * `isAllowedOllamaBase` から切り出してある。理由は、この「ホストの絞り」だけを
+ * 使いたい呼び出し側があるため:
+ *
+ *   `isAllowedOllamaBase`  サービスページ用。ホストの絞り **+ 形の絞り**
+ *                          (パス・クエリ・認証情報つきを拒否)
+ *   ここ                   AI プロバイダ経路用。**ホストの絞りだけ**が要る ——
+ *                          あちらは `https://tunnel.example/ollama` のような
+ *                          パス付き base を正当に受ける (リバースプロキシ)
+ *
+ * 2026-08-23 まで AI プロバイダ経路はこの絞りを**一切通っていなかった**。
+ * `docs/OLLAMA_SECURITY.md` は「ブラウザ版のみ接続先を設定できるが、許可される
+ * のは 3 経路だけで、平文 http による別ホスト接続は拒否する」と書いており、
+ * 制約を `shared/ollama.ts` に 1 つ置く理由も「**片方だけ緩い状態を作らない
+ * ため**」と明記していた。実際には片方だけ緩かった (実測: プロバイダ経路は
+ * `http://example.com:11434` も `http://169.254.169.254` も通した)。
+ *
+ * 絞る理由は文書のとおり —— 内部ネットワーク探索の踏み台化と、
+ * **プロンプトの平文送信**を防ぐため。
+ */
+export function isAllowedOllamaPlaintextHost(hostname: string, pageHostname = ''): boolean {
   // (1) ループバック
-  if (isLoopbackHostname(u.hostname)) return true;
+  if (isLoopbackHostname(hostname)) return true;
   // (2) ページ自身と同じホスト名 (PC で配信したページをスマホから開くケース)。
   //     大文字小文字は URL 側で正規化済み。pageHostname 側も揃える。
   //     `pageHostname !== ''` の前置きは要らない — http URL の hostname は必ず
   //     非空なので、pageHostname が空なら一致しようがない。
-  return u.hostname === pageHostname.toLowerCase();
+  return hostname === pageHostname.toLowerCase();
 }
 
 /** base + 許可パス を結合する。base が未許可 / パスが未許可なら null。 */
@@ -159,15 +211,18 @@ export function parseOllamaEndpoint(input: string, pageHostname = ''): string | 
  * モデル識別子の検証。"llama3.2" / "qwen2.5-coder:7b" / "library/mistral:latest"
  * は許可し、空白・`..`・バックスラッシュ・スキーム記号などは拒否する。
  */
-const MODEL_NAME_RE = /^[a-z0-9][a-z0-9._:/-]{0,127}$/i;
-
 export function isSafeModelName(name: unknown): name is string {
   if (typeof name !== 'string') return false;
   if (name.includes('..')) return false;
   // 連続スラッシュは Ollama の正規なモデル名 (library/mistral:latest) には現れず、
   // URL 風の文字列 ('http://x/y') を弾くための防御。self-test で通過を検出した。
   if (name.includes('//')) return false;
-  return MODEL_NAME_RE.test(name);
+  // **モジュール定数へ括り出さない。** 括り出すと本体がモジュール読み込み時に
+  // 評価され、変異検査では「静的変異体」になる —— テストが読み込みより後に
+  // 走るぶん、書き換えても誰も気付けない。実測 (2026-08-23): 定数のままだと
+  // `^` を落とす変異などが「生存」と報告され、どんな検査を足しても殺せない。
+  // `redact.ts` / `updateCheck.ts` が同じ理由で本体へ置いている。
+  return /^[a-z0-9][a-z0-9._:/-]{0,127}$/i.test(name);
 }
 
 /** semver 風の比較。-1 / 0 / +1 を返す (Array.sort と同じ規約)。 */

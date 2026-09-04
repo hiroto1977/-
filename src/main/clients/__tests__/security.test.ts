@@ -384,6 +384,105 @@ describe('ACTIONS["check-email-breach"] — URL + header pinning (kills StringLi
     expect(headers.Accept).toBe('application/json');
   });
 
+  /*
+   * **前後の空白は落としてから問い合わせる。**
+   *
+   * ブラウザ版 (`saasWriteWeb.checkEmailBreach`) は元から `.trim()` していて、
+   * こちらだけ生のまま送っていた (2026-08-22)。貼り付けで空白が付いた住所を
+   * そのまま問い合わせると HIBP は 404 を返し、この実装はそれを
+   * 「どの漏洩にも含まれない」と表示する —— **誤った安心**を返す側のずれ。
+   */
+  it.each([' a@b.com', 'a@b.com ', '  a@b.com  ', '\ta@b.com\n'])(
+    '前後の空白を落としてから問い合わせる (%j)',
+    async (padded) => {
+      const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(jsonResponse([]));
+      await ACTIONS['check-email-breach']!({
+        token: JSON.stringify({ hibp: 'k' }),
+        fetch: fetchMock,
+        payload: { email: padded },
+      });
+      expect(fetchMock.mock.calls[0]![0]).toBe(
+        'https://haveibeenpwned.com/api/v3/breachedaccount/a%40b.com?truncateResponse=false',
+      );
+    },
+  );
+
+  it('空白だけの email は問い合わせずに断る', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['check-email-breach']!({
+        token: JSON.stringify({ hibp: 'k' }),
+        fetch: fetchMock,
+        payload: { email: '   ' },
+      }),
+    ).rejects.toThrow('email is required');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  /*
+   * **JSON にならない 200 応答を「漏洩なし」にしない。**
+   *
+   * 上の空白の件 (#30) と同じ向きの誤り —— HIBP の応答を素直に信じると、
+   * 実際には答えを得ていないのに**誤った安心**を返す。認証を挟むネットワーク
+   * が差し込むログイン画面 (HTML) が典型で、status は 200 のまま来る。
+   *
+   * この経路は 2026-08-31 の変異検査で **NoCoverage** だった —— catch を空に
+   * しても、文言を空文字にしても、誰も気付かなかった。
+   */
+  /*
+   * **上限超過の文言に、どのサービスかが載る。**
+   * `hctx.serviceId` は `readCapped` の文言 (`<id> response too large`) にしか
+   * 出ないので、上限を超える応答を作らないと測れない (実測 2026-08-31: 生存)。
+   */
+  it('★ 上限を超える HIBP 応答は「security」と名乗って落ちる', async () => {
+    const chunk = new TextEncoder().encode('A'.repeat(1024 * 1024));
+    let sent = 0;
+    const body = new ReadableStream<Uint8Array>({
+      pull(c) {
+        if (sent >= 12) {
+          c.close();
+          return;
+        }
+        sent += 1;
+        c.enqueue(chunk);
+      },
+    });
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(new Response(body, { status: 200 }));
+    await expect(
+      ACTIONS['check-email-breach']!({
+        token: JSON.stringify({ hibp: 'k' }),
+        fetch: fetchMock,
+        payload: { email: 'a@b.com' },
+      }),
+    ).rejects.toThrow(/security response too large/);
+  }, 30_000);
+
+  it('★ JSON でない 2xx 応答は投げる (「漏洩なし」に倒さない)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(
+        new Response('<html>proxy login</html>', {
+          status: 200,
+          headers: { 'content-type': 'text/html' },
+        }),
+      );
+    let caught: unknown;
+    try {
+      await ACTIONS['check-email-breach']!({
+        token: JSON.stringify({ hibp: 'k' }),
+        fetch: fetchMock,
+        payload: { email: 'a@b.com' },
+      });
+    } catch (e) {
+      caught = e;
+    }
+    expect(caught, '投げていない = 「漏洩なし」として返っている').toBeInstanceOf(Error);
+    expect((caught as Error).message).toBe('HIBP の応答が JSON ではありません');
+    expect((caught as FetchError).serviceId).toBe('security');
+    // 本文そのものは載せない (ログイン画面に秘密が混じりうる)。
+    expect((caught as Error).message).not.toContain('proxy login');
+  });
+
   it('throws `HIBP <status>: <body>` on non-2xx (kills the "HIBP " literal)', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()

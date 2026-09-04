@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, beforeEach, afterEach } from 'vitest';
+import { promises as fsp } from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import {
@@ -1150,5 +1151,55 @@ describe('renderTeamRadarSvg — 座標の書式と重なり', () => {
     expect(anchors[0]).toBe('middle'); // 1 本目は真上
     expect(anchors.filter((a) => a === 'start')).toHaveLength(2); // 右側
     expect(anchors.filter((a) => a === 'end')).toHaveLength(2); // 左側
+  });
+});
+
+/*
+ * **ここに入るのは他人の評価である。**
+ *
+ * `team-radar.json` は部署名・メンバーの氏名・軸ごとの 1〜5 評価・付箋コメント、
+ * つまり人事評価そのもので、しかも利用者本人ではなく第三者の情報である。
+ * 実測 (2026-08-23) では **644** で書かれており、同じ機械の他の利用者が
+ * 同僚の評価を読める状態だった (`secrets.json` と `service-hub-emotions.json` は
+ * どちらも 600)。
+ *
+ * `mode` は新規作成のときしか効かないが、この関数は tmp を新しく作って
+ * rename で被せるので、**既にある緩いファイルも次の保存で直る**。
+ * 下の 2 本目がそれを留めている。
+ */
+describe('saveTeamRadarState の権限', () => {
+  let dir = '';
+  const state = {
+    department: '営業',
+    evaluatedAt: '2026-08-23',
+    members: [{ id: 'm1', name: '山田', scores: [3, 3, 3, 3, 3] }],
+  };
+
+  beforeEach(async () => {
+    dir = await fsp.mkdtemp(path.join(os.tmpdir(), 'teamradar-mode-'));
+  });
+  afterEach(async () => {
+    await fsp.rm(dir, { recursive: true, force: true });
+  });
+
+  const modeOf = async (p: string) => ((await fsp.stat(p)).mode & 0o777).toString(8);
+
+  it('新しく作るファイルは 0600', async () => {
+    const target = path.join(dir, 'team-radar.json');
+    await saveTeamRadarState(state as never, { statePath: () => target });
+    expect(await modeOf(target)).toBe('600');
+    // 中身も書けていること (権限だけ見て中身を見ないと、書けていなくても通る)。
+    expect(JSON.parse(await fsp.readFile(target, 'utf8')).members[0].name).toBe('山田');
+  });
+
+  it('既にある 644 のファイルも、次の保存で締まる', async () => {
+    const target = path.join(dir, 'team-radar.json');
+    await fsp.writeFile(target, '{}');
+    await fsp.chmod(target, 0o644);
+    expect(await modeOf(target)).toBe('644');
+
+    await saveTeamRadarState(state as never, { statePath: () => target });
+
+    expect(await modeOf(target)).toBe('600');
   });
 });

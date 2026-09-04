@@ -1,8 +1,12 @@
 import { useMemo, useState } from 'react';
+import { localIsoDate } from '../../shared/localDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { analyzeProfile } from '../data/emotionInsights';
+import { useParameters } from '../data/parameterOverrides';
+import { emotionThresholds } from '../../shared/parameters';
+import type { EmotionThresholds } from '../../shared/emotionThresholds';
 import { counsel } from '../data/counseling';
 import { SELF_CARE_LIBRARY } from '../data/selfCareLibrary';
 
@@ -50,7 +54,9 @@ function MoodTrend({ moods }: { moods: MoodLog[] }) {
   for (let i = 29; i >= 0; i--) {
     const d = new Date(today);
     d.setDate(d.getDate() - i);
-    const key = d.toISOString().slice(0, 10);
+    // 保存側 (`logMood`) は利用者の時計で日付を書く。キーも同じ時計で作らないと、
+    // 朝 9 時までは今日の記録が図から消える (UTC の日付は前日)。
+    const key = localIsoDate(d);
     const found = moods.find((m) => m.date === key);
     days.push({ date: key, score: found ? found.score : null });
   }
@@ -122,13 +128,15 @@ function ScoreBar({ name, score }: { name: string; score: number }) {
 }
 
 /** 寄り添いカウンセリング — 縦断プロファイル + 危機検知つきの共感応答。 */
-function CounselingCard({ moods, analyses, draftNote, draftScore }: {
+function CounselingCard({ moods, analyses, draftNote, draftScore, thresholds }: {
   moods: readonly MoodLog[];
   analyses: readonly Analysis[];
   draftNote: string;
   draftScore: number;
+  /** 見立てのしきい値 (台帳の値)。 */
+  thresholds: EmotionThresholds;
 }) {
-  const profile = useMemo(() => analyzeProfile(moods, analyses), [moods, analyses]);
+  const profile = useMemo(() => analyzeProfile(moods, analyses, thresholds), [moods, analyses, thresholds]);
   // 応答の対象: 入力中のメモがあればそれ、なければ最新の気分メモ。
   const latestMood = moods[moods.length - 1];
   const note = draftNote.trim() || latestMood?.note || '';
@@ -209,6 +217,8 @@ export function EmotionsPage() {
     SNAPSHOT.emotions,
   );
   const { moods, analyses, keyConfigured } = data;
+  const { values: params } = useParameters();
+  const thresholds = useMemo(() => emotionThresholds(params), [params]);
 
   // --- mood log
   const [moodScore, setMoodScore] = useState<number>(3);
@@ -327,7 +337,7 @@ export function EmotionsPage() {
         </div>
       </Section>
 
-      <CounselingCard moods={moods} analyses={analyses} draftNote={moodNote} draftScore={moodScore} />
+      <CounselingCard moods={moods} analyses={analyses} draftNote={moodNote} draftScore={moodScore} thresholds={thresholds} />
 
       {moods.length > 0 ? (
         <Section title="過去 30 日のトレンド">

@@ -24,20 +24,54 @@
  */
 
 import { floorHundred } from './num';
+import { TWENTY_PERCENT_RATE } from './taxConsumption';
 
 /** 現行法における消費税（国税）の割合。標準10% = 国税7.8% + 地方2.2%。 */
 export const NATIONAL_SHARE = 0.78;
 /** 地方消費税は「納付すべき消費税額（国税）」× 22/78。 */
 export const LOCAL_RATIO = 22 / 78;
 
+/**
+ * 国税分の割合から地方消費税の比 (既定 22/78) を作る。百万分率の整数比で割るので、
+ * 既定の 0.78 では `22 / 78` と同じ double になる (1 − 0.78 の丸め誤差を持ち込まない)。
+ */
+export function localRatioOf(nationalShare: number): number {
+  const ppm = Math.round(nationalShare * 1_000_000);
+  return (1_000_000 - ppm) / ppm;
+}
+
+/** 中間申告の回数の境目 (前課税期間の確定消費税額・国税分・円。消費税法 42 条)。 */
+export const INTERIM_TIER1 = 480_000;
+export const INTERIM_TIER2 = 4_000_000;
+export const INTERIM_TIER3 = 48_000_000;
+
+/** 申告・納付の計算が読む法定値 (台帳 `parameters.ts` から渡せる)。省略時は上の定数。 */
+export interface ScheduleParams {
+  /** 消費税のうち国税分の割合 (7.8 / 10)。地方消費税は (1 − 割合) ÷ 割合 で組む。 */
+  readonly nationalShare: number;
+  /** 2 割特例で納める割合 (売上税額 × 20%)。 */
+  readonly twentyPercentRate: number;
+  /** これ以下なら中間申告なし。 */
+  readonly interimTier1: number;
+  /** これ以下なら年 1 回。 */
+  readonly interimTier2: number;
+  /** これ以下なら年 3 回、超は年 11 回。 */
+  readonly interimTier3: number;
+}
+
+export const DEFAULT_SCHEDULE_PARAMS: ScheduleParams = {
+  nationalShare: NATIONAL_SHARE,
+  twentyPercentRate: TWENTY_PERCENT_RATE,
+  interimTier1: INTERIM_TIER1,
+  interimTier2: INTERIM_TIER2,
+  interimTier3: INTERIM_TIER3,
+};
+
 /** 試算できる税率の上限（50%）。 */
 export const MAX_RATE = 0.5;
 
 export type FilerKind = 'individual' | 'corporate';
 export type TaxMethod = 'standard' | 'simplified' | 'twenty-percent';
-
-/** 2割特例の負担割合。 */
-const TWENTY_PERCENT = 0.2;
 
 /** 還付額の端数処理: 1円未満切捨て。ただし 1円未満の正値は 1円とする。 */
 export function roundRefund(n: number): number {
@@ -149,8 +183,35 @@ function addDays(d: Date, n: number): Date {
 
 /**
  * 行政機関の休日にあたる場合は翌開庁日へ送る（国税通則法10条2項）。
- * 土日と 12/29〜1/3 を休日として扱う。**国民の祝日は考慮していない**
- * （期限は月末・応当日に集中し、月末にあたる固定祝日が無いため）。
+ * 土日と 12/29〜1/3 を休日として扱う。**国民の祝日は考慮していない。**
+ *
+ * ## 理由と、その理由の穴（2026-08-23 実測）
+ *
+ * 元の注記は「月末にあたる固定祝日が無いため」と書いていた。**固定祝日に
+ * ついてはそのとおり**で、2024〜2035 年で確かめると、固定祝日・ハッピー
+ * マンデー・春分/秋分（取りうる 3/20〜23・9/20〜23 を全部）のどれも
+ * 月末日には当たらない。
+ *
+ * **だが振替休日を数えていなかった。** 昭和の日 4/29 が日曜だと翌 4/30 が
+ * 振替休日になり、**4/30 は月末である**。実測で当たる年:
+ *
+ * ```
+ *   2029-04-29 (日) → 振替 4/30 = 月末
+ *   2035-04-29 (日) → 振替 4/30 = 月末
+ *   2040-04-29 (日) → 振替 4/30 = 月末
+ * ```
+ *
+ * つまり 3 月決算法人の 2 か月後期限などがこの日に当たると、法律上は 5/1 以降へ
+ * 送られるのに、本モジュールは 4/30 を返す。
+ *
+ * **ずれる向きは安全側である。** 返す期限が法定より*早い*ので、その日までに
+ * 申告すれば適法。遅い日を答えて期限を徒過させる向きには外れない。
+ * それでも注記が「祝日は無視してよい」と読める形だったのを直すのは、
+ * **理由が間違ったまま残ると、次に触る人が同じ結論を再利用する**ため。
+ *
+ * 祝日を本気で扱うには春分/秋分の天文計算と国民の休日まで要り、
+ * 得られるのは「安全側のずれが年に数日消える」だけなので入れていない。
+ * 入れるなら内閣府の暦要項を出典にすること。
  */
 export function nextBusinessDay(d: Date): Date {
   let cur = d;
@@ -201,19 +262,20 @@ function periodStart(input: ScheduleInput): { year: number; month: number } {
  * `納付すべき消費税額（国税・100円未満切捨て後）× 22/78`。
  * 78 : 22 は現行法の区分であり、税率が変われば法律上の区分も変わり得る。
  */
-export function calcAnnualTax(input: ScheduleInput, rate: number): AnnualTax {
+export function calcAnnualTax(input: ScheduleInput, rate: number, p: ScheduleParams = DEFAULT_SCHEDULE_PARAMS): AnnualTax {
   const r = Math.min(Math.max(rate, 0), MAX_RATE);
   const sales = Math.max(0, input.taxableSales);
   const purchases = Math.max(0, input.taxablePurchases);
+  const localRatio = localRatioOf(p.nationalShare);
 
-  const salesTaxNational = sales * r * NATIONAL_SHARE;
+  const salesTaxNational = sales * r * p.nationalShare;
   let deductibleNational: number;
   if (input.method === 'simplified') {
     deductibleNational = salesTaxNational * Math.min(Math.max(input.deemedPurchaseRate, 0), 1);
   } else if (input.method === 'twenty-percent') {
-    deductibleNational = salesTaxNational * (1 - TWENTY_PERCENT);
+    deductibleNational = salesTaxNational * (1 - p.twentyPercentRate);
   } else {
-    deductibleNational = purchases * r * NATIONAL_SHARE;
+    deductibleNational = purchases * r * p.nationalShare;
   }
 
   const netNationalRaw = salesTaxNational - deductibleNational;
@@ -224,10 +286,10 @@ export function calcAnnualTax(input: ScheduleInput, rate: number): AnnualTax {
   if (isRefund) {
     const refundNational = roundRefund(-netNationalRaw);
     national = -refundNational;
-    local = -roundRefund(refundNational * LOCAL_RATIO);
+    local = -roundRefund(refundNational * localRatio);
   } else {
     national = floorHundred(netNationalRaw);
-    local = floorHundred(national * LOCAL_RATIO);
+    local = floorHundred(national * localRatio);
   }
 
   return {
@@ -244,21 +306,27 @@ export function calcAnnualTax(input: ScheduleInput, rate: number): AnnualTax {
 
 // --- 中間申告 -----------------------------------------------------------
 
-/** 前課税期間の確定消費税額（国税分）から中間申告の回数を判定する。 */
-export function interimCount(priorNationalTax: number): 0 | 1 | 3 | 11 {
+/** 前課税期間の確定消費税額（国税分）から中間申告の回数を判定する。境目は `p` (既定 48 万 / 400 万 / 4,800 万)。 */
+export function interimCount(priorNationalTax: number, p: ScheduleParams = DEFAULT_SCHEDULE_PARAMS): 0 | 1 | 3 | 11 {
   const t = Math.max(0, priorNationalTax);
-  if (t <= 480_000) return 0;
-  if (t <= 4_000_000) return 1;
-  if (t <= 48_000_000) return 3;
+  if (t <= p.interimTier1) return 0;
+  if (t <= p.interimTier2) return 1;
+  if (t <= p.interimTier3) return 3;
   return 11;
 }
 
-const BAND_LABEL: Record<0 | 1 | 3 | 11, string> = {
-  0: '48万円以下 — 中間申告は不要（任意の中間申告制度あり）',
-  1: '48万円超 400万円以下 — 年1回（6か月中間申告）',
-  3: '400万円超 4,800万円以下 — 年3回（3か月中間申告）',
-  11: '4,800万円超 — 年11回（1か月中間申告）',
-};
+/** 円を万円で書く (48 / 400 / 4,800)。 */
+function man(n: number): string {
+  return (n / 10_000).toLocaleString('ja-JP', { maximumFractionDigits: 2 });
+}
+
+/** 中間申告の区分の説明文。境目の額は `p` から出す。 */
+export function interimBandLabel(count: 0 | 1 | 3 | 11, p: ScheduleParams = DEFAULT_SCHEDULE_PARAMS): string {
+  if (count === 0) return `${man(p.interimTier1)}万円以下 — 中間申告は不要（任意の中間申告制度あり）`;
+  if (count === 1) return `${man(p.interimTier1)}万円超 ${man(p.interimTier2)}万円以下 — 年1回（6か月中間申告）`;
+  if (count === 3) return `${man(p.interimTier2)}万円超 ${man(p.interimTier3)}万円以下 — 年3回（3か月中間申告）`;
+  return `${man(p.interimTier3)}万円超 — 年11回（1か月中間申告）`;
+}
 
 /**
  * 中間申告の計画（回数・各回の額と期限）を組み立てる。
@@ -266,15 +334,16 @@ const BAND_LABEL: Record<0 | 1 | 3 | 11, string> = {
  * 各回の中間納付額は「前課税期間の確定消費税額（国税分）× 対象月数/12」を
  * 100円未満切捨てしたもの。地方消費税はその 22/78。
  */
-export function planInterim(input: ScheduleInput): InterimPlan {
+export function planInterim(input: ScheduleInput, p: ScheduleParams = DEFAULT_SCHEDULE_PARAMS): InterimPlan {
   const prior = Math.max(0, input.priorNationalTax);
-  const count = interimCount(prior);
+  const count = interimCount(prior, p);
+  const localRatio = localRatioOf(p.nationalShare);
   const start = periodStart(input);
   const payments: InterimPayment[] = [];
 
   if (count === 1) {
     const national = floorHundred((prior * 6) / 12);
-    const local = floorHundred(national * LOCAL_RATIO);
+    const local = floorHundred(national * localRatio);
     payments.push({
       no: 1,
       periodEnd: monthEndAfter(start.year, start.month, 5),
@@ -286,7 +355,7 @@ export function planInterim(input: ScheduleInput): InterimPlan {
   } else if (count === 3) {
     for (let i = 0; i < 3; i += 1) {
       const national = floorHundred((prior * 3) / 12);
-      const local = floorHundred(national * LOCAL_RATIO);
+      const local = floorHundred(national * localRatio);
       payments.push({
         no: i + 1,
         periodEnd: monthEndAfter(start.year, start.month, 3 * i + 2),
@@ -304,7 +373,7 @@ export function planInterim(input: ScheduleInput): InterimPlan {
     const headDue = dueMonthEndAfter(start.year, start.month, input.extendedDeadline ? 4 : 3);
     for (let k = 1; k <= 11; k += 1) {
       const national = floorHundred(prior / 12);
-      const local = floorHundred(national * LOCAL_RATIO);
+      const local = floorHundred(national * localRatio);
       payments.push({
         no: k,
         periodEnd: monthEndAfter(start.year, start.month, k - 1),
@@ -318,7 +387,7 @@ export function planInterim(input: ScheduleInput): InterimPlan {
 
   const total = payments.reduce((s, p) => s + p.total, 0);
   const totalNational = payments.reduce((s, p) => s + p.national, 0);
-  return { count, priorNationalTax: prior, band: BAND_LABEL[count], payments, total, totalNational };
+  return { count, priorNationalTax: prior, band: interimBandLabel(count, p), payments, total, totalNational };
 }
 
 // --- 確定申告 -----------------------------------------------------------
@@ -376,12 +445,13 @@ export const DEFAULT_RATE_POINTS: readonly number[] = [
 export function sweepRates(
   input: ScheduleInput,
   rates: readonly number[] = DEFAULT_RATE_POINTS,
+  p: ScheduleParams = DEFAULT_SCHEDULE_PARAMS,
 ): readonly RateRow[] {
-  const interim = planInterim(input);
+  const interim = planInterim(input, p);
   return rates
     .filter((r) => r >= 0 && r <= MAX_RATE)
     .map((rate) => {
-      const annual = calcAnnualTax(input, rate);
+      const annual = calcAnnualTax(input, rate, p);
       return { rate, annual, settlement: settle(input, annual, interim) };
     });
 }
@@ -394,8 +464,8 @@ export function sweepRates(
  * 税率が求まる。課税ベースが 0 以下（＝どの税率でも還付、または課税なし）の
  * 場合と、分岐税率が 50% を超える場合は null。
  */
-export function breakEvenRate(input: ScheduleInput): number | null {
-  const interim = planInterim(input);
+export function breakEvenRate(input: ScheduleInput, p: ScheduleParams = DEFAULT_SCHEDULE_PARAMS): number | null {
+  const interim = planInterim(input, p);
   if (interim.total <= 0) return null;
 
   const sales = Math.max(0, input.taxableSales);
@@ -403,7 +473,7 @@ export function breakEvenRate(input: ScheduleInput): number | null {
   if (input.method === 'simplified') {
     base = sales * (1 - Math.min(Math.max(input.deemedPurchaseRate, 0), 1));
   } else if (input.method === 'twenty-percent') {
-    base = sales * TWENTY_PERCENT;
+    base = sales * p.twentyPercentRate;
   } else {
     base = sales - Math.max(0, input.taxablePurchases);
   }
@@ -424,14 +494,14 @@ export interface ScheduleResult {
   readonly sweep: readonly RateRow[];
 }
 
-export function buildSchedule(input: ScheduleInput, rate: number): ScheduleResult {
-  const annual = calcAnnualTax(input, rate);
-  const interim = planInterim(input);
+export function buildSchedule(input: ScheduleInput, rate: number, p: ScheduleParams = DEFAULT_SCHEDULE_PARAMS): ScheduleResult {
+  const annual = calcAnnualTax(input, rate, p);
+  const interim = planInterim(input, p);
   return {
     annual,
     interim,
     settlement: settle(input, annual, interim),
-    breakEven: breakEvenRate(input),
-    sweep: sweepRates(input),
+    breakEven: breakEvenRate(input, p),
+    sweep: sweepRates(input, DEFAULT_RATE_POINTS, p),
   };
 }

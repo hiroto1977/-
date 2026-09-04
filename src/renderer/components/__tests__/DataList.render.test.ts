@@ -7,7 +7,7 @@
 import { describe, expect, it } from 'vitest';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { DataList, safeImageSrc } from '../DataList';
+import { DataList, MAX_LIST_ITEMS, listTruncatedNotice } from '../DataList';
 import type { DataListItem } from '../DataList';
 
 describe('DataList — empty state', () => {
@@ -84,50 +84,6 @@ describe('DataList — with items', () => {
   });
 });
 
-/**
- * 2026-07 セキュリティ監査（多層防御）: 第三者由来の画像 URL のスキーム検証。
- * `<img src>` 自体はスクリプトを実行しないが、同じ値が `<a href>` / CSS `url()` /
- * SVG `<use>` に移った瞬間に危険になるため、入口で許可スキームに限定する。
- */
-describe('safeImageSrc — 許可スキーム', () => {
-  it('https / http はそのまま通す', () => {
-    expect(safeImageSrc('https://example.com/a.png')).toBe('https://example.com/a.png');
-    expect(safeImageSrc('http://example.com/a.png')).toBe('http://example.com/a.png');
-    expect(safeImageSrc('HTTPS://EXAMPLE.COM/A.PNG')).toBe('HTTPS://EXAMPLE.COM/A.PNG');
-  });
-
-  it('data:image/* は通す（base64 / 非 base64 とも）', () => {
-    expect(safeImageSrc('data:image/png;base64,iVBORw0KGgo=')).toBe('data:image/png;base64,iVBORw0KGgo=');
-    expect(safeImageSrc('data:image/svg+xml,%3Csvg%2F%3E')).toBe('data:image/svg+xml,%3Csvg%2F%3E');
-  });
-
-  it('javascript: を拒否する', () => {
-    expect(safeImageSrc('javascript:alert(1)')).toBeUndefined();
-    expect(safeImageSrc('JaVaScRiPt:alert(1)')).toBeUndefined();
-  });
-
-  it('tab/改行で難読化した javascript: も拒否する', () => {
-    // HTML は URL 属性のパース前に tab/LF/CR を除去するため、検証側も同じ正規化が必要。
-    expect(safeImageSrc('java\tscript:alert(1)')).toBeUndefined();
-    expect(safeImageSrc('  java\nscript:alert(1)  ')).toBeUndefined();
-  });
-
-  it('data:image/* 以外の data: URI を拒否する', () => {
-    expect(safeImageSrc('data:text/html,<script>alert(1)</script>')).toBeUndefined();
-    expect(safeImageSrc('data:image')).toBeUndefined();
-    expect(safeImageSrc('data:imagex/png;base64,AA')).toBeUndefined();
-  });
-
-  it('その他のスキーム / 相対パス / 空値を拒否する', () => {
-    expect(safeImageSrc('vbscript:msgbox(1)')).toBeUndefined();
-    expect(safeImageSrc('file:///etc/passwd')).toBeUndefined();
-    expect(safeImageSrc('//example.com/a.png')).toBeUndefined();
-    expect(safeImageSrc('./a.png')).toBeUndefined();
-    expect(safeImageSrc('')).toBeUndefined();
-    expect(safeImageSrc(undefined)).toBeUndefined();
-  });
-});
-
 describe('DataList — thumbnailUrl のスキーム検証', () => {
   const thumb = (thumbnailUrl: string): string =>
     renderToStaticMarkup(
@@ -176,5 +132,66 @@ describe('DataList — does not crash with edge-case inputs', () => {
       thumbnailUrl: `https://example.com/${i}.png`,
     }));
     expect(() => renderToStaticMarkup(createElement(DataList, { items }))).not.toThrow();
+  });
+});
+
+/**
+ * **一覧に描く件数の上限。**
+ *
+ * `DataList` は 35 ページが共有する沈み先で、**そのうち 31 ページが件数を
+ * 絞らずに渡している** (実測)。件数を決めるのは第三者 API の応答で、
+ * 上限は本文の byte 上限しか無かった。実測 (2026-08-29):
+ *
+ * ```
+ *      100 件   render     8ms   html  0.0MiB
+ *   10,000 件   render   222ms   html  1.8MiB
+ *  200,000 件   render 3,917ms   html 36.1MiB
+ * ```
+ *
+ * レンダラーは 1 スレッドなので、画面が 4 秒死ぬということである。
+ * ブラウザ版は利用者が用意した Cloudflare Worker を経由する経路があり、
+ * このリポジトリは「乗っ取られた proxy」を攻撃者として既に数えている。
+ */
+describe('一覧の件数上限 — 量で画面を止めさせない', () => {
+  const many = (n: number): DataListItem[] =>
+    Array.from({ length: n }, (_, i) => ({ key: `k${i}`, title: `件名 ${i}` }));
+
+  /** `<li` の数を数える。上限が効いているかは行数で見る。 */
+  const rows = (html: string): number => html.split('<li').length - 1;
+
+  it('★ 上限を超えると行数が頭打ちになる', () => {
+    const html = renderToStaticMarkup(createElement(DataList, { items: many(MAX_LIST_ITEMS * 2) }));
+    // 上限ぶん + 注記の 1 行
+    expect(rows(html)).toBe(MAX_LIST_ITEMS + 1);
+  });
+
+  it('★ 打ち切ったことと件数が見える形で残る', () => {
+    const total = MAX_LIST_ITEMS + 37;
+    const html = renderToStaticMarkup(createElement(DataList, { items: many(total) }));
+    expect(html).toContain('他 37 件は表示していません');
+    expect(html).toContain(listTruncatedNotice(total));
+  });
+
+  /*
+   * **対照。** 上 2 件は「切られること」しか見ないので、実装が何でも切る
+   * ようになっても気付けない。上限**ちょうど**が 1 件も欠けず、注記も
+   * 付かないことを見る。
+   *
+   * **最後の 1 件まで名指しする。** 件数だけを数えていた最初の版は、
+   * `slice(0, MAX_LIST_ITEMS - 1)` の対照で**鳴らなかった** ——
+   * 上限ちょうどでは三項が `slice` を呼ばず、境界がすり抜けていたためである。
+   * 最後の要素を名指しすると、切る位置がずれた瞬間に鳴る。
+   */
+  it('★ 上限ちょうどは 1 件も欠けず、注記も付かない (対照)', () => {
+    const html = renderToStaticMarkup(createElement(DataList, { items: many(MAX_LIST_ITEMS) }));
+    expect(rows(html)).toBe(MAX_LIST_ITEMS);
+    expect(html).toContain(`件名 ${MAX_LIST_ITEMS - 1}`);
+    expect(html).not.toContain('表示していません');
+  });
+
+  it('★ 普通の件数は素通し (正当な一覧では発火しない)', () => {
+    const html = renderToStaticMarkup(createElement(DataList, { items: many(10) }));
+    expect(rows(html)).toBe(10);
+    expect(html).not.toContain('表示していません');
   });
 });

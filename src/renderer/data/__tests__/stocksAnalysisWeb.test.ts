@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   sma,
   ema,
@@ -1111,5 +1111,68 @@ describe('renderDashboardMarkdown — 埋め込みが構造を乗っ取れない
     expect(md).toContain('| sma\\|x 偽 |');
     expect(md).toContain('最良 (リターン基準): best ## 偽');
     expect(md).not.toMatch(/^## 偽$/m);
+  });
+});
+
+/**
+ * **静的な定数は、読み直さないと測れない。**
+ *
+ * 免責の文言・既定ユニバース・戦略表・リスク既定値はどれもモジュール本体で
+ * 一度だけ評価される。ファイル先頭の静的 import では、変異が有効になる前に
+ * 評価が済んでしまうので、上の「ADVISOR_DISCLAIMER exact text」のような
+ * 正しい主張でも変異を観測できない (実測 2026-08-31: 13 件が生存)。
+ *
+ * **これは体裁の話ではない。** 免責は「投資助言ではない」と伝える唯一の口で、
+ * 片が 1 つ黙って消えても画面は動き続ける。戦略表と既定値が空になれば、
+ * 分析は「何も推奨しない」状態で静かに成立してしまう。
+ */
+describe('静的な定数 —— 読み直して問う', () => {
+  const fresh = async (): Promise<typeof import('../stocksAnalysisWeb')> => {
+    vi.resetModules();
+    return import('../stocksAnalysisWeb');
+  };
+
+  /*
+   * 免責は 3 片の連結。**片ごとに固有の言い回しを取る** —— 片方だけを空に
+   * する変異は、もう片方に当たる検査では捕まらない (`UNPATCHED_OOB_NOTICE`
+   * で一度これを外して、中ほどの 1 片が素通りした)。
+   */
+  it('★ 投資助言の免責は 3 つのことを言う', async () => {
+    const m = await fresh();
+    expect(m.ADVISOR_DISCLAIMER).toContain('投資助言ではありません');
+    expect(m.ADVISOR_DISCLAIMER).toContain('過去パフォーマンスは将来のリターンを保証しません');
+    expect(m.ADVISOR_DISCLAIMER).toContain('ご自身の責任で行ってください');
+  });
+
+  it('★ リスク指標の免責は 2 つのことを言う', async () => {
+    const m = await fresh();
+    expect(m.RISK_METRICS_DISCLAIMER).toContain('投資助言ではありません');
+    expect(m.RISK_METRICS_DISCLAIMER).toContain('将来を保証しません');
+  });
+
+  it('★ 既定ユニバースは実在の銘柄で埋まっている', async () => {
+    const m = await fresh();
+    expect([...m.DEFAULT_ADVISOR_UNIVERSE]).toEqual(['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META']);
+    // 空文字が混ざっていないこと (要素ごとの変異への標本)。
+    for (const s of m.DEFAULT_ADVISOR_UNIVERSE) expect(s).toMatch(/^[A-Z]{1,5}$/);
+  });
+
+  it('★ 戦略表は 3 つの戦略を持つ (空の表なら何も判定しない)', async () => {
+    const m = await fresh();
+    expect(Object.keys(m.STRATEGIES).sort()).toEqual([
+      'macd-signal',
+      'rsi-mean-reversion',
+      'sma-crossover',
+    ]);
+    for (const fn of Object.values(m.STRATEGIES)) expect(typeof fn).toBe('function');
+  });
+
+  it('★ リスクの既定値は 3 欄とも数を持つ (空なら建玉が計算できない)', async () => {
+    const m = await fresh();
+    expect(m.DEFAULT_RISK_PARAMS).toEqual({
+      positionSizePct: 0.1,
+      stopLossPct: 0.05,
+      takeProfitPct: 0.15,
+    });
   });
 });

@@ -102,6 +102,7 @@ export function calcSpouseDeduction(
   spouseIncome: number,
   spouseElderly = false,
   taxYear = new Date().getFullYear(),
+  specialIncomeLimit = SPOUSE_SPECIAL_INCOME_LIMIT_YEN,
 ): DeductionPair {
   const tier = spouseTierBySelfIncome(selfIncome);
   if (tier === 0) return { incomeTax: 0, residentTax: 0 };
@@ -118,7 +119,7 @@ export function calcSpouseDeduction(
   // 配偶者特別控除 (配偶者控除の上限超〜133万)。満額相当の段階表 (本人所得900万以下)。
   // No.1195 の表を所得帯で近似 (段階の刻みは簡略化)。
   // 上限と段階表は改正されていない — 動いたのは入口 (上の分岐) だけ。
-  if (spouseIncome > SPOUSE_SPECIAL_INCOME_LIMIT_YEN) return { incomeTax: 0, residentTax: 0 };
+  if (spouseIncome > specialIncomeLimit) return { incomeTax: 0, residentTax: 0 };
   let fullIncome: number;
   let fullResident: number;
   if (spouseIncome <= 950_000) {
@@ -217,11 +218,12 @@ export interface DependentWithIncome {
  */
 export function calcDependentDeductionWithIncome(
   dependents: readonly DependentWithIncome[],
+  incomeLimit = DEPENDENT_INCOME_LIMIT,
 ): DeductionPair {
   return dependents.reduce<DeductionPair>(
     (acc, dep) => {
       // 所得が上限超なら扶養控除の対象外。
-      if (dep.income > DEPENDENT_INCOME_LIMIT) return acc;
+      if (dep.income > incomeLimit) return acc;
       const d = dependentDeduction(dep.kind);
       return { incomeTax: acc.incomeTax + d.incomeTax, residentTax: acc.residentTax + d.residentTax };
     },
@@ -365,9 +367,13 @@ export const SELF_MEDICATION_CAP = 88_000;
  *
  * @param switchOtcPaid スイッチOTC等の年間購入額 (円)
  */
-export function calcSelfMedicationDeduction(switchOtcPaid: number): DeductionPair {
+export function calcSelfMedicationDeduction(
+  switchOtcPaid: number,
+  threshold = SELF_MEDICATION_THRESHOLD,
+  cap = SELF_MEDICATION_CAP,
+): DeductionPair {
   const paid = Math.max(0, switchOtcPaid);
-  const deduction = Math.min(SELF_MEDICATION_CAP, Math.max(0, paid - SELF_MEDICATION_THRESHOLD));
+  const deduction = Math.min(cap, Math.max(0, paid - threshold));
   return { incomeTax: deduction, residentTax: deduction };
 }
 
@@ -413,8 +419,8 @@ export function clampIdecoContribution(amount: number, occupation: IdecoOccupati
 }
 
 /** 小規模企業共済掛金を年間上限 (84万) でクランプする (負値は0)。 */
-export function clampSmallBizMutualAid(amount: number): number {
-  return Math.min(Math.max(0, amount), SMALL_BIZ_MUTUAL_ANNUAL_CAP);
+export function clampSmallBizMutualAid(amount: number, cap = SMALL_BIZ_MUTUAL_ANNUAL_CAP): number {
+  return Math.min(Math.max(0, amount), cap);
 }
 
 // --- 寄附金控除 (ふるさと納税ベースの所得税分) ---------------------------
@@ -423,12 +429,22 @@ export function clampSmallBizMutualAid(amount: number): number {
 // ※住民税の寄附金「税額控除」は別 (基本分+特例分)。ここでは所得税の所得控除のみ
 //   を返し、住民税側は 0 とする (住民税は税額控除のため別関数 calcFurusatoResidentCredit)。
 
+/** 寄附金控除 (所得控除) の足切り (円)。 */
+export const DONATION_DEDUCTION_FLOOR = 2_000;
+/** 寄附金控除 (所得控除) の上限 = 合計所得金額に対する割合。 */
+export const DONATION_INCOME_CAP_RATE = 0.4;
+
 /** ふるさと納税等の寄附金控除 (所得税の所得控除分)。 */
-export function calcDonationDeduction(donation: number, totalIncome: number): DeductionPair {
+export function calcDonationDeduction(
+  donation: number,
+  totalIncome: number,
+  floor = DONATION_DEDUCTION_FLOOR,
+  capRate = DONATION_INCOME_CAP_RATE,
+): DeductionPair {
   // Stryker disable next-line EqualityOperator,ConditionalExpression: 2,000円境界は連続(控除0)で <= と < が同値。
-  if (donation <= 2_000) return { incomeTax: 0, residentTax: 0 };
-  const cap = yen(totalIncome * 0.4);
-  const deduction = Math.min(cap, donation - 2_000);
+  if (donation <= floor) return { incomeTax: 0, residentTax: 0 };
+  const cap = yen(totalIncome * capRate);
+  const deduction = Math.min(cap, donation - floor);
   return { incomeTax: Math.max(0, deduction), residentTax: 0 };
 }
 
@@ -439,10 +455,6 @@ export function calcDonationDeduction(donation: number, totalIncome: number): De
 // ふるさと納税と本質的に同じ算式だが、用途を明示するための別名。住民税側は税額控除
 // (自治体により対象が異なる) のためここでは 0 とする。
 
-/** 寄附金控除 (所得控除) の足切り (円)。 */
-export const DONATION_DEDUCTION_FLOOR = 2_000;
-/** 寄附金控除 (所得控除) の上限 = 合計所得金額に対する割合。 */
-export const DONATION_INCOME_CAP_RATE = 0.4;
 
 /**
  * 一般寄附金 (ふるさと納税以外の特定寄附金) の所得控除を計算する。
@@ -573,7 +585,11 @@ export interface CasualtyLossInput {
  * の大きい方 (いずれも下限0) を控除額とする。所得税・住民税で同額。
  * 非有限・負の入力はガードして安全側に倒す。
  */
-export function calcCasualtyLossDeduction(input: CasualtyLossInput): DeductionPair {
+export function calcCasualtyLossDeduction(
+  input: CasualtyLossInput,
+  disasterFloor = CASUALTY_DISASTER_FLOOR,
+  incomeRate = CASUALTY_INCOME_RATE,
+): DeductionPair {
   const loss = Number.isFinite(input.lossAmount) ? Math.max(0, input.lossAmount) : 0;
   const disaster = Number.isFinite(input.disasterRelatedSpending ?? 0)
     ? Math.max(0, input.disasterRelatedSpending ?? 0)
@@ -587,11 +603,11 @@ export function calcCasualtyLossDeduction(input: CasualtyLossInput): DeductionPa
   if (netLoss <= 0) return { incomeTax: 0, residentTax: 0 };
 
   // 方式(1): 差引損失額 − 総所得×10%。
-  const byIncome = netLoss - yen(income * CASUALTY_INCOME_RATE);
+  const byIncome = netLoss - yen(income * incomeRate);
   // 方式(2): 差引損失額のうち災害関連支出 − 5万円。
   //   補填後に災害関連支出が残る上限として min(災害関連支出, 差引損失額) を採る。
   const disasterPortion = Math.min(disaster, netLoss);
-  const byDisaster = disasterPortion - CASUALTY_DISASTER_FLOOR;
+  const byDisaster = disasterPortion - disasterFloor;
 
   const deduction = Math.max(0, byIncome, byDisaster);
   return { incomeTax: deduction, residentTax: deduction };
@@ -630,6 +646,36 @@ export const WORKING_STUDENT_DEDUCTION: DeductionPair = { incomeTax: 270_000, re
 // --- 控除の集計 -----------------------------------------------------------
 
 /** 所得控除の入力 (すべて任意・該当しなければ未指定/0)。 */
+/**
+ * 所得控除の法定値・上限。省略すると各定数。台帳 (`shared/parameters.ts`) から
+ * 上書きできる — 改正で動いたとき、画面が `useParameters()` で読んで渡す。
+ */
+export interface DeductionParams {
+  readonly spouseSpecialIncomeLimit: number;
+  readonly dependentIncomeLimit: number;
+  readonly selfMedicationThreshold: number;
+  readonly selfMedicationCap: number;
+  readonly smallBizMutualAnnualCap: number;
+  readonly donationDeductionFloor: number;
+  readonly donationIncomeCapRate: number;
+  readonly casualtyDisasterFloor: number;
+  readonly casualtyIncomeRate: number;
+  readonly basicHumanDeductionDiff: number;
+}
+
+export const DEFAULT_DEDUCTION_PARAMS: DeductionParams = {
+  spouseSpecialIncomeLimit: SPOUSE_SPECIAL_INCOME_LIMIT_YEN,
+  dependentIncomeLimit: DEPENDENT_INCOME_LIMIT,
+  selfMedicationThreshold: SELF_MEDICATION_THRESHOLD,
+  selfMedicationCap: SELF_MEDICATION_CAP,
+  smallBizMutualAnnualCap: SMALL_BIZ_MUTUAL_ANNUAL_CAP,
+  donationDeductionFloor: DONATION_DEDUCTION_FLOOR,
+  donationIncomeCapRate: DONATION_INCOME_CAP_RATE,
+  casualtyDisasterFloor: CASUALTY_DISASTER_FLOOR,
+  casualtyIncomeRate: CASUALTY_INCOME_RATE,
+  basicHumanDeductionDiff: BASIC_HUMAN_DEDUCTION_DIFF,
+};
+
 export interface DeductionInput {
   /**
    * 対象の年分 (西暦)。基礎控除の段階が年分で変わるので効く。省略時は現在の年。
@@ -710,7 +756,10 @@ const ZERO: DeductionPair = { incomeTax: 0, residentTax: 0 };
  * 社会保険料控除は実額があればそれを、なければ 0 とする (calcNetSalary 側で
  * 概算社保を使う場合はそちらと二重計上しないよう注意)。
  */
-export function calcAllDeductions(input: DeductionInput): DeductionBreakdown {
+export function calcAllDeductions(
+  input: DeductionInput,
+  p: DeductionParams = DEFAULT_DEDUCTION_PARAMS,
+): DeductionBreakdown {
   const basic: DeductionPair = {
     // 基礎控除は年分で段階が違う。省略時は現在の年。
     incomeTax: calcBasicDeduction(input.totalIncome, input.taxYear),
@@ -721,7 +770,7 @@ export function calcAllDeductions(input: DeductionInput): DeductionBreakdown {
     ? { incomeTax: yen(input.socialInsurancePaid), residentTax: yen(input.socialInsurancePaid) }
     : ZERO;
   // 小規模企業共済 (年84万上限) + iDeCo (職業区分別上限) の合算。
-  const smallBizCapped = clampSmallBizMutualAid(input.smallBizMutualAid ?? 0);
+  const smallBizCapped = clampSmallBizMutualAid(input.smallBizMutualAid ?? 0, p.smallBizMutualAnnualCap);
   const idecoRaw = input.idecoContribution ?? 0;
   const idecoCapped = input.idecoOccupation
     ? clampIdecoContribution(idecoRaw, input.idecoOccupation)
@@ -731,11 +780,17 @@ export function calcAllDeductions(input: DeductionInput): DeductionBreakdown {
     ? { incomeTax: yen(smallBizTotal), residentTax: yen(smallBizTotal) }
     : ZERO;
   const spouse = input.spouseIncome !== undefined
-    ? calcSpouseDeduction(input.totalIncome, input.spouseIncome, input.spouseElderly ?? false)
+    ? calcSpouseDeduction(
+        input.totalIncome,
+        input.spouseIncome,
+        input.spouseElderly ?? false,
+        input.taxYear,
+        p.spouseSpecialIncomeLimit,
+      )
     : ZERO;
   // 所得付きの扶養親族が指定されていれば所得チェック付きで計算 (48万円超を除外)。
   const dependents = input.dependentsWithIncome
-    ? calcDependentDeductionWithIncome(input.dependentsWithIncome)
+    ? calcDependentDeductionWithIncome(input.dependentsWithIncome, p.dependentIncomeLimit)
     : input.dependents
       ? calcDependentDeduction(input.dependents)
       : ZERO;
@@ -745,13 +800,19 @@ export function calcAllDeductions(input: DeductionInput): DeductionBreakdown {
     ? calcMedicalDeduction(input.medical.paid, input.medical.reimbursed, input.totalIncome)
     : ZERO;
   const selfMedication = input.selfMedicationPaid
-    ? calcSelfMedicationDeduction(input.selfMedicationPaid)
+    ? calcSelfMedicationDeduction(input.selfMedicationPaid, p.selfMedicationThreshold, p.selfMedicationCap)
     : ZERO;
   // 通常の医療費控除とセルフメディケーション税制は選択制。有利な方を採用する。
   const medical = chooseMedicalDeductionScheme(standardMedical, selfMedication);
-  const donation = input.donation ? calcDonationDeduction(input.donation, input.totalIncome) : ZERO;
+  const donation = input.donation
+    ? calcDonationDeduction(input.donation, input.totalIncome, p.donationDeductionFloor, p.donationIncomeCapRate)
+    : ZERO;
   const casualtyLoss = input.casualtyLoss
-    ? calcCasualtyLossDeduction({ ...input.casualtyLoss, totalIncome: input.totalIncome })
+    ? calcCasualtyLossDeduction(
+        { ...input.casualtyLoss, totalIncome: input.totalIncome },
+        p.casualtyDisasterFloor,
+        p.casualtyIncomeRate,
+      )
     : ZERO;
   const disability = input.disabilities
     ? input.disabilities.reduce<DeductionPair>((acc, d) => addPair(acc, disabilityDeduction(d)), ZERO)
@@ -787,8 +848,8 @@ export function calcAllDeductions(input: DeductionInput): DeductionBreakdown {
   // そちらは実額でよい。
   const humanParts = [spouse, dependents, disability, singleParentOrWidow, workingStudent];
   const humanDeductionDiff =
-    BASIC_HUMAN_DEDUCTION_DIFF +
-    humanParts.reduce((s, p) => s + (p.incomeTax - p.residentTax), 0);
+    p.basicHumanDeductionDiff +
+    humanParts.reduce((s, part) => s + (part.incomeTax - part.residentTax), 0);
 
   return {
     basic,

@@ -19,6 +19,8 @@ const DB_VERSION = 1;
 const STORE = 'kv';
 const HANDLE_KEY = 'fsa-directory-handle';
 
+import { isSafeFilename } from '../../shared/safeFilename';
+
 interface FsaWindow extends Window {
   showDirectoryPicker?: (options?: { mode?: 'read' | 'readwrite' }) => Promise<FileSystemDirectoryHandle>;
 }
@@ -141,9 +143,19 @@ export async function clearFolderHandle(): Promise<void> {
   db.close();
 }
 
-function isSafeFilename(s: string): boolean {
-  return s.length > 0 && s.length <= 256 && !/[\0\r\n/\\]/.test(s);
-}
+/*
+ * ファイル名の検査は `shared/safeFilename.ts` に 1 つだけ置いた。
+ *
+ * 2026-08-22 まで、ここと `library/library.ts` に**別々の規則で**書かれて
+ * いた —— library 側は `.` / `..` と `\` を通していた。危ないのは
+ * `web-shim.ts` の `saveToLibrary` が **1 つの filename を両方へ渡している**
+ * ことで、入口 (library) が出口 (ここ) より緩い状態は「新しい書き出し経路が
+ * 再検査を忘れた瞬間」に穴になる。厳しい側へ寄せて統合した。
+ *
+ * (渡ってくる名前はアプリが組み立てたもの (`service-hub-YYYYMMDD-HHMM.txt`
+ *  など) で利用者入力ではないため、これは多層防御。)
+ */
+
 
 /** handle 配下に blob を書き出す。permission チェック + atomic close は内部で実行。 */
 export async function writeBlobToFolder(

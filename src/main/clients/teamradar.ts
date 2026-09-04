@@ -2,7 +2,8 @@ import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
-import { isSafeExportPath } from './exportPaths';
+import { isSafeExportPath, writeExportFile } from './exportPaths';
+import { localIsoDate } from '../../shared/localDate';
 
 /**
  * Team radar chart — 18 番目のサービス。
@@ -394,7 +395,7 @@ export async function loadTeamRadarState(
       : '営業部';
     const at = typeof o['evaluatedAt'] === 'string' && o['evaluatedAt'].length > 0
       ? (o['evaluatedAt'] as string).slice(0, 32)
-      : new Date().toISOString().slice(0, 10);
+      : localIsoDate();
     const members = validateMembers(o['members'] ?? []);
     return { department: dept, evaluatedAt: at, members };
   } catch {
@@ -404,6 +405,22 @@ export async function loadTeamRadarState(
       members: DEFAULT_TEAM_RADAR.members,
     };
   }
+}
+
+/**
+ * 0600 で書いて、**書いた後に締める**。
+ *
+ * `mode` は新規作成のときしか効かないので、固定名の `.tmp` が既に 644 で
+ * 残っていると 644 のまま本体へ被さる (2026-08-25 実測)。
+ * 留めているのは `main/__tests__/staleTmpMode.test.ts`。
+ */
+async function writeTight(target: string, contents: string): Promise<void> {
+  // Stryker disable next-line ObjectLiteral: `mode` を落としても**直後の
+  // `chmod` が同じ 600 を掛ける**ので、最終状態は変わらない (等価変異)。
+  // 明示を残すのは、作成→chmod の隙間を狭めるため (上の注記のとおり
+  // `mode` は新規作成のときしか効かず、既存ファイルには chmod が要る)。
+  await fs.writeFile(target, contents, { mode: 0o600 });
+  await fs.chmod(target, 0o600);
 }
 
 export async function saveTeamRadarState(
@@ -421,9 +438,37 @@ export async function saveTeamRadarState(
   const p = (deps.statePath ?? defaultStatePath)();
   const tmp = p + '.tmp';
   const mkdirFn = deps.mkdir ?? ((dir: string) => fs.mkdir(dir, { recursive: true }).then(() => undefined));
-  // `fs.writeFile` の既定は utf8。明示すると「空文字でも同じ」という
-  // 観測できない引数が増えるだけなので書かない (実測済み)。
-  const writeFn = deps.writeFile ?? ((q: string, c: string) => fs.writeFile(q, c));
+  /*
+   * **0600 で書く。ここに入るのは他人の評価である。**
+   *
+   * `team-radar.json` の中身は部署名・**メンバーの氏名**・軸ごとの 1〜5 評価・
+   * 付箋コメント —— 人事評価そのもので、しかも**利用者本人ではなく第三者**の
+   * 情報である。にもかかわらず実測 (2026-08-23) では **644** で書かれていた:
+   *
+   * ```
+   *   secrets.json               600  (明示)
+   *   service-hub-emotions.json  600  (明示)
+   *   team-radar.json            644  ← ここだけ既定のまま
+   * ```
+   *
+   * 同じ機械の他の利用者が同僚の評価を読める状態だった。
+   *
+   * **既にある 644 のファイルも次の保存で直る。** `mode` は新規作成のときしか
+   * 効かないが、この関数は `tmp` を作って `rename` で被せるので、本体の
+   * 古い権限は残らない。
+   *
+   * **ただし「毎回 0600 で作られたものになる」は誤りだった (2026-08-25 訂正)。**
+   * `tmp` は固定名 (`p + '.tmp'`) なので、**それ自体が既に 644 で存在する**と
+   * `writeFile(..., { mode: 0o600 })` はその権限を変えずに上書きし、
+   * 644 のまま本体へ被さる。下の `writeFn` で書いた後に `chmod` して閉じた。
+   *
+   * `atomicWriteFile` に寄せなかったのは、`writeFile` / `rename` の
+   * 差し替え口を検査が使っているため —— 得られる性質は同じ
+   * (あちらは一意な tmp 名なのでこの形にはならない)。
+   *
+   * (`fs.writeFile` の既定の符号化は utf8 で、options を渡しても変わらない。)
+   */
+  const writeFn = deps.writeFile ?? writeTight;
   const renameFn = deps.rename ?? ((a: string, b: string) => fs.rename(a, b));
   await mkdirFn(path.dirname(p));
   await writeFn(tmp, JSON.stringify(state, null, 2));
@@ -510,7 +555,7 @@ export async function exportTeamRadarSvgImpl(
     : 'チームレーダーチャート';
   const svg = renderTeamRadarSvg(snap, { title: titleStr });
   const mkdirFn = deps.mkdir ?? ((dir: string) => fs.mkdir(dir, { recursive: true }).then(() => undefined));
-  const writeFn = deps.writeFile ?? ((p: string, c: string) => fs.writeFile(p, c));
+  const writeFn = deps.writeFile ?? writeExportFile;
   await mkdirFn(path.dirname(filePath));
   await writeFn(filePath, svg);
   const generatedAt = (deps.now ?? (() => new Date()))().toISOString();

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  DEFAULT_IMPORT_PARAMS,
   JP_LOCAL_RATIO,
   JP_NATIONAL_REDUCED,
   JP_NATIONAL_STANDARD,
@@ -416,5 +417,41 @@ describe('付加価値税の参考税率 — 表そのものを固定する', ()
     expect(JP_LOCAL_RATIO).toBe(22 / 78);
     expect(SMALL_VALUE_LIMIT).toBe(10_000);
     expect(PERSONAL_USE_FACTOR).toBe(0.6);
+  });
+});
+
+describe('台帳から渡す輸入消費税の率・少額免税・個人使用の係数 (ImportParams)', () => {
+  const base: ImportInput = { goodsValue: 100_000, freight: 5_000, insurance: 1_000, dutyRate: 0.05 };
+
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_IMPORT_PARAMS).toEqual({
+      nationalStandard: JP_NATIONAL_STANDARD,
+      nationalReduced: JP_NATIONAL_REDUCED,
+      smallValueLimit: SMALL_VALUE_LIMIT,
+      personalUseFactor: PERSONAL_USE_FACTOR,
+    });
+    expect(calcJapanImport(base)).toEqual(calcJapanImport(base, DEFAULT_IMPORT_PARAMS));
+  });
+
+  it('国税の率 (標準 / 軽減) が消費税額に効く', () => {
+    const p = { ...DEFAULT_IMPORT_PARAMS, nationalStandard: 0.1, nationalReduced: 0.07 };
+    const std = calcJapanImport(base, p);
+    const byDefault = calcJapanImport(base);
+    expect(std.nationalTax).toBeGreaterThan(byDefault.nationalTax);
+    expect(std.nationalTax).toBe(Math.floor((std.consumptionBase * 0.1) / 100) * 100);
+    const red = calcJapanImport({ ...base, reducedRate: true }, p);
+    expect(red.nationalTax).toBe(Math.floor((red.consumptionBase * 0.07) / 100) * 100);
+  });
+
+  it('少額免税の基準と個人使用の係数', () => {
+    // 課税価格 106,000 は既定の 1 万円では課税、基準を 20 万円にすれば免税。
+    expect(calcJapanImport(base).totalTax).toBeGreaterThan(0);
+    const exempt = calcJapanImport(base, { ...DEFAULT_IMPORT_PARAMS, smallValueLimit: 200_000 });
+    expect(exempt.totalTax).toBe(0);
+    // 個人使用: 係数 50% なら課税価格は 50,000 (既定 60% は 60,000)。
+    const personal = calcJapanImport({ ...base, personalUse: true }, { ...DEFAULT_IMPORT_PARAMS, personalUseFactor: 0.5 });
+    expect(personal.customsValue).toBe(50_000);
+    expect(calcJapanImport({ ...base, personalUse: true }).customsValue).toBe(60_000);
+    expect(personal.notes.some((n) => n.includes('50%'))).toBe(true);
   });
 });

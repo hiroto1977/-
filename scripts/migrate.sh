@@ -245,8 +245,97 @@ do_restore() {
 EOS
 }
 
+# ---------------------------------------------------------------------------
+# self-test —— 秘密の扱いと、展開先の封じ込めを**実際に走らせて**確かめる
+#
+# 2026-08-26 に足した。それまでこのスクリプトには挙動の検査が 1 件も無く、
+# `lint:shell` が見ていたのは `bash -n` と strict mode だけだった。
+# パスフレーズを受け取り、$HOME へ書き戻し、`rm -rf` もする本である。
+# ---------------------------------------------------------------------------
+do_self_test() {
+  local bad=0 code
+  say_ok()  { printf '  \033[1;32m✓\033[0m %s\n' "$*"; }
+  say_bad() { printf '  \033[1;31m✗\033[0m %s\n' "$*"; bad=$((bad + 1)); }
+
+  code="$(grep -v '^[[:space:]]*#' "${BASH_SOURCE[0]}" || true)"
+
+  # 1. パスフレーズを argv へ載せない。
+  #    /proc/<pid>/cmdline はモード 444 (誰でも読める) / environ は 400 (本人だけ)。
+  #    実測で確かめた差なので、`-pass env:` から `-pass pass:` へ戻れば鳴る。
+  # 探す字面を**組み立てる**。素朴に書くと、この検査の grep 引数そのものが
+  # 本文に当たって鳴る (実際に鳴った —— 同じ罠をこのセッションで 3 回踏んだ)。
+  local want_form bad_form
+  want_form='-pass env:MIGRATE_PASSPHRASE'
+  bad_form='-pass pa''ss:'
+  if printf '%s' "$code" | grep -qF -- "$want_form" &&
+     ! printf '%s' "$code" | grep -qF -- "$bad_form"; then
+    say_ok 'パスフレーズを argv へ渡していない (-pass env:)'
+  else
+    say_bad 'パスフレーズが argv に載っている (/proc/<pid>/cmdline は 444)'
+  fi
+
+  # 2. アーカイブは 600 で閉じる (秘密鍵が入る)。
+  if printf '%s' "$code" | grep -q 'chmod 600 "\$out"'; then
+    say_ok 'アーカイブを 600 にしている'
+  else
+    say_bad 'アーカイブの権限を絞っていない'
+  fi
+
+  # 3. **展開先の封じ込め。** 敵対的な書庫を実際に作って復元し、
+  #    $HOME の外へ 1 バイトも出ないことを見る。
+  local sandbox home_dir arc
+  sandbox="$(mktemp -d)"
+  home_dir="$sandbox/home"; mkdir -p "$home_dir" "$sandbox/build/payload/sub" "$sandbox/outside"
+  echo 'benign' > "$sandbox/build/payload/sub/keep.txt"
+  echo 'ORIGINAL' > "$sandbox/outside/target.txt"
+  # (a) `..` で外へ出ようとする member  (b) 外を指す symlink
+  ln -s "$sandbox/outside/target.txt" "$sandbox/build/payload/escape-link"
+  arc="$sandbox/hostile.tar.gz"
+  ( cd "$sandbox/build/payload" && tar -czf "$arc" . ../../outside/target.txt 2>/dev/null ) || true
+
+  ( HOME="$home_dir" bash "${BASH_SOURCE[0]}" restore "$arc" >/dev/null 2>&1 ) || true
+
+  if [ "$(cat "$sandbox/outside/target.txt")" = "ORIGINAL" ]; then
+    say_ok '敵対的な書庫を復元しても $HOME の外を書き換えない'
+  else
+    say_bad '$HOME の外のファイルが書き換わった'
+  fi
+  if [ -f "$home_dir/sub/keep.txt" ]; then
+    say_ok '陰性対照: まっとうな member はちゃんと復元される'
+  else
+    say_bad '陰性対照が落ちた — 復元そのものが動いていない (上の合格は無意味)'
+  fi
+  # `..` を含む member は tar が先頭を削るので `outside/target.txt` になり、
+  # **$HOME の中**へ落ちる。それが正しい姿 —— 「$HOME の下に現れないこと」を
+  # 期待値にすると、実装が正しいのに落ちる検査になる (最初にそう書いて落ちた)。
+  # 見るべきは「外へ出ていないこと」と「無害化されて中に居ること」の両方。
+  if [ -f "$home_dir/outside/target.txt" ]; then
+    say_ok '`..` の member は先頭を削られ $HOME の中へ落ちた (脱出していない)'
+  else
+    say_bad '`..` の member の行き先が想定と違う — 封じ込めを読み直すこと'
+  fi
+  # 外を指す symlink は `find -type f` が拾わないので復元されない。
+  if [ ! -e "$home_dir/escape-link" ]; then
+    say_ok '$HOME の外を指す symlink は復元されない'
+  else
+    say_bad '外を指す symlink が $HOME へ置かれた'
+  fi
+  rm -rf "$sandbox"
+
+  # 4. --force 無しでは既存を壊さない (字面ではなく分岐の存在を見る)。
+  if printf '%s' "$code" | grep -q '\[ -e "\$dest" \] && \[ "\$force" = "0" \]'; then
+    say_ok '--force 無しでは既存ファイルを上書きしない'
+  else
+    say_bad '既存ファイルの保護が見当たらない'
+  fi
+
+  [ "$bad" -eq 0 ] || die "self-test 不一致 $bad 件"
+  ok "self-test 全件一致"
+}
+
 case "$MODE" in
   backup)  do_backup "$@" ;;
   restore) do_restore "$@" ;;
+  --self-test) do_self_test ;;
   *) usage ;;
 esac

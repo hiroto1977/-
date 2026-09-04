@@ -39,14 +39,24 @@ function read(p) {
 // Canonical facts (computed from source)
 // ---------------------------------------------------------------------------
 
+/*
+ * 読めなかったときは null を返す。
+ *
+ * **`main()` には「canonical を source から計算できない」を報告する枝がある
+ * のに、ここが null を素通しさせるので到達できなかった** —— ファイル名が変わると
+ * 意図した失敗ではなく生の TypeError で落ち、どの事実が測れなかったのかが
+ * 出力に出ない。到達しない枝は、その先の報告を全部無効にする。
+ */
 function canonicalServiceCount() {
   const src = read(path.join(REPO_ROOT, 'src/shared/serviceId.ts'));
+  if (src == null) return null;
   const m = src.match(/SERVICE_IDS = \[([\s\S]*?)\]/);
   return m ? [...m[1].matchAll(/^\s*'[a-z][a-z0-9-]*'\s*,/gm)].length : null;
 }
 
 function canonicalServiceList() {
   const src = read(path.join(REPO_ROOT, 'src/shared/serviceId.ts'));
+  if (src == null) return null;
   const m = src.match(/SERVICE_IDS = \[([\s\S]*?)\]/);
   if (!m) return null;
   const ids = [...m[1].matchAll(/'([a-z][a-z0-9-]*)'/g)].map((x) => x[1]);
@@ -55,11 +65,13 @@ function canonicalServiceList() {
 
 function canonicalIpcHandlerCount() {
   const src = read(path.join(REPO_ROOT, 'src/main/main.ts'));
+  if (src == null) return null;
   return [...src.matchAll(/^ipcMain\.handle\(/gm)].length;
 }
 
 function canonicalOAuthCount() {
   const src = read(path.join(REPO_ROOT, 'src/main/oauth.ts'));
+  if (src == null) return null;
   const m = src.match(/OAUTH_CONFIGS[^{]*\{([\s\S]*?)\n\};/);
   if (!m) return null;
   return [...m[1].matchAll(/^\s*'?[a-z][a-z0-9-]*'?:\s*\{/gm)].length;
@@ -116,7 +128,53 @@ function canonicalCitationLedgerCount() {
   return total;
 }
 
+/*
+ * Mutation score。**canonical は `docs/QUALITY.md`** —— これが
+ * `npm run quality:report` の生成物で、素材の `reports/mutation/mutation.json`
+ * 自体は `.gitignore` 済み (CI の fresh checkout には無い)。したがって
+ * 「Stryker の報告 → QUALITY.md」の鮮度は quality:report の責任で、
+ * ここが見るのは「QUALITY.md → 他ドキュメント」の一致だけ。
+ *
+ * このファイルの冒頭は最初から "mutation score" を見ていると書いていたが、
+ * **FACTS に項目が無く一度も見ていなかった** (2026-09-01 まで)。その間に
+ * ARCHITECTURE の TL;DR は出典として QUALITY.md を挙げながら 100.00% と書き、
+ * QUALITY.md 側は分母に `Ignored` を混ぜて 77.16% を出していた —— 同じ
+ * 報告書から出た 2 つの数字が、互いを出典に名指ししたまま 23 ポイント違っていた。
+ */
+function canonicalMutationScore(which) {
+  const src = read(path.join(DOCS, 'QUALITY.md'));
+  if (src == null) return null;
+  const m = src.match(/\| Mutation score \(total \/ covered\) \| ([\d.]+)% \/ ([\d.]+)% \|/);
+  if (m == null) return null;
+  return which === 'covered' ? m[2] : m[1];
+}
+
 const FACTS = [
+  {
+    // ARCHITECTURE の TL;DR は出典欄に `docs/QUALITY.md` と書いてある。
+    // 「出典を名指ししている」ことと「その出典と一致している」ことは別なので、
+    // 名指しのほうを機械に確かめさせる。
+    name: 'mutation score (total)',
+    canonical: canonicalMutationScore('total'),
+    claims: [
+      {
+        file: 'docs/ARCHITECTURE.md',
+        pattern: /\| Mutation score \(total\) \| \*\*([\d.]+)%\*\* \|/,
+        parse: (m) => m[1],
+      },
+    ],
+  },
+  {
+    name: 'mutation score (covered)',
+    canonical: canonicalMutationScore('covered'),
+    claims: [
+      {
+        file: 'docs/ARCHITECTURE.md',
+        pattern: /\| Mutation score \(covered\) \| \*\*([\d.]+)%\*\* \|/,
+        parse: (m) => m[1],
+      },
+    ],
+  },
   {
     name: 'citation ledger backlog',
     canonical: canonicalCitationLedgerCount(),
@@ -219,7 +277,7 @@ const FACTS = [
   },
   {
     name: 'service list (set equality)',
-    canonical: canonicalServiceList().sort().join(','),
+    canonical: canonicalServiceList()?.sort().join(',') ?? null,
     claims: [
       {
         file: 'docs/ARCHITECTURE.md',
@@ -253,10 +311,18 @@ const FACTS = [
  * ci.yml に無ければ落ちる。逆方向 (ci.yml にしか無い) は許す — CI には
  * verify:all に属さない手順 (build 検証など) が正当に存在するため。
  */
-function checkCiGateCoverage(failures) {
-  const pkg = JSON.parse(read(path.join(REPO_ROOT, 'package.json')) ?? '{}');
+/**
+ * `allOverride` / `ciOverride` は self-test 用の差し込み口。既定では実ファイル
+ * を読む。この 2 つが無いと、**このゲート自身が鳴るかを試せない** — 実ファイル
+ * を壊して確かめるしかなくなり、確かめた事実は今日しか残らない。
+ */
+function checkCiGateCoverage(failures, allOverride, ciOverride) {
+  const pkg =
+    allOverride === undefined
+      ? JSON.parse(read(path.join(REPO_ROOT, 'package.json')) ?? '{}')
+      : { scripts: { 'verify:all': allOverride } };
   const all = pkg.scripts?.['verify:all'];
-  const ci = read(path.join(REPO_ROOT, '.github/workflows/ci.yml'));
+  const ci = ciOverride === undefined ? read(path.join(REPO_ROOT, '.github/workflows/ci.yml')) : ciOverride;
   if (!all || ci == null) {
     failures.push({
       fact: 'CI gate coverage',
@@ -283,10 +349,790 @@ function checkCiGateCoverage(failures) {
 }
 
 // ---------------------------------------------------------------------------
+// 構造チェック: 出荷物に当てる検査は、**公開するワークフロー**でも走ること
+// ---------------------------------------------------------------------------
+
+/*
+ * `ci.yml` は出た HTML に 2 つの検査を当てている ——
+ * 個人データの走査 (`lint-sample-data.cjs --artifact`) と
+ * CSP (`lint-artifact-csp.cjs`)。どちらも「出荷物に混ざったら公開される」
+ * 事故を承けて足したものである。
+ *
+ * だが**公開しているのは `pages.yml`** で、そちらは 2026-08-25 の時点で
+ * ゲートを 1 つも走らせず、`needs:` も持っていなかった。2 つは別々の
+ * ワークフローとして push: main で**並行に**起動するので、
+ * ci.yml が赤くなっても pages.yml は公開を終える。
+ *
+ * つまり検査は「公開の門」ではなく「公開後の報せ」だった。この repo で
+ * 繰り返し出ている「検査と危ない操作が別の場所に在る」形そのものなので、
+ * 文で約束せずここで突き合わせる。
+ *
+ * 逆方向 (pages.yml にしか無い) は許す —— 公開側だけが見るべき物は在りうる。
+ */
+const ARTIFACT_SCANNERS = [
+  {
+    script: 'scripts/lint-sample-data.cjs',
+    why: '出荷物に実在の個人データが混ざっていないか (過去に dist/standalone.html で実際に起きた)',
+  },
+  {
+    script: 'scripts/lint-artifact-csp.cjs',
+    why: 'script-src がハッシュ固定を失って unsafe-inline に戻る回帰は、アプリが動いたまま注入も通るのでここでしか捕まらない',
+  },
+];
+
+/**
+ * **物を外へ出すワークフロー**と、その「出す一手」の目印。
+ *
+ * ここに載っているワークフローは、少なくとも 1 つは出荷物検査を持ち、かつ
+ * それが「出す一手」より**前**に在ること。`ci.yml` は何も公開しないので
+ * 載せない —— あちらは検査の置き場であって、出口ではない。
+ */
+const PUBLISHING_WORKFLOWS = [
+  {
+    file: '.github/workflows/pages.yml',
+    // **`uses:` の行に限る。** 素の文字列一致では権限欄のコメント
+    // (`# required for softprops/action-gh-release`) を「出す一手」と
+    // 読んでしまい、検査が前に在っても順序違反として鳴った (実測)。
+    publishMarker: /^\s*-?\s*uses:\s*actions\/upload-pages-artifact/m,
+    // ブラウザ版は HTML そのものを配るので、両方を要求する。
+    require: ['scripts/lint-sample-data.cjs', 'scripts/lint-artifact-csp.cjs'],
+    why: 'GitHub Pages へ公開する。push: main で ci.yml と並行に走り needs: を持たない',
+  },
+  {
+    file: '.github/workflows/release.yml',
+    publishMarker: /^\s*-?\s*uses:\s*softprops\/action-gh-release/m,
+    // インストーラの中身は dist/**/* (レンダラー束)。CSP は index.html 側の
+    // 話で、デスクトップ版は Electron の webPreferences が別に守っている。
+    require: ['scripts/lint-sample-data.cjs'],
+    why: 'タグ push で署名済みインストーラを公開する。タグはどのコミットも指せる',
+  },
+];
+
+/**
+ * `ciOverride` / `overrides` は self-test 用の差し込み口。
+ * 無いと**このゲート自身が鳴るかを試せない**。
+ * `overrides` はワークフロー file → 中身の対応表。
+ */
+function checkPublishScanCoverage(failures, ciOverride, overrides) {
+  const ci =
+    ciOverride === undefined ? read(path.join(REPO_ROOT, '.github/workflows/ci.yml')) : ciOverride;
+  if (ci == null) {
+    failures.push({ fact: 'publish scan coverage', reason: '.github/workflows/ci.yml を読めない' });
+    return 0;
+  }
+  let checked = 0;
+  for (const wf of PUBLISHING_WORKFLOWS) {
+    const text =
+      overrides !== undefined && Object.hasOwn(overrides, wf.file)
+        ? overrides[wf.file]
+        : read(path.join(REPO_ROOT, wf.file));
+    if (text == null) {
+      failures.push({ fact: 'publish scan coverage', reason: `${wf.file} を読めない` });
+      continue;
+    }
+    for (const script of wf.require) {
+      const meta = ARTIFACT_SCANNERS.find((a) => a.script === script);
+      if (meta === undefined) {
+        failures.push({
+          fact: 'publish scan coverage',
+          reason: `${wf.file} が要求する ${script} が ARTIFACT_SCANNERS に無い (台帳の綴り違い)`,
+        });
+        continue;
+      }
+      if (!ci.includes(script)) continue; // ci.yml が当てていないなら要求しない
+      checked += 1;
+      if (!text.includes(script)) {
+        failures.push({
+          fact: 'publish scan coverage',
+          reason:
+            `${script} は ci.yml で出荷物に当てているのに ${wf.file} に無い —— ` +
+            `外へ出しているのは ${wf.file} のほうである (${wf.why}) (${meta.why})`,
+        });
+        continue;
+      }
+      // 出す一手より前であること。後ろに置いても意味が無い。
+      const publishAt = text.search(wf.publishMarker);
+      const scanAt = text.indexOf(script);
+      if (publishAt !== -1 && scanAt > publishAt) {
+        failures.push({
+          fact: 'publish scan coverage',
+          reason: `${script} が ${wf.file} の公開ステップより後ろに在る —— 出してから調べても遅い`,
+        });
+      }
+    }
+  }
+  return checked;
+}
+
+/**
+ * **dist/ を掃除するビルドの順序。**
+ *
+ * vite は `emptyOutDir` で `dist/` を丸ごと掃除する。`.github/workflows/e2e.yml`
+ * は 3 つの vite ビルドを走らせるので、順序を間違えると**後ろのビルドが
+ * 前の成果物を消す**。実測 (2026-08-26):
+ *
+ * ```
+ *   build:web → 退避 → build:web:lite → 戻す   (両方そろう)
+ *   → build:renderer                            (dist/ が掃除され両方消える)
+ *   → perf                                      ★ 「ファイルがありません」で落ちる
+ * ```
+ *
+ * `build:renderer` と `smoke:app` は 2026-08-26 にこのファイルへ足したもので、
+ * **足した位置が後ろだった**。`e2e.yml` は既定で走らない (手動起動か `run-e2e`
+ * ラベル) ので、**誰も落ちるところを見ていなかった** —— 「在るが一度も
+ * 成功しないゲート」の形である。
+ *
+ * 直したうえで、順序そのものを機械で留める。
+ *
+ * @param textOverride self-test の差し込み口。
+ */
+function checkE2eBuildOrder(failures, textOverride) {
+  // `??` にすると `null` が「読めない」を表せない (null ?? x は x になり、
+  // **実ファイルを読みに行ってしまう**)。self-test で気付いた。
+  const text =
+    textOverride === undefined ? read(path.join(REPO_ROOT, '.github/workflows/e2e.yml')) : textOverride;
+  if (text === null) {
+    failures.push({ fact: 'e2e build order', reason: '.github/workflows/e2e.yml を読めない' });
+    return 0;
+  }
+  // ブラウザ版の成果物を要求する段。これらより後ろで dist/ を掃除してはいけない。
+  const consumers = ['npm run e2e', 'npm run e2e:lite', 'npm run perf'];
+  const firstConsumer = consumers
+    .map((c) => text.indexOf(c))
+    .filter((i) => i !== -1)
+    .sort((a, b) => a - b)[0];
+  const rendererAt = text.indexOf('npm run build:renderer');
+  const webAt = text.indexOf('npm run build:web');
+  if (rendererAt === -1 || webAt === -1) {
+    failures.push({
+      fact: 'e2e build order',
+      reason: 'e2e.yml に build:renderer / build:web が見当たらない — 順序を確かめられない',
+    });
+    return 0;
+  }
+  if (rendererAt > webAt) {
+    failures.push({
+      fact: 'e2e build order',
+      reason:
+        'build:renderer が build:web より後ろに在る —— vite の emptyOutDir が ' +
+        'standalone.html / standalone-lite.html を消すので、後段の e2e / perf が必ず落ちる',
+    });
+  }
+  if (firstConsumer !== undefined && rendererAt > firstConsumer) {
+    failures.push({
+      fact: 'e2e build order',
+      reason: 'build:renderer が e2e / perf より後ろに在る —— 成果物を消してから測ることになる',
+    });
+  }
+  return 1;
+}
+
+/**
+ * 変異スコアの**鮮度**。等値の照合 (FACTS) では捕まらない種類の腐り方を見る。
+ *
+ * `docs/QUALITY.md` は自動生成だが、生成し直さなければ古いまま committed で
+ * 残る。実際 2026-05-13 から 2026-09-01 まで 3 か月半そのままで、その間
+ * ARCHITECTURE の TL;DR は「出典: docs/QUALITY.md」と書きながら、その
+ * QUALITY.md に**存在しない数字**を載せていた。FACTS の等値照合を足しても、
+ * 両方が同じだけ古ければ黙って一致してしまう。
+ *
+ * そこで**設定と突き合わせる**: `stryker.config.json` の `thresholds.break` を
+ * 下回るスコアが doc に書いてあるなら、weekly の mutation CI は赤のはずである。
+ * 緑のまま doc だけが下回っているなら、それは古いか間違っているかのどちらか。
+ * 今回の実物 (doc 77.16% / break 99.8) はこの一本だけでも鳴った。
+ *
+ * 逆向きの誤爆はしない —— スコアが閾値を**上回る**のは正常なので鳴らさない。
+ */
+function checkMutationScoreFresh(failures, qualityOverride, configOverride) {
+  const quality =
+    qualityOverride === undefined ? read(path.join(DOCS, 'QUALITY.md')) : qualityOverride;
+  const rawCfg =
+    configOverride === undefined
+      ? read(path.join(REPO_ROOT, 'stryker.config.json'))
+      : configOverride;
+  if (quality === null || rawCfg === null) {
+    failures.push({
+      fact: 'mutation score freshness',
+      reason: 'docs/QUALITY.md か stryker.config.json を読めない',
+    });
+    return 0;
+  }
+  let breakAt = null;
+  try {
+    breakAt = JSON.parse(rawCfg).thresholds?.break ?? null;
+  } catch {
+    breakAt = null;
+  }
+  if (breakAt === null) {
+    failures.push({
+      fact: 'mutation score freshness',
+      reason: 'stryker.config.json に thresholds.break が無い — 鮮度を確かめられない',
+    });
+    return 0;
+  }
+  const m = quality.match(/\| Mutation score \(total \/ covered\) \| ([\d.]+)% \/ ([\d.]+)% \|/);
+  if (m === null) {
+    failures.push({
+      fact: 'mutation score freshness',
+      reason: 'docs/QUALITY.md に Mutation score の行が無い — `npm run quality:report` で再生成する',
+    });
+    return 0;
+  }
+  const total = Number(m[1]);
+  if (total < breakAt) {
+    failures.push({
+      fact: 'mutation score freshness',
+      reason:
+        `docs/QUALITY.md の総合スコア ${total}% が stryker.config.json の ` +
+        `thresholds.break ${breakAt}% を下回っている —— この値なら weekly の mutation CI は ` +
+        '赤のはず。緑のままなら doc が古いか、点数の出し方が間違っている ' +
+        '(`npm run quality:report` で再生成)',
+    });
+  }
+  return 1;
+}
+
+/**
+ * 逆向きの照合 — **「CI に無い」と書いてあるものが、本当に無いか。**
+ *
+ * `checkCiGateCoverage` は「ゲートを足したのに CI へ繋ぎ忘れた」を見る。
+ * その裏返しが 2026-08-24 に実在した: `e2e` / `e2e:lite` / `perf` は
+ * `.github/workflows/e2e.yml` から (ラベル `run-e2e` か手動起動で) 走るのに、
+ * **CLAUDE.md は「not in CI」と書いたままだった**。
+ *
+ * CLAUDE.md は Claude Code セッションへの**指示書**なので、この種のずれは
+ * 「無い」と信じさせて**動く仕組みを隠す**。実際、この e2e 経路は誰にも
+ * 使われないまま残っていた。
+ *
+ * 実装が説明より先を行く形は、逆向き (説明が先) と同じくらい起きる。
+ *
+ * @param claimOverride / @param workflowsOverride self-test の差し込み口。
+ */
+function checkNotInCiClaims(failures, claimOverride, workflowsOverride) {
+  const claudeMd =
+    claimOverride === undefined ? read(path.join(REPO_ROOT, 'CLAUDE.md')) : claimOverride;
+  if (claudeMd == null) {
+    failures.push({ fact: 'not-in-CI claims', reason: 'CLAUDE.md を読めない' });
+    return 0;
+  }
+  // 「… are **not** in CI」の直前に並ぶバッククォート付きの名前を拾う。
+  // 文をまたぐので、直前 200 文字を窓にする。
+  const claimed = new Set();
+  for (const m of claudeMd.matchAll(/\*\*not\*\* in CI/g)) {
+    const window = claudeMd.slice(Math.max(0, m.index - 200), m.index);
+    for (const t of window.matchAll(/`([a-z][a-z0-9:_-]*)`/g)) claimed.add(t[1]);
+  }
+  if (claimed.size === 0) return 0;
+
+  let workflows;
+  if (workflowsOverride !== undefined) workflows = workflowsOverride;
+  else {
+    const dir = path.join(REPO_ROOT, '.github', 'workflows');
+    workflows = fs.existsSync(dir)
+      ? fs.readdirSync(dir)
+          .filter((f) => f.endsWith('.yml') || f.endsWith('.yaml'))
+          .map((f) => ({ name: f, text: read(path.join(dir, f)) ?? '' }))
+      : [];
+  }
+  for (const name of claimed) {
+    const re = new RegExp(`npm run ${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![a-z0-9:_-])`);
+    for (const wf of workflows) {
+      if (re.test(wf.text)) {
+        failures.push({
+          fact: 'not-in-CI claims',
+          reason:
+            `CLAUDE.md は "${name}" を「not in CI」と書いているが ` +
+            `.github/workflows/${wf.name} が実行している — ` +
+            '「無い」と信じさせて動く仕組みを隠している',
+        });
+      }
+    }
+  }
+  return claimed.size;
+}
+
+// ---------------------------------------------------------------------------
 // Run
 // ---------------------------------------------------------------------------
 
+/*
+ * README のカテゴリ内訳を、サイドバーの実体 (`services.ts`) に結び付ける。
+ *
+ * 見出しの合計 (`## サービス一覧 (74)`) は上の `service count` が既に留めている。
+ * だが**内訳の行**はどの検査も読んでいなかった —— 2026-08-25 に実測すると
+ * 12+8+18+32 = 70 で、同じ README の本文が言う「全 74」と 4 件ずれていた。
+ * サイドバーに出ているのに README にだけ無かったのは `Cursor` (外部サービス連携)
+ * と `可視化` (分析・ツール) の 2 件である。
+ *
+ * **合計だけを見る検査は、内訳が同じだけ間違っていても黙る。** 足し引きが
+ * 打ち消し合えば合計は動かないし、そもそもここでは合計 (74) が
+ * サイドバー非表示の 2 件を含むため、内訳の和 (72) と一致しない —— 
+ * つまり合計の検査は内訳について何も言っていなかった。
+ *
+ * 数ではなく**名前の集合**を突き合わせる。数を数えるだけだと
+ * 「1 件足して 1 件消した」が通ってしまうし、綴りが変わったことも見えない。
+ */
+const README_CATEGORY_ROWS = [
+  { label: 'おすすめ', category: 'featured' },
+  { label: '士業連携', category: 'professionals' },
+  { label: '分析・ツール', category: 'tools' },
+  { label: '外部サービス連携', category: 'integrations' },
+];
+
+/*
+ * README が短縮して書いているサイドバーの名前。
+ *
+ * 表のセルは ` / ` 区切りだが、**サイドバーの名前そのものに ` / ` を含む**
+ * ものが 2 つある (`KPI / BEP` と `コネクター / 自動化`)。そのまま書くと
+ * 読む側にも数える側にも 2 件に見えるので、README では前半だけを書いている。
+ *
+ * ここに書くことで、**短縮は 2 件だけ**という事実自体が検査対象になる。
+ * 3 件目を黙って増やすことはできないし、左辺の名前がサイドバーから消えれば
+ * 下の「古くなった短縮」で鳴る。
+ */
+const README_LABEL_ALIASES = {
+  'KPI / BEP': 'KPI',
+  'コネクター / 自動化': 'コネクター',
+};
+
+/** `services.ts` から category → label[] を作る。 */
+function sidebarLabelsByCategory(src) {
+  const out = {};
+  // `label: '…',` … `category: '…',` の順で並ぶ 1 エントリを 1 件とみなす。
+  for (const m of src.matchAll(/label: '([^']+)',[\s\S]{0,400}?category: '([a-z]+)',/g)) {
+    (out[m[2]] ??= []).push(m[1]);
+  }
+  return out;
+}
+
+/**
+ * README の 1 行から、宣言された件数と列挙された名前を取り出す。
+ * 見つからなければ null。
+ */
+function readmeCategoryRow(readme, label) {
+  const re = new RegExp(
+    '^\\|\\s*\\*\\*' + label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\*\\*\\s*\\(([^)]*)\\)\\s*\\|([^|]*)\\|',
+    'm',
+  );
+  const m = readme.match(re);
+  if (!m) return null;
+  const countM = m[1].match(/(\d+)\s*$/);
+  // 名前の後ろに「— 各ページに…」のような注記が付く行がある (士業連携)。
+  const items = m[2]
+    .split(' — ')[0]
+    .split('/')
+    .map((s) => s.trim())
+    .filter((s) => s !== '');
+  return { count: countM ? Number(countM[1]) : null, items };
+}
+
+/**
+ * `servicesOverride` / `readmeOverride` は self-test 用の差し込み口
+ * (`checkCiGateCoverage` と同じ理由 — 実ファイルを壊さずに鳴らせるように)。
+ * 戻り値は照合したカテゴリ数。
+ */
+function checkReadmeCategories(failures, servicesOverride, readmeOverride) {
+  const FACT = 'README category breakdown';
+  const servicesSrc =
+    servicesOverride === undefined ? read(path.join(REPO_ROOT, 'src/renderer/services.ts')) : servicesOverride;
+  const readme = readmeOverride === undefined ? read(path.join(REPO_ROOT, 'README.md')) : readmeOverride;
+  if (servicesSrc == null || readme == null) {
+    failures.push({ fact: FACT, reason: 'src/renderer/services.ts か README.md を読めない' });
+    return 0;
+  }
+  const byCategory = sidebarLabelsByCategory(servicesSrc);
+  let checked = 0;
+  for (const { label, category } of README_CATEGORY_ROWS) {
+    const actual = byCategory[category];
+    if (!actual || actual.length === 0) {
+      // 走査が死んで 0 件になったのを「違反なし」と読まない。
+      failures.push({
+        fact: FACT,
+        reason: `services.ts から category '${category}' を 1 件も拾えない — 走査が壊れている`,
+      });
+      continue;
+    }
+    const row = readmeCategoryRow(readme, label);
+    if (row === null) {
+      failures.push({ fact: FACT, reason: `README.md にカテゴリ行 "${label}" が無い` });
+      continue;
+    }
+    checked++;
+    if (row.count !== row.items.length) {
+      failures.push({
+        fact: FACT,
+        reason: `README "${label}" は (${row.count}) と書いているが ${row.items.length} 件しか並べていない`,
+      });
+    }
+    const shown = actual.map((l) => README_LABEL_ALIASES[l] ?? l);
+    const missing = shown.filter((l) => !row.items.includes(l));
+    const extra = row.items.filter((l) => !shown.includes(l));
+    if (missing.length > 0) {
+      failures.push({
+        fact: FACT,
+        reason: `README "${label}" にサイドバーの ${missing.join(' / ')} が載っていない`,
+      });
+    }
+    if (extra.length > 0) {
+      failures.push({
+        fact: FACT,
+        reason: `README "${label}" の ${extra.join(' / ')} はサイドバーに無い (綴り違いか、消えたサービス)`,
+      });
+    }
+  }
+  /*
+   * **古くなった短縮を残さない。** 左辺がサイドバーから消えていれば、
+   * その短縮はもう何も指していない —— 放っておくと「README にだけある名前」を
+   * 黙って許す抜け穴になる。
+   */
+  const allLabels = Object.values(byCategory).flat();
+  for (const full of Object.keys(README_LABEL_ALIASES)) {
+    if (!allLabels.includes(full)) {
+      failures.push({
+        fact: FACT,
+        reason: `短縮の台帳にある "${full}" がサイドバーに無い — 名前が変わったか消えた。台帳から外すこと`,
+      });
+    }
+  }
+  return checked;
+}
+
+/**
+ * 陰性対照 — **このゲートが本当に鳴るか**。
+ *
+ * ここは「他の 25 ゲートが CI で実際に走っているか」を見る、いわば
+ * ゲートのゲートである。ここが黙ると、新しいゲートを足しても CI で
+ * 走らないまま「緑」に見える — リポジトリの記録によれば、実際に
+ * lint:citations / lint:knowledge-refs / verify:knowledge の 3 つが
+ * その状態だった。
+ */
+let selfTestFailed = false;
+function selfTest() {
+  const step = (g) => `      - run: npm run ${g}\n`;
+  // 逆向き —— 「CI に無い」と書いたものが本当に無いか。
+  // 2026-08-24 に実在した形 (e2e.yml が e2e/e2e:lite/perf を走らせるのに
+  // CLAUDE.md は not in CI と書いていた) を最初のケースに置く。
+  {
+    const claimCases = [
+      [
+        '「not in CI」と書いたものを workflow が実行していたら鳴る',
+        '`e2e` / `smoke` are **not** in CI at all.',
+        [{ name: 'e2e.yml', text: '      - run: npm run e2e\n' }],
+        1,
+      ],
+      [
+        '本当に無ければ鳴らない',
+        '`e2e:ollama` / `smoke` are **not** in CI at all.',
+        [{ name: 'ci.yml', text: '      - run: npm run test\n' }],
+        0,
+      ],
+      [
+        '★ 前方一致で誤爆しない (e2e の主張は e2e:lite の実行に当たらない)',
+        '`e2e` are **not** in CI at all.',
+        [{ name: 'e2e.yml', text: '      - run: npm run e2e:lite\n' }],
+        0,
+      ],
+      [
+        '複数の workflow それぞれで鳴る',
+        '`smoke` are **not** in CI at all.',
+        [
+          { name: 'a.yml', text: 'npm run smoke' },
+          { name: 'b.yml', text: 'npm run smoke' },
+        ],
+        2,
+      ],
+      ['主張が無ければ何も見ない', 'ここには主張が無い', [{ name: 'x.yml', text: 'npm run e2e' }], 0],
+    ];
+    for (const [label, claim, wfs, expected] of claimCases) {
+      const f = [];
+      checkNotInCiClaims(f, claim, wfs);
+      const ok = f.length === expected;
+      if (!ok) selfTestFailed = true;
+      console.log(`  ${ok ? '✓' : '✗'} ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+  }
+
+  const cases = [
+    [
+      'verify:all のゲートが ci.yml に無ければ鳴る',
+      'npm run lint:a && npm run lint:b',
+      step('lint:a'),
+      1,
+    ],
+    [
+      '全部あれば鳴らない',
+      'npm run lint:a && npm run lint:b',
+      step('lint:a') + step('lint:b'),
+      0,
+    ],
+    [
+      '前方一致では通さない (lint:test では lint:test-coverage を満たさない)',
+      'npm run lint:test-coverage',
+      step('lint:test'),
+      1,
+    ],
+    [
+      '行末に余計なものが付いていたら通さない',
+      'npm run lint:a',
+      '      - run: npm run lint:a --silent\n',
+      1,
+    ],
+    [
+      'ci.yml にだけある手順は許す (build 検証など)',
+      'npm run lint:a',
+      step('lint:a') + step('build:web'),
+      0,
+    ],
+    ['verify:all が読めなければ鳴る', '', step('lint:a'), 1],
+    ['ci.yml が読めなければ鳴る', 'npm run lint:a', null, 1],
+  ];
+
+  /*
+   * README の内訳。**実際に起きた形を最初のケースに置く** ——
+   * サイドバーに `可視化` が居るのに README の行が 18 件のまま
+   * (数も列挙も揃っているので、その行だけを見ていると気付けない)。
+   *
+   * 各ケースは 4 カテゴリすべてを備えた雛形の上で、**分析・ツールの行だけ**を
+   * 差し替える。他の 3 行を欠いたまま試すと、どのケースも「走査が壊れている」で
+   * 鳴ってしまい、**何を確かめたのか分からない対照**になる (最初にそう書いた)。
+   */
+  {
+    const svc = (label, category) =>
+      `  {\n    id: 'x',\n    label: '${label}',\n    category: '${category}',\n  },\n`;
+    const row = (label, n, items) => `| **${label}** (${n}) | ${items.join(' / ')} |\n`;
+    /*
+     * 分析・ツール以外の 3 カテゴリは常に揃っている雛形。
+     * 短縮の台帳 (`README_LABEL_ALIASES`) の 2 件もここに入れる —— 実物と同じく
+     * **README 側は前半だけ**を書いており、これが鳴らないことで
+     * 「短縮が効いている」を肯定形で確かめている。
+     */
+    const OTHERS_SRC =
+      svc('ホーム', 'featured') +
+      svc('KPI / BEP', 'featured') +
+      svc('コネクター / 自動化', 'featured') +
+      svc('税理士', 'professionals') +
+      svc('GitHub', 'integrations');
+    const OTHERS_MD =
+      '| **おすすめ** (常時表示, 3) | ホーム / KPI / コネクター |\n' +
+      '| **士業連携** (1) | 税理士 — 各ページに「担当領域 (事業仕分け)」ナビ |\n' +
+      row('外部サービス連携', 1, ['GitHub']);
+    /** [ラベル, tools のサービス, tools の README 行, 期待件数] */
+    const catCases = [
+      [
+        '★ サイドバーに在って README に無い (2026-08-25 の 可視化 / Cursor)',
+        svc('KPI', 'tools') + svc('可視化', 'tools'),
+        row('分析・ツール', 1, ['KPI']),
+        1,
+      ],
+      ['揃っていれば鳴らない', svc('KPI', 'tools'), row('分析・ツール', 1, ['KPI']), 0],
+      [
+        '★ 数だけ直して列挙を直さなかったら鳴る',
+        svc('KPI', 'tools') + svc('可視化', 'tools'),
+        row('分析・ツール', 2, ['KPI']),
+        2, // 宣言 2 件 vs 列挙 1 件 + 可視化 が無い
+      ],
+      [
+        '★ 1 件足して 1 件消しても鳴る (数を数えるだけの検査は通してしまう)',
+        svc('KPI', 'tools') + svc('可視化', 'tools'),
+        row('分析・ツール', 2, ['KPI', 'Docker']),
+        2, // 可視化 が無い + Docker がサイドバーに無い
+      ],
+      ['前後の空白は同一とみなす (表の整形では鳴らない)', svc('可視化', 'tools'), row('分析・ツール', 1, ['可視化 ']), 0],
+      [
+        '★ 別綴りは鳴る',
+        svc('可視化', 'tools'),
+        row('分析・ツール', 1, ['視覚化']),
+        2, // 可視化 が無い + 視覚化 がサイドバーに無い
+      ],
+      ['★ README に行が無ければ鳴る', svc('KPI', 'tools'), '(分析・ツールの行が無い)\n', 1],
+      [
+        '★ 走査が死んで 0 件になったのを「違反なし」と読まない',
+        '', // tools が 1 件も無い
+        row('分析・ツール', 1, ['KPI']),
+        1,
+      ],
+    ];
+    for (const [label, toolsSrc, toolsMd, expected] of catCases) {
+      const f = [];
+      checkReadmeCategories(f, OTHERS_SRC + toolsSrc, OTHERS_MD + toolsMd);
+      const ok = f.length === expected;
+      if (!ok) selfTestFailed = true;
+      console.log(`  ${ok ? '✓' : '✗'} ${label}: ${f.length} 件 (期待 ${expected})`);
+      if (!ok) for (const x of f) console.log(`      → ${x.reason}`);
+    }
+    // 短縮の台帳が古くなった側 + 読めない側 (雛形を使わない)
+    for (const [label, s, r, expected] of [
+      [
+        '★ 短縮の左辺がサイドバーから消えたら鳴る',
+        svc('ホーム', 'featured') + svc('税理士', 'professionals') + svc('GitHub', 'integrations') + svc('KPI', 'tools'),
+        '| **おすすめ** (常時表示, 1) | ホーム |\n' +
+          '| **士業連携** (1) | 税理士 |\n' +
+          row('外部サービス連携', 1, ['GitHub']) +
+          row('分析・ツール', 1, ['KPI']),
+        2, // KPI / BEP と コネクター / 自動化 の 2 件が宙に浮く
+      ],
+      ['services.ts が読めなければ鳴る', null, OTHERS_MD, 1],
+      ['README が読めなければ鳴る', OTHERS_SRC, null, 1],
+    ]) {
+      const f = [];
+      checkReadmeCategories(f, s, r);
+      const ok = f.length === expected;
+      if (!ok) selfTestFailed = true;
+      console.log(`  ${ok ? '✓' : '✗'} ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+  }
+
+  let bad = 0;
+  for (const [label, all, ci, expected] of cases) {
+    const f = [];
+    checkCiGateCoverage(f, all, ci);
+    const ok = f.length === expected;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${f.length} 件 (期待 ${expected})`);
+  }
+
+  /*
+   * 出荷物検査が**公開するワークフロー**でも走るか (2026-08-25 に足した)。
+   * 実物を壊さずに鳴らせるよう、両方の yml を差し込みで渡す。
+   */
+  {
+    const CI_BOTH =
+      '      - run: node scripts/lint-sample-data.cjs --artifact x.html\n' +
+      '      - run: node scripts/lint-artifact-csp.cjs --app x.html\n';
+    const PAGES_OK =
+      '      - run: node scripts/lint-sample-data.cjs --artifact _site/app.html\n' +
+      '      - run: node scripts/lint-artifact-csp.cjs --app _site/app.html\n' +
+      '      - uses: actions/upload-pages-artifact@v3\n';
+    const PAGES_NONE = '      - uses: actions/upload-pages-artifact@v3\n';
+    const PAGES_HALF =
+      '      - run: node scripts/lint-sample-data.cjs --artifact _site/app.html\n' +
+      '      - uses: actions/upload-pages-artifact@v3\n';
+    const PAGES_AFTER =
+      '      - uses: actions/upload-pages-artifact@v3\n' +
+      '      - run: node scripts/lint-sample-data.cjs --artifact _site/app.html\n' +
+      '      - run: node scripts/lint-artifact-csp.cjs --app _site/app.html\n';
+    const REL_OK =
+      '      - run: node scripts/lint-sample-data.cjs --artifact dist/assets/x.js\n' +
+      '      - uses: softprops/action-gh-release@v2\n';
+    const REL_NONE = '      - uses: softprops/action-gh-release@v2\n';
+    /*
+     * **公開ステップの目印は `uses:` の行に限る。** 素の文字列一致だと
+     * 権限欄のコメント (`# required for softprops/action-gh-release`) を
+     * 「出す一手」と読み、検査が前に在っても順序違反として鳴った (実測)。
+     * その形をここに標本として置く。
+     */
+    const REL_COMMENT_FIRST =
+      '  contents: write  # required for softprops/action-gh-release\n' +
+      '      - run: node scripts/lint-sample-data.cjs --artifact dist/assets/x.js\n' +
+      '      - uses: softprops/action-gh-release@v2\n';
+    const P = '.github/workflows/pages.yml';
+    const R = '.github/workflows/release.yml';
+    for (const [label, ci, ov, expected] of [
+      ['公開側にも全部あれば通る', CI_BOTH, { [P]: PAGES_OK, [R]: REL_OK }, 0],
+      ['★ Pages 側に 1 つも無ければ 2 件鳴る', CI_BOTH, { [P]: PAGES_NONE, [R]: REL_OK }, 2],
+      ['★ Pages 側が片方だけなら 1 件鳴る', CI_BOTH, { [P]: PAGES_HALF, [R]: REL_OK }, 1],
+      ['★ Pages 側が公開の後ろなら 2 件鳴る', CI_BOTH, { [P]: PAGES_AFTER, [R]: REL_OK }, 2],
+      ['★ Release 側に無ければ鳴る (インストーラの中身)', CI_BOTH, { [P]: PAGES_OK, [R]: REL_NONE }, 1],
+      ['★ 権限欄のコメントを公開ステップと読み違えない', CI_BOTH, { [P]: PAGES_OK, [R]: REL_COMMENT_FIRST }, 0],
+      ['ci.yml が当てていないものは要求しない', '', { [P]: PAGES_NONE, [R]: REL_NONE }, 0],
+      ['ワークフローが読めなければ鳴る', CI_BOTH, { [P]: null, [R]: REL_OK }, 1],
+      ['ci.yml が読めなければ鳴る', null, { [P]: PAGES_OK, [R]: REL_OK }, 1],
+    ]) {
+      const f = [];
+      checkPublishScanCoverage(f, ci, ov);
+      const ok = f.length === expected;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+    // 台帳どうしの綴りが合っていること (require の script が台帳に在る)。
+    for (const wf of PUBLISHING_WORKFLOWS) {
+      const unknown = wf.require.filter((r) => !ARTIFACT_SCANNERS.some((a) => a.script === r));
+      if (unknown.length > 0) bad++;
+      console.log(
+        `  ${unknown.length === 0 ? '✓' : '✗'} ${wf.file} が要求する検査は台帳に在る (${wf.require.length} 件)`,
+      );
+    }
+    // 台帳に理由が書かれていること。
+    const noWhy = ARTIFACT_SCANNERS.filter((a) => String(a.why).trim().length < 20);
+    if (noWhy.length > 0) bad++;
+    console.log(`  ${noWhy.length === 0 ? '✓' : '✗'} 出荷物検査の台帳 ${ARTIFACT_SCANNERS.length} 件に理由がある`);
+  }
+
+  /*
+   * dist/ を掃除するビルドの順序。2026-08-26 に実在した形 ——
+   * `build:renderer` を `perf` の前に足したら、vite の emptyOutDir が
+   * ブラウザ版の成果物を消し、`perf` が「ファイルがありません」で落ちた。
+   * `e2e.yml` は既定で走らないので、誰も落ちるところを見ていなかった。
+   */
+  {
+    const R = '      - run: npm run build:renderer\n';
+    const W = '      - run: npm run build:web\n';
+    const P = '      - run: npm run perf\n';
+    const E = '      - run: npm run e2e\n';
+    for (const [label, text, expected] of [
+      ['正しい順 (renderer → web → e2e → perf) なら鳴らない', R + W + E + P, 0],
+      // renderer が web の後ろでも e2e より前なら、鳴るのは「web より後ろ」の 1 件だけ。
+      // 最初は 2 件と書いて落ちた —— **期待のほうが誤っていた**。
+      ['★ renderer が web の後ろなら鳴る', W + R + E + P, 1],
+      ['★ renderer が perf の後ろなら鳴る', W + E + P + R, 2],
+      ['★ renderer が e2e の後ろなら鳴る (perf が無くても)', W + E + R, 2],
+      ['build:renderer が無ければ「確かめられない」で鳴る', W + E + P, 1],
+      ['build:web が無ければ「確かめられない」で鳴る', R + E + P, 1],
+      ['読めなければ鳴る', null, 1],
+    ]) {
+      const f = [];
+      checkE2eBuildOrder(f, text);
+      const ok = f.length === expected;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} ビルド順: ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+  }
+
+  /*
+   * 変異スコアの鮮度。**2026-09-01 に実在した形を最初のケースに置く** ——
+   * `docs/QUALITY.md` が 77.16% と書き、`stryker.config.json` の break は
+   * 99.8 だった (点数の分母に `Ignored` を混ぜていた)。
+   * 「上回る側では鳴らない」も同じ強さで要る —— 逆向きに誤爆する検査は、
+   * 正常な日に赤を出して信用を失う。
+   */
+  {
+    const cfg = (b) => JSON.stringify({ thresholds: { break: b } });
+    const doc = (t, c) => `| Mutation score (total / covered) | ${t}% / ${c}% |\n`;
+    for (const [label, quality, config, expected] of [
+      ['★ 実在した形 (doc 77.16% / break 99.8) で鳴る', doc('77.16', '77.16'), cfg(99.8), 1],
+      ['閾値ちょうどなら鳴らない', doc('99.8', '99.8'), cfg(99.8), 0],
+      ['上回っていれば鳴らない', doc('100.00', '100.00'), cfg(99.8), 0],
+      ['★ わずかに下回っても鳴る', doc('99.79', '99.79'), cfg(99.8), 1],
+      ['閾値が無ければ「確かめられない」で鳴る', doc('100.00', '100.00'), '{}', 1],
+      ['設定が壊れていれば鳴る', doc('100.00', '100.00'), '{ not json', 1],
+      ['doc に行が無ければ鳴る', '# Quality dashboard\n', cfg(99.8), 1],
+      ['doc が読めなければ鳴る', null, cfg(99.8), 1],
+      ['設定が読めなければ鳴る', doc('100.00', '100.00'), null, 1],
+    ]) {
+      const f = [];
+      checkMutationScoreFresh(f, quality, config);
+      const ok = f.length === expected;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} 変異スコア鮮度: ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+  }
+  /*
+   * `selfTestFailed` は `checkNotInCiClaims` 側のケースが立てる旗である。
+   * **2026-08-25 まで、この旗はどこからも読まれていなかった** ——
+   * つまり claimCases が全滅しても `✅ self-test 全件一致` と出て 0 を返した。
+   * 「✗」は画面に出るが、CI が見るのは終了コードだけである。
+   * 対照を書いておきながら、その対照の結果を捨てていた。
+   */
+  if (bad > 0 || selfTestFailed) {
+    console.error(`❌ self-test 不一致 ${bad} 件 (+ 旗 ${selfTestFailed}) — ゲートのゲートが鳴っていない`);
+    return 1;
+  }
+  console.log('✅ self-test 全件一致');
+  return 0;
+}
+
 function main() {
+  if (process.argv.includes('--self-test')) return selfTest();
   const failures = [];
   let factCount = 0;
 
@@ -328,9 +1174,18 @@ function main() {
   }
 
   const gateCount = checkCiGateCoverage(failures);
+  checkNotInCiClaims(failures);
+  const catCount = checkReadmeCategories(failures);
+  const pubCount = checkPublishScanCoverage(failures);
+  const orderCount = checkE2eBuildOrder(failures);
+  const freshCount = checkMutationScoreFresh(failures);
 
   console.log(
-    `Checked ${factCount} cross-doc facts against canonical source + ${gateCount} verify:all gate(s) against ci.yml`,
+    `Checked ${factCount} cross-doc facts against canonical source + ${gateCount} verify:all gate(s) against ci.yml` +
+      ` + README ${catCount} カテゴリの内訳を services.ts と照合` +
+      ` + 出荷物検査 ${pubCount} 件が pages.yml でも公開前に走ることを照合` +
+      ` + e2e.yml のビルド順 ${orderCount} 件 (dist/ を掃除する側が後ろに来ていないこと)`,
+      `+ 変異スコアの鮮度 ${freshCount} 件 (doc の点数が stryker の break 閾値を下回っていないこと)`,
   );
   if (failures.length === 0) {
     console.log('✅ all docs agree with source, and every gate runs in CI');

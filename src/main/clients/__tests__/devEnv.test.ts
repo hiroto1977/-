@@ -344,6 +344,65 @@ describe('readDevEnv — 実際のファイルから読む', () => {
     expect(snap.git).toEqual({ branch: 'missing', sha: '' });
   });
 
+  /*
+   * `ref` は **`.git/HEAD` の中身**から来る (`parseGitHead` が `ref: ` の後を
+   * そのまま渡す)。つまりディスク上のファイルの内容がパスの一部になる。
+   * 2026-08-22 まで封じ込めが無く、`ref: ../../../etc/passwd` と書いた HEAD を
+   * 置くだけで cwd の外を読み、その 1 行目が **コミット SHA として画面に出た**。
+   *
+   * `readDevEnv()` は引数なしでしか呼ばれず cwd はアプリ自身の作業ディレクトリ
+   * なので遠隔から踏める経路ではないが、不変条件 #10 (パス走査を含む名前を
+   * 使わない) そのものの形なので塞いだ。
+   */
+  it('ref が .git の外を指していたら読まない (パス走査)', async () => {
+    const secret = nodePath.join(dir, 'secret.txt');
+    await fsp.writeFile(secret, 'TOP-SECRET-VALUE\n');
+    // .git から見て 1 つ上 = 一時ディレクトリ直下の secret.txt
+    await write('.git/HEAD', 'ref: ../secret.txt\n');
+
+    const snap = readDevEnv(dir);
+    // 枝名はそのまま出る (表示のみ) が、**中身は読まない**。
+    expect(snap.git?.sha).toBe('');
+    expect(JSON.stringify(snap)).not.toContain('TOP-SECRET-VALUE');
+  });
+
+  /*
+   * 逃げ先は**必ず実在させる**。存在しないパス (`/etc/hostname` が無い環境など) を
+   * 使うと、封じ込めを外しても sha は空のままで、検査が「正しい理由で通っていない」
+   * 状態になる —— 最初に書いたときこれを踏み、対照実験で 1 件だけ落ちなかった。
+   */
+  it.each([
+    ['1 つ上へ抜ける', (d: string) => nodePath.join(d, 'escape.txt'), '../escape.txt'],
+    ['絶対パスで指す', (d: string) => nodePath.join(d, 'escape.txt'), '@ABS@'],
+    ['refs 配下から抜ける', (d: string) => nodePath.join(d, 'escape.txt'), 'refs/heads/../../../escape.txt'],
+  ])('%s も読まない', async (_label, target, ref) => {
+    const full = target(dir);
+    await fsp.writeFile(full, 'd'.repeat(40) + '\n');
+    await write('.git/HEAD', `ref: ${ref === '@ABS@' ? full : ref}\n`);
+
+    const snap = readDevEnv(dir);
+    expect(snap.git?.sha).toBe('');
+  });
+
+  it('前方一致する兄弟ディレクトリも .git の中とは見なさない', async () => {
+    // `<dir>/.git-evil/x` は `<dir>/.git` で始まるが別のディレクトリ。
+    await fsp.mkdir(nodePath.join(dir, '.git-evil'), { recursive: true });
+    await fsp.writeFile(nodePath.join(dir, '.git-evil', 'x'), 'b'.repeat(40) + '\n');
+    await write('.git/HEAD', 'ref: ../.git-evil/x\n');
+
+    const snap = readDevEnv(dir);
+    expect(snap.git?.sha).toBe('');
+  });
+
+  it('正当な入れ子の ref は今までどおり読める (絞りすぎていない)', async () => {
+    const sha = 'c'.repeat(40);
+    await write('.git/HEAD', 'ref: refs/heads/feature/deep/x\n');
+    await write('.git/refs/heads/feature/deep/x', `${sha}\n`);
+
+    const snap = readDevEnv(dir);
+    expect(snap.git).toEqual({ branch: 'feature/deep/x', sha });
+  });
+
   it('lockfile は npm / yarn / pnpm のどれでも認める', async () => {
     // 並び順も固定しておく (0=node_modules / 1=lockfile / 2=git)。
     const lockCheck = (snap: ReturnType<typeof readDevEnv>) => snap.readiness[1]!;
@@ -383,5 +442,100 @@ describe('readDevEnv — 実際のファイルから読む', () => {
     await write('package.json', 'not json');
     const snap = readDevEnv(dir);
     expect(snap.project).toBeNull();
+  });
+
+  /*
+   * **symlink は `path.resolve` を素通りする。**
+   *
+   * `../` の封じ込め (2026-08-22) は字面の正規化で判定していたので、
+   * `.git/refs/heads/x` を外へ向けた symlink にすると素通りした。
+   * 実測 (2026-08-23): 判定は `true` を返しながら、読み出しだけが
+   * 根の外の中身 ("SECRET-OUTSIDE-ROOT") を返した。
+   *
+   * 下の 2 本は**向きが逆**で、両方要る ——
+   * 締めすぎて正当な ref まで弾く直し方 (実体だけ realpath する) は
+   * 1 本目を通して 2 本目で落ちる。
+   */
+  it('ref が symlink で .git の外を指していたら読まない', async () => {
+    const outside = nodePath.join(dir, 'outside-secret.txt');
+    await fsp.writeFile(outside, 'SECRET-OUTSIDE-ROOT\n');
+    await fsp.mkdir(nodePath.join(dir, '.git', 'refs', 'heads'), { recursive: true });
+    await fsp.symlink(outside, nodePath.join(dir, '.git', 'refs', 'heads', 'evil'));
+    await write('.git/HEAD', 'ref: refs/heads/evil\n');
+
+    const snap = readDevEnv(dir);
+    // ブランチ名は HEAD から取れる (中身は読んでいない) が、sha は読めない。
+    expect(snap.git?.branch).toBe('evil');
+    expect(snap.git?.sha).toBe('');
+    // 根の外の中身がどこにも出ていないこと。
+    expect(JSON.stringify(snap)).not.toContain('SECRET-OUTSIDE-ROOT');
+  });
+
+  /*
+   * **字面の門と実体の門は、別々の物を止めている。**
+   *
+   * 上の 2 本は実体 (`realpath`) の門しか測っておらず、字面の門
+   * (`target.startsWith(gitDir + path.sep)`) を外しても鳴らなかった
+   * (実測 2026-08-31: 変異体が生存)。2 つの門が互いを覆っていて、
+   * **どちらが効いているのか誰にも分からない**状態だった。
+   *
+   * 字面の門だけが止める場面はこれ: ref が `.git` の**外**を字面で指し、
+   * その先が `.git` の中へ戻る symlink になっている形。実体だけを見れば
+   * 「根の中」なので通ってしまう。読める中身自体は `.git` の中なので
+   * 実害は小さいが、**「`.git` の外を指す ref は読まない」という規則が
+   * 効いているかどうか**は、これでしか分からない。
+   */
+  it('★ 字面で .git の外を指す ref は、実体が中へ戻っていても読まない', async () => {
+    await fsp.mkdir(nodePath.join(dir, '.git', 'refs', 'heads'), { recursive: true });
+    await fsp.writeFile(nodePath.join(dir, '.git', 'refs', 'heads', 'main'), 'abc1234\n');
+    // `.git` の外に、`.git` の中へ戻る symlink を置く。
+    await fsp.symlink(
+      nodePath.join(dir, '.git', 'refs', 'heads', 'main'),
+      nodePath.join(dir, 'decoy'),
+    );
+    // ref は `.git` から見て 1 つ上を指す = 字面では外。
+    await write('.git/HEAD', 'ref: ../decoy\n');
+
+    const snap = readDevEnv(dir);
+    expect(snap.git?.branch).toBe('../decoy');
+    // 実体は `.git` の中なので、字面の門を外すと 'abc1234' が読めてしまう。
+    expect(snap.git?.sha).toBe('');
+  });
+
+  /*
+   * **ref がディレクトリを指していたら、落ちずに空で返す。**
+   *
+   * `realpath` は通る (実在する) が `readFileSync` は EISDIR で投げるので、
+   * `readFileOrNull` は null を返す。`raw === null ? null : raw.trim()` の
+   * 判定を外すと `null.trim()` で TypeError になり、`readDevEnv` ごと落ちる。
+   *
+   * (`.git` そのものが無い場合の早期 return は**ここからは測れない** ——
+   *  `resolveRef` は `.git/HEAD` が読めたときにしか呼ばれないので、
+   *  `.git` は必ず在る。実装側に理由つきの pragma を置いた。)
+   */
+  it('★ ref がディレクトリを指していても落ちない (sha は空)', async () => {
+    await fsp.mkdir(nodePath.join(dir, '.git', 'refs', 'heads'), { recursive: true });
+    await write('.git/HEAD', 'ref: refs/heads\n'); // ディレクトリを指す
+
+    const snap = readDevEnv(dir);
+    expect(snap.git?.branch).toBe('refs/heads');
+    expect(snap.git?.sha).toBe('');
+  });
+
+  it('作業ディレクトリ自体が symlink 越しでも、正当な ref は読める', async () => {
+    // `/tmp/link` → `/tmp/actual` の形。根の側も realpath しないとここで落ちる。
+    await fsp.mkdir(nodePath.join(dir, '.git', 'refs', 'heads'), { recursive: true });
+    await write('.git/HEAD', 'ref: refs/heads/main\n');
+    await fsp.writeFile(nodePath.join(dir, '.git', 'refs', 'heads', 'main'), 'abc1234\n');
+
+    const linked = nodePath.join(await fsp.mkdtemp(nodePath.join(os.tmpdir(), 'devenv-link-')), 'proj');
+    await fsp.symlink(dir, linked);
+    try {
+      const snap = readDevEnv(linked);
+      expect(snap.git?.branch).toBe('main');
+      expect(snap.git?.sha).toBe('abc1234');
+    } finally {
+      await fsp.rm(nodePath.dirname(linked), { recursive: true, force: true });
+    }
   });
 });

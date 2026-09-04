@@ -294,3 +294,79 @@ describe('fetchCursorSnapshotWith — 通信手段を差し替えられる', () 
     await expect(fetchCursorSnapshotWith(boom, 'k', NOW, 30)).rejects.toThrow('HTTP 401');
   });
 });
+
+/*
+ * **欠けた数値欄を 0 にする `num` が測られていなかった** (実測 2026-08-31)。
+ *
+ * `() => undefined` へ変えても、上の検査群は「在る値」しか渡していないので
+ * 気付かない。欠けている・数でない・NaN の 3 種を通す —— `undefined` が
+ * 混ざると `requests` の加算が NaN になり、画面には「NaN」が出る。
+ */
+describe('num —— 欠けた数値欄は 0 にする', () => {
+  /*
+   * **`num` はモジュール本体の `const` なので、読み直さないと測れない。**
+   * 静的 import では変異が効く前に矢印関数が作られてしまい、
+   * `() => undefined` へ変えても気付けない (実測 2026-08-31: 生存)。
+   */
+  const fresh = async (): Promise<typeof import('../cursor')> => {
+    vi.resetModules();
+    return import('../cursor');
+  };
+
+  it('★ 欄が欠けていても 0 になり、加算が NaN にならない', async () => {
+    const { normalizeUsage } = await fresh();
+    const [row] = normalizeUsage({ data: [{ date: 0, isActive: true }] });
+    expect(row?.linesAdded).toBe(0);
+    expect(row?.linesAccepted).toBe(0);
+    expect(row?.tabsShown).toBe(0);
+    expect(row?.tabsAccepted).toBe(0);
+    expect(row?.requests).toBe(0);
+    expect(Number.isNaN(row?.requests)).toBe(false);
+  });
+
+  it('★ 数でない値・NaN・Infinity も 0 に倒す', async () => {
+    const { normalizeUsage } = await fresh();
+    const [row] = normalizeUsage({
+      data: [
+        {
+          date: 0,
+          totalLinesAdded: '100',
+          acceptedLinesAdded: Number.NaN,
+          totalTabsShown: Number.POSITIVE_INFINITY,
+          composerRequests: null,
+          chatRequests: 3,
+        },
+      ],
+    });
+    expect(row?.linesAdded).toBe(0);
+    expect(row?.linesAccepted).toBe(0);
+    expect(row?.tabsShown).toBe(0);
+    // 有効な数はそのまま通る (何でも 0 にしているのではない — 対照)。
+    expect(row?.requests).toBe(3);
+  });
+});
+
+/*
+ * 送り先の定数は**読み直して**問う —— 静的 import では変異が効く前に
+ * 評価が済む (実測 2026-08-31: 生存)。空文字になれば相対 URL になり、
+ * ブラウザ版では**自分のオリジンへトークンを送る**ことになる。
+ */
+describe('送り先 —— 読み直して問う', () => {
+  it('★ 送り先は https://api.cursor.com で、要求もそこへ出る', async () => {
+    vi.resetModules();
+    const m = await import('../cursor');
+    expect(m.CURSOR_API_BASE).toBe('https://api.cursor.com');
+    const seen: string[] = [];
+    await m.fetchCursorSnapshotWith(
+      async (url: string) => {
+        seen.push(url);
+        return {};
+      },
+      'tok',
+      Date.UTC(2026, 0, 10),
+      7,
+    );
+    expect(seen.length).toBeGreaterThan(0);
+    for (const u of seen) expect(u.startsWith('https://api.cursor.com/')).toBe(true);
+  });
+});

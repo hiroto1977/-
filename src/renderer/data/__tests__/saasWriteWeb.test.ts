@@ -847,3 +847,140 @@ describe('ensureOk error formatting', () => {
     expect(msg).toBe('GitHub API 503: ');
   });
 });
+
+/*
+ * site を弾いたときの文言を字面で留める。
+ *
+ * この 4 文だけが、利用者に **なぜ Atlassian に繋がらないのか** を伝える。
+ * `ATLASSIAN_SITE_MESSAGES` は非公開の表なので、外から見えるのは
+ * `parseAtlassianToken` が投げる例外の message だけ —— そこを確かめる。
+ *
+ * 実測でこの表 (オブジェクトそのもの + 4 文) が変異検査を生き延びていた:
+ * 空文字に変えても「throw する」ことしか確かめていなかったので通ってしまう。
+ * 文言が消えると、site を貼り間違えた利用者に空のエラーが出る。
+ *
+ * `vi.resetModules()` + 動的 import なのは表がモジュール定数だから
+ * (静的 import のままだと読み込み時に評価が済んで変異体が畳み込まれる)。
+ */
+describe('Atlassian の site を弾いたときの文言', () => {
+  async function freshParse(): Promise<typeof parseAtlassianToken> {
+    vi.resetModules();
+    const mod = (await import('../saasWriteWeb')) as typeof import('../saasWriteWeb');
+    return mod.parseAtlassianToken;
+  }
+
+  const CASES: [string, string, RegExp][] = [
+    ['control-char', 'https://x.atlassian.net\tfoo', /制御文字/],
+    ['not-a-url', 'not-a-url', /https URL/],
+    ['not-https', 'http://x.atlassian.net', /https のみ/],
+    ['not-atlassian', 'https://evil.example', /\*\.atlassian\.net/],
+  ];
+
+  it.each(CASES)('%s は理由の分かる文言で断る', async (_reason, site, want) => {
+    const parse = await freshParse();
+    expect(() => parse(JSON.stringify({ email: 'a@b.c', token: 't', site }))).toThrow(want);
+  });
+
+  it('4 通りとも別の文言 (同じ文言に潰れていない)', async () => {
+    const parse = await freshParse();
+    const seen = CASES.map(([, site]) => {
+      try {
+        parse(JSON.stringify({ email: 'a@b.c', token: 't', site }));
+        return '';
+      } catch (e) {
+        return (e as Error).message;
+      }
+    });
+    expect(seen.filter((m) => m.length > 0)).toHaveLength(4);
+    expect(new Set(seen).size).toBe(4);
+  });
+});
+
+/*
+ * **応答の大きさの上限が、経路によって違っていた。**
+ *
+ * `network/proxy.ts` の `fetchViaProxy` は上限つきで読んだ本文から
+ * `Response` を組み直して返すので、プロキシ経由で来る create-* は既に
+ * 10MiB 以下を受け取っている。ところが `api.github.com` は CORS 許可済みで
+ * **プロキシを通らない** —— 課題作成だけは素の `Response` を
+ * `res.json()` でそのまま読んでいた (2026-08-31 に発見)。
+ *
+ * ここで見るのは「上限が掛かっていること」だけである。**「読み切らずに
+ * 止まる」ことはこの作りでは測れない** —— 最初 `pull` が呼ばれた回数を
+ * 数えたが、Node の `Response` は `ReadableStream` を内部へ取り込む際に
+ * 元を先に汲み切るので、12/12 が流れて検査が鳴った。実装ではなく替え玉の
+ * 性質を測っていたので、その主張は落とした (背圧まで見たいなら
+ * `shared/ai/__tests__/chatBodyDeadline.test.ts` のように実サーバが要る)。
+ */
+describe('createGithubIssue — 応答本文の上限 (プロキシを通らない道)', () => {
+  const MIB = 1024 * 1024;
+
+  /**
+   * 1MiB ずつ `chunks` 回流す `Response`。
+   *
+   * **中身は正しい JSON にする。** 詰め物を JSON にしないと、上限を外した
+   * ときに `JSON.parse` が別の理由で落ち、検査が「どちらでも鳴る」ものに
+   * なってしまう —— 上限を外したら**素通りして成功する**形にしておくと、
+   * 対照が上限そのものを指す。
+   */
+  function streamingResponse(chunks: number, status = 200): Response {
+    const head = new TextEncoder().encode(
+      '{"number":1,"html_url":"https://x.test/1","title":"',
+    );
+    const chunk = new TextEncoder().encode('A'.repeat(MIB));
+    const tail = new TextEncoder().encode('"}');
+    let sent = 0;
+    const body = new ReadableStream<Uint8Array>({
+      start(c) {
+        c.enqueue(head);
+      },
+      pull(c) {
+        if (sent >= chunks) {
+          c.enqueue(tail);
+          c.close();
+          return;
+        }
+        sent += 1;
+        c.enqueue(chunk);
+      },
+    });
+    return new Response(body, { status, headers: { 'content-type': 'application/json' } });
+  }
+
+  it('★ 上限を超える応答は読み切らずに落とす', async () => {
+    const res = streamingResponse(12);
+    const fetchFn = vi.fn<typeof fetch>().mockResolvedValue(res);
+    await expect(
+      createGithubIssue({ owner: 'o', repo: 'r', title: 't' }, 'tok', fetchFn),
+    ).rejects.toThrow(/GitHub API response too large/);
+  });
+
+  /*
+   * **肯定の対照。** 上は「投げること」を見る検査なので、実装が何でも
+   * 投げるようになっても気付けない。正当な大きさの応答が同じ道を
+   * 通り抜けることを、同じ作りの `Response` で確かめる。
+   */
+  it('★ 正当な大きさの応答はそのまま通る (対照)', async () => {
+    const body = JSON.stringify({ number: 7, html_url: 'https://x.test/7', title: 't' });
+    const fetchFn = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(new Response(body, { status: 200 }));
+    await expect(
+      createGithubIssue({ owner: 'o', repo: 'r', title: 't' }, 'tok', fetchFn),
+    ).resolves.toEqual({ number: 7, url: 'https://x.test/7', title: 't' });
+  });
+
+  it('★ 失敗の本文にも上限が掛かる (落ちている相手ほど大きく返しうる)', async () => {
+    const fetchFn = vi.fn<typeof fetch>().mockResolvedValue(streamingResponse(12, 500));
+    // `ensureOk` は本文が読めなければ空文字に落とすので、status だけが残る。
+    // 上限を外すと 12MiB がそのまま `redactForMessage` に渡り、200 字に切られた
+    // 詰め物が文言に載る —— そちらは同じ検査が落として気付ける。
+    const err: unknown = await createGithubIssue(
+      { owner: 'o', repo: 'r', title: 't' },
+      'tok',
+      fetchFn,
+    ).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).message).toBe('GitHub API 500: ');
+  });
+});

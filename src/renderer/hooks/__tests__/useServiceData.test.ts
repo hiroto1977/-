@@ -84,6 +84,60 @@ describe('useServiceData — initial state', () => {
     expect(h.ref.current.data).toEqual({ v: 1 }); // 未設定 → 自動更新せずスナップショットのまま
     h.unmount();
   });
+
+  /*
+   * マウント時の `listConfigured` が **reject** したとき。
+   *
+   * `refresh` 側には最初から IPC reject の受け皿があったが、マウント側には
+   * 無く、失敗が unhandled rejection として外へ出ていた。変異検査で
+   * `window.serviceHub?.` の `?.` を外した変異体がこれを踏み、テスト
+   * ランナーごと落ちて Stryker が RuntimeError (評価不成立) と分類 ——
+   * その 1 件はスコアの分母から外れ、100.00% のまま見えなくなっていた。
+   *
+   * ここが無いと受け皿自身が未到達になり、`setIsConfigured(false)` を
+   * `true` に変える変異体を誰も殺せない。**防御を足したら、その防御に
+   * 届く入力も一緒に足す。**
+   */
+  it('listConfigured が reject しても落ちず、未設定のまま留まる', async () => {
+    setHub({
+      listConfigured: async () => { throw new Error('IPC broke'); },
+      fetchSnapshot: async () => ({ ok: true, data: { v: 2 } }) as FetchResult<unknown>,
+    });
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    expect(h.ref.current.isConfigured).toBe(false);
+    expect(h.ref.current.status).toBe('idle');
+    expect(h.ref.current.source).toBe('snapshot');
+    expect(h.ref.current.data).toEqual({ v: 1 });
+    h.unmount();
+  });
+
+  /*
+   * 受け皿が **false を書き戻す**ことの意味。初期状態も false なので
+   * 「最初の一回」では観測差が出ない —— 差が出るのは、**設定済みの
+   * サービスから、問い合わせが失敗するサービスへ切り替えたとき**である。
+   * 書き戻さないと、前のサービスの「設定済み」バッジが次の画面に居座る。
+   *
+   * これを置くまで、受け皿の中身を空にする変異体 (BlockStatement → `{}`) が
+   * 生き残っていた。上の「reject しても落ちない」だけでは足りない。
+   */
+  it('設定済み → 問い合わせ失敗のサービスへ切り替えると、設定済みが残らない', async () => {
+    let fail = false;
+    setHub({
+      listConfigured: async () => {
+        if (fail) throw new Error('IPC broke');
+        return ['github'];
+      },
+      fetchSnapshot: async () => ({ ok: true, data: { v: 2 } }) as FetchResult<unknown>,
+    });
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    expect(h.ref.current.isConfigured).toBe(true); // 前提: ここが true でないと対照にならない
+    fail = true;
+    await h.rerender('slack');
+    expect(h.ref.current.isConfigured).toBe(false);
+    h.unmount();
+  });
 });
 
 describe('useServiceData — refresh', () => {

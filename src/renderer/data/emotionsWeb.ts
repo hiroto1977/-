@@ -6,6 +6,9 @@
  * 行う (Vault のキーを使うため)。ここは純粋ロジック + localStorage のみ。
  */
 
+import { MAX_ANALYSES, MAX_MOODS, MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
+import { localIsoDate } from '../../shared/localDate';
+
 export const EMOTION_KEYS = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust'] as const;
 export type EmotionKey = (typeof EMOTION_KEYS)[number];
 export type EmotionScores = Record<EmotionKey, number>;
@@ -36,36 +39,73 @@ export interface EmotionsSnapshot extends EmotionsStore {
 }
 
 export const EMOTIONS_STORE_KEY = 'emotions.store';
-const MAX_ANALYSES = 50;
-const MAX_MOODS = 365;
+
+/**
+ * 「在るが読めなかった」ことを表す印。
+ *
+ * `loadStore` は読めなかったときも空を返す —— 読み出しとしては正しい
+ * (画面が落ちるより空の方がまし)。だが**その空を土台にして書くと、
+ * 読めなかっただけの記録が消える。**
+ *
+ * 実測 (2026-08-23): 末尾が切れた保管値に `logMood` を 1 回するだけで
+ *
+ *   壊れる前の中身: {"moods":[{"date":"2026-01-01","score":4,"note":"…"}]…
+ *   logMood 後:     {"moods":[{"date":"2026-02-02","score":3,"note":"new"}]…
+ *
+ * となり、**元の記録も、壊れた文字列そのものも消える**。壊れていても
+ * 文字列の中には `"note":"…"` が読める形で残っているので、消さなければ
+ * 人手で拾える。消したら拾えない。
+ *
+ * **同じ機能の main 側 (`main/clients/emotions.ts`) は最初から正しい** ——
+ * `ENOENT` (ファイルが無い) だけを飲み、壊れた JSON は投げ直す。
+ * ブラウザ版だけが全部飲んでいた。`main/secrets.ts` で見つけたのと同じ形。
+ */
+// Stryker disable next-line BooleanLiteral: 初期値は**一度も観測されない** ——
+// 唯一の読み手 `loadStoreForWrite` は必ず `loadStore()` を先に呼び、その冒頭が
+// この変数を毎回 false へ戻す。true にしても差が出ない (等価変異)。
+let lastLoadDegraded = false;
 
 export function loadStore(): EmotionsStore {
+  lastLoadDegraded = false;
+  const raw = localStorage.getItem(EMOTIONS_STORE_KEY);
+  // 「無い」は degraded ではない —— 消える物が無い。
+  if (!raw) return { moods: [], analyses: [] };
   try {
-    const raw = localStorage.getItem(EMOTIONS_STORE_KEY);
-    // raw が null/'' のいずれでも下の JSON.parse 経路が最終的に catch で default を
-    // 返すため、この早期 return の ConditionalExpression は equivalent。
-    // Stryker disable next-line ConditionalExpression
-    if (!raw) return { moods: [], analyses: [] };
     const parsed = JSON.parse(raw) as Partial<EmotionsStore>;
     return {
       moods: Array.isArray(parsed.moods) ? parsed.moods : [],
       analyses: Array.isArray(parsed.analyses) ? parsed.analyses : [],
     };
   } catch {
+    lastLoadDegraded = true;
     return { moods: [], analyses: [] };
   }
+}
+
+/**
+ * 書き込みの土台として読む。**読めなかったなら投げる。**
+ *
+ * 「消す」だけは別扱いにする —— 利用者が明示的に捨てると言っている操作で、
+ * 壊れた保管値から抜け出す唯一の道でもあるため (ここまで塞ぐと行き止まりになる)。
+ */
+function loadStoreForWrite(): EmotionsStore {
+  const store = loadStore();
+  if (lastLoadDegraded) {
+    throw new Error(
+      '保存された記録を読めませんでした。上書きすると失われるため、記録を中止しました。' +
+        '「履歴を消去」で作り直せます。',
+    );
+  }
+  return store;
 }
 
 function saveStore(store: EmotionsStore): void {
   localStorage.setItem(EMOTIONS_STORE_KEY, JSON.stringify(store));
 }
 
+/** 利用者の時計の今日。共有の `localIsoDate` に寄せた (同じ関数が main にもあった)。 */
 function todayLocal(now: number = Date.now()): string {
-  const d = new Date(now);
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
+  return localIsoDate(new Date(now));
 }
 
 interface LogMoodPayload {
@@ -81,11 +121,27 @@ export function logMood(payload: unknown, now: number = Date.now()): { date: str
   if (!Number.isFinite(finalScore) || finalScore < 1 || finalScore > 5) {
     throw new Error('score must be a number between 1 and 5');
   }
+  // note の上限。**この経路にだけ無かった** (2026-08-23 実測)。
+  //
+  // `shared/emotionsLimits.ts` と `main/clients/emotions.ts` はどちらも
+  // 「上限はブラウザ版だけが持っていた」と書いているが、実際に持っていたのは
+  // `analyze-text` の方だけで (`web-shim.ts` が MAX_ANALYZE_TEXT_CHARS で断る)、
+  // **log-mood の note は素通しだった** —— 5 万字を渡すと 5 万字そのまま
+  // localStorage に載る (実測)。main 側はその誤った前提のまま修正を受けた。
+  //
+  // ブラウザ版の保存先は localStorage で、**容量はオリジン全体で共有**する。
+  // `MAX_MOODS` は件数を 365 に抑えるが 1 件の大きさは抑えないので、ここが
+  // 青天井だと保管庫のメタや proxy 設定など**別機能の書き込みが先に落ちる**。
+  // `saveStore` は setItem を包んでいないので、溢れた時点で例外がそのまま出る。
+  const noteStr = String(note ?? '');
+  if (noteStr.length > MAX_MOOD_NOTE_CHARS) {
+    throw new Error(`note exceeds ${MAX_MOOD_NOTE_CHARS} chars`);
+  }
   const finalDate =
     (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : null) ?? todayLocal(now);
-  const store = loadStore();
+  const store = loadStoreForWrite();
   const idx = store.moods.findIndex((m) => m.date === finalDate);
-  const entry: MoodEntry = { date: finalDate, score: Math.round(finalScore), note: String(note ?? '') };
+  const entry: MoodEntry = { date: finalDate, score: Math.round(finalScore), note: noteStr };
   if (idx >= 0) store.moods[idx] = entry;
   else store.moods.push(entry);
   store.moods.sort((a, b) => a.date.localeCompare(b.date));
@@ -167,7 +223,7 @@ export function recordAnalysis(
     excerpt: (source ? `[${source}] ` : '') + text.slice(0, 80),
     ...normalized,
   };
-  const store = loadStore();
+  const store = loadStoreForWrite();
   store.analyses.unshift(entry);
   // slice(0, MAX_ANALYSES) は length<=MAX_ANALYSES のとき恒等なので、> を >= にしても
   // 条件を true 固定しても結果は不変 (equivalent)。

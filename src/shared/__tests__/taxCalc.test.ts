@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  DEFAULT_NET_SALARY_PARAMS,
+  DEFAULT_SALARY_TAX_PARAMS,
   BASIC_DEDUCTION,
   RESIDENT_BASIC_DEDUCTION,
   calcBasicDeduction,
@@ -19,6 +21,7 @@ import {
   marginalIncomeTaxRate,
   CONSUMPTION_TAX_REDUCED,
   RECONSTRUCTION_SURTAX_RATE,
+  SOCIAL_INSURANCE_RATE,
   RESIDENT_TAX_RATE,
   RESIDENT_TAX_PER_CAPITA,
   RESIDENT_PER_CAPITA_BASE,
@@ -962,5 +965,61 @@ describe('calcBasicDeduction — 年分ごとの段階', () => {
     for (const income of [0, 5_000_000, 23_500_000]) {
       expect(calcResidentBasicDeduction(income)).toBe(430_000);
     }
+  });
+});
+
+describe('台帳から渡す前提 (surtax / 社保概算率 / 住民税の自治体の値)', () => {
+  it('calcIncomeTax は付加率を受ける (0 なら基準所得税額そのもの)', () => {
+    expect(calcIncomeTax(1_770_000)).toBe(90_358); // 88,500 × 1.021
+    expect(calcIncomeTax(1_770_000, 0)).toBe(88_500);
+    expect(calcIncomeTax(1_770_000, RECONSTRUCTION_SURTAX_RATE)).toBe(calcIncomeTax(1_770_000));
+  });
+
+  it('calcNetSalary — 既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_NET_SALARY_PARAMS).toEqual({ socialInsuranceRate: SOCIAL_INSURANCE_RATE, surtaxRate: RECONSTRUCTION_SURTAX_RATE });
+    expect(calcNetSalary(5_000_000, 2026)).toEqual(calcNetSalary(5_000_000, 2026, DEFAULT_NET_SALARY_PARAMS));
+  });
+
+  it('calcNetSalary — 社保の概算率が課税所得と所得税・住民税に伝わる (令和8年分)', () => {
+    const r = calcNetSalary(5_000_000, 2026, { ...DEFAULT_NET_SALARY_PARAMS, socialInsuranceRate: 0.2 });
+    expect(r.socialInsurance).toBe(1_000_000);
+    expect(r.taxableIncome).toBe(1_520_000); // 3,560,000 − 1,000,000 − 基礎 1,040,000
+    expect(r.incomeTax).toBe(77_596); // 1,520,000 × 5% × 1.021
+    expect(r.residentTax).toBe(218_000); // (3,560,000 − 1,000,000 − 430,000) × 10% + 5,000
+    expect(r.takeHome).toBe(5_000_000 - 1_000_000 - 77_596 - 218_000);
+  });
+
+  it('calcNetSalary — 付加率 0 と自治体の値 (所得割 5% / 均等割 6,000 円)', () => {
+    const r = calcNetSalary(5_000_000, 2026, {
+      ...DEFAULT_NET_SALARY_PARAMS,
+      surtaxRate: 0,
+      resident: { incomeRate: 0.05, perCapita: 6_000 },
+    });
+    expect(r.incomeTax).toBe(88_500); // 1,770,000 × 5%
+    expect(r.residentTax).toBe(125_000); // 2,380,000 × 5% + 6,000
+    // 年収 0 でも均等割は自治体の値。
+    expect(calcNetSalary(0, 2026, { ...DEFAULT_NET_SALARY_PARAMS, resident: { perCapita: 6_000 } }).residentTax).toBe(6_000);
+  });
+
+  it('calcSalaryWithDeductions — 既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_SALARY_TAX_PARAMS).toEqual({ surtaxRate: RECONSTRUCTION_SURTAX_RATE });
+    expect(calcSalaryWithDeductions(6_000_000, 1_100_000, 1_030_000, 30_000, 50_000, 0, 2026)).toEqual(
+      calcSalaryWithDeductions(6_000_000, 1_100_000, 1_030_000, 30_000, 50_000, 0, 2026, DEFAULT_SALARY_TAX_PARAMS),
+    );
+  });
+
+  it('calcSalaryWithDeductions — 付加率と自治体の値が所得税・所得割・均等割に伝わる', () => {
+    const p = { surtaxRate: 0, resident: { incomeRate: 0.05, perCapita: 6_000 } };
+    const r = calcSalaryWithDeductions(6_000_000, 1_100_000, 1_030_000, 30_000, 50_000, 0, 2026, p);
+    expect(r.baseIncomeTax).toBe(228_500);
+    expect(r.incomeTax).toBe(228_500); // 付加率 0
+    expect(r.residentIncomeLevy).toBe(166_500); // 3,330,000 × 5%
+    const afterAdjust = 166_500 - r.adjustmentCredit;
+    const furusato = calcFurusatoResidentCredit(30_000, afterAdjust, marginalIncomeTaxRate(r.taxableIncomeForIncomeTax));
+    expect(r.furusatoResidentCredit).toBe(furusato);
+    expect(r.residentTax).toBe(Math.max(6_000, afterAdjust + 6_000 - furusato));
+    expect(r.takeHome).toBe(6_000_000 - r.incomeTax - r.residentTax);
+    // 年収 0 の早期 return も自治体の均等割。
+    expect(calcSalaryWithDeductions(0, 480_000, 430_000, 0, 0, 0, 2026, p).residentTax).toBe(6_000);
   });
 });

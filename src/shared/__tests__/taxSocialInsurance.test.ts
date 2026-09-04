@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  DEFAULT_SOCIAL_INSURANCE_RATES,
+  resolveStandardBonus as _resolveStandardBonusForParams,
   calcSocialInsurance,
   calcSocialInsuranceWithBonus,
   resolveStandardMonthly,
@@ -257,5 +259,57 @@ describe('calcSocialInsuranceWithBonus (標準賞与額の上限を考慮)', () 
   it('returns all-zero when monthly is zero, bonus is zero, and count is zero', () => {
     const r = calcSocialInsuranceWithBonus(0, 0, 0);
     expect(r).toEqual({ pension: 0, health: 0, employment: 0, total: 0 });
+  });
+});
+
+describe('料率と上限を渡す (台帳の値)', () => {
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_SOCIAL_INSURANCE_RATES).toEqual({
+      pensionRate: PENSION_RATE,
+      healthRate: HEALTH_RATE,
+      careRate: CARE_RATE,
+      employmentRate: EMPLOYMENT_INSURANCE_RATE,
+      pensionBonusCapPerPayment: PENSION_BONUS_CAP_PER_PAYMENT,
+      healthBonusCapAnnual: HEALTH_BONUS_CAP_ANNUAL,
+    });
+    expect(calcSocialInsurance(6_000_000, true)).toEqual(calcSocialInsurance(6_000_000, true, DEFAULT_SOCIAL_INSURANCE_RATES));
+    expect(calcSocialInsuranceWithBonus(400_000, 1_000_000, 2, true)).toEqual(
+      calcSocialInsuranceWithBonus(400_000, 1_000_000, 2, true, DEFAULT_SOCIAL_INSURANCE_RATES),
+    );
+  });
+
+  it('料率はそれぞれの保険料にだけ効く (年収 600 万 = 標準報酬月額 50 万)', () => {
+    const r = {
+      ...DEFAULT_SOCIAL_INSURANCE_RATES,
+      pensionRate: 0.1,
+      healthRate: 0.06,
+      careRate: 0.01,
+      employmentRate: 0.007,
+    };
+    const withCare = calcSocialInsurance(6_000_000, true, r);
+    expect(withCare.pension).toBe(Math.round(500_000 * 0.1 * 12));
+    expect(withCare.health).toBe(Math.round(500_000 * 0.07 * 12)); // 健保 6% + 介護 1%
+    expect(withCare.employment).toBe(Math.round(6_000_000 * 0.007));
+    expect(withCare.total).toBe(withCare.pension + withCare.health + withCare.employment);
+    // 介護なしなら健保の率だけ。
+    expect(calcSocialInsurance(6_000_000, false, r).health).toBe(Math.round(500_000 * 0.06 * 12));
+  });
+
+  it('賞与の上限は渡した額で頭打ちになる', () => {
+    const r = { ...DEFAULT_SOCIAL_INSURANCE_RATES, pensionBonusCapPerPayment: 1_000_000, healthBonusCapAnnual: 3_000_000 };
+    const monthly = 400_000;
+    const result = calcSocialInsuranceWithBonus(monthly, 2_000_000, 2, false, r);
+    const pensionBase = resolvePensionStandardMonthly(monthly);
+    const healthBase = resolveHealthStandardMonthly(monthly);
+    const bonusStd = _resolveStandardBonusForParams(2_000_000);
+    // 厚生年金: 1 回 100 万で頭打ち × 2 回。健康保険: 年 300 万で頭打ち (2 回分 400 万 → 300 万)。
+    expect(result.pension).toBe(Math.round(pensionBase * PENSION_RATE * 12 + Math.min(bonusStd, 1_000_000) * PENSION_RATE * 2));
+    expect(result.health).toBe(Math.round(healthBase * HEALTH_RATE * 12 + Math.min(bonusStd * 2, 3_000_000) * HEALTH_RATE));
+    // 既定の上限 (150 万 / 573 万) より保険料は小さい。
+    const byDefault = calcSocialInsuranceWithBonus(monthly, 2_000_000, 2, false);
+    expect(result.pension).toBeLessThan(byDefault.pension);
+    expect(result.health).toBeLessThan(byDefault.health);
+    // 雇用保険は上限に関係なく賃金総額 × 率。
+    expect(result.employment).toBe(byDefault.employment);
   });
 });

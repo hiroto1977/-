@@ -41,7 +41,13 @@ describe('demae-can ACTIONS', () => {
       };
       expect(r.phase).toBe('stub');
       expect(r.notForRealMoney).toBe(true);
-      expect(r.disclaimer).toMatch(/助言ではありません|Phase 6/);
+      // **`|` で繋がない。** `/助言ではありません|Phase 6/` は「どちらか一方」
+      // でも通るので、前半を丸ごと空にしても後半の "Phase 6" で素通りする ——
+      // 2 つ確かめているように見えて、どちらも確かめていない検査だった
+      // (2026-09-01)。片ごとに分ける。
+      expect(r.disclaimer).toMatch(/店舗運営上の助言ではありません/);
+      expect(r.disclaimer).toMatch(/実際の経営判断はオーナー・専門家の責任で/);
+      expect(r.disclaimer).toMatch(/Phase 6/);
       expect(r.recommendations.length).toBeGreaterThan(0);
     });
   });

@@ -40,6 +40,28 @@ export const EFFLUENT_TP_DAILY_AVG_MG_L = 8;
 /** 窒素・りん規制の対象になる排出水量の目安 (m³/日)。これ未満は対象外のことが多い。 */
 export const WPCL_NP_APPLICABILITY_M3_PER_DAY = 50;
 
+/**
+ * 排水の判定に使う基準 (台帳 `parameters.ts` から渡せる)。省略時は上の定数。
+ * 一律排水基準は自治体の上乗せ条例で厳しくなるので、そちらの値に置き換えて使う。
+ */
+export interface EffluentStandards {
+  /** 全窒素の一律排水基準 (mg/L)。 */
+  readonly tnUniformMgL: number;
+  /** 全りんの一律排水基準 (mg/L)。 */
+  readonly tpUniformMgL: number;
+  /** 窒素・りん規制の対象になる排出水量 (m³/日)。 */
+  readonly npApplicabilityM3PerDay: number;
+  /** 地下水の環境基準 (硝酸性窒素及び亜硝酸性窒素・mg/L)。 */
+  readonly groundwaterNitrateNMgL: number;
+}
+
+export const DEFAULT_EFFLUENT_STANDARDS: EffluentStandards = {
+  tnUniformMgL: EFFLUENT_TN_UNIFORM_MG_L,
+  tpUniformMgL: EFFLUENT_TP_UNIFORM_MG_L,
+  npApplicabilityM3PerDay: WPCL_NP_APPLICABILITY_M3_PER_DAY,
+  groundwaterNitrateNMgL: GROUNDWATER_NITRATE_N_STANDARD_MG_L,
+};
+
 /** 非有限・負を 0 に丸める。 */
 
 /** 0.1 単位に丸める。 */
@@ -310,7 +332,7 @@ export interface EffluentResult {
  * 濃縮廃液の排出が法規制の閾値を超えるかを概算判定する。閾値は目安であり、
  * 実際の適用は自治体の上乗せ条例・地域指定で変わるため要確認。
  */
-export function checkEffluent(input: EffluentInput): EffluentResult {
+export function checkEffluent(input: EffluentInput, s: EffluentStandards = DEFAULT_EFFLUENT_STANDARDS): EffluentResult {
   const tn = nonNeg(input.concentrateTnMgL);
   const tp = nonNeg(input.concentrateTpMgL);
   const annualL = nonNeg(input.annualDischargeL);
@@ -324,12 +346,12 @@ export function checkEffluent(input: EffluentInput): EffluentResult {
     dailyDischargeM3: round1(dailyM3),
     annualNitrogenKg: round1(annualNKg),
     annualPhosphorusKg: round1(annualPKg),
-    wpclNpApplicable: toPublic && dailyM3 >= WPCL_NP_APPLICABILITY_M3_PER_DAY,
-    exceedsTn: toPublic && tn > EFFLUENT_TN_UNIFORM_MG_L,
-    exceedsTp: toPublic && tp > EFFLUENT_TP_UNIFORM_MG_L,
+    wpclNpApplicable: toPublic && dailyM3 >= s.npApplicabilityM3PerDay,
+    exceedsTn: toPublic && tn > s.tnUniformMgL,
+    exceedsTp: toPublic && tp > s.tpUniformMgL,
     // `tn > 0` の判定は置かない — tn が 0 なら商も 0 で、else と同じ答えになる。
-    nitrateVsGroundwaterFactor: round1(tn / GROUNDWATER_NITRATE_N_STANDARD_MG_L),
+    nitrateVsGroundwaterFactor: round1(tn / s.groundwaterNitrateNMgL),
     // 放流すると基準超過が濃厚 → 捨てずに希釈施用へ回すのが技術的にも法的にも安全。
-    recommendReuse: tn > EFFLUENT_TN_UNIFORM_MG_L || tp > EFFLUENT_TP_UNIFORM_MG_L,
+    recommendReuse: tn > s.tnUniformMgL || tp > s.tpUniformMgL,
   };
 }

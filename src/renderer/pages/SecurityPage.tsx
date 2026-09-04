@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useSyncExternalStore } from 'react';
 import { describeScanUrlRisk } from '../../shared/scanTarget';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -17,6 +17,7 @@ import {
 } from '../../shared/securityRange';
 import { buildDbSecurityReport } from '../../shared/dbSecurityPosture';
 import { currentDbSecurityInputs } from '../data/dbPosture';
+import { isAutoLockActive, subscribeAutoLockActive } from '../security/autoLock';
 
 const GRADE_COLOR: Record<string, string> = {
   A: '#22c55e',
@@ -76,10 +77,31 @@ export function SecurityPage() {
   const range = useMemo(() => runSecurityRange(DEFAULT_RANGE_CORPUS, DEFAULT_EVASIONS), []);
 
   // ローカルDB (IndexedDB レコードストア) のセキュリティ姿勢診断。
-  // 検出可能な設定 (レコード暗号化) で評価し、確認できない保護は保守的に改善候補とする。
-  // 入力の組み立ては `data/dbPosture.ts` にある。画面の中で作ると、実測を
-  // 定数へ戻しても誰も気付かない (監査前が実際にそうなっていた)。
-  const dbReport = useMemo(() => buildDbSecurityReport(currentDbSecurityInputs()), []);
+  // 実測できる項目 (レコード暗号化・自動ロック・マスターパスワード) は実測し、
+  // まだ観測していない保護は保守的に改善候補とする。入力の組み立ては
+  // `data/dbPosture.ts` にある。画面の中で作ると、実測を定数へ戻しても
+  // 誰も気付かない (監査前が実際にそうなっていた)。
+  /*
+   * **組み立ては `dbPosture.ts` のまま。ここが持つのは「いつ読み直すか」だけ。**
+   *
+   * `useMemo(..., [])` は**初回描画中**に走る —— あらゆる `useEffect` より
+   * 前である。自動ロックは `App` の効果 (解錠後) で始まり、React は
+   * **子の効果を親より先に**走らせるので、この画面がどこで読んでも
+   * 「まだ始まっていない」しか見えなかった。
+   *
+   * 実測 (2026-08-25、実ブラウザ・同じ設定): アプリ内で移動すると
+   * 自動ロック ✅ / スコア 10、直接ロードして解錠すると ⚠ / 0。
+   * **たどり着き方で診断が変わり、悪いほうを出すのが再読み込みの経路**だった。
+   *
+   * 購読して、変わったら読み直す。`currentDbSecurityInputs()` が実測を
+   * 束ねる役目は動かさない (画面の中で入力を作ると、実測を定数へ戻しても
+   * 誰も気付かない —— 監査前が実際にそうだった)。
+   */
+  const autoLockActive = useSyncExternalStore(subscribeAutoLockActive, isAutoLockActive, () => false);
+  const dbReport = useMemo(
+    () => buildDbSecurityReport(currentDbSecurityInputs()),
+    [autoLockActive],
+  );
 
   // --- breach check form
   const [showBreach, setShowBreach] = useState(false);
@@ -194,6 +216,38 @@ export function SecurityPage() {
         ) : null}
         {showBreach && keysConfigured.hibp ? (
           <div className="card" style={{ gap: 10 }}>
+            {/*
+              **隣が「送信しません」と約束している。**
+
+              すぐ上の「パスワード強度チェッカー」は「この端末内だけで評価し、
+              外部に送信しません」と明記している。その直後にあるこの欄は、
+              **入力したメールアドレスを第三者へ送る**。何も書かなければ、
+              利用者は上の約束が同じページ全体に及ぶと読む。
+
+              下の VirusTotal の節は同じ理由で説明を入力欄より前に置いてあり、
+              **その配慮がここだけ抜けていた** (2026-08-25)。
+
+              書けることだけを書く —— HIBP 側が検索語をどう扱うかは
+              このリポジトリからは確かめられないので**主張しない**。
+              確かなのは「送られる」ことと「経路に誰が居るか」である。
+            */}
+            <div
+              style={{
+                fontSize: 12,
+                lineHeight: 1.7,
+                padding: '8px 10px',
+                border: '1px solid var(--border)',
+                borderRadius: 6,
+                color: 'var(--text-mute)',
+              }}
+            >
+              入力したメールアドレスは{' '}
+              <strong style={{ color: 'var(--text)' }}>Have I Been Pwned (第三者のサービス) へ送信されます</strong>。
+              上の「パスワード強度チェッカー」とは違い、<strong>この照会は端末内で完結しません</strong>。
+              <br />
+              ブラウザ版では、設定した<strong>プロキシ (Cloudflare Worker) を経由</strong>するため、
+              その運用者からも照会したアドレスが見えます。
+            </div>
             <input
               placeholder="your@example.com"
               type="email"
@@ -267,6 +321,14 @@ export function SecurityPage() {
               入力した URL は <strong style={{ color: 'var(--text)' }}>VirusTotal に送信され、
               他の VirusTotal 利用者が検索できる状態で残ります</strong>。取り消せません。
               署名付きリンク・招待リンク・社内のホスト名など、人に見られて困る URL は入れないでください。
+              {/*
+                経路に居るのは VirusTotal だけではない。ブラウザ版の送信は
+                利用者が設定したプロキシ (Cloudflare Worker) を通る。
+                HIBP 側に同じ説明を足したとき、こちらに**経路の話が無い**ことに気付いた。
+              */}
+              <br />
+              ブラウザ版では、設定した<strong>プロキシ (Cloudflare Worker) を経由</strong>するため、
+              その運用者からも送信した URL が見えます。
             </div>
             <input
               placeholder="https://example.com/suspicious"
@@ -379,6 +441,21 @@ export function SecurityPage() {
           <div style={statCardStyle}>
             <div style={statLabelStyle}>スコア</div>
             <div style={statValueStyle}>{dbReport.score} / 100</div>
+            {/*
+              **グレード D の意味を読めるようにする。**
+
+              この版で到達しうる最大点は `maxAchievableScore` である
+              (残りはアプリ側の未実装で、利用者には動かせない)。
+              それを書かずに「25 / 100・D」とだけ出すと、**すべて正しく
+              設定した利用者が「自分の設定が悪い」と読む**。
+            */}
+            {dbReport.maxAchievableScore < 100 && (
+              <div style={{ fontSize: 10, color: 'var(--text-mute)', marginTop: 2, lineHeight: 1.5 }}>
+                この版で到達しうる最大は <strong>{dbReport.maxAchievableScore}</strong> 点
+                <br />
+                （残り {100 - dbReport.maxAchievableScore} 点は未実装の保護）
+              </div>
+            )}
           </div>
           <div style={statCardStyle}>
             <div style={statLabelStyle}>達成 / 全項目</div>
@@ -409,13 +486,22 @@ export function SecurityPage() {
           </tbody>
         </table>
 
-        {dbReport.findings.length > 0 && (
+        {/*
+          **直せるものと、直せないものを分けて出す。**
+
+          2026-08-25 まで、ここは未達 7 件を重み降順で 1 つの一覧に並べて
+          いた。ところが 7 件のうち **5 件はこの版に仕組みが無い**もので
+          (重み 75)、しかも重みが大きいので**上を占める**。利用者が今できる
+          2 件は下に埋まっていた。**直せないものを混ぜて並べると、一覧ごと
+          信じなくなる。**
+        */}
+        {dbReport.actionable.length > 0 && (
           <div style={{ marginTop: 12 }}>
             <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
-              改善候補 (重み降順) — {dbReport.findings.length} 件
+              いま設定でできること — {dbReport.actionable.length} 件
             </div>
             <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, lineHeight: 1.7 }}>
-              {dbReport.findings.map((f) => (
+              {dbReport.actionable.map((f) => (
                 <li key={f.id} style={{ color: SEVERITY_COLOR[f.severity] }}>
                   <strong>{f.label}</strong>: {f.recommendation}
                 </li>
@@ -424,9 +510,50 @@ export function SecurityPage() {
           </div>
         )}
 
+        {dbReport.unavailable.length > 0 && (
+          <div style={{ marginTop: 12 }}>
+            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
+              この版に無い保護 — {dbReport.unavailable.length} 件
+              <span style={{ fontWeight: 400, color: 'var(--text-mute)' }}>
+                （アプリ側の未実装です。<strong>設定を変えても直せません</strong>）
+              </span>
+            </div>
+            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, lineHeight: 1.7, color: 'var(--text-mute)' }}>
+              {dbReport.unavailable.map((f) => (
+                <li key={f.id}>
+                  <strong>{f.label}</strong>: {f.recommendation}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <div style={{ marginTop: 12, padding: 10, background: 'rgba(91, 141, 239, 0.08)', border: '1px solid var(--border)', borderRadius: 6, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
-          🗄 検出可能な設定 (レコード暗号化) に基づく評価です。自動ロック・整合性・クラウドバックアップは
-          現状サブシステムの状態を未配線のため保守的に改善候補として表示します (今後の連携で精緻化)。
+          {/*
+            **注記のほうが古くなっていた。** ここは「自動ロック・整合性・
+            クラウドバックアップは未配線のため保守的に改善候補として表示」と
+            書いたままだったが、自動ロックは実測に変わっており (`dbPosture.ts`)、
+            マスターパスワードも 2026-08-25 に実測へ変えた。
+            **「確認できないので悪く出している」と「確認したうえで悪い」は
+            別の話**で、混ぜると利用者はどちらも本気にしなくなる。
+            実測している物と、していない物を分けて書く。
+          */}
+          🗄 <strong>実測して評価している項目</strong>: レコード暗号化・自動ロック・マスターパスワード。
+          <br />
+          {/*
+            **ここも 2 度直している。** 直前まで「まだ観測していない項目:
+            改ざん検知・クラウドバックアップ」と書いていたが、これらは
+            「観測できていない」のではなく**この版に存在しない**。
+            上の一覧が `availability` で分けるようになったので、注記も
+            同じ言い方に揃える —— **「確認できないので悪く出している」と
+            「確認したうえで無い」を混ぜない。**
+          */}
+          <strong>この版に存在しない保護</strong>: レコード暗号化の有効化画面 /
+          レコード単位の改ざん検知 / クラウド同期 (送信路が未実装)。
+          いずれも<strong>設定では直せません</strong>ので、上の一覧では分けて示しています。
+          <br />
+          この診断が見ているのは<strong>業務レコード</strong> (IndexedDB) です ——
+          ライブラリの書類とブラウザ内の設定は範囲外で、常に平文です。
           本診断はアプリ層の姿勢評価で、OS/物理層を含む完全な安全を保証するものではありません
           (docs/DATA_PROTECTION.md)。
         </div>

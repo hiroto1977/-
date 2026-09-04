@@ -12,6 +12,10 @@ const {
   PWA_HEAD_TAGS,
   SW_REGISTER_JS,
   SW_SCRIPT_HASH,
+  assertHashesPreserved,
+  assertPublishable,
+  policyOf: cspPolicyOf,
+  scriptHashesIn,
 } = req('../../../scripts/inject-pwa.cjs') as {
   injectPwaTags: (html: string) => string;
   findRealHeadClose: (html: string) => number;
@@ -20,6 +24,13 @@ const {
   PWA_HEAD_TAGS: string;
   SW_REGISTER_JS: string;
   SW_SCRIPT_HASH: string;
+  assertHashesPreserved: (before: string, after: string) => void;
+  assertPublishable: (before: string, after: string, label: string) => void;
+  policyOf: (html: string) => string | null;
+  scriptHashesIn: (policy: string) => string[];
+};
+const { cspHash } = req('../../../scripts/inline-html.cjs') as {
+  cspHash: (source: string) => string;
 };
 
 const SIMPLE = '<!doctype html><html><head><title>t</title></head><body></body></html>';
@@ -172,5 +183,95 @@ describe('inject-pwa — SW スニペットの CSP ハッシュ', () => {
     expect(out).toContain(`script-src ${BUNDLE_HASH} ${SW_SCRIPT_HASH};`);
     expect(out.match(/sha256-/g)!.length).toBe(2);
     expect(out).toContain(decoy); // デコイは 1 バイトも変わらない
+  });
+});
+
+/*
+ * **注入は「後段の書き換え」なので、自分の検算を持たなければならない。**
+ *
+ * `inline-html.cjs` は仕上がり文書を最後に読み直して、inline script が全部
+ * CSP に載っているかを確かめている (`assertPinnedScripts`)。ところが Pages 版は
+ * そのあと `inject-pwa` が CSP を書き換えるのに、**そこには同じ検算が無かった**
+ * (2026-08-23)。既存のガード 2 つでは埋まらない:
+ *
+ *   - `moduleScriptRegion` … スクリプトの**本文**を比べるだけで CSP を見ない
+ *   - CLI の検査          … SW スニペットのハッシュが在るかしか見ない
+ *
+ * つまり `withSwScriptHash` が CSP を組み損ねて**バンドル本体のハッシュを
+ * 落とした**場合、どちらも通る。公開されるのは「自分の 11MB のバンドルを
+ * CSP が拒否する頁」= 白画面で、痕跡は console にしか出ない。
+ * 2026-07-24 の Pages 障害と同じ「公開して初めて分かる」形である。
+ */
+describe('inject-pwa — 注入が CSP のハッシュを落としていないこと', () => {
+  it('ハッシュを 1 つも落とさない普通の注入は通る', () => {
+    expect(() => assertHashesPreserved(STANDALONE_CSP, injectPwaTags(STANDALONE_CSP))).not.toThrow();
+  });
+
+  it('SW のハッシュが増えるのは正しい (減っていなければよい)', () => {
+    const after = injectPwaTags(STANDALONE_CSP);
+    expect(scriptHashesIn(cspPolicyOf(after) as string)).toContain(BUNDLE_HASH);
+    expect(scriptHashesIn(cspPolicyOf(after) as string)).toContain(SW_SCRIPT_HASH);
+    expect(scriptHashesIn(cspPolicyOf(STANDALONE_CSP) as string)).toHaveLength(1);
+  });
+
+  // 対照 — バンドルのハッシュを落とした CSP を作ると鳴る。
+  it('既存のハッシュが消えたら落とす', () => {
+    const after = injectPwaTags(STANDALONE_CSP).replace(BUNDLE_HASH, '');
+    expect(() => assertHashesPreserved(STANDALONE_CSP, after)).toThrow(/ハッシュが 1 個消え/);
+  });
+
+  it('CSP メタごと消えても落とす (「無い」を「変わっていない」と取り違えない)', () => {
+    expect(() => assertHashesPreserved(STANDALONE_CSP, SIMPLE)).toThrow(/ハッシュが 1 個消え/);
+  });
+
+  // 規則が広すぎない対照 — CSP を持たない頁・ハッシュを使わない頁は通る。
+  it('CSP を持たない頁 (自動生成ランディング) は対象外', () => {
+    expect(cspPolicyOf(SIMPLE)).toBeNull();
+    expect(() => assertHashesPreserved(SIMPLE, injectPwaTags(SIMPLE))).not.toThrow();
+  });
+
+  it('ハッシュを使わない CSP も対象外', () => {
+    const noHash = standaloneWith("'self'");
+    expect(scriptHashesIn(cspPolicyOf(noHash) as string)).toHaveLength(0);
+    expect(() => assertHashesPreserved(noHash, injectPwaTags(noHash))).not.toThrow();
+  });
+});
+
+/*
+ * `assertPublishable` は **入力そのものが正しくピン留めされていること**まで
+ * 要求するので、注入の事後条件ではなく「実物を公開する経路 (CLI)」の検査。
+ * ここでは本物のハッシュを `inline-html.cjs` から計算して両方の向きを固定する。
+ */
+describe('inject-pwa — 公開してよい形かの検算 (CLI 経路)', () => {
+  // バンドルの**実ハッシュ**でピン留めした、正しい standalone。
+  // `scriptSourceFor` は使わない —— あれは inline-html.cjs が書き出すときに
+  // 前後へ改行を足す形で、このフィクスチャは `<script type="module">${JS}</script>` と
+  // 改行なしで書いている。ブラウザが読む子テキストは JS そのものなので、
+  // ハッシュ対象も JS そのもの。(最初 `scriptSourceFor` を通して書いたら
+  // この検算に落とされた —— 検算が仕事をしている側の例。)
+  const REAL = standaloneWith(cspHash(BUNDLE_JS));
+
+  it('正しくピン留めされた頁は、注入後も公開できる', () => {
+    expect(() => assertPublishable(REAL, injectPwaTags(REAL), 'app.html')).not.toThrow();
+  });
+
+  // 対照 — ハッシュが実体と食い違えば公開を止める。
+  it('ハッシュが中身と合わない頁は止める', () => {
+    expect(() => assertPublishable(STANDALONE_CSP, injectPwaTags(STANDALONE_CSP), 'app.html')).toThrow(
+      /公開できません/,
+    );
+  });
+
+  it('CSP を持たない頁は対象外 (ランディングを止めない)', () => {
+    expect(() => assertPublishable(SIMPLE, injectPwaTags(SIMPLE), 'index.html')).not.toThrow();
+  });
+
+  // 元がハッシュを使っていない頁は対象外。判定を `after` でやると、注入が必ず足す
+  // SW のハッシュのせいでここが対象に入り、注入と無関係な不備で落ちる。
+  it('元がハッシュを使わない CSP は対象外 (注入が足す SW ハッシュで判定しない)', () => {
+    const noHash = standaloneWith("'self'");
+    expect(() => assertPublishable(noHash, injectPwaTags(noHash), 'x.html')).not.toThrow();
+    // 注入後には確かにハッシュが在る = `after` で判定していたら落ちていた。
+    expect(scriptHashesIn(cspPolicyOf(injectPwaTags(noHash)) as string)).toHaveLength(1);
   });
 });

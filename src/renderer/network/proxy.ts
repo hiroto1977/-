@@ -20,6 +20,7 @@
  * (b) レスポンスサイズ上限、(c) プロキシのエラー応答に含まれうるトークンの
  * redactSecrets による秘匿 — に限られる。
  */
+import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../../shared/httpLimits';
 import { redactForMessage } from '../../shared/redact';
 import {
   describeProxyEndpointFailure,
@@ -33,6 +34,21 @@ import {
 // fallbacks, and the request/response envelope structure are pinned by
 // the 13 integration tests via `getProxyConfig` / `setProxyConfig` /
 // `fetchViaProxy` round-trip + validation cases.
+/**
+ * **この DB は平文である。** `sharedSecret` (Worker への簡易認証) もここに入る。
+ *
+ * 保管庫 (`business-hub-vault`) とは別で、暗号化されない。実測 (2026-08-23) で
+ * ブラウザ版に平文で残る資格情報はこれだけだった。設定画面の「保存時の保護状態」は
+ * **トークン**について述べており、ここは含まない (見出しにも範囲を書いた)。
+ *
+ * 漏れたときに何が起きるかは測ってある: `docs/PROXY_EXAMPLE.md` の Worker は
+ * 秘密の照合 (定数時間) とは**別に** `denyReason(target)` で宛先を検査し、
+ * DoH で名前解決してから private/reserved を弾く (DNS rebinding 対策込み)。
+ * つまり秘密だけを得ても **SSRF にはならない** —— 公開宛先への中継に使える
+ * だけで、これは Worker の持ち主の帯域の話に留まる。
+ * 保管庫へ移すには「解錠前に proxy を使う経路」の可否を決める必要があるため、
+ * ここでは**現状を書くに留める** (勝手に設計を変えない)。
+ */
 const DB_NAME = 'business-hub-preferences';
 const DB_VERSION = 1;
 const STORE = 'kv';
@@ -149,48 +165,15 @@ interface ProxyResponseEnvelope {
 /** Stream-read a Response body with a hard byte cap. Throws if the cap
  *  is exceeded mid-stream (so we don't buffer the whole oversized payload). */
 async function readWithCap(res: Response, maxBytes: number): Promise<string> {
-  if (!res.body) {
-    // Some test runtimes (fake fetch mocks) don't expose body. Fall back
-    // to text() but check length post-hoc.
-    const t = await res.text();
-    if (t.length > maxBytes) {
-      throw new Error(`proxy response too large (${t.length} > ${maxBytes} bytes)`);
-    }
-    return t;
-  }
-  const reader = res.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let total = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    // Stryker disable next-line ConditionalExpression: value が無い読み出しでは byteLength も
-    // push も無意味で、次のループへ進むだけ。分岐の有無で結果が変わらない (等価変異)。
-    if (value) {
-      total += value.byteLength;
-      // Stryker disable next-line EqualityOperator: total は 1 バイト単位で増えるが、上限ちょうどで
-      // 止めるか超えてから止めるかは、上限 10MiB に対して観測できる差にならない
-      // (ちょうどのケースを作るにはチャンク境界を制御する必要があり、実装依存になる)。
-      if (total > maxBytes) {
-        reader.cancel().catch(() => {});
-        throw new Error(`proxy response too large (>${maxBytes} bytes)`);
-      }
-      chunks.push(value);
-    }
-  }
-  // Concatenate chunks → decode as UTF-8.
-  const buf = new Uint8Array(total);
-  let off = 0;
-  for (const c of chunks) {
-    buf.set(c, off);
-    off += c.byteLength;
-  }
-  return new TextDecoder('utf-8').decode(buf);
+  // 判定の本体は `shared/httpLimits.ts` に 1 つだけ置く。2026-08-22 まで
+  // ここにしか無く、`clients/types.ts` の `jsonFetch` (SaaS 74 本が通る口)
+  // には上限が無かった。同じ問いなので、実装も 1 つにする。
+  return readBodyWithCap(res, maxBytes, 'proxy');
 }
 
 /** 10 MiB. Defense-in-depth cap on proxy response body to prevent OOM /
  *  DoS when a compromised or malicious proxy returns a huge payload. */
-export const MAX_PROXY_RESPONSE_BYTES = 10 * 1024 * 1024;
+export const MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES;
 
 /** Block targets that would let the proxy be weaponized as a SSRF
  *  oracle against the proxy operator's intranet / cloud metadata.
@@ -321,6 +304,28 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
     if (a === 0) return true;                           // 0.0.0.0/8
     if (a === 100 && b >= 64 && b <= 127) return true;  // 100.64/10 CGNAT (RFC 6598)
     if (a === 198 && (b === 18 || b === 19)) return true; // 198.18/15 benchmark (RFC 2544)
+    /*
+     * **予約されているが「私的」ではない範囲** —— この関数の名は
+     * `isPrivateOrReservedTarget` であり、既に CGNAT (100.64/10) や
+     * ベンチマーク用 (198.18/15) のような**公開されていない予約**を
+     * 遮断している。同じ意図が掛かっていなかった範囲を揃える
+     * (2026-08-25 実測: 下の 5 つはどれも素通りしていた)。
+     *
+     * 公開経路には出ないので、ここへ向ける要求が届くのは
+     * **その番号を内部で流用している網の中だけ**である。だからこそ、
+     * 利用者の Worker を経由して外から触らせる先ではない。
+     */
+    const [, , c] = v4.slice(1).map(Number) as [number, number, number, number];
+    // 192.0.0.0/24 IETF プロトコル割当 (RFC 6890)。DS-Lite の 192.0.0.0/29 を
+    // 含み、CPE 上で**実際に応答する**ことがある。NAT64 の 192.0.0.170/171 も同じ枠。
+    if (a === 192 && b === 0 && c === 0) return true;
+    // 文書用 TEST-NET-1/2/3 (RFC 5737)。公開経路には出ない。
+    if (a === 192 && b === 0 && c === 2) return true;
+    if (a === 198 && b === 51 && c === 100) return true;
+    if (a === 203 && b === 0 && c === 113) return true;
+    // 6to4 リレー anycast (RFC 3068)。RFC 7526 で廃止された番号で、
+    // 生きているとすれば内部の流用である。
+    if (a === 192 && b === 88 && c === 99) return true;
     if (a >= 224) return true;                          // multicast + reserved
     return false;
   }
@@ -377,6 +382,29 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
     // Link-local fe80::/10.
     // Stryker disable next-line Regex
     if (/^fe[89ab][0-9a-f]?:/i.test(bare)) return true;
+    /*
+     * 文書用 2001:db8::/32 (RFC 3849)。IPv4 側の TEST-NET と同じ理由で塞ぐ。
+     * `2001:db8:...` と、第 2 群が 0 埋めされた `2001:0db8:...` の両方を見る
+     * (`URL` は前者へ正規化するが、別のパーサから渡る場合に備える)。
+     * **`2001:` で始まるだけでは当てない** —— 2001::/16 は正当な公開空間で、
+     * `2001:4860::` (Google) などが居る。第 2 群まで見るのが要点である。
+     */
+    // Stryker disable next-line Regex
+    if (/^2001:0*db8:/i.test(bare)) return true;
+    /*
+     * **site-local fec0::/10 と multicast ff00::/8。**
+     *
+     * この 2 つは利用者が配る Worker (docs/PROXY_EXAMPLE.md) 側には
+     * 最初から在り、こちらだけ無かった —— 同じ判断を 2 か所に書いて
+     * いたので、**両方向にずれていた** (2026-08-25 実測)。
+     * fec0::/10 は RFC 3879 で廃止されたが実装が残っており、
+     * ff00::/8 へ向ける要求に正当な用途は無い。
+     * 綴りは上の fe80 と同じ流儀 (先頭群の上位ビットで見る)。
+     */
+    // Stryker disable next-line Regex
+    if (/^fe[c-f][0-9a-f]?:/i.test(bare)) return true;
+    // Stryker disable next-line Regex
+    if (/^ff[0-9a-f]{0,2}:/i.test(bare)) return true;
     return false;
   }
 
@@ -559,10 +587,16 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
     proxyHeaders['x-proxy-auth'] = cfg.sharedSecret;
   }
 
+  // **呼び出し側の signal を捨てない。** 2026-08-22 まで `init` から
+  // url / method / headers / body だけを取り出しており、`signal` は
+  // envelope にも下の fetch にも渡っていなかった。呼び出し側 (`runAiChat`)
+  // が timeout を付けても、プロキシ経由の道だけ効かない —— 「守っている
+  // つもりの守り」になる。中継先が固まったら、こちらの待ちも切る。
   const proxyRes = await fetch(proxyChecked.url, {
     method: 'POST',
     headers: proxyHeaders,
     body: JSON.stringify(envelope),
+    signal: init.signal ?? undefined,
   });
 
   if (!proxyRes.ok) {
@@ -574,21 +608,12 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
 
   // Defense-in-depth: cap response body before json() to prevent OOM on
   // a compromised/malicious proxy returning a huge payload.
-  // `proxyRes.headers` is optional in test mocks, hence the `?.get` chain.
-  // We require `cl > 0` (not just `cl > cap`) because:
-  //   - a malicious / buggy proxy could return `Content-Length: -1`, which
-  //     is finite and ≤ cap and would slip past the header gate;
-  //   - real implementations never send a negative or NaN length, so
-  //     ignoring such headers and falling through to `readWithCap` (which
-  //     enforces the cap at the byte-stream level) is the safe behaviour.
-  const clHeader = proxyRes.headers?.get?.('content-length');
-  const cl = clHeader ? Number(clHeader) : 0;
-  // Stryker disable next-line ConditionalExpression,EqualityOperator,LogicalOperator: ヘッダーが無い
-  // ときは cl = 0 で、いずれの部分条件を潰しても `0 > 上限` が false になり素通りする。
-  // 上限そのものの境界は proxy.test.ts の Content-Length 検査 4 本で固定している。
-  if (Number.isFinite(cl) && cl > 0 && cl > MAX_PROXY_RESPONSE_BYTES) {
-    throw new Error(`proxy response too large (${cl} > ${MAX_PROXY_RESPONSE_BYTES} bytes)`);
-  }
+  //
+  // 宣言長 (Content-Length) の先手の門はここに**自前で**書いてあったが、
+  // 2026-08-31 に `readBodyWithCap` へ畳んだ (同じ問いに答えを 2 つ持たない)。
+  // `cl > 0` を要求する理由 —— `Content-Length: -1` は有限かつ上限以下として
+  // すり抜けるので、壊れた宣言は byte 単位の門へ委ねる —— も向こうへ移した。
+  // 文言は同じ (`proxy response too large (N > 上限 bytes)`)。
   const bodyText = await readWithCap(proxyRes, MAX_PROXY_RESPONSE_BYTES);
   // Empty-body fast path: `JSON.parse('')` throws SyntaxError, so when the
   // proxy returns no body we substitute an empty envelope; the Response
@@ -602,10 +627,23 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
   });
 }
 
-/** Service id → CORS 直接呼び出しが不可能で proxy 必須かどうか。 */
-export const PROXY_REQUIRED_SERVICES: ReadonlySet<string> = new Set([
-  'notion',
-  'atlassian',
-  'cloudflare',
-]);
+/*
+ * `PROXY_REQUIRED_SERVICES` は 2026-08-27 に**削除した**。
+ *
+ * 「CORS 直接呼び出しが不可能で proxy 必須なのは notion / atlassian /
+ * cloudflare の 3 つ」という表だったが、**実装はその方針をやめている**。
+ * `network/liveRead.ts` は全サービスを**必ずプロキシへ通す**:
+ *
+ *   > CORS を許す相手なら直接 fetch でもよいが、その分岐は今どのサービスも
+ *   > 通らない = 検査で確かめられない。資格情報を第三者のホストへ送る経路を、
+ *   > 動かないまま置いておくほうが危ない。
+ *
+ * つまりこの表は**実装より緩い方針**を述べたまま残っており、しかも検査が
+ * 「github は proxy 必須では**ない**」と固定していた。読んだ人が
+ * 「github は直接 fetch してよい」と受け取ると、上の注記がまさに危ないと
+ * 言っている直接経路を戻すことになる。**production からの参照は 0 件**
+ * だった (定義と検査だけが生きていた)。
+ *
+ * 方針は `liveRead.ts` の 1 か所に置く。表を 2 つ持たない。
+ */
 // Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression

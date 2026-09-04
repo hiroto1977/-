@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { Section } from '../components/StatusBar';
 import { useCollection } from '../data/useCollection';
+import { localIsoDate } from '../../shared/localDate';
 import {
   SALES_COLLECTION,
   SALES_CHANNELS,
@@ -100,7 +101,7 @@ export function SalesPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `sales-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `sales-${localIsoDate()}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }

@@ -205,3 +205,184 @@ describe('startSpeechRecognition', () => {
     expect(instance!.aborted).toBe(true);
   });
 });
+
+
+/*
+ * 変異検査で残った箇所から起こした検査。
+ *
+ * 既存の検査は「配線されている」ことを見ており、**取り出しの途中で
+ * 欠けている要素**や**確定フラグの既定値**を通っていなかった。
+ */
+describe('extractTranscript — 取り出しの穴', () => {
+  /** results 風のオブジェクトを作る (length と添字を持つ)。 */
+  const results = (items: readonly (unknown | null)[]) => {
+    const o: Record<string | number, unknown> = { length: items.length };
+    items.forEach((it, i) => {
+      o[i] = it;
+    });
+    return o as never;
+  };
+  const alt = (transcript: string) => ({ length: 1, 0: { transcript, confidence: 1 } });
+
+  it('resultIndex 以降だけを連結する (前は読まない)', () => {
+    const ev = {
+      resultIndex: 1,
+      results: results([alt('捨てる'), alt('あ'), alt('い')]),
+    } as never;
+    expect(extractTranscript(ev)).toBe('あい');
+  });
+
+  it('resultIndex が 0 なら全部つなぐ', () => {
+    const ev = { resultIndex: 0, results: results([alt('あ'), alt('い')]) } as never;
+    expect(extractTranscript(ev)).toBe('あい');
+  });
+
+  it('resultIndex が末尾を超えていれば空', () => {
+    const ev = { resultIndex: 5, results: results([alt('あ')]) } as never;
+    expect(extractTranscript(ev)).toBe('');
+  });
+
+  it('要素が欠けていても飛ばして続ける', () => {
+    const ev = { resultIndex: 0, results: results([null, alt('い')]) } as never;
+    expect(extractTranscript(ev)).toBe('い');
+  });
+
+  it('alternative を持たない result は飛ばす (length 0)', () => {
+    const ev = { resultIndex: 0, results: results([{ length: 0 }, alt('い')]) } as never;
+    expect(extractTranscript(ev)).toBe('い');
+  });
+
+  it('length はあるのに中身が欠けている result も飛ばす', () => {
+    const ev = { resultIndex: 0, results: results([{ length: 1 }, alt('い')]) } as never;
+    expect(extractTranscript(ev)).toBe('い');
+  });
+
+  it('前後の空白は落とす', () => {
+    const ev = { resultIndex: 0, results: results([alt('  あ '), alt(' い  ')]) } as never;
+    expect(extractTranscript(ev)).toBe('あ  い');
+  });
+
+  it('results が空なら空', () => {
+    expect(extractTranscript({ resultIndex: 0, results: results([]) } as never)).toBe('');
+  });
+});
+
+describe('startSpeechRecognition — 設定と既定値', () => {
+  beforeEach(() => {
+    MockRecognition.last = null;
+  });
+
+  const winWith = () => ({ SpeechRecognition: MockRecognition }) as never;
+  const results = (items: readonly unknown[]) => {
+    const o: Record<string | number, unknown> = { length: items.length };
+    items.forEach((it, i) => {
+      o[i] = it;
+    });
+    return o as never;
+  };
+  const alt = (transcript: string, isFinal = false) => ({
+    isFinal,
+    length: 1,
+    0: { transcript, confidence: 1 },
+  });
+
+  it('continuous は false (押している間だけ拾う)', () => {
+    startSpeechRecognition({ onTranscript: () => {} }, winWith());
+    expect(MockRecognition.last!.continuous).toBe(false);
+  });
+
+  it('lang / interimResults / maxAlternatives も固定する', () => {
+    startSpeechRecognition({ onTranscript: () => {} }, winWith());
+    const r = MockRecognition.last!;
+    expect(r.lang).toBe('ja-JP');
+    expect(r.interimResults).toBe(true);
+    expect(r.maxAlternatives).toBe(1);
+  });
+
+  it('末尾 result の isFinal を伝える', () => {
+    const seen: { text: string; isFinal: boolean }[] = [];
+    startSpeechRecognition({ onTranscript: (text, isFinal) => seen.push({ text, isFinal }) }, winWith());
+    MockRecognition.last!.onresult!({
+      resultIndex: 0,
+      results: results([alt('あ', false), alt('い', true)]),
+    } as never);
+    expect(seen).toEqual([{ text: 'あい', isFinal: true }]);
+  });
+
+  it('末尾が未確定なら isFinal は false', () => {
+    const seen: boolean[] = [];
+    startSpeechRecognition({ onTranscript: (_t, f) => seen.push(f) }, winWith());
+    MockRecognition.last!.onresult!({
+      resultIndex: 0,
+      results: results([alt('あ', true), alt('い', false)]),
+    } as never);
+    expect(seen).toEqual([false]);
+  });
+
+  it('results が空なら isFinal は false 扱いで、テキストも空なので呼ばない', () => {
+    const seen: unknown[] = [];
+    startSpeechRecognition({ onTranscript: (...a) => seen.push(a) }, winWith());
+    MockRecognition.last!.onresult!({ resultIndex: 0, results: results([]) } as never);
+    expect(seen).toEqual([]);
+  });
+
+  it('テキストが空なら onTranscript を呼ばない', () => {
+    const seen: unknown[] = [];
+    startSpeechRecognition({ onTranscript: (...a) => seen.push(a) }, winWith());
+    MockRecognition.last!.onresult!({
+      resultIndex: 0,
+      results: results([alt('   ', true)]),
+    } as never);
+    expect(seen).toEqual([]);
+  });
+
+  // length だけ進んで末尾の実体が欠けたリスト。テキストは前の result から
+  // 取れるので配信はするが、確定フラグは取れないので false に倒す
+  // (ここで落ちると、認識中に UI ごと死ぬ)。
+  it('末尾 result が欠けていても配信し、isFinal は false に倒す', () => {
+    const seen: { text: string; isFinal: boolean }[] = [];
+    startSpeechRecognition(
+      { onTranscript: (text, isFinal) => seen.push({ text, isFinal }) },
+      winWith(),
+    );
+    MockRecognition.last!.onresult!({
+      resultIndex: 0,
+      results: results([alt('あ', true), null]),
+    } as never);
+    expect(seen).toEqual([{ text: 'あ', isFinal: false }]);
+  });
+});
+
+describe('startSpeechRecognition — エラーと終了', () => {
+  beforeEach(() => {
+    MockRecognition.last = null;
+  });
+  const winWith = () => ({ SpeechRecognition: MockRecognition }) as never;
+
+  it('message があればそれを、無ければ error の種別を渡す', () => {
+    const seen: string[] = [];
+    startSpeechRecognition({ onTranscript: () => {}, onError: (m) => seen.push(m) }, winWith());
+    const r = MockRecognition.last!;
+    r.onerror!({ error: 'no-speech', message: '音声が検出されません' });
+    r.onerror!({ error: 'not-allowed' });
+    r.onerror!({ error: 'network', message: '' });
+    expect(seen).toEqual(['音声が検出されません', 'not-allowed', 'network']);
+  });
+
+  it('onError を渡していなくても落ちない', () => {
+    startSpeechRecognition({ onTranscript: () => {} }, winWith());
+    expect(() => MockRecognition.last!.onerror!({ error: 'no-speech' })).not.toThrow();
+  });
+
+  it('onEnd を渡していなくても落ちない', () => {
+    startSpeechRecognition({ onTranscript: () => {} }, winWith());
+    expect(() => MockRecognition.last!.onend!()).not.toThrow();
+  });
+
+  it('onEnd を渡していれば呼ぶ', () => {
+    let ended = 0;
+    startSpeechRecognition({ onTranscript: () => {}, onEnd: () => (ended += 1) }, winWith());
+    MockRecognition.last!.onend!();
+    expect(ended).toBe(1);
+  });
+});

@@ -43,6 +43,8 @@ export interface FinancialInputs {
   readonly effectiveTaxRate?: number; // 実効税率 (0-1; NOPAT 算定用; 無ければ DEFAULT_EFFECTIVE_TAX_RATE)
 }
 
+import { RADAR_AXIS_BANDS, type AxisBand, type RadarAxisKey, type RadarBands } from '../../shared/financialHealthBands';
+
 /** NOPAT / ROIC / FCF 算定で参照する既定値 (概算)。法人実効税率は約 30% を仮置き。 */
 export const DEFAULT_EFFECTIVE_TAX_RATE = 0.3;
 
@@ -179,23 +181,37 @@ function linScore(raw: number | null, bad: number, good: number): number {
   return Math.max(0, Math.min(100, Math.round(t * 100)));
 }
 
-/** 15 指標をレーダー軸 (0-100 スコア) に変換する。 */
-export function radarAxes(r: FinancialRatios): RadarAxis[] {
+/**
+ * 軸の帯を引く。0 点と 100 点の水準が同じ帯 (幅 0) は割り算が壊れるので既定の帯に戻す —
+ * 台帳は 1 件ずつしか検査できず、2 件の組み合わせの矛盾はここで受ける。
+ */
+export function axisBand(key: RadarAxisKey, bands: RadarBands): AxisBand {
+  const b = bands[key];
+  return b.good === b.bad ? RADAR_AXIS_BANDS[key] : b;
+}
+
+function axisScore(raw: number | null, key: RadarAxisKey, bands: RadarBands): number {
+  const b = axisBand(key, bands);
+  return linScore(raw, b.bad, b.good);
+}
+
+/** 15 指標をレーダー軸 (0-100 スコア) に変換する。`bands` は 0 点 / 100 点の水準 (台帳の値・省略時は既定)。 */
+export function radarAxes(r: FinancialRatios, bands: RadarBands = RADAR_AXIS_BANDS): RadarAxis[] {
   return [
-    { key: 'equityRatio', label: '自己資本比率', unit: '%', raw: r.equityRatioPct, score: linScore(r.equityRatioPct, 0, 50) },
-    { key: 'currentRatio', label: '流動比率', unit: '%', raw: r.currentRatioPct, score: linScore(r.currentRatioPct, 80, 200) },
-    { key: 'fixedLongTermFit', label: '固定長期適合率', unit: '%', raw: r.fixedLongTermFitPct, score: linScore(r.fixedLongTermFitPct, 130, 80) },
-    { key: 'debtToMonthlySales', label: '借入金月商倍率', unit: 'ヶ月', raw: r.debtToMonthlySalesRatio, score: linScore(r.debtToMonthlySalesRatio, 6, 1) },
-    { key: 'debtRepaymentYears', label: '債務償還年数', unit: '年', raw: r.debtRepaymentYears, score: linScore(r.debtRepaymentYears, 15, 3) },
-    { key: 'operatingMargin', label: '営業利益率', unit: '%', raw: r.operatingMarginPct, score: linScore(r.operatingMarginPct, -5, 20) },
-    { key: 'ordinaryMargin', label: '経常利益率', unit: '%', raw: r.ordinaryMarginPct, score: linScore(r.ordinaryMarginPct, -5, 20) },
-    { key: 'netMargin', label: '当期純利益率', unit: '%', raw: r.netMarginPct, score: linScore(r.netMarginPct, -5, 15) },
-    { key: 'laborShare', label: '労働分配率', unit: '%', raw: r.laborSharePct, score: linScore(r.laborSharePct, 80, 40) },
-    { key: 'ebitdaMargin', label: 'EBITDAマージン', unit: '%', raw: r.ebitdaMarginPct, score: linScore(r.ebitdaMarginPct, 0, 25) },
-    { key: 'receivablesTurnover', label: '売上債権回転率', unit: '倍', raw: r.receivablesTurnover, score: linScore(r.receivablesTurnover, 4, 24) },
-    { key: 'inventoryTurnover', label: '棚卸資産回転率', unit: '倍', raw: r.inventoryTurnover, score: linScore(r.inventoryTurnover, 4, 24) },
-    { key: 'ccc', label: 'CCC', unit: '日', raw: r.cccDays, score: linScore(r.cccDays, 90, 0) },
-    { key: 'roa', label: 'ROA', unit: '%', raw: r.roaPct, score: linScore(r.roaPct, 0, 10) },
-    { key: 'roe', label: 'ROE', unit: '%', raw: r.roePct, score: linScore(r.roePct, 0, 15) },
+    { key: 'equityRatio', label: '自己資本比率', unit: '%', raw: r.equityRatioPct, score: axisScore(r.equityRatioPct, 'equityRatio', bands) },
+    { key: 'currentRatio', label: '流動比率', unit: '%', raw: r.currentRatioPct, score: axisScore(r.currentRatioPct, 'currentRatio', bands) },
+    { key: 'fixedLongTermFit', label: '固定長期適合率', unit: '%', raw: r.fixedLongTermFitPct, score: axisScore(r.fixedLongTermFitPct, 'fixedLongTermFit', bands) },
+    { key: 'debtToMonthlySales', label: '借入金月商倍率', unit: 'ヶ月', raw: r.debtToMonthlySalesRatio, score: axisScore(r.debtToMonthlySalesRatio, 'debtToMonthlySales', bands) },
+    { key: 'debtRepaymentYears', label: '債務償還年数', unit: '年', raw: r.debtRepaymentYears, score: axisScore(r.debtRepaymentYears, 'debtRepaymentYears', bands) },
+    { key: 'operatingMargin', label: '営業利益率', unit: '%', raw: r.operatingMarginPct, score: axisScore(r.operatingMarginPct, 'operatingMargin', bands) },
+    { key: 'ordinaryMargin', label: '経常利益率', unit: '%', raw: r.ordinaryMarginPct, score: axisScore(r.ordinaryMarginPct, 'ordinaryMargin', bands) },
+    { key: 'netMargin', label: '当期純利益率', unit: '%', raw: r.netMarginPct, score: axisScore(r.netMarginPct, 'netMargin', bands) },
+    { key: 'laborShare', label: '労働分配率', unit: '%', raw: r.laborSharePct, score: axisScore(r.laborSharePct, 'laborShare', bands) },
+    { key: 'ebitdaMargin', label: 'EBITDAマージン', unit: '%', raw: r.ebitdaMarginPct, score: axisScore(r.ebitdaMarginPct, 'ebitdaMargin', bands) },
+    { key: 'receivablesTurnover', label: '売上債権回転率', unit: '倍', raw: r.receivablesTurnover, score: axisScore(r.receivablesTurnover, 'receivablesTurnover', bands) },
+    { key: 'inventoryTurnover', label: '棚卸資産回転率', unit: '倍', raw: r.inventoryTurnover, score: axisScore(r.inventoryTurnover, 'inventoryTurnover', bands) },
+    { key: 'ccc', label: 'CCC', unit: '日', raw: r.cccDays, score: axisScore(r.cccDays, 'ccc', bands) },
+    { key: 'roa', label: 'ROA', unit: '%', raw: r.roaPct, score: axisScore(r.roaPct, 'roa', bands) },
+    { key: 'roe', label: 'ROE', unit: '%', raw: r.roePct, score: axisScore(r.roePct, 'roe', bands) },
   ];
 }

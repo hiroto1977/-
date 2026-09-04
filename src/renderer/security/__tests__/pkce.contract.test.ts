@@ -187,7 +187,8 @@ describe('exchangeGoogleCode — 送る中身', () => {
     redirectUri: OPTS.redirectUri,
   };
   function okRes(body: Record<string, unknown> = { access_token: 'at', expires_in: 100, scope: 'sc' }): Response {
-    return { ok: true, status: 200, async json() { return body; }, async text() { return ''; } } as unknown as Response;
+    // 本物の `Response`。手作りの物は `json()` と `text()` が矛盾しうる。
+    return new Response(JSON.stringify(body), { status: 200 });
   }
 
   async function sentBody(): Promise<URLSearchParams> {
@@ -259,7 +260,7 @@ describe('exchangeGoogleCode — 入口のガード', () => {
 
   it('code が 2048 文字ちょうどは通す (上限)', async () => {
     const f = vi.fn<typeof fetch>().mockResolvedValue(
-      { ok: true, status: 200, async json() { return { access_token: 'at' }; } } as unknown as Response,
+      new Response(JSON.stringify({ access_token: 'at' }), { status: 200 }),
     );
     await expect(exchangeGoogleCode({ ...BASE, code: 'c'.repeat(2048) }, f)).resolves.toBeDefined();
   });
@@ -311,7 +312,7 @@ describe('exchangeGoogleCode — 応答の扱い', () => {
   };
   const res = (body: Record<string, unknown>) =>
     vi.fn<typeof fetch>().mockResolvedValue(
-      { ok: true, status: 200, async json() { return body; } } as unknown as Response,
+      new Response(JSON.stringify(body), { status: 200 }),
     );
 
   it('access_token が無ければ失敗', async () => {

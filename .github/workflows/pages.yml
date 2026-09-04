@@ -70,6 +70,41 @@ jobs:
       # PWA タグ注入 (公開 HTML のみ。standalone.html 配布物は単一ファイルのまま不変)
       - name: Inject PWA tags
         run: node scripts/inject-pwa.cjs _site/index.html _site/app.html _site/lite.html
+      # ---- 公開の直前に、出す物そのものへ当てる -------------------------
+      #
+      # **公開しているのはこのワークフローである。** 同じ検査は ci.yml にも
+      # 在るが、あちらは別ジョブで**並行に走るだけ**で、ここには `needs:` も
+      # 無い —— ci.yml が赤くなっても、このワークフローは公開を終えている
+      # (2026-08-25 に構成を確認)。検査と危ない操作が別の場所に在るという、
+      # この repo で繰り返し出ている形そのものだった。
+      #
+      # ci.yml は `/tmp/inject-check/` へ**複製**を作って当てるが、ここでは
+      # `_site/` の**実物**に当てる。写しではなく出す物を見る。
+      - name: Scan the artifacts being published for real personal data
+        run: |
+          ls -la _site/
+          node scripts/lint-sample-data.cjs --artifact \
+            _site/app.html \
+            _site/index.html \
+            _site/lite.html \
+            _site/standalone.html \
+            _site/counseling-demo.html \
+            _site/deliberation-demo.html \
+            _site/research-demo.html
+
+      # CSP も注入後の実物に当てる。`inject-pwa` は manifest / icon / SW 登録を
+      # 足すので、注入前に足りていても注入後に足りないことがある。
+      - name: Verify CSP on the artifacts being published
+        run: |
+          node scripts/lint-artifact-csp.cjs \
+            --app _site/app.html \
+            --app _site/lite.html \
+            --app _site/standalone.html \
+            --document _site/index.html \
+            --document _site/counseling-demo.html \
+            --document _site/deliberation-demo.html \
+            --document _site/research-demo.html
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

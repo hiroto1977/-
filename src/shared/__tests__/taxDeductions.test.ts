@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  DEFAULT_DEDUCTION_PARAMS,
+  BASIC_HUMAN_DEDUCTION_DIFF,
   calcAllDeductions,
   calcDependentDeduction,
   calcDependentDeductionWithIncome,
@@ -782,5 +784,105 @@ describe('calcAllDeductions — 雑損控除の統合 (加算的)', () => {
     // but confirm humanDeductionDiff stays at basic-only 50,000.
     const d = calcAllDeductions({ totalIncome: 5_000_000, casualtyLoss: { lossAmount: 1_000_000 } });
     expect(d.humanDeductionDiff).toBe(50_000);
+  });
+});
+
+describe('台帳から渡す法定値・上限 (DeductionParams)', () => {
+  const BASE = { totalIncome: 5_000_000, taxYear: 2026 } as const;
+
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_DEDUCTION_PARAMS).toEqual({
+      spouseSpecialIncomeLimit: SPOUSE_SPECIAL_INCOME_LIMIT_YEN,
+      dependentIncomeLimit: DEPENDENT_INCOME_LIMIT,
+      selfMedicationThreshold: SELF_MEDICATION_THRESHOLD,
+      selfMedicationCap: SELF_MEDICATION_CAP,
+      smallBizMutualAnnualCap: SMALL_BIZ_MUTUAL_ANNUAL_CAP,
+      donationDeductionFloor: DONATION_DEDUCTION_FLOOR,
+      donationIncomeCapRate: DONATION_INCOME_CAP_RATE,
+      casualtyDisasterFloor: CASUALTY_DISASTER_FLOOR,
+      casualtyIncomeRate: CASUALTY_INCOME_RATE,
+      basicHumanDeductionDiff: BASIC_HUMAN_DEDUCTION_DIFF,
+    });
+    const input = {
+      ...BASE,
+      spouseIncome: 1_200_000,
+      dependentsWithIncome: [{ kind: 'general', income: 400_000 }],
+      selfMedicationPaid: 50_000,
+      smallBizMutualAid: 1_000_000,
+      donation: 100_000,
+      casualtyLoss: { lossAmount: 1_000_000, disasterRelatedSpending: 200_000 },
+    } as const;
+    expect(calcAllDeductions(input)).toEqual(calcAllDeductions(input, DEFAULT_DEDUCTION_PARAMS));
+  });
+
+  it('配偶者特別控除の上限: 133 万超は 0、上限を上げればその所得でも控除が出る', () => {
+    const at133over = calcAllDeductions({ ...BASE, spouseIncome: 1_400_000 });
+    expect(at133over.spouse).toEqual({ incomeTax: 0, residentTax: 0 });
+    const raised = calcAllDeductions({ ...BASE, spouseIncome: 1_400_000 }, { ...DEFAULT_DEDUCTION_PARAMS, spouseSpecialIncomeLimit: 1_500_000 });
+    expect(raised.spouse.incomeTax).toBeGreaterThan(0);
+    // 直接呼ぶ形でも同じ (年分は入口の判定にだけ効く)。
+    expect(calcSpouseDeduction(5_000_000, 1_400_000, false, 2026, 1_500_000).incomeTax).toBe(raised.spouse.incomeTax);
+    expect(calcSpouseDeduction(5_000_000, 1_400_000, false, 2026)).toEqual({ incomeTax: 0, residentTax: 0 });
+  });
+
+  it('calcAllDeductions は配偶者控除の入口に input.taxYear を渡す (現在の年で固定しない)', () => {
+    // 令和6年分の入口は 48 万。50 万の配偶者は令和6年分では配偶者特別控除、令和8年分では配偶者控除 (満額)。
+    const y2024 = calcAllDeductions({ totalIncome: 5_000_000, taxYear: 2024, spouseIncome: 500_000 });
+    const y2026 = calcAllDeductions({ totalIncome: 5_000_000, taxYear: 2026, spouseIncome: 500_000 });
+    expect(y2024.spouse).toEqual(calcSpouseDeduction(5_000_000, 500_000, false, 2024));
+    expect(y2026.spouse).toEqual(calcSpouseDeduction(5_000_000, 500_000, false, 2026));
+    expect(y2026.spouse.incomeTax).toBe(380_000);
+  });
+
+  it('扶養親族の所得上限: 48 万超は対象外、上げれば対象', () => {
+    const deps = [{ kind: 'general', income: 500_000 }] as const;
+    expect(calcAllDeductions({ ...BASE, dependentsWithIncome: deps }).dependents).toEqual({ incomeTax: 0, residentTax: 0 });
+    const raised = calcAllDeductions({ ...BASE, dependentsWithIncome: deps }, { ...DEFAULT_DEDUCTION_PARAMS, dependentIncomeLimit: 500_000 });
+    expect(raised.dependents).toEqual(dependentDeduction('general'));
+    expect(calcDependentDeductionWithIncome(deps, 500_000)).toEqual(dependentDeduction('general'));
+  });
+
+  it('セルフメディケーション: 足切りと上限を渡す', () => {
+    expect(calcSelfMedicationDeduction(50_000)).toEqual({ incomeTax: 38_000, residentTax: 38_000 });
+    expect(calcSelfMedicationDeduction(50_000, 10_000, 100_000)).toEqual({ incomeTax: 40_000, residentTax: 40_000 });
+    expect(calcSelfMedicationDeduction(200_000, 10_000, 100_000)).toEqual({ incomeTax: 100_000, residentTax: 100_000 });
+    const r = calcAllDeductions({ ...BASE, selfMedicationPaid: 50_000 }, { ...DEFAULT_DEDUCTION_PARAMS, selfMedicationThreshold: 10_000, selfMedicationCap: 100_000 });
+    expect(r.medical).toEqual({ incomeTax: 40_000, residentTax: 40_000 });
+  });
+
+  it('小規模企業共済の上限を渡す', () => {
+    expect(clampSmallBizMutualAid(1_000_000)).toBe(840_000);
+    expect(clampSmallBizMutualAid(1_000_000, 900_000)).toBe(900_000);
+    const r = calcAllDeductions({ ...BASE, smallBizMutualAid: 1_000_000 }, { ...DEFAULT_DEDUCTION_PARAMS, smallBizMutualAnnualCap: 900_000 });
+    expect(r.smallBizMutualAid).toEqual({ incomeTax: 900_000, residentTax: 900_000 });
+  });
+
+  it('寄附金控除: 足切りと所得比の上限を渡す', () => {
+    expect(calcDonationDeduction(100_000, 5_000_000)).toEqual({ incomeTax: 98_000, residentTax: 0 });
+    expect(calcDonationDeduction(100_000, 5_000_000, 1_000, 0.4)).toEqual({ incomeTax: 99_000, residentTax: 0 });
+    // 上限 (合計所得 × 率) で頭打ち: 所得 100,000 × 50% = 50,000。
+    expect(calcDonationDeduction(100_000, 100_000, 2_000, 0.5)).toEqual({ incomeTax: 50_000, residentTax: 0 });
+    expect(calcDonationDeduction(1_000, 5_000_000, 1_000)).toEqual({ incomeTax: 0, residentTax: 0 });
+    const r = calcAllDeductions({ ...BASE, donation: 100_000 }, { ...DEFAULT_DEDUCTION_PARAMS, donationDeductionFloor: 1_000 });
+    expect(r.donation).toEqual({ incomeTax: 99_000, residentTax: 0 });
+  });
+
+  it('雑損控除: 災害関連支出の足切りと所得比の足切り率を渡す', () => {
+    const input = { lossAmount: 1_000_000, disasterRelatedSpending: 200_000, totalIncome: 5_000_000 };
+    // 既定: max(1,200,000 − 500,000, 200,000 − 50,000) = 700,000。
+    expect(calcCasualtyLossDeduction(input)).toEqual({ incomeTax: 700_000, residentTax: 700_000 });
+    // 率 5% → 1,200,000 − 250,000 = 950,000。
+    expect(calcCasualtyLossDeduction(input, 50_000, 0.05)).toEqual({ incomeTax: 950_000, residentTax: 950_000 });
+    // 足切り 40,000 で災害分 160,000 だが所得比の方が大きいので変わらない。損失を小さくすると災害分が効く。
+    const small = { lossAmount: 0, disasterRelatedSpending: 200_000, totalIncome: 5_000_000 };
+    expect(calcCasualtyLossDeduction(small).incomeTax).toBe(150_000);
+    expect(calcCasualtyLossDeduction(small, 40_000).incomeTax).toBe(160_000);
+    const r = calcAllDeductions({ ...BASE, casualtyLoss: { lossAmount: 0, disasterRelatedSpending: 200_000 } }, { ...DEFAULT_DEDUCTION_PARAMS, casualtyDisasterFloor: 40_000 });
+    expect(r.casualtyLoss).toEqual({ incomeTax: 160_000, residentTax: 160_000 });
+  });
+
+  it('調整控除の基礎控除分の差を渡す (人的控除差の合計の底)', () => {
+    expect(calcAllDeductions(BASE).humanDeductionDiff).toBe(50_000);
+    expect(calcAllDeductions(BASE, { ...DEFAULT_DEDUCTION_PARAMS, basicHumanDeductionDiff: 100_000 }).humanDeductionDiff).toBe(100_000);
   });
 });

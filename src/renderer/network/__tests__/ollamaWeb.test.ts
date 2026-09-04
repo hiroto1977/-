@@ -10,7 +10,9 @@ import {
   OLLAMA_PORT_KEY,
   desktopSetupCommands,
   originsSetupSteps,
+  MAX_RESPONSE_BYTES,
   probeOllama,
+  REQUEST_TIMEOUT_MS,
   setupCommands,
 } from '../ollamaWeb';
 import { DEFAULT_SETUP_MODEL, MIN_SAFE_VERSION } from '../../../shared/ollama';
@@ -909,6 +911,39 @@ describe('chatOllama — 応答の解釈', () => {
     });
   });
 
+  /*
+   * **上限超過「だけ」を too-large にする。**
+   *
+   * 本 PR で `isOverCap` を足したのは、打ち切りや接続断まで「大きすぎます」と
+   * 報せないためだった。ところが**その区別を確かめる検査を書いていなかった**
+   * —— 変異検査で `isOverCap(e)` を `true` に潰しても鳴らなかった
+   * (2026-08-31 実測)。自分で足した分岐の穴である。
+   *
+   * 本文の途中で壊れる応答を作る。読み出しは上限とは無関係に失敗するので、
+   * `too-large` ではない種別で返らなければならない。
+   */
+  it('★ 上限とは無関係な読み出し失敗は too-large にしない', async () => {
+    const broken = () =>
+      new Response(
+        new ReadableStream({
+          start(c) {
+            c.enqueue(new TextEncoder().encode('{"message":'));
+            c.error(new Error('stream broke'));
+          },
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      );
+    const f = vi.fn(async (url: string | URL | Request) => {
+      const u = String(url);
+      if (u.endsWith('/api/tags')) return json({ models: [] });
+      if (u.endsWith('/api/chat')) return broken();
+      throw new Error(`unexpected url: ${u}`);
+    }) as unknown as typeof fetch;
+
+    const r = await chatOllama(base, f, '').catch((e: Error) => ({ thrown: e.message }));
+    expect(JSON.stringify(r), '大きすぎる扱いにしない').not.toContain('too-large');
+  });
+
   it('HTTP エラーは分類して「次の一手」まで返す', async () => {
     const r = await chatOllama(base, chatFetch({ error: 'no such model' }, 404), '');
     expect(r.ok).toBe(false);
@@ -1397,7 +1432,26 @@ describe('時間切れと後始末', () => {
     expect(r.status).toBe('not-running');
   });
 
-  it('終わったら見張りを解除する (時計を残さない)', async () => {
+  /*
+   * **この検査は 2026-08-29 に約束を差し替えた。** 経緯を残す。
+   *
+   * 元は「応答が済んだ時点で timer が 0 本」を見ていた (`getTimerCount() === 0`)。
+   * 解除し忘れを捕まえるための検査で、意図は正しかった。**ところがその
+   * 「解除」自体が欠陥だった** —— `fetch` はヘッダーで解決するので、
+   * 解除した時点で**本文はまだ流れていない**。ヘッダーだけ返して黙る相手には
+   * 打ち切りが掛からず、レンダラーは 1 スレッドなので画面ごと止まる。
+   *
+   * つまり旧い約束は「画面が止まらないこと」と**両立しない**。
+   * `withBodyDeadline` は本文を読み終えるまで timer を生かす道具で、
+   * ブラウザ版では既に 3 経路 (`web-shim.ts` の `timedFetch` ほか) が
+   * 同じ代償を払っている。
+   *
+   * そこで見る物を「0 本であること」から**「溜まらないこと」**へ移す。
+   * 残った timer が締切とともに自分で消えることを実際に進めて確かめる ——
+   * こちらのほうが強い検査でもある。**締切の窓の間、見張りが実際に
+   * 起きていること**まで言えるからで、旧い検査はそれを言えなかった。
+   */
+  it('★ 見張りは本文の間だけ残り、締切とともに自分で消える', async () => {
     vi.useFakeTimers();
     const f = vi.fn(async (url: string | URL | Request) => {
       if (String(url).endsWith('/api/version')) return json({ version: '0.5.4' });
@@ -1405,7 +1459,11 @@ describe('時間切れと後始末', () => {
     }) as unknown as typeof fetch;
     const r = await probeOllama(11434, f, '', noCsp);
     expect(r.status).toBe('ok');
-    // 解除し忘れると、成功後もタイマーが残り続ける。
+    // 応答が済んでも見張りは**わざと**残っている。本文がまだ流れている
+    // かもしれないため —— ここが 0 なら、黙る相手を打ち切れない。
+    expect(vi.getTimerCount()).toBeGreaterThan(0);
+    // そして締切が過ぎれば自分で消える (要求ごとに溜まり続けない)。
+    await vi.advanceTimersByTimeAsync(REQUEST_TIMEOUT_MS + 1);
     expect(vi.getTimerCount()).toBe(0);
   });
 
@@ -1424,6 +1482,35 @@ describe('時間切れと後始末', () => {
   it('上限を 1 バイト超えたら、読める JSON でも読まない', async () => {
     const pad = 'y'.repeat(2 * 1024 * 1024 - JSON.stringify({ version: '' }).length + 1);
     const body = JSON.stringify({ version: pad });
+    const f = vi.fn(async (url: string | URL | Request) => {
+      if (String(url).endsWith('/api/version')) return new Response(body, { status: 200 });
+      return json({ models: [] });
+    }) as unknown as typeof fetch;
+    const r = await probeOllama(11434, f, '', noCsp);
+    expect(r.snapshot.version).toBe('');
+  });
+
+  /*
+   * **上限は byte で数える。以前は文字で数えていた。**
+   *
+   * 定数の名前は `MAX_RESPONSE_BYTES` で、画面の「セキュリティポリシー」欄にも
+   * byte として出ている。ところが実装は `res.text()` の結果に `.length` を
+   * 当てており、これは **UTF-16 の符号単位の数**であって byte ではない。
+   * 日本語は 1 文字 3 byte なので、**名乗っている上限の約 3 倍**が通っていた。
+   *
+   * 上の 2 件 (ちょうど / 1 超え) が気付けなかったのは、標本が `'y'` の
+   * 繰り返し —— **ASCII では文字数と byte 数が一致する**ため。境界の検査は
+   * 在ったが、境界が何の境界かを分ける標本が無かった。
+   *
+   * `readBodyWithCap` へ移して byte で数えるようにした。**厳しくなる側**の
+   * 変化で、名前と実体が揃う。
+   */
+  it('★ 上限は byte で数える (日本語で 3 倍通っていた)', async () => {
+    const pad = 'あ'.repeat(1_000_000);
+    const body = JSON.stringify({ version: pad });
+    // 文字数は上限以下だが、byte 数は上限を超える —— ここが分かれ目。
+    expect(body.length).toBeLessThan(MAX_RESPONSE_BYTES);
+    expect(new TextEncoder().encode(body).byteLength).toBeGreaterThan(MAX_RESPONSE_BYTES);
     const f = vi.fn(async (url: string | URL | Request) => {
       if (String(url).endsWith('/api/version')) return new Response(body, { status: 200 });
       return json({ models: [] });
@@ -1785,5 +1872,106 @@ describe('readTextOrEmpty', () => {
     const r = await readTextOrEmpty(broken);
     expect(r).toBe('');
     expect(typeof r).toBe('string');
+  });
+});
+
+/**
+ * **モジュール直下の値を、読み直して留める。**
+ *
+ * 保存キー・上限・空スナップショットは上の検査群が既に字面で見ているが、
+ * **静的 import なので変異が届いていなかった** (2026-08-31 実測で 5 件生存)。
+ * `vi.resetModules()` + 動的 `import()` で読み直す。
+ * 本 PR で 7 度目の同じ手当てである。
+ */
+describe('モジュール直下の値 — 読み直して static 変異体を届かせる', () => {
+  const fresh = async () => {
+    vi.resetModules();
+    return import('../ollamaWeb');
+  };
+
+  /*
+   * 保存キーが変われば、**利用者が前の版で保存した接続先が読めなくなる**。
+   * 旧キー (`…ollama.port`) は後方互換のためだけに残っているので、
+   * 綴りが崩れると移行が静かに壊れる。`lint:storage` の台帳とも対になる。
+   */
+  it('★ localStorage の保存キー (新・旧)', async () => {
+    const m = await fresh();
+    expect(m.OLLAMA_ENDPOINT_KEY).toBe('servicehub.ollama.endpoint');
+    expect(m.OLLAMA_PORT_KEY).toBe('servicehub.ollama.port');
+  });
+
+  /*
+   * 上限は掛け算で書いてあるので、`*` が `/` に変わると **2 バイト**になる
+   * (`2 * 1024 / 1024`)。そうなると正常な応答まで全部 too-large で弾かれる。
+   * 画面の「セキュリティポリシー」欄にも出る値なので、実寸で留める。
+   */
+  /*
+   * 繋がらないときに返す**空のスナップショット**。中身が `undefined` に
+   * なると、画面は「Ollama の状態」欄を描けずに落ちる。4 か所から返るので
+   * 形そのものを留める。
+   */
+  it('★ 繋がらないときの空スナップショットの形', async () => {
+    const m = await fresh();
+    const f = vi.fn(async () => {
+      throw new Error('ECONNREFUSED');
+    }) as unknown as typeof fetch;
+    const noCspLocal = () => ({ hit: () => false, stop: () => undefined });
+    const r = await m.probeOllama(11434, f, '', noCspLocal);
+    expect(r.snapshot).toEqual({
+      running: false,
+      version: '',
+      versionSafe: false,
+      versionMinRecommended: MIN_SAFE_VERSION,
+      models: [],
+      warnings: [],
+    });
+  });
+
+  it('★ 応答の上限は 2MiB ちょうど', async () => {
+    const m = await fresh();
+    expect(m.MAX_RESPONSE_BYTES).toBe(2 * 1024 * 1024);
+    expect(m.MAX_RESPONSE_BYTES).toBe(2097152);
+  });
+});
+
+/**
+ * **モデル一覧が取れなくても、助言まで辿り着く。**
+ *
+ * `chatOllama` は「モデルが無い」と分かったとき、実在するモデルを添えるために
+ * 一覧を取りに行く (`listInstalledModels`)。その一覧の取得が失敗しても
+ * **助言そのものは返らなければならない** —— ここで投げると、利用者は
+ * 「モデル名が違う」という肝心の案内を受け取れないまま例外を見る。
+ *
+ * `res === null || !res.ok` を `false` に潰しても鳴っていなかった。
+ * 潰すと失敗した応答をそのまま読みに行き、実際には例外になる。
+ * 一覧の取得口は export されていないので、**本物の経路 (chatOllama) から**
+ * 当てる。
+ */
+describe('モデル一覧が取れなくても助言は返る', () => {
+  const base = { endpoint: '11434', model: 'llama3.2:1b', prompt: 'こんにちは' };
+  const notFound = { error: 'model "llama9" not found, try pulling it first' };
+
+  it('★ 一覧の取得が失敗しても、助言を返す (投げない)', async () => {
+    const f = vi.fn(async (url: string | URL | Request) => {
+      const u = String(url);
+      if (u.endsWith('/api/tags')) throw new Error('ECONNREFUSED');
+      if (u.endsWith('/api/chat')) return json(notFound, 404);
+      throw new Error(`unexpected url: ${u}`);
+    }) as unknown as typeof fetch;
+    const r = await chatOllama(base, f, '');
+    expect(r.ok).toBe(false);
+    expect(r.ok === false && r.kind).toBe('model-not-found');
+  });
+
+  it('★ 一覧が HTTP エラーでも、助言を返す', async () => {
+    const f = vi.fn(async (url: string | URL | Request) => {
+      const u = String(url);
+      if (u.endsWith('/api/tags')) return new Response('nope', { status: 500 });
+      if (u.endsWith('/api/chat')) return json(notFound, 404);
+      throw new Error(`unexpected url: ${u}`);
+    }) as unknown as typeof fetch;
+    const r = await chatOllama(base, f, '');
+    expect(r.ok).toBe(false);
+    expect(r.ok === false && r.kind).toBe('model-not-found');
   });
 });

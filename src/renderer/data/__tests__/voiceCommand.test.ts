@@ -4,7 +4,10 @@ import {
   matchServices,
   parseVoiceCommand,
   routeCommand,
+  isKnownDangerousAction,
   requiresConfirmation,
+  isExecutableIntent,
+  PARSEABLE_ACTIONS,
   disambiguate,
   isQuestion,
   type AvailableCapabilities,
@@ -540,9 +543,20 @@ describe('requiresConfirmation', () => {
     expect(requiresConfirmation({ kind: 'action', action: '', confidence: 0.5 })).toBe(false);
   });
 
-  it('navigate that carries a dangerous-looking action field → still false (kind gate)', () => {
-    // kind!=='action' のゲートが先に効くため、action='delete' でも確認不要。
-    expect(requiresConfirmation({ kind: 'navigate', action: 'delete', confidence: 0.7 })).toBe(false);
+  /*
+   * 2026-08-26 に**期待を反転**した。以前はここが `false` で、コメントは
+   * 「kind!=='action' のゲートが先に効くため確認不要」と書いていた。
+   * ところが `ChatbotWidget` の実行側 (`runIntent`) は **kind を見ておらず**、
+   * `serviceId` と `action` が在れば invoke していた ——
+   * **確認の門と実行の門が別々の物を見ていた**。この検査は、その不一致を
+   * 「正しい挙動」として書き留めてしまっていた。
+   *
+   * 両側を `action` の有無へ揃えたので、`action` を持つ intent は kind に
+   * かかわらず確認を要する。実行側にも `kind === 'action'` の門を足してある
+   * (兄弟の `VoiceCommandBar` は最初からそうしていた)。
+   */
+  it('action フィールドを持つなら kind によらず確認を要する (実行側と同じ単位)', () => {
+    expect(requiresConfirmation({ kind: 'navigate', action: 'delete', confidence: 0.7 })).toBe(true);
   });
 
   it('send-message requires confirmation (external send)', () => {
@@ -573,12 +587,148 @@ describe('requiresConfirmation', () => {
     expect(requiresConfirmation({ kind: 'action', action: 'SendInvoice', confidence: 0.9 })).toBe(true);
   });
 
-  it('read-only / internal action → false (advise)', () => {
-    expect(requiresConfirmation({ kind: 'action', serviceId: 'uber-eats', action: 'advise', confidence: 0.9 })).toBe(false);
+  /*
+   * 既定を fail closed へ倒したので、`advise` のような**見覚えのない action** も
+   * 確認を要する。`PARSEABLE_ACTIONS`(= 動詞ルール由来の 6 つ) に `advise` は
+   * 無いので、発話・チャットからは到達しない。到達しない物の既定を
+   * 「無確認で実行」に置く理由が無く、しかも `advise` は**有料 LLM API** を叩く。
+   */
+  it('見覚えのない action は既定で確認を要する (fail closed)', () => {
+    expect(requiresConfirmation({ kind: 'action', serviceId: 'uber-eats', action: 'advise', confidence: 0.9 })).toBe(true);
+  });
+
+  /*
+   * **不変条件そのものを留める。** 「確認を求めないなら、実行もされない」。
+   * 2 つの門が別々の物を見ていたときは、この関係が破れていた。
+   */
+  /*
+   * 述語そのものを留める。上の不変条件だけでは `kind` の判定を消しても鳴らない
+   * ——揃えた後は「navigate + action」も**確認を経て**実行されるので安全側では
+   * あるからである (対照で実測した)。だが navigate が invoke するのは意味として
+   * 誤りなので、ここで別に留める。**安全と意味は別々に固定する。**
+   */
+  it.each([
+    ['action + serviceId + action 名', { kind: 'action', serviceId: 'github', action: 'create-issue', confidence: 0.9 }, true],
+    ['navigate は action を持っていても実行しない', { kind: 'navigate', serviceId: 'sales', action: 'delete', confidence: 0.7 }, false],
+    ['query も実行しない', { kind: 'query', serviceId: 'overview', action: 'delete', confidence: 0.7 }, false],
+    ['unknown も実行しない', { kind: 'unknown', action: 'delete', confidence: 0 }, false],
+    ['serviceId が無ければ実行しない', { kind: 'action', action: 'create-issue', confidence: 0.9 }, false],
+    ['action 名が無ければ実行しない', { kind: 'action', serviceId: 'github', confidence: 0.9 }, false],
+    ['action 名が空なら実行しない', { kind: 'action', serviceId: 'github', action: '', confidence: 0.9 }, false],
+  ])('isExecutableIntent: %s', (_n, intent, want) => {
+    expect(isExecutableIntent(intent as VoiceIntent)).toBe(want);
+  });
+
+  it('★ 確認不要と判定される intent は、実行側の門も通らない', () => {
+    // **実行側と同じ述語を呼ぶ。** ここで判定を書き直すと、実物の門が
+    // 変わっても検査は自分の写しを回るだけになる (CLAUDE.md の
+    // 「検査が、留めるべき表を読んで回っていた」)。
+    const executable = isExecutableIntent;
+    const samples: VoiceIntent[] = [
+      { kind: 'navigate', serviceId: 'sales', confidence: 0.7 },
+      { kind: 'query', serviceId: 'overview', confidence: 0.7 },
+      { kind: 'unknown', confidence: 0 },
+      { kind: 'action', serviceId: 'slack', confidence: 0.5 },
+      { kind: 'action', serviceId: 'slack', action: '', confidence: 0.5 },
+      { kind: 'navigate', serviceId: 'sales', action: 'delete', confidence: 0.7 },
+      { kind: 'action', serviceId: 'github', action: 'create-issue', confidence: 0.9 },
+      { kind: 'action', serviceId: 'uber-eats', action: 'advise', confidence: 0.9 },
+    ];
+    for (const s of samples) {
+      if (!requiresConfirmation(s)) expect(executable(s)).toBe(false);
+    }
+    // 空撃ちでないこと: 標本には実行される物も確認を要する物も居る。
+    expect(samples.some(executable)).toBe(true);
+    expect(samples.some((s) => requiresConfirmation(s))).toBe(true);
   });
 
   it('record-entry requires confirmation (writes data)', () => {
     expect(requiresConfirmation({ kind: 'action', serviceId: 'uber-eats', action: 'record-entry', confidence: 0.9 })).toBe(true);
+  });
+
+  /*
+   * **発話から生まれうる action は 1 つ残らず確認必須であること。**
+   *
+   * この判定を見ている入口は 2 つあり、どちらも false のとき**そのまま実行**する:
+   *   - `VoiceCommandBar` —— `phase === 'parsed'` を useEffect で自動承認
+   *   - `ChatbotWidget`   —— `else await runIntent(reply.intent)`
+   * チャット側は**マイクを要さない**。入力欄に打つだけで同じ経路を通る。
+   *
+   * 上の 1 件ずつの検査は「この 6 つは true」を言っているだけで、
+   * **7 つ目が足されたことには気付けない**。
+   *
+   * 動詞ルール (`ACTION_RULES`) と確認名簿 (`CONFIRM_ACTIONS`) は同じファイルの
+   * 別々の表で、どちらも手で保たれている。載せ忘れは「確認なしで実行」側へ
+   * 倒れるので、閉包を機械で留める。
+   *
+   * `advise` のように確認不要な action が在ってよい設計は変えていない ——
+   * 縛るのは「**発話から到達できる**もの」だけ。
+   */
+  /*
+   * **この検査は 2026-08-31 まで空虚だった。**
+   *
+   * `requiresConfirmation` を呼んでいたが、2026-08-26 に既定が fail closed へ
+   * 倒れて以降は **action が在れば必ず `true`** なので、名簿に載せ忘れても
+   * `notConfirmed` は空のままだった。上の注記が言う閉包 (`PARSEABLE_ACTIONS ⊆
+   * 危険と分かっている action) を、**検査が確かめていなかった**。
+   *
+   * 名簿そのものへ問い直す。確認の要否 (下の検査) とは別の主張である。
+   */
+  it('発話から生まれうる action は 1 つ残らず「危険と分かっている」側に載る', () => {
+    const unlisted = PARSEABLE_ACTIONS.filter((action) => !isKnownDangerousAction(action));
+    expect(unlisted, `名簿にも語幹にも当たらない action: ${JSON.stringify(unlisted)}`).toEqual([]);
+  });
+
+  it('発話から生まれうる action は 1 つ残らず確認必須', () => {
+    const notConfirmed = PARSEABLE_ACTIONS.filter(
+      (action) => !requiresConfirmation({ kind: 'action', action, confidence: 1 }),
+    );
+    expect(notConfirmed, `確認なしで実行される action: ${JSON.stringify(notConfirmed)}`).toEqual([]);
+  });
+
+  /*
+   * **名簿の判定そのものを留める。** 上の閉包だけでは、判定が「常に true」に
+   * なっても鳴らない —— まさにそれが `requiresConfirmation` に起きたことである。
+   * 陰性 (載っていない action) を必ず添える。
+   */
+  describe('isKnownDangerousAction', () => {
+    it('名簿に在る action は true', () => {
+      expect(isKnownDangerousAction('delete')).toBe(true);
+      expect(isKnownDangerousAction('send-message')).toBe(true);
+      expect(isKnownDangerousAction('checkout')).toBe(true);
+    });
+
+    it('語幹で拾う (名簿に無い派生形)', () => {
+      expect(isKnownDangerousAction('remove-foo')).toBe(true);
+      expect(isKnownDangerousAction('buy-credits')).toBe(true);
+    });
+
+    it('語幹の判定は大小文字を区別しない', () => {
+      expect(isKnownDangerousAction('SendInvoice')).toBe(true);
+      // toLowerCase を toUpperCase にすると、語幹 (小文字) に当たらなくなる。
+      expect(isKnownDangerousAction('DELETE-ALL')).toBe(true);
+    });
+
+    it('★ 名簿にも語幹にも当たらない action は false (陰性 — 何でも true ではない)', () => {
+      expect(isKnownDangerousAction('advise')).toBe(false);
+      expect(isKnownDangerousAction('refresh')).toBe(false);
+      expect(isKnownDangerousAction('')).toBe(false);
+    });
+
+    /*
+     * **確認の要否とは別の問いであること**を、両方が食い違う標本で留める。
+     * `advise` は危険と分かってはいないが、既定が fail closed なので確認は要る。
+     */
+    it('★ 危険と分かっていなくても確認は要る (2 つは別の問い)', () => {
+      expect(isKnownDangerousAction('advise')).toBe(false);
+      expect(requiresConfirmation({ kind: 'action', action: 'advise', confidence: 1 })).toBe(true);
+    });
+  });
+
+  it('その一覧が空でない (空なら上の検査は空虚に通る)', () => {
+    expect(PARSEABLE_ACTIONS.length).toBeGreaterThanOrEqual(6);
+    // 動詞ルールから導出しているので重複しない。
+    expect(new Set(PARSEABLE_ACTIONS).size).toBe(PARSEABLE_ACTIONS.length);
   });
 });
 

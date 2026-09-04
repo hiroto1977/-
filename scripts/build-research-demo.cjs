@@ -15,6 +15,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const esbuild = require('esbuild');
+const { scriptSafeJs } = require('./lib/json-for-script.cjs');
 
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'dist/research-demo.html');
@@ -130,6 +131,7 @@ function htmlShell(js) {
 <html lang="ja">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:;">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>カウンセリング研究デモ — AI同士の役割演技</title>
 <style>${CSS}</style>
@@ -163,7 +165,7 @@ async function main() {
     logLevel: 'silent',
   });
   let js = result.outputFiles[0].text;
-  js = js.replace(/<\/script/gi, '<\\/script');
+  js = scriptSafeJs(js); // 退避は scripts/lib/json-for-script.cjs に 1 つだけ
   const html = htmlShell(js);
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
   fs.writeFileSync(OUT, html);

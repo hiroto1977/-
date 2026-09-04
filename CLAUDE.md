@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Service Hub — a Japanese-facing business dashboard exposing **74 services** through a unified,
+Service Hub — a Japanese-facing business dashboard exposing **75 services** through a unified,
 category-grouped sidebar (おすすめ / 士業連携 / 分析・ツール / 外部サービス連携). Services span third-party SaaS
 (GitHub, WordPress.com, Atlassian, Notion, Google Drive / Calendar / Gmail, Slack, Canva,
 Microsoft 365, Dropbox, Salesforce, Discord, Asana, Linear, Sentry, Shopify, Stripe, LINE), local
@@ -23,7 +23,7 @@ with a verified 事業仕分け duty map (`professionalMap.ts`) and a local-firs
 **Two runtime targets ship from the same codebase:**
 1. **Electron desktop app** (`npm run dev` / `npm run build`) — full OS integration, 3-process model.
 2. **Browser standalone** (`npm run build:web` → `dist/standalone.html`) — a single self-contained HTML
-   file (実測 10.7 MiB full / 2.6 MiB `build:web:lite` mobile variant — 2026-08-11 計測) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
+   file (実測 10.9 MiB full / 2.8 MiB `build:web:lite` mobile variant — 2026-09-02 計測: 11,418,740 B / 2,913,792 B) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
 
 Each service page starts from a static snapshot in `src/renderer/data/snapshot.ts` and can swap to a
 live REST fetch. The `useServiceData(serviceId, snapshot)` hook returns `data`, `source`
@@ -32,7 +32,7 @@ live REST fetch. The `useServiceData(serviceId, snapshot)` hook returns `data`, 
 All verified (sourced) knowledge datasets — academic concepts (`academicKnowledge.ts`), tax/labor/legal
 compliance (`complianceKnowledge.ts`), subsidies (`subsidyKnowledge.ts`), support hotlines
 (`counselorKnowledge.ts`), and economic history (`economicHistoryKnowledge.ts`) — are the single source
-of truth for an **Obsidian knowledge vault** (`knowledge-vault/`, ~1130 notes, `npm run vault:build`)
+of truth for an **Obsidian knowledge vault** (`knowledge-vault/`, 7,500+ notes, `npm run vault:build`)
 and are injected as context into the AI-orchestration runtime per executive role
 (`orchestration/knowledge-map.json`, `orchestration/knowledge-context.cjs`, `npm run orchestrate:context`
 / dispatch). `vault:check` (in `verify:all`/CI) enforces vault sync and forbids duplicate ids
@@ -46,7 +46,11 @@ npm run dev              # Vite + Electron, hot reload (desktop dev)
 npm run build:web        # → dist/standalone.html (browser build; runs inline-html.cjs)
 npm run build:web:lite   # → dist/standalone-lite.html (~2MB モバイル版・学術コーパス非搭載)
 npm run e2e              # Playwright 実機 E2E (desktop/phone/tablet)。e2e:lite で LITE 版を検証
-npm run perf             # 起動性能ゲート (実 chromium)。起動時の巨大 JSON.parse を検出。要 build:web + build:web:lite
+npm run perf             # 起動性能ゲート (実 chromium)。起動時の巨大 JSON.parse を検出。
+                         #   フル版と LITE 版の**両方**が要る。vite の emptyOutDir が dist/ を掃除するので
+                         #   `build:web && build:web:lite` と続けると**フル版が消えて perf が落ちる** ——
+                         #   フル版を退避してから lite を作ること (e2e.yml がその順序を持っている)。
+                         #   `build:renderer` も vite なので、走らせるならブラウザ版より**前に**
 npm run e2e:ollama       # Ollama 連携 E2E (スタブ Ollama + 実 chromium)。未起動/CORS未許可/接続成功の3状態
 npm run ollama           # Ollama CLI (ブラウザ不要・CORS 無縁)。`-- chat <model> "..."` で対話
 npm run ollama:setup     # 導入→モデル取得→起動→1往復して確認。足りない段だけ埋める
@@ -54,10 +58,13 @@ npm run ollama:setup     # 導入→モデル取得→起動→1往復して確�
 npm run build:renderer   # tsc -b + vite build only (no packaging)
 npm run build            # full desktop build: tsc -b, vite build, electron-builder installers
 npm run typecheck        # tsc -b --noEmit --force (uses tsconfig project references)
-npm test                 # vitest run (~1460 tests under src/**/__tests__/)
+npm test                 # vitest run (src/**/__tests__/ 。件数は docs/ARCHITECTURE.md の表が持つ
+                         #   — 数を 2 か所に書くと必ず食い違うので、ここには書かない)
 npm run test:watch       # vitest watch mode
-npm run lint             # eslint . (flat config in eslint.config.js, ESLint 9 + typescript-eslint)
+npm run lint             # eslint . --max-warnings 0 (flat config in eslint.config.js, ESLint 9 + typescript-eslint)
 npm run smoke            # xvfb + Electron screenshot smoke test of every page
+npm run smoke:app        # 実物の `electron .` を起動して 8 秒生きているか
+                         #   (主プロセス dist-electron/main.js を通す唯一の検査)
 npm run scaffold -- <id> "<Label>" <ICON> [bearer|oauth|json]   # generate a new service end-to-end
 ```
 
@@ -69,7 +76,10 @@ Vitest config is in `vitest.config.ts` (node environment).
 ```bash
 npm run verify:arch        # docs/ARCHITECTURE.md file:line refs + live metrics must match reality
 npm run lint:imports       # main / preload / renderer import-boundary enforcement
-npm run lint:forbidden     # forbidden patterns (e.g. nodeIntegration: true, contextIsolation: false)
+npm run lint:forbidden     # forbidden patterns (nodeIntegration: true / contextIsolation: false /
+                           #   sandbox: false / webSecurity: false / eval / innerHTML ほか 36 種)
+npm run lint:workflow-security # .github/workflows/: permissions の明示・第三者 action の SHA 固定・
+                           #   pull_request_target 禁止・run: への信用できない値の埋め込み
 npm run lint:network-targets # 送り先ホストが変数で決まる通信の台帳 (資格情報の流出経路)
 npm run lint:docs          # cross-document consistency
 npm run lint:citations     # 出典の内部矛盾 (同一 DOI が別々の出版年で引かれていないか)
@@ -77,9 +87,26 @@ npm run lint:doi-prefix    # DOI プレフィックス(=登録機関=出版社) 
 npm run lint:charset       # 他文字種・簡体字の混入 (CJK は共有ブロックなので字を列挙するしかない)
 npm run lint:knowledge-refs # 裁定台帳が実在しない知識 id を参照していないか
 npm run lint:test-coverage # every service must have a test + an action registered
+npm run lint:csp           # 出荷 HTML の CSP を**実物**に当てる (self-test のみ verify:all。
+                           #   成果物への適用は ci.yml が inject-pwa 適用後に行う)。
+                           #   雛形側 (index.html / inline-html.cjs の buildCsp) は
+                           #   `shared/__tests__/shippedCsp.test.ts` が既に留めている ——
+                           #   こちらが見るのは **注入後の公開ファイル** と landing / デモ 3 本
+npm run lint:deps          # 依存の供給網 (本番依存の閉包 5 件 / インストール時コード 3 件 の台帳・
+                           #   取得元は registry のみ・integrity 必須。本番依存は単一 HTML へ
+                           #   畳み込まれ保管庫と同じオリジンで走るので、増やすなら理由を書く)
+npm run lint:storage       # ブラウザに残す物の台帳 (IndexedDB 4 / Cache Storage 1 /
+                           #   localStorage 21 / sessionStorage 4。cookie と OPFS は 0 件だが走査はする)。
+                           #   新しい保存先が黙って増えないこと・バックアップが覆うのは 1 つだけ・
+                           #   **媒体そのものが `docs/DATA_PROTECTION.md` の在庫に載っていること**
 npm run lint:shell         # scripts/*.sh: bash -n syntax + strict mode (set -euo pipefail)
 npm run lint:mutation-scope # 変異検査の「測っていない範囲」の台帳 (広い Stryker disable)
-npm run verify:all         # typecheck + all of the above + eslint (23 ゲート)
+npm run lint:regex         # 正規表現の破滅的バックトラック (ReDoS) を実測。worker + 番犬つき
+                           #   (モデル応答を解析する assistantMarkdown.ts が主眼。指数のみ)
+npm run verify:all         # typecheck + all of the above + eslint (34 ゲート)
+                           #   **`npm test` は含まない。** CI は両方走らせるので、
+                           #   push 前は `npm test && npm run verify:all` の両方を回すこと
+                           #   (verify:all だけを見て「全 green」と言うと CI で落ちる)
 npm run mutate             # Stryker mutation testing (target: 100%); mutate:triage / mutate:next help
 npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+NotebookLM) → verify → work queue
                            #   (weekly CI: knowledge-auto.yml; consume queue per docs/KNOWLEDGE_AUTOPILOT.md)
@@ -88,7 +115,7 @@ npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+Noteboo
 These are plain Node scripts in `scripts/` — there is no AST parser dependency; they grep marker
 comments and source. `verify:arch` will fail if you change architecture without updating
 `docs/ARCHITECTURE.md`. CI (`.github/workflows/ci.yml`) runs a single consolidated job on push to
-`main` and PRs to `main` (one `npm ci`, then typecheck + **all 23 `verify:all` gates**, vitest +
+`main` and PRs to `main` (one `npm ci`, then typecheck + **all 34 `verify:all` gates**, vitest +
 coverage, and `build:web` asserting `dist/standalone.html` is generated and non-trivial) — collapsed
 from 3 jobs
 to 1 to minimize GitHub Actions minutes on the free tier. **`lint:docs` enforces that every gate in
@@ -97,9 +124,13 @@ existing but guarding nothing, which is exactly what happened to `lint:citations
 `lint:knowledge-refs` and `verify:knowledge` (the provenance gate) until 2026-07-30.
 `.github/workflows/release.yml` builds Mac/Win/Linux installers on `v*` tags;
 `mutation.yml` runs Stryker (weekly + on pushes to `main` that touch `stryker.config.json`,
-`vitest.config.ts`, `src/main/clients/**` or `src/main/oauth.ts`). `e2e` / `e2e:lite` /
-`e2e:ollama` / `perf` / `smoke` need a real browser or Electron and are **not** in CI — run them
-locally before shipping renderer or startup-performance changes.
+`vitest.config.ts`, `src/main/clients/**` or `src/main/oauth.ts`). `e2e` / `e2e:lite` / `perf` / `smoke:app` **are** wired into `.github/workflows/e2e.yml`, but it does **not run by
+default** (Actions 分の節約): trigger it from the Actions tab (`workflow_dispatch`) or by putting the
+**`run-e2e` label** on a PR. `e2e:ollama` / `smoke` are **not** in CI at all.
+`smoke:app` は 2026-08-26 に足した —— **実物の `electron .` を起動する唯一の検査**で、
+それまで誰も主プロセスを通しておらず、`dist-electron/main.js` は 2 週間ほど起動不能なまま
+全 CI が緑だった (`scripts/smoke-app.cjs` の冒頭に経緯)。 All of them need a real
+browser or Electron — run them locally before shipping renderer or startup-performance changes.
 
 ## Architecture
 
@@ -196,8 +227,20 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   `window.open`, so the OS browser handles them.
 - Add new service IDs to `SERVICE_IDS` in `src/shared/serviceId.ts` (not `services.ts`) — the type
   system then flags every dependent switch/lookup, and prefer `npm run scaffold` over manual edits.
+- **計算に使う固定の数字 (法定値・参考値・しきい値・前提) は `src/shared/parameters.ts` の台帳に登録し、
+  画面は `useParameters()` で読んで関数へ引数で渡す。** 既定値はモジュールの定数をそのまま参照する
+  (数字を写さない)。登録した値は**必ず配線し、`parameterWiring.test.ts` で「上書きすると画面が動く」を
+  対照つきで留める** — 「設定できるのに効かない」項目を作らない。安全上限 (timeout / 応答サイズ /
+  PBKDF2 反復 / 入力長) は台帳に載せない。
 - When you change architecture, update `docs/ARCHITECTURE.md` too — `verify:arch` checks its
   `file:line` references and metrics against the real tree.
+- **不在を主張する検査には、標本を添える。** `not.toMatch(/…/)` や
+  `!body.includes('…')` は、綴りが 1 つ違えば黙る — どの入力でも通る空の検査になる。
+  規則が**実際にその文面へ当たる**ことを、同じテストの中で標本に対して確かめること
+  (2026-08-25 に 2 件やらかした。どちらも「記憶の言い換え」に対して正規表現を書いていた)。
+  肯定形で書けるならそのほうが安全 — **有ることの検査は、無ければ必ず鳴る**。
+- **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
+  落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 
 ## Branching
 

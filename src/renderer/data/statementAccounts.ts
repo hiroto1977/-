@@ -100,6 +100,11 @@ export const ACCOUNTS: readonly AccountDef[] = [
   { k: 'inventory', name: '商品及び製品', section: 'current-asset' },
   { k: 'rawMaterials', name: '原材料及び貯蔵品', section: 'current-asset' },
   { k: 'prepaid', name: '前払費用', section: 'current-asset' },
+  // 消費税 (税抜経理方式)。期中は仮払/仮受で両建てし、決算で相殺して
+  // 差額を未払 (納付) か未収還付 (還付) に振り替える。両方に残高が立つ
+  // ことは無いので、入力するのはどちらか一方になる。
+  { k: 'consumptionTaxPaid', name: '仮払消費税等', section: 'current-asset' },
+  { k: 'consumptionTaxRefundReceivable', name: '未収還付消費税等', section: 'current-asset' },
   { k: 'otherCurrentAsset', name: 'その他の流動資産', section: 'current-asset' },
   { k: 'allowanceDoubtful', name: '貸倒引当金', section: 'current-asset', contra: true },
   // ── 固定資産 ──
@@ -121,6 +126,8 @@ export const ACCOUNTS: readonly AccountDef[] = [
   { k: 'shortTermDebt', name: '短期借入金', section: 'current-liability' },
   { k: 'accruedExpenses', name: '未払金・未払費用', section: 'current-liability' },
   { k: 'accruedTax', name: '未払法人税等', section: 'current-liability' },
+  { k: 'consumptionTaxPayable', name: '未払消費税等', section: 'current-liability' },
+  { k: 'consumptionTaxReceived', name: '仮受消費税等', section: 'current-liability' },
   { k: 'depositsReceived', name: '預り金', section: 'current-liability' },
   { k: 'otherCurrentLiability', name: 'その他の流動負債', section: 'current-liability' },
   // ── 固定負債 ──
@@ -459,6 +466,23 @@ export function checkStatements(v: Amounts, opt: BalanceOptions): readonly State
       message: '税引前当期純損失なのに法人税等が計上されています。均等割のみであればこのままで正しいので、内訳を確認してください。',
       field: 'incomeTax',
     });
+  }
+
+  // 消費税の精算は「納付」か「還付」のどちらか一方にしかならない。
+  // 両方に残高が立つのは振替の誤りだが、**どちらも金額としては
+  // もっともらしく見え、貸借も合ってしまう**ので入力者は気づけない。
+  {
+    const payable = amountOf(v, 'consumptionTaxPayable');
+    const refund = amountOf(v, 'consumptionTaxRefundReceivable');
+    if (payable > 0 && refund > 0) {
+      out.push({
+        level: 'warn',
+        field: 'consumptionTaxPayable',
+        message: '未払消費税等と未収還付消費税等の両方に残高があります。'
+          + '消費税の精算は納付か還付のどちらか一方なので、仮受消費税等と仮払消費税等を'
+          + '相殺した差額を片方だけに振り替えてください。',
+      });
+    }
   }
 
   if (opt.dividends > 0 && inc.netIncome < 0) {

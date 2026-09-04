@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   EMOTIONS_STORE_KEY,
   EMOTION_KEYS,
@@ -265,5 +265,51 @@ describe('recordAnalysis + buildEmotionsSnapshot', () => {
     expect(snap.analyses).toHaveLength(10);
     // last-30: 最古5日 (01-01..01-05) が落ち 01-06 始まり。
     expect(snap.moods[0]!.date).toBe('2025-01-06');
+  });
+});
+
+/**
+ * **静的な定数は、読み直さないと測れない。**
+ *
+ * `EMOTIONS_STORE_KEY` / `ANALYZE_SYSTEM` / 上書き警告の文言はどれも
+ * モジュール本体で一度だけ評価される。ファイル先頭の静的 import では、
+ * 変異が有効になる前に評価が済んでしまうので、上の検査群が正しい主張を
+ * していても変異を観測できない (実測 2026-08-31: 3 件が生存)。
+ *
+ * 保管の鍵が空文字になれば**保存先が変わる** (別の鍵の下に書き、既存の記録は
+ * 読めなくなる)。警告文は「上書きすると失われる」を伝える唯一の口である。
+ * どちらも黙って消えてよいものではない。
+ */
+describe('静的な定数 —— 読み直して問う', () => {
+  const fresh = async (): Promise<typeof import('../emotionsWeb')> => {
+    vi.resetModules();
+    return import('../emotionsWeb');
+  };
+
+  it('★ 保管の鍵は "emotions.store"', async () => {
+    const m = await fresh();
+    expect(m.EMOTIONS_STORE_KEY).toBe('emotions.store');
+    // 実際にその鍵の下へ書いていること (定数だけ合っていても意味が無い)。
+    localStorage.clear();
+    m.logMood({ score: 3 });
+    expect(localStorage.getItem('emotions.store')).not.toBeNull();
+  });
+
+  it('★ 解析の指示文は空でない', async () => {
+    const m = await fresh();
+    expect(m.ANALYZE_SYSTEM.length).toBeGreaterThan(50);
+    expect(m.ANALYZE_SYSTEM).toContain('valid JSON');
+  });
+
+  /*
+   * 警告文は 2 片の連結。**片ごとに固有の言い回しを取る** —— 片方だけを
+   * 空にする変異は、もう片方に当たる検査では捕まらない。
+   */
+  it('★ 壊れた記録の上書きを断るとき、何が起きるかと、どうすればよいかを言う', async () => {
+    const m = await fresh();
+    localStorage.setItem(m.EMOTIONS_STORE_KEY, '{壊れた');
+    expect(() => m.logMood({ score: 3 })).toThrow(/上書きすると失われる/);
+    expect(() => m.logMood({ score: 3 })).toThrow(/記録を中止しました/);
+    expect(() => m.logMood({ score: 3 })).toThrow(/「履歴を消去」で作り直せます/);
   });
 });

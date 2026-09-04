@@ -37,10 +37,18 @@ function floorYen(n: number): number {
 /** 公共交通機関の通勤手当の非課税限度 (月額, 円)。 */
 export const COMMUTE_PUBLIC_TRANSPORT_CAP = 150_000;
 
-/** 公共交通機関の通勤手当: 非課税分と課税分 (上限超過) に分ける。 */
-export function publicTransportCommute(monthly: number): { nonTaxable: number; taxable: number } {
+/**
+ * 公共交通機関の通勤手当: 非課税分と課税分 (上限超過) に分ける。
+ *
+ * @param cap 非課税限度 (月額, 円)。省略すると法定値。改正されたときは台帳
+ *   (`shared/parameters.ts`) から上書きできる。
+ */
+export function publicTransportCommute(
+  monthly: number,
+  cap: number = COMMUTE_PUBLIC_TRANSPORT_CAP,
+): { nonTaxable: number; taxable: number } {
   const amt = Math.max(0, monthly);
-  const nonTaxable = Math.min(amt, COMMUTE_PUBLIC_TRANSPORT_CAP);
+  const nonTaxable = Math.min(amt, Math.max(0, cap));
   return { nonTaxable, taxable: amt - nonTaxable };
 }
 

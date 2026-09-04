@@ -88,6 +88,40 @@ describe('getStorageProtection', () => {
     const serialized = JSON.stringify(r);
     expect(serialized).not.toContain('ghp_SUPERSECRET');
     expect(serialized).not.toContain('SUPERSECRET');
-    expect(Object.keys(r).sort()).toEqual(['encrypted', 'file', 'plainCount']);
+    /*
+     * **鍵の一覧を固定するのは、秘密を載せる欄が黙って増えないため。**
+     * 増やすときは「その欄に秘密が載りうるか」を人が見ることになる。
+     * `mechanism` は 3 値の列挙で、店の中身から作らない (2026-08-23 追加)。
+     */
+    // `durability` は 3 値の列挙 ('file' | 'persistent' | 'best-effort')。
+    // デスクトップ版は定数 'file'、ブラウザ版は `navigator.storage.persisted()` の
+    // 戻り値から作るので、**店の中身は一切通らない** (2026-08-25 追加)。
+    expect(Object.keys(r).sort()).toEqual([
+      'durability',
+      'encrypted',
+      'file',
+      'mechanism',
+      'plainCount',
+    ]);
+  });
+
+  /*
+   * `durability` は**値まで**留める。上の検査は鍵が在ることを見ているが、
+   * 空文字に潰れても鳴らなかった (変異検査で 1 件生存、2026-08-30 実測)。
+   * 画面の「保存の持続性」欄がこれを読むので、空なら表示が消える。
+   */
+  it("★ durability は 'file' (この保管は実ファイル)", async () => {
+    const { getStorageProtection } = await import('../secrets');
+    expect((await getStorageProtection()).durability).toBe('file');
+  });
+
+  it('mechanism は 3 値の列挙しか返さない (自由文字列を載せない)', async () => {
+    const { getStorageProtection } = await import('../secrets');
+
+    encryptionAvailable = true;
+    expect((await getStorageProtection()).mechanism).toBe('os-keychain');
+
+    encryptionAvailable = false;
+    expect((await getStorageProtection()).mechanism).toBe('obfuscated');
   });
 });

@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../../shared/emotionsLimits';
 import { extractJson, normalizeAnalysis } from '../emotions';
 
 describe('extractJson', () => {
@@ -467,6 +468,13 @@ describe('ACTIONS["analyze-text"] — 送り先と中身', () => {
     expect(body.max_tokens).toBe(512);
     expect(typeof body.system).toBe('string');
     expect(body.system.length).toBeGreaterThan(0);
+    // **中身も見る。** `length > 0` は空文字だけしか捕まえない —— 実測
+    // 2026-08-31 でこの指示文を丸ごと空にする変異が生き残った (静的な
+    // テンプレート文字列なので、下の「読み直して問う」も併せて要る)。
+    // 指示文が消えると、モデルは JSON を返さなくなり `extractJson` が失敗する。
+    expect(body.system).toContain('valid JSON');
+    expect(body.system).toContain('"sentiment"');
+    expect(body.system).toContain('"dominant"');
     expect(body.messages).toEqual([{ role: 'user', content: '今日はいい日だった' }]);
   });
 
@@ -793,5 +801,102 @@ describe('normalizeAnalysis — dominant の決め方', () => {
     // joy / sadness / anger / fear / surprise / disgust の順。
     const n = normalizeAnalysis({ scores: { sadness: 0.5, anger: 0.5 } });
     expect(n.dominant).toBe('sadness');
+  });
+});
+
+/*
+ * **入力の上限は、IPC の信頼境界にも在ること。**
+ *
+ * 2026-08-23 まで、上限を持っていたのは**ブラウザ版だけ**だった:
+ *
+ *              analyze-text の text     log-mood の note
+ *   ブラウザ   5000 字で断る             2000 字で断る
+ *   main       空でなければ通す          検査なし
+ *
+ * **向きが逆である。** `main` はレンダラーから来た payload を最初に受ける
+ * 側なのに、そこだけ上限が無かった。`text` は Anthropic の要求本文へ
+ * そのまま載り、`note` は保存される。
+ */
+describe('emotions の入力上限 (両ビルドで同じ値)', () => {
+  it('analyze-text: 上限ちょうどは通す (境界)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(JSON.stringify({ content: [{ type: 'text', text: '{"scores":{"joy":1}}' }] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    await expect(
+      ACTIONS['analyze-text']!({
+        token: 'sk-ant-x',
+        fetch: fetchMock,
+        payload: { text: 'a'.repeat(MAX_ANALYZE_TEXT_CHARS) },
+      }),
+    ).resolves.toBeDefined();
+  });
+
+  it('analyze-text: 上限 +1 は断る (境界)', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['analyze-text']!({
+        token: 'sk-ant-x',
+        fetch: fetchMock,
+        payload: { text: 'a'.repeat(MAX_ANALYZE_TEXT_CHARS + 1) },
+      }),
+    ).rejects.toThrow(/exceeds/);
+    expect(fetchMock, '断る前に API を呼んでいる').not.toHaveBeenCalled();
+  });
+
+  it('log-mood: 上限ちょうどは通す (境界)', async () => {
+    await expect(
+      ACTIONS['log-mood']!({
+        token: '',
+        payload: { score: 3, note: 'n'.repeat(MAX_MOOD_NOTE_CHARS) },
+      }),
+    ).resolves.toBeDefined();
+  });
+
+  it('log-mood: 上限 +1 は断る (境界)', async () => {
+    await expect(
+      ACTIONS['log-mood']!({
+        token: '',
+        payload: { score: 3, note: 'n'.repeat(MAX_MOOD_NOTE_CHARS + 1) },
+      }),
+    ).rejects.toThrow(/exceeds/);
+  });
+
+  it('上限は共有の定数から来ている (2 か所に数字を持たない)', () => {
+    expect(MAX_ANALYZE_TEXT_CHARS).toBe(5000);
+    expect(MAX_MOOD_NOTE_CHARS).toBe(2000);
+  });
+});
+
+/*
+ * **静的なテンプレート文字列は、読み直さないと測れない。**
+ *
+ * `ANALYZE_SYSTEM` はモジュール本体で一度だけ評価されるので、ファイル先頭の
+ * 静的 import では変異が効く前に評価が済む (実測 2026-08-31: 生存)。
+ * ここが空になると Anthropic への指示が消え、モデルは自由文で返し、
+ * `extractJson` → `normalizeAnalysis` が黙って既定値に倒れる。
+ */
+describe('解析の指示文 —— 読み直して問う', () => {
+  it('★ 指示文は JSON の形を名指しする', async () => {
+    vi.resetModules();
+    const m = await import('../emotions');
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({ content: [{ type: 'text', text: '{"scores":{},"sentiment":"neutral","dominant":"joy"}' }] }),
+        { status: 200 },
+      ),
+    );
+    await m.ACTIONS['analyze-text']!({
+      token: 'sk-ant-secret',
+      fetch: fetchMock,
+      payload: { text: 'hello' },
+    });
+    const [, init] = fetchMock.mock.calls[0]! as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as { system: string };
+    expect(body.system).toContain('valid JSON');
+    expect(body.system).toContain('"sentiment"');
+    expect(body.system.length).toBeGreaterThan(100);
   });
 });

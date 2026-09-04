@@ -108,6 +108,31 @@ async function measure(browser, port, file) {
         parses: window.__bigParses,
       };
     });
+    /*
+     * **フックが生きていることを毎回確かめる。**
+     *
+     * `JSON.parse` の計装が (addInitScript の失敗・上書き・API 変更で) 効いて
+     * いなくても、`window.__bigParses` が空配列のままなら **「巨大 parse ゼロ」
+     * という同じ報告が出る**。健全なのか計器が死んでいるのかを区別できない。
+     *
+     * 測り終えた**後**に既知の巨大 parse を 1 回走らせ、拾えたことを確認する
+     * (測定への影響は無い)。同じ形を `smoke` にも入れてある (2026-08-24)。
+     */
+    const hookAlive = await page.evaluate(() => {
+      const before = window.__bigParses.length;
+      JSON.parse(JSON.stringify({ pad: 'x'.repeat(1_100_000) }));
+      return window.__bigParses.length > before;
+    });
+    if (!hookAlive) {
+      console.error(
+        `❌ ${file}: JSON.parse の計装が働いていません — ` +
+          '「巨大 parse ゼロ」が意味を持たないので止めます',
+      );
+      process.exit(2);
+    }
+    // 自己検査の分は数えない (本番の測定はこの行より前で終わっている)。
+    m.parses = m.parses.filter((_, idx) => idx < m.parses.length - 1);
+
     samples.push(m);
     if (i === 0) bigParses = m.parses;
     await ctx.close();
@@ -126,11 +151,22 @@ async function measure(browser, port, file) {
   if (missing.length > 0) {
     console.error(
       `perf: ${missing.map((m) => m.file).join(', ')} がありません — ` +
-        'npm run build:web && npm run build:web:lite を先に実行してください ' +
-        '(build:web は dist/ を空にするため、フル版を退避してから lite を作る順序が必要)',
+        '両方のブラウザ版を先に作ってください。**この順でないと片方が消えます** ' +
+        '(vite の emptyOutDir が dist/ を掃除するため):\n' +
+        '    npm run build:web && cp dist/standalone.html /tmp/full.html \\\n' +
+        '      && npm run build:web:lite && cp /tmp/full.html dist/standalone.html\n' +
+        '  `npm run build:renderer` も vite なので、走らせるならブラウザ版より**前に** ' +
+        '(後ろだと両方消える。2026-08-26 に e2e.yml で実際にそうなっていた)',
     );
     process.exit(2);
   }
+
+  // 存在だけでは足りない —— ビルドが失敗すると **前回の成果物が残る**ので、
+  // 古いバンドルの起動性能を測って「問題なし」と報告してしまう。
+  require('../lib/artifact-freshness.cjs').assertFreshArtifacts(
+    TARGETS.map((t) => path.join(dist, t.file)),
+    { srcDir: path.join(ROOT, 'src'), repoRoot: ROOT, tool: 'perf', allowEnv: 'SERVICE_HUB_PERF_ALLOW_STALE' },
+  );
 
   const server = await serve(dist);
   const { port } = server.address();

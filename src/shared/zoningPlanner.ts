@@ -25,6 +25,55 @@ export type RoadMultiplierCategory = 'residential' | 'other';
 /** 近隣商業地域: 原動機を使用する工場の作業場床面積の上限 (㎡・別表第二)。 */
 export const NEIGHBORHOOD_COMMERCIAL_WORKSHOP_CAP = 150;
 
+/** 前面道路の幅員がこれ未満なら、容積率が幅員で制限される (法52条2項・m)。 */
+export const ROAD_FAR_WIDTH_THRESHOLD_M = 12;
+/** 幅員 1 m あたりの容積率 (%)。住居系 4/10 = 40%/m、その他 6/10 = 60%/m (法52条2項)。 */
+export const ROAD_FAR_MULTIPLIER_RESIDENTIAL = 40;
+export const ROAD_FAR_MULTIPLIER_OTHER = 60;
+/** 建ぺい率の緩和 (法53条3項): 角地 +10 ポイント、防火地域内の耐火建築物等 +10 ポイント。 */
+export const CORNER_LOT_COVERAGE_BONUS_PCT = 10;
+export const FIREPROOF_COVERAGE_BONUS_PCT = 10;
+/** 指定建ぺい率がこれ以上の区域で防火地域内の耐火建築物等なら適用除外 = 100% (法53条6項)。 */
+export const FIREPROOF_EXEMPTION_COVERAGE_PCT = 80;
+
+/**
+ * 道路斜線の勾配 (法別表第三(に)欄)。住居系 1.25 / その他 1.5。
+ * 「反対側の境界から 1m につき何 m 上がれるか」を表す。
+ */
+export const ROAD_SLOPE_RESIDENTIAL = 1.25;
+export const ROAD_SLOPE_OTHER = 1.5;
+
+/**
+ * 建築基準法の数値 (台帳 `parameters.ts` から渡せる)。省略時は上の定数。
+ * 建ぺい率・容積率の指定値は都市計画で決まり画面の入力欄にあるので、ここには持たない。
+ */
+export interface ZoningRules {
+  readonly roadFarWidthThresholdM: number;
+  readonly roadFarMultiplierResidential: number;
+  readonly roadFarMultiplierOther: number;
+  readonly cornerLotBonusPct: number;
+  readonly fireproofBonusPct: number;
+  readonly fireproofExemptionCoveragePct: number;
+  readonly roadSlopeResidential: number;
+  readonly roadSlopeOther: number;
+}
+
+export const DEFAULT_ZONING_RULES: ZoningRules = {
+  roadFarWidthThresholdM: ROAD_FAR_WIDTH_THRESHOLD_M,
+  roadFarMultiplierResidential: ROAD_FAR_MULTIPLIER_RESIDENTIAL,
+  roadFarMultiplierOther: ROAD_FAR_MULTIPLIER_OTHER,
+  cornerLotBonusPct: CORNER_LOT_COVERAGE_BONUS_PCT,
+  fireproofBonusPct: FIREPROOF_COVERAGE_BONUS_PCT,
+  fireproofExemptionCoveragePct: FIREPROOF_EXEMPTION_COVERAGE_PCT,
+  roadSlopeResidential: ROAD_SLOPE_RESIDENTIAL,
+  roadSlopeOther: ROAD_SLOPE_OTHER,
+};
+
+/** 用途区分から幅員 1 m あたりの容積率 (%) を引く。 */
+export function roadFarMultiplier(category: RoadMultiplierCategory, rules: ZoningRules = DEFAULT_ZONING_RULES): number {
+  return category === 'residential' ? rules.roadFarMultiplierResidential : rules.roadFarMultiplierOther;
+}
+
 /** 非有限・負を 0 に丸める。 */
 
 /** 0.1 ㎡単位に丸める。 */
@@ -66,8 +115,9 @@ export interface SitePlanResult {
 
 /**
  * 敷地面積と規制値から建築面積・延べ床面積の上限を概算する。
+ * `rules` は建築基準法の数値 (省略時は定数)。
  */
-export function planSite(input: SitePlanInput): SitePlanResult {
+export function planSite(input: SitePlanInput, rules: ZoningRules = DEFAULT_ZONING_RULES): SitePlanResult {
   const site = nonNeg(input.siteArea);
   const baseCov = Math.min(100, nonNeg(input.coverageRatioPct));
   const far = nonNeg(input.farPct);
@@ -76,19 +126,21 @@ export function planSite(input: SitePlanInput): SitePlanResult {
   // 建ぺい率の緩和: 80% 指定 × 防火地域内の耐火建築物等 → 適用除外 (100%)。
   // それ以外は 角地 +10 / 耐火 +10 を加算し 100 で頭打ち。
   let cov: number;
-  if (input.fireproofBonus === true && baseCov >= 80) {
+  if (input.fireproofBonus === true && baseCov >= rules.fireproofExemptionCoveragePct) {
     cov = 100;
   } else {
     cov = Math.min(
       100,
-      baseCov + (input.cornerLot === true ? 10 : 0) + (input.fireproofBonus === true ? 10 : 0),
+      baseCov +
+        (input.cornerLot === true ? rules.cornerLotBonusPct : 0) +
+        (input.fireproofBonus === true ? rules.fireproofBonusPct : 0),
     );
   }
 
   // 前面道路 12m 未満: 幅員 × 4/10 (住居系) or 6/10 (その他) [%換算 = m × 40/60]。
   const roadLimitedFarPct =
-    road > 0 && road < 12
-      ? Math.round(road * (input.category === 'residential' ? 40 : 60) * 10) / 10
+    road > 0 && road < rules.roadFarWidthThresholdM
+      ? Math.round(road * roadFarMultiplier(input.category, rules) * 10) / 10
       : null;
   const effectiveFarPct = roadLimitedFarPct === null ? far : Math.min(far, roadLimitedFarPct);
 
@@ -168,12 +220,7 @@ export function planFactory(input: FactoryPlanInput): FactoryPlanResult {
 
 /* ───────────────  高さ制限: 道路斜線 (法56条1項1号・2項)  ─────────────── */
 
-/**
- * 道路斜線の勾配 (法別表第三(に)欄)。住居系 1.25 / その他 1.5。
- * 「反対側の境界から 1m につき何 m 上がれるか」を表す。
- */
-export const ROAD_SLOPE_RESIDENTIAL = 1.25;
-export const ROAD_SLOPE_OTHER = 1.5;
+// 勾配の定数 (`ROAD_SLOPE_RESIDENTIAL` / `ROAD_SLOPE_OTHER`) は冒頭の `ZoningRules` の隣にある。
 
 /**
  * 日影規制 (法56条の2) の対象となる高さ。近隣商業・商業・準工業・住居系は
@@ -183,8 +230,8 @@ export const ROAD_SLOPE_OTHER = 1.5;
 export const SHADOW_HEIGHT_THRESHOLD_M = 10;
 
 /** 用途区分から道路斜線の勾配を引く。 */
-export function roadSlopeFactor(category: RoadMultiplierCategory): number {
-  return category === 'residential' ? ROAD_SLOPE_RESIDENTIAL : ROAD_SLOPE_OTHER;
+export function roadSlopeFactor(category: RoadMultiplierCategory, rules: ZoningRules = DEFAULT_ZONING_RULES): number {
+  return category === 'residential' ? rules.roadSlopeResidential : rules.roadSlopeOther;
 }
 
 /** 0.01 単位で切り上げる (後退距離は切り下げると違反になるため)。 */
@@ -237,11 +284,11 @@ export interface RoadSlopeResult {
  * 外側にあるとみなされる (法56条2項) ため、後退は 2 倍で効く。
  * 逆に解くと必要後退 a = (計画高さ ÷ 勾配 − 幅員) ÷ 2。
  */
-export function planRoadSlope(input: RoadSlopeInput): RoadSlopeResult {
+export function planRoadSlope(input: RoadSlopeInput, rules: ZoningRules = DEFAULT_ZONING_RULES): RoadSlopeResult {
   const width = nonNeg(input.roadWidthM);
   const setback = nonNeg(input.setbackM);
   const height = nonNeg(input.plannedHeightM);
-  const slopeFactor = roadSlopeFactor(input.category);
+  const slopeFactor = roadSlopeFactor(input.category, rules);
 
   const limitM = round2((width + setback * 2) * slopeFactor);
   const needed = (height / slopeFactor - width) / 2;
@@ -362,13 +409,16 @@ export interface SetbackTradeoffResult {
  * 敷地の奥行をより多く使える。ただし建蔽率の上限を超えては建てられないため、
  * 最終的にどちらに縛られているかを limitedBy で示す。
  */
-export function planSetbackTradeoff(input: SetbackTradeoffInput): SetbackTradeoffResult {
-  const slope = planRoadSlope({
-    roadWidthM: input.roadWidthM,
-    setbackM: 0,
-    category: input.category,
-    plannedHeightM: input.plannedHeightM,
-  });
+export function planSetbackTradeoff(input: SetbackTradeoffInput, rules: ZoningRules = DEFAULT_ZONING_RULES): SetbackTradeoffResult {
+  const slope = planRoadSlope(
+    {
+      roadWidthM: input.roadWidthM,
+      setbackM: 0,
+      category: input.category,
+      plannedHeightM: input.plannedHeightM,
+    },
+    rules,
+  );
   const requiredSetbackM = slope.minSetbackM;
 
   const buildableDepthM = round2(
