@@ -13,6 +13,13 @@
  * 本フェーズでは file:// と hosted の両方で動く共通フローとして
  * out-of-band を採用する (BROWSER_REDESIGN.md §8.1)。
  */
+import { redactForMessage } from '../../shared/redact';
+import {
+  DEFAULT_HTTP_TIMEOUT_MS,
+  MAX_HTTP_RESPONSE_BYTES,
+  readBodyWithCap,
+  withTimeout,
+} from '../../shared/httpLimits';
 
 export interface PkceSecrets {
   /** code_verifier — token exchange までブラウザに保持 */
@@ -27,10 +34,20 @@ export interface PkceSecrets {
 // (challenge len / state random / URL params / token exchange happy +
 // error). Decorative error messages, default fallbacks, and Date.now()
 // arithmetic are not differentiable.
-// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,ArithmeticOperator,Regex,UpdateOperator,BlockStatement
-function base64UrlEncode(bytes: Uint8Array): string {
+/**
+ * base64url (RFC 4648 §5) — `+`→`-`、`/`→`_`、末尾のパディングは落とす。
+ *
+ * **テストのために公開している。** 2026-08-21 の実測で
+ * `.replace(/\//g, '_')` を `''` にした変異体が生き残っていた — つまり
+ * 「`/` が `_` になる」ことを誰も見ていなかった。`generatePkce` 経由の
+ * 既存の検査は `/^[A-Za-z0-9_-]+$/` を見ているが、**`/` を消しても
+ * その文字クラスは満たされる**ので落ちない。純関数なので直に固定する。
+ */
+export function base64UrlEncode(bytes: Uint8Array): string {
   let bin = '';
   for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]!);
+  // Stryker disable next-line Regex: base64 のパディングは末尾にしか現れないので、
+  // 末尾アンカーを外しても取り除く対象は変わらない (等価変異)。
   return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
@@ -53,6 +70,9 @@ export function safeStateEquals(a: string, b: string): boolean {
   if (typeof a !== 'string' || typeof b !== 'string') return false;
   if (a.length !== b.length) return false;
   let diff = 0;
+  // Stryker disable next-line EqualityOperator: 長さが等しいことは上で確認済みなので、
+  // 1 つ余分に回っても両側とも `charCodeAt(len)` が NaN になり `NaN ^ NaN === 0` で
+  // diff が変わらない (等価変異)。境界を 1 つ越えても結果は同じ。
   for (let i = 0; i < a.length; i++) {
     diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
   }
@@ -66,20 +86,33 @@ export function safeStateEquals(a: string, b: string): boolean {
 export function parseGoogleCallback(input: string): { code: string; state: string } | null {
   if (typeof input !== 'string') return null;
   const trimmed = input.trim();
-  if (trimmed.length === 0) return null;
-  // Three accepted forms:
+  // **空文字の早期 return も置かない。** `new URLSearchParams('')` は空なので
+  // 下の `!code || !state` で null に落ちる。上の分岐と同じ理由 —
+  // 結果が変わらない枝を置くと、黙らせるしかない変異体が 1 つ増える。
+  // Accepted forms:
   //   1. full URL: https://localhost:12345/cb?code=...&state=...
   //   2. query-only: ?code=...&state=...  or  code=...&state=...
-  //   3. bare "code=4/..." with no state (rejected — state-less callback)
+  // それ以外 (bare "code=4/..." のように state が無いもの・そもそも
+  // クエリでないもの) は下の `!code || !state` で null になる。
   let params: URLSearchParams;
   try {
+    // **`=` を含むかの判定は置かない。** 以前は
+    // `} else if (trimmed.includes('='))` と書いていたが、`=` を含まない
+    // 文字列がその枝へ入っても `URLSearchParams` は空になり、結局下の
+    // `!code || !state` で null に落ちる — 条件の有無で結果が変わらない。
+    //
+    // 2026-08 の時点では「範囲指定で黙らせると 163 → 97 変異体に縮むので
+    // 割に合わない」として**等価変異 2 つを生存のまま残していた**。だが
+    // 第三の道があった: 分岐そのものを消せば、黙らせずに 2 つとも消える。
+    // 分母を縮めずに 100% になるので、こちらが正しい (この repo の
+    // 「等価変異は黙らせる前にコードを単純化できないか先に疑う」の実例)。
+    //
+    // 先頭の `?` は URLSearchParams 自身が落とすので、こちらで剥がさない
+    // (剥がす分岐は一度も結果を変えていなかった — 2026-08 変異検査)。
     if (/^https?:\/\//i.test(trimmed)) {
       params = new URL(trimmed).searchParams;
-    } else if (trimmed.includes('=')) {
-      const qs = trimmed.startsWith('?') ? trimmed.slice(1) : trimmed;
-      params = new URLSearchParams(qs);
     } else {
-      return null;
+      params = new URLSearchParams(trimmed);
     }
   } catch {
     return null;
@@ -168,24 +201,50 @@ export async function exchangeGoogleCode(
     code_verifier: verifier,
     redirect_uri: redirectUri,
   });
-  const res = await fetchImpl('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    body: params.toString(),
+  // 打ち切りと応答サイズの上限を掛ける —— 兄弟の `network/proxy.ts` は
+  // 掛けていて、ここだけ素の fetch だった (2026-08-23)。相手は既知ホストだが、
+  // 守るのは攻撃より**事故**である: 応答しない端点で「交換中…」のまま
+  // 固まるか、巨大な応答をそのまま読む。
+  // **本文を読み終えるまでを締切の中に入れる。** `fetch` はヘッダで解決するので、
+  // Response を外へ出すと打ち切りが本文に掛からない (2026-08-28)。
+  const raw = await withTimeout(DEFAULT_HTTP_TIMEOUT_MS, null, async (signal) => {
+    const res = await fetchImpl('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: params.toString(),
+      signal,
+    });
+    if (!res.ok) {
+      // Stryker disable next-line StringLiteral: ここのラベルは**直後の `.catch` が
+      // 捨てる**ので、空にしても観測できる差が出ない (等価変異・2026-08-31 に
+      // 対照で確認)。成功側 (下の `return`) は catch していないため文言が
+      // 利用者に届き、そちらは検査で留めてある。
+      const body = await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'token exchange').catch(
+        () => '',
+      );
+      // 連携先が応答に資格情報を反射しても、エラー経由で漏らさない
+      // (jsonFetch / proxy.ts と同じ規律)。この文字列は画面にそのまま出て、
+      // 不具合報告に貼られる。
+      throw new Error(`token exchange ${res.status}: ${redactForMessage(body, 200)}`);
+    }
+    return readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'token exchange');
   });
-  if (!res.ok) {
-    const body = await res.text().catch(() => '');
-    throw new Error(`token exchange ${res.status}: ${body.slice(0, 200)}`);
-  }
-  const data = (await res.json()) as {
+  let data: {
     access_token?: string;
     refresh_token?: string;
     expires_in?: number;
     scope?: string;
   };
+  try {
+    data = JSON.parse(raw) as typeof data;
+  } catch {
+    throw new Error('トークン端点の応答が JSON ではありません');
+  }
   if (typeof data.access_token !== 'string' || data.access_token.length === 0) {
     throw new Error('token exchange response missing access_token');
   }
+  // Stryker disable next-line ConditionalExpression: 型検査を落としても `Number.isFinite` が
+  // 非数値を弾くため、既定の 3600 に落ちる結果は変わらない (等価変異)。
   const expiresIn = typeof data.expires_in === 'number' && Number.isFinite(data.expires_in) ? data.expires_in : 3600;
   const result: TokenResult = {
     accessToken: data.access_token,
@@ -204,4 +263,3 @@ export const GOOGLE_SCOPES = {
   calendar: ['https://www.googleapis.com/auth/calendar.readonly'],
   gmail: ['https://www.googleapis.com/auth/gmail.readonly'],
 } as const;
-// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,ArithmeticOperator

@@ -35,6 +35,12 @@ if (!['bearer', 'oauth', 'json'].includes(authKind)) fail(`unknown auth kind "${
 
 const pascal = id.replace(/(^|-)(.)/g, (_, __, c) => c.toUpperCase());
 const camel = pascal[0].toLowerCase() + pascal.slice(1);
+// JS object key for `LIVE_FETCHERS` / `LIVE_ACTIONS` / `SNAPSHOT`. Must
+// match `ServiceId` exactly (so renderer/main agree). Hyphens or digits
+// in the ID force a quoted key — using `camel` (which strips hyphens)
+// was the source of the silent-mismatch bug where `microsoft-365` got
+// registered as `microsoft365` etc. in PR #5 / PR #7.
+const idKey = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(id) ? id : `'${id}'`;
 
 // --- file paths ----------------------------------------------------------
 const FETCHER = path.join(ROOT, `src/main/clients/${id}.ts`);
@@ -286,12 +292,12 @@ insertBefore(
 insertBefore(
   CLIENTS_INDEX,
   '  // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE',
-  `  ${camel}: fetch${pascal}Snapshot,\n`,
+  `  ${idKey}: fetch${pascal}Snapshot,\n`,
 );
 insertBefore(
   CLIENTS_INDEX,
   '  // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE',
-  `  ${camel}: ${pascal.toUpperCase()}_ACTIONS,\n`,
+  `  ${idKey}: ${pascal.toUpperCase()}_ACTIONS,\n`,
 );
 
 insertBefore(
@@ -314,7 +320,7 @@ insertBefore(
 insertBefore(
   SNAPSHOT,
   '  // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW',
-  `  ${camel}: {
+  `  ${idKey}: {
     items: [] as { id: string; name: string }[],
   },\n\n`,
 );

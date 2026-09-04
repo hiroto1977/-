@@ -18,21 +18,70 @@ import { fetchBusinessOpsSnapshot, ACTIONS as BUSINESS_ACTIONS } from './busines
 import { fetchTeamRadarSnapshot, ACTIONS as TEAMRADAR_ACTIONS } from './teamradar';
 import { fetchTemplatesSnapshot, ACTIONS as TEMPLATES_ACTIONS } from './templates';
 import { fetchHomeSnapshot } from './home';
+import { fetchVillageSnapshot } from './village';
 import { fetchLibrarySnapshot } from './library';
 import { fetchSettingsSnapshot } from './settings';
 import { fetchUberEatsSnapshot, ACTIONS as UBER_EATS_ACTIONS } from './uber-eats';
 import { fetchDemaeCanSnapshot, ACTIONS as DEMAE_CAN_ACTIONS } from './demae-can';
 import { fetchRealEstateSnapshot, ACTIONS as REAL_ESTATE_ACTIONS } from './real-estate';
 import { fetchMutualFundsSnapshot, ACTIONS as MUTUAL_FUNDS_ACTIONS } from './mutual-funds';
+import { fetchChartsSnapshot } from './charts';
 import { fetchQualitySnapshot } from './quality';
+import { fetchMicrosoft365Snapshot, ACTIONS as MICROSOFT365_ACTIONS } from './microsoft-365';
+import { fetchDropboxSnapshot } from './dropbox';
+import { fetchSalesforceSnapshot } from './salesforce';
+import { fetchDiscordSnapshot } from './discord';
+import { fetchAsanaSnapshot } from './asana';
+import { fetchLinearSnapshot } from './linear';
+import { fetchSentrySnapshot } from './sentry';
+import { fetchShopifySnapshot, ACTIONS as SHOPIFY_ACTIONS } from './shopify';
+import { fetchStripeSnapshot } from './stripe';
+import { fetchLineSnapshot } from './line';
+import { fetchStorageSnapshot } from './storage';
+import { fetchTaxAccountantSnapshot } from './tax-accountant';
+import { fetchLaborConsultantSnapshot } from './labor-consultant';
+import { fetchLawyerSnapshot } from './lawyer';
+import { fetchJudicialScrivenerSnapshot } from './judicial-scrivener';
+import { fetchAdminScrivenerSnapshot } from './admin-scrivener';
+import { fetchSmeConsultantSnapshot } from './sme-consultant';
+import { fetchPatentAttorneySnapshot } from './patent-attorney';
+import { fetchCpaSnapshot } from './cpa';
+import { fetchBaseSnapshot } from './base';
+import { fetchNetseaSnapshot } from './netsea';
+import { fetchSuperDeliverySnapshot } from './super-delivery';
+import { fetchTopsellerSnapshot } from './topseller';
+import { fetchA8netSnapshot } from './a8net';
+import { fetchAiBlogkunSnapshot } from './ai-blogkun';
+import { fetchMoneyforwardSnapshot } from './moneyforward';
+import { fetchAmazonSnapshot } from './amazon';
+import { fetchAmazonAssociatesSnapshot } from './amazon-associates';
+import { fetchSalesSnapshot } from './sales';
+import { fetchTeamSnapshot } from './team';
+import { fetchYoutubeSnapshot } from './youtube';
+import { fetchOverviewSnapshot } from './overview';
+import { fetchCoconalaSnapshot } from './coconala';
+import { fetchTiktokSnapshot } from './tiktok';
+import { fetchTaxSnapshot } from './tax';
+import { fetchFundingSnapshot } from './funding';
+import { fetchFreeeSnapshot } from './freee';
+import { fetchConnectorsSnapshot } from './connectors';
+import { fetchLinuxSnapshot } from './linux';
+import { fetchComplianceSnapshot } from './compliance';
+import { fetchObsidianSnapshot } from './obsidian';
+import { fetchDockerSnapshot } from './docker';
+import { fetchAssistantSnapshot, ACTIONS as ASSISTANT_ACTIONS } from './assistant';
+import { fetchDocstudioSnapshot, ACTIONS as DOCSTUDIO_ACTIONS } from './docstudio';
+import { fetchCursorSnapshot, ACTIONS as CURSOR_ACTIONS } from './cursor';
+import { fetchTalentSnapshot, ACTIONS as TALENT_ACTIONS } from './talent';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
-import type { ServiceId } from '../../shared/serviceId';
+import { SERVICE_IDS, type ServiceId } from '../../shared/serviceId';
 
 export type { ServiceId };
 
 export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unknown>> = {
   home: fetchHomeSnapshot,
+  village: fetchVillageSnapshot,
   github: fetchGithubSnapshot,
   wordpress: fetchWordPressSnapshot,
   atlassian: fetchAtlassianSnapshot,
@@ -58,7 +107,54 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   'demae-can': fetchDemaeCanSnapshot,
   'real-estate': fetchRealEstateSnapshot,
   'mutual-funds': fetchMutualFundsSnapshot,
+  charts: fetchChartsSnapshot,
   quality: fetchQualitySnapshot,
+  'microsoft-365': fetchMicrosoft365Snapshot,
+  dropbox: fetchDropboxSnapshot,
+  salesforce: fetchSalesforceSnapshot,
+  discord: fetchDiscordSnapshot,
+  asana: fetchAsanaSnapshot,
+  linear: fetchLinearSnapshot,
+  sentry: fetchSentrySnapshot,
+  shopify: fetchShopifySnapshot,
+  stripe: fetchStripeSnapshot,
+  line: fetchLineSnapshot,
+  storage: fetchStorageSnapshot,
+  'tax-accountant': fetchTaxAccountantSnapshot,
+  'labor-consultant': fetchLaborConsultantSnapshot,
+  lawyer: fetchLawyerSnapshot,
+  'judicial-scrivener': fetchJudicialScrivenerSnapshot,
+  'admin-scrivener': fetchAdminScrivenerSnapshot,
+  'sme-consultant': fetchSmeConsultantSnapshot,
+  'patent-attorney': fetchPatentAttorneySnapshot,
+  cpa: fetchCpaSnapshot,
+  base: fetchBaseSnapshot,
+  netsea: fetchNetseaSnapshot,
+  'super-delivery': fetchSuperDeliverySnapshot,
+  topseller: fetchTopsellerSnapshot,
+  a8net: fetchA8netSnapshot,
+  'ai-blogkun': fetchAiBlogkunSnapshot,
+  moneyforward: fetchMoneyforwardSnapshot,
+  amazon: fetchAmazonSnapshot,
+  'amazon-associates': fetchAmazonAssociatesSnapshot,
+  sales: fetchSalesSnapshot,
+  team: fetchTeamSnapshot,
+  youtube: fetchYoutubeSnapshot,
+  overview: fetchOverviewSnapshot,
+  coconala: fetchCoconalaSnapshot,
+  tiktok: fetchTiktokSnapshot,
+  tax: fetchTaxSnapshot,
+  funding: fetchFundingSnapshot,
+  freee: fetchFreeeSnapshot,
+  connectors: fetchConnectorsSnapshot,
+  linux: fetchLinuxSnapshot,
+  compliance: fetchComplianceSnapshot,
+  obsidian: fetchObsidianSnapshot,
+  docker: fetchDockerSnapshot,
+  assistant: fetchAssistantSnapshot,
+  docstudio: fetchDocstudioSnapshot,
+  cursor: fetchCursorSnapshot,
+  talent: fetchTalentSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -68,9 +164,27 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
 // loud, deterministic crash rather than an opaque "unknown service id"
 // at first user interaction.
 {
-  // Import lazily to avoid widening the circular-import surface.
-   
-  const { SERVICE_IDS } = require('../../shared/serviceId') as typeof import('../../shared/serviceId');
+  /*
+   * **静的 import で読む。**
+   *
+   * ここは 2026-08-26 まで `require('../../shared/serviceId')` だった
+   * ——「循環 import の面を広げないため」という理由が添えてあったが、
+   * `shared/serviceId.ts` は import を 1 つも持たない葉なので循環は起きない。
+   *
+   * そして実行時 `require()` は**バンドラが書き換えない**。出来上がった
+   * `dist-electron/main.js` にはそのまま `require("../../shared/serviceId")`
+   * が残り、`dist-electron/` から見て repo の外を指すので解決できない。
+   * 実測 (2026-08-26):
+   *
+   *   electron .  →  App threw an error during load
+   *                  Cannot find module '../../shared/serviceId'
+   *
+   * **デスクトップ版が起動しない。** しかも落ちているのは、まさに
+   * 「新しい id にフェッチャを足し忘れたら起動時に大きく落とす」ための
+   * 不変条件そのものだった。CI はここを一度も通らない —— smoke は
+   * `scripts/screenshot.cjs` を主プロセスにして自前で窓を作り、e2e は
+   * ブラウザ版の HTML を読み、release.yml はインストーラを作るが起動はしない。
+   */
   for (const id of SERVICE_IDS) {
     if (!Object.hasOwn(LIVE_FETCHERS, id)) {
       throw new Error(
@@ -88,6 +202,10 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
  *  token is not an error here. */
 export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'home',
+  // 書類スタジオ: テンプレートは renderer 内蔵。認証・ネットワーク不要。
+  'docstudio',
+  // AIの村: registry.json から renderer 側で導出する全画面シーン。認証不要。
+  'village',
   'skills',
   'security',
   'emotions',
@@ -95,7 +213,10 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'kpi',
   'stocks',
   'business',
+  'funding',
   'teamradar',
+  // 人材育成: 判定はすべて純粋関数、状態は ~/.local/business-hub/。認証・通信なし。
+  'talent',
   'templates',
   'library',
   'settings',
@@ -103,7 +224,55 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'demae-can',
   'real-estate',
   'mutual-funds',
+  'charts',
   'quality',
+  'storage',
+  // 士業: 個別の専門家連携で公式 API なし、永続的に snapshot-only。
+  'tax-accountant',
+  'labor-consultant',
+  'lawyer',
+  'judicial-scrivener',
+  'admin-scrivener',
+  'sme-consultant',
+  'patent-attorney',
+  'cpa',
+  // EC 仕入れ/卸/ASP/AI 執筆: 公開 API なし or パートナー限定で snapshot-only。
+  'netsea',
+  'super-delivery',
+  'topseller',
+  'a8net',
+  'ai-blogkun',
+  // クラウド会計 (公式 API はパートナー登録 + OAuth 必須) で snapshot-only。
+  'moneyforward',
+  // Amazon セラー (SP-API) / アソシエイト: 要パートナー承認で snapshot-only。
+  'amazon',
+  'amazon-associates',
+  // 売上集計: データは renderer の record store に保存、認証不要。
+  'sales',
+  // チーム管理: メンバーは renderer の record store に保存、認証不要。
+  'team',
+  // 経営サマリー: 既存機能の集約のみ。認証不要。
+  'overview',
+  // ココナラ: 公開 API なしで snapshot-only。
+  'coconala',
+  // TikTok: 公式 API はパートナー審査 + OAuth 前提で snapshot-only。
+  'tiktok',
+  // 税務試算: 計算のみ・公式ツールへ導線。納付は手動。snapshot-only。
+  'tax',
+  // コネクター/自動化: 無料(認証不要)カタログの可視化のみ。snapshot-only。
+  'connectors',
+  // Linux システムモニター: Electron main の `os` から実値を読む。認証不要。
+  'linux',
+  // コンプライアンス: 確証済み知識の表示のみ。実データは renderer。認証不要。
+  'compliance',
+  // Obsidian: ローカル Vault (Markdown) の可視化。認証不要。fetcher は現状 stub で、
+  // 実 Vault の fs 読み取りは未配線 (`dataOrigin.ts` では 'sample')。
+  'obsidian',
+  // Docker: ローカル Docker Engine の可視化。認証不要。fetcher は現状 stub で、
+  // 実 Engine の socket 読み取りは未配線 (`dataOrigin.ts` では 'sample')。
+  'docker',
+  // AI アシスタント: ページ表示は認証不要 (会話は Anthropic キー設定時のみ)。
+  'assistant',
 ]);
 
 /** Per-service write-side actions. Each service may register one or more
@@ -131,6 +300,12 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   'demae-can': DEMAE_CAN_ACTIONS,
   'real-estate': REAL_ESTATE_ACTIONS,
   'mutual-funds': MUTUAL_FUNDS_ACTIONS,
+  shopify: SHOPIFY_ACTIONS,
+  'microsoft-365': MICROSOFT365_ACTIONS,
+  assistant: ASSISTANT_ACTIONS,
+  docstudio: DOCSTUDIO_ACTIONS,
+  cursor: CURSOR_ACTIONS,
+  talent: TALENT_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 

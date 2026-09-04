@@ -1,0 +1,26 @@
+---
+title: "un.org"
+type: source-domain
+host: "un.org"
+cite_count: 3
+tags:
+  - source-domain
+  - index
+---
+
+# un.org
+
+> [!info] 出典ドメイン索引 ・ 引用 **3 件**（公的 3）
+
+## このドメインを出典とする項目
+
+- [[bizlaw-sovereign-equality|主権平等原則（Principle of Sovereign Equality）]] — UNCharterChapterI:PurposesandPrinciples—Article2(1)
+- [[human-intersectionality-theory|インターセクショナリティ理論（交差性理論）]] — UNWomen/CEDAW—ConceptNoteonIntersectionality
+- [[infosoc-knowledge-society|知識社会（ナレッジ・ソサエティ）]] — UNESCO,TowardsKnowledgeSocieties:複数形の知識社会と情報社会の区別
+
+## 関連
+- 索引: [[出典ドメイン索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

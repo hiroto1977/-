@@ -2,7 +2,7 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <!--
       Content-Security-Policy: defense-in-depth on top of contextIsolation
       + sandbox. Tightened for our actual needs:
@@ -16,17 +16,24 @@
                                          arbitrary https hosts (Canva,
                                          GitHub avatars, etc.) and our
                                          icon is a data: URL fallback
-        - connect-src 'self' http://localhost:5173 ws://localhost:5173
-                                       — needed only for `npm run dev`
-                                         HMR; production renderer makes
-                                         zero network calls (all REST
-                                         goes through main via IPC)
+        - connect-src 'self'           — production renderer makes zero
+                                         network calls (all REST goes
+                                         through main via IPC).
+                                         `npm run dev` の HMR は 5173 へ
+                                         WebSocket を張るが、その origin は
+                                         **ここには書かない**。Electron 版は
+                                         この meta をそのまま同梱するので、
+                                         書くと製品版でも 5173 を握るローカル
+                                         プロセスへ通信できてしまう。開発時
+                                         だけ vite.config.ts の
+                                         `devCspOrigins` プラグインが足す
+                                         (scripts/dev-csp.cjs)。
         - object-src  'none'           — no plugins, no flash
         - frame-src   'none'           — no embedded frames
         - base-uri    'self'           — block injected <base> tags
         - form-action 'none'           — block any form submission
     -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' http://localhost:5173 ws://localhost:5173; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'none'" />
     <title>Service Hub</title>
   </head>
   <body>

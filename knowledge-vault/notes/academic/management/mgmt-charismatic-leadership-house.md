@@ -1,0 +1,50 @@
+---
+collection: academic
+id: mgmt-charismatic-leadership-house
+category: "management"
+category_ja: "経営学"
+title: "カリスマ的リーダーシップ——非凡な影響を生む行動と帰属の理論"
+as_of: "2026-06-26"
+source_count: 2
+authoritative: true
+tags:
+  - collection/academic
+  - academic/management
+  - knowledge/verified
+aliases:
+  - "カリスマ的リーダーシップ——非凡な影響を生む行動と帰属の理論"
+---
+
+# カリスマ的リーダーシップ——非凡な影響を生む行動と帰属の理論
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06-26 ・ 出典: 2件（うち権威ある出典 ✓）
+
+## 概要
+カリスマ的リーダーシップ（charismatic leadership）の理論は、ロバート・ハウスが1976年の論文「カリスマ的リーダーシップの1976年理論」で、マックス・ウェーバーが論じた「カリスマ的支配」の概念を、検証可能な行動科学的理論へと転換したものである。ウェーバーは、支配の正統性の源泉を、伝統・合法性・カリスマの三類型に分け、カリスマを、指導者の超人的・非凡な資質に対する被支配者の帰依に基づく支配とした。ハウスはこの社会学的概念を、リーダーの具体的な行動と、それがフォロワーに及ぼす効果として操作的に定義した。ハウスによれば、カリスマ的リーダーは特定の行動を示す。すなわち、人を鼓舞する魅力的なビジョンを明確に語ること、フォロワーに高い期待を示すと同時に彼らがそれを達成できるという信頼を表明すること、自らが模範（ロールモデル）となって範を示すこと、そして自信と確信、強い信念を体現することである。これらの行動が、フォロワーに非凡な効果を生む。フォロワーはリーダーへの信頼と献身、同一化を深め、リーダーの信念やビジョンを自らのものとして受け入れ、動機づけが高まり、通常の期待を超える努力と成果を発揮する。ハウスの理論の重要な特徴は、カリスマが単にリーダーが生まれ持つ神秘的な資質なのではなく、フォロワーが、リーダーの示す行動や、自己犠牲・型破りな手段といった特徴に基づいてリーダーに帰属する性質だと捉えた点にある。すなわちカリスマは、リーダーとフォロワーの関係の中で構成される。この理論は、バーナード・バスの変革的リーダーシップ論やボアス・シャミルらの自己概念に基づくカリスマ理論へと発展し、ビジョンと感情的な鼓舞を通じてフォロワーの非凡な動機づけを引き出すリーダーシップの研究の基礎となった。一方で、カリスマが暗い目的に用いられる危険（破壊的カリスマ）も論じられている。
+
+## 提唱者・初出
+ロバート・ハウス ／ マックス・ウェーバー ／ バーナード・バス ／ ボアス・シャミル
+
+## 出典
+- [House, R.J. (1977) A 1976 Theory of Charismatic Leadership — in Leadership: The Cutting Edge (WorldCat)](https://www.worldcat.org/oclc/2729158) `学術`
+- [Wikipedia: Charismatic leadership — House, Weber, vision, follower attribution, transformational leadership](https://en.wikipedia.org/wiki/Charismatic_authority) `リファレンス`
+
+## 関連概念
+- [[mgmt-bureaucracy|官僚制（ウェーバー）]] — 同じ思想家
+- [[infosoc-mcdonaldization|マクドナルド化]] — 同じ思想家
+- [[mgmt-full-range-leadership-bass|フルレンジ・リーダーシップ・モデル——変革・交換・放任の連続体]] — 同じ思想家
+- [[human-curse-of-knowledge|知識の呪縛]] — 同じ思想家
+- [[mgmt-contingency-fiedler|フィードラーのコンティンジェンシー理論——リーダー特性と状況好意性の適合]] — 同じ思想家
+- [[mgmt-cross-cultural-leadership-house-globe|GLOBEプロジェクト——文化次元とリーダーシップの国際比較]] — 同じ思想家
+- [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同じ思想家
+- [[mgmt-path-goal-theory-house|パス・ゴール理論——リーダーが部下の目標達成経路を整備する条件適応的指導]] — 同じ思想家
+- [[mgmt-zone-of-indifference-barnard|無関心圏——権威の受容理論と命令が受け入れられる範囲]] — 同じ思想家
+- [[mgmt-servant-leadership-spears|サーバント・リーダーシップ（グリーンリーフ／スピアーズ）]] — 同分野の近傍
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

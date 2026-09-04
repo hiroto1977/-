@@ -142,7 +142,7 @@ function Tile({ label, value, sub, accent }: { label: string; value: string; sub
 export function StocksPage() {
   const { data, source, status, errorMessage, refresh } = useServiceData<StocksSnapshot>(
     'stocks',
-    SNAPSHOT.stocks as unknown as StocksSnapshot,
+    SNAPSHOT.stocks,
   );
 
   const portfolio = data.portfolio;
@@ -576,6 +576,18 @@ export function StocksPage() {
           AI 出力は実在しないティッカーや誤った理由付けを含む可能性があります。
           実際の売買判断はご自身の責任で行ってください。
           回答は登録されている許可済みティッカーに限定されます。
+          {/*
+            **何が外へ出るかを書く。** 質問だけでなく、**登録済みウォッチリストの
+            ティッカー**が system / user 両方のプロンプトに載って Anthropic へ送られる
+            (`callStocksAdvisor` が `loadWatchlistSymbols()` をユニバースにする)。
+            指標そのものはモックだが、**どの銘柄を見ているかは利用者が入れた情報**で、
+            別の目的で登録したものがここで外部へ出る。
+            このアプリは他の画面 (クラウド同期・保存状態) では「何が送られないか」まで
+            書いているのに、AI の画面だけ書いていなかった (2026-08-23)。
+          */}
+          <br />
+          送信内容: 質問文と、<strong>登録済みウォッチリストのティッカー</strong>が
+          Anthropic API へ送信されます (指標はモック値)。
         </div>
         <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
           <input

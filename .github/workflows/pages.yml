@@ -1,0 +1,112 @@
+name: pages
+
+# GitHub Pages へ standalone ビルドを公開する。
+# 公開後は https://<owner>.github.io/<repo>/ をクリックするだけで
+# アプリがブラウザで開く (ダウンロード・ファイル操作は一切不要)。
+#
+# 有効化 (オーナーが一度だけ): リポジトリ Settings → Pages →
+#   "Build and deployment" の Source を "GitHub Actions" に設定。
+# 以後 main への push で自動公開される。
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # 手動実行も可
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build:web
+      # フル版を退避してからモバイル用ライト版 (学術コーパス非搭載・~2MB) を
+      # 生成する。vite build は dist/ を空にするため順序と退避が必須。
+      - run: cp dist/standalone.html /tmp/standalone-full.html
+      - run: npm run build:web:lite
+      - run: cp /tmp/standalone-full.html dist/standalone.html
+      # 軽量ランディング (services.ts から自動生成・自己検証付き) を生成
+      - run: npm run build:landing
+      # カウンセリング会話デモ (実エンジンをバンドル・自己検証付き) を生成
+      - run: npm run build:demo
+      # 合議デモ (実エンジン同梱・自己検証付き) を生成
+      - run: npm run build:deliberation-demo
+      # 研究デモ (AI同士の役割演技・自己検証付き) を生成
+      - run: npm run build:research-demo
+      # ルート = 軽量ランディング、フル版 = /app.html、OGP = /og.png
+      - name: Prepare site
+        run: |
+          mkdir -p _site
+          cp dist/landing.html _site/index.html
+          cp dist/standalone.html _site/app.html
+          cp dist/standalone.html _site/standalone.html
+          # スマホ用ライト版: /lite.html (10MB のフル版はスマホ回線で開けないため)
+          cp dist/standalone-lite.html _site/lite.html
+          cp dist/counseling-demo.html _site/counseling-demo.html
+          cp dist/deliberation-demo.html _site/deliberation-demo.html
+          cp dist/research-demo.html _site/research-demo.html
+          cp assets/og.png _site/og.png
+          # PWA (ホーム画面に追加): manifest / icon / service worker を配置
+          cp assets/manifest.webmanifest _site/manifest.webmanifest
+          cp assets/icon.svg _site/icon.svg
+          cp assets/sw.js _site/sw.js
+          touch _site/.nojekyll
+      # PWA タグ注入 (公開 HTML のみ。standalone.html 配布物は単一ファイルのまま不変)
+      - name: Inject PWA tags
+        run: node scripts/inject-pwa.cjs _site/index.html _site/app.html _site/lite.html
+      # ---- 公開の直前に、出す物そのものへ当てる -------------------------
+      #
+      # **公開しているのはこのワークフローである。** 同じ検査は ci.yml にも
+      # 在るが、あちらは別ジョブで**並行に走るだけ**で、ここには `needs:` も
+      # 無い —— ci.yml が赤くなっても、このワークフローは公開を終えている
+      # (2026-08-25 に構成を確認)。検査と危ない操作が別の場所に在るという、
+      # この repo で繰り返し出ている形そのものだった。
+      #
+      # ci.yml は `/tmp/inject-check/` へ**複製**を作って当てるが、ここでは
+      # `_site/` の**実物**に当てる。写しではなく出す物を見る。
+      - name: Scan the artifacts being published for real personal data
+        run: |
+          ls -la _site/
+          node scripts/lint-sample-data.cjs --artifact \
+            _site/app.html \
+            _site/index.html \
+            _site/lite.html \
+            _site/standalone.html \
+            _site/counseling-demo.html \
+            _site/deliberation-demo.html \
+            _site/research-demo.html
+
+      # CSP も注入後の実物に当てる。`inject-pwa` は manifest / icon / SW 登録を
+      # 足すので、注入前に足りていても注入後に足りないことがある。
+      - name: Verify CSP on the artifacts being published
+        run: |
+          node scripts/lint-artifact-csp.cjs \
+            --app _site/app.html \
+            --app _site/lite.html \
+            --app _site/standalone.html \
+            --document _site/index.html \
+            --document _site/counseling-demo.html \
+            --document _site/deliberation-demo.html \
+            --document _site/research-demo.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

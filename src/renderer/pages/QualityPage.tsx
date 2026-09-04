@@ -72,10 +72,10 @@ export function QualityPage() {
           <thead>
             <tr>
               <th style={thStyle}>PR</th>
-              <th style={thStyle}>Round</th>
-              <th style={thNum}>🔴 BLOCKING</th>
-              <th style={thNum}>🟡 SHOULD-FIX</th>
-              <th style={thNum}>🟢 NIT</th>
+              <th style={thStyle}>ラウンド</th>
+              <th style={thNum}>🔴 要修正</th>
+              <th style={thNum}>🟡 修正推奨</th>
+              <th style={thNum}>🟢 軽微</th>
               <th style={thStyle}>判定</th>
             </tr>
           </thead>

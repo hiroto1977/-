@@ -1,0 +1,1173 @@
+{
+ "description": "重複統合パス4（2026-07-28, 4並列エージェントが全文読解のうえ裁定）で「統合すべき」と判定されたペアの実行計画。DISTINCT 裁定は knowledge-distinct-pairs.json、こちらは MERGE 側。keep に残し、drop を削除する前に migrate の内容を必ず keep 側へ取り込むこと（統合＝削除ではない）。実行後は vault:build → vault:check → verify:knowledge → verify:graph を通す。",
+ "adjudicatedAt": "2026-07-28",
+ "method": "各ペアについて両エントリの全文（title / statement / keyFigures / authority / sources）を読み、『同じ対象を同じ粒度で説明した実質的な言い換え』のみを MERGE と判定。粒度違い・法域違い・上位/下位・片方にしかない条文や数値がある場合は DISTINCT として除外した。",
+ "clusters": {
+  "note": "3件以上が同一概念に収束するため、ペア単位でなくまとめて処理すること。ペアごとに実行すると統合先が二重に残る。",
+  "items": [
+   {
+    "topic": "感情調整（Gross のプロセスモデル）",
+    "ids": [
+     "human-emotion-regulation-gross",
+     "human-emotional-regulation",
+     "human-emotion-regulation",
+     "human-emotional-regulation-process-model"
+    ],
+    "issue": "別チャンクの裁定で human-emotional-regulation と human-emotional-regulation-process-model の2つが survivor になった。4件を1件へ統合するのが正しい"
+   },
+   {
+    "topic": "ストレス・コーピング（Lazarus & Folkman 1984）",
+    "ids": [
+     "human-cognitive-appraisal-lazarus-folkman",
+     "human-cognitive-appraisal-lazarus",
+     "human-stress-coping"
+    ],
+    "keep": "human-stress-coping",
+    "issue": "3-way 統合。なお human-cognitive-appraisal（アーノルド1960起点）と human-emotion-appraisal-lazarus は感情理論側の別概念で対象外"
+   },
+   {
+    "topic": "代替の弾力性",
+    "ids": [
+     "econ-elasticity-of-substitution-ces",
+     "econ-elasticity-substitution-production",
+     "econ-elasticity-of-substitution"
+    ],
+    "keep": "econ-elasticity-of-substitution-ces",
+    "issue": "第3のエントリ econ-elasticity-of-substitution（Joan Robinson 1933 の独立導入と Chirinko 2008 を持つ）も同主題。3件まとめて整理"
+   }
+  ]
+ },
+ "ready": [
+  {
+   "keep": "econ-metzler-paradox-tariff",
+   "drop": "econ-metzler-paradox",
+   "why": "同一定理（Metzler 1949 JPE）を同一粒度で解説した言い換え。keep 側が一次文献 DOI と Jones & Neary 1984 ハンドブックを持ち出典が強い",
+   "migrate": "オファーカーブ弾力性による逆説成立条件の表現、ヘクシャー＝オーリン／ストルパー＝サミュエルソン定理との明示的対照、移転問題と結びつけた Springer 章の出典"
+  },
+  {
+   "keep": "econ-monetary-policy-trilemma",
+   "drop": "econ-impossible-trinity-trilemma",
+   "why": "同一命題・同一論者列・同一構成の純粋な重複。keep 側は出典4件で Fleming 1962 IMF Staff Papers と Rey 2015 NBER WP21162 を含む",
+   "migrate": "別称「不可能の三位一体」を title に併記、IMF Finance & Development の government 出典"
+  },
+  {
+   "keep": "econ-uncovered-interest-parity-fama",
+   "drop": "econ-uncovered-interest-parity",
+   "why": "両者とも UIP 定義＋ファマ 1984 のフォワード・プレミアム・パズル＋説明仮説という同一構成。drop 側も本文の過半がパズルで一般/特殊の切り分けになっていない",
+   "migrate": "New Fama Puzzle 文献（Bussière & Chinn 2018 NBER WP24342 / 2022 IMF Econ Review）、Chinn 2003「UIP は長期のみ成立」という期間依存性"
+  },
+  {
+   "keep": "mgmt-job-embeddedness-theory",
+   "drop": "mgmt-job-embeddedness",
+   "why": "同一理論を同一粒度（どちらも1文のスタブ）で説明した完全な重複。keep 側は出典4件すべて academic で Mitchell 2001 AMJ 原著を含む",
+   "migrate": "「2001年に提唱」の年、JILPT の government 出典と日本語解説リンク、「地域コミュニティへの埋め込み」という日本語の言い換え。統合を機に加筆推奨（両者とも短文キューに載っている）"
+  },
+  {
+   "keep": "tax-invoice-20percent-special",
+   "drop": "tax-invoice-2wari",
+   "why": "同一の2割特例を同一粒度で記述。keep 側は対象外要件と一般課税/簡易課税いずれでも適用可という具体を持つ上位互換",
+   "migrate": "「課税期間ごとに選択適用できる」という選択単位の明示、国税庁 確定申告書等作成コーナーの出典"
+  },
+  {
+   "keep": "mgmt-mbo",
+   "drop": "mgmt-management-by-objectives",
+   "why": "同一概念の訳語違い（目標管理／目標による管理）。ドラッカー1954、正式名 MBO and Self-Control、参加型目標設定と自己統制まで全一致",
+   "migrate": "オディオーン(1965)による普及、SMART 目標との接続、数値偏重批判のデミングへの帰属、Business Horizons (1967) 出典。あわせて keep 側 keyFigures が要約詰め込みになっているので提唱者・初出の形へ直す"
+  },
+  {
+   "keep": "mgmt-attention-based-view",
+   "drop": "mgmt-attention-based-view-ocasio",
+   "why": "同一論文（Ocasio 1997 SMJ 18:187-206）の同一理論を二重記述。3原則の説明がほぼ逐語一致",
+   "migrate": "Bower (1970) 資源配分プロセス研究という先行知見の位置づけ、Ocasio (2011)「Attention to Attention」による拡張と該当2出典"
+  },
+  {
+   "keep": "tax-stamp-duty-electronic",
+   "drop": "tax-electronic-contract-stamp",
+   "why": "結論も根拠も同一で出典3件中2件は URL まで一致。keep 側は課税文書の3要件を加えた完全な上位集合",
+   "migrate": "福岡国税局「注文請書を電子メール送信した場合の印紙税」の出典（具体事例の裏付けとして残す）"
+  },
+  {
+   "keep": "econ-is-lm",
+   "drop": "is-lm-model",
+   "why": "同一モデル・同一提唱者（Hicks 1937 Econometrica）・同一政策分析の二重記述。keep 側が曲線の機構・流動性の罠・ルーカス批判まで含み内容を包含",
+   "migrate": "**必須**: Hicks (1937) Econometrica 5(2) 147-159 の原典 DOI 10.2307/1907242（移さないと keep 側の権威ある出典が大学の講義ページのみになり確証ゲートの水準が下がる）。あわせてクラウディングアウトの語、ヒックス1972年ノーベル賞・生没年"
+  },
+  {
+   "keep": "infosoc-knowledge-management-nonaka-takeuchi",
+   "drop": "infosoc-seci",
+   "why": "どちらも野中・竹内1995のSECIモデルを同一粒度で解説し、4モードもポランニーへの言及も一致。keep 側は書籍 DOI と Organization Science DOI で権威性が高い",
+   "migrate": "「Ba（場）」概念、「個人→集団→組織へのスパイラル増幅」の記述、Frontiers in Psychology の SECI 操作化論文の出典"
+  },
+  {
+   "keep": "econ-bandwagon-snob",
+   "drop": "econ-bandwagon-snob-leibenstein",
+   "why": "同一論文（Leibenstein 1950 QJE）の同一3効果を同一粒度で解説。keep 側は出典3件で需要弾力性の方向まで記述",
+   "migrate": "ヴェブレン効果の詳述（高価格が地位誇示となり右上がりの需要曲線を生む）、新古典派の需要独立仮定の緩和という位置づけ、keyFigures のベッカー/フランク"
+  },
+  {
+   "keep": "mgmt-amo-model",
+   "drop": "mgmt-ability-motivation-opportunity",
+   "why": "どちらも Appelbaum et al. (2000) 由来の AMO で P=f(A,M,O)・3要素の人事施策・HPWS との接続まで同一。keep 側は Bos-Nehles et al. 2023 IJMR 査読レビューを持ち源流の区別もある",
+   "migrate": "「人事施策と組織成果を結ぶブラックボックス」という定式化、3要素のいずれか1つでも欠ければ業績が損なわれるという記述、keyFigures のフェファー/ヒュースリッド"
+  },
+  {
+   "keep": "econ-trade-gravity-model",
+   "drop": "econ-tinbergen-gravity-model",
+   "why": "Tinbergen 1962 → Anderson 1979 → Anderson & van Wincoop 2003 → Head & Mayer 2014 という同一系譜を同一粒度でたどり出典もほぼ同一集合。keep 側は PPML 推定と FTA 評価も記述",
+   "migrate": "Tinbergen 1962 の「付録IVで初めて計量的に定式化」という初出の具体性、AER 各論文の巻・頁、「長らく理論的基礎を欠いた」という位置づけ"
+  },
+  {
+   "keep": "mgmt-organizational-decline-weitzel",
+   "drop": "mgmt-organizational-decline-weitzel-jonsson",
+   "why": "同一著者・同一年 (Weitzel & Jonsson 1989) の五段階モデルを同一粒度で説明した言い換え。DOI 照合が済み、両者が同一の正しい DOI を指すようになったため統合可",
+   "migrate": "ダニー・ミラー『イカロスの逆説』(1990)、バリー・スタウの投資の段階的拡大による誤行動段階の持続メカニズム、アイゼンハート＆ブラウンのシンプル・ルール戦略"
+  },
+  {
+   "keep": "econ-transfer-problem-keynes",
+   "drop": "econ-transfer-problem-keynes-ohlin",
+   "why": "1929 年のケインズ＝オリーン論争とサミュエルソン 1952 の決着を同一粒度で記述した言い換え。DOI 照合が済み統合可",
+   "migrate": "orthodox case / anti-orthodox case の術語、オランダ病への応用、バグワティの言及、Jones & Neary 1984 ハンドブック出典 (10.1016/S1573-4404(84)01006-4)"
+  },
+  {
+   "keep": "econ-monetary-policy-trilemma",
+   "drop": "econ-impossible-trinity-obstfeld",
+   "why": "同一命題 (Mundell-Fleming のトリレンマ) を同一粒度で解説した言い換え。keep 側が Mundell 1963 / Fleming 1962 の一次文献と Obstfeld-Shambaugh-Taylor 2005 の実証論文、IMF の政府系解説を持ち出典が強い",
+   "migrate": "金本位制・ブレトンウッズ体制という体制別の具体例、資本フロー管理とマクロプルーデンス規制をめぐる政策論争への含意、別名『国際金融のトリレンマ』、Obstfeld & Taylor 2004 の書籍出典 (DOI は誤りだったため一次照合のうえ 10.1017/CBO9780511616525 に訂正して移行)、Wikipedia: Impossible trinity"
+  },
+  {
+   "keep": "mgmt-3c-model-ohmae",
+   "drop": "mgmt-3c-analysis",
+   "why": "大前研一 1982 の 3C を同一粒度で解説した言い換え。keep 側が Ohmae 1982 の一次文献 (WorldCat) を持ち、記述量も約 3 倍 (drop は reference 出典のみ)",
+   "migrate": "別名『3C分析』、実務上の分析項目 (顧客=市場規模・ニーズ・購買行動 / 競合=強み・弱み・市場シェア / 自社=経営資源・強み・弱み)、MindTools と日本経営心理士協会の出典 2 件"
+  },
+  {
+   "keep": "infosoc-datafication-mayer-schoenberger",
+   "drop": "infosoc-datafication-mayer-schonberger",
+   "why": "同一概念 (Mayer-Schönberger & Cukier 2013 のデータ化論) を同一粒度で解説した言い換え。id は ö の翻字ゆれ (schoenberger / schonberger) だけの差。keep 側が記述量で上 (434 対 381 字) かつ Crawford 2021 Atlas of AI とランシマン 2014 を持ち出典が厚い",
+   "migrate": "別名「データフィケーション」、原典の邦題『ビッグデータの正体』、応用領域 (信用スコアリング・採用AI・医療診断・犯罪予測)、プロファイリング批判 (アルゴリズム差別・自律性の喪失)、GDPR のプロファイリング自動決定への異議申し立て権。**移送しなかった出典**: drop 側の 10.2307/j.ctt1hj9w84 は実体が Schonfeld, Bowen & Varian \"JSTOR: A History\" (Princeton UP) で誤り。keep は同じ本を出版社ページ (hmhbooks.com) で正しく引いている"
+  }
+ ],
+ "citationCheckResolved": {
+  "resolvedAt": "2026-07-28",
+  "note": "blockedOnCitationCheck の 4 組はすべて WebSearch で一次照合し、academicKnowledge.ts を修正済み。照合の過程で当初 4 件を超える 13 件の誤りが確定した (DOI が別論文を指す 9 件・書籍に他誌論文の DOI 2 件・人名の誤り 2 件)。以後この種の混入は lint:citations が検出する (orchestration/knowledge-citation-baseline.json)。",
+  "fixes": [
+   "Weitzel & Jonsson (1989): 10.2307/258302 と 10.2307/258079 の両方が誤り (258xxx は AMR 帯で ASQ 論文にはありえない) → 正 10.2307/2392987 (ASQ 34(1), 91-109)。掲載誌ラベル AMR も ASQ へ訂正",
+   "同エントリ内で追加発見 — Hambrick & D'Aveni (1988): 10.2307/2393470 → 正 10.2307/2392853 (ASQ 33(1), 1-23)。帯は正しいため DOI 帯チェックでは検出できない型",
+   "Keynes (1929): 10.2307/2223852 は EJ 42(166) 1932 の別項目 → 正 10.2307/2224211 (EJ 39(153), 1-7)。当初仮説『オリーンの反論論文』は否定された",
+   "同エントリ内で追加発見 — Samuelson (1952): 10.2307/2296547 は Phelps & Pollak (1968) Review of Economic Studies 35(2) → 正 10.2307/2227005 (EJ 62(246), 278-304)",
+   "Bourgeois (1981): 10.2307/2392586 と 10.2307/2392580 の両方が誤りで、いずれも ASQ 23(4) 1978 内の別項目 (前者は無題書評、後者は Gephart 1978) → 正 10.5465/amr.1981.4287985 (AMR 6(1), 29-39)",
+   "同エントリ内で追加発見 — Nohria & Gulati (1996): SICI 形式 DOI の AID トークンが 1997 年 Smith et al. のもので内部矛盾する無効値。ラベル (AMJ) は正しい → 正 10.5465/256998 (AMJ 39(5), 1245-1264)",
+   "同エントリ内で追加発見 — George (2005): amr 接頭辞だが実体は AMJ → 正 10.5465/amj.2005.17843944 (AMJ 48(4), 661-676)",
+   "10.1177/0306312706056047 の実体は Gillespie (2006) Engineering a Principle — Social Studies of Science 36(3), 427-457 で、Bowker とも Edwards とも無関係だった。Bowker (1994) は書籍で DOI 未付与 → MIT Press 商品ページ + ISBN 978-0-262-02367-2 へ。『Edwards et al. (2007) JAIS』は 2007 年のタイトルと 2009 年の掲載誌の合成ラベル → 正 10.17705/1jais.00200 (2009, JAIS 10(5), 364-374)",
+   "人名: 『ヌーリアとサージェント』(マクロ経済学者 Thomas Sargent の混入) と『ノリアとグルク』→ ともに『ノーリアとグラティ』へ。keyFigures の『ニティン・ノリア』→『ニティン・ノーリア』"
+  ],
+  "stillUnverified": [
+   "10.2307/258302 / 258079 / 2393470 / 2223852 / 2296547 / 2392586 / 2392580 / amr.2005.19139064 の各『実体』は JSTOR/Crossref に到達できないため未特定 (誤りであることは確定し、出典自体はパス4で差し替え済み)。ゲートには抵触しない"
+  ],
+  "resolvedLater": [
+   "2026-07-30: en.wikipedia.org/wiki/Organizational_decline と /wiki/Sorting_Things_Out は**実際に存在しなかった** (台帳の疑いが的中)。前者は Serra et al. (2017) BAR 14(2) e160110 のレビュー論文 (10.1590/1807-7692bar2017160110) に、後者は MIT Press の書籍ページに差し替えた。mgmt-organizational-decline-weitzel は academic 出典が 2→3 に増えた",
+   "2026-07-30: Gillespie 3 件を照合完了。真の所有者を特定できなくても**出版社接頭辞から不整合は確定できる** — SAGE 誌 (10.1177/14614444…) の DOI が MIT Press の書籍章を指すことはなく、T&F 誌 (10.1080/1369118X…) の DOI が SAGE 誌論文を指すこともない。10.1080/1369118x.2010.508516 → 10.1177/1461444809342738 (Gillespie 2010 New Media & Society 12(3) 347–364)、10.1177/1461444813490395 と 10.1177/1461444812437963 → ともに 10.7551/mitpress/9780262525374.003.0009 (The Relevance of Algorithms, Media Technologies 第9章 pp.167–194)。後者はラベルの刊行年も 2012→2014 が正で、直さなければ新たな年の矛盾を作っていた"
+  ]
+ },
+ "pass5": {
+  "appliedAt": "2026-07-30",
+  "note": "重複疑いキューを 0 件まで完走。パス4の統合で記述が充実し新たに閾値を超えた 2 件を全文読解のうえ裁定・適用した。両ペアとも keep の出典が +2 件、本文が +100 字以上で、減少した指標はない。",
+  "citationResolved": {
+   "doi": "10.1017/CBO9780511559747",
+   "actualWork": "Rogers, C. (1989) Money, Interest and Capital: A Study in the Foundations of Monetary Theory — Cambridge University Press, Modern Cambridge Economics Series",
+   "method": "WebSearch で DOI 接尾辞そのもの (CBO9780511559747) を完全一致検索し、Cambridge Core が返す章ページ群 (Preface / Contents / Index / Chapter 2,3,5,6,9) がすべて同一書籍であることを確認した。要約の主張ではなく検索索引が返すページ実体を証拠とする。",
+   "wrongClaimants": [
+    "econ-corridor-of-stability-leijonhufvud — Leijonhufvud (1968) は Oxford UP 刊。DOI を持たないため Internet Archive の書誌 (onkeynesianecono0000leij, ISBN 0195009487) に差し替え",
+    "econ-endogenous-money-supply-moore — Moore (1988) は Cambridge 刊だが CBO DOI を確定できず。Internet Archive の書誌 (horizontalistsve0000moor, ISBN 0521350794) に差し替え、あわせて書評論文 Bindseil & König (2013) ROKE 1(4) 383-390 の実 DOI 10.4337/roke.2013.04.01 を追加 (academic 1→2)",
+    "econ-impossible-trinity-obstfeld — 正 DOI は 10.1017/CBO9780511616525 (完全一致検索が Global Capital Markets の Cambridge Core ページ群を返すことで確認)。統合先へ訂正のうえ移行"
+   ],
+   "lesson": "同一 DOI に複数の出版年がぶつかっているとき、正解が候補のどれかである保証はない。まず DOI の実体を確定し、そのうえで各主張者を個別に照合する。"
+  }
+ },
+ "pass6": {
+  "appliedAt": "2026-07-30",
+  "note": "knowledge-citation-baseline.json の残 17 件をすべて一次照合し knownConflicts を 0 件にした。詳細 (誰が誤りで正 DOI が何か) はベースライン側の resolved2026_07_30 に記録している。",
+  "wrongCitationsFixed": 28,
+  "allClaimantsWrongCount": 5,
+  "provenanceDelta": "infosoc-spreadability-jenkins のみ academic 2→1。Jenkins「If It Doesn't Spread, It's Dead」は査読誌論文ではなく 2008 年ホワイトペーパー＋2009 年連載ブログなので reference が正しい種別で、水増しの是正であって情報の喪失ではない。mgmt-organizational-decline-weitzel は 2→3 に増加。他は全エントリで出典の件数・種別が完全に同一。"
+ },
+ "pass7": {
+  "appliedAt": "2026-07-30",
+  "note": "「残作業は無いか徹底的に解析して」で実施した全体監査で発見した 1 ペアを統合。**既存の 2 系列の検出器がともにすり抜けていた** — titleCore は「データ化」vs「データフィケーション」で不一致 (同義語だが文字列が違う)、term-overlap も閾値 3000 未満。id を正規化すれば一発で並ぶので、恒久対策として idDedupeSuspects (人名の翻字ゆれ検出) を autopilot に新設した。負のコントロール (統合前の状態を模した入力で検出・裁定済み台帳で除外) を確認済み。",
+  "provenanceDelta": "keep は src 4→4 / auth 4→4 / academic 2→2 / 本文 434→621 字。減少なし。",
+  "newFindingOutsideGates": "10.2307/j.ctt1hj9w84 (Mayer-Schönberger & Cukier 2013 と誤記) の実体は Schonfeld, Bowen & Varian \"JSTOR: A History\"。**1 回しか引かれていない DOI は lint:citations では検出できない** (年の矛盾が生じないため)。単発誤 DOI は 2,449 件の引用の大半を占めるので、構造的な残作業として記録する。"
+ },
+ "pass8": {
+  "appliedAt": "2026-08-09",
+  "note": "enrich キューを消化した副作用で浮上した 1 ペアを統合。labor-working-conditions-disclosure の本文を 90 → 328 字へ増強したところ term-overlap が 3782 に上がり dedupeGraph が検出した。統合前は titleCore が「労働条件明示のルール（就業場所・業務の変更の範囲）」vs「労働条件明示ルールの改正（2024年4月1日施行・明示事項の追加）」で不一致、term-overlap も閾値未満ですり抜けていた。**薄い記述は重複検出そのものを鈍らせる** — 増強は情報量を増やすだけでなく、検出器の感度を上げる働きがある。",
+  "keep": "labor-working-conditions-disclosure",
+  "drop": "labor-working-condition-disclosure-2024",
+  "migrate": "drop 固有だった滋賀労働局の様式ページを keep の出典へ取り込み、それを支える 1 文（改正前の様式では追加された明示事項を満たせない旨）を本文に追加。タイトルは drop 側が持っていた施行日を取り込んで「労働条件明示ルールの改正（2024年4月1日施行・就業場所と業務の変更の範囲）」に広げた。authority も drop 側の「労働基準局」を併記。",
+  "provenanceDelta": "keep は src 4→5 / government 4→5 / 本文 328→382 字。drop の 3 出典はすべて keep に含まれる（2 件は元から共通、1 件を移送）。減少なし。",
+  "verified": "2026-08-09 に mhlw.go.jp ドメインへ限定した検索で一次情報を再確認（労基則5条1項1号の3・更新上限・無期転換申込機会・職業安定法施行規則の改正）。"
+ },
+ "pass9": {
+  "appliedAt": "2026-08-09",
+  "note": "enrich 消化の副作用で浮上した 2 組目。tax-edenshocho を 83 → 401 字に増強したところ term-overlap が 3274 に上がり、tax-electronic-bookkeeping-etransaction と同一概念であることが露見した。どちらも「電子取引データの電子保存義務」で、片方が電帳法全体を指す曖昧な id、もう片方が概念どおりの id を持っていた。**薄い記述は重複検出を鈍らせる**（pass8 と同じ構図）。",
+  "keep": "tax-edenshocho",
+  "drop": "tax-electronic-bookkeeping-etransaction",
+  "migrate": "drop 側が持っていた精度を keep へ移送: タイトルを「電子取引データの電子保存義務（2024年1月〜）」に、authority を電子帳簿保存法第7条に、保存義務者の範囲（所得税・法人税に係る保存義務者が電子メールやEC等の電子取引で授受した場合）と「出力書面のみの保存は認められない」旨を本文へ。出典は国税庁「令和6年1月からの電子取引データの保存方法」を移送（drop 側のもう 1 件の一問一答は keep 側に同内容の現行 URL があるため、media 1 件とあわせて採らない）。",
+  "provenanceDelta": "keep は src 4→5 / government 4→5 / 本文 401→433 字。drop の government 2 件のうち 1 件を移送、1 件は keep の現行 URL と同内容、media 1 件は government で置き換え済み。減少なし。",
+  "verified": "2026-08-09 に nta.go.jp 限定の検索で一次情報を再確認（宥恕措置の終了と猶予措置への置換・真実性と可視性の要件・相当の理由とダウンロードの求め）。"
+ },
+ "pass10": {
+  "appliedAt": "2026-08-09",
+  "note": "enrich 消化で浮上した 3 組目（pass8・pass9 と同じ構図）。labor-dismissal-notice を 94 → 476 字に増強して20条・21条・除外認定を書き切ったところ、labor-dismissal-notice-exception を完全に包含し term-overlap 3868 で衝突した。**この3件で共通するのは「薄い記述どうしは語彙が少なすぎて重ならない」という性質**で、enrich キューの消化は増強と同時に重複検出の感度を上げる作業でもある。残りの enrich を進めるとさらに出てくると考えてよい。",
+  "keep": "labor-dismissal-notice",
+  "drop": "labor-dismissal-notice-exception",
+  "migrate": "タイトルを「解雇予告と適用除外・除外認定（労働基準法第20条・第21条）」へ広げ、drop 固有の出典 2 件（e-Gov電子申請の解雇予告除外認定申請・厚労省法令データの労基法20条21条）を keep へ移送。本文は keep が 21条の各類型（日雇い1か月・期間の定めはその期間・試用期間14日）まで具体的に書いており、drop 側に keep が持たない事実はない。",
+  "provenanceDelta": "keep は src 4→6 / government 4→6 / 本文 476→476 字。drop の 3 出典のうち 1 件は元から共通、2 件を移送。減少なし。",
+  "verified": "2026-08-09 に mhlw.go.jp 限定の検索で一次情報を再確認（20条1項の予告と手当・予告日は日数に不算入・除外認定の2事由と様式第3号・21条の4類型とそれぞれの継続使用要件・12条の平均賃金）。"
+ },
+ "pass11": {
+  "appliedAt": "2026-08-09",
+  "note": "法令実務の増強を続けたところ、**触っていない学術側で** dedupeGraph が 3 ペア鳴った。term-overlap はコーパス全体の語彙重みから計算されるため、別コレクションの増強でもスコアが動く。3 ペアを個別に読んで裁定した結果、2 件が統合・1 件が別概念だった。**鳴ったペアを機械的に DISTINCT へ流さず、必ず全文を読むこと** — 今回 bizlaw のペアは、タイトルが「原則」と「法律」で違うだけで中身がほぼ同一だった（読まずに DISTINCT と判断していたら重複が残っていた）。",
+  "merges": [
+   {
+    "keep": "mgmt-effectuation",
+    "drop": "mgmt-effectuation-theory-sarasvathy",
+    "reason": "同一の理論・同一の 2001 年論文・同一の 5 原則。id に著者名の接尾辞が付いているだけで別概念ではない。",
+    "migrate": "5 原則の英語名とそれぞれの説明、知的系譜（ナイトの不確実性・サイモンの限定合理性・ワイクのセンスメイキング）を keep の本文と keyFigures へ。drop 側の JSTOR DOI (10.2307/259121) も出典に追加（keep は AOM の DOI 10.5465/amr.2001.4378020 を持っており、同一論文の別 DOI なので lint:citations の年不整合には当たらない）。",
+    "provenanceDelta": "keep は src 4→5 / academic 2→3 / 本文 約400→約560字。drop の 2 出典のうち 1 件を移送、Wikipedia(Effectuation) は keep が同等の reference を持つため採らない。減少なし。"
+   },
+   {
+    "keep": "bizlaw-part-time-labor",
+    "drop": "bizlaw-equal-pay-equal-work",
+    "reason": "どちらもパートタイム・有期雇用労働法を説明し、8条の均衡待遇・9条の均等待遇・説明義務・施行日まで同じ。タイトルが「法律名」と「その中心原則」で分かれていただけ。法律名側を残す（原則は法律の内容として本文に含まれ、『同一労働同一賃金』での検索性も保たれる）。",
+    "migrate": "drop 固有だった派遣労働者の手当て（労働者派遣法の改正による派遣先均等・均衡方式／労使協定方式）を keep の本文へ。出典 2 件（厚労省パート・有期雇用労働法とは／東京弁護士会の8条9条解説）も移送。",
+    "provenanceDelta": "keep は src 3→5 / government 2→3。減少なし。"
+   }
+  ],
+  "distinct": [
+   [
+    "tax-listed-securities",
+    "tax-real-estate-capital-gains"
+   ]
+  ],
+  "alsoFixed": "混入チェックで academicKnowledge.ts のハングル混入 2 件を発見して修正（『엄밀にはPLTではない』→『厳密に』、『섭식障害』→『摂食障害』）。いずれも日本語の同義語の位置にハングルが入っており、Stryker の対象外・テストの対象外で、機械的な文字種スキャンでしか出ない類。"
+ },
+ "pass12": {
+  "appliedAt": "2026-08-10",
+  "note": "enrich キューの学術 415 件に着手する前に、キュー内の id を正規化名で突き合わせたところ 2 組の同名概念（laches ×2 / economic loss ×2）が薄いまま並んでいた。全文読解の結果、laches はキュー外の充実版 2 件（bizlaw-doctrine-of-laches / bizlaw-laches）まで含めて **4 エントリが同一概念**だった。thin エントリは語彙が足りず term-overlap 検出器に掛からない（2026-08 の既知現象）ので、増強前のキューを名前で予備スキャンする手順が有効。過去に DISTINCT 裁定されていた [doctrine-of-laches, laches-doctrine] は、比較対象の削除に伴い台帳から除去した。McClintock (10.2307/1341086)・Spry (10.1017/S0008197300040854)・Oxford Handbook の各 DOI は接尾辞完全一致検索で実体を確定できず移送しない（誤 DOI の教訓の適用）。Bray SSRN 2376080 は索引がページ実体を返し確認済み。",
+  "merges": [
+   {
+    "keep": "bizlaw-doctrine-of-laches",
+    "drop": "bizlaw-laches-doctrine",
+    "reason": "同一概念（エクイティ上の抗弁・不合理な遅延＋不利益・出訴期限との対比）。drop は IP 訴訟での重要性と SCA Hygiene への言及のみが固有。",
+    "migrate": "SCA Hygiene v. First Quality (2017) の判示（特許法286条の6年内はラッチェス不可＝Petrella の特許への拡張）と IP 訴訟への影響を本文へ。出典は supremecourt.gov の判決 PDF を laches-defense 経由で採用。McClintock/Spry/Oxford Handbook の DOI は実体未確定のため移送しない。",
+    "provenanceDelta": "keep は src 2→5 / gov 1→2 / academic 0→1 / 本文 416→約640字。減少なし。"
+   },
+   {
+    "keep": "bizlaw-doctrine-of-laches",
+    "drop": "bizlaw-laches-defense",
+    "reason": "同一概念。drop は Bray の議論と SCA 判決 PDF が固有。",
+    "migrate": "Bray (2014) SSRN 2376080（実体確認済み）と supremecourt.gov の SCA 判決 PDF を出典へ、Bray のエクイティ限定論を本文へ。Laser SSRN と National Law Review は実体未確認・三次資料のため移送しない。",
+    "provenanceDelta": "上記に合算。keyFigures に Samuel L. Bray を追加。"
+   },
+   {
+    "keep": "bizlaw-doctrine-of-laches",
+    "drop": "bizlaw-laches",
+    "reason": "同一概念の概念的充実版だが出典が三次資料 2 件のみで判例出典なし。keep 側が判例＋学術出典を持つため keep を維持。",
+    "migrate": "prejudice の具体例（証拠散逸・証人の死亡/記憶減退・立場変更）と政策根拠（不意打ち防止・早期解決・法的安定）を本文へ、Joseph Story を keyFigures へ、Wikipedia: Laches (equity) を出典へ。LII Wex は keep が同一 URL を保有済み。",
+    "provenanceDelta": "keep は src 5→6。減少なし。"
+   },
+   {
+    "keep": "bizlaw-economic-loss-rule",
+    "drop": "bizlaw-economic-loss-doctrine",
+    "reason": "同一概念（East River を共有）。drop は Posner/Keeton の正当化根拠が固有。",
+    "migrate": "Posner の効率性論と Prosser=Keeton の indeterminate liability 論を本文へ、keyFigures に Keeton/Posner を追加。East River の justia（government）と Wikipedia: Pure economic loss を出典へ。Cornell Law Review の viewcontent URL はどの論文か特定できず移送しない。Britannica は三次資料で keep に同等以上があるため移送しない。",
+    "provenanceDelta": "keep は src 4→6 / gov 0→1 / academic 2→2 / 本文 72→377字。減少なし。"
+   }
+  ]
+ },
+ "pass13": {
+  "appliedAt": "2026-08-10",
+  "note": "パス12 の教訓を一般化し、enrich キュー 411 件 × コーパス全体の id 正規化衝突を事前スキャン → EQUAL 46 組（うち台帳未裁定 37 組）を検出。今回はその第1弾 8 統合 + 1 レーン矯正。**薄い側の出典に誤実体 DOI が繰り返し見つかった**（Blanchard&Wolfers 2000 に JEP 1998 の DOI / Weiskrantz 1974 原著の誌名を Brain Research と誤記＝正しくは Brain / F&P 2003 ASQ に Organization Studies の DOI / job.583 の実体は Avey et al. 2009 Psychological ownership で Personnel Psychology のラベルは誤り＝接尾辞検索で確定）。**未確定 DOI は移送せず drop ごと落とす**を通した。同一概念でも discipline が異なるペア（human× mgmt 等）は既裁定例（growth-mindset / sociotechnical 等）に合わせて DISTINCT レーン維持。",
+  "merges": [
+   {
+    "keep": "bizlaw-attractive-nuisance",
+    "drop": "bizlaw-attractive-nuisance-doctrine",
+    "reason": "同一法理（Restatement §339・Stout 1873）。keep は5要件の詳説を持つ充実版。",
+    "migrate": "LII の Stout 判決全文リンクと Bohlen / Prosser を keyFigures へ。Indiana LJ / Marquette LR の viewcontent URL は掲載論文を特定できず移送しない。",
+    "provenanceDelta": "keep src 3→4。減少なし。"
+   },
+   {
+    "keep": "econ-hysteresis-unemployment",
+    "drop": "econ-hysteresis-unemployment-theory",
+    "reason": "同一概念（Blanchard&Summers 1986・インサイダー/アウトサイダー・人的資本減価）。keep は3伝達経路の詳説を持つ。",
+    "migrate": "Laurence Ball を keyFigures へ。drop の 5 DOI は Blanchard&Wolfers(2000) ラベルに JEP 12(1)=1998 の DOI が付くなど実体不一致を含むため全て移送しない。",
+    "provenanceDelta": "keep src 3（不変・全て健全）。減少なし。"
+   },
+   {
+    "keep": "human-blindsight",
+    "drop": "human-blindsight-weiskrantz",
+    "reason": "同一現象。keep は Brain 97(1) の正確な書誌 + PMID を持つ。drop は原著の誌名を Brain Research と誤記。",
+    "migrate": "Cowey / Humphrey を keyFigures へ、SEP: Neuroscience of Consciousness を出典へ。誌名誤りの ScienceDirect リンクと年不整合の Nature/Current Biology リンクは移送しない。",
+    "provenanceDelta": "keep src 2→3。減少なし。"
+   },
+   {
+    "keep": "mgmt-organizational-routines-feldman-pentland",
+    "drop": "mgmt-organizational-routines-feldman",
+    "reason": "同一の F&P 動態ルーティン論。",
+    "migrate": "Cambridge Handbook of Routine Dynamics を出典へ。同時に keep の F&P 2003 の DOI が 10.1177/0170840603024003001（Organization Studies）と誤実体だったため、姉妹エントリ3件が持つ正しい ASQ リンク（10.2307/3556620）へ差し替え。",
+    "provenanceDelta": "keep src 3→4 + 誤DOI 1 件修正。減少なし。"
+   },
+   {
+    "keep": "mgmt-organizational-routines-theory",
+    "drop": "mgmt-organizational-routines",
+    "reason": "N&W 1982 + F&P を語る同一の総論エントリ同士。keep が Feldman 2000 遂行モデルと DC 接続まで持つ。",
+    "migrate": "遺伝子アナロジー（変異-選択-保持の選択単位）と安定/調整/意思決定節約/慣性の対句を本文へ。SSRN 1496211 は実体未確定のため移送しない。",
+    "provenanceDelta": "keep 本文 +約110字。減少なし。"
+   },
+   {
+    "keep": "mgmt-psychological-capital-theory",
+    "drop": "mgmt-psychological-capital-luthans",
+    "reason": "同一 discipline（management）内の同一概念（HERO・PCQ-24・POB）。human 側の human-psychological-capital-luthans は discipline レーン慣例により DISTINCT 維持（台帳登録）。",
+    "migrate": "Luthans (2002) AME の POB 創始論文と Annual Review of Organizational Psychology の総説を出典へ。同時に keep の 10.1002/job.583（ラベルは Personnel Psychology 2007）は接尾辞検索で実体が Avey et al. (2009) Psychological ownership と確定したため削除。10.1177/1548051814534492（Stress and Health と称する SAGE DOI）と 10.1037/a0016998（HRDQ と思われる Avey 2011 に APA DOI）は実体未確定のため現状維持とし、SESSION_HANDOFF の残作業に記録。",
+    "provenanceDelta": "keep src 5→6（誤実体 1 除去 + 検証済み 2 追加）。減少なし。"
+   },
+   {
+    "keep": "mgmt-punctuated-equilibrium",
+    "drop": "mgmt-punctuated-equilibrium-theory",
+    "reason": "同一理論の総論同士（T&R 1985・Gersick 1991・R&T 1994 を共有）。keep は書誌詳細と Eldredge&Gould 系譜を持つ。",
+    "migrate": "深層構造のフィードバック抑制と CEO 交代トリガー・実践的示唆の段落を本文へ、W.H. Newman を keyFigures へ、T&R 1985 Semantic Scholar / TNR 1986 CMR / Wikipedia (social theory) を出典へ。Besson & Rowe の Springer 章は三次的で移送しない。",
+    "provenanceDelta": "keep src 2→5 / 本文 +約180字。減少なし。"
+   },
+   {
+    "keep": "mgmt-punctuated-equilibrium",
+    "drop": "mgmt-punctuated-equilibrium-org-change",
+    "reason": "同一理論の thin 版（85字）。",
+    "migrate": "Wikipedia: Punctuated equilibrium in social theory（上記で採用）。Semantic Scholar の Gersick 重複エントリは移送しない。",
+    "provenanceDelta": "上記に合算。"
+   }
+  ],
+  "steers": [
+   {
+    "id": "mgmt-organizational-routines-as-grammars",
+    "action": "本文を Pentland & Rueter (1994) の文法モデル固有のレーンへ書き換え（F&P 2003 の要約の重複を解消し、94年論文の実証と Routine Dynamics への系譜として位置づけ）。routines-theory / feldman-pentland との 3 ペアを DISTINCT 登録。"
+   }
+  ]
+ },
+ "pass14": {
+  "appliedAt": "2026-08-10",
+  "note": "パス13 に続く EQUAL 衝突の第2弾 6 統合。今回も薄い側で誤実体 DOI を 2 件検出（Barney 1986 SFM に SMJ の DOI＝実体は Management Science 32(10) で keep 側が正 / Thaler の Mental Accounting に mnsc（Management Science）の DOI＝Marketing Science は mksc）。いずれも移送せず drop ごと落とした。適用時の教訓: 同一の Wikipedia 出典行が姉妹エントリにも存在して 3 行ブロックのアンカーが多重一致 → **一意な出典行（York classics 等）をアンカーにする**。スクリプトは原子的（最後に書く）なので途中 assert 失敗時は全ロールバック＝再適用は先頭から。",
+  "merges": [
+   {
+    "keep": "bizlaw-fraudulent-conveyance-doctrine",
+    "drop": "bizlaw-fraudulent-conveyance",
+    "reason": "同一法理（1571年エリザベス法起源・UVTA・Baird&Jackson）。keep は actual/constructive の二類型・LBO・日本法424条まで持つ充実版。",
+    "migrate": "11 U.S.C. §548 の LII 条文リンク（government）と Baird&Jackson 1985 の Vanderbilt リポジトリ本文リンクを出典へ（keep の JSTOR DOI 724036 は実体未確定のため並置で補強）。LII Wex と ULC の重複 URL は移送しない。",
+    "provenanceDelta": "keep src 5→7 / gov 1→2。減少なし。"
+   },
+   {
+    "keep": "econ-loanable-funds",
+    "drop": "econ-loanable-funds-theory",
+    "reason": "同一の利子論（ヴィクセル系譜・流動性選好との対立）。keep は需給メカニズムとクラウディングアウトの詳説を持つ。",
+    "migrate": "ヴィクセルの自然利子率の概念句を本文へ、INET の実証批判ペーパーを出典へ。ResearchGate ホスティングは移送しない。",
+    "provenanceDelta": "keep src 3→4 / 本文 +約80字。減少なし。"
+   },
+   {
+    "keep": "mgmt-strategic-factor-markets-barney",
+    "drop": "mgmt-strategic-factor-markets",
+    "reason": "同一理論。keep は Barney 1986 の正しい Management Science DOI（mnsc.32.10.1231）と Dierickx&Cool を持つ。drop の Barney 1986 は SMJ の DOI（smj.4250070306）で実体不一致。",
+    "migrate": "Barney 1991 JoM・Wernerfelt 1984 SMJ・Wikipedia: Strategic factor market を出典へ、Wernerfelt を keyFigures へ。誤実体の smj.4250070306 は移送しない。",
+    "provenanceDelta": "keep src 3→6。減少なし。"
+   },
+   {
+    "keep": "econ-behavioral-finance",
+    "drop": "econ-behavioral-finance-kahneman",
+    "reason": "フィールド総論と基礎理論紹介の同一レーン重複（プロスペクト理論は human-prospect-theory が専用エントリとして別在）。",
+    "migrate": "K&T 1979 Econometrica の JSTOR・Kahneman 2002 / Thaler 2017 の Nobel Lecture を出典へ。Thaler Mental Accounting の mnsc DOI（Marketing Science は mksc のはず）は実体未確定で移送しない。",
+    "provenanceDelta": "keep src 4→7。減少なし。"
+   },
+   {
+    "keep": "econ-fiscal-multiplier",
+    "drop": "econ-fiscal-multiplier-theory",
+    "reason": "総論同士の重複（Kahn 1931 → Keynes 1936・1/(1−MPC)・実証論争を共有）。fiscal-multiplier-* の各論ファミリー（keynes/AG/crowding-out 等）は既存レーンとして維持。",
+    "migrate": "Blanchard&Leigh 2013 の予測誤差の知見を本文へ、IMF WP/13/1 と Kahn 1931 JSTOR（書誌が完全一致）を出典へ。日本語版 Wikipedia は keep が英語版を保有するため移送しない。",
+    "provenanceDelta": "keep src 4→6 / 本文 +約120字。減少なし。"
+   },
+   {
+    "keep": "human-cognitive-dissonance",
+    "drop": "human-cognitive-dissonance-festinger",
+    "reason": "同一理論の総論同士（1957・F&C 1959 を共有）。",
+    "migrate": "アロンソン自己一貫性・Cooper&Fazio 1984 New Look の展開を本文へ、PsycNet の 1957 書誌 / h0042519 / AESP 17 の DOI を出典へ、Aronson・Cooper&Fazio を keyFigures へ。",
+    "provenanceDelta": "keep src 3→6 / 本文 +約110字。減少なし。"
+   }
+  ]
+ },
+ "pass15": {
+  "appliedAt": "2026-08-10",
+  "note": "EQUAL/SUBSET 衝突の第3弾 — frustration ×4 / tortious interference ×4 / restraint ×3 の 3 ファミリーを全文読解で裁定。**判例リンクの『裁判所違い』を新パターンとして 3 件検出**: Krell v Henry [1903] 2 KB 740 は控訴院（CA）判決なのに UKHL / EWHC KB のパスを持つ BAILII リンクが 2 エントリに存在（正: ew/cases/EWCA/Civ/1903/1.html）。Lumley v Gye の /1853/2.html も誤パスで、正典パス J73.html を接尾辞検索で確定してから採用。Pennzoil の justia リンクはラベル『481 U.S. 1 (1987) SCOTUS landmark tortious interference』に対し URL が F.2d 481 (1988) の控訴審で、しかも SCOTUS 判決の実体は abstention 論点 — まるごと移送しない。",
+  "merges": [
+   {
+    "keep": "bizlaw-frustration-of-purpose",
+    "drop": "bizlaw-frustration-of-purpose-doctrine",
+    "reason": "同一法理（Krell・§265・impossibility との区別）。",
+    "migrate": "BAILII の Krell 判決全文（EWCA/Civ パス）・ALI §265・Treitel の章参照を出典へ。Burrows の出版社カタログページは三次的で移送しない。",
+    "provenanceDelta": "keep src 2→5 / gov 0→1。減少なし。"
+   },
+   {
+    "keep": "bizlaw-frustration-of-purpose",
+    "drop": "bizlaw-frustration-of-purpose-krell",
+    "reason": "同一法理のもう 1 つの総論（Krell 物語・§265 を共有）。",
+    "migrate": "UCC 2-615 の隣接規定と COVID-19 訴訟波の現代的適用を本文へ。drop の BAILII は EWHC/KB パス（裁判所違い）のため移送せず、上記 EWCA パスに統一。10.2307/1096649 は実体未確定で移送しない。",
+    "provenanceDelta": "本文 +約90字。減少なし。"
+   },
+   {
+    "keep": "bizlaw-tortious-interference",
+    "drop": "bizlaw-tortious-interference-doctrine",
+    "reason": "同一法理の thin 版。",
+    "migrate": "ALI Restatement (Second) of Torts §§766-766B のページを出典へ。Prosser 1953 / Harper&James / Perlman / Dobbs の 10.2307 DOI 4 件は実体未確定のため移送しない。",
+    "provenanceDelta": "keep src 2→5（Wikipedia 2 件のみだった keep に BAILII 判決全文 + LII + ALI が入り、権威 0→1）。"
+   },
+   {
+    "keep": "bizlaw-tortious-interference",
+    "drop": "bizlaw-tortious-interference-restatement",
+    "reason": "§766/766B と Texaco/Pennzoil の要約で keep の完全下位互換。keyFigures の人名（James Fleming／William P. Keeton）は語順・イニシャルが崩れていた。",
+    "migrate": "LII Wex のみ。Pennzoil の justia リンクはラベルと URL の実体が不一致（SCOTUS 1987 と称して F.2d 1988）のため移送しない。",
+    "provenanceDelta": "上記に合算。"
+   },
+   {
+    "keep": "bizlaw-tortious-interference",
+    "drop": "bizlaw-tortious-interference-lumley",
+    "reason": "Lumley 物語 + §766 4要件で keep と同一レーン。",
+    "migrate": "BAILII の Lumley 判決全文 — ただし drop の /1853/2.html は誤パスのため、接尾辞検索で確定した正典パス /1853/J73.html に置き換えて採用。10.2307/1340543 は実体未確定で移送しない。",
+    "provenanceDelta": "上記に合算。"
+   },
+   {
+    "keep": "bizlaw-restraint-of-trade",
+    "drop": "bizlaw-restraint-of-trade-doctrine",
+    "reason": "同一法理（Nordenfelt 合理性審査）の thin 版。",
+    "migrate": "Esso v Harper's Garage [1967] UKHL 1 と Tillman v Egon Zehnder [2019] UKSC 32 の BAILII、Nordenfelt の Wikipedia を出典へ、パーカー卿を keyFigures へ。",
+    "provenanceDelta": "keep src 3→6 / gov 0→2。減少なし。"
+   }
+  ],
+  "fixes": [
+   {
+    "id": "bizlaw-doctrine-of-frustration",
+    "action": "Krell の BAILII リンクが UKHL パス（ラベルは Court of Appeal）だったため、姉妹エントリの EWCA/Civ パスへ差し替え（ラベルと整合）。"
+   }
+  ],
+  "distinct": [
+   [
+    "bizlaw-doctrine-of-frustration",
+    "bizlaw-frustration-of-purpose",
+    "英国法のフラストレーション法理全体（Taylor v Caldwell・1943年法・事情変更の原則）と米国側の目的挫折（§265）でレーンが異なる"
+   ],
+   [
+    "bizlaw-restraint-of-trade",
+    "bizlaw-unreasonable-restraint-of-trade",
+    "コモン・ローの取引制限法理と日本の独禁法2条6項の不当な取引制限で対象法体系が異なる"
+   ]
+  ]
+ },
+ "pass16": {
+  "appliedAt": "2026-08-10",
+  "note": "EQUAL 衝突の第4弾 9 統合。**connective action は翻字ゆれ（セガーバーグ/セガバーグ/セゲルベリ）で dedupeId 検出を逃れた 5 重複**で、名前スキャン導入以来最大のクラスタ。datafication では OJS の記事 URL が数値 id でなくスラッグ（article/view/datafication）という不自然なパスだったため、-theory 側の DOI（10.24908/ss.v12i2.4776 — OJS 数値 id と整合）へ差し替え。loose-coupling では **keeper 内部に同一論文（Weick 1976）の矛盾する 2 つの JSTOR id**（3149527 / 2391875）が併存しており、plain 側も 2391875 を持つ 2 独立の一致を根拠に 3149527 を除去した。",
+  "merges": [
+   {
+    "keep": "infosoc-connective-action",
+    "drop": "infosoc-connective-action-theory",
+    "reason": "同一理論（Bennett & Segerberg 2012/2013）。",
+    "migrate": "組織なき組織化・ハッシュタグアクティビズム・正確な誌巻号を本文へ。共有 DOI は keep が同 URL を保有。Bimber 2005 等の未確定 DOI は移送しない。",
+    "provenanceDelta": "本文 +約110字。減少なし。"
+   },
+   {
+    "keep": "infosoc-connective-action",
+    "drop": "infosoc-connective-action-bennett",
+    "reason": "同一理論。",
+    "migrate": "上記に合算。",
+    "provenanceDelta": "—"
+   },
+   {
+    "keep": "infosoc-connective-action",
+    "drop": "infosoc-connective-action-bennett-segerberg",
+    "reason": "同一理論（翻字ゆれ）。",
+    "migrate": "上記に合算。",
+    "provenanceDelta": "—"
+   },
+   {
+    "keep": "infosoc-connective-action",
+    "drop": "infosoc-logic-of-connective-action",
+    "reason": "同一理論（書籍題名を id 化しただけ）。",
+    "migrate": "上記に合算。",
+    "provenanceDelta": "—"
+   },
+   {
+    "keep": "infosoc-datafication",
+    "drop": "infosoc-datafication-theory",
+    "reason": "同一概念（M-S&C 2013・van Dijck dataism）。",
+    "migrate": "Couldry & Mejias のデータ植民地主義論を本文と keyFigures へ、FA 記事・SUP 書籍・TVNM 論文 DOI を出典へ。van Dijck の queensu スラッグ URL を DOI 版へ差し替え。",
+    "provenanceDelta": "keep src 2→5(+置換1) / 本文 +約120字。減少なし。"
+   },
+   {
+    "keep": "infosoc-dataveillance",
+    "drop": "infosoc-dataveillance-theory",
+    "reason": "同一概念（Clarke 1988 個人/マス区別）。",
+    "migrate": "Lyon のソーシャル・ソーティング論を本文と keyFigures へ、Lyon 2001 の archive.org 書誌を出典へ。austlii の参照は掲載論文を特定できず移送しない。",
+    "provenanceDelta": "keep src 2→3 / 本文 +約100字。減少なし。"
+   },
+   {
+    "keep": "infosoc-domestication",
+    "drop": "infosoc-domestication-theory",
+    "reason": "同一理論（Silverstone/Hirsch/Morley 1992・4局面）。",
+    "migrate": "創始文献 2 件（1992 章の Semantic Scholar・S&H 1996 Springer 章）を出典へ。",
+    "provenanceDelta": "keep src 3→5。減少なし。"
+   },
+   {
+    "keep": "mgmt-loose-coupling-weick",
+    "drop": "mgmt-loose-coupling",
+    "reason": "同一概念。keep は逆機能・5つの声・デカップリング/ノーマルアクシデントへの影響まで持つ最充実版。",
+    "migrate": "Glassman 1973 の DOI を出典へ。March のゴミ箱モデルへの言及は別概念（mgmt-garbage-can 系）のため移送しない。同時に keep 内の Weick 1976 に付いていた誤実体 DOI 10.2307/3149527 を、2 独立の一致（keep 自身と drop の双方が 2391875 を保有）を根拠に除去。",
+    "provenanceDelta": "keep src 6→6（誤1除去+検証1追加）。減少なし。"
+   }
+  ],
+  "distinct": [
+   [
+    "bizlaw-administrative-law",
+    "mgmt-administrative-theory-fayol",
+    "行政法（公法）とファヨール管理過程論（経営学）— administrative の同語異義"
+   ]
+  ]
+ },
+ "pass17": {
+  "appliedAt": "2026-08-10",
+  "note": "EQUAL 衝突の第5弾 — 7 統合 + 1 レーン矯正。POB keeper の DOI 4 本中 3 本が発行元不一致で、うち 2 本はラベルと完全一致する正リンク（drop 側の job.165 / pass13 検証済みの annualreviews）で置換、1 本は SESSION_HANDOFF の未確定リストへ。moral-disengagement の drop 側 keyFigures に実在を確認できない人名 3 件（マッシモ・マカロ等）— 幻覚の疑いがあるためまるごと落とした。",
+  "merges": [
+   {
+    "keep": "infosoc-diffusion-of-innovations",
+    "drop": "infosoc-diffusion-of-innovations-digital",
+    "reason": "中身の9割が古典ロジャーズの要約で digital レーンとして立っていない。",
+    "migrate": "Bass model と SNS バイラル/ネットワーク効果の句を本文へ、ムーア/バスを keyFigures へ。Routledge と称する 5 版の DOI（実際の5版は Free Press 刊）は実体不一致の疑いで移送しない。",
+    "provenanceDelta": "本文 +約90字。減少なし。"
+   },
+   {
+    "keep": "infosoc-epistemic-injustice",
+    "drop": "infosoc-epistemic-injustice-digital",
+    "reason": "keep が既にアルゴリズム的証言的/解釈的不正義まで詳述しており完全下位互換。",
+    "migrate": "Milano & Prunkl (2024) Philosophical Studies を出典へ、Noble/Milano を keyFigures へ。Amazon の販売ページは移送しない。",
+    "provenanceDelta": "keep src 2→3。減少なし。"
+   },
+   {
+    "keep": "infosoc-filter-bubble",
+    "drop": "infosoc-filter-bubble-theory",
+    "reason": "同一概念（Pariser 2011・実証論争）。",
+    "migrate": "Flaxman, Goel & Rao (2016) POQ を出典へ、Flaxman/Nguyen を keyFigures へ。",
+    "provenanceDelta": "keep src 3→5。減少なし。"
+   },
+   {
+    "keep": "infosoc-filter-bubble",
+    "drop": "infosoc-filter-bubble-pariser",
+    "reason": "同一概念。",
+    "migrate": "Internet Policy Review の概念定義を出典へ。TED 動画は三次的で移送しない。",
+    "provenanceDelta": "上記に合算。"
+   },
+   {
+    "keep": "human-moral-disengagement",
+    "drop": "human-moral-disengagement-bandura",
+    "reason": "同一 discipline 内の同一概念（8機構）。drop の keyFigures に実在未確認の人名 3 件。",
+    "migrate": "組織環境での集合的離脱と組織文化の文脈の句を本文へ、Wikipedia を出典へ。Routledge と称する 2016 書籍 DOI（実際は Worth Publishers 刊）は実体不一致の疑いで移送しない。",
+    "provenanceDelta": "keep src +1 / 本文 +約90字。減少なし。"
+   },
+   {
+    "keep": "mgmt-positive-organizational-behavior-luthans",
+    "drop": "human-positive-organizational-behavior",
+    "reason": "経営学の主題が human-science 側に重複配置されていた（discipline レーンとして機能していない）。",
+    "migrate": "job.165（正しい JOB 書誌）で keep の誤 DOI を置換、Seligman & Csikszentmihalyi 2000 と PsyCap 書籍 DOI を出典へ、POS との対比句と Kim Cameron を本文/keyFigures へ。",
+    "provenanceDelta": "keep src 4→6 + 誤DOI 2 置換。減少なし。"
+   }
+  ],
+  "steers": [
+   {
+    "id": "mgmt-emotional-intelligence",
+    "action": "human-emotional-intelligence（概念・測定の学術レーン）と分業し、mgmt 側をゴールマンの6リーダーシップ・スタイル、採用/研修/360度への実装、メタ分析の効果量と選抜への慎重論という職場応用レーンへ書き換え。DISTINCT 登録。"
+   }
+  ]
+ },
+ "pass18": {
+  "appliedAt": "2026-08-10",
+  "note": "EQUAL 衝突の第6弾 — 6 統合 + 2 レーン矯正で、名前スキャンで検出した未裁定 EQUAL ペアの主要クラスタを完了。mgmt-organizational-learning は **title フィールドに定義文が丸ごと入っている整形不良**を併発しており、修正して傘概念レーン（Argyris 各論と分業）へ矯正した。",
+  "merges": [
+   {
+    "keep": "mgmt-bricolage",
+    "drop": "mgmt-bricolage-theory",
+    "reason": "同一 discipline 内の同一概念（Baker & Nelson 2005）。文化理論レーンの infosoc-bricolage は DISTINCT 維持。",
+    "migrate": "Weick（組織化/即興）を keyFigures へ。B&N の DOI は keep が本文中に保有。",
+    "provenanceDelta": "減少なし。"
+   },
+   {
+    "keep": "human-growth-mindset",
+    "drop": "human-growth-mindset-dweck",
+    "reason": "同一 discipline 内の同一理論。",
+    "migrate": "神経可塑性メッセージの介入研究とフィードバック様式研究の句を本文へ。",
+    "provenanceDelta": "本文 +約120字。減少なし。"
+   },
+   {
+    "keep": "infosoc-quantified-self",
+    "drop": "infosoc-quantified-self-movement",
+    "reason": "同一の運動/実践（Wolf & Kelly 2007）。",
+    "migrate": "Ajana の生政治論文（PMC）を出典へ、Ajana/Nafus を keyFigures へ。",
+    "provenanceDelta": "keep src 3→4。減少なし。"
+   },
+   {
+    "keep": "mgmt-organizational-decline-theory",
+    "drop": "mgmt-organizational-decline",
+    "reason": "同一理論。keep は脅威硬直・下降螺旋・ターンアラウンド接続まで持つ超集合。",
+    "migrate": "「段階が進むほど逆転困難」「自己認識能力が要」の句を本文へ。drop の JSTOR 258039（ASQ 論文に AMR 帯の id）は実体不整合の疑いで移送しない。",
+    "provenanceDelta": "本文 +約80字。減少なし。"
+   },
+   {
+    "keep": "mgmt-strategic-renewal",
+    "drop": "mgmt-strategic-renewal-theory",
+    "reason": "同一概念。Volberda/Crossan の各論は専用エントリが別在。",
+    "migrate": "研究系譜の整理句（Floyd&Lane/Volberda/Crossan → A&H 統合）を本文へ、Floyd & Lane 2000 AMR の DOI を出典へ。",
+    "provenanceDelta": "keep src 3→4 / 本文 +約130字。減少なし。"
+   }
+  ],
+  "steers": [
+   {
+    "id": "mgmt-organizational-learning",
+    "action": "title に定義文が入る整形不良を修正し、傘概念レーンへ書き換え（Argyris/March/Huber/Crossan/Senge/SECI の系譜整理）。organizational-learning-argyris と DISTINCT 登録。"
+   },
+   {
+    "id": "mgmt-growth-mindset",
+    "action": "組織マインドセット（culture of genius vs growth culture・人事実装・効果量の限界）レーンへ書き換え。human 側とは既裁定 DISTINCT。"
+   }
+  ]
+ },
+ "pass19": {
+  "appliedAt": "2026-08-10",
+  "note": "名前スキャン起点の EQUAL 未裁定ペアを完走（37→0）。BJR ファミリー 5 エントリを日本法レーン / デラウェア・レーン / 強化審査レーンの 3 本へ整理。",
+  "merges": [
+   {
+    "keep": "bizlaw-business-judgment-rule",
+    "drop": "bizlaw-business-judgment-rule-japan",
+    "reason": "どちらも日本法レーン（善管注意義務・アパマンショップ）で完全重複。",
+    "migrate": "江頭・神田を keyFigures へ、OIKE LIBRARY のアパマンショップ解説・Puchniak & Nakahigashi (2012) SSRN・Wikipedia を出典へ。",
+    "provenanceDelta": "keep src 3→6 / academic 1→3。減少なし。"
+   },
+   {
+    "keep": "bizlaw-business-judgment-rule-delaware",
+    "drop": "bizlaw-business-judgment-rule-evolution",
+    "reason": "evolution は米法史＋日本法の混載で、米法部分は delaware レーンの、日本法部分は plain の下位互換。",
+    "migrate": "Percy v. Millaudon (1829) の淵源・102条(b)(7) 立法応答・Bainbridge abstention 説 vs Eisenberg 行為規範/審査基準乖離説を delaware 本文へ吸収し、enhanced レーンへの参照を追記。Bainbridge 2004 の Vanderbilt リポジトリ URL はラベル（2004=57巻）と URL（vol55=2002）の巻号不一致で移送しない。Aronson justia と e-Gov は keep 側が同一 URL を保有。",
+    "provenanceDelta": "delaware 本文 249→約520字 / keyFigures +2。減少なし。"
+   }
+  ],
+  "distinct": [
+   [
+    "bizlaw-business-judgment-rule",
+    "bizlaw-business-judgment-rule-delaware",
+    "日本会社法レーンとデラウェア判例法レーン"
+   ],
+   [
+    "bizlaw-business-judgment-rule-delaware",
+    "bizlaw-business-judgment-rule-enhanced",
+    "通常審査（BJR推定）と支配権変動局面の強化審査（Unocal/Revlon）"
+   ]
+  ]
+ },
+ "pass20": {
+  "appliedAt": "2026-08-10",
+  "note": "enrich 感度上昇で dedupeGraph が 1 組検出（既知現象の再現）。全文読解で同一概念と裁定。",
+  "merges": [
+   {
+    "keep": "econ-stackelberg-competition",
+    "drop": "econ-duopoly-stackelberg-model",
+    "reason": "同一の逐次手番数量競争モデル。keep が 1934 年書誌・後方帰納・厚生比較・SPE 位置づけまで持つ超集合。",
+    "migrate": "Gal-Or (1985) REStud の先行者/後行者優位論文を出典へ。EconLib のゲーム理論総説は三次的で移送しない。",
+    "provenanceDelta": "keep src 3→4。減少なし。"
+   }
+  ]
+ },
+ "pass21": {
+  "appliedAt": "2026-08-10",
+  "note": "title フィールドに定義文が丸ごと入る整形不良を正規表現（60字超 + とは、/のこと。/を指す）で系統検出し 4 件を修正（information-cascades / obedience / intellectual-property / digital-literacy — organizational-learning・market-microstructure と同型）。うち 2 件で keyFigures の人名崩れも修正（『サンジョイ・ビハリ・チャンドニ』→スシル・ビクチャンダニ、『ソロモン・モスコヴィチ』→セルジュ・モスコヴィシ）。enrich 感度で dedupeGraph 1 組 → 統合。",
+  "merges": [
+   {
+    "keep": "mgmt-transformational-leadership",
+    "drop": "mgmt-transformational-leadership-bass",
+    "reason": "同一 discipline の同一理論（Burns 1978・Bass 4Is・MLQ・取引型対比）。レーン分化なし。drop の keyFigures に実在を確認できない人名（フランシス・ホガン）。",
+    "migrate": "現代的方向（心理的安全性・共有型・e-リーダーシップ）の句を本文へ、Wikipedia を出典へ。書籍に JSTOR 論文 id を付した Bass 1985 の出典は実体未確定で移送しない。",
+    "provenanceDelta": "keep src +1 / 本文 +約60字。減少なし。"
+   }
+  ]
+ },
+ "pass22": {
+  "appliedAt": "2026-08-10",
+  "note": "enrich 感度で dedupeGraph 1 組 → 全文読解で OGD の 5 重複クラスタ（connective-action と同型）と判明。一般概念レーン（open-data: オープン定義・5スター・FAIR との分業）と政府政策レーン（open-government-data: Janssen/Meijer の実証研究・Sunlight 10 原則）の 2 本へ整理。",
+  "merges": [
+   {
+    "keep": "infosoc-open-government-data",
+    "drop": "infosoc-open-government-data-sunlight",
+    "reason": "同一の OGD 政策概念。",
+    "migrate": "Sunlight 10 原則の内訳を本文へ、原典 URL と Wikipedia を出典へ（財団は NGO のため type は reference）。",
+    "provenanceDelta": "keep src 4→6 / 本文 +約230字。減少なし。"
+   },
+   {
+    "keep": "infosoc-open-government-data",
+    "drop": "infosoc-open-data-government-transparency",
+    "reason": "同一概念（queue 項目）。",
+    "migrate": "G8 憲章・ポータル群・課題均衡の句を本文へ吸収。OECD Working Paper と称する 10.1017（Cambridge）DOI は発行元不一致で移送しない。",
+    "provenanceDelta": "上記に合算。"
+   },
+   {
+    "keep": "infosoc-open-government-data",
+    "drop": "infosoc-open-data-movement-sunlight",
+    "reason": "運動フレーミングの同一概念。",
+    "migrate": "シビックテックによる実装側の句を本文へ。ポロックは open-data 側の keyFigures へ。",
+    "provenanceDelta": "上記に合算。"
+   }
+  ],
+  "distinct": [
+   [
+    "infosoc-open-data",
+    "infosoc-open-government-data",
+    "一般概念（定義・品質尺度・FAIR 分業）と政府政策パラダイム"
+   ]
+  ]
+ },
+ "pass23": {
+  "appliedAt": "2026-08-10",
+  "note": "queue 先頭に 3 つ目の champerty エントリが現れ、全文読解で 3 重複と判明。バッチ13 で -maintenance-doctrine へ書いた TPLF 分析は keeper へ移送（作業は無駄にならない）。-and-maintenance が持っていた 1967 年英刑事法の条文リンクは、バッチ13 の際に記憶から書いた事実の相互裏付けになった。",
+  "merges": [
+   {
+    "keep": "bizlaw-champerty",
+    "drop": "bizlaw-champerty-and-maintenance",
+    "reason": "同一法理。keep は中世制定法・14条(2)留保・Arkin cap・米州差まで持つ最充実版。",
+    "migrate": "Mulheron (OUP 2023) を出典へ、Winfield/Mulheron を keyFigures へ。Brooks VLR 1916 の JSTOR id は実体未確定で移送しない。1967年法の条文リンクは keep が同一 URL を保有。",
+    "provenanceDelta": "keep src 2→6 / academic 0→3。減少なし。"
+   },
+   {
+    "keep": "bizlaw-champerty",
+    "drop": "bizlaw-champerty-maintenance-doctrine",
+    "reason": "同一法理（バッチ13 で増強した版）。",
+    "migrate": "TPLF 産業の対立軸・Sebok/Steinitz の学説・開示義務の立法論点・日本法未整備の比較法的意味を本文へ、SSRN Sebok・RAND・LII を出典へ。",
+    "provenanceDelta": "上記に合算 / 本文 +約320字。減少なし。"
+   }
+  ]
+ },
+ "pass24": {
+  "date": "2026-08-10",
+  "trigger": "knowledge:auto dedupe（タイトルコア一致）2 件 — title-malformation 修正で正規化されたコアが照合可能になり顕在化",
+  "merges": [
+   {
+    "keep": "econ-information-cascades",
+    "drop": "infosoc-information-cascade",
+    "reason": "同一 BHW 1992 モデルの再記述。infosoc 側は SNS バイラル 1 文以外に分野固有の角度がなく（cultivation-digital 型の「デジタル拡張」エントリではない）、出典も著者ページ・講義ブログ中心で keeper の DOI 4 本に劣後。discipline-lane 例外（各分野の角度に操舵済みなら別建て）に該当しない。",
+    "migrate": [
+     "https://tamuz.caltech.edu/papers/cascades_survey.pdf"
+    ],
+    "absorbed": "情報的影響（他者の行動を証拠として扱う）と規範的影響（同調圧力）の区別・集合知の失敗としての位置づけ・SNS バイラル拡散への適用",
+    "provenanceDelta": {
+     "chars": [
+      537,
+      681
+     ],
+     "sources": [
+      4,
+      5
+     ],
+     "academic": [
+      4,
+      5
+     ]
+    }
+   },
+   {
+    "keep": "infosoc-digital-literacy",
+    "drop": "infosoc-digital-literacy-gilster",
+    "reason": "同一分野（infosoc）内の重複 — 規則どおり常に統合。keeper が出典 4 本（DOI 3 + JRC 政府系）で最厚。",
+    "migrate": [
+     "https://en.wikipedia.org/wiki/Digital_literacy"
+    ],
+    "notMigrated": [
+     {
+      "url": "https://doi.org/10.2307/j.ctt1bmznxg",
+      "why": "JSTOR ブック DOI プレフィックス（10.2307/j.ctt）なのにラベルは Gilster 1997 Wiley 刊 — 誤実体疑い。推測で直さない規則により未検証のまま移管しない。"
+     }
+    ],
+    "absorbed": "Gilster 1997 の概念的初出と批判的思考コア・UNESCO MIL 枠組み・偽情報/ディープフェイク教育・図書館情報学/ジャーナリズム教育/移民包摂への実践展開",
+    "provenanceDelta": {
+     "chars": [
+      499,
+      713
+     ],
+     "sources": [
+      4,
+      5
+     ],
+     "academic": [
+      3,
+      3
+     ]
+    }
+   }
+  ]
+ },
+ "pass25": {
+  "date": "2026-08-10",
+  "trigger": "knowledge:auto dedupeGraph（term-overlap 3351）— pass24 再生成後に顕在化",
+  "merges": [
+   {
+    "keep": "human-social-learning-theory",
+    "drop": "human-observational-learning",
+    "reason": "同一分野（human-science）の相互再記述 — 双方が Bandura・ボボ人形 1961・モデリング・代理強化・社会的認知理論への発展を記述し、どちらも理論と過程の両方を扱っていて lane 分担がない。keeper は上位概念かつ DOI 3 本（Bandura 1977・BRR 1961・Rotter 1954）+ York 原典全文で最厚。",
+    "migrate": [
+     "https://www.britannica.com/science/observational-learning",
+     "https://wsu.pressbooks.pub/psych105/chapter/6-5-observational-learning-modeling/"
+    ],
+    "notMigrated": [
+     {
+      "url": "https://www.simplypsychology.org/bandura.html",
+      "why": "keeper に同一 URL が既存（重複回避）"
+     }
+    ],
+    "absorbed": "観察学習の4過程（注意・保持・運動再生・動機づけ）・行動主義を認知過程で拡張した理論史的意義・攻撃/向社会的行動とメディア影響への応用",
+    "provenanceDelta": {
+     "chars": [
+      486,
+      676
+     ],
+     "sources": [
+      5,
+      7
+     ],
+     "academic": [
+      3,
+      4
+     ]
+    }
+   }
+  ]
+ },
+ "pass26": {
+  "date": "2026-08-10",
+  "trigger": "knowledge:auto dedupeGraph（term-overlap 3267）",
+  "merges": [
+   {
+    "keep": "econ-nudge-theory",
+    "drop": "econ-behavioral-nudge-thaler-sunstein",
+    "reason": "同一分野（economics）の同一概念 — 双方が Thaler&Sunstein 2008・選択アーキテクチャ・デフォルト例・BIT 2010・ノーベル賞 2017・操作性批判を記述。keeper は Britannica/NobelPrize.org/IfG と全出典が精密で、タイトル・id も簡潔。",
+    "migrate": [
+     "https://yalebooks.yale.edu/book/9780300122237/nudge/",
+     "https://www.bi.team/"
+    ],
+    "notAbsorbed": [
+     {
+      "claim": "ハンナ・フリードリクセンらの自律性侵害批判",
+      "why": "実在確認不能の人名（confabulation 疑い）— 批判論点自体は人名なしで吸収"
+     },
+     {
+      "claim": "内閣府の行動ファイナンス研究・経産省ナッジ×デジタル",
+      "why": "無出典の省庁固有名。実在の環境省 BEST への推測差し替えもしない"
+     }
+    ],
+    "absorbed": "二重過程理論の基盤・401(k) 自動加入/自動増額・BIT の納税督促成果・批判 3 論点（効果量/民主的正統性/文化的移転）と設計原則（透明・回避容易）",
+    "provenanceDelta": {
+     "chars": [
+      363,
+      606
+     ],
+     "sources": [
+      3,
+      5
+     ],
+     "academic": [
+      0,
+      1
+     ],
+     "government": [
+      1,
+      2
+     ]
+    }
+   }
+  ]
+ },
+ "pass27": {
+  "date": "2026-08-10",
+  "trigger": "knowledge:auto dedupe（タイトルコア一致）— econ-greenfield-paradox の誤称タイトル（グリーンフィールド）を実体どおりグリーン・パラドックスへ訂正した結果、隠れていた真正重複が顕在化",
+  "merges": [
+   {
+    "keep": "econ-green-paradox-sinn",
+    "drop": "econ-greenfield-paradox",
+    "reason": "同一分野（economics）・同一概念（Sinn の green paradox）。keeper は Sinn の正 DOI（10.1007/s10797-008-9082-z, Int Tax Public Finance）を持ち機構記述が最厚。drop の Sinn URL は 10.1007/s10640-007-9181-8（= Environmental and Resource Economics 誌のプレフィックス）で誤実体。",
+    "migrate": [
+     "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2037694"
+    ],
+    "notMigrated": [
+     {
+      "url": "https://link.springer.com/article/10.1007/s10640-007-9181-8",
+      "why": "ラベルは ITPF 15:360-394 だが DOI プレフィックス s10640 は別誌（ERE）— 誤実体のため移管しない（keeper が正しい DOI を保有済み）"
+     }
+    ],
+    "absorbed": "成立条件の腑分け（抽出費用逓増・バックストップ価格）・弱い/強いパラドックスの区別・炭素リーケージとの相互作用・Gerlagh/van der Werf/Di Maria の研究系譜",
+    "provenanceDelta": {
+     "chars": [
+      619,
+      817
+     ],
+     "sources": [
+      2,
+      3
+     ],
+     "academic": [
+      1,
+      2
+     ]
+    }
+   }
+  ]
+ },
+ "pass28": {
+  "date": "2026-08-10",
+  "trigger": "knowledge:auto dedupeGraph（term-overlap 3000）",
+  "merges": [
+   {
+    "keep": "econ-greenfield-investment",
+    "drop": "econ-greenfield-investment-fdi-modes",
+    "reason": "同一分野（economics）・同一概念（FDI 参入モードの greenfield/brownfield 二分・Dunning OLI・UNCTAD WIR の受入国効果）。keeper は Nocke&Yeaple JIE/REStud + Dunning JIBS の DOI 3 本で最厚。drop は UNCTAD（重複）+ Wikipedia のみで全角カンマの表記も混在。",
+    "migrate": [
+     "https://en.wikipedia.org/wiki/Foreign_direct_investment"
+    ],
+    "absorbed": "モード選択の決定因（制度環境・産業特性）・機能的分担（内部化/迅速獲得）・M&A の雇用再編と市場集中リスク・新興国の優遇政策と規制選好",
+    "provenanceDelta": {
+     "chars": [
+      278,
+      477
+     ],
+     "sources": [
+      4,
+      5
+     ],
+     "academic": [
+      3,
+      3
+     ],
+     "government": [
+      1,
+      1
+     ]
+    }
+   }
+  ]
+ },
+ "pass29": {
+  "date": "2026-08-10",
+  "trigger": "knowledge:auto dedupeGraph（term-overlap 3274）",
+  "merges": [
+   {
+    "keep": "bizlaw-guarantee-obligation",
+    "drop": "bizlaw-suretyship",
+    "reason": "同一分野（business-law）・同一制度（民法446条の保証・連帯保証）。双方が要式性・付従性・催告/検索の抗弁・454条・2017年改正を重複記述。keeper は三性質（付従・随伴・補充）＋情報提供義務＋求償まで含み最厚。タイトルを「保証債務・連帯保証（民法446条）」へ拡張して検索性を保持。",
+    "migrate": [],
+    "notMigrated": [
+     {
+      "url": "https://www.moj.go.jp/content/001399956.pdf",
+      "why": "keeper が同一趣旨の法務省リーフレット（001254262.pdf）を保有済み"
+     },
+     {
+      "url": "https://ja.wikibooks.org/wiki/民法第446条",
+      "why": "吸収した 456条・465条の2 は keeper の e-Gov 出典（第446条〜465条の10）の範囲内で裏付け済み"
+     }
+    ],
+    "absorbed": "分別の利益（456条）と連帯保証におけるその喪失・個人根保証契約の極度額要求（465条の2）",
+    "provenanceDelta": {
+     "chars": [
+      574,
+      673
+     ],
+     "sources": [
+      3,
+      3
+     ],
+     "government": [
+      2,
+      2
+     ]
+    }
+   }
+  ]
+ },
+ "pass30": {
+  "date": "2026-08-10",
+  "trigger": "enrich キュー先頭で同一概念の薄い重複を検出（thin-entry が dedupe 検出器を逃れる既知パターン — タイトルコア相違・増強前 term-overlap 不足）",
+  "merges": [
+   {
+    "keep": "econ-solow-paradox",
+    "drop": "econ-productivity-paradox",
+    "reason": "同一分野（economics）・同一概念（Solow 1987 の quip・Brynjolfsson 1993 の四仮説・1990年代後半の解消論）。keeper は増強済みで最厚。",
+    "migrate": [
+     "https://dl.acm.org/doi/10.1145/163298.163309",
+     "https://www.frbsf.org/wp-content/uploads/resurgence.pdf"
+    ],
+    "replaced": [
+     {
+      "old": "https://www.nber.org/papers/w3891",
+      "new": "https://dl.acm.org/doi/10.1145/163298.163309",
+      "why": "NBER WP 3891 の実体は未検証の疑義リンクだった。Brynjolfsson 1993 の正規掲載誌は CACM 36(12):67-77 で、drop エントリの独立 attestation と一致するため正規 DOI へ置換（出典数は減少なし）"
+     }
+    ],
+    "notMigrated": [
+     {
+      "url": "https://en.wikipedia.org/wiki/Productivity_paradox",
+      "why": "keeper が Britannica の同主題 reference を保有済み"
+     }
+    ],
+    "absorbed": "Oliner & Sichel (2000) の成長会計による IT 資本深化・半導体 TFP 寄与の定量化",
+    "provenanceDelta": {
+     "chars": [
+      620,
+      672
+     ],
+     "sources": [
+      2,
+      3
+     ],
+     "academic": [
+      1,
+      2
+     ]
+    }
+   }
+  ]
+ },
+ "pass31": {
+  "date": "2026-08-10",
+  "trigger": "enrich キュー先頭で同一分野・同一核（Rochet-Tirole 多面市場）の重複を検出 — thin-entry が検出器を逃れる既知パターン。裁定台帳に該当ペアなし",
+  "merges": [
+   {
+    "keep": "infosoc-platform-economics",
+    "drop": "infosoc-platform-economy",
+    "reason": "同一分野（infosoc）で双方が Rochet-Tirole 2003・非対称価格・勝者総取りを核に記述。keeper は増強済みで P&VA 2005 の学術 DOI と Nobel 出典を持ち最厚。",
+    "migrate": [
+     "https://wwnorton.com/books/Platform-Revolution/",
+     "https://politybooks.com/bookdetail/?isbn=9781509504879"
+    ],
+    "replaced": [
+     {
+      "old": "https://doi.org/10.1111/1467-937X.00160",
+      "new": "https://doi.org/10.1162/154247603322493212",
+      "why": "keeper の R&T 2003 リンクは REStud の DOI プレフィックス (1467-937X) に JEEA ラベルが付いた誤結線。drop エントリが保持していた正規 JEEA DOI に置換（出典数の減少なし）"
+     }
+    ],
+    "notMigrated": [
+     {
+      "url": "https://store.hbr.org/product/matchmakers-the-new-economics-of-multisided-platforms/10536",
+      "why": "マッチメーカー論の内容は keeper の R&T 記述で被覆済み（追加吸収なしのため移管せず）"
+     }
+    ],
+    "absorbed": "パイプライン→プラットフォーム転換（Parker et al. 2016）とスルニチェクのデータ=生産手段テーゼ・5類型 — 価格理論/事業モデル/政治経済批判の三層構成として統合",
+    "provenanceDelta": {
+     "chars": [
+      600,
+      855
+     ],
+     "sources": [
+      3,
+      5
+     ],
+     "academic": [
+      2,
+      2
+     ]
+    }
+   }
+  ]
+ },
+ "pass32": {
+  "date": "2026-08-10",
+  "trigger": "knowledge:auto dedupeGraph（term-overlap 3289）",
+  "merges": [
+   {
+    "keep": "econ-transfer-pricing",
+    "drop": "econ-transfer-pricing-multinational",
+    "reason": "同一分野（economics）・同一概念（移転価格と独立企業原則・OECD ガイドライン・BEPS）。keeper は措法66条の4 と国税庁・OECD の制度出典を持つ制度側エントリで、経済分析側の固有内容（利益移転の実証・ALP の限界・二本柱）を吸収して一本化。",
+    "migrate": [
+     "https://en.wikipedia.org/wiki/Transfer_pricing"
+    ],
+    "notMigrated": [
+     {
+      "url": "https://doi.org/10.1016/S0047-2727(02)00005-2",
+      "why": "ラベルは Hines & Rice (1994) QJE だが DOI プレフィックス 0047-2727 は Journal of Public Economics（2002 年記事）— 誤実体のため移管しない。keyFigures の人名転記（ヒルシェイ等）も不正確で継承せず"
+     },
+     {
+      "url": "https://www.oecd.org/en/topics/policy-issues/transfer-pricing.html",
+      "why": "keeper が OECD ガイドライン公式ページを保有済み（同趣旨の重複）"
+     }
+    ],
+    "absorbed": "算定方法群と相互協議・APA、タックスヘイブンへの報告利益集中の実証、無形資産評価困難と ALP の限界、BEPS 行動計画8-10 から二本柱合意への展開",
+    "provenanceDelta": {
+     "chars": [
+      389,
+      664
+     ],
+     "sources": [
+      2,
+      3
+     ],
+     "government": [
+      2,
+      2
+     ]
+    }
+   }
+  ]
+ },
+ "pass33": {
+  "date": "2026-08-14",
+  "trigger": "knowledge:auto dedupeGraph（term-overlap 3267）",
+  "merges": [
+   {
+    "keep": "bizlaw-statute-of-frauds",
+    "drop": "bizlaw-statute-of-frauds-modern",
+    "reason": "同一分野（business-law）・同一概念。drop 側は「現代的展開」と題しながら 1677年の起源・対象契約類型・UCC §2-201・E-SIGN/UETA まで keeper と同じ範囲を扱っており、粒度も法域も同じ言い換えだった。keeper は一次資料（legislation.gov.uk）と Yale LJ を持ち、drop 側の権威源は Wikipedia を含む。",
+    "migrate": [],
+    "notMigrated": [
+     {
+      "claim": "2003年のUCC改正でデジタル時代に対応して書面要件が緩和された",
+      "why": "改訂第2編は2003年に ALI/ULC が承認したものの**どの州も採用せず、2011年に両団体が承認を撤回**した。現行法として書けない誤りなので移管しない。"
+     },
+     {
+      "claim": "1989年財産法（雑則）により不動産取引を除いて書面要件は撤廃されている",
+      "why": "1677年法第4条の文言を削除したのは Law Reform (Enforcement of Contracts) Act 1954 s.1 であり 1989 年法ではない。また廃止対象から外れたのは保証（suretyship）で、「不動産取引を除いて」という整理も誤り。一次資料で確認した正しい内容だけを keeper へ書き足した。"
+     },
+     {
+      "url": "https://doi.org/10.2307/1340108",
+      "why": "ラベルの出版年（1998）を一次照合できていない。未検証の出典を持ち込むことになるため移管しない（推測で出典を直さない）。"
+     },
+     {
+      "url": "https://en.wikipedia.org/wiki/Statute_of_frauds",
+      "why": "keeper が Cornell LII Wex で同じ範囲を押さえている。"
+     },
+     {
+      "url": "https://www.law.cornell.edu/ucc/2/2-201",
+      "why": "keeper が同一 URL を保有済み。"
+     }
+    ],
+    "absorbed": "イギリス本国での一部廃止の経緯（1954年法 s.1 が第4条の文言の大半を削除し、保証だけが残った）を一次資料の出典付きで keeper に追記した。",
+    "provenanceDelta": {
+     "chars": [
+      486,
+      674
+     ],
+     "sources": [
+      4,
+      5
+     ],
+     "government": [
+      1,
+      2
+     ]
+    }
+   }
+  ]
+ }
+}

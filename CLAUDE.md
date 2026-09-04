@@ -2,102 +2,247 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> **🆕 セッション引継ぎ:** 新しい Claude Code セッションを開始した場合、
+> まず [`docs/SESSION_HANDOFF.md`](docs/SESSION_HANDOFF.md) を読んでください。
+> 進行中タスク・確立されたパターン・既知の罠・残作業を簡潔にまとめています。
+> `.claude/settings.json` の SessionStart hook (`scripts/session-context.cjs`)
+> が自動でこのファイルの存在を案内します。
+
 ## Project
 
-Service Hub — an Electron + React + TypeScript desktop dashboard skeleton that exposes 27 services
-across third‑party SaaS (GitHub, WordPress.com, Atlassian, Notion, Google Drive / Calendar / Gmail,
-Slack, Canva), local tools (Skills, Security, Cloudflare, Emotions, Ollama, KPI, Stocks), business
-operations (Home, Business Dashboard, Team Radar, Templates, Library, Settings), food delivery
-(Uber Eats, 出前館 — snapshot only) and investment (Real Estate 不動産投資, Mutual Funds 投資信託 —
-snapshot only) through a unified sidebar UI. The renderer is built with Vite; the Electron main and preload processes
-are bundled by `vite-plugin-electron`.
+Service Hub — a Japanese-facing business dashboard exposing **75 services** through a unified,
+category-grouped sidebar (おすすめ / 士業連携 / 分析・ツール / 外部サービス連携). Services span third-party SaaS
+(GitHub, WordPress.com, Atlassian, Notion, Google Drive / Calendar / Gmail, Slack, Canva,
+Microsoft 365, Dropbox, Salesforce, Discord, Asana, Linear, Sentry, Shopify, Stripe, LINE), local
+tools (Skills, Security, Cloudflare, Emotions, Ollama, KPI, Stocks, Storage), business operations
+(Home, Business Dashboard, Team Radar, Templates, Library, Settings, Quality), food delivery
+(Uber Eats, 出前館), investment (Real Estate 不動産投資, Mutual Funds 投資信託) and eight 士業
+professional integrations (税理士 / 公認会計士 / 社労士 / 弁護士 / 司法書士 / 行政書士 / 中小企業診断士 / 弁理士)
+with a verified 事業仕分け duty map (`professionalMap.ts`) and a local-first CRM.
 
-Each service page starts from a static snapshot in `src/renderer/data/snapshot.ts` (regenerated
-manually by running MCP tools) and can swap to a live REST fetch via the main‑process clients in
-`src/main/clients/*`. The `useServiceData(serviceId, snapshot)` hook in `src/renderer/hooks/`
-manages this: it returns `data`, `source` (`'snapshot'` | `'live'`), `status`, `errorMessage`, and
-`refresh()`. All nine services have live fetchers registered in `LIVE_FETCHERS`. Auth varies:
-GitHub/Notion/Slack/Drive/Calendar/Gmail/Canva/WordPress take a single Bearer token;
-Atlassian takes a JSON blob `{"email","token","site"}` (Basic auth + site URL). Real OAuth code
-flow isn't implemented — users obtain access tokens out‑of‑band (e.g. Google OAuth Playground,
-Notion integration token, Slack workspace token) and paste them into the page.
+**Two runtime targets ship from the same codebase:**
+1. **Electron desktop app** (`npm run dev` / `npm run build`) — full OS integration, 3-process model.
+2. **Browser standalone** (`npm run build:web` → `dist/standalone.html`) — a single self-contained HTML
+   file (実測 10.9 MiB full / 2.8 MiB `build:web:lite` mobile variant — 2026-09-02 計測: 11,418,740 B / 2,913,792 B) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
 
-Tokens are persisted in the user's Electron `userData` directory via `src/main/secrets.ts`, which
-encrypts them with `safeStorage` when the OS keychain is available (and falls back to a
-plain‑base64 layout otherwise, so dev on Linux without keychain still works). Renderer never sees
-the raw token — it only calls `serviceHub.setToken / clearToken / listConfigured / fetchSnapshot`.
+Each service page starts from a static snapshot in `src/renderer/data/snapshot.ts` and can swap to a
+live REST fetch. The `useServiceData(serviceId, snapshot)` hook returns `data`, `source`
+(`'snapshot'` | `'live'`), `status`, `errorMessage`, and `refresh()`.
+
+All verified (sourced) knowledge datasets — academic concepts (`academicKnowledge.ts`), tax/labor/legal
+compliance (`complianceKnowledge.ts`), subsidies (`subsidyKnowledge.ts`), support hotlines
+(`counselorKnowledge.ts`), and economic history (`economicHistoryKnowledge.ts`) — are the single source
+of truth for an **Obsidian knowledge vault** (`knowledge-vault/`, 7,500+ notes, `npm run vault:build`)
+and are injected as context into the AI-orchestration runtime per executive role
+(`orchestration/knowledge-map.json`, `orchestration/knowledge-context.cjs`, `npm run orchestrate:context`
+/ dispatch). `vault:check` (in `verify:all`/CI) enforces vault sync and forbids duplicate ids
+(`node scripts/dedupe-knowledge.cjs` consolidates). See `docs/KNOWLEDGE_VAULT.md`.
 
 ## Commands
 
 ```bash
-npm install          # install deps
-npm run dev          # launch Vite + Electron in development (hot reload)
-npm run typecheck    # tsc -b --noEmit (uses tsconfig project references)
-npm run build:renderer  # type-check + vite build only (no packaging)
-npm run build        # full build: tsc -b, vite build, electron-builder package
-npm run lint         # eslint . (no eslint config committed yet — add one before relying on this)
-npm test             # vitest run (all *.test.ts under src/**/__tests__/)
-npm run test:watch   # vitest watch mode
+npm install              # install deps
+npm run dev              # Vite + Electron, hot reload (desktop dev)
+npm run build:web        # → dist/standalone.html (browser build; runs inline-html.cjs)
+npm run build:web:lite   # → dist/standalone-lite.html (~2MB モバイル版・学術コーパス非搭載)
+npm run e2e              # Playwright 実機 E2E (desktop/phone/tablet)。e2e:lite で LITE 版を検証
+npm run perf             # 起動性能ゲート (実 chromium)。起動時の巨大 JSON.parse を検出。
+                         #   フル版と LITE 版の**両方**が要る。vite の emptyOutDir が dist/ を掃除するので
+                         #   `build:web && build:web:lite` と続けると**フル版が消えて perf が落ちる** ——
+                         #   フル版を退避してから lite を作ること (e2e.yml がその順序を持っている)。
+                         #   `build:renderer` も vite なので、走らせるならブラウザ版より**前に**
+npm run e2e:ollama       # Ollama 連携 E2E (スタブ Ollama + 実 chromium)。未起動/CORS未許可/接続成功の3状態
+npm run ollama           # Ollama CLI (ブラウザ不要・CORS 無縁)。`-- chat <model> "..."` で対話
+npm run ollama:setup     # 導入→モデル取得→起動→1往復して確認。足りない段だけ埋める
+                         #   `-- --check` で現状確認のみ / `-- --origin <URL>` でブラウザ許可も案内
+npm run build:renderer   # tsc -b + vite build only (no packaging)
+npm run build            # full desktop build: tsc -b, vite build, electron-builder installers
+npm run typecheck        # tsc -b --noEmit --force (uses tsconfig project references)
+npm test                 # vitest run (src/**/__tests__/ 。件数は docs/ARCHITECTURE.md の表が持つ
+                         #   — 数を 2 か所に書くと必ず食い違うので、ここには書かない)
+npm run test:watch       # vitest watch mode
+npm run lint             # eslint . --max-warnings 0 (flat config in eslint.config.js, ESLint 9 + typescript-eslint)
+npm run smoke            # xvfb + Electron screenshot smoke test of every page
+npm run smoke:app        # 実物の `electron .` を起動して 8 秒生きているか
+                         #   (主プロセス dist-electron/main.js を通す唯一の検査)
+npm run scaffold -- <id> "<Label>" <ICON> [bearer|oauth|json]   # generate a new service end-to-end
 ```
 
-Run a single test with `npx vitest run path/to/file.test.ts` or filter by name with
-`npx vitest run -t "pattern"`. Vitest config is in `vitest.config.ts` (node environment).
+Run a single test: `npx vitest run path/to/file.test.ts`, or filter by name: `npx vitest run -t "pattern"`.
+Vitest config is in `vitest.config.ts` (node environment).
 
-CI: `.github/workflows/ci.yml` runs typecheck + test + build:renderer on every push to
-main / `claude/**` and on PRs to main. `.github/workflows/release.yml` builds Mac / Win /
-Linux installers in parallel on `v*` tag pushes and attaches them to a GitHub Release.
+### Custom quality gates (all run in CI — keep them green)
+
+```bash
+npm run verify:arch        # docs/ARCHITECTURE.md file:line refs + live metrics must match reality
+npm run lint:imports       # main / preload / renderer import-boundary enforcement
+npm run lint:forbidden     # forbidden patterns (nodeIntegration: true / contextIsolation: false /
+                           #   sandbox: false / webSecurity: false / eval / innerHTML ほか 36 種)
+npm run lint:workflow-security # .github/workflows/: permissions の明示・第三者 action の SHA 固定・
+                           #   pull_request_target 禁止・run: への信用できない値の埋め込み
+npm run lint:network-targets # 送り先ホストが変数で決まる通信の台帳 (資格情報の流出経路)
+npm run lint:docs          # cross-document consistency
+npm run lint:citations     # 出典の内部矛盾 (同一 DOI が別々の出版年で引かれていないか)
+npm run lint:doi-prefix    # DOI プレフィックス(=登録機関=出版社) とラベルの出版社の矛盾
+npm run lint:charset       # 他文字種・簡体字の混入 (CJK は共有ブロックなので字を列挙するしかない)
+npm run lint:knowledge-refs # 裁定台帳が実在しない知識 id を参照していないか
+npm run lint:test-coverage # every service must have a test + an action registered
+npm run lint:csp           # 出荷 HTML の CSP を**実物**に当てる (self-test のみ verify:all。
+                           #   成果物への適用は ci.yml が inject-pwa 適用後に行う)。
+                           #   雛形側 (index.html / inline-html.cjs の buildCsp) は
+                           #   `shared/__tests__/shippedCsp.test.ts` が既に留めている ——
+                           #   こちらが見るのは **注入後の公開ファイル** と landing / デモ 3 本
+npm run lint:deps          # 依存の供給網 (本番依存の閉包 5 件 / インストール時コード 3 件 の台帳・
+                           #   取得元は registry のみ・integrity 必須。本番依存は単一 HTML へ
+                           #   畳み込まれ保管庫と同じオリジンで走るので、増やすなら理由を書く)
+npm run lint:storage       # ブラウザに残す物の台帳 (IndexedDB 4 / Cache Storage 1 /
+                           #   localStorage 21 / sessionStorage 4。cookie と OPFS は 0 件だが走査はする)。
+                           #   新しい保存先が黙って増えないこと・バックアップが覆うのは 1 つだけ・
+                           #   **媒体そのものが `docs/DATA_PROTECTION.md` の在庫に載っていること**
+npm run lint:shell         # scripts/*.sh: bash -n syntax + strict mode (set -euo pipefail)
+npm run lint:mutation-scope # 変異検査の「測っていない範囲」の台帳 (広い Stryker disable)
+npm run lint:regex         # 正規表現の破滅的バックトラック (ReDoS) を実測。worker + 番犬つき
+                           #   (モデル応答を解析する assistantMarkdown.ts が主眼。指数のみ)
+npm run verify:all         # typecheck + all of the above + eslint (34 ゲート)
+                           #   **`npm test` は含まない。** CI は両方走らせるので、
+                           #   push 前は `npm test && npm run verify:all` の両方を回すこと
+                           #   (verify:all だけを見て「全 green」と言うと CI で落ちる)
+npm run mutate             # Stryker mutation testing (target: 100%); mutate:triage / mutate:next help
+npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+NotebookLM) → verify → work queue
+                           #   (weekly CI: knowledge-auto.yml; consume queue per docs/KNOWLEDGE_AUTOPILOT.md)
+```
+
+These are plain Node scripts in `scripts/` — there is no AST parser dependency; they grep marker
+comments and source. `verify:arch` will fail if you change architecture without updating
+`docs/ARCHITECTURE.md`. CI (`.github/workflows/ci.yml`) runs a single consolidated job on push to
+`main` and PRs to `main` (one `npm ci`, then typecheck + **all 34 `verify:all` gates**, vitest +
+coverage, and `build:web` asserting `dist/standalone.html` is generated and non-trivial) — collapsed
+from 3 jobs
+to 1 to minimize GitHub Actions minutes on the free tier. **`lint:docs` enforces that every gate in
+`verify:all` actually appears in `ci.yml`** — adding a gate without wiring it into CI leaves it
+existing but guarding nothing, which is exactly what happened to `lint:citations`,
+`lint:knowledge-refs` and `verify:knowledge` (the provenance gate) until 2026-07-30.
+`.github/workflows/release.yml` builds Mac/Win/Linux installers on `v*` tags;
+`mutation.yml` runs Stryker (weekly + on pushes to `main` that touch `stryker.config.json`,
+`vitest.config.ts`, `src/main/clients/**` or `src/main/oauth.ts`). `e2e` / `e2e:lite` / `perf` / `smoke:app` **are** wired into `.github/workflows/e2e.yml`, but it does **not run by
+default** (Actions 分の節約): trigger it from the Actions tab (`workflow_dispatch`) or by putting the
+**`run-e2e` label** on a PR. `e2e:ollama` / `smoke` are **not** in CI at all.
+`smoke:app` は 2026-08-26 に足した —— **実物の `electron .` を起動する唯一の検査**で、
+それまで誰も主プロセスを通しておらず、`dist-electron/main.js` は 2 週間ほど起動不能なまま
+全 CI が緑だった (`scripts/smoke-app.cjs` の冒頭に経緯)。 All of them need a real
+browser or Electron — run them locally before shipping renderer or startup-performance changes.
 
 ## Architecture
 
 Three TypeScript build contexts, kept separate via `tsconfig` project references:
 
-- `src/main/` — Electron main process. `main.ts` creates the `BrowserWindow` and registers IPC
-  handlers (`app:*`, `secrets:*`, `fetch:snapshot`). Token persistence lives in `secrets.ts`
-  (`safeStorage`‑backed). Live REST clients live under `src/main/clients/`; each exports a function
-  `(ctx: FetchContext) => Promise<NormalizedSnapshot>` and is registered in `clients/index.ts`'s
-  `LIVE_FETCHERS` map keyed by `ServiceId`.
-- `src/preload/` — Context‑isolated preload that exposes a typed `window.serviceHub` bridge via
-  `contextBridge.exposeInMainWorld`. The bridge type is re‑declared globally in `src/shared/bridge.d.ts`
-  so the renderer can call it without imports.
-- `src/renderer/` — React app. `App.tsx` renders a sidebar driven by `services.ts`, which is the single
-  source of truth for the service list (id, label, icon, description, page component). Adding a new
-  service means: create a page in `src/renderer/pages/`, create an API client in `src/shared/api/`
-  (stub) and/or a live fetcher in `src/main/clients/`, register the fetcher in `LIVE_FETCHERS`,
-  and append an entry to `SERVICES`.
+- **`src/main/`** — Electron main process. `main.ts` creates the `BrowserWindow` and registers IPC
+  handlers (`app:*`, `secrets:*`, `fetch:snapshot`, action invoke). `secrets.ts` persists tokens in
+  the Electron `userData` dir, encrypted with `safeStorage` when the OS keychain is available
+  (base64 fallback so Linux dev without a keychain still works). `oauth.ts` implements a real OAuth
+  2.0 Authorization-Code + PKCE flow via a loopback `127.0.0.1` HTTP server (RFC 7636 / 8252); pure
+  helpers (PKCE gen, URL building, token-request body) are exported for unit tests. Live REST clients
+  live under `src/main/clients/`.
+- **`src/preload/`** — Context-isolated preload exposing a typed `window.serviceHub` bridge via
+  `contextBridge.exposeInMainWorld`. The bridge type is re-declared globally in
+  `src/shared/bridge.d.ts` so the renderer calls it without imports.
+- **`src/renderer/`** — React app. `App.tsx` renders the category-grouped sidebar from `SERVICES`
+  (`services.ts`). The renderer never sees raw tokens — it only calls
+  `serviceHub.setToken / clearToken / listConfigured / fetchSnapshot / invoke / openExternal`.
 
-Page composition: each service page calls `useServiceData(id, SNAPSHOT[id])` and renders the result
-with the shared `components/StatusBar.tsx` + `Section` (header + count) + `components/DataList.tsx`
-(cards with optional thumbnail, meta, badge, and "open external" button). `StatusBar` exposes a
-unified refresh button plus an optional `tokenSetup` slot for password‑input‑style credential
-entry. Keep service pages declarative — if a new visual primitive is needed by more than one page,
-add it under `components/` rather than duplicating markup.
+### The single source of truth for services
 
-Live fetcher contract: a fetcher takes `{ token, fetch? }` and returns a value with the same shape
-as the corresponding `SNAPSHOT[id]` slice. `fetch` is injectable so the function is unit‑testable
-under Node without a real network. See `src/main/clients/github.ts` for the reference implementation
-and `src/main/clients/__tests__/github.test.ts` for the testing pattern (mock fetch with
-`vi.fn<typeof fetch>()`).
+`src/shared/serviceId.ts` exports the `SERVICE_IDS` array and `ServiceId` union — **this is the one
+true list**, imported by `services.ts` (sidebar), `clients/index.ts` (fetchers), and the preload
+bridge. Three parallel maps in `src/main/clients/index.ts` are keyed by `ServiceId`:
 
-API clients (`src/shared/api/*.ts`): each exports a class implementing `ServiceClient` (`id`,
-`isConfigured()`). Methods that need credentials must guard with `if (!this.isConfigured()) throw new
-NotConfiguredError(this.id);` before any network call. The clients are framework‑agnostic so they can
-later be invoked from either the renderer (direct fetch) or the main process (via IPC) — pick the
-location based on whether the API requires secret tokens that must not reach the renderer.
+- `LIVE_FETCHERS` — a **total** `Record<ServiceId, fetcher>`. A runtime invariant at module load
+  throws if any `ServiceId` is missing an entry, so a forgotten service crashes loudly at app start
+  rather than on first click. Note: many entries are static stubs (investment, 士業, food delivery)
+  that just satisfy the invariant and return `SNAPSHOT[id]` directly — only the SaaS clients do real
+  network I/O.
+- `LOCAL_SERVICES` — services whose fetcher reads local resources and needs no saved credentials
+  (a missing token is not an error for these).
+- `LIVE_ACTIONS` — `Partial<Record<ServiceId, ActionMap>>` of write-side actions, invoked from the
+  renderer via `serviceHub.invoke()`.
 
-Vite config (`vite.config.ts`) has `root: 'src/renderer'` and `build.outDir: '../../dist'`, so the
-renderer build lands at repo‑root `dist/`. The Electron bundles land at `dist-electron/`. Keep these
-directories in `.gitignore`.
+### Adding a service
+
+**Use the scaffolder** — don't wire services by hand:
+
+```bash
+npm run scaffold -- <id> "<Label>" <ICON> [bearer|oauth|json]
+```
+
+It creates the client + test + page and patches `serviceId.ts`, `clients/index.ts`, `services.ts`,
+and `snapshot.ts` by inserting at `// SCAFFOLD:ADD_*` marker comments. `auth-kind`: `bearer` (PAT/API
+token → `Authorization: Bearer`), `oauth` (OAuth access token, same wire as bearer), `json`
+(`{email,token,site}` Basic auth, e.g. Atlassian). Then fill the TODOs in the generated client, run
+`npm run typecheck && npm test`, and `git checkout` the patched files to undo. Full guide:
+`docs/ADDING_A_SERVICE.md`.
+
+### Page composition
+
+Each service page calls `useServiceData(id, SNAPSHOT[id])` and renders with the shared
+`components/StatusBar.tsx` (unified refresh button + optional `tokenSetup` credential slot) +
+`Section` + `components/DataList.tsx` (cards with thumbnail / meta / badge / open-external). Keep
+pages declarative — if a visual primitive is needed by more than one page, add it under `components/`.
+
+### Live fetcher contract
+
+A fetcher takes `{ token, fetch? }` and returns a value with the same shape as `SNAPSHOT[id]`.
+`fetch` is injectable so fetchers are unit-testable under Node without a network. See
+`src/main/clients/github.ts` and its `__tests__/github.test.ts` (mock with `vi.fn<typeof fetch>()`).
+
+### API clients (`src/shared/api/*.ts`)
+
+Framework-agnostic classes implementing `ServiceClient` (`id`, `isConfigured()`). Credentialed
+methods must guard with `if (!this.isConfigured()) throw new NotConfiguredError(this.id);` before any
+network call, so they can run from either the renderer or main depending on whether the token must
+stay out of the renderer.
+
+### Browser standalone layer (`build:web`)
+
+The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported first in `main.tsx`),
+`web-templates.ts`, and a client-side security/storage stack under `src/renderer/`:
+
+- `security/vault.ts` — WebCrypto AES-GCM-256 with a PBKDF2-SHA-256 (600k iter) key derived from the
+  master password; key is `extractable: false`, memory-only. `LockScreen.tsx` + `autoLock.ts` lock on
+  tab-hidden / idle.
+- `library/library.ts` — IndexedDB blob store. `fs/fsa.ts` — File System Access API wrapper.
+- `network/proxy.ts` — routes CORS-blocked APIs (Notion / Atlassian / Cloudflare) through a
+  user-supplied Cloudflare Worker (`docs/PROXY_EXAMPLE.md`). `oauth/pkce.ts` — out-of-band paste PKCE
+  for `file://`.
+
+`scripts/inline-html.cjs` inlines CSS/JS into `dist/standalone.html`. Vite (`vite.config.ts`) has
+`root: 'src/renderer'`, renderer build → repo-root `dist/`, Electron bundles → `dist-electron/`
+(both gitignored).
 
 ## Conventions
 
-- The `serviceHub` global in the renderer is the only sanctioned way to call into the main process.
-  Do not add `nodeIntegration: true` or remove `contextIsolation` — extend the preload bridge instead.
-- External links must go through `window.serviceHub.openExternal(url)` (which calls
-  `shell.openExternal`) rather than `window.open`, so the OS browser handles them.
-- Service identity is the `ServiceId` union in `src/renderer/services.ts`. Update that union when
-  adding a service so the type system flags every dependent switch / lookup.
+- `window.serviceHub` is the **only** sanctioned way to call into the main process. Do not add
+  `nodeIntegration: true` or remove `contextIsolation` — extend the preload bridge instead
+  (`lint:forbidden` enforces this).
+- External links must go through `window.serviceHub.openExternal(url)` (→ `shell.openExternal`), never
+  `window.open`, so the OS browser handles them.
+- Add new service IDs to `SERVICE_IDS` in `src/shared/serviceId.ts` (not `services.ts`) — the type
+  system then flags every dependent switch/lookup, and prefer `npm run scaffold` over manual edits.
+- **計算に使う固定の数字 (法定値・参考値・しきい値・前提) は `src/shared/parameters.ts` の台帳に登録し、
+  画面は `useParameters()` で読んで関数へ引数で渡す。** 既定値はモジュールの定数をそのまま参照する
+  (数字を写さない)。登録した値は**必ず配線し、`parameterWiring.test.ts` で「上書きすると画面が動く」を
+  対照つきで留める** — 「設定できるのに効かない」項目を作らない。安全上限 (timeout / 応答サイズ /
+  PBKDF2 反復 / 入力長) は台帳に載せない。
+- When you change architecture, update `docs/ARCHITECTURE.md` too — `verify:arch` checks its
+  `file:line` references and metrics against the real tree.
+- **不在を主張する検査には、標本を添える。** `not.toMatch(/…/)` や
+  `!body.includes('…')` は、綴りが 1 つ違えば黙る — どの入力でも通る空の検査になる。
+  規則が**実際にその文面へ当たる**ことを、同じテストの中で標本に対して確かめること
+  (2026-08-25 に 2 件やらかした。どちらも「記憶の言い換え」に対して正規表現を書いていた)。
+  肯定形で書けるならそのほうが安全 — **有ることの検査は、無ければ必ず鳴る**。
+- **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
+  落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 
 ## Branching
 
 Active development for Claude Code sessions happens on the branch designated in the task prompt
-(e.g. `claude/add-claude-documentation-F7HIa`). The default branch is `main`.
+(e.g. `claude/claude-md-docs-qqUAT`). The default branch is `main`.

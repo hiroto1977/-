@@ -1,5 +1,4 @@
-/** @vitest-environment jsdom */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { webcrypto } from 'node:crypto';
 if (!('subtle' in globalThis.crypto)) {
   Object.defineProperty(globalThis, 'crypto', { value: webcrypto, configurable: true });
@@ -240,5 +239,41 @@ describe('generateEntropy', () => {
     const a = generateEntropy();
     const b = generateEntropy();
     expect(a).not.toEqual(b);
+  });
+});
+
+/**
+ * ここだけ **動的 import** で読み直す理由。
+ *
+ * `ENTROPY_BYTES = ENTROPY_BITS / 8` はモジュール本体で一度だけ評価される
+ * 「静的」な定数である。ファイル先頭の静的 import では、変異が有効になる前に
+ * モジュールが読み込まれ**評価が済んでしまう**ので、上の `generateEntropy`
+ * の 32 バイト検査は正しい主張なのに変異を観測できない
+ * (実測: `/ 8` → `* 8` が生き残る)。
+ *
+ * `vi.resetModules()` + `await import()` で、変異が効いた状態のモジュールを
+ * 読み直してから同じことを問う。
+ */
+describe('ENTROPY_BYTES —— 静的定数を測れる形で問う', () => {
+  it('再読込したモジュールでも generateEntropy() は 32 バイト (= 256 bit)', async () => {
+    vi.resetModules();
+    const mod = await import('../mnemonic');
+    expect(mod.generateEntropy()).toHaveLength(32);
+  });
+
+  it('再読込したモジュールでも 32 バイト↔24 語を往復する', async () => {
+    vi.resetModules();
+    const mod = await import('../mnemonic');
+    const entropy = mod.generateEntropy();
+    const mnemonic = await mod.encodeMnemonic(entropy);
+    expect(mnemonic.split(' ')).toHaveLength(24);
+    expect(await mod.decodeMnemonic(mnemonic)).toEqual(entropy);
+  });
+
+  it('再読込したモジュールでも 31 / 33 バイトは受け付けない', async () => {
+    vi.resetModules();
+    const mod = await import('../mnemonic');
+    await expect(mod.encodeMnemonic(new Uint8Array(31))).rejects.toThrow('entropy must be 32 bytes');
+    await expect(mod.encodeMnemonic(new Uint8Array(33))).rejects.toThrow('entropy must be 32 bytes');
   });
 });

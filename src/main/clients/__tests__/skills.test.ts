@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { parseFrontmatter, scanSkills, ACTIONS, isSafeSkillName, fetchSkillsSnapshot } from '../skills';
+import { parseFrontmatter, scanSkills, ACTIONS, isSafeSkillName, fetchSkillsSnapshot, SKILLS_MAX_TOKENS } from '../skills';
 import { FetchError } from '../types';
 
 describe('parseFrontmatter', () => {
@@ -163,7 +163,8 @@ describe('scanSkills', () => {
       source: 'user',
       description: 'Reviews diffs for security issues.',
     });
-    expect(result[1]!.path).toContain('security-review/SKILL.md');
+    // Windows では区切りが \ になるため、期待値も path.join で組み立てる。
+    expect(result[1]!.path).toContain(path.join('security-review', 'SKILL.md'));
   });
 
   it('skips directories that have no SKILL.md', async () => {
@@ -425,7 +426,26 @@ describe('ACTIONS["run-skill"]', () => {
     expect((err as FetchError).message).toMatch(/^skills 529:/);
   });
 
-  it('uses maxTokens override when provided (kills `?? 2048` mutation)', async () => {
+  /*
+   * **payload は有料 API のパラメータを動かせない。**
+   *
+   * 2026-08-22 まで `maxTokens ?? 2048` / `model ?? default` で、型検査も
+   * 有限性検査も無しに payload の値を送っていた。実測すると UI はこの値を
+   * 一度も渡していないので、使われていない受け口がレンダラーに
+   * 外部 API のパラメータを握らせているだけだった。`assistant.ts` と同じ
+   * 「定数」の形へ寄せてある。
+   *
+   * この検査は**通そうとして落ちる**ことを確かめる側である。
+   */
+  it.each([
+    ['数値', 512],
+    ['巨大な値', 100_000_000],
+    ['負値', -1],
+    ['Infinity', Number.POSITIVE_INFINITY],
+    ['文字列', '999999'],
+    ['オブジェクト', { n: 999999 }],
+    ['null', null],
+  ])('payload の maxTokens (%s) は無視される', async (_label, maxTokens) => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(JSON.stringify({ content: [{ type: 'text', text: 'ok' }] }), {
         status: 200,
@@ -435,10 +455,26 @@ describe('ACTIONS["run-skill"]', () => {
     await ACTIONS['run-skill']!({
       token: 'sk-ant-x',
       fetch: fetchMock,
-      payload: { name: 'echo', prompt: 'p', maxTokens: 512 },
+      payload: { name: 'echo', prompt: 'p', maxTokens },
     });
     const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
-    expect(body.max_tokens).toBe(512);
+    expect(body.max_tokens).toBe(SKILLS_MAX_TOKENS);
+  });
+
+  it('payload の model も無視される (送り先モデルを選ばせない)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ content: [{ type: 'text', text: 'ok' }] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    await ACTIONS['run-skill']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { name: 'echo', prompt: 'p', model: 'claude-opus-4-7' },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.model).toBe('claude-sonnet-4-6');
   });
 
   it('returns empty text when the response has no text content (kills `?? \'\'` mutation)', async () => {
@@ -514,6 +550,96 @@ describe('ACTIONS["run-skill"]', () => {
       payload: { name: 'echo', prompt: 'p' },
     })) as { stopReason: string };
     expect(result.stopReason).toBe('');
+  });
+});
+
+/*
+ * **symlink は `path.resolve` を素通りする。**
+ *
+ * `isSafeSkillName` は `/` も `\\` も `..` も弾くので**字面では**外へ出られないが、
+ * `~/.claude/skills/evil.md` を外へ向けた symlink にすると封じ込めの判定は
+ * `true` を返す。実測 (2026-08-23) で任意ファイルの中身が読めた。
+ *
+ * **ここで読んだ中身は Anthropic API へ system として送られる。** スキルは
+ * 利用者が配布物として入れる物なので、細工した symlink の同梱は現実的な経路。
+ *
+ * 下の 2 本は**向きが逆**で、両方要る —— 実体だけ realpath する直し方は
+ * 1 本目を通して 2 本目で落ちる。
+ */
+describe('readSkillBody と symlink', () => {
+  let tmpDir = '';
+  const originalHome = os.homedir();
+
+  beforeEach(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'skills-sym-'));
+    process.env.HOME = tmpDir;
+    vi.spyOn(os, 'homedir').mockReturnValue(tmpDir);
+    await fs.mkdir(path.join(tmpDir, '.claude', 'skills'), { recursive: true });
+  });
+
+  afterEach(async () => {
+    process.env.HOME = originalHome;
+    vi.restoreAllMocks();
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+
+  it('skills の外を指す symlink は読まない (中身が API へ出ていかない)', async () => {
+    const secret = path.join(tmpDir, 'secret.txt');
+    await fs.writeFile(secret, 'TOP-SECRET-FILE-CONTENTS');
+    await fs.symlink(secret, path.join(tmpDir, '.claude', 'skills', 'evil.md'));
+
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['run-skill']!({
+        token: 'sk-ant-x',
+        payload: { name: 'evil', prompt: 'hi' },
+        fetch: fetchMock,
+      } as unknown as Parameters<NonNullable<(typeof ACTIONS)['run-skill']>>[0]),
+    ).rejects.toThrow(/not found/);
+
+    // 送信そのものが起きないこと (中身が出ていく前に止まる)。
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('ホーム自体が symlink 越しでも、正当なスキルは読める (締めすぎない)', async () => {
+    /*
+     * **根を実体に直さないと、ここが落ちる。**
+     *
+     * `~` そのものが symlink のことがある (運用でホームを別ボリュームへ逃がす等)。
+     * 候補だけ realpath して根を字面のまま比べると、実体は根の「外」に見えるので
+     * **正当なスキルまで弾く**。両側を同じ土俵に乗せる必要がある。
+     *
+     * この検査は根が**本当に symlink 越し**でないと意味を持たない —— 最初に
+     * 書いたときは実体のディレクトリを HOME にしていたので、根を字面のまま
+     * にする変異を入れても通ってしまった (空撃ちの対照だった)。
+     */
+    const realHome = await fs.mkdtemp(path.join(os.tmpdir(), 'skills-realhome-'));
+    const linkedHome = path.join(await fs.mkdtemp(path.join(os.tmpdir(), 'skills-link-')), 'home');
+    await fs.symlink(realHome, linkedHome);
+    process.env.HOME = linkedHome;
+    vi.spyOn(os, 'homedir').mockReturnValue(linkedHome);
+    await fs.mkdir(path.join(realHome, '.claude', 'skills'), { recursive: true });
+
+    const real = path.join(linkedHome, '.claude', 'skills', 'real.md');
+    await fs.writeFile(real, 'BODY-FROM-REAL-SKILL');
+    await fs.symlink(real, path.join(linkedHome, '.claude', 'skills', 'alias.md'));
+
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ content: [{ type: 'text', text: 'ok' }], stop_reason: 'end_turn' }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    await ACTIONS['run-skill']!({
+      token: 'sk-ant-x',
+      payload: { name: 'alias', prompt: 'hi' },
+      fetch: fetchMock,
+    } as unknown as Parameters<NonNullable<(typeof ACTIONS)['run-skill']>>[0]);
+
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string) as {
+      system: string;
+    };
+    expect(body.system).toBe('BODY-FROM-REAL-SKILL');
   });
 });
 
@@ -638,5 +764,98 @@ describe('ACTIONS["run-skill"] — name validation', () => {
       }),
     ).rejects.toThrow(/unsafe name/);
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+/*
+ * **列挙も、根の中かどうかを実体で見る。**
+ *
+ * `readSkillContent` は 2026-08-23 に symlink 越しの読み出しを塞いだが、
+ * **列挙側 (`scanSkills`) には同じ手当てが入っていなかった**。
+ * `entry.isDirectory()` は symlink では false になるので、名前しか見ない
+ * `.md` 判定へ落ち、`fs.readFile` が symlink を辿って根の外を読む。
+ *
+ * 実測 (2026-08-25、修正前):
+ *
+ * ```
+ *   skills/evil.md -> <root 外>/OUTSIDE-SECRET.md
+ *   → {"name":"LEAKED-NAME","description":"TOP-SECRET-DESCRIPTION", …}
+ * ```
+ *
+ * 出るのは frontmatter の 2 欄だけで `readSkillContent` ほど重くないが、
+ * **前提条件は同じ** (細工した symlink を含む配布物) なので同じ扱いにする。
+ */
+describe('scanSkills — 根の外は列挙しない', () => {
+  const mkRoot = async (): Promise<string> => {
+    const base = await fs.mkdtemp(path.join(os.tmpdir(), 'skills-containment-'));
+    await fs.mkdir(path.join(base, 'skills'));
+    return base;
+  };
+
+  it('★ 根の外へ向いた symlink は列挙しない (frontmatter も出さない)', async () => {
+    const root = await mkRoot();
+    const skills = path.join(root, 'skills');
+    const outside = path.join(root, 'OUTSIDE-SECRET.md');
+    await fs.writeFile(outside, '---\nname: LEAKED-NAME\ndescription: TOP-SECRET\n---\nbody\n');
+    await fs.symlink(outside, path.join(skills, 'evil.md'));
+
+    const out = await scanSkills(skills, 'user');
+    expect(out.map((s) => s.name)).not.toContain('LEAKED-NAME');
+    expect(JSON.stringify(out)).not.toContain('TOP-SECRET');
+    expect(out).toEqual([]);
+  });
+
+  /*
+   * **全部弾く実装でも上は通る。** 正当なスキルが残ることまで見ないと、
+   * 「読めなくなっただけ」を修正と呼んでしまう。
+   */
+  it('★ 根の中の実ファイルはこれまでどおり列挙する', async () => {
+    const root = await mkRoot();
+    const skills = path.join(root, 'skills');
+    await fs.writeFile(path.join(skills, 'good.md'), '---\nname: good\ndescription: fine\n---\n');
+
+    const out = await scanSkills(skills, 'user');
+    expect(out.map((s) => s.name)).toEqual(['good']);
+  });
+
+  /*
+   * **「symlink だから弾く」ではなく「根の外だから弾く」。**
+   * 根の中を指す symlink は正当な使い方 (整理のための別名) なので通す。
+   * 素朴に `isSymbolicLink()` で弾く実装は、ここで落ちる。
+   */
+  it('根の中を指す symlink は列挙する (弾くのは行き先であって種類ではない)', async () => {
+    const root = await mkRoot();
+    const skills = path.join(root, 'skills');
+    await fs.writeFile(path.join(skills, 'real.md'), '---\nname: real\ndescription: d\n---\n');
+    await fs.symlink(path.join(skills, 'real.md'), path.join(skills, 'alias.md'));
+
+    const out = await scanSkills(skills, 'user');
+    expect(out.map((s) => s.name).sort()).toEqual(['real', 'real']);
+  });
+
+  /*
+   * **根そのものが symlink 越しでも、正当なスキルを弾かない。**
+   * 実体だけを根にすると、`~` や `.claude` が symlink の環境で全滅する
+   * (`readSkillContent` の注記が挙げているのと同じ罠)。
+   */
+  it('根が symlink 越しでも、中のスキルは列挙する', async () => {
+    const root = await mkRoot();
+    const skills = path.join(root, 'skills');
+    await fs.writeFile(path.join(skills, 'good.md'), '---\nname: good\ndescription: fine\n---\n');
+    const linkToSkills = path.join(root, 'skills-link');
+    await fs.symlink(skills, linkToSkills);
+
+    const out = await scanSkills(linkToSkills, 'user');
+    expect(out.map((s) => s.name)).toEqual(['good']);
+  });
+
+  it('壊れた symlink は静かに飛ばす (走査は止めない)', async () => {
+    const root = await mkRoot();
+    const skills = path.join(root, 'skills');
+    await fs.symlink(path.join(root, 'does-not-exist.md'), path.join(skills, 'broken.md'));
+    await fs.writeFile(path.join(skills, 'good.md'), '---\nname: good\ndescription: fine\n---\n');
+
+    const out = await scanSkills(skills, 'user');
+    expect(out.map((s) => s.name)).toEqual(['good']);
   });
 });

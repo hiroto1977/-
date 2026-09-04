@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import {
@@ -309,6 +309,18 @@ describe('isSafeSvgExportPath', () => {
     expect(isSafeSvgExportPath('/home/other/x.svg', home)).toBe(false);
     expect(isSafeSvgExportPath('/home/user/../etc/x.svg', home)).toBe(false);
   });
+
+  it('.svg 以外の拡張子を拒む（ラッパーの役目は拡張子の固定）', () => {
+    const home = '/home/user';
+    const root = '/home/user/.local/business-hub/data/templates/';
+    // 中身が SVG でも、書き出し先が別の拡張子なら通さない。
+    expect(isSafeSvgExportPath(root + 'x.html', home)).toBe(false);
+    expect(isSafeSvgExportPath(root + 'x.sh', home)).toBe(false);
+    expect(isSafeSvgExportPath(root + 'x', home)).toBe(false);
+    expect(isSafeSvgExportPath(root + 'x.svg.txt', home)).toBe(false);
+    // 正しい拡張子は通る（上の否定が「何でも false」でないことの確認）
+    expect(isSafeSvgExportPath(root + 'x.svg', home)).toBe(true);
+  });
 });
 
 // --- fetchTemplatesSnapshot -------------------------------------------
@@ -381,7 +393,7 @@ describe('exportTemplateImpl', () => {
   });
 
   it('uses custom safe path when provided', async () => {
-    const customPath = path.join(os.homedir(), 'custom.svg');
+    const customPath = path.join(os.homedir(), '.local', 'business-hub', 'data', 'custom.svg');
     let writtenPath = '';
     const result = await exportTemplateImpl(
       { token: '', payload: { templateId: 'business-card', path: customPath } },
@@ -440,5 +452,172 @@ describe('exportTemplateImpl', () => {
 describe('ACTIONS', () => {
   it('exposes export-template', () => {
     expect(typeof ACTIONS['export-template']).toBe('function');
+  });
+});
+
+// --- 折り返しの段組み --------------------------------------------------
+//
+// 折り返した各行は `<tspan dy>` で下にずらして並べる。1 行目だけ dy=0 で、
+// 2 行目以降が行間ぶん下がる。この分岐が反転すると 1 行目まで下がって
+// 見出しが枠から外れるが、SVG は壊れないので目視でしか気付けない。
+
+function tspansOf(svg: string): { dy: string; text: string }[] {
+  return [...svg.matchAll(/<tspan[^>]*dy="([^"]*)"[^>]*>([^<]*)<\/tspan>/g)].map((m) => ({
+    dy: m[1]!,
+    text: m[2]!,
+  }));
+}
+
+describe('折り返した行の段組み', () => {
+  const CASES: { id: TemplateId; field: 'title' | 'body'; chars: number; dy: string }[] = [
+    { id: 'presentation-cover', field: 'title', chars: 60, dy: '100' },
+    { id: 'social-square', field: 'title', chars: 45, dy: '90' },
+    { id: 'social-story', field: 'title', chars: 36, dy: '120' },
+    { id: 'flyer-a4', field: 'body', chars: 120, dy: '56' },
+  ];
+
+  for (const c of CASES) {
+    it(`${c.id}: 1 行目は dy=0、2 行目以降は dy=${c.dy}`, () => {
+      const text = 'あ'.repeat(c.chars);
+      const svg = renderTemplate(c.id, { [c.field]: text });
+      const spans = tspansOf(svg);
+
+      expect(spans.length).toBeGreaterThanOrEqual(2);
+      expect(spans[0]!.dy).toBe('0');
+      for (const s of spans.slice(1)) expect(s.dy).toBe(c.dy);
+
+      // 折り返しても文字は落ちない
+      expect(spans.map((s) => s.text).join('')).toBe(text);
+      // 区切り文字を挟まずに連結する（挟むと SVG に地の文が漏れる）
+      expect(svg).toContain('</tspan><tspan');
+    });
+  }
+});
+
+/** 証書の本文は 2 行ぶんの `<text>` に割り当てられる。その中身だけ取り出す。 */
+function certificateBodySlots(svg: string): string[] {
+  return [...svg.matchAll(/fill="#374151"[^>]*>([^<]*)<\/text>/g)].map((m) => m[1]!);
+}
+
+describe('renderCertificate の本文 2 行', () => {
+  it('改行で 2 行に割り当てる', () => {
+    const svg = renderTemplate('certificate', { body: '一行目\n二行目' });
+    expect(certificateBodySlots(svg)).toEqual(['一行目', '二行目']);
+  });
+
+  it('本文が 1 行なら 2 行目は空にする（undefined を出さない）', () => {
+    const svg = renderTemplate('certificate', { body: '一行だけ' });
+    expect(certificateBodySlots(svg)).toEqual(['一行だけ', '']);
+    expect(svg).not.toContain('undefined');
+  });
+
+  it('本文が空なら 2 行とも空にする', () => {
+    const svg = renderTemplate('certificate', { body: '' });
+    expect(certificateBodySlots(svg)).toEqual(['', '']);
+    expect(svg).not.toContain('undefined');
+  });
+
+  it('3 行以上あっても 2 行目までしか出さない', () => {
+    const svg = renderTemplate('certificate', { body: '一\n二\n三' });
+    expect(certificateBodySlots(svg)).toEqual(['一', '二']);
+    expect(svg).not.toContain('三');
+  });
+});
+
+// --- 型の取り違え ------------------------------------------------------
+
+describe('isTemplateId — 文字列に化ける値', () => {
+  it('中身が正しいテンプレート id でも、文字列でなければ拒む', () => {
+    // `Object.hasOwn` は第 2 引数をプロパティキーへ変換するので、
+    // 文字列かどうかを先に見ないと ['certificate'] や
+    // { toString: () => 'certificate' } が通ってしまう。
+    // これらは renderer まで届くと `CATALOG_BY_ID[id]` で再度変換され、
+    // 型の取り違えに気付けないまま動いてしまう。
+    expect(isTemplateId(['certificate'])).toBe(false);
+    expect(isTemplateId({ toString: () => 'certificate' })).toBe(false);
+    expect(isTemplateId(new String('certificate'))).toBe(false);
+  });
+});
+
+// --- 書き出し先の既定値 ------------------------------------------------
+
+describe('exportTemplateImpl — path を渡さないとき', () => {
+  async function exportWith(payload: Record<string, unknown>) {
+    const writes: { path: string; content: string }[] = [];
+    const result = await exportTemplateImpl(
+      { token: '', payload },
+      {
+        writeFile: async (p, c) => {
+          writes.push({ path: p, content: c });
+        },
+        mkdir: async () => {},
+        now: () => new Date('2035-05-15T00:00:00.000Z'),
+      },
+    );
+    return { result, writes };
+  }
+
+  it('path が無ければ既定の書き出し先を使う', async () => {
+    const { result, writes } = await exportWith({ templateId: 'business-card' });
+    expect(result.path).toBe(defaultExportPath('business-card'));
+    expect(writes[0]!.path).toBe(defaultExportPath('business-card'));
+  });
+
+  it('path が空文字なら「指定なし」として既定の書き出し先を使う', async () => {
+    // 空文字をそのまま採用すると安全判定で弾かれて書き出しごと失敗する。
+    const { result } = await exportWith({ templateId: 'business-card', path: '' });
+    expect(result.path).toBe(defaultExportPath('business-card'));
+  });
+});
+
+/**
+ * **モジュール本体で一度だけ評価される表を、測れる形で問う。**
+ *
+ * `TEMPLATE_IDS` / `RENDERERS` / `FETCHED_AT` / `ACTIONS` はどれも import 時に
+ * 一度だけ評価される「静的」な値である。ファイル先頭の静的 import では、
+ * 変異が有効になる前にモジュールが読み込まれ**評価が済んでしまう**ので、
+ * 上の検査群が正しい主張をしていても変異を観測できない
+ * (実測 2026-08-31: 4 件が生き残っていた —— 一覧を `undefined` の配列にしても、
+ *  描画関数の表と action の表を空にしても、取得時刻を空文字にしても鳴らない)。
+ *
+ * `vi.resetModules()` + `await import()` で、変異が効いた状態のモジュールを
+ * 読み直してから同じことを問う。
+ */
+describe('静的な表 —— 読み直して問う', () => {
+  const fresh = async (): Promise<typeof import('../templates')> => {
+    vi.resetModules();
+    return import('../templates');
+  };
+
+  it('TEMPLATE_IDS は目録の id と 1 件ずつ一致する', async () => {
+    const m = await fresh();
+    expect(m.TEMPLATE_IDS.length).toBe(m.TEMPLATE_CATALOG.length);
+    expect([...m.TEMPLATE_IDS]).toEqual(m.TEMPLATE_CATALOG.map((t) => t.id));
+    // `undefined` の配列になっていないこと (`() => undefined` 変異への標本)。
+    for (const id of m.TEMPLATE_IDS) expect(typeof id).toBe('string');
+    expect(m.TEMPLATE_IDS).toContain('business-card');
+  });
+
+  it('描画関数の表は全 id を埋めている (空の表なら描けない)', async () => {
+    const m = await fresh();
+    for (const id of m.TEMPLATE_IDS) {
+      const svg = m.renderTemplate(id, {});
+      // 出力は XML 宣言から始まる (上の検査群と同じ形)。
+      expect(svg.startsWith('<?xml'), `${id} が描けていない`).toBe(true);
+      expect(svg, `${id} の svg 要素が無い`).toContain('<svg');
+    }
+  });
+
+  it('取得時刻は決まった値を名乗る (空文字にしない)', async () => {
+    const m = await fresh();
+    const snap = await m.fetchTemplatesSnapshotImpl({} as Parameters<typeof m.fetchTemplatesSnapshotImpl>[0]);
+    expect(snap.fetchedAt).toBe('2035-05-15T00:00:00.000Z');
+    expect(snap.isMock).toBe(true);
+  });
+
+  it('action の表に export-template が居る (空の表なら呼べない)', async () => {
+    const m = await fresh();
+    expect(Object.keys(m.ACTIONS)).toEqual(['export-template']);
+    expect(typeof m.ACTIONS['export-template']).toBe('function');
   });
 });

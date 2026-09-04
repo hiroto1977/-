@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { localIsoDate } from '../../../shared/localDate';
 import { fetchGmailSnapshot, ACTIONS, buildRfc2822, isSafeHeaderValue } from '../gmail';
 import { FetchError } from '../types';
 
@@ -227,10 +228,19 @@ describe('fetchGmailSnapshot mutation-killing tests', () => {
         }),
       );
     const snap = await fetchGmailSnapshot({ token: 't', fetch: fetchMock });
-    // Asserts the .slice(0, 10) actually happened — kills a mutation that
-    // drops .toISOString() or returns the raw number.
+    // 利用者の時計の日付 (時間帯に依らず、同じ helper で組んだ値と一致する)。
     expect(snap.threads[0]!.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-    expect(snap.threads[0]!.date.length).toBe(10);
+    expect(snap.threads[0]!.date).toBe(localIsoDate(new Date(1746931200000)));
+  });
+
+  it('internalDate が無い・壊れている 1 通で受信箱ごと落とさない (日付は空文字)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ messages: [{ id: 'm', threadId: 't' }] }))
+      .mockResolvedValueOnce(jsonResponse({ id: 'm', threadId: 't', internalDate: 'garbage', payload: { headers: [] } }));
+    const snap = await fetchGmailSnapshot({ token: 't', fetch: fetchMock });
+    expect(snap.threads).toHaveLength(1);
+    expect(snap.threads[0]!.date).toBe('');
   });
 });
 

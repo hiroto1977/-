@@ -1,7 +1,9 @@
+import { wrapLines } from '../../shared/textWrap';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
+import { isSafeExportPath, writeExportFile } from './exportPaths';
 
 /**
  * Templates — 19 番目のサービス。
@@ -51,18 +53,9 @@ export interface TemplateDef {
   readonly defaults: TemplateParams;
 }
 
-// HEX regex pinned via positive (`#abcdef`/`#012345` accepted) + negative
-// (`red`, `#abc`, `#zzzzzz`) tests. Stryker Regex mutants on the anchor
-// or class internals are equivalent up to allowing strings the validator
-// is supposed to reject — but the surviving forms (`?` quantifier mutation
-// on `{6}`) admit shorter strings still matching the 5 rejection cases.
-// Stryker disable next-line Regex
-const HEX = /^#[0-9a-fA-F]{6}$/;
-
 // Catalog string-literals (label / description / default param text) are
 // decorative copy. The TemplateId list is pinned by structural tests
 // (toEqual on TEMPLATE_IDS). Hex defaults are pinned via validation tests.
-// Stryker disable StringLiteral,ArrayDeclaration,ObjectLiteral
 export const TEMPLATE_CATALOG: readonly TemplateDef[] = [
   {
     id: 'presentation-cover',
@@ -185,7 +178,6 @@ export const TEMPLATE_CATALOG: readonly TemplateDef[] = [
     },
   },
 ];
-// Stryker restore StringLiteral,ArrayDeclaration,ObjectLiteral
 
 export const TEMPLATE_IDS: readonly TemplateId[] = TEMPLATE_CATALOG.map((t) => t.id);
 
@@ -196,11 +188,9 @@ const CATALOG_BY_ID = Object.fromEntries(TEMPLATE_CATALOG.map((t) => [t.id, t]))
 // Use Object.hasOwn (not `in`) so prototype-chain entries like
 // '__proto__' / 'constructor' / 'toString' do not pass — 3 dedicated
 // tests pin this.
-// Stryker disable ConditionalExpression
 export function isTemplateId(value: unknown): value is TemplateId {
   return typeof value === 'string' && Object.hasOwn(CATALOG_BY_ID, value);
 }
-// Stryker restore ConditionalExpression
 
 export function getTemplateDef(id: TemplateId): TemplateDef {
   return CATALOG_BY_ID[id];
@@ -219,7 +209,6 @@ const FIELD_LIMITS = {
  *  Throws only on outright pathological input (control characters, oversize). */
 // Each guard is exhaustively tested via negative cases. perTest mis-attribution
 // on the chained `||` / boundary mutants is silenced.
-// Stryker disable ConditionalExpression,LogicalOperator,BooleanLiteral,EqualityOperator,MethodExpression
 export function validateParams(
   raw: unknown,
   defaults: TemplateParams,
@@ -244,7 +233,7 @@ export function validateParams(
   for (const k of ['accentColor', 'secondaryColor'] as const) {
     const v = o[k];
     if (typeof v === 'string') {
-      if (!HEX.test(v)) {
+      if (!isHexColor(v)) {
         throw new Error(`${k} must be #RRGGBB hex color`);
       }
       out[k] = v;
@@ -252,51 +241,27 @@ export function validateParams(
   }
   return out;
 }
-// Stryker restore ConditionalExpression,LogicalOperator,BooleanLiteral,EqualityOperator,MethodExpression
 
 // --- SVG helpers ------------------------------------------------------
 
-export function escapeXml(input: string): string {
-  return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
+/** マークアップ用のエスケープ。実装は `shared/escape.ts` に 1 つだけ持つ。 */
+import { escapeXml, isHexColor } from '../../shared/escape';
+
+export { escapeXml };
 
 /** Split text into lines no longer than `maxChars`. Newlines force a break. */
-// Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,ArithmeticOperator,BooleanLiteral
-export function wrapLines(text: string, maxChars: number): string[] {
-  const out: string[] = [];
-  for (const para of text.split(/\n/)) {
-    if (para.length === 0) {
-      out.push('');
-      continue;
-    }
-    let buf = '';
-    for (const ch of para) {
-      if (buf.length >= maxChars) {
-        out.push(buf);
-        buf = '';
-      }
-      buf += ch;
-    }
-    if (buf.length > 0) out.push(buf);
-  }
-  return out;
-}
-// Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,ArithmeticOperator,BooleanLiteral
 
 // --- Individual template renderers ------------------------------------
 //
-// Each renderer is a pure function (params, def) → SVG string. All numeric
-// coords / colors / font sizes are decorative; tests pin the structural
-// invariants (root <svg> with correct dims, presence of title, etc.) and
-// the rest is block-form-pragma'd.
+// Each renderer is a pure function (params, def) → SVG string. 構造
+// (root <svg>・寸法・タイトルの有無)、折り返しの分岐、エスケープは検査で
+// 固定する。測らないのは座標の算術だけ。
 
-// Stryker disable StringLiteral,ArithmeticOperator,ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement,ArrayDeclaration,ObjectLiteral
 
+// ここから下は SVG の座標計算。`d.height / 2 - 220` のような数値は
+// 「そこに置くと収まりが良い」以上の意味を持たないので、算術だけ測らない。
+// 折り返し・改行の分岐・エスケープは測る（下の帯に含めない）。
+// Stryker disable ArithmeticOperator
 function renderPresentationCover(p: TemplateParams, d: TemplateDef): string {
   const lines = wrapLines(p.title, 24);
   const titleY = d.height / 2 - lines.length * 30;
@@ -388,6 +353,11 @@ function renderFlyerA4(p: TemplateParams, d: TemplateDef): string {
 }
 
 function renderCertificate(p: TemplateParams, d: TemplateDef): string {
+  const bodyLines = p.body.split('\n');
+  // `split` は区切り文字が空でなければ必ず 1 要素以上返す ('' でも [''])。
+  // Stryker disable next-line StringLiteral: 到達しない既定値 (1 行目は常に存在する)
+  const bodyLine1 = bodyLines[0] ?? '';
+  const bodyLine2 = bodyLines[1] ?? '';
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${d.width}" height="${d.height}" viewBox="0 0 ${d.width} ${d.height}" role="img" aria-label="${escapeXml(p.title)}">
   <rect x="0" y="0" width="${d.width}" height="${d.height}" fill="${p.secondaryColor}" />
@@ -397,8 +367,8 @@ function renderCertificate(p: TemplateParams, d: TemplateDef): string {
   <text x="${d.width / 2}" y="${d.height / 2 - 140}" font-size="120" font-weight="700" fill="#1f2937" text-anchor="middle" font-family="'Hiragino Mincho',serif">${escapeXml(p.title)}</text>
   <text x="${d.width / 2}" y="${d.height / 2 - 40}" font-size="56" fill="#1f2937" text-anchor="middle" font-family="'Hiragino Mincho',serif">${escapeXml(p.subtitle)}</text>
   <line x1="${d.width / 2 - 200}" y1="${d.height / 2}" x2="${d.width / 2 + 200}" y2="${d.height / 2}" stroke="${p.accentColor}" stroke-width="2" />
-  <text x="${d.width / 2}" y="${d.height / 2 + 90}" font-size="34" fill="#374151" text-anchor="middle" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.body.split('\n')[0] ?? '')}</text>
-  <text x="${d.width / 2}" y="${d.height / 2 + 150}" font-size="34" fill="#374151" text-anchor="middle" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.body.split('\n')[1] ?? '')}</text>
+  <text x="${d.width / 2}" y="${d.height / 2 + 90}" font-size="34" fill="#374151" text-anchor="middle" font-family="'Hiragino Sans',sans-serif">${escapeXml(bodyLine1)}</text>
+  <text x="${d.width / 2}" y="${d.height / 2 + 150}" font-size="34" fill="#374151" text-anchor="middle" font-family="'Hiragino Sans',sans-serif">${escapeXml(bodyLine2)}</text>
   <text x="${d.width / 2}" y="${d.height - 100}" font-size="32" font-weight="600" fill="${p.accentColor}" text-anchor="middle" font-family="'Hiragino Mincho',serif">${escapeXml(p.brandText)}</text>
 </svg>`;
 }
@@ -429,7 +399,8 @@ function renderResumeHeader(p: TemplateParams, d: TemplateDef): string {
 </svg>`;
 }
 
-// Stryker restore StringLiteral,ArithmeticOperator,ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement,ArrayDeclaration,ObjectLiteral
+
+// Stryker restore ArithmeticOperator
 
 const RENDERERS: Readonly<Record<TemplateId, (p: TemplateParams, d: TemplateDef) => string>> = {
   'presentation-cover': renderPresentationCover,
@@ -457,7 +428,6 @@ export interface TemplatesSnapshot {
   readonly isMock: boolean;
 }
 
-// Stryker disable next-line StringLiteral
 const FETCHED_AT = '2035-05-15T00:00:00.000Z';
 
 export async function fetchTemplatesSnapshotImpl(
@@ -466,7 +436,6 @@ export async function fetchTemplatesSnapshotImpl(
   return { templates: TEMPLATE_CATALOG, fetchedAt: FETCHED_AT, isMock: true };
 }
 
-// Stryker disable next-line BlockStatement
 export async function fetchTemplatesSnapshot(
   ctx: FetchContext,
 ): Promise<TemplatesSnapshot> {
@@ -483,17 +452,9 @@ export function defaultExportPath(id: TemplateId): string {
   return path.join(defaultExportDir(), `${id}.svg`);
 }
 
-// Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator,BooleanLiteral
 export function isSafeSvgExportPath(filePath: string, home: string): boolean {
-  if (typeof filePath !== 'string' || filePath.length === 0) return false;
-  if (filePath.length > 1024) return false;
-  if (/[\0\r\n]/.test(filePath)) return false;
-  if (!filePath.endsWith('.svg')) return false;
-  const resolved = path.resolve(filePath);
-  const resolvedHome = path.resolve(home);
-  return resolved.startsWith(resolvedHome + path.sep) || resolved === resolvedHome;
+  return isSafeExportPath(filePath, home, '.svg');
 }
-// Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator,BooleanLiteral
 
 export interface ExportResult {
   readonly path: string;
@@ -513,7 +474,6 @@ export interface ExportDeps {
   now?: () => Date;
 }
 
-// Stryker disable ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction,ObjectLiteral,StringLiteral,BooleanLiteral
 export async function exportTemplateImpl(
   ctx: ActionContext,
   deps: ExportDeps = {},
@@ -532,20 +492,20 @@ export async function exportTemplateImpl(
   }
   const svg = renderTemplate(templateId, params);
   const mkdirFn = deps.mkdir ?? ((dir: string) => fs.mkdir(dir, { recursive: true }).then(() => undefined));
-  const writeFn = deps.writeFile ?? ((p: string, c: string) => fs.writeFile(p, c, 'utf8'));
+  const writeFn = deps.writeFile ?? writeExportFile;
   await mkdirFn(path.dirname(filePath));
   await writeFn(filePath, svg);
   const generatedAt = (deps.now ?? (() => new Date()))().toISOString();
-  return { path: filePath, bytes: Buffer.byteLength(svg, 'utf8'), generatedAt };
+  return { path: filePath, bytes: Buffer.byteLength(svg), generatedAt };
 }
-// Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction,ObjectLiteral,StringLiteral,BooleanLiteral
 
-// Stryker disable next-line BlockStatement
 async function exportTemplate(ctx: ActionContext): Promise<ExportResult> {
   return exportTemplateImpl(ctx);
 }
 
-// Stryker disable next-line ObjectLiteral
 export const ACTIONS: ActionMap = {
   'export-template': exportTemplate,
 };
+
+/** 印刷幅の折り返し。実装は `shared/textWrap.ts` に 1 つだけ持つ。 */
+export { wrapLines };

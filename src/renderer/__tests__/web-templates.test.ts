@@ -134,3 +134,140 @@ describe('renderTemplateForWeb — structural invariants', () => {
     }
   });
 });
+
+/**
+ * Golden 完全一致テスト。SVG は決定論的に生成されるため、座標・色・フォント・opacity
+ * などのリテラルと W/2・H-80 等の算術、`i === 0 ? 0 : dy` の条件、`typeof === 'string'`
+ * の param ガードを一括で撃墜する。esc(特殊文字) と wrap(長い多段落) を必ず通す入力にする。
+ */
+describe('renderTemplateForWeb — golden output (exact SVG)', () => {
+  // 特殊文字 (esc) + 長いタイトル/本文 (wrap: 24/14/11/36 折返し境界と空行) を含む。
+  const CUSTOM: Record<string, string> = {
+    title: '限定<&>"\'セール2035 — 全社員むけ特別企画 ABCDEFGHIJKLMNOP',
+    subtitle: 'Q2 <レビュー> & "まとめ"',
+    body: '一行目 <a&b>\n\n三行目 "quoted" \'apos\' これは長めの本文で flyer の36文字折返しを十分に超える内容です ABCDEFGHIJK',
+    accentColor: '#123abc',
+    secondaryColor: '#fedcba',
+    brandText: 'Brand<&>',
+  };
+
+  for (const def of TEMPLATE_CATALOG_FOR_WEB) {
+    it(`matches the golden SVG for ${def.id} (custom params)`, () => {
+      expect(renderTemplateForWeb(def, CUSTOM)).toMatchSnapshot();
+    });
+    it(`matches the golden SVG for ${def.id} (defaults)`, () => {
+      // 空 params → 各 typeof ガードが false 側 (def.defaults) を採る。
+      expect(renderTemplateForWeb(def, {})).toMatchSnapshot();
+    });
+  }
+
+  it('matches the golden placeholder SVG for an unknown template id', () => {
+    const fakeDef: TemplateDef = {
+      id: 'no-such-template',
+      width: 320,
+      height: 240,
+      defaults: { title: 'x', subtitle: 'x', body: 'x', accentColor: '#000000', secondaryColor: '#ffffff', brandText: 'x' },
+    };
+    expect(renderTemplateForWeb(fakeDef, CUSTOM)).toMatchSnapshot();
+  });
+});
+
+describe('renderTemplateForWeb — esc / wrap edge behaviour', () => {
+  const pres = TEMPLATE_CATALOG_FOR_WEB[0]!; // presentation-cover, wrap(title, 24)
+
+  it('escapes all five HTML-significant characters in order', () => {
+    const svg = renderTemplateForWeb(pres, { title: `&<>"'` });
+    // & は最初に置換されるので二重エスケープしない。
+    expect(svg).toContain('&amp;&lt;&gt;&quot;&#39;');
+  });
+
+  it('wraps a title exactly at the 24-char boundary (>= strict)', () => {
+    // 24 文字ちょうど → 1 行。25 文字目で 2 行目へ割れる (buf.length >= maxChars)。
+    const at24 = 'あ'.repeat(24);
+    const svg24 = renderTemplateForWeb(pres, { title: at24 });
+    expect((svg24.match(/<tspan/g) ?? []).length).toBe(1);
+    const at25 = 'あ'.repeat(25);
+    const svg25 = renderTemplateForWeb(pres, { title: at25 });
+    expect((svg25.match(/<tspan/g) ?? []).length).toBe(2);
+    // 2 行目は dy=100 (i !== 0)、1 行目は dy=0。
+    expect(svg25).toContain('dy="0"');
+    expect(svg25).toContain('dy="100"');
+  });
+
+  it('certificate with a single-line body leaves the 2nd line blank ([1] ?? "" fallback)', () => {
+    const cert = TEMPLATE_CATALOG_FOR_WEB.find((t) => t.id === 'certificate')!;
+    // 1 行のみ → split[1] が undefined → `?? ''` で空文字。"Stryker" 化変異を撃墜。
+    const svg = renderTemplateForWeb(cert, { body: 'ONLY-ONE-LINE' });
+    expect(svg).toContain('ONLY-ONE-LINE');
+    expect(svg).not.toContain('Stryker');
+    // 2 番目の body text 要素は空 (中身なし)。
+    expect(svg).toContain('font-size="34" fill="#374151" text-anchor="middle"></text>');
+  });
+
+  it('preserves blank paragraphs from newlines (empty-para branch)', () => {
+    const flyer = TEMPLATE_CATALOG_FOR_WEB.find((t) => t.id === 'flyer-a4')!;
+    // a\n\nb → 3 行 (空行を含む)。空行は空 tspan になる。
+    const svg = renderTemplateForWeb(flyer, { body: 'a\n\nb' });
+    expect((svg.match(/<tspan/g) ?? []).length).toBe(3);
+  });
+});
+
+describe('色の属性値からの脱出を防ぐ（ブラウザ版の書き出し）', () => {
+  const def = TEMPLATE_CATALOG_FOR_WEB[0]!;
+
+  /**
+   * 画面は `<input type="color">` なので `#rrggbb` しか作れないが、
+   * `serviceHub.invoke()` は任意の文字列を受ける。書き出した SVG は
+   * ライブラリに保存されダウンロードされるので、開いた人の環境で走る。
+   */
+  const ATTACKS = [
+    '"/><script>alert(1)</script><rect fill="#000',
+    '" onload="alert(1)',
+    "' onload='alert(1)",
+    '#000" onmouseover="alert(1)',
+    'url(javascript:alert(1))',
+    'red;background:url(javascript:alert(1))',
+    '<script>alert(1)</script>',
+  ];
+
+  it('壊れた色は既定値に落ち、属性を抜ける文字を残さない', () => {
+    for (const bad of ATTACKS) {
+      const svg = renderTemplateForWeb(def, { accentColor: bad, secondaryColor: bad });
+      expect(svg, bad).not.toContain('<script');
+      expect(svg, bad).not.toContain('onload');
+      expect(svg, bad).not.toContain('onmouseover');
+      expect(svg, bad).not.toContain('javascript:');
+      // 既定値に落ちていること。
+      expect(svg, bad).toContain(def.defaults.accentColor);
+    }
+  });
+
+  it('文字列でない色は safeColor へ渡さず既定値にする', () => {
+    // `params` の型は Record<string, string> だが、invoke() は任意の値を運ぶ。
+    // 数値や配列を String() で正規化してから検証する書き方だと、
+    // 正規化の中身を変えても結果が既定値のままで観測できる差が出ない。
+    for (const bad of [123, null, undefined, {}, [], true] as unknown[]) {
+      const svg = renderTemplateForWeb(def, { accentColor: bad } as unknown as Record<string, string>);
+      expect(svg, String(bad)).toContain(def.defaults.accentColor);
+      expect(svg, String(bad)).not.toContain('object Object');
+      expect(svg, String(bad)).not.toContain('123');
+    }
+  });
+
+  it('正しい色はそのまま通す（機能を壊さない）', () => {
+    for (const good of ['#fff', '#0f5fac', '#0f5facff', 'rebeccapurple', 'red']) {
+      const svg = renderTemplateForWeb(def, { accentColor: good, secondaryColor: '#111111' });
+      expect(svg, good).toContain(good);
+    }
+  });
+
+  it('本文・タイトルのマークアップも従来どおりエスケープされる', () => {
+    const svg = renderTemplateForWeb(def, {
+      title: '<script>alert(1)</script>',
+      brandText: '" onload="x',
+    });
+    expect(svg).not.toContain('<script>');
+    expect(svg).toContain('&lt;script&gt;');
+    expect(svg).toContain('&quot;');
+  });
+});

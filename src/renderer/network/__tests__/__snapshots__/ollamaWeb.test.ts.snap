@@ -1,0 +1,432 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`chatOllama の失敗文言 golden > CORS 未許可 > cors-blocked 1`] = `
+{
+  "kind": "cors-blocked",
+  "message": "Ollama は http://127.0.0.1:11434 で動作していますが、このページからの送信が CORS で拒否されました。OLLAMA_ORIGINS を設定して再起動してください。",
+  "ok": false,
+}
+`;
+
+exports[`chatOllama の失敗文言 golden > プロンプトが空 > empty-prompt 1`] = `
+{
+  "kind": "empty-prompt",
+  "message": "プロンプトを入力してください。",
+  "ok": false,
+}
+`;
+
+exports[`chatOllama の失敗文言 golden > モデル名が不正 > bad-model 1`] = `
+{
+  "kind": "bad-model",
+  "message": "モデル名が不正です: ../evil",
+  "ok": false,
+}
+`;
+
+exports[`chatOllama の失敗文言 golden > 接続先が不正 > bad-endpoint 1`] = `
+{
+  "kind": "bad-endpoint",
+  "message": "接続先が不正か、許可されていません。",
+  "ok": false,
+}
+`;
+
+exports[`chatOllama の失敗文言 golden > 未起動 > not-running 1`] = `
+{
+  "kind": "not-running",
+  "message": "http://127.0.0.1:11434 に接続できませんでした。Ollama が起動しているか確認してください。",
+  "ok": false,
+}
+`;
+
+exports[`つながらない理由の文言 golden > 古い版は警告つきで返す > outdated 1`] = `
+{
+  "message": "Ollama 0.1.45 に接続しました。モデル 0 件を検出。",
+  "snapshot": {
+    "models": [],
+    "running": true,
+    "version": "0.1.45",
+    "versionMinRecommended": "0.1.46",
+    "versionSafe": false,
+    "warnings": [
+      "検出された Ollama 0.1.45 は既知の脆弱性が修正された 0.1.46 未満です。ただちに更新してください (Probllama / CVE-2024-37032 ほか)。",
+      "Ollama 本体に未パッチの out-of-bounds read (モデル/エンジンファイルパーサ) が公表されています。本アプリは /api/pull・/api/create・/api/push を呼ばない 設計でこの攻撃ベクトルを遮断していますが、CLI からモデルを取得する場合は 必ず Ollama 公式 library など検証済みソースのみを使用してください。詳細は docs/OLLAMA_SECURITY.md を参照。",
+    ],
+  },
+  "status": "ok",
+}
+`;
+
+exports[`つながらない理由の文言 golden > 接続先が不正 (許可されない宛先) > bad-endpoint 1`] = `
+{
+  "message": "接続先が不正か、許可されていません。ポート番号のみ (例 11434)、このページと同じホストの http (例 http://192.168.1.10:11434)、または https のトンネル URL を入力してください。",
+  "snapshot": {
+    "models": [],
+    "running": false,
+    "version": "",
+    "versionMinRecommended": "0.1.46",
+    "versionSafe": false,
+    "warnings": [],
+  },
+  "status": "bad-endpoint",
+}
+`;
+
+exports[`つながらない理由の文言 golden > 接続成功 > ok 1`] = `
+{
+  "message": "Ollama 0.5.4 に接続しました。モデル 0 件を検出。",
+  "snapshot": {
+    "models": [],
+    "running": true,
+    "version": "0.5.4",
+    "versionMinRecommended": "0.1.46",
+    "versionSafe": true,
+    "warnings": [
+      "Ollama 本体に未パッチの out-of-bounds read (モデル/エンジンファイルパーサ) が公表されています。本アプリは /api/pull・/api/create・/api/push を呼ばない 設計でこの攻撃ベクトルを遮断していますが、CLI からモデルを取得する場合は 必ず Ollama 公式 library など検証済みソースのみを使用してください。詳細は docs/OLLAMA_SECURITY.md を参照。",
+    ],
+  },
+  "status": "ok",
+}
+`;
+
+exports[`つながらない理由の文言 golden > 未起動 (通常 fetch も no-cors も失敗) > not-running 1`] = `
+{
+  "message": "http://127.0.0.1:11434 に接続できませんでした。Ollama が起動しているか、接続先が合っているかを確認してください (同じ端末なら 11434 / 別端末からは下の「スマホなど別の端末から使う」を参照)。",
+  "snapshot": {
+    "models": [],
+    "running": false,
+    "version": "",
+    "versionMinRecommended": "0.1.46",
+    "versionSafe": false,
+    "warnings": [],
+  },
+  "status": "not-running",
+}
+`;
+
+exports[`つながらない理由の文言 golden > 起動しているが CORS 未許可 > cors-blocked 1`] = `
+{
+  "message": "Ollama は http://127.0.0.1:11434 で動作していますが、このページからの読み取りが CORS で拒否されました。Ollama 側に OLLAMA_ORIGINS を設定して再起動してください (下の手順を参照)。",
+  "snapshot": {
+    "models": [],
+    "running": false,
+    "version": "",
+    "versionMinRecommended": "0.1.46",
+    "versionSafe": false,
+    "warnings": [],
+  },
+  "status": "cors-blocked",
+}
+`;
+
+exports[`つながらない理由の文言 golden > 配信元 CSP が塞いでいる (未起動と区別する) > csp-blocked 1`] = `
+{
+  "message": "このページの配信元が CSP でローカルへの接続を禁止しているため、Ollama へ接続できません。Ollama の設定を変えても解決しません（ブラウザがリクエストを送る前に落としています）。下の「この配布形態では接続できません」を参照してください。",
+  "snapshot": {
+    "models": [],
+    "running": false,
+    "version": "",
+    "versionMinRecommended": "0.1.46",
+    "versionSafe": false,
+    "warnings": [],
+  },
+  "status": "csp-blocked",
+}
+`;
+
+exports[`セットアップ手順の golden > desktopSetupCommands — 既定モデルと差し替え > desktop-default 1`] = `
+[
+  {
+    "command": "# 1. Ollama を入れる (入っていれば何もしません)
+command -v ollama >/dev/null || curl -fsSL https://ollama.com/install.sh | sh
+# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)
+ollama pull llama3.2:1b",
+    "os": "Linux",
+  },
+  {
+    "command": "# 1. https://ollama.com/download から Ollama.app を入れて一度起動
+# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)
+ollama pull llama3.2:1b",
+    "os": "macOS",
+  },
+  {
+    "command": "# 1. Ollama を入れる (入っていれば何もしません)
+if (-not (Get-Command ollama -EA SilentlyContinue)) { winget install -e --id Ollama.Ollama }
+# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)
+ollama pull llama3.2:1b",
+    "os": "Windows (PowerShell)",
+  },
+]
+`;
+
+exports[`セットアップ手順の golden > desktopSetupCommands — 既定モデルと差し替え > desktop-qwen 1`] = `
+[
+  {
+    "command": "# 1. Ollama を入れる (入っていれば何もしません)
+command -v ollama >/dev/null || curl -fsSL https://ollama.com/install.sh | sh
+# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)
+ollama pull qwen2.5:0.5b",
+    "os": "Linux",
+  },
+  {
+    "command": "# 1. https://ollama.com/download から Ollama.app を入れて一度起動
+# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)
+ollama pull qwen2.5:0.5b",
+    "os": "macOS",
+  },
+  {
+    "command": "# 1. Ollama を入れる (入っていれば何もしません)
+if (-not (Get-Command ollama -EA SilentlyContinue)) { winget install -e --id Ollama.Ollama }
+# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)
+ollama pull qwen2.5:0.5b",
+    "os": "Windows (PowerShell)",
+  },
+]
+`;
+
+exports[`セットアップ手順の golden > originsSetupSteps — 許可だけを足す手順 > origins-claude-ai 1`] = `
+[
+  {
+    "command": "launchctl setenv OLLAMA_ORIGINS "https://claude.ai" && killall ollama && open -a Ollama",
+    "os": "macOS",
+  },
+  {
+    "command": "sudo systemctl edit ollama.service
+# [Service] セクションに追記:
+Environment="OLLAMA_ORIGINS=https://claude.ai"
+sudo systemctl daemon-reload && sudo systemctl restart ollama",
+    "os": "Linux (systemd)",
+  },
+  {
+    "command": "[Environment]::SetEnvironmentVariable("OLLAMA_ORIGINS", "https://claude.ai", "User")
+# Ollama を終了して再起動",
+    "os": "Windows (PowerShell)",
+  },
+  {
+    "command": "OLLAMA_ORIGINS="https://claude.ai" ollama serve",
+    "os": "手元で試すだけ",
+  },
+]
+`;
+
+exports[`セットアップ手順の golden > originsSetupSteps — 許可だけを足す手順 > origins-null 1`] = `
+[
+  {
+    "command": "launchctl setenv OLLAMA_ORIGINS "*" && killall ollama && open -a Ollama",
+    "os": "macOS",
+  },
+  {
+    "command": "sudo systemctl edit ollama.service
+# [Service] セクションに追記:
+Environment="OLLAMA_ORIGINS=*"
+sudo systemctl daemon-reload && sudo systemctl restart ollama",
+    "os": "Linux (systemd)",
+  },
+  {
+    "command": "[Environment]::SetEnvironmentVariable("OLLAMA_ORIGINS", "*", "User")
+# Ollama を終了して再起動",
+    "os": "Windows (PowerShell)",
+  },
+  {
+    "command": "OLLAMA_ORIGINS="*" ollama serve",
+    "os": "手元で試すだけ",
+  },
+]
+`;
+
+exports[`セットアップ手順の golden > setupCommands — 4 ブロックすべて > origin-claude-ai 1`] = `
+[
+  {
+    "command": "# 1. Ollama を入れる — 未導入なら https://ollama.com/download から
+#    Ollama.app を入れて一度起動 (ここだけ手作業)
+# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)
+ollama pull llama3.2:1b
+# 3. このページからの読み取りを許可して再起動
+launchctl setenv OLLAMA_ORIGINS "https://claude.ai"
+killall ollama 2>/dev/null; open -a Ollama
+# 4. 確認 — {"version":"..."} が出れば成功
+sleep 3 && curl -s http://127.0.0.1:11434/api/version",
+    "os": "macOS",
+  },
+  {
+    "command": "# 1. Ollama を入れる (入っていれば何もしません)
+command -v ollama >/dev/null || curl -fsSL https://ollama.com/install.sh | sh
+# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)
+ollama pull llama3.2:1b
+# 3. このページからの読み取りを許可して再起動
+sudo mkdir -p /etc/systemd/system/ollama.service.d
+printf '[Service]\\nEnvironment="OLLAMA_ORIGINS=https://claude.ai"\\n' \\
+  | sudo tee /etc/systemd/system/ollama.service.d/origins.conf
+sudo systemctl daemon-reload && sudo systemctl restart ollama
+# 4. 確認 — {"version":"..."} が出れば成功
+sleep 3 && curl -s http://127.0.0.1:11434/api/version",
+    "os": "Linux (systemd)",
+  },
+  {
+    "command": "# 1. Ollama を入れる (入っていれば何もしません)
+if (-not (Get-Command ollama -EA SilentlyContinue)) { winget install -e --id Ollama.Ollama }
+# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)
+ollama pull llama3.2:1b
+# 3. このページからの読み取りを許可して再起動
+[Environment]::SetEnvironmentVariable("OLLAMA_ORIGINS", "https://claude.ai", "User")
+Get-Process ollama -EA SilentlyContinue | Stop-Process
+Start-Process "$env:LOCALAPPDATA\\Programs\\Ollama\\ollama app.exe"
+# 4. 確認 — {"version":"..."} が出れば成功
+Start-Sleep 3; curl.exe -s http://127.0.0.1:11434/api/version",
+    "os": "Windows (PowerShell)",
+  },
+  {
+    "command": "ollama pull llama3.2:1b
+OLLAMA_ORIGINS="https://claude.ai" ollama serve",
+    "os": "1 回だけ試す (OS 共通・このターミナルは開いたまま)",
+  },
+]
+`;
+
+exports[`セットアップ手順の golden > setupCommands — origin が特定できないとき (file:// / sandbox) > origin-empty 1`] = `
+[
+  {
+    "command": "# 1. Ollama を入れる — 未導入なら https://ollama.com/download から
+#    Ollama.app を入れて一度起動 (ここだけ手作業)
+# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)
+ollama pull llama3.2:1b
+# 3. このページからの読み取りを許可して再起動
+launchctl setenv OLLAMA_ORIGINS "*"
+killall ollama 2>/dev/null; open -a Ollama
+# 4. 確認 — {"version":"..."} が出れば成功
+sleep 3 && curl -s http://127.0.0.1:11434/api/version",
+    "os": "macOS",
+  },
+  {
+    "command": "# 1. Ollama を入れる (入っていれば何もしません)
+command -v ollama >/dev/null || curl -fsSL https://ollama.com/install.sh | sh
+# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)
+ollama pull llama3.2:1b
+# 3. このページからの読み取りを許可して再起動
+sudo mkdir -p /etc/systemd/system/ollama.service.d
+printf '[Service]\\nEnvironment="OLLAMA_ORIGINS=*"\\n' \\
+  | sudo tee /etc/systemd/system/ollama.service.d/origins.conf
+sudo systemctl daemon-reload && sudo systemctl restart ollama
+# 4. 確認 — {"version":"..."} が出れば成功
+sleep 3 && curl -s http://127.0.0.1:11434/api/version",
+    "os": "Linux (systemd)",
+  },
+  {
+    "command": "# 1. Ollama を入れる (入っていれば何もしません)
+if (-not (Get-Command ollama -EA SilentlyContinue)) { winget install -e --id Ollama.Ollama }
+# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)
+ollama pull llama3.2:1b
+# 3. このページからの読み取りを許可して再起動
+[Environment]::SetEnvironmentVariable("OLLAMA_ORIGINS", "*", "User")
+Get-Process ollama -EA SilentlyContinue | Stop-Process
+Start-Process "$env:LOCALAPPDATA\\Programs\\Ollama\\ollama app.exe"
+# 4. 確認 — {"version":"..."} が出れば成功
+Start-Sleep 3; curl.exe -s http://127.0.0.1:11434/api/version",
+    "os": "Windows (PowerShell)",
+  },
+  {
+    "command": "ollama pull llama3.2:1b
+OLLAMA_ORIGINS="*" ollama serve",
+    "os": "1 回だけ試す (OS 共通・このターミナルは開いたまま)",
+  },
+]
+`;
+
+exports[`セットアップ手順の golden > setupCommands — origin が特定できないとき (file:// / sandbox) > origin-null 1`] = `
+[
+  {
+    "command": "# 1. Ollama を入れる — 未導入なら https://ollama.com/download から
+#    Ollama.app を入れて一度起動 (ここだけ手作業)
+# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)
+ollama pull llama3.2:1b
+# 3. このページからの読み取りを許可して再起動
+launchctl setenv OLLAMA_ORIGINS "*"
+killall ollama 2>/dev/null; open -a Ollama
+# 4. 確認 — {"version":"..."} が出れば成功
+sleep 3 && curl -s http://127.0.0.1:11434/api/version",
+    "os": "macOS",
+  },
+  {
+    "command": "# 1. Ollama を入れる (入っていれば何もしません)
+command -v ollama >/dev/null || curl -fsSL https://ollama.com/install.sh | sh
+# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)
+ollama pull llama3.2:1b
+# 3. このページからの読み取りを許可して再起動
+sudo mkdir -p /etc/systemd/system/ollama.service.d
+printf '[Service]\\nEnvironment="OLLAMA_ORIGINS=*"\\n' \\
+  | sudo tee /etc/systemd/system/ollama.service.d/origins.conf
+sudo systemctl daemon-reload && sudo systemctl restart ollama
+# 4. 確認 — {"version":"..."} が出れば成功
+sleep 3 && curl -s http://127.0.0.1:11434/api/version",
+    "os": "Linux (systemd)",
+  },
+  {
+    "command": "# 1. Ollama を入れる (入っていれば何もしません)
+if (-not (Get-Command ollama -EA SilentlyContinue)) { winget install -e --id Ollama.Ollama }
+# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)
+ollama pull llama3.2:1b
+# 3. このページからの読み取りを許可して再起動
+[Environment]::SetEnvironmentVariable("OLLAMA_ORIGINS", "*", "User")
+Get-Process ollama -EA SilentlyContinue | Stop-Process
+Start-Process "$env:LOCALAPPDATA\\Programs\\Ollama\\ollama app.exe"
+# 4. 確認 — {"version":"..."} が出れば成功
+Start-Sleep 3; curl.exe -s http://127.0.0.1:11434/api/version",
+    "os": "Windows (PowerShell)",
+  },
+  {
+    "command": "ollama pull llama3.2:1b
+OLLAMA_ORIGINS="*" ollama serve",
+    "os": "1 回だけ試す (OS 共通・このターミナルは開いたまま)",
+  },
+]
+`;
+
+exports[`セットアップ手順の golden > setupCommands — モデルを差し替えたとき > model-qwen 1`] = `
+[
+  {
+    "command": "# 1. Ollama を入れる — 未導入なら https://ollama.com/download から
+#    Ollama.app を入れて一度起動 (ここだけ手作業)
+# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)
+ollama pull qwen2.5:0.5b
+# 3. このページからの読み取りを許可して再起動
+launchctl setenv OLLAMA_ORIGINS "https://claude.ai"
+killall ollama 2>/dev/null; open -a Ollama
+# 4. 確認 — {"version":"..."} が出れば成功
+sleep 3 && curl -s http://127.0.0.1:11434/api/version",
+    "os": "macOS",
+  },
+  {
+    "command": "# 1. Ollama を入れる (入っていれば何もしません)
+command -v ollama >/dev/null || curl -fsSL https://ollama.com/install.sh | sh
+# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)
+ollama pull qwen2.5:0.5b
+# 3. このページからの読み取りを許可して再起動
+sudo mkdir -p /etc/systemd/system/ollama.service.d
+printf '[Service]\\nEnvironment="OLLAMA_ORIGINS=https://claude.ai"\\n' \\
+  | sudo tee /etc/systemd/system/ollama.service.d/origins.conf
+sudo systemctl daemon-reload && sudo systemctl restart ollama
+# 4. 確認 — {"version":"..."} が出れば成功
+sleep 3 && curl -s http://127.0.0.1:11434/api/version",
+    "os": "Linux (systemd)",
+  },
+  {
+    "command": "# 1. Ollama を入れる (入っていれば何もしません)
+if (-not (Get-Command ollama -EA SilentlyContinue)) { winget install -e --id Ollama.Ollama }
+# 2. 軽いモデルを 1 つ入れる (約 1.3 GB)
+ollama pull qwen2.5:0.5b
+# 3. このページからの読み取りを許可して再起動
+[Environment]::SetEnvironmentVariable("OLLAMA_ORIGINS", "https://claude.ai", "User")
+Get-Process ollama -EA SilentlyContinue | Stop-Process
+Start-Process "$env:LOCALAPPDATA\\Programs\\Ollama\\ollama app.exe"
+# 4. 確認 — {"version":"..."} が出れば成功
+Start-Sleep 3; curl.exe -s http://127.0.0.1:11434/api/version",
+    "os": "Windows (PowerShell)",
+  },
+  {
+    "command": "ollama pull qwen2.5:0.5b
+OLLAMA_ORIGINS="https://claude.ai" ollama serve",
+    "os": "1 回だけ試す (OS 共通・このターミナルは開いたまま)",
+  },
+]
+`;

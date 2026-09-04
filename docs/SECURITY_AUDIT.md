@@ -1,9 +1,57 @@
 # セキュリティ監査レポート
 
-最終監査日: 2026-05-12  
-監査対象 commit: 8b0a0ca
+最終監査日: 2026-07-25 (第2ラウンド・5並列エージェント + 手動)  
+監査対象 commit: 149adaea (第1ラウンド: 2026-05-12 / 8b0a0ca)
 
 ## サマリ
+
+### 第2ラウンド (2026-07-25) — 全件修正済み
+
+Electron main / OAuth+PKCE / プロキシ SSRF ガード / WebCrypto Vault / XSS・ビルド時
+インジェクション の5面を並列監査し、**実在が確認できた指摘のみ**修正した (エージェント
+の主張は全件こちらで再現・検証してから着手。再現できなかったものは修正していない)。
+
+| # | 重大度 | 対象 | 内容 | 状態 |
+|---|---|---|---|---|
+| R2-1 | 中 (Windows では影響大) | `main.ts` `app:openPath` / `app:revealInFolder` | `$HOME` 配下の**任意ファイル**を OS 既定アプリで開けた (Windows では `.exe` 実行プリミティブ) | 修正 |
+| R2-2 | 中 | `business/stocks/templates/teamradar` の `customPath` | `$HOME` 配下の任意 `.html/.md/.svg` を作成・上書きできた (R2-1 の材料設置に直結) | 修正 |
+| R2-3 | 中 | `dataCrypto.ts` | PBKDF2-SHA256 の反復が **210,000** (OWASP SHA-256 基準は 600,000。210k は SHA-512 の行を誤記) → バックアップの総当り耐性が意図の 1/3 | 修正 |
+| R2-4 | 中 | `vault.ts` | マスターパスワード最低 **8 文字** — `kcv`/`master-wrap` によりオフライン検証が可能なため、プロファイル窃取時の総当りに耐えない | 修正 (12 文字) |
+| R2-5 | 中 | `proxy.ts` SSRF ガード | **末尾ドット** (`localhost.` / `metadata.google.internal.` / `x.internal.`) で名前ベースの全規則を回避できた (実測再現済み) | 修正 |
+| R2-6 | 中 | `proxy.ts` | 検証したのは `parsed` なのに転送は**生文字列** — プロキシ側パーサ差分で SSRF (`https://public.com\@169.254.169.254/`) | 修正 (`parsed.href` 転送) |
+| R2-7 | 低 | `assets/sw.js` | 全 GET を Cache Storage に平文保存 — CORS 対応第三者 API のレスポンス (業務データ) が Vault の暗号化・自動ロックを迂回して端末に残りうる | 修正 (同一オリジン限定) |
+| R2-8 | 低 | `inline-html.cjs` CSP | `worker-src` 未指定 → `script-src` へフォールバックし **SW が一切登録できていなかった** (PWA オフライン/インストールが無効) | 修正 |
+| R2-9 | 低 | `oauth.ts` | `state` 不一致もサーバ自己終了カウンタに算入 → ローカルプロセスが偽コールバック 50 発で正規フローを DoS 可能 (この分岐が防ぐはずの攻撃を再導入していた) | 修正 |
+| R2-10 | 低 | `oauth.ts` | `tokenUrl` の https 未検証 / トークン交換エラー本文の redaction 漏れ | 修正 (多層防御) |
+| R2-11 | 低 | `dataCrypto.ts` | 自己記述の `iterations` に上限なし → 悪意ある bundle で CPU-DoS | 修正 (10万〜400万にクランプ) |
+| R2-12 | 低 | `vault.ts` | `clearToken` がロック中でも動作・`serviceId` 未検証 / `unlock()` の例外時に生マスター鍵を zero 化しない | 修正 |
+| R2-13 | 低 | 書類メーカー3種 + landing | `JSON.stringify` を inline `<script>` に埋め込み `<` 未エスケープ → データに `</script>` が入るとページ崩壊 (2026-07-24 の Pages 事故と同型)。`replace(str,str)` の `$&` 解釈も同時に是正 | 修正 |
+
+**修正しなかった (受容 / 上流責務)** — ※ 第3ラウンド (下記) でほぼ全て解消済み:
+- ~~SSRF ガードはホスト名文字列のみ~~ → **R3 で上流実装**。`docs/PROXY_EXAMPLE.md` の Worker が DoH で解決後 IP を再検査し、リダイレクト各ホップも再検査する。client 側の限界は変わらないが、文書上の防御線が実在するようになった。
+- リカバリー 24 語のクリップボード / 平文 `.txt` 保存は「書き留める」UX と不可分 → **警告文を明確化** (平文であり単体で Vault を復元できる旨をダウンロード時に表示)。
+- `webauthn.ts` は未配線のまま。`verifyBiometric` は署名検証をしていなかったため **fail-closed 化済み** (認証器を呼ぶ前に throw し、誤って解錠ゲートに配線されても通らない)。将来実装する場合の不変条件 — マスターパスワード/派生鍵を生体解錠のために保存しないこと — をモジュール冒頭と `docs/SECURITY_CHAIN.md` §3 に明記した。
+- `secrets.ts` の `plain:` フォールバック (keychain 不在 Linux) は暗号化の代替が無いため受容継続。ただし **R3 で利用者に可視化** (`secrets:protection` IPC + 設定画面に暗号化可否/未暗号化件数/keyring 導入手順)。従来は `console.warn` だけで GUI 利用者に届いていなかった。
+
+### 第3ラウンド (2026-07-25) — 未対処項目の総ざらい
+
+| ID | 対象 | 内容 | 状態 |
+|---|---|---|---|
+| R3-1 | `docs/PROXY_EXAMPLE.md` | リファレンス Worker が文書化済みの「解決後 IP 再検査」を実装していなかった → DoH (A/AAAA) で全アドレスを private/reserved 判定・`redirect:'manual'` + ホップ上限 3 で各 `Location` を再検査・非 http(s) 拒否・ホスト跨ぎで `Authorization`/`Cookie`/`x-proxy-auth` 破棄・301/302/303 は POST→GET 降格・DoH 失敗/NXDOMAIN/回答ゼロは fail-closed | 修正 |
+| R3-2 | 同上 | 共有シークレット比較が `!==` (先頭一致文字数が応答時間から漏れる) → XOR 累積の定数時間比較 | 修正 |
+| R3-3 | `scripts/inline-html.cjs`, `inject-pwa.cjs` | `script-src 'unsafe-inline'` = 注入された任意の inline `<script>` も実行可 → バンドルの sha256 ハッシュに固定し、SW スニペットのハッシュを冪等追記。仕上がり文書から再導出して未ピン留めならビルド失敗。実 chromium で 10MB/2.2MB の正常描画と注入 script の遮断を確認 | 修正 |
+| R3-4 | `security/webauthn.ts` | `rawId.byteLength > 0` だけで所持証明 true (署名未検証・チャレンジ使い捨て) → 認証器呼び出し前に throw する fail-closed 化。誤配線事故を構造的に防ぐ | 修正 |
+| R3-5 | `main/secrets.ts` + 設定画面 | `plain:` フォールバックの警告が `console.warn` のみで GUI 利用者に不可視 → `secrets:protection` IPC (秘密を返さず encrypted/plainCount/path のみ) + 設定画面表示 | 修正 |
+| R3-6 | `components/DataList.tsx`, `StatusBar.tsx` | 第三者由来 `thumbnailUrl`/`avatarUrl` のスキーム未検証 (現状 `<img>` なので実害なし。`href`/CSS `url()`/SVG `use` へ移した瞬間に危険) → https?/data:image のみ許可し、それ以外は `src` 属性自体を出さない。tab/CR/LF を除去してから判定 | 修正 |
+| R3-7 | `package.json` | Electron ^33 の既知 CVE → **43.2.0** / electron-builder → 26.15.3。E34〜43 の breaking-changes を精査し使用 API に影響なしを確認 | 修正 |
+
+production npm audit: **0 脆弱性**。dev 依存の残りは electron-builder の推移的依存 (brace-expansion /
+minimatch / ejs / temp / glob の DoS・ReDoS) と vite/vitest 系。いずれも**出荷物の依存ツリーには入らず**、
+かつ攻撃前提が本プロジェクトの使い方では成立しない (`vitest --ui` は未使用、vite dev server は
+ローカルのみ、electron-builder はリリースタグ時に自前ソースをビルドするだけ)。
+electron-builder については npm の提案が 25 系への降格であり、Electron 43 を扱えなくなるため採らない。
+
+### 第1ラウンド (2026-05-12)
 
 | 重大度 | 件数 | 状態 |
 |---|---|---|
@@ -12,8 +60,6 @@
 | P2 (中) | 4 | 修正済み 2 / 受容可能なリスク 2 |
 | P3 (低) | 3 | 文書化済み |
 | Info | 6 | 既存防御で対応済み (本ファイルに記載) |
-
-production npm audit: **0 脆弱性**（最終確認時点）。
 
 ## P1: 高優先度（すべて修正済み）
 
@@ -86,9 +132,16 @@ main プロセス OOM。
 作る → 理論上タイミング攻撃で state 推測可能。実用上は OAuth 5 分タイムアウト
 + 1 attempt しか無いため exploit 困難だが、防御深層原則として `timingSafeEqual` 推奨。
 
-**修正方針 (低リスクと判断、未実装)**:
-- 現状の 16 バイト randomBytes + 5 分制限で実害なし → 文書化で済ます
-- 状況: **受容**（後述 P2 と同様の判断）
+**状況: 修正済み** (この文書が古かった — 2026-08-24 に実装を確認して更新)
+
+当初は「16 バイト randomBytes + 5 分制限で実害なし」として**受容**と書いたが、
+その後 `safeStateEquals` として実装されている (`src/main/oauth.ts` — `timingSafeEqual`
+にバイト長を揃えてから渡す)。検査も在る: `oauth.test.ts` と、main の
+`timingSafeEqual` とブラウザ版の手書き XOR ループが同じ答えを返すことを見る
+`stateEqualsParity.test.ts`。
+
+**文書が「受容」のままなのは危ない** —— 次に触る人が「監査が許容と判断した」
+と読んで `!==` へ戻せてしまう。実装のほうが先に進んでいた。
 
 ## P2: 中優先度
 
@@ -117,6 +170,15 @@ main プロセス OOM。
 
 ### P3-1: OAuth callback HTML はテンプレートリテラル
 `CALLBACK_HTML` 定数として直接記述、変数挿入なし。XSS リスク無し。文書化のみ。
+
+**追記 (2026-08-24)**: 成功応答は確かに何も映さないが、**同じサーバの
+`oauth-error` 応答だけは要求の値を映して返す** (`error` はクエリ由来)。
+到達には state 一致が要るので任意の相手からは叩けない。ただし
+「映して返す唯一の口」が「何も映さない成功応答」より頭書きが弱い
+(成功側は `charset` を明示していて、理由も『ブラウザに中身を推測させない』と
+書いてある) のは筋が通らないので、`charset=utf-8` と
+`X-Content-Type-Options: nosniff` を揃えた。検査は
+`oauth.test.ts`（頭書きを戻すと落ちる対照つき）。
 
 ### P3-2: secrets.json の `mode 0o600`
 read+write owner only. 既存実装で対応。

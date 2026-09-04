@@ -13,7 +13,6 @@ import {
   createMockBusinessOpsDataSource,
   defaultBusinessDashboardPath,
   defaultBusinessDashboardMdPath,
-  escapeHtml,
   exportBusinessDashboardImpl,
   exportBusinessDashboardMdImpl,
   fetchBusinessOpsSnapshot,
@@ -30,6 +29,7 @@ import {
   type BusinessCategoryId,
   type BusinessAdvisorRecommendation,
   type BusinessAdvisorResponse,
+  BUSINESS_ADVISOR_MAX_TOKENS,
 } from '../business';
 
 // --- Category taxonomy ------------------------------------------------
@@ -93,6 +93,30 @@ describe('getCategoryDef + isBusinessCategoryId', () => {
     expect(isBusinessCategoryId(undefined)).toBe(false);
     expect(isBusinessCategoryId({})).toBe(false);
   });
+
+  /*
+   * プロトタイプ側の名前を通さない。
+   *
+   * `value in CATEGORY_BY_ID` はプロトタイプ鎖まで辿るので、表に無い
+   * `'constructor'` / `'toString'` / `'__proto__'` が **8 個とも true** になる
+   * (2026-08-22 実測)。この関数は `askBusinessAdvisor` の `categories` を
+   * IPC 境界で絞る唯一の番人で、抜けたものは
+   *   - `businessAdvisorSystemPrompt` を通って外部 API へ送るプロンプトに載り、
+   *   - `allowedSet` にどの事業も一致しないので **KPI 0 件のまま助言させる**
+   * (「そのカテゴリはある」と言いながら中身が空、という食い違いが起きる)。
+   *
+   * 同じ形は `templates.ts` の `isTemplateId` で先に直してあり、そこには
+   * 「`in` ではなく `Object.hasOwn` を使う」と書いてあった。**判断を 1 か所に
+   * 書いても、隣は直らない** —— 走査したら型ガード 38 個のうちここだけが
+   * 残っていた。
+   */
+  it.each(['constructor', 'toString', '__proto__', 'valueOf', 'hasOwnProperty',
+    'isPrototypeOf', 'propertyIsEnumerable', 'toLocaleString'])(
+    'プロトタイプ側の名前 %s を id として通さない',
+    (name) => {
+      expect(isBusinessCategoryId(name)).toBe(false);
+    },
+  );
 });
 
 // --- computeCategoryKpi ----------------------------------------------
@@ -570,17 +594,16 @@ describe('validateBusinessAdvisorJson', () => {
 // --- askBusinessAdvisorImpl --------------------------------------------
 
 describe('askBusinessAdvisorImpl', () => {
+  /*
+   * **本物の `Response` を作る。** 以前は `json()` が payload を返すのに
+   * `text()` が空文字を返す手作りの物だった —— 本物の `Response` では
+   * ありえない形で、`readBodyWithCap` を通すようにした途端に落ちた
+   * (2026-08-23)。モックが実物と違う形をしていると、**検査は実装ではなく
+   * モックの挙動を留めてしまう**。stocks 側は最初から本物を使っていて、
+   * 同じ変更で落ちなかった。
+   */
   function mockResponse(payload: unknown, ok = true, status = 200): Response {
-    return {
-      ok,
-      status,
-      async text() {
-        return ok ? '' : JSON.stringify(payload);
-      },
-      async json() {
-        return payload;
-      },
-    } as Response;
+    return new Response(JSON.stringify(payload), { status: ok ? status : status });
   }
 
   function llmReply(recs: BusinessAdvisorRecommendation[]): unknown {
@@ -684,36 +707,47 @@ describe('askBusinessAdvisorImpl', () => {
     expect(body.max_tokens).toBe(1500);
   });
 
-  it('respects custom model + max_tokens overrides', async () => {
+  /*
+   * **payload は有料 API のパラメータを動かせない** (経緯は `skills.test.ts`)。
+   * ここは以前「上書きを尊重する」ことを確かめる検査だった —— 使われていない
+   * 受け口を仕様として固定していた形なので、期待ごと反転させてある。
+   */
+  it.each([
+    ['数値', 2000],
+    ['巨大な値', 100_000_000],
+    ['負値', -1],
+    ['Infinity', Number.POSITIVE_INFINITY],
+    ['文字列', '999999'],
+    ['null', null],
+  ])('payload の maxTokens (%s) は無視される', async (_label, maxTokens) => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(mockResponse(llmReply([goodRec])));
     await askBusinessAdvisorImpl({
       token: 't',
       fetch: fetchMock,
-      payload: { question: 'q', model: 'claude-opus-4-7', maxTokens: 2000 },
+      payload: { question: 'q', maxTokens },
     });
-    const body = JSON.parse(fetchMock.mock.calls[0]![1]!.body as string) as { model: string; max_tokens: number };
-    expect(body.model).toBe('claude-opus-4-7');
-    expect(body.max_tokens).toBe(2000);
+    const body = JSON.parse(fetchMock.mock.calls[0]![1]!.body as string) as { max_tokens: number };
+    expect(body.max_tokens).toBe(BUSINESS_ADVISOR_MAX_TOKENS);
   });
 
-  it('falls back to default when model is empty string or maxTokens is 0 / NaN', async () => {
+  it('payload の model も無視される (送り先モデルを選ばせない)', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(mockResponse(llmReply([goodRec])));
     await askBusinessAdvisorImpl({
       token: 't',
       fetch: fetchMock,
-      payload: { question: 'q', model: '', maxTokens: 0 },
+      payload: { question: 'q', model: 'claude-opus-4-7' },
     });
-    const body1 = JSON.parse(fetchMock.mock.calls[0]![1]!.body as string) as { model: string; max_tokens: number };
-    expect(body1.model).toBe('claude-sonnet-4-6');
-    expect(body1.max_tokens).toBe(1500);
-    fetchMock.mockResolvedValueOnce(mockResponse(llmReply([goodRec])));
-    await askBusinessAdvisorImpl({
-      token: 't',
-      fetch: fetchMock,
-      payload: { question: 'q', maxTokens: Number.NaN },
-    });
-    const body2 = JSON.parse(fetchMock.mock.calls[1]![1]!.body as string) as { max_tokens: number };
-    expect(body2.max_tokens).toBe(1500);
+    const body = JSON.parse(fetchMock.mock.calls[0]![1]!.body as string) as { model: string };
+    expect(body.model).toBe('claude-sonnet-4-6');
+  });
+
+  it('既定のモデルと max_tokens を送る (定数が動いていない)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(mockResponse(llmReply([goodRec])));
+    await askBusinessAdvisorImpl({ token: 't', fetch: fetchMock, payload: { question: 'q' } });
+    const body = JSON.parse(fetchMock.mock.calls[0]![1]!.body as string) as { model: string; max_tokens: number };
+    expect(body.model).toBe('claude-sonnet-4-6');
+    expect(body.max_tokens).toBe(1500);
+    expect(BUSINESS_ADVISOR_MAX_TOKENS).toBe(1500);
   });
 
   it('throws on HTTP non-2xx response', async () => {
@@ -884,7 +918,7 @@ describe('business advisor boundary pins', () => {
       ok: true,
       status: 200,
       async text() {
-        return '';
+        return JSON.stringify(await this.json());
       },
       async json() {
         return {
@@ -925,7 +959,7 @@ describe('business advisor boundary pins', () => {
       ok: true,
       status: 200,
       async text() {
-        return '';
+        return JSON.stringify(await this.json());
       },
       async json() {
         return {
@@ -967,7 +1001,7 @@ describe('business advisor boundary pins', () => {
       ok: true,
       status: 200,
       async text() {
-        return '';
+        return JSON.stringify(await this.json());
       },
       async json() {
         return {
@@ -1007,7 +1041,7 @@ describe('business advisor boundary pins', () => {
       ok: true,
       status: 200,
       async text() {
-        return '';
+        return JSON.stringify(await this.json());
       },
       async json() {
         return {
@@ -1104,7 +1138,7 @@ describe('business advisor boundary pins', () => {
       ok: true,
       status: 200,
       async text() {
-        return '';
+        return JSON.stringify(await this.json());
       },
       async json() {
         return {
@@ -1136,22 +1170,6 @@ describe('business advisor boundary pins', () => {
   });
 });
 
-// --- escapeHtml -------------------------------------------------------
-
-describe('escapeHtml', () => {
-  it('escapes all 5 HTML-significant characters', () => {
-    expect(escapeHtml('<script>alert("x")</script>')).toBe(
-      '&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;',
-    );
-    expect(escapeHtml("o'reilly")).toBe('o&#39;reilly');
-    expect(escapeHtml('a & b')).toBe('a &amp; b');
-  });
-
-  it('passes through plain text unchanged', () => {
-    expect(escapeHtml('hello world 日本語')).toBe('hello world 日本語');
-  });
-});
-
 // --- Dashboard path safety -------------------------------------------
 
 describe('defaultBusinessDashboardPath / Md', () => {
@@ -1172,7 +1190,12 @@ describe('isSafeBusinessDashboardPath', () => {
   const home = '/home/user';
 
   it('accepts a .html file inside the home directory', () => {
-    expect(isSafeBusinessDashboardPath('/home/user/.local/x.html', home)).toBe(true);
+    expect(isSafeBusinessDashboardPath('/home/user/.local/business-hub/data/x.html', home)).toBe(true);
+    // Anywhere else under $HOME is rejected since the 2026-07 audit: exports are
+    // confined to ~/.local/business-hub so a compromised renderer cannot write
+    // (or clobber) files elsewhere in the home tree.
+    expect(isSafeBusinessDashboardPath('/home/user/x.html', home)).toBe(false);
+    expect(isSafeBusinessDashboardPath('/home/user/.config/evil.html', home)).toBe(false);
   });
 
   it('rejects non-string', () => {
@@ -1215,7 +1238,8 @@ describe('isSafeBusinessDashboardMdPath', () => {
   const home = '/home/user';
 
   it('accepts .md inside home', () => {
-    expect(isSafeBusinessDashboardMdPath('/home/user/x.md', home)).toBe(true);
+    expect(isSafeBusinessDashboardMdPath('/home/user/.local/business-hub/data/x.md', home)).toBe(true);
+    expect(isSafeBusinessDashboardMdPath('/home/user/x.md', home)).toBe(false);
   });
 
   it('rejects .html (wrong extension for md variant)', () => {
@@ -1715,5 +1739,494 @@ describe('exportBusinessDashboardMdImpl', () => {
     );
     expect(md).toContain('md-embedded');
     expect(md).toContain('mdact');
+  });
+});
+
+// --- 赤字を赤で出す ----------------------------------------------------
+//
+// 利益の符号は「色」と「+ の有無」でしか表に出ない。判定がずれると
+// **赤字が緑・プラス表記**で出てしまい、読み手は黒字だと受け取る。
+// 数字自体は正しいので、目視では気付きにくい。
+
+describe('経営ダッシュボードの符号と色', () => {
+  const GREEN = '#22c55e';
+  const RED = '#ef4444';
+
+  function snapWith(profit: number, profitMargin: number): BusinessOpsSnapshot {
+    const m = {
+      revenue: 1_000_000,
+      variableCost: 400_000,
+      fixedCost: 200_000,
+      totalCost: 1_000_000 - profit,
+      profit,
+      profitMargin,
+      traffic: 10_000,
+      conversion: 200,
+      conversionRatePct: 2,
+      aov: 5000,
+      roas: 5,
+      contentOutput: 10,
+    };
+    return {
+      units: [
+        {
+          id: 'ec' as BusinessCategoryId,
+          label: 'EC',
+          description: 'd',
+          trafficKind: 'session',
+          current: m,
+          history: [m, m],
+        },
+      ],
+      aggregate: {
+        revenue: 1_000_000,
+        totalCost: 1_000_000 - profit,
+        profit,
+        profitMargin,
+        contentOutput: 10,
+      },
+      fetchedAt: '2026-05-14T00:00:00.000Z',
+      isMock: true,
+    };
+  }
+
+  const html = (profit: number, margin: number) =>
+    renderBusinessDashboardHtml({ snapshot: snapWith(profit, margin), generatedAt: 'x' });
+  const md = (profit: number, margin: number) =>
+    renderBusinessDashboardMarkdown({ snapshot: snapWith(profit, margin), generatedAt: 'x' });
+
+  /** 利益セル (事業行) と月次利益タイル (合計) の色だけを取り出す。
+   *  スパークラインなど他の用途にも同じ色を使うので、場所で絞る。 */
+  function profitColors(page: string): { row: string; tile: string } {
+    const row = /<td class="num" style="color:(#[0-9a-f]{6})">[^<]*<\/td>/.exec(page)?.[1] ?? '';
+    const tile = /月次利益<\/div><div class="value" style="color:(#[0-9a-f]{6})"/.exec(page)?.[1] ?? '';
+    return { row, tile };
+  }
+
+  it('HTML: 黒字は緑・赤字は赤 (0 は黒字あつかい)', () => {
+    expect(profitColors(html(400_000, 40))).toEqual({ row: GREEN, tile: GREEN });
+    expect(profitColors(html(-400_000, -40))).toEqual({ row: RED, tile: RED });
+    // 境界: ちょうど 0 は損していないので赤にしない
+    expect(profitColors(html(0, 0))).toEqual({ row: GREEN, tile: GREEN });
+  });
+
+  /** 事業行の利益率セルと、月次利益タイルの表記を取り出す。 */
+  function htmlMargins(page: string): { row: string; tile: string } {
+    const cells = [...page.matchAll(/<td class="num" style="color:#[0-9a-f]{6}">([^<]*)<\/td>/g)];
+    const tile = /月次利益<\/div><div class="value"[^>]*>[^(]*\(([^)]*)\)/.exec(page)?.[1] ?? '';
+    return { row: cells[1]?.[1] ?? '', tile };
+  }
+  /** Markdown の事業行 (利益率の列) と合計行の表記。 */
+  function mdMargins(doc: string): { row: string; agg: string } {
+    const row = /^\| EC \(ec\) \|[^|]*\|[^|]*\|[^|]*\| ([^|]*) \|/m.exec(doc)?.[1]?.trim() ?? '';
+    const agg = /利益率[^\d+-]*([+-]?[\d.]+)%/.exec(doc)?.[0] ?? '';
+    return { row, agg };
+  }
+
+  it('HTML: 利益率の + は黒字のときだけ付ける (0 は付ける)', () => {
+    expect(htmlMargins(html(400_000, 40))).toEqual({ row: '+40.0%', tile: '+40.0%' });
+    expect(htmlMargins(html(-400_000, -40))).toEqual({ row: '-40.0%', tile: '-40.0%' });
+    expect(htmlMargins(html(0, 0))).toEqual({ row: '+0.0%', tile: '+0.0%' });
+  });
+
+  it('Markdown: 利益率の + は黒字のときだけ付ける (0 は付ける)', () => {
+    expect(mdMargins(md(400_000, 40)).row).toBe('+40.0%');
+    expect(mdMargins(md(-400_000, -40)).row).toBe('-40.0%');
+    expect(mdMargins(md(0, 0)).row).toBe('+0.0%');
+    // 合計側 (全社合算の「月次利益」行) も同じ規則
+    const aggCell = (doc: string) =>
+      /\| 月次利益 \| [^(]*\(([^)]*)\)/.exec(doc)?.[1] ?? '';
+    expect(aggCell(md(400_000, 40))).toBe('+40.0%');
+    expect(aggCell(md(-400_000, -40))).toBe('-40.0%');
+    expect(aggCell(md(0, 0))).toBe('+0.0%');
+  });
+
+  it('推移のグラフは各月の売上を点にする', () => {
+    // 売上を読まずに描くと、値が違っても同じ線になる。
+    const flat = html(400_000, 40); // 履歴 2 点とも同額
+    const rising = renderBusinessDashboardHtml({
+      snapshot: (() => {
+        const s = snapWith(400_000, 40);
+        const u = s.units[0]!;
+        return {
+          ...s,
+          units: [
+            {
+              ...u,
+              history: [
+                { ...u.history[0]!, revenue: 100_000 },
+                { ...u.history[1]!, revenue: 900_000 },
+              ],
+            },
+          ],
+        };
+      })(),
+      generatedAt: 'x',
+    });
+    const pts = (page: string) => /<polyline[^>]*points="([^"]*)"/.exec(page)?.[1] ?? '';
+    expect(pts(flat)).not.toBe('');
+    expect(pts(rising)).not.toBe(pts(flat));
+  });
+
+  it('Markdown: 助言の推奨アクションとリスク要因を箇条書きにする', () => {
+    const doc = renderBusinessDashboardMarkdown({
+      snapshot: snapWith(400_000, 40),
+      generatedAt: 'x',
+      advisorResult: {
+        notForRealMoney: true,
+        disclaimer: '一般情報です',
+        recommendations: [
+          {
+            rank: 1,
+            categoryId: 'ec' as BusinessCategoryId,
+            rationale: '利益率が高い',
+            actionItems: ['広告費を増やす', '在庫を厚くする'],
+            riskFactors: ['在庫過多', '広告費の高騰'],
+          },
+        ],
+      } as unknown as BusinessAdvisorResponse,
+    });
+    expect(doc).toContain('- 広告費を増やす\n- 在庫を厚くする');
+    expect(doc).toContain('- 在庫過多\n- 広告費の高騰');
+  });
+});
+
+/*
+ * 書き出した Markdown が「差し替えられる」形になっていないか。
+ *
+ * 2026-08-20 の監査時点で、この書き出しは**エスケープを 1 つも通していな
+ * かった** (HTML 側は `escapeXml` を通していた)。埋まるのは事業ラベルだけ
+ * ではなく AI 経営アドバイザーの応答で、検証は「空でない文字列」しか見て
+ * いない。したがって「壊れた入力」ではなく敵対的な入力を置く。
+ */
+describe('renderBusinessDashboardMarkdown — 埋め込みが構造を乗っ取れないか', () => {
+  const evilSnap = (): BusinessOpsSnapshot => ({
+    units: [
+      {
+        id: 'ec',
+        // 改行 + 区切り行で表を作り直そうとする値。
+        label: '偽|EC\n\n| 乗っ取り |\n|---|\n| 0 |',
+        description: '',
+        trafficKind: 'session',
+        current: {
+          revenue: 1000, variableCost: 400, fixedCost: 200, totalCost: 600,
+          profit: 400, profitMargin: 40, traffic: 100, conversion: 5,
+          conversionRatePct: 5, aov: 200, roas: 3, contentOutput: 4,
+        },
+        history: [],
+      },
+    ],
+    aggregate: { revenue: 1000, totalCost: 600, profit: 400, profitMargin: 40, contentOutput: 4 },
+    fetchedAt: 'x',
+    isMock: true,
+  });
+
+  it('事業ラベルの改行と区切りが表を作り直さない', () => {
+    const md = renderBusinessDashboardMarkdown({ snapshot: evilSnap(), generatedAt: 'x' });
+    const unitRow = md.split('\n').find((l) => l.includes('乗っ取り'));
+    expect(unitRow).toBeDefined();
+    // 1 行に収まっている = 表の外へ出ていない。
+    expect(unitRow).toContain('偽\\|EC');
+    expect(unitRow).toContain('\\| 乗っ取り \\|');
+    // 区切り行がそのままの形で現れない (現れると以降が別の表になる)。
+    expect(md).not.toMatch(/^\|---\|$/m);
+  });
+
+  it('アドバイザーの応答から生 HTML が出ない', () => {
+    // `categoryId` の型は union だが、**実行時には何でも来る**。
+    // 受け口の `isAdvisorResult` は `recommendations` が配列かどうかしか
+    // 見ておらず、要素の中身を 1 つも検査していない (「conservative」と
+    // 書いてあるが実際は素通し)。型は IPC の境界を越えないので、
+    // ここでは実際に届きうる値を置く。
+    const advisor = {
+      recommendations: [
+        {
+          categoryId: '<b>ec</b>',
+          rank: 1,
+          rationale: '<img src=x onerror=alert(1)>',
+          actionItems: ['<script>alert(1)</script>'],
+          riskFactors: ['<iframe src=evil>'],
+        },
+      ],
+      disclaimer: '<style>body{display:none}</style>',
+      notForRealMoney: true,
+    } as unknown as BusinessAdvisorResponse;
+    const md = renderBusinessDashboardMarkdown({
+      snapshot: fakeSnapForEscaping(),
+      advisorResult: advisor,
+      generatedAt: 'x',
+    });
+    // `<` が 1 つも生で残らない = タグの開き括弧が無い。
+    expect(md).not.toContain('<');
+    expect(md).toContain('&lt;img src=x onerror=alert(1)>');
+    expect(md).toContain('&lt;script>alert(1)&lt;/script>');
+  });
+
+  it('箇条書きの 1 項目から抜けさせない', () => {
+    const advisor: BusinessAdvisorResponse = {
+      recommendations: [
+        {
+          categoryId: 'ec',
+          rank: 1,
+          rationale: 'ok',
+          actionItems: ['やる\n## 偽の見出し'],
+          riskFactors: ['risk'],
+        },
+      ],
+      disclaimer: 'd',
+      notForRealMoney: true,
+    };
+    const md = renderBusinessDashboardMarkdown({
+      snapshot: fakeSnapForEscaping(),
+      advisorResult: advisor,
+      generatedAt: 'x',
+    });
+    expect(md).toContain('- やる ## 偽の見出し');
+    expect(md).not.toMatch(/^## 偽の見出し$/m);
+  });
+
+  it('rationale は段落なので改行を残す (体裁を壊さない)', () => {
+    const advisor: BusinessAdvisorResponse = {
+      recommendations: [
+        { categoryId: 'ec', rank: 1, rationale: '一行目\n二行目', actionItems: ['a'], riskFactors: ['r'] },
+      ],
+      disclaimer: 'd',
+      notForRealMoney: true,
+    };
+    const md = renderBusinessDashboardMarkdown({
+      snapshot: fakeSnapForEscaping(),
+      advisorResult: advisor,
+      generatedAt: 'x',
+    });
+    expect(md).toContain('一行目\n二行目');
+  });
+
+  function fakeSnapForEscaping(): BusinessOpsSnapshot {
+    return {
+      units: [
+        {
+          id: 'ec', label: 'EC', description: '', trafficKind: 'session',
+          current: {
+            revenue: 1000, variableCost: 400, fixedCost: 200, totalCost: 600,
+            profit: 400, profitMargin: 40, traffic: 100, conversion: 5,
+            conversionRatePct: 5, aov: 200, roas: 3, contentOutput: 4,
+          },
+          history: [],
+        },
+      ],
+      aggregate: { revenue: 1000, totalCost: 600, profit: 400, profitMargin: 40, contentOutput: 4 },
+      fetchedAt: 'x',
+      // 模擬データの断り書きが 1 行入るが `<` を含まないので、
+      // 「`<` が 1 つも残らない」の判定は変わらない。
+      isMock: true,
+    };
+  }
+});
+
+/*
+ * 書き出しの入口で、壊れた助言が弾かれるか。
+ *
+ * `isAdvisorResult` は 2026-08-21 まで `recommendations` が配列かどうかしか
+ * 見ておらず、同じファイルの `validateBusinessAdvisorJson`
+ * (「throws on any deviation so a malformed reply can't smuggle bad data
+ * into the UI」) と守りが割れていた。
+ */
+describe('exportBusinessDashboardMdImpl — 配列の中身が壊れた助言', () => {
+  const snap: BusinessOpsSnapshot = {
+    units: [
+      {
+        id: 'ec', label: 'EC', description: 'd', trafficKind: 'session',
+        current: {
+          revenue: 1000, variableCost: 400, fixedCost: 200, totalCost: 600,
+          profit: 400, profitMargin: 40, traffic: 100, conversion: 5,
+          conversionRatePct: 5, aov: 200, roas: 3, contentOutput: 4,
+        },
+        history: [],
+      },
+    ],
+    aggregate: { revenue: 1000, totalCost: 600, profit: 400, profitMargin: 40, contentOutput: 4 },
+    fetchedAt: 'x',
+    isMock: true,
+  };
+
+  const run = async (advisorResult: unknown): Promise<string> => {
+    let captured = '';
+    await exportBusinessDashboardMdImpl(
+      { token: '', payload: { advisorResult } },
+      {
+        fetchSnapshot: async () => snap,
+        writeFile: async (_p, c) => {
+          captured = c;
+        },
+        now: () => new Date('2026-05-14T00:00:00.000Z'),
+      },
+    );
+    return captured;
+  };
+
+  const good = { categoryId: 'ec', rank: 1, rationale: 'r', actionItems: ['a'], riskFactors: ['x'] };
+
+  const cases: readonly (readonly [string, unknown])[] = [
+    ['要素が null', [null]],
+    ['actionItems が無い', [{ ...good, actionItems: undefined }]],
+    ['rationale が数値', [{ ...good, rationale: 42 }]],
+    ['rank が 0', [{ ...good, rank: 0 }]],
+    ['categoryId が実在しない', [{ ...good, categoryId: '<b>ec</b>' }]],
+    ['riskFactors が空', [{ ...good, riskFactors: [] }]],
+  ];
+
+  for (const [label, recommendations] of cases) {
+    it(`${label} → 助言なしとして書き出しは成功する`, async () => {
+      const out = await run({ recommendations, disclaimer: 'd', notForRealMoney: true });
+      expect(out).not.toContain('AI 経営アドバイザー提案');
+      expect(out.length).toBeGreaterThan(0);
+    });
+  }
+
+  it('正しい助言はこれまでどおり通る (絞りすぎていない)', async () => {
+    const out = await run({ recommendations: [good], disclaimer: 'd', notForRealMoney: true });
+    expect(out).toContain('AI 経営アドバイザー提案');
+  });
+
+  it('全カテゴリが許可される (利用者が選んだ部分集合で絞らない)', async () => {
+    // 助言の宇宙は payload の `categories` か全カテゴリ。どの部分集合で
+    // 作られたかは書き出しの payload からは分からないので、ここでは
+    // 全カテゴリを許可する — 狭めると正しい助言を黙って捨てる。
+    const other = BUSINESS_CATEGORIES.find((c) => c.id !== 'ec');
+    expect(other).toBeDefined();
+    const out = await run({
+      recommendations: [{ ...good, categoryId: other!.id }],
+      disclaimer: 'd',
+      notForRealMoney: true,
+    });
+    expect(out).toContain('AI 経営アドバイザー提案');
+  });
+});
+
+/**
+ * **事業カテゴリ表を、読み直して留める。**
+ *
+ * 上の `describe('BUSINESS_CATEGORIES')` は id を字面で留め、label /
+ * description が空でないことも見ている —— **論理としては十分**である。
+ * それでも変異検査では 52 件すべてが生存していた (84.10%、2026-08-30 実測)。
+ *
+ * `BUSINESS_CATEGORIES` はモジュール直下の配列リテラルで、**読み込み時に
+ * 1 度だけ評価される**。静的 import のままでは、Stryker が変異を有効に
+ * する前に評価が済んでいる (覆われた static 変異体)。
+ *
+ * `stryker.config.json` の注記どおり `vi.resetModules()` + 動的 `import()`
+ * で読み直す。本 PR で 6 度目の同じ手当て (`MEMBER_ID_RE` / 橋 /
+ * `INTERNAL_TLDS` / `EMPTY_TALENT_STATE` / テンプレート表 / ここ)。
+ *
+ * ## 何を字面で留めるか
+ *
+ * - `id` —— `CATEGORY_BY_ID` の鍵であり、`validateBusinessAdvisorJson` が
+ *   受理する集合でもある。変われば助言の宛先が黙って外れる
+ * - `trafficKind` —— 画面がどの指標 (session / view / impression / project)
+ *   を出すかを決める。取り違えても数字は出るので、**間違いが見えない**
+ * - `label` —— 利用者が選ぶ選択肢そのもの
+ * - `description` は字面で留めない (10 行の説明文を写しても目を滑らせる)。
+ *   **空でないこと・重複しないこと**で押さえる —— 空文字への変異はこれで死ぬ
+ */
+describe('BUSINESS_CATEGORIES — 読み直して static 変異体を届かせる', () => {
+  const fresh = async () => {
+    vi.resetModules();
+    return (await import('../business')).BUSINESS_CATEGORIES;
+  };
+
+  it('★ id は 10 件、順序込みで固定', async () => {
+    const c = await fresh();
+    expect(c.map((x) => x.id)).toEqual([
+      'ec',
+      'dropship',
+      'oem-odm',
+      'blog',
+      'blog-affiliate',
+      'ppc-affiliate',
+      'video-production',
+      'video-upload',
+      'video-distribution',
+      'sns-ops',
+    ]);
+  });
+
+  it('★ label (利用者が選ぶ選択肢)', async () => {
+    const c = await fresh();
+    expect(c.map((x) => x.label)).toEqual([
+      'EC / ネットショップ',
+      'ドロップシッピング',
+      'OEM / ODM',
+      '自社ブログ',
+      'ブログアフィリエイト',
+      'PPC アフィリエイト',
+      '動画制作 (受託)',
+      '動画投稿 (自社チャンネル)',
+      '動画配信 (有料広告)',
+      'SNS 運用',
+    ]);
+  });
+
+  /*
+   * **取り違えても数字は出る。** だから検査でしか気付けない。
+   */
+  it('★ trafficKind (画面が出す指標を決める)', async () => {
+    const c = await fresh();
+    expect(c.map((x) => [x.id, x.trafficKind])).toEqual([
+      ['ec', 'session'],
+      ['dropship', 'session'],
+      ['oem-odm', 'project'],
+      ['blog', 'session'],
+      ['blog-affiliate', 'session'],
+      ['ppc-affiliate', 'impression'],
+      ['video-production', 'project'],
+      ['video-upload', 'view'],
+      ['video-distribution', 'impression'],
+      ['sns-ops', 'impression'],
+    ]);
+  });
+
+  /*
+   * 説明文は字面で留めない代わりに、**空でないこと**と**重複しないこと**で
+   * 押さえる。空文字への変異はここで死に、10 行の写経も要らない。
+   */
+  it('★ description は空でなく、重複しない', async () => {
+    const c = await fresh();
+    for (const x of c) expect(x.description.length, x.id).toBeGreaterThan(0);
+    expect(new Set(c.map((x) => x.description)).size).toBe(c.length);
+  });
+
+  /*
+   * `FETCHED_AT` もモジュール直下の定数である。上の
+   * 「returns 10 units + aggregate + isMock=true」が既に字面で見ているが、
+   * **静的 import なので変異が届いていなかった**。読み直して当て直す。
+   */
+  it('★ 見本スナップショットの取得日時', async () => {
+    vi.resetModules();
+    const m = await import('../business');
+    const snap = await m.fetchBusinessOpsSnapshot({ token: '' });
+    expect(snap.fetchedAt).toBe('2026-05-14T00:00:00.000Z');
+  });
+
+  /*
+   * 項目の集合を留める。要素が `{}` に潰れる変異 (ObjectLiteral) は
+   * 上の id 検査でも死ぬが、**項目が 1 つ消える**形はここでしか鳴らない。
+   */
+  it('★ 各カテゴリの項目が揃っている', async () => {
+    const c = await fresh();
+    for (const x of c) {
+      expect(Object.keys(x).sort(), x.id).toEqual([
+        'baseContentOutput',
+        'baseConversionRate',
+        'baseRevenue',
+        'baseRoas',
+        'baseTraffic',
+        'description',
+        'fixedCost',
+        'id',
+        'label',
+        'trafficKind',
+        'variableRatio',
+      ]);
+    }
   });
 });

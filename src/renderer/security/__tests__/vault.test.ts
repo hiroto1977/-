@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { describe, expect, it, beforeEach } from 'vitest';
+import { describe, expect, it, beforeEach, vi } from 'vitest';
 import 'fake-indexeddb/auto';
 // `indexedDB.deleteDatabase` for cleanup between tests
 import { _resetVaultForTests, getVault, NoRecoveryBranchError } from '../vault';
@@ -41,7 +41,9 @@ describe('Vault — initialization', () => {
 
   it('rejects passwords shorter than 8 chars', async () => {
     const vault = getVault();
-    await expect(vault.initialize('short')).rejects.toThrow(/8 文字以上/);
+    await expect(vault.initialize('short')).rejects.toThrow(/12 文字以上/);
+    // 11 chars is now rejected too (policy raised 8 → 12 in the 2026-07 audit).
+    await expect(vault.initialize('elevenchars')).rejects.toThrow(/12 文字以上/);
   });
 
   it('rejects oversized passwords (> 256 chars)', async () => {
@@ -278,12 +280,17 @@ describe('Vault — recoverWithMnemonic', () => {
 
   it('rejects mnemonic with bad checksum (typo)', async () => {
     const v = getVault();
-    const { mnemonic } = await v.initialize('original-password-12345');
+    await v.initialize('original-password-12345');
     _resetVaultForTests();
     const v2 = getVault();
 
-    const words = mnemonic.split(' ');
-    words[10] = words[10] === 'ability' ? 'zoo' : 'ability'; // swap
+    // **生成した mnemonic を書き換える形にしない。** チェックサムは 8 bit なので、
+    // 1 語を差し替えても 1/256 で偶然通ってしまい、その回だけテストが落ちる
+    // (実測 8/3000 = 0.27%)。乱数に依存しない固定ベクタを使う。
+    // 24 語・全ゼロエントロピーの公式 BIP-39 ベクタ (abandon ×23 + art) の
+    // 11 語目を ability に替えると、エントロピーが変わるので art が合わなくなる。
+    const words = `${'abandon '.repeat(23)}art`.trim().split(' ');
+    words[10] = 'ability';
     await expect(v2.recoverWithMnemonic(words.join(' '), 'new-password-1234')).rejects.toThrow(
       /checksum invalid/,
     );
@@ -304,7 +311,7 @@ describe('Vault — recoverWithMnemonic', () => {
     const { mnemonic } = await v.initialize('original-password-12345');
     _resetVaultForTests();
     const v2 = getVault();
-    await expect(v2.recoverWithMnemonic(mnemonic, 'short')).rejects.toThrow(/8 文字以上/);
+    await expect(v2.recoverWithMnemonic(mnemonic, 'short')).rejects.toThrow(/12 文字以上/);
   });
 
   it('rejects oversize new password', async () => {
@@ -694,5 +701,137 @@ describe('Vault — wipeAndReset', () => {
     expect(await v.status()).toBe('uninitialized');
     await v.wipeAndReset();
     expect(await v.status()).toBe('uninitialized');
+  });
+});
+
+describe('Vault — status() 堅牢化 (IndexedDB 読取失敗)', () => {
+  it('idbGet が throw しても reject せず uninitialized を返す (ログイン画面に到達)', async () => {
+    const v = getVault();
+    // 先に初期化して meta を書き込んでおく (本来は locked が返る状態)。
+    await v.initialize('robustness-pw-123456');
+    _resetVaultForTests(); // currentKey を捨てて再起動相当 (= locked のはず)
+    const v2 = getVault();
+
+    // idbGet 内の db.transaction を一時的に throw させ、読取失敗を再現する。
+    const proto = (globalThis as unknown as { IDBDatabase: { prototype: { transaction: unknown } } }).IDBDatabase
+      .prototype;
+    const orig = proto.transaction;
+    proto.transaction = () => {
+      throw new Error('synthetic idb failure');
+    };
+    try {
+      // reject せず uninitialized に縮退すること (App はこれでロック画面を表示)。
+      await expect(v2.status()).resolves.toBe('uninitialized');
+    } finally {
+      proto.transaction = orig;
+    }
+  });
+});
+
+describe('Vault — IndexedDB connection cleanup on error (no leak)', () => {
+  it('closes the db even when a token operation throws mid-flight', async () => {
+    const vault = getVault();
+    await vault.initialize('correct-horse-battery-staple');
+    const closeSpy = vi.spyOn(IDBDatabase.prototype, 'close');
+    const txSpy = vi.spyOn(IDBDatabase.prototype, 'transaction').mockImplementation(() => {
+      throw new Error('tx boom');
+    });
+    // 4 つの操作はすべて openDb → (失敗) → finally で close される。
+    await expect(vault.setToken('github', 'tok')).rejects.toThrow('tx boom');
+    await expect(vault.getToken('github')).rejects.toThrow('tx boom');
+    await expect(vault.clearToken('github')).rejects.toThrow('tx boom');
+    await expect(vault.listConfigured()).rejects.toThrow('tx boom');
+    expect(closeSpy).toHaveBeenCalledTimes(4);
+    txSpy.mockRestore();
+    closeSpy.mockRestore();
+  });
+});
+
+/** メタを直接書き換える (壊れた/差し替えられた保存内容を再現する)。 */
+function tamperMeta(mutate: (meta: Record<string, unknown>) => void): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const open = indexedDB.open('business-hub-vault');
+    open.onsuccess = () => {
+      const db = open.result;
+      const tx = db.transaction('meta', 'readwrite');
+      const store = tx.objectStore('meta');
+      const get = store.get('vault');
+      get.onsuccess = () => {
+        const meta = get.result as Record<string, unknown>;
+        mutate(meta);
+        store.put(meta, 'vault');
+      };
+      tx.oncomplete = () => {
+        db.close();
+        resolve();
+      };
+      tx.onerror = () => {
+        db.close();
+        reject(tx.error ?? new Error('tamper failed'));
+      };
+    };
+    open.onerror = () => reject(open.error ?? new Error('open failed'));
+  });
+}
+
+describe('Vault — 保存された反復回数の検証', () => {
+  // 反復回数はメタから読む = 保存側の値をそのまま信じる形になっていた。
+  // 途方もない値を書かれると PBKDF2 が返らず、利用者が自分の資格情報から
+  // 永久に締め出される。dataCrypto は同じ検査を最初から持っていたのに、
+  // 資格情報そのものを持つ Vault 側が素通しだった。
+  it('上限を超える反復回数のメタでは解錠せず即座に断る', async () => {
+    const vault = getVault();
+    await vault.initialize('correct-horse-battery-staple');
+    vault.lock();
+    _resetVaultForTests();
+    await tamperMeta((meta) => {
+      meta.iterations = 1_000_000_000;
+    });
+    await expect(getVault().unlock('correct-horse-battery-staple')).rejects.toThrow(/反復回数/);
+  });
+
+  it('下限を下回る反復回数も断る', async () => {
+    const vault = getVault();
+    await vault.initialize('correct-horse-battery-staple');
+    vault.lock();
+    _resetVaultForTests();
+    await tamperMeta((meta) => {
+      meta.iterations = 1;
+    });
+    await expect(getVault().unlock('correct-horse-battery-staple')).rejects.toThrow(/反復回数/);
+  });
+
+  /*
+   * **隣の欄も同じ出どころである。**
+   *
+   * 上の 2 件は `meta.iterations` を留めている。だが `meta.salt` も同じ
+   * IndexedDB から来て、同じ `deriveKey` へそのまま渡っていた ——
+   * 2026-08-27 まで長さを見る物が無く、そのために書かれた定数
+   * `MIN_SALT_BYTES` は**どこからも参照されていなかった** (grep で 0 件)。
+   *
+   * 短いソルトは鍵そのものを壊さないが、**利用者をまたいだ事前計算**を
+   * 成り立たせる。保管領域へ書ける相手 (拡張機能・同一生成元の別ページ) が
+   * salt を固定値へ差し替えれば、KCV への総当たりを使い回せる。
+   */
+  it('★ 短いソルトへ差し替えられたメタは断る', async () => {
+    const vault = getVault();
+    await vault.initialize('correct-horse-battery-staple');
+    vault.lock();
+    _resetVaultForTests();
+    await tamperMeta((meta) => {
+      meta.salt = new Uint8Array(4);
+    });
+    await expect(getVault().unlock('correct-horse-battery-staple')).rejects.toThrow(/ソルト/);
+  });
+
+  // ネガティブコントロール: 正規のメタは今までどおり解錠できる
+  // (「常に断る」実装になっていないことの確認)。
+  it('手を加えていないメタは解錠できる', async () => {
+    const vault = getVault();
+    await vault.initialize('correct-horse-battery-staple');
+    vault.lock();
+    _resetVaultForTests();
+    await getVault().unlock('correct-horse-battery-staple');
+    expect(getVault().isUnlocked()).toBe(true);
   });
 });

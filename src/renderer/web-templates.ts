@@ -1,3 +1,5 @@
+import { wrapLines } from '../shared/textWrap';
+import { escapeXml, safeColor } from '../shared/escape';
 /**
  * Browser-side template renderers — mirror of the backend templates.ts
  * renderers. Imported by web-shim.ts so the standalone HTML build can
@@ -34,31 +36,27 @@ export const TEMPLATE_CATALOG_FOR_WEB: readonly TemplateDef[] = [
   { id: 'resume-header', width: 1240, height: 600, defaults: { title: '山田 太郎', subtitle: '営業部 / Sales Lead · 7年', body: 'Tokyo, Japan · taro.yamada@example.com', accentColor: '#43c3b8', secondaryColor: '#0f1117', brandText: '' } },
 ];
 
-function esc(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
-
-function wrap(text: string, maxChars: number): string[] {
-  const out: string[] = [];
-  for (const para of text.split(/\n/)) {
-    if (para.length === 0) { out.push(''); continue; }
-    let buf = '';
-    for (const ch of para) {
-      if (buf.length >= maxChars) { out.push(buf); buf = ''; }
-      buf += ch;
-    }
-    if (buf.length > 0) out.push(buf);
-  }
-  return out;
-}
+// エスケープは shared/escape.ts の 1 実装だけを使う（写経すると片方だけ
+// 文字を足し忘れて、その画面だけ漏れる状態になる）。
+const esc = escapeXml;
 
 export function renderTemplateForWeb(def: TemplateDef, params: Record<string, string>): string {
   const p: TemplateParams = {
     title: typeof params.title === 'string' ? params.title : def.defaults.title,
     subtitle: typeof params.subtitle === 'string' ? params.subtitle : def.defaults.subtitle,
     body: typeof params.body === 'string' ? params.body : def.defaults.body,
-    accentColor: typeof params.accentColor === 'string' ? params.accentColor : def.defaults.accentColor,
-    secondaryColor: typeof params.secondaryColor === 'string' ? params.secondaryColor : def.defaults.secondaryColor,
+    // 色は属性値に素で入るので、入口で検証して既定値に落とす。
+    // 他の項目と同じ typeof 判定を先に置く。`String(x ?? '')` で正規化してから
+    // safeColor に渡す書き方だと、`''` を何に変えても結果が既定値のままで
+    // 観測できる差が出ない（殺せない変異体になる）。
+    accentColor:
+      typeof params.accentColor === 'string'
+        ? safeColor(params.accentColor, def.defaults.accentColor)
+        : def.defaults.accentColor,
+    secondaryColor:
+      typeof params.secondaryColor === 'string'
+        ? safeColor(params.secondaryColor, def.defaults.secondaryColor)
+        : def.defaults.secondaryColor,
     brandText: typeof params.brandText === 'string' ? params.brandText : def.defaults.brandText,
   };
   const d = def;
@@ -66,7 +64,7 @@ export function renderTemplateForWeb(def: TemplateDef, params: Record<string, st
   const H = d.height;
 
   if (d.id === 'presentation-cover') {
-    const lines = wrap(p.title, 24);
+    const lines = wrapLines(p.title, 24);
     const titleY = H / 2 - lines.length * 30;
     const ts = lines.map((l, i) => `<tspan x="${W / 2}" dy="${i === 0 ? 0 : 100}">${esc(l)}</tspan>`).join('');
     return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${p.secondaryColor}"/><rect width="14" height="${H}" fill="${p.accentColor}"/><rect x="60" y="${H - 80}" width="120" height="6" fill="${p.accentColor}"/><text x="${W / 2}" y="${titleY}" font-size="92" font-weight="800" fill="#fff" text-anchor="middle">${ts}</text><text x="${W / 2}" y="${H / 2 + 100}" font-size="36" fill="#cbd5e1" text-anchor="middle">${esc(p.subtitle)}</text><text x="60" y="${H - 32}" font-size="20" fill="#94a3b8">${esc(p.body)}</text><text x="${W - 60}" y="${H - 32}" font-size="22" font-weight="600" fill="${p.accentColor}" text-anchor="end">${esc(p.brandText)}</text></svg>`;
@@ -75,22 +73,27 @@ export function renderTemplateForWeb(def: TemplateDef, params: Record<string, st
     return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${p.secondaryColor}"/><rect width="${W}" height="22" fill="${p.accentColor}"/><text x="60" y="180" font-size="64" font-weight="700" fill="#0f1117">${esc(p.title)}</text><text x="60" y="240" font-size="28" fill="${p.accentColor}">${esc(p.subtitle)}</text><line x1="60" y1="280" x2="${W - 60}" y2="280" stroke="${p.accentColor}" stroke-width="2"/><text x="60" y="340" font-size="22" fill="#475569">${esc(p.body)}</text><text x="${W - 60}" y="${H - 56}" font-size="28" font-weight="700" fill="${p.accentColor}" text-anchor="end">${esc(p.brandText)}</text></svg>`;
   }
   if (d.id === 'social-square') {
-    const lines = wrap(p.title, 14);
+    const lines = wrapLines(p.title, 14);
     const ts = lines.map((l, i) => `<tspan x="${W / 2}" dy="${i === 0 ? 0 : 90}">${esc(l)}</tspan>`).join('');
     return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${p.secondaryColor}"/><circle cx="${W - 100}" cy="100" r="180" fill="${p.accentColor}" opacity="0.18"/><circle cx="80" cy="${H - 80}" r="240" fill="${p.accentColor}" opacity="0.12"/><rect x="60" y="120" width="80" height="6" fill="${p.accentColor}"/><text x="${W / 2}" y="${H / 2 - lines.length * 30}" font-size="80" font-weight="800" fill="#fff" text-anchor="middle">${ts}</text><text x="${W / 2}" y="${H / 2 + 100}" font-size="34" fill="#cbd5e1" text-anchor="middle">${esc(p.subtitle)}</text><text x="${W / 2}" y="${H - 80}" font-size="26" fill="${p.accentColor}" text-anchor="middle">${esc(p.body)}</text><text x="60" y="80" font-size="22" font-weight="600" fill="#fff">${esc(p.brandText)}</text></svg>`;
   }
   if (d.id === 'social-story') {
-    const lines = wrap(p.title, 11);
+    const lines = wrapLines(p.title, 11);
     const ts = lines.map((l, i) => `<tspan x="${W / 2}" dy="${i === 0 ? 0 : 120}">${esc(l)}</tspan>`).join('');
     return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${p.secondaryColor}"/><stop offset="100%" stop-color="${p.accentColor}" stop-opacity="0.4"/></linearGradient></defs><rect width="${W}" height="${H}" fill="url(#g)"/><rect x="${W / 2 - 60}" y="${H / 2 - 360}" width="120" height="8" fill="${p.accentColor}"/><text x="${W / 2}" y="${H / 2 - 80 - lines.length * 30}" font-size="120" font-weight="900" fill="#fff" text-anchor="middle">${ts}</text><text x="${W / 2}" y="${H / 2 + 200}" font-size="56" fill="#fafafa" text-anchor="middle">${esc(p.subtitle)}</text><rect x="${W / 2 - 200}" y="${H - 280}" width="400" height="80" rx="40" fill="${p.accentColor}"/><text x="${W / 2}" y="${H - 224}" font-size="38" font-weight="700" fill="#fff" text-anchor="middle">${esc(p.body)}</text><text x="${W / 2}" y="${H - 120}" font-size="32" fill="#cbd5e1" text-anchor="middle">${esc(p.brandText)}</text></svg>`;
   }
   if (d.id === 'flyer-a4') {
-    const lines = wrap(p.body, 36);
+    const lines = wrapLines(p.body, 36);
     const ts = lines.map((l, i) => `<tspan x="80" dy="${i === 0 ? 0 : 56}">${esc(l)}</tspan>`).join('');
     return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="#fdfbf7"/><rect width="${W}" height="380" fill="${p.accentColor}"/><rect y="380" width="${W}" height="14" fill="${p.secondaryColor}"/><text x="80" y="200" font-size="96" font-weight="800" fill="#fff">${esc(p.title)}</text><text x="80" y="280" font-size="42" fill="#fefefe">${esc(p.subtitle)}</text><text x="80" y="500" font-size="40" fill="#1f2937">${ts}</text><rect x="80" y="${H - 200}" width="${W - 160}" height="100" fill="${p.accentColor}" opacity="0.1"/><text x="${W / 2}" y="${H - 140}" font-size="38" font-weight="700" fill="${p.accentColor}" text-anchor="middle">${esc(p.brandText)}</text></svg>`;
   }
   if (d.id === 'certificate') {
-    return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${p.secondaryColor}"/><rect x="40" y="40" width="${W - 80}" height="${H - 80}" fill="none" stroke="${p.accentColor}" stroke-width="6"/><rect x="60" y="60" width="${W - 120}" height="${H - 120}" fill="none" stroke="${p.accentColor}" stroke-width="2"/><text x="${W / 2}" y="${H / 2 - 220}" font-size="32" letter-spacing="12" fill="${p.accentColor}" text-anchor="middle">CERTIFICATE</text><text x="${W / 2}" y="${H / 2 - 140}" font-size="120" font-weight="700" fill="#1f2937" text-anchor="middle">${esc(p.title)}</text><text x="${W / 2}" y="${H / 2 - 40}" font-size="56" fill="#1f2937" text-anchor="middle">${esc(p.subtitle)}</text><line x1="${W / 2 - 200}" y1="${H / 2}" x2="${W / 2 + 200}" y2="${H / 2}" stroke="${p.accentColor}" stroke-width="2"/><text x="${W / 2}" y="${H / 2 + 90}" font-size="34" fill="#374151" text-anchor="middle">${esc(p.body.split('\n')[0] ?? '')}</text><text x="${W / 2}" y="${H / 2 + 150}" font-size="34" fill="#374151" text-anchor="middle">${esc(p.body.split('\n')[1] ?? '')}</text><text x="${W / 2}" y="${H - 100}" font-size="32" font-weight="600" fill="${p.accentColor}" text-anchor="middle">${esc(p.brandText)}</text></svg>`;
+    const bodyLines = p.body.split('\n');
+    // split は常に 1 要素以上返すため [0] の `?? ''` フォールバックは到達不能 (equivalent)。
+    // Stryker disable next-line StringLiteral
+    const cLine0 = bodyLines[0] ?? '';
+    const cLine1 = bodyLines[1] ?? '';
+    return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${p.secondaryColor}"/><rect x="40" y="40" width="${W - 80}" height="${H - 80}" fill="none" stroke="${p.accentColor}" stroke-width="6"/><rect x="60" y="60" width="${W - 120}" height="${H - 120}" fill="none" stroke="${p.accentColor}" stroke-width="2"/><text x="${W / 2}" y="${H / 2 - 220}" font-size="32" letter-spacing="12" fill="${p.accentColor}" text-anchor="middle">CERTIFICATE</text><text x="${W / 2}" y="${H / 2 - 140}" font-size="120" font-weight="700" fill="#1f2937" text-anchor="middle">${esc(p.title)}</text><text x="${W / 2}" y="${H / 2 - 40}" font-size="56" fill="#1f2937" text-anchor="middle">${esc(p.subtitle)}</text><line x1="${W / 2 - 200}" y1="${H / 2}" x2="${W / 2 + 200}" y2="${H / 2}" stroke="${p.accentColor}" stroke-width="2"/><text x="${W / 2}" y="${H / 2 + 90}" font-size="34" fill="#374151" text-anchor="middle">${esc(cLine0)}</text><text x="${W / 2}" y="${H / 2 + 150}" font-size="34" fill="#374151" text-anchor="middle">${esc(cLine1)}</text><text x="${W / 2}" y="${H - 100}" font-size="32" font-weight="600" fill="${p.accentColor}" text-anchor="middle">${esc(p.brandText)}</text></svg>`;
   }
   if (d.id === 'invoice-header') {
     return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${p.secondaryColor}"/><rect width="${W}" height="${H}" fill="${p.accentColor}" opacity="0.07"/><text x="80" y="130" font-size="84" font-weight="800" letter-spacing="6" fill="${p.accentColor}">${esc(p.title)}</text><text x="80" y="190" font-size="28" fill="#475569">${esc(p.subtitle)}</text><text x="80" y="240" font-size="22" fill="#94a3b8">${esc(p.body)}</text><text x="${W - 80}" y="80" font-size="32" font-weight="700" fill="#1f2937" text-anchor="end">${esc(p.brandText)}</text><rect y="${H - 6}" width="${W}" height="6" fill="${p.accentColor}"/></svg>`;

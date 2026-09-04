@@ -3,6 +3,17 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import {
+  CHAT_TIMEOUT_MS as WEB_CHAT_TIMEOUT_MS,
+  MAX_RESPONSE_BYTES as WEB_MAX_RESPONSE_BYTES,
+  OLLAMA_ENDPOINT_KEY,
+  REQUEST_TIMEOUT_MS as WEB_REQUEST_TIMEOUT_MS,
+  desktopSetupCommands,
+  loadEndpointSetting,
+  originsSetupSteps,
+  setupCommands,
+} from '../network/ollamaWeb';
+import { DEFAULT_OLLAMA_PORT, isLoopbackHostname, parseOllamaEndpoint } from '../../shared/ollama';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -18,6 +29,9 @@ export function OllamaPage() {
   const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'ollama',
     SNAPSHOT.ollama,
+    // 認証不要のローカルサービスなので、開いた時点で接続を試す
+    // (「つながっているのか」がこのページの主目的)。
+    { autoFetch: true },
   );
   const { running, version, versionSafe, versionMinRecommended, models, warnings } = data;
 
@@ -92,6 +106,10 @@ export function OllamaPage() {
           </>
         }
       />
+
+      <Section title="接続設定">
+        <ConnectionSetup running={running} errorMessage={errorMessage} onReconnect={refresh} />
+      </Section>
 
       {warnings.length > 0 ? (
         <Section title="セキュリティ警告">
@@ -212,24 +230,393 @@ export function OllamaPage() {
 
       <Section title="セキュリティポリシー">
         <div className="card" style={{ gap: 6, fontSize: 12, color: 'var(--text-muted)' }}>
+          {/*
+            * ここは長らく「ハードコード (他ホストへの送信不可)」とだけ書いていたが、
+            * それは**デスクトップ版の経路の話**である。同じページの「接続設定」は
+            * 接続先の入力欄を出していて、ブラウザ版では実際に効く ——
+            * **同じ画面が矛盾したことを言っていた** (2026-08-23)。
+            * 上の「指定できるのは次の 3 通りだけです」と同じ事実を書く。
+            */}
           <div>
-            🔒 接続先は <code>http://127.0.0.1:11434</code> に <strong>ハードコード</strong>{' '}
-            (他ホストへの送信不可)
+            🔒 デスクトップ版の接続先は <code>http://127.0.0.1:11434</code> に{' '}
+            <strong>ハードコード</strong> (他ホストへの送信不可)。ブラウザ版は上の「接続設定」で
+            変更できるが、<strong>①同じ端末 ②このページと同じホスト ③https</strong> の
+            3 通りだけを受け付ける (平文 http で別ホストへは接続しない)
           </div>
           <div>
             🔒 危険な書き込みエンドポイント (<code>/api/pull</code>, <code>/api/create</code>,{' '}
             <code>/api/push</code>) は呼び出さない (CVE-2024-37032 等回避)
           </div>
           <div>
-            🔒 モデル名は正規表現 <code>^[a-z0-9][a-z0-9._:/-]*$</code> でサニタイズ
+            🔒 モデル名は正規表現 <code>^[a-z0-9][a-z0-9._:/-]{'{0,127}'}$</code> (大文字小文字は
+            区別しない) でサニタイズ
           </div>
-          <div>🔒 リクエストは 30 秒タイムアウト、レスポンスは 10 MB で切り詰め</div>
+          {/*
+            * 数字はビルドで違う。1 行で「30 秒 / 10 MB」とだけ書いていた頃は
+            * デスクトップ版の値で、ブラウザ版 (chat 120 秒 / 上限 2 MB) と
+            * ずれていた (2026-08-23)。値は実物の定数から出す。
+            */}
+          <div>
+            🔒 デスクトップ版はリクエスト 30 秒・レスポンス 10 MB、
+            ブラウザ版は疎通確認 {WEB_REQUEST_TIMEOUT_MS / 1000} 秒 / チャット{' '}
+            {WEB_CHAT_TIMEOUT_MS / 1000} 秒・レスポンス {WEB_MAX_RESPONSE_BYTES / (1024 * 1024)} MB
+            で切り詰め
+          </div>
           <div>🔒 Streaming レスポンス未対応 (有限長応答のみ受理)</div>
           <div>
             詳細は <code>docs/OLLAMA_SECURITY.md</code>
           </div>
         </div>
       </Section>
+    </div>
+  );
+}
+
+/**
+ * 接続設定と診断。
+ *
+ * ブラウザ版の要点: Ollama は既定で CORS ヘッダを返さないため、ページから
+ * `http://127.0.0.1:11434` を読もうとすると **サーバは動いているのにブラウザが
+ * 結果を捨てる**。利用者には「未起動」と区別がつかないので、
+ * `network/ollamaWeb.ts` の probe が理由を切り分け、ここでは
+ * 「CORS で拒否された」場合にだけ OLLAMA_ORIGINS の設定手順を出す。
+ *
+ * Electron 版では main プロセスが直接叩くため CORS は関係なく、この案内も出ない。
+ */
+function ConnectionSetup({
+  running,
+  errorMessage,
+  onReconnect,
+}: {
+  running: boolean;
+  errorMessage?: string;
+  onReconnect: () => void;
+}) {
+  const [endpoint, setEndpoint] = useState(
+    () => loadEndpointSetting() || String(DEFAULT_OLLAMA_PORT),
+  );
+  const [saved, setSaved] = useState(false);
+  const [copied, setCopied] = useState<string>();
+
+  // ビルド種別を推測するのはやめる (どちらのブリッジも同じメソッドを持つため脆い)。
+  // 代わりに **診断結果** で出し分ける: OLLAMA_ORIGINS の案内が要るのは
+  // 「起動しているのに CORS で拒否された」時だけで、これは network/ollamaWeb.ts の
+  // probe が返すメッセージから判定できる (Electron 版は main 経由なので CORS は起きない)。
+  const corsBlocked = /CORS/.test(errorMessage ?? '');
+  // 配信元の CSP がローカル接続を禁じている場合、Ollama 側を何度直しても解決しない。
+  // ここを「未起動」と同じ案内にすると、絶対に終わらない作業へ送り込むことになる。
+  const cspBlocked = /CSP/.test(errorMessage ?? '');
+  // デスクトップ (Electron) 版の判定も **診断結果** から行う (ビルド種別の推測はしない)。
+  // ブラウザ版の probe は失敗時に必ず理由メッセージを返すが、Electron 版は main の
+  // フェッチャが「running:false のスナップショット」を正常応答として返すため、
+  // 未起動でも errorMessage が無い。この差だけで確実に見分けられる。
+  const desktopMode = !running && (errorMessage === undefined || errorMessage === '');
+  const origin = typeof location !== 'undefined' ? location.origin : '';
+  const pageHostname = typeof location !== 'undefined' ? location.hostname : '';
+  // 別端末から使うには、アプリ自身をその端末から見えるホストで配信する必要がある。
+  // ループバックで開いている限り、スマホからは到達できない (127.0.0.1 は各端末の自分自身)。
+  const servedFromLoopback = pageHostname === '' || isLoopbackHostname(pageHostname);
+  const resolved = parseOllamaEndpoint(endpoint, pageHostname);
+  // 「起動しているが CORS 拒否」なら許可の設定だけ、そうでなければ導入から全部を出す。
+  // 診断で分かっている段階を飛ばして長い手順を読ませると、そこで諦められてしまう。
+  const steps = originsSetupSteps(origin);
+  const fullSetup = setupCommands(origin);
+  const desktopSetup = desktopSetupCommands();
+
+  function applyEndpoint() {
+    try {
+      localStorage.setItem(OLLAMA_ENDPOINT_KEY, endpoint.trim());
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch {
+      /* localStorage 不可の環境では既定のまま */
+    }
+    onReconnect();
+  }
+
+  async function copy(text: string, os: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(os);
+      setTimeout(() => setCopied(undefined), 2000);
+    } catch {
+      /* クリップボード不可 — 手動選択してもらう */
+    }
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div className="field-grid">
+        <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 12 }}>
+          <span style={{ color: 'var(--text-muted)' }}>接続先 (既定 11434 = 同じ端末)</span>
+          <input
+            style={inputStyle}
+            value={endpoint}
+            onChange={(e) => setEndpoint(e.target.value)}
+            placeholder="11434 / 192.168.1.10:11434 / https://xxx.trycloudflare.com"
+            aria-label="Ollama の接続先"
+          />
+        </label>
+        <button onClick={applyEndpoint}>接続テスト</button>
+      </div>
+      <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.7 }}>
+        指定できるのは次の 3 通りだけです —{' '}
+        <strong>①同じ端末</strong> (ポート番号のみ)、
+        <strong>②このページと同じホスト</strong> (
+        {pageHostname ? <code>{pageHostname}</code> : '配信元'} への http)、
+        <strong>③https のトンネル URL</strong>。
+        平文 http で「別のホスト」を指定できる作りにすると、このページが内部ネットワークを
+        覗く踏み台になりうるため許可していません（ブラウザ側でも mixed content として
+        遮断されます）。呼び出すのは <code>/api/version</code> ・<code>/api/tags</code> ・
+        <code>/api/chat</code> の 3 つだけで、モデルを取得・削除する API は呼びません。
+      </p>
+      {saved && (
+        <p style={{ margin: 0, fontSize: 12, color: 'var(--success)' }}>
+          ポートを保存して再接続しました。
+        </p>
+      )}
+
+      {/* 入力が許可外なら、保存前にその場で分かるようにする。 */}
+      {resolved === null && (
+        <p style={{ margin: 0, fontSize: 12, color: 'var(--warning)' }}>
+          この接続先は指定できません（上の 3 通りのいずれかにしてください）。
+        </p>
+      )}
+
+      {/* スマホ等の別端末から使う手順。ここが「つながらない」の最大の原因になる:
+          127.0.0.1 は各端末にとって自分自身なので、スマホのブラウザから PC の
+          Ollama には絶対に届かない。経路を 2 つ提示する。 */}
+      <details style={{ fontSize: 12 }}>
+        <summary style={{ cursor: 'pointer', fontWeight: 600 }}>
+          スマホなど別の端末から使う
+        </summary>
+        <div
+          style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 8, lineHeight: 1.7 }}
+        >
+          <p style={{ margin: 0, color: 'var(--text-muted)' }}>
+            Ollama は PC の中で動いています。<code>127.0.0.1</code> は
+            <strong>その端末自身</strong>を指すため、スマホのブラウザから開いた場合は
+            スマホ自身を見に行ってしまい、絶対に届きません。
+            {servedFromLoopback && (
+              <>
+                <br />
+                いまこのページは <code>{pageHostname || 'ローカル'}</code> から開かれているので、
+                下の A か B のどちらかが必要です。
+              </>
+            )}
+          </p>
+
+          <div>
+            <strong>いちばん確実: ターミナルから使う（ブラウザ不要）</strong>
+            <p style={{ margin: '4px 0 0', color: 'var(--text-muted)' }}>
+              CORS も mixed content も「間にブラウザがいる」ことが原因なので、Node から
+              直接叩けば一つも起きません。リポジトリを持っている端末で:
+            </p>
+            <pre
+              style={{
+                margin: '4px 0 0',
+                padding: '8px 10px',
+                background: 'var(--bg)',
+                border: '1px solid var(--border)',
+                borderRadius: 6,
+                fontSize: 11.5,
+                overflowX: 'auto',
+                whiteSpace: 'pre-wrap',
+              }}
+            >
+              {'npm run ollama                              # 状態とモデル一覧\nnpm run ollama -- chat llama3.2 "こんにちは"   # チャット'}
+            </pre>
+            <p style={{ margin: '4px 0 0', color: 'var(--text-muted)' }}>
+              制約は画面版と同一（ループバック限定・読み取り3エンドポイントのみ）。
+              Ollama と同じマシンで実行してください。
+            </p>
+          </div>
+
+          <div>
+            <strong>A. 同じ Wi-Fi で使う（追加ソフト不要）</strong>
+            <ol style={{ margin: '4px 0 0', paddingLeft: '1.4em', color: 'var(--text-muted)' }}>
+              <li>
+                PC で Ollama を LAN に公開して起動:{' '}
+                <code>OLLAMA_HOST=0.0.0.0 OLLAMA_ORIGINS=&quot;*&quot; ollama serve</code>
+              </li>
+              <li>
+                同じフォルダの <code>standalone.html</code> を PC から配信:{' '}
+                <code>python3 -m http.server 8080</code>
+              </li>
+              <li>
+                スマホで <code>http://&lt;PCのIP&gt;:8080/standalone.html</code> を開く
+                （IP は PC の設定で確認。例 192.168.1.10）
+              </li>
+              <li>
+                このページの「接続先」に <code>&lt;PCのIP&gt;:11434</code> を入れて「接続テスト」
+              </li>
+            </ol>
+            <p style={{ margin: '4px 0 0', color: 'var(--text-muted)' }}>
+              ※ アプリ自身も PC から配信するのが要点です。https のページから平文 http の
+              LAN 機器へは、ブラウザが mixed content として遮断するため繋がりません。
+            </p>
+          </div>
+
+          <div>
+            <strong>B. https トンネルで使う（外出先でも可）</strong>
+            <ol style={{ margin: '4px 0 0', paddingLeft: '1.4em', color: 'var(--text-muted)' }}>
+              <li>
+                PC で <code>cloudflared tunnel --url http://127.0.0.1:11434</code>
+                （または Tailscale の <code>tailscale serve</code>）を実行
+              </li>
+              <li>
+                表示された <code>https://…</code> の URL を「接続先」に貼り付け
+              </li>
+              <li>
+                Ollama 側にこのページのオリジンを許可:{' '}
+                <code>OLLAMA_ORIGINS=&quot;{origin || '*'}&quot;</code> を設定して再起動
+              </li>
+            </ol>
+            <p style={{ margin: '4px 0 0', color: 'var(--text-muted)' }}>
+              ※ トンネル URL を知る人は誰でもあなたの Ollama を叩けます。使い終わったら
+              トンネルを止めてください。
+            </p>
+          </div>
+        </div>
+      </details>
+
+      {/* 配信元の CSP で塞がれている場合は、Ollama 側の手順を一切出さない。
+          原因がこちら側の配布形態にあるので、出せば必ず徒労になる。 */}
+      {cspBlocked && (
+        <div
+          style={{
+            border: '1px solid var(--warning)',
+            borderRadius: 8,
+            padding: 12,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 8,
+          }}
+        >
+          <strong style={{ fontSize: 13, color: 'var(--warning)' }}>
+            この配布形態では接続できません
+          </strong>
+          <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.7 }}>
+            いまこのページを配信している場所が、<strong>ローカルへの接続そのものを禁止</strong>
+            しています（<code>connect-src</code>）。ブラウザがリクエストを送る前に落とすため、
+            <strong>Ollama をどう設定しても解決しません</strong>。
+            claude.ai のアーティファクトとして開いた場合がこれに当たります。
+            <br />
+            他の機能はそのまま使えます。Ollama だけは下のどれかで開いてください。
+          </p>
+          <ol
+            style={{
+              margin: 0,
+              paddingLeft: '1.4em',
+              fontSize: 12,
+              color: 'var(--text-muted)',
+              lineHeight: 1.8,
+            }}
+          >
+            <li>
+              <strong>ターミナルから使う（設定ゼロ・いちばん確実）</strong>
+              <br />
+              <code>npm run ollama:setup</code> → <code>npm run ollama -- chat</code>。
+              ブラウザを通らないので CORS も CSP も発生しません。
+            </li>
+            <li>
+              <strong>アプリを localhost から開く（許可設定も不要）</strong>
+              <br />
+              <code>standalone.html</code> を置いたフォルダで{' '}
+              <code>python3 -m http.server 8080</code> を実行し、
+              <code>http://localhost:8080/standalone.html</code> を開きます。Ollama は
+              <strong>既定で localhost からの読み取りを許可している</strong>ため、
+              <code>OLLAMA_ORIGINS</code> の設定すら要りません。
+            </li>
+            <li>
+              <strong>デスクトップ版を使う</strong>
+              <br />
+              Electron 版は main プロセスから直接叩くため、ブラウザ由来の制約が
+              いっさい発生しません。
+            </li>
+          </ol>
+        </div>
+      )}
+
+      {!running && !cspBlocked && (
+        <div
+          style={{
+            border: '1px solid var(--border)',
+            borderRadius: 8,
+            padding: 12,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 8,
+          }}
+        >
+          <strong style={{ fontSize: 13 }}>
+            {corsBlocked
+              ? 'あと 1 つだけ設定が要ります'
+              : desktopMode
+                ? 'はじめて使う — 2 つ実行するだけ (許可設定は不要)'
+                : 'はじめて使う — これを 1 回貼るだけ'}
+          </strong>
+          <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.7 }}>
+            {corsBlocked ? (
+              <>
+                <strong>Ollama の起動は検出できています。</strong>
+                残っているのは「このページからの読み取りを許可する」設定だけです。Ollama は既定で
+                他オリジンからの読み取りを拒否します（ブラウザ版のみ該当）。
+                お使いの OS のコマンドを実行し、設定後に「接続テスト」を押してください。
+              </>
+            ) : desktopMode ? (
+              <>
+                <strong>Ollama がまだ動いていません。</strong>
+                デスクトップ版はアプリ内部から直接接続するため、ブラウザ版で必要な
+                読み取り許可 (<code>OLLAMA_ORIGINS</code>) は<strong>不要</strong>です。
+                下の 2 行を実行してから、上の「更新」を押してください。
+              </>
+            ) : (
+              <>
+                <strong>Ollama がまだ動いていません。</strong>
+                下のブロックには <strong>導入 → モデル取得 → 読み取り許可 → 再起動 → 確認</strong>{' '}
+                が全部入っています。お使いの OS のものを丸ごとコピーしてターミナルに貼り、
+                最後に <code>{'{"version":"…"}'}</code> が出れば成功です。そのあと
+                「接続テスト」を押してください。
+              </>
+            )}
+          </p>
+          {(corsBlocked ? steps : desktopMode ? desktopSetup : fullSetup).map((s) => (
+            <div key={s.os} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 12, fontWeight: 600 }}>{s.os}</span>
+                <button
+                  style={{ fontSize: 11, padding: '2px 8px' }}
+                  onClick={() => copy(s.command, s.os)}
+                >
+                  {copied === s.os ? 'コピーしました' : 'コピー'}
+                </button>
+              </div>
+              <pre
+                style={{
+                  margin: 0,
+                  padding: '8px 10px',
+                  background: 'var(--bg)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 6,
+                  fontSize: 11.5,
+                  overflowX: 'auto',
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-all',
+                }}
+              >
+                {s.command}
+              </pre>
+            </div>
+          ))}
+          <p style={{ margin: 0, fontSize: 11.5, color: 'var(--text-muted)' }}>
+            ※ <code>OLLAMA_ORIGINS</code> は「どのページからの読み取りを許可するか」の設定です。
+            上のコマンドはこのページのオリジンだけを許可します（
+            <code>*</code> は誰からでも読める状態になるため、単一ファイル版で
+            オリジンが特定できない場合の最後の手段です）。
+          </p>
+        </div>
+      )}
     </div>
   );
 }

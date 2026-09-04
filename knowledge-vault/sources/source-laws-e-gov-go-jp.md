@@ -1,0 +1,232 @@
+---
+title: "laws.e-gov.go.jp"
+type: source-domain
+host: "laws.e-gov.go.jp"
+cite_count: 209
+tags:
+  - source-domain
+  - index
+---
+
+# laws.e-gov.go.jp
+
+> [!info] 出典ドメイン索引 ・ 引用 **209 件**（公的 208 ・ リファレンス 1）
+
+## このドメインを出典とする項目
+
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — e-Gov法令検索民法（第1条基本原則、権利濫用の禁止）
+- [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]] — e-Gov法令検索—私的独占の禁止及び公正取引の確保に関する法律（昭和22年法律第54号）
+- [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — e-Gov法令検索—労働契約法（平成19年法律第128号）第16条
+- [[bizlaw-act-on-electronic-contract|電子契約法（電子消費者契約に関する民法の特例法）]] — e-Gov法令検索「電子消費者契約に関する民法の特例に関する法律」
+- [[bizlaw-administrative-appeal|行政不服審査（審査請求）]] — e-Gov法令検索行政不服審査法（平成26年法律第68号、法令ID426AC0000000068）
+- [[bizlaw-administrative-execution|行政代執行（行政代執行法）]] — e-Gov法令検索行政代執行法（昭和23年法律第43号、法令ID323AC0000000043）
+- [[bizlaw-administrative-guidance|行政指導（行政手続法）]] — e-Gov法令検索行政手続法（平成5年法律第88号、法令ID405AC0000000088）
+- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 行政事件訴訟法（昭和37年法律第139号）e-Gov法令検索
+- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 行政手続法（平成5年法律第88号）e-Gov法令検索
+- [[bizlaw-administrative-litigation|行政事件訴訟法]] — e-Gov法令検索「行政事件訴訟法」（昭和37年法律第139号）
+- [[bizlaw-agency|代理（民法99条）]] — e-Gov法令検索民法（明治29年法律第89号、第99条〜第118条代理）
+- [[bizlaw-anonymized-info|匿名加工情報・仮名加工情報（個人情報保護法）]] — e-Gov法令検索個人情報の保護に関する法律（平成15年法律第57号、法令ID415AC0000000057）第2条
+- [[bizlaw-antimonopoly|独占禁止法]] — e-Gov法令検索「私的独占の禁止及び公正取引の確保に関する法律」（昭和22年法律第54号）
+- [[bizlaw-arbitration-act|仲裁法]] — e-Gov法令検索仲裁法（平成15年法律第138号）
+- [[bizlaw-assignment-of-claims|債権譲渡（民法466条）]] — e-Gov法令検索「民法」（lawid129AC0000000089、466〜468条）
+- [[bizlaw-assumption-of-debt|債務引受（民法470条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号）第470条〜第472条の4
+- [[bizlaw-auto-liability-act|自動車損害賠償保障法（自賠法）]] — e-Gov法令検索「自動車損害賠償保障法」（昭和30年法律第97号、第3条運行供用者責任）
+- [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 民事再生法（平成11年法律第225号）e-Gov法令検索
+- [[bizlaw-bankruptcy-insolvency-law|倒産法：破産・民事再生・会社更生による債務者の清算と再建の法理論]] — 破産法（平成16年法律第75号）e-Gov法令検索
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]] — e-Gov法令検索民法（lawid129AC0000000089、第136条・第137条）
+- [[bizlaw-bona-fide-acquisition|即時取得（善意取得・民法192条）]] — e-Gov法令検索民法（明治29年法律第89号）第192条・第193条
+- [[bizlaw-building-standards|建築基準法]] — e-Gov法令検索—建築基準法（昭和二十五年法律第二百一号）
+- [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — e-Gov法令検索会社法（330条・355条）
+- [[bizlaw-cheque-act|小切手法]] — e-Gov法令検索小切手法（昭和8年法律第57号）
+- [[bizlaw-civil-procedure|民事訴訟法]] — e-Gov法令検索民事訴訟法（平成8年法律第109号）
+- [[bizlaw-commorientes-rule|同時死亡の推定（コモリエンテス法理）]] — 民法（明治29年法律第89号）—e-Gov法令検索第32条の2「同時死亡の推定」
+- [[bizlaw-companies-act|会社法]] — e-Gov法令検索「会社法」（平成17年法律第86号）
+- [[bizlaw-comparative-negligence|過失相殺（民法418条・722条2項）]] — e-Gov法令検索民法（lawid129AC0000000089）—第418条・第722条の条文
+- [[bizlaw-condition-suspensive|停止条件・解除条件]] — e-Gov法令検索—民法（明治29年法律第89号）第127条〜133条（条件及び期限）
+- [[bizlaw-condominium-ownership|区分所有（区分所有法）]] — e-Gov法令検索「建物の区分所有等に関する法律」（昭和37年法律第69号、lawid337AC0000000069）
+- [[bizlaw-consumer-basic-act|消費者基本法]] — e-Gov法令検索「消費者基本法」（昭和43年法律第78号）
+- [[bizlaw-consumer-collective-redress|消費者裁判手続特例法（消費者団体訴訟制度）]] — e-Gov法令検索—消費者の財産的被害等の集団的な回復のための民事の裁判手続の特例に関する法律（平成25年法律第96号）
+- [[bizlaw-consumer-protection-law|消費者保護法の国際的展開と日本における法体系の形成]] — 消費者基本法（昭和43年法律第78号）e-Gov法令検索
+- [[bizlaw-consumer-protection-law|消費者保護法の国際的展開と日本における法体系の形成]] — 消費者契約法（平成12年法律第61号）e-Gov法令検索
+- [[bizlaw-consumer-protection-law|消費者保護法の国際的展開と日本における法体系の形成]] — 特定商取引に関する法律（昭和51年法律第57号）e-Gov法令検索
+- [[bizlaw-contract-nonconformity|契約不適合責任（旧・瑕疵担保責任）]] — e-Gov法令検索—民法（562条以下・566条）
+- [[bizlaw-contract-termination|契約の解除（民法541条・542条）]] — e-Gov法令検索民法（lawid129AC0000000089、540条〜545条）
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — e-Gov法令検索「特定商取引に関する法律」（昭和51年法律第57号）
+- [[bizlaw-copyright|著作権法]] — e-Gov法令検索—著作権法（昭和四十五年法律第四十八号）
+- [[bizlaw-corporate-reorganization|組織再編（合併・会社分割等）]] — 会社法（平成17年法律第86号）e-Gov法令検索—第五編に組織変更・合併・会社分割・株式交換・株式移転を規定
+- [[bizlaw-creditor-delay|受領遅滞（民法413条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号）第413条・第413条の2・第492条・第493条
+- [[bizlaw-creditor-subrogation|債権者代位権（民法423条）]] — e-Gov法令検索—民法（明治二十九年法律第八十九号、lawid129AC0000000089、第423条〜423条の7）
+- [[bizlaw-dation-in-payment|代物弁済（民法482条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号）第482条
+- [[bizlaw-defamation|名誉毀損（刑法230条・民法709条/723条）]] — e-Gov法令検索刑法（明治40年法律第45号）—230条・230条の2の条文
+- [[bizlaw-defamation|名誉毀損（刑法230条・民法709条/723条）]] — e-Gov法令検索民法（明治29年法律第89号）—709条・710条・723条の条文
+- [[bizlaw-default-damages|債務不履行と損害賠償（民法415条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号、法令ID129AC0000000089）—415条・416条
+- [[bizlaw-deposit-kyotaku|弁済供託（民法494条）]] — e-Gov法令検索民法（明治29年法律第89号）第494条供託
+- [[bizlaw-derivative-action-foss-harbottle|株主代表訴訟とフォス対ハーボトル原則]] — e-Gov法令検索会社法（平成十七年法律第八十六号）第847条責任追及等の訴え
+- [[bizlaw-derivative-suit|株主代表訴訟（責任追及等の訴え）]] — e-Gov法令検索「会社法」（平成十七年法律第八十六号）第847条—第853条責任追及等の訴え
+- [[bizlaw-design-right|意匠権（意匠法）]] — e-Gov法令検索意匠法（昭和34年法律第125号）
+- [[bizlaw-director-conflict|取締役の競業避止義務・利益相反取引（会社法356条）]] — e-Gov法令検索会社法（平成17年法律第86号、法令ID417AC0000000086）—355条・356条・365条・423条
+- [[bizlaw-discharge-for-breach|契約違反による債務免除]] — e-Gov法令検索民法541条・542条・545条4項（2020年施行改正民法）
+- [[bizlaw-duty-of-care|善管注意義務（善良な管理者の注意義務）]] — e-Gov法令検索『会社法』（330条・355条の正文）
+- [[bizlaw-duty-of-loyalty|取締役の忠実義務（会社法355条）]] — e-Gov法令検索：会社法（355条忠実義務・356条競業及び利益相反取引の制限）
+- [[bizlaw-e-signature|電子署名法]] — e-Gov法令検索電子署名及び認証業務に関する法律（平成12年法律第102号）条文
+- [[bizlaw-earnest-money|手付（民法557条）]] — e-Gov法令検索民法（明治29年法律第89号）第557条手付
+- [[bizlaw-employer-liability|使用者責任（民法715条）]] — e-Gov法令検索民法（明治29年法律第89号、lawid129AC0000000089）第715条
+- [[bizlaw-employment-insurance|雇用保険法]] — e-Gov法令検索雇用保険法（昭和49年法律第116号）
+- [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — e-Gov法令検索「民法」（明治29年法律第89号、709条ほか）
+- [[bizlaw-fictitious-manifestation|通謀虚偽表示（民法94条）]] — e-Gov法令検索—民法（明治二十九年法律第八十九号、lawid129AC0000000089）第94条
+- [[bizlaw-fiduciary-duty|信認義務（受託者責任）]] — e-Gov法令検索—会社法（平成17年法律第86号）第355条（忠実義務）・第330条（委任の準用）
+- [[bizlaw-fixed-term-conversion|無期転換ルール（労働契約法18条）]] — e-Gov法令検索労働契約法第18条
+- [[bizlaw-forum-non-conveniens|フォーラム・ノン・コンヴィニエンス（不便宜法廷地の法理）]] — e-Gov法令検索民事訴訟法（3条の9・特別の事情による訴えの却下）
+- [[bizlaw-fraud-duress|詐欺・強迫による取消し（民法96条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号）第96条
+- [[bizlaw-fraudulent-rescission|詐害行為取消権（民法424条）]] — e-Gov法令検索民法（明治29年法律第89号、lawid129AC0000000089）第424条詐害行為取消請求
+- [[bizlaw-freedom-of-contract|契約自由の原則]] — e-Gov法令検索—民法（521条・522条・90条・548条の2等）
+- [[bizlaw-guarantee-obligation|保証債務・連帯保証（民法446条）]] — e-Gov法令検索民法（lawid129AC0000000089、第446条〜465条の10）
+- [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]] — e-Gov法令検索—民法（明治29年法律第89号）第177条（不動産物権変動の対抗要件・登記）
+- [[bizlaw-hate-speech-elimination|ヘイトスピーチ解消法]] — e-Gov法令検索—本邦外出身者に対する不当な差別的言動の解消に向けた取組の推進に関する法律（平成28年法律第68号）
+- [[bizlaw-health-insurance|健康保険法]] — e-Gov法令検索「健康保険法（大正十一年法律第七十号）」第1条（目的・対象・給付）
+- [[bizlaw-hoteijichijoken|法定地上権（民法388条）]] — e-Gov法令検索—民法（明治29年法律第89号）第388条（法定地上権）
+- [[bizlaw-income-tax-act|所得税法]] — e-Gov法令検索「所得税法（昭和40年法律第33号）」
+- [[bizlaw-industrial-safety|労働安全衛生法]] — e-Gov法令検索「労働安全衛生法」（昭和四十七年法律第五十七号）
+- [[bizlaw-inheritance-tax|相続税法]] — e-Gov法令検索相続税法（昭和25年法律第73号）
+- [[bizlaw-interest-rate-restriction|利息制限法]] — e-Gov法令検索—利息制限法（昭和29年法律第100号）
+- [[bizlaw-internal-control|内部統制システム（J-SOX・内部統制報告制度）]] — e-Gov法令検索：会社法（362条＝取締役会の権限・内部統制システム整備の基本方針決定）
+- [[bizlaw-internal-control|内部統制システム（J-SOX・内部統制報告制度）]] — e-Gov法令検索：金融商品取引法（24条の4の4＝内部統制報告書の提出義務／J-SOX）
+- [[bizlaw-iryubun|遺留分（民法1042条）]] — e-Gov法令検索—民法（明治29年法律第89号）第1042条〜1049条（遺留分）
+- [[bizlaw-joint-several-obligation|連帯債務（民法436条）]] — e-Gov法令検索民法（条文・法令ID129AC0000000089、436条・442条）
+- [[bizlaw-joint-tort|共同不法行為（民法719条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号）第719条
+- [[bizlaw-judicial-scrivener-act|司法書士法]] — e-Gov法令検索—司法書士法（昭和25年法律第197号）
+- [[bizlaw-juvenile-act|少年法]] — e-Gov法令検索—少年法（昭和23年法律第168号）
+- [[bizlaw-kyodou-shinken|共同親権（2024年民法改正）]] — e-Gov法令検索—民法（第819条離婚後の親権、改正後条文）
+- [[bizlaw-labor-contract-act|労働契約法]] — e-Gov法令検索労働契約法（平成19年法律第128号）
+- [[bizlaw-labor-union-act|労働組合法]] — e-Gov法令検索「労働組合法」（昭和24年法律第174号）
+- [[bizlaw-large-shareholding|大量保有報告制度（5%ルール）]] — e-Gov法令検索「金融商品取引法」（27条の23以下大量保有報告書）
+- [[bizlaw-lay-judge-act|裁判員法（裁判員の参加する刑事裁判に関する法律）]] — e-Gov法令検索—裁判員の参加する刑事裁判に関する法律（平成16年法律第63号）
+- [[bizlaw-leniency|課徴金減免制度（リニエンシー）]] — e-Gov法令検索「私的独占の禁止及び公正取引の確保に関する法律」（独占禁止法）
+- [[bizlaw-limited-liability|株主有限責任の原則]] — e-Gov法令検索—会社法第104条（株主の責任）
+- [[bizlaw-local-autonomy|地方自治法]] — e-Gov法令検索地方自治法（昭和二十二年法律第六十七号）
+- [[bizlaw-local-tax-act|地方税法]] — e-Gov法令検索「地方税法（昭和25年法律第226号）」
+- [[bizlaw-maritime-law|海商法・海事法：海上運送と船舶に関する国際的法秩序の体系]] — 商法（明治32年法律第48号）海商編—e-Gov法令検索
+- [[bizlaw-market-manipulation|相場操縦の禁止]] — e-Gov法令検索「金融商品取引法」（158条風説の流布等・159条相場操縦行為等の禁止）
+- [[bizlaw-mental-reservation|心裡留保（民法93条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号）第93条
+- [[bizlaw-merger-of-obligations|混同（民法520条）]] — e-Gov法令検索「民法」（明治29年法律第89号,lawid129AC0000000089）第520条
+- [[bizlaw-mistake|錯誤（民法95条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号）第95条
+- [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]] — e-Gov法令検索著作権法（昭和45年法律第48号、lawid345AC0000000048）第18〜20条・59条・115条
+- [[bizlaw-mortgage|抵当権（民法369条）]] — e-Gov法令検索「民法」（lawid:129AC0000000089）第369条・第370条・第373条
+- [[bizlaw-mortgage-pursuit|抵当権の追及効]] — e-Gov法令検索—民法（明治29年法律第89号）第369条・378条・379条（抵当権・代価弁済・消滅請求）
+- [[bizlaw-national-health-insurance|国民健康保険法]] — e-Gov法令検索—国民健康保険法（昭和33年法律第192号）
+- [[bizlaw-negotiorum-gestio|事務管理（民法697条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号）第三章事務管理第697条〜第702条
+- [[bizlaw-novation|更改（民法513条）]] — e-Gov法令検索民法（明治29年法律第89号、lawid129AC0000000089）第513条
+- [[bizlaw-numerus-clausus|物権法定主義（民法175条）]] — e-Gov法令検索民法（明治29年法律第89号）第175条物権の創設
+- [[bizlaw-offer-acceptance|契約の成立（申込みと承諾・民法522条）]] — e-Gov法令検索民法（明治29年法律第89号、lawid129AC0000000089）第522条〜第528条
+- [[bizlaw-ordre-public|国際公序（Ordre Public / Public Policy Exception）]] — e-Gov法令検索—法の適用に関する通則法（平成18年法律第78号）第42条（外国法適用の公序条項）
+- [[bizlaw-pipa-optout-third-party|個人情報保護法のオプトアウト第三者提供]] — e-Gov法令検索—個人情報の保護に関する法律（平成15年法律第57号、第27条オプトアウト規定）
+- [[bizlaw-pledge|質権（民法342条）]] — e-Gov法令検索民法（lawid129AC0000000089／第九章質権342条以下）
+- [[bizlaw-prescription|時効（消滅時効・取得時効）]] — e-Gov法令検索—民法（162条・166条・145条・147条以下）
+- [[bizlaw-private-detective-act|探偵業法（探偵業の業務の適正化に関する法律）]] — e-Gov法令検索—探偵業の業務の適正化に関する法律（平成18年法律第60号）
+- [[bizlaw-private-international-law|国際私法（法の適用に関する通則法）]] — e-Gov法令検索「法の適用に関する通則法（平成18年法律第78号）」
+- [[bizlaw-prize-advertisement|懸賞広告（民法529条）]] — e-Gov法令検索民法（明治29年法律第89号）第529条〜第532条
+- [[bizlaw-property-transfer|物権変動と対抗要件（民法177条）]] — e-Gov法令検索『民法』（明治二十九年法律第八十九号、lawid129AC0000000089）—176条・177条・178条の一次条文
+- [[bizlaw-public-order|公序良俗（民法90条）]] — e-Gov法令検索民法（明治29年法律第89号、lawid129AC0000000089）第90条
+- [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — 日本民法第703条・第704条（不当利得）—e-Gov法令検索
+- [[bizlaw-real-estate-registration|不動産登記法]] — e-Gov法令検索「不動産登記法（平成十六年法律第百二十三号）」
+- [[bizlaw-real-estate-transactions-act|宅地建物取引業法（宅建業法）]] — e-Gov法令検索—宅地建物取引業法（昭和二十七年法律第百七十六号）条文
+- [[bizlaw-real-subrogation|物上代位（民法304条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号）第304条・第350条・第372条
+- [[bizlaw-receivables-security|集合債権譲渡担保（将来債権譲渡）]] — e-Gov法令検索民法（第466条の6・第467条）
+- [[bizlaw-release-of-debt|免除（民法519条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号、第519条免除）
+- [[bizlaw-retention-lien|留置権（民法295条）]] — e-Gov法令検索民法（条文の一次出典、lawid129AC0000000089）第295条〜第298条
+- [[bizlaw-retention-of-title|所有権留保]] — e-Gov法令検索「割賦販売法」（昭和36年法律第159号）—第7条所有権に関する推定
+- [[bizlaw-revocation-litigation|取消訴訟（行政事件訴訟法）]] — e-Gov法令検索「行政事件訴訟法（昭和37年法律第139号、法令ID337AC0000000139）」
+- [[bizlaw-revolving-mortgage|根抵当権（民法398条の2）]] — e-Gov法令検索—民法（明治二十九年法律第八十九号、第398条の2根抵当権）
+- [[bizlaw-risk-bearing|危険負担（民法536条）]] — e-Gov法令検索民法（lawid129AC0000000089）—第536条・第567条の条文
+- [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]] — e-Gov法令検索「民法」（第416条損害賠償の範囲、lawid129AC0000000089）
+- [[bizlaw-secrecy-of-communications|通信の秘密（憲法21条2項）]] — e-Gov法令検索「日本国憲法」（lawid321CONSTITUTION、第21条）
+- [[bizlaw-secrecy-of-communications|通信の秘密（憲法21条2項）]] — e-Gov法令検索「電気通信事業法」（lawid359AC0000000086、第4条・第179条）
+- [[bizlaw-securities-disclosure|企業内容開示制度（ディスクロージャー）]] — e-Gov法令検索「金融商品取引法」（第24条有価証券報告書の提出等）
+- [[bizlaw-set-off|相殺（民法505条）]] — e-Gov法令検索民法（明治29年法律第89号、第505条〜第512条の2）
+- [[bizlaw-simultaneous-performance|同時履行の抗弁権（民法533条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号）第533条
+- [[bizlaw-specified-commercial-transactions|特定商取引法]] — e-Gov法令検索「特定商取引に関する法律」（昭和51年法律第57号法令本文）
+- [[bizlaw-squeeze-out|スクイーズアウト（特別支配株主の株式等売渡請求）]] — e-Gov法令検索会社法（第179条〜179条の10特別支配株主の株式等売渡請求）
+- [[bizlaw-standard-terms|定型約款（民法548条の2）]] — e-Gov法令検索民法（明治二十九年法律第八十九号、lawid129AC0000000089）第548条の2〜第548条の4
+- [[bizlaw-state-liability|国家賠償（国家賠償法1条・2条）]] — e-Gov法令検索「国家賠償法」（昭和22年法律第125号、法令ID322AC0000000125）
+- [[bizlaw-statutory-lien|先取特権（民法303条）]] — e-Gov法令検索民法（法令ID129AC0000000089）第303条以下
+- [[bizlaw-structure-liability|工作物責任（民法717条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号）第717条
+- [[bizlaw-subcontract-act|下請法（下請代金支払遅延等防止法）]] — e-Gov法令検索—下請代金支払遅延等防止法（法令ID331AC0000000120）
+- [[bizlaw-subrogation-by-payment|弁済による代位（民法499条）]] — e-Gov法令検索民法（明治29年法律第89号、第499条〜第501条）
+- [[bizlaw-tender-of-performance|弁済の提供（民法492条・493条）]] — e-Gov法令検索民法（明治29年法律第89号）492条・493条
+- [[bizlaw-third-party-performance|第三者の弁済（民法474条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号）第474条
+- [[bizlaw-tob|公開買付け（TOB）]] — e-Gov法令検索「金融商品取引法」（27条の2以下公開買付けに関する規定）
+- [[bizlaw-tort-liability|不法行為責任（民法709条）]] — e-Gov法令検索—民法（709条・710条・715条・717条・719条・722条）
+- [[bizlaw-trade-secret|営業秘密（不正競争防止法2条6項）]] — e-Gov法令検索不正競争防止法（平成5年法律第47号、法令ID405AC0000000047）
+- [[bizlaw-trademark|商標法]] — e-Gov法令検索「商標法（昭和三十四年法律第百二十七号）」
+- [[bizlaw-two-stage-presumption|二段の推定（文書の真正成立）]] — e-Gov法令検索—民事訴訟法（平成8年法律第109号）第228条4項（私文書の真正成立の推定）
+- [[bizlaw-two-stage-presumption|二段の推定（文書の真正成立）]] — e-Gov法令検索—電子署名及び認証業務に関する法律（平成12年法律第102号）第3条（電子文書の真正成立の推定）
+- [[bizlaw-unauthorized-agency|無権代理（民法113条・117条）]] — 民法|e-Gov法令検索（lawid129AC0000000089）113条〜117条
+- [[bizlaw-unjust-enrichment|不当利得（民法703条・704条）]] — e-Gov法令検索民法（明治29年法律第89号）第三編債権第四章不当利得第703条—第708条
+- [[bizlaw-waste-management-act|廃棄物処理法（廃棄物の処理及び清掃に関する法律）]] — e-Gov法令検索—廃棄物の処理及び清掃に関する法律（昭和45年法律第137号）
+- [[bizlaw-work-for-hire|職務著作（著作権法15条）]] — e-Gov法令検索著作権法（昭和45年法律第48号）第15条
+- [[bizlaw-worker-dispatch|労働者派遣法]] — e-Gov法令検索｜労働者派遣事業の適正な運営の確保及び派遣労働者の保護等に関する法律（昭和60年法律第88号）
+- [[bizlaw-workers-comp|労働者災害補償保険法（労災保険）]] — e-Gov法令検索労働者災害補償保険法（昭和22年法律第50号）法令本文
+- [[labor-average-wage|平均賃金（労働基準法12条）]] — e-Gov法令検索労働基準法（12条）
+- [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]] — e-Gov法令検索労働基準法（38条の2）
+- [[labor-employment-certificate|退職時等の証明（労働基準法22条）]] — e-Gov法令検索労働基準法（22条）
+- [[labor-flextime|フレックスタイム制（労働基準法32条の3）]] — e-Gov法令検索労働基準法（32条の3）
+- [[labor-individual-dispute-mediation|個別労働紛争解決制度（個別労働関係紛争解決促進法）]] — e-Gov法令検索個別労働関係紛争解決促進法
+- [[labor-industrial-physician|産業医の選任義務（労働安全衛生法13条）]] — e-Gov法令検索労働安全衛生法（13条）
+- [[labor-industrial-physician|産業医の選任義務（労働安全衛生法13条）]] — e-Gov法令検索労働安全衛生規則（産業医の選任）
+- [[labor-maternity-allowance|健康保険の出産手当金]] — e-Gov法令検索健康保険法（102条出産手当金）
+- [[labor-minor-protection|年少者の労働保護（労働基準法 第6章）]] — e-Gov法令検索労働基準法（第6章年少者）
+- [[labor-minwage-reduction-exception|最低賃金の減額の特例許可制度（最低賃金法7条）]] — e-Gov法令検索最低賃金法（7条）
+- [[labor-paid-leave-timing|年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）]] — e-Gov法令検索労働基準法（39条）
+- [[labor-payment-on-termination|金品の返還（労働基準法23条）]] — e-Gov法令検索労働基準法（23条）
+- [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — e-Gov法令検索民法（第627条）
+- [[labor-rule-disadvantage-change|就業規則による労働条件の不利益変更（労働契約法9条・10条）]] — e-Gov法令検索労働契約法（9条・10条）
+- [[labor-safety-obligation|安全配慮義務（労働契約法第5条）]] — e-Gov労働契約法
+- [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]] — e-Gov労働基準法
+- [[labor-tribunal|労働審判制度（労働審判法）]] — e-Gov法令検索労働審判法
+- [[legal-agency|民法の代理（代理権・無権代理・表見代理）]] — e-Gov法令検索民法（99条・109条・110条・112条・113条）
+- [[legal-anonymized-info|匿名加工情報（個人情報保護法）]] — e-Gov法令検索個人情報の保護に関する法律
+- [[legal-claim-assignment|債権譲渡と譲渡制限特約（改正民法）]] — e-Gov法令検索民法（466条・467条）
+- [[legal-computer-virus|不正指令電磁的記録に関する罪（コンピュータウイルスに関する罪）]] — e-Gov法令検索刑法（168条の2・168条の3）
+- [[legal-contract-cancellation|契約の解除（催告解除・無催告解除／改正民法）]] — e-Gov法令検索民法（541条・542条・543条）
+- [[legal-contract-types|請負契約と委任契約（準委任）の区別]] — e-Gov法令検索民法（632条・643条・644条・656条）
+- [[legal-copyright-quotation|著作物の引用（著作権法32条）]] — e-Gov法令検索著作権法（32条）
+- [[legal-corporate-governance|会社法における株式会社の機関設計]] — e-Gov法令検索会社法（326条〜328条）
+- [[legal-corporate-registration|会社の商業登記（設立登記・変更登記）]] — e-Gov法令検索会社法（49条・915条・976条）
+- [[legal-corporate-reorganization|会社法における組織再編（合併・会社分割・株式交換・株式移転・株式交付）]] — e-Gov法令検索会社法（第五編組織再編）
+- [[legal-crypto-asset|暗号資産交換業の登録制（資金決済法）]] — e-Gov法令検索資金決済に関する法律
+- [[legal-defective-intent|意思表示の瑕疵（錯誤・詐欺・強迫／改正民法）]] — e-Gov法令検索民法（95条・96条）
+- [[legal-director-duty|取締役の善管注意義務・忠実義務（会社法）]] — e-Gov法令検索会社法（330条・355条・423条）
+- [[legal-financial-services-intermediary|金融サービス仲介業（金融サービス提供法）]] — e-Gov法令検索金融サービス提供法
+- [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — e-Gov法令検索会社法（440条・976条）
+- [[legal-interest-limit|利息制限法の上限金利]] — e-Gov法令検索利息制限法（1条）
+- [[legal-land-building-lease|借地借家法における建物賃貸借（借家）]] — e-Gov法令検索借地借家法
+- [[legal-land-lease-right|借地借家法における借地権]] — e-Gov法令検索借地借家法（2条・3条・4条・6条）
+- [[legal-lgbt-understanding-promotion-act|LGBT理解増進法（性的指向・ジェンダーアイデンティティ理解増進法）]] — e-Gov法令検索LGBT理解増進法（令和5年法律第68号）
+- [[legal-money-lending|貸金業法（登録制と総量規制）]] — e-Gov法令検索貸金業法（3条）
+- [[legal-moral-rights|著作者人格権]] — e-Gov法令検索著作権法
+- [[legal-patent-right|特許権の発生・存続期間・効力（特許法）]] — e-Gov法令検索特許法
+- [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — e-Gov法令検索民法（166条消滅時効）
+- [[legal-prescription-renewal|消滅時効の完成猶予・更新（改正民法）]] — e-Gov法令検索民法（147条〜152条）
+- [[legal-product-liability|製造物責任法（PL法）]] — e-Gov製造物責任法
+- [[legal-related-personal-info|個人関連情報の第三者提供の制限（個人情報保護法31条）]] — e-Gov法令検索個人情報保護法（31条・2022年4月施行版）
+- [[legal-risk-bearing|危険負担（改正民法536条）]] — e-Gov法令検索民法（536条）
+- [[legal-sensitive-personal-info|要配慮個人情報の取扱い]] — e-Gov法令検索個人情報の保護に関する法律
+- [[legal-set-off|相殺（民法505条等）]] — e-Gov法令検索民法（505条・506条・509条）
+- [[legal-share-types|会社法における種類株式]] — e-Gov法令検索会社法（108条）
+- [[legal-shareholder-derivative-suit|株主代表訴訟（責任追及等の訴え・会社法847条）]] — e-Gov法令検索会社法（847条）
+- [[legal-shareholders-meeting|株式会社の株主総会（会社法）]] — e-Gov法令検索会社法（295条・296条・309条）
+- [[legal-statutory-interest|民法の法定利率（変動制）]] — e-Gov法令検索民法（404条法定利率）
+- [[legal-trade-name|商号に関する規制（商号選定自由と誤認防止）]] — e-Gov法令検索会社法（6条・7条・8条）
+- [[legal-trademark|商標権の発生・存続期間と更新]] — e-Gov法令検索商標法（昭和34年法律第127号）
+- [[legal-work-for-hire|職務著作（法人著作・著作権法15条）]] — e-Gov法令検索著作権法（15条）
+- [[tax-delinquent-tax|国税の延滞税]] — e-Gov法令検索国税通則法（60条）
+- [[tax-depreciation-useful-life|減価償却資産の法定耐用年数]] — e-Gov法令検索減価償却資産の耐用年数等に関する省令
+- [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — e-Gov法令検索所得税法（229条）
+- [[tax-withholding-slip|給与所得の源泉徴収票の交付義務（所得税法226条）]] — e-Gov法令検索所得税法（226条）
+
+## 関連
+- 索引: [[出典ドメイン索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

@@ -1,0 +1,47 @@
+---
+collection: academic
+id: human-fregoli-delusion
+category: "human-science"
+category_ja: "人間科学"
+title: "フレゴリの錯覚——「変装した同一人物」という妄想的誤認"
+as_of: "2026-06-27"
+source_count: 2
+authoritative: true
+tags:
+  - collection/academic
+  - academic/human-science
+  - knowledge/verified
+aliases:
+  - "フレゴリの錯覚——「変装した同一人物」という妄想的誤認"
+---
+
+# フレゴリの錯覚——「変装した同一人物」という妄想的誤認
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 人間科学 ・ asOf: 2026-06-27 ・ 出典: 2件（うち権威ある出典 ✓）
+
+## 概要
+フレゴリの錯覚（Fregoli delusion、フレゴリ妄想）は、1927年にクルボンとファイユが報告した妄想性誤認症候群（delusional misidentification syndrome）の一つで、患者が、周囲の見知らぬ複数の人物を、実は「変装し姿を変えた、たった一人の同じ人物」だと確信する妄想を指す。多くの場合、その「一人」は自分を追跡・迫害する人物だと体験され、誰が近づいてきても「またあの人物が姿を変えて現れた」と解釈される。名称は、舞台上で瞬時に何役も演じ分けた早変わりの名優レオポルド・フレゴリにちなむ。フレゴリの錯覚は、しばしばカプグラ症候群（身近な人物が瓜二つの偽者にすり替えられたと確信する妄想）の「裏返し」として論じられる。カプグラが「外見は同じなのに、馴染みの感覚が失われ別人だと感じる」のに対し、フレゴリは「外見は違うのに、過剰な馴染みの感覚から同一人物だと感じる」という、対をなす誤認だからである。ハドリン・エリスとアンドリュー・ヤングは、認知神経心理学の立場から両者を統一的に説明するモデルを提示した。顔の認知には、誰の顔かを同定する経路と、その顔に対する情動的な親近感を生む経路があり、カプグラでは情動経路が遮断されて「見覚えはあるのに何も感じない」状態が、フレゴリでは逆に親近感・同定の信号が過剰に誤作動する状態が生じる、という二経路の障害として理解される。神経学的には、右半球や前頭葉、顔処理に関わる紡錘状回などの損傷との関連が指摘され、ラマチャンドランらの顔認知・情動反応の研究とも接続する。フレゴリの錯覚は、統合失調症や器質性脳疾患、認知症などに伴って現れ、顔の同定と親近感がいかに脳内で別個に処理され、その乖離が「人物の同一性」をめぐる確信をいかに歪めるかを示す、認知神経精神医学の重要な症例概念である。
+
+## 提唱者・初出
+レオポルド・フレゴリ ／ ハドリン・エリス ／ アンドリュー・ヤング ／ ヴィラヤヌル・ラマチャンドラン
+
+## 出典
+- [Ellis, H. D. & Young, A. W. (1990) Accounting for delusional misidentifications — British Journal of Psychiatry, 157, 239–248](https://doi.org/10.1192/bjp.157.2.239) `学術`
+- [Wikipedia: Fregoli delusion — Courbon & Fail (1927), delusional misidentification, converse of Capgras](https://en.wikipedia.org/wiki/Fregoli_delusion) `リファレンス`
+
+## 関連概念
+- [[human-anton-syndrome|アントン症候群——皮質盲なのに見えないことを否認する]] — 同じ思想家
+- [[human-aristotle-illusion|アリストテレスの錯覚——指を交差させると一つの物が二つに感じる]] — 同じ思想家
+- [[human-bouba-kiki-effect|ブーバ／キキ効果——音と形の非恣意的な結びつき]] — 同じ思想家
+- [[human-charles-bonnet-syndrome|シャルル・ボネ症候群——視力を失った人に現れる鮮明な幻視]] — 同じ思想家
+- [[human-cutaneous-rabbit-illusion|皮膚ウサギ錯覚——後の刺激が前の刺激の位置を書き換える]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

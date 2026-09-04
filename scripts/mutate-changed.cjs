@@ -1,0 +1,216 @@
+#!/usr/bin/env node
+'use strict';
+
+/**
+ * push で変わったファイルのうち、変異検査の対象になっているものだけを選ぶ。
+ *
+ * ## なぜ要るか
+ *
+ * `mutation.yml` の冒頭には長らく「Mutation testing takes ~2 minutes」と
+ * 書いてあったが、**実測は 75〜104 分**だった (2026-08-20 に GitHub Actions の
+ * 実行履歴で確認)。`mutate` の対象が 227 ファイルまで増えた結果である。
+ *
+ * その誤った前提の上に「毎 PR は過剰なので週次 + 一部パスの push」という
+ * 方針が立っていたので、いま実際に起きていたのは:
+ *
+ * - `src/main/clients/**` は変更の多いディレクトリなので push で頻繁に発火し、
+ *   2026-08-19 だけで **5 回 × 約 100 分 = 約 8 時間**を消費した (全部失敗)
+ * - それでいて対象パスは 227 件中 2 件しか無く、**残り 225 件の退行は週次まで
+ *   最大 7 日気付かない**
+ *
+ * つまり同時に「高すぎる」と「狭すぎる」が成り立っていた。全部を毎回測るのが
+ * 高いなら、**変わったものだけ測ればよい**。週次は従来どおり全件を測る。
+ *
+ * ## 使い方
+ *
+ *   node scripts/mutate-changed.cjs <base-ref>
+ *
+ * 対象があれば `--mutate` に渡せる形 (カンマ区切り) を stdout へ出す。
+ * 無ければ何も出さない (呼び出し側は空なら検査を飛ばす)。
+ */
+
+const { execFileSync } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+
+const REPO_ROOT = path.resolve(__dirname, '..');
+
+/** `mutate` の一覧。glob は使っていない前提 (現状すべて実ファイルのパス)。 */
+function mutateList() {
+  const cfg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'stryker.config.json'), 'utf8'));
+  return Array.isArray(cfg.mutate) ? cfg.mutate : [];
+}
+
+/**
+ * base から HEAD までに変わったファイル。
+ *
+ * 削除されたファイルは対象から外す (測りようがない)。base が解決できない
+ * (浅い clone・初回 push など) 場合は**空ではなく null** を返し、呼び出し側が
+ * 「全件測る」へ倒せるようにする — 分からないときに「変更なし」と答えると、
+ * 黙って何も測らない状態になる。
+ */
+function changedFiles(baseRef) {
+  try {
+    const out = execFileSync('git', ['diff', '--name-only', '--diff-filter=d', `${baseRef}...HEAD`], {
+      cwd: REPO_ROOT,
+      encoding: 'utf8',
+    });
+    return out.split('\n').map((s) => s.trim()).filter((s) => s !== '');
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 変わったファイルから、測るべき対象を決める。
+ *
+ * **テストだけが変わった場合も、その対象を測る。** テストを緩めた変更こそ
+ * 変異検査が捕まえるべきものなので、`src/**\/__tests__/foo.test.ts` から
+ * `foo.ts` を引き当てて対象に入れる。
+ */
+function targetsFor(changed, mutate) {
+  const set = new Set(mutate);
+  const out = new Set();
+  for (const f of changed) {
+    if (set.has(f)) {
+      out.add(f);
+      continue;
+    }
+    const m = /^(.*)\/__tests__\/(.+?)(?:\.[a-z]+)?\.test\.tsx?$/.exec(f);
+    if (m === null) continue;
+    for (const cand of [`${m[1]}/${m[2]}.ts`, `${m[1]}/${m[2]}.tsx`]) {
+      if (set.has(cand)) out.add(cand);
+    }
+  }
+  const targets = [...out].sort();
+  assertPlainPaths(targets);
+  return targets;
+}
+
+/** リポジトリのソースパスとして普通の形。`,` は区切りに使うので含めない。 */
+const PLAIN_PATH = /^[A-Za-z0-9._/-]+$/;
+
+/**
+ * 出す前に形を確かめる。
+ *
+ * 出力は `mutate` 一覧 (= `stryker.config.json` の値) から来るので、変わった
+ * ファイル名がそのまま出るわけではない。それでも**設定に 1 行足すだけで
+ * 中身を決められる**ことに変わりはなく、この文字列は CI で
+ * `$GITHUB_OUTPUT` へ書かれ、次の段のコマンド引数になる。
+ *
+ * - `$(…)` / バッククォート / `"` … シェルへ渡る形だと構文になる
+ *   (`mutation.yml` は env: 経由にしたので今は渡らないが、**渡らない形を
+ *   保証しているのは別ファイル**なので、ここでも塞ぐ)
+ * - 改行 … `key=value` を 1 行で書く `$GITHUB_OUTPUT` の形式を壊し、
+ *   後続行が別の出力として解釈されうる (`mode` を上書きできる)
+ * - `,` … 呼び出し側が `--mutate` の区切りとして読む
+ *
+ * 黙って捨てると「対象が減った」ことに気付けないので、落とす。
+ */
+function assertPlainPaths(targets) {
+  const bad = targets.filter((t) => !PLAIN_PATH.test(t));
+  if (bad.length > 0) {
+    throw new Error(
+      `変異検査の対象に、パスとして普通でない名前が ${bad.length} 件あります ` +
+        `(stryker.config.json の mutate を確認してください): ` +
+        bad.map((t) => JSON.stringify(t)).join(' , '),
+    );
+  }
+}
+
+/**
+ * 対照実験 — 「変更なし」と「対象なし」を取り違えていないか。
+ *
+ * ここが黙って空を返すと、CI は何も測らずに緑になる (常に緑を返すゲート)。
+ * 対応付けの規則ごとに 1 件ずつ確かめる。
+ */
+function selfTest() {
+  const mutate = ['src/a/foo.ts', 'src/b/bar.ts', 'src/c/baz.tsx'];
+  const cases = [
+    ['対象そのものが変わったら選ぶ', ['src/a/foo.ts'], ['src/a/foo.ts']],
+    ['対象外のファイルは選ばない', ['src/z/other.ts', 'docs/X.md'], []],
+    ['テストが変わったら対象を選ぶ', ['src/a/__tests__/foo.test.ts'], ['src/a/foo.ts']],
+    ['tsx の対象もテストから引ける', ['src/c/__tests__/baz.test.tsx'], ['src/c/baz.tsx']],
+    ['枝番付きのテスト名も引ける', ['src/a/__tests__/foo.adversarial.test.ts'], ['src/a/foo.ts']],
+    ['一覧に無い対象のテストは選ばない', ['src/z/__tests__/other.test.ts'], []],
+    ['重複しても 1 度だけ', ['src/a/foo.ts', 'src/a/__tests__/foo.test.ts'], ['src/a/foo.ts']],
+    ['何も変わっていなければ空', [], []],
+    ['複数は並べ替えて返す', ['src/b/bar.ts', 'src/a/foo.ts'], ['src/a/foo.ts', 'src/b/bar.ts']],
+    // 形の検査 (want が文字列 = 例外を期待。mutate 一覧は changed をそのまま使う)。
+    ['コマンド置換を含む名前は出さない', ['src/$(id).ts'], 'パスとして普通でない'],
+    ['バッククォートを含む名前は出さない', ['src/' + String.fromCharCode(96) + 'id' + String.fromCharCode(96) + '.ts'], 'パスとして普通でない'],
+    ['二重引用符を含む名前は出さない', ['src/a".ts'], 'パスとして普通でない'],
+    ['改行を含む名前は出さない ($GITHUB_OUTPUT の形式を壊す)', ['src/a\nmode=all.ts'], 'パスとして普通でない'],
+    ['カンマを含む名前は出さない (--mutate の区切り)', ['src/a,b.ts'], 'パスとして普通でない'],
+    ['空白を含む名前は出さない', ['src/a b.ts'], 'パスとして普通でない'],
+  ];
+  let failed = 0;
+  console.log('self-test:');
+  for (const [label, changed, want] of cases) {
+    // `want` が文字列のときは「その語を含む例外で落ちること」を期待する。
+    let got;
+    try {
+      got = JSON.stringify(targetsFor(changed, typeof want === 'string' ? changed : mutate));
+    } catch (e) {
+      got = `例外: ${e.message}`;
+    }
+    const ok = typeof want === 'string' ? got.startsWith('例外:') && got.includes(want) : got === JSON.stringify(want);
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} (期待 ${JSON.stringify(want)})`);
+  }
+  // 規則が広すぎない対照 — 実在する `mutate` 一覧を 1 件も弾かないこと。
+  // 合成ケースだけだと「全部落とす」規則でも緑になる。
+  const real = mutateList();
+  try {
+    assertPlainPaths(real);
+    console.log(`  ✓ 実在する mutate ${real.length} 件はすべて通る (規則が広すぎない対照)`);
+  } catch (e) {
+    failed += 1;
+    console.log(`  ✗ 実在する mutate を弾いた: ${e.message}`);
+  }
+  if (real.length === 0) {
+    failed += 1;
+    console.log('  ✗ mutate 一覧が空 — 上の対照は何も測っていない');
+  }
+  if (failed > 0) {
+    console.error(`❌ self-test ${failed} 件失敗 — 対応付けが壊れています`);
+    return 1;
+  }
+  console.log('✅ self-test 全件一致');
+  return 0;
+}
+
+function main(argv) {
+  if (argv.includes('--self-test')) return selfTest();
+  const baseRef = argv[0];
+  if (baseRef === undefined || baseRef === '') {
+    process.stderr.write('usage: mutate-changed.cjs <base-ref>\n');
+    return 2;
+  }
+  const changed = changedFiles(baseRef);
+  if (changed === null) {
+    // 差分が取れない = 何が変わったか分からない。黙って飛ばさず全件を測らせる。
+    process.stderr.write(`base ref "${baseRef}" から差分を取れませんでした。全件を測ります。\n`);
+    process.stdout.write('ALL\n');
+    return 0;
+  }
+  let targets;
+  try {
+    targets = targetsFor(changed, mutateList());
+  } catch (e) {
+    // 形がおかしいものを黙って落として「対象なし」にすると、CI は何も測らずに
+    // 緑になる。読める形で落とす。
+    process.stderr.write(`${e.message}\n`);
+    return 1;
+  }
+  process.stderr.write(`変更 ${changed.length} ファイル → 変異検査の対象 ${targets.length} ファイル\n`);
+  for (const t of targets) process.stderr.write(`  ${t}\n`);
+  if (targets.length > 0) process.stdout.write(`${targets.join(',')}\n`);
+  return 0;
+}
+
+module.exports = { targetsFor, changedFiles, mutateList, selfTest };
+
+if (require.main === module) {
+  process.exit(main(process.argv.slice(2)));
+}

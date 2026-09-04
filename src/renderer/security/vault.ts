@@ -18,6 +18,8 @@
  */
 
 import { decodeMnemonic, encodeMnemonic, generateEntropy, normalizeMnemonic } from './mnemonic';
+import { assertKdfIterations, assertSaltBytes } from './dataCrypto';
+import { AES_GCM_IV_BYTES, PBKDF2_ITERATIONS as SHARED_ITERATIONS } from '../../shared/cryptoParams';
 
 // Constants below are pinned by integration behavior (DB name / iterations
 // / byte counts) but the exact string values & default arrows are not
@@ -28,11 +30,35 @@ const DB_NAME = 'business-hub-vault';
 const DB_VERSION = 1;
 const META_STORE = 'meta';
 const TOKEN_STORE = 'tokens';
-const PBKDF2_ITERATIONS = 600_000;
+const PBKDF2_ITERATIONS = SHARED_ITERATIONS;
+/** Minimum master-password length for new vaults / password resets. */
+export const MIN_PASSWORD_LENGTH = 12;
+
 const SALT_BYTES = 32;
-const IV_BYTES = 12;
+const IV_BYTES = AES_GCM_IV_BYTES;
 const KCV_PLAINTEXT = 'service-hub-v1'; // 復号検証用固定文字列
 // Stryker restore StringLiteral
+
+/**
+ * パスワードが**現在の**下限を満たすか。
+ *
+ * 判定は 1 行だが、**関数にして外へ出してある**。理由は測れるようにするため:
+ * 以前この式は `unlock` の途中に埋まっていて、`false` になる枝へ検査から
+ * 到達する手段が無かった (短いパスワードの保管庫は `initialize` /
+ * `changePassword` / `recoverWithMnemonic` がどれも下限を強制するので、
+ * 現在の API では作れない —— `false` に届くのは 2026-07 に下限を 8 → 12 へ
+ * 上げる前に作られた実在の保管庫だけである)。
+ *
+ * その結果、**下限そのものを撃ち抜く変異が 2 件生き残っていた**
+ * (`>=` → `>` / 式ごと `true`。実測 2026-08-31)。式を外へ出せば、
+ * 保管庫を作らずに 11 / 12 / 13 字を直接問える。
+ *
+ * 長さの**上限** (256 字) はここに含めない —— あちらは「強制する」側の規則で、
+ * `unlock` は通さない。混ぜると `unlock` が既存の保管庫を閉め出す。
+ */
+export function meetsPasswordPolicy(password: string): boolean {
+  return password.length >= MIN_PASSWORD_LENGTH;
+}
 
 export type VaultStatus = 'uninitialized' | 'locked' | 'unlocked';
 
@@ -53,6 +79,21 @@ export class NoRecoveryBranchError extends Error {
 export interface Vault {
   status(): Promise<VaultStatus>;
   isUnlocked(): boolean;
+  /**
+   * 解錠に使われたパスワードが、**現在の**下限 (`MIN_PASSWORD_LENGTH`) を
+   * 満たしていたか。`null` = 判定できていない (未解錠など)。
+   *
+   * `initialize` / `changePassword` / `recoverWithMnemonic` は下限を強制するが、
+   * **`unlock` は強制しない** —— 既にあるヴォールトを開けなくしてしまうため
+   * (「Existing vaults are unaffected」と `initialize` に明記されている)。
+   * その結果、2026-07 に下限を 8 → 12 へ上げる前に作られたヴォールトは
+   * **短いパスワードのまま、誰にも知らされずに**開き続ける。
+   *
+   * ここで測るのはその 1 点だけ。**値は保存しない** (メモリのみ・`lock()` で
+   * 捨てる) —— 「このヴォールトのパスワードは短い」を IndexedDB に書けば、
+   * 総当たりの手掛かりを 1 つ置くことになる。
+   */
+  passwordMeetsPolicy(): boolean | null;
   /** Initialize a new vault. Returns the one-time recovery mnemonic. */
   initialize(password: string): Promise<InitResult>;
   unlock(password: string): Promise<void>;
@@ -61,6 +102,25 @@ export interface Vault {
   getToken(serviceId: string): Promise<string | null>;
   clearToken(serviceId: string): Promise<void>;
   listConfigured(): Promise<string[]>;
+  /** 旧パスワードで認証して、新パスワードへ**包み直す**。
+   *
+   *  トークンはマスター鍵で暗号化されており、パスワードはそのマスター鍵を
+   *  包んでいるだけなので、**トークンにも リカバリー枝にも触らない**。
+   *  したがって利用者が控えた 24 語は変更後もそのまま使える。
+   *
+   *  以前は画面側が「保管庫ごと消す → `initialize()` → 書き戻す」を組み立てて
+   *  いた (2026-08-24 に発見)。それには 2 つの結果があった:
+   *
+   *   1. **消してから書き戻すまでの失窓** —— 中断すれば資格情報が永久に消える
+   *   2. **`initialize()` は新しい 24 語を生成して返す**が、画面はその戻り値を
+   *      捨てていた → 控えたフレーズは通らなくなり、通るフレーズは誰も知らない
+   *
+   *  `recoverWithMnemonic` と同じ書き込み (meta の password 枝 + master-wrap を
+   *  1 トランザクションで差し替え) を行う。認証手段が違うだけである。
+   *
+   *  offline backup attack の性質も `recoverWithMnemonic` と同じ —— 変更前の
+   *  プロファイル複製を持つ者はそちらを旧パスワードで開ける。前方向の境界。 */
+  changePassword(oldPassword: string, newPassword: string): Promise<void>;
   /** Validate mnemonic, unwrap master key, re-initialize under newPassword.
    *  Preserves all stored tokens.
    *
@@ -100,17 +160,21 @@ export interface Vault {
 // `||` short-circuit defaults, and the arrow-function bodies are not
 // load-bearing; production tests cover the success + missing-data paths
 // via the public Vault API.
-// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,BooleanLiteral,ConditionalExpression,BlockStatement,MethodExpression
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = () => {
       const db = req.result;
+      // DB_VERSION が上がらない限り onupgradeneeded は新規作成時にしか走らず
+      // contains は常に false (等価変異)。将来の版上げに備えて残す。
+      // Stryker disable next-line ConditionalExpression
       if (!db.objectStoreNames.contains(META_STORE)) db.createObjectStore(META_STORE);
+      // Stryker disable next-line ConditionalExpression
       if (!db.objectStoreNames.contains(TOKEN_STORE)) db.createObjectStore(TOKEN_STORE);
     };
     req.onsuccess = () => resolve(req.result);
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない。
     req.onerror = () => reject(req.error ?? new Error('indexedDB open failed'));
   });
 }
@@ -120,6 +184,7 @@ function idbGet<T>(db: IDBDatabase, store: string, key: string): Promise<T | und
     const tx = db.transaction(store, 'readonly');
     const req = tx.objectStore(store).get(key);
     req.onsuccess = () => resolve(req.result as T | undefined);
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない。
     req.onerror = () => reject(req.error ?? new Error('idb get failed'));
   });
 }
@@ -129,7 +194,41 @@ function idbPut(db: IDBDatabase, store: string, key: string, value: unknown): Pr
     const tx = db.transaction(store, 'readwrite');
     tx.objectStore(store).put(value, key);
     tx.oncomplete = () => resolve();
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない。
     tx.onerror = () => reject(tx.error ?? new Error('idb put failed'));
+  });
+}
+
+/**
+ * 複数の書き込みを **1 トランザクション**で行う。IndexedDB のトランザクションは
+ * 同一 DB 内の複数ストアに対して原子的なので、途中で落ちれば全部巻き戻る。
+ *
+ * `idbPut` を 2 回呼ぶと**トランザクションが 2 つ**になる。パスワード周りでは
+ * これが効く —— meta (`salt`/`kcv`) を書いた後に `master-wrap` の書き込みが
+ * 失敗すると、**新旧どちらのパスワードでも開けない保管庫**が残る。
+ * (`kcv` は新パスワードを指し、`master-wrap` は旧パスワードで包まれたまま。)
+ */
+function idbPutAll(
+  db: IDBDatabase,
+  entries: readonly { store: string; key: string; value: unknown }[],
+): Promise<void> {
+  // **空なら何もしない。** `db.transaction([], …)` は仕様上 InvalidAccessError を
+  // 投げる (実測で確認)。呼び出し側は今どこも空を渡さないが、「書くものが無い」を
+  // 例外で返すヘルパは、後から使う人が踏む。無害な no-op に倒す。
+  // Stryker disable next-line ConditionalExpression: 呼び出し側は今どこも空を
+  // 渡さない (上の注記のとおり「後から使う人」のための備え)。条件を潰すと
+  // `db.transaction([], …)` が InvalidAccessError を投げるが、そこへ到達する
+  // 経路が無いので観測差が出ない (等価変異)。
+  if (entries.length === 0) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const stores = [...new Set(entries.map((e) => e.store))];
+    const tx = db.transaction(stores, 'readwrite');
+    for (const e of entries) tx.objectStore(e.store).put(e.value, e.key);
+    tx.oncomplete = () => resolve();
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられない。
+    tx.onerror = () => reject(tx.error ?? new Error('idb put-all failed'));
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: 同上 (abort 経路)。
+    tx.onabort = () => reject(tx.error ?? new Error('idb put-all aborted'));
   });
 }
 
@@ -138,6 +237,7 @@ function idbDelete(db: IDBDatabase, store: string, key: string): Promise<void> {
     const tx = db.transaction(store, 'readwrite');
     tx.objectStore(store).delete(key);
     tx.oncomplete = () => resolve();
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない。
     tx.onerror = () => reject(tx.error ?? new Error('idb delete failed'));
   });
 }
@@ -146,11 +246,14 @@ function idbKeys(db: IDBDatabase, store: string): Promise<string[]> {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(store, 'readonly');
     const req = tx.objectStore(store).getAllKeys();
+    // Stryker disable next-line MethodExpression,ConditionalExpression: この store の鍵は
+    // すべて serviceId (文字列) なので filter は一度も要素を落とさない (等価変異)。
+    // 型を絞るために必要なので残す。
     req.onsuccess = () => resolve((req.result as IDBValidKey[]).filter((k): k is string => typeof k === 'string'));
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない。
     req.onerror = () => reject(req.error ?? new Error('idb keys failed'));
   });
 }
-// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,BooleanLiteral,ConditionalExpression,BlockStatement,MethodExpression
 
 // --- Crypto primitives ------------------------------------------------
 
@@ -195,6 +298,37 @@ const RECOVERY_DERIVATION_PREFIX_V1 = 'service-hub-bip39-recovery-v1:';
 interface EncryptedToken {
   iv: Uint8Array;
   ciphertext: Uint8Array;
+  /**
+   * トークンレコードの版。`1` は「serviceId を AAD で束ねてある」印。
+   * meta 側の blob (kcv / master-wrap / recovery) はこの欄を持たない。
+   */
+  v?: number;
+}
+
+/** 現在のトークンレコードの版。 */
+const TOKEN_RECORD_V1 = 1;
+
+/**
+ * トークンを**保管場所に束ねる**ための付随データ (AES-GCM の additionalData)。
+ *
+ * ## なぜ要るのか (2026-08-24 に実証した)
+ *
+ * AES-GCM は「暗号文が改竄されていないこと」は保証するが、
+ * **それがどこに置かれていたか**は何も言わない。IndexedDB へ書ける相手
+ * (プロファイルに触れる者・ページに script を通せる者) は、復号できなくても
+ * **レコードを別のサービスの位置へ移し替えられる**。
+ *
+ * 実証: `github` の暗号文を `slack` の鍵位置へ put すると、利用者が解錠した
+ * あと `getToken('slack')` が **GitHub のトークンをそのまま返した**。
+ * 攻撃者はマスターパスワードを一切知らないまま、**どの資格情報を
+ * どのサービスへ送らせるかを選べる**。ブラウザ版は CORS 迂回の中継先を
+ * 利用者が設定できる (`network/proxy.ts`) ので、送り先まで攻撃者が
+ * 選べる状況では、そのまま持ち出しの経路になる。
+ *
+ * `serviceId` を AAD に入れると、位置が違う暗号文は**復号自体が失敗する**。
+ */
+function tokenAad(serviceId: string): Uint8Array {
+  return new TextEncoder().encode(`service-hub-token-v1:${serviceId}`);
 }
 
 // AES-GCM / PBKDF2 wrappers — security-critical correctness is pinned by
@@ -203,7 +337,6 @@ interface EncryptedToken {
 // to BufferSource are dictated by WebCrypto contract; mutating them
 // either breaks at runtime (caught by integration tests) or makes no
 // observable difference (decorative).
-// Stryker disable StringLiteral,ArrowFunction,BooleanLiteral,ObjectLiteral,ArrayDeclaration,MethodExpression
 async function deriveKey(password: string, salt: Uint8Array, iterations: number): Promise<CryptoKey> {
   const baseKey = await crypto.subtle.importKey(
     'raw',
@@ -221,11 +354,22 @@ async function deriveKey(password: string, salt: Uint8Array, iterations: number)
   );
 }
 
-async function encryptString(key: CryptoKey, plaintext: string): Promise<EncryptedToken> {
+async function encryptString(
+  key: CryptoKey,
+  plaintext: string,
+  aad?: Uint8Array,
+): Promise<EncryptedToken> {
   const iv = crypto.getRandomValues(new Uint8Array(IV_BYTES));
   const ciphertext = new Uint8Array(
     await crypto.subtle.encrypt(
-      { name: 'AES-GCM', iv: iv as BufferSource },
+      // Stryker disable next-line ConditionalExpression: WebIDL では辞書の項目に
+      // `undefined` を入れることと**項目を書かないこと**が同じ扱いになるので、
+      // 条件を潰して常に `additionalData: undefined` を渡しても結果が変わらない
+      // (等価変異)。実測 2026-08-31: 同じ鍵・同じ iv で暗号文が完全に一致し、
+      // 交差して復号もできた。三項を残すのは意図を読める形にしておくため。
+      aad === undefined
+        ? { name: 'AES-GCM', iv: iv as BufferSource }
+        : { name: 'AES-GCM', iv: iv as BufferSource, additionalData: aad as BufferSource },
       key,
       new TextEncoder().encode(plaintext) as BufferSource,
     ),
@@ -233,9 +377,17 @@ async function encryptString(key: CryptoKey, plaintext: string): Promise<Encrypt
   return { iv, ciphertext };
 }
 
-async function decryptString(key: CryptoKey, blob: EncryptedToken): Promise<string> {
+async function decryptString(
+  key: CryptoKey,
+  blob: EncryptedToken,
+  aad?: Uint8Array,
+): Promise<string> {
   const plain = await crypto.subtle.decrypt(
-    { name: 'AES-GCM', iv: blob.iv as BufferSource },
+    // Stryker disable next-line ConditionalExpression: 上の `encryptString` と同じ
+    // 理由 (`additionalData: undefined` == 項目を書かない)。実測で確認済み。
+    aad === undefined
+      ? { name: 'AES-GCM', iv: blob.iv as BufferSource }
+      : { name: 'AES-GCM', iv: blob.iv as BufferSource, additionalData: aad as BufferSource },
     key,
     blob.ciphertext as BufferSource,
   );
@@ -343,26 +495,39 @@ async function unwrapMasterFromRecovery(
 ): Promise<Uint8Array> {
   return decryptBytes(recoveryKey, { iv, ciphertext });
 }
-// Stryker restore StringLiteral,ArrowFunction,BooleanLiteral,ObjectLiteral,ArrayDeclaration,MethodExpression
 
 // --- Vault implementation ---------------------------------------------
 
 // Error messages, default-state boundary literals (length checks), and
 // EqualityOperator on `currentKey !== null` are all behaviorally pinned
 // by the 20 integration tests (init / unlock / token CRUD / lock paths).
-// Stryker disable StringLiteral,EqualityOperator,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,BlockStatement,MethodExpression
 class BrowserVault implements Vault {
   private currentKey: CryptoKey | null = null;
+  /** 解錠に使われたパスワードが下限を満たしたか (メモリのみ・保存しない)。 */
+  private policyOk: boolean | null = null;
 
   async status(): Promise<VaultStatus> {
     let db: IDBDatabase;
+    // DB を開けない環境 (プライベートモード等) では「未初期化」として扱う。
+    // fake-indexeddb では失敗させられず、この catch には到達しない。
+    /* Stryker disable BlockStatement,StringLiteral */
     try {
       db = await openDb();
     } catch {
       return 'uninitialized';
     }
-    const meta = await idbGet<VaultMeta>(db, META_STORE, 'vault');
-    db.close();
+    /* Stryker restore BlockStatement,StringLiteral */
+    // idbGet が reject すると status() が reject し、呼び出し側 (App) が
+    // ハングしてログイン画面が出なくなる。読み取り失敗時は meta 未取得のまま
+    // 下の `!meta` 分岐に落とし、uninitialized を返してロック画面に到達させる。
+    let meta: VaultMeta | undefined;
+    try {
+      meta = await idbGet<VaultMeta>(db, META_STORE, 'vault');
+    } catch {
+      // 読取失敗 → meta は undefined のまま (下で uninitialized を返す)
+    } finally {
+      db.close();
+    }
     if (!meta) return 'uninitialized';
     return this.currentKey ? 'unlocked' : 'locked';
   }
@@ -372,8 +537,14 @@ class BrowserVault implements Vault {
   }
 
   async initialize(password: string): Promise<InitResult> {
-    if (typeof password !== 'string' || password.length < 8) {
-      throw new Error('パスワードは 8 文字以上で設定してください');
+    // 12 chars minimum (raised from 8 in the 2026-07 audit). The stored `kcv`
+    // and `master-wrap` both let anyone holding a copy of the IndexedDB verify a
+    // guess offline, so password entropy is the only thing standing between a
+    // stolen browser profile and every SaaS token in the vault; 600k PBKDF2
+    // slows each guess but cannot rescue an 8-char human-chosen password.
+    // Existing vaults are unaffected — `unlock()` never re-checks policy.
+    if (typeof password !== 'string' || !meetsPasswordPolicy(password)) {
+      throw new Error(`パスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください`);
     }
     if (password.length > 256) {
       throw new Error('パスワードが長すぎます (256 字以内)');
@@ -429,6 +600,8 @@ class BrowserVault implements Vault {
         // 4. Re-import the key non-extractable for runtime use.
         const nonExtractable = await importNonExtractable(masterRaw);
         this.currentKey = nonExtractable;
+        // ここに来る時点で下限を強制済み。
+        this.policyOk = true;
         return { mnemonic };
       } finally {
         masterRaw.fill(0);
@@ -442,6 +615,12 @@ class BrowserVault implements Vault {
     if (typeof password !== 'string' || password.length === 0) {
       throw new Error('パスワードを入力してください');
     }
+    /*
+     * **下限は強制しない (既存のヴォールトを閉め出さないため) が、測りはする。**
+     * 2026-07 に 8 → 12 へ上げる前に作られたヴォールトは短いままで、
+     * 利用者はそれを知る術が無かった。診断がこの値を見て伝える。
+     */
+    const meetsPolicy = meetsPasswordPolicy(password);
     const db = await openDb();
     let meta: VaultMeta | undefined;
     let masterWrap: EncryptedToken | undefined;
@@ -452,9 +631,20 @@ class BrowserVault implements Vault {
       db.close();
     }
     if (!meta) throw new Error('Vault が未初期化です。初回設定を完了してください');
+    // 反復回数はメタから読む = 保存側の値をそのまま信じることになる。壊れた/
+    // 差し替えられたメタが途方もない回数を要求すると PBKDF2 が返らず、
+    // **利用者が自分の資格情報から永久に締め出される**。dataCrypto は同じ検査を
+    // 最初から持っていたのに、資格情報そのものを持つこちらが素通しだった。
+    assertKdfIterations(meta.iterations);
+    // 隣の欄も同じ出どころ (IndexedDB)。2026-08-27 まで salt だけ素通しだった。
+    assertSaltBytes(meta.salt);
     const passwordKey = await deriveKey(password, meta.salt, meta.iterations);
     try {
       const plain = await decryptString(passwordKey, { iv: meta.iv, ciphertext: meta.kcv });
+      // AES-GCM は認証付きなので、鍵が違えば decryptString が先に throw する。
+      // 復号に成功して中身だけ違う状態は作れず到達しない。多重防御として残す
+      // (この throw は下の catch が拾って同じ文言になる)。
+      // Stryker disable next-line ConditionalExpression,StringLiteral
       if (plain !== KCV_PLAINTEXT) throw new Error('kcv mismatch');
     } catch {
       throw new Error('パスワードが違います');
@@ -464,19 +654,57 @@ class BrowserVault implements Vault {
     // itself was the encryption key. Fall back gracefully.
     if (masterWrap) {
       const masterRaw = await decryptBytes(passwordKey, masterWrap);
-      this.currentKey = await importNonExtractable(masterRaw);
-      masterRaw.fill(0);
+      // finally: zero the raw master even if the import rejects, matching
+      // initialize() / recoverWithMnemonic() (2026-07 audit — memory hygiene).
+      try {
+        this.currentKey = await importNonExtractable(masterRaw);
+      } finally {
+        masterRaw.fill(0);
+      }
     } else {
       this.currentKey = passwordKey;
     }
+    // 解錠できたパスワードについてだけ記録する (失敗すればここへ来ない)。
+    this.policyOk = meetsPolicy;
+    // 解錠できて初めて旧形式を読めるので、ここで束ね直す。
+    await this.rebindLegacyTokens().catch(() => {});
   }
 
   lock(): void {
     this.currentKey = null;
+    // 施錠したら「分からない」に戻す。前回の判定を持ち越さない。
+    this.policyOk = null;
+  }
+
+  passwordMeetsPolicy(): boolean | null {
+    return this.policyOk;
+  }
+
+  /**
+   * 施錠されていれば投げ、そうでなければ鍵を返す。
+   *
+   * **`this.currentKey` を await の向こう側で読まないため**の入口。
+   * `setToken` / `getToken` は入口で施錠を確かめた後、`openDb()` や
+   * `idbGet()` を待ってから改めて `this.currentKey` を使っていた。
+   * 待っている間に `lock()` が走ると (自動施錠はタブ非表示・放置で走る)
+   * `null` が WebCrypto へ渡り、
+   *
+   *   setToken → `Failed to execute 'encrypt' on 'SubtleCrypto': 2nd
+   *              argument is not of type CryptoKey` という**内部の文言**が
+   *              利用者に出る (実測)
+   *   getToken → 例外が下の `catch { return null }` に飲まれ、
+   *              **「トークン未設定」と区別が付かなくなる** (実測)
+   *
+   * 後者が厄介で、呼び出し側は `not_configured` として扱うので、
+   * 設定済みの資格情報について「設定されていません」と言ってしまう。
+   */
+  private requireKey(): CryptoKey {
+    if (!this.currentKey) throw new Error('Vault がロックされています');
+    return this.currentKey;
   }
 
   async setToken(serviceId: string, token: string): Promise<void> {
-    if (!this.currentKey) throw new Error('Vault がロックされています');
+    const key = this.requireKey();
     if (typeof serviceId !== 'string' || serviceId.length === 0 || serviceId.length > 64) {
       throw new Error('serviceId が不正です');
     }
@@ -484,42 +712,273 @@ class BrowserVault implements Vault {
       throw new Error('token が不正です (1-8192 字)');
     }
     const db = await openDb();
-    const blob = await encryptString(this.currentKey, token);
-    await idbPut(db, TOKEN_STORE, serviceId, blob);
-    db.close();
+    try {
+      // 待っている間に施錠されていたら、**書かずに**施錠の文言で落とす。
+      // 掴んだ鍵で書き切る手も有るが、それは「施錠した」と言いながら
+      // 書き込みを続けることになる。
+      this.requireKey();
+      const blob = await encryptString(key, token, tokenAad(serviceId));
+      await idbPut(db, TOKEN_STORE, serviceId, { ...blob, v: TOKEN_RECORD_V1 });
+    } finally {
+      db.close();
+    }
   }
 
   async getToken(serviceId: string): Promise<string | null> {
-    if (!this.currentKey) throw new Error('Vault がロックされています');
+    const key = this.requireKey();
     const db = await openDb();
-    const blob = await idbGet<EncryptedToken>(db, TOKEN_STORE, serviceId);
-    db.close();
-    if (!blob) return null;
+    let blob: EncryptedToken | undefined;
     try {
-      return await decryptString(this.currentKey, blob);
+      blob = await idbGet<EncryptedToken>(db, TOKEN_STORE, serviceId);
+    } finally {
+      db.close();
+    }
+    // Stryker disable next-line ConditionalExpression: 早期 return を外しても
+    // `decryptString(key, undefined)` が throw し、下の catch が null を返すため同じ結果 (等価変異)。
+    if (!blob) return null;
+    // 待っている間に施錠されたなら、それは「未設定」ではない。
+    // 下の catch は**復号の失敗** (鍵違い・壊れた blob) だけを飲む。
+    this.requireKey();
+    if (blob.v === TOKEN_RECORD_V1) {
+      // AAD が合わない = **置き場所が違う**。鍵違いと同じ扱いで黙って断る。
+      //
+      // `try/catch` ではなく `.catch()` で書く理由 (2026-08-31): catch の
+      // **中身を空にする変異が等価**だった —— 空にすると下の「版の無いレコード」
+      // 経路へ落ちるが、AAD つきで封緘された物を AAD 無しで開こうとして必ず
+      // 失敗する (GCM が AAD まで認証するのが、まさにこの AAD の目的である)
+      // ので、結局 null を返す。**同じ結果に 2 つの道がある形**が変異体を
+      // 測れなくしていた。
+      //
+      // `next-line` の pragma では黙らせられなかった —— 指示は次の**文**の
+      // 先頭に付くので、try ブロックの末尾に書いた注記は catch 節へ届かない
+      // (このリポジトリで 3 度目)。ブロック形で囲むと try 側の測定まで
+      // 落ちるので、**分岐そのものを 1 本にした**。
+      // `.catch(() => null)` の `null` は `vaultRecordBinding.test.ts` の
+      // `toBeNull()` が留めている (undefined へ変えると鳴る)。
+      return await decryptString(key, blob, tokenAad(serviceId)).catch(() => null);
+    }
+    // 版の無いレコードは AAD を導入する前のもの。読めたらその場で束ね直す
+    // (この 1 回だけ付け替え攻撃が通る窓が残るので、解錠時にも一括で直す)。
+    let plain: string;
+    try {
+      plain = await decryptString(key, blob);
     } catch {
       return null;
+    }
+    await this.rebindToken(serviceId, plain).catch(() => {});
+    return plain;
+  }
+
+  /** 旧形式のトークンを AAD つきで保存し直す。失敗しても読み出しは成功させる。 */
+  private async rebindToken(serviceId: string, token: string): Promise<void> {
+    const key = this.requireKey();
+    const blob = await encryptString(key, token, tokenAad(serviceId));
+    const db = await openDb();
+    try {
+      await idbPut(db, TOKEN_STORE, serviceId, { ...blob, v: TOKEN_RECORD_V1 });
+    } finally {
+      db.close();
+    }
+  }
+
+  /**
+   * 解錠のたびに、版の無いレコードを全部束ね直す。
+   *
+   * `getToken` 側だけの移行だと、**一度も読まれないトークンは旧形式のまま残る**
+   * —— 付け替え攻撃はまさにそういうレコードを狙える。best-effort (失敗しても
+   * 解錠は成功させる) だが、通常の利用で 1 回解錠すれば窓は閉じる。
+   */
+  private async rebindLegacyTokens(): Promise<void> {
+    /*
+     * **接続は 1 本で済ませる。** 以前は id ごとに `openDb()`/`close()` して
+     * おり、しかも「もう v1 だから何もしない」の判定はその**後**だった ——
+     * 設定済みサービスが 20 件なら、解錠 1 回につき 21 往復が全部空振りする
+     * (自動施錠からのタブ復帰・再読込のたび)。id ごとの `openDb` は、
+     * アプリの他所が使っている DB に対する `versionchange` / `blocked` の
+     * 窓も広げていた (2026-08-28)。
+     */
+    const db = await openDb();
+    /*
+     * **この関数の変異は、下のループの `catch {}` がまとめて飲む。**
+     *
+     * 束ね直しは best-effort (失敗しても解錠は成功させる) なので、選び方を
+     * どう狂わせても「読めなかったレコードは触らない」に落ちて、外からは
+     * 何も変わらない。実測 2026-08-31 で 5 件が等価と分かった:
+     *
+     *   - 初期値の配列に異物が入る → 分割代入が undefined になり復号が投げる
+     *   - 条件を `true` に      → v1 のレコードまで積むが、AAD 無しで開こうと
+     *                             して必ず失敗する (GCM が AAD を認証する)
+     *   - `&&` を `||` に        → `found` が undefined なら TypeError だが、
+     *                             `idbKeys` が返した鍵なので undefined は無い。
+     *                             仮に投げても呼び出し側が `.catch(() => {})`
+     *     
+     * 飲む側 (`catch {}`) を外すのは**直しではない** —— 解錠が旧レコード 1 本の
+     * 破損で失敗するようになる。選び方の側を測れる形にするには書き込み結果を
+     * 数える口が要り、それは検査のためだけの API になる。
+     */
+    // Stryker disable next-line ArrayDeclaration
+    const pending: { id: string; blob: EncryptedToken }[] = [];
+    try {
+      for (const id of await idbKeys(db, TOKEN_STORE)) {
+        const found = await idbGet<EncryptedToken>(db, TOKEN_STORE, id);
+        // 既に v1 なら読み替える物が無い。**ここで落とすので I/O も起きない。**
+        // Stryker disable next-line ConditionalExpression,LogicalOperator
+        if (found && found.v !== TOKEN_RECORD_V1) pending.push({ id, blob: found });
+      }
+    } finally {
+      db.close();
+    }
+    for (const { id, blob } of pending) {
+      const key = this.currentKey;
+      // Stryker disable next-line ConditionalExpression: 早期 return を外しても
+      // `decryptString(null, …)` が投げて下の catch が飲むので、観測できる差が
+      // 無い (等価変異)。意図 —— 施錠された後は仕事を続けない —— を残すために書く。
+      if (!key) return; // 途中で施錠されたら止める
+      try {
+        const plain = await decryptString(key, blob);
+        await this.rebindToken(id, plain);
+      } catch {
+        // 読めないレコードは触らない (壊れている / 別の鍵で書かれている)
+      }
     }
   }
 
   async clearToken(serviceId: string): Promise<void> {
+    // Require an unlocked vault and a sane id, like setToken/getToken. Deleting
+    // is not a confidentiality leak, but a locked vault should be inert
+    // (2026-07 audit).
+    if (!this.currentKey) throw new Error('Vault がロックされています');
+    if (typeof serviceId !== 'string' || serviceId.length === 0 || serviceId.length > 64) {
+      throw new Error('serviceId が不正です');
+    }
     const db = await openDb();
-    await idbDelete(db, TOKEN_STORE, serviceId);
-    db.close();
+    try {
+      await idbDelete(db, TOKEN_STORE, serviceId);
+    } finally {
+      db.close();
+    }
   }
 
   async listConfigured(): Promise<string[]> {
     const db = await openDb();
-    const keys = await idbKeys(db, TOKEN_STORE);
-    db.close();
-    return keys;
+    try {
+      return await idbKeys(db, TOKEN_STORE);
+    } finally {
+      db.close();
+    }
   }
 
   // --- Phase E: recovery API ----------------------------------------
 
+  async changePassword(oldPassword: string, newPassword: string): Promise<void> {
+    if (typeof oldPassword !== 'string' || oldPassword.length === 0) {
+      throw new Error('現在のパスワードを入力してください');
+    }
+    if (typeof newPassword !== 'string' || !meetsPasswordPolicy(newPassword)) {
+      throw new Error(`新しいパスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください`);
+    }
+    if (newPassword.length > 256) {
+      throw new Error('新しいパスワードが長すぎます (256 字以内)');
+    }
+    const db = await openDb();
+    try {
+      const meta = await idbGet<VaultMeta>(db, META_STORE, 'vault');
+      if (!meta) throw new Error('Vault が未初期化です');
+      const masterWrap = await idbGet<EncryptedToken>(db, META_STORE, 'master-wrap');
+
+      // 旧パスワードの検証は unlock と同じ手順 (反復回数の範囲確認 → KCV)。
+      assertKdfIterations(meta.iterations);
+    // 隣の欄も同じ出どころ (IndexedDB)。2026-08-27 まで salt だけ素通しだった。
+    assertSaltBytes(meta.salt);
+      const oldPasswordKey = await deriveKey(oldPassword, meta.salt, meta.iterations);
+      try {
+        const plain = await decryptString(oldPasswordKey, { iv: meta.iv, ciphertext: meta.kcv });
+        // AES-GCM は認証付きなので鍵違いは復号側が先に throw する (多重防御)。
+        // Stryker disable next-line ConditionalExpression,StringLiteral
+        if (plain !== KCV_PLAINTEXT) throw new Error('kcv mismatch');
+      } catch {
+        throw new Error('現在のパスワードが違います');
+      }
+
+      const newSalt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
+      const newPasswordKey = await deriveKey(newPassword, newSalt, PBKDF2_ITERATIONS);
+      const newKcv = await encryptString(newPasswordKey, KCV_PLAINTEXT);
+      const newMeta: VaultMeta = {
+        ...meta,                       // ← リカバリー枝はそのまま (控えた 24 語が生き続ける)
+        salt: newSalt,
+        iv: newKcv.iv,
+        kcv: newKcv.ciphertext,
+        iterations: PBKDF2_ITERATIONS,
+      };
+
+      if (masterWrap) {
+        // Phase E: マスター鍵を包み直すだけ。**トークンには一切触らない。**
+        const masterRaw = await decryptBytes(oldPasswordKey, masterWrap);
+        try {
+          const newMasterWrap = await encryptBytes(newPasswordKey, masterRaw);
+          await idbPutAll(db, [
+            { store: META_STORE, key: 'vault', value: newMeta },
+            {
+              store: META_STORE,
+              key: 'master-wrap',
+              value: { iv: newMasterWrap.iv, ciphertext: newMasterWrap.ciphertext },
+            },
+          ]);
+          this.currentKey = await importNonExtractable(masterRaw);
+          // newPassword は下限を強制済み —— ここで「短い」状態は解消する。
+          // **この 1 行が下の枝にしか無かった** (2026-08-28)。master-wrap 枝は
+          // Phase E の保管庫すべてが通る通常路なので、利用者が案内どおりに
+          // 直しても診断が同じ指摘を出し続けていた (施錠→解錠まで消えない)。
+          this.policyOk = true;
+        } finally {
+          masterRaw.fill(0);
+        }
+        return;
+      }
+
+      // Phase E 以前: マスター鍵が無く、トークンは**パスワード鍵そのもの**で
+      // 暗号化されている。したがって包み直しでは済まず、全部を読み替える。
+      // 書き込みは meta と全トークンを **1 トランザクション**にまとめるので、
+      // 途中で落ちても旧パスワードの保管庫がそのまま残る。
+      const ids = await idbKeys(db, TOKEN_STORE);
+      const rewritten: { store: string; key: string; value: unknown }[] = [
+        { store: META_STORE, key: 'vault', value: newMeta },
+      ];
+      for (const id of ids) {
+        const blob = await idbGet<EncryptedToken>(db, TOKEN_STORE, id);
+        // Stryker disable next-line ConditionalExpression: `ids` は直前の
+        // `idbKeys` が返した実在の鍵なので `blob` が空になる経路が無い。
+        // 潰すと `blob.v` で TypeError になるが、そこへ到達できない (等価変異)。
+        if (!blob) continue;
+        // **読む側は 2 つの形を扱う。** `getToken` と同じ判定 —— 版が付いて
+        // いるものは AAD つきで封緘されており、版の無いものは AAD 導入前
+        // (2026-08-24) の記録である。Phase E 以前の保管庫は AAD 以前より
+        // 更に古いので、**ここは必ず後者を通る**。無条件に AAD を要求すると
+        // レガシー利用者はパスワードを変更できなくなる (最初そう書いていた)。
+        const plain =
+          blob.v === TOKEN_RECORD_V1
+            ? await decryptString(oldPasswordKey, blob, tokenAad(id))
+            : await decryptString(oldPasswordKey, blob);
+        // 書く側は常に新しい形にする —— 変更を機に AAD へ束ね直す。
+        const next = await encryptString(newPasswordKey, plain, tokenAad(id));
+        rewritten.push({
+          store: TOKEN_STORE,
+          key: id,
+          value: { ...next, v: TOKEN_RECORD_V1 },
+        });
+      }
+      await idbPutAll(db, rewritten);
+      this.currentKey = newPasswordKey;
+      // newPassword は下限を強制済み —— ここで「短い」状態は解消する。
+      this.policyOk = true;
+    } finally {
+      db.close();
+    }
+  }
+
   async recoverWithMnemonic(mnemonic: string, newPassword: string): Promise<void> {
-    if (typeof newPassword !== 'string' || newPassword.length < 8) {
-      throw new Error('新しいパスワードは 8 文字以上で設定してください');
+    if (typeof newPassword !== 'string' || !meetsPasswordPolicy(newPassword)) {
+      throw new Error(`新しいパスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください`);
     }
     if (newPassword.length > 256) {
       throw new Error('新しいパスワードが長すぎます (256 字以内)');
@@ -560,7 +1019,10 @@ class BrowserVault implements Vault {
           iv: meta.recoveryIv,
           ciphertext: meta.recoveryKcv,
         });
-        if (plain !== KCV_PLAINTEXT) throw new Error('kcv mismatch');
+        // AES-GCM は認証付きなので鍵が違えば復号側が先に throw する。復号に成功して
+      // 中身だけ違う状態は作れず到達しない。多重防御として残す。
+      // Stryker disable next-line ConditionalExpression,StringLiteral
+      if (plain !== KCV_PLAINTEXT) throw new Error('kcv mismatch');
       } catch {
         throw new Error('リカバリーキーが違います');
       }
@@ -604,6 +1066,7 @@ class BrowserVault implements Vault {
         // stays usable under v0 — partial writes cannot occur because we
         // compute the full new meta in memory before a single idbPut.
         if (meta.recoveryVersion === undefined) {
+          /* Stryker disable BlockStatement,StringLiteral */
           try {
             const migratedRecoverySalt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
             const migratedRecoveryKey = await deriveKeyFromMnemonic(
@@ -622,22 +1085,31 @@ class BrowserVault implements Vault {
               recoveryWrappedKey: migratedRecoveryWrap.ciphertext,
               recoveryVersion: 1,
             };
+            // 移行はベストエフォート — 失敗しても復旧自体は成功しており、金庫は
+            // v0 のまま使える。書き込みを失敗させる手段がテストに無く到達しない。
           } catch (err) {
-            // Stryker disable next-line all
             console.warn(
               '[vault] legacy v0 → v1 recovery migration failed; vault remains usable under v0. ' +
                 'Re-run recoverWithMnemonic() to retry the upgrade.',
               err,
             );
           }
+          /* Stryker restore BlockStatement,StringLiteral */
         }
 
-        await idbPut(db, META_STORE, 'vault', newMeta);
-        await idbPut(db, META_STORE, 'master-wrap', {
-          iv: newMasterWrap.iv,
-          ciphertext: newMasterWrap.ciphertext,
-        });
+        // meta と master-wrap は **同時に**入れ替える (片方だけ書けた状態は
+        // 新旧どちらのパスワードでも開けない保管庫になる)。
+        await idbPutAll(db, [
+          { store: META_STORE, key: 'vault', value: newMeta },
+          {
+            store: META_STORE,
+            key: 'master-wrap',
+            value: { iv: newMasterWrap.iv, ciphertext: newMasterWrap.ciphertext },
+          },
+        ]);
         this.currentKey = await importNonExtractable(masterRaw);
+        // newPassword は下限を強制済み。
+        this.policyOk = true;
       } finally {
         masterRaw.fill(0);
       }
@@ -688,12 +1160,15 @@ class BrowserVault implements Vault {
       req.onsuccess = () => resolve();
       // Stryker disable next-line ArrowFunction
       req.onerror = () => resolve();
-      // Stryker disable next-line ArrowFunction
+      // 他のタブが接続を掴んでいるときだけ発火する。単一プロセスのテストでは
+      // 作れず到達しない。
+      /* Stryker disable BlockStatement,StringLiteral,ArrowFunction */
       req.onblocked = () => {
         console.warn(
           '[vault] wipeAndReset blocked — another tab is still holding the IndexedDB. ' +
             'Close all other tabs of this app and try again.',
         );
+        /* Stryker restore BlockStatement,StringLiteral,ArrowFunction */
         // Best-effort follow-up: check whether the DB is actually gone
         // after a short delay (the other tab might close in the meantime).
         // We don't await this — wipeAndReset() must return promptly so the
@@ -726,7 +1201,6 @@ class BrowserVault implements Vault {
     });
   }
 }
-// Stryker restore StringLiteral,EqualityOperator,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,BlockStatement,MethodExpression
 
 let singleton: Vault | null = null;
 export function getVault(): Vault {

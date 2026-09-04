@@ -1,0 +1,50 @@
+---
+collection: academic
+id: bizlaw-national-treatment
+category: "business-law"
+category_ja: "ビジネス法務"
+title: "内国民待遇原則（National Treatment）"
+as_of: "2026-06"
+source_count: 3
+authoritative: true
+tags:
+  - collection/academic
+  - academic/business-law
+  - knowledge/verified
+aliases:
+  - "内国民待遇原則（National Treatment）"
+---
+
+# 内国民待遇原則（National Treatment）
+
+> [!info] コレクション: [[学術概念]] ・ 区分: ビジネス法務 ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
+
+## 概要
+GATT第3条に規定される内外無差別原則で、輸入品に対し国内産品と同等の課税・規制上の待遇を義務付ける。最恵国待遇（MFN）と並ぶWTO多角的貿易体制の二大無差別原則であり、GATS・TRIPS・TRIMsにも拡張されている。国境で関税を払って入った後の「内側の差別」を封じる原則で、MFN（外国産品同士の無差別）と対で市場アクセスの約束を実効化する。適用の中心争点は「同種の産品（like products）」の判定で、Japan–Alcoholic Beverages (1996) の上級委員会は、焼酎とウォッカ等の類似性を物理的特性・最終用途・消費者の嗜好・関税分類から総合判断し、「直接競争・代替可能な産品」への異なる課税が国内生産保護として機能するかを問う分析枠組みを確立した。規制目的をどう扱うかが理論的対立軸で、目的を同種性判定に読み込む aims-and-effects 論は退けられ、正当な規制目的は GATT 20 条の一般例外（健康・環境等）で吟味する構造が判例法として定着した——環境規制・健康表示が保護主義と紛争になる EC–Asbestos などがその適用例である。投資協定では設立後の外国投資家への NT として現れ（ISDS の主要請求原因）、デジタル貿易ではデータ・ローカライゼーション要求が NT・GATS 約束違反かという新しい戦線が開いている。
+
+## 提唱者・初出
+GATT（1947 第3条での原則確立）／WTO上級委員会（Japan–Alcoholic Beverages 1996等での解釈発展）
+
+## 出典
+- [National Treatment, Principle — Oxford Public International Law](https://opil.ouplaw.com/display/10.1093/law:epil/9780199231690/law-9780199231690-e1540) `リファレンス`
+- [National Treatment Principle — Analysis of GATT Article III — Lakshmikumaran & Sridharan](https://www.lakshmisri.com/insights/articles/national-treatment-principle-analysis-of-gatt-article-iii/) `リファレンス`
+- [National Treatment — WTO Appellate Body Repertory](https://www.wto.org/english/tratop_e/dispu_e/repertory_e/n1_e.htm) `公的`
+
+## 関連概念
+- [[bizlaw-most-favoured-nation|最恵国待遇条項（Most-Favoured-Nation Clause）]] — 同じ思想家
+- [[eh-1947|1947年（昭和22年）]] — 同じ思想家
+- [[eh-1955|1955年（昭和30年）]] — 同じ思想家
+- [[eh-1963|1963年（昭和38年）]] — 同じ思想家
+- [[bizlaw-international-trade-law|国際通商法の基本原則と多角的貿易体制の法的枠組み]] — 出典を共有
+- [[bizlaw-trade-secret-protection-trips|営業秘密保護法——不正競争防止と国際的調和の法的枠組み]] — 出典を共有
+- [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — 出典を共有
+- [[bizlaw-calvo-clause|カルヴォ条項（Calvo Clause）]] — 出典を共有
+- [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 出典を共有
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

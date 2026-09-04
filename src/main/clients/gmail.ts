@@ -1,4 +1,5 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { localIsoDate } from '../../shared/localDate';
 
 interface GmailListResponse {
   messages?: { id: string; threadId: string }[];
@@ -35,7 +36,7 @@ export async function fetchGmailSnapshot(ctx: FetchContext): Promise<GmailSnapsh
   const messages = await Promise.all(
     ids.map((id) =>
       jsonFetch<GmailMessage>(
-        `https://gmail.googleapis.com/gmail/v1/users/me/messages/${id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject`,
+        `https://gmail.googleapis.com/gmail/v1/users/me/messages/${encodeURIComponent(id)}?format=metadata&metadataHeaders=From&metadataHeaders=Subject`,
         { headers },
         fetchCtx,
       ),
@@ -44,7 +45,8 @@ export async function fetchGmailSnapshot(ctx: FetchContext): Promise<GmailSnapsh
 
   return {
     threads: messages.map((m) => {
-      const date = new Date(Number(m.internalDate)).toISOString().slice(0, 10);
+      // 受信日は利用者の時計で (UTC の日付だと日本の朝の受信が前日に見える)。
+      const date = localIsoDate(new Date(Number(m.internalDate)));
       return {
         id: m.threadId,
         sender: headerValue(m, 'From'),

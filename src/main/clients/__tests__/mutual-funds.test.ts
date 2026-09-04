@@ -41,7 +41,11 @@ describe('mutual-funds ACTIONS', () => {
       };
       expect(r.phase).toBe('stub');
       expect(r.notForRealMoney).toBe(true);
+      // 3 片の連結。真ん中 (誰に確かめるか) を片ごとに留める —— 理由は
+      // `real-estate.test.ts` の同じ検査に書いてある。
       expect(r.disclaimer).toMatch(/投資助言ではありません/);
+      expect(r.disclaimer).toMatch(/ファイナンシャルアドバイザーの確認を経て/);
+      expect(r.disclaimer).toMatch(/ご自身の責任で行ってください/);
       expect(r.disclaimer).toMatch(/Phase 6/);
       expect(r.recommendations.length).toBeGreaterThan(0);
     });

@@ -1,0 +1,46 @@
+---
+collection: academic
+id: bizlaw-consumer-collective-redress
+category: "business-law"
+category_ja: "ビジネス法務"
+title: "消費者裁判手続特例法（消費者団体訴訟制度）"
+as_of: "2026-06"
+source_count: 3
+authoritative: true
+tags:
+  - collection/academic
+  - academic/business-law
+  - knowledge/verified
+aliases:
+  - "消費者裁判手続特例法（消費者団体訴訟制度）"
+---
+
+# 消費者裁判手続特例法（消費者団体訴訟制度）
+
+> [!info] コレクション: [[学術概念]] ・ 区分: ビジネス法務 ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
+
+## 概要
+正式名称は「消費者の財産的被害等の集団的な回復のための民事の裁判手続の特例に関する法律」（平成25年法律第96号）。2013年に制定され2016年10月1日に施行された、消費者庁が所管する集団的消費者被害回復のための制度。内閣総理大臣の認定を受けた特定適格消費者団体が提起する二段階型の手続をとり、第一段階で事業者が消費者全体に対し共通義務を負うか否かを確認し（共通義務確認訴訟）、第二段階で個々の消費者が加入（オプトイン）して各自の債権を簡易な手続で確定・回収する。適格消費者団体が消費者契約法に基づき行う差止請求とは別個で、これを補完する関係にある。2022年改正（令和4年法律第59号、2023年施行）で慰謝料等を含む対象範囲が拡大された。少額・多数で個人では訴訟提起が困難な消費者被害をまとめて効率的に回復することを狙いとする。消費者契約法そのものとは区別される。
+
+## 提唱者・初出
+消費者の財産的被害等の集団的な回復のための民事の裁判手続の特例に関する法律（消費者裁判手続特例法、平成25年法律第96号、2013年制定・2016年施行）／消費者庁
+
+## 出典
+- [e-Gov法令検索 — 消費者の財産的被害等の集団的な回復のための民事の裁判手続の特例に関する法律（平成25年法律第96号）](https://laws.e-gov.go.jp/law/425AC0000000096) `公的`
+- [消費者庁 — 消費者裁判手続特例法](https://www.caa.go.jp/policies/policy/consumer_system/consumer_court_proceedings/) `公的`
+- [BUSINESS LAWYERS — 令和4年改正・消費者裁判手続特例法のポイント解説](https://www.businesslawyers.jp/articles/1203) `リファレンス`
+
+## 関連概念
+- [[legal-consumer-collective-litigation|消費者団体訴訟制度（差止請求・被害回復）]] — 分野横断
+- [[bizlaw-tort-liability|不法行為責任（民法709条）]] — 同分野の近傍
+- [[bizlaw-consumer-basic-act|消費者基本法]] — 同分野の近傍
+- [[bizlaw-consumer-contract-unfair-terms|消費者契約と不当条項——EU不当条項指令と日本の消費者契約法の情報格差是正]] — 同分野の近傍
+- [[bizlaw-defamation|名誉毀損（刑法230条・民法709条/723条）]] — 同分野の近傍
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

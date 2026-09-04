@@ -1,0 +1,29 @@
+---
+title: "ジョージ・ローウェンスタイン"
+type: thinker
+person_key: "ローウェンスタイン|ジ"
+concept_count: 7
+tags:
+  - person
+  - index
+---
+
+# ジョージ・ローウェンスタイン
+
+> [!info] 人物索引 ・ 関連する検証済み概念 **7 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+
+## 学術概念（7件）
+- [[econ-magnitude-effect-discounting|大きさ効果——金額が大きいほど将来を割り引く率が下がる]] — 大きさ効果（magnitudeeffect）は、リチャード・セイラー（1981年）らが記録した、「異時点間の選択（将来…
+- [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — ティモシー・ウィルソンとダニエル・ギルバートが2003年に体系化した感情予測（affectiveforecasting…
+- [[human-curse-of-knowledge|知識の呪縛]] — 知識の呪縛（知識の呪い）は、よく知っている者が、知らない者の視点に立って物事を考えることが極めて難しくなる認知バイアス…
+- [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — 共感ギャップ（empathygap）またはホット＝コールド共感ギャップ（hot-coldempathygap）は、ロー…
+- [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — 認識論的好奇心は新たな知識獲得への内発的動機づけである。
+- [[human-hot-cold-empathy-gap|ホット・コールド共感ギャップ]] — ジョージ・ローウェンスタインが提唱した、ある感情的・内臓的状態にあるとき、別の状態での自分や他者の行動・選好・感情を正…
+- [[human-ostrich-effect|ダチョウ効果（情報回避）]] — ダチョウ効果（オーストリッチ効果）とは、ネガティブで不快だと予想する情報を、危険から逃れようと砂に頭を埋めるダチョウの…
+
+## 関連
+- 索引: [[人物索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

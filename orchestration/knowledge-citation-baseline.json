@@ -1,0 +1,46 @@
+{
+  "description": "lint-citations.cjs が検出した『同一 DOI が複数の出版年で引かれている』既知の矛盾。導入時点で残っていた分をここに列挙し、ゲートはこれ以外の新規矛盾で落ちる。一次資料で確認して直したら、この配列から**必ず削除する** — 実際には矛盾していない DOI がこの配列に残っている場合もゲートが落ちるため、台帳は放置できない設計。",
+  "howToFix": "WebSearch で複数の独立した書誌データベースが一致する DOI を確定し、誤っている側の出典を差し替える。推測で書き換えないこと。確定できない場合はここに残す (誤った出典を『直したことにする』より、既知の負債として見えている方が安全)。",
+  "method": "**DOI 接尾辞そのものを完全一致検索する**。検索エンジンの要約が主張する書誌ではなく、索引が返すページ実体 (出版社の DOI URL・章ページ群・書誌 DB のレコード) を証拠とする。書誌 API は egress で遮断されている (api.crossref.org / api.openalex.org / doi.org / Cambridge Core / archive.org はいずれも 403) ため WebSearch のみが使える。**順序が重要**: まず DOI の実体を確定し、そのうえで各主張者を個別に照合する。同一 DOI に複数の年がぶつかっているとき『候補のどれかが正しい』保証はない — 実測すると全主張者が誤りのケースが 5 件あった。",
+  "verifiedExamples": "2026-07-28 のパス4では 13 件を確定・修正した。うち 9 件は DOI が別論文を指しており (例: 10.2307/2392586 は Bourgeois 1981 ではなく ASQ 23(4) 1978 の無題書評)、2 件は書籍に他誌論文の DOI が付いていた。2026-07-30 に**残り 18 件すべて**を照合し、knownConflicts を 0 件にした (下記 resolved2026_07_30)。",
+  "resolved2026_07_30": {
+    "note": "18 件 (パス5 で先に片付けた 10.1017/CBO9780511559747 を含む) をすべて一次照合し、誤っていた出典 28 箇所を差し替えた。**5 件は全主張者が誤り**だった — 年の矛盾は『どれかが誤り』ではなく『全部誤り』の兆候でもありうる。",
+    "allClaimantsWrong": [
+      "10.1017/CBO9780511559747 → 実体 Rogers (1989) Money, Interest and Capital (Cambridge)。Leijonhufvud 1968 / Moore 1988 / Obstfeld & Taylor 2004 の 3 者すべて誤り",
+      "10.1093/he/9780198876984.001.0001 → 実体 Phillips (2023) The Cooperative Neuron (Oxford UP)。Sweet & Maxwell の契約法テキスト 6 件すべて誤り",
+      "10.1093/ojls/gqi037 → 実体 Oxford Journal of Legal Studies 25(4) 2005, 793–813 の雑誌論文。Gower & Davies (書籍) 4 件すべて誤り",
+      "10.1177/2053951714528481 → 実体 Kitchin (2014) Big Data, new epistemologies and paradigm shifts (Big Data & Society 1(1))。boyd & Crawford 2012 / van Dijck 2014 ×3 すべて誤り",
+      "10.1145/3313831.3376600 → 実体 Di Geronimo et al. (2020) UI Dark Patterns and Where to Find Them (CHI 2020)。Gray 2020 / Mathur 2019 の両方が誤り",
+      "10.2307/2937686 → 実体を特定できなかったが、Deaton (1991) の実 DOI が 10.2307/2938366 であることを確認したため両主張者とも誤り"
+    ],
+    "correctedDois": [
+      "Barney (1991) Journal of Management 17(1) → 10.1177/014920639101700108 (実体 10.1002/smj.4250050207 は Wernerfelt 1984 SMJ 5(2))",
+      "Van Alstyne & Brynjolfsson (2005) Management Science 51(6) → 10.1287/mnsc.1050.0363 (実体 10.1126/science.1167742 は Lazer et al. 2009 Science 323)",
+      "boyd & Crawford (2012) Information, Communication & Society 15(5) → 10.1080/1369118X.2012.678878",
+      "van Dijck (2014) Surveillance & Society 12(2) → 10.24908/ss.v12i2.4776",
+      "Samuelson (1954) Economic Journal 64(254) → 10.2307/2226834 (実体 10.2307/1884513 は Solow 1956 QJE 70(1))",
+      "Hannan & Freeman (1977) American Journal of Sociology 82(5) → 10.1086/226424 (実体 10.2307/2392498 は Karasek 1979 ASQ 24)",
+      "March (1991) Organization Science 2(1) → 10.1287/orsc.2.1.71 (実体 10.2307/2393553 は Cohen & Levinthal 1990 ASQ 35(1))",
+      "Deaton (1991) Econometrica 59(5) → 10.2307/2938366",
+      "Mathur et al. (2019) PACM HCI 3(CSCW) → 10.1145/3359183 (実体 10.1145/3173574.3174108 は Gray et al. 2018 CHI)",
+      "Carpenter, Geletkanycz & Sanders (2004) Journal of Management 30(6) → 10.1016/j.jm.2004.06.001 (実体 10.5465/amr.2007.24345254 は Hambrick 2007 AMR)",
+      "Obstfeld & Taylor (2004) Global Capital Markets → 10.1017/CBO9780511616525"
+    ],
+    "labelOnlyFixes": [
+      "10.5465/amj.2016.0594 は DOI が正しく、ラベルが誤っていた → Miron-Spektor, Ingram, Keller, Smith & Lewis (2018) AMJ 61(1) 26–45 に修正 (Smith は共著者だが第一著者ではない)",
+      "10.1177/1527476418796632 は同一著作 (Couldry & Mejias, Television & New Media 20(4)) の年表記ゆれのみ (online-first 2018 / 号 2019) → 2019 に正規化"
+    ],
+    "doiUnavailable": [
+      "Leijonhufvud (1968) On Keynesian Economics and the Economics of Keynes は Oxford UP 刊で DOI なし → Internet Archive 書誌 (ISBN 0195009487)",
+      "Moore (1988) Horizontalists and Verticalists は Cambridge 刊だが CBO DOI を確定できず → Internet Archive 書誌 (ISBN 0521350794) + 書評論文 Bindseil & König (2013) ROKE 1(4) の実 DOI 10.4337/roke.2013.04.01 を追加",
+      "Angrist (1990) American Economic Review 80(3) → RePEc 書誌 (aea:aecrev:v:80:y:1990:i:3:p:313-36)",
+      "Alchian & Demsetz (1972) American Economic Review 62(5) → RePEc 書誌 (aea:aecrev:v62y1972i5p777-95)",
+      "Dixit & Pindyck (1994) Investment Under Uncertainty → Princeton UP 書籍ページ (ISBN 9780691034102)",
+      "Peel (2015) Treitel on the Law of Contract 14th ed. → WorldCat (OCLC 910717405, ISBN 9780414037397)",
+      "Treitel (2014) Frustration and Force Majeure 3rd ed. → ISBN 9780414028531 の書誌ページ",
+      "Davies & Worthington (2016) Gower 10th ed. → ISBN 9780414056268 / (2012) 9th ed. → ISBN 9780414022720",
+      "Jenkins「If It Doesn't Spread, It's Dead」は Convergence 論文ではなく 2008 年 Convergence Culture Consortium ホワイトペーパー＋2009 年の連載ブログ → 一次テキスト (henryjenkins.org) に差し替え、種別を academic から reference に是正 (この 1 件のみ academic 件数が 2→1 に減るが、査読誌論文でないものを academic と数えていた分の是正であって情報の喪失ではない)"
+    ]
+  },
+  "knownConflicts": []
+}

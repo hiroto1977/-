@@ -1,0 +1,47 @@
+---
+collection: academic
+id: bizlaw-consumer-basic-act
+category: "business-law"
+category_ja: "ビジネス法務"
+title: "消費者基本法"
+as_of: "2026-06"
+source_count: 3
+authoritative: true
+tags:
+  - collection/academic
+  - academic/business-law
+  - knowledge/verified
+aliases:
+  - "消費者基本法"
+---
+
+# 消費者基本法
+
+> [!info] コレクション: [[学術概念]] ・ 区分: ビジネス法務 ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
+
+## 概要
+消費者基本法は、消費者政策の基本理念と枠組みを定める日本の基本法である。起源は1968年（昭和43年）制定の消費者保護基本法（昭和43年法律第78号）で、2004年（平成16年）に36年ぶりに大幅改正され消費者基本法へ改称された。この改正は、消費者を単なる「保護」の対象とする立場から、消費者の権利を尊重しその自立を支援する立場（消費者を自立した主体と位置づける）への理念転換を画した。消費者と事業者の間の情報の質・量および交渉力の格差を踏まえ、安全の確保、選択の機会の確保、必要な情報の提供、教育の機会の確保、意見の政策への反映、被害の適切・迅速な救済などの消費者の権利を列挙する。国・地方公共団体の責務と事業者の責務を定め、消費者基本計画の策定を規定する。消費者庁が関係行政を担う。消費者契約法や消費者裁判手続特例法とは区別される、消費者政策の包括的・基本的な法である。
+
+## 提唱者・初出
+消費者基本法（消費者保護基本法＝昭和43年法律第78号、1968年制定／2004年改正・改称）／消費者庁
+
+## 出典
+- [e-Gov法令検索「消費者基本法」（昭和43年法律第78号）](https://laws.e-gov.go.jp/law/343AC1000000078/) `公的`
+- [消費者庁「消費者基本計画等」](https://www.caa.go.jp/policies/policy/consumer_policy/basic_plan/) `公的`
+- [コトバンク「消費者基本法」](https://kotobank.jp/word/%E6%B6%88%E8%B2%BB%E8%80%85%E5%9F%BA%E6%9C%AC%E6%B3%95-156335) `リファレンス`
+
+## 関連概念
+- [[legal-consumer-collective-litigation|消費者団体訴訟制度（差止請求・被害回復）]] — 語彙が近い
+- [[bizlaw-consumer-contract-act|消費者契約法]] — 同分野の近傍
+- [[bizlaw-consumer-collective-redress|消費者裁判手続特例法（消費者団体訴訟制度）]] — 同分野の近傍
+- [[bizlaw-corporate-governance-stewardship|スチュワードシップ・コードと機関投資家の責任投資——コーポレートガバナンス改革の法的枠組み]] — 同分野の近傍
+- [[bizlaw-pse-act|電気用品安全法（PSE法）]] — 同分野の近傍
+- [[bizlaw-administrative-appeal|行政不服審査（審査請求）]] — 同分野の近傍
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

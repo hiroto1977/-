@@ -29,21 +29,27 @@ export function ExportActions({
   openUrl?: string;
 }) {
   const [copied, setCopied] = useState(false);
+  // 開けなかった理由を出す場所。監査前は catch で握り潰していたため、書き出した
+  // 書類が開けなくても画面には何も出なかった (押しても無反応に見える)。
+  const [opFailure, setOpFailure] = useState<string>();
 
-  async function openFile() {
+  /** OS 操作の結果を 1 か所で受ける。reject も戻り値の失敗も同じ扱いにする。 */
+  async function runOsOp(op: () => Promise<{ ok: boolean; message?: string }>): Promise<void> {
+    setOpFailure(undefined);
     try {
-      await window.serviceHub.openPath(path);
-    } catch {
-      // best-effort; ignore
+      const r = await op();
+      if (!r.ok) setOpFailure(r.message ?? '操作できませんでした');
+    } catch (e) {
+      setOpFailure(e instanceof Error ? e.message : String(e));
     }
   }
 
+  async function openFile() {
+    await runOsOp(() => window.serviceHub.openPath(path));
+  }
+
   async function reveal() {
-    try {
-      await window.serviceHub.revealInFolder(path);
-    } catch {
-      // ignore
-    }
+    await runOsOp(() => window.serviceHub.revealInFolder(path));
   }
 
   async function copy() {
@@ -73,6 +79,11 @@ export function ExportActions({
           </span>
         )}
       </div>
+      {opFailure ? (
+        <div data-os-op-error role="alert" style={{ fontSize: 12, color: 'var(--danger)' }}>
+          {opFailure}
+        </div>
+      ) : null}
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
         <button
           type="button"

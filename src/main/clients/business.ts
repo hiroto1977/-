@@ -1,7 +1,15 @@
+import { MAX_ADVISOR_QUESTION_CHARS, checkAdvisorQuestion } from '../../shared/advisorQuestionLimits';
+import { MAX_ADVISOR_ACTION_ITEMS, MAX_ADVISOR_ITEM_CHARS, MAX_ADVISOR_RATIONALE_CHARS, MAX_ADVISOR_RECOMMENDATIONS, MAX_ADVISOR_RISK_FACTORS } from '../../shared/advisorResponseLimits';
+import { seededNoise } from '../../shared/seededNoise';
+import { escapeXml, escapeMarkdownInline, escapeMarkdownText } from '../../shared/escape';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
+import { limitedFetch, readCapped, redactForMessage } from './types';
+import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
+import { isSafeExportPath, writeExportFile } from './exportPaths';
+import { AI_PROVIDERS } from '../../shared/ai/providers';
 
 /**
  * Business operations dashboard — 17 番目のサービス。
@@ -288,16 +296,6 @@ export function computeCategoryKpi(
 
 // --- Mock data source ----------------------------------------------------
 
-/** xorshift32 — same as kpi/stocks for deterministic mock series. */
-function noise(seed: number): number {
-  // Stryker disable next-line ConditionalExpression,LogicalOperator
-  let x = seed | 0 || 1;
-  x ^= x << 13;
-  x ^= x >>> 17;
-  x ^= x << 5;
-  return (x >>> 0) / 4294967296;
-}
-
 export const HISTORY_LENGTH = 30;
 
 export interface BusinessOpsDataSource {
@@ -319,11 +317,11 @@ export function createMockBusinessOpsDataSource(): BusinessOpsDataSource {
         const history: CategoryKpi[] = [];
         for (let i = 0; i < HISTORY_LENGTH; i++) {
           // Stryker disable next-line ArithmeticOperator
-          const dr = 0.7 + noise(seedBase + i) * 0.6;
+          const dr = 0.7 + seededNoise(seedBase + i) * 0.6;
           // Stryker disable next-line ArithmeticOperator
-          const dt = 0.6 + noise(seedBase + i + 3333) * 0.8;
+          const dt = 0.6 + seededNoise(seedBase + i + 3333) * 0.8;
           // Stryker disable next-line ArithmeticOperator
-          const droas = 0.75 + noise(seedBase + i + 7777) * 0.5;
+          const droas = 0.75 + seededNoise(seedBase + i + 7777) * 0.5;
           history.push(computeCategoryKpi(def, dr, dt, droas));
         }
         const current = history[history.length - 1]!;
@@ -389,14 +387,19 @@ export function getCategoryDef(id: BusinessCategoryId): BusinessCategoryDef {
   return CATEGORY_BY_ID[id];
 }
 
-// `typeof value === 'string'` short-circuit is required for the `in`
-// operator below (`in` throws TypeError on non-objects but accepts strings
-// vacuously). 6 tests cover string/number/null/undefined/object/known —
-// Stryker mis-attributes per-test coverage. Block-form pragma covers the
-// return statement itself.
+// `in` ではなく `Object.hasOwn` を使う。`in` はプロトタイプ鎖まで辿るので、
+// 表に無い 'constructor' / 'toString' / '__proto__' 等が **8 個とも通っていた**
+// (2026-08-22 実測)。ここは `askBusinessAdvisor` の `categories` を IPC 境界で
+// 絞る唯一の番人で、抜けた名前は外部 API へ送るプロンプトに載り、しかも
+// `allowedSet` にどの事業も一致しないので KPI 0 件のまま助言させてしまう。
+// 同じ判断は `templates.ts` の `isTemplateId` に先に書いてあった。
+//
+// `typeof value === 'string'` は型述語のための絞り込みで、安全性には要らない
+// (`Object.hasOwn` は非文字列でも throw せず false を返す)。この等価変異と、
+// 6 本の負のケースに対する perTest の帰属ずれを併せて黙らせる。
 // Stryker disable ConditionalExpression
 export function isBusinessCategoryId(value: unknown): value is BusinessCategoryId {
-  return typeof value === 'string' && value in CATEGORY_BY_ID;
+  return typeof value === 'string' && Object.hasOwn(CATEGORY_BY_ID, value);
 }
 // Stryker restore ConditionalExpression
 
@@ -528,11 +531,13 @@ export function validateBusinessAdvisorJson(
   if (obj.recommendations.length === 0) {
     throw new Error('business-advisor response has zero recommendations');
   }
-  if (obj.recommendations.length > 5) {
+  if (obj.recommendations.length > MAX_ADVISOR_RECOMMENDATIONS) {
     throw new Error('business-advisor response exceeds 5 recommendations');
   }
-  // 各 guard 句は negative テストで pinned。Stryker の per-test 帰属が
-  // ぶれることがあるので block-form pragma を被せる。
+  // 各 guard 句は negative テストで固定してある。残る `typeof` の前置きは
+  // 後続の判定 (`allowedIds.has` / `Number.isFinite` / `.length === 0`) が
+  // 型違いをそのまま落とすので、単独では観測できない。型を絞るために
+  // 置いているだけなので、そこだけを帯で外す (判定の本体は測る側に残る)。
   // Stryker disable ConditionalExpression
   const out: BusinessAdvisorRecommendation[] = [];
   for (const item of obj.recommendations) {
@@ -551,18 +556,19 @@ export function validateBusinessAdvisorJson(
     if (typeof rec.rationale !== 'string' || rec.rationale.length === 0) {
       throw new Error('business-advisor recommendation has empty rationale');
     }
-    if (rec.rationale.length > 600) {
+    // Stryker restore ConditionalExpression
+    if (rec.rationale.length > MAX_ADVISOR_RATIONALE_CHARS) {
       throw new Error('business-advisor recommendation rationale exceeds 600 chars');
     }
     if (!Array.isArray(rec.actionItems) || rec.actionItems.length === 0) {
       throw new Error('business-advisor recommendation has no actionItems');
     }
-    if (rec.actionItems.length > 5) {
+    if (rec.actionItems.length > MAX_ADVISOR_ACTION_ITEMS) {
       throw new Error('business-advisor recommendation actionItems exceeds 5');
     }
     const actionItems: string[] = [];
     for (const ai of rec.actionItems) {
-      if (typeof ai !== 'string' || ai.length === 0 || ai.length > 240) {
+      if (typeof ai !== 'string' || ai.length === 0 || ai.length > MAX_ADVISOR_ITEM_CHARS) {
         throw new Error('business-advisor actionItem entry is not a 1-240 char string');
       }
       actionItems.push(ai);
@@ -570,17 +576,16 @@ export function validateBusinessAdvisorJson(
     if (!Array.isArray(rec.riskFactors) || rec.riskFactors.length === 0) {
       throw new Error('business-advisor recommendation has no riskFactors');
     }
-    if (rec.riskFactors.length > 3) {
+    if (rec.riskFactors.length > MAX_ADVISOR_RISK_FACTORS) {
       throw new Error('business-advisor recommendation riskFactors exceeds 3');
     }
     const riskFactors: string[] = [];
     for (const rf of rec.riskFactors) {
-      if (typeof rf !== 'string' || rf.length === 0 || rf.length > 240) {
+      if (typeof rf !== 'string' || rf.length === 0 || rf.length > MAX_ADVISOR_ITEM_CHARS) {
         throw new Error('business-advisor riskFactor entry is not a 1-240 char string');
       }
       riskFactors.push(rf);
     }
-    // Stryker restore ConditionalExpression
     out.push({
       categoryId: rec.categoryId as BusinessCategoryId,
       rank: rec.rank,
@@ -600,14 +605,28 @@ interface AnthropicMessagesResponse {
   content?: AnthropicContentBlock[];
 }
 
+/**
+ * この呼び出しの `max_tokens`。**レンダラーからは変えられない**
+ * (経緯は `skills.ts` の `SKILLS_MAX_TOKENS`)。`model` も payload から外した。
+ */
+export const BUSINESS_ADVISOR_MAX_TOKENS = 1500;
+
+/**
+ * **`model` / `maxTokens` はここに無い。**
+ *
+ * 2026-08 の監査で payload から外し、定数 (`AI_PROVIDERS.anthropic.defaultModel`
+ * / `BUSINESS_ADVISOR_MAX_TOKENS`) を使うようにした ——「乗っ取られた
+ * renderer が任意のモデル・任意の長さを**利用者の課金で**呼べる」を塞ぐため。
+ *
+ * だが**型の宣言だけが残っていた** (2026-09-01 に発見)。読んでいないので実害は
+ * 無いが、`model?: unknown` が宣言されている限り `payload.model` と書いても
+ * 型検査が通る —— 次に触る人が黙って配線し直せてしまう。
+ * **消してあることが、型で分かる形にする。**
+ */
 interface BusinessAdvisorPayload {
   question?: unknown;
   /** Optional override; defaults to all 10 mock category IDs. */
   categories?: unknown;
-  /** Model id; defaults to claude-sonnet-4-6. */
-  model?: unknown;
-  /** Max output tokens; defaults to 1500. */
-  maxTokens?: unknown;
 }
 
 /** Test seam: ActionContext usually uses real `fetch`, but tests inject
@@ -621,17 +640,18 @@ export async function askBusinessAdvisorImpl(
   ctx: ActionContext,
   deps: AdvisorDeps = {},
 ): Promise<BusinessAdvisorResponse> {
-  const { question, categories, model, maxTokens } = ctx.payload as BusinessAdvisorPayload;
+  const { question, categories } = ctx.payload as BusinessAdvisorPayload;
 
   // question is required and bounded; control chars rejected to keep prompt clean.
   // Stryker disable ConditionalExpression
-  if (typeof question !== 'string' || question.length === 0) {
+  const problem = checkAdvisorQuestion(question);
+  if (problem === 'empty') {
     throw new Error('question is required');
   }
-  if (question.length > 1000) {
-    throw new Error('question exceeds 1000 chars');
+  if (problem === 'too-long') {
+    throw new Error(`question exceeds ${MAX_ADVISOR_QUESTION_CHARS} chars`);
   }
-  if (/[\r\n\0]/.test(question)) {
+  if (problem === 'control-chars') {
     throw new Error('question contains control characters');
   }
   // Stryker restore ConditionalExpression
@@ -667,41 +687,40 @@ export async function askBusinessAdvisorImpl(
     JSON.stringify(analyses),
   ].join('\n');
 
-  const f = ctx.fetch ?? fetch;
-  // The model / max_tokens fallback ladder + boundary `> 0` are pinned by
-  // dedicated tests (custom model, empty model → default, NaN/0 maxTokens →
-  // default, custom maxTokens). Boundary `>= 0` is observationally
-  // equivalent because Number.isFinite(0)=true and the `> 0` test rejects 0.
-  // Block-form pragma covers the whole body builder.
-  // Stryker disable ConditionalExpression,LogicalOperator,EqualityOperator
-  const res = await f('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': ctx.token,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
+  // 有料 API への呼び出しにも**打ち切りと応答サイズの上限**を掛ける。
+  // 2026-08-23 まで素の fetch で、`signal` も上限も無かった (実測)。
+  // 補完は普通の REST より長くかかるので、既定 30 秒ではなく
+  // `AI_CHAT_TIMEOUT_MS` (2 分) を使う —— `shared/ai/chat.ts` と同じ値。
+  const hctx = { fetch: ctx.fetch, serviceId: 'business', timeoutMs: AI_CHAT_TIMEOUT_MS };
+  const parsed = await limitedFetch(
+    'https://api.anthropic.com/v1/messages',
+    {
+      method: 'POST',
+      headers: {
+        'x-api-key': ctx.token,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: AI_PROVIDERS.anthropic.defaultModel,
+        max_tokens: BUSINESS_ADVISOR_MAX_TOKENS,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }],
+      }),
     },
-    body: JSON.stringify({
-      model: typeof model === 'string' && model.length > 0 ? model : 'claude-sonnet-4-6',
-      max_tokens:
-        typeof maxTokens === 'number' && Number.isFinite(maxTokens) && maxTokens > 0
-          ? maxTokens
-          : 1500,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userPrompt }],
-    }),
-  });
-  // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator
+    hctx,
+    async (res) => {
+      if (!res.ok) {
+        // Defensive catch on the capped read — unreachable from current tests but
+        // mirrors stocks-advisor pattern for symmetry.
+        // Stryker disable next-line ArrowFunction,MethodExpression
+        const body = await readCapped(res, hctx).catch(() => '');
+        throw new Error(`business-advisor ${res.status}: ${redactForMessage(body, 200)}`);
+      }
+      return JSON.parse(await readCapped(res, hctx)) as AnthropicMessagesResponse;
+    },
+  );
 
-  if (!res.ok) {
-    // Defensive catch on text() — unreachable from current tests but
-    // mirrors stocks-advisor pattern for symmetry.
-    // Stryker disable next-line ArrowFunction,MethodExpression
-    const body = await res.text().catch(() => '');
-    throw new Error(`business-advisor ${res.status}: ${body.slice(0, 200)}`);
-  }
-
-  const parsed = (await res.json()) as AnthropicMessagesResponse;
   // Optional chain + find: see stocks-advisor for the same justification.
   // Stryker disable next-line OptionalChaining,ConditionalExpression
   const textBlock = parsed.content?.find((b) => b.type === 'text');
@@ -755,13 +774,7 @@ export function defaultBusinessDashboardMdPath(): string {
 // kills under perTest; block-form pragma.
 // Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator
 function isSafeBusinessPathWithExt(filePath: string, home: string, ext: string): boolean {
-  if (typeof filePath !== 'string' || filePath.length === 0) return false;
-  if (filePath.length > 1024) return false;
-  if (/[\0\r\n]/.test(filePath)) return false;
-  if (!filePath.endsWith(ext)) return false;
-  const resolved = path.resolve(filePath);
-  const resolvedHome = path.resolve(home);
-  return resolved.startsWith(resolvedHome + path.sep) || resolved === resolvedHome;
+  return isSafeExportPath(filePath, home, ext);
 }
 
 export function isSafeBusinessDashboardPath(filePath: string, home: string): boolean {
@@ -772,17 +785,6 @@ export function isSafeBusinessDashboardMdPath(filePath: string, home: string): b
   return isSafeBusinessPathWithExt(filePath, home, '.md');
 }
 // Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator
-
-/** Escape `<>&"'` for safe HTML interpolation. Any UI-supplied string
- *  (category label, AI rationale, action item) goes through this. */
-export function escapeHtml(input: string): string {
-  return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
 
 // Number-format options are decorative; perTest can't link them to a test.
 // Stryker disable next-line ObjectLiteral
@@ -824,29 +826,59 @@ export interface BusinessDashboardInput {
 }
 
 /** Type guard for advisorResult payload received from the renderer.
- *  Conservative: only accepts structures that pass the same validator
- *  used when the LLM produced them. */
-// Each guard branch has a dedicated negative test (null root, missing
-// recommendations, non-string disclaimer, missing notForRealMoney). The
-// `return true` at the end has no false-path test because every other
-// branch already returned false; BooleanLiteral mutant on the guards is
-// equivalent. Block-form pragma covers everything.
+ *
+ *  ## 2026-08-21 まで、この説明は嘘だった
+ *
+ *  ここには「conservative: only accepts structures that pass the same
+ *  validator used when the LLM produced them」と書いてあったが、実際には
+ *  `recommendations` が**配列かどうかしか見ていなかった** — 要素の中身は
+ *  1 つも検査していない。`validateBusinessAdvisorJson` (同じファイルの
+ *  上にある。「throws on any deviation so a malformed reply can't smuggle
+ *  bad data into the UI」) は全要素・全項目を検査しているので、**同じ
+ *  ファイルの中に同じデータの検査が 2 つあり、IPC 境界を守っている方が
+ *  空だった**ことになる。
+ *
+ *  TypeScript の型は IPC を越えない。`BusinessAdvisorRecommendation` の
+ *  `categoryId` は union 型だが、実行時に届く値は任意である。実測では
+ *  `recommendations: [null]` で `Cannot read properties of null`、
+ *  `actionItems` 欠落で `Cannot read properties of undefined (reading 'map')`
+ *  が書き出しの最中に投げられていた (main.ts の invoke ハンドラが受けるので
+ *  クラッシュはしないが、書き出しは丸ごと失敗する)。
+ *
+ *  説明を実装に合わせるのではなく、**実装を説明に合わせる** — 検査を
+ *  1 つに寄せ、厳密な方を呼ぶ。壊れた payload は従来どおり「助言なし」
+ *  として扱う (throw ではなく false) ので、書き出し自体は成功する。 */
+// 分岐ごとに negative テストがある (null root / recommendations 非配列 /
+// disclaimer 非文字列 / notForRealMoney 欠落 / 要素が壊れている)。
 // Stryker disable ConditionalExpression,LogicalOperator,BooleanLiteral
 function isAdvisorResult(v: unknown): v is BusinessAdvisorResponse {
   if (v === null || typeof v !== 'object') return false;
   const o = v as Record<string, unknown>;
-  if (!Array.isArray(o['recommendations'])) return false;
   if (typeof o['disclaimer'] !== 'string') return false;
   if (o['notForRealMoney'] !== true) return false;
-  return true;
+  // catch の中で return しない。**空の catch にしても結果が変わらない形**を
+  // 避けるためである — `catch { return false }` は中身を消すと暗黙の
+  // `undefined` を返し、呼び出し側はどちらも偽として扱うので違いが観測でき
+  // ない (実測で生存した)。「投げなければ真」を 1 つの変数で表す。
+  let valid = false;
+  try {
+    // 要素の検査は 1 つだけ持つ。許可する categoryId は全カテゴリ —
+    // どの部分集合を利用者が選んだかは、この境界からは分からない。
+    validateBusinessAdvisorJson(v, new Set(BUSINESS_CATEGORIES.map((d) => d.id)));
+    valid = true;
+  } catch {
+    // 形が合わない = 助言なし。呼び出し側が節ごと省く。
+  }
+  return valid;
 }
 // Stryker restore ConditionalExpression,LogicalOperator,BooleanLiteral
 
-// HTML renderer: pure function, no I/O. Inline ternaries / color flips /
-// section gating are cosmetic — block-form pragma covers the body.
-// Security-critical paths (escapeHtml application, isAdvisorResult guard,
-// isSafeBusinessDashboardPath) are pinned by dedicated tests outside.
-// Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement
+// HTML renderer: pure function, no I/O.
+//
+// 「色や記号は飾りだから測らなくてよい」と書いて body 全体を外していたが、
+// **これは誤りだった**。利益が黒字か赤字かは、表の上では色と `+` の有無で
+// しか出ない — 金額は符号付きで正しく出るので、判定が反転すると数字は
+// 合ったまま黒字の顔をする。飾りではなく、読み手が最初に見る情報である。
 export function renderBusinessDashboardHtml(input: BusinessDashboardInput): string {
   const { snapshot, advisorResult, generatedAt } = input;
   const agg = snapshot.aggregate;
@@ -857,7 +889,7 @@ export function renderBusinessDashboardHtml(input: BusinessDashboardInput): stri
       const marginSign = c.profitMargin >= 0 ? '+' : '';
       const spark = renderUnitSparkline(u.history.map((h) => h.revenue));
       return `<tr>
-  <td><strong>${escapeHtml(u.label)}</strong><br/><span class="mute">${escapeHtml(u.id)}</span></td>
+  <td><strong>${escapeXml(u.label)}</strong><br/><span class="mute">${escapeXml(u.id)}</span></td>
   <td class="num">${YEN_FMT.format(c.revenue)}</td>
   <td class="num">${YEN_FMT.format(c.totalCost)}</td>
   <td class="num" style="color:${profitColor}">${YEN_FMT.format(c.profit)}</td>
@@ -875,17 +907,17 @@ export function renderBusinessDashboardHtml(input: BusinessDashboardInput): stri
   const advisorSection = advisorResult
     ? `<section>
   <h2>AI 経営アドバイザー提案</h2>
-  <p class="disclaimer">${escapeHtml(advisorResult.disclaimer)}</p>
+  <p class="disclaimer">${escapeXml(advisorResult.disclaimer)}</p>
   <ol class="recs">
     ${advisorResult.recommendations
       .map(
         (r) => `<li>
-      <h3>${escapeHtml(r.categoryId)} <span class="rank">#${r.rank}</span></h3>
-      <p>${escapeHtml(r.rationale)}</p>
+      <h3>${escapeXml(r.categoryId)} <span class="rank">#${r.rank}</span></h3>
+      <p>${escapeXml(r.rationale)}</p>
       <h4>推奨アクション</h4>
-      <ul>${r.actionItems.map((a) => `<li>${escapeHtml(a)}</li>`).join('')}</ul>
+      <ul>${r.actionItems.map((a) => `<li>${escapeXml(a)}</li>`).join('')}</ul>
       <h4>リスク要因</h4>
-      <ul class="risk">${r.riskFactors.map((rf) => `<li>${escapeHtml(rf)}</li>`).join('')}</ul>
+      <ul class="risk">${r.riskFactors.map((rf) => `<li>${escapeXml(rf)}</li>`).join('')}</ul>
     </li>`,
       )
       .join('')}
@@ -897,7 +929,7 @@ export function renderBusinessDashboardHtml(input: BusinessDashboardInput): stri
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<title>事業ダッシュボード — ${escapeHtml(generatedAt)}</title>
+<title>事業ダッシュボード — ${escapeXml(generatedAt)}</title>
 <style>
   body { font-family: -apple-system, "Hiragino Sans", "Yu Gothic", sans-serif; background: #0f1117; color: #e6e8ec; margin: 0; padding: 24px; }
   h1 { font-size: 20px; margin: 0 0 4px; }
@@ -924,7 +956,7 @@ export function renderBusinessDashboardHtml(input: BusinessDashboardInput): stri
 </head>
 <body>
 <h1>事業ダッシュボード</h1>
-<div class="meta">Generated: ${escapeHtml(generatedAt)} · ${snapshot.units.length} 事業 · ${snapshot.isMock ? 'シミュレーション中 (模擬データ)' : '本番データ'}</div>
+<div class="meta">Generated: ${escapeXml(generatedAt)} · ${snapshot.units.length} 事業 · ${snapshot.isMock ? 'シミュレーション中 (模擬データ)' : '本番データ'}</div>
 ${snapshot.isMock ? '<div class="mock-banner"><strong>シミュレーション中:</strong> Phase 6 で freee / 楽天 SP-API / Shopify / GA4 / YouTube Data API / X API などへ接続予定。本ダッシュボードの数値は模擬値です。</div>' : ''}
 
 <section>
@@ -952,11 +984,17 @@ ${advisorSection}
 </body>
 </html>`;
 }
-// Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement
 
-// Markdown renderer: pure function, no I/O. Decorative formatting is
-// pragma'd; security-critical (advisor inclusion) tested explicitly.
-// Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement
+// Markdown renderer: pure function, no I/O.
+// HTML 側と同じ符号の規則 (0 は黒字あつかい) を使う。両方を同じ検査で
+// 突き合わせてあるので、片方だけ変えると落ちる。
+//
+// **2026-08-20 まで、ここはエスケープを 1 つも通していなかった。** HTML 側
+// (`renderBusinessDashboardHtml`) は `escapeXml` を通しているので、同じ
+// データの同じ書き出しで守りが片方にしか無い状態だった。埋まるのは事業の
+// ラベルだけではなく **AI 経営アドバイザーの応答** (`rationale` /
+// `actionItems` / `riskFactors` / `categoryId`) で、`|` 1 つで表が崩れ、
+// 生 HTML はそのまま通る。書き出した `.md` はライブラリに残り人に渡る。
 export function renderBusinessDashboardMarkdown(input: BusinessDashboardInput): string {
   const { snapshot, advisorResult, generatedAt } = input;
   const agg = snapshot.aggregate;
@@ -966,15 +1004,17 @@ export function renderBusinessDashboardMarkdown(input: BusinessDashboardInput): 
     .map((u) => {
       const c = u.current;
       const marginSign = c.profitMargin >= 0 ? '+' : '';
-      return `| ${u.label} (${u.id}) | ${YEN_FMT.format(c.revenue)} | ${YEN_FMT.format(c.totalCost)} | ${YEN_FMT.format(c.profit)} | ${marginSign}${c.profitMargin.toFixed(1)}% | ${NUM_FMT.format(c.traffic)} | ${c.contentOutput} |`;
+      return `| ${escapeMarkdownInline(u.label)} (${escapeMarkdownInline(u.id)}) | ${YEN_FMT.format(c.revenue)} | ${YEN_FMT.format(c.totalCost)} | ${YEN_FMT.format(c.profit)} | ${marginSign}${c.profitMargin.toFixed(1)}% | ${NUM_FMT.format(c.traffic)} | ${c.contentOutput} |`;
     })
     .join('\n');
 
   const advisorMd = advisorResult
-    ? `\n## AI 経営アドバイザー提案\n\n> ${advisorResult.disclaimer}\n\n${advisorResult.recommendations
+    ? `\n## AI 経営アドバイザー提案\n\n> ${escapeMarkdownInline(advisorResult.disclaimer)}\n\n${advisorResult.recommendations
         .map(
           (r) =>
-            `### #${r.rank} — ${r.categoryId}\n\n${r.rationale}\n\n**推奨アクション:**\n${r.actionItems.map((a) => '- ' + a).join('\n')}\n\n**リスク要因:**\n${r.riskFactors.map((rf) => '- ' + rf).join('\n')}\n`,
+            // rationale だけが段落。見出し・箇条書きの 1 項目・引用は
+            // 改行 1 つでその構造から抜けるので inline 側を使う。
+            `### #${r.rank} — ${escapeMarkdownInline(r.categoryId)}\n\n${escapeMarkdownText(r.rationale)}\n\n**推奨アクション:**\n${r.actionItems.map((a) => '- ' + escapeMarkdownInline(a)).join('\n')}\n\n**リスク要因:**\n${r.riskFactors.map((rf) => '- ' + escapeMarkdownInline(rf)).join('\n')}\n`,
         )
         .join('\n')}`
     : '';
@@ -1002,7 +1042,6 @@ ${snapshot.isMock ? '> ⚠️ **シミュレーション中:** Phase 6 で freee
 ${unitRows}
 ${advisorMd}`;
 }
-// Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement
 
 export interface ExportBusinessResult {
   readonly path: string;
@@ -1052,7 +1091,7 @@ export async function exportBusinessDashboardImpl(
     generatedAt,
   });
   await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await (deps.writeFile ?? ((p, c) => fs.writeFile(p, c, 'utf8')))(filePath, html);
+  await (deps.writeFile ?? writeExportFile)(filePath, html);
   return { path: filePath, bytes: Buffer.byteLength(html, 'utf8'), generatedAt };
 }
 // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction,ObjectLiteral
@@ -1089,7 +1128,7 @@ export async function exportBusinessDashboardMdImpl(
     generatedAt,
   });
   await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await (deps.writeFile ?? ((p, c) => fs.writeFile(p, c, 'utf8')))(filePath, md);
+  await (deps.writeFile ?? writeExportFile)(filePath, md);
   return { path: filePath, bytes: Buffer.byteLength(md, 'utf8'), generatedAt };
 }
 // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction,ObjectLiteral

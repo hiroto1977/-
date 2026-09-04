@@ -1,0 +1,73 @@
+---
+title: "researchgate.net"
+type: source-domain
+host: "researchgate.net"
+cite_count: 50
+tags:
+  - source-domain
+  - index
+---
+
+# researchgate.net
+
+> [!info] 出典ドメイン索引 ・ 引用 **50 件**（学術 43 ・ リファレンス 7）
+
+## このドメインを出典とする項目
+
+- [[bizlaw-clean-hands-doctrine|クリーンハンズ法理（不正行為の抗弁）]] — BeyondChafee:AProcess-BasedTheoryofUncleanHands
+- [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — Myrdal'sTheoryofCumulativeCausation—ResearchGate
+- [[econ-ces-production|CES生産関数]] — TheOriginsoftheCESProductionFunction（Arrow-Chenery-Minhas-Solow1961の出…
+- [[econ-eaton-lipsey-local-clustering|イートン＝リプシーの局所的集塊の原理（Eaton-Lipsey's Principle of Local Clustering）]] — ResearchGaterecordofEaton&Lipsey(1975)—fullpapermetadataandabstract,p…
+- [[econ-juglar-cycle|ジュグラー・サイクル（Juglar Cycle）]] — LeGrand&Hagemann—BusinessCyclesinJuglarandSchumpeter—ResearchGate
+- [[econ-user-cost-of-capital|資本の使用者費用]] — Jorgenson,"CapitalTheoryandInvestmentBehavior,"AmericanEconomicReview…
+- [[human-action-observation-mismatch|アクション・オブザベーション・ミスマッチ（Action-Observation Mismatch）]] — Bosbachetal.(2005)Full-TextPDF—ResearchGate
+- [[human-autobiographical-memory|自伝的記憶（Autobiographical Memory）]] — Conway&Pleydell-Pearce(2000)TheConstructionofAutobiographicalMemories…
+- [[human-cognitive-appraisal|認知的評価理論（感情）]] — AppraisalTheoryofEmotion（学術レビュー：アーノルド1960／一次・二次評価）
+- [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — Loewenstein1994ThePsychologyofCuriosity:AReviewandReinterpretation,Ps…
+- [[human-ideomotor|観念運動効果（Ideomotor Effect）]] — Stock&Stock(2004)AShortHistoryofIdeo-MotorAction—ResearchGate
+- [[human-implicit-association-test-greenwald|潜在的連合テスト（IAT）]] — Greenwald,Nosek&Banaji(2003)UnderstandingandUsingtheIAT:I.AnImprovedS…
+- [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — Christopheetal.(1997)ReflectionsonPhonologicalBootstrapping—Language&…
+- [[human-self-verification-swann|自己確証理論（スワン）——自己像を裏づける評価を求める動機]] — Swann,W.B.,Jr.(1983)Self-verification:Bringingsocialrealityintoharmon…
+- [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — Just&Latzer(2017)Full-Text—ResearchGate
+- [[infosoc-communicative-capitalism|コミュニカティブ・キャピタリズム（Communicative Capitalism）]] — Dean(2005)CommunicativeCapitalism—ResearchGate
+- [[infosoc-counterpublic|対抗的公共圏（カウンターパブリック）]] — MichaelWarner,"PublicsandCounterpublics"(2002)
+- [[infosoc-data-double|データ・ダブル／監視的アサンブラージュ（Data Double / Surveillant Assemblage）]] — Haggerty&Ericson(2000)—ResearchGate
+- [[infosoc-information-disorder|情報障害（Information Disorder）]] — Wardle&Derakhshan(2017)InformationDisorder—CouncilofEurope/ResearchGa…
+- [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — Star&Ruhleder(1996)—ResearchGate
+- [[infosoc-network-gatekeeping|ネットワーク・ゲートキーピング理論（Network Gatekeeping Theory）]] — Barzilai-Nahon(2008)NetworkGatekeepingFramework—ResearchGate
+- [[infosoc-phenomenological-technology|技術の現象学]] — Human-DataRelationsandtheLifeworld-DonIhdephenomenologicalframework
+- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — Gillespie(2010)—ResearchGate
+- [[mgmt-aaker-brand-identity|アーカーのブランド・アイデンティティ]] — AnApplicationofDavidA.Aaker'sBrandIdentityPlanningModel（査読付ケーススタディ）
+- [[mgmt-absorptive-capacity-theory|吸収能力理論]] — ResearchGate—Cohen&Levinthal(1990)fulltext&citations
+- [[mgmt-absorptive-capacity-theory|吸収能力理論]] — ResearchGate—Zahra&George(2002)fulltext&citations
+- [[mgmt-adaptive-performance-griffin|適応的パフォーマンス（グリフィン・ニール・パーカー）]] — Pulakos,E.D.,Arad,S.,Donovan,M.A.,&Plamondon,K.E.(2000)Adaptabilityin…
+- [[mgmt-affective-events-theory|感情イベント理論（AET）]] — Weiss&Cropanzano(1996)AffectiveEventsTheory—ResearchGate
+- [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — Appelbaum,Bailey,Berg&Kalleberg(2000)ManufacturingAdvantage(CornellUn…
+- [[mgmt-career-construction-theory-savickas|キャリア構築理論（サビカス理論）]] — ResearchGate—Savickas(2013)Careerconstructiontheoryandpractice
+- [[mgmt-collective-efficacy-bandura|集合的効力感理論]] — Feltzetal.—DevelopmentandPreliminaryValidationoftheCollectiveEfficacy…
+- [[mgmt-competing-values|競合価値フレームワーク（CVF）]] — AReviewofStudyontheCompetingValuesFramework（2軸・4象限と因子分析的起源の学術レビュー）
+- [[mgmt-crossing-the-chasm|キャズム理論（Crossing the Chasm）]] — CanYouSeetheChasm?—Rogers/Bass/Mooreの普及理論比較（学術文献）
+- [[mgmt-event-system-theory|出来事システム理論（Event System Theory）]] — Morgeson,Mitchell&Liu(2015)EventSystemTheory—ResearchGatefull-textrec…
+- [[mgmt-experience-economy|経験経済（パイン＆ギルモア）]] — Oh,Fiore&Jeong,“PineandGilmore'sConceptofExperienceEconomyandItsDimen…
+- [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — Weick,K.E.&Sutcliffe,K.M.(2007).ManagingtheUnexpected:ResilientPerfor…
+- [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — Crossleyetal.2007,globalmeasuredevelopment
+- [[mgmt-learning-agility|学習敏捷性（ラーニング・アジリティ）]] — Lombardo&Eichinger(2000)—HighPotentialsasHighLearners,HumanResourceMa…
+- [[mgmt-network-organization|ネットワーク組織（Network Forms of Organization）]] — Powell(1990)NeitherMarketNorHierarchy:NetworkFormsofOrganization—Rese…
+- [[mgmt-service-blueprint|サービス・ブループリント]] — Bitner,Ostrom&Morgan,“ServiceBlueprinting:APracticalTechniqueforServi…
+- [[mgmt-strategic-alliance|戦略的提携理論（Strategic Alliance Theory）]] — StrategicAlliances—ResearchGate
+- [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — Hittetal.(2001)—ResearchGate
+- [[mgmt-strategic-issue-selling|戦略的イシュー・セリング（Strategic Issue Selling）]] — Dutton&Ashford(1993)SellingIssuestoTopManagement—ResearchGate
+- [[mgmt-strategic-issue-selling|戦略的イシュー・セリング（Strategic Issue Selling）]] — Duttonetal.(2001)MovesThatMatter:IssueSellingandOrganizationalChange—…
+- [[mgmt-team-mental-models-theory|チーム・メンタルモデル理論]] — DeChurch&Mesmer-Magnus(2010)—MeasuringSharedTeamMentalModels:AMeta-An…
+- [[mgmt-temporal-leadership|テンポラル・リーダーシップ（Temporal Leadership）]] — Mohammed&Nadkarni(2011)—ResearchGate
+- [[mgmt-threat-rigidity-effect|脅威による硬直化効果（Threat-Rigidity Effect）]] — ResearchGatefull-textrepository—Threat-RigidityEffectsinOrganizationa…
+- [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — ResearchGate—ASociallyEmbeddedModelofThrivingatWork
+- [[mgmt-trust-integrative-model|組織的信頼統合モデル（メイヤー＝デイビス＝シューアマンの信頼モデル）]] — ResearchGate—"Organizationaltrust:Mayer,DavisandSchoormanmodel,arevie…
+- [[mgmt-work-family-border-theory|仕事─家庭境界理論（ボーダー理論）]] — ResearchGate—Clark(2000)Work/FamilyBorderTheory
+
+## 関連
+- 索引: [[出典ドメイン索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

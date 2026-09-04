@@ -46,8 +46,22 @@ a:hover { text-decoration: underline; }
 
 .app {
   display: grid;
-  grid-template-columns: 240px 1fr;
+  /* minmax(0, 1fr): コンテンツ列が「中身の最小幅」で広がるのを防ぐ。
+     これがないと幅の広い表やチャートが列を押し広げ、.app の overflow:hidden で
+     画面外に見切れてしまう (スクロールもできない)。0 を下限にすると列は
+     ビューポート幅に収まり、はみ出す中身は .content / .data-section 側で
+     スクロールに切り替わる。 */
+  grid-template-columns: 240px minmax(0, 1fr);
+  /* 行も 100vh に収める。これがないと暗黙の行が中身の高さ(auto)で広がり、
+     height:100vh + overflow:hidden の組み合わせで下側が画面外に切れ、しかも
+     スクロールできなくなる (背の高いページでチャートの下が見られない原因)。
+     minmax(0, 1fr) で行をビューポート高に収め、はみ出しは .content 側の
+     overflow-y:auto で縦スクロールに切り替える。 */
+  grid-template-rows: minmax(0, 1fr);
   height: 100vh;
+  /* モバイルブラウザの動的 URL バー対策: 対応環境では実表示高 (dvh) を使う。
+     100vh だと Android Chrome で下端 (チャットボット等) がバーの裏に隠れる。 */
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -67,6 +81,57 @@ a:hover { text-decoration: underline; }
   color: var(--text-muted);
   text-transform: uppercase;
 }
+
+.sidebar-search {
+  padding: 0 16px 12px;
+}
+.sidebar-search-input {
+  width: 100%;
+  padding: 7px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border, #2a2f3a);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 13px;
+}
+.sidebar-search-input::placeholder { color: var(--text-muted); }
+.sidebar-search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: rgba(110, 168, 255, 0.06);
+}
+.sidebar-empty {
+  padding: 12px 20px;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.sidebar-section-label {
+  padding: 4px 12px;
+  margin-top: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+}
+.sidebar-item-controls {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.fav-toggle {
+  font-size: 13px;
+  line-height: 1;
+  color: var(--text-muted);
+  opacity: 0;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.sidebar-item:hover .fav-toggle { opacity: 0.5; }
+.fav-toggle.on { opacity: 1; color: var(--warning); }
+.fav-toggle:hover { opacity: 1 !important; color: var(--warning); }
 
 .sidebar-nav {
   flex: 1;
@@ -118,6 +183,7 @@ a:hover { text-decoration: underline; }
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-width: 0; /* グリッド子要素が中身で広がらないようにする (見切れ防止の要) */
 }
 
 .topbar {
@@ -128,27 +194,164 @@ a:hover { text-decoration: underline; }
   padding: 0 24px;
   gap: 16px;
   background: var(--bg-elevated);
+  min-width: 0;
+  overflow: hidden;
 }
 .topbar h1 {
   font-size: 16px;
   margin: 0;
   font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
+
+/* ハンバーガー (モバイル/タブレットのみ表示 — メディアクエリ側で display 切替) */
+.menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
+  flex: none;
+}
+
+/* ドロワー開時の背景 (モバイルのみ・タップで閉じる) */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(0, 0, 0, 0.55);
+  border: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+/* 音声ボタンが狭い画面で 2 行に折り返してトップバーを壊すのを防ぐ */
+.voice-mic { white-space: nowrap; }
 .topbar .description {
   color: var(--text-muted);
   font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .content {
   flex: 1;
   overflow-y: auto;
+  overflow-x: auto; /* 万一の横はみ出しはページ全体ではなくここでスクロール */
   padding: 24px;
+  min-width: 0;
+}
+
+/* --- レスポンシブ・ガードレール: どのページでも画面内に収める ---
+   個別ページに手を入れなくても、共通の崩れ要因をここで吸収する。 */
+
+/* メディアはコンテナ幅を上限に。viewBox 付き SVG はアスペクト比を保ったまま縮む。 */
+.content img,
+.content svg,
+.content canvas,
+.content video {
+  max-width: 100%;
+}
+
+/* コードブロックは内部で横スクロール (ページを押し広げない) */
+.content pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* 幅の広い表やセクション内容は、ページ全体ではなくカード内で横スクロールさせる。
+   これで見出しは固定のまま、はみ出した中身だけをスクロールして確認できる。 */
+.data-section {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.data-section table {
+  max-width: 100%;
+}
+
+/* --- モバイル/タブレット最適化 (Android スマホ・タブレット・iPad) ---
+   768px 以下ではサイドバーを常設せず、ハンバーガーで開くオーバーレイ・
+   ドロワーに切り替える。コンテンツが全幅を使えるので、スマホでも
+   デスクトップと同じページがそのまま操作できる。 */
+@media (max-width: 768px) {
+  .app {
+    grid-template-columns: minmax(0, 1fr); /* サイドバー列を畳む */
+  }
+  .menu-btn { display: inline-flex; }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: min(300px, 84vw);
+    z-index: 50;
+    transform: translateX(-105%);
+    transition: transform 0.22s ease;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.5);
+    /* ノッチ/ジェスチャーバーを避ける (viewport-fit=cover 時のみ効く) */
+    padding-top: max(16px, env(safe-area-inset-top));
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .app.nav-open .sidebar { transform: translateX(0); }
+  .app.nav-open .sidebar-backdrop { display: block; }
+  .content { padding: 16px; }
+  .topbar { padding: 0 12px; gap: 10px; }
+  /* フォーカス時の自動ズーム防止: モバイル Safari/Chrome は 16px 未満の
+     入力欄にフォーカスするとページ全体を拡大してしまう。ページ側の
+     inline style (fontSize: 13 等) にも勝つ必要があるため !important。 */
+  input, select, textarea { font-size: 16px !important; }
+}
+
+/* ページ内フォーム/統計カードのレスポンシブユーティリティ。
+   .field-grid — 入力フォームの列。デスクトップは複数列、狭幅では自動で
+     1〜2 列に折り返す。inline の固定幅 (width: 140 等) より優先させるため
+     幅は !important で 100% にする (checkbox/radio は除外)。
+   .stat-grid — Stat カードの列。repeat(N, 1fr) 固定だとスマホで金額が
+     潰れるため、auto-fit + minmax で折り返す。 */
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
+  gap: 10px 12px;
+  align-items: end;
+}
+.field-grid input:not([type="checkbox"]):not([type="radio"]),
+.field-grid select {
+  width: 100% !important;
+  min-width: 0;
+}
+.stat-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
+}
+@media (max-width: 640px) {
+  .topbar .description { display: none; } /* タイトル+音声ボタンを優先 */
+  .content { padding: 12px; }
+}
+
+/* タッチデバイス (Android/iPad 等): ホバーが無い前提の操作性を確保する。 */
+@media (pointer: coarse) {
+  .sidebar-item { padding: 13px 20px; } /* 指で押しやすい高さ (~44px) */
+  .sidebar-item:active { background: rgba(255, 255, 255, 0.08); }
+  /* ホバーで出す UI はタッチでは永遠に出ないので、常時うっすら表示 */
+  .fav-toggle { opacity: 0.45; }
+  .data-list-open { padding: 8px 14px; }
+  button { touch-action: manipulation; } /* ダブルタップズームの誤発火防止 */
 }
 
 .page-grid {
   display: grid;
   gap: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
 }
 
 .card {
@@ -315,4 +518,105 @@ a:hover { text-decoration: underline; }
   height: 28px;
   border-radius: 50%;
   border: 1px solid var(--border);
+}
+
+/* --- 書類スタジオ (DocstudioPage): 書面プレビュー + 印刷 --- */
+.ds-paper {
+  background: #ffffff;
+  color: #1c2027;
+  border-radius: 10px;
+  padding: 40px 44px;
+  line-height: 1.95;
+  font-size: 13.5px;
+  font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', serif;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.35);
+  max-width: 760px;
+}
+.ds-title { text-align: center; font-size: 20px; letter-spacing: 0.14em; font-weight: 700; margin: 0 0 22px; }
+.ds-chapter { text-align: center; font-weight: 700; margin: 18px 0 6px; letter-spacing: 0.2em; }
+.ds-h { font-weight: 700; margin: 12px 0 2px; }
+.ds-p { margin: 4px 0; text-align: justify; }
+.ds-li { margin: 2px 0 2px 1.5em; }
+.ds-right { text-align: right; margin: 7px 0; }
+.ds-fill { font-weight: 700; border-bottom: 1px solid #999; padding: 0 2px; }
+.ds-fill.ds-empty { color: #b06060; font-weight: 400; }
+.ds-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px;
+            font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+.ds-table th, .ds-table td { border: 1px solid #8892a0; padding: 6px 10px; }
+.ds-table th { background: #f2f5fa; }
+.ds-table td.ds-num { text-align: right; font-variant-numeric: tabular-nums; }
+.ds-table tr.ds-total td { font-weight: 700; background: #f8f9fc; }
+.ds-sign { display: flex; gap: 28px; margin-top: 24px; flex-wrap: wrap; }
+.ds-sign-side { flex: 1 1 220px; }
+.ds-big { text-align: center; font-size: 21px; font-weight: 700; border: 2px solid #1c2027;
+          padding: 10px 16px; margin: 14px auto; max-width: 420px; }
+.ds-stamp { width: 110px; height: 70px; border: 1px dashed #999; color: #999; font-size: 9.5px;
+            display: flex; align-items: center; justify-content: center; text-align: center;
+            padding: 4px; margin-top: 12px; font-family: 'Hiragino Sans', sans-serif; }
+.ds-disclaimer { margin-top: 26px; padding-top: 9px; border-top: 1px solid #d5d9e0; color: #667;
+                 font-size: 10.5px; font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+
+/* 印刷: アプリの UI を隠し、書面 (.ds-paper) だけを A4 に出力する */
+@media print {
+  body.ds-printing .sidebar,
+  body.ds-printing .sidebar-backdrop,
+  body.ds-printing .topbar,
+  body.ds-printing .ds-side,
+  body.ds-printing .chatbot-widget {
+    display: none !important;
+  }
+  body.ds-printing .app { display: block; height: auto; overflow: visible; }
+  body.ds-printing .main { overflow: visible; }
+  body.ds-printing .content { overflow: visible; padding: 0; }
+  body.ds-printing .ds-paper { box-shadow: none; border-radius: 0; max-width: none;
+                               padding: 0; font-size: 11.5pt; }
+  body.ds-printing .ds-fill.ds-empty { color: #444; }
+}
+
+/* ---------------------------------------------------------------------------
+ * 金融機関等提出用の書面 (.bank-sheet) — 画面では白い紙、印刷では A4 に紙だけを出す。
+ * 数字は等幅の桁 (tabular-nums) で右揃え、罫線は 0.5pt の黒。明朝体は
+ * 決算書・試算表と同じ読み味にするため (画面のテーマ色は使わない)。
+ * ------------------------------------------------------------------------- */
+.bank-toolbar { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; padding: 10px 12px;
+                border: 1px solid var(--border, #334); border-radius: 8px; font-size: 12px; }
+.bank-toolbar-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+.bank-field { display: flex; flex-direction: column; gap: 2px; font-size: 11px; color: var(--text-mute); }
+.bank-hint { color: var(--text-mute); font-size: 11px; }
+.bank-error { color: #f87171; }
+.bank-saved { color: #22c55e; }
+.bank-sheet { background: #fff; color: #111; max-width: 210mm; margin: 0 auto; padding: 16mm 15mm;
+              box-shadow: 0 2px 14px rgba(0, 0, 0, 0.3); border-radius: 3px; font-size: 10.5pt; line-height: 1.5;
+              font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'MS Mincho', 'Noto Serif JP', serif;
+              font-variant-numeric: tabular-nums; }
+.bank-sheet h1 { margin: 0; text-align: center; font-size: 17pt; font-weight: 600; letter-spacing: 0.3em; color: #111; }
+.bank-sheet h2 { margin: 14px 0 4px; font-size: 11pt; font-weight: 600; color: #111;
+                 border-left: 3px solid #111; padding-left: 6px; }
+.bank-sheet-stamp { float: right; border: 1px solid #111; padding: 1px 8px; font-size: 9pt; }
+.bank-sheet-sub { margin: 4px 0 12px; text-align: center; font-size: 10pt; }
+.bank-meta, .bank-table { width: 100%; border-collapse: collapse; }
+.bank-meta th, .bank-meta td, .bank-table th, .bank-table td { border: 0.5pt solid #111; padding: 3px 6px;
+                                                                 vertical-align: middle; font-size: 10pt; }
+.bank-meta th { width: 16%; background: #f0f0f0; font-weight: 600; text-align: left; white-space: nowrap; }
+.bank-meta td { width: 34%; }
+.bank-table th { background: #f0f0f0; font-weight: 600; text-align: center; }
+.bank-table td.bank-num { text-align: right; white-space: nowrap; width: 22%; }
+.bank-table td.bank-note { color: #333; font-size: 9pt; width: 38%; }
+.bank-unit { margin: 8px 0 2px; text-align: right; font-size: 9pt; }
+.bank-caption { margin: 3px 0 0; font-size: 9pt; color: #333; }
+.bank-notes ol { margin: 4px 0; padding-left: 1.6em; font-size: 9pt; }
+.bank-attest { margin-top: 18px; }
+.bank-attest p { margin: 0 0 6px; }
+.bank-attest table { border-collapse: collapse; }
+.bank-attest th { text-align: left; font-weight: 600; padding: 4px 12px 4px 0; white-space: nowrap; }
+.bank-attest td { padding: 4px 0; min-width: 60mm; }
+.bank-seal { display: inline-block; width: 16mm; height: 16mm; margin-left: 8px; border: 0.5pt solid #111;
+             border-radius: 50%; text-align: center; line-height: 16mm; color: #999; font-size: 9pt; vertical-align: middle; }
+
+@media print {
+  @page { size: A4 portrait; margin: 15mm 14mm; }
+  body.ds-printing .bank-toolbar { display: none !important; }
+  body.ds-printing .bank-sheet { box-shadow: none; border-radius: 0; max-width: none; padding: 0; }
+  body.ds-printing .bank-section, body.ds-printing .bank-attest { break-inside: avoid; page-break-inside: avoid; }
+  body.ds-printing .bank-table thead { display: table-header-group; }
 }

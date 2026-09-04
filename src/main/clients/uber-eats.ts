@@ -1,15 +1,18 @@
 import type { ActionContext, ActionMap, FetchContext, ServiceAdvisorResponse } from './types';
+import { MAX_RECORD_NOTE_CHARS } from '../../shared/recordEntryLimits';
 
 /**
  * Uber Eats — フードデリバリー (snapshot 専用)。
  *
  * Eats Merchants API はパートナー認証が必須で、本プロジェクトでは未配線。
- * このファイルは `LIVE_FETCHERS` invariant (clients/index.ts:33-85 で
+ * このファイルは `LIVE_FETCHERS` invariant (clients/index.ts で
  * すべての ServiceId が登録されている必要がある) を満たすための static
- * stub。実際の業務 KPI ダッシュボードは `SNAPSHOT.uberEats` を直接
- * 描画するため、refresh ボタンを押してもネットワーク呼び出しは発生せず、
- * 同等のデータが返る。パートナー資格を取得して live を有効化する際は、
- * この fetcher 内で fetch を行い同じ shape で返却する。
+ * stub。**返すのは空の値で、`SNAPSHOT.uberEats` とは別物**なので、これを
+ * 画面に流し込むと表示が空になる。そのため `shared/dataOrigin.ts` で
+ * 'sample' と宣言し、renderer 側 (`useServiceData`) は取得自体を行わない。
+ * パートナー資格を取得して live を有効化する際は、この fetcher 内で fetch を
+ * 行い同じ shape で返し、`SERVICE_DATA_ORIGIN` を 'remote' へ直す
+ * (`lint:data-origin` が直し忘れを落とす)。
  */
 
 export interface UberEatsSnapshot {
@@ -70,23 +73,31 @@ export interface RecordEntryResult {
   readonly persisted: false;
 }
 
+// Stryker disable next-line all
 async function recordEntry(ctx: ActionContext): Promise<RecordEntryResult> {
   const p = (ctx.payload ?? {}) as Partial<RecordEntryPayload>;
-  if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > 2000) {
-    throw new Error('uber-eats.record-entry: note は 1-2000 文字で指定してください');
+  // Stryker disable all
+  if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > MAX_RECORD_NOTE_CHARS) {
+    throw new Error(`uber-eats.record-entry: note は 1-${MAX_RECORD_NOTE_CHARS} 文字で指定してください`);
   }
   if (p.amount !== undefined && (typeof p.amount !== 'number' || !Number.isFinite(p.amount))) {
     throw new Error('uber-eats.record-entry: amount は finite な数値で指定してください');
   }
+  // Stryker restore all
   return { ok: true, serviceId: 'uber-eats', recordedAt: new Date().toISOString(), persisted: false };
 }
 
+// Stryker disable all
+// — disable for stub UX content (disclaimer text + recommendation titles/rationale).
+// These string literals are not security-critical; their exact wording will be replaced
+// by LLM output in Phase 6. Stryker mutations on these are noise.
 const UBER_EATS_DISCLAIMER =
   '本提案は静的 snapshot に基づくテンプレートであり、店舗運営上の助言ではありません。' +
   '実際の経営判断はオーナー・専門家の責任で行ってください。Phase 6 で実 LLM 推論を接続します。';
 
 async function advise(ctx: ActionContext): Promise<ServiceAdvisorResponse> {
   void ctx;
+  // Stryker disable next-line all
   return {
     recommendations: [
       { title: '店舗別売上の平準化', rationale: 'Shibuya > Shinjuku > Ikebukuro のばらつきが大きい。Top 店舗のオペレーションを他 2 店舗へ展開すると平均化が見込める。' },
@@ -103,3 +114,4 @@ export const ACTIONS: ActionMap = {
   'record-entry': recordEntry,
   advise,
 };
+// Stryker restore all

@@ -1,0 +1,50 @@
+---
+collection: academic
+id: econ-property-rights-demsetz
+category: "economics"
+category_ja: "経済学"
+title: "財産権の生成理論——外部性の内部化が私的所有権を生む"
+as_of: "2026-06-26"
+source_count: 2
+authoritative: true
+tags:
+  - collection/academic
+  - academic/economics
+  - knowledge/verified
+aliases:
+  - "財産権の生成理論——外部性の内部化が私的所有権を生む"
+---
+
+# 財産権の生成理論——外部性の内部化が私的所有権を生む
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-06-26 ・ 出典: 2件（うち権威ある出典 ✓）
+
+## 概要
+財産権の生成理論は、ハロルド・デムゼッツが1967年の論文「財産権の理論に向けて」で提示した、財産権がなぜ、どのようにして生まれ、共有的なものから私的なものへと進化するのかを説明する理論である。デムゼッツの中心的な主張は、財産権が、外部性を内部化することの便益が、その権利を確立し執行する費用を上回るようになったときに出現し発展するというものである。外部性とは、ある主体の行動が、市場での取引を介さずに他者に及ぼす影響であり、共有資源の乱獲はその典型である。誰もが自由に利用できる共有地では、各人は自分が資源を消費する便益をすべて得る一方、それによる資源の枯渇という費用は共同体全体に分散して負担されるため、個人には資源を過剰に利用する誘因が生じる。これがコモンズの悲劇である。デムゼッツは、こうした外部性が顕著になると、それを内部化する仕組みとして私的財産権が生まれると論じた。資源を特定の個人に私的に割り当てれば、その所有者は資源を乱用すれば自らが将来の損失を被るため、資源を持続的に管理する誘因を持つようになり、外部性が内部化される。デムゼッツが挙げた有名な例が、ラブラドル半島のモンタニェ族における土地の私的所有の発生である。彼らはもともと狩猟地を共有していたが、ヨーロッパとの毛皮交易が始まってビーバーの毛皮に高い価値が生じると、共有のもとでの乱獲（外部性）の費用が急増した。これに応じて、彼らは狩猟territoryを家族ごとに割り当てる私的所有的な慣行を発達させ、ビーバーの過剰捕獲を抑制したという。財産権の生成理論は、財産権を所与の制度としてではなく、技術や相対価格、資源の希少性の変化に応じて、外部性に対処するために効率的に進化する内生的な制度として捉える視座を提供した。この理論は、ロナルド・コースの社会的費用の議論やダグラス・ノースの制度の経済史と並んで、新制度派経済学と財産権理論の礎をなしている。
+
+## 提唱者・初出
+ハロルド・デムゼッツ ／ ロナルド・コース ／ アルメン・アルチャン ／ ダグラス・ノース
+
+## 出典
+- [Demsetz, H. (1967) Toward a Theory of Property Rights — American Economic Review 57(2)](https://www.jstor.org/stable/1821637) `学術`
+- [Wikipedia: Harold Demsetz — theory of property rights, internalizing externalities, Montagnais beaver example](https://en.wikipedia.org/wiki/Harold_Demsetz) `リファレンス`
+
+## 関連概念
+- [[mgmt-transaction-cost-economics|取引コスト理論（取引費用経済学）]] — 同じ思想家
+- [[econ-coase-theorem|コースの定理（Coase theorem）]] — 同じ思想家
+- [[econ-new-institutional-economics-north|新制度経済学と制度変化の歴史的分析——ノースの経路依存性論]] — 同じ思想家
+- [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — 同じ思想家
+- [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — 同じ思想家
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — 同じ思想家
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 同じ思想家
+- [[bizlaw-learned-hand-formula|ラーニッド・ハンドの定式——過失を費用と確率で測る]] — 同じ思想家
+- [[econ-alchian-allen-theorem|アルチャン＝アレンの定理——「良いリンゴは外へ送られる」]] — 同じ思想家
+- [[econ-alchian-demsetz-team-production|チーム生産と残余請求権（アルチャン＆デムセッツ）]] — 同じ思想家
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

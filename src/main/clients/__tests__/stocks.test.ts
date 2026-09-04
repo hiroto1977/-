@@ -1,4 +1,5 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { promises as fsp } from 'node:fs';
 import {
   sma,
   ema,
@@ -23,13 +24,13 @@ import {
   validateAdvisorJson,
   ADVISOR_DISCLAIMER,
   renderDashboardHtml,
-  escapeHtml,
   defaultDashboardPath,
   isSafeDashboardPath,
   exportDashboardImpl,
   type Candle,
   type Signal,
   type StocksSnapshot,
+  type PaperTrade,
   type AdvisorResponse,
   loadStocksState,
   saveStocksState,
@@ -40,6 +41,7 @@ import {
   unregisterTickerImpl,
   fetchStocksSnapshotImpl,
   type StateDeps,
+  STOCKS_ADVISOR_MAX_TOKENS,
 } from '../stocks';
 import os from 'node:os';
 import path from 'node:path';
@@ -1545,16 +1547,37 @@ describe('ACTIONS["advise"]', () => {
     ).rejects.toThrow(/no text content/);
   });
 
-  it('honors a custom model + maxTokens override', async () => {
+  /*
+   * **payload は有料 API のパラメータを動かせない** (経緯は `skills.test.ts`)。
+   * ここは以前「上書きを尊重する」ことを確かめる検査だった。
+   */
+  it.each([
+    ['数値', 512],
+    ['巨大な値', 100_000_000],
+    ['負値', -1],
+    ['Infinity', Number.POSITIVE_INFINITY],
+    ['文字列', '999999'],
+    ['null', null],
+  ])('payload の maxTokens (%s) は無視される', async (_label, maxTokens) => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(anthropicMock(goodJson));
     await ACTIONS['advise']!({
       token: 'sk-ant-x',
       fetch: fetchMock,
-      payload: { question: 'q', model: 'claude-opus-4-7', maxTokens: 512 },
+      payload: { question: 'q', maxTokens },
     });
     const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
-    expect(body.model).toBe('claude-opus-4-7');
-    expect(body.max_tokens).toBe(512);
+    expect(body.max_tokens).toBe(STOCKS_ADVISOR_MAX_TOKENS);
+  });
+
+  it('payload の model も無視される (送り先モデルを選ばせない)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(anthropicMock(goodJson));
+    await ACTIONS['advise']!({
+      token: 'sk-ant-x',
+      fetch: fetchMock,
+      payload: { question: 'q', model: 'claude-opus-4-7' },
+    });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.model).toBe('claude-sonnet-4-6');
   });
 
   it('defaults to claude-sonnet-4-6 + 1024 max_tokens', async () => {
@@ -1919,38 +1942,6 @@ describe('advisor edge cases', () => {
   });
 });
 
-// --- escapeHtml ----------------------------------------------------------
-
-describe('escapeHtml', () => {
-  it('escapes &, <, >, ", \'', () => {
-    expect(escapeHtml('<script>')).toBe('&lt;script&gt;');
-    expect(escapeHtml('a & b')).toBe('a &amp; b');
-    expect(escapeHtml('"x"')).toBe('&quot;x&quot;');
-    expect(escapeHtml("it's")).toBe('it&#39;s');
-  });
-
-  it('escapes & FIRST so &lt; cannot decode back to <', () => {
-    // If `<` was escaped before `&`, the result would be `&amp;lt;`
-    // which renders as `&lt;` literally instead of `<`.
-    expect(escapeHtml('&lt;')).toBe('&amp;lt;');
-  });
-
-  it('leaves safe text untouched', () => {
-    expect(escapeHtml('hello world')).toBe('hello world');
-    expect(escapeHtml('')).toBe('');
-  });
-
-  it('handles a XSS-style attempt (kills any drop in the escape chain)', () => {
-    const out = escapeHtml('<img src=x onerror="alert(1)">');
-    expect(out).not.toContain('<');
-    expect(out).not.toContain('>');
-    expect(out).not.toContain('"');
-    expect(out).toContain('&lt;');
-    expect(out).toContain('&gt;');
-    expect(out).toContain('&quot;');
-  });
-});
-
 // --- renderDashboardHtml -------------------------------------------------
 
 function emptySnapshot(): StocksSnapshot {
@@ -2165,7 +2156,7 @@ describe('isSafeDashboardPath', () => {
   const home = '/home/user';
 
   it('accepts a .html under the home dir', () => {
-    expect(isSafeDashboardPath('/home/user/dashboard.html', home)).toBe(true);
+    expect(isSafeDashboardPath('/home/user/dashboard.html', home)).toBe(false); // outside export root
     expect(isSafeDashboardPath('/home/user/.local/business-hub/data/dashboard.html', home)).toBe(true);
   });
 
@@ -2227,7 +2218,8 @@ describe('exportDashboardImpl', () => {
   });
 
   it('honors a custom safe path', async () => {
-    const customPath = path.join(os.homedir(), 'my-dashboard.html');
+    // Custom paths must live inside the export root (2026-07 audit).
+    const customPath = path.join(os.homedir(), '.local', 'business-hub', 'data', 'my-dashboard.html');
     let received = '';
     const r = await exportDashboardImpl(
       { token: '', payload: { path: customPath } },
@@ -2842,7 +2834,8 @@ describe('defaultDashboardMdPath', () => {
 describe('isSafeDashboardMdPath', () => {
   const home = '/home/user';
   it('accepts a .md path under home', () => {
-    expect(isSafeDashboardMdPath('/home/user/x.md', home)).toBe(true);
+    expect(isSafeDashboardMdPath('/home/user/.local/business-hub/data/x.md', home)).toBe(true);
+    expect(isSafeDashboardMdPath('/home/user/x.md', home)).toBe(false);
   });
   it('rejects .html (wrong extension)', () => {
     expect(isSafeDashboardMdPath('/home/user/x.html', home)).toBe(false);
@@ -2881,7 +2874,7 @@ describe('exportDashboardMdImpl', () => {
   });
 
   it('honors a custom path under home', async () => {
-    const customPath = path.join(os.homedir(), 'tmp-md-test.md');
+    const customPath = path.join(os.homedir(), '.local', 'business-hub', 'data', 'tmp-md-test.md');
     let written = false;
     const r = await exportDashboardMdImpl(
       { token: '', payload: { path: customPath } },
@@ -3249,5 +3242,502 @@ describe('stocks state persistence', () => {
       expect(snap.isMock).toBe(true);
       expect(Array.isArray(snap.watchlist)).toBe(true);
     });
+  });
+});
+
+// --- 損をしていることが色と符号でしか出ない -----------------------------
+//
+// 損益・変動率・売買の別は、表の上では**色**と **`+` の有無**、そして
+// 「買い」/「売り」の 2 文字でしか出ない。金額は符号付きで正しく出るので、
+// 判定が反転しても数字は合ったまま**逆の顔をする**。
+//
+// これまでの検査は `expect(html).toContain('#22c55e')` の形だった。緑は
+// 買いシグナルの chip や戦略比較の最良行にも使うので、**判定を反転させても
+// 緑は必ずページのどこかに見つかる** — 落ちない検査だった。場所で絞る。
+
+describe('Stocks ダッシュボードの符号と色', () => {
+  const GREEN = '#22c55e';
+  const RED = '#ef4444';
+
+  /** 「損益」タイルの色・金額・パーセントを 1 つの塊として取り出す。 */
+  function pnlTile(page: string): { color: string; amount: string; pct: string } {
+    const re =
+      /<div class="label">損益<\/div><div class="value" style="color:(#[0-9a-f]{6})">([^<]*)<\/div><div class="sub">([^<]*)<\/div>/;
+    const m = re.exec(page);
+    return { color: m?.[1] ?? '', amount: m?.[2] ?? '', pct: m?.[3] ?? '' };
+  }
+  /** 「現在資産」タイルの表示額。 */
+  function equityTile(page: string): string {
+    return /<div class="label">現在資産<\/div><div class="value">([^<]*)<\/div>/.exec(page)?.[1] ?? '';
+  }
+
+  /** 現金 + 保有株の時価。`held` を渡すと 1 銘柄だけ建てる。 */
+  function withPosition(cash: number, shares: number, latestClose: number): StocksSnapshot {
+    return {
+      ...emptySnapshot(),
+      watchlist: [
+        {
+          symbol: 'X',
+          label: 'X Corp',
+          latestClose,
+          previousClose: latestClose,
+          changePct: 0,
+          signal: { date: '01', action: 'hold', confidence: 0, reason: 'r', strategy: 's' },
+          candles: [],
+        },
+      ],
+      portfolio: {
+        cash,
+        initialCash: 1_000_000,
+        positions: { X: { shares, avgCost: latestClose } },
+        history: [],
+      },
+    };
+  }
+
+  it('損益タイルは黒字なら緑と +、赤字なら赤と符号なし (0 は黒字あつかい)', () => {
+    // 現金 900,000 + 500 株 × 300 = 1,050,000 → +50,000 (+5.00%)
+    const win = renderDashboardHtml({ snapshot: withPosition(900_000, 500, 300), generatedAt: '01' });
+    expect(pnlTile(win)).toEqual({ color: GREEN, amount: '+￥50,000', pct: '+5.00%' });
+
+    // 現金 900,000 + 500 株 × 100 = 950,000 → -50,000 (-5.00%)
+    const loss = renderDashboardHtml({ snapshot: withPosition(900_000, 500, 100), generatedAt: '01' });
+    expect(pnlTile(loss)).toEqual({ color: RED, amount: '-￥50,000', pct: '-5.00%' });
+
+    // 境界: ちょうど 0 は損していないので赤にしない
+    const flat = renderDashboardHtml({ snapshot: withPosition(900_000, 500, 200), generatedAt: '01' });
+    expect(pnlTile(flat)).toEqual({ color: GREEN, amount: '+￥0', pct: '+0.00%' });
+  });
+
+  it('現在資産は現金に保有株の時価を足す (足し忘れると損に見える)', () => {
+    expect(equityTile(renderDashboardHtml({ snapshot: withPosition(900_000, 500, 300), generatedAt: '01' })))
+      .toBe('￥1,050,000');
+    // 株価が動けば現在資産も動く — 現金だけを出していれば変わらない
+    expect(equityTile(renderDashboardHtml({ snapshot: withPosition(900_000, 500, 100), generatedAt: '01' })))
+      .toBe('￥950,000');
+  });
+
+  it('保有銘柄はそれぞれ自分の値段で評価する (先頭の値段で揃えない)', () => {
+    // 2 銘柄を別々の値段で建てる。銘柄の取り違えが起きると、両方が
+    // 先頭 (A=100) の値段で評価され、現在資産が 100,000 ずれる。
+    const snap: StocksSnapshot = {
+      ...emptySnapshot(),
+      watchlist: (['A', 'B'] as const).map((symbol, i) => ({
+        symbol,
+        label: symbol,
+        latestClose: i === 0 ? 100 : 300,
+        previousClose: i === 0 ? 100 : 300,
+        changePct: 0,
+        signal: { date: '01', action: 'hold' as const, confidence: 0, reason: 'r', strategy: 's' },
+        candles: [],
+      })),
+      portfolio: {
+        cash: 100_000,
+        initialCash: 1_000_000,
+        positions: { A: { shares: 500, avgCost: 100 }, B: { shares: 500, avgCost: 300 } },
+        history: [],
+      },
+    };
+    // 100,000 + 500*100 + 500*300 = 300,000
+    expect(equityTile(renderDashboardHtml({ snapshot: snap, generatedAt: '01' }))).toBe('￥300,000');
+    // Markdown 側も同じ額を出す (式を 2 つ持たない)
+    expect(renderDashboardMarkdown({ snapshot: snap, generatedAt: '01' })).toContain('| 現在資産 | ￥300,000 |');
+  });
+
+  it('値段の分からない保有銘柄は時価に足さない', () => {
+    // ウォッチリストから外れた銘柄には最終値が無い。cost basis で
+    // 埋めると「持っていないお金」を資産に載せることになるので足さない。
+    const snap: StocksSnapshot = {
+      ...emptySnapshot(),
+      watchlist: [],
+      portfolio: {
+        cash: 100_000,
+        initialCash: 1_000_000,
+        positions: { GONE: { shares: 500, avgCost: 100 } },
+        history: [],
+      },
+    };
+    expect(equityTile(renderDashboardHtml({ snapshot: snap, generatedAt: '01' }))).toBe('￥100,000');
+  });
+
+  it('初期入金が 0 でも利益率は 0% にする (0 除算を出さない)', () => {
+    const snap: StocksSnapshot = {
+      ...emptySnapshot(),
+      portfolio: { cash: 500, initialCash: 0, positions: {}, history: [] },
+    };
+    const page = renderDashboardHtml({ snapshot: snap, generatedAt: '01' });
+    expect(pnlTile(page).pct).toBe('+0.00%');
+    expect(page).not.toContain('NaN');
+    expect(page).not.toContain('Infinity');
+  });
+
+  /** ウォッチリスト行の変動率セル (色 + 表記)。 */
+  function changeCell(page: string): { color: string; text: string } {
+    const m = /<td class="num" style="color:(#[0-9a-f]{6})">([^<]*%)<\/td>/.exec(page);
+    return { color: m?.[1] ?? '', text: m?.[2] ?? '' };
+  }
+  /** シグナル chip の色とラベル。 */
+  function signalChip(page: string): { color: string; label: string } {
+    const m = /<span class="chip" style="background:(#[0-9a-f]{6})">([^<]*)<\/span>/.exec(page);
+    return { color: m?.[1] ?? '', label: m?.[2] ?? '' };
+  }
+
+  function watched(changePct: number, action: 'buy' | 'sell' | 'hold'): StocksSnapshot {
+    return {
+      ...emptySnapshot(),
+      watchlist: [
+        {
+          symbol: 'X',
+          label: 'X Corp',
+          latestClose: 100,
+          previousClose: 100,
+          changePct,
+          signal: { date: '01', action, confidence: 0.5, reason: 'r', strategy: 's' },
+          candles: [],
+        },
+      ],
+    };
+  }
+
+  it('変動率も同じ規則 — 上げは緑と +、下げは赤 (0 は上げあつかい)', () => {
+    const page = (pct: number) =>
+      renderDashboardHtml({ snapshot: watched(pct, 'hold'), generatedAt: '01' });
+    expect(changeCell(page(1.5))).toEqual({ color: GREEN, text: '+1.50%' });
+    expect(changeCell(page(-1.5))).toEqual({ color: RED, text: '-1.50%' });
+    expect(changeCell(page(0))).toEqual({ color: GREEN, text: '+0.00%' });
+  });
+
+  it('シグナルの色とラベルが対になっている (買いが赤・売りが緑にならない)', () => {
+    const chip = (a: 'buy' | 'sell' | 'hold') =>
+      signalChip(renderDashboardHtml({ snapshot: watched(0, a), generatedAt: '01' }));
+    expect(chip('buy')).toEqual({ color: GREEN, label: '買い' });
+    expect(chip('sell')).toEqual({ color: RED, label: '売り' });
+    expect(chip('hold')).toEqual({ color: '#94a3b8', label: '見送り' });
+  });
+
+  // --- 取引履歴は「何をしたか」の記録 ---------------------------------
+  //
+  // 売買の別を取り違えると、記録が事実と逆になる。ここは飾りではない。
+
+  function trades(n: number): PaperTrade[] {
+    return Array.from({ length: n }, (_, i) => ({
+      date: `2026-01-${String(i + 1).padStart(2, '0')}`,
+      ticker: `T${String(i + 1).padStart(2, '0')}`,
+      action: (i % 2 === 0 ? 'buy' : 'sell') as 'buy' | 'sell',
+      shares: 1,
+      price: 100,
+      cashAfter: 1000,
+      reason: 'r',
+    }));
+  }
+  function withHistory(history: readonly PaperTrade[]): StocksSnapshot {
+    return {
+      ...emptySnapshot(),
+      portfolio: { cash: 1_000_000, initialCash: 1_000_000, positions: {}, history },
+    };
+  }
+  /** 取引履歴の各行から「銘柄・売買の色・売買のラベル」を取り出す。 */
+  function tradeRows(page: string): { ticker: string; color: string; label: string }[] {
+    const re =
+      /<td class="mute">[^<]*<\/td>\s*<td><strong>([^<]*)<\/strong><\/td>\s*<td style="color:(#[0-9a-f]{6})"><strong>([^<]*)<\/strong><\/td>/g;
+    return [...page.matchAll(re)].map((m) => ({ ticker: m[1] ?? '', color: m[2] ?? '', label: m[3] ?? '' }));
+  }
+
+  it('買いは緑で「買い」、売りは赤で「売り」', () => {
+    const rows = tradeRows(renderDashboardHtml({ snapshot: withHistory(trades(2)), generatedAt: '01' }));
+    // 新しい順に並ぶので T02 (sell) が先
+    expect(rows).toEqual([
+      { ticker: 'T02', color: RED, label: '売り' },
+      { ticker: 'T01', color: GREEN, label: '買い' },
+    ]);
+  });
+
+  it('直近 20 件を新しい順に出し、見出しの件数が表の行数と一致する', () => {
+    const page = renderDashboardHtml({ snapshot: withHistory(trades(25)), generatedAt: '01' });
+    const rows = tradeRows(page);
+    // 末尾 20 件 = T06..T25。先頭 20 件 (T01..T20) でも、全 25 件でもない。
+    expect(rows).toHaveLength(20);
+    expect(rows[0]!.ticker).toBe('T25'); // 新しい順
+    expect(rows[19]!.ticker).toBe('T06'); // 末尾 20 件の先頭
+    // 見出しが表より多くの件数を名乗らない
+    const heading = /最近の取引 \(直近 (\d+) 件\)/.exec(page)?.[1] ?? '';
+    expect(Number(heading)).toBe(rows.length);
+  });
+
+  it('20 件に満たなければ見出しも実際の件数を言う', () => {
+    const page = renderDashboardHtml({ snapshot: withHistory(trades(3)), generatedAt: '01' });
+    expect(/最近の取引 \(直近 (\d+) 件\)/.exec(page)?.[1]).toBe('3');
+    expect(tradeRows(page)).toHaveLength(3);
+  });
+
+  it('戦略比較のリターン列も同じ規則 (0 は + を付ける)', () => {
+    const page = renderDashboardHtml({
+      snapshot: emptySnapshot(),
+      generatedAt: '01',
+      strategyComparison: {
+        symbol: 'AAPL',
+        initialCash: 100_000,
+        rows: [
+          { strategy: 'up', finalEquity: 115_000, totalReturnPct: 15, maxDrawdownPct: 5, winRate: 1, tradeCount: 2 },
+          { strategy: 'flat', finalEquity: 100_000, totalReturnPct: 0, maxDrawdownPct: 0, winRate: 0, tradeCount: 0 },
+          { strategy: 'down', finalEquity: 95_000, totalReturnPct: -5, maxDrawdownPct: 8, winRate: 0, tradeCount: 1 },
+        ],
+        bestByReturn: 'up',
+      },
+    });
+    const cells = [...page.matchAll(/<td class="num" style="color:(#[0-9a-f]{6})">([^<]*%)<\/td>/g)].map(
+      (m) => ({ color: m[1] ?? '', text: m[2] ?? '' }),
+    );
+    expect(cells).toEqual([
+      { color: GREEN, text: '+15.00%' },
+      { color: GREEN, text: '+0.00%' },
+      { color: RED, text: '-5.00%' },
+    ]);
+  });
+});
+
+/*
+ * 書き出した Markdown の構造が埋め込みで乗っ取られないか。
+ *
+ * ここには関数内に `escMd = s => s.replace(/\|/g,'\\|')` が 1 つあり、`|` は
+ * 落としていたが (a) 改行を落としていないので 1 行の構造 (見出し・箇条書き・
+ * 引用) から抜けられ、(b) `<` を落としていないので生 HTML が通っていた。
+ */
+describe('renderDashboardMarkdown — 埋め込みが構造を乗っ取れないか', () => {
+  const snap = (over: Record<string, unknown> = {}): Parameters<typeof renderDashboardMarkdown>[0]['snapshot'] =>
+    ({
+      watchlist: [],
+      portfolio: { initialCash: 1000, cash: 1000, positions: {}, history: [] },
+      fetchedAt: 'x',
+      isMock: true,
+      ...over,
+    }) as unknown as Parameters<typeof renderDashboardMarkdown>[0]['snapshot'];
+
+  it('銘柄名の改行と区切りが表を作り直さない', () => {
+    const md = renderDashboardMarkdown({
+      snapshot: snap({
+        watchlist: [
+          {
+            symbol: 'AAPL',
+            label: '偽|株\n\n| 乗っ取り |\n|---|\n| 0 |',
+            latestClose: 100,
+            changePct: 1,
+            candles: [],
+            signal: { action: 'hold', reason: 'r' },
+          },
+        ],
+      }),
+      generatedAt: 'x',
+    });
+    const row = md.split('\n').find((l) => l.includes('乗っ取り'));
+    expect(row).toBeDefined();
+    expect(row).toContain('偽\\|株');
+    expect(md).not.toMatch(/^\|---\|$/m);
+  });
+
+  it('アドバイザーの応答から生 HTML が出ない', () => {
+    const md = renderDashboardMarkdown({
+      snapshot: snap(),
+      advisorResult: {
+        recommendations: [
+          {
+            symbol: '<b>AAPL</b>',
+            rank: 1,
+            rationale: '<img src=x onerror=alert(1)>',
+            riskFactors: ['<script>alert(1)</script>'],
+          },
+        ],
+        disclaimer: '<style>body{display:none}</style>',
+        notForRealMoney: true,
+      },
+      generatedAt: 'x',
+    });
+    expect(md).not.toContain('<');
+    expect(md).toContain('&lt;img src=x onerror=alert(1)>');
+  });
+
+  it('見出し・引用・箇条書きから抜けさせない', () => {
+    const md = renderDashboardMarkdown({
+      snapshot: snap(),
+      advisorResult: {
+        recommendations: [
+          { symbol: 'A\n## 偽', rank: 1, rationale: 'ok', riskFactors: ['r\n- 偽'] },
+        ],
+        disclaimer: 'd\n本文',
+        notForRealMoney: true,
+      },
+      generatedAt: 'x',
+    });
+    expect(md).toContain('### 1. A ## 偽');
+    expect(md).toContain('- リスク: r - 偽');
+    expect(md).toContain('> d 本文');
+    expect(md).not.toMatch(/^## 偽$/m);
+  });
+
+  it('rationale は段落なので改行を残す', () => {
+    const md = renderDashboardMarkdown({
+      snapshot: snap(),
+      advisorResult: {
+        recommendations: [{ symbol: 'A', rank: 1, rationale: '一行目\n二行目', riskFactors: [] }],
+        disclaimer: 'd',
+        notForRealMoney: true,
+      },
+      generatedAt: 'x',
+    });
+    expect(md).toContain('一行目\n二行目');
+  });
+});
+
+/*
+ * IPC 境界の型ガードが、要素の中身まで見ているか。
+ *
+ * 2026-08-21 まで `isAdvisorResult` は `recommendations` が配列かどうかしか
+ * 見ておらず、同じファイルの `validateAdvisorJson` (全要素・全項目を検査)
+ * と守りが割れていた。TypeScript の型は IPC を越えないので、型の上では
+ * ありえない値が実行時には届く。
+ */
+describe('validateAdvisorJson — 宇宙が分からない場合 (allowedSymbols = null)', () => {
+  const rec = (over: Record<string, unknown> = {}) => ({
+    recommendations: [{ symbol: 'AAPL', rank: 1, rationale: 'r', riskFactors: ['x'], ...over }],
+  });
+
+  it('宇宙が null でも形は検査する', () => {
+    expect(() => validateAdvisorJson(rec(), null)).not.toThrow();
+    expect(() => validateAdvisorJson(rec({ rationale: '' }), null)).toThrow(/empty rationale/);
+    expect(() => validateAdvisorJson(rec({ rank: 0 }), null)).toThrow(/invalid rank/);
+    expect(() => validateAdvisorJson(rec({ riskFactors: [] }), null)).toThrow(/no riskFactors/);
+    expect(() => validateAdvisorJson({ recommendations: [null] }, null)).toThrow(/not an object/);
+  });
+
+  it('宇宙が null なら所属ではなく isSafeSymbol で判定する', () => {
+    // 許可リストに無くても、安全な形の銘柄なら通す。
+    expect(() => validateAdvisorJson(rec({ symbol: 'ZZZZ' }), null)).not.toThrow();
+    // 安全でない形は落とす。
+    expect(() => validateAdvisorJson(rec({ symbol: 'A B' }), null)).toThrow(/out-of-universe symbol/);
+    expect(() => validateAdvisorJson(rec({ symbol: '<script>' }), null)).toThrow(/out-of-universe symbol/);
+    expect(() => validateAdvisorJson(rec({ symbol: 'A'.repeat(17) }), null)).toThrow(/out-of-universe symbol/);
+  });
+
+  it('Set を渡したときは従来どおり所属で判定する', () => {
+    expect(() => validateAdvisorJson(rec(), new Set(['AAPL']))).not.toThrow();
+    // 形は安全でも宇宙の外なら落とす — null との違いはここに出る。
+    expect(() => validateAdvisorJson(rec({ symbol: 'ZZZZ' }), new Set(['AAPL']))).toThrow(
+      /out-of-universe symbol/,
+    );
+  });
+});
+
+/*
+ * 書き出しの入口で、壊れた助言が「そのまま描画されて落ちる」のではなく
+ * 「助言なし」として弾かれるか。
+ *
+ * 既存の 'ignores malformed advisor payloads' は `recommendations` が
+ * **配列ですらない**場合しか見ていなかった。配列でありさえすれば中身は
+ * 素通りしていたので、以下はどれも書き出しの最中に TypeError を投げていた
+ * (invoke ハンドラが受けるのでクラッシュはしないが、書き出しは丸ごと失敗し、
+ * ファイルは 1 バイトも書かれない)。
+ */
+describe('exportDashboardImpl — 配列の中身が壊れた助言', () => {
+  const snap = () =>
+    ({
+      watchlist: [],
+      portfolio: { initialCash: 1000, cash: 1000, positions: {}, history: [] },
+      fetchedAt: 'x',
+      isMock: true,
+    }) as unknown as StocksSnapshot;
+
+  const run = async (advisorResult: unknown): Promise<string> => {
+    let captured = '';
+    await exportDashboardImpl(
+      { token: '', payload: { advisorResult } },
+      {
+        fetchSnapshot: async () => snap(),
+        writeFile: async (_p, c) => {
+          captured = c;
+        },
+      },
+    );
+    return captured;
+  };
+
+  const cases: readonly (readonly [string, unknown])[] = [
+    ['要素が null', [null]],
+    ['rationale が数値', [{ symbol: 'AAPL', rank: 1, rationale: 42, riskFactors: ['x'] }]],
+    ['riskFactors が無い', [{ symbol: 'AAPL', rank: 1, rationale: 'r' }]],
+    ['rank が 0', [{ symbol: 'AAPL', rank: 0, rationale: 'r', riskFactors: ['x'] }]],
+    ['symbol が安全でない', [{ symbol: 'A B', rank: 1, rationale: 'r', riskFactors: ['x'] }]],
+  ];
+
+  for (const [label, recommendations] of cases) {
+    it(`${label} → 助言なしとして書き出しは成功する`, async () => {
+      const out = await run({ recommendations, disclaimer: 'd', notForRealMoney: true });
+      expect(out).not.toContain('AI アドバイザー結果');
+      // 書き出し自体は成功している (投げていない = ファイルの中身がある)。
+      expect(out.length).toBeGreaterThan(0);
+    });
+  }
+
+  it('正しい助言はこれまでどおり通る (絞りすぎていない)', async () => {
+    const out = await run({
+      recommendations: [{ symbol: 'AAPL', rank: 1, rationale: 'r', riskFactors: ['x'] }],
+      disclaimer: 'd',
+      notForRealMoney: true,
+    });
+    expect(out).toContain('AI アドバイザー結果');
+  });
+
+  it('ウォッチリストに無い銘柄でも通る (宇宙 ≠ ウォッチリスト)', async () => {
+    // 助言の宇宙は `advise` の `universe` payload か MOCK_TICKERS から来る。
+    // ここをウォッチリストで絞ると、正しい助言を黙って捨てることになる。
+    const out = await run({
+      recommendations: [{ symbol: 'ZZZZ', rank: 1, rationale: 'r', riskFactors: ['x'] }],
+      disclaimer: 'd',
+      notForRealMoney: true,
+    });
+    expect(out).toContain('AI アドバイザー結果');
+    expect(out).toContain('ZZZZ');
+  });
+});
+
+/*
+ * **内部状態は 600 で書く。**
+ *
+ * `state.json` に入るのはウォッチリスト —— 利用者が何に関心を持っているかという
+ * 個人の情報。実測 (2026-08-23) では 644 で、`secrets.json` /
+ * `service-hub-emotions.json` / `team-radar.json` がどれも 600 なのに、
+ * 内部状態のうちここだけが緩かった。
+ *
+ * `mode` は新規作成にしか効かないが、tmp を新しく作って rename で被せるので
+ * 既にある 644 のファイルも次の保存で直る (2 本目)。
+ */
+describe('saveStocksState の権限', () => {
+  let dir = '';
+
+  beforeEach(async () => {
+    dir = await fsp.mkdtemp(path.join(os.tmpdir(), 'stocks-mode-'));
+  });
+  afterEach(async () => {
+    await fsp.rm(dir, { recursive: true, force: true });
+  });
+
+  const modeOf = async (p: string) => ((await fsp.stat(p)).mode & 0o777).toString(8);
+
+  it('新しく作るファイルは 0600', async () => {
+    const target = path.join(dir, 'state.json');
+    await saveStocksState({ watchlist: ['AAPL'] }, { statePath: () => target });
+    expect(await modeOf(target)).toBe('600');
+    // 中身も書けていること (権限だけ見ると、書けていなくても通る)。
+    expect(JSON.parse(await fsp.readFile(target, 'utf8')).watchlist).toEqual(['AAPL']);
+  });
+
+  it('既にある 644 のファイルも、次の保存で締まる', async () => {
+    const target = path.join(dir, 'state.json');
+    await fsp.writeFile(target, '{"watchlist":[]}');
+    await fsp.chmod(target, 0o644);
+    expect(await modeOf(target)).toBe('644');
+
+    await saveStocksState({ watchlist: ['MSFT'] }, { statePath: () => target });
+
+    expect(await modeOf(target)).toBe('600');
   });
 });

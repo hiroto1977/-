@@ -1,0 +1,50 @@
+---
+collection: academic
+id: infosoc-co-production-jasanoff
+category: "information-sociology"
+category_ja: "情報社会学"
+title: "共産出——科学的知識と社会秩序はともに生み出される"
+as_of: "2026-06-27"
+source_count: 2
+authoritative: true
+tags:
+  - collection/academic
+  - academic/information-sociology
+  - knowledge/verified
+aliases:
+  - "共産出——科学的知識と社会秩序はともに生み出される"
+---
+
+# 共産出——科学的知識と社会秩序はともに生み出される
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-06-27 ・ 出典: 2件（うち権威ある出典 ✓）
+
+## 概要
+共産出（co-production、共産出のイディオム）は、科学技術社会論（STS）の研究者シーラ・ジャサノフが2004年の編著『知識の諸状態——科学と社会秩序の共産出』で提示した概念・枠組みで、科学的な「知識」と「社会秩序」とが「ともに（同時に）」生み出される——「共産出される」——と論じるものである。鍵となる主張はこうである。私たちが世界（自然と社会の双方）を知り、表象するに至るやり方は、私たちが世界の中でどう「生きる」かを選ぶやり方と「不可分」である——私たちの科学的知識、技術、そして社会的な制度・アイデンティティ・規範・言説・権力の形は、ともに立ち現れ、互いを形づくり合う。科学は、社会から切り離されて自然を映す鏡なのでもなく（実証主義的な見方）、単に社会的に決定されるのでもなく（強い構築主義の一部の見方）、むしろ自然秩序と社会秩序は連動して生み出される。ジャサノフは二つの筋を区別する。(1)「構成的（constitutive）」共産出——新しい自然的・社会的な存在やカテゴリーがいかにともに生まれてくるか、(2)「相互作用的（interactional）」共産出——特定の論争・場面において、知識と社会的な取り決めがいかに交渉され、ともに安定化されるか、である。彼女は、共産出が生じる反復的な「経路・手段」として、アイデンティティを作ること、制度を作ること、言説を作ること、表象を作ること、を挙げる。共産出は、たとえば環境科学と環境規制、バイオテクノロジーと生命倫理、リスク評価と政治的権威が、いかにともに発展するかを研究するための、STSの主要な分析枠組みである。それは、ジャサノフの関連する諸概念——「市民認識論（civic epistemology、社会が知識の主張を評価する文化的に固有のやり方）」「社会技術的想像（sociotechnical imaginaries）」——を支える。それは（予測的な法則をもつ理論ではなく）一つの「イディオム（ものの見方・解釈の仕方）」であり、認識的なものと規範的なものの絡み合い、そして知識と統治の共進化を強調する。共産出は、STS、科学政策、環境研究、知識社会学においてきわめて影響力がある。共産出は、科学的知識と社会秩序とが互いを形づくりながらともに生み出されることを論じ、認識と規範の絡み合いを捉えた、科学技術社会論・情報社会論の重要な枠組みである。
+
+## 提唱者・初出
+シーラ・ジャサノフ ／ ブルーノ・ラトゥール ／ ドナ・ハラウェイ ／ ヘルガ・ノヴォトニー
+
+## 出典
+- [Jasanoff, S. (ed.) (2004) States of Knowledge: The Co-Production of Science and Social Order — Routledge](https://www.worldcat.org/oclc/53389809) `学術`
+- [Wikipedia: Sheila Jasanoff — co-production, civic epistemology, sociotechnical imaginaries, STS](https://en.wikipedia.org/wiki/Sheila_Jasanoff) `リファレンス`
+
+## 関連概念
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同じ思想家
+- [[infosoc-boundary-work-gieryn|境界画定作業——科学と非科学の境界を引く営み]] — 同じ思想家
+- [[infosoc-civic-epistemology-jasanoff|市民認識論——社会ごとに異なる知の公的な評価のしかた]] — 同じ思想家
+- [[infosoc-cyborg-haraway|サイボーグ宣言——機械と有機体の混淆が脱構築する近代の二項対立]] — 同じ思想家
+- [[infosoc-epistemic-cultures-knorr-cetina|認識文化——科学分野ごとに異なる知の作り方]] — 同じ思想家
+- [[infosoc-immutable-mobiles-latour|不変の可動物——形を変えずに運ばれる記録が知と権力を支える]] — 同じ思想家
+- [[infosoc-mode-2-knowledge-gibbons|モード2知識生産——応用の文脈で生まれる学際的な知]] — 同じ思想家
+- [[infosoc-obligatory-passage-point-callon|義務的通過点——ネットワークに不可欠な存在になること]] — 同じ思想家
+- [[infosoc-post-normal-science-funtowicz-ravetz|ポストノーマル科学——不確実性と利害が高い問題における科学]] — 同じ思想家
+- [[infosoc-script-akrich|技術の「スクリプト」（アクリッシュ）——設計者が物に書き込む利用者像]] — 同じ思想家
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

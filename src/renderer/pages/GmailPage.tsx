@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
+import { GoogleConnectCard } from '../components/GoogleConnectCard';
 import { useServiceData } from '../hooks/useServiceData';
 
 const inputStyle: React.CSSProperties = {
@@ -63,6 +64,8 @@ export function GmailPage() {
           placeholder: 'ya29.… (gmail.compose scope for drafts)',
         }}
       />
+
+      <GoogleConnectCard serviceId="gmail" onConnected={refresh} />
 
       <Section title="Inbox" count={threads.length}>
         <DataList

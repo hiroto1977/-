@@ -1,7 +1,14 @@
+import { MAX_ADVISOR_QUESTION_CHARS, checkAdvisorQuestion } from '../../shared/advisorQuestionLimits';
+import { seededNoise } from '../../shared/seededNoise';
+import { escapeXml, escapeMarkdownInline, escapeMarkdownText } from '../../shared/escape';
 import type { FetchContext, ActionContext, ActionMap } from './types';
+import { limitedFetch, readCapped, redactForMessage } from './types';
+import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { isSafeExportPath, writeExportFile } from './exportPaths';
+import { AI_PROVIDERS } from '../../shared/ai/providers';
 
 /**
  * Stocks analytics + paper trading.
@@ -496,6 +503,16 @@ export function applySignal(
   };
 }
 
+/** ウォッチリストの最終値を「銘柄 → 値段」の表にする。時価評価は
+ *  `portfolioEquity` だけが持つ規則なので、画面側はこの表を作って渡す。 */
+export function watchlistPrices(
+  watchlist: readonly WatchlistItem[],
+): Readonly<Record<string, number>> {
+  const prices: Record<string, number> = {};
+  for (const w of watchlist) prices[w.symbol] = w.latestClose;
+  return prices;
+}
+
 /** Total portfolio value at the given snapshot of prices (cash + held shares). */
 export function portfolioEquity(
   port: PaperPortfolio,
@@ -651,16 +668,6 @@ export interface StocksDataSource {
   fetchHistory(symbol: string, periods: number): Promise<Candle[]>;
 }
 
-/** xorshift32 — deterministic noise for reproducible mock prices. */
-function noise(seed: number): number {
-  // Stryker disable next-line ConditionalExpression,LogicalOperator
-  let x = seed | 0 || 1;
-  x ^= x << 13;
-  x ^= x >>> 17;
-  x ^= x << 5;
-  return (x >>> 0) / 4294967296;
-}
-
 /** Universe of mock tickers — covers 日本株 (TSE .T suffix) and 米国株. */
 export const MOCK_TICKERS: readonly { symbol: string; label: string; basePrice: number; driftDaily: number }[] = [
   { symbol: '7203.T', label: 'トヨタ自動車', basePrice: 3200, driftDaily: 0.0008 },
@@ -689,7 +696,7 @@ function mockCandle(
   // attribution occasionally mis-credits this; pragma the
   // ArithmeticOperator just on the seed expression.
   // Stryker disable next-line ArithmeticOperator
-  const driftRand = (noise(symbolSeed + i) - 0.5) * 0.04; // ±2%
+  const driftRand = (seededNoise(symbolSeed + i) - 0.5) * 0.04; // ±2%
   const close = prevClose * (1 + def.driftDaily + driftRand);
   const open = prevClose;
   // The +7777/+8888/+9999 stream-decorrelation seeds and the 0.01 / 500_000
@@ -698,11 +705,11 @@ function mockCandle(
   // separately. Any arithmetic mutation here that still satisfies the
   // invariants is observationally equivalent.
   // Stryker disable next-line ArithmeticOperator
-  const high = Math.max(open, close) * (1 + noise(symbolSeed + i + 7777) * 0.01);
+  const high = Math.max(open, close) * (1 + seededNoise(symbolSeed + i + 7777) * 0.01);
   // Stryker disable next-line ArithmeticOperator
-  const low = Math.min(open, close) * (1 - noise(symbolSeed + i + 8888) * 0.01);
+  const low = Math.min(open, close) * (1 - seededNoise(symbolSeed + i + 8888) * 0.01);
   // Stryker disable next-line ArithmeticOperator
-  const volume = Math.round(1_000_000 + noise(symbolSeed + i + 9999) * 500_000);
+  const volume = Math.round(1_000_000 + seededNoise(symbolSeed + i + 9999) * 500_000);
   return { open, high, low, close, volume };
 }
 
@@ -1113,9 +1120,32 @@ function advisorSystemPrompt(allowedSymbols: readonly string[]): string {
 
 /** Strict shape validator for the LLM JSON response. Throws on any
  *  deviation so a malformed reply can't smuggle bad data into the UI. */
+/**
+ * 助言に出てきた銘柄を受け入れるか。
+ *
+ * 宇宙が分かっていれば所属で、分からなければ形 (`isSafeSymbol`) で判定する。
+ * `validateAdvisorJson` の中に三項で書くと、あちらの
+ * `Stryker disable ConditionalExpression` の帯に飲まれて**この分岐だけ
+ * 測られなくなる**ので、外へ出して独立に測る。
+ */
+function advisorSymbolAllowed(symbol: string, allowedSymbols: ReadonlySet<string> | null): boolean {
+  return allowedSymbols === null ? isSafeSymbol(symbol) : allowedSymbols.has(symbol);
+}
+
 export function validateAdvisorJson(
   raw: unknown,
-  allowedSymbols: ReadonlySet<string>,
+  /**
+   * 銘柄の許可リスト。**null は「この場では宇宙が分からない」** を意味し、
+   * 所属の検査を `isSafeSymbol` (形の検査) に落とす。
+   *
+   * LLM の応答を検証する経路では宇宙が確定している (`advise` が
+   * `universe` payload か `MOCK_TICKERS` から作る) ので Set を渡す。
+   * 一方 IPC 境界の `isAdvisorResult` は、書き出しの payload を見ているだけで
+   * どの宇宙で助言が作られたかを知らない — ウォッチリストで代用しようとして
+   * 既存の検査 2 件が落ちた。**宇宙 = ウォッチリストではない。**
+   * 知らないものを知っているふりで絞ると、正しい結果を捨てる。
+   */
+  allowedSymbols: ReadonlySet<string> | null,
 ): readonly AdvisorRecommendation[] {
   if (raw === null || typeof raw !== 'object') {
     throw new Error('advisor response is not an object');
@@ -1142,7 +1172,7 @@ export function validateAdvisorJson(
       throw new Error('recommendation entry is not an object');
     }
     const rec = item as Record<string, unknown>;
-    if (typeof rec.symbol !== 'string' || !allowedSymbols.has(rec.symbol)) {
+    if (typeof rec.symbol !== 'string' || !advisorSymbolAllowed(rec.symbol, allowedSymbols)) {
       throw new Error(`recommendation has invalid or out-of-universe symbol: ${String(rec.symbol)}`);
     }
     if (typeof rec.rank !== 'number' || !Number.isFinite(rec.rank) || rec.rank < 1) {
@@ -1175,14 +1205,21 @@ export function validateAdvisorJson(
   return out;
 }
 
+/**
+ * この呼び出しの `max_tokens`。**レンダラーからは変えられない**
+ * (経緯は `skills.ts` の `SKILLS_MAX_TOKENS`)。`model` も payload から外した。
+ */
+export const STOCKS_ADVISOR_MAX_TOKENS = 1024;
+
+/**
+ * **`model` / `maxTokens` はここに無い** —— `business.ts` の
+ * `BusinessAdvisorPayload` と同じ理由 (2026-08 に payload から外し、定数を使う)。
+ * 型の宣言だけが 2026-09-01 まで残っていたので消した。
+ */
 interface AdvisorPayload {
   question?: unknown;
   /** Optional override; defaults to MOCK_TICKERS symbols. */
   universe?: unknown;
-  /** Model id; defaults to claude-sonnet-4-6. */
-  model?: unknown;
-  /** Max output tokens; defaults to 1024. */
-  maxTokens?: unknown;
 }
 
 interface AnthropicContentBlock {
@@ -1195,19 +1232,20 @@ interface AnthropicMessagesResponse {
 }
 
 async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
-  const { question, universe, model, maxTokens } = ctx.payload as AdvisorPayload;
+  const { question, universe } = ctx.payload as AdvisorPayload;
   // Each input-validation branch is exhaustively tested (empty, oversize,
   // control-char). ConditionalExpression `false` would skip the throw;
   // downstream code would fail differently. Stryker mis-attributes; pin
   // via pragma.
   // Stryker disable ConditionalExpression
-  if (typeof question !== 'string' || question.length === 0) {
+  const problem = checkAdvisorQuestion(question);
+  if (problem === 'empty') {
     throw new Error('question is required');
   }
-  if (question.length > 1000) {
-    throw new Error('question exceeds 1000 chars');
+  if (problem === 'too-long') {
+    throw new Error(`question exceeds ${MAX_ADVISOR_QUESTION_CHARS} chars`);
   }
-  if (/[\r\n\0]/.test(question)) {
+  if (problem === 'control-chars') {
     throw new Error('question contains control characters');
   }
   // Stryker restore ConditionalExpression
@@ -1259,40 +1297,39 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
     JSON.stringify(analyses),
   ].join('\n');
 
-  const f = ctx.fetch ?? fetch;
-  const res = await f('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': ctx.token,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
+  // business-advisor と同じ理由で `limitedFetch` を通す —— 2026-08-23 まで
+  // 素の fetch で打ち切りも上限も無かった。補完は長いので 2 分。
+  const hctx = { fetch: ctx.fetch, serviceId: 'stocks', timeoutMs: AI_CHAT_TIMEOUT_MS };
+  const parsed = await limitedFetch(
+    'https://api.anthropic.com/v1/messages',
+    {
+      method: 'POST',
+      headers: {
+        'x-api-key': ctx.token,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: AI_PROVIDERS.anthropic.defaultModel,
+        max_tokens: STOCKS_ADVISOR_MAX_TOKENS,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }],
+      }),
     },
-    // The model / max_tokens fallback ladder is pinned by 4 tests
-    // (custom model, empty-string model → default, NaN maxTokens →
-    // default, zero maxTokens → default). The boundary `maxTokens > 0`
-    // vs `>= 0` is equivalent because `Number.isFinite(0)` is true and
-    // `0 > 0` is false (mutant would also reject 0).
-    // Stryker disable next-line ConditionalExpression,LogicalOperator,EqualityOperator
-    body: JSON.stringify({
-      model: typeof model === 'string' && model.length > 0 ? model : 'claude-sonnet-4-6',
-      // Stryker disable next-line ConditionalExpression,LogicalOperator,EqualityOperator
-      max_tokens: typeof maxTokens === 'number' && Number.isFinite(maxTokens) && maxTokens > 0 ? maxTokens : 1024,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userPrompt }],
-    }),
-  });
-
-  if (!res.ok) {
-    // Defensive catch on res.text() — the HTTP-429 test gives a normal
-    // response body, so the catch path is unreachable from tests. The
-    // `body.slice(0, 200)` length cap is also unreachable since test
-    // bodies are short.
-    // Stryker disable next-line ArrowFunction,MethodExpression
-    const body = await res.text().catch(() => '');
-    throw new Error(`stocks-advisor ${res.status}: ${body.slice(0, 200)}`);
-  }
-
-  const parsed = (await res.json()) as AnthropicMessagesResponse;
+    hctx,
+    async (res) => {
+      if (!res.ok) {
+        // Defensive catch on the capped read — the HTTP-429 test gives a normal
+        // response body, so the catch path is unreachable from tests. The
+        // `body.slice(0, 200)` length cap is also unreachable since test
+        // bodies are short.
+        // Stryker disable next-line ArrowFunction,MethodExpression
+        const body = await readCapped(res, hctx).catch(() => '');
+        throw new Error(`stocks-advisor ${res.status}: ${redactForMessage(body, 200)}`);
+      }
+      return JSON.parse(await readCapped(res, hctx)) as AnthropicMessagesResponse;
+    },
+  );
   // The Anthropic response contract: `content` is a (possibly empty)
   // array. The empty-content test exercises the next throw; the
   // `?.find((b) => true)` mutant would still find a (different) block
@@ -1341,14 +1378,6 @@ export interface DashboardInput {
  *  dashboard interpolates user-supplied data (advisor rationale,
  *  watchlist labels) and any of these could carry attacker-controlled
  *  text from a tampered snapshot — never trust the input. */
-export function escapeHtml(input: string): string {
-  return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
 
 const YEN_FMT = new Intl.NumberFormat('ja-JP', {
   style: 'currency',
@@ -1382,23 +1411,19 @@ function renderSparkline(candles: readonly Candle[], width = 160, height = 40): 
 // Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,BlockStatement
 
 /** Generate a self-contained HTML dashboard. Pure function — no I/O. */
-// The renderer's inline ternaries (color flips, sign prefixes,
-// section gating, label maps) are HTML-decoration only. Their
-// mutated outputs still produce valid HTML; the user-visible
-// difference is cosmetic. Block-form pragma covers the whole body;
-// security-critical paths (escapeHtml application, advisor-payload
-// validation, isSafeDashboardPath) are pinned by dedicated tests
-// outside this region.
-// Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement
+//
+// 「色や符号は飾りだから測らなくてよい」と書いて body 全体を外していたが、
+// **これは誤りだった**。損をしているかどうかは、表の上では色と `+` の有無
+// でしか出ない — 金額は符号付きで正しく出るので、判定がずれても数字は
+// 合ったまま逆の顔をする。「買い」/「売り」も同じで、これは飾りではなく
+// **何をしたかの記録**である。帯には現在資産の時価評価まで入っていた。
 export function renderDashboardHtml(input: DashboardInput): string {
   const { snapshot, advisorResult, generatedAt } = input;
   const port = snapshot.portfolio;
-  // Mark-to-market equity over current latestClose for each held ticker.
-  let equity = port.cash;
-  for (const [ticker, pos] of Object.entries(port.positions)) {
-    const w = snapshot.watchlist.find((x) => x.symbol === ticker);
-    if (w) equity += pos.shares * w.latestClose;
-  }
+  // 時価評価は `portfolioEquity` に 1 つだけ置く。ここと Markdown 側と
+  // バックテストで同じ式を 3 つ持っていたが、値段の取り違えは画面に
+  // 出ないので、写し間違えても気付けない形だった。
+  const equity = portfolioEquity(port, watchlistPrices(snapshot.watchlist));
   const pnl = equity - port.initialCash;
   const pnlPct = port.initialCash > 0 ? (pnl / port.initialCash) * 100 : 0;
 
@@ -1415,11 +1440,11 @@ export function renderDashboardHtml(input: DashboardInput): string {
       const sigLabel =
         w.signal.action === 'buy' ? '買い' : w.signal.action === 'sell' ? '売り' : '見送り';
       return `<tr>
-  <td><strong>${escapeHtml(w.symbol)}</strong><br/><span class="mute">${escapeHtml(w.label)}</span></td>
+  <td><strong>${escapeXml(w.symbol)}</strong><br/><span class="mute">${escapeXml(w.label)}</span></td>
   <td class="num">${NUM_FMT.format(w.latestClose)}</td>
   <td class="num" style="color:${dir}">${sign}${w.changePct.toFixed(2)}%</td>
   <td>${renderSparkline(w.candles)}</td>
-  <td><span class="chip" style="background:${sigColor}">${sigLabel}</span><br/><span class="mute">${escapeHtml(w.signal.reason)}</span></td>
+  <td><span class="chip" style="background:${sigColor}">${sigLabel}</span><br/><span class="mute">${escapeXml(w.signal.reason)}</span></td>
 </tr>`;
     })
     .join('\n');
@@ -1431,12 +1456,12 @@ export function renderDashboardHtml(input: DashboardInput): string {
       const color = t.action === 'buy' ? '#22c55e' : '#ef4444';
       const label = t.action === 'buy' ? '買い' : '売り';
       return `<tr>
-  <td class="mute">${escapeHtml(t.date)}</td>
-  <td><strong>${escapeHtml(t.ticker)}</strong></td>
+  <td class="mute">${escapeXml(t.date)}</td>
+  <td><strong>${escapeXml(t.ticker)}</strong></td>
   <td style="color:${color}"><strong>${label}</strong></td>
   <td class="num">${t.shares}</td>
   <td class="num">${NUM_FMT.format(t.price)}</td>
-  <td class="mute">${escapeHtml(t.reason)}</td>
+  <td class="mute">${escapeXml(t.reason)}</td>
 </tr>`;
     })
     .join('\n');
@@ -1449,29 +1474,29 @@ export function renderDashboardHtml(input: DashboardInput): string {
       (r) => `<article class="rec">
     <div class="rank">${r.rank}</div>
     <div>
-      <h3>${escapeHtml(r.symbol)}</h3>
-      <p>${escapeHtml(r.rationale)}</p>
-      <ul>${r.riskFactors.map((rf) => `<li>${escapeHtml(rf)}</li>`).join('')}</ul>
+      <h3>${escapeXml(r.symbol)}</h3>
+      <p>${escapeXml(r.rationale)}</p>
+      <ul>${r.riskFactors.map((rf) => `<li>${escapeXml(rf)}</li>`).join('')}</ul>
     </div>
   </article>`,
     )
     .join('\n')}
-  <p class="mute disclaimer">${escapeHtml(advisorResult.disclaimer)}</p>
+  <p class="mute disclaimer">${escapeXml(advisorResult.disclaimer)}</p>
 </section>`
     : '';
 
   const strategyComparison = input.strategyComparison;
   const strategySection = strategyComparison
     ? `<section>
-  <h2>戦略比較 — ${escapeHtml(strategyComparison.symbol)} (初期 ${escapeHtml(YEN_FMT.format(strategyComparison.initialCash))})</h2>
+  <h2>戦略比較 — ${escapeXml(strategyComparison.symbol)} (初期 ${escapeXml(YEN_FMT.format(strategyComparison.initialCash))})</h2>
   <table>
     <thead><tr><th>戦略</th><th class="num">最終資産</th><th class="num">総リターン</th><th class="num">最大DD</th><th class="num">勝率</th><th class="num">取引数</th></tr></thead>
     <tbody>${strategyComparison.rows
       .map((r) => {
         const isBest = r.strategy === strategyComparison.bestByReturn;
         return `<tr${isBest ? ' style="background:rgba(34,197,94,0.08)"' : ''}>
-  <td><strong>${escapeHtml(r.strategy)}</strong>${isBest ? ' <span class="chip" style="background:#22c55e">最良</span>' : ''}</td>
-  <td class="num">${escapeHtml(YEN_FMT.format(r.finalEquity))}</td>
+  <td><strong>${escapeXml(r.strategy)}</strong>${isBest ? ' <span class="chip" style="background:#22c55e">最良</span>' : ''}</td>
+  <td class="num">${escapeXml(YEN_FMT.format(r.finalEquity))}</td>
   <td class="num" style="color:${r.totalReturnPct >= 0 ? '#22c55e' : '#ef4444'}">${r.totalReturnPct >= 0 ? '+' : ''}${r.totalReturnPct.toFixed(2)}%</td>
   <td class="num">${r.maxDrawdownPct.toFixed(2)}%</td>
   <td class="num">${(r.winRate * 100).toFixed(0)}%</td>
@@ -1514,16 +1539,16 @@ footer { margin-top: 32px; color: #64748b; font-size: 11px; }
 </head>
 <body>
 <h1>Service Hub — Stocks ダッシュボード</h1>
-<div class="mute">生成日時: ${escapeHtml(generatedAt)}</div>
+<div class="mute">生成日時: ${escapeXml(generatedAt)}</div>
 <div class="banner"><strong>シミュレーション中:</strong> 実弾発注は行いません。Phase 7 で証券会社 API 連携時に有効化。本ダッシュボードは教育目的の参考情報であり投資助言ではありません。過去パフォーマンスは将来リターンを保証しません。</div>
 
 <section>
   <h2>ペーパー口座</h2>
   <div class="tiles">
-    <div class="tile"><div class="label">現在資産</div><div class="value">${escapeHtml(YEN_FMT.format(equity))}</div></div>
-    <div class="tile"><div class="label">現金残高</div><div class="value">${escapeHtml(YEN_FMT.format(port.cash))}</div></div>
-    <div class="tile"><div class="label">損益</div><div class="value" style="color:${pnl >= 0 ? '#22c55e' : '#ef4444'}">${pnl >= 0 ? '+' : ''}${escapeHtml(YEN_FMT.format(pnl))}</div><div class="sub">${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(2)}%</div></div>
-    <div class="tile"><div class="label">初期入金</div><div class="value">${escapeHtml(YEN_FMT.format(port.initialCash))}</div></div>
+    <div class="tile"><div class="label">現在資産</div><div class="value">${escapeXml(YEN_FMT.format(equity))}</div></div>
+    <div class="tile"><div class="label">現金残高</div><div class="value">${escapeXml(YEN_FMT.format(port.cash))}</div></div>
+    <div class="tile"><div class="label">損益</div><div class="value" style="color:${pnl >= 0 ? '#22c55e' : '#ef4444'}">${pnl >= 0 ? '+' : ''}${escapeXml(YEN_FMT.format(pnl))}</div><div class="sub">${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(2)}%</div></div>
+    <div class="tile"><div class="label">初期入金</div><div class="value">${escapeXml(YEN_FMT.format(port.initialCash))}</div></div>
     <div class="tile"><div class="label">取引履歴</div><div class="value">${port.history.length}</div><div class="sub">paper trades</div></div>
   </div>
 </section>
@@ -1558,7 +1583,6 @@ Generated by Service Hub. © local-only · no real-money execution.
 </body>
 </html>`;
 }
-// Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement
 
 /** Default cross-platform path matching the Windows reference layout
  *  `~/.local/business-hub/data/dashboard.html`. */
@@ -1610,10 +1634,60 @@ function shape(raw: unknown): StocksState {
 
 /** Load state from disk. Returns DEFAULT_STATE on missing file / parse error /
  *  shape mismatch. Never throws. */
+/*
+ * `saveStocksState` が **0600** で書く理由 —— `team-radar.json` と同じ扱いに
+ * 揃える (2026-08-23)。
+ *
+ * ここに入るのはウォッチリスト = 利用者が何に関心を持っているかという個人の
+ * 情報で、同じ機械の他の利用者に見せる理由が無い。実測では 644 で、
+ * `secrets.json` / `service-hub-emotions.json` / (同日直した) `team-radar.json`
+ * がどれも 600 なのに、**内部状態のうちここだけが緩かった**。
+ *
+ * `mode` は新規作成にしか効かないが、`tmp` を新しく作って `rename` で被せるので
+ * **既にある 644 のファイルも次の保存で直る** (実測で確認)。
+ *
+ * (書き出し物 = `dashboard.html` / `.md` はここでは触らない。あちらは利用者が
+ *  見る・渡すために作る成果物で、内部状態とは性質が違う。)
+ *
+ * **この注記は `Stryker disable` の外に置くこと。** 中に入れると黙らせる範囲が
+ * その分だけ広がり、`lint:mutation-scope` が鳴る (実際に鳴らして気付いた)。
+ */
+/*
+ * **`mode` は新規作成のときしか効かない。** 保存は固定名の `.tmp` へ書いて
+ * `rename` で被せる形なので、古い版が権限を付ける前に残した `.tmp` が 644 で
+ * 居ると、`writeFile(..., { mode: 0o600 })` はその 644 を**変えないまま**
+ * 上書きし、`rename` がそれを本体へ被せる —— 保存した本体が 644 になる。
+ *
+ * 実測 (2026-08-25):
+ *
+ * ```
+ *   事前の .tmp = 644 → 保存後の本体 = 644
+ *   .tmp 無し          → 保存後の本体 = 600
+ * ```
+ *
+ * 同じ形は `emotions.ts` と `exportPaths.ts` の注記が既に書いており、
+ * `exportPaths.ts` は `writeFile` の後に `chmod` を置いて閉じている。
+ * ここだけ閉じていなかった。**締めるのは書いた後である。**
+ * `saveStocksState` の `writeFn` が既定の実装の中で `chmod` する ——
+ * 検査が差し替える `deps.writeFile` は実ファイルを作らないことがあるので、
+ * 外へ出すと注入側が壊れる。留めているのは
+ * `main/__tests__/staleTmpMode.test.ts`。
+ */
 // The default-fallback arrow functions below are exercised only when
 // callers omit the corresponding dep (production path). The tests always
 // inject deps to keep file I/O hermetic. `recursive: true` on mkdir is
 // part of that production-only path.
+/**
+ * 0600 で書いて、**書いた後に締める**。理由は直上の注記。
+ *
+ * `Stryker disable` の**外**に置く —— 中に入れると chmod ごと黙らされ、
+ * 「測っていない」が 100% として報告される。ここは実際に測られる。
+ */
+async function writeTight(target: string, contents: string): Promise<void> {
+  await fs.writeFile(target, contents, { mode: 0o600 });
+  await fs.chmod(target, 0o600);
+}
+
 // Stryker disable ArrowFunction,BooleanLiteral
 export async function loadStocksState(deps: StateDeps = {}): Promise<StocksState> {
   const p = (deps.statePath ?? defaultStatePath)();
@@ -1632,7 +1706,8 @@ export async function saveStocksState(state: StocksState, deps: StateDeps = {}):
   const p = (deps.statePath ?? defaultStatePath)();
   const tmp = p + '.tmp';
   const mkdirFn = deps.mkdir ?? ((dir: string) => fs.mkdir(dir, { recursive: true }).then(() => undefined));
-  const writeFn = deps.writeFile ?? ((path: string, c: string) => fs.writeFile(path, c, 'utf8'));
+  // 0600 で書く理由は上の `Stryker disable` の手前の注記を参照。
+  const writeFn = deps.writeFile ?? writeTight;
   const renameFn = deps.rename ?? ((a: string, b: string) => fs.rename(a, b));
   await mkdirFn(path.dirname(p));
   await writeFn(tmp, JSON.stringify(state, null, 2));
@@ -1666,31 +1741,22 @@ export async function removeWatchlistEntry(symbol: string, deps: StateDeps = {})
   return next;
 }
 
-
 /** Default Markdown path — sibling to the HTML, .md extension. */
 export function defaultDashboardMdPath(): string {
   return path.join(os.homedir(), '.local', 'business-hub', 'data', 'dashboard.md');
 }
 
 /** Render the same dashboard as Markdown — for Slack / Notion / email
- *  bodies / GitHub PR descriptions. Pure function. No HTML escaping
- *  needed but we strip any pipe `|` from cell strings so inline tables
- *  don't break.  */
+ *  bodies / GitHub PR descriptions. Pure function.
+ *
+ *  エスケープは `shared/escape.ts` の 2 つを使い分ける。ここには
+ *  `|` だけを落とす `escMd` が関数内に 1 つあり、(a) 改行を落としていない
+ *  ので 1 行の構造 (見出し・箇条書き・引用) から抜けられ、(b) `<` を
+ *  落としていないので生 HTML が通っていた。書き出した `.md` は人に渡る。 */
 export function renderDashboardMarkdown(input: DashboardInput): string {
   const { snapshot, advisorResult, strategyComparison, generatedAt } = input;
-  const escMd = (s: string): string => s.replace(/\|/g, '\\|');
 
-  // The find-predicate's ConditionalExpression `true` mutant returns
-  // the FIRST watchlist row for any ticker — the equity calculation
-  // would over-count if multiple positions reference the same row.
-  // Pinned by the position-tracked test (50,000 cash + 100*250 = 75,000).
-  // Stryker disable next-line ConditionalExpression,EqualityOperator
-  const equity =
-    snapshot.portfolio.cash +
-    Object.entries(snapshot.portfolio.positions).reduce((acc, [t, p]) => {
-      const w = snapshot.watchlist.find((x) => x.symbol === t);
-      return acc + (w ? p.shares * w.latestClose : 0);
-    }, 0);
+  const equity = portfolioEquity(snapshot.portfolio, watchlistPrices(snapshot.watchlist));
   const pnl = equity - snapshot.portfolio.initialCash;
   const pnlPct =
     snapshot.portfolio.initialCash > 0
@@ -1709,7 +1775,7 @@ export function renderDashboardMarkdown(input: DashboardInput): string {
               // template-string consumers.
               // Stryker disable next-line ConditionalExpression,EqualityOperator
               const sign = w.changePct >= 0 ? '+' : '';
-              return `| ${escMd(w.symbol)} | ${escMd(w.label)} | ${YEN_FMT.format(w.latestClose)} | ${sign}${w.changePct.toFixed(2)}% | ${w.signal.action} |`;
+              return `| ${escapeMarkdownInline(w.symbol)} | ${escapeMarkdownInline(w.label)} | ${YEN_FMT.format(w.latestClose)} | ${sign}${w.changePct.toFixed(2)}% | ${w.signal.action} |`;
             }),
           )
           .join('\n');
@@ -1720,17 +1786,17 @@ export function renderDashboardMarkdown(input: DashboardInput): string {
         '',
         ...advisorResult.recommendations.map(
           (r) =>
-            `### ${r.rank}. ${escMd(r.symbol)}\n\n${escMd(r.rationale)}\n\n` +
-            r.riskFactors.map((rf) => `- リスク: ${escMd(rf)}`).join('\n'),
+            `### ${r.rank}. ${escapeMarkdownInline(r.symbol)}\n\n${escapeMarkdownText(r.rationale)}\n\n` +
+            r.riskFactors.map((rf) => `- リスク: ${escapeMarkdownInline(rf)}`).join('\n'),
         ),
         '',
-        '> ' + escMd(advisorResult.disclaimer),
+        '> ' + escapeMarkdownInline(advisorResult.disclaimer),
       ].join('\n\n')
     : '';
 
   const comparisonBlock = strategyComparison
     ? [
-        `## 戦略比較 — ${escMd(strategyComparison.symbol)} (初期 ${YEN_FMT.format(strategyComparison.initialCash)})`,
+        `## 戦略比較 — ${escapeMarkdownInline(strategyComparison.symbol)} (初期 ${YEN_FMT.format(strategyComparison.initialCash)})`,
         '',
         '| 戦略 | 最終資産 | 総リターン | 最大DD | 勝率 | 取引数 |',
         '|---|---:|---:|---:|---:|---:|',
@@ -1741,7 +1807,7 @@ export function renderDashboardMarkdown(input: DashboardInput): string {
           // isBest pinned by 「**(最良)**」+ non-best rows tests.
           // Stryker disable next-line ConditionalExpression
           const isBest = r.strategy === strategyComparison.bestByReturn;
-          const label = isBest ? `**${escMd(r.strategy)} (最良)**` : escMd(r.strategy);
+          const label = isBest ? `**${escapeMarkdownInline(r.strategy)} (最良)**` : escapeMarkdownInline(r.strategy);
           return `| ${label} | ${YEN_FMT.format(r.finalEquity)} | ${sign}${r.totalReturnPct.toFixed(2)}% | ${r.maxDrawdownPct.toFixed(2)}% | ${(r.winRate * 100).toFixed(0)}% | ${r.tradeCount} |`;
         }),
       ].join('\n')
@@ -1805,20 +1871,40 @@ export interface ExportDeps {
 }
 
 /** Type guard for the AdvisorResponse payload that the renderer
- *  forwards through `serviceHub.invoke`. */
-// All 4 short-circuit clauses are exercised by 'ignores malformed
-// advisor payloads' test + the 'embeds advisor result when payload
-// is valid' test. Stryker's perTest mis-attributes the kill — pragma
-// here, real-behavior pinned by tests.
+ *  forwards through `serviceHub.invoke`.
+ *
+ *  business.ts の同名の関数と同じ穴があった (2026-08-21): `recommendations`
+ *  が**配列かどうかしか見ておらず**、要素の中身を 1 つも検査していなかった。
+ *  同じファイルの `validateAdvisorJson` は LLM の応答について全要素・全項目を
+ *  検査しているので、同じデータの検査が 2 つあって、IPC 境界を守っている方が
+ *  空だった。TypeScript の型は IPC を越えない。
+ *
+ *  検査は 1 つに寄せる。ただし**銘柄の所属だけはここでは判定できない** —
+ *  助言がどの宇宙で作られたかは payload に書かれていない。最初これを
+ *  スナップショットのウォッチリストで代用したが、宇宙は `advise` の
+ *  `universe` payload か `MOCK_TICKERS` から来るのであってウォッチリスト
+ *  ではなく、既存の検査 2 件がそれを捕まえた。知らないものを知っている
+ *  ふりで絞ると正しい助言を黙って捨てることになるので、ここでは形と
+ *  `isSafeSymbol` までにする。 */
 // Stryker disable ConditionalExpression,LogicalOperator,EqualityOperator,BooleanLiteral
 function isAdvisorResult(v: unknown): v is AdvisorResponse {
   if (v === null || typeof v !== 'object') return false;
   const r = v as Record<string, unknown>;
-  return (
-    Array.isArray(r['recommendations']) &&
-    typeof r['disclaimer'] === 'string' &&
-    r['notForRealMoney'] === true
-  );
+  if (typeof r['disclaimer'] !== 'string') return false;
+  if (r['notForRealMoney'] !== true) return false;
+  // catch の中で return しない。**空の catch にしても結果が変わらない形**を
+  // 避けるためである — `catch { return false }` は中身を消すと暗黙の
+  // `undefined` を返し、呼び出し側はどちらも偽として扱うので違いが観測でき
+  // ない (実測で生存した)。「投げなければ真」を 1 つの変数で表す。
+  let valid = false;
+  try {
+    // null = 宇宙は分からない。形と `isSafeSymbol` までを見る。
+    validateAdvisorJson(v, null);
+    valid = true;
+  } catch {
+    // 形が合わない = 助言なし。呼び出し側が節ごと省く。
+  }
+  return valid;
 }
 
 function isStrategyComparison(v: unknown): v is StrategyComparisonResult {
@@ -1849,13 +1935,7 @@ export function isSafeDashboardMdPath(filePath: string, home: string): boolean {
 }
 
 function isSafeFilePathWithExt(filePath: string, home: string, ext: string): boolean {
-  if (typeof filePath !== 'string' || filePath.length === 0) return false;
-  if (filePath.length > 1024) return false;
-  if (/[\0\r\n]/.test(filePath)) return false;
-  if (!filePath.endsWith(ext)) return false;
-  const resolved = path.resolve(filePath);
-  const resolvedHome = path.resolve(home);
-  return resolved.startsWith(resolvedHome + path.sep) || resolved === resolvedHome;
+  return isSafeExportPath(filePath, home, ext);
 }
 // Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator
 
@@ -1890,7 +1970,7 @@ export async function exportDashboardImpl(
     generatedAt,
   });
   await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await (deps.writeFile ?? ((p, c) => fs.writeFile(p, c, 'utf8')))(filePath, html);
+  await (deps.writeFile ?? writeExportFile)(filePath, html);
   return { path: filePath, bytes: Buffer.byteLength(html, 'utf8'), generatedAt };
 }
 // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction
@@ -1938,7 +2018,7 @@ export async function exportDashboardMdImpl(
     generatedAt,
   });
   await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await (deps.writeFile ?? ((p, c) => fs.writeFile(p, c, 'utf8')))(filePath, md);
+  await (deps.writeFile ?? writeExportFile)(filePath, md);
   return { path: filePath, bytes: Buffer.byteLength(md, 'utf8'), generatedAt };
 }
 // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction

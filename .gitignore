@@ -1,5 +1,13 @@
 node_modules/
-dist/
+dist/*
+!dist/ServiceHubを開く.bat
+# dist/standalone.html はビルド生成物 (約 10MB)。CI / GitHub Pages が
+# `npm run build:web` で毎回作り直すため追跡不要。追跡していた頃は
+# コーパスを触るたび 10MB が .git に積まれ、327 版で 362MB を占めていた。
+# 入手経路: https://hiroto1977.github.io/-/app.html または `npm run build:web`
+# dist-chunks/ は AppImage を 30MB 単位に分割したもの (計 106MB)。
+# v0.1.0 以降は GitHub Release が AppImage を直接配布するため冗長。
+dist-chunks/
 dist-electron/
 release/
 tmp-screenshots/
@@ -15,5 +23,5 @@ tmp-screenshots/
 .stryker-incremental.json
 reports/
 coverage/
-dist/standalone.html
 business-hub.html
+orchestration/knowledge-queue.json

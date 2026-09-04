@@ -1,0 +1,47 @@
+---
+collection: academic
+id: mgmt-psychological-detachment-sonnentag
+category: "management"
+category_ja: "経営学"
+title: "心理的距離——仕事から心理的に離れて回復する"
+as_of: "2026-06-27"
+source_count: 2
+authoritative: true
+tags:
+  - collection/academic
+  - academic/management
+  - knowledge/verified
+aliases:
+  - "心理的距離——仕事から心理的に離れて回復する"
+---
+
+# 心理的距離——仕事から心理的に離れて回復する
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06-27 ・ 出典: 2件（うち権威ある出典 ✓）
+
+## 概要
+心理的距離（psychological detachment、仕事からの心理的距離）は、ザビーネ・ゾンネンタークとシャルロッテ・フリッツが2007年に体系化した、主要な「回復経験（recovery experiences）」の一つで、非就業時間に、仕事の状況から「離れている」という感覚——心理的に仕事から「スイッチを切り」、距離を置くこと——を指す。すなわち、仕事のことを考えず、仕事の要求について反芻せず、余暇・非就業の時間に仕事から心理的に不在であることである。それは、単に物理的に職場から離れていること以上のもので、心理的な離脱（メールを確認しない、仕事の問題を引きずらない）である。ゾンネンタークとフリッツは、人々が非就業時間に仕事のストレスから「回復」し、消耗した資源を補充するのを助ける、四つの回復経験を特定した（メイマンとマルダーの「努力－回復モデル」やホブフォルの資源保存理論に根ざす）。(1)心理的距離（仕事から心理的にスイッチを切ること）、(2)リラクセーション（低い活性化、肯定的な感情——余暇、休息）、(3)熟達（mastery、技能・有能感を高める、挑戦的な非就業の活動——語学やスポーツなど）、(4)余暇時間の統制（自由な時間をどう過ごすかを自分で決めること）である。このうち、心理的距離は最もよく研究され、頑健に有益である。研究は、非就業時間の高い心理的距離を、より低い疲労・消耗、より少ない仕事の反芻、より良い幸福・睡眠・気分・ワークエンゲージメント・業績と結びつけ、それが仕事のストレッサーの悪影響を「緩衝する」ことを示している。逆に、距離を置けないこと（仕事の反芻、「常時オン」の接続、スマートフォンによる絶え間ない連絡可能性）は、回復を損ない、バーンアウトの一因となる。この概念は、産業保健心理学、仕事と生活の境界、回復、バーンアウト、そして技術・ICTや「テレプレッシャー」が幸福に及ぼす影響の研究において、きわめて影響力があり——とりわけリモートワークと絶え間ない接続のもとで重要性を増している。心理的距離は、非就業時間に仕事から心理的に離れることが、ストレスからの回復と幸福にとって決定的に重要であることを示した、産業保健心理学・組織行動論の重要な概念である。
+
+## 提唱者・初出
+ザビーネ・ゾンネンターク ／ シャルロッテ・フリッツ ／ スティーヴン・ホブフォル ／ アーノルド・バッカー
+
+## 出典
+- [Sonnentag, S. & Fritz, C. (2007) The Recovery Experience Questionnaire — Journal of Occupational Health Psychology](https://doi.org/10.1037/1076-8998.12.3.204) `学術`
+- [Wikipedia: Recovery experiences — psychological detachment, relaxation, mastery, control](https://en.wikipedia.org/wiki/Occupational_burnout) `リファレンス`
+
+## 関連概念
+- [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 同じ思想家
+- [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]] — 同じ思想家
+- [[mgmt-conservation-resources-hobfoll|資源保存理論——資源の喪失脅威がストレスを生み喪失の螺旋を駆動する]] — 同じ思想家
+- [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — 同じ思想家
+- [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]] — 同じ思想家
+- [[mgmt-job-demands-resources-bakker|職務要求-資源モデル——ストレスとエンゲージメントの二重過程]] — 同じ思想家
+- [[mgmt-upper-echelons-refinement|上層部理論精緻化]] — 同分野の近傍
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

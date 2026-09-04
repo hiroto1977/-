@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
+import { buildTeamEmotionRadar, teamEmotionSummary, type MemberEmotion } from '../data/teamEmotionRadar';
+import { buildTeamCare, type CarePriority } from '../data/memberCare';
 
 interface TeamMember {
   id: string;
@@ -11,17 +13,58 @@ interface TeamMember {
   notes?: Record<number, string>;
 }
 
+/** snapshot 由来の読み取り専用メンバー (state に入る前の初期値の型)。
+ *  state 側は structuredClone で mutable な TeamMember[] にコピーする。 */
+interface ReadonlyTeamMember {
+  readonly id: string;
+  readonly name: string;
+  readonly scores: readonly number[];
+  readonly notes?: Readonly<Record<number, string>>;
+}
+
 interface TeamRadarSnapshot {
-  department: string;
-  evaluatedAt: string;
-  axes: readonly string[];
-  members: TeamMember[];
-  fetchedAt: string;
-  isMock: boolean;
+  readonly department: string;
+  readonly evaluatedAt: string;
+  readonly axes: readonly string[];
+  readonly members: readonly ReadonlyTeamMember[];
+  readonly fetchedAt: string;
+  readonly isMock: boolean;
 }
 
 const AXES_FALLBACK = ['営業力', '顧客対応力', 'プレゼン力', '交渉力', '顧客管理力'];
+const TITLE_FALLBACK = '営業チーム強み・弱みシート';
 const SCORE_MAX = 5;
+
+/** 名前編集の下書き (タイトル・軸名・メンバー等) を localStorage に保持する。
+ *  ブラウザ standalone では保存アクションが使えない環境もあるため、
+ *  リロードしても編集した名前が消えないようにするのが目的。 */
+const DRAFT_KEY = 'servicehub.teamradar.draft.v1';
+
+interface RadarDraft {
+  title?: string;
+  axes?: string[];
+  department?: string;
+  evaluatedAt?: string;
+  members?: TeamMember[];
+}
+
+function loadDraft(): RadarDraft {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    const parsed: unknown = raw ? JSON.parse(raw) : null;
+    return parsed && typeof parsed === 'object' ? (parsed as RadarDraft) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveDraft(draft: RadarDraft): void {
+  try {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+  } catch {
+    /* private mode / quota — 永続化は best-effort */
+  }
+}
 const PALETTE = [
   { stroke: '#5b8def', fill: 'rgba(91, 141, 239, 0.18)' },
   { stroke: '#ec9a3d', fill: 'rgba(236, 154, 61, 0.18)' },
@@ -59,14 +102,22 @@ function RadarChart({
   const cy = size / 2 + 8;
   const radius = size * 0.36;
   const rings: number[] = [1, 2, 3, 4, 5];
+  // viewBox + width:100% で「コンテナ幅に合わせて縮む」レスポンシブ SVG にする。
+  // 固定 width/height だと狭い画面で見切れるため、最大幅だけ size に制限する。
   return (
     <svg
-      width={size}
-      height={size}
       viewBox={`0 0 ${size} ${size}`}
       role="img"
       aria-label="チームレーダーチャート"
-      style={{ background: 'transparent' }}
+      preserveAspectRatio="xMidYMid meet"
+      style={{
+        background: 'transparent',
+        display: 'block',
+        width: '100%',
+        maxWidth: size,
+        height: 'auto',
+        margin: '0 auto',
+      }}
     >
       {rings.map((lvl) => {
         const pts: string[] = [];
@@ -138,26 +189,92 @@ function uniqueId(name: string, existing: string[]): string {
 export function TeamRadarPage() {
   const { data, source, status, errorMessage, refresh } = useServiceData<TeamRadarSnapshot>(
     'teamradar',
-    SNAPSHOT.teamradar as unknown as TeamRadarSnapshot,
+    SNAPSHOT.teamradar,
   );
 
-  const [department, setDepartment] = useState(data.department);
-  const [evaluatedAt, setEvaluatedAt] = useState(data.evaluatedAt);
-  const [members, setMembers] = useState<TeamMember[]>(() => structuredClone(data.members) as TeamMember[]);
+  // 初回マウント時に localStorage の下書きを優先して復元する
+  // (チャート名・軸名・メンバー名を「任意で変更して残せる」ようにするため)。
+  const draft = useRef(loadDraft());
+  const [title, setTitle] = useState(draft.current.title ?? TITLE_FALLBACK);
+  const [department, setDepartment] = useState(draft.current.department ?? data.department);
+  const [evaluatedAt, setEvaluatedAt] = useState(draft.current.evaluatedAt ?? data.evaluatedAt);
+  const [members, setMembers] = useState<TeamMember[]>(() =>
+    draft.current.members && draft.current.members.length > 0
+      ? draft.current.members
+      : (structuredClone(data.members) as TeamMember[]),
+  );
   const [saveBusy, setSaveBusy] = useState(false);
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
   const [exportBusy, setExportBusy] = useState(false);
   const [exportMsg, setExportMsg] = useState<string | null>(null);
   const [lastExport, setLastExport] = useState<{ path: string; bytes: number } | null>(null);
+  // 感情ウェルビーイング連携: メンバーごとの「今日の気分」(1-5)。
+  const [moods, setMoods] = useState<Record<string, number>>({});
+
+  const emotionRadar = useMemo(() => {
+    const memberEmotions: MemberEmotion[] = members.map((m) => ({
+      id: m.id,
+      name: m.name,
+      moods: [{ score: moods[m.id] ?? 3, note: '' }],
+      analyses: [],
+    }));
+    return buildTeamEmotionRadar(memberEmotions);
+  }, [members, moods]);
+  const emotionRadarMembers = useMemo(
+    () => emotionRadar.members.map((m) => ({ id: m.id, name: m.name, scores: [...m.scores] })),
+    [emotionRadar],
+  );
 
   // Sync local state when the snapshot refreshes (live fetch).
+  // 初回 (マウント直後の snapshot) では localStorage の下書きを潰さないようスキップする。
+  const isFirstDataSync = useRef(true);
   useEffect(() => {
+    if (isFirstDataSync.current) {
+      isFirstDataSync.current = false;
+      return;
+    }
     setDepartment(data.department);
     setEvaluatedAt(data.evaluatedAt);
     setMembers(structuredClone(data.members) as TeamMember[]);
   }, [data]);
 
-  const axes = useMemo(() => (data.axes && data.axes.length > 0 ? data.axes : AXES_FALLBACK), [data.axes]);
+  // 軸の名前も任意で変更できるようにする (本数は snapshot の定義どおり固定)。
+  const baseAxes = useMemo(
+    () => (data.axes && data.axes.length > 0 ? [...data.axes] : [...AXES_FALLBACK]),
+    [data.axes],
+  );
+  const [axes, setAxes] = useState<string[]>(() =>
+    draft.current.axes && draft.current.axes.length === baseAxes.length ? draft.current.axes : baseAxes,
+  );
+
+  function updateAxis(axisIdx: number, name: string) {
+    setAxes((prev) => {
+      const next = [...prev];
+      next[axisIdx] = name;
+      return next;
+    });
+  }
+
+  // 名前まわりの編集は自動で localStorage に保存 (リロードしても消えない)。
+  useEffect(() => {
+    saveDraft({ title, axes, department, evaluatedAt, members });
+  }, [title, axes, department, evaluatedAt, members]);
+
+  // 評価 × ケア支援: スキルスコア + 気分から 1on1 支援レポートを組み立てる。
+  const teamCare = useMemo(
+    () =>
+      buildTeamCare(
+        members.map((m) => ({
+          id: m.id,
+          name: m.name,
+          scores: m.scores,
+          moods: [{ score: moods[m.id] ?? 3, note: '' }],
+          analyses: [],
+        })),
+        axes,
+      ),
+    [members, moods, axes],
+  );
 
   function updateScore(memberIdx: number, axisIdx: number, value: number) {
     setMembers((prev) => {
@@ -232,7 +349,7 @@ export function TeamRadarPage() {
       const r = await window.serviceHub.invoke<{ path: string; bytes: number }>(
         'teamradar',
         'export-svg',
-        { title: `${department} 強み・弱みシート (${evaluatedAt})` },
+        { title: `${title}｜${department} (${evaluatedAt})` },
       );
       if (r.ok) {
         setLastExport({ path: r.data.path, bytes: r.data.bytes });
@@ -249,7 +366,7 @@ export function TeamRadarPage() {
   return (
     <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 20 }}>
       <StatusBar
-        who="チームレーダーチャート · 営業チーム強み・弱みシート"
+        who={`チームレーダーチャート · ${title}`}
         serviceId="teamradar"
         source={source}
         status={status}
@@ -274,8 +391,28 @@ export function TeamRadarPage() {
         に書き出されます。Canva のキャンバスに直接ドラッグ&ドロップして取り込めるベクター画像です。
       </div>
 
-      <Section title="メタ情報" count={2}>
+      <Section title="メタ情報 / 名前の変更" count={3 + axes.length}>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: 'var(--text-mute)' }}>
+            チャート名
+            <input
+              type="text"
+              value={title}
+              maxLength={64}
+              onChange={(e) => setTitle(e.target.value)}
+              aria-label="チャート名"
+              placeholder={TITLE_FALLBACK}
+              style={{
+                padding: '6px 10px',
+                background: 'var(--bg-elev)',
+                border: '1px solid var(--border)',
+                borderRadius: 6,
+                color: 'var(--text)',
+                fontSize: 13,
+                width: 260,
+              }}
+            />
+          </label>
           <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: 'var(--text-mute)' }}>
             部署
             <input
@@ -314,11 +451,59 @@ export function TeamRadarPage() {
             />
           </label>
         </div>
+        <div style={{ marginTop: 12 }}>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 6 }}>
+            レーダーの軸名（クリックして任意の名前に変更できます — チャートと編集欄に即時反映）
+          </div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {axes.map((axis, ai) => (
+              <input
+                key={ai}
+                type="text"
+                value={axis}
+                maxLength={24}
+                onChange={(e) => updateAxis(ai, e.target.value)}
+                aria-label={`軸${ai + 1} の名前`}
+                style={{
+                  padding: '6px 10px',
+                  background: 'var(--bg-elev)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 6,
+                  color: 'var(--text)',
+                  fontSize: 13,
+                  width: 140,
+                }}
+              />
+            ))}
+            <button
+              type="button"
+              onClick={() => {
+                setTitle(TITLE_FALLBACK);
+                setAxes([...baseAxes]);
+              }}
+              title="チャート名と軸名を初期値に戻す"
+              style={{
+                padding: '6px 12px',
+                background: 'transparent',
+                border: '1px solid var(--border)',
+                borderRadius: 6,
+                color: 'var(--text-mute)',
+                cursor: 'pointer',
+                fontSize: 12,
+              }}
+            >
+              名前を初期値に戻す
+            </button>
+          </div>
+        </div>
       </Section>
 
       <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+        {/* flex:1 1 <basis> + minWidth:0 で、狭い画面では縦積み・広い画面では横並びに。
+            minWidth:0 がないと中身(SVG 520px等)が縮まず画面外に見切れる。 */}
+        <div style={{ flex: '1 1 340px', minWidth: 0 }}>
         <Section title="レーダーチャート プレビュー" count={members.length}>
-          <div style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 10, padding: 16 }}>
+          <div style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 10, padding: 16, maxWidth: '100%' }}>
             <RadarChart axes={axes} members={members} size={520} />
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 8 }}>
               {members.map((m, idx) => {
@@ -334,8 +519,108 @@ export function TeamRadarPage() {
           </div>
         </Section>
 
+        <Section title="感情ウェルビーイング・レーダー" count={members.length}>
+          <div style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 10, padding: 16, maxWidth: '100%' }}>
+            <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '0 0 12px', lineHeight: 1.6 }}>
+              スキルのレーダーに加え、各メンバーの「今日の気分」から<strong>感情ウェルビーイング</strong>
+              （活力・前向き・安定・余裕・回復力）を同じレーダーで可視化します。判定は感情解析エンジン
+              （<code>emotionInsights</code>）由来で、声かけが必要そうなメンバーを抽出します。
+            </p>
+            <RadarChart axes={emotionRadar.axes} members={emotionRadarMembers} size={520} />
+            <p style={{ fontSize: 13, marginTop: 10 }}>{teamEmotionSummary(emotionRadar)}</p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
+              {members.map((m) => (
+                <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
+                  <span style={{ minWidth: 90 }}>{m.name}</span>
+                  <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>気分</span>
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => setMoods((prev) => ({ ...prev, [m.id]: s }))}
+                      aria-label={`${m.name} の気分 ${s}`}
+                      style={{
+                        minWidth: 30,
+                        background: (moods[m.id] ?? 3) === s ? 'var(--accent)' : 'transparent',
+                        color: (moods[m.id] ?? 3) === s ? '#fff' : 'var(--text)',
+                        borderColor: (moods[m.id] ?? 3) === s ? 'var(--accent)' : 'var(--border)',
+                      }}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            {emotionRadar.needsSupport.length > 0 ? (
+              <div style={{ marginTop: 12, border: '1px solid var(--warning, #d97706)', borderRadius: 8, padding: 10 }}>
+                <strong style={{ fontSize: 13 }}>🫂 声かけをおすすめするメンバー</strong>
+                <ul style={{ margin: '6px 0 0', paddingLeft: 18, fontSize: 12, lineHeight: 1.7 }}>
+                  {emotionRadar.needsSupport.map((s) => (
+                    <li key={s.id}>
+                      <strong>{s.name}</strong>: {s.reason}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+            <p style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 10 }}>
+              ※ セルフケア・チームケア支援であり、診断や評価ではありません。
+            </p>
+          </div>
+        </Section>
+
+        <Section title="メンバーケア / 評価支援 (1on1)" count={members.length}>
+          <div style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 10, padding: 16 }}>
+            <p style={{ fontSize: 13, margin: '0 0 12px' }}>{teamCare.summary}</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {teamCare.reports.map((r) => {
+                const badge: Record<CarePriority, { label: string; color: string }> = {
+                  high: { label: 'ケア優先', color: '#ef4444' },
+                  medium: { label: '見守り', color: '#d97706' },
+                  none: { label: '安定', color: '#22c55e' },
+                };
+                const b = badge[r.priority];
+                return (
+                  <div
+                    key={r.id}
+                    style={{
+                      border: '1px solid var(--border)',
+                      borderLeft: `3px solid ${b.color}`,
+                      borderRadius: 8,
+                      padding: '10px 12px',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                      <strong style={{ fontSize: 14 }}>{r.name}</strong>
+                      <span style={{ fontSize: 11, color: '#fff', background: b.color, borderRadius: 999, padding: '1px 8px' }}>
+                        {b.label}
+                      </span>
+                      <span style={{ fontSize: 12, color: 'var(--text-mute)' }}>
+                        スキル {r.skill.average}/5 ({r.skill.level}) · {r.emotionNote}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 4 }}>
+                      強み: {r.skill.strength.axis} ({r.skill.strength.score}) ／ 伸びしろ: {r.skill.growth.axis} ({r.skill.growth.score})
+                    </div>
+                    <div style={{ fontSize: 13, marginTop: 6 }}>🗣 {r.oneOnOneFocus}</div>
+                  </div>
+                );
+              })}
+            </div>
+            <p style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 12, lineHeight: 1.6 }}>
+              ※ これは人による 1on1 支援の補助であり、自動的な人事評価・選別ではありません。
+              心理的に不調なメンバーは、評価より先に気持ちを聞くことを優先してください。
+            </p>
+          </div>
+        </Section>
+        </div>
+
+        <div style={{ flex: '1 1 380px', minWidth: 0 }}>
         <Section title="メンバー編集" count={members.length}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 380 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {members.map((m, idx) => {
               const c = PALETTE[idx % PALETTE.length]!;
               return (
@@ -448,6 +733,7 @@ export function TeamRadarPage() {
             </button>
           </div>
         </Section>
+        </div>
       </div>
 
       <Section title="保存 / エクスポート" count={0}>

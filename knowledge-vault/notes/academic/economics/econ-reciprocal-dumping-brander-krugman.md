@@ -1,0 +1,50 @@
+---
+collection: academic
+id: econ-reciprocal-dumping-brander-krugman
+category: "economics"
+category_ja: "経済学"
+title: "相互ダンピング・モデル（ブランダー＝クルーグマン）——寡占がもたらす産業内貿易"
+as_of: "2026-06-27"
+source_count: 2
+authoritative: true
+tags:
+  - collection/academic
+  - academic/economics
+  - knowledge/verified
+aliases:
+  - "相互ダンピング・モデル（ブランダー＝クルーグマン）——寡占がもたらす産業内貿易"
+---
+
+# 相互ダンピング・モデル（ブランダー＝クルーグマン）——寡占がもたらす産業内貿易
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-06-27 ・ 出典: 2件（うち権威ある出典 ✓）
+
+## 概要
+相互ダンピング・モデル（reciprocal dumping model）は、経済学者ジェームズ・ブランダーとポール・クルーグマンが1983年の論文で提示した国際貿易の理論で、比較優位がまったくなくても、寡占企業どうしの競争それ自体が貿易を生み出しうることを示した。伝統的な貿易理論（リカードの比較優位やヘクシャー＝オリーンの要素賦存）は、国どうしの技術や資源の違いを貿易の原因とする。だがこの理論では、技術も資源もそっくりな二国が、まったく同じ製品を互いに輸出し合う「産業内貿易」を説明できない。ブランダーとクルーグマンは、市場が完全競争ではなく寡占であるという、より現実的な前提からこれを説明した。設定はこうである。二つの国にそれぞれ一社ずつ、同じ財を作る企業があるとする。各企業は、自国市場では大きなシェアを持つため価格支配力を行使して高い価格をつけるが、相手国市場では「もう一社」として参入するため、限界費用に近い低い価格でも一単位売れば利益が出ると考える。つまり各企業は、自国より安い価格で相手国に製品を売り込む——これが「ダンピング（不当廉売）」である。重要なのは、これが双方向に起こる点である。両国の企業が互いの市場へダンピングし合う結果、同じ製品が二国間を行き来する「相互ダンピング」、すなわち産業内貿易が生じる。輸送費を払ってまで同じものを交換し合うこの貿易は、一見すると無駄に見える。実際、ブランダーとクルーグマンは、その厚生効果が両義的（曖昧）だと示した。一方で、同一財をわざわざ国境を越えて運び合うため、輸送資源が浪費される。他方で、外国企業の参入によって各国市場の競争が激しくなり、独占的な高価格による歪み（死荷重）が緩和される。どちらが上回るかは状況による。相互ダンピング・モデルは、クルーグマンの新貿易理論（規模の経済と不完全競争にもとづく貿易）の一角をなし、なぜ似た国どうしが同種の製品を活発に貿易し合うのかを、寡占競争という新しい観点から説明した、国際経済学の重要なモデルである。
+
+## 提唱者・初出
+ジェームズ・ブランダー ／ ポール・クルーグマン ／ エルハナン・ヘルプマン ／ アヴィナッシュ・ディキシット
+
+## 出典
+- [Brander, J. A. & Krugman, P. R. (1983) A Reciprocal Dumping Model of International Trade — Journal of International Economics, 15(3–4), 313–321](https://doi.org/10.1016/S0022-1996(83)80008-7) `学術`
+- [Wikipedia: Intra-industry trade — reciprocal dumping (Brander-Krugman), oligopoly, two-way trade in identical goods](https://en.wikipedia.org/wiki/Intra-industry_trade) `リファレンス`
+
+## 関連概念
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同じ思想家
+- [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 同じ思想家
+- [[econ-optimal-tariff-terms-of-trade|最適関税と交易条件——大国の市場支配力と関税政策の国際経済学的根拠]] — 同じ思想家
+- [[econ-strategic-trade-policy-brander-spencer|戦略的貿易政策——寡占市場における輸出補助金のレント移転]] — 同じ思想家
+- [[econ-trade-policy-strategic-industries|戦略的通商政策と産業政策——クルーグマンの貿易政策論とインダストリアル・ポリシー復権]] — 同じ思想家
+- [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
+- [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
+- [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

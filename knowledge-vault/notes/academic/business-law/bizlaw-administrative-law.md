@@ -1,0 +1,51 @@
+---
+collection: academic
+id: bizlaw-administrative-law
+category: "business-law"
+category_ja: "ビジネス法務"
+title: "行政法：公権力の行使に対する法的統制と行政救済の理論体系"
+as_of: "2026-06-24"
+source_count: 3
+authoritative: true
+tags:
+  - collection/academic
+  - academic/business-law
+  - knowledge/verified
+aliases:
+  - "行政法：公権力の行使に対する法的統制と行政救済の理論体系"
+---
+
+# 行政法：公権力の行使に対する法的統制と行政救済の理論体系
+
+> [!info] コレクション: [[学術概念]] ・ 区分: ビジネス法務 ・ asOf: 2026-06-24 ・ 出典: 3件（うち権威ある出典 ✓）
+
+## 概要
+行政法は、国家の公権力行使を法的に統制し、個人の権利利益を保護する法領域である。英国のアルバート・ダイシーは『憲法序説』（1885）で、すべての者が通常裁判所の同一の法に服するという法の支配の観点から、行政に特別の法と裁判所を認めるフランス流の行政法を特権として否定した——後年この評価自体が見直され、行政国家化の中で英米にも行政法が発達する。フランスではモーリス・オリウがコンセイユ・デタの判例を基礎に行政裁判制度と公役務（サービス・ピュブリック）概念を体系化し、大陸型の公法体系を確立した。日本では田中二郎が、公定力・不可争力・自力執行力を持つ行政行為を中核とする行政法総論を確立し、救済法は、取消訴訟を中心に2004年改正で義務付け訴訟・差止め訴訟を法定し原告適格の考慮事項を明文化した行政事件訴訟法、処分・不利益処分の事前手続（理由提示・聴聞）と意見公募手続（パブリックコメント）を定める行政手続法、行政内部の見直しとして審理員による審査請求を整備した行政不服審査法の三本柱に国家賠償法上の金銭救済が加わる構造をなす。裁量統制では、目的と手段の均衡を問う比例原則、表示への正当な信頼を保護する信頼保護原則、考慮すべき事項の審査（判断過程統制）が判例上の基準として機能し、事前手続による適正化と事後審査による救済を組み合わせて「法律による行政」を実質化することが現代行政法の課題である。
+
+## 提唱者・初出
+アルバート・ダイシー ／ モーリス・オリウ ／ 田中二郎
+
+## 出典
+- [Dicey 1885 Introduction to the Study of the Law of the Constitution, Macmillan](https://archive.org/details/introductiontos08teleducgoog) `学術`
+- [行政事件訴訟法（昭和37年法律第139号）e-Gov法令検索](https://laws.e-gov.go.jp/law/337AC0000000139) `公的`
+- [行政手続法（平成5年法律第88号）e-Gov法令検索](https://laws.e-gov.go.jp/law/405AC0000000088) `公的`
+
+## 関連概念
+- [[bizlaw-administrative-litigation|行政事件訴訟法]] — 語彙が近い
+- [[bizlaw-choice-of-law|準拠法——複数の法域に関わる紛争にいずれの法を適用するか]] — 同じ思想家
+- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
+- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 出典を共有
+- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 出典を共有
+- [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 出典を共有
+- [[econ-giffen-good-theory|ギッフェン財理論]] — 出典を共有
+- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 出典を共有
+- [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — 出典を共有
+- [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 出典を共有
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

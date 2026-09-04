@@ -1,0 +1,49 @@
+---
+collection: academic
+id: bizlaw-corporate-insolvency-rescue
+category: "business-law"
+category_ja: "ビジネス法務"
+title: "企業救済型倒産手続と「救済文化」（rescue culture）"
+as_of: "2026-06-26"
+source_count: 2
+authoritative: true
+tags:
+  - collection/academic
+  - academic/business-law
+  - knowledge/verified
+aliases:
+  - "企業救済型倒産手続と「救済文化」（rescue culture）"
+---
+
+# 企業救済型倒産手続と「救済文化」（rescue culture）
+
+> [!info] コレクション: [[学術概念]] ・ 区分: ビジネス法務 ・ asOf: 2026-06-26 ・ 出典: 2件（うち権威ある出典 ✓）
+
+## 概要
+英国の管理手続（Administration）や米国のChapter 11連邦破産法は，清算（liquidation）を回避して事業を存続・再建させる「救済文化（rescue culture）」を体現した倒産法制として知られる。英国では2002年企業法（Enterprise Act）により管理手続が清算型の受託管理（receivership）に代わる主要ルートとなり，倒産実務者（insolvency practitioner）がモラトリアム下で事業再生計画を策定する。日本では会社更生法（1952年，2002年改正）・民事再生法（2000年）が対応する。再建型手続が債権者・株主・従業員の利益調整をめぐる複雑なゲームを生み出し，DIPファイナンス・プレパッケージ（prepackaged plan）・クレームトレーディング（claim trading）などの実務的技法が発達した。
+
+## 提唱者・初出
+ロイ・グッド ／ 山本和彦 ／ ジェイ・ウェストブルック ／ ブライアン・カーニー
+
+## 出典
+- [Goode, R. & Gullifer, L. (2019) Goode and Gullifer on Legal Problems of Credit and Security — Oxford University Press（担保法・倒産法の主要テキスト）](https://doi.org/10.1093/oso/9780198786641.001.0001) `学術`
+- [Wikipedia: Administration (law) — 英国管理手続（企業救済型倒産）の概説](https://en.wikipedia.org/wiki/Administration_(law)) `リファレンス`
+
+## 関連概念
+- [[bizlaw-cross-border-insolvency-model|国際倒産法とUNCITRALモデル法（クロスボーダー・インソルベンシー）]] — 同じ思想家
+- [[bizlaw-insolvent-trading-directors|破産時取締役責任（インソルベント・トレーディング）]] — 同じ思想家
+- [[bizlaw-ipso-facto-clause-insolvency|イプソ・ファクト条項——倒産を契機とする契約終了条項の法的規制]] — 同じ思想家
+- [[bizlaw-secured-transactions-uncitral|動産担保取引法の国際的統一——UNCITRALモデル法と担保権の登録・優先順位]] — 同じ思想家
+- [[bizlaw-insolvency-law-fresh-start-discharge|倒産法と免責制度——新出発主義（フレッシュ・スタート）と債権者保護の均衡]] — 同分野の近傍
+- [[bizlaw-corporate-restructuring-insolvency|会社更生・民事再生と倒産法制——事業再生手続きの法的構造と債権者保護]] — 同分野の近傍
+- [[bizlaw-environmental-law|環境法：公共信託理論・ポーター仮説・国際気候法が形成する自然環境保護の法的体系]] — 同分野の近傍
+- [[bizlaw-class-action-collective-redress|集団訴訟と集合的救済制度の比較法]] — 同分野の近傍
+- [[bizlaw-corporate-insolvency-restructuring|会社更生法と企業倒産法制——日本の会社更生・民事再生と米国Chapter11の国際比較]] — 同分野の近傍
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

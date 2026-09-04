@@ -1,0 +1,50 @@
+---
+collection: academic
+id: infosoc-code-is-law-lessig
+category: "information-sociology"
+category_ja: "情報社会学"
+title: "コードは法である——サイバー空間の規制を担う四つの様式とアーキテクチャ"
+as_of: "2026-06-26"
+source_count: 2
+authoritative: true
+tags:
+  - collection/academic
+  - academic/information-sociology
+  - knowledge/verified
+aliases:
+  - "コードは法である——サイバー空間の規制を担う四つの様式とアーキテクチャ"
+---
+
+# コードは法である——サイバー空間の規制を担う四つの様式とアーキテクチャ
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-06-26 ・ 出典: 2件（うち権威ある出典 ✓）
+
+## 概要
+「コードは法である（code is law）」は、法学者ローレンス・レッシグが1999年の著作『コード——サイバースペースの法』（2006年に『Code: Version 2.0』として改訂）で提示した命題で、サイバー空間における人々の行動が、ソフトウェアとハードウェアの構造、すなわち「コード」によって、法律と同じくらい強力に規制されることを論じる。レッシグは、サイバー空間に限らず、人間の行動が四つの様式（modality）によって規制されると整理した。第一は「法（law）」で、国家が定める明示的な規則と罰則。第二は「社会規範（social norms）」で、共同体が課す非公式の制裁。第三は「市場（market）」で、価格を通じた制約。第四は「アーキテクチャ（architecture）」で、物理的・技術的な構造が定める可能・不可能の制約である。現実空間では建物の構造や地理がこれにあたり、サイバー空間ではそれが「コード」——その空間を構成するソフトウェアとプロトコル——となる。レッシグの中心的な主張は、サイバー空間においては、このアーキテクチャ＝コードこそが最も強力な規制者だという点にある。コードは、何が可能で、何が許され、何が妨げられるかを根本的に決定する。匿名でいられるか、発言が追跡されるか、コンテンツが複製できるか、アクセスが制限されるか——これらはすべてコードの設計によって決まる。コードが許さないことは、法が禁じるまでもなく端的に不可能になるのである。この洞察は、ジョン・ペリー・バーロウのサイバースペース独立宣言に代表される、サイバー空間は本来的に自由で規制不可能だとするサイバーリバタリアニズムへの根本的な反論となった。レッシグによれば、サイバー空間は自由でも統制でもなく、そのコードがいかに設計されるか次第である。コードは自由を可能にするようにも、完全な統制を可能にするようにも書ける。そして問題は、誰がそのコードを書き、どのような価値を埋め込むのかという点に移る。政府や企業がコードを通じて目に見えない形で行動を統制しうるからこそ、コードの設計は法と同様に、いや、しばしばそれ以上に、民主的な監視と価値判断の対象とされねばならない、とレッシグは論じた。「コードは法である」というテーゼは、技術の設計が権力と規制の問題であることを鋭く示し、デジタル時代の自由・プライバシー・規制をめぐる議論の基軸となっている。
+
+## 提唱者・初出
+ローレンス・レッシグ ／ ジョエル・ライデンバーグ ／ ジョン・ペリー・バーロウ ／ ヨハイ・ベンクラー
+
+## 出典
+- [Lessig, L. (1999) Code and Other Laws of Cyberspace — Basic Books (WorldCat)](https://www.worldcat.org/oclc/40340890) `学術`
+- [Wikipedia: Code is law — Lessig, four modalities of regulation, architecture/code, cyber-libertarianism critique](https://en.wikipedia.org/wiki/Lawrence_Lessig#Code_and_Other_Laws_of_Cyberspace) `リファレンス`
+
+## 関連概念
+- [[infosoc-commons-based-peer-production-benkler|コモンズ型ピア生産（ベンクラー）]] — 同じ思想家
+- [[infosoc-cyberspace|サイバースペース]] — 同じ思想家
+- [[infosoc-cyberspace-barlow|サイバースペース独立宣言——国家主権から自律したネット空間という理想]] — 同じ思想家
+- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 同じ思想家
+- [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 同じ思想家
+- [[infosoc-wikinomics-tapscott|ウィキノミクス——マス・コラボレーションが変える生産と経済]] — 同じ思想家
+- [[infosoc-generativity-zittrain|生成力（ジットレイン）——インターネットの革新力とその脆さ]] — 同じ思想家
+- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — 同じ思想家
+- [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同じ思想家
+- [[infosoc-open-source-software-movement|オープンソースソフトウェア運動——フリーソフトウェア倫理・バザール開発モデルと情報コモンズ]] — 同じ思想家
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

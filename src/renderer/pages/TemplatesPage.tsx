@@ -1,3 +1,5 @@
+import { wrapLines } from '../../shared/textWrap';
+import { escapeXml, isHexColor } from '../../shared/escape';
 import { useEffect, useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -14,43 +16,18 @@ interface TemplateParams {
 }
 
 interface TemplateDef {
-  id: string;
-  label: string;
-  description: string;
-  width: number;
-  height: number;
-  defaults: TemplateParams;
+  readonly id: string;
+  readonly label: string;
+  readonly description: string;
+  readonly width: number;
+  readonly height: number;
+  readonly defaults: TemplateParams;
 }
 
 interface TemplatesSnapshot {
-  templates: TemplateDef[];
-  fetchedAt: string;
-  isMock: boolean;
-}
-
-const HEX = /^#[0-9a-fA-F]{6}$/;
-
-function escapeXml(input: string): string {
-  return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-function wrapLines(text: string, maxChars: number): string[] {
-  const out: string[] = [];
-  for (const para of text.split(/\n/)) {
-    if (para.length === 0) { out.push(''); continue; }
-    let buf = '';
-    for (const ch of para) {
-      if (buf.length >= maxChars) { out.push(buf); buf = ''; }
-      buf += ch;
-    }
-    if (buf.length > 0) out.push(buf);
-  }
-  return out;
+  readonly templates: readonly TemplateDef[];
+  readonly fetchedAt: string;
+  readonly isMock: boolean;
 }
 
 // Mirror of the backend renderers so the renderer can preview without an IPC round-trip.
@@ -176,7 +153,7 @@ function svgDataUrl(svg: string): string {
 export function TemplatesPage() {
   const { data, source, status, errorMessage, refresh } = useServiceData<TemplatesSnapshot>(
     'templates',
-    SNAPSHOT.templates as unknown as TemplatesSnapshot,
+    SNAPSHOT.templates,
   );
 
   const [selectedId, setSelectedId] = useState<string>(data.templates[0]?.id ?? 'presentation-cover');
@@ -224,7 +201,7 @@ export function TemplatesPage() {
     setLastExport(null);
     try {
       // Lightweight client-side validation mirrors backend bounds.
-      if (!HEX.test(params.accentColor) || !HEX.test(params.secondaryColor)) {
+      if (!isHexColor(params.accentColor) || !isHexColor(params.secondaryColor)) {
         setMsg('カラーは #RRGGBB 形式で指定してください');
         return;
       }
@@ -277,7 +254,7 @@ export function TemplatesPage() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(200px, 100%), 1fr))',
             gap: 8,
           }}
         >

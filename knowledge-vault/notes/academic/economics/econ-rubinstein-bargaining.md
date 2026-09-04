@@ -1,0 +1,51 @@
+---
+collection: academic
+id: econ-rubinstein-bargaining
+category: "economics"
+category_ja: "経済学"
+title: "ルービンシュタイン交渉モデル"
+as_of: "2026-06"
+source_count: 3
+authoritative: true
+tags:
+  - collection/academic
+  - academic/economics
+  - knowledge/verified
+aliases:
+  - "ルービンシュタイン交渉モデル"
+---
+
+# ルービンシュタイン交渉モデル
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
+
+## 概要
+アリエル・ルービンシュタインが1982年にEconometrica誌で発表した「Perfect Equilibrium in a Bargaining Model」に基づく、非協力的・戦略的な交渉モデル。2人のプレイヤーが一定の「パイ」（余剰）の分割を巡り、（無限に続きうる）複数ラウンドにわたって交互にオファーを出し合う。各プレイヤーはせっかちで、将来の利得を割引因子で割り引く（時間コスト/遅延コスト）。この交互オファー・ゲームには一意の部分ゲーム完全均衡が存在し、合意は遅延なく初回（最初の期）に即時成立する。均衡での分け前は両者の割引因子（相対的な辛抱強さ）と先手か後手かに依存し、より辛抱強い（割引因子が1に近い）側ほど大きい取り分を得る。公理的なナッシュ交渉解とは区別され、その戦略的・非協力的基礎を与え、極限で両者は関係づけられる。
+
+## 提唱者・初出
+アリエル・ルービンシュタイン（Ariel Rubinstein, 1982）
+
+## 出典
+- [Ariel Rubinstein, "Perfect Equilibrium in a Bargaining Model," Econometrica 50(1), 1982 — The Econometric Society](https://www.econometricsociety.org/publications/econometrica/1982/01/01/perfect-equilibrium-bargaining-model) `学術`
+- [RePEc/IDEAS bibliographic record: Econometrica 50(1), pp. 97-109 (1982)](https://ideas.repec.org/a/ecm/emetrp/v50y1982i1p97-109.html) `学術`
+- [Rubinstein bargaining model — Wikipedia (alternating offers, discounting, unique SPE, patience)](https://en.wikipedia.org/wiki/Rubinstein_bargaining_model) `リファレンス`
+
+## 関連概念
+- [[econ-nash-bargaining|ナッシュ交渉解]] — 同じ思想家
+- [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 出典を共有
+- [[human-hot-hand-fallacy|ホットハンドの誤謬]] — 出典を共有
+- [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 出典を共有
+- [[econ-balanced-budget-multiplier|均衡予算乗数]] — 出典を共有
+- [[econ-folk-theorem|フォーク定理（繰り返しゲーム）]] — 出典を共有
+- [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]] — 出典を共有
+- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 出典を共有
+- [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 出典を共有
+- [[econ-search-matching|サーチ理論／マッチング理論]] — 同分野の近傍
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

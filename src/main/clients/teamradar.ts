@@ -2,6 +2,8 @@ import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
+import { isSafeExportPath, writeExportFile } from './exportPaths';
+import { localIsoDate } from '../../shared/localDate';
 
 /**
  * Team radar chart — 18 番目のサービス。
@@ -65,7 +67,6 @@ export interface TeamRadarSnapshot {
 // Block-form pragma covers the whole literal because perTest can't link
 // module-load const init to specific tests.
 
-// Stryker disable StringLiteral,ArrayDeclaration,ObjectLiteral,BooleanLiteral
 const DEFAULT_MEMBERS: readonly TeamMember[] = [
   {
     id: 'morita-takuya',
@@ -113,18 +114,18 @@ export const DEFAULT_TEAM_RADAR: TeamRadarSnapshot = {
   fetchedAt: '',
   isMock: true,
 };
-// Stryker restore StringLiteral,ArrayDeclaration,ObjectLiteral,BooleanLiteral
 
 // --- Validation --------------------------------------------------------
 
 // 4 dedicated tests cover both boundaries (1, 5, 0, 6, non-integer,
 // non-number, NaN, Infinity). perTest mis-attribution on the chained
 // `&&` ConditionalExpression mutants is the surviving artifact.
-// Stryker disable ConditionalExpression
 export function isValidScore(n: unknown): n is number {
+  // `Number.isInteger` は数値以外を必ず false にするので、前置きの typeof は
+  // 単独では観測できない (読みやすさのために残している)。
+  // Stryker disable next-line ConditionalExpression: Number.isInteger と重なる (観測不能)
   return typeof n === 'number' && Number.isInteger(n) && n >= SCORE_MIN && n <= SCORE_MAX;
 }
-// Stryker restore ConditionalExpression
 
 const ID_RE = /^[a-z0-9][a-z0-9-]{0,63}$/;
 export function isValidMemberId(id: unknown): id is string {
@@ -139,7 +140,6 @@ export function isValidMemberId(id: unknown): id is string {
 // equivalent up to one extra/missing element — we'd need 100+ boundary
 // tests to pin every single one. Block-form pragma covers the whole
 // validator body and silences perTest mis-attribution.
-// Stryker disable ConditionalExpression,LogicalOperator,BooleanLiteral,EqualityOperator,ArithmeticOperator,MethodExpression,StringLiteral
 export function validateMembers(raw: unknown): readonly TeamMember[] {
   if (!Array.isArray(raw)) throw new Error('members must be an array');
   if (raw.length > 50) throw new Error('members exceeds 50');
@@ -151,6 +151,7 @@ export function validateMembers(raw: unknown): readonly TeamMember[] {
     }
     const m = item as Record<string, unknown>;
     if (!isValidMemberId(m['id'])) {
+        // Stryker disable next-line StringLiteral: 末尾の空 quasi は変異させても同じ
       throw new Error(`member id is invalid: ${String(m['id'])}`);
     }
     if (seenIds.has(m['id'])) {
@@ -191,12 +192,10 @@ export function validateMembers(raw: unknown): readonly TeamMember[] {
   }
   return out;
 }
-// Stryker restore ConditionalExpression,LogicalOperator,BooleanLiteral,EqualityOperator,ArithmeticOperator,MethodExpression,StringLiteral
 
 // --- SVG renderer ------------------------------------------------------
 
 // Palette colors are decorative — exact hex values are not contract.
-// Stryker disable next-line ArrayDeclaration
 const PALETTE = [
   { stroke: '#5b8def', fill: 'rgba(91, 141, 239, 0.18)' },
   { stroke: '#ec9a3d', fill: 'rgba(236, 154, 61, 0.18)' },
@@ -213,19 +212,14 @@ export function colorFor(index: number): { stroke: string; fill: string } {
   // The double-modulo handles negative indices; tests pin the 8 positive
   // wrap (i=8 → 0, i=9 → 1) and the negative wrap (i=-1 → 7). The middle
   // arithmetic is observationally equivalent to many mutated forms.
-  // Stryker disable next-line ArithmeticOperator,LogicalOperator,EqualityOperator
   const i = ((index % PALETTE.length) + PALETTE.length) % PALETTE.length;
   return PALETTE[i]!;
 }
 
-export function escapeXml(input: string): string {
-  return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
+/** マークアップ用のエスケープ。実装は `shared/escape.ts` に 1 つだけ持つ。 */
+import { escapeXml } from '../../shared/escape';
+
+export { escapeXml };
 
 export interface RadarChartOptions {
   readonly width?: number;
@@ -240,7 +234,6 @@ export interface RadarChartOptions {
 // linear radius scaling. ArithmeticOperator mutants on the multiple
 // expressions (each numerator/denominator) all manifest as different
 // pixel positions; the contract is only the 3 tested anchor points.
-// Stryker disable ArithmeticOperator
 export function axisPoint(
   cx: number,
   cy: number,
@@ -249,20 +242,20 @@ export function axisPoint(
   axisCount: number,
   score: number,
 ): { x: number; y: number } {
+  // Stryker disable ArithmeticOperator: 角度の取り方 (真上から時計回り)。左右が入れ替わるだけで図としては成立するため、軸名の寄せ方の検査で構造を固定している
   const theta = -Math.PI / 2 + (axisIdx / axisCount) * 2 * Math.PI;
   const r = (score / SCORE_MAX) * radius;
   return {
     x: cx + Math.cos(theta) * r,
+  // Stryker restore ArithmeticOperator
     y: cy + Math.sin(theta) * r,
   };
 }
-// Stryker restore ArithmeticOperator
 
 // The renderer is a pure function. Coordinate math + color flips +
 // label positioning are decorative — pinned by smoke tests that assert
 // the output contains <svg, the correct member polygon count, each
 // member name, and each axis label.
-// Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement,ArithmeticOperator,StringLiteral,ArrayDeclaration,ObjectLiteral
 export function renderTeamRadarSvg(
   snap: TeamRadarSnapshot,
   opts: RadarChartOptions = {},
@@ -270,7 +263,9 @@ export function renderTeamRadarSvg(
   const width = opts.width ?? 720;
   const height = opts.height ?? 720;
   const cx = width / 2;
+  // Stryker disable ArithmeticOperator: 中心の縦位置の微調整
   const cy = height / 2 + 10;
+  // Stryker restore ArithmeticOperator
   const radius = Math.min(width, height) * 0.35;
   const axes = snap.axes;
   const axisCount = axes.length;
@@ -289,7 +284,9 @@ export function renderTeamRadarSvg(
     // Label the ring with its score (only on the rightmost vertex of the top axis)
     const labelP = axisPoint(cx, cy, radius, 0, axisCount, lvl);
     rings.push(
+      // Stryker disable ArithmeticOperator: 目盛り数字の横ずらし
       `<text x="${(labelP.x + 8).toFixed(1)}" y="${labelP.y.toFixed(1)}" font-size="10" fill="#94a3b8" text-anchor="start">${lvl}</text>`,
+      // Stryker restore ArithmeticOperator
     );
   }
 
@@ -301,11 +298,13 @@ export function renderTeamRadarSvg(
       `<line x1="${cx}" y1="${cy}" x2="${outer.x.toFixed(1)}" y2="${outer.y.toFixed(1)}" stroke="#2a2f3a" stroke-width="1" />`,
     );
     // Place axis label slightly outside the ring
+    // Stryker disable ArithmeticOperator,EqualityOperator,StringLiteral: 軸名を置く半径と寄せ方のしきい値・書式 (寄せ方の振り分けは検査で固定済み)
     const labelP = axisPoint(cx, cy, radius * 1.12, i, axisCount, SCORE_MAX);
     const anchor =
       Math.abs(labelP.x - cx) < 8 ? 'middle' : labelP.x > cx ? 'start' : 'end';
     spokes.push(
       `<text x="${labelP.x.toFixed(1)}" y="${labelP.y.toFixed(1)}" font-size="13" fill="#e6e8ec" text-anchor="${anchor}" dominant-baseline="middle">${escapeXml(axes[i] ?? '')}</text>`,
+    // Stryker restore ArithmeticOperator,EqualityOperator,StringLiteral
     );
   }
 
@@ -330,6 +329,7 @@ export function renderTeamRadarSvg(
       );
     }
     // Legend entry
+    // Stryker disable ArithmeticOperator,StringLiteral: 凡例の行間と、要素をつなぐ改行・字下げ (要素の数と中身は検査で固定済み)
     const legendY = 28 + idx * 22;
     legend.push(
       `<circle cx="${width - 180}" cy="${legendY}" r="6" fill="${c.stroke}" />`,
@@ -349,8 +349,8 @@ export function renderTeamRadarSvg(
   ${polygons.join('\n  ')}
   ${legend.join('\n  ')}
 </svg>`;
+  // Stryker restore ArithmeticOperator,StringLiteral
 }
-// Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement,ArithmeticOperator,StringLiteral,ArrayDeclaration,ObjectLiteral
 
 // --- State persistence ------------------------------------------------
 
@@ -378,7 +378,6 @@ export interface StateDeps {
 // length > 0 are equivalent for any non-empty input — 1 boundary test
 // (oversize-truncate) pins the contract; sub-boundary mutants don't
 // change behavior for the standard load path. perTest noise is silenced.
-// Stryker disable ArrowFunction,BooleanLiteral,StringLiteral,EqualityOperator,ConditionalExpression,LogicalOperator,ArithmeticOperator,ObjectLiteral,MethodExpression,ArrayDeclaration
 export async function loadTeamRadarState(
   deps: StateDeps = {},
 ): Promise<TeamRadarState> {
@@ -387,6 +386,8 @@ export async function loadTeamRadarState(
   try {
     const raw = await read(p);
     const parsed = JSON.parse(raw) as unknown;
+    // 文言は下の catch が飲むので画面には出ない (分岐の存在だけが意味を持つ)。
+    // Stryker disable next-line StringLiteral: catch が飲むため観測不能
     if (parsed === null || typeof parsed !== 'object') throw new Error('not object');
     const o = parsed as Record<string, unknown>;
     const dept = typeof o['department'] === 'string' && o['department'].length > 0
@@ -394,7 +395,7 @@ export async function loadTeamRadarState(
       : '営業部';
     const at = typeof o['evaluatedAt'] === 'string' && o['evaluatedAt'].length > 0
       ? (o['evaluatedAt'] as string).slice(0, 32)
-      : new Date().toISOString().slice(0, 10);
+      : localIsoDate();
     const members = validateMembers(o['members'] ?? []);
     return { department: dept, evaluatedAt: at, members };
   } catch {
@@ -404,6 +405,22 @@ export async function loadTeamRadarState(
       members: DEFAULT_TEAM_RADAR.members,
     };
   }
+}
+
+/**
+ * 0600 で書いて、**書いた後に締める**。
+ *
+ * `mode` は新規作成のときしか効かないので、固定名の `.tmp` が既に 644 で
+ * 残っていると 644 のまま本体へ被さる (2026-08-25 実測)。
+ * 留めているのは `main/__tests__/staleTmpMode.test.ts`。
+ */
+async function writeTight(target: string, contents: string): Promise<void> {
+  // Stryker disable next-line ObjectLiteral: `mode` を落としても**直後の
+  // `chmod` が同じ 600 を掛ける**ので、最終状態は変わらない (等価変異)。
+  // 明示を残すのは、作成→chmod の隙間を狭めるため (上の注記のとおり
+  // `mode` は新規作成のときしか効かず、既存ファイルには chmod が要る)。
+  await fs.writeFile(target, contents, { mode: 0o600 });
+  await fs.chmod(target, 0o600);
 }
 
 export async function saveTeamRadarState(
@@ -421,18 +438,46 @@ export async function saveTeamRadarState(
   const p = (deps.statePath ?? defaultStatePath)();
   const tmp = p + '.tmp';
   const mkdirFn = deps.mkdir ?? ((dir: string) => fs.mkdir(dir, { recursive: true }).then(() => undefined));
-  const writeFn = deps.writeFile ?? ((q: string, c: string) => fs.writeFile(q, c, 'utf8'));
+  /*
+   * **0600 で書く。ここに入るのは他人の評価である。**
+   *
+   * `team-radar.json` の中身は部署名・**メンバーの氏名**・軸ごとの 1〜5 評価・
+   * 付箋コメント —— 人事評価そのもので、しかも**利用者本人ではなく第三者**の
+   * 情報である。にもかかわらず実測 (2026-08-23) では **644** で書かれていた:
+   *
+   * ```
+   *   secrets.json               600  (明示)
+   *   service-hub-emotions.json  600  (明示)
+   *   team-radar.json            644  ← ここだけ既定のまま
+   * ```
+   *
+   * 同じ機械の他の利用者が同僚の評価を読める状態だった。
+   *
+   * **既にある 644 のファイルも次の保存で直る。** `mode` は新規作成のときしか
+   * 効かないが、この関数は `tmp` を作って `rename` で被せるので、本体の
+   * 古い権限は残らない。
+   *
+   * **ただし「毎回 0600 で作られたものになる」は誤りだった (2026-08-25 訂正)。**
+   * `tmp` は固定名 (`p + '.tmp'`) なので、**それ自体が既に 644 で存在する**と
+   * `writeFile(..., { mode: 0o600 })` はその権限を変えずに上書きし、
+   * 644 のまま本体へ被さる。下の `writeFn` で書いた後に `chmod` して閉じた。
+   *
+   * `atomicWriteFile` に寄せなかったのは、`writeFile` / `rename` の
+   * 差し替え口を検査が使っているため —— 得られる性質は同じ
+   * (あちらは一意な tmp 名なのでこの形にはならない)。
+   *
+   * (`fs.writeFile` の既定の符号化は utf8 で、options を渡しても変わらない。)
+   */
+  const writeFn = deps.writeFile ?? writeTight;
   const renameFn = deps.rename ?? ((a: string, b: string) => fs.rename(a, b));
   await mkdirFn(path.dirname(p));
   await writeFn(tmp, JSON.stringify(state, null, 2));
   await renameFn(tmp, p);
 }
-// Stryker restore ArrowFunction,BooleanLiteral,StringLiteral,EqualityOperator,ConditionalExpression,LogicalOperator,ArithmeticOperator,ObjectLiteral,MethodExpression,ArrayDeclaration
 
 // --- Snapshot fetcher --------------------------------------------------
 
 // Module-level const init; perTest can't link to a specific test.
-// Stryker disable next-line StringLiteral
 const FETCHED_AT = '2035-04-15T00:00:00.000Z';
 
 export interface SnapshotDeps {
@@ -455,7 +500,6 @@ export async function fetchTeamRadarSnapshotImpl(
   };
 }
 
-// Stryker disable next-line BlockStatement
 export async function fetchTeamRadarSnapshot(
   ctx: FetchContext,
 ): Promise<TeamRadarSnapshot> {
@@ -469,17 +513,9 @@ export function defaultSvgExportPath(): string {
 }
 
 // Same path-traversal guard pattern as the business-dashboard export.
-// Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator,BooleanLiteral
 export function isSafeSvgExportPath(filePath: string, home: string): boolean {
-  if (typeof filePath !== 'string' || filePath.length === 0) return false;
-  if (filePath.length > 1024) return false;
-  if (/[\0\r\n]/.test(filePath)) return false;
-  if (!filePath.endsWith('.svg')) return false;
-  const resolved = path.resolve(filePath);
-  const resolvedHome = path.resolve(home);
-  return resolved.startsWith(resolvedHome + path.sep) || resolved === resolvedHome;
+  return isSafeExportPath(filePath, home, '.svg');
 }
-// Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator,BooleanLiteral
 
 export interface ExportSvgResult {
   readonly path: string;
@@ -499,7 +535,6 @@ export interface ExportSvgDeps {
   now?: () => Date;
 }
 
-// Stryker disable ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction,ObjectLiteral,StringLiteral,BooleanLiteral
 export async function exportTeamRadarSvgImpl(
   ctx: ActionContext,
   deps: ExportSvgDeps = {},
@@ -520,15 +555,13 @@ export async function exportTeamRadarSvgImpl(
     : 'チームレーダーチャート';
   const svg = renderTeamRadarSvg(snap, { title: titleStr });
   const mkdirFn = deps.mkdir ?? ((dir: string) => fs.mkdir(dir, { recursive: true }).then(() => undefined));
-  const writeFn = deps.writeFile ?? ((p: string, c: string) => fs.writeFile(p, c, 'utf8'));
+  const writeFn = deps.writeFile ?? writeExportFile;
   await mkdirFn(path.dirname(filePath));
   await writeFn(filePath, svg);
   const generatedAt = (deps.now ?? (() => new Date()))().toISOString();
-  return { path: filePath, bytes: Buffer.byteLength(svg, 'utf8'), generatedAt };
+  return { path: filePath, bytes: Buffer.byteLength(svg), generatedAt };
 }
-// Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction,ObjectLiteral,StringLiteral,BooleanLiteral
 
-// Stryker disable next-line BlockStatement
 async function exportTeamRadarSvg(ctx: ActionContext): Promise<ExportSvgResult> {
   return exportTeamRadarSvgImpl(ctx);
 }
@@ -546,27 +579,19 @@ export async function saveTeamRadarStateImpl(
   deps: StateDeps = {},
 ): Promise<TeamRadarState> {
   const { department, evaluatedAt, members } = ctx.payload as SaveStatePayload;
-  // Stryker disable ConditionalExpression,LogicalOperator,EqualityOperator,StringLiteral,BlockStatement
-  if (typeof department !== 'string' || department.length === 0 || department.length > 64) {
-    throw new Error('department must be a 1-64 char string');
-  }
-  if (typeof evaluatedAt !== 'string' || evaluatedAt.length === 0 || evaluatedAt.length > 32) {
-    throw new Error('evaluatedAt must be a 1-32 char string');
-  }
-  // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,StringLiteral,BlockStatement
-  // Stryker disable next-line LogicalOperator,ArrayDeclaration
+  // 長さと型の判定は `saveTeamRadarState` が持つ。ここで同じ判定を重ねると、
+  // 外側を外しても内側が同じ文言で弾くため観測できない分岐になる
+  // (規則を決める場所は 1 つにする)。
   const validated = validateMembers(members ?? []);
-  const next: TeamRadarState = { department, evaluatedAt, members: validated };
+  const next = { department, evaluatedAt, members: validated } as TeamRadarState;
   await saveTeamRadarState(next, deps);
   return next;
 }
 
-// Stryker disable next-line BlockStatement
 async function saveTeamRadarStateAction(ctx: ActionContext): Promise<TeamRadarState> {
   return saveTeamRadarStateImpl(ctx);
 }
 
-// Stryker disable next-line ObjectLiteral
 export const ACTIONS: ActionMap = {
   'save-state': saveTeamRadarStateAction,
   'export-svg': exportTeamRadarSvg,
