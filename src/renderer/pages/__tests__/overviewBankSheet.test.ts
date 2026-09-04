@@ -14,6 +14,7 @@ import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../../data/kpiActuals';
 import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../../data/balanceSheet';
 import { BANK_SUBMISSION_COLLECTION, type BankSubmissionSettings } from '../../data/bankSubmission';
+import { _resetNavigationIntentForTests, navigateTo, onNavigate, takeNavigationIntent } from '../../navigate';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -113,6 +114,7 @@ async function savedSettings(): Promise<readonly BankSubmissionSettings[]> {
 beforeEach(async () => {
   _resetRecordStoreForTests();
   _resetCollectionSubscribersForTests();
+  _resetNavigationIntentForTests();
   await new Promise<void>((resolve) => {
     const req = indexedDB.deleteDatabase('business-hub-data');
     req.onsuccess = () => resolve();
@@ -227,5 +229,31 @@ describe('経営サマリー — 金融機関等提出用の書面', () => {
     } finally {
       (window as unknown as { print: () => void }).print = original;
     }
+  });
+});
+
+describe('経営サマリー — 書類スタジオ・士業との連携', () => {
+  it('「提出用の書面を開いた状態で」の指示つきで来ると、mount 直後に書面が開いている', async () => {
+    navigateTo('overview', { action: 'bank-sheet' });
+    await mountOverview();
+    expect(q.sheet()).not.toBeNull();
+    expect(takeNavigationIntent('overview')).toBeNull();
+  });
+  it('指示なしなら書面は閉じたまま', async () => {
+    await mountOverview();
+    expect(q.sheet()).toBeNull();
+  });
+  it('計算書類・税理士・公認会計士のボタンは遷移と指示を届ける', async () => {
+    await mountOverview();
+    const seen: string[] = [];
+    const off = onNavigate((id) => seen.push(id));
+    await click(q.button('書類スタジオで計算書類を作る'));
+    expect(seen).toEqual(['docstudio']);
+    expect(takeNavigationIntent('docstudio')).toEqual({ doc: 'kessan', action: 'import-overview' });
+    await click(q.button('税理士に相談'));
+    await click(q.button('公認会計士に相談'));
+    off();
+    expect(seen).toEqual(['docstudio', 'tax-accountant', 'cpa']);
+    expect(takeNavigationIntent('tax-accountant')).toBeNull();
   });
 });

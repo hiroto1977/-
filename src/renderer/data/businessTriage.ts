@@ -60,6 +60,22 @@ export interface DocTriage {
 
 /** 定款・就業規則は STUDIO_TEMPLATES の外にあるので擬似 id を振る。 */
 export const EXTRA_DOC_IDS = ['teikan-kk', 'teikan-gk', 'shugyo', 'kessan'] as const;
+export type ExtraDocId = (typeof EXTRA_DOC_IDS)[number];
+
+/** 書式一覧に無い 4 つの表示名 (書類スタジオの各タブの名前と揃える)。 */
+export const EXTRA_DOC_LABEL: Readonly<Record<ExtraDocId, string>> = {
+  'teikan-kk': '電子定款（株式会社）',
+  'teikan-gk': '電子定款（合同会社）',
+  shugyo: '就業規則',
+  kessan: '計算書類（4点）',
+};
+
+/** doc id → 表示名。書式一覧 → 4 つの特別枠 → 見つからなければ id をそのまま。 */
+export function docLabel(doc: string): string {
+  const template = STUDIO_TEMPLATES.find((d) => d.id === doc);
+  if (template) return template.label;
+  return (EXTRA_DOC_LABEL as Readonly<Record<string, string | undefined>>)[doc] ?? doc;
+}
 
 /** 契約書に共通の注意（個別の注意が無い書式で使う）。 */
 export const CONTRACT_NOTE =
@@ -489,4 +505,33 @@ export function labelOf(id: ProfessionalId): string {
 /** 士業 id → 検証済みの根拠法。仕分けの文面ではこれをそのまま引く。 */
 export function lawOf(id: ProfessionalId): string {
   return PROFESSIONAL_MAP[id].law;
+}
+
+/** 士業から見た書類との関係。独占業務に当たる書類が先、相談先として名前が挙がる書類が後。 */
+export type DocRelation = 'exclusive' | 'consult';
+
+export interface ProfessionalDocLink {
+  readonly doc: string;
+  readonly label: string;
+  readonly relation: DocRelation;
+  readonly ownUse: OwnUse;
+}
+
+/**
+ * 士業 → 書類の逆引き (士業のページの「書類スタジオで作る書類」)。
+ *
+ * 仕分け表 (`ROWS`) を裏返すだけで、担当の定義は増やさない。独占業務に当たる
+ * 書類 (`exclusiveTo`) を先に、相談先として挙がる書類 (`consult`) を後に、
+ * どちらも表の並び順のまま返す。両方に載る書類は独占側に 1 度だけ出す。
+ */
+export function docsForProfessional(id: ProfessionalId): readonly ProfessionalDocLink[] {
+  const link = (r: DocTriage, relation: DocRelation): ProfessionalDocLink => ({
+    doc: r.doc,
+    label: docLabel(r.doc),
+    relation,
+    ownUse: r.ownUse,
+  });
+  const exclusive = ROWS.filter((r) => r.exclusiveTo.includes(id)).map((r) => link(r, 'exclusive'));
+  const consult = ROWS.filter((r) => !r.exclusiveTo.includes(id) && r.consult.includes(id)).map((r) => link(r, 'consult'));
+  return [...exclusive, ...consult];
 }

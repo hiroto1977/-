@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { navigateTo, takeNavigationIntent } from '../navigate';
 import { Section } from '../components/StatusBar';
 import { useCollection } from '../data/useCollection';
 import {
@@ -785,6 +786,10 @@ export function OverviewPage() {
     [submissionCol.records],
   );
   const [sheetOpen, setSheetOpen] = useState(false);
+  // 士業のページなどから「提出用の書面を開いた状態で」と言われて来たとき。mount 時に 1 度だけ。
+  useEffect(() => {
+    if (takeNavigationIntent('overview')?.action === 'bank-sheet') setSheetOpen(true);
+  }, []);
   const kpiPeriods = useMemo(() => kpiRecords.map((r) => r.data.period), [kpiRecords]);
   const balanceSheetAsOf = latestRecord(bsRecords)?.data.asOf ?? null;
   const sheetModel = useMemo(
@@ -836,7 +841,20 @@ export function OverviewPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+        <button
+          type="button"
+          onClick={() => navigateTo('docstudio', { doc: 'kessan', action: 'import-overview' })}
+          title="KPI 実績・貸借対照表・提出者情報を書類スタジオの計算書類 (損益計算書・貸借対照表・株主資本等変動計算書・個別注記表) に写します"
+        >
+          書類スタジオで計算書類を作る
+        </button>
+        <button type="button" onClick={() => navigateTo('tax-accountant')} title="税理士のページ (事業仕分け・連絡先・相談履歴) を開きます">
+          税理士に相談
+        </button>
+        <button type="button" onClick={() => navigateTo('cpa')} title="公認会計士のページを開きます">
+          公認会計士に相談
+        </button>
         <button
           type="button"
           onClick={() => setSheetOpen(true)}

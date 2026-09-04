@@ -29,6 +29,14 @@ import { checkDoc, countBlank, toNum, type DocIssue } from '../data/docStudioChe
 import { LEVEL_COLOR, LEVEL_MARK, LEVEL_NAME, borderColorFor } from '../components/issueLevelUi';
 import { byIssueLevel, countByLevel } from '../../shared/issueLevel';
 import { labelOf, lawOf, triageFor } from '../data/businessTriage';
+import { navigateTo, takeNavigationIntent } from '../navigate';
+import { useCollection } from '../data/useCollection';
+import { latestRecord } from '../data/latestRecord';
+import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../data/kpiActuals';
+import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceSheet';
+import { BANK_SUBMISSION_COLLECTION, settingsFromRecord, type BankSubmissionSettings } from '../data/bankSubmission';
+import { buildKessanImport, type KessanImportResult } from '../data/kessanImport';
+import { tableStyle, thStyle, tdStyle, tdNum } from '../components/tableStyles';
 import {
   STATUS_DESCRIPTION,
   STATUS_LABEL,
@@ -1116,6 +1124,16 @@ function TriagePanel({ doc }: { doc: string }) {
         </div>
       )}
 
+      {(t.exclusiveTo.length > 0 || t.consult.length > 0) && (
+        <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+          {[...t.exclusiveTo, ...t.consult.filter((id) => !t.exclusiveTo.includes(id))].map((id) => (
+            <button key={id} type="button" onClick={() => navigateTo(id)} style={{ fontSize: 11 }}>
+              {labelOf(id)}のページへ →
+            </button>
+          ))}
+        </div>
+      )}
+
       <div style={{ marginTop: 8, color: 'var(--text-mute)', fontSize: 11 }}>
         独占規定はいずれも「他人の求めに応じ」「業として」を要件に置くため、自社の書類を自社の名で
         出す分は制限されません。ただし形式だけ本人名義にして実質が他人からの依頼なら、同じく制限を受けます。
@@ -1203,6 +1221,69 @@ function matches(doc: StudioDoc, query: string): boolean {
   return q.split(/\s+/).every((term) => hay.includes(term));
 }
 
+/**
+ * 経営サマリーから計算書類へ取り込むパネル。取り込む前に「どの科目に・いくら・どこから」を
+ * 全部見せ、置き方の注記と取り込めない物を並べる。押すまで何も書かない。
+ */
+function KessanImportPanel({ result, applied, onApply }: { result: KessanImportResult; applied: number | null; onApply: () => void }) {
+  const hasRows = result.rows.length > 0;
+  return (
+    <Section title="経営サマリーから取り込む" count={result.rows.length}>
+      <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 8 }}>
+        経営サマリーの KPI 実績・貸借対照表・提出者情報を計算書類の科目残高に写します。出所の無い科目
+        (資本金・役員報酬・地代家賃など) は今の値のまま残します。内訳の無い額は「その他」の科目に置き、置いた理由を下に出します。
+      </div>
+      {hasRows && (
+        <div style={{ overflowX: 'auto' }}>
+          <table style={tableStyle} data-kessan-import>
+            <thead>
+              <tr>
+                <th style={thStyle}>入力欄</th>
+                <th style={thStyle}>取り込む値</th>
+                <th style={thStyle}>出所</th>
+              </tr>
+            </thead>
+            <tbody>
+              {result.rows.map((r) => (
+                <tr key={r.k}>
+                  <td style={tdStyle}>{r.label}</td>
+                  <td style={tdNum}>{/^-?\d+$/.test(r.value) ? Number(r.value).toLocaleString('ja-JP') : r.value}</td>
+                  <td style={{ ...tdStyle, color: 'var(--text-mute)' }}>{r.source}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {result.skipped.length > 0 && (
+        <ul style={{ fontSize: 12, color: 'var(--text-mute)', margin: '8px 0 0', paddingLeft: '1.4em' }}>
+          {result.skipped.map((t) => (
+            <li key={t}>取り込めない: {t}</li>
+          ))}
+        </ul>
+      )}
+      {result.notes.length > 0 && (
+        <ul style={{ fontSize: 12, color: 'var(--text-mute)', margin: '8px 0 0', paddingLeft: '1.4em' }}>
+          {result.notes.map((t) => (
+            <li key={t}>{t}</li>
+          ))}
+        </ul>
+      )}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 10 }}>
+        <button type="button" className="primary" disabled={!hasRows} onClick={onApply}>
+          この内容で取り込む
+        </button>
+        <button type="button" onClick={() => navigateTo('overview')}>経営サマリーを開く →</button>
+      </div>
+      {applied !== null && (
+        <div role="status" style={{ color: '#22c55e', fontSize: 12, marginTop: 6 }}>
+          {applied} 件を取り込みました。貸借の検算は下の「貸借の検算」パネルで確認してください。
+        </div>
+      )}
+    </Section>
+  );
+}
+
 export function DocstudioPage() {
   const { source, status, errorMessage, refresh } = useServiceData('docstudio', SNAPSHOT.docstudio);
   const [store, setStore] = useState<StoreShape>(() => loadStore());
@@ -1213,6 +1294,51 @@ export function DocstudioPage() {
   const [cat, setCat] = useState<string>('すべて');
 
   useEffect(() => saveStore(store), [store]);
+
+  // 経営サマリー → 計算書類。KPI 実績・貸借対照表・提出者情報は record store に
+  // あり、書類スタジオの入力は localStorage にある。ここで読んで写す (押すまで書かない)。
+  const kpiCol = useCollection<KpiActual>(KPI_ACTUALS_COLLECTION);
+  const bsCol = useCollection<BalanceSheet>(BALANCE_SHEET_COLLECTION);
+  const submissionCol = useCollection<BankSubmissionSettings>(BANK_SUBMISSION_COLLECTION);
+  const kessanImport = useMemo(
+    () =>
+      buildKessanImport({
+        kpiActuals: kpiCol.records.map((r) => r.data),
+        balanceSheet: latestRecord(bsCol.records)?.data ?? null,
+        profile: settingsFromRecord(latestRecord(submissionCol.records)?.data).profile,
+        existing: store.kessan ?? {},
+      }),
+    [kpiCol.records, bsCol.records, submissionCol.records, store.kessan],
+  );
+  const [importApplied, setImportApplied] = useState<number | null>(null);
+  function applyKessanImport() {
+    const n = kessanImport.rows.length;
+    setStore((prev) => ({ ...prev, kessan: { ...prev.kessan, ...kessanImport.values } }));
+    setImportApplied(n);
+  }
+
+  /** 書類 id から画面の状態へ (士業のページや経営サマリーからの遷移)。知らない id は何もしない。 */
+  function openDoc(doc: string) {
+    if (doc === 'kessan') {
+      setCollection('kessan');
+    } else if (doc === 'shugyo') {
+      setCollection('shugyo');
+    } else if (doc === 'teikan-kk' || doc === 'teikan-gk') {
+      setCollection('teikan');
+      setTeikanType(doc === 'teikan-kk' ? 'kk' : 'gk');
+    } else if (STUDIO_TEMPLATES.some((d) => d.id === doc)) {
+      setCollection('studio');
+      pickDoc(doc);
+    }
+  }
+
+  // 他の画面からの「開いたら最初にすること」。mount 時に 1 度だけ受け取る。
+  useEffect(() => {
+    const intent = takeNavigationIntent('docstudio');
+    if (intent === null) return;
+    if (intent.doc !== undefined) openDoc(intent.doc);
+    if (intent.action === 'import-overview') setCollection('kessan');
+  }, []);
 
   const studioDoc = useMemo(() => STUDIO_TEMPLATES.find((d) => d.id === docId) ?? STUDIO_TEMPLATES[0]!, [docId]);
 
@@ -1497,6 +1623,10 @@ export function DocstudioPage() {
                 </button>
               </div>
             </Section>
+          )}
+
+          {collection === 'kessan' && (
+            <KessanImportPanel result={kessanImport} applied={importApplied} onApply={applyKessanImport} />
           )}
 
           <LegalPanel

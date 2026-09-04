@@ -9,6 +9,7 @@ import type { ServiceId } from '../../shared/serviceId';
 import type { ShigyoSnapshot, ShigyoConsultationStatus } from '../../shared/shigyoTypes';
 import { jpy } from '../../shared/formatters';
 import { PROFESSIONAL_MAP, otherProfessionals, isProfessionalId } from '../data/professionalMap';
+import { docsForProfessional } from '../data/businessTriage';
 import {
   SHIGYO_CONTACTS_COLLECTION,
   SHIGYO_CONSULTATIONS_COLLECTION,
@@ -80,6 +81,8 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
   const { pendingDocuments, monthlyFee, outstandingInvoice } = data;
   const profile = isProfessionalId(serviceId) ? PROFESSIONAL_MAP[serviceId] : null;
   const others = isProfessionalId(serviceId) ? otherProfessionals(serviceId) : [];
+  // 書類スタジオで作れる、この士業に関わる書式 (仕分け表の逆引き)。
+  const docs = useMemo(() => (isProfessionalId(serviceId) ? docsForProfessional(serviceId) : []), [serviceId]);
 
   // ユーザー登録の連絡先・相談履歴 (record store 永続化・端末内)。8 士業で
   // コレクションを共有し、serviceId で自分のページの分だけを表示する。
@@ -263,6 +266,59 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                 )}
               </div>
             ))}
+          </div>
+        </Section>
+      )}
+
+      {profile != null && docs.length > 0 && (
+        <Section title="書類スタジオで作る書類" count={docs.length}>
+          <div style={{ fontSize: 12, color: 'var(--text)', marginBottom: 8, lineHeight: 1.6 }}>
+            この士業に関わる書式です。自社の分は書類スタジオで作れます (開くと書式ごとの事業仕分けと注意点が出ます)。
+            計算書類は経営サマリーの数値から組めます。
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+            {docs.some((d) => d.doc === 'kessan') && (
+              <button
+                type="button"
+                className="primary"
+                onClick={() => navigateTo('docstudio', { doc: 'kessan', action: 'import-overview' })}
+                style={{ fontSize: 12 }}
+              >
+                経営サマリーの数値から計算書類を作る →
+              </button>
+            )}
+            <button type="button" onClick={() => navigateTo('overview')} style={{ fontSize: 12 }}>
+              経営サマリーを開く →
+            </button>
+            <button type="button" onClick={() => navigateTo('overview', { action: 'bank-sheet' })} style={{ fontSize: 12 }}>
+              金融機関等提出用の書面を開く →
+            </button>
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={tableStyle} data-shigyo-docs>
+              <thead>
+                <tr>
+                  <th style={thStyle}>書類</th>
+                  <th style={thStyle}>この士業との関わり</th>
+                  <th style={thStyle}>自社分</th>
+                  <th style={thStyle}></th>
+                </tr>
+              </thead>
+              <tbody>
+                {docs.map((d) => (
+                  <tr key={d.doc}>
+                    <td style={tdStyle}>{d.label}</td>
+                    <td style={tdStyle}>{d.relation === 'exclusive' ? '他人のために業として行うと独占業務' : '相談先'}</td>
+                    <td style={tdStyle}>{d.ownUse === 'ok' ? '自社で作れる' : '自社で作れる (手順に注意)'}</td>
+                    <td style={tdStyle}>
+                      <button type="button" onClick={() => navigateTo('docstudio', { doc: d.doc })} style={{ fontSize: 11 }}>
+                        書類スタジオで開く →
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </Section>
       )}
