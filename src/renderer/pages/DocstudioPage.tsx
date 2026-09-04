@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { printDocument } from '../data/printDocument';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
@@ -1274,13 +1275,7 @@ export function DocstudioPage() {
   );
 
   function printDoc() {
-    document.body.classList.add('ds-printing');
-    const cleanup = () => {
-      document.body.classList.remove('ds-printing');
-      window.removeEventListener('afterprint', cleanup);
-    };
-    window.addEventListener('afterprint', cleanup);
-    window.print();
+    printDocument();
   }
 
   const notes = collection === 'studio' ? studioDoc.note

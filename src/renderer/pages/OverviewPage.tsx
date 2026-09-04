@@ -74,7 +74,7 @@ import {
   applyManualOverrides,
   type ManualOverrideEntry,
 } from '../data/manualData';
-import { buildManagementScorecard } from '../../shared/managementScorecard';
+import { VERDICT_LABEL, buildManagementScorecard } from '../../shared/managementScorecard';
 import { buildManagementHighlights, summarizeHighlights, RISK_BAND_LABEL, type RiskBand } from '../data/managementHighlights';
 import { buildManagementReport } from '../data/managementReport';
 import { sparklinePoints } from '../data/sparkline';
@@ -84,11 +84,17 @@ import { useServiceData } from '../hooks/useServiceData';
 import { RealtimeTicker, type RealtimeRow } from '../components/RealtimeTicker';
 import { annualizedPace } from '../../shared/realtimeProjection';
 import { FinancialAnalysis } from '../components/FinancialAnalysis';
+import { BankSubmissionPanel } from '../components/BankSubmissionSheet';
+import {
+  BANK_SUBMISSION_COLLECTION,
+  buildBankSubmissionSheet,
+  settingsFromRecord,
+  type BankSubmissionSettings,
+} from '../data/bankSubmission';
 import { SNAPSHOT } from '../data/snapshot';
 
 const SCORE_COLOR = (s: number | null): string =>
   s === null ? 'var(--text-mute)' : s >= 80 ? '#22c55e' : s >= 60 ? '#3ec98a' : s >= 40 ? '#f59e0b' : '#ef4444';
-const VERDICT_LABEL: Record<string, string> = { poor: '要改善', caution: '注意', good: '良好', excellent: '優良' };
 const TREND_LABEL: Record<string, string> = { up: '↗ 上昇', down: '↘ 下降', flat: '→ 横ばい', none: '—' };
 const TREND_COLOR: Record<string, string | undefined> = { up: '#22c55e', down: '#ef4444', flat: undefined, none: undefined };
 const RISK_BAND_COLOR: Record<RiskBand, string> = { high: '#ef4444', medium: '#f59e0b', low: '#22c55e', none: 'var(--text-mute)' };
@@ -770,6 +776,31 @@ export function OverviewPage() {
     [overview, scorecard, highlights, monthlyTrend, sensitivity],
   );
 
+  // 金融機関等提出用の書面。書式と提出者情報は 1 レコードに保存し、最新を採用する
+  // (ハイライトのしきい値と同じ読み方)。数字は上の `overview` / `scorecard` /
+  // `debtService` をそのまま書式に通す — 画面と書面で計算を分けない。
+  const submissionCol = useCollection<BankSubmissionSettings>(BANK_SUBMISSION_COLLECTION);
+  const submissionSettings = useMemo(
+    () => settingsFromRecord(latestRecord(submissionCol.records)?.data),
+    [submissionCol.records],
+  );
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const kpiPeriods = useMemo(() => kpiRecords.map((r) => r.data.period), [kpiRecords]);
+  const balanceSheetAsOf = latestRecord(bsRecords)?.data.asOf ?? null;
+  const sheetModel = useMemo(
+    () =>
+      buildBankSubmissionSheet({
+        overview,
+        scorecard,
+        debtService,
+        kpiPeriods,
+        balanceSheetAsOf,
+        today: localIsoDate(),
+        settings: submissionSettings,
+      }),
+    [overview, scorecard, debtService, kpiPeriods, balanceSheetAsOf, submissionSettings],
+  );
+
   async function copyReport() {
     try {
       await navigator.clipboard.writeText(report);
@@ -792,8 +823,28 @@ export function OverviewPage() {
   const hasData =
     salesRecords.length > 0 || kpiRecords.length > 0 || memberRecords.length > 0;
 
+  if (sheetOpen) {
+    return (
+      <BankSubmissionPanel
+        model={sheetModel}
+        settings={submissionSettings}
+        onSave={(s) => submissionCol.add(s)}
+        onClose={() => setSheetOpen(false)}
+      />
+    );
+  }
+
   return (
     <div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
+        <button
+          type="button"
+          onClick={() => setSheetOpen(true)}
+          title="金額を千円単位・負数を △ で表す金融機関等の書式に揃え、A4 で印刷できる書面を開きます"
+        >
+          金融機関等提出用の書式で表示
+        </button>
+      </div>
       {hasData && highlights.length > 0 && (
         <Section title={`経営ハイライト — 総合 ${scorecard.overallScore}/100（${VERDICT_LABEL[scorecard.verdict]}）`}>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 12, fontSize: 13 }}>
