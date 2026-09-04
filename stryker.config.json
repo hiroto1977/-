@@ -85,6 +85,7 @@
     "src/renderer/data/crisisDeliberation.ts",
     "src/renderer/data/csv.ts",
     "src/renderer/data/dbPosture.ts",
+    "src/renderer/data/docImports.ts",
     "src/renderer/data/docLegalStatus.ts",
     "src/renderer/data/docStudioChecks.ts",
     "src/renderer/data/docStudioTeikan.ts",

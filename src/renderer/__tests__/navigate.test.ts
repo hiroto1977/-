@@ -56,6 +56,10 @@ describe('遷移先で最初にすること (intent)', () => {
   it('何も預かっていなければ null', () => {
     expect(takeNavigationIntent('docstudio')).toBeNull();
   });
+  it('検索語の指示もそのまま届く', () => {
+    navigateTo('docstudio', { query: '決算報告書' });
+    expect(takeNavigationIntent('docstudio')).toEqual({ query: '決算報告書' });
+  });
   it('検査用の reset は預かっている指示を捨てる', () => {
     navigateTo('docstudio', { doc: 'kessan' });
     _resetNavigationIntentForTests();

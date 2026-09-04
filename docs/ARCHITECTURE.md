@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **10622** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **10634** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 421 | 自己検証 |
+| `file:line` 参照数 | 422 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1700,7 +1700,7 @@ union を参照する。
 | `stripe` | Stripe 決済 (snapshot) | Bearer (将来) | | | (read-only — MRR / 顧客 / 請求) |
 | `line` | LINE 公式アカウント (snapshot) | Bearer (将来) | | | (read-only — 友達 / 配信 / 統計) |
 | `storage` | ストレージ最適化 (snapshot のみ) | none | ✅ | | (read-only — ディスク使用 / クリーンアップ推奨 / フラグメント率 / メモリ) |
-| `tax-accountant` | 税理士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 相談履歴 / 書類 / 月次顧問料・**書類スタジオで作る書類** (2026-09-04): 仕分け表の逆引き `docsForProfessional` — `src/renderer/data/businessTriage.ts` — がこの士業の独占 / 相談先の書式を並べ、書類スタジオへ intent 付きで遷移する。計算書類が関わる士業〔税理士・公認会計士〕は「経営サマリーの数値から計算書類を作る」、全士業に「経営サマリーを開く」「金融機関等提出用の書面を開く」) |
+| `tax-accountant` | 税理士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 相談履歴 / 書類 / 月次顧問料・**書類スタジオで作る書類** (2026-09-04): 仕分け表の逆引き `docsForProfessional` — `src/renderer/data/businessTriage.ts` — がこの士業の独占 / 相談先の書式を並べ、書類スタジオへ intent 付きで遷移する。計算書類が関わる士業〔税理士・公認会計士〕は「経営サマリーの数値から計算書類を作る」、全士業に「経営サマリーを開く」「金融機関等提出用の書面を開く」。「やり取り中の書類」の各行に「書類スタジオで探す →」〔題名を書式検索に入れて開く〕) |
 | `labor-consultant` | 社労士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 社保手続 / 給与計算 / 顧問料・書類スタジオで作る書類 (`docsForProfessional` の逆引き・2026-09-04)) |
 | `lawyer` | 弁護士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 契約書レビュー / 紛争対応・書類スタジオで作る書類 (`docsForProfessional` の逆引き・2026-09-04)) |
 | `judicial-scrivener` | 司法書士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 商業登記 / 不動産登記・書類スタジオで作る書類 (`docsForProfessional` の逆引き・2026-09-04)) |
@@ -1731,7 +1731,7 @@ union を参照する。
 | `docker` | Docker — コンテナ/イメージ・脆弱性スキャン・GHCR 連携で開発基盤を可視化 | none | ✅ | | (read-only — 実データは renderer の SNAPSHOT.docker。実 Engine は socket で読む Phase 6) |
 | `assistant` | AI アシスタント — マルチエージェント AI ハブ。Claude / ChatGPT / Gemini / Ollama / OpenAI 互換 API を `src/shared/ai/providers.ts` のプロバイダレジストリで呼び分け | JSON マルチプロバイダ資格情報 (`src/shared/ai/credentials.ts`。生キーは Anthropic 後方互換) | ✅ | | `chat` + `providers` (RAG 文脈は renderer の `data/assistantContext.ts` で構築 — IDF 重み + 膠着語降格 + フレーズボーナス + 近似タイトル代表化。表/成果物は `data/assistantMarkdown.ts` で描画。未設定時は `data/chatbot.ts` の決定論エンジンへフォールバックし、解釈不能時のみ確証済みナレッジ直答 `buildOfflineKnowledgeAnswer` を先に試す) |
 | `village` | AIの村 — AI オーケストレーション組織 143 体をどうぶつの森風の全画面シーンに村人として可視化。タスク実行を常時アニメーションで表示し、画面に話しかけて対話 (音声) | none | ✅ | | (read-only — `orchestration/registry.json` から `data/villageData` が純導出。ルーティングは `data/chatOrg.routeTopicScored`、返答は `data/chatbot.replyTo`＋AI 設定時は `assistant/chat`。音声は `voice/speechAdapter`＋`voice/ttsAdapter`) |
-| `docstudio` | 書類スタジオ — 経営書類 52 書式 (契約9/経理8/人事10/組織7/規程4/社内5/通知4/事業計画5)＋電子定款 (株式/合同)＋就業規則 (10章47条)＋計算書類4点 (PL/BS/株主資本等変動計算書/個別注記表)＋決算公告 を入力→交付前チェック→事業仕分け→印刷/PDF。検証済みコンプラ知識を注記に反映 | none | ✅ | | `list-collections` (read-only — テンプレートは renderer の `data/docStudioData.ts` 単一ソース。交付前チェックは `data/docStudioChecks.ts` の純関数 `checkDoc`〔fatal/warn/info〕。適格請求書/仕入明細書の明細は `src/shared/invoiceTax.ts` — 品目ごとに税率区分（標準/軽減/任意A・B 0〜50%/免税/非課税/不課税）を割り当てて自動仕分けし、**端数処理は区分ごとに1回**〔消費税法57条の4〕。計算書類は `data/statementAccounts.ts`（標準科目 56 件の残高から段階利益・貸借対照表・決算公告の要旨を積み上げ、貸借差額と当期純利益→繰越利益剰余金の連結を検算）と `data/statementEquity.ts`（株主資本等変動計算書と個別注記表。期首残高は入力させず期末から逆算するので二表がずれない。会社法445条2項・3項の資本準備金上限、同4項の準備金積立不足を検算）の 2 本。資金繰り表は `data/cashPlan.ts` — 前月繰越を入力させず連鎖させ、資金ショート月を名指し。「自社でやるか士業に頼むか」は `data/businessTriage.ts` の 56 件。入力は localStorage 保存・印刷は `src/renderer/data/printDocument.ts`〔`body.ds-printing`〕。**経営サマリーからの取り込み** (2026-09-04) — 計算書類のタブに「経営サマリーから取り込む」パネル。`src/renderer/data/kessanImport.ts` が KPI 実績・貸借対照表・提出者情報を 56 科目の入力欄へ写す〔事業年度は提出者情報の決算期で 12 か月を切り出し、無ければ全期間を合算して注記。内訳の無い額は「その他」の科目に置いて理由を注記し〔売上原価 → 当期商品仕入高、人件費以外の販管費 → 雑費、固定資産 → その他の固定資産、有利子負債は固定負債に収まる分を長期借入金〕、資本金・役員報酬など出所の無い科目は触らない。唯一の逆算は繰越利益剰余金 (期首) で、資産合計 − 負債 − 資本金等 − 当期純利益 + 配当 + 積立 を置いて貸借を合わせる。法人税等は KPI の営業利益と貸借対照表の当期純利益の差が正のときだけ〕。取り込む前に「入力欄 / 値 / 出所」と注記・取り込めない物を全部見せ、押すまで localStorage には書かない。**他の画面からの遷移の指示** は `src/renderer/navigate.ts` の intent〔`doc` / `action`〕を mount 時に 1 度だけ受け取る〔書式 id・`kessan`・`teikan-kk` / `teikan-gk`・`shugyo` を開く、`import-overview` で計算書類のタブへ〕。事業仕分けパネルの各士業名は、その士業のページへのボタンになった) |
+| `docstudio` | 書類スタジオ — 経営書類 52 書式 (契約9/経理8/人事10/組織7/規程4/社内5/通知4/事業計画5)＋電子定款 (株式/合同)＋就業規則 (10章47条)＋計算書類4点 (PL/BS/株主資本等変動計算書/個別注記表)＋決算公告 を入力→交付前チェック→事業仕分け→印刷/PDF。検証済みコンプラ知識を注記に反映 | none | ✅ | | `list-collections` (read-only — テンプレートは renderer の `data/docStudioData.ts` 単一ソース。交付前チェックは `data/docStudioChecks.ts` の純関数 `checkDoc`〔fatal/warn/info〕。適格請求書/仕入明細書の明細は `src/shared/invoiceTax.ts` — 品目ごとに税率区分（標準/軽減/任意A・B 0〜50%/免税/非課税/不課税）を割り当てて自動仕分けし、**端数処理は区分ごとに1回**〔消費税法57条の4〕。計算書類は `data/statementAccounts.ts`（標準科目 56 件の残高から段階利益・貸借対照表・決算公告の要旨を積み上げ、貸借差額と当期純利益→繰越利益剰余金の連結を検算）と `data/statementEquity.ts`（株主資本等変動計算書と個別注記表。期首残高は入力させず期末から逆算するので二表がずれない。会社法445条2項・3項の資本準備金上限、同4項の準備金積立不足を検算）の 2 本。資金繰り表は `data/cashPlan.ts` — 前月繰越を入力させず連鎖させ、資金ショート月を名指し。「自社でやるか士業に頼むか」は `data/businessTriage.ts` の 56 件。入力は localStorage 保存・印刷は `src/renderer/data/printDocument.ts`〔`body.ds-printing`〕。**経営サマリーからの取り込み** (2026-09-04) — 計算書類のタブに「経営サマリーから取り込む」パネル。`src/renderer/data/kessanImport.ts` が KPI 実績・貸借対照表・提出者情報を 56 科目の入力欄へ写す〔事業年度は提出者情報の決算期で 12 か月を切り出し、無ければ全期間を合算して注記。内訳の無い額は「その他」の科目に置いて理由を注記し〔売上原価 → 当期商品仕入高、人件費以外の販管費 → 雑費、固定資産 → その他の固定資産、有利子負債は固定負債に収まる分を長期借入金〕、資本金・役員報酬など出所の無い科目は触らない。唯一の逆算は繰越利益剰余金 (期首) で、資産合計 − 負債 − 資本金等 − 当期純利益 + 配当 + 積立 を置いて貸借を合わせる。法人税等は KPI の営業利益と貸借対照表の当期純利益の差が正のときだけ〕。取り込む前に「入力欄 / 値 / 出所」と注記・取り込めない物を全部見せ、押すまで localStorage には書かない。**他の画面からの遷移の指示** は `src/renderer/navigate.ts` の intent〔`doc` / `action`〕を mount 時に 1 度だけ受け取る〔書式 id・`kessan`・`teikan-kk` / `teikan-gk`・`shugyo` を開く、`import-overview` で計算書類のタブへ〕。事業仕分けパネルの各士業名は、その士業のページへのボタンになった。**資金繰り表・事業計画書にも同じパネル** (2026-09-04, `src/renderer/data/docImports.ts`): 資金繰り表は会計連携 (freee) の直近 12 か月の収入を売上入金・支出をその他経費に置き、貸借対照表の現預金を期首残高に〔借入の行は出所が無いので触らない〕。事業計画書は会社名・代表者・作成日と、直近の事業年度の実績を 1 年目の売上高・経常利益に置く〔2・3 年目は数字を作らない〕。指示の `query` は経営書類のタブで書式検索に入る〔士業のページの「やり取り中の書類」から〕) |
 
 - **LOCAL** = `LOCAL_SERVICES` set (`src/main/clients/index.ts:201-272`)。トークン未設定でも snapshot OK。
 - **OAuth** = `OAUTH_CONFIGS` 登録あり (`src/main/oauth.ts:103-255`)。各プロバイダの `*_OAUTH_CLIENT_ID` 環境変数で有効化。Notion / Canva / WordPress.com / Atlassian は**機密クライアント**なので `*_OAUTH_CLIENT_SECRET` も必須 (未設定なら `isOAuthSupported()` が false を返し、押しても 401 にしかならない ボタンを出さない)。Slack だけは PKCE 対応の公開クライアントで secret 不要。
@@ -2138,7 +2138,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **259 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **260 ファイル**。
 
 #### 点数の定義 (分母に何を入れないか)
 

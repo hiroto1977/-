@@ -143,6 +143,19 @@ describe('士業のページ — 書類スタジオで作る書類', () => {
     expect(takeNavigationIntent('docstudio')).toEqual({ doc: 'shugyo' });
   });
 
+  it('やり取り中の書類から書類スタジオの検索へ飛べる', async () => {
+    await mount('tax-accountant');
+    const rows = Array.from(container.querySelectorAll('button')).filter((b) => b.textContent === '書類スタジオで探す →');
+    expect(rows.length).toBeGreaterThan(0);
+    const title = rows[0]!.closest('tr')!.querySelectorAll('td')[1]!.textContent!;
+    const seen: string[] = [];
+    const off = onNavigate((id) => seen.push(id));
+    await click(rows[0]!);
+    off();
+    expect(seen).toEqual(['docstudio']);
+    expect(takeNavigationIntent('docstudio')).toEqual({ query: title });
+  });
+
   it('8 士業すべてに節が出る', async () => {
     for (const id of ['cpa', 'lawyer', 'judicial-scrivener', 'admin-scrivener', 'sme-consultant', 'patent-attorney'] as const) {
       await mount(id);

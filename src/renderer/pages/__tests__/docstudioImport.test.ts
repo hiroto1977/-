@@ -189,6 +189,37 @@ describe('書類スタジオ — 経営サマリーから計算書類を取り�
     expect(takeNavigationIntent('tax-accountant')).toBeNull();
   });
 
+  it('事業計画書: 提出者情報と KPI 実績が 1 年目の欄へ写る', async () => {
+    await getRecordStore().insert(KPI_ACTUALS_COLLECTION, KPI);
+    await getRecordStore().insert(BANK_SUBMISSION_COLLECTION, SETTINGS);
+    navigateTo('docstudio', { doc: 'jigyo-keikaku' });
+    await mount('docstudio');
+    expect(q.importRow('1年目 売上高（円）')).toBe('12,345,678');
+    expect(q.importRow('会社名・屋号')).toBe('株式会社テスト');
+    await click(q.button('この内容で取り込む'));
+    const studio = (JSON.parse(localStorage.getItem(LS_KEY) ?? '{}') as { studio?: Record<string, Record<string, string>> }).studio!;
+    expect(studio['jigyo-keikaku']!.y1sales).toBe('12345678');
+    expect(studio['jigyo-keikaku']!.company).toBe('株式会社テスト');
+    expect(container.querySelector('[role="status"]')?.textContent).toContain('件を取り込みました');
+  });
+
+  it('資金繰り表: 会計連携が無ければ取り込めない物が並び、期首残高だけ貸借対照表から', async () => {
+    await getRecordStore().insert(BALANCE_SHEET_COLLECTION, BS);
+    navigateTo('docstudio', { doc: 'shikin-guri' });
+    await mount('docstudio');
+    expect(q.importRow('期首の現預金残高（円）')).toBe('3,000,000');
+    expect(container.textContent).toContain('取り込めない: 月ごとの入出金');
+    expect(q.button('この内容で取り込む').disabled).toBe(false);
+  });
+
+  it('検索語の指示は経営書類のタブで書式検索に入る', async () => {
+    navigateTo('docstudio', { query: '議事録' });
+    await mount('docstudio');
+    expect(q.buttonStartsWith('🗂 経営書類')?.className).toBe('primary');
+    const search = Array.from(container.querySelectorAll('input')).find((el) => el.value === '議事録');
+    expect(search).toBeDefined();
+  });
+
   it('「経営サマリーを開く」は経営サマリーへ遷移する', async () => {
     navigateTo('docstudio', { doc: 'kessan' });
     await mount('docstudio');

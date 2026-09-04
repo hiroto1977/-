@@ -527,6 +527,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                 <th style={thStyle}>方向</th>
                 <th style={thStyle}>タイトル</th>
                 <th style={thNum}>日付</th>
+                <th style={thStyle} />
               </tr>
             </thead>
             <tbody>
@@ -535,6 +536,16 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                   <td style={tdStyle}>{d.direction === 'sent' ? '📤 送付' : '📥 受領'}</td>
                   <td style={tdStyle}>{d.title}</td>
                   <td style={tdNum}>{d.date}</td>
+                  <td style={tdStyle}>
+                    <button
+                      type="button"
+                      onClick={() => navigateTo('docstudio', { query: d.title })}
+                      title="書類スタジオの書式検索にこの題名を入れて開きます"
+                      style={{ fontSize: 11 }}
+                    >
+                      書類スタジオで探す →
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

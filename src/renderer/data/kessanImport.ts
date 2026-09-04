@@ -50,7 +50,7 @@ export interface KessanImportResult {
   readonly values: Record<string, string>;
 }
 
-const PERIOD_RE = /^(\d{4})-(0[1-9]|1[0-2])$/;
+export const PERIOD_RE = /^(\d{4})-(0[1-9]|1[0-2])$/;
 
 /** `YYYY-MM` を 12 か月さかのぼった月 (事業年度の始まり)。読めなければ null。 */
 export function fiscalYearWindow(fiscalYearEnd: string): { from: string; to: string } | null {
@@ -65,18 +65,18 @@ export function fiscalYearWindow(fiscalYearEnd: string): { from: string; to: str
 }
 
 /** `YYYY-MM` → 「2026年3月」。呼ぶ側が正規表現で確かめた期だけを渡す。 */
-function monthLabel(period: string): string {
+export function monthLabel(period: string): string {
   const m = PERIOD_RE.exec(period)!;
   return `${Number(m[1])}年${Number(m[2])}月`;
 }
 
 /** 事業年度（自）「2025年4月1日」。 */
-function firstDayLabel(period: string): string {
+export function firstDayLabel(period: string): string {
   return `${monthLabel(period)}1日`;
 }
 
 /** 事業年度（至）「2026年3月31日」。 */
-function lastDayLabel(period: string): string {
+export function lastDayLabel(period: string): string {
   const m = PERIOD_RE.exec(period)!;
   const last = new Date(Date.UTC(Number(m[1]), Number(m[2]), 0)).getUTCDate();
   return `${monthLabel(period)}${last}日`;
