@@ -377,6 +377,12 @@ function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
 
   const files = shellFiles();
+  // git でも scripts/ 直下でも拾えない = 0 件を「問題なし」と読まない (実測 9 本、2026-09-05)。
+  const MIN_SHELL_FILES = 3;
+  if (files.length < MIN_SHELL_FILES) {
+    console.error(`❌ .sh を ${files.length} 本しか拾えませんでした (${MIN_SHELL_FILES} 本以上を期待)。走査が壊れています。`);
+    return 1;
+  }
   const failures = [];
   for (const rel of files) {
     failures.push(...checkScript(rel, path.join(REPO_ROOT, rel)));
