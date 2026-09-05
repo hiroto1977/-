@@ -6,6 +6,7 @@ import {
   docIdOfSheet,
   fieldsForSheet,
   inheritedNote,
+  isKessanSheet,
   sheetDef,
   sheetKeys,
   sheetOfDoc,
@@ -53,6 +54,16 @@ describe('KESSAN_SHEETS — 4 点 + まとめて', () => {
       expect(sheetOfDoc(s.docId)).toBe(s.id);
       expect(s.note.length).toBeGreaterThan(10);
     }
+  });
+
+  it('isKessanSheet: 5 つの書面 id だけ true。保存値に紛れる文字列・undefined・数値・オブジェクトは false', () => {
+    for (const s of KESSAN_SHEETS) expect(isKessanSheet(s.id), s.id).toBe(true);
+    for (const bad of ['foo', '', 'kessan-bs', 'BS', undefined, null, 42, {}, ['bs']]) expect(isKessanSheet(bad), String(bad)).toBe(false);
+  });
+
+  it('★ 対照: sheetDef は知らない値でも落ちず「まとめて」に倒す (保存値が壊れても書類スタジオが開く)', () => {
+    expect(sheetDef('foo' as KessanSheet).id).toBe('all');
+    expect(docIdOfSheet('foo' as KessanSheet)).toBe('kessan');
   });
 
   it('対照: 知らない書類 id は null (就業規則や書式 id を計算書類と取り違えない)', () => {

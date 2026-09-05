@@ -37,7 +37,7 @@ import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../data/kpiActuals';
 import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceSheet';
 import { BANK_SUBMISSION_COLLECTION, settingsFromRecord, type BankSubmissionSettings } from '../data/bankSubmission';
 import { buildKessanImport } from '../data/kessanImport';
-import { KESSAN_SHEETS, docIdOfSheet, fieldsForSheet, inheritedNote, sheetDef, sheetOfDoc, type KessanSheet } from '../data/kessanSheets';
+import { KESSAN_SHEETS, docIdOfSheet, fieldsForSheet, inheritedNote, isKessanSheet, sheetDef, sheetOfDoc, type KessanSheet } from '../data/kessanSheets';
 import { buildBusinessPlanImport, buildCashPlanImport, type ImportPreview } from '../data/docImports';
 import { tableStyle, thStyle, tdStyle, tdNum } from '../components/tableStyles';
 import {
@@ -1319,7 +1319,8 @@ export function DocstudioPage() {
 
   useEffect(() => saveStore(store), [store]);
   /** 計算書類で見ている書面。store に持たせるので、開き直しても同じ書面から続けられる。 */
-  const kessanSheet: KessanSheet = store.kessanSheet ?? 'all';
+  // 保存値は型が守らない（古い版・手で直した JSON）。知らない値は「まとめて」に倒し、画面を壊さない。
+  const kessanSheet: KessanSheet = isKessanSheet(store.kessanSheet) ? store.kessanSheet : 'all';
   function setKessanSheet(sheet: KessanSheet) {
     setStore((prev) => ({ ...prev, kessanSheet: sheet }));
   }
@@ -1509,7 +1510,8 @@ export function DocstudioPage() {
   /** 絞り込み前の全書式の内訳（ボタンに件数を出すため）。 */
   const legalCounts = useMemo(() => countByStatus(STUDIO_TEMPLATES.map((d) => d.id)), []);
   const recent = useMemo(
-    () => (store.recent ?? []).map((id) => STUDIO_TEMPLATES.find((d) => d.id === id)).filter((d): d is StudioDoc => !!d),
+    // 保存値は型が守らない: 配列でなければ無視し、配列でも文字列だけを見る (`.map` が無い値で画面を落とさない)
+    () => (Array.isArray(store.recent) ? store.recent : []).filter((id): id is string => typeof id === 'string').map((id) => STUDIO_TEMPLATES.find((d) => d.id === id)).filter((d): d is StudioDoc => !!d),
     [store.recent],
   );
 

@@ -182,6 +182,44 @@ describe('書類スタジオ — 計算書類を 1 点ずつ', () => {
     expect(q.statement('負債・純資産の部')?.textContent).toContain('1,234,567');
   });
 
+  it('★ 対照: 端末に残った値が知らない書面 id でも壊れず「まとめて」で開く (保存値は型が守らない)', async () => {
+    // 遷移の指示なしで書式一覧から開く (指示 `kessan` は書面を「まとめて」に上書きするので、保存値の経路を見るならこちら)
+    const openFromList = async () => {
+      _resetNavigationIntentForTests();
+      await mount();
+      await click(container.querySelector<HTMLButtonElement>('button[data-doc-id="kessan"]') ?? (Array.from(container.querySelectorAll('button')).find((b) => (b.textContent ?? '').startsWith('📊 計算書類')) as HTMLButtonElement));
+    };
+    localStorage.setItem(LS_KEY, JSON.stringify({ kessanSheet: 'foo', kessan: { company: '壊れた保存値株式会社' } }));
+    await openFromList();
+    expect(q.tab('all')?.className).toBe('primary');
+    expect(q.sheets()?.dataset['kessanSheets']).toBe('all');
+    expect(q.paperText()).toContain('壊れた保存値株式会社');
+    await unmount();
+    // 標本: 同じ経路で有効な保存値 'bs' なら貸借対照表が開く (上の検査が「開く」を本当に見ている対照)
+    localStorage.setItem(LS_KEY, JSON.stringify({ kessanSheet: 'bs' }));
+    await openFromList();
+    expect(q.tab('bs')?.className).toBe('primary');
+    expect(q.sheets()?.dataset['kessanSheets']).toBe('bs');
+  });
+
+  it('対照: 端末に残った「最近使った書式」が配列でなくても壊れず開く (同じ型の穴の 2 つ目)', async () => {
+    localStorage.setItem(LS_KEY, JSON.stringify({ recent: 'not-an-array', kessanSheet: 'pl' }));
+    _resetNavigationIntentForTests();
+    await mount();
+    expect(container.querySelector('button[data-doc-id="kessan"]') ?? Array.from(container.querySelectorAll('button')).find((b) => (b.textContent ?? '').startsWith('📊 計算書類'))).toBeTruthy();
+    expect(container.textContent).not.toContain('最近使った書類');
+    await unmount();
+    // 標本: 配列なら (数値や null を飛ばして) 最近使った書類に並ぶ —— 上の not.toContain が本当にその見出しを見ている対照
+    const firstTemplate = (await import('../../data/docStudioData')).STUDIO_TEMPLATES[0]!;
+    localStorage.setItem(LS_KEY, JSON.stringify({ recent: [firstTemplate.id, 42, null] }));
+    _resetNavigationIntentForTests();
+    await mount();
+    expect(container.textContent).toContain('最近使った書類');
+    const recentBlock = Array.from(container.querySelectorAll('div')).find((d) => d.textContent === '最近使った書類')?.parentElement;
+    expect(recentBlock?.querySelectorAll('button').length).toBe(1);
+    expect(recentBlock?.textContent).toContain(firstTemplate.label);
+  });
+
   it('選んだ書面は端末に残り、開き直しても同じ書面から続く', async () => {
     navigateTo('docstudio', { doc: 'kessan' });
     await mount();

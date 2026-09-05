@@ -46,13 +46,23 @@ export function sheetOfDoc(docId: string): KessanSheet | null {
   return def ? def.id : null;
 }
 
-/** 書面 → 書類 id（法的区分・事業仕分け・遷移で使う）。 */
-export function docIdOfSheet(sheet: KessanSheet): string {
-  return KESSAN_SHEETS.find((s) => s.id === sheet)!.docId;
+/**
+ * 端末に残した値が書面 id か。localStorage の値は型が守ってくれない（古い版・手で書き換えた JSON・
+ * 別の版が書いた値）。ここを通さずに `sheetDef()` へ渡すと `.note` で落ち、書類スタジオが
+ * 開くたびに壊れる —— 保存値は**読むたびに**確かめる。
+ */
+export function isKessanSheet(value: unknown): value is KessanSheet {
+  return typeof value === 'string' && KESSAN_SHEETS.some((s) => s.id === value);
 }
 
+/** 書面 → 書類 id（法的区分・事業仕分け・遷移で使う）。 */
+export function docIdOfSheet(sheet: KessanSheet): string {
+  return sheetDef(sheet).docId;
+}
+
+/** 書面の定義。型の外から来た値（保存値など）は `isKessanSheet` を先に通す。知らない id はまとめてに倒す。 */
 export function sheetDef(sheet: KessanSheet): KessanSheetDef {
-  return KESSAN_SHEETS.find((s) => s.id === sheet)!;
+  return KESSAN_SHEETS.find((s) => s.id === sheet) ?? KESSAN_SHEETS[0]!;
 }
 
 /** 損益計算書に載る区分。 */
