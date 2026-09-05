@@ -37,10 +37,10 @@ aliases:
 - [[infosoc-epistemic-injustice|認識的不正義（epistemic injustice）]] — 同じ思想家
 - [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]] — 同じ思想家
 - [[infosoc-platform-temporality|プラットフォーム時間性：デジタルプラットフォームによる時間の構造化と加速]] — 同じ思想家
+- [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — 同じ思想家
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 出典を共有
 - [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — 出典を共有
 - [[infosoc-techno-feminist-theory|テクノフェミニスト理論]] — 出典を共有
-- [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

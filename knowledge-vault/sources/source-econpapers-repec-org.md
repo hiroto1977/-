@@ -2,7 +2,7 @@
 title: "econpapers.repec.org"
 type: source-domain
 host: "econpapers.repec.org"
-cite_count: 14
+cite_count: 15
 tags:
   - source-domain
   - index
@@ -10,13 +10,14 @@ tags:
 
 # econpapers.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **14 件**（学術 13 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **15 件**（学術 14 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
 - [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — Kashyap,Stein&Wilcox(1993)MonetaryPolicyandCreditConditions:Evidencef…
 - [[econ-black-scholes|ブラック＝ショールズ・モデル]] — EconPapers/RePEc—原論文の書誌情報（掲載誌・巻号・頁）
 - [[econ-chartalism-modern-monetary-theory|チャータリズムと現代貨幣理論（MMT）]] — Tcherneva(2006)ChartalismandtheTax-DrivenApproachtoMoney,inHandbookof…
+- [[econ-hodrick-prescott-filter|ホドリック＝プレスコット・フィルター——景気循環をトレンドから分離する平滑化フィルターとその妥当性論争]] — Hodrick,R.J.,&Prescott,E.C.(1997).PostwarU.S.BusinessCycles:AnEmpiric…
 - [[econ-natural-experiment-angrist|自然実験と操作変数法による因果識別戦略（アングリスト）]] — Angrist,J.D.(1990)LifetimeEarningsandtheVietnamEraDraftLottery:Eviden…
 - [[econ-rational-addiction|合理的依存]] — EconPapers/RePEcbibliographicrecord—Becker&Murphy,JPE1988
 - [[econ-rotemberg-saloner-price-wars-booms|ロテンバーグ＝サローナー・モデル——好況期に協調的価格が崩れ価格戦争が生じる反循環的マークアップ理論]] — Borenstein,S.&Shepard,A.(1996).DynamicPricinginRetailGasolineMarkets.…

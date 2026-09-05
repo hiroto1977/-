@@ -2,7 +2,7 @@
 title: "sciencedirect.com"
 type: source-domain
 host: "sciencedirect.com"
-cite_count: 113
+cite_count: 115
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # sciencedirect.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **113 件**（学術 101 ・ リファレンス 12）
+> [!info] 出典ドメイン索引 ・ 引用 **115 件**（学術 103 ・ リファレンス 12）
 
 ## このドメインを出典とする項目
 
@@ -36,6 +36,7 @@ tags:
 - [[econ-frey-osborne-computerisation-susceptibility|フレイ＝オズボーンの職業別コンピュータ化確率——「米国雇用の47%が高リスク」]] — Frey,C.B.&Osborne,M.A.(2017)."Thefutureofemployment:Howsusceptibleare…
 - [[econ-habit-formation-asset|習慣形成資産価格モデル（Habit Formation in Asset Pricing）]] — Otroketal.(2002)HabitFormation:AResolutionoftheEquityPremiumPuzzle?—J…
 - [[econ-hedonic-pricing-rosen|ヘドニック価格法（ローゼンの差別化財モデル）]] — Goodman,A.C.(1998)"AndrewCourtandtheInventionofHedonicPriceAnalysis,"…
+- [[econ-hodrick-prescott-filter|ホドリック＝プレスコット・フィルター——景気循環をトレンドから分離する平滑化フィルターとその妥当性論争]] — Cogley,T.,&Nason,J.M.(1995).EffectsoftheHodrick-PrescottFilteronTrend…
 - [[econ-input-output-analysis|産業連関分析（投入産出分析）]] — ScienceDirectTopics—Input-OutputModel（投入係数・(I−A)⁻¹・収穫一定の前提）
 - [[econ-kemp-wan-customs-union|ケンプ＝ウァンの定理（Kemp-Wan Theorem／1976）——どんな国の組み合わせでも、域外との貿易を変えない共通関税で必ず厚生改善的な関税同盟をつくれる]] — Kemp,M.C.,&Wan,H.Y.,Jr.(1976).AnElementaryPropositionConcerningtheFor…
 - [[econ-lindahl-equilibrium|リンダール均衡（リンダール価格）]] — JournalofPublicEconomics「TheSamuelsonconditionandtheLindahlschemeinne…
@@ -82,6 +83,7 @@ tags:
 - [[human-predictive-coding-psychosis|精神病の予測符号化理論（予測誤差による幻覚・妄想の計算論的説明）]] — Sterzer,P.etal.(2018).ThePredictiveCodingAccountofPsychosis.Biologica…
 - [[human-prospective-memory|展望的記憶（Prospective Memory）]] — ProspectiveMemory—ScienceDirectTopics
 - [[human-psychomotor-vigilance|精神運動覚醒課題（PVT）]] — ScienceDirectTopics—PVTinsleepandfatigueresearch
+- [[human-riasec-vocational-interests-holland|ホランドのRIASEC理論——六類型の適合度で職業選択と職務満足を説明する六角形モデル]] — Tranberg,M.,Slane,S.,&Ekeberg,S.E.(1993).Therelationbetweeninterestco…
 - [[human-self-evaluation-maintenance|自己評価維持モデル（SEM）]] — Tesser,A.(1988).TowardaSelf-EvaluationMaintenanceModelofSocialBehavio…
 - [[human-self-reference-effect|自己参照効果]] — Neuropsychologia(2019)"Theself-referenceeffectonmemory:Aquantitativer…
 - [[human-social-referencing|社会的参照（Social Referencing）]] — SocialReferencing—ScienceDirectTopics

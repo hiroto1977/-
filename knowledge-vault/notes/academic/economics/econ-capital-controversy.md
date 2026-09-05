@@ -31,6 +31,7 @@ aliases:
 - [Samuelson, P.A. (1966) A Summing Up — Quarterly Journal of Economics](https://doi.org/10.2307/1882916) `学術`
 
 ## 関連概念
+- [[econ-factor-price-equalization|要素価格均等化定理]] — 同じ思想家
 - [[econ-monopolistic-competition|独占的競争]] — 同じ思想家
 - [[econ-sraffa-commodities|スラッファの商品による商品の生産（ケンブリッジ資本論争）]] — 同じ思想家
 - [[econ-sraffian-price|スラッファ価格理論（Sraffian Price Theory）]] — 同じ思想家
@@ -40,7 +41,6 @@ aliases:
 - [[econ-marginal-efficiency-capital|資本の限界効率——期待収益に基づく投資決定とアニマル・スピリッツ]] — 同じ思想家
 - [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]] — 同じ思想家
 - [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]] — 同じ思想家
-- [[econ-north-institutions-economic-history|ノースの制度論と経済史——取引費用・財産権・路径依存性による長期経済変化の解明]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

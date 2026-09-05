@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経営学"
 type: flashcard-deck
 deck_key: "academic-management"
-card_count: 657
+card_count: 658
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経営学（657枚）
+# フラッシュカード — 学術概念／経営学（658枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -468,6 +468,8 @@ tags:
   - **A:** Carol S. Dweck の成長マインドセット理論の組織・経営への応用レーン。個人レベルの理論と測定は human-growth-mindset に譲り、本項は組織マインドセットを扱う。（→ [[mgmt-growth-mindset]]）
 - **Q:** グアンシ関係資本主義と東アジアの経営システム
   - **A:** グアンシ（個人的紐帯と信頼関係）は、東アジア資本主義、特に中国・香港の経営エコシステムの中心的メカニズムである。Lin、Yeungら研究者（1990年代〜2010年代）の研究によれば、グアンシは単なる社会的ネットワークではなく、経営意思決定、資本へのアクセス、競争優位性の形成に構造的に組み込まれた関係資本である。（→ [[mgmt-guanxi-network-capitalism]]）
+- **Q:** 重量級プロダクト・マネジャー——組織内外の統合を一身に担い製品コンセプトを守る開発責任者
+  - **A:** 重量級プロダクト・マネジャーは、キム・B・クラークと藤本隆宏が『Product Development Performance』（Harvard Business School Press、1991年。邦訳『製品開発力』ダイヤモンド社1993年・田村明比古訳）で示した製品開発組織の一形態である。（→ [[mgmt-heavyweight-product-manager-clark-fujimoto]]）
 - **Q:** ハリネズミの概念——三つの円の交わりに焦点を絞る
   - **A:** ハリネズミの概念（Hedgehog Concept）は、経営研究者ジム・コリンズが2001年の著作『ビジョナリー・カンパニー2——飛躍の法則（Good to Great）』で提示した、卓越した企業の戦略の核心を捉えた概念である。その名は、思想史家アイザイア・バーリンの随筆「ハリネズミと狐」に由来する。（→ [[mgmt-hedgehog-concept-collins]]）
 - **Q:** ハインリッヒの法則（1:29:300）

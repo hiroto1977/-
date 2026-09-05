@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[labor-safety-management|安全衛生管理体制（50人以上）]] — 語彙が近い
 - [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]] — 同分野の近傍
+- [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

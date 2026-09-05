@@ -33,6 +33,7 @@ Richard L. Priem（2007 消費者便益に基づく需要側の価値創造論�
 - [Vinokurova (2019) — Reshaping Demand Landscapes: How Firms Change Customer Preferences, SMJ 40(13):2107-2137](https://onlinelibrary.wiley.com/doi/full/10.1002/smj.3074) `学術`
 
 ## 関連概念
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 出典を共有
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
 - [[mgmt-multimarket-contact-mutual-forbearance|多市場接触と相互自制の理論（マルチマーケット・コンペティション）]] — 出典を共有
@@ -41,7 +42,6 @@ Richard L. Priem（2007 消費者便益に基づく需要側の価値創造論�
 - [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 出典を共有
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 出典を共有
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
-- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 出典を共有
 - [[mgmt-asset-stock-accumulation-dierickx-cool|資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性]] — 出典を共有
 
 ## 関連

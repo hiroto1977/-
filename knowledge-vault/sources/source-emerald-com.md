@@ -2,7 +2,7 @@
 title: "emerald.com"
 type: source-domain
 host: "emerald.com"
-cite_count: 7
+cite_count: 8
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # emerald.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **7 件**（学術 7）
+> [!info] 出典ドメイン索引 ・ 引用 **8 件**（学術 8）
 
 ## このドメインを出典とする項目
 
@@ -19,6 +19,7 @@ tags:
 - [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — Glanville(2004)Thepurposeofsecond-ordercybernetics,Kybernetes33(9/10)…
 - [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — Scott(2004)Second-ordercybernetics:anhistoricalintroduction,Kybernete…
 - [[mgmt-appreciative-inquiry|アプリシエイティブ・インクワイアリー（AI）]] — Cooperrider&Srivastva,"AppreciativeInquiryinOrganizationalLife"(1987)…
+- [[mgmt-heavyweight-product-manager-clark-fujimoto|重量級プロダクト・マネジャー——組織内外の統合を一身に担い製品コンセプトを守る開発責任者]] — Rauniar,R.,Doll,W.,Rawski,G.&Hong,P.(2008)"TheRoleofHeavyweightProduc…
 - [[mgmt-organizational-unlearning|組織的アンラーニング]] — Guesteditorial,TheLearningOrganization(EmeraldPublishing)—Hedberg1981…
 - [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — WhatDoWeTalkAboutWhenWeTalkAboutStrategicRenewal—CentralEuropeanManag…
 

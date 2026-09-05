@@ -40,7 +40,7 @@ aliases:
 - [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
 - [[infosoc-protocol-politics-galloway|プロトコル政治論：分散化後の制御様式]] — 出典を共有
-- [[infosoc-broken-world-thinking|壊れた世界の思考（ブロークン・ワールド・シンキング）]] — 出典を共有
+- [[econ-hodrick-prescott-filter|ホドリック＝プレスコット・フィルター——景気循環をトレンドから分離する平滑化フィルターとその妥当性論争]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

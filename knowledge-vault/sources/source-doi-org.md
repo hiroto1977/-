@@ -2,7 +2,7 @@
 title: "doi.org"
 type: source-domain
 host: "doi.org"
-cite_count: 2144
+cite_count: 2143
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # doi.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2144 件**（学術 2136 ・ リファレンス 5 ・ 公的 3）
+> [!info] 出典ドメイン索引 ・ 引用 **2143 件**（学術 2135 ・ リファレンス 5 ・ 公的 3）
 
 ## このドメインを出典とする項目
 
@@ -927,7 +927,6 @@ tags:
 - [[human-embodied-cognition-barsalou|身体化認知——知覚シミュレーションと概念的知識の身体的基盤]] — Glenberg,A.M.&Kaschak,M.P.(2002)"GroundingLanguageinAction"—Psychonom…
 - [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — Barsalou,L.W.(2008)GroundedCognition—AnnualReviewofPsychology,59,617–…
 - [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — Wilson,M.(2002)SixViewsofEmbodiedCognition—PsychonomicBulletin&Review…
-- [[human-embodied-cognition-varela|身体化認知とエナクティヴィズム（ヴァレラ）]] — Varela,F.J.,Thompson,E.&Rosch,E.(1991)TheEmbodiedMind:CognitiveScienc…
 - [[human-embodied-simulation|身体化されたシミュレーション理論と鏡像ニューロン系：他者理解・共感・社会的認知の神経基盤]] — Gallese&Goldman1998—MirrorNeuronsandtheSimulationTheoryofMind-Reading…
 - [[human-embodied-simulation|身体化されたシミュレーション理論と鏡像ニューロン系：他者理解・共感・社会的認知の神経基盤]] — Gallese,Keysers&Rizzolatti2004—AUnifyingViewoftheBasisofSocialCogniti…
 - [[human-embodied-simulation|身体化されたシミュレーション理論と鏡像ニューロン系：他者理解・共感・社会的認知の神経基盤]] — Rizzolatti&Craighero2004—TheMirror-NeuronSystem,AnnualReviewofNeurosc…

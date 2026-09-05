@@ -39,8 +39,8 @@ aliases:
 - [[mgmt-psychological-detachment-sonnentag|心理的距離——仕事から心理的に離れて回復する]] — 同じ思想家
 - [[bizlaw-labor-contract-act|労働契約法]] — 出典を共有
 - [[econ-time-preference|時間選好]] — 出典を共有
-- [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 出典を共有
-- [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 出典を共有
+- [[human-riasec-vocational-interests-holland|ホランドのRIASEC理論——六類型の適合度で職業選択と職務満足を説明する六角形モデル]] — 出典を共有
+- [[labor-digital-wage-payment|賃金のデジタル払い（指定資金移動業者口座への賃金支払）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

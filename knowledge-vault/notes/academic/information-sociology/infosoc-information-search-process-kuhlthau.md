@@ -34,7 +34,7 @@ aliases:
 - [[infosoc-information-seeking-wilson|ウィルソンの情報行動モデル——文脈・欲求・障壁から情報探索を捉える]] — 同じ思想家
 - [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]] — 同じ思想家
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
-- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+- [[infosoc-network-neutrality-theory|ネットワーク中立性理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

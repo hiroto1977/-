@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[human-phenomenological-reduction|現象学的還元（エポケー）と意識の本質構造]] — 同じ思想家
 - [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 同じ思想家
-- [[human-embodied-cognition-varela|身体化認知とエナクティヴィズム（ヴァレラ）]] — 同じ思想家
 - [[human-enactivism|エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論]] — 同じ思想家
 - [[human-phenomenological-psychology-husserl-merleau-ponty|現象学的心理学——フッサールとメルロ＝ポンティの生きられた経験の探究]] — 同じ思想家
 - [[human-affordance-theory|アフォーダンス理論]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[infosoc-cnn-effect|CNN効果——リアルタイム報道が外交を動かすのか]] — 出典を共有
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 出典を共有
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 出典を共有
+- [[infosoc-digital-labor-theory|デジタル労働理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -38,9 +38,9 @@ James W. Friedman（1971・部分ゲーム完全版）／Drew Fudenberg & Eric M
 - [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 出典を共有
 - [[econ-all-pay-auction|オールペイ・オークション]] — 出典を共有
 - [[econ-balanced-budget-multiplier|均衡予算乗数]] — 出典を共有
+- [[econ-entry-thresholds-bresnahan-reiss|ブレスナハン＝ライス参入閾値モデル——市場規模と参入企業数から競争の強さを推定する実証手法]] — 出典を共有
 - [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]] — 出典を共有
 - [[econ-nash-bargaining|ナッシュ交渉解]] — 出典を共有
-- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

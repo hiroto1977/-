@@ -38,9 +38,9 @@ aliases:
 - [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同じ思想家
 - [[infosoc-data-sovereignty-digital-rights|データ主権とデジタル自決権の国際政治経済学]] — 同じ思想家
 - [[infosoc-epistemic-injustice|認識的不正義（epistemic injustice）]] — 同じ思想家
+- [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — 同じ思想家
 - [[infosoc-panoptic-sort-gandy|パノプティック・ソート——個人情報による選別と差別的処遇の政治経済学]] — 同じ思想家
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]] — 同じ思想家
-- [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

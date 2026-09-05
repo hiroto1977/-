@@ -34,13 +34,9 @@ aliases:
 - [[mgmt-core-competence|コアコンピタンス（中核的能力）]] — 同じ思想家
 - [[mgmt-strategic-intent|戦略的意図（ストラテジック・インテント）]] — 同じ思想家
 - [[mgmt-dominant-logic-prahalad-bettis|支配的論理——経営者の事業の捉え方が資源配分と適応を方向づける認知枠組み]] — 同じ思想家
-- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
-- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 出典を共有
-- [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]] — 出典を共有
-- [[mgmt-family-business-governance-gersick|ファミリービジネスの三円モデル（ガーシック）]] — 出典を共有
-- [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]] — 出典を共有
-- [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — 出典を共有
-- [[mgmt-institutional-void|制度的空白（Institutional Voids）]] — 出典を共有
+- [[mgmt-leadership-substitutes-kerr-jermier|リーダーシップ代替論——リーダー行動を不要化・無効化する状況要因]] — 同分野の近傍
+- [[mgmt-organizational-equilibrium|組織均衡論（誘因と貢献）]] — 同分野の近傍
+- [[mgmt-collective-genius|集合的天才（Collective Genius）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,6 +33,7 @@ aliases:
 - [[mgmt-appreciative-inquiry-cooperrider|アプリシエイティブ・インクワイアリー（AI）と組織開発の強み志向]] — 語彙が近い
 - [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — 出典を共有
 - [[bizlaw-ultra-vires-doctrine-modern|近代企業法における越権行為法理（Ultra Vires Doctrine）]] — 出典を共有
+- [[mgmt-heavyweight-product-manager-clark-fujimoto|重量級プロダクト・マネジャー——組織内外の統合を一身に担い製品コンセプトを守る開発責任者]] — 出典を共有
 - [[mgmt-organizational-unlearning|組織的アンラーニング]] — 出典を共有
 - [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 出典を共有
 - [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有

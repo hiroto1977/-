@@ -39,8 +39,8 @@ aliases:
 - [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]] — 出典を共有
 - [[bizlaw-forfeiture-of-rights|権利失効の原則]] — 出典を共有
 - [[bizlaw-piercing-corporate-veil-reverse|法人格否認の法理（逆方向）]] — 出典を共有
+- [[mgmt-heavyweight-product-manager-clark-fujimoto|重量級プロダクト・マネジャー——組織内外の統合を一身に担い製品コンセプトを守る開発責任者]] — 出典を共有
 - [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "hbr.org"
 type: source-domain
 host: "hbr.org"
-cite_count: 68
+cite_count: 69
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # hbr.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **68 件**（学術 42 ・ メディア 24 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **69 件**（学術 42 ・ メディア 25 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -40,6 +40,7 @@ tags:
 - [[mgmt-focused-factory-skinner|集中工場（スキナー）——「絞り込み」が競争力を生む製造戦略]] — Skinner,W.(1974)TheFocusedFactory—HarvardBusinessReview,52(3),113–121
 - [[mgmt-followership|フォロワーシップ論]] — Kelley,R.E.(1988)"InPraiseofFollowers"HarvardBusinessReview66(6)
 - [[mgmt-greiner-growth|グレイナーの企業成長モデル]] — LarryE.Greiner,“EvolutionandRevolutionasOrganizationsGrow,”HarvardBus…
+- [[mgmt-heavyweight-product-manager-clark-fujimoto|重量級プロダクト・マネジャー——組織内外の統合を一身に担い製品コンセプトを守る開発責任者]] — Clark,K.B.&Fujimoto,T.(1990)"ThePowerofProductIntegrity",HarvardBusin…
 - [[mgmt-innovation-s-curve-foster|イノベーションのSカーブとテクノロジーサイクル——技術的限界と不連続的イノベーションの経営戦略]] — Foster(1986)Innovation:TheAttacker'sAdvantage—HarvardBusinessReview
 - [[mgmt-innovators-dilemma|イノベーションのジレンマ（破壊的イノベーション）]] — Christensen,Raynor&McDonald(2015),"WhatIsDisruptiveInnovation?",Harva…
 - [[mgmt-institutional-void|制度的空白（Institutional Voids）]] — Khanna&Palepu(1997)WhyFocusedStrategiesMayBeWrongforEmergingMarkets,H…

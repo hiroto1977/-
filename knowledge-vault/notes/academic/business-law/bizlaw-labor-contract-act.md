@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[labor-fixed-term-conversion|無期転換ルール（有期から無期への転換）]] — 語彙が近い
 - [[bizlaw-fixed-term-conversion|無期転換ルール（労働契約法18条）]] — 語彙が近い
+- [[human-riasec-vocational-interests-holland|ホランドのRIASEC理論——六類型の適合度で職業選択と職務満足を説明する六角形モデル]] — 出典を共有
 - [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 出典を共有
 - [[labor-digital-wage-payment|賃金のデジタル払い（指定資金移動業者口座への賃金支払）]] — 出典を共有
 - [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[mgmt-job-based-employment|ジョブ型雇用]] — 出典を共有
 - [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 出典を共有
 - [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
-- [[bizlaw-industrial-safety|労働安全衛生法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

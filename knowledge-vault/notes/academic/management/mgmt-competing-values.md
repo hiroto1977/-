@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-competing-values-framework-quinn|競合価値観フレームワーク——クインの組織文化類型と管理的リーダーシップ]] — 語彙が近い
+- [[mgmt-adhocracy|アドホクラシー]] — 語彙が近い
 - [[mgmt-organizational-decline-weitzel|組織衰退の段階モデル——早期警戒・不作為・誤った行動・危機・解体]] — 同じ思想家
 - [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 同じ思想家
 - [[human-motor-theory-speech-liberman|音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する]] — 出典を共有
@@ -39,7 +40,6 @@ aliases:
 - [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — 出典を共有
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 出典を共有
 - [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — 出典を共有
-- [[mgmt-tannenbaum-schmidt|タンネンバウム＝シュミットのリーダーシップ連続体]] — 出典を共有
 - [[mgmt-dynamic-pricing|ダイナミック・プライシング]] — 同分野の近傍
 
 ## 関連

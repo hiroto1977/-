@@ -2,7 +2,7 @@
 title: "onlinelibrary.wiley.com"
 type: source-domain
 host: "onlinelibrary.wiley.com"
-cite_count: 95
+cite_count: 96
 tags:
   - source-domain
   - index
@@ -10,13 +10,14 @@ tags:
 
 # onlinelibrary.wiley.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **95 件**（学術 80 ・ リファレンス 15）
+> [!info] 出典ドメイン索引 ・ 引用 **96 件**（学術 81 ・ リファレンス 15）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-relational-contracting-macneil|関係的契約論（マクニール）]] — Deakin,S.&Wilkinson,F.(2010)RelationalContractsandtheEvolutionofEnter…
 - [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — JapaneseEconomicReview(Wiley)—Aoki,'TowardsaComparativeInstitutionalA…
 - [[econ-dorfman-steiner-theorem|ドーフマン＝スタイナーの定理——最適な広告は弾力性で決まる]] — Dorfman&Steiner(1954)OptimalAdvertisingandOptimalQuality—AmericanEcon…
+- [[econ-entry-thresholds-bresnahan-reiss|ブレスナハン＝ライス参入閾値モデル——市場規模と参入企業数から競争の強さを推定する実証手法]] — Schaumans,C.&Verboven,F.(2008)."EntryandRegulation:EvidencefromHealth…
 - [[econ-generalized-method-of-moments-hansen|一般化モーメント法（GMM）——モーメント条件のみから分布を仮定せず母数を推定するハンセンの一般理論]] — Stock,J.H.&Wright,J.H.(2000)."GMMwithWeakIdentification."Econometrica…
 - [[econ-henry-george-theorem|ヘンリー・ジョージ定理（Henry George Theorem）]] — Arnott(2004)DoestheHenryGeorgeTheoremProvideaPracticalGuidetoOptimalC…
 - [[econ-mundell-tobin-effect|マンデル＝トービン効果]] — Liquidity,theMundell–TobinEffect,andtheFriedmanRule—JournalofMoney,Cr…

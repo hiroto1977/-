@@ -31,6 +31,7 @@ Edwards, Corwin D. （1955 Conglomerate Bigness as a Source of Power）／Karnan
 - [Gimeno, J. (1999) "Reciprocal Threats in Multimarket Rivalry: Staking Out 'Spheres of Influence' in the U.S. Airline Industry," Strategic Management Journal 20(2): 101–128](https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/(SICI)1097-0266(199902)20:2%3C101::AID-SMJ12%3E3.0.CO;2-4) `学術`
 
 ## 関連概念
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 出典を共有
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
 - [[mgmt-demand-side-strategy|需要サイド戦略論]] — 出典を共有
@@ -39,7 +40,6 @@ Edwards, Corwin D. （1955 Conglomerate Bigness as a Source of Power）／Karnan
 - [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 出典を共有
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 出典を共有
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
-- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 出典を共有
 - [[mgmt-asset-stock-accumulation-dierickx-cool|資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性]] — 出典を共有
 
 ## 関連

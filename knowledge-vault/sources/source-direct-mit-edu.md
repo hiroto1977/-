@@ -2,7 +2,7 @@
 title: "direct.mit.edu"
 type: source-domain
 host: "direct.mit.edu"
-cite_count: 13
+cite_count: 15
 tags:
   - source-domain
   - index
@@ -10,11 +10,13 @@ tags:
 
 # direct.mit.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **13 件**（学術 13）
+> [!info] 出典ドメイン索引 ・ 引用 **15 件**（学術 15）
 
 ## このドメインを出典とする項目
 
 - [[econ-currency-substitution-girton|通貨代替と為替市場圧力——複数通貨選択のマクロ経済分析]] — Calvo&Vegh(1996)FromCurrencySubstitutiontoDollarizationandBeyond—inMo…
+- [[econ-hodrick-prescott-filter|ホドリック＝プレスコット・フィルター——景気循環をトレンドから分離する平滑化フィルターとその妥当性論争]] — Hamilton,J.D.(2018).WhyYouShouldNeverUsetheHodrick-PrescottFilter.The…
+- [[econ-hodrick-prescott-filter|ホドリック＝プレスコット・フィルター——景気循環をトレンドから分離する平滑化フィルターとその妥当性論争]] — Ravn,M.O.,&Uhlig,H.(2002).OnAdjustingtheHodrick-PrescottFilterfortheF…
 - [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — Corden,W.M.(2002)TooSensational:OntheChoiceofExchangeRateRegimes—MITP…
 - [[econ-task-based-automation-acemoglu-restrepo|アセモグル＝レストレポのタスクベース自動化モデル——置換効果・生産性効果・復元効果の綱引き]] — Graetz,G.andMichaels,G.(2018).RobotsatWork.ReviewofEconomicsandStatis…
 - [[human-embodied-cognition-theory|身体化された認知]] — Varela,Thompson&Rosch—TheEmbodiedMind:CognitiveScienceandHumanExperie…

@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-reciprocity|返報性の原理（reciprocity）]] — 同分野の近傍
+- [[human-phenomenological-psychology-husserl-merleau-ponty|現象学的心理学——フッサールとメルロ＝ポンティの生きられた経験の探究]] — 同分野の近傍
 - [[human-interpersonal-psychotherapy-klerman|対人関係療法（IPT）——うつ病治療における対人プロセスと役割移行への介入]] — 同分野の近傍
 - [[human-pratfall-effect|失態効果（プラットフォール効果）]] — 同分野の近傍
 - [[human-still-face-tronick|スティルフェイス実験（トロニック）——無表情の母親と乳児の情動調整]] — 同分野の近傍

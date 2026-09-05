@@ -35,11 +35,11 @@ aliases:
 - [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか]] — 同じ思想家
 - [[infosoc-epistemic-injustice|認識的不正義（epistemic injustice）]] — 同じ思想家
 - [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]] — 同じ思想家
+- [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — 同じ思想家
 - [[infosoc-techno-feminism-wajcman|テクノフェミニズム——技術とジェンダーの相互構成的関係]] — 同じ思想家
 - [[infosoc-calculated-publics|算出された公衆（calculated publics）]] — 同分野の近傍
 - [[infosoc-platform-labor-control|プラットフォーム労働とアルゴリズム的統制]] — 同分野の近傍
 - [[infosoc-panopticon|パノプティコンと規律権力]] — 同分野の近傍
-- [[infosoc-technofeudalism|テクノ封建制（デジタル封建制）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

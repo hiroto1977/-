@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[econ-liquidity-trap-keynes|流動性の罠——名目金利の下限で金融政策が有効性を失う状況]] — 出典を共有
 - [[econ-taylor-principle|テイラー原理（Taylor Principle）]] — 出典を共有
+- [[econ-entry-thresholds-bresnahan-reiss|ブレスナハン＝ライス参入閾値モデル——市場規模と参入企業数から競争の強さを推定する実証手法]] — 出典を共有
 - [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 出典を共有
 - [[eh-1993|1993年（平成5年）]] — 出典を共有
 - [[infosoc-third-place|サードプレイス]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[econ-too-big-to-fail|大きすぎて潰せない]] — 出典を共有
 - [[eh-2013|2013年（平成25年）]] — 出典を共有
 - [[econ-keynesian-effective-demand|有効需要の原理と乗数効果（ケインズ経済学）]] — 同分野の近傍
-- [[econ-fiscal-drag|財政ドラッグ（ブラケットクリープ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

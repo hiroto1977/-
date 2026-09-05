@@ -36,7 +36,7 @@ aliases:
 - [[mgmt-full-range-leadership-bass|フルレンジ・リーダーシップ・モデル——変革・交換・放任の連続体]] — 同じ思想家
 - [[mgmt-path-goal-theory-house|パス・ゴール理論——リーダーが部下の目標達成経路を整備する条件適応的指導]] — 同じ思想家
 - [[mgmt-responsible-innovation-stilgoe|責任ある研究・イノベーション（RRI）と科学技術ガバナンス]] — 同分野の近傍
-- [[mgmt-team-effectiveness-model|チーム有効性モデル]] — 同分野の近傍
+- [[mgmt-psychological-capital-theory|心理的資本理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

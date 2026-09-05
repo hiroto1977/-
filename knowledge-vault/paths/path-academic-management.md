@@ -2,29 +2,29 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 657
+entry_count: 658
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（657件）
+# 学習パス — 学術概念／経営学（658件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[agile-development|アジャイルソフトウェア開発]]（接続 65）
+- [[agile-development|アジャイルソフトウェア開発]]（接続 63）
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 40）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 29）
-- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 27）
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 25）
+- [[mgmt-mbo|目標による管理（MBO）]]（接続 25）
 - [[mgmt-csr|企業の社会的責任（CSR）]]（接続 24）
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 24）
-- [[mgmt-mbo|目標による管理（MBO）]]（接続 24）
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 23）
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 23）
 - [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]]（接続 22）
+- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]]（接続 22）
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 22）
 - [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]]（接続 21）
 - [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]]（接続 21）
@@ -187,6 +187,7 @@ tags:
 - 1990年: [[mgmt-core-competence|コアコンピタンス（中核的能力）]]
 - 1990年: [[mgmt-diversity-management|ダイバーシティ・マネジメント]]
 - 1990年: [[mgmt-emotional-intelligence|感情知性（EQ）]]
+- 1990年: [[mgmt-heavyweight-product-manager-clark-fujimoto|重量級プロダクト・マネジャー——組織内外の統合を一身に担い製品コンセプトを守る開発責任者]]
 - 1990年: [[mgmt-icarus-paradox|イカロスのパラドックス（Icarus Paradox）]]
 - 1990年: [[mgmt-market-orientation|市場志向]]
 - 1990年: [[mgmt-network-organization|ネットワーク組織（Network Forms of Organization）]]
@@ -323,6 +324,7 @@ tags:
 - [[mgmt-behavioral-integrity|行動的誠実性（ビヘイビオラル・インテグリティ）]]
 - [[mgmt-behavioral-strategy-powell-lovallo|行動戦略論——認知バイアスと限定合理性が戦略的意思決定に及ぼす体系的影響]]
 - [[mgmt-behavioral-strategy-theory|行動戦略理論]]
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]
 - [[mgmt-benchmarking-camp|ベンチマーキング——最良の実践との体系的な比較による改善]]
 - [[mgmt-blake-mouton-grid|マネジリアル・グリッド——業績への関心と人への関心の二軸でリーダーを類型化]]
 - [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]]
@@ -539,7 +541,6 @@ tags:
 - [[mgmt-person-environment-fit|人と環境の適合理論（P-Eフィット）]]
 - [[mgmt-pestel-analysis|PESTEL分析——マクロ環境を六つの外部要因から分析する枠組み]]
 - [[mgmt-platform-ecosystems-gawer-cusumano|プラットフォーム・エコシステム——インダストリアル・プラットフォームとネットワーク効果の戦略論]]
-- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]]
 - [[mgmt-poka-yoke|ポカヨケ]]
 - [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]]
 - [[mgmt-polychronicity|ポリクロニシティ（多時間並行志向）]]

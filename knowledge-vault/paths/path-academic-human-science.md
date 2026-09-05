@@ -13,8 +13,8 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 142）
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 102）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 143）
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 103）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 31）
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 28）
@@ -103,6 +103,7 @@ tags:
 - 1959年: [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]]
 - 1959年: [[human-latent-inhibition|潜在制止（latent inhibition）——結果を伴わない刺激への事前接触が、その刺激の後続の条件づけ学習を遅らせる現象]]
 - 1959年: [[human-premack-principle|プレマックの原理]]
+- 1959年: [[human-riasec-vocational-interests-holland|ホランドのRIASEC理論——六類型の適合度で職業選択と職務満足を説明する六角形モデル]]
 - 1960年: [[human-confirmation-bias|確証バイアス（confirmation bias）]]
 - 1960年: [[human-item-response-theory|項目反応理論（Item Response Theory, IRT）]]
 - 1960年: [[human-visual-cliff|視覚的断崖実験（Visual Cliff Experiment）]]
@@ -407,7 +408,6 @@ tags:
 - [[human-embodied-cognition-barsalou|身体化認知——知覚シミュレーションと概念的知識の身体的基盤]]
 - [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]]
 - [[human-embodied-cognition-theory|身体化された認知]]
-- [[human-embodied-cognition-varela|身体化認知とエナクティヴィズム（ヴァレラ）]]
 - [[human-embodied-simulation|身体化されたシミュレーション理論と鏡像ニューロン系：他者理解・共感・社会的認知の神経基盤]]
 - [[human-embodied-simulation-rizzolatti|身体的シミュレーションと鏡像ニューロン（リゾラッティ）]]
 - [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]]

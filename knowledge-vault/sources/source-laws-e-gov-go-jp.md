@@ -2,7 +2,7 @@
 title: "laws.e-gov.go.jp"
 type: source-domain
 host: "laws.e-gov.go.jp"
-cite_count: 209
+cite_count: 210
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # laws.e-gov.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **209 件**（公的 208 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **210 件**（公的 209 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -70,6 +70,7 @@ tags:
 - [[bizlaw-duty-of-loyalty|取締役の忠実義務（会社法355条）]] — e-Gov法令検索：会社法（355条忠実義務・356条競業及び利益相反取引の制限）
 - [[bizlaw-e-signature|電子署名法]] — e-Gov法令検索電子署名及び認証業務に関する法律（平成12年法律第102号）条文
 - [[bizlaw-earnest-money|手付（民法557条）]] — e-Gov法令検索民法（明治29年法律第89号）第557条手付
+- [[bizlaw-employee-invention-japan-patent-act-35|職務発明制度（特許法第35条）——従業者の発明の帰属と「相当の利益」]] — 特許法（昭和34年法律第121号）第35条|e-Gov法令検索—職務発明の定義および特許を受ける権利の原始的帰属・使用者の通常実施権という…
 - [[bizlaw-employer-liability|使用者責任（民法715条）]] — e-Gov法令検索民法（明治29年法律第89号、lawid129AC0000000089）第715条
 - [[bizlaw-employment-insurance|雇用保険法]] — e-Gov法令検索雇用保険法（昭和49年法律第116号）
 - [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — e-Gov法令検索「民法」（明治29年法律第89号、709条ほか）

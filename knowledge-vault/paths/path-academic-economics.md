@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 948
+entry_count: 950
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（948件）
+# 学習パス — 学術概念／経済学（950件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -109,6 +109,7 @@ tags:
 - 1920年: [[econ-kondratiev-waves|コンドラチェフの波（長期波動）]]
 - 1920年: [[econ-pigouvian-tax|ピグー税]]
 - 1923年: [[econ-gibson-paradox|ギブソンのパラドックス]]
+- 1923年: [[econ-hodrick-prescott-filter|ホドリック＝プレスコット・フィルター——景気循環をトレンドから分離する平滑化フィルターとその妥当性論争]]
 - 1924年: [[econ-lancaster-characteristics|ランカスターの特性アプローチ]]
 - 1924年: [[econ-solow-growth-model|ソロー成長モデル]]
 - 1924年: [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]]
@@ -346,6 +347,7 @@ tags:
 - 1986年: [[econ-noise-trader|ノイズトレーダー]]
 - 1986年: [[econ-property-rights-theory|財産権アプローチ（企業の所有権理論）]]
 - 1987年: [[econ-deaton-paradox|ディートンのパラドックス（消費の過剰平滑性）]]
+- 1987年: [[econ-entry-thresholds-bresnahan-reiss|ブレスナハン＝ライス参入閾値モデル——市場規模と参入企業数から競争の強さを推定する実証手法]]
 - 1987年: [[econ-sheepskin-effect|シープスキン効果（sheepskin effect／卒業証書効果）——学位取得そのものがもたらす賃金の非連続的上昇]]
 - 1988年: [[econ-blanchard-quah-long-run-restrictions|ブランシャール＝クアの長期制約による構造VAR識別——需要ショックと供給ショックの分解]]
 - 1988年: [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]]

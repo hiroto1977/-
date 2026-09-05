@@ -38,8 +38,8 @@ aliases:
 - [[econ-time-inconsistency-kydland-prescott|時間的非整合性——最適計画の事後的破棄とルール対裁量の問題]] — 同じ思想家
 - [[econ-equity-premium-puzzle-mehra-prescott|株式プレミアム・パズル——標準理論で説明できない株式の超過収益]] — 同じ思想家
 - [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]] — 同じ思想家
+- [[econ-hodrick-prescott-filter|ホドリック＝プレスコット・フィルター——景気循環をトレンドから分離する平滑化フィルターとその妥当性論争]] — 同じ思想家
 - [[econ-new-open-economy-macro-obstfeld|新しい開放経済マクロ経済学——ミクロ的基礎と名目硬直性の統合]] — 同じ思想家
-- [[econ-political-business-cycle-nordhaus|政治的景気循環——選挙を見据えた政策操作が生む景気の周期的変動]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

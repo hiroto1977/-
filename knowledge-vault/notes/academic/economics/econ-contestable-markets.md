@@ -35,6 +35,7 @@ William J. Baumol／John C. Panzar／Robert D. Willig（1982）／サンクコ�
 - [[econ-baumol-oates-standards-charges|ボーモル＝オーツの標準・価格アプローチ——政治的に定めた環境基準を一律の排出課徴金で費用最小に達成する]] — 同じ思想家
 - [[infosoc-communicative-capitalism|コミュニカティブ・キャピタリズム（Communicative Capitalism）]] — 出典を共有
 - [[econ-marginal-productivity-distribution|限界生産力説]] — 出典を共有
+- [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — 出典を共有
 - [[econ-credit-rationing-stiglitz-weiss|スティグリッツ＝ワイス信用割当モデル]] — 同分野の近傍
 
 ## 関連

@@ -35,6 +35,7 @@ aliases:
 - [[mgmt-organizational-cynicism-dean|組織シニシズム——組織の誠実さを信じない否定的態度]] — 同じ思想家
 - [[econ-contestable-markets|コンテスタブル市場]] — 出典を共有
 - [[econ-marginal-productivity-distribution|限界生産力説]] — 出典を共有
+- [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — 出典を共有
 - [[infosoc-smart-city-governance-kitchin|スマートシティ・ガバナンス——データ駆動型都市管理の批判的検討]] — 同分野の近傍
 - [[infosoc-information-theory|情報理論（シャノン）]] — 同分野の近傍
 

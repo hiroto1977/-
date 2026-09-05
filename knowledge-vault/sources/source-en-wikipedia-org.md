@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2260
+cite_count: 2261
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2260 件**（リファレンス 2260）
+> [!info] 出典ドメイン索引 ・ 引用 **2261 件**（リファレンス 2261）
 
 ## このドメインを出典とする項目
 
@@ -1191,7 +1191,6 @@ tags:
 - [[human-elaboration-likelihood-model-petty-cacioppo|精緻化見込みモデル——ペティとカシオッポの二重過程的態度変容理論]] — Wikipedia:Elaborationlikelihoodmodel—ELMの概要
 - [[human-embodied-cognition-barsalou|身体化認知——知覚シミュレーションと概念的知識の身体的基盤]] — Wikipedia:Embodiedcognition—身体化認知の理論的系譜と実証
 - [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — Wikipedia:Embodiedcognition—Lakoff&Johnson,Varelaenactivism,empirical…
-- [[human-embodied-cognition-varela|身体化認知とエナクティヴィズム（ヴァレラ）]] — Wikipedia:Embodiedcognition—身体化認知の概説
 - [[human-embodied-simulation-rizzolatti|身体的シミュレーションと鏡像ニューロン（リゾラッティ）]] — Wikipedia:Mirrorneuron—embodiedsimulation
 - [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]] — Wikipedia:Appraisaltheory—Lazarus,primary/secondary,Scherer,CBT,reapp…
 - [[human-emotion-regulation-gross-reappraisal|感情調節理論——グロスの認知的再評価・抑圧・状況選択のプロセスモデル]] — Wikipedia:Emotionregulation—psychologyandneuroscience
@@ -1200,6 +1199,7 @@ tags:
 - [[human-emotional-regulation-gross|感情調節理論（グロス）と認知的再評価・表現抑制]] — Wikipedia:Emotionalself-regulation—Grossprocessmodel
 - [[human-emotional-stroop-effect|感情ストループ効果——感情的単語が色命名を遅延させる注意的干渉]] — Wikipedia:EmotionalStroopTest—attentionalbiasmeasurementinclinicalpsy…
 - [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — Wikipedia:Empathygap—hot-coldstates,commitmentdevices,behavioralecono…
+- [[human-enactivism|エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論]] — Wikipedia:Embodiedcognition—身体化認知の概説（重複統合で移設）
 - [[human-encoding-specificity-tulving|符号化特定性原理——記憶の検索は符号化時の手がかりとの一致に依存する]] — Wikipedia:Encodingspecificityprinciple—Tulving&Thomson,context/state-…
 - [[human-end-of-history-illusion|歴史の終わり錯覚]] — Wikipedia:End-of-historyillusion
 - [[human-endowment-effect|保有効果（授かり効果）]] — Wikipedia:Endowmenteffect（Thaler1980命名・WTA>WTPの補強）
@@ -1737,6 +1737,7 @@ tags:
 - [[infosoc-network-society-castells|ネットワーク社会論——カステルスの情報資本主義・流れの空間・アイデンティティの政治]] — Wikipedia:Castells—NetworkSocietyandInformationAge
 - [[infosoc-networked-protest-tufekci|トゥフェックチのネットワーク化された抗議——能力を伴わないシグナルの拡大と戦術的凍結]] — "TwitterandTearGas"—Wikipedia(English)—corroboratesthebook'spublisher…
 - [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — Wikipedia:Publicsphere—networkeddemocracy
+- [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — "RaceAfterTechnology"—Wikipedia—書名・出版社・ISBN（9781509526406）と四類型（engine…
 - [[infosoc-non-places-auge|非‐場所——通過と消費の匿名的空間]] — Wikipedia:Non-place—supermodernity,transience,anthropologicalplace
 - [[infosoc-noopolitik-arquilla-ronfeldt|ヌーポリティーク——理念とソフトパワーにもとづく情報時代の外交]] — Wikipedia:Noopolitik—noosphere,softpower,Realpolitik,informationstrat…
 - [[infosoc-obfuscation-brunton-nissenbaum|難読化（オブファスケーション）——ノイズを加えて監視を妨げる]] — Wikipedia:Obfuscation—privacy,noise,surveillance,TrackMeNot,weaponsof…

@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Essential facilities doctrine — antitrust law](https://en.wikipedia.org/wiki/Essential_facilities_doctrine) `リファレンス`
 
 ## 関連概念
+- [[econ-essential-facilities-doctrine|不可欠施設の法理——競争に不可欠な施設へのアクセス開放]] — 語彙が近い
 - [[bizlaw-antitrust-competition-law|独占禁止法・競争法：シャーマン法の消費者厚生基準からネオ・ブランダイズ派アプローチまでの競争政策の展開]] — 同じ思想家
-- [[econ-essential-facilities-doctrine|不可欠施設の法理——競争に不可欠な施設へのアクセス開放]] — 同じ思想家
 - [[econ-predatory-pricing-mcgee|略奪的価格設定——競争相手の排除を狙う原価割れ価格とその合理性論争]] — 同じ思想家
 - [[bizlaw-anti-bribery-fcpa-ukba|贈収賄禁止法とコンプライアンス——米国FCPA・英国贈収賄防止法と国際腐敗防止規制]] — 出典を共有
 - [[bizlaw-competition-law-merger-control|企業結合規制と競争法——独占禁止法における合併審査の基準と実務]] — 出典を共有

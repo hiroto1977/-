@@ -33,9 +33,9 @@ aliases:
 
 ## 関連概念
 - [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 語彙が近い
-- [[econ-long-run-aggregate-supply-solow-growth|ソロー成長モデルと長期総供給——資本蓄積・技術進歩・収束仮説の新古典派成長論]] — 語彙が近い
 - [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 同じ思想家
 - [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 同じ思想家
+- [[econ-long-run-aggregate-supply-solow-growth|ソロー成長モデルと長期総供給——資本蓄積・技術進歩・収束仮説の新古典派成長論]] — 同じ思想家
 - [[econ-ces-production|CES生産関数]] — 同じ思想家
 - [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
 - [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 同じ思想家

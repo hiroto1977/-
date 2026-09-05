@@ -35,14 +35,14 @@ aliases:
 ## 関連概念
 - [[mgmt-asset-stock-accumulation-dierickx-cool|資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性]] — 出典を共有
 - [[mgmt-knowledge-based-view|知識ベース理論（ナレッジ・ベースト・ビュー）]] — 出典を共有
+- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 出典を共有
 - [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
 - [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
 - [[human-bias-blind-spot|バイアスの盲点]] — 出典を共有
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 出典を共有
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 出典を共有
-- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 出典を共有
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
-- [[mgmt-demand-side-strategy|需要サイド戦略論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

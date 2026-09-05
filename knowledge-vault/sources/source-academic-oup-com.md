@@ -2,7 +2,7 @@
 title: "academic.oup.com"
 type: source-domain
 host: "academic.oup.com"
-cite_count: 127
+cite_count: 128
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # academic.oup.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **127 件**（学術 125 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **128 件**（学術 126 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -42,6 +42,7 @@ tags:
 - [[econ-eaton-lipsey-local-clustering|イートン＝リプシーの局所的集塊の原理（Eaton-Lipsey's Principle of Local Clustering）]] — Eaton,B.C.&Lipsey,R.G.(1975)"ThePrincipleofMinimumDifferentiationReco…
 - [[econ-efficiency-wage|効率賃金仮説（efficiency wage hypothesis）]] — Akerlof(1982)LaborContractsasPartialGiftExchange,QJE97(4):543-569
 - [[econ-ellsberg-paradox|エルズバーグのパラドックス（曖昧性回避）]] — DanielEllsberg,“Risk,Ambiguity,andtheSavageAxioms,”TheQuarterlyJourna…
+- [[econ-entry-thresholds-bresnahan-reiss|ブレスナハン＝ライス参入閾値モデル——市場規模と参入企業数から競争の強さを推定する実証手法]] — Bresnahan,T.F.&Reiss,P.C.(1990)."EntryinMonopolyMarket."TheReviewofEc…
 - [[econ-fair-wage-effort|公正賃金・努力仮説]] — Akerlof&Yellen,"TheFairWage-EffortHypothesisandUnemployment,"QJE105(2…
 - [[econ-fear-of-floating|変動相場回避（フィア・オブ・フローティング）]] — Calvo&Reinhart,"FearofFloating,"QuarterlyJournalofEconomics117(2),200…
 - [[econ-fei-ranis|フェイ＝ラニス・モデル]] — AmericanJournalofAgriculturalEconomics書評:Fei&Ranis,DevelopmentoftheLa…

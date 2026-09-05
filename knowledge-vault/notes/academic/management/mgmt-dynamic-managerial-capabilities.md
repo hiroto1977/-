@@ -36,11 +36,11 @@ aliases:
 - [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 出典を共有
 - [[infosoc-actor-network-theory|アクターネットワーク理論]] — 出典を共有
 - [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — 出典を共有
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 出典を共有
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
 - [[mgmt-bureaucracy|官僚制（ウェーバー）]] — 出典を共有
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
 - [[mgmt-coopetition|コーペティション（協調的競争）]] — 出典を共有
-- [[mgmt-demand-side-strategy|需要サイド戦略論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

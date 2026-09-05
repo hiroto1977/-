@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 語彙が近い
 - [[infosoc-algorithmic-accountability-sandvig|アルゴリズムの説明責任——自動化された意思決定の監査と透明性]] — 同じ思想家
+- [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — 同じ思想家
 - [[infosoc-algorithmic-accountability-diakopoulos|アルゴリズム説明責任——自動的意思決定の透明性と監査]] — 同じ思想家
 - [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — 同じ思想家
 - [[infosoc-algorithmic-opacity-burrell|アルゴリズム不透明性の三類型——企業秘密・技術的リテラシー・機械学習の規模に起因する不透明性]] — 同じ思想家

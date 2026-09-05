@@ -2,7 +2,7 @@
 title: "science.org"
 type: source-domain
 host: "science.org"
-cite_count: 18
+cite_count: 20
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # science.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **18 件**（学術 18）
+> [!info] 出典ドメイン索引 ・ 引用 **20 件**（学術 20）
 
 ## このドメインを出典とする項目
 
@@ -30,6 +30,8 @@ tags:
 - [[human-trolley-problem|トロッコ問題]] — Greeneetal.(2001)“AnfMRIInvestigationofEmotionalEngagementinMoralJudg…
 - [[infosoc-computational-social-science|計算社会科学]] — Lazer,D.etal.“ComputationalSocialScience,”Science323(5915):721–723(20…
 - [[infosoc-fake-news|フェイクニュース（情報の無秩序）]] — Vosoughi,Roy&Aral,“TheSpreadofTrueandFalseNewsOnline,”Science359:1146…
+- [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — RuhaBenjamin(2019)"Assessingrisk,automatingracism,"Science(AAAS)366(6…
+- [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — ZiadObermeyer,BrianPowers,ChristineVogeli,SendhilMullainathan(2019)"D…
 - [[infosoc-preferential-attachment|優先的選択（スケールフリー・ネットワーク）]] — Barabási&Albert,"EmergenceofScalinginRandomNetworks,"Science286,509–5…
 - [[mgmt-likert-systems|リッカートのシステム4]] — Science誌書評—TheHumanOrganization(1967,McGraw-Hill)の出版確認
 

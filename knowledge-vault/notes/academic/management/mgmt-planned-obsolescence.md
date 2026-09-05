@@ -34,8 +34,8 @@ aliases:
 - [[infosoc-reed-law|リードの法則——グループ形成ネットワークの指数関数的価値]] — 出典を共有
 - [[infosoc-metcalfe-law|メトカーフの法則]] — 出典を共有
 - [[infosoc-network-effects-metcalfe|ネットワーク効果（メトカルフの法則）]] — 出典を共有
+- [[mgmt-organizational-death-theory|組織死亡理論]] — 同分野の近傍
 - [[mgmt-resource-munificence-aldrich|資源余剰性と組織生態学（アルドリッチ）]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

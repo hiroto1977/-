@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／ビジネス法務"
 type: learning-path
 path_key: "academic-business-law"
-entry_count: 685
+entry_count: 686
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／ビジネス法務（685件）
+# 学習パス — 学術概念／ビジネス法務（686件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -17,7 +17,7 @@ tags:
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 56）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 37）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 36）
-- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 29）
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 30）
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]]（接続 29）
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]]（接続 29）
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 28）
@@ -194,6 +194,7 @@ tags:
 - 2002年: [[bizlaw-say-on-pay|セイ・オン・ペイ（Say on Pay）— 役員報酬に関する株主諮問的投票制度]]
 - 2002年: [[bizlaw-staggered-board-classified-board|期差任期取締役会（クラシファイド・ボード）——買収防衛策としての効果と機関投資家による解体]]
 - 2003年: [[bizlaw-arbitration-act|仲裁法]]
+- 2003年: [[bizlaw-employee-invention-japan-patent-act-35|職務発明制度（特許法第35条）——従業者の発明の帰属と「相当の利益」]]
 - 2003年: [[bizlaw-umbrella-clause|アンブレラ条項（Umbrella Clause）]]
 - 2004年: [[bizlaw-adr|裁判外紛争解決手続（ADR）]]
 - 2004年: [[bizlaw-bankruptcy|破産法]]

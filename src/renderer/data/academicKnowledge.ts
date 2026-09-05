@@ -28520,6 +28520,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.7551/mitpress/6358.001.0001', type: 'academic', label: 'Varela, F.J., Thompson, E., & Rosch, E. (1991). The Embodied Mind: Cognitive Science and Human Experience. MIT Press.' },
       { url: 'https://link.springer.com/book/10.1007/978-94-009-8947-4', type: 'academic', label: 'Maturana, H.R., & Varela, F.J. (1980). Autopoiesis and Cognition: The Realization of the Living. D. Reidel.' },
       { url: 'https://doi.org/10.1007/s11245-017-9484-6', type: 'academic', label: 'Ward, D., Silverman, D., & Villalobos, M. (2017). Introduction: The Varieties of Enactivism. Topoi, 36(3), 365-375.' },
+      { url: 'https://en.wikipedia.org/wiki/Embodied_cognition', type: 'reference', label: 'Wikipedia: Embodied cognition — 身体化認知の概説（重複統合で移設）' },
     ],
   },
   {
@@ -47625,18 +47626,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-embodied-cognition-varela',
-    discipline: 'human-science',
-    title: '身体化認知とエナクティヴィズム（ヴァレラ）',
-    statement: 'ヴァレラ（Francisco Varela），トンプソン（Evan Thompson），ロッシュ（Eleanor Rosch）は1991年の著書『The Embodied Mind』で，認知は脳内の表象処理ではなく，身体と環境の相互作用（enaction）から生起するという「身体化認知（embodied cognition）／エナクティヴィズム」の枠組みを提唱した。マトゥラーナとヴァレラが先立って提唱したオートポイエーシス（autopoiesis；自己生産システム）の概念を認知科学に拡張したものであり，認知を「世界の表象を構築する計算」から「生きた身体による世界への参加」へと転換させた。チャーマーズ・クラーク（Andy Clark）の「拡張認知（extended mind）」，ノーの知覚的エナクティヴィズム，4Eアプローチ（Embodied, Embedded, Enacted, Extended）の源泉の一つとして広く引用されている。',
-    keyFigures: 'フランシスコ・ヴァレラ ／ エヴァン・トンプソン ／ ウンベルト・マトゥラーナ ／ エレノア・ロッシュ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.7551/mitpress/3885.001.0001', type: 'academic', label: 'Varela, F.J., Thompson, E. & Rosch, E. (1991) The Embodied Mind: Cognitive Science and Human Experience — MIT Press（身体化認知の原著）' },
-      { url: 'https://en.wikipedia.org/wiki/Embodied_cognition', type: 'reference', label: 'Wikipedia: Embodied cognition — 身体化認知の概説' },
-    ],
-  },
-  {
     id: 'bizlaw-corporate-purpose-enlightened-shareholder',
     discipline: 'business-law',
     title: '企業目的と啓発的株主価値論（英国会社法172条）',
@@ -50108,6 +50097,102 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/10.1177/0002764213479369', type: 'academic', label: 'Tufekci, Z. (2013). "Not This One": Social Movements, the Attention Economy, and Microcelebrity Networked Activism. American Behavioral Scientist (SAGE), 57(7), 848-870. DOI: 10.1177/0002764213479369 — supports the attention-economy argument underlying the censorship-to-attention-flooding shift' },
       { url: 'https://www.tandfonline.com/doi/abs/10.1080/1369118X.2012.670661', type: 'academic', label: 'Bennett, W. L., & Segerberg, A. (2012). The Logic of Connective Action: Digital Media and the Personalization of Contentious Politics. Information, Communication & Society (Taylor & Francis), 15(5), 739-768. DOI: 10.1080/1369118X.2012.670661 — supports the comparison with connective-action theory' },
       { url: 'https://en.wikipedia.org/wiki/Twitter_and_Tear_Gas', type: 'reference', label: '"Twitter and Tear Gas" — Wikipedia (English) — corroborates the book\'s publisher/year/ISBN and its open-access availability at twitterandteargas.org' },
+    ],
+  },
+  {
+    id: 'econ-hodrick-prescott-filter',
+    discipline: 'economics',
+    title: 'ホドリック＝プレスコット・フィルター——景気循環をトレンドから分離する平滑化フィルターとその妥当性論争',
+    statement:
+      'ホドリック＝プレスコット・フィルター（HPフィルター）は時系列を滑らかなトレンド成分と循環成分に分解する平滑化手法で、ロバート・ホドリックとエドワード・プレスコットが1980年代初頭の未公刊論文で提示し、1997年に『Postwar U.S. Business Cycles: An Empirical Investigation』としてJournal of Money, Credit and Banking誌29巻1号1〜16頁に発表した。観測値への適合度（残差平方和）とトレンドの二階差分の平方和にλを掛けた滑らかさ罰則の合計を最小化してトレンドを求め、四半期データにはλ=1600が標準とされる（同じ最小化問題はウィッタカー1923年やレザー1961年の研究に既に現れていた）。実物的景気循環モデルの較正やIMF・中央銀行の出力ギャップ推定、バーゼルIII規制の信用・GDPギャップ（λ=400,000）に広く用いられる一方、コグリー＆ネイソン（1995）は差分定常系列で存在しない循環を作り出すと批判し、ハミルトン（2018）は標本終端の推定改訂の大きさとλの恣意性から使用を戒め回帰による代替を提案、ラヴン＆ウーリッヒ（2002）はλを観測頻度の4乗で調整すべきと論じた。中小企業経営者が売上系列を見る際は、直近数期のトレンド推定は今後のデータ追加で大きく改訂され得るため速報値として過信せず、単純移動平均や別手法との比較で補うべきである。',
+    keyFigures: 'ロバート・ホドリック＆エドワード・プレスコット（1980年代ディスカッションペーパー／1997『Postwar U.S. Business Cycles: An Empirical Investigation』JMCB）／ジェームズ・ハミルトン（2018『Why You Should Never Use the Hodrick-Prescott Filter』REStat）／ティモシー・コグリー＆ジェームズ・ネイソン（1995 JEDC・擬似循環批判）／モーテン・ラヴン＆ハラルド・ウーリッヒ（2002『On Adjusting the Hodrick-Prescott Filter for the Frequency of Observations』REStat）／先駆: E・T・ウィッタカー（1923『On a New Method of Graduation』）／C・E・V・レザー（1961『A Simple Method of Trend Construction』）／対比: マリアン・バクスター＆ロバート・キング（1999 バンドパス・フィルター）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://econpapers.repec.org/RePEc:mcb:jmoncb:v:29:y:1997:i:1:p:1-16', type: 'academic', label: 'Hodrick, R. J., & Prescott, E. C. (1997). Postwar U.S. Business Cycles: An Empirical Investigation. Journal of Money, Credit and Banking, 29(1), 1–16 (EconPapers record). — HPフィルターの原論文（モデル定義と実証結果の一次資料）' },
+      { url: 'https://direct.mit.edu/rest/article/100/5/831/58479/Why-You-Should-Never-Use-the-Hodrick-Prescott', type: 'academic', label: 'Hamilton, J. D. (2018). Why You Should Never Use the Hodrick-Prescott Filter. The Review of Economics and Statistics (MIT Press), 100(5), 831–843. doi:10.1162/rest_a_00706 — 擬似的動学・標本終端の改訂・λの恣意性への批判と回帰型代替案の一次資料' },
+      { url: 'https://direct.mit.edu/rest/article/84/2/371/57338/On-Adjusting-the-Hodrick-Prescott-Filter-for-the', type: 'academic', label: 'Ravn, M. O., & Uhlig, H. (2002). On Adjusting the Hodrick-Prescott Filter for the Frequency of Observations. The Review of Economics and Statistics (MIT Press), 84(2), 371–376. doi:10.1162/003465302317411604 — λを観測頻度の4乗で調整する規則の一次資料' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/016518899300781X', type: 'academic', label: 'Cogley, T., & Nason, J. M. (1995). Effects of the Hodrick-Prescott Filter on Trend and Difference Stationary Time Series: Implications for Business Cycle Research. Journal of Economic Dynamics and Control (Elsevier), 19(1–2), 253–278. doi:10.1016/0165-1889(93)00781-X — 差分定常系列への適用が生む擬似的循環変動の指摘' },
+      { url: 'https://www.bis.org/publ/qtrpdf/r_qt1403g.htm', type: 'government', label: 'Drehmann, M., & Tsatsaronis, K. (2014). The Credit-to-GDP Gap and Countercyclical Capital Buffers: Questions and Answers. BIS Quarterly Review, March 2014. — バーゼルIII規制の信用・GDPギャップにおける一方向HPフィルター（λ=400,000）の実務利用に関する一次資料' },
+    ],
+  },
+  {
+    id: 'econ-entry-thresholds-bresnahan-reiss',
+    discipline: 'economics',
+    title: 'ブレスナハン＝ライス参入閾値モデル——市場規模と参入企業数から競争の強さを推定する実証手法',
+    statement:
+      'ブレスナハン＝ライス参入閾値モデルは、ティモシー・F・ブレスナハンとピーター・C・ライスがBrookings Papers on Economic Activity: Microeconomics（1987年）で提起し、Review of Economic Studies 57巻4号（1990年）と Journal of Political Economy 99巻5号（1991年）『Entry and Competition in Concentrated Markets』で確立した。価格や利益でなく市場規模（人口）と参入企業数の関係から競争の強さを推定する手法で、大都市から離れた孤立小都市202か所（医師・歯科医師・薬局・配管業・タイヤ販売店の5業種、平均人口3,740人）を対象に、N社を維持するのに必要な最小市場規模（参入閾値S_N）と1社当たり閾値s_N=S_N/Nを順序プロビットで推定した。結果、s_Nは独占（N=1）から2〜3社への移行で急落し、3〜5社でほぼ横ばいになった——参入による競争激化の大半は最初の数社で出尽くすという発見である。対称企業・静学・横断的識別・製品差別化なしという基本モデルの前提は限界とされ、ベリー（1992年、航空業）やマッツェオ（2002年）、サイム（2006年）、スハウマンス＆フェルボーフェン（2008年）が拡張した。中小事業者には、類似規模の町の「競合1社当たり必要人口」を比較し、自店の商圏がもう1店を支えられるかを見積もる目安となる。',
+    keyFigures: 'ティモシー・F・ブレスナハン＆ピーター・C・ライス（1987『Do Entry Conditions Vary across Markets?』BPEA／1990 RES 57(4)／1991『Entry and Competition in Concentrated Markets』JPE）／スティーブン・T・ベリー（1992 航空業参入への応用）／マイケル・J・マッツェオ（2002）／カティア・サイム（2006）／キャサリン・スハウマンス＆フランク・フェルボーフェン（2008）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/261786', type: 'academic', label: 'Bresnahan, T.F. & Reiss, P.C. (1991). "Entry and Competition in Concentrated Markets." Journal of Political Economy (University of Chicago Press), 99(5), 977–1009. DOI 10.1086/261786 — primary source for the JPE formulation, the 202-town/5-industry sample, and the finding that per-firm threshold ratios fall sharply to N=3 then flatten.' },
+      { url: 'https://academic.oup.com/restud/article-abstract/57/4/531/1535733', type: 'academic', label: 'Bresnahan, T.F. & Reiss, P.C. (1990). "Entry in Monopoly Market." The Review of Economic Studies (Oxford University Press), 57(4), 531–553 — earlier formalization of the entry-threshold approach, applied to monopoly/duopoly new-car-dealer markets.' },
+      { url: 'https://www.brookings.edu/articles/do-entry-conditions-vary-across-markets/', type: 'academic', label: 'Bresnahan, T.F. & Reiss, P.C. (1987). "Do Entry Conditions Vary across Markets?" Brookings Papers on Economic Activity: Microeconomics, 1987(3), 833–882 — the paper that first proposed inferring entry conditions from the number of firms versus market size in isolated markets.' },
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1992/07/01/estimation-model-entry-airline-industry', type: 'academic', label: 'Berry, S.T. (1992). "Estimation of a Model of Entry in the Airline Industry." Econometrica, 60(4), 889–917 — supports the framework\'s influence on later structural entry-game models in empirical industrial organization.' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1756-2171.2008.00045.x', type: 'academic', label: 'Schaumans, C. & Verboven, F. (2008). "Entry and Regulation: Evidence from Health Care Professions." The RAND Journal of Economics (Wiley), 39(4), 949–972. DOI 10.1111/j.1756-2171.2008.00045.x — supports the framework\'s extension/critique (relaxing the symmetric-firm assumption) in a regulated-profession application.' },
+    ],
+  },
+  {
+    id: 'mgmt-heavyweight-product-manager-clark-fujimoto',
+    discipline: 'management',
+    title: '重量級プロダクト・マネジャー——組織内外の統合を一身に担い製品コンセプトを守る開発責任者',
+    statement:
+      '重量級プロダクト・マネジャーは、キム・B・クラークと藤本隆宏が『Product Development Performance』（Harvard Business School Press、1991年。邦訳『製品開発力』ダイヤモンド社1993年・田村明比古訳）で示した製品開発組織の一形態である。両者は1980年代の日米欧自動車メーカー20社・新型車開発29プロジェクトの実証調査から、組織を機能別構造・軽量級プロダクト・マネジャー・重量級プロダクト・マネジャー・プロジェクト実行チーム（自律型・タイガーチーム）の4類型に整理した。重量級PMは社内で上級の地位を持ち市場・顧客と直接接触しながら、部門間の内部統合と顧客期待への外部統合を一身に担い、部品同士の一貫性と顧客期待との一致からなる「プロダクト・インテグリティ」を実現する主体とされ、トヨタの主査制度がその典型とされた。日本メーカーは欧米より短いリードタイムと少ないエンジニアリング工数で開発を完了していたことも示された。この枠組みはクラーク＆藤本の論文「The Power of Product Integrity」（1990年）やクラーク＆ウィールライト（1992年）の論文で発展し、後続研究ではPM個人への過負荷や機能別専門家との権限対立が指摘され、自動車以外の産業への一般化可能性も検証され、後年の「リーン製品開発」論へつながった。中小企業には、製品コンセプトの責任者を一人に定め、顧客と直接接して開発全体を統合させる意義を示す。',
+    keyFigures: 'キム・B・クラーク（1991『Product Development Performance』／1990『The Power of Product Integrity』HBR／1992『Organizing and Leading "Heavyweight" Development Teams』California Management Review）／藤本隆宏（クラークと 1991 共著／邦訳 1993『製品開発力』ダイヤモンド社・田村明比古訳）／スティーブン・C・ウィールライト（1992 クラークとの共著論文）／後続: 桑嶋健一（2013『Three Footnotes to "Heavyweight Product Manager"』ABAS で概念を再検討）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=4745', type: 'academic', label: 'Clark, K. B. & Fujimoto, T. (1991) Product Development Performance: Strategy, Organization, and Management in the World Auto Industry, Harvard Business School Press — 重量級プロダクト・マネジャーと4類型の組織論、日米欧自動車メーカー20社・29プロジェクトの実証調査を報告した原典' },
+      { url: 'https://journals.sagepub.com/doi/10.2307/41167421', type: 'academic', label: 'Clark, K. B. & Wheelwright, S. C. (1992) "Organizing and Leading \'Heavyweight\' Development Teams", California Management Review 34(3), pp.9-28 (SAGE) — 機能別・軽量級・重量級・自律型（project execution）チームの4類型と重量級PMの権限・役割を提示' },
+      { url: 'https://hbr.org/1990/11/the-power-of-product-integrity', type: 'media', label: 'Clark, K. B. & Fujimoto, T. (1990) "The Power of Product Integrity", Harvard Business Review 68(6), pp.107-118 — プロダクト・インテグリティ（内部整合性・外部整合性）の概念とマツダ／ホンダ四輪ステアリングの事例' },
+      { url: 'https://www.emerald.com/ijopm/article-abstract/28/2/130/147312/The-role-of-heavyweight-product-manager-in-new?redirectedFrom=PDF', type: 'academic', label: 'Rauniar, R., Doll, W., Rawski, G. & Hong, P. (2008) "The Role of Heavyweight Product Manager in New Product Development", International Journal of Operations & Production Management (Emerald) 28(2), pp.130-154 — 自動車産業以外への概念の適用を検証した後続の実証研究' },
+      { url: 'https://www.jstage.jst.go.jp/article/abas/12/5/12_265/_article', type: 'academic', label: 'Kuwashima, K. (2013) "Three Footnotes to \'Heavyweight Product Manager\'", Annals of Business Administrative Science 12(5), pp.265-276 (J-STAGE) — 重量級プロダクト・マネジャー概念の限界・過負荷を再検討した後続研究' },
+    ],
+  },
+  {
+    id: 'human-riasec-vocational-interests-holland',
+    discipline: 'human-science',
+    title: 'ホランドのRIASEC理論——六類型の適合度で職業選択と職務満足を説明する六角形モデル',
+    statement:
+      'ホランドのRIASEC理論は、心理学者ジョン・L・ホランドが職業興味と職務環境の性格類型を六つ（現実的R・研究的I・芸術的A・社会的S・企業的E・慣習的C）に分類し、両者の適合度で職業選択と満足・遂行を説明する枠組みである。1959年の論文「A Theory of Vocational Choice」（Journal of Counseling Psychology, 6(1), 35–45頁）で提示され、1973年の著書『Making Vocational Choices』（Prentice-Hall、第3版1997年）で体系化された。六類型は1969年のホランド・ホイットニー・コール・リチャーズのACT研究報告で六角形上に配置され、隣接するほど類似するという計算仮説のもと、一貫性・差異化・適合・アイデンティティの派生概念が定義された。Self-Directed Search（1970年）や職業興味検査（VPI）が普及し、米労働省O*NETも同種の興味プロファイルを採用する。だが適合度と満足の相関は平均0.2程度と弱く（トランバーグら、1993年）、六角形の文化的普遍性にも疑義がある一方、ナイら（2012年）は興味と職務パフォーマンスの関連を60年分の研究から再確認した。日本でも雇用問題研究会がVPIを翻訳・普及させている。中小企業では採用・配置の際に応募者の興味類型と職務環境の類型を照らし合わせ、離職を抑えた役割設計に活かせる。',
+    keyFigures: 'ジョン・L・ホランド（1959『A Theory of Vocational Choice』Journal of Counseling Psychology／1973・1997『Making Vocational Choices』）／マーガレット・M・ナウタ（2010 理論50年史レビュー、Journal of Counseling Psychology）／クリストファー・ナイ＆ロン・スー＆ジェームズ・ラウンズ＆フリッツ・ドラスゴウ（2012『Vocational Interests and Performance』Perspectives on Psychological Science）／マリア・トランバーグ他（1993 適合度・満足のメタ分析、Journal of Vocational Behavior）／渡辺三枝子（ホランド理論と VPI の日本への導入・翻訳）／対比・批判: ジェームズ・ラウンズ＆テレンス・トレーシー（1996 六角形構造の交差文化的検証）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://psycnet.apa.org/record/1960-06165-001', type: 'academic', label: 'Holland, J. L. (1959). A theory of vocational choice. Journal of Counseling Psychology (APA), 6(1), 35–45. DOI: 10.1037/h0040767 — RIASEC 六類型と職業選択理論の原典' },
+      { url: 'https://psycnet.apa.org/record/2010-00483-003', type: 'academic', label: 'Nauta, M. M. (2010). The development, evolution, and status of Holland\'s theory of vocational personalities: Reflections and future directions for counseling psychology. Journal of Counseling Psychology (APA), 57(1), 11–22. DOI: 10.1037/a0018213 — 理論の50年史・六角形（1969年 ACT 研究報告）・SDS/VPI の経緯と限界の確認' },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1177/1745691612449021', type: 'academic', label: 'Nye, C. D., Su, R., Rounds, J., & Drasgow, F. (2012). Vocational interests and performance: A quantitative summary of over 60 years of research. Perspectives on Psychological Science (SAGE), 7(4), 384–403. DOI: 10.1177/1745691612449021 — 興味と職務パフォーマンス・継続の関連の量的統合' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0001879183710183', type: 'academic', label: 'Tranberg, M., Slane, S., & Ekeberg, S. E. (1993). The relation between interest congruence and satisfaction: A metaanalysis. Journal of Vocational Behavior (Elsevier), 42(3), 253–264. DOI: 10.1006/jvbe.1993.1018 — 適合度と職務満足の相関が平均0.2程度と弱いことのメタ分析による確認' },
+      { url: 'https://www.jil.go.jp/institute/seika/tools/VPI.html', type: 'government', label: '独立行政法人労働政策研究・研修機構（JILPT）. VPI職業興味検査（Vocational Preference Inventory）解説ページ — ホランド理論に基づく VPI の日本版適応の確認' },
+    ],
+  },
+  {
+    id: 'bizlaw-employee-invention-japan-patent-act-35',
+    discipline: 'business-law',
+    title: '職務発明制度（特許法第35条）——従業者の発明の帰属と「相当の利益」',
+    statement:
+      '職務発明とは特許法35条が定める、使用者等の業務範囲に属し、発明行為が従業者等の現在または過去の職務に属する発明で、同条1項は特許を受ける権利が発明者たる従業者等に帰属し、使用者に無償の通常実施権が生じる。社内規定の額が不足すれば裁判所が不足額を認定できるとしたオリンパス光学工業事件（最三小判平成15年4月22日民集57巻4号477頁）と、中村修二が日亜化学工業を訴えた青色LED訴訟（東京地裁平成16年1月30日判決が200億円の支払を命じ、2005年1月東京高裁で約8億4391万円で和解）を受け、2004年改正（2005年施行）は対価決定手続の合理性（協議・開示・意見聴取）を基準化した。日立製作所事件（最高裁平成18年10月17日判決）はこの規定を外国特許を受ける権利にも類推適用した。2015年改正（2016年4月施行）は契約・勤務規則により特許を受ける権利を発生時から使用者に原始的に帰属させることを認め、対価は金銭以外の経済的利益も含む「相当の利益」に改め、経済産業省告示第131号（2016年4月22日）が協議・開示・意見聴取の指針を示した。米国は法定の対価請求権がなく、発明目的で雇用された者の譲渡義務やショップライト（無償実施権）の判例法理に委ね、ドイツのArbeitnehmererfindungsgesetzは届出・承継・補償を制度化する。従業者の交渉力の弱さと「相当の利益」の不明確さは残る課題で、職務発明規程を整備しない中小企業では権利帰属も対価も不安定なままとなる。',
+    keyFigures: '中村修二（発明者・青色LED訴訟／東京地裁2004年1月30日判決で200億円命令／2005年1月東京高裁で和解）／最高裁第三小法廷（オリンパス光学工業事件、2003年4月22日判決）／最高裁（日立製作所事件、2006年10月17日判決）／経済産業省・特許庁（2016年4月22日、告示第131号の指針公表）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.jstage.jst.go.jp/article/jjsip/2/1/2_1_32/_article/-char/ja/', type: 'academic', label: '「職務発明の『相当の対価』判決の予測可能性」『産学連携学』2巻1号32–42頁（2005年）、DOI:10.11305/jjsip.2.32（J-STAGE） — 相当対価訴訟における裁判所の算定要素（使用者の利益・貢献度等）の分析枠組みを確認。' },
+      { url: 'https://laws.e-gov.go.jp/law/334AC0000000121', type: 'government', label: '特許法（昭和34年法律第121号）第35条 | e-Gov 法令検索 — 職務発明の定義および特許を受ける権利の原始的帰属・使用者の通常実施権という原則を確認。' },
+      { url: 'https://www.courts.go.jp/app/hanrei_jp/detail2?id=52324', type: 'government', label: '最高裁判所第三小法廷判決 平成15年4月22日（オリンパス光学工業事件）民集57巻4号477頁 | 裁判例検索（裁判所） — 勤務規則上の対価が特許法35条所定の額に満たないときは不足額を請求できるとした判断を確認。' },
+      { url: 'https://www.jpo.go.jp/system/patent/shutugan/shokumu/shokumu_guideline.html', type: 'government', label: '「特許法第35条第6項の指針（ガイドライン）」経済産業省告示第131号（平成28年4月22日） | 経済産業省特許庁 — 2015年改正後の「相当の利益」決定手続（協議・開示・意見聴取）に関する指針の公表日と告示番号を確認。' },
+      { url: 'https://www.itmedia.co.jp/news/articles/0501/11/news046.html', type: 'media', label: '「青色LED訴訟、日亜が8億4391万円支払いで和解」ITmedia NEWS（2005年1月11日） — 中村修二氏と日亜化学工業の職務発明訴訟が東京高裁で和解した金額（発明対価6億857万円＋延滞損害金2億3534万円）を確認。' },
+    ],
+  },
+  {
+    id: 'infosoc-new-jim-code-benjamin',
+    discipline: 'information-sociology',
+    title: 'ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み',
+    statement:
+      'ニュー・ジム・コードとは、社会学者ルハ・ベンジャミンが著書『Race After Technology: Abolitionist Tools for the New Jim Code』（Polity、2019年）で示した概念で、既存の人種的不平等を反映・再生産しながらも前時代の差別的制度より客観的・進歩的だと宣伝され受け止められる新技術の利用を指す。同書は機序を「エンジニアド・インイクオリティ」（格差を明示的に組み込む設計）、「デフォルト・ディスクリミネーション」、「コーデッド・エクスポージャー」（コード化された露出）、「テクノロジカル・ベネボレンス」の四類型に整理し、履歴書選別・顔認識誤認・予測的警察活動・医療リスクアルゴリズムを例示する。ベンジャミンは2019年のサイエンス誌論評「Assessing risk, automating racism」で、オーバーマイヤーらの医療費予測アルゴリズムが費用を必要性の代理指標としたため黒人患者の必要性を過小評価した事例を分析した。名称はミシェル・アレクサンダー『The New Jim Crow』（2010年）を踏襲し、ノーブルやユーバンクス、オニールらの批判的潮流と並ぶが、米国的人種枠組みへの依拠や技術的公平性定義との噛み合わなさが限界とされ、コスタンザ＝チョックの説くデザイン・ジャスティスや監査が対応策として論じられる。中小企業がAIツールを導入する際は、代理変数を問い、属性別に結果を監査し、自動化を中立性と混同しない姿勢が実務上の含意となる。',
+    keyFigures: 'ルハ・ベンジャミン（2019『Race After Technology: Abolitionist Tools for the New Jim Code』Polity／2019 編『Captivating Technology』Duke University Press／2019 Science 誌論評「Assessing risk, automating racism」）／ミシェル・アレクサンダー（2010『The New Jim Crow』・名称の由来）／併走: サフィヤ・ノーブル（2018『Algorithms of Oppression』）／ヴァージニア・ユーバンクス（2018『Automating Inequality』）／キャシー・オニール（2016『Weapons of Math Destruction』）／処方箋としての対比: サシャ・コスタンザ＝チョック（2020『Design Justice』）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.science.org/doi/10.1126/science.aaz3873', type: 'academic', label: 'Ruha Benjamin (2019) "Assessing risk, automating racism," Science (AAAS) 366(6464), 421–422, DOI: 10.1126/science.aaz3873 — ベンジャミン自身による、医療リスクアルゴリズムへのニュー・ジム・コード論の適用' },
+      { url: 'https://www.science.org/doi/10.1126/science.aax2342', type: 'academic', label: 'Ziad Obermeyer, Brian Powers, Christine Vogeli, Sendhil Mullainathan (2019) "Dissecting racial bias in an algorithm used to manage the health of populations," Science (AAAS) 366(6464), 447–453, DOI: 10.1126/science.aax2342 — ベンジャミンが分析する、費用を必要性の代理指標に用いた医療アルゴリズムの実証研究' },
+      { url: 'https://read.dukeupress.edu/books/book/2588/Captivating-TechnologyRace-Carceral-Technoscience', type: 'academic', label: 'Ruha Benjamin, ed. (2019) Captivating Technology: Race, Carceral Technoscience, and Liberatory Imagination in Everyday Life, Duke University Press, DOI: 10.1215/9781478004493 — ニュー・ジム・コード論を刑罰技術一般に拡張した編著の書誌確認' },
+      { url: 'https://en.wikipedia.org/wiki/Race_After_Technology', type: 'reference', label: '"Race After Technology" — Wikipedia — 書名・出版社・ISBN（9781509526406）と四類型（engineered inequity 等）の要約確認' },
+      { url: 'https://www.newstatesman.com/science-tech/2019/09/new-jim-code-ruha-benjamin-racial-discrimination-algorithm', type: 'media', label: 'New Statesman (2019) "\'The New Jim Code\' – Ruha Benjamin on racial discrimination by algorithm" — 定義と論点についての報道による独立確認' },
     ],
   },
 ];

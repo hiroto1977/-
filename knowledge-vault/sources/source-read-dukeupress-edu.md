@@ -2,7 +2,7 @@
 title: "read.dukeupress.edu"
 type: source-domain
 host: "read.dukeupress.edu"
-cite_count: 4
+cite_count: 5
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # read.dukeupress.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **4 件**（学術 4）
+> [!info] 出典ドメイン索引 ・ 引用 **5 件**（学術 5）
 
 ## このドメインを出典とする項目
 
@@ -18,6 +18,7 @@ tags:
 - [[econ-marginal-productivity-distribution|限界生産力説]] — HistoryofPoliticalEconomy(DukeUP)—Clarkの「素朴な生産力倫理」とその批判
 - [[infosoc-communicative-capitalism|コミュニカティブ・キャピタリズム（Communicative Capitalism）]] — Dean(2005)CommunicativeCapitalism—CulturalPolitics1(1)/DukeUP
 - [[infosoc-communicative-capitalism|コミュニカティブ・キャピタリズム（Communicative Capitalism）]] — Dean(2009)DemocracyandOtherNeoliberalFantasies—DukeUP
+- [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — RuhaBenjamin,ed.(2019)CaptivatingTechnology:Race,CarceralTechnoscienc…
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

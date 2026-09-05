@@ -34,6 +34,7 @@ aliases:
 - [[mgmt-work-engagement|ワーク・エンゲージメント]] — 同分野の近傍
 - [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]] — 同分野の近傍
 - [[mgmt-social-capital-intellectual-capital-nahapiet-ghoshal|ナハピエト＝ゴシャールの社会関係資本論——構造的・関係的・認知的の三次元による知的資本創造と組織の優位性]] — 同分野の近傍
+- [[mgmt-theory-of-constraints|制約理論（TOC）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

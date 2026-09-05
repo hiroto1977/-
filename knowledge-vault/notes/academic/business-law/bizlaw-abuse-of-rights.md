@@ -32,7 +32,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-disability-employment|障害者雇用促進法]] — 同分野の近傍
-- [[bizlaw-forfeiture-of-rights|権利失効の原則]] — 同分野の近傍
+- [[bizlaw-pledge|質権（民法342条）]] — 同分野の近傍
+- [[bizlaw-numerus-clausus|物権法定主義（民法175条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,6 +31,7 @@ aliases:
 - [Lieberman & Montgomery (1998) "First-Mover (Dis)advantages," SMJ 19:1111–1125 (UCLA Anderson)](https://www.anderson.ucla.edu/faculty/marvin.lieberman/publications/FMA2-SMH1998.pdf) `学術`
 
 ## 関連概念
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 出典を共有
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
 - [[mgmt-demand-side-strategy|需要サイド戦略論]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 出典を共有
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 出典を共有
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
-- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

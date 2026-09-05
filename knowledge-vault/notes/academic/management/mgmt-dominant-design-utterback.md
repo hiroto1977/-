@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[mgmt-platform-ecosystems-gawer-cusumano|プラットフォーム・エコシステム——インダストリアル・プラットフォームとネットワーク効果の戦略論]] — 同分野の近傍
 - [[mgmt-stage-gate|ステージゲート法]] — 同分野の近傍
-- [[mgmt-lead-user|リードユーザー法]] — 同分野の近傍
 - [[mgmt-scientific-management|科学的管理法（テイラリズム）]] — 同分野の近傍
 
 ## 関連

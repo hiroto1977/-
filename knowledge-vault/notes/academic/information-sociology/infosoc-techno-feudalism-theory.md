@@ -42,7 +42,7 @@ Yanis Varoufakis ／ Cédric Durand ／ Evgeny Morozov
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 出典を共有
 - [[econ-corridor-of-stability-theory|安定の回廊理論]] — 出典を共有
 - [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 出典を共有
-- [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 出典を共有
+- [[mgmt-collective-genius|集合的天才（Collective Genius）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

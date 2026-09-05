@@ -35,12 +35,12 @@ aliases:
 - [[labor-foreign-employment-report|外国人雇用状況の届出]] — 語彙が近い
 - [[labor-midcareer-hiring-ratio-disclosure|正規雇用労働者の中途採用比率の公表義務（労働施策総合推進法）]] — 語彙が近い
 - [[bizlaw-labor-contract-act|労働契約法]] — 出典を共有
+- [[human-riasec-vocational-interests-holland|ホランドのRIASEC理論——六類型の適合度で職業選択と職務満足を説明する六角形モデル]] — 出典を共有
 - [[labor-digital-wage-payment|賃金のデジタル払い（指定資金移動業者口座への賃金支払）]] — 出典を共有
 - [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 出典を共有
 - [[mgmt-mbo|目標による管理（MBO）]] — 出典を共有
 - [[mgmt-job-based-employment|ジョブ型雇用]] — 出典を共有
 - [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 出典を共有
-- [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

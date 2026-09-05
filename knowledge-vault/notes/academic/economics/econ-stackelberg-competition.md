@@ -39,6 +39,7 @@ aliases:
 - [[mgmt-emergent-strategy|創発戦略]] — 出典を共有
 - [[econ-zero-sum-game|ゼロサムゲーム（ミニマックス定理）]] — 同分野の近傍
 - [[econ-rational-addiction|合理的依存]] — 同分野の近傍
+- [[econ-herfindahl-hirschman-index|ハーフィンダール・ハーシュマン指数（HHI）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -39,7 +39,6 @@ aliases:
 - [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — 同分野の近傍
 - [[infosoc-hate-speech-online-moderation|ヘイトスピーチとオンライン・コンテンツ・モデレーションの社会法学]] — 同分野の近傍
 - [[infosoc-californian-ideology|カリフォルニアン・イデオロギー]] — 同分野の近傍
-- [[infosoc-third-place|サードプレイス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "psycnet.apa.org"
 type: source-domain
 host: "psycnet.apa.org"
-cite_count: 43
+cite_count: 45
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # psycnet.apa.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **43 件**（学術 39 ・ リファレンス 4）
+> [!info] 出典ドメイン索引 ・ 引用 **45 件**（学術 41 ・ リファレンス 4）
 
 ## このドメインを出典とする項目
 
@@ -34,6 +34,8 @@ tags:
 - [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — Tulving,E.(1972).Episodicandsemanticmemory.InE.Tulving&W.Donaldson(Ed…
 - [[human-outgroup-homogeneity-effect|外集団均質性効果]] — Park,B.&Rothbart,M.(1982)"PerceptionofOut-GroupHomogeneityandLevelsof…
 - [[human-place-cells-okeefe|場所細胞と認知地図]] — O'Keefe&Nadel(1978)TheHippocampusasaCognitiveMap—OUP
+- [[human-riasec-vocational-interests-holland|ホランドのRIASEC理論——六類型の適合度で職業選択と職務満足を説明する六角形モデル]] — Holland,J.L.(1959).Atheoryofvocationalchoice.JournalofCounselingPsych…
+- [[human-riasec-vocational-interests-holland|ホランドのRIASEC理論——六類型の適合度で職業選択と職務満足を説明する六角形モデル]] — Nauta,M.M.(2010).Thedevelopment,evolution,andstatusofHolland'stheoryo…
 - [[human-self-reference-effect|自己参照効果]] — APAPsycNet—Rogers,Kuiper&Kirk(1977)"Self-referenceandtheencodingofper…
 - [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]] — Zimmerman(1990)"Self-RegulatedLearningandAcademicAchievement:AnOvervi…
 - [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — Baumeister,R.F.etal.(1998)EgoDepletion:IstheActiveSelfaLimitedResourc…

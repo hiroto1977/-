@@ -2,19 +2,19 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 609
+entry_count: 610
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（609件）
+# 学習パス — 学術概念／情報社会学（610件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 82）
-- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 48）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 80）
+- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 47）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 25）
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 24）
@@ -25,9 +25,9 @@ tags:
 - [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]]（接続 21）
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]]（接続 21）
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 20）
-- [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]]（接続 20）
+- [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]]（接続 20）
 - [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]]（接続 20）
-- [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]（接続 20）
+- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -46,6 +46,7 @@ tags:
 - 1920年: [[infosoc-media-ownership-concentration|メディア所有の集中（メディア独占論）]]
 - 1920年: [[infosoc-umesao-information-industry|情報産業論（梅棹忠夫）]]
 - 1922年: [[infosoc-code-switching|コードスイッチング]]
+- 1922年: [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]
 - 1922年: [[infosoc-lippmann-pseudo-environment|擬似環境とステレオタイプ（リップマン『世論』）]]
 - 1925年: [[infosoc-digital-markets-act|デジタル市場法（DMA）]]
 - 1925年: [[infosoc-gift-economy|贈与経済（贈与論）]]
@@ -221,6 +222,7 @@ tags:
 - 2010年: [[infosoc-cancel-culture|キャンセルカルチャー]]
 - 2010年: [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]]
 - 2010年: [[infosoc-networked-publics|ネットワーク化された公衆]]
+- 2010年: [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]]
 - 2010年: [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]]
 - 2010年: [[infosoc-sharing-economy|シェアリングエコノミー]]
 - 2011年: [[infosoc-algorithmic-identity|アルゴリズム的アイデンティティ——データから統計的に推論・付与される、本人の自認から切り離された可変的な「私」]]
@@ -312,7 +314,6 @@ tags:
 - [[infosoc-banopticon-bigo|バノプティコン——危険視された少数を選別し排除する監視]]
 - [[infosoc-behavioral-surplus-zuboff|行動余剰と監視資本主義（ズボフ）]]
 - [[infosoc-berrypicking-bates|ベリーピッキング——進化しながら断片的に集める情報探索]]
-- [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]]
 - [[infosoc-blockchain-governance-decentralized|ブロックチェーン・ガバナンスと分散型自律組織（DAO）の社会学]]
 - [[infosoc-boundary-work-gieryn|境界画定作業——科学と非科学の境界を引く営み]]
 - [[infosoc-broken-world-thinking|壊れた世界の思考（ブロークン・ワールド・シンキング）]]
@@ -350,6 +351,7 @@ tags:
 - [[infosoc-cultivation-theory-digital|培養理論（デジタル時代の拡張）]]
 - [[infosoc-cultural-capital|文化資本（ブルデュー）]]
 - [[infosoc-cultural-industry-adorno-horkheimer|文化産業論——標準化された大量生産文化による大衆欺瞞]]
+- [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]]
 - [[infosoc-cybersecurity-governance-multi-stakeholder|サイバーセキュリティ・ガバナンスとマルチステークホルダー・モデル]]
 - [[infosoc-cybersecurity-threat-landscape|サイバーセキュリティの社会的地平——国家・犯罪・ハクティビズムの脅威と安全保障ガバナンス]]
 - [[infosoc-cyberspace-barlow|サイバースペース独立宣言——国家主権から自律したネット空間という理想]]
@@ -441,7 +443,6 @@ tags:
 - [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]]
 - [[infosoc-information-avoidance-theory|情報回避理論]]
 - [[infosoc-information-behavior-wilson-model|情報行動モデル——ウィルソンの情報ニーズ・探索・利用の統合的枠組み]]
-- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]]
 - [[infosoc-information-commons-theory|情報コモンズ理論]]
 - [[infosoc-information-disorder-taxonomy|情報障害の分類体系（ワードル＆デラクシャン）]]
 - [[infosoc-information-ecology-nardi|情報エコロジー——ナルディとオデイの技術・人間・実践の相互作用分析]]

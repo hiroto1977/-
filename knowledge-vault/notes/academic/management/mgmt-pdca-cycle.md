@@ -40,7 +40,6 @@ aliases:
 - [[mgmt-quality-function-deployment|品質機能展開（QFD・品質の家／Quality Function Deployment）——顧客の声を技術特性へ翻訳する品質計画手法]] — 出典を共有
 - [[mgmt-six-sigma|シックス・シグマ]] — 出典を共有
 - [[mgmt-hoshin-kanri|方針管理]] — 同分野の近傍
-- [[mgmt-theory-of-constraints|制約理論（TOC）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

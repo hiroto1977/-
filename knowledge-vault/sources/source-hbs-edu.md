@@ -2,7 +2,7 @@
 title: "hbs.edu"
 type: source-domain
 host: "hbs.edu"
-cite_count: 25
+cite_count: 26
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # hbs.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **25 件**（学術 20 ・ リファレンス 5）
+> [!info] 出典ドメイン索引 ・ 引用 **26 件**（学術 21 ・ リファレンス 5）
 
 ## このドメインを出典とする項目
 
@@ -27,6 +27,7 @@ tags:
 - [[mgmt-conways-law|コンウェイの法則（組織構造とシステム設計の同型性）]] — MacCormack,Baldwin&Rusnak(2012)"ExploringtheDualitybetweenProductandO…
 - [[mgmt-family-business-governance-gersick|ファミリービジネスの三円モデル（ガーシック）]] — Gersick,K.E.etal.(1997)GenerationtoGeneration:LifeCyclesoftheFamilyBu…
 - [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]] — HarvardBusinessSchool—CompetitiveAdvantage(MichaelE.Porter)書誌
+- [[mgmt-heavyweight-product-manager-clark-fujimoto|重量級プロダクト・マネジャー——組織内外の統合を一身に担い製品コンセプトを守る開発責任者]] — Clark,K.B.&Fujimoto,T.(1991)ProductDevelopmentPerformance:Strategy,Or…
 - [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — Marquis&Tilcsik(2013)Imprinting:TowardaMultilevelTheory—HarvardBusine…
 - [[mgmt-institutional-void|制度的空白（Institutional Voids）]] — Khanna&Palepu(2005)SpottingInstitutionalVoidsinEmergingMarkets,HBSBac…
 - [[mgmt-jobs-to-be-done|ジョブ理論（片付けるべき用事）]] — HarvardBusinessSchoolFaculty&Research—“KnowYourCustomers’‘JobstoBeDon…

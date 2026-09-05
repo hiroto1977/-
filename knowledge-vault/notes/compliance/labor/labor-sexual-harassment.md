@@ -34,7 +34,6 @@ aliases:
 ## 関連概念
 - [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]] — 同分野の近傍
 - [[labor-workers-comp|労災保険（労働者災害補償保険）の加入義務]] — 同分野の近傍
-- [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — 同分野の近傍
 - [[labor-power-harassment|パワハラ防止措置の事業主義務]] — 同分野の近傍
 
 ## 関連

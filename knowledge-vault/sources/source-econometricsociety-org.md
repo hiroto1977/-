@@ -2,7 +2,7 @@
 title: "econometricsociety.org"
 type: source-domain
 host: "econometricsociety.org"
-cite_count: 14
+cite_count: 15
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # econometricsociety.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **14 件**（学術 14）
+> [!info] 出典ドメイン索引 ・ 引用 **15 件**（学術 15）
 
 ## このドメインを出典とする項目
 
@@ -18,6 +18,7 @@ tags:
 - [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — Baron,D.P.&Myerson,R.B.(1982)RegulatingaMonopolistwithUnknownCosts,Ec…
 - [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — TheEconometricSociety—Fisher(1933),"TheDebt-DeflationTheoryofGreatDep…
 - [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — Fisher,"TheDebt-DeflationTheoryofGreatDepressions,"Econometrica1(4),1…
+- [[econ-entry-thresholds-bresnahan-reiss|ブレスナハン＝ライス参入閾値モデル——市場規模と参入企業数から競争の強さを推定する実証手法]] — Berry,S.T.(1992)."EstimationofaModelofEntryintheAirlineIndustry."Econ…
 - [[econ-folk-theorem|フォーク定理（繰り返しゲーム）]] — Fudenberg&Maskin,“TheFolkTheoreminRepeatedGameswithDiscountingorwithI…
 - [[econ-generalized-method-of-moments-hansen|一般化モーメント法（GMM）——モーメント条件のみから分布を仮定せず母数を推定するハンセンの一般理論]] — Hansen,L.P.&Singleton,K.J.(1982)."GeneralizedInstrumentalVariablesEst…
 - [[econ-generalized-method-of-moments-hansen|一般化モーメント法（GMM）——モーメント条件のみから分布を仮定せず母数を推定するハンセンの一般理論]] — Hansen,L.P.(1982)."LargeSamplePropertiesofGeneralizedMethodofMomentsE…

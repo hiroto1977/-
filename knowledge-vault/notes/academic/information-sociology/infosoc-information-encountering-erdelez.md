@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[infosoc-berrypicking-bates|ベリーピッキング——進化しながら断片的に集める情報探索]] — 同じ思想家
 - [[infosoc-information-grounds-fisher|情報の場（インフォメーション・グラウンド）——偶発的に情報が共有される場]] — 同じ思想家
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-information-seeking-wilson|ウィルソンの情報行動モデル——文脈・欲求・障壁から情報探索を捉える]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
