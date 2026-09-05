@@ -26,7 +26,7 @@ aliases:
 ジョージ・スタルク・ジュニア（George Stalk Jr., 1988 HBR論文で提唱）／トーマス・ハウト（Thomas M. Hout, 1990『Competing Against Time』共著）／ボストン・コンサルティング・グループ（BCG, 日本企業分析から概念を抽出）
 
 ## 出典
-- [Stalk, G. Jr. (1988) "Time—The Next Source of Competitive Advantage," Harvard Business Review 66(4):41-51（時間ベース競争の提唱原典）](https://hbr.org/1988/07/time-the-next-source-of-competitive-advantage) `学術`
+- [Stalk, G. Jr. (1988) "Time—The Next Source of Competitive Advantage," Harvard Business Review 66(4):41-51（時間ベース競争の提唱原典）](https://hbr.org/1988/07/time-the-next-source-of-competitive-advantage) `メディア`
 - [Stalk, G. Jr. "Time — The Next Source of Competitive Advantage" — SpringerLink（原論文の書籍再録・書誌）](https://link.springer.com/chapter/10.1007/978-3-642-27922-5_16) `学術`
 - [Reference for Business — "Time-Based Competition"（付加価値時間比率・事例・派生概念の概説）](https://www.referenceforbusiness.com/management/Str-Ti/Time-Based-Competition.html) `リファレンス`
 

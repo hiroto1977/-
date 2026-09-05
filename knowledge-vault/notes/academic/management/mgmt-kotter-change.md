@@ -26,7 +26,7 @@ aliases:
 ジョン・コッター（John P. Kotter, 1995/1996）
 
 ## 出典
-- [Harvard Business Review (1995) — Leading Change: Why Transformation Efforts Fail](https://hbr.org/1995/05/leading-change-why-transformation-efforts-fail-2) `学術`
+- [Harvard Business Review (1995) — Leading Change: Why Transformation Efforts Fail](https://hbr.org/1995/05/leading-change-why-transformation-efforts-fail-2) `メディア`
 - [Kotter Inc. — The 8-Step Process for Leading Change](https://www.kotterinc.com/methodology/8-steps/) `リファレンス`
 - [MindTools — Kotter’s 8-Step Change Model](https://www.mindtools.com/a8nu5v5/kotters-8-step-change-model/) `リファレンス`
 

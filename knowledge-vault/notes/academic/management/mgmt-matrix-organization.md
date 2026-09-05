@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Encyclopaedia Britannica (Money) — “Matrix organization: Advantages & Disadvantages”（定義・二重報告・利点欠点）](https://www.britannica.com/money/matrix-organization) `リファレンス`
-- [Davis, S. M. & Lawrence, P. R. (1978) “Problems of Matrix Organizations,” Harvard Business Review（古典論文）](https://hbr.org/1978/05/problems-of-matrix-organizations) `学術`
+- [Davis, S. M. & Lawrence, P. R. (1978) “Problems of Matrix Organizations,” Harvard Business Review（古典論文）](https://hbr.org/1978/05/problems-of-matrix-organizations) `メディア`
 - [Project Management Institute (PMI) — “The Matrix Organization”（航空宇宙起源・構造の進化）](https://www.pmi.org/learning/library/matrix-organization-structure-reason-evolution-1837) `学術`
 
 ## 関連概念

@@ -27,7 +27,7 @@ C.クリステンセン1997『The Innovator's Dilemma』／持続的イノベー
 
 ## 出典
 - [Harvard Business School Online — What Is Disruptive Innovation Theory? 4 Key Concepts](https://online.hbs.edu/blog/post/4-keys-to-understanding-clayton-christensens-theory-of-disruptive-innovation) `学術`
-- [Christensen, Raynor & McDonald (2015), "What Is Disruptive Innovation?", Harvard Business Review](https://hbr.org/2015/12/what-is-disruptive-innovation) `学術`
+- [Christensen, Raynor & McDonald (2015), "What Is Disruptive Innovation?", Harvard Business Review](https://hbr.org/2015/12/what-is-disruptive-innovation) `メディア`
 - [Wikipedia — The Innovator's Dilemma (1997, Christensen)](https://en.wikipedia.org/wiki/The_Innovator%27s_Dilemma) `リファレンス`
 - [Christensen Institute — Disruptive Innovation Theory](https://www.christenseninstitute.org/theory/disruptive-innovation/) `リファレンス`
 

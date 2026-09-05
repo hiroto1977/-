@@ -27,7 +27,7 @@ Akao Yoji（赤尾洋二） ／ Mizuno Shigeru（水野滋） ／ Hauser, John R
 
 ## 出典
 - [American Society for Quality (ASQ), "What is Quality Function Deployment (QFD)?" — QFD は1966年に日本で開発され、Yoji Akao を原案者とし、House of Quality を基本ツールとすると定義する](https://asq.org/quality-resources/qfd-quality-function-deployment) `リファレンス`
-- [Hauser, John R. & Clausing, Don (1988) "The House of Quality," Harvard Business Review 66(3), May–June 1988, pp.63–73](https://hbr.org/1988/05/the-house-of-quality) `学術`
+- [Hauser, John R. & Clausing, Don (1988) "The House of Quality," Harvard Business Review 66(3), May–June 1988, pp.63–73](https://hbr.org/1988/05/the-house-of-quality) `メディア`
 - [Akao, Yoji (1990) Quality Function Deployment: Integrating Customer Requirements into Product Design, trans. G. H. Mazur, Productivity Press（原書1978年、水野滋・赤尾洋二編）, ISBN 9781563273131](https://www.routledge.com/Quality-Function-Deployment-Integrating-Customer-Requirements-into-Product-Design/Akao/p/book/9781563273131) `リファレンス`
 
 ## 関連概念

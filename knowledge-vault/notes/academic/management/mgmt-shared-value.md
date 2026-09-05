@@ -26,7 +26,7 @@ aliases:
 M.ポーター&M.クラマー2011 HBR「Creating Shared Value」／社会的価値と経済的価値を同時創造／CSR(利益と分離した義務)との違い＝社会課題を競争力の源泉に／3つの方法：製品市場の再定義・バリューチェーンの再定義・地域クラスター形成／CSRの焼き直し等の批判
 
 ## 出典
-- [Porter & Kramer, "The Big Idea: Creating Shared Value," Harvard Business Review, Jan–Feb 2011（一次資料）](https://hbr.org/2011/01/the-big-idea-creating-shared-value) `学術`
+- [Porter & Kramer, "The Big Idea: Creating Shared Value," Harvard Business Review, Jan–Feb 2011（一次資料）](https://hbr.org/2011/01/the-big-idea-creating-shared-value) `メディア`
 - [Harvard Business School Faculty & Research — "Creating Shared Value"（書誌・要旨）](https://www.hbs.edu/faculty/Pages/item.aspx?num=39071) `学術`
 - [Crane, Palazzo, Spence & Matten, "Contesting the Value of Creating Shared Value," California Management Review 56(2), 2014（査読・批判）](https://journals.sagepub.com/doi/10.1525/cmr.2014.56.2.130) `学術`
 

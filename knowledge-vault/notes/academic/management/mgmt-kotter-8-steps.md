@@ -26,7 +26,7 @@ aliases:
 ジョン・P・コッター（John P. Kotter, 1995 HBR・1996『Leading Change』）／クルト・レヴィン（先行する3段階モデル）／8段階＝危機感→連帯チーム→ビジョン→周知→行動促進→短期的成果→さらなる変革→文化定着
 
 ## 出典
-- [John P. Kotter, “Leading Change: Why Transformation Efforts Fail,” Harvard Business Review (1995) — 原典論文](https://hbr.org/1995/05/leading-change-why-transformation-efforts-fail-2) `学術`
+- [John P. Kotter, “Leading Change: Why Transformation Efforts Fail,” Harvard Business Review (1995) — 原典論文](https://hbr.org/1995/05/leading-change-why-transformation-efforts-fail-2) `メディア`
 - [Kotter Inc., “The 8-Step Process for Leading Change” — 著者本人の組織による公式解説](https://www.kotterinc.com/methodology/8-steps/) `リファレンス`
 - [Mark Hughes, “Leading changes: Why transformation explanations fail,” Leadership 13(4), SAGE (2016) — 批判的検討](https://journals.sagepub.com/doi/abs/10.1177/1742715015571393) `学術`
 

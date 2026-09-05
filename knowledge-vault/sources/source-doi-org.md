@@ -2,7 +2,7 @@
 title: "doi.org"
 type: source-domain
 host: "doi.org"
-cite_count: 1926
+cite_count: 1925
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # doi.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **1926 件**（学術 1919 ・ リファレンス 4 ・ 公的 3）
+> [!info] 出典ドメイン索引 ・ 引用 **1925 件**（学術 1918 ・ リファレンス 4 ・ 公的 3）
 
 ## このドメインを出典とする項目
 
@@ -1427,7 +1427,6 @@ tags:
 - [[infosoc-platform-urbanism-barns|プラットフォーム都市主義——デジタルプラットフォームによる都市空間の再編]] — Barns,S.(2020)PlatformUrbanism:NegotiatingPlatformEcosystemsinConnect…
 - [[infosoc-platform-urbanism-barns|プラットフォーム都市主義——デジタルプラットフォームによる都市空間の再編]] — Richardson,L.(2020)Platforms,Markets,andContingentCalculation—UrbanSt…
 - [[infosoc-playbour-kucklich|プレイバー——遊びと労働の境界が溶解しゲーム文化で価値を生む無償活動]] — Kücklich,J.(2005)PrecariousPlaybour:ModdersandtheDigitalGamesIndustry…
-- [[infosoc-post-digital-aesthetics-cramer|ポスト・デジタル美学——デジタルの日常化と新たなメディア意識]] — Cascone(2000)TheAestheticsofFailure—ComputerMusicJournal,MITPress
 - [[infosoc-post-digital-aesthetics-cramer|ポスト・デジタル美学——デジタルの日常化と新たなメディア意識]] — Cascone,K.(2000)"TheAestheticsofFailure:Post-DigitalTendencies"—Compu…
 - [[infosoc-post-digital-aesthetics-cramer|ポスト・デジタル美学——デジタルの日常化と新たなメディア意識]] — Cramer,F.(2015)"WhatIsPost-Digital?"—APRJA(APeer-ReviewedJournalAbout)
 - [[infosoc-post-normal-science-funtowicz-ravetz|ポストノーマル科学——不確実性と利害が高い問題における科学]] — Funtowicz,S.O.&Ravetz,J.R.(1993)Scienceforthepost-normalage—Futures

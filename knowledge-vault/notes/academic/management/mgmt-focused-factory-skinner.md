@@ -26,7 +26,7 @@ aliases:
 ウィッカム・スキナー ／ ロバート・ヘイズ ／ スティーブン・ホイールライト ／ テリー・ヒル
 
 ## 出典
-- [Skinner, W. (1974) The Focused Factory — Harvard Business Review, 52(3), 113–121](https://hbr.org/1974/05/the-focused-factory) `学術`
+- [Skinner, W. (1974) The Focused Factory — Harvard Business Review, 52(3), 113–121](https://hbr.org/1974/05/the-focused-factory) `メディア`
 - [Reference for Business: Focused Factory — Skinner, manufacturing strategy, plant-within-a-plant, focus on one task](https://www.referenceforbusiness.com/management/Ex-Gov/Focused-Factory.html) `リファレンス`
 
 ## 関連概念

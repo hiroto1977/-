@@ -26,7 +26,7 @@ aliases:
 ジェームズ・ムーア ／ マルコ・イアンシティ ／ ロイ・レヴィン ／ ロン・アドナー
 
 ## 出典
-- [Moore, J.F. (1993) Predators and Prey: A New Ecology of Competition — Harvard Business Review 71(3)](https://hbr.org/1993/05/predators-and-prey-a-new-ecology-of-competition) `学術`
+- [Moore, J.F. (1993) Predators and Prey: A New Ecology of Competition — Harvard Business Review 71(3)](https://hbr.org/1993/05/predators-and-prey-a-new-ecology-of-competition) `メディア`
 - [Wikipedia: Business ecosystem — Moore, coevolution, keystone, platform strategy](https://en.wikipedia.org/wiki/Business_ecosystem) `リファレンス`
 
 ## 関連概念

@@ -26,7 +26,7 @@ aliases:
 マイケル・E・ポーター（Harvard Business School、初出1979年HBR論文）
 
 ## 出典
-- [M.E.Porter, The Five Competitive Forces That Shape Strategy, Harvard Business Review (2008)](https://hbr.org/2008/01/the-five-competitive-forces-that-shape-strategy) `学術`
+- [M.E.Porter, The Five Competitive Forces That Shape Strategy, Harvard Business Review (2008)](https://hbr.org/2008/01/the-five-competitive-forces-that-shape-strategy) `メディア`
 - [Encyclopaedia Britannica Money — Porter’s Five Forces](https://www.britannica.com/money/porters-five-forces-explained) `リファレンス`
 - [Baruch College (CUNY) Library — Porter’s Five Forces Analysis](https://guides.newman.baruch.cuny.edu/porter) `学術`
 

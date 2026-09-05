@@ -28,8 +28,8 @@ aliases:
 ## 出典
 - [Nehrbass, K. (2021). "Book Review: The Culture Map by Erin Meyer." Great Commission Research Journal, 13(2), 109–110. — 面談・観察中心の方法論の実証性の限界と、国単位平均が生む固定観念化リスクへの学術的批判を確認。](https://place.asburyseminary.edu/gcrj/vol13/iss2/13/) `学術`
 - [Meyer, E. (2014). The Culture Map: Breaking Through the Invisible Boundaries of Global Business. PublicAffairs. — 原著の書誌情報（出版社・刊行年・題名）を確認。](https://www.hachettebookgroup.com/titles/erin-meyer/the-culture-map/9781610392501/?lens=publicaffairs) `リファレンス`
-- [Meyer, E. (2014). "Navigating the Cultural Minefield." Harvard Business Review, 92(5), 119–123. — 8つの尺度の枠組みを最初に発表した原論文であることを確認。](https://hbr.org/2014/05/navigating-the-cultural-minefield) `学術`
-- [Meyer, E. (2015). "When Culture Doesn't Translate." Harvard Business Review, 93(10), 66–72. — 多国籍化した企業文化への応用を論じた続編論文であることを確認。](https://hbr.org/2015/10/when-culture-doesnt-translate) `学術`
+- [Meyer, E. (2014). "Navigating the Cultural Minefield." Harvard Business Review, 92(5), 119–123. — 8つの尺度の枠組みを最初に発表した原論文であることを確認。](https://hbr.org/2014/05/navigating-the-cultural-minefield) `メディア`
+- [Meyer, E. (2015). "When Culture Doesn't Translate." Harvard Business Review, 93(10), 66–72. — 多国籍化した企業文化への応用を論じた続編論文であることを確認。](https://hbr.org/2015/10/when-culture-doesnt-translate) `メディア`
 - [エリン・メイヤー著、田岡恵監訳、樋口武志訳（2015）『異文化理解力――相手と自分の真意がわかる ビジネスパーソン必須の教養』英治出版。— 日本語版の書誌情報（訳者・出版社・刊行年）を確認。](https://eijipress.co.jp/en/products/2208) `リファレンス`
 
 ## 関連概念

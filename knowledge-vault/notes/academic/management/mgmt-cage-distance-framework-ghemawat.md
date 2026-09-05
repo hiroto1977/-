@@ -26,7 +26,7 @@ CAGEディスタンス・フレームワークは、パンカジ・ゲマワッ�
 パンカジ・ゲマワット（2001『Distance Still Matters』Harvard Business Review／2003『Semiglobalization and International Business Strategy』Journal of International Business Studies／2007『Redefining Global Strategy』Harvard Business School Press／2007『Managing Differences』Harvard Business Review）／批判: オデッド・シェンカー（2001）・スリラタ・ザヒール他（2012）／関連: スティーブン・A・アルトマン（DHL Global Connectedness Index 共同執筆）
 
 ## 出典
-- [Ghemawat, P. (2001). "Distance Still Matters: The Hard Reality of Global Expansion." Harvard Business Review, 79(8), 137–147. — CAGEフレームワークの初出、4つの距離とStar TV事例の出典](https://hbr.org/2001/09/distance-still-matters-the-hard-reality-of-global-expansion) `学術`
+- [Ghemawat, P. (2001). "Distance Still Matters: The Hard Reality of Global Expansion." Harvard Business Review, 79(8), 137–147. — CAGEフレームワークの初出、4つの距離とStar TV事例の出典](https://hbr.org/2001/09/distance-still-matters-the-hard-reality-of-global-expansion) `メディア`
 - [Ghemawat, P. (2003). "Semiglobalization and International Business Strategy." Journal of International Business Studies, 34(2), 138–152. — セミグローバリゼーション仮説とCAGEの理論的前提の出典](https://link.springer.com/article/10.1057/palgrave.jibs.8400013) `学術`
 - [Shenkar, O. (2001). "Cultural Distance Revisited: Towards a More Rigorous Conceptualization and Measurement of Cultural Differences." Journal of International Business Studies, 32(3), 519–535. — 文化的距離測定の「対称性の錯覚」など批判の出典](https://link.springer.com/article/10.1057/palgrave.jibs.8490982) `学術`
 - [Zaheer, S., Schomaker, M. S., & Nachum, L. (2012). "Distance without Direction: Restoring Credibility to a Much-Loved Construct." Journal of International Business Studies, 43(1), 18–27. — 距離の対称性・方向性欠如と次元合算批判の出典](https://link.springer.com/article/10.1057/jibs.2011.43) `学術`

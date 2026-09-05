@@ -257,6 +257,58 @@ const PLAINTEXT_ALLOWLIST = new Set([
   'http://www1.tcue.ac.jp/home1/takamatsu/107016/6.html',
 ]);
 
+/*
+ * ## 種別の偽装 — 'academic' が雑誌・ブログ・百科事典の URL に付いていないか (2026-09-05)
+ *
+ * 確証ゲート (verify-knowledge-provenance.cjs) は「権威ある出典 1 件以上」を
+ * **出典の type** で判定する。type は自由記述なので、Harvard Business Review の記事や
+ * Medium のブログに 'academic' と書けば、査読誌論文と同じ重みで数えられる。
+ * 実測 (2026-09-05): hbr.org 45 件・medium.com 1 件・blogspot 1 件が 'academic' だった
+ * (hbr.org の他の記事は 'media' で、同じ出典が項目によって別の種別を持っていた)。
+ * 規則: 下のホストに置かれた出典は 'academic' を名乗れない (media / reference にする)。
+ * 一次資料そのものは影響しない —— 種別の是正であって出典の削除ではない。
+ */
+const NON_ACADEMIC_HOSTS = [
+  // 雑誌・新聞・一般向けメディア
+  'hbr.org', 'forbes.com', 'nytimes.com', 'theguardian.com', 'wired.com', 'economist.com', 'ft.com',
+  'wsj.com', 'bloomberg.com', 'reuters.com', 'nikkei.com', 'toyokeizai.net', 'diamond.jp',
+  'scientificamerican.com', 'psychologytoday.com', 'theatlantic.com', 'newyorker.com', 'time.com',
+  // ブログ・動画・SNS・投稿サイト
+  'medium.com', 'blogspot.com', 'wordpress.com', 'substack.com', 'note.com', 'qiita.com', 'youtube.com',
+  'linkedin.com', 'ted.com', 'x.com', 'twitter.com', 'facebook.com',
+  // 百科事典・辞書 (reference)
+  'wikipedia.org', 'wikibooks.org', 'britannica.com', 'kotobank.jp', 'weblio.jp', 'investopedia.com',
+];
+
+function hostOf(url) {
+  try {
+    return new URL(url).hostname.toLowerCase();
+  } catch {
+    return '';
+  }
+}
+
+function isNonAcademicHost(host) {
+  return NON_ACADEMIC_HOSTS.some((h) => host === h || host.endsWith('.' + h));
+}
+
+/** 'academic' を名乗る出典のうち、雑誌・ブログ・百科事典のホストに置かれた物。 */
+function checkAcademicHosts(entries) {
+  const bad = [];
+  let seen = 0;
+  for (const entry of entries) {
+    const sources = Array.isArray(entry.sources) ? entry.sources : [];
+    for (const source of sources) {
+      if (source === null || typeof source !== 'object') continue;
+      if (source.type !== 'academic' || typeof source.url !== 'string') continue;
+      seen++;
+      const host = hostOf(source.url.trim());
+      if (isNonAcademicHost(host)) bad.push({ id: entry.id, url: source.url.trim(), host });
+    }
+  }
+  return { bad, seen };
+}
+
 /** 出典 URL のスキームを見る。戻り値は違反の配列 (空なら白)。 */
 function checkSchemes(entries, allowlist = PLAINTEXT_ALLOWLIST) {
   const bad = [];
@@ -385,11 +437,27 @@ function main() {
     }
     process.exit(1);
   }
+  /* --- 種別の偽装 ('academic' が雑誌・ブログ・百科事典の URL に付いていないか) --- */
+  const academicHosts = checkAcademicHosts(entries);
+  const MIN_ACADEMIC_SOURCES = 2000; // 実測 5,144 (学術) + 他コレクション (2026-09-05)
+  if (academicHosts.seen < MIN_ACADEMIC_SOURCES) {
+    console.error(
+      `❌ 'academic' の出典を ${academicHosts.seen} 件しか拾えませんでした (${MIN_ACADEMIC_SOURCES} 件以上を期待)。走査が壊れています。`,
+    );
+    process.exit(1);
+  }
+  if (academicHosts.bad.length > 0) {
+    console.error(`❌ 'academic' を名乗る出典が雑誌・ブログ・百科事典のホストに ${academicHosts.bad.length} 件あります`);
+    console.error("   (確証ゲートは type で権威を数えます。雑誌記事は 'media'、百科事典は 'reference' にしてください)");
+    for (const b of academicHosts.bad) console.error(`  ${b.id}: ${b.host} — ${b.url}`);
+    process.exit(1);
+  }
   console.log(
     `Checked ${byDoi.size} DOI citation(s) across ${entries.length} entries ` +
       `(既知 ${baseline.size} 件は台帳で除外) / ` +
       `多重引用 ${multiCited} 件のラベル照合 (既知 ${labelBaseline.size} 件は台帳で除外) / ` +
-      `出典 URL ${scheme.seen} 件のスキーム OK (平文 http は台帳の ${PLAINTEXT_ALLOWLIST.size} 件のみ)`,
+      `出典 URL ${scheme.seen} 件のスキーム OK (平文 http は台帳の ${PLAINTEXT_ALLOWLIST.size} 件のみ) / ` +
+      `'academic' ${academicHosts.seen} 件のホスト OK`,
   );
 
   if (fresh.length === 0 && stale.length === 0 && labelFresh.length === 0 && labelStale.length === 0) {
@@ -529,6 +597,26 @@ function selfTest() {
   const hitsOk = hits.length === 1 && hits[0].doi === '10.1/conflict' && hits[0].a.id === 'p' && hits[0].b.id === 'q';
   if (!hitsOk) bad++;
   console.log(`  ${hitsOk ? '✓' : '✗'} findLabelConflicts: 3 DOI 中 1 件 (期待 1 件 = 10.1/conflict)`);
+
+  /* --- 種別の偽装。雑誌・ブログ・百科事典に 'academic' は鳴り、査読誌・出版社・'media' は通る。 --- */
+  const A = (url, type = 'academic') => [{ id: 'x', sources: [{ url, type, label: 'l' }] }];
+  const hostCases = [
+    ['★ hbr.org に academic は鳴る', A('https://hbr.org/1990/05/the-core-competence-of-the-corporation'), 1],
+    ['★ medium.com に academic は鳴る', A('https://medium.com/@someone/post'), 1],
+    ['★ サブドメイン (andyneely.blogspot.com) も鳴る', A('https://andyneely.blogspot.com/2013/11/x.html'), 1],
+    ['★ wikipedia に academic は鳴る', A('https://en.wikipedia.org/wiki/X'), 1],
+    ['hbr.org でも media なら通る', A('https://hbr.org/2004/10/blue-ocean-strategy', 'media'), 0],
+    ['wikipedia でも reference なら通る', A('https://en.wikipedia.org/wiki/X', 'reference'), 0],
+    ['doi.org の academic は通る', A('https://doi.org/10.1002/smj.4250140303'), 0],
+    ['出版社ページの academic は通る', A('https://journals.sagepub.com/doi/10.1177/0170840607081138'), 0],
+    ['似た名前の別ホスト (hbr.org.example) は通る', A('https://hbr.org.example/x'), 0],
+  ];
+  for (const [label, entries, want] of hostCases) {
+    const got = checkAcademicHosts(entries).bad.length;
+    const ok = got === want;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
+  }
   if (bad > 0) {
     console.error(`❌ self-test 不一致 ${bad} 件`);
     return 1;
@@ -542,4 +630,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { checkSchemes, selfTest, PLAINTEXT_ALLOWLIST, labelTokens, labelSurnames, labelsAgree, findLabelConflicts };
+module.exports = { checkSchemes, selfTest, PLAINTEXT_ALLOWLIST, labelTokens, labelSurnames, labelsAgree, findLabelConflicts, checkAcademicHosts, isNonAcademicHost, NON_ACADEMIC_HOSTS };

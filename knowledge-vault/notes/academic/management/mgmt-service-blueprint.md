@@ -26,7 +26,7 @@ aliases:
 G・リン・ショスタック（G. Lynn Shostack、1984 HBR「Designing Services That Deliver」）／メアリー・ジョー・ビトナー＆エイミー・オストロム＆フェリシア・モーガン（Bitner, Ostrom & Morgan, 2008, 現代型5行モデルの定式化）
 
 ## 出典
-- [G. Lynn Shostack, “Designing Services That Deliver,” Harvard Business Review 62(1), 1984, pp.133-139（原典）](https://hbr.org/1984/01/designing-services-that-deliver) `学術`
+- [G. Lynn Shostack, “Designing Services That Deliver,” Harvard Business Review 62(1), 1984, pp.133-139（原典）](https://hbr.org/1984/01/designing-services-that-deliver) `メディア`
 - [Nielsen Norman Group「Service Blueprints: Definition」（5構成要素と3境界線の定義）](https://www.nngroup.com/articles/service-blueprints-definition/) `リファレンス`
 - [Wikipedia「Service blueprint」（起源・構成要素・物理的証拠・fail point）](https://en.wikipedia.org/wiki/Service_blueprint) `リファレンス`
 - [Bitner, Ostrom & Morgan, “Service Blueprinting: A Practical Technique for Service Innovation,” California Management Review 50(4), 2008, pp.66-94](https://www.researchgate.net/publication/215915405_Service_Blueprinting_A_Practical_Technique_for_Service_Innovation) `学術`

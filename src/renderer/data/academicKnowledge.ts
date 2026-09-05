@@ -60,7 +60,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'マイケル・E・ポーター（Harvard Business School、初出1979年HBR論文）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://hbr.org/2008/01/the-five-competitive-forces-that-shape-strategy', type: 'academic', label: 'M.E.Porter, The Five Competitive Forces That Shape Strategy, Harvard Business Review (2008)' },
+      { url: 'https://hbr.org/2008/01/the-five-competitive-forces-that-shape-strategy', type: 'media', label: 'M.E.Porter, The Five Competitive Forces That Shape Strategy, Harvard Business Review (2008)' },
       { url: 'https://www.britannica.com/money/porters-five-forces-explained', type: 'reference', label: 'Encyclopaedia Britannica Money — Porter’s Five Forces' },
       { url: 'https://guides.newman.baruch.cuny.edu/porter', type: 'academic', label: 'Baruch College (CUNY) Library — Porter’s Five Forces Analysis' },
     ],
@@ -164,7 +164,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'C.K.プラハラード／ゲイリー・ハメル（1990 HBR）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://hbr.org/1990/05/the-core-competence-of-the-corporation', type: 'academic', label: 'Prahalad & Hamel, The Core Competence of the Corporation, HBR (1990)' },
+      { url: 'https://hbr.org/1990/05/the-core-competence-of-the-corporation', type: 'media', label: 'Prahalad & Hamel, The Core Competence of the Corporation, HBR (1990)' },
       { url: 'https://michiganross.umich.edu/about/100-years/our-impact/1990/core-competence-corporation', type: 'academic', label: 'University of Michigan Ross — Core Competence of the Corporation 解説' },
       { url: 'https://en.wikipedia.org/wiki/Core_competency', type: 'reference', label: 'Wikipedia — Core competency' },
     ],
@@ -1786,7 +1786,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://online.hbs.edu/blog/post/4-keys-to-understanding-clayton-christensens-theory-of-disruptive-innovation', type: 'academic', label: 'Harvard Business School Online — What Is Disruptive Innovation Theory? 4 Key Concepts' },
-      { url: 'https://hbr.org/2015/12/what-is-disruptive-innovation', type: 'academic', label: 'Christensen, Raynor & McDonald (2015), "What Is Disruptive Innovation?", Harvard Business Review' },
+      { url: 'https://hbr.org/2015/12/what-is-disruptive-innovation', type: 'media', label: 'Christensen, Raynor & McDonald (2015), "What Is Disruptive Innovation?", Harvard Business Review' },
       { url: 'https://en.wikipedia.org/wiki/The_Innovator%27s_Dilemma', type: 'reference', label: 'Wikipedia — The Innovator\'s Dilemma (1997, Christensen)' },
       { url: 'https://www.christenseninstitute.org/theory/disruptive-innovation/', type: 'reference', label: 'Christensen Institute — Disruptive Innovation Theory' },
     ],
@@ -1868,7 +1868,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: '導入期・成長期・成熟期・衰退期の4段階／各段階で異なるマーケティング戦略／T.レビット1965 HBRが普及（起源は諸説、ディーン1950が先行）／全製品が同曲線ではないとの批判',
     asOf: '2026-06',
     sources: [
-      { url: 'https://hbr.org/1965/11/exploit-the-product-life-cycle', type: 'academic', label: 'Theodore Levitt, "Exploit the Product Life Cycle", Harvard Business Review, 1965（概念を実務に普及させた一次文献）' },
+      { url: 'https://hbr.org/1965/11/exploit-the-product-life-cycle', type: 'media', label: 'Theodore Levitt, "Exploit the Product Life Cycle", Harvard Business Review, 1965（概念を実務に普及させた一次文献）' },
       { url: 'https://link.springer.com/rwe/10.1007/978-1-349-58802-2_1344', type: 'academic', label: 'SpringerLink（The Palgrave Encyclopedia of Strategic Management）"Product Life Cycle"（定義・4段階）' },
       { url: 'https://core.ac.uk/download/pdf/62433731.pdf', type: 'academic', label: '学術論文 "Origins and Development of the Product Life Cycle Concept"（起源と発展・批判の整理）' },
       { url: 'https://pressbooks.pub/agreatmarketingtextbook/chapter/introduction-to-product-life-cycle/', type: 'academic', label: 'オープン教科書 "A Great Marketing Textbook"（4段階と全製品同曲線ではない点）' },
@@ -2831,7 +2831,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'M.ポーター&M.クラマー2011 HBR「Creating Shared Value」／社会的価値と経済的価値を同時創造／CSR(利益と分離した義務)との違い＝社会課題を競争力の源泉に／3つの方法：製品市場の再定義・バリューチェーンの再定義・地域クラスター形成／CSRの焼き直し等の批判',
     asOf: '2026-06',
     sources: [
-      { url: 'https://hbr.org/2011/01/the-big-idea-creating-shared-value', type: 'academic', label: 'Porter & Kramer, "The Big Idea: Creating Shared Value," Harvard Business Review, Jan–Feb 2011（一次資料）' },
+      { url: 'https://hbr.org/2011/01/the-big-idea-creating-shared-value', type: 'media', label: 'Porter & Kramer, "The Big Idea: Creating Shared Value," Harvard Business Review, Jan–Feb 2011（一次資料）' },
       { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=39071', type: 'academic', label: 'Harvard Business School Faculty & Research — "Creating Shared Value"（書誌・要旨）' },
       { url: 'https://journals.sagepub.com/doi/10.1525/cmr.2014.56.2.130', type: 'academic', label: 'Crane, Palazzo, Spence & Matten, "Contesting the Value of Creating Shared Value," California Management Review 56(2), 2014（査読・批判）' },
     ],
@@ -3096,7 +3096,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://glisa.umich.edu/engagement/scenario-planning/', type: 'academic', label: 'University of Michigan (GLISA) — Scenario Planning（定義・複数の未来・頑健性）' },
-      { url: 'https://hbr.org/1985/09/scenarios-uncharted-waters-ahead', type: 'academic', label: 'Pierre Wack, "Scenarios: Uncharted Waters Ahead," Harvard Business Review (1985) — 一次資料' },
+      { url: 'https://hbr.org/1985/09/scenarios-uncharted-waters-ahead', type: 'media', label: 'Pierre Wack, "Scenarios: Uncharted Waters Ahead," Harvard Business Review (1985) — 一次資料' },
       { url: 'https://en.wikipedia.org/wiki/Pierre_Wack', type: 'reference', label: 'Wikipedia — Pierre Wack（H.カーン／RAND起源、シェル応用、1985年HBR論文）' },
       { url: 'https://scienceimpact.mit.edu/node/1243', type: 'academic', label: 'MIT Science Impact Collaborative — Scenario Planning（単一予測でなく複数の妥当な未来）' },
     ],
@@ -3162,7 +3162,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: '業務プロセスをゼロベースで抜本的に再設計し重要指標を劇的に向上／M.ハマー&J.チャンピー『リエンジニアリング革命』1993／定義4語：根本的・抜本的・劇的・プロセス／ITで仕事のやり方を変える(Don\'t Automate, Obliterate)／漸進的なカイゼンと対照的な不連続変革／リストラの口実・失敗例の批判',
     asOf: '2026-06',
     sources: [
-      { url: 'https://hbr.org/1990/07/reengineering-work-dont-automate-obliterate', type: 'academic', label: 'Michael Hammer, "Reengineering Work: Don\'t Automate, Obliterate," Harvard Business Review (1990)（原典的論文）' },
+      { url: 'https://hbr.org/1990/07/reengineering-work-dont-automate-obliterate', type: 'media', label: 'Michael Hammer, "Reengineering Work: Don\'t Automate, Obliterate," Harvard Business Review (1990)（原典的論文）' },
       { url: 'https://content.time.com/time/specials/packages/article/0,28804,2086680_2086683_2087684,00.html', type: 'reference', label: 'TIME「The 25 Most Influential Business Management Books」— Reengineering the Corporation (1993)' },
       { url: 'https://www.ibm.com/think/topics/business-process-reengineering', type: 'reference', label: 'IBM「What is business process reengineering?」— BPRの定義とITの有効化役割' },
     ],
@@ -5342,7 +5342,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://www.insead.edu/faculty-research/publications/books/blue-ocean-strategy-how-create-uncontested-market-space-and', type: 'academic', label: 'INSEAD — Blue Ocean Strategy（著者所属校・公式書籍ページ）' },
-      { url: 'https://hbr.org/2004/10/blue-ocean-strategy', type: 'academic', label: 'Harvard Business Review — “Blue Ocean Strategy” (Kim & Mauborgne, 2004)' },
+      { url: 'https://hbr.org/2004/10/blue-ocean-strategy', type: 'media', label: 'Harvard Business Review — “Blue Ocean Strategy” (Kim & Mauborgne, 2004)' },
       { url: 'https://www.britannica.com/money/blue-ocean-strategy-explained', type: 'reference', label: 'Encyclopædia Britannica Money — Blue Ocean Strategy Explained（戦略キャンバス・ERRCグリッド・事例）' },
       { url: 'https://en.wikipedia.org/wiki/Blue_Ocean_Strategy', type: 'reference', label: 'Wikipedia — Blue Ocean Strategy（出版情報・定義）' },
       { url: 'https://doi.org/10.1016/j.lrp.2015.09.002', type: 'academic', label: 'Kim, W.C. & Mauborgne, R. (2005) Blue Ocean Strategy — HBS Press' },
@@ -6051,7 +6051,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       'B・ジョセフ・パインⅡ（B. Joseph Pine II）／ジェームズ・H・ギルモア（James H. Gilmore）（1998 HBR・1999『The Experience Economy』）／4領域＝娯楽・教育・脱日常・審美／第5の価値＝変革',
     asOf: '2026-06',
     sources: [
-      { url: 'https://hbr.org/1998/07/welcome-to-the-experience-economy', type: 'academic', label: 'Pine & Gilmore, “Welcome to the Experience Economy,” Harvard Business Review, July–August 1998（提唱原典）' },
+      { url: 'https://hbr.org/1998/07/welcome-to-the-experience-economy', type: 'media', label: 'Pine & Gilmore, “Welcome to the Experience Economy,” Harvard Business Review, July–August 1998（提唱原典）' },
       { url: 'https://www.researchgate.net/publication/233101787_Pine_and_Gilmore%27s_Concept_of_Experience_Economy_and_Its_Dimensions_An_Empirical_Examination_in_Tourism', type: 'academic', label: "Oh, Fiore & Jeong, “Pine and Gilmore's Concept of Experience Economy and Its Dimensions”（査読論文・4領域と2軸の実証）" },
       { url: 'https://en.wikipedia.org/wiki/B._Joseph_Pine_II', type: 'reference', label: 'Wikipedia: B. Joseph Pine II（提唱者・著書1999）' },
     ],
@@ -6133,7 +6133,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       'クレイトン・クリステンセン（Clayton Christensen）／タディ・ホール（Taddy Hall）／カレン・ディロン（Karen Dillon）／デイビッド・ダンカン（David S. Duncan）（HBR 2016「Know Your Customers’ Jobs to Be Done」・著書『Competing Against Luck』2016）／源流＝セオドア・レビット',
     asOf: '2026-06',
     sources: [
-      { url: 'https://hbr.org/2016/09/know-your-customers-jobs-to-be-done', type: 'academic', label: "Christensen, Hall, Dillon & Duncan, “Know Your Customers’ ‘Jobs to Be Done’,” Harvard Business Review, vol.94 no.9 (Sept 2016), pp.54-62" },
+      { url: 'https://hbr.org/2016/09/know-your-customers-jobs-to-be-done', type: 'media', label: "Christensen, Hall, Dillon & Duncan, “Know Your Customers’ ‘Jobs to Be Done’,” Harvard Business Review, vol.94 no.9 (Sept 2016), pp.54-62" },
       { url: 'https://www.christenseninstitute.org/theory/jobs-to-be-done/', type: 'reference', label: 'Clayton Christensen Institute — Jobs to Be Done Theory（解説ページ）' },
       { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=51553', type: 'academic', label: "Harvard Business School Faculty & Research — “Know Your Customers’ ‘Jobs to Be Done’” 書誌情報（R1609D）" },
     ],
@@ -6299,7 +6299,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       'G・リン・ショスタック（G. Lynn Shostack、1984 HBR「Designing Services That Deliver」）／メアリー・ジョー・ビトナー＆エイミー・オストロム＆フェリシア・モーガン（Bitner, Ostrom & Morgan, 2008, 現代型5行モデルの定式化）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://hbr.org/1984/01/designing-services-that-deliver', type: 'academic', label: 'G. Lynn Shostack, “Designing Services That Deliver,” Harvard Business Review 62(1), 1984, pp.133-139（原典）' },
+      { url: 'https://hbr.org/1984/01/designing-services-that-deliver', type: 'media', label: 'G. Lynn Shostack, “Designing Services That Deliver,” Harvard Business Review 62(1), 1984, pp.133-139（原典）' },
       { url: 'https://www.nngroup.com/articles/service-blueprints-definition/', type: 'reference', label: 'Nielsen Norman Group「Service Blueprints: Definition」（5構成要素と3境界線の定義）' },
       { url: 'https://en.wikipedia.org/wiki/Service_blueprint', type: 'reference', label: 'Wikipedia「Service blueprint」（起源・構成要素・物理的証拠・fail point）' },
       { url: 'https://www.researchgate.net/publication/215915405_Service_Blueprinting_A_Practical_Technique_for_Service_Innovation', type: 'academic', label: 'Bitner, Ostrom & Morgan, “Service Blueprinting: A Practical Technique for Service Innovation,” California Management Review 50(4), 2008, pp.66-94' },
@@ -7094,7 +7094,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://www.britannica.com/money/matrix-organization', type: 'reference', label: 'Encyclopaedia Britannica (Money) — “Matrix organization: Advantages & Disadvantages”（定義・二重報告・利点欠点）' },
-      { url: 'https://hbr.org/1978/05/problems-of-matrix-organizations', type: 'academic', label: 'Davis, S. M. & Lawrence, P. R. (1978) “Problems of Matrix Organizations,” Harvard Business Review（古典論文）' },
+      { url: 'https://hbr.org/1978/05/problems-of-matrix-organizations', type: 'media', label: 'Davis, S. M. & Lawrence, P. R. (1978) “Problems of Matrix Organizations,” Harvard Business Review（古典論文）' },
       { url: 'https://www.pmi.org/learning/library/matrix-organization-structure-reason-evolution-1837', type: 'academic', label: 'Project Management Institute (PMI) — “The Matrix Organization”（航空宇宙起源・構造の進化）' },
     ],
   },
@@ -7333,7 +7333,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       'ジョン・P・コッター（John P. Kotter, 1995 HBR・1996『Leading Change』）／クルト・レヴィン（先行する3段階モデル）／8段階＝危機感→連帯チーム→ビジョン→周知→行動促進→短期的成果→さらなる変革→文化定着',
     asOf: '2026-06',
     sources: [
-      { url: 'https://hbr.org/1995/05/leading-change-why-transformation-efforts-fail-2', type: 'academic', label: 'John P. Kotter, “Leading Change: Why Transformation Efforts Fail,” Harvard Business Review (1995) — 原典論文' },
+      { url: 'https://hbr.org/1995/05/leading-change-why-transformation-efforts-fail-2', type: 'media', label: 'John P. Kotter, “Leading Change: Why Transformation Efforts Fail,” Harvard Business Review (1995) — 原典論文' },
       { url: 'https://www.kotterinc.com/methodology/8-steps/', type: 'reference', label: 'Kotter Inc., “The 8-Step Process for Leading Change” — 著者本人の組織による公式解説' },
       { url: 'https://journals.sagepub.com/doi/abs/10.1177/1742715015571393', type: 'academic', label: 'Mark Hughes, “Leading changes: Why transformation explanations fail,” Leadership 13(4), SAGE (2016) — 批判的検討' },
     ],
@@ -8278,7 +8278,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://www.britannica.com/topic/diversity-equity-and-inclusion-programs', type: 'reference', label: 'Encyclopædia Britannica — Diversity, Equity, and Inclusion Programs' },
       { url: 'https://pubmed.ncbi.nlm.nih.gov/15584838/', type: 'academic', label: 'van Knippenberg & Schippers (2007), Work group diversity, Annual Review of Psychology (PubMed)' },
-      { url: 'https://hbr.org/1990/03/from-affirmative-action-to-affirming-diversity', type: 'academic', label: 'R. R. Thomas Jr. (1990), From Affirmative Action to Affirming Diversity, Harvard Business Review' },
+      { url: 'https://hbr.org/1990/03/from-affirmative-action-to-affirming-diversity', type: 'media', label: 'R. R. Thomas Jr. (1990), From Affirmative Action to Affirming Diversity, Harvard Business Review' },
     ],
   },
   {
@@ -9161,7 +9161,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'フレッド・ライクヘルド（Fred Reichheld, 2003 / Bain & Company）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://hbr.org/2003/12/the-one-number-you-need-to-grow', type: 'academic', label: 'Reichheld, F. (2003) "The One Number You Need to Grow", Harvard Business Review' },
+      { url: 'https://hbr.org/2003/12/the-one-number-you-need-to-grow', type: 'media', label: 'Reichheld, F. (2003) "The One Number You Need to Grow", Harvard Business Review' },
       { url: 'https://en.wikipedia.org/wiki/Net_promoter_score', type: 'reference', label: 'Wikipedia: Net promoter score' },
     ],
   },
@@ -9783,7 +9783,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'マイケル・グールド／アンドリュー・キャンベル／マーカス・アレクサンダー（1994）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://hbr.org/1995/03/corporate-strategy-the-quest-for-parenting-advantage', type: 'academic', label: 'Campbell, Goold & Alexander, "Corporate Strategy: The Quest for Parenting Advantage," Harvard Business Review' },
+      { url: 'https://hbr.org/1995/03/corporate-strategy-the-quest-for-parenting-advantage', type: 'media', label: 'Campbell, Goold & Alexander, "Corporate Strategy: The Quest for Parenting Advantage," Harvard Business Review' },
       { url: 'https://archive.org/details/corporatelevelst0000gool_l3w7', type: 'reference', label: 'Goold, Campbell & Alexander, Corporate-Level Strategy: Creating Value in the Multibusiness Company (1994) — Internet Archive' },
       { url: 'https://www.adlittle.com/sites/default/files/prism/1995_q2_08-12.pdf', type: 'reference', label: 'Arthur D. Little Prism, "Parenting Advantage: The Key to Corporate-Level Strategy"' },
     ],
@@ -10610,7 +10610,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'デイヴ・スノーデン（Dave Snowden, 1999）／メアリー・ブーン（Snowden & Boone, 2007 HBR）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://hbr.org/2007/11/a-leaders-framework-for-decision-making', type: 'academic', label: 'Snowden & Boone, "A Leader\'s Framework for Decision Making", Harvard Business Review (2007年11月)' },
+      { url: 'https://hbr.org/2007/11/a-leaders-framework-for-decision-making', type: 'media', label: 'Snowden & Boone, "A Leader\'s Framework for Decision Making", Harvard Business Review (2007年11月)' },
       { url: 'https://en.wikipedia.org/wiki/Cynefin_framework', type: 'reference', label: 'Cynefin framework — Wikipedia' },
       { url: 'https://www.praxisframework.org/en/library/cynefin-framework', type: 'reference', label: 'Cynefin framework — Praxis Framework' },
     ],
@@ -10819,7 +10819,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ヘンリー・ミンツバーグ（Henry Mintzberg, 1973/1975）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://hbr.org/1990/03/the-managers-job-folklore-and-fact', type: 'academic', label: 'Henry Mintzberg, "The Manager’s Job: Folklore and Fact," Harvard Business Review (1975/1990 reprint)' },
+      { url: 'https://hbr.org/1990/03/the-managers-job-folklore-and-fact', type: 'media', label: 'Henry Mintzberg, "The Manager’s Job: Folklore and Fact," Harvard Business Review (1975/1990 reprint)' },
       { url: 'https://eric.ed.gov/?id=EJ122544', type: 'academic', label: 'ERIC EJ122544 — The Manager’s Job: Folklore and Fact, Harvard Business Review, 1975' },
       { url: 'https://study.com/academy/lesson/henry-mintzbergs-managerial-roles.html', type: 'reference', label: 'Study.com — Henry Mintzberg’s Managerial Roles（10役割・3カテゴリ・1973 The Nature of Managerial Work）' },
     ],
@@ -12331,7 +12331,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0263237388900333', type: 'academic', label: 'Vandermerwe & Rada (1988) Servitization of Business, European Management Journal 6(4):314-324' },
-      { url: 'http://andyneely.blogspot.com/2013/11/what-is-servitization.html', type: 'academic', label: 'Andy Neely (Cambridge) What is Servitization? — PSS定義・サービス化のパラドックス' },
+      { url: 'http://andyneely.blogspot.com/2013/11/what-is-servitization.html', type: 'media', label: 'Andy Neely (Cambridge) What is Servitization? — PSS定義・サービス化のパラドックス' },
     ],
   },
   {
@@ -13211,8 +13211,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'リタ・マグレイス／イアン・マクミラン（McGrath & MacMillan, 1995）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://hbr.org/1995/07/discovery-driven-planning', type: 'academic', label: 'McGrath & MacMillan, "Discovery-Driven Planning," Harvard Business Review (1995)' },
-      { url: 'https://hbr.org/2017/02/a-refresher-on-discovery-driven-planning', type: 'academic', label: 'Harvard Business Review, "A Refresher on Discovery-Driven Planning" (2017)' },
+      { url: 'https://hbr.org/1995/07/discovery-driven-planning', type: 'media', label: 'McGrath & MacMillan, "Discovery-Driven Planning," Harvard Business Review (1995)' },
+      { url: 'https://hbr.org/2017/02/a-refresher-on-discovery-driven-planning', type: 'media', label: 'Harvard Business Review, "A Refresher on Discovery-Driven Planning" (2017)' },
       { url: 'https://link.springer.com/article/10.1007/s11187-019-00153-w', type: 'academic', label: 'Small Business Economics (Springer): comparing effectuation, DDP, lean startup, design thinking (2019)' },
     ],
   },
@@ -13744,7 +13744,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://www.jimcollins.com/concepts/level-five-leadership.html', type: 'reference', label: 'Jim Collins — Concepts: Level 5 Leadership（著者本人による解説）' },
-      { url: 'https://hbr.org/2001/01/level-5-leadership-the-triumph-of-humility-and-fierce-resolve-2', type: 'academic', label: 'Harvard Business Review (2001), Jim Collins, "Level 5 Leadership: The Triumph of Humility and Fierce Resolve"' },
+      { url: 'https://hbr.org/2001/01/level-5-leadership-the-triumph-of-humility-and-fierce-resolve-2', type: 'media', label: 'Harvard Business Review (2001), Jim Collins, "Level 5 Leadership: The Triumph of Humility and Fierce Resolve"' },
       { url: 'https://www.mindtools.com/atqwpnm/level-5-leadership/', type: 'reference', label: 'MindTools — Level 5 Leadership（5段階階層・窓と鏡）' },
     ],
   },
@@ -14010,7 +14010,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'リタ・ガンター・マグレイス（Rita Gunther McGrath, 2013）／マイケル・ポーター（対比）／リチャード・ダベニ（関連）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://hbr.org/2013/06/transient-advantage', type: 'academic', label: 'Rita Gunther McGrath, "Transient Advantage," Harvard Business Review, June 2013' },
+      { url: 'https://hbr.org/2013/06/transient-advantage', type: 'media', label: 'Rita Gunther McGrath, "Transient Advantage," Harvard Business Review, June 2013' },
       { url: 'https://www.ritamcgrath.com/book/the-end-of-competitive-advantage/', type: 'reference', label: 'Rita McGrath — The End of Competitive Advantage (HBR Press, 2013)' },
       { url: 'https://www.strategy-business.com/article/00239', type: 'media', label: 'strategy+business: Rita Gunther McGrath on the End of Competitive Advantage (lifecycle stages)' },
     ],
@@ -14310,7 +14310,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ラリー・グレイナー（Larry E. Greiner, 1972）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://hbr.org/1998/05/evolution-and-revolution-as-organizations-grow', type: 'academic', label: 'Larry E. Greiner, “Evolution and Revolution as Organizations Grow,” Harvard Business Review (1998年改訂版)' },
+      { url: 'https://hbr.org/1998/05/evolution-and-revolution-as-organizations-grow', type: 'media', label: 'Larry E. Greiner, “Evolution and Revolution as Organizations Grow,” Harvard Business Review (1998年改訂版)' },
       { url: 'https://ils.unc.edu/daniel/131/cco4/Greiner.pdf', type: 'academic', label: 'Greiner (1972) 原論文 PDF（ノースカロライナ大学チャペルヒル校 配布）' },
       { url: 'https://en.wikipedia.org/wiki/Larry_E._Greiner', type: 'reference', label: 'Wikipedia — Larry E. Greiner（経歴・モデル6段階の解説）' },
     ],
@@ -14384,7 +14384,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョン・コッター（John P. Kotter, 1995/1996）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://hbr.org/1995/05/leading-change-why-transformation-efforts-fail-2', type: 'academic', label: 'Harvard Business Review (1995) — Leading Change: Why Transformation Efforts Fail' },
+      { url: 'https://hbr.org/1995/05/leading-change-why-transformation-efforts-fail-2', type: 'media', label: 'Harvard Business Review (1995) — Leading Change: Why Transformation Efforts Fail' },
       { url: 'https://www.kotterinc.com/methodology/8-steps/', type: 'reference', label: 'Kotter Inc. — The 8-Step Process for Leading Change' },
       { url: 'https://www.mindtools.com/a8nu5v5/kotters-8-step-change-model/', type: 'reference', label: 'MindTools — Kotter’s 8-Step Change Model' },
     ],
@@ -14625,7 +14625,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ロバート・ケリー（Robert E. Kelley）／初出：1988年 Harvard Business Review "In Praise of Followers"',
     asOf: '2026-06',
     sources: [
-      { url: 'https://hbr.org/1988/11/in-praise-of-followers', type: 'academic', label: 'Kelley, R. E. (1988) "In Praise of Followers" Harvard Business Review 66(6)' },
+      { url: 'https://hbr.org/1988/11/in-praise-of-followers', type: 'media', label: 'Kelley, R. E. (1988) "In Praise of Followers" Harvard Business Review 66(6)' },
       { url: 'https://en.wikipedia.org/wiki/Followership', type: 'reference', label: 'Wikipedia — Followership' },
     ],
   },
@@ -20567,7 +20567,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'タルン・カンナ & クリシュナ・パレプ（1997 HBR／2000 Journal of Finance／2005 Five Contexts Framework／2010 Winning in Emerging Markets）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://hbr.org/1997/07/why-focused-strategies-may-be-wrong-for-emerging-markets', type: 'academic', label: 'Khanna & Palepu (1997) Why Focused Strategies May Be Wrong for Emerging Markets, Harvard Business Review 75(4)' },
+      { url: 'https://hbr.org/1997/07/why-focused-strategies-may-be-wrong-for-emerging-markets', type: 'media', label: 'Khanna & Palepu (1997) Why Focused Strategies May Be Wrong for Emerging Markets, Harvard Business Review 75(4)' },
       { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=32645', type: 'academic', label: 'Khanna & Palepu (2005) Spotting Institutional Voids in Emerging Markets, HBS Background Note' },
       { url: 'https://link.springer.com/article/10.1057/s41267-017-0074-z', type: 'academic', label: 'Springer JIBS — International business responses to institutional voids（制度的空白への企業対応の体系的レビュー）' },
     ],
@@ -26523,7 +26523,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-25',
     sources: [
       { url: 'https://doi.org/10.1136/jech.54.7.502', type: 'academic', label: 'Aronsson, G., Gustafsson, K. & Dallner, M. 2000 Sick but yet at work: An empirical study of sickness presenteeism. Journal of Epidemiology and Community Health 54(7) 502-509' },
-      { url: 'https://hbr.org/2004/10/presenteeism-at-work-but-out-of-it', type: 'academic', label: 'Hemp, P. 2004 Presenteeism: At Work—But Out of It. Harvard Business Review 82(10) 49-58' },
+      { url: 'https://hbr.org/2004/10/presenteeism-at-work-but-out-of-it', type: 'media', label: 'Hemp, P. 2004 Presenteeism: At Work—But Out of It. Harvard Business Review 82(10) 49-58' },
       { url: 'https://doi.org/10.1002/job.630', type: 'academic', label: 'Johns, G. 2010 Presenteeism in the workplace: A review and research agenda. Journal of Organizational Behavior 31(4) 519-542' },
     ],
   },
@@ -26692,7 +26692,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-25',
     sources: [
       { url: 'https://dspace.mit.edu/handle/1721.1/2421', type: 'academic', label: 'Ancona, D. & Chong, C. 1996. Entrainment: Pace, Cycle, and Rhythm in Organizational Behavior. Research in Organizational Behavior, 18, 251-284.' },
-      { url: 'https://hbr.org/1998/03/time-pacing-competing-in-markets-that-wont-stand-still', type: 'academic', label: 'Eisenhardt, K.M. & Brown, S.L. 1998. Time Pacing: Competing in Markets That Won\'t Stand Still. Harvard Business Review, 76(2), 59-69.' },
+      { url: 'https://hbr.org/1998/03/time-pacing-competing-in-markets-that-wont-stand-still', type: 'media', label: 'Eisenhardt, K.M. & Brown, S.L. 1998. Time Pacing: Competing in Markets That Won\'t Stand Still. Harvard Business Review, 76(2), 59-69.' },
       { url: 'https://journals.aom.org/doi/abs/10.5465/amr.2001.5393903', type: 'academic', label: 'Ancona, D., Goodman, P., Lawrence, B. & Tushman, M. 2001. Time: A New Research Lens. Academy of Management Review, 26(4), 645-663.' },
     ],
   },
@@ -27833,7 +27833,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://bpb-us-e2.wpmucdn.com/sites.uci.edu/dist/a/3282/files/2018/01/Heidegger_TheQuestionConcerningTechnology.pdf', type: 'academic', label: 'Heidegger M: The Question Concerning Technology (primary work on Gestell and technological revealing)' },
       { url: 'https://1000wordphilosophy.com/2025/04/23/heidegger-on-technology/', type: 'academic', label: '1000-Word Philosophy: Martin Heidegger on Technology - Analysis of questioning technology & Being' },
       { url: 'https://www.researchgate.net/publication/287994986_Human-Data_Relations_and_the_Lifeworld', type: 'academic', label: 'Human-Data Relations and the Lifeworld - Don Ihde phenomenological framework' },
-      { url: 'https://medium.com/@JunyuLiu/how-don-ihdes-human-technology-relations-contribute-to-user-experience-design-1cacdef3c042', type: 'academic', label: 'How Don Ihde\'s Human-Technology Relations Contribute to User Experience Design' },
+      { url: 'https://medium.com/@JunyuLiu/how-don-ihdes-human-technology-relations-contribute-to-user-experience-design-1cacdef3c042', type: 'media', label: 'How Don Ihde\'s Human-Technology Relations Contribute to User Experience Design' },
       { url: 'https://philpapers.org/rec/DREAPO', type: 'reference', label: 'PhilPapers: Hubert L. Dreyfus - A phenomenology of skill acquisition as the basis for Merleau-Pontian cognitive science' },
     ],
   },
@@ -28287,7 +28287,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/256388', type: 'academic', label: 'Nonaka, I. (1988) Toward Middle-Up-Down Management: Accelerating Information Creation — Sloan Management Review, 29(3), 9–18' },
       { url: 'https://www.semanticscholar.org/paper/The-Knowledge-Creating-Company%3A-How-Japanese-Create-Nonaka-Takeuchi/1eaf3f6e73dcf3f0cddcd07960fd3af4b8bc4e3e', type: 'academic', label: 'Nonaka, I. & Takeuchi, H. (1995) The Knowledge-Creating Company — Oxford University Press（SECIモデルとの統合）' },
-      { url: 'https://hbr.org/1991/11/the-knowledge-creating-company', type: 'academic', label: 'Nonaka, I. (1991) The Knowledge-Creating Company — Harvard Business Review, November–December（英語での広範な普及）' },
+      { url: 'https://hbr.org/1991/11/the-knowledge-creating-company', type: 'media', label: 'Nonaka, I. (1991) The Knowledge-Creating Company — Harvard Business Review, November–December（英語での広範な普及）' },
       { url: 'https://en.wikipedia.org/wiki/Middle-up-down_management', type: 'reference', label: 'Wikipedia: Middle-up-down management — Nonaka model, comparison with top-down and bottom-up' },
     ],
   },
@@ -30230,7 +30230,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-27',
     sources: [
       { url: 'https://en.wikipedia.org/wiki/Profit_pools', type: 'reference', label: '"Profit pools", Wikipedia — concept introduced by Orit Gadiesh and James L. Gilbert (Bain & Company), Harvard Business Review, 1998; profit pool = total profits earned at all points along an industry\'s value chain.' },
-      { url: 'https://hbr.org/1998/05/profit-pools-a-fresh-look-at-strategy', type: 'academic', label: 'Gadiesh, O. & Gilbert, J. L. (1998). "Profit Pools: A Fresh Look at Strategy." Harvard Business Review, 76(3), May–June 1998, pp. 139–147 (ISSN 0017-8012).' },
+      { url: 'https://hbr.org/1998/05/profit-pools-a-fresh-look-at-strategy', type: 'media', label: 'Gadiesh, O. & Gilbert, J. L. (1998). "Profit Pools: A Fresh Look at Strategy." Harvard Business Review, 76(3), May–June 1998, pp. 139–147 (ISSN 0017-8012).' },
       { url: 'https://pubmed.ncbi.nlm.nih.gov/10179649/', type: 'academic', label: 'Gadiesh O, Gilbert JL. "Profit pools: a fresh look at strategy." Harv Bus Rev. 1998 May–Jun;76(3):139–147. PMID: 10179649.' },
     ],
   },
@@ -30385,7 +30385,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-27',
     sources: [
       { url: 'https://asq.org/quality-resources/qfd-quality-function-deployment', type: 'reference', label: 'American Society for Quality (ASQ), "What is Quality Function Deployment (QFD)?" — QFD は1966年に日本で開発され、Yoji Akao を原案者とし、House of Quality を基本ツールとすると定義する' },
-      { url: 'https://hbr.org/1988/05/the-house-of-quality', type: 'academic', label: 'Hauser, John R. & Clausing, Don (1988) "The House of Quality," Harvard Business Review 66(3), May–June 1988, pp.63–73' },
+      { url: 'https://hbr.org/1988/05/the-house-of-quality', type: 'media', label: 'Hauser, John R. & Clausing, Don (1988) "The House of Quality," Harvard Business Review 66(3), May–June 1988, pp.63–73' },
       { url: 'https://www.routledge.com/Quality-Function-Deployment-Integrating-Customer-Requirements-into-Product-Design/Akao/p/book/9781563273131', type: 'reference', label: 'Akao, Yoji (1990) Quality Function Deployment: Integrating Customer Requirements into Product Design, trans. G. H. Mazur, Productivity Press（原書1978年、水野滋・赤尾洋二編）, ISBN 9781563273131' },
     ],
   },
@@ -31036,7 +31036,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'マイケル・トレーシー ／ フレッド・ウィアセーマ ／ マイケル・ポーター ／ ピーター・ドラッカー',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://hbr.org/1993/01/customer-intimacy-and-other-value-disciplines', type: 'academic', label: 'Treacy, M. & Wiersema, F. (1993) Customer Intimacy and Other Value Disciplines — Harvard Business Review, 71(1), 84–93' },
+      { url: 'https://hbr.org/1993/01/customer-intimacy-and-other-value-disciplines', type: 'media', label: 'Treacy, M. & Wiersema, F. (1993) Customer Intimacy and Other Value Disciplines — Harvard Business Review, 71(1), 84–93' },
       { url: 'https://www.toolshero.com/strategy/value-disciplines-treacy-wiersema/', type: 'reference', label: 'Toolshero: Value Disciplines Model (Treacy & Wiersema) — operational excellence, product leadership, customer intimacy; excel in one, threshold in others' },
     ],
   },
@@ -31180,7 +31180,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ウィッカム・スキナー ／ ロバート・ヘイズ ／ スティーブン・ホイールライト ／ テリー・ヒル',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://hbr.org/1974/05/the-focused-factory', type: 'academic', label: 'Skinner, W. (1974) The Focused Factory — Harvard Business Review, 52(3), 113–121' },
+      { url: 'https://hbr.org/1974/05/the-focused-factory', type: 'media', label: 'Skinner, W. (1974) The Focused Factory — Harvard Business Review, 52(3), 113–121' },
       { url: 'https://www.referenceforbusiness.com/management/Ex-Gov/Focused-Factory.html', type: 'reference', label: 'Reference for Business: Focused Factory — Skinner, manufacturing strategy, plant-within-a-plant, focus on one task' },
     ],
   },
@@ -33691,7 +33691,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://www.worldcat.org/oclc/21227966', type: 'academic', label: 'Porter, M.E. (1990) The Competitive Advantage of Nations — Free Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Diamond_model', type: 'reference', label: 'Wikipedia: Diamond model — Porter, factor/demand conditions, related industries, firm strategy/rivalry, clusters' },
-      { url: 'https://hbr.org/1990/03/the-competitive-advantage-of-nations', type: 'academic', label: 'Michael E. Porter, "The Competitive Advantage of Nations," Harvard Business Review (1990) — 原典論文' },
+      { url: 'https://hbr.org/1990/03/the-competitive-advantage-of-nations', type: 'media', label: 'Michael E. Porter, "The Competitive Advantage of Nations," Harvard Business Review (1990) — 原典論文' },
       { url: 'https://saylordotorg.github.io/text_fundamentals-of-global-strategy/s04-03-clustering-porter-s-national-d.html', type: 'academic', label: 'Saylor Academy open textbook — "Clustering: Porter\'s National Diamond"' },
       { url: 'https://www.ebsco.com/research-starters/economics/diamond-model', type: 'reference', label: 'EBSCO Research Starters (Economics) — "Diamond Model"' },
     ],
@@ -34202,7 +34202,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'クレイトン・クリステンセン ／ セオドア・レビット ／ アンソニー・アルウィック ／ ボブ・モエスタ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://hbr.org/2016/09/know-your-customers-jobs-to-be-done', type: 'academic', label: 'Christensen, C.M. et al. (2016) Know Your Customers Jobs to Be Done — Harvard Business Review 94(9)' },
+      { url: 'https://hbr.org/2016/09/know-your-customers-jobs-to-be-done', type: 'media', label: 'Christensen, C.M. et al. (2016) Know Your Customers Jobs to Be Done — Harvard Business Review 94(9)' },
       { url: 'https://en.wikipedia.org/wiki/Jobs_to_be_done', type: 'reference', label: 'Wikipedia: Jobs to be done — Christensen, hiring products, milkshake example, Levitt, innovation' },
     ],
   },
@@ -35064,7 +35064,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'カール・シャピロ ／ ハル・ヴァリアン ／ アーサー・ピグー ／ ジュール・デュピュイ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://hbr.org/1998/11/versioning-the-smart-way-to-sell-information', type: 'academic', label: 'Shapiro, C. & Varian, H.R. (1998) Versioning: The Smart Way to Sell Information — Harvard Business Review 76(6)' },
+      { url: 'https://hbr.org/1998/11/versioning-the-smart-way-to-sell-information', type: 'media', label: 'Shapiro, C. & Varian, H.R. (1998) Versioning: The Smart Way to Sell Information — Harvard Business Review 76(6)' },
       { url: 'https://en.wikipedia.org/wiki/Versioning', type: 'reference', label: 'Wikipedia: Versioning — Shapiro & Varian, information goods, self-selection, second-degree price discrimination' },
     ],
   },
@@ -35934,7 +35934,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ラリー・グレイナー ／ ヘンリー・ミンツバーグ ／ ダニー・ミラー ／ イチャク・アディゼス',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://hbr.org/1998/05/evolution-and-revolution-as-organizations-grow', type: 'academic', label: 'Greiner, L.E. (1972/1998) Evolution and Revolution as Organizations Grow — Harvard Business Review 50(4)' },
+      { url: 'https://hbr.org/1998/05/evolution-and-revolution-as-organizations-grow', type: 'media', label: 'Greiner, L.E. (1972/1998) Evolution and Revolution as Organizations Grow — Harvard Business Review 50(4)' },
       { url: 'https://en.wikipedia.org/wiki/Greiner%27s_growth_model', type: 'reference', label: 'Wikipedia: Greiners growth model — evolution/revolution, five phases, leadership/autonomy/control crises' },
     ],
   },
@@ -37099,7 +37099,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジェームズ・ムーア ／ マルコ・イアンシティ ／ ロイ・レヴィン ／ ロン・アドナー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://hbr.org/1993/05/predators-and-prey-a-new-ecology-of-competition', type: 'academic', label: 'Moore, J.F. (1993) Predators and Prey: A New Ecology of Competition — Harvard Business Review 71(3)' },
+      { url: 'https://hbr.org/1993/05/predators-and-prey-a-new-ecology-of-competition', type: 'media', label: 'Moore, J.F. (1993) Predators and Prey: A New Ecology of Competition — Harvard Business Review 71(3)' },
       { url: 'https://en.wikipedia.org/wiki/Business_ecosystem', type: 'reference', label: 'Wikipedia: Business ecosystem — Moore, coevolution, keystone, platform strategy' },
     ],
   },
@@ -39562,7 +39562,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.12801/1947-5403.2014.06.01.02', type: 'academic', label: 'Cramer, F. (2015) "What Is Post-Digital?" — APRJA (A Peer-Reviewed Journal About)' },
       { url: 'https://doi.org/10.1162/014892600559489', type: 'academic', label: 'Cascone, K. (2000) "The Aesthetics of Failure: Post-Digital Tendencies" — Computer Music Journal' },
       { url: 'https://en.wikipedia.org/wiki/Post-digital', type: 'reference', label: 'Wikipedia: Post-digital — デジタル日常化と文化的再考' },
-      { url: 'https://doi.org/10.1162/014892600559489', type: 'academic', label: 'Cascone (2000) The Aesthetics of Failure — Computer Music Journal, MIT Press' },
       { url: 'https://link.springer.com/book/10.1057/9781137437204', type: 'academic', label: 'Berry & Dieter eds. (2015) Postdigital Aesthetics: Art, Computation and Design — Palgrave Macmillan' },
       { url: 'https://en.wikipedia.org/wiki/Glitch_art', type: 'reference', label: 'Wikipedia — Glitch art (ポストデジタル美学の中核実践)' },
       { url: 'https://monoskop.org/Post-digital', type: 'reference', label: 'Monoskop — Post-digital (メディアアート理論アーカイブ)' },
@@ -43217,7 +43216,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョン・コッター ／ クルト・ルーウィン ／ エドガー・シャイン ／ デービッド・ネーデラー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://hbr.org/1995/05/leading-change-why-transformation-efforts-fail', type: 'academic', label: 'Kotter, J.P. (1995) Leading Change: Why Transformation Efforts Fail — Harvard Business Review' },
+      { url: 'https://hbr.org/1995/05/leading-change-why-transformation-efforts-fail', type: 'media', label: 'Kotter, J.P. (1995) Leading Change: Why Transformation Efforts Fail — Harvard Business Review' },
       { url: 'https://www.meti.go.jp/policy/it_policy/dx/dx.html', type: 'government', label: '経済産業省 DX推進指標 — 組織変革と経営改革の枠組み' },
       { url: 'https://ja.wikipedia.org/wiki/%E7%B5%84%E7%B9%94%E5%A4%89%E9%9D%A9', type: 'reference', label: 'Wikipedia: 組織変革 — コッターの8ステップと変革管理の解説' },
     ],
@@ -43482,7 +43481,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://www.rand.org/pubs/articles/2005/A3422.html', type: 'academic', label: 'Katz, M.L. & Shapiro, C. (1985) Network Externalities, Competition, and Compatibility — American Economic Review' },
-      { url: 'https://hbr.org/1999/11/information-rules', type: 'academic', label: 'Shapiro, C. & Varian, H.R. (1999) Information Rules: A Strategic Guide to the Network Economy — Harvard Business Review Press' },
+      { url: 'https://hbr.org/1999/11/information-rules', type: 'media', label: 'Shapiro, C. & Varian, H.R. (1999) Information Rules: A Strategic Guide to the Network Economy — Harvard Business Review Press' },
       { url: 'https://ja.wikipedia.org/wiki/%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E5%A4%96%E9%83%A8%E6%80%A7', type: 'reference', label: 'Wikipedia: ネットワーク外部性 — 標準化競争と互換性の解説' },
     ],
   },
@@ -46265,7 +46264,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.2.1.71', type: 'academic', label: 'March, J. G. (1991) Exploration and Exploitation in Organizational Learning — Organization Science 2(1), 71–87（探索と深化のトレードオフ）' },
       { url: 'https://doi.org/10.2307/41165852', type: 'academic', label: 'Tushman, M. L. & O\'Reilly, C. A. III (1996) Ambidextrous Organizations: Managing Evolutionary and Revolutionary Change — California Management Review 38(4)（構造的両利き）' },
-      { url: 'https://hbr.org/2004/04/the-ambidextrous-organization', type: 'academic', label: 'O\'Reilly, C. A. III & Tushman, M. L. (2004) The Ambidextrous Organization — Harvard Business Review（35件の革新的取り組みの比較）' },
+      { url: 'https://hbr.org/2004/04/the-ambidextrous-organization', type: 'media', label: 'O\'Reilly, C. A. III & Tushman, M. L. (2004) The Ambidextrous Organization — Harvard Business Review（35件の革新的取り組みの比較）' },
       { url: 'https://doi.org/10.5465/20159573', type: 'academic', label: 'Gibson, C. B. & Birkinshaw, J. (2004) The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity — Academy of Management Journal 47(2)（文脈的両利き）' },
       { url: 'https://doi.org/10.1177/0149206308316058', type: 'academic', label: 'Raisch, S. & Birkinshaw, J. (2008) Organizational Ambidexterity: Antecedents, Outcomes, and Moderators — Journal of Management 34(3)（実現経路の整理）' },
       { url: 'https://doi.org/10.5465/amp.2013.0025', type: 'academic', label: 'O\'Reilly, C. A. III & Tushman, M. L. (2013) Organizational Ambidexterity: Past, Present, and Future — Academy of Management Perspectives 27(4)（実証の総括）' },
@@ -47078,7 +47077,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョージ・スタルク・ジュニア（George Stalk Jr., 1988 HBR論文で提唱）／トーマス・ハウト（Thomas M. Hout, 1990『Competing Against Time』共著）／ボストン・コンサルティング・グループ（BCG, 日本企業分析から概念を抽出）',
     asOf: '2026-07',
     sources: [
-      { url: 'https://hbr.org/1988/07/time-the-next-source-of-competitive-advantage', type: 'academic', label: 'Stalk, G. Jr. (1988) "Time—The Next Source of Competitive Advantage," Harvard Business Review 66(4):41-51（時間ベース競争の提唱原典）' },
+      { url: 'https://hbr.org/1988/07/time-the-next-source-of-competitive-advantage', type: 'media', label: 'Stalk, G. Jr. (1988) "Time—The Next Source of Competitive Advantage," Harvard Business Review 66(4):41-51（時間ベース競争の提唱原典）' },
       { url: 'https://link.springer.com/chapter/10.1007/978-3-642-27922-5_16', type: 'academic', label: 'Stalk, G. Jr. "Time — The Next Source of Competitive Advantage" — SpringerLink（原論文の書籍再録・書誌）' },
       { url: 'https://www.referenceforbusiness.com/management/Str-Ti/Time-Based-Competition.html', type: 'reference', label: 'Reference for Business — "Time-Based Competition"（付加価値時間比率・事例・派生概念の概説）' },
     ],
@@ -47925,7 +47924,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'パンカジ・ゲマワット（2001『Distance Still Matters』Harvard Business Review／2003『Semiglobalization and International Business Strategy』Journal of International Business Studies／2007『Redefining Global Strategy』Harvard Business School Press／2007『Managing Differences』Harvard Business Review）／批判: オデッド・シェンカー（2001）・スリラタ・ザヒール他（2012）／関連: スティーブン・A・アルトマン（DHL Global Connectedness Index 共同執筆）',
     asOf: '2026-09',
     sources: [
-      { url: 'https://hbr.org/2001/09/distance-still-matters-the-hard-reality-of-global-expansion', type: 'academic', label: 'Ghemawat, P. (2001). "Distance Still Matters: The Hard Reality of Global Expansion." Harvard Business Review, 79(8), 137–147. — CAGEフレームワークの初出、4つの距離とStar TV事例の出典' },
+      { url: 'https://hbr.org/2001/09/distance-still-matters-the-hard-reality-of-global-expansion', type: 'media', label: 'Ghemawat, P. (2001). "Distance Still Matters: The Hard Reality of Global Expansion." Harvard Business Review, 79(8), 137–147. — CAGEフレームワークの初出、4つの距離とStar TV事例の出典' },
       { url: 'https://link.springer.com/article/10.1057/palgrave.jibs.8400013', type: 'academic', label: 'Ghemawat, P. (2003). "Semiglobalization and International Business Strategy." Journal of International Business Studies, 34(2), 138–152. — セミグローバリゼーション仮説とCAGEの理論的前提の出典' },
       { url: 'https://link.springer.com/article/10.1057/palgrave.jibs.8490982', type: 'academic', label: 'Shenkar, O. (2001). "Cultural Distance Revisited: Towards a More Rigorous Conceptualization and Measurement of Cultural Differences." Journal of International Business Studies, 32(3), 519–535. — 文化的距離測定の「対称性の錯覚」など批判の出典' },
       { url: 'https://link.springer.com/article/10.1057/jibs.2011.43', type: 'academic', label: 'Zaheer, S., Schomaker, M. S., & Nachum, L. (2012). "Distance without Direction: Restoring Credibility to a Much-Loved Construct." Journal of International Business Studies, 43(1), 18–27. — 距離の対称性・方向性欠如と次元合算批判の出典' },
@@ -48119,8 +48118,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://place.asburyseminary.edu/gcrj/vol13/iss2/13/', type: 'academic', label: 'Nehrbass, K. (2021). "Book Review: The Culture Map by Erin Meyer." Great Commission Research Journal, 13(2), 109–110. — 面談・観察中心の方法論の実証性の限界と、国単位平均が生む固定観念化リスクへの学術的批判を確認。' },
       { url: 'https://www.hachettebookgroup.com/titles/erin-meyer/the-culture-map/9781610392501/?lens=publicaffairs', type: 'reference', label: 'Meyer, E. (2014). The Culture Map: Breaking Through the Invisible Boundaries of Global Business. PublicAffairs. — 原著の書誌情報（出版社・刊行年・題名）を確認。' },
-      { url: 'https://hbr.org/2014/05/navigating-the-cultural-minefield', type: 'academic', label: 'Meyer, E. (2014). "Navigating the Cultural Minefield." Harvard Business Review, 92(5), 119–123. — 8つの尺度の枠組みを最初に発表した原論文であることを確認。' },
-      { url: 'https://hbr.org/2015/10/when-culture-doesnt-translate', type: 'academic', label: 'Meyer, E. (2015). "When Culture Doesn\'t Translate." Harvard Business Review, 93(10), 66–72. — 多国籍化した企業文化への応用を論じた続編論文であることを確認。' },
+      { url: 'https://hbr.org/2014/05/navigating-the-cultural-minefield', type: 'media', label: 'Meyer, E. (2014). "Navigating the Cultural Minefield." Harvard Business Review, 92(5), 119–123. — 8つの尺度の枠組みを最初に発表した原論文であることを確認。' },
+      { url: 'https://hbr.org/2015/10/when-culture-doesnt-translate', type: 'media', label: 'Meyer, E. (2015). "When Culture Doesn\'t Translate." Harvard Business Review, 93(10), 66–72. — 多国籍化した企業文化への応用を論じた続編論文であることを確認。' },
       { url: 'https://eijipress.co.jp/en/products/2208', type: 'reference', label: 'エリン・メイヤー著、田岡恵監訳、樋口武志訳（2015）『異文化理解力――相手と自分の真意がわかる ビジネスパーソン必須の教養』英治出版。— 日本語版の書誌情報（訳者・出版社・刊行年）を確認。' },
     ],
   },

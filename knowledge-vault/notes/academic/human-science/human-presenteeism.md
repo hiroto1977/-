@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Aronsson, G., Gustafsson, K. & Dallner, M. 2000 Sick but yet at work: An empirical study of sickness presenteeism. Journal of Epidemiology and Community Health 54(7) 502-509](https://doi.org/10.1136/jech.54.7.502) `学術`
-- [Hemp, P. 2004 Presenteeism: At Work—But Out of It. Harvard Business Review 82(10) 49-58](https://hbr.org/2004/10/presenteeism-at-work-but-out-of-it) `学術`
+- [Hemp, P. 2004 Presenteeism: At Work—But Out of It. Harvard Business Review 82(10) 49-58](https://hbr.org/2004/10/presenteeism-at-work-but-out-of-it) `メディア`
 - [Johns, G. 2010 Presenteeism in the workplace: A review and research agenda. Journal of Organizational Behavior 31(4) 519-542](https://doi.org/10.1002/job.630) `学術`
 
 ## 関連概念

@@ -26,7 +26,7 @@ aliases:
 タルン・カンナ & クリシュナ・パレプ（1997 HBR／2000 Journal of Finance／2005 Five Contexts Framework／2010 Winning in Emerging Markets）
 
 ## 出典
-- [Khanna & Palepu (1997) Why Focused Strategies May Be Wrong for Emerging Markets, Harvard Business Review 75(4)](https://hbr.org/1997/07/why-focused-strategies-may-be-wrong-for-emerging-markets) `学術`
+- [Khanna & Palepu (1997) Why Focused Strategies May Be Wrong for Emerging Markets, Harvard Business Review 75(4)](https://hbr.org/1997/07/why-focused-strategies-may-be-wrong-for-emerging-markets) `メディア`
 - [Khanna & Palepu (2005) Spotting Institutional Voids in Emerging Markets, HBS Background Note](https://www.hbs.edu/faculty/Pages/item.aspx?num=32645) `学術`
 - [Springer JIBS — International business responses to institutional voids（制度的空白への企業対応の体系的レビュー）](https://link.springer.com/article/10.1057/s41267-017-0074-z) `学術`
 

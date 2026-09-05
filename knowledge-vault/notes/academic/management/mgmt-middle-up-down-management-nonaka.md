@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Nonaka, I. (1988) Toward Middle-Up-Down Management: Accelerating Information Creation — Sloan Management Review, 29(3), 9–18](https://doi.org/10.2307/256388) `学術`
 - [Nonaka, I. & Takeuchi, H. (1995) The Knowledge-Creating Company — Oxford University Press（SECIモデルとの統合）](https://www.semanticscholar.org/paper/The-Knowledge-Creating-Company%3A-How-Japanese-Create-Nonaka-Takeuchi/1eaf3f6e73dcf3f0cddcd07960fd3af4b8bc4e3e) `学術`
-- [Nonaka, I. (1991) The Knowledge-Creating Company — Harvard Business Review, November–December（英語での広範な普及）](https://hbr.org/1991/11/the-knowledge-creating-company) `学術`
+- [Nonaka, I. (1991) The Knowledge-Creating Company — Harvard Business Review, November–December（英語での広範な普及）](https://hbr.org/1991/11/the-knowledge-creating-company) `メディア`
 - [Wikipedia: Middle-up-down management — Nonaka model, comparison with top-down and bottom-up](https://en.wikipedia.org/wiki/Middle-up-down_management) `リファレンス`
 
 ## 関連概念

@@ -26,7 +26,7 @@ aliases:
 マイケル・グールド／アンドリュー・キャンベル／マーカス・アレクサンダー（1994）
 
 ## 出典
-- [Campbell, Goold & Alexander, "Corporate Strategy: The Quest for Parenting Advantage," Harvard Business Review](https://hbr.org/1995/03/corporate-strategy-the-quest-for-parenting-advantage) `学術`
+- [Campbell, Goold & Alexander, "Corporate Strategy: The Quest for Parenting Advantage," Harvard Business Review](https://hbr.org/1995/03/corporate-strategy-the-quest-for-parenting-advantage) `メディア`
 - [Goold, Campbell & Alexander, Corporate-Level Strategy: Creating Value in the Multibusiness Company (1994) — Internet Archive](https://archive.org/details/corporatelevelst0000gool_l3w7) `リファレンス`
 - [Arthur D. Little Prism, "Parenting Advantage: The Key to Corporate-Level Strategy"](https://www.adlittle.com/sites/default/files/prism/1995_q2_08-12.pdf) `リファレンス`
 

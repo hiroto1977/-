@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [University of Michigan (GLISA) — Scenario Planning（定義・複数の未来・頑健性）](https://glisa.umich.edu/engagement/scenario-planning/) `学術`
-- [Pierre Wack, "Scenarios: Uncharted Waters Ahead," Harvard Business Review (1985) — 一次資料](https://hbr.org/1985/09/scenarios-uncharted-waters-ahead) `学術`
+- [Pierre Wack, "Scenarios: Uncharted Waters Ahead," Harvard Business Review (1985) — 一次資料](https://hbr.org/1985/09/scenarios-uncharted-waters-ahead) `メディア`
 - [Wikipedia — Pierre Wack（H.カーン／RAND起源、シェル応用、1985年HBR論文）](https://en.wikipedia.org/wiki/Pierre_Wack) `リファレンス`
 - [MIT Science Impact Collaborative — Scenario Planning（単一予測でなく複数の妥当な未来）](https://scienceimpact.mit.edu/node/1243) `学術`
 

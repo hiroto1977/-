@@ -26,7 +26,7 @@ aliases:
 フレッド・ライクヘルド（Fred Reichheld, 2003 / Bain & Company）
 
 ## 出典
-- [Reichheld, F. (2003) "The One Number You Need to Grow", Harvard Business Review](https://hbr.org/2003/12/the-one-number-you-need-to-grow) `学術`
+- [Reichheld, F. (2003) "The One Number You Need to Grow", Harvard Business Review](https://hbr.org/2003/12/the-one-number-you-need-to-grow) `メディア`
 - [Wikipedia: Net promoter score](https://en.wikipedia.org/wiki/Net_promoter_score) `リファレンス`
 
 ## 関連概念

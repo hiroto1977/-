@@ -26,7 +26,7 @@ aliases:
 リタ・ガンター・マグレイス（Rita Gunther McGrath, 2013）／マイケル・ポーター（対比）／リチャード・ダベニ（関連）
 
 ## 出典
-- [Rita Gunther McGrath, "Transient Advantage," Harvard Business Review, June 2013](https://hbr.org/2013/06/transient-advantage) `学術`
+- [Rita Gunther McGrath, "Transient Advantage," Harvard Business Review, June 2013](https://hbr.org/2013/06/transient-advantage) `メディア`
 - [Rita McGrath — The End of Competitive Advantage (HBR Press, 2013)](https://www.ritamcgrath.com/book/the-end-of-competitive-advantage/) `リファレンス`
 - [strategy+business: Rita Gunther McGrath on the End of Competitive Advantage (lifecycle stages)](https://www.strategy-business.com/article/00239) `メディア`
 

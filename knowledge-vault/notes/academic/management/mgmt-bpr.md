@@ -26,7 +26,7 @@ aliases:
 業務プロセスをゼロベースで抜本的に再設計し重要指標を劇的に向上／M.ハマー&J.チャンピー『リエンジニアリング革命』1993／定義4語：根本的・抜本的・劇的・プロセス／ITで仕事のやり方を変える(Don't Automate, Obliterate)／漸進的なカイゼンと対照的な不連続変革／リストラの口実・失敗例の批判
 
 ## 出典
-- [Michael Hammer, "Reengineering Work: Don't Automate, Obliterate," Harvard Business Review (1990)（原典的論文）](https://hbr.org/1990/07/reengineering-work-dont-automate-obliterate) `学術`
+- [Michael Hammer, "Reengineering Work: Don't Automate, Obliterate," Harvard Business Review (1990)（原典的論文）](https://hbr.org/1990/07/reengineering-work-dont-automate-obliterate) `メディア`
 - [TIME「The 25 Most Influential Business Management Books」— Reengineering the Corporation (1993)](https://content.time.com/time/specials/packages/article/0,28804,2086680_2086683_2087684,00.html) `リファレンス`
 - [IBM「What is business process reengineering?」— BPRの定義とITの有効化役割](https://www.ibm.com/think/topics/business-process-reengineering) `リファレンス`
 

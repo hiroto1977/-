@@ -28,7 +28,7 @@ R.ルーズベルト・トーマスJr.（R. Roosevelt Thomas Jr., 1990 HBR）／
 ## 出典
 - [Encyclopædia Britannica — Diversity, Equity, and Inclusion Programs](https://www.britannica.com/topic/diversity-equity-and-inclusion-programs) `リファレンス`
 - [van Knippenberg & Schippers (2007), Work group diversity, Annual Review of Psychology (PubMed)](https://pubmed.ncbi.nlm.nih.gov/15584838/) `学術`
-- [R. R. Thomas Jr. (1990), From Affirmative Action to Affirming Diversity, Harvard Business Review](https://hbr.org/1990/03/from-affirmative-action-to-affirming-diversity) `学術`
+- [R. R. Thomas Jr. (1990), From Affirmative Action to Affirming Diversity, Harvard Business Review](https://hbr.org/1990/03/from-affirmative-action-to-affirming-diversity) `メディア`
 
 ## 関連概念
 - [[mgmt-team-diversity-performance|チーム多様性とパフォーマンスの関係論——情報精緻化理論と価値・情報的多様性]] — 同じ思想家

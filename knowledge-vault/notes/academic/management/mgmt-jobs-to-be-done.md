@@ -26,7 +26,7 @@ aliases:
 クレイトン・クリステンセン（Clayton Christensen）／タディ・ホール（Taddy Hall）／カレン・ディロン（Karen Dillon）／デイビッド・ダンカン（David S. Duncan）（HBR 2016「Know Your Customers’ Jobs to Be Done」・著書『Competing Against Luck』2016）／源流＝セオドア・レビット
 
 ## 出典
-- [Christensen, Hall, Dillon & Duncan, “Know Your Customers’ ‘Jobs to Be Done’,” Harvard Business Review, vol.94 no.9 (Sept 2016), pp.54-62](https://hbr.org/2016/09/know-your-customers-jobs-to-be-done) `学術`
+- [Christensen, Hall, Dillon & Duncan, “Know Your Customers’ ‘Jobs to Be Done’,” Harvard Business Review, vol.94 no.9 (Sept 2016), pp.54-62](https://hbr.org/2016/09/know-your-customers-jobs-to-be-done) `メディア`
 - [Clayton Christensen Institute — Jobs to Be Done Theory（解説ページ）](https://www.christenseninstitute.org/theory/jobs-to-be-done/) `リファレンス`
 - [Harvard Business School Faculty & Research — “Know Your Customers’ ‘Jobs to Be Done’” 書誌情報（R1609D）](https://www.hbs.edu/faculty/Pages/item.aspx?num=51553) `学術`
 

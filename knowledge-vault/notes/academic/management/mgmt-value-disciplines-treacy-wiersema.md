@@ -26,7 +26,7 @@ aliases:
 マイケル・トレーシー ／ フレッド・ウィアセーマ ／ マイケル・ポーター ／ ピーター・ドラッカー
 
 ## 出典
-- [Treacy, M. & Wiersema, F. (1993) Customer Intimacy and Other Value Disciplines — Harvard Business Review, 71(1), 84–93](https://hbr.org/1993/01/customer-intimacy-and-other-value-disciplines) `学術`
+- [Treacy, M. & Wiersema, F. (1993) Customer Intimacy and Other Value Disciplines — Harvard Business Review, 71(1), 84–93](https://hbr.org/1993/01/customer-intimacy-and-other-value-disciplines) `メディア`
 - [Toolshero: Value Disciplines Model (Treacy & Wiersema) — operational excellence, product leadership, customer intimacy; excel in one, threshold in others](https://www.toolshero.com/strategy/value-disciplines-treacy-wiersema/) `リファレンス`
 
 ## 関連概念

@@ -26,7 +26,7 @@ aliases:
 ラリー・グレイナー（Larry E. Greiner, 1972）
 
 ## 出典
-- [Larry E. Greiner, “Evolution and Revolution as Organizations Grow,” Harvard Business Review (1998年改訂版)](https://hbr.org/1998/05/evolution-and-revolution-as-organizations-grow) `学術`
+- [Larry E. Greiner, “Evolution and Revolution as Organizations Grow,” Harvard Business Review (1998年改訂版)](https://hbr.org/1998/05/evolution-and-revolution-as-organizations-grow) `メディア`
 - [Greiner (1972) 原論文 PDF（ノースカロライナ大学チャペルヒル校 配布）](https://ils.unc.edu/daniel/131/cco4/Greiner.pdf) `学術`
 - [Wikipedia — Larry E. Greiner（経歴・モデル6段階の解説）](https://en.wikipedia.org/wiki/Larry_E._Greiner) `リファレンス`
 

@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Jim Collins — Concepts: Level 5 Leadership（著者本人による解説）](https://www.jimcollins.com/concepts/level-five-leadership.html) `リファレンス`
-- [Harvard Business Review (2001), Jim Collins, "Level 5 Leadership: The Triumph of Humility and Fierce Resolve"](https://hbr.org/2001/01/level-5-leadership-the-triumph-of-humility-and-fierce-resolve-2) `学術`
+- [Harvard Business Review (2001), Jim Collins, "Level 5 Leadership: The Triumph of Humility and Fierce Resolve"](https://hbr.org/2001/01/level-5-leadership-the-triumph-of-humility-and-fierce-resolve-2) `メディア`
 - [MindTools — Level 5 Leadership（5段階階層・窓と鏡）](https://www.mindtools.com/atqwpnm/level-5-leadership/) `リファレンス`
 
 ## 関連概念

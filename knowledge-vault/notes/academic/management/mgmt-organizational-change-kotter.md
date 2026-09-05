@@ -26,7 +26,7 @@ aliases:
 ジョン・コッター ／ クルト・ルーウィン ／ エドガー・シャイン ／ デービッド・ネーデラー
 
 ## 出典
-- [Kotter, J.P. (1995) Leading Change: Why Transformation Efforts Fail — Harvard Business Review](https://hbr.org/1995/05/leading-change-why-transformation-efforts-fail) `学術`
+- [Kotter, J.P. (1995) Leading Change: Why Transformation Efforts Fail — Harvard Business Review](https://hbr.org/1995/05/leading-change-why-transformation-efforts-fail) `メディア`
 - [経済産業省 DX推進指標 — 組織変革と経営改革の枠組み](https://www.meti.go.jp/policy/it_policy/dx/dx.html) `公的`
 - [Wikipedia: 組織変革 — コッターの8ステップと変革管理の解説](https://ja.wikipedia.org/wiki/%E7%B5%84%E7%B9%94%E5%A4%89%E9%9D%A9) `リファレンス`
 

@@ -26,8 +26,8 @@ aliases:
 リタ・マグレイス／イアン・マクミラン（McGrath & MacMillan, 1995）
 
 ## 出典
-- [McGrath & MacMillan, "Discovery-Driven Planning," Harvard Business Review (1995)](https://hbr.org/1995/07/discovery-driven-planning) `学術`
-- [Harvard Business Review, "A Refresher on Discovery-Driven Planning" (2017)](https://hbr.org/2017/02/a-refresher-on-discovery-driven-planning) `学術`
+- [McGrath & MacMillan, "Discovery-Driven Planning," Harvard Business Review (1995)](https://hbr.org/1995/07/discovery-driven-planning) `メディア`
+- [Harvard Business Review, "A Refresher on Discovery-Driven Planning" (2017)](https://hbr.org/2017/02/a-refresher-on-discovery-driven-planning) `メディア`
 - [Small Business Economics (Springer): comparing effectuation, DDP, lean startup, design thinking (2019)](https://link.springer.com/article/10.1007/s11187-019-00153-w) `学術`
 
 ## 関連概念

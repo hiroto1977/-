@@ -26,7 +26,7 @@ aliases:
 C.K.プラハラード／ゲイリー・ハメル（1990 HBR）
 
 ## 出典
-- [Prahalad & Hamel, The Core Competence of the Corporation, HBR (1990)](https://hbr.org/1990/05/the-core-competence-of-the-corporation) `学術`
+- [Prahalad & Hamel, The Core Competence of the Corporation, HBR (1990)](https://hbr.org/1990/05/the-core-competence-of-the-corporation) `メディア`
 - [University of Michigan Ross — Core Competence of the Corporation 解説](https://michiganross.umich.edu/about/100-years/our-impact/1990/core-competence-corporation) `学術`
 - [Wikipedia — Core competency](https://en.wikipedia.org/wiki/Core_competency) `リファレンス`
 

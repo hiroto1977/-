@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Ancona, D. & Chong, C. 1996. Entrainment: Pace, Cycle, and Rhythm in Organizational Behavior. Research in Organizational Behavior, 18, 251-284.](https://dspace.mit.edu/handle/1721.1/2421) `学術`
-- [Eisenhardt, K.M. & Brown, S.L. 1998. Time Pacing: Competing in Markets That Won't Stand Still. Harvard Business Review, 76(2), 59-69.](https://hbr.org/1998/03/time-pacing-competing-in-markets-that-wont-stand-still) `学術`
+- [Eisenhardt, K.M. & Brown, S.L. 1998. Time Pacing: Competing in Markets That Won't Stand Still. Harvard Business Review, 76(2), 59-69.](https://hbr.org/1998/03/time-pacing-competing-in-markets-that-wont-stand-still) `メディア`
 - [Ancona, D., Goodman, P., Lawrence, B. & Tushman, M. 2001. Time: A New Research Lens. Academy of Management Review, 26(4), 645-663.](https://journals.aom.org/doi/abs/10.5465/amr.2001.5393903) `学術`
 
 ## 関連概念
