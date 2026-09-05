@@ -43,7 +43,7 @@ Electron main / OAuth+PKCE / プロキシ SSRF ガード / WebCrypto Vault / XSS
 | R3-4 | `security/webauthn.ts` | `rawId.byteLength > 0` だけで所持証明 true (署名未検証・チャレンジ使い捨て) → 認証器呼び出し前に throw する fail-closed 化。誤配線事故を構造的に防ぐ | 修正 |
 | R3-5 | `main/secrets.ts` + 設定画面 | `plain:` フォールバックの警告が `console.warn` のみで GUI 利用者に不可視 → `secrets:protection` IPC (秘密を返さず encrypted/plainCount/path のみ) + 設定画面表示 | 修正 |
 | R3-6 | `components/DataList.tsx`, `StatusBar.tsx` | 第三者由来 `thumbnailUrl`/`avatarUrl` のスキーム未検証 (現状 `<img>` なので実害なし。`href`/CSS `url()`/SVG `use` へ移した瞬間に危険) → https?/data:image のみ許可し、それ以外は `src` 属性自体を出さない。tab/CR/LF を除去してから判定 | 修正 |
-| R3-7 | `package.json` | Electron ^33 の既知 CVE → **43.2.0** / electron-builder → 26.15.3。E34〜43 の breaking-changes を精査し使用 API に影響なしを確認 | 修正 |
+| R3-7 | `package.json` | Electron ^33 の既知 CVE → **43.2.0** / electron-builder → 26.15.3。E34〜43 の breaking-changes を精査し使用 API に影響なしを確認。2026-09-05 に 43 系の最新 **43.6.0** へ（patch 4 つぶんの Chromium / Node の security backport。`npm audit` は patch release を勧告として出さないので `npm outdated` の `wanted` で見る。実物の起動は `smoke:app` で確認） | 修正 |
 
 production npm audit: **0 脆弱性**。dev 依存の残りは electron-builder の推移的依存 (brace-expansion /
 minimatch / ejs / temp / glob の DoS・ReDoS) と vite/vitest 系。いずれも**出荷物の依存ツリーには入らず**、
