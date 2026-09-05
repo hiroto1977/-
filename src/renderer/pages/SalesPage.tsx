@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { Section } from '../components/StatusBar';
 import { useCollection } from '../data/useCollection';
+import { MAX_CSV_IMPORT_BYTES, readImportText } from '../data/importFile';
 import { localIsoDate } from '../../shared/localDate';
 import {
   SALES_COLLECTION,
@@ -109,7 +110,15 @@ export function SalesPage() {
   async function onImportFile(file: File) {
     setError(undefined);
     setNotice(undefined);
-    const text = await file.text();
+    // 読む前に大きさで断る (`data/importFile.ts`)。読んでからでは落ちるのが先。
+    let text: string;
+    try {
+      text = await readImportText(file, MAX_CSV_IMPORT_BYTES, 'CSV ファイル');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+      if (fileRef.current) fileRef.current.value = '';
+      return;
+    }
     const { entries: parsed, errors } = salesFromCsv(text);
     // Atomic: all valid rows commit together or none (no partial import).
     if (parsed.length > 0) await addMany(parsed);

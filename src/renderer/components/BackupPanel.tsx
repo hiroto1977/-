@@ -9,6 +9,7 @@ import {
 } from '../data/backup';
 import { isEncryptionEnabled } from '../data/recordEncryption';
 import { localIsoDate } from '../../shared/localDate';
+import { MAX_BACKUP_IMPORT_BYTES, readImportText } from '../data/importFile';
 
 /**
  * Backup / restore the entire local record store (sales, KPI actuals, team
@@ -55,7 +56,8 @@ export function BackupPanel() {
       return;
     }
     try {
-      const text = await file.text();
+      // 読む前に大きさで断る (`data/importFile.ts`)。読んでからでは落ちるのが先。
+      const text = await readImportText(file, MAX_BACKUP_IMPORT_BYTES, 'バックアップファイル');
       let pw: string | undefined;
       if (isEncryptedBackup(text)) {
         // 暗号化バックアップ: パスフレーズ欄、無ければプロンプトで取得。

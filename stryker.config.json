@@ -101,6 +101,7 @@
     "src/renderer/data/foodDelivery.ts",
     "src/renderer/data/highlightSettings.ts",
     "src/renderer/data/hydroponicsSetup.ts",
+    "src/renderer/data/importFile.ts",
     "src/renderer/data/industryPresets.ts",
     "src/renderer/data/inputGuards.ts",
     "src/renderer/data/investments.ts",

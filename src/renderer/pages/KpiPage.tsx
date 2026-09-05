@@ -3,6 +3,7 @@ import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { useCollection } from '../data/useCollection';
+import { MAX_CSV_IMPORT_BYTES, readImportText } from '../data/importFile';
 import { latestRecord } from '../data/latestRecord';
 import { localIsoDate } from '../../shared/localDate';
 import {
@@ -333,7 +334,15 @@ function ActualsPanel() {
   }
 
   async function onImportCsv(file: File) {
-    const { entries, errors } = kpiActualsFromCsv(await file.text());
+    // 読む前に大きさで断る (`data/importFile.ts`)。読んでからでは落ちるのが先。
+    let text: string;
+    try {
+      text = await readImportText(file, MAX_CSV_IMPORT_BYTES, 'CSV ファイル');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+      return;
+    }
+    const { entries, errors } = kpiActualsFromCsv(text);
     // Atomic: all valid rows commit together or none (no partial import).
     if (entries.length > 0) await addMany(entries);
     setError(
