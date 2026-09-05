@@ -2,18 +2,18 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 663
+entry_count: 664
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（663件）
+# 学習パス — 学術概念／経営学（664件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[agile-development|アジャイルソフトウェア開発]]（接続 61）
+- [[agile-development|アジャイルソフトウェア開発]]（接続 60）
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 38）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 30）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
@@ -107,6 +107,7 @@ tags:
 - 1968年: [[mgmt-conways-law|コンウェイの法則（組織構造とシステム設計の同型性）]]
 - 1968年: [[mgmt-job-enrichment|職務拡大と職務充実]]
 - 1969年: [[mgmt-bass-diffusion-model|バスの普及モデル（Bass diffusion model）——新製品の採用を革新係数pと模倣係数qで記述する数理予測モデル]]
+- 1969年: [[mgmt-bridges-transition-model-ending-neutral-zone-beginning|ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み]]
 - 1969年: [[mgmt-eprg-orientations-perlmutter|EPRGフレームワーク——本国志向から世界志向へ至る多国籍企業経営者の心的構え]]
 - 1969年: [[mgmt-situational-leadership|状況的リーダーシップ理論]]
 - 1969年: [[mgmt-stp-marketing|STPマーケティング]]

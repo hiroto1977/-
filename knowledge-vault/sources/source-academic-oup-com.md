@@ -2,7 +2,7 @@
 title: "academic.oup.com"
 type: source-domain
 host: "academic.oup.com"
-cite_count: 136
+cite_count: 137
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # academic.oup.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **136 件**（学術 134 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **137 件**（学術 135 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -94,6 +94,7 @@ tags:
 - [[econ-task-based-automation-acemoglu-restrepo|アセモグル＝レストレポのタスクベース自動化モデル——置換効果・生産性効果・復元効果の綱引き]] — Zeira,J.(1998).Workers,Machines,andEconomicGrowth.QuarterlyJournalofE…
 - [[econ-two-part-tariff|二部料金制（two-part tariff）]] — WalterY.Oi,“ADisneylandDilemma:Two-PartTariffsforaMickeyMouseMonopoly…
 - [[econ-two-sided-markets|両面市場（two-sided markets）]] — Rochet&Tirole,“PlatformCompetitioninTwo-SidedMarkets,”JEEA1(4):990-10…
+- [[econ-varian-model-of-sales-informed-uninformed-consumers|ヴァリアンのセールのモデル——情報客と非情報客の混在が生む価格分散と特売の均衡]] — Salop,S.&Stiglitz,J.（1977）『BargainsandRipoffs:AModelofMonopolisticall…
 - [[econ-varieties-of-capitalism|資本主義の多様性（VoC）論]] — OxfordUniversityPress—Hall&Soskiceeds.『VarietiesofCapitalism:TheInsti…
 - [[econ-veblen-good|ヴェブレン財と顕示的消費]] — Leibenstein(1950)“Bandwagon,Snob,andVeblenEffects”,QJE64(2),OxfordAca…
 - [[econ-vent-for-surplus-myint|余剰のはけ口理論（ミント）——貿易が遊休資源を動かす]] — Myint,H.(1958)The"ClassicalTheory"ofInternationalTradeandtheUnderdeve…

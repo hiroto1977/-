@@ -2,7 +2,7 @@
 title: "cambridge.org"
 type: source-domain
 host: "cambridge.org"
-cite_count: 63
+cite_count: 64
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # cambridge.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **63 件**（学術 61 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **64 件**（学術 62 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -67,6 +67,7 @@ tags:
 - [[infosoc-eu-ai-act|EU AI規制法（AI Act）]] — CambridgeCore/InternationalLegalMaterials「Regulation2024/1689ofJune13…
 - [[infosoc-global-village|グローバル・ヴィレッジ（地球村）]] — CambridgeUniversityPress—McLuhan'sGlobalVillageToday(GlobalImmediacy)
 - [[infosoc-misinformation-prebunking|ミスインフォメーションとプリバンキング——接種理論とファクトチェックの情報社会論]] — vanderLinden,S.etal.(2017)InoculatingthePublicAgainstMisinformation—P…
+- [[infosoc-social-influence-network-theory-friedkin-johnsen|フリードキン＝ジョンセンの社会的影響ネットワーク理論——初期意見への係留を残す加重平均が持続的な不一致を説明する]] — Friedkin,N.E.,&Johnsen,E.C.(2011).SocialInfluenceNetworkTheory:ASocio…
 - [[infosoc-social-judgment-theory|社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み]] — Sherif,C.W.,Sherif,M.&Nebergall,R.E.(1965)AttitudeandAttitudeChange:T…
 - [[infosoc-speech-act-theory|言語行為論]] — Searle,J.R.(1969)SpeechActs:AnEssayinthePhilosophyofLanguage,Cambridg…
 - [[infosoc-symbolic-interactionism|象徴的相互作用論（symbolic interactionism）]] — TheCambridgeHandbookofSocialTheory,Ch.11—SymbolicInteractionism

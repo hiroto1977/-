@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／情報社会学"
 type: flashcard-deck
 deck_key: "academic-information-sociology"
-card_count: 615
+card_count: 616
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／情報社会学（615枚）
+# フラッシュカード — 学術概念／情報社会学（616枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -1060,6 +1060,8 @@ tags:
   - **A:** 技術の社会的構成（social construction of technology、SCOT）は、ウィーベ・バイカーとトレヴァー・ピンチが1984年の論文「事実と人工物の社会的構成」で提唱した科学技術社会論の枠組みで、技術が自律的な内的論理に従って一直線に発展し社会を規定するという技術決定論に対し、技術のかたちはそれをめぐる社会集団の解釈と交渉を通じて社会的に構成されると主張する。SCOTの中心概念は四つある。（→ [[infosoc-social-construction-technology-bijker]]）
 - **Q:** 社会交換理論
   - **A:** 社会交換理論（social exchange theory）とは、人間の社会的相互作用を報酬（利益）とコスト（費用）の交換として捉える社会学・社会心理学の理論的枠組みである。ジョージ・ホーマンズが1958年の論文で行動主義的観点から定式化し、ピーター・ブラウが1964年に『社会的交換と権力（Exchange and Power in Social Life）』で組織・集団レベルへ拡張した。（→ [[infosoc-social-exchange-theory]]）
+- **Q:** フリードキン＝ジョンセンの社会的影響ネットワーク理論——初期意見への係留を残す加重平均が持続的な不一致を説明する
+  - **A:** フリードキンとジョンセンが1990年の論文「Social Influence and Opinions」（The Journal of Mathematical Sociology 15(3-4), 193-205）で提示し、1998年のフリードキン単著、2011年の両者共著（いずれもCambridge University Press）で体系化した社会的影響ネットワーク理論の数理モデルである。（→ [[infosoc-social-influence-network-theory-friedkin-johnsen]]）
 - **Q:** 社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み
   - **A:** 社会的判断理論は、ムザファー・シェリフ（Muzafer Sherif）とカール・ホヴランド（Carl Hovland）が1961年の著書『Social Judgment（社会的判断）』で定式化した、説得と態度変容の理論である。人は説得メッセージを、自分の基準となる態度（アンカー）と無意識に比較して評価する、という前提に立つ。（→ [[infosoc-social-judgment-theory]]）
 - **Q:** ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）

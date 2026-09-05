@@ -2,7 +2,7 @@
 title: "science.org"
 type: source-domain
 host: "science.org"
-cite_count: 21
+cite_count: 22
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # science.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **21 件**（学術 21）
+> [!info] 出典ドメイン索引 ・ 引用 **22 件**（学術 22）
 
 ## このドメインを出典とする項目
 
@@ -33,6 +33,7 @@ tags:
 - [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — RuhaBenjamin(2019)"Assessingrisk,automatingracism,"Science(AAAS)366(6…
 - [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — ZiadObermeyer,BrianPowers,ChristineVogeli,SendhilMullainathan(2019)"D…
 - [[infosoc-preferential-attachment|優先的選択（スケールフリー・ネットワーク）]] — Barabási&Albert,"EmergenceofScalinginRandomNetworks,"Science286,509–5…
+- [[infosoc-social-influence-network-theory-friedkin-johnsen|フリードキン＝ジョンセンの社会的影響ネットワーク理論——初期意見への係留を残す加重平均が持続的な不一致を説明する]] — Friedkin,N.E.,Proskurnikov,A.V.,Tempo,R.,&Parsegov,S.E.(2016).Network…
 - [[infosoc-the-shallows-carr|カーの「浅瀬」論——ネットの断片的・多重的な情報環境が深い読みと持続的注意を蝕むという主張]] — Sparrow,B.,Liu,J.,&Wegner,D.M.(2011)."GoogleEffectsonMemory:Cognitive…
 - [[mgmt-likert-systems|リッカートのシステム4]] — Science誌書評—TheHumanOrganization(1967,McGraw-Hill)の出版確認
 

@@ -36,6 +36,7 @@ aliases:
 - [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同じ思想家
 - [[infosoc-gatekeeping-white|ゲートキーピング——膨大な情報を選別し公衆に届く記事を決める門番の作用]] — 同じ思想家
 - [[mgmt-action-centred-leadership-adair|アクション・センタード・リーダーシップ——課題・チーム・個人の三つの輪]] — 同じ思想家
+- [[mgmt-bridges-transition-model-ending-neutral-zone-beginning|ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み]] — 同じ思想家
 - [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 同分野の近傍
 - [[mgmt-glass-ceiling|ガラスの天井（グラス・シーリング）]] — 同分野の近傍
 

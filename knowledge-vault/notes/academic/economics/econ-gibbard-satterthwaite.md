@@ -32,10 +32,10 @@ aliases:
 
 ## 関連概念
 - [[econ-arrow-impossibility|アローの不可能性定理]] — 語彙が近い
+- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 語彙が近い
 - [[econ-myerson-satterthwaite|マイヤーソン＝サタースウェイトの定理——私的情報下での効率的取引の不可能性]] — 同じ思想家
 - [[econ-revelation-principle|顕示原理（メカニズムデザイン）]] — 同じ思想家
 - [[econ-shapley-value|シャープレー値]] — 出典を共有
-- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 同分野の近傍
 - [[econ-sen-paradox|センのリベラル・パラドックス（パレート派リベラルの不可能性）]] — 同分野の近傍
 - [[econ-trembling-hand-perfection-selten|震える手の完全均衡——ミスの可能性に頑健なナッシュ均衡]] — 同分野の近傍
 

@@ -2,7 +2,7 @@
 title: "papers.ssrn.com"
 type: source-domain
 host: "papers.ssrn.com"
-cite_count: 35
+cite_count: 36
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # papers.ssrn.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **35 件**（学術 34 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **36 件**（学術 35 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -23,6 +23,7 @@ tags:
 - [[bizlaw-doctrine-of-laches|ラッチェスの法理（懈怠の抗弁）]] — Bray(2014)ALittleBitofLachesGoesaLongWay—VanderbiltLawReviewEnBanc
 - [[bizlaw-duty-of-care-standard|注意義務の基準]] — OutsideDirectorLiability—BernardS.Black,BrianR.Cheffins&MichaelKlausn…
 - [[bizlaw-holder-in-due-course-doctrine|正当所持人の法理]] — GregoryE.Maggs—TheHolderinDueCourseDoctrineasaDefaultRule(GeorgiaLawR…
+- [[bizlaw-kenford-v-erie-lost-profits-reasonable-certainty|ケンフォード対エリー郡事件——新規事業の逸失利益は合理的確実性なき限り投機的として退けられる]] — VictorP.Goldberg,"TheNewBusinessRuleandCompensationforLostProfits,"Co…
 - [[bizlaw-material-adverse-change|重大な悪影響条項（MAC条項）]] — Miller,"PandemicRiskandtheInterpretationofExceptionsinMAEClauses,"J.C…
 - [[bizlaw-materiality-securities-law|証券法における重要性基準]] — Langevoort(2009)BasicatTwenty:RethinkingFraud-on-the-Market,2009Wis.L…
 - [[bizlaw-piercing-corporate-veil-reverse|法人格否認の法理（逆方向）]] — Watanabe(2020)PiercingtheCorporateVeilundertheJapaneseCompaniesAct—SS…

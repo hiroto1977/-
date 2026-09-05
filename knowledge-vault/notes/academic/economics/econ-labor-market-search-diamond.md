@@ -39,7 +39,7 @@ aliases:
 - [[econ-optimal-taxation-mirrlees|最適課税理論——ミルリーズの情報の非対称性と効率性・公平性のトレードオフ]] — 同じ思想家
 - [[econ-optimal-taxation-mirrlees-diamond|最適課税論——効率性と公平性のトレードオフにおける税制設計]] — 同じ思想家
 - [[econ-overlapping-generations-samuelson|世代重複モデル——有限の生涯を生きる世代が共存する動学的一般均衡]] — 同じ思想家
-- [[econ-search-theory-stigler|情報の経済学と探索理論——最適な探索が価格分散を均衡として説明する]] — 同じ思想家
+- [[econ-value-added-tax-theory|付加価値税の理論と最適間接課税]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -38,9 +38,9 @@ aliases:
 - [[econ-schumpeterian-growth-aghion-howitt|アギオン＝ハウイットのシュンペーター型内生成長モデル——創造的破壊による成長]] — 出典を共有
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 出典を共有
 - [[econ-trilemma-financial-regulation|金融規制のトリレンマ]] — 出典を共有
+- [[econ-varian-model-of-sales-informed-uninformed-consumers|ヴァリアンのセールのモデル——情報客と非情報客の混在が生む価格分散と特売の均衡]] — 出典を共有
 - [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 出典を共有
 - [[infosoc-network-externality|ネットワーク外部性]] — 出典を共有
-- [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

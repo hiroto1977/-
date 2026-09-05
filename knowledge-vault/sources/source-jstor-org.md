@@ -2,7 +2,7 @@
 title: "jstor.org"
 type: source-domain
 host: "jstor.org"
-cite_count: 146
+cite_count: 147
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jstor.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **146 件**（学術 145 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **147 件**（学術 146 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -54,6 +54,7 @@ tags:
 - [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — Harberger,A.C.(1954)MonopolyandResourceAllocation—AmericanEconomicRev…
 - [[econ-debt-deflation-fisher-irving|債務デフレーション論——フィッシャーの過剰債務螺旋と大恐慌の金融的説明]] — Fisher,I.(1933)TheDebt-DeflationTheoryofGreatDepressions—Econometrica
 - [[econ-debt-deflation-theory|債務デフレ理論]] — Fisher,I.(1933).TheDebt-DeflationTheoryofGreatDepressions.Econometric…
+- [[econ-diamond-paradox-search-costs-monopoly-price|ダイアモンドのパラドックス——探索費用がごくわずかでも、均衡価格が独占価格になってしまう逆説]] — Stahl,D.O.(1989).OligopolisticPricingwithSequentialConsumerSearch.Ame…
 - [[econ-dividend-irrelevance-mm|配当無関連命題——完全市場では配当政策が企業価値に影響しない]] — Miller,M.H.&Modigliani,F.(1961)DividendPolicy,Growth,andtheValuationo…
 - [[econ-dividend-signaling-bhattacharya|配当のシグナリング理論——配当が企業の将来性を伝える信頼できる信号]] — Bhattacharya,S.(1979)ImperfectInformation,DividendPolicy,andtheBirdin…
 - [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]] — Kydland,F.E.&Prescott,E.C.(1982)TimetoBuildandAggregateFluctuations—E…

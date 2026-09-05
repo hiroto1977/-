@@ -2,7 +2,7 @@
 title: "ideas.repec.org"
 type: source-domain
 host: "ideas.repec.org"
-cite_count: 97
+cite_count: 98
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ideas.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **97 件**（学術 82 ・ リファレンス 15）
+> [!info] 出典ドメイン索引 ・ 引用 **98 件**（学術 83 ・ リファレンス 15）
 
 ## このドメインを出典とする項目
 
@@ -94,6 +94,7 @@ tags:
 - [[econ-trust-game|信頼ゲーム（投資ゲーム）]] — Berg,Dickhaut&McCabe(1995),GamesandEconomicBehavior10(1):122–142(RePE…
 - [[econ-ultimatum-game|最後通牒ゲーム]] — Güth,Schmittberger&Schwarze(1982)“AnExperimentalAnalysisofUltimatumBa…
 - [[econ-unified-growth-theory|統一成長理論（Unified Growth Theory）——停滞から近代成長への移行を一つの動学モデルで説明する枠組み]] — Galor,Oded&Weil,DavidN.(2000),AmericanEconomicReview90(4):806–828—IDE…
+- [[econ-varian-model-of-sales-informed-uninformed-consumers|ヴァリアンのセールのモデル——情報客と非情報客の混在が生む価格分散と特売の均衡]] — Lach,S.（2002）『ExistenceandPersistenceofPriceDispersion:AnEmpiricalAna…
 - [[econ-weitzman-dismal-theorem|ワイツマンの悲観定理（Dismal Theorem）——裾の厚い不確実性の前で気候政策の費用便益分析は破綻し、破局回避は無限の保険料に値する]] — Weitzman,M.L.(2009)"OnModelingandInterpretingtheEconomicsofCatastroph…
 - [[econ-weitzman-prices-vs-quantities|ワイツマンの「価格か数量か」（Prices vs. Quantities／Weitzman 1974）——不確実性下では限界費用と限界便益の傾きが規制手段の優劣を決める]] — IDEAS/RePEc収録の書誌（Weitzman[1974],RES41(4):477-491・費用不確実性下での価格手段と数量手段の比…
 - [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — Loewenstein,G.,O'Donoghue,T.&Rabin,M.(2003)ProjectionBiasinPredicting…

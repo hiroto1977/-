@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 960
+entry_count: 962
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（960件）
+# 学習パス — 学術概念／経済学（962件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -24,7 +24,7 @@ tags:
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 37）
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 37）
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
-- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]]（接続 34）
+- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]]（接続 35）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 34）
 - [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]]（接続 33）
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 32）
@@ -212,6 +212,7 @@ tags:
 - 1960年: [[econ-sraffian-price|スラッファ価格理論（Sraffian Price Theory）]]
 - 1961年: [[econ-auction-theory|オークション理論]]
 - 1961年: [[econ-ces-production|CES生産関数]]
+- 1961年: [[econ-diamond-paradox-search-costs-monopoly-price|ダイアモンドのパラドックス——探索費用がごくわずかでも、均衡価格が独占価格になってしまう逆説]]
 - 1961年: [[econ-ellsberg-paradox|エルズバーグのパラドックス（曖昧性回避）]]
 - 1961年: [[econ-fei-ranis|フェイ＝ラニス・モデル]]
 - 1961年: [[econ-linder-hypothesis|リンダー仮説（重複需要理論）]]
@@ -300,6 +301,7 @@ tags:
 - 1977年: [[econ-debt-overhang|デット・オーバーハング]]
 - 1977年: [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]]
 - 1977年: [[econ-time-inconsistency|動学的不整合（時間的非整合性）]]
+- 1977年: [[econ-varian-model-of-sales-informed-uninformed-consumers|ヴァリアンのセールのモデル——情報客と非情報客の混在が生む価格分散と特売の均衡]]
 - 1979年: [[econ-behavioral-finance|行動ファイナンス]]
 - 1979年: [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]]
 - 1979年: [[econ-costly-state-verification|コストのかかる状態検証（Costly State Verification／Townsend 1979）——なぜ「標準的な負債契約」が最適になるのか]]

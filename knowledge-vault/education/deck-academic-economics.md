@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経済学"
 type: flashcard-deck
 deck_key: "academic-economics"
-card_count: 960
+card_count: 962
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経済学（960枚）
+# フラッシュカード — 学術概念／経済学（962枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -426,6 +426,8 @@ tags:
   - **A:** ダイヤモンド（Douglas Diamond）とディブビッグ（Philip Dybvig）は1983年に，銀行の存在意義（流動性変換）と脆弱性（取付け）を統一的に説明するモデルを提唱した。銀行は流動性の低い長期資産を短期預金で調達することで経済的価値を創出するが，この「満期変換（maturity transformation）」が自己実現型の取付け（bank run）を引き起こす均衡を内包する。（→ [[econ-diamond-dybvig-bank-runs]]）
 - **Q:** ダイヤモンド＝マーリーズの生産効率定理
   - **A:** ピーター・ダイヤモンドとジェームズ・マーリーズが1971年の論文「Optimal Taxation and Public Production」（American Economic Review）で示した最適課税論の中心的結果。一定の条件下（政府が全ての最終財に課税でき、企業の純利潤は完全に課税されるか存在しない＝規模に関して収穫一定）では、最適な税制は集計的な生産効率を保つべきだと述べる。（→ [[econ-diamond-mirrlees]]）
+- **Q:** ダイアモンドのパラドックス——探索費用がごくわずかでも、均衡価格が独占価格になってしまう逆説
+  - **A:** ダイアモンドのパラドックスとは、売り手が何人いても、買い手の探索費用がどれほど小さくても正である限り、唯一の均衡価格が独占価格に一致してしまうという逆説である。ピーター・A・ダイアモンドが1971年の論文『A Model of Price Adjustment』（Journal of Economic Theory）で示した。（→ [[econ-diamond-paradox-search-costs-monopoly-price]]）
 - **Q:** 価値の逆説（ダイヤモンドと水のパラドックス）
   - **A:** 価値の逆説とは、生存に不可欠で有用な水の市場価格が極めて低い一方、生活に必須でないダイヤモンドが高価で取引されるという、有用性と価格の乖離を指す経済学上の難問である。アダム・スミスは1776年の『国富論』で、財の価値を使用価値（使うことで得られる便益）と交換価値（他財と交換できる力）に区別し、水は使用価値が高いのに交換価値が低く、ダイヤモンドはその逆だと指摘した。（→ [[econ-diamond-water-paradox]]）
 - **Q:** 独裁者ゲーム
@@ -1854,6 +1856,8 @@ tags:
   - **A:** バリュー・プレミアム（value premium）は、ユージン・ファマとケネス・フレンチが1992年と1993年の研究で実証的に示した株式市場の現象で、「バリュー株（割安株）」が「グロース株（成長株）」よりも高い平均収益率を上げる傾向を指す。バリュー株とは、株価が、企業の簿価（純資産の会計上の価値）に対して相対的に安い株式、すなわち簿価時価比率（book-to-market ratio、簿価を時価で割った値）の高い株式を指す。（→ [[econ-value-premium-fama-french]]）
 - **Q:** ヴァネクの要素含有量定理——多数財・多数要素への貿易理論の拡張
   - **A:** ヴァネクの要素含有量定理（Vanek factor content theorem, 1968年）は、ヘクシャー＝オリーン・モデルを任意の数の財と生産要素に拡張し、各国の純貿易に体化された要素含有量が要素賦存量の相対的過不足と整合的であることを示した。（→ [[econ-vanek-chain-factor-content]]）
+- **Q:** ヴァリアンのセールのモデル——情報客と非情報客の混在が生む価格分散と特売の均衡
+  - **A:** ヴァリアンのセールのモデルは、ハル・ヴァリアンが『A Model of Sales』（1980、American Economic Review 70巻4号651-659頁、1981年に正誤表）で提示した価格分散の理論である。（→ [[econ-varian-model-of-sales-informed-uninformed-consumers]]）
 - **Q:** 資本主義の多様性（VoC）論
   - **A:** 資本主義の多様性（Varieties of Capitalism, VoC）論とは、ピーター・ホールとデイヴィッド・ソスキスが2001年の著書『Varieties of Capitalism』で提示した比較資本主義論の枠組みである。（→ [[econ-varieties-of-capitalism]]）
 - **Q:** ヴェブレン財と顕示的消費

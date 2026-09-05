@@ -2,7 +2,7 @@
 title: "search.worldcat.org"
 type: source-domain
 host: "search.worldcat.org"
-cite_count: 21
+cite_count: 22
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # search.worldcat.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **21 件**（学術 18 ・ リファレンス 3）
+> [!info] 出典ドメイン索引 ・ 引用 **22 件**（学術 18 ・ リファレンス 4）
 
 ## このドメインを出典とする項目
 
@@ -32,6 +32,7 @@ tags:
 - [[infosoc-smart-city-critique-greenfield|スマートシティ批判——技術的ソリューショニズムと都市ガバナンス]] — Greenfield,A.(2013)AgainsttheSmartCity—DoProjects
 - [[infosoc-social-judgment-theory|社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み]] — Sherif,M.&Hovland,C.I.(1961)SocialJudgment:AssimilationandContrastEff…
 - [[infosoc-sociotechnical-systems|社会技術システム理論：組織における社会的・技術的サブシステムの共同最適化]] — Emery&Trist1960Socio-TechnicalSystems,inManagementSciencesModelsandTe…
+- [[mgmt-bridges-transition-model-ending-neutral-zone-beginning|ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み]] — WorldCat書誌レコード"Managingtransitions:makingthemostofchange"(Addison-Wes…
 - [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]] — Huff(1990)MappingStrategicThought—Wiley（Wiley,1990,ISBN978-0-471-9263…
 - [[mgmt-organizational-learning-cycles-levinthal|組織学習の落とし穴——コンピタンシー・トラップとサクセス・トラップ（レビンタール＆マーチ）]] — Argyris,C.&Schön,D.A.(1996)OrganizationalLearningII:Theory,Method,and…
 - [[mgmt-strategic-drift|戦略的漂流（Strategic Drift）]] — Sammut-Bonnici,StrategicDrift,WileyEncyclopediaofManagement(2015)（Wil…

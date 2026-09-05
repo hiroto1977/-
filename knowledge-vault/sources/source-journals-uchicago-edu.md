@@ -2,7 +2,7 @@
 title: "journals.uchicago.edu"
 type: source-domain
 host: "journals.uchicago.edu"
-cite_count: 42
+cite_count: 43
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.uchicago.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **42 件**（学術 42）
+> [!info] 出典ドメイン索引 ・ 引用 **43 件**（学術 43）
 
 ## このドメインを出典とする項目
 
@@ -21,6 +21,7 @@ tags:
 - [[econ-budget-maximizing-bureaucrat-niskanen|ニスカネンの予算最大化官僚モデル——独占的官庁が情報優位で総予算を極大化し過剰供給を導く公共選択理論]] — Niskanen,W.A.(1975)."BureaucratsandPoliticians."JournalofLawandEconom…
 - [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — Murphy,K.M.etal.(1989)IndustrializationandtheBigPush—JournalofPolitic…
 - [[econ-diamond-coconut-model|ダイアモンドのココナッツ・モデル（Diamond 1982）——探索の外部性が生む複数均衡と協調の失敗]] — Diamond,P.A.(1982).AggregateDemandManagementinSearchEquilibrium.Journ…
+- [[econ-diamond-paradox-search-costs-monopoly-price|ダイアモンドのパラドックス——探索費用がごくわずかでも、均衡価格が独占価格になってしまう逆説]] — Stigler,G.J.(1961).TheEconomicsofInformation.JournalofPoliticalEconom…
 - [[econ-director-law|ディレクターの法則（Director's Law／Stigler 1970）——公共支出は中間層を主たる受益者として設計され、その負担は貧者と富者に及ぶ]] — Stigler,G.J.(1970).Director'sLawofPublicIncomeRedistribution.Journalo…
 - [[econ-entry-thresholds-bresnahan-reiss|ブレスナハン＝ライス参入閾値モデル——市場規模と参入企業数から競争の強さを推定する実証手法]] — Bresnahan,T.F.&Reiss,P.C.(1991)."EntryandCompetitioninConcentratedMar…
 - [[econ-fine-is-a-price-gneezy-rustichini|「罰金は価格である」——金銭的インセンティブが内発的・社会的動機を締め出し関係を取引に変える現象]] — Gneezy,U.,&Rustichini,A.(2000)."AFineisaPrice."TheJournalofLegalStudi…

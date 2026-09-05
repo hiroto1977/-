@@ -32,7 +32,7 @@ Andrew DeNatale／Prudence B. Abram／David G. Epstein／Jonathan Landers／Lawr
 
 ## 関連概念
 - [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 語彙が近い
-- [[bizlaw-disgorgement-remedy|吐出し命令——不正利得の剥奪的救済と抑止機能]] — 同分野の近傍
+- [[bizlaw-contract-nonconformity|契約不適合責任（旧・瑕疵担保責任）]] — 同分野の近傍
 - [[bizlaw-insolvency-law-fresh-start-discharge|倒産法と免責制度——新出発主義（フレッシュ・スタート）と債権者保護の均衡]] — 同分野の近傍
 - [[bizlaw-unfair-competition|不正競争防止法]] — 同分野の近傍
 

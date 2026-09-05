@@ -31,9 +31,9 @@ aliases:
 - [infed.org — Bruce W. Tuckman: forming, storming, norming and performing（各段階定義・非線形性）](https://infed.org/dir/welcome/bruce-w-tuckman-forming-storming-norming-and-performing-in-groups/) `リファレンス`
 
 ## 関連概念
-- [[mgmt-tuckman-team-stages|タックマンのチーム発達段階——形成・混乱・規範化・遂行・解散]] — 語彙が近い
 - [[human-legitimate-peripheral-participation|正統的周辺参加と実践共同体]] — 出典を共有
 - [[mgmt-communities-of-practice|実践共同体（コミュニティ・オブ・プラクティス）]] — 出典を共有
+- [[mgmt-tuckman-team-stages|タックマンのチーム発達段階——形成・混乱・規範化・遂行・解散]] — 同分野の近傍
 - [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連

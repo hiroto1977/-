@@ -4459,5 +4459,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 人間科学 | スイスチーズモデル——多層防護に開いた穴が一列に並んだ瞬間に事故が起きるとする、能動的失敗と潜在的条件の事故因果モデル | ジェームズ・リーズン（1990『Human Error』Cambridge University Press ／ 1997『Managing the Risks of Organizational Accidents』Ashgate ／ 2000 BMJ「Human error: models and management」／2006 EUROCONTROL論考でモデルを自己検証） |
 | 商法 | プロCD対ザイデンバーグ事件——包装を開けた・クリックしたことで成立するライセンス契約の拘束力を認めた米連邦控訴審判例 | フランク・イースターブルック（1996 ProCD, Inc. v. Zeidenberg, 86 F.3d 1447 ／ 1997 Hill v. Gateway 2000, Inc., 105 F.3d 1147） ／ マーク・レムリー（2006『Terms of Use』Minnesota Law Review 91巻2号459-483頁） |
 | 情報社会学 | 新しい統治者論——プラットフォームを独自の規則・手続・文化でオンライン言論を統治する私的統治システムとみなす議論 | ケイト・クロニック（2018『The New Governors: The People, Rules, and Processes Governing Online Speech』 ／ 2020『The Facebook Oversight Board: Creating an Independent Institution to Adjudicate Online Free Expression』） ／ ジャック・M・バルキン（2018『Free Speech is a Triangle』・言論の三角形モデル） |
+| 経済学 | ダイアモンドのパラドックス——探索費用がごくわずかでも、均衡価格が独占価格になってしまう逆説 | ピーター・A・ダイアモンド（1971『A Model of Price Adjustment』Journal of Economic Theory ／ 2010年ノーベル経済学賞をモーテンセン・ピサリデスと共同受賞） ／ ジョージ・J・スティグラー（1961『The Economics of Information』Journal of Political Economy——探索理論の起点） |
+| 経済学 | ヴァリアンのセールのモデル——情報客と非情報客の混在が生む価格分散と特売の均衡 | ハル・ヴァリアン（1980『A Model of Sales』American Economic Review 70(4) ／ 1981正誤表 AER 71(3)） ／ スティーブン・サロップ＆ジョセフ・スティグリッツ（1977『Bargains and Ripoffs』先行モデル） |
+| 経営学 | ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み | ウィリアム・ブリッジズ（1980『Transitions: Making Sense of Life's Changes』 ／ 1991『Managing Transitions: Making the Most of Change』 ／ 2001『The Way of Transition』） |
+| 人間科学 | ミニューチンの構造派家族療法——家族を下位システムと境界からなる構造とみなし、絡み合い／遊離した境界を組み替えて問題を解く | サルヴァドール・ミニューチン（1967『Families of the Slums』 ／ 1974『Families and Family Therapy』 ／ 1978『Psychosomatic Families』／1981『Family Therapy Techniques』） |
+| 商法 | ケンフォード対エリー郡事件——新規事業の逸失利益は合理的確実性なき限り投機的として退けられる | ニューヨーク州最上級審（Kenford I: 1986年 67 N.Y.2d 257 ／ Kenford II: 1989年 73 N.Y.2d 312） ／ ロバート・M・ロイド（2010『The Reasonable Certainty Requirement in Lost Profits Litigation』） |
+| 情報社会学 | フリードキン＝ジョンセンの社会的影響ネットワーク理論——初期意見への係留を残す加重平均が持続的な不一致を説明する | ノア・E・フリードキン＆ユージン・C・ジョンセン（1990「Social Influence and Opinions」 ／ 1998フリードキン単著『A Structural Theory of Social Influence』 ／ 2011共著『Social Influence Network Theory: A Sociological Examination of Small Group Dynamics』） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。

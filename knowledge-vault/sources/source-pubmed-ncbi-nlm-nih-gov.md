@@ -2,7 +2,7 @@
 title: "pubmed.ncbi.nlm.nih.gov"
 type: source-domain
 host: "pubmed.ncbi.nlm.nih.gov"
-cite_count: 95
+cite_count: 96
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # pubmed.ncbi.nlm.nih.gov
 
-> [!info] 出典ドメイン索引 ・ 引用 **95 件**（学術 89 ・ リファレンス 5 ・ 公的 1）
+> [!info] 出典ドメイン索引 ・ 引用 **96 件**（学術 89 ・ リファレンス 6 ・ 公的 1）
 
 ## このドメインを出典とする項目
 
@@ -97,6 +97,7 @@ tags:
 - [[infosoc-digital-detox|デジタルデトックス]] — Impactsofdigitalsocialmediadetoxformentalhealth:Asystematicreviewandm…
 - [[infosoc-narrative-transportation|ナラティブ・トランスポーテーション理論（narrative transportation／物語移入）——物語世界に没入した受け手の信念が物語の含意へ傾く説得メカニズム]] — Green,M.C.,&Brock,T.C.(2000).Theroleoftransportationinthepersuasivene…
 - [[infosoc-pluralistic-ignorance|多元的無知（pluralistic ignorance）——皆が内心で否定する規範を、皆が支持していると誤って思い込む状態]] — Prentice,D.A.&Miller,D.T.(1993)PluralisticIgnoranceandAlcoholUseonCam…
+- [[infosoc-social-influence-network-theory-friedkin-johnsen|フリードキン＝ジョンセンの社会的影響ネットワーク理論——初期意見への係留を残す加重平均が持続的な不一致を説明する]] — French,J.R.P.,Jr.(1956).Aformaltheoryofsocialpower.PsychologicalRevie…
 - [[mgmt-collective-efficacy-bandura|集合的効力感理論]] — Stajkovicetal.—Collectiveefficacy,grouppotency,andgroupperformance:me…
 - [[mgmt-core-self-evaluations-judge|中核的自己評価——自尊心・一般的自己効力感・統制の所在・情緒安定性を束ねる高次特性]] — Judge,T.A.,&Bono,J.E.(2001).RelationshipofCoreSelf-EvaluationsTraits—…
 - [[mgmt-creative-self-efficacy|創造的自己効力感]] — Tierney&Farmer(2011)CreativeSelf-EfficacyDevelopmentandCreativePerfor…

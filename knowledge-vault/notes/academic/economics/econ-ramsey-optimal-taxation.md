@@ -40,7 +40,7 @@ aliases:
 - [[econ-ramsey-pricing|ラムゼイ価格（逆弾力性ルール）]] — 同じ思想家
 - [[econ-value-added-tax-theory|付加価値税の理論と最適間接課税]] — 同じ思想家
 - [[econ-diamond-mirrlees|ダイヤモンド＝マーリーズの生産効率定理]] — 同じ思想家
-- [[econ-burdett-mortensen-wage-dispersion|バーデット＝モーテンセン・モデル——同一労働者でも賃金が分散する均衡]] — 同じ思想家
+- [[econ-overlapping-generations-samuelson|世代重複モデル——有限の生涯を生きる世代が共存する動学的一般均衡]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

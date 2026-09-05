@@ -33,6 +33,7 @@ W・D・ハミルトン（William D. Hamilton, 1964年の論文で包括適応�
 
 ## 関連概念
 - [[human-hostile-attribution-bias|敵意的帰属バイアス]] — 同分野の近傍
+- [[human-reciprocal-altruism|互恵的利他主義]] — 同分野の近傍
 - [[human-prosocial-behavior|向社会的行動：利他性・協力・共感に基づく自発的他者支援行動]] — 同分野の近傍
 
 ## 関連

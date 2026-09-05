@@ -2,7 +2,7 @@
 title: "econometricsociety.org"
 type: source-domain
 host: "econometricsociety.org"
-cite_count: 23
+cite_count: 24
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # econometricsociety.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **23 件**（学術 23）
+> [!info] 出典ドメイン索引 ・ 引用 **24 件**（学術 24）
 
 ## このドメインを出典とする項目
 
@@ -21,6 +21,7 @@ tags:
 - [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]] — Johansen,S.(1991).EstimationandHypothesisTestingofCointegrationVector…
 - [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — TheEconometricSociety—Fisher(1933),"TheDebt-DeflationTheoryofGreatDep…
 - [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — Fisher,"TheDebt-DeflationTheoryofGreatDepressions,"Econometrica1(4),1…
+- [[econ-diamond-paradox-search-costs-monopoly-price|ダイアモンドのパラドックス——探索費用がごくわずかでも、均衡価格が独占価格になってしまう逆説]] — Burdett,K.,&Judd,K.L.(1983).EquilibriumPriceDispersion.Econometrica,5…
 - [[econ-edgeworth-price-cycles-maskin-tirole|エッジワース価格サイクル——マスキン＝ティロールの動学的価格競争と小売ガソリン価格の鋸歯状変動]] — EricMaskin&JeanTirole(1988)"ATheoryofDynamicOligopoly,II:PriceCompeti…
 - [[econ-entry-thresholds-bresnahan-reiss|ブレスナハン＝ライス参入閾値モデル——市場規模と参入企業数から競争の強さを推定する実証手法]] — Berry,S.T.(1992)."EstimationofaModelofEntryintheAirlineIndustry."Econ…
 - [[econ-folk-theorem|フォーク定理（繰り返しゲーム）]] — Fudenberg&Maskin,“TheFolkTheoreminRepeatedGameswithDiscountingorwithI…

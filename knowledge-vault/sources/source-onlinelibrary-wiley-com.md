@@ -2,7 +2,7 @@
 title: "onlinelibrary.wiley.com"
 type: source-domain
 host: "onlinelibrary.wiley.com"
-cite_count: 104
+cite_count: 106
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # onlinelibrary.wiley.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **104 件**（学術 89 ・ リファレンス 15）
+> [!info] 出典ドメイン索引 ・ 引用 **106 件**（学術 91 ・ リファレンス 15）
 
 ## このドメインを出典とする項目
 
@@ -41,6 +41,8 @@ tags:
 - [[human-minimal-group-paradigm|最小条件集団パラダイム]] — Tajfeletal.(1971)Socialcategorizationandintergroupbehaviour—EuropeanJ…
 - [[human-selective-optimization-with-compensation-baltes|選択・最適化・補償（SOC）モデル——資源が減る中で目標を絞り、手段を磨き、失った機能を補って発達を続けるバルテスの生涯発達論]] — Moghimi,D.,Zacher,H.,Scheibe,S.&VanYperen,N.W.(2017)TheSelection,Opti…
 - [[human-stress-coping|ストレスとコーピング（ラザルス）]] — Wiley—LazarusandFolkman’sPsychologicalStressandCopingTheory（TheHandbo…
+- [[human-structural-family-therapy-minuchin|ミニューチンの構造派家族療法——家族を下位システムと境界からなる構造とみなし、絡み合い／遊離した境界を組み替えて問題を解く]] — Carr,A.(2019).Familytherapyandsystemicinterventionsforchild-focusedpr…
+- [[human-structural-family-therapy-minuchin|ミニューチンの構造派家族療法——家族を下位システムと境界からなる構造とみなし、絡み合い／遊離した境界を組み替えて問題を解く]] — Hare-Mustin,R.T.(1978).AFeministApproachtoFamilyTherapy.FamilyProcess…
 - [[human-synaptic-pruning|シナプスの刈り込み（synaptic pruning／シナプス・プルーニング）——脳が過剰なシナプスを除去し神経回路を最適化する発達過程]] — Huttenlocher,P.R.&Dabholkar,A.S.(1997)Regionaldifferencesinsynaptogen…
 - [[human-unimodel-persuasion-kruglanski-thompson|ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論]] — Kruglanski,A.W.,Pierro,A.,Manetti,L.,Erb,H.P.&Spiegel,S.(2006)Persuas…
 - [[infosoc-attribute-agenda-setting|第二レベルの議題設定（属性アジェンダ設定）]] — McCombs,López-Escobar&Llamas,"SettingtheAgendaofAttributesinthe1996Sp…

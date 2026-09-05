@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 615
+entry_count: 616
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（615件）
+# 学習パス — 学術概念／情報社会学（616件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -82,6 +82,7 @@ tags:
 - 1955年: [[infosoc-semantic-web|セマンティック・ウェブ]]
 - 1956年: [[infosoc-parasocial|パラソーシャル関係]]
 - 1956年: [[infosoc-self-presentation|自己呈示とドラマトゥルギー（ゴッフマン）]]
+- 1956年: [[infosoc-social-influence-network-theory-friedkin-johnsen|フリードキン＝ジョンセンの社会的影響ネットワーク理論——初期意見への係留を残す加重平均が持続的な不一致を説明する]]
 - 1959年: [[infosoc-connectivism|コネクティビズム]]
 - 1959年: [[infosoc-dramaturgy|ドラマトゥルギー（演劇論的アプローチ）]]
 - 1962年: [[infosoc-diffusion-of-innovations|イノベーションの普及理論（ロジャーズ）]]

@@ -2,7 +2,7 @@
 title: "tandfonline.com"
 type: source-domain
 host: "tandfonline.com"
-cite_count: 48
+cite_count: 49
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # tandfonline.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **48 件**（学術 48）
+> [!info] 出典ドメイン索引 ・ 引用 **49 件**（学術 49）
 
 ## このドメインを出典とする項目
 
@@ -51,6 +51,7 @@ tags:
 - [[infosoc-parasocial|パラソーシャル関係]] — Taylor&Francis(Intl.JournalofAdolescenceandYouth)—Parasocialrelations…
 - [[infosoc-proteus-effect|プロテウス効果——アバターの外見が利用者自身の行動を変える]] — Ratan,Beyea,Li&Graciano(2020)"Avatarcharacteristicsinduceusers'behavi…
 - [[infosoc-slow-journalism|スロー・ジャーナリズム]] — LeMasurier,M.(2015)"WhatisSlowJournalism?"JournalismPractice9(2)（Tayl…
+- [[infosoc-social-influence-network-theory-friedkin-johnsen|フリードキン＝ジョンセンの社会的影響ネットワーク理論——初期意見への係留を残す加重平均が持続的な不一致を説明する]] — Friedkin,N.E.,&Johnsen,E.C.(1990).Socialinfluenceandopinions.TheJourn…
 - [[infosoc-spiral-of-silence-digital|デジタル時代の沈黙の螺旋]] — Matthesetal.,"ACross-NationalStudyoftheSpiralofSilence,"PoliticalComm…
 - [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — Barbrook&Cameron(1996)TheCalifornianIdeology,ScienceasCulture6(1):44-…
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — Chen&Miller(2012)CompetitiveDynamics:Themes,Trends—AcademyofManagemen…

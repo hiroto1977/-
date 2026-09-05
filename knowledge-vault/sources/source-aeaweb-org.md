@@ -2,7 +2,7 @@
 title: "aeaweb.org"
 type: source-domain
 host: "aeaweb.org"
-cite_count: 41
+cite_count: 42
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # aeaweb.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **41 件**（学術 41）
+> [!info] 出典ドメイン索引 ・ 引用 **42 件**（学術 42）
 
 ## このドメインを出典とする項目
 
@@ -50,6 +50,7 @@ tags:
 - [[econ-task-based-automation-acemoglu-restrepo|アセモグル＝レストレポのタスクベース自動化モデル——置換効果・生産性効果・復元効果の綱引き]] — Acemoglu,D.andRestrepo,P.(2019).AutomationandNewTasks:HowTechnologyDi…
 - [[econ-technological-unemployment|技術的失業]] — Autor,D.H.(2015)"WhyAreThereStillSoManyJobs?TheHistoryandFutureofWork…
 - [[econ-value-added-tax-theory|付加価値税の理論と最適間接課税]] — Diamond&Mirrlees(1971)OptimalTaxationandPublicProduction—AmericanEcon…
+- [[econ-varian-model-of-sales-informed-uninformed-consumers|ヴァリアンのセールのモデル——情報客と非情報客の混在が生む価格分散と特売の均衡]] — Baye,M.R.&Morgan,J.（2001）『InformationGatekeepersontheInternetandtheCo…
 - [[econ-wage-curve|賃金カーブ（ブランチフラワー＝オズワルド則）]] — Blanchflower&Oswald(1995)—AnIntroductiontotheWageCurve,JEP
 - [[human-cognitive-reflection-test|認知反映テスト（CRT）]] — Frederick(2005)"CognitiveReflectionandDecisionMaking,"JournalofEconom…
 - [[human-endowment-effect|保有効果（授かり効果）]] — Kahneman,Knetsch&Thaler(1991),"Anomalies:TheEndowmentEffect,LossAvers…

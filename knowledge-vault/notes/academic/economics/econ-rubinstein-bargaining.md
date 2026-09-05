@@ -40,7 +40,7 @@ aliases:
 - [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 出典を共有
 - [[econ-balanced-budget-multiplier|均衡予算乗数]] — 出典を共有
 - [[econ-blp-demand-estimation-berry-levinsohn-pakes|BLP法（ランダム係数ロジット需要推定）——IIA制約と価格の内生性を解消し差別化財市場の需要を推定する構造推定法]] — 出典を共有
-- [[econ-entry-thresholds-bresnahan-reiss|ブレスナハン＝ライス参入閾値モデル——市場規模と参入企業数から競争の強さを推定する実証手法]] — 出典を共有
+- [[econ-diamond-paradox-search-costs-monopoly-price|ダイアモンドのパラドックス——探索費用がごくわずかでも、均衡価格が独占価格になってしまう逆説]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

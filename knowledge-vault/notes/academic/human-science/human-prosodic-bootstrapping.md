@@ -31,6 +31,8 @@ aliases:
 - [Christophe et al. (1997) Reflections on Phonological Bootstrapping — Language & Cognitive Processes](https://www.researchgate.net/publication/239653441_Reflections_on_Phonological_Bootstrapping_Its_Role_for_Lexical_and_Syntactic_Acquisition) `学術`
 
 ## 関連概念
+- [[econ-diamond-paradox-search-costs-monopoly-price|ダイアモンドのパラドックス——探索費用がごくわずかでも、均衡価格が独占価格になってしまう逆説]] — 同じ思想家
+- [[econ-varian-model-of-sales-informed-uninformed-consumers|ヴァリアンのセールのモデル——情報客と非情報客の混在が生む価格分散と特売の均衡]] — 同じ思想家
 - [[human-affordance-theory|アフォーダンス理論]] — 出典を共有
 - [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 出典を共有
 - [[infosoc-cnn-effect|CNN効果——リアルタイム報道が外交を動かすのか]] — 出典を共有
@@ -39,8 +41,6 @@ aliases:
 - [[infosoc-digital-labor-theory|デジタル労働理論]] — 出典を共有
 - [[infosoc-digital-labour|デジタル労働（digital labour）]] — 出典を共有
 - [[infosoc-polymedia|ポリメディア（Polymedia）]] — 出典を共有
-- [[mgmt-growth-mindset|成長マインドセット（Growth Mindset）]] — 出典を共有
-- [[mgmt-smed|シングル段取り（SMED：Single-Minute Exchange of Die）——段取り替え時間を一桁分に縮める手法]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

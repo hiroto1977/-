@@ -38,7 +38,7 @@ aliases:
 - [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同じ思想家
 - [[econ-focal-point|フォーカルポイント（シェリングの焦点）]] — 同じ思想家
 - [[econ-revealed-preference-samuelson|顕示選好理論——観察された選択行動から選好を推論する]] — 同分野の近傍
-- [[econ-double-auction|連続ダブルオークション]] — 同分野の近傍
+- [[econ-anticommons|アンチコモンズの悲劇]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -50675,5 +50675,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=LEGISSUM%3A4625430', type: 'government', label: 'Regulation (EU) 2022/2065 of the European Parliament and of the Council of 19 October 2022 (Digital Services Act), Official Journal of the EU L 277, 27.10.2022 — 透明性報告と苦情処理をプラットフォームに義務づける後続の EU 法制' },
     ],
   },
+  {
+    id: 'econ-diamond-paradox-search-costs-monopoly-price',
+    discipline: 'economics',
+    title: 'ダイアモンドのパラドックス——探索費用がごくわずかでも、均衡価格が独占価格になってしまう逆説',
+    statement:
+      'ダイアモンドのパラドックスとは、売り手が何人いても、買い手の探索費用がどれほど小さくても正である限り、唯一の均衡価格が独占価格に一致してしまうという逆説である。ピーター・A・ダイアモンドが1971年の論文『A Model of Price Adjustment』（Journal of Economic Theory）で示した。買い手が費用を払い逐次探索すると仮定すれば、全店同一価格を予想する限り価格をわずかに超える見積りでも探索を続ける利得がなく、各店は訪問客を独占できるため値上げの誘因が生じ、この論理が全店に働いて独占価格のみが均衡になる。スティグラー（1961）に始まる探索理論の系譜上の結果で、わずかな摩擦一つで多数の売り手がいても競争が消え去る点が「逆説」とされる。後続研究は前提を緩めて分散を回復させた——バーデット＆ジャッド（1983）は探索にノイズがあれば価格分散が均衡となることを示し、スタール（1989）は探索費用ゼロの買い回り客が一定割合いる場合に価格が競争価格と独占価格の間に分散することを示した。広告や反復購買も緩和要因となる。ベイ・モーガン・ショルテン（2006）のサーベイは、探索費用が極小なはずのオンライン市場でも価格分散が根強く残ると報告する。小規模事業者にとっては、価格を明示せず探索を難しくするほど価格決定力を握れるが、価格比較サイトは探索費用を下げてその力を奪う——価格提示は立場次第で武器にも罠にもなる。',
+    keyFigures: 'ピーター・A・ダイアモンド（1971『A Model of Price Adjustment』Journal of Economic Theory／2010年ノーベル経済学賞をモーテンセン・ピサリデスと共同受賞）／ジョージ・J・スティグラー（1961『The Economics of Information』Journal of Political Economy——探索理論の起点）／ケネス・バーデット＆ケネス・L・ジャッド（1983『Equilibrium Price Dispersion』Econometrica——ノイズのある探索による価格分散の回復）／デール・O・スタール（1989『Oligopolistic Pricing with Sequential Consumer Search』American Economic Review——ゼロ探索費用の買い回り客による価格分散）／マイケル・R・ベイ＆ジョン・モーガン＆パトリック・ショルテン（2006『Information, Search, and Price Dispersion』Handbook on Economics and Information Systems所収——オンライン価格分散の実証サーベイ）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0022053171900135', type: 'academic', label: 'Diamond, P. A. (1971). A Model of Price Adjustment. Journal of Economic Theory, 3(2), 156–168. — サーチコストが独占価格を導くことを示した原論文（逐次探索モデルの原典）' },
+      { url: 'https://www.journals.uchicago.edu/doi/10.1086/258464', type: 'academic', label: 'Stigler, G. J. (1961). The Economics of Information. Journal of Political Economy, 69(3), 213–225. DOI: 10.1086/258464 — 消費者探索理論の起点となった論文' },
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1983/07/01/equilibrium-price-dispersion', type: 'academic', label: 'Burdett, K., & Judd, K. L. (1983). Equilibrium Price Dispersion. Econometrica, 51(4), 955–969. — ノイズのある探索が価格分散を均衡として回復させることを示した論文' },
+      { url: 'https://www.jstor.org/stable/1827927', type: 'academic', label: 'Stahl, D. O. (1989). Oligopolistic Pricing with Sequential Consumer Search. American Economic Review, 79(4), 700–712. — ゼロ探索費用の買い回り客の存在が競争価格と独占価格の間の価格分散を生むことを示した論文' },
+      { url: 'https://faculty.haas.berkeley.edu/rjmorgan/Information%20Search%20and%20Price%20Dispersion.pdf', type: 'academic', label: 'Baye, M. R., Morgan, J., & Scholten, P. (2006). Information, Search, and Price Dispersion. In T. Hendershott (Ed.), Handbook on Economics and Information Systems, Elsevier. — オンライン市場における価格分散の実証研究を統合したサーベイ論文' },
+    ],
+  },
+  {
+    id: 'econ-varian-model-of-sales-informed-uninformed-consumers',
+    discipline: 'economics',
+    title: 'ヴァリアンのセールのモデル——情報客と非情報客の混在が生む価格分散と特売の均衡',
+    statement:
+      'ヴァリアンのセールのモデルは、ハル・ヴァリアンが『A Model of Sales』（1980、American Economic Review 70巻4号651-659頁、1981年に正誤表）で提示した価格分散の理論である。同一の固定費で同質の商品を売る店が並ぶ市場に、全店の価格を比較して最安値で買う「情報を持つ客」と、店を無作為に一軒選ぶ「情報を持たない客」が混在すると仮定すると、全店が同一価格を付ける純粋戦略の均衡は存在しない——少し下げれば情報客を独占でき、少し上げれば情報を持たない常連から超過利潤を取れるためである。均衡は各店が価格区間上で確率的に価格を選ぶ混合戦略となり、同質な商品でも価格が分散し、「特売」自体が均衡として繰り返し現れ、情報客が多いほど均衡価格は競争的になる。先行するサロップとスティグリッツの研究（1977）、後続のナラシマンによる得意客と乗り換え客の区別（1988）、ベイとモーガンによる価格比較サイト分析（2001）が理論を発展させ、ラックはイスラエルの小売データで店舗が価格分布内を移動する実証（2002）を示した。静学的・情報外生という限界に加え、ロイヤルティやスイッチングコストによる別説明も批判される。中小事業者への含意は、一時的な特売で価格感度の高い情報客を取り込み常連客からは通常価格で利幅を守り、比較サイトの普及が情報客比率を左右する点を踏まえ、読まれやすい定期セールの日程は避けることである。',
+    keyFigures: 'ハル・ヴァリアン（1980『A Model of Sales』American Economic Review 70(4)／1981正誤表 AER 71(3)）／スティーブン・サロップ＆ジョセフ・スティグリッツ（1977『Bargains and Ripoffs』先行モデル）／チャクラヴァルティ・ナラシマン（1988『Competitive Promotional Strategies』得意客と乗り換え客の区別）／マイケル・ベイ＆ジョン・モーガン（2001『Information Gatekeepers on the Internet』価格比較サイト）／ソール・ラック（2002 イスラエル小売データの実証）／対比: ピーター・ダイアモンド（探索コストモデルは独占価格に収束）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://econpapers.repec.org/RePEc:aea:aecrev:v:70:y:1980:i:4:p:651-59', type: 'academic', label: 'Varian, H. R.（1980）『A Model of Sales』American Economic Review, 70(4), pp.651-659（1981年 AER 71(3) p.517に正誤表）— 概念の原典。情報客と非情報客の混在下での混合戦略価格分散モデルを提示' },
+      { url: 'https://academic.oup.com/restud/article-abstract/44/3/493/1546143', type: 'academic', label: 'Salop, S. & Stiglitz, J.（1977）『Bargains and Ripoffs: A Model of Monopolistically Competitive Price Dispersion』Review of Economic Studies, 44(3), pp.493-510 — ヴァリアンのモデルの先行研究、探索コスト下での価格分散モデル' },
+      { url: 'https://econpapers.repec.org/RePEc:ucp:jnlbus:v:61:y:1988:i:4:p:427-49', type: 'academic', label: 'Narasimhan, C.（1988）『Competitive Promotional Strategies』Journal of Business, 61(4), pp.427-449 — 得意客と乗り換え客を区別し販促プロモーションの均衡戦略へ拡張' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2Faer.91.3.454', type: 'academic', label: 'Baye, M. R. & Morgan, J.（2001）『Information Gatekeepers on the Internet and the Competitiveness of Homogeneous Product Markets』American Economic Review, 91(3), pp.454-474 — 価格比較サイトを情報客の代理とみなし均衡での価格分散を分析' },
+      { url: 'https://ideas.repec.org/a/tpr/restat/v84y2002i3p433-444.html', type: 'academic', label: 'Lach, S.（2002）『Existence and Persistence of Price Dispersion: An Empirical Analysis』Review of Economics and Statistics, 84(3), pp.433-444 — イスラエル小売データで店舗が価格分布内を移動する実証、混合戦略の予測と整合' },
+    ],
+  },
+  {
+    id: 'mgmt-bridges-transition-model-ending-neutral-zone-beginning',
+    discipline: 'management',
+    title: 'ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み',
+    statement:
+      'ブリッジズのトランジション・モデルは、ウィリアム・ブリッジズが『Transitions: Making Sense of Life\'s Changes』（1980、Addison-Wesley）で提示し、『Managing Transitions』（1991年、Addison-Wesley。スーザン・ブリッジズとの共著第4版は2016年刊）で組織向けに発展させた枠組みである。外部で起こる状況の切り替わり「チェンジ」と、それを内面で受け止め順応する緩やかな心理過程「トランジション」を区別し、後者は「終わり・失うこと・手放すこと」、「ニュートラルゾーン」（混乱と創造が同時に生じる中間段階）、「新たな始まり」（目的・見通し・計画・役割の4Pが示され活力を得る段階）の3段階を経るとされる。組織の実行手順が主眼のレヴィンの解凍・変化・再凍結モデルやコッターの8段階モデルと対照的に心理面を扱い、感情の推移を描くキューブラー・ロスの5段階モデルとは特定の感情を固定しない点で異なる。実務家発の枠組みで査読付き実証研究は乏しいが、看護異動教育（Gill & Shanta、2020）や児童養護施設退所支援（Nesmith、2025）などの適用研究が近年蓄積し、3段階を直線的順序でなく個人差や往還を伴う過程とみなす修正が推奨される。中小企業では事業承継やシステム移行の際、何が終わるかを明示して痛みを認め、混乱期を許容しつつ新体制の目的・見通し・計画・役割を早期に伝えることが離職防止に資する。',
+    keyFigures: 'ウィリアム・ブリッジズ（1980『Transitions: Making Sense of Life\'s Changes』／1991『Managing Transitions: Making the Most of Change』／2001『The Way of Transition』）／スーザン・ブリッジズ（2016年、Managing Transitions第4版共著）／対比: クルト・レヴィン（解凍・変化・再凍結モデル）／ジョン・コッター（変革の8段階モデル）／エリザベス・キューブラー・ロス（死の受容5段階モデル、1969）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://doi.org/10.1016/j.jradnu.2019.10.005', type: 'academic', label: 'Gill, A. & Shanta, L. (2020) "Application of Transition Theory for Orientation of Experienced Nurses to Radiology and Imaging Nursing," Journal of Radiology Nursing, 39(2), pp.106-113 — 看護分野（放射線科への異動オリエンテーション）へのモデル適用を示す学術研究' },
+      { url: 'https://www.mdpi.com/2227-9067/12/1/22', type: 'academic', label: 'Nesmith, A. A. (2025) "Managing Major Life Changes: An Exploratory Study Using the Bridges Transitions Framework to Help Foster Youth Prepare for Discharge," Children, 12(1), 22 — 福祉分野への適用例と実証研究の蓄積・限界を示す学術研究' },
+      { url: 'https://en.wikipedia.org/wiki/William_Bridges_(author)', type: 'reference', label: 'Wikipedia "William Bridges (author)" — ブリッジズの生没年・経歴および3段階モデルの概要を確認' },
+      { url: 'https://wmbridges.com/about/what-is-transition/', type: 'reference', label: 'William Bridges Associates "Bridges Transition Model" (wmbridges.com) — チェンジとトランジションの区別および3段階の公式名称・定義を確認' },
+      { url: 'https://search.worldcat.org/title/Managing-transitions-:-making-the-most-of-change/oclc/23386366', type: 'reference', label: 'WorldCat書誌レコード "Managing transitions: making the most of change" (Addison-Wesley, Reading Mass., 1991, OCLC 23386366) — 原著初版（1991年）の出版年・版元を確認' },
+    ],
+  },
+  {
+    id: 'human-structural-family-therapy-minuchin',
+    discipline: 'human-science',
+    title: 'ミニューチンの構造派家族療法——家族を下位システムと境界からなる構造とみなし、絡み合い／遊離した境界を組み替えて問題を解く',
+    statement:
+      '構造派家族療法は、サルヴァドール・ミニューチンが『Families of the Slums』（1967）を経て『Families and Family Therapy』（1974）で体系化した家族療法である。家族を夫婦・親・同胞の下位システムが境界で仕切られた構造とみなし、境界を絡み合い（enmeshed）から遊離（disengaged）までの連続体として捉え、親が子に優越する階層の再構築を目指す。夫婦間の緊張を子に転嫁する迂回連合（detouring）が症状を維持するとし、ロスマンらとの『Psychosomatic Families』（1978）は摂食障害の家族に絡み合い・過保護・硬直・葛藤回避・患者の三角関係化という共通パターンを見出した。加わり・実演・境界設定・不均衡化・再定義という技法は『Family Therapy Techniques』（1981、フィッシュマンと共著）にまとめられ、日本では山根常男監訳『家族と家族療法』（誠信書房、1984）が紹介した。ヘア＝マスティン（1978）は「健全な階層」規範が父権的な性別役割や特定文化像を前提すると批判し、カー（2019）のレビューは青年期の問題行動や摂食障害への家族療法の効果を支持するが、個々の研究は試験数の少なさを課題とする。同族中小企業では、家族と経営という下位システムの境界を明確にし、家族内対立に従業員を巻き込む迂回連合を避け、承継期の執行上の階層を曖昧にしないことが実務上の含意となる。',
+    keyFigures: 'サルヴァドール・ミニューチン（1967『Families of the Slums』／1974『Families and Family Therapy』／1978『Psychosomatic Families』／1981『Family Therapy Techniques』）／レイチェル・ヘア＝マスティン（1978年のFamily Process論文でフェミニスト視点から批判）／アラン・カー（2019年のJournal of Family Therapyレビューで効果を検証）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.hup.harvard.edu/books/9780674292369', type: 'academic', label: 'Minuchin, S. (1974). Families and Family Therapy. Cambridge, MA: Harvard University Press. — 家族構造・下位システム・境界・階層を体系化した主著' },
+      { url: 'https://www.degruyterbrill.com/document/doi/10.4159/harvard.9780674418233/html', type: 'academic', label: 'Minuchin, S., Rosman, B. L., & Baker, L. (1978). Psychosomatic Families: Anorexia Nervosa in Context. Cambridge, MA: Harvard University Press. — 「心身症家族」パターン（絡み合い・過保護・硬直・葛藤回避・患者の三角関係化）の出典' },
+      { url: 'https://www.hup.harvard.edu/books/9780674294103', type: 'academic', label: 'Minuchin, S., & Fishman, H. C. (1981). Family Therapy Techniques. Cambridge, MA: Harvard University Press. — 再構造化の技法（加わり・実演・境界設定・不均衡化・再定義）の出典' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1545-5300.1978.00181.x', type: 'academic', label: 'Hare-Mustin, R. T. (1978). A Feminist Approach to Family Therapy. Family Process, 17(2), 181-194. — 家族療法の階層観と性別役割の前提へのフェミニスト批判' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/1467-6427.12226', type: 'academic', label: 'Carr, A. (2019). Family therapy and systemic interventions for child-focused problems: the current evidence base. Journal of Family Therapy, 41(2), 153-213. — 子ども・青年の問題に対する家族療法・システム論的介入のエビデンスのレビュー' },
+    ],
+  },
+  {
+    id: 'bizlaw-kenford-v-erie-lost-profits-reasonable-certainty',
+    discipline: 'business-law',
+    title: 'ケンフォード対エリー郡事件——新規事業の逸失利益は合理的確実性なき限り投機的として退けられる',
+    statement:
+      'ケンフォード対エリー郡事件は、契約違反の逸失利益賠償に「合理的確実性」を要求する代表判例である。ニューヨーク州最上級審（Court of Appeals）は1986年、Kenford Co. v. County of Erie（67 N.Y.2d 257）で、1969年契約のバッファロー近郊ドーム球場建設が予算超過で郡に解除された事案を審理し、陪審が認めた運営会社DSIの逸失利益2560万ドルの賠償を否定した。要件は①損害が違反により生じ、②合理的確実性で証明され、③契約時の当事者の予見内にあることで、新規事業の長期利益予測は投機的とされた。続く1989年のKenford II（73 N.Y.2d 312）も、Kenford社が主張した周辺地地価上昇の喪失を、郡がその責任を契約時に想定した証拠なしとして退けた。予見内要件は1854年Hadley v. Baxendale判決に遡る。新規事業の利益を一律排除した旧「新規事業の法理」は証拠法則へ緩和され、ニューヨーク州でもAshland Management Inc. v. Janien（82 N.Y.2d 395、1993年）が契約書の算定式による立証を認めた。ロバート・M・ロイド（2010）は運用の不統一を批判し、ヴィクター・P・ゴールドバーグ（2016）は投資実績なき原告への否定を資本の機会コストの観点から論じる。中小事業者は新規事業の契約時に違約金・解除料条項を交渉し、事業計画を文書化しておくべきである。',
+    keyFigures: 'ニューヨーク州最上級審（Kenford I: 1986年 67 N.Y.2d 257／Kenford II: 1989年 73 N.Y.2d 312）／ロバート・M・ロイド（2010『The Reasonable Certainty Requirement in Lost Profits Litigation』）／ヴィクター・P・ゴールドバーグ（2016『The New Business Rule and Compensation for Lost Profits』）／対比: Ashland Management Inc. v. Janien事件（1993、合理的確実性を満たす新規事業の逸失利益を認容）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.casemine.com/judgement/us/59148d8cadd7b04934544fee', type: 'government', label: 'Kenford Co., Inc. v. County of Erie, 67 N.Y.2d 257, 493 N.E.2d 234, 502 N.Y.S.2d 131 (N.Y. 1986) — 合理的確実性の三要件を確立し、未建設ドーム球場の 20 年運営に係る DSI の逸失利益 2,560 万ドルを否定（Kenford I）' },
+      { url: 'https://www.casemine.com/judgement/us/59148af1add7b0493451a28d', type: 'government', label: 'Kenford Co. v. County of Erie, 73 N.Y.2d 312, 537 N.E.2d 176, 540 N.Y.S.2d 1 (N.Y. 1989) — 周辺地の地価上昇の喪失は契約時の当事者の予見外として否定（Kenford II）' },
+      { url: 'https://law.justia.com/cases/new-york/court-of-appeals/1993/82-n-y-2d-395-0.html', type: 'government', label: 'Ashland Management Incorporated v. C. Christopher Janien, 82 N.Y.2d 395 (N.Y. 1993) — 契約が定める利益算定式により合理的確実性で算定できる新規事業の逸失利益を認容した、現代的な緩和の例' },
+      { url: 'https://ir.law.utk.edu/transactions/vol12/iss1/2/', type: 'academic', label: 'Robert M. Lloyd, "The Reasonable Certainty Requirement in Lost Profits Litigation: What It Really Means," Transactions: The Tennessee Journal of Business Law, 12(1) (2010) — 裁判所の「合理的確実性」の運用が不統一だという批判' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2817600', type: 'academic', label: 'Victor P. Goldberg, "The New Business Rule and Compensation for Lost Profits," Columbia Law & Economics Working Paper No. 544 (2016) — 資本の機会コストの観点からの新規事業の法理の経済学的批判' },
+    ],
+  },
+  {
+    id: 'infosoc-social-influence-network-theory-friedkin-johnsen',
+    discipline: 'information-sociology',
+    title: 'フリードキン＝ジョンセンの社会的影響ネットワーク理論——初期意見への係留を残す加重平均が持続的な不一致を説明する',
+    statement:
+      'フリードキンとジョンセンが1990年の論文「Social Influence and Opinions」（The Journal of Mathematical Sociology 15(3-4), 193-205）で提示し、1998年のフリードキン単著、2011年の両者共著（いずれもCambridge University Press）で体系化した社会的影響ネットワーク理論の数理モデルである。意見ベクトルy(t)を影響網Wで加重平均しつつ感受性行列A（対角要素a_ii）で初期意見y(1)への係留を y(t+1)=AWy(t)+(I−A)y(1) として残し、1−a_iiが頑固さを表す。Aが単位行列ならデグルート（1974）の反復平均に帰着し強連結網で合意に収束するが、係留項ゆえ強連結網でも持続的不一致・分極が生じ、フレンチ（1956）の社会的権力論を継承・拡張する。三人組・四人組の小集団実験で討議前後の意見と相互影響の自己報告を測り、集団が全員一致でなく「落着した不一致」に至ることを確認する実証研究を伴う。制御理論ではプロスクルニコフ＆テンポ（2017）が整理し、フリードキン自身も共著（2016 Science）で信念系へ拡張、後続研究は表明意見と私的意見を分離する拡張も示すが、線形性・影響重みの測定・網の固定性には批判があり、限定信頼モデルとは別系譜である。中小企業の会議では最初の発言が係留点として固着しやすく、実質的な影響力の担い手を見極め議論順序を設計する意義がある。',
+    keyFigures: 'ノア・E・フリードキン＆ユージン・C・ジョンセン（1990「Social Influence and Opinions」／1998フリードキン単著『A Structural Theory of Social Influence』／2011共著『Social Influence Network Theory: A Sociological Examination of Small Group Dynamics』）／先行: ジョン・R・P・フレンチJr.（1956「A Formal Theory of Social Power」）・モリス・H・デグルート（1974「Reaching a Consensus」）／後続: アントン・V・プロスクルニコフ＆ロベルト・テンポ（2017 制御理論からのレビュー）／対比: 限定信頼モデル（ヘーゲルマン＝クラウゼ／デフュアン）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/0022250X.1990.9990069', type: 'academic', label: 'Friedkin, N. E., & Johnsen, E. C. (1990). Social influence and opinions. The Journal of Mathematical Sociology, 15(3-4), 193-205 — A／W による係留モデルとその式を提示した原典' },
+      { url: 'https://www.cambridge.org/9781107002463', type: 'academic', label: 'Friedkin, N. E., & Johnsen, E. C. (2011). Social Influence Network Theory: A Sociological Examination of Small Group Dynamics. Cambridge University Press — 理論と小集団実験プログラムの体系化' },
+      { url: 'https://www.science.org/doi/10.1126/science.aag2624', type: 'academic', label: 'Friedkin, N. E., Proskurnikov, A. V., Tempo, R., & Parsegov, S. E. (2016). Network science on belief system dynamics under logic constraints. Science, 354(6310), 321-326 — 論理制約を持つ信念系へのフリードキン自身の拡張' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S1367578817300172', type: 'academic', label: 'Proskurnikov, A. V., & Tempo, R. (2017). A tutorial on modeling and analysis of dynamic social networks. Part I. Annual Reviews in Control, 43, 65-79 — 制御理論からの受容とフリードキン＝ジョンセン・モデルの体系的レビュー' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/13323174/', type: 'reference', label: 'French, J. R. P., Jr. (1956). A formal theory of social power. Psychological Review, 63(3), 181-194 — 理論が継承する対人影響・社会的権力の先行定式化' },
+    ],
+  },
 ];
 // Stryker restore all

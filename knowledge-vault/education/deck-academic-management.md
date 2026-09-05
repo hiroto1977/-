@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経営学"
 type: flashcard-deck
 deck_key: "academic-management"
-card_count: 663
+card_count: 664
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経営学（663枚）
+# フラッシュカード — 学術概念／経営学（664枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -160,6 +160,8 @@ tags:
   - **A:** アントレプレナーシップのブリコラージュ（entrepreneurial bricolage）は、ベーカーとネルソンが2005年に提唱した概念であり、レヴィ＝ストロースの人類学的ブリコラージュ概念を起業プロセスに適用した理論枠組みである。ブリコラージュとは「手元にある資源を用いて即興的に新しい目的のために再結合する」行為を指し、資源制約に直面した起業家が、既存の資源を新しい方法で組み合わせることで機会を創造するプロセスを説明する。（→ [[mgmt-bricolage-entrepreneurship-baker]]）
 - **Q:** 組織的ブリコラージュ（ベイカー）
   - **A:** 組織的ブリコラージュ（organizational bricolage）は、ベイカー＆ネルソン（2005）がレヴィ＝ストロースの人類学的概念を企業家論に応用した概念であり、「手元にある資源の組み合わせ（making do with what's at hand）」によって新たな問題解決やイノベーションを創出する資源活用行動を指す。（→ [[mgmt-bricolage-organizational-baker]]）
+- **Q:** ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み
+  - **A:** ブリッジズのトランジション・モデルは、ウィリアム・ブリッジズが『Transitions: Making Sense of Life's Changes』（1980、Addison-Wesley）で提示し、『Managing Transitions』（1991年、Addison-Wesley。スーザン・ブリッジズとの共著第4版は2016年刊）で組織向けに発展させた枠組みである。（→ [[mgmt-bridges-transition-model-ending-neutral-zone-beginning]]）
 - **Q:** 拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム
   - **A:** バーバラ・フレドリクソンが提唱した拡張形成理論（broaden-and-build theory）は、ポジティブ感情がネガティブ感情とは質的に異なる適応的機能を持つことを体系化した理論である。喜び・興味・感謝・愛情などのポジティブ感情は、瞬間的に個人の思考と行動のレパートリーを「拡張（broaden）」し、探索・創造・遊びといった幅広い認知・行動パターンを促進する。（→ [[mgmt-broaden-and-build-theory]]）
 - **Q:** 官僚制（ウェーバー）

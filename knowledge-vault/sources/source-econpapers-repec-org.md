@@ -2,7 +2,7 @@
 title: "econpapers.repec.org"
 type: source-domain
 host: "econpapers.repec.org"
-cite_count: 18
+cite_count: 20
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # econpapers.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **18 件**（学術 17 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **20 件**（学術 19 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -28,6 +28,8 @@ tags:
 - [[econ-schumpeterian-growth-aghion-howitt|アギオン＝ハウイットのシュンペーター型内生成長モデル——創造的破壊による成長]] — Jones,C.I.(1995)."R&D-BasedModelsofEconomicGrowth."JournalofPolitical…
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — EconPapers—ANoteonWelfarePropositions(1941)
 - [[econ-trilemma-financial-regulation|金融規制のトリレンマ]] — EconPapers/RePEc—"Thefinancialtrilemma,"EconomicsLettersv.111y.2011i.…
+- [[econ-varian-model-of-sales-informed-uninformed-consumers|ヴァリアンのセールのモデル——情報客と非情報客の混在が生む価格分散と特売の均衡]] — Narasimhan,C.（1988）『CompetitivePromotionalStrategies』JournalofBusines…
+- [[econ-varian-model-of-sales-informed-uninformed-consumers|ヴァリアンのセールのモデル——情報客と非情報客の混在が生む価格分散と特売の均衡]] — Varian,H.R.（1980）『AModelofSales』AmericanEconomicReview,70(4),pp.651-6…
 - [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — Kahneman,D.&Thaler,R.H.(1991)EconomicAnalysisandthePsychologyofUtilit…
 - [[infosoc-network-externality|ネットワーク外部性]] — Rohlfs(1974)"ATheoryofInterdependentDemandforaCommunicationsService",…
 - [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — Argote&Ingram(2000)“KnowledgeTransfer:ABasisforCompetitiveAdvantagein…

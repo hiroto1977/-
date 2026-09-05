@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2270
+cite_count: 2271
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2270 件**（リファレンス 2270）
+> [!info] 出典ドメイン索引 ・ 引用 **2271 件**（リファレンス 2271）
 
 ## このドメインを出典とする項目
 
@@ -1931,6 +1931,7 @@ tags:
 - [[mgmt-brand-equity|ブランド・エクイティ]] — Wikipedia「Brandequity」—Aakerの資産・負債定義と5要素、一般的定義
 - [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — Wikipedia:Bricolage—creativerecombinationofavailableresourcesoverview
 - [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — Wikipedia:Bricolage—Lévi-Strauss,Baker&Nelson,resourceconstraint,effe…
+- [[mgmt-bridges-transition-model-ending-neutral-zone-beginning|ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み]] — Wikipedia"WilliamBridges(author)"—ブリッジズの生没年・経歴および3段階モデルの概要を確認
 - [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — Wikipedia:Broaden-and-Build—Fredricksonpositiveemotionstheoryoverview
 - [[mgmt-bureaucracy|官僚制（ウェーバー）]] — Rational-legalauthority—Wikipedia（合法的支配と官僚制の特徴）
 - [[mgmt-bureaucratic-phenomenon-crozier|クロジエの官僚制現象——規則の増殖が不確実性支配という権力を生み悪循環を招く]] — MichelCrozier.Wikipedia(English)—confirmsCrozier'sdates(1922-2013)and…

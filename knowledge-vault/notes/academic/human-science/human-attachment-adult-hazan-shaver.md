@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[human-adult-attachment-hazan-shaver|成人愛着スタイルとロマンティック関係の愛着理論（ハザン＝シェイバー）]] — 語彙が近い
+- [[human-attachment-theory-adult|成人愛着理論]] — 同分野の近傍
 - [[human-approach-avoidance-elliot|接近回避動機——望ましいものへの接近と望ましくないものの回避の二系統]] — 同分野の近傍
 - [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]] — 同分野の近傍
 

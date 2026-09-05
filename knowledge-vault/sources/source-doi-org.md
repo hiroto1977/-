@@ -2,7 +2,7 @@
 title: "doi.org"
 type: source-domain
 host: "doi.org"
-cite_count: 2137
+cite_count: 2138
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # doi.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2137 件**（学術 2129 ・ リファレンス 5 ・ 公的 3）
+> [!info] 出典ドメイン索引 ・ 引用 **2138 件**（学術 2130 ・ リファレンス 5 ・ 公的 3）
 
 ## このドメインを出典とする項目
 
@@ -1708,6 +1708,7 @@ tags:
 - [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — Baker,T.&Nelson,R.E.(2005)CreatingSomethingfromNothing:ResourceConstr…
 - [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — Davidsson,P.,Baker,T.&Senyard,J.M.(2017)ATheoryofBricolageforEntrepre…
 - [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — Sarasvathy,S.D.(2001)CausationandEffectuation:TowardaTheoreticalShift…
+- [[mgmt-bridges-transition-model-ending-neutral-zone-beginning|ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み]] — Gill,A.&Shanta,L.(2020)"ApplicationofTransitionTheoryforOrientationof…
 - [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — Fredrickson,B.L.(2001)TheRoleofPositiveEmotionsinPositivePsychology—A…
 - [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — Fredrickson,B.L.(2013)UpdatedThinkingonPositivityRatios—AmericanPsych…
 - [[mgmt-calling-wrzesniewski|コーリング（天職意識）とジョブ・クラフティング（ヴルゼシニェウスキー）]] — Wrzesniewski,A.,McCauley,C.,Rozin,P.&Schwartz,B.(1997)Jobs,Careers,an…

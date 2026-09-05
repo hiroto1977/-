@@ -30,10 +30,10 @@ aliases:
 - [Wikipedia: Chris Argyris — defensive routines, single/double-loop learning, theory-in-use](https://en.wikipedia.org/wiki/Chris_Argyris) `リファレンス`
 
 ## 関連概念
+- [[mgmt-organizational-learning-argyris|組織学習とシングル・ダブルループ学習（アージリス）]] — 語彙が近い
 - [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]] — 同じ思想家
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
 - [[mgmt-learning-organization-senge|学習する組織（センゲ）]] — 同じ思想家
-- [[mgmt-organizational-learning-argyris|組織学習とシングル・ダブルループ学習（アージリス）]] — 同じ思想家
 - [[mgmt-psychological-contract|心理的契約]] — 同じ思想家
 - [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同じ思想家
 - [[mgmt-corporate-culture-schein-artifacts|組織文化論——シャインの三層モデル（人工物・信念・基本的仮定）と文化変革]] — 同じ思想家
