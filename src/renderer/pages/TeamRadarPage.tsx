@@ -5,13 +5,8 @@ import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
 import { buildTeamEmotionRadar, teamEmotionSummary, type MemberEmotion } from '../data/teamEmotionRadar';
 import { buildTeamCare, type CarePriority } from '../data/memberCare';
+import { sanitizeRadarDraft, type RadarDraft, type TeamMember } from '../data/teamRadarDraft';
 
-interface TeamMember {
-  id: string;
-  name: string;
-  scores: number[];
-  notes?: Record<number, string>;
-}
 
 /** snapshot 由来の読み取り専用メンバー (state に入る前の初期値の型)。
  *  state 側は structuredClone で mutable な TeamMember[] にコピーする。 */
@@ -40,19 +35,11 @@ const SCORE_MAX = 5;
  *  リロードしても編集した名前が消えないようにするのが目的。 */
 const DRAFT_KEY = 'servicehub.teamradar.draft.v1';
 
-interface RadarDraft {
-  title?: string;
-  axes?: string[];
-  department?: string;
-  evaluatedAt?: string;
-  members?: TeamMember[];
-}
-
 function loadDraft(): RadarDraft {
   try {
     const raw = localStorage.getItem(DRAFT_KEY);
-    const parsed: unknown = raw ? JSON.parse(raw) : null;
-    return parsed && typeof parsed === 'object' ? (parsed as RadarDraft) : {};
+    // 保存値は型が守らない —— 形の合う欄だけを受ける (members が配列でなければ .map で落ちていた)。
+    return sanitizeRadarDraft(raw ? JSON.parse(raw) : null);
   } catch {
     return {};
   }

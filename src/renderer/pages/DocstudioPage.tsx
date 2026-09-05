@@ -38,6 +38,7 @@ import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceShee
 import { BANK_SUBMISSION_COLLECTION, settingsFromRecord, type BankSubmissionSettings } from '../data/bankSubmission';
 import { buildKessanImport } from '../data/kessanImport';
 import { KESSAN_SHEETS, docIdOfSheet, fieldsForSheet, inheritedNote, isKessanSheet, sheetDef, sheetOfDoc, type KessanSheet } from '../data/kessanSheets';
+import { sanitizeDocstudioStore, type StoreShape, type Values } from '../data/docstudioStore';
 import { buildBusinessPlanImport, buildCashPlanImport, type ImportPreview } from '../data/docImports';
 import { tableStyle, thStyle, tdStyle, tdNum } from '../components/tableStyles';
 import {
@@ -111,26 +112,13 @@ import {
  */
 
 type Collection = 'studio' | 'teikan' | 'shugyo' | 'kessan';
-type Values = Record<string, string>;
-
-interface StoreShape {
-  studio?: Record<string, Values>;
-  teikan?: { kk?: Values; gk?: Values };
-  shugyo?: Values;
-  kessan?: Values;
-  /** 計算書類で選んでいる書面（4点まとめて / 1 点ずつ）。値の入れ物は kessan の 1 つのまま。 */
-  kessanSheet?: KessanSheet;
-  /** 最近使った書式 id（新しい順）。書式が増えたので探す手間を減らす。 */
-  recent?: string[];
-}
-
 const LS_KEY = 'servicehub.docstudio.v1';
 
 function loadStore(): StoreShape {
   try {
     const raw = localStorage.getItem(LS_KEY);
-    const parsed: unknown = raw ? JSON.parse(raw) : null;
-    return parsed && typeof parsed === 'object' ? (parsed as StoreShape) : {};
+    // 保存値は型が守らない —— 形の合う欄だけを受ける (2026-09-05 に 'foo' で画面が落ちた)。
+    return sanitizeDocstudioStore(raw ? JSON.parse(raw) : null);
   } catch {
     return {};
   }

@@ -13,6 +13,7 @@
  * 音声コマンドの能力テーブル) ため、将来のサービス・組織の拡張に自動連動する。
  */
 import { navigateTo } from '../navigate';
+import { arrayOf, chatMessages, isRecord } from '../data/persistedShape';
 import { classifyActionResult } from '../data/actionOutcome';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES } from '../services';
@@ -42,12 +43,19 @@ const CHAT_CONTEXT = {
   capabilities: CAPABILITIES,
 };
 
+/** 保存された要望 1 件の形。text と at が文字列でなければ書き出しで落ちる。 */
+interface FeatureRequest {
+  readonly text: string;
+  readonly at: string;
+}
+const isFeatureRequest = (v: unknown): v is FeatureRequest => isRecord(v) && typeof v.text === 'string' && typeof v.at === 'string';
+
 function loadHistory(): ChatMessage[] {
   try {
     const raw = localStorage.getItem(HISTORY_KEY);
     if (!raw) return [];
-    const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as ChatMessage[]).slice(-HISTORY_MAX) : [];
+    // 保存値は型が守らない —— role / text の形が合う要素だけ (null が 1 つ混じると描画で落ちる)。
+    return chatMessages<ChatMessage>(JSON.parse(raw), ['user', 'bot'], HISTORY_MAX);
   } catch {
     return [];
   }
@@ -64,8 +72,7 @@ function saveHistory(messages: ChatMessage[]): void {
 function recordRequest(text: string): void {
   try {
     const raw = localStorage.getItem(REQUESTS_KEY);
-    const parsed: unknown = raw ? JSON.parse(raw) : [];
-    const list = Array.isArray(parsed) ? (parsed as { text: string; at: string }[]) : [];
+    const list: FeatureRequest[] = arrayOf(raw ? JSON.parse(raw) : [], isFeatureRequest);
     list.push({ text, at: new Date().toISOString() });
     localStorage.setItem(REQUESTS_KEY, JSON.stringify(list));
   } catch {
@@ -75,11 +82,10 @@ function recordRequest(text: string): void {
 
 /** 記録済み要望を Markdown でダウンロードする (オーケストレーション backlog 連携用)。 */
 function downloadRequests(): void {
-  let list: { text: string; at: string }[] = [];
+  let list: FeatureRequest[] = [];
   try {
     const raw = localStorage.getItem(REQUESTS_KEY);
-    const parsed: unknown = raw ? JSON.parse(raw) : [];
-    if (Array.isArray(parsed)) list = parsed as { text: string; at: string }[];
+    list = arrayOf(raw ? JSON.parse(raw) : [], isFeatureRequest);
   } catch {
     list = [];
   }

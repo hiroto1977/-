@@ -7,6 +7,7 @@
  */
 
 import { MAX_ANALYSES, MAX_MOODS, MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
+import { isRecord } from './persistedShape';
 import { localIsoDate } from '../../shared/localDate';
 
 export const EMOTION_KEYS = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust'] as const;
@@ -65,17 +66,46 @@ export const EMOTIONS_STORE_KEY = 'emotions.store';
 // この変数を毎回 false へ戻す。true にしても差が出ない (等価変異)。
 let lastLoadDegraded = false;
 
+/** 保存された気分 1 件の形 (logMood が書く形)。 */
+export function isMoodEntry(v: unknown): v is MoodEntry {
+  return isRecord(v) && typeof v.date === 'string' && typeof v.score === 'number' && Number.isFinite(v.score) && typeof v.note === 'string';
+}
+
+/** 保存された分析 1 件の形 (recordAnalysis が書く形)。 */
+export function isAnalysisEntry(v: unknown): v is AnalysisEntry {
+  return (
+    isRecord(v) &&
+    typeof v.id === 'string' &&
+    typeof v.timestamp === 'number' &&
+    typeof v.excerpt === 'string' &&
+    isRecord(v.scores) &&
+    (v.sentiment === 'positive' || v.sentiment === 'neutral' || v.sentiment === 'negative') &&
+    typeof v.dominant === 'string'
+  );
+}
+
 export function loadStore(): EmotionsStore {
   lastLoadDegraded = false;
   const raw = localStorage.getItem(EMOTIONS_STORE_KEY);
   // 「無い」は degraded ではない —— 消える物が無い。
   if (!raw) return { moods: [], analyses: [] };
   try {
-    const parsed = JSON.parse(raw) as Partial<EmotionsStore>;
-    return {
-      moods: Array.isArray(parsed.moods) ? parsed.moods : [],
-      analyses: Array.isArray(parsed.analyses) ? parsed.analyses : [],
+    const parsed: unknown = JSON.parse(raw);
+    // 保存値は型が守らない。欄が無いのは古い形 (degraded ではない)。欄が在るのに配列でない・
+    // 形の違う要素が混じる = **在るのに読めない** —— 読み出しは残りを返し、書き込みは断る
+    // (上書きすると読めなかった分が消える。`loadStoreForWrite` 参照)。
+    const rec = isRecord(parsed) ? parsed : {};
+    const listOf = <T,>(field: unknown, is: (v: unknown) => v is T): T[] => {
+      if (field === undefined) return [];
+      if (!Array.isArray(field)) {
+        lastLoadDegraded = true;
+        return [];
+      }
+      const kept = field.filter(is);
+      if (kept.length !== field.length) lastLoadDegraded = true;
+      return kept;
     };
+    return { moods: listOf(rec.moods, isMoodEntry), analyses: listOf(rec.analyses, isAnalysisEntry) };
   } catch {
     lastLoadDegraded = true;
     return { moods: [], analyses: [] };

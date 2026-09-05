@@ -14,6 +14,7 @@
  * 画面遷移は `servicehub:navigate` CustomEvent (App.tsx が listen)。
  */
 import { navigateTo } from '../navigate';
+import { chatMessages } from '../data/persistedShape';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES } from '../services';
 import type { ServiceId } from '../../shared/serviceId';
@@ -111,8 +112,8 @@ function loadHistory(): ChatMessage[] {
   try {
     const raw = localStorage.getItem(HISTORY_KEY);
     if (!raw) return [];
-    const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as ChatMessage[]).slice(-HISTORY_MAX) : [];
+    // 保存値は型が守らない —— role / text の形が合う要素だけ (null が 1 つ混じると描画で落ちる)。
+    return chatMessages<ChatMessage>(JSON.parse(raw), ['user', 'assistant'], HISTORY_MAX);
   } catch {
     return [];
   }
