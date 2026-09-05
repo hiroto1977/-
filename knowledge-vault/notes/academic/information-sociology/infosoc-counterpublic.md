@@ -39,6 +39,7 @@ aliases:
 - [[infosoc-recursive-publics-kelty|再帰的公共——自らの存在基盤である技術・法的インフラそのものを作り変える公共]] — 同じ思想家
 - [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — 同分野の近傍
 - [[infosoc-hate-speech-online-moderation|ヘイトスピーチとオンライン・コンテンツ・モデレーションの社会法学]] — 同分野の近傍
+- [[infosoc-spreadable-media-jenkins|スプレッダブル・メディア——能動的な受け手の共有が価値を循環させる]] — 同分野の近傍
 - [[infosoc-californian-ideology|カリフォルニアン・イデオロギー]] — 同分野の近傍
 
 ## 関連

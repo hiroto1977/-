@@ -38,10 +38,10 @@ aliases:
 - [[infosoc-enshittification-doctorow|エンシッティフィケーション（ドクトロウ）]] — 同じ思想家
 - [[infosoc-platform-economics|プラットフォーム経済学・二面市場理論：デジタル市場の仲介構造と価格戦略]] — 同じ思想家
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]] — 同じ思想家
+- [[infosoc-platform-governance-tarleton|プラットフォームの政治学（ギレスピー）——「プラットフォーム」という語の多義性が中立で開かれた場のイメージを作り、選別・推薦・削除という編集的介入と私的統治を見えなくする]] — 同じ思想家
 - [[infosoc-platform-labor-gig-economy|プラットフォーム労働とギグエコノミー——デジタル仲介による労働の再編と社会的保護]] — 同じ思想家
 - [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — 同じ思想家
 - [[infosoc-platform-society-vandijck|プラットフォーム社会——データ化・商品化・選別による社会の再編]] — 同じ思想家
-- [[infosoc-platform-urbanism-barns|プラットフォーム都市主義——デジタルプラットフォームによる都市空間の再編]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

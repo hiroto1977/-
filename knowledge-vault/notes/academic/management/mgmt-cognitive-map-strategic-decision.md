@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]] — 語彙が近い
+- [[mgmt-strategic-cognition|戦略的認知（Strategic Cognition）]] — 語彙が近い
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
 - [[mgmt-managerial-cognition|経営者認知（ウォルシュ）——経営者は環境そのものではなく知識構造を通した解釈に反応し、その認知地図が注意・判断・競争行動を規定する]] — 同じ思想家
 - [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 同じ思想家
@@ -40,7 +41,6 @@ aliases:
 - [[human-error-management-theory-frese|エラー管理理論（フレゼ）]] — 同じ思想家
 - [[infosoc-information-search-process-kuhlthau|情報探索過程（ISP）——感情・思考・行動の六段階モデル]] — 同じ思想家
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
-- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

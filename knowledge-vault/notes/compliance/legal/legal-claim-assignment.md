@@ -35,6 +35,7 @@ aliases:
 - [[bizlaw-receivables-security|集合債権譲渡担保（将来債権譲渡）]] — 語彙が近い
 - [[bizlaw-assignment-of-claims|債権譲渡（民法466条）]] — 分野横断
 - [[legal-risk-bearing|危険負担（改正民法536条）]] — 同分野の近傍
+- [[legal-corporate-governance|会社法における株式会社の機関設計]] — 同分野の近傍
 - [[legal-insolvency-procedures|法的倒産処理手続（破産・民事再生・会社更生・特別清算）]] — 同分野の近傍
 
 ## 関連

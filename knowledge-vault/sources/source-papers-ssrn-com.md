@@ -2,7 +2,7 @@
 title: "papers.ssrn.com"
 type: source-domain
 host: "papers.ssrn.com"
-cite_count: 38
+cite_count: 37
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # papers.ssrn.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **38 件**（学術 37 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **37 件**（学術 36 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -46,7 +46,6 @@ tags:
 - [[infosoc-information-commons-theory|情報コモンズ理論]] — Hess,MappingtheNewCommons(2008)—SSRN
 - [[infosoc-network-neutrality-theory|ネットワーク中立性理論]] — Wu,Tim—"NetworkNeutrality,BroadbandDiscrimination"(2003),JournalofTel…
 - [[infosoc-networked-publics-boyd|ネットワーク化された公共圏：デジタル技術が再構成する公衆と文脈の崩壊]] — boyd,d.(2008)TakenOutofContext:AmericanTeenSocialityinNetworkedPublic…
-- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — Gillespie(2010)ThePoliticsof"Platforms"—SSRN
 - [[infosoc-taxonomy-of-privacy-solove|ソロブのプライバシー類型論——プライバシー侵害を情報収集・情報処理・情報拡散・侵入の四群十六類型に分ける枠組み]] — DanielJ.Solove(2002)"ConceptualizingPrivacy,"CaliforniaLawReview,Vol.…
 - [[infosoc-taxonomy-of-privacy-solove|ソロブのプライバシー類型論——プライバシー侵害を情報収集・情報処理・情報拡散・侵入の四群十六類型に分ける枠組み]] — DanielJ.Solove(2006)"ATaxonomyofPrivacy,"UniversityofPennsylvaniaLawR…
 - [[mgmt-freemium|フリーミアム]] — NicolasPujol,“Freemium:AttributesofanEmergingBusinessModel”（SSRN）

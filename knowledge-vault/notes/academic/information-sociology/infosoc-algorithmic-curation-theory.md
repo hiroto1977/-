@@ -35,14 +35,14 @@ aliases:
 ## 関連概念
 - [[infosoc-calculated-publics|算出された公衆（calculated publics）]] — 同じ思想家
 - [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 同じ思想家
-- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
+- [[infosoc-platform-governance-tarleton|プラットフォームの政治学（ギレスピー）——「プラットフォーム」という語の多義性が中立で開かれた場のイメージを作り、選別・推薦・削除という編集的介入と私的統治を見えなくする]] — 同じ思想家
 - [[infosoc-platform-moderation-content-governance|プラットフォームのコンテンツモデレーション——ソーシャルメディアのコンテンツガバナンスと表現の自由]] — 同じ思想家
 - [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像（ブッヒャー）——利用者がアルゴリズムをどう感じ意味づけるかが、想像に導かれた行動を通じてアルゴリズムの力そのものを構成する]] — 同じ思想家
 - [[infosoc-algorithmic-personalization-critique|アルゴリズム的パーソナライゼーションと認知的閉鎖の社会学]] — 同じ思想家
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 同じ思想家
 - [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — 同じ思想家
 - [[infosoc-new-governors-online-speech-klonick|新しい統治者論——プラットフォームを独自の規則・手続・文化でオンライン言論を統治する私的統治システムとみなす議論]] — 同じ思想家
-- [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 同じ思想家
+- [[infosoc-post-truth-society|ポスト真実社会——感情と信念が事実を凌駕する情報環境の社会学]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

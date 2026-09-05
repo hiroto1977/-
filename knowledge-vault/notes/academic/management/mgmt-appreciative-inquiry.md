@@ -39,7 +39,6 @@ aliases:
 - [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有
 - [[mgmt-heavyweight-product-manager-clark-fujimoto|重量級プロダクト・マネジャー——組織内外の統合を一身に担い製品コンセプトを守る開発責任者]] — 出典を共有
 - [[mgmt-change-management-kotter-8-step|コッターの8段階変革モデル——組織変革の失敗要因分析と変革リーダーシップの実践フレームワーク]] — 同分野の近傍
-- [[mgmt-paradox-theory-smith-lewis|組織パラドックス理論（ルイス／スミス＝ルイス）——相互に矛盾しつつ相互依存する要求を排除せず受容し、動態的均衡として管理する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

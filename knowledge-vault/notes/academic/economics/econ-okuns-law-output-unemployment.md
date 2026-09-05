@@ -38,7 +38,7 @@ aliases:
 - [[econ-k-percent-rule|フリードマンのk%ルール（貨幣供給量固定成長率準則）]] — 同じ思想家
 - [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利の変更が金利・為替・資産価格・信用・期待の各チャネルを通じて物価と実体経済に届くまで]] — 同じ思想家
 - [[econ-near-rationality-akerlof-yellen|近似合理性とメニューコスト——僅かな最適化の怠りが大きな景気変動を生む]] — 同じ思想家
-- [[econ-price-stickiness-calvo|カルボ型価格設定——確率的な価格改定が生む名目硬直性とニューケインジアン曲線]] — 同じ思想家
+- [[econ-price-stickiness-calvo|カルボ型価格設定（カルボ）——各企業が毎期一定の確率でしか価格を改定できないという仮定が、名目硬直性とニューケインジアン・フィリップス曲線を導く]] — 同じ思想家
 - [[econ-stagflation-supply-shock-gordon|スタグフレーションと供給ショック（ゴードン）]] — 同じ思想家
 
 ## 関連

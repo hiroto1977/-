@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2204
+cite_count: 2201
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2204 件**（リファレンス 2204）
+> [!info] 出典ドメイン索引 ・ 引用 **2201 件**（リファレンス 2201）
 
 ## このドメインを出典とする項目
 
@@ -829,7 +829,7 @@ tags:
 - [[econ-price-discrimination-monopoly|価格差別と独占力——一・二・三級差別の福祉効果と規制政策への含意]] — Wikipedia:Pricediscrimination—economictheoryandregulation
 - [[econ-price-discrimination-pigou-varian|価格差別の経済学——ピグーの三類型とデジタル経済における動的価格設定]] — Wikipedia:Pricediscrimination—Pigou,first/second/thirddegree,personal…
 - [[econ-price-level-targeting|物価水準目標政策]] — Wikipedia:Priceleveltargeting—makeupstrategy,Woodford,vs.inflationtar…
-- [[econ-price-stickiness-calvo|カルボ型価格設定——確率的な価格改定が生む名目硬直性とニューケインジアン曲線]] — Wikipedia:Calvo(staggered)contracts—pricestickiness,NewKeynesianPhill…
+- [[econ-price-stickiness-calvo|カルボ型価格設定（カルボ）——各企業が毎期一定の確率でしか価格を改定できないという仮定が、名目硬直性とニューケインジアン・フィリップス曲線を導く]] — Wikipedia:Calvo(staggered)contracts—価格硬直性、NKPC、DSGE
 - [[econ-probabilistic-serial-bogomolnaia-moulin|確率的シリアル・メカニズム——同時消費による公平な確率配分]] — Wikipedia:Probabilistic-serialprocedure—randomassignment,ordinaleffic…
 - [[econ-procedural-utility-frey|手続き効用——「何を」だけでなく「どのように」も大切である]] — Wikipedia:Proceduralutility—processvsoutcome,autonomy,proceduraljusti…
 - [[econ-product-cycle-trade|プロダクト・サイクル理論（貿易）]] — Productlife-cycletheory—Wikipedia
@@ -939,7 +939,6 @@ tags:
 - [[econ-temptation-self-control-gul-pesendorfer|誘惑と自制の選好——選択肢の集合そのものを評価する]] — Wikipedia:Temptationandself-control—menupreferences,commitment,Gul–Pe…
 - [[econ-theil-index-inequality|タイル指数——情報理論にもとづく分解可能な不平等尺度]] — Wikipedia:Theilindex—entropy,decomposability,inequalitymeasurement
 - [[econ-tiebout-hypothesis-local-public-goods|ティブー仮説（足による投票）——住民が税と公共サービスの組み合わせで自治体を選ぶことで地方公共財の選好が顕示され効率的供給が実現する]] — Wikipedia:Tieboutmodel—足による投票・地方公共財・選好顕示・自治体間競争・仮定と批判の概説
-- [[econ-time-inconsistency-calvo|時間非整合性とカルヴォ型価格設定——粘着価格のミクロ的基礎とニューケインジアン・フィリップス曲線]] — Wikipedia:Calvocontracts—staggeredpricing,NKPC,stickyprices,DSGE
 - [[econ-time-inconsistency-kydland-prescott|時間的非整合性——最適計画の事後的破棄とルール対裁量の問題]] — Wikipedia:Dynamicinconsistency—Kydland-Prescott,inflationbias,commitm…
 - [[econ-tinbergen-rule-policy-targets|ティンバーゲンの定理——政策目標と政策手段の対応関係]] — Wikipedia:Tinbergenrule—policyinstrumentsandtargetsassignmentoverview
 - [[econ-tobin-q-investment|トービンのq理論——資本の市場価値と再取得費用の比が投資を規定する]] — Wikipedia:Tobinsq—marketvaluevsreplacementcost,marginal/averageq,Haya…
@@ -1716,7 +1715,7 @@ tags:
 - [[infosoc-platform-capitalism|プラットフォーム資本主義]] — Wikipedia—Platformcapitalism
 - [[infosoc-platform-cooperativism-scholz-schneider|プラットフォーム協同組合主義——デジタル経済における労働者所有の代替モデル]] — Wikipedia:Platformcooperative—プラットフォーム協同組合主義の概説
 - [[infosoc-platform-envelopment-eisenmann|プラットフォーム包囲戦略（アイゼンマン）]] — Wikipedia:Platformenvelopment—Eisenmann,bundling,gatekeeper,DMA,multi…
-- [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — Wikipedia:Contentmoderation—プラットフォームのコンテンツモデレーションの概説
+- [[infosoc-platform-governance-tarleton|プラットフォームの政治学（ギレスピー）——「プラットフォーム」という語の多義性が中立で開かれた場のイメージを作り、選別・推薦・削除という編集的介入と私的統治を見えなくする]] — Wikipedia:Contentmoderation—プラットフォームによる選別・削除と媒介者責任の概観
 - [[infosoc-platform-labor-gig-economy|プラットフォーム労働とギグエコノミー——デジタル仲介による労働の再編と社会的保護]] — Wikipedia:Gigeconomy—platformlabor,independentcontractors,algorithmic…
 - [[infosoc-platform-labor-regulation|プラットフォーム労働規制論——ギグワーカーの法的地位と社会的保護]] — Wikipedia:Gigworker—ギグワーカーの法的地位と規制動向の概説
 - [[infosoc-platform-labor-theory|プラットフォーム労働論]] — Platformeconomy—Wikipedia
@@ -1915,7 +1914,6 @@ tags:
 - [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]] — Wikipedia:Stakeholdercapitalism—history,BRT2019statement,andcritiqueo…
 - [[mgmt-corporate-social-performance|企業社会的パフォーマンスモデル]] — Wikipedia—Corporatesocialresponsibility
 - [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]] — Wikipedia:Carroll'spyramidofCSR—fourlayers,Friedmancritique,ESGconnec…
-- [[mgmt-corporate-social-responsibility-csr|企業の社会的責任（CSR）とステークホルダー資本主義の経営論]] — Wikipedia:CSR—stakeholdertheory,ESG,CSRD,BusinessRoundtable,Friedmand…
 - [[mgmt-corporate-venturing-burgelman|コーポレート・ベンチャリング（バーゲルマン）]] — Wikipedia:Corporateventurecapital—BurgelmanICVmodel,externalventuring…
 - [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — Wikipedia:Creativedestruction—Schumpeterianinnovationandindustrialtra…
 - [[mgmt-cross-cultural-leadership-house-globe|GLOBEプロジェクト——文化次元とリーダーシップの国際比較]] — Wikipedia:GLOBEproject—文化次元とリーダーシップの国際比較
@@ -2012,7 +2010,7 @@ tags:
 - [[mgmt-knowledge-brokering-hargadon|知識ブローカリングとイノベーション（ハーガドン＆サットン）]] — Wikipedia:IDEO—知識ブローカリングの典型企業の概説
 - [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — Wikipedia—SECImodelofknowledgedimensions
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — Wikipedia:SECImodel—Nonaka,knowledgeconversion,tacit–explicitspiral
-- [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — Tacitknowledge(Wikipedia)—Polanyi『TheTacitDimension』(1966)
+- [[mgmt-knowledge-transfer|知識移転（シュランスキー／アーゴット＝イングラム）——ノウハウやベストプラクティスを送り手から受け手へ伝え、受け手が吸収して使えるようにする過程と、それを妨げる知識の粘着性]] — Wikipedia:Tacitknowledge—Polanyi『TheTacitDimension』(1966)、形式知との区別
 - [[mgmt-kraljic-matrix|クラルジック・マトリクス（購買ポートフォリオ）]] — Wikipedia—Kraljicmatrix
 - [[mgmt-lead-user|リードユーザー法]] — Wikipedia「Leaduser」—定義とリードユーザー法
 - [[mgmt-leadership-substitutes-kerr-jermier|リーダーシップ代替論——リーダー行動を不要化・無効化する状況要因]] — Wikipedia:SubstitutesforLeadershipTheory—Kerr&Jermier,substitutesvsne…
@@ -2141,10 +2139,9 @@ tags:
 - [[mgmt-social-exchange-theory|社会的交換理論]] — Wikipedia—Socialexchangetheory(Homans,Blau,Emersonoverview)
 - [[mgmt-sociomaterial-assemblage|社会物質的アセンブラージュ論]] — Wikipedia—Sociomateriality
 - [[mgmt-sociotechnical-systems|社会技術システム論（Sociotechnical Systems Theory）]] — Wikipedia—SociotechnicalSystem
-- [[mgmt-stakeholder-capitalism-freeman|ステークホルダー資本主義と企業の目的（フリーマン）]] — Wikipedia:Stakeholdercapitalism—corporategovernance
-- [[mgmt-stakeholder-integration-freeman|ステークホルダー統合戦略（フリーマン）]] — Wikipedia:Stakeholdertheory—Freeman,descriptive/instrumental/normativ…
 - [[mgmt-stakeholder-salience-theory|ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性で経営者が誰に注意を払うかを予測する]] — Wikipedia:Stakeholdertheory—Mitchell,Agle&Woodの三属性・顕出性の類型・ESGマテリアリティ
-- [[mgmt-stakeholder-theory-freeman-strategic|ステークホルダー理論——フリーマンの戦略的管理と全ステークホルダー利害調整]] — Wikipedia:Stakeholdertheory—corporatepurposeandethics
+- [[mgmt-stakeholder-theory-freeman-strategic|ステークホルダー理論（フリーマン）——企業の目的を株主利益に限定せず、目的達成に影響を与え影響を受けるすべての集団の利害を戦略に組み込む規範的・道具的・記述的理論]] — Wikipedia:Corporatesocialresponsibility—Bowen1953、Friedman1970、ESG・CS…
+- [[mgmt-stakeholder-theory-freeman-strategic|ステークホルダー理論（フリーマン）——企業の目的を株主利益に限定せず、目的達成に影響を与え影響を受けるすべての集団の利害を戦略に組み込む規範的・道具的・記述的理論]] — Wikipedia:Stakeholdertheory—Freeman、Donaldson&Prestonの三層、批判
 - [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]] — Wikipedia:SimonSinek—GoldenCircle,StartWithWhy,purpose-drivenleadersh…
 - [[mgmt-stp-marketing|STPマーケティング]] — Wikipedia—Segmenting-targeting-positioning（STP,Kotler;STP戦略vs4P戦術）
 - [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — Wikipedia—Strategicalignment

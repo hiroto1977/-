@@ -2,7 +2,7 @@
 title: "researchgate.net"
 type: source-domain
 host: "researchgate.net"
-cite_count: 49
+cite_count: 48
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # researchgate.net
 
-> [!info] 出典ドメイン索引 ・ 引用 **49 件**（学術 44 ・ リファレンス 5）
+> [!info] 出典ドメイン索引 ・ 引用 **48 件**（学術 43 ・ リファレンス 5）
 
 ## このドメインを出典とする項目
 
@@ -36,7 +36,6 @@ tags:
 - [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — Star&Ruhleder(1996)—ResearchGate
 - [[infosoc-network-gatekeeping|ネットワーク・ゲートキーピング理論（Network Gatekeeping Theory）]] — Barzilai-Nahon(2008)NetworkGatekeepingFramework—ResearchGate
 - [[infosoc-phenomenological-technology|技術の現象学]] — Human-DataRelationsandtheLifeworld-DonIhdephenomenologicalframework
-- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — Gillespie(2010)—ResearchGate
 - [[mgmt-aaker-brand-identity|アーカーのブランド・アイデンティティ]] — AnApplicationofDavidA.Aaker'sBrandIdentityPlanningModel（査読付ケーススタディ）
 - [[mgmt-adaptive-performance-griffin|適応的パフォーマンス（グリフィン・ニール・パーカー）]] — Pulakos,E.D.,Arad,S.,Donovan,M.A.,&Plamondon,K.E.(2000)Adaptabilityin…
 - [[mgmt-affective-events-theory|感情イベント理論（AET）]] — Weiss&Cropanzano(1996)AffectiveEventsTheory—ResearchGate

@@ -39,8 +39,8 @@ David J. Teece ／ Gary Pisano ／ Amy Shuen
 - [[mgmt-coopetition|コーペティション（協調的競争）]] — 出典を共有
 - [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する]] — 出典を共有
 - [[mgmt-liability-of-foreignness|外国性の不利益（Liability of Foreignness, LOF）——多国籍企業が外国市場で現地企業より余分に負う社会的コスト]] — 出典を共有
-- [[mgmt-market-orientation|市場志向]] — 同分野の近傍
 - [[mgmt-strategic-human-capital-coff-kryscynski|戦略的人的資本——知識労働者の獲得・保持と持続的競争優位]] — 同分野の近傍
+- [[mgmt-market-orientation|市場志向]] — 同分野の近傍
 - [[mgmt-platform-leadership|プラットフォーム・リーダーシップ]] — 同分野の近傍
 
 ## 関連

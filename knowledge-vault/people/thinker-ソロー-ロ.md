@@ -2,7 +2,7 @@
 title: "ロバート・ソロー"
 type: thinker
 person_key: "ソロー|ロ"
-concept_count: 18
+concept_count: 19
 tags:
   - person
   - index
@@ -10,9 +10,10 @@ tags:
 
 # ロバート・ソロー
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **18 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **19 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（18件）
+## 学術概念（19件）
+- [[econ-capital-controversy|ケンブリッジ資本論争（ロビンソン／スラッファ対サミュエルソン）——異質な資本財を一つの量に集計できるかをめぐり、再スイッチングと資本逆行が新古典派の限界生産力理論に根本的な疑義を投じた]] — ケンブリッジ資本論争（Cambridgecapitalcontroversy）は、1950年代から1970年代にかけて…
 - [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 資本深化（CapitalDeepening）とは、労働者一人当たりの資本ストックが時間の経過とともに増加する過程を指す。
 - [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 収束仮説（convergencehypothesis）は、新古典派のソロー成長モデルから導かれる予測で、一人当たり所得…
 - [[econ-golden-rule-capital-phelps|資本蓄積の黄金律——定常状態の消費を最大化する貯蓄水準]] — 資本蓄積の黄金律（goldenruleofcapitalaccumulation）は、エドムンド・フェルプスが1961…

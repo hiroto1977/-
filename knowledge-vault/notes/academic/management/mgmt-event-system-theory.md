@@ -33,7 +33,7 @@ Morgeson, Frederick P.（2015 Academy of Management Review）／Mitchell, Terenc
 ## 関連概念
 - [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 同じ思想家
 - [[mgmt-time-pacing-eisenhardt|タイム・ペーシング戦略とリズム的製品開発（アイゼンハート）]] — 同分野の近傍
-- [[mgmt-evidence-based-management-pfeffer|エビデンスに基づく経営（ファフェー＆サットン）と管理的迷信の批判]] — 同分野の近傍
+- [[mgmt-behavioral-integration-tmt|トップ・マネジメント・チームの行動統合]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

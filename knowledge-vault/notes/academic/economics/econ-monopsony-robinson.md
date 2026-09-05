@@ -39,7 +39,7 @@ aliases:
 - [[econ-rent-seeking|レントシーキング]] — 同じ思想家
 - [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家
 - [[econ-natural-experiments-rdd|自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価]] — 同じ思想家
-- [[econ-sraffa-commodities|スラッファの商品による商品の生産（ケンブリッジ資本論争）]] — 同じ思想家
+- [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

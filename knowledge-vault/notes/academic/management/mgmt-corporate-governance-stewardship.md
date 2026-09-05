@@ -33,13 +33,12 @@ aliases:
 - [[econ-financialization-lazonick-shareholder|金融化とシェアホルダー・バリュー——ラゾニックの「保持・再投資」から「縮小・分配」への転換]] — 同じ思想家
 - [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]] — 同じ思想家
 - [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]] — 同じ思想家
-- [[mgmt-corporate-social-responsibility-csr|企業の社会的責任（CSR）とステークホルダー資本主義の経営論]] — 同じ思想家
 - [[mgmt-family-business-governance-gersick|ファミリービジネスの三円モデル（ガーシック）]] — 同じ思想家
 - [[mgmt-family-business-succession|ファミリービジネスの事業承継と経営継続性の組織論]] — 同じ思想家
-- [[mgmt-stakeholder-capitalism-freeman|ステークホルダー資本主義と企業の目的（フリーマン）]] — 同じ思想家
-- [[mgmt-stakeholder-integration-freeman|ステークホルダー統合戦略（フリーマン）]] — 同じ思想家
-- [[mgmt-stakeholder-mapping-power-interest|ステークホルダー・マッピングと利害権力分析——戦略的ステークホルダー管理の実践論]] — 同じ思想家
 - [[mgmt-stakeholder-salience-theory|ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性で経営者が誰に注意を払うかを予測する]] — 同じ思想家
+- [[mgmt-stakeholder-theory-freeman-strategic|ステークホルダー理論（フリーマン）——企業の目的を株主利益に限定せず、目的達成に影響を与え影響を受けるすべての集団の利害を戦略に組み込む規範的・道具的・記述的理論]] — 同じ思想家
+- [[mgmt-evidence-based-management-pfeffer|エビデンスに基づく経営（ファフェー＆サットン）と管理的迷信の批判]] — 同分野の近傍
+- [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -36,7 +36,7 @@ aliases:
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 分野横断
 - [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 分野横断
 - [[mgmt-knowledge-management|ナレッジマネジメント（知識管理）：SECIモデルと「場」による組織的知識創造理論]] — 分野横断
-- [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 同じ思想家
+- [[mgmt-knowledge-transfer|知識移転（シュランスキー／アーゴット＝イングラム）——ノウハウやベストプラクティスを送り手から受け手へ伝え、受け手が吸収して使えるようにする過程と、それを妨げる知識の粘着性]] — 同じ思想家
 - [[econ-supplier-induced-demand|供給者誘発需要——医師は自らの需要を生み出すのか]] — 出典を共有
 - [[human-compromise-effect|妥協効果（極端回避性）]] — 出典を共有
 - [[human-epigenetics|エピジェネティクス（Epigenetics）]] — 出典を共有

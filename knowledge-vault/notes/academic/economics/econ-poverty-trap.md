@@ -40,9 +40,9 @@ aliases:
 - [[bizlaw-environmental-law|環境法：公共信託理論・ポーター仮説・国際気候法が形成する自然環境保護の法的体系]] — 同じ思想家
 - [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
 - [[econ-rct-development|開発経済学におけるランダム化比較試験（RCT in Development Economics）]] — 同じ思想家
-- [[econ-sraffa-commodities|スラッファの商品による商品の生産（ケンブリッジ資本論争）]] — 同じ思想家
 - [[econ-behavioral-development-economics-banerjee|行動開発経済学——バネルジー＆デュフロのRCTによる貧困の罠と政策介入の評価]] — 同じ思想家
-- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 同じ思想家
+- [[econ-conditional-cash-transfers-bolsa-familia|条件付き現金給付——ボルサ・ファミリアが証明する貧困削減・教育投資・行動インセンティブの統合政策]] — 同じ思想家
+- [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

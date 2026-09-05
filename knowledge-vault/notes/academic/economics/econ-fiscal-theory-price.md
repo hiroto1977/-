@@ -40,7 +40,7 @@ aliases:
 - [[econ-new-keynesian|ニュー・ケインジアン経済学]] — 同じ思想家
 - [[econ-price-level-targeting|物価水準目標政策]] — 同じ思想家
 - [[econ-price-puzzle|プライス・パズル（Price Puzzle）]] — 同じ思想家
-- [[econ-price-stickiness-calvo|カルボ型価格設定——確率的な価格改定が生む名目硬直性とニューケインジアン曲線]] — 同じ思想家
+- [[econ-price-stickiness-calvo|カルボ型価格設定（カルボ）——各企業が毎期一定の確率でしか価格を改定できないという仮定が、名目硬直性とニューケインジアン・フィリップス曲線を導く]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

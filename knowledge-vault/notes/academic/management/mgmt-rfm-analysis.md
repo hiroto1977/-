@@ -32,7 +32,7 @@ RFM分析（Recency／Frequency／Monetary）／データベースマーケテ�
 
 ## 関連概念
 - [[mgmt-customer-lifetime-value|顧客生涯価値（LTV）]] — 同分野の近傍
-- [[mgmt-stakeholder-salience-theory|ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性で経営者が誰に注意を払うかを予測する]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

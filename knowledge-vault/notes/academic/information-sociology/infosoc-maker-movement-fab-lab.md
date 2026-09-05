@@ -35,7 +35,6 @@ aliases:
 - [[infosoc-technofeudalism|テクノ封建制（デジタル封建制）]] — 同じ思想家
 - [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]] — 同じ思想家
 - [[infosoc-long-tail-anderson|ロングテール——デジタル経済におけるニッチ需要の集積の価値]] — 同じ思想家
-- [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 同じ思想家
 - [[infosoc-solutionism|テクノロジカル・ソリューショニズム（技術的解決主義）]] — 同じ思想家
 - [[infosoc-techno-solutionism-morozov|テクノ・ソリューショニズム（モロゾフ）]] — 同じ思想家
 - [[mgmt-freemium|フリーミアム]] — 同じ思想家

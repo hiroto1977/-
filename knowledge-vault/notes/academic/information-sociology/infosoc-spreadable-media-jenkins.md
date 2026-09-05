@@ -30,10 +30,10 @@ aliases:
 - [Wikipedia: Spreadable media — Jenkins/Ford/Green, vs viral, spreadability vs stickiness, participatory circulation](https://en.wikipedia.org/wiki/Spreadable_media) `リファレンス`
 
 ## 関連概念
+- [[infosoc-spreadability-jenkins|スプレッダビリティ——参加型文化におけるメディアコンテンツの拡散メカニズム]] — 語彙が近い
 - [[infosoc-participatory-culture|参加型文化]] — 同じ思想家
 - [[infosoc-transmedia-storytelling|トランスメディア・ストーリーテリング]] — 同じ思想家
 - [[infosoc-convergence-culture-jenkins|コンバージェンス・カルチャー——旧来メディアと新興メディアの衝突と参加文化]] — 同じ思想家
-- [[infosoc-spreadability-jenkins|スプレッダビリティ——参加型文化におけるメディアコンテンツの拡散メカニズム]] — 同じ思想家
 - [[human-trolley-problem|トロッコ問題]] — 同じ思想家
 - [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 同じ思想家
 - [[infosoc-remix-culture-lessig-jenkins|リミックス文化（レシッグ／ジェンキンス）——既存の文化的素材を再構成して創作するデジタル時代の実践と、それを抑圧しうる著作権制度との緊張]] — 同じ思想家

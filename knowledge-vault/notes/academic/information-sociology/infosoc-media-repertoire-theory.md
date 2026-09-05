@@ -35,7 +35,6 @@ aliases:
 
 ## 関連概念
 - [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]] — 同じ思想家
-- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 同じ思想家
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同じ思想家
 - [[infosoc-data-justice|データ正義（Data Justice）]] — 同じ思想家
@@ -43,6 +42,7 @@ aliases:
 - [[infosoc-algorithmic-opacity-burrell|アルゴリズム不透明性の三類型——企業秘密・技術的リテラシー・機械学習の規模に起因する不透明性]] — 同じ思想家
 - [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — 同じ思想家
 - [[infosoc-networked-protest-tufekci|トゥフェックチのネットワーク化された抗議——能力を伴わないシグナルの拡大と戦術的凍結]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

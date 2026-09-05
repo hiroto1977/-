@@ -8496,17 +8496,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-knowledge-transfer',
     discipline: 'management',
-    title: '知識移転（ナレッジ・トランスファー）',
+    title: '知識移転（シュランスキー／アーゴット＝イングラム）——ノウハウやベストプラクティスを送り手から受け手へ伝え、受け手が吸収して使えるようにする過程と、それを妨げる知識の粘着性',
     statement:
-      '知識移転とは、組織内（部門間・拠点間・個人間）や組織間で、ノウハウやベストプラクティスを送り手から受け手へ伝達・共有し、受け手が吸収・活用できるようにするプロセスであり、ナレッジマネジメントの中核活動である。アーゴットとイングラム（2000）はこれを「ある社会的単位が別の単位の経験から学び、影響を受けるプロセス」と定義した。' +
-      '鍵となるのは、文書化できる形式知と、言語化しにくい暗黙知（ポランニー「我々は語れる以上のことを知っている」）の区別で、暗黙知の移転にはOJT・徒弟制・対面が要る。シュチマン（1996）は移転を妨げる「知識の粘着性（stickiness）」を、因果関係の曖昧さ、送り手の動機・信頼性、受け手の吸収能力、両者の困難な関係に整理し、受け手の吸収能力と因果関係の曖昧さを最大の障害とした。SECIや吸収能力と関連する。',
-    keyFigures:
-      'マイケル・ポランニー（暗黙知）／ガブリエル・シュチマン（Szulanski 1996・知識の粘着性）／リンダ・アーゴット＆ポール・イングラム（2000・定義）／吸収能力',
-    asOf: '2026-06',
+      '知識移転（knowledge transfer）とは、組織内の部門・拠点・個人の間や組織間で、ノウハウやベストプラクティスを送り手から受け手へ伝達・共有し、受け手が吸収して活用できるようにする過程で、ナレッジマネジメントの中核活動である。リンダ・アーゴットとポール・イングラム（2000）はこれを「ある社会的単位が別の単位の経験から学び影響を受ける過程」と定義した。鍵は、文書化できる形式知と言語化しにくい暗黙知（マイケル・ポランニー「我々は語れる以上のことを知っている」）の区別で、暗黙知の移転には OJT・徒弟制・対面が要る。ガブリエル・シュランスキー（1996）は社内のベストプラクティス移転を妨げる「知識の粘着性（stickiness）」を、因果関係の曖昧さ、送り手の動機と信頼性、受け手の吸収能力、両者の困難な関係に整理し、受け手の吸収能力と因果関係の曖昧さを最大の障害とした。多国籍企業では本社と子会社、子会社間の移転が競争優位の源泉として研究され、子会社が現地で生んだ知識を本社へ逆移転するリバース・イノベーションが注目される。日本企業では「すり合わせ型」の知識が暗黙次元の高さから海外移転が難しく、モジュール化・文書化・現地人材の育成が課題とされる。吸収能力、知識ベース企業観、野中の SECI と関連する。批判として、移転を送り手から受け手への一方向の伝達と捉えると受け手側の再解釈や創造が見えにくいこと、粘着性の要因の相対的な重みが文脈で大きく変わることがある。中小企業には、熟練者のノウハウは本人が語れる以上のものであるため、文書化だけでなく一緒に働く時間と関係の質が移転を決めること、受け手側の基礎（吸収能力）への投資なしに移転は起きないことが含意となる。',
+    keyFigures: 'ガブリエル・シュランスキー（1996 知識の粘着性）／リンダ・アーゴット＆ポール・イングラム（2000 定義と競争優位）／マイケル・ポランニー（暗黙知）／関連: リバース・イノベーション（GE の事例）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://sms.onlinelibrary.wiley.com/doi/10.1002/smj.4250171105', type: 'academic', label: 'Szulanski, G. (1996) “Exploring internal stickiness...”, Strategic Management Journal 17, 27-43 (Wiley)' },
-      { url: 'https://econpapers.repec.org/RePEc:eee:jobhdp:v:82:y:2000:i:1:p:150-169', type: 'academic', label: 'Argote & Ingram (2000) “Knowledge Transfer: A Basis for Competitive Advantage in Firms”, OBHDP 82, 150-169' },
-      { url: 'https://en.wikipedia.org/wiki/Tacit_knowledge', type: 'reference', label: 'Tacit knowledge (Wikipedia) — Polanyi『The Tacit Dimension』(1966)' },
+      { url: 'https://doi.org/10.1002/smj.4250171105', type: 'academic', label: 'Szulanski, G. (1996) Exploring Internal Stickiness: Impediments to the Transfer of Best Practice Within the Firm — Strategic Management Journal 17(S2)（原典）' },
+      { url: 'https://econpapers.repec.org/RePEc:eee:jobhdp:v:82:y:2000:i:1:p:150-169', type: 'academic', label: 'Argote, L. & Ingram, P. (2000) Knowledge Transfer: A Basis for Competitive Advantage in Firms — Organizational Behavior and Human Decision Processes 82(1), 150–169' },
+      { url: 'https://hbr.org/2009/10/reverse-innovation', type: 'media', label: 'Harvard Business Review (2009) How GE Is Disrupting Itself — リバース・イノベーション（新興国の子会社で生まれた知識の本社への逆移転）の事例' },
+      { url: 'https://en.wikipedia.org/wiki/Tacit_knowledge', type: 'reference', label: 'Wikipedia: Tacit knowledge — Polanyi『The Tacit Dimension』(1966)、形式知との区別' },
     ],
   },
   {
@@ -17382,20 +17381,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-sraffa-commodities',
-    discipline: 'economics',
-    title: 'スラッファの商品による商品の生産（ケンブリッジ資本論争）',
-    statement:
-      'ピエロ・スラッファが1960年にケンブリッジ大学出版局から刊行した『Production of Commodities by Means of Commodities: Prelude to a Critique of Economic Theory』は、異質的資本財を物的投入ベクトルとして表現し、新古典派の限界生産力理論における資本集計の循環論法を数学的に暴露した。具体的には「技術の再転換（reswitching）」と「資本逆転（capital reversal）」が理論的に生じうることを示し、利潤率の低下が必ずしもより資本集約的な技術の採用に対応しないことを証明した。' +
-      'この著作はジョーン・ロビンソンが1953年のReview of Economic Studies掲載論文 "The Production Function and the Theory of Capital" で提起した資本集計問題の数学的定式化であり、ケンブリッジ資本論争（Cambridge capital controversy）の核心的文献となった。ルイジ・パシネッティは1966年にQJE誌上で再転換の拡張分析を発表した。ポール・サミュエルソンは同年同誌の "A Summing Up"（QJE 80(4), pp.568–583）において「ジェヴォンズ、ベーム＝バヴェルク、ヴィクセルらの新古典派的な単純な物語は普遍的に妥当たりえない」と理論的に譲歩した。スラッファはリカードとマルクスに連なる古典的剰余アプローチを復権させ、ポスト・ケインジアンおよびネオ・リカーディアン経済学の基盤を形成した。',
-    keyFigures: 'ピエロ・スラッファ（1960『Production of Commodities by Means of Commodities』Cambridge UP）／ジョーン・ロビンソン（1953 "The Production Function and the Theory of Capital"）／ポール・サミュエルソン（1966 "A Summing Up" QJE 80(4)）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.2307/2296002', type: 'academic', label: 'Robinson (1953) "The Production Function and the Theory of Capital", Review of Economic Studies 21(2), 81–106' },
-      { url: 'https://doi.org/10.2307/1882916', type: 'academic', label: 'Samuelson (1966) "A Summing Up", Quarterly Journal of Economics 80(4), 568–583' },
-    ],
-  },
-  {
     id: 'human-diderot-effect',
     discipline: 'human-science',
     title: 'ディドロ効果（Diderot Effect）',
@@ -20302,20 +20287,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-platform-imaginaries',
-    discipline: 'information-sociology',
-    title: 'プラットフォームの政治学（Politics of Platforms）',
-    statement:
-      'デジタルプラットフォームが「プラットフォーム」という語の多義性を戦略的に活用し、利用者・広告主・政策立案者に対する自己の位置づけを構築する言説政治を分析する枠組み。ギレスピー（2010）は同語の意味領域を、ソフトウェア開発の基盤という計算論的用法、人が立つ平坦な構造物という建築的用法、機会の足場という比喩的用法、演説の壇という政治的用法の4つに腑分けし、これらの含意の重ね合わせから「平等で開放的な中立の場」というイメージが生成されると論じた。事例分析では YouTube が利用者には表現の場、広告主には商業機会、大手権利者には流通経路、規制当局には中立的媒介者と聴衆ごとに語り分けて相互の緊張を糊塗する様を示し、Viacom 訴訟や DMCA セーフハーバーをめぐり編集主体ではなく媒介者としての免責を主張する法廷戦略とこの自己呈示が連動することを指摘した。平坦な基盤の隠喩は、実際には選別・推奨・削除を通じてコンテンツを形作る編集的介入と、そこに埋め込まれたビジネスモデル・権力構造を不可視化する。プラットフォーム研究の基礎文献として、後続のコンテンツ・モデレーション研究や媒介者責任論の出発点となった。',
-    keyFigures: 'タールトン・ギレスピー（2010 The Politics of "Platforms" — New Media & Society）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://journals.sagepub.com/doi/10.1177/1461444809342738', type: 'academic', label: 'Gillespie (2010) The Politics of "Platforms" — New Media & Society / SAGE' },
-      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1601487', type: 'academic', label: 'Gillespie (2010) The Politics of "Platforms" — SSRN' },
-      { url: 'https://www.researchgate.net/publication/258173728_The_politics_of_\'platforms\'', type: 'academic', label: 'Gillespie (2010) — ResearchGate' },
-    ],
-  },
-  {
     id: 'human-teleological-reasoning',
     discipline: 'human-science',
     title: '目的論的推論（Teleological Reasoning in Infancy）',
@@ -21281,16 +21252,13 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     discipline: 'human-science',
     title: '社会的アイデンティティ脅威',
     statement:
-      '社会的アイデンティティ脅威とは、個人が所属する集団に基づく自己概念が否定的評価や偏見によって損なわれる知覚的状態を指す。' +
-      'Steele & Aronson（1995）は、ステレオタイプ脅威として、否定的な集団ステレオタイプが確認されるという懸念がパフォーマンスの低下をもたらすことを実証した。' +
-      'Branscombe et al.（1999）の拒絶—同一化モデルは、外集団からの拒絶が内集団への同一化を強化し、自己尊重感を保護することを示した。' +
-      'Ellemers et al.（2002）は、自己と社会的アイデンティティの関係を包括的に整理し、集団成員性の脅威が認知・感情・行動に広範な影響を及ぼすことを論じた。',
+      '社会的アイデンティティ脅威とは、個人が所属する集団に基づく自己概念が否定的評価や偏見によって損なわれる知覚的状態を指す。Steele & Aronson（1995）は、ステレオタイプ脅威として、否定的な集団ステレオタイプが確認されるという懸念がパフォーマンスの低下をもたらすことを実証した。Branscombe et al.（1999）の拒絶—同一化モデルは、外集団からの拒絶が内集団への同一化を強化し、自己尊重感を保護することを示した。Ellemers et al.（2002）は、自己と社会的アイデンティティの関係を包括的に整理し、集団成員性の脅威が認知・感情・行動に広範な影響を及ぼすことを論じた。',
     keyFigures: 'Claude M. Steele／Joshua Aronson／Naomi Ellemers／Nyla R. Branscombe／Russell Spears',
     asOf: '2026-06',
     sources: [
-      { url: 'https://doi.org/10.1037/0022-3514.69.5.797', type: 'academic', label: 'Steele & Aronson (1995) Stereotype threat and intellectual test performance of African Americans, JPSP 69(5):797-811' },
       { url: 'https://doi.org/10.1177/0146167299025006006', type: 'academic', label: 'Branscombe et al. (1999) The context and content of social identity threat, PSPB 25(6):723-739' },
       { url: 'https://doi.org/10.1146/annurev.psych.53.100901.135228', type: 'academic', label: 'Ellemers, Spears & Doosje (2002) Self and social identity, Annual Review of Psychology 53:161-186' },
+      { url: 'https://doi.org/10.1037/0022-3514.69.5.797', type: 'academic', label: 'Steele & Aronson (1995) Stereotype threat and intellectual test performance of African Americans, JPSP 69(5):797-811' },
     ],
   },
   {
@@ -23291,7 +23259,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     discipline: 'management',
     title: 'ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性で経営者が誰に注意を払うかを予測する',
     statement:
-      'ステークホルダー顕出性（stakeholder salience）理論は、ロナルド・ミッチェル、ブラッドリー・アグル、ドナ・ウッドが1997年の論文「Toward a Theory of Stakeholder Identification and Salience」（Academy of Management Review 22巻4号853–886頁）で提唱した。フリーマン（1984）のステークホルダー概念が「誰でも入る」広さゆえに実務指針を欠いた問題に対し、経営者が誰にどれだけ注意を配るかを、①パワー（意図した結果を押し付ける能力）、②正統性（主張が社会的に正当とみなされる程度）、③緊急性（時間的切迫と重要性）の三属性の組合せで予測する記述理論である。属性を1つ持つ潜在的3類型（休眠型・任意型・要求型）、2つ持つ期待的3類型（支配型・危険型・依存型）、3つそろう確定型の計7類型に分け、属性は固定した地位でなく知覚され獲得・喪失される変数だとする。アグル・ミッチェル・ソネンフェルド（1999）の大企業CEO調査は属性と顕出性の関係を支持したが顕出性と財務業績の関係は確認されず、ペアレント＆ディープハウス（2007）はパワーの効果が最も強く緊急性の効果は文脈依存だと示した。ネヴィル・ベル＆ホイットウェル（2011）は概念の精緻化を試み、ロウリーはステークホルダー間のネットワーク構造（密度・中心性）が顕出性を左右すると論じた。批判として、正統性とパワーの独立性への疑義、道徳的義務を負う弱い依存型が構造的に後回しになる規範的問題がある。ESG実務のマテリアリティ分析や影響度×関心度マトリクスの理論的祖形として広く使われ、中小企業でも取引先・金融機関・従業員・地域を三属性で棚卸しし、注意配分を意識的に決める指針となる。',
+      'ステークホルダー顕出性（stakeholder salience）理論は、ロナルド・ミッチェル、ブラッドリー・アグル、ドナ・ウッドが1997年の論文「Toward a Theory of Stakeholder Identification and Salience」（Academy of Management Review 22巻4号）で提唱した。フリーマン（1984）のステークホルダー概念が「誰でも入る」広さゆえに実務指針を欠いた問題に対し、経営者が誰にどれだけ注意を配るかを、①パワー（意図した結果を押し付ける能力）、②正統性（主張が社会的に正当とみなされる程度）、③緊急性（時間的切迫と重要性）の三属性の組合せで予測する記述理論である。属性を1つ持つ潜在的3類型（休眠型・任意型・要求型）、2つ持つ期待的3類型（支配型・危険型・依存型）、3つそろう確定型の計7類型に分け、アグルら（1999）の CEO 調査は属性と顕出性の関係を支持したが顕出性と財務業績の関係は確認されず、ペアレント＆ディープハウス（2007）はパワーの効果が最も強く緊急性の効果は文脈依存だと示した。ロウリーはステークホルダー間のネットワーク構造（密度・中心性）が顕出性を左右すると論じた。批判として、正統性とパワーの独立性への疑義、道徳的義務を負う弱い依存型が構造的に後回しになる規範的問題がある。実務ではステークホルダーを影響力（パワー）と関心度の二軸で主要プレイヤー・満足維持・情報提供・監視の対象に分けるパワー＝インタレスト・グリッドとして簡略化され、ESG のマテリアリティ分析の祖形になった。中小企業でも取引先・金融機関・従業員・地域を三属性で棚卸しし、注意の配分を意識的に決める指針となる。',
     keyFigures: 'ロナルド・ミッチェル ／ ブラッドリー・アグル ／ ドナ・ウッド（1997 AMR）／ジェフリー・ソネンフェルド（1999 AMJ 共著）／ミレナ・ペアレント＆デイヴィッド・ディープハウス（2007 JBE）／ベンジャミン・ネヴィル（2006 JBE メングッチと共著／2011 JBE ベル＆ホイットウェルと共著）／ティモシー・ロウリー（ネットワーク視点）／土台: R・エドワード・フリーマン（1984『Strategic Management: A Stakeholder Approach』）',
     asOf: '2026-09',
     sources: [
@@ -27180,14 +27148,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-capital-controversy',
     discipline: 'economics',
-    title: 'ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎',
-    statement: 'ケンブリッジ資本論争（Two Cambridges debate）は、1950年代から1970年代にかけて、英国ケンブリッジ（ロビンソン、スラッファ、パシネッティ）と米国MIT（サミュエルソン、ソロー）の経済学者間で展開された、資本の本質と測定をめぐる理論的論争である。ジョーン・ロビンソン（1953-54）は新古典派の総生産関数における「資本」の集計問題を提起し、異質な資本財を単一の量に集約することの理論的矛盾を指摘した。ピエロ・スラッファ（1960）は『商品による商品の生産』で、利潤率の変化に伴い資本集約度の順序が逆転する「再スイッチング」（reswitching）と「資本逆行」（capital-reversing）の可能性を示し、新古典派の限界生産力理論に根本的疑義を投じた。サミュエルソン（1966）はQuarterly Journal of Economics誌上で再スイッチングの論理的可能性を認め、寓話的代理モデルの一般化不可能性を公式に受容した。この論争は分配理論・成長理論の基礎に関する未解決の問題を残している。',
-    keyFigures: 'ジョーン・ロビンソン ／ ピエロ・スラッファ ／ ポール・サミュエルソン ／ ルイジ・パシネッティ',
-    asOf: '2026-06-25',
+    title: 'ケンブリッジ資本論争（ロビンソン／スラッファ対サミュエルソン）——異質な資本財を一つの量に集計できるかをめぐり、再スイッチングと資本逆行が新古典派の限界生産力理論に根本的な疑義を投じた',
+    statement:
+      'ケンブリッジ資本論争（Cambridge capital controversy）は、1950年代から1970年代にかけて英国ケンブリッジ（ジョーン・ロビンソン、ピエロ・スラッファ、ルイジ・パシネッティ）と米国 MIT（ポール・サミュエルソン、ロバート・ソロー）の経済学者の間で展開された、資本の本質と測定をめぐる理論的論争である。ロビンソン（1953–54）は新古典派の総生産関数における「資本」の集計問題を提起し、異質な資本財を利潤率と独立に単一の量へ集約することの循環論法を指摘した。スラッファは1960年の『商品による商品の生産』で異質な資本財を物的投入のベクトルとして表現し、利潤率が変化すると技術の資本集約度の順序が逆転する「再スイッチング」と、利潤率の低下が必ずしも資本集約的な技術の採用に対応しない「資本逆行」が理論的に生じうることを示して限界生産力による分配理論に根本的疑義を投じた。パシネッティ（1966）が再スイッチングの分析を拡張し、サミュエルソン（1966）は「A Summing Up」で再スイッチングの論理的可能性を認め、集計的生産関数の寓話が一般には成り立たないことを公式に受容した。それでも新古典派の成長論と分配論は集計的生産関数を実用的な近似として使い続けており、論争は分配理論・成長理論の基礎に未解決の問題を残している。批判として、再スイッチングの経験的重要性は小さいとする見方と、理論の基礎に関わる以上は頻度の問題ではないとする見方が対立する。中小企業には、「資本」を金額で一括りにした投資判断が設備の組み合わせや金利水準で収益の順位が入れ替わる現実を隠しうること、金利が変わっても有利な技術が単調に変わるとは限らないことが含意となる。',
+    keyFigures: 'ジョーン・ロビンソン（1953–54 集計問題の提起）／ピエロ・スラッファ（1960『商品による商品の生産』）／ルイジ・パシネッティ（1966 再スイッチングの拡張）／ポール・サミュエルソン（1966「A Summing Up」）／ロバート・ソロー（MIT 側）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.2307/2296002', type: 'academic', label: 'Robinson, J. (1953-54) The Production Function and the Theory of Capital — Review of Economic Studies' },
-      { url: 'https://archive.org/details/productionofcomm0000sraf', type: 'academic', label: 'Sraffa, P. (1960) Production of Commodities by Means of Commodities — Cambridge University Press' },
-      { url: 'https://doi.org/10.2307/1882916', type: 'academic', label: 'Samuelson, P.A. (1966) A Summing Up — Quarterly Journal of Economics' },
+      { url: 'https://doi.org/10.2307/2296002', type: 'academic', label: 'Robinson, J. (1953–54) The Production Function and the Theory of Capital — Review of Economic Studies 21(2)（集計問題の提起）' },
+      { url: 'https://archive.org/details/productionofcomm0000sraf', type: 'academic', label: 'Sraffa, P. (1960) Production of Commodities by Means of Commodities: Prelude to a Critique of Economic Theory — Cambridge University Press（Internet Archive）' },
+      { url: 'https://doi.org/10.2307/1882916', type: 'academic', label: 'Samuelson, P. A. (1966) A Summing Up — Quarterly Journal of Economics 80(4), 568–583' },
     ],
   },
   {
@@ -36832,13 +36801,14 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-price-stickiness-calvo',
     discipline: 'economics',
-    title: 'カルボ型価格設定——確率的な価格改定が生む名目硬直性とニューケインジアン曲線',
-    statement: 'カルボ型価格設定（Calvo pricing）は、ギジェルモ・カルボが1983年に提唱した価格改定のモデル化手法で、ニューケインジアン・マクロ経済学において名目価格の硬直性（price stickiness）を数学的に扱いやすく表現する標準的な枠組みとなっている。カルボの着想は、各企業が毎期、一定の確率でしか価格を改定できず、その確率は前回の改定からの経過時間に依存しないと仮定する点にある。すなわち、いつ価格を変えられるかは企業がコントロールできない外生的なくじ引きのように与えられ、各期に価格を据え置く企業と改定する企業が混在する。この単純な仮定により、経済全体の物価は個々の企業の価格改定がずれて積み重なる(staggered)ことでゆっくりとしか調整されず、貨幣供給や需要の変化が短期的に実質産出と雇用に影響を及ぼす余地が生まれる。価格を改定できる企業は、次にいつ改定できるか分からないため、現在だけでなく将来の予想される需要とコストを織り込んで最適価格を設定する。この前向きの価格設定行動を集計すると、現在のインフレ率が予想される将来のインフレ率と限界費用（産出ギャップ）に依存するという「ニューケインジアン・フィリップス曲線」が導かれる。カルボ型価格設定は、ジョン・テイラーの固定契約期間モデルと並ぶ硬直性の定式化として、動学的確率的一般均衡（DSGE）モデルの中核に組み込まれ、金融政策分析の基礎を提供している。',
-    keyFigures: 'ギジェルモ・カルボ ／ ジョン・テイラー ／ マイケル・ウッドフォード ／ ジョルディ・ガリ',
-    asOf: '2026-06-26',
+    title: 'カルボ型価格設定（カルボ）——各企業が毎期一定の確率でしか価格を改定できないという仮定が、名目硬直性とニューケインジアン・フィリップス曲線を導く',
+    statement:
+      'カルボ型価格設定（Calvo pricing）は、ギジェルモ・カルボが1983年の論文で提唱した価格改定のモデル化で、ニューケインジアン・マクロ経済学において名目価格の硬直性を数学的に扱いやすく表す標準的な枠組みである。各企業は毎期、前回の改定からの経過時間に依存しない一定の確率でしか価格を改定できず、各期に価格を据え置く企業と改定する企業が混在する。改定が時間的にずれて積み重なる（staggered）ことで経済全体の物価はゆっくりとしか調整されず、貨幣供給や需要の変化が短期的に実質産出と雇用に影響する余地が生まれる。改定できる企業は次にいつ改定できるか分からないため、現在だけでなく将来の予想される需要と費用を織り込んで価格を決め、この前向きの行動を集計すると、現在のインフレ率が将来のインフレ予想と実質限界費用（産出ギャップ）に依存するニューケインジアン・フィリップス曲線が導かれる。ジョン・テイラーの固定契約期間モデルと並ぶ硬直性の定式化として動学的確率的一般均衡（DSGE）モデルの中核に組み込まれ、マイケル・ウッドフォードの『利子と物価』（2003）はこれをテイラー・ルール型の金融政策分析と統合した。批判として、改定機会の確率が外生的で景気やインフレ率に依存しない仮定は、メニューコストに基づく状態依存型の価格改定モデル（ゴロソフとルーカス）から疑問視され、価格改定頻度のミクロデータ（ナカムラとシュタインソン）との整合性が論争されている。中小企業には、価格改定は頻度もタイミングも自社が決められる経営判断であり、費用上昇を据え置きで吸収する期間が長いほど後の改定幅が大きくなること、改定時には現在の費用だけでなく先の見通しを織り込むべきことが含意となる。',
+    keyFigures: 'ギジェルモ・カルボ（1983 提唱）／ジョン・テイラー（固定契約期間モデル）／マイケル・ウッドフォード（2003『利子と物価』）／ジョルディ・ガリ（ニューケインジアン・モデル）／対比: ミハイル・ゴロソフ＆ロバート・ルーカス（メニューコスト）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1016/0304-3932(83)90060-0', type: 'academic', label: 'Calvo, G.A. (1983) Staggered Prices in a Utility-Maximizing Framework — Journal of Monetary Economics 12(3)' },
-      { url: 'https://en.wikipedia.org/wiki/Calvo_(staggered)_contracts', type: 'reference', label: 'Wikipedia: Calvo (staggered) contracts — price stickiness, New Keynesian Phillips curve, DSGE' },
+      { url: 'https://doi.org/10.1016/0304-3932(83)90060-0', type: 'academic', label: 'Calvo, G. A. (1983) Staggered Prices in a Utility-Maximizing Framework — Journal of Monetary Economics 12(3)（原典）' },
+      { url: 'https://en.wikipedia.org/wiki/Calvo_(staggered)_contracts', type: 'reference', label: 'Wikipedia: Calvo (staggered) contracts — 価格硬直性、NKPC、DSGE' },
     ],
   },
   {
@@ -41855,18 +41825,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-time-inconsistency-calvo',
-    discipline: 'economics',
-    title: '時間非整合性とカルヴォ型価格設定——粘着価格のミクロ的基礎とニューケインジアン・フィリップス曲線',
-    statement: 'ギジェルモ・カルヴォは1983年の論文「Staggered Prices in a Utility-Maximizing Framework」において，各期間に一定確率（1−θ）で価格改定の機会が到来する「カルヴォ型価格設定（Calvo pricing）」を提案し，粘着価格（sticky prices）のミクロ的基礎を数学的にトラクタブルな形式で提供した。このモデルから導出されるニューケインジアン・フィリップス曲線（NKPC）は，現在のインフレ率が将来のインフレ期待と実質限界費用（産出ギャップ）の関数として表され，フォワードルッキングな金融政策分析の中核的方程式となった。マイケル・ウッドフォードの『利子と物価（Interest and Prices）』（2003年）はカルヴォ型NKPCをDSGEモデルに組み込み，テイラー・ルール型の金融政策ルールと整合的な政策分析枠組みを構築した。しかし，カルヴォ型価格設定における「価格改定機会の外生的確率」という仮定は，メニューコスト・モデル（ゴロソフ＝ルーカス）のような状態依存型価格改定理論から批判を受け，価格データのミクロ実証（ナカムラ＝シュタインソン）との整合性が論争されている。',
-    keyFigures: 'ギジェルモ・カルヴォ ／ マイケル・ウッドフォード ／ ジョルディ・ガリ ／ グレゴリー・マンキュー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1016/0304-3932(83)90060-0', type: 'academic', label: 'Calvo, G. (1983) Staggered Prices in a Utility-Maximizing Framework — Journal of Monetary Economics' },
-      { url: 'https://en.wikipedia.org/wiki/Calvo_(staggered)_contracts', type: 'reference', label: 'Wikipedia: Calvo contracts — staggered pricing, NKPC, sticky prices, DSGE' },
-    ],
-  },
-  {
     id: 'human-resilience-theory-masten',
     discipline: 'human-science',
     title: 'レジリエンス理論——逆境からの回復力と「普通の魔法」',
@@ -42415,13 +42373,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-stakeholder-theory-freeman-strategic',
     discipline: 'management',
-    title: 'ステークホルダー理論——フリーマンの戦略的管理と全ステークホルダー利害調整',
-    statement: 'ステークホルダー理論（stakeholder theory）は，R・エドワード・フリーマンが著作『戦略的管理：ステークホルダーアプローチ』（1984年）で提唱した，企業の目的を株主利益最大化に限定せず，従業員・顧客・供給者・コミュニティ・政府などすべてのステークホルダーの利害を考慮した管理を行うべきとする規範的・道具的理論である。道具的観点では，ステークホルダー管理が長期的な企業業績・レピュテーション・持続的競争優位に貢献することが実証研究で支持される。規範的観点では，ステークホルダーはカント的義務論的理由から尊重されるべきとする倫理的基盤も持つ。2019年のBusiness Roundtable声明（米国主要企業CEO181社が「株主第一主義」から「ステークホルダー資本主義」への転換を宣言）はステークホルダー理論の実践的影響力を示した。ESG投資・SDGs経営・コーポレートガバナンス改革の理論的基盤としても機能している。',
-    keyFigures: 'R・エドワード・フリーマン ／ ジョン・ドナルドソン ／ アンドリュー・ウィックス ／ ジョン・ロールズ',
-    asOf: '2026-06-26',
+    title: 'ステークホルダー理論（フリーマン）——企業の目的を株主利益に限定せず、目的達成に影響を与え影響を受けるすべての集団の利害を戦略に組み込む規範的・道具的・記述的理論',
+    statement:
+      'ステークホルダー理論（stakeholder theory）は、R・エドワード・フリーマンが1984年の著書『Strategic Management: A Stakeholder Approach』で体系化した理論で、ステークホルダーを「組織の目的達成に影響を与え、または影響を受ける集団・個人」と定義し、企業の目的を株主利益の最大化に限定せず、従業員・顧客・供給者・地域社会・政府など全ステークホルダーの利害を考慮して調整する経営を説く。ミルトン・フリードマン（1970）の「企業の社会的責任は利益を増やすことだ」という株主第一主義への対抗軸であり、トーマス・ドナルドソンとリー・プレストン（1995）は理論を、企業が実際にどう振る舞うかの記述的側面、ステークホルダー管理が業績に何をもたらすかの道具的側面、企業は何をすべきかの規範的側面の三層に整理した。道具的には、ステークホルダー管理が長期の業績・評判・持続的競争優位に寄与することが実証研究で支持され、規範的にはカント的な義務論や公正の観点からステークホルダーは手段ではなく目的として尊重されるべきだとする。2019年のビジネス・ラウンドテーブル声明とダボス・マニフェストで注目が高まり、ESG 投資や CSRD 開示と接続して制度化が進む。批判として、誰がステークホルダーかの境界が広すぎて実務指針を欠くこと（顕出性理論が補う）、複数の利害を調整する原理が曖昧で経営者の裁量を広げること、掲げるだけで行動が伴わない「ウォッシュ」がある。中小企業には、従業員・取引先・金融機関・地域といった少数の顔の見える相手との関係そのものが事業の基盤であり、誰の利害をどう調整しているかを明示することが信用と採用に直結することが含意となる。',
+    keyFigures: 'R・エドワード・フリーマン（1984 提唱）／トーマス・ドナルドソン＆リー・プレストン（1995 記述・道具・規範の三層）／対比: ミルトン・フリードマン（1970 株主第一主義）／ハワード・ボーウェン（1953 CSR の嚆矢）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1017/CBO9780511815768', type: 'academic', label: 'Freeman, R.E. (1984) Strategic Management: A Stakeholder Approach — Cambridge UP' },
-      { url: 'https://en.wikipedia.org/wiki/Stakeholder_theory', type: 'reference', label: 'Wikipedia: Stakeholder theory — corporate purpose and ethics' },
+      { url: 'https://doi.org/10.1017/CBO9781139192675', type: 'academic', label: 'Freeman, R. E. (1984) Strategic Management: A Stakeholder Approach — Cambridge University Press（2010 年再刊、原典）' },
+      { url: 'https://doi.org/10.2307/258887', type: 'academic', label: 'Donaldson, T. & Preston, L. E. (1995) The Stakeholder Theory of the Corporation: Concepts, Evidence, and Implications — Academy of Management Review 20(1)' },
+      { url: 'https://www.businessroundtable.org/business-roundtable-redefines-the-purpose-of-a-corporation-to-promote-an-economy-that-serves-all-americans', type: 'reference', label: 'Business Roundtable (2019) Statement on the Purpose of a Corporation（ステークホルダー資本主義への転換宣言）' },
+      { url: 'https://en.wikipedia.org/wiki/Stakeholder_theory', type: 'reference', label: 'Wikipedia: Stakeholder theory — Freeman、Donaldson & Preston の三層、批判' },
+      { url: 'https://en.wikipedia.org/wiki/Corporate_social_responsibility', type: 'reference', label: 'Wikipedia: Corporate social responsibility — Bowen 1953、Friedman 1970、ESG・CSRD との関係' },
     ],
   },
   {
@@ -43513,12 +43475,13 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'human-flow-psychology-csikszentmihalyi',
     discipline: 'human-science',
     title: 'フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学',
-    statement: 'フロー（Flow）とはミハイ・チクセントミハイが提唱した概念で、活動に完全に没入し、時間の感覚や自意識が消え、行為そのものが報酬となる「最適経験」の精神状態を指す。フローは「課題の難しさ」と「自分のスキル」のバランスが高いレベルで均衡するときに生じ、どちらかが著しく上回ると退屈（スキル過剰）または不安（課題過剰）になる。チクセントミハイは芸術家・外科医・チェスプレイヤーなどの質的研究を通じてフロー状態の普遍性を示し、ポジティブ心理学の礎を築いた。フローは教育・ゲームデザイン・スポーツ心理学・UI/UX設計に応用されており、ゲーミフィケーション理論の核となっている。また職場でのフロー促進が組織の生産性と従業員幸福度（well-being）に寄与することも実証されている。',
-    keyFigures: 'ミハイ・チクセントミハイ ／ マーティン・セリグマン ／ エルンスト・アランコーラ ／ ジェシカ・スコット',
+    statement:
+      'フロー（Flow）とはミハイ・チクセントミハイが提唱した概念で、活動に完全に没入し、時間の感覚や自意識が消え、行為そのものが報酬となる「最適経験」の精神状態を指す。フローは「課題の難しさ」と「自分のスキル」のバランスが高いレベルで均衡するときに生じ、どちらかが著しく上回ると退屈（スキル過剰）または不安（課題過剰）になる。チクセントミハイは芸術家・外科医・チェスプレイヤーなどの質的研究を通じてフロー状態の普遍性を示し、ポジティブ心理学の礎を築いた。フローは教育・ゲームデザイン・スポーツ心理学・UI/UX設計に応用されており、ゲーミフィケーション理論の核となっている。また職場でのフロー促進が組織の生産性と従業員幸福度（well-being）に寄与することも実証されている。',
+    keyFigures: 'ミハイ・チクセントミハイ（1975 提唱／1990『フロー体験』）／マーティン・セリグマン（ポジティブ心理学への位置づけ）',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1037/0003-066X.55.1.5', type: 'academic', label: 'Csikszentmihalyi (2000) Beyond Boredom and Anxiety — Jossey-Bass' },
       { url: 'https://doi.org/10.1037/h0097084', type: 'academic', label: 'Csikszentmihalyi (1975) Play and Intrinsic Rewards — Journal of Humanistic Psychology' },
+      { url: 'https://doi.org/10.1037/0003-066X.55.1.5', type: 'academic', label: 'Seligman, M. E. P. & Csikszentmihalyi, M. (2000) Positive Psychology: An Introduction — American Psychologist 55(1)（フローをポジティブ心理学に位置づけた序論）' },
       { url: 'https://en.wikipedia.org/wiki/Flow_(psychology)', type: 'reference', label: 'Wikipedia: Flow (psychology) — フロー状態と最適経験の概念' },
     ],
   },
@@ -43758,19 +43721,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://taxation-customs.ec.europa.eu/carbon-border-adjustment-mechanism_en', type: 'government', label: 'European Commission CBAM — Carbon Border Adjustment Mechanism' },
       { url: 'https://www.meti.go.jp/policy/energy_environment/global_warming/cbam.html', type: 'government', label: '経済産業省 炭素国境調整措置（CBAM）への対応 — METI' },
       { url: 'https://ja.wikipedia.org/wiki/%E7%82%AD%E7%B4%A0%E5%9B%BD%E5%A2%83%E8%AA%BF%E6%95%B4', type: 'reference', label: 'Wikipedia: 炭素国境調整 — CBAMとカーボンリーケージの解説' },
-    ],
-  },
-  {
-    id: 'mgmt-knowledge-transfer-multinational',
-    discipline: 'management',
-    title: '多国籍企業における知識移転——粘着性・吸収能力・本社—子会社ネットワーク',
-    statement: '多国籍企業（MNC）における知識移転（Knowledge Transfer）は、技術・管理ノウハウ・組織ルーティンをグループ内で共有し「知識の場」を展開する競争優位の源泉として研究されてきた。ガブリエル・シルガドーとウルフ・ハンソンは「知識の粘着性（Knowledge Stickiness）」概念を提唱し、暗黙知・文脈依存性・吸収能力不足・動機付けの欠如が移転を困難にすることを示した。ビルゲル・ウィリアムらは移転コストを受信側の吸収能力（Cohen & Levinthal）・送信側の開示意欲・関係の社会的資本によって決まる「3面モデル」として整理した。スウルジット・クマーらは本社—子会社間の「イニシアティブ競争（Entrepreneurial Initiative）」——子会社が知識を引き出し本社に逆転移する——をリバース・イノベーションの起点として分析した。日本企業の文脈では「すり合わせ型」知識が暗黙次元の高さから海外移転が難しく、モジュール型生産・ドキュメント化・現地人材育成が課題とされる。デジタル技術の進展により動画マニュアル・AR/VR・AIコーチングが暗黙知移転の新たな手段として注目される。',
-    keyFigures: 'ガブリエル・シルガドー ／ ウルフ・ハンソン ／ ビルゲル・ウィリアム ／ スジット・クマー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1002/smj.4250171105', type: 'academic', label: 'Szulanski, G. (1996) Exploring Internal Stickiness — Strategic Management Journal' },
-      { url: 'https://hbr.org/2009/10/reverse-innovation', type: 'media', label: 'Govindarajan, V. & Ramamurti, R. (2011) Reverse Innovation — Harvard Business Review' },
-      { url: 'https://ja.wikipedia.org/wiki/%E7%9F%A5%E8%AD%98%E7%A7%BB%E8%BB%A2', type: 'reference', label: 'Wikipedia: 知識移転 — 多国籍企業における知識管理の解説' },
     ],
   },
   {
@@ -44060,19 +44010,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-stakeholder-mapping-power-interest',
-    discipline: 'management',
-    title: 'ステークホルダー・マッピングと利害権力分析——戦略的ステークホルダー管理の実践論',
-    statement: 'ステークホルダー・マッピング（Stakeholder Mapping）とは、組織の決定に利害関係を持つ個人・集団を特定し、その影響力（権力）と関心度（利害）を二次元で分類する分析ツールであり、エドワード・フリーマンのステークホルダー理論（1984年）を実務的に具体化したフレームワークである。「パワー—インタレスト・グリッド」（オーバン、1991年）では、高権力・高関心の「主要プレイヤー」を最重視管理し、高権力・低関心の「満足維持対象」・低権力・高関心の「情報提供対象」・低権力・低関心の「モニタリング対象」に分類する。ミッチェル・エイグル・ウッドの「ステークホルダー顕現性（Salience）モデル」（1997年）は、権力・正当性・緊急性の三属性が重なるほど経営者の注意優先度が高まると論じる。エクソン・モービル石油事故・組織変革・公共事業の合意形成プロセスで広く活用され、近年のESG・SDGs目標設定においても重要ステークホルダーの特定に援用されている。デジタル化に伴いSNS上の「擬似ステークホルダー」（インフルエンサー・ボット）の台頭が分析を複雑にしている。',
-    keyFigures: 'エドワード・フリーマン ／ ロナルド・ミッチェル ／ ブラッドリー・エイグル ／ ドナルド・ウッド',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://journals.aom.org/doi/10.5465/amr.1997.9711022105', type: 'academic', label: 'Mitchell, R.K. et al. (1997) Toward a Theory of Stakeholder Identification and Salience — Academy of Management Review' },
-      { url: 'https://hbr.org/2010/01/managing-your-stakeholders', type: 'media', label: 'Harvard Business Review (2010) Managing Your Stakeholders — HBR' },
-      { url: 'https://ja.wikipedia.org/wiki/%E3%82%B9%E3%83%86%E3%83%BC%E3%82%AF%E3%83%9B%E3%83%AB%E3%83%80%E3%83%BC', type: 'reference', label: 'Wikipedia: ステークホルダー — ステークホルダー理論と管理の解説' },
-    ],
-  },
-  {
     id: 'human-positive-psychology-seligman-perma',
     discipline: 'human-science',
     title: 'ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤',
@@ -44355,18 +44292,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/2221224', type: 'academic', label: 'Pigou (1920) The Economics of Welfare — Macmillan; Ch.9 externalities and Pigouvian taxes' },
       { url: 'https://en.wikipedia.org/wiki/Pigouvian_tax', type: 'reference', label: 'Wikipedia: Pigouvian tax — externalities, carbon tax, EU ETS, double dividend, Coase theorem' },
-    ],
-  },
-  {
-    id: 'mgmt-corporate-social-responsibility-csr',
-    discipline: 'management',
-    title: '企業の社会的責任（CSR）とステークホルダー資本主義の経営論',
-    statement: '企業の社会的責任（Corporate Social Responsibility: CSR）は、企業が利益最大化を超えて従業員・顧客・地域社会・環境に対して積極的責任を担うという経営理念であり、ハワード・ボーウェンの「企業人の社会的責任」（1953年）が近代CSR論の嚆矢とされる。フリードマンは「企業の社会的責任は利益を増やすことだ」（1970年）と論じてCSRを株主至上主義から批判したが、エドワード・フリーマンのステークホルダー理論（1984年）が顧客・従業員・供給業者・地域社会・株主の複合的利害を重視する対抗的枠組みを提示した。2019年のビジネス・ラウンドテーブル声明（米国主要企業CEOがステークホルダー資本主義を支持）・EUの非財務情報開示指令（NFRD→CSRD）・国際サステナビリティ基準審議会（ISSB）基準の策定により、CSRはESG開示・サステナビリティ経営として義務化・定量化の段階に移行した。CSRの効果研究はメタ分析で企業業績（CFP）との正の相関（r≒0.13）を示すが、因果関係・測定の一貫性・グリーンウォッシュ問題が研究上の課題として指摘される。',
-    keyFigures: 'ハワード・ボーウェン ／ エドワード・フリーマン ／ マイケル・ポーター ／ キャロル・アーチー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1017/CBO9781139192675', type: 'academic', label: 'Freeman, R. E. (1984) Strategic Management: A Stakeholder Approach — Pitman（Cambridge University Press 2010 復刻版の DOI）' },
-      { url: 'https://en.wikipedia.org/wiki/Corporate_social_responsibility', type: 'reference', label: 'Wikipedia: CSR — stakeholder theory, ESG, CSRD, Business Roundtable, Friedman doctrine' },
     ],
   },
   {
@@ -45768,18 +45693,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-stakeholder-capitalism-freeman',
-    discipline: 'management',
-    title: 'ステークホルダー資本主義と企業の目的（フリーマン）',
-    statement: 'ステークホルダー理論は、企業は株主のみでなく、従業員・顧客・仕入先・地域社会・環境など利害を持つ全当事者（ステークホルダー）に対して責任を負うとする企業倫理・戦略論の基盤理論である。エドワード・フリーマンは1984年の著書『Strategic Management: A Stakeholder Approach』においてこの概念を体系化し、株主至上主義（シェアホルダー・プライマシー）への対抗軸を提示した。2019年のビジネス・ラウンドテーブル声明やダボス・マニフェスト（WEF）がステークホルダー資本主義を公式に採択したことで注目が高まった。ESG投資・CSV（共有価値の創造）・Bコープ認証などの実践的運動と接続しつつ、株主価値最大化との両立可能性・測定可能性・「ウォッシュ」批判を巡る議論が続く。',
-    keyFigures: 'エドワード・フリーマン ／ ロバート・フィリップス ／ マイケル・ジェンセン ／ コリン・メイヤー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1017/CBO9780511815768', type: 'academic', label: 'Freeman, R.E. (1984). Strategic Management: A Stakeholder Approach — Cambridge UP' },
-      { url: 'https://en.wikipedia.org/wiki/Stakeholder_capitalism', type: 'reference', label: 'Wikipedia: Stakeholder capitalism — corporate governance' },
-    ],
-  },
-  {
     id: 'bizlaw-penalty-clause-comparative',
     discipline: 'business-law',
     title: '違約金条項・損害賠償予定と比較契約法',
@@ -46227,13 +46140,14 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'infosoc-platform-governance-tarleton',
     discipline: 'information-sociology',
-    title: 'プラットフォーム・ガバナンス（ギレスピー）',
-    statement: 'ギレスピー（Tarleton Gillespie）は2010年の論文で，「プラットフォーム」という語が技術的中立性・公共インフラ性を演出するために用いられ，コンテンツモデレーション・アルゴリズム推薦・利用規約（TOS）を通じた私的統治（private governance）の実態を隠蔽すると論じた。プラットフォームはユーザーの発言を主体的に編集せず媒介するという「ニュートラル・プラットフォーム」言説で法的免責（米国Section 230等）を維持しつつ，実際にはコンテンツをランク付け・選別・削除することで規範的環境を生産している。この「プラットフォーム・レトリック」の分析は，デジタル公共圏・表現の自由・コンテンツモデレーション規制をめぐる政策論争の核心的視座となっており，EU・DSA（デジタルサービス法）等の規制立案にも影響を与えている。',
-    keyFigures: 'タールトン・ギレスピー ／ ソフィア・ノーブル ／ ニック・サーニセック ／ エブゲニー・モロゾフ',
-    asOf: '2026-06-26',
+    title: 'プラットフォームの政治学（ギレスピー）——「プラットフォーム」という語の多義性が中立で開かれた場のイメージを作り、選別・推薦・削除という編集的介入と私的統治を見えなくする',
+    statement:
+      'プラットフォームの政治学は、ターレトン・ギレスピーが2010年の論文で示した枠組みで、YouTube などのデジタルプラットフォームが「プラットフォーム」という語の多義性を戦略的に使い、利用者・広告主・権利者・政策立案者に対する自己の位置づけを構築する言説政治を分析する。ギレスピーは同語の意味を計算論的・建築的・比喩的・政治的の四つの用法に腑分けし、これらの含意の重ね合わせから「平等で開放的な中立の場」というイメージが生成されると論じた。事例分析では YouTube が利用者には表現の場、広告主には商業機会、大手権利者には流通経路、規制当局には中立的な媒介者と聴衆ごとに語り分けて相互の緊張を糊塗し、Viacom 訴訟や DMCA のセーフハーバーをめぐって編集主体ではなく媒介者としての免責を主張する法廷戦略とこの自己呈示が連動することを示した。平坦な基盤の隠喩は、実際にはコンテンツ・モデレーション、アルゴリズム推薦、利用規約を通じてコンテンツを選別・順位づけ・削除する編集的介入と、そこに埋め込まれたビジネスモデルや権力構造による私的統治を不可視化する。プラットフォーム研究の基礎文献として、コンテンツ・モデレーション研究、媒介者責任（米国 Section 230 など）や EU のデジタルサービス法をめぐる議論の出発点となった。批判として、言説分析が中心で統治の実際の機構や利用者側の抵抗の分析は後続研究に委ねられ、「中立」を否定した先の規範（誰がどう統治すべきか）を与えない。中小企業には、集客や販売を委ねるプラットフォームが「中立の場」ではなく規約と推薦で自社の可視性を左右する統治者であること、規約変更やアカウント停止の手続きを前提にした依存度の管理が含意となる。',
+    keyFigures: 'ターレトン・ギレスピー（2010 提唱）／対比: ニック・スルニチェク（プラットフォーム資本主義）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1177/1461444809342738', type: 'academic', label: 'Gillespie, T. (2010) The politics of "platforms" — New Media & Society 12(3), 347–364（プラットフォーム・ガバナンス論の原論文）' },
-      { url: 'https://en.wikipedia.org/wiki/Content_moderation', type: 'reference', label: 'Wikipedia: Content moderation — プラットフォームのコンテンツモデレーションの概説' },
+      { url: 'https://doi.org/10.1177/1461444809342738', type: 'academic', label: 'Gillespie, T. (2010) The Politics of "Platforms" — New Media & Society 12(3)（原典）' },
+      { url: 'https://en.wikipedia.org/wiki/Content_moderation', type: 'reference', label: 'Wikipedia: Content moderation — プラットフォームによる選別・削除と媒介者責任の概観' },
     ],
   },
   {
@@ -46768,20 +46682,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.legislation.gov.uk/ukpga/1986/45/section/214', type: 'government', label: 'UK Government (1986) Insolvency Act 1986 s.214 — Wrongful Trading（英国不正取引規定）' },
       { url: 'https://doi.org/10.1111/j.1468-2230.2008.00702.x', type: 'academic', label: 'Goode, R. (2011) Principles of Corporate Insolvency Law — Sweet & Maxwell（倒産法の体系書）' },
       { url: 'https://en.wikipedia.org/wiki/Insolvent_trading', type: 'reference', label: 'Wikipedia: Insolvent trading — Corporations Act 2001, wrongful trading UK, Chapter 11, director liability' },
-    ],
-  },
-  {
-    id: 'mgmt-stakeholder-integration-freeman',
-    discipline: 'management',
-    title: 'ステークホルダー統合戦略（フリーマン）',
-    statement: 'ステークホルダー統合戦略（stakeholder integration）は、フリーマン（1984）の『Strategic Management: A Stakeholder Approach』を基盤として発展した、企業が株主のみならず顧客・従業員・サプライヤー・地域社会・規制当局等の多様なステークホルダーの利益を戦略計画に組み込む経営アプローチである。フリーマンのステークホルダー定義は「組織の目的達成に影響を与え、または与えられる集団・個人」であり、ポーターの「競争の五力」とは異なり、ステークホルダーを取り込む「共創的価値（value co-creation）」を強調する。ドナルドソン＆プレストン（1995）は、ステークホルダー理論を①記述的（descriptive）——企業が実際にどう振る舞うか、②道具的（instrumental）——ステークホルダー管理が業績に何をもたらすか、③規範的（normative）——企業は何をすべきか——の三層で整理した。ESG投資・CSV（共有価値の創造）・SDGs企業報告の拡大により、ステークホルダー統合はBRTの「ステークホルダー資本主義宣言（2019）」で制度化され、米国コーポレート・ガバナンス論の主流に浮上した。批判として、ミルトン・フリードマン（1970）の株主第一主義との規範的対立が今日も続く。',
-    keyFigures: 'エドワード・フリーマン ／ ジョン・ドナルドソン ／ リー・プレストン ／ マイケル・ポーター',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1017/CBO9781139192675', type: 'academic', label: 'Freeman, R. E. (1984) Strategic Management: A Stakeholder Approach — Pitman（ステークホルダー理論の原典）' },
-      { url: 'https://doi.org/10.2307/258887', type: 'academic', label: 'Donaldson, T. & Preston, L. E. (1995) The Stakeholder Theory of the Corporation: Concepts, Evidence, and Implications — Academy of Management Review, 20(1), 65–91（三層理論の体系化）' },
-      { url: 'https://www.businessroundtable.org/business-roundtable-redefines-the-purpose-of-a-corporation-to-promote-an-economy-that-serves-all-americans', type: 'reference', label: 'Business Roundtable (2019) Statement on the Purpose of a Corporation（ステークホルダー資本主義宣言）' },
-      { url: 'https://en.wikipedia.org/wiki/Stakeholder_theory', type: 'reference', label: 'Wikipedia: Stakeholder theory — Freeman, descriptive/instrumental/normative, BRT 2019, ESG, CSV' },
     ],
   },
   {

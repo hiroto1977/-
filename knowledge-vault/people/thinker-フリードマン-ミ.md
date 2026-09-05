@@ -2,7 +2,7 @@
 title: "ミルトン・フリードマン"
 type: thinker
 person_key: "フリードマン|ミ"
-concept_count: 26
+concept_count: 27
 tags:
   - person
   - index
@@ -10,9 +10,9 @@ tags:
 
 # ミルトン・フリードマン
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **26 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **27 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（26件）
+## 学術概念（27件）
 - [[econ-consumption-smoothing-permanent-income|消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み]] — 消費の平滑化（ConsumptionSmoothing）は、合理的な経済主体が一時的な所得変動に対して消費を安定的に維…
 - [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]] — 期待修正フィリップス曲線（Expectations-AugmentedPhillipsCurve）は、フリードマンとフ…
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — ミルトン・フリードマンが1969年『最適貨幣量』で提示した金融政策の処方で、名目利子率がゼロになるとき最適な資源配分が…
@@ -39,6 +39,7 @@ tags:
 - [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]] — 企業目的論（corporatepurpose）は、1970年のミルトン・フリードマン「企業の唯一の社会的責任は利益を増…
 - [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]] — キャロルのCSRピラミッド（Carroll'spyramidofCSR）は、キャロル（1979,1991）が提唱した企…
 - [[mgmt-csr|企業の社会的責任（CSR）]] — 企業の社会的責任（CSR）とは、企業が利益追求にとどまらず、環境・社会・ガバナンスに配慮した経営を行い、ステークホルダ…
+- [[mgmt-stakeholder-theory-freeman-strategic|ステークホルダー理論（フリーマン）——企業の目的を株主利益に限定せず、目的達成に影響を与え影響を受けるすべての集団の利害を戦略に組み込む規範的・道具的・記述的理論]] — ステークホルダー理論（stakeholdertheory）は、R・エドワード・フリーマンが1984年の著書『Strat…
 
 ## 関連
 - 索引: [[人物索引]]

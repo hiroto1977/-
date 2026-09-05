@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 923
+entry_count: 921
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（923件）
+# 学習パス — 学術概念／経済学（921件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 88）
-- [[econ-helicopter-money|ヘリコプターマネー]]（接続 47）
+- [[econ-helicopter-money|ヘリコプターマネー]]（接続 48）
 - [[econ-liquidity-trap|流動性のわな]]（接続 44）
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 43）
 - [[econ-agglomeration-economies|集積の経済]]（接続 43）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 43）
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 42）
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 41）
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]]（接続 39）
 - [[econ-behavioral-finance|行動ファイナンス]]（接続 38）
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 38）
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]]（接続 37）
-- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 37）
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 36）
 - [[econ-becker-crime|犯罪の経済学]]（接続 35）
-- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 33）
-- [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]]（接続 32）
+- [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]]（接続 34）
+- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 34）
 
 ## 第 2 部 — 年代順の展開
 - 1623年: [[econ-petty-clark-law|ペティ＝クラークの法則]]
@@ -183,10 +183,10 @@ tags:
 - 1952年: [[econ-modern-portfolio-theory|現代ポートフォリオ理論（MPT）]]
 - 1952年: [[econ-tobin-separation|トービンの分離定理（Tobin Separation Theorem）]]
 - 1953年: [[econ-allais-paradox|アレのパラドックス]]
+- 1953年: [[econ-capital-controversy|ケンブリッジ資本論争（ロビンソン／スラッファ対サミュエルソン）——異質な資本財を一つの量に集計できるかをめぐり、再スイッチングと資本逆行が新古典派の限界生産力理論に根本的な疑義を投じた]]
 - 1953年: [[econ-core|コア（協力ゲーム理論）]]
 - 1953年: [[econ-optimal-tariff|最適関税論]]
 - 1953年: [[econ-shapley-value|シャープレー値]]
-- 1953年: [[econ-sraffa-commodities|スラッファの商品による商品の生産（ケンブリッジ資本論争）]]
 - 1954年: [[econ-harberger-triangle|ハーバーガーの三角形（独占の死荷重損失計測）]]
 - 1954年: [[econ-public-goods|公共財（非競合性・非排除性）]]
 - 1954年: [[econ-samuelson-condition|公共財供給のサミュエルソン条件]]
@@ -348,6 +348,7 @@ tags:
 - 1983年: [[econ-diamond-dybvig-bank-run|ダイアモンド＝ディビッグの銀行取付モデル——流動性変換という銀行の本質的機能そのものが自己実現的な取付の脆弱性を生む]]
 - 1983年: [[econ-kreps-scheinkman-capacity-precommitment-cournot|クレプス＝シャインクマンの生産能力事前コミットメント・モデル——価格競争でもクールノー的寡占均衡へ至る二段階ゲーム]]
 - 1983年: [[econ-new-keynesian-phillips|ニューケインジアン・フィリップス曲線（New Keynesian Phillips Curve）]]
+- 1983年: [[econ-price-stickiness-calvo|カルボ型価格設定（カルボ）——各企業が毎期一定の確率でしか価格を改定できないという仮定が、名目硬直性とニューケインジアン・フィリップス曲線を導く]]
 - 1983年: [[econ-raising-rivals-costs|ライバルの費用引き上げ理論（Raising Rivals' Costs／RRC、サロップ＝シェフマン）——支配的企業が略奪的安売りではなく競争相手の費用を高めて排除する反トラスト理論]]
 - 1983年: [[econ-sunspot-equilibrium|サンスポット均衡]]
 - 1984年: [[econ-forward-premium-puzzle|フォワード・プレミアム・パズル]]
@@ -498,7 +499,6 @@ tags:
 - [[econ-business-cycles|景気循環とその諸波動]]
 - [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]]
 - [[econ-cap-and-trade-dales|排出量取引——総量規制と取引可能な排出権による費用最小の汚染削減]]
-- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]]
 - [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]]
 - [[econ-capital-levy-debate|資本課徴金論争——戦後債務処理のための一回的資産課税]]
 - [[econ-carbon-border-adjustment-mechanism|炭素国境調整メカニズム（CBAM）——カーボンリーケージ防止と気候変動政策の貿易接続]]
@@ -803,7 +803,6 @@ tags:
 - [[econ-price-discrimination-pigou-varian|価格差別の経済学——ピグーの三類型とデジタル経済における動的価格設定]]
 - [[econ-price-elasticity-demand|需要の価格弾力性]]
 - [[econ-price-level-targeting|物価水準目標政策]]
-- [[econ-price-stickiness-calvo|カルボ型価格設定——確率的な価格改定が生む名目硬直性とニューケインジアン曲線]]
 - [[econ-principal-agent-problem|プリンシパル＝エージェント理論：委任関係における利益相反と情報非対称性が生む代理費用の経済学的分析]]
 - [[econ-probabilistic-serial-bogomolnaia-moulin|確率的シリアル・メカニズム——同時消費による公平な確率配分]]
 - [[econ-procedural-utility-frey|手続き効用——「何を」だけでなく「どのように」も大切である]]
@@ -881,7 +880,6 @@ tags:
 - [[econ-tax-incidence-theory|租税帰着理論]]
 - [[econ-temptation-self-control-gul-pesendorfer|誘惑と自制の選好——選択肢の集合そのものを評価する]]
 - [[econ-theil-index-inequality|タイル指数——情報理論にもとづく分解可能な不平等尺度]]
-- [[econ-time-inconsistency-calvo|時間非整合性とカルヴォ型価格設定——粘着価格のミクロ的基礎とニューケインジアン・フィリップス曲線]]
 - [[econ-time-inconsistency-kydland-prescott|時間的非整合性——最適計画の事後的破棄とルール対裁量の問題]]
 - [[econ-time-inconsistency-monetary-policy|金融政策の時間的非整合性（裁量 vs. ルール）]]
 - [[econ-tinbergen-rule-policy-targets|ティンバーゲンの定理——政策目標と政策手段の対応関係]]

@@ -3,8 +3,8 @@ collection: academic
 id: econ-capital-controversy
 category: "economics"
 category_ja: "経済学"
-title: "ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎"
-as_of: "2026-06-25"
+title: "ケンブリッジ資本論争（ロビンソン／スラッファ対サミュエルソン）——異質な資本財を一つの量に集計できるかをめぐり、再スイッチングと資本逆行が新古典派の限界生産力理論に根本的な疑義を投じた"
+as_of: "2026-09"
 source_count: 3
 authoritative: true
 tags:
@@ -12,35 +12,35 @@ tags:
   - academic/economics
   - knowledge/verified
 aliases:
-  - "ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎"
+  - "ケンブリッジ資本論争（ロビンソン／スラッファ対サミュエルソン）——異質な資本財を一つの量に集計できるかをめぐり、再スイッチングと資本逆行が新古典派の限界生産力理論に根本的な疑義を投じた"
 ---
 
-# ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎
+# ケンブリッジ資本論争（ロビンソン／スラッファ対サミュエルソン）——異質な資本財を一つの量に集計できるかをめぐり、再スイッチングと資本逆行が新古典派の限界生産力理論に根本的な疑義を投じた
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-06-25 ・ 出典: 3件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-09 ・ 出典: 3件（うち権威ある出典 ✓）
 
 ## 概要
-ケンブリッジ資本論争（Two Cambridges debate）は、1950年代から1970年代にかけて、英国ケンブリッジ（ロビンソン、スラッファ、パシネッティ）と米国MIT（サミュエルソン、ソロー）の経済学者間で展開された、資本の本質と測定をめぐる理論的論争である。ジョーン・ロビンソン（1953-54）は新古典派の総生産関数における「資本」の集計問題を提起し、異質な資本財を単一の量に集約することの理論的矛盾を指摘した。ピエロ・スラッファ（1960）は『商品による商品の生産』で、利潤率の変化に伴い資本集約度の順序が逆転する「再スイッチング」（reswitching）と「資本逆行」（capital-reversing）の可能性を示し、新古典派の限界生産力理論に根本的疑義を投じた。サミュエルソン（1966）はQuarterly Journal of Economics誌上で再スイッチングの論理的可能性を認め、寓話的代理モデルの一般化不可能性を公式に受容した。この論争は分配理論・成長理論の基礎に関する未解決の問題を残している。
+ケンブリッジ資本論争（Cambridge capital controversy）は、1950年代から1970年代にかけて英国ケンブリッジ（ジョーン・ロビンソン、ピエロ・スラッファ、ルイジ・パシネッティ）と米国 MIT（ポール・サミュエルソン、ロバート・ソロー）の経済学者の間で展開された、資本の本質と測定をめぐる理論的論争である。ロビンソン（1953–54）は新古典派の総生産関数における「資本」の集計問題を提起し、異質な資本財を利潤率と独立に単一の量へ集約することの循環論法を指摘した。スラッファは1960年の『商品による商品の生産』で異質な資本財を物的投入のベクトルとして表現し、利潤率が変化すると技術の資本集約度の順序が逆転する「再スイッチング」と、利潤率の低下が必ずしも資本集約的な技術の採用に対応しない「資本逆行」が理論的に生じうることを示して限界生産力による分配理論に根本的疑義を投じた。パシネッティ（1966）が再スイッチングの分析を拡張し、サミュエルソン（1966）は「A Summing Up」で再スイッチングの論理的可能性を認め、集計的生産関数の寓話が一般には成り立たないことを公式に受容した。それでも新古典派の成長論と分配論は集計的生産関数を実用的な近似として使い続けており、論争は分配理論・成長理論の基礎に未解決の問題を残している。批判として、再スイッチングの経験的重要性は小さいとする見方と、理論の基礎に関わる以上は頻度の問題ではないとする見方が対立する。中小企業には、「資本」を金額で一括りにした投資判断が設備の組み合わせや金利水準で収益の順位が入れ替わる現実を隠しうること、金利が変わっても有利な技術が単調に変わるとは限らないことが含意となる。
 
 ## 提唱者・初出
-ジョーン・ロビンソン ／ ピエロ・スラッファ ／ ポール・サミュエルソン ／ ルイジ・パシネッティ
+ジョーン・ロビンソン（1953–54 集計問題の提起）／ピエロ・スラッファ（1960『商品による商品の生産』）／ルイジ・パシネッティ（1966 再スイッチングの拡張）／ポール・サミュエルソン（1966「A Summing Up」）／ロバート・ソロー（MIT 側）
 
 ## 出典
-- [Robinson, J. (1953-54) The Production Function and the Theory of Capital — Review of Economic Studies](https://doi.org/10.2307/2296002) `学術`
-- [Sraffa, P. (1960) Production of Commodities by Means of Commodities — Cambridge University Press](https://archive.org/details/productionofcomm0000sraf) `学術`
-- [Samuelson, P.A. (1966) A Summing Up — Quarterly Journal of Economics](https://doi.org/10.2307/1882916) `学術`
+- [Robinson, J. (1953–54) The Production Function and the Theory of Capital — Review of Economic Studies 21(2)（集計問題の提起）](https://doi.org/10.2307/2296002) `学術`
+- [Sraffa, P. (1960) Production of Commodities by Means of Commodities: Prelude to a Critique of Economic Theory — Cambridge University Press（Internet Archive）](https://archive.org/details/productionofcomm0000sraf) `学術`
+- [Samuelson, P. A. (1966) A Summing Up — Quarterly Journal of Economics 80(4), 568–583](https://doi.org/10.2307/1882916) `学術`
 
 ## 関連概念
+- [[econ-wicksell-effect-capital|ヴィクセル効果——利子率の変化が資本の価値を動かす]] — 語彙が近い
 - [[econ-monopolistic-competition|独占的競争]] — 同じ思想家
-- [[econ-sraffa-commodities|スラッファの商品による商品の生産（ケンブリッジ資本論争）]] — 同じ思想家
 - [[econ-sraffian-price|スラッファ価格理論（Sraffian Price Theory）]] — 同じ思想家
-- [[econ-wicksell-effect-capital|ヴィクセル効果——利子率の変化が資本の価値を動かす]] — 同じ思想家
-- [[econ-heterodox-post-keynesian-kalecki|ポスト・ケインズ派経済学とカレツキ——有効需要・所得分配・マクロ投資決定の代替的枠組み]] — 同じ思想家
-- [[econ-leontief-dynamic-model|動学的レオンチェフ・モデル——資本蓄積を組み込んだ産業連関分析]] — 同じ思想家
-- [[econ-marginal-efficiency-capital|資本の限界効率——期待収益に基づく投資決定とアニマル・スピリッツ]] — 同じ思想家
-- [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]] — 同じ思想家
-- [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]] — 同じ思想家
-- [[econ-north-institutions-economic-history|ノースの制度論と経済史——取引費用・財産権・路径依存性による長期経済変化の解明]] — 同じ思想家
+- [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 同じ思想家
+- [[econ-le-chatelier-samuelson|ル・シャトリエの原理（サミュエルソン）——制約が緩むほど反応は大きくなる]] — 同じ思想家
+- [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
+- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同じ思想家
+- [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
+- [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 同じ思想家
+- [[econ-growth-accounting-solow-residual|成長会計とソロー残差——全要素生産性（TFP）と技術進歩の計測]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

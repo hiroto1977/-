@@ -39,7 +39,7 @@ aliases:
 - [[mgmt-corporate-governance-stewardship|コーポレートガバナンスとスチュワードシップ理論——エージェンシー論との対比]] — 同じ思想家
 - [[mgmt-family-business-governance-gersick|ファミリービジネスの三円モデル（ガーシック）]] — 同じ思想家
 - [[mgmt-family-business-succession|ファミリービジネスの事業承継と経営継続性の組織論]] — 同じ思想家
-- [[mgmt-stakeholder-capitalism-freeman|ステークホルダー資本主義と企業の目的（フリーマン）]] — 同じ思想家
+- [[econ-baumol-sales-maximization|売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,11 +33,11 @@ aliases:
 ## 関連概念
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 語彙が近い
 - [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]] — 語彙が近い
+- [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — 同じ思想家
 - [[human-flow-state|フロー状態（Flow State）]] — 同じ思想家
 - [[human-learned-optimism|学習性楽観主義]] — 同じ思想家
 - [[human-explanatory-style-seligman|説明スタイル——出来事の原因をどう説明するかが楽観と悲観を分ける]] — 同じ思想家
 - [[human-flow-optimal-experience-csikszentmihalyi|フロー理論と最適経験の積極心理学（チクセントミハイ）]] — 同じ思想家
-- [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — 同じ思想家
 - [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 同じ思想家
 - [[human-learned-helplessness|学習性無力感（learned helplessness）]] — 同じ思想家
 - [[infosoc-serious-leisure-stebbins|シリアスレジャー——余暇を「キャリア」として追求する営み]] — 同じ思想家

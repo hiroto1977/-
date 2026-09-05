@@ -38,6 +38,7 @@ aliases:
 - [[mgmt-bricolage-entrepreneurship-baker|アントレプレナー的ブリコラージュ（ベイカー＝ネルソン）——手元にある資源の組み合わせを新しい問題や機会に当てはめて「無から有」を生む資源構築]] — 同じ思想家
 - [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（フェリン＆フォス）——組織能力やルーティンといった集合的概念を、個人の行為・相互作用・異質性から説明しようとする研究プログラム]] — 同じ思想家
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 同分野の近傍
+- [[mgmt-organizational-routines-as-grammars|組織ルーティンの生成文法モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

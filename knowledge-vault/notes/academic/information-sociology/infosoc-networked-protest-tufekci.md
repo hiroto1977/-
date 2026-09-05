@@ -37,12 +37,12 @@ aliases:
 - [[infosoc-space-of-flows|フローの空間（スペース・オブ・フローズ）]] — 同じ思想家
 - [[infosoc-connective-action|つながりの行為論理（コネクティブ・アクション）]] — 同じ思想家
 - [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]] — 同じ思想家
-- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同じ思想家
 - [[infosoc-control-revolution-beniger|制御革命（ベニガー）——情報社会の技術的・経済的起源]] — 同じ思想家
 - [[infosoc-data-justice|データ正義（Data Justice）]] — 同じ思想家
 - [[infosoc-differential-susceptibility-media-effects|メディア効果の分化感受性モデル（DSMM／Differential Susceptibility to the Media Effects Model）——同じ内容が人により違う効果を生む理由を説明する統合枠組み]] — 同じ思想家
 - [[infosoc-indexing-hypothesis-bennett|インデックス仮説——報道は公的エリートの論争の幅に従う]] — 同じ思想家
+- [[infosoc-information-society-webster|情報社会論の批判的検討——情報社会は新たな社会か資本主義の連続か]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

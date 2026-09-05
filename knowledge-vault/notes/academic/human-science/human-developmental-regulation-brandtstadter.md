@@ -34,8 +34,8 @@ aliases:
 ## 関連概念
 - [[human-cognitive-aging-fluid-crystallized|流動性知能と結晶性知能——キャッテルの知能二元モデルと認知的老化の軌跡]] — 同じ思想家
 - [[human-selective-optimization-with-compensation-baltes|選択・最適化・補償（SOC）モデル——資源が減る中で目標を絞り、手段を磨き、失った機能を補って発達を続けるバルテスの生涯発達論]] — 同じ思想家
-- [[human-constructive-developmental-kegan|構成的発達理論——意味構成の段階的変容と主体-客体均衡]] — 同分野の近傍
 - [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 同分野の近傍
+- [[human-constructive-developmental-kegan|構成的発達理論——意味構成の段階的変容と主体-客体均衡]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

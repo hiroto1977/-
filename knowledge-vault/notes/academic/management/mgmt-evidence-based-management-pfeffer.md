@@ -37,7 +37,6 @@ aliases:
 - [[mgmt-psychological-contract|心理的契約（ルソー）——雇用関係における明文化されない相互義務についての従業員の主観的信念と、その違反が信頼とコミットメントに与える影響]] — 同じ思想家
 - [[mgmt-corporate-governance-stewardship|コーポレートガバナンスとスチュワードシップ理論——エージェンシー論との対比]] — 同分野の近傍
 - [[mgmt-scientific-management|科学的管理法（テイラリズム）]] — 同分野の近傍
-- [[mgmt-event-system-theory|出来事システム理論（Event System Theory）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "journals.sagepub.com"
 type: source-domain
 host: "journals.sagepub.com"
-cite_count: 179
+cite_count: 178
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.sagepub.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **179 件**（学術 178 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **178 件**（学術 177 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -103,7 +103,6 @@ tags:
 - [[infosoc-news-values|ニュース・バリュー（ニュースの価値）]] — Galtung&Ruge(1965)"TheStructureofForeignNews",JournalofPeaceResearch(…
 - [[infosoc-online-disinhibition|オンライン脱抑制効果]] — JohnSuler,“TheOnlineDisinhibitionEffect,”CyberPsychology&Behavior7(3)…
 - [[infosoc-phatic-culture|ファティック文化（Phatic Culture／Vincent Miller 2008）——内容より「つながりの維持」を目的とする、中身の薄いコミュニケーションの拡大]] — Miller,V.(2008).NewMedia,NetworkingandPhaticCulture.Convergence,14(4)…
-- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — Gillespie(2010)ThePoliticsof"Platforms"—NewMedia&Society/SAGE
 - [[infosoc-platformization|プラットフォーム化（Platformization）]] — Helmond(2015)ThePlatformizationoftheWeb—SocialMedia+Society1(2)
 - [[infosoc-polymedia|ポリメディア（Polymedia）]] — Madianou&Miller(2013)Polymedia:Towardsanewtheoryofdigitalmediaininter…
 - [[infosoc-profiling|プロファイリングと自動意思決定]] — Mittelstadtetal.(2016)“Theethicsofalgorithms:Mappingthedebate”,BigDat…

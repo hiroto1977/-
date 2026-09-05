@@ -37,7 +37,7 @@ aliases:
 - [[human-legitimate-peripheral-participation|正統的周辺参加と実践共同体]] — 同じ思想家
 - [[mgmt-communities-of-practice|実践共同体（コミュニティ・オブ・プラクティス）]] — 同じ思想家
 - [[mgmt-communities-practice-wenger|実践共同体理論と組織学習のコミュニティ論（ウェンガー）]] — 同じ思想家
-- [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 同じ思想家
+- [[mgmt-knowledge-transfer|知識移転（シュランスキー／アーゴット＝イングラム）——ノウハウやベストプラクティスを送り手から受け手へ伝え、受け手が吸収して使えるようにする過程と、それを妨げる知識の粘着性]] — 同じ思想家
 - [[mgmt-ba-knowledge-creation-nonaka|場（Ba）と知識創造（野中・紺野）]] — 同分野の近傍
 - [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]] — 同分野の近傍
 

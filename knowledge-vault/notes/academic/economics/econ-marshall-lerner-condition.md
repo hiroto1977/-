@@ -37,9 +37,9 @@ aliases:
 - [[econ-elasticity-pessimism-thesis|弾力性ペシミズム——為替レート調整による貿易収支改善への懐疑論]] — 同じ思想家
 - [[econ-marginal-efficiency-capital|資本の限界効率——期待収益に基づく投資決定とアニマル・スピリッツ]] — 同じ思想家
 - [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — 同じ思想家
-- [[econ-sraffa-commodities|スラッファの商品による商品の生産（ケンブリッジ資本論争）]] — 同じ思想家
 - [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同じ思想家
-- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 同じ思想家
+- [[econ-capital-controversy|ケンブリッジ資本論争（ロビンソン／スラッファ対サミュエルソン）——異質な資本財を一つの量に集計できるかをめぐり、再スイッチングと資本逆行が新古典派の限界生産力理論に根本的な疑義を投じた]] — 同じ思想家
+- [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

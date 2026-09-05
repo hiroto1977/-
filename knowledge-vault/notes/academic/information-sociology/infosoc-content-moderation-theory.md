@@ -35,12 +35,12 @@ aliases:
 - [[infosoc-algorithmic-curation-theory|アルゴリズム的キュレーションと増幅（ギレスピー）——プラットフォームのランキング・推薦・フィルタリングは中立の配管ではなく、価値と権力を埋め込んだ文化的仲介として情報環境を形づくる]] — 同じ思想家
 - [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像（ブッヒャー）——利用者がアルゴリズムをどう感じ意味づけるかが、想像に導かれた行動を通じてアルゴリズムの力そのものを構成する]] — 同じ思想家
 - [[infosoc-new-governors-online-speech-klonick|新しい統治者論——プラットフォームを独自の規則・手続・文化でオンライン言論を統治する私的統治システムとみなす議論]] — 同じ思想家
-- [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 同じ思想家
-- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
+- [[infosoc-platform-governance-tarleton|プラットフォームの政治学（ギレスピー）——「プラットフォーム」という語の多義性が中立で開かれた場のイメージを作り、選別・推薦・削除という編集的介入と私的統治を見えなくする]] — 同じ思想家
 - [[infosoc-platform-moderation-content-governance|プラットフォームのコンテンツモデレーション——ソーシャルメディアのコンテンツガバナンスと表現の自由]] — 同じ思想家
 - [[bizlaw-best-efforts-obligation|最善努力義務]] — 出典を共有
 - [[infosoc-aspirational-labor-duffy|アスピレーショナル労働（aspirational labour／夢追い型デジタル労働）——「好きを仕事に」の約束に支えられた、ほぼ無償のセルフブランディング労働]] — 出典を共有
 - [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
+- [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

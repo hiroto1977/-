@@ -31,8 +31,8 @@ aliases:
 - [Baruch College (CUNY) Library — Porter’s Five Forces Analysis](https://guides.newman.baruch.cuny.edu/porter) `学術`
 
 ## 関連概念
-- [[mgmt-corporate-social-performance|企業社会的パフォーマンスモデル]] — 同分野の近傍
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

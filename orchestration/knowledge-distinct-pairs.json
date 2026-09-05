@@ -460,6 +460,38 @@
   [
    "bizlaw-liquidated-damages",
    "bizlaw-penalty-clause"
+  ],
+  [
+   "bizlaw-anchoring-litigation",
+   "human-anchoring-adjustment-tversky"
+  ],
+  [
+   "econ-capital-deepening",
+   "econ-long-run-aggregate-supply-solow-growth"
+  ],
+  [
+   "econ-commons-tragedy-hardin-ostrom",
+   "infosoc-open-source-governance-ostrom"
+  ],
+  [
+   "econ-microeconomic-foundations-general-equilibrium",
+   "econ-second-welfare-theorem"
+  ],
+  [
+   "econ-principal-agent-problem",
+   "mgmt-corporate-governance"
+  ],
+  [
+   "econ-ramsey-boiteux-pricing",
+   "econ-ramsey-optimal-taxation"
+  ],
+  [
+   "infosoc-media-multitasking",
+   "infosoc-the-shallows-carr"
+  ],
+  [
+   "mgmt-ambidexterity-tushman",
+   "mgmt-exploration-exploitation"
   ]
  ]
 }

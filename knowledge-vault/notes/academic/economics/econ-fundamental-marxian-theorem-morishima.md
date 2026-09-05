@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: Fundamental Marxian theorem — exploitation, profit, Okishio, Morishima](https://en.wikipedia.org/wiki/Fundamental_Marxian_theorem) `リファレンス`
 
 ## 関連概念
-- [[econ-marxian-exploitation|マルクス搾取理論（Marxian Exploitation Theory）]] — 語彙が近い
+- [[econ-marxian-exploitation|マルクス搾取理論（Marxian Exploitation Theory）]] — 同じ思想家
 - [[econ-okishio-theorem|置塩定理——資本家的な技術選択と利潤率の動態]] — 同じ思想家
 - [[econ-goodwin-growth-cycle|グッドウィンの成長循環——分配をめぐる階級闘争が生む景気循環]] — 同じ思想家
 - [[infosoc-society-of-spectacle-debord|スペクタクルの社会——イメージに媒介された社会関係と消費社会批判]] — 同じ思想家

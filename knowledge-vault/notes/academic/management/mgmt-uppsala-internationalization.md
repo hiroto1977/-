@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: Uppsala model — Johanson & Vahlne, incremental internationalization, psychic distance, establishment chain](https://en.wikipedia.org/wiki/Uppsala_model) `リファレンス`
 
 ## 関連概念
-- [[mgmt-knowledge-transfer-multinational|多国籍企業における知識移転——粘着性・吸収能力・本社—子会社ネットワーク]] — 同分野の近傍
+- [[mgmt-knowledge-transfer|知識移転（シュランスキー／アーゴット＝イングラム）——ノウハウやベストプラクティスを送り手から受け手へ伝え、受け手が吸収して使えるようにする過程と、それを妨げる知識の粘着性]] — 同分野の近傍
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連

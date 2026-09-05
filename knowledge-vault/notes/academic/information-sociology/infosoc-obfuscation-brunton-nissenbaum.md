@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[infosoc-privacy-surveillance|プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察]] — 同じ思想家
-- [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — 同じ思想家
 - [[infosoc-taxonomy-of-privacy-solove|ソロブのプライバシー類型論——プライバシー侵害を情報収集・情報処理・情報拡散・侵入の四群十六類型に分ける枠組み]] — 同じ思想家
 - [[mgmt-identity-work-pratt|アイデンティティ・ワーク（プラット＆フォアマン）]] — 同じ思想家
 - [[infosoc-post-digital-aesthetics-cramer|ポスト・デジタル美学——デジタルの日常化と新たなメディア意識]] — 同分野の近傍

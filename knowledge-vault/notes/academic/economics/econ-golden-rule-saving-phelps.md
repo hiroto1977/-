@@ -40,7 +40,7 @@ aliases:
 - [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
 - [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同じ思想家
 - [[econ-diamond-mirrlees|ダイヤモンド＝マーリーズの生産効率定理]] — 同じ思想家
-- [[econ-growth-accounting-solow-residual|成長会計とソロー残差——全要素生産性（TFP）と技術進歩の計測]] — 同じ思想家
+- [[econ-hartwick-rule|ハートウィックの規則——枯渇性資源レントの投資と世代間の公平]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,7 +34,6 @@ aliases:
 
 ## 関連概念
 - [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]] — 同じ思想家
-- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
 - [[infosoc-algorithmic-accountability-sandvig|アルゴリズムの説明責任——自動化された意思決定の監査と透明性]] — 同じ思想家
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同じ思想家
 - [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — 同じ思想家
@@ -43,6 +42,7 @@ aliases:
 - [[infosoc-data-justice|データ正義（Data Justice）]] — 同じ思想家
 - [[infosoc-repair-work|修繕の労働（Repair Work）]] — 同じ思想家
 - [[infosoc-techno-solutionism-morozov|テクノ・ソリューショニズム（モロゾフ）]] — 同じ思想家
+- [[infosoc-critical-data-studies-kitchin-dalton|批判的データ研究——データの政治性と知識生産の権力構造]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

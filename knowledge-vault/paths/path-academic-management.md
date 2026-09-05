@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 620
+entry_count: 615
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（620件）
+# 学習パス — 学術概念／経営学（615件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 64）
-- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 58）
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 67）
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 57）
 - [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]]（接続 36）
 - [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる]]（接続 32）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 30）
+- [[mgmt-csr|企業の社会的責任（CSR）]]（接続 27）
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 26）
 - [[mgmt-mbo|目標による管理（MBO）]]（接続 26）
-- [[mgmt-csr|企業の社会的責任（CSR）]]（接続 24）
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 23）
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 23）
-- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 22）
-- [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 22）
+- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 23）
 - [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]]（接続 21）
-- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]]（接続 21）
 - [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]]（接続 20）
+- [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]]（接続 20）
+- [[mgmt-organizational-decline-weitzel|組織衰退（ウェイツェル＝ヨンソンの五段階モデル）——盲目・不作為・誤った行動・危機・解体と進み、段階が進むほど反転が難しくなる衰退の動態]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1629年: [[mgmt-fmea|故障モード影響解析（FMEA／Failure Mode and Effects Analysis）——起こりうる故障を体系的に洗い出し、深刻度・発生度・検出度で優先順位づける]]
@@ -67,6 +67,7 @@ tags:
 - 1950年: [[mgmt-mentoring|メンタリング]]
 - 1950年: [[mgmt-product-life-cycle|プロダクト・ライフサイクル（製品ライフサイクル）]]
 - 1951年: [[mgmt-sociotechnical-systems|社会技術システム論（Sociotechnical Systems Theory）]]
+- 1953年: [[mgmt-stakeholder-theory-freeman-strategic|ステークホルダー理論（フリーマン）——企業の目的を株主利益に限定せず、目的達成に影響を与え影響を受けるすべての集団の利害を戦略に組み込む規範的・道具的・記述的理論]]
 - 1955年: [[mgmt-multimarket-contact-mutual-forbearance|多市場接触と相互自制の理論（マルチマーケット・コンペティション）]]
 - 1957年: [[mgmt-ansoff-matrix|アンゾフの成長マトリクス]]
 - 1957年: [[mgmt-diversification|多角化戦略]]
@@ -147,7 +148,6 @@ tags:
 - 1980年: [[mgmt-mckinsey-7s|マッキンゼーの7Sフレームワーク]]
 - 1980年: [[mgmt-six-sigma|シックス・シグマ]]
 - 1980年: [[mgmt-t-shaped-skills|T字型人材（T型スキル）]]
-- 1981年: [[mgmt-organizational-decline-weitzel|組織衰退（ウェイツェル＝ヨンソンの五段階モデル）——盲目・不作為・誤った行動・危機・解体と進み、段階が進むほど反転が難しくなる衰退の動態]]
 - 1981年: [[mgmt-organizational-unlearning|組織的アンラーニング]]
 - 1981年: [[mgmt-theory-z|セオリーZ]]
 - 1981年: [[mgmt-threat-rigidity-effect|脅威による硬直化効果（Threat-Rigidity Effect）]]
@@ -177,7 +177,6 @@ tags:
 - 1986年: [[mgmt-social-capital-intellectual-capital-nahapiet-ghoshal|ナハピエト＝ゴシャールの社会関係資本論——構造的・関係的・認知的の三次元による知的資本創造と組織の優位性]]
 - 1986年: [[mgmt-technology-s-curve|技術のSカーブ]]
 - 1987年: [[mgmt-mass-customization|マス・カスタマイゼーション]]
-- 1987年: [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]]
 - 1987年: [[mgmt-pims|PIMS研究（市場戦略の利益への影響）]]
 - 1987年: [[mgmt-strategic-issue-diagnosis|戦略的争点の診断（Strategic Issue Diagnosis）]]
 - 1988年: [[mgmt-competency-trap|コンピテンシー・トラップと成功の罠（レヴィット＝マーチ／レヴィンタール＝マーチ）——過去の成功への習熟が学習を深化に偏らせ、より優れた選択肢への転換を妨げる]]
@@ -235,7 +234,7 @@ tags:
 - 1996年: [[mgmt-affective-events-theory|感情イベント理論（AET）]]
 - 1996年: [[mgmt-enabling-coercive-bureaucracy|イネーブリング官僚制——規則・公式化は「量」ではなく「型」で支援的にも強制的にもなる]]
 - 1996年: [[mgmt-guanxi-network-capitalism|グアンシ関係資本主義と東アジアの経営システム]]
-- 1996年: [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]]
+- 1996年: [[mgmt-knowledge-transfer|知識移転（シュランスキー／アーゴット＝イングラム）——ノウハウやベストプラクティスを送り手から受け手へ伝え、受け手が吸収して使えるようにする過程と、それを妨げる知識の粘着性]]
 - 1996年: [[mgmt-normalization-of-deviance-vaughan|逸脱の正常化——小さな逸脱の反復的許容が組織の「正常」の基準を書き換える]]
 - 1996年: [[mgmt-strategic-inflection|戦略的転換点（Strategic Inflection Point）]]
 - 1997年: [[mgmt-brand-personality|ブランドパーソナリティ（アーカーの5次元モデル）]]
@@ -371,7 +370,6 @@ tags:
 - [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]]
 - [[mgmt-corporate-social-performance|企業社会的パフォーマンスモデル]]
 - [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]]
-- [[mgmt-corporate-social-responsibility-csr|企業の社会的責任（CSR）とステークホルダー資本主義の経営論]]
 - [[mgmt-corporate-venturing-burgelman|コーポレート・ベンチャリング（バーゲルマン）]]
 - [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]]
 - [[mgmt-creative-self-efficacy|創造的自己効力感]]
@@ -454,7 +452,6 @@ tags:
 - [[mgmt-knowledge-hiding-behavior|知識隠蔽行動理論]]
 - [[mgmt-knowledge-management|ナレッジマネジメント（知識管理）：SECIモデルと「場」による組織的知識創造理論]]
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]]
-- [[mgmt-knowledge-transfer-multinational|多国籍企業における知識移転——粘着性・吸収能力・本社—子会社ネットワーク]]
 - [[mgmt-leadership-substitutes-kerr-jermier|リーダーシップ代替論——リーダー行動を不要化・無効化する状況要因]]
 - [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]]
 - [[mgmt-learning-agility|学習敏捷性（ラーニング・アジリティ）]]
@@ -522,9 +519,11 @@ tags:
 - [[mgmt-person-environment-fit|人と環境の適合理論（P-Eフィット）]]
 - [[mgmt-pestel-analysis|PESTEL分析——マクロ環境を六つの外部要因から分析する枠組み]]
 - [[mgmt-platform-ecosystems-gawer-cusumano|プラットフォーム・エコシステム——インダストリアル・プラットフォームとネットワーク効果の戦略論]]
+- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]]
 - [[mgmt-poka-yoke|ポカヨケ]]
 - [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]]
 - [[mgmt-polychronicity|ポリクロニシティ（多時間並行志向）]]
+- [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]
 - [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]]
 - [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]]
 - [[mgmt-prosocial-motivation-grant|向社会的動機付けと他者指向的動機の組織行動論（グラント）]]
@@ -567,10 +566,6 @@ tags:
 - [[mgmt-social-identity-theory-of-leadership|リーダーシップの社会的アイデンティティ理論]]
 - [[mgmt-sociomaterial-assemblage|社会物質的アセンブラージュ論]]
 - [[mgmt-stage-gate|ステージゲート法]]
-- [[mgmt-stakeholder-capitalism-freeman|ステークホルダー資本主義と企業の目的（フリーマン）]]
-- [[mgmt-stakeholder-integration-freeman|ステークホルダー統合戦略（フリーマン）]]
-- [[mgmt-stakeholder-mapping-power-interest|ステークホルダー・マッピングと利害権力分析——戦略的ステークホルダー管理の実践論]]
-- [[mgmt-stakeholder-theory-freeman-strategic|ステークホルダー理論——フリーマンの戦略的管理と全ステークホルダー利害調整]]
 - [[mgmt-star-model|スター・モデル（ガルブレイス）]]
 - [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]]
 - [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]]

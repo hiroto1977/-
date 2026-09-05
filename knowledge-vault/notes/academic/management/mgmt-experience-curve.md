@@ -35,7 +35,6 @@ T.P.ライト（1936 学習曲線・航空機で約20%低下）／BCG・B.ヘン
 - [[mgmt-bcg-matrix|プロダクト・ポートフォリオ・マネジメント（PPM／BCGマトリクス）]] — 出典を共有
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]] — 出典を共有
 - [[mgmt-bcg-advantage-matrix|BCGアドバンテージ・マトリクス]] — 出典を共有
-- [[mgmt-organizational-routines-as-grammars|組織ルーティンの生成文法モデル]] — 同分野の近傍
 - [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]] — 同分野の近傍
 - [[mgmt-first-mover-advantage|先発者優位]] — 同分野の近傍
 

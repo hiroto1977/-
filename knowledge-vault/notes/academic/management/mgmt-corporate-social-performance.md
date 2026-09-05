@@ -31,7 +31,7 @@ Archie B. Carroll ／ Donna J. Wood
 - [Wikipedia — Corporate social responsibility](https://en.wikipedia.org/wiki/Corporate_social_responsibility) `リファレンス`
 
 ## 関連概念
-- [[mgmt-five-forces|ファイブフォース分析（5つの競争要因）]] — 同分野の近傍
+- [[mgmt-stakeholder-theory-freeman-strategic|ステークホルダー理論（フリーマン）——企業の目的を株主利益に限定せず、目的達成に影響を与え影響を受けるすべての集団の利害を戦略に組み込む規範的・道具的・記述的理論]] — 同分野の近傍
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連

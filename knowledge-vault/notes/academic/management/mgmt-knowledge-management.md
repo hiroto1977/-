@@ -35,6 +35,7 @@ aliases:
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 語彙が近い
 - [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 語彙が近い
 - [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]] — 分野横断
+- [[mgmt-network-organization|ネットワーク組織（Network Forms of Organization）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

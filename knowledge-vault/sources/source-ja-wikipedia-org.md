@@ -2,7 +2,7 @@
 title: "ja.wikipedia.org"
 type: source-domain
 host: "ja.wikipedia.org"
-cite_count: 137
+cite_count: 135
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ja.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **137 件**（リファレンス 135 ・ メディア 2）
+> [!info] 出典ドメイン索引 ・ 引用 **135 件**（リファレンス 133 ・ メディア 2）
 
 ## このドメインを出典とする項目
 
@@ -145,9 +145,7 @@ tags:
 - [[mgmt-integrative-social-contracts-theory|統合的社会契約理論（ISCT）——ビジネス倫理の普遍的規範と地域的規範の二層構造]] — Wikipedia:ビジネス倫理—社会契約理論と企業倫理の解説
 - [[mgmt-kanban|かんばん方式]] — ウィキペディア「大野耐一」—TPS体系化・後工程引取り・かんばん
 - [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 狩野モデル—ウィキペディア日本語版
-- [[mgmt-knowledge-transfer-multinational|多国籍企業における知識移転——粘着性・吸収能力・本社—子会社ネットワーク]] — Wikipedia:知識移転—多国籍企業における知識管理の解説
 - [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — Wikipedia:組織変革—コッターの8ステップと変革管理の解説
-- [[mgmt-stakeholder-mapping-power-interest|ステークホルダー・マッピングと利害権力分析——戦略的ステークホルダー管理の実践論]] — Wikipedia:ステークホルダー—ステークホルダー理論と管理の解説
 - [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — Wikipedia:戦略的提携—アライアンスと協調戦略の解説
 - [[mgmt-supply-chain-resilience-disruption|サプライチェーン・レジリエンス——中断リスク管理とコロナ禍・地政学的断絶への対応]] — Wikipedia:サプライチェーン—レジリエンスと断絶リスク管理の解説
 - [[mgmt-team-diversity-performance|チーム多様性とパフォーマンスの関係論——情報精緻化理論と価値・情報的多様性]] — Wikipedia:ダイバーシティ—多様性と組織パフォーマンスの解説

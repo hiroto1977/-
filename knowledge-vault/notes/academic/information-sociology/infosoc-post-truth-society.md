@@ -40,7 +40,7 @@ aliases:
 - [[human-availability-cascade|利用可能性カスケード]] — 同じ思想家
 - [[infosoc-cyber-cascade|サイバーカスケード]] — 同じ思想家
 - [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 同じ思想家
-- [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — 同じ思想家
+- [[infosoc-algorithmic-curation-theory|アルゴリズム的キュレーションと増幅（ギレスピー）——プラットフォームのランキング・推薦・フィルタリングは中立の配管ではなく、価値と権力を埋め込んだ文化的仲介として情報環境を形づくる]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

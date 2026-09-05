@@ -34,6 +34,7 @@ aliases:
 ## 関連概念
 - [[econ-rational-expectations|合理的期待形成（合理的期待仮説）]] — 語彙が近い
 - [[econ-rational-expectations-muth|合理的期待——主観的予想が利用可能情報のもとでの客観的期待値に一致する仮説]] — 同分野の近傍
+- [[econ-new-keynesian-phillips|ニューケインジアン・フィリップス曲線（New Keynesian Phillips Curve）]] — 同分野の近傍
 - [[econ-equity-premium-puzzle-mehra-prescott|株式プレミアム・パズル——標準理論で説明できない株式の超過収益]] — 同分野の近傍
 
 ## 関連

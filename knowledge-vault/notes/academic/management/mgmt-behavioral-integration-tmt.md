@@ -37,7 +37,8 @@ Donald C. Hambrick ／ Zeki Simsek ／ John F. Veiga ／ Michael H. Lubatkin
 - [[mgmt-evidence-based-management|証拠に基づく経営（エビデンスに基づく経営）]] — 出典を共有
 - [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 出典を共有
 - [[mgmt-organizational-resilience-sutcliffe|組織的レジリエンスと高信頼組織の理論（サトクリフ＆ワイク）]] — 同分野の近傍
-- [[mgmt-boundaryspanning-roles|バウンダリースパニング役割：組織と環境を結ぶ境界連結機能・ゲートキーパー・役割葛藤の組織論的体系]] — 同分野の近傍
+- [[mgmt-psychological-ownership|心理的所有感（ピアース＆コストバ＆ダークス）——法的所有と無関係に対象を「自分のもの」と感じる状態が、支配・熟知・自己投資の三経路で生まれ、責任感と縄張り意識の両面をもたらす]] — 同分野の近傍
+- [[mgmt-event-system-theory|出来事システム理論（Event System Theory）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

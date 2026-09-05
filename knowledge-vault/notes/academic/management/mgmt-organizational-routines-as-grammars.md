@@ -33,7 +33,7 @@ Martha S. Feldman ／ Brian T. Pentland ／ Henry H. Rueter
 
 ## 関連概念
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 語彙が近い
-- [[mgmt-experience-curve|経験曲線効果・学習曲線（experience/learning curve）]] — 同分野の近傍
+- [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 同分野の近傍
 - [[mgmt-expectancy-theory|期待理論（ブルーム）]] — 同分野の近傍
 
 ## 関連

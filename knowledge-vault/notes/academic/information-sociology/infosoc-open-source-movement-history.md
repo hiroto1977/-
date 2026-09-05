@@ -37,6 +37,7 @@ aliases:
 - [[infosoc-open-source-governance-ostrom|オープンソースガバナンスとコモンズ——オストロムの共有資源論とデジタルコモンズ]] — 同じ思想家
 - [[infosoc-knowledge-commons-theory|知識コモンズ理論]] — 同分野の近傍
 - [[infosoc-ambient-awareness|アンビエント・アウェアネス]] — 同分野の近傍
+- [[infosoc-information-goods|情報財の経済的特性（高固定費・ゼロ限界費用・非競合性・経験財）]] — 同分野の近傍
 - [[infosoc-smart-city-urban-informatics|スマートシティと都市情報学の批判的・社会技術的分析]] — 同分野の近傍
 - [[infosoc-media-system-dependency-ball-rokeach|メディア・システム依存理論——メディアへの依存が効果の強さを規定する]] — 同分野の近傍
 

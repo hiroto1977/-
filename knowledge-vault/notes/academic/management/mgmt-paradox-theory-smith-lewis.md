@@ -39,8 +39,7 @@ aliases:
 - [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]] — 同じ思想家
 - [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる]] — 同じ思想家
 - [[human-mirror-self-recognition|鏡像自己認知（Mirror Self-Recognition）]] — 同じ思想家
-- [[mgmt-appreciative-inquiry|アプリシエイティブ・インクワイアリー（AI）]] — 同分野の近傍
-- [[mgmt-stakeholder-mapping-power-interest|ステークホルダー・マッピングと利害権力分析——戦略的ステークホルダー管理の実践論]] — 同分野の近傍
+- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

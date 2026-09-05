@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[econ-solow-residual-total-factor-productivity|ソロー残差と全要素生産性——技術進歩の計測とその解釈を巡る論争]] — 語彙が近い
 - [[econ-solow-growth-model|ソロー成長モデル]] — 語彙が近い
+- [[econ-capital-controversy|ケンブリッジ資本論争（ロビンソン／スラッファ対サミュエルソン）——異質な資本財を一つの量に集計できるかをめぐり、再スイッチングと資本逆行が新古典派の限界生産力理論に根本的な疑義を投じた]] — 同じ思想家
 - [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 同じ思想家
 - [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
 - [[econ-golden-rule-capital-phelps|資本蓄積の黄金律——定常状態の消費を最大化する貯蓄水準]] — 同じ思想家
@@ -40,7 +41,6 @@ aliases:
 - [[econ-green-golden-rule-phelps-sustainability|黄金律と修正黄金律——フェルプスの最適貯蓄率と世代間公平性]] — 同じ思想家
 - [[econ-growth-accounting-solow-residual|成長会計とソロー残差——全要素生産性（TFP）と技術進歩の計測]] — 同じ思想家
 - [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
-- [[econ-hartwick-rule|ハートウィックの規則——枯渇性資源レントの投資と世代間の公平]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "sms.onlinelibrary.wiley.com"
 type: source-domain
 host: "sms.onlinelibrary.wiley.com"
-cite_count: 21
+cite_count: 20
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # sms.onlinelibrary.wiley.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **21 件**（学術 21）
+> [!info] 出典ドメイン索引 ・ 引用 **20 件**（学術 20）
 
 ## このドメインを出典とする項目
 
@@ -28,7 +28,6 @@ tags:
 - [[mgmt-first-mover-advantage|先発者優位]] — Lieberman&Montgomery(1988)"First-MoverAdvantages,"StrategicManagement…
 - [[mgmt-good-strategy-kernel-rumelt|ルメルトの「良い戦略」のカーネル——診断・基本方針・一貫した行動の三要素で戦略を判定する]] — Rumelt,R.P.(1991).Howmuchdoesindustrymatter?StrategicManagementJourna…
 - [[mgmt-hypercompetition|ハイパーコンペティション]] — D'Aveni,Dagnino&Smith「Theageoftemporaryadvantage」StrategicManagementJ…
-- [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — Szulanski,G.(1996)“Exploringinternalstickiness...”,StrategicManagemen…
 - [[mgmt-levers-of-control-simons|サイモンズの統制のレバー——信条・境界・診断型・インタラクティブ型の四レバーで革新と統制を両立させる経営統制論]] — Simons,R.(1994).Hownewtopmanagersusecontrolsystemsasleversofstrategic…
 - [[mgmt-multimarket-contact-mutual-forbearance|多市場接触と相互自制の理論（マルチマーケット・コンペティション）]] — Gimeno,J.(1999)"ReciprocalThreatsinMultimarketRivalry:StakingOut'Sphe…
 - [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — Wernerfelt(1984)AResource-BasedViewoftheFirm,SMJ5(2):171-180（原典）

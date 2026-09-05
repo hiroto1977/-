@@ -33,7 +33,6 @@ aliases:
 
 ## 関連概念
 - [[human-componential-theory-creativity-amabile|創造性の構成要素理論（アマビル）——領域スキル・創造的思考・内発的動機づけと社会環境が交わって生まれる創造性]] — 同じ思想家
-- [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — 同じ思想家
 - [[infosoc-obfuscation-brunton-nissenbaum|難読化（オブファスケーション）——ノイズを加えて監視を妨げる]] — 同じ思想家
 - [[mgmt-abusive-supervision-tepper|虐待的監督——上司による持続的な敵対的言動]] — 同じ思想家
 - [[mgmt-institutional-entrepreneurship-dimaggio|制度的起業家精神（ディマジオ）]] — 同じ思想家

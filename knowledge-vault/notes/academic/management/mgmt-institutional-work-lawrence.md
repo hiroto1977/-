@@ -37,7 +37,6 @@ aliases:
 - [[mgmt-sensegiving|センスギビング（ジョイア＆チッティペディ）——リーダーが他者の意味形成に働きかけ、変革の望ましい解釈を組織に広めるコミュニケーション過程]] — 同じ思想家
 - [[mgmt-slack-resources-bourgeois|組織スラック論——余剰資源の緩衝・革新・政治的機能]] — 同分野の近傍
 - [[mgmt-institutional-work|制度的ワーク]] — 同分野の近傍
-- [[mgmt-shared-value|共有価値の創造（CSV）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
