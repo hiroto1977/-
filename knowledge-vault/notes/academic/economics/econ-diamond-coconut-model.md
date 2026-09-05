@@ -32,8 +32,8 @@ Peter A. Diamond（1982年論文・モデルの提唱者・2010年ノーベル�
 ## 関連概念
 - [[econ-laffer-curve-theory|ラッファー曲線理論]] — 同じ思想家
 - [[econ-optimal-taxation-theory|最適課税理論]] — 同じ思想家
-- [[econ-cobweb-theorem-ezekiel|コブウェブ定理（エゼキエル）]] — 同分野の近傍
 - [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]] — 同分野の近傍
+- [[econ-kalai-smorodinsky|カライ＝スモロディンスキー解——単調性にもとづく交渉の解]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

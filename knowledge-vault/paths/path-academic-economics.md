@@ -2,27 +2,27 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 965
+entry_count: 957
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（965件）
+# 学習パス — 学術概念／経済学（957件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 82）
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 85）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 50）
-- [[econ-agglomeration-economies|集積の経済]]（接続 43）
-- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 42）
-- [[econ-liquidity-trap|流動性のわな]]（接続 42）
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 41）
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 43）
+- [[econ-liquidity-trap|流動性のわな]]（接続 43）
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 42）
+- [[econ-agglomeration-economies|集積の経済]]（接続 42）
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 41）
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 39）
-- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 38）
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 37）
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 37）
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]]（接続 36）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 34）
@@ -30,7 +30,6 @@ tags:
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 33）
 
 ## 第 2 部 — 年代順の展開
-- 1553年: [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]]
 - 1623年: [[econ-petty-clark-law|ペティ＝クラークの法則]]
 - 1738年: [[econ-expected-utility|期待効用理論]]
 - 1752年: [[econ-neutrality-of-money|貨幣の中立性（Neutrality of Money）]]
@@ -71,6 +70,7 @@ tags:
 - 1889年: [[econ-roundabout-production|迂回生産]]
 - 1889年: [[econ-time-preference|時間選好]]
 - 1891年: [[econ-lump-of-labour-fallacy|労働塊の誤謬（Lump of Labour Fallacy）]]
+- 1895年: [[econ-giffen-goods-inferior-demand|ギッフェン財——価格が上がると需要が増える需要法則の例外は、負の所得効果が代替効果を上回る下級財で生じる]]
 - 1897年: [[econ-edgeworth-price-cycles-maskin-tirole|エッジワース価格サイクル——マスキン＝ティロールの動学的価格競争と小売ガソリン価格の鋸歯状変動]]
 - 1898年: [[econ-wicksell-cumulative-process|ヴィクセルの累積過程]]
 - 1899年: [[econ-cobb-douglas|コブ＝ダグラス生産関数]]
@@ -125,6 +125,7 @@ tags:
 - 1929年: [[econ-eaton-lipsey-local-clustering|イートン＝リプシーの局所的集塊の原理（Eaton-Lipsey's Principle of Local Clustering）]]
 - 1929年: [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]]
 - 1929年: [[econ-oi-quasi-fixed-labor|労働の準固定的生産要素（Oi の quasi-fixed factor）——雇用・訓練の固定費が労働を「半固定」にする]]
+- 1930年: [[econ-cobweb-model-ezekiel-nerlove|くもの巣モデル（コブウェブ定理）——生産の遅れと素朴な期待が農産物価格の収束・発散・循環を生む動学モデル]]
 - 1930年: [[econ-flying-geese|雁行形態論]]
 - 1930年: [[econ-nirvana-fallacy|ニルヴァーナ・アプローチ（ニルヴァーナの誤謬）]]
 - 1930年: [[econ-technological-unemployment|技術的失業]]
@@ -137,7 +138,6 @@ tags:
 - 1933年: [[econ-deposit-insurance|預金保険制度（ペイオフ）]]
 - 1933年: [[econ-monopolistic-competition|独占的競争]]
 - 1933年: [[econ-pigou-effect|ピグー効果（実質残高効果）]]
-- 1934年: [[econ-cobweb|クモの巣理論]]
 - 1934年: [[econ-granger-causality|グレンジャー因果性]]
 - 1934年: [[econ-lerner-index|ラーナーの独占度（ラーナー指数）]]
 - 1934年: [[econ-stackelberg-competition|シュタッケルベルク競争（先導者・追随者モデル）]]
@@ -304,6 +304,7 @@ tags:
 - 1976年: [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]]
 - 1977年: [[econ-debt-overhang|デット・オーバーハング]]
 - 1977年: [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]]
+- 1977年: [[econ-dutch-disease-corden|オランダ病（コーデン＝ニアリー）——資源ブームが支出効果と資源移動効果で交易財部門を萎縮させる脱工業化のメカニズム]]
 - 1977年: [[econ-time-inconsistency|動学的不整合（時間的非整合性）]]
 - 1977年: [[econ-varian-model-of-sales-informed-uninformed-consumers|ヴァリアンのセールのモデル——情報客と非情報客の混在が生む価格分散と特売の均衡]]
 - 1978年: [[econ-lucas-span-of-control-firm-size-distribution|ルーカスのスパン・オブ・コントロール・モデル——経営者の才能分布と管理限界が企業規模の分布を決める]]
@@ -513,10 +514,6 @@ tags:
 - [[econ-clientele-effect-dividend|配当の顧客効果——配当政策が選好の合う投資家層を引きつける]]
 - [[econ-club-goods-buchanan|クラブ財——排除可能だが混雑するまで非競合的な財の最適規模]]
 - [[econ-club-goods-buchanan-tiebout|クラブ財理論——ブキャナンの共同消費と最適メンバーシップ]]
-- [[econ-cobweb-model-agricultural-cycles|くもの巣モデル——農産物市場の価格循環と動学的不安定性の分析]]
-- [[econ-cobweb-model-ezekiel-nerlove|くもの巣モデル——農産物価格の動学的変動と適応的期待形成]]
-- [[econ-cobweb-theorem-agricultural-cycles|蜘蛛の巣理論（農業価格循環）]]
-- [[econ-cobweb-theorem-ezekiel|コブウェブ定理（エゼキエル）]]
 - [[econ-colonel-blotto-game|ブロット大佐ゲーム——限られた資源を複数の戦線に配分する競争]]
 - [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]]
 - [[econ-commons-tragedy-hardin-ostrom|共有地の悲劇とオストロムの制度分析——コモンズ管理のガバナンス設計]]
@@ -578,9 +575,6 @@ tags:
 - [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]]
 - [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]]
 - [[econ-durable-goods-monopoly|耐久財独占とコースの推測——独占者が自らの将来の値下げと競争する]]
-- [[econ-dutch-disease-corden|オランダ病（コーデン＆ニアリー）]]
-- [[econ-dutch-disease-resource-curse|オランダ病と天然資源の呪い——資源輸出依存が製造業と経済多様性を損なうメカニズム]]
-- [[econ-dutch-disease-theory|オランダ病理論]]
 - [[econ-eaton-kortum-trade|イートン＝コータム・モデル——確率的リカード・モデルと貿易の定量分析]]
 - [[econ-ecological-footprint-biocapacity|生態足跡とバイオキャパシティ]]
 - [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]]
@@ -642,8 +636,6 @@ tags:
 - [[econ-gender-wage-gap-goldin|ジェンダー賃金格差と職業分離の経済学——ゴールディンの労働経済分析]]
 - [[econ-general-equilibrium-walras|ワルラスの一般均衡理論]]
 - [[econ-general-purpose-technology|汎用技術——広範な波及と補完的革新を通じて成長を牽引する基盤技術]]
-- [[econ-giffen-good-theory|ギッフェン財理論]]
-- [[econ-giffen-goods-inferior-demand|ギッフェン財と需要法則の例外——所得効果が代替効果を凌駕する極限的ケース]]
 - [[econ-global-games-carlsson-vandamme|グローバルゲーム——わずかな情報の不完全さが均衡を一つに絞る]]
 - [[econ-global-imbalances-bernanke|グローバル・インバランスと貯蓄過剰仮説——経常収支不均衡のマクロ経済学]]
 - [[econ-global-value-chains-gereffi|グローバル・バリューチェーン（ゲレッフィ）]]

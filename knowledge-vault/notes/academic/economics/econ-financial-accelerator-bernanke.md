@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Financial accelerator — Bernanke-Gertler-Gilchrist, external finance premium, net worth](https://en.wikipedia.org/wiki/Financial_accelerator) `リファレンス`
 
 ## 関連概念
+- [[econ-financial-accelerator|金融加速度効果（フィナンシャル・アクセラレータ）]] — 語彙が近い
 - [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 同じ思想家
-- [[econ-financial-accelerator|金融加速度効果（フィナンシャル・アクセラレータ）]] — 同じ思想家
 - [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — 同じ思想家
 - [[econ-savings-glut|世界的貯蓄過剰（グローバル・セービング・グラット）]] — 同じ思想家
 - [[econ-credit-channel-bernanke|信用チャンネル（バーナンキ）]] — 同じ思想家

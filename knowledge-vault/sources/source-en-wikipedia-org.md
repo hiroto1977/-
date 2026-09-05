@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2269
+cite_count: 2264
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2269 件**（リファレンス 2269）
+> [!info] 出典ドメイン索引 ・ 引用 **2264 件**（リファレンス 2264）
 
 ## このドメインを出典とする項目
 
@@ -455,10 +455,7 @@ tags:
 - [[econ-coase-conjecture|コースの推測（耐久財独占）]] — Wikipedia:Coaseconjecture
 - [[econ-coase-theorem|コースの定理（Coase theorem）]] — Wikipedia—Coasetheorem（定義・スティグラー命名の経緯）
 - [[econ-cobb-douglas|コブ＝ダグラス生産関数]] — Wikipedia—Cobb–Douglasproductionfunction
-- [[econ-cobweb|クモの巣理論]] — Wikipedia:Cobwebmodel（傾き／弾力性による収束・発散条件）
-- [[econ-cobweb-model-agricultural-cycles|くもの巣モデル——農産物市場の価格循環と動学的不安定性の分析]] — Wikipedia:Cobwebmodel—くもの巣モデルの概要
-- [[econ-cobweb-model-ezekiel-nerlove|くもの巣モデル——農産物価格の動学的変動と適応的期待形成]] — Wikipedia:Cobwebmodel—くもの巣モデルの動学分析と期待形成の概説
-- [[econ-cobweb-theorem-ezekiel|コブウェブ定理（エゼキエル）]] — Wikipedia:Cobwebmodel—コブウェブモデルの概説
+- [[econ-cobweb-model-ezekiel-nerlove|くもの巣モデル（コブウェブ定理）——生産の遅れと素朴な期待が農産物価格の収束・発散・循環を生む動学モデル]] — Wikipedia:Cobwebmodel（傾き／弾力性による収束・発散条件と期待形成の概説）
 - [[econ-colonel-blotto-game|ブロット大佐ゲーム——限られた資源を複数の戦線に配分する競争]] — Wikipedia:Blottogame—resourceallocation,contests,mixedstrategies,Borel
 - [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]] — Wikipedia:Tragedyofthecommons—Hardin,Ostrom,CPRgovernance,designprinc…
 - [[econ-commons-tragedy-hardin-ostrom|共有地の悲劇とオストロムの制度分析——コモンズ管理のガバナンス設計]] — Wikipedia:Tragedyofthecommons—Hardin,Ostrom,CPR,eightdesignprinciples
@@ -524,8 +521,7 @@ tags:
 - [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]] — Wikipedia:Dynamicstochasticgeneralequilibrium—overview,variants,criti…
 - [[econ-dual-labor-market|二重労働市場論]] — Duallabourmarket—Wikipedia（一次/二次部門への分断とDLMの定義）
 - [[econ-durable-goods-monopoly|耐久財独占とコースの推測——独占者が自らの将来の値下げと競争する]] — Wikipedia:Coaseconjecture—durablegoodsmonopoly,competingwithfuturesel…
-- [[econ-dutch-disease-corden|オランダ病（コーデン＆ニアリー）]] — Wikipedia:Dutchdisease—Corden&Nearymodel,spendingeffect,resourcemovem…
-- [[econ-dutch-disease-resource-curse|オランダ病と天然資源の呪い——資源輸出依存が製造業と経済多様性を損なうメカニズム]] — Wikipedia:Dutchdisease—オランダ病と資源の呪い
+- [[econ-dutch-disease-corden|オランダ病（コーデン＝ニアリー）——資源ブームが支出効果と資源移動効果で交易財部門を萎縮させる脱工業化のメカニズム]] — Wikipedia:Dutchdisease—Corden&Nearymodel,spendingeffect,resourcemovem…
 - [[econ-duverger-law|デュヴェルジェの法則]] — Duverger'slaw—Wikipedia（百科事典級リファレンス）
 - [[econ-eaton-kortum-trade|イートン＝コータム・モデル——確率的リカード・モデルと貿易の定量分析]] — Wikipedia:Eaton–Kortummodel—Ricardian,Fréchet,gravity,gainsfromtrade
 - [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — Wikipedia:MarkGranovetter—embeddednesstheory,weakties,andneweconomics…
@@ -609,8 +605,7 @@ tags:
 - [[econ-gibbard-satterthwaite|ギバード＝サタースウェイトの定理]] — Wikipedia—Gibbard–Satterthwaitetheorem
 - [[econ-gibrat-law|ジブラの法則]] — Wikipedia:Gibrat'slaw（1931・比例効果・対数正規分布）
 - [[econ-gibson-paradox|ギブソンのパラドックス]] — Wikipedia:Gibson'sparadox
-- [[econ-giffen-goods-inferior-demand|ギッフェン財と需要法則の例外——所得効果が代替効果を凌駕する極限的ケース]] — Wikipedia:Giffengood—demandlawexception,incomeeffect,substitutioneffe…
-- [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]] — Wikipedia—Giffengood（定義・歴史・所得効果メカニズム）
+- [[econ-giffen-goods-inferior-demand|ギッフェン財——価格が上がると需要が増える需要法則の例外は、負の所得効果が代替効果を上回る下級財で生じる]] — Wikipedia:Giffengood—demandlawexception,incomeeffect,substitutioneffe…
 - [[econ-global-games-carlsson-vandamme|グローバルゲーム——わずかな情報の不完全さが均衡を一つに絞る]] — Wikipedia:Globalgame—equilibriumselection,coordination,currencyattack…
 - [[econ-global-imbalances-bernanke|グローバル・インバランスと貯蓄過剰仮説——経常収支不均衡のマクロ経済学]] — Wikipedia:Globalfinancialsystem—currentaccountimbalancesandsavingglut…
 - [[econ-global-value-chains-gereffi|グローバル・バリューチェーン（ゲレッフィ）]] — Wikipedia:Globalvaluechain—Gereffi,buyer/producer-driven,upgrading,CO…

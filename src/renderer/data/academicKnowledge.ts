@@ -9402,21 +9402,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-cobweb',
-    discipline: 'economics',
-    title: 'クモの巣理論',
-    statement:
-      'クモの巣理論（クモの巣モデル）は、生産に時間がかかる市場で価格と生産量がどう変動するかを示す動学モデルである。需要はその期の価格で決まる一方、供給は生産計画時に観測した一期前の価格に基づいて決定される（一期のタイムラグと素朴・適応的期待）。このため需給ショック後、価格と数量は時間とともに振動し、供給・需要曲線図上にクモの巣状（螺旋）の軌跡を描く。均衡へ収束するか発散するかは両曲線の傾き（価格弾力性）の相対関係で決まり、' +
-      '供給が需要より非弾力的（急）なら振動は減衰して収束し、より弾力的（緩やか）なら発散、傾きが等しければ一定振幅で循環する。農産物市場（豚循環＝ハナウの研究など）の周期的価格変動の説明に応用される。1930年ごろリッチ・ティンバーゲン・シュルツらが独立に定式化し、エゼキエルが整理、ニコラス・カルドアが1934年の論文で分析し「クモの巣の定理」という名称を与えた。',
-    keyFigures: 'ニコラス・カルドア（Nicholas Kaldor, 1934命名）／モーデカイ・エゼキエル（Mordecai Ezekiel, 1938整理）／ウンベルト・リッチ／ヤン・ティンバーゲン／ヘンリー・シュルツ',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.cambridge.org/core/journals/journal-of-the-history-of-economic-thought/article/cobweb-theory-market-stability-and-price-expectations/EF014F2F0378CB5CE259E12E5CDD5C2D', type: 'academic', label: 'Poitras, "Cobweb Theory, Market Stability, and Price Expectations", Journal of the History of Economic Thought (Cambridge UP)' },
-      { url: 'https://kotobank.jp/word/%E3%81%8F%E3%82%82%E3%81%AE%E5%B7%A3%E7%90%86%E8%AB%96-831121', type: 'reference', label: 'コトバンク「くもの巣理論」（平凡社 世界大百科事典ほか）' },
-      { url: 'https://en.wikipedia.org/wiki/Cobweb_model', type: 'reference', label: 'Wikipedia: Cobweb model（傾き／弾力性による収束・発散条件）' },
-    ],
-  },
-  {
     id: 'econ-financial-accelerator',
     discipline: 'economics',
     title: '金融加速度効果（フィナンシャル・アクセラレータ）',
@@ -20958,23 +20943,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-giffen-paradox',
-    discipline: 'economics',
-    title: 'ギッフェン財（Giffen Good / Giffen Paradox）',
-    statement:
-      'ギッフェン財とは、価格が上昇すると需要量が増加するという需要法則の例外を示す劣等財であり、アルフレッド・マーシャルが1895年の『経済学原理』第3版においてロバート・ギッフェンの観察に帰したとされる逆説的な財の類型である。' +
-      'そのメカニズムは、劣等財の価格上昇が実質所得を低下させる所得効果が、通常の代替効果を圧倒する場合に生じる——すなわち、家計の予算の大部分を占める必需的劣等財の価格上昇により他財への支出余裕が失われ、かえって当該劣等財の消費量が増加する。' +
-      '長らく純粋な理論的可能性として扱われてきたが、Jensen & Miller（2008, American Economic Review 98(4):1553-1577）が中国湖南省・甘粛省における米・小麦への補助金付与実験を通じて、主食への価格補助金の減少が消費量を減少させるギッフェン行動の初の厳密な実証的証拠を提示した。' +
-      'ギッフェン財の概念はミクロ経済学における消費者理論の精緻さを示すとともに、所得効果と代替効果の分解（スルツキー分解）の理論的重要性を実証する事例として教育・研究の双方で広く参照される。',
-    keyFigures: 'ロバート・ギッフェン（1837–1910、マーシャルによる帰属）／アルフレッド・マーシャル（1895 Principles of Economics 第3版）／R.T. Jensen & N.H. Miller（2008 AER 98(4):1553-1577、初の厳密な実証）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.aeaweb.org/articles?id=10.1257/aer.98.4.1553', type: 'academic', label: 'Jensen & Miller (2008) Giffen Behavior and Subsistence Consumption, American Economic Review 98(4)' },
-      { url: 'https://en.wikipedia.org/wiki/Giffen_good', type: 'reference', label: 'Wikipedia — Giffen good（定義・歴史・所得効果メカニズム）' },
-      { url: 'https://www.econlib.org/library/Enc/GiffenGoods.html', type: 'reference', label: 'Econlib — Giffen Goods（経済学百科事典）' },
-    ],
-  },
-  {
     id: 'econ-solow-residual',
     discipline: 'economics',
     title: 'ソロー残差（Solow Residual / 全要素生産性）',
@@ -23588,20 +23556,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-giffen-good-theory',
-    discipline: 'economics',
-    title: 'ギッフェン財理論',
-    statement: 'ギッフェン財とは、価格が上昇するにもかかわらず需要量が増加するという通常の需要法則に反する財を指す。この逆説的な現象は、代替効果を上回る強い負の所得効果によって生じ、当該財が下級財（劣等財）である場合にのみ起こりうる。Marshallは著書Principles of Economicsにおいて、19世紀アイルランドの飢饉時のジャガイモを例に挙げ、統計家Giffenの観察としてこの概念を紹介した。しかし長らく理論的好奇心にとどまり実証例に乏しかったところ、Jensen & Millerは2008年の研究で中国農村部の貧困世帯を対象とした実地実験を行い、コメおよび小麦においてギッフェン行動の統計的に有意な証拠を初めて示した。この発見は、極度の貧困下では主食価格の上昇が栄養補給の代替手段を奪い需要を押し上げるという所得効果のメカニズムを実証するものである。',
-    keyFigures: 'Robert Giffen ／ Alfred Marshall ／ Robert T. Jensen ／ Nolan H. Miller',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1257/aer.98.4.1553', type: 'academic', label: 'Jensen & Miller (2008) "Giffen Behavior and Subsistence Consumption" — American Economic Review' },
-      { url: 'https://archive.org/details/principlesofeco00mars', type: 'reference', label: 'Marshall, A. (1895) Principles of Economics, 3rd ed. — Giffen good original passage' },
-      { url: 'https://www.econlib.org/library/Enc/GiffenGoods.html', type: 'reference', label: 'Battalio, Kagel & Kogut — "Giffen Goods", Library of Economics and Liberty (EconLib)' },
-      { url: 'https://doi.org/10.1016/j.jdeveco.2010.01.001', type: 'academic', label: 'Jensen & Miller (2010) "A Revealed Preference Test of Giffen Behavior" — Journal of Development Economics' },
-    ],
-  },
-  {
     id: 'human-place-attachment-theory',
     discipline: 'human-science',
     title: '場所愛着理論',
@@ -23748,21 +23702,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1257/jep.13.2.3', type: 'academic', label: 'Camerer, Loewenstein & Prelec (1999) "Neuroeconomics: How Neuroscience Can Inform Economics" — Journal of Economic Perspectives' },
       { url: 'https://doi.org/10.1038/nrn2357', type: 'academic', label: 'Sanfey (2007) "Social Decision-Making: Insights from Game Theory and Neuroscience" — Nature Reviews Neuroscience' },
       { url: 'https://doi.org/10.1016/j.leaqua.2014.06.005', type: 'academic', label: 'Waldman et al. (2014) "Leadership and Neuroscience" — Leadership Quarterly' },
-    ],
-  },
-  {
-    id: 'econ-dutch-disease-theory',
-    discipline: 'economics',
-    title: 'オランダ病理論',
-    statement: 'オランダ病理論とは、天然資源の発見・輸出ブームが実質為替レートの上昇を招き、製造業など非資源輸出セクターの競争力を失わせる現象を指す。1977年に「エコノミスト」誌がオランダの天然ガス発見後の製造業衰退を報じたことがこの名称の起源である。Corden & Nearyは1982年の論文で「支出効果」と「資源移動効果」という二つのメカニズムを定式化し、資源ブームが労働・資本の製造業からの流出と実質為替レート上昇を通じて脱工業化をもたらすことを示した。Sachs & Warnerはその後の実証研究において、資源依存度の高い国ほど長期的な経済成長が低迷する「資源の呪い」との関連を指摘し、オランダ病を制度的腐敗や政策失敗と結びつけた。この理論は資源輸出国に対する政策立案に広く影響を与え、資源ファンドや財政ルールによる対策が提唱されている。',
-    keyFigures: 'W. Max Corden ／ J. Peter Neary ／ Jeffrey D. Sachs ／ Andrew M. Warner',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.2307/2232670', type: 'academic', label: 'Corden & Neary (1982) "Booming Sector and De-Industrialisation in a Small Open Economy" — Economic Journal' },
-      { url: 'https://doi.org/10.3386/w5398', type: 'academic', label: 'Sachs & Warner (1995) "Natural Resource Abundance and Economic Growth" — NBER Working Paper 5398' },
-      { url: 'https://www.imf.org/external/pubs/ft/wp/2012/wp1228.pdf', type: 'reference', label: 'IMF Working Paper WP/12/28 — "The Dutch Disease: Too Much Wealth Managed Unwisely" (2012)' },
-      { url: 'https://www.economist.com/finance-and-economics/1977/11/26/the-dutch-disease', type: 'media', label: '"The Dutch Disease" — The Economist (1977年11月26日号, 命名記事)' },
-      { url: 'https://doi.org/10.1016/j.jdeveco.2003.12.006', type: 'academic', label: 'Sala-i-Martin & Subramanian (2003) "Addressing the Natural Resource Curse" — Journal of Development Economics' },
     ],
   },
   {
@@ -24711,29 +24650,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1016/S0956-5221(98)00044-3', type: 'academic', label: 'Weick (1998) Introductory essay — improvisation as a mindset' },
       { url: 'https://www.jstor.org/stable/2391875', type: 'academic', label: 'Weick, K.E. (1976). Educational Organizations as Loosely Coupled Systems. Administrative Science Quarterly, 21(1), 1-19.' },
       { url: 'https://journals.aom.org/doi/10.5465/amr.1990.4308154', type: 'academic', label: 'Orton, J.D. & Weick, K.E. (1990). Loosely Coupled Systems: A Reconceptualization. Academy of Management Review, 15(2), 203-223.' },
-    ],
-  },
-  {
-    id: 'econ-cobweb-theorem-agricultural-cycles',
-    discipline: 'economics',
-    title: '蜘蛛の巣理論（農業価格循環）',
-    statement:
-      '農業市場において生産者が過去の価格を基に供給量を決定するため、需給の価格弾力性の比率によって価格が収束・発散・持続的振動のいずれかを示す動学的均衡モデル。' +
-      'EzekielおよびTinbergenが独立に定式化した。' +
-      '1930年前後にJan Tinbergen、Umberto Ricci、Henry Schultzがそれぞれ独立にこの構造を提示し、Nicholas Kaldorが1934年の論文で蜘蛛の巣定理という名称を与え、Mordecai Ezekielが1938年のQuarterly Journal of Economics掲載論文「The Cobweb Theorem」で図解とともに広く普及させた。' +
-      '中核の機構は生産の時間差にある。' +
-      '作付けや家畜の飼養のように投入から出荷まで一定期間を要する財では、生産者は今期の価格をまだ知らないまま前期の価格を手がかりに生産量を決めるため、供給が一期遅れで反応し、需要曲線と供給曲線の間を価格と数量が渦を巻くように推移する。' +
-      '均衡点の近傍で需要の価格弾力性が供給の弾力性を上回れば振幅は縮小して均衡に収束し、下回れば振幅は拡大して発散し、両者が等しければ一定の振幅で振動が持続する。' +
-      '豚肉市場で観察される豚循環は代表的な事例であり、CoaseとFowlerによる1930年代の英国養豚市場の研究など実証的検討も早くから行われた。' +
-      'もっとも、Kaldorは短期と長期の弾力性の区別や調整速度を扱えない点を批判し、生産者が体系的に予想を誤り続けるという素朴な期待形成の想定は、後の適応的期待や合理的期待の議論から強い批判を受けた。' +
-      '今日では期待形成や在庫の役割を組み込んだ拡張モデルとして継承されている。',
-    keyFigures: 'Mordecai Ezekiel ／ Jan Tinbergen ／ Umberto Ricci',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.jstor.org/stable/1927330', type: 'academic', label: 'Ezekiel (1938) The Cobweb Theorem — Quarterly Journal of Economics' },
-      { url: 'https://www.econlib.org/library/Enc/CobwebTheorem.html', type: 'reference', label: 'EconLib Encyclopedia entry on Cobweb Theorem' },
-      { url: 'https://www.britannica.com/topic/cobweb-theorem', type: 'reference', label: 'Britannica: Cobweb Theorem overview' },
-      { url: 'https://www.sciencedirect.com/topics/economics-econometrics-and-finance/cobweb-model', type: 'academic', label: 'ScienceDirect: Cobweb Model topic overview' },
     ],
   },
   {
@@ -29795,14 +29711,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-dutch-disease-corden',
     discipline: 'economics',
-    title: 'オランダ病（コーデン＆ニアリー）',
-    statement: 'オランダ病（Dutch disease）は、コーデン＆ニアリー（1982）が命名した、天然資源ブームが製造業・農業など交易財部門を萎縮させるメカニズムである。語源は1960〜70年代のオランダでの天然ガス輸出増大が製造業競争力を失わせた現象に由来する。伝達チャネルは二つ：①資源輸出によるキャッシュフロー増大がオランダ通貨を増価させる「支出効果（spending effect）」、②資源セクターへの労働・資本移動が製造業のコストを上昇させる「資源移動効果（resource movement effect）」。長期的には「資源の呪い（resource curse）」と重なる概念として発展し、サックス＆ワーナー（1995）はGDP成長率と資源輸出比率の負の相関を実証した。対処策としては、ノルウェーの政府系ファンド（GPF-G）のような資源収益の分離管理・外貨準備積み上げ・製造業への補助金が実証的に有効とされるが、補助金は効率損失を生む批判もある。近年は石油ショックと製造業空洞化の関係においてGCCアラブ産油国・中央アジアの事例研究が蓄積されている。',
-    keyFigures: 'マックス・コーデン ／ ジョン・ニアリー ／ ジェフリー・サックス ／ アンドリュー・ワーナー',
-    asOf: '2026-06-26',
+    title: 'オランダ病（コーデン＝ニアリー）——資源ブームが支出効果と資源移動効果で交易財部門を萎縮させる脱工業化のメカニズム',
+    statement:
+      'オランダ病（Dutch disease）は、天然資源の発見や輸出ブームが実質為替レートの上昇を招き、製造業や農業など資源以外の交易財部門の競争力を失わせる現象である。名称は1977年11月にエコノミスト誌が、天然ガス輸出の拡大したオランダで製造業が衰退した状況を報じた記事に由来する。マックス・コーデンとピーター・ニアリーは1982年の論文『Booming Sector and De-Industrialisation in a Small Open Economy』（Economic Journal 92巻368号）で二つの伝達経路を定式化した。資源収入の増大が国内需要を押し上げ非貿易財の価格と実質為替レートを上昇させる「支出効果」と、労働や資本が好況の資源部門へ移動して製造業のコストを上昇させる「資源移動効果」である。資源輸出への依存度が高い国ほど長期の成長率が低いというサックスとワーナー（1995）の実証以来、オランダ病は「資源の呪い」の主要な機序の一つとされ、資源収入が財政規律を緩め腐敗や制度の劣化を招く経路と併せて論じられる。対策としては、ノルウェーの政府年金基金のように資源収益を分離して運用する政府系ファンド、財政ルール、産業の多角化が挙げられるが、製造業への補助金は効率損失を生むとの批判があり、資源の呪い自体も制度の質に依存するとして再検討されている。中小企業には、地域の一部門（観光・大型工場・公共事業）の好況が賃金と地価を押し上げて他の事業の採算を圧迫する縮図として理解でき、好況期の収益を分離して蓄え、単一部門への依存を避ける含意がある。',
+    keyFigures: 'マックス・コーデン＆ピーター・ニアリー（1982『Booming Sector and De-Industrialisation in a Small Open Economy』Economic Journal）／ジェフリー・サックス＆アンドリュー・ワーナー（1995 NBER Working Paper 5398・資源の呪いの実証）／エコノミスト誌（1977 命名記事）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.2307/2232670', type: 'academic', label: 'Corden, W. M. & Neary, J. P. (1982) Booming Sector and De-Industrialisation in a Small Open Economy — Economic Journal, 92(368), 825–848（オランダ病の原典）' },
-      { url: 'https://doi.org/10.3386/w5398', type: 'academic', label: 'Sachs, J. D. & Warner, A. M. (1995) Natural Resource Abundance and Economic Growth — NBER Working Paper 5398（資源の呪い実証）' },
-      { url: 'https://doi.org/10.1093/oxrep/grm030', type: 'academic', label: 'Frankel, J. A. (2012) The Natural Resource Curse: A Survey of Diagnoses and Some Prescriptions — HKS Faculty Research Working Papers（政策的処方箋の概観）' },
+      { url: 'https://doi.org/10.2307/2232670', type: 'academic', label: 'Corden, W. M. & Neary, J. P. (1982) Booming Sector and De-Industrialisation in a Small Open Economy — Economic Journal 92(368), 825–848（オランダ病の原典。支出効果と資源移動効果）' },
+      { url: 'https://www.nber.org/papers/w5398', type: 'academic', label: 'Sachs, J. D. & Warner, A. M. (1995) Natural Resource Abundance and Economic Growth — NBER Working Paper 5398（資源輸出比率と成長率の負の相関）' },
+      { url: 'https://www.economist.com/finance-and-economics/1977/11/26/the-dutch-disease', type: 'media', label: '"The Dutch Disease" — The Economist, 1977年11月26日号（命名記事）' },
+      { url: 'https://www.imf.org/external/pubs/ft/wp/2012/wp1228.pdf', type: 'government', label: 'IMF Working Paper WP/12/28 (2012) The Dutch Disease: Too Much Wealth Managed Unwisely（政策対応の整理）' },
       { url: 'https://en.wikipedia.org/wiki/Dutch_disease', type: 'reference', label: 'Wikipedia: Dutch disease — Corden & Neary model, spending effect, resource movement effect, case studies' },
     ],
   },
@@ -41619,14 +41537,18 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-cobweb-model-ezekiel-nerlove',
     discipline: 'economics',
-    title: 'くもの巣モデル——農産物価格の動学的変動と適応的期待形成',
-    statement: 'くもの巣モデル（Cobweb Model）は、農産物市場のように生産に時間的遅れ（ラグ）がある場合の価格変動を分析する動学的市場モデルであり、エゼキエル（1938）が体系化した。生産者が前期の価格に基づいて今期の供給量を決定する（素朴な期待形成）場合、供給曲線の傾きの絶対値が需要曲線のそれより小さければ価格は均衡に収束するが、大きければ発散する。価格と数量の軌跡をグラフに描くとくもの巣状のパターンが現れることから命名された。ネルローヴ（1958）はこのモデルに適応的期待（前期の期待と実現値の加重平均で今期の期待を形成）を導入し、より現実的な価格予測行動をモデル化した。ムス（1961）は合理的期待の概念をくもの巣モデルに適用し、情報を効率的に利用する生産者は体系的な予測誤りを犯さないため、くもの巣型の変動は消滅すると主張した。近年ではホンメスら（2007）の異質的期待モデルが、トレンド追従者と合理的期待者の混在による複雑な価格動学を分析している。',
-    keyFigures: 'モルデカイ・エゼキエル ／ マーク・ネルローヴ ／ ジョン・ムス ／ カーズ・ホンメス ／ ウィリアム・ブロック',
-    asOf: '2026-06-26',
+    title: 'くもの巣モデル（コブウェブ定理）——生産の遅れと素朴な期待が農産物価格の収束・発散・循環を生む動学モデル',
+    statement:
+      'くもの巣モデル（コブウェブ定理）は、生産の決定から出荷までに時間がかかる財の市場で、価格と生産量が時間とともにどう変動するかを示す動学的部分均衡モデルである。1930年前後にウンベルト・リッチ、ヤン・ティンバーゲン、ヘンリー・シュルツがそれぞれ独立に構造を提示し、ニコラス・カルドアが1934年の論文（Review of Economic Studies）で「くもの巣定理」の名称を与え、モーデカイ・エゼキエルが1938年の論文『The Cobweb Theorem』（Quarterly Journal of Economics 52巻2号）で図解とともに普及させた。需要は今期の価格で決まる一方、供給は生産計画時に観測した前期の価格に基づく（素朴な期待）ため、需給ショックの後、価格と数量は需要曲線と供給曲線の間を渦を巻くように推移し、図上にくもの巣状の軌跡を描く。均衡近傍で供給の価格弾力性が需要より小さければ振幅は縮小して収束し、大きければ発散し、等しければ一定振幅の循環が続く。豚肉市場の周期変動（豚サイクル）はハナウ以来の代表例で、コースとファウラーの英国養豚市場の実証もある。カルドア自身が短期と長期の弾力性の区別や調整速度を扱えない点を指摘し、生産者が体系的に予想を誤り続けるという想定は批判を受けた。ネルローヴ（1958）は前期の期待と実現値の加重平均で期待を作る適応的期待を導入し、ムース（1961）は情報を効率的に使う生産者は体系的な予測誤りを犯さないとする合理的期待仮説を、くもの巣モデルへの批判として提示した。中小企業には、前年の高値を見た増産や参入の後に値崩れが起きる農産物や流行商品で供給の遅れが循環を生むことを踏まえ、在庫・契約栽培・先物で変動を平準化する含意がある。',
+    keyFigures: 'モーデカイ・エゼキエル（1938『The Cobweb Theorem』QJE）／ニコラス・カルドア（1934 命名・Review of Economic Studies）／ウンベルト・リッチ、ヤン・ティンバーゲン、ヘンリー・シュルツ（1930年前後に独立に定式化）／マーク・ネルローヴ（1958 適応的期待）／ジョン・ムース（1961 合理的期待による批判）／カーズ・ホンメス（異質的期待モデル）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.2307/1881734', type: 'academic', label: 'Ezekiel (1938) The Cobweb Theorem — QJE' },
-      { url: 'https://doi.org/10.2307/1905380', type: 'academic', label: 'Nerlove (1958) Adaptive Expectations and Cobweb Phenomena — QJE' },
-      { url: 'https://en.wikipedia.org/wiki/Cobweb_model', type: 'reference', label: 'Wikipedia: Cobweb model — くもの巣モデルの動学分析と期待形成の概説' },
+      { url: 'https://doi.org/10.2307/1881734', type: 'academic', label: 'Ezekiel, M. (1938) The Cobweb Theorem — Quarterly Journal of Economics 52(2), 255–280（コブウェブ定理の原論文。図解による普及）' },
+      { url: 'https://doi.org/10.2307/2296731', type: 'academic', label: 'Kaldor, N. (1934) A Classificatory Note on the Determinateness of Equilibrium — Review of Economic Studies（「くもの巣定理」の命名と安定条件の分類）' },
+      { url: 'https://www.cambridge.org/core/journals/journal-of-the-history-of-economic-thought/article/cobweb-theory-market-stability-and-price-expectations/EF014F2F0378CB5CE259E12E5CDD5C2D', type: 'academic', label: 'Poitras, "Cobweb Theory, Market Stability, and Price Expectations" — Journal of the History of Economic Thought (Cambridge UP)（起源と期待形成をめぐる学説史）' },
+      { url: 'https://www.econlib.org/library/Enc/CobwebTheorem.html', type: 'reference', label: 'EconLib, Concise Encyclopedia of Economics: Cobweb Theorem（収束・発散条件と豚サイクルの解説）' },
+      { url: 'https://kotobank.jp/word/%E3%81%8F%E3%82%82%E3%81%AE%E5%B7%A3%E7%90%86%E8%AB%96-831121', type: 'reference', label: 'コトバンク「くもの巣理論」（平凡社 世界大百科事典ほか）' },
+      { url: 'https://en.wikipedia.org/wiki/Cobweb_model', type: 'reference', label: 'Wikipedia: Cobweb model（傾き／弾力性による収束・発散条件と期待形成の概説）' },
     ],
   },
   {
@@ -42619,19 +42541,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-cobweb-model-agricultural-cycles',
-    discipline: 'economics',
-    title: 'くもの巣モデル——農産物市場の価格循環と動学的不安定性の分析',
-    statement: 'くもの巣モデル（cobweb model）は、生産に時間がかかる財（特に農産物）の価格が時系列的に循環的変動を示すメカニズムを説明する動学的部分均衡モデルである。ニコラス・カルドアが1934年に、エゼキエルが同年にそれぞれ独立に定式化した。生産者が前期の市場価格に基づいて今期の生産量を決定するという適応的期待（ナイーヴな期待）を仮定すると、供給の価格弾力性と需要の価格弾力性の相対的大きさにより、価格が均衡に収束する場合（安定的くもの巣）、発散する場合（不安定的くもの巣）、振幅が一定に保たれる場合（循環的くもの巣）の三パターンが生じる。合理的期待革命以後、ムースの合理的期待モデルがくもの巣理論を批判的に発展させ、情報コストや学習過程を組み込んだ拡張モデルが構築された。農産物価格の不安定性と農業政策（価格支持・備蓄制度）の理論的基礎を提供する。',
-    keyFigures: 'ニコラス・カルドア ／ モーデカイ・エゼキエル ／ ジョン・ムース ／ マーク・ネルロヴ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/1881734', type: 'academic', label: 'Ezekiel, M. (1938) The Cobweb Theorem — Quarterly Journal of Economics' },
-      { url: 'https://doi.org/10.2307/2296731', type: 'academic', label: 'Kaldor, N. (1934) A Classificatory Note on the Determinateness of Equilibrium — REStud' },
-      { url: 'https://en.wikipedia.org/wiki/Cobweb_model', type: 'reference', label: 'Wikipedia: Cobweb model — くもの巣モデルの概要' },
-    ],
-  },
-  {
     id: 'econ-tiebout-hypothesis-local-public-goods',
     discipline: 'economics',
     title: 'ティブー仮説（足による投票）——住民が税と公共サービスの組み合わせで自治体を選ぶことで地方公共財の選好が顕示され効率的供給が実現する',
@@ -42882,12 +42791,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-giffen-goods-inferior-demand',
     discipline: 'economics',
-    title: 'ギッフェン財と需要法則の例外——所得効果が代替効果を凌駕する極限的ケース',
-    statement: 'アルフレッド・マーシャルは1895年の『経済学原理』においてロバート・ギッフェンの観察に言及し，価格の上昇にもかかわらず需要量が増加する例外的な財——「ギッフェン財（Giffen good）」——の可能性を理論的に示した。この逆説はスルツキー分解（ユージン・スルツキー，1915年；ジョン・ヒックスにより普及）において，価格変化の効果を代替効果（相対価格の変化による財の間の代替）と所得効果（実質所得の変化による需要の変動）に分解することで説明される。ギッフェン財は下級財（所得増加で需要減少）であり，かつ所得効果の絶対値が代替効果を上回るほど大きい場合に成立する。その実在性は長く論争されてきたが，ロバート・ジェンセンとノーラン・ミラーは2008年の実験的研究において中国湖南省の貧困世帯における米の消費行動がギッフェン財の条件を満たすことを実証し，発展経済学における食料補助金政策の設計に含意を持つことを示した。',
-    keyFigures: 'ロバート・ギッフェン ／ アルフレッド・マーシャル ／ ユージン・スルツキー ／ ロバート・ジェンセン',
-    asOf: '2026-06-26',
+    title: 'ギッフェン財——価格が上がると需要が増える需要法則の例外は、負の所得効果が代替効果を上回る下級財で生じる',
+    statement:
+      'ギッフェン財とは、価格が上昇すると需要量が増えるという需要法則の例外を示す財である。アルフレッド・マーシャルは1895年の『経済学原理』第3版で、貧しい労働者家計にとってパンの値上がりが家計を圧迫し、より高価な食品を減らしてかえってパンを多く買わせるというロバート・ギッフェンの観察を紹介し、この可能性を理論的に示した。スルツキー分解（ユージン・スルツキー1915年、ジョン・ヒックスにより普及）によれば、価格変化の効果は相対価格の変化による代替効果と実質所得の変化による所得効果に分かれ、ギッフェン財は所得が増えると需要が減る下級財であって、かつ家計の予算に占める比重が大きく、負の所得効果の絶対値が代替効果を上回る場合にのみ成立する。アイルランド飢饉期のジャガイモなど教科書的な例は統計的裏付けに乏しく、長く理論上の可能性にとどまっていたが、ロバート・ジェンセンとノーラン・ミラーは2008年の論文（American Economic Review 98巻4号）で、中国の湖南省と甘粛省の貧困世帯に主食の価格補助金を与える実地実験を行い、湖南省では補助金で米が安くなると米の消費が減るというギッフェン行動の強い証拠を、甘粛省の小麦では弱い証拠を示した。極度の貧困下では主食の値上がりが栄養を確保する代替手段を奪うため需要が増えるという機序で、食料補助金の設計への含意を持つ。中小企業には、価格を下げても数量が伸びず上げても落ちない顧客層がありうること、需要曲線の形は顧客の所得と予算構成に依存することの教訓となる。',
+    keyFigures: 'ロバート・ギッフェン（マーシャルによる帰属）／アルフレッド・マーシャル（1895『Principles of Economics』第3版）／ユージン・スルツキー（1915 分解）／ジョン・ヒックス（スルツキー分解の普及）／ロバート・ジェンセン＆ノーラン・ミラー（2008『Giffen Behavior and Subsistence Consumption』AER 98(4)）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1257/aer.98.4.1553', type: 'academic', label: 'Jensen, R. T. & Miller, N. H. (2008) Giffen Behavior and Subsistence Consumption — American Economic Review' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/aer.98.4.1553', type: 'academic', label: 'Jensen, R. T. & Miller, N. H. (2008) Giffen Behavior and Subsistence Consumption — American Economic Review 98(4), 1553–1577（湖南省の米で強い証拠、甘粛省の小麦で弱い証拠）' },
+      { url: 'https://archive.org/details/principlesofeco00mars', type: 'reference', label: 'Marshall, A. (1895) Principles of Economics, 3rd ed.（ギッフェンの観察に言及した原典。Internet Archive）' },
+      { url: 'https://www.econlib.org/library/Enc/GiffenGoods.html', type: 'reference', label: 'EconLib, Concise Encyclopedia of Economics: Giffen Goods（定義・歴史・実証をめぐる論争）' },
       { url: 'https://en.wikipedia.org/wiki/Giffen_good', type: 'reference', label: 'Wikipedia: Giffen good — demand law exception, income effect, substitution effect' },
     ],
   },
@@ -44955,19 +44867,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1057/9780230391598', type: 'academic', label: 'Minsky (1986) Stabilizing an Unstable Economy — Yale University Press' },
       { url: 'https://doi.org/10.2307/2077948', type: 'academic', label: 'Kindleberger (1978) Manias, Panics, and Crashes — Basic Books' },
       { url: 'https://en.wikipedia.org/wiki/Minsky_moment', type: 'reference', label: 'Wikipedia: Minsky moment — ミンスキー・モーメントと金融危機' },
-    ],
-  },
-  {
-    id: 'econ-dutch-disease-resource-curse',
-    discipline: 'economics',
-    title: 'オランダ病と天然資源の呪い——資源輸出依存が製造業と経済多様性を損なうメカニズム',
-    statement: 'オランダ病とは、天然資源の大量輸出が実質為替レートの上昇を招き、製造業や農業の競争力を毀損する現象を指す。1970年代のオランダの天然ガス輸出に伴う製造業空洞化を契機に命名され、コーデンとニアリーが1982年に理論化した。資源ブームは①「資源移動効果」（労働が採掘部門へ移動）と②「支出効果」（国内需要拡大が非貿易財価格を押し上げ）を通じて、貿易財製造業を圧迫する。さらに、資源収入を財源とする政府支出の拡大が財政規律を弛緩させ、腐敗や制度的劣化を招く「資源の呪い（リソース・カース）」と結びつくことが多い。サックスとウォーナーは豊富な資源を持つ国が長期的に経済成長で遅れをとる傾向を実証し、ノルウェーの政府年金基金（オイルファンド）のような財政緩衝装置や産業多角化政策が重要な対抗手段であることを示した。',
-    keyFigures: 'ウィリアム・コーデン ／ ピーター・ニアリー ／ ジェフリー・サックス ／ アンドリュー・ウォーナー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/2232670', type: 'academic', label: 'Corden & Neary (1982) Booming Sector and De-Industrialisation in a Small Open Economy — Economic Journal' },
-      { url: 'https://doi.org/10.3386/w5398', type: 'academic', label: 'Sachs & Warner (1995) Natural Resource Abundance and Economic Growth — European Economic Review' },
-      { url: 'https://en.wikipedia.org/wiki/Dutch_disease', type: 'reference', label: 'Wikipedia: Dutch disease — オランダ病と資源の呪い' },
     ],
   },
   {
@@ -47767,18 +47666,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1080/01972240490507974', type: 'academic', label: 'Eppler, M.J. & Mengis, J. (2004) The Concept of Information Overload: A Review of Literature — The Information Society 20(5), 325–344（情報過負荷研究の体系的レビュー）' },
       { url: 'https://en.wikipedia.org/wiki/Information_overload', type: 'reference', label: 'Wikipedia: Information overload — 情報過負荷の概説' },
-    ],
-  },
-  {
-    id: 'econ-cobweb-theorem-ezekiel',
-    discipline: 'economics',
-    title: 'コブウェブ定理（エゼキエル）',
-    statement: 'エゼキエル（Mordecai Ezekiel）は1938年に，農産物のように生産決定から収穫・供給までにラグ（時間的遅延）がある市場では，価格が均衡に向かう収束型・発散型・循環型の三パターンをとることを数学的に示し「コブウェブ定理」と命名した。供給の価格弾力性が需要より小さければ収束，大きければ発散，等しければ一定周期の循環となる。農産物価格の周期変動（豚肉サイクル・牛肉サイクルなど）の説明に広く使われ，後にムース（John Muth）が合理的期待形成仮説（1961）でコブウェブの逆説を批判し，「人々は系統的な誤りを犯さない」という命題を通じて合理的期待マクロ経済学の萌芽を開いた。行動経済学では適応的期待を持つエージェントがコブウェブ型の過剰反応を繰り返すことが，資産価格のバブル・崩壊サイクルのモデルとして再解釈されている。',
-    keyFigures: 'モーデカイ・エゼキエル ／ ヨハン・ティネベルゲン ／ ジョン・ムース ／ ハンス・レイターレ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/1881734', type: 'academic', label: 'Ezekiel, M. (1938) The Cobweb Theorem — Quarterly Journal of Economics 52(2), 255–280（コブウェブ定理の原論文）' },
-      { url: 'https://en.wikipedia.org/wiki/Cobweb_model', type: 'reference', label: 'Wikipedia: Cobweb model — コブウェブモデルの概説' },
     ],
   },
   {

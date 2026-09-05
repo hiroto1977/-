@@ -2,7 +2,7 @@
 title: "jstor.org"
 type: source-domain
 host: "jstor.org"
-cite_count: 149
+cite_count: 148
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jstor.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **149 件**（学術 148 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **148 件**（学術 147 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -49,7 +49,6 @@ tags:
 - [[econ-budget-maximizing-bureaucrat-niskanen|ニスカネンの予算最大化官僚モデル——独占的官庁が情報優位で総予算を極大化し過剰供給を導く公共選択理論]] — Blais,A.&Dion,S.(eds.)(1991).TheBudget-MaximizingBureaucrat:Appraisal…
 - [[econ-bullwhip-effect|ブルウィップ効果——需要の小さな変動が供給連鎖を遡って増幅される現象]] — Lee,H.L.,Padmanabhan,V.&Whang,S.(1997)InformationDistortioninaSupplyC…
 - [[econ-chamley-judd-theorem|チャムリー＝ジャッド定理——長期の最適な資本所得税はゼロである]] — Chamley,C.(1986)OptimalTaxationofCapitalIncomeinGeneralEquilibriumwit…
-- [[econ-cobweb-theorem-agricultural-cycles|蜘蛛の巣理論（農業価格循環）]] — Ezekiel(1938)TheCobwebTheorem—QuarterlyJournalofEconomics
 - [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — Baumol,W.J.(1986)ProductivityGrowth,Convergence,andWelfare—AmericanEc…
 - [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — Rosenstein-Rodan,P.N.(1943)ProblemsofIndustrializationofEasternandSou…
 - [[econ-credit-rationing-stiglitz-weiss|スティグリッツ＝ワイス信用割当モデル]] — Stiglitz&Weiss(1981)CreditRationinginMarketswithImperfectInformation,…

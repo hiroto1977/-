@@ -35,8 +35,8 @@ Banks, James （1998 Is There a Retirement-Savings Puzzle?）／Blundell, Richar
 - [[econ-mechanism-design|メカニズムデザイン]] — 出典を共有
 - [[econ-corridor-of-stability-theory|安定の回廊理論]] — 出典を共有
 - [[econ-helicopter-money|ヘリコプターマネー]] — 出典を共有
+- [[econ-real-business-cycle-kydland-prescott|リアル・ビジネス・サイクル理論——キドランド＆プレスコットの技術ショックと景気循環]] — 同分野の近傍
 - [[econ-wage-rigidity|名目賃金の下方硬直性]] — 同分野の近傍
-- [[econ-deaton-paradox|ディートンのパラドックス（消費の過剰平滑性）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

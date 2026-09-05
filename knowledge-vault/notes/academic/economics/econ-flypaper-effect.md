@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[econ-stagflation-supply-shock-gordon|スタグフレーションと供給ショック（ゴードン）]] — 同じ思想家
 - [[econ-fiscal-illusion-buchanan|財政錯覚——政府支出の費用を過小評価させる課税構造の不透明性]] — 同分野の近傍
-- [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]] — 同分野の近傍
+- [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

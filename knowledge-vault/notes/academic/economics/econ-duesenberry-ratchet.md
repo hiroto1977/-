@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[econ-demonstration-effect|デモンストレーション効果]] — 語彙が近い
-- [[econ-cobweb-model-ezekiel-nerlove|くもの巣モデル——農産物価格の動学的変動と適応的期待形成]] — 同分野の近傍
 - [[econ-sheepskin-effect|シープスキン効果（sheepskin effect／卒業証書効果）——学位取得そのものがもたらす賃金の非連続的上昇]] — 同分野の近傍
 
 ## 関連

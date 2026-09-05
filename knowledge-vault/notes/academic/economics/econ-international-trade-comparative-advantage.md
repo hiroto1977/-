@@ -40,7 +40,7 @@ aliases:
 - [[econ-comparative-advantage|比較優位（リカードの比較生産費説）]] — 同じ思想家
 - [[econ-eaton-kortum-trade|イートン＝コータム・モデル——確率的リカード・モデルと貿易の定量分析]] — 同じ思想家
 - [[econ-heckscher-ohlin|ヘクシャー＝オリーン理論]] — 同じ思想家
-- [[econ-international-trade-gains-ricardo|比較優位と貿易利益（リカード）]] — 同じ思想家
+- [[econ-heckscher-ohlin-vanek-factor-content|ヘクシャー＝オリーン＝ヴァネク定理——要素賦存と貿易パターン]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

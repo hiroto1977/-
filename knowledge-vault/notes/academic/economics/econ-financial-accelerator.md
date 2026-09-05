@@ -31,8 +31,8 @@ aliases:
 - [Bernanke, Gertler & Gilchrist, "The Financial Accelerator in a Quantitative Business Cycle Framework" (Handbook of Macroeconomics, 1999)](https://faculty.wcas.northwestern.edu/lchrist/course/Czech/BGG%201999%20Handbook%20chapter.pdf) `学術`
 
 ## 関連概念
+- [[econ-financial-accelerator-bernanke|金融加速度メカニズム——信用市場の摩擦が実体経済の変動を増幅する]] — 語彙が近い
 - [[econ-credit-channel-bernanke|信用チャンネル（バーナンキ）]] — 同じ思想家
-- [[econ-financial-accelerator-bernanke|金融加速度メカニズム——信用市場の摩擦が実体経済の変動を増幅する]] — 同じ思想家
 - [[econ-financial-accelerator-bernanke-gertler|金融アクセラレーター——信用市場の摩擦と景気変動の増幅メカニズム]] — 同じ思想家
 - [[econ-savings-glut|世界的貯蓄過剰（グローバル・セービング・グラット）]] — 同じ思想家
 - [[econ-credit-channel|信用経路（クレジット・チャネル）]] — 同じ思想家

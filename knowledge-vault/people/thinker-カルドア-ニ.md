@@ -2,7 +2,7 @@
 title: "ニコラス・カルドア"
 type: thinker
 person_key: "カルドア|ニ"
-concept_count: 16
+concept_count: 15
 tags:
   - person
   - index
@@ -10,14 +10,13 @@ tags:
 
 # ニコラス・カルドア
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **16 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **15 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（16件）
+## 学術概念（15件）
 - [[econ-backwash-spread-myrdal|逆流効果と波及効果——ミュルダールの循環的累積的因果関係論]] — グンナー・ミュルダールは新古典派の均衡収束仮説を批判し、地域間の経済格差は市場メカニズムだけでは縮小せず、むしろ拡大す…
 - [[econ-balance-of-payments-constraint-thirlwall|サールウォールの法則——国際収支制約のもとでの長期成長率]] — サールウォールの法則（Thirlwall'slaw）は、アンソニー・サールウォールが1979年に提唱したポスト・ケイン…
 - [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — ボーリーの法則（Bowley'slaw）は、国民所得のうち労働への分配（賃金として支払われる割合＝労働分配率）が、賃金…
-- [[econ-cobweb|クモの巣理論]] — クモの巣理論（クモの巣モデル）は、生産に時間がかかる市場で価格と生産量がどう変動するかを示す動学モデルである。
-- [[econ-cobweb-model-agricultural-cycles|くもの巣モデル——農産物市場の価格循環と動学的不安定性の分析]] — くもの巣モデル（cobwebmodel）は、生産に時間がかかる財（特に農産物）の価格が時系列的に循環的変動を示すメカニ…
+- [[econ-cobweb-model-ezekiel-nerlove|くもの巣モデル（コブウェブ定理）——生産の遅れと素朴な期待が農産物価格の収束・発散・循環を生む動学モデル]] — くもの巣モデル（コブウェブ定理）は、生産の決定から出荷までに時間がかかる財の市場で、価格と生産量が時間とともにどう変動…
 - [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]] — カルドア＝ヒックス基準（Kaldor-Hickscriterion）は、ある政策や変化が社会的に望ましい改善といえるか…
 - [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]] — 内生的貨幣供給理論（EndogenousMoneyTheory）とは、貨幣供給量が中央銀行による外生的操作ではなく、実…
 - [[econ-endogenous-money-post-keynesian-moore|内生的貨幣論——ムーアの信用貨幣観と中央銀行の利子率コントロール]] — 内生的貨幣（endogenousmoney）論は，マネーサプライが中央銀行による外生的コントロールではなく，銀行の信用…

@@ -2,7 +2,7 @@
 title: "nber.org"
 type: source-domain
 host: "nber.org"
-cite_count: 87
+cite_count: 88
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nber.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **87 件**（学術 86 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **88 件**（学術 87 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -34,6 +34,7 @@ tags:
 - [[econ-dornbusch-overshooting|オーバーシューティング・モデル（ドーンブッシュ）]] — NBERWorkingPaper「ExchangeRateDynamicsandtheOvershootingHypothesis」
 - [[econ-double-dividend|二重の配当（環境税）]] — Goulder,"EnvironmentalTaxationandtheDoubleDividend:AReader'sGuide"(NB…
 - [[econ-dual-labor-market|二重労働市場論]] — ATheoryofDualLaborMarkets—NBERWorkingPaper
+- [[econ-dutch-disease-corden|オランダ病（コーデン＝ニアリー）——資源ブームが支出効果と資源移動効果で交易財部門を萎縮させる脱工業化のメカニズム]] — Sachs,J.D.&Warner,A.M.(1995)NaturalResourceAbundanceandEconomicGrowth…
 - [[econ-efficiency-wage|効率賃金仮説（efficiency wage hypothesis）]] — Raff&Summers—DidHenryFordPayEfficiencyWages?NBERWP2101
 - [[econ-elasticity-of-substitution-ces|代替の弾力性とCES生産関数]] — Chirinko(2008)σ:TheLongandShortofIt—NBERWorkingPaper13351（推計値のサーベイ）
 - [[econ-elasticity-of-substitution-ces|代替の弾力性とCES生産関数]] — NBERchapter:RecentEmpiricalStudiesoftheCESandRelatedProductionFunctio…

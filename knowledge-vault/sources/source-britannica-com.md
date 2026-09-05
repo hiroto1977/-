@@ -2,7 +2,7 @@
 title: "britannica.com"
 type: source-domain
 host: "britannica.com"
-cite_count: 277
+cite_count: 276
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # britannica.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **277 件**（リファレンス 277）
+> [!info] 出典ドメイン索引 ・ 引用 **276 件**（リファレンス 276）
 
 ## このドメインを出典とする項目
 
@@ -33,7 +33,6 @@ tags:
 - [[econ-business-cycles|景気循環とその諸波動]] — BritannicaMoney—Businesscycle（四循環の定義・周期）
 - [[econ-coase-theorem|コースの定理（Coase theorem）]] — EncyclopædiaBritannica(Money)—TheCoasetheorem
 - [[econ-cobb-douglas|コブ＝ダグラス生産関数]] — EncyclopædiaBritannica—"Cobb-Douglasfunction"(economics)
-- [[econ-cobweb-theorem-agricultural-cycles|蜘蛛の巣理論（農業価格循環）]] — Britannica:CobwebTheoremoverview
 - [[econ-comparative-advantage|比較優位（リカードの比較生産費説）]] — EncyclopaediaBritannicaMoney—Simplifiedtheoryofcomparativeadvantage
 - [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — EncyclopaediaBritannicaMoney—Consumersurplus（消費者余剰とヒックスの補償変分・等価変分の関係）
 - [[econ-creative-destruction|創造的破壊]] — BritannicaMoney—CreativeDestruction:Innovation,Growth,&Examples

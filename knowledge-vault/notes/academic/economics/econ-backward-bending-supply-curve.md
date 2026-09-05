@@ -32,7 +32,6 @@ Alfred Marshall ／ Lionel Robbins ／ Mark R. Killingsworth ／ John Pencavel
 - [Blundell & MaCurdy (1999) "Labor Supply: A Review of Alternative Approaches" — Handbook of Labor Economics Vol. 3A](https://doi.org/10.1016/S1573-4463(99)03008-4) `学術`
 
 ## 関連概念
-- [[econ-giffen-good-theory|ギッフェン財理論]] — 同じ思想家
 - [[econ-tax-incidence-theory|租税帰着理論]] — 同じ思想家
 - [[econ-expectations-hypothesis|金利の期間構造の期待仮説]] — 同分野の近傍
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]] — 同分野の近傍

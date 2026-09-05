@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[econ-diminishing-marginal-utility|限界効用逓減の法則]] — 同分野の近傍
-- [[econ-engel-curve-income-consumption|エンゲル曲線——所得水準と消費構成の体系的変動]] — 同分野の近傍
+- [[econ-engels-law|エンゲルの法則]] — 同分野の近傍
 - [[econ-theil-index-inequality|タイル指数——情報理論にもとづく分解可能な不平等尺度]] — 同分野の近傍
 
 ## 関連

@@ -2,7 +2,7 @@
 title: "ジョン・ヒックス"
 type: thinker
 person_key: "ヒックス|ジ"
-concept_count: 20
+concept_count: 21
 tags:
   - person
   - index
@@ -10,14 +10,15 @@ tags:
 
 # ジョン・ヒックス
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **20 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **21 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（20件）
+## 学術概念（21件）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 先物価格が予想将来スポット価格を下回る状態（バックワーデーション）と上回る状態（コンタンゴ）を対比する先物市場の価格構…
 - [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]] — 補償賃金格差（compensatingwagedifferentials）は、職業ごとの賃金の違いの一部が、その仕事の…
 - [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 補償変分（CV:CompensatingVariation）と等価変分（EV:EquivalentVariation）…
 - [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]] — カルドア＝ヒックス基準（Kaldor-Hickscriterion）は、ある政策や変化が社会的に望ましい改善といえるか…
 - [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 代替の弾力性（ElasticityofSubstitution）は、生産要素の相対価格が変化した際に、要素投入比率がど…
+- [[econ-giffen-goods-inferior-demand|ギッフェン財——価格が上がると需要が増える需要法則の例外は、負の所得効果が代替効果を上回る下級財で生じる]] — ギッフェン財とは、価格が上昇すると需要量が増えるという需要法則の例外を示す財である。
 - [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — ハロッド中立的技術進歩（Harrod-neutraltechnicalchange）は、イギリスの経済学者ロイ・ハロッ…
 - [[econ-hicks-allen-consumer-demand|序数効用と無差別曲線分析（ヒックス＆アレン）]] — ヒックス（J.R.Hicks）とアレン（R.G.D.Allen）は1934年の共著論文「価値理論の再定式化」で，基数的…
 - [[econ-hicks-trade-cycle|ヒックスの景気循環論——天井と床に挟まれた持続的な循環]] — ヒックスの景気循環論は、ジョン・ヒックスが1950年の著作『景気循環論』で提示した、内生的な景気循環のモデルである。

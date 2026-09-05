@@ -32,12 +32,12 @@ aliases:
 
 ## 関連概念
 - [[econ-leontief-paradox|レオンチェフの逆説]] — 語彙が近い
-- [[econ-heckscher-ohlin-vanek-factor-content|ヘクシャー＝オリーン＝ヴァネク定理——要素賦存と貿易パターン]] — 語彙が近い
 - [[econ-immiserizing-growth|窮乏化成長]] — 同じ思想家
 - [[econ-input-output-analysis|産業連関分析（投入産出分析）]] — 同じ思想家
 - [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家
 - [[econ-bowen-leamer-sveikauskas-hov|HOV定理の実証検証——要素含有量貿易理論の計量的テスト]] — 同じ思想家
 - [[econ-effective-rate-of-protection|実効保護率——付加価値基準での貿易保護の実質的水準]] — 同じ思想家
+- [[econ-heckscher-ohlin-vanek-factor-content|ヘクシャー＝オリーン＝ヴァネク定理——要素賦存と貿易パターン]] — 同じ思想家
 - [[econ-infant-industry-argument-mill-bastable|幼稚産業保護論——一時的保護と動学的比較優位の育成]] — 同じ思想家
 - [[econ-input-output-analysis-leontief|投入産出分析——レオンチェフ・マトリクスと産業連関の定量的分析]] — 同じ思想家
 - [[econ-tariff-escalation-effective-protection|関税エスカレーションと実効保護率——加工段階別保護構造]] — 同じ思想家

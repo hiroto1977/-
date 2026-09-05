@@ -2,7 +2,7 @@
 title: "sciencedirect.com"
 type: source-domain
 host: "sciencedirect.com"
-cite_count: 134
+cite_count: 133
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # sciencedirect.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **134 件**（学術 122 ・ リファレンス 12）
+> [!info] 出典ドメイン索引 ・ 引用 **133 件**（学術 121 ・ リファレンス 12）
 
 ## このドメインを出典とする項目
 
@@ -21,7 +21,6 @@ tags:
 - [[econ-armington-elasticity-national-product-differentiation|アーミントンの仮定とアーミントン弾力性——同じ財でも生産国が違えば不完全代替とみなし、その代替の弾力性で貿易モデルを閉じる考え方]] — Bajzik,J.,Havranek,T.,Irsova,Z.&Schwarz,J.(2020)"EstimatingtheArmingt…
 - [[econ-backus-smith|バッカス＝スミス・パズル（Backus-Smith Puzzle）]] — Corsettietal.(2008)UnderstandingtheBackus-SmithPuzzle—JIntlMoney&Fina…
 - [[econ-cobb-douglas|コブ＝ダグラス生産関数]] — ScienceDirectTopics—Cobb-DouglasProductionFunction(overview)
-- [[econ-cobweb-theorem-agricultural-cycles|蜘蛛の巣理論（農業価格循環）]] — ScienceDirect:CobwebModeltopicoverview
 - [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]] — Granger,C.W.J.(1981).SomePropertiesofTimeSeriesDataandTheirUseinEcono…
 - [[econ-costly-state-verification|コストのかかる状態検証（Costly State Verification／Townsend 1979）——なぜ「標準的な負債契約」が最適になるのか]] — Townsend,R.M.(1979).OptimalContractsandCompetitiveMarketswithCostlySt…
 - [[econ-credit-channel-monetary-transmission|金融政策伝達の信用チャネル]] — Bernanke,Gertler&Gilchrist(1999)TheFinancialAcceleratorinaQuantitativ…
