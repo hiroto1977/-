@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Encyclopaedia Britannica — Richard Thaler（Nudge・libertarian paternalism）](https://www.britannica.com/money/Richard-Thaler) `リファレンス`
-- [NobelPrize.org — Richard H. Thaler 2017（行動経済学への貢献）](https://www.nobelprize.org/prizes/economic-sciences/2017/thaler/facts/) `公的`
+- [NobelPrize.org — Richard H. Thaler 2017（行動経済学への貢献）](https://www.nobelprize.org/prizes/economic-sciences/2017/thaler/facts/) `リファレンス`
 - [Institute for Government — Nudge Unit（BIT 2010設立・応用例）](https://www.instituteforgovernment.org.uk/article/explainer/nudge-unit) `リファレンス`
 - [Thaler, R.H. & Sunstein, C.R. (2008) Nudge: Improving Decisions About Health, Wealth, and Happiness — Yale University Press](https://yalebooks.yale.edu/book/9780300122237/nudge/) `学術`
 - [Behavioural Insights Team (BIT) — UK Government Nudge Unit](https://www.bi.team/) `公的`

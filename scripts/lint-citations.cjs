@@ -61,6 +61,9 @@ const path = require('node:path');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const kc = require(path.join(REPO_ROOT, 'orchestration', 'knowledge-context.cjs'));
+// コレクション → 種別の語彙 (academic: government/academic/reference/media、official: government/municipality/operator/media/other)。
+// 確証ゲートと同じ表を読む —— ここに写すと 2 か所で食い違う。
+const { TAXONOMY_BY_COLLECTION } = require(path.join(__dirname, 'verify-knowledge-provenance.cjs'));
 const BASELINE_FILE = path.join(REPO_ROOT, 'orchestration', 'knowledge-citation-baseline.json');
 
 /**
@@ -273,9 +276,10 @@ const NON_ACADEMIC_HOSTS = [
   'hbr.org', 'forbes.com', 'nytimes.com', 'theguardian.com', 'wired.com', 'economist.com', 'ft.com',
   'wsj.com', 'bloomberg.com', 'reuters.com', 'nikkei.com', 'toyokeizai.net', 'diamond.jp',
   'scientificamerican.com', 'psychologytoday.com', 'theatlantic.com', 'newyorker.com', 'time.com',
+  'spectrum.ieee.org', // IEEE Spectrum は学会誌ではなく一般向け雑誌 (同じ記事が academic ×2 / media ×1 だった)
   // ブログ・動画・SNS・投稿サイト
   'medium.com', 'blogspot.com', 'wordpress.com', 'substack.com', 'note.com', 'qiita.com', 'youtube.com',
-  'linkedin.com', 'ted.com', 'x.com', 'twitter.com', 'facebook.com',
+  'linkedin.com', 'ted.com', 'x.com', 'twitter.com', 'facebook.com', 'positivepsychology.com',
   // 百科事典・辞書 (reference)
   'wikipedia.org', 'wikibooks.org', 'britannica.com', 'kotobank.jp', 'weblio.jp', 'investopedia.com',
 ];
@@ -307,6 +311,75 @@ function checkAcademicHosts(entries) {
     }
   }
   return { bad, seen };
+}
+
+/**
+ * 出典 URL を「同じ資料か」で比べるための正規化。http→https、ホストとパスの大小、末尾の `/`、
+ * `#fragment` は同じ資料の表記ゆれとして畳む。クエリは資料を選ぶことがある (book_slug= など) ので残す。
+ * URL として読めない文字列は小文字化だけして返す (落とさない —— スキーム検査が別に鳴らす)。
+ */
+function normalizeSourceUrl(url) {
+  const trimmed = String(url).trim();
+  let parsed;
+  try {
+    parsed = new URL(trimmed);
+  } catch {
+    return trimmed.toLowerCase();
+  }
+  const pathname = parsed.pathname.replace(/\/+$/, '').toLowerCase();
+  return `https://${parsed.hostname.toLowerCase()}${pathname}${parsed.search}`;
+}
+
+/** コレクションの種別語彙。表に無いコレクション (fixture の collection 無しを含む) は学術側として扱う。 */
+function vocabularyOf(collection) {
+  return Object.hasOwn(TAXONOMY_BY_COLLECTION, collection) ? TAXONOMY_BY_COLLECTION[collection] : 'academic';
+}
+
+/**
+ * 同じ URL は同じ種別 (type) を持つ —— 同じ語彙の中で。
+ *
+ * 確証ゲート (verify:knowledge) は出典の type で権威を数える。同じ資料が項目によって 'academic' だったり
+ * 'media' だったりすると、種別の判断が項目ごとの気分になり、同じ根拠で片方だけがゲートを満たす。
+ * 実測 (2026-09-05): 11,171 の URL のうち 45 件が 2 種別以上を持ち、うち 6 件は権威の境界
+ * (media ⇄ government / reference / academic) をまたいでいた —— e-gov の会社法が 1 件だけ 'reference'、
+ * 国民生活センターが 1 件だけ 'media'、IEEE Spectrum の同じ記事が academic ×2 / media ×1、など。
+ * 学術系 (academic / econ-history) と公的系 (compliance / subsidy / support) は語彙が違う
+ * (後者に 'reference' は無く 'operator' がある) ので、比べるのは同じ語彙のコレクション同士だけ。
+ * 戻り値: conflicts (語彙・URL ごとの種別と使用項目)、multiCited (2 回以上引かれた URL の数 —— 走査の生存確認に使う)、
+ * urls (語彙 × 正規化 URL の数)。
+ */
+function checkUrlTypes(entries) {
+  /** `語彙 正規化URL` -> { url, vocabulary, uses, types: Map(type -> Set(項目キー)) } */
+  const byUrl = new Map();
+  for (const entry of entries) {
+    const sources = Array.isArray(entry.sources) ? entry.sources : [];
+    const key = entry.collection ? `${entry.collection}:${entry.id}` : String(entry.id);
+    const vocabulary = vocabularyOf(entry.collection);
+    for (const source of sources) {
+      if (source === null || typeof source !== 'object') continue;
+      if (typeof source.url !== 'string' || typeof source.type !== 'string') continue;
+      const url = normalizeSourceUrl(source.url);
+      const bucket = `${vocabulary} ${url}`;
+      if (!byUrl.has(bucket)) byUrl.set(bucket, { url, vocabulary, uses: 0, types: new Map() });
+      const rec = byUrl.get(bucket);
+      rec.uses++;
+      if (!rec.types.has(source.type)) rec.types.set(source.type, new Set());
+      rec.types.get(source.type).add(key);
+    }
+  }
+  let multiCited = 0;
+  const conflicts = [];
+  for (const rec of byUrl.values()) {
+    if (rec.uses >= 2) multiCited++;
+    if (rec.types.size < 2) continue;
+    conflicts.push({
+      url: rec.url,
+      vocabulary: rec.vocabulary,
+      types: [...rec.types].map(([type, ids]) => ({ type, ids: [...ids].sort() })).sort((a, b) => b.ids.length - a.ids.length),
+    });
+  }
+  conflicts.sort((a, b) => a.url.localeCompare(b.url) || a.vocabulary.localeCompare(b.vocabulary));
+  return { conflicts, multiCited, urls: byUrl.size };
 }
 
 /** 出典 URL のスキームを見る。戻り値は違反の配列 (空なら白)。 */
@@ -452,12 +525,31 @@ function main() {
     for (const b of academicHosts.bad) console.error(`  ${b.id}: ${b.host} — ${b.url}`);
     process.exit(1);
   }
+  /* --- 同じ URL は同じ種別 --- */
+  const urlTypes = checkUrlTypes(entries);
+  const MIN_MULTI_CITED_URLS = 300; // 実測 682 (2026-09-05、語彙 × URL で数える)
+  if (urlTypes.multiCited < MIN_MULTI_CITED_URLS) {
+    console.error(
+      `❌ 2 回以上引かれた URL を ${urlTypes.multiCited} 件しか拾えませんでした (${MIN_MULTI_CITED_URLS} 件以上を期待)。走査が壊れています。`,
+    );
+    process.exit(1);
+  }
+  if (urlTypes.conflicts.length > 0) {
+    console.error(`❌ 同じ URL が項目によって別の種別 (type) を持っています: ${urlTypes.conflicts.length} 件`);
+    console.error('   (確証ゲートは type で権威を数えます。同じ資料には同じ種別を —— 多数派に合わせるのではなく、資料が何かで決めてください)');
+    for (const c of urlTypes.conflicts) {
+      console.error(`  [${c.vocabulary}] ${c.url}`);
+      for (const t of c.types) console.error(`      ${t.type} ×${t.ids.length}: ${t.ids.slice(0, 4).join(', ')}${t.ids.length > 4 ? ', …' : ''}`);
+    }
+    process.exit(1);
+  }
   console.log(
     `Checked ${byDoi.size} DOI citation(s) across ${entries.length} entries ` +
       `(既知 ${baseline.size} 件は台帳で除外) / ` +
       `多重引用 ${multiCited} 件のラベル照合 (既知 ${labelBaseline.size} 件は台帳で除外) / ` +
       `出典 URL ${scheme.seen} 件のスキーム OK (平文 http は台帳の ${PLAINTEXT_ALLOWLIST.size} 件のみ) / ` +
-      `'academic' ${academicHosts.seen} 件のホスト OK`,
+      `'academic' ${academicHosts.seen} 件のホスト OK / ` +
+      `URL ${urlTypes.urls} 件の種別一致 OK (多重引用 ${urlTypes.multiCited} 件)`,
   );
 
   if (fresh.length === 0 && stale.length === 0 && labelFresh.length === 0 && labelStale.length === 0) {
@@ -617,6 +709,38 @@ function selfTest() {
     if (!ok) bad++;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
   }
+
+  /* --- 同じ URL は同じ種別。表記ゆれ (大小・末尾 / ・http・#fragment) は同じ URL として比べる。 --- */
+  const U = (...pairs) => pairs.map(([url, type], i) => ({ id: `e${i}`, sources: [{ url, type, label: 'l' }] }));
+  const urlCases = [
+    ['★ 同じ URL が academic と media を持つと鳴る', U(['https://x.example/a', 'academic'], ['https://x.example/a', 'media']), 1],
+    ['★ 表記ゆれ (末尾 / ・大文字・http) でも同じ URL として鳴る', U(['https://X.example/A/', 'academic'], ['http://x.example/a', 'reference']), 1],
+    ['★ #fragment だけ違う URL は同じ資料として鳴る', U(['https://x.example/a#s1', 'academic'], ['https://x.example/a#s2', 'media']), 1],
+    ['同じ URL が同じ種別なら通る', U(['https://x.example/a', 'academic'], ['https://x.example/a', 'academic']), 0],
+    ['別の URL が別の種別でも通る', U(['https://x.example/a', 'academic'], ['https://x.example/b', 'media']), 0],
+    ['クエリが違えば別の URL', U(['https://x.example/a?p=1', 'academic'], ['https://x.example/a?p=2', 'media']), 0],
+    ['語彙の違うコレクション (academic ⇄ compliance) の間では比べない', [
+      { id: 'a', collection: 'academic', sources: [{ url: 'https://x.example/a', type: 'reference', label: 'l' }] },
+      { id: 'b', collection: 'compliance', sources: [{ url: 'https://x.example/a', type: 'media', label: 'l' }] },
+    ], 0],
+    ['★ 同じ語彙のコレクション (academic ⇄ econ-history) の間では鳴る', [
+      { id: 'a', collection: 'academic', sources: [{ url: 'https://x.example/a', type: 'reference', label: 'l' }] },
+      { id: 'b', collection: 'econ-history', sources: [{ url: 'https://x.example/a', type: 'media', label: 'l' }] },
+    ], 1],
+  ];
+  for (const [label, entries, want] of urlCases) {
+    const got = checkUrlTypes(entries).conflicts.length;
+    const ok = got === want;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
+  }
+  {
+    // 生存確認の数え方: 2 回以上引かれた URL を種別に関係なく数える
+    const r = checkUrlTypes(U(['https://x.example/a', 'academic'], ['https://x.example/a/', 'academic'], ['https://x.example/b', 'media']));
+    const ok = r.multiCited === 1 && r.urls === 2;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} 多重引用の数え方: multiCited=${r.multiCited} urls=${r.urls} (期待 1 / 2)`);
+  }
   if (bad > 0) {
     console.error(`❌ self-test 不一致 ${bad} 件`);
     return 1;
@@ -630,4 +754,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { checkSchemes, selfTest, PLAINTEXT_ALLOWLIST, labelTokens, labelSurnames, labelsAgree, findLabelConflicts, checkAcademicHosts, isNonAcademicHost, NON_ACADEMIC_HOSTS };
+module.exports = { checkSchemes, selfTest, PLAINTEXT_ALLOWLIST, labelTokens, labelSurnames, labelsAgree, findLabelConflicts, checkAcademicHosts, isNonAcademicHost, NON_ACADEMIC_HOSTS, normalizeSourceUrl, checkUrlTypes, vocabularyOf };

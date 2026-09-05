@@ -26,7 +26,7 @@ aliases:
 Lord Hardwicke（Earl of Chesterfield v Janssen (1751)）／J. Skelly Wright（Williams v. Walker-Thomas Furniture Co., 350 F.2d 445 (1965)）／Karl Llewellyn（UCC §2-302 主任起草者）
 
 ## 出典
-- [Cornell LII — UCC §2-302 Unconscionable Contract or Clause](https://www.law.cornell.edu/ucc/2/2-302) `公的`
+- [Cornell LII — UCC §2-302 Unconscionable Contract or Clause](https://www.law.cornell.edu/ucc/2/2-302) `リファレンス`
 - [Williams v. Walker-Thomas Furniture Co., 350 F.2d 445 (D.C. Cir. 1965) — Justia](https://law.justia.com/cases/federal/appellate-courts/F2/350/445/74531/) `公的`
 
 ## 関連概念

@@ -26,7 +26,7 @@ aliases:
 キャス・サンスティーン（Cass Sunstein, 2001『Republic.com』/2017『#Republic』）／ニコラス・ネグロポンテ（“Daily Me”）／集団極性化・選択的接触
 
 ## 出典
-- [Princeton University Press — Cass R. Sunstein, #Republic: Divided Democracy in the Age of Social Media](https://press.princeton.edu/books/hardcover/9780691175515/republic) `リファレンス`
+- [Princeton University Press — Cass R. Sunstein, #Republic: Divided Democracy in the Age of Social Media](https://press.princeton.edu/books/hardcover/9780691175515/republic) `学術`
 - [総務省「令和元年版 情報通信白書」（サイバーカスケード・集団極性化）](https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/r01/html/nd114210.html) `公的`
 - [Cass Sunstein, “On Group Polarization and Cyber-Cascades”（Republic.com 抜粋テキスト）](https://www.woldww.net/classes/Information_Ethics/Sunstein_on_Group_Polarization_and_Cyber-Cascades.pdf) `学術`
 

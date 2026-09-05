@@ -28,7 +28,7 @@ Robert S. Summers ／ Steven J. Burton ／ E. Allan Farnsworth
 ## 出典
 - [Summers, 'Good Faith' in General Contract Law and the Sales Provisions of the UCC, 54 Va. L. Rev. 195 (1968) — Cornell Law](https://scholarship.law.cornell.edu/facpub/1137/) `学術`
 - [Farnsworth, Good Faith Performance and Commercial Reasonableness under the UCC, 30 U. Chi. L. Rev. 666 (1963)](https://chicagounbound.uchicago.edu/uclrev/vol30/iss4/3/) `学術`
-- [UCC § 1-304 Obligation of Good Faith — Cornell LII](https://www.law.cornell.edu/ucc/1/1-304) `公的`
+- [UCC § 1-304 Obligation of Good Faith — Cornell LII](https://www.law.cornell.edu/ucc/1/1-304) `リファレンス`
 - [Kirke La Shelle Co. v. Paul Armstrong Co., 188 N.E. 163 (N.Y. 1933) — CourtListener](https://www.courtlistener.com/opinion/3612877/kirke-la-shelle-co-v-armstrong-co/) `リファレンス`
 
 ## 関連概念

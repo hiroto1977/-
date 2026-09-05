@@ -393,7 +393,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'M.フラッド&M.ドレッシャー（1950 RAND考案）／A.W.タッカー（命名）／R.アクセルロッド（反復ゲーム・しっぺ返し）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://plato.stanford.edu/entries/prisoner-dilemma/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Prisoner’s Dilemma' },
+      { url: 'https://plato.stanford.edu/entries/prisoner-dilemma/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Prisoner’s Dilemma' },
       { url: 'https://www.britannica.com/science/game-theory/The-prisoners-dilemma', type: 'reference', label: 'Encyclopaedia Britannica — Game theory: The prisoners’ dilemma' },
       { url: 'https://www.econlib.org/library/Enc/PrisonersDilemma.html', type: 'reference', label: 'Econlib, Concise Encyclopedia of Economics — Prisoners’ Dilemma' },
     ],
@@ -438,7 +438,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'イゴール・アンゾフ（1957 HBR「Strategies for Diversification」／1965『Corporate Strategy』、「戦略経営の父」）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://www.ebsco.com/research-starters/business-and-management/ansoff-matrix', type: 'academic', label: 'EBSCO Research Starters — Ansoff Matrix（4戦略・多角化が最高リスク）' },
+      { url: 'https://www.ebsco.com/research-starters/business-and-management/ansoff-matrix', type: 'reference', label: 'EBSCO Research Starters — Ansoff Matrix（4戦略・多角化が最高リスク）' },
       { url: 'https://onlinelibrary.wiley.com/doi/full/10.1002/jsc.2600', type: 'academic', label: 'Puyt (2024) The Ansoff archive, Strategic Change (Wiley)' },
       { url: 'https://en.wikipedia.org/wiki/Ansoff_matrix', type: 'reference', label: 'Wikipedia — Ansoff matrix（1957 HBR論文・4戦略・リスク逓増）' },
     ],
@@ -664,7 +664,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://www.britannica.com/money/Richard-Thaler', type: 'reference', label: 'Encyclopaedia Britannica — Richard Thaler（Nudge・libertarian paternalism）' },
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2017/thaler/facts/', type: 'government', label: 'NobelPrize.org — Richard H. Thaler 2017（行動経済学への貢献）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2017/thaler/facts/', type: 'reference', label: 'NobelPrize.org — Richard H. Thaler 2017（行動経済学への貢献）' },
       { url: 'https://www.instituteforgovernment.org.uk/article/explainer/nudge-unit', type: 'reference', label: 'Institute for Government — Nudge Unit（BIT 2010設立・応用例）' },
       { url: 'https://yalebooks.yale.edu/book/9780300122237/nudge/', type: 'academic', label: 'Thaler, R.H. & Sunstein, C.R. (2008) Nudge: Improving Decisions About Health, Wealth, and Happiness — Yale University Press' },
       { url: 'https://www.bi.team/', type: 'government', label: 'Behavioural Insights Team (BIT) — UK Government Nudge Unit' },
@@ -966,7 +966,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://www.britannica.com/topic/theory-of-rational-expectations', type: 'reference', label: 'Encyclopaedia Britannica — Theory of rational expectations' },
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1995/summary/', type: 'government', label: 'NobelPrize.org — 1995年経済学賞（ロバート・ルーカス）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1995/summary/', type: 'reference', label: 'NobelPrize.org — 1995年経済学賞（ロバート・ルーカス）' },
       { url: 'https://www.econlib.org/library/Enc/RationalExpectations.html', type: 'academic', label: 'Econlib, Concise Encyclopedia of Economics — Rational Expectations' },
     ],
   },
@@ -1340,7 +1340,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ユルゲン・ハーバーマス（1962『公共性の構造転換』）／市民的公共圏・再封建化',
     asOf: '2026-06',
     sources: [
-      { url: 'https://plato.stanford.edu/entries/habermas/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Jürgen Habermas（公共圏・再封建化）' },
+      { url: 'https://plato.stanford.edu/entries/habermas/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Jürgen Habermas（公共圏・再封建化）' },
       { url: 'https://en.wikipedia.org/wiki/The_Structural_Transformation_of_the_Public_Sphere', type: 'reference', label: 'Wikipedia — The Structural Transformation of the Public Sphere（1962）' },
       { url: 'https://mitpress.mit.edu/9780262581080/the-structural-transformation-of-the-public-sphere/', type: 'academic', label: 'MIT Press — The Structural Transformation of the Public Sphere（英訳版書誌）' },
     ],
@@ -2290,7 +2290,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.federalreserve.gov/monetarypolicy/policy-rules-and-how-policymakers-use-them.htm', type: 'government', label: 'Federal Reserve Board — Policy Rules and How Policymakers Use Them（FRB による政策ルールの解説）' },
       { url: 'https://www.stlouisfed.org/on-the-economy/2024/mar/output-gaps-taylor-rule-stance-monetary-policy', type: 'government', label: 'Federal Reserve Bank of St. Louis (2024) Output Gaps, the Taylor Rule and the Stance of Monetary Policy（産出ギャップ推定の影響）' },
       { url: 'https://www.frbsf.org/wp-content/uploads/3-16.pdf', type: 'government', label: 'Federal Reserve Bank of San Francisco — Taylor\'s Rule and the Fed: 1970–1997（歴史的当てはまり）' },
-      { url: 'https://www.brookings.edu/articles/the-taylor-rule-a-benchmark-for-monetary-policy/', type: 'reference', label: 'Brookings Institution — The Taylor Rule: A benchmark for monetary policy?（ベンチマークとしての使われ方）' },
+      { url: 'https://www.brookings.edu/articles/the-taylor-rule-a-benchmark-for-monetary-policy/', type: 'academic', label: 'Brookings Institution — The Taylor Rule: A benchmark for monetary policy?（ベンチマークとしての使われ方）' },
       { url: 'https://en.wikipedia.org/wiki/Taylor_rule', type: 'reference', label: 'Wikipedia: Taylor rule — テイラー・ルールの概要' },
     ],
   },
@@ -2305,7 +2305,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: '繰り返しで協力が均衡になりうる(フォーク定理)／R.アクセルロッドのトーナメント／優勝はラポポートのしっぺ返し(tit-for-tat、初手協力＋相手の前回手を模倣)／強い戦略＝上品・報復的・寛容・明快／『The Evolution of Cooperation』1984',
     asOf: '2026-06',
     sources: [
-      { url: 'https://plato.stanford.edu/entries/prisoner-dilemma/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Prisoner\'s Dilemma（Axelrod and Tit for Tat）' },
+      { url: 'https://plato.stanford.edu/entries/prisoner-dilemma/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Prisoner\'s Dilemma（Axelrod and Tit for Tat）' },
       { url: 'https://heritage.umich.edu/stories/the-prisoners-dilemma/', type: 'academic', label: 'University of Michigan Heritage Project — The Prisoner\'s Dilemma（トーナメント／ラポポートのtit-for-tat優勝）' },
       { url: 'https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1012644', type: 'academic', label: 'PLOS Computational Biology — Properties of winning Iterated Prisoner\'s Dilemma strategies（nice/retaliating/forgiving/clear）' },
       { url: 'https://scholar.harvard.edu/files/maskin/files/folk_theorem_in_repeated_games_with_discounting_or_incomplete_information.pdf', type: 'academic', label: 'Harvard (E. Maskin) — The Folk Theorem in Repeated Games' },
@@ -2702,7 +2702,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'E.デシ&R.ライアンが提唱（ロチェスター大学）／3つの基本的心理欲求：自律性・有能感・関係性／充足で内発的動機づけ・well-beingが高まる／外的報酬が内発的動機を下げるアンダーマイニング効果／有機的統合理論／教育・職場等に応用',
     asOf: '2026-06',
     sources: [
-      { url: 'https://selfdeterminationtheory.org/theory/', type: 'academic', label: 'selfdeterminationtheory.org — Theory（デシ&ライアン本人運営の公式理論解説）' },
+      { url: 'https://selfdeterminationtheory.org/theory/', type: 'reference', label: 'selfdeterminationtheory.org — Theory（デシ&ライアン本人運営の公式理論解説）' },
       { url: 'https://www.apa.org/research-practice/conduct-research/self-determination-theory.html', type: 'academic', label: 'American Psychological Association — Self-determination theory' },
       { url: 'https://pubmed.ncbi.nlm.nih.gov/11392867/', type: 'academic', label: 'Ryan & Deci (2000), American Psychologist（査読論文・PubMed索引）' },
     ],
@@ -3045,7 +3045,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'J.ハーバーマス『コミュニケーション的行為の理論』(1981)／戦略的行為(成功志向・手段化)と区別したコミュニケーション的行為(了解志向)／妥当性請求(真理性・正当性・誠実性)とより良い論拠の力による合意(理想的発話状況)／生活世界のシステムによる植民地化／熟議民主主義・討議倫理の基盤',
     asOf: '2026-06',
     sources: [
-      { url: 'https://plato.stanford.edu/entries/habermas/', type: 'academic', label: 'Jürgen Habermas — Stanford Encyclopedia of Philosophy（妥当性請求・生活世界・コミュニケーション的合理性）' },
+      { url: 'https://plato.stanford.edu/entries/habermas/', type: 'reference', label: 'Jürgen Habermas — Stanford Encyclopedia of Philosophy（妥当性請求・生活世界・コミュニケーション的合理性）' },
       { url: 'https://www.britannica.com/biography/Jurgen-Habermas/Philosophy-and-social-theory', type: 'reference', label: 'Jürgen Habermas: Philosophy and social theory — Encyclopaedia Britannica' },
       { url: 'https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0065111', type: 'academic', label: 'Communicative versus Strategic Rationality: Habermas\' Theory of Communicative Action and the Social Brain — PLOS ONE（査読論文）' },
       { url: 'https://www.cambridge.org/core/books/cambridge-habermas-lexicon/colonization-of-the-lifeworld/36E8421628B4E1914F7E675B31977ADC', type: 'academic', label: 'Colonization of the Lifeworld — The Cambridge Habermas Lexicon (Cambridge University Press)' },
@@ -3357,7 +3357,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://en.wikipedia.org/wiki/Metcalfe%27s_law', type: 'reference', label: 'Wikipedia「Metcalfe’s law」: n²/三角数 n(n−1)/2、Metcalfe由来、Gilder1993命名' },
       { url: 'https://www.encyclopedia.com/economics/encyclopedias-almanacs-transcripts-and-maps/metcalfes-law', type: 'reference', label: 'Encyclopedia.com「Metcalfe’s Law」（百科事典級リファレンス、独立第二情報源）' },
-      { url: 'https://spectrum.ieee.org/metcalfes-law-is-wrong', type: 'academic', label: 'Briscoe, Odlyzko & Tilly「Metcalfe’s Law is Wrong」IEEE Spectrum 43(7):34–39, 2006（n log n提案・学会刊行物）' },
+      { url: 'https://spectrum.ieee.org/metcalfes-law-is-wrong', type: 'media', label: 'Briscoe, Odlyzko & Tilly「Metcalfe’s Law is Wrong」IEEE Spectrum 43(7):34–39, 2006（n log n提案・学会刊行物）' },
       { url: 'https://experts.umn.edu/en/publications/metcalfes-law-is-wrong/', type: 'academic', label: 'University of Minnesota Experts（Odlyzko所属大学による同論文の書誌）' },
     ],
   },
@@ -3496,7 +3496,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://blogs.lse.ac.uk/lsereviewofbooks/2017/06/05/book-review-platform-capitalism-by-nick-srnicek/', type: 'academic', label: 'LSE Review of Books — Book Review: Platform Capitalism by Nick Srnicek（ロンドン・スクール・オブ・エコノミクス）' },
       { url: 'https://mastersofmedia.hum.uva.nl/2018/02/interventions-on-nick-srniceks-platform-capitalism/', type: 'academic', label: 'University of Amsterdam, Media Studies — Interventions on Nick Srnicek’s “Platform Capitalism”' },
-      { url: 'https://www.politybooks.com/bookdetail?book_slug=platform-capitalism--9781509504862', type: 'media', label: 'Polity Press — Platform Capitalism（原著出版社・書誌）' },
+      { url: 'https://www.politybooks.com/bookdetail?book_slug=platform-capitalism--9781509504862', type: 'academic', label: 'Polity Press — Platform Capitalism（原著出版社・書誌）' },
       { url: 'https://en.wikipedia.org/wiki/Platform_capitalism', type: 'reference', label: 'Wikipedia — Platform capitalism' },
     ],
   },
@@ -3899,7 +3899,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.nobelprize.org/prizes/economic-sciences/2007/9276-mechanism-design-theory/', type: 'government', label: 'NobelPrize.org — Mechanism Design Theory（2007年経済学賞 公式解説）' },
       { url: 'https://en.wikipedia.org/wiki/Mechanism_design', type: 'reference', label: 'Wikipedia — Mechanism design（逆向きのゲーム理論・誘因両立性・表明原理）' },
       { url: 'https://cepr.org/voxeu/columns/nobel-prize-what-mechanism-design-and-why-does-it-matter-policy-making', type: 'academic', label: 'CEPR / VoxEU — What is mechanism design and why does it matter for policy-making?' },
-      { url: 'https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2007.pdf', type: 'government', label: 'ノーベル賞委員会 学術背景文書「Mechanism Design Theory」（専門解説PDF）' },
+      { url: 'https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2007.pdf', type: 'reference', label: 'ノーベル賞委員会 学術背景文書「Mechanism Design Theory」（専門解説PDF）' },
     ],
   },
   {
@@ -4823,7 +4823,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://en.wikipedia.org/wiki/Focal_point_(game_theory)', type: 'reference', label: 'Wikipedia: Focal point (game theory) — 定義・シェリング・1960年・ニューヨークの例' },
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2005/schelling/facts/', type: 'government', label: 'NobelPrize.org: 2005年経済学賞（Schelling・Aumann共同受賞）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2005/schelling/facts/', type: 'reference', label: 'NobelPrize.org: 2005年経済学賞（Schelling・Aumann共同受賞）' },
       { url: 'https://www.aeaweb.org/research/can-schellings-focal-points-help-us-understand-high-stakes-negotiations', type: 'academic', label: 'American Economic Association: Schellingの焦点と交渉に関する解説' },
     ],
   },
@@ -5179,7 +5179,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://www.britannica.com/science/tragedy-of-the-commons', type: 'reference', label: 'Encyclopaedia Britannica — Tragedy of the commons' },
       { url: 'https://www.britannica.com/topic/Garrett-Hardin', type: 'reference', label: 'Encyclopaedia Britannica — Garrett Hardin' },
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2009/summary/', type: 'government', label: 'NobelPrize.org — Prize in Economic Sciences 2009 (Elinor Ostrom)' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2009/summary/', type: 'reference', label: 'NobelPrize.org — Prize in Economic Sciences 2009 (Elinor Ostrom)' },
       { url: 'https://news.cnrs.fr/opinions/debunking-the-tragedy-of-the-commons', type: 'media', label: 'CNRS News — Debunking the Tragedy of the Commons（open-access vs. commons の批判）' },
     ],
   },
@@ -7622,7 +7622,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法（明治二十九年法律第八十九号、第519条 免除）' },
       { url: 'https://ja.wikibooks.org/wiki/民法第519条', type: 'reference', label: 'Wikibooks 民法第519条（条文・解説）' },
-      { url: 'https://www.businesslawyers.jp/practices/1196', type: 'reference', label: 'BUSINESS LAWYERS 連帯債務と免除の相対的効力（民法441条／2017年改正）' },
+      { url: 'https://www.businesslawyers.jp/practices/1196', type: 'media', label: 'BUSINESS LAWYERS 連帯債務と免除の相対的効力（民法441条／2017年改正）' },
     ],
   },
   {
@@ -7732,7 +7732,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       'キャス・サンスティーン（Cass Sunstein, 2001『Republic.com』/2017『#Republic』）／ニコラス・ネグロポンテ（“Daily Me”）／集団極性化・選択的接触',
     asOf: '2026-06',
     sources: [
-      { url: 'https://press.princeton.edu/books/hardcover/9780691175515/republic', type: 'reference', label: 'Princeton University Press — Cass R. Sunstein, #Republic: Divided Democracy in the Age of Social Media' },
+      { url: 'https://press.princeton.edu/books/hardcover/9780691175515/republic', type: 'academic', label: 'Princeton University Press — Cass R. Sunstein, #Republic: Divided Democracy in the Age of Social Media' },
       { url: 'https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/r01/html/nd114210.html', type: 'government', label: '総務省「令和元年版 情報通信白書」（サイバーカスケード・集団極性化）' },
       { url: 'https://www.woldww.net/classes/Information_Ethics/Sunstein_on_Group_Polarization_and_Cyber-Cascades.pdf', type: 'academic', label: 'Cass Sunstein, “On Group Polarization and Cyber-Cascades”（Republic.com 抜粋テキスト）' },
     ],
@@ -8005,7 +8005,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://en.wikipedia.org/wiki/Revenue_equivalence', type: 'reference', label: 'Revenue equivalence — Wikipedia（定理の定義・条件・破綻ケース）' },
-      { url: 'https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2007.pdf', type: 'academic', label: 'Mechanism Design Theory — Nobel委員会 科学的背景文書（Myersonらのメカニズムデザイン）' },
+      { url: 'https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2007.pdf', type: 'reference', label: 'Mechanism Design Theory — Nobel委員会 科学的背景文書（Myersonらのメカニズムデザイン）' },
       { url: 'https://cpb-us-w2.wpmucdn.com/sites.wustl.edu/dist/3/2139/files/2019/11/BasicAuctionRevEq.pdf', type: 'academic', label: 'The Revenue Equivalence Theorem for Basic Auctions — Washington University in St. Louis 講義資料' },
     ],
   },
@@ -8182,7 +8182,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://hbswk.hbs.edu/archive/information-rules-avoiding-lock-in-in-the-information-economy', type: 'academic', label: 'Harvard Business School Working Knowledge — Information Rules: Avoiding “Lock-In” (Shapiro & Varian)' },
       { url: 'https://link.springer.com/chapter/10.1007/978-3-030-78237-5_12', type: 'academic', label: 'Springer Nature — “Lock-In and Switching Costs”' },
-      { url: 'https://eh.net/encyclopedia/path-dependence/', type: 'reference', label: 'EH.net Encyclopedia (Economic History Association) — Path Dependence (QWERTY; David, Arthur)' },
+      { url: 'https://eh.net/encyclopedia/path-dependence/', type: 'academic', label: 'EH.net Encyclopedia (Economic History Association) — Path Dependence (QWERTY; David, Arthur)' },
     ],
   },
   {
@@ -9988,9 +9988,9 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'マーティン・セリグマン（Martin Seligman, 1990『Learned Optimism』）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://positivepsychology.com/learned-optimism/', type: 'academic', label: 'PositivePsychology.com「Learned Optimism: Is Martin Seligman\'s Glass Half Full?」' },
+      { url: 'https://positivepsychology.com/learned-optimism/', type: 'media', label: 'PositivePsychology.com「Learned Optimism: Is Martin Seligman\'s Glass Half Full?」' },
       { url: 'https://en.wikipedia.org/wiki/Learned_optimism', type: 'reference', label: 'Wikipedia「Learned optimism」' },
-      { url: 'https://positivepsychology.com/explanatory-styles-optimism/', type: 'academic', label: 'PositivePsychology.com「What Are Attributional and Explanatory Styles in Psychology?」' },
+      { url: 'https://positivepsychology.com/explanatory-styles-optimism/', type: 'media', label: 'PositivePsychology.com「What Are Attributional and Explanatory Styles in Psychology?」' },
     ],
   },
   {
@@ -10019,7 +10019,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://www.tandfonline.com/doi/full/10.1080/08109020802657453', type: 'academic', label: 'W. H. Dutton, "The Fifth Estate Emerging through the Network of Networks," Prometheus 27(1):1-15 (2009)' },
-      { url: 'https://www.oii.ox.ac.uk/research/projects/the-fifth-estate/', type: 'reference', label: 'Oxford Internet Institute (University of Oxford) — The Fifth Estate research project' },
+      { url: 'https://www.oii.ox.ac.uk/research/projects/the-fifth-estate/', type: 'academic', label: 'Oxford Internet Institute (University of Oxford) — The Fifth Estate research project' },
     ],
   },
   {
@@ -14476,7 +14476,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://journals.sagepub.com/doi/10.2190/DUGG-P24E-52WK-6CDG', type: 'academic', label: 'Salovey & Mayer (1990) "Emotional Intelligence", Imagination, Cognition and Personality（査読誌・原著論文）' },
       { url: 'https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2019.01116/full', type: 'academic', label: 'Frontiers in Psychology (2019) 感情知性の測定法に関する批判的レビュー' },
-      { url: 'https://nobaproject.com/modules/emotional-intelligence', type: 'reference', label: 'Noba Project: Emotional Intelligence（能力モデル・4枝の解説）' },
+      { url: 'https://nobaproject.com/modules/emotional-intelligence', type: 'academic', label: 'Noba Project: Emotional Intelligence（能力モデル・4枝の解説）' },
     ],
   },
   {
@@ -14532,7 +14532,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ケント・ベック（Kent Beck、XP提唱・宣言署名者）／ケン・シュウェイバー&ジェフ・サザーランド（Scrum共同考案）／ロバート・C・マーティン、マーティン・ファウラー等（2001年宣言署名者17名）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://agilemanifesto.org/', type: 'academic', label: 'Agile Manifesto — アジャイルソフトウェア開発宣言（2001年原典）' },
+      { url: 'https://agilemanifesto.org/', type: 'reference', label: 'Agile Manifesto — アジャイルソフトウェア開発宣言（2001年原典）' },
       { url: 'https://scrumguides.org/', type: 'academic', label: 'The Scrum Guide — Schwaber & Sutherland（Scrum公式定義）' },
     ],
   },
@@ -14800,7 +14800,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'バティア・フリードマン（Batya Friedman）／ジョイ・ブオラムウィニ（Joy Buolamwini, 1990–）／ティムニット・ゲブル（Timnit Gebru, 1982–）／サフィヤ・ウモジャ・ノーブル（Safiya Umoja Noble）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://plato.stanford.edu/entries/algorithmic-fairness/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Algorithmic Fairness' },
+      { url: 'https://plato.stanford.edu/entries/algorithmic-fairness/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Algorithmic Fairness' },
       { url: 'https://proceedings.mlr.press/v81/buolamwini18a.html', type: 'academic', label: 'Buolamwini & Gebru (2018) "Gender Shades" Proceedings of Machine Learning Research 81' },
     ],
   },
@@ -15000,7 +15000,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ティム・バーナーズ＝リー（Tim Berners-Lee, 1955–）／オープン・ナレッジ・ファウンデーション（2004年設立）／ルーファス・ポロック（OKF 創設）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://opendefinition.org/', type: 'academic', label: 'Open Knowledge Foundation — Open Definition' },
+      { url: 'https://opendefinition.org/', type: 'reference', label: 'Open Knowledge Foundation — Open Definition' },
       { url: 'https://www.data.go.jp/', type: 'government', label: 'データカタログサイト DATA.GO.JP（日本政府オープンデータポータル）' },
     ],
   },
@@ -17414,7 +17414,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'Lord Hardwicke（Earl of Chesterfield v Janssen (1751)）／J. Skelly Wright（Williams v. Walker-Thomas Furniture Co., 350 F.2d 445 (1965)）／Karl Llewellyn（UCC §2-302 主任起草者）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://www.law.cornell.edu/ucc/2/2-302', type: 'government', label: 'Cornell LII — UCC §2-302 Unconscionable Contract or Clause' },
+      { url: 'https://www.law.cornell.edu/ucc/2/2-302', type: 'reference', label: 'Cornell LII — UCC §2-302 Unconscionable Contract or Clause' },
       { url: 'https://law.justia.com/cases/federal/appellate-courts/F2/350/445/74531/', type: 'government', label: 'Williams v. Walker-Thomas Furniture Co., 350 F.2d 445 (D.C. Cir. 1965) — Justia' },
     ],
   },
@@ -20482,7 +20482,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250090107', type: 'academic', label: 'Johnson, Rethinking Incrementalism, Strategic Management Journal (1988) — Wiley' },
-      { url: 'https://search.worldcat.org/title/mapping-strategic-thought/oclc/20722225', type: 'reference', label: 'Sammut-Bonnici, Strategic Drift, Wiley Encyclopedia of Management (2015)（Wiley, 1990, ISBN 978-0-471-92632-0）' },
+      { url: 'https://search.worldcat.org/title/mapping-strategic-thought/oclc/20722225', type: 'academic', label: 'Sammut-Bonnici, Strategic Drift, Wiley Encyclopedia of Management (2015)（Wiley, 1990, ISBN 978-0-471-92632-0）' },
       { url: 'https://www.tutor2u.net/business/reference/strategic-drift', type: 'media', label: 'tutor2u — Strategic Drift 解説（英国教育メディア）' },
     ],
   },
@@ -21176,7 +21176,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://doi.org/10.1002/asi.21470', type: 'academic', label: 'Duff (2011) The Rawls-Tawney theorem and the digital divide in postindustrial society, JASIST 62(3):604-612' },
-      { url: 'https://nyupress.org/9781479837243/algorithms-of-oppression/', type: 'reference', label: 'Noble (2018) Algorithms of Oppression: How Search Engines Reinforce Racism, NYU Press' },
+      { url: 'https://nyupress.org/9781479837243/algorithms-of-oppression/', type: 'academic', label: 'Noble (2018) Algorithms of Oppression: How Search Engines Reinforce Racism, NYU Press' },
       { url: 'https://lthj.qut.edu.au/article/view/1386', type: 'academic', label: 'Gordon (2019) Review of Eubanks (2018) Automating Inequality, Law Technology and Humans 1(1):162-164' },
     ],
   },
@@ -21589,7 +21589,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://global.oup.com/academic/product/remedies-for-breach-of-contract-9780198258193', type: 'academic', label: 'Treitel (1988) Remedies for Breach of Contract: A Comparative Account — Clarendon Press, Oxford' },
       { url: 'https://www.jstor.org/stable/1116042', type: 'academic', label: 'Farnsworth (1970) Legal Remedies for Breach of Contract — Columbia Law Review' },
-      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'reference', label: 'e-Gov法令検索 民法541条・542条・545条4項（2020年施行改正民法）' },
+      { url: 'https://laws.e-gov.go.jp/law/129AC0000000089', type: 'government', label: 'e-Gov法令検索 民法541条・542条・545条4項（2020年施行改正民法）' },
     ],
   },
   {
@@ -21601,7 +21601,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'Ben Shalom Bernanke ／ Ricardo J. Caballero ／ Emmanuel Farhi ／ Pierre-Olivier Gourinchas',
     asOf: '2026-06',
     sources: [
-      { url: 'https://www.federalreserve.gov/boarddocs/speeches/2005/200503102/', type: 'academic', label: 'Bernanke (2005) The Global Saving Glut and the U.S. Current Account Deficit — Federal Reserve Board' },
+      { url: 'https://www.federalreserve.gov/boarddocs/speeches/2005/200503102/', type: 'government', label: 'Bernanke (2005) The Global Saving Glut and the U.S. Current Account Deficit — Federal Reserve Board' },
       { url: 'https://www.aeaweb.org/articles?id=10.1257%2Faer.98.1.358', type: 'academic', label: 'Caballero, Farhi & Gourinchas (2008) An Equilibrium Model of Global Imbalances and Low Interest Rates — American Economic Review' },
       { url: 'https://en.wikipedia.org/wiki/Global_saving_glut', type: 'reference', label: 'Wikipedia — Global saving glut' },
     ],
@@ -21867,8 +21867,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://www.britannica.com/science/attachment-theory', type: 'reference', label: 'Attachment Theory | Britannica' },
-      { url: 'https://www.simplypsychology.org/bowlby.html', type: 'academic', label: "John Bowlby's Attachment Theory — Simply Psychology" },
-      { url: 'https://www.simplypsychology.org/mary-ainsworth.html', type: 'academic', label: 'Mary Ainsworth Strange Situation Experiment — Simply Psychology' },
+      { url: 'https://www.simplypsychology.org/bowlby.html', type: 'reference', label: "John Bowlby's Attachment Theory — Simply Psychology" },
+      { url: 'https://www.simplypsychology.org/mary-ainsworth.html', type: 'reference', label: 'Mary Ainsworth Strange Situation Experiment — Simply Psychology' },
     ],
   },
   {
@@ -22225,8 +22225,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.law.cornell.edu/wex/mailbox_rule', type: 'reference', label: 'Cornell Law School Legal Information Institute — Mailbox Rule' },
       { url: 'https://en.wikipedia.org/wiki/Postal_acceptance_rule', type: 'reference', label: 'Wikipedia — Postal Acceptance Rule' },
       { url: 'https://elaws.e-gov.go.jp/document?lawid=129AC0000000089', type: 'government', label: '日本民法（e-Gov法令検索）' },
-      { url: 'https://www.unidroit.org/instruments/commercial-contracts/unidroit-principles-2016/', type: 'academic', label: 'UNIDROIT Principles of International Commercial Contracts 2016' },
-      { url: 'https://uncitral.un.org/en/texts/salegoods/conventions/sale_of_goods/cisg', type: 'academic', label: 'United Nations Convention on Contracts for the International Sale of Goods (CISG)' },
+      { url: 'https://www.unidroit.org/instruments/commercial-contracts/unidroit-principles-2016/', type: 'reference', label: 'UNIDROIT Principles of International Commercial Contracts 2016' },
+      { url: 'https://uncitral.un.org/en/texts/salegoods/conventions/sale_of_goods/cisg', type: 'government', label: 'United Nations Convention on Contracts for the International Sale of Goods (CISG)' },
     ],
   },
   {
@@ -22297,8 +22297,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://www.law.cornell.edu/wex/parol_evidence_rule', type: 'reference', label: 'Cornell Law School LII — Parol Evidence Rule' },
-      { url: 'https://www.law.cornell.edu/ucc/2/2-202', type: 'government', label: 'UCC § 2-202: Parol or Extrinsic Evidence (Cornell LII)' },
-      { url: 'https://www.ali.org/publications/show/contracts/', type: 'academic', label: 'American Law Institute — Restatement (Second) of Contracts' },
+      { url: 'https://www.law.cornell.edu/ucc/2/2-202', type: 'reference', label: 'UCC § 2-202: Parol or Extrinsic Evidence (Cornell LII)' },
+      { url: 'https://www.ali.org/publications/show/contracts/', type: 'reference', label: 'American Law Institute — Restatement (Second) of Contracts' },
       { url: 'https://www.uniformlaws.org/acts/ucc', type: 'government', label: 'Uniform Law Commission — Uniform Commercial Code' },
     ],
   },
@@ -25360,7 +25360,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://scholarship.law.cornell.edu/facpub/1137/', type: 'academic', label: 'Summers, \'Good Faith\' in General Contract Law and the Sales Provisions of the UCC, 54 Va. L. Rev. 195 (1968) — Cornell Law' },
       { url: 'https://chicagounbound.uchicago.edu/uclrev/vol30/iss4/3/', type: 'academic', label: 'Farnsworth, Good Faith Performance and Commercial Reasonableness under the UCC, 30 U. Chi. L. Rev. 666 (1963)' },
-      { url: 'https://www.law.cornell.edu/ucc/1/1-304', type: 'government', label: 'UCC § 1-304 Obligation of Good Faith — Cornell LII' },
+      { url: 'https://www.law.cornell.edu/ucc/1/1-304', type: 'reference', label: 'UCC § 1-304 Obligation of Good Faith — Cornell LII' },
       { url: 'https://www.courtlistener.com/opinion/3612877/kirke-la-shelle-co-v-armstrong-co/', type: 'reference', label: 'Kirke La Shelle Co. v. Paul Armstrong Co., 188 N.E. 163 (N.Y. 1933) — CourtListener' },
     ],
   },
@@ -25481,7 +25481,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://ieeexplore.ieee.org/document/6636305/', type: 'academic', label: 'Metcalfe, R. (2013). Metcalfe\'s Law after 40 Years of Ethernet. IEEE Computer, 46(12), 26–31. DOI:10.1109/MC.2013.374' },
       { url: 'https://link.springer.com/article/10.1007/s11390-015-1518-1', type: 'academic', label: 'Zhang, X., Liu, J., & Xu, Z. (2015). Tencent and Facebook Data Validate Metcalfe\'s Law. Journal of Computer Science and Technology, 30(2), 246–251. DOI:10.1007/s11390-015-1518-1' },
-      { url: 'https://spectrum.ieee.org/metcalfes-law-is-wrong', type: 'academic', label: 'Briscoe, B., Odlyzko, A., & Tilly, B. (2006). Metcalfe\'s Law is Wrong. IEEE Spectrum, 43(7), 34–39.' },
+      { url: 'https://spectrum.ieee.org/metcalfes-law-is-wrong', type: 'media', label: 'Briscoe, B., Odlyzko, A., & Tilly, B. (2006). Metcalfe\'s Law is Wrong. IEEE Spectrum, 43(7), 34–39.' },
       { url: 'https://neconomides.com/uploads/Economides_Economics_of_Networks.pdf', type: 'academic', label: 'Economides, N. (1996). The Economics of Networks. International Journal of Industrial Organization, 14(6), 673–699.' },
       { url: 'https://en.wikipedia.org/wiki/Metcalfe%27s_law', type: 'reference', label: 'Wikipedia: Metcalfe\'s law — overview of the law, mathematical formulation, and key academic debates' },
     ],
@@ -26058,7 +26058,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679', type: 'government', label: 'EU 2016 — General Data Protection Regulation (GDPR), Regulation (EU) 2016/679' },
       { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex:62012CJ0131', type: 'government', label: 'CJEU 2014 — Google Spain v AEPD, Case C-131/12 (Right to be Forgotten), ECLI:EU:C:2014:317' },
       { url: 'https://ssrn.com/abstract=1747374', type: 'academic', label: 'Schwartz & Solove 2011 — The PII Problem: Privacy and a New Concept of Personally Identifiable Information, New York University Law Review 86(6):1814-1894' },
-      { url: 'https://press.princeton.edu/books/paperback/9780691150369/delete', type: 'reference', label: 'Mayer-Schönberger 2009 — Delete: The Virtue of Forgetting in the Digital Age, Princeton University Press' },
+      { url: 'https://press.princeton.edu/books/paperback/9780691150369/delete', type: 'academic', label: 'Mayer-Schönberger 2009 — Delete: The Virtue of Forgetting in the Digital Age, Princeton University Press' },
     ],
   },
   {
@@ -26100,7 +26100,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-24',
     sources: [
       { url: 'https://www.jstor.org/stable/2657300', type: 'academic', label: 'Thornton & Ocasio 1999 — Institutional Logics and the Historical Contingency of Power in Organizations, American Journal of Sociology 105(3):801-843' },
-      { url: 'https://global.oup.com/academic/product/the-institutional-logics-perspective-9780199601936', type: 'reference', label: 'Thornton, Ocasio & Lounsbury 2012 — The Institutional Logics Perspective: A New Approach to Culture, Structure, and Process, Oxford University Press' },
+      { url: 'https://global.oup.com/academic/product/the-institutional-logics-perspective-9780199601936', type: 'academic', label: 'Thornton, Ocasio & Lounsbury 2012 — The Institutional Logics Perspective: A New Approach to Culture, Structure, and Process, Oxford University Press' },
     ],
   },
   {
@@ -26206,7 +26206,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://www.hup.harvard.edu/catalog.php?isbn=9780674003668', type: 'academic', label: 'Bruner 1986 — Actual Minds, Possible Worlds, Harvard University Press' },
       { url: 'https://guilford.com/books/The-Stories-We-Live-By/Dan-McAdams/9780898621730', type: 'academic', label: 'McAdams 1993 — The Stories We Live By: Personal Myths and the Making of the Self, Guilford Press' },
-      { url: 'https://wwnorton.com/books/Narrative-Means-to-Therapeutic-Ends/', type: 'reference', label: 'White & Epston 1990 — Narrative Means to Therapeutic Ends, W.W. Norton' },
+      { url: 'https://wwnorton.com/books/Narrative-Means-to-Therapeutic-Ends/', type: 'academic', label: 'White & Epston 1990 — Narrative Means to Therapeutic Ends, W.W. Norton' },
     ],
   },
   {
@@ -26861,7 +26861,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-25',
     sources: [
       { url: 'https://doi.org/10.1093/acprof:oso/9780199232383.001.0001', type: 'academic', label: 'Floridi, L. (2011) The Philosophy of Information — Oxford University Press' },
-      { url: 'https://rm.coe.int/information-disorder-report-version-august-2018/16808c9c77', type: 'reference', label: 'Wardle, C. & Derakhshan, H. (2017) Information Disorder: Toward an Interdisciplinary Framework for Research and Policy Making — Council of Europe' },
+      { url: 'https://rm.coe.int/information-disorder-report-version-august-2018/16808c9c77', type: 'government', label: 'Wardle, C. & Derakhshan, H. (2017) Information Disorder: Toward an Interdisciplinary Framework for Research and Policy Making — Council of Europe' },
       { url: 'https://doi.org/10.1126/science.aap9559', type: 'academic', label: 'Vosoughi, S., Roy, D. & Aral, S. (2018) The Spread of True and False News Online — Science, 359, 1146-1151' },
     ],
   },
@@ -27007,7 +27007,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-25',
     sources: [
       { url: 'https://plato.stanford.edu/entries/husserl/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Edmund Husserl' },
-      { url: 'https://plato.stanford.edu/entries/phenomenology/', type: 'academic', label: 'Stanford Encyclopedia of Philosophy — Phenomenology' },
+      { url: 'https://plato.stanford.edu/entries/phenomenology/', type: 'reference', label: 'Stanford Encyclopedia of Philosophy — Phenomenology' },
       { url: 'https://www.britannica.com/topic/phenomenological-reduction', type: 'reference', label: 'Encyclopaedia Britannica — Phenomenological Reduction' },
     ],
   },
@@ -27392,7 +27392,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-25',
     sources: [
       { url: 'https://www.bailii.org/ew/cases/EWHC/QB/1863/J1.html', type: 'academic', label: 'Taylor v Caldwell (1863) 3 B & S 826 — BAILII judgment text' },
-      { url: 'https://www.bailii.org/ew/cases/EWCA/Civ/1903/1.html', type: 'academic', label: 'Krell v Henry [1903] 2 KB 740 (CA) — BAILII judgment text' },
+      { url: 'https://www.bailii.org/ew/cases/EWCA/Civ/1903/1.html', type: 'government', label: 'Krell v Henry [1903] 2 KB 740 (CA) — BAILII judgment text' },
       { url: 'https://publications.parliament.uk/pa/ld199596/ldjudgmt/davis.htm', type: 'reference', label: 'Davis Contractors Ltd v Fareham UDC [1956] AC 696 (HL) — Lord Radcliffe\'s radically different test' },
       { url: 'https://www.sweetandmaxwell.co.uk/Catalogue/ProductDetails.aspx?recordid=677', type: 'reference', label: 'Treitel, The Law of Contract (15th ed., Sweet & Maxwell 2023), Ch. 19 Frustration' },
     ],
@@ -27714,7 +27714,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ルートヴィヒ・フォン・ミーゼス ／ フリードリヒ・A・ハイエク ／ クヌート・ヴィクセル ／ マレー・ロスバード',
     asOf: '2026-06-25',
     sources: [
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1974/hayek/lecture/', type: 'academic', label: 'NobelPrize.org — F.A.Hayek Nobel Lecture \'The Pretence of Knowledge\' (1974)' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1974/hayek/lecture/', type: 'reference', label: 'NobelPrize.org — F.A.Hayek Nobel Lecture \'The Pretence of Knowledge\' (1974)' },
       { url: 'https://mises.org/library/austrian-theory-trade-cycle-and-other-essays', type: 'academic', label: 'Mises Institute — The Austrian Theory of the Trade Cycle and Other Essays' },
       { url: 'https://www.britannica.com/topic/Austrian-school-of-economics', type: 'reference', label: 'Encyclopaedia Britannica — Austrian school of economics' },
     ],
@@ -38431,7 +38431,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'グラント・ギルモア ／ ジェームズ・ホワイト ／ ロバート・サマーズ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.law.cornell.edu/ucc/9', type: 'government', label: 'UCC Article 9: Secured Transactions — Legal Information Institute, Cornell Law School' },
+      { url: 'https://www.law.cornell.edu/ucc/9', type: 'reference', label: 'UCC Article 9: Secured Transactions — Legal Information Institute, Cornell Law School' },
       { url: 'https://doi.org/10.2307/1340234', type: 'academic', label: 'Gilmore (1965) Security Interests in Personal Property — Little, Brown and Company' },
       { url: 'https://en.wikipedia.org/wiki/Dragnet_clause', type: 'reference', label: 'Wikipedia: Dragnet clause — 包括担保条項の定義と法的解釈の概説' },
     ],
@@ -38711,7 +38711,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.1086/467163', type: 'academic', label: 'Posner, R. A. & Rosenfield, A. M. (1977) Impossibility and Related Doctrines in Contract Law — Journal of Legal Studies' },
-      { url: 'https://www.law.cornell.edu/ucc/2/2-615', type: 'government', label: 'UCC Section 2-615: Excuse by Failure of Presupposed Conditions — Cornell Law Institute' },
+      { url: 'https://www.law.cornell.edu/ucc/2/2-615', type: 'reference', label: 'UCC Section 2-615: Excuse by Failure of Presupposed Conditions — Cornell Law Institute' },
       { url: 'https://en.wikipedia.org/wiki/Impracticability', type: 'reference', label: 'Wikipedia: Impracticability — commercial excuse doctrine in contract law overview' },
     ],
   },
@@ -43545,7 +43545,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'デイヴィッド・リカード ／ エリー・ヘクシャー ／ ベルティル・オリーン ／ ポール・クルーグマン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.econlib.org/library/Ricardo/ricP.html', type: 'academic', label: 'Ricardo, D. (1817) On the Principles of Political Economy and Taxation — Library of Economics and Liberty' },
+      { url: 'https://www.econlib.org/library/Ricardo/ricP.html', type: 'reference', label: 'Ricardo, D. (1817) On the Principles of Political Economy and Taxation — Library of Economics and Liberty' },
       { url: 'https://www.wto.org/english/res_e/reser_e/gtdw_e/wkshop05_e/kim05_e.pdf', type: 'reference', label: 'WTO (2005) Comparative Advantage and the Pattern of Trade — WTO Research Paper' },
       { url: 'https://ja.wikipedia.org/wiki/%E6%AF%94%E8%BC%83%E5%84%AA%E4%BD%8D', type: 'reference', label: 'Wikipedia: 比較優位 — リカードとH-O定理の解説' },
     ],
@@ -47150,7 +47150,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1111/1467-937X.00076', type: 'academic', label: 'Maskin, E. (1999) Nash Equilibrium and Welfare Optimality — The Review of Economic Studies, 66(1), 23-38' },
       { url: 'https://ideas.repec.org/a/oup/restud/v66y1999i1p23-38..html', type: 'academic', label: 'RePEc/IDEAS — Maskin (1999) Nash Equilibrium and Welfare Optimality, Review of Economic Studies 66(1):23-38' },
-      { url: 'https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2007.pdf', type: 'government', label: 'Nobel Committee (2007) Scientific Background: Mechanism Design Theory — implementation theory, Maskin monotonicity and Nash implementation' },
+      { url: 'https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2007.pdf', type: 'reference', label: 'Nobel Committee (2007) Scientific Background: Mechanism Design Theory — implementation theory, Maskin monotonicity and Nash implementation' },
     ],
   },
   {
@@ -47304,7 +47304,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1142/S0219525900000078', type: 'academic', label: 'Deffuant, G., Neau, D., Amblard, F. & Weisbuch, G. (2000) "Mixing Beliefs among Interacting Agents," Advances in Complex Systems, 3(1-4), pp.87-98 — ランダム2者交流と収束パラメータμによるDWモデルの原論文' },
       { url: 'https://doi.org/10.1142/S0129183107011789', type: 'academic', label: 'Lorenz, J. (2007) "Continuous Opinion Dynamics under Bounded Confidence: A Survey," International Journal of Modern Physics C, 18(12), pp.1819-1838 — HK/DW両モデルとノイズ・異質な信頼限界・ネットワーク構造への拡張を整理したサーベイ' },
       { url: 'https://www.jasss.org/20/4/2.html', type: 'academic', label: 'Flache, A., Mäs, M., Feliciani, T. et al. (2017) "Models of Social Influence: Towards the Next Frontiers," Journal of Artificial Societies and Social Simulation, 20(4) — 限定信頼モデルを含む社会的影響モデル群の定型化・実証的検証の乏しさを整理した批判的レビュー' },
-      { url: 'https://reutersinstitute.politics.ox.ac.uk/echo-chambers-filter-bubbles-and-polarisation-literature-review', type: 'reference', label: 'Reuters Institute for the Study of Journalism, "Echo chambers, filter bubbles, and polarisation: a literature review" — SNS上の意見分極・フィルターバブル研究への応用文脈を確認する文献レビュー' },
+      { url: 'https://reutersinstitute.politics.ox.ac.uk/echo-chambers-filter-bubbles-and-polarisation-literature-review', type: 'academic', label: 'Reuters Institute for the Study of Journalism, "Echo chambers, filter bubbles, and polarisation: a literature review" — SNS上の意見分極・フィルターバブル研究への応用文脈を確認する文献レビュー' },
     ],
   },
   {

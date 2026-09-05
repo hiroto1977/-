@@ -26,9 +26,9 @@ aliases:
 マーティン・セリグマン（Martin Seligman, 1990『Learned Optimism』）
 
 ## 出典
-- [PositivePsychology.com「Learned Optimism: Is Martin Seligman's Glass Half Full?」](https://positivepsychology.com/learned-optimism/) `学術`
+- [PositivePsychology.com「Learned Optimism: Is Martin Seligman's Glass Half Full?」](https://positivepsychology.com/learned-optimism/) `メディア`
 - [Wikipedia「Learned optimism」](https://en.wikipedia.org/wiki/Learned_optimism) `リファレンス`
-- [PositivePsychology.com「What Are Attributional and Explanatory Styles in Psychology?」](https://positivepsychology.com/explanatory-styles-optimism/) `学術`
+- [PositivePsychology.com「What Are Attributional and Explanatory Styles in Psychology?」](https://positivepsychology.com/explanatory-styles-optimism/) `メディア`
 
 ## 関連概念
 - [[human-explanatory-style-seligman|説明スタイル——出来事の原因をどう説明するかが楽観と悲観を分ける]] — 語彙が近い

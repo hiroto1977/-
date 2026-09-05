@@ -86,7 +86,8 @@ npm run lint:workflow-security # .github/workflows/: permissions の明示・第
 npm run lint:network-targets # 送り先ホストが変数で決まる通信の台帳 (資格情報の流出経路)
 npm run lint:docs          # cross-document consistency
 npm run lint:citations     # 出典の内部矛盾 (同一 DOI が別々の出版年・別々の著作で引かれていないか)、
-                           #   種別の偽装 (雑誌・ブログ・百科事典の URL に 'academic' が付いていないか)
+                           #   種別の偽装 (雑誌・ブログ・百科事典の URL に 'academic' が付いていないか)、
+                           #   同じ URL は同じ種別 (項目ごとに 'academic' / 'media' が揺れていないか)
 npm run lint:doi-prefix    # DOI プレフィックス(=登録機関=出版社) とラベルの出版社の矛盾。
                            #   ISSN を埋め込む DOI (APA / Elsevier PII / Wiley j. / SAGE) は台帳 164 誌で、誌の略号を
                            #   持つ DOI (INFORMS / Oxford / Wiley / Springer / Annual Reviews / MIT / Emerald) は

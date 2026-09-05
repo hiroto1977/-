@@ -26,7 +26,7 @@ aliases:
 バティア・フリードマン（Batya Friedman）／ジョイ・ブオラムウィニ（Joy Buolamwini, 1990–）／ティムニット・ゲブル（Timnit Gebru, 1982–）／サフィヤ・ウモジャ・ノーブル（Safiya Umoja Noble）
 
 ## 出典
-- [Stanford Encyclopedia of Philosophy — Algorithmic Fairness](https://plato.stanford.edu/entries/algorithmic-fairness/) `学術`
+- [Stanford Encyclopedia of Philosophy — Algorithmic Fairness](https://plato.stanford.edu/entries/algorithmic-fairness/) `リファレンス`
 - [Buolamwini & Gebru (2018) "Gender Shades" Proceedings of Machine Learning Research 81](https://proceedings.mlr.press/v81/buolamwini18a.html) `学術`
 
 ## 関連概念

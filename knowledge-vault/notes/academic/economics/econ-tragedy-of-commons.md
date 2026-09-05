@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Encyclopaedia Britannica — Tragedy of the commons](https://www.britannica.com/science/tragedy-of-the-commons) `リファレンス`
 - [Encyclopaedia Britannica — Garrett Hardin](https://www.britannica.com/topic/Garrett-Hardin) `リファレンス`
-- [NobelPrize.org — Prize in Economic Sciences 2009 (Elinor Ostrom)](https://www.nobelprize.org/prizes/economic-sciences/2009/summary/) `公的`
+- [NobelPrize.org — Prize in Economic Sciences 2009 (Elinor Ostrom)](https://www.nobelprize.org/prizes/economic-sciences/2009/summary/) `リファレンス`
 - [CNRS News — Debunking the Tragedy of the Commons（open-access vs. commons の批判）](https://news.cnrs.fr/opinions/debunking-the-tragedy-of-the-commons) `メディア`
 
 ## 関連概念

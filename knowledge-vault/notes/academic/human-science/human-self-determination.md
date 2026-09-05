@@ -26,7 +26,7 @@ aliases:
 E.デシ&R.ライアンが提唱（ロチェスター大学）／3つの基本的心理欲求：自律性・有能感・関係性／充足で内発的動機づけ・well-beingが高まる／外的報酬が内発的動機を下げるアンダーマイニング効果／有機的統合理論／教育・職場等に応用
 
 ## 出典
-- [selfdeterminationtheory.org — Theory（デシ&ライアン本人運営の公式理論解説）](https://selfdeterminationtheory.org/theory/) `学術`
+- [selfdeterminationtheory.org — Theory（デシ&ライアン本人運営の公式理論解説）](https://selfdeterminationtheory.org/theory/) `リファレンス`
 - [American Psychological Association — Self-determination theory](https://www.apa.org/research-practice/conduct-research/self-determination-theory.html) `学術`
 - [Ryan & Deci (2000), American Psychologist（査読論文・PubMed索引）](https://pubmed.ncbi.nlm.nih.gov/11392867/) `学術`
 

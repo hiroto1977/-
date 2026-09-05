@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Floridi, L. (2011) The Philosophy of Information — Oxford University Press](https://doi.org/10.1093/acprof:oso/9780199232383.001.0001) `学術`
-- [Wardle, C. & Derakhshan, H. (2017) Information Disorder: Toward an Interdisciplinary Framework for Research and Policy Making — Council of Europe](https://rm.coe.int/information-disorder-report-version-august-2018/16808c9c77) `リファレンス`
+- [Wardle, C. & Derakhshan, H. (2017) Information Disorder: Toward an Interdisciplinary Framework for Research and Policy Making — Council of Europe](https://rm.coe.int/information-disorder-report-version-august-2018/16808c9c77) `公的`
 - [Vosoughi, S., Roy, D. & Aral, S. (2018) The Spread of True and False News Online — Science, 359, 1146-1151](https://doi.org/10.1126/science.aap9559) `学術`
 
 ## 関連概念

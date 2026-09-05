@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [LSE Review of Books — Book Review: Platform Capitalism by Nick Srnicek（ロンドン・スクール・オブ・エコノミクス）](https://blogs.lse.ac.uk/lsereviewofbooks/2017/06/05/book-review-platform-capitalism-by-nick-srnicek/) `学術`
 - [University of Amsterdam, Media Studies — Interventions on Nick Srnicek’s “Platform Capitalism”](https://mastersofmedia.hum.uva.nl/2018/02/interventions-on-nick-srniceks-platform-capitalism/) `学術`
-- [Polity Press — Platform Capitalism（原著出版社・書誌）](https://www.politybooks.com/bookdetail?book_slug=platform-capitalism--9781509504862) `メディア`
+- [Polity Press — Platform Capitalism（原著出版社・書誌）](https://www.politybooks.com/bookdetail?book_slug=platform-capitalism--9781509504862) `学術`
 - [Wikipedia — Platform capitalism](https://en.wikipedia.org/wiki/Platform_capitalism) `リファレンス`
 
 ## 関連概念

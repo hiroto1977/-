@@ -28,7 +28,7 @@ Robert Metcalfe ／ George Gilder ／ Nicholas Economides
 ## 出典
 - [Metcalfe, R. (2013). Metcalfe's Law after 40 Years of Ethernet. IEEE Computer, 46(12), 26–31. DOI:10.1109/MC.2013.374](https://ieeexplore.ieee.org/document/6636305/) `学術`
 - [Zhang, X., Liu, J., & Xu, Z. (2015). Tencent and Facebook Data Validate Metcalfe's Law. Journal of Computer Science and Technology, 30(2), 246–251. DOI:10.1007/s11390-015-1518-1](https://link.springer.com/article/10.1007/s11390-015-1518-1) `学術`
-- [Briscoe, B., Odlyzko, A., & Tilly, B. (2006). Metcalfe's Law is Wrong. IEEE Spectrum, 43(7), 34–39.](https://spectrum.ieee.org/metcalfes-law-is-wrong) `学術`
+- [Briscoe, B., Odlyzko, A., & Tilly, B. (2006). Metcalfe's Law is Wrong. IEEE Spectrum, 43(7), 34–39.](https://spectrum.ieee.org/metcalfes-law-is-wrong) `メディア`
 - [Economides, N. (1996). The Economics of Networks. International Journal of Industrial Organization, 14(6), 673–699.](https://neconomides.com/uploads/Economides_Economics_of_Networks.pdf) `学術`
 - [Wikipedia: Metcalfe's law — overview of the law, mathematical formulation, and key academic debates](https://en.wikipedia.org/wiki/Metcalfe%27s_law) `リファレンス`
 

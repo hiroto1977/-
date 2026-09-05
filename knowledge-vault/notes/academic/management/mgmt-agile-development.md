@@ -26,7 +26,7 @@ aliases:
 ケント・ベック（Kent Beck、XP提唱・宣言署名者）／ケン・シュウェイバー&ジェフ・サザーランド（Scrum共同考案）／ロバート・C・マーティン、マーティン・ファウラー等（2001年宣言署名者17名）
 
 ## 出典
-- [Agile Manifesto — アジャイルソフトウェア開発宣言（2001年原典）](https://agilemanifesto.org/) `学術`
+- [Agile Manifesto — アジャイルソフトウェア開発宣言（2001年原典）](https://agilemanifesto.org/) `リファレンス`
 - [The Scrum Guide — Schwaber & Sutherland（Scrum公式定義）](https://scrumguides.org/) `学術`
 
 ## 関連概念

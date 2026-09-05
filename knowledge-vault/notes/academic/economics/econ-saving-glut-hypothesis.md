@@ -26,7 +26,7 @@ aliases:
 Ben Shalom Bernanke ／ Ricardo J. Caballero ／ Emmanuel Farhi ／ Pierre-Olivier Gourinchas
 
 ## 出典
-- [Bernanke (2005) The Global Saving Glut and the U.S. Current Account Deficit — Federal Reserve Board](https://www.federalreserve.gov/boarddocs/speeches/2005/200503102/) `学術`
+- [Bernanke (2005) The Global Saving Glut and the U.S. Current Account Deficit — Federal Reserve Board](https://www.federalreserve.gov/boarddocs/speeches/2005/200503102/) `公的`
 - [Caballero, Farhi & Gourinchas (2008) An Equilibrium Model of Global Imbalances and Low Interest Rates — American Economic Review](https://www.aeaweb.org/articles?id=10.1257%2Faer.98.1.358) `学術`
 - [Wikipedia — Global saving glut](https://en.wikipedia.org/wiki/Global_saving_glut) `リファレンス`
 

@@ -30,7 +30,7 @@ aliases:
 - [Deffuant, G., Neau, D., Amblard, F. & Weisbuch, G. (2000) "Mixing Beliefs among Interacting Agents," Advances in Complex Systems, 3(1-4), pp.87-98 — ランダム2者交流と収束パラメータμによるDWモデルの原論文](https://doi.org/10.1142/S0219525900000078) `学術`
 - [Lorenz, J. (2007) "Continuous Opinion Dynamics under Bounded Confidence: A Survey," International Journal of Modern Physics C, 18(12), pp.1819-1838 — HK/DW両モデルとノイズ・異質な信頼限界・ネットワーク構造への拡張を整理したサーベイ](https://doi.org/10.1142/S0129183107011789) `学術`
 - [Flache, A., Mäs, M., Feliciani, T. et al. (2017) "Models of Social Influence: Towards the Next Frontiers," Journal of Artificial Societies and Social Simulation, 20(4) — 限定信頼モデルを含む社会的影響モデル群の定型化・実証的検証の乏しさを整理した批判的レビュー](https://www.jasss.org/20/4/2.html) `学術`
-- [Reuters Institute for the Study of Journalism, "Echo chambers, filter bubbles, and polarisation: a literature review" — SNS上の意見分極・フィルターバブル研究への応用文脈を確認する文献レビュー](https://reutersinstitute.politics.ox.ac.uk/echo-chambers-filter-bubbles-and-polarisation-literature-review) `リファレンス`
+- [Reuters Institute for the Study of Journalism, "Echo chambers, filter bubbles, and polarisation: a literature review" — SNS上の意見分極・フィルターバブル研究への応用文脈を確認する文献レビュー](https://reutersinstitute.politics.ox.ac.uk/echo-chambers-filter-bubbles-and-polarisation-literature-review) `学術`
 
 ## 関連概念
 - [[human-reciprocal-altruism|互恵的利他主義]] — 同じ思想家

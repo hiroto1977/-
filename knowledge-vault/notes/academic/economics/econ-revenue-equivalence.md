@@ -27,7 +27,7 @@ William Vickrey（1961, 先駆）／Roger Myerson（1981「Optimal Auction Desig
 
 ## 出典
 - [Revenue equivalence — Wikipedia（定理の定義・条件・破綻ケース）](https://en.wikipedia.org/wiki/Revenue_equivalence) `リファレンス`
-- [Mechanism Design Theory — Nobel委員会 科学的背景文書（Myersonらのメカニズムデザイン）](https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2007.pdf) `学術`
+- [Mechanism Design Theory — Nobel委員会 科学的背景文書（Myersonらのメカニズムデザイン）](https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2007.pdf) `リファレンス`
 - [The Revenue Equivalence Theorem for Basic Auctions — Washington University in St. Louis 講義資料](https://cpb-us-w2.wpmucdn.com/sites.wustl.edu/dist/3/2139/files/2019/11/BasicAuctionRevEq.pdf) `学術`
 
 ## 関連概念

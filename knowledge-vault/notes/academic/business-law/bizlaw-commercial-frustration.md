@@ -27,7 +27,7 @@ Taylor v. Caldwell（1863）でBlackburn判事が定立した黙示条件理論�
 
 ## 出典
 - [Taylor v Caldwell (1863) 3 B & S 826 — BAILII judgment text](https://www.bailii.org/ew/cases/EWHC/QB/1863/J1.html) `学術`
-- [Krell v Henry [1903] 2 KB 740 (CA) — BAILII judgment text](https://www.bailii.org/ew/cases/EWCA/Civ/1903/1.html) `学術`
+- [Krell v Henry [1903] 2 KB 740 (CA) — BAILII judgment text](https://www.bailii.org/ew/cases/EWCA/Civ/1903/1.html) `公的`
 - [Davis Contractors Ltd v Fareham UDC [1956] AC 696 (HL) — Lord Radcliffe's radically different test](https://publications.parliament.uk/pa/ld199596/ldjudgmt/davis.htm) `リファレンス`
 - [Treitel, The Law of Contract (15th ed., Sweet & Maxwell 2023), Ch. 19 Frustration](https://www.sweetandmaxwell.co.uk/Catalogue/ProductDetails.aspx?recordid=677) `リファレンス`
 

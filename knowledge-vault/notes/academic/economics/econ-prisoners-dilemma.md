@@ -26,7 +26,7 @@ aliases:
 M.フラッド&M.ドレッシャー（1950 RAND考案）／A.W.タッカー（命名）／R.アクセルロッド（反復ゲーム・しっぺ返し）
 
 ## 出典
-- [Stanford Encyclopedia of Philosophy — Prisoner’s Dilemma](https://plato.stanford.edu/entries/prisoner-dilemma/) `学術`
+- [Stanford Encyclopedia of Philosophy — Prisoner’s Dilemma](https://plato.stanford.edu/entries/prisoner-dilemma/) `リファレンス`
 - [Encyclopaedia Britannica — Game theory: The prisoners’ dilemma](https://www.britannica.com/science/game-theory/The-prisoners-dilemma) `リファレンス`
 - [Econlib, Concise Encyclopedia of Economics — Prisoners’ Dilemma](https://www.econlib.org/library/Enc/PrisonersDilemma.html) `リファレンス`
 

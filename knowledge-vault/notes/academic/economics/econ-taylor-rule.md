@@ -31,7 +31,7 @@ aliases:
 - [Federal Reserve Board — Policy Rules and How Policymakers Use Them（FRB による政策ルールの解説）](https://www.federalreserve.gov/monetarypolicy/policy-rules-and-how-policymakers-use-them.htm) `公的`
 - [Federal Reserve Bank of St. Louis (2024) Output Gaps, the Taylor Rule and the Stance of Monetary Policy（産出ギャップ推定の影響）](https://www.stlouisfed.org/on-the-economy/2024/mar/output-gaps-taylor-rule-stance-monetary-policy) `公的`
 - [Federal Reserve Bank of San Francisco — Taylor's Rule and the Fed: 1970–1997（歴史的当てはまり）](https://www.frbsf.org/wp-content/uploads/3-16.pdf) `公的`
-- [Brookings Institution — The Taylor Rule: A benchmark for monetary policy?（ベンチマークとしての使われ方）](https://www.brookings.edu/articles/the-taylor-rule-a-benchmark-for-monetary-policy/) `リファレンス`
+- [Brookings Institution — The Taylor Rule: A benchmark for monetary policy?（ベンチマークとしての使われ方）](https://www.brookings.edu/articles/the-taylor-rule-a-benchmark-for-monetary-policy/) `学術`
 - [Wikipedia: Taylor rule — テイラー・ルールの概要](https://en.wikipedia.org/wiki/Taylor_rule) `リファレンス`
 
 ## 関連概念

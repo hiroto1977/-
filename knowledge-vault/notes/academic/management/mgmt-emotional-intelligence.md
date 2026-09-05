@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Salovey & Mayer (1990) "Emotional Intelligence", Imagination, Cognition and Personality（査読誌・原著論文）](https://journals.sagepub.com/doi/10.2190/DUGG-P24E-52WK-6CDG) `学術`
 - [Frontiers in Psychology (2019) 感情知性の測定法に関する批判的レビュー](https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2019.01116/full) `学術`
-- [Noba Project: Emotional Intelligence（能力モデル・4枝の解説）](https://nobaproject.com/modules/emotional-intelligence) `リファレンス`
+- [Noba Project: Emotional Intelligence（能力モデル・4枝の解説）](https://nobaproject.com/modules/emotional-intelligence) `学術`
 
 ## 関連概念
 - [[human-emotional-intelligence|情動知能（EQ）]] — 分野横断

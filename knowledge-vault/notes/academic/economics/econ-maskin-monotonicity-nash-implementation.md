@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Maskin, E. (1999) Nash Equilibrium and Welfare Optimality — The Review of Economic Studies, 66(1), 23-38](https://doi.org/10.1111/1467-937X.00076) `学術`
 - [RePEc/IDEAS — Maskin (1999) Nash Equilibrium and Welfare Optimality, Review of Economic Studies 66(1):23-38](https://ideas.repec.org/a/oup/restud/v66y1999i1p23-38..html) `学術`
-- [Nobel Committee (2007) Scientific Background: Mechanism Design Theory — implementation theory, Maskin monotonicity and Nash implementation](https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2007.pdf) `公的`
+- [Nobel Committee (2007) Scientific Background: Mechanism Design Theory — implementation theory, Maskin monotonicity and Nash implementation](https://www.nobelprize.org/uploads/2018/06/advanced-economicsciences2007.pdf) `リファレンス`
 
 ## 関連概念
 - [[econ-mechanism-design|メカニズムデザイン]] — 同じ思想家

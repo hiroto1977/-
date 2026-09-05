@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Johnson, Rethinking Incrementalism, Strategic Management Journal (1988) — Wiley](https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250090107) `学術`
-- [Sammut-Bonnici, Strategic Drift, Wiley Encyclopedia of Management (2015)（Wiley, 1990, ISBN 978-0-471-92632-0）](https://search.worldcat.org/title/mapping-strategic-thought/oclc/20722225) `リファレンス`
+- [Sammut-Bonnici, Strategic Drift, Wiley Encyclopedia of Management (2015)（Wiley, 1990, ISBN 978-0-471-92632-0）](https://search.worldcat.org/title/mapping-strategic-thought/oclc/20722225) `学術`
 - [tutor2u — Strategic Drift 解説（英国教育メディア）](https://www.tutor2u.net/business/reference/strategic-drift) `メディア`
 
 ## 関連概念

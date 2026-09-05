@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Encyclopaedia Britannica — Theory of rational expectations](https://www.britannica.com/topic/theory-of-rational-expectations) `リファレンス`
-- [NobelPrize.org — 1995年経済学賞（ロバート・ルーカス）](https://www.nobelprize.org/prizes/economic-sciences/1995/summary/) `公的`
+- [NobelPrize.org — 1995年経済学賞（ロバート・ルーカス）](https://www.nobelprize.org/prizes/economic-sciences/1995/summary/) `リファレンス`
 - [Econlib, Concise Encyclopedia of Economics — Rational Expectations](https://www.econlib.org/library/Enc/RationalExpectations.html) `学術`
 
 ## 関連概念

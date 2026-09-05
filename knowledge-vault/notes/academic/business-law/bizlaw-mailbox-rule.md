@@ -29,8 +29,8 @@ Samuel Williston ／ Arthur Linton Corbin ／ Sir Frederick Pollock ／ Lord Edw
 - [Cornell Law School Legal Information Institute — Mailbox Rule](https://www.law.cornell.edu/wex/mailbox_rule) `リファレンス`
 - [Wikipedia — Postal Acceptance Rule](https://en.wikipedia.org/wiki/Postal_acceptance_rule) `リファレンス`
 - [日本民法（e-Gov法令検索）](https://elaws.e-gov.go.jp/document?lawid=129AC0000000089) `公的`
-- [UNIDROIT Principles of International Commercial Contracts 2016](https://www.unidroit.org/instruments/commercial-contracts/unidroit-principles-2016/) `学術`
-- [United Nations Convention on Contracts for the International Sale of Goods (CISG)](https://uncitral.un.org/en/texts/salegoods/conventions/sale_of_goods/cisg) `学術`
+- [UNIDROIT Principles of International Commercial Contracts 2016](https://www.unidroit.org/instruments/commercial-contracts/unidroit-principles-2016/) `リファレンス`
+- [United Nations Convention on Contracts for the International Sale of Goods (CISG)](https://uncitral.un.org/en/texts/salegoods/conventions/sale_of_goods/cisg) `公的`
 
 ## 関連概念
 - [[bizlaw-mailbox-rule-acceptance|郵便箱ルール（発信主義）]] — 語彙が近い

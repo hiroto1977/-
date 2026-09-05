@@ -27,8 +27,8 @@ John Bowlby ／ Mary Dinsmore Salter Ainsworth ／ Mary Main
 
 ## 出典
 - [Attachment Theory | Britannica](https://www.britannica.com/science/attachment-theory) `リファレンス`
-- [John Bowlby's Attachment Theory — Simply Psychology](https://www.simplypsychology.org/bowlby.html) `学術`
-- [Mary Ainsworth Strange Situation Experiment — Simply Psychology](https://www.simplypsychology.org/mary-ainsworth.html) `学術`
+- [John Bowlby's Attachment Theory — Simply Psychology](https://www.simplypsychology.org/bowlby.html) `リファレンス`
+- [Mary Ainsworth Strange Situation Experiment — Simply Psychology](https://www.simplypsychology.org/mary-ainsworth.html) `リファレンス`
 
 ## 関連概念
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — 出典を共有

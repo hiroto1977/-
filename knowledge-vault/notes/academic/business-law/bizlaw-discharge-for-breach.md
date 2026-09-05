@@ -28,7 +28,7 @@ Guenter Treitel ／ E. Allan Farnsworth
 ## 出典
 - [Treitel (1988) Remedies for Breach of Contract: A Comparative Account — Clarendon Press, Oxford](https://global.oup.com/academic/product/remedies-for-breach-of-contract-9780198258193) `学術`
 - [Farnsworth (1970) Legal Remedies for Breach of Contract — Columbia Law Review](https://www.jstor.org/stable/1116042) `学術`
-- [e-Gov法令検索 民法541条・542条・545条4項（2020年施行改正民法）](https://laws.e-gov.go.jp/law/129AC0000000089) `リファレンス`
+- [e-Gov法令検索 民法541条・542条・545条4項（2020年施行改正民法）](https://laws.e-gov.go.jp/law/129AC0000000089) `公的`
 
 ## 関連概念
 - [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]] — 同じ思想家

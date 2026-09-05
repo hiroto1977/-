@@ -29,7 +29,7 @@ aliases:
 - [EU 2016 — General Data Protection Regulation (GDPR), Regulation (EU) 2016/679](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679) `公的`
 - [CJEU 2014 — Google Spain v AEPD, Case C-131/12 (Right to be Forgotten), ECLI:EU:C:2014:317](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex:62012CJ0131) `公的`
 - [Schwartz & Solove 2011 — The PII Problem: Privacy and a New Concept of Personally Identifiable Information, New York University Law Review 86(6):1814-1894](https://ssrn.com/abstract=1747374) `学術`
-- [Mayer-Schönberger 2009 — Delete: The Virtue of Forgetting in the Digital Age, Princeton University Press](https://press.princeton.edu/books/paperback/9780691150369/delete) `リファレンス`
+- [Mayer-Schönberger 2009 — Delete: The Virtue of Forgetting in the Digital Age, Princeton University Press](https://press.princeton.edu/books/paperback/9780691150369/delete) `学術`
 
 ## 関連概念
 - [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同じ思想家

@@ -26,7 +26,7 @@ aliases:
 ティム・バーナーズ＝リー（Tim Berners-Lee, 1955–）／オープン・ナレッジ・ファウンデーション（2004年設立）／ルーファス・ポロック（OKF 創設）
 
 ## 出典
-- [Open Knowledge Foundation — Open Definition](https://opendefinition.org/) `学術`
+- [Open Knowledge Foundation — Open Definition](https://opendefinition.org/) `リファレンス`
 - [データカタログサイト DATA.GO.JP（日本政府オープンデータポータル）](https://www.data.go.jp/) `公的`
 
 ## 関連概念

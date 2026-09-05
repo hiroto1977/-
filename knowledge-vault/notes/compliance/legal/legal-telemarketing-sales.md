@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [消費者庁 特定商取引法ガイド 電話勧誘販売](https://www.no-trouble.caa.go.jp/what/telemarketing/) `公的`
 - [消費者庁 特商法逐条解説 電話勧誘販売（16条・17条）](https://www.no-trouble.caa.go.jp/pdf/20180625ac05.pdf) `公的`
-- [国民生活センター クーリング・オフ（電話勧誘8日間）](https://www.kokusen.go.jp/soudan_now/data/coolingoff.html) `メディア`
+- [国民生活センター クーリング・オフ（電話勧誘8日間）](https://www.kokusen.go.jp/soudan_now/data/coolingoff.html) `公的`
 
 ## 関連概念
 - [[legal-business-opportunity-sales|業務提供誘引販売取引（内職商法・モニター商法）]] — 語彙が近い

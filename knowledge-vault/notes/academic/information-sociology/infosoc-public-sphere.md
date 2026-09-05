@@ -26,7 +26,7 @@ aliases:
 ユルゲン・ハーバーマス（1962『公共性の構造転換』）／市民的公共圏・再封建化
 
 ## 出典
-- [Stanford Encyclopedia of Philosophy — Jürgen Habermas（公共圏・再封建化）](https://plato.stanford.edu/entries/habermas/) `学術`
+- [Stanford Encyclopedia of Philosophy — Jürgen Habermas（公共圏・再封建化）](https://plato.stanford.edu/entries/habermas/) `リファレンス`
 - [Wikipedia — The Structural Transformation of the Public Sphere（1962）](https://en.wikipedia.org/wiki/The_Structural_Transformation_of_the_Public_Sphere) `リファレンス`
 - [MIT Press — The Structural Transformation of the Public Sphere（英訳版書誌）](https://mitpress.mit.edu/9780262581080/the-structural-transformation-of-the-public-sphere/) `学術`
 
