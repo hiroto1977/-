@@ -36,6 +36,7 @@ Taina Bucher／Motahhare Eslami／Emilee Rader／Tarleton Gillespie
 - [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 同じ思想家
 - [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同じ思想家
 - [[infosoc-produsage-bruns|プロデュセージ——生産と利用が融合する協働的なコンテンツ創造]] — 同分野の近傍
+- [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]] — 同分野の近傍
 - [[infosoc-sociotechnical-systems|社会技術システム理論：組織における社会的・技術的サブシステムの共同最適化]] — 同分野の近傍
 
 ## 関連

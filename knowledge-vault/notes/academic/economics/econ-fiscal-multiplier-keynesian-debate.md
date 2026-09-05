@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Fiscal multiplier — 財政乗数の理論と実証概観](https://en.wikipedia.org/wiki/Fiscal_multiplier) `リファレンス`
 
 ## 関連概念
-- [[econ-fiscal-multiplier-keynesian-analysis|財政乗数——政府支出と減税の国民所得波及効果]] — 語彙が近い
 - [[econ-fiscal-multiplier-crowding-out-debate|財政乗数とクラウディングアウト論争——IS-LMモデルから実証的な乗数推定への展開]] — 語彙が近い
+- [[econ-fiscal-multiplier-keynesian-analysis|財政乗数——政府支出と減税の国民所得波及効果]] — 語彙が近い
 - [[econ-fiscal-multiplier-auerbach-gorodnichenko|財政乗数——景気局面依存性とアウアーバッハ＝ゴロドニチェンコの状態依存推定]] — 語彙が近い
 - [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 同じ思想家
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家

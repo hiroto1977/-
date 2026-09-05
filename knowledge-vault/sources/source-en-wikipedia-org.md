@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2252
+cite_count: 2248
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2252 件**（リファレンス 2252）
+> [!info] 出典ドメイン索引 ・ 引用 **2248 件**（リファレンス 2248）
 
 ## このドメインを出典とする項目
 
@@ -1597,11 +1597,8 @@ tags:
 - [[infosoc-digital-heritage-preservation|デジタル文化遺産保存——ビットロット・フォーマット陳腐化とデジタルアーカイブの持続可能性]] — Wikipedia:Digitalpreservation—デジタル保存の技術と課題
 - [[infosoc-digital-humanities-mccarty|デジタル・ヒューマニティーズ——マッカーシーの計算的モデリングと人文知の変容]] — Wikipedia:Digitalhumanities—computationalmethodsinarts
 - [[infosoc-digital-identity-self-sovereign|デジタルアイデンティティと自己主権——SSIの分散管理と個人情報支配の再設計]] — Wikipedia:Self-sovereignidentity—decentralizeddigitalidentity
-- [[infosoc-digital-labor-exploitation|デジタル労働と搾取の情報社会学（テラノヴァ・フックス）]] — Wikipedia:Digitallabor—Terranova,Fuchs,prosumer,surveillancecapitalis…
-- [[infosoc-digital-labor-fuchs|デジタル労働論——プラットフォーム資本主義における価値創造と搾取]] — Wikipedia:Digitallabor—デジタル労働論の定義と批判的分析の概説
-- [[infosoc-digital-labor-scholz-casilli|デジタル労働論——プラットフォーム経済における労働の不可視化]] — Wikipedia:Digitallabor—プラットフォーム経済と労働の再定義
+- [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]] — Wikipedia:Digitallabor—Terranova,Fuchs,Scholz,Casilli,prosumer,microw…
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — Wikipedia:Platformcooperativism—プラットフォーム協同組合主義の概要
-- [[infosoc-digital-labor-terranova|デジタル労働とフリー・レイバー（テラノバ）]] — Wikipedia:Digitallabor—デジタル労働論の概説
 - [[infosoc-digital-labour|デジタル労働（digital labour）]] — Digitallabor—Wikipedia（定義・研究領域の概観）
 - [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）]] — Wikipedia:Digitalliteracy—definitionandframeworks
 - [[infosoc-digital-memory-collective|デジタル集合記憶とオンライン追悼実践の情報社会学]] — Wikipedia:Digitalmemory—collectivememoryonline
@@ -1913,8 +1910,7 @@ tags:
 - [[mgmt-boundary-spanning|境界連結（バウンダリー・スパニング）]] — Wikipedia:Boundaryspanning（情報処理・外部代表の二機能の概説）
 - [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]] — Wikipedia:Boundaryspanning—organizationaltheory
 - [[mgmt-brand-equity|ブランド・エクイティ]] — Wikipedia「Brandequity」—Aakerの資産・負債定義と5要素、一般的定義
-- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — Wikipedia:Bricolage—creativerecombinationofavailableresourcesoverview
-- [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — Wikipedia:Bricolage—Lévi-Strauss,Baker&Nelson,resourceconstraint,effe…
+- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナー的ブリコラージュ（ベイカー＝ネルソン）——手元にある資源の組み合わせを新しい問題や機会に当てはめて「無から有」を生む資源構築]] — Wikipedia:Bricolage—Lévi-Strauss,Baker&Nelson,resourceconstraint,effe…
 - [[mgmt-bridges-transition-model-ending-neutral-zone-beginning|ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み]] — Wikipedia"WilliamBridges(author)"—ブリッジズの生没年・経歴および3段階モデルの概要を確認
 - [[mgmt-bureaucracy|官僚制（ウェーバー）]] — Rational-legalauthority—Wikipedia（合法的支配と官僚制の特徴）
 - [[mgmt-bureaucratic-phenomenon-crozier|クロジエの官僚制現象——規則の増殖が不確実性支配という権力を生み悪循環を招く]] — MichelCrozier.Wikipedia(English)—confirmsCrozier'sdates(1922-2013)and…

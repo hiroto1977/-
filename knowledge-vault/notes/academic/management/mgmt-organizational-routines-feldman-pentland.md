@@ -36,9 +36,7 @@ aliases:
 - [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 同じ思想家
 - [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同じ思想家
 - [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — 同じ思想家
-- [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — 同じ思想家
-- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 同じ思想家
-- [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — 同じ思想家
+- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナー的ブリコラージュ（ベイカー＝ネルソン）——手元にある資源の組み合わせを新しい問題や機会に当てはめて「無から有」を生む資源構築]] — 同じ思想家
 - [[mgmt-dynamic-managerial-capabilities-adner|動的経営能力——マネジャーの人的資本・社会関係資本・認知]] — 同じ思想家
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 同分野の近傍
 

@@ -34,7 +34,7 @@ aliases:
 - [[infosoc-platform-capitalism|プラットフォーム資本主義]] — 同じ思想家
 - [[infosoc-platform-workers-gig-rights|ギグワーカーの権利とプラットフォーム労働——雇用分類の争点と情報社会の新しい労働関係]] — 同じ思想家
 - [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — 同じ思想家
-- [[infosoc-digital-labor-fuchs|デジタル労働論——プラットフォーム資本主義における価値創造と搾取]] — 同じ思想家
+- [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]] — 同じ思想家
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — 同じ思想家
 - [[infosoc-enshittification-doctorow|エンシッティフィケーション（ドクトロウ）]] — 同じ思想家
 - [[infosoc-infrastructural-inversion-bowker|インフラストラクチャーの逆転——不可視の情報基盤を可視化する方法論]] — 同じ思想家

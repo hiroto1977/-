@@ -35,6 +35,7 @@ aliases:
 - [[infosoc-algorithmic-personalization-critique|アルゴリズム的パーソナライゼーションと認知的閉鎖の社会学]] — 語彙が近い
 - [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 同じ思想家
 - [[infosoc-ai-governance-human-rights|AIガバナンスと人権基盤アプローチの国際政治社会学]] — 同分野の近傍
+- [[infosoc-information-asymmetry-online|オンライン市場における情報の非対称性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

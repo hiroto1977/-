@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — 同じ思想家
-- [[infosoc-digital-labor-fuchs|デジタル労働論——プラットフォーム資本主義における価値創造と搾取]] — 同じ思想家
+- [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]] — 同じ思想家
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — 同じ思想家
 - [[infosoc-enshittification-doctorow|エンシッティフィケーション（ドクトロウ）]] — 同じ思想家
 - [[infosoc-platform-economics|プラットフォーム経済学・二面市場理論：デジタル市場の仲介構造と価格戦略]] — 同じ思想家

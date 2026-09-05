@@ -41,6 +41,7 @@ aliases:
 - [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]] — 同じ思想家
 - [[econ-price-discrimination-monopoly|価格差別と独占力——一・二・三級差別の福祉効果と規制政策への含意]] — 同じ思想家
 - [[econ-price-discrimination-pigou-varian|価格差別の経済学——ピグーの三類型とデジタル経済における動的価格設定]] — 同じ思想家
+- [[infosoc-platform-cooperativism-scholz-schneider|プラットフォーム協同組合主義——デジタル経済における労働者所有の代替モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -35,6 +35,7 @@ Cory Doctorow（Pluralistic / Wired, 2022-2023, 造語者）／American Dialect 
 - [[infosoc-cypherpunk-movement|サイファーパンク運動]] — 出典を共有
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]] — 同分野の近傍
 - [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同分野の近傍
+- [[infosoc-network-neutrality-theory|ネットワーク中立性理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -39,7 +39,7 @@ aliases:
 - [[infosoc-social-network-analysis|社会ネットワーク分析（SNA）]] — 同じ思想家
 - [[infosoc-strength-weak-ties-granovetter|弱い紐帯の強さ——希薄なつながりが新規情報の橋渡しをする]] — 同じ思想家
 - [[infosoc-structural-holes-burt|構造的空隙——分断された集団を橋渡しする仲介者が得る情報と統制の優位]] — 同じ思想家
-- [[infosoc-digital-labor-exploitation|デジタル労働と搾取の情報社会学（テラノヴァ・フックス）]] — 同分野の近傍
+- [[infosoc-mediatization-theory-hjarvard|メディア化理論（ヒャーバード）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

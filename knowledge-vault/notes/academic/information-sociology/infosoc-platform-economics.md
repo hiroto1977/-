@@ -39,7 +39,7 @@ aliases:
 - [[econ-two-sided-markets|両面市場（two-sided markets）]] — 同じ思想家
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 同じ思想家
 - [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — 同じ思想家
-- [[infosoc-digital-labor-fuchs|デジタル労働論——プラットフォーム資本主義における価値創造と搾取]] — 同じ思想家
+- [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]] — 同じ思想家
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — 同じ思想家
 - [[infosoc-enshittification-doctorow|エンシッティフィケーション（ドクトロウ）]] — 同じ思想家
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]] — 同じ思想家

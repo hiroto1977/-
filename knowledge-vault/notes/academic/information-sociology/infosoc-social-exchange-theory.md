@@ -30,8 +30,8 @@ aliases:
 - [Encyclopaedia Britannica — Social exchange theory（報酬・コスト・互恵性の規範・ホーマンズとブラウの貢献）](https://www.britannica.com/topic/social-exchange-theory) `リファレンス`
 
 ## 関連概念
-- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 同分野の近傍
-- [[infosoc-digital-labor-exploitation|デジタル労働と搾取の情報社会学（テラノヴァ・フックス）]] — 同分野の近傍
+- [[infosoc-visibility-digital-thompson|新しい可視性——デジタルメディアによる権力と監視の変容]] — 同分野の近傍
+- [[infosoc-fifth-estate|第五の権力（フィフス・エステート）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -39,7 +39,6 @@ Edward L. Deci ／ Richard M. Ryan ／ Marylène Gagné
 - [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 同分野の近傍
 - [[mgmt-self-concordance-model|自己一致モデル（セルフ・コンコーダンス）]] — 同分野の近傍
 - [[mgmt-erg-alderfer|ERG理論（アルダーファー）——存在・関係・成長の三欲求]] — 同分野の近傍
-- [[mgmt-garbage-can-model|ゴミ箱モデル（Garbage Can Model of Organizational Choice）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

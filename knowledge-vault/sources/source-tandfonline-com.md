@@ -2,7 +2,7 @@
 title: "tandfonline.com"
 type: source-domain
 host: "tandfonline.com"
-cite_count: 52
+cite_count: 51
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # tandfonline.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **52 件**（学術 52）
+> [!info] 出典ドメイン索引 ・ 引用 **51 件**（学術 51）
 
 ## このドメインを出典とする項目
 
@@ -43,7 +43,6 @@ tags:
 - [[infosoc-connective-action|つながりの行為論理（コネクティブ・アクション）]] — Bennett&Segerberg(2012),Information,Communication&Society15(5)
 - [[infosoc-cultivation-theory-digital|培養理論（デジタル時代の拡張）]] — Cultivationinthedigitalage:socialmediaandstreamingresearch
 - [[infosoc-digital-constitutionalism|デジタル立憲主義]] — EdoardoCeleste,“Digitalconstitutionalism:anewsystematictheorisation,”…
-- [[infosoc-digital-labor-platform|デジタル労働プラットフォーム論（Digital Labor Platform Theory）]] — TheMachineSystemofDigitalLaborPlatformsandtheAlgorithm—Science&Societ…
 - [[infosoc-digital-sovereignty-theory|デジタル主権論]] — Couldry&Mejias—TheCostsofConnection:DataColonialism(Information,Commu…
 - [[infosoc-doomscrolling|ドゥームスクローリング]] — JournalismStudies—Doomscrolling,MonitoringandAvoiding(COVID-19)
 - [[infosoc-fifth-estate|第五の権力（フィフス・エステート）]] — W.H.Dutton,"TheFifthEstateEmergingthroughtheNetworkofNetworks,"Promet…

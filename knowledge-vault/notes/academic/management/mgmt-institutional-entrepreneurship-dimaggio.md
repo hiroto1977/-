@@ -36,7 +36,6 @@ aliases:
 - [[mgmt-institutional-theory|制度理論（制度的同型化）]] — 同じ思想家
 - [[mgmt-institutional-work-lawrence|制度的ワーク論——アクターによる制度の創造・維持・破壊の実践]] — 同じ思想家
 - [[mgmt-paradox-embedded-agency-seo|埋め込まれたエージェンシーのパラドクス——制度変革者の制度的条件付け]] — 同じ思想家
-- [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — 同分野の近傍
 - [[mgmt-institutional-entrepreneurship|制度的アントレプレナーシップ（Institutional Entrepreneurship）]] — 同分野の近傍
 - [[mgmt-triple-bottom-line|トリプルボトムライン（TBL）]] — 同分野の近傍
 

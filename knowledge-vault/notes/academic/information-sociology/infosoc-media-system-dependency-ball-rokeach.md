@@ -36,7 +36,7 @@ aliases:
 - [[infosoc-symbolic-annihilation-tuchman|象徴的消滅（タックマン）——メディアが集団を「存在しないこと」にする]] — 同じ思想家
 - [[infosoc-uses-and-gratifications|利用と満足理論——能動的な受け手がメディアをどう使い何を得るか]] — 同じ思想家
 - [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 同分野の近傍
-- [[infosoc-open-source-movement-history|オープンソース運動の歴史と知識コモンズの思想的系譜]] — 同分野の近傍
+- [[infosoc-algorithmic-imaginaries-bucher|アルゴリズムの想像力——利用者によるアルゴリズム認知と日常的対応]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

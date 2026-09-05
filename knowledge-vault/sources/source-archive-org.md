@@ -10,7 +10,7 @@ tags:
 
 # archive.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **27 件**（学術 14 ・ リファレンス 13）
+> [!info] 出典ドメイン索引 ・ 引用 **27 件**（リファレンス 14 ・ 学術 13）
 
 ## このドメインを出典とする項目
 
@@ -36,7 +36,7 @@ tags:
 - [[infosoc-digital-nomadism|デジタルノマディズム（場所非依存型ナレッジワーク）]] — Makimoto&Manners(1997)DigitalNomad,Wiley(InternetArchive)
 - [[infosoc-feminist-technoscience-haraway|フェミニスト・テクノサイエンス論]] — Haraway(1985)AManifestoforCyborgs—SocialistReview(InternetArchive)
 - [[infosoc-technostress-theory|テクノストレス理論]] — Brod,Craig(1984)—Technostress:TheHumanCostoftheComputerRevolution,Add…
-- [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — Levi-Strauss,C.(1962)LaPenseeSauvage(TheSavageMind)—Plon/Universityof…
+- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナー的ブリコラージュ（ベイカー＝ネルソン）——手元にある資源の組み合わせを新しい問題や機会に当てはめて「無から有」を生む資源構築]] — Lévi-Strauss,C.(1962)LaPenséesauvage/TheSavageMind—InternetArchive（ブリ…
 - [[mgmt-corporate-parenting|ペアレンティング戦略]] — Goold,Campbell&Alexander,Corporate-LevelStrategy:CreatingValueintheMu…
 - [[mgmt-johari-window|ジョハリの窓]] — Luft,J.(1969)OfHumanInteraction,NationalPressBooks—InternetArchive
 - [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]] — Argyris&Schön1978—OrganizationalLearning:TheoryofAction

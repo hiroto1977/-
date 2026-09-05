@@ -2,7 +2,7 @@
 title: "sciencedirect.com"
 type: source-domain
 host: "sciencedirect.com"
-cite_count: 133
+cite_count: 132
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # sciencedirect.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **133 件**（学術 121 ・ リファレンス 12）
+> [!info] 出典ドメイン索引 ・ 引用 **132 件**（学術 121 ・ リファレンス 11）
 
 ## このドメインを出典とする項目
 
@@ -110,7 +110,6 @@ tags:
 - [[infosoc-chinese-room-argument-searle|サールの中国語の部屋（Chinese Room Argument）——構文操作は意味理解を保証しないとする「強いAI」批判]] — Harnad,S.(1990).TheSymbolGroundingProblem.PhysicaD:NonlinearPhenomena…
 - [[infosoc-clickbait|クリックベイト（釣り見出し）]] — Scott,K.(2021)“...Clickbait,relevanceandthecuriositygap”,JournalofPra…
 - [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — ScienceDirect—ConceptualizationandutilityofCPMTheory
-- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — DigitalLabor—ScienceDirectTopics（Elsevier概説）
 - [[infosoc-information-worlds-theory|情報世界理論]] — Burnett,Jaeger&Thompson2008LISRarticle
 - [[infosoc-informational-self-determination|情報自己決定権]] — Hornung&Schnabel,“DataprotectioninGermanyI:Thepopulationcensusdecisio…
 - [[infosoc-privacy-paradox|プライバシー・パラドックス]] — Kokolakis,S.(2017)“Privacyattitudesandprivacybehaviour:Areviewofcurre…

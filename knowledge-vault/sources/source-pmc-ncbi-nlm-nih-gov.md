@@ -2,7 +2,7 @@
 title: "pmc.ncbi.nlm.nih.gov"
 type: source-domain
 host: "pmc.ncbi.nlm.nih.gov"
-cite_count: 67
+cite_count: 66
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # pmc.ncbi.nlm.nih.gov
 
-> [!info] 出典ドメイン索引 ・ 引用 **67 件**（学術 64 ・ 公的 2 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **66 件**（学術 63 ・ 公的 2 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -66,7 +66,6 @@ tags:
 - [[human-undermining-effect|アンダーマイニング効果（過正当化効果）]] — PMC収載のレビュー論文（過正当化効果の定量的レビュー、Deci1971・Lepperetal.1973を引用）
 - [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — Frost—TheImpoverishedPublicnessofAlgorithmicDecisionMaking,OxfordJour…
 - [[infosoc-data-sovereignty|データ主権]] — PMC(NIH)—Data,BigTech,andtheNewConceptofSovereignty（査読付き）
-- [[infosoc-digital-labor-platform|デジタル労働プラットフォーム論（Digital Labor Platform Theory）]] — Grahametal.(2017)DigitalLabourandDevelopment:ImpactsofGlobalDigitalLa…
 - [[infosoc-doomscrolling|ドゥームスクローリング]] — Sharmaetal.,DoomscrollingScale(PMC)
 - [[infosoc-platform-affordance|プラットフォーム・アフォーダンス（Platform Affordances）]] — SocialMediaInterventionDesign:ApplyinganAffordancesFramework—PMC
 - [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — Ajana—DigitalhealthandthebiopoliticsoftheQuantifiedSelf（PMC）

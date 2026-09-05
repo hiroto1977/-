@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経営学"
 type: flashcard-deck
 deck_key: "academic-management"
-card_count: 663
+card_count: 660
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経営学（663枚）
+# フラッシュカード — 学術概念／経営学（660枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -152,14 +152,8 @@ tags:
   - **A:** ブランド・エクイティとは、ブランド（名前・ロゴ・シンボル等）が製品やサービスに付与する付加的な価値であり、同一の製品でもブランドが付くことで生じる顧客の認識・態度・行動の差に由来する資産である。（→ [[mgmt-brand-equity]]）
 - **Q:** ブランドパーソナリティ（アーカーの5次元モデル）
   - **A:** ブランドパーソナリティとは、消費者がブランドに帰属させる人間的な性格特性の集合体をいう。（→ [[mgmt-brand-personality]]）
-- **Q:** アントレプレナー的ブリコラージュ（Entrepreneurial Bricolage）
-  - **A:** アントレプレナー的ブリコラージュ（Entrepreneurial Bricolage）とは、アントレプレナーシップ研究における概念で、手元にある資源の組合せを新たな問題や機会に適用することで「無から有を創出する」資源構築プロセスを指す。（→ [[mgmt-bricolage]]）
-- **Q:** アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造
-  - **A:** アントレプレナーシップ・ブリコラージュは、Baker & Nelson（2005）がAcademy of Management Reviewで提唱した概念で、資源制約に直面した起業家が新たな資源を外部調達するのではなく、「手元にあるもの」（resources at hand）を再結合・転用して新たな目的に活用する創造的プロセスを指す。（→ [[mgmt-bricolage-entrepreneurial]]）
-- **Q:** アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合
-  - **A:** アントレプレナーシップのブリコラージュ（entrepreneurial bricolage）は、ベーカーとネルソンが2005年に提唱した概念であり、レヴィ＝ストロースの人類学的ブリコラージュ概念を起業プロセスに適用した理論枠組みである。ブリコラージュとは「手元にある資源を用いて即興的に新しい目的のために再結合する」行為を指し、資源制約に直面した起業家が、既存の資源を新しい方法で組み合わせることで機会を創造するプロセスを説明する。（→ [[mgmt-bricolage-entrepreneurship-baker]]）
-- **Q:** 組織的ブリコラージュ（ベイカー）
-  - **A:** 組織的ブリコラージュ（organizational bricolage）は、ベイカー＆ネルソン（2005）がレヴィ＝ストロースの人類学的概念を企業家論に応用した概念であり、「手元にある資源の組み合わせ（making do with what's at hand）」によって新たな問題解決やイノベーションを創出する資源活用行動を指す。（→ [[mgmt-bricolage-organizational-baker]]）
+- **Q:** アントレプレナー的ブリコラージュ（ベイカー＝ネルソン）——手元にある資源の組み合わせを新しい問題や機会に当てはめて「無から有」を生む資源構築
+  - **A:** アントレプレナー的ブリコラージュ（entrepreneurial bricolage）は、テッド・ベイカーとリード・ネルソンが2005年の論文『Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage』（Administrative Science Quarterly 50巻3号）で提唱した概念で、クロード・レヴィ＝…（→ [[mgmt-bricolage-entrepreneurship-baker]]）
 - **Q:** ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み
   - **A:** ブリッジズのトランジション・モデルは、ウィリアム・ブリッジズが『Transitions: Making Sense of Life's Changes』（1980、Addison-Wesley）で提示し、『Managing Transitions』（1991年、Addison-Wesley。スーザン・ブリッジズとの共著第4版は2016年刊）で組織向けに発展させた枠組みである。（→ [[mgmt-bridges-transition-model-ending-neutral-zone-beginning]]）
 - **Q:** 官僚制（ウェーバー）

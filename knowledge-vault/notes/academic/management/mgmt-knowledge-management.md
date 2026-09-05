@@ -32,8 +32,8 @@ aliases:
 - [Sveiby 1997 — The New Organizational Wealth: Managing and Measuring Knowledge-Based Assets, Berrett-Koehler Publishers](https://www.bkconnection.com/books/title/The-New-Organizational-Wealth) `リファレンス`
 
 ## 関連概念
-- [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 語彙が近い
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 語彙が近い
+- [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 語彙が近い
 - [[mgmt-knowledge-based-view-grant|知識ベース企業観——専門知識の統合機構としての企業]] — 語彙が近い
 - [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]] — 分野横断
 

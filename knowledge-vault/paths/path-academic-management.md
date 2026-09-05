@@ -2,18 +2,18 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 663
+entry_count: 660
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（663件）
+# 学習パス — 学術概念／経営学（660件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[agile-development|アジャイルソフトウェア開発]]（接続 61）
+- [[agile-development|アジャイルソフトウェア開発]]（接続 63）
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 39）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 29）
@@ -85,7 +85,7 @@ tags:
 - 1960年: [[mgmt-psychological-contract|心理的契約]]
 - 1960年: [[mgmt-swot-analysis|SWOT分析]]
 - 1960年: [[mgmt-target-costing|原価企画（目標原価計算）]]
-- 1962年: [[mgmt-bricolage|アントレプレナー的ブリコラージュ（Entrepreneurial Bricolage）]]
+- 1962年: [[mgmt-bricolage-entrepreneurship-baker|アントレプレナー的ブリコラージュ（ベイカー＝ネルソン）——手元にある資源の組み合わせを新しい問題や機会に当てはめて「無から有」を生む資源構築]]
 - 1962年: [[mgmt-modularity|モジュール化]]
 - 1963年: [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]]
 - 1963年: [[mgmt-bureaucratic-phenomenon-crozier|クロジエの官僚制現象——規則の増殖が不確実性支配という権力を生み悪循環を招く]]
@@ -338,9 +338,6 @@ tags:
 - [[mgmt-blake-mouton-grid|マネジリアル・グリッド——業績への関心と人への関心の二軸でリーダーを類型化]]
 - [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]]
 - [[mgmt-boundaryspanning-roles|バウンダリースパニング役割：組織と環境を結ぶ境界連結機能・ゲートキーパー・役割葛藤の組織論的体系]]
-- [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]]
-- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]]
-- [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]]
 - [[mgmt-business-ecosystem-moore|ビジネス・エコシステム——企業が共進化する競争と協調の生態系]]
 - [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]]
 - [[mgmt-calling-wrzesniewski|コーリング（天職意識）とジョブ・クラフティング（ヴルゼシニェウスキー）]]

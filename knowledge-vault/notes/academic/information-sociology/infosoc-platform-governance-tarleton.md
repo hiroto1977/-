@@ -37,9 +37,9 @@ aliases:
 - [[infosoc-technofeudalism|テクノ封建制（デジタル封建制）]] — 同じ思想家
 - [[infosoc-algorithmic-amplification-gillespie|アルゴリズム的増幅と文化的仲介（ギレスピー）]] — 同じ思想家
 - [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか]] — 同じ思想家
-- [[infosoc-digital-labor-terranova|デジタル労働とフリー・レイバー（テラノバ）]] — 同じ思想家
 - [[infosoc-maker-movement-fab-lab|メイカームーブメントとFabLab——分散型製造・オープンハードウェアと民主的製作文化]] — 同じ思想家
 - [[infosoc-new-governors-online-speech-klonick|新しい統治者論——プラットフォームを独自の規則・手続・文化でオンライン言論を統治する私的統治システムとみなす議論]] — 同じ思想家
+- [[infosoc-solutionism|テクノロジカル・ソリューショニズム（技術的解決主義）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

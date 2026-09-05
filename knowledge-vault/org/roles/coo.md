@@ -18,14 +18,14 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / 経営学（全663件）
+### 学術概念 / 経営学（全660件）
 - [[agile-development|アジャイルソフトウェア開発]]
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]
 - [[mgmt-aaker-brand-identity|アーカーのブランド・アイデンティティ]]
 - [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]]
 - [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]]
-- …ほか 657 件 → [[学術概念]]
+- …ほか 654 件 → [[学術概念]]
 
 ### 学術概念 / ビジネス法務（全695件）
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]
@@ -54,14 +54,14 @@ aliases:
 - [[human-action-bias|行動バイアス（アクション・バイアス）]]
 - …ほか 638 件 → [[学術概念]]
 
-### 学術概念 / 情報社会学（全619件）
+### 学術概念 / 情報社会学（全613件）
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]
 - [[infosoc-affective-computing-picard|アフェクティブコンピューティング——ピカードの感情認識AI論と機械が感情を扱う倫理的課題]]
 - [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]]
 - [[infosoc-affordance-theory-gibson|アフォーダンス理論——環境が提供する行為可能性と技術の社会的利用への展開]]
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
-- …ほか 613 件 → [[学術概念]]
+- …ほか 607 件 → [[学術概念]]
 
 ### 法務・税務・労務 / 労務（全124件）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]

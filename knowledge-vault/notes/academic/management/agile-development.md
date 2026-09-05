@@ -36,10 +36,10 @@ aliases:
 - [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]] — 同分野の近傍
 - [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 同分野の近傍
 - [[mgmt-affective-events-theory|感情イベント理論（AET）]] — 同分野の近傍
+- [[mgmt-altman-z-score|アルトマンのZスコア（Altman Z-Score／1968）——財務比率の判別分析による企業倒産予測]] — 同分野の近傍
 - [[mgmt-amoeba-management|アメーバ経営（稲盛和夫）]] — 同分野の近傍
 - [[mgmt-bass-diffusion-model|バスの普及モデル（Bass diffusion model）——新製品の採用を革新係数pと模倣係数qで記述する数理予測モデル]] — 同分野の近傍
 - [[mgmt-blue-ocean-strategy|ブルー・オーシャン戦略]] — 同分野の近傍
-- [[mgmt-bureaucratic-phenomenon-crozier|クロジエの官僚制現象——規則の増殖が不確実性支配という権力を生み悪循環を招く]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

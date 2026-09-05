@@ -32,7 +32,6 @@ aliases:
 - [Microsoft Research — Ghost Work (Gray & Suri 2019)](https://www.microsoft.com/en-us/research/publication/ghost-work-how-to-stop-silicon-valley-from-building-a-new-global-underclass-co-authored-with-siddharth-suri/) `学術`
 
 ## 関連概念
-- [[infosoc-digital-labor-scholz-casilli|デジタル労働論——プラットフォーム経済における労働の不可視化]] — 同じ思想家
 - [[infosoc-calculated-publics|算出された公衆（calculated publics）]] — 出典を共有
 - [[infosoc-digital-labour|デジタル労働（digital labour）]] — 同分野の近傍
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — 同分野の近傍

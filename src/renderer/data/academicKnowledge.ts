@@ -18373,20 +18373,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-bricolage',
-    discipline: 'management',
-    title: 'アントレプレナー的ブリコラージュ（Entrepreneurial Bricolage）',
-    statement:
-      'アントレプレナー的ブリコラージュ（Entrepreneurial Bricolage）とは、アントレプレナーシップ研究における概念で、手元にある資源の組合せを新たな問題や機会に適用することで「無から有を創出する」資源構築プロセスを指す。テッド・ベイカー＝リード・E・ネルソン（Ted Baker & Reed E. Nelson, 2005, "Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage," Administrative Science Quarterly, Vol.50, No.3, pp.329-366, DOI: 10.2189/asqu.2005.50.3.329）は資源制約下の29企業のフィールドスタディに基づき、ブリコラージュを「手元にある資源の組合せを新たな問題や機会に適用してやりくりすること（making do by applying combinations of the resources at hand to new problems and opportunities）」と定義した。' +
-      '三つの中核的次元として、(1)やりくり（making do）——実行可能な成果を創出できるかの問い掛けに留まらず行動と能動的関与への偏向、(2)手元資源の組合せ・再利用（combination/reuse of resources at hand）——他者が無用と見なすものを潜在的資源として扱う、(3)制約の拒絶（refusal to enact limitations）——素材投入・実践・定義・基準の一般的に受容された限界を無視し解決策を試行する、を識別した。5つの資源領域（物理的投入・労働・技能・顧客/市場・制度/規制環境）にわたるブリコラージュが観察され、選択的ブリコラージュ（focused, temporary）は企業成長に関連する一方、並行的ブリコラージュ（multiple ongoing projects）は相互強化的性質により企業を罠に陥れ成長を阻害しうる。本概念はレヴィ＝ストロース（Claude Lévi-Strauss, 1966, The Savage Mind, University of Chicago Press, 原著1962年 La Pensée sauvage）のブリコルール概念——理論的計画から作業する技師と対比される、手元にあるもので逸脱的方法を用い新たな組合せを行う実践者——を経営学に適用したものである。',
-    keyFigures: 'Ted Baker & Reed E. Nelson（ASQ 50(3), 2005 — アントレプレナー的ブリコラージュ概念の提唱）／Claude Lévi-Strauss（1962/1966, The Savage Mind — ブリコラージュ概念の人類学的源泉）／カール・E・ワイク（組織化とブリコラージュ/即興）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://journals.sagepub.com/doi/10.2189/asqu.2005.50.3.329', type: 'academic', label: 'Baker & Nelson (2005) Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage — ASQ 50(3), pp.329-366' },
-      { url: 'https://www.jstor.org/stable/30037207', type: 'academic', label: 'JSTOR: Baker & Nelson (2005) — stable URL' },
-    ],
-  },
-  {
     id: 'infosoc-technological-frames',
     discipline: 'information-sociology',
     title: 'テクノロジカル・フレーム（Technological Frames）',
@@ -19867,21 +19853,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-digital-labor-platform',
-    discipline: 'information-sociology',
-    title: 'デジタル労働プラットフォーム論（Digital Labor Platform Theory）',
-    statement:
-      'デジタル労働プラットフォーム論（Digital Labor Platform Theory）とは、デジタルプラットフォームが労働を原子化・データ化し、ギグワーカーを競争的に低賃金タスクに従事させる新たな労働搾取形態を批判的に分析する理論枠組みである。トレバー・ショルツ（Trebor Scholz）が2012年に『Digital Labor: The Internet as Factory and Playground』を編集し、デジタル労働を「有償デジタルワーク」と「無償デジタルワーク」に分類し、「クラウド・フリーシング」（群衆搾取）を新たな労働搾取形態として概念化した。' +
-      'プラットフォームは伝統的な労働活動のみならず社会的協力からも価値を抽出し、親族・友情・性的関係といった社会的紐帯を複雑な収益化スキームに変換する。ショルツはプラットフォーム労働を「規制緩和・組合破壊・失業増大・偶発的労働からなる巨大な新自由主義的槍の光り輝く鋭い先端」と特徴づけた。アントニオ・カシッリ（Antonio Casilli）はプラットフォーム資本主義における移民女性労働の批判的分析に貢献した。',
-    keyFigures: 'トレバー・ショルツ（2012 Digital Labor 編著）／アントニオ・カシッリ（プラットフォーム資本主義批判）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5518998/', type: 'academic', label: 'Graham et al. (2017) Digital Labour and Development: Impacts of Global Digital Labour Platforms — PMC / Transfer' },
-      { url: 'https://www.tandfonline.com/doi/full/10.1080/08935696.2022.2159718', type: 'academic', label: 'The Machine System of Digital Labor Platforms and the Algorithm — Science & Society (Taylor & Francis)' },
-      { url: 'https://compass.onlinelibrary.wiley.com/doi/10.1111/soc4.70018', type: 'academic', label: 'Faraoun (2024) Theorizing Labor in the Platform Economy — Sociology Compass (Wiley)' },
-    ],
-  },
-  {
     id: 'human-visual-cliff',
     discipline: 'human-science',
     title: '視覚的断崖実験（Visual Cliff Experiment）',
@@ -20983,22 +20954,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-digital-labor',
-    discipline: 'information-sociology',
-    title: 'デジタル・レイバー（デジタル労働）',
-    statement:
-      'デジタル・レイバーとは、ソーシャルメディアへのコンテンツ投稿、データ生成、オンラインでの社会的交流など、デジタルプラットフォーム上でのユーザー活動が、プラットフォーム所有者のために価値を生み出す無償または低報酬の労働形態であるという概念である。' +
-      'テラノヴァ（2000, Social Text 18(2):33-58）は「フリー・レイバー」においてインターネットユーザーの文化的活動がデジタル資本主義に搾取されていることを論じ、フックス（2014）はマルクス主義的政治経済学の観点からこれを体系化しユーザーデータの商品化を剰余価値の収奪として分析した。' +
-      'この理論的枠組みは情報社会学における中心的議題となり、プラットフォーム経済における労働・搾取・抵抗の問題を批判的に検討する基盤を提供している。',
-    keyFigures: 'ティツィアーナ・テラノヴァ（Tiziana Terranova, 2000「Free Labor: Producing Culture for the Digital Economy」Social Text）／クリスティアン・フックス（Christian Fuchs, 2014 Digital Labour and Karl Marx, Routledge）／ダラス・スマイス（Dallas Smythe, 1977「オーディエンス商品」概念の先駆者）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1215/01642472-18-2_63-33', type: 'academic', label: 'Terranova, T. (2000) Free Labor: Producing Culture for the Digital Economy, Social Text 18(2):33-58' },
-      { url: 'https://www.routledge.com/Digital-Labour-and-Karl-Marx/Fuchs/p/book/9780415716154', type: 'academic', label: 'Fuchs, C. (2014) Digital Labour and Karl Marx — Routledge' },
-      { url: 'https://www.sciencedirect.com/topics/social-sciences/digital-labor', type: 'reference', label: 'Digital Labor — ScienceDirect Topics（Elsevier概説）' },
-    ],
-  },
-  {
     id: 'mgmt-real-options-theory',
     discipline: 'management',
     title: 'リアル・オプション理論',
@@ -21472,23 +21427,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/10.1177/0149206310385695', type: 'academic', label: 'Sirmon et al. (2011) Resource Orchestration to Create Competitive Advantage, Journal of Management 37(5):1390-1412' },
       { url: 'https://journals.aom.org/doi/10.5465/amr.2007.23466005', type: 'academic', label: 'Sirmon, Hitt & Ireland (2007) Managing Firm Resources in Dynamic Environments, Academy of Management Review 32(1):273-292' },
       { url: 'https://www.wiley.com/en-us/Dynamic+Capabilities:+Understanding+Strategic+Change+in+Organizations-p-9781405135757', type: 'academic', label: 'Helfat et al. (2007) Dynamic Capabilities: Understanding Strategic Change in Organizations, Blackwell' },
-    ],
-  },
-  {
-    id: 'infosoc-digital-labor-theory',
-    discipline: 'information-sociology',
-    title: 'デジタル労働理論',
-    statement:
-      'デジタル労働理論とは、デジタルプラットフォーム上でのユーザーの活動（閲覧・クリック・コンテンツ生成・データ提供）を資本が価値を搾取する労働形態として分析する批判的理論的枠組みである。' +
-      'Terranova（2000）は「フリー・レイバー」概念を提唱し、インターネット経済においてユーザーの無償文化的労働が経済価値の源泉をなすと論じた。' +
-      'Fuchs（2014）はマルクスの労働価値論をデジタル領域に適用し、ソーシャルメディア利用者の活動が広告収益として資本蓄積に組み込まれる構造を体系的に解明した。' +
-      'Scholz（2013）はこの現象を「プレイバー（遊び＋労働）」と概念化し、プラットフォーム資本主義が余暇と生産の境界を解体することでデジタル労働の搾取を不可視化するメカニズムを明らかにした。',
-    keyFigures: 'Tiziana Terranova／Christian Fuchs／Trebor Scholz',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1215/01642472-18-2_63-33', type: 'academic', label: 'Terranova (2000) Free Labor: Producing Culture for the Digital Economy, Social Text 18(2/63):33-58' },
-      { url: 'https://www.routledge.com/Digital-Labour-and-Karl-Marx/Fuchs/p/book/9780415716161', type: 'academic', label: 'Fuchs (2014) Digital Labour and Karl Marx, Routledge' },
-      { url: 'https://www.routledge.com/Digital-Labor-The-Internet-as-Playground-and-Factory/Scholz/p/book/9780415896955', type: 'academic', label: 'Scholz (ed.) (2013) Digital Labor: The Internet as Playground and Factory, Routledge' },
     ],
   },
   {
@@ -27832,19 +27770,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-bricolage-entrepreneurial',
-    discipline: 'management',
-    title: 'アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造',
-    statement: 'アントレプレナーシップ・ブリコラージュは、Baker & Nelson（2005）がAcademy of Management Reviewで提唱した概念で、資源制約に直面した起業家が新たな資源を外部調達するのではなく、「手元にあるもの」（resources at hand）を再結合・転用して新たな目的に活用する創造的プロセスを指す。レヴィ＝ストロース（1962）が『野生の思考』で提示した知的ブリコラージュの概念を組織論に応用し、29社の新興企業の質的縦断研究から、物的資源・制度的環境・技能の3領域における「ありあわせの活用」パターンを抽出した。「選択的ブリコラージュ」は特定領域での資源創造を促進しつつ成長を可能にする一方、「並行的ブリコラージュ」は全領域で同時に行われると組織の成長制約となる。Garud & Karnøe（2003）のブリコラージュ的経路創造論やSenyard et al.（2014）の実証的拡張がこの枠組みを発展させている。',
-    keyFigures: 'テッド・ベイカー ／ リード・ネルソン ／ クロード・レヴィ＝ストロース',
-    asOf: '2026-06-25',
-    sources: [
-      { url: 'https://doi.org/10.2189/asqu.2005.50.3.329', type: 'academic', label: 'Baker, T. & Nelson, R.E. (2005) Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage — Administrative Science Quarterly' },
-      { url: 'https://archive.org/details/savagemindsavoir00levi', type: 'academic', label: 'Levi-Strauss, C. (1962) La Pensee Sauvage (The Savage Mind) — Plon / University of Chicago Press' },
-      { url: 'https://doi.org/10.1016/S0048-7333(02)00062-8', type: 'academic', label: 'Garud, R. & Karnoe, P. (2003) Bricolage versus Breakthrough: Distributed and Embedded Agency in Technology Entrepreneurship — Research Policy' },
-    ],
-  },
-  {
     id: 'bizlaw-exculpatory-clause',
     discipline: 'business-law',
     title: '免責条項の法理：契約上の責任制限・免除とその規制',
@@ -29831,20 +29756,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.federalreserve.gov/BOARDDOCS/SPEECHES/2002/20021108/', type: 'government', label: 'Bernanke, B. S. (2002) On Milton Friedman\'s Ninetieth Birthday — Federal Reserve Board Remarks（バーナンキの謝罪スピーチ）' },
       { url: 'https://doi.org/10.1257/mac.2.1.1', type: 'academic', label: 'Romer, C. D. & Romer, D. H. (2013) The Missing Transmission Mechanism in the Money and Great Depression — American Economic Review, 103(3), 66–72（需要ショック独立性の再検討）' },
       { url: 'https://en.wikipedia.org/wiki/A_Monetary_History_of_the_United_States', type: 'reference', label: 'Wikipedia: A Monetary History of the United States — Friedman & Schwartz, Great Depression, Bernanke, monetarism' },
-    ],
-  },
-  {
-    id: 'mgmt-bricolage-organizational-baker',
-    discipline: 'management',
-    title: '組織的ブリコラージュ（ベイカー）',
-    statement: '組織的ブリコラージュ（organizational bricolage）は、ベイカー＆ネルソン（2005）がレヴィ＝ストロースの人類学的概念を企業家論に応用した概念であり、「手元にある資源の組み合わせ（making do with what\'s at hand）」によって新たな問題解決やイノベーションを創出する資源活用行動を指す。資源制約下の中小企業・スタートアップ・社会的起業家が典型的ブリコラーであり、「資源があるからやる」でなく「やりながら資源を組み合わせる」逆転の行動論理を持つ。ベイカー＆ネルソン（2005）の質的研究は、ブリコラージュ企業がしばしば外部投資家から見限られた廃棄資源を再利用し新事業を構築することを示した。副作用として「コンピタンストラップ（competency trap）」——ブリコラージュへの習慣が戦略的資源調達を妨げる——が指摘される。近年はエマージェント戦略・エフェクチュエーション（サラスバシー）・リーン・スタートアップとの概念的連続性が議論されている。',
-    keyFigures: 'テッド・ベイカー ／ リード・ネルソン ／ クロード・レヴィ＝ストロース ／ サラ・サラスバシー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2189/asqu.2005.50.3.329', type: 'academic', label: 'Baker, T. & Nelson, R. E. (2005) Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage — Administrative Science Quarterly, 50(3), 329–366（原典）' },
-      { url: 'https://doi.org/10.1177/0149206313501181', type: 'academic', label: 'Davidsson, P., Baker, T. & Senyard, J. M. (2017) A Theory of Bricolage for Entrepreneurship Research — Journal of Business Venturing, 32(6), 674–694（理論の発展）' },
-      { url: 'https://doi.org/10.5465/amr.2001.4378020', type: 'academic', label: 'Sarasvathy, S. D. (2001) Causation and Effectuation: Toward a Theoretical Shift from Economic Inevitability to Entrepreneurial Contingency — Academy of Management Review, 26(2), 243–263（エフェクチュエーションとの比較）' },
-      { url: 'https://en.wikipedia.org/wiki/Bricolage', type: 'reference', label: 'Wikipedia: Bricolage — Lévi-Strauss, Baker & Nelson, resource constraint, effectuation, lean startup connection' },
     ],
   },
   {
@@ -39562,14 +39473,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'infosoc-digital-labor-fuchs',
     discipline: 'information-sociology',
-    title: 'デジタル労働論——プラットフォーム資本主義における価値創造と搾取',
-    statement: 'デジタル労働（Digital Labour）論は、デジタルプラットフォーム上でのユーザー活動（コンテンツ生成、データ提供、ソーシャルメディア利用）が経済的価値を生産する「労働」として分析されるべきであるとする理論的枠組みである。フックスはマルクスの労働価値論をデジタル経済に適用し、FacebookやGoogleのユーザーが無償で提供するデータと注意（attention）がプラットフォーム企業の広告収入の源泉となっており、これは「搾取」の現代的形態であると論じた。テラノヴァはこれを「フリーレイバー」（free labour）——自由であると同時に無償である労働——として概念化し、デジタル経済が楽しさと搾取を同時に含む矛盾した構造を持つことを指摘した。スルニチェクはプラットフォーム資本主義の類型論を展開し、データ抽出が21世紀の資本蓄積の中心的メカニズムとなっていることを分析している。',
-    keyFigures: 'クリスティアン・フックス ／ ティツィアナ・テラノヴァ ／ ニック・スルニチェク ／ トレバー・ショルツ',
-    asOf: '2026-06-26',
+    title: 'デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）',
+    statement:
+      'デジタル労働（digital labour）とは、投稿・検索・クリック・レビュー・データ提供といったユーザーの日常的な活動を、プラットフォームのために価値を生む無償または低報酬の労働として分析する批判的枠組みである。ティツィアナ・テラノヴァは2000年の論文『Free Labor: Producing Culture for the Digital Economy』（Social Text 18巻2号）で、ネット上のコンテンツ生成やフォーラム運営を、資本主義的生産に包摂された「自由であると同時に無償の労働」と捉え、搾取とも趣味とも言い切れない価値生産様式だと論じた。クリスチャン・フックスは『Digital Labour and Karl Marx』（2014）でマルクスの労働価値論とダラス・スマイスのオーディエンス商品論を接ぎ、ユーザーが無償で提供する注意とデータが広告収入の源泉になる構造を剰余価値の搾取の現代形態と理論化した。トレバー・ショルツが編んだ『Digital Labor: The Internet as Playground and Factory』（2013）はデジタル労働を有償と無償に分け、アントニオ・カシッリは Amazon Mechanical Turk などのマイクロワークが労働法の外で低賃金の断片的タスクを配分し労働者を不可視化する構造を実証した。批判として、楽しみや自己表現まで「労働」と呼ぶ拡張が搾取の意味を薄めること、労働価値論の解釈への異論、無償労働と有償ギグ労働を同列に扱う是非がある。中小企業には、SNS 運用やレビュー依頼が顧客の無償労働に依存すること、クラウドソーシングで発注するタスクの報酬と条件が評判に直結することが含意となる。',
+    keyFigures: 'ティツィアナ・テラノヴァ（2000『Free Labor』Social Text）／クリスチャン・フックス（2014『Digital Labour and Karl Marx』Routledge）／トレバー・ショルツ（2013 編『Digital Labor: The Internet as Playground and Factory』Routledge）／アントニオ・カシッリ（マイクロワークと不可視の労働の実証）／ダラス・スマイス（オーディエンス商品論の先行研究）／対比: ニック・スルニチェク（プラットフォーム資本主義）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.4324/9780415856287', type: 'academic', label: 'Fuchs (2014) Digital Labour and Karl Marx — Routledge' },
-      { url: 'https://doi.org/10.1215/01642472-18-2_63-33', type: 'academic', label: 'Terranova (2000) Free Labor: Producing Culture for the Digital Economy — Social Text' },
-      { url: 'https://en.wikipedia.org/wiki/Digital_labor', type: 'reference', label: 'Wikipedia: Digital labor — デジタル労働論の定義と批判的分析の概説' },
+      { url: 'https://doi.org/10.1215/01642472-18-2_63-33', type: 'academic', label: 'Terranova, T. (2000) Free Labor: Producing Culture for the Digital Economy — Social Text 18(2), 33–58（フリー・レイバー概念の原典）' },
+      { url: 'https://www.routledge.com/Digital-Labour-and-Karl-Marx/Fuchs/p/book/9780415716154', type: 'academic', label: 'Fuchs, C. (2014) Digital Labour and Karl Marx — Routledge（マルクス労働価値論によるデジタル労働の搾取分析）' },
+      { url: 'https://www.routledge.com/Digital-Labor-The-Internet-as-Playground-and-Factory/Scholz/p/book/9780415896955', type: 'academic', label: 'Scholz, T. (ed.) (2013) Digital Labor: The Internet as Playground and Factory — Routledge（有償／無償のデジタル労働とクラウド・フリーシング）' },
+      { url: 'https://en.wikipedia.org/wiki/Digital_labor', type: 'reference', label: 'Wikipedia: Digital labor — Terranova, Fuchs, Scholz, Casilli, prosumer, microwork' },
     ],
   },
   {
@@ -40072,14 +39985,18 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-bricolage-entrepreneurship-baker',
     discipline: 'management',
-    title: 'アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合',
-    statement: 'アントレプレナーシップのブリコラージュ（entrepreneurial bricolage）は、ベーカーとネルソンが2005年に提唱した概念であり、レヴィ＝ストロースの人類学的ブリコラージュ概念を起業プロセスに適用した理論枠組みである。ブリコラージュとは「手元にある資源を用いて即興的に新しい目的のために再結合する」行為を指し、資源制約に直面した起業家が、既存の資源を新しい方法で組み合わせることで機会を創造するプロセスを説明する。ベーカーとネルソンは29社の縦断的フィールド研究から、ブリコラージュが物的資源・制度的環境・労働力・スキル・顧客/市場の五つの領域で展開されることを示した。サラスバシーのエフェクチュエーション理論と補完的な関係にあり、両者とも因果推論的アプローチ（causation）に対する代替的な起業論理を提示する。ブリコラージュは資源ベース理論の「資源制約が不利」という前提に挑戦し、制約が創造性を促進しうることを示している。',
-    keyFigures: 'テッド・ベーカー ／ リード・ネルソン ／ クロード・レヴィ＝ストロース ／ サラス・サラスバシー',
-    asOf: '2026-06-26',
+    title: 'アントレプレナー的ブリコラージュ（ベイカー＝ネルソン）——手元にある資源の組み合わせを新しい問題や機会に当てはめて「無から有」を生む資源構築',
+    statement:
+      'アントレプレナー的ブリコラージュ（entrepreneurial bricolage）は、テッド・ベイカーとリード・ネルソンが2005年の論文『Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage』（Administrative Science Quarterly 50巻3号）で提唱した概念で、クロード・レヴィ＝ストロースの『野生の思考』（1962）の「ありあわせで仕事をする器用人」を起業研究に持ち込んだものである。資源制約下の29社のフィールド研究から、ブリコラージュを「手元にある資源の組み合わせを新たな問題や機会に適用してやりくりすること」と定義し、三つの次元——まず動いて成果を作る「やりくり」、他者が無用と見なす物も資源として扱う手元資源の組み合わせ・再利用、素材や基準の通念上の限界を無視して試す「制約の拒絶」——を識別した。ブリコラージュは物的投入・労働・技能・顧客／市場・制度／規制環境の五領域で観察され、領域を絞った選択的ブリコラージュは成長と結びつく一方、全領域で続く並行的ブリコラージュは企業を成長できない状態に閉じ込める。ガルドとカルノー（2003）は風力タービン開発を例に漸進的なブリコラージュと画期的突破を対比し、サラスバシー（2001）のエフェクチュエーションとは手元の手段から出発する点で補完的である。限界として、概念の測定の難しさ、資源制約の美化、その場しのぎが能力の罠になる危険が指摘される。中小企業には、手元の設備・人・関係を組み替えて試作し、成長したい領域では並行的なやりくりをやめて標準的な調達へ切り替えるという含意がある。',
+    keyFigures: 'テッド・ベイカー＆リード・ネルソン（2005『Creating Something from Nothing』ASQ 50(3)）／クロード・レヴィ＝ストロース（1962『野生の思考』ブリコラージュ概念の源泉）／ラグー・ガルド＆ペーター・カルノー（2003 Research Policy・ブリコラージュ対ブレークスルー）／対比: サラス・サラスバシー（2001 エフェクチュエーション）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.2189/asqu.2005.50.3.329', type: 'academic', label: 'Baker, T. & Nelson, R. E. (2005) Creating Something from Nothing — Administrative Science Quarterly' },
-      { url: 'https://doi.org/10.5465/amr.2012.0431', type: 'academic', label: 'Fisher, G. (2012) Effectuation, Causation, and Bricolage — Entrepreneurship Theory and Practice' },
-      { url: 'https://en.wikipedia.org/wiki/Bricolage', type: 'reference', label: 'Wikipedia: Bricolage — creative recombination of available resources overview' },
+      { url: 'https://doi.org/10.2189/asqu.2005.50.3.329', type: 'academic', label: 'Baker, T. & Nelson, R. E. (2005) Creating Something from Nothing: Resource Construction through Entrepreneurial Bricolage — Administrative Science Quarterly 50(3), 329–366（原典。定義・三次元・五領域・選択的／並行的ブリコラージュ）' },
+      { url: 'https://www.jstor.org/stable/30037207', type: 'academic', label: 'JSTOR: Baker & Nelson (2005) — stable URL' },
+      { url: 'https://doi.org/10.1016/S0048-7333(02)00062-8', type: 'academic', label: 'Garud, R. & Karnøe, P. (2003) Bricolage versus Breakthrough: Distributed and Embedded Agency in Technology Entrepreneurship — Research Policy（風力タービン開発の比較）' },
+      { url: 'https://doi.org/10.5465/amr.2001.4378020', type: 'academic', label: 'Sarasvathy, S. D. (2001) Causation and Effectuation: Toward a Theoretical Shift from Economic Inevitability to Entrepreneurial Contingency — Academy of Management Review 26(2), 243–263（エフェクチュエーションとの比較）' },
+      { url: 'https://archive.org/details/savagemindsavoir00levi', type: 'reference', label: 'Lévi-Strauss, C. (1962) La Pensée sauvage / The Savage Mind — Internet Archive（ブリコラージュ概念の源泉）' },
+      { url: 'https://en.wikipedia.org/wiki/Bricolage', type: 'reference', label: 'Wikipedia: Bricolage — Lévi-Strauss, Baker & Nelson, resource constraint, effectuation' },
     ],
   },
   {
@@ -40870,19 +40787,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:12016E102', type: 'government', label: 'TFEU Article 102 — 市場支配的地位の濫用禁止規定' },
       { url: 'https://doi.org/10.1093/acprof:oso/9780199566730.001.0001', type: 'academic', label: 'Whish, R. & Bailey, D. (2018) Competition Law, 9th ed. — Oxford Univ Press' },
       { url: 'https://en.wikipedia.org/wiki/Article_102_of_the_Treaty_on_the_Functioning_of_the_European_Union', type: 'reference', label: 'Wikipedia: TFEU Article 102 — 支配的地位の濫用の法的枠組み' },
-    ],
-  },
-  {
-    id: 'infosoc-digital-labor-scholz-casilli',
-    discipline: 'information-sociology',
-    title: 'デジタル労働論——プラットフォーム経済における労働の不可視化',
-    statement: 'トレバー・ショルツとアントニオ・カシッリが体系化したデジタル労働（digital labor）論は、プラットフォーム経済においてユーザーの日常的なオンライン活動——SNS投稿・検索・クリック・レビュー・データ提供——が無償の価値生産労働として企業利潤に転化される構造を分析する。マルクス主義的価値論を援用しつつ、フックスはSNSユーザーの「受衆商品」化——注意と行動データが広告主に販売される——を現代版の剰余価値搾取として理論化した。カシッリのマイクロワーク研究はAmazon Mechanical Turk等のクラウドソーシング・プラットフォームが労働法の適用外で低賃金の断片的タスクを配分する「タスク化」（taskification）の構造を分析し、労働者の不可視化と団体交渉の困難を指摘した。ショルツのプラットフォーム協同組合運動（platform cooperativism）は、利用者・労働者による民主的所有のプラットフォームを対抗モデルとして提示している。',
-    keyFigures: 'トレバー・ショルツ ／ アントニオ・カシッリ ／ クリスチャン・フックス ／ ティツィアナ・テラノヴァ ／ メアリー・グレイ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.4324/9781315738468', type: 'academic', label: 'Scholz, T. (ed.) (2013) Digital Labor: The Internet as Playground and Factory — Routledge' },
-      { url: 'https://doi.org/10.1093/oso/9780198799009.001.0001', type: 'academic', label: 'Casilli, A. (2019) En attendant les robots: Enquete sur le travail du clic — Seuil' },
-      { url: 'https://en.wikipedia.org/wiki/Digital_labor', type: 'reference', label: 'Wikipedia: Digital labor — プラットフォーム経済と労働の再定義' },
     ],
   },
   {
@@ -46231,18 +46135,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-digital-labor-exploitation',
-    discipline: 'information-sociology',
-    title: 'デジタル労働と搾取の情報社会学（テラノヴァ・フックス）',
-    statement: 'デジタル労働（digital labour）とは、ソーシャルメディアへのコンテンツ投稿・データ生成・オンラインコミュニティへの参加など、ユーザーがプラットフォームに提供する無償の労働を指し、テイズ・テラノヴァが2000年に「インターネット上の自由労働（free labour）」として概念化した。クリスチャン・フックスはマルクス主義の搾取論を援用し、ソーシャルメディア企業がユーザーデータを商品化する過程を剰余価値の搾取として分析する。プラットフォーム経済においてユーザーは消費者であると同時に生産者（プロシューマー）として機能し、その活動は広告ターゲティングのための監視資本（surveillance capitalism）の原料となる。労働法的保護が及ばないデジタル労働の実態は、プラットフォーム規制・データ所有権・UGCの権利保護をめぐる法制度議論を促進しており、クリエイター経済の台頭とともに補償モデルの模索が続いている。',
-    keyFigures: 'テイズ・テラノヴァ ／ クリスチャン・フックス ／ ニック・ダイヤー＝ウィゼフォード ／ ダラス・スマイス',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1215/01642472-18-2_63-33', type: 'academic', label: 'Terranova (2000) Free Labor: Producing Culture for the Digital Economy — Social Text' },
-      { url: 'https://en.wikipedia.org/wiki/Digital_labor', type: 'reference', label: 'Wikipedia: Digital labor — Terranova, Fuchs, prosumer, surveillance capitalism, platform economy' },
-    ],
-  },
-  {
     id: 'econ-commons-tragedy-hardin',
     discipline: 'economics',
     title: 'コモンズの悲劇とオストロムの集合行為論',
@@ -47465,18 +47357,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1093/acprof:oso/9780198236535.001.0001', type: 'academic', label: 'Davies, P.L. & Worthington, S. (2012) Gower & Davies: Principles of Modern Company Law — Sweet & Maxwell（取締役義務の包括的概説）' },
       { url: 'https://en.wikipedia.org/wiki/Shadow_director', type: 'reference', label: 'Wikipedia: Shadow director — 影の取締役と名義取締役の概説' },
-    ],
-  },
-  {
-    id: 'infosoc-digital-labor-terranova',
-    discipline: 'information-sociology',
-    title: 'デジタル労働とフリー・レイバー（テラノバ）',
-    statement: 'テラノバ（Tiziana Terranova）は2000年の論文「Free Labor」で，インターネット上のユーザーによるコンテンツ生成・コミュニティ管理・フォーラム投稿などの活動が，資本主義的生産様式に包摂された無償労働（free labor）として機能していることを論じた。これは搾取でも純粋な趣味でもなく，デジタル経済における価値生産の本質的様式であるとされる。後のスマイス（Dallas Smythe）の「オーディエンス商品」論，マルクス主義メディア論，ポスト・フォーディズムとの接合により，SNSのいいね・検索行動・視聴データなど広範な「無料サービス」が実際にはデータ労働の搾取として分析されるようになり，プラットフォーム経済批判の理論的基盤を提供している。',
-    keyFigures: 'ティジアナ・テラノバ ／ ダラス・スマイス ／ クリスチャン・フクス ／ ニック・サーニセック',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1215/01642472-18-2_63-33', type: 'academic', label: 'Terranova, T. (2000) Free Labor: Producing Culture for the Digital Economy — Social Text 18(2), 33–58（デジタル労働論の原論文）' },
-      { url: 'https://en.wikipedia.org/wiki/Digital_labor', type: 'reference', label: 'Wikipedia: Digital labor — デジタル労働論の概説' },
     ],
   },
   {

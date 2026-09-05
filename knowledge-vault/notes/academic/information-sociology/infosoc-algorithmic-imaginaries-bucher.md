@@ -39,6 +39,7 @@ aliases:
 - [[infosoc-moral-panic|道徳的パニック（モラル・パニック）]] — 同分野の近傍
 - [[infosoc-post-digital-aesthetics-cramer|ポスト・デジタル美学——デジタルの日常化と新たなメディア意識]] — 同分野の近傍
 - [[infosoc-co-production-jasanoff|共産出——科学的知識と社会秩序はともに生み出される]] — 同分野の近傍
+- [[infosoc-media-system-dependency-ball-rokeach|メディア・システム依存理論——メディアへの依存が効果の強さを規定する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

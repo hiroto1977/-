@@ -33,7 +33,6 @@ Michael D. Slater（マイケル・D・スレイター, RSM 提唱者, 2007） �
 ## 関連概念
 - [[infosoc-uses-and-gratifications|利用と満足理論——能動的な受け手がメディアをどう使い何を得るか]] — 同分野の近傍
 - [[infosoc-communicative-ecology|コミュニケーション生態系理論]] — 同分野の近傍
-- [[infosoc-digital-health-medical-data|デジタルヘルスと医療データの権力・プライバシー・アルゴリズム的不平等]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

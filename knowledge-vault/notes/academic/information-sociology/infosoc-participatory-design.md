@@ -38,8 +38,8 @@ Pelle Ehn（1988, Work-Oriented Design of Computer Artifacts — ツール視点
 - [[infosoc-cnn-effect|CNN効果——リアルタイム報道が外交を動かすのか]] — 出典を共有
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 出典を共有
 - [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
-- [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]] — 出典を共有
-- [[infosoc-digital-labor-theory|デジタル労働理論]] — 出典を共有
+- [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]] — 出典を共有
+- [[infosoc-digital-labour|デジタル労働（digital labour）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

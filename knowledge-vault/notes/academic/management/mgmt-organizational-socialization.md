@@ -38,6 +38,7 @@ aliases:
 - [[human-foot-in-the-door|フット・イン・ザ・ドア・テクニック（段階的要請法）]] — 出典を共有
 - [[mgmt-identity-work-pratt|アイデンティティ・ワーク（プラット＆フォアマン）]] — 同分野の近傍
 - [[mgmt-toxic-leadership-whicker|トキシック・リーダーシップ（ウィッカー）]] — 同分野の近傍
+- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナー的ブリコラージュ（ベイカー＝ネルソン）——手元にある資源の組み合わせを新しい問題や機会に当てはめて「無から有」を生む資源構築]] — 同分野の近傍
 - [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（主体的性格特性）]] — 同分野の近傍
 
 ## 関連

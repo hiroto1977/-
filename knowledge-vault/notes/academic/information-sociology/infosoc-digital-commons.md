@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — 語彙が近い
+- [[infosoc-knowledge-commons-theory|知識コモンズ理論]] — 語彙が近い
 - [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — 同じ思想家
 - [[infosoc-code-is-law-lessig|コードは法である——サイバー空間の規制を担う四つの様式とアーキテクチャ]] — 同じ思想家
 - [[infosoc-commons-based-peer-production-benkler|コモンズ型ピア生産（ベンクラー）]] — 同じ思想家
@@ -38,7 +39,6 @@ aliases:
 - [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 同じ思想家
 - [[infosoc-wikinomics-tapscott|ウィキノミクス——マス・コラボレーションが変える生産と経済]] — 同じ思想家
 - [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]] — 同じ思想家
-- [[econ-commons-tragedy-hardin-ostrom|共有地の悲劇とオストロムの制度分析——コモンズ管理のガバナンス設計]] — 同じ思想家
 - [[infosoc-cyberspace-barlow|サイバースペース独立宣言——国家主権から自律したネット空間という理想]] — 同じ思想家
 
 ## 関連

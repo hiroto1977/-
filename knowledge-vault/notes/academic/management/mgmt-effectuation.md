@@ -34,8 +34,8 @@ aliases:
 
 ## 関連概念
 - [[econ-ellsberg-paradox|エルズバーグのパラドックス（曖昧性回避）]] — 同じ思想家
-- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 同分野の近傍
 - [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 同分野の近傍
+- [[mgmt-strategic-intent|戦略的意図（ストラテジック・インテント）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

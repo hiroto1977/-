@@ -2,7 +2,7 @@
 title: "journals.sagepub.com"
 type: source-domain
 host: "journals.sagepub.com"
-cite_count: 184
+cite_count: 183
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.sagepub.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **184 件**（学術 183 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **183 件**（学術 182 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -122,7 +122,6 @@ tags:
 - [[mgmt-affective-commitment|感情的コミットメント（情緒的組織コミットメント）]] — Mercurio(2015)—affectivecommitmentascoreessence,HumanResourceDevelopm…
 - [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — Barley,S.R.&Tolbert,P.S.(1997)InstitutionalizationandStructuration:St…
 - [[mgmt-brand-equity|ブランド・エクイティ]] — Keller,K.L.(1993)“Conceptualizing,Measuring,andManagingCustomer-Based…
-- [[mgmt-bricolage|アントレプレナー的ブリコラージュ（Entrepreneurial Bricolage）]] — Baker&Nelson(2005)CreatingSomethingfromNothing:ResourceConstructionth…
 - [[mgmt-burke-litwin-causal-model-organizational-change|バーク＝リトウィン・モデル——外部環境から個人業績までを12要因の因果連鎖で結ぶ組織診断モデル]] — W.WarnerBurke&GeorgeH.Litwin(1992)"ACausalModelofOrganizationalPerfor…
 - [[mgmt-category-theory-markets|市場カテゴリー理論]] — Hsu(2006)JacksofAllTradesandMastersofNone—ASQ51(3)
 - [[mgmt-category-theory-markets|市場カテゴリー理論]] — Hsu,Hannan&Kocak(2009)MultipleCategoryMembershipsinMarkets—ASR74(1)
