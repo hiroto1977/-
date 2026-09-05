@@ -2,7 +2,7 @@
 title: "reutersinstitute.politics.ox.ac.uk"
 type: source-domain
 host: "reutersinstitute.politics.ox.ac.uk"
-cite_count: 2
+cite_count: 3
 tags:
   - source-domain
   - index
@@ -10,10 +10,11 @@ tags:
 
 # reutersinstitute.politics.ox.ac.uk
 
-> [!info] 出典ドメイン索引 ・ 引用 **2 件**（学術 2）
+> [!info] 出典ドメイン索引 ・ 引用 **3 件**（学術 2 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
+- [[infosoc-bounded-confidence-opinion-dynamics|限定信頼モデル——意見差が信頼限界εを超える相手を無視し合意と分極を分ける意見動学の枠組み]] — ReutersInstitutefortheStudyofJournalism,"Echochambers,filterbubbles,a…
 - [[infosoc-echo-chamber|エコーチェンバー（反響室効果）]] — ReutersInstitute(UniversityofOxford)—"Echochambers,filterbubbles,andp…
 - [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — ReutersInstitute（Oxford）—Echochambers,filterbubbles,andpolarisation:a…
 

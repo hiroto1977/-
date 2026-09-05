@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経営学"
 type: flashcard-deck
 deck_key: "academic-management"
-card_count: 653
+card_count: 654
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経営学（653枚）
+# フラッシュカード — 学術概念／経営学（654枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -162,6 +162,8 @@ tags:
   - **A:** バーバラ・フレドリクソンが提唱した拡張形成理論（broaden-and-build theory）は、ポジティブ感情がネガティブ感情とは質的に異なる適応的機能を持つことを体系化した理論である。喜び・興味・感謝・愛情などのポジティブ感情は、瞬間的に個人の思考と行動のレパートリーを「拡張（broaden）」し、探索・創造・遊びといった幅広い認知・行動パターンを促進する。（→ [[mgmt-broaden-and-build-theory]]）
 - **Q:** 官僚制（ウェーバー）
   - **A:** ドイツの社会学者マックス・ウェーバーが、近代社会で最も合理的・効率的な組織管理形態として理念型（ideal type）で定式化した組織モデル。（→ [[mgmt-bureaucracy]]）
+- **Q:** クロジエの官僚制現象——規則の増殖が不確実性支配という権力を生み悪循環を招く
+  - **A:** フランスの社会学者ミシェル・クロジエが『Le Phénomène bureaucratique』（1963年、Éditions du Seuil）、英訳『The Bureaucratic Phenomenon』（1964年、University of Chicago Press）で提示した組織理論。（→ [[mgmt-bureaucratic-phenomenon-crozier]]）
 - **Q:** ビジネス・エコシステム——企業が共進化する競争と協調の生態系
   - **A:** ビジネス・エコシステム（business ecosystem）は、ジェームズ・ムーアが1993年の論文「捕食者と獲物——競争の新しい生態学」で提唱した概念で、企業を単独の業界内で競う存在としてではなく、業界の境界を越えて相互依存する生態系の一員として捉える視座を提示した。（→ [[mgmt-business-ecosystem-moore]]）
 - **Q:** ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク

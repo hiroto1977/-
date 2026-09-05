@@ -34,6 +34,7 @@ aliases:
 
 ## 関連概念
 - [[human-cognitive-appraisal|認知的評価理論（感情）]] — 同じ思想家
+- [[human-general-adaptation-syndrome-selye|汎適応症候群——警告反応期・抵抗期・疲憊期を経る非特異的ストレス反応]] — 同じ思想家
 - [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]] — 同じ思想家
 - [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]] — 同じ思想家
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]] — 出典を共有
@@ -42,7 +43,6 @@ aliases:
 - [[human-kohlberg-moral-development|コールバーグの道徳性発達理論]] — 出典を共有
 - [[human-operant-conditioning|オペラント条件づけ]] — 出典を共有
 - [[infosoc-hypodermic-needle|弾丸理論（皮下注射モデル）]] — 出典を共有
-- [[econ-natural-monopoly|自然独占（natural monopoly）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

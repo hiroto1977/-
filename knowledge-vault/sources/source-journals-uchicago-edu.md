@@ -2,7 +2,7 @@
 title: "journals.uchicago.edu"
 type: source-domain
 host: "journals.uchicago.edu"
-cite_count: 35
+cite_count: 36
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.uchicago.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **35 件**（学術 35）
+> [!info] 出典ドメイン索引 ・ 引用 **36 件**（学術 36）
 
 ## このドメインを出典とする項目
 
@@ -43,6 +43,7 @@ tags:
 - [[infosoc-issue-attention-cycle|争点注目サイクル（イシュー・アテンション・サイクル、Issue-Attention Cycle）——社会問題への世論の注目が解決ではなく注目資源の周期的消耗によって浮上・衰退する五段階モデル]] — Peters,B.G.＆Hogwood,B.W.(1985)"InSearchoftheIssue-AttentionCycle,"The…
 - [[infosoc-social-exchange-theory|社会交換理論]] — Homans(1958)"SocialBehaviorasExchange,"AmericanJournalofSociology63(6…
 - [[infosoc-social-network-analysis|社会ネットワーク分析（SNA）]] — Granovetter(1973)"TheStrengthofWeakTies,"AmericanJournalofSociology78…
+- [[mgmt-bureaucratic-phenomenon-crozier|クロジエの官僚制現象——規則の増殖が不確実性支配という権力を生み悪循環を招く]] — TheBureaucraticPhenomenon.MichelCrozier(bookreview).AmericanJournalof…
 - [[mgmt-category-theory-markets|市場カテゴリー理論]] — Zuckerman(1999)TheCategoricalImperative—AmericanJournalofSociology104…
 - [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — Johnson(2007)WhatIsOrganizationalImprinting?—AmericanJournalofSociolo…
 - [[mgmt-kanter-tokenism-theory|カンターのトークニズム理論（Tokenism Theory）]] — Kanter,R.M.(1977)SomeEffectsofProportionsonGroupLife:SkewedSexRatiosa…

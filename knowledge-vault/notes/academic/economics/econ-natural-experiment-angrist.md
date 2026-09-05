@@ -37,9 +37,9 @@ aliases:
 - [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]] — 同じ思想家
 - [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — 出典を共有
 - [[econ-chartalism-modern-monetary-theory|チャータリズムと現代貨幣理論（MMT）]] — 出典を共有
+- [[econ-rotemberg-saloner-price-wars-booms|ロテンバーグ＝サローナー・モデル——好況期に協調的価格が崩れ価格戦争が生じる反循環的マークアップ理論]] — 出典を共有
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 出典を共有
 - [[econ-trilemma-financial-regulation|金融規制のトリレンマ]] — 出典を共有
-- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

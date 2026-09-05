@@ -2,7 +2,7 @@
 title: "nobelprize.org"
 type: source-domain
 host: "nobelprize.org"
-cite_count: 93
+cite_count: 94
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nobelprize.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **93 件**（リファレンス 55 ・ 公的 36 ・ 学術 2）
+> [!info] 出典ドメイン索引 ・ 引用 **94 件**（リファレンス 56 ・ 公的 36 ・ 学術 2）
 
 ## このドメインを出典とする項目
 
@@ -41,6 +41,7 @@ tags:
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]] — NobelPrize2018—WilliamNordhaus
 - [[econ-focal-point|フォーカルポイント（シェリングの焦点）]] — NobelPrize.org:2005年経済学賞（Schelling・Aumann共同受賞）
 - [[econ-general-equilibrium|一般均衡理論]] — NobelPrize.org1983年経済学賞プレスリリース（ドブリュー「一般均衡理論の厳密な再定式化」）
+- [[econ-generalized-method-of-moments-hansen|一般化モーメント法（GMM）——モーメント条件のみから分布を仮定せず母数を推定するハンセンの一般理論]] — TheSverigesRiksbankPrizeinEconomicSciencesinMemoryofAlfredNobel2013—N…
 - [[econ-granger-causality|グレンジャー因果性]] — NobelPrize.org—CliveW.J.Granger,PrizeinEconomicSciences2003
 - [[econ-harsanyi-purification-theorem|ハルサーニの純化定理——混合戦略は私的情報に基づく確定的行動の極限である]] — Harsanyi,J.C.(1994)GameswithIncompleteInformation—NobelLecture,NobelP…
 - [[econ-hayek-knowledge|ハイエクの知識の分散と価格メカニズム]] — NobelPrize.org—Hayek1974PrizeLecture（市場秩序の優位性は分散した知識の活用にある）

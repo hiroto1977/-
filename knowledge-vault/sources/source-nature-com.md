@@ -2,7 +2,7 @@
 title: "nature.com"
 type: source-domain
 host: "nature.com"
-cite_count: 34
+cite_count: 35
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nature.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **34 件**（学術 34）
+> [!info] 出典ドメイン索引 ・ 引用 **35 件**（学術 35）
 
 ## このドメインを出典とする項目
 
@@ -25,6 +25,7 @@ tags:
 - [[human-epigenetic-inheritance|世代間エピジェネティック継承]] — Pembreyetal.—Sex-specifictransgenerationalresponses,EJHG
 - [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — Nijhawan(1994)MotionExtrapolationinCatching—Nature
 - [[human-fresh-start-effect|フレッシュスタート効果]] — Daietal.(2021)“BehaviouralnudgesincreaseCOVID-19vaccinations”,Nature—…
+- [[human-general-adaptation-syndrome-selye|汎適応症候群——警告反応期・抵抗期・疲憊期を経る非特異的ストレス反応]] — Selye,H.(1936)."ASyndromeProducedbyDiverseNocuousAgents."Nature,138,3…
 - [[human-growth-mindset|マインドセット理論（ドゥエック）]] — Yeageretal.,“Anationalexperimentrevealswhereagrowthmindsetimprovesach…
 - [[human-interoception|インテロセプション（内受容感覚）]] — Craig(2002)Howdoyoufeel?Interoception—NatureReviewsNeuroscience3(8),p…
 - [[human-interoception|インテロセプション（内受容感覚）]] — Craig(2009)Howdoyoufeel—now?Theanteriorinsulaandhumanawareness—NatRev…

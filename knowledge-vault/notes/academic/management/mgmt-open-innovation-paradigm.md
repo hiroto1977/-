@@ -35,8 +35,8 @@ Henry W. Chesbrough／Wim Vanhaverbeke／Joel West
 - [[mgmt-t-shaped-skills|T字型人材（T型スキル）]] — 出典を共有
 - [[mgmt-workplace-spirituality|職場のスピリチュアリティ（意味・目的・共同体意識）]] — 出典を共有
 - [[mgmt-organizational-forgetting|組織的忘却]] — 出典を共有
-- [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）]] — 同分野の近傍
 - [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

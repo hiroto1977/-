@@ -34,6 +34,7 @@ aliases:
 - [[human-mirror-neuron-controversy|ミラーニューロン論争（Mirror Neuron Controversy）]] — 語彙が近い
 - [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 同じ思想家
 - [[human-mirror-neuron-theory|ミラーニューロン理論]] — 同分野の近傍
+- [[human-transactive-memory|トランザクティブ・メモリー・システム：集団における分散型記憶と知識共有の理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

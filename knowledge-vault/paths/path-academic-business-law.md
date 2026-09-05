@@ -2,19 +2,19 @@
 title: "学習パス: 学術概念／ビジネス法務"
 type: learning-path
 path_key: "academic-business-law"
-entry_count: 681
+entry_count: 682
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／ビジネス法務（681件）
+# 学習パス — 学術概念／ビジネス法務（682件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 80）
-- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 58）
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 57）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 38）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 36）
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 29）
@@ -25,9 +25,9 @@ tags:
 - [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]]（接続 26）
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
 - [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]]（接続 26）
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]]（接続 25）
 - [[bizlaw-earnest-money|手付（民法557条）]]（接続 25）
 - [[bizlaw-retention-lien|留置権（民法295条）]]（接続 25）
-- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]]（接続 25）
 
 ## 第 2 部 — 年代順の展開
 - 1540年: [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]]
@@ -165,6 +165,7 @@ tags:
 - 1993年: [[bizlaw-administrative-procedure-act|行政手続法]]
 - 1993年: [[bizlaw-part-time-labor|パートタイム・有期雇用労働法]]
 - 1994年: [[bizlaw-ratchet-clause|ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）]]
+- 1995年: [[bizlaw-inevitable-disclosure-doctrine|不可避的開示の法理——転職者の知識のみで差止めを認めるか州で分裂した米国営業秘密理論]]
 - 1995年: [[bizlaw-insurance-business-act|保険業法]]
 - 1996年: [[bizlaw-civil-procedure|民事訴訟法]]
 - 1996年: [[bizlaw-slapp|SLAPP訴訟（戦略的言論封殺訴訟）]]
@@ -386,7 +387,6 @@ tags:
 - [[bizlaw-contract-law-unconscionability|不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限]]
 - [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]]
 - [[bizlaw-contractual-estoppel|契約上の禁反言——合意された前提を後から否定できない]]
-- [[bizlaw-contractual-unconscionability|契約の非良心性法理]]
 - [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]]
 - [[bizlaw-corporate-governance-code-japan|コーポレートガバナンス・コード——日本のスチュワードシップと取締役会改革]]
 - [[bizlaw-corporate-governance-stewardship|スチュワードシップ・コードと機関投資家の責任投資——コーポレートガバナンス改革の法的枠組み]]
@@ -633,6 +633,7 @@ tags:
 - [[bizlaw-shareholder-activism-proxy-fight|株主アクティビズムと委任状争奪戦——コーポレートガバナンスにおける物言う株主の法的地位]]
 - [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]]
 - [[bizlaw-shareholder-primacy-doctrine|株主優先主義（シェアホルダー・プライマシー）]]
+- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]]
 - [[bizlaw-shozoken-publicity|肖像権・パブリシティ権]]
 - [[bizlaw-silent-partnership-tokumei-kumiai|匿名組合（商法535条）——名を出さず出資し、利益の分配を受ける]]
 - [[bizlaw-sovereign-immunity-waiver|主権免除と放棄（ソブリン・イミュニティ）]]

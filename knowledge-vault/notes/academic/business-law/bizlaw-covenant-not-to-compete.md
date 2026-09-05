@@ -35,6 +35,7 @@ aliases:
 - [[bizlaw-restraint-of-trade|取引制限の法理——営業の自由を制約する条項の合理性審査]] — 語彙が近い
 - [[bizlaw-corporate-restructuring-law|企業再編法制と会社分割・合併の法律構成]] — 同じ思想家
 - [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 同じ思想家
+- [[bizlaw-inevitable-disclosure-doctrine|不可避的開示の法理——転職者の知識のみで差止めを認めるか州で分裂した米国営業秘密理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

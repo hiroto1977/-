@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[human-alexithymia-sifneos|アレキシサイミア（感情失認）（シフネオス）]] — 語彙が近い
 - [[human-alexithymia-emotional-regulation|アレキシサイミアと感情調節障害——感情の言語化困難・身体化・心身症との関連]] — 同じ思想家
-- [[human-adult-attachment-hazan-shaver|成人愛着スタイルとロマンティック関係の愛着理論（ハザン＝シェイバー）]] — 同分野の近傍
+- [[human-sensorimotor-psychotherapy-ogden|センサリモーター・サイコセラピー——オグデンの身体志向トラウマ治療と階層的情報処理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

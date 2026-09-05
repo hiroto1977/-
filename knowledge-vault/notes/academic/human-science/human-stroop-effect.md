@@ -38,6 +38,7 @@ aliases:
 - [[human-social-learning-theory|社会的学習理論]] — 出典を共有
 - [[human-self-monitoring|セルフ・モニタリング（スナイダー）]] — 同分野の近傍
 - [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 同分野の近傍
+- [[human-negative-priming|負のプライミング——無視した刺激への反応が遅れる]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

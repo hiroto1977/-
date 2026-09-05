@@ -36,7 +36,6 @@ aliases:
 - [[human-aphantasia|アファンタジア——心の中に像を思い描けない]] — 同じ思想家
 - [[econ-envelope-theorem-milgrom-segal|包絡線定理——最適化問題のパラメータ感応度と経済学的応用]] — 同じ思想家
 - [[human-theory-of-constructed-emotion|情動の構成理論]] — 同分野の近傍
-- [[human-narrative-identity-ricoeur|物語的アイデンティティ（リクール）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

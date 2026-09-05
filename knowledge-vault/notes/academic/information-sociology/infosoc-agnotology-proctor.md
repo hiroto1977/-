@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Agnotology — culturally induced ignorance, manufactured doubt, tobacco, undone science](https://en.wikipedia.org/wiki/Agnotology) `リファレンス`
 
 ## 関連概念
-- [[infosoc-post-truth-society|ポスト真実社会——感情と信念が事実を凌駕する情報環境の社会学]] — 同分野の近傍
 - [[infosoc-status-conferral|地位付与機能]] — 同分野の近傍
+- [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

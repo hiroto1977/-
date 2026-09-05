@@ -32,7 +32,7 @@ Ted Baker & Reed E. Nelson（ASQ 50(3), 2005 — アントレプレナー的ブ�
 ## 関連概念
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
 - [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-altman-z-score|アルトマンのZスコア（Altman Z-Score／1968）——財務比率の判別分析による企業倒産予測]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 出典を共有
+- [[econ-generalized-method-of-moments-hansen|一般化モーメント法（GMM）——モーメント条件のみから分布を仮定せず母数を推定するハンセンの一般理論]] — 出典を共有
 - [[econ-rubinstein-bargaining|ルービンシュタイン交渉モデル]] — 出典を共有
 - [[human-hot-hand-fallacy|ホットハンドの誤謬]] — 出典を共有
 - [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[econ-nash-bargaining|ナッシュ交渉解]] — 出典を共有
 - [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 出典を共有
 - [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 出典を共有
-- [[econ-welfare-theorems|厚生経済学の基本定理]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

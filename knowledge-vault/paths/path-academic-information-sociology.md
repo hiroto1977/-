@@ -2,19 +2,19 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 605
+entry_count: 606
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（605件）
+# 学習パス — 学術概念／情報社会学（606件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 80）
-- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 46）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 81）
+- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 48）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 25）
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 25）
@@ -24,10 +24,10 @@ tags:
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 22）
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]（接続 21）
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]]（接続 21）
+- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 20）
 - [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]]（接続 20）
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]]（接続 20）
 - [[infosoc-datafication|データ化（データ化現象）]]（接続 20）
-- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -85,7 +85,6 @@ tags:
 - 1962年: [[infosoc-diffusion-of-innovations|イノベーションの普及理論（ロジャーズ）]]
 - 1962年: [[infosoc-global-village|グローバル・ヴィレッジ（地球村）]]
 - 1962年: [[infosoc-public-sphere|公共圏（ハーバーマス）]]
-- 1963年: [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
 - 1964年: [[infosoc-data-sovereignty|データ主権]]
 - 1964年: [[infosoc-hot-cool-media|ホットなメディアとクールなメディア]]
 - 1964年: [[infosoc-information-overload|情報過多（情報オーバーロード）]]
@@ -107,6 +106,7 @@ tags:
 - 1973年: [[infosoc-encoding-decoding|エンコーディング／デコーディング・モデル]]
 - 1973年: [[infosoc-post-industrial|脱工業社会論（ダニエル・ベル）]]
 - 1973年: [[infosoc-social-network-analysis|社会ネットワーク分析（SNA）]]
+- 1974年: [[infosoc-bounded-confidence-opinion-dynamics|限定信頼モデル——意見差が信頼限界εを超える相手を無視し合意と分極を分ける意見動学の枠組み]]
 - 1974年: [[infosoc-network-externality|ネットワーク外部性]]
 - 1976年: [[infosoc-meme|ミーム（meme）]]
 - 1976年: [[infosoc-social-presence|社会的存在感理論（ソーシャル・プレゼンス）]]
@@ -438,6 +438,7 @@ tags:
 - [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]]
 - [[infosoc-information-avoidance-theory|情報回避理論]]
 - [[infosoc-information-behavior-wilson-model|情報行動モデル——ウィルソンの情報ニーズ・探索・利用の統合的枠組み]]
+- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]]
 - [[infosoc-information-commons-theory|情報コモンズ理論]]
 - [[infosoc-information-disorder-taxonomy|情報障害の分類体系（ワードル＆デラクシャン）]]
 - [[infosoc-information-ecology-nardi|情報エコロジー——ナルディとオデイの技術・人間・実践の相互作用分析]]

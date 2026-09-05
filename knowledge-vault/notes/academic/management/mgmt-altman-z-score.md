@@ -30,8 +30,8 @@ Edward I. Altman（1968・Zスコア・モデルの開発者） ／ 多変量判
 - [IDEAS/RePEc 収録の書誌（Altman [1968], Journal of Finance 23(4):589-609・判別分析による倒産予測・Zスコアと判定領域）](https://ideas.repec.org/a/bla/jfinan/v23y1968i4p589-609.html) `リファレンス`
 
 ## 関連概念
+- [[mgmt-bricolage|アントレプレナー的ブリコラージュ（Entrepreneurial Bricolage）]] — 同分野の近傍
 - [[mgmt-kanter-tokenism-theory|カンターのトークニズム理論（Tokenism Theory）]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

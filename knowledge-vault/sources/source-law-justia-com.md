@@ -2,7 +2,7 @@
 title: "law.justia.com"
 type: source-domain
 host: "law.justia.com"
-cite_count: 26
+cite_count: 28
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # law.justia.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **26 件**（リファレンス 21 ・ 公的 5）
+> [!info] 出典ドメイン索引 ・ 引用 **28 件**（リファレンス 23 ・ 公的 5）
 
 ## このドメインを出典とする項目
 
@@ -30,6 +30,8 @@ tags:
 - [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]] — InreCaremarkInternationalInc.DerivativeLitigation,698A.2d959(Del.Ch.1…
 - [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]] — Marchandv.Barnhill,212A.3d805(Del.2019)
 - [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — Smithv.VanGorkom(488A.2d858,Del.1985)fulltext
+- [[bizlaw-inevitable-disclosure-doctrine|不可避的開示の法理——転職者の知識のみで差止めを認めるか州で分裂した米国営業秘密理論]] — Justia—PepsiCo,Inc.v.Redmond,54F.3d1262(7thCir.1995)—不可避的開示の法理を確立した第七…
+- [[bizlaw-inevitable-disclosure-doctrine|不可避的開示の法理——転職者の知識のみで差止めを認めるか州で分裂した米国営業秘密理論]] — Justia—Whytev.SchlageLockCo.,101Cal.App.4th1443,125Cal.Rptr.2d277(Cal…
 - [[bizlaw-lender-liability-doctrine|貸手責任法理（レンダー・ライアビリティ）]] — K.M.C.Co.v.IrvingTrustCo.,757F.2d752(6thCir.1985)—Justia
 - [[bizlaw-material-adverse-change-clause|MAC条項法理]] — Akornv.FreseniusKabi(Del.Ch.2018)
 - [[bizlaw-material-adverse-change-clause|MAC条項法理]] — Hexionv.Huntsman,965A.2d715(Del.Ch.2008)

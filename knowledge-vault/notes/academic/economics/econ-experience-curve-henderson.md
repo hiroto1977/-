@@ -30,6 +30,7 @@ aliases:
 - [Wikipedia: Experience curve effects — Henderson, BCG, Wright learning curve, cumulative production, cost decline](https://en.wikipedia.org/wiki/Experience_curve_effects) `リファレンス`
 
 ## 関連概念
+- [[mgmt-experience-curve|経験曲線効果・学習曲線（experience/learning curve）]] — 語彙が近い
 - [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家
 - [[mgmt-bcg-matrix|プロダクト・ポートフォリオ・マネジメント（PPM／BCGマトリクス）]] — 同じ思想家
 - [[econ-ces-production|CES生産関数]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家
 - [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 同じ思想家
 - [[econ-elasticity-substitution-ces-arrow|CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化]] — 同じ思想家
-- [[econ-general-equilibrium-walras|ワルラスの一般均衡理論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

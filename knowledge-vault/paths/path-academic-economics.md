@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 940
+entry_count: 942
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（940件）
+# 学習パス — 学術概念／経済学（942件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -314,6 +314,7 @@ tags:
 - 1982年: [[econ-barzel-measurement-cost-property-rights|財産権の測定費用理論（バーゼルのメジャーメント・コスト・アプローチ）]]
 - 1982年: [[econ-contestable-markets|コンテスタブル市場]]
 - 1982年: [[econ-diamond-coconut-model|ダイアモンドのココナッツ・モデル（Diamond 1982）——探索の外部性が生む複数均衡と協調の失敗]]
+- 1982年: [[econ-generalized-method-of-moments-hansen|一般化モーメント法（GMM）——モーメント条件のみから分布を仮定せず母数を推定するハンセンの一般理論]]
 - 1982年: [[econ-gift-exchange|贈与交換（労働の部分的贈与交換）]]
 - 1982年: [[econ-rational-bubble|合理的バブル]]
 - 1982年: [[econ-rbc|実物的景気循環論（RBC）]]
@@ -327,6 +328,7 @@ tags:
 - 1983年: [[econ-raising-rivals-costs|ライバルの費用引き上げ理論（Raising Rivals' Costs／RRC、サロップ＝シェフマン）——支配的企業が略奪的安売りではなく競争相手の費用を高めて排除する反トラスト理論]]
 - 1983年: [[econ-sunspot-equilibrium|サンスポット均衡]]
 - 1984年: [[econ-forward-premium-puzzle|フォワード・プレミアム・パズル]]
+- 1984年: [[econ-rotemberg-saloner-price-wars-booms|ロテンバーグ＝サローナー・モデル——好況期に協調的価格が崩れ価格戦争が生じる反循環的マークアップ理論]]
 - 1984年: [[econ-shapiro-stiglitz|シャピロ=スティグリッツの効率賃金モデル（怠業モデル）]]
 - 1984年: [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]]
 - 1985年: [[econ-chamley-judd-theorem|チャムリー＝ジャッド定理——長期の最適な資本所得税はゼロである]]

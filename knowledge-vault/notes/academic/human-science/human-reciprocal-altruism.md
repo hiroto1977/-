@@ -30,6 +30,7 @@ aliases:
 - [Wikipedia — Reciprocal altruism](https://en.wikipedia.org/wiki/Reciprocal_altruism) `リファレンス`
 
 ## 関連概念
+- [[infosoc-bounded-confidence-opinion-dynamics|限定信頼モデル——意見差が信頼限界εを超える相手を無視し合意と分極を分ける意見動学の枠組み]] — 同じ思想家
 - [[human-cocktail-party-effect|カクテルパーティー効果]] — 同分野の近傍
 - [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — 同分野の近傍
 

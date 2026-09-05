@@ -40,7 +40,7 @@ aliases:
 - [[econ-rational-ignorance-downs|合理的無知——情報収集の費用が便益を上回るときの意図的な無知]] — 同じ思想家
 - [[econ-rational-irrationality|合理的非合理性（rational irrationality）——一票が結果を変えないため有権者があえて偏った経済観を抱く公共選択論の概念]] — 同じ思想家
 - [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 出典を共有
-- [[econ-rubinstein-bargaining|ルービンシュタイン交渉モデル]] — 出典を共有
+- [[econ-generalized-method-of-moments-hansen|一般化モーメント法（GMM）——モーメント条件のみから分布を仮定せず母数を推定するハンセンの一般理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

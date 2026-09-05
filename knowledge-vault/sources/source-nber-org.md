@@ -2,7 +2,7 @@
 title: "nber.org"
 type: source-domain
 host: "nber.org"
-cite_count: 85
+cite_count: 86
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nber.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **85 件**（学術 84 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **86 件**（学術 85 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -82,6 +82,7 @@ tags:
 - [[econ-production-fragmentation|生産のフラグメンテーション理論（ジョーンズ＝キエルジャコウスキー）]] — Grossman&Rossi-Hansberg(2008)"TradingTasks:ASimpleTheoryofOffshoring,…
 - [[econ-rational-bubble|合理的バブル]] — Diba&Grossman,"RationalAssetPriceBubbles,"NBERWorkingPaperNo.1059
 - [[econ-resource-curse-sachs-warner|資源の呪い——天然資源の豊富さが経済発展を阻害する逆説]] — Sachs,J.D.&Warner,A.M.(1995)NaturalResourceAbundanceandEconomicGrowth…
+- [[econ-rotemberg-saloner-price-wars-booms|ロテンバーグ＝サローナー・モデル——好況期に協調的価格が崩れ価格戦争が生じる反循環的マークアップ理論]] — Rotemberg,J.J.&Saloner,G.(1984).ASupergame-TheoreticModelofBusinessCy…
 - [[econ-screening|スクリーニング（選別理論）]] — Stiglitz&Weiss,“SortingOuttheDifferencesBetweenSignalingandScreeningM…
 - [[econ-search-matching|サーチ理論／マッチング理論]] — NBER—Diamond,Mortensen&PissaridesShared2010NobelPrizeforResearchonJob…
 - [[econ-signaling|シグナリング]] — NBER「Stiglitz,Akerlof,andSpenceWon2001NobelPrizeforAnalysesofMarketsw…

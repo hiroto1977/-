@@ -2,19 +2,19 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 639
+entry_count: 640
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（639件）
+# 学習パス — 学術概念／人間科学（640件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 141）
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 101）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 140）
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 102）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 28）
 - [[human-attribution-theory|帰属理論]]（接続 28）
@@ -25,9 +25,9 @@ tags:
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 25）
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 25）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 25）
+- [[human-cognitive-appraisal|認知的評価理論（感情）]]（接続 24）
 - [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]]（接続 24）
 - [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]]（接続 24）
-- [[human-framing-effect|フレーミング効果（framing effect）]]（接続 24）
 
 ## 第 2 部 — 年代順の展開
 - 1510年: [[human-phantom-limb|幻肢（ファントムリム）]]
@@ -75,6 +75,7 @@ tags:
 - 1933年: [[human-von-restorff-effect|フォン・レストルフ効果（孤立効果）]]
 - 1934年: [[human-flynn-effect|フリン効果]]
 - 1936年: [[human-defense-mechanisms|防衛機制]]
+- 1936年: [[human-general-adaptation-syndrome-selye|汎適応症候群——警告反応期・抵抗期・疲憊期を経る非特異的ストレス反応]]
 - 1936年: [[human-reciprocal-altruism|互恵的利他主義]]
 - 1938年: [[human-impostor-syndrome|インポスター症候群（インポスター現象）]]
 - 1939年: [[human-frustration-aggression|フラストレーション＝攻撃仮説]]
@@ -102,7 +103,6 @@ tags:
 - 1959年: [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]]
 - 1959年: [[human-latent-inhibition|潜在制止（latent inhibition）——結果を伴わない刺激への事前接触が、その刺激の後続の条件づけ学習を遅らせる現象]]
 - 1959年: [[human-premack-principle|プレマックの原理]]
-- 1960年: [[human-cognitive-appraisal|認知的評価理論（感情）]]
 - 1960年: [[human-confirmation-bias|確証バイアス（confirmation bias）]]
 - 1960年: [[human-item-response-theory|項目反応理論（Item Response Theory, IRT）]]
 - 1960年: [[human-visual-cliff|視覚的断崖実験（Visual Cliff Experiment）]]
@@ -183,6 +183,7 @@ tags:
 - 1980年: [[human-cognitive-load|認知負荷理論]]
 - 1980年: [[human-endowment-effect|保有効果（授かり効果）]]
 - 1980年: [[human-optimism-bias|楽観バイアス]]
+- 1981年: [[human-framing-effect|フレーミング効果（framing effect）]]
 - 1981年: [[human-mood-congruent-memory|気分一致効果（気分一致記憶）]]
 - 1981年: [[human-perceptual-fluency|知覚的流暢性（Perceptual Fluency）]]
 - 1981年: [[human-social-referencing|社会的参照（Social Referencing）]]

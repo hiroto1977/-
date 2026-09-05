@@ -2,7 +2,7 @@
 title: "academic.oup.com"
 type: source-domain
 host: "academic.oup.com"
-cite_count: 119
+cite_count: 120
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # academic.oup.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **119 件**（学術 117 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **120 件**（学術 118 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -120,6 +120,7 @@ tags:
 - [[infosoc-presumed-media-influence-gunther|推定されたメディア影響の影響（IPMI: Influence of Presumed Media Influence）——他者への影響の推定を介してメディアが間接的に作用するモデル]] — Gunther,A.C.,&Storey,J.D.(2003)TheInfluenceofPresumedInfluence.Journa…
 - [[infosoc-reinforcing-spirals-model|強化スパイラルモデル（相互強化スパイラル・モデル／Reinforcing Spirals Model, RSM）——選択的接触と効果が時間とともに互いを強める動的フィードバック・ループ]] — Slater,M.D.(2007).ReinforcingSpirals(abstract),CommunicationTheory17(…
 - [[infosoc-slacktivism|スラックティビズム]] — Kristofferson,White&Peloza(2014)“TheNatureofSlacktivism”,JournalofCon…
+- [[mgmt-bureaucratic-phenomenon-crozier|クロジエの官僚制現象——規則の増殖が不確実性支配という権力を生み悪循環を招く]] — Udy,StanleyH.,Jr.(1965).ReviewofMichelCrozier,TheBureaucraticPhenomen…
 - [[mgmt-category-theory-markets|市場カテゴリー理論]] — Negro,Hannan&Rao(2010)CategoricalContrastandAudienceAppeal—Industrial…
 - [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — Grusky(1960)AdministrativeSuccessioninFormalOrganizations—SocialForce…
 - [[mgmt-glass-ceiling|ガラスの天井（グラス・シーリング）]] — Cotteretal.(2001)"TheGlassCeilingEffect"SocialForces80(2)

@@ -34,7 +34,6 @@ aliases:
 ## 関連概念
 - [[mgmt-customer-value-co-creation|顧客価値の共創とサービス・エコシステム（バーゴ＆ラッシュ）]] — 語彙が近い
 - [[mgmt-dominant-logic|ドミナント・ロジック（Dominant Logic）]] — 同分野の近傍
-- [[mgmt-open-innovation-paradigm|オープン・イノベーション・パラダイム]] — 同分野の近傍
 - [[mgmt-servitization|サービタイゼーション（サービス化）]] — 同分野の近傍
 
 ## 関連

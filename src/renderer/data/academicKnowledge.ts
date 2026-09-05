@@ -49726,5 +49726,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Andrew_Feenberg', type: 'reference', label: 'Wikipedia: Andrew Feenberg — critical theory of technology, technical code, instrumentalization theory, student of Herbert Marcuse' },
     ],
   },
+  {
+    id: 'econ-rotemberg-saloner-price-wars-booms',
+    discipline: 'economics',
+    title: 'ロテンバーグ＝サローナー・モデル——好況期に協調的価格が崩れ価格戦争が生じる反循環的マークアップ理論',
+    statement:
+      'ロテンバーグ＝サローナー・モデルは、需要が独立同一分布（i.i.d.）で変動する寡占市場を対象とする反復ゲーム型の暗黙的共謀理論である。フリオ・ロテンバーグとガース・サローナーが1986年に『A Supergame-Theoretic Model of Price Wars during Booms』（American Economic Review 第76巻3号、390–407頁）として発表した。企業は繰返しゲームで協調価格を維持するが、離脱時の当期の超過利得は好況期ほど大きくなる一方、将来の懲罰の価値は需要水準に左右されにくいため、好況期ほど逸脱の誘惑が強まり協調は崩れやすい。最適な暗黙協調はこの誘惑を抑えるため好況期にこそ価格を下げねばならず、反循環的マークアップと好況期の価格戦争が生じる。これは需要不観測下で裏切りと需要低迷を区別できず不況期に価格戦争が生じるグリーン＝ポーター（1984, Econometrica）モデルと対照的である。神取道宏（1991）は需要ショックに系列相関がある場合へ拡張し、後続のバグウェル＝ステイガー（1997, RAND Journal of Economics）は需要成長率の系列相関の符号次第で協調価格が順循環にも反循環にもなると示した。ボレンスタイン＝シェパード（1996）は小売ガソリン市場で将来需要の予想が高いほどマージンが上がると実証した。i.i.d.で観測可能な需要という前提に依拠する点が限界である。中小事業者には、需要急増期の値下げ圧力は需要不足でなく暗黙協調が抜け駆け誘惑で崩れた表れの可能性があり、好況期の価格・シェア戦略の見直しに含意を持つ。',
+    keyFigures: 'フリオ・ロテンバーグ＆ガース・サローナー（1986『A Supergame-Theoretic Model of Price Wars during Booms』AER／原型は1984 NBER Working Paper No.1412）／対比: エドワード・グリーン＆ロバート・ポーター（1984『Noncooperative Collusion under Imperfect Price Information』Econometrica）／拡張: 神取道宏（1991『Correlated Demand Shocks and Price Wars During Booms』Review of Economic Studies）／カイル・バグウェル＆ロバート・ステイガー（1997『Collusion over the Business Cycle』RAND Journal of Economics）／実証: セブリン・ボレンスタイン＆アンドレア・シェパード（1996『Dynamic Pricing in Retail Gasoline Markets』RAND Journal of Economics）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://econpapers.repec.org/RePEc:aea:aecrev:v:76:y:1986:i:3:p:390-407', type: 'academic', label: 'Rotemberg, J. J. & Saloner, G. (1986). A Supergame-Theoretic Model of Price Wars during Booms. American Economic Review, 76(3), pp.390-407 (EconPapers record) — originates the supergame model and its temptation-vs-punishment mechanism under i.i.d. demand.' },
+      { url: 'https://www.nber.org/papers/w1412', type: 'academic', label: 'Rotemberg, J. J. & Saloner, G. (1984). A Supergame-Theoretic Model of Business Cycles and Price Wars During Booms. NBER Working Paper No. 1412 — working-paper version of the 1986 AER article, with the abstract stating that the temptation to deviate is greater when demand is high.' },
+      { url: 'https://doi.org/10.2307/1911462', type: 'academic', label: 'Green, E. J. & Porter, R. H. (1984). Noncooperative Collusion under Imperfect Price Information. Econometrica, 52(1), pp.87-100 (JSTOR, DOI: 10.2307/1911462) — contrasting model in which price wars are triggered by unobservable demand slumps rather than by booms.' },
+      { url: 'https://ideas.repec.org/p/nbr/nberwo/5056.html', type: 'academic', label: 'Bagwell, K. & Staiger, R. W. (1997). Collusion over the Business Cycle. RAND Journal of Economics, 28(1), pp.82-106 (NBER Working Paper No. 5056 record on IDEAS/RePEc) — shows collusive pricing is procyclical or countercyclical depending on the serial correlation of demand growth rates, qualifying the i.i.d. result.' },
+      { url: 'https://econpapers.repec.org/RePEc:rje:randje:v:27:y:1996:i:autumn:p:429-451', type: 'academic', label: 'Borenstein, S. & Shepard, A. (1996). Dynamic Pricing in Retail Gasoline Markets. RAND Journal of Economics, 27(3), pp.429-451 (EconPapers record) — empirical test finding retail gasoline margins rise with expected future demand, consistent with the model\'s logic.' },
+    ],
+  },
+  {
+    id: 'econ-generalized-method-of-moments-hansen',
+    discipline: 'economics',
+    title: '一般化モーメント法（GMM）——モーメント条件のみから分布を仮定せず母数を推定するハンセンの一般理論',
+    statement:
+      '一般化モーメント法（GMM）は、モーメント条件E[g(X,θ)]=0の標本平均をゼロに近づけパラメータθを推定する手法で、ラース・ピーター・ハンセンが論文『Large Sample Properties of Generalized Method of Moments Estimators』（Econometrica 50巻4号、1982年、1029–1054頁）で確立した。条件数がパラメータ数を超える過剰識別では二次形式を重み行列で加重して最小化し、最適重み行列はモーメントの分散共分散行列の逆行列で、妥当性はJ検定（サーガン検定の一般化）でカイ二乗検定する。ハンセンはケネス・シングルトンと消費資産価格モデルのオイラー方程式にGMMを応用（同50巻5号、1269–1286頁）、分布を仮定せず割引因子とリスク回避度を推定したが、過剰識別制約は多くの定式化で棄却された。線形かつ最適重み行列ならOLS・IV・2段階最小二乗法はGMMの特殊ケースで、分布仮定が正しければ最尤法も漸近的に一致する。後にHAC推定量（ニューウィー＆ウェスト1987）、動的パネルGMM（アレラーノ＆ボンド1991）、二段階・逐次・連続更新GMMの比較（ハンセン・ヒートン・ヤロン1996）へ発展したが、操作変数が弱いか条件過多だと有限標本で偏りが生じ、ストック＆ライト（2000）は弱識別下で漸近理論が破綻すると示した。分布形状が未知でも操作変数があれば一致推定と過剰識別検定を行え、需要の価格弾力性やリスクプレミアム分析に役立つ。',
+    keyFigures: 'ラース・ピーター・ハンセン（1982『Large Sample Properties of Generalized Method of Moments Estimators』／2013年ノーベル経済学賞をユージン・ファーマ＆ロバート・シラーと共同受賞）／ケネス・シングルトン（ハンセンとの共著1982『Generalized Instrumental Variables Estimation of Nonlinear Rational Expectations Models』）／ホイットニー・ニューウィー＆ケネス・ウェスト（1987 HAC共分散行列）／マヌエル・アレラーノ＆スティーブン・ボンド（1991 動的パネルGMM）／ジェームズ・ストック＆ジョナサン・ライト（2000 弱識別下のGMM理論）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1982/07/01/large-sample-properties-generalized-method-moments-estimators', type: 'academic', label: 'Hansen, L. P. (1982). "Large Sample Properties of Generalized Method of Moments Estimators." Econometrica, 50(4), 1029–1054. — GMMの原論文。モーメント条件・過剰識別・最適重み行列・J検定の定式化の一次資料。' },
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1982/09/01/generalized-instrumental-variables-estimation-nonlinear', type: 'academic', label: 'Hansen, L. P. & Singleton, K. J. (1982). "Generalized Instrumental Variables Estimation of Nonlinear Rational Expectations Models." Econometrica, 50(5), 1269–1286. — 消費資産価格モデルのオイラー方程式へのGMM応用を確認。' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2013/hansen/facts/', type: 'reference', label: 'The Sveriges Riksbank Prize in Economic Sciences in Memory of Alfred Nobel 2013 — NobelPrize.org. — ハンセンが2013年にユージン・ファーマ、ロバート・シラーと共同受賞したこと（資産価格の実証分析）を確認。' },
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1987/05/01/notes-and-comments-simple-positive-semi-definite', type: 'academic', label: 'Newey, W. K. & West, K. D. (1987). "A Simple, Positive Semi-Definite, Heteroskedasticity and Autocorrelation Consistent Covariance Matrix." Econometrica, 55(3), 703–708. — GMMの最適重み行列を系列相関・不均一分散に対応させたHAC推定量の後続研究を確認。' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/1468-0262.00151', type: 'academic', label: 'Stock, J. H. & Wright, J. H. (2000). "GMM with Weak Identification." Econometrica, 68(5), 1055–1096. DOI: 10.1111/1468-0262.00151. — 弱い操作変数・弱識別下でGMMの標準的漸近理論が破綻することを示した批判研究を確認。' },
+    ],
+  },
+  {
+    id: 'mgmt-bureaucratic-phenomenon-crozier',
+    discipline: 'management',
+    title: 'クロジエの官僚制現象——規則の増殖が不確実性支配という権力を生み悪循環を招く',
+    statement:
+      'フランスの社会学者ミシェル・クロジエが『Le Phénomène bureaucratique』（1963年、Éditions du Seuil）、英訳『The Bureaucratic Phenomenon』（1964年、University of Chicago Press）で提示した組織理論。パリの会計事務所（Agence comptable）とタバコ産業独占企業SEITA工場の実地調査から、恣意性を排すべき非人称的な規則がむしろ「悪循環」を生むと論じた。規則の増加が組織を硬直化させ、規則の及ばぬ不確実性の領域——機械故障の不確実性を握る保守要員が標準化された生産労働者より優位に立つ例——を制する者に権力が集中し、抑えるため規則が増える循環である。中央集権化と階層間の分断も悪循環を強め、官僚制組織は誤りから学んで自己修正できず危機によってのみ変化しうるとした。権力を不確実性の源泉の支配と捉える視点は、後にエルハール・フリードベールとの共著『L\'Acteur et le système』（1977年、Seuil）で「戦略分析」として体系化された。マートン・グールドナー・セルズニックらの官僚制逆機能論やヴェーバー官僚制論と並置されるが、フランス事例への依存という文化的限定性や機能主義的説明との批判、比較研究による一般化への疑問も指摘される。中小企業には、規則を増やすほど現場の裁量が非公式な権力を生む点に注意し、規則制定と裁量配分のバランスを設計すべきという含意がある。',
+    keyFigures: 'ミシェル・クロジエ（1963『Le Phénomène bureaucratique』／1964英訳『The Bureaucratic Phenomenon』）／エルハール・フリードベール（1977共著『L\'Acteur et le système』で戦略分析を体系化）／対比: 官僚制の逆機能論（マートン、グールドナー、セルズニック）／マックス・ヴェーバー（合理的官僚制の理念型）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://academic.oup.com/sf/article-abstract/43/4/596/2227974', type: 'academic', label: 'Udy, Stanley H., Jr. (1965). Review of Michel Crozier, The Bureaucratic Phenomenon: An Examination of Bureaucracy in Modern Organizations and Its Cultural Setting in France (Chicago: University of Chicago Press, 1964, 320pp.). Social Forces, Vol.43, No.4, pp.596-597 — confirms the English edition\'s publisher/year/pages and its contemporary US scholarly reception.' },
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/224003', type: 'academic', label: 'The Bureaucratic Phenomenon. Michel Crozier (book review). American Journal of Sociology, Vol.71, No.1 (1965), DOI 10.1086/224003 — independent second confirmation of the English edition\'s US academic reception.' },
+      { url: 'https://www.persee.fr/doc/rfsp_0035-2950_1964_num_14_5_403469_t1_0991_0000_003', type: 'academic', label: 'Gournay, Bernard (1964). Compte rendu: Crozier (Michel), Le phénomène bureaucratique. Essai sur les tendances bureaucratiques des systèmes d\'organisation modernes et sur leurs relations en France avec le système social et culturel (Paris, Éditions du Seuil, 1963, 414p.). Revue française de science politique, 14e année, n°5, pp.991-997 — confirms the French original\'s publisher/year/pagination and the book\'s two case studies (accounting agency; industrial monopoly).' },
+      { url: 'https://api.lib.kyushu-u.ac.jp/opac_download_md/2920574/039_p081.pdf', type: 'academic', label: '中野裕治（1977）「官僚制組織の動態的把握とその展開：M.クロジエ『官僚制現象』をめぐって」『経済論究』第39号、81-106頁（九州大学） — 権力＝不確実性支配・官僚制的悪循環という論点の日本語学術文献での確認。' },
+      { url: 'https://en.wikipedia.org/wiki/Michel_Crozier', type: 'reference', label: 'Michel Crozier. Wikipedia (English) — confirms Crozier\'s dates (1922-2013) and his 1977 co-authored book with Erhard Friedberg, L\'Acteur et le système, as the systematization of strategic analysis (analyse stratégique).' },
+    ],
+  },
+  {
+    id: 'human-general-adaptation-syndrome-selye',
+    discipline: 'human-science',
+    title: '汎適応症候群——警告反応期・抵抗期・疲憊期を経る非特異的ストレス反応',
+    statement:
+      '汎適応症候群（GAS）は、マギル大学の生理学者ハンス・セリエが、ラットに寒冷・外科的侵襲・強制運動・各種薬物などの有害刺激を与えた実験を報告した論文『A Syndrome Produced by Diverse Nocuous Agents』（Nature 138巻32ページ、1936年）で提唱した。刺激の種類を問わず副腎皮質肥大・胸腺萎縮・胃潰瘍という共通の三徴が生じたことから反応の「非特異性」を主張し、続く『Stress and the General Adaptation Syndrome』（British Medical Journal 1950年、1巻4667号1383–1392ページ）で警告反応期・抵抗期・疲憊期の三段階モデルを提示、機序を下垂体−副腎皮質系（視床下部−下垂体−副腎系、HPA系）に求めた。1956年『The Stress of Life』で「ストレス」を一般語として定着させた。メイソンは1971年、非特異的反応の多くは心理的・情動的興奮を介すると再評価し、ラザルスとフォルクマンは1984年の認知的評価モデルで個人差を、マキューアンは1998年のアロスタティック負荷概念で慢性負荷の蓄積機序をそれぞれ補完・継承した。ペティクルーとリーは2011年、セリエがタバコ産業から資金提供を受け理論が喫煙訴訟の弁護に利用されたことを文書分析で示した。中小企業では、負荷の累積（疲憊期）を早期に見分ける休養設計と個人差への配慮が、離職・疾病休業の予防に資する。',
+    keyFigures: 'ハンス・セリエ（1936 Nature『A Syndrome Produced by Diverse Nocuous Agents』／1950 British Medical Journal『Stress and the General Adaptation Syndrome』／1956『The Stress of Life』／1974『Stress without Distress』）／ジョン・メイソン（1971 非特異性の再評価・心理的媒介説）／リチャード・ラザルス＆スーザン・フォルクマン（1984『Stress, Appraisal, and Coping』・認知的評価モデル）／ブルース・マキューアン（1998 アロスタティック負荷・後続概念）／マーク・ペティクルー＆ケリー・リー（2011 タバコ産業資金提供の検証）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.nature.com/articles/138032a0', type: 'academic', label: 'Selye, H. (1936). "A Syndrome Produced by Diverse Nocuous Agents." Nature, 138, 32. DOI: 10.1038/138032a0 — GASの初出論文。ラットにおける副腎皮質肥大・胸腺萎縮・胃潰瘍の三徴と刺激の非特異性の主張を確認。' },
+      { url: 'https://doi.org/10.1136/bmj.1.4667.1383', type: 'academic', label: 'Selye, H. (1950). "Stress and the General Adaptation Syndrome." British Medical Journal, 1(4667), 1383–1392. DOI: 10.1136/bmj.1.4667.1383 — 警告反応期・抵抗期・疲憊期の三段階モデルの提示を確認。' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0022395671900288', type: 'academic', label: 'Mason, J. W. (1971). "A Re-evaluation of the Concept of \'Non-Specificity\' in Stress Theory." Journal of Psychiatric Research, 8, 323–333. DOI: 10.1016/0022-3956(71)90028-8 — 非特異性への批判（心理的・情動的媒介説）を確認。' },
+      { url: 'https://www.nejm.org/doi/full/10.1056/NEJM199801153380307', type: 'academic', label: 'McEwen, B. S. (1998). "Protective and Damaging Effects of Stress Mediators." New England Journal of Medicine, 338(3), 171–179. DOI: 10.1056/NEJM199801153380307 — アロスタティック負荷という後続の理論的発展を確認。' },
+      { url: 'https://ajph.aphapublications.org/doi/10.2105/AJPH.2009.177634', type: 'academic', label: 'Petticrew, M. P., & Lee, K. (2011). "The \'Father of Stress\' Meets \'Big Tobacco\': Hans Selye and the Tobacco Industry." American Journal of Public Health, 101(3), 411–418. DOI: 10.2105/AJPH.2009.177634 — セリエとタバコ産業の資金提供関係、および理論の訴訟への利用を確認。' },
+    ],
+  },
+  {
+    id: 'bizlaw-inevitable-disclosure-doctrine',
+    discipline: 'business-law',
+    title: '不可避的開示の法理——転職者の知識のみで差止めを認めるか州で分裂した米国営業秘密理論',
+    statement:
+      '不可避的開示の法理とは、営業秘密を知る従業員が競合の同種職務へ転職すること自体で秘密の使用・開示が避けられないとして、実際の不正流用の証拠なしに差止めを認める理論で、統一営業秘密法（UTSA）第2条(a)の「現実の、又は差し迫った不正流用」概念に基づく。代表例が第七巡回区PepsiCo, Inc. v. Redmond, 54 F.3d 1262 (7th Cir. 1995)で、PepsiCo飲料「All Sport」担当GMウィリアム・レドモンドが機密保持契約に反し競合クエーカー・オーツ（ゲータレード/スナップル）へ転職しようとした事案に、イリノイ州営業秘密法で差止めを認めた。評価は州で割れ、カリフォルニア州はWhyte v. Schlage Lock Co., 101 Cal. App. 4th 1443 (2002)で、事業・職業法典16600条の競業避止禁止政策に反する事後的競業避止だとして否定、現実の脅威の証拠を要求する（他方、第三巡回区は具体的脅威の証拠がある事案で差止めを維持した）。連邦Defend Trade Secrets Act（2016）18 U.S.C. §1836(b)(3)(A)(i)は、差止めが雇用関係参加自体を妨げてはならず、条件は知る情報のみでなく脅威の証拠に基づくべきと定める。ロウ（2005）は対価なき事後的競業避止で移動を萎縮させると批判。中小企業には中途採用時の審査と、自社秘密は本法理でなく秘密保持契約で守る含意がある。',
+    keyFigures: 'ジョエル・フラム（第七巡回区判事、1995 PepsiCo, Inc. v. Redmond 主任執筆）／エリザベス・A・ロウ（2005『When Trade Secrets Become Shackles: Fairness and the Inevitable Disclosure Doctrine』7 Tul. J. Tech. & Intell. Prop. 167）／対比: ロナルド・J・ギルソン（1999『The Legal Infrastructure of High Technology Industrial Districts: Silicon Valley, Route 128, and Covenants Not to Compete』74 N.Y.U. L. Rev. 575）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://law.justia.com/cases/federal/appellate-courts/F3/54/1262/483231/', type: 'reference', label: 'Justia — PepsiCo, Inc. v. Redmond, 54 F.3d 1262 (7th Cir. 1995) — 不可避的開示の法理を確立した第七巡回区判決。レドモンドの経歴とイリノイ州営業秘密法に基づく差止めの事実認定を確認。' },
+      { url: 'https://law.justia.com/cases/california/court-of-appeal/4th/101/1443.html', type: 'reference', label: 'Justia — Whyte v. Schlage Lock Co., 101 Cal. App. 4th 1443, 125 Cal. Rptr. 2d 277 (Cal. Ct. App. 2002) — カリフォルニア州が同法理を明確に否定し、Bus. & Prof. Code §16600の競業避止禁止政策との抵触を論じた根拠。' },
+      { url: 'https://www.courtlistener.com/opinion/151632/bimbo-bakeries-usa-inc-v-botticella/', type: 'reference', label: 'CourtListener — Bimbo Bakeries USA, Inc. v. Botticella, 613 F.3d 102 (3d Cir. 2010) — ペンシルベニア州法を適用した第三巡回区が、具体的な脅威の証拠に基づき差止めを維持した例。' },
+      { url: 'https://www.law.cornell.edu/uscode/text/18/1836', type: 'government', label: '18 U.S. Code §1836 - Civil proceedings (Defend Trade Secrets Act of 2016, Pub. L. 114-153), Cornell LII — §1836(b)(3)(A)(i)が差止めによる雇用参加の妨害を禁じ、単なる知識のみでの差止めを退ける明文を確認。' },
+      { url: 'https://scholarship.law.ufl.edu/facultypub/93/', type: 'academic', label: 'Rowe, Elizabeth A. (2005). When Trade Secrets Become Shackles: Fairness and the Inevitable Disclosure Doctrine. 7 Tulane Journal of Technology & Intellectual Property 167 (University of Florida Levin College of Law repository) — 法理の公正性への学術的批判（事後的な競業避止化という問題提起）を確認。' },
+    ],
+  },
+  {
+    id: 'infosoc-bounded-confidence-opinion-dynamics',
+    discipline: 'information-sociology',
+    title: '限定信頼モデル——意見差が信頼限界εを超える相手を無視し合意と分極を分ける意見動学の枠組み',
+    statement:
+      '限定信頼モデル（bounded confidence models）は、各主体が連続的な意見値を持ち、意見差が信頼限界ε未満の相手からしか影響を受けないと仮定する意見動学モデルの総称である。ライナー・ヘーゲルマンとウルリッヒ・クラウゼは論文「Opinion Dynamics and Bounded Confidence」（2002）で、各主体がε以内の全意見の平均に同期的に移動するHKモデルを示した。同じ頃ギヨーム・デフュアンらは「Mixing beliefs among interacting agents」（2000）で、ランダムな2者交流のみを想定し意見差がε未満なら収束パラメータμで部分的に接近するDWモデルを提示した。両モデルとも生き残る意見クラスタ数はおおむね1/(2ε)に比例し、εが大きいほど単一合意、小さいほど複数クラスタへの分極・断片化が生じる。この系譜はモリス・デグルート（1974）の線形加重平均モデルや、ロバート・アクセルロッド（1997）の文化伝播モデルに連なる。ヤン・ローレンツの2007年サーベイはノイズ・非対称信頼限界・ネットワーク構造への拡張を整理し、エコーチェンバーやSNS上の意見分極研究にも応用される一方、アンドレアス・フラーヒェらの2017年レビューは定型化のしすぎと実証的検証の乏しさを批判する。中小企業にとっては、分極した顧客コミュニティで許容できる意見差ε相当を見極め、穏健な多数派との接点を保つ発信設計がネット上の評判管理に資する。',
+    keyFigures: 'ライナー・ヘーゲルマン＆ウルリッヒ・クラウゼ（2002『Opinion Dynamics and Bounded Confidence』JASSS 5(3)）／ギヨーム・デフュアン他（2000『Mixing Beliefs among Interacting Agents』Advances in Complex Systems 3）／先行: モリス・デグルート（1974『Reaching a Consensus』線形加重平均モデル）／対比: ロバート・アクセルロッド（1997 文化伝播モデル）／サーベイ: ヤン・ローレンツ（2007 IJMPC）／批判: アンドレアス・フラーヒェ他（2017 JASSS 20(4)）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.jasss.org/5/3/2.html', type: 'academic', label: 'Hegselmann, R. & Krause, U. (2002) "Opinion Dynamics and Bounded Confidence: Models, Analysis and Simulation," Journal of Artificial Societies and Social Simulation, 5(3) — HKモデル（信頼限界εと同期的平均化）を定義した原論文' },
+      { url: 'https://doi.org/10.1142/S0219525900000078', type: 'academic', label: 'Deffuant, G., Neau, D., Amblard, F. & Weisbuch, G. (2000) "Mixing Beliefs among Interacting Agents," Advances in Complex Systems, 3(1-4), pp.87-98 — ランダム2者交流と収束パラメータμによるDWモデルの原論文' },
+      { url: 'https://doi.org/10.1142/S0129183107011789', type: 'academic', label: 'Lorenz, J. (2007) "Continuous Opinion Dynamics under Bounded Confidence: A Survey," International Journal of Modern Physics C, 18(12), pp.1819-1838 — HK/DW両モデルとノイズ・異質な信頼限界・ネットワーク構造への拡張を整理したサーベイ' },
+      { url: 'https://www.jasss.org/20/4/2.html', type: 'academic', label: 'Flache, A., Mäs, M., Feliciani, T. et al. (2017) "Models of Social Influence: Towards the Next Frontiers," Journal of Artificial Societies and Social Simulation, 20(4) — 限定信頼モデルを含む社会的影響モデル群の定型化・実証的検証の乏しさを整理した批判的レビュー' },
+      { url: 'https://reutersinstitute.politics.ox.ac.uk/echo-chambers-filter-bubbles-and-polarisation-literature-review', type: 'reference', label: 'Reuters Institute for the Study of Journalism, "Echo chambers, filter bubbles, and polarisation: a literature review" — SNS上の意見分極・フィルターバブル研究への応用文脈を確認する文献レビュー' },
+    ],
+  },
 ];
 // Stryker restore all

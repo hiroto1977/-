@@ -2,7 +2,7 @@
 title: "sciencedirect.com"
 type: source-domain
 host: "sciencedirect.com"
-cite_count: 107
+cite_count: 108
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # sciencedirect.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **107 件**（学術 95 ・ リファレンス 12）
+> [!info] 出典ドメイン索引 ・ 引用 **108 件**（学術 96 ・ リファレンス 12）
 
 ## このドメインを出典とする項目
 
@@ -60,6 +60,7 @@ tags:
 - [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — Ross,Greene&House(1977)“Thefalseconsensuseffect...”,JournalofExperime…
 - [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — Aronson&Linder(1965)“Gainandlossofesteemasdeterminantsofinterpersonal…
 - [[human-gate-control-theory|ゲートコントロール理論]] — Melzack(1999)Fromthegatetotheneuromatrix.Pain,Suppl.6,S121–S126.
+- [[human-general-adaptation-syndrome-selye|汎適応症候群——警告反応期・抵抗期・疲憊期を経る非特異的ストレス反応]] — Mason,J.W.(1971)."ARe-evaluationoftheConceptof'Non-Specificity'inStre…
 - [[human-illusory-correlation|錯誤相関]] — Hamilton&Gifford(1976),JournalofExperimentalSocialPsychology—distinct…
 - [[human-interoception-theory|内受容感覚理論]] — Seth(2013)—Interoceptiveinference,emotion,andtheembodiedself
 - [[human-joint-action|共同行為（Joint Action）]] — UnderstandingJointAction:CurrentTheoreticalandEmpiricalApproaches—Act…

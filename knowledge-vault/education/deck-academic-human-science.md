@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／人間科学"
 type: flashcard-deck
 deck_key: "academic-human-science"
-card_count: 639
+card_count: 640
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／人間科学（639枚）
+# フラッシュカード — 学術概念／人間科学（640枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -534,6 +534,8 @@ tags:
   - **A:** 袋小路文とは、文法的には正しいにもかかわらず、文頭部分の語が読み手をいったんはもっともらしいが最終的には誤った統語構造へと誘い込み、後続の語に到達した時点でその解析が破綻して再分析を迫られる文を指す。トマス・G・ベヴァーが1970年に提示した「The horse raced past the barn fell（納屋のそばを走らされた馬が倒れた）」が代表例である。（→ [[human-garden-path-sentence]]）
 - **Q:** ゲートコントロール理論
   - **A:** Melzack and Wall（1965）は、痛みの知覚が末梢から中枢へ単純に伝達されるものではなく、脊髄後角において「ゲート」機構によって調節されるという革新的な理論を提唱した。（→ [[human-gate-control-theory]]）
+- **Q:** 汎適応症候群——警告反応期・抵抗期・疲憊期を経る非特異的ストレス反応
+  - **A:** 汎適応症候群（GAS）は、マギル大学の生理学者ハンス・セリエが、ラットに寒冷・外科的侵襲・強制運動・各種薬物などの有害刺激を与えた実験を報告した論文『A Syndrome Produced by Diverse Nocuous Agents』（Nature 138巻32ページ、1936年）で提唱した。（→ [[human-general-adaptation-syndrome-selye]]）
 - **Q:** 生成効果——自ら生成した情報は受動的に読んだ情報より記憶されやすい
   - **A:** ノーマン・スラメッカとピーター・グラフが1978年に報告した生成効果（generation effect）は、学習者が情報を受動的に読むよりも、手がかりから自ら能動的に生成した場合に、その情報の記憶保持が有意に向上する現象である。（→ [[human-generation-effect-slamecka]]）
 - **Q:** ゲシュタルト知覚の法則

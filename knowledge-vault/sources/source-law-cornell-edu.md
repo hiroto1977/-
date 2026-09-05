@@ -2,7 +2,7 @@
 title: "law.cornell.edu"
 type: source-domain
 host: "law.cornell.edu"
-cite_count: 146
+cite_count: 147
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # law.cornell.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **146 件**（リファレンス 123 ・ 公的 22 ・ 学術 1）
+> [!info] 出典ドメイン索引 ・ 引用 **147 件**（リファレンス 123 ・ 公的 23 ・ 学術 1）
 
 ## このドメインを出典とする項目
 
@@ -100,6 +100,7 @@ tags:
 - [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]] — UCC§2-316—ExclusionorModificationofWarranties(CornellLII)
 - [[bizlaw-in-pari-delicto-doctrine|均等違法原則（インパリ・デリクト）]] — CornellLegalInformationInstitute:InPariDelicto—definition,elements,ex…
 - [[bizlaw-indemnification-clause-duty-to-defend|補償条項と防御義務・補償義務の区別（Indemnification Clause）]] — CornellLawSchoolLegalInformationInstitute(LII)—Wex:Indemnify（補償の法的定義・…
+- [[bizlaw-inevitable-disclosure-doctrine|不可避的開示の法理——転職者の知識のみで差止めを認めるか州で分裂した米国営業秘密理論]] — 18U.S.Code§1836-Civilproceedings(DefendTradeSecretsActof2016,Pub.L.11…
 - [[bizlaw-injunction-equity|差止命令——金銭賠償では不十分な場合に行為を命じ又は禁じる衡平法上の救済]] — CornellLIIWex:Injunction—equitableremedy,mandatory/prohibitory,interi…
 - [[bizlaw-internal-affairs-doctrine|内部事項の法理（Internal Affairs Doctrine／インターナル・アフェアーズ・ドクトリン）——会社の内部関係は設立準拠州の法で規律されるという抵触法原則]] — CTSCorp.v.DynamicsCorp.ofAmerica,481U.S.69(1987)（合衆国最高裁判決一次資料、LegalIn…
 - [[bizlaw-ip-exhaustion-first-sale|知的財産権の消尽（ファースト・セール）]] — 17U.S.C.§109—CornellLII（著作権のファースト・セール・ドクトリンの法文）

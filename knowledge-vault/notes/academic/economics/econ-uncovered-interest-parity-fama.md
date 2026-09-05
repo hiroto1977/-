@@ -35,8 +35,8 @@ aliases:
 
 ## 関連概念
 - [[econ-interest-rate-parity-covered|カバー付き金利平価——先渡為替レートと内外金利差の裁定均衡]] — 語彙が近い
-- [[econ-interest-rate-parity|金利平価説]] — 語彙が近い
 - [[econ-forward-premium-puzzle|フォワード・プレミアム・パズル]] — 語彙が近い
+- [[econ-interest-rate-parity|金利平価説]] — 語彙が近い
 - [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]] — 同じ思想家
 - [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
 - [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]] — 同じ思想家

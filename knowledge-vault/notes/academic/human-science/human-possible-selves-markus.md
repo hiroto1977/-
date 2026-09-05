@@ -35,7 +35,7 @@ aliases:
 - [[human-self-construal-markus-kitayama|自己解釈理論——相互独立的・相互協調的自己観と文化的認知の基盤]] — 同じ思想家
 - [[human-self-discrepancy-higgins|自己不一致理論——現実自己と自己指針の乖離が異なる感情を生む]] — 同じ思想家
 - [[mgmt-regulatory-focus-theory-higgins|制御焦点理論——促進焦点と予防焦点が動機づけと意思決定を形成するメカニズム]] — 同じ思想家
-- [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同分野の近傍
+- [[human-approach-avoidance-elliot|接近回避動機——望ましいものへの接近と望ましくないものの回避の二系統]] — 同分野の近傍
 - [[human-sensory-integration-theory|感覚統合理論]] — 同分野の近傍
 
 ## 関連

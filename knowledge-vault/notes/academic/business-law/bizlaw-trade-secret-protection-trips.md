@@ -33,8 +33,8 @@ aliases:
 ## 関連概念
 - [[bizlaw-trade-secret-protection-utsa|営業秘密保護法制——不正競争防止法とUTSAによる企業秘密の法的保護]] — 語彙が近い
 - [[bizlaw-trade-secret-misappropriation|営業秘密の不正取得（トレード・シークレット法）]] — 語彙が近い
-- [[bizlaw-unfair-competition-trade-secret|不正競争防止と営業秘密保護の比較法制]] — 語彙が近い
 - [[bizlaw-trade-secret-directive-eu|EU営業秘密指令——営業秘密保護の域内調和]] — 語彙が近い
+- [[bizlaw-unfair-competition-trade-secret|不正競争防止と営業秘密保護の比較法制]] — 語彙が近い
 - [[bizlaw-intellectual-property-trade-secret|営業秘密と知的財産保護——不正競争防止法の秘密管理性要件と情報漏洩対策]] — 同じ思想家
 - [[bizlaw-trade-secret-misappropriation-dtsa|営業秘密不正流用と連邦防衛営業秘密法——DTSAによる統一的民事救済の確立]] — 同じ思想家
 - [[bizlaw-international-trade-law|国際通商法の基本原則と多角的貿易体制の法的枠組み]] — 出典を共有

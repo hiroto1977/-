@@ -33,6 +33,7 @@ J. Dennis Hynes ／ Frances E. Freund ／ Patricia A. McCoy
 
 ## 関連概念
 - [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 出典を共有
+- [[bizlaw-inevitable-disclosure-doctrine|不可避的開示の法理——転職者の知識のみで差止めを認めるか州で分裂した米国営業秘密理論]] — 出典を共有
 - [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
 - [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
 - [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
@@ -41,7 +42,6 @@ J. Dennis Hynes ／ Frances E. Freund ／ Patricia A. McCoy
 - [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
 - [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 出典を共有
 - [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 出典を共有
-- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

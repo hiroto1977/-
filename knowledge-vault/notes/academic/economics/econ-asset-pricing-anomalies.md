@@ -40,7 +40,7 @@ aliases:
 - [[econ-asset-pricing-capm|資本資産価格モデル（CAPM）と株式リターンのリスク・リターン関係]] — 同じ思想家
 - [[econ-career-concerns-holmstrom|キャリア・コンサーン（ホルムストローム）——評判が生む暗黙の誘因]] — 同じ思想家
 - [[econ-efficient-market-hypothesis-fama|効率的市場仮説とファーマの資産価格形成論]] — 同じ思想家
-- [[econ-home-bias|ホームバイアス（自国バイアス・パズル）]] — 同じ思想家
+- [[econ-generalized-method-of-moments-hansen|一般化モーメント法（GMM）——モーメント条件のみから分布を仮定せず母数を推定するハンセンの一般理論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

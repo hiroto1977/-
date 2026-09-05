@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2253
+cite_count: 2254
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2253 件**（リファレンス 2253）
+> [!info] 出典ドメイン索引 ・ 引用 **2254 件**（リファレンス 2254）
 
 ## このドメインを出典とする項目
 
@@ -1918,6 +1918,7 @@ tags:
 - [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — Wikipedia:Bricolage—Lévi-Strauss,Baker&Nelson,resourceconstraint,effe…
 - [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — Wikipedia:Broaden-and-Build—Fredricksonpositiveemotionstheoryoverview
 - [[mgmt-bureaucracy|官僚制（ウェーバー）]] — Rational-legalauthority—Wikipedia（合法的支配と官僚制の特徴）
+- [[mgmt-bureaucratic-phenomenon-crozier|クロジエの官僚制現象——規則の増殖が不確実性支配という権力を生み悪循環を招く]] — MichelCrozier.Wikipedia(English)—confirmsCrozier'sdates(1922-2013)and…
 - [[mgmt-business-ecosystem-moore|ビジネス・エコシステム——企業が共進化する競争と協調の生態系]] — Wikipedia:Businessecosystem—Moore,coevolution,keystone,platformstrate…
 - [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — Wikipedia:BusinessModelCanvas—ninebuildingblocks,valueproposition,Ost…
 - [[mgmt-calling-wrzesniewski|コーリング（天職意識）とジョブ・クラフティング（ヴルゼシニェウスキー）]] — Wikipedia:Jobcrafting—ジョブ・クラフティングの概説

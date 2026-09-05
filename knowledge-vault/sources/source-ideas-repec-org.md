@@ -2,7 +2,7 @@
 title: "ideas.repec.org"
 type: source-domain
 host: "ideas.repec.org"
-cite_count: 85
+cite_count: 86
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ideas.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **85 件**（学術 71 ・ リファレンス 14）
+> [!info] 出典ドメイン索引 ・ 引用 **86 件**（学術 72 ・ リファレンス 14）
 
 ## このドメインを出典とする項目
 
@@ -73,6 +73,7 @@ tags:
 - [[econ-raising-rivals-costs|ライバルの費用引き上げ理論（Raising Rivals' Costs／RRC、サロップ＝シェフマン）——支配的企業が略奪的安売りではなく競争相手の費用を高めて排除する反トラスト理論]] — Salop,StevenC.andDavidT.Scheffman(1983)."RaisingRivals'Costs."America…
 - [[econ-real-business-cycle-theory|実物景気循環理論]] — Kydland&Prescott(1982):TimetoBuildandAggregateFluctuations—Econometri…
 - [[econ-retirement-consumption-puzzle|退職消費パズル（Retirement-Consumption Puzzle）]] — Banks,J.,Blundell,R.&Tanner,S.(1998)"IsThereaRetirement-SavingsPuzzle…
+- [[econ-rotemberg-saloner-price-wars-booms|ロテンバーグ＝サローナー・モデル——好況期に協調的価格が崩れ価格戦争が生じる反循環的マークアップ理論]] — Bagwell,K.&Staiger,R.W.(1997).CollusionovertheBusinessCycle.RANDJourn…
 - [[econ-rubinstein-bargaining|ルービンシュタイン交渉モデル]] — RePEc/IDEASbibliographicrecord:Econometrica50(1),pp.97-109(1982)
 - [[econ-school-choice-mechanism-design|学校選択メカニズムデザイン（School Choice Mechanism Design）]] — RePEc/IDEAS—Abdulkadiroğlu&Sönmez(2003)"SchoolChoice:AMechanismDesign…
 - [[econ-shapiro-stiglitz|シャピロ=スティグリッツの効率賃金モデル（怠業モデル）]] — Shapiro&Stiglitz(1984)"EquilibriumUnemploymentasaWorkerDisciplineDevi…

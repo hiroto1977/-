@@ -33,6 +33,7 @@ Georg Friedrich Knapp／L. Randall Wray／Stephanie Kelton／Warren Mosler／Pav
 ## 関連概念
 - [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — 出典を共有
 - [[econ-natural-experiment-angrist|自然実験と操作変数法による因果識別戦略（アングリスト）]] — 出典を共有
+- [[econ-rotemberg-saloner-price-wars-booms|ロテンバーグ＝サローナー・モデル——好況期に協調的価格が崩れ価格戦争が生じる反循環的マークアップ理論]] — 出典を共有
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 出典を共有
 - [[econ-trilemma-financial-regulation|金融規制のトリレンマ]] — 出典を共有
 - [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 出典を共有
@@ -40,7 +41,6 @@ Georg Friedrich Knapp／L. Randall Wray／Stephanie Kelton／Warren Mosler／Pav
 - [[mgmt-product-architecture|製品アーキテクチャ（モジュラー/インテグラル）]] — 出典を共有
 - [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 出典を共有
 - [[econ-rational-addiction|合理的依存]] — 出典を共有
-- [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

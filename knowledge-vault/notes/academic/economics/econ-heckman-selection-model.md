@@ -33,6 +33,7 @@ Heckman, James J.（1979 "Sample Selection Bias as a Specification Error", Econo
 ## 関連概念
 - [[econ-rational-inattention-sims|合理的不注意理論——情報処理コストに基づく意思決定と価格硬直性]] — 同分野の近傍
 - [[econ-burdett-mortensen-wage-dispersion|バーデット＝モーテンセン・モデル——同一労働者でも賃金が分散する均衡]] — 同分野の近傍
+- [[econ-supplier-induced-demand|供給者誘発需要——医師は自らの需要を生み出すのか]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

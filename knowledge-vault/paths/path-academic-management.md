@@ -2,19 +2,19 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 653
+entry_count: 654
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（653件）
+# 学習パス — 学術概念／経営学（654件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[agile-development|アジャイルソフトウェア開発]]（接続 67）
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 38）
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 40）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 29）
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 27）
@@ -87,6 +87,7 @@ tags:
 - 1962年: [[mgmt-bricolage|アントレプレナー的ブリコラージュ（Entrepreneurial Bricolage）]]
 - 1962年: [[mgmt-modularity|モジュール化]]
 - 1963年: [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]]
+- 1963年: [[mgmt-bureaucratic-phenomenon-crozier|クロジエの官僚制現象——規則の増殖が不確実性支配という権力を生み悪循環を招く]]
 - 1963年: [[mgmt-double-jeopardy-law|ダブル・ジョパディの法則（Double Jeopardy Law／Ehrenberg 1990）——市場シェアの小さいブランドは買い手が少なく、しかもその買い手の忠誠度も低い]]
 - 1963年: [[mgmt-organizational-slack|組織スラック]]
 - 1964年: [[mgmt-expectancy-theory|期待理論（ブルーム）]]

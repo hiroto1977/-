@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[human-self-efficacy-performance-bandura|自己効力感と目標設定・パフォーマンスの社会認知理論（バンデューラ）]] — 同分野の近傍
-- [[human-mindfulness|マインドフルネス（MBSR）]] — 同分野の近傍
 - [[human-psychoneuroimmunology-ader-cohen|精神神経免疫学——心理・神経・免疫系の双方向的相互作用]] — 同分野の近傍
 
 ## 関連
