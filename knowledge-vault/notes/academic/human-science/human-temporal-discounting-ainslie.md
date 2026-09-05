@@ -40,7 +40,7 @@ aliases:
 - [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
 - [[econ-present-bias|現在バイアス：先延ばし行動と自己制御の行動経済学的分析]] — 同じ思想家
 - [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — 同じ思想家
-- [[human-hyperbolic-discounting|双曲割引]] — 同分野の近傍
+- [[human-sleeper-effect|スリーパー効果（眠り効果）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

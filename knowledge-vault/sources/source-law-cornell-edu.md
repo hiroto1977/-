@@ -2,7 +2,7 @@
 title: "law.cornell.edu"
 type: source-domain
 host: "law.cornell.edu"
-cite_count: 149
+cite_count: 150
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # law.cornell.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **149 件**（リファレンス 124 ・ 公的 24 ・ 学術 1）
+> [!info] 出典ドメイン索引 ・ 引用 **150 件**（リファレンス 125 ・ 公的 24 ・ 学術 1）
 
 ## このドメインを出典とする項目
 
@@ -128,6 +128,7 @@ tags:
 - [[bizlaw-parens-patriae|パレンス・パトリエ法理（Parens Patriae Doctrine）]] — 15U.S.C.§15c—Antitrustparenspatriaeactionsbystateattorneysgeneral（Har…
 - [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — CornellLawSchoolLII—ParolEvidenceRule
 - [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — UCC§2-202:ParolorExtrinsicEvidence(CornellLII)
+- [[bizlaw-peevyhouse-v-garland-coal-cost-of-completion|ピーヴィーハウス対ガーランド石炭事件——完成費用か価値減少分か、契約損害賠償の測り方]] — CornellLawSchoolLegalInformationInstitute(LII),Wex:'Costofcompletion'…
 - [[bizlaw-penalty-clause|違約罰条項——損害填補を超えた懲罰的支払条項の執行不能性]] — CornellLII:Penaltyclause—unenforceablepenaltyvsliquidateddamages,inte…
 - [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — CornellLII—UCC§2-601:Buyer'sRightsonImproperDelivery(statutorytext;in…
 - [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — CornellLegalInformationInstitute(Wex):PerfectTenderRule—UCCArticle2,b…

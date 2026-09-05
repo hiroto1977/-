@@ -2,7 +2,7 @@
 title: "ポール・ミルグロム"
 type: thinker
 person_key: "ミルグロム|ポ"
-concept_count: 12
+concept_count: 13
 tags:
   - person
   - index
@@ -10,9 +10,9 @@ tags:
 
 # ポール・ミルグロム
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **12 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **13 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（12件）
+## 学術概念（13件）
 - [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 連関価値（affiliatedvalues）とリンケージ原理（linkageprinciple）は、ポール・ミルグロム…
 - [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — オークション理論は、財の配分と価格決定を入札競争を通じて行うメカニズムの設計と分析に関する経済理論であり、ヴィックリー…
 - [[econ-chain-store-paradox-selten|チェーンストアの逆説——評判による参入阻止と後ろ向き帰納の衝突]] — チェーンストアの逆説（chainstoreparadox）は、ラインハルト・ゼルテンが1978年に提示した、評判と参入…
@@ -24,6 +24,7 @@ tags:
 - [[econ-milgrom-stokey-no-trade|ノートレード定理——合理的な投機的取引は成立しない]] — ノートレード定理（no-tradetheorem、取引不能定理）は、ポール・ミルグロムとナンシー・ストーキーが1982…
 - [[econ-myerson-optimal-auction|マイヤーソンの最適オークション——仮想評価による収入最大化]] — マイヤーソンの最適オークション（Myerson'soptimalauction）は、ロジャー・マイヤーソンが1981年…
 - [[econ-predatory-pricing-mcgee|略奪的価格設定——競争相手の排除を狙う原価割れ価格とその合理性論争]] — 略奪的価格設定（predatorypricing）は、企業が競争相手を市場から駆逐する目的で、価格を費用を下回る水準に…
+- [[econ-reputation-effects-kreps-wilson-milgrom-roberts|不完備情報下の評判効果——わずかなタイプの不確実性が参入阻止と協調を合理化する]] — 不完備情報下の評判効果とは、繰り返しゲームで長期的関与者の「タイプ」にわずかな不確実性があるだけで、評判形成のため一見…
 - [[econ-winner-curse-auction|勝者の呪い——共通価値オークションで落札者が過大評価し損をする逆説]] — 勝者の呪い（winner'scurse）は、共通価値（commonvalue）オークション——入札される対象が、すべて…
 
 ## 関連

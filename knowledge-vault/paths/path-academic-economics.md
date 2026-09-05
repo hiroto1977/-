@@ -2,18 +2,18 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 956
+entry_count: 958
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（956件）
+# 学習パス — 学術概念／経済学（958件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 81）
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 83）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 49）
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 43）
 - [[econ-agglomeration-economies|集積の経済]]（接続 43）
@@ -244,6 +244,7 @@ tags:
 - 1968年: [[econ-entrepreneurial-state|起業家国家（マッツカートの公共イノベーション論）]]
 - 1968年: [[econ-precautionary-saving|予備的貯蓄]]
 - 1968年: [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]]
+- 1969年: [[econ-armington-elasticity-national-product-differentiation|アーミントンの仮定とアーミントン弾力性——同じ財でも生産国が違えば不完全代替とみなし、その代替の弾力性で貿易モデルを閉じる考え方]]
 - 1969年: [[econ-emmanuel-unequal-exchange|不等価交換論（エマニュエル理論）]]
 - 1969年: [[econ-flypaper-effect|フライペーパー効果（flypaper effect／ハエ取り紙効果）——一括補助金が私的所得より地方公共支出を強く押し上げる現象]]
 - 1970年: [[econ-adverse-selection|逆選択（レモン市場）]]
@@ -324,6 +325,7 @@ tags:
 - 1982年: [[econ-gift-exchange|贈与交換（労働の部分的贈与交換）]]
 - 1982年: [[econ-rational-bubble|合理的バブル]]
 - 1982年: [[econ-rbc|実物的景気循環論（RBC）]]
+- 1982年: [[econ-reputation-effects-kreps-wilson-milgrom-roberts|不完備情報下の評判効果——わずかなタイプの不確実性が参入阻止と協調を合理化する]]
 - 1982年: [[econ-rubinstein-bargaining|ルービンシュタイン交渉モデル]]
 - 1982年: [[econ-sterilized-intervention|不胎化介入（外国為替市場介入）]]
 - 1982年: [[econ-sunk-costs-market-structure-sutton|内生的サンクコストと市場構造の下限アプローチ——広告・R&D競争が集中度をゼロへ収束させない仕組み]]

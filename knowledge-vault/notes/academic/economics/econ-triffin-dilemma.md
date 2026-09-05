@@ -33,6 +33,7 @@ aliases:
 
 ## 関連概念
 - [[eh-1980|1980年（昭和55年）]] — 出典を共有
+- [[econ-armington-elasticity-national-product-differentiation|アーミントンの仮定とアーミントン弾力性——同じ財でも生産国が違えば不完全代替とみなし、その代替の弾力性で貿易モデルを閉じる考え方]] — 出典を共有
 - [[econ-hysteresis|ヒステリシス（履歴効果）]] — 出典を共有
 - [[econ-monetarism|マネタリズム]] — 出典を共有
 - [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — 出典を共有
@@ -41,7 +42,6 @@ aliases:
 - [[eh-1989|1989年（昭和64/平成元年）]] — 出典を共有
 - [[eh-1990|1990年（平成2年）]] — 出典を共有
 - [[eh-2009|2009年（平成21年）]] — 出典を共有
-- [[econ-zero-lower-bound|ゼロ金利下限（実効下限制約）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

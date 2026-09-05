@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／ビジネス法務"
 type: flashcard-deck
 deck_key: "academic-business-law"
-card_count: 689
+card_count: 690
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／ビジネス法務（689枚）
+# フラッシュカード — 学術概念／ビジネス法務（690枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -996,6 +996,8 @@ tags:
   - **A:** 資金決済法（資金決済に関する法律、平成21年法律第59号）は、2009年に制定され2010年4月1日に施行された、資金決済サービスを規律する金融庁所管の法律である。利用者保護と決済サービスの適正な運営を確保し、国民経済の健全な発展に資することを目的とする。（→ [[bizlaw-payment-services-act]]）
 - **Q:** EU決済サービス指令（PSD2）——オープンバンキングと決済市場の自由化
   - **A:** EU第2次決済サービス指令（PSD2, Directive 2015/2366）は、EU域内の決済サービス市場の競争促進・消費者保護・セキュリティ強化を目的とする包括的金融規制であり、オープンバンキング革命の法的基盤を構成する。PSD2の核心は、銀行に対して口座情報サービスプロバイダー（AISP）と決済指図サービスプロバイダー（PISP）への顧客口座データへのアクセス提供を義務付けるアクセス・トゥ・アカウント（XS2A）規定にある。（→ [[bizlaw-payment-services-directive-psd2]]）
+- **Q:** ピーヴィーハウス対ガーランド石炭事件——完成費用か価値減少分か、契約損害賠償の測り方
+  - **A:** ピーヴィーハウス対ガーランド石炭事件（Peevyhouse v. Garland Coal & Mining Co., 382 P.2d 109, Okla. 1962、1963年再審請求棄却）は、契約違反の損害賠償を完成費用か価値減少分で測るかを定めた米契約法の代表判例である。（→ [[bizlaw-peevyhouse-v-garland-coal-cost-of-completion]]）
 - **Q:** ペムゼルの四類型——慈善目的の古典的な分類
   - **A:** ペムゼルの四類型（the Pemsel categories、「慈善の四つの項目」）は、所得税特別目的委員会対ペムゼル事件（Income Tax Special Purposes Commissioners v Pemsel、1891年、貴族院、マクナテン卿）に由来する、イングランド法における「慈善目的（charitable purposes）」の古典的な分類である。（→ [[bizlaw-pemsel-charity-heads]]）
 - **Q:** 違約罰条項——損害填補を超えた懲罰的支払条項の執行不能性

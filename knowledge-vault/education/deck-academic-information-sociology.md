@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／情報社会学"
 type: flashcard-deck
 deck_key: "academic-information-sociology"
-card_count: 613
+card_count: 614
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／情報社会学（613枚）
+# フラッシュカード — 学術概念／情報社会学（614枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -1186,6 +1186,8 @@ tags:
   - **A:** 時間的焦点理論（Temporal Focus Theory）とは、個人や組織が過去・現在・未来に注意をどう配分するかの認知傾向を説明する理論。Shipp, Edwards & Lambert（2009年）はOrganizational Behavior and Human Decision Processesで時間的焦点尺度（TFS）を開発。（→ [[infosoc-temporal-focus-information]]）
 - **Q:** テクストの密猟——ファンによる能動的なメディアの流用と作り替え
   - **A:** テクストの密猟（textual poaching）は、ヘンリー・ジェンキンスが1992年の著作『テクストの密猟者たち——テレビ・ファンと参加型文化』で、ミシェル・ド・セルトーの「密猟」概念を応用して提示した概念で、メディアのファンが、ポピュラー文化のテクスト（テレビ番組、映画、書物）を、自分自身の目的・楽しみのために、能動的かつ選択的に「流用（appropriate）」し、解釈し直し、作り替えるあり方を指す——メディアの作り手が所有す…（→ [[infosoc-textual-poaching-jenkins]]）
+- **Q:** カーの「浅瀬」論——ネットの断片的・多重的な情報環境が深い読みと持続的注意を蝕むという主張
+  - **A:** ニコラス・カーが2008年の論考「Is Google Making Us Stupid?」（The Atlantic、2008年7-8月号）で提起し、2010年の著書『The Shallows: What the Internet Is Doing to Our Brains』（W. W. Norton、2011年ピュリツァー賞ノンフィクション部門最終候補、邦訳『ネット・バカ』篠儀直子訳、青土社）で展開した。（→ [[infosoc-the-shallows-carr]]）
 - **Q:** 第三者効果——メディアの影響を他者により強く帰属する知覚的偏向
   - **A:** 第三者効果（third-person effect）は、W・フィリップス・デイヴィソンが1983年の論文で提唱したコミュニケーション理論で、人々がマスメディアのメッセージの影響について、自分自身よりも他者（第三者）に対してより大きく及ぶと知覚する傾向を指す。（→ [[infosoc-third-person-effect-davison]]）
 - **Q:** サードプレイス

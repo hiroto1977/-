@@ -41,8 +41,8 @@ Terence R. Mitchell ／ Brooks C. Holtom ／ Thomas W. Lee
 - [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 出典を共有
 - [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
 - [[human-riasec-vocational-interests-holland|ホランドのRIASEC理論——六類型の適合度で職業選択と職務満足を説明する六角形モデル]] — 出典を共有
+- [[human-selective-optimization-with-compensation-baltes|選択・最適化・補償（SOC）モデル——資源が減る中で目標を絞り、手段を磨き、失った機能を補って発達を続けるバルテスの生涯発達論]] — 出典を共有
 - [[human-sociometer-theory|ソシオメーター理論]] — 出典を共有
-- [[human-status-characteristics|地位特性理論（期待状態理論）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

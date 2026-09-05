@@ -36,9 +36,9 @@ aliases:
 - [[infosoc-creative-class-florida|クリエイティブ・クラス——創造的人材が駆動する都市と経済]] — 同じ思想家
 - [[mgmt-social-capital-intellectual-capital-nahapiet-ghoshal|ナハピエト＝ゴシャールの社会関係資本論——構造的・関係的・認知的の三次元による知的資本創造と組織の優位性]] — 同じ思想家
 - [[infosoc-phatic-culture|ファティック文化（Phatic Culture／Vincent Miller 2008）——内容より「つながりの維持」を目的とする、中身の薄いコミュニケーションの拡大]] — 同分野の近傍
-- [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]] — 同分野の近傍
 - [[infosoc-media-multiplexity-haythornthwaite|メディア・マルチプレクシティ理論（ヘイソーンスウェイト）——絆の強さと使うメディアの数]] — 同分野の近傍
 - [[infosoc-urban-data-commons|アーバン・データ・コモンズとスマート都市統治]] — 同分野の近傍
+- [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

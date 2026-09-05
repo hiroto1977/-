@@ -2,7 +2,7 @@
 title: "cambridge.org"
 type: source-domain
 host: "cambridge.org"
-cite_count: 61
+cite_count: 62
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # cambridge.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **61 件**（学術 59 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **62 件**（学術 60 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -49,6 +49,7 @@ tags:
 - [[human-legitimate-peripheral-participation|正統的周辺参加と実践共同体]] — Lave&Wenger,SituatedLearning:LegitimatePeripheralParticipation—Cambri…
 - [[human-predictive-processing-theory|予測処理理論]] — Clark,A.(2013).Whatevernext?Predictivebrains,situatedagents,andthefut…
 - [[human-resilience|レジリエンス（心理的回復力）]] — WernerE.E.—Risk,resilience,andrecovery:PerspectivesfromtheKauaiLongit…
+- [[human-selective-optimization-with-compensation-baltes|選択・最適化・補償（SOC）モデル——資源が減る中で目標を絞り、手段を磨き、失った機能を補って発達を続けるバルテスの生涯発達論]] — Baltes,P.B.&Baltes,M.M.(1990)PsychologicalPerspectivesonSuccessfulAgi…
 - [[human-temporal-discounting|時間割引（Temporal Discounting / 遅延割引）]] — ModelsofTemporalDiscounting1937-2000—CambridgeCore
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — Engestrom,Y.(2015).LearningbyExpanding:AnActivity-TheoreticalApproach…
 - [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]] — “AlgorithmicAccountabilityintheMaking,”SocialPhilosophyandPolicy(Camb…

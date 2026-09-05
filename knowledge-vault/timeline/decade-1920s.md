@@ -2,15 +2,15 @@
 title: "1920年代"
 type: timeline-decade
 decade: 1920
-entry_count: 46
+entry_count: 47
 tags:
   - timeline
 ---
 
-# 1920年代 — 46 件
+# 1920年代 — 47 件
 
 - [[year-1920|1920年]]（9件）
-- [[year-1921|1921年]]（2件）
+- [[year-1921|1921年]]（3件）
 - [[year-1922|1922年]]（4件）
 - [[year-1923|1923年]]（4件）
 - [[year-1924|1924年]]（6件）

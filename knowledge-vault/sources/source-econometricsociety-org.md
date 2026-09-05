@@ -2,7 +2,7 @@
 title: "econometricsociety.org"
 type: source-domain
 host: "econometricsociety.org"
-cite_count: 19
+cite_count: 21
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # econometricsociety.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **19 件**（学術 19）
+> [!info] 出典ドメイン索引 ・ 引用 **21 件**（学術 21）
 
 ## このドメインを出典とする項目
 
@@ -29,6 +29,8 @@ tags:
 - [[econ-generalized-method-of-moments-hansen|一般化モーメント法（GMM）——モーメント条件のみから分布を仮定せず母数を推定するハンセンの一般理論]] — Newey,W.K.&West,K.D.(1987)."ASimple,PositiveSemi-Definite,Heteroskeda…
 - [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]] — d’Aspremont,Gabszewicz&Thisse,“OnHotelling’sStabilityinCompetition,”E…
 - [[econ-nash-bargaining|ナッシュ交渉解]] — JohnF.Nash,“TheBargainingProblem”,Econometrica18(2),1950（EconometricS…
+- [[econ-reputation-effects-kreps-wilson-milgrom-roberts|不完備情報下の評判効果——わずかなタイプの不確実性が参入阻止と協調を合理化する]] — DrewFudenberg&DavidK.Levine(1989)"ReputationandEquilibriumSelectionin…
+- [[econ-reputation-effects-kreps-wilson-milgrom-roberts|不完備情報下の評判効果——わずかなタイプの不確実性が参入阻止と協調を合理化する]] — MartinW.Cripps,GeorgeJ.Mailath&LarrySamuelson(2004)"ImperfectMonitori…
 - [[econ-rubinstein-bargaining|ルービンシュタイン交渉モデル]] — ArielRubinstein,"PerfectEquilibriuminaBargainingModel,"Econometrica50…
 - [[econ-welfare-theorems|厚生経済学の基本定理]] — Arrow&Debreu,“ExistenceofanEquilibriumforaCompetitiveEconomy”,Econome…
 - [[human-hot-hand-fallacy|ホットハンドの誤謬]] — Miller&Sanjurjo(2018),Econometrica:streakselectionbiasreassessment

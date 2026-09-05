@@ -2,7 +2,7 @@
 title: "psycnet.apa.org"
 type: source-domain
 host: "psycnet.apa.org"
-cite_count: 47
+cite_count: 48
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # psycnet.apa.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **47 件**（学術 43 ・ リファレンス 4）
+> [!info] 出典ドメイン索引 ・ 引用 **48 件**（学術 44 ・ リファレンス 4）
 
 ## このドメインを出典とする項目
 
@@ -38,6 +38,7 @@ tags:
 - [[human-place-cells-okeefe|場所細胞と認知地図]] — O'Keefe&Nadel(1978)TheHippocampusasaCognitiveMap—OUP
 - [[human-riasec-vocational-interests-holland|ホランドのRIASEC理論——六類型の適合度で職業選択と職務満足を説明する六角形モデル]] — Holland,J.L.(1959).Atheoryofvocationalchoice.JournalofCounselingPsych…
 - [[human-riasec-vocational-interests-holland|ホランドのRIASEC理論——六類型の適合度で職業選択と職務満足を説明する六角形モデル]] — Nauta,M.M.(2010).Thedevelopment,evolution,andstatusofHolland'stheoryo…
+- [[human-selective-optimization-with-compensation-baltes|選択・最適化・補償（SOC）モデル——資源が減る中で目標を絞り、手段を磨き、失った機能を補って発達を続けるバルテスの生涯発達論]] — Baltes,P.B.(1997)OntheIncompleteArchitectureofHumanOntogeny:Selection…
 - [[human-self-reference-effect|自己参照効果]] — APAPsycNet—Rogers,Kuiper&Kirk(1977)"Self-referenceandtheencodingofper…
 - [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]] — Zimmerman(1990)"Self-RegulatedLearningandAcademicAchievement:AnOvervi…
 - [[human-self-regulation-baumeister|自己制御理論とエゴ枯渇——意志力の有限資源モデル（バウマイスター）]] — Baumeister,R.F.etal.(1998)EgoDepletion:IstheActiveSelfaLimitedResourc…

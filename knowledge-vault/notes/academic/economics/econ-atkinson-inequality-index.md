@@ -33,6 +33,7 @@ Anthony B. Atkinson（Journal of Economic Theory 2(3), 1970, アトキンソン�
 - [[econ-optimal-taxation-theory|最適課税理論]] — 同じ思想家
 - [[econ-rawls-difference-principle-social-justice|ロールズの格差原理と正義論——「無知のヴェール」から導く社会的不平等の倫理的許容条件]] — 同分野の近傍
 - [[econ-gordon-growth-model|配当割引モデル（ゴードン成長モデル）]] — 同分野の近傍
+- [[econ-sonnenschein-mantel-debreu-theorem|ゾンネンシャイン＝マンテル＝ドブリュー定理（SMD定理）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

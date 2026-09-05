@@ -32,9 +32,9 @@ aliases:
 
 ## 関連概念
 - [[subsidy-kagoshima|鹿児島県中小企業経営革新支援事業費補助金（鹿児島県）]] — 語彙が近い
+- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 語彙が近い
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]] — 出典を共有
 - [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]] — 出典を共有
-- [[labor-overtime-cap|時間外労働の上限規制（36協定）]] — 出典を共有
 - [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]] — 同分野の近傍
 
 ## 関連

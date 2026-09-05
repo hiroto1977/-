@@ -50483,5 +50483,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://fordhampress.com/cultural-techniques-hb-9780823263752.html', type: 'academic', label: 'Bernhard Siegert, Cultural Techniques: Grids, Filters, Doors, and Other Articulations of the Real (Fordham University Press, 2015), trans. Geoffrey Winthrop-Young — キットラー以後のドイツ・メディア唯物論が文化的技術（Kulturtechnik）論へ展開した出典' },
     ],
   },
+  {
+    id: 'econ-armington-elasticity-national-product-differentiation',
+    discipline: 'economics',
+    title: 'アーミントンの仮定とアーミントン弾力性——同じ財でも生産国が違えば不完全代替とみなし、その代替の弾力性で貿易モデルを閉じる考え方',
+    statement:
+      'アーミントンの仮定とは、同じ種類の財でも生産国（原産地）が違えば別の財とみなし、需要側では不完全代替として扱う考え方である。ポール・S・アーミントンが1969年の論文『A Theory of Demand for Products Distinguished by Place of Production』（IMF Staff Papers 16巻159–178頁）で提示し、国内財と輸入財合成をCES関数で代替させる上段、輸入合成をさらに輸入相手国別に代替させる下段という二段階のネスト構造として、GTAPなど応用一般均衡（CGE）モデルに標準搭載された。この構造により、比較優位のみでは説明できない同種財の相互輸出入を再現でき、モデルは完全特化に陥らず解ける。ただし代替の強さを示すアーミントン弾力性は、ホームバイアスを説明せず前提として組み込むにすぎず、集計レベルや観察期間で値が変わる（フィーンストラ他2018、バイジク他2020のメタ分析3,524件は2.5～5.1、中央値3.8）うえ、短期・長期のギャップも大きい（ボーム他2023は関税変化への貿易反応が短期0.76・長期2程度、収束に7～10年）。その選択次第で関税・貿易自由化の推定福祉効果が変わるため論争が続く。中小企業にとっては、為替や関税の変化で顧客が国内・海外の仕入先をどれだけ切り替えるかを示す指標であり、財の種類や時間軸で価格感応度が異なる点を踏まえた調達・価格戦略が要る。',
+    keyFigures: 'ポール・S・アーミントン（1969『A Theory of Demand for Products Distinguished by Place of Production』IMF Staff Papers 16巻）／トーマス・ハーテル編（1997『Global Trade Analysis: Modeling and Applications』でGTAPの二段階ネストに実装）／フィーンストラ他（2018 macro／micro弾力性の相違）／バイジク他（2020 メタ分析3,524件で2.5～5.1・中央値3.8）／ボーム＆レフチェンコ＆パンダライ＝ナヤール（2023 短期0.76・長期2の弾力性ギャップ）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.elibrary.imf.org/view/journals/024/1969/001/article-A007-en.xml', type: 'academic', label: 'Armington, P.S. (1969) "A Theory of Demand for Products Distinguished by Place of Production," IMF Staff Papers, 16(1), 159-178 — アーミントンの仮定の原典（生産地別の需要理論の提示）を確認' },
+      { url: 'https://ideas.repec.org/a/tpr/restat/v100y2018i1p135-150.html', type: 'academic', label: 'Feenstra, R.C., Luck, P., Obstfeld, M. & Russ, K.N. (2018) "In Search of the Armington Elasticity," The Review of Economics and Statistics, 100(1), 135-150 — macro弾力性とmicro弾力性の食い違いを確認' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0022199620300982', type: 'academic', label: 'Bajzik, J., Havranek, T., Irsova, Z. & Schwarz, J. (2020) "Estimating the Armington elasticity: The importance of study design and publication bias," Journal of International Economics, 127, 103383 — 3,524件のメタ分析による代表値（2.5～5.1、中央値3.8）と公表バイアスを確認' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2Faer.20210225', type: 'academic', label: 'Boehm, C.E., Levchenko, A.A. & Pandalai-Nayar, N. (2023) "The Long and Short (Run) of Trade Elasticities," American Economic Review, 113(4), 861-905 — 貿易弾力性の短期・長期ギャップ（短期0.76・長期2、収束に7～10年）を確認' },
+      { url: 'https://en.wikipedia.org/wiki/Armington_elasticity', type: 'reference', label: '"Armington elasticity," Wikipedia (English) — 概念の一般的定義とCGEモデルでの用法の確認（参考）' },
+    ],
+  },
+  {
+    id: 'econ-reputation-effects-kreps-wilson-milgrom-roberts',
+    discipline: 'economics',
+    title: '不完備情報下の評判効果——わずかなタイプの不確実性が参入阻止と協調を合理化する',
+    statement:
+      '不完備情報下の評判効果とは、繰り返しゲームで長期的関与者の「タイプ」にわずかな不確実性があるだけで、評判形成のため一見非合理な行動を続ける均衡を合理化する一群のモデルである。デイヴィッド・クレプスとロバート・ウィルソンの「Reputation and Imperfect Information」（Journal of Economic Theory、1982年）、および同号のポール・ミルグロムとジョン・ロバーツが示した。ゼルテンのチェーンストアの逆説の完備情報を緩め、参入者が独占企業を「常に応戦する強硬タイプ」だとわずかでも信じれば、合理タイプもその評判を模倣し序盤の参入者に応戦する方が得になり、終盤の数期を除く全期間で参入阻止が均衡となる（解概念は同年の逐次均衡）。同号の四者共著論文は同じ論理を有限反復囚人のジレンマに適用し、わずかな協調型の存在だけで序盤の協調を合理化した。ドリュー・フューデンバーグとデイヴィッド・レヴィン（1989）は単一の忍耐強い長期プレイヤーに一般化し、割引因子が1に近づくほど均衡ペイオフがシュタッケルベルク・ペイオフへ収束する下限を導いた。ただし結果は仮定するタイプ集合に依存し均衡は一意でなく、不完全モニタリング下では評判は永続せず失われうること（マーティン・クリップス、ジョージ・メイラス、ラリー・サミュエルソン、2004年）も指摘される。中小事業者にとり、価格や品質の評判は繰り返し取引で回収される投資であり、早期に姿勢を示す価値があるが維持せねば失われる。',
+    keyFigures: 'デイヴィッド・クレプス＆ロバート・ウィルソン（1982『Reputation and Imperfect Information』Journal of Economic Theory 27(2)／1982『Sequential Equilibria』Econometrica 50(4)）／ポール・ミルグロム＆ジョン・ロバーツ（1982『Predation, Reputation, and Entry Deterrence』Journal of Economic Theory 27(2)）／クレプス・ミルグロム・ロバーツ・ウィルソン（1982『Rational Cooperation in the Finitely Repeated Prisoners\' Dilemma』同27(2)、通称「gang of four」論文）／ドリュー・フューデンバーグ＆デイヴィッド・レヴィン（1989『Reputation and Equilibrium Selection in Games with a Patient Player』Econometrica 57(4)）／マーティン・クリップス＆ジョージ・メイラス＆ラリー・サミュエルソン（2004『Imperfect Monitoring and Impermanent Reputations』Econometrica 72(2)・後続批判）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/pii/0022053182900308', type: 'academic', label: 'David M. Kreps & Robert Wilson (1982) "Reputation and Imperfect Information," Journal of Economic Theory, 27(2), pp. 253–279 — 不完備情報下でわずかな『強硬タイプ』の事前確率が参入阻止的な評判形成を合理化する基本モデルを提示' },
+      { url: 'https://www.sciencedirect.com/science/article/pii/002205318290031X', type: 'academic', label: 'Paul Milgrom & John Roberts (1982) "Predation, Reputation, and Entry Deterrence," Journal of Economic Theory, 27(2), pp. 280–312 — 同時発表の姉妹論文。非対称情報下での略奪的行動による参入阻止の均衡を分析' },
+      { url: 'https://www.sciencedirect.com/science/article/pii/0022053182900291', type: 'academic', label: 'David M. Kreps, Paul Milgrom, John Roberts & Robert Wilson (1982) "Rational Cooperation in the Finitely Repeated Prisoners\' Dilemma," Journal of Economic Theory, 27(2), pp. 245–252 — 同じ論理を有限回反復囚人のジレンマに適用し序盤の協調が均衡になることを示した論文' },
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1989/07/01/reputation-and-equilibrium-selection-games-patient-player', type: 'academic', label: 'Drew Fudenberg & David K. Levine (1989) "Reputation and Equilibrium Selection in Games with a Patient Player," Econometrica, 57(4), pp. 759–778 — 単一の忍耐強い長期プレイヤーに一般化し、割引因子が1に近づくほど均衡ペイオフがシュタッケルベルク・ペイオフへ収束する下限を導出' },
+      { url: 'https://www.econometricsociety.org/publications/econometrica/2004/03/01/imperfect-monitoring-and-impermanent-reputations', type: 'academic', label: 'Martin W. Cripps, George J. Mailath & Larry Samuelson (2004) "Imperfect Monitoring and Impermanent Reputations," Econometrica, 72(2), pp. 407–432 — 不完全モニタリング下では評判が永続しないことを示し初期モデルの限界を指摘する後続研究' },
+    ],
+  },
+  {
+    id: 'mgmt-normalization-of-deviance-vaughan',
+    discipline: 'management',
+    title: '逸脱の正常化——小さな逸脱の反復的許容が組織の「正常」の基準を書き換える',
+    statement:
+      '社会学者ダイアン・ヴォーンが1986年のチャレンジャー号事故の分析から示した概念で、初出は『The Challenger Launch Decision』（1996）。新技術を運用する組織で、当初は危険信号とみなされた事象（Oリング浸食など）が大事故に至らず運用を重ねるたびに「許容できるリスク」へ再定義され、組織の「正常」の基準自体が動く漸進的過程を指す。ヴォーンは1984年の飛行準備審査でOリング浸食が安全余裕内として公式に受容された経緯を示し、経営者の損得計算（amoral calculator）ではなく、NASAの生産の文化（culture of production）と部局間の構造的秘匿性（structural secrecy）から説明した。1999年の論文（Annual Review of Sociology）で理論を一般化し、2003年のコロンビア号事故ではヴォーンが参加した事故調査委員会報告書第8章「History as Cause」が同型の過程の再発を検証、医療分野ではバンジャ（2010）が診療基準違反の常態化に概念を拡張した。批判としては、どの事象を「危険信号」とみなすかを事後的に選び出す後知恵バイアスがあり、デッカーの漂流的失敗（drift into failure）との境界も論争的である。中小企業には、些細な基準違反を「今回も問題なかった」で済ませず、ニアミス報告と基準の定期的な再検証で工程・納期の圧力による安全・品質基準の侵食を防ぐ含意がある。',
+    keyFigures: 'ダイアン・ヴォーン（1996『The Challenger Launch Decision』University of Chicago Press／1999 Annual Review of Sociology）／対比: チャールズ・ペロー（Normal Accidents、構造的説明）／ジョン・バンジャ（2010、医療への概念拡張）／シドニー・デッカー（Drift into Failure、対比概念）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.press.uchicago.edu/ucp/books/book/chicago/C/bo22781921.html', type: 'academic', label: 'Vaughan, D. (1996) The Challenger Launch Decision: Risky Technology, Culture, and Deviance at NASA, University of Chicago Press（Enlarged Edition 2016）— 逸脱の正常化概念の初出とチャレンジャー号事故の事例分析' },
+      { url: 'https://www.annualreviews.org/doi/10.1146/annurev.soc.25.1.271', type: 'academic', label: 'Vaughan, D. (1999) \'The Dark Side of Organizations: Mistake, Misconduct, and Disaster\', Annual Review of Sociology 25, pp.271-305（DOI: 10.1146/annurev.soc.25.1.271）— ミステイク・不正行為・災害を統合する理論的一般化' },
+      { url: 'https://ntrs.nasa.gov/citations/20030066167', type: 'government', label: 'Columbia Accident Investigation Board (2003) Columbia Accident Investigation Board Report, Volume I, Chapter 8 \'History as Cause: Columbia and Challenger\' — コロンビア号事故における逸脱の正常化の再発の検証' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0007681309001542', type: 'academic', label: 'Banja, J. (2010) \'The normalization of deviance in healthcare delivery\', Business Horizons 53(2), pp.139-148 — 医療分野への概念の拡張' },
+      { url: 'https://en.wikipedia.org/wiki/Normalization_of_deviance', type: 'reference', label: 'Wikipedia contributors, \'Normalization of deviance\' — 概念の定義および関連概念（Dekkerのdrift into failureなど）の概観' },
+    ],
+  },
+  {
+    id: 'human-selective-optimization-with-compensation-baltes',
+    discipline: 'human-science',
+    title: '選択・最適化・補償（SOC）モデル——資源が減る中で目標を絞り、手段を磨き、失った機能を補って発達を続けるバルテスの生涯発達論',
+    statement:
+      '選択・最適化・補償（SOC）モデルは、ポール・B・バルテスとマーガレット・M・バルテスが1990年の共編著『Successful Aging: Perspectives from the Behavioral Sciences』（Cambridge University Press）第1章で示した生涯発達の適応モデルである。加齢で資源が減る中、①選択（目標を絞る主体的選択と喪失に応じた選択）、②最適化（残す目標への訓練・練習）、③補償（失った手段を道具や他者で代替）を組み合わせ発達を続けるとする。バルテスが好んで語ったピアニスト、アルトゥール・ルービンシュタインの逸話——高齢で曲目を絞り、より練習し、速い箇所の直前で減速して速さの印象を作った——が典例。バルテス（1997、American Psychologist）は発達基盤が加齢とともに「不完全な構造」になるとし、あらゆる年齢で獲得と喪失が並行するという生涯発達心理学の前提（流動性知能の低下やブランツテッターの同化・調節理論と並ぶ）を示した。フロインド＆バルテス（2002、JPSP）は自己報告尺度の妥当性を確認し、モギミらの2017年メタ分析（JOB）はSOC使用が年齢・職務満足・職務パフォーマンスと正の関連を持つと示した一方、自己報告依存・一般的自己制御との重複・文化的一般性が限界とされる。中小企業では高齢熟練社員の担当を絞り深化させ、ツールや同僚との分業で欠けを補う役割設計が戦力維持に資する。',
+    keyFigures: 'ポール・B・バルテス（1990『Successful Aging』共編／1997 American Psychologist「On the Incomplete Architecture of Human Ontogeny」）／マーガレット・M・バルテス（1990『Successful Aging』共編）／アレクサンドラ・M・フロインド（2002 Journal of Personality and Social Psychology、SOC自己報告尺度）／ウルスラ・M・シュタウディンガー＆ウルマン・リンデンベルガー（1999 Annual Review of Psychology、生涯発達心理学の理論的総括）／モギミ・ザッハー・シャイベ＆ヴァン・イペレン（2017 Journal of Organizational Behavior、職場文脈のSOCメタ分析）／関連: ヨッヘン・ブランツテッター（同化・調節の発達的行為調整理論）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.cambridge.org/core/books/abs/successful-aging/psychological-perspectives-on-successful-aging-the-model-of-selective-optimization-with-compensation/EAE9389C90617AE014260735DFFCEF82', type: 'academic', label: 'Baltes, P. B. & Baltes, M. M. (1990) Psychological Perspectives on Successful Aging: The Model of Selective Optimization with Compensation — in P. B. Baltes & M. M. Baltes (Eds.), Successful Aging: Perspectives from the Behavioral Sciences, Cambridge University Press, pp. 1–34 — SOCモデルの原典、三過程（選択・最適化・補償）の初回体系化' },
+      { url: 'https://psycnet.apa.org/record/1997-03698-009', type: 'academic', label: 'Baltes, P. B. (1997) On the Incomplete Architecture of Human Ontogeny: Selection, Optimization, and Compensation as Foundation of Developmental Theory — American Psychologist, 52(4), 366–380 — 生涯発達の理論的基盤と『不完全な構造』論' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/11999929/', type: 'academic', label: 'Freund, A. M. & Baltes, P. B. (2002) Life-Management Strategies of Selection, Optimization, and Compensation: Measurement by Self-Report and Construct Validity — Journal of Personality and Social Psychology, 82(4), 642–662 — 自己報告尺度の開発と構成概念妥当性の検証' },
+      { url: 'https://www.annualreviews.org/doi/abs/10.1146/annurev.psych.50.1.471', type: 'academic', label: 'Baltes, P. B., Staudinger, U. M. & Lindenberger, U. (1999) Lifespan Psychology: Theory and Application to Intellectual Functioning — Annual Review of Psychology, 50, 471–507 — 生涯発達心理学の理論的前提（獲得と喪失の並行・可塑性）の総括' },
+      { url: 'https://onlinelibrary.wiley.com/doi/full/10.1002/job.2108', type: 'academic', label: 'Moghimi, D., Zacher, H., Scheibe, S. & Van Yperen, N. W. (2017) The Selection, Optimization, and Compensation Model in the Work Context: A Systematic Review and Meta-Analysis of Two Decades of Research — Journal of Organizational Behavior, 38(2), 247–275 — 職場文脈でのSOC使用と年齢・職務パフォーマンス・幸福感の関連のメタ分析' },
+    ],
+  },
+  {
+    id: 'bizlaw-peevyhouse-v-garland-coal-cost-of-completion',
+    discipline: 'business-law',
+    title: 'ピーヴィーハウス対ガーランド石炭事件——完成費用か価値減少分か、契約損害賠償の測り方',
+    statement:
+      'ピーヴィーハウス対ガーランド石炭事件（Peevyhouse v. Garland Coal & Mining Co., 382 P.2d 109, Okla. 1962、1963年再審請求棄却）は、契約違反の損害賠償を完成費用か価値減少分で測るかを定めた米契約法の代表判例である。1954年、ピーヴィーハウス夫妻は農地でのストリップマイニングを認める5年賃貸借契約をガーランド石炭社と結び、採掘後の土地復旧を対価の一部として求めたが、同社は履行しなかった。復旧費用は約2万9000ドルに及ぶ一方、土地価値の増加はわずか300ドルで、陪審は5000ドルを認定した。オクラホマ州最高裁（多数意見ジャクソン判事）は復旧義務を賃貸借の主目的（採炭）に付随的とし履行費用が経済的利益に著しく不均衡だとして賠償を300ドルに限定、アーウィン判事は当事者が復旧を求めて契約した事実を重視すべきと反対した。グローブス対ジョン・ワンダー社事件（1939年）は故意の違反に完成費用を認め、リステイトメント第二次契約法348条は価値減少と著しく不均衡でなければ完成費用を認める妥協基準を置く。マウテ（1995年）は夫妻が復旧条項のため前払い3000ドルを放棄していた事実を明らかにした。日本法には同種の二分論はなく、民法416条の予見可能性の枠内で修補費用相当額の当否が調整される。中小事業者への含意は、市場価値を超える主観的価値のために発注する際は損害賠償の測り方か損害賠償額の予定条項を契約に明示すべきことである。',
+    keyFigures: 'ジャクソン判事（多数意見・1962）／アーウィン判事（反対意見・1962）／ジュディス・マウテ（1995『Peevyhouse v. Garland Coal & Mining Co. Revisited: The Ballad of Willie and Lucille』Northwestern University Law Review 89）／対比: グローブス対ジョン・ワンダー社事件（1939、完成費用を認容）／対比: ベンジャミン・カードーゾ（Jacob & Youngs v. Kent、1921、実質的履行）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.semanticscholar.org/paper/Peevyhouse-v.-Garland-Coal-&-Mining-Co.-Revisited:-Maute/655273125a042303b2f2d76b90bfd604597f563f', type: 'academic', label: 'Maute, J. L. (1995) \'Peevyhouse v. Garland Coal & Mining Co. Revisited: The Ballad of Willie and Lucille,\' Northwestern University Law Review, Vol. 89, No. 4, p. 1341 (1995) — 夫妻が復旧条項を求めて前払い 3,000 ドルを放棄した事実と、被告側の訴訟戦略の再検証' },
+      { url: 'https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=36236', type: 'government', label: 'Peevyhouse v. Garland Coal & Mining Co., 382 P.2d 109 (Okla. 1962) — Oklahoma State Courts Network（OSCN）掲載の判決原文 — 事実関係、多数意見（Jackson, J.）と反対意見（Irwin, J.）、300 ドルの判決' },
+      { url: 'https://www.courtlistener.com/opinion/3536897/groves-v-john-wunder-co/', type: 'government', label: 'Groves v. John Wunder Co., 205 Minn. 163, 286 N.W. 235 (Minn. 1939) — CourtListener 掲載の判決 — 故意の違反に完成費用を認めた対照判例' },
+      { url: 'https://www.law.cornell.edu/wex/cost_of_completion', type: 'reference', label: 'Cornell Law School Legal Information Institute (LII), Wex: \'Cost of completion\' — 完成費用と価値減少分の二つの損害算定基準の枠組み' },
+      { url: 'https://en.wikipedia.org/wiki/Peevyhouse_v._Garland_Coal_%26_Mining_Co.', type: 'reference', label: 'Wikipedia: \'Peevyhouse v. Garland Coal & Mining Co.\' — 事件の概要・事実・結末の独立した照合' },
+    ],
+  },
+  {
+    id: 'infosoc-the-shallows-carr',
+    discipline: 'information-sociology',
+    title: 'カーの「浅瀬」論——ネットの断片的・多重的な情報環境が深い読みと持続的注意を蝕むという主張',
+    statement:
+      'ニコラス・カーが2008年の論考「Is Google Making Us Stupid?」（The Atlantic、2008年7-8月号）で提起し、2010年の著書『The Shallows: What the Internet Is Doing to Our Brains』（W. W. Norton、2011年ピュリツァー賞ノンフィクション部門最終候補、邦訳『ネット・バカ』篠儀直子訳、青土社）で展開した。メディアの形式が認知を規定するとの立場から、ハイパーリンクや通知による中断が読む行為を深い読みから断片的な走査（スキミング）へ変質させ、マーゼニックの神経可塑性研究とタクシー運転手の海馬肥大を示すマグワイアの2000年研究を根拠に、脳の回路が再編されると論じる。オフィルらの2009年PNAS論文は重度マルチタスカーほど無関係情報の抑制が弱いと示し、スパロウらの2011年Science論文の「グーグル効果」は主張を部分的に支えるが標本規模や再現性に課題が残り、2019年のFirthらのWorld Psychiatryレビューも支持と限定を併記する。刊行後はベストセラーとなったが、ピンカーはニューヨーク・タイムズ論説でグーテンベルク以来のモラルパニックの反復と反論し、シャーキーは『Cognitive Surplus』で対置した。中小事業者への含意は、契約書や決算資料など判断を左右する長文を通知を切った時間で全文通読し、断片的な確認作業と時間帯を分けることにある。',
+    keyFigures: 'ニコラス・カー（2008『Is Google Making Us Stupid?』The Atlantic／2010『The Shallows』W. W. Norton）／マイケル・マーゼニック（神経可塑性研究）／エレノア・マグワイア（2000 タクシー運転手の海馬研究・PNAS）／エヤル・オフィル＆クリフォード・ナス＆アンソニー・ワグナー（2009 PNAS メディアマルチタスキング研究）／ベツィ・スパロウ（2011 Science「グーグル効果」研究）／対比: スティーブン・ピンカー（2010 NYT論説で反論）／クレイ・シャーキー（2010『Cognitive Surplus』で対置）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.pnas.org/doi/10.1073/pnas.0903620106', type: 'academic', label: 'Ophir, E., Nass, C., & Wagner, A. D. (2009). "Cognitive control in media multitaskers." Proceedings of the National Academy of Sciences, 106(37), 15583–15587. — カーの議論が依拠するメディアマルチタスキングと注意制御の研究' },
+      { url: 'https://www.science.org/doi/10.1126/science.1207745', type: 'academic', label: 'Sparrow, B., Liu, J., & Wegner, D. M. (2011). "Google Effects on Memory: Cognitive Consequences of Having Information at Our Fingertips." Science, 333(6043), 776–778. — カーの主張を後から検証した「グーグル効果」の実証' },
+      { url: 'https://onlinelibrary.wiley.com/doi/full/10.1002/wps.20617', type: 'academic', label: 'Firth, J., Torous, J., Stubbs, B., et al. (2019). "The \'online brain\': how the Internet may be changing our cognition." World Psychiatry, 18(2), 119–129. — カーの認知変化テーゼを部分的に支持しつつ限定するレビュー' },
+      { url: 'https://en.wikipedia.org/wiki/The_Shallows_(book)', type: 'reference', label: 'Wikipedia, "The Shallows (book)" — 2010 年 W. W. Norton 刊と 2011 年ピュリツァー賞ノンフィクション部門最終候補の確認' },
+      { url: 'https://www.forbes.com/2010/05/30/clay-shirky-nicholas-carr-technology-internet.html', type: 'media', label: 'Forbes (2010), "Eeek! The Internet!" — カー『The Shallows』とシャーキー『Cognitive Surplus』の論争を伝える同時代報道' },
+    ],
+  },
 ];
 // Stryker restore all

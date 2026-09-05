@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／人間科学"
 type: flashcard-deck
 deck_key: "academic-human-science"
-card_count: 646
+card_count: 647
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／人間科学（646枚）
+# フラッシュカード — 学術概念／人間科学（647枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -1038,6 +1038,8 @@ tags:
   - **A:** スキーマ療法（Schema Therapy）は、ジェフリー・ヤングが開発した統合的認知行動療法の拡張版であり、通常のCBTで効果が限定的な慢性うつ・境界性パーソナリティ障害・ナルシシズム的障害への応用を主な動機として発展した。（→ [[human-schema-therapy-young]]）
 - **Q:** スキーマ療法——ヤングの早期不適応スキーマ理論と人格障害・慢性うつへの統合的アプローチ
   - **A:** ジェフリー・ヤングが1990年代に開発したスキーマ療法は、CBT・愛着理論・ゲシュタルト療法・対象関係論を統合した治療アプローチで、幼少期・青年期の未充足ニーズから生じた「早期不適応スキーマ（Early Maladaptive Schemas: EMS）」の変容を核とする。スキーマとは「自己・他者・世界に関する広汎で根深い信念パターン」であり、18種に分類された（例：見捨てられ、欠陥・羞恥、服従など）。（→ [[human-schema-therapy-young-maladaptive]]）
+- **Q:** 選択・最適化・補償（SOC）モデル——資源が減る中で目標を絞り、手段を磨き、失った機能を補って発達を続けるバルテスの生涯発達論
+  - **A:** 選択・最適化・補償（SOC）モデルは、ポール・B・バルテスとマーガレット・M・バルテスが1990年の共編著『Successful Aging: Perspectives from the Behavioral Sciences』（Cambridge University Press）第1章で示した生涯発達の適応モデルである。（→ [[human-selective-optimization-with-compensation-baltes]]）
 - **Q:** 自己肯定化理論——別領域の価値の確認が自己統合性を回復し防衛を緩める
   - **A:** 自己肯定化理論（self-affirmation theory）は、クロード・スティールが1988年に提唱した社会心理学の理論で、人は自己統合性（self-integrity）——自分が善良で有能で道徳的であり、重要な結果を統御できる存在だという全体的な自己像——を維持しようと動機づけられていると説く。（→ [[human-self-affirmation-steele]]）
 - **Q:** 自己カテゴリー化理論

@@ -25,9 +25,9 @@ tags:
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]（接続 18）
 - [[legal-data-subject-rights|保有個人データに関する本人の権利]]（接続 16）
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]]（接続 16）
-- [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]]（接続 16）
 - [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]]（接続 15）
 - [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]]（接続 15）
+- [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]]（接続 15）
 
 ## 第 2 部 — 年代順の展開
 - 2012年: [[legal-fit-fip-renewable-energy|再エネ特措法に基づくFIT制度（2012年7月開始）とFIP制度（2022年4月導入）]]
@@ -45,7 +45,6 @@ tags:
 - 2024年: [[legal-keihyo-commitment|景品表示法の確約手続（2024年10月施行）]]
 - 2024年: [[legal-logistics-efficiency-act|改正物流効率化法（物流2法・物流2024年問題への対応）]]
 - 2024年: [[legal-premium-labeling-commitment-procedure|景品表示法 令和5年改正（確約手続・直罰規定）2024年10月1日施行]]
-- 2025年: [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]]
 - 2025年: [[legal-family-register-furigana|戸籍に氏名の振り仮名が記載される制度（改正戸籍法・2025年5月26日施行）]]
 - 2025年: [[legal-tokyo-customer-harassment-ordinance|東京都カスタマー・ハラスメント防止条例（全国初・2025年4月施行）]]
 - 2026年: [[legal-subcontract-act-amendment-2026|下請法改正（中小受託取引適正化法へ改称・2026年1月1日施行）]]
@@ -134,6 +133,7 @@ tags:
 - [[legal-related-personal-info|個人関連情報の第三者提供の制限（個人情報保護法31条）]]
 - [[legal-risk-bearing|危険負担（改正民法536条）]]
 - [[legal-secondhand-dealer|古物営業法と古物商許可]]
+- [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]]
 - [[legal-sensitive-personal-info|要配慮個人情報の取扱い]]
 - [[legal-set-off|相殺（民法505条等）]]
 - [[legal-share-types|会社法における種類株式]]

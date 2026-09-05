@@ -34,6 +34,7 @@ aliases:
 - [[econ-rational-expectations-muth|合理的期待——主観的予想が利用可能情報のもとでの客観的期待値に一致する仮説]] — 語彙が近い
 - [[econ-policy-ineffectiveness|政策無効命題]] — 語彙が近い
 - [[econ-lucas-critique|ルーカス批判]] — 語彙が近い
+- [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]] — 同分野の近傍
 - [[econ-global-games-carlsson-vandamme|グローバルゲーム——わずかな情報の不完全さが均衡を一つに絞る]] — 同分野の近傍
 
 ## 関連

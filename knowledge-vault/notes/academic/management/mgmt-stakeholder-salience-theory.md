@@ -34,8 +34,8 @@ Ronald K. Mitchell ／ Bradley R. Agle ／ Donna J. Wood
 
 ## 関連概念
 - [[mgmt-corporate-social-performance|企業社会的パフォーマンスモデル]] — 同じ思想家
+- [[mgmt-stakeholder-salience-mitchell|ステークホルダー・サリエンス（ミッチェル）]] — 同分野の近傍
 - [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — 同分野の近傍
-- [[mgmt-stakeholder-mapping-power-interest|ステークホルダー・マッピングと利害権力分析——戦略的ステークホルダー管理の実践論]] — 同分野の近傍
 - [[mgmt-rfm-analysis|RFM分析]] — 同分野の近傍
 
 ## 関連

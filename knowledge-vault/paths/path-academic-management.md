@@ -2,27 +2,27 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 661
+entry_count: 662
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（661件）
+# 学習パス — 学術概念／経営学（662件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[agile-development|アジャイルソフトウェア開発]]（接続 60）
+- [[agile-development|アジャイルソフトウェア開発]]（接続 61）
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 39）
+- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 30）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
-- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 29）
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 26）
 - [[mgmt-mbo|目標による管理（MBO）]]（接続 25）
 - [[mgmt-csr|企業の社会的責任（CSR）]]（接続 24）
-- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 24）
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 23）
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 23）
+- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 23）
 - [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]]（接続 22）
 - [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]]（接続 22）
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 22）
@@ -226,6 +226,7 @@ tags:
 - 1996年: [[mgmt-enabling-coercive-bureaucracy|イネーブリング官僚制——規則・公式化は「量」ではなく「型」で支援的にも強制的にもなる]]
 - 1996年: [[mgmt-guanxi-network-capitalism|グアンシ関係資本主義と東アジアの経営システム]]
 - 1996年: [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]]
+- 1996年: [[mgmt-normalization-of-deviance-vaughan|逸脱の正常化——小さな逸脱の反復的許容が組織の「正常」の基準を書き換える]]
 - 1996年: [[mgmt-strategic-inflection|戦略的転換点（Strategic Inflection Point）]]
 - 1997年: [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]]
 - 1997年: [[mgmt-brand-personality|ブランドパーソナリティ（アーカーの5次元モデル）]]

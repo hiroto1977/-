@@ -34,6 +34,7 @@ aliases:
 - [[mgmt-dynamic-delegation|公式的権限と実質的権限（Formal and Real Authority）]] — 同分野の近傍
 - [[mgmt-blake-mouton-grid|マネジリアル・グリッド——業績への関心と人への関心の二軸でリーダーを類型化]] — 同分野の近傍
 - [[mgmt-contextual-ambidexterity|コンテクスチュアル・アンビデクストリティ（文脈的両利き経営）]] — 同分野の近傍
+- [[mgmt-strategic-intent|戦略的意図（ストラテジック・インテント）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

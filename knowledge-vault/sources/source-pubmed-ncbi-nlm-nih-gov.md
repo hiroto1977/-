@@ -2,7 +2,7 @@
 title: "pubmed.ncbi.nlm.nih.gov"
 type: source-domain
 host: "pubmed.ncbi.nlm.nih.gov"
-cite_count: 94
+cite_count: 95
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # pubmed.ncbi.nlm.nih.gov
 
-> [!info] 出典ドメイン索引 ・ 引用 **94 件**（学術 88 ・ リファレンス 5 ・ 公的 1）
+> [!info] 出典ドメイン索引 ・ 引用 **95 件**（学術 89 ・ リファレンス 5 ・ 公的 1）
 
 ## このドメインを出典とする項目
 
@@ -78,6 +78,7 @@ tags:
 - [[human-rejection-sensitivity-downey|拒絶感受性（ダウニー＆フェルドマン）]] — Ayduk,O.,Downey,G.,Testa,A.,Yen,Y.&Shoda,Y.(1999)DoesRejectionElicitH…
 - [[human-rejection-sensitivity-downey|拒絶感受性（ダウニー＆フェルドマン）]] — Downey,G.&Feldman,S.I.(1996)ImplicationsofRejectionSensitivityforInti…
 - [[human-resilience|レジリエンス（心理的回復力）]] — MastenA.S.(2001)“Ordinarymagic:Resilienceprocessesindevelopment,”Amer…
+- [[human-selective-optimization-with-compensation-baltes|選択・最適化・補償（SOC）モデル——資源が減る中で目標を絞り、手段を磨き、失った機能を補って発達を続けるバルテスの生涯発達論]] — Freund,A.M.&Baltes,P.B.(2002)Life-ManagementStrategiesofSelection,Opt…
 - [[human-self-compassion|セルフ・コンパッション（自己への思いやり）]] — Neff,K.D.&Vonk,R.(2009).Self-compassionversusglobalself-esteem.Journa…
 - [[human-self-determination|自己決定理論（SDT）]] — Ryan&Deci(2000),AmericanPsychologist（査読論文・PubMed索引）
 - [[human-self-handicapping-jones-berglas|セルフ・ハンディキャッピング——失敗の言い訳を先取りし自尊心を防衛する方略]] — Berglas,S.&Jones,E.E.(1978)DrugChoiceasaSelf-HandicappingStrategyinRe…

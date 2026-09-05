@@ -2,7 +2,7 @@
 title: "pnas.org"
 type: source-domain
 host: "pnas.org"
-cite_count: 13
+cite_count: 14
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # pnas.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **13 件**（学術 13）
+> [!info] 出典ドメイン索引 ・ 引用 **14 件**（学術 14）
 
 ## このドメインを出典とする項目
 
@@ -27,6 +27,7 @@ tags:
 - [[human-perceptual-narrowing|知覚的狭窄化（Perceptual Narrowing）]] — Ponsetal.(2009)NarrowingofIntersensorySpeechPerceptioninInfancy—PNAS
 - [[infosoc-echo-chamber|エコーチェンバー（反響室効果）]] — Cinellietal.,"Theechochambereffectonsocialmedia",PNAS(2021)
 - [[infosoc-media-multitasking|メディア・マルチタスキング]] — Ophir,Nass&Wagner(2009)“Cognitivecontrolinmediamultitaskers”,PNAS106(…
+- [[infosoc-the-shallows-carr|カーの「浅瀬」論——ネットの断片的・多重的な情報環境が深い読みと持続的注意を蝕むという主張]] — Ophir,E.,Nass,C.,&Wagner,A.D.(2009)."Cognitivecontrolinmediamultitask…
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

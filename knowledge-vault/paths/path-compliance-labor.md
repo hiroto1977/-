@@ -20,9 +20,9 @@ tags:
 - [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]]（接続 19）
 - [[labor-childcare-disclosure|育児休業取得状況の公表義務（300人超企業へ拡大）]]（接続 18）
 - [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]]（接続 18）
+- [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 16）
 - [[labor-work-rules|就業規則の作成・届出義務]]（接続 16）
 - [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]]（接続 15）
-- [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 15）
 - [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]]（接続 15）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]（接続 14）
 - [[labor-flextime|フレックスタイム制（労働基準法32条の3）]]（接続 14）

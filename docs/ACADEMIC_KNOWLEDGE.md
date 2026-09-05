@@ -4447,5 +4447,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 人間科学 | マーシャの自我同一性地位——探求と関与の有無で青年期のアイデンティティ形成を4つの地位に分ける | ジェームズ・E・マーシャ（1966『Development and Validation of Ego-Identity Status』 ／ 1980『Identity in Adolescence』） ／ ジェーン・クロガー＆モニカ・マルティヌッセン（マーシャとの共著、2010メタ分析） |
 | 商法 | ルーシー対ゼーマー事件と契約成立の客観説——内心でなく言葉と行為の外形で合意を判断する原則 | オリバー・ウェンデル・ホームズ（1881『The Common Law』 ／ 1897『The Path of the Law』、10 Harv. L. Rev. 457） ／ ブキャナン判事（Lucy v. Zehmer 法廷意見執筆、バージニア州最高裁、1954） |
 | 情報社会学 | キットラーのメディア唯物論——技術メディアが我々の状況を規定する | フリードリヒ・キットラー（1985『Aufschreibesysteme 1800/1900』英訳1990 ／ 1986『Grammophon Film Typewriter』英訳1999 ／ 1992「There Is No Software」 |
+| 経済学 | アーミントンの仮定とアーミントン弾力性——同じ財でも生産国が違えば不完全代替とみなし、その代替の弾力性で貿易モデルを閉じる考え方 | ポール・S・アーミントン（1969『A Theory of Demand for Products Distinguished by Place of Production』IMF Staff Papers 16巻） ／ トーマス・ハーテル編（1997『Global Trade Analysis: Modeling and Applications』でGTAPの二段階ネストに実装） ／ フィーンストラ他（2018 macro／micro弾力性の相違） |
+| 経済学 | 不完備情報下の評判効果——わずかなタイプの不確実性が参入阻止と協調を合理化する | デイヴィッド・クレプス＆ロバート・ウィルソン（1982『Reputation and Imperfect Information』Journal of Economic Theory 27(2) ／ 1982『Sequential Equilibria』Econometrica 50(4)） ／ ポール・ミルグロム＆ジョン・ロバーツ（1982『Predation, Reputation, and Entry Deterrence』Journal of Economic Theory 27(2)） |
+| 経営学 | 逸脱の正常化——小さな逸脱の反復的許容が組織の「正常」の基準を書き換える | ダイアン・ヴォーン（1996『The Challenger Launch Decision』University of Chicago Press ／ 1999 Annual Review of Sociology） ／ 対比: チャールズ・ペロー（Normal Accidents、構造的説明） |
+| 人間科学 | 選択・最適化・補償（SOC）モデル——資源が減る中で目標を絞り、手段を磨き、失った機能を補って発達を続けるバルテスの生涯発達論 | ポール・B・バルテス（1990『Successful Aging』共編 ／ 1997 American Psychologist「On the Incomplete Architecture of Human Ontogeny」） ／ マーガレット・M・バルテス（1990『Successful Aging』共編） |
+| 商法 | ピーヴィーハウス対ガーランド石炭事件——完成費用か価値減少分か、契約損害賠償の測り方 | ジャクソン判事（多数意見・1962） ／ アーウィン判事（反対意見・1962） ／ ジュディス・マウテ（1995『Peevyhouse v. Garland Coal & Mining Co. Revisited: The Ballad of Willie and Lucille』Northwestern University Law Review 89） |
+| 情報社会学 | カーの「浅瀬」論——ネットの断片的・多重的な情報環境が深い読みと持続的注意を蝕むという主張 | ニコラス・カー（2008『Is Google Making Us Stupid?』The Atlantic ／ 2010『The Shallows』W. W. Norton） ／ マイケル・マーゼニック（神経可塑性研究） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。

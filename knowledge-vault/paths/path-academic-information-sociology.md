@@ -2,19 +2,19 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 613
+entry_count: 614
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（613件）
+# 学習パス — 学術概念／情報社会学（614件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 78）
-- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 47）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 75）
+- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 46）
 - [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]]（接続 30）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 25）
@@ -174,6 +174,7 @@ tags:
 - 2000年: [[infosoc-gamification|ゲーミフィケーション]]
 - 2000年: [[infosoc-narrative-transportation|ナラティブ・トランスポーテーション理論（narrative transportation／物語移入）——物語世界に没入した受け手の信念が物語の含意へ傾く説得メカニズム]]
 - 2000年: [[infosoc-social-capital|社会関係資本（ソーシャル・キャピタル）]]
+- 2000年: [[infosoc-the-shallows-carr|カーの「浅瀬」論——ネットの断片的・多重的な情報環境が深い読みと持続的注意を蝕むという主張]]
 - 2001年: [[infosoc-creative-commons|クリエイティブ・コモンズ（CCライセンス）]]
 - 2001年: [[infosoc-cyber-cascade|サイバーカスケード]]
 - 2001年: [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]]

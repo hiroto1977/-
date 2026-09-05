@@ -33,7 +33,7 @@ W・アーサー・ルイス ／ ジョン・フェイ ／ グスタフ・ラニ
 
 ## 関連概念
 - [[econ-lewis-turning-point|ルイスの二重経済モデル（転換点）]] — 語彙が近い
-- [[econ-fei-ranis|フェイ＝ラニス・モデル]] — 同じ思想家
+- [[econ-fei-ranis|フェイ＝ラニス・モデル]] — 語彙が近い
 - [[econ-vent-for-surplus-myint|余剰のはけ口理論（ミント）——貿易が遊休資源を動かす]] — 同じ思想家
 - [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 出典を共有
 - [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — 出典を共有

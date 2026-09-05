@@ -2,19 +2,19 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 646
+entry_count: 647
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（646件）
+# 学習パス — 学術概念／人間科学（647件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 146）
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 103）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 144）
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 102）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 31）
 - [[human-attribution-theory|帰属理論]]（接続 29）
@@ -228,6 +228,7 @@ tags:
 - 1990年: [[human-marshmallow-test|マシュマロ・テスト（満足の遅延）]]
 - 1990年: [[human-prospective-memory|展望的記憶（Prospective Memory）]]
 - 1990年: [[human-reactive-devaluation|反応的価値低減（リアクティブ・デバリュエーション／Reactive devaluation）——相手が出した案というだけで価値が下がる認知バイアス]]
+- 1990年: [[human-selective-optimization-with-compensation-baltes|選択・最適化・補償（SOC）モデル——資源が減る中で目標を絞り、手段を磨き、失った機能を補って発達を続けるバルテスの生涯発達論]]
 - 1991年: [[human-legitimate-peripheral-participation|正統的周辺参加と実践共同体]]
 - 1991年: [[human-optimal-distinctiveness|最適弁別性理論（Optimal Distinctiveness Theory／Brewer 1991）——人は所属（同化）と差異化（独自性）の相反する欲求の均衡点で社会的アイデンティティを選ぶ]]
 - 1991年: [[human-rumination|反芻思考]]

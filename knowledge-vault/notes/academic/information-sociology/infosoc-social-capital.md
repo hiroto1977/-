@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-structural-holes-burt|構造的空隙——分断された集団を橋渡しする仲介者が得る情報と統制の優位]] — 同じ思想家
 - [[mgmt-network-structural-holes-burt|構造的空隙理論とネットワーク仲介優位の組織社会学（バート）]] — 同じ思想家
 - [[infosoc-computational-propaganda-bots|コンピュテーショナル・プロパガンダとソーシャルボット——自動化された世論操作の情報社会論]] — 同分野の近傍
-- [[infosoc-information-theory|情報理論（シャノン）]] — 同分野の近傍
+- [[infosoc-informational-self-determination|情報自己決定権]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

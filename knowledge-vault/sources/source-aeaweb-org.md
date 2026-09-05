@@ -2,7 +2,7 @@
 title: "aeaweb.org"
 type: source-domain
 host: "aeaweb.org"
-cite_count: 39
+cite_count: 40
 tags:
   - source-domain
   - index
@@ -10,10 +10,11 @@ tags:
 
 # aeaweb.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **39 件**（学術 39）
+> [!info] 出典ドメイン索引 ・ 引用 **40 件**（学術 40）
 
 ## このドメインを出典とする項目
 
+- [[econ-armington-elasticity-national-product-differentiation|アーミントンの仮定とアーミントン弾力性——同じ財でも生産国が違えば不完全代替とみなし、その代替の弾力性で貿易モデルを閉じる考え方]] — Boehm,C.E.,Levchenko,A.A.&Pandalai-Nayar,N.(2023)"TheLongandShort(Run…
 - [[econ-auerbach-kotlikoff-generational|世代会計（Generational Accounting）]] — GenerationalAccounting:AMeaningfulWaytoEvaluateFiscalPolicy,JEP(1994)
 - [[econ-bartik-shift-share-instrument|バーティック操作変数（シフトシェア操作変数）——全国産業成長率と地域産業構成の積で地域労働需要ショックを予測する識別戦略]] — Goldsmith-Pinkham,P.,Sorkin,I.,&Swift,H.(2020).BartikInstruments:What…
 - [[econ-blanchard-quah-long-run-restrictions|ブランシャール＝クアの長期制約による構造VAR識別——需要ショックと供給ショックの分解]] — Galí,J.(1999)."Technology,Employment,andtheBusinessCycle:DoTechnology…

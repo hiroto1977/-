@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-level-5-leadership|レベル5リーダーシップ]] — 出典を共有
 - [[mgmt-leavitt-diamond|リービットのダイヤモンド]] — 出典を共有
 - [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]] — 出典を共有
-- [[mgmt-flywheel|フライホイール効果（弾み車の法則）]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

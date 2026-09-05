@@ -39,7 +39,7 @@ aliases:
 - [[mgmt-kotter-change|コッターの変革の8段階プロセス]] — 出典を共有
 - [[mgmt-leavitt-diamond|リービットのダイヤモンド]] — 出典を共有
 - [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]] — 出典を共有
-- [[mgmt-kaizen-imai|カイゼン——全員参加による継続的・漸進的な改善の経営哲学]] — 同分野の近傍
+- [[mgmt-inclusive-leadership-catalyst|インクルーシブ・リーダーシップ——多様性・公平性・帰属感を生み出すリーダー行動と組織文化]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "ideas.repec.org"
 type: source-domain
 host: "ideas.repec.org"
-cite_count: 96
+cite_count: 97
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ideas.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **96 件**（学術 81 ・ リファレンス 15）
+> [!info] 出典ドメイン索引 ・ 引用 **97 件**（学術 82 ・ リファレンス 15）
 
 ## このドメインを出典とする項目
 
@@ -20,6 +20,7 @@ tags:
 - [[econ-alchian-demsetz-team-production|チーム生産と残余請求権（アルチャン＆デムセッツ）]] — Alchian,A.A.&Demsetz,H.(1972)Production,InformationCosts,andEconomicO…
 - [[econ-allingham-sandmo-tax-evasion|アリンガム＝サンドモ・モデル（脱税の経済分析）——過少申告という賭けと税務コンプライアンス]] — Allingham,M.G.&Sandmo,A.(1972)IncomeTaxEvasion:ATheoreticalAnalysis—J…
 - [[econ-allingham-sandmo-tax-evasion|アリンガム＝サンドモ・モデル（脱税の経済分析）——過少申告という賭けと税務コンプライアンス]] — Andreoni,J.,Erard,B.&Feinstein,J.(1998)TaxCompliance—JournalofEconomi…
+- [[econ-armington-elasticity-national-product-differentiation|アーミントンの仮定とアーミントン弾力性——同じ財でも生産国が違えば不完全代替とみなし、その代替の弾力性で貿易モデルを閉じる考え方]] — Feenstra,R.C.,Luck,P.,Obstfeld,M.&Russ,K.N.(2018)"InSearchoftheArming…
 - [[econ-asset-pricing-anomalies|資産価格アノマリー（Asset Pricing Anomalies）]] — Fama&French(2012)Size,Value,andMomentuminInternationalStockReturns—JF…
 - [[econ-atkinson-inequality-index|アトキンソン不等式指数（不等式測定指数）]] — IDEAS/RePEcentry—OntheMeasurementofInequality
 - [[econ-atkinson-stiglitz-theorem|アトキンソン＝スティグリッツの定理——最適な所得税があれば物品税はいらない]] — Atkinson,A.B.&Stiglitz,J.E.(1976)TheDesignofTaxStructure:Directversus…
