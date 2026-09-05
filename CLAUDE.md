@@ -35,8 +35,11 @@ compliance (`complianceKnowledge.ts`), subsidies (`subsidyKnowledge.ts`), suppor
 of truth for an **Obsidian knowledge vault** (`knowledge-vault/`, 7,500+ notes, `npm run vault:build`)
 and are injected as context into the AI-orchestration runtime per executive role
 (`orchestration/knowledge-map.json`, `orchestration/knowledge-context.cjs`, `npm run orchestrate:context`
-/ dispatch). `vault:check` (in `verify:all`/CI) enforces vault sync and forbids duplicate ids
-(`node scripts/dedupe-knowledge.cjs` consolidates). See `docs/KNOWLEDGE_VAULT.md`.
+/ dispatch). `vault:check` (in `verify:all`/CI) enforces vault sync, forbids duplicate ids
+(`node scripts/dedupe-knowledge.cjs` consolidates), and fails when the concept table in
+`docs/ACADEMIC_KNOWLEDGE.md` is stale — that table is **generated** from the corpus by
+`npm run knowledge:md` (never hand-edit rows; 2026-09-05 実測で手書き表は本体と 942 行／909 項目ずれていた).
+See `docs/KNOWLEDGE_VAULT.md`.
 
 ## Commands
 
@@ -109,6 +112,8 @@ npm run verify:all         # typecheck + all of the above + eslint (34 ゲート
                            #   (verify:all だけを見て「全 green」と言うと CI で落ちる)
 npm run mutate             # Stryker mutation testing (target: 100%); mutate:triage / mutate:next help
 npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+NotebookLM) → verify → work queue
+npm run knowledge:md       # docs/ACADEMIC_KNOWLEDGE.md の概念表を academicKnowledge.ts から再生成
+                           #   (表は生成物 — 手で行を書かない。vault:check が「再生成 == committed」を検証)
                            #   (weekly CI: knowledge-auto.yml; consume queue per docs/KNOWLEDGE_AUTOPILOT.md)
 ```
 
