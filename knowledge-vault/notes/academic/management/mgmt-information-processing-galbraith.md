@@ -35,11 +35,11 @@ aliases:
 - [[mgmt-boundary-spanning|境界連結（バウンダリー・スパニング）]] — 同じ思想家
 - [[mgmt-thompson-technology-typology|トンプソンの技術類型——技術が規定する相互依存と調整の様式]] — 同じ思想家
 - [[econ-asset-price-bubbles-kindleberger-minsky|資産価格バブル——キンドルバーガーとミンスキーの信用サイクルと崩壊のモデル]] — 同じ思想家
-- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 同じ思想家
-- [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]] — 同じ思想家
+- [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]] — 同じ思想家
+- [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる]] — 同じ思想家
 - [[mgmt-burke-litwin-causal-model-organizational-change|バーク＝リトウィン・モデル——外部環境から個人業績までを12要因の因果連鎖で結ぶ組織診断モデル]] — 同じ思想家
 - [[mgmt-strategic-renewal-volberda|戦略的刷新と組織アンビデクストリティの動態能力論（フォルベルダ）]] — 同じ思想家
-- [[mgmt-organizational-ambidexterity-raisch|組織的アンビデクストリティの実現メカニズム——ライシュの構造的・文脈的アプローチ統合]] — 同分野の近傍
+- [[mgmt-matrix-organization|マトリックス組織]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

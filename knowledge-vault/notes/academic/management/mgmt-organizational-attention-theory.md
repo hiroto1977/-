@@ -36,12 +36,12 @@ William Ocasio ／ Herbert A. Simon ／ James G. March ／ Richard M. Cyert ／ 
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
 - [[mgmt-behavioral-integration|行動的統合（Behavioral Integration）]] — 同じ思想家
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
-- [[mgmt-paradox-of-success|成功のパラドクス]] — 同じ思想家
 - [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
 - [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
 - [[infosoc-bandwagon-underdog-effect|バンドワゴン効果・アンダードッグ効果（bandwagon / underdog effect）——公表された世論調査が投票行動そのものを動かすフィードバック現象]] — 同じ思想家
 - [[mgmt-behavioral-integration-tmt|トップ・マネジメント・チームの行動統合]] — 同じ思想家
 - [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 同じ思想家
+- [[infosoc-information-overload-theory|情報過負荷理論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -37,7 +37,6 @@ aliases:
 - [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]] — 同じ思想家
 - [[mgmt-job-demands-resources-bakker|職務要求-資源モデル——ストレスとエンゲージメントの二重過程]] — 同じ思想家
 - [[mgmt-psychological-detachment-sonnentag|心理的距離——仕事から心理的に離れて回復する]] — 同じ思想家
-- [[mgmt-competency-trap|コンピテンシー・トラップ（能力の罠）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

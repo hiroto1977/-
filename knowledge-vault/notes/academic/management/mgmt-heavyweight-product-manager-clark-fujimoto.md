@@ -37,12 +37,12 @@ aliases:
 - [[human-identity-status-paradigm-marcia|マーシャの自我同一性地位——探求と関与の有無で青年期のアイデンティティ形成を4つの地位に分ける]] — 出典を共有
 - [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 出典を共有
 - [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — 出典を共有
-- [[mgmt-psychological-ownership|心理的所有感]] — 出典を共有
-- [[bizlaw-piercing-corporate-veil-reverse|法人格否認の法理（逆方向）]] — 出典を共有
-- [[bizlaw-ultra-vires-doctrine-modern|近代企業法における越権行為法理（Ultra Vires Doctrine）]] — 出典を共有
-- [[mgmt-appreciative-inquiry|アプリシエイティブ・インクワイアリー（AI）]] — 出典を共有
-- [[mgmt-eprg-orientations-perlmutter|EPRGフレームワーク——本国志向から世界志向へ至る多国籍企業経営者の心的構え]] — 出典を共有
-- [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 出典を共有
+- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 出典を共有
+- [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]] — 出典を共有
+- [[mgmt-family-business-governance-gersick|ファミリービジネスの三円モデル（ガーシック）]] — 出典を共有
+- [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]] — 出典を共有
+- [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

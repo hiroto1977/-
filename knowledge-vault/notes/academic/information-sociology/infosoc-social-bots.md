@@ -40,8 +40,8 @@ aliases:
 - [[infosoc-technological-momentum|技術的モメンタム]] — 出典を共有
 - [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — 出典を共有
 - [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 出典を共有
-- [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 出典を共有
 - [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]] — 出典を共有
+- [[infosoc-digital-materiality|デジタル・マテリアリティ]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

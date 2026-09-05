@@ -41,8 +41,8 @@ Thomas C. Powell ／ Dan Lovallo ／ Craig G. Fox ／ Giovanni Gavetti ／ Danie
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
 - [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 同じ思想家
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
-- [[mgmt-paradox-of-success|成功のパラドクス]] — 同じ思想家
 - [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
+- [[mgmt-organizational-attention-theory|組織注意理論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

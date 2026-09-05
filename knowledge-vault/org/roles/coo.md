@@ -18,14 +18,14 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / 経営学（全660件）
+### 学術概念 / 経営学（全647件）
 - [[agile-development|アジャイルソフトウェア開発]]
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]
 - [[mgmt-aaker-brand-identity|アーカーのブランド・アイデンティティ]]
 - [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]]
 - [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]]
-- …ほか 654 件 → [[学術概念]]
+- …ほか 641 件 → [[学術概念]]
 
 ### 学術概念 / ビジネス法務（全695件）
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]

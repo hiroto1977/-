@@ -41,7 +41,6 @@ aliases:
 - [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 同じ思想家
 - [[mgmt-organizational-socialization|組織社会化]] — 同分野の近傍
 - [[mgmt-total-quality-management-deming-juran|総合的品質管理——デミングとジュランの継続的改善と全社的品質経営]] — 同分野の近傍
-- [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

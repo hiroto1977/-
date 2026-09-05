@@ -34,6 +34,7 @@ aliases:
 ## 関連概念
 - [[infosoc-remix-copyright-digital-culture|リミックス文化とデジタル著作権のジレンマ——クリエイティブ・コモンズの思想と実践]] — 語彙が近い
 - [[infosoc-remix-culture-lessig|リミックス文化とクリエイティブ・コモンズ（レシッグ）]] — 語彙が近い
+- [[infosoc-synopticon|シノプティコン]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

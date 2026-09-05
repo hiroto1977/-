@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Product liability — strict liability standard](https://en.wikipedia.org/wiki/Product_liability) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-product-liability-directive-eu|EU製造物責任指令と無過失責任——欠陥製品による損害と生産者の厳格責任]] — 語彙が近い
 - [[bizlaw-product-liability-strict-eu-directive|製造物責任法——無過失責任と欠陥製品による損害救済]] — 語彙が近い
+- [[bizlaw-product-liability-directive-eu|EU製造物責任指令と無過失責任——欠陥製品による損害と生産者の厳格責任]] — 語彙が近い
 - [[bizlaw-product-liability-strict-tort|製造物責任と無過失責任——PL法・EU製造物責任指令とグローバルサプライチェーンの法的リスク]] — 語彙が近い
 - [[bizlaw-product-liability-strict-liability|製造物責任と厳格責任——PL法の理論的基盤と消費者保護]] — 語彙が近い
 - [[bizlaw-strict-product-liability|製造物厳格責任——欠陥そのものに基づく製造者の無過失責任]] — 同じ思想家

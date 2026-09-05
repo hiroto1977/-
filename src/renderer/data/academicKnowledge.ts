@@ -17288,15 +17288,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-competency-trap',
     discipline: 'management',
-    title: 'コンピテンシー・トラップ（能力の罠）',
+    title: 'コンピテンシー・トラップと成功の罠（レヴィット＝マーチ／レヴィンタール＝マーチ）——過去の成功への習熟が学習を深化に偏らせ、より優れた選択肢への転換を妨げる',
     statement:
-      'コンピテンシー・トラップ（Competency Trap）とは、組織が既存の技術・ルーティン・事業領域に習熟するほど、その活用（exploitation）への依存を深め、新たな技術や市場機会の探索（exploration）を怠る結果、環境変化に対して脆弱になる現象をいう。成功が学習の方向性を固定し、自己強化的に硬直化する経路依存的メカニズムである。' +
-      'バーバラ・レヴィットとジェームズ・マーチが1988年のAnnual Review of Sociology論文"Organizational Learning"で概念化した。マーチが1991年のOrganization Science論文で展開した探索と活用のトレードオフ理論の中核概念であり、コダック・ノキア等の事例で実証的に検証されている。両利き経営（ambidexterity）の理論的前提をなす概念である。',
-    keyFigures: 'バーバラ・レヴィット & ジェームズ・G・マーチ（Levitt & March, 1988 "Organizational Learning"）／ジェームズ・G・マーチ（James G. March, 1991 "Exploration and Exploitation in Organizational Learning"）',
-    asOf: '2026-06',
+      'コンピテンシー・トラップ（competency trap）とは、既存の技術や手順に習熟するほどその活用への依存を深め、より優れた選択肢の探索を怠って環境変化に脆くなる現象で、バーバラ・レヴィットとジェームズ・マーチが1988年の論文『Organizational Learning』（Annual Review of Sociology 14巻）で概念化した。劣った手続でも習熟で成果が出るため、より優れた手続へ乗り換えることが不合理になる学習の袋小路である。マーチ（1991）は探索と深化のトレードオフを体系化し、深化の見返りは近く確実で探索の見返りは遠く不確実なため、適応過程が成功体験を通じて深化へ自己強化的に傾く「成功の罠」と、失敗続きで探索を乱発する「失敗の罠」を論じた。ダニエル・レヴィンタールとマーチ（1993、Strategic Management Journal）は、組織学習が近くの代替案・短期の成果・成功確率の高い選択肢を過大評価する三つの「学習の近視眼」で歪むことを示した。ドロシー・レナード＝バートン（1992）は、中核的能力がそれに合わない新製品開発では中核的硬直性へ転化することを実証し、ダニー・ミラーのイカロス・パラドックスも同型の診断である。処方として両利きの経営、探索のための余裕資源、定期的な自己刷新が論じられ、コダックやノキアの衰退の説明にしばしば引かれるが、事後的な説明に流れやすく転換の時機の規範を与えにくいという批判がある。中小企業には、得意技への習熟が売上を支えるほど次の技術や顧客層への学習が後回しになるため、売上の一部を意図的に探索へ振り向け、失敗を許す小さな実験を制度化することが含意となる。',
+    keyFigures: 'バーバラ・レヴィット＆ジェームズ・マーチ（1988『Organizational Learning』Annual Review of Sociology）／ジェームズ・マーチ（1991 成功の罠・失敗の罠）／ダニエル・レヴィンタール＆ジェームズ・マーチ（1993『The Myopia of Learning』SMJ）／ドロシー・レナード＝バートン（1992 中核的硬直性）／ダニー・ミラー（イカロス・パラドックス）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1287/orsc.2.1.71', type: 'academic', label: 'March (1991) "Exploration and Exploitation in Organizational Learning," Organization Science 2(1), 71–87 — 探索と活用の理論的枠組み' },
-      { url: 'https://doi.org/10.1146/annurev.so.14.080188.001535', type: 'academic', label: 'Levitt & March (1988) "Organizational Learning," Annual Review of Sociology 14, 319–340 — コンピテンシー・トラップの原典' },
+      { url: 'https://doi.org/10.1146/annurev.so.14.080188.001535', type: 'academic', label: 'Levitt, B. & March, J. G. (1988) Organizational Learning — Annual Review of Sociology 14, 319–340（コンピテンシー・トラップの概念化）' },
+      { url: 'https://doi.org/10.1287/orsc.2.1.71', type: 'academic', label: 'March, J. G. (1991) Exploration and Exploitation in Organizational Learning — Organization Science 2(1), 71–87（成功の罠・失敗の罠）' },
+      { url: 'https://doi.org/10.1002/smj.4250141009', type: 'academic', label: 'Levinthal, D. A. & March, J. G. (1993) The Myopia of Learning — Strategic Management Journal 14(S2)（学習の三つの近視眼）' },
+      { url: 'https://doi.org/10.1002/smj.4250131009', type: 'academic', label: 'Leonard-Barton, D. (1992) Core Capabilities and Core Rigidities: A Paradox in Managing New Product Development — Strategic Management Journal 13(S1)（中核的硬直性）' },
+      { url: 'https://en.wikipedia.org/wiki/Competency_trap', type: 'reference', label: 'Wikipedia: Competency trap — March, Levinthal, exploration/exploitation, success trap, myopia of learning' },
     ],
   },
   {
@@ -17769,20 +17771,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.5465/amr.2006.22527470', type: 'academic', label: 'Rousseau, Ho & Greenberg (2006) I-Deals: Idiosyncratic Terms in Employment Relationships — Academy of Management Review 31(4), pp.977-994' },
       { url: 'https://doi.org/10.1002/job.1959', type: 'academic', label: 'Liao, Wayne & Rousseau (2016) Idiosyncratic deals in contemporary organizations — Journal of Organizational Behavior 37(S1), pp.S9-S29' },
-    ],
-  },
-  {
-    id: 'mgmt-organizational-paradox-theory',
-    discipline: 'management',
-    title: '組織パラドックス理論（Organizational Paradox Theory）',
-    statement:
-      '組織パラドックス理論（organizational paradox theory）とは、組織が直面する矛盾する要求・緊張（tensions）を排除すべき問題としてではなく、持続的に共存させ活用すべき本質的特性として捉える経営理論の研究領域である。この領域の現代的基盤を確立したのはマリアンヌ・W・ルイス（Marianne W. Lewis）の2000年の論文「Exploring Paradox: Toward a More Comprehensive Guide」（Academy of Management Review, Vol.25, No.4, pp.760-776, DOI: 10.5465/AMR.2000.3707712）であり、ルイスは既存の矛盾・ジレンマ・弁証法研究を統合し、パラドックスを「相互に関連する矛盾要素が同時的かつ持続的に存在する状態」として概念化した。ルイスは組織パラドックスを学習のパラドックス（paradoxes of learning）、組織化のパラドックス（paradoxes of organizing）、帰属のパラドックス（paradoxes of belonging）の三類型に分類し、防衛的反応（splitting, projection, regression）と能動的対処（acceptance, confrontation, transcendence）の対比を提示した。' +
-      'ウェンディ・K・スミス（Wendy K. Smith）とマリアンヌ・W・ルイスは2011年の論文「Toward a Theory of Paradox: A Dynamic Equilibrium Model of Organizing」（Academy of Management Review, Vol.36, No.2, pp.381-403, DOI: 10.5465/amr.2009.0223）において動態的均衡モデル（dynamic equilibrium model）を提唱し、パラドックス理論の統合的枠組みを構築した。このモデルでは、環境の多元性（plurality）、変化（change）、希少性（scarcity）がパラドックス的緊張を顕在化させる先行要因として作用し、アクターの認知的複雑性（cognitive complexity）と行動的複雑性（behavioral complexity）が「受容（acceptance）」を通じてパラドックスの動態的均衡を可能にすることを理論化した。Smith and Lewis はパラドックスの四つの基本類型として、学習（learning: 知識の更新と既存知識の活用）、帰属（belonging: 個人的アイデンティティと集団的アイデンティティ）、組織化（organizing: 統制と柔軟性）、遂行（performing: 多元的ステークホルダーの矛盾する要求）を提示した。Smith, Lewis, Jarzabkowski, and Langley 編『The Oxford Handbook of Organizational Paradox』（Oxford University Press, 2017, DOI: 10.1093/oxfordhb/9780198754428.001.0001）は、この領域の包括的レビューとして30章にわたりパラドックス理論の存在論的・認識論的基盤、方法論、実証研究、実践的含意を体系化している。',
-    keyFigures: 'Marianne W. Lewis（AMR 25(4), 2000, 概念的基盤）／Wendy K. Smith & Marianne W. Lewis（AMR 36(2), 2011, 動態的均衡モデル）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.5465/amr.2009.0223', type: 'academic', label: 'Smith & Lewis (2011) Toward a Theory of Paradox: A Dynamic Equilibrium Model of Organizing — AMR 36(2), pp.381-403' },
-      { url: 'https://doi.org/10.1093/oxfordhb/9780198754428.001.0001', type: 'academic', label: 'Smith, Lewis, Jarzabkowski & Langley eds. (2017) The Oxford Handbook of Organizational Paradox — Oxford University Press' },
     ],
   },
   {
@@ -18754,21 +18742,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1016/0926-6410(96)00022-5', type: 'academic', label: 'Gallese, V. et al. (1996) "Action Recognition in the Premotor Cortex" — Brain' },
       { url: 'https://doi.org/10.1177/0963721411410837', type: 'academic', label: 'Hickok, G. (2009) "Eight Problems for the Mirror Neuron Theory" — Journal of Cognitive Neuroscience' },
       { url: 'https://en.wikipedia.org/wiki/Mirror_neuron', type: 'reference', label: 'Wikipedia: Mirror neuron — ミラーニューロンの発見・機能・論争' },
-    ],
-  },
-  {
-    id: 'mgmt-ambidextrous-organization',
-    discipline: 'management',
-    title: '両利き経営（Ambidextrous Organization）',
-    statement:
-      '両利き経営（Ambidextrous Organization）とは、組織が「活用（exploitation）」（効率化・精緻化・実行）と「探索（exploration）」（実験・革新・発見）を同時に追求する能力を指す経営学概念である。ダンカン（Robert Duncan, 1976）が「両利き組織」の用語を造語し、イノベーション・プロジェクトの開始段階と実施段階で異なる組織構造が必要であることを論じた。マーチ（James March, 1991, Organization Science）が探索と活用のトレードオフを定式化し、活用偏重は短期的に適応的だが長期的には自壊的であると示した。' +
-      'オライリー＆タッシュマン（O\'Reilly & Tushman, 2004, HBR）は「構造的両利き（structural ambidexterity）」を提唱し、探索部門と活用部門を組織的に分離しつつ上位経営チームで統合する設計を実証した（35件の革新的試みで両利き構造の成功率90%超）。ギブソン＆バーキンショー（Gibson & Birkinshaw, 2004, AMJ）は「文脈的両利き（contextual ambidexterity）」を提唱し、同一部門内で個人が活用と探索を切り替えられる組織文脈（ストレッチ・規律・支援・信頼）の重要性を41事業部4,195名のデータで実証した。メタ分析（Junni et al. 2013）は両利き性と業績の正の関係（r≈0.19）を確認している。',
-    keyFigures: 'ロバート・ダンカン（1976 造語）／ジェームズ・マーチ（1991 探索と活用のトレードオフ）／オライリー＆タッシュマン（2004 構造的両利き・HBR）／ギブソン＆バーキンショー（2004 文脈的両利き・AMJ）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.2.1.71', type: 'academic', label: 'March (1991) Exploration and Exploitation in Organizational Learning — Organization Science 2(1)' },
-      { url: 'https://hbr.org/2004/04/the-ambidextrous-organization', type: 'academic', label: 'O\'Reilly & Tushman (2004) The Ambidextrous Organization — Harvard Business Review' },
-      { url: 'https://journals.aom.org/doi/10.5465/20159573', type: 'academic', label: 'Gibson & Birkinshaw (2004) Organizational Ambidexterity — Academy of Management Journal 47(2)' },
     ],
   },
   {
@@ -19835,21 +19808,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Bilateral_investment_treaty', type: 'reference', label: 'Wikipedia: Bilateral Investment Treaty' },
       { url: 'https://www.trade.gov/trade-guide-bilateral-investment-treaties', type: 'government', label: 'Trade Guide: Bilateral Investment Treaties — U.S. International Trade Administration' },
       { url: 'https://ccsi.columbia.edu/primer-international-investment-treaties-and-investor-state-dispute-settlement/', type: 'academic', label: 'Primer on International Investment Treaties and ISDS — Columbia Center on Sustainable Investment' },
-    ],
-  },
-  {
-    id: 'mgmt-organizational-ambidexterity',
-    discipline: 'management',
-    title: '組織的両利き経営（Organizational Ambidexterity）',
-    statement:
-      '組織的両利き経営（Organizational Ambidexterity）とは、組織が既存事業の深化（exploitation）と新規事業の探索（exploration）を同時に追求する能力を指す。ジェームズ・マーチ（James G. March）が1991年にOrganization Scienceで「Exploration and Exploitation in Organizational Learning」として探索と深化のトレードオフを定式化し、マイケル・タッシュマン（Michael Tushman）とチャールズ・オライリー（Charles O\'Reilly）が1996年に両利き組織の概念を提唱した。' +
-      'マーチは探索（変異・リスクテイク・実験・発見）と深化（精緻化・効率化・実行・選択）の間の資源配分バランスが組織の長期的適応にとって決定的であると論じた。タッシュマンとオライリーは構造的両利き経営（structural ambidexterity）として、探索と深化を組織構造的に分離しつつ上位統合する形態を精緻化した。両利き経営と組織業績の正の関連がメタ分析で確認されている。',
-    keyFigures: 'ジェームズ・マーチ（1991 Organization Science 探索＝深化フレームワーク）／タッシュマン＆オライリー（1996 構造的両利き経営）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.hbs.edu/ris/Publication%20Files/O\'Reilly%20and%20Tushman%20AMP%20Ms%20051413_c66b0c53-5fcd-46d5-aa16-943eab6aa4a1.pdf', type: 'academic', label: 'O\'Reilly & Tushman (2013) Organizational Ambidexterity: Past, Present, and Future — Harvard Business School' },
-      { url: 'https://journals.aom.org/doi/abs/10.5465/amp.2013.0025', type: 'academic', label: 'O\'Reilly & Tushman (2013) Organizational Ambidexterity — Academy of Management Perspectives' },
-      { url: 'https://sciendo.com/2/v2/download/article/10.1515/orga-2015-0006.pdf', type: 'academic', label: 'Organizational Ambidexterity, Exploration, Exploitation — Organizacija (Sciendo)' },
     ],
   },
   {
@@ -21444,20 +21402,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-paradox-of-success',
-    discipline: 'management',
-    title: '成功のパラドクス',
-    statement:
-      '成功のパラドクスとは、成功した組織が過去の成功パターンへの過剰なコミットメントによって将来の失敗の条件を自ら生み出す現象を指す。March（1991）の探索と活用の二律背反が機構の核心を与える——活用の収益は近く確実で、探索の収益は遠く不確実なため、適応プロセスは成功体験を通じて活用へ自己強化的に傾き、変化対応に必要な探索が締め出される（成功の罠。逆に失敗続きで探索を乱発する失敗の罠もある）。Levitt と March（1988）の有能性の罠は、劣った手続でも成果が出るほど習熟がその手続を深掘りさせ、より優れた手続への乗り換えを経済的に不合理にしてしまう学習の袋小路として定式化した。Leonard-Barton（1992）は、技能・技術システム・管理システム・価値規範の4次元からなる中核的能力が、それに適合しない新製品開発プロジェクトでは同じ4次元がそのまま中核的硬直性へ転化することを実証し、能力と硬直性が同一物の両面であることを示した。Miller のイカロス・パラドクス——卓越の源泉が単純化と過信を経て没落の軌道になる——も同型の診断であり、処方としては、探索と活用を構造的・時間的に併存させる両利き経営、探索のための余裕資源、定期的な自己刷新が論じられる。持続的成功がもたらす慣性こそが破壊的変化への脆弱性の源だという本概念は、イノベーションのジレンマ研究や戦略的刷新論の基底をなす。',
-    keyFigures: 'James G. March／Dorothy Leonard-Barton／Danny Miller',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1287/orsc.2.1.71', type: 'academic', label: 'March (1991) Exploration and Exploitation in Organizational Learning, Organization Science 2(1):71-87' },
-      { url: 'https://doi.org/10.1002/smj.4250131009', type: 'academic', label: 'Leonard-Barton (1992) Core Capabilities and Core Rigidities, Strategic Management Journal 13(S):111-125' },
-      { url: 'https://doi.org/10.1146/annurev.so.14.080188.001535', type: 'academic', label: 'Levitt & March (1988) Organizational Learning, Annual Review of Sociology 14:319-338' },
-    ],
-  },
-  {
     id: 'bizlaw-materiality-securities-law',
     discipline: 'business-law',
     title: '証券法における重要性基準',
@@ -21587,22 +21531,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1037/0022-3514.69.5.797', type: 'academic', label: 'Steele & Aronson (1995) Stereotype threat and intellectual test performance of African Americans, JPSP 69(5):797-811' },
       { url: 'https://doi.org/10.1177/0146167299025006006', type: 'academic', label: 'Branscombe et al. (1999) The context and content of social identity threat, PSPB 25(6):723-739' },
       { url: 'https://doi.org/10.1146/annurev.psych.53.100901.135228', type: 'academic', label: 'Ellemers, Spears & Doosje (2002) Self and social identity, Annual Review of Psychology 53:161-186' },
-    ],
-  },
-  {
-    id: 'mgmt-organizational-ambidexterity-context',
-    discipline: 'management',
-    title: '文脈的両利き経営',
-    statement:
-      'Gibson & Birkinshaw（2004）は、探索（exploration）と活用（exploitation）の両立を組織構造の分離によらず、個人の行動的文脈（behavioral context）を通じて実現する「文脈的両利き性」を提唱した。' +
-      'この概念は、二重組織構造によって両利き性を達成するTushman & O\'Reillyの構造的両利き性とは対照的に、一元的な組織の中で個人が自律的に両利き的行動をとれる文脈を整備することに焦点を当てる。' +
-      'Raisch & Birkinshaw（2008）はOrganization Scienceにおけるレビューでこの議論を体系化し、文脈的アプローチと構造的アプローチの統合的理解を示した。',
-    keyFigures: 'Cristina B. Gibson／Julian Birkinshaw／Michael L. Tushman／Charles A. O\'Reilly III／Sebastian Raisch',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.5465/20159573', type: 'academic', label: 'Gibson & Birkinshaw (2004) The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity, AMJ 47(2):209-226' },
-      { url: 'https://doi.org/10.1287/orsc.1070.0357', type: 'academic', label: 'Raisch & Birkinshaw (2008) Organizational ambidexterity review, Organization Science 19(3):375-392' },
-      { url: 'https://doi.org/10.2307/41165852', type: 'academic', label: 'Tushman & O\'Reilly (1996) Ambidextrous organizations, California Management Review 38(4):8-29' },
     ],
   },
   {
@@ -22983,21 +22911,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-ambidextrous-organization-theory',
-    discipline: 'management',
-    title: '両利き組織理論',
-    statement: 'March（1991）は、組織学習において「探索（exploration）」と「活用（exploitation）」のトレードオフを示し、両者のバランスが組織の長期的生存に不可欠であると論じた。Duncan（1976）は構造的二元性の概念を初めて提唱し、組織が異なるフェーズで異なる構造を採用することで革新と効率を両立できると主張した。Tushman と O\'Reilly（1996）はこれを「構造的両利き（structural ambidexterity）」として発展させ、探索ユニットと活用ユニットを組織内で物理的に分離しつつ上位レベルで統合するデザインを提示した。Raisch と Birkinshaw（2008）はその後の研究を包括的にレビューし、構造的・文脈的・リーダーシップ的など複数の両利き実現モードを整理するとともに、成果に影響する組織内外の調整要因を体系化した。これらの知見は、成熟企業が既存事業の深化と新規事業の探索を同時追求するイノベーション戦略の理論的基盤となっている。',
-    keyFigures: 'James Gardner March ／ Robert B. Duncan ／ Michael L. Tushman ／ Charles A. O\'Reilly III ／ Sebastian Raisch ／ Julian Birkinshaw',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1287/orsc.2.1.71', type: 'academic', label: 'March (1991) "Exploration and Exploitation in Organizational Learning" — Organization Science' },
-      { url: 'https://doi.org/10.2307/41165852', type: 'academic', label: 'Tushman & O\'Reilly (1996) "Ambidextrous Organizations" — California Management Review' },
-      { url: 'https://doi.org/10.1177/0149206308316058', type: 'academic', label: 'Raisch & Birkinshaw (2008) "Organizational Ambidexterity" — Journal of Management' },
-      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=9913', type: 'reference', label: 'O\'Reilly & Tushman (2004) "The Ambidextrous Organization" — Harvard Business Review' },
-      { url: 'https://www.annualreviews.org/doi/10.1146/annurev-orgpsych-012420-062543', type: 'academic', label: 'O\'Reilly & Tushman (2021) "Organizational Ambidexterity: Past, Present and Future" — Annual Review of Organizational Psychology' },
-    ],
-  },
-  {
     id: 'infosoc-information-ecology-theory',
     discipline: 'information-sociology',
     title: '情報生態学理論',
@@ -23620,21 +23533,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-organizational-ambidexterity-theory',
-    discipline: 'management',
-    title: '組織両利き理論',
-    statement: '組織両利き理論は、組織が既存能力の洗練（活用・exploitation）と新能力の開発（探索・exploration）を同時に追求する能力を指し、March（1991）が提唱した探索と活用のトレードオフ論を理論的起点とする。Tushman & O\'Reilly（1996）は、異なる構造・文化・プロセスをもつ組織単位を並存させる「構造的両利き（structural ambidexterity）」を提唱し、成熟事業と新興事業を分離しながら上位経営層が統合するモデルを示した。Gibson & Birkinshaw（2004）は、個々の従業員が適応性と整合性を文脈的に使い分ける「文脈的両利き（contextual ambidexterity）」を提唱し、組織設計だけでなく個人行動レベルの仕組みの重要性を指摘した。Raisch & Birkinshaw（2008）は構造的・文脈的・リーダーシップ的アプローチを統合し、両利きを組織ダイナミクスの中核概念として確立した。現代の経営研究では、デジタル変革・イノベーション戦略・組織学習において不可欠な概念として広く援用されている。',
-    keyFigures: 'James G. March ／ Michael L. Tushman ／ Charles A. O\'Reilly III ／ Cristina B. Gibson ／ Julian Birkinshaw',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.2307/2634396', type: 'academic', label: 'March, J.G. (1991). Exploration and Exploitation in Organizational Learning. Organization Science, 2(1), 71-87.' },
-      { url: 'https://doi.org/10.2307/41165852', type: 'academic', label: 'Tushman, M.L. & O\'Reilly, C.A. III (1996). Ambidextrous Organizations: Managing Evolutionary and Revolutionary Change. California Management Review, 38(4), 8-29.' },
-      { url: 'https://doi.org/10.5465/20159573', type: 'academic', label: 'Gibson, C.B. & Birkinshaw, J. (2004). The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity. Academy of Management Journal, 47(2), 209-226.' },
-      { url: 'https://doi.org/10.1177/0149206308316058', type: 'academic', label: 'Raisch, S. & Birkinshaw, J. (2008). Organizational Ambidexterity: Antecedents, Outcomes, and Moderators. Journal of Management, 34(3), 375-409.' },
-      { url: 'https://doi.org/10.5465/amp.2013.0025', type: 'academic', label: 'O\'Reilly, C.A. III & Tushman, M.L. (2013). Organizational Ambidexterity: Past, Present, and Future. Academy of Management Perspectives, 27(4), 324-338.' },
-    ],
-  },
-  {
     id: 'infosoc-techno-feminist-theory',
     discipline: 'information-sociology',
     title: 'テクノフェミニスト理論',
@@ -23928,28 +23826,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://law.justia.com/cases/federal/appellate-courts/F2/350/445/93456/', type: 'reference', label: 'Williams v. Walker-Thomas Furniture Co., 350 F.2d 445 (D.C. Cir. 1965)' },
       { url: 'https://doi.org/10.2307/794991', type: 'academic', label: 'Leff (1967) Unconscionability and the Code — U. Penn. Law Review 115(4)' },
       { url: 'https://www.britannica.com/topic/unconscionability', type: 'reference', label: 'Encyclopaedia Britannica — Unconscionability' },
-    ],
-  },
-  {
-    id: 'mgmt-organizational-ambidexterity-paradox',
-    discipline: 'management',
-    title: '組織両利き性のパラドクス',
-    statement:
-      "Smith & Lewisのパラドクス理論に基づき、探索と活用は相互矛盾しつつ共存する逆説的緊張であり、構造分離を超えてパラドクスを動的均衡として受容することで持続的両立が実現されるとする。" +
-      "両利き経営の従来の処方は、探索と活用を別々の組織単位に割り当てる構造的分離や、時期をずらす時間的分離であり、Charles A. O'Reilly IIIとMichael L. Tushmanの議論がその代表である。" +
-      "これに対しWendy K. SmithとMarianne W. Lewisは2011年の論文で、組織に遍在する矛盾を学習・帰属・組織化・遂行の四類型に整理し、パラドクスへの循環的な対応が現在の高い成果と将来の成功を両立させる持続可能性を生むという動的均衡モデルを提示した。" +
-      "潜在的な緊張は多元性・変化・希少性といった条件のもとで顕在化し、防衛的に一方を切り捨てる対応は悪循環を招くが、矛盾の同時存在を受容する対応は好循環を生む。" +
-      "Costas AndriopoulosとLewisは2009年に、製品デザイン業界の両利き企業五社の研究から、この緊張が入れ子構造をなすことを示した。" +
-      "すなわち、収益と画期的革新をめぐる戦略的意図、顧客との緊密な結合と緩やかな結合、規律と情熱という個人の駆動因が層をなして絡み合い、統合的な戦術と分化的な戦術の組み合わせがこれらを同時に扱うことを可能にする。" +
-      "Angeliki Papachroni、Loizos Heracleous、Sotirios Paroutisは2015年に、分離志向の処方を超えて両極の総合ないし超克へ、また両極が時間の中でどう相互関係を変えるかの縦断的探究へ研究を進めるべきだと主張した。" +
-      "Jonathan Schad、Lewis、Sebastian Raisch、Tushmanによる2016年のレビューは、経営学におけるパラドクス研究の系譜を整理し、この視角が両利き性を含む多様な組織現象の分析枠組みとして定着したことを跡づけている。",
-    keyFigures: 'Wendy K. Smith ／ Marianne W. Lewis ／ Charles A. O\'Reilly III ／ Michael L. Tushman',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://journals.aom.org/doi/abs/10.5465/amr.2009.0223', type: 'academic', label: 'Smith & Lewis (2011) Toward a Theory of Paradox — Academy of Management Review 36(2)' },
-      { url: 'https://journals.sagepub.com/doi/10.1177/0021886314553101', type: 'academic', label: 'Papachroni, Heracleous & Paroutis (2015) Organizational Ambidexterity Through Paradox — JABS 51(1)' },
-      { url: 'https://journals.aom.org/doi/10.5465/19416520.2016.1162422', type: 'academic', label: 'Schad, Lewis, Raisch & Tushman (2016) Paradox Research in Management Science — AMA 10(1)' },
-      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.1080.0406', type: 'academic', label: 'Andriopoulos & Lewis (2009) Exploitation-Exploration Tensions — Organization Science 20(4)' },
     ],
   },
   {
@@ -24853,29 +24729,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Cognitive_flexibility', type: 'reference', label: 'Wikipedia — Cognitive flexibility' },
       { url: 'https://doi.org/10.1007/978-3-662-02840-7_23', type: 'academic', label: 'Cognitive Flexibility Theory and its Implications for Designing CBI (Springer chapter)' },
       { url: 'https://escholarship.org/uc/item/1dr9x302', type: 'academic', label: 'Spiro et al. (1988) CFT — Cognitive Science Society proceedings (UC eScholarship)' },
-    ],
-  },
-  {
-    id: 'mgmt-paradox-theory-of-leadership',
-    discipline: 'management',
-    title: 'リーダーシップのパラドックス理論',
-    statement:
-      '効果的なリーダーシップは統制と権限委譲、安定と変革など矛盾する要求を同時に受容し両立させる両立思考で実現されるとスミスとルイスが提唱した動的均衡理論である。' +
-      '両者は二〇一一年の論考でパラドックスを、同時に存在し時間を通じて持続する、相互に矛盾しながらも相互依存する要素として定義した。組織の緊張は四つに類型化される。' +
-      '目標や戦略をめぐる遂行の緊張、業務の進め方や構造をめぐる組織化の緊張、アイデンティティ・役割・価値をめぐる帰属の緊張、そして旧来の知識と新しい知識の間に生じる学習の緊張である。' +
-      'これらは平時には潜在的だが、資源の希少性、多元的な利害、変化といった条件のもとで顕在化する。顕在化した緊張への反応は二つに分かれる。' +
-      '一方に偏って他方を切り離す分裂、外部に押し付ける投影、直視を避ける抑圧といった防衛的反応は、短期的には不安を鎮めるが、選ばれなかった極の要求を蓄積させ悪循環を生む。' +
-      '他方、緊張を排除すべき異常ではなく組織に内在する常態として受容し、両極を切り分けつつ統合する対応を反復すれば、現在の高い成果と将来の成功を両立させる持続可能性が生まれる。これが動的均衡である。' +
-      'リーダーシップ論への含意は、どちらか一方を選ぶ思考から、両方を成り立たせる思考への転換にある。' +
-      'ミロン・スペクターらは二〇一八年の共同研究でこの発想を個人水準に降ろし、緊張を受け入れそこから活力を得る度合いをパラドックス・マインドセットとして測定し、資源が乏しいときほど緊張の経験が強まる一方、その心構えを持つ個人は職務遂行と革新性を高めることを示した。' +
-      '限界としては、真のパラドックスと単なるトレードオフの区別が曖昧になりやすい点が指摘される。',
-    keyFigures: 'Wendy K. Smith ／ Marianne W. Lewis',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://journals.aom.org/doi/abs/10.5465/amr.2009.0223', type: 'academic', label: 'Smith & Lewis (2011) Toward a theory of paradox AMR' },
-      { url: 'https://journals.aom.org/doi/10.5465/amj.2016.0594', type: 'academic', label: 'Miron-Spektor, Ingram, Keller, Smith & Lewis (2018) Microfoundations of Organizational Paradox: The Problem Is How We Think about the Problem — Academy of Management Journal 61(1), 26–45' },
-      { url: 'https://journals.sagepub.com/doi/abs/10.1177/0021886314522322', type: 'academic', label: 'JABS — Paradox theory in organization development' },
-      { url: 'https://bothandthinking.net/', type: 'reference', label: 'Smith & Lewis — Both/And Thinking' },
     ],
   },
   {
@@ -40406,14 +40259,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-ambidextrous-leadership-rosing',
     discipline: 'management',
-    title: '両利きのリーダーシップ——探索と活用の動的切替え',
-    statement: '両利きのリーダーシップ（ambidextrous leadership）は、組織の探索（exploration）と活用（exploitation）を効果的に統合するリーダー行動の理論である。ローシングらは2011年の研究で、リーダーが開放的行動（opening behavior）と閉鎖的行動（closing behavior）を状況に応じて柔軟に切り替える能力がイノベーション成果を高めることを実証した。開放的行動は実験・リスク許容・多様な視点の奨励を含み、閉鎖的行動はルーティン確立・目標遵守・効率追求を含む。この理論はマーチの探索・活用トレードオフを個人レベルのリーダーシップ行動に翻訳し、タシュマンとオライリーの組織的アンビデクストリティ論を補完する。両利きのリーダーは二つの行動レパートリーの時間的切替え（temporal switching）を通じて、チームの創造性と実行力を同時に維持する。',
-    keyFigures: 'カトリン・ローシング ／ マイケル・フレーゼ ／ マイケル・タシュマン ／ チャールズ・オライリー',
-    asOf: '2026-06-26',
+    title: '両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる',
+    statement:
+      '両利きのリーダーシップ（ambidextrous leadership）は、探索と深化をリーダーの行動で統合する理論で、カトリン・ローシング、ミヒャエル・フレーゼ、アンドレアス・バウシュが2011年の論文『Explaining the Heterogeneity of the Leadership-Innovation Relationship: Ambidextrous Leadership』（The Leadership Quarterly 22巻5号）で提示した。リーダーは、実験やリスク許容、多様な視点を奨励する開放的行動（opening behavior）と、ルーティン確立・目標遵守・効率追求で行動の幅を絞る閉鎖的行動（closing behavior）を、イノベーション過程の局面に応じて切り替えることで、チームの創造性と実行力を同時に保つ。マーチの探索と深化のトレードオフを個人のリーダー行動の水準に翻訳し、構造的両利きと文脈的両利きを補完する理論である。ウェンディ・スミスとマリアンヌ・ルイスのパラドックス理論は、矛盾を「どちらか」でなく「両方」で捉えるパラドックス・マインドセットをリーダーの要件として位置づけ、心理的安全性や認知的柔軟性がそれを支えると論じられる。限界として、切替えの適切な時機を判断する基準が弱いこと、実証が自己報告に偏ること、一人に両方の行動を求める負荷がある。中小企業の経営者は一人で切り替えざるを得ないことが多く、試作や新規開拓では失敗を許容して意見を募り、量産や納期の局面では手順と目標を締める使い分けを会議や評価基準に落とし込むことが含意となる。',
+    keyFigures: 'カトリン・ローシング＆ミヒャエル・フレーゼ＆アンドレアス・バウシュ（2011『Explaining the Heterogeneity of the Leadership-Innovation Relationship: Ambidextrous Leadership』The Leadership Quarterly 22(5)）／ジェームズ・マーチ（1991 探索と深化）／マイケル・タッシュマン＆チャールズ・オライリー（組織的両利き）／対比: ウェンディ・スミス＆マリアンヌ・ルイス（パラドックス・マインドセット）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1016/j.leaqua.2011.02.013', type: 'academic', label: 'Rosing, K., Frese, M. & Bausch, A. (2011) Explaining the Heterogeneity of the Leadership-Innovation Relationship — Leadership Quarterly' },
-      { url: 'https://doi.org/10.1287/orsc.7.2.136', type: 'academic', label: 'March, J. G. (1991) Exploration and Exploitation in Organizational Learning — Organization Science' },
-      { url: 'https://en.wikipedia.org/wiki/Ambidextrous_organization', type: 'reference', label: 'Wikipedia: Ambidextrous organization — structural and contextual approaches overview' },
+      { url: 'https://doi.org/10.1016/j.leaqua.2011.07.014', type: 'academic', label: 'Rosing, K., Frese, M. & Bausch, A. (2011) Explaining the Heterogeneity of the Leadership-Innovation Relationship: Ambidextrous Leadership — The Leadership Quarterly 22(5), 956–974（開放的行動と閉鎖的行動の切替え）' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.2.1.71', type: 'academic', label: 'March, J. G. (1991) Exploration and Exploitation in Organizational Learning — Organization Science 2(1), 71–87（探索と深化のトレードオフ）' },
+      { url: 'https://en.wikipedia.org/wiki/Organizational_ambidexterity', type: 'reference', label: 'Wikipedia: Organizational ambidexterity — ambidextrous leadership, structural and contextual approaches' },
     ],
   },
   {
@@ -41666,13 +41520,18 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-paradox-theory-smith-lewis',
     discipline: 'management',
-    title: 'パラドックス理論——組織における矛盾の同時追求と動態的均衡',
-    statement: 'パラドックス理論は、組織が直面する相互に矛盾する要求（探索と深化、自由と統制、個人と集団、短期と長期等）を「いずれか一方の選択」（either/or）ではなく「両方の同時追求」（both/and）として受け入れ、動態的に管理する組織理論である。スミスとルイス（2011）は、パラドックスを「存続するが一見論理的に矛盾する相互関連要素」と定義し、帰属（belonging）、学習（learning）、組織化（organizing）、遂行（performing）の4カテゴリーに分類した。ルイス（2000）は、パラドックスが認知的・修辞的な構成物であり、行為者がそれをどう枠付けするかによって防御的反応（分離・抑圧・投影）か積極的反応（受容・差別化・統合）が決まると論じた。ジャルザブコウスキーら（2013）の組織パラドックス研究レビューは、個人レベルの認知的複雑性から組織レベルの構造的・文脈的対応まで多層的な分析枠組みを整理した。近年のメタ理論的発展として、パットナムら（2016）はコミュニケーション的アプローチからパラドックスの社会的構成過程を解明している。',
-    keyFigures: 'ウェンディ・スミス ／ マリアンヌ・ルイス ／ エヴァ・ジャルザブコウスキー ／ リンダ・パットナム ／ ケノン・シェルトン',
-    asOf: '2026-06-26',
+    title: '組織パラドックス理論（ルイス／スミス＝ルイス）——相互に矛盾しつつ相互依存する要求を排除せず受容し、動態的均衡として管理する',
+    statement:
+      '組織パラドックス理論は、矛盾する要求や緊張（探索と深化、統制と柔軟性、個人と集団など）を排除すべき問題ではなく、共存させ活用すべき組織の本質的特性と捉える研究領域である。マリアンヌ・ルイスは2000年の論文『Exploring Paradox』（Academy of Management Review 25巻4号）でパラドックスを「相互に関連する矛盾要素が同時的かつ持続的に存在する状態」と定義し、分裂・投影・抑圧といった防衛的反応と受容・対峙・超越という能動的対処を対比した。ウェンディ・スミスとルイスは2011年の論文『Toward a Theory of Paradox』（同誌36巻2号）で動態的均衡モデルを提唱し、多元性・変化・希少性が緊張を顕在化させ、一方を切り捨てる防衛的反応は悪循環を、矛盾の同時存在を受容して分化と統合を反復する対応は好循環を生むと理論化し、緊張を学習・帰属・組織化・遂行の四類型に整理した。ミロン＝スペクターら（2018）は緊張を受け入れて活力を得る度合いをパラドックス・マインドセットとして測定し、その心構えを持つ個人は職務遂行と革新性が高いことを示した。シャッドら（2016）のレビューと2017年の『The Oxford Handbook of Organizational Paradox』が研究系譜と領域を体系化した。限界として、真のパラドックスと単なるトレードオフの区別が曖昧になりやすく、受容が現状追認に流れる危険がある。中小企業の経営者は家業と事業、成長と統制といった緊張を一人で抱えるため、どちらかを消すのではなく時期や場面で重心を移しながら両方を成り立たせる運営が含意となる。',
+    keyFigures: 'マリアンヌ・ルイス（2000『Exploring Paradox』AMR 25(4)）／ウェンディ・スミス＆マリアンヌ・ルイス（2011『Toward a Theory of Paradox』AMR 36(2)・動態的均衡モデル）／エラ・ミロン＝スペクターら（2018 AMJ パラドックス・マインドセット）／パウラ・ジャルザブコウスキーら（2013 Strategic Organization）／ジョナサン・シャッドら（2016 Academy of Management Annals レビュー）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.5465/amr.2009.0223', type: 'academic', label: 'Smith & Lewis (2011) Toward a Theory of Paradox: A Dynamic Equilibrium Model of Organizing — Academy of Management Review' },
-      { url: 'https://doi.org/10.1177/1476127013481016', type: 'academic', label: 'Jarzabkowski, Lê & Van de Ven (2013) Responding to Competing Strategic Demands — Strategic Organization 11(3), 245–280' },
+      { url: 'https://doi.org/10.5465/amr.2009.0223', type: 'academic', label: 'Smith, W. K. & Lewis, M. W. (2011) Toward a Theory of Paradox: A Dynamic Equilibrium Model of Organizing — Academy of Management Review 36(2), 381–403（動態的均衡モデル・四類型）' },
+      { url: 'https://doi.org/10.5465/amr.2000.3707712', type: 'academic', label: 'Lewis, M. W. (2000) Exploring Paradox: Toward a More Comprehensive Guide — Academy of Management Review 25(4), 760–776（概念的基盤・三類型・防衛的／能動的対処）' },
+      { url: 'https://journals.aom.org/doi/10.5465/amj.2016.0594', type: 'academic', label: 'Miron-Spektor, E., Ingram, A., Keller, J., Smith, W. K. & Lewis, M. W. (2018) Microfoundations of Organizational Paradox: The Problem Is How We Think About the Problem — Academy of Management Journal（パラドックス・マインドセット）' },
+      { url: 'https://journals.aom.org/doi/10.5465/19416520.2016.1162422', type: 'academic', label: 'Schad, J., Lewis, M. W., Raisch, S. & Tushman, M. L. (2016) Paradox Research in Management Science: Looking Back to Move Forward — Academy of Management Annals 10(1)（研究系譜のレビュー）' },
+      { url: 'https://doi.org/10.1177/1476127013481016', type: 'academic', label: 'Jarzabkowski, P., Lê, J. K. & Van de Ven, A. H. (2013) Responding to Competing Strategic Demands: How Organizing, Belonging, and Performing Paradoxes Coevolve — Strategic Organization 11(3)（多層的な対応）' },
+      { url: 'https://doi.org/10.1093/oxfordhb/9780198754428.001.0001', type: 'academic', label: 'Smith, W. K., Lewis, M. W., Jarzabkowski, P. & Langley, A. (eds.) (2017) The Oxford Handbook of Organizational Paradox — Oxford University Press（領域の体系化）' },
       { url: 'https://en.wikipedia.org/wiki/Paradox_theory', type: 'reference', label: 'Wikipedia: Paradox theory — 組織パラドックス理論の概説' },
     ],
   },
@@ -42607,18 +42466,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-organizational-ambidexterity-raisch',
-    discipline: 'management',
-    title: '組織的アンビデクストリティの実現メカニズム——ライシュの構造的・文脈的アプローチ統合',
-    statement: 'セバスチャン・ライシュとジュリアン・バーキンショーは2008年の論文「Organizational Ambidexterity: Antecedents, Outcomes, and Moderators」において，組織的アンビデクストリティ（両利きの経営）の実現方法を構造的アンビデクストリティ（探索と深化を独立した組織単位に分離し，トップマネジメントが統合する）と文脈的アンビデクストリティ（個人レベルで探索と深化を切り替える組織文化・インセンティブ設計）の二つに体系化し，そのアンティシーダント（先行要因）とモデレーター（調整要因）を包括的にレビューした。ロバート・ダンカンは1976年に「アンビデクストラス組織」の概念を初めて提示し，時間的分離（逐次的な探索と深化の交替）を提唱した。チャールズ・オライリーとマイケル・タッシュマンは構造的分離の有効性を実証的に支持し，クリスティーナ・ギブソンとジュリアン・バーキンショーは文脈的アンビデクストリティが個人の裁量と組織的支援（規律・ストレッチ・信頼・支援の文脈）の組み合わせから創発することを論じた。',
-    keyFigures: 'セバスチャン・ライシュ ／ ジュリアン・バーキンショー ／ ロバート・ダンカン ／ クリスティーナ・ギブソン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1177/0149206308316058', type: 'academic', label: 'Raisch, S. & Birkinshaw, J. (2008) Organizational Ambidexterity — Journal of Management' },
-      { url: 'https://en.wikipedia.org/wiki/Ambidextrous_organization', type: 'reference', label: 'Wikipedia: Ambidextrous organization — structural, contextual, exploration-exploitation' },
-    ],
-  },
-  {
     id: 'human-transactional-analysis-berne',
     discipline: 'human-science',
     title: '交流分析——バーンの自我状態モデルとゲーム理論的対人関係分析',
@@ -43210,18 +43057,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.jstor.org/stable/2138873', type: 'academic', label: 'Weiss, A. (1995) Human Capital vs. Signalling Explanations of Wages — Journal of Economic Perspectives 9(4), 133–154（人的資本説との識別）' },
       { url: 'https://www.nobelprize.org/prizes/economic-sciences/2001/popular-information/', type: 'reference', label: 'NobelPrize.org — The 2001 Prize in Economic Sciences, Popular information（シグナリングとスクリーニングの区別）' },
       { url: 'https://en.wikipedia.org/wiki/Signalling_(economics)', type: 'reference', label: 'Wikipedia: Signalling (economics) — コストのかかる信頼できるシグナルとスクリーニングとの対比' },
-    ],
-  },
-  {
-    id: 'mgmt-ambidextrous-organization-exploration-exploitation',
-    discipline: 'management',
-    title: '両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き',
-    statement: '両利きの経営（ambidextrous organization）は，マイケル・タッシュマンとチャールズ・オライリーが1996年に論じた，組織が既存事業の「活用（exploitation）」と新規事業の「探索（exploration）」を同時に追求する能力を指す概念であり，ジェームズ・マーチが1991年に示した「探索と活用のトレードオフ」への組織的回答として位置づけられる。構造的両利き（structural ambidexterity）では，探索ユニットと活用ユニットを物理的・組織的に分離しつつ，上位のシニアチームが統合する設計が採られる。文脈的両利き（contextual ambidexterity）は，サルジット・ギオシャルとジュリアン・バーチェルが2002年に提唱した，分離なしに個人・チームが探索と活用を状況に応じて切り替える能力である。デジタル変革時代の大企業（Amazon AWS・Intel NUC・IBM Watson）の持続的競争優位の説明に用いられ，日本の「失われた30年」と既存事業過剰への依存の関係としても論じられる。',
-    keyFigures: 'マイケル・タッシュマン ／ チャールズ・オライリー ／ ジェームズ・マーチ ／ サルジット・ギオシャル',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/2393449', type: 'academic', label: 'March, J.G. (1991) Exploration and Exploitation — Organization Science' },
-      { url: 'https://en.wikipedia.org/wiki/Organizational_ambidexterity', type: 'reference', label: 'Wikipedia: Organizational ambidexterity — exploration and exploitation' },
     ],
   },
   {
@@ -46723,18 +46558,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-ambidextrous-leadership',
-    discipline: 'management',
-    title: '両利きのリーダーシップとパラドックス・マインドセット（タシュマン）',
-    statement: '両利きのリーダーシップ（ambidextrous leadership）は、リーダーが状況に応じて探索（exploration）と活用（exploitation）を切り替え、あるいは同時並行で促進する行動スタイルであり、マイケル・タシュマンとチャールズ・オライリーが提唱した組織的両利きの経営論をリーダーシップ論に敷衍したものである。BMWやAGなど大企業がイノベーション・ユニットと既存事業部を同時運営する「構造的両利き」とは異なり、両利きのリーダーは文脈的・行動的な柔軟性によって一人で探索と深化の矛盾を統合する。Wendy Smithのパラドックス理論は、組織的緊張を「どちらか一方を選ぶ（either/or）」ではなく「両方を統合する（both/and）」思考で対処するパラドックス・マインドセットの涵養を提唱する。心理的安全性・認知的柔軟性・関係的協調が両利きリーダーの実践的要件として論じられる。',
-    keyFigures: 'マイケル・タシュマン ／ チャールズ・オライリー ／ ウェンディ・スミス ／ マリアン・レウィス',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1016/j.leaqua.2011.07.014', type: 'academic', label: 'Rosing, K. et al. (2011). Ambidextrous leadership — The Leadership Quarterly 22(5), 956–974' },
-      { url: 'https://en.wikipedia.org/wiki/Organizational_ambidexterity', type: 'reference', label: 'Wikipedia: Organizational ambidexterity — ambidextrous leadership' },
-    ],
-  },
-  {
     id: 'infosoc-computational-journalism',
     discipline: 'information-sociology',
     title: '計算論的ジャーナリズムとデータ・ドリブン報道の社会学',
@@ -47588,20 +47411,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-organizational-learning-cycles-levinthal',
-    discipline: 'management',
-    title: '組織学習の落とし穴——コンピタンシー・トラップとサクセス・トラップ（レビンタール＆マーチ）',
-    statement: 'コンピタンシー・トラップ（competency trap）とは、過去成功した既存技術・手順への学習投資が強化されることで、より優れた新技術への転換を妨げる組織学習の逆機能現象である。マーチ（1991）は探索（exploration）——新たな代替技術の学習——と深化（exploitation）——既存能力の精緻化——のトレードオフを体系化し、短期的収益化速度の差異が組織を深化に過度に偏向させる「サクセス・トラップ（success trap）」を論じた。レビンタール＆マーチ（1993）は、現実の組織学習が「近視眼（myopia of learning）」——①近接性（近くの代替手段を過大評価）、②期間（短期成果を過大評価）、③失敗回避（成功確率が高い選択肢に偏向）——という三種の近視によって体系的に歪められることを論じた。この理論は技術経営・プラットフォームビジネスにおける「ディスラプション」への脆弱性——既存能力への強化学習がイノベーションの窓口を閉じる——の認知論的基盤を提供し、コダック・ノキア・ブロックバスターの失敗の説明枠組みとして広く引用される。',
-    keyFigures: 'ジェームズ・マーチ ／ ダニエル・レビンタール ／ ロバート・チャップル ／ フレッド・ルーサンズ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1287/orsc.2.1.71', type: 'academic', label: 'March, J. G. (1991) Exploration and Exploitation in Organizational Learning — Organization Science, 2(1), 71–87（探索—深化ジレンマの原典）' },
-      { url: 'https://doi.org/10.1002/smj.4250141009', type: 'academic', label: 'Levinthal, D. A. & March, J. G. (1993) The Myopia of Learning — Strategic Management Journal, 14(S2), 95–112（学習の近視眼モデル）' },
-      { url: 'https://search.worldcat.org/title/organizational-learning-ii-theory-method-and-practice/oclc/35831782', type: 'academic', label: 'Argyris, C. & Schön, D. A. (1996) Organizational Learning II: Theory, Method, and Practice — Addison-Wesley（コンピタンシー・トラップの組織学習論的文脈）' },
-      { url: 'https://en.wikipedia.org/wiki/Competency_trap', type: 'reference', label: 'Wikipedia: Competency trap — March, Levinthal, exploration/exploitation, success trap, myopia' },
-    ],
-  },
-  {
     id: 'human-alexithymia-sifneos',
     discipline: 'human-science',
     title: 'アレキシサイミア（感情失認）（シフネオス）',
@@ -48126,15 +47935,19 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-ambidexterity-tushman',
     discipline: 'management',
-    title: '組織的両利きの経営（タッシュマン＆オライリー）',
-    statement: '組織的両利き（organizational ambidexterity）は、タッシュマン＆オライリー（1996）が提唱した、組織が既存事業の「深化（exploitation）」と新事業・知識探索の「探索（exploration）」を同時に追求する能力を指す概念で、マーチ（1991）の探索—深化ジレンマを組織構造論として具体化した。「構造的両利き（structural ambidexterity）」は主流部門と探索部門を物理的に分離し、トップ統合（top-team integration）を通じて連動させる。「文脈的両利き（contextual ambidexterity）」はギブソン＆バーキンショー（2004）が提唱した、個人や現場単位が文脈に応じて探索と深化を切り替える能力である。オライリー＆タッシュマン（2013）の実証研究は、両利き組織が産業の技術不連続（技術変革波）を超えた長期的成果で優位を示すことを確認した。イノベーション経営・DXにおいて、コア事業（既存IT）と探索事業（新規デジタル）の並行追求の制度設計——予算・人事・評価基準の分離——が実践的課題として広く論じられている。',
-    keyFigures: 'マイケル・タッシュマン ／ チャールズ・オライリー ／ ジェームズ・マーチ ／ クリスティーナ・ギブソン',
-    asOf: '2026-06-26',
+    title: '両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する',
+    statement:
+      '両利きの経営（organizational ambidexterity）とは、既存事業の深化（exploitation）と新規事業や知識の探索（exploration）を同時に追求する組織の能力をいう。用語はロバート・ダンカン（1976）が造り、ジェームズ・マーチ（1991）が探索と深化のトレードオフを定式化した。マイケル・タッシュマンとチャールズ・オライリーは1996年の論文『Ambidextrous Organizations』（California Management Review）で、探索部門と深化部門を構造・文化・プロセスごと分離しつつ上位経営チームで統合する「構造的両利き」を提唱し、2004年の HBR 論文では35件の革新的取り組みのうち両利き構造をとったものの成功率が9割を超えたと報告した。クリスティーナ・ギブソンとジュリアン・バーキンショー（2004）は、個人が状況に応じて適応性と整合性を切り替えられる組織文脈（ストレッチ・規律・支援・信頼）を41事業部のデータで実証し「文脈的両利き」と呼んだ。ライシュとバーキンショー（2008）は構造的・文脈的・リーダーシップ的な実現経路を整理し、オライリーとタッシュマン（2013）は技術の不連続を越えた長期の成果で両利き組織の優位を確認し、メタ分析も業績との正の関連を示す。パラドックス論は探索と深化を分離で解消する矛盾ではなく受容して動的に均衡させる緊張と捉え直す。批判として概念の曖昧さ、測定と因果の弱さ、大企業偏重が指摘される。中小企業は部門を分ける余裕に乏しいため、時期を分けて交互に取り組む時間的両利きや、経営者と少数の現場が切り替える文脈的な仕組み（予算・評価基準の分離、小さな実験枠）が現実的な含意となる。',
+    keyFigures: 'マイケル・タッシュマン＆チャールズ・オライリー（1996 CMR 構造的両利き／2004 HBR／2013 AMP）／ジェームズ・マーチ（1991 探索と深化のトレードオフ）／ロバート・ダンカン（1976 用語の提唱）／クリスティーナ・ギブソン＆ジュリアン・バーキンショー（2004 AMJ 文脈的両利き）／セバスチャン・ライシュ＆ジュリアン・バーキンショー（2008 J. Management レビュー）／対比: ウェンディ・スミス＆マリアンヌ・ルイス（パラドックス理論）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.2307/41165852', type: 'academic', label: 'Tushman, M. L. & O\'Reilly, C. A. (1996) Ambidextrous Organizations: Managing Evolutionary and Revolutionary Change — California Management Review, 38(4), 8–29（両利き組織の原典）' },
-      { url: 'https://doi.org/10.2307/41166127', type: 'academic', label: 'O\'Reilly, C. A. & Tushman, M. L. (2013) Organizational Ambidexterity: Past, Present, and Future — Academy of Management Perspectives, 27(4), 324–338（両利き研究の総括）' },
-      { url: 'https://doi.org/10.5465/20159573', type: 'academic', label: 'Gibson, C. B. & Birkinshaw, J. (2004) The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity — Academy of Management Journal, 47(2), 209–226（文脈的両利きの実証）' },
-      { url: 'https://en.wikipedia.org/wiki/Organizational_ambidexterity', type: 'reference', label: 'Wikipedia: Organizational ambidexterity — Tushman, exploration/exploitation, structural vs contextual, DX' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.2.1.71', type: 'academic', label: 'March, J. G. (1991) Exploration and Exploitation in Organizational Learning — Organization Science 2(1), 71–87（探索と深化のトレードオフ）' },
+      { url: 'https://doi.org/10.2307/41165852', type: 'academic', label: 'Tushman, M. L. & O\'Reilly, C. A. III (1996) Ambidextrous Organizations: Managing Evolutionary and Revolutionary Change — California Management Review 38(4)（構造的両利き）' },
+      { url: 'https://hbr.org/2004/04/the-ambidextrous-organization', type: 'academic', label: 'O\'Reilly, C. A. III & Tushman, M. L. (2004) The Ambidextrous Organization — Harvard Business Review（35件の革新的取り組みの比較）' },
+      { url: 'https://doi.org/10.5465/20159573', type: 'academic', label: 'Gibson, C. B. & Birkinshaw, J. (2004) The Antecedents, Consequences, and Mediating Role of Organizational Ambidexterity — Academy of Management Journal 47(2)（文脈的両利き）' },
+      { url: 'https://doi.org/10.1177/0149206308316058', type: 'academic', label: 'Raisch, S. & Birkinshaw, J. (2008) Organizational Ambidexterity: Antecedents, Outcomes, and Moderators — Journal of Management 34(3)（実現経路の整理）' },
+      { url: 'https://doi.org/10.5465/amp.2013.0025', type: 'academic', label: 'O\'Reilly, C. A. III & Tushman, M. L. (2013) Organizational Ambidexterity: Past, Present, and Future — Academy of Management Perspectives 27(4)（実証の総括）' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.1080.0406', type: 'academic', label: 'Andriopoulos, C. & Lewis, M. W. (2009) Exploitation-Exploration Tensions and Organizational Ambidexterity — Organization Science 20(4)（パラドックスの視角）' },
     ],
   },
   {

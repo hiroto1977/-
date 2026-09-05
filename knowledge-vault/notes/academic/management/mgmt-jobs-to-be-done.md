@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-innovation-s-curve-foster|イノベーションのSカーブとテクノロジーサイクル——技術的限界と不連続的イノベーションの経営戦略]] — 同じ思想家
 - [[mgmt-second-curve-handy|セカンド・カーブ——衰退する前に次の成長曲線を始める]] — 同じ思想家
 - [[mgmt-strategic-momentum-miller|戦略的モメンタム——成功パターンの固定化が組織衰退を招くメカニズム]] — 同じ思想家
-- [[mgmt-innovators-dilemma|イノベーションのジレンマ（破壊的イノベーション）]] — 出典を共有
+- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -38,11 +38,11 @@ John Child ／ Richard M. Cyert ／ James G. March ／ Alfred D. Chandler Jr. �
 - [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
 - [[mgmt-organizational-attention-theory|組織注意理論]] — 同じ思想家
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
-- [[mgmt-paradox-of-success|成功のパラドクス]] — 同じ思想家
 - [[mgmt-guanxi-network-capitalism|グアンシ関係資本主義と東アジアの経営システム]] — 同じ思想家
-- [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 同じ思想家
-- [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 同じ思想家
 - [[mgmt-vicarious-learning|代理学習（Vicarious Learning in Organizations）]] — 同じ思想家
+- [[mgmt-penrose-growth|ペンローズの企業成長理論]] — 出典を共有
+- [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — 出典を共有
+- [[econ-tobin-separation|トービンの分離定理（Tobin Separation Theorem）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

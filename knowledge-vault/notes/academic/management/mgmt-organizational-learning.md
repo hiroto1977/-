@@ -33,6 +33,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-learning-organization-senge|学習する組織（センゲ）]] — 語彙が近い
+- [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]] — 語彙が近い
 - [[mgmt-defensive-routines-argyris|組織の防衛的ルーチン——脅威を避けて学習を妨げる習慣]] — 同じ思想家
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
 - [[mgmt-organizational-learning-argyris|組織学習とシングル・ダブルループ学習（アージリス）]] — 同じ思想家

@@ -31,7 +31,6 @@ aliases:
 - [O'Donoghue & Rabin 2001 Choice and Procrastination. Quarterly Journal of Economics 116(1) 121-160](https://doi.org/10.1162/003355301556365) `学術`
 
 ## 関連概念
-- [[human-hyperbolic-discounting|双曲割引]] — 語彙が近い
 - [[econ-disappointment-aversion-gul|失望回避——期待を下回る結果を重く評価する]] — 同じ思想家
 - [[econ-temptation-self-control-gul-pesendorfer|誘惑と自制の選好——選択肢の集合そのものを評価する]] — 同じ思想家
 - [[human-temporal-discounting-ainslie|時間割引と双曲割引——即時的報酬への選好と衝動性の行動経済学]] — 同じ思想家

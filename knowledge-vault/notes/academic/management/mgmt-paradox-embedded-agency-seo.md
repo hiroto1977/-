@@ -39,6 +39,7 @@ aliases:
 - [[mgmt-institutional-work-lawrence|制度的ワーク論——アクターによる制度の創造・維持・破壊の実践]] — 同じ思想家
 - [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 同分野の近傍
 - [[mgmt-institutional-logics-thornton|制度的ロジック理論：制度的多元性と組織的合理性の再解釈]] — 同分野の近傍
+- [[mgmt-institutional-logic-friedland|制度的ロジック（フリードランド＆アルフォード）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

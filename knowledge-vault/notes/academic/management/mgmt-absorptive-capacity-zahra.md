@@ -36,6 +36,7 @@ Cohen & Levinthal（1990）が提唱した吸収能力（absorptive capacity）�
 - [[mgmt-absorptive-capacity-realization|吸収能力の実現化モデル：潜在的能力と実現的能力]] — 語彙が近い
 - [[mgmt-absorptive-capacity-reconceptualization|吸収能力の再概念化（ザーラ＆ジョージ 2002）]] — 語彙が近い
 - [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — 語彙が近い
+- [[mgmt-competency-trap|コンピテンシー・トラップと成功の罠（レヴィット＝マーチ／レヴィンタール＝マーチ）——過去の成功への習熟が学習を深化に偏らせ、より優れた選択肢への転換を妨げる]] — 同じ思想家
 - [[mgmt-corporate-entrepreneurship-zahra|コーポレート・アントレプレナーシップ（ザーラ）]] — 同じ思想家
 - [[mgmt-corporate-venturing-burgelman|コーポレート・ベンチャリング（バーゲルマン）]] — 同じ思想家
 - [[mgmt-nk-fitness-landscape|NK適応度地形モデル——戦略の「険しい山」と局所最適]] — 同じ思想家

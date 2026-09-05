@@ -34,7 +34,6 @@ aliases:
 - [[legal-corporate-reorganization|会社法における組織再編（合併・会社分割・株式交換・株式移転・株式交付）]] — 分野横断
 - [[bizlaw-companies-act|会社法]] — 同分野の近傍
 - [[bizlaw-corporate-restructuring-law|企業再編法制と会社分割・合併の法律構成]] — 同分野の近傍
-- [[bizlaw-cross-border-merger-eu|越境合併と株式会社指令（EU）]] — 同分野の近傍
 - [[bizlaw-de-facto-merger-doctrine|事実上の合併の法理（デ・ファクト・マージャー法理）]] — 同分野の近傍
 
 ## 関連

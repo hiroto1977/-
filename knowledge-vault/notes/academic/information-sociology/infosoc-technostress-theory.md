@@ -39,10 +39,10 @@ Craig Brod ／ Monideepa Tarafdar ／ T. S. Ragu-Nathan ／ Bhanu S. Ragu-Nathan
 - [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
 - [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 出典を共有
 - [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 出典を共有
-- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 出典を共有
+- [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]] — 出典を共有
+- [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる]] — 出典を共有
 - [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — 出典を共有
 - [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 出典を共有
-- [[mgmt-managerial-cognition|経営者認知理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

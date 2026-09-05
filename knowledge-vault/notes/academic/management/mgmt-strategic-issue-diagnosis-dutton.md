@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — 同じ思想家
 - [[mgmt-organizational-identity-albert|組織アイデンティティ理論（アルバート＆ウェッテン）]] — 同じ思想家
 - [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同じ思想家
-- [[mgmt-paradox-theory-smith-lewis|パラドックス理論——組織における矛盾の同時追求と動態的均衡]] — 同分野の近傍
+- [[mgmt-organizational-resilience-lengnick-hall|組織レジリエンス——逆境からの回復と適応的成長の能力]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

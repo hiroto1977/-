@@ -36,11 +36,11 @@ aliases:
 - [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]] — 同じ思想家
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
 - [[infosoc-digital-ethnography-hine|デジタル・エスノグラフィー——ハインのヴァーチャル方法論とオンライン社会調査]] — 同じ思想家
+- [[mgmt-competency-trap|コンピテンシー・トラップと成功の罠（レヴィット＝マーチ／レヴィンタール＝マーチ）——過去の成功への習熟が学習を深化に偏らせ、より優れた選択肢への転換を妨げる]] — 同じ思想家
 - [[mgmt-configurational-theory-fiss|構成理論——等結果性と因果的複雑性の組織分析アプローチ]] — 同じ思想家
 - [[mgmt-configurational-theory-miller|構成的理論（ミラー）]] — 同じ思想家
 - [[mgmt-entrepreneurial-orientation-miller|起業家的志向性（ミラー）]] — 同じ思想家
 - [[mgmt-generic-strategies-porter|ポーターの基本戦略——コスト・リーダーシップ・差別化・集中]] — 同じ思想家
-- [[mgmt-organizational-life-cycle-greiner|グレイナーの組織成長モデル——進化と革命を繰り返す五段階の発展]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

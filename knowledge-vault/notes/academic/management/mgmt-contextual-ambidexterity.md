@@ -31,11 +31,9 @@ aliases:
 - [O'Reilly, C.A. & Tushman, M.L. (2004) The Ambidextrous Organization — Harvard Business Review, 82(4), 74-81](https://doi.org/10.1287/orsc.1050.0134) `学術`
 
 ## 関連概念
-- [[mgmt-organizational-ambidexterity-raisch|組織的アンビデクストリティの実現メカニズム——ライシュの構造的・文脈的アプローチ統合]] — 同じ思想家
-- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 同じ思想家
+- [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]] — 同じ思想家
 - [[mgmt-balanced-scorecard-kaplan-norton|バランスト・スコアカード——カプラン＆ノートンによる四つの視点を統合した戦略的業績管理]] — 同分野の近傍
 - [[mgmt-institutional-theory|制度理論（制度的同型化）]] — 同分野の近傍
-- [[mgmt-shamrock-organization-handy|シャムロック型組織——三つの異なる働き手からなる柔軟な組織]] — 同分野の近傍
 - [[mgmt-strategic-alliances|戦略的提携・アライアンス：企業間協力による競争優位・知識学習・社会ネットワークの組織間関係論]] — 同分野の近傍
 
 ## 関連

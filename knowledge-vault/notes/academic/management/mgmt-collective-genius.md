@@ -32,11 +32,15 @@ aliases:
 
 ## 関連概念
 - [[infosoc-information-goods|情報財の経済的特性（高固定費・ゼロ限界費用・非競合性・経験財）]] — 出典を共有
+- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 出典を共有
+- [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]] — 出典を共有
+- [[mgmt-family-business-governance-gersick|ファミリービジネスの三円モデル（ガーシック）]] — 出典を共有
+- [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]] — 出典を共有
+- [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — 出典を共有
+- [[mgmt-institutional-void|制度的空白（Institutional Voids）]] — 出典を共有
+- [[mgmt-kanter-tokenism-theory|カンターのトークニズム理論（Tokenism Theory）]] — 出典を共有
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 出典を共有
-- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 出典を共有
-- [[infosoc-techno-feudalism-theory|テクノ封建主義論]] — 出典を共有
-- [[mgmt-growth-mindset|成長マインドセット（Growth Mindset）]] — 同分野の近傍
-- [[mgmt-agile-scrum-organizational|アジャイル・スクラムと組織アジリティの経営論——ソフトウェア開発から経営変革へ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

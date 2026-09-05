@@ -34,7 +34,7 @@ C・K・プラハラード／ベンカト・ラマスワミ（2004）
 - [[mgmt-customer-value-co-creation|顧客価値の共創とサービス・エコシステム（バーゴ＆ラッシュ）]] — 語彙が近い
 - [[infosoc-post-industrial|脱工業社会論（ダニエル・ベル）]] — 出典を共有
 - [[infosoc-umesao-information-industry|情報産業論（梅棹忠夫）]] — 出典を共有
-- [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — 同分野の近傍
+- [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

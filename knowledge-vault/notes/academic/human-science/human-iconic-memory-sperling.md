@@ -33,8 +33,8 @@ aliases:
 - [[human-flashbulb-memory-brown-kulik|フラッシュバルブ記憶——衝撃的出来事を知った状況の鮮明な記憶]] — 同じ思想家
 - [[human-reconstructive-memory-bartlett|再構成的記憶——スキーマに基づき能動的に再構成される記憶]] — 同じ思想家
 - [[human-working-memory-baddeley|ワーキングメモリ——情報を一時的に保持し操作する多成分システム]] — 同じ思想家
-- [[human-levels-of-processing-craik-lockhart|処理水準説——記憶の定着は情報を処理する深さに依存する]] — 同分野の近傍
 - [[human-cbt|認知行動療法（CBT）]] — 同分野の近傍
+- [[human-levels-of-processing-craik-lockhart|処理水準説——記憶の定着は情報を処理する深さに依存する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

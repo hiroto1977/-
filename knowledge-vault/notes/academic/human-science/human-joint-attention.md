@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[human-situation-awareness-endsley|エンズリーの状況認識（SA）モデル——知覚・理解・予測の三層がつくる動的意思決定の認知基盤]] — 同分野の近傍
-- [[human-fast-mapping|高速マッピング（Fast Mapping）]] — 同分野の近傍
 - [[human-ideomotor|観念運動効果（Ideomotor Effect）]] — 同分野の近傍
 
 ## 関連

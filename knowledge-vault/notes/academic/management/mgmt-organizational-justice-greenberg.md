@@ -38,7 +38,6 @@ aliases:
 - [[mgmt-equity-theory-adams|公平理論——投入と報酬の比率の社会的比較が動機づけを左右する]] — 同じ思想家
 - [[mgmt-illegitimate-tasks-semmer|不当な課業——役割や自尊心にそぐわない仕事がストレスを生む]] — 同じ思想家
 - [[mgmt-workplace-deviance-robinson|職場逸脱行動——組織規範に反する自発的行為の分類と規定要因]] — 同じ思想家
-- [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 同分野の近傍
 - [[mgmt-psychological-contract|心理的契約]] — 同分野の近傍
 
 ## 関連

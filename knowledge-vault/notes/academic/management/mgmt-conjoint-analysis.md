@@ -32,7 +32,7 @@ Paul E. Green (ポール・グリーン, ウォートン校) ／ Vithala R. Rao 
 
 ## 関連概念
 - [[mgmt-reverse-mentoring|リバース・メンタリング]] — 同分野の近傍
-- [[mgmt-freemium|フリーミアム]] — 同分野の近傍
+- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

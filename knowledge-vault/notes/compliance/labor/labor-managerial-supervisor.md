@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[labor-medical-interview|長時間労働者に対する医師による面接指導]] — 出典を共有
-- [[labor-high-professional|高度プロフェッショナル制度（労基法41条の2）]] — 同分野の近傍
 - [[labor-paid-leave-timing|年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）]] — 同分野の近傍
+- [[labor-high-professional|高度プロフェッショナル制度（労基法41条の2）]] — 同分野の近傍
 - [[labor-minor-protection|年少者の労働保護（労働基準法 第6章）]] — 同分野の近傍
 
 ## 関連

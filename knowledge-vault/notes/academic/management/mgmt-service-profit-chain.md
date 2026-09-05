@@ -37,7 +37,6 @@ aliases:
 - [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 出典を共有
 - [[mgmt-high-performance-work-systems-huselid|高業績労働システム——ヒューセリッドの人的資源管理バンドルと企業業績]] — 同分野の近傍
 - [[mgmt-brand-equity|ブランド・エクイティ]] — 同分野の近傍
-- [[mgmt-net-promoter-score|ネット・プロモーター・スコア（NPS）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

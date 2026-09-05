@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 660
+entry_count: 647
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（660件）
+# 学習パス — 学術概念／経営学（647件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[agile-development|アジャイルソフトウェア開発]]（接続 63）
+- [[agile-development|アジャイルソフトウェア開発]]（接続 65）
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 39）
+- [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]]（接続 36）
+- [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる]]（接続 32）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 29）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 29）
-- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 27）
 - [[mgmt-mbo|目標による管理（MBO）]]（接続 25）
+- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 24）
 - [[mgmt-csr|企業の社会的責任（CSR）]]（接続 24）
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 24）
-- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]]（接続 23）
-- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 23）
+- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 23）
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 23）
-- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 22）
-- [[mgmt-managerial-cognition|経営者認知理論]]（接続 22）
-- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]]（接続 22）
-- [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]]（接続 21）
+- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]]（接続 22）
+- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]]（接続 21）
 
 ## 第 2 部 — 年代順の展開
 - 1629年: [[mgmt-fmea|故障モード影響解析（FMEA／Failure Mode and Effects Analysis）——起こりうる故障を体系的に洗い出し、深刻度・発生度・検出度で優先順位づける]]
@@ -138,7 +138,6 @@ tags:
 - 1979年: [[mgmt-mintzberg-organization|ミンツバーグの組織構造の5類型]]
 - 1979年: [[mgmt-organizational-socialization|組織社会化]]
 - 1979年: [[mgmt-paradox-of-organizing|組織化のパラドックス（Paradox of Organizing）]]
-- 1980年: [[mgmt-activity-based-costing|活動基準原価計算（ABC）]]
 - 1980年: [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]]
 - 1980年: [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]]
 - 1980年: [[mgmt-hofstede-dimensions|ホフステッドの文化次元論]]
@@ -177,7 +176,7 @@ tags:
 - 1987年: [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]]
 - 1987年: [[mgmt-pims|PIMS研究（市場戦略の利益への影響）]]
 - 1987年: [[mgmt-strategic-issue-diagnosis|戦略的争点の診断（Strategic Issue Diagnosis）]]
-- 1988年: [[mgmt-competency-trap|コンピテンシー・トラップ（能力の罠）]]
+- 1988年: [[mgmt-competency-trap|コンピテンシー・トラップと成功の罠（レヴィット＝マーチ／レヴィンタール＝マーチ）——過去の成功への習熟が学習を深化に偏らせ、より優れた選択肢への転換を妨げる]]
 - 1988年: [[mgmt-first-mover-advantage|先発者優位]]
 - 1988年: [[mgmt-followership|フォロワーシップ論]]
 - 1988年: [[mgmt-institutional-entrepreneurship|制度的アントレプレナーシップ（Institutional Entrepreneurship）]]
@@ -203,7 +202,6 @@ tags:
 - 1991年: [[mgmt-crossing-the-chasm|キャズム理論（Crossing the Chasm）]]
 - 1991年: [[mgmt-exploration-exploitation|知の探索と知の深化（探索と活用）]]
 - 1991年: [[mgmt-good-strategy-kernel-rumelt|ルメルトの「良い戦略」のカーネル——診断・基本方針・一貫した行動の三要素で戦略を判定する]]
-- 1991年: [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]]
 - 1991年: [[mgmt-organizational-commitment|組織コミットメント]]
 - 1991年: [[mgmt-sensegiving|センスギビング（Sensegiving）]]
 - 1991年: [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]]
@@ -234,7 +232,6 @@ tags:
 - 1996年: [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]]
 - 1996年: [[mgmt-normalization-of-deviance-vaughan|逸脱の正常化——小さな逸脱の反復的許容が組織の「正常」の基準を書き換える]]
 - 1996年: [[mgmt-strategic-inflection|戦略的転換点（Strategic Inflection Point）]]
-- 1997年: [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]]
 - 1997年: [[mgmt-brand-personality|ブランドパーソナリティ（アーカーの5次元モデル）]]
 - 1997年: [[mgmt-collective-efficacy-bandura|集合的効力感理論]]
 - 1997年: [[mgmt-core-self-evaluations-judge|中核的自己評価——自尊心・一般的自己効力感・統制の所在・情緒安定性を束ねる高次特性]]
@@ -255,7 +252,7 @@ tags:
 - 1999年: [[mgmt-reverse-mentoring|リバース・メンタリング]]
 - 1999年: [[mgmt-self-concordance-model|自己一致モデル（セルフ・コンコーダンス）]]
 - 2000年: [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]]
-- 2000年: [[mgmt-organizational-paradox-theory|組織パラドックス理論（Organizational Paradox Theory）]]
+- 2000年: [[mgmt-paradox-theory-smith-lewis|組織パラドックス理論（ルイス／スミス＝ルイス）——相互に矛盾しつつ相互依存する要求を排除せず受容し、動態的均衡として管理する]]
 - 2000年: [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]]
 - 2000年: [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]]
 - 2001年: [[mgmt-cage-distance-framework-ghemawat|CAGEディスタンス・フレームワーク——文化・制度・地理・経済の4つの距離で海外市場の遠さを測るゲマワットの枠組み]]
@@ -315,9 +312,6 @@ tags:
 - [[mgmt-agile-kanban|かんばん方式とアジャイル・カンバン]]
 - [[mgmt-agile-scrum-organizational|アジャイル・スクラムと組織アジリティの経営論——ソフトウェア開発から経営変革へ]]
 - [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]]
-- [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]]
-- [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ——探索と活用の動的切替え]]
-- [[mgmt-ambidextrous-organization-theory|両利き組織理論]]
 - [[mgmt-amoeba-management|アメーバ経営（稲盛和夫）]]
 - [[mgmt-appreciative-inquiry-cooperrider|アプリシエイティブ・インクワイアリー（AI）と組織開発の強み志向]]
 - [[mgmt-architectural-innovation-henderson-clark|アーキテクチュラル・イノベーション——構成要素のつなぎ方を変える革新]]
@@ -333,7 +327,6 @@ tags:
 - [[mgmt-behavioral-integrity|行動的誠実性（ビヘイビオラル・インテグリティ）]]
 - [[mgmt-behavioral-strategy-powell-lovallo|行動戦略論——認知バイアスと限定合理性が戦略的意思決定に及ぼす体系的影響]]
 - [[mgmt-behavioral-strategy-theory|行動戦略理論]]
-- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]
 - [[mgmt-benchmarking-camp|ベンチマーキング——最良の実践との体系的な比較による改善]]
 - [[mgmt-blake-mouton-grid|マネジリアル・グリッド——業績への関心と人への関心の二軸でリーダーを類型化]]
 - [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]]
@@ -475,6 +468,7 @@ tags:
 - [[mgmt-lmx-theory-graen|リーダー・メンバー交換理論——上司と部下が築く差異化された二者関係の質]]
 - [[mgmt-logical-incrementalism-quinn|論理的漸進主義——意図的に少しずつ進める戦略形成]]
 - [[mgmt-management-fashion-abrahamson|経営ファッション論——経営技法の流行とその供給・需要の力学]]
+- [[mgmt-managerial-cognition|経営者認知理論]]
 - [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]]
 - [[mgmt-managerial-cognition-walsh|経営者認知論（ウォルシュ）]]
 - [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]]
@@ -494,10 +488,6 @@ tags:
 - [[mgmt-open-innovation-paradigm|オープン・イノベーション・パラダイム]]
 - [[mgmt-order-winners-hill|受注獲得基準と受注資格基準（ヒル）——製造を市場に結びつける]]
 - [[mgmt-organizational-aesthetics|組織美学]]
-- [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]]
-- [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]]
-- [[mgmt-organizational-ambidexterity-raisch|組織的アンビデクストリティの実現メカニズム——ライシュの構造的・文脈的アプローチ統合]]
-- [[mgmt-organizational-ambidexterity-theory|組織両利き理論]]
 - [[mgmt-organizational-ambivalence-rothman|組織的アンビヴァレンス——矛盾する感情の共存とその機能]]
 - [[mgmt-organizational-ambivalence-theory|組織的アンビバレンス理論]]
 - [[mgmt-organizational-attention-theory|組織注意理論]]
@@ -523,7 +513,6 @@ tags:
 - [[mgmt-organizational-justice-greenberg|組織的公正——分配・手続き・相互作用の三次元からなる職場の公正知覚]]
 - [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]]
 - [[mgmt-organizational-learning-argyris|組織学習とシングル・ダブルループ学習（アージリス）]]
-- [[mgmt-organizational-learning-cycles-levinthal|組織学習の落とし穴——コンピタンシー・トラップとサクセス・トラップ（レビンタール＆マーチ）]]
 - [[mgmt-organizational-life-cycle-greiner|グレイナーの組織成長モデル——進化と革命を繰り返す五段階の発展]]
 - [[mgmt-organizational-neuroscience|組織神経科学]]
 - [[mgmt-organizational-resilience-lengnick-hall|組織レジリエンス——逆境からの回復と適応的成長の能力]]
@@ -537,9 +526,6 @@ tags:
 - [[mgmt-organizational-slack-bourgeois|組織スラック理論——余剰資源の緩衝機能と戦略的活用]]
 - [[mgmt-organizational-tempo-entrainment|組織テンポとエントレインメント：時間的同期と戦略的ペーシング]]
 - [[mgmt-paradox-embedded-agency-seo|埋め込まれたエージェンシーのパラドクス——制度変革者の制度的条件付け]]
-- [[mgmt-paradox-of-success|成功のパラドクス]]
-- [[mgmt-paradox-theory-of-leadership|リーダーシップのパラドックス理論]]
-- [[mgmt-paradox-theory-smith-lewis|パラドックス理論——組織における矛盾の同時追求と動態的均衡]]
 - [[mgmt-paradoxical-leadership-zhang|パラドキシカル・リーダーシップ——相反する要請を同時に満たす]]
 - [[mgmt-path-goal-theory-house|パス・ゴール理論——リーダーが部下の目標達成経路を整備する条件適応的指導]]
 - [[mgmt-pdca-cycle|PDCAサイクル]]
@@ -547,6 +533,7 @@ tags:
 - [[mgmt-person-environment-fit|人と環境の適合理論（P-Eフィット）]]
 - [[mgmt-pestel-analysis|PESTEL分析——マクロ環境を六つの外部要因から分析する枠組み]]
 - [[mgmt-platform-ecosystems-gawer-cusumano|プラットフォーム・エコシステム——インダストリアル・プラットフォームとネットワーク効果の戦略論]]
+- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]]
 - [[mgmt-poka-yoke|ポカヨケ]]
 - [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]]
 - [[mgmt-polychronicity|ポリクロニシティ（多時間並行志向）]]

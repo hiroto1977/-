@@ -40,7 +40,7 @@ aliases:
 - [[human-identity-status-paradigm-marcia|マーシャの自我同一性地位——探求と関与の有無で青年期のアイデンティティ形成を4つの地位に分ける]] — 出典を共有
 - [[mgmt-psychological-ownership|心理的所有感]] — 出典を共有
 - [[bizlaw-piercing-corporate-veil-reverse|法人格否認の法理（逆方向）]] — 出典を共有
-- [[mgmt-heavyweight-product-manager-clark-fujimoto|重量級プロダクト・マネジャー——組織内外の統合を一身に担い製品コンセプトを守る開発責任者]] — 出典を共有
+- [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

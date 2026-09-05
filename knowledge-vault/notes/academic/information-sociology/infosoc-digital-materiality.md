@@ -32,9 +32,9 @@ Jean-François Blanchette ／ Paul Dourish
 - [Casemajor, Digital Materialisms, Westminster Papers (2015)](https://www.westminsterpapers.org/articles/10.16997/wpcc.209/) `学術`
 
 ## 関連概念
-- [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 出典を共有
 - [[infosoc-privacy-paradox|プライバシー・パラドックス]] — 出典を共有
 - [[infosoc-second-level-digital-divide|第二のデジタル・デバイド（スキル・利用の格差）]] — 出典を共有
+- [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 出典を共有
 - [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 出典を共有
 - [[infosoc-information-ecology-theory|情報生態学理論]] — 出典を共有
 - [[infosoc-social-bots|ソーシャルボット]] — 出典を共有

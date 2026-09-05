@@ -35,7 +35,13 @@ aliases:
 - [[econ-financialization-lazonick-shareholder|金融化とシェアホルダー・バリュー——ラゾニックの「保持・再投資」から「縮小・分配」への転換]] — 同じ思想家
 - [[mgmt-corporate-governance-stewardship|コーポレートガバナンスとスチュワードシップ理論——エージェンシー論との対比]] — 同じ思想家
 - [[mgmt-family-business-succession|ファミリービジネスの事業承継と経営継続性の組織論]] — 同じ思想家
-- [[mgmt-institutional-logic-friedland|制度的ロジック（フリードランド＆アルフォード）]] — 同分野の近傍
+- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 出典を共有
+- [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]] — 出典を共有
+- [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]] — 出典を共有
+- [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — 出典を共有
+- [[mgmt-institutional-void|制度的空白（Institutional Voids）]] — 出典を共有
+- [[mgmt-kanter-tokenism-theory|カンターのトークニズム理論（Tokenism Theory）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

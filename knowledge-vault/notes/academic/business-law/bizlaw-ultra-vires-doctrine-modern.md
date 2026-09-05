@@ -35,10 +35,10 @@ aliases:
 - [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — 出典を共有
 - [[mgmt-appreciative-inquiry|アプリシエイティブ・インクワイアリー（AI）]] — 出典を共有
 - [[mgmt-eprg-orientations-perlmutter|EPRGフレームワーク——本国志向から世界志向へ至る多国籍企業経営者の心的構え]] — 出典を共有
-- [[mgmt-heavyweight-product-manager-clark-fujimoto|重量級プロダクト・マネジャー——組織内外の統合を一身に担い製品コンセプトを守る開発責任者]] — 出典を共有
 - [[mgmt-organizational-unlearning|組織的アンラーニング]] — 出典を共有
 - [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 出典を共有
 - [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有
+- [[mgmt-heavyweight-product-manager-clark-fujimoto|重量級プロダクト・マネジャー——組織内外の統合を一身に担い製品コンセプトを守る開発責任者]] — 出典を共有
 - [[bizlaw-duty-of-loyalty|取締役の忠実義務（会社法355条）]] — 同分野の近傍
 - [[bizlaw-corporate-restructuring-law|企業再編法制と会社分割・合併の法律構成]] — 同分野の近傍
 

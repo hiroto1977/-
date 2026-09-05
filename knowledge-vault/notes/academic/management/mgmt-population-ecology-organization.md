@@ -37,7 +37,6 @@ Michael T. Hannan ／ John Freeman
 - [[mgmt-organizational-ecology-density|組織エコロジーの密度依存モデル——個体群密度と組織の設立・消滅]] — 同分野の近傍
 - [[mgmt-behavioral-decision-theory-march|行動的意思決定理論——限定合理性下の組織的選択プロセス]] — 同分野の近傍
 - [[mgmt-organizational-ecology|組織エコロジー（Organizational Ecology）]] — 同分野の近傍
-- [[mgmt-resource-munificence-aldrich|資源余剰性と組織生態学（アルドリッチ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

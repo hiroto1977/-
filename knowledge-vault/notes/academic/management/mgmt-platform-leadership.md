@@ -37,6 +37,7 @@ aliases:
 - [[mgmt-career-anchor|キャリア・アンカー（シャイン）]] — 出典を共有
 - [[mgmt-theory-u|セオリーU（プレゼンシング）]] — 出典を共有
 - [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — 同分野の近傍
+- [[mgmt-strategic-renewal-crossan|戦略的リニューアル——組織学習と戦略変革の動態モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

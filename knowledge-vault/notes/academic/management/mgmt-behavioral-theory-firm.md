@@ -38,8 +38,8 @@ Richard M. Cyert & James G. March（Prentice-Hall, 1963, 企業の行動理論�
 - [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 同じ思想家
 - [[infosoc-bandwagon-underdog-effect|バンドワゴン効果・アンダードッグ効果（bandwagon / underdog effect）——公表された世論調査が投票行動そのものを動かすフィードバック現象]] — 同じ思想家
 - [[infosoc-information-overload-theory|情報過負荷理論]] — 同じ思想家
-- [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — 同じ思想家
-- [[mgmt-organizational-ambidexterity-theory|組織両利き理論]] — 同じ思想家
+- [[mgmt-vicarious-learning|代理学習（Vicarious Learning in Organizations）]] — 同じ思想家
+- [[mgmt-dominant-logic|ドミナント・ロジック（Dominant Logic）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

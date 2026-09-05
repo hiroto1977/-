@@ -32,14 +32,14 @@ aliases:
 
 ## 関連概念
 - [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]] — 語彙が近い
-- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 出典を共有
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
 - [[mgmt-demand-side-strategy|需要サイド戦略論]] — 出典を共有
-- [[mgmt-levers-of-control-simons|サイモンズの統制のレバー——信条・境界・診断型・インタラクティブ型の四レバーで革新と統制を両立させる経営統制論]] — 出典を共有
 - [[mgmt-multimarket-contact-mutual-forbearance|多市場接触と相互自制の理論（マルチマーケット・コンペティション）]] — 出典を共有
 - [[mgmt-red-queen-competition|赤の女王競争理論]] — 出典を共有
 - [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 出典を共有
+- [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 出典を共有
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
 - [[mgmt-hypercompetition|ハイパーコンペティション]] — 出典を共有
 
 ## 関連

@@ -39,7 +39,7 @@ aliases:
 - [[infosoc-superpanopticon-poster|スーパーパノプティコン——データベースによる監視と主体の構成]] — 同じ思想家
 - [[infosoc-total-institution-goffman|全制的施設——隔離された生活世界と自己の剥奪・再社会化]] — 同じ思想家
 - [[infosoc-visibility-digital-thompson|新しい可視性——デジタルメディアによる権力と監視の変容]] — 同じ思想家
-- [[infosoc-looking-glass-self-cooley|鏡に映った自己——他者の眼差しの想像を通じて形成される社会的自己]] — 同分野の近傍
+- [[infosoc-creative-commons|クリエイティブ・コモンズ（CCライセンス）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

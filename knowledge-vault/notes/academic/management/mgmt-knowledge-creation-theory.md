@@ -38,9 +38,9 @@ Ikujiro Nonaka ／ Hirotaka Takeuchi
 - [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
 - [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
 - [[human-bias-blind-spot|バイアスの盲点]] — 出典を共有
-- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 出典を共有
+- [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]] — 出典を共有
+- [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる]] — 出典を共有
 - [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — 出典を共有
-- [[mgmt-managerial-cognition|経営者認知理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

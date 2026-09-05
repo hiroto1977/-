@@ -37,9 +37,9 @@ aliases:
 - [[human-hedonic-adaptation|快楽順応]] — 出典を共有
 - [[human-status-quo-bias|現状維持バイアス]] — 出典を共有
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
-- [[human-asch-conformity|アッシュの同調実験（同調圧力）]] — 同分野の近傍
 - [[human-bias-blind-spot|バイアスの盲点]] — 同分野の近傍
 - [[human-action-bias|行動バイアス（アクション・バイアス）]] — 同分野の近傍
+- [[human-asch-conformity|アッシュの同調実験（同調圧力）]] — 同分野の近傍
 - [[human-gestalt-principles|ゲシュタルト知覚の法則]] — 同分野の近傍
 
 ## 関連

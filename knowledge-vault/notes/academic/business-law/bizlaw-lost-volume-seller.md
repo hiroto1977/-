@@ -40,8 +40,8 @@ aliases:
 - [[bizlaw-peevyhouse-v-garland-coal-cost-of-completion|ピーヴィーハウス対ガーランド石炭事件——完成費用か価値減少分か、契約損害賠償の測り方]] — 出典を共有
 - [[bizlaw-assumption-of-risk|危険の引受——原告が任意に引き受けた既知の危険につき被告の不法行為責任を否定するコモンロー上の抗弁]] — 出典を共有
 - [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 出典を共有
-- [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — 出典を共有
 - [[infosoc-taxonomy-of-privacy-solove|ソロブのプライバシー類型論——プライバシー侵害を情報収集・情報処理・情報拡散・侵入の四群十六類型に分ける枠組み]] — 出典を共有
+- [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — 出典を共有
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 
 ## 関連

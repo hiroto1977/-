@@ -3,41 +3,46 @@ collection: academic
 id: mgmt-competency-trap
 category: "management"
 category_ja: "経営学"
-title: "コンピテンシー・トラップ（能力の罠）"
-as_of: "2026-06"
-source_count: 2
+title: "コンピテンシー・トラップと成功の罠（レヴィット＝マーチ／レヴィンタール＝マーチ）——過去の成功への習熟が学習を深化に偏らせ、より優れた選択肢への転換を妨げる"
+as_of: "2026-09"
+source_count: 5
 authoritative: true
 tags:
   - collection/academic
   - academic/management
   - knowledge/verified
 aliases:
-  - "コンピテンシー・トラップ（能力の罠）"
+  - "コンピテンシー・トラップと成功の罠（レヴィット＝マーチ／レヴィンタール＝マーチ）——過去の成功への習熟が学習を深化に偏らせ、より優れた選択肢への転換を妨げる"
 ---
 
-# コンピテンシー・トラップ（能力の罠）
+# コンピテンシー・トラップと成功の罠（レヴィット＝マーチ／レヴィンタール＝マーチ）——過去の成功への習熟が学習を深化に偏らせ、より優れた選択肢への転換を妨げる
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06 ・ 出典: 2件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-09 ・ 出典: 5件（うち権威ある出典 ✓）
 
 ## 概要
-コンピテンシー・トラップ（Competency Trap）とは、組織が既存の技術・ルーティン・事業領域に習熟するほど、その活用（exploitation）への依存を深め、新たな技術や市場機会の探索（exploration）を怠る結果、環境変化に対して脆弱になる現象をいう。成功が学習の方向性を固定し、自己強化的に硬直化する経路依存的メカニズムである。バーバラ・レヴィットとジェームズ・マーチが1988年のAnnual Review of Sociology論文"Organizational Learning"で概念化した。マーチが1991年のOrganization Science論文で展開した探索と活用のトレードオフ理論の中核概念であり、コダック・ノキア等の事例で実証的に検証されている。両利き経営（ambidexterity）の理論的前提をなす概念である。
+コンピテンシー・トラップ（competency trap）とは、既存の技術や手順に習熟するほどその活用への依存を深め、より優れた選択肢の探索を怠って環境変化に脆くなる現象で、バーバラ・レヴィットとジェームズ・マーチが1988年の論文『Organizational Learning』（Annual Review of Sociology 14巻）で概念化した。劣った手続でも習熟で成果が出るため、より優れた手続へ乗り換えることが不合理になる学習の袋小路である。マーチ（1991）は探索と深化のトレードオフを体系化し、深化の見返りは近く確実で探索の見返りは遠く不確実なため、適応過程が成功体験を通じて深化へ自己強化的に傾く「成功の罠」と、失敗続きで探索を乱発する「失敗の罠」を論じた。ダニエル・レヴィンタールとマーチ（1993、Strategic Management Journal）は、組織学習が近くの代替案・短期の成果・成功確率の高い選択肢を過大評価する三つの「学習の近視眼」で歪むことを示した。ドロシー・レナード＝バートン（1992）は、中核的能力がそれに合わない新製品開発では中核的硬直性へ転化することを実証し、ダニー・ミラーのイカロス・パラドックスも同型の診断である。処方として両利きの経営、探索のための余裕資源、定期的な自己刷新が論じられ、コダックやノキアの衰退の説明にしばしば引かれるが、事後的な説明に流れやすく転換の時機の規範を与えにくいという批判がある。中小企業には、得意技への習熟が売上を支えるほど次の技術や顧客層への学習が後回しになるため、売上の一部を意図的に探索へ振り向け、失敗を許す小さな実験を制度化することが含意となる。
 
 ## 提唱者・初出
-バーバラ・レヴィット & ジェームズ・G・マーチ（Levitt & March, 1988 "Organizational Learning"）／ジェームズ・G・マーチ（James G. March, 1991 "Exploration and Exploitation in Organizational Learning"）
+バーバラ・レヴィット＆ジェームズ・マーチ（1988『Organizational Learning』Annual Review of Sociology）／ジェームズ・マーチ（1991 成功の罠・失敗の罠）／ダニエル・レヴィンタール＆ジェームズ・マーチ（1993『The Myopia of Learning』SMJ）／ドロシー・レナード＝バートン（1992 中核的硬直性）／ダニー・ミラー（イカロス・パラドックス）
 
 ## 出典
-- [March (1991) "Exploration and Exploitation in Organizational Learning," Organization Science 2(1), 71–87 — 探索と活用の理論的枠組み](https://doi.org/10.1287/orsc.2.1.71) `学術`
-- [Levitt & March (1988) "Organizational Learning," Annual Review of Sociology 14, 319–340 — コンピテンシー・トラップの原典](https://doi.org/10.1146/annurev.so.14.080188.001535) `学術`
+- [Levitt, B. & March, J. G. (1988) Organizational Learning — Annual Review of Sociology 14, 319–340（コンピテンシー・トラップの概念化）](https://doi.org/10.1146/annurev.so.14.080188.001535) `学術`
+- [March, J. G. (1991) Exploration and Exploitation in Organizational Learning — Organization Science 2(1), 71–87（成功の罠・失敗の罠）](https://doi.org/10.1287/orsc.2.1.71) `学術`
+- [Levinthal, D. A. & March, J. G. (1993) The Myopia of Learning — Strategic Management Journal 14(S2)（学習の三つの近視眼）](https://doi.org/10.1002/smj.4250141009) `学術`
+- [Leonard-Barton, D. (1992) Core Capabilities and Core Rigidities: A Paradox in Managing New Product Development — Strategic Management Journal 13(S1)（中核的硬直性）](https://doi.org/10.1002/smj.4250131009) `学術`
+- [Wikipedia: Competency trap — March, Levinthal, exploration/exploitation, success trap, myopia of learning](https://en.wikipedia.org/wiki/Competency_trap) `リファレンス`
 
 ## 関連概念
-- [[mgmt-organizational-learning-cycles-levinthal|組織学習の落とし穴——コンピタンシー・トラップとサクセス・トラップ（レビンタール＆マーチ）]] — 語彙が近い
+- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]] — 同じ思想家
+- [[mgmt-icarus-paradox|イカロスのパラドックス（Icarus Paradox）]] — 同じ思想家
+- [[mgmt-organizational-slack-bourgeois|組織スラック理論——余剰資源の緩衝機能と戦略的活用]] — 同じ思想家
+- [[mgmt-strategic-momentum-miller|戦略的モメンタム——成功パターンの固定化が組織衰退を招くメカニズム]] — 同じ思想家
+- [[infosoc-polymedia|ポリメディア（Polymedia）]] — 同じ思想家
+- [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]] — 同じ思想家
+- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
 - [[mgmt-organizational-slack|組織スラック]] — 同じ思想家
-- [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — 同分野の近傍
-- [[mgmt-conservation-resources-hobfoll|資源保存理論——資源の喪失脅威がストレスを生み喪失の螺旋を駆動する]] — 同分野の近傍
-- [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同分野の近傍
-- [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — 同分野の近傍
-- [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 同分野の近傍
-- [[mgmt-guanxi-network-capitalism|グアンシ関係資本主義と東アジアの経営システム]] — 同分野の近傍
+- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
+- [[infosoc-digital-ethnography-hine|デジタル・エスノグラフィー——ハインのヴァーチャル方法論とオンライン社会調査]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -35,6 +35,7 @@ aliases:
 - [[mgmt-psychological-ownership-pierce|心理的所有権理論（ピアース＆コストバ）]] — 同じ思想家
 - [[mgmt-psychological-safety-edmondson|心理的安全性（エドモンドソン）]] — 同分野の近傍
 - [[mgmt-second-curve-handy|セカンド・カーブ——衰退する前に次の成長曲線を始める]] — 同分野の近傍
+- [[mgmt-organizational-resilience-lengnick-hall|組織レジリエンス——逆境からの回復と適応的成長の能力]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

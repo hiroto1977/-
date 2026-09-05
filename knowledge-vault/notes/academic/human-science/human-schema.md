@@ -34,6 +34,7 @@ aliases:
 ## 関連概念
 - [[human-false-memory|虚記憶（フォールス・メモリ）]] — 同分野の近傍
 - [[human-retrieval-induced-forgetting|検索誘導性忘却（Retrieval-Induced Forgetting）——思い出す行為そのものが、関連する競合記憶を一時的に抑制する]] — 同分野の近傍
+- [[human-depressive-realism-alloy|抑うつリアリズム——軽度抑うつ者における判断の正確性仮説]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

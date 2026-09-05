@@ -35,12 +35,12 @@ aliases:
 - [[mgmt-organizational-slack|組織スラック]] — 同じ思想家
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
 - [[mgmt-behavioral-decision-theory-march|行動的意思決定理論——限定合理性下の組織的選択プロセス]] — 同じ思想家
-- [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — 同じ思想家
-- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 同じ思想家
-- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 同じ思想家
-- [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]] — 同じ思想家
+- [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]] — 同じ思想家
+- [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる]] — 同じ思想家
 - [[mgmt-change-management-kotter-8-step|コッターの8段階変革モデル——組織変革の失敗要因分析と変革リーダーシップの実践フレームワーク]] — 同じ思想家
-- [[mgmt-institutional-work-lawrence|制度的ワーク論——アクターによる制度の創造・維持・破壊の実践]] — 同分野の近傍
+- [[mgmt-competency-trap|コンピテンシー・トラップと成功の罠（レヴィット＝マーチ／レヴィンタール＝マーチ）——過去の成功への習熟が学習を深化に偏らせ、より優れた選択肢への転換を妨げる]] — 同じ思想家
+- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]] — 同じ思想家
+- [[mgmt-strategic-renewal-crossan|戦略的リニューアル——組織学習と戦略変革の動態モデル]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

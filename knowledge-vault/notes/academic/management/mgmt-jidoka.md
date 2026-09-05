@@ -34,8 +34,8 @@ aliases:
 - [[mgmt-six-sigma|シックス・シグマ]] — 出典を共有
 - [[mgmt-toyota-production|トヨタ生産方式（リーン生産方式）]] — 出典を共有
 - [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]] — 出典を共有
+- [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]] — 同分野の近傍
 - [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

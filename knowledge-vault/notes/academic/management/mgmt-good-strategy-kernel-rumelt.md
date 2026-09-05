@@ -41,8 +41,8 @@ aliases:
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 同じ思想家
 - [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]] — 出典を共有
 - [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 出典を共有
-- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 出典を共有
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
+- [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

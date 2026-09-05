@@ -33,6 +33,7 @@ aliases:
 - [[econ-natural-monopoly-regulation|自然独占と規制経済学（ボーモル＆ヴィッカーズ）]] — 語彙が近い
 - [[mgmt-strategic-cognition|戦略的認知（Strategic Cognition）]] — 同分野の近傍
 - [[mgmt-pims|PIMS研究（市場戦略の利益への影響）]] — 同分野の近傍
+- [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

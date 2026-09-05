@@ -2,7 +2,7 @@
 title: "annualreviews.org"
 type: source-domain
 host: "annualreviews.org"
-cite_count: 24
+cite_count: 23
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # annualreviews.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **24 件**（学術 24）
+> [!info] 出典ドメイン索引 ・ 引用 **23 件**（学術 23）
 
 ## このドメインを出典とする項目
 
@@ -30,7 +30,6 @@ tags:
 - [[infosoc-homophily|ホモフィリー（同類性）]] — McPherson,Smith-Lovin&Cook(2001)"BirdsofaFeather:HomophilyinSocialNet…
 - [[infosoc-platform-labor-politics|プラットフォーム労働の政治学]] — Vallas&Schor(2020)WhatDoPlatformsDo?AnnualReviewofSociology46:273-294
 - [[infosoc-political-polarization|政治的分極化]] — Iyengaretal.(2019)“TheOriginsandConsequencesofAffectivePolarizationin…
-- [[mgmt-ambidextrous-organization-theory|両利き組織理論]] — O'Reilly&Tushman(2021)"OrganizationalAmbidexterity:Past,PresentandFut…
 - [[mgmt-behavioral-integrity|行動的誠実性（ビヘイビオラル・インテグリティ）]] — RevisitingBehavioralIntegrity:ProgressandNewDirectionsAfter20Years—An…
 - [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — Holtom&Darabi2018,AnnualReviewwhywestay
 - [[mgmt-normalization-of-deviance-vaughan|逸脱の正常化——小さな逸脱の反復的許容が組織の「正常」の基準を書き換える]] — Vaughan,D.(1999)'TheDarkSideofOrganizations:Mistake,Misconduct,andDis…

@@ -15,17 +15,17 @@ tags:
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 86）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 50）
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 44）
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 43）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 43）
 - [[econ-liquidity-trap|流動性のわな]]（接続 43）
 - [[econ-agglomeration-economies|集積の経済]]（接続 42）
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 41）
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]]（接続 37）
-- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 37）
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]]（接続 37）
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 37）
 - [[econ-becker-crime|犯罪の経済学]]（接続 35）
 - [[econ-behavioral-finance|行動ファイナンス]]（接続 35）
+- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 35）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 34）
 - [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]]（接続 33）
 

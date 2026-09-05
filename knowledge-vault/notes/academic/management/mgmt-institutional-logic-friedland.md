@@ -33,8 +33,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-institutional-logics|制度ロジック：信念体系が組織行動を形成するメカニズム]] — 同じ思想家
-- [[mgmt-organizational-paradox-theory|組織パラドックス理論（Organizational Paradox Theory）]] — 同分野の近傍
-- [[mgmt-family-business-governance-gersick|ファミリービジネスの三円モデル（ガーシック）]] — 同分野の近傍
+- [[mgmt-paradox-embedded-agency-seo|埋め込まれたエージェンシーのパラドクス——制度変革者の制度的条件付け]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

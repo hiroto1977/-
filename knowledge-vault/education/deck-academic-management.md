@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経営学"
 type: flashcard-deck
 deck_key: "academic-management"
-card_count: 660
+card_count: 647
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経営学（660枚）
+# フラッシュカード — 学術概念／経営学（647枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -66,18 +66,10 @@ tags:
   - **A:** 「アルトマンのZスコア」は、ニューヨーク大学のエドワード・I・アルトマンが1968年の論文「Financial Ratios, Discriminant Analysis and the Prediction of Corporate Bankruptcy」（Journal of Finance 第23巻4号589-609頁）で開発した、企業の倒産（経営破綻）を予測する統計モデルである。（→ [[mgmt-altman-z-score]]）
 - **Q:** 両面文化主義——東西の対立を超える競争と協調の統合的経営思想
   - **A:** 両面文化主義（Ambiculturalism）は、チェン・ミンジャーが2008年に提唱した経営思想であり、西洋的な競争志向と東洋的な協調志向を二項対立として捉えるのではなく、両者を統合的に活用する能力を経営の核心的課題として位置づける。（→ [[mgmt-ambiculturalism-chen]]）
-- **Q:** 組織的両利きの経営（タッシュマン＆オライリー）
-  - **A:** 組織的両利き（organizational ambidexterity）は、タッシュマン＆オライリー（1996）が提唱した、組織が既存事業の「深化（exploitation）」と新事業・知識探索の「探索（exploration）」を同時に追求する能力を指す概念で、マーチ（1991）の探索—深化ジレンマを組織構造論として具体化した。（→ [[mgmt-ambidexterity-tushman]]）
-- **Q:** 両利きのリーダーシップとパラドックス・マインドセット（タシュマン）
-  - **A:** 両利きのリーダーシップ（ambidextrous leadership）は、リーダーが状況に応じて探索（exploration）と活用（exploitation）を切り替え、あるいは同時並行で促進する行動スタイルであり、マイケル・タシュマンとチャールズ・オライリーが提唱した組織的両利きの経営論をリーダーシップ論に敷衍したものである。（→ [[mgmt-ambidextrous-leadership]]）
-- **Q:** 両利きのリーダーシップ——探索と活用の動的切替え
-  - **A:** 両利きのリーダーシップ（ambidextrous leadership）は、組織の探索（exploration）と活用（exploitation）を効果的に統合するリーダー行動の理論である。ローシングらは2011年の研究で、リーダーが開放的行動（opening behavior）と閉鎖的行動（closing behavior）を状況に応じて柔軟に切り替える能力がイノベーション成果を高めることを実証した。（→ [[mgmt-ambidextrous-leadership-rosing]]）
-- **Q:** 両利き経営（Ambidextrous Organization）
-  - **A:** 両利き経営（Ambidextrous Organization）とは、組織が「活用（exploitation）」（効率化・精緻化・実行）と「探索（exploration）」（実験・革新・発見）を同時に追求する能力を指す経営学概念である。ダンカン（Robert Duncan, 1976）が「両利き組織」の用語を造語し、イノベーション・プロジェクトの開始段階と実施段階で異なる組織構造が必要であることを論じた。（→ [[mgmt-ambidextrous-organization]]）
-- **Q:** 両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き
-  - **A:** 両利きの経営（ambidextrous organization）は，マイケル・タッシュマンとチャールズ・オライリーが1996年に論じた，組織が既存事業の「活用（exploitation）」と新規事業の「探索（exploration）」を同時に追求する能力を指す概念であり，ジェームズ・マーチが1991年に示した「探索と活用のトレードオフ」への組織的回答として位置づけられる。（→ [[mgmt-ambidextrous-organization-exploration-exploitation]]）
-- **Q:** 両利き組織理論
-  - **A:** March（1991）は、組織学習において「探索（exploration）」と「活用（exploitation）」のトレードオフを示し、両者のバランスが組織の長期的生存に不可欠であると論じた。Duncan（1976）は構造的二元性の概念を初めて提唱し、組織が異なるフェーズで異なる構造を採用することで革新と効率を両立できると主張した。（→ [[mgmt-ambidextrous-organization-theory]]）
+- **Q:** 両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する
+  - **A:** 両利きの経営（organizational ambidexterity）とは、既存事業の深化（exploitation）と新規事業や知識の探索（exploration）を同時に追求する組織の能力をいう。用語はロバート・ダンカン（1976）が造り、ジェームズ・マーチ（1991）が探索と深化のトレードオフを定式化した。（→ [[mgmt-ambidexterity-tushman]]）
+- **Q:** 両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる
+  - **A:** 両利きのリーダーシップ（ambidextrous leadership）は、探索と深化をリーダーの行動で統合する理論で、カトリン・ローシング、ミヒャエル・フレーゼ、アンドレアス・バウシュが2011年の論文『Explaining the Heterogeneity of the Leadership-Innovation Relationship: Ambidextrous Leadership』（The Leadership Quar…（→ [[mgmt-ambidextrous-leadership-rosing]]）
 - **Q:** AMOモデル（能力・動機づけ・機会）
   - **A:** AMOモデル（AMOフレームワーク）は人的資源管理における業績の枠組みで、アペルバウム、ベイリー、バーグ、カレバーグ2000『Manufacturing Advantage（高業績作業システムはなぜ報われるか）』が代表的とされる。個人や組織の業績は3要素の関数とみなす＝能力Ability（知識・技能。（→ [[mgmt-amo-model]]）
 - **Q:** アメーバ経営（稲盛和夫）
@@ -208,8 +200,8 @@ tags:
   - **A:** 実践共同体（Communities of Practice: CoP）とは、エティエンヌ・ウェンガーとジーン・レイブが提唱した学習理論で、共通の関心事や問題を共有するメンバーが継続的な相互作用を通じて知識・技能・実践を深めていく社会的学習単位を指す。正統的周辺参加（Legitimate Peripheral Participation）の概念を基盤とし、新参者が実践の周辺から徐々に中心的参加者へと成長する過程を社会化として記述する。（→ [[mgmt-communities-practice-wenger]]）
 - **Q:** コンピテンシー
   - **A:** コンピテンシーとは、高業績者に共通して見られる行動特性であり、職務上の優れた成果と因果的に結びつく個人の根源的特性を指す。心理学者デイビッド・マクレランドは1973年の論文「知能ではなくコンピテンシーを測定せよ」で、従来の知能検査や学歴・適性検査は実際の職務遂行をうまく予測できないと批判し、動機・特性・自己概念・知識・技能といった特性こそが高業績を予測すると主張した。（→ [[mgmt-competency]]）
-- **Q:** コンピテンシー・トラップ（能力の罠）
-  - **A:** コンピテンシー・トラップ（Competency Trap）とは、組織が既存の技術・ルーティン・事業領域に習熟するほど、その活用（exploitation）への依存を深め、新たな技術や市場機会の探索（exploration）を怠る結果、環境変化に対して脆弱になる現象をいう。成功が学習の方向性を固定し、自己強化的に硬直化する経路依存的メカニズムである。（→ [[mgmt-competency-trap]]）
+- **Q:** コンピテンシー・トラップと成功の罠（レヴィット＝マーチ／レヴィンタール＝マーチ）——過去の成功への習熟が学習を深化に偏らせ、より優れた選択肢への転換を妨げる
+  - **A:** コンピテンシー・トラップ（competency trap）とは、既存の技術や手順に習熟するほどその活用への依存を深め、より優れた選択肢の探索を怠って環境変化に脆くなる現象で、バーバラ・レヴィットとジェームズ・マーチが1988年の論文『Organizational Learning』（Annual Review of Sociology 14巻）で概念化した。（→ [[mgmt-competency-trap]]）
 - **Q:** 競合価値フレームワーク（CVF）
   - **A:** 組織の有効性や文化を2つの対立軸で整理する枠組み。第1軸は「柔軟性と裁量」対「安定と統制」、第2軸は「内部志向と統合」対「外部志向と差別化」で、これらを交差させると4つの類型が現れる。クラン（協働・家族的でチームワークと人材育成を重視）、アドホクラシー（創造・革新と起業家精神、リスクテイク）、マーケット（競争・成果と目標達成を重視）、ヒエラルキー（統制・規則と効率を重んじる官僚的組織）である。（→ [[mgmt-competing-values]]）
 - **Q:** 競合価値観フレームワーク——クインの組織文化類型と管理的リーダーシップ
@@ -748,16 +740,6 @@ tags:
   - **A:** 受注獲得基準（order winners）と受注資格基準（order qualifiers）は、製造戦略論の研究者テリー・ヒルが1985年の著作『製造戦略（Manufacturing Strategy）』で提示した概念で、企業の生産・オペレーション能力を、顧客が実際に購買を決める基準と結びつけて考えるための枠組みである。ヒルの問題意識は、製造（オペレーション）と市場（マーケティング）のあいだの断絶にあった。（→ [[mgmt-order-winners-hill]]）
 - **Q:** 組織美学
   - **A:** 組織美学（Organizational Aesthetics）は、美・感覚・身体的経験といった審美的知識が組織生活・実践・理論をいかに形成するかを探究する学際的領域である。（→ [[mgmt-organizational-aesthetics]]）
-- **Q:** 組織的両利き経営（Organizational Ambidexterity）
-  - **A:** 組織的両利き経営（Organizational Ambidexterity）とは、組織が既存事業の深化（exploitation）と新規事業の探索（exploration）を同時に追求する能力を指す。（→ [[mgmt-organizational-ambidexterity]]）
-- **Q:** 文脈的両利き経営
-  - **A:** Gibson & Birkinshaw（2004）は、探索（exploration）と活用（exploitation）の両立を組織構造の分離によらず、個人の行動的文脈（behavioral context）を通じて実現する「文脈的両利き性」を提唱した。（→ [[mgmt-organizational-ambidexterity-context]]）
-- **Q:** 組織両利き性のパラドクス
-  - **A:** Smith & Lewisのパラドクス理論に基づき、探索と活用は相互矛盾しつつ共存する逆説的緊張であり、構造分離を超えてパラドクスを動的均衡として受容することで持続的両立が実現されるとする。両利き経営の従来の処方は、探索と活用を別々の組織単位に割り当てる構造的分離や、時期をずらす時間的分離であり、Charles A. O'Reilly IIIとMichael L. Tushmanの議論がその代表である。（→ [[mgmt-organizational-ambidexterity-paradox]]）
-- **Q:** 組織的アンビデクストリティの実現メカニズム——ライシュの構造的・文脈的アプローチ統合
-  - **A:** セバスチャン・ライシュとジュリアン・バーキンショーは2008年の論文「Organizational Ambidexterity: Antecedents, Outcomes, and Moderators」において，組織的アンビデクストリティ（両利きの経営）の実現方法を構造的アンビデクストリティ（探索と深化を独立した組織単位に分離し，トップマネジメントが統合する）と文脈的アンビデクストリティ（個人レベルで探索と深化を切り替える組織文化…（→ [[mgmt-organizational-ambidexterity-raisch]]）
-- **Q:** 組織両利き理論
-  - **A:** 組織両利き理論は、組織が既存能力の洗練（活用・exploitation）と新能力の開発（探索・exploration）を同時に追求する能力を指し、March（1991）が提唱した探索と活用のトレードオフ論を理論的起点とする。（→ [[mgmt-organizational-ambidexterity-theory]]）
 - **Q:** 組織的アンビヴァレンス——矛盾する感情の共存とその機能
   - **A:** 組織的アンビヴァレンス（organizational ambivalence）は、ロスマンとメルワニが2017年に体系化した概念であり、組織メンバーが同一の対象（職務・上司・組織変革等）に対してポジティブとネガティブの相反する感情を同時に経験する状態を分析する枠組みである。従来の態度研究が一元的な好意・嫌悪スペクトラム上に態度を位置づけたのに対し、アンビヴァレンス研究はポジティブ態度とネガティブ態度が独立した次元であることを前提とする。（→ [[mgmt-organizational-ambivalence-rothman]]）
 - **Q:** 組織的アンビバレンス理論
@@ -816,14 +798,10 @@ tags:
   - **A:** 組織学習とは、組織全体が経験から学び、知識を共有し、集団的な問題解決能力を継続的に向上させるプロセスの総称であり、複数の研究系譜を束ねる傘概念である。（→ [[mgmt-organizational-learning]]）
 - **Q:** 組織学習とシングル・ダブルループ学習（アージリス）
   - **A:** 組織学習（organizational learning）のシングル・ダブルループモデルは、アージリス＆ショーン（1978）が提唱した、組織がエラーを発見・修正する二つのレベルの学習を区別する枠組みである。（→ [[mgmt-organizational-learning-argyris]]）
-- **Q:** 組織学習の落とし穴——コンピタンシー・トラップとサクセス・トラップ（レビンタール＆マーチ）
-  - **A:** コンピタンシー・トラップ（competency trap）とは、過去成功した既存技術・手順への学習投資が強化されることで、より優れた新技術への転換を妨げる組織学習の逆機能現象である。（→ [[mgmt-organizational-learning-cycles-levinthal]]）
 - **Q:** グレイナーの組織成長モデル——進化と革命を繰り返す五段階の発展
   - **A:** グレイナーの組織成長モデルは、ラリー・グレイナーが1972年の論文「組織の成長における進化と革命」で提示した組織発展の理論で、企業が成長していく過程を、安定した「進化（evolution）」の局面と、それを終わらせる経営上の「危機（revolution）」の局面が交互に現れる一連の段階として描く。（→ [[mgmt-organizational-life-cycle-greiner]]）
 - **Q:** 組織神経科学
   - **A:** 組織神経科学（Organizational Neuroscience）は、fMRI・EEG・ホルモンアッセイなどの神経科学的手法を組織行動研究に応用する新興学際領域である。BeckerとCropanzanoは2010年の論文で、神経科学が組織行動論に与える理論的・方法論的基盤を体系的に提示し、この分野の礎を築いた。（→ [[mgmt-organizational-neuroscience]]）
-- **Q:** 組織パラドックス理論（Organizational Paradox Theory）
-  - **A:** 組織パラドックス理論（organizational paradox theory）とは、組織が直面する矛盾する要求・緊張（tensions）を排除すべき問題としてではなく、持続的に共存させ活用すべき本質的特性として捉える経営理論の研究領域である。（→ [[mgmt-organizational-paradox-theory]]）
 - **Q:** 組織レジリエンス——逆境からの回復と適応的成長の能力
   - **A:** 組織レジリエンス（Organizational Resilience）は、組織が重大な脅威・危機・逆境に直面した際に、単に回復するだけでなく、その経験を通じて新たな能力を獲得し適応的に成長する組織能力を指す概念である。レンニック＝ホールら（2011）は組織レジリエンスを「破壊的事象を吸収し、状況特殊的で頑健かつ変容的な反応を開発し、最終的には組織の機能的能力を拡張する破壊的驚異に関与する定型化された活動セット」と定義した。（→ [[mgmt-organizational-resilience-lengnick-hall]]）
 - **Q:** 組織的レジリエンスと高信頼組織の理論（サトクリフ＆ワイク）
@@ -860,12 +838,8 @@ tags:
   - **A:** 埋め込みのパラドックス（Paradox of Embeddedness）とは、経済社会学・組織論における概念で、社会的埋め込み（embeddedness）と組織パフォーマンスの間に逆U字型の関係が存在し、競争優位をもたらすまさにそのメカニズムが閾値を超えると負債に転化することを指す。（→ [[mgmt-paradox-of-embeddedness]]）
 - **Q:** 組織化のパラドックス（Paradox of Organizing）
   - **A:** 組織化のパラドックス（Paradox of Organizing）とは、カール・E・ワイク（Karl E. Weick, 1979, The Social Psychology of Organizing, 2nd ed., McGraw-Hill）が提唱した組織プロセス理論の中核的矛盾を指す。（→ [[mgmt-paradox-of-organizing]]）
-- **Q:** 成功のパラドクス
-  - **A:** 成功のパラドクスとは、成功した組織が過去の成功パターンへの過剰なコミットメントによって将来の失敗の条件を自ら生み出す現象を指す。March（1991）の探索と活用の二律背反が機構の核心を与える——活用の収益は近く確実で、探索の収益は遠く不確実なため、適応プロセスは成功体験を通じて活用へ自己強化的に傾き、変化対応に必要な探索が締め出される（成功の罠。（→ [[mgmt-paradox-of-success]]）
-- **Q:** リーダーシップのパラドックス理論
-  - **A:** 効果的なリーダーシップは統制と権限委譲、安定と変革など矛盾する要求を同時に受容し両立させる両立思考で実現されるとスミスとルイスが提唱した動的均衡理論である。両者は二〇一一年の論考でパラドックスを、同時に存在し時間を通じて持続する、相互に矛盾しながらも相互依存する要素として定義した。（→ [[mgmt-paradox-theory-of-leadership]]）
-- **Q:** パラドックス理論——組織における矛盾の同時追求と動態的均衡
-  - **A:** パラドックス理論は、組織が直面する相互に矛盾する要求（探索と深化、自由と統制、個人と集団、短期と長期等）を「いずれか一方の選択」（either/or）ではなく「両方の同時追求」（both/and）として受け入れ、動態的に管理する組織理論である。（→ [[mgmt-paradox-theory-smith-lewis]]）
+- **Q:** 組織パラドックス理論（ルイス／スミス＝ルイス）——相互に矛盾しつつ相互依存する要求を排除せず受容し、動態的均衡として管理する
+  - **A:** 組織パラドックス理論は、矛盾する要求や緊張（探索と深化、統制と柔軟性、個人と集団など）を排除すべき問題ではなく、共存させ活用すべき組織の本質的特性と捉える研究領域である。（→ [[mgmt-paradox-theory-smith-lewis]]）
 - **Q:** パラドキシカル・リーダーシップ——相反する要請を同時に満たす
   - **A:** パラドキシカル・リーダーシップ（paradoxical leadership、矛盾統合的リーダーシップ）は、ヤン・チャン、デヴィッド・ウォルドマンらが2015年の論文で提示した、リーダーシップの概念で、「構造的な要請と部下の要請とを、同時に、かつ時間を通じて満たすために、一見すると競合しながらも相互に関連する行動をとること」と定義される。（→ [[mgmt-paradoxical-leadership-zhang]]）
 - **Q:** パーキンソンの法則

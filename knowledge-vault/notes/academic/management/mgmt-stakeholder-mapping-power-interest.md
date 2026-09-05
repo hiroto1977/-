@@ -39,7 +39,7 @@ aliases:
 - [[mgmt-stakeholder-capitalism-freeman|ステークホルダー資本主義と企業の目的（フリーマン）]] — 同じ思想家
 - [[mgmt-stakeholder-integration-freeman|ステークホルダー統合戦略（フリーマン）]] — 同じ思想家
 - [[mgmt-stakeholder-theory-freeman-strategic|ステークホルダー理論——フリーマンの戦略的管理と全ステークホルダー利害調整]] — 同じ思想家
-- [[mgmt-event-system-theory|出来事システム理論（Event System Theory）]] — 同分野の近傍
+- [[mgmt-paradox-theory-smith-lewis|組織パラドックス理論（ルイス／スミス＝ルイス）——相互に矛盾しつつ相互依存する要求を排除せず受容し、動態的均衡として管理する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

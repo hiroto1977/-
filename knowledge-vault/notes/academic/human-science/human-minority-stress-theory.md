@@ -34,7 +34,6 @@ Virginia R. Brooks／Ilan H. Meyer／Mark L. Hatzenbuehler
 - [[human-rejection-sensitivity-downey|拒絶感受性（ダウニー＆フェルドマン）]] — 同分野の近傍
 - [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]] — 同分野の近傍
 - [[human-social-determinants-of-health|健康の社会的決定要因：社会疫学における健康格差の構造的理解]] — 同分野の近傍
-- [[human-affordance-theory|アフォーダンス理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
