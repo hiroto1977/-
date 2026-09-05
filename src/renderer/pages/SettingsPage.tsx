@@ -4,6 +4,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { SERVICES, CATEGORY_LABEL, type ServiceCategory } from '../services';
 import { summarizeConnections } from '../data/connectionStatus';
 import { BackupPanel } from '../components/BackupPanel';
+import { RecordShapeAuditPanel } from '../components/RecordShapeAuditPanel';
 import { CloudSyncPanel } from '../components/CloudSyncPanel';
 import { ParametersPanel } from '../components/ParametersPanel';
 import { PARAMETERS } from '../../shared/parameters';
@@ -801,6 +802,8 @@ export function SettingsPage() {
       </Section>
 
       <BackupPanel />
+
+      <RecordShapeAuditPanel />
 
       <CloudSyncPanel />
 
