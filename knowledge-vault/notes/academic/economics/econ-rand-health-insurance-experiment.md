@@ -37,8 +37,8 @@ RAND医療保険実験は、ランド研究所が1971年から1982年にかけ�
 - [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 出典を共有
 - [[infosoc-online-radicalization|オンライン過激化（ラジカリゼーション）]] — 出典を共有
 - [[mgmt-delphi-method|デルファイ法]] — 出典を共有
-- [[econ-director-law|ディレクターの法則（Director's Law／Stigler 1970）——公共支出は中間層を主たる受益者として設計され、その負担は貧者と富者に及ぶ]] — 同分野の近傍
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

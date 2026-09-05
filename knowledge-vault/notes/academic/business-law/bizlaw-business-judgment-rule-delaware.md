@@ -31,12 +31,12 @@ William T. Allen（元デラウェア衡平法裁判所長官）／Stephen M. Ba
 - [Allen, W.T. Modern Corporate Governance and the Erosion of the BJR in Delaware (SSRN)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1105591) `学術`
 
 ## 関連概念
-- [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 語彙が近い
-- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 語彙が近い
+- [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 同じ思想家
 - [[bizlaw-duty-of-care-standard|注意義務の基準]] — 同じ思想家
 - [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]] — 同じ思想家
 - [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 同じ思想家
 - [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 同じ思想家
+- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

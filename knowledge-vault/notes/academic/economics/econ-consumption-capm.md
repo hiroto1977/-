@@ -38,7 +38,7 @@ aliases:
 - [[infosoc-narcotizing-dysfunction|麻酔的逆機能]] — 同じ思想家
 - [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同じ思想家
 - [[infosoc-status-conferral|地位付与機能]] — 同じ思想家
-- [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — 同分野の近傍
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する]] — 同分野の近傍
 - [[econ-green-paradox-sinn|グリーン・パラドックス——将来の環境規制予告が化石燃料の前倒し採掘を促す]] — 同分野の近傍
 
 ## 関連

@@ -39,9 +39,9 @@ aliases:
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同じ思想家
 - [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 同じ思想家
-- [[econ-screening|スクリーニング（選別理論）]] — 同じ思想家
 - [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — 同じ思想家
 - [[econ-quantity-theory-money-fisher-friedman|貨幣数量説——MV=PYの古典的枠組みとマネタリズムの現代的展開]] — 同じ思想家
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "jstor.org"
 type: source-domain
 host: "jstor.org"
-cite_count: 145
+cite_count: 144
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jstor.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **145 件**（学術 144 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **144 件**（学術 143 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -32,7 +32,6 @@ tags:
 - [[bizlaw-trust-fund-doctrine|信託基金の法理（trust fund doctrine／資本＝債権者のための信託基金）——会社資本は債権者のための信託財産とみる古典法理]] — EdwinS.Hunt,"TheTrustFundTheoryandSomeSubstitutesforIt,"TheYaleLawJou…
 - [[bizlaw-vincent-v-lake-erie-private-necessity|ヴィンセント対レイク・エリー運送事件——緊急時に他人の財産を使うことは許されるが、生じた損害は賠償しなければならないという「不完全な特権」の法理]] — FrancisH.Bohlen,"IncompletePrivilegetoInflictIntentionalInvasionsofIn…
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — Alexander,S.S.(1952)EffectsofaDevaluationonaTradeBalance—IMFStaffPape…
-- [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — Akerlof,G.A.(1970).TheMarketfor'Lemons':QualityUncertaintyandtheMarke…
 - [[econ-ak-model|AKモデル（内生的成長の基本モデル）]] — S.Rebelo,“Long-RunPolicyAnalysisandLong-RunGrowth”,JournalofPolitical…
 - [[econ-alchian-allen-theorem|アルチャン＝アレンの定理——「良いリンゴは外へ送られる」]] — Borcherding,T.E.&Silberberg,E.(1978)ShippingtheGoodApplesOut:TheAlchi…
 - [[econ-alonso-monocentric-city|アロンソの単一中心都市モデル（Alonso–Muth–Mills monocentric city model）——通勤費と地代のトレードオフが都市内土地利用を決める]] — Mills,E.S.(1967)AnAggregativeModelofResourceAllocationinaMetropolitan…

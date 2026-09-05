@@ -39,7 +39,7 @@ aliases:
 - [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同じ思想家
 - [[mgmt-path-goal-theory-house|パス・ゴール理論——リーダーが部下の目標達成経路を整備する条件適応的指導]] — 同じ思想家
 - [[mgmt-zone-of-indifference-barnard|無関心圏——権威の受容理論と命令が受け入れられる範囲]] — 同じ思想家
-- [[mgmt-transformational-leadership|変革型リーダーシップ]] — 同分野の近傍
+- [[mgmt-servant-leadership-spears|サーバント・リーダーシップ（グリーンリーフ／スピアーズ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

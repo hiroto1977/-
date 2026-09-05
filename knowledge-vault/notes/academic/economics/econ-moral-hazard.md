@@ -31,7 +31,6 @@ aliases:
 - [Federal Reserve Bank of Minneapolis — "Too Big To Fail: The Hazards of Bank Bailouts"（救済期待による過大リスク）](https://www.minneapolisfed.org/article/2003/too-big-to-fail-the-hazards-of-bank-bailouts) `公的`
 
 ## 関連概念
-- [[econ-adverse-selection|逆選択（レモン市場）]] — 語彙が近い
 - [[econ-hotelling-rule|ホテリングのルール（枯渇性資源）]] — 出典を共有
 - [[econ-rbc|実物的景気循環論（RBC）]] — 出典を共有
 - [[econ-fiscal-dominance|財政支配（Fiscal Dominance）]] — 出典を共有
@@ -39,6 +38,7 @@ aliases:
 - [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 出典を共有
 - [[econ-superstar-economics|スーパースターの経済学]] — 出典を共有
 - [[econ-principal-agent|プリンシパル・エージェント理論（agency theory）]] — 同分野の近傍
+- [[econ-bundling-tying|バンドリングと抱き合わせ——複数財の組み合わせ販売による余剰の抽出]] — 同分野の近傍
 - [[econ-milgrom-stokey-no-trade|ノートレード定理——合理的な投機的取引は成立しない]] — 同分野の近傍
 
 ## 関連

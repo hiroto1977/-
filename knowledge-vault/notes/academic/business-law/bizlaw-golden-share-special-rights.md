@@ -36,8 +36,8 @@ aliases:
 - [[bizlaw-shareholder-activism-hedge|ヘッジファンド株主アクティビズムと会社法]] — 同じ思想家
 - [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同じ思想家
 - [[bizlaw-staggered-board-classified-board|期差任期取締役会（クラシファイド・ボード）——買収防衛策としての効果と機関投資家による解体]] — 同じ思想家
-- [[bizlaw-golden-share-state-ownership|黄金株（特別議決権株）と国家所有権保護の比較法]] — 同分野の近傍
 - [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — 同分野の近傍
+- [[bizlaw-golden-share-state-ownership|黄金株（特別議決権株）と国家所有権保護の比較法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,8 +33,6 @@ George Arthur Akerlof ／ Shoshana Zuboff ／ Joseph Eugene Stiglitz ／ Michael
 - [Stiglitz & Kosenko — "Reforming the U.S. Financial System" NBER WP (information asymmetry framework)](https://www.nber.org/papers/w25024) `学術`
 
 ## 関連概念
-- [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — 同じ思想家
-- [[econ-lemons-problem-akerlof|レモン市場]] — 同じ思想家
 - [[econ-credit-rationing-stiglitz-weiss|スティグリッツ＝ワイス信用割当モデル]] — 同じ思想家
 - [[infosoc-information-asymmetry-platform|プラットフォーム情報非対称性理論]] — 同じ思想家
 - [[econ-henry-george-theorem|ヘンリー・ジョージ定理（Henry George Theorem）]] — 同じ思想家
@@ -43,6 +41,8 @@ George Arthur Akerlof ／ Shoshana Zuboff ／ Joseph Eugene Stiglitz ／ Michael
 - [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 同じ思想家
 - [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 同じ思想家
 - [[bizlaw-anti-monopoly-digital-platforms|デジタルプラットフォームの独占禁止規制——ゲートキーパー規制とデジタル市場競争法の展開]] — 出典を共有
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 出典を共有
+- [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

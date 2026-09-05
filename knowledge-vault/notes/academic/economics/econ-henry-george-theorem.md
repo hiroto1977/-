@@ -31,8 +31,6 @@ Richard J. Arnott & Joseph E. Stiglitz（QJE 93(4), 1979 — HGT の定式化）
 
 ## 関連概念
 - [[econ-credit-rationing-stiglitz-weiss|スティグリッツ＝ワイス信用割当モデル]] — 同じ思想家
-- [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — 同じ思想家
-- [[econ-lemons-problem-akerlof|レモン市場]] — 同じ思想家
 - [[econ-joint-liability-group-lending|連帯責任型グループ貸付理論（Joint Liability Group Lending）]] — 同じ思想家
 - [[econ-nutrition-efficiency-wage|栄養効率賃金理論（nutrition-based efficiency wage theory／ダスグプタ＝レイ）——貧困農村では高賃金が栄養を通じて生産性を高め、市場清算を上回る賃金と非自発的失業を均衡として生む]] — 同じ思想家
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家

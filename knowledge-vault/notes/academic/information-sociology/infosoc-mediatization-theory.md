@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 出典を共有
 - [[bizlaw-expropriation-compensation|収用と補償・ハル公式（Expropriation & Hull Formula）]] — 出典を共有
 - [[infosoc-media-logic|メディア・ロジック]] — 同分野の近傍
-- [[infosoc-deep-mediatization|深層メディアタイゼーション（Deep Mediatization）]] — 同分野の近傍
+- [[infosoc-broken-world-thinking|壊れた世界の思考（ブロークン・ワールド・シンキング）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

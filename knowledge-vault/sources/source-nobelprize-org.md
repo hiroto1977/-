@@ -2,7 +2,7 @@
 title: "nobelprize.org"
 type: source-domain
 host: "nobelprize.org"
-cite_count: 95
+cite_count: 92
 tags:
   - source-domain
   - index
@@ -10,15 +10,13 @@ tags:
 
 # nobelprize.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **95 件**（リファレンス 58 ・ 公的 35 ・ 学術 2）
+> [!info] 出典ドメイン索引 ・ 引用 **92 件**（リファレンス 56 ・ 公的 34 ・ 学術 2）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — NobelPrize2016—OliverHartandBengtHolmström:ContractTheory
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — NobelPrize.org—RonaldH.Coase,1991PrizeinEconomicSciences
-- [[econ-adverse-selection|逆選択（レモン市場）]] — NobelPrize.org—2001年経済学賞advancedinformation（3受賞者と非対称情報分析）
-- [[econ-adverse-selection|逆選択（レモン市場）]] — NobelPrize.org—2001年経済学賞popularinformation（アカロフのレモン市場・逆選択・市場崩壊）
-- [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — NobelPrizepressrelease(2001)—Akerlof,Spence,Stiglitz:marketswithasymm…
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する]] — NobelPrize.org—The2001PrizeinEconomicSciences,Popularinformation（レモン市…
 - [[econ-agglomeration-economies|集積の経済]] — NobelPrize.org—PaulKrugmanFacts,2008SverigesRiksbankPrize（貿易パターンと経済活動…
 - [[econ-allais-paradox|アレのパラドックス]] — NobelPrize.org—MauriceAllais,1988年経済学賞
 - [[econ-arrow-impossibility|アローの不可能性定理]] — NobelPrize.org—KennethJ.Arrow,1972年経済学賞
@@ -53,7 +51,6 @@ tags:
 - [[econ-input-output-analysis|産業連関分析（投入産出分析）]] — NobelPrize.org—ThePrizeinEconomicSciences1973(WassilyLeontief,授賞理由・pr…
 - [[econ-kuznets-curve|クズネッツ曲線]] — NobelPrize.org—SimonKuznets,PrizeinEconomicSciences1971(Facts)
 - [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — JeanTirole—NobelPrize2014Facts
-- [[econ-lemons-problem-akerlof|レモン市場]] — 2001年ノーベル経済学賞公式概要（NobelPrize.org）
 - [[econ-lewis-turning-point|ルイスの二重経済モデル（転換点）]] — NobelPrize.org—ThePrizeinEconomics1979(Schultz・Lewis,授賞理由)
 - [[econ-lucas-critique|ルーカス批判]] — NobelPrize.org—EconomicSciences1995(RobertE.LucasJr.)
 - [[econ-maskin-monotonicity-nash-implementation|マスキンの遂行理論とマスキン単調性——ナッシュ均衡で社会的目標を実現できる条件]] — NobelCommittee(2007)ScientificBackground:MechanismDesignTheory—implem…
@@ -83,7 +80,7 @@ tags:
 - [[econ-revenue-equivalence|収入同値定理]] — MechanismDesignTheory—Nobel委員会科学的背景文書（Myersonらのメカニズムデザイン）
 - [[econ-rubin-causal-model-potential-outcomes|ルービン因果モデル（潜在結果枠組み）——処置と非処置を同時に観測できないという因果推論の根本問題]] — TheSverigesRiksbankPrizeinEconomicSciencesinMemoryofAlfredNobel2021—S…
 - [[econ-schelling-segregation|シェリングの分居モデル]] — NobelPrize.org—ThomasC.Schelling,2005年ノーベル経済学賞（Aumannと共同受賞）
-- [[econ-screening|スクリーニング（選別理論）]] — NobelPrize.org—The2001PrizeinEconomicSciences,Popularinformation（保険会社…
+- [[econ-screening-rothschild-stiglitz|スクリーニング理論（ロスチャイルド＝スティグリッツ）——情報を持たない側が契約メニューを設計し、相手の自己選択で隠れた型を選別する]] — NobelPrize.org—The2001PrizeinEconomicSciences,Popularinformation（保険会社…
 - [[econ-search-matching|サーチ理論／マッチング理論]] — RoyalSwedishAcademyofSciences,“MarketswithSearchFrictions”(Scientific…
 - [[econ-shapley-value|シャープレー値]] — NobelPrize.org—LloydS.Shapley,2012年経済学賞
 - [[econ-signaling-theory-spence-job-market|シグナリング理論（スペンス）——情報を持つ側が模倣にコストのかかる行動で自らの質を伝え、分離均衡が成立する仕組み]] — NobelPrize.org—The2001PrizeinEconomicSciences,Popularinformation（シグナリ…

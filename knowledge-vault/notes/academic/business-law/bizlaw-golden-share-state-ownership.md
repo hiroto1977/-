@@ -38,8 +38,8 @@ aliases:
 - [[bizlaw-whitewash-procedure-hk|ホワイトウォッシュ手続き（違法財務支援除外申請）]] — 同じ思想家
 - [[bizlaw-corporate-groups-konzernrecht|企業集団規制とコンツェルン法（ドイツ株式法）]] — 同じ思想家
 - [[bizlaw-corporate-purpose-enlightened-shareholder|企業目的と啓発的株主価値論（英国会社法172条）]] — 同じ思想家
-- [[bizlaw-golden-share-special-rights|黄金株と特別議決権株式（ゴールデン・シェア）]] — 同分野の近傍
 - [[bizlaw-bill-of-lading|船荷証券——海上運送における受取証・運送契約・権利証券]] — 同分野の近傍
+- [[bizlaw-golden-share-special-rights|黄金株と特別議決権株式（ゴールデン・シェア）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

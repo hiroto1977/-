@@ -35,7 +35,6 @@ aliases:
 - [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 語彙が近い
 - [[tax-corp-establishment-filing|法人設立後の税務署への届出期限]] — 同分野の近傍
 - [[tax-loss-carryforward|青色申告法人の繰越欠損金]] — 同分野の近傍
-- [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

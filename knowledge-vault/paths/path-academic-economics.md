@@ -2,20 +2,20 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 946
+entry_count: 941
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（946件）
+# 学習パス — 学術概念／経済学（941件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 86）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 50）
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 43）
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 44）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 43）
 - [[econ-liquidity-trap|流動性のわな]]（接続 43）
 - [[econ-agglomeration-economies|集積の経済]]（接続 42）
@@ -26,8 +26,8 @@ tags:
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 37）
 - [[econ-becker-crime|犯罪の経済学]]（接続 35）
 - [[econ-behavioral-finance|行動ファイナンス]]（接続 35）
-- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 34）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 34）
+- [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]]（接続 33）
 
 ## 第 2 部 — 年代順の展開
 - 1623年: [[econ-petty-clark-law|ペティ＝クラークの法則]]
@@ -253,7 +253,7 @@ tags:
 - 1969年: [[econ-armington-elasticity-national-product-differentiation|アーミントンの仮定とアーミントン弾力性——同じ財でも生産国が違えば不完全代替とみなし、その代替の弾力性で貿易モデルを閉じる考え方]]
 - 1969年: [[econ-emmanuel-unequal-exchange|不等価交換論（エマニュエル理論）]]
 - 1969年: [[econ-flypaper-effect|フライペーパー効果（flypaper effect／ハエ取り紙効果）——一括補助金が私的所得より地方公共支出を強く押し上げる現象]]
-- 1970年: [[econ-adverse-selection|逆選択（レモン市場）]]
+- 1970年: [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する]]
 - 1970年: [[econ-director-law|ディレクターの法則（Director's Law／Stigler 1970）——公共支出は中間層を主たる受益者として設計され、その負担は貧者と富者に及ぶ]]
 - 1970年: [[econ-efficient-market-hypothesis|効率的市場仮説（efficient market hypothesis, EMH）]]
 - 1970年: [[econ-fine-is-a-price-gneezy-rustichini|「罰金は価格である」——金銭的インセンティブが内発的・社会的動機を締め出し関係を取引に変える現象]]
@@ -302,7 +302,7 @@ tags:
 - 1976年: [[econ-lucas-critique|ルーカス批判]]
 - 1976年: [[econ-overshooting-model|ドーンブッシュ・オーバーシューティング・モデル（Dornbusch Overshooting Model）]]
 - 1976年: [[econ-principal-agent|プリンシパル・エージェント理論（agency theory）]]
-- 1976年: [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]]
+- 1976年: [[econ-screening-rothschild-stiglitz|スクリーニング理論（ロスチャイルド＝スティグリッツ）——情報を持たない側が契約メニューを設計し、相手の自己選択で隠れた型を選別する]]
 - 1977年: [[econ-debt-overhang|デット・オーバーハング]]
 - 1977年: [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]]
 - 1977年: [[econ-dutch-disease-corden|オランダ病（コーデン＝ニアリー）——資源ブームが支出効果と資源移動効果で交易財部門を萎縮させる脱工業化のメカニズム]]
@@ -348,7 +348,6 @@ tags:
 - 1983年: [[econ-raising-rivals-costs|ライバルの費用引き上げ理論（Raising Rivals' Costs／RRC、サロップ＝シェフマン）——支配的企業が略奪的安売りではなく競争相手の費用を高めて排除する反トラスト理論]]
 - 1983年: [[econ-sunspot-equilibrium|サンスポット均衡]]
 - 1984年: [[econ-forward-premium-puzzle|フォワード・プレミアム・パズル]]
-- 1984年: [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]]
 - 1984年: [[econ-rotemberg-saloner-price-wars-booms|ロテンバーグ＝サローナー・モデル——好況期に協調的価格が崩れ価格戦争が生じる反循環的マークアップ理論]]
 - 1984年: [[econ-shapiro-stiglitz|シャピロ=スティグリッツの効率賃金モデル（怠業モデル）]]
 - 1984年: [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]]
@@ -415,7 +414,6 @@ tags:
 - 2001年: [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]]
 - 2001年: [[econ-inclusive-institutions|包摂的制度と収奪的制度]]
 - 2001年: [[econ-quantitative-easing|量的緩和（QE）]]
-- 2001年: [[econ-screening|スクリーニング（選別理論）]]
 - 2001年: [[econ-varieties-of-capitalism|資本主義の多様性（VoC）論]]
 - 2002年: [[econ-circular-economy|サーキュラーエコノミー（循環型経済）]]
 - 2002年: [[econ-fear-of-floating|変動相場回避（フィア・オブ・フローティング）]]
@@ -445,7 +443,6 @@ tags:
 
 ## 第 3 部 — 年代情報のない項目
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]]
-- [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]]
 - [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]]
 - [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]]
 - [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]]
@@ -716,7 +713,6 @@ tags:
 - [[econ-land-value-tax-george|土地価値税とジョージズム]]
 - [[econ-le-chatelier-samuelson|ル・シャトリエの原理（サミュエルソン）——制約が緩むほど反応は大きくなる]]
 - [[econ-leland-pyle-signaling|リーランド＝パイルのシグナリング——経営者の出資比率が質を伝える]]
-- [[econ-lemons-problem-akerlof|レモン市場]]
 - [[econ-leontief-dynamic-model|動学的レオンチェフ・モデル——資本蓄積を組み込んだ産業連関分析]]
 - [[econ-leontief-paradox-trade|レオンチェフ・パラドックス——要素賦存理論への実証的挑戦]]
 - [[econ-lerner-index-market-power|ラーナー指数（市場支配力の測定）]]
@@ -869,7 +865,6 @@ tags:
 - [[econ-sargent-wallace-unpleasant-arithmetic|サージェント＝ウォレスの不愉快な貨幣主義の算術]]
 - [[econ-saving-glut-hypothesis|過剰貯蓄仮説]]
 - [[econ-savings-glut-bernanke|世界的過剰貯蓄仮説——グローバル・インバランスと低金利の構造的要因]]
-- [[econ-screening-rothschild-stiglitz|スクリーニング理論——情報を持たない側が契約メニューで相手の型を選別する]]
 - [[econ-search-matching-theory-diamond-mortensen|サーチ・マッチング理論——労働市場の摩擦と失業の均衡モデル]]
 - [[econ-search-theory-stigler|情報の経済学と探索理論——最適な探索が価格分散を均衡として説明する]]
 - [[econ-second-best-lipsey-lancaster|次善の理論——最適条件の一部不達成時における政策評価の困難]]

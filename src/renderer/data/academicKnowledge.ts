@@ -1559,22 +1559,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-adverse-selection',
-    discipline: 'economics',
-    title: '逆選択（レモン市場）',
-    statement:
-      '取引が成立する前に当事者間で情報の非対称性があるとき、質の悪い財やリスクの高い相手ばかりが市場に集まり、良質な財・相手が締め出される現象。' +
-      'ジョージ・アカロフが1970年の論文「The Market for "Lemons"」で中古車市場を例に示した。買い手が品質を見分けられないと、買い手はリスクを反映した平均的価格しか払わず、その結果良質な車（peach）の売り手は退出し、質の悪い車（lemon）ばかりが残って市場が縮小・崩壊しうる。同様の情報の非対称性は保険（健康リスクの高い人ほど加入したがる）や金融・信用市場でも生じる。' +
-      '情報の非対称性が「取引前」に作用する点で、取引後の隠された行動であるモラルハザードと区別される。対策としてシグナリング（スペンス）、スクリーニング（スティグリッツ）、保証、強制加入などがある。アカロフ・スペンス・スティグリッツは情報の非対称性のある市場の分析により2001年ノーベル経済学賞を受賞した。',
-    keyFigures: 'ジョージ・アカロフ1970「The Market for Lemons」／情報の非対称性は取引前（隠れた性質）に作用・モラルハザード（取引後）と対比／対策：シグナリング・スクリーニング／2001年ノーベル賞 アカロフ・スペンス・スティグリッツ',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2001/popular-information/', type: 'reference', label: 'NobelPrize.org — 2001年経済学賞 popular information（アカロフのレモン市場・逆選択・市場崩壊）' },
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2001/advanced-information/', type: 'reference', label: 'NobelPrize.org — 2001年経済学賞 advanced information（3受賞者と非対称情報分析）' },
-      { url: 'https://www.britannica.com/money/George-Akerlof', type: 'reference', label: 'Encyclopaedia Britannica（Money）— George Akerlof：中古車市場での逆選択と1970年論文' },
-    ],
-  },
-  {
     id: 'econ-moral-hazard',
     discipline: 'economics',
     title: 'モラルハザード（道徳的危険）',
@@ -5343,23 +5327,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://firstmonday.org/ojs/index.php/fm/article/view/1394', type: 'academic', label: 'Barnes, S. B. (2006) “A privacy paradox: Social networking in the United States”, First Monday 11(9)' },
       { url: 'https://www.sciencedirect.com/science/article/pii/S0167404818303031', type: 'academic', label: 'Kokolakis, S. (2017) “Privacy attitudes and privacy behaviour: A review of current research on the privacy paradox phenomenon”, Computers & Security 64:122-134' },
       { url: 'https://www.heinz.cmu.edu/~acquisti/papers/Acquisti-Grossklags-Chapter-Etrics.pdf', type: 'academic', label: 'Acquisti, A. & Grossklags, J. “What Can Behavioral Economics Teach Us About Privacy?”（Carnegie Mellon University, Heinz College）' },
-    ],
-  },
-  {
-    id: 'econ-screening',
-    discipline: 'economics',
-    title: 'スクリーニング（選別理論）',
-    statement:
-      'スクリーニングとは、情報の非対称性のもとで、情報をもたない側（uninformed party）が情報をもつ側（informed party）に複数の選択肢からなるメニューを提示し、相手の自己選択（self-selection）を通じて隠れた属性・タイプを識別・分離しようとする仕組みである。' +
-      'マイケル・ロスチャイルドとジョセフ・スティグリッツが保険市場分析（Rothschild–Stiglitz 1976, QJE）で定式化し、保険会社が「高保険料・高補償」と「低保険料・高免責（低補償）」の契約を用意して高リスク者と低リスク者を分離均衡へ導く例が代表的である。情報をもつ側が自ら信号を発するシグナリング（スペンスの教育シグナル）とは仕掛ける主体が逆で、逆選択への対処手段でもある。',
-    keyFigures:
-      'マイケル・ロスチャイルド（Michael Rothschild）／ジョセフ・スティグリッツ（Joseph E. Stiglitz、2001年ノーベル経済学賞、A. Michael Spence・George Akerlof と共同受賞）／対をなす概念＝シグナリング（情報をもつ側が仕掛ける）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2001/popular-information/', type: 'government', label: 'NobelPrize.org — The 2001 Prize in Economic Sciences, Popular information（保険会社がメニューでリスク類型を選別＝スクリーニング）' },
-      { url: 'https://academic.oup.com/qje/article-abstract/90/4/629/1886620', type: 'academic', label: 'Rothschild & Stiglitz (1976), “Equilibrium in Competitive Insurance Markets,” The Quarterly Journal of Economics 90(4): 629–649（Oxford Academic）' },
-      { url: 'https://www.nber.org/papers/t0093', type: 'academic', label: 'Stiglitz & Weiss, “Sorting Out the Differences Between Signaling and Screening Models,” NBER' },
-      { url: 'https://en.wikipedia.org/wiki/Screening_(economics)', type: 'reference', label: 'Wikipedia — Screening (economics)（自己選択・分離均衡・シグナリングとの対比）' },
     ],
   },
   {
@@ -13154,21 +13121,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.oxfordbibliographies.com/display/document/obo-9780199756841/obo-9780199756841-0174.xml', type: 'reference', label: 'Oxford Bibliographies (OUP) — Transmedia Storytelling' },
       { url: 'https://www.technologyreview.com/2003/01/15/234540/transmedia-storytelling/', type: 'academic', label: 'Henry Jenkins, "Transmedia Storytelling", MIT Technology Review (2003)' },
       { url: 'https://www.ebsco.com/research-starters/communication-and-mass-media/transmedia-storytelling', type: 'reference', label: 'EBSCO Research Starters — Transmedia Storytelling' },
-    ],
-  },
-  {
-    id: 'econ-rothschild-stiglitz',
-    discipline: 'economics',
-    title: 'ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）',
-    statement:
-      'マイケル・ロスチャイルド＆ジョセフ・スティグリッツが1976年（QJE）に示した、逆選択下の競争的保険市場における選別（スクリーニング）の代表的モデル。保険会社は顧客のリスクタイプ（高リスク/低リスク）を観察できないため、価格と補償範囲が異なる契約のメニューを提示し、顧客に自己選択させてタイプを顕示させる（自己選択・誘因両立）。結果として生じうるのは分離均衡で、高リスク者は高い保険料で完全保険を買う一方、低リスク者は免責付きの部分的補償しか買えず歪められ配給される（完全情報下より不利になる）。' +
-      'これは、より厚い補償を許すと高リスク者を引き寄せてしまうためである。全員が同一契約を結ぶプール均衡は競争均衡として存在しえず、高リスク者が少ない場合には（ナッシュ）均衡そのものが存在しないこともある。情報の非対称性が市場の効率を損なうことを示し、情報の経済学の基礎（スティグリッツの2001年ノーベル賞に寄与）となった。逆選択そのもの、より広い選別（スクリーニング）概念、当事者が自ら情報を発信するシグナリングとは区別される。',
-    keyFigures: 'マイケル・ロスチャイルド／ジョセフ・スティグリッツ（Rothschild & Stiglitz, 1976）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.princeton.edu/~dixitak/Teaching/EconomicsOfUncertainty/Slides&Notes/Slides15.pdf', type: 'academic', label: 'Princeton University (A. Dixit) — Adverse Selection in Insurance Markets 講義ノート' },
-      { url: 'https://dspace.mit.edu/bitstream/handle/1721.1/109484/14-03-fall-2010/contents/lecture-notes/MIT14_03F10_lec16.pdf', type: 'academic', label: 'MIT 14.03 (D. Autor) — Adverse Selection, Risk Aversion and Insurance Markets 講義ノート' },
-      { url: 'https://en.wikipedia.org/wiki/Separating_equilibrium', type: 'reference', label: 'Wikipedia — Separating equilibrium（Rothschild–Stiglitz 1976 QJE の帰結）' },
     ],
   },
   {
@@ -22123,21 +22075,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-lemons-problem-akerlof',
-    discipline: 'economics',
-    title: 'レモン市場',
-    statement:
-      'Akerlof（1970）は中古車市場を例に、売り手のみが品質を知る情報の非対称性のもとでは買い手が平均的価格しか提示できず、高品質財（ピーチ）が市場から退出して低品質財（レモン）だけが残る逆選択（adverse selection）が生じることを示した。' +
-      'この悪循環が進むと市場そのものが崩壊しうるという洞察は、保険・金融・労働など広範な市場分析に応用され、Spence（1973）のシグナリング理論やRothschild & Stiglitz（1976）の均衡分析とともに情報経済学の礎を築いた。Akerlof・Spence・Stiglitzはこの貢献により2001年ノーベル経済学賞を共同受賞した。',
-    keyFigures: 'George A. Akerlof ／ Michael Spence ／ Joseph E. Stiglitz',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.2307/1879431', type: 'academic', label: 'Akerlof (1970) The Market for Lemons: Quality Uncertainty and the Market Mechanism — QJE' },
-      { url: 'https://doi.org/10.2307/1882010', type: 'academic', label: 'Spence (1973) Job Market Signaling — QJE' },
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2001/summary/', type: 'reference', label: '2001年ノーベル経済学賞 公式概要（NobelPrize.org）' },
-    ],
-  },
-  {
     id: 'mgmt-real-options-strategy',
     discipline: 'management',
     title: 'リアル・オプション戦略論',
@@ -26270,23 +26207,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/10.1177/1534484315603612', type: 'academic', label: 'Mercurio (2015) — affective commitment as core essence, Human Resource Development Review' },
       { url: 'https://en.wikipedia.org/wiki/Organizational_commitment', type: 'reference', label: 'Wikipedia — organizational commitment' },
       { url: 'https://onlinelibrary.wiley.com/doi/10.1002/job.2081', type: 'academic', label: 'Kim (2016) — POS moderates affective commitment, J. of Organizational Behavior' },
-    ],
-  },
-  {
-    id: 'econ-adverse-selection-akerlof',
-    discipline: 'economics',
-    title: '逆選択理論（レモンの市場）',
-    statement: 'Akerlofが1970年に提唱した情報非対称性下での市場メカニズム。買い手が売り手よりも商品品質を把握できない場合、低品質商品が高品質商品を淘汰し市場全体が崩壊する「レモンの市場」現象を説明。2001年ノーベル経済学賞の基盤理論。' +
-      'メカニズムの核心は価格が平均品質にしか付かないことにある。買い手が品質を見分けられなければ支払意思額は市場の平均品質を反映し、平均を上回る品質の売り手は割に合わず退出する。すると平均品質がさらに下がり、価格も下がり、また上位が退出する——この unraveling が極端な場合には取引が消滅する。' +
-      '中古車が原型だが、保険（リスクの高い人ほど加入したがるため料率が上がり健常者が抜ける）、信用市場（金利を上げると安全な借り手から抜ける）、労働市場に同型の構造がある。' +
-      '対処は情報の非対称そのものを緩める設計で、保証・返品条項、ブランドと評判、第三者認証・検査、開示規制、そして保険では強制加入によるプール維持が典型である。売り手側の対処はシグナリング、買い手側の設計はスクリーニングとして独立の理論に発展した（各論は signaling-screening の項）。',
-    keyFigures: 'George A. Akerlof ／ A. Michael Spence ／ Joseph E. Stiglitz',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.jstor.org/stable/1879431', type: 'academic', label: 'Akerlof, G. A. (1970). The Market for \'Lemons\': Quality Uncertainty and the Market Mechanism. QJE 84(3) 488-500.' },
-      { url: 'https://academic.oup.com/qje/article-abstract/84/3/488/1896241', type: 'academic', label: 'Oxford Academic — The Market for \'Lemons\' (1970)' },
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2001/press-release/', type: 'reference', label: 'Nobel Prize press release (2001) — Akerlof, Spence, Stiglitz: markets with asymmetric information' },
-      { url: 'https://www.britannica.com/money/adverse-selection', type: 'reference', label: 'Britannica Money — Adverse selection' },
     ],
   },
   {
@@ -37784,13 +37704,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-screening-rothschild-stiglitz',
     discipline: 'economics',
-    title: 'スクリーニング理論——情報を持たない側が契約メニューで相手の型を選別する',
-    statement: 'スクリーニング理論（screening theory）は、情報の非対称性が存在する市場で、情報を持たない側（uninformed party）が、相手の私的情報（型）を自己選択を通じて明らかにさせるために契約のメニューを設計する仕組みを分析する理論で、マイケル・ロスチャイルドとジョセフ・スティグリッツが1976年の競争的保険市場の研究で代表的に定式化した。情報を持つ側が先に行動して自らの型を伝える「シグナリング」と対をなし、スクリーニングでは情報を持たない側が先に複数の契約を提示し、相手が自分に最も有利な契約を選ぶことで型が露見する。ロスチャイルドとスティグリッツの保険市場モデルでは、保険会社は加入者の事故リスクの高低を観察できないが、保険料と免責額（自己負担）の組み合わせが異なる契約メニューを用意することで加入者を選別できる。低リスク者は免責額が大きく保険料の安い契約を、高リスク者は手厚い補償の契約を選ぶため、両者が異なる契約を選ぶ「分離均衡」が成立しうる。しかし彼らは、低リスク者が望む契約を高リスク者が模倣する誘因のために、すべての型が同一契約を選ぶ「プーリング均衡」は競争下で維持できず、さらに条件によっては均衡そのものが存在しない可能性をも示した。この理論は逆選択への対処として、保険・労働・信用市場の契約設計を理解する基礎を与え、メカニズムデザインや情報の経済学の発展に寄与した。',
-    keyFigures: 'マイケル・ロスチャイルド ／ ジョセフ・スティグリッツ ／ マイケル・スペンス ／ ジョージ・アカロフ',
-    asOf: '2026-06-26',
+    title: 'スクリーニング理論（ロスチャイルド＝スティグリッツ）——情報を持たない側が契約メニューを設計し、相手の自己選択で隠れた型を選別する',
+    statement:
+      'スクリーニング理論（screening）は、情報を持たない側が複数の契約からなるメニューを提示し、相手の自己選択を通じて隠れた属性（型）を識別・分離する仕組みを分析する理論である。情報を持つ側が先に行動して自らの型を伝えるシグナリング（スペンス）とは仕掛ける主体が逆で、逆選択への対処手段でもある。代表的な定式化はマイケル・ロスチャイルドとジョセフ・スティグリッツの1976年の論文『Equilibrium in Competitive Insurance Markets』（Quarterly Journal of Economics 90巻4号）で、保険会社は加入者の事故リスクを観察できないため、高い保険料で完全補償の契約と、低い保険料だが免責の大きい部分補償の契約を用意し、高リスク者は前者を、低リスク者は後者を自ら選ぶ分離均衡へ導く。低リスク者は完全情報の場合より薄い補償しか買えず歪められる一方、全員が同じ契約を結ぶプール均衡は他社に低リスク者を奪われるため競争均衡として存続できず、高リスク者が少ない場合にはナッシュ均衡そのものが存在しないこともある。この結果は情報の経済学の基礎となり、スティグリッツの2001年ノーベル経済学賞に寄与した。応用は保険のほか賃金・昇進体系、担保と金利の組み合わせ、料金プランの設計に及び、限界としては均衡概念の選び方で結論が変わること、現実には規制やリスク分類が自己選択を補うことが指摘される。中小企業には、相手の型が分からないときは免責・支払条件・数量に応じた複数のプランを用意して選ばせること、自社が選別される側（融資・保険）では低リスクを示す情報開示が有利な条件につながることが含意となる。',
+    keyFigures: 'マイケル・ロスチャイルド＆ジョセフ・スティグリッツ（1976『Equilibrium in Competitive Insurance Markets』QJE）／ジョセフ・スティグリッツ＆アンドリュー・ワイス（シグナリングとスクリーニングの区別）／対比: マイケル・スペンス（シグナリング）／ジョージ・アカロフ（逆選択）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.2307/1885326', type: 'academic', label: 'Rothschild, M. & Stiglitz, J. (1976) Equilibrium in Competitive Insurance Markets — QJE 90(4)' },
-      { url: 'https://en.wikipedia.org/wiki/Screening_(economics)', type: 'reference', label: 'Wikipedia: Screening (economics) — Rothschild-Stiglitz, self-selection, separating/pooling equilibria' },
+      { url: 'https://doi.org/10.2307/1885326', type: 'academic', label: 'Rothschild, M. & Stiglitz, J. (1976) Equilibrium in Competitive Insurance Markets: An Essay on the Economics of Imperfect Information — Quarterly Journal of Economics 90(4), 629–649（原論文）' },
+      { url: 'https://academic.oup.com/qje/article-abstract/90/4/629/1886620', type: 'academic', label: 'Oxford Academic — Rothschild & Stiglitz (1976) 論文ページ' },
+      { url: 'https://www.nber.org/papers/t0093', type: 'academic', label: 'Stiglitz, J. & Weiss, A. — Sorting Out the Differences Between Signaling and Screening Models, NBER Technical Working Paper 93（シグナリングとスクリーニングの区別）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2001/popular-information/', type: 'reference', label: 'NobelPrize.org — The 2001 Prize in Economic Sciences, Popular information（保険会社がメニューでリスク類型を選別する例）' },
+      { url: 'https://en.wikipedia.org/wiki/Screening_(economics)', type: 'reference', label: 'Wikipedia: Screening (economics) — 自己選択・分離均衡・プール均衡・シグナリングとの対比' },
     ],
   },
   {
@@ -43872,13 +43796,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-adverse-selection-akerlof-lemons',
     discipline: 'economics',
-    title: '逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム',
-    statement: '逆選択（adverse selection）とは，取引前の情報非対称性（隠れた情報）によって市場において品質の低い財・サービスや高リスク主体が優先的に取引される現象である。ジョージ・アカロフは1970年の論文「レモン市場」で，中古車市場を例に，売り手が品質を知り買い手が知らない場合，買い手は平均品質に基づく価格しか払わず，高品質車（ピーチ）の売り手が市場から退出し，最終的に市場が崩壊するメカニズムを示した（2001年ノーベル経済学賞）。保険市場では，健康な人ほど保険を敬遠し高リスク者が集まる逆選択が保険プールを悪化させる。対策としてシグナリング（スペンスの教育シグナリング）・スクリーニング・強制加入・保証・評判メカニズムが論じられる。情報経済学の基礎概念として金融市場（信用割当）・労働市場（採用・解雇）・e-コマース（評価システム）・医療保険（ACA・国民健康保険）に広く応用される。',
-    keyFigures: 'ジョージ・アカロフ ／ マイケル・スペンス ／ ジョセフ・スティグリッツ ／ ジャン・ティロール',
-    asOf: '2026-06-26',
+    title: '逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する',
+    statement:
+      '逆選択（adverse selection）とは、取引前に一方だけが品質やリスクを知る情報の非対称性の下で、質の悪い財や高リスクの相手ばかりが市場に集まり、良質な財や相手が締め出される現象である。ジョージ・アカロフは1970年の論文『The Market for "Lemons": Quality Uncertainty and the Market Mechanism』（Quarterly Journal of Economics 84巻3号）で中古車市場を例に示した。買い手が品質を見分けられなければ支払意思額は平均品質にしか対応せず、良質な車（ピーチ）の売り手は割に合わず退出し、平均品質と価格がさらに下がって上位が次々に退出する（unraveling）ため、極端な場合には質の悪い車（レモン）しか残らず取引が消滅しうる。同型の構造は保険（高リスク者ほど加入したがる）や信用市場（金利を上げると安全な借り手から抜ける）にもあり、情報の非対称性が「取引前」に作用する点で、取引後の隠れた行動であるモラルハザードと区別される。対処は保証・返品条項、評判、第三者認証、開示規制、強制加入など情報の非対称そのものを緩める設計で、情報を持つ側が仕掛けるシグナリング（スペンス）と持たない側が選別するスクリーニング（ロスチャイルド＝スティグリッツ）は独立の理論に発展した。三人は2001年にノーベル経済学賞を受けた。現実の市場が完全に崩壊することは稀で、評判や仲介者がどこまで逆選択を抑えるかが実証の焦点である。中小企業には、品質を見分けてもらえなければ平均並みの値段しか付かず、保証・実績の開示・第三者評価がそれをはね返す投資であること、買い手や貸し手の側では相手の自己選択を疑うことが含意となる。',
+    keyFigures: 'ジョージ・アカロフ（1970『The Market for "Lemons"』QJE／2001 ノーベル経済学賞）／対比: マイケル・スペンス（シグナリング）／ジョセフ・スティグリッツ（スクリーニング）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.2307/1879431', type: 'academic', label: 'Akerlof, G.A. (1970) The Market for "Lemons" — QJE' },
-      { url: 'https://en.wikipedia.org/wiki/The_Market_for_Lemons', type: 'reference', label: 'Wikipedia: The Market for Lemons — information economics' },
+      { url: 'https://doi.org/10.2307/1879431', type: 'academic', label: 'Akerlof, G. A. (1970) The Market for "Lemons": Quality Uncertainty and the Market Mechanism — Quarterly Journal of Economics 84(3), 488–500（原論文）' },
+      { url: 'https://academic.oup.com/qje/article-abstract/84/3/488/1896241', type: 'academic', label: 'Oxford Academic — The Market for "Lemons" (1970) 論文ページ' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2001/popular-information/', type: 'reference', label: 'NobelPrize.org — The 2001 Prize in Economic Sciences, Popular information（レモン市場・逆選択・市場崩壊の解説）' },
+      { url: 'https://www.britannica.com/money/adverse-selection', type: 'reference', label: 'Britannica Money — Adverse selection（定義と保険・信用市場の例）' },
+      { url: 'https://en.wikipedia.org/wiki/The_Market_for_Lemons', type: 'reference', label: 'Wikipedia: The Market for Lemons — 論文の概要と情報経済学への影響' },
     ],
   },
   {

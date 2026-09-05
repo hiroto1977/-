@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 語彙が近い
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 同分野の近傍
+- [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

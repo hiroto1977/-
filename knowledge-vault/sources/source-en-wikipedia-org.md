@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2254
+cite_count: 2252
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2254 件**（リファレンス 2254）
+> [!info] 出典ドメイン索引 ・ 引用 **2252 件**（リファレンス 2252）
 
 ## このドメインを出典とする項目
 
@@ -369,7 +369,7 @@ tags:
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — Wikipedia:Absoluteadvantage—絶対優位論の概説
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — Wikipedia:Absorptionapproach—Alexander,incomeminusabsorption,devaluat…
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]] — Wikipedia:AD–ASmodel（モデルの定義・AD/SRAS/LRAS・需要/供給ショック）
-- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — Wikipedia:TheMarketforLemons—informationeconomics
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する]] — Wikipedia:TheMarketforLemons—論文の概要と情報経済学への影響
 - [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — Wikipedia:Auctiontheory—affiliation,linkageprinciple,revenueranking,w…
 - [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — Wikipedia:Economiesofagglomeration—集積経済の理論と実証
 - [[econ-ak-model|AKモデル（内生的成長の基本モデル）]] — Wikipedia—AKmodel
@@ -881,7 +881,6 @@ tags:
 - [[econ-revenue-equivalence|収入同値定理]] — Revenueequivalence—Wikipedia（定理の定義・条件・破綻ケース）
 - [[econ-reversal-of-fortune-acemoglu|運命の逆転——制度が長期の発展を分ける]] — Wikipedia:ReversalofFortune—institutionsvsgeography,colonialorigins,d…
 - [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — Wikipedia,"Ricardianequivalence"（Ricardo1820/Barrocoinageの補足確認）
-- [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]] — Wikipedia—Separatingequilibrium（Rothschild–Stiglitz1976QJEの帰結）
 - [[econ-rotten-kid-theorem|腐った子定理]] — Wikipedia—Rottenkidtheorem(Becker1974,JPEvol.82)
 - [[econ-rubinstein-bargaining|ルービンシュタイン交渉モデル]] — Rubinsteinbargainingmodel—Wikipedia(alternatingoffers,discounting,uni…
 - [[econ-rybczynski|リブチンスキー定理]] — Wikipedia:Rybczynskitheorem
@@ -897,8 +896,7 @@ tags:
 - [[econ-schelling-segregation|シェリングの分居モデル]] — Wikipedia—Schelling’smodelofsegregation（約1/3の選好閾値・創発）
 - [[econ-school-choice-mechanism-design|学校選択メカニズムデザイン（School Choice Mechanism Design）]] — Wikipedia—School-choicemechanism(Bostonmechanism,deferredacceptance,s…
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — Wikipedia—Scitovskyparadox
-- [[econ-screening|スクリーニング（選別理論）]] — Wikipedia—Screening(economics)（自己選択・分離均衡・シグナリングとの対比）
-- [[econ-screening-rothschild-stiglitz|スクリーニング理論——情報を持たない側が契約メニューで相手の型を選別する]] — Wikipedia:Screening(economics)—Rothschild-Stiglitz,self-selection,sep…
+- [[econ-screening-rothschild-stiglitz|スクリーニング理論（ロスチャイルド＝スティグリッツ）——情報を持たない側が契約メニューを設計し、相手の自己選択で隠れた型を選別する]] — Wikipedia:Screening(economics)—自己選択・分離均衡・プール均衡・シグナリングとの対比
 - [[econ-search-matching|サーチ理論／マッチング理論]] — Wikipedia—Search-and-matchingtheory
 - [[econ-search-matching-theory-diamond-mortensen|サーチ・マッチング理論——労働市場の摩擦と失業の均衡モデル]] — Wikipedia:Searchandmatchingtheory—サーチ・マッチング理論の概説
 - [[econ-search-theory-stigler|情報の経済学と探索理論——最適な探索が価格分散を均衡として説明する]] — Wikipedia:Searchtheory—Stigler,optimalsearch,pricedispersion,marginal…

@@ -35,6 +35,7 @@ aliases:
 ## 関連概念
 - [[tax-individual-business-tax|個人事業税]] — 同分野の近傍
 - [[tax-filing-necessity|所得税の確定申告が必要な人・不要な人]] — 同分野の近傍
+- [[tax-edenshocho|電子取引データの電子保存義務（2024年1月〜）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

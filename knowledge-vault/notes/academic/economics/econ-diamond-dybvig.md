@@ -34,6 +34,7 @@ aliases:
 - [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]] — 同じ思想家
 - [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同分野の近傍
 - [[econ-diamond-dybvig-bank-runs|銀行取付モデル（ダイヤモンド＆ディブビッグ）]] — 同分野の近傍
+- [[econ-new-keynesian|ニュー・ケインジアン経済学]] — 同分野の近傍
 - [[econ-diamond-dybvig-bank-run|ダイアモンド＝ディブビグ銀行取付モデル]] — 同分野の近傍
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 同分野の近傍
 

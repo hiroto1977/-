@@ -2,7 +2,7 @@
 title: "britannica.com"
 type: source-domain
 host: "britannica.com"
-cite_count: 276
+cite_count: 275
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # britannica.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **276 件**（リファレンス 276）
+> [!info] 出典ドメイン索引 ・ 引用 **275 件**（リファレンス 275）
 
 ## このドメインを出典とする項目
 
@@ -22,8 +22,7 @@ tags:
 - [[bizlaw-parens-patriae|パレンス・パトリエ法理（Parens Patriae Doctrine）]] — EncyclopaediaBritannica—Parenspatriae（定義・英国法起源・米国法における展開）
 - [[bizlaw-promissory-estoppel|約束的禁反言（プロミッサリー・エストッペル）]] — EncyclopaediaBritannica—Contractlaw（約因・禁反言・信頼利益保護を含む契約法の概観）
 - [[econ-accelerator-principle|加速度原理（投資の加速度原理）]] — EncyclopaediaBritannica—Acceleratorprinciple(economics)
-- [[econ-adverse-selection|逆選択（レモン市場）]] — EncyclopaediaBritannica（Money）—GeorgeAkerlof：中古車市場での逆選択と1970年論文
-- [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — BritannicaMoney—Adverseselection
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する]] — BritannicaMoney—Adverseselection（定義と保険・信用市場の例）
 - [[econ-allison-models|アリソンの意思決定モデル（合理的行為者・組織過程・政府政治）]] — EncyclopaediaBritannica—EssenceofDecision（3モデルの解説・政策科学への影響）
 - [[econ-arbitrage|裁定取引（アービトラージ）と一物一価の法則]] — BritannicaMoney—"WhatIsArbitrage?"（裁定の定義・リスクフリー利益・市場間価格差の解消）
 - [[econ-arrow-impossibility|アローの不可能性定理]] — EncyclopaediaBritannica—Impossibilitytheorem(Arrow'sParadox,VotingThe…

@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 語彙が近い
-- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 語彙が近い
 - [[bizlaw-shareholder-activism-hedge|ヘッジファンド株主アクティビズムと会社法]] — 同じ思想家
 - [[bizlaw-corporate-restructuring-law|企業再編法制と会社分割・合併の法律構成]] — 同じ思想家
 - [[bizlaw-golden-share-special-rights|黄金株と特別議決権株式（ゴールデン・シェア）]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[bizlaw-covenant-not-to-compete|競業避止契約——営業秘密・顧客関係の保護と職業選択の自由の調整]] — 同じ思想家
 - [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同じ思想家
 - [[bizlaw-staggered-board-classified-board|期差任期取締役会（クラシファイド・ボード）——買収防衛策としての効果と機関投資家による解体]] — 同じ思想家
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

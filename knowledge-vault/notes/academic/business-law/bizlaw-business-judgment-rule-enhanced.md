@@ -32,7 +32,7 @@ Ronald J. Gilson ／ Reinier Kraakman ／ Stephen M. Bainbridge ／ William T. A
 
 ## 関連概念
 - [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 語彙が近い
-- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 語彙が近い
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 同じ思想家
 - [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]] — 同じ思想家
 - [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 同じ思想家
 - [[bizlaw-duty-of-care-standard|注意義務の基準]] — 同じ思想家

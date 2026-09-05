@@ -31,7 +31,7 @@ aliases:
 - [Dimoka, A., Hong, Y. & Pavlou, P.A. (2012) On Product Uncertainty in Online Markets, MISQ 36(2):395-426](https://doi.org/10.2307/41703461) `学術`
 
 ## 関連概念
-- [[infosoc-post-truth-epistemology|ポスト・トゥルース時代の認識論と情報環境の政治社会学]] — 同分野の近傍
+- [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同分野の近傍
 - [[infosoc-prosumption-ritzer|プロシューマー論——生産と消費の融合がもたらす社会経済的変容]] — 同分野の近傍
 
 ## 関連
