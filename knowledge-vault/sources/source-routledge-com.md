@@ -2,7 +2,7 @@
 title: "routledge.com"
 type: source-domain
 host: "routledge.com"
-cite_count: 22
+cite_count: 21
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # routledge.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **22 件**（学術 18 ・ リファレンス 4）
+> [!info] 出典ドメイン索引 ・ 引用 **21 件**（学術 17 ・ リファレンス 4）
 
 ## このドメインを出典とする項目
 
@@ -26,7 +26,6 @@ tags:
 - [[infosoc-deep-mediatization|深層メディアタイゼーション（Deep Mediatization）]] — Hepp(2020)DeepMediatization—Routledge
 - [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]] — Fuchs,C.(2014)DigitalLabourandKarlMarx—Routledge（マルクス労働価値論によるデジタル労働の搾…
 - [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]] — Scholz,T.(ed.)(2013)DigitalLabor:TheInternetasPlaygroundandFactory—Ro…
-- [[infosoc-digital-labour|デジタル労働（digital labour）]] — ChristianFuchs,DigitalLabourandKarlMarx(Routledge,2014)—出版社書誌ページ
 - [[infosoc-information-worlds-theory|情報世界理論]] — Jaeger&Burnett2010book(Routledge)
 - [[infosoc-network-agenda-setting|ネットワーク議題設定モデル（Network Agenda Setting、議題設定理論の第三レベル）]] — Guo,L.&McCombs,M.(eds.)(2016)ThePowerofInformationNetworks:NewDirecti…
 - [[infosoc-participatory-design|参加型デザイン（Participatory Design）]] — Schuler&Namioka(1993)ParticipatoryDesign:PrinciplesandPractices—Routl…

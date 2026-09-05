@@ -33,8 +33,6 @@ Michael L. Tushman ／ Elaine Romanelli ／ Nicolaj Siggelkow ／ Daniel A. Levi
 
 ## 関連概念
 - [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — 同じ思想家
-- [[mgmt-absorptive-capacity-realization|吸収能力の実現化モデル：潜在的能力と実現的能力]] — 同じ思想家
-- [[mgmt-absorptive-capacity-theory|吸収能力理論]] — 同じ思想家
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
 - [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
 - [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
@@ -42,6 +40,8 @@ Michael L. Tushman ／ Elaine Romanelli ／ Nicolaj Siggelkow ／ Daniel A. Levi
 - [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
 - [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]] — 出典を共有
 - [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる]] — 出典を共有
+- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 出典を共有
+- [[mgmt-organizational-tempo-entrainment|組織テンポとエントレインメント：時間的同期と戦略的ペーシング]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

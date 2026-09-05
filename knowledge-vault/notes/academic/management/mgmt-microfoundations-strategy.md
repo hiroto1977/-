@@ -31,7 +31,8 @@ aliases:
 - [Felin et al. (eds.) Microfoundations — Cambridge University Press](https://www.cambridge.org/core/books/microfoundations/079FF73BB164AE480BA997395B7245E1) `学術`
 
 ## 関連概念
-- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 語彙が近い
+- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同じ思想家
+- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]] — 同じ思想家
 - [[mgmt-knowledge-governance|知識ガバナンス（Knowledge Governance）]] — 同じ思想家
 - [[mgmt-microfoundations-movement|ミクロ基礎運動（Microfoundations Movement）]] — 同分野の近傍
 - [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 同分野の近傍

@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Decentralized autonomous organization — blockchain governance](https://en.wikipedia.org/wiki/Decentralized_autonomous_organization) `リファレンス`
 
 ## 関連概念
+- [[infosoc-calculated-publics|算出された公衆（calculated publics）]] — 同分野の近傍
 - [[infosoc-web3|Web3]] — 同分野の近傍
-- [[infosoc-techno-feminism-wajcman|テクノフェミニズム——技術とジェンダーの相互構成的関係]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,8 +32,9 @@ aliases:
 - [What Do We Talk About When We Talk About Strategic Renewal — Central European Management Journal (Emerald)](https://www.emerald.com/insight/content/doi/10.1108/cemj-01-2023-0003/full/html) `学術`
 
 ## 関連概念
-- [[mgmt-dynamic-managerial-capabilities-adner|動的経営能力——マネジャーの人的資本・社会関係資本・認知]] — 同じ思想家
-- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者ケイパビリティ——アドナーとヘルファットの経営者固有の戦略的資源変革能力]] — 同じ思想家
+- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]] — 同じ思想家
+- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する]] — 同じ思想家
+- [[mgmt-upper-echelons-theory|上層部理論（ハンブリック＝メイソン）——組織はトップ経営陣の反映であり、経営者の経歴と特性が認知のフィルターとして戦略的選択と業績を部分的に予測する]] — 同じ思想家
 - [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — 出典を共有
 - [[bizlaw-ultra-vires-doctrine-modern|近代企業法における越権行為法理（Ultra Vires Doctrine）]] — 出典を共有
 - [[mgmt-appreciative-inquiry|アプリシエイティブ・インクワイアリー（AI）]] — 出典を共有
@@ -41,7 +42,6 @@ aliases:
 - [[mgmt-organizational-unlearning|組織的アンラーニング]] — 出典を共有
 - [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有
 - [[mgmt-heavyweight-product-manager-clark-fujimoto|重量級プロダクト・マネジャー——組織内外の統合を一身に担い製品コンセプトを守る開発責任者]] — 出典を共有
-- [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

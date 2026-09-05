@@ -36,6 +36,7 @@ aliases:
 - [[human-spacing-effect-cepeda|間隔効果（分散効果）——同じ学習時間でも間隔をあけて分散させた方が集中して行うより長く記憶に残る]] — 同じ思想家
 - [[human-mood-congruent-memory|気分一致効果（気分一致記憶）]] — 同分野の近傍
 - [[human-load-theory-attention-lavie|注意の負荷理論——課題の知覚的負荷が選択の段階を決める]] — 同分野の近傍
+- [[human-fast-mapping|高速マッピング（Fast Mapping）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

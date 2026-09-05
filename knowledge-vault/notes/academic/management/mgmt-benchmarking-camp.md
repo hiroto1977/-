@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Benchmarking — Camp, Xerox, best practices, internal/competitive/functional/generic, continuous improvement](https://en.wikipedia.org/wiki/Benchmarking) `リファレンス`
 
 ## 関連概念
+- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する]] — 同分野の近傍
 - [[mgmt-generic-strategies-porter|ポーターの基本戦略——コスト・リーダーシップ・差別化・集中]] — 同分野の近傍
-- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

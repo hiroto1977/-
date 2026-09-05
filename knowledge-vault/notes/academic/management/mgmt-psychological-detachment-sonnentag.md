@@ -36,7 +36,6 @@ aliases:
 - [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — 同じ思想家
 - [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]] — 同じ思想家
 - [[mgmt-job-demands-resources-bakker|職務要求-資源モデル——ストレスとエンゲージメントの二重過程]] — 同じ思想家
-- [[mgmt-upper-echelons-refinement|上層部理論精緻化]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,14 +2,14 @@
 title: "2000年代"
 type: timeline-decade
 decade: 2000
-entry_count: 189
+entry_count: 188
 tags:
   - timeline
 ---
 
-# 2000年代 — 189 件
+# 2000年代 — 188 件
 
-- [[year-2000|2000年]]（21件）
+- [[year-2000|2000年]]（20件）
 - [[year-2001|2001年]]（29件）
 - [[year-2002|2002年]]（18件）
 - [[year-2003|2003年]]（21件）

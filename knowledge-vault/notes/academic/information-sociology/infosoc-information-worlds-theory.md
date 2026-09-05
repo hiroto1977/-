@@ -40,8 +40,8 @@ Paul T. Jaeger ／ Gary Burnett
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — 出典を共有
 - [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
 - [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]] — 出典を共有
-- [[infosoc-digital-labour|デジタル労働（digital labour）]] — 出典を共有
 - [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 出典を共有
+- [[infosoc-polymedia|ポリメディア（Polymedia）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

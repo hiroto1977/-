@@ -34,13 +34,13 @@ aliases:
 - [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 語彙が近い
 - [[mgmt-profiting-from-innovation|技術革新からの利益専有（PFIフレームワーク）]] — 同じ思想家
 - [[econ-economies-of-scope|範囲の経済——複数製品の共同生産が個別生産より費用を節約する]] — 同じ思想家
-- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — 同じ思想家
-- [[mgmt-absorptive-capacity-zahra|吸収能力の再概念化：動的能力としての知識統合]] — 同じ思想家
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]] — 同じ思想家
 - [[mgmt-corporate-entrepreneurship-zahra|コーポレート・アントレプレナーシップ（ザーラ）]] — 同じ思想家
 - [[mgmt-corporate-venturing-burgelman|コーポレート・ベンチャリング（バーゲルマン）]] — 同じ思想家
-- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者ケイパビリティ——アドナーとヘルファットの経営者固有の戦略的資源変革能力]] — 同じ思想家
 - [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同じ思想家
+- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]] — 同じ思想家
+- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する]] — 同じ思想家
+- [[mgmt-proactive-personality-bateman|プロアクティブ・パーソナリティと主体的行動（ベイトマン＆クラント）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

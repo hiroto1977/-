@@ -30,6 +30,7 @@ aliases:
 - [Wikipedia: Behavioral Theory of the Firm — Cyert, March, satisficing, organizational slack, bounded rationality](https://en.wikipedia.org/wiki/A_Behavioral_Theory_of_the_Firm) `リファレンス`
 
 ## 関連概念
+- [[human-bounded-rationality|限定合理性]] — 語彙が近い
 - [[mgmt-behavioral-decision-theory-march|行動的意思決定理論——限定合理性下の組織的選択プロセス]] — 同じ思想家
 - [[mgmt-organizational-slack|組織スラック]] — 同じ思想家
 - [[econ-x-inefficiency-leibenstein|X非効率——競争圧力の欠如が生む費用最小化からの組織的乖離]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[mgmt-clan-control-ouchi|クラン統制理論——大内の市場・官僚制・クランの三類型と組織文化による制御]] — 同じ思想家
 - [[econ-baumol-sales-maximization|売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者]] — 同じ思想家
 - [[econ-hold-up-problem-williamson|ホールドアップ問題——関係特殊投資の搾取懸念が過少投資を招く]] — 同じ思想家
-- [[econ-new-institutional-economics-north|新制度経済学と制度変化の歴史的分析——ノースの経路依存性論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

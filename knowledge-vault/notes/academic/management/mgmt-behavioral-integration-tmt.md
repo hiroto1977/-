@@ -35,11 +35,11 @@ Donald C. Hambrick ／ Zeki Simsek ／ John F. Veiga ／ Michael H. Lubatkin
 - [[mgmt-organizational-attention-theory|組織注意理論]] — 同じ思想家
 - [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
 - [[mgmt-strategic-leadership-theory|戦略的リーダーシップ理論]] — 同じ思想家
-- [[mgmt-upper-echelons-refinement|上層部理論精緻化]] — 同じ思想家
 - [[mgmt-ba-knowledge-creation-nonaka|場（Ba）と知識創造（野中・紺野）]] — 出典を共有
 - [[mgmt-evidence-based-management|証拠に基づく経営（エビデンスに基づく経営）]] — 出典を共有
 - [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 出典を共有
 - [[mgmt-psychological-ownership|心理的所有感]] — 同分野の近傍
+- [[mgmt-managerial-cognition|経営者認知理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 613
+entry_count: 612
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（613件）
+# 学習パス — 学術概念／情報社会学（612件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 73）
-- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 46）
+- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 44）
 - [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]]（接続 30）
-- [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]]（接続 30）
+- [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]]（接続 28）
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 26）
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 25）
+- [[infosoc-polymedia|ポリメディア（Polymedia）]]（接続 25）
+- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 22）
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]]（接続 22）
 - [[infosoc-dataveillance|データヴェイランス（データ監視）]]（接続 22）
 - [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]]（接続 22）
-- [[infosoc-digital-labour|デジタル労働（digital labour）]]（接続 22）
-- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 21）
 - [[infosoc-banal-nationalism|バナール・ナショナリズム]]（接続 21）
+- [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]]（接続 21）
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 21）
-- [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]]（接続 21）
-- [[infosoc-polymedia|ポリメディア（Polymedia）]]（接続 21）
+- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]]（接続 21）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -394,7 +394,6 @@ tags:
 - [[infosoc-digital-humanities-mccarty|デジタル・ヒューマニティーズ——マッカーシーの計算的モデリングと人文知の変容]]
 - [[infosoc-digital-identity-self-sovereign|デジタルアイデンティティと自己主権——SSIの分散管理と個人情報支配の再設計]]
 - [[infosoc-digital-inequality|デジタル格差・デジタル不平等：情報技術へのアクセスと活用における社会的不均衡]]
-- [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]]
 - [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）]]
 - [[infosoc-digital-materiality|デジタル・マテリアリティ]]
 - [[infosoc-digital-memory-collective|デジタル集合記憶とオンライン追悼実践の情報社会学]]
@@ -467,7 +466,6 @@ tags:
 - [[infosoc-information-worlds-theory|情報世界理論]]
 - [[infosoc-infrastructural-inversion-bowker|インフラストラクチャーの逆転——不可視の情報基盤を可視化する方法論]]
 - [[infosoc-infrastructural-inversion-bowker-star|インフラの逆転——分類システムの不可視的政治性]]
-- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]]
 - [[infosoc-knowledge-commons-theory|知識コモンズ理論]]
 - [[infosoc-knowledge-gap-tichenor|知識ギャップ仮説——マスメディアの情報流入が社会階層間の知識格差を拡大する]]
 - [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]]
@@ -516,6 +514,7 @@ tags:
 - [[infosoc-phenomenological-technology|技術の現象学]]
 - [[infosoc-platform-cooperativism-scholz-schneider|プラットフォーム協同組合主義——デジタル経済における労働者所有の代替モデル]]
 - [[infosoc-platform-economics|プラットフォーム経済学・二面市場理論：デジタル市場の仲介構造と価格戦略]]
+- [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]]
 - [[infosoc-platform-envelopment-eisenmann|プラットフォーム包囲戦略（アイゼンマン）]]
 - [[infosoc-platform-feudalism|プラットフォーム封建制（デジタル封建制）]]
 - [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]]

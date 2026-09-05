@@ -38,7 +38,6 @@ aliases:
 - [[infosoc-social-construction|現実の社会的構成（社会構築主義）]] — 同分野の近傍
 - [[infosoc-automated-journalism|自動ジャーナリズム（ロボットジャーナリズム）]] — 同分野の近傍
 - [[infosoc-smart-mob|スマートモブ]] — 同分野の近傍
-- [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -38,8 +38,8 @@ aliases:
 - [[econ-incomplete-contracts-hart-moore|不完備契約理論——残余コントロール権の配分としての所有権]] — 同じ思想家
 - [[econ-maskin-monotonicity-nash-implementation|マスキンの遂行理論とマスキン単調性——ナッシュ均衡で社会的目標を実現できる条件]] — 同じ思想家
 - [[econ-property-rights-theory|財産権アプローチ（企業の所有権理論）]] — 同じ思想家
-- [[mgmt-dynamic-managerial-capabilities-adner|動的経営能力——マネジャーの人的資本・社会関係資本・認知]] — 同じ思想家
-- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者ケイパビリティ——アドナーとヘルファットの経営者固有の戦略的資源変革能力]] — 同じ思想家
+- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する]] — 同じ思想家
+- [[mgmt-upper-echelons-theory|上層部理論（ハンブリック＝メイソン）——組織はトップ経営陣の反映であり、経営者の経歴と特性が認知のフィルターとして戦略的選択と業績を部分的に予測する]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

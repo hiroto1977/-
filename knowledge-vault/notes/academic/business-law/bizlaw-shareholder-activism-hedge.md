@@ -38,7 +38,7 @@ aliases:
 - [[bizlaw-standstill-agreement-ma|スタンドスティル協定（M&A）]] — 同じ思想家
 - [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同じ思想家
 - [[bizlaw-staggered-board-classified-board|期差任期取締役会（クラシファイド・ボード）——買収防衛策としての効果と機関投資家による解体]] — 同じ思想家
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-corporate-governance-code-japan|コーポレートガバナンス・コード——日本のスチュワードシップと取締役会改革]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

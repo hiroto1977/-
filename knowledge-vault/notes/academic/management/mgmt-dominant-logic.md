@@ -34,7 +34,6 @@ C. K. Prahalad & Richard A. Bettis（SMJ 7(6), 1986, 原提唱）／Bettis & Pra
 - [[mgmt-bop|BOP（ベース・オブ・ザ・ピラミッド）]] — 同じ思想家
 - [[mgmt-strategic-consensus-bourgeois|戦略的コンセンサスとトップ・マネジメント・チーム（ブルジョワ）]] — 同分野の近傍
 - [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）]] — 同分野の近傍
-- [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同分野の近傍
 - [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同分野の近傍
 
 ## 関連

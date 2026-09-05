@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2226
+cite_count: 2220
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2226 件**（リファレンス 2226）
+> [!info] 出典ドメイン索引 ・ 引用 **2220 件**（リファレンス 2220）
 
 ## このドメインを出典とする項目
 
@@ -1581,7 +1581,6 @@ tags:
 - [[infosoc-digital-identity-self-sovereign|デジタルアイデンティティと自己主権——SSIの分散管理と個人情報支配の再設計]] — Wikipedia:Self-sovereignidentity—decentralizeddigitalidentity
 - [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]] — Wikipedia:Digitallabor—Terranova,Fuchs,Scholz,Casilli,prosumer,microw…
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — Wikipedia:Platformcooperativism—プラットフォーム協同組合主義の概要
-- [[infosoc-digital-labour|デジタル労働（digital labour）]] — Digitallabor—Wikipedia（定義・研究領域の概観）
 - [[infosoc-digital-literacy|デジタル・リテラシー（Digital Literacy）]] — Wikipedia:Digitalliteracy—definitionandframeworks
 - [[infosoc-digital-memory-collective|デジタル集合記憶とオンライン追悼実践の情報社会学]] — Wikipedia:Digitalmemory—collectivememoryonline
 - [[infosoc-digital-natives-prensky|デジタルネイティブ——デジタル環境で育った世代をめぐる概念とその批判]] — Wikipedia:Digitalnative—Prensky,digitalimmigrants,generationaldivide,…
@@ -1854,8 +1853,7 @@ tags:
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — Wikipedia:360-degreefeedback（定義・多面評価・能力開発と考課・評価者バイアス・1990年代普及）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — Wikipedia:3Csmodel—Ohmae,customer/company/competition,strategictriang…
 - [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]] — Wikipedia:Abileneparadox—JerryB.Harvey,mismanagementofagreement,plura…
-- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — Wikipedia:Absorptivecapacity—Cohen&Levinthal,PACAP/RACAP,priorknowled…
-- [[mgmt-absorptive-capacity-theory|吸収能力理論]] — Wikipedia—Absorptivecapacityoverview
+- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]] — Wikipedia:Absorptivecapacity—Cohen&Levinthal,PACAP/RACAP,priorknowled…
 - [[mgmt-abusive-supervision-tepper|虐待的監督——上司による持続的な敵対的言動]] — Wikipedia:Abusivesupervision—destructiveleadership,hostilebehavior,ou…
 - [[mgmt-action-centred-leadership-adair|アクション・センタード・リーダーシップ——課題・チーム・個人の三つの輪]] — Wikipedia:JohnAdair—action-centredleadership,task/team/individual,fun…
 - [[mgmt-action-learning|アクションラーニング]] — Wikipedia—RegRevans
@@ -1948,9 +1946,7 @@ tags:
 - [[mgmt-double-diamond|ダブルダイヤモンド（デザインプロセス）]] — Wikipedia—DoubleDiamond(designprocessmodel)
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — Wikipedia:Double-looplearning—Argyris&Schön,governingvariables,theory…
 - [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ]] — Dynamiccapabilities—Wikipedia（RBV/バーニーとの関係）
-- [[mgmt-dynamic-managerial-capabilities-adner|動的経営能力——マネジャーの人的資本・社会関係資本・認知]] — Wikipedia:Dynamiccapabilities—組織・経営レベルの能力論
-- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者ケイパビリティ——アドナーとヘルファットの経営者固有の戦略的資源変革能力]] — Wikipedia:Dynamiccapabilities—ダイナミック・ケイパビリティの概要
-- [[mgmt-dynamic-managerial-cognition|動的経営認知と戦略的変化（トゥイッテル＆ロウランズ）]] — Wikipedia:Dynamiccapabilities—managerialcognition
+- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する]] — Wikipedia:Dynamiccapabilities—組織・経営者レベルの能力論の概説
 - [[mgmt-dynamic-pricing|ダイナミック・プライシング]] — Wikipedia—Dynamicpricing
 - [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — Wikipedia—EconomicOrderQuantity
 - [[mgmt-effectuation|エフェクチュエーション]] — Wikipedia—SarasSarasvathy（経歴・研究背景）
@@ -2076,7 +2072,7 @@ tags:
 - [[mgmt-organizational-commitment-meyer-allen|組織コミットメント三成分モデル——情緒的・存続的・規範的な結びつき]] — Wikipedia:Organizationalcommitment—Meyer&Allen,affective/continuance/…
 - [[mgmt-organizational-culture-theory|組織文化理論]] — Organizationalculture—Wikipedia
 - [[mgmt-organizational-cynicism-dean|組織シニシズム——組織の誠実さを信じない否定的態度]] — Wikipedia:Organizationalcynicism—belief,affect,behavior,attitude,chan…
-- [[mgmt-organizational-ecology-density|組織エコロジーの密度依存モデル——個体群密度と組織の設立・消滅]] — Wikipedia:Organizationalecology—population-levelanalysisoforganizatio…
+- [[mgmt-organizational-ecology|組織エコロジー（ハナン＝フリーマン）——個別組織の適応ではなく組織個体群レベルの環境淘汰が、構造的慣性・密度依存・新しさの不利益を通じて組織形態の多様性を説明する]] — Wikipedia:Organizationalecology—population-levelanalysis,structuralin…
 - [[mgmt-organizational-equilibrium|組織均衡論（誘因と貢献）]] — Wikipedia「AdministrativeBehavior」（サイモン1947年、誘因＝貢献均衡のバーナード由来）
 - [[mgmt-organizational-equilibrium|組織均衡論（誘因と貢献）]] — Wikipedia「TheFunctionsoftheExecutive」（バーナード1938年、協働体系・有効性と能率）
 - [[mgmt-organizational-hypocrisy-theory|組織的偽善理論]] — Wikipedia—NilsBrunsson
@@ -2110,7 +2106,6 @@ tags:
 - [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — Wikipedia:RogerMartin—PlayingtoWin,strategicchoicecascade,wheretoplay…
 - [[mgmt-poka-yoke|ポカヨケ]] — Wikipedia:Poka-yoke
 - [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]] — Wikipedia:Organizationalpolitics—politicalskill,socialastuteness,inte…
-- [[mgmt-population-ecology-organization|組織の個体群生態学]] — Wikipedia—Organizationalecology
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]] — Wikipedia:Growth–sharematrix—BCGマトリクスの概念と限界
 - [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — Wikipedia:Positiveorganizationalbehavior—Luthans,PsyCap,HERO,POBvsPER…
 - [[mgmt-proactive-personality-bateman|プロアクティブ・パーソナリティと主体的行動（ベイトマン＆クラント）]] — Wikipedia:Proactivity—Bateman&Crant,proactivepersonalityscale,proacti…
@@ -2222,8 +2217,7 @@ tags:
 - [[mgmt-triple-bottom-line-elkington|トリプルボトムラインとCSR測定——エルキントンによる経済・環境・社会の三重成果会計]] — Wikipedia:Triplebottomline—TBLの概念と企業サステナビリティ
 - [[mgmt-trompenaars-dimensions|トロンペナールスの文化の7次元]] — Wikipedia:Trompenaars'smodelofnationalculturedifferences（7次元・出典・帰属）
 - [[mgmt-tuckman-team-stages|タックマンのチーム発達段階——形成・混乱・規範化・遂行・解散]] — Wikipedia:Tuckmansstages—forming/storming/norming/performing/adjourni…
-- [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — Wikipedia:Upperechelontheory—Hambrick&Mason,TMTdemographics,manageria…
-- [[mgmt-upper-echelons-hambrick|上層部理論（ハンブリック＆メイソン）]] — Wikipedia:Upperechelonstheory—Hambrick&Mason,TMTdiversity,CEOoverconf…
+- [[mgmt-upper-echelons-theory|上層部理論（ハンブリック＝メイソン）——組織はトップ経営陣の反映であり、経営者の経歴と特性が認知のフィルターとして戦略的選択と業績を部分的に予測する]] — Wikipedia:Upperechelonstheory—Hambrick&Mason,TMTdemographics,manageri…
 - [[mgmt-upper-echelons-tournament-theory|トーナメント理論と経営者インセンティブ（レイザー＆ローゼン）]] — Wikipedia:Tournamenttheory—トーナメント理論の概説
 - [[mgmt-uppsala-internationalization|ウプサラ・モデル——企業の漸進的な国際化プロセス]] — Wikipedia:Uppsalamodel—Johanson&Vahlne,incrementalinternationalizatio…
 - [[mgmt-value-proposition|バリュープロポジション]] — Wikipedia—Valueproposition（定義・ランニング&マイケルズ1988起源）

@@ -32,8 +32,6 @@ aliases:
 - [The Dynamic Capabilities of David Teece — strategy+business（ティース本人へのインタビュー）](https://www.strategy-business.com/article/00225) `メディア`
 
 ## 関連概念
-- [[mgmt-dynamic-managerial-capabilities-adner|動的経営能力——マネジャーの人的資本・社会関係資本・認知]] — 語彙が近い
-- [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — 語彙が近い
 - [[mgmt-agile-scrum-organizational|アジャイル・スクラムと組織アジリティの経営論——ソフトウェア開発から経営変革へ]] — 語彙が近い
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
@@ -42,6 +40,8 @@ aliases:
 - [[mgmt-red-queen-competition|赤の女王競争理論]] — 出典を共有
 - [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 出典を共有
 - [[mgmt-servqual|SERVQUAL（サービス品質モデル）]] — 出典を共有
+- [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — 出典を共有
+- [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

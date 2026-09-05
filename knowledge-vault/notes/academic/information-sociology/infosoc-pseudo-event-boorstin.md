@@ -39,7 +39,6 @@ aliases:
 - [[infosoc-uses-and-gratifications|利用と満足理論——能動的な受け手がメディアをどう使い何を得るか]] — 同じ思想家
 - [[infosoc-information-subsidy|情報補助金]] — 同分野の近傍
 - [[infosoc-parasocial|パラソーシャル関係]] — 同分野の近傍
-- [[infosoc-new-governors-online-speech-klonick|新しい統治者論——プラットフォームを独自の規則・手続・文化でオンライン言論を統治する私的統治システムとみなす議論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

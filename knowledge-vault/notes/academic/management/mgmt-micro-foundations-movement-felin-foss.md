@@ -31,7 +31,7 @@ aliases:
 - [Wikipedia: Microfoundations — ミクロ的基礎の経済学・経営学における議論の概説](https://en.wikipedia.org/wiki/Microfoundations) `リファレンス`
 
 ## 関連概念
-- [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（Microfoundations of Strategy）]] — 語彙が近い
+- [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（Microfoundations of Strategy）]] — 同じ思想家
 - [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 同じ思想家
 - [[mgmt-knowledge-governance|知識ガバナンス（Knowledge Governance）]] — 同じ思想家
 - [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — 同じ思想家
@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 同じ思想家
 - [[mgmt-strategic-groups-hunt-porter|戦略グループ論——産業内の競争構造と移動障壁の分析]] — 同じ思想家
 - [[mgmt-vrio-framework-barney|VRIOフレームワーク——持続的競争優位をもたらす経営資源の四条件]] — 同じ思想家
-- [[mgmt-asset-stock-accumulation-dierickx-cool|資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性]] — 同じ思想家
+- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

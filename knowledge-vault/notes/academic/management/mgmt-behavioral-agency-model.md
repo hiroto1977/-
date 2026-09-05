@@ -31,7 +31,7 @@ aliases:
 - [Larraza-Kintana, Wiseman, Gómez-Mejía & Welbourne (2007) Disentangling Compensation and Employment Risks Using the Behavioral Agency Model — Strategic Management Journal 28(10): 1001-1019](https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.624) `学術`
 
 ## 関連概念
-- [[mgmt-dynamic-managerial-capabilities-adner|動的経営能力——マネジャーの人的資本・社会関係資本・認知]] — 同じ思想家
+- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する]] — 同じ思想家
 - [[mgmt-family-business-succession|ファミリービジネスの事業承継と経営継続性の組織論]] — 同じ思想家
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
 - [[mgmt-demand-side-strategy|需要サイド戦略論]] — 出典を共有

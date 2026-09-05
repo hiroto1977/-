@@ -2,7 +2,7 @@
 title: "sms.onlinelibrary.wiley.com"
 type: source-domain
 host: "sms.onlinelibrary.wiley.com"
-cite_count: 25
+cite_count: 24
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # sms.onlinelibrary.wiley.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **25 件**（学術 25）
+> [!info] 出典ドメイン索引 ・ 引用 **24 件**（学術 24）
 
 ## このドメインを出典とする項目
 
@@ -25,7 +25,6 @@ tags:
 - [[mgmt-deliberate-learning-zollo-winter|意図的学習とダイナミック・ケイパビリティの進化——経験蓄積・知識の明示化・コード化による組織能力の体系的な更新]] — Zollo,M.,&Singh,H.(2004).'DeliberateLearninginCorporateAcquisitions:P…
 - [[mgmt-demand-side-strategy|需要サイド戦略論]] — Adner&Zemsky(2006)—Demand-BasedSustainableCompetitiveAdvantage,SMJ
 - [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ]] — Teece,Pisano&Shuen(1997)“DynamicCapabilitiesandStrategicManagement”,S…
-- [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — Adner&Helfat(2003)CorporateEffectsandDynamicManagerialCapabilities—SM…
 - [[mgmt-emergent-strategy|創発戦略]] — Mintzberg&Waters(1985)"OfStrategies,DeliberateandEmergent,"StrategicM…
 - [[mgmt-first-mover-advantage|先発者優位]] — Lieberman&Montgomery(1988)"First-MoverAdvantages,"StrategicManagement…
 - [[mgmt-good-strategy-kernel-rumelt|ルメルトの「良い戦略」のカーネル——診断・基本方針・一貫した行動の三要素で戦略を判定する]] — Rumelt,R.P.(1991).Howmuchdoesindustrymatter?StrategicManagementJourna…

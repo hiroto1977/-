@@ -2,7 +2,7 @@
 title: "journals.sagepub.com"
 type: source-domain
 host: "journals.sagepub.com"
-cite_count: 181
+cite_count: 180
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.sagepub.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **181 件**（学術 180 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **180 件**（学術 179 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -134,7 +134,6 @@ tags:
 - [[mgmt-demand-side-strategy|需要サイド戦略論]] — Priem,Li&Carr(2012)—Demand-SideApproaches,JournalofManagement
 - [[mgmt-demand-side-strategy|需要サイド戦略論]] — Schmidt,Priem&Zanella(2024)—FiveArchetypicalValueCreationLogics,JoM
 - [[mgmt-double-jeopardy-law|ダブル・ジョパディの法則（Double Jeopardy Law／Ehrenberg 1990）——市場シェアの小さいブランドは買い手が少なく、しかもその買い手の忠誠度も低い]] — Ehrenberg,A.S.C.,Goodhardt,G.J.,&Barwise,T.P.(1990).DoubleJeopardyRev…
-- [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — Helfat&Martin(2015)DynamicManagerialCapabilities:ReviewandAssessment—…
 - [[mgmt-emotional-intelligence|感情知性（EQ）]] — Salovey&Mayer(1990)"EmotionalIntelligence",Imagination,CognitionandPe…
 - [[mgmt-eprg-orientations-perlmutter|EPRGフレームワーク——本国志向から世界志向へ至る多国籍企業経営者の心的構え]] — Wind,Y.,Douglas,S.P.,&Perlmutter,H.V.(1973)."GuidelinesforDevelopingI…
 - [[mgmt-ethical-leadership-theory|倫理的リーダーシップ理論]] — Treviño,Hartman&Brown(2000)MoralPerson—CMR
@@ -191,7 +190,7 @@ tags:
 - [[mgmt-team-mental-models-theory|チーム・メンタルモデル理論]] — Klimoski&Mohammed(1994)—TeamMentalModel:ConstructorMetaphor?(Journalo…
 - [[mgmt-team-mental-models-theory|チーム・メンタルモデル理論]] — Stout,Cannon-Bowers,Salas&Milanovich(1999)—Planning,SharedMentalModel…
 - [[mgmt-tuckman-stages|タックマンのチーム発達段階モデル]] — Tuckman,B.W.&Jensen,M.A.C.(1977)StagesofSmall-GroupDevelopmentRevisit…
-- [[mgmt-upper-echelons-theory|アッパー・エシュロン理論（Upper Echelons Theory）]] — Neelyetal.(2020)MetacritiquesofUpperEchelonsTheory—JournalofManagemen…
+- [[mgmt-upper-echelons-theory|上層部理論（ハンブリック＝メイソン）——組織はトップ経営陣の反映であり、経営者の経歴と特性が認知のフィルターとして戦略的選択と業績を部分的に予測する]] — Neely,B.H.,Lovelace,J.B.,Cowen,A.P.&Hiller,N.J.(2020)MetacritiquesofU…
 - [[mgmt-work-family-border-theory|仕事─家庭境界理論（ボーダー理論）]] — Clark(2000)Work/familybordertheory—HumanRelations
 - [[mgmt-workplace-deviance-theory|職場逸脱行動理論]] — Robinson&Bennett2024revisionisthistory
 - [[mgmt-workplace-spirituality|職場のスピリチュアリティ（意味・目的・共同体意識）]] — Ashmos&Duchon(2000)—SpiritualityatWork:AConceptualizationandMeasure,J…

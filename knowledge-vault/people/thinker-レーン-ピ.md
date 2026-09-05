@@ -1,20 +1,20 @@
 ---
-title: "ダニエル・レヴィンソール"
+title: "ピーター・レーン"
 type: thinker
-person_key: "レヴィンソール|ダ"
+person_key: "レーン|ピ"
 concept_count: 2
 tags:
   - person
   - index
 ---
 
-# ダニエル・レヴィンソール
+# ピーター・レーン
 
 > [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
 ## 学術概念（2件）
 - [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]] — 吸収能力（absorptivecapacity）は、ウェズリー・コーエンとダニエル・レヴィンソールが1990年の論文（…
-- [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — レッドクイーン競争（RedQueencompetition）は、ウィリアム・バーネットとモートン・ハンセンが1996年…
+- [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 戦略的刷新（StrategicRenewal）とは、組織の長期的展望に実質的影響を及ぼしうる属性の再生（refresh…
 
 ## 関連
 - 索引: [[人物索引]]

@@ -43,7 +43,6 @@ aliases:
 - [[mgmt-stakeholder-capitalism-freeman|ステークホルダー資本主義と企業の目的（フリーマン）]] — 同じ思想家
 - [[mgmt-stakeholder-integration-freeman|ステークホルダー統合戦略（フリーマン）]] — 同じ思想家
 - [[mgmt-stakeholder-theory-freeman-strategic|ステークホルダー理論——フリーマンの戦略的管理と全ステークホルダー利害調整]] — 同じ思想家
-- [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — 同分野の近傍
 - [[mgmt-rfm-analysis|RFM分析]] — 同分野の近傍
 
 ## 関連

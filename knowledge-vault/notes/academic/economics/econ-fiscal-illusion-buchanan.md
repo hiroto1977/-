@@ -37,8 +37,8 @@ aliases:
 - [[econ-rent-seeking-tullock|レント・シーキング理論と政治経済学的非効率性（タロック・クルーガー）]] — 同じ思想家
 - [[econ-samaritan-dilemma-buchanan|サマリア人のジレンマ（ブキャナン）——利他の時間非整合性と「戦略的勇気」]] — 同じ思想家
 - [[econ-tullock-paradox|タロックのパラドックス——レントシーキング支出はなぜ過少なのか]] — 同じ思想家
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
 - [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
 - [[econ-flypaper-effect|フライペーパー効果（flypaper effect／ハエ取り紙効果）——一括補助金が私的所得より地方公共支出を強く押し上げる現象]] — 同分野の近傍
 
 ## 関連

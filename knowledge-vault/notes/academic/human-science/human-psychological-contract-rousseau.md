@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Psychological contract — 心理的契約の概要](https://en.wikipedia.org/wiki/Psychological_contract) `リファレンス`
 
 ## 関連概念
-- [[mgmt-psychological-contract-rousseau|心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態]] — 語彙が近い
 - [[mgmt-psychological-contract|心理的契約]] — 分野横断
+- [[mgmt-psychological-contract-rousseau|心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態]] — 同じ思想家
 - [[mgmt-evidence-based-management-pfeffer|エビデンスに基づく経営（ファフェー＆サットン）と管理的迷信の批判]] — 同じ思想家
 - [[mgmt-evidence-based-management-rousseau|エビデンス・ベースド・マネジメント——科学的根拠に基づく経営判断と「管理職の神話」の打破]] — 同じ思想家
 - [[mgmt-mum-effect-bad-news|MUM効果——悪い知らせを伝えたがらない心理]] — 同じ思想家

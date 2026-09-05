@@ -2,7 +2,7 @@
 title: "journals.uchicago.edu"
 type: source-domain
 host: "journals.uchicago.edu"
-cite_count: 44
+cite_count: 43
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.uchicago.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **44 件**（学術 44）
+> [!info] 出典ドメイン索引 ・ 引用 **43 件**（学術 43）
 
 ## このドメインを出典とする項目
 
@@ -56,8 +56,7 @@ tags:
 - [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — Johnson(2007)WhatIsOrganizationalImprinting?—AmericanJournalofSociolo…
 - [[mgmt-kanter-tokenism-theory|カンターのトークニズム理論（Tokenism Theory）]] — Kanter,R.M.(1977)SomeEffectsofProportionsonGroupLife:SkewedSexRatiosa…
 - [[mgmt-organizational-death-theory|組織死亡理論]] — Hannan(1998)RethinkingAgeDependenceinOrganizationalMortality:LogicalF…
-- [[mgmt-organizational-ecology|組織エコロジー（Organizational Ecology）]] — Hannan&Freeman(1977)ThePopulationEcologyofOrganizations—AJS82(5),pp.9…
-- [[mgmt-population-ecology-organization|組織の個体群生態学]] — Hannan&Freeman(1977).ThePopulationEcologyofOrganizations.AmericanJour…
+- [[mgmt-organizational-ecology|組織エコロジー（ハナン＝フリーマン）——個別組織の適応ではなく組織個体群レベルの環境淘汰が、構造的慣性・密度依存・新しさの不利益を通じて組織形態の多様性を説明する]] — Hannan,M.T.&Freeman,J.(1977)ThePopulationEcologyofOrganizations—Ameri…
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

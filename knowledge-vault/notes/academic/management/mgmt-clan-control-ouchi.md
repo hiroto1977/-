@@ -38,7 +38,7 @@ aliases:
 - [[econ-x-inefficiency-leibenstein|X非効率——競争圧力の欠如が生む費用最小化からの組織的乖離]] — 同じ思想家
 - [[mgmt-coordination-costs-arrow|調整コスト理論と情報経済学（アロー）]] — 同じ思想家
 - [[mgmt-ringi|稟議制]] — 同分野の近傍
-- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]] — 同分野の近傍
+- [[mgmt-trompenaars-dimensions|トロンペナールスの文化の7次元]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

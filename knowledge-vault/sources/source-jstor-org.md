@@ -2,7 +2,7 @@
 title: "jstor.org"
 type: source-domain
 host: "jstor.org"
-cite_count: 144
+cite_count: 143
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jstor.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **144 件**（学術 143 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **143 件**（学術 143）
 
 ## このドメインを出典とする項目
 
@@ -125,7 +125,6 @@ tags:
 - [[infosoc-post-truth-society|ポスト真実社会——感情と信念が事実を凌駕する情報環境の社会学]] — Fuller(2018)Post-Truth:KnowledgeasaPowerGame—AnthemPress
 - [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — Winner(1980)DoArtifactsHavePolitics?Daedalus109(1):121-136
 - [[infosoc-uses-and-gratifications|利用と満足理論——能動的な受け手がメディアをどう使い何を得るか]] — Katz,E.,Blumler,J.G.&Gurevitch,M.(1973)UsesandGratificationsResearch—…
-- [[mgmt-absorptive-capacity-reconceptualization|吸収能力の再概念化（ザーラ＆ジョージ 2002）]] — Zahra&George(2002)—JSTOR全文アーカイブ（AMRVol.27No.2）
 - [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — Barley,S.R.(1986)TechnologyasanOccasionforStructuring:EvidencefromObs…
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — JSTOR—ABehavioralAgencyModelofManagerialRiskTaking,AcademyofManagemen…
 - [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]] — Aldrich,H.&Herker,D.(1977)BoundarySpanningRoles—ASQ
@@ -144,9 +143,9 @@ tags:
 - [[mgmt-loose-coupling-weick|疎結合システム（組織論）]] — Orton&Weick(1990)LooselyCoupledSystems:AReconceptualization—AMR
 - [[mgmt-loose-coupling-weick|疎結合システム（組織論）]] — Weick,K.E.(1976).EducationalOrganizationsasLooselyCoupledSystems.Admi…
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — Weick,K.E.(1976)"EducationalOrganizationsasLooselyCoupledSystems,"Adm…
-- [[mgmt-organizational-ecology|組織エコロジー（Organizational Ecology）]] — Hannan&Freeman(1984)StructuralInertiaandOrganizationalChange—ASR49(2)…
+- [[mgmt-organizational-ecology|組織エコロジー（ハナン＝フリーマン）——個別組織の適応ではなく組織個体群レベルの環境淘汰が、構造的慣性・密度依存・新しさの不利益を通じて組織形態の多様性を説明する]] — Hannan,M.T.&Freeman,J.(1984)StructuralInertiaandOrganizationalChange—…
 - [[mgmt-organizational-identification|組織アイデンティフィケーション理論]] — Ashforth&Mael(1989)AMR—JSTOR
-- [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]] — Bruderl&Schussler(1990)OrganizationalMortality—AdministrativeScienceQ…
+- [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]] — Hannan,M.T.&Freeman,J.(1984)StructuralInertiaandOrganizationalChange—…
 - [[mgmt-organizational-routines-as-grammars|組織ルーティンの生成文法モデル]] — Pentland&Rueter(1994)OrganizationalRoutinesasGrammarsofAction—ASQ39(3)
 - [[mgmt-paradox-of-embeddedness|埋め込みのパラドックス（Paradox of Embeddedness）]] — Uzzi(1997)SocialStructureandCompetitioninInterfirmNetworks:TheParadox…
 - [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — Barnett,W.P.&Hansen,M.T.(1996)TheRedQueeninOrganizationalEvolution—St…

@@ -2,7 +2,7 @@
 title: "ダニエル・レヴィンタール"
 type: thinker
 person_key: "レヴィンタール|ダ"
-concept_count: 4
+concept_count: 3
 tags:
   - person
   - index
@@ -10,10 +10,9 @@ tags:
 
 # ダニエル・レヴィンタール
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **4 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（4件）
-- [[mgmt-absorptive-capacity-zahra|吸収能力の再概念化：動的能力としての知識統合]] — Cohen&Levinthal（1990）が提唱した吸収能力（absorptivecapacity）の概念を、Zahr…
+## 学術概念（3件）
 - [[mgmt-competency-trap|コンピテンシー・トラップと成功の罠（レヴィット＝マーチ／レヴィンタール＝マーチ）——過去の成功への習熟が学習を深化に偏らせ、より優れた選択肢への転換を妨げる]] — コンピテンシー・トラップ（competencytrap）とは、既存の技術や手順に習熟するほどその活用への依存を深め、よ…
 - [[mgmt-nk-fitness-landscape|NK適応度地形モデル——戦略の「険しい山」と局所最適]] — NK適応度地形モデル（NKmodel、NKフィットネス・ランドスケープ）は、生物学者スチュアート・カウフマンが進化生物…
 - [[mgmt-organizational-slack-bourgeois|組織スラック理論——余剰資源の緩衝機能と戦略的活用]] — 組織スラック（organizationalslack）は、サイアートとマーチが1963年の企業行動理論で定式化し、ブル…

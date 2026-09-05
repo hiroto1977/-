@@ -32,6 +32,7 @@ Robert J. Aumann（ロバート・オーマン・1976年論文・2005年ノー�
 ## 関連概念
 - [[econ-rubin-causal-model-potential-outcomes|ルービン因果モデル（潜在結果枠組み）——処置と非処置を同時に観測できないという因果推論の根本問題]] — 出典を共有
 - [[econ-milgrom-stokey-no-trade|ノートレード定理——合理的な投機的取引は成立しない]] — 同分野の近傍
+- [[econ-smooth-ambiguity-klibanoff|スムーズ曖昧性モデル——曖昧性への態度を信念から分離する]] — 同分野の近傍
 - [[econ-inequality-measurement|不平等測定・所得格差の計量：ジニ係数・ローレンツ曲線・アトキンソン指数による経済的不平等の定量化体系]] — 同分野の近傍
 
 ## 関連

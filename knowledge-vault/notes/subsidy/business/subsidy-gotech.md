@@ -43,7 +43,7 @@ national
 - [[subsidy-monodukuri|ものづくり・商業・サービス生産性向上促進補助金（ものづくり補助金）]] — 出典を共有
 - [[subsidy-business-restructuring|事業再構築補助金（新規公募は第13回・2025年3月で終了。後継: 中小企業新事業進出補助金）]] — 出典を共有
 - [[subsidy-patent-fee-reduction|特許料等の減免制度]] — 同分野の近傍
-- [[subsidy-niigata|稼ぐ力強化支援事業 補助金（新潟県）]] — 同分野の近傍
+- [[subsidy-tokyo-equipment|躍進的な事業推進のための設備投資支援事業（東京都）]] — 同分野の近傍
 - [[subsidy-zeb|ZEB（ネット・ゼロ・エネルギー・ビル）化支援補助事業]] — 同分野の近傍
 
 ## 関連

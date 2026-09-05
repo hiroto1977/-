@@ -2,7 +2,7 @@
 title: "researchgate.net"
 type: source-domain
 host: "researchgate.net"
-cite_count: 52
+cite_count: 50
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # researchgate.net
 
-> [!info] 出典ドメイン索引 ・ 引用 **52 件**（学術 45 ・ リファレンス 7）
+> [!info] 出典ドメイン索引 ・ 引用 **50 件**（学術 45 ・ リファレンス 5）
 
 ## このドメインを出典とする項目
 
@@ -39,8 +39,6 @@ tags:
 - [[infosoc-phenomenological-technology|技術の現象学]] — Human-DataRelationsandtheLifeworld-DonIhdephenomenologicalframework
 - [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — Gillespie(2010)—ResearchGate
 - [[mgmt-aaker-brand-identity|アーカーのブランド・アイデンティティ]] — AnApplicationofDavidA.Aaker'sBrandIdentityPlanningModel（査読付ケーススタディ）
-- [[mgmt-absorptive-capacity-theory|吸収能力理論]] — ResearchGate—Cohen&Levinthal(1990)fulltext&citations
-- [[mgmt-absorptive-capacity-theory|吸収能力理論]] — ResearchGate—Zahra&George(2002)fulltext&citations
 - [[mgmt-adaptive-performance-griffin|適応的パフォーマンス（グリフィン・ニール・パーカー）]] — Pulakos,E.D.,Arad,S.,Donovan,M.A.,&Plamondon,K.E.(2000)Adaptabilityin…
 - [[mgmt-affective-events-theory|感情イベント理論（AET）]] — Weiss&Cropanzano(1996)AffectiveEventsTheory—ResearchGate
 - [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — Appelbaum,Bailey,Berg&Kalleberg(2000)ManufacturingAdvantage(CornellUn…

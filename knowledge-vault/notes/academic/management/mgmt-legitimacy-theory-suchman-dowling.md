@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]] — 同じ思想家
 - [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — 同じ思想家
 - [[mgmt-organizational-decline-theory|組織衰退理論]] — 同分野の近傍
-- [[mgmt-organizational-ecology-density|組織エコロジーの密度依存モデル——個体群密度と組織の設立・消滅]] — 同分野の近傍
+- [[mgmt-managerial-cognition-walsh|経営者認知論（ウォルシュ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

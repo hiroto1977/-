@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 647
+entry_count: 635
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（647件）
+# 学習パス — 学術概念／経営学（635件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[agile-development|アジャイルソフトウェア開発]]（接続 64）
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 40）
+- [[agile-development|アジャイルソフトウェア開発]]（接続 63）
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 41）
 - [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]]（接続 36）
 - [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる]]（接続 32）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
-- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 29）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 29）
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 28）
 - [[mgmt-mbo|目標による管理（MBO）]]（接続 26）
-- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 24）
 - [[mgmt-csr|企業の社会的責任（CSR）]]（接続 24）
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 24）
+- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 23）
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 23）
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 23）
-- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]]（接続 22）
-- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]]（接続 21）
+- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]]（接続 22）
+- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]]（接続 21）
 
 ## 第 2 部 — 年代順の展開
 - 1629年: [[mgmt-fmea|故障モード影響解析（FMEA／Failure Mode and Effects Analysis）——起こりうる故障を体系的に洗い出し、深刻度・発生度・検出度で優先順位づける]]
@@ -97,7 +97,7 @@ tags:
 - 1965年: [[mgmt-leavitt-diamond|リービットのダイヤモンド]]
 - 1965年: [[mgmt-levers-of-control-simons|サイモンズの統制のレバー——信条・境界・診断型・インタラクティブ型の四レバーで革新と統制を両立させる経営統制論]]
 - 1965年: [[mgmt-liability-of-newness|新しさの負債（Liability of Newness）]]
-- 1965年: [[mgmt-organizational-ecology|組織エコロジー（Organizational Ecology）]]
+- 1965年: [[mgmt-organizational-ecology|組織エコロジー（ハナン＝フリーマン）——個別組織の適応ではなく組織個体群レベルの環境淘汰が、構造的慣性・密度依存・新しさの不利益を通じて組織形態の多様性を説明する]]
 - 1965年: [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]]
 - 1965年: [[mgmt-tuckman-stages|タックマンのチーム発達段階モデル]]
 - 1967年: [[mgmt-holacracy|ホラクラシー]]
@@ -157,7 +157,7 @@ tags:
 - 1984年: [[mgmt-high-reliability-organizations|高信頼性組織（High Reliability Organizations / HRO）]]
 - 1984年: [[mgmt-service-blueprint|サービス・ブループリント]]
 - 1984年: [[mgmt-stakeholder-salience-theory|ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性で経営者が誰に注意を払うかを予測する]]
-- 1984年: [[mgmt-upper-echelons-theory|アッパー・エシュロン理論（Upper Echelons Theory）]]
+- 1984年: [[mgmt-upper-echelons-theory|上層部理論（ハンブリック＝メイソン）——組織はトップ経営陣の反映であり、経営者の経歴と特性が認知のフィルターとして戦略的選択と業績を部分的に予測する]]
 - 1985年: [[mgmt-emergent-strategy|創発戦略]]
 - 1985年: [[mgmt-intrapreneurship|社内起業（イントラプレナーシップ）]]
 - 1985年: [[mgmt-paradox-of-embeddedness|埋め込みのパラドックス（Paradox of Embeddedness）]]
@@ -188,7 +188,7 @@ tags:
 - 1989年: [[mgmt-strategic-cognition|戦略的認知（Strategic Cognition）]]
 - 1989年: [[mgmt-strategic-intent|戦略的意図（ストラテジック・インテント）]]
 - 1989年: [[mgmt-team-member-exchange|チーム・メンバー交換理論（Team-Member Exchange, TMX）]]
-- 1990年: [[mgmt-absorptive-capacity-reconceptualization|吸収能力の再概念化（ザーラ＆ジョージ 2002）]]
+- 1990年: [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]]
 - 1990年: [[mgmt-core-competence|コアコンピタンス（中核的能力）]]
 - 1990年: [[mgmt-diversity-management|ダイバーシティ・マネジメント]]
 - 1990年: [[mgmt-emotional-intelligence|感情知性（EQ）]]
@@ -265,7 +265,7 @@ tags:
 - 2002年: [[mgmt-bop|BOP（ベース・オブ・ザ・ピラミッド）]]
 - 2002年: [[mgmt-platform-leadership|プラットフォーム・リーダーシップ]]
 - 2002年: [[mgmt-work-engagement|ワーク・エンゲージメント]]
-- 2003年: [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]]
+- 2003年: [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する]]
 - 2003年: [[mgmt-net-promoter-score|ネット・プロモーター・スコア（NPS）]]
 - 2003年: [[mgmt-open-innovation|オープン・イノベーション]]
 - 2004年: [[mgmt-blue-ocean-strategy|ブルー・オーシャン戦略]]
@@ -298,10 +298,6 @@ tags:
 
 ## 第 3 部 — 年代情報のない項目
 - [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]]
-- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]]
-- [[mgmt-absorptive-capacity-realization|吸収能力の実現化モデル：潜在的能力と実現的能力]]
-- [[mgmt-absorptive-capacity-theory|吸収能力理論]]
-- [[mgmt-absorptive-capacity-zahra|吸収能力の再概念化：動的能力としての知識統合]]
 - [[mgmt-abusive-supervision-tepper|虐待的監督——上司による持続的な敵対的言動]]
 - [[mgmt-action-centred-leadership-adair|アクション・センタード・リーダーシップ——課題・チーム・個人の三つの輪]]
 - [[mgmt-adaptive-leadership-heifetz|適応的リーダーシップ（変化への適応と組織学習）]]
@@ -387,9 +383,6 @@ tags:
 - [[mgmt-dominant-design-utterback|支配的デザイン理論（Dominant Design）：アバナシー＆アターバックの技術進化モデル]]
 - [[mgmt-dominant-logic-prahalad-bettis|支配的論理——経営者の事業の捉え方が資源配分と適応を方向づける認知枠組み]]
 - [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]]
-- [[mgmt-dynamic-managerial-capabilities-adner|動的経営能力——マネジャーの人的資本・社会関係資本・認知]]
-- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者ケイパビリティ——アドナーとヘルファットの経営者固有の戦略的資源変革能力]]
-- [[mgmt-dynamic-managerial-cognition|動的経営認知と戦略的変化（トゥイッテル＆ロウランズ）]]
 - [[mgmt-effort-reward-imbalance-siegrist|努力－報酬不均衡モデル——払った努力に見合う報酬がないとき]]
 - [[mgmt-employee-engagement-kahn|従業員エンゲージメント理論と心理的安全性の組織行動論（カーン）]]
 - [[mgmt-employee-silence-pinder-harlos|従業員サイレンス——黙従的沈黙と諦観的沈黙]]
@@ -500,7 +493,6 @@ tags:
 - [[mgmt-organizational-death-theory|組織死亡理論]]
 - [[mgmt-organizational-decline-theory|組織衰退理論]]
 - [[mgmt-organizational-decline-weitzel|組織衰退の段階モデル——早期警戒・不作為・誤った行動・危機・解体]]
-- [[mgmt-organizational-ecology-density|組織エコロジーの密度依存モデル——個体群密度と組織の設立・消滅]]
 - [[mgmt-organizational-energy-bruch|組織エネルギー理論——集団的活力の質と強度による組織診断]]
 - [[mgmt-organizational-entropy|組織エントロピー]]
 - [[mgmt-organizational-forgetting|組織的忘却]]
@@ -537,7 +529,6 @@ tags:
 - [[mgmt-poka-yoke|ポカヨケ]]
 - [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]]
 - [[mgmt-polychronicity|ポリクロニシティ（多時間並行志向）]]
-- [[mgmt-population-ecology-organization|組織の個体群生態学]]
 - [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]]
 - [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]]
 - [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（主体的性格特性）]]
@@ -648,9 +639,6 @@ tags:
 - [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]]
 - [[mgmt-triple-bottom-line-elkington|トリプルボトムラインとCSR測定——エルキントンによる経済・環境・社会の三重成果会計]]
 - [[mgmt-tuckman-team-stages|タックマンのチーム発達段階——形成・混乱・規範化・遂行・解散]]
-- [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]]
-- [[mgmt-upper-echelons-hambrick|上層部理論（ハンブリック＆メイソン）]]
-- [[mgmt-upper-echelons-refinement|上層部理論精緻化]]
 - [[mgmt-upper-echelons-tournament-theory|トーナメント理論と経営者インセンティブ（レイザー＆ローゼン）]]
 - [[mgmt-uppsala-internationalization|ウプサラ・モデル——企業の漸進的な国際化プロセス]]
 - [[mgmt-value-disciplines-treacy-wiersema|価値基準（バリュー・ディシプリン）——市場リーダーが選ぶ三つの卓越]]

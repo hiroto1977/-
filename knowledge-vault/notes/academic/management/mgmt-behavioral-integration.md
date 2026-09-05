@@ -34,10 +34,8 @@ Donald C. Hambrick（1994, Research in Organizational Behavior — 行動的統�
 - [[mgmt-organizational-attention-theory|組織注意理論]] — 同じ思想家
 - [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
 - [[mgmt-strategic-leadership-theory|戦略的リーダーシップ理論]] — 同じ思想家
-- [[mgmt-upper-echelons-refinement|上層部理論精緻化]] — 同じ思想家
-- [[mgmt-upper-echelons-theory|アッパー・エシュロン理論（Upper Echelons Theory）]] — 同分野の近傍
+- [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同分野の近傍
 - [[mgmt-vroom-yetton|ヴルーム＝イェットン・モデル]] — 同分野の近傍
-- [[mgmt-social-capital-intellectual-capital-nahapiet-ghoshal|ナハピエト＝ゴシャールの社会関係資本論——構造的・関係的・認知的の三次元による知的資本創造と組織の優位性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

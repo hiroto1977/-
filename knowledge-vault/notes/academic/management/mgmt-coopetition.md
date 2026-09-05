@@ -38,8 +38,8 @@ aliases:
 - [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — 出典を共有
 - [[mgmt-bureaucracy|官僚制（ウェーバー）]] — 出典を共有
 - [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — 出典を共有
+- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する]] — 出典を共有
 - [[mgmt-liability-of-foreignness|外国性の不利益（Liability of Foreignness, LOF）——多国籍企業が外国市場で現地企業より余分に負う社会的コスト]] — 出典を共有
-- [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — 出典を共有
 - [[mgmt-strategic-inflection|戦略的転換点（Strategic Inflection Point）]] — 同分野の近傍
 
 ## 関連

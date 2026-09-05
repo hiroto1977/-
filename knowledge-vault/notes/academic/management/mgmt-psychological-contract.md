@@ -31,7 +31,6 @@ aliases:
 - [Psychological contract — Wikipedia](https://en.wikipedia.org/wiki/Psychological_contract) `リファレンス`
 
 ## 関連概念
-- [[mgmt-psychological-contract-rousseau|心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態]] — 語彙が近い
 - [[human-psychological-contract-rousseau|心理的契約理論——ルソーの暗黙的雇用関係と契約違反の帰結]] — 分野横断
 - [[mgmt-defensive-routines-argyris|組織の防衛的ルーチン——脅威を避けて学習を妨げる習慣]] — 同じ思想家
 - [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[mgmt-learning-organization-senge|学習する組織（センゲ）]] — 同じ思想家
 - [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — 同じ思想家
 - [[mgmt-organizational-learning-argyris|組織学習とシングル・ダブルループ学習（アージリス）]] — 同じ思想家
+- [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

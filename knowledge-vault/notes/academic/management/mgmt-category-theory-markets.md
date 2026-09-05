@@ -34,7 +34,6 @@ Ezra W. Zuckerman（1999 カテゴリー命令と非正統性割引を提唱）�
 - [Goldfarb & Yan (2021) Revisiting Zuckerman's (1999) Categorical Imperative: An Application of Epistemic Maps for Replication — Strategic Management Journal 42(11)](https://onlinelibrary.wiley.com/doi/abs/10.1002/smj.3290) `学術`
 
 ## 関連概念
-- [[mgmt-population-ecology-organization|組織の個体群生態学]] — 同じ思想家
 - [[mgmt-structural-inertia-theory|構造的慣性理論]] — 同じ思想家
 - [[mgmt-organizational-death-theory|組織死亡理論]] — 同じ思想家
 - [[mgmt-hypercompetition|ハイパーコンペティション]] — 同分野の近傍

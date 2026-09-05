@@ -33,6 +33,7 @@ aliases:
 - [[mgmt-culture-map-eight-scales-meyer|カルチャーマップ——8つの尺度で各国のビジネス行動を相対的に位置づける枠組み]] — 同じ思想家
 - [[mgmt-organizational-unlearning|組織的アンラーニング]] — 同分野の近傍
 - [[mgmt-brand-personality|ブランドパーソナリティ（アーカーの5次元モデル）]] — 同分野の近傍
+- [[mgmt-clan-control-ouchi|クラン統制理論——大内の市場・官僚制・クランの三類型と組織文化による制御]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

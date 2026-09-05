@@ -27,16 +27,15 @@ Arthur L. Stinchcombe（1965, Handbook of Organizations — 組織的刻印の�
 
 ## 出典
 - [Stinchcombe (1965) Social Structure and Organizations — Handbook of Organizations (J. G. March, Ed.)](https://scholar.google.com/scholar?q=Stinchcombe+1965+Social+Structure+Organizations+Handbook) `リファレンス`
-- [Bruderl & Schussler (1990) Organizational Mortality — Administrative Science Quarterly 35(3)](https://www.jstor.org/stable/2095567) `学術`
+- [Hannan, M. T. & Freeman, J. (1984) Structural Inertia and Organizational Change — American Sociological Review 49(2), 149–164（創設期に固まった構造が持続する機構としての構造的慣性）](https://www.jstor.org/stable/2095567) `学術`
 
 ## 関連概念
-- [[mgmt-organizational-ecology|組織エコロジー（Organizational Ecology）]] — 同じ思想家
 - [[mgmt-organizational-death-theory|組織死亡理論]] — 同じ思想家
 - [[human-metacognition|メタ認知（Metacognition）]] — 出典を共有
 - [[mgmt-strategic-issue-diagnosis|戦略的争点の診断（Strategic Issue Diagnosis）]] — 出典を共有
 - [[bizlaw-framing-statute|フレーミング法定立学（Framing Statute）]] — 出典を共有
-- [[mgmt-organizational-imprinting-stinchcombe|組織インプリンティング——創設時条件の持続的影響]] — 同分野の近傍
 - [[mgmt-strategic-issue-management-ansoff|戦略的イシュー・マネジメント——アンソフの弱信号検知と戦略的サプライズへの備え]] — 同分野の近傍
+- [[mgmt-organizational-imprinting-stinchcombe|組織インプリンティング——創設時条件の持続的影響]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

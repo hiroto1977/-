@@ -4983,21 +4983,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-digital-labour',
-    discipline: 'information-sociology',
-    title: 'デジタル労働（digital labour）',
-    statement:
-      'デジタル・プラットフォームやインターネット上で行われ、あるいはデジタル技術によって媒介・統治される労働・活動の総称、およびそれを批判的に分析する研究領域。中心的論点は、ソーシャルメディアのユーザーが投稿・「いいね」・データ生成などの活動を通じ、自覚なく無償でプラットフォーム企業の利潤（広告・データ）を生み出す「フリーレイバー（free labour、無償労働）」「プレイバー（playbour、遊び＋労働）」の問題である。' +
-      'ティツィアーナ・テラノヴァが2000年の論文「Free Labor」でデジタル経済における無償の文化労働を論じ、クリスチャン・フックスがマルクス主義の視座から搾取と価値生産を体系的に論じた。ギグワーク、クラウドワーク、コンテンツ・モデレーション、AI学習データのアノテーション（教師データ作成）など、不可視化されがちな労働の搾取や労働条件も対象となる。ギグエコノミー・プロシューマー・プラットフォーム資本主義と関連しつつ、デジタル環境での労働・搾取・価値の批判的分析として区別される。',
-    keyFigures: 'ティツィアーナ・テラノヴァ（Tiziana Terranova／「Free Labor」2000, Social Text）／クリスチャン・フックス（Christian Fuchs／『Digital Labour and Karl Marx』2014, Routledge）／ジュリアン・キュックリッヒ（Julian Kücklich／「playbour」2005）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.routledge.com/Digital-Labour-and-Karl-Marx/Fuchs/p/book/9780415716161', type: 'academic', label: 'Christian Fuchs, Digital Labour and Karl Marx (Routledge, 2014) — 出版社書誌ページ' },
-      { url: 'https://link.springer.com/chapter/10.1057/9781137478573_2', type: 'academic', label: 'The Digital Labour Theory of Value and Karl Marx in the Age of Facebook... (Springer Nature)' },
-      { url: 'https://en.wikipedia.org/wiki/Digital_labor', type: 'reference', label: 'Digital labor — Wikipedia（定義・研究領域の概観）' },
-    ],
-  },
-  {
     id: 'mgmt-lewin-change',
     discipline: 'management',
     title: 'レヴィンの変革モデル（解凍・変革・再凍結）',
@@ -17596,15 +17581,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-organizational-ecology',
     discipline: 'management',
-    title: '組織エコロジー（Organizational Ecology）',
+    title: '組織エコロジー（ハナン＝フリーマン）——個別組織の適応ではなく組織個体群レベルの環境淘汰が、構造的慣性・密度依存・新しさの不利益を通じて組織形態の多様性を説明する',
     statement:
-      '組織エコロジー（organizational ecology）とは、マイケル・T・ハナンとジョン・フリーマンが1977年の論文「The Population Ecology of Organizations」（American Journal of Sociology, Vol.82, No.5, pp.929-964, DOI: 10.1086/226424）において提唱した組織理論の研究プログラムであり、個別組織の合理的適応（rational adaptation）ではなく、組織個体群（organizational population）レベルでの環境淘汰（environmental selection）が組織形態の多様性と変化を説明する主要メカニズムであると主張する。この理論は三つの中核概念を持つ。第一に構造的慣性（structural inertia）：組織は信頼性（reliability）と説明責任（accountability）を確保するために公式化・標準化された構造を発達させるが、これが環境変化への迅速な適応を阻害する（Hannan & Freeman 1984, American Sociological Review, Vol.49, No.2, pp.149-164, DOI: 10.2307/2095567）。' +
-      '第二に密度依存（density dependence）：組織個体群における創設率と消滅率は個体群密度の非単調関数であり、低密度期には正当性効果（legitimation effect）が支配して創設率が上昇し、高密度期には競争効果（competition effect）が支配して創設率が低下し消滅率が上昇する逆U字型の関係を示す。Carroll and Swaminathan (1991) は1633年から1988年までの米国醸造業7,709社のデータで密度依存の逆U字パターンを実証した。第三に新しさの不利益（liability of newness）：Stinchcombe (1965) が「Social Structure and Organizations」において提唱した概念で、新設組織は確立されたルーティン・社会的正当性・外部関係ネットワークを欠くため、既存組織より体系的に高い消滅率を示す。Freeman, Carroll and Hannan (1983) は労働組合・半導体メーカー・新聞社の三つの個体群でこのパターンを実証した。Hannan and Freeman (1989) の著書『Organizational Ecology』（Harvard University Press, ISBN: 978-0-674-64348-2）はこれらの知見を体系化した。',
-    keyFigures: 'Michael T. Hannan・John H. Freeman（AJS 82(5), 1977; ASR 49(2), 1984）／Arthur L. Stinchcombe（Handbook of Organizations, 1965, 新しさの不利益）／Glenn R. Carroll・Anand Swaminathan（醸造業密度依存実証, 1991）',
-    asOf: '2026-06',
+      '組織エコロジー（organizational ecology、組織の個体群生態学）は、マイケル・ハナンとジョン・フリーマンが1977年の論文（American Journal of Sociology 82巻5号）で提唱した研究プログラムで、組織形態の多様性と変化を個別組織の合理的適応ではなく個体群レベルで働く環境の選択（淘汰）で説明し、分析単位を個体群へ移した。三つの中核概念がある。第一に構造的慣性で、組織は信頼性と説明責任のために標準化された構造を発達させるが、それが環境変化への適応を妨げ、慣性の強い組織ほど選択で残るため慣性自体が淘汰の産物になる（ハナンとフリーマン1984）。第二に密度依存で、個体群の密度が低い段階では密度の増加が組織形態の正統性を高めて設立率を上げ消滅率を下げるが、高密度では競争効果が支配して設立率が下がり消滅率が上がるため、設立率と密度は逆U字、消滅率と密度はU字の関係を示す。ハナンとグレン・キャロル（1992）は新聞社・労働組合・醸造所の歴史データでこれを検証した。第三にアーサー・スティンチコムが指摘した新しさの不利益で、若い組織ほど役割やルーティンが未確立で外部との信頼関係が薄いため消滅率が高い。批判としては、組織の意図的な変革や学習を過小評価すること、選択の単位や個体群の境界の定義が恣意的になりうること、戦略論との対立が指摘される。中小企業には、新規参入の成否が自社の努力だけでなく業種の密度（正統性と競争）や参入時期に左右されること、若い会社ほど信頼と定型化を早く築くことが生存率を上げること、慣性は信頼の裏返しである以上、変革は新しい単位で始める方が通りやすいことが含意となる。',
+    keyFigures: 'マイケル・ハナン＆ジョン・フリーマン（1977 個体群生態学／1984 構造的慣性）／マイケル・ハナン＆グレン・キャロル（1992 密度依存）／アーサー・スティンチコム（1965 新しさの不利益）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/226424', type: 'academic', label: 'Hannan & Freeman (1977) The Population Ecology of Organizations — AJS 82(5), pp.929-964' },
-      { url: 'https://www.jstor.org/stable/2095567', type: 'academic', label: 'Hannan & Freeman (1984) Structural Inertia and Organizational Change — ASR 49(2), pp.149-164' },
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/226424', type: 'academic', label: 'Hannan, M. T. & Freeman, J. (1977) The Population Ecology of Organizations — American Journal of Sociology 82(5), 929–964（原典）' },
+      { url: 'https://www.jstor.org/stable/2095567', type: 'academic', label: 'Hannan, M. T. & Freeman, J. (1984) Structural Inertia and Organizational Change — American Sociological Review 49(2), 149–164（構造的慣性）' },
+      { url: 'https://doi.org/10.1093/oso/9780195071917.001.0001', type: 'academic', label: 'Hannan, M. T. & Carroll, G. R. (1992) Dynamics of Organizational Populations: Density, Legitimation, and Competition — Oxford University Press（密度依存モデルの体系化）' },
+      { url: 'https://en.wikipedia.org/wiki/Organizational_ecology', type: 'reference', label: 'Wikipedia: Organizational ecology — population-level analysis, structural inertia, density dependence, liability of newness' },
     ],
   },
   {
@@ -18416,7 +18402,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://scholar.google.com/scholar?q=Stinchcombe+1965+Social+Structure+Organizations+Handbook', type: 'reference', label: 'Stinchcombe (1965) Social Structure and Organizations — Handbook of Organizations (J. G. March, Ed.)' },
-      { url: 'https://www.jstor.org/stable/2095567', type: 'academic', label: 'Bruderl & Schussler (1990) Organizational Mortality — Administrative Science Quarterly 35(3)' },
+      { url: 'https://www.jstor.org/stable/2095567', type: 'academic', label: 'Hannan, M. T. & Freeman, J. (1984) Structural Inertia and Organizational Change — American Sociological Review 49(2), 149–164（創設期に固まった構造が持続する機構としての構造的慣性）' },
     ],
   },
   {
@@ -18738,21 +18724,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-dynamic-managerial-capabilities',
-    discipline: 'management',
-    title: '動的経営者能力（Dynamic Managerial Capabilities）',
-    statement:
-      '動的経営者能力（Dynamic Managerial Capabilities, DMC）とは、経営者が組織の資源と能力を構築・統合・再構成する経営者固有の能力を指す戦略経営論の概念である。アドナー＆ヘルファット（Ron Adner & Constance Helfat, 2003, Strategic Management Journal）が概念を導入し、同一産業内でも経営者の意思決定の異質性が企業効果の時間変動を説明することを実証した。ヘルファット＆マーティン（Helfat & Martin, 2015, Journal of Management）は定義を「経営者が企業の生計手段を創造・拡張・修正する能力」と精緻化した。' +
-      'DMCの三つの基盤は：（1）経営者人的資本（managerial human capital）：教育・訓練・経験を通じて獲得された技能と知識；（2）経営者社会関係資本（managerial social capital）：公式・非公式ネットワークから得られる善意と資源；（3）経営者認知（managerial cognition）：情報の認識・解釈・処理に関わる精神的活動・信念・メンタルモデル。本概念はティース（Teece 1997/2007）の組織レベルのダイナミック・ケイパビリティ枠組みを経営者個人レベルに具体化するものであり、感知（sensing）・捕捉（seizing）・変容（transforming）のミクロ基礎と対応する。',
-    keyFigures: 'アドナー＆ヘルファット（2003 SMJ — DMC概念の導入）／ヘルファット＆マーティン（2015 Journal of Management — レビューと評価）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://sms.onlinelibrary.wiley.com/doi/10.1002/smj.331', type: 'academic', label: 'Adner & Helfat (2003) Corporate Effects and Dynamic Managerial Capabilities — SMJ 24(10)' },
-      { url: 'https://journals.sagepub.com/doi/10.1177/0149206314561301', type: 'academic', label: 'Helfat & Martin (2015) Dynamic Managerial Capabilities: Review and Assessment — Journal of Management 41(5)' },
-      { url: 'https://oxfordre.com/business/view/10.1093/acrefore/9780190224851.001.0001/acrefore-9780190224851-e-20', type: 'reference', label: 'Oxford Research Encyclopedia — Dynamic Managerial Capabilities' },
-    ],
-  },
-  {
     id: 'bizlaw-margin-of-appreciation',
     discipline: 'business-law',
     title: '評価の余地の法理（Margin of Appreciation）',
@@ -18785,16 +18756,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-upper-echelons-theory',
     discipline: 'management',
-    title: 'アッパー・エシュロン理論（Upper Echelons Theory）',
+    title: '上層部理論（ハンブリック＝メイソン）——組織はトップ経営陣の反映であり、経営者の経歴と特性が認知のフィルターとして戦略的選択と業績を部分的に予測する',
     statement:
-      'アッパー・エシュロン理論（Upper Echelons Theory）とは、組織の戦略的選択と業績がトップマネジメントチーム（TMT）の経歴・特性によって部分的に予測されるとする戦略経営理論である。ドナルド・ハンブリック（Donald Hambrick）とフィリス・メイソン（Phyllis Mason）が1984年にAcademy of Management Review（Vol.9, No.2, pp.193-206）で「組織はそのトップマネジャーの反映である」という命題を提示した。限定合理性（bounded rationality）の下で、経営者は年齢・在職期間・職能的バックグラウンド・教育水準等の個人特性に基づく認知フィルターを通じて環境を解釈し、戦略を形成する。' +
-      '本理論の重要な精緻化として二つのモデレータがある：（1）経営者裁量（managerial discretion, Hambrick & Finkelstein 1987）：産業構造・組織要因・個人特性により決まる行動の余地が大きいほど、経営者特性が戦略・業績に強く反映される；（2）経営者職務要求（executive job demands, Hambrick et al. 2005）：時間圧力や複雑性が高いほど、経営者はヒューリスティクスに依存し特性の影響が増大する。最大の批判は「ブラックボックス問題」であり、人口統計学的特性は実際の認知プロセスの不正確な代理変数にすぎないとされる（Neely et al. 2020, Journal of Management）。',
-    keyFigures: 'ドナルド・ハンブリック＆フィリス・メイソン（1984 AMR — Upper Echelons命題）／ハンブリック（2007 AMR — 理論の更新と回顧）',
-    asOf: '2026-06',
+      '上層部理論（upper echelons theory）は、ドナルド・ハンブリックとフィリス・メイソンが1984年の論文（Academy of Management Review 9巻2号）で提示した、組織の戦略的選択と業績がトップ・マネジメント・チーム（TMT）の認知・価値観・知覚によって形成され、それらが経歴や特性から部分的に予測できるとする理論である。限定合理性の下で経営者は環境を年齢・在職期間・職能的背景・教育・財務的利害といった特性に基づく認知のフィルターを通して選択的に知覚するため、測定の難しい心理変数の代理に人口統計的指標を使う研究が開かれ、TMT の多様性が戦略の多様性やリスクテイクを予測するとされた。ハンブリックは2007年の再定式化で二つの調整変数を導入した。行動の余地である経営者裁量が大きいほど経営者特性が戦略と業績に反映され、時間圧力や複雑性という職務要求が高いほど経営者はヒューリスティックに頼り経歴の刻印が出やすくなる。カーペンター、ゲレトカニツ、サンダース（2004）のレビューは媒介プロセスのブラックボックス化と内生性を批判し、以後は CEO のパーソナリティや過信の直接測定へと方法が移った。ニーリーら（2020）は人口統計的特性が認知の不正確な代理にすぎないというブラックボックス問題を理論最大の批判として整理した。CEO 交代、取締役会構成、後継者計画の実証研究の基礎理論であり続けている。中小企業には、経営者と幹部の経歴の偏りがそのまま会社の戦略の偏りになりやすいため、異なる背景の幹部や外部の視点を意図的に取り込み、自分の経験則を検証する場を持つことが含意となる。',
+    keyFigures: 'ドナルド・ハンブリック＆フィリス・メイソン（1984 原典）／ドナルド・ハンブリック（2007 更新・経営者裁量と職務要求）／メイソン・カーペンター＆マータ・ゲレトカニツ＆ジェラルド・サンダース（2004 レビュー）／ブライアン・ニーリーら（2020 メタ批判）／対比: ロン・アドナー＆コンスタンス・ヘルファット（動的経営者能力）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://journals.aom.org/doi/10.5465/amr.1984.4277628', type: 'academic', label: 'Hambrick & Mason (1984) Upper Echelons — Academy of Management Review 9(2)' },
-      { url: 'https://journals.aom.org/doi/abs/10.5465/amr.2007.24345254', type: 'academic', label: 'Hambrick (2007) Upper Echelons Theory: An Update — Academy of Management Review 32(2)' },
-      { url: 'https://journals.sagepub.com/doi/abs/10.1177/0149206320908640', type: 'academic', label: 'Neely et al. (2020) Metacritiques of Upper Echelons Theory — Journal of Management 46(6)' },
+      { url: 'https://doi.org/10.5465/amr.1984.4277628', type: 'academic', label: 'Hambrick, D. C. & Mason, P. A. (1984) Upper Echelons: The Organization as a Reflection of Its Top Managers — Academy of Management Review 9(2), 193–206（原典）' },
+      { url: 'https://doi.org/10.5465/amr.2007.24345254', type: 'academic', label: 'Hambrick, D. C. (2007) Upper Echelons Theory: An Update — Academy of Management Review 32(2)（経営者裁量と職務要求の導入）' },
+      { url: 'https://doi.org/10.1016/j.jm.2004.06.001', type: 'academic', label: 'Carpenter, M. A., Geletkanycz, M. A. & Sanders, W. G. (2004) Upper Echelons Research Revisited — Journal of Management 30(6)（レビューと方法論批判）' },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1177/0149206320908640', type: 'academic', label: 'Neely, B. H., Lovelace, J. B., Cowen, A. P. & Hiller, N. J. (2020) Metacritiques of Upper Echelons Theory — Journal of Management 46(6)（ブラックボックス問題の整理）' },
+      { url: 'https://en.wikipedia.org/wiki/Upper_echelons_theory', type: 'reference', label: 'Wikipedia: Upper echelons theory — Hambrick & Mason, TMT demographics, managerial discretion' },
     ],
   },
   {
@@ -20798,22 +20770,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-absorptive-capacity-reconceptualization',
-    discipline: 'management',
-    title: '吸収能力の再概念化（ザーラ＆ジョージ 2002）',
-    statement:
-      'ザーラ＆ジョージ（2002, Academy of Management Review 27(2):185-203）は、コーエン＆レビンサール（1990）が提唱した吸収能力概念を発展させ、外部知識の獲得（acquisition）・同化（assimilation）からなる潜在的吸収能力（PACAP）と、知識の変換（transformation）・活用（exploitation）からなる実現的吸収能力（RACAP）という二次元の動態的能力フレームワークへと再概念化した。' +
-      'PACAPは外部知識を取り込み組織内で理解する基盤的能力、RACAPはその知識を既存知識と統合して競争優位に転換する実践的能力を表し、両者の比率を「効率ファクター（efficiency factor）」として組織の知識変換効率を測定する概念を導入した。' +
-      'この枠組みは組織学習・イノベーション・ダイナミック・ケイパビリティ研究の交差点に位置し、企業の知識統合プロセスと競争優位の源泉を解明する主要な理論的基盤を提供している。',
-    keyFigures: 'シャカー・A・ザーラ（Shaker A. Zahra）＆ジェラルド・ジョージ（Gerard George）（2002 PACAP/RACAP二次元モデル, AMR 27(2):185-203）／ウェズリー・M・コーエン＆ダニエル・A・レビンサール（Wesley M. Cohen & Daniel A. Levinthal, 1990 吸収能力の原概念, ASQ 35(1):128-152）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.5465/amr.2002.6587995', type: 'academic', label: 'Zahra, S.A. & George, G. (2002) Absorptive capacity: A review, reconceptualization, and extension, AMR 27(2):185-203' },
-      { url: 'https://doi.org/10.2307/2393553', type: 'academic', label: 'Cohen, W.M. & Levinthal, D.A. (1990) Absorptive capacity: A new perspective on learning and innovation, ASQ 35(1):128-152' },
-      { url: 'https://www.jstor.org/stable/4134351', type: 'reference', label: 'Zahra & George (2002) — JSTOR全文アーカイブ（AMR Vol. 27 No. 2）' },
-    ],
-  },
-  {
     id: 'bizlaw-ultra-vires-doctrine',
     discipline: 'business-law',
     title: '権限踰越の法理（Ultra Vires）',
@@ -21352,22 +21308,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1016/j.neubiorev.2017.05.015', type: 'academic', label: 'Barrett (2017) The theory of constructed emotion, Neuroscience & Biobehavioral Reviews 76:3-14' },
       { url: 'https://doi.org/10.1037/0033-295X.110.1.145', type: 'academic', label: 'Russell (2003) Core affect and the psychological construction of emotion, Psychological Review 110(1):145-172' },
       { url: 'https://doi.org/10.1017/S0140525X11000446', type: 'academic', label: 'Lindquist et al. (2012) The brain basis of emotion: A meta-analytic review, Behavioral and Brain Sciences 35(3):121-143' },
-    ],
-  },
-  {
-    id: 'mgmt-absorptive-capacity-realization',
-    discipline: 'management',
-    title: '吸収能力の実現化モデル：潜在的能力と実現的能力',
-    statement:
-      'Cohen & Levinthal（1990）は、組織が外部知識を認識・同化・活用する能力として「吸収能力（absorptive capacity）」を提唱し、先行知識の蓄積が技術革新の源泉となることを示した。' +
-      'Zahra & George（2002）はこの概念を再構築し、吸収能力を「潜在的吸収能力（Potential AC）」——外部知識の獲得・同化——と「実現的吸収能力（Realized AC）」——知識の変換・活用——の二次元に分類し、両者の比率（効率性）が競争優位に直結すると論じた。' +
-      'Volberda, Foss & Lyles（2010）はさらにこの枠組みをマルチレベル視点から拡張し、個人・グループ・組織の各層における吸収能力の先行要因と組織間ダイナミクスを包括的に検討した。',
-    keyFigures: 'Shaker A. Zahra／Gerard George／Wesley M. Cohen／Daniel A. Levinthal／Henk W. Volberda',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.2307/2393553', type: 'academic', label: 'Cohen & Levinthal (1990) Absorptive Capacity: A New Perspective on Learning and Innovation, ASQ 35(1):128-152' },
-      { url: 'https://doi.org/10.5465/amr.2002.6587995', type: 'academic', label: 'Zahra & George (2002) Absorptive Capacity: A Review, Reconceptualization, and Extension, AMR 27(2):185-203' },
-      { url: 'https://doi.org/10.1287/orsc.1090.0503', type: 'academic', label: 'Volberda, Foss & Lyles (2010) Absorbing the Concept of Absorptive Capacity, Organization Science 21(4):931-951' },
     ],
   },
   {
@@ -22075,23 +22015,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-population-ecology-organization',
-    discipline: 'management',
-    title: '組織の個体群生態学',
-    statement:
-      '組織の個体群生態学（ポピュレーション・エコロジー）は、生物学の個体群生態学の知見を組織研究に応用した理論的枠組みであり、Hannan & Freeman（1977）が創始した。' +
-      '組織の変化は個々の組織による戦略的適応よりも、環境による選択（自然淘汰）によって主に説明されると主張し、分析単位を個別組織ではなく「組織個体群」に置く。' +
-      '組織は一度確立されると構造的慣性によって変革が困難となり、環境変化への適応が遅れるため、組織形態の多様性は新設・存続・消滅というポピュレーションレベルの選択プロセスから生じる。' +
-      'Hannan & Freeman（1984）は構造的慣性論をさらに発展させ、信頼性・説明可能性の高い組織ほど変革に抵抗し、その慣性自体が選択の産物であることを論じた。',
-    keyFigures: 'Michael T. Hannan ／ John Freeman',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.journals.uchicago.edu/doi/10.1086/226424', type: 'academic', label: 'Hannan & Freeman (1977). The Population Ecology of Organizations. American Journal of Sociology, 82(5), 929–964.' },
-      { url: 'https://www.semanticscholar.org/paper/Structural-Inertia-and-Organizational-Change-Hannan/ef6388bd6e27ae56054e3a2aa58cda91842ef729', type: 'academic', label: 'Hannan & Freeman (1984). Structural Inertia and Organizational Change. American Sociological Review, 49(2), 149–164.' },
-      { url: 'https://en.wikipedia.org/wiki/Organizational_ecology', type: 'reference', label: 'Wikipedia — Organizational ecology' },
-    ],
-  },
-  {
     id: 'human-attachment-theory-bowlby',
     discipline: 'human-science',
     title: 'アタッチメント理論',
@@ -22555,21 +22478,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.law.cornell.edu/ucc/2/2-202', type: 'government', label: 'UCC § 2-202: Parol or Extrinsic Evidence (Cornell LII)' },
       { url: 'https://www.ali.org/publications/show/contracts/', type: 'academic', label: 'American Law Institute — Restatement (Second) of Contracts' },
       { url: 'https://www.uniformlaws.org/acts/ucc', type: 'government', label: 'Uniform Law Commission — Uniform Commercial Code' },
-    ],
-  },
-  {
-    id: 'mgmt-absorptive-capacity-theory',
-    discipline: 'management',
-    title: '吸収能力理論',
-    statement: 'Cohen and Levinthal（1990）は、企業が外部の新たな知識・情報の価値を認識し、それを吸収・同化して商業的目的に応用する能力を「吸収能力（Absorptive Capacity）」と定義し、この能力が企業のイノベーション創出に不可欠であると論じた。吸収能力は企業が蓄積してきた関連する先行知識の水準に大きく依存するため、継続的な研究開発投資が能力形成の基盤となる。Zahra and George（2002）はこの概念を再検討し、外部知識の獲得（acquisition）と同化（assimilation）からなる「潜在的吸収能力（potential absorptive capacity）」と、知識の変換（transformation）と活用（exploitation）からなる「実現的吸収能力（realized absorptive capacity）」の二次元に再構成した。潜在的吸収能力と実現的吸収能力の比率（効率性指標）は、企業が競争優位を持続的に創出・維持できるかどうかを左右する重要な要因とされる。吸収能力理論はその後、オープン・イノベーション、ダイナミック・ケイパビリティ論、知識経営など幅広い経営学分野に影響を与え、外部知識をいかに戦略的に取り込むかを分析する中心的フレームワークとなっている。',
-    keyFigures: 'Wesley M. Cohen ／ Daniel A. Levinthal ／ Shaker A. Zahra ／ Gerard George',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.2307/2393553', type: 'academic', label: 'Cohen & Levinthal (1990) — Absorptive Capacity: A New Perspective on Learning and Innovation, Administrative Science Quarterly 35(1)' },
-      { url: 'https://journals.aom.org/doi/10.5465/amr.2002.6587995', type: 'academic', label: 'Zahra & George (2002) — Absorptive Capacity: A Review, Reconceptualization, and Extension, Academy of Management Review 27(2)' },
-      { url: 'https://www.researchgate.net/publication/220019726_Absorptive_Capacity_A_New_Perspective_on_Learning_and_Innovation', type: 'reference', label: 'ResearchGate — Cohen & Levinthal (1990) full text & citations' },
-      { url: 'https://www.researchgate.net/publication/215485503_Absorptive_Capacity_A_Review_Reconceptualization_and_Extension', type: 'reference', label: 'ResearchGate — Zahra & George (2002) full text & citations' },
-      { url: 'https://en.wikipedia.org/wiki/Absorptive_capacity', type: 'reference', label: 'Wikipedia — Absorptive capacity overview' },
     ],
   },
   {
@@ -23604,23 +23512,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1093/heapro/dah609', type: 'academic', label: 'Eriksson & Lindström (2006)' },
       { url: 'https://doi.org/10.1007/BF00578367', type: 'academic', label: 'Antonovsky et al. (1971) Twenty-five years later (Social Psychiatry)' },
       { url: 'https://doi.org/10.1136/jech.2005.041616', type: 'academic', label: 'Eriksson & Lindström (2006) JECH — SOC scale and health: systematic review' },
-    ],
-  },
-  {
-    id: 'mgmt-upper-echelons-refinement',
-    discipline: 'management',
-    title: '上層部理論精緻化',
-    statement: 'Hambrick & Masonの1984年原型モデルをHambrickが2007年に再評価し、経営裁量と職務要求を調整変数として導入。Carpenterらの包括的レビューを経て、人口統計学的代理指標から心理的測定への方法論的転換が進展した。' +
-      '原型モデル（1984）は「組織は経営トップの認知と価値観の反映である」と述べ、直接測定が難しい心理変数の代理として年齢・在職年数・職能背景・学歴などの人口統計指標を使う研究プログラムを開いた。' +
-      '2007年の再定式化は2つの調整変数を導入した。経営裁量（managerial discretion）が小さい産業では誰がトップでも結果が変わらないため理論の予測力は裁量の大きさに依存し、職務要求（executive job demands）が高いほど経営者はヒューリスティックに頼り、経歴の刻印が意思決定に出やすくなる。' +
-      'Carpenter ら (2004) のレビューは TMT（経営チーム）研究の媒介プロセスのブラックボックス化と内生性を批判し、以後、行動統合（TMT が実際に情報を共有し協働する度合い）や CEO のパーソナリティ・自己愛・過信の直接測定、機械学習によるテキスト測定へと方法が移行した。CEO 交代・取締役会構成・後継者計画の実証研究の基礎理論であり続けている。',
-    keyFigures: 'Donald C. Hambrick ／ Phyllis A. Mason ／ Mason A. Carpenter ／ Marta A. Geletkanycz ／ Sydney Finkelstein',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.5465/amr.1984.4277628', type: 'academic', label: 'Hambrick & Mason (1984) Upper Echelons AMR' },
-      { url: 'https://doi.org/10.5465/amr.2007.24345254', type: 'academic', label: 'Hambrick (2007) Upper Echelons Update AMR' },
-      { url: 'https://doi.org/10.1016/j.jm.2004.06.001', type: 'academic', label: 'Carpenter, Geletkanycz & Sanders (2004) JM' },
-      { url: 'https://academic.oup.com/book/10716', type: 'reference', label: 'Finkelstein, Hambrick & Cannella (2009) Strategic Leadership' },
     ],
   },
   {
@@ -27439,20 +27330,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-absorptive-capacity-zahra',
-    discipline: 'management',
-    title: '吸収能力の再概念化：動的能力としての知識統合',
-    statement: 'Cohen & Levinthal（1990）が提唱した吸収能力（absorptive capacity）の概念を、Zahra & George（2002）は動的能力の観点から再概念化した。彼らは吸収能力を、獲得（acquisition）・同化（assimilation）・変換（transformation）・活用（exploitation）の4次元から構成される動的能力として定義し、潜在的吸収能力（獲得・同化）と実現的吸収能力（変換・活用）を区別した。この枠組みにより、外部知識の認識・取得から組織内での統合・商業的活用に至るプロセスが体系的に説明される。Lane, Koka & Pathak（2006）はその後の文献レビューを通じ、吸収能力研究の具象化と測定の精緻化を提言した。Todorova & Durisin（2007）は変換と同化の関係を批判的に再検討し、モデルの理論的拡張を試みた。',
-    keyFigures: 'シャーカー・ザーラ ／ ジェラード・ジョージ ／ ウェズリー・コーエン ／ ダニエル・レヴィンタール',
-    asOf: '2026-06-25',
-    sources: [
-      { url: 'https://doi.org/10.5465/amr.2002.6587995', type: 'academic', label: 'Zahra & George (2002) Absorptive Capacity: A Review, Reconceptualization, and Extension — Academy of Management Review' },
-      { url: 'https://doi.org/10.2307/2393553', type: 'academic', label: 'Cohen & Levinthal (1990) Absorptive Capacity: A New Perspective on Learning and Innovation — Administrative Science Quarterly' },
-      { url: 'https://doi.org/10.5465/amr.2006.21318802', type: 'academic', label: 'Lane, Koka & Pathak (2006) The Reification of Absorptive Capacity: A Critical Review and Rejuvenation of the Construct — Academy of Management Review' },
-      { url: 'https://doi.org/10.5465/amr.2007.25275513', type: 'academic', label: 'Todorova & Durisin (2007) Absorptive Capacity: Valuing a Reconceptualization — Academy of Management Review' },
-    ],
-  },
-  {
     id: 'infosoc-platform-temporality',
     discipline: 'information-sociology',
     title: 'プラットフォーム時間性：デジタルプラットフォームによる時間の構造化と加速',
@@ -29239,20 +29116,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1162/0033553053327515', type: 'academic', label: 'Aghion, P. et al. (2005) Competition and Innovation: An Inverted-U Relationship — Quarterly Journal of Economics, 120(2), 701–728（競争と革新の逆U字）' },
       { url: 'https://doi.org/10.2307/3440307', type: 'academic', label: 'Hall, R. E. (1988) The Relation Between Price and Marginal Cost in U.S. Industry — Journal of Political Economy, 96(5), 921–947（マークアップ推定法）' },
       { url: 'https://en.wikipedia.org/wiki/Lerner_index', type: 'reference', label: 'Wikipedia: Lerner index — formula, perfect competition, monopoly, empirical estimation, banking applications' },
-    ],
-  },
-  {
-    id: 'mgmt-upper-echelon-theory-hambrick',
-    discipline: 'management',
-    title: 'アッパー・エシェロン理論（ハンブリック＆メイソン）',
-    statement: 'アッパー・エシェロン理論（upper echelon theory）は、ハンブリック＆メイソン（1984）が提唱した、組織の戦略的選択と業績は最高経営幹部（上位幹部チーム; TMT: Top Management Team）の認知・価値観・知覚によって形成されるという命題である。TMTの人口統計学的特性（年齢・任期・機能的背景・学歴・財務的利害）が認知地図のプロキシとして機能し、戦略多様性・変化への抵抗・リスクテイクを予測するとされる。ハンブリック（2007）はこの「メンバー構成→認知→意思決定→組織成果」の因果連鎖を精緻化し、裁量の余地（managerial discretion）——外部環境・組織内制約・個人の裁量——が調整変数として機能することを示した。メタ分析（Wang他 2016）はTMTの多様性（性別・機能背景・年齢）が一部の業績指標に正の影響を与えることを確認したが、条件性（産業タービュランス・組織規模）への依存性が大きい。CG研究ではCEO在任期間・取締役会構成と戦略慣性の関係にも応用されている。',
-    keyFigures: 'ドナルド・ハンブリック ／ フィリス・メイソン ／ マシュー・ファラジャック ／ シエナン・フィンケルスタイン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.5465/amr.1984.4277628', type: 'academic', label: 'Hambrick, D. C. & Mason, P. A. (1984) Upper Echelons: The Organization as a Reflection of Its Top Managers — Academy of Management Review, 9(2), 193–206（原典）' },
-      { url: 'https://doi.org/10.5465/amr.2007.24345254', type: 'academic', label: 'Hambrick, D. C. (2007) Upper Echelons Theory: An Update — Academy of Management Review, 32(2), 334–343（理論の精緻化）' },
-      { url: 'https://doi.org/10.1177/0149206316647581', type: 'academic', label: 'Wang, G. et al. (2016) Strategic Leadership Across Organizational Levels: A Meta-Analytic Review — Journal of Management, 42(5), 1374–1408（メタ分析）' },
-      { url: 'https://en.wikipedia.org/wiki/Upper_echelon_theory', type: 'reference', label: 'Wikipedia: Upper echelon theory — Hambrick & Mason, TMT demographics, managerial discretion, empirical research' },
     ],
   },
   {
@@ -39115,12 +38978,13 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     title: 'デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）',
     statement:
       'デジタル労働（digital labour）とは、投稿・検索・クリック・レビュー・データ提供といったユーザーの日常的な活動を、プラットフォームのために価値を生む無償または低報酬の労働として分析する批判的枠組みである。ティツィアナ・テラノヴァは2000年の論文『Free Labor: Producing Culture for the Digital Economy』（Social Text 18巻2号）で、ネット上のコンテンツ生成やフォーラム運営を、資本主義的生産に包摂された「自由であると同時に無償の労働」と捉え、搾取とも趣味とも言い切れない価値生産様式だと論じた。クリスチャン・フックスは『Digital Labour and Karl Marx』（2014）でマルクスの労働価値論とダラス・スマイスのオーディエンス商品論を接ぎ、ユーザーが無償で提供する注意とデータが広告収入の源泉になる構造を剰余価値の搾取の現代形態と理論化した。トレバー・ショルツが編んだ『Digital Labor: The Internet as Playground and Factory』（2013）はデジタル労働を有償と無償に分け、アントニオ・カシッリは Amazon Mechanical Turk などのマイクロワークが労働法の外で低賃金の断片的タスクを配分し労働者を不可視化する構造を実証した。批判として、楽しみや自己表現まで「労働」と呼ぶ拡張が搾取の意味を薄めること、労働価値論の解釈への異論、無償労働と有償ギグ労働を同列に扱う是非がある。中小企業には、SNS 運用やレビュー依頼が顧客の無償労働に依存すること、クラウドソーシングで発注するタスクの報酬と条件が評判に直結することが含意となる。',
-    keyFigures: 'ティツィアナ・テラノヴァ（2000『Free Labor』Social Text）／クリスチャン・フックス（2014『Digital Labour and Karl Marx』Routledge）／トレバー・ショルツ（2013 編『Digital Labor: The Internet as Playground and Factory』Routledge）／アントニオ・カシッリ（マイクロワークと不可視の労働の実証）／ダラス・スマイス（オーディエンス商品論の先行研究）／対比: ニック・スルニチェク（プラットフォーム資本主義）',
+    keyFigures: 'ティツィアナ・テラノヴァ（2000『Free Labor』Social Text）／クリスチャン・フックス（2014『Digital Labour and Karl Marx』Routledge）／トレバー・ショルツ（2013 編『Digital Labor: The Internet as Playground and Factory』Routledge）／アントニオ・カシッリ（マイクロワークと不可視の労働の実証）／ダラス・スマイス（オーディエンス商品論の先行研究）／ジュリアン・キュックリッヒ（2005 playbour：遊びと労働の融合）／対比: ニック・スルニチェク（プラットフォーム資本主義）',
     asOf: '2026-09',
     sources: [
       { url: 'https://doi.org/10.1215/01642472-18-2_63-33', type: 'academic', label: 'Terranova, T. (2000) Free Labor: Producing Culture for the Digital Economy — Social Text 18(2), 33–58（フリー・レイバー概念の原典）' },
       { url: 'https://www.routledge.com/Digital-Labour-and-Karl-Marx/Fuchs/p/book/9780415716154', type: 'academic', label: 'Fuchs, C. (2014) Digital Labour and Karl Marx — Routledge（マルクス労働価値論によるデジタル労働の搾取分析）' },
       { url: 'https://www.routledge.com/Digital-Labor-The-Internet-as-Playground-and-Factory/Scholz/p/book/9780415896955', type: 'academic', label: 'Scholz, T. (ed.) (2013) Digital Labor: The Internet as Playground and Factory — Routledge（有償／無償のデジタル労働とクラウド・フリーシング）' },
+      { url: 'https://link.springer.com/chapter/10.1057/9781137478573_2', type: 'academic', label: 'The Digital Labour Theory of Value and Karl Marx in the Age of Facebook… — 書籍章（Palgrave Macmillan）' },
       { url: 'https://en.wikipedia.org/wiki/Digital_labor', type: 'reference', label: 'Wikipedia: Digital labor — Terranova, Fuchs, Scholz, Casilli, prosumer, microwork' },
     ],
   },
@@ -39727,19 +39591,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.2307/2525382', type: 'academic', label: 'Vanek, J. (1968) The Factor Proportions Theory: The N-Factor Case — Kyklos' },
       { url: 'https://doi.org/10.1016/S1573-4404(84)01006-4', type: 'academic', label: 'Deardorff, A. V. (1984) Testing Trade Theories and Predicting Trade Flows — Handbook of International Economics' },
       { url: 'https://en.wikipedia.org/wiki/Vanek%27s_factor_proportions_theory', type: 'reference', label: 'Wikipedia: Heckscher-Ohlin-Vanek theorem — factor content of trade overview' },
-    ],
-  },
-  {
-    id: 'mgmt-organizational-ecology-density',
-    discipline: 'management',
-    title: '組織エコロジーの密度依存モデル——個体群密度と組織の設立・消滅',
-    statement: '組織エコロジー（organizational ecology）の密度依存モデルは、ハナンとフリーマンが1977年に提唱した組織個体群の進化理論を基盤として、ハナンとキャロルが1992年に発展させた組織の設立率と消滅率の変動を説明する中核的枠組みである。密度依存理論によれば、組織個体群の密度が低い段階では、密度の増加が当該組織形態の正統性（legitimation）を高めて設立率を増加させ消滅率を低下させるが、密度が高くなると競争（competition）効果が支配的となり、設立率が低下し消滅率が上昇する。この非単調な関係は、設立率と密度の逆U字型関係、消滅率と密度のU字型関係として定式化される。ハナンとキャロルは新聞社・労働組合・ビール醸造所など多様な産業の歴史データでこのモデルを検証し、組織の変革ではなく選択（淘汰）が産業構造の変化を駆動する主要メカニズムであると論じた。',
-    keyFigures: 'マイケル・ハナン ／ ジョン・フリーマン ／ グレン・キャロル ／ ジャック・ブリタン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1086/226424', type: 'academic', label: 'Hannan, M. T. & Freeman, J. (1977) The Population Ecology of Organizations — American Journal of Sociology' },
-      { url: 'https://doi.org/10.1093/oso/9780195071917.001.0001', type: 'academic', label: 'Hannan, M. T. & Carroll, G. R. (1992) Dynamics of Organizational Populations — Oxford University Press' },
-      { url: 'https://en.wikipedia.org/wiki/Organizational_ecology', type: 'reference', label: 'Wikipedia: Organizational ecology — population-level analysis of organizational dynamics overview' },
     ],
   },
   {
@@ -40670,19 +40521,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-dynamic-managerial-capabilities-adner',
-    discipline: 'management',
-    title: '動的経営能力——マネジャーの人的資本・社会関係資本・認知',
-    statement: 'アドナーとヘルファットが2003年に提唱した動的経営能力（dynamic managerial capabilities）は、ティースらの動的ケイパビリティ論を個人レベルに降ろし、マネジャーが戦略的資源の構築・統合・再構成を行う能力を人的資本（知識・スキル）、社会関係資本（ネットワーク・関係性）、経営認知（メンタル・モデル・信念体系）の三次元で分析する枠組みである。動的ケイパビリティが組織レベルのルーティンとプロセスに焦点を当てるのに対し、動的経営能力は個々の意思決定者がいかに変化を感知（sensing）し機会を捕捉（seizing）するかのミクロ基盤を解明する。ヘルファットとマーティンの統合レビューは、これら三資本の相互作用がマネジャー間の能力異質性を生み出し、同一産業環境下でも企業間業績格差を説明する個人レベルのメカニズムとなることを論じた。',
-    keyFigures: 'ロン・アドナー ／ コンスタンス・ヘルファット ／ デイヴィッド・ティース ／ ジョアンナ・マーティン ／ シドニー・ウィンター',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1002/smj.331', type: 'academic', label: 'Adner, R. & Helfat, C. E. (2003) "Corporate Effects and Dynamic Managerial Capabilities" — SMJ' },
-      { url: 'https://doi.org/10.1080/19416520.2014.873858', type: 'academic', label: 'Helfat, C. E. & Martin, J. A. (2015) "Dynamic Managerial Capabilities" — Academy of Management Annals' },
-      { url: 'https://en.wikipedia.org/wiki/Dynamic_capabilities', type: 'reference', label: 'Wikipedia: Dynamic capabilities — 組織・経営レベルの能力論' },
-    ],
-  },
-  {
     id: 'human-psychological-capital-luthans',
     discipline: 'human-science',
     title: '心理的資本——自己効力・楽観・希望・レジリエンスの統合構成概念',
@@ -41464,14 +41302,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-dynamic-managerial-capabilities-adner-helfat',
     discipline: 'management',
-    title: '動的経営者ケイパビリティ——アドナーとヘルファットの経営者固有の戦略的資源変革能力',
-    statement: '動的経営者ケイパビリティ（dynamic managerial capabilities）は、ロン・アドナーとコンスタンス・ヘルファットが2003年に提唱した、個々の経営者が組織の資源基盤を構築・統合・再構成する能力を分析する概念枠組みである。ティースのダイナミック・ケイパビリティ論が組織レベルの能力に焦点を当てるのに対し、アドナーとヘルファットは経営者個人のレベルに分析を移し、動的経営者ケイパビリティを「経営者の人的資本」（知識・スキル・経験）、「経営者の社会的資本」（ネットワーク・関係性・信頼）、「経営者の認知」（信念・メンタルモデル・注意配分パターン）の三要素から構成されるとした。この三要素の組合せが経営者の戦略的意思決定の質と資源変革の効果を規定し、同一の組織資源からも異なる経営者が異なる価値を創出し得る理由を説明する。ハンブリックの上層部理論と理論的に接続する。',
-    keyFigures: 'ロン・アドナー ／ コンスタンス・ヘルファット ／ デイヴィッド・ティース ／ シドニー・フィンケルシュタイン',
-    asOf: '2026-06-26',
+    title: '動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する',
+    statement:
+      '動的経営者能力（dynamic managerial capabilities）は、ロン・アドナーとコンスタンス・ヘルファットが2003年の論文（Strategic Management Journal 24巻10号）で提唱した、個々の経営者が組織の資源と能力を構築・統合・再構成する経営者固有の能力を分析する概念である。同一産業内でも経営者の意思決定の異質性が企業間の業績差とその時間変動を説明することを示し、ティースらの動的ケイパビリティ論が組織レベルのルーティンとプロセスに焦点を当てるのに対し、分析を経営者個人の水準に移して感知・捕捉・変容のミクロ基礎を明らかにした。能力の三つの基盤は、教育や経験で獲得された技能と知識である人的資本、ネットワークから得られる善意と資源である社会関係資本、信念やメンタルモデル、注意の配分といった認知である。ヘルファットとジェニファー・マーティンは2015年の論文（Journal of Management 41巻5号）で先行研究を統合し、三資本の相互作用が経営者間の能力の異質性を生み、同じ組織資源からも異なる経営者が異なる価値を引き出す理由を説明すると論じた。人口統計的特性を認知の代理とする上層部理論を、認知そのものと資本の組み合わせで補完する。限界としては、三資本の測定が難しく、経営者個人の能力と組織の能力を分離した因果の識別が困難であること、事例研究への偏りがある。中小企業では経営者一人の人的資本・人脈・認知が事業の再構成力そのものであるため、経営者自身の学習、外部人脈の意図的な構築、自分の思い込み（メンタルモデル）を検証する仕組みが含意となる。',
+    keyFigures: 'ロン・アドナー＆コンスタンス・ヘルファット（2003 概念の提唱）／コンスタンス・ヘルファット＆ジェニファー・マーティン（2015 統合レビュー）／対比: デイヴィッド・ティース（組織レベルの動的ケイパビリティ）／ドナルド・ハンブリック＆フィリス・メイソン（上層部理論）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1002/smj.331', type: 'academic', label: 'Adner, R. & Helfat, C. (2003) Corporate Effects and Dynamic Managerial Capabilities — SMJ' },
-      { url: 'https://doi.org/10.1177/0149206314561301', type: 'academic', label: 'Helfat, C. & Martin, J. (2015) Dynamic Managerial Capabilities — Journal of Management' },
-      { url: 'https://en.wikipedia.org/wiki/Dynamic_capabilities', type: 'reference', label: 'Wikipedia: Dynamic capabilities — ダイナミック・ケイパビリティの概要' },
+      { url: 'https://doi.org/10.1002/smj.331', type: 'academic', label: 'Adner, R. & Helfat, C. E. (2003) Corporate Effects and Dynamic Managerial Capabilities — Strategic Management Journal 24(10), 1011–1025（原論文）' },
+      { url: 'https://doi.org/10.1177/0149206314561301', type: 'academic', label: 'Helfat, C. E. & Martin, J. A. (2015) Dynamic Managerial Capabilities: Review and Assessment of Managerial Impact on Strategic Change — Journal of Management 41(5)（統合レビュー）' },
+      { url: 'https://oxfordre.com/business/view/10.1093/acrefore/9780190224851.001.0001/acrefore-9780190224851-e-20', type: 'reference', label: 'Oxford Research Encyclopedia of Business and Management — Dynamic Managerial Capabilities（概説）' },
+      { url: 'https://en.wikipedia.org/wiki/Dynamic_capabilities', type: 'reference', label: 'Wikipedia: Dynamic capabilities — 組織・経営者レベルの能力論の概説' },
     ],
   },
   {
@@ -46344,18 +46184,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-dynamic-managerial-cognition',
-    discipline: 'management',
-    title: '動的経営認知と戦略的変化（トゥイッテル＆ロウランズ）',
-    statement: '動的経営認知（dynamic managerial cognition）とは、最高経営者・上位経営チームが環境の変化を感知・解釈し戦略的行動に変換する認知プロセスの動的側面を指す。シンシア・トゥイッテルらはDynamic Managerial Capabilities（DMC）フレームワークにおいて、経営者の「認知（managerial cognition）」「社会関係資本（social capital）」「ヒューマン・キャピタル」が組織能力の再構成を可能にすると論じた。伝統的な動的ケイパビリティ論（テイス）が組織レベルの能力に焦点を当てるのに対し、DMCは個々の経営者の認知的差異と意思決定バイアスが戦略的変化の経路依存性を説明すると主張する。上位梯子理論（Upper Echelons Theory）と接合することで、CEOの認知スタイル・経験・ネットワークと戦略的刷新・企業業績の関係が実証的に検討されている。',
-    keyFigures: 'シンシア・トゥイッテル ／ マーガレット・ペンバートン ／ デビッド・テイス ／ ドナルド・ハンブリック',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1002/smj.2509', type: 'academic', label: 'Teece, D.J. et al. (2016). Dynamic managerial capabilities — Strategic Management Journal' },
-      { url: 'https://en.wikipedia.org/wiki/Dynamic_capabilities', type: 'reference', label: 'Wikipedia: Dynamic capabilities — managerial cognition' },
-    ],
-  },
-  {
     id: 'human-basic-psychological-needs-ryan',
     discipline: 'human-science',
     title: '基本的心理欲求理論（ライアン＆デシ）',
@@ -47505,14 +47333,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-absorptive-capacity-cohen',
     discipline: 'management',
-    title: '吸収能力（コーエン＆レヴィンソール）',
-    statement: '吸収能力（absorptive capacity）は、コーエン＆レヴィンソール（1990）が提唱した、組織が外部知識を認識・同化・活用する能力を指す概念である。R&Dは単に新知識を生み出すだけでなく、外部の科学・技術知識を評価・取り込む「二面的機能（dual role of R&D）」を持つと論じ、吸収能力が高い組織ほど産業スピルオーバーを活用し、イノベーションで優位に立つことを実証した。吸収能力は「先行知識（prior knowledge）」に依存する累積的・経路依存的特性を持ち、学習に学習（learning-to-learn）の側面がある。ザーラ＆ジョージ（2002）は吸収能力を「潜在的吸収能力（PACAP：外部知識の取得・同化）」と「実現的吸収能力（RACAP：外部知識の変換・活用）」に二分し、柔軟性ルーチンが両者をつなぐとした。オープンイノベーション・知識集約型企業・産学連携・M&A後の知識統合において吸収能力は中核的組織能力として研究されており、吸収能力の組織構造的条件（水門役（gatekeeper）・T字型人材・外部ネットワーク）が実践的テーマとなっている。',
-    keyFigures: 'ウェスリー・コーエン ／ ダニエル・レヴィンソール ／ シャーカー・ザーラ ／ ジェラルド・ジョージ',
-    asOf: '2026-06-26',
+    title: '吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する',
+    statement:
+      '吸収能力（absorptive capacity）は、ウェズリー・コーエンとダニエル・レヴィンソールが1990年の論文（Administrative Science Quarterly 35巻1号）で提唱した、企業が外部の新しい知識の価値を認識し、それを同化して商業的目的に応用する能力である。研究開発は新知識を生むだけでなく外部の科学・技術知識を評価し取り込む二面的な役割を持ち、吸収能力は蓄積された関連する先行知識に依存するため累積的で経路依存的であり、「学習のための学習」の側面を持つ。シェイカー・ザーラとジェラルド・ジョージは2002年の論文（Academy of Management Review 27巻2号）でこれを動的能力の観点から再概念化し、外部知識の獲得と同化からなる潜在的吸収能力（PACAP）と、知識の変換と活用からなる実現的吸収能力（RACAP）に二分して、社会統合メカニズムが両者をつなぐとした。レーン、コカ、パサック（2006）は概念が物象化して測定が粗いままだと批判し、トドロヴァとデュリシン（2007）は同化と変換の関係を再検討し、フォルベルダ、フォス、ライルズ（2010）は個人・集団・組織の多層的な先行要因を整理した。オープン・イノベーション、産学連携、M&A 後の知識統合で中核的な概念となり、門番役の人材や外部ネットワークといった組織的条件が実践的な論点である。限界としては、研究開発支出を代理変数にする粗い測定、概念の拡張による曖昧さが指摘される。中小企業には、外部の技術や顧客情報を取り込む力は自社の先行知識と人材の基礎に比例するため、少額でも継続的な学習投資と外部との接点（展示会・共同研究・取引先からの学習）を絶やさないことが含意となる。',
+    keyFigures: 'ウェズリー・コーエン＆ダニエル・レヴィンソール（1990 原典）／シェイカー・ザーラ＆ジェラルド・ジョージ（2002 潜在的／実現的吸収能力への再概念化）／ピーター・レーン＆バラジ・コカ＆シーマ・パサック（2006 批判的レビュー）／ゲルガナ・トドロヴァ＆ボリス・デュリシン（2007 再検討）／ヘンク・フォルベルダ＆ニコライ・フォス＆マージョリー・ライルズ（2010 多層的枠組み）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.2307/2393553', type: 'academic', label: 'Cohen, W. M. & Levinthal, D. A. (1990) Absorptive Capacity: A New Perspective on Learning and Innovation — Administrative Science Quarterly, 35(1), 128–152（原典）' },
-      { url: 'https://doi.org/10.5465/amr.2002.5922314', type: 'academic', label: 'Zahra, S. A. & George, G. (2002) Absorptive Capacity: A Review, Reconceptualization, and Extension — Academy of Management Review, 27(2), 185–203（PACAP/RACAP分類）' },
-      { url: 'https://doi.org/10.5465/amr.2006.22527456', type: 'academic', label: 'Lane, P. J., Koka, B. R. & Pathak, S. (2006) The Reification of Absorptive Capacity: A Critical Review and Rejuvenation of the Construct — Academy of Management Review, 31(4), 833–863（概念的批判と再整備）' },
+      { url: 'https://doi.org/10.2307/2393553', type: 'academic', label: 'Cohen, W. M. & Levinthal, D. A. (1990) Absorptive Capacity: A New Perspective on Learning and Innovation — Administrative Science Quarterly 35(1), 128–152（原典）' },
+      { url: 'https://doi.org/10.5465/amr.2002.6587995', type: 'academic', label: 'Zahra, S. A. & George, G. (2002) Absorptive Capacity: A Review, Reconceptualization, and Extension — Academy of Management Review 27(2), 185–203（潜在的／実現的吸収能力への再概念化）' },
+      { url: 'https://doi.org/10.5465/amr.2007.25275513', type: 'academic', label: 'Todorova, G. & Durisin, B. (2007) Absorptive Capacity: Valuing a Reconceptualization — Academy of Management Review 32(3)（同化と変換の関係の再検討）' },
+      { url: 'https://doi.org/10.1287/orsc.1090.0503', type: 'academic', label: 'Volberda, H. W., Foss, N. J. & Lyles, M. A. (2010) Absorbing the Concept of Absorptive Capacity: How to Realize Its Potential in the Organization Field — Organization Science 21(4)（多層的な先行要因の整理）' },
       { url: 'https://en.wikipedia.org/wiki/Absorptive_capacity', type: 'reference', label: 'Wikipedia: Absorptive capacity — Cohen & Levinthal, PACAP/RACAP, prior knowledge, open innovation' },
     ],
   },
@@ -47556,20 +47386,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1287/mnsc.18.2.B141', type: 'academic', label: 'Simon, H. A. (1971) Designing Organizations for an Information-Rich World — in Computers, Communication, and the Public Interest（情報豊富化と注意希少化の先行論）' },
       { url: 'https://doi.org/10.1108/eb026538', type: 'academic', label: 'Davenport, T. H. & Beck, J. C. (2001) The Attention Economy: Understanding the New Currency of Business — Harvard Business School Press（経営学への展開）' },
       { url: 'https://en.wikipedia.org/wiki/Attention_economy', type: 'reference', label: 'Wikipedia: Attention economy — Goldhaber, Simon, social media algorithms, dopamine, Haugen testimony' },
-    ],
-  },
-  {
-    id: 'mgmt-upper-echelons-hambrick',
-    discipline: 'management',
-    title: '上層部理論（ハンブリック＆メイソン）',
-    statement: '上層部理論（Upper Echelons Theory）は、ハンブリック＆メイソン（1984）が提唱した、組織の戦略的選択・パフォーマンスは経営幹部（top management team; TMT）の認知・価値・知覚——すなわちトップの「観察可能な特性（observable characteristics）」である年齢・職務経験・教育・財務的基盤——によって規定されるという命題である。外部環境は複雑すぎてCEOが完全には処理できないため、選択的知覚・制限合理性・価値体系に基づくフィルタリングを経て意思決定が行われ、トップの心理的・人口統計的属性が組織アウトカムの代理変数として機能する。TMTの多様性（ダイバーシティ）——機能・教育・年齢・性別の異質性——が情報処理の幅と意思決定品質に与える効果は広く研究されており、タスク環境の不確実性が高いほどTMT異質性の正の効果が強まるという相互作用論が展開されている。カレン・フェラーリ他（2004）のメタ分析は人口統計的多様性と業績の関係が「曲線的（U字型）」であることを示し、「適度の多様性」の重要性を論じた。CEO在任期間（tenure）・過信（overconfidence）・ナルシシズムの組織選択への影響も盛んに研究されている。',
-    keyFigures: 'ドナルド・ハンブリック ／ フィリス・メイソン ／ リック・ダヴェニー ／ カレン・フェラーリ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/258434', type: 'academic', label: 'Hambrick, D. C. & Mason, P. A. (1984) Upper Echelons: The Organization as a Reflection of Its Top Managers — Academy of Management Review, 9(2), 193–206（原典）' },
-      { url: 'https://doi.org/10.5465/amr.2007.23464074', type: 'academic', label: 'Hambrick, D. C. (2007) Upper Echelons Theory: An Update — Academy of Management Review, 32(2), 334–343（理論のアップデート）' },
-      { url: 'https://doi.org/10.1016/j.jm.2004.06.001', type: 'academic', label: 'Carpenter, M. A., Geletkanycz, M. A. & Sanders, W. G. (2004) Upper Echelons Research Revisited — Journal of Management, 30(6), 749–778（文献サーベイ）' },
-      { url: 'https://en.wikipedia.org/wiki/Upper_echelons_theory', type: 'reference', label: 'Wikipedia: Upper echelons theory — Hambrick & Mason, TMT diversity, CEO overconfidence, observable characteristics' },
     ],
   },
   {

@@ -33,8 +33,8 @@ aliases:
 ## 関連概念
 - [[bizlaw-prescription|時効（消滅時効・取得時効）]] — 語彙が近い
 - [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 同分野の近傍
-- [[legal-tort-liability|不法行為による損害賠償責任（民法709条等）]] — 同分野の近傍
 - [[legal-land-lease-right|借地借家法における借地権]] — 同分野の近傍
+- [[legal-tort-liability|不法行為による損害賠償責任（民法709条等）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

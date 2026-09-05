@@ -37,10 +37,10 @@ Richard M. Cyert／James G. March／Herbert A. Simon／Henrich R. Greve／Daniel
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
 - [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
 - [[infosoc-bandwagon-underdog-effect|バンドワゴン効果・アンダードッグ効果（bandwagon / underdog effect）——公表された世論調査が投票行動そのものを動かすフィードバック現象]] — 同じ思想家
-- [[mgmt-absorptive-capacity-theory|吸収能力理論]] — 同じ思想家
 - [[mgmt-temporal-ambidexterity|時間的両利き性]] — 同じ思想家
 - [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 同じ思想家
 - [[infosoc-information-overload-theory|情報過負荷理論]] — 同じ思想家
+- [[mgmt-vicarious-learning|代理学習（Vicarious Learning in Organizations）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

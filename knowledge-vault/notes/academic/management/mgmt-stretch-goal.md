@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-goal-setting-theory|目標設定理論（goal-setting theory）]] — 同分野の近傍
+- [[mgmt-slack-resources-bourgeois|組織スラック論——余剰資源の緩衝・革新・政治的機能]] — 同分野の近傍
 - [[mgmt-escalation-of-commitment|コミットメントのエスカレーション]] — 同分野の近傍
 
 ## 関連

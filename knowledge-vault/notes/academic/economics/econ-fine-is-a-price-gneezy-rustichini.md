@@ -40,7 +40,7 @@ aliases:
 - [[human-undermining-effect|アンダーマイニング効果（過正当化効果）]] — 同じ思想家
 - [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル——ハックマン＆オールダムによる動機づけ・満足・パフォーマンスを規定する五つの職務次元]] — 同じ思想家
 - [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]] — 同分野の近傍
-- [[econ-crowdfunding-equity|クラウドファンディングと資本市場の民主化]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

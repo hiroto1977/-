@@ -38,6 +38,7 @@ aliases:
 - [[mgmt-pestel-analysis|PESTEL分析——マクロ環境を六つの外部要因から分析する枠組み]] — 同分野の近傍
 - [[mgmt-pest-analysis|PEST分析（PESTLE分析）]] — 同分野の近傍
 - [[mgmt-strategy-as-practice-whittington|実践としての戦略——戦略を組織が「持つ」ものではなく人が「行う」活動として捉える]] — 同分野の近傍
+- [[mgmt-organizational-hypocrisy-theory|組織的偽善理論]] — 同分野の近傍
 - [[mgmt-garbage-can-model|ゴミ箱モデル（Garbage Can Model of Organizational Choice）]] — 同分野の近傍
 
 ## 関連

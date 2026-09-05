@@ -31,12 +31,12 @@ aliases:
 - [Wikipedia: 心理的契約 — 雇用関係における暗黙の期待の解説](https://ja.wikipedia.org/wiki/%E5%BF%83%E7%90%86%E7%9A%84%E5%A5%91%E7%B4%84) `リファレンス`
 
 ## 関連概念
-- [[mgmt-psychological-contract|心理的契約]] — 語彙が近い
-- [[human-psychological-contract-rousseau|心理的契約理論——ルソーの暗黙的雇用関係と契約違反の帰結]] — 語彙が近い
+- [[human-psychological-contract-rousseau|心理的契約理論——ルソーの暗黙的雇用関係と契約違反の帰結]] — 同じ思想家
 - [[mgmt-evidence-based-management-pfeffer|エビデンスに基づく経営（ファフェー＆サットン）と管理的迷信の批判]] — 同じ思想家
 - [[mgmt-evidence-based-management-rousseau|エビデンス・ベースド・マネジメント——科学的根拠に基づく経営判断と「管理職の神話」の打破]] — 同じ思想家
 - [[mgmt-mum-effect-bad-news|MUM効果——悪い知らせを伝えたがらない心理]] — 同じ思想家
 - [[mgmt-workplace-deviance-robinson|職場逸脱行動——組織規範に反する自発的行為の分類と規定要因]] — 同じ思想家
+- [[mgmt-psychological-contract|心理的契約]] — 同分野の近傍
 - [[mgmt-affective-commitment|感情的コミットメント（情緒的組織コミットメント）]] — 同分野の近傍
 
 ## 関連

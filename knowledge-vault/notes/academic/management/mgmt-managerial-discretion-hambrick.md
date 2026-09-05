@@ -32,16 +32,14 @@ aliases:
 - [Wangrow, D.B., Schepker, D.J. & Barker, V.L. 2015. Managerial Discretion: An Empirical Review. Journal of Management, 41(1).](https://journals.sagepub.com/doi/10.1177/0149206314554214) `学術`
 
 ## 関連概念
-- [[mgmt-upper-echelons-theory|アッパー・エシュロン理論（Upper Echelons Theory）]] — 語彙が近い
 - [[mgmt-strategic-leadership-theory|戦略的リーダーシップ理論]] — 語彙が近い
 - [[mgmt-asset-stock-accumulation-dierickx-cool|資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性]] — 同じ思想家
 - [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]] — 同じ思想家
 - [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 同じ思想家
-- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者ケイパビリティ——アドナーとヘルファットの経営者固有の戦略的資源変革能力]] — 同じ思想家
-- [[mgmt-dynamic-managerial-cognition|動的経営認知と戦略的変化（トゥイッテル＆ロウランズ）]] — 同じ思想家
+- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する]] — 同じ思想家
 - [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — 同じ思想家
-- [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — 同じ思想家
-- [[mgmt-upper-echelons-hambrick|上層部理論（ハンブリック＆メイソン）]] — 同じ思想家
+- [[mgmt-upper-echelons-theory|上層部理論（ハンブリック＝メイソン）——組織はトップ経営陣の反映であり、経営者の経歴と特性が認知のフィルターとして戦略的選択と業績を部分的に予測する]] — 同じ思想家
+- [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
