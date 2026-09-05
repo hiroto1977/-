@@ -37,7 +37,7 @@ national
 - [J-Startup 地域版 サポーター企業認定（地域版・サポーター制度の確認）](https://prtimes.jp/main/html/rd/p/000000009.000052863.html) `メディア`
 
 ## 関連概念
-- [[subsidy-overseas-expansion|新輸出大国コンソーシアム（中小企業の海外展開支援）]] — 語彙が近い
+- [[subsidy-overseas-expansion|新輸出大国コンソーシアム（中小企業の海外展開支援）]] — 同分野の近傍
 - [[subsidy-kitakyushu|北九州市の創業支援（特定創業支援等事業・COMPASS小倉）]] — 同分野の近傍
 - [[subsidy-sbir|SBIR制度（中小企業技術革新制度）]] — 同分野の近傍
 

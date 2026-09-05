@@ -2,7 +2,7 @@
 title: "tandfonline.com"
 type: source-domain
 host: "tandfonline.com"
-cite_count: 47
+cite_count: 48
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # tandfonline.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **47 件**（学術 47）
+> [!info] 出典ドメイン索引 ・ 引用 **48 件**（学術 48）
 
 ## このドメインを出典とする項目
 
@@ -25,6 +25,7 @@ tags:
 - [[econ-synthetic-control-method|合成コントロール法（synthetic control method）]] — Abadie,A.,Diamond,A.&Hainmueller,J.(2010)"SyntheticControlMethodsforC…
 - [[human-affordance-theory|アフォーダンス理論]] — Chemero,"AnOutlineofaTheoryofAffordances,"EcologicalPsychology15(2):1…
 - [[human-body-schema|身体図式（ボディスキーマ）]] — Gallagher&Cole(1995)Bodyimageandbodyschemainadeafferentedsubject,Jour…
+- [[human-control-value-theory-achievement-emotions-pekrun|制御価値理論——達成感情の生起を統制評価と価値評価で説明する]] — Pekrun,R.,Goetz,T.,Titz,W.,&Perry,R.P.(2002).AcademicEmotionsinStuden…
 - [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — Litman2005CuriosityandthePleasuresofLearning:WantingandLikingNewInfor…
 - [[human-fading-affect-bias|感情消失バイアス]] — Walkeretal.(2003),Dysphoriadisruptsthefadingaffectbias,CognitionandEm…
 - [[human-false-memory|虚記憶（フォールス・メモリ）]] — Memory誌「Lostinthemallagain:apreregisteredreplication...Loftus&Pickrel…

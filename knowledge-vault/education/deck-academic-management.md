@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経営学"
 type: flashcard-deck
 deck_key: "academic-management"
-card_count: 659
+card_count: 660
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経営学（659枚）
+# フラッシュカード — 学術概念／経営学（660枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -390,6 +390,8 @@ tags:
   - **A:** アントレプレナーシップ・エコシステムとは、起業家・投資家・大学・政府・文化が相互作用し新規事業創出を支える地域的な仕組みを指す。（→ [[mgmt-entrepreneurial-ecosystems]]）
 - **Q:** 起業家的志向性（ミラー）
   - **A:** 起業家的志向性（entrepreneurial orientation; EO）は、ミラー（1983）が提唱し、ラムサワミー他（1996）・コビン＆スレビン（1989）が発展させた、組織レベルで測定される「起業家的意思決定・行動のパターン」を指す構成概念である。（→ [[mgmt-entrepreneurial-orientation-miller]]）
+- **Q:** EPRGフレームワーク——本国志向から世界志向へ至る多国籍企業経営者の心的構え
+  - **A:** ハワード・V・パールミュッターが1969年の論文『The Tortuous Evolution of the Multinational Corporation』で示した、多国籍企業経営者の海外事業への心的構えを4類型に分ける枠組み。（→ [[mgmt-eprg-orientations-perlmutter]]）
 - **Q:** 公平理論——投入と報酬の比率の社会的比較が動機づけを左右する
   - **A:** 公平理論（equity theory）は、ジョン・ステイシー・アダムスが1963〜65年に提唱した職場の動機づけ理論で、人が自らの労働への投入（input：努力・技能・時間・忠誠）と、そこから得る報酬（outcome：給与・承認・地位）の比率を、比較対象となる他者（referent）のそれと照らし合わせて公平さを評価すると説く。（→ [[mgmt-equity-theory-adams]]）
 - **Q:** ERG理論（アルダーファー）——存在・関係・成長の三欲求

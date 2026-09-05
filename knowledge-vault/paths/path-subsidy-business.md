@@ -22,12 +22,12 @@ tags:
 - [[subsidy-aichi-rd|新あいち創造研究開発補助金（愛知県）]]（接続 22）
 - [[subsidy-kitakyushu|北九州市の創業支援（特定創業支援等事業・COMPASS小倉）]]（接続 21）
 - [[subsidy-niigata-city|創業サポート事業補助金（新潟市）]]（接続 21）
-- [[subsidy-overseas-expansion|新輸出大国コンソーシアム（中小企業の海外展開支援）]]（接続 16）
-- [[subsidy-patent-fee-reduction|特許料等の減免制度]]（接続 16）
+- [[subsidy-patent-fee-reduction|特許料等の減免制度]]（接続 17）
 - [[subsidy-saitama|埼玉県中小企業省力化支援事業補助金]]（接続 16）
 - [[subsidy-kagoshima|鹿児島県中小企業経営革新支援事業費補助金（鹿児島県）]]（接続 15）
 - [[subsidy-kobe|神戸市中小企業投資促進等助成制度]]（接続 15）
-- [[subsidy-ibaraki|いばらき業務改善奨励金（茨城県）]]（接続 14）
+- [[subsidy-overseas-expansion|新輸出大国コンソーシアム（中小企業の海外展開支援）]]（接続 15）
+- [[subsidy-wakayama|和歌山県中小企業成長促進補助金（和歌山県）]]（接続 15）
 
 ## 第 2 部 — 年代順の展開
 - 2025年: [[subsidy-business-restructuring|事業再構築補助金（新規公募は第13回・2025年3月で終了。後継: 中小企業新事業進出補助金）]]
@@ -53,6 +53,7 @@ tags:
 - [[subsidy-hiroshima|中小・ベンチャー企業チャレンジ応援事業助成金（広島県）]]
 - [[subsidy-hokkaido|中小企業競争力強化促進事業（北海道）]]
 - [[subsidy-hyogo|起業家支援事業助成金（兵庫県）]]
+- [[subsidy-ibaraki|いばらき業務改善奨励金（茨城県）]]
 - [[subsidy-ishikawa|小規模事業者事業継続支援補助金（国持続化補助金への上乗せ補助）（石川県）]]
 - [[subsidy-iwate|中小企業者等賃上げ環境整備支援事業費補助金（岩手県）]]
 - [[subsidy-jfc-loan|日本政策金融公庫の中小企業・小規模事業者向け融資]]
@@ -107,7 +108,6 @@ tags:
 - [[subsidy-tottori|鳥取県産業成長応援補助金（企業立地・設備投資等大型投資への支援）（鳥取県）]]
 - [[subsidy-tourism-revitalization|地域一体となった観光地・観光産業の再生・高付加価値化事業（観光庁）]]
 - [[subsidy-toyama|富山県中小企業トランスフォーメーション補助金（富山県）]]
-- [[subsidy-wakayama|和歌山県中小企業成長促進補助金（和歌山県）]]
 - [[subsidy-yamagata|山形県中小企業まるっとサポート補助金（山形県）]]
 - [[subsidy-yamaguchi|山口県中小企業者等向け省・創・蓄エネ設備設置補助金（山口県）]]
 - [[subsidy-yamanashi|中小企業等生産性向上設備整備等支援補助金（山梨県）]]

@@ -35,7 +35,7 @@ aliases:
 - [[human-resilience|レジリエンス（心理的回復力）]] — 同じ思想家
 - [[human-resilience-adversity-luthar|レジリエンスと逆境適応の発達心理学——リスク・保護因子の動態モデル（ルサール）]] — 同じ思想家
 - [[human-resilience-bonanno-adversity|レジリエンスと逆境後の軌跡——ボナンノの回復力類型と精神的健康の動態モデル]] — 同分野の近傍
-- [[human-normalcy-bias|正常性バイアス]] — 同分野の近傍
+- [[human-cultural-neuroscience-chiao|文化神経科学——文化と脳機能の双方向的相互作用]] — 同分野の近傍
 - [[human-diathesis-stress-model|素因ストレスモデル]] — 同分野の近傍
 
 ## 関連

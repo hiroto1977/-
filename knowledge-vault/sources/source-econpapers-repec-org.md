@@ -2,7 +2,7 @@
 title: "econpapers.repec.org"
 type: source-domain
 host: "econpapers.repec.org"
-cite_count: 15
+cite_count: 18
 tags:
   - source-domain
   - index
@@ -10,13 +10,16 @@ tags:
 
 # econpapers.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **15 件**（学術 14 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **18 件**（学術 17 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
 - [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — Kashyap,Stein&Wilcox(1993)MonetaryPolicyandCreditConditions:Evidencef…
 - [[econ-black-scholes|ブラック＝ショールズ・モデル]] — EconPapers/RePEc—原論文の書誌情報（掲載誌・巻号・頁）
+- [[econ-blp-demand-estimation-berry-levinsohn-pakes|BLP法（ランダム係数ロジット需要推定）——IIA制約と価格の内生性を解消し差別化財市場の需要を推定する構造推定法]] — Knittel,C.R.,&Metaxoglou,K.(2014).EstimationofRandom-CoefficientDeman…
+- [[econ-blp-demand-estimation-berry-levinsohn-pakes|BLP法（ランダム係数ロジット需要推定）——IIA制約と価格の内生性を解消し差別化財市場の需要を推定する構造推定法]] — Nevo,A.(2001).MeasuringMarketPowerintheReady-to-EatCerealIndustry.Eco…
 - [[econ-chartalism-modern-monetary-theory|チャータリズムと現代貨幣理論（MMT）]] — Tcherneva(2006)ChartalismandtheTax-DrivenApproachtoMoney,inHandbookof…
+- [[econ-edgeworth-price-cycles-maskin-tirole|エッジワース価格サイクル——マスキン＝ティロールの動学的価格競争と小売ガソリン価格の鋸歯状変動]] — DavidP.Byrne&NicolasdeRoos(2019)"LearningtoCoordinate:AStudyinRetailG…
 - [[econ-hodrick-prescott-filter|ホドリック＝プレスコット・フィルター——景気循環をトレンドから分離する平滑化フィルターとその妥当性論争]] — Hodrick,R.J.,&Prescott,E.C.(1997).PostwarU.S.BusinessCycles:AnEmpiric…
 - [[econ-natural-experiment-angrist|自然実験と操作変数法による因果識別戦略（アングリスト）]] — Angrist,J.D.(1990)LifetimeEarningsandtheVietnamEraDraftLottery:Eviden…
 - [[econ-rational-addiction|合理的依存]] — EconPapers/RePEcbibliographicrecord—Becker&Murphy,JPE1988

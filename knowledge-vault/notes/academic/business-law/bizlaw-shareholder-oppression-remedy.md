@@ -41,7 +41,7 @@ aliases:
 - [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 出典を共有
 - [[bizlaw-substantive-consolidation|実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済]] — 出典を共有
 - [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 出典を共有
-- [[bizlaw-battle-of-the-forms|書式の戦い]] — 出典を共有
+- [[bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff|パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

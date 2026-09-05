@@ -39,7 +39,6 @@ aliases:
 - [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 出典を共有
 - [[econ-superstar-economics|スーパースターの経済学]] — 出典を共有
 - [[econ-principal-agent|プリンシパル・エージェント理論（agency theory）]] — 同分野の近傍
-- [[econ-too-big-to-fail|大きすぎて潰せない]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

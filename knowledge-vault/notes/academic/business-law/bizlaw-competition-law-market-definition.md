@@ -36,10 +36,10 @@ aliases:
 - [[mgmt-dynamic-delegation|公式的権限と実質的権限（Formal and Real Authority）]] — 同じ思想家
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同じ思想家
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同じ思想家
+- [[econ-edgeworth-price-cycles-maskin-tirole|エッジワース価格サイクル——マスキン＝ティロールの動学的価格競争と小売ガソリン価格の鋸歯状変動]] — 同じ思想家
 - [[econ-price-discrimination-monopoly|価格差別と独占力——一・二・三級差別の福祉効果と規制政策への含意]] — 同じ思想家
 - [[econ-price-discrimination-pigou-varian|価格差別の経済学——ピグーの三類型とデジタル経済における動的価格設定]] — 同じ思想家
 - [[econ-two-sided-markets|両面市場（two-sided markets）]] — 同じ思想家
-- [[econ-war-of-attrition|消耗戦ゲーム——どちらが先に降りるかを競う持久戦]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

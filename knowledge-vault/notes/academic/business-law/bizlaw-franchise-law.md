@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-franchise-law-regulation-disclosure|フランチャイズ法——加盟者保護と情報開示義務の法的枠組み]] — 語彙が近い
 - [[bizlaw-franchise-law-regulation|フランチャイズ規制と情報開示義務の比較法制]] — 語彙が近い
+- [[bizlaw-franchise-contract|フランチャイズ契約]] — 語彙が近い
 - [[bizlaw-holder-in-due-course-doctrine|正当所持人の法理]] — 出典を共有
 - [[bizlaw-noerr-pennington-doctrine|ノア・ペニントン法理——政府への請願活動を反トラスト法責任から免責する憲法的法理]] — 出典を共有
 - [[econ-raising-rivals-costs|ライバルの費用引き上げ理論（Raising Rivals' Costs／RRC、サロップ＝シェフマン）——支配的企業が略奪的安売りではなく競争相手の費用を高めて排除する反トラスト理論]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[infosoc-deceptive-design-gray|欺瞞的デザインとダーク・パターン（グレイ他）]] — 出典を共有
 - [[infosoc-native-advertising-persuasion-knowledge|ネイティブ広告と説得知識モデル（Native Advertising / Persuasion Knowledge Model）]] — 出典を共有
 - [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 出典を共有
-- [[econ-predatory-pricing|略奪的価格設定]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

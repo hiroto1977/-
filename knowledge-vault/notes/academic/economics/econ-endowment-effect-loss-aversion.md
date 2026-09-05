@@ -32,6 +32,7 @@ Richard Thaler ／ Daniel Kahneman ／ Amos Tversky
 - [Nobel Prize 2017 — Richard Thaler: Behavioural Economics](https://www.nobelprize.org/prizes/economic-sciences/2017/thaler/facts/) `リファレンス`
 
 ## 関連概念
+- [[human-endowment-effect|保有効果（授かり効果）]] — 語彙が近い
 - [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
 - [[mgmt-strategic-reference-point-theory|戦略的参照点理論]] — 同じ思想家
 - [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 同じ思想家

@@ -38,8 +38,8 @@ aliases:
 - [[infosoc-platform-capitalism|プラットフォーム資本主義]] — 同じ思想家
 - [[infosoc-platform-labor-gig-economy|プラットフォーム労働とギグエコノミー——デジタル仲介による労働の再編と社会的保護]] — 同じ思想家
 - [[infosoc-platform-workers-gig-rights|ギグワーカーの権利とプラットフォーム労働——雇用分類の争点と情報社会の新しい労働関係]] — 同じ思想家
+- [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — 同じ思想家
 - [[infosoc-digital-labor-terranova|デジタル労働とフリー・レイバー（テラノバ）]] — 同じ思想家
-- [[infosoc-enshittification-doctorow|エンシッティフィケーション（ドクトロウ）]] — 同じ思想家
 - [[infosoc-platform-economics|プラットフォーム経済学・二面市場理論：デジタル市場の仲介構造と価格戦略]] — 同じ思想家
 
 ## 関連

@@ -38,7 +38,7 @@ aliases:
 - [[econ-sudden-stop|サドンストップ（資本流入の急停止）]] — 同じ思想家
 - [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]] — 同分野の近傍
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同分野の近傍
-- [[econ-currency-substitution-girton|通貨代替と為替市場圧力——複数通貨選択のマクロ経済分析]] — 同分野の近傍
+- [[econ-middle-income-trap|中所得国の罠——中位の所得で成長が止まる現象]] — 同分野の近傍
 - [[econ-walras-law|ワルラスの法則]] — 同分野の近傍
 
 ## 関連

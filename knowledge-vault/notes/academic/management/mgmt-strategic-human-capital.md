@@ -33,7 +33,7 @@ David Lepak ／ Scott Snell ／ Patrick Wright
 
 ## 関連概念
 - [[mgmt-strategic-human-capital-theory|戦略的人的資本理論]] — 同じ思想家
-- [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — 同分野の近傍
+- [[mgmt-relational-coordination-gittell|リレーショナル・コーディネーション（ギッテル）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

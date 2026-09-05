@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／ビジネス法務"
 type: flashcard-deck
 deck_key: "academic-business-law"
-card_count: 687
+card_count: 688
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／ビジネス法務（687枚）
+# フラッシュカード — 学術概念／ビジネス法務（688枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -976,6 +976,8 @@ tags:
   - **A:** 国際公序（ordre public international）とは、国際私法・国際仲裁法において、外国法を準拠法として適用した結果が法廷地の根本的な法的・道徳的秩序に反する場合に、その外国法の適用を排除して自国の強行法規を優先させることを認める原則である。（→ [[bizlaw-ordre-public]]）
 - **Q:** 合意は拘束する（Pacta Sunt Servanda）
   - **A:** 合意は拘束する（Pacta Sunt Servanda）とは、有効に成立した合意・条約は当事者を拘束し誠実に履行されなければならないとする国際法および契約法の根本原則である。（→ [[bizlaw-pacta-sunt-servanda]]）
+- **Q:** パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争
+  - **A:** 過失法における「義務」と「近因」の範囲確定を巡る代表判例。ニューヨーク州最上級審Court of Appealsは1928年5月29日、Palsgraf v. Long Island Railroad Co., 248 N.Y. 339, 162 N.E. 99を4対3で判決した。（→ [[bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff]]）
 - **Q:** パレンス・パトリエ法理（Parens Patriae Doctrine）
   - **A:** パレンス・パトリエ（parens patriae、ラテン語で「国の親」）法理とは、国家が自己の利益を保護する能力を欠く者（未成年者・禁治産者・精神障害者等）および一般公衆の福祉を保護するために、主権者としての後見的権限（sovereign guardianship）を行使する法理である。（→ [[bizlaw-parens-patriae]]）
 - **Q:** 口頭証拠排除法則

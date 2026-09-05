@@ -39,8 +39,8 @@ aliases:
 - [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]] — 同じ思想家
 - [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 同じ思想家
 - [[bizlaw-negligence-per-se|法定過失（Negligence Per Se）]] — 同じ思想家
+- [[bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff|パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争]] — 同じ思想家
 - [[bizlaw-product-liability-strict|製造物責任（PL法）の厳格責任法理と欠陥類型]] — 同じ思想家
-- [[bizlaw-product-liability-strict-eu-directive|製造物責任法——無過失責任と欠陥製品による損害救済]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／情報社会学"
 type: flashcard-deck
 deck_key: "academic-information-sociology"
-card_count: 611
+card_count: 612
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／情報社会学（611枚）
+# フラッシュカード — 学術概念／情報社会学（612枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -274,6 +274,8 @@ tags:
   - **A:** ダークパターン（Dark Patterns）とは、ウェブサイト・アプリのUI/UXデザインにおいてユーザーを意図せぬ行動（個人情報同意・サブスクリプション契約・不要な購入）に誘導するために意図的に設計されたトリッキーなインターフェース要素を指し、ハリー・ブリニュールが2010年に定義・分類した。（→ [[infosoc-dark-patterns-ux-deception]]）
 - **Q:** ダークウェブと匿名性技術の社会学——Tor・I2P・暗号通貨の重層的分析
   - **A:** ダークウェブ（dark web）とは、標準的ウェブブラウザではアクセスできず、Tor（The Onion Router）・I2P・Freenetなどの匿名性ネットワーク技術を通じてのみ到達可能なウェブの一部を指し、医薬品・兵器の不正市場（シルクロードなど）・内部告発（WikiLeaks）・反検閲通信・プライバシー保護など多様な用途が混在する。（→ [[infosoc-dark-web-anonymity-tor]]）
+- **Q:** 資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論
+  - **A:** ジェイサン・サドウスキー（Jathan Sadowski）が2019年、『Big Data & Society』6巻1号（1-12頁）論文「When data is capital: Datafication, accumulation, and extraction」で提示し、著書『Too Smart』（MIT Press、2020年）で展開した概念。（→ [[infosoc-data-as-capital-sadowski]]）
 - **Q:** データ植民地主義
   - **A:** データ植民地主義（data colonialism）とは、人々の日常の経験・行動・社会関係といった「生（life）」そのものを、データ化（datafication）を通じて新たな収奪・領有（appropriation）の対象とし、資本主義のための価値抽出にあてる現代の大規模データ収集・利用のあり方を、歴史的な植民地主義になぞらえて批判的に分析する概念・枠組みである。（→ [[infosoc-data-colonialism]]）
 - **Q:** データ・ダブル／監視的アサンブラージュ（Data Double / Surveillant Assemblage）

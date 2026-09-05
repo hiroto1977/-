@@ -2,7 +2,7 @@
 title: "direct.mit.edu"
 type: source-domain
 host: "direct.mit.edu"
-cite_count: 15
+cite_count: 16
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # direct.mit.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **15 件**（学術 15）
+> [!info] 出典ドメイン索引 ・ 引用 **16 件**（学術 16）
 
 ## このドメインを出典とする項目
 
@@ -23,6 +23,7 @@ tags:
 - [[human-theory-of-mind|心の理論]] — MITPress—Baron-Cohen“Mindblindness:AnEssayonAutismandTheoryofMind”
 - [[infosoc-broken-world-thinking|壊れた世界の思考（ブロークン・ワールド・シンキング）]] — Jackson(2014)—RethinkingRepair,MITPress
 - [[infosoc-civic-technology-movement|シビックテクノロジー運動]] — O'Reilly:GovernmentasaPlatform—MITPressInnovations,Vol.6No.1(2011)
+- [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — Sadowski,J.(2020).TooSmart:HowDigitalCapitalismIsExtractingData,Contr…
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — Hess,C.&Ostrom,E.eds.(2007)"UnderstandingKnowledgeasaCommons",MITPress
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — Hess&Ostromeds.(2007)UnderstandingKnowledgeasaCommons,MITPress
 - [[infosoc-hashtag-activism|ハッシュタグ・アクティビズム]] — Jackson,Bailey&FoucaultWelles,#HashtagActivism:NetworksofRaceandGende…

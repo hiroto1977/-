@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 644
+entry_count: 645
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（644件）
+# 学習パス — 学術概念／人間科学（645件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -17,8 +17,8 @@ tags:
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 103）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 31）
+- [[human-attribution-theory|帰属理論]]（接続 29）
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 28）
-- [[human-attribution-theory|帰属理論]]（接続 28）
 - [[human-bias-blind-spot|バイアスの盲点]]（接続 28）
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 27）
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 26）
@@ -283,6 +283,7 @@ tags:
 - 2004年: [[human-processing-fluency|処理流暢性]]
 - 2005年: [[human-action-observation-mismatch|アクション・オブザベーション・ミスマッチ（Action-Observation Mismatch）]]
 - 2005年: [[human-cognitive-reflection-test|認知反映テスト（CRT）]]
+- 2006年: [[human-control-value-theory-achievement-emotions-pekrun|制御価値理論——達成感情の生起を統制評価と価値評価で説明する]]
 - 2006年: [[human-joint-action|共同行為（Joint Action）]]
 - 2006年: [[human-ostrich-effect|ダチョウ効果（情報回避）]]
 - 2006年: [[human-procrastination|先延ばしと時間的動機づけ理論（TMT）]]

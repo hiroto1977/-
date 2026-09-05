@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-forum-selection-clause|合意管轄条項の有効性と国際裁判管轄]] — 同じ思想家
 - [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-offer-acceptance|契約の成立（申込みと承諾・民法522条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

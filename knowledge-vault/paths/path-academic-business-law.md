@@ -2,18 +2,18 @@
 title: "学習パス: 学術概念／ビジネス法務"
 type: learning-path
 path_key: "academic-business-law"
-entry_count: 687
+entry_count: 688
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／ビジネス法務（687件）
+# 学習パス — 学術概念／ビジネス法務（688件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 80）
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 78）
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 56）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 37）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 36）
@@ -69,6 +69,7 @@ tags:
 - 1900年: [[bizlaw-nachfrist|ナッハフリスト制度（付加期間催告による解除）]]
 - 1916年: [[bizlaw-macpherson-v-buick-privity|マクファーソン対ビュイック事件——過失責任における契約当事者関係（プリヴィティ）要件の崩壊と製造物責任の出発点]]
 - 1922年: [[bizlaw-health-insurance|健康保険法]]
+- 1928年: [[bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff|パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争]]
 - 1929年: [[bizlaw-assumption-of-risk|危険の引受——原告が任意に引き受けた既知の危険につき被告の不法行為責任を否定するコモンロー上の抗弁]]
 - 1932年: [[bizlaw-berle-means-thesis|バーリ＝ミーンズ命題（The Berle-Means thesis／所有と経営の分離）——大規模公開会社では株式が分散し、支配が株主から専門経営者へ移る]]
 - 1932年: [[bizlaw-bills-act|手形法]]

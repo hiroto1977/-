@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2262
+cite_count: 2264
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2262 件**（リファレンス 2262）
+> [!info] 出典ドメイン索引 ・ 引用 **2264 件**（リファレンス 2264）
 
 ## このドメインを出典とする項目
 
@@ -248,6 +248,8 @@ tags:
 - [[bizlaw-non-est-factum|ノン・エスト・ファクトゥム——署名した文書が本質的に別物だったときの抗弁]] — Wikipedia:Nonestfactum—fundamentalmistake,SaundersvAngliaBS,voiddocum…
 - [[bizlaw-nuisance|ニューサンス（生活妨害）——土地の使用収益に対する不当な干渉の不法行為]] — Wikipedia:Nuisance—private/public,reasonableness,giveandtake,injuncti…
 - [[bizlaw-oppression-remedy|少数株主抑圧救済（オプレッション・レメディ）]] — Wikipedia—OppressionRemedy
+- [[bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff|パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争]] — OverseasTankship(UK)LtdvMortsDockandEngineeringCoLtd—Wikipedia—TheWag…
+- [[bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff|パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争]] — Palsgrafv.LongIslandRailroadCo.—Wikipedia—4対3の評決と判事構成（多数:Cardozo,Poun…
 - [[bizlaw-part-payment-foakes|債務の一部弁済と約因——フォークス対ビア事件（Foakes v Beer 1884）とピンネル事件の準則]] — Wikipedia,“FoakesvBeer”（1884・9AppCas605・Pinnel'sCaseの確認・一部弁済は約因とならない・…
 - [[bizlaw-payment-services-directive-psd2|EU決済サービス指令（PSD2）——オープンバンキングと決済市場の自由化]] — Wikipedia:PaymentServicesDirective—EU決済サービス指令の概説
 - [[bizlaw-pemsel-charity-heads|ペムゼルの四類型——慈善目的の古典的な分類]] — Wikipedia:CharitabletrustsinEnglishlaw—Pemselfourheads,publicbenefit,…

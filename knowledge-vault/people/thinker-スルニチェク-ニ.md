@@ -2,7 +2,7 @@
 title: "ニック・スルニチェク"
 type: thinker
 person_key: "スルニチェク|ニ"
-concept_count: 12
+concept_count: 13
 tags:
   - person
   - index
@@ -10,9 +10,10 @@ tags:
 
 # ニック・スルニチェク
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **12 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **13 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（12件）
+## 学術概念（13件）
+- [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — ジェイサン・サドウスキー（JathanSadowski）が2019年、『BigData&Society』6巻1号（1-…
 - [[infosoc-digital-labor-fuchs|デジタル労働論——プラットフォーム資本主義における価値創造と搾取]] — デジタル労働（DigitalLabour）論は、デジタルプラットフォーム上でのユーザー活動（コンテンツ生成、データ提供…
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — デジタル・レイバー（デジタル労働）論は、デジタルプラットフォーム上で行われる有償・無償の労働がいかに価値を生産し、その…
 - [[infosoc-enshittification-doctorow|エンシッティフィケーション（ドクトロウ）]] — エンシッティフィケーション（enshittification）は、コリー・ドクトロウ（2023）が命名した、プラットフ…

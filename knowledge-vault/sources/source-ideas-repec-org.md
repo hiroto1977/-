@@ -2,7 +2,7 @@
 title: "ideas.repec.org"
 type: source-domain
 host: "ideas.repec.org"
-cite_count: 91
+cite_count: 93
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ideas.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **91 件**（学術 76 ・ リファレンス 15）
+> [!info] 出典ドメイン索引 ・ 引用 **93 件**（学術 78 ・ リファレンス 15）
 
 ## このドメインを出典とする項目
 
@@ -42,6 +42,8 @@ tags:
 - [[econ-double-auction|連続ダブルオークション]] — VernonL.Smith,"AnExperimentalStudyofCompetitiveMarketBehavior,"Journa…
 - [[econ-double-marginalization|二重マージン（二重限界化）]] — Spengler,“VerticalIntegrationandAntitrustPolicy”,JournalofPoliticalEc…
 - [[econ-eaton-lipsey-local-clustering|イートン＝リプシーの局所的集塊の原理（Eaton-Lipsey's Principle of Local Clustering）]] — IDEAS/RePEcbibliographicrecord—Eaton&Lipsey(1975),ReviewofEconomicStu…
+- [[econ-edgeworth-price-cycles-maskin-tirole|エッジワース価格サイクル——マスキン＝ティロールの動学的価格競争と小売ガソリン価格の鋸歯状変動]] — AndrewEckert(2013)"EmpiricalStudiesofGasolineRetailing:AGuidetotheLit…
+- [[econ-edgeworth-price-cycles-maskin-tirole|エッジワース価格サイクル——マスキン＝ティロールの動学的価格競争と小売ガソリン価格の鋸歯状変動]] — MichaelD.Noel(2007)"EdgeworthPriceCycles:EvidencefromtheTorontoRetail…
 - [[econ-emmanuel-unequal-exchange|不等価交換論（エマニュエル理論）]] — IDEAS/RePEc—JEHreviewofEmmanuel(1974)
 - [[econ-financialization|金融化——経済の金融部門支配]] — Epstein,G.A.(Ed.)(2005).FinancializationandtheWorldEconomy.EdwardElga…
 - [[econ-fiscal-dominance|財政支配（Fiscal Dominance）]] — Sargent&Wallace(1981)—IDEAS/RePEc

@@ -2,7 +2,7 @@
 title: "academic.oup.com"
 type: source-domain
 host: "academic.oup.com"
-cite_count: 128
+cite_count: 129
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # academic.oup.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **128 件**（学術 126 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **129 件**（学術 127 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -113,6 +113,7 @@ tags:
 - [[infosoc-collingridge-dilemma|コリングリッジのジレンマ（技術制御の二重拘束）]] — Collingridge(1982)"HedgingandFlexing:TwoWaysofChoosingUnderIgnorance,…
 - [[infosoc-colonization-lifeworld|生活世界の植民地化]] — CommunicationTheory(OxfordAcademic)—生活世界とシステム・植民地化テーゼ
 - [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — “OneSizeFitsAll:ContextCollapse,Self-PresentationStrategiesandLanguag…
+- [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — Fourcade,M.,&Healy,K.(2017).Seeinglikeamarket.Socio-EconomicReview,15…
 - [[infosoc-differential-susceptibility-media-effects|メディア効果の分化感受性モデル（DSMM／Differential Susceptibility to the Media Effects Model）——同じ内容が人により違う効果を生む理由を説明する統合枠組み]] — Valkenburg&Peter(2013),'TheDifferentialSusceptibilitytoMediaEffectsMo…
 - [[infosoc-digital-constitutionalism|デジタル立憲主義]] — “TheMarcoCivildaInternetandDigitalConstitutionalism,”OxfordHandbookof…
 - [[infosoc-epistemic-injustice|認識的不正義（epistemic injustice）]] — Fricker(2007)"EpistemicInjustice:PowerandtheEthicsofKnowing,"OxfordUn…

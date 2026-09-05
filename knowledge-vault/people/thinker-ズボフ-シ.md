@@ -2,7 +2,7 @@
 title: "ショシャナ・ズボフ"
 type: thinker
 person_key: "ズボフ|シ"
-concept_count: 10
+concept_count: 11
 tags:
   - person
   - index
@@ -10,11 +10,12 @@ tags:
 
 # ショシャナ・ズボフ
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **10 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **11 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（10件）
+## 学術概念（11件）
 - [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — アルゴリズム的統治性（AlgorithmicGovernmentality）とは、アントワネット・ルーブロワ（ベルギー…
 - [[infosoc-behavioral-surplus-zuboff|行動余剰と監視資本主義（ズボフ）]] — 監視資本主義（surveillancecapitalism）は、ショシャナ・ズボフ（2019）の『監視資本主義の時代（…
+- [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — ジェイサン・サドウスキー（JathanSadowski）が2019年、『BigData&Society』6巻1号（1-…
 - [[infosoc-data-sovereignty-digital-rights|データ主権とデジタル自決権の国際政治経済学]] — データ主権（datasovereignty）とは、個人・組織・国家が自己に関するデータの収集・処理・移転を管理する権限…
 - [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]] — 情報の非対称性の社会学的分析は、アカロフが1970年に経済学で理論化した情報の非対称性の概念を社会構造・権力関係の文脈…
 - [[infosoc-panoptic-sort-gandy|パノプティック・ソート——個人情報による選別と差別的処遇の政治経済学]] — パノプティック・ソート（thepanopticsort）は、オスカー・ガンディ・ジュニアが1993年の著作『パノプティ…

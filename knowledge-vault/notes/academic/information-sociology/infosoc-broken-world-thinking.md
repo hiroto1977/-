@@ -39,8 +39,8 @@ Steven J. Jackson ／ Stephen Graham ／ Nigel Thrift
 - [[human-theory-of-mind|心の理論]] — 出典を共有
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 出典を共有
 - [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
+- [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — 出典を共有
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
-- [[infosoc-hashtag-activism|ハッシュタグ・アクティビズム]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -40,6 +40,7 @@ aliases:
 - [[econ-nominal-anchor-mishkin|名目アンカー——インフレ期待を安定化する金融政策の制度的枠組み]] — 同じ思想家
 - [[econ-time-inconsistency-kydland-prescott|時間的非整合性——最適計画の事後的破棄とルール対裁量の問題]] — 同じ思想家
 - [[bizlaw-keech-v-sandford|キーチ対サンドフォード——受託者は地位から利益を得てはならない]] — 同じ思想家
+- [[econ-real-business-cycle-theory|実物景気循環理論]] — 同分野の近傍
 - [[econ-poole-instrument-choice|プールの政策手段選択モデル（Poole's instrument problem）——金利目標か貨幣供給量目標かはショックの源泉で決まる]] — 同分野の近傍
 
 ## 関連

@@ -2,7 +2,7 @@
 title: "aeaweb.org"
 type: source-domain
 host: "aeaweb.org"
-cite_count: 36
+cite_count: 37
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # aeaweb.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **36 件**（学術 36）
+> [!info] 出典ドメイン索引 ・ 引用 **37 件**（学術 37）
 
 ## このドメインを出典とする項目
 
@@ -49,6 +49,7 @@ tags:
 - [[econ-wage-curve|賃金カーブ（ブランチフラワー＝オズワルド則）]] — Blanchflower&Oswald(1995)—AnIntroductiontotheWageCurve,JEP
 - [[human-cognitive-reflection-test|認知反映テスト（CRT）]] — Frederick(2005)"CognitiveReflectionandDecisionMaking,"JournalofEconom…
 - [[human-endowment-effect|保有効果（授かり効果）]] — Kahneman,Knetsch&Thaler(1991),"Anomalies:TheEndowmentEffect,LossAvers…
+- [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — Arrieta-Ibarra,I.,Goff,L.,Jiménez-Hernández,D.,Lanier,J.,&Weyl,E.G.(2…
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — Akerlof—"TheMarketforLemons"(AER,1970;republisheddigitalaccess)
 
 ## 関連

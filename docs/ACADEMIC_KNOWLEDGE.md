@@ -4435,5 +4435,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 人間科学 | エクスプレッシブ・ライティング——感情体験を書き出す筆記開示の健康効果 | ジェームズ・W・ペネベーカー＆サンドラ・K・ビール（1986 J. Abnormal Psychology） ／ スペラ他（1994 AMJ） ／ スマイス（1998 メタ分析） ／ フラッタロリ（2006 メタ分析） ／ 大森美香（2013 RIETI） |
 | 商法 | マクファーソン対ビュイック事件——過失責任における契約当事者関係（プリヴィティ）要件の崩壊と製造物責任の出発点 | カードーゾ判事（N.Y. 1916） ／ Winterbottom v. Wright（1842） ／ Donoghue v. Stevenson（1932） ／ ゴールドバーグ＆ジプルスキー（2016） ／ クラーク（2005 Law and History Review） ／ 製造物責任法（1994） |
 | 情報社会学 | 再帰的公共——自らの存在基盤である技術・法的インフラそのものを作り変える公共 | クリストファー・ケルティ（2005 Cultural Anthropology／2008『Two Bits』） ／ ガブリエラ・コールマン（2013） ／ 土台: ウォーナー（2002）／テイラー（2004） ／ 批判: ダンバー＝ヘスター（2008） |
+| 経済学 | BLP法（ランダム係数ロジット需要推定）——IIA制約と価格の内生性を解消し差別化財市場の需要を推定する構造推定法 | スティーブン・ベリー、ジェームズ・レビンソン、アリエル・パックス（1995『Automobile Prices in Market Equilibrium』Econometrica） ／ アビブ・ネヴォ（2000 実務者向け解説 ／ 2001 シリアル業界応用） |
+| 経済学 | エッジワース価格サイクル——マスキン＝ティロールの動学的価格競争と小売ガソリン価格の鋸歯状変動 | エリック・マスキン（1988『A Theory of Dynamic Oligopoly, II: Price Competition, Kinked Demand Curves, and Edgeworth Cycles』Econometrica 56(3)） ／ ジャン・ティロール（同上） ／ フランシス・イシドロ・エッジワース（1897年論文／英訳1925『The Pure Theory of Monopoly』） |
+| 経営学 | EPRGフレームワーク——本国志向から世界志向へ至る多国籍企業経営者の心的構え | ハワード・V・パールミュッター（1969『The Tortuous Evolution of the Multinational Corporation』 ／ 1979『Multinational Organization Development』共著） ／ ヨーラム・ウィンド＆スーザン・P・ダグラス（1973 Journal of Marketing論文でRegiocentric追加に協働） |
+| 人間科学 | 制御価値理論——達成感情の生起を統制評価と価値評価で説明する | ラインハルト・ペクラン（2006『The Control-Value Theory of Achievement Emotions』Educational Psychology Review 18(4) ／ 2011 Contemporary Educational PsychologyでAEQ〈達成感情質問紙〉を共同発表） ／ 村山航（2017 Child Developmentでペクランらと縦断的相互効果モデルを共同実証） |
+| 商法 | パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争 | ベンジャミン・カードーゾ（1928 Palsgraf v. Long Island R.R. Co. 多数意見・後に連邦最高裁判事） ／ ウィリアム・アンドリューズ（1928 同判決 反対意見） ／ ウィリアム・プロッサー（1953『Palsgraf Revisited』Michigan Law Review 52(1)） |
+| 情報社会学 | 資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論 | ジェイサン・サドウスキー（2019『When data is capital』Big Data & Society ／ 2020『Too Smart』MIT Press） ／ 対比: ショシャナ・ズボフ（2019『The Age of Surveillance Capitalism』） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。

@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]] — 同じ思想家
 - [[mgmt-psychological-detachment-sonnentag|心理的距離——仕事から心理的に離れて回復する]] — 同じ思想家
 - [[mgmt-work-engagement|ワーク・エンゲージメント]] — 同じ思想家
-- [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]] — 同分野の近傍
+- [[human-dark-triad|ダークトライアド（暗黒の三特性／Dark Triad）——マキャヴェリアニズム・ナルシシズム・サイコパシーという、有害だが非臨床的な三つの重なり合う人格特性の集合]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

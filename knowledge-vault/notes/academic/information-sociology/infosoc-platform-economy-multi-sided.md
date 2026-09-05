@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[econ-two-sided-markets|両面市場（two-sided markets）]] — 語彙が近い
+- [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — 同じ思想家
 - [[infosoc-platform-capitalism|プラットフォーム資本主義]] — 同じ思想家
 - [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — 同じ思想家
 - [[infosoc-surveillance-capitalism-zuboff|監視資本主義（ズボフ）]] — 同じ思想家
@@ -40,7 +41,6 @@ aliases:
 - [[infosoc-platform-workers-gig-rights|ギグワーカーの権利とプラットフォーム労働——雇用分類の争点と情報社会の新しい労働関係]] — 同じ思想家
 - [[infosoc-privacy-surveillance|プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察]] — 同じ思想家
 - [[mgmt-dynamic-delegation|公式的権限と実質的権限（Formal and Real Authority）]] — 同じ思想家
-- [[bizlaw-competition-law-market-definition|競争法における市場画定とHHI集中度分析の法的枠組み]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

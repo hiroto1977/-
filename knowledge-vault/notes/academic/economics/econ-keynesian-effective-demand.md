@@ -37,7 +37,6 @@ J.M.ケインズ（1936『一般理論』）
 - [[econ-paradox-of-thrift|倹約のパラドックス]] — 同分野の近傍
 - [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 同分野の近傍
 - [[econ-jevons-paradox|ジェヴォンズのパラドックス]] — 同分野の近傍
-- [[econ-money-creation|信用創造と貨幣乗数]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

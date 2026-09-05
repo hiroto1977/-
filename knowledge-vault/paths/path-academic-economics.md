@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 952
+entry_count: 954
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（952件）
+# 学習パス — 学術概念／経済学（954件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -20,7 +20,7 @@ tags:
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 42）
 - [[econ-liquidity-trap|流動性のわな]]（接続 42）
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 40）
-- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 38）
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 39）
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 37）
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 37）
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
@@ -71,6 +71,7 @@ tags:
 - 1889年: [[econ-roundabout-production|迂回生産]]
 - 1889年: [[econ-time-preference|時間選好]]
 - 1891年: [[econ-lump-of-labour-fallacy|労働塊の誤謬（Lump of Labour Fallacy）]]
+- 1897年: [[econ-edgeworth-price-cycles-maskin-tirole|エッジワース価格サイクル——マスキン＝ティロールの動学的価格競争と小売ガソリン価格の鋸歯状変動]]
 - 1898年: [[econ-wicksell-cumulative-process|ヴィクセルの累積過程]]
 - 1899年: [[econ-cobb-douglas|コブ＝ダグラス生産関数]]
 - 1899年: [[econ-kalecki-profit|カレツキの利潤理論]]
@@ -383,6 +384,7 @@ tags:
 - 1994年: [[econ-difference-in-differences|差の差分析（DID）]]
 - 1994年: [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]]
 - 1994年: [[econ-grossman-helpman-protection-for-sale|保護の販売モデル（グロスマン＝ヘルプマン「Protection for Sale」）——貿易保護の政治経済学]]
+- 1995年: [[econ-blp-demand-estimation-berry-levinsohn-pakes|BLP法（ランダム係数ロジット需要推定）——IIA制約と価格の内生性を解消し差別化財市場の需要を推定する構造推定法]]
 - 1995年: [[econ-credit-channel|信用経路（クレジット・チャネル）]]
 - 1995年: [[econ-trust-game|信頼ゲーム（投資ゲーム）]]
 - 1996年: [[econ-financial-accelerator|金融加速度効果（フィナンシャル・アクセラレータ）]]

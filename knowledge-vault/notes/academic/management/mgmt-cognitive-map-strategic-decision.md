@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]] — 語彙が近い
-- [[mgmt-strategic-cognition|戦略的認知（Strategic Cognition）]] — 語彙が近い
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
 - [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 同じ思想家
 - [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
 - [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — 同じ思想家
 - [[mgmt-enactment-weick|イナクトメント——組織が行為を通じて自らの環境を能動的に作り出す]] — 同じ思想家
+- [[mgmt-organizational-improvisation-weick|組織的即興——計画と実行が時間的に融合する行為としての組織化]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

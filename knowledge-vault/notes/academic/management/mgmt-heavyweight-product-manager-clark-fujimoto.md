@@ -40,9 +40,9 @@ aliases:
 - [[bizlaw-piercing-corporate-veil-reverse|法人格否認の法理（逆方向）]] — 出典を共有
 - [[bizlaw-ultra-vires-doctrine-modern|近代企業法における越権行為法理（Ultra Vires Doctrine）]] — 出典を共有
 - [[mgmt-appreciative-inquiry|アプリシエイティブ・インクワイアリー（AI）]] — 出典を共有
+- [[mgmt-eprg-orientations-perlmutter|EPRGフレームワーク——本国志向から世界志向へ至る多国籍企業経営者の心的構え]] — 出典を共有
 - [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 出典を共有
 - [[mgmt-organizational-unlearning|組織的アンラーニング]] — 出典を共有
-- [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

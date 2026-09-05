@@ -38,8 +38,8 @@ aliases:
 - [[human-attribution-theory|帰属理論]] — 同じ思想家
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同じ思想家
 - [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同じ思想家
+- [[human-control-value-theory-achievement-emotions-pekrun|制御価値理論——達成感情の生起を統制評価と価値評価で説明する]] — 同じ思想家
 - [[human-depressive-realism-alloy|抑うつリアリズム——軽度抑うつ者における判断の正確性仮説]] — 同じ思想家
-- [[human-garcia-taste-aversion|ガルシア効果（味覚嫌悪学習）——学習の生物学的制約]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -50291,5 +50291,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/10.1177/0306312707082954', type: 'academic', label: 'Christina Dunbar-Hester, "Geeks, Meta-Geeks, and Gender Trouble: Activism, Identity, and Low-power FM Radio," Social Studies of Science (SAGE) 38(2), 201-232, 2008 (DOI: 10.1177/0306312707082954) — ギーク文化のジェンダー的盲点への批判を確認' },
     ],
   },
+  {
+    id: 'econ-blp-demand-estimation-berry-levinsohn-pakes',
+    discipline: 'economics',
+    title: 'BLP法（ランダム係数ロジット需要推定）——IIA制約と価格の内生性を解消し差別化財市場の需要を推定する構造推定法',
+    statement:
+      'BLP法は、差別化財市場の需要を消費者ごとに異なる選好（ランダム係数）を持つロジットモデルで推定する構造推定法で、スティーブン・ベリー、ジェームズ・レビンソン、アリエル・パックスが「Automobile Prices in Market Equilibrium」（Econometrica第63巻4号、1995年、841-890頁）で提示した。単純なロジットは無関係な選択肢からの独立性（IIA）により代替パターンを歪め、観測されない製品品質ξが価格と相関する内生性も無視する。BLP法はこの異質性でIIAを緩和し、市場シェアと整合する平均効用を求める縮小写像（contraction mapping）と、競合の製品特性を操作変数とするGMM推定で価格内生性に対処する。ネヴォ（2000年、Journal of Economics & Management Strategy第9巻4号）は推定手順を実務解説し、シリアル業界分析（2001年、Econometrica第69巻2号）では価格コストマージンを差別化・複数商品保有・共謀の3要因に分解し、共謀でなく差別化とポートフォリオが主因と示した。後続研究では局所解への収束などの数値的困難（クニッテル＆メタクソグルー、2014年）が指摘され、コンロン＆ゴートメーカー（2020年、PyBLP）が推定実務の指針を整理した。中小企業でも、自社製品の需要弾力性は競合の特性配置に左右されるため、構造需要モデルは価格・製品戦略の定量的根拠となる。',
+    keyFigures: 'スティーブン・ベリー、ジェームズ・レビンソン、アリエル・パックス（1995『Automobile Prices in Market Equilibrium』Econometrica）／アビブ・ネヴォ（2000 実務者向け解説／2001 シリアル業界応用）／クリストファー・クニッテル＆コンスタンティノス・メタクソグルー（2014・計算上の批判）／クリストファー・コンロン＆ジェフ・ゴートメーカー（2020・PyBLPで標準化）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1995/07/01/automobile-prices-market-equilibrium', type: 'academic', label: 'Berry, S., Levinsohn, J., & Pakes, A. (1995). Automobile Prices in Market Equilibrium. Econometrica, 63(4), 841-890. — BLP法の原典。ランダム係数ロジット需要モデルと縮小写像による推定手法を提示。' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1430-9134.2000.00513.x', type: 'academic', label: 'Nevo, A. (2000). A Practitioner\'s Guide to Estimation of Random-Coefficients Logit Models of Demand. Journal of Economics & Management Strategy, 9(4), 513-548. — BLP操作変数を含む推定手順の実務的解説を支持。' },
+      { url: 'https://econpapers.repec.org/RePEc:ecm:emetrp:v:69:y:2001:i:2:p:307-42', type: 'academic', label: 'Nevo, A. (2001). Measuring Market Power in the Ready-to-Eat Cereal Industry. Econometrica, 69(2), 307-342. — シリアル業界への応用と価格コストマージンの3要因分解を支持。' },
+      { url: 'https://econpapers.repec.org/RePEc:tpr:restat:v:96:y:2014:i:1:p:34-59', type: 'academic', label: 'Knittel, C. R., & Metaxoglou, K. (2014). Estimation of Random-Coefficient Demand Models: Two Empiricists\' Perspective. Review of Economics and Statistics, 96(1), 34-59. — 推定アルゴリズムの局所解収束など計算上の限界の指摘を支持。' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/1756-2171.12352', type: 'academic', label: 'Conlon, C. T., & Gortmaker, J. (2020). Best Practices for Differentiated Products Demand Estimation with PyBLP. RAND Journal of Economics, 51(4), 1108-1161. — 推定実務のベストプラクティスとPyBLPによる標準化を支持。' },
+    ],
+  },
+  {
+    id: 'econ-edgeworth-price-cycles-maskin-tirole',
+    discipline: 'economics',
+    title: 'エッジワース価格サイクル——マスキン＝ティロールの動学的価格競争と小売ガソリン価格の鋸歯状変動',
+    statement:
+      'エッジワース価格サイクルとは、寡占市場に現れる非対称な鋸歯状の価格変動——緩やかな値下げの連続を突発的な急騰が中断する型——を説明する動学的寡占理論である。起源はフランシス・イシドロ・エッジワースの1897年論文で、英訳『The Pure Theory of Monopoly』として『Papers Relating to Political Economy』第1巻（1925年）に収められた。エリック・マスキンとジャン・ティロールは交互手番の価格競争モデルでこれを定式化し（Econometrica 56(3), 1988, 571–599頁）、マルコフ完全均衡には焦点価格に固まる屈折需要曲線均衡と、限界コストでの我慢比べの後に一社が値上げし以後交互に値下げして戻る「エッジワースサイクル」均衡の二型があると示した。マイケル・ノエルはトロントの小売ガソリン市場で平均約1週間・振幅約8%の非対称サイクルを実証し、大手が値上げ主導・独立系小規模店が値下げ主導という非対称性を報告した。後続研究では、豪州都市市場でサイクルが数年かけ暗黙の協調装置として学習され高マージン化した例（バーン＆デ・ルース）や、小規模独立系業者の多さが発生条件でコスト変動との識別が課題という限界（エッカートのサーベイ）が示されている。中小の販売店には、値上がり直後の高値圏を避けた仕入れ・値付け判断と、自社の値付けが競争の帰結か暗黙の協調の手段かの見極めが実務上の要点となる。',
+    keyFigures: 'エリック・マスキン（1988『A Theory of Dynamic Oligopoly, II: Price Competition, Kinked Demand Curves, and Edgeworth Cycles』Econometrica 56(3)）／ジャン・ティロール（同上）／フランシス・イシドロ・エッジワース（1897年論文／英訳1925『Papers Relating to Political Economy』第1巻所収『The Pure Theory of Monopoly』）／マイケル・ノエル（2007『Edgeworth Price Cycles: Evidence from the Toronto Retail Gasoline Market』Journal of Industrial Economics）／デイヴィッド・バーン＆ニコラス・デ・ルース（2019『Learning to Coordinate: A Study in Retail Gasoline』American Economic Review）／アンドリュー・エッカート（2013 サーベイ論文 Journal of Economic Surveys）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1988/05/01/theory-dynamic-oligopoly-ii-price-competition-kinked-demand', type: 'academic', label: 'Eric Maskin & Jean Tirole (1988) "A Theory of Dynamic Oligopoly, II: Price Competition, Kinked Demand Curves, and Edgeworth Cycles," Econometrica, 56(3), pp.571–599 — 交互手番の価格競争モデルとマルコフ完全均衡による屈折需要曲線均衡／エッジワースサイクルの定式化を裏付け' },
+      { url: 'https://ideas.repec.org/a/bla/jindec/v55y2007i1p69-92.html', type: 'academic', label: 'Michael D. Noel (2007) "Edgeworth Price Cycles: Evidence from the Toronto Retail Gasoline Market," The Journal of Industrial Economics, 55(1), pp.69–92 — トロント市場での平均サイクル期間・振幅、大手／独立系小規模店の非対称な役割を裏付け' },
+      { url: 'https://econpapers.repec.org/article/aeaaecrev/v_3a109_3ay_3a2019_3ai_3a2_3ap_3a591-619.htm', type: 'academic', label: 'David P. Byrne & Nicolas de Roos (2019) "Learning to Coordinate: A Study in Retail Gasoline," American Economic Review, 109(2), pp.591–619 — 価格サイクルが暗黙の協調装置として学習され高マージンへ移行する過程を裏付け' },
+      { url: 'https://ideas.repec.org/a/bla/jecsur/v27y2013i1p140-166.html', type: 'academic', label: 'Andrew Eckert (2013) "Empirical Studies of Gasoline Retailing: A Guide to the Literature," Journal of Economic Surveys, 27(1), pp.140–166 — 小規模独立系業者の存在という発生条件、コスト連動との識別困難という限界の整理を裏付け' },
+      { url: 'https://www.accc.gov.au/consumers/petrol-and-fuel/petrol-price-cycles-in-the-5-largest-cities', type: 'government', label: 'Australian Competition and Consumer Commission, "Petrol price cycles in the 5 largest cities" — 豪州主要都市における鋸歯状の価格サイクルの実例と継続的モニタリングを裏付け' },
+    ],
+  },
+  {
+    id: 'mgmt-eprg-orientations-perlmutter',
+    discipline: 'management',
+    title: 'EPRGフレームワーク——本国志向から世界志向へ至る多国籍企業経営者の心的構え',
+    statement:
+      'ハワード・V・パールミュッターが1969年の論文『The Tortuous Evolution of the Multinational Corporation』で示した、多国籍企業経営者の海外事業への心的構えを4類型に分ける枠組み。当初は本国志向（ethnocentric）・現地志向（polycentric）・世界志向（geocentric）のEPGで、本国志向は本国基準を子会社に及ぼし意思決定を本社に集中させ、現地志向は各国の独自性を尊重し権限を現地に委ね、世界志向は国籍を問わず適材を世界規模で登用し本社・子会社が双方向に情報を交わす姿勢を指す。1973年のウィンド＝ダグラス＝パールミュッター論文と79年のヒーナン＝パールミュッター著『Multinational Organization Development』で地域志向（regiocentric）が加わりEPRGとなった。パールミュッターは、世界志向の実現には調整・育成コストがかかるとしつつ、本国志向から世界志向へ至る険しい（tortuous）進化こそ長期的な競争優位を生むと論じた。コブリン（1994）は世界志向的な心的構えが人事施策や事業の地理的な広がりとは関係するが多国籍戦略・組織構造との関係は確認できないとし、態度を測る枠組みの限界を実証した。海外展開を図る中小企業には、マーケティングは現地志向で適応し人材登用や品質基準は世界志向で統一するなど、機能ごとに志向を選び分ける指針となる。',
+    keyFigures: 'ハワード・V・パールミュッター（1969『The Tortuous Evolution of the Multinational Corporation』／1979『Multinational Organization Development』共著）／ヨーラム・ウィンド＆スーザン・P・ダグラス（1973 Journal of Marketing論文でRegiocentric追加に協働）／デイビッド・A・ヒーナン（1979 共著者）／スティーブン・J・コブリン（1994 実証研究で限界を検証）／対比: クリストファー・バートレット＆スマントラ・ゴシャール（1989『Managing Across Borders』のトランスナショナル型組織論）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.taylorfrancis.com/chapters/edit/10.4324/9781315199689-7/tortuous-evolution-multinational-corporation-howard-perlmutter', type: 'academic', label: 'Perlmutter, H. V. (1969). "The Tortuous Evolution of the Multinational Corporation." Columbia Journal of World Business, 4(1), pp. 9–18 (reprinted as Ch. 7 in a Routledge collection, DOI: 10.4324/9781315199689-7) — EPG原典、本国・現地・世界志向の定義と「険しい進化」論を確認。' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/002224297303700205', type: 'academic', label: 'Wind, Y., Douglas, S. P., & Perlmutter, H. V. (1973). "Guidelines for Developing International Marketing Strategies." Journal of Marketing, 37(2), pp. 14–23. DOI: 10.1177/002224297303700205 — EPRGへの地域志向（R）追加と国際マーケティング戦略への適用を確認。' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1002/tie.5060210213', type: 'academic', label: 'Heenan, D. A., & Perlmutter, H. V. (1979). Multinational Organization Development (Addison-Wesley, 194 p.); book review in The International Executive, 21(2), pp. 21–23, DOI: 10.1002/tie.5060210213 — 刊行年・出版社・分量とEPRG類型の組織開発論としての体系化を確認。' },
+      { url: 'https://link.springer.com/article/10.1057/palgrave.jibs.8490209', type: 'academic', label: 'Kobrin, S. J. (1994). "Is There a Relationship Between a Geocentric Mind-Set and Multinational Strategy?" Journal of International Business Studies, 25(3), pp. 493–511. DOI: 10.1057/palgrave.jibs.8490209 — 世界志向的心的構えと多国籍戦略・組織構造の関係を実証検証し有意な関係を確認できなかったことを確認。' },
+      { url: 'https://www.emerald.com/jabes/article/31/1/27/1229610', type: 'academic', label: 'Ashta, A. (2023). "Perlmutter Visited. Japanese International Business Strategic Orientation Transformation in India: Progress Made and Forces Against." Journal of Asian Business and Economic Studies, 31(1), pp. 27–39. DOI: 10.1108/JABES-05-2023-0113 — EPRGの現代的妥当性と発展途上国子会社にエスノセントリズムが残存する限界を確認。' },
+    ],
+  },
+  {
+    id: 'human-control-value-theory-achievement-emotions-pekrun',
+    discipline: 'human-science',
+    title: '制御価値理論——達成感情の生起を統制評価と価値評価で説明する',
+    statement:
+      '制御価値理論は、学習や仕事などの達成活動およびその成否に伴って生じる感情（達成感情）を、活動や成果への主観的な統制感と主観的な価値評価という二つの認知的評価から説明する理論で、ドイツの教育心理学者ラインハルト・ペクランが2006年に学術誌『Educational Psychology Review』第18巻4号（315～341頁）で体系化した。感情は快・不快、活性化の強弱、対象が活動か成果か（成果はさらに予期的・回顧的に分かれる）という三軸で分類され、楽しさ・希望・誇り・安堵・怒り・不安・恥・絶望感・退屈の9種が代表例とされる。ペクランらは2002年と2011年の論文で、この分類に基づく自己報告尺度「達成感情質問紙（AEQ）」を開発し、統制感と価値評価が高いほど楽しさや希望が、低いと不安や退屈が生じやすいと示した。2017年のペクラン・村山航らの縦断研究（Child Development）は感情と成績が互いに影響し合う相互効果を実証し、2021年のカマチョ＝モルレスらのメタ分析は活動時の楽しさが成績に正、怒りや退屈が負に関連すると確認した。理論はワイナーの帰属理論やラザルスの認知的評価理論を統合する一方、自己報告への依存や文化的一般性の検証不足が限界とされる。中小企業の研修・オンボーディングでは、達成可能な課題設計と意義の説明で統制感と価値評価を高め、不安や退屈による離脱を防ぐことが実務上の含意となる。',
+    keyFigures: 'ラインハルト・ペクラン（2006『The Control-Value Theory of Achievement Emotions』Educational Psychology Review 18(4)／2011 Contemporary Educational PsychologyでAEQ〈達成感情質問紙〉を共同発表）／村山航（2017 Child Developmentでペクランらと縦断的相互効果モデルを共同実証）／対比: バーナード・ワイナー（帰属理論）・リチャード・ラザルス（認知的評価理論／トランザクショナル・ストレス理論）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://link.springer.com/article/10.1007/s10648-006-9029-9', type: 'academic', label: 'Pekrun, R. (2006). The Control-Value Theory of Achievement Emotions: Assumptions, Corollaries, and Implications for Educational Research and Practice. Educational Psychology Review, 18(4), 315–341. — 制御価値理論の体系的提示（統制評価・価値評価による達成感情の分類と発生機序）を確認' },
+      { url: 'https://www.tandfonline.com/doi/abs/10.1207/S15326985EP3702_4', type: 'academic', label: 'Pekrun, R., Goetz, T., Titz, W., & Perry, R. P. (2002). Academic Emotions in Students\' Self-Regulated Learning and Achievement: A Program of Qualitative and Quantitative Research. Educational Psychologist, 37(2), 91–105. — 達成感情の分類（enjoyment, hope, pride, relief, anger, anxiety, shame, hopelessness, boredom）とAEQ尺度開発の起点を確認' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0361476X10000536', type: 'academic', label: 'Pekrun, R., Goetz, T., Frenzel, A. C., Barchfeld, P., & Perry, R. P. (2011). Measuring Emotions in Students\' Learning and Performance: The Achievement Emotions Questionnaire (AEQ). Contemporary Educational Psychology, 36(1), 36–48. — 自己報告尺度AEQの構成・信頼性・妥当性を確認' },
+      { url: 'https://srcd.onlinelibrary.wiley.com/doi/abs/10.1111/cdev.12704', type: 'academic', label: 'Pekrun, R., Lichtenfeld, S., Marsh, H. W., Murayama, K., & Goetz, T. (2017). Achievement Emotions and Academic Performance: Longitudinal Models of Reciprocal Effects. Child Development, 88(5), 1653–1670. — 感情と学業成績の縦断的相互効果（PALMA調査、ドイツの生徒3,425名）を確認。共著者に村山航' },
+      { url: 'https://link.springer.com/article/10.1007/s10648-020-09585-3', type: 'academic', label: 'Camacho-Morles, J., Slemp, G. R., Pekrun, R., Loderer, K., Hou, H., & Oades, L. G. (2021). Activity Achievement Emotions and Academic Performance: A Meta-Analysis. Educational Psychology Review, 33(3), 1051–1095. — 活動系達成感情（楽しさ・怒り・退屈等）と学業成績の関連をメタ分析で確認' },
+    ],
+  },
+  {
+    id: 'bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff',
+    discipline: 'business-law',
+    title: 'パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争',
+    statement:
+      '過失法における「義務」と「近因」の範囲確定を巡る代表判例。ニューヨーク州最上級審Court of Appealsは1928年5月29日、Palsgraf v. Long Island Railroad Co., 248 N.Y. 339, 162 N.E. 99を4対3で判決した。駅員が発車間際の乗客を押した際、抱えていた花火入り包みが落下・爆発し、衝撃でホーム反対側の秤が倒れヘレン・パルスグラフに当たった事案である。多数意見のベンジャミン・カードーゾは義務を予見可能な危険域内の者に限定し原告敗訴とした。ウィリアム・アンドリューズは反対意見で、義務は世界全体に及ぶとし、責任の切断点は論理でなく便宜・公共政策・粗い正義感による「実務上の政治」だと論じた。この対立はRestatement (Second) of Torts §281、および行為を不法とした危険から生じた害に責任を限定するRestatement (Third) §29（2010年）へ継承され、英法のThe Wagon Mound (No.1) [1961] AC 388もRe Polemisの直接因果テストを廃し損害の種類の予見可能性を基準とした。ウィリアム・プロッサーらは「危険域」基準の不確定性と、判決の前提事実自体への疑義を指摘する。中小事業者への含意は、責任は行為が生む危険の範囲に限られる一方、予見可能性は裁判所に広く解されうるため、平時の危険評価の記録が有効という点である。',
+    keyFigures: 'ベンジャミン・カードーゾ（1928 Palsgraf v. Long Island R.R. Co. 多数意見・後に連邦最高裁判事）／ウィリアム・アンドリューズ（1928 同判決 反対意見）／ウィリアム・プロッサー（1953『Palsgraf Revisited』Michigan Law Review 52(1)）／ジョン・ゴールドバーグ＆ベンジャミン・ジプルスキー（2001『The Restatement (Third) and the Place of Duty in Negligence Law』Vanderbilt Law Review 54）／対比: 英法のThe Wagon Mound (No.1) [1961] AC 388（旧Re Polemis直接因果テストを代替）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.nycourts.gov/reporter/archives/palsgraf_lirr.htm', type: 'government', label: 'Palsgraf v. Long Island Railroad Co., 248 N.Y. 339, 162 N.E. 99, New York Court of Appeals (1928) — 判決全文（事実関係・多数意見と反対意見）を確認' },
+      { url: 'https://repository.law.umich.edu/mlr/vol52/iss1/2', type: 'academic', label: 'William L. Prosser, "Palsgraf Revisited," Michigan Law Review, Vol. 52, No. 1 (1953), pp. 1-32（University of Michigan Law School Scholarship Repository）— 判決への後続批判・「危険域」基準の不確定性を確認' },
+      { url: 'https://scholarship.law.vanderbilt.edu/vlr/vol54/iss3/2/', type: 'academic', label: 'John C. P. Goldberg & Benjamin C. Zipursky, "The Restatement (Third) and the Place of Duty in Negligence Law," Vanderbilt Law Review, Vol. 54 (2001), p. 657 — Restatement (Third)における義務論の位置づけを確認' },
+      { url: 'https://en.wikipedia.org/wiki/Palsgraf_v._Long_Island_Railroad_Co.', type: 'reference', label: 'Palsgraf v. Long Island Railroad Co. — Wikipedia — 4対3の評決と判事構成（多数: Cardozo, Pound, Lehman, Kellogg ／ 反対: Andrews, Crane, O\'Brien）を確認' },
+      { url: 'https://en.wikipedia.org/wiki/Overseas_Tankship_(UK)_Ltd_v_Morts_Dock_and_Engineering_Co_Ltd', type: 'reference', label: 'Overseas Tankship (UK) Ltd v Morts Dock and Engineering Co Ltd — Wikipedia — The Wagon Mound (No.1) [1961] AC 388の事実とRe Polemis代替を確認' },
+    ],
+  },
+  {
+    id: 'infosoc-data-as-capital-sadowski',
+    discipline: 'information-sociology',
+    title: '資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論',
+    statement:
+      'ジェイサン・サドウスキー（Jathan Sadowski）が2019年、『Big Data & Society』6巻1号（1-12頁）論文「When data is capital: Datafication, accumulation, and extraction」で提示し、著書『Too Smart』（MIT Press、2020年）で展開した概念。データを「新しい石油」的な単なる商品ではなく、マルクスの資本一般式とブルデューの文化資本論を接合し、自己増殖する価値として機能する資本の一形態と位置づける。データ収集は目先の使用価値のためではなく資本蓄積という永続的循環——データ化・蓄積・抽出・流通——に駆動され、企業はプロファイリングと個人の標的化、システムの最適化、モノの管理・制御、確率のモデリング、AIなどのモノづくり、資産価値の増大という六つの用途のため、同意や対価への配慮なく「データ抽出」を行うと論じる。この視点はズボフの「行動余剰」に基づく監視資本主義論やスルニチェクのプラットフォーム資本主義論と重なりつつ、資本蓄積の論理そのものを前面化する点で独自だが、「資本」は分析概念か比喩かという論争や、データを労働として扱うべきだという対案も提起されている。中小企業にとっては、取引先やプラットフォームがなぜ執拗にデータ提供を求めるのかを理解し、自社データを資産として評価し契約条件を交渉する視点を持つことが実務上の含意となる。',
+    keyFigures: 'ジェイサン・サドウスキー（2019『When data is capital』Big Data & Society／2020『Too Smart』MIT Press）／対比: ショシャナ・ズボフ（2019『The Age of Surveillance Capitalism』）／ニック・スルニチェク（2017『Platform Capitalism』）／マリオン・フルカード＆キーラン・ヒーリー（2017「Seeing like a market」）／対案: アリエタ・イバラら（2018「Should We Treat Data as Labor?」）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/2053951718820549', type: 'academic', label: 'Sadowski, J. (2019). When data is capital: Datafication, accumulation, and extraction. Big Data & Society, 6(1), 1–12. DOI: 10.1177/2053951718820549 — 概念の原典。マルクス／ブルデューの資本論を接合した理論枠組みと、データ抽出の六つの用途、蓄積・抽出・流通の循環を提示' },
+      { url: 'https://direct.mit.edu/books/book/4644/Too-SmartHow-Digital-Capitalism-is-Extracting-Data', type: 'academic', label: 'Sadowski, J. (2020). Too Smart: How Digital Capitalism Is Extracting Data, Controlling Our Lives, and Taking Over the World. MIT Press. — 「資本としてのデータ」論をスマートシティ／ホーム／セルフの3領域に展開した単著' },
+      { url: 'https://www.wiley.com/en-us/Platform+Capitalism-p-9781509504862', type: 'academic', label: 'Srnicek, N. (2017). Platform Capitalism. Polity. — プラットフォームをデータ抽出装置として分析する比較対象としての議論' },
+      { url: 'https://academic.oup.com/ser/article-abstract/15/1/9/2656165', type: 'academic', label: 'Fourcade, M., & Healy, K. (2017). Seeing like a market. Socio-Economic Review, 15(1), 9–29. DOI: 10.1093/ser/mww033 — 個人単位のデータ蓄積と市場的採点・分類を論じる比較対象としての議論' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2Fpandp.20181003', type: 'academic', label: 'Arrieta-Ibarra, I., Goff, L., Jiménez-Hernández, D., Lanier, J., & Weyl, E. G. (2018). Should We Treat Data as Labor? Moving beyond "Free". AEA Papers and Proceedings, 108, 38–42. DOI: 10.1257/pandp.20181003 — 「データ資本」論への対案となる「データ労働」論' },
+    ],
+  },
 ];
 // Stryker restore all

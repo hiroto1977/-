@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 659
+entry_count: 660
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（659件）
+# 学習パス — 学術概念／経営学（660件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -26,8 +26,8 @@ tags:
 - [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]]（接続 22）
 - [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]]（接続 22）
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 22）
-- [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]]（接続 21）
 - [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]]（接続 21）
+- [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]]（接続 21）
 
 ## 第 2 部 — 年代順の展開
 - 1629年: [[mgmt-fmea|故障モード影響解析（FMEA／Failure Mode and Effects Analysis）——起こりうる故障を体系的に洗い出し、深刻度・発生度・検出度で優先順位づける]]
@@ -106,6 +106,7 @@ tags:
 - 1968年: [[mgmt-conways-law|コンウェイの法則（組織構造とシステム設計の同型性）]]
 - 1968年: [[mgmt-job-enrichment|職務拡大と職務充実]]
 - 1969年: [[mgmt-bass-diffusion-model|バスの普及モデル（Bass diffusion model）——新製品の採用を革新係数pと模倣係数qで記述する数理予測モデル]]
+- 1969年: [[mgmt-eprg-orientations-perlmutter|EPRGフレームワーク——本国志向から世界志向へ至る多国籍企業経営者の心的構え]]
 - 1969年: [[mgmt-situational-leadership|状況的リーダーシップ理論]]
 - 1969年: [[mgmt-stp-marketing|STPマーケティング]]
 - 1970年: [[mgmt-bcg-matrix|プロダクト・ポートフォリオ・マネジメント（PPM／BCGマトリクス）]]
@@ -370,6 +371,7 @@ tags:
 - [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]]
 - [[mgmt-corporate-governance-stewardship|コーポレートガバナンスとスチュワードシップ理論——エージェンシー論との対比]]
 - [[mgmt-corporate-political-activity|コーポレート・ポリティカル・アクティビティ（バロン）]]
+- [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]]
 - [[mgmt-corporate-social-performance|企業社会的パフォーマンスモデル]]
 - [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]]
 - [[mgmt-corporate-social-responsibility-csr|企業の社会的責任（CSR）とステークホルダー資本主義の経営論]]
@@ -470,7 +472,6 @@ tags:
 - [[mgmt-logical-incrementalism-quinn|論理的漸進主義——意図的に少しずつ進める戦略形成]]
 - [[mgmt-management-fashion-abrahamson|経営ファッション論——経営技法の流行とその供給・需要の力学]]
 - [[mgmt-managerial-cognition|経営者認知理論]]
-- [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]]
 - [[mgmt-managerial-cognition-walsh|経営者認知論（ウォルシュ）]]
 - [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]]
 - [[mgmt-means-end-chain|手段-目的連鎖モデル（Means-End Chain／ミーンズ・エンド・チェーンとラダリング法）——製品の属性が結果を介して個人の価値観へとつながる階層を解明する]]

@@ -37,10 +37,10 @@ Owen Roberts ／ Asa S. Herzog ／ Joel B. Zweibel ／ Rafael I. Pardo ／ Steve
 - [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]] — 出典を共有
 - [[bizlaw-substantive-consolidation|実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済]] — 出典を共有
 - [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 出典を共有
+- [[bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff|パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争]] — 出典を共有
 - [[bizlaw-battle-of-the-forms|書式の戦い]] — 出典を共有
 - [[bizlaw-lender-liability-doctrine|貸手責任法理（レンダー・ライアビリティ）]] — 出典を共有
 - [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 出典を共有
-- [[bizlaw-daubert-standard|ドーバート基準：専門家証言の許容性判定基準と科学的証拠法の転換]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
