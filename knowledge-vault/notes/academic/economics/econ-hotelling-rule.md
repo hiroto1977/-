@@ -35,12 +35,12 @@ aliases:
 - [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 同じ思想家
 - [[econ-green-paradox-sinn|グリーン・パラドックス——将来の環境規制予告が化石燃料の前倒し採掘を促す]] — 同じ思想家
 - [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]] — 同じ思想家
+- [[econ-shephards-lemma-cost-function-duality|シェパードの補題——費用関数を要素価格で微分すると条件付き要素需要が得られるという双対理論の基本命題]] — 同じ思想家
 - [[econ-moral-hazard|モラルハザード（道徳的危険）]] — 出典を共有
 - [[econ-rbc|実物的景気循環論（RBC）]] — 出典を共有
 - [[econ-fiscal-dominance|財政支配（Fiscal Dominance）]] — 出典を共有
 - [[econ-real-bills-doctrine|真正手形主義（リアルビルズ・ドクトリン）]] — 出典を共有
 - [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 出典を共有
-- [[econ-superstar-economics|スーパースターの経済学]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

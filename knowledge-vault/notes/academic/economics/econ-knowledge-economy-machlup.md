@@ -37,9 +37,9 @@ aliases:
 - [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同じ思想家
 - [[econ-endogenous-growth-romer|内生的成長理論（ローマー）]] — 同じ思想家
 - [[econ-endogenous-growth-romer-knowledge-spillovers|内生的成長論——ローマーの知識スピルオーバーとアイデアの非競合性が生む収穫逓増の成長論]] — 同じ思想家
+- [[econ-kaldor-stylized-facts-growth|カルドアの定型化された事実——長期成長に見られる6つの経験的規則性]] — 同じ思想家
 - [[econ-schumpeterian-growth-aghion-howitt|アギオン＝ハウイットのシュンペーター型内生成長モデル——創造的破壊による成長]] — 同じ思想家
 - [[infosoc-control-revolution-beniger|制御革命（ベニガー）——情報社会の技術的・経済的起源]] — 同じ思想家
-- [[infosoc-creative-class-florida|クリエイティブ・クラス——創造的人材が駆動する都市と経済]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

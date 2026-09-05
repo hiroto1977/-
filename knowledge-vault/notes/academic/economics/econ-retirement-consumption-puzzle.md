@@ -37,7 +37,6 @@ Banks, James （1998 Is There a Retirement-Savings Puzzle?）／Blundell, Richar
 - [[econ-helicopter-money|ヘリコプターマネー]] — 出典を共有
 - [[econ-wage-rigidity|名目賃金の下方硬直性]] — 同分野の近傍
 - [[econ-deaton-paradox|ディートンのパラドックス（消費の過剰平滑性）]] — 同分野の近傍
-- [[econ-corlett-hague-rule|コーレット＝ヘイグの規則——余暇と補完的な財を重く課税する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

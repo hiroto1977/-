@@ -32,15 +32,9 @@ Andrew DeNatale／Prudence B. Abram／David G. Epstein／Jonathan Landers／Lawr
 
 ## 関連概念
 - [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 語彙が近い
-- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
-- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
-- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
-- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
-- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 出典を共有
-- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 出典を共有
-- [[bizlaw-res-ipsa-loquitur|過失の推認法理レス・イプサ・ロクィトゥル（res ipsa loquitur／「事物自体が語る」）——Byrne v Boadle 1863が確立した、状況証拠から過失を推認する枠組み]] — 出典を共有
-- [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — 出典を共有
-- [[bizlaw-best-efforts-obligation|最善努力義務]] — 出典を共有
+- [[bizlaw-disgorgement-remedy|吐出し命令——不正利得の剥奪的救済と抑止機能]] — 同分野の近傍
+- [[bizlaw-insolvency-law-fresh-start-discharge|倒産法と免責制度——新出発主義（フレッシュ・スタート）と債権者保護の均衡]] — 同分野の近傍
+- [[bizlaw-unfair-competition|不正競争防止法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-schema-therapy-young|スキーマ療法（ヤング）と早期不適応スキーマの臨床的応用]] — 語彙が近い
+- [[infosoc-media-materialism-kittler|キットラーのメディア唯物論——技術メディアが我々の状況を規定する]] — 同じ思想家
 - [[human-gestalt-therapy-perls-here-now|ゲシュタルト療法——パールズの「今ここ」の気づきと接触・統合・自己責任の実存的アプローチ]] — 同分野の近傍
 
 ## 関連

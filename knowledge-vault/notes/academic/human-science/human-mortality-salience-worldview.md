@@ -26,7 +26,7 @@ aliases:
 ジェフ・グリーンバーグ ／ シェルドン・ソロモン ／ トム・ピシンスキー ／ アーネスト・ベッカー
 
 ## 出典
-- [Greenberg, J. et al. (1986). Evidence for Terror Management Theory — JPSP](https://doi.org/10.1016/0022-1031(86)90070-3) `学術`
+- [Greenberg, J., Pyszczynski, T., Solomon, S., Rosenblatt, A., Veeder, M., Kirkland, S. & Lyon, D. (1990). Evidence for Terror Management Theory II: The Effects of Mortality Salience on Reactions to Those Who Threaten or Bolster the Cultural Worldview — Journal of Personality and Social Psychology 58(2), 308–318（旧ラベルは 1986 年・JPSP としながら DOI は JESP 1986 の別論文を指していたため差し替え）](https://doi.org/10.1037/0022-3514.58.2.308) `学術`
 - [Wikipedia: Terror management theory — social psychology](https://en.wikipedia.org/wiki/Terror_management_theory) `リファレンス`
 
 ## 関連概念

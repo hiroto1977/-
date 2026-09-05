@@ -39,8 +39,8 @@ aliases:
 - [[econ-mohring-effect|モーリング効果——利用者の増加が公共交通の便益を高める]] — 同じ思想家
 - [[econ-rational-ignorance-downs|合理的無知——情報収集の費用が便益を上回るときの意図的な無知]] — 同じ思想家
 - [[econ-rational-irrationality|合理的非合理性（rational irrationality）——一票が結果を変えないため有権者があえて偏った経済観を抱く公共選択論の概念]] — 同じ思想家
+- [[econ-shephards-lemma-cost-function-duality|シェパードの補題——費用関数を要素価格で微分すると条件付き要素需要が得られるという双対理論の基本命題]] — 同じ思想家
 - [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 出典を共有
-- [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

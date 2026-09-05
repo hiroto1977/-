@@ -33,16 +33,8 @@ aliases:
 - [製造物責任法（平成六年法律第八十五号）e-Gov 法令検索 — 日本の製造物責任法の公布年・法律番号・欠陥要件への転換を裏付け](https://laws.e-gov.go.jp/law/406AC0000000085) `公的`
 
 ## 関連概念
-- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
-- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
-- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
-- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
-- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 出典を共有
-- [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 出典を共有
-- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 出典を共有
-- [[bizlaw-res-ipsa-loquitur|過失の推認法理レス・イプサ・ロクィトゥル（res ipsa loquitur／「事物自体が語る」）——Byrne v Boadle 1863が確立した、状況証拠から過失を推認する枠組み]] — 出典を共有
-- [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — 出典を共有
-- [[bizlaw-best-efforts-obligation|最善努力義務]] — 出典を共有
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

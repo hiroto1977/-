@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2264
+cite_count: 2266
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2264 件**（リファレンス 2264）
+> [!info] 出典ドメイン索引 ・ 引用 **2266 件**（リファレンス 2266）
 
 ## このドメインを出典とする項目
 
@@ -216,6 +216,7 @@ tags:
 - [[bizlaw-liquidated-damages|損害賠償額の予定——違約金条項の有効性と違約罰との区別]] — Wikipedia:Liquidateddamages—DunlopvNewGarage,CavendishvMakdessi,penal…
 - [[bizlaw-liquidated-damages-clause|損害賠償額の予定条項（清算損害賠償条項）]] — Wikipedia:Liquidateddamages—genuinepre-estimate,penaltyclause,UCC2-71…
 - [[bizlaw-lost-volume-seller|逸失販売量売主の法理——転売しても消えない一件分の利益を売主に補填する理論]] — Wikipedia,"Lostvolumeseller"—corroboratesthedoctrine'sdefinitionandit…
+- [[bizlaw-lucy-v-zehmer-objective-theory-of-contract|ルーシー対ゼーマー事件と契約成立の客観説——内心でなく言葉と行為の外形で合意を判断する原則]] — Restatement(Second)ofContracts(AmericanLawInstitute,1981)—§§2,18–21にお…
 - [[bizlaw-macpherson-v-buick-privity|マクファーソン対ビュイック事件——過失責任における契約当事者関係（プリヴィティ）要件の崩壊と製造物責任の出発点]] — Wikipedia,"MacPhersonv.BuickMotorCo."—事件概要、先行判例の系譜、Donoghuev.Stevenso…
 - [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — Wikipedia—PostalAcceptanceRule
 - [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]] — Wikipedia:Postingrule—発信主義の歴史と各国法制における適用の概説
@@ -685,6 +686,7 @@ tags:
 - [[econ-k-percent-rule|フリードマンのk%ルール（貨幣供給量固定成長率準則）]] — Wikipedia—Friedman'sk-percentrule（k%ルールの定義・批判・テイラー・ルールへの移行）
 - [[econ-kalai-smorodinsky|カライ＝スモロディンスキー解——単調性にもとづく交渉の解]] — Wikipedia:Kalai–Smorodinskybargainingsolution—monotonicity,idealpoint…
 - [[econ-kaldor-nonlinear-cycle|カルドアの非線形景気循環モデル——投資と貯蓄の非線形性が生む内生的循環]] — Wikipedia:Businesscycle—Kaldornonlinearmodel,endogenouscycles,limitcy…
+- [[econ-kaldor-stylized-facts-growth|カルドアの定型化された事実——長期成長に見られる6つの経験的規則性]] — "Kaldor'sfacts."Wikipedia—6事実の一覧、および長期平均としての性質の概説の確認
 - [[econ-kaldor-verdoorn|ヴェルドゥーンの法則（カルドア＝ヴェルドゥーン法則）]] — Wikipedia—Verdoorn'slaw
 - [[econ-kalecki-profit|カレツキの利潤理論]] — Wikipedia—MichałKalecki
 - [[econ-keynesian-beauty-contest|ケインズの美人投票]] — Wikipedia:Keynesianbeautycontest（概念・新聞コンテストの比喩）

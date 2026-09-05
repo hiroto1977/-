@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Arrow, Chenery, Minhas & Solow (1961) Capital-Labor Substitution and Economic Efficiency — Review of Economics and Statistics](https://doi.org/10.2307/1927286) `学術`
-- [Karabarbounis & Neiman (2014) The Global Decline of the Labor Share — QJE](https://doi.org/10.1257/aer.104.5.218) `学術`
+- [Karabarbounis, L. & Neiman, B. (2014) The Global Decline of the Labor Share — Quarterly Journal of Economics 129(1), 61–103（誤った AEA DOI 10.1257/aer.104.5.218 を OUP 論文ページへ差し替え）](https://academic.oup.com/qje/article-abstract/129/1/61/1899422) `学術`
 - [Wikipedia: Elasticity of substitution — 代替の弾力性の定義と拡張の概説](https://en.wikipedia.org/wiki/Elasticity_of_substitution) `リファレンス`
 
 ## 関連概念

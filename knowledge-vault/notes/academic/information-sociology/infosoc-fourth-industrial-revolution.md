@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-semantic-web|セマンティック・ウェブ]] — 同分野の近傍
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-techno-orientalism-morley|テクノ・オリエンタリズム——東アジアの技術的他者化と西洋の想像力]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

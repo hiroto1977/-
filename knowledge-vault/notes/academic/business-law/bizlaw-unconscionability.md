@@ -38,8 +38,6 @@ Lord Hardwicke（Earl of Chesterfield v Janssen (1751)）／J. Skelly Wright（W
 - [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 同じ思想家
 - [[bizlaw-shelter-rule-negotiable-instruments|シェルター・ルール（Shelter Rule／遮蔽の法理）]] — 同じ思想家
 - [[bizlaw-statute-of-frauds|詐欺防止法]] — 同じ思想家
-- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
-- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

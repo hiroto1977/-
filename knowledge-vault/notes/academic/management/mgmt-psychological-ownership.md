@@ -34,6 +34,7 @@ aliases:
 ## 関連概念
 - [[mgmt-psychological-ownership-pierce|心理的所有権理論（ピアース＆コストバ）]] — 語彙が近い
 - [[econ-time-preference|時間選好]] — 出典を共有
+- [[human-identity-status-paradigm-marcia|マーシャの自我同一性地位——探求と関与の有無で青年期のアイデンティティ形成を4つの地位に分ける]] — 出典を共有
 - [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 出典を共有
 - [[bizlaw-piercing-corporate-veil-reverse|法人格否認の法理（逆方向）]] — 出典を共有
 - [[mgmt-heavyweight-product-manager-clark-fujimoto|重量級プロダクト・マネジャー——組織内外の統合を一身に担い製品コンセプトを守る開発責任者]] — 出典を共有

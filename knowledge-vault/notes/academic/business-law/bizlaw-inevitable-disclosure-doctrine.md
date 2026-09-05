@@ -33,16 +33,14 @@ aliases:
 - [Rowe, Elizabeth A. (2005). When Trade Secrets Become Shackles: Fairness and the Inevitable Disclosure Doctrine. 7 Tulane Journal of Technology & Intellectual Property 167 (University of Florida Levin College of Law repository) — 法理の公正性への学術的批判（事後的な競業避止化という問題提起）を確認。](https://scholarship.law.ufl.edu/facultypub/93/) `学術`
 
 ## 関連概念
-- [[bizlaw-assumption-of-risk|危険の引受——原告が任意に引き受けた既知の危険につき被告の不法行為責任を否定するコモンロー上の抗弁]] — 出典を共有
-- [[bizlaw-lender-liability-doctrine|貸手責任法理（レンダー・ライアビリティ）]] — 出典を共有
-- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
-- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
-- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
 - [[bizlaw-cy-pres-doctrine|サイプレ法理（Cy Pres Doctrine）]] — 出典を共有
-- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
-- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 出典を共有
-- [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 出典を共有
-- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 出典を共有
+- [[bizlaw-substantial-performance-jacob|実質的履行の法理——軽微な不履行による契約解除の制限]] — 出典を共有
+- [[bizlaw-assumption-of-risk|危険の引受——原告が任意に引き受けた既知の危険につき被告の不法行為責任を否定するコモンロー上の抗弁]] — 出典を共有
+- [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 出典を共有
+- [[bizlaw-lender-liability-doctrine|貸手責任法理（レンダー・ライアビリティ）]] — 出典を共有
+- [[bizlaw-lost-volume-seller|逸失販売量売主の法理——転売しても消えない一件分の利益を売主に補填する理論]] — 出典を共有
+- [[bizlaw-covenant-not-to-compete|競業避止契約——営業秘密・顧客関係の保護と職業選択の自由の調整]] — 同分野の近傍
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

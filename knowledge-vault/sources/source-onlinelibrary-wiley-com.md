@@ -2,7 +2,7 @@
 title: "onlinelibrary.wiley.com"
 type: source-domain
 host: "onlinelibrary.wiley.com"
-cite_count: 100
+cite_count: 101
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # onlinelibrary.wiley.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **100 件**（学術 85 ・ リファレンス 15）
+> [!info] 出典ドメイン索引 ・ 引用 **101 件**（学術 86 ・ リファレンス 15）
 
 ## このドメインを出典とする項目
 
@@ -57,6 +57,7 @@ tags:
 - [[infosoc-microcelebrity|マイクロセレブリティ]] — Senft,T.M."MicrocelebrityandtheBrandedSelf",ACompaniontoNewMediaDynam…
 - [[infosoc-network-gatekeeping|ネットワーク・ゲートキーピング理論（Network Gatekeeping Theory）]] — Barzilai-Nahon(2008)TowardaTheoryofNetworkGatekeeping—JASIST(Wiley)
 - [[infosoc-networked-protest-tufekci|トゥフェックチのネットワーク化された抗議——能力を伴わないシグナルの拡大と戦術的凍結]] — Tufekci,Z.,&Wilson,C.(2012).SocialMediaandtheDecisiontoParticipateinP…
+- [[infosoc-open-source-software-movement|オープンソースソフトウェア運動——フリーソフトウェア倫理・バザール開発モデルと情報コモンズ]] — Lerner,J.&Tirole,J.(2002)SomeSimpleEconomicsofOpenSource—JournalofInd…
 - [[infosoc-presumed-media-influence-gunther|推定されたメディア影響の影響（IPMI: Influence of Presumed Media Influence）——他者への影響の推定を介してメディアが間接的に作用するモデル]] — Tal-Or,N.InfluenceofPresumedMediaInfluence.TheInternationalEncycloped…
 - [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — 査読誌SociologyofHealth&Illness書評（Petrakaki,2017）—ラプトン2016年著作
 - [[infosoc-risk-society|リスク社会（ベック）]] — Blok,A."RiskSociety",TheWiley-BlackwellEncyclopediaofSocialTheory（査読的…

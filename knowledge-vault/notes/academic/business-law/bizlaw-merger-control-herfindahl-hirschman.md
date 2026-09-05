@@ -38,6 +38,7 @@ aliases:
 - [[econ-herfindahl-hirschman-index|ハーフィンダール・ハーシュマン指数（HHI）]] — 出典を共有
 - [[bizlaw-lien-priority-rule|担保権優先順位の法則]] — 出典を共有
 - [[bizlaw-corporate-restructuring-m-and-a|M&A法と企業再構築——株主保護・競争法審査・情報開示義務の国際比較]] — 同分野の近傍
+- [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

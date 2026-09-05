@@ -215,6 +215,45 @@ const JOURNAL_RULES = [
   { pubs: ['annualreviews'], re: /\bAnnual Reviews? of \w/i },
   { pubs: ['pnas'], re: /\bPNAS\b|Proceedings of the National Academy of Sciences/i },
   { pubs: ['cup'], re: /\bBehavioral and Brain Sciences\b/i },
+  // ── 誌名の略称 (2026-09-05) ──
+  // ラベルの多くは掲載誌を略称で書く ("— AER" / "QJE 129(1)")。正式名しか見て
+  // いなかったため、Karabarbounis & Neiman 2014 (QJE) に AEA の DOI、Krueger 1974
+  // (AER) に Chicago の DOI、Matějka & McKay 2015 (AER) に RES の DOI が付いたまま
+  // 3 件が素通りしていた (実測、いずれも一次照合して差し替え済み)。
+  // 略称は他誌・他語と衝突しないものだけ採用する: JIE は Journal of International
+  // Economics / Journal of Industrial Economics で衝突、JEP は Journal of Economic
+  // Psychology と衝突、RES / ASQ / JAP は一般語や別団体と衝突するので採らない。
+  // DOI 文字列中の小文字 (10.1257/aer.…) に当たらないよう、略称は大文字小文字を区別する。
+  { pubs: ['aea'], re: /\bAER\b/ },
+  { pubs: ['oup', 'mitpress'], re: /\bQJE\b/ },
+  { pubs: ['uchicago'], re: /\bJPE\b/ },
+  { pubs: ['oup', 'wiley'], re: /\bREStud\b/ },
+  { pubs: ['mitpress'], re: /\bREStat\b/ },
+  { pubs: ['aom'], re: /\b(?:AMJ|AMR)\b/ },
+  { pubs: ['wiley'], re: /\bSMJ\b/ },
+  { pubs: ['springer'], re: /\bJIBS\b/ },
+  { pubs: ['apa'], re: /\bJPSP\b/ },
+  // ── 版元が動いていない主要誌の正式名 (2026-09-05) ──
+  // Elsevier は買収した Academic Press / North-Holland 時代の論文も 10.1016 (10.1006)
+  // で遡及採番しているので単一グループで足りる。JSTOR 経由の旧論文は中立扱い。
+  { pubs: ['mitpress'], re: /\bReview of Economics and Statistics\b/i },
+  { pubs: ['springer'], re: /\bJournal of International Business Studies\b/i },
+  {
+    pubs: ['elsevier'],
+    re: /\b(?:Journal of International Economics|Journal of Economic Theory|Journal of Monetary Economics|Journal of Financial Economics|Journal of Public Economics|Journal of Econometrics|Research Policy|Journal of Economic Behavior (?:&|and) Organization|Games and Economic Behavior)\b/i,
+  },
+  {
+    pubs: ['wiley'],
+    re: /\b(?:RAND Journal of Economics|Journal of Industrial Economics|International Economic Review|Personnel Psychology|Journal of Organizational Behavior|Child Development|Journal of Economic Surveys)\b/i,
+  },
+  { pubs: ['uchicago'], re: /\bJournal of La(?:bor|w and|w &) Economics\b/i },
+  { pubs: ['oup'], re: /\bReview of Financial Studies\b/i },
+  {
+    pubs: ['sage'],
+    re: /\b(?:Big Data & Society|New Media & Society|Media, Culture & Society|Theory, Culture & Society|Social Studies of Science|Journal of Management Inquiry|Group & Organization Management)\b/i,
+  },
+  // Organization Studies は 2001 年まで de Gruyter 刊、以降 SAGE。
+  { pubs: ['sage', 'degruyter'], re: /\bOrganization Studies\b/i },
 ];
 
 /**

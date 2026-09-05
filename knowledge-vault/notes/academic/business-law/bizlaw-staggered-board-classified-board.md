@@ -38,11 +38,11 @@ aliases:
 - [[bizlaw-shareholder-activism-hedge|ヘッジファンド株主アクティビズムと会社法]] — 同じ思想家
 - [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同じ思想家
 - [[econ-liquidity-premium-keynes|流動性プレミアム——資産の換金容易性に対する利回り上乗せ]] — 同じ思想家
-- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
-- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
-- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
-- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
 - [[bizlaw-material-adverse-change-mac|マテリアル・アドバース・チェンジ条項（MAC条項）]] — 出典を共有
+- [[bizlaw-corporate-opportunity-doctrine|会社機会の流用禁止原則]] — 出典を共有
+- [[bizlaw-standstill-agreement|スタンドスティル契約]] — 出典を共有
+- [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 出典を共有
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

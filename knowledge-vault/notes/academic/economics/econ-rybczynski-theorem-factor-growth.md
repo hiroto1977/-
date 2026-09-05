@@ -27,18 +27,17 @@ aliases:
 
 ## 出典
 - [Rybczynski, T. M. (1955) "Factor Endowment and Relative Commodity Prices" — Economica](https://doi.org/10.1111/j.1468-0335.1955.tb00530.x) `学術`
-- [Davis, D. R. & Weinstein, D. E. (2003) "Market Access, Economic Geography and Comparative Advantage" — JIE](https://doi.org/10.1257/aer.91.5.1423) `学術`
+- [Davis, D. R., Weinstein, D. E., Bradford, S. C. & Shimpo, K. (1997) "Using International and Japanese Regional Data to Determine When the Factor Abundance Theory of Trade Works" — American Economic Review 87(3), 421–446（著者ホスト PDF。旧ラベルは 2003 JIE 論文名に 2001 AER 論文の DOI 10.1257/aer.91.5.1423 を付けており、本文が引く日本の地域データ研究とも別物だったため差し替え）](https://deweinst.github.io/weinstein_website/FactorAbundanceTheory.pdf) `学術`
 - [Wikipedia: Rybczynski theorem — 要素増加と産出量変化の定理](https://en.wikipedia.org/wiki/Rybczynski_theorem) `リファレンス`
 
 ## 関連概念
-- [[econ-rybczynski|リブチンスキー定理]] — 語彙が近い
 - [[econ-heckscher-ohlin-vanek-factor-content|ヘクシャー＝オリーン＝ヴァネク定理——要素賦存と貿易パターン]] — 語彙が近い
+- [[econ-rybczynski|リブチンスキー定理]] — 語彙が近い
 - [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]] — 同じ思想家
 - [[econ-specific-factors-model-jones|特殊要素モデル——部門間要素移動の不完全性と所得分配]] — 同じ思想家
 - [[econ-stolper-samuelson-trade-wages|ストルパー＝サミュエルソン定理——貿易自由化と要素価格の変動]] — 同じ思想家
 - [[econ-lerner-symmetry-theorem-trade|ラーナーの対称性定理——輸入関税と輸出税の等価性]] — 同じ思想家
 - [[econ-vanek-chain-factor-content|ヴァネクの要素含有量定理——多数財・多数要素への貿易理論の拡張]] — 同じ思想家
-- [[econ-envelope-theorem-milgrom-segal|包絡線定理——最適化問題のパラメータ感応度と経済学的応用]] — 同じ思想家
 - [[econ-bowen-leamer-sveikauskas-hov|HOV定理の実証検証——要素含有量貿易理論の計量的テスト]] — 同分野の近傍
 - [[econ-petty-clark-law|ペティ＝クラークの法則]] — 同分野の近傍
 

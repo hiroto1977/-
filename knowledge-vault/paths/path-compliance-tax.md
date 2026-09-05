@@ -15,8 +15,8 @@ tags:
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[tax-basic-deduction|所得税の基礎控除（令和7年改正反映）]]（接続 29）
 - [[tax-amended-return|修正申告・期限後申告と加算税]]（接続 28）
+- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]]（接続 25）
 - [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]]（接続 24）
-- [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]]（接続 24）
 - [[tax-special-depreciation|特別償却（租税特別措置法）]]（接続 24）
 - [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]]（接続 22）
 - [[tax-business-tax-pro-forma|法人事業税の外形標準課税]]（接続 20）

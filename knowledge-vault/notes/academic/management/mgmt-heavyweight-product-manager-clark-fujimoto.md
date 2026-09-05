@@ -34,6 +34,7 @@ aliases:
 
 ## 関連概念
 - [[econ-time-preference|時間選好]] — 出典を共有
+- [[human-identity-status-paradigm-marcia|マーシャの自我同一性地位——探求と関与の有無で青年期のアイデンティティ形成を4つの地位に分ける]] — 出典を共有
 - [[infosoc-mediatization|メディア化（メディアティゼーション）]] — 出典を共有
 - [[infosoc-second-order-cybernetics|セカンドオーダー・サイバネティクス（二次制御理論）]] — 出典を共有
 - [[mgmt-psychological-ownership|心理的所有感]] — 出典を共有
@@ -42,7 +43,6 @@ aliases:
 - [[mgmt-appreciative-inquiry|アプリシエイティブ・インクワイアリー（AI）]] — 出典を共有
 - [[mgmt-eprg-orientations-perlmutter|EPRGフレームワーク——本国志向から世界志向へ至る多国籍企業経営者の心的構え]] — 出典を共有
 - [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 出典を共有
-- [[mgmt-organizational-unlearning|組織的アンラーニング]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

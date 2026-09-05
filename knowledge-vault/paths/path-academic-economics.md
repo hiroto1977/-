@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 954
+entry_count: 956
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（954件）
+# 学習パス — 学術概念／経済学（956件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 80）
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 81）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 49）
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 43）
 - [[econ-agglomeration-economies|集積の経済]]（接続 43）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 42）
 - [[econ-liquidity-trap|流動性のわな]]（接続 42）
-- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 40）
+- [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 41）
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 39）
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 37）
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 37）
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]]（接続 34）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 34）
+- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]]（接続 33）
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 32）
-- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]]（接続 32）
 
 ## 第 2 部 — 年代順の展開
 - 1553年: [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]]
@@ -130,6 +130,7 @@ tags:
 - 1931年: [[econ-gibrat-law|ジブラの法則]]
 - 1931年: [[econ-hotelling-rule|ホテリングのルール（枯渇性資源）]]
 - 1931年: [[econ-production-fragmentation|生産のフラグメンテーション理論（ジョーンズ＝キエルジャコウスキー）]]
+- 1932年: [[econ-shephards-lemma-cost-function-duality|シェパードの補題——費用関数を要素価格で微分すると条件付き要素需要が得られるという双対理論の基本命題]]
 - 1933年: [[econ-debt-deflation|負債デフレ（債務デフレ理論）]]
 - 1933年: [[econ-deposit-insurance|預金保険制度（ペイオフ）]]
 - 1933年: [[econ-monopolistic-competition|独占的競争]]
@@ -191,6 +192,7 @@ tags:
 - 1955年: [[econ-oaxaca-blinder-decomposition|オアハカ＝ブラインダー分解——賃金格差を「属性の差」と「評価の差」に切り分ける]]
 - 1955年: [[econ-rybczynski|リブチンスキー定理]]
 - 1955年: [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]]
+- 1956年: [[econ-kaldor-stylized-facts-growth|カルドアの定型化された事実——長期成長に見られる6つの経験的規則性]]
 - 1956年: [[econ-peak-oil|ピークオイル（Peak Oil）とハバート曲線]]
 - 1957年: [[econ-battle-of-sexes|両性の闘い（battle of the sexes）]]
 - 1957年: [[econ-bop-stages|国際収支の発展段階説]]

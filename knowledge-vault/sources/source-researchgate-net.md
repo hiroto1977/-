@@ -2,7 +2,7 @@
 title: "researchgate.net"
 type: source-domain
 host: "researchgate.net"
-cite_count: 51
+cite_count: 52
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # researchgate.net
 
-> [!info] 出典ドメイン索引 ・ 引用 **51 件**（学術 44 ・ リファレンス 7）
+> [!info] 出典ドメイン索引 ・ 引用 **52 件**（学術 45 ・ リファレンス 7）
 
 ## このドメインを出典とする項目
 
@@ -25,6 +25,7 @@ tags:
 - [[human-cognitive-appraisal|認知的評価理論（感情）]] — AppraisalTheoryofEmotion（学術レビュー：アーノルド1960／一次・二次評価）
 - [[human-componential-theory-creativity-amabile|創造性の構成要素理論（アマビル）——領域スキル・創造的思考・内発的動機づけと社会環境が交わって生まれる創造性]] — Eisenberger,R.,&Cameron,J.(1996).DetrimentalEffectsofReward:Realityor…
 - [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — Loewenstein1994ThePsychologyofCuriosity:AReviewandReinterpretation,Ps…
+- [[human-identity-status-paradigm-marcia|マーシャの自我同一性地位——探求と関与の有無で青年期のアイデンティティ形成を4つの地位に分ける]] — Marcia,J.E.(1980).IdentityinAdolescence.InJ.Adelson(Ed.),HandbookofAd…
 - [[human-ideomotor|観念運動効果（Ideomotor Effect）]] — Stock&Stock(2004)AShortHistoryofIdeo-MotorAction—ResearchGate
 - [[human-implicit-association-test-greenwald|潜在的連合テスト（IAT）]] — Greenwald,Nosek&Banaji(2003)UnderstandingandUsingtheIAT:I.AnImprovedS…
 - [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — Christopheetal.(1997)ReflectionsonPhonologicalBootstrapping—Language&…

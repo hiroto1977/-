@@ -39,10 +39,8 @@ Leo E. Strine Jr. ／ Ronald J. Gilson ／ Alan Schwartz
 - [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 同じ思想家
 - [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — 同じ思想家
 - [[bizlaw-standstill-agreement|スタンドスティル契約]] — 同じ思想家
-- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
-- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
-- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
-- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
+- [[bizlaw-material-adverse-change-mac|マテリアル・アドバース・チェンジ条項（MAC条項）]] — 同分野の近傍
+- [[bizlaw-assignment-contract|債権譲渡——契約上の権利を第三者に移転する仕組み]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

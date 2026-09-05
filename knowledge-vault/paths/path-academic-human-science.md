@@ -2,24 +2,24 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 645
+entry_count: 646
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（645件）
+# 学習パス — 学術概念／人間科学（646件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 145）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 146）
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 103）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 31）
 - [[human-attribution-theory|帰属理論]]（接続 29）
+- [[human-bias-blind-spot|バイアスの盲点]]（接続 29）
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 28）
-- [[human-bias-blind-spot|バイアスの盲点]]（接続 28）
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 27）
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 26）
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 26）
@@ -120,6 +120,7 @@ tags:
 - 1966年: [[human-defensive-attribution-hypothesis|防衛的帰属仮説（defensive attribution hypothesis）——事故の責任帰属が自己防衛動機で歪むとする社会心理学の説]]
 - 1966年: [[human-foot-in-the-door|フット・イン・ザ・ドア・テクニック（段階的要請法）]]
 - 1966年: [[human-habituation|馴化（habituation）——単一刺激の反復による反応減弱と非連合学習]]
+- 1966年: [[human-identity-status-paradigm-marcia|マーシャの自我同一性地位——探求と関与の有無で青年期のアイデンティティ形成を4つの地位に分ける]]
 - 1966年: [[human-locus-of-control|統制の所在（ローカス・オブ・コントロール）]]
 - 1966年: [[human-pratfall-effect|失態効果（プラットフォール効果）]]
 - 1967年: [[human-illusory-correlation|錯誤相関]]

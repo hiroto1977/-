@@ -29,7 +29,7 @@ aliases:
 - [GNU Project (1996) What is Free Software? — Free Software Foundation](https://www.gnu.org/philosophy/free-sw.html) `リファレンス`
 - [Raymond, E.S. (1999) The Cathedral and the Bazaar — O'Reilly Media](https://www.catb.org/~esr/writings/cathedral-bazaar/) `学術`
 - [Wikipedia: オープンソース — フリーソフトウェア運動とバザール開発の解説](https://ja.wikipedia.org/wiki/%E3%82%AA%E3%83%BC%E3%83%97%E3%83%B3%E3%82%BD%E3%83%BC%E3%82%B9) `リファレンス`
-- [Lerner & Tirole (2002) Some Simple Economics of Open Source — Journal of Industrial Economics](https://doi.org/10.1162/rest.89.2.209) `学術`
+- [Lerner, J. & Tirole, J. (2002) Some Simple Economics of Open Source — Journal of Industrial Economics 50(2), 197–234（旧 DOI 10.1162/rest.89.2.209 は REStat 2007 の別論文を指していたため差し替え）](https://onlinelibrary.wiley.com/doi/10.1111/1467-6451.00174) `学術`
 - [Benkler (2006) The Wealth of Networks: How Social Production Transforms Markets and Freedom — Yale University Press](https://doi.org/10.2307/j.ctt1njknw) `学術`
 - [Wikipedia: Open-source-software movement — OSS運動の歴史と思想の概説](https://en.wikipedia.org/wiki/Open-source-software_movement) `リファレンス`
 

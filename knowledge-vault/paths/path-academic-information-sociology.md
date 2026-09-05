@@ -2,18 +2,18 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 612
+entry_count: 613
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（612件）
+# 学習パス — 学術概念／情報社会学（613件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 79）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 78）
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 47）
 - [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]]（接続 30）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
@@ -26,12 +26,13 @@ tags:
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 21）
 - [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]]（接続 21）
 - [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]]（接続 20）
+- [[infosoc-datafication|データ化（データ化現象）]]（接続 20）
 - [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]]（接続 20）
-- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
 - 1791年: [[infosoc-panopticon|パノプティコンと規律権力]]
+- 1800年: [[infosoc-media-materialism-kittler|キットラーのメディア唯物論——技術メディアが我々の状況を規定する]]
 - 1877年: [[infosoc-collective-memory|集合的記憶]]
 - 1886年: [[infosoc-cultural-lag|カルチュラル・ラグ（文化遅滞）]]
 - 1886年: [[infosoc-polanyi-great-transformation|ポランニーの大転換（市場の埋め込みと脱埋め込み）]]
@@ -240,7 +241,6 @@ tags:
 - 2012年: [[infosoc-polymedia|ポリメディア（Polymedia）]]
 - 2012年: [[infosoc-social-bots|ソーシャルボット]]
 - 2013年: [[infosoc-algorithmic-governmentality|アルゴリズム的統治性（Algorithmic Governmentality）]]
-- 2013年: [[infosoc-datafication|データ化（データ化現象）]]
 - 2013年: [[infosoc-differential-susceptibility-media-effects|メディア効果の分化感受性モデル（DSMM／Differential Susceptibility to the Media Effects Model）——同じ内容が人により違う効果を生む理由を説明する統合枠組み]]
 - 2013年: [[infosoc-digital-disconnect|デジタル・ディスコネクト（Digital Disconnect）]]
 - 2013年: [[infosoc-hybrid-media-system|ハイブリッド・メディア・システム]]
@@ -444,6 +444,7 @@ tags:
 - [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]]
 - [[infosoc-information-avoidance-theory|情報回避理論]]
 - [[infosoc-information-behavior-wilson-model|情報行動モデル——ウィルソンの情報ニーズ・探索・利用の統合的枠組み]]
+- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]]
 - [[infosoc-information-commons-theory|情報コモンズ理論]]
 - [[infosoc-information-disorder-taxonomy|情報障害の分類体系（ワードル＆デラクシャン）]]
 - [[infosoc-information-ecology-nardi|情報エコロジー——ナルディとオデイの技術・人間・実践の相互作用分析]]

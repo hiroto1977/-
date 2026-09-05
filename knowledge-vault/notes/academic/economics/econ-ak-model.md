@@ -38,9 +38,9 @@ AKモデルとは、生産関数を Y＝AK（A は正の定数、K は物的・�
 - [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]] — 同じ思想家
 - [[econ-goodharts-law-lucas-critique|グッドハートの法則とルーカス批判——政策目標化された統計的関係の崩壊]] — 同じ思想家
 - [[econ-goodharts-law-monetary|グッドハートの法則——指標が目標となるとき有効性を失う統計的規則性]] — 同じ思想家
+- [[econ-kaldor-stylized-facts-growth|カルドアの定型化された事実——長期成長に見られる6つの経験的規則性]] — 同じ思想家
 - [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]] — 同じ思想家
 - [[econ-lucas-islands-monetary-misperception|ルーカスの島モデル（Lucas islands model／貨幣的誤認・信号抽出問題）——局所価格しか見えない合理的主体の誤認から右上がりの総供給曲線を導く]] — 同じ思想家
-- [[econ-natural-rate-friedman-phelps|自然失業率仮説——インフレと失業の長期トレードオフの不在]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

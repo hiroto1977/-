@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 語彙が近い
 - [[econ-public-goods|公共財（非競合性・非排除性）]] — 語彙が近い
-- [[econ-baumol-oates-standards-charges|ボーモル＝オーツの標準・価格アプローチ——政治的に定めた環境基準を一律の排出課徴金で費用最小に達成する]] — 同分野の近傍
 - [[econ-cap-and-trade-dales|排出量取引——総量規制と取引可能な排出権による費用最小の汚染削減]] — 同分野の近傍
 - [[econ-merit-goods|メリット財（価値財）]] — 同分野の近傍
 - [[econ-entrepreneurial-state|起業家国家（マッツカートの公共イノベーション論）]] — 同分野の近傍

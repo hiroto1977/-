@@ -26,7 +26,7 @@ aliases:
 アーサー・ラッファー ／ マーティン・フェルドシュタイン ／ エマニュエル・サエズ ／ ロバート・マンデル
 
 ## 出典
-- [Fullerton, D. (1982) On the Possibility of an Inverse Relationship between Tax Rates and Government Revenues — Journal of Public Economics](https://doi.org/10.1257/jep.5.1.211) `学術`
+- [Fullerton, D. (1982) On the Possibility of an Inverse Relationship between Tax Rates and Government Revenues — Journal of Public Economics 19(1), 3–22（旧 DOI 10.1257/jep.5.1.211 は JEP 1991 の別論文を指していたため差し替え）](https://www.sciencedirect.com/science/article/abs/pii/0047272782900494) `学術`
 - [Wikipedia: Laffer curve — supply-side economics, optimal tax rate, Reagan tax cuts](https://en.wikipedia.org/wiki/Laffer_curve) `リファレンス`
 
 ## 関連概念

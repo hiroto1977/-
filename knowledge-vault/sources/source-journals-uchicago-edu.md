@@ -2,7 +2,7 @@
 title: "journals.uchicago.edu"
 type: source-domain
 host: "journals.uchicago.edu"
-cite_count: 40
+cite_count: 41
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.uchicago.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **40 件**（学術 40）
+> [!info] 出典ドメイン索引 ・ 引用 **41 件**（学術 41）
 
 ## このドメインを出典とする項目
 
@@ -33,9 +33,10 @@ tags:
 - [[econ-oi-quasi-fixed-labor|労働の準固定的生産要素（Oi の quasi-fixed factor）——雇用・訓練の固定費が労働を「半固定」にする]] — Oi,W.Y.(1962)'LaborasaQuasi-FixedFactor',JournalofPoliticalEconomy70(…
 - [[econ-peltzman-effect-risk-compensation|ペルツマン効果（リスク補償仮説）——安全規制が誘発する危険行動による便益の相殺]] — Peltzman,S.(1975)"TheEffectsofAutomobileSafetyRegulation,"JournalofPo…
 - [[econ-policy-ineffectiveness|政策無効命題]] — Sargent&Wallace,"RationalExpectations,theOptimalMonetaryInstrument,an…
-- [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — Samuelson,P.A.(1954)ThePureTheoryofPublicExpenditure—ReviewofEconomic…
 - [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — RobertJ.Barro,"AreGovernmentBondsNetWealth?",JournalofPoliticalEconom…
 - [[econ-sen-paradox|センのリベラル・パラドックス（パレート派リベラルの不可能性）]] — AmartyaSen,"TheImpossibilityofaParetianLiberal,"JournalofPoliticalEco…
+- [[econ-shephards-lemma-cost-function-duality|シェパードの補題——費用関数を要素価格で微分すると条件付き要素需要が得られるという双対理論の基本命題]] — Diewert,W.E.(1971)."AnApplicationoftheShephardDualityTheorem:AGeneral…
+- [[econ-shephards-lemma-cost-function-duality|シェパードの補題——費用関数を要素価格で微分すると条件付き要素需要が得られるという双対理論の基本命題]] — Hotelling,H.(1932)."Edgeworth'sTaxationParadoxandtheNatureofDemandand…
 - [[econ-sunspot-equilibrium|サンスポット均衡]] — Cass&Shell,"DoSunspotsMatter?",JournalofPoliticalEconomy91(2),1983
 - [[econ-task-based-automation-acemoglu-restrepo|アセモグル＝レストレポのタスクベース自動化モデル——置換効果・生産性効果・復元効果の綱引き]] — Acemoglu,D.andRestrepo,P.(2020).RobotsandJobs:EvidencefromUSLaborMark…
 - [[econ-time-inconsistency|動学的不整合（時間的非整合性）]] — JournalofPoliticalEconomy(1977)—RulesRatherthanDiscretion（一次文献）

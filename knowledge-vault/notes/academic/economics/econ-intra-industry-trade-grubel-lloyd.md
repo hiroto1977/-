@@ -31,7 +31,6 @@ aliases:
 - [Wikipedia: Intra-industry trade — 産業内貿易の理論と測定](https://en.wikipedia.org/wiki/Intra-industry_trade) `リファレンス`
 
 ## 関連概念
-- [[econ-factor-price-equalization|要素価格均等化定理]] — 語彙が近い
 - [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
 - [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
 - [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[econ-comparative-advantage-ricardian|比較優位論と国際分業の理論的基礎——リカードからヘクシャー＝オリーンまで]] — 同じ思想家
 - [[econ-comparative-advantage-ricardo-modern|比較優位と現代貿易理論——リカードからヘクシャー＝オリーンへの国際分業の基礎]] — 同じ思想家
 - [[econ-currency-crisis-first-generation|通貨危機の第一世代・第二世代・第三世代モデル——国際資本移動と新興国脆弱性]] — 同じ思想家
+- [[econ-currency-crisis-speculative-attack-krugman|通貨危機の世代別モデル——クルーグマン・第二世代・第三世代の投機的攻撃理論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

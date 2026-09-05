@@ -39,7 +39,7 @@ W・J・コーレット ／ D・C・ヘイグ ／ フランク・ラムゼイ �
 - [[econ-social-discount-rate|社会的割引率——将来の費用と便益を現在価値に換算する公共の割引率]] — 同じ思想家
 - [[econ-value-added-tax-theory|付加価値税の理論と最適間接課税]] — 同じ思想家
 - [[econ-balanced-budget-multiplier|均衡予算乗数]] — 同分野の近傍
-- [[econ-retirement-consumption-puzzle|退職消費パズル（Retirement-Consumption Puzzle）]] — 同分野の近傍
+- [[econ-kaldor-stylized-facts-growth|カルドアの定型化された事実——長期成長に見られる6つの経験的規則性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

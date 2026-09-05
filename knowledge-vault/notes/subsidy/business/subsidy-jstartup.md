@@ -39,6 +39,7 @@ national
 ## 関連概念
 - [[subsidy-overseas-expansion|新輸出大国コンソーシアム（中小企業の海外展開支援）]] — 同分野の近傍
 - [[subsidy-kitakyushu|北九州市の創業支援（特定創業支援等事業・COMPASS小倉）]] — 同分野の近傍
+- [[subsidy-nedo-startup|NEDO 研究開発型スタートアップ支援事業]] — 同分野の近傍
 - [[subsidy-sbir|SBIR制度（中小企業技術革新制度）]] — 同分野の近傍
 
 ## 関連

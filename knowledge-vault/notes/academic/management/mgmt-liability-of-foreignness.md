@@ -39,7 +39,7 @@ Srilata Zaheer (ザヒール, 1995) ／ Stephen Hymer (ハイマー, 1960/1976) 
 - [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — 出典を共有
 - [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — 出典を共有
 - [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-cage-distance-framework-ghemawat|CAGEディスタンス・フレームワーク——文化・制度・地理・経済の4つの距離で海外市場の遠さを測るゲマワットの枠組み]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

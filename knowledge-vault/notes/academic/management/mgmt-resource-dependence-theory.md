@@ -37,8 +37,10 @@ aliases:
 - [[infosoc-data-colonialism|データ植民地主義]] — 出典を共有
 - [[mgmt-resource-dependence|資源依存理論]] — 出典を共有
 - [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
+- [[infosoc-media-materialism-kittler|キットラーのメディア唯物論——技術メディアが我々の状況を規定する]] — 出典を共有
 - [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 同分野の近傍
 - [[mgmt-resource-dependence-pfeffer|資源依存理論と組織間権力関係のマネジメント（ファーファー＝サランシク）]] — 同分野の近傍
+- [[mgmt-sensegiving|センスギビング（Sensegiving）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "pubmed.ncbi.nlm.nih.gov"
 type: source-domain
 host: "pubmed.ncbi.nlm.nih.gov"
-cite_count: 93
+cite_count: 94
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # pubmed.ncbi.nlm.nih.gov
 
-> [!info] 出典ドメイン索引 ・ 引用 **93 件**（学術 87 ・ リファレンス 5 ・ 公的 1）
+> [!info] 出典ドメイン索引 ・ 引用 **94 件**（学術 88 ・ リファレンス 5 ・ 公的 1）
 
 ## このドメインを出典とする項目
 
@@ -80,6 +80,7 @@ tags:
 - [[human-resilience|レジリエンス（心理的回復力）]] — MastenA.S.(2001)“Ordinarymagic:Resilienceprocessesindevelopment,”Amer…
 - [[human-self-compassion|セルフ・コンパッション（自己への思いやり）]] — Neff,K.D.&Vonk,R.(2009).Self-compassionversusglobalself-esteem.Journa…
 - [[human-self-determination|自己決定理論（SDT）]] — Ryan&Deci(2000),AmericanPsychologist（査読論文・PubMed索引）
+- [[human-self-handicapping-jones-berglas|セルフ・ハンディキャッピング——失敗の言い訳を先取りし自尊心を防衛する方略]] — Berglas,S.&Jones,E.E.(1978)DrugChoiceasaSelf-HandicappingStrategyinRe…
 - [[human-semantic-satiation|意味飽和（セマンティック・サティエイション）]] — Lambert&Jakobovits(1960)Verbalsatiationandchangesintheintensityofmean…
 - [[human-sensory-deprivation|感覚遮断（感覚剥奪）]] — Bexton,Heron&Scott(1954)"Effectsofdecreasedvariationinthesensoryenvir…
 - [[human-sensory-gating|感覚ゲーティング（Sensory Gating / P50抑制）]] — Adleretal.(1982)NeurophysiologicalEvidenceforaDefectinNeuronalMechani…

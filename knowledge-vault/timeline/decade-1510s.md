@@ -2,14 +2,15 @@
 title: "1510年代"
 type: timeline-decade
 decade: 1510
-entry_count: 1
+entry_count: 2
 tags:
   - timeline
 ---
 
-# 1510年代 — 1 件
+# 1510年代 — 2 件
 
 - [[year-1510|1510年]]（1件）
+- [[year-1511|1511年]]（1件）
 
 ## 関連
 - 索引: [[年表索引]]

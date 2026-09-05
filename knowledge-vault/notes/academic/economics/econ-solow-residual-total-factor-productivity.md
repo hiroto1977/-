@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Solow, R. (1957) Technical Change and the Aggregate Production Function — REStat](https://doi.org/10.2307/1926047) `学術`
-- [Jorgenson, D. & Griliches, Z. (1967) The Explanation of Productivity Change — REStat](https://doi.org/10.1086/258177) `学術`
+- [Jorgenson, D. W. & Griliches, Z. (1967) The Explanation of Productivity Change — Review of Economic Studies 34(3), 249–283（旧ラベルは REStat と誤記し DOI も JPE のものだったため差し替え）](https://academic.oup.com/restud/article-abstract/34/3/249/1533121) `学術`
 - [Wikipedia: Solow residual — ソロー残差の概要](https://en.wikipedia.org/wiki/Solow_residual) `リファレンス`
 
 ## 関連概念

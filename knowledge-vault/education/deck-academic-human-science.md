@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／人間科学"
 type: flashcard-deck
 deck_key: "academic-human-science"
-card_count: 645
+card_count: 646
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／人間科学（645枚）
+# フラッシュカード — 学術概念／人間科学（646枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -612,6 +612,8 @@ tags:
   - **A:** 特定可能な被害者効果とは、匿名の統計的被害者（statistical victims）よりも、顔・名前・物語が特定できる個人に対して、人々がはるかに強い共感を示し援助行動をとりやすくなる心理傾向をいう。（→ [[human-identifiable-victim]]）
 - **Q:** アイデンティティ・プロセス理論（ブレイクウェル）
   - **A:** ブレイクウェル（Glynis Breakwell）は1986年に，アイデンティティが連続性（continuity）・識別性（distinctiveness）・自尊感情（self-esteem）・自己効力感（self-efficacy）の四原則に従って構築され維持されるというアイデンティティ・プロセス理論（IPT）を提唱した。（→ [[human-identity-process-theory-breakwell]]）
+- **Q:** マーシャの自我同一性地位——探求と関与の有無で青年期のアイデンティティ形成を4つの地位に分ける
+  - **A:** 自我同一性地位（アイデンティティ・ステイタス）は、エリクソンの心理社会的発達理論の同一性対役割混乱を実証的に測定可能な形へ操作化した枠組みで、心理学者ジェームズ・E・マーシャが大学生86名への半構造化面接に基づき『Development and Validation of Ego-Identity Status』（1966年、Journal of Personality and Social Psychology誌3巻5号551-55…（→ [[human-identity-status-paradigm-marcia]]）
 - **Q:** 観念運動効果（Ideomotor Effect）
   - **A:** 観念運動効果（Ideomotor Effect）とは、ある行為の観念（心的表象）が意志的決定を経ずに当該行為の遂行を自動的に惹起する心理学的現象である。（→ [[human-ideomotor]]）
 - **Q:** イケア効果

@@ -2,7 +2,7 @@
 title: "pubsonline.informs.org"
 type: source-domain
 host: "pubsonline.informs.org"
-cite_count: 26
+cite_count: 27
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # pubsonline.informs.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **26 件**（学術 26）
+> [!info] 出典ドメイン索引 ・ 引用 **27 件**（学術 27）
 
 ## このドメインを出典とする項目
 
@@ -37,6 +37,7 @@ tags:
 - [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — Andriopoulos&Lewis(2009)Exploitation-ExplorationTensions—Organization…
 - [[mgmt-organizational-forgetting|組織的忘却]] — deHolan&Phillips—RemembranceofThingsPast?TheDynamicsofOrganizationalF…
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]] — Feldman(2000)-OrganizationalRoutinesasaSourceofContinuousChange,Organ…
+- [[mgmt-real-options-reasoning-mcgrath|リアル・オプション推論——マクグラスの不確実性下の段階的投資と戦略的柔軟性]] — Kogut,B.(1991)JointVenturesandtheOptiontoExpandandAcquire—ManagementS…
 - [[mgmt-sensemaking-weick|意味構築（オーガニゼーショナル・センスメーキング）]] — Weick,K.E.,Sutcliffe,K.M.,&Obstfeld,D.(2005).OrganizingandtheProcesso…
 - [[mgmt-temporal-ambidexterity|時間的両利き性]] — Siggelkow&Levinthal(2003)TemporarilyDividetoConquer—OrganizationScien…
 - [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — Spreitzeretal.(2005)ASociallyEmbeddedModelofThrivingatWork—Organizati…

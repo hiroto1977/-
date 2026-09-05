@@ -32,15 +32,15 @@ M/S Bremen v. Zapata Off-Shore Co.（407 U.S. 1, 1972）／Carnival Cruise Lines
 
 ## 関連概念
 - [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 出典を共有
+- [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 出典を共有
 - [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 出典を共有
 - [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]] — 出典を共有
 - [[bizlaw-substantive-consolidation|実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済]] — 出典を共有
-- [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 出典を共有
+- [[bizlaw-lender-liability-doctrine|貸手責任法理（レンダー・ライアビリティ）]] — 出典を共有
+- [[bizlaw-lucy-v-zehmer-objective-theory-of-contract|ルーシー対ゼーマー事件と契約成立の客観説——内心でなく言葉と行為の外形で合意を判断する原則]] — 出典を共有
 - [[bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff|パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争]] — 出典を共有
 - [[bizlaw-battle-of-the-forms|書式の戦い]] — 出典を共有
-- [[bizlaw-lender-liability-doctrine|貸手責任法理（レンダー・ライアビリティ）]] — 出典を共有
 - [[bizlaw-product-liability-doctrine|製造物責任法（製品不具合と製造業者の厳格責任）]] — 出典を共有
-- [[bizlaw-entire-agreement-clause|完全合意条項：契約書の最終性と口頭証拠排除法理の比較法的考察]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

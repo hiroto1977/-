@@ -2,7 +2,7 @@
 title: "cambridge.org"
 type: source-domain
 host: "cambridge.org"
-cite_count: 60
+cite_count: 61
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # cambridge.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **60 件**（学術 58 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **61 件**（学術 59 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -39,6 +39,7 @@ tags:
 - [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — Blaug(1980/1992)TheMethodologyofEconomics,CambridgeUP
 - [[econ-risk-aversion|リスク回避（アロー＝プラット測度）]] — JournalofFinancialandQuantitativeAnalysis(CambridgeCore),“MeasuresofR…
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — Justetal.(2012),J.Benefit-CostAnalysis3(2)
+- [[econ-shephards-lemma-cost-function-duality|シェパードの補題——費用関数を要素価格で微分すると条件付き要素需要が得られるという双対理論の基本命題]] — Uzawa,H.(1964)."DualityPrinciplesintheTheoryofCostandProduction."Inte…
 - [[human-appraisal-theory-of-emotion|感情の評価理論]] — ReflectiononLazarus—EmotionandAdaptation(CambridgeCore)
 - [[human-category-formation|乳児カテゴリ形成（Infant Category Formation）]] — InfantCategorization—CambridgeHandbookofCognitiveDevelopment
 - [[human-compromise-effect|妥協効果（極端回避性）]] — JudgmentandDecisionMaking(Cambridge)—おとり効果と妥協効果の構造的区別

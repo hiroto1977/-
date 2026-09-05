@@ -35,9 +35,9 @@ Brian R. Cheffins ／ Jeffrey G. MacIntosh ／ Daniel D. Prentice
 - [[infosoc-pluralistic-ignorance|多元的無知（pluralistic ignorance）——皆が内心で否定する規範を、皆が支持していると誤って思い込む状態]] — 同じ思想家
 - [[econ-tying|抱き合わせ販売（tying）]] — 出典を共有
 - [[bizlaw-appraisal-rights-remedy|株式買取請求権（反対株主の公正価値救済）]] — 出典を共有
-- [[econ-predatory-pricing|略奪的価格設定]] — 出典を共有
 - [[bizlaw-contract-law-unconscionability|不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限]] — 出典を共有
 - [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]] — 出典を共有
+- [[econ-predatory-pricing|略奪的価格設定]] — 出典を共有
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
 

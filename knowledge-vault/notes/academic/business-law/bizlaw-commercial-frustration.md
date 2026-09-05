@@ -39,9 +39,9 @@ Taylor v. Caldwell（1863）でBlackburn判事が定立した黙示条件理論�
 - [[human-chunking|チャンク化（チャンキング）]] — 同じ思想家
 - [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]] — 出典を共有
 - [[bizlaw-anti-suit-injunction|アンチスーツ・インジャンクション（Anti-Suit Injunction）]] — 出典を共有
+- [[bizlaw-exculpatory-clause|免責条項の法理：契約上の責任制限・免除とその規制]] — 出典を共有
 - [[bizlaw-hadley-v-baxendale|ハドリー対バクセンデール事件（The rule in Hadley v Baxendale, 1854）——契約上の損害の遠隔性を画する二段ルール]] — 出典を共有
 - [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 出典を共有
-- [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

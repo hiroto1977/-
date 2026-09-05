@@ -33,12 +33,12 @@ aliases:
 ## 関連概念
 - [[bizlaw-appraisal-rights-doctrine|株式買取請求権の法理]] — 語彙が近い
 - [[bizlaw-appraisal-rights-remedy|株式買取請求権（反対株主の公正価値救済）]] — 語彙が近い
-- [[bizlaw-poison-pill|ポイズンピル（Poison Pill ／ライツプラン）]] — 出典を共有
 - [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]] — 出典を共有
+- [[bizlaw-poison-pill|ポイズンピル（Poison Pill ／ライツプラン）]] — 出典を共有
+- [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]] — 出典を共有
 - [[bizlaw-sec-rule-14a8-shareholder-proposals|SEC規則14a-8（株主提案の委任状記載制度）]] — 出典を共有
 - [[bizlaw-standstill-agreement|スタンドスティル契約]] — 出典を共有
 - [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 出典を共有
-- [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]] — 出典を共有
 - [[bizlaw-alter-ego-doctrine|法人格否認の法理（分身理論）]] — 同分野の近傍
 - [[bizlaw-mareva-injunction|マレーバ差止命令——判決前に被告の資産を凍結する救済]] — 同分野の近傍
 

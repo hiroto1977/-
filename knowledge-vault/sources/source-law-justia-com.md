@@ -2,7 +2,7 @@
 title: "law.justia.com"
 type: source-domain
 host: "law.justia.com"
-cite_count: 30
+cite_count: 31
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # law.justia.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **30 件**（リファレンス 24 ・ 公的 6）
+> [!info] 出典ドメイン索引 ・ 引用 **31 件**（リファレンス 24 ・ 公的 7）
 
 ## このドメインを出典とする項目
 
@@ -33,6 +33,7 @@ tags:
 - [[bizlaw-inevitable-disclosure-doctrine|不可避的開示の法理——転職者の知識のみで差止めを認めるか州で分裂した米国営業秘密理論]] — Justia—PepsiCo,Inc.v.Redmond,54F.3d1262(7thCir.1995)—不可避的開示の法理を確立した第七…
 - [[bizlaw-inevitable-disclosure-doctrine|不可避的開示の法理——転職者の知識のみで差止めを認めるか州で分裂した米国営業秘密理論]] — Justia—Whytev.SchlageLockCo.,101Cal.App.4th1443,125Cal.Rptr.2d277(Cal…
 - [[bizlaw-lender-liability-doctrine|貸手責任法理（レンダー・ライアビリティ）]] — K.M.C.Co.v.IrvingTrustCo.,757F.2d752(6thCir.1985)—Justia
+- [[bizlaw-lucy-v-zehmer-objective-theory-of-contract|ルーシー対ゼーマー事件と契約成立の客観説——内心でなく言葉と行為の外形で合意を判断する原則]] — W.O.Lucy&J.C.Lucyv.A.H.Zehmer&IdaS.Zehmer,196Va.493,84S.E.2d516(Supre…
 - [[bizlaw-macpherson-v-buick-privity|マクファーソン対ビュイック事件——過失責任における契約当事者関係（プリヴィティ）要件の崩壊と製造物責任の出発点]] — Justia—MacPhersonv.BuickMotorCo.,217N.Y.382,111N.E.1050(N.Y.1916),New…
 - [[bizlaw-material-adverse-change-clause|MAC条項法理]] — Akornv.FreseniusKabi(Del.Ch.2018)
 - [[bizlaw-material-adverse-change-clause|MAC条項法理]] — Hexionv.Huntsman,965A.2d715(Del.Ch.2008)

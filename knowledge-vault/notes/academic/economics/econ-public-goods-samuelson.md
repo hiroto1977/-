@@ -26,7 +26,7 @@ aliases:
 ポール・サミュエルソン ／ リチャード・マスグレイブ ／ エリノア・オストロム ／ マンカー・オルソン
 
 ## 出典
-- [Samuelson, P.A. (1954) The Pure Theory of Public Expenditure — Review of Economics and Statistics](https://www.journals.uchicago.edu/doi/10.1086/257672) `学術`
+- [Samuelson, P.A. (1954) The Pure Theory of Public Expenditure — Review of Economics and Statistics 36(4), 387–389（旧 DOI 10.1086/257672 は JPE のものだったため JSTOR DOI へ差し替え）](https://doi.org/10.2307/1925895) `学術`
 - [Nobel Prize (2009) Elinor Ostrom — Governing the Commons](https://www.nobelprize.org/prizes/economic-sciences/2009/ostrom/facts/) `リファレンス`
 - [Wikipedia: 公共財 — 非競合性・非排除性と市場の失敗の解説](https://ja.wikipedia.org/wiki/%E5%85%AC%E5%85%B1%E8%B2%A1) `リファレンス`
 

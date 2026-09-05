@@ -2,7 +2,7 @@
 title: "journals.sagepub.com"
 type: source-domain
 host: "journals.sagepub.com"
-cite_count: 175
+cite_count: 176
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.sagepub.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **175 件**（学術 174 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **176 件**（学術 175 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -78,6 +78,7 @@ tags:
 - [[infosoc-data-justice|データ正義（Data Justice）]] — Couldry&Mejias(2019)DataColonialism—Television&NewMedia20(4)
 - [[infosoc-data-justice|データ正義（Data Justice）]] — Dencik,Hintz&Cable(2016)TowardsDataJustice?—BigData&Society
 - [[infosoc-data-justice|データ正義（Data Justice）]] — Taylor(2017)WhatIsDataJustice?—BigData&Society
+- [[infosoc-datafication-van-dijck|データ化（ダタフィケーション）と社会的実践（ヴァン・ダイク）]] — Taylor,L.(2017)WhatIsDataJustice?TheCaseforConnectingDigitalRightsand…
 - [[infosoc-digital-detox|デジタルデトックス]] — Radtkeetal.(2022)“Digitaldetox:...Asystematicliteraturereview”,Mobile…
 - [[infosoc-digital-divide|デジタルディバイド（情報格差）]] — vanDeursen&vanDijk(2019),NewMedia&Society—first/second-leveldivideの査読…
 - [[infosoc-digital-resignation|デジタル諦念（デジタル・レジグネーション）]] — BigData&Society—DigitalResignationandPrivacyCynicismspecialtheme(2024)

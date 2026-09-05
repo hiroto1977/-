@@ -2,7 +2,7 @@
 title: "psycnet.apa.org"
 type: source-domain
 host: "psycnet.apa.org"
-cite_count: 46
+cite_count: 47
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # psycnet.apa.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **46 件**（学術 42 ・ リファレンス 4）
+> [!info] 出典ドメイン索引 ・ 引用 **47 件**（学術 43 ・ リファレンス 4）
 
 ## このドメインを出典とする項目
 
@@ -31,6 +31,7 @@ tags:
 - [[human-golem-effect|ゴーレム効果]] — Eden&Shani(1982)"PygmalionGoestoBootCamp:Expectancy,Leadership,andTra…
 - [[human-halo-effect|ハロー効果（後光効果, halo effect）]] — Thorndike(1920)AConstantErrorinPsychologicalRatings—APAPsycNet（原典書誌）
 - [[human-hostile-attribution-bias|敵意的帰属バイアス]] — Dodge,K.A.(1986)"Asocialinformationprocessingmodelofsocialcompetencei…
+- [[human-identity-status-paradigm-marcia|マーシャの自我同一性地位——探求と関与の有無で青年期のアイデンティティ形成を4つの地位に分ける]] — Marcia,J.E.(1966).DevelopmentandValidationofEgo-IdentityStatus.Journa…
 - [[human-illusion-of-transparency|透明性の錯覚]] — Gilovich,Savitsky&Medvec(1998).TheIllusionofTransparency.JournalofPer…
 - [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — Tulving,E.(1972).Episodicandsemanticmemory.InE.Tulving&W.Donaldson(Ed…
 - [[human-outgroup-homogeneity-effect|外集団均質性効果]] — Park,B.&Rothbart,M.(1982)"PerceptionofOut-GroupHomogeneityandLevelsof…

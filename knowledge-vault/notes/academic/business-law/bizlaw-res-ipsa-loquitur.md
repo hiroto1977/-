@@ -30,16 +30,8 @@ Byrne v. Boadle（1863・2 H&C 722／159 ER 299・法理確立の記念碑的判
 - [Byrne v. Boadle, 159 Eng. Rep. 299 (Exch. 1863)（Justia 収録の判決原文・Pollock C.B. の判示）](https://law.justia.com/cases/foreign/united-kingdom/159-eng-rep-299-1863.html) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
-- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
-- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
-- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
-- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 出典を共有
-- [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 出典を共有
-- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 出典を共有
-- [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — 出典を共有
-- [[bizlaw-best-efforts-obligation|最善努力義務]] — 出典を共有
-- [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 出典を共有
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

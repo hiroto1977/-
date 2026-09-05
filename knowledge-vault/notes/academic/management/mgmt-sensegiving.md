@@ -34,7 +34,7 @@ Dennis A. Gioia & Kumar Chittipeddi（SMJ 12(6), 1991, 概念提唱）／Sally M
 - [[mgmt-institutional-work|制度的ワーク]] — 同じ思想家
 - [[mgmt-organizational-forgetting|組織的忘却]] — 同じ思想家
 - [[mgmt-sensegiving-gioia|センスギビング理論（ジョイア＆チッタンパリー）]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-resource-dependence-theory|リソース・ディペンデンス理論（Resource Dependence Theory）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

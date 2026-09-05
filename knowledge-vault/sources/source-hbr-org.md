@@ -2,7 +2,7 @@
 title: "hbr.org"
 type: source-domain
 host: "hbr.org"
-cite_count: 69
+cite_count: 70
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # hbr.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **69 件**（学術 42 ・ メディア 25 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **70 件**（学術 43 ・ メディア 25 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -24,6 +24,7 @@ tags:
 - [[mgmt-blue-ocean-strategy|ブルー・オーシャン戦略]] — HarvardBusinessReview—“BlueOceanStrategy”(Kim&Mauborgne,2004)
 - [[mgmt-bpr|ビジネスプロセス・リエンジニアリング（BPR）]] — MichaelHammer,"ReengineeringWork:Don'tAutomate,Obliterate,"HarvardBus…
 - [[mgmt-business-ecosystem-moore|ビジネス・エコシステム——企業が共進化する競争と協調の生態系]] — Moore,J.F.(1993)PredatorsandPrey:ANewEcologyofCompetition—HarvardBusi…
+- [[mgmt-cage-distance-framework-ghemawat|CAGEディスタンス・フレームワーク——文化・制度・地理・経済の4つの距離で海外市場の遠さを測るゲマワットの枠組み]] — Ghemawat,P.(2001)."DistanceStillMatters:TheHardRealityofGlobalExpansi…
 - [[mgmt-change-management-kotter-8-step|コッターの8段階変革モデル——組織変革の失敗要因分析と変革リーダーシップの実践フレームワーク]] — Kotter(1995)LeadingChange:WhyTransformationEffortsFail—HarvardBusines…
 - [[mgmt-clan-control-ouchi|クラン統制理論——大内の市場・官僚制・クランの三類型と組織文化による制御]] — Ouchi,W.G.(1981)TheoryZ—HBRReview
 - [[mgmt-core-competence|コアコンピタンス（中核的能力）]] — Prahalad&Hamel,TheCoreCompetenceoftheCorporation,HBR(1990)

@@ -2,7 +2,7 @@
 title: "ebsco.com"
 type: source-domain
 host: "ebsco.com"
-cite_count: 69
+cite_count: 70
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ebsco.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **69 件**（リファレンス 55 ・ 学術 14）
+> [!info] 出典ドメイン索引 ・ 引用 **70 件**（リファレンス 56 ・ 学術 14）
 
 ## このドメインを出典とする項目
 
@@ -65,6 +65,7 @@ tags:
 - [[mgmt-ansoff-matrix|アンゾフの成長マトリクス]] — EBSCOResearchStarters—AnsoffMatrix（4戦略・多角化が最高リスク）
 - [[mgmt-bcg-matrix|プロダクト・ポートフォリオ・マネジメント（PPM／BCGマトリクス）]] — EBSCOResearchStarters—Growth–sharematrix
 - [[mgmt-bureaucracy|官僚制（ウェーバー）]] — Merton’sDysfunctionsofBureaucracies—EBSCOResearchStarters（逆機能）
+- [[mgmt-cage-distance-framework-ghemawat|CAGEディスタンス・フレームワーク——文化・制度・地理・経済の4つの距離で海外市場の遠さを測るゲマワットの枠組み]] — "CAGEFramework."BusinessandManagement,ResearchStarters,EBSCOhost.—4つの…
 - [[mgmt-diamond-model-porter|ポーターのダイヤモンドモデル——国の競争優位を生む四つの決定要因]] — EBSCOResearchStarters(Economics)—"DiamondModel"
 - [[mgmt-diversification|多角化戦略]] — EBSCOResearchStarters—AnsoffMatrix（多角化が最もリスクの高い新製品×新市場象限であること）
 - [[mgmt-dynamic-pricing|ダイナミック・プライシング]] — EBSCOResearchStarters(BusinessandManagement)—Dynamicpricing(surgepric…

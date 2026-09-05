@@ -36,6 +36,7 @@ aliases:
 - [[mgmt-middle-status-conformity-phillips|中位地位同調性——組織階層における地位と逸脱の非線形的関係]] — 同じ思想家
 - [[human-obedience|権威への服従（オベディエンス）]] — 同分野の近傍
 - [[human-anton-syndrome|アントン症候群——皮質盲なのに見えないことを否認する]] — 同分野の近傍
+- [[human-identity-status-paradigm-marcia|マーシャの自我同一性地位——探求と関与の有無で青年期のアイデンティティ形成を4つの地位に分ける]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -37,10 +37,6 @@ William T. Allen（元デラウェア衡平法裁判所長官）／Stephen M. Ba
 - [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]] — 同じ思想家
 - [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 同じ思想家
 - [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 同じ思想家
-- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
-- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
-- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
-- [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

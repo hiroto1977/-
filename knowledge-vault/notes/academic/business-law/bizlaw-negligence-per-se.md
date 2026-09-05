@@ -40,8 +40,8 @@ aliases:
 - [[bizlaw-consideration-doctrine|約因の法理——約束が拘束力を持つために要する交換的対価]] — 同じ思想家
 - [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 同じ思想家
 - [[bizlaw-liquidated-damages-clause|損害賠償額の予定条項（清算損害賠償条項）]] — 同じ思想家
+- [[bizlaw-lucy-v-zehmer-objective-theory-of-contract|ルーシー対ゼーマー事件と契約成立の客観説——内心でなく言葉と行為の外形で合意を判断する原則]] — 同じ思想家
 - [[bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff|パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争]] — 同じ思想家
-- [[bizlaw-product-liability-strict|製造物責任（PL法）の厳格責任法理と欠陥類型]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

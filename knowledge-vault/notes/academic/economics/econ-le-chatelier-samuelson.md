@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Foundations of Economic Analysis (Samuelson, 1947) — comparative statics, Le Chatelier principle, correspondence principle](https://en.wikipedia.org/wiki/Foundations_of_Economic_Analysis) `リファレンス`
 
 ## 関連概念
-- [[econ-envelope-theorem-milgrom-segal|包絡線定理——最適化問題のパラメータ感応度と経済学的応用]] — 語彙が近い
 - [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 同じ思想家
 - [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
 - [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 同じ思想家
 - [[econ-ces-production|CES生産関数]] — 同じ思想家
 - [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
+- [[econ-damaged-goods-deneckere-mcafee|損傷財——あえて劣化させて価格差別する]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

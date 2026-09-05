@@ -4441,5 +4441,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 人間科学 | 制御価値理論——達成感情の生起を統制評価と価値評価で説明する | ラインハルト・ペクラン（2006『The Control-Value Theory of Achievement Emotions』Educational Psychology Review 18(4) ／ 2011 Contemporary Educational PsychologyでAEQ〈達成感情質問紙〉を共同発表） ／ 村山航（2017 Child Developmentでペクランらと縦断的相互効果モデルを共同実証） |
 | 商法 | パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争 | ベンジャミン・カードーゾ（1928 Palsgraf v. Long Island R.R. Co. 多数意見・後に連邦最高裁判事） ／ ウィリアム・アンドリューズ（1928 同判決 反対意見） ／ ウィリアム・プロッサー（1953『Palsgraf Revisited』Michigan Law Review 52(1)） |
 | 情報社会学 | 資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論 | ジェイサン・サドウスキー（2019『When data is capital』Big Data & Society ／ 2020『Too Smart』MIT Press） ／ 対比: ショシャナ・ズボフ（2019『The Age of Surveillance Capitalism』） |
+| 経済学 | カルドアの定型化された事実——長期成長に見られる6つの経験的規則性 | ニコラス・カルドア（1957『A Model of Economic Growth』 ／ 1961『Capital Accumulation and Economic Growth』） ／ ロバート・ソロー（1956『A Contribution to the Theory of Economic Growth』） |
+| 経済学 | シェパードの補題——費用関数を要素価格で微分すると条件付き要素需要が得られるという双対理論の基本命題 | ロナルド・W・シェパード（1953『Cost and Production Functions』 ／ 1970『Theory of Cost and Production Functions』） ／ ハロルド・ホテリング（1932、ホテリングの補題） |
+| 経営学 | CAGEディスタンス・フレームワーク——文化・制度・地理・経済の4つの距離で海外市場の遠さを測るゲマワットの枠組み | パンカジ・ゲマワット（2001『Distance Still Matters』Harvard Business Review ／ 2003『Semiglobalization and International Business Strategy』Journal of International Business Studies ／ 2007『Redefining Global Strategy』Harvard Business School Press |
+| 人間科学 | マーシャの自我同一性地位——探求と関与の有無で青年期のアイデンティティ形成を4つの地位に分ける | ジェームズ・E・マーシャ（1966『Development and Validation of Ego-Identity Status』 ／ 1980『Identity in Adolescence』） ／ ジェーン・クロガー＆モニカ・マルティヌッセン（マーシャとの共著、2010メタ分析） |
+| 商法 | ルーシー対ゼーマー事件と契約成立の客観説——内心でなく言葉と行為の外形で合意を判断する原則 | オリバー・ウェンデル・ホームズ（1881『The Common Law』 ／ 1897『The Path of the Law』、10 Harv. L. Rev. 457） ／ ブキャナン判事（Lucy v. Zehmer 法廷意見執筆、バージニア州最高裁、1954） |
+| 情報社会学 | キットラーのメディア唯物論——技術メディアが我々の状況を規定する | フリードリヒ・キットラー（1985『Aufschreibesysteme 1800/1900』英訳1990 ／ 1986『Grammophon Film Typewriter』英訳1999 ／ 1992「There Is No Software」 |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。

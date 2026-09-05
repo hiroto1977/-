@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-post-truth-theory|ポスト真実論]] — 同分野の近傍
+- [[infosoc-fourth-industrial-revolution|第四次産業革命]] — 同分野の近傍
 - [[infosoc-metaverse|メタバース]] — 同分野の近傍
 
 ## 関連

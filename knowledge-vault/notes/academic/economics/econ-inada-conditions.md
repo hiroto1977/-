@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Inada conditions — neoclassical growth, production function, Solow model](https://en.wikipedia.org/wiki/Inada_conditions) `リファレンス`
 
 ## 関連概念
-- [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 語彙が近い
 - [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 同じ思想家
 - [[econ-long-run-aggregate-supply-solow-growth|ソロー成長モデルと長期総供給——資本蓄積・技術進歩・収束仮説の新古典派成長論]] — 同じ思想家
 - [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[econ-elasticity-substitution-ces-arrow|CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化]] — 同じ思想家
 - [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — 同じ思想家
 - [[econ-golden-rule-capital-phelps|資本蓄積の黄金律——定常状態の消費を最大化する貯蓄水準]] — 同じ思想家
+- [[econ-golden-rule-saving-phelps|貯蓄の黄金律——定常状態における消費最大化の最適貯蓄率]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]
