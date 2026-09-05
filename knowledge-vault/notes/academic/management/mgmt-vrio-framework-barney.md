@@ -31,10 +31,11 @@ VRIOフレームワーク（VRIO framework）は、ジェイ・バーニーが�
 
 ## 関連概念
 - [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — 語彙が近い
-- [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 語彙が近い
 - [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 語彙が近い
+- [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 語彙が近い
 - [[mgmt-penrose-growth|ペンローズの企業成長理論]] — 同じ思想家
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 同じ思想家
+- [[mgmt-asset-stock-accumulation-dierickx-cool|資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性]] — 同じ思想家
 - [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 同じ思想家
 - [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同じ思想家
 - [[mgmt-experience-economy|経験経済（パイン＆ギルモア）]] — 同分野の近傍

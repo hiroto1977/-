@@ -2,7 +2,7 @@
 title: "sms.onlinelibrary.wiley.com"
 type: source-domain
 host: "sms.onlinelibrary.wiley.com"
-cite_count: 22
+cite_count: 23
 tags:
   - source-domain
   - index
@@ -10,12 +10,13 @@ tags:
 
 # sms.onlinelibrary.wiley.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **22 件**（学術 22）
+> [!info] 出典ドメイン索引 ・ 引用 **23 件**（学術 23）
 
 ## このドメインを出典とする項目
 
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — Townsendetal.(2024),“WhatisKnightianuncertainty?”,StrategicEntreprene…
 - [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — StrategicManagementJournal—PlatformEnvelopment（Eisenmann,Parker&VanAl…
+- [[mgmt-asset-stock-accumulation-dierickx-cool|資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性]] — Peteraf,M.A.(1993).TheCornerstonesofCompetitiveAdvantage:AResource-Ba…
 - [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — Ocasio,W.(1997)TowardsanAttention-BasedViewoftheFirm,StrategicManagem…
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — Larraza-Kintana,Wiseman,Gómez-Mejía&Welbourne(2007)DisentanglingCompe…
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — Chen&Miller(2015)ReconceptualizingCompetitiveDynamics—StrategicManage…

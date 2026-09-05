@@ -36,6 +36,7 @@ aliases:
 - [[bizlaw-childcare-leave|育児・介護休業法]] — 分野横断
 - [[labor-childcare-leave|育児休業と育児休業給付金]] — 出典を共有
 - [[labor-foreign-worker-status|外国人材の在留資格（特定技能・技能実習→育成就労）]] — 同分野の近傍
+- [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -32,7 +32,6 @@ Martin L. Weitzman（1974年論文・理論の提唱者） ／ 価格規制（�
 ## 関連概念
 - [[econ-weitzman-dismal-theorem|ワイツマンの悲観定理（Dismal Theorem）——裾の厚い不確実性の前で気候政策の費用便益分析は破綻し、破局回避は無限の保険料に値する]] — 同じ思想家
 - [[econ-prices-vs-quantities|価格規制と数量規制（プライシズ・バーサス・クオンティティーズ）]] — 同分野の近傍
-- [[econ-financial-accelerator-bernanke|金融加速度メカニズム——信用市場の摩擦が実体経済の変動を増幅する]] — 同分野の近傍
 - [[econ-wage-curve|賃金カーブ（ブランチフラワー＝オズワルド則）]] — 同分野の近傍
 
 ## 関連

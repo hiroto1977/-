@@ -32,8 +32,8 @@ aliases:
 ## 関連概念
 - [[econ-skill-biased-tech|スキルバイアス型技術変化（SBTC）]] — 同じ思想家
 - [[econ-bartik-shift-share-instrument|バーティック操作変数（シフトシェア操作変数）——全国産業成長率と地域産業構成の積で地域労働需要ショックを予測する識別戦略]] — 同じ思想家
-- [[econ-inequality-piketty-capital21|不平等と資本——ピケティの「r>g」命題と21世紀の富の集中]] — 同分野の近傍
 - [[econ-okuns-law|オーカンの法則]] — 同分野の近傍
+- [[econ-inequality-piketty-capital21|不平等と資本——ピケティの「r>g」命題と21世紀の富の集中]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -30,8 +30,9 @@ W・ランス・ベネット／アレクサンドラ・セガーバーグ（2012
 - [Bennett & Segerberg (2012), Information, Communication & Society 15(5)](https://www.tandfonline.com/doi/abs/10.1080/1369118X.2012.670661) `学術`
 
 ## 関連概念
-- [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]] — 語彙が近い
 - [[infosoc-indexing-hypothesis-bennett|インデックス仮説——報道は公的エリートの論争の幅に従う]] — 同じ思想家
+- [[infosoc-networked-protest-tufekci|トゥフェックチのネットワーク化された抗議——能力を伴わないシグナルの拡大と戦術的凍結]] — 同じ思想家
+- [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]] — 同分野の近傍
 - [[infosoc-information-asymmetry-platform|プラットフォーム情報非対称性理論]] — 同分野の近傍
 
 ## 関連

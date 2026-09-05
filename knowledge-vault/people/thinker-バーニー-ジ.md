@@ -2,7 +2,7 @@
 title: "ジェイ・バーニー"
 type: thinker
 person_key: "バーニー|ジ"
-concept_count: 7
+concept_count: 8
 tags:
   - person
   - index
@@ -10,9 +10,10 @@ tags:
 
 # ジェイ・バーニー
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **7 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **8 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（7件）
+## 学術概念（8件）
+- [[mgmt-asset-stock-accumulation-dierickx-cool|資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性]] — インゲマール・ディエリックスとカレル・クールが『ManagementScience』誌35巻12号（1989年、150…
 - [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 因果的曖昧性（causalambiguity）は、スティーブン・リップマンとリチャード・ルメルトが1982年の論文「不…
 - [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 競争均衡（competitiveparity）は、バーニー（1991）のRBV（資源ベース・ビュー）フレームワークの中…
 - [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — ミクロ的基礎（Microfoundations）運動は、組織能力・ルーティン・制度などのマクロレベルの組織現象を、個人…

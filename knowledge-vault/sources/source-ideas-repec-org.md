@@ -2,7 +2,7 @@
 title: "ideas.repec.org"
 type: source-domain
 host: "ideas.repec.org"
-cite_count: 88
+cite_count: 89
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ideas.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **88 件**（学術 73 ・ リファレンス 15）
+> [!info] 出典ドメイン索引 ・ 引用 **89 件**（学術 74 ・ リファレンス 15）
 
 ## このドメインを出典とする項目
 
@@ -25,6 +25,7 @@ tags:
 - [[econ-backus-kehoe-kydland-puzzle|バックス＝ケホー＝カイランド・パズル（Backus-Kehoe-Kydland Puzzle / 数量異常）]] — Backus,Kehoe&Kydland(1992)InternationalRealBusinessCycles—IDEAS/RePEc
 - [[econ-backus-kehoe-kydland-puzzle|バックス＝ケホー＝カイランド・パズル（Backus-Kehoe-Kydland Puzzle / 数量異常）]] — Backus,Kehoe&Kydland(1994)J-Curve—AER84(1)IDEAS/RePEc
 - [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — RePEc/IDEAS—Baron&Myerson(1982)RegulatingaMonopolistwithUnknownCosts,…
+- [[econ-blanchard-quah-long-run-restrictions|ブランシャール＝クアの長期制約による構造VAR識別——需要ショックと供給ショックの分解]] — Lippi,M.&Reichlin,L.(1993)."TheDynamicEffectsofAggregateDemandandSupp…
 - [[econ-boserup-agricultural-intensification|ボズラップの仮説（Boserup's hypothesis／人口圧力による農業集約化）——人口増加が農業技術革新を駆動するという、マルサスとは逆の因果]] — Darity,W.A.,Jr.(1980).TheBoseruptheoryofagriculturalgrowth:Amodelfora…
 - [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — Karabarbounis,L.&Neiman,B.(2014)TheGlobalDeclineoftheLaborShare—Quart…
 - [[econ-chartalism-modern-monetary-theory|チャータリズムと現代貨幣理論（MMT）]] — Wray(1998)UnderstandingModernMoney:TheKeytoFullEmploymentandPriceStab…

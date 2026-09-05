@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／情報社会学"
 type: flashcard-deck
 deck_key: "academic-information-sociology"
-card_count: 608
+card_count: 609
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／情報社会学（608枚）
+# フラッシュカード — 学術概念／情報社会学（609枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -786,6 +786,8 @@ tags:
   - **A:** ネットワーク中立性（Network Neutrality）とは、インターネット・サービス・プロバイダー（ISP）がすべてのデータトラフィックを送信元・送信先・コンテンツ種別に関わらず平等に扱うべきだという原則であり、その思想的起源は鉄道・電話などの「コモン・キャリア（common carrier）」規制における非差別義務に遡る。（→ [[infosoc-network-neutrality-theory]]）
 - **Q:** ネットワーク社会論——カステルスの情報資本主義・流れの空間・アイデンティティの政治
   - **A:** ネットワーク社会（Network Society）論は，マニュエル・カステルスが三部作「情報の時代」（1996〜98年）で展開した，グローバルな情報通信技術ネットワークが社会・経済・文化の組織原理を再構成する「情報主義（informationalism）」の理論である。（→ [[infosoc-network-society-castells]]）
+- **Q:** トゥフェックチのネットワーク化された抗議——能力を伴わないシグナルの拡大と戦術的凍結
+  - **A:** ネットワーク化された抗議とは、社会学者ゼイナップ・トゥフェックチが『Twitter and Tear Gas』（2017年、イェール大学出版局。前段: トゥフェックチ＆ウィルソン、Journal of Communication、2012年、62巻2号、363–379頁）で示した理論である。（→ [[infosoc-networked-protest-tufekci]]）
 - **Q:** ネットワーク化された公共圏とデジタル・デモクラシー論
   - **A:** ハーバーマスの「公共圏（Öffentlichkeit）」理論は、市民が自由な討議を通じて公的意見を形成する空間として概念化されたが、インターネットによる情報環境の変容がその現代的展開と挑戦をもたらした。（→ [[infosoc-networked-public-sphere-fraser]]）
 - **Q:** ネットワーク化された公衆

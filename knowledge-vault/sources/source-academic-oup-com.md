@@ -2,7 +2,7 @@
 title: "academic.oup.com"
 type: source-domain
 host: "academic.oup.com"
-cite_count: 125
+cite_count: 127
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # academic.oup.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **125 件**（学術 123 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **127 件**（学術 125 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -72,6 +72,8 @@ tags:
 - [[econ-reference-dependent-preferences-koszegi-rabin|期待ベースの参照点モデル（Kőszegi-Rabin 2006）——参照点は過去の現実ではなく「最近抱いた合理的期待」で内生的に決まる]] — Kőszegi,B.,&Rabin,M.(2006).AModelofReference-DependentPreferences.The…
 - [[econ-roy-model|ロイ・モデル——比較優位による職業の自己選択]] — Roy,A.D.(1951)SomeThoughtsontheDistributionofEarnings—OxfordEconomicP…
 - [[econ-salience-theory-bordalo|顕著性理論（ボルダロ＝ジェンナイオリ＝シュライファー）——目立つ属性が選択を歪める]] — Bordalo,P.,Gennaioli,N.&Shleifer,A.(2012)SalienceTheoryofChoiceUnderR…
+- [[econ-schumpeterian-growth-aghion-howitt|アギオン＝ハウイットのシュンペーター型内生成長モデル——創造的破壊による成長]] — Aghion,P.,Bloom,N.,Blundell,R.,Griffith,R.&Howitt,P.(2005)."Competiti…
+- [[econ-schumpeterian-growth-aghion-howitt|アギオン＝ハウイットのシュンペーター型内生成長モデル——創造的破壊による成長]] — Grossman,G.M.&Helpman,E.(1991)."QualityLaddersintheTheoryofGrowth."Re…
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — Gorman(1955)"TheIntransitivityofCertainCriteriaUsedinWelfareEconomics…
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — Kaldor(1939)"WelfarePropositionsofEconomicsandInterpersonalComparison…
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — Scitovsky(1941),Rev.Econ.Studies9(1):77-88

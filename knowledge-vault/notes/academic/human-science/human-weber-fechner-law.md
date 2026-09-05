@@ -36,7 +36,7 @@ aliases:
 - [[human-frustration-aggression|フラストレーション＝攻撃仮説]] — 出典を共有
 - [[human-stroop-effect|ストループ効果]] — 出典を共有
 - [[human-social-learning-theory|社会的学習理論]] — 出典を共有
-- [[human-unimodel-persuasion-kruglanski-thompson|ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論]] — 同分野の近傍
+- [[human-terror-management|存在脅威管理理論（恐怖管理理論）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -50014,5 +50014,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/abs/10.1177/1461444816676645', type: 'academic', label: 'Ananny, M., & Crawford, K. (2018). Seeing without knowing: Limitations of the transparency ideal and its application to algorithmic accountability. New Media & Society (SAGE), 20(3), 973–989. DOI 10.1177/1461444816676645 — 透明性理想の限界批判の出典' },
     ],
   },
+  {
+    id: 'econ-schumpeterian-growth-aghion-howitt',
+    discipline: 'economics',
+    title: 'アギオン＝ハウイットのシュンペーター型内生成長モデル——創造的破壊による成長',
+    statement:
+      '本モデルは、フィリップ・アギオンとピーター・ハウイットが『A Model of Growth through Creative Destruction』（Econometrica, 60(2), 1992, pp.323–351）で示した、シュンペーターの「創造的破壊」を動学一般均衡モデル化した内生成長理論である。各部門で研究開発投資の増加関数であるポアソン到着率で品質改善型（垂直的）イノベーションが生じ、新技術が旧世代の独占レントを奪う「ビジネス・スティーリング」で成長が駆動される。将来の研究が現在の研究レントを破壊するとの予想が研究開発水準を前向きな差分方程式で規定し、研究がゼロと正の間で交替する周期的均衡（no-growth trap）も生じうる。均衡研究開発水準は専有可能性・ビジネス・スティーリング・世代間スピルオーバーという相反する外部性ゆえ社会的最適との大小は一般に不定であり、グロスマン＝ヘルプマン（1991）の品質ラダーモデルは並行理論、ローマー（1990）の多様性拡大モデルとは対照をなす。アギオン他（2005, QJE）は競争度上昇が同水準企業の革新を促す一方で後発企業の意欲を削ぎ、総体で逆U字関係を生むと示し、ジョーンズ（1995, JPE）は研究者数増大に比例した成長率上昇（スケール効果）が実証と整合しないと批判した。中小企業には、技術フロンティアへの近さが競争回避的な革新意欲を左右するため、自社の位置取りに応じた研究開発戦略の選択が持続的成長の鍵となる。',
+    keyFigures: 'フィリップ・アギオン＆ピーター・ハウイット（1992『A Model of Growth through Creative Destruction』Econometrica／1998『Endogenous Growth Theory』MIT Press／2025 ノーベル経済学賞をジョエル・モキイアと共同受賞）／拡張: アギオン他（2005『Competition and Innovation: An Inverted-U Relationship』QJE — 逆U字・脱競争効果）／並行: ジーン・グロスマン＆エルハナン・ヘルプマン（1991『Quality Ladders in the Theory of Growth』）／対比: ポール・ローマー（1990『Endogenous Technological Change』多様性拡大モデル）／批判: チャールズ・ジョーンズ（1995『R&D-Based Models of Economic Growth』スケール効果批判）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://doi.org/10.2307/2951599', type: 'academic', label: 'Aghion, P. & Howitt, P. (1992). "A Model of Growth through Creative Destruction." Econometrica (JSTOR), 60(2), 323–351. DOI: 10.2307/2951599 — 創造的破壊モデルの原典。垂直的イノベーション・ポアソン到着率・ビジネス・スティーリング効果・前向き差分方程式・no-growth trap の根拠' },
+      { url: 'https://academic.oup.com/qje/article-abstract/120/2/701/1933966', type: 'academic', label: 'Aghion, P., Bloom, N., Blundell, R., Griffith, R. & Howitt, P. (2005). "Competition and Innovation: An Inverted-U Relationship." Quarterly Journal of Economics (Oxford University Press), 120(2), 701–728 — 競争度と技術革新の逆U字関係・脱競争効果という後続拡張の根拠' },
+      { url: 'https://academic.oup.com/restud/article-abstract/58/1/43/1519065', type: 'academic', label: 'Grossman, G. M. & Helpman, E. (1991). "Quality Ladders in the Theory of Growth." Review of Economic Studies (Oxford University Press), 58(1), 43–61 — 品質ラダー型モデルという並行理論の根拠' },
+      { url: 'https://doi.org/10.1086/261725', type: 'academic', label: 'Romer, P. M. (1990). "Endogenous Technological Change." Journal of Political Economy (University of Chicago Press), 98(5, Part 2), S71–S102. DOI: 10.1086/261725 — 対照をなす多様性拡大型モデルの根拠' },
+      { url: 'https://econpapers.repec.org/RePEc:ucp:jpolec:v:103:y:1995:i:4:p:759-84', type: 'academic', label: 'Jones, C. I. (1995). "R&D-Based Models of Economic Growth." Journal of Political Economy, 103(4), 759–784 (EconPapers) — スケール効果批判の根拠（掲載誌は QJE ではなく JPE）' },
+    ],
+  },
+  {
+    id: 'econ-blanchard-quah-long-run-restrictions',
+    discipline: 'economics',
+    title: 'ブランシャール＝クアの長期制約による構造VAR識別——需要ショックと供給ショックの分解',
+    statement:
+      'ブランシャール＝クア分解とは、オリヴィエ・ブランシャールとダニー・クアが『The Dynamic Effects of Aggregate Demand and Supply Disturbances』（American Economic Review 79巻4号、1989年、655–673頁）で示した、長期制約により構造VAR（ベクトル自己回帰）のショックを識別する手法である。GNP成長率と失業率の二変量VARにおいて、需要ショックは出力に長期的効果を持たず供給ショックのみが恒久的効果を持つという長期中立性の仮定を置くことで、シムズ（1980）型の再帰的な短期ゼロ制約に依存せずに構造ショックを一意に定める。米国四半期データへの適用では、需要ショックが短期の出力変動の大半を説明し、供給ショックは長期の変動を支配するという結果が得られた。この分解は恒久成分と一時成分を分離する一般的道具として広がったが、リッピとライクリン（1993年、AER）は非基礎性（non-fundamentalness）の問題を、フォーストとリーパー（1997年、Journal of Business and Economic Statistics）は弱識別と有限サンプルでの信頼性の限界を指摘した。後にガリ（1999年、AER）は技術ショック識別に応用し、符号制約法や外部操作変数法という代替識別も発展した。事業運営者には、需要面の一時的な揺れと供給・技術面の構造変化とを区別して景気指標を読む視点を与える。',
+    keyFigures: 'オリヴィエ・ブランシャール＆ダニー・クア（1989『The Dynamic Effects of Aggregate Demand and Supply Disturbances』AER）／マシュー・シャピロ＆マーク・ワトソン（1988『Sources of Business Cycle Fluctuations』NBER Macroeconomics Annual）／ジョルディ・ガリ（1999『Technology, Employment, and the Business Cycle』AER）／批判: マルコ・リッピ＆ルクレツィア・ライクリン（1993 AER comment）、ジョン・フォースト＆エリック・リーパー（1997 Journal of Business and Economic Statistics）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.nber.org/papers/w2737', type: 'academic', label: 'Blanchard, O. J. & Quah, D. (1989). "The Dynamic Effects of Aggregate Demand and Supply Disturbances." American Economic Review, 79(4), 655-673（NBER Working Paper No. 2737 版）— 原論文の書誌情報と長期制約による識別枠組みを確認' },
+      { url: 'https://ideas.repec.org/a/aea/aecrev/v83y1993i3p644-52.html', type: 'academic', label: 'Lippi, M. & Reichlin, L. (1993). "The Dynamic Effects of Aggregate Demand and Supply Disturbances: Comment." American Economic Review, 83(3), 644-652 (IDEAS/RePEc) — 非基礎性（non-fundamentalness）批判の書誌情報を確認' },
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/07350015.1997.10524712', type: 'academic', label: 'Faust, J. & Leeper, E. M. (1997). "When Do Long-Run Identifying Restrictions Give Reliable Results?" Journal of Business and Economic Statistics (Taylor & Francis), 15(3), 345-353. DOI 10.1080/07350015.1997.10524712 — 弱識別・有限サンプルでの信頼性の限界という批判の書誌とDOIを確認' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2Faer.89.1.249', type: 'academic', label: 'Galí, J. (1999). "Technology, Employment, and the Business Cycle: Do Technology Shocks Explain Aggregate Fluctuations?" American Economic Review, 89(1), 249-271. DOI 10.1257/aer.89.1.249 — 長期制約識別の技術ショック分析への応用例の書誌とDOIを確認' },
+      { url: 'https://www.jstor.org/stable/3584944', type: 'academic', label: 'Shapiro, M. D. & Watson, M. W. (1988). "Sources of Business Cycle Fluctuations." NBER Macroeconomics Annual, 3, 111-148 (JSTOR) — 関連する長期制約による需要・供給ショック識別研究の書誌を確認' },
+    ],
+  },
+  {
+    id: 'mgmt-asset-stock-accumulation-dierickx-cool',
+    discipline: 'management',
+    title: '資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性',
+    statement:
+      'インゲマール・ディエリックスとカレル・クールが『Management Science』誌35巻12号（1989年、1504–1511頁）の論文「Asset Stock Accumulation and Sustainability of Competitive Advantage」で示した理論。ジェイ・バーニー（1986）の戦略的要素市場論が前提とする「資源は市場で買える」との想定の限界を指摘し、戦略資産の多くは売買できる「フロー」ではなく時間をかけ積むしかない「ストック」だと論じ、浴槽（bath-tub）の比喩でストックとフローを区別した。模倣困難性は資産蓄積の5特性から生じる——急ぐほど費用が跳ね上がる時間圧縮の不経済、既存のR&Dノウハウが多い企業ほど蓄積が進みやすい資産量効率（「成功が成功を生む」）、他の資産ストックとの相互連結性、放置すれば減耗する資産の減耗、成功要因を特定できない因果的曖昧性である。同号にバーニーの反論コメントが並び、バーニー（1991）のVRIN分析やペテラフ（1993）の統合枠組みに影響したが、プリーム＆バトラー（2001、Academy of Management Review 26巻）は資源ベース論全般を成果から資源価値を逆算するトートロジーだと批判し、ストック量自体の測定困難という限界も残る。中小企業にとっては、信用や顧客関係、暗黙知は近道で買えないと心得て、拙速な即席プログラムに頼らず地道な蓄積を続けることが競争優位の実務的な鍵になる。',
+    keyFigures: 'インゲマール・ディエリックス＆カレル・クール（1989『Asset Stock Accumulation and Sustainability of Competitive Advantage』Management Science）／ジェイ・バーニー（1986『Strategic Factor Markets』／1989 同号にコメント／1991『Firm Resources and Sustained Competitive Advantage』で VRIN 提示）／マーガレット・ペテラフ（1993『The Cornerstones of Competitive Advantage』SMJ）／対比: プリーム＆バトラー（2001 RBV のトートロジー批判）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://pubsonline.informs.org/doi/10.1287/mnsc.35.12.1504', type: 'academic', label: 'Dierickx, I., & Cool, K. (1989). Asset Stock Accumulation and Sustainability of Competitive Advantage. Management Science (INFORMS), 35(12), 1504–1511. DOI 10.1287/mnsc.35.12.1504 — 資産ストック蓄積論の原典。ストック/フロー区別・浴槽の比喩・模倣困難性の5特性（時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性）の典拠' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/mnsc.35.12.1511', type: 'academic', label: 'Barney, J. B. (1989). Asset Stocks and Sustained Competitive Advantage: A Comment. Management Science (INFORMS), 35(12), 1511–1513. DOI 10.1287/mnsc.35.12.1511 — 同一号に掲載されたバーニーの反論コメント。戦略的要素市場論との関係を巡る論争の典拠' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/mnsc.32.10.1231', type: 'academic', label: 'Barney, J. B. (1986). Strategic Factor Markets: Expectations, Luck, and Business Strategy. Management Science (INFORMS), 32(10), 1231–1241. DOI 10.1287/mnsc.32.10.1231 — ディエリックス＝クールが批判的に継承した戦略的要素市場論の原典' },
+      { url: 'https://journals.aom.org/doi/10.5465/amr.2001.4011928', type: 'academic', label: 'Priem, R. L., & Butler, J. E. (2001). Is the Resource-Based "View" a Useful Perspective for Strategic Management Research? Academy of Management Review, 26(1), 22–40. DOI 10.5465/amr.2001.4011928 — 資源ベース論のトートロジー批判の典拠' },
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250140303', type: 'academic', label: 'Peteraf, M. A. (1993). The Cornerstones of Competitive Advantage: A Resource-Based View. Strategic Management Journal (Wiley), 14(3), 179–191. DOI 10.1002/smj.4250140303 — 資産ストック蓄積論を統合した資源ベース論の枠組みの典拠' },
+    ],
+  },
+  {
+    id: 'human-four-horsemen-gottman',
+    discipline: 'human-science',
+    title: 'ゴットマンの黙示録の四騎士——批判・侮蔑・自己防衛・逃避が関係の破綻を予測する',
+    statement:
+      'ゴットマンの「四騎士」理論は、心理学者ジョン・M・ゴットマンとロバート・W・レヴェンソンが夫婦を「ラブ・ラボ」実験室に招き、対立時の会話を情動符号化システムと心拍等の生理指標で記録した縦断研究に基づく。初出はゴットマン＆レヴェンソン（1992）の論文「Marital Processes Predictive of Later Dissolution」（Journal of Personality and Social Psychology, 63(2), 221–233）で、73組を追跡し感情制御が弱いほど離婚検討・生理的覚醒が強く、不満から離婚へ至る段階的「カスケード」を示した。四騎士——批判・侮蔑・自己防衛・逃避——のうち侮蔑が最強の予測因で、安定夫婦は対立中もポジティブ:ネガティブ比が約5:1、離婚へ向かう夫婦は1未満に落ち込み、これらの指標により離婚を90%超の精度で判別したとの報告もある。対策となる修復の試みと柔らかい切り出しはゴットマン＆シルバー（1999）にまとめられた。ただしヘイマン＆スレップ（2001）は、高精度な予測式の多くが交差検証を欠く事後的モデルで新規サンプルでは正判別率が大きく低下すると指摘した。小規模事業の経営者にも、共同創業者間や顧客対応の対立で侮蔑的な物言いを避け、柔らかい切り出しと早期の修復を心がける実務的含意がある。',
+    keyFigures: 'ジョン・M・ゴットマン（1992 Gottman & Levenson『Marital Processes Predictive of Later Dissolution』／1994『What Predicts Divorce?』／1998 Gottman, Coan, Carrère & Swanson『Predicting Marital Happiness and Stability from Newlywed Interactions』／1999 Gottman & Silver『The Seven Principles for Making Marriage Work』／2000『The Timing of Divorce』）／ロバート・W・レヴェンソン（1992・2000年論文の共著者・生理指標測定）／批判: リチャード・E・ヘイマン＆エイミー・M・スレップ（2001『The Hazards of Predicting Divorce Without Crossvalidation』で交差検証の欠如を指摘）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://doi.org/10.1037/0022-3514.63.2.221', type: 'academic', label: 'Gottman, J. M., & Levenson, R. W. (1992). Marital processes predictive of later dissolution: Behavior, physiology, and health. Journal of Personality and Social Psychology (American Psychological Association), 63(2), 221–233. — original longitudinal study establishing the Love Lab/SPAFF method, the regulated/nonregulated distinction, and the cascade model.' },
+      { url: 'https://www.jstor.org/stable/353438', type: 'academic', label: 'Gottman, J. M., Coan, J., Carrère, S., & Swanson, C. (1998). Predicting marital happiness and stability from newlywed interactions. Journal of Marriage and the Family, 60(1), 5–22 (JSTOR). — newlywed-couple follow-up study predicting divorce and marital satisfaction from early conflict interaction.' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1741-3737.2000.00737.x', type: 'academic', label: 'Gottman, J. M., & Levenson, R. W. (2000). The timing of divorce: Predicting when a couple will divorce over a 14-year period. Journal of Marriage and Family (Wiley), 62(3), 737–745. — 14-year longitudinal study distinguishing predictors of early versus later divorce.' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1741-3737.2001.00473.x', type: 'academic', label: 'Heyman, R. E., & Slep, A. M. S. (2001). The hazards of predicting divorce without crossvalidation. Journal of Marriage and Family (Wiley), 63(2), 473–479. — methodological critique showing divorce-prediction accuracy drops sharply without cross-validation on a fresh sample.' },
+      { url: 'https://en.wikipedia.org/wiki/The_Seven_Principles_for_Making_Marriage_Work', type: 'reference', label: 'The Seven Principles for Making Marriage Work — Wikipedia. — confirms publication details (Gottman & Silver, 1999, Crown Publishers) and the antidotes/Love-Lab content of the popular synthesis of this research.' },
+    ],
+  },
+  {
+    id: 'bizlaw-lost-volume-seller',
+    discipline: 'business-law',
+    title: '逸失販売量売主の法理——転売しても消えない一件分の利益を売主に補填する理論',
+    statement:
+      '逸失販売量売主の法理（ロスト・ボリューム・セラー）とは、供給能力が需要を上回る売主が買主の違反後に同一物品を他へ転売しても、それは違反がなくても生じたはずの別売上にすぎず、差額賠償のみでは真の損害を補填できないとする理論である。米国統一商事法典§2-708(2)は、損害を「合理的経費を含む、買主の完全履行により売主が得たはずの利益」と定め、ニューヨーク州最上級裁判所（Court of Appeals）のNeri v. Retail Marine Corp.事件（30 N.Y.2d 393, 285 N.E.2d 311, 1972年、ボート解約後に同一艇を同価格で転売した事案）がこれを明確化した代表的判例である。R.E. Davis Chemical Corp. v. Diasonics, Inc.事件（826 F.2d 678, 第7巡回区, 1987年）は追加販売の能力・収益性・実現可能性という3要件を課し、Restatement (Second) of Contracts §347コメントfも同旨である。ゲッツ＆スコット（1979, Stanford Law Review 31号323頁）は追加コスト上昇や需要限界を考慮すれば利益基準が過大補償になりうると批判し、クーター＆アイゼンバーグ（1985, California Law Review 73号1432頁）も複数の損害算定枠組みの中でこれを検討した。中小企業の売主は生産能力と利益率を記録し、解約手数料や手付金条項を立証負担の軽減策として活用すべきである。',
+    keyFigures: 'チャールズ・J・ゲッツ＆ロバート・E・スコット（1979『Measuring Sellers\' Damages: The Lost-Profits Puzzle』Stanford Law Review 31号）／ロバート・クーター＆メルビン・A・アイゼンバーグ（1985『Damages for Breach of Contract』California Law Review 73号）／判例: Neri v. Retail Marine Corp.（1972年、N.Y. Court of Appeals）／判例: R.E. Davis Chemical Corp. v. Diasonics, Inc.（1987年、第7巡回区）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.law.cornell.edu/ucc/2/2-708', type: 'reference', label: 'Cornell Law School Legal Information Institute, "§ 2-708. Seller\'s Damages for Non-acceptance or Repudiation," Uniform Commercial Code Article 2 — verifies the exact statutory text of UCC §2-708(2), including the "profit (including reasonable overhead)" measure' },
+      { url: 'https://en.wikipedia.org/wiki/Lost_volume_seller', type: 'reference', label: 'Wikipedia, "Lost volume seller" — corroborates the doctrine\'s definition and its establishment/application in Neri v. Retail Marine Corp. (1972) and R.E. Davis Chemical Corp. v. Diasonics, Inc. (1987)' },
+      { url: 'https://www.courtlistener.com/opinion/492710/re-davis-chemical-corporation-an-illinois-corporation-v-diasonics/', type: 'reference', label: 'CourtListener — R.E. Davis Chemical Corp. v. Diasonics, Inc., 826 F.2d 678 (7th Cir. 1987) — supports the three-factor lost-volume-seller test (capacity to make an additional sale, its profitability, and the probability it would have been made)' },
+      { url: 'https://scholarship.law.columbia.edu/context/faculty_scholarship/article/1624/viewcontent/ScottR___Measuring_Sellers_Damages.pdf', type: 'academic', label: 'Charles J. Goetz & Robert E. Scott, "Measuring Sellers\' Damages: The Lost-Profits Puzzle," 31 Stanford Law Review 323 (1979), via Columbia Law School Scholarship Archive — supports the economic critique that the profit-based lost-volume measure can overcompensate the seller when marginal cost rises or demand is limited' },
+      { url: 'https://lawcat.berkeley.edu/record/1112369', type: 'academic', label: 'Robert Cooter & Melvin A. Eisenberg, "Damages for Breach of Contract," 73(5) California Law Review 1432-1481 (1985), via lawcat.berkeley.edu — supports the comparative economic framing of seller-damage formulas, including the profit/lost-volume measure' },
+    ],
+  },
+  {
+    id: 'infosoc-networked-protest-tufekci',
+    discipline: 'information-sociology',
+    title: 'トゥフェックチのネットワーク化された抗議——能力を伴わないシグナルの拡大と戦術的凍結',
+    statement:
+      'ネットワーク化された抗議とは、社会学者ゼイナップ・トゥフェックチが『Twitter and Tear Gas』（2017年、イェール大学出版局。前段: トゥフェックチ＆ウィルソン、Journal of Communication、2012年、62巻2号、363–379頁）で示した理論である。抗議は権力者への「シグナル」であり、本来はナラティブ（言説を動かす）・妨害（業務を止める）・選挙・制度（票と組織で変える）という三つの「能力」を反映するはずだが、SNSは組織構築なしに大規模動員（アドホクラシー）を可能にするため、同数でも1963年ワシントン大行進（数年の準備を要した）より弱い信号しか送れず、指導部や意思決定構造を欠き戦術転換や交渉ができない「戦術的凍結」に陥る。ゲジ公園・タハリール広場・オキュパイ・サパティスタ・香港雨傘運動が事例で、政府の対応も検閲から注意の枯渇と偽情報の洪水へ移行したと論じる。カステル（2012）やベネット＆セーゲルバーグの「コネクティブ・アクション」論（2012）と並び議論され、トゥフェックチ自身、比較基準の公民権運動が唯一の先行例ではない点を限界と認めるほか、2014年雨傘運動の凍結を教訓に2019年香港が指導部なき「be water」戦術へ適応した例など後続の学習も指摘される。中小企業や団体には、SNSでの話題化や急な会員増を組織的実行力と誤認せず、危機の前に意思決定構造を整える教訓になる。',
+    keyFigures: 'ゼイナップ・トゥフェックチ（2017『Twitter and Tear Gas: The Power and Fragility of Networked Protest』／トゥフェックチ＆ウィルソン 2012 Journal of Communication 62(2)／2013 American Behavioral Scientist 57(7)）／対比: マニュエル・カステル（2012『Networks of Outrage and Hope』）／対比: W・ランス・ベネット＆アレクサンドラ・セーゲルバーグ（2012 コネクティブ・アクション論、Information, Communication & Society 15(5)）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.twitterandteargas.org/', type: 'academic', label: 'Tufekci, Z. (2017). Twitter and Tear Gas: The Power and Fragility of Networked Protest. New Haven: Yale University Press (360pp.; ISBN 9780300215120; official open-access edition hosted at this site) — primary source for the three capacities (narrative/disruptive/electoral-institutional), "tactical freeze," the case studies (Zapatistas, Gezi Park, Occupy, Tahrir, Hong Kong Umbrella Movement), and the shift from censorship to attention-flooding/disinformation' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1460-2466.2012.01629.x', type: 'academic', label: 'Tufekci, Z., & Wilson, C. (2012). Social Media and the Decision to Participate in Political Protest: Observations From Tahrir Square. Journal of Communication (Wiley), 62(2), 363-379. DOI: 10.1111/j.1460-2466.2012.01629.x — precursor empirical study supporting the Tahrir Square case and the social-media-participation mechanism' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/0002764213479369', type: 'academic', label: 'Tufekci, Z. (2013). "Not This One": Social Movements, the Attention Economy, and Microcelebrity Networked Activism. American Behavioral Scientist (SAGE), 57(7), 848-870. DOI: 10.1177/0002764213479369 — supports the attention-economy argument underlying the censorship-to-attention-flooding shift' },
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/1369118X.2012.670661', type: 'academic', label: 'Bennett, W. L., & Segerberg, A. (2012). The Logic of Connective Action: Digital Media and the Personalization of Contentious Politics. Information, Communication & Society (Taylor & Francis), 15(5), 739-768. DOI: 10.1080/1369118X.2012.670661 — supports the comparison with connective-action theory' },
+      { url: 'https://en.wikipedia.org/wiki/Twitter_and_Tear_Gas', type: 'reference', label: '"Twitter and Tear Gas" — Wikipedia (English) — corroborates the book\'s publisher/year/ISBN and its open-access availability at twitterandteargas.org' },
+    ],
+  },
 ];
 // Stryker restore all

@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[econ-is-lm|IS-LMモデル]] — 同分野の近傍
-- [[econ-balassa-samuelson-effect-productivity|バラッサ＝サミュエルソン効果——生産性格差と実質為替レートの体系的乖離]] — 同分野の近傍
+- [[econ-blanchard-quah-long-run-restrictions|ブランシャール＝クアの長期制約による構造VAR識別——需要ショックと供給ショックの分解]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

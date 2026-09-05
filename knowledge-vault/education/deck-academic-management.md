@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経営学"
 type: flashcard-deck
 deck_key: "academic-management"
-card_count: 656
+card_count: 657
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経営学（656枚）
+# フラッシュカード — 学術概念／経営学（657枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -90,6 +90,8 @@ tags:
   - **A:** アプリシエイティブ・インクワイアリー（Appreciative Inquiry: AI）は、デービッド・コーペライダーとサルウィッチ・シュリバスタバが1987年に提唱した組織開発手法であり、問題分析・解決中心のアプローチを転換し、組織の「最善のもの（best of what is）」を中核的探求対象とする。（→ [[mgmt-appreciative-inquiry-cooperrider]]）
 - **Q:** アーキテクチュラル・イノベーション——構成要素のつなぎ方を変える革新
   - **A:** アーキテクチュラル・イノベーション（architectural innovation、構造的革新）は、レベッカ・ヘンダーソンとキム・クラークが1990年の論文で提示した、イノベーションの類型論の一つである。彼らは、製品を「構成要素（components）」と、それらの構成要素を全体としてまとめ上げる「つなぎ方・配置（architecture、アーキテクチャ）」の二つの側面から捉えた。（→ [[mgmt-architectural-innovation-henderson-clark]]）
+- **Q:** 資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性
+  - **A:** インゲマール・ディエリックスとカレル・クールが『Management Science』誌35巻12号（1989年、1504–1511頁）の論文「Asset Stock Accumulation and Sustainability of Competitive Advantage」で示した理論。（→ [[mgmt-asset-stock-accumulation-dierickx-cool]]）
 - **Q:** アストン研究——組織構造の多次元的・実証的測定
   - **A:** アストン研究（Aston studies）は、1960年代にイギリスのアストン大学（バーミンガム）で、デレク・パグ、デヴィッド・ヒクソン、クリストファー・ハイニングスらの研究グループによって行われた、組織構造に関する大規模な実証研究である。それまでの組織論は、官僚制を論じたマックス・ウェーバーや、管理原則を説いた古典的管理論のように、しばしば理論的・規範的な議論にとどまっていた。（→ [[mgmt-aston-studies-organization]]）
 - **Q:** 注意ベース理論（アテンション・ベースト・ビュー）

@@ -33,6 +33,7 @@ aliases:
 - [IDEAS/RePEc bibliographic entry: Zollo, M. & Winter, S. G. (2002). 'Deliberate Learning and the Evolution of Dynamic Capabilities.' Organization Science, 13(3), 339–351 — 巻・号・頁の書誌情報をINFORMSページと独立に再確認](https://ideas.repec.org/a/inm/ororsc/v13y2002i3p339-351.html) `リファレンス`
 
 ## 関連概念
+- [[mgmt-asset-stock-accumulation-dierickx-cool|資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性]] — 出典を共有
 - [[mgmt-knowledge-based-view|知識ベース理論（ナレッジ・ベースト・ビュー）]] — 出典を共有
 - [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
 - [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
@@ -42,7 +43,6 @@ aliases:
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
 - [[mgmt-demand-side-strategy|需要サイド戦略論]] — 出典を共有
-- [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

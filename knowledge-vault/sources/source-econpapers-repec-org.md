@@ -2,7 +2,7 @@
 title: "econpapers.repec.org"
 type: source-domain
 host: "econpapers.repec.org"
-cite_count: 13
+cite_count: 14
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # econpapers.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **13 件**（学術 12 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **14 件**（学術 13 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -21,6 +21,7 @@ tags:
 - [[econ-rational-addiction|合理的依存]] — EconPapers/RePEcbibliographicrecord—Becker&Murphy,JPE1988
 - [[econ-rotemberg-saloner-price-wars-booms|ロテンバーグ＝サローナー・モデル——好況期に協調的価格が崩れ価格戦争が生じる反循環的マークアップ理論]] — Borenstein,S.&Shepard,A.(1996).DynamicPricinginRetailGasolineMarkets.…
 - [[econ-rotemberg-saloner-price-wars-booms|ロテンバーグ＝サローナー・モデル——好況期に協調的価格が崩れ価格戦争が生じる反循環的マークアップ理論]] — Rotemberg,J.J.&Saloner,G.(1986).ASupergame-TheoreticModelofPriceWarsd…
+- [[econ-schumpeterian-growth-aghion-howitt|アギオン＝ハウイットのシュンペーター型内生成長モデル——創造的破壊による成長]] — Jones,C.I.(1995)."R&D-BasedModelsofEconomicGrowth."JournalofPolitical…
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — EconPapers—ANoteonWelfarePropositions(1941)
 - [[econ-trilemma-financial-regulation|金融規制のトリレンマ]] — EconPapers/RePEc—"Thefinancialtrilemma,"EconomicsLettersv.111y.2011i.…
 - [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — Kahneman,D.&Thaler,R.H.(1991)EconomicAnalysisandthePsychologyofUtilit…

@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 656
+entry_count: 657
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（656件）
+# 学習パス — 学術概念／経営学（657件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -19,10 +19,10 @@ tags:
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 29）
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 27）
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 25）
-- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 24）
 - [[mgmt-csr|企業の社会的責任（CSR）]]（接続 24）
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 24）
 - [[mgmt-mbo|目標による管理（MBO）]]（接続 24）
+- [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 23）
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 23）
 - [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]]（接続 22）
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 22）
@@ -160,6 +160,7 @@ tags:
 - 1985年: [[mgmt-servqual|SERVQUAL（サービス品質モデル）]]
 - 1985年: [[mgmt-value-chain|バリューチェーン（価値連鎖）]]
 - 1985年: [[mgmt-vuca|VUCA（ブーカ）]]
+- 1986年: [[mgmt-asset-stock-accumulation-dierickx-cool|資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性]]
 - 1986年: [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]]
 - 1986年: [[mgmt-dominant-logic|ドミナント・ロジック（Dominant Logic）]]
 - 1986年: [[mgmt-lead-user|リードユーザー法]]

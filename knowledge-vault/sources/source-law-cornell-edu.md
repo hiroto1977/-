@@ -2,7 +2,7 @@
 title: "law.cornell.edu"
 type: source-domain
 host: "law.cornell.edu"
-cite_count: 148
+cite_count: 149
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # law.cornell.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **148 件**（リファレンス 123 ・ 公的 24 ・ 学術 1）
+> [!info] 出典ドメイン索引 ・ 引用 **149 件**（リファレンス 124 ・ 公的 24 ・ 学術 1）
 
 ## このドメインを出典とする項目
 
@@ -112,6 +112,7 @@ tags:
 - [[bizlaw-lien-priority-rule|担保権優先順位の法則]] — UCC§9-322—PrioritiesAmongConflictingSecurityInterests(LIICornell)
 - [[bizlaw-lien-priority-rule|担保権優先順位の法則]] — UCC§9-324—PriorityofPurchase-MoneySecurityInterests(LIICornell)
 - [[bizlaw-liquidated-damages|損害賠償額の予定——違約金条項の有効性と違約罰との区別]] — CornellLIIWex:Liquidateddamages—reasonableforecast,penaltydistinction…
+- [[bizlaw-lost-volume-seller|逸失販売量売主の法理——転売しても消えない一件分の利益を売主に補填する理論]] — CornellLawSchoolLegalInformationInstitute,"§2-708.Seller'sDamagesforN…
 - [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — CornellLawSchoolLegalInformationInstitute—MailboxRule
 - [[bizlaw-mailbox-rule-acceptance|郵便箱ルール（発信主義）]] — LII/CornellLawSchool—MailboxRuledefinition
 - [[bizlaw-marine-insurance-utmost-good-faith|最大善意の原則——保険契約における重要事実の開示義務]] — CornellLIIWex:Uberrimaefidei—utmostgoodfaith,dutyofdisclosure,materia…

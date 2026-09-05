@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[human-autobiographical-memory-conway|コンウェイの自己記憶システム（SMS）と自伝的記憶の階層構造モデル]] — 同じ思想家
-- [[human-narrative-identity|ナラティブ・アイデンティティ（Narrative Identity）]] — 同分野の近傍
 - [[human-reminiscence-bump|レミニセンス・バンプ]] — 同分野の近傍
+- [[human-narrative-identity|ナラティブ・アイデンティティ（Narrative Identity）]] — 同分野の近傍
 - [[human-polyvagal-porges|ポリヴェーガル理論（ポージェス）]] — 同分野の近傍
 
 ## 関連

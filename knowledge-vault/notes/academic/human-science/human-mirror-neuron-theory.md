@@ -31,6 +31,7 @@ Giacomo Rizzolatti ／ Vittorio Gallese ／ Leonardo Fogassi ／ Marco Iacoboni 
 - [Ramachandran & Oberman (2007) — Broken Mirrors: A Theory of Autism, Scientific American](https://www.scientificamerican.com/article/broken-mirrors-a-theory-of-autism-2007-06/) `メディア`
 
 ## 関連概念
+- [[human-embodied-simulation|身体化されたシミュレーション理論と鏡像ニューロン系：他者理解・共感・社会的認知の神経基盤]] — 語彙が近い
 - [[human-phantom-limb-ramachandran|幻肢痛とミラーセラピー]] — 同じ思想家
 - [[human-synesthesia-neuroscience|共感覚の神経科学]] — 同じ思想家
 - [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — 出典を共有
@@ -40,7 +41,6 @@ Giacomo Rizzolatti ／ Vittorio Gallese ／ Leonardo Fogassi ／ Marco Iacoboni 
 - [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 出典を共有
 - [[human-sociometer-theory|ソシオメーター理論]] — 出典を共有
 - [[human-status-characteristics|地位特性理論（期待状態理論）]] — 出典を共有
-- [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

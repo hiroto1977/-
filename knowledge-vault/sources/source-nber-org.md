@@ -2,7 +2,7 @@
 title: "nber.org"
 type: source-domain
 host: "nber.org"
-cite_count: 86
+cite_count: 87
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nber.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **86 件**（学術 85 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **87 件**（学術 86 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -23,6 +23,7 @@ tags:
 - [[econ-barro-growth|バロー成長回帰（Barro Growth Regression）]] — Barro(1996)DeterminantsofEconomicGrowth—NBERWP5698
 - [[econ-becker-crime|犯罪の経済学]] — Becker,G.S.(1968)"CrimeandPunishment:AnEconomicApproach,"JournalofPol…
 - [[econ-ben-porath-human-capital-lifecycle|ベン=ポラト・モデル（人的資本生産の生涯サイクル理論）]] — NBERChapter—"TheProductionofHumanCapitalOverTime"(retrospectiveanalys…
+- [[econ-blanchard-quah-long-run-restrictions|ブランシャール＝クアの長期制約による構造VAR識別——需要ショックと供給ショックの分解]] — Blanchard,O.J.&Quah,D.(1989)."TheDynamicEffectsofAggregateDemandandSu…
 - [[econ-credit-channel|信用経路（クレジット・チャネル）]] — NBERWorkingPaperNo.5146—Bernanke&Gertler,"InsidetheBlackBox"
 - [[econ-credit-channel-theory|信用チャネル理論]] — Bernanke,Gertler,&Gilchrist"TheFinancialAccelerator..."NBERWorkingPap…
 - [[econ-credit-cycle-theory|信用循環理論]] — Bernanke,Gertler&Gilchrist"TheFinancialAcceleratorinaQuantitativeBusi…

@@ -2,7 +2,7 @@
 title: "aeaweb.org"
 type: source-domain
 host: "aeaweb.org"
-cite_count: 35
+cite_count: 36
 tags:
   - source-domain
   - index
@@ -10,12 +10,13 @@ tags:
 
 # aeaweb.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **35 件**（学術 35）
+> [!info] 出典ドメイン索引 ・ 引用 **36 件**（学術 36）
 
 ## このドメインを出典とする項目
 
 - [[econ-auerbach-kotlikoff-generational|世代会計（Generational Accounting）]] — GenerationalAccounting:AMeaningfulWaytoEvaluateFiscalPolicy,JEP(1994)
 - [[econ-bartik-shift-share-instrument|バーティック操作変数（シフトシェア操作変数）——全国産業成長率と地域産業構成の積で地域労働需要ショックを予測する識別戦略]] — Goldsmith-Pinkham,P.,Sorkin,I.,&Swift,H.(2020).BartikInstruments:What…
+- [[econ-blanchard-quah-long-run-restrictions|ブランシャール＝クアの長期制約による構造VAR識別——需要ショックと供給ショックの分解]] — Galí,J.(1999)."Technology,Employment,andtheBusinessCycle:DoTechnology…
 - [[econ-chamley-judd-theorem|チャムリー＝ジャッド定理——長期の最適な資本所得税はゼロである]] — Straub,L.&Werning,I.(2020)PositiveLong-RunCapitalTaxation:Chamley-Jud…
 - [[econ-comparative-advantage|比較優位（リカードの比較生産費説）]] — AEA,JournalofEconomicPerspectives—Ricardo’s1817FormulationofComparati…
 - [[econ-credit-channel|信用経路（クレジット・チャネル）]] — Bernanke&Gertler(1995),"InsidetheBlackBox:TheCreditChannelofMonetaryP…

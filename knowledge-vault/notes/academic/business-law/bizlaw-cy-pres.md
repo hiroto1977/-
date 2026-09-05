@@ -34,8 +34,8 @@ Jackson v. Phillips, 96 Mass. (14 Allen) 539 (1867)／In re Neher's Will, 279 N.
 - [[infosoc-techno-nationalism|テクノナショナリズム（Techno-nationalism）]] — 同じ思想家
 - [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]] — 同じ思想家
 - [[bizlaw-ultra-vires-doctrine|権限踰越の法理（Ultra Vires）]] — 同じ思想家
+- [[bizlaw-materiality-securities-law|証券法における重要性基準]] — 同分野の近傍
 - [[bizlaw-pemsel-charity-heads|ペムゼルの四類型——慈善目的の古典的な分類]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

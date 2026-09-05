@@ -2,7 +2,7 @@
 title: "lawcat.berkeley.edu"
 type: source-domain
 host: "lawcat.berkeley.edu"
-cite_count: 1
+cite_count: 2
 tags:
   - source-domain
   - index
@@ -10,11 +10,12 @@ tags:
 
 # lawcat.berkeley.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **1 件**（学術 1）
+> [!info] 出典ドメイン索引 ・ 引用 **2 件**（学術 2）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — Eisenberg—DutyofCareofCorporateDirectorsandOfficers,UCBerkeley
+- [[bizlaw-lost-volume-seller|逸失販売量売主の法理——転売しても消えない一件分の利益を売主に補填する理論]] — RobertCooter&MelvinA.Eisenberg,"DamagesforBreachofContract,"73(5)Cali…
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

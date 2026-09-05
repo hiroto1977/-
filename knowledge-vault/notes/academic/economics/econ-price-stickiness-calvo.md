@@ -37,8 +37,8 @@ aliases:
 - [[econ-fear-of-floating|変動相場回避（フィア・オブ・フローティング）]] — 同じ思想家
 - [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 同じ思想家
 - [[econ-new-keynesian-phillips|ニューケインジアン・フィリップス曲線（New Keynesian Phillips Curve）]] — 同じ思想家
+- [[econ-blanchard-quah-long-run-restrictions|ブランシャール＝クアの長期制約による構造VAR識別——需要ショックと供給ショックの分解]] — 同じ思想家
 - [[econ-corridor-of-stability-theory|安定の回廊理論]] — 同じ思想家
-- [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

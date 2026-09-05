@@ -38,8 +38,8 @@ aliases:
 - [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 同じ思想家
 - [[infosoc-mode-of-information-poster|情報様式論——電子的コミュニケーションが主体と社会関係を再構成する]] — 同じ思想家
 - [[infosoc-network-individualism-wellman|ネットワーク個人主義——集団から個人中心の柔軟な人的ネットワークへの移行]] — 同じ思想家
+- [[infosoc-networked-protest-tufekci|トゥフェックチのネットワーク化された抗議——能力を伴わないシグナルの拡大と戦術的凍結]] — 同じ思想家
 - [[infosoc-technological-determinism-mcluhan|技術決定論——技術とりわけメディアが社会と意識を規定するという見方]] — 同じ思想家
-- [[infosoc-warm-expert-bakardjieva|ウォーム・エキスパート——身近な技術支援者が生活世界とシステム世界を橋渡しする]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

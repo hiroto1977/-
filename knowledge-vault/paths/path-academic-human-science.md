@@ -2,19 +2,19 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 642
+entry_count: 643
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（642件）
+# 学習パス — 学術概念／人間科学（643件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 141）
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 101）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 142）
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 102）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 31）
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 28）
@@ -24,9 +24,9 @@ tags:
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 26）
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 26）
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 25）
+- [[human-cognitive-appraisal|認知的評価理論（感情）]]（接続 25）
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 25）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 25）
-- [[human-cognitive-appraisal|認知的評価理論（感情）]]（接続 24）
 - [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]]（接続 24）
 
 ## 第 2 部 — 年代順の展開
@@ -229,6 +229,7 @@ tags:
 - 1991年: [[human-optimal-distinctiveness|最適弁別性理論（Optimal Distinctiveness Theory／Brewer 1991）——人は所属（同化）と差異化（独自性）の相反する欲求の均衡点で社会的アイデンティティを選ぶ]]
 - 1991年: [[human-rumination|反芻思考]]
 - 1992年: [[human-dunbars-number|ダンバー数（社会脳仮説）]]
+- 1992年: [[human-four-horsemen-gottman|ゴットマンの黙示録の四騎士——批判・侮蔑・自己防衛・逃避が関係の破綻を予測する]]
 - 1992年: [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]]
 - 1992年: [[human-socioemotional-selectivity|社会情動的選択性理論（Socioemotional Selectivity Theory）]]
 - 1993年: [[human-emotional-contagion|情動感染]]

@@ -30,6 +30,7 @@ aliases:
 - [OECD — Cost-Benefit Analysis and the Environment（CV/EVによる厚生変化測定・環境価値評価への応用）](https://www.oecd.org/en/publications/cost-benefit-analysis-and-the-environment_9789264085169-en.html) `公的`
 
 ## 関連概念
+- [[econ-harberger-excess-burden-taxation|ハーバーガーの超過負担——課税の厚生損失と最適税制設計]] — 語彙が近い
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
 - [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]] — 同じ思想家
 - [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[econ-hicks-trade-cycle|ヒックスの景気循環論——天井と床に挟まれた持続的な循環]] — 同じ思想家
 - [[econ-interest-rate-term-structure-expectations|金利の期間構造と期待仮説——イールドカーブ理論と金融政策の波及経路]] — 同じ思想家
 - [[econ-is-lm|IS-LMモデル]] — 同じ思想家
-- [[econ-keynesian-cross|ケインジアンの45度線分析——有効需要が均衡国民所得を決める]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

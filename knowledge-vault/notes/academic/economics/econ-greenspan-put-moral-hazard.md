@@ -35,6 +35,7 @@ Marcus H. Miller ／ Paul A. Weller ／ Raghuram G. Rajan
 - [[econ-washington-consensus|ワシントン・コンセンサス]] — 出典を共有
 - [[econ-greenspan-put|グリーンスパン・プット]] — 同分野の近傍
 - [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同分野の近傍
+- [[econ-schumpeterian-growth-aghion-howitt|アギオン＝ハウイットのシュンペーター型内生成長モデル——創造的破壊による成長]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

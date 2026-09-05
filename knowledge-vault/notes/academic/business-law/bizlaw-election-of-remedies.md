@@ -41,7 +41,7 @@ Dan B. Dobbs ／ Howard W. Brill ／ Samuel Williston
 - [[bizlaw-best-efforts-obligation|最善努力義務]] — 出典を共有
 - [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 出典を共有
 - [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 出典を共有
-- [[bizlaw-unauthorized-agency|無権代理（民法113条・117条）]] — 同分野の近傍
+- [[bizlaw-choice-of-law|準拠法——複数の法域に関わる紛争にいずれの法を適用するか]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

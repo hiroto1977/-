@@ -2,7 +2,7 @@
 title: "オリヴィエ・ブランシャール"
 type: thinker
 person_key: "ブランシャール|オ"
-concept_count: 14
+concept_count: 15
 tags:
   - person
   - index
@@ -10,10 +10,11 @@ tags:
 
 # オリヴィエ・ブランシャール
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **14 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **15 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（14件）
+## 学術概念（15件）
 - [[econ-bartik-shift-share-instrument|バーティック操作変数（シフトシェア操作変数）——全国産業成長率と地域産業構成の積で地域労働需要ショックを予測する識別戦略]] — バーティック操作変数（シフトシェア操作変数）とは、産業別の全国成長率と地域の初期産業シェアの積で地域の予測労働需要ショ…
+- [[econ-blanchard-quah-long-run-restrictions|ブランシャール＝クアの長期制約による構造VAR識別——需要ショックと供給ショックの分解]] — ブランシャール＝クア分解とは、オリヴィエ・ブランシャールとダニー・クアが『TheDynamicEffectsofAgg…
 - [[econ-eurosclerosis-giersch|ユーロスクレローシス——欧州経済の構造的硬直性と高失業の持続]] — ユーロスクレローシス（Eurosclerosis）は、ヘルベルト・ギールシュが1985年に造語した概念で、1970年代…
 - [[econ-fiscal-multiplier-auerbach-gorodnichenko|財政乗数——景気局面依存性とアウアーバッハ＝ゴロドニチェンコの状態依存推定]] — アラン・アウアーバッハとユーリー・ゴロドニチェンコは2012年の論文「MeasuringtheOutputRespon…
 - [[econ-fiscal-multiplier-crowding-out-debate|財政乗数とクラウディングアウト論争——IS-LMモデルから実証的な乗数推定への展開]] — ケインズ的財政政策の効果を定量化する「財政乗数」は、政府支出が最終的にGDPを何倍増やすかを示すパラメータである。

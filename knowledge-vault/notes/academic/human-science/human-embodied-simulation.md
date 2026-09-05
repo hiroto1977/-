@@ -33,9 +33,9 @@ aliases:
 
 ## 関連概念
 - [[human-embodied-simulation-rizzolatti|身体的シミュレーションと鏡像ニューロン（リゾラッティ）]] — 語彙が近い
+- [[human-mirror-neuron-theory|ミラーニューロン理論]] — 語彙が近い
 - [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — 同じ思想家
 - [[human-mirror-neuron-controversy|ミラーニューロン論争（Mirror Neuron Controversy）]] — 同じ思想家
-- [[human-mirror-neuron-theory|ミラーニューロン理論]] — 同分野の近傍
 - [[human-emotional-regulation|感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解]] — 同分野の近傍
 - [[human-mentalizing-fonagy-bateman|メンタライゼーション理論——フォナギーの心の理論と境界性パーソナリティ障害への治療的介入]] — 同分野の近傍
 - [[human-planned-behavior|計画的行動理論（TPB）]] — 同分野の近傍

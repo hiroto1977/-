@@ -36,7 +36,6 @@ Jan G. Deutsch／Walter Rand III／W. B. Davis
 - [[bizlaw-competition-law-abuse-dominant-position|市場支配的地位の濫用——EU競争法102条の規制枠組み]] — 同分野の近傍
 - [[bizlaw-corporate-reorganization|組織再編（合併・会社分割等）]] — 同分野の近傍
 - [[bizlaw-fair-and-equitable-treatment|公正衡平待遇基準（Fair and Equitable Treatment）]] — 同分野の近傍
-- [[bizlaw-condominium-ownership|区分所有（区分所有法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,8 +33,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-inheritance-tax|相続税法]] — 語彙が近い
-- [[tax-inheritance-basic-deduction|相続税の基礎控除額]] — 同分野の近傍
 - [[tax-special-collection-resident|個人住民税の特別徴収（給与天引き）義務]] — 同分野の近傍
+- [[tax-housing-fund-gift|直系尊属からの住宅取得等資金贈与の非課税特例]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

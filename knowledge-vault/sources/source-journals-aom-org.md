@@ -2,7 +2,7 @@
 title: "journals.aom.org"
 type: source-domain
 host: "journals.aom.org"
-cite_count: 70
+cite_count: 71
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.aom.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **70 件**（学術 70）
+> [!info] 出典ドメイン索引 ・ 引用 **71 件**（学術 71）
 
 ## このドメインを出典とする項目
 
@@ -20,6 +20,7 @@ tags:
 - [[mgmt-absorptive-capacity-theory|吸収能力理論]] — Zahra&George(2002)—AbsorptiveCapacity:AReview,Reconceptualization,and…
 - [[mgmt-adaptive-performance-griffin|適応的パフォーマンス（グリフィン・ニール・パーカー）]] — Griffin,M.A.,Neal,A.,&Parker,S.K.(2007)Anewmodelofworkroleperformance…
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — Gibson&Birkinshaw(2004)OrganizationalAmbidexterity—AcademyofManagemen…
+- [[mgmt-asset-stock-accumulation-dierickx-cool|資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性]] — Priem,R.L.,&Butler,J.E.(2001).IstheResource-Based"View"aUsefulPerspec…
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — Wiseman,R.M.&Gómez-Mejía,L.R.(1998)ABehavioralAgencyModelofManagerial…
 - [[mgmt-behavioral-integration|行動的統合（Behavioral Integration）]] — Hambrick(2007)UpperEchelonsTheory:AnUpdate—AcademyofManagementReview3…
 - [[mgmt-behavioral-integration-tmt|トップ・マネジメント・チームの行動統合]] — Simsek,Veiga,Lubatkin&Dino(2005)ModelingtheMultilevelDeterminantsofTM…

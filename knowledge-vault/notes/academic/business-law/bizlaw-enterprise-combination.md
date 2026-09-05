@@ -33,6 +33,7 @@ aliases:
 - [[legal-merger-control|独占禁止法の企業結合規制（M&A・合併等の届出）]] — 語彙が近い
 - [[bizlaw-competition-law|競争法・独占禁止法：市場支配力の規制と反トラスト法の経済学的分析]] — 出典を共有
 - [[bizlaw-antitrust-merger-remedies|M&A競争法上の救済措置——構造的・行動的救済と市場競争維持のための条件付き承認]] — 同分野の近傍
+- [[bizlaw-competition-law-merger-control|企業結合規制と競争法——独占禁止法における合併審査の基準と実務]] — 同分野の近傍
 - [[bizlaw-competition-law-merger-control-eu|EU競争法における企業結合規制——欧州委員会の合併審査とSIECテスト]] — 同分野の近傍
 - [[bizlaw-state-liability|国家賠償（国家賠償法1条・2条）]] — 同分野の近傍
 

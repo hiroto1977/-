@@ -39,6 +39,7 @@ Albert Bandura（1997 『Self-Efficacy: The Exercise of Control』で集合的�
 - [[mgmt-creative-self-efficacy|創造的自己効力感]] — 同じ思想家
 - [[mgmt-psychological-capital-theory|心理的資本理論]] — 同分野の近傍
 - [[mgmt-organizational-identity-albert|組織アイデンティティ理論（アルバート＆ウェッテン）]] — 同分野の近傍
+- [[mgmt-asset-stock-accumulation-dierickx-cool|資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 946
+entry_count: 948
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（946件）
+# 学習パス — 学術概念／経済学（948件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -347,6 +347,7 @@ tags:
 - 1986年: [[econ-property-rights-theory|財産権アプローチ（企業の所有権理論）]]
 - 1987年: [[econ-deaton-paradox|ディートンのパラドックス（消費の過剰平滑性）]]
 - 1987年: [[econ-sheepskin-effect|シープスキン効果（sheepskin effect／卒業証書効果）——学位取得そのものがもたらす賃金の非連続的上昇]]
+- 1988年: [[econ-blanchard-quah-long-run-restrictions|ブランシャール＝クアの長期制約による構造VAR識別——需要ショックと供給ショックの分解]]
 - 1988年: [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]]
 - 1988年: [[econ-insider-outsider|インサイダー・アウトサイダー理論]]
 - 1988年: [[econ-rational-addiction|合理的依存]]
@@ -357,6 +358,7 @@ tags:
 - 1990年: [[econ-lucas-paradox|ルーカスのパラドックス]]
 - 1990年: [[econ-ostrom-commons|オストロムのコモンズ統治]]
 - 1990年: [[econ-rct-development|開発経済学におけるランダム化比較試験（RCT in Development Economics）]]
+- 1990年: [[econ-schumpeterian-growth-aghion-howitt|アギオン＝ハウイットのシュンペーター型内生成長モデル——創造的破壊による成長]]
 - 1991年: [[econ-barro-growth|バロー成長回帰（Barro Growth Regression）]]
 - 1991年: [[econ-bartik-shift-share-instrument|バーティック操作変数（シフトシェア操作変数）——全国産業成長率と地域産業構成の積で地域労働需要ショックを予測する識別戦略]]
 - 1991年: [[econ-double-dividend|二重の配当（環境税）]]

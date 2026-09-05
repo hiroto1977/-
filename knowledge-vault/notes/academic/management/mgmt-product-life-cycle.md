@@ -32,8 +32,8 @@ aliases:
 - [オープン教科書 "A Great Marketing Textbook"（4段階と全製品同曲線ではない点）](https://pressbooks.pub/agreatmarketingtextbook/chapter/introduction-to-product-life-cycle/) `学術`
 
 ## 関連概念
-- [[mgmt-innovation-s-curve-foster|イノベーションのSカーブとテクノロジーサイクル——技術的限界と不連続的イノベーションの経営戦略]] — 同分野の近傍
 - [[mgmt-pest-analysis|PEST分析（PESTLE分析）]] — 同分野の近傍
+- [[mgmt-innovation-s-curve-foster|イノベーションのSカーブとテクノロジーサイクル——技術的限界と不連続的イノベーションの経営戦略]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

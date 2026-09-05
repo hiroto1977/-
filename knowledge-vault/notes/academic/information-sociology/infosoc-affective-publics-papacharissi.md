@@ -31,7 +31,6 @@ aliases:
 - [Wikipedia: Affective publics — emotional networks and digital mobilization overview](https://en.wikipedia.org/wiki/Affective_publics) `リファレンス`
 
 ## 関連概念
-- [[infosoc-connective-action|つながりの行為論理（コネクティブ・アクション）]] — 語彙が近い
 - [[infosoc-colonization-lifeworld|生活世界の植民地化]] — 同じ思想家
 - [[infosoc-public-sphere|公共圏（ハーバーマス）]] — 同じ思想家
 - [[infosoc-counterpublic|対抗的公共圏（カウンターパブリック）]] — 同じ思想家
@@ -39,6 +38,7 @@ aliases:
 - [[infosoc-deliberative-democracy|熟議民主主義]] — 同じ思想家
 - [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同じ思想家
 - [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 同分野の近傍
+- [[infosoc-connective-action|つながりの行為論理（コネクティブ・アクション）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

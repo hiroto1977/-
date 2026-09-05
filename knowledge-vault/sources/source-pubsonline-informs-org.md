@@ -2,7 +2,7 @@
 title: "pubsonline.informs.org"
 type: source-domain
 host: "pubsonline.informs.org"
-cite_count: 23
+cite_count: 26
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # pubsonline.informs.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **23 件**（学術 23）
+> [!info] 出典ドメイン索引 ・ 引用 **26 件**（学術 26）
 
 ## このドメインを出典とする項目
 
@@ -21,6 +21,9 @@ tags:
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — VanAlstyne&Brynjolfsson(2005),ManagementScience51(6):851-868(INFORMS)
 - [[infosoc-technostress-theory|テクノストレス理論]] — Ragu-Nathanetal.(2008)—TheConsequencesofTechnostressforEndUsersinOrga…
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — March(1991)ExplorationandExploitationinOrganizationalLearning—Organiz…
+- [[mgmt-asset-stock-accumulation-dierickx-cool|資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性]] — Barney,J.B.(1986).StrategicFactorMarkets:Expectations,Luck,andBusines…
+- [[mgmt-asset-stock-accumulation-dierickx-cool|資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性]] — Barney,J.B.(1989).AssetStocksandSustainedCompetitiveAdvantage:ACommen…
+- [[mgmt-asset-stock-accumulation-dierickx-cool|資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性]] — Dierickx,I.,&Cool,K.(1989).AssetStockAccumulationandSustainabilityofC…
 - [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — Ocasio,W.(2011)AttentiontoAttention—OrganizationScience22(5):1286-1296
 - [[mgmt-behavioral-integrity|行動的誠実性（ビヘイビオラル・インテグリティ）]] — Simons(2002)—BehavioralIntegrity:ThePerceivedAlignmentBetweenManagers…
 - [[mgmt-deliberate-learning-zollo-winter|意図的学習とダイナミック・ケイパビリティの進化——経験蓄積・知識の明示化・コード化による組織能力の体系的な更新]] — Zollo,M.&Winter,S.G.(2002).'DeliberateLearningandtheEvolutionofDynami…

@@ -2,7 +2,7 @@
 title: "journals.sagepub.com"
 type: source-domain
 host: "journals.sagepub.com"
-cite_count: 168
+cite_count: 169
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.sagepub.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **168 件**（学術 167 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **169 件**（学術 168 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -90,6 +90,7 @@ tags:
 - [[infosoc-network-agenda-setting|ネットワーク議題設定モデル（Network Agenda Setting、議題設定理論の第三レベル）]] — Vu,H.T.,Guo,L.&McCombs,M.(2014)Exploring"theWorldOutsideandthePicture…
 - [[infosoc-network-effects|ネットワーク効果（Network Effects）]] — Abramovaiteetal.(2022)ClassicalDeterrenceTheoryRevisited—SageJournals
 - [[infosoc-network-neutrality-theory|ネットワーク中立性理論]] — Hildebrandt&Wiewiorra—"Thepast,present,andfutureof(net)neutrality:Ast…
+- [[infosoc-networked-protest-tufekci|トゥフェックチのネットワーク化された抗議——能力を伴わないシグナルの拡大と戦術的凍結]] — Tufekci,Z.(2013)."NotThisOne":SocialMovements,theAttentionEconomy,and…
 - [[infosoc-news-values|ニュース・バリュー（ニュースの価値）]] — Galtung&Ruge(1965)"TheStructureofForeignNews",JournalofPeaceResearch(…
 - [[infosoc-online-disinhibition|オンライン脱抑制効果]] — JohnSuler,“TheOnlineDisinhibitionEffect,”CyberPsychology&Behavior7(3)…
 - [[infosoc-phatic-culture|ファティック文化（Phatic Culture／Vincent Miller 2008）——内容より「つながりの維持」を目的とする、中身の薄いコミュニケーションの拡大]] — Miller,V.(2008).NewMedia,NetworkingandPhaticCulture.Convergence,14(4)…
