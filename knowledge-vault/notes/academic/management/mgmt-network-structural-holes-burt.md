@@ -34,7 +34,6 @@ aliases:
 - [[mgmt-social-capital-intellectual-capital-nahapiet-ghoshal|ナハピエト＝ゴシャールの社会関係資本論——構造的・関係的・認知的の三次元による知的資本創造と組織の優位性]] — 同じ思想家
 - [[econ-social-capital-putnam|ソーシャル・キャピタル（パットナム）]] — 同じ思想家
 - [[infosoc-social-network-analysis|社会ネットワーク分析（SNA）]] — 同じ思想家
-- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]] — 同じ思想家
 - [[infosoc-social-capital|社会関係資本（ソーシャル・キャピタル）]] — 同じ思想家
 - [[infosoc-strength-weak-ties-granovetter|弱い紐帯の強さ——希薄なつながりが新規情報の橋渡しをする]] — 同じ思想家
 - [[mgmt-resource-dependence-pfeffer|資源依存理論と組織間権力関係のマネジメント（ファーファー＝サランシク）]] — 同じ思想家

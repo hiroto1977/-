@@ -33,7 +33,6 @@ aliases:
 
 ## 関連概念
 - [[econ-second-welfare-theorem|厚生経済学第二基本定理——効率と公平の分離と再分配の可能性]] — 語彙が近い
-- [[econ-welfare-economics-pigou-kaldor-hicks|厚生経済学——ピグーの外部性補正とカルドア＝ヒックス補償原理]] — 語彙が近い
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 同じ思想家
 - [[econ-contingent-valuation|仮想評価法——表明選好により非市場財の価値を計測する手法]] — 同じ思想家
 - [[econ-discrimination-becker|差別の経済学——「差別への嗜好」と競争による差別の侵食]] — 同じ思想家
@@ -42,6 +41,7 @@ aliases:
 - [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]] — 同じ思想家
 - [[econ-general-equilibrium-walras|ワルラスの一般均衡理論]] — 同じ思想家
 - [[econ-harsanyi-utilitarianism|ハルサニの功利主義（集計定理）——不偏な観察者と期待効用の和]] — 同じ思想家
+- [[econ-hirshleifer-private-social-value-information|情報の私的価値と社会的価値の乖離（ハーシュライファー）——予見的情報は私的に有利でも社会的には過剰・無価値になりうる]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

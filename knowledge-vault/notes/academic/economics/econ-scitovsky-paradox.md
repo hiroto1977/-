@@ -34,7 +34,7 @@ aliases:
 - [Kaldor (1939) "Welfare Propositions of Economics and Interpersonal Comparisons of Utility", Economic Journal 49(195):549-552](https://academic.oup.com/ej/article-abstract/49/195/549/5268352) `学術`
 
 ## 関連概念
-- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]] — 同じ思想家
+- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——勝者が敗者を補償してなお余剰が残るなら改善とみなす潜在的パレート改善で、費用便益分析の理論的基礎]] — 同じ思想家
 - [[econ-verdoorn-law|フェルドーンの法則（カルドア＝フェルドーンの法則）]] — 同じ思想家
 - [[econ-backwash-spread-myrdal|逆流効果と波及効果——ミュルダールの循環的累積的因果関係論]] — 同じ思想家
 - [[econ-balance-of-payments-constraint-thirlwall|サールウォールの法則——国際収支制約のもとでの長期成長率]] — 同じ思想家

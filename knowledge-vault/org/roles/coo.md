@@ -27,14 +27,14 @@ aliases:
 - [[bizlaw-accord-and-satisfaction|和解合意と履行——係争中の債務の合意的解決の法理]]
 - …ほか 689 件 → [[学術概念]]
 
-### 学術概念 / 経済学（全921件）
+### 学術概念 / 経済学（全916件）
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]
 - [[econ-accelerator-principle|加速度原理（投資の加速度原理）]]
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]]
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する]]
 - [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]]
-- …ほか 915 件 → [[学術概念]]
+- …ほか 910 件 → [[学術概念]]
 
 ### 学術概念 / 人間科学（全630件）
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]
@@ -54,14 +54,14 @@ aliases:
 - [[infosoc-agnotology-proctor|アグノトロジー——無知はいかに作り出されるか]]
 - …ほか 586 件 → [[学術概念]]
 
-### 学術概念 / 経営学（全615件）
+### 学術概念 / 経営学（全614件）
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]
 - [[mgmt-aaker-brand-identity|アーカーのブランド・アイデンティティ]]
 - [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]]
 - [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]]
 - [[mgmt-abusive-supervision-tepper|虐待的監督——上司による持続的な敵対的言動]]
-- …ほか 609 件 → [[学術概念]]
+- …ほか 608 件 → [[学術概念]]
 
 ### 法務・税務・労務 / 労務（全124件）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]

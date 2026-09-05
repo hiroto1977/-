@@ -34,7 +34,7 @@ aliases:
 ## 関連概念
 - [[econ-samuelson-condition|公共財供給のサミュエルソン条件]] — 同じ思想家
 - [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 同じ思想家
-- [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — 同じ思想家
+- [[econ-public-goods-samuelson|公共財（サミュエルソン）——非競合性と非排除性を持つ財はフリーライダー問題により市場で過少供給され、政府供給や集合的解決の根拠になる]] — 同じ思想家
 - [[econ-club-goods-buchanan|クラブ財（ブキャナン）——排除できるが混雑するまでは非競合的な財の最適な供給規模と会員数]] — 同じ思想家
 - [[econ-merit-goods|メリット財（価値財）]] — 同じ思想家
 - [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]] — 同じ思想家

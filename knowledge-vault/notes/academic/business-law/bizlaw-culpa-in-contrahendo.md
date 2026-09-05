@@ -35,7 +35,6 @@ aliases:
 - [[bizlaw-adequate-consideration|契約法における約因の法理と比較法的考察]] — 同分野の近傍
 - [[bizlaw-promissory-estoppel|約束的禁反言（プロミッサリー・エストッペル）]] — 同分野の近傍
 - [[bizlaw-framing-statute|フレーミング法定立学（Framing Statute）]] — 同分野の近傍
-- [[bizlaw-mitigation-of-damages|損害軽減義務——違反後に合理的努力で回避しえた損害は回復できない]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

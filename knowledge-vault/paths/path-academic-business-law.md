@@ -15,8 +15,8 @@ tags:
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 83）
 - [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]（接続 57）
-- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 38）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 37）
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 37）
 - [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]]（接続 35）
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 31）
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]]（接続 29）

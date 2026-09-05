@@ -35,6 +35,7 @@ aliases:
 - [[mgmt-emotional-intelligence|感情知性（EQ）]] — 分野横断
 - [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]] — 同じ思想家
 - [[human-theory-of-mind|心の理論]] — 同分野の近傍
+- [[human-affective-forecasting-wilson-gilbert|感情予測（ウィルソン＝ギルバート）——将来の出来事が自分の感情に与える影響の予測は、強さと持続を過大評価する方向に体系的に歪む]] — 同分野の近傍
 - [[human-confirmation-bias|確証バイアス（confirmation bias）]] — 同分野の近傍
 - [[human-implicit-association-test-greenwald|潜在的連合テスト（IAT）]] — 同分野の近傍
 - [[human-interpersonal-emotion-regulation|対人感情調節と感情の社会的共有・コ・レギュレーション理論]] — 同分野の近傍

@@ -35,7 +35,7 @@ aliases:
 - [[mgmt-bcg-matrix|プロダクト・ポートフォリオ・マネジメント（PPM／BCGマトリクス）]] — 同じ思想家
 - [[mgmt-focused-factory-skinner|集中工場（スキナー）——「絞り込み」が競争力を生む製造戦略]] — 出典を共有
 - [[mgmt-competing-values-framework-quinn|競合価値観フレームワーク——クインの組織文化類型と管理的リーダーシップ]] — 同分野の近傍
-- [[mgmt-transaction-cost-economics|取引コスト理論（取引費用経済学）]] — 同分野の近傍
+- [[mgmt-value-disciplines-treacy-wiersema|価値基準（バリュー・ディシプリン）——市場リーダーが選ぶ三つの卓越]] — 同分野の近傍
 - [[mgmt-littles-law|リトルの法則——待ち行列を貫くシンプルな等式]] — 同分野の近傍
 
 ## 関連

@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-co-opetition-brandenburger|競争と協調の共存（コーペティション）]] — 同じ思想家
-- [[econ-tournament-theory-lazear-rosen|トーナメント理論——相対的順位に基づく報酬が努力を引き出す仕組み]] — 同じ思想家
+- [[econ-tournament-theory-lazear-rosen|トーナメント理論（レイザー＝ローゼン）——絶対成果ではなく相対順位で報酬を決める仕組みが努力を引き出し、昇進ごとの大きな報酬格差を説明する]] — 同じ思想家
 - [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 出典を共有
 - [[infosoc-actor-network-theory|アクターネットワーク理論]] — 出典を共有
 - [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — 出典を共有

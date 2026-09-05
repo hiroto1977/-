@@ -37,7 +37,7 @@ aliases:
 - [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — 同じ思想家
 - [[econ-leviathan-hypothesis-brennan-buchanan|リヴァイアサン仮説——歳入最大化を図る政府と憲法的・分権的な制約]] — 同じ思想家
 - [[econ-merit-goods-musgrave|価値財——個人の選好を超えて社会が消費を奨励すべきとされる財]] — 同じ思想家
-- [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — 同じ思想家
+- [[econ-public-goods-samuelson|公共財（サミュエルソン）——非競合性と非排除性を持つ財はフリーライダー問題により市場で過少供給され、政府供給や集合的解決の根拠になる]] — 同じ思想家
 - [[econ-ramsey-optimal-taxation|ラムゼイの最適課税理論——効率的税制設計と超過負担最小化の原理]] — 同分野の近傍
 
 ## 関連

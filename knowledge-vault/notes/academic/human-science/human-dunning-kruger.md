@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[human-spotlight-effect-gilovich|スポットライト効果——自己の顕著性に対する過大推定バイアス]] — 同じ思想家
 - [[human-minimal-group-paradigm|最小条件集団パラダイム]] — 同分野の近傍
-- [[human-overconfidence|自信過剰（過信バイアス）]] — 同分野の近傍
 - [[human-reminiscence-bump|レミニセンス・バンプ]] — 同分野の近傍
 
 ## 関連

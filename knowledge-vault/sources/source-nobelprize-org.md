@@ -71,7 +71,7 @@ tags:
 - [[econ-ostrom-commons|オストロムのコモンズ統治]] — NobelPrize.org—ThePrizeinEconomicSciences2009(Pressrelease)
 - [[econ-principal-agent|プリンシパル・エージェント理論（agency theory）]] — NobelPrize.org—2016年経済学賞Hart&Holmström（契約理論・本人-代理人モデル）
 - [[econ-property-rights-theory|財産権アプローチ（企業の所有権理論）]] — 2016年ノーベル経済学賞プレスリリース（Hart&Holmström、契約理論・残余コントロール権）
-- [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — NobelPrize(2009)ElinorOstrom—GoverningtheCommons
+- [[econ-public-goods-samuelson|公共財（サミュエルソン）——非競合性と非排除性を持つ財はフリーライダー問題により市場で過少供給され、政府供給や集合的解決の根拠になる]] — NobelPrize(2009)ElinorOstrom—GoverningtheCommons（共有資源の自主管理）
 - [[econ-rational-expectations|合理的期待形成（合理的期待仮説）]] — NobelPrize.org—1995年経済学賞（ロバート・ルーカス）
 - [[econ-rbc|実物的景気循環論（RBC）]] — NobelPrize.org—2004年経済学賞（キドランド&プレスコット）授賞理由
 - [[econ-rct-development|開発経済学におけるランダム化比較試験（RCT in Development Economics）]] — NobelPrize—2019SverigesRiksbankPrizeinEconomicSciencesPressRelease

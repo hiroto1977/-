@@ -40,9 +40,9 @@ aliases:
 - [[infosoc-social-network-analysis|社会ネットワーク分析（SNA）]] — 同じ思想家
 - [[infosoc-way-of-life-savolainen|日常生活情報探索——「生き方」と「生活の統御」のなかの情報]] — 同じ思想家
 - [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]] — 同じ思想家
-- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]] — 同じ思想家
 - [[infosoc-social-capital-digital-civic|ソーシャル・キャピタルとデジタル社会参加の情報社会論]] — 同じ思想家
 - [[infosoc-strength-weak-ties-granovetter|弱い紐帯の強さ——希薄なつながりが新規情報の橋渡しをする]] — 同じ思想家
+- [[mgmt-eprg-orientations-perlmutter|EPRGフレームワーク——本国志向から世界志向へ至る多国籍企業経営者の心的構え]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

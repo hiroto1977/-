@@ -33,11 +33,11 @@ aliases:
 - [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]] — 同じ思想家
 - [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる]] — 同じ思想家
 - [[mgmt-boundary-spanning|境界連結（バウンダリー・スパニング）]] — 同じ思想家
+- [[econ-tournament-theory-lazear-rosen|トーナメント理論（レイザー＝ローゼン）——絶対成果ではなく相対順位で報酬を決める仕組みが努力を引き出し、昇進ごとの大きな報酬格差を説明する]] — 同じ思想家
 - [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]] — 同じ思想家
 - [[mgmt-burke-litwin-causal-model-organizational-change|バーク＝リトウィン・モデル——外部環境から個人業績までを12要因の因果連鎖で結ぶ組織診断モデル]] — 同じ思想家
 - [[mgmt-information-processing-galbraith|組織の情報処理理論——不確実性に応じた情報処理能力の設計]] — 同じ思想家
 - [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同じ思想家
-- [[mgmt-upper-echelons-tournament-theory|トーナメント理論と経営者インセンティブ（レイザー＆ローゼン）]] — 同じ思想家
 - [[mgmt-corporate-entrepreneurship-zahra|コーポレート・アントレプレナーシップ（ザーラ）]] — 同分野の近傍
 
 ## 関連

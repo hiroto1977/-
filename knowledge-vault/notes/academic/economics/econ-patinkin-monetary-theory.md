@@ -34,6 +34,7 @@ Don Patinkin ／ Arthur Cecil Pigou ／ John Maynard Keynes
 ## 関連概念
 - [[econ-pigou-effect|ピグー効果（実質残高効果）]] — 同分野の近傍
 - [[econ-neutrality-of-money|貨幣の中立性（Neutrality of Money）]] — 同分野の近傍
+- [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

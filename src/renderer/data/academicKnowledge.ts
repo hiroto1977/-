@@ -20846,14 +20846,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-sargent-wallace-unpleasant-arithmetic',
     discipline: 'economics',
-    title: 'サージェント＝ウォレスの不愉快な貨幣主義の算術',
+    title: 'サージェント＝ウォレスの不愉快なマネタリスト算術——財政が支配的なら、金融引き締めは将来の貨幣化を通じてかえってインフレを高める',
     statement:
-      '財政支配（フィスカル・ドミナンス）の下では、中央銀行が現在引き締め的な金融政策を採っても、政府債務の貨幣化が将来不可避となるためかえって長期的にはより高いインフレーションを招くことを示した命題。骨格は統合政府の予算制約にある——財政赤字の経路が財政当局によって先に固定され（財政が支配的）、国債の実質利子率が経済成長率を上回り、公衆が保有しうる国債残高に限界があるならば、金融引き締めで現在の通貨発行益（シニョレッジ）を減らすことは債務の雪だるま式の累増を意味し、限界到達後はより大きな貨幣化で賄うほかなくなる。将来の貨幣化を合理的に予見する公衆の期待を通じて、現在のインフレーションさえ引き締めで上昇しうるという逆説も導かれる。財政規律なき金融引き締めは物価安定に逆効果となりうるという、マネタリストにとって「不愉快な」この帰結は、金融政策の独立性が財政の持続可能性に依存することを示し、中央銀行と財政当局のどちらが先に譲るかというチキンゲームの構図、後の物価水準の財政理論（FTPL）や新興国のインフレ分析、高債務下の量的緩和出口論へと継承された。成立には r>g と国債需要の上限という条件が要る点も、適用範囲の議論として重要である。',
-    keyFigures: 'Thomas J. Sargent／Neil Wallace',
-    asOf: '2026-06',
+      '不愉快なマネタリスト算術（unpleasant monetarist arithmetic）は、トーマス・サージェントとニール・ウォレスが1981年の論文で示した命題で、財政支配（fiscal dominance）——政府の財政赤字が中央銀行の政策運営を実質的に制約する状態——の下では、中央銀行が現在引き締め的な金融政策を採っても、政府債務の貨幣化が将来不可避となるため長期的にはより高いインフレーションを招くことを示す。骨格は統合政府の予算制約にある。財政赤字の経路が財政当局によって先に固定され、国債の実質利子率が経済成長率を上回り、公衆が保有しうる国債残高に上限があるならば、金融引き締めで現在の通貨発行益（シニョレッジ）を減らすことは債務の累増を意味し、上限に達した後はより大きな貨幣化で賄うほかなくなる。将来の貨幣化を合理的に予見する公衆の期待を通じて、現在のインフレさえ引き締めで上昇しうるという逆説も導かれる。財政規律なき金融引き締めは物価安定に逆効果となりうるというマネタリストにとって「不愉快な」帰結は、金融政策の独立性が財政の持続可能性に依存すること、中央銀行と財政当局のどちらが先に譲るかというチキンゲームの構図を示し、政府の異時点間予算制約が物価水準を決めるとする物価水準の財政理論、高債務下の量的緩和の出口論へ継承された。批判として、成立には実質利子率が成長率を上回ることと国債需要の上限という条件が要り、低金利で成長率を下回る局面では適用範囲が問われる。中小企業には、政府債務と中央銀行の関係が長期金利とインフレ予想を通じて借入コストと価格転嫁に及ぶこと、財政と金融の「どちらが譲るか」が見えない局面では長期固定金利や価格改定条項で備えることが含意となる。',
+    keyFigures: 'トーマス・サージェント＆ニール・ウォレス（1981 提唱）／トーマス・サージェント（1982 四大インフレの終結）／ジョン・コクラン＆マイケル・ウッドフォード（物価水準の財政理論）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.21034/qr.531', type: 'academic', label: 'Sargent & Wallace (1981) Some Unpleasant Monetarist Arithmetic, FRB Minneapolis Quarterly Review 5(3)' },
-      { url: 'https://en.wikipedia.org/wiki/Unpleasant_monetarist_arithmetic', type: 'reference', label: 'Wikipedia — Unpleasant monetarist arithmetic' },
+      { url: 'https://doi.org/10.21034/qr.531', type: 'academic', label: 'Sargent, T. J. & Wallace, N. (1981) Some Unpleasant Monetarist Arithmetic — Federal Reserve Bank of Minneapolis Quarterly Review 5(3)（原典）' },
+      { url: 'https://doi.org/10.1086/261117', type: 'academic', label: 'Sargent, T. J. (1982) The Ends of Four Big Inflations — in Inflation: Causes and Effects, University of Chicago Press（NBER）' },
+      { url: 'https://en.wikipedia.org/wiki/Unpleasant_monetarist_arithmetic', type: 'reference', label: 'Wikipedia: Unpleasant monetarist arithmetic — Sargent & Wallace、統合政府の予算制約' },
+      { url: 'https://en.wikipedia.org/wiki/Fiscal_dominance', type: 'reference', label: 'Wikipedia: Fiscal dominance — 財政支配の定義と政策含意' },
     ],
   },
   {
@@ -26253,8 +26255,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アンソニー・アトキンソン ／ トマ・ピケティ ／ コッラード・ジーニ',
     asOf: '2026-06-24',
     sources: [
-      { url: 'https://doi.org/10.1016/0022-0531(70)90039-6', type: 'academic', label: 'Atkinson 1970 — On the Measurement of Inequality, Journal of Economic Theory 2(3):244-263' },
       { url: 'https://www.jstor.org/stable/2276207', type: 'academic', label: 'Lorenz 1905 — Methods of Measuring the Concentration of Wealth, Publications of the American Statistical Association 9(70):209-219' },
+      { url: 'https://doi.org/10.1016/0022-0531(70)90039-6', type: 'academic', label: 'Atkinson 1970 — On the Measurement of Inequality, Journal of Economic Theory 2(3):244-263' },
       { url: 'https://www.hup.harvard.edu/books/9780674430006', type: 'reference', label: 'Piketty 2014 — Capital in the Twenty-First Century, Harvard University Press' },
       { url: 'https://wid.world/', type: 'reference', label: 'World Inequality Database (WID.world) — 所得・富の長期不平等統計データベース' },
     ],
@@ -35062,13 +35064,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-cost-benefit-analysis-kaldor-hicks',
     discipline: 'economics',
-    title: 'カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善',
-    statement: 'カルドア＝ヒックス基準（Kaldor-Hicks criterion）は、ある政策や変化が社会的に望ましい改善といえるかを判断するための厚生経済学の基準で、ニコラス・カルドアとジョン・ヒックスがそれぞれ1939年に提唱した。この基準は、費用便益分析の理論的基礎をなす。厚生経済学の最も厳格な基準は「パレート改善」である。これは、誰一人の状況も悪化させることなく、少なくとも一人の状況を改善する変化のみを是とする。しかしこの基準は、現実の政策のほとんどが必ず誰かを損なう（勝者と敗者を生む）ため、ほとんど適用できないという難点がある。カルドアとヒックスは、この厳格さを緩めた基準を提案した。それによれば、ある変化は、その変化によって利益を得る者（勝者）が、損失を被る者（敗者）に対して、原理的に完全な補償を行ってもなお余りある利益を得られるならば、改善とみなされる。重要なのは、この補償が実際に支払われる必要はなく、補償が可能であるという潜在的な可能性だけで判断する点である。それゆえカルドア＝ヒックス基準は「潜在的パレート改善（potential Pareto improvement）」とも呼ばれる。実質的にこの基準は、社会全体の便益の総和が費用の総和を上回るかどうか、すなわち勝者の便益（支払意思額の合計）が敗者の損失（受入補償額の合計）を上回るかどうかを問う。便益が費用を上回るプロジェクトは、原理的には勝者が敗者を補償してなお全員を改善できるはずだから、望ましいとされる。これが費用便益分析の論理である。しかしカルドア＝ヒックス基準には根本的な批判がある。第一に、潜在的な補償が実際には支払われない場合、現実には敗者は損なわれたままであり、分配上の公正を無視している。第二に、ティボール・シトフスキーが指摘した「逆転のパラドックス」——ある状態Aから状態Bへの変化がカルドア＝ヒックス基準で改善とされると同時に、BからAへの変化も改善とされうるという矛盾——がありうる。これらの限界にもかかわらず、カルドア＝ヒックス基準は、現実の政策評価において、効率性の観点から多数の人々に影響する変化の望ましさを判断する不可欠な道具であり、公共政策・規制・プロジェクト評価の理論的基盤であり続けている。',
-    keyFigures: 'ニコラス・カルドア ／ ジョン・ヒックス ／ ティボール・シトフスキー ／ ジュールズ・コールマン',
-    asOf: '2026-06-27',
+    title: 'カルドア＝ヒックス基準——勝者が敗者を補償してなお余剰が残るなら改善とみなす潜在的パレート改善で、費用便益分析の理論的基礎',
+    statement:
+      'カルドア＝ヒックス基準（Kaldor–Hicks criterion）は、ある政策や変化が社会的に望ましい改善かを判断する厚生経済学の基準で、ニコラス・カルドアとジョン・ヒックスがそれぞれ1939年に提唱し、費用便益分析の理論的基礎をなす。最も厳格なパレート改善（誰の状況も悪化させずに少なくとも一人を改善する）は、現実の政策のほとんどが勝者と敗者を生むためほとんど適用できない。二人は、変化で利益を得る者が損失を被る者に原理的に完全な補償を行ってもなお余りある利益を得られるならば改善とみなすという緩めた基準を提案した。補償が実際に支払われる必要はなく可能性だけで判断するため「潜在的パレート改善」とも呼ばれ、実質的には勝者の便益（支払意思額の合計）が敗者の損失（受入補償額の合計）を上回るか、すなわち社会全体の便益の総和が費用の総和を上回るかを問う。これが費用便益分析の論理であり、ピグーの『厚生の経済学』（1920）以来の外部性の補正や厚生経済学の基本定理と並ぶ実用的な柱として、公共政策の評価の基盤であり続けている。批判として、補償が実際には支払われない場合に敗者は損なわれたままで分配上の公正を無視すること、ティボール・シトフスキー（1941）が指摘した逆転のパラドックス、支払意思額が所得に依存するため富裕層の選好が重く数えられること、アマルティア・センが社会的選択論の立場から功利主義的な集計を批判したことがある。中小企業には、補助金や規制の費用便益評価が「総額で得なら可」の論理で動くため、自社が敗者側に入るときは補償や経過措置を明示的に要求する必要があること、社内の投資判断でも部門間の損得を総和だけで判断すると補償なき敗者を生むことが含意となる。',
+    keyFigures: 'ニコラス・カルドア＆ジョン・ヒックス（1939 補償原理）／ティボール・シトフスキー（1941 逆転のパラドックス）／アーサー・ピグー（1920『厚生の経済学』）／アマルティア・セン（社会的選択論からの批判）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.2307/2224835', type: 'academic', label: 'Kaldor, N. (1939) Welfare Propositions of Economics and Interpersonal Comparisons of Utility — Economic Journal 49(195)' },
-      { url: 'https://en.wikipedia.org/wiki/Kaldor%E2%80%93Hicks_efficiency', type: 'reference', label: 'Wikipedia: Kaldor–Hicks efficiency — potential Pareto improvement, compensation, cost-benefit analysis, Scitovsky' },
+      { url: 'https://doi.org/10.2307/2224835', type: 'academic', label: 'Kaldor, N. (1939) Welfare Propositions of Economics and Interpersonal Comparisons of Utility — Economic Journal 49(195)（原典）' },
+      { url: 'https://search.worldcat.org/title/140528', type: 'academic', label: 'Sen, A. K. (1970) Collective Choice and Social Welfare — Holden-Day（WorldCat）' },
+      { url: 'https://en.wikipedia.org/wiki/Kaldor%E2%80%93Hicks_efficiency', type: 'reference', label: 'Wikipedia: Kaldor–Hicks efficiency — 潜在的パレート改善、シトフスキーのパラドックス' },
+      { url: 'https://en.wikipedia.org/wiki/Welfare_economics', type: 'reference', label: 'Wikipedia: Welfare economics — 厚生経済学の基本定理と補償原理' },
     ],
   },
   {
@@ -35532,13 +35537,14 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-tournament-theory-lazear-rosen',
     discipline: 'economics',
-    title: 'トーナメント理論——相対的順位に基づく報酬が努力を引き出す仕組み',
-    statement: 'トーナメント理論（tournament theory）は、エドワード・ラジアーとシャーウィン・ローゼンが1981年の論文「最適労働契約としての順位トーナメント」で提唱した労働経済学の理論で、報酬が個人の絶対的な成果ではなく、他者との相対的な順位に基づいて決められることがなぜ効率的でありうるのか、そして階層の段階間、とりわけ最高経営者への昇進に伴う報酬の格差がなぜこれほど大きくなりうるのかを説明する。理論の出発点は、多くの職場で個人の真の生産性を正確に測定することが困難である一方、誰が誰より優れているかという相対的な順位は比較的観察しやすいという認識である。このような状況で、絶対的な成果に応じて報酬を払うのではなく、スポーツのトーナメントのように、順位に応じてあらかじめ定められた賞金（昇進や高い報酬）を与える仕組みを設けると、参加者は順位を上げようとして効率的な水準の努力を払う。重要なのは、報酬が個人の運や測定誤差に左右される絶対成果ではなく相対順位で決まるため、全員に共通の運や環境の変動が相殺され、純粋な努力の差が順位に反映されやすくなる点である。トーナメント理論は、企業の階層構造における昇進制度や、経営幹部の報酬がなぜ急激に上昇するのかを説明する。最上位のポストに就くことの巨大な報酬は、その地位にある一人への対価というより、その下の階層にいる多数の人々に競争への努力を促す「賞金」として機能する。一方で、トーナメント理論は負の側面も指摘する。相対順位を競う構造は、協力を阻害し、他者の足を引っ張るサボタージュを誘発し、順位を上げるための過度なリスクテイクを招きうる。バリー・ネイルバフとジョセフ・スティグリッツらはこの理論を精緻化し、トーナメント理論は、報酬制度の設計、昇進、経営者報酬、相対評価をめぐる人事経済学の中心的な枠組みとなっている。',
-    keyFigures: 'エドワード・ラジアー ／ シャーウィン・ローゼン ／ バリー・ネイルバフ ／ ジョセフ・スティグリッツ',
-    asOf: '2026-06-26',
+    title: 'トーナメント理論（レイザー＝ローゼン）——絶対成果ではなく相対順位で報酬を決める仕組みが努力を引き出し、昇進ごとの大きな報酬格差を説明する',
+    statement:
+      'トーナメント理論（tournament theory）は、エドワード・レイザーとシャーウィン・ローゼンが1981年の論文で提唱した労働経済学の理論で、報酬が個人の絶対的な成果ではなく他者との相対的な順位で決まることがなぜ効率的でありうるのか、昇進に伴う報酬格差がなぜこれほど大きくなりうるのかを説明する。出発点は、多くの職場で個人の真の生産性を正確に測ることは難しい一方、誰が誰より優れているかという相対順位は比較的観察しやすいという認識である。順位に応じてあらかじめ定めた賞金（昇進や高い報酬）を与える仕組みを設けると、参加者は順位を上げようとして効率的な水準の努力を払い、全員に共通する運や環境の変動が相殺されて純粋な努力の差が順位に反映されやすくなる。最上位ポストの巨大な報酬は、その地位の一人への対価というより下の階層の多数に競争への努力を促す「賞金」として機能するという解釈を生み、CEO 報酬の「競技的格差」仮説として実証研究が蓄積された。一方で、相対順位を競う構造は協力を阻害し、他者の足を引っ張るサボタージュや順位を上げるための過度なリスクテイクを誘発し、女性やマイノリティに不利なバイアスを固定化しうるという負の側面も指摘される。バリー・ネイルバフとジョセフ・スティグリッツらが理論を精緻化し、報酬制度の設計、昇進、経営者報酬、相対評価をめぐる人事経済学の中心的な枠組みとなった。批判として、賞金格差と努力の関係は実証で一様でなく、順位の観察可能性という前提が知識労働では崩れやすい。中小企業には、少人数の職場で相対評価を導入すると協力が損なわれやすいこと、昇進の「賞金」が小さい組織では絶対評価や利益分配のほうが動機づけに向くことが含意となる。',
+    keyFigures: 'エドワード・レイザー＆シャーウィン・ローゼン（1981 提唱）／バリー・ネイルバフ＆ジョセフ・スティグリッツ（理論の精緻化）／ブライアン・メイン＆チャールズ・オライリー（CEO 報酬の実証）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1086/261010', type: 'academic', label: 'Lazear, E.P. & Rosen, S. (1981) Rank-Order Tournaments as Optimum Labor Contracts — Journal of Political Economy 89(5)' },
-      { url: 'https://en.wikipedia.org/wiki/Tournament_theory', type: 'reference', label: 'Wikipedia: Tournament theory — Lazear & Rosen, relative rank, executive pay, promotion incentives' },
+      { url: 'https://doi.org/10.1086/261010', type: 'academic', label: 'Lazear, E. P. & Rosen, S. (1981) Rank-Order Tournaments as Optimum Labor Contracts — Journal of Political Economy 89(5)（原典）' },
+      { url: 'https://en.wikipedia.org/wiki/Tournament_theory', type: 'reference', label: 'Wikipedia: Tournament theory — Lazear & Rosen、相対順位、経営者報酬' },
     ],
   },
   {
@@ -37082,13 +37088,14 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-time-inconsistency-kydland-prescott',
     discipline: 'economics',
-    title: '時間的非整合性——最適計画の事後的破棄とルール対裁量の問題',
-    statement: '時間的非整合性（time inconsistency）は、フィン・キドランドとエドワード・プレスコットが1977年の論文「裁量よりルール——最適計画の非整合性」で定式化した政策理論上の問題で、事前に最適とされた政策が、民間主体がその予想に基づいて行動した後の事後の時点では、もはや実行することが最適でなくなる現象を指す。当局には事後的に約束を反故にする誘因が生じ、合理的な民間主体はこれを見越して行動するため、裁量的政策は信頼性を失い、かえって悪い結果を招く。古典的な例が金融政策のインフレ・バイアスである。中央銀行が物価安定を約束しても、人々が低インフレを予想して賃金・価格を設定した後には、当局には予想外のインフレで一時的に失業を減らす誘因が生じる。人々はこの誘因を見抜いて高いインフレ予想を形成するため、均衡では失業は減らないままインフレ率だけが高止まりする。この洞察から、当局が裁量を自制し信頼できる「ルール」に事前にコミットすることの価値、中央銀行の独立性、インフレ目標、政策の評判の重要性が導かれた。キドランドとプレスコットはこの業績などにより2004年にノーベル経済学賞を受賞した。',
-    keyFigures: 'フィン・キドランド ／ エドワード・プレスコット ／ ロバート・バロー ／ デヴィッド・ゴードン',
-    asOf: '2026-06-26',
+    title: '時間的非整合性（キドランド＝プレスコット）——事前に最適だった政策を事後に覆す誘因が信頼性を損ない、ルールへのコミットメントと中央銀行の独立性を正当化する',
+    statement:
+      '時間的非整合性（time inconsistency）は、フィン・キドランドとエドワード・プレスコットが1977年の論文「裁量よりルール」で定式化した政策理論上の問題で、事前に最適とされた政策が、民間主体がその予想に基づいて行動した後の事後の時点ではもはや最適でなくなる現象を指す。当局には事後的に約束を反故にする誘因が生じ、合理的な民間主体はこれを見越して行動するため、裁量的政策は信頼性を失ってかえって悪い結果を招く。古典的な例が金融政策のインフレ・バイアスで、中央銀行が物価安定を約束しても、人々が低インフレを予想して賃金と価格を設定した後には予想外のインフレで一時的に失業を減らす誘因が生じ、人々はそれを見抜いて高いインフレ予想を形成するため、均衡では失業は減らないままインフレ率だけが高止まりする。ロバート・バローとデイヴィッド・ゴードン（1983）はこれをゲーム理論的に定式化し、評判メカニズムによる信認の形成を分析した。この洞察から、当局が裁量を自制して信頼できるルールに事前にコミットする価値、中央銀行の独立性、インフレ目標、保守的な中央銀行家の任命、政策の評判の重要性が導かれ、1990年代以降の各国の中央銀行改革の理論的根拠となった。キドランドとプレスコットは実物的景気循環理論とともにこの業績で2004年にノーベル経済学賞を受賞した。批判として、インフレ・バイアスの経験的な大きさには論争があり、ルールへの拘束が予期せぬ危機での柔軟性を奪うこと、独立性が民主的説明責任と緊張することが指摘される。中小企業には、経営者の「今回だけ」の例外が従業員や取引先の予想を通じて信頼を損ない次回の交渉を不利にすること、方針を事前に決めて公表し守ることの価値が含意となる。',
+    keyFigures: 'フィン・キドランド＆エドワード・プレスコット（1977 提唱／2004 ノーベル賞）／ロバート・バロー＆デイヴィッド・ゴードン（1983 評判メカニズム）／ケネス・ロゴフ（保守的な中央銀行家）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1086/260580', type: 'academic', label: 'Kydland, F.E. & Prescott, E.C. (1977) Rules Rather than Discretion: The Inconsistency of Optimal Plans — JPE 85(3)' },
-      { url: 'https://en.wikipedia.org/wiki/Dynamic_inconsistency', type: 'reference', label: 'Wikipedia: Dynamic inconsistency — Kydland-Prescott, inflation bias, commitment, central bank independence' },
+      { url: 'https://doi.org/10.1086/260580', type: 'academic', label: 'Kydland, F. E. & Prescott, E. C. (1977) Rules Rather than Discretion: The Inconsistency of Optimal Plans — Journal of Political Economy 85(3)（原典）' },
+      { url: 'https://en.wikipedia.org/wiki/Dynamic_inconsistency', type: 'reference', label: 'Wikipedia: Dynamic inconsistency — Kydland & Prescott、インフレ・バイアス、中央銀行の独立性' },
     ],
   },
   {
@@ -38792,19 +38799,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-fiscal-dominance-sargent',
-    discipline: 'economics',
-    title: '財政支配と物価水準の財政理論——政府債務が金融政策を拘束するメカニズム',
-    statement: '財政支配（Fiscal Dominance）とは、政府の財政赤字が中央銀行の金融政策運営を実質的に制約し、物価安定目標の達成を困難にする状態を指す。サージェントとウォレスは1981年の「不愉快なマネタリスト算術」において、財政当局が持続不可能な赤字を続ける場合、中央銀行は最終的にシニョレッジ（通貨発行益）による財政ファイナンスを余儀なくされ、インフレーションが不可避となることを示した。この洞察は物価水準の財政理論（FTPL）へと発展し、コクランやウッドフォードが政府の跨時的予算制約が物価水準を決定するチャネルを精緻化した。財政支配のリスクは、高債務国における中央銀行の独立性の実効性、非伝統的金融政策の出口戦略、そして財政・金融政策の協調設計という現代マクロ経済政策の核心的課題を提起している。',
-    keyFigures: 'トーマス・サージェント ／ ニール・ウォレス ／ ジョン・コクラン ／ マイケル・ウッドフォード',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.21034/qr.531', type: 'academic', label: 'Sargent & Wallace (1981) Some Unpleasant Monetarist Arithmetic — Federal Reserve Bank of Minneapolis Quarterly Review' },
-      { url: 'https://doi.org/10.1086/261117', type: 'academic', label: 'Sargent (1982) The Ends of Four Big Inflations — in Inflation: Causes and Effects, U of Chicago Press' },
-      { url: 'https://en.wikipedia.org/wiki/Fiscal_dominance', type: 'reference', label: 'Wikipedia: Fiscal dominance — 財政支配の定義と政策含意の概説' },
-    ],
-  },
-  {
     id: 'mgmt-requisite-variety-ashby',
     discipline: 'management',
     title: '必要多様性の法則——組織の制御能力と環境複雑性の対応原理',
@@ -40394,19 +40388,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.5040/9781849662505', type: 'academic', label: 'Lessig, L. (2008) Remix: Making Art and Commerce Thrive in the Hybrid Economy — Bloomsbury Academic（原典）' },
       { url: 'https://doi.org/10.18574/nyu/9780814743096.001.0001', type: 'academic', label: 'Jenkins, H. (2006) Convergence Culture: Where Old and New Media Collide — NYU Press' },
       { url: 'https://en.wikipedia.org/wiki/Remix_culture', type: 'reference', label: 'Wikipedia: Remix culture — Lessig、Creative Commons、参加型文化、DSM 指令' },
-    ],
-  },
-  {
-    id: 'econ-welfare-economics-pigou-kaldor-hicks',
-    discipline: 'economics',
-    title: '厚生経済学——ピグーの外部性補正とカルドア＝ヒックス補償原理',
-    statement: '厚生経済学は、経済政策や制度変化が社会全体の福祉（厚生）に与える影響を評価する規範的経済学の分野であり、ピグー（1920）の『厚生の経済学』がその体系的出発点となった。ピグーは外部性（externality）の概念を定式化し、私的限界費用と社会的限界費用の乖離を矯正するピグー税・補助金を提案した。厚生経済学の第一基本定理は、完全競争均衡がパレート効率的であることを証明し、第二基本定理は、適切な初期賦存量の再配分の下で任意のパレート効率的配分が競争均衡として実現可能であることを示す。カルドア（1939）とヒックス（1939）は、ある政策変化で利得者が損失者を仮想的に補償してなお余剰が残る場合に社会的改善と判断する「補償原理」を提唱し、パレート基準の実用的拡張を図った。しかしシトフスキー（1941）はこの基準の可逆性パラドックスを指摘した。セン（1970）は社会的選択理論の枠組みから功利主義的厚生関数の限界を批判し、ケイパビリティ・アプローチへの転換を促した。',
-    keyFigures: 'アーサー・ピグー ／ ニコラス・カルドア ／ ジョン・ヒックス ／ アマルティア・セン ／ ポール・サミュエルソン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/2224835', type: 'academic', label: 'Kaldor (1939) Welfare Propositions of Economics and Interpersonal Comparisons of Utility — Economic Journal' },
-      { url: 'https://search.worldcat.org/title/140528', type: 'academic', label: 'Sen (1970) Collective Choice and Social Welfare — Holden-Day（Holden-Day, 1970, ISBN 978-0-8162-7765-0）' },
-      { url: 'https://en.wikipedia.org/wiki/Welfare_economics', type: 'reference', label: 'Wikipedia: Welfare economics — 厚生経済学の基本定理と社会的評価基準の概説' },
     ],
   },
   {
@@ -42299,18 +42280,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-public-goods-samuelson-free-rider',
-    discipline: 'economics',
-    title: '公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠',
-    statement: '公共財（public goods）は，ポール・サミュエルソンが1954年の論文「公共支出の純粋理論」で定式化した，①非競合性（non-rivalry：一人の消費が他者の消費機会を減らさない）と②非排除性（non-excludability：対価を払わない者を利用から排除できない）の二特性を持つ財である。このニ特性からフリーライダー問題（費用負担をしない個人が便益を享受する）が生じ，市場供給では社会的最適量より過少供給となる市場の失敗が発生する。国防・灯台・無料テレビ・清潔な空気・基礎研究・感染症予防が純公共財の典型例である。クラブ財（排除可能・非競合）・コモンプール資源（非排除・競合）は中間的性質を持つ。情報財（知識・ソフトウェア・音楽・映像）は非競合性が高く，デジタル技術で限界費用ゼロの複製が可能なため，著作権制度・公共放送・オープンソースの選択が問われる。',
-    keyFigures: 'ポール・サミュエルソン ／ ブコアナン（クラブ財） ／ エリノア・オストロム ／ ミルトン・フリードマン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/1925895', type: 'academic', label: 'Samuelson, P.A. (1954) The Pure Theory of Public Expenditure — RES' },
-      { url: 'https://en.wikipedia.org/wiki/Public_good_(economics)', type: 'reference', label: 'Wikipedia: Public good (economics) — non-rivalry and non-excludability' },
-    ],
-  },
-  {
     id: 'econ-microeconomic-foundations-general-equilibrium',
     discipline: 'economics',
     title: '一般均衡理論——ワルラスからアロー＝ドブリューへの競争均衡存在と効率性の数理証明',
@@ -42882,19 +42851,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1145/1979742.1979773', type: 'academic', label: 'Gershenfeld (2012) How to Make Almost Anything — Foreign Affairs' },
       { url: 'https://www.fablabs.io/labs', type: 'reference', label: 'Fab Foundation (2023) FabLab Network Global Directory' },
       { url: 'https://en.wikipedia.org/wiki/Maker_culture', type: 'reference', label: 'Wikipedia: Maker culture — メイカー文化の歴史と社会的影響' },
-    ],
-  },
-  {
-    id: 'econ-north-institutions-economic-history',
-    discipline: 'economics',
-    title: 'ノースの制度論と経済史——取引費用・財産権・路径依存性による長期経済変化の解明',
-    statement: 'ダグラス・ノースが提唱した制度的経済史は、「制度（institutions）」を「人間が考案したゲームのルール」と定義し、制度の変化が経済パフォーマンスの長期的差異を生む主要要因であるとする。制度は「公式ルール（法律・規制・財産権）」と「非公式制約（慣行・規範・行動規範）」からなり、それらを執行するメカニズムと合わさって「取引費用（transaction costs）」の水準を決定する。ノースは「路径依存性（path dependence）」概念を通じて、一度定着した制度は非効率であっても変更されにくい「lock-in」が存在すると論じた。アセモグルら（『国家はなぜ衰退するか』）はノースの枠組みを発展させ、植民地制度の違いが現在の経済格差を説明することを実証した。ノースは1993年ノーベル経済学賞をロバート・フォーゲルと共同受賞した。',
-    keyFigures: 'ダグラス・ノース ／ ダロン・アセモグル ／ ジェームズ・ロビンソン ／ ジョン・ウォリス',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1017/CBO9780511808678', type: 'academic', label: 'North (1990) Institutions, Institutional Change and Economic Performance — Cambridge' },
-      { url: 'https://doi.org/10.1257/aer.101.7.3093', type: 'academic', label: 'Acemoglu & Robinson (2001) The Colonial Origins of Comparative Development — American Economic Review' },
-      { url: 'https://en.wikipedia.org/wiki/Douglass_North', type: 'reference', label: 'Wikipedia: Douglass North — ノースの制度論と経済史の革新' },
     ],
   },
   {
@@ -44155,13 +44111,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-public-goods-samuelson',
     discipline: 'economics',
-    title: '公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗',
-    statement: '公共財（Public Goods）とは、非競合性（一人が消費しても他者の消費量が減らない）と非排除性（対価を払わない者を排除できない）の両特性を持つ財であり、ポール・サミュエルソンが1954年の論文「公共支出の純粋理論」で定式化した。街灯・国防・地上波放送が典型例であり、非排除性に起因する「フリーライダー問題」によって私的市場では過少供給が起きる「市場の失敗」が生じる。マスグレイブはこれを「有益財（Merit Goods）」概念と区別し、公共財・外部性・所得分配を政府介入の三大根拠として体系化した。エリノア・オストロムは「コモンズの悲劇」を越えた地域コミュニティによる共有資源管理の実例を世界的に調査し、政府・市場二分法を超えた第三の経路を示し2009年ノーベル経済学賞を受賞した。デジタル経済では知識・ソフトウェア・ネットワーク外部性が公共財に近い特性を持ち、オープンソース・オープンデータ政策の理論的根拠となっている。気候変動対策も国際公共財の典型問題として各国の協力誘因設計が課題である。',
-    keyFigures: 'ポール・サミュエルソン ／ リチャード・マスグレイブ ／ エリノア・オストロム ／ マンカー・オルソン',
-    asOf: '2026-06-26',
+    title: '公共財（サミュエルソン）——非競合性と非排除性を持つ財はフリーライダー問題により市場で過少供給され、政府供給や集合的解決の根拠になる',
+    statement:
+      '公共財（public goods）とは、一人が消費しても他者の消費量が減らない非競合性と、対価を払わない者を排除できない非排除性の両方を持つ財で、ポール・サミュエルソンが1954年の論文「公共支出の純粋理論」（Review of Economics and Statistics 36巻4号）で定式化した。国防・灯台・感染症予防が典型例で、非排除性から費用を負担しない者が便益を享受するフリーライダー問題が生じ、私的市場では社会的最適量より過少供給となる市場の失敗が起きる。リチャード・マスグレイブは公共財を価値財と区別して公共財・外部性・所得分配を政府介入の三大根拠として体系化し、ジェームズ・ブキャナンのクラブ財（排除可能で混雑するまで非競合）とコモンプール資源（非排除で競合）は中間的な性質を持つ。エリノア・オストロムはコモンズの悲劇を越えて地域コミュニティが共有資源を自主管理する実例を世界的に調査し、政府と市場の二分法を超えた第三の経路を示して2009年にノーベル経済学賞を受賞した。知識やソフトウェアといった情報財は非競合性が高くデジタル複製の限界費用がゼロに近いため、著作権制度、公共放送、オープンソースやオープンデータ政策の選択が問われ、気候変動対策は各国の協力誘因の設計が課題となる国際公共財の典型である。批判として、純粋公共財は稀で多くの財は程度の問題であること、政府供給も政治的失敗や非効率を伴うこと、選好の顕示が難しく最適量の推定が困難なことがある。中小企業には、業界団体の標準、地域の治安や景観、共同の販促のように自社だけでは供給できず皆が便益を受けるものは、参加の仕組みや会費のルールがなければ誰も担わなくなること、逆に公的支援や共同事業の根拠にもなることが含意となる。',
+    keyFigures: 'ポール・サミュエルソン（1954 定式化）／リチャード・マスグレイブ（価値財・政府介入の三大根拠）／ジェームズ・ブキャナン（クラブ財）／エリノア・オストロム（共有資源の自主管理・2009 ノーベル賞）／マンカー・オルソン（集合行為論）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.2307/1925895', type: 'academic', label: 'Samuelson, P.A. (1954) The Pure Theory of Public Expenditure — Review of Economics and Statistics 36(4), 387–389（旧 DOI 10.1086/257672 は JPE のものだったため JSTOR DOI へ差し替え）' },
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2009/ostrom/facts/', type: 'reference', label: 'Nobel Prize (2009) Elinor Ostrom — Governing the Commons' },
+      { url: 'https://doi.org/10.2307/1925895', type: 'academic', label: 'Samuelson, P. A. (1954) The Pure Theory of Public Expenditure — Review of Economics and Statistics 36(4)（原典）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2009/ostrom/facts/', type: 'reference', label: 'Nobel Prize (2009) Elinor Ostrom — Governing the Commons（共有資源の自主管理）' },
+      { url: 'https://en.wikipedia.org/wiki/Public_good_(economics)', type: 'reference', label: 'Wikipedia: Public good (economics) — 非競合性・非排除性、フリーライダー問題' },
       { url: 'https://ja.wikipedia.org/wiki/%E5%85%AC%E5%85%B1%E8%B2%A1', type: 'reference', label: 'Wikipedia: 公共財 — 非競合性・非排除性と市場の失敗の解説' },
     ],
   },
@@ -44555,13 +44513,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-new-institutional-economics-north',
     discipline: 'economics',
-    title: '新制度経済学と制度変化の歴史的分析——ノースの経路依存性論',
-    statement: '新制度経済学（New Institutional Economics: NIE）は、ダグラス・ノース・オリバー・ウィリアムソン・ロナルド・コースらが発展させた経済学の潮流で、制度（非公式のルール・公式の規則・執行メカニズム）が経済パフォーマンスを決定する根本的な要因であると論じる。ノースは「制度・制度変化と経済パフォーマンス」（1990年）で制度を「ゲームのルール」と定義し、経路依存性（path dependence）——一度選択された制度が技術的・認知的・政治的なロックインによって非効率であっても持続する——を歴史的事例（QWERTY配列・米国南北格差）で示した。NIEは新古典派の完全競争・完全情報・取引費用ゼロの仮定を緩め、コースの定理（取引費用がゼロなら当事者間の交渉が効率的配分を達成する）の含意として、現実の制度設計が取引費用を最小化する問題として位置づける。ノースは1993年にノーベル経済学賞を受賞し、比較歴史制度分析・開発経済学・規制改革論の理論的基盤を提供した。',
-    keyFigures: 'ダグラス・ノース ／ ロナルド・コース ／ オリバー・ウィリアムソン ／ アヴナー・グライフ',
-    asOf: '2026-06-26',
+    title: '新制度経済学と制度変化（ノース）——制度は人間が考案した「ゲームのルール」であり、取引費用と経路依存性を通じて経済パフォーマンスの長期的な差を生む',
+    statement:
+      '新制度経済学（New Institutional Economics）は、ダグラス・ノース、オリバー・ウィリアムソン、ロナルド・コースらが発展させた経済学の潮流で、制度が経済パフォーマンスを決定する根本的な要因だと論じる。ノースは1990年の『制度・制度変化・経済成果』で制度を「人間が考案したゲームのルール」と定義し、法律・規制・財産権といった公式ルール、慣行や規範といった非公式制約、そしてそれらを執行するメカニズムが合わさって取引費用の水準を決めるとした。新古典派の完全競争・完全情報・取引費用ゼロの仮定を緩め、コースの定理の含意として、現実の制度設計を取引費用を最小化する問題として位置づける。一度定着した制度は技術的・認知的・政治的なロックインによって非効率でも持続するという経路依存性を、QWERTY 配列や米国の南北格差といった歴史的事例で示し、制度変化が漸進的で歴史に規定される理由を説明した。ダロン・アセモグルとジェームズ・ロビンソンらはこの枠組みを発展させ、植民地時代の制度の違いが現在の経済格差を説明することを実証し、『国家はなぜ衰退するのか』で包括的制度と収奪的制度を対比した。ノースは1993年にロバート・フォーゲルとともにノーベル経済学賞を受賞し、比較歴史制度分析、開発経済学の理論的基盤を与えた。批判として、制度の定義が広く因果の識別が難しいこと、非公式制約や信念の変化を説明する理論が弱いこと、経路依存性が事後的な説明になりやすいことがある。中小企業には、契約の履行、登記、紛争解決といった制度の質が取引費用として日々の経営コストに現れること、慣行や信頼関係という非公式制約が公式ルールと同じくらい取引を支えていることが含意となる。',
+    keyFigures: 'ダグラス・ノース（1990『制度・制度変化・経済成果』／1993 ノーベル賞）／ロナルド・コース（取引費用）／オリバー・ウィリアムソン（取引費用の経済学）／ダロン・アセモグル＆ジェームズ・ロビンソン（植民地起源と包括的制度）／アヴナー・グライフ（比較歴史制度分析）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1017/CBO9780511808678', type: 'academic', label: 'North (1990) Institutions, Institutional Change and Economic Performance — Cambridge University Press' },
-      { url: 'https://en.wikipedia.org/wiki/New_institutional_economics', type: 'reference', label: 'Wikipedia: New institutional economics — North, Coase, path dependence, transaction costs, governance' },
+      { url: 'https://doi.org/10.1017/CBO9780511808678', type: 'academic', label: 'North, D. C. (1990) Institutions, Institutional Change and Economic Performance — Cambridge University Press（原典）' },
+      { url: 'https://en.wikipedia.org/wiki/New_institutional_economics', type: 'reference', label: 'Wikipedia: New institutional economics — North、Coase、Williamson、経路依存性' },
+      { url: 'https://en.wikipedia.org/wiki/Douglass_North', type: 'reference', label: 'Wikipedia: Douglass North — 制度論と経済史、1993 年ノーベル賞' },
     ],
   },
   {
@@ -44622,18 +44582,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://www.usenix.org/legacy/events/sec04/tech/dingledine.html', type: 'academic', label: 'Dingledine et al. (2004) Tor: The Second-Generation Onion Router — USENIX Security' },
       { url: 'https://en.wikipedia.org/wiki/Dark_web', type: 'reference', label: 'Wikipedia: Dark web — Tor, I2P, Silk Road, anonymity, whistleblowing, law enforcement' },
-    ],
-  },
-  {
-    id: 'econ-central-bank-independence-kydland',
-    discipline: 'economics',
-    title: '中央銀行の独立性と時間非一貫性問題——キドランド＝プレスコットの規則対裁量論',
-    statement: '時間非一貫性（time inconsistency）問題とは、フィン・キドランドとエドワード・プレスコットが1977年に発表した論文「ルールと裁量——最適プランの非一貫性」で提示した概念で、将来において最適な政策が現在のコミットメントと矛盾するため、裁量的政策決定者が事前に最適だった政策を事後に変更するインセンティブを持ち、合理的期待のもとで均衡はインフレバイアスを帯びると論じた。この理論は中央銀行の独立性・インフレターゲティング・ルールへの拘束（commitment）の経済学的正当化の基礎となり、1990年代以降のニュージーランド・イングランド銀行・欧州中央銀行（ECB）設立における中央銀行改革の理論的根拠となった。ロバート・バローとデービッド・ゴードンは「インフレバイアス」のゲーム理論的定式化をさらに発展させ、評判メカニズム（reputational mechanism）による信認形成を分析した。キドランドとプレスコットは2004年にノーベル経済学賞を受賞し、実物的景気循環理論（RBC）とともにマクロ経済学の実証的・理論的革新に貢献した。',
-    keyFigures: 'フィン・キドランド ／ エドワード・プレスコット ／ ロバート・バロー ／ スタンレー・フィッシャー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1086/260580', type: 'academic', label: 'Kydland & Prescott (1977) Rules Rather Than Discretion: The Inconsistency of Optimal Plans — JPE 85(3)' },
-      { url: 'https://en.wikipedia.org/wiki/Kydland%E2%80%93Prescott_award', type: 'reference', label: 'Wikipedia: Time consistency — Kydland, Prescott, central bank independence, inflation bias, commitment' },
     ],
   },
   {
@@ -46148,18 +46096,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1177/1461444809342738', type: 'academic', label: 'Gillespie, T. (2010) The Politics of "Platforms" — New Media & Society 12(3)（原典）' },
       { url: 'https://en.wikipedia.org/wiki/Content_moderation', type: 'reference', label: 'Wikipedia: Content moderation — プラットフォームによる選別・削除と媒介者責任の概観' },
-    ],
-  },
-  {
-    id: 'mgmt-upper-echelons-tournament-theory',
-    discipline: 'management',
-    title: 'トーナメント理論と経営者インセンティブ（レイザー＆ローゼン）',
-    statement: 'レイザー（Edward Lazear）とローゼン（Sherwin Rosen）は1981年に，組織ヒエラルキー内の賃金分布が個人の限界生産性と乖離する理由を「トーナメント・モデル」で説明した。上位ポジションへの昇進をトーナメントの勝者賞金と見なし，賞金格差が大きいほど下位参加者の努力が引き出され組織全体の生産性が上がる最適な仕組みが設計できると示した。CEOの突出した報酬は個人の人的資本より，直下の上級管理職全体を動機づける賞金（prize）として機能するという解釈を生み，「報酬の競技的格差」仮説として実証研究が蓄積されている。後続研究では，トーナメントが協調行動・情報共有を阻害するリスクや，女性・マイノリティに不利なバイアスを固定化する可能性も指摘されている。',
-    keyFigures: 'エドワード・レイザー ／ シャーウィン・ローゼン ／ ブライアン・メイン ／ チャールズ・オライリー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1086/261010', type: 'academic', label: 'Lazear, E.P. & Rosen, S. (1981) Rank-Order Tournaments as Optimum Labor Contracts — Journal of Political Economy 89(5), 841–864（トーナメント理論の原論文）' },
-      { url: 'https://en.wikipedia.org/wiki/Tournament_theory', type: 'reference', label: 'Wikipedia: Tournament theory — トーナメント理論の概説' },
     ],
   },
   {

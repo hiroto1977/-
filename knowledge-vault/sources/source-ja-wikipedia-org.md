@@ -87,7 +87,7 @@ tags:
 - [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — Wikipedia:乗数効果—ケインズ乗数の解説
 - [[econ-network-externalities-katz-shapiro|ネットワーク外部性と互換性戦略——カッツ＆シャピロの標準化競争理論]] — Wikipedia:ネットワーク外部性—標準化競争と互換性の解説
 - [[econ-optimal-income-taxation-mirrlees|最適所得税理論（マーリーズ）——政府が個人の能力を観察できない情報制約の下で、再分配と効率の二律背反を最小化する税率構造を導く]] — Wikipedia（日本語）:最適課税—理論と効率性・公平性の解説
-- [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — Wikipedia:公共財—非競合性・非排除性と市場の失敗の解説
+- [[econ-public-goods-samuelson|公共財（サミュエルソン）——非競合性と非排除性を持つ財はフリーライダー問題により市場で過少供給され、政府供給や集合的解決の根拠になる]] — Wikipedia:公共財—非競合性・非排除性と市場の失敗の解説
 - [[econ-real-business-cycle-kydland-prescott|リアル・ビジネス・サイクル理論——キドランド＆プレスコットの技術ショックと景気循環]] — Wikipedia:実期的景気循環理論—RBCモデルとDSGE分析の解説
 - [[econ-sovereign-debt-restructuring|ソブリン債務危機と債務再編——IMFプログラムと国際倒産制度の欠如]] — Wikipedia:国家債務—ソブリン債務危機と再編の解説
 - [[econ-time-preference|時間選好]] — ウィキペディア日本語版「時間選好」—時間選好率の定義・異時点間選択・割引

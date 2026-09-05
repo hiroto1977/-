@@ -36,13 +36,13 @@ aliases:
 - [[econ-real-business-cycle-kydland|実物的景気循環理論（キドランド＆プレスコット）]] — 同じ思想家
 - [[econ-real-business-cycle-kydland-prescott|リアル・ビジネス・サイクル理論——キドランド＆プレスコットの技術ショックと景気循環]] — 同じ思想家
 - [[bizlaw-keech-v-sandford|キーチ対サンドフォード——受託者は地位から利益を得てはならない]] — 同じ思想家
-- [[econ-central-bank-independence-kydland|中央銀行の独立性と時間非一貫性問題——キドランド＝プレスコットの規則対裁量論]] — 同じ思想家
 - [[econ-central-bank-independence-rogoff|中央銀行の独立性——ロゴフの保守的中央銀行論とインフレ目標政策]] — 同じ思想家
 - [[econ-equity-premium-puzzle-mehra-prescott|株式プレミアム・パズル——標準理論で説明できない株式の超過収益]] — 同じ思想家
 - [[econ-nominal-anchor-mishkin|名目アンカー——インフレ期待を安定化する金融政策の制度的枠組み]] — 同じ思想家
-- [[econ-time-inconsistency-kydland-prescott|時間的非整合性——最適計画の事後的破棄とルール対裁量の問題]] — 同じ思想家
+- [[econ-time-inconsistency-kydland-prescott|時間的非整合性（キドランド＝プレスコット）——事前に最適だった政策を事後に覆す誘因が信頼性を損ない、ルールへのコミットメントと中央銀行の独立性を正当化する]] — 同じ思想家
 - [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]] — 同じ思想家
 - [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — 出典を共有
+- [[econ-chartalism-modern-monetary-theory|チャータリズムと現代貨幣理論（MMT）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

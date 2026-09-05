@@ -31,7 +31,6 @@ William Brainard ／ Alan Blinder ／ Ben Bernanke ／ Lars Hansen & Thomas Sarg
 - [Wikipedia: 'Policy uncertainty' — multiplier (multiplicative) uncertainty and the Brainard (1967) caution/attenuation principle; smaller, more cautious policy actions](https://en.wikipedia.org/wiki/Policy_uncertainty) `リファレンス`
 
 ## 関連概念
-- [[econ-sargent-wallace-unpleasant-arithmetic|サージェント＝ウォレスの不愉快な貨幣主義の算術]] — 同じ思想家
 - [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 同じ思想家
 - [[econ-debt-deflation-theory|債務デフレ理論]] — 同じ思想家
 - [[econ-saving-glut-hypothesis|過剰貯蓄仮説]] — 同じ思想家

@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia — The Logic of Collective Action（Mancur Olson 1965、群が大きいほど深刻）](https://en.wikipedia.org/wiki/The_Logic_of_Collective_Action) `リファレンス`
 
 ## 関連概念
-- [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 語彙が近い
 - [[econ-public-goods|公共財（非競合性・非排除性）]] — 語彙が近い
+- [[econ-public-goods-samuelson|公共財（サミュエルソン）——非競合性と非排除性を持つ財はフリーライダー問題により市場で過少供給され、政府供給や集合的解決の根拠になる]] — 同分野の近傍
 - [[econ-cap-and-trade-dales|排出量取引——総量規制と取引可能な排出権による費用最小の汚染削減]] — 同分野の近傍
 - [[econ-entrepreneurial-state|起業家国家（マッツカートの公共イノベーション論）]] — 同分野の近傍
 - [[econ-merit-goods|メリット財（価値財）]] — 同分野の近傍

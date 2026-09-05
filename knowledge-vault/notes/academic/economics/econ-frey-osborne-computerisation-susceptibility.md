@@ -34,10 +34,10 @@ aliases:
 
 ## 関連概念
 - [[econ-inclusive-institutions|包摂的制度と収奪的制度]] — 同じ思想家
-- [[econ-north-institutions-economic-history|ノースの制度論と経済史——取引費用・財産権・路径依存性による長期経済変化の解明]] — 同じ思想家
 - [[econ-reversal-of-fortune-acemoglu|運命の逆転——制度が長期の発展を分ける]] — 同じ思想家
 - [[econ-twin-peaks-quah|双峰分布仮説——世界所得分布の二極化と収束クラブの形成]] — 同じ思想家
 - [[econ-task-based-automation-acemoglu-restrepo|アセモグル＝レストレポのタスクベース自動化モデル——置換効果・生産性効果・復元効果の綱引き]] — 同じ思想家
+- [[econ-new-institutional-economics-north|新制度経済学と制度変化（ノース）——制度は人間が考案した「ゲームのルール」であり、取引費用と経路依存性を通じて経済パフォーマンスの長期的な差を生む]] — 同じ思想家
 - [[econ-poverty-trap|貧困の罠——低所得が貯蓄と投資を妨げて貧困を自己強化的に再生産する複数均衡と、その存在をめぐる実証]] — 同じ思想家
 - [[mgmt-competitive-positions|競争地位別戦略（リーダー・チャレンジャー・フォロワー・ニッチャー）]] — 出典を共有
 - [[econ-solow-growth-model|ソロー成長モデル]] — 同分野の近傍

@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[econ-rational-expectations|合理的期待形成（合理的期待仮説）]] — 語彙が近い
 - [[econ-policy-ineffectiveness|政策無効命題]] — 語彙が近い
+- [[econ-lucas-critique|ルーカス批判]] — 語彙が近い
 - [[econ-lucas-paradox|ルーカスのパラドックス]] — 同じ思想家
 - [[econ-goodharts-law-lucas-critique|グッドハートの法則とルーカス批判——政策目標化された統計的関係の崩壊]] — 同じ思想家
 - [[econ-ak-model|AKモデル（内生的成長の基本モデル）]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[econ-fiscal-dominance|財政支配（Fiscal Dominance）]] — 同じ思想家
 - [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 同じ思想家
 - [[econ-neutrality-of-money|貨幣の中立性（Neutrality of Money）]] — 同じ思想家
-- [[econ-phillips-curve-inflation-unemployment|フィリップス曲線——インフレ率と失業率のトレードオフと期待修正型の展開]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

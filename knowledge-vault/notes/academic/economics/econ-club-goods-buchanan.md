@@ -31,16 +31,16 @@ aliases:
 - [Wikipedia: Club good — Buchanan, excludable but non-rival, congestion, optimal club size](https://en.wikipedia.org/wiki/Club_good) `リファレンス`
 
 ## 関連概念
+- [[econ-public-goods-samuelson|公共財（サミュエルソン）——非競合性と非排除性を持つ財はフリーライダー問題により市場で過少供給され、政府供給や集合的解決の根拠になる]] — 同じ思想家
 - [[econ-logrolling|ログローリング（票の取引）]] — 同じ思想家
-- [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — 同じ思想家
 - [[econ-public-choice-buchanan-tullock|公共選択論（ブキャナン＝タロック）——政治家・官僚・有権者も自己利益を追う合理的個人として政治的意思決定を経済学の方法で分析する]] — 同じ思想家
-- [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 同じ思想家
 - [[econ-tiebout-hypothesis-local-public-goods|ティブー仮説（足による投票）——住民が税と公共サービスの組み合わせで自治体を選ぶことで地方公共財の選好が顕示され効率的供給が実現する]] — 同じ思想家
 - [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]] — 同じ思想家
 - [[econ-commons-tragedy-hardin-ostrom|共有地の悲劇とオストロムの制度分析——コモンズ管理のガバナンス設計]] — 同じ思想家
 - [[econ-fiscal-illusion-buchanan|財政錯覚——政府支出の費用を過小評価させる課税構造の不透明性]] — 同じ思想家
 - [[econ-leviathan-hypothesis-brennan-buchanan|リヴァイアサン仮説——歳入最大化を図る政府と憲法的・分権的な制約]] — 同じ思想家
 - [[econ-rent-seeking-tullock|レント・シーキング理論と政治経済学的非効率性（タロック・クルーガー）]] — 同じ思想家
+- [[econ-samaritan-dilemma-buchanan|サマリア人のジレンマ（ブキャナン）——利他の時間非整合性と「戦略的勇気」]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

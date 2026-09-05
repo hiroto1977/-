@@ -35,7 +35,7 @@ P・J・フェルドーン（P. J. Verdoorn, 1949）／ニコラス・カルド�
 - [[econ-balance-of-payments-constraint-thirlwall|サールウォールの法則——国際収支制約のもとでの長期成長率]] — 同じ思想家
 - [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — 同じ思想家
 - [[econ-cobweb-model-ezekiel-nerlove|くもの巣モデル（コブウェブ定理）——生産の遅れと素朴な期待が農産物価格の収束・発散・循環を生む動学モデル]] — 同じ思想家
-- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]] — 同じ思想家
+- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——勝者が敗者を補償してなお余剰が残るなら改善とみなす潜在的パレート改善で、費用便益分析の理論的基礎]] — 同じ思想家
 - [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]] — 同じ思想家
 - [[econ-endogenous-money-post-keynesian-moore|内生的貨幣論——ムーアの信用貨幣観と中央銀行の利子率コントロール]] — 同じ思想家
 - [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 同じ思想家

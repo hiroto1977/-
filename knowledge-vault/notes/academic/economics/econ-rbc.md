@@ -37,8 +37,8 @@ F.キドランド&E.プレスコット1982「Time to Build and Aggregate Fluctua
 - [[econ-real-bills-doctrine|真正手形主義（リアルビルズ・ドクトリン）]] — 出典を共有
 - [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 出典を共有
 - [[econ-superstar-economics|スーパースターの経済学]] — 出典を共有
-- [[econ-central-bank-independence-kydland|中央銀行の独立性と時間非一貫性問題——キドランド＝プレスコットの規則対裁量論]] — 同分野の近傍
 - [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]] — 同分野の近傍
+- [[econ-real-business-cycle-kydland|実物的景気循環理論（キドランド＆プレスコット）]] — 同分野の近傍
 - [[econ-financial-accelerator-bernanke-gertler|金融加速度効果（バーナンキ＝ガートラー＝ギルクリスト）——借り手の純資産と外部資金プレミアムの相互作用が景気のショックを増幅する]] — 同分野の近傍
 - [[econ-ak-model|AKモデル（内生的成長の基本モデル）]] — 同分野の近傍
 

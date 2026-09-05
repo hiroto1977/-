@@ -38,9 +38,9 @@ aliases:
 - [[econ-samaritan-dilemma-buchanan|サマリア人のジレンマ（ブキャナン）——利他の時間非整合性と「戦略的勇気」]] — 同じ思想家
 - [[econ-tullock-paradox|タロックのパラドックス——レントシーキング支出はなぜ過少なのか]] — 同じ思想家
 - [[econ-club-goods-buchanan|クラブ財（ブキャナン）——排除できるが混雑するまでは非競合的な財の最適な供給規模と会員数]] — 同じ思想家
+- [[econ-public-goods-samuelson|公共財（サミュエルソン）——非競合性と非排除性を持つ財はフリーライダー問題により市場で過少供給され、政府供給や集合的解決の根拠になる]] — 同じ思想家
 - [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家
 - [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]] — 同じ思想家
-- [[econ-commons-tragedy-hardin-ostrom|共有地の悲劇とオストロムの制度分析——コモンズ管理のガバナンス設計]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

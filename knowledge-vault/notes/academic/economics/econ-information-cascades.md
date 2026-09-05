@@ -35,7 +35,7 @@ aliases:
 ## 関連概念
 - [[econ-herd-behavior-banerjee|群衆行動と情報カスケード——他者の行動の模倣が私的情報を覆い隠す]] — 同じ思想家
 - [[econ-leontief-paradox|レオンチェフの逆説]] — 同分野の近傍
-- [[econ-sargent-wallace-unpleasant-arithmetic|サージェント＝ウォレスの不愉快な貨幣主義の算術]] — 同分野の近傍
+- [[econ-rent-seeking|レントシーキング]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,7 +32,7 @@ aliases:
 - [Avner Greif (Stanford) — 'Self-enforcing and Self-reinforcing Economic Institutions'](https://web.stanford.edu/class/polisci210/papers/greif.pdf) `学術`
 
 ## 関連概念
-- [[econ-new-institutional-economics-north|新制度経済学と制度変化の歴史的分析——ノースの経路依存性論]] — 同じ思想家
+- [[econ-new-institutional-economics-north|新制度経済学と制度変化（ノース）——制度は人間が考案した「ゲームのルール」であり、取引費用と経路依存性を通じて経済パフォーマンスの長期的な差を生む]] — 同じ思想家
 - [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 同じ思想家
 - [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
 - [[econ-chain-store-paradox-selten|チェーンストアの逆説——評判による参入阻止と後ろ向き帰納の衝突]] — 同じ思想家

@@ -41,7 +41,7 @@ aliases:
 - [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 出典を共有
 - [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 出典を共有
 - [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 出典を共有
-- [[econ-near-rationality-akerlof-yellen|近似合理性とメニューコスト——僅かな最適化の怠りが大きな景気変動を生む]] — 同分野の近傍
+- [[econ-wage-rigidity|名目賃金の下方硬直性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

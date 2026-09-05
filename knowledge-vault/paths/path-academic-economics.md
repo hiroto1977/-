@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 921
+entry_count: 916
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（921件）
+# 学習パス — 学術概念／経済学（916件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 88）
-- [[econ-helicopter-money|ヘリコプターマネー]]（接続 48）
-- [[econ-liquidity-trap|流動性のわな]]（接続 44）
+- [[econ-helicopter-money|ヘリコプターマネー]]（接続 47）
+- [[econ-liquidity-trap|流動性のわな]]（接続 45）
 - [[econ-agglomeration-economies|集積の経済]]（接続 43）
-- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 43）
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 42）
+- [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 42）
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 41）
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]]（接続 39）
 - [[econ-behavioral-finance|行動ファイナンス]]（接続 38）
-- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 38）
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]]（接続 37）
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 37）
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 36）
 - [[econ-becker-crime|犯罪の経済学]]（接続 35）
 - [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]]（接続 34）
-- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 34）
+- [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]]（接続 33）
 
 ## 第 2 部 — 年代順の展開
 - 1623年: [[econ-petty-clark-law|ペティ＝クラークの法則]]
@@ -107,6 +107,7 @@ tags:
 - 1919年: [[econ-minsky-moment|ミンスキー・モーメント（金融不安定性仮説）]]
 - 1920年: [[econ-atkinson-inequality-index|アトキンソン不等式指数（不等式測定指数）]]
 - 1920年: [[econ-baumol-oates-standards-charges|ボーモル＝オーツの標準・価格アプローチ——政治的に定めた環境基準を一律の排出課徴金で費用最小に達成する]]
+- 1920年: [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——勝者が敗者を補償してなお余剰が残るなら改善とみなす潜在的パレート改善で、費用便益分析の理論的基礎]]
 - 1920年: [[econ-externality-market-failure|外部性と市場の失敗]]
 - 1920年: [[econ-kondratiev-waves|コンドラチェフの波（長期波動）]]
 - 1920年: [[econ-pigouvian-tax|ピグー税]]
@@ -146,7 +147,6 @@ tags:
 - 1936年: [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]]
 - 1936年: [[econ-keynesian-beauty-contest|ケインズの美人投票]]
 - 1936年: [[econ-keynesian-effective-demand|有効需要の原理と乗数効果（ケインズ経済学）]]
-- 1936年: [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]]
 - 1936年: [[econ-lerner-symmetry|ラーナー対称性定理（Lerner Symmetry Theorem）]]
 - 1936年: [[econ-paradox-of-thrift|倹約のパラドックス]]
 - 1936年: [[econ-wage-rigidity|名目賃金の下方硬直性]]
@@ -189,6 +189,7 @@ tags:
 - 1953年: [[econ-shapley-value|シャープレー値]]
 - 1954年: [[econ-harberger-triangle|ハーバーガーの三角形（独占の死荷重損失計測）]]
 - 1954年: [[econ-public-goods|公共財（非競合性・非排除性）]]
+- 1954年: [[econ-public-goods-samuelson|公共財（サミュエルソン）——非競合性と非排除性を持つ財はフリーライダー問題により市場で過少供給され、政府供給や集合的解決の根拠になる]]
 - 1954年: [[econ-samuelson-condition|公共財供給のサミュエルソン条件]]
 - 1954年: [[econ-tiebout-hypothesis-local-public-goods|ティブー仮説（足による投票）——住民が税と公共サービスの組み合わせで自治体を選ぶことで地方公共財の選好が顕示され効率的供給が実現する]]
 - 1954年: [[econ-welfare-theorems|厚生経済学の基本定理]]
@@ -213,6 +214,7 @@ tags:
 - 1960年: [[econ-focal-point|フォーカルポイント（シェリングの焦点）]]
 - 1960年: [[econ-human-capital|人的資本論]]
 - 1960年: [[econ-mechanism-design|メカニズムデザイン]]
+- 1960年: [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]
 - 1960年: [[econ-regression-discontinuity|回帰不連続デザイン（RDD）]]
 - 1960年: [[econ-rostow-stages|ロストウの経済成長段階説]]
 - 1960年: [[econ-sraffian-price|スラッファ価格理論（Sraffian Price Theory）]]
@@ -310,6 +312,7 @@ tags:
 - 1977年: [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]]
 - 1977年: [[econ-dutch-disease-corden|オランダ病（コーデン＝ニアリー）——資源ブームが支出効果と資源移動効果で交易財部門を萎縮させる脱工業化のメカニズム]]
 - 1977年: [[econ-time-inconsistency|動学的不整合（時間的非整合性）]]
+- 1977年: [[econ-time-inconsistency-kydland-prescott|時間的非整合性（キドランド＝プレスコット）——事前に最適だった政策を事後に覆す誘因が信頼性を損ない、ルールへのコミットメントと中央銀行の独立性を正当化する]]
 - 1977年: [[econ-varian-model-of-sales-informed-uninformed-consumers|ヴァリアンのセールのモデル——情報客と非情報客の混在が生む価格分散と特売の均衡]]
 - 1978年: [[econ-lucas-span-of-control-firm-size-distribution|ルーカスのスパン・オブ・コントロール・モデル——経営者の才能分布と管理限界が企業規模の分布を決める]]
 - 1979年: [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]]
@@ -326,9 +329,11 @@ tags:
 - 1981年: [[econ-economies-of-scale-scope|規模の経済と範囲の経済]]
 - 1981年: [[econ-fiscal-dominance|財政支配（Fiscal Dominance）]]
 - 1981年: [[econ-probabilistic-voting|確率的投票モデル（probabilistic voting model）——有権者の選択が政策に確率的に反応すると仮定し、多次元でも均衡を与える選挙競争理論]]
+- 1981年: [[econ-sargent-wallace-unpleasant-arithmetic|サージェント＝ウォレスの不愉快なマネタリスト算術——財政が支配的なら、金融引き締めは将来の貨幣化を通じてかえってインフレを高める]]
 - 1981年: [[econ-sen-entitlement-approach|センの権原アプローチ（Entitlement Approach／Sen 1981）——飢饉は食料の絶対量不足ではなく、人々が食料を入手する「権原」の崩壊によって起こる]]
 - 1981年: [[econ-superstar-economics|スーパースターの経済学]]
 - 1981年: [[econ-tobins-q|トービンのq]]
+- 1981年: [[econ-tournament-theory-lazear-rosen|トーナメント理論（レイザー＝ローゼン）——絶対成果ではなく相対順位で報酬を決める仕組みが努力を引き出し、昇進ごとの大きな報酬格差を説明する]]
 - 1982年: [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]]
 - 1982年: [[econ-barzel-measurement-cost-property-rights|財産権の測定費用理論（バーゼルのメジャーメント・コスト・アプローチ）]]
 - 1982年: [[econ-contestable-markets|コンテスタブル市場]]
@@ -384,6 +389,7 @@ tags:
 - 1990年: [[econ-inflation-targeting|インフレ・ターゲティング]]
 - 1990年: [[econ-joint-liability-group-lending|連帯責任型グループ貸付理論（Joint Liability Group Lending）]]
 - 1990年: [[econ-lucas-paradox|ルーカスのパラドックス]]
+- 1990年: [[econ-new-institutional-economics-north|新制度経済学と制度変化（ノース）——制度は人間が考案した「ゲームのルール」であり、取引費用と経路依存性を通じて経済パフォーマンスの長期的な差を生む]]
 - 1990年: [[econ-ostrom-commons|オストロムのコモンズ統治]]
 - 1990年: [[econ-rct-development|開発経済学におけるランダム化比較試験（RCT in Development Economics）]]
 - 1990年: [[econ-relationship-lending-petersen-rajan-berger-udell|リレーションシップ・レンディング（関係型融資）——長期関係で蓄積した「ソフト情報」が中小企業の資金調達力を高める仕組み]]
@@ -505,7 +511,6 @@ tags:
 - [[econ-career-concerns-holmstrom|キャリア・コンサーン（ホルムストローム）——評判が生む暗黙の誘因]]
 - [[econ-carry-trade-foreign-exchange|キャリートレード（外国為替）]]
 - [[econ-centipede-game|ムカデゲーム——後ろ向き帰納と協調のジレンマ]]
-- [[econ-central-bank-independence-kydland|中央銀行の独立性と時間非一貫性問題——キドランド＝プレスコットの規則対裁量論]]
 - [[econ-central-bank-independence-rogoff|中央銀行の独立性——ロゴフの保守的中央銀行論とインフレ目標政策]]
 - [[econ-chain-store-paradox-selten|チェーンストアの逆説——評判による参入阻止と後ろ向き帰納の衝突]]
 - [[econ-chartalism-modern-monetary-theory|チャータリズムと現代貨幣理論（MMT）]]
@@ -527,7 +532,6 @@ tags:
 - [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]]
 - [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]]
 - [[econ-corlett-hague-rule|コーレット＝ヘイグの規則——余暇と補完的な財を重く課税する]]
-- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]]
 - [[econ-credit-cycle-minsky-financial-fragility|ミンスキーの金融不安定性仮説——信用サイクルと「ミンスキー・モーメント」の経済学]]
 - [[econ-credit-cycle-theory|信用循環理論]]
 - [[econ-credit-rationing-stiglitz|信用割当理論（スティグリッツ＆ワイス）]]
@@ -605,7 +609,6 @@ tags:
 - [[econ-financial-repression-mckinnon-shaw|金融抑圧と金融深化——マッキノン＝ショウ仮説と発展途上国の金融自由化]]
 - [[econ-financialization|金融化——経済の金融部門支配]]
 - [[econ-financialization-lazonick-shareholder|金融化とシェアホルダー・バリュー——ラゾニックの「保持・再投資」から「縮小・分配」への転換]]
-- [[econ-fiscal-dominance-sargent|財政支配と物価水準の財政理論——政府債務が金融政策を拘束するメカニズム]]
 - [[econ-fiscal-drag|財政ドラッグ（ブラケットクリープ）]]
 - [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]]
 - [[econ-fiscal-illusion-buchanan|財政錯覚——政府支出の費用を過小評価させる課税構造の不透明性]]
@@ -765,13 +768,11 @@ tags:
 - [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]]
 - [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]]
 - [[econ-new-institutional-economics|新制度派経済学]]
-- [[econ-new-institutional-economics-north|新制度経済学と制度変化の歴史的分析——ノースの経路依存性論]]
 - [[econ-new-open-economy-macro-obstfeld|新しい開放経済マクロ経済学——ミクロ的基礎と名目硬直性の統合]]
 - [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]]
 - [[econ-noise-trader-delong|ノイズトレーダー・リスク——非合理な取引者が市場で生き残る仕組み]]
 - [[econ-nominal-anchor-inflation-targeting|インフレ目標政策（ノミナル・アンカー）]]
 - [[econ-nominal-anchor-mishkin|名目アンカー——インフレ期待を安定化する金融政策の制度的枠組み]]
-- [[econ-north-institutions-economic-history|ノースの制度論と経済史——取引費用・財産権・路径依存性による長期経済変化の解明]]
 - [[econ-nucleolus-schmeidler|仁（ニュークレオラス）——最も不満な連合の不満を最小にする配分]]
 - [[econ-o-ring-theory-kremer|オーリング理論——一つの弱点が全体の価値を損なう生産と発展]]
 - [[econ-occupational-crowding-bergmann|職業の過密仮説（バーグマン）——差別がもたらす職業隔離と賃金格差]]
@@ -807,8 +808,6 @@ tags:
 - [[econ-probabilistic-serial-bogomolnaia-moulin|確率的シリアル・メカニズム——同時消費による公平な確率配分]]
 - [[econ-procedural-utility-frey|手続き効用——「何を」だけでなく「どのように」も大切である]]
 - [[econ-property-rights-demsetz|財産権の生成理論——外部性の内部化が私的所有権を生む]]
-- [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]]
-- [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]]
 - [[econ-purchasing-power-parity-cassel|購買力平価説（カッセル）]]
 - [[econ-purchasing-power-parity-uip-fisher|購買力平価・カバーなし金利平価・フィッシャー効果——為替レート決定の三大理論]]
 - [[econ-quadratic-voting-weyl|二次の投票（クアドラティック・ボーティング）——選好の強度を表す投票]]
@@ -843,7 +842,6 @@ tags:
 - [[econ-rybczynski-theorem-factor-growth|リプチンスキー定理——要素賦存変化と産出構成の変動]]
 - [[econ-salience-theory-bordalo|顕著性理論（ボルダロ＝ジェンナイオリ＝シュライファー）——目立つ属性が選択を歪める]]
 - [[econ-samaritan-dilemma-buchanan|サマリア人のジレンマ（ブキャナン）——利他の時間非整合性と「戦略的勇気」]]
-- [[econ-sargent-wallace-unpleasant-arithmetic|サージェント＝ウォレスの不愉快な貨幣主義の算術]]
 - [[econ-saving-glut-hypothesis|過剰貯蓄仮説]]
 - [[econ-savings-glut-bernanke|世界的過剰貯蓄仮説——グローバル・インバランスと低金利の構造的要因]]
 - [[econ-search-matching-theory-diamond-mortensen|サーチ・マッチング理論——労働市場の摩擦と失業の均衡モデル]]
@@ -880,14 +878,12 @@ tags:
 - [[econ-tax-incidence-theory|租税帰着理論]]
 - [[econ-temptation-self-control-gul-pesendorfer|誘惑と自制の選好——選択肢の集合そのものを評価する]]
 - [[econ-theil-index-inequality|タイル指数——情報理論にもとづく分解可能な不平等尺度]]
-- [[econ-time-inconsistency-kydland-prescott|時間的非整合性——最適計画の事後的破棄とルール対裁量の問題]]
 - [[econ-time-inconsistency-monetary-policy|金融政策の時間的非整合性（裁量 vs. ルール）]]
 - [[econ-tinbergen-rule-policy-targets|ティンバーゲンの定理——政策目標と政策手段の対応関係]]
 - [[econ-tobin-q-investment|トービンのq理論——資本の市場価値と再取得費用の比が投資を規定する]]
 - [[econ-tobin-tax-financial|トービン税——国際金融取引への課税による投機的資本移動の抑制]]
 - [[econ-too-big-to-fail|大きすぎて潰せない]]
 - [[econ-top-trading-cycles-shapley-scarf|トップ・トレーディング・サイクル——分割不可能な財の戦略耐性のある交換]]
-- [[econ-tournament-theory-lazear-rosen|トーナメント理論——相対的順位に基づく報酬が努力を引き出す仕組み]]
 - [[econ-trade-adjustment-assistance-kaldor-hicks|カルドア＝ヒックス基準と貿易調整支援——自由貿易の恩恵と損失者への再分配政策]]
 - [[econ-trade-balance-current-account-absorption|経常収支と吸収アプローチ——アレキサンダーの国民所得恒等式と為替政策の効果]]
 - [[econ-trade-balance-j-curve|Jカーブ効果と経常収支調整]]
@@ -930,7 +926,6 @@ tags:
 - [[econ-weitzman-dismal-theorem|ワイツマンの悲観定理（Dismal Theorem）——裾の厚い不確実性の前で気候政策の費用便益分析は破綻し、破局回避は無限の保険料に値する]]
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]]
 - [[econ-welfare-economics-bergson-samuelson|厚生経済学の基本定理——バーグソン＝サミュエルソン社会厚生関数とパレート効率性]]
-- [[econ-welfare-economics-pigou-kaldor-hicks|厚生経済学——ピグーの外部性補正とカルドア＝ヒックス補償原理]]
 - [[econ-wicksell-effect-capital|ヴィクセル効果——利子率の変化が資本の価値を動かす]]
 - [[econ-winner-curse-auction|勝者の呪い——共通価値オークションで落札者が過大評価し損をする逆説]]
 - [[econ-winner-take-all-frank|勝者総取り市場——わずかな能力差が報酬の巨大格差に転化する競争構造]]

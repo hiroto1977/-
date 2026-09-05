@@ -26,8 +26,8 @@ aliases:
 アンソニー・アトキンソン ／ トマ・ピケティ ／ コッラード・ジーニ
 
 ## 出典
-- [Atkinson 1970 — On the Measurement of Inequality, Journal of Economic Theory 2(3):244-263](https://doi.org/10.1016/0022-0531(70)90039-6) `学術`
 - [Lorenz 1905 — Methods of Measuring the Concentration of Wealth, Publications of the American Statistical Association 9(70):209-219](https://www.jstor.org/stable/2276207) `学術`
+- [Atkinson 1970 — On the Measurement of Inequality, Journal of Economic Theory 2(3):244-263](https://doi.org/10.1016/0022-0531(70)90039-6) `学術`
 - [Piketty 2014 — Capital in the Twenty-First Century, Harvard University Press](https://www.hup.harvard.edu/books/9780674430006) `リファレンス`
 - [World Inequality Database (WID.world) — 所得・富の長期不平等統計データベース](https://wid.world/) `リファレンス`
 

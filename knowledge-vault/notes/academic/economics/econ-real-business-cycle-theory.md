@@ -34,7 +34,6 @@ Finn E. Kydland ／ Edward C. Prescott ／ John B. Long ／ Charles I. Plosser �
 - [[econ-time-inconsistency-monetary-policy|金融政策の時間的非整合性（裁量 vs. ルール）]] — 同じ思想家
 - [[bizlaw-blue-sky-laws|ブルースカイ法（州証券規制）]] — 同じ思想家
 - [[econ-real-business-cycle-kydland|実物的景気循環理論（キドランド＆プレスコット）]] — 同分野の近傍
-- [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]] — 同分野の近傍
 - [[econ-strategic-complementarity|戦略的補完性]] — 同分野の近傍
 
 ## 関連

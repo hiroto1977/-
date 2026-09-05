@@ -34,6 +34,7 @@ aliases:
 - [[econ-club-goods-buchanan|クラブ財（ブキャナン）——排除できるが混雑するまでは非競合的な財の最適な供給規模と会員数]] — 同じ思想家
 - [[econ-leviathan-hypothesis-brennan-buchanan|リヴァイアサン仮説——歳入最大化を図る政府と憲法的・分権的な制約]] — 同じ思想家
 - [[econ-public-choice-buchanan-tullock|公共選択論（ブキャナン＝タロック）——政治家・官僚・有権者も自己利益を追う合理的個人として政治的意思決定を経済学の方法で分析する]] — 同じ思想家
+- [[econ-public-goods-samuelson|公共財（サミュエルソン）——非競合性と非排除性を持つ財はフリーライダー問題により市場で過少供給され、政府供給や集合的解決の根拠になる]] — 同じ思想家
 - [[econ-rent-seeking-tullock|レント・シーキング理論と政治経済学的非効率性（タロック・クルーガー）]] — 同じ思想家
 - [[econ-samaritan-dilemma-buchanan|サマリア人のジレンマ（ブキャナン）——利他の時間非整合性と「戦略的勇気」]] — 同じ思想家
 - [[econ-tullock-paradox|タロックのパラドックス——レントシーキング支出はなぜ過少なのか]] — 同じ思想家

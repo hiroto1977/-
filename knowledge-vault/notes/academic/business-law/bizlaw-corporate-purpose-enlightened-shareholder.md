@@ -39,6 +39,7 @@ aliases:
 - [[bizlaw-whitewash-procedure-hk|ホワイトウォッシュ手続き（違法財務支援除外申請）]] — 同じ思想家
 - [[bizlaw-corporate-groups-konzernrecht|企業集団規制とコンツェルン法（ドイツ株式法）]] — 同じ思想家
 - [[bizlaw-golden-share-state-ownership|黄金株（特別議決権株）と国家所有権保護の比較法]] — 同じ思想家
+- [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

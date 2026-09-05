@@ -32,7 +32,7 @@ aliases:
 - [Journal of Political Economy (1977) — Rules Rather than Discretion（一次文献）](https://www.journals.uchicago.edu/doi/abs/10.1086/260580) `学術`
 
 ## 関連概念
-- [[econ-time-inconsistency-kydland-prescott|時間的非整合性——最適計画の事後的破棄とルール対裁量の問題]] — 語彙が近い
+- [[econ-time-inconsistency-kydland-prescott|時間的非整合性（キドランド＝プレスコット）——事前に最適だった政策を事後に覆す誘因が信頼性を損ない、ルールへのコミットメントと中央銀行の独立性を正当化する]] — 語彙が近い
 - [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 同じ思想家
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 出典を共有
 - [[econ-wage-rigidity|名目賃金の下方硬直性]] — 出典を共有
