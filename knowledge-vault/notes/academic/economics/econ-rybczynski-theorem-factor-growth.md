@@ -40,6 +40,7 @@ aliases:
 - [[econ-vanek-chain-factor-content|ヴァネクの要素含有量定理——多数財・多数要素への貿易理論の拡張]] — 同じ思想家
 - [[econ-envelope-theorem-milgrom-segal|包絡線定理——最適化問題のパラメータ感応度と経済学的応用]] — 同じ思想家
 - [[econ-bowen-leamer-sveikauskas-hov|HOV定理の実証検証——要素含有量貿易理論の計量的テスト]] — 同分野の近傍
+- [[econ-petty-clark-law|ペティ＝クラークの法則]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

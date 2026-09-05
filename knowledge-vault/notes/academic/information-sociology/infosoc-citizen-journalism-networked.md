@@ -35,7 +35,7 @@ aliases:
 - [[infosoc-open-data|オープンデータ]] — 同じ思想家
 - [[infosoc-open-government-data|オープンガバメントデータ：行政保有データの公開・再利用と透明性・説明責任・市民参加を促進する政策パラダイム]] — 同じ思想家
 - [[infosoc-semantic-web|セマンティック・ウェブ]] — 同じ思想家
-- [[infosoc-participatory-culture|参加型文化]] — 同分野の近傍
+- [[infosoc-collective-intelligence-levy|集合知——レヴィの「知識の宇宙」とウェブ2.0・ウィキペディア・クラウドソーシングへの展開]] — 同分野の近傍
 - [[infosoc-digital-markets-act|デジタル市場法（DMA）]] — 同分野の近傍
 - [[infosoc-political-polarization|政治的分極化]] — 同分野の近傍
 

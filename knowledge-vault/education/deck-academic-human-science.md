@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／人間科学"
 type: flashcard-deck
 deck_key: "academic-human-science"
-card_count: 641
+card_count: 642
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／人間科学（641枚）
+# フラッシュカード — 学術概念／人間科学（642枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -564,6 +564,8 @@ tags:
   - **A:** 馴化（habituation）とは、ある刺激が反復して呈示されると、それに対する反応が次第に減弱していく学習現象であり、二つの事象間の連合を必要としない「非連合学習」の代表例である。刺激と結果の対呈示（随伴）を前提とする古典的条件づけやオペラント条件づけと異なり、単一刺激の反復のみで生じる、最も単純かつ生物界に普遍的な学習形態とされる。（→ [[human-habituation]]）
 - **Q:** ハロー効果（後光効果, halo effect）
   - **A:** ある対象がもつ一つの顕著な特徴（好ましい／好ましくない）の印象が、その対象の他の無関係な特徴の評価にまで波及してしまう認知バイアス。たとえば外見が魅力的な人を、知性や誠実さといった本来無関係な面でも高く評価しやすい。（→ [[human-halo-effect]]）
+- **Q:** ハーディネス——コミットメント・コントロール・チャレンジの3Cからなるストレス耐性パーソナリティ
+  - **A:** ハーディネスは、心理学者スザンヌ・C・コバサ（Suzanne C. Kobasa）が論文『Stressful Life Events, Personality, and Health: An Inquiry into Hardiness』（Journal of Personality and Social Psychology, 1979, 37巻）で示した、ストレスに強い人格特性の概念で、コミットメント（関与、疎外の対極）・コントロ…（→ [[human-hardiness-kobasa]]）
 - **Q:** ハーロウの代理母実験——「接触の安らぎ」と愛着
   - **A:** ハーロウの代理母実験は、心理学者ハリー・ハーロウが1950〜60年代に行い、1958年の論文「愛の本質（The Nature of Love）」などで報告した、アカゲザルの乳児を用いた一連の実験で、母子の絆（愛着）が、空腹を満たす授乳ではなく、温かく柔らかいものに触れる「接触の安らぎ（contact comfort）」に根ざすことを示した。（→ [[human-harlow-contact-comfort]]）
 - **Q:** ホーソン効果

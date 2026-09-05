@@ -32,8 +32,8 @@ David G. Blanchflower ／ Andrew J. Oswald ／ Alex Bryson
 - [Blanchflower, Bryson & Spurling (2022) — The Wage Curve After the Great Recession, NBER WP](https://www.nber.org/papers/w30322) `学術`
 
 ## 関連概念
+- [[econ-wage-rigidity-bewley|賃金の下方硬直性——ビューリーのインタビュー研究による実証的解明]] — 同分野の近傍
 - [[econ-weitzman-prices-vs-quantities|ワイツマンの「価格か数量か」（Prices vs. Quantities／Weitzman 1974）——不確実性下では限界費用と限界便益の傾きが規制手段の優劣を決める]] — 同分野の近傍
-- [[econ-lump-of-labour-fallacy|労働塊の誤謬（Lump of Labour Fallacy）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

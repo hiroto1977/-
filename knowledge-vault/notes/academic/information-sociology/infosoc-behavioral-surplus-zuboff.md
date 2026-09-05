@@ -26,7 +26,7 @@ aliases:
 ショシャナ・ズボフ ／ ニック・クルドリー ／ ユリゲン・モエ ／ ロジャー・マクネーミー
 
 ## 出典
-- [Zuboff, S. (2015) Big Other: Surveillance Capitalism and the Prospects of an Information Civilization — Journal of Information Technology, 30(1), 75–89（監視資本主義の先行論文）](https://doi.org/10.1177/1461444816676645) `学術`
+- [Zuboff, S. (2015) Big Other: Surveillance Capitalism and the Prospects of an Information Civilization — Journal of Information Technology, 30(1), 75–89（監視資本主義の先行論文）](https://doi.org/10.1057/jit.2015.5) `学術`
 - [Couldry, N. & Mejias, U. A. (2021) The Costs of Connection: How Data Is Colonizing Human Life and Appropriating It for Capitalism — Stanford University Press（データ植民地主義の視点）](https://doi.org/10.1177/20539517211062037) `学術`
 - [European Parliament (2016) Regulation (EU) 2016/679 — GDPR（行動データ保護の立法）](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679) `公的`
 - [Wikipedia: Surveillance capitalism — Zuboff, behavioral surplus, Google Adsense, behavioral modification, GDPR](https://en.wikipedia.org/wiki/Surveillance_capitalism) `リファレンス`

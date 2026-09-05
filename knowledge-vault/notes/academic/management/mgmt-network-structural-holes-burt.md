@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-structural-holes-burt|構造的空隙——分断された集団を橋渡しする仲介者が得る情報と統制の優位]] — 同じ思想家
+- [[mgmt-social-capital-intellectual-capital-nahapiet-ghoshal|ナハピエト＝ゴシャールの社会関係資本論——構造的・関係的・認知的の三次元による知的資本創造と組織の優位性]] — 同じ思想家
 - [[econ-social-capital-putnam|ソーシャル・キャピタル（パットナム）]] — 同じ思想家
 - [[infosoc-social-network-analysis|社会ネットワーク分析（SNA）]] — 同じ思想家
 - [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]] — 同じ思想家

@@ -39,7 +39,7 @@ aliases:
 - [[econ-merit-goods-musgrave|価値財——個人の選好を超えて社会が消費を奨励すべきとされる財]] — 同じ思想家
 - [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — 同じ思想家
 - [[econ-tiebout-hypothesis-local-public-goods|ティブー仮説——「足による投票」と地方公共財の効率的供給メカニズム]] — 同じ思想家
-- [[bizlaw-employment-at-will-doctrine|随意雇用法理——米国の雇用自由原則と日本の解雇権濫用法理の比較]] — 出典を共有
+- [[econ-ramsey-optimal-taxation|ラムゼイの最適課税理論——効率的税制設計と超過負担最小化の原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

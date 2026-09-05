@@ -2,7 +2,7 @@
 title: "nature.com"
 type: source-domain
 host: "nature.com"
-cite_count: 35
+cite_count: 36
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nature.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **35 件**（学術 35）
+> [!info] 出典ドメイン索引 ・ 引用 **36 件**（学術 36）
 
 ## このドメインを出典とする項目
 
@@ -44,6 +44,7 @@ tags:
 - [[human-vestibular-perception-theory|前庭知覚理論]] — Fetsch,Pouget,DeAngelis&Angelaki(2011)"Neuralcorrelatesofreliability-…
 - [[human-vestibular-perception-theory|前庭知覚理論]] — Merfeld,Zupan&Peterka(1999)"Humansuseinternalmodelstoestimategravitya…
 - [[human-zeigarnik|ツァイガルニク効果]] — HumanitiesandSocialSciencesCommunications(Nature,2025)—meta-analysiso…
+- [[infosoc-algorithmic-opacity-burrell|アルゴリズム不透明性の三類型——企業秘密・技術的リテラシー・機械学習の規模に起因する不透明性]] — Rudin,C.(2019).Stopexplainingblackboxmachinelearningmodelsforhighstak…
 - [[infosoc-citizen-journalism|市民ジャーナリズム]] — HumanitiesandSocialSciencesCommunications(Nature,peer-reviewed)—credi…
 - [[infosoc-digital-wellbeing|デジタル・ウェルビーイング]] — Orben,A.&Przybylski,A.K.(2019)“Theassociationbetweenadolescentwell-be…
 - [[infosoc-inoculation-theory|接種理論（inoculation theory）]] — vanderLindenetal.(2021)"Inoculatingthepublicagainstmisinformationabou…

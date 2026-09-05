@@ -25,7 +25,7 @@ tags:
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]（接続 18）
 - [[legal-data-subject-rights|保有個人データに関する本人の権利]]（接続 16）
 - [[legal-email-ad-optin|特定商取引法における電子メール広告のオプトイン規制]]（接続 16）
-- [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]]（接続 16）
+- [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]]（接続 16）
 - [[legal-address-change-registration|所有権登記名義人の住所等変更登記の申請義務化（2026年4月1日施行）]]（接続 15）
 - [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]]（接続 15）
 
@@ -103,6 +103,7 @@ tags:
 - [[legal-funds-transfer|資金移動業]]
 - [[legal-guarantee-contract|改正民法の保証契約ルール（個人根保証の極度額・事業性個人保証の公正証書）]]
 - [[legal-home-appliance-recycling|家電リサイクル法（家電4品目の引取り・リサイクル義務）]]
+- [[legal-individual-credit|個別信用購入あっせん（個別クレジット）に関する割賦販売法の規制]]
 - [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]]
 - [[legal-insolvency-procedures|法的倒産処理手続（破産・民事再生・会社更生・特別清算）]]
 - [[legal-installment-sales|割賦販売法（クレジットカード／包括信用購入あっせん）]]
@@ -133,7 +134,6 @@ tags:
 - [[legal-related-personal-info|個人関連情報の第三者提供の制限（個人情報保護法31条）]]
 - [[legal-risk-bearing|危険負担（改正民法536条）]]
 - [[legal-secondhand-dealer|古物営業法と古物商許可]]
-- [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]]
 - [[legal-sensitive-personal-info|要配慮個人情報の取扱い]]
 - [[legal-set-off|相殺（民法505条等）]]
 - [[legal-share-types|会社法における種類株式]]

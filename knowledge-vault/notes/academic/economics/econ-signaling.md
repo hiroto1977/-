@@ -40,8 +40,8 @@ aliases:
 - [[econ-screening-rothschild-stiglitz|スクリーニング理論——情報を持たない側が契約メニューで相手の型を選別する]] — 同じ思想家
 - [[econ-signaling-theory-spence|教育シグナリング理論（スペンス）]] — 同じ思想家
 - [[econ-signaling-theory-spence-job-market|シグナリング理論——スペンスの学歴シグナルと情報非対称性下の資格獲得行動]] — 同じ思想家
+- [[econ-sunk-costs-market-structure-sutton|内生的サンクコストと市場構造の下限アプローチ——広告・R&D競争が集中度をゼロへ収束させない仕組み]] — 同じ思想家
 - [[infosoc-information-asymmetry-akerlof-stiglitz|情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ]] — 同じ思想家
-- [[econ-screening|スクリーニング（選別理論）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "papers.ssrn.com"
 type: source-domain
 host: "papers.ssrn.com"
-cite_count: 34
+cite_count: 35
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # papers.ssrn.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **34 件**（学術 33 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **35 件**（学術 34 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -26,6 +26,7 @@ tags:
 - [[bizlaw-material-adverse-change|重大な悪影響条項（MAC条項）]] — Miller,"PandemicRiskandtheInterpretationofExceptionsinMAEClauses,"J.C…
 - [[bizlaw-materiality-securities-law|証券法における重要性基準]] — Langevoort(2009)BasicatTwenty:RethinkingFraud-on-the-Market,2009Wis.L…
 - [[bizlaw-piercing-corporate-veil-reverse|法人格否認の法理（逆方向）]] — Watanabe(2020)PiercingtheCorporateVeilundertheJapaneseCompaniesAct—SS…
+- [[bizlaw-staggered-board-classified-board|期差任期取締役会（クラシファイド・ボード）——買収防衛策としての効果と機関投資家による解体]] — Bebchuk,L.A.,Coates,J.C.IV,&Subramanian,G.(2002).ThePowerfulAntitakeo…
 - [[bizlaw-successor-liability-doctrine|承継人責任の法理]] — Kuney,G.W."ATaxonomyandEvaluationofSuccessorLiability(Revisited)"—SSR…
 - [[bizlaw-trail-smelter-principle|トレイル・スメルター原則（Trail Smelter Principle）]] — Miller&Bratspies(2006)TransboundaryHarminInternationalLaw—CambridgeUn…
 - [[econ-barro-growth|バロー成長回帰（Barro Growth Regression）]] — Barro(1996)DeterminantsofEconomicGrowth—SSRN

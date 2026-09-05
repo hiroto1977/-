@@ -34,7 +34,6 @@ aliases:
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 同分野の近傍
 - [[human-theory-of-constructed-emotion|情動の構成理論]] — 同分野の近傍
 - [[human-critical-period-hubel-wiesel|臨界期——発達初期の経験依存的な神経可塑性の窓]] — 同分野の近傍
-- [[human-obedience|権威への服従（オベディエンス）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

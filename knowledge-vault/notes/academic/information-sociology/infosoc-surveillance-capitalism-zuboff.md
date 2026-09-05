@@ -26,7 +26,7 @@ aliases:
 ショシャナ・ズボフ ／ エドワード・スノーデン ／ ニック・スルニチェク ／ カイト・クロフォード
 
 ## 出典
-- [Zuboff, S. (2015) Big Other: Surveillance Capitalism and the Prospects of an Information Civilization — Journal of Information Technology, 30(1), 75–89（監視資本主義の概念論文）](https://doi.org/10.1177/0002764215600169) `学術`
+- [Zuboff, S. (2015) Big Other: Surveillance Capitalism and the Prospects of an Information Civilization — Journal of Information Technology, 30(1), 75–89（監視資本主義の概念論文）](https://doi.org/10.1057/jit.2015.5) `学術`
 - [Zuboff, S. (2019) The Age of Surveillance Capitalism — PublicAffairs（概念の体系書）](https://www.publicaffairsbooks.com/titles/shoshana-zuboff/the-age-of-surveillance-capitalism/9781610395694/) `リファレンス`
 - [Cohen, J. E. (2017) The Biopolitical Public Domain: The Legal Construction of the Surveillance Economy — Philosophy & Technology, 31(2), 213–233（法的次元の分析）](https://doi.org/10.1093/ijlit/eax005) `学術`
 - [Wikipedia: Surveillance capitalism — Zuboff, behavioral surplus, behavioral futures, GDPR, critiques](https://en.wikipedia.org/wiki/Surveillance_capitalism) `リファレンス`

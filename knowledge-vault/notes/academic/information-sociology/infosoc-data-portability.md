@@ -36,8 +36,8 @@ aliases:
 - [[infosoc-profiling|プロファイリングと自動意思決定]] — 同じ思想家
 - [[bizlaw-privacy-law-gdpr-compliance|プライバシー法とGDPRコンプライアンス——個人データ保護の国際法制]] — 出典を共有
 - [[infosoc-gdpr-right-erasure|GDPRと忘れられる権利（消去権）]] — 出典を共有
-- [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 出典を共有
 - [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]] — 出典を共有
+- [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 出典を共有
 - [[infosoc-datafication-van-dijck|データ化（ダタフィケーション）と社会的実践（ヴァン・ダイク）]] — 同分野の近傍
 
 ## 関連

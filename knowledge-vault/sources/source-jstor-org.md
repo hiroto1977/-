@@ -2,7 +2,7 @@
 title: "jstor.org"
 type: source-domain
 host: "jstor.org"
-cite_count: 141
+cite_count: 142
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jstor.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **141 件**（学術 140 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **142 件**（学術 141 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -115,6 +115,7 @@ tags:
 - [[human-metacognition|メタ認知（Metacognition）]] — Flavell(1979)MetacognitionandCognitiveMonitoring—AmericanPsychologist…
 - [[human-narrative-identity|ナラティブ・アイデンティティ（Narrative Identity）]] — McAdams—LifeStories:AThematicAnalysisof50Lives—JournalofPersonalityan…
 - [[human-reciprocal-altruism|互恵的利他主義]] — Trivers,R.L.(1971)"TheEvolutionofReciprocalAltruism"TheQuarterlyRevie…
+- [[infosoc-algorithmic-opacity-burrell|アルゴリズム不透明性の三類型——企業秘密・技術的リテラシー・機械学習の規模に起因する不透明性]] — Pasquale,F.(2015).TheBlackBoxSociety:TheSecretAlgorithmsThatControlMo…
 - [[infosoc-boundary-objects|境界オブジェクト（Boundary Objects）]] — JSTOR:Star&Griesemer(1989)—stableURL
 - [[infosoc-communication-accommodation-theory|コミュニケーション適応理論（Communication Accommodation Theory, CAT）]] — Giles,H.(1973)"AccentMobility:AModelandSomeData",AnthropologicalLingu…
 - [[infosoc-feminist-technoscience-haraway|フェミニスト・テクノサイエンス論]] — Haraway(1988)SituatedKnowledges—FeministStudiesVol.14No.3

@@ -40,7 +40,6 @@ aliases:
 - [[infosoc-spiral-of-silence-noelle-neumann|沈黙の螺旋——孤立の恐れが少数意見を沈黙させ多数意見を増幅する]] — 同じ思想家
 - [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]] — 同じ思想家
 - [[human-self-categorization-theory|自己カテゴリー化理論]] — 同分野の近傍
-- [[human-cultural-neuroscience-chiao|文化神経科学——文化と脳機能の双方向的相互作用]] — 同分野の近傍
 - [[human-minority-influence-moscovici|少数派の影響——一貫した少数派が多数派の私的態度を変える社会的影響]] — 同分野の近傍
 
 ## 関連

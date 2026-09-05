@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2255
+cite_count: 2257
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2255 件**（リファレンス 2255）
+> [!info] 出典ドメイン索引 ・ 引用 **2257 件**（リファレンス 2257）
 
 ## このドメインを出典とする項目
 
@@ -939,6 +939,7 @@ tags:
 - [[econ-strategic-complementarity|戦略的補完性]] — Wikipedia「Strategiccomplements」—戦略的補完性/代替性の定義と限界利得・最適反応
 - [[econ-strategic-trade-policy-brander-spencer|戦略的貿易政策——寡占市場における輸出補助金のレント移転]] — Wikipedia:Strategictradetheory—寡占市場と貿易政策の理論
 - [[econ-sudden-stop|サドンストップ（資本流入の急停止）]] — Wikipedia:Suddenstop(economics)
+- [[econ-sunk-costs-market-structure-sutton|内生的サンクコストと市場構造の下限アプローチ——広告・R&D競争が集中度をゼロへ収束させない仕組み]] — Wikipedia,"JohnSutton(economist)"—ジョン・サットンの所属・経歴および主要著作一覧の確認
 - [[econ-sunspot-equilibrium|サンスポット均衡]] — Sunspots(economics)—Wikipedia
 - [[econ-supplier-induced-demand|供給者誘発需要——医師は自らの需要を生み出すのか]] — Wikipedia:Supplier-induceddemand—physicianasagent,informationasymmetr…
 - [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — Wikipedia:Swandiagram—internal-externalbalancepolicyframeworkoverview
@@ -1246,6 +1247,7 @@ tags:
 - [[human-goal-gradient|目標勾配効果]] — Wikipedia—ClarkL.Hull（1932年goal-gradienthypothesisの起源）
 - [[human-grit|グリット（やり抜く力）]] — Wikipedia:Grit(personalitytrait)（2因子・批判の概観）
 - [[human-group-polarization-myers|集団極化——討議が集団の立場を当初の傾きの方向へ先鋭化させる]] — Wikipedia:Grouppolarization—Myers&Lamm,riskyshift,persuasivearguments…
+- [[human-hardiness-kobasa|ハーディネス——コミットメント・コントロール・チャレンジの3Cからなるストレス耐性パーソナリティ]] — Wikipedia,"Hardiness(psychology)"—コバサによる1979年の概念提示の経緯、コミットメント・コントロール・…
 - [[human-harlow-contact-comfort|ハーロウの代理母実験——「接触の安らぎ」と愛着]] — Wikipedia:HarryHarlow—rhesusmonkeysurrogate-motherexperiments,contact…
 - [[human-hedonic-adaptation-brickman|快楽適応理論——幸福度のセットポイントと重大な生活事象からの回復]] — Wikipedia:Hedonictreadmill—happinesssetpointandadaptationoverview
 - [[human-hermann-grid|ヘルマン格子錯視——白い交差点に現れる灰色の幻]] — Wikipedia:Gridillusion—Hermanngrid,lateralinhibition,scintillatinggrid

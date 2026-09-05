@@ -2,7 +2,7 @@
 title: "law.justia.com"
 type: source-domain
 host: "law.justia.com"
-cite_count: 28
+cite_count: 29
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # law.justia.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **28 件**（リファレンス 23 ・ 公的 5）
+> [!info] 出典ドメイン索引 ・ 引用 **29 件**（リファレンス 23 ・ 公的 6）
 
 ## このドメインを出典とする項目
 
@@ -40,6 +40,7 @@ tags:
 - [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]] — Justia—Revlon,Inc.v.MacAndrews&ForbesHoldings,506A.2d173(Del.1986)
 - [[bizlaw-shareholder-primacy-doctrine|株主優先主義（シェアホルダー・プライマシー）]] — Dodgev.FordMotorCo.,204Mich.459,170N.W.668(1919)
 - [[bizlaw-shelter-rule-negotiable-instruments|シェルター・ルール（Shelter Rule／遮蔽の法理）]] — ColoradoRevisedStatutes§4-3-203—TransferofInstrument;RightsAcquiredby…
+- [[bizlaw-staggered-board-classified-board|期差任期取締役会（クラシファイド・ボード）——買収防衛策としての効果と機関投資家による解体]] — DelawareCode,Title8,§141—Boardofdirectors;classesofdirectors(subsecti…
 - [[bizlaw-successor-liability-doctrine|承継人責任の法理]] — Rayv.AladCorp.,19Cal.3d22(Cal.1977)—Justia
 - [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — Williamsv.Walker-ThomasFurnitureCo.,350F.2d445(D.C.Cir.1965)—Justia
 

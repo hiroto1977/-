@@ -30,16 +30,9 @@ aliases:
 - [Wikipedia: At-will employment — US and comparative law](https://en.wikipedia.org/wiki/At-will_employment) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-employment-law-dismissal|雇用法と解雇規制の法律体系——正当事由と解雇権濫用法理]] — 出典を共有
-- [[bizlaw-tax-avoidance-beps-regulation|タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革]] — 出典を共有
-- [[bizlaw-transfer-pricing-arms-length-principle|移転価格税制と独立企業間原則——多国籍企業の利益移転と国際課税の攻防]] — 出典を共有
-- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 出典を共有
-- [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 出典を共有
-- [[econ-petty-clark-law|ペティ＝クラークの法則]] — 出典を共有
-- [[econ-transfer-pricing|移転価格税制]] — 出典を共有
-- [[econ-transfer-pricing-arm-length|移転価格と独立企業間価格原則——多国籍企業の利益配分]] — 出典を共有
-- [[eh-1964|1964年（昭和39年）]] — 出典を共有
-- [[infosoc-social-capital|社会関係資本（ソーシャル・キャピタル）]] — 出典を共有
+- [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]] — 同分野の近傍
+- [[bizlaw-quasi-contract|準契約——合意なき法定の債務による不当利得の回復]] — 同分野の近傍
+- [[bizlaw-business-necessity-defense|事業上の必要性の抗弁]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

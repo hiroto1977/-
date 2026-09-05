@@ -41,7 +41,7 @@ aliases:
 - [[infosoc-native-advertising-persuasion-knowledge|ネイティブ広告と説得知識モデル（Native Advertising / Persuasion Knowledge Model）]] — 出典を共有
 - [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 出典を共有
 - [[econ-predatory-pricing|略奪的価格設定]] — 出典を共有
-- [[infosoc-ghost-work|ゴーストワーク（AI背後の不可視労働）]] — 同分野の近傍
+- [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

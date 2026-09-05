@@ -40,9 +40,9 @@ aliases:
 - [[econ-reversal-of-fortune-acemoglu|運命の逆転——制度が長期の発展を分ける]] — 同じ思想家
 - [[econ-technological-unemployment|技術的失業]] — 同じ思想家
 - [[econ-twin-peaks-quah|双峰分布仮説——世界所得分布の二極化と収束クラブの形成]] — 同じ思想家
+- [[econ-frey-osborne-computerisation-susceptibility|フレイ＝オズボーンの職業別コンピュータ化確率——「米国雇用の47%が高リスク」]] — 同じ思想家
 - [[econ-currency-substitution-girton|通貨代替と為替市場圧力——複数通貨選択のマクロ経済分析]] — 出典を共有
 - [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — 出典を共有
-- [[human-theory-of-mind|心の理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

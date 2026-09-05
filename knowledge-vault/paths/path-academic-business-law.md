@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／ビジネス法務"
 type: learning-path
 path_key: "academic-business-law"
-entry_count: 683
+entry_count: 684
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／ビジネス法務（683件）
+# 学習パス — 学術概念／ビジネス法務（684件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 80）
-- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 56）
-- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 38）
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 81）
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 55）
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 37）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 36）
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 29）
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]]（接続 29）
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]]（接続 29）
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 28）
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 28）
+- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 27）
 - [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]]（接続 26）
 - [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]]（接続 26）
-- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
 - [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]]（接続 26）
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]]（接続 25）
 - [[bizlaw-earnest-money|手付（民法557条）]]（接続 25）
-- [[bizlaw-retention-lien|留置権（民法295条）]]（接続 25）
 
 ## 第 2 部 — 年代順の展開
 - 1540年: [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]]
@@ -191,6 +191,7 @@ tags:
 - 2002年: [[bizlaw-anti-spam-act|特定電子メール法]]
 - 2002年: [[bizlaw-internal-control|内部統制システム（J-SOX・内部統制報告制度）]]
 - 2002年: [[bizlaw-say-on-pay|セイ・オン・ペイ（Say on Pay）— 役員報酬に関する株主諮問的投票制度]]
+- 2002年: [[bizlaw-staggered-board-classified-board|期差任期取締役会（クラシファイド・ボード）——買収防衛策としての効果と機関投資家による解体]]
 - 2003年: [[bizlaw-arbitration-act|仲裁法]]
 - 2003年: [[bizlaw-umbrella-clause|アンブレラ条項（Umbrella Clause）]]
 - 2004年: [[bizlaw-adr|裁判外紛争解決手続（ADR）]]
@@ -387,7 +388,6 @@ tags:
 - [[bizlaw-contract-law-unconscionability|不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限]]
 - [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]]
 - [[bizlaw-contractual-estoppel|契約上の禁反言——合意された前提を後から否定できない]]
-- [[bizlaw-contractual-unconscionability|契約の非良心性法理]]
 - [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]]
 - [[bizlaw-corporate-governance-code-japan|コーポレートガバナンス・コード——日本のスチュワードシップと取締役会改革]]
 - [[bizlaw-corporate-governance-stewardship|スチュワードシップ・コードと機関投資家の責任投資——コーポレートガバナンス改革の法的枠組み]]
@@ -613,6 +613,7 @@ tags:
 - [[bizlaw-rescission|契約の取消（リシジョン）——契約を解消し当事者を原状に復させる救済]]
 - [[bizlaw-respondeat-superior-scope|使用者責任の範囲——代理責任法理と雇用関係における帰責原理]]
 - [[bizlaw-restraint-of-trade|取引制限の法理——営業の自由を制約する条項の合理性審査]]
+- [[bizlaw-retention-lien|留置権（民法295条）]]
 - [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]]
 - [[bizlaw-revocation-litigation|取消訴訟（行政事件訴訟法）]]
 - [[bizlaw-revolving-mortgage|根抵当権（民法398条の2）]]

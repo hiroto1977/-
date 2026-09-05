@@ -36,7 +36,6 @@ Handyside v. United Kingdom（1976 ECtHR — 法理の初の明示的定式化�
 - [[bizlaw-letter-of-credit|信用状——銀行の支払確約による国際貿易の決済の保障]] — 同分野の近傍
 - [[bizlaw-margin-squeeze-abuse|マージン・スクイーズ（鋏状圧縮）の競争法上の位置づけ]] — 同分野の近傍
 - [[bizlaw-nuisance|ニューサンス（生活妨害）——土地の使用収益に対する不当な干渉の不法行為]] — 同分野の近傍
-- [[bizlaw-pemsel-charity-heads|ペムゼルの四類型——慈善目的の古典的な分類]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

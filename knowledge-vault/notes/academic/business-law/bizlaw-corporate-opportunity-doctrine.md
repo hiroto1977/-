@@ -33,6 +33,7 @@ Pat K. Chew／Victor Brudney／Robert C. Clark／Eric Talley／Gabriel Rauterber
 ## 関連概念
 - [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 同じ思想家
 - [[bizlaw-material-adverse-change-mac|マテリアル・アドバース・チェンジ条項（MAC条項）]] — 出典を共有
+- [[bizlaw-staggered-board-classified-board|期差任期取締役会（クラシファイド・ボード）——買収防衛策としての効果と機関投資家による解体]] — 出典を共有
 - [[bizlaw-standstill-agreement|スタンドスティル契約]] — 出典を共有
 - [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 出典を共有
 - [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同分野の近傍

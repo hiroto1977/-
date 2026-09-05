@@ -2,7 +2,7 @@
 title: "Society"
 type: thinker
 person_key: "society|"
-concept_count: 6
+concept_count: 7
 tags:
   - person
   - index
@@ -10,10 +10,11 @@ tags:
 
 # Society
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **6 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **7 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（6件）
+## 学術概念（7件）
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — アルゴリズム的ゲートキーピング（AlgorithmicGatekeeping）とは、デジタルプラットフォーム上でアルゴ…
+- [[infosoc-algorithmic-opacity-burrell|アルゴリズム不透明性の三類型——企業秘密・技術的リテラシー・機械学習の規模に起因する不透明性]] — ジェナ・バレルが2016年の論文『Howthemachine'thinks'』（BigData&Society3巻）で…
 - [[infosoc-data-justice|データ正義（Data Justice）]] — データ正義（DataJustice）とは、デジタルデータの収集・処理・統治における公正性と衡平性を問う概念的枠組みであ…
 - [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]] — インフラストラクチャーとプラットフォームの収斂は、グローバルなデジタルプラットフォーム（Google、Facebook…
 - [[infosoc-media-repertoire-theory|メディア・レパートリー理論]] — メディア・レパートリー理論とは、個人のメディア利用を単一メディアへの接触量ではなく、日常的に利用する複数メディアの組み…

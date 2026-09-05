@@ -2,7 +2,7 @@
 title: "ideas.repec.org"
 type: source-domain
 host: "ideas.repec.org"
-cite_count: 87
+cite_count: 88
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ideas.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **87 件**（学術 72 ・ リファレンス 15）
+> [!info] 出典ドメイン索引 ・ 引用 **88 件**（学術 73 ・ リファレンス 15）
 
 ## このドメインを出典とする項目
 
@@ -80,6 +80,7 @@ tags:
 - [[econ-sheepskin-effect|シープスキン効果（sheepskin effect／卒業証書効果）——学位取得そのものがもたらす賃金の非連続的上昇]] — Hungerford,Thomas&Solon,Gary(1987)"SheepskinEffectsintheReturnstoEduc…
 - [[econ-strategic-complementarity|戦略的補完性]] — Bulow,Geanakoplos&Klemperer(1985)“MultimarketOligopoly:StrategicSubst…
 - [[econ-sunk-cost|サンクコスト（埋没費用）とサンクコストの誤謬]] — Arkes&Blumer(1985)ThePsychologyofSunkCost,OBHDP35(1):124-140（RePEc）
+- [[econ-sunk-costs-market-structure-sutton|内生的サンクコストと市場構造の下限アプローチ——広告・R&D競争が集中度をゼロへ収束させない仕組み]] — Waterson,M.(1992).BookreviewofJ.Sutton,"SunkCostsandMarketStructure"(…
 - [[econ-superstar-economics|スーパースターの経済学]] — IDEAS/RePEc—TheEconomicsofSuperstars書誌情報
 - [[econ-trust-game|信頼ゲーム（投資ゲーム）]] — Berg,Dickhaut&McCabe(1995),GamesandEconomicBehavior10(1):122–142(RePE…
 - [[econ-ultimatum-game|最後通牒ゲーム]] — Güth,Schmittberger&Schwarze(1982)“AnExperimentalAnalysisofUltimatumBa…

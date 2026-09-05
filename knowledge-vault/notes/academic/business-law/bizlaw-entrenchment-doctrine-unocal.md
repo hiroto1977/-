@@ -40,7 +40,7 @@ aliases:
 - [[bizlaw-standstill-agreement-ma|スタンドスティル協定（M&A）]] — 同じ思想家
 - [[bizlaw-covenant-not-to-compete|競業避止契約——営業秘密・顧客関係の保護と職業選択の自由の調整]] — 同じ思想家
 - [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同じ思想家
-- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
+- [[bizlaw-staggered-board-classified-board|期差任期取締役会（クラシファイド・ボード）——買収防衛策としての効果と機関投資家による解体]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

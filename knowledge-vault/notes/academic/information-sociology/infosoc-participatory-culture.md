@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-transmedia-storytelling|トランスメディア・ストーリーテリング]] — 同じ思想家
 - [[infosoc-mass-self-communication|マス・セルフ・コミュニケーション]] — 同分野の近傍
 - [[infosoc-deepfake|ディープフェイク]] — 同分野の近傍
-- [[infosoc-citizen-journalism-networked|市民ジャーナリズムとネットワーク化されたニュース生産——参加・速報・正確性の緊張]] — 同分野の近傍
+- [[infosoc-civic-epistemology-jasanoff|市民認識論——社会ごとに異なる知の公的な評価のしかた]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

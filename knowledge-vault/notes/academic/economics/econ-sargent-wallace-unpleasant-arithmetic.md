@@ -32,7 +32,8 @@ Thomas J. Sargent／Neil Wallace
 ## 関連概念
 - [[econ-fiscal-dominance-sargent|財政支配と物価水準の財政理論——政府債務が金融政策を拘束するメカニズム]] — 語彙が近い
 - [[econ-brainard-attenuation-principle|ブレイナードの減衰原理（Brainard attenuation principle／保守主義原理）——乗数が不確かなら政策は控えめに]] — 同じ思想家
-- [[econ-currency-crisis-models-krugman-obstfeld|通貨危機の世代モデル——固定相場制崩壊の理論的枠組み]] — 同分野の近傍
+- [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 同分野の近傍
+- [[econ-information-cascades|情報カスケード（インフォメーション・カスケード）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-web3|Web3]] — 同分野の近傍
-- [[infosoc-digital-labour|デジタル労働（digital labour）]] — 同分野の近傍
+- [[infosoc-techno-feminism-wajcman|テクノフェミニズム——技術とジェンダーの相互構成的関係]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

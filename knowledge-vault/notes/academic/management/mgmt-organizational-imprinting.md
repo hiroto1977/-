@@ -37,6 +37,7 @@ Arthur L. Stinchcombe（1965, Handbook of Organizations — 組織的刻印の�
 - [[bizlaw-framing-statute|フレーミング法定立学（Framing Statute）]] — 出典を共有
 - [[mgmt-organizational-imprinting-stinchcombe|組織インプリンティング——創設時条件の持続的影響]] — 同分野の近傍
 - [[mgmt-strategic-issue-management-ansoff|戦略的イシュー・マネジメント——アンソフの弱信号検知と戦略的サプライズへの備え]] — 同分野の近傍
+- [[mgmt-organizational-energy-bruch|組織エネルギー理論——集団的活力の質と強度による組織診断]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

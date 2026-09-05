@@ -2,7 +2,7 @@
 title: "oecd.org"
 type: source-domain
 host: "oecd.org"
-cite_count: 25
+cite_count: 27
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # oecd.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **25 件**（公的 22 ・ リファレンス 3）
+> [!info] 出典ドメイン索引 ・ 引用 **27 件**（公的 24 ・ リファレンス 3）
 
 ## このドメインを出典とする項目
 
@@ -22,6 +22,8 @@ tags:
 - [[bizlaw-transfer-pricing-arms-length-principle|移転価格税制と独立企業間原則——多国籍企業の利益移転と国際課税の攻防]] — OECD(2022)TransferPricingGuidelinesforMultinationalEnterprises
 - [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — OECD—Cost-BenefitAnalysisandtheEnvironment（CV/EVによる厚生変化測定・環境価値評価への応用）
 - [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — OECDFiscalFederalismNetwork—財政連邦主義の理論・各国実践・政策指針
+- [[econ-frey-osborne-computerisation-susceptibility|フレイ＝オズボーンの職業別コンピュータ化確率——「米国雇用の47%が高リスク」]] — Arntz,M.,Gregory,T.,&Zierahn,U.(2016)."TheRiskofAutomationforJobsinOE…
+- [[econ-frey-osborne-computerisation-susceptibility|フレイ＝オズボーンの職業別コンピュータ化確率——「米国雇用の47%が高リスク」]] — Nedelkoska,L.,&Quintini,G.(2018)."Automation,SkillsUseandTraining."OE…
 - [[econ-income-distribution-gini-lorenz|所得分配とジニ係数・ローレンツ曲線——不平等計測の理論と政策含意]] — OECDIncomeDistributionDatabase—GiniCoefficientsbyCountry
 - [[econ-petty-clark-law|ペティ＝クラークの法則]] — OECD—StructuralTransformation（産業構造の高次化・三部門シフトを扱う国際機関ページ）
 - [[econ-skill-biased-tech|スキルバイアス型技術変化（SBTC）]] — OECD(1998)"Technology,ProductivityandJobCreation"（スキルバイアス型技術変化と雇用・賃金格…

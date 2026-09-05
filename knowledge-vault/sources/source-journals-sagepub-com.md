@@ -2,7 +2,7 @@
 title: "journals.sagepub.com"
 type: source-domain
 host: "journals.sagepub.com"
-cite_count: 166
+cite_count: 168
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.sagepub.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **166 件**（学術 165 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **168 件**（学術 167 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -62,6 +62,8 @@ tags:
 - [[infosoc-algorithmic-governance|アルゴリズムによる統治（アルゴクラシー）]] — Danaheretal.,“Algorithmicgovernance:Developingaresearchagendathrought…
 - [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — Rouvroy,A.&Berns,T.(2013)AlgorithmicGovernmentalityandProspectsofEman…
 - [[infosoc-algorithmic-identity|アルゴリズム的アイデンティティ——データから統計的に推論・付与される、本人の自認から切り離された可変的な「私」]] — SAGEJournals—Cheney-Lippold(2011),Theory,Culture&Society（査読誌掲載ページ・mea…
+- [[infosoc-algorithmic-opacity-burrell|アルゴリズム不透明性の三類型——企業秘密・技術的リテラシー・機械学習の規模に起因する不透明性]] — Ananny,M.,&Crawford,K.(2018).Seeingwithoutknowing:Limitationsofthetra…
+- [[infosoc-algorithmic-opacity-burrell|アルゴリズム不透明性の三類型——企業秘密・技術的リテラシー・機械学習の規模に起因する不透明性]] — Burrell,J.(2016).Howthemachine'thinks':Understandingopacityinmachinel…
 - [[infosoc-appadurai-scapes|アパデュライのスケープ（グローバルな文化フローの5次元）]] — ArjunAppadurai,"DisjunctureandDifferenceintheGlobalCulturalEconomy",T…
 - [[infosoc-aspirational-labor-duffy|アスピレーショナル労働（aspirational labour／夢追い型デジタル労働）——「好きを仕事に」の約束に支えられた、ほぼ無償のセルフブランディング労働]] — Duffy,BrookeErin(2016).'Theromanceofwork:Genderandaspirationallabouri…
 - [[infosoc-astroturfing|アストロターフィング]] — JovyChan,"Onlineastroturfing:Aproblembeyonddisinformation,"Philosophy…

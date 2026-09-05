@@ -39,7 +39,7 @@ Karl E. Weick（1979, The Social Psychology of Organizing — 組織化のパラ
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同じ思想家
 - [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 同じ思想家
 - [[mgmt-sensegiving-gioia|センスギビング理論（ジョイア＆チッタンパリー）]] — 出典を共有
-- [[mgmt-lmx-theory|LMX理論（リーダー・メンバー交換理論）]] — 出典を共有
+- [[infosoc-digital-divide-warschauer|デジタルデバイド（情報アクセス格差）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

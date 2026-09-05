@@ -34,10 +34,10 @@ aliases:
 - [[bizlaw-insider-trading|インサイダー取引規制]] — 出典を共有
 - [[bizlaw-market-manipulation|相場操縦の禁止]] — 出典を共有
 - [[legal-insider-trading|インサイダー取引規制（金融商品取引法）]] — 出典を共有
+- [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]] — 出典を共有
 - [[bizlaw-corporate-governance-code|コーポレートガバナンス・コード]] — 出典を共有
 - [[bizlaw-securities-disclosure|企業内容開示制度（ディスクロージャー）]] — 出典を共有
 - [[legal-securities-disclosure|有価証券報告書等の継続開示（金融商品取引法）]] — 出典を共有
-- [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]] — 出典を共有
 - [[eh-1978|1978年（昭和53年）]] — 出典を共有
 - [[bizlaw-stewardship-code|日本版スチュワードシップ・コード]] — 同分野の近傍
 

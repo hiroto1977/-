@@ -38,9 +38,9 @@ aliases:
 - [[human-catharsis-hypothesis|カタルシス仮説（攻撃性の浄化理論）]] — 出典を共有
 - [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 出典を共有
 - [[human-disenfranchised-grief|剥奪された悲嘆（ディスエンフランチャイズド・グリーフ）]] — 出典を共有
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 出典を共有
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 出典を共有
 - [[human-tend-and-befriend|思いやり・絆形成反応（テンド・アンド・ビフレンド）]] — 出典を共有
-- [[mgmt-team-effectiveness-model|チーム有効性モデル]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

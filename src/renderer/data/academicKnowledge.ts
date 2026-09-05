@@ -29896,7 +29896,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ショシャナ・ズボフ ／ エドワード・スノーデン ／ ニック・スルニチェク ／ カイト・クロフォード',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1177/0002764215600169', type: 'academic', label: 'Zuboff, S. (2015) Big Other: Surveillance Capitalism and the Prospects of an Information Civilization — Journal of Information Technology, 30(1), 75–89（監視資本主義の概念論文）' },
+      { url: 'https://doi.org/10.1057/jit.2015.5', type: 'academic', label: 'Zuboff, S. (2015) Big Other: Surveillance Capitalism and the Prospects of an Information Civilization — Journal of Information Technology, 30(1), 75–89（監視資本主義の概念論文）' },
       { url: 'https://www.publicaffairsbooks.com/titles/shoshana-zuboff/the-age-of-surveillance-capitalism/9781610395694/', type: 'reference', label: 'Zuboff, S. (2019) The Age of Surveillance Capitalism — PublicAffairs（概念の体系書）' },
       { url: 'https://doi.org/10.1093/ijlit/eax005', type: 'academic', label: 'Cohen, J. E. (2017) The Biopolitical Public Domain: The Legal Construction of the Surveillance Economy — Philosophy & Technology, 31(2), 213–233（法的次元の分析）' },
       { url: 'https://en.wikipedia.org/wiki/Surveillance_capitalism', type: 'reference', label: 'Wikipedia: Surveillance capitalism — Zuboff, behavioral surplus, behavioral futures, GDPR, critiques' },
@@ -48524,7 +48524,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ショシャナ・ズボフ ／ ニック・クルドリー ／ ユリゲン・モエ ／ ロジャー・マクネーミー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://doi.org/10.1177/1461444816676645', type: 'academic', label: 'Zuboff, S. (2015) Big Other: Surveillance Capitalism and the Prospects of an Information Civilization — Journal of Information Technology, 30(1), 75–89（監視資本主義の先行論文）' },
+      { url: 'https://doi.org/10.1057/jit.2015.5', type: 'academic', label: 'Zuboff, S. (2015) Big Other: Surveillance Capitalism and the Prospects of an Information Civilization — Journal of Information Technology, 30(1), 75–89（監視資本主義の先行論文）' },
       { url: 'https://doi.org/10.1177/20539517211062037', type: 'academic', label: 'Couldry, N. & Mejias, U. A. (2021) The Costs of Connection: How Data Is Colonizing Human Life and Appropriating It for Capitalism — Stanford University Press（データ植民地主義の視点）' },
       { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679', type: 'government', label: 'European Parliament (2016) Regulation (EU) 2016/679 — GDPR（行動データ保護の立法）' },
       { url: 'https://en.wikipedia.org/wiki/Surveillance_capitalism', type: 'reference', label: 'Wikipedia: Surveillance capitalism — Zuboff, behavioral surplus, Google Adsense, behavioral modification, GDPR' },
@@ -49916,6 +49916,102 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1561/0400000042', type: 'academic', label: 'Dwork, C., Roth, A. (2014). "The Algorithmic Foundations of Differential Privacy." Foundations and Trends in Theoretical Computer Science (now Publishers), 9(3–4), pp. 211–407 — (ε,δ)-差分プライバシーの緩和・合成定理・プライバシー予算の体系的整理' },
       { url: 'https://dl.acm.org/doi/10.1109/SP.2008.33', type: 'academic', label: 'Narayanan, A., Shmatikov, V. (2008). "Robust De-anonymization of Large Sparse Datasets." Proceedings of the 2008 IEEE Symposium on Security and Privacy, pp. 111–125 — Netflix Prize データセットの再匿名化事例。従来型匿名化（k匿名化等）の限界を示した動機付けとなった研究' },
       { url: 'https://www2.census.gov/library/publications/decennial/2020/census-briefs/c2020br-03.pdf', type: 'government', label: 'U.S. Census Bureau. "Why the Census Bureau Chose Differential Privacy." 2020 Census Brief C2020BR-03 — 2020年米国国勢調査の開示回避システム（TopDown アルゴリズム）への差分プライバシー採用を示す一次資料' },
+    ],
+  },
+  {
+    id: 'econ-frey-osborne-computerisation-susceptibility',
+    discipline: 'economics',
+    title: 'フレイ＝オズボーンの職業別コンピュータ化確率——「米国雇用の47%が高リスク」',
+    statement:
+      'フレイ＝オズボーンの職業別コンピュータ化確率は、カール・ベネディクト・フレイとマイケル・A・オズボーンが2013年9月17日のオックスフォード・マーティン・スクール・ワーキングペーパーで示し、2017年に『Technological Forecasting and Social Change』第114巻254–280頁で公刊した推計である。オックスフォード大学のワークショップで専門家がO*NET職業のうち70種を自動化可能／不可能に手作業分類し、これを訓練データとして知覚と手腕の操作・創造的知能・社会的知能という3つのボトルネックに対応するO*NET由来9変数からガウス過程分類器により米国の702職業全体の確率を推計、0.7超を高リスクとすると米国雇用の約47%が該当し、賃金・学歴が高い職業ほど確率は低いという負の関係を示した。野村総合研究所は2015年に日本版を推計し労働人口の49%が代替可能としたが、OECDのアルンツらは2016年にタスク単位で見ると21か国平均9%に留まると批判的に再推計し、ネデルコスカ＝クイニーニ（2018）も高リスク14%・大幅変化32%とした。確率は技術的代替可能性を示すのみで導入速度やアセモグル＝レストレポの言う新規タスク創出による相殺を反映しない点が限界であり、中小企業は自社業務がどのボトルネックに依拠するかを点検し自動化・育成投資の優先順位づけに活用できる。',
+    keyFigures: 'カール・ベネディクト・フレイ＆マイケル・A・オズボーン（2013 Oxford Martin working paper／2017『Technological Forecasting and Social Change』114巻254–280頁）／対比・再推計: メラニー・アルンツ＆テリー・グレゴリー＆ウルリッヒ・ツィエラーン（2016 OECD WP189・タスク単位で21か国平均9%）／リュビツァ・ネデルコスカ＆グレンダ・クイニーニ（2018 OECD WP202・高リスク14%／大幅変化32%）／ダロン・アセモグル＆パスカル・レストレポ（新規タスク創出による相殺効果を強調）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0040162516302244', type: 'academic', label: 'Frey, C.B. & Osborne, M.A. (2017). "The future of employment: How susceptible are jobs to computerisation?" Technological Forecasting and Social Change (Elsevier), 114, 254–280. DOI: 10.1016/j.techfore.2016.08.019 — 主要論文本体。702職業・ガウス過程分類器・47%という結果の一次資料' },
+      { url: 'https://www.oxfordmartin.ox.ac.uk/downloads/academic/The_Future_of_Employment.pdf', type: 'reference', label: 'Frey, C.B. & Osborne, M.A. (2013). "The Future of Employment: How Susceptible Are Jobs to Computerisation?" Oxford Martin School Working Paper, University of Oxford, 17 September 2013 — 初出のワーキングペーパー版。70職業の手作業分類・9変数・3ボトルネックという手法の詳細を確認' },
+      { url: 'https://www.oecd.org/en/publications/the-risk-of-automation-for-jobs-in-oecd-countries_5jlz9h56dvq7-en.html', type: 'government', label: 'Arntz, M., Gregory, T., & Zierahn, U. (2016). "The Risk of Automation for Jobs in OECD Countries: A Comparative Analysis." OECD Social, Employment and Migration Working Papers, No. 189. DOI: 10.1787/5jlz9h56dvq7-en — タスク単位アプローチによる再推計（21か国平均9%）の一次資料' },
+      { url: 'https://www.oecd.org/en/publications/automation-skills-use-and-training_2e2f4eea-en.html', type: 'government', label: 'Nedelkoska, L., & Quintini, G. (2018). "Automation, Skills Use and Training." OECD Social, Employment and Migration Working Papers, No. 202. DOI: 10.1787/2e2f4eea-en — PIAAC データに基づく再推計（高リスク14%・大幅変化32%）の一次資料' },
+      { url: 'https://www.nri.com/content/900037164.pdf', type: 'media', label: '株式会社野村総合研究所「日本の労働人口の49%が人工知能やロボット等で代替可能に」ニュースリリース、2015年12月2日 — フレイ・オズボーンとの共同研究による日本版推計（49%）の公表資料' },
+    ],
+  },
+  {
+    id: 'econ-sunk-costs-market-structure-sutton',
+    discipline: 'economics',
+    title: '内生的サンクコストと市場構造の下限アプローチ——広告・R&D競争が集中度をゼロへ収束させない仕組み',
+    statement:
+      'サットンの内生的サンクコスト理論は、ジョン・サットンが『Sunk Costs and Market Structure』（1991年、MIT Press）で提示した産業組織論の理論枠組みであり、シェイクド＆サットンによる垂直差別化モデル（Review of Economic Studies 49(1)、1982年）を理論的基礎とする。工場設備など参入時に一度だけ必要な「外生的サンクコスト」型産業は市場拡大とともに均衡集中度が理論上ゼロへ収束するのに対し、広告やR&Dのように企業が支出水準を自ら選べる「内生的サンクコスト」型産業では、市場拡大に応じて各社の支出が競り合って「エスカレート」するため集中度はある下限より下がらない（非収束）ことを示した。この主張は特定モデルでなく多数の寡占ゲームに共通する「下限」のみを予測する「下限アプローチ」として提示され、六か国・二十品目の食品飲料産業データで確認、サットン『Technology and Market Structure』（1998年）はR&D集約産業へ拡張、エリクソン（RAND Journal of Economics 38(1)、2007年）が米国スーパーマーケット業界で追検証した。理論は点予測でなく下限しか与えない点や広告集約度の測定法が限界とされる。広告・品質競争が激しい業界では市場成長でも大手集中が続くため、中小事業者は規模競争を避けニッチ差別化に資源を集中すべき含意を持つ。',
+    keyFigures: 'ジョン・サットン（1991『Sunk Costs and Market Structure』MIT Press／1998『Technology and Market Structure』MIT Press／2007 Handbook of Industrial Organization 第35章）／アブナー・シェイクド（サットンと共著、1982 Review of Economic Studies 49(1)／1987 Journal of Industrial Economics 36(2)）／検証: ポール・エリクソン（2007 RAND Journal of Economics 38(1)、米国スーパーマーケット業界で理論を検証）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://academic.oup.com/restud/article-abstract/49/1/3/1571096', type: 'academic', label: 'Shaked, A. and Sutton, J. (1982). "Relaxing Price Competition through Product Differentiation." The Review of Economic Studies (Oxford University Press), 49(1), 3-13. DOI: 10.2307/2297136 — 内生的サンクコスト理論の土台となる垂直差別化モデルの原論文' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S1573448X06030354', type: 'academic', label: 'Sutton, J. (2007). "Market Structure: Theory and Evidence." Handbook of Industrial Organization, Vol. 3, Chapter 35, pp. 2301-2368. Elsevier. DOI: 10.1016/S1573-448X(06)03035-4 — 著者自身による下限アプローチ・非収束結果の総括' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1756-2171.2007.tb00043.x', type: 'academic', label: 'Ellickson, P. B. (2007). "Does Sutton Apply to Supermarkets?" RAND Journal of Economics (Wiley), 38(1), 43-59. DOI: 10.1111/j.1756-2171.2007.tb00043.x — 米国スーパーマーケット業界による内生的サンクコスト理論の実証検証' },
+      { url: 'https://ideas.repec.org/a/eee/indorg/v10y1992i2p319-323.html', type: 'academic', label: 'Waterson, M. (1992). Book review of J. Sutton, "Sunk Costs and Market Structure" (MIT Press, 1991, pp. xiv+577). International Journal of Industrial Organization, 10(2), 319-323 — 1991年原著の出版社・刊年・頁数の独立確認' },
+      { url: 'https://en.wikipedia.org/wiki/John_Sutton_(economist)', type: 'reference', label: 'Wikipedia, "John Sutton (economist)" — ジョン・サットンの所属・経歴および主要著作一覧の確認' },
+    ],
+  },
+  {
+    id: 'mgmt-social-capital-intellectual-capital-nahapiet-ghoshal',
+    discipline: 'management',
+    title: 'ナハピエト＝ゴシャールの社会関係資本論——構造的・関係的・認知的の三次元による知的資本創造と組織の優位性',
+    statement:
+      '社会関係資本を「個人や社会的単位が有する関係のネットワークに埋め込まれ、そこから利用・派生する実際的・潜在的資源の総体」と定義し、組織内での知的資本創造の条件になると論じたのが、ジャニン・ナハピエトとスマントラ・ゴシャールの共著論文（Academy of Management Review, 23巻2号, 242–266頁, 1998年）である。両者は社会関係資本を、ネットワークの結びつきや配置を指す構造的次元、信頼・規範・義務・アイデンティティを指す関係的次元、共有言語や共有される物語を指す認知的次元に区分し、これら三次元が知識の交換・結合に必要な機会（アクセス）・価値の予期・動機・結合能力を高めることで、個人の暗黙知を組織的な知的資本へ転化させると説明した。ブルデュー（1986）、コールマン（1988）、グラノヴェッターの埋め込み概念（1985）、バートの構造的空隙論（1992）を統合し、企業は市場より関係の密度・閉鎖性・安定性が高いため社会関係資本を蓄積しやすく、知的資本の創造で市場に対する優位性を持つと主張した。この枠組みはツァイ＝ゴシャール（1998年）の実証やインクペン＝ツァン（2005年）の拡張を生んだが、アドラー＝クウォン（2002年）は三次元の重複や、閉鎖性が学習を硬直化させる負の側面、測定の難しさを批判した。中小企業への含意は、部署横断のつながりと共通言語、相互信頼への投資が個人の暗黙知を組織資産へ変える近道になる点にある。',
+    keyFigures: 'ジャニン・ナハピエト＆スマントラ・ゴシャール（1998『Social Capital, Intellectual Capital, and the Organizational Advantage』AMR 23(2)）／源流: ピエール・ブルデュー（1986『The Forms of Capital』）／ジェームズ・コールマン（1988 AJS）／ロナルド・バート（1992『Structural Holes』）／後続実証: ウェンピン・ツァイ＆スマントラ・ゴシャール（1998 AMJ）／アンドリュー・インクペン＆エリック・ツァン（2005 AMR）／批判: ポール・アドラー＆ソクウ・クウォン（2002『Social Capital: Prospects for a New Concept』AMR）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://journals.aom.org/doi/10.5465/amr.1998.533225', type: 'academic', label: 'Nahapiet, J. & Ghoshal, S. (1998). Social Capital, Intellectual Capital, and the Organizational Advantage. Academy of Management Review, 23(2), 242-266. DOI: 10.5465/amr.1998.533225 — 社会関係資本の三次元モデルと知的資本創造の理論的基盤を示す原論文' },
+      { url: 'https://journals.aom.org/doi/abs/10.5465/257085', type: 'academic', label: 'Tsai, W. & Ghoshal, S. (1998). Social Capital and Value Creation: The Role of Intrafirm Networks. Academy of Management Journal, 41(4), 464-476. DOI: 10.5465/257085 — 三次元モデルを企業内ネットワークで実証した追跡研究' },
+      { url: 'https://journals.aom.org/doi/abs/10.5465/AMR.2002.5922314', type: 'academic', label: 'Adler, P.S. & Kwon, S.W. (2002). Social Capital: Prospects for a New Concept. Academy of Management Review, 27(1), 17-40. DOI: 10.5465/AMR.2002.5922314 — 三次元の重複や社会関係資本の負の側面など枠組みへの批判を示す' },
+      { url: 'https://journals.aom.org/doi/10.5465/AMR.2005.15281445', type: 'academic', label: 'Inkpen, A.C. & Tsang, E.W.K. (2005). Social Capital, Networks, and Knowledge Transfer. Academy of Management Review, 30(1), 146-165. DOI: 10.5465/AMR.2005.15281445 — ネットワーク類型（企業内・戦略提携・産業集積）への枠組みの拡張を示す' },
+      { url: 'https://www.socialcapitalresearch.com/structural-cognitive-relational-social-capital/', type: 'reference', label: 'Claridge, T., Institute for Social Capital, "Structural, Cognitive, Relational Social Capital" — ナハピエト＝ゴシャールの三次元区分の定義を実務者向けに要約した解説' },
+    ],
+  },
+  {
+    id: 'human-hardiness-kobasa',
+    discipline: 'human-science',
+    title: 'ハーディネス——コミットメント・コントロール・チャレンジの3Cからなるストレス耐性パーソナリティ',
+    statement:
+      'ハーディネスは、心理学者スザンヌ・C・コバサ（Suzanne C. Kobasa）が論文『Stressful Life Events, Personality, and Health: An Inquiry into Hardiness』（Journal of Personality and Social Psychology, 1979, 37巻）で示した、ストレスに強い人格特性の概念で、コミットメント（関与、疎外の対極）・コントロール（統制、無力感の対極）・チャレンジ（挑戦、安定志向の対極）という3つの態度（3C）から成る。実存主義心理学者サルヴァトーレ・R・マディ（Salvatore R. Maddi）と共に、規制緩和期のイリノイ・ベル電話（IBT）の管理職を対象とする長期研究（1975年から約12年、約450名）の初期分析で、高ストレス下で発病しなかった86名は発病した75名より3Cが高いと報告し、1982年の前向き研究（コバサ・マディ・カーン、259名）で追認した。ハル・ヴァン・トルーレン・ヴィルネリ（1987）はチャレンジ因子の弱さを、ファンク（1992、Health Psychology）は初期尺度が神経症傾向と重なる問題を指摘し、バートーンのDispositional Resilience Scaleが提案された。アントノフスキーの首尾一貫感覚やグリットと概念的重複が指摘される一方、マディは選抜でなく研修（HardiTraining）による習得を説き、中小企業にも粘り強さは訓練で伸ばせるという点で実務的意義がある。',
+    keyFigures: 'スザンヌ・C・コバサ（1979『Stressful Life Events, Personality, and Health』JPSP／1982『Hardiness and Health: A Prospective Study』JPSP、マディ・カーンと共著）／サルヴァトーレ・R・マディ（実存主義心理学の系譜、1984『The Hardy Executive』コバサと共著／2002「The Story of Hardiness」／2006「Hardiness: The Courage to Grow from Stresses」）／ポール・T・バートーン（1989 Dispositional Resilience Scale 開発）／対比・批判: ハル＆ヴァン・トルーレン＆ヴィルネリ（1987）、スーザン・C・ファンク（1992 Health Psychology レビュー）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/458548/', type: 'academic', label: 'Kobasa, S. C. (1979). Stressful Life Events, Personality, and Health: An Inquiry into Hardiness. Journal of Personality and Social Psychology, 37(1), 1–11. DOI: 10.1037/0022-3514.37.1.1 (PubMed) — ハーディネス概念の原典。イリノイ・ベル電話の管理職を対象に、発病群(n=75)より非発病群(n=86)の方がコミットメント・コントロール・チャレンジ(3C)が高いことを報告した最初の研究を支持' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/7057354/', type: 'academic', label: 'Kobasa, S. C., Maddi, S. R., & Kahn, S. (1982). Hardiness and Health: A Prospective Study. Journal of Personality and Social Psychology, 42(1), 168–177. DOI: 10.1037/0022-3514.42.1.168 (PubMed) — 259名の男性管理職を追跡した前向き研究による、3Cのストレス緩衝効果の追認を支持' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/3656083/', type: 'academic', label: 'Hull, J. G., Van Treuren, R. R., & Virnelli, S. (1987). Hardiness and Health: A Critique and Alternative Approach. Journal of Personality and Social Psychology, 53(3), 518–530. DOI: 10.1037/0022-3514.53.3.518 (PubMed) — チャレンジ因子が他の2因子と関連が弱く不安定であることなど、初期のハーディネス測定への理論的・実証的批判を支持' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/1425552/', type: 'academic', label: 'Funk, S. C. (1992). Hardiness: A Review of Theory and Research. Health Psychology, 11(5), 335–345. DOI: 10.1037/0278-6133.11.5.335 (PubMed) — 初期のハーディネス尺度が神経症傾向(negative affectivity)と重なって混同されている問題を指摘した批判的レビューを支持' },
+      { url: 'https://en.wikipedia.org/wiki/Hardiness_(psychology)', type: 'reference', label: 'Wikipedia, "Hardiness (psychology)" — コバサによる1979年の概念提示の経緯、コミットメント・コントロール・チャレンジの定義、マディらシカゴ大学グループによる理論展開の概観を支持' },
+    ],
+  },
+  {
+    id: 'bizlaw-staggered-board-classified-board',
+    discipline: 'business-law',
+    title: '期差任期取締役会（クラシファイド・ボード）——買収防衛策としての効果と機関投資家による解体',
+    statement:
+      '期差任期取締役会（クラシファイド・ボード）は、取締役を3クラスに分け毎年1クラスずつ改選する制度で、敵対的買収者が取締役会の過半数を握るには年次株主総会での連続2回の勝利を要する。デラウェア州一般会社法141条(d)項が設置根拠で、解任も原則「正当な理由」がある場合に限られる。ルシアン・ベブチャック、ジョン・コーツ、グハン・スブラマニアンは『The Powerful Antitakeover Force of Staggered Boards』（Stanford Law Review 54巻887–951頁、2002年）で、ポイズンピルと組み合わせた「実効的な期差任期取締役会」が1996〜2000年の敵対的買収標本で一度も選挙で破られなかったことを実証した。ベブチャックとアルマ・コーエンは2005年の実証研究（Journal of Financial Economics 78巻409–433頁）で企業価値（トービンのQ）の顕著な低下を報告したが、クレマーズらの2017年の再検証（同誌126巻422–444頁）は長期では負の関係を確認できず、イノベーション志向企業では逆に価値創出に資する「ボンディング」効果を報告した。2011年のエアプロダクツ対エアガス事件（16 A.3d 48）でチャンドラー裁判長は両者の併用を適法と認め、買収者は判決当日に提案を撤回した。中小企業にとっては経営安定と長期戦略の時間を買収防衛として得る一方、株式価値の割引と統治批判という代償を負う選択となる。',
+    keyFigures: 'ルシアン・ベブチャック（2002『The Powerful Antitakeover Force of Staggered Boards』／2005『The Costs of Entrenched Boards』）／ジョン・コーツ4世＆グハン・スブラマニアン（2002 共著）／アルマ・コーエン（2005 共著）／マーティン・クレマーズ＆ルボミール・リトフ＆シモーネ・セペ（2017『Staggered Boards and Long-Term Firm Value, Revisited』——反証・ボンディング仮説）／ウィリアム・チャンドラー（デラウェア州衡平法裁判所裁判長、エアガス対エアプロダクツ事件 2011）／対比: ヤコブ・アミフッド＆ストヤン・ストヤノフ（Amihud–Stoyanov 論争）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://law.justia.com/codes/delaware/2022/title-8/chapter-1/subchapter-iv/section-141/', type: 'government', label: 'Delaware Code, Title 8, § 141 — Board of directors; classes of directors (subsection (d)); removal of directors of a classified board only for cause (Justia, 2022 codification) — 期差任期取締役会の設置根拠と解任制限の法文を確認' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=304388', type: 'academic', label: 'Bebchuk, L. A., Coates, J. C. IV, & Subramanian, G. (2002). The Powerful Antitakeover Force of Staggered Boards: Theory, Evidence, and Policy. Stanford Law Review, 54(5), 887–951 (SSRN) — 「実効的な期差任期取締役会」の買収防衛効果を1996–2000年標本で実証した基礎文献' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0304405X05001169', type: 'academic', label: 'Bebchuk, L. A., & Cohen, A. (2005). The costs of entrenched boards. Journal of Financial Economics (Elsevier), 78(2), 409–433. DOI 10.1016/j.jfineco.2004.12.006 — 期差任期取締役会とトービンのQで測った企業価値低下との関係を実証' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0304405X17302143', type: 'academic', label: 'Cremers, K. J. M., Litov, L. P., & Sepe, S. M. (2017). Staggered boards and long-term firm value, revisited. Journal of Financial Economics (Elsevier), 126(2), 422–444. DOI 10.1016/j.jfineco.2017.08.003 — 長期的な負の関係を確認できないとする反証と「ボンディング」仮説' },
+      { url: 'https://courts.delaware.gov/opinions/download.aspx?ID=150850', type: 'government', label: 'Air Products and Chemicals, Inc. v. Airgas, Inc., 16 A.3d 48 (Del. Ch. 2011) (Chandler, C.) — ポイズンピルと期差任期取締役会の併用を適法と認めた判例、判決当日の買収提案撤回を確認' },
+    ],
+  },
+  {
+    id: 'infosoc-algorithmic-opacity-burrell',
+    discipline: 'information-sociology',
+    title: 'アルゴリズム不透明性の三類型——企業秘密・技術的リテラシー・機械学習の規模に起因する不透明性',
+    statement:
+      'ジェナ・バレルが2016年の論文『How the machine \'thinks\'』（Big Data & Society 3巻）で示した、アルゴリズム不透明性を三分する枠組み。第一は企業・国家が企業秘密やゲーミング回避のため意図的に仕組みを秘匿する秘匿型、第二は専門技能なしにコードを読めないことによる技術的リテラシー型、第三は機械学習の性質と実運用規模から生じ、高次元の数理的最適化と人間の意味論的推論との齟齬を指す不透明性。バレルはスパムフィルタ用SVMの例で、詐欺メールが「dearest」等の直感的に疑わしい語でなく「money」「please」「contact」という重み語で分類され、金銭表現と「please」を除くと判定が覆る事例を挙げた。この整理はパスクアーレ『The Black Box Society』（2015年）の法的ブラックボックス論や、GDPR22条・前文71項の「説明を受ける権利」論争（ヴァハターら2017年）に接続する。リプトン（2018年）は解釈可能性の多義性を、ルーディン（2019年、Nature Machine Intelligence）は精度との相反が必ずしも成立しないことを指摘し、アナニー＆クロフォード（2018年）は透明性理想自体の限界を指摘する。後続研究では、三類型が組織間・関係的な不透明性を軽視するとの批判もある。中小企業は外部AI利用時に直面する不透明性の型を見極め、人間による確認と顧客への説明記録を残すことが実務上の含意となる。',
+    keyFigures: 'ジェナ・バレル（2016『How the machine \'thinks\': Understanding opacity in machine learning algorithms』Big Data & Society 3(1)）／フランク・パスクアーレ（2015『The Black Box Society』Harvard University Press）／シンシア・ルーディン（2019『Stop Explaining Black Box Machine Learning Models for High Stakes Decisions』Nature Machine Intelligence）／サンドラ・ヴァハター他（2017 GDPR「説明を受ける権利」論争、International Data Privacy Law）／マイク・アナニー＆ケイト・クロフォード（2018『Seeing without Knowing』New Media & Society）／関連: ザッカリー・リプトン（2018『The Mythos of Model Interpretability』Communications of the ACM）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/2053951715622512', type: 'academic', label: 'Burrell, J. (2016). How the machine \'thinks\': Understanding opacity in machine learning algorithms. Big Data & Society (SAGE), 3(1), 1–12. DOI 10.1177/2053951715622512 — 三類型の原典およびSVMスパムフィルタ例の出典' },
+      { url: 'https://www.jstor.org/stable/j.ctt13x0hch', type: 'academic', label: 'Pasquale, F. (2015). The Black Box Society: The Secret Algorithms That Control Money and Information. Harvard University Press, 320pp, ISBN 978-0674368279 (JSTOR) — バレルの枠組みと並行して引用される法制度的ブラックボックス論の典拠' },
+      { url: 'https://www.nature.com/articles/s42256-019-0048-x', type: 'academic', label: 'Rudin, C. (2019). Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead. Nature Machine Intelligence, 1, 206–215. DOI 10.1038/s42256-019-0048-x — 精度と解釈可能性の相反への反論の出典' },
+      { url: 'https://academic.oup.com/idpl/article-abstract/7/2/76/3860948', type: 'academic', label: 'Wachter, S., Mittelstadt, B., & Floridi, L. (2017). Why a Right to Explanation of Automated Decision-Making Does Not Exist in the General Data Protection Regulation. International Data Privacy Law (Oxford University Press), 7(2), 76–99 — GDPR22条・前文71項の説明を受ける権利論争の出典' },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1177/1461444816676645', type: 'academic', label: 'Ananny, M., & Crawford, K. (2018). Seeing without knowing: Limitations of the transparency ideal and its application to algorithmic accountability. New Media & Society (SAGE), 20(3), 973–989. DOI 10.1177/1461444816676645 — 透明性理想の限界批判の出典' },
     ],
   },
 ];

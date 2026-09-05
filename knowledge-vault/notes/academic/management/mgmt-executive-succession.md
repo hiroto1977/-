@@ -38,7 +38,6 @@ aliases:
 - [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]] — 同じ思想家
 - [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 同じ思想家
 - [[mgmt-dynamic-managerial-cognition|動的経営認知と戦略的変化（トゥイッテル＆ロウランズ）]] — 同じ思想家
-- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者ケイパビリティ——アドナーとヘルファットの経営者固有の戦略的資源変革能力]] — 同分野の近傍
 - [[mgmt-social-identity-theory-of-leadership|リーダーシップの社会的アイデンティティ理論]] — 同分野の近傍
 
 ## 関連

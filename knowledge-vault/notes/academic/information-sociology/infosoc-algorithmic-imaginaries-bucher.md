@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか]] — 同じ思想家
+- [[infosoc-algorithmic-opacity-burrell|アルゴリズム不透明性の三類型——企業秘密・技術的リテラシー・機械学習の規模に起因する不透明性]] — 同じ思想家
 - [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同じ思想家
 - [[infosoc-digital-rights-management-critique|DRM批判論——デジタル著作権管理の社会的統制機能と利用者の自律性]] — 同じ思想家
 - [[infosoc-algorithmic-culture|アルゴリズム文化論]] — 同分野の近傍

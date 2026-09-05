@@ -26,8 +26,8 @@ tags:
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 15）
 - [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]]（接続 15）
 - [[labor-collective-agreement|労働協約（労働組合法）]]（接続 14）
-- [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]]（接続 14）
 - [[labor-flextime|フレックスタイム制（労働基準法32条の3）]]（接続 14）
+- [[labor-paid-leave-grant|年次有給休暇の付与]]（接続 14）
 
 ## 第 2 部 — 年代順の展開
 - 2024年: [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]]
@@ -53,6 +53,7 @@ tags:
 - [[labor-commuting-injury|通勤災害（労災保険）]]
 - [[labor-contract-period-cap|有期労働契約の契約期間の上限（労働基準法14条）]]
 - [[labor-corporate-dc-pension|企業型確定拠出年金（企業型DC）]]
+- [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]]
 - [[labor-digital-wage-payment|賃金のデジタル払い（指定資金移動業者口座への賃金支払）]]
 - [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]]
 - [[labor-disability-employment-levy|障害者雇用納付金制度（事業主間の経済的負担の調整）]]
@@ -102,7 +103,6 @@ tags:
 - [[labor-overtime-60h-premium|月60時間超の時間外労働の割増賃金率（50%以上）]]
 - [[labor-overtime-special-cap|時間外労働の上限（特別条項付き36協定）]]
 - [[labor-paid-leave-5days|年次有給休暇の年5日取得義務]]
-- [[labor-paid-leave-grant|年次有給休暇の付与]]
 - [[labor-paid-leave-timing|年次有給休暇の時季指定権・時季変更権・計画年休（労基法39条）]]
 - [[labor-payment-on-termination|金品の返還（労働基準法23条）]]
 - [[labor-pension-enrollment|厚生年金保険・健康保険の適用事業所と加入義務]]

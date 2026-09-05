@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[mgmt-grow-model|GROWモデル（コーチング）]] — 同分野の近傍
 - [[mgmt-greiner-growth|グレイナーの企業成長モデル]] — 同分野の近傍
-- [[mgmt-service-profit-chain|サービス・プロフィット・チェーン]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

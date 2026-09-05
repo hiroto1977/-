@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同じ思想家
+- [[infosoc-algorithmic-opacity-burrell|アルゴリズム不透明性の三類型——企業秘密・技術的リテラシー・機械学習の規模に起因する不透明性]] — 同じ思想家
 - [[infosoc-data-justice|データ正義（Data Justice）]] — 同じ思想家
 - [[infosoc-media-repertoire-theory|メディア・レパートリー理論]] — 同じ思想家
 - [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
@@ -40,7 +41,6 @@ aliases:
 - [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]] — 出典を共有
 - [[infosoc-media-events|メディア・イベント]] — 出典を共有
 - [[infosoc-citizen-journalism|市民ジャーナリズム]] — 同分野の近傍
-- [[infosoc-user-generated-content-prosumer|ユーザー生成コンテンツとプロシューマー経済の情報社会論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

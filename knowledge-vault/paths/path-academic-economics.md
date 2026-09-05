@@ -2,18 +2,18 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 944
+entry_count: 946
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（944件）
+# 学習パス — 学術概念／経済学（946件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 80）
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 81）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 49）
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 44）
 - [[econ-agglomeration-economies|集積の経済]]（接続 43）
@@ -21,13 +21,13 @@ tags:
 - [[econ-liquidity-trap|流動性のわな]]（接続 42）
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 40）
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 38）
-- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]]（接続 38）
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 37）
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 37）
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]]（接続 34）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 34）
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 32）
+- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]]（接続 32）
 
 ## 第 2 部 — 年代順の展開
 - 1553年: [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]]
@@ -77,6 +77,7 @@ tags:
 - 1899年: [[econ-marginal-productivity-distribution|限界生産力説]]
 - 1899年: [[econ-veblen-good|ヴェブレン財と顕示的消費]]
 - 1900年: [[econ-gordon-growth-model|配当割引モデル（ゴードン成長モデル）]]
+- 1904年: [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]]
 - 1904年: [[econ-gerschenkron-backwardness|ゲルシェンクロンの後発性利益]]
 - 1905年: [[econ-gini-coefficient|ジニ係数とローレンツ曲線]]
 - 1905年: [[econ-input-output-analysis|産業連関分析（投入産出分析）]]
@@ -189,7 +190,6 @@ tags:
 - 1955年: [[econ-rybczynski|リブチンスキー定理]]
 - 1955年: [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]]
 - 1956年: [[econ-peak-oil|ピークオイル（Peak Oil）とハバート曲線]]
-- 1956年: [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]]
 - 1957年: [[econ-battle-of-sexes|両性の闘い（battle of the sexes）]]
 - 1957年: [[econ-bop-stages|国際収支の発展段階説]]
 - 1957年: [[econ-merit-goods|メリット財（価値財）]]
@@ -320,6 +320,7 @@ tags:
 - 1982年: [[econ-rbc|実物的景気循環論（RBC）]]
 - 1982年: [[econ-rubinstein-bargaining|ルービンシュタイン交渉モデル]]
 - 1982年: [[econ-sterilized-intervention|不胎化介入（外国為替市場介入）]]
+- 1982年: [[econ-sunk-costs-market-structure-sutton|内生的サンクコストと市場構造の下限アプローチ——広告・R&D競争が集中度をゼロへ収束させない仕組み]]
 - 1982年: [[econ-ultimatum-game|最後通牒ゲーム]]
 - 1983年: [[econ-bootleggers-baptists|密造者と聖職者（ブートレガーとバプテスト）]]
 - 1983年: [[econ-currency-board|カレンシーボード制（通貨委員会制度）]]
@@ -411,6 +412,7 @@ tags:
 - 2010年: [[econ-macroprudential-policy|マクロプルーデンス政策]]
 - 2010年: [[econ-search-matching|サーチ理論／マッチング理論]]
 - 2011年: [[econ-islamic-finance|イスラム金融とシャリア准拠の融資メカニズム]]
+- 2013年: [[econ-frey-osborne-computerisation-susceptibility|フレイ＝オズボーンの職業別コンピュータ化確率——「米国雇用の47%が高リスク」]]
 - 2013年: [[econ-piketty|ピケティの r>g（資本収益率と格差）]]
 - 2013年: [[econ-stranded-assets|座礁資産（Stranded Assets）]]
 - 2014年: [[econ-crowdfunding-equity|クラウドファンディングと資本市場の民主化]]

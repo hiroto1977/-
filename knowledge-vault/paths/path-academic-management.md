@@ -2,18 +2,18 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 655
+entry_count: 656
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（655件）
+# 学習パス — 学術概念／経営学（656件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[agile-development|アジャイルソフトウェア開発]]（接続 66）
+- [[agile-development|アジャイルソフトウェア開発]]（接続 65）
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 40）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 29）
@@ -164,6 +164,7 @@ tags:
 - 1986年: [[mgmt-dominant-logic|ドミナント・ロジック（Dominant Logic）]]
 - 1986年: [[mgmt-lead-user|リードユーザー法]]
 - 1986年: [[mgmt-profiting-from-innovation|技術革新からの利益専有（PFIフレームワーク）]]
+- 1986年: [[mgmt-social-capital-intellectual-capital-nahapiet-ghoshal|ナハピエト＝ゴシャールの社会関係資本論——構造的・関係的・認知的の三次元による知的資本創造と組織の優位性]]
 - 1986年: [[mgmt-technology-s-curve|技術のSカーブ]]
 - 1987年: [[mgmt-mass-customization|マス・カスタマイゼーション]]
 - 1987年: [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]]
