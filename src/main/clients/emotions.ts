@@ -39,7 +39,7 @@ import {
 } from './types';
 import { ANTHROPIC_FAST_MODEL } from '../../shared/ai/providers';
 import { localIsoDate } from '../../shared/localDate';
-import { isAnalysisEntry, isMoodEntry, readStoredList } from '../../shared/emotionsShape';
+import { asRecord, isAnalysisEntry, isMoodEntry, readStoredList } from '../../shared/emotionsShape';
 
 
 const EMOTION_KEYS = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust'] as const;
@@ -97,8 +97,8 @@ async function readStore(opts: { forWrite?: boolean } = {}): Promise<EmotionsSto
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') return { moods: [], analyses: [] };
     throw err;
   }
-  const parsed: unknown = JSON.parse(raw);
-  const rec = typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed) ? (parsed as Record<string, unknown>) : {};
+  // オブジェクトでない JSON (null / 配列 / 数値) は「欄が無い古い形」と同じ扱い (空)。判定は共有側 1 か所。
+  const rec = asRecord(JSON.parse(raw));
   const moods = readStoredList(rec.moods, isMoodEntry);
   const analyses = readStoredList(rec.analyses, isAnalysisEntry);
   if (opts.forWrite && (moods.dropped > 0 || analyses.dropped > 0)) {
@@ -275,6 +275,10 @@ async function analyzeText(ctx: ActionContext): Promise<AnalysisEntry> {
     throw new Error(`text exceeds ${MAX_ANALYZE_TEXT_CHARS} chars`);
   }
   if (!ctx.token) throw new Error('Anthropic API key required for analyze-text');
+  // 保存できない保存先なら**送る前に**断る。断るのが保存の直前だと、本文は Anthropic へ渡り
+  // API 呼び出しも済んだ後で捨てることになる (2026-09-05 まではそうだった)。
+  // 送っている間に壊れる分は、保存の直前でもう一度読んで断る (下)。
+  await readStore({ forWrite: true });
 
   const res = await jsonFetch<AnthropicResponse>(
     'https://api.anthropic.com/v1/messages',

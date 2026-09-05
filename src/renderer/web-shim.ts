@@ -107,6 +107,7 @@ import {
   logMood as emotionsLogMood,
   clearHistory as emotionsClearHistory,
   recordAnalysis as emotionsRecordAnalysis,
+  assertStoreWritable as emotionsAssertStoreWritable,
   normalizeAnalysis as emotionsNormalize,
   extractJson as emotionsExtractJson,
   buildEmotionsSnapshot,
@@ -670,6 +671,13 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
     return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
   }
   if (!apiKey) return err('not_configured', 'Anthropic API キーが未設定です。上の「Anthropic API キー」から設定してください');
+  // 保存できない保管値なら**送る前に**断る (本文と API 呼び出しを無駄にしない。main 側と同じ順)。
+  // 送っている間に壊れた分は `recordAnalysis` が保存の直前にもう一度見る。
+  try {
+    emotionsAssertStoreWritable();
+  } catch (e) {
+    return err('action_failed', e instanceof Error ? e.message : String(e));
+  }
 
   let res: Response;
   try {

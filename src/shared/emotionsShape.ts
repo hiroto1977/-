@@ -27,12 +27,17 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+/** 保存先の JSON を辞書として読む。オブジェクトでなければ (null / 配列 / 数値 / 文字列) 空の辞書。 */
+export function asRecord(value: unknown): Record<string, unknown> {
+  return isRecord(value) ? value : {};
+}
+
 /** 保存された気分 1 件の形 (log-mood が書く形)。 */
 export function isMoodEntry(value: unknown): value is MoodEntryShape {
   return (
     isRecord(value) &&
     typeof value.date === 'string' &&
-    typeof value.score === 'number' &&
+    // `Number.isFinite` は数値以外に false (型を見る typeof は冗長 — 変異検査で等価と出た)
     Number.isFinite(value.score) &&
     typeof value.note === 'string'
   );

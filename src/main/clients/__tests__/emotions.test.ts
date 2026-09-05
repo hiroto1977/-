@@ -920,6 +920,21 @@ describe('解析の指示文 —— 読み直して問う', () => {
  */
 describe('保存要素の形 (ブラウザ版と同じ規則)', () => {
   const GOOD = { date: '2026-01-01', score: 4, note: '大事なメモ' };
+  // 前の describe が消した tmpDir に `seed` が書けていたのは、直前のテストの書き込み
+  // (`atomicWriteFile` が mkdir する) が偶然ディレクトリを作り直していたから。順序に頼らない。
+  beforeEach(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'emotions-shape-'));
+  });
+  afterEach(async () => {
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+  const anthropicOk = () =>
+    new Response(
+      JSON.stringify({ content: [{ type: 'text', text: JSON.stringify({ scores: { joy: 0.8 }, sentiment: 'positive', dominant: 'joy' }) }] }),
+      { status: 200, headers: { 'content-type': 'application/json' } },
+    );
+  const analyze = (fetchMock: ReturnType<typeof vi.fn<typeof fetch>>) =>
+    ACTIONS['analyze-text']!({ token: 'sk-ant-x', fetch: fetchMock, payload: { text: '今日は最高だった', source: 'journal' } });
 
   it('★ 形の違う要素が混じった保存先: 読み出しは残りを返す', async () => {
     await seed({ moods: [GOOD, null, { date: 5 }, { date: '2026-01-02', score: '3', note: '' }], analyses: [analysisFixture('a1'), 'junk'] });
@@ -952,5 +967,62 @@ describe('保存要素の形 (ブラウザ版と同じ規則)', () => {
     await seed({ moods: [null], analyses: ['junk'] });
     await expect(ACTIONS['clear-history']!({ token: '', payload: { kind: 'all' } })).resolves.toEqual({ moods: 0, analyses: 0 });
     expect(await readStored()).toEqual({ moods: [], analyses: [] });
+  });
+
+  it('★ 解析側だけが壊れていても log-mood は断る (両方の欄を見る)', async () => {
+    await seed({ moods: [GOOD], analyses: ['junk'] });
+    const before = await readStored();
+    await expect(ACTIONS['log-mood']!({ token: '', payload: { date: '2026-02-02', score: 3, note: 'new' } })).rejects.toThrow(/記録を中止/);
+    expect(await readStored()).toEqual(before);
+  });
+
+  it('★ analyze-text: 保存できない保存先なら**送る前に**断る (本文も API 呼び出しも外へ出ない)', async () => {
+    await seed({ moods: [null], analyses: [] });
+    const before = await readStored();
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(anthropicOk());
+    await expect(analyze(fetchMock)).rejects.toThrow(/記録を中止/);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(await readStored()).toEqual(before);
+  });
+
+  it('★ analyze-text: 送っている間に保存先が壊れたら、返事は捨てて保存先は書き換えない', async () => {
+    await seed({ moods: [GOOD], analyses: [] });
+    const brokenMidFlight = { moods: [GOOD, null], analyses: [] };
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation(async () => {
+      await seed(brokenMidFlight); // 応答が返る前に別の書き手が壊した
+      return anthropicOk();
+    });
+    await expect(analyze(fetchMock)).rejects.toThrow(/記録を中止/);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(await readStored()).toEqual(brokenMidFlight);
+  });
+
+  it('対照: 合う保存先なら analyze-text は 1 回送って保存する (上 2 本が「何をしても通る」ものでない根拠)', async () => {
+    await seed({ moods: [GOOD], analyses: [] });
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(anthropicOk());
+    const entry = (await analyze(fetchMock)) as { dominant: string };
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(entry.dominant).toBe('joy');
+    const stored = await readStored();
+    expect(stored.moods).toEqual([GOOD]);
+    expect(stored.analyses).toHaveLength(1);
+  });
+
+  it.each([
+    ['null', 'null'],
+    ['配列', '[]'],
+    ['数値', '42'],
+  ])('オブジェクトでない JSON (%s) は欄が無い古い形と同じ: 空として読み、普通に書ける', async (_label, raw) => {
+    await fs.writeFile(storeFile(), raw);
+    expect(await fetchEmotionsSnapshot({ token: '' })).toMatchObject({ moods: [], analyses: [] });
+    await ACTIONS['log-mood']!({ token: '', payload: { date: '2026-02-02', score: 3, note: 'new' } });
+    expect((await readStored()).moods).toHaveLength(1);
+  });
+
+  it('★ 読み出しでも ENOENT 以外の失敗 (EISDIR) を「まだ無い」にしない', async () => {
+    // 同名のディレクトリを置くと readFile は EISDIR で失敗する。log-mood 側の同じ検査は
+    // 書き込み (rename がディレクトリに当たる) でも落ちるので、読み出しの握り潰しを測れない。
+    await fs.mkdir(storeFile());
+    await expect(fetchEmotionsSnapshot({ token: '' })).rejects.toThrow(/EISDIR/);
   });
 });

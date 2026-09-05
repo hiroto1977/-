@@ -7,8 +7,7 @@
  */
 
 import { MAX_ANALYSES, MAX_MOODS, MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
-import { isRecord } from './persistedShape';
-import { isAnalysisEntry, isMoodEntry, readStoredList } from '../../shared/emotionsShape';
+import { asRecord, isAnalysisEntry, isMoodEntry, readStoredList } from '../../shared/emotionsShape';
 import { localIsoDate } from '../../shared/localDate';
 
 export const EMOTION_KEYS = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust'] as const;
@@ -76,11 +75,10 @@ export function loadStore(): EmotionsStore {
   // 「無い」は degraded ではない —— 消える物が無い。
   if (!raw) return { moods: [], analyses: [] };
   try {
-    const parsed: unknown = JSON.parse(raw);
     // 保存値は型が守らない。欄が無いのは古い形 (degraded ではない)。欄が在るのに配列でない・
     // 形の違う要素が混じる = **在るのに読めない** —— 読み出しは残りを返し、書き込みは断る
     // (上書きすると読めなかった分が消える。`loadStoreForWrite` 参照)。
-    const rec = isRecord(parsed) ? parsed : {};
+    const rec = asRecord(JSON.parse(raw));
     const moods = readStoredList(rec.moods, isMoodEntry);
     const analyses = readStoredList(rec.analyses, isAnalysisEntry);
     if (moods.dropped > 0 || analyses.dropped > 0) lastLoadDegraded = true;
@@ -106,6 +104,15 @@ function loadStoreForWrite(): EmotionsStore {
     );
   }
   return store;
+}
+
+/**
+ * 「いま書けるか」だけを確かめる (書けなければ `loadStoreForWrite` と同じ理由で投げる)。
+ * web-shim が analyze-text で Anthropic へ**送る前に**呼ぶ —— 断るのが保存の直前だと、
+ * 本文は外へ渡り API 呼び出しも済んだ後で捨てることになる (main 側と同じ順)。
+ */
+export function assertStoreWritable(): void {
+  loadStoreForWrite();
 }
 
 function saveStore(store: EmotionsStore): void {
