@@ -2,7 +2,7 @@
 title: "link.springer.com"
 type: source-domain
 host: "link.springer.com"
-cite_count: 144
+cite_count: 145
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # link.springer.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **144 件**（学術 124 ・ リファレンス 20）
+> [!info] 出典ドメイン索引 ・ 引用 **145 件**（学術 125 ・ リファレンス 20）
 
 ## このドメインを出典とする項目
 
@@ -75,6 +75,7 @@ tags:
 - [[human-reminiscence-bump|レミニセンス・バンプ]] — Koppel&Berntsen(2019)"Whatcharacterizesthereminiscencebump...",Memory…
 - [[human-retrieval-induced-forgetting|検索誘導性忘却（Retrieval-Induced Forgetting）——思い出す行為そのものが、関連する競合記憶を一時的に抑制する]] — Storm,B.C.&Levy,B.J.(2012)"Aprogressreportontheinhibitoryaccountofret…
 - [[human-self-fulfilling-prophecy|自己成就的予言（マートン）]] — Springer—PygmalionEffect（教育文脈での自己成就的予言の一事例）
+- [[human-situation-awareness-endsley|エンズリーの状況認識（SA）モデル——知覚・理解・予測の三層がつくる動的意思決定の認知基盤]] — Dekker,S.W.A.,&Hollnagel,E.(2004)."HumanFactorsandFolkModels."Cogniti…
 - [[human-social-proof|社会的証明]] — Synthese(Springer)—Pluralisticignoranceinthebystandereffect（社会的証明と傍観者…
 - [[human-social-referencing|社会的参照（Social Referencing）]] — SocialReferencing—SpringerEncyclopediaofChildBehaviorandDevelopment
 - [[human-spiritual-wellbeing|スピリチュアル・ウェルビーイング尺度：宗教的ウェルビーイングと実存的ウェルビーイングの二因子モデル]] — Paloutzian&Bufford—SpiritualWell-BeingScale(SWBS):MeasuringSpiritualW…

@@ -2,23 +2,23 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 964
+entry_count: 966
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（964件）
+# 学習パス — 学術概念／経済学（966件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 83）
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 82）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 49）
 - [[econ-agglomeration-economies|集積の経済]]（接続 43）
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 42）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 42）
 - [[econ-liquidity-trap|流動性のわな]]（接続 42）
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 41）
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 41）
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 39）
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 38）
@@ -112,6 +112,7 @@ tags:
 - 1920年: [[econ-pigouvian-tax|ピグー税]]
 - 1923年: [[econ-gibson-paradox|ギブソンのパラドックス]]
 - 1923年: [[econ-hodrick-prescott-filter|ホドリック＝プレスコット・フィルター——景気循環をトレンドから分離する平滑化フィルターとその妥当性論争]]
+- 1923年: [[econ-rubin-causal-model-potential-outcomes|ルービン因果モデル（潜在結果枠組み）——処置と非処置を同時に観測できないという因果推論の根本問題]]
 - 1924年: [[econ-lancaster-characteristics|ランカスターの特性アプローチ]]
 - 1924年: [[econ-solow-growth-model|ソロー成長モデル]]
 - 1924年: [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]]
@@ -373,6 +374,7 @@ tags:
 - 1990年: [[econ-lucas-paradox|ルーカスのパラドックス]]
 - 1990年: [[econ-ostrom-commons|オストロムのコモンズ統治]]
 - 1990年: [[econ-rct-development|開発経済学におけるランダム化比較試験（RCT in Development Economics）]]
+- 1990年: [[econ-relationship-lending-petersen-rajan-berger-udell|リレーションシップ・レンディング（関係型融資）——長期関係で蓄積した「ソフト情報」が中小企業の資金調達力を高める仕組み]]
 - 1990年: [[econ-schumpeterian-growth-aghion-howitt|アギオン＝ハウイットのシュンペーター型内生成長モデル——創造的破壊による成長]]
 - 1991年: [[econ-barro-growth|バロー成長回帰（Barro Growth Regression）]]
 - 1991年: [[econ-bartik-shift-share-instrument|バーティック操作変数（シフトシェア操作変数）——全国産業成長率と地域産業構成の積で地域労働需要ショックを予測する識別戦略]]

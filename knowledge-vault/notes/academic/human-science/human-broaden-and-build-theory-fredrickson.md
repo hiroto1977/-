@@ -33,13 +33,13 @@ aliases:
 ## 関連概念
 - [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 語彙が近い
 - [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 語彙が近い
+- [[human-positive-psychology-broaden-build|ポジティブ心理学と拡張形成理論：ポジティブ感情が思考・行動レパートリーを広げ持続的個人資源を構築するメカニズム]] — 語彙が近い
 - [[human-broaden-build-upward-spiral|拡張＝形成理論の上昇スパイラル——ポジティブ感情と個人資源の相互強化]] — 同じ思想家
 - [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]] — 同じ思想家
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 同じ思想家
 - [[human-rumination-response-styles-nolen-hoeksema|反すう反応スタイル理論——ノーレン＝ホークセマの抑うつ的反すうと気分障害の維持]] — 同じ思想家
 - [[human-self-expansion-aron|自己拡張モデル（アーロン）]] — 同じ思想家
 - [[mgmt-technology-acceptance-model|技術受容モデル（TAM）——情報システム採用の知覚有用性と知覚容易性]] — 同じ思想家
-- [[human-positive-psychology-broaden-build|ポジティブ心理学と拡張形成理論：ポジティブ感情が思考・行動レパートリーを広げ持続的個人資源を構築するメカニズム]] — 同分野の近傍
 - [[human-multiple-intelligences|多重知能理論（ガードナー）]] — 同分野の近傍
 
 ## 関連

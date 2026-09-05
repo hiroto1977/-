@@ -2,7 +2,7 @@
 title: "cambridge.org"
 type: source-domain
 host: "cambridge.org"
-cite_count: 64
+cite_count: 66
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # cambridge.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **64 件**（学術 62 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **66 件**（学術 64 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -38,6 +38,7 @@ tags:
 - [[econ-rand-health-insurance-experiment|RAND医療保険実験（The RAND Health Insurance Experiment, HIE）——自己負担率を無作為に変え、医療需要の費用分担効果（モラルハザード）を実証した大規模社会実験]] — Newhouse,J.P.andtheInsuranceExperimentGroup(1993)FreeforAll?Lessonsfr…
 - [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — Blaug(1980/1992)TheMethodologyofEconomics,CambridgeUP
 - [[econ-risk-aversion|リスク回避（アロー＝プラット測度）]] — JournalofFinancialandQuantitativeAnalysis(CambridgeCore),“MeasuresofR…
+- [[econ-rubin-causal-model-potential-outcomes|ルービン因果モデル（潜在結果枠組み）——処置と非処置を同時に観測できないという因果推論の根本問題]] — Imbens,G.W.&Rubin,D.B.(2015)CausalInferenceforStatistics,Social,andBi…
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — Justetal.(2012),J.Benefit-CostAnalysis3(2)
 - [[econ-shephards-lemma-cost-function-duality|シェパードの補題——費用関数を要素価格で微分すると条件付き要素需要が得られるという双対理論の基本命題]] — Uzawa,H.(1964)."DualityPrinciplesintheTheoryofCostandProduction."Inte…
 - [[human-appraisal-theory-of-emotion|感情の評価理論]] — ReflectiononLazarus—EmotionandAdaptation(CambridgeCore)
@@ -55,6 +56,7 @@ tags:
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — Engestrom,Y.(2015).LearningbyExpanding:AnActivity-TheoreticalApproach…
 - [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]] — “AlgorithmicAccountabilityintheMaking,”SocialPhilosophyandPolicy(Camb…
 - [[infosoc-algorithmic-governmentality|アルゴリズム的統治性（Algorithmic Governmentality）]] — BigData,AlgorithmicGovernmentalityandPandemicRisk—EuropeanJRiskRegula…
+- [[infosoc-chinese-room-argument-searle|サールの中国語の部屋（Chinese Room Argument）——構文操作は意味理解を保証しないとする「強いAI」批判]] — Searle,J.R.(1980).Minds,Brains,andPrograms.BehavioralandBrainSciences…
 - [[infosoc-code-switching|コードスイッチング]] — Gumperz,J.J.(1982)DiscourseStrategies,CambridgeUniversityPress
 - [[infosoc-communicative-action|コミュニケーション的行為（ハーバーマス）]] — ColonizationoftheLifeworld—TheCambridgeHabermasLexicon(CambridgeUnive…
 - [[infosoc-connective-action|つながりの行為論理（コネクティブ・アクション）]] — Bennett&Segerberg,TheLogicofConnectiveAction(CambridgeUniversityPress…

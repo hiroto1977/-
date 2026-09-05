@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2270
+cite_count: 2268
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2270 件**（リファレンス 2270）
+> [!info] 出典ドメイン索引 ・ 引用 **2268 件**（リファレンス 2268）
 
 ## このドメインを出典とする項目
 
@@ -1065,7 +1065,7 @@ tags:
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — Wikipedia:Acceptanceandcommitmenttherapy—third-waveCBT
 - [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]] — Wikipedia:Acceptanceandcommitmenttherapy—third-waveCBT
 - [[human-actor-observer-bias|行為者-観察者バイアス]] — Wikipedia:Actor–observerasymmetry
-- [[human-adult-attachment-hazan-shaver|成人愛着スタイルとロマンティック関係の愛着理論（ハザン＝シェイバー）]] — Wikipedia:Attachmentinadults—Hazan,Shaver,ECR,fourtypes,anxious,avoid…
+- [[human-adult-attachment-hazan-shaver|成人愛着スタイル（ハザン＝シェイバー）——乳児期の愛着理論を恋愛関係へ拡張し、安定・不安・回避の個人差で親密な関係を説明する]] — Wikipedia:Attachmentinadults—三類型・四類型・二次元モデルとECRの概説
 - [[human-affect-heuristic-slovic|感情ヒューリスティック——良い悪いの感じが判断と意思決定を導く近道]] — Wikipedia:Affectheuristic—Slovic,affectivetag,risk-benefitinversecorr…
 - [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — Wikipedia:Affectiveforecasting—Wilson&Gilbert,impactbias,focalism,imm…
 - [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — Wikipedia:Affectiveforecasting—感情予測バイアスの理論と実証
@@ -1085,8 +1085,6 @@ tags:
 - [[human-appraisal-theory-of-emotion|感情の評価理論]] — MagdaB.Arnold—Wikipedia
 - [[human-approach-avoidance-elliot|接近回避動機——望ましいものへの接近と望ましくないものの回避の二系統]] — Wikipedia:Approach-avoidance—Elliot,2x2achievementgoals,BAS/BIS,Lewin…
 - [[human-aristotle-illusion|アリストテレスの錯覚——指を交差させると一つの物が二つに感じる]] — Wikipedia:Aristotle'sillusion—crossedfingers,tactileillusion,bodyrepr…
-- [[human-attachment-adult-hazan-shaver|成人愛着スタイル（ハザン＆シェイバー）と親密関係の研究]] — Wikipedia:Attachmentinadults—HazanandShaver
-- [[human-attachment-styles-hazan-shaver|成人の愛着スタイル——乳児期の愛着理論の恋愛関係への拡張]] — Wikipedia:Attachmentinadults—Hazan&Shaver,secure/anxious/avoidant,wor…
 - [[human-attentional-blink-raymond|注意の瞬き——連続提示で第二の標的の検出が一時的に低下する]] — Wikipedia:Attentionalblink—Raymond/Shapiro/Arnell,RSVP,T1/T2,200-500m…
 - [[human-attribution-theory|帰属理論]] — Attribution(psychology)—Wikipedia
 - [[human-attribution-theory|帰属理論]] — Covariationmodel(Kelley)—Wikipedia

@@ -213,6 +213,56 @@ function idDedupeSuspects(entries, distinct) {
 }
 
 /**
+ * 出典由来の重複疑い: **第一出典の DOI が同じ**ペア（同一コレクション内）。
+ *
+ * 2026-09-05 に第一出典で束ねる走査を手で回したところ、同じ原典を筆頭に掲げる
+ * 3 件以上の塊が 33 あった（stakeholder-salience ×4、成人愛着 Hazan & Shaver ×5 など）。
+ * どれもタイトルコア（副題が違う）・term-overlap（語彙が違う）・id 正規化（id が別物）を
+ * すり抜けていた。同じ原典を筆頭に置く 2 項目は、ほぼ同じ概念である。
+ *
+ * DOI 以外の URL は鍵にしない: e-Gov の法令 1 本（会社法）を 62 項目が筆頭に置くなど、
+ * 法令・SEP・Wikipedia は多くの別概念が共有する典拠なので精度が落ちる。
+ * DOI は出版社ページの URL に埋め込まれた形（journals.sagepub.com/doi/10.1177/…）も拾う。
+ */
+function firstSourceDoi(entry) {
+  const first = Array.isArray(entry.sources) && entry.sources[0] ? entry.sources[0] : null;
+  const url = first && typeof first === 'object' ? String(first.url || '') : String(first || '');
+  let decoded;
+  try {
+    decoded = decodeURIComponent(url);
+  } catch {
+    decoded = url;
+  }
+  const m = /10\.\d{4,9}\/[^\s?#]+/i.exec(decoded);
+  return m ? m[0].toLowerCase().replace(/[.,;)]+$/, '') : null;
+}
+
+function sourceDedupeSuspects(entries, distinct) {
+  const byDoi = new Map();
+  for (const e of entries) {
+    const doi = firstSourceDoi(e);
+    if (!doi) continue;
+    const key = `${e.collection}|${doi}`;
+    if (!byDoi.has(key)) byDoi.set(key, []);
+    byDoi.get(key).push(e.id);
+  }
+  const out = [];
+  for (const [key, ids] of byDoi) {
+    if (ids.length < 2) continue;
+    const doi = key.slice(key.indexOf('|') + 1);
+    ids.sort();
+    for (let i = 0; i < ids.length; i += 1) {
+      for (let j = i + 1; j < ids.length; j += 1) {
+        if (distinct.has(`${ids[i]}|${ids[j]}`)) continue;
+        out.push({ a: ids[i], b: ids[j], doi });
+      }
+    }
+  }
+  out.sort((x, y) => (x.a < y.a ? -1 : x.a > y.a ? 1 : x.b < y.b ? -1 : 1));
+  return out;
+}
+
+/**
  * 知識グラフ由来の重複疑い: term-overlap スコアが閾値以上のペアは
  * 「語彙がほぼ同一」であり、副題違いで titleCore 照合をすり抜けた残存重複の
  * 有力候補（例: リーンスタートアップの第 3 変種を実際に発見）。裁定済みペアは除外。
@@ -448,6 +498,7 @@ async function main() {
   const q = audit(entries, today);
   const dedupeGraph = graphDedupeSuspects(entries, q.distinct);
   const dedupeId = idDedupeSuspects(entries, q.distinct);
+  const dedupeSource = sourceDedupeSuspects(entries, q.distinct);
   let links = { checked: 0, totalUrls: 0, dead: [], suspect: [] };
   if (args.links) {
     const n = Number(args.links) || 100;
@@ -482,6 +533,7 @@ async function main() {
       dedupe: q.dedupe,
       dedupeGraph,
       dedupeId,
+      dedupeSource,
       sourceHygiene: q.sourceHygiene,
       deadLinks: links.dead,
       suspectLinks: links.suspect,
@@ -493,6 +545,7 @@ async function main() {
       dedupe: q.dedupe.length,
       dedupeGraph: dedupeGraph.length,
       dedupeId: dedupeId.length,
+      dedupeSource: dedupeSource.length,
       sourceHygiene: q.sourceHygiene.length,
       deadLinks: links.dead.length,
       suspectLinks: links.suspect.length,
@@ -509,6 +562,7 @@ async function main() {
     `重複疑い（タイトルコア一致・裁定済み除外後）: ${s.dedupe}`,
     `重複疑い（グラフ term-overlap ≥ ${GRAPH_DUP_SCORE}・裁定済み除外後）: ${s.dedupeGraph}`,
     `重複疑い（id 正規化＝人名の翻字ゆれ・裁定済み除外後）: ${s.dedupeId}`,
+    `重複疑い（第一出典の DOI 一致・裁定済み除外後）: ${s.dedupeSource}`,
     `出典衛生（<2件 or 権威なし）: ${s.sourceHygiene}`,
     `リンク切れ: ${s.deadLinks}（要確認 ${s.suspectLinks} / 検査 ${s.linksChecked}）`,
   ];
@@ -530,6 +584,7 @@ async function main() {
       `| 重複疑い（タイトルコア） | ${s.dedupe} |`,
       `| 重複疑い（グラフ語彙） | ${s.dedupeGraph} |`,
       `| 重複疑い（id 翻字ゆれ） | ${s.dedupeId} |`,
+      `| 重複疑い（第一出典 DOI） | ${s.dedupeSource} |`,
       `| 出典衛生 | ${s.sourceHygiene} |`,
       `| リンク切れ | ${s.deadLinks} (要確認 ${s.suspectLinks} / 検査 ${s.linksChecked}) |`,
       '',
@@ -539,7 +594,7 @@ async function main() {
   }
 
   const actionable =
-    s.enrich + s.reverify + s.missingAsOf + s.dedupe + s.dedupeGraph + s.dedupeId + s.sourceHygiene + s.deadLinks;
+    s.enrich + s.reverify + s.missingAsOf + s.dedupe + s.dedupeGraph + s.dedupeId + s.dedupeSource + s.sourceHygiene + s.deadLinks;
   console.log(actionable > 0 ? `\n⏳ LLM 作業 ${actionable} 件が待機中` : '\n✅ 全て最新 — LLM 作業なし');
 }
 
@@ -550,4 +605,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { corpusFingerprint, staleQueueReport, weekIndex, shardOffset, isCheckableUrl, checkLinks, fetchWithCheckedRedirects, MAX_LINK_REDIRECTS };
+module.exports = { corpusFingerprint, staleQueueReport, firstSourceDoi, sourceDedupeSuspects, weekIndex, shardOffset, isCheckableUrl, checkLinks, fetchWithCheckedRedirects, MAX_LINK_REDIRECTS };

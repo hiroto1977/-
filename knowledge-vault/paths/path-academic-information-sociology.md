@@ -2,19 +2,19 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 617
+entry_count: 618
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（617件）
+# 学習パス — 学術概念／情報社会学（618件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 74）
-- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 46）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 72）
+- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 47）
 - [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]]（接続 30）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 25）
@@ -76,6 +76,7 @@ tags:
 - 1948年: [[infosoc-narcotizing-dysfunction|麻酔的逆機能]]
 - 1948年: [[infosoc-status-conferral|地位付与機能]]
 - 1949年: [[infosoc-technical-debt|技術的負債]]
+- 1950年: [[infosoc-chinese-room-argument-searle|サールの中国語の部屋（Chinese Room Argument）——構文操作は意味理解を保証しないとする「強いAI」批判]]
 - 1954年: [[infosoc-bandwagon-underdog-effect|バンドワゴン効果・アンダードッグ効果（bandwagon / underdog effect）——公表された世論調査が投票行動そのものを動かすフィードバック現象]]
 - 1954年: [[infosoc-homophily|ホモフィリー（同類性）]]
 - 1954年: [[infosoc-solutionism|テクノロジカル・ソリューショニズム（技術的解決主義）]]

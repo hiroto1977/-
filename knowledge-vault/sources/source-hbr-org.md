@@ -2,7 +2,7 @@
 title: "hbr.org"
 type: source-domain
 host: "hbr.org"
-cite_count: 72
+cite_count: 73
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # hbr.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **72 件**（学術 45 ・ メディア 25 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **73 件**（学術 45 ・ メディア 26 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -55,6 +55,7 @@ tags:
 - [[mgmt-kraljic-matrix|クラルジック・マトリクス（購買ポートフォリオ）]] — HarvardBusinessReview(1983)—PurchasingMustBecomeSupplyManagement(原典)
 - [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]] — SteveBlank,“WhytheLeanStart-UpChangesEverything,”HarvardBusinessRevie…
 - [[mgmt-level-5-leadership|レベル5リーダーシップ]] — HarvardBusinessReview(2001),JimCollins,"Level5Leadership:TheTriumphof…
+- [[mgmt-levers-of-control-simons|サイモンズの統制のレバー——信条・境界・診断型・インタラクティブ型の四レバーで革新と統制を両立させる経営統制論]] — Simons,R.(1995).ControlinanAgeofEmpowerment.HarvardBusinessReview,73(…
 - [[mgmt-matrix-organization|マトリックス組織]] — Davis,S.M.&Lawrence,P.R.(1978)“ProblemsofMatrixOrganizations,”Harvard…
 - [[mgmt-middle-up-down-management-nonaka|ミドル・アップダウン・マネジメント（野中郁次郎）]] — Nonaka,I.(1991)TheKnowledge-CreatingCompany—HarvardBusinessReview,Nov…
 - [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]] — HenryMintzberg,"TheManager’sJob:FolkloreandFact,"HarvardBusinessRevie…

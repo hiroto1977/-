@@ -40,9 +40,9 @@ aliases:
 - [[bizlaw-vicarious-liability|代位責任（使用者責任）——被用者の不法行為について使用者が負う責任]] — 同じ思想家
 - [[bizlaw-adverse-possession|時効取得——長期の占有により非所有者が土地の権原を取得する法理]] — 同じ思想家
 - [[bizlaw-consideration-doctrine|約因の法理——約束が拘束力を持つために要する交換的対価]] — 同じ思想家
+- [[bizlaw-tarasoff-v-regents-duty-to-protect|タラソフ対カリフォルニア大学理事会事件——心理療法士に第三者保護義務を認めた判例]] — 出典を共有
 - [[bizlaw-economic-loss-rule|純粋経済的損失の法理]] — 出典を共有
 - [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]] — 出典を共有
-- [[bizlaw-implied-covenant-good-faith|誠実義務・公正取引の黙示的誓約]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

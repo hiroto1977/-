@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[econ-seigniorage-hyperinflation-cagan|インフレ税と超インフレ——ケーガンモデルが解明するハイパーインフレの自己強化メカニズム]] — 同じ思想家
 - [[econ-olivera-tanzi-effect|オリベラ＝タンジ効果]] — 同分野の近傍
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-chartalism-modern-money|シャルタリズムと現代貨幣理論（MMT）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

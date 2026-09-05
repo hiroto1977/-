@@ -2,7 +2,7 @@
 title: "ideas.repec.org"
 type: source-domain
 host: "ideas.repec.org"
-cite_count: 99
+cite_count: 100
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ideas.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **99 件**（学術 84 ・ リファレンス 15）
+> [!info] 出典ドメイン索引 ・ 引用 **100 件**（学術 85 ・ リファレンス 15）
 
 ## このドメインを出典とする項目
 
@@ -80,6 +80,7 @@ tags:
 - [[econ-probabilistic-voting|確率的投票モデル（probabilistic voting model）——有権者の選択が政策に確率的に反応すると仮定し、多次元でも均衡を与える選挙競争理論]] — Coughlin,Peter&Nitzan,Shmuel(1981)"Electoraloutcomeswithprobabilistic…
 - [[econ-raising-rivals-costs|ライバルの費用引き上げ理論（Raising Rivals' Costs／RRC、サロップ＝シェフマン）——支配的企業が略奪的安売りではなく競争相手の費用を高めて排除する反トラスト理論]] — Salop,StevenC.andDavidT.Scheffman(1983)."RaisingRivals'Costs."America…
 - [[econ-real-business-cycle-theory|実物景気循環理論]] — Kydland&Prescott(1982):TimetoBuildandAggregateFluctuations—Econometri…
+- [[econ-relationship-lending-petersen-rajan-berger-udell|リレーションシップ・レンディング（関係型融資）——長期関係で蓄積した「ソフト情報」が中小企業の資金調達力を高める仕組み]] — Berger,A.N.&Udell,G.F.(1995)."RelationshipLendingandLinesofCreditinSm…
 - [[econ-rent-seeking|レントシーキング]] — Krueger,A.O.(1974)ThePoliticalEconomyoftheRent-SeekingSociety—America…
 - [[econ-retirement-consumption-puzzle|退職消費パズル（Retirement-Consumption Puzzle）]] — Banks,J.,Blundell,R.&Tanner,S.(1998)"IsThereaRetirement-SavingsPuzzle…
 - [[econ-rotemberg-saloner-price-wars-booms|ロテンバーグ＝サローナー・モデル——好況期に協調的価格が崩れ価格戦争が生じる反循環的マークアップ理論]] — Bagwell,K.&Staiger,R.W.(1997).CollusionovertheBusinessCycle.RANDJourn…

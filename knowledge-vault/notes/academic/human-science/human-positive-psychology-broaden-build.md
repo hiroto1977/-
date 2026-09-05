@@ -33,10 +33,9 @@ aliases:
 
 ## 関連概念
 - [[human-positive-psychology|ポジティブ心理学]] — 語彙が近い
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 語彙が近い
 - [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 分野横断
 - [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 出典を共有
-- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 同分野の近傍
-- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 同分野の近傍
 - [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同分野の近傍
 
 ## 関連

@@ -30,13 +30,12 @@ aliases:
 - [Wikipedia: Strange situation — Ainsworth, secure/avoidant/resistant/disorganized, secure base, Bowlby](https://en.wikipedia.org/wiki/Strange_situation) `リファレンス`
 
 ## 関連概念
-- [[human-attachment-styles-hazan-shaver|成人の愛着スタイル——乳児期の愛着理論の恋愛関係への拡張]] — 同じ思想家
+- [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — 語彙が近い
+- [[human-adult-attachment-hazan-shaver|成人愛着スタイル（ハザン＝シェイバー）——乳児期の愛着理論を恋愛関係へ拡張し、安定・不安・回避の個人差で親密な関係を説明する]] — 同じ思想家
 - [[human-harlow-contact-comfort|ハーロウの代理母実験——「接触の安らぎ」と愛着]] — 同じ思想家
 - [[human-mentalizing-fonagy-bateman|メンタライゼーション理論——フォナギーの心の理論と境界性パーソナリティ障害への治療的介入]] — 同じ思想家
 - [[human-rumination-nolen-hoeksema|ルミネーション（反芻思考）理論（ノレン＝ホークスマ）]] — 同じ思想家
 - [[human-still-face-tronick|スティルフェイス実験（トロニック）——無表情の母親と乳児の情動調整]] — 同じ思想家
-- [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — 同分野の近傍
-- [[human-theory-of-mind-frith-baron-cohen|心の理論（ToM）とメンタライジング——フリス＝バロン=コーエンによる他者心理の推論と社会認知の神経科学]] — 同分野の近傍
 - [[human-marshmallow-test|マシュマロ・テスト（満足の遅延）]] — 同分野の近傍
 
 ## 関連

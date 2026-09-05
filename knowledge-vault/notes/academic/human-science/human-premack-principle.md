@@ -34,7 +34,6 @@ aliases:
 - [[human-theory-of-mind|心の理論]] — 同じ思想家
 - [[human-theory-of-mind-baron-cohen|心の理論と自閉症スペクトラム——バロン＝コーエンのサリーとアン課題と共感システム論]] — 同じ思想家
 - [[human-illusory-correlation|錯誤相関]] — 同分野の近傍
-- [[human-defensive-attribution-hypothesis|防衛的帰属仮説（defensive attribution hypothesis）——事故の責任帰属が自己防衛動機で歪むとする社会心理学の説]] — 同分野の近傍
 - [[human-occupational-science-yerxa-clark|作業科学——人間の作業的存在としての健康と参加の学際的探究]] — 同分野の近傍
 
 ## 関連

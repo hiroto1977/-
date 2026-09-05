@@ -2,14 +2,14 @@
 title: "1990年代"
 type: timeline-decade
 decade: 1990
-entry_count: 214
+entry_count: 215
 tags:
   - timeline
 ---
 
-# 1990年代 — 214 件
+# 1990年代 — 215 件
 
-- [[year-1990|1990年]]（35件）
+- [[year-1990|1990年]]（36件）
 - [[year-1991|1991年]]（23件）
 - [[year-1992|1992年]]（16件）
 - [[year-1993|1993年]]（14件）

@@ -2,7 +2,7 @@
 title: "journals.sagepub.com"
 type: source-domain
 host: "journals.sagepub.com"
-cite_count: 179
+cite_count: 182
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.sagepub.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **179 件**（学術 178 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **182 件**（学術 181 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -54,6 +54,9 @@ tags:
 - [[human-riasec-vocational-interests-holland|ホランドのRIASEC理論——六類型の適合度で職業選択と職務満足を説明する六角形モデル]] — Nye,C.D.,Su,R.,Rounds,J.,&Drasgow,F.(2012).Vocationalinterestsandperf…
 - [[human-rumination|反芻思考]] — Nolen-Hoeksema,Wisco&Lyubomirsky(2008)"RethinkingRumination",Perspect…
 - [[human-semantic-satiation|意味飽和（セマンティック・サティエイション）]] — Jakobovits(1967)SemanticSatiationandCognitiveDynamics—PsychologicalRe…
+- [[human-situation-awareness-endsley|エンズリーの状況認識（SA）モデル——知覚・理解・予測の三層がつくる動的意思決定の認知基盤]] — Endsley,M.R.(1995)."MeasurementofSituationAwarenessinDynamicSystems."…
+- [[human-situation-awareness-endsley|エンズリーの状況認識（SA）モデル——知覚・理解・予測の三層がつくる動的意思決定の認知基盤]] — Endsley,M.R.(1995)."TowardaTheoryofSituationAwarenessinDynamicSystems…
+- [[human-situation-awareness-endsley|エンズリーの状況認識（SA）モデル——知覚・理解・予測の三層がつくる動的意思決定の認知基盤]] — Smith,K.,&Hancock,P.A.(1995)."SituationAwarenessIsAdaptive,Externally…
 - [[human-spiritual-wellbeing|スピリチュアル・ウェルビーイング尺度：宗教的ウェルビーイングと実存的ウェルビーイングの二因子モデル]] — Bufford,Paloutzian&Ellison1991NormsfortheSpiritualWell-BeingScale.Jou…
 - [[human-spiritual-wellbeing|スピリチュアル・ウェルビーイング尺度：宗教的ウェルビーイングと実存的ウェルビーイングの二因子モデル]] — Ellison1983SpiritualWell-Being:ConceptualizationandMeasurement.Journa…
 - [[human-status-characteristics|地位特性理論（期待状態理論）]] — Ridgeway(1991)TheSocialConstructionofStatusValue—SocialForces

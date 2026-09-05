@@ -40,7 +40,7 @@ Egashira Kenjiro ／ Hiroyuki Watanabe
 - [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
 - [[bizlaw-employee-invention-japan-patent-act-35|職務発明制度（特許法第35条）——従業者の発明の帰属と「相当の利益」]] — 出典を共有
 - [[bizlaw-derivative-suit|株主代表訴訟（責任追及等の訴え）]] — 同分野の近傍
-- [[bizlaw-limited-liability|株主有限責任の原則]] — 同分野の近傍
+- [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

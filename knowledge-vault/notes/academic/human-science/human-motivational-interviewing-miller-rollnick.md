@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Motivational interviewing — OARS, change talk, ambivalence, MI spirit](https://en.wikipedia.org/wiki/Motivational_interviewing) `リファレンス`
 
 ## 関連概念
-- [[human-attachment-style-theory|愛着スタイル理論]] — 出典を共有
 - [[human-dialectical-behavior-therapy-linehan|弁証法的行動療法——リネハンのDBTと境界性パーソナリティ障害の治療革新]] — 出典を共有
 - [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 出典を共有
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍

@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／ビジネス法務"
 type: learning-path
 path_key: "academic-business-law"
-entry_count: 693
+entry_count: 694
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／ビジネス法務（693件）
+# 学習パス — 学術概念／ビジネス法務（694件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 87）
-- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 60）
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 86）
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 59）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 38）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 37）
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 31）
-- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]]（接続 31）
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]]（接続 30）
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]]（接続 29）
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 28）
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 27）
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
 - [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]]（接続 26）
 - [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]]（接続 26）
+- [[bizlaw-toushiho|出資法]]（接続 26）
 - [[bizlaw-earnest-money|手付（民法557条）]]（接続 25）
 - [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]]（接続 25）
-- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]]（接続 25）
 
 ## 第 2 部 — 年代順の展開
 - 1511年: [[bizlaw-lucy-v-zehmer-objective-theory-of-contract|ルーシー対ゼーマー事件と契約成立の客観説——内心でなく言葉と行為の外形で合意を判断する原則]]
@@ -111,7 +111,6 @@ tags:
 - 1953年: [[bizlaw-regulation-d-private-placement|レギュレーションD——「自ら身を守れる」投資家を前提に登録義務を免除する私募のセーフハーバー]]
 - 1954年: [[bizlaw-employees-pension|厚生年金保険法]]
 - 1954年: [[bizlaw-interest-rate-restriction|利息制限法]]
-- 1954年: [[bizlaw-toushiho|出資法]]
 - 1955年: [[bizlaw-auto-liability-act|自動車損害賠償保障法（自賠法）]]
 - 1958年: [[bizlaw-national-health-insurance|国民健康保険法]]
 - 1959年: [[bizlaw-bilateral-investment-treaty|二国間投資条約（Bilateral Investment Treaty / BIT）]]
@@ -147,6 +146,7 @@ tags:
 - 1974年: [[bizlaw-proper-purpose-howard-smith|取締役の権限濫用と適正目的の法理——ハワード・スミス対アンポル事件（Howard Smith v Ampol 1974）]]
 - 1976年: [[bizlaw-margin-of-appreciation|評価の余地の法理（Margin of Appreciation）]]
 - 1976年: [[bizlaw-specified-commercial-transactions|特定商取引法]]
+- 1976年: [[bizlaw-tarasoff-v-regents-duty-to-protect|タラソフ対カリフォルニア大学理事会事件——心理療法士に第三者保護義務を認めた判例]]
 - 1979年: [[bizlaw-civil-execution|民事執行法]]
 - 1980年: [[bizlaw-greenmail|グリーンメール（敵対的買収防衛の株式買戻し）]]
 - 1981年: [[bizlaw-banking-act|銀行法]]
@@ -507,6 +507,7 @@ tags:
 - [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]]
 - [[bizlaw-implied-covenant-good-faith|誠実義務・公正取引の黙示的誓約]]
 - [[bizlaw-implied-terms|黙示の契約条項——当事者が明示せずとも契約に読み込まれる条項]]
+- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]]
 - [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]]
 - [[bizlaw-in-pari-delicto-doctrine|均等違法原則（インパリ・デリクト）]]
 - [[bizlaw-incoterms|インコタームズ——国際売買における売主と買主の責任を定める定型取引条件]]

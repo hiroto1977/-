@@ -31,7 +31,6 @@ aliases:
 - [東京都主税局 特別法人事業税](https://www.tax.metro.tokyo.lg.jp/kazei/work/tokubetsu_houjin) `自治体`
 
 ## 関連概念
-- [[tax-large-corp-efiling|大法人の電子申告（e-Tax）義務化]] — 語彙が近い
 - [[tax-individual-business-tax|個人事業税]] — 出典を共有
 - [[tax-sole-proprietor-notification|個人事業の開業・廃業等届出書（開業届）]] — 出典を共有
 - [[tax-automobile-tax|自動車税（種別割）]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[tax-depreciable-asset-filing|固定資産税（償却資産）の申告]] — 出典を共有
 - [[tax-fixed-asset-tax|固定資産税（土地・家屋）]] — 出典を共有
 - [[tax-real-estate-acquisition|不動産取得税]] — 出典を共有
+- [[tax-resident-tax|個人住民税（道府県民税・市町村民税）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

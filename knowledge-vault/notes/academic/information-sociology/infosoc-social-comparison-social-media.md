@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 語彙が近い
-- [[human-social-comparison-theory-festinger|社会比較理論と自己評価プロセスの社会心理学（フェスティンガー）]] — 語彙が近い
 - [[infosoc-digital-divide-stratification|デジタル格差と情報不平等の社会的成層論]] — 同分野の近傍
 - [[infosoc-context-collapse-marwick|コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ]] — 同分野の近傍
 

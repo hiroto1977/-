@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[legal-business-opportunity-sales|業務提供誘引販売取引（内職商法・モニター商法）]] — 語彙が近い
-- [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 語彙が近い
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]] — 語彙が近い
+- [[legal-cooling-off|クーリング・オフ（特定商取引法）]] — 語彙が近い
 - [[legal-chain-sales|連鎖販売取引（マルチ商法）]] — 語彙が近い
 - [[legal-continuous-service|特定継続的役務提供（特定商取引法）]] — 分野横断
 - [[legal-document-electronic|特定商取引法の契約書面等の電子化（2023年6月施行）]] — 分野横断

@@ -31,6 +31,7 @@ M. King Hubbert（Shell Development Company, Drilling and Production Practice, 1
 
 ## 関連概念
 - [[human-mirror-neuron-theory|ミラーニューロン理論]] — 出典を共有
+- [[infosoc-chinese-room-argument-searle|サールの中国語の部屋（Chinese Room Argument）——構文操作は意味理解を保証しないとする「強いAI」批判]] — 出典を共有
 - [[human-dunbars-number|ダンバー数（社会脳仮説）]] — 出典を共有
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍

@@ -2,7 +2,7 @@
 title: "nobelprize.org"
 type: source-domain
 host: "nobelprize.org"
-cite_count: 95
+cite_count: 96
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nobelprize.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **95 件**（リファレンス 57 ・ 公的 36 ・ 学術 2）
+> [!info] 出典ドメイン索引 ・ 引用 **96 件**（リファレンス 58 ・ 公的 36 ・ 学術 2）
 
 ## このドメインを出典とする項目
 
@@ -81,6 +81,7 @@ tags:
 - [[econ-rct-development|開発経済学におけるランダム化比較試験（RCT in Development Economics）]] — NobelPrize—2019SverigesRiksbankPrizeinEconomicSciencesPressRelease
 - [[econ-real-business-cycle-theory|実物景気循環理論]] — TheSverigesRiksbankPrizeinEconomicSciences2004—NobelPrizeSummary(Kydl…
 - [[econ-revenue-equivalence|収入同値定理]] — MechanismDesignTheory—Nobel委員会科学的背景文書（Myersonらのメカニズムデザイン）
+- [[econ-rubin-causal-model-potential-outcomes|ルービン因果モデル（潜在結果枠組み）——処置と非処置を同時に観測できないという因果推論の根本問題]] — TheSverigesRiksbankPrizeinEconomicSciencesinMemoryofAlfredNobel2021—S…
 - [[econ-schelling-segregation|シェリングの分居モデル]] — NobelPrize.org—ThomasC.Schelling,2005年ノーベル経済学賞（Aumannと共同受賞）
 - [[econ-screening|スクリーニング（選別理論）]] — NobelPrize.org—The2001PrizeinEconomicSciences,Popularinformation（保険会社…
 - [[econ-search-matching|サーチ理論／マッチング理論]] — RoyalSwedishAcademyofSciences,“MarketswithSearchFrictions”(Scientific…

@@ -37,6 +37,7 @@ aliases:
 - [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 同じ思想家
 - [[econ-twin-deficits-hypothesis-feldstein|双子の赤字仮説——財政赤字と経常収支赤字の連動メカニズム]] — 同分野の近傍
 - [[econ-money-creation|信用創造と貨幣乗数]] — 同分野の近傍
+- [[econ-hyperinflation|ハイパーインフレーション（超インフレ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

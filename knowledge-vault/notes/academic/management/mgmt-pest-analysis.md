@@ -35,6 +35,7 @@ Politics・Economy・Society・Technologyのマクロ環境分析／SWOTの外�
 - [[mgmt-pestel-analysis|PESTEL分析——マクロ環境を六つの外部要因から分析する枠組み]] — 語彙が近い
 - [[mgmt-product-life-cycle|プロダクト・ライフサイクル（製品ライフサイクル）]] — 同分野の近傍
 - [[mgmt-swot-analysis|SWOT分析]] — 同分野の近傍
+- [[mgmt-organizational-ambivalence-theory|組織的アンビバレンス理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

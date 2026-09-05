@@ -23351,21 +23351,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-attachment-theory-adult',
-    discipline: 'human-science',
-    title: '成人愛着理論',
-    statement: 'Hazan and Shaver（1987）は、Bowlbyの愛着理論を成人の恋愛関係に拡張し、乳幼児期の愛着システムが成人の親密な関係においても同様に機能すると提唱した。彼らはAinsworthの乳児研究から得られた3類型（安定型・不安型・回避型）を成人の恋愛スタイルに対応させ、それぞれが関係の質や満足度に異なる影響を及ぼすことを示した。Bartholomew and Horowitz（1991）はさらに自己イメージと他者イメージの二次元モデルを導入し、安定型・とらわれ型・恐怖回避型・拒絶回避型の4カテゴリー分類へと発展させた。内的作業モデル（internal working models）は、幼少期の養育者との相互作用を通じて形成される自己と他者に関する認知的・感情的スキーマであり、成人期の関係期待や行動パターンを規定する。Mikulincer and Shaver（2012）らによる研究は、愛着スタイルが感情調整・親密性・葛藤解決など多面的な関係プロセスと深く関連することを実証し、成人愛着研究を関係科学・臨床心理学の中核的枠組みとして確立した。',
-    keyFigures: 'Cindy Hazan ／ Phillip R. Shaver ／ Kim Bartholomew ／ Leonard M. Horowitz ／ Mario Mikulincer ／ R. Chris Fraley',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1037/0022-3514.52.3.511', type: 'academic', label: 'Hazan & Shaver (1987) Romantic Love Conceptualized as an Attachment Process — JPSP' },
-      { url: 'https://doi.org/10.1037/0022-3514.61.2.226', type: 'academic', label: 'Bartholomew & Horowitz (1991) Attachment Styles Among Young Adults — JPSP' },
-      { url: 'https://doi.org/10.1111/j.1756-2589.2012.00142.x', type: 'academic', label: 'Mikulincer & Shaver (2012) Adult Attachment Orientations and Relationship Processes — Journal of Family Theory & Review' },
-      { url: 'https://doi.org/10.1037/1089-2680.4.2.132', type: 'academic', label: 'Fraley & Shaver (2000) Adult Romantic Attachment: Theoretical Developments — Review of General Psychology' },
-      { url: 'https://labs.psychology.illinois.edu/~rcfraley/attachment.htm', type: 'reference', label: 'Fraley, R. C. — A Brief Overview of Adult Attachment Theory and Research (University of Illinois)' },
-    ],
-  },
-  {
     id: 'bizlaw-equitable-estoppel',
     discipline: 'business-law',
     title: '衡平法上の禁反言',
@@ -23848,21 +23833,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.penguinrandomhouse.com/books/309214/the-filter-bubble-by-eli-pariser/', type: 'reference', label: 'Pariser, E. (2011). The Filter Bubble: What the Internet Is Hiding from You. Penguin Press.' },
       { url: 'https://doi.org/10.1093/oso/9780190905491.001.0001', type: 'academic', label: 'Bucher, T. (2018). If...Then: Algorithmic Power and Politics. Oxford University Press.' },
       { url: 'https://doi.org/10.1126/science.aaa1160', type: 'academic', label: 'Bakshy, E., Messing, S., & Adamic, L. A. (2015). Exposure to ideologically diverse news and opinion on Facebook. Science.' },
-    ],
-  },
-  {
-    id: 'human-attachment-style-theory',
-    discipline: 'human-science',
-    title: '愛着スタイル理論',
-    statement: 'Bowlby の愛着理論と Ainsworth の乳幼児観察研究（安定型・不安回避型・不安抵抗型）を基盤として、Hazan & Shaver は1987年にこの枠組みを成人のロマンティック関係へ拡張し、恋愛関係が幼少期の愛着行動システムと同一のメカニズムで機能すると論じた。Bartholomew & Horowitz は1991年に自己モデル（肯定的／否定的）と他者モデル（肯定的／否定的）の2軸から安定型・とらわれ型・拒絶回避型・恐れ回避型の4カテゴリーモデルを提唱し、従来の3分類を精緻化した。これらの内的作業モデル（IWM）は自己と他者への期待・信念を符号化し、対人関係における感情調整や親密性希求の個人差を説明する。Brennan・Clark・Shaver は1998年に不安（見捨てられ不安）と回避（親密性回避）の2次元を測定する経験的愛着尺度（ECR）を開発し、愛着スタイルの量的研究を大きく推進した。現在では愛着スタイルはパートナーシップ満足度、感情調整方略、精神的健康との関連が広く検討されており、臨床・社会・発達心理学の横断的テーマとなっている。',
-    keyFigures: 'John Bowlby ／ Mary Ainsworth ／ Cindy Hazan ／ Phillip Shaver ／ Kim Bartholomew ／ Leonard Horowitz',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1037/0022-3514.52.3.511', type: 'academic', label: 'Hazan & Shaver (1987) — Romantic love conceptualized as an attachment process, Journal of Personality and Social Psychology' },
-      { url: 'https://doi.org/10.1037/0022-3514.61.2.226', type: 'academic', label: 'Bartholomew & Horowitz (1991) — Attachment styles among young adults: A test of a four-category model, Journal of Personality and Social Psychology' },
-      { url: 'https://doi.org/10.1037/0022-3514.74.5.1150', type: 'academic', label: 'Brennan, Clark & Shaver (1998) — Self-report measurement of adult attachment: An integrative overview, in Attachment Theory and Close Relationships' },
-      { url: 'https://doi.org/10.1037/0033-2909.117.3.387', type: 'academic', label: 'Feeney & Noller (1996) — Adult attachment review, Psychological Bulletin' },
-      { url: 'https://www.guilford.com/books/Handbook-of-Attachment/Cassidy-Shaver/9781462538683', type: 'reference', label: 'Cassidy & Shaver (Eds.) (2016) — Handbook of Attachment: Theory, Research, and Clinical Applications (3rd ed.), Guilford Press' },
     ],
   },
   {
@@ -36951,18 +36921,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-attachment-styles-hazan-shaver',
-    discipline: 'human-science',
-    title: '成人の愛着スタイル——乳児期の愛着理論の恋愛関係への拡張',
-    statement: '成人の愛着スタイル（adult attachment styles）の理論は、シンディ・ヘイザンとフィリップ・シェイヴァーが1987年の論文「愛着過程として概念化された恋愛」で提唱したもので、ジョン・ボウルビィとメアリー・エインズワースが乳児と養育者の絆について築いた愛着理論を、成人の恋愛関係へと拡張した。ボウルビィは、乳児が養育者との相互作用を通じて、自己と他者についての内的作業モデル（自分は愛される価値があるか、他者は頼れるか）を形成し、それが愛着行動を方向づけると論じた。エインズワースは「ストレンジ・シチュエーション法」によって、乳児の愛着を安定型、不安・両価型、回避型に分類した。ヘイザンとシェイヴァーは、成人の恋愛もこれと同じ愛着システムによって駆動され、乳児期のパターンに対応する愛着スタイルが現れると提唱した。安定型（secure）は、親密さと自律の双方に心地よくいられ、相手を信頼し、必要なときに頼り頼られることができる。不安型／とらわれ型（anxious/preoccupied）は、親密さを強く求める一方で見捨てられることを恐れ、相手の愛情を疑い、関係に過度に依存しやすい。回避型（avoidant）は、親密さに不快を感じ、独立を重んじ、感情的な距離を保とうとする。この当初の三類型は、後にキム・バーソロミューやブレナン、フレイリーらによって、「愛着不安（見捨てられ不安）」と「愛着回避（親密さの回避）」という二つの連続的次元の組み合わせとして捉え直され、より精緻な枠組みへと発展した。成人の愛着スタイルは、幼少期に形成された自己と他者の作業モデルが、生涯を通じて恋愛・友情・育児などの親密な関係のあり方に影響を及ぼすことを示し、対人関係、感情調整、精神的健康の研究に広く応用されている。',
-    keyFigures: 'シンディ・ヘイザン ／ フィリップ・シェイヴァー ／ ジョン・ボウルビィ ／ メアリー・エインズワース',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1037/0022-3514.52.3.511', type: 'academic', label: 'Hazan, C. & Shaver, P. (1987) Romantic Love Conceptualized as an Attachment Process — JPSP 52(3)' },
-      { url: 'https://en.wikipedia.org/wiki/Attachment_in_adults', type: 'reference', label: 'Wikipedia: Attachment in adults — Hazan & Shaver, secure/anxious/avoidant, working models, two dimensions' },
-    ],
-  },
-  {
     id: 'bizlaw-strict-product-liability',
     discipline: 'business-law',
     title: '製造物厳格責任——欠陥そのものに基づく製造者の無過失責任',
@@ -45981,13 +45939,19 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'human-adult-attachment-hazan-shaver',
     discipline: 'human-science',
-    title: '成人愛着スタイルとロマンティック関係の愛着理論（ハザン＝シェイバー）',
-    statement: '成人愛着理論（adult attachment theory）は、ボウルビーの乳幼児期愛着理論をシンシア・ハザンとフィリップ・シェイバーが1987年に成人の恋愛関係へ応用し、回避型（avoidant）・不安型（anxious/ambivalent）・安定型（secure）の三類型が成人のロマンティック関係のパターンを説明することを示した研究に基づく。ダン・ファーニーとノルマ・ブレナンは後に四類型モデル（安定・不安定・恐怖回避・拒絶回避）を提案し、「愛着不安（attachment anxiety）」と「愛着回避（attachment avoidance）」の二次元で成人愛着を測定する経験型愛着質問紙（ECR）が国際的に普及した。成人愛着スタイルは親密関係の満足度・紛争解決スタイル・性的行動・嫉妬・コミットメントとの関連が多くの研究で確認され、不安型は過剰活性化戦略（hyper-activation）・回避型は脱活性化戦略（deactivation）を通じて愛着システムを調整する。心理療法（愛着焦点化療法・感情焦点化カップルセラピー）は愛着スタイルの修正可能性を実証的に支持している。',
-    keyFigures: 'シンシア・ハザン ／ フィリップ・シェイバー ／ キム・バルソロミュー ／ マリオ・ミクリンサー',
-    asOf: '2026-06-26',
+    title: '成人愛着スタイル（ハザン＝シェイバー）——乳児期の愛着理論を恋愛関係へ拡張し、安定・不安・回避の個人差で親密な関係を説明する',
+    statement:
+      '成人愛着理論は、シンディ・ハザンとフィリップ・シェイバーが1987年の論文『Romantic Love Conceptualized as an Attachment Process』（Journal of Personality and Social Psychology 52巻3号）で、ジョン・ボウルビィの愛着理論とメアリー・エインズワースの乳児の三分類を成人の恋愛関係へ拡張したことに始まる。新聞紙上の質問紙調査で、成人も安定型・回避型・不安／両価型に乳児とほぼ同じ比率（約56％・25％・19％）で自己分類し、型ごとに恋愛経験が異なることを示した。核心は、養育者との相互作用で形成された自己と他者の内的作業モデルが、親密な関係の期待と行動を生涯方向づけるという主張である。キム・バーソロミューとレナード・ホロウィッツ（1991）は自己像と他者像の肯定・否定を組み合わせた四類型（安定型・とらわれ型・拒絶回避型・恐れ回避型）を提唱し、ブレナン＝クラーク＝シェイバー（1998）は愛着不安と愛着回避の二次元を測る自己報告尺度 ECR を開発して、類型論から次元論への転換を導いた。ミクリンサーとシェイバーは、不安型が愛着システムを過活性化し回避型が非活性化するという調整戦略の枠組みで、感情調整や葛藤解決との関連を整理した。限界としては、自己報告と回顧への依存、愛着型の安定性が中程度で人生の出来事により変わりうること、成人愛着面接（AAI）で測る表象と自己報告の恋愛愛着が必ずしも一致しないこと、初期研究の標本の偏りが指摘される。中小企業では、部下や顧客の距離の取り方を性格の欠陥でなく関係の作業モデルとして理解すれば、面談やクレーム対応で不安の強い相手には一貫した応答を、回避的な相手には自律を尊重した関わりを選べる。',
+    keyFigures: 'シンディ・ハザン（1987 JPSP 論文の第一著者）／フィリップ・シェイバー（1987 共著／ミクリンサーとの共同研究）／キム・バーソロミュー＆レナード・ホロウィッツ（1991 四類型モデル）／ブレナン＝クラーク＝シェイバー（1998 ECR 尺度）／マリオ・ミクリンサー（過活性化・非活性化戦略）／R・クリス・フレイリー（次元論と測定）／対比: ジョン・ボウルビィ＆メアリー・エインズワース（乳児期の愛着理論と三分類）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1037/0022-3514.52.3.511', type: 'academic', label: 'Hazan & Shaver (1987) Romantic Love Conceptualized as an Attachment Process — JPSP 52(3)' },
-      { url: 'https://en.wikipedia.org/wiki/Attachment_in_adults', type: 'reference', label: 'Wikipedia: Attachment in adults — Hazan, Shaver, ECR, four types, anxious, avoidant, secure' },
+      { url: 'https://doi.org/10.1037/0022-3514.52.3.511', type: 'academic', label: 'Hazan, C. & Shaver, P. (1987) Romantic Love Conceptualized as an Attachment Process — Journal of Personality and Social Psychology 52(3), 511–524（原典。三類型の自己分類と約56％・25％・19％の分布）' },
+      { url: 'https://doi.org/10.1037/0022-3514.61.2.226', type: 'academic', label: 'Bartholomew, K. & Horowitz, L. M. (1991) Attachment Styles Among Young Adults: A Test of a Four-Category Model — Journal of Personality and Social Psychology 61(2), 226–244（四類型モデル）' },
+      { url: 'https://doi.org/10.1037/1089-2680.4.2.132', type: 'academic', label: 'Fraley, R. C. & Shaver, P. R. (2000) Adult Romantic Attachment: Theoretical Developments, Emerging Controversies, and Unanswered Questions — Review of General Psychology 4(2), 132–154（次元論への転換と論争点）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1756-2589.2012.00142.x', type: 'academic', label: 'Mikulincer, M. & Shaver, P. R. (2012) Adult Attachment Orientations and Relationship Processes — Journal of Family Theory & Review 4(4), 259–274（過活性化・非活性化戦略と関係プロセス）' },
+      { url: 'https://doi.org/10.1037/0033-2909.117.3.387', type: 'academic', label: 'van IJzendoorn, M. H. (1995) Adult Attachment Representations, Parental Responsiveness, and Infant Attachment: A Meta-Analysis on the Predictive Validity of the Adult Attachment Interview — Psychological Bulletin 117(3), 387–403（AAI の予測妥当性。統合前の項目では Feeney & Noller 1996 と誤記されていた DOI）' },
+      { url: 'https://labs.psychology.illinois.edu/~rcfraley/attachment.htm', type: 'reference', label: 'Fraley, R. C., A Brief Overview of Adult Attachment Theory and Research（University of Illinois。ECR など自己報告尺度と二次元モデルの解説）' },
+      { url: 'https://en.wikipedia.org/wiki/Attachment_in_adults', type: 'reference', label: 'Wikipedia: Attachment in adults — 三類型・四類型・二次元モデルと ECR の概説' },
     ],
   },
   {
@@ -47272,18 +47236,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1017/9781316556795', type: 'academic', label: 'Westbrook, J.L. et al. (2010). A Global View of Business Insolvency Systems — World Bank' },
       { url: 'https://en.wikipedia.org/wiki/UNCITRAL_Model_Law_on_Cross-Border_Insolvency', type: 'reference', label: 'Wikipedia: UNCITRAL cross-border insolvency — international law' },
-    ],
-  },
-  {
-    id: 'human-attachment-adult-hazan-shaver',
-    discipline: 'human-science',
-    title: '成人愛着スタイル（ハザン＆シェイバー）と親密関係の研究',
-    statement: '成人愛着理論（adult attachment theory）は、ジョン・ボウルビーの愛着理論をシンディ・ハザンとフィリップ・シェイバーが成人の恋愛関係に適用した1987年の研究に端を発する。彼らはボウルビーの乳幼児愛着（安定型・回避型・不安型）に対応する三つの成人愛着スタイルを提示し、恋愛における感情調節・接近回避・嫉妬・コミットメントとの関連を示した。その後キム・バーセロミューとレオナード・ホロウィッツが4類型モデル（安定・没頭・軽視・恐れ）を導入し、成人愛着インタビュー（AAI）とECR尺度が研究ツールとして普及した。職場・友人関係・医療場面にも適用が拡大し、愛着スタイルとメンタルヘルス・パーソナリティ・世代間伝達の関係が広範に研究されている。マインドフルネス介入による愛着不安の緩和効果も注目される。',
-    keyFigures: 'シンディ・ハザン ／ フィリップ・シェイバー ／ マリオ・ミクリンサー ／ キム・バーセロミュー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1037/0022-3514.52.3.511', type: 'academic', label: 'Hazan, C. & Shaver, P. (1987). Romantic love conceptualized as an attachment process — JPSP' },
-      { url: 'https://en.wikipedia.org/wiki/Attachment_in_adults', type: 'reference', label: 'Wikipedia: Attachment in adults — Hazan and Shaver' },
     ],
   },
   {
@@ -50827,6 +50779,102 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.hup.harvard.edu/books/9780674035072', type: 'academic', label: 'Daniel J. Solove (2008) Understanding Privacy, Harvard University Press — 類型論を単著として理論的に展開した書籍' },
       { url: 'https://lawcat.berkeley.edu/record/1109651?ln=en', type: 'academic', label: 'William L. Prosser (1960) "Privacy," California Law Review, Vol. 48, No. 3, pp. 383-423 — ソロブが拡張した4つのプライバシー不法行為の原典' },
       { url: 'https://www.repository.law.indiana.edu/ilj/vol86/iss3/8/', type: 'academic', label: 'M. Ryan Calo (2011) "The Boundaries of Privacy Harm," Indiana Law Journal, Vol. 86, No. 3, pp. 1131-1162 — ソロブ類型論を主観的害・客観的害の区別で補う後続研究' },
+    ],
+  },
+  {
+    id: 'econ-rubin-causal-model-potential-outcomes',
+    discipline: 'economics',
+    title: 'ルービン因果モデル（潜在結果枠組み）——処置と非処置を同時に観測できないという因果推論の根本問題',
+    statement:
+      'ルービン因果モデル（潜在結果枠組み）は、個体iについて処置時の潜在結果Yi(1)と非処置時の潜在結果Yi(0)を想定し、その差を因果効果とする枠組みである。起源はネイマン（1923、ポーランド語。英訳はStatistical Science 5（4）、1990）のランダム化実験だが、一般の処置評価へ拡張したのがルービン（1974、Journal of Educational Psychology 66（5）、688-701頁）である。ホランド（1986、JASA 81（396）、945-960頁）はこれを「ルービン因果モデル」と呼び、個体ではどちらか一方のみ観測できる点を「因果推論の根本問題」と定式化した。個体間で処置が影響しないSUTVA（ルービン、1980）や、共変量で条件付けると割付機構が無視可能になる仮定（傾向スコア：ローゼンバウム＆ルービン、1983）の下でATE・ATTが識別され、インベンス＆ルービン（2015、ケンブリッジ大学出版）の教科書に結実し、2021年ノーベル経済学賞（カード／アングリスト・インベンス）にもつながった。他方、他者の処置が自分の結果に及ぶ干渉はSUTVAを崩し、パールの構造的因果モデルからは割付機構の仮定が暗黙的だとの批判があるほか、外部妥当性や説得力ある割付機構の提示も課題である。中小企業がA/Bテストや研修・昇進の効果を測る際、自ら選んだ者と選ばなかった者を単純比較すると自己選抜と効果を混同するため、妥当な反実仮想を与える割付が欠かせない。',
+    keyFigures: 'ネイマン（1923、ポーランド語論文／英訳1990『On the Application of Probability Theory to Agricultural Experiments. Essay on Principles. Section 9』Statistical Science 5（4）465-472頁）／ルービン（1974『Estimating Causal Effects of Treatments in Randomized and Nonrandomized Studies』Journal of Educational Psychology 66（5）688-701頁／1980 JASAコメントでSUTVAを提示／2015インベンスと共著『Causal Inference for Statistics, Social, and Biomedical Sciences』）／ホランド（1986『Statistics and Causal Inference』JASA 81（396）945-960頁で「ルービン因果モデル」と命名し因果推論の根本問題を提示）／ローゼンバウム（1983ルービンと共著、Biometrika 70（1）で傾向スコアを提示）／インベンス（2015ルービンと共著／2021年ノーベル経済学賞をアングリスト・カードと共同受賞）／対比: パール（構造的因果モデル・因果図の立場から、潜在結果枠組みが割付機構の仮定を暗黙化していると指摘）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://projecteuclid.org/journals/statistical-science/volume-5/issue-4/On-the-Application-of-Probability-Theory-to-Agricultural-Experiments-Essay/10.1214/ss/1177012031.full', type: 'academic', label: 'Splawa-Neyman, J. (1923, Polish original); trans. Dabrowska, D. M. & Speed, T. P. (1990) "On the Application of Probability Theory to Agricultural Experiments. Essay on Principles. Section 9." Statistical Science, 5(4), 465–472 — ランダム化実験における潜在結果の起源を確認。' },
+      { url: 'https://doi.org/10.1037/h0037350', type: 'academic', label: 'Rubin, D. B. (1974) "Estimating Causal Effects of Treatments in Randomized and Nonrandomized Studies." Journal of Educational Psychology, 66(5), 688–701 — 潜在結果枠組みを一般の処置評価へ拡張した基礎論文であることを確認。' },
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/01621459.1986.10478354', type: 'academic', label: 'Holland, P. W. (1986) "Statistics and Causal Inference." Journal of the American Statistical Association, 81(396), 945–960 — 「ルービン因果モデル」の命名と「因果推論の根本問題」の定式化を確認。' },
+      { url: 'https://www.cambridge.org/core/books/abs/causal-inference-for-statistics-social-and-biomedical-sciences/frontmatter/47027940BE981F7B2D8D5AEFC17BBC7F', type: 'academic', label: 'Imbens, G. W. & Rubin, D. B. (2015) Causal Inference for Statistics, Social, and Biomedical Sciences: An Introduction. Cambridge University Press — 潜在結果枠組みを体系化した標準教科書であることを確認。' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2021/summary/', type: 'reference', label: 'The Sveriges Riksbank Prize in Economic Sciences in Memory of Alfred Nobel 2021 — Summary. NobelPrize.org (half to David Card; half jointly to Joshua D. Angrist and Guido W. Imbens) — カード、アングリスト、インベンスへの2021年ノーベル経済学賞授与を確認。' },
+    ],
+  },
+  {
+    id: 'econ-relationship-lending-petersen-rajan-berger-udell',
+    discipline: 'economics',
+    title: 'リレーションシップ・レンディング（関係型融資）——長期関係で蓄積した「ソフト情報」が中小企業の資金調達力を高める仕組み',
+    statement:
+      'リレーションシップ・レンディング（関係型融資）とは、担保や財務諸表などの「ハード情報」に基づく取引型融資と異なり、銀行が長期・複数商品の取引関係で蓄積した「ソフト情報」に基づき、情報が不透明な中小企業へ融資する手法である。ピーターセンとラジャンは1994年の論文「The Benefits of Lending Relationships: Evidence from Small Business Data」（Journal of Finance 49巻1号）で中小企業金融データを用い、関係強化は融資価格の低下よりも融資可能性の拡大として現れると示した。バーガーとユデル（1995、Journal of Business 68巻3号）は関係の長い借り手ほど金利が低く担保要求も少ないと確認した。一方でブート（2000）は、関係型融資が情報独占による「ホールドアップ」問題や軟予算制約のコストを伴うと整理した。日本では金融庁が2003年に地域・中小金融機関向け「リレーションシップバンキングの機能強化に関するアクションプログラム」を策定した一方、ピークとローゼングレン（2005）は業績不振企業への追い貸し（エバーグリーニング）を助長する銀行行動を示し、関係型融資の構造的な限界を示した。中小企業には、取引を一つの金融機関に集中し早期から情報を共有して担当者と信頼関係を築くことが資金調達力を高める一方、ホールドアップを避けるため複数の関係も確保すべき含意がある。',
+    keyFigures: 'ミッチェル・ピーターセン＆ラグラム・ラジャン（1994『The Benefits of Lending Relationships: Evidence from Small Business Data』）／アレン・バーガー＆グレゴリー・ユデル（1995『Relationship Lending and Lines of Credit in Small Firm Finance』）／シャープ（1990、顧客関係の定式化モデルで情報独占によるホールドアップを提示）／ブート（2000、関係型バンキングの理論サーベイ）／ジェレミー・スタイン（2002、階層組織では柔らかい情報の伝達が難しく銀行統合が中小企業金融を細らせると分析）／ジョー・ピーク＆エリック・ローゼングレン（2005、日本の追い貸し批判）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1540-6261.1994.tb04418.x', type: 'academic', label: 'Petersen, M.A. & Rajan, R.G. (1994). "The Benefits of Lending Relationships: Evidence from Small Business Data." The Journal of Finance, 49(1), 3–37. — 関係の強化が融資価格の低下より融資可能性の拡大として現れるという基礎的実証結果を支持' },
+      { url: 'https://ideas.repec.org/a/ucp/jnlbus/v68y1995i3p351-81.html', type: 'academic', label: 'Berger, A.N. & Udell, G.F. (1995). "Relationship Lending and Lines of Credit in Small Firm Finance." The Journal of Business, 68(3), 351–381. — 関係の長い借り手ほど金利が低く担保要求も少ないという価格・非価格効果の実証を支持' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S1042957300902821', type: 'academic', label: 'Boot, A.W.A. (2000). "Relationship Banking: What Do We Know?" Journal of Financial Intermediation, 9(1), 7–25. — 関係型融資のホールドアップ問題・軟予算制約コストと競争環境の関係を整理した理論サーベイとして支持' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2F0002828054825691', type: 'academic', label: 'Peek, J. & Rosengren, E.S. (2005). "Unnatural Selection: Perverse Incentives and the Misallocation of Credit in Japan." American Economic Review, 95(4), 1144–1166. — 日本の銀行による業績不振企業への追い貸し（エバーグリーニング）という関係型融資の限界の実証を支持' },
+      { url: 'https://www.fsa.go.jp/policy/chusho/01.html', type: 'government', label: '金融庁「地域密着型金融（リレーションシップバンキング）の機能強化」（2003年3月公表、中小・地域金融機関向け「リレーションシップバンキングの機能強化に関するアクションプログラム」）— 日本における政策的対応の内容を支持' },
+    ],
+  },
+  {
+    id: 'mgmt-levers-of-control-simons',
+    discipline: 'management',
+    title: 'サイモンズの統制のレバー——信条・境界・診断型・インタラクティブ型の四レバーで革新と統制を両立させる経営統制論',
+    statement:
+      'サイモンズの統制のレバー（Levers of Control）は、ハーバード・ビジネス・スクールのロバート・サイモンズが著書『Levers of Control: How Managers Use Innovative Control Systems to Drive Strategic Renewal』(1995)で提示した経営統制の枠組みで、米国企業への十年間の調査と、『Strategic Management Journal』15巻3号（1994）での新任トップマネジャー10名の追跡調査を土台とする。中核的価値観を伝える信条システム、避けるべきリスクの境界を示す境界システム、重要業績変数を測定し意図した戦略実行を統制する診断型システム、戦略的不確実性について対話を促し創発的学習を引き出すインタラクティブ・システムという四レバーの緊張で、イノベーションと統制を両立させる点が核心である。テシエ＆オトリー（2012）は各レバーの定義の曖昧さと重複を指摘し、ワイドナー（2007）はCFO122名の調査で戦略的不確実性が信条・境界システムの重視や業績測定の診断型・インタラクティブ型どちらの使い方にも結びつくことを示した一方、実証研究はサイモンズも含め大企業や事例分析に偏り、インタラクティブ・レバーの効果を示す証拠は限られる。少人数の中小企業の経営者でも、簡潔な信条と明確な禁止事項、少数の診断指標、一つ二つの戦略的不確実性への対面対話を組み合わせれば、過剰な管理体制なしに実践できる。',
+    keyFigures: 'ロバート・サイモンズ（1991『Strategic orientation and top management attention to control systems』Strategic Management Journal 12(1)／1994『How new top managers use control systems as levers of strategic renewal』Strategic Management Journal 15(3)／1995『Levers of Control: How Managers Use Innovative Control Systems to Drive Strategic Renewal』Harvard Business School Press／1995『Control in an Age of Empowerment』Harvard Business Review 73(2)）／テシエ＆オトリー（2012『A Conceptual Development of Simons\' Levers of Control Framework』Management Accounting Research 23(3)）／ワイドナー（2007『An Empirical Analysis of the Levers of Control Framework』Accounting, Organizations and Society 32(7-8)）／アンリ（2006『Management control systems and strategy: A resource-based perspective』Accounting, Organizations and Society 31(6)）／対比: ウチ（1980『Markets, Bureaucracies, and Clans』Administrative Science Quarterly 25(1)）／マーチャント（『Management Control Systems: Performance Measurement, Evaluation and Incentives』結果／行動／人事・文化的コントロール）／アンソニー（1965『Planning and Control Systems: A Framework for Analysis』）／マルミ＆ブラウン（2008『Management control systems as a package』Management Accounting Research 19(4)）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=257', type: 'academic', label: 'Simons, R. (1995). Levers of Control: How Managers Use Innovative Control Systems to Drive Strategic Renewal. Harvard Business School Press. — 信条・境界・診断型・インタラクティブ型の四レバー枠組みを提示した原典であることを確認。' },
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250150301', type: 'academic', label: 'Simons, R. (1994). How new top managers use control systems as levers of strategic renewal. Strategic Management Journal, 15(3), 169–189. — 新任トップマネジャー10名の追跡調査という実証基盤と四レバーの機能分担を確認。' },
+      { url: 'https://doi.org/10.1016/j.mar.2012.04.003', type: 'academic', label: 'Tessier, S., & Otley, D. (2012). A Conceptual Development of Simons\' Levers of Control Framework. Management Accounting Research, 23(3), 171–185. — 各レバーの定義の曖昧さ・重複という批判を確認。' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0361368207000049', type: 'academic', label: 'Widener, S. K. (2007). An Empirical Analysis of the Levers of Control Framework. Accounting, Organizations and Society, 32(7–8), 757–788. — CFO122名調査による実証結果（戦略的不確実性と信条・境界・診断型・インタラクティブ型の関係）を確認。' },
+      { url: 'https://hbr.org/1995/03/control-in-an-age-of-empowerment', type: 'media', label: 'Simons, R. (1995). Control in an Age of Empowerment. Harvard Business Review, 73(2), 80–88. — 四レバー（診断型・信条・境界・インタラクティブ型コントロール）の実務向け要約を確認。' },
+    ],
+  },
+  {
+    id: 'human-situation-awareness-endsley',
+    discipline: 'human-science',
+    title: 'エンズリーの状況認識（SA）モデル——知覚・理解・予測の三層がつくる動的意思決定の認知基盤',
+    statement:
+      'ミカ・エンズリーの状況認識（Situation Awareness、SA）モデルは、動的環境下の人間の意思決定を、知覚・理解・予測の三層で説明する理論。1988年に提示され、1995年の「Toward a theory of situation awareness in dynamic systems」（『Human Factors』37巻1号32-64頁）で体系化。レベル1は環境要素の知覚、レベル2は目標に関わる意味の理解、レベル3は近未来の予測で、いずれも注意・作業記憶の制約下、目標・メンタルモデル（スキーマ）・自動化された処理に支えられる。同年の姉妹論文（同誌65-84頁）ではシミュレーションを一時停止し質問で測るSAGAT（フリーズプローブ法）を開発・検証。戦闘機コクピットや航空管制の設計研究に起源し、後に医療・運転・プロセス制御・サイバーセキュリティへ応用が広がった。一方でスミス＝ハンコック（1995）は知識でなく「適応的で外部指向的な意識」と再定義、スタントンら（2006）は作業者ごとに異なる分散状況認識論を対置、デッカー＝ホルナゲル（2004）は「SAの喪失」という説明が反証不能な民間モデルに陥り操作者を非難しがちと批判、エンズリー（2015）はこれらを自説の誤読と反論。中小企業の実務では、事故調査や安全管理を「不注意」で終わらせず、何が知覚・理解可能だったかを問い、ダッシュボードや引継ぎチェックリストを理解と予測の支援に設計することが求められる。',
+    keyFigures: 'ミカ・エンズリー（1988 論文提示／1995『Toward a Theory of Situation Awareness in Dynamic Systems』・『Measurement of Situation Awareness in Dynamic Systems』／ジョーンズ共著『Designing for Situation Awareness』第2版（CRC Press）／2015 誤解に反論）／対比: スミス＝ハンコック（1995「適応的で外部指向的な意識」）・スタントンら（2006 分散状況認識）・デッカー＝ホルナゲル（2004 folk model批判）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1518/001872095779049543', type: 'academic', label: 'Endsley, M. R. (1995). "Toward a Theory of Situation Awareness in Dynamic Systems." Human Factors, 37(1), 32-64. — 知覚・理解・予測の三層モデルと、注意・作業記憶・目標・メンタルモデル・自動化という支持機構を提示した基幹論文' },
+      { url: 'https://journals.sagepub.com/doi/10.1518/001872095779049499', type: 'academic', label: 'Endsley, M. R. (1995). "Measurement of Situation Awareness in Dynamic Systems." Human Factors, 37(1), 65-84. — SAGAT（状況認識グローバル評価技法、シミュレーション凍結質問法）の開発と妥当性検証を報告した姉妹論文' },
+      { url: 'https://journals.sagepub.com/doi/10.1518/001872095779049444', type: 'academic', label: 'Smith, K., & Hancock, P. A. (1995). "Situation Awareness Is Adaptive, Externally Directed Consciousness." Human Factors, 37(1), 137-148. — 状況認識を知識でなく適応的・外部指向的な意識として再定義した対抗理論の典拠' },
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/00140130600612762', type: 'academic', label: 'Stanton, N. A., Stewart, R., Harris, D., et al. (2006). "Distributed Situation Awareness in Dynamic Systems: Theoretical Development and Application of an Ergonomics Methodology." Ergonomics, 49(12-13), 1288-1311. — 個々のエージェントが異なる状況認識を持つとする分散状況認識論の典拠' },
+      { url: 'https://link.springer.com/article/10.1007/s10111-003-0136-9', type: 'academic', label: 'Dekker, S. W. A., & Hollnagel, E. (2004). "Human Factors and Folk Models." Cognition, Technology & Work, 6, 79-86. — 「状況認識の喪失」による説明が反証不能な民間モデルに陥りやすいと批判した方法論的典拠' },
+    ],
+  },
+  {
+    id: 'bizlaw-tarasoff-v-regents-duty-to-protect',
+    discipline: 'business-law',
+    title: 'タラソフ対カリフォルニア大学理事会事件——心理療法士に第三者保護義務を認めた判例',
+    statement:
+      'タラソフ対カリフォルニア大学理事会事件は、心理療法士が患者による第三者への暴力を防ぐ義務を負うと認めたカリフォルニア州最高裁判決である。1969年、学生プロセンジット・ポダーは心理学者ローレンス・ムーア博士にタチアナ・タラソフを殺害する意図を告げ、大学警察は一時拘束後に釈放、誰も警告せず同年10月にポダーは彼女を殺害した。1974年の第一次判決（13 Cal.3d 177）は警告義務を認め、1976年の再審理判決（17 Cal.3d 425、551 P.2d 334）でトブライナー裁判官執筆の多数意見は「秘密保護の特権は公共の危険が始まる所で終わる」と述べ、患者が他者への重大な危険を示すと判断した療法士は合理的注意で予見可能な被害者を保護する義務を負うとした。クラーク裁判官は治療関係の信頼崩壊を理由に反対した。後にカリフォルニア州民法43.92条（1985年制定）が識別可能な被害者への具体的脅迫を被害者本人・警察へ伝達すれば免責されると定め、1980年のトンプソン対アラメダ郡事件（27 Cal.3d 741）は対象不特定の脅迫には及ばないとの限定を加えた。ストーン（1976 Harvard Law Review 90巻）は治療回避という副作用を警告、後の実証研究は安全性低下という予測を支持する結果を報告した。中小企業でも産業医やカウンセラーは守秘義務を負うが、識別可能な相手への暴力の脅威を把握した際は開示が許されるため、通報手順を事前に整備すべきである。',
+    keyFigures: 'トブライナー（1976 タラソフ対カリフォルニア大学理事会事件・多数意見執筆）／クラーク（1976 同事件・反対意見）／ストーン（1976『The Tarasoff Decisions: Suing Psychotherapists to Safeguard Society』Harvard Law Review 90巻）／エドワーズ（2014『Doing Their Duty』Journal of Law and Economics 57巻2号・実証研究）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://law.justia.com/cases/california/supreme-court/3d/17/425.html', type: 'government', label: 'Tarasoff v. Regents of University of California, 17 Cal.3d 425, 551 P.2d 334, 131 Cal.Rptr. 14 (Cal. 1976) — 再審理判決全文（トブライナー執筆の多数意見・クラーク反対意見・保護義務の内容）を確認' },
+      { url: 'https://caselaw.findlaw.com/court/ca-supreme-court/1829929.html', type: 'government', label: 'Tarasoff v. Regents of University of California, 13 Cal.3d 177, 529 P.2d 553 (Cal. 1974) — 第一次（警告義務）判決全文を確認' },
+      { url: 'https://law.justia.com/codes/california/code-civ/division-1/part-2/section-43-92/', type: 'government', label: 'California Civil Code Section 43.92（2025 California Code；1985年制定・2012年SB1134により改正）— 心理療法士の警告・保護義務に関する免責規定の現行条文を確認' },
+      { url: 'https://www.jstor.org/stable/1340158', type: 'academic', label: 'Alan A. Stone (1976) "The Tarasoff Decisions: Suing Psychotherapists to Safeguard Society," Harvard Law Review, Vol. 90, p.358 — タラソフ判決への初期の学術的批判（治療回避という副作用の指摘）を確認' },
+      { url: 'https://doi.org/10.1086/675668', type: 'academic', label: 'Griffin Sims Edwards (2014) "Doing Their Duty: An Empirical Analysis of the Unintended Effect of Tarasoff v. Regents on Homicidal Activity," Journal of Law and Economics, Vol. 57, No. 2 — 警告義務法と殺人率上昇の関連を検証した実証研究を確認' },
+    ],
+  },
+  {
+    id: 'infosoc-chinese-room-argument-searle',
+    discipline: 'information-sociology',
+    title: 'サールの中国語の部屋（Chinese Room Argument）——構文操作は意味理解を保証しないとする「強いAI」批判',
+    statement:
+      '哲学者ジョン・サール（John Searle）が論文「Minds, Brains, and Programs」（Behavioral and Brain Sciences 3(3)、1980年、pp.417-424、公開査読コメント付き）で示した思考実験。中国語を理解しない人物が、英語で書かれた規則書だけを頼りに部屋の中で中国語の記号を操作し、外部からは中国語の母語話者と区別できない応答を返す——しかし本人は意味を一切理解していない。ここからサールは、統辞（構文的な記号操作）の実行だけでは意味論（理解・志向性）は生じず、チューリング型テスト合格は心の証拠にならないとして、「強いAI」（適切なプログラムを走らせるコンピュータそのものが心を持つとする立場）を「弱いAI」（コンピュータは思考を道具的に模擬するに過ぎないとする立場）と対比して否定した。システム全体説・ロボット説・脳シミュレータ説など主要な反論に自ら反駁したが、システム全体説への反駁は直観の再主張に留まり論点先取だとの批判や、生物学的自然主義自体の不明確さも指摘され、ハーナッド（Harnad）は記号接地問題として意味の外的根拠付けの必要性を別角度から論じた。近年は大規模言語モデルの流暢な応答が「理解」を伴うかという論争にこの議論が引用される。中小企業の実務では、生成AIの出力がいかに自然でも理解の保証にはならない点を踏まえ、最終判断と説明責任は人が担い、出力を検証する運用が欠かせない。',
+    keyFigures: 'チューリング（1950『Computing Machinery and Intelligence』Mind誌／模倣ゲームの提唱者でサールが反証を試みた相手）／ジョン・サール（1980『Minds, Brains, and Programs』Behavioral and Brain Sciences／『Minds, Brains and Science: The 1984 Reith Lectures』Harvard University Press／1990『Is the Brain\'s Mind a Computer Program?』Scientific American）／ハーナッド（1990『The Symbol Grounding Problem』Physica D — 記号接地問題として批判的に継承）／ポール＆パトリシア・チャーチランド（1990『Could a Machine Think?』Scientific American同号でサールに応答）／デネット＆ホフスタッター（1981編著『The Mind\'s I』でサール論文に反論的注釈を付す）／対比: ベンダー＆コラー（2020『Climbing towards NLU』ACL — 大規模言語モデルの「理解」論争への引用）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.cambridge.org/core/journals/behavioral-and-brain-sciences/article/abs/minds-brains-and-programs/DC644B47A4299C637C89772FACC2706A', type: 'academic', label: 'Searle, J. R. (1980). Minds, Brains, and Programs. Behavioral and Brain Sciences, 3(3), pp.417-424 (target article; with Open Peer Commentary to p.457) — 中国語の部屋論証の原典、strong AI/weak AIの定義を確認' },
+      { url: 'https://plato.stanford.edu/entries/chinese-room/', type: 'reference', label: 'Cole, D. The Chinese Room Argument. The Stanford Encyclopedia of Philosophy — systems reply・robot reply・brain simulator replyなど標準的反論と、その限界・批判の整理を確認' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0167278990900876', type: 'academic', label: 'Harnad, S. (1990). The Symbol Grounding Problem. Physica D: Nonlinear Phenomena, 42(1-3), pp.335-346 — 記号接地問題としての批判的継承を確認' },
+      { url: 'https://www.scientificamerican.com/article/is-the-brains-mind-a-computer-progr/', type: 'media', label: 'Searle, J. R. (1990). Is the Brain\'s Mind a Computer Program? Scientific American, 262(1), pp.25-31 — 一般向け解説と、同号のChurchland夫妻による反論記事との論争構図を確認' },
+      { url: 'https://aclanthology.org/2020.acl-main.463/', type: 'academic', label: 'Bender, E. M., & Koller, A. (2020). Climbing towards NLU: On Meaning, Form, and Understanding in the Age of Data. Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics, pp.5185-5198 — 大規模言語モデルの「理解」論争における現代的引用を確認' },
     ],
   },
 ];

@@ -37,7 +37,6 @@ aliases:
 - [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか]] — 同じ思想家
 - [[infosoc-new-governors-online-speech-klonick|新しい統治者論——プラットフォームを独自の規則・手続・文化でオンライン言論を統治する私的統治システムとみなす議論]] — 同じ思想家
 - [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 同じ思想家
-- [[infosoc-ambient-awareness|アンビエント・アウェアネス]] — 同分野の近傍
 - [[infosoc-main-model-credibility|MAINモデル（技術的特性が信憑性判断に与える影響のヒューリスティック・モデル）]] — 同分野の近傍
 
 ## 関連

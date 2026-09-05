@@ -35,6 +35,7 @@ aliases:
 - [[human-self-construal-markus-kitayama|自己解釈理論——相互独立的・相互協調的自己観と文化的認知の基盤]] — 語彙が近い
 - [[human-possible-selves-markus|可能自己理論——なりたい自己・なりうる自己の動機づけ機能]] — 同じ思想家
 - [[human-negative-priming|負のプライミング——無視した刺激への反応が遅れる]] — 同分野の近傍
+- [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

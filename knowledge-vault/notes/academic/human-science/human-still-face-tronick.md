@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: Still-face experiment — Edward Tronick, infant socio-emotional regulation, interactional reciprocity, repair](https://en.wikipedia.org/wiki/Still_face_experiment) `リファレンス`
 
 ## 関連概念
-- [[human-attachment-styles-hazan-shaver|成人の愛着スタイル——乳児期の愛着理論の恋愛関係への拡張]] — 同じ思想家
+- [[human-adult-attachment-hazan-shaver|成人愛着スタイル（ハザン＝シェイバー）——乳児期の愛着理論を恋愛関係へ拡張し、安定・不安・回避の個人差で親密な関係を説明する]] — 同じ思想家
 - [[human-harlow-contact-comfort|ハーロウの代理母実験——「接触の安らぎ」と愛着]] — 同じ思想家
 - [[human-mentalizing-fonagy-bateman|メンタライゼーション理論——フォナギーの心の理論と境界性パーソナリティ障害への治療的介入]] — 同じ思想家
 - [[human-strange-situation-ainsworth|ストレンジ・シチュエーション法——乳児の愛着の質を測定する標準化手続き]] — 同じ思想家

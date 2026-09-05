@@ -2064,7 +2064,6 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経営学 | 組織注意理論 | 注意配分・規制による戦略的行動決定・カーネギー学派継承（Ocasio / Simon / Cho & Hambrick） |
 | 情報社会学 | アルゴリズムキュレーション理論 | プラットフォームアルゴリズムによるコンテンツ選別・フィルターバブル（Gillespie / Bucher / Pariser） |
 | 経済学 | 金融政策のトリレンマ | 固定為替・資本移動自由・金融政策独立の不可能三角形（Mundell / Fleming / Obstfeld & Taylor / Rey） |
-| 人間科学 | 愛着スタイル理論 | 成人ロマンティック関係への愛着理論拡張・4カテゴリーモデル（Hazan & Shaver / Bartholomew & Horowitz） |
 | 経営法学 | 詐害行為取消法理 | 債権者害意的財産移転の取消・UFTA/UVTA・債権者交渉理論（Baird & Jackson / Clark / Warren） |
 | 経営学 | 戦略グループ理論 | 産業内類似戦略企業群・移動障壁・業績差異（Hunt / Porter / Caves & Porter / Cool & Schendel） |
 | 経営学 | 組織両利き理論 | 探索と活用の同時追求・構造的/文脈的両利き（March / Tushman & O'Reilly / Gibson & Birkinshaw） |
@@ -3296,7 +3295,6 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経済学 | 不完備契約理論——残余コントロール権の配分としての所有権 | オリバー・ハート ／ サンフォード・グロスマン ／ ジョン・ムーア ／ ベント・ホルムストローム |
 | 経済学 | ロックインとスイッチングコスト——乗り換え費用が生む顧客の囲い込み | カール・シャピロ ／ ハル・ヴァリアン ／ ポール・クレンペラー ／ ジョセフ・ファレル |
 | 経営学 | 戦略的選択論——環境決定論に抗する意思決定者の主体的選択 | ジョン・チャイルド ／ トム・バーンズ ／ デレク・プフ ／ カール・ワイク |
-| 人間科学 | 成人の愛着スタイル——乳児期の愛着理論の恋愛関係への拡張 | シンディ・ヘイザン ／ フィリップ・シェイヴァー ／ ジョン・ボウルビィ ／ メアリー・エインズワース |
 | 商法 | 製造物厳格責任——欠陥そのものに基づく製造者の無過失責任 | ロジャー・トレイナー ／ ウィリアム・プロッサー ／ ジョージ・プリースト ／ ジョン・ウェイド |
 | 情報社会学 | サイボーグ宣言——機械と有機体の混淆が脱構築する近代の二項対立 | ダナ・ハラウェイ ／ キャサリン・ヘイルズ ／ サディ・プラント ／ ブルーノ・ラトゥール |
 | 経済学 | ホールドアップ問題——関係特殊投資の搾取懸念が過少投資を招く | オリバー・ウィリアムソン ／ ベンジャミン・クライン ／ オリバー・ハート ／ ジョン・ムーア |
@@ -4188,7 +4186,7 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 経済学 | 複占・寡占市場の均衡理論——クールノー均衡とベルトラン均衡の対比 | アントワーヌ・オーギュスタン・クールノー ／ ジョセフ・ルイ・フランソワ・ベルトラン ／ フランシス・エッジワース ／ ハインリッヒ・フォン・スタッケルバーグ |
 | 経済学 | 資本資産価格モデル（CAPM）と株式リターンのリスク・リターン関係 | ウィリアム・シャープ ／ ジョン・リントナー ／ ハリー・マーコビッツ ／ ユージン・ファーマ |
 | 経営学 | 資源依存理論と組織間権力関係のマネジメント（ファーファー＝サランシク） | ジェフリー・ファーファー ／ ジェラルド・サランシク ／ マーク・グラノヴェター ／ デービッド・ウェットン |
-| 人間科学 | 成人愛着スタイルとロマンティック関係の愛着理論（ハザン＝シェイバー） | シンシア・ハザン ／ フィリップ・シェイバー ／ キム・バルソロミュー ／ マリオ・ミクリンサー |
+| 人間科学 | 成人愛着スタイル（ハザン＝シェイバー）——乳児期の愛着理論を恋愛関係へ拡張し、安定・不安・回避の個人差で親密な関係を説明する | シンディ・ハザン（1987 JPSP 論文の第一著者） ／ フィリップ・シェイバー（1987 共著／ミクリンサーとの共同研究） ／ キム・バーソロミュー＆レナード・ホロウィッツ（1991 四類型モデル） |
 | 商法 | デジタルプラットフォームと独占禁止法——市場支配力の現代的定義と規制 | マルグレーテ・ベステアー ／ ティム・ウー ／ リナ・カーン ／ 岡田羊祐 |
 | 情報社会学 | 市民ジャーナリズムとネットワーク化されたニュース生産——参加・速報・正確性の緊張 | ジェフ・ジャービス ／ J・D・ラサー ／ ダン・ギルモア ／ ティム・バーナーズ＝リー |
 | 経済学 | 人口転換理論と少子化の経済学——出生率低下の人口学的・経済的メカニズム | ワーレン・トンプソン ／ フランク・ノートシュタイン ／ ロン・レスタエー ／ ゲーリー・ベッカー |
@@ -4304,7 +4302,6 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 情報社会学 | サイバーセキュリティ・ガバナンスとマルチステークホルダー・モデル | ミルトン・ミューラー ／ ジョセフ・ナイ ／ ブルース・シュナイアー ／ ジャン・ランセロット |
 | 商法 | 製造物責任（PL法）の厳格責任法理と欠陥類型 | ロジャー・トレイナー ／ ウィリアム・プロッサー ／ テリー・ドブス ／ 升田純 |
 | 商法 | 国際倒産法とUNCITRALモデル法（クロスボーダー・インソルベンシー） | ジェイ・ウェストブルック ／ ボブ・スミス ／ 山本和彦 ／ ハリー・ガブリエル |
-| 人間科学 | 成人愛着スタイル（ハザン＆シェイバー）と親密関係の研究 | シンディ・ハザン ／ フィリップ・シェイバー ／ マリオ・ミクリンサー ／ キム・バーセロミュー |
 | 経営学 | 両利きのリーダーシップとパラドックス・マインドセット（タシュマン） | マイケル・タシュマン ／ チャールズ・オライリー ／ ウェンディ・スミス ／ マリアン・レウィス |
 | 情報社会学 | 計算論的ジャーナリズムとデータ・ドリブン報道の社会学 | ニコラス・ダイアコポロス ／ チャーリー・ベケット ／ デリック・フライラー ／ スーザン・ブラッドショー |
 | 情報社会学 | デジタル格差と情報不平等の社会的成層論 | ジャン・ファン・ダイク ／ ノーリス・ペッパ ／ エスター・ヘルグソン ／ モニカ・ビッカー |
@@ -4468,5 +4465,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 人間科学 | 愛の三角理論——親密さ・情熱・コミットメントの3要素とブランド・ラブへの応用 | ロバート・スターンバーグ（1986 Psychological Review／1997 European Journal of Social Psychology／1998『Love Is a Story』） ／ ミシェル・アッカー＆マーク・デイヴィス（1992） ／ ピョートル・ソロコフスキら（2021・25か国調査） |
 | 商法 | ヴィンセント対レイク・エリー運送事件——緊急時に他人の財産を使うことは許されるが、生じた損害は賠償しなければならないという「不完全な特権」の法理 | フランシス・H・ボーレン（1926『Incomplete Privilege to Inflict Intentional Invasions of Interests of Property and Personality』Harvard Law Review 39巻307頁） ／ グレゴリー・キーティング（2005『Property Right and Tortious Wrong in Vincent v. Lake Erie』Issues in Legal Scholarship 5巻2号） ／ スティーブン・シュガーマン（2005、同号所収の関連論文） |
 | 情報社会学 | ソロブのプライバシー類型論——プライバシー侵害を情報収集・情報処理・情報拡散・侵入の四群十六類型に分ける枠組み | ダニエル・J・ソロブ（2002『Conceptualizing Privacy』／2006『A Taxonomy of Privacy』／2008『Understanding Privacy』） ／ ウィリアム・L・プロッサー（1960『Privacy』・4類型の不法行為論） ／ サミュエル・D・ウォーレン＆ルイス・D・ブランダイス（1890『The Right to Privacy』） |
+| 経済学 | ルービン因果モデル（潜在結果枠組み）——処置と非処置を同時に観測できないという因果推論の根本問題 | ネイマン（1923、ポーランド語論文／英訳1990『On the Application of Probability Theory to Agricultural Experiments. Essay on Principles. Section 9』Statistical Science 5（4）465-472頁） ／ ルービン（1974『Estimating Causal Effects of Treatments in Randomized and Nonrandomized Studies』Journal of Educational Psychology 66（5）688-701頁／1980 JASAコメントでSUTVAを提示／2015インベンスと共著『Causal Inference for Statistics, Social, and Biomedical Sciences』） ／ ホランド（1986『Statistics and Causal Inference』JASA 81（396）945-960頁で「ルービン因果モデル」と命名し因果推論の根本問題を提示） |
+| 経済学 | リレーションシップ・レンディング（関係型融資）——長期関係で蓄積した「ソフト情報」が中小企業の資金調達力を高める仕組み | ミッチェル・ピーターセン＆ラグラム・ラジャン（1994『The Benefits of Lending Relationships: Evidence from Small Business Data』） ／ アレン・バーガー＆グレゴリー・ユデル（1995『Relationship Lending and Lines of Credit in Small Firm Finance』） ／ シャープ（1990、顧客関係の定式化モデルで情報独占によるホールドアップを提示） |
+| 経営学 | サイモンズの統制のレバー——信条・境界・診断型・インタラクティブ型の四レバーで革新と統制を両立させる経営統制論 | ロバート・サイモンズ（1991『Strategic orientation and top management attention to control systems』Strategic Management Journal 12(1)／1994『How new top managers use control systems as levers of strategic renewal』Strategic Management Journal 15(3)／1995『Levers of Control: How Managers Use Innovative Control Systems to Drive Strategic Renewal』Harvard Business School Press／1995『Control in an Age of Empowerment』Harvard Business Review 73(2)） ／ テシエ＆オトリー（2012『A Conceptual Development of Simons' Levers of Control Framework』Management Accounting Research 23(3)） ／ ワイドナー（2007『An Empirical Analysis of the Levers of Control Framework』Accounting, Organizations and Society 32(7-8)） |
+| 人間科学 | エンズリーの状況認識（SA）モデル——知覚・理解・予測の三層がつくる動的意思決定の認知基盤 | ミカ・エンズリー（1988 論文提示／1995『Toward a Theory of Situation Awareness in Dynamic Systems』・『Measurement of Situation Awareness in Dynamic Systems』／ジョーンズ共著『Designing for Situation Awareness』第2版（CRC Press）／2015 誤解に反論） ／ 対比: スミス＝ハンコック（1995「適応的で外部指向的な意識」）・スタントンら（2006 分散状況認識）・デッカー＝ホルナゲル（2004 folk model批判） |
+| 商法 | タラソフ対カリフォルニア大学理事会事件——心理療法士に第三者保護義務を認めた判例 | トブライナー（1976 タラソフ対カリフォルニア大学理事会事件・多数意見執筆） ／ クラーク（1976 同事件・反対意見） ／ ストーン（1976『The Tarasoff Decisions: Suing Psychotherapists to Safeguard Society』Harvard Law Review 90巻） |
+| 情報社会学 | サールの中国語の部屋（Chinese Room Argument）——構文操作は意味理解を保証しないとする「強いAI」批判 | チューリング（1950『Computing Machinery and Intelligence』Mind誌／模倣ゲームの提唱者でサールが反証を試みた相手） ／ ジョン・サール（1980『Minds, Brains, and Programs』Behavioral and Brain Sciences／『Minds, Brains and Science: The 1984 Reith Lectures』Harvard University Press／1990『Is the Brain's Mind a Computer Program?』Scientific American） ／ ハーナッド（1990『The Symbol Grounding Problem』Physica D — 記号接地問題として批判的に継承） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。

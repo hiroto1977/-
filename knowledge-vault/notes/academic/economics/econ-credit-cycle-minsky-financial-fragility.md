@@ -40,7 +40,7 @@ aliases:
 - [[econ-endogenous-money-post-keynesian-moore|内生的貨幣論——ムーアの信用貨幣観と中央銀行の利子率コントロール]] — 同じ思想家
 - [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 同じ思想家
 - [[econ-hot-money-flows-kindleberger|ホットマネーと国際資本移動——投機的資本フローの不安定化効果]] — 同じ思想家
-- [[econ-credit-channel-monetary-transmission|金融政策伝達の信用チャネル]] — 同分野の近傍
+- [[econ-minsky-moment|ミンスキー・モーメント（金融不安定性仮説）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

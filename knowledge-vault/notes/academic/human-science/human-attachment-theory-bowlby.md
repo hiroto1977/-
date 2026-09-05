@@ -31,7 +31,6 @@ John Bowlby ／ Mary Dinsmore Salter Ainsworth ／ Mary Main
 - [Mary Ainsworth Strange Situation Experiment — Simply Psychology](https://www.simplypsychology.org/mary-ainsworth.html) `学術`
 
 ## 関連概念
-- [[human-attachment-style-theory|愛着スタイル理論]] — 同じ思想家
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — 出典を共有
 - [[human-attribution-theory|帰属理論]] — 出典を共有
 - [[human-big-five|ビッグファイブ（5因子性格モデル）]] — 出典を共有
@@ -41,6 +40,7 @@ John Bowlby ／ Mary Dinsmore Salter Ainsworth ／ Mary Main
 - [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — 出典を共有
 - [[human-object-permanence|対象の永続性（Object Permanence）]] — 出典を共有
 - [[human-opponent-process|対抗過程理論（Opponent-Process Theory of Acquired Motivation）]] — 出典を共有
+- [[human-planned-behavior|計画的行動理論（TPB）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

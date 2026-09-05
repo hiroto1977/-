@@ -34,7 +34,7 @@ aliases:
 - [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 同じ思想家
 - [[human-self-efficacy-performance-bandura|自己効力感と目標設定・パフォーマンスの社会認知理論（バンデューラ）]] — 同じ思想家
 - [[human-bias-blind-spot|バイアスの盲点]] — 同分野の近傍
-- [[human-attachment-adult-hazan-shaver|成人愛着スタイル（ハザン＆シェイバー）と親密関係の研究]] — 同分野の近傍
+- [[human-cultural-self-construal-markus|文化的自己観（マーカス＆北山）]] — 同分野の近傍
 - [[human-metacognition|メタ認知（Metacognition）]] — 同分野の近傍
 
 ## 関連

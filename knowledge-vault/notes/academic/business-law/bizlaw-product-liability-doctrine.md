@@ -45,7 +45,7 @@ John W. Wade（リスク・ユーティリティ・テスト開発者） ／ Geo
 - [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 出典を共有
 - [[bizlaw-internal-affairs-doctrine|内部事項の法理（Internal Affairs Doctrine／インターナル・アフェアーズ・ドクトリン）——会社の内部関係は設立準拠州の法で規律されるという抵触法原則]] — 出典を共有
 - [[bizlaw-appraisal-rights-doctrine|株式買取請求権の法理]] — 出典を共有
-- [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]] — 出典を共有
+- [[human-intersectionality-theory|インターセクショナリティ理論（交差性理論）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

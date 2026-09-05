@@ -2,7 +2,7 @@
 title: "jstor.org"
 type: source-domain
 host: "jstor.org"
-cite_count: 148
+cite_count: 149
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jstor.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **148 件**（学術 147 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **149 件**（学術 148 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -28,6 +28,7 @@ tags:
 - [[bizlaw-promissory-estoppel-reliance|約束的禁反言法理]] — Fuller&Perdue(1936)TheRelianceInterestinContractDamages—46YaleL.J.52
 - [[bizlaw-renvoi|反致（レンヴォイ／renvoi）——外国法指定が抵触規則ごと及び法廷地法へ送り返される法理]] — ErnestG.Lorenzen,"The'Renvoi'TheoryandtheApplicationofForeignLaw,"Col…
 - [[bizlaw-statute-of-frauds|詐欺防止法]] — Fuller&Perdue,"TheRelianceInterestinContractDamages"YaleLawJournal(19…
+- [[bizlaw-tarasoff-v-regents-duty-to-protect|タラソフ対カリフォルニア大学理事会事件——心理療法士に第三者保護義務を認めた判例]] — AlanA.Stone(1976)"TheTarasoffDecisions:SuingPsychotherapiststoSafegua…
 - [[bizlaw-trust-fund-doctrine|信託基金の法理（trust fund doctrine／資本＝債権者のための信託基金）——会社資本は債権者のための信託財産とみる古典法理]] — EdwinS.Hunt,"TheTrustFundTheoryandSomeSubstitutesforIt,"TheYaleLawJou…
 - [[bizlaw-vincent-v-lake-erie-private-necessity|ヴィンセント対レイク・エリー運送事件——緊急時に他人の財産を使うことは許されるが、生じた損害は賠償しなければならないという「不完全な特権」の法理]] — FrancisH.Bohlen,"IncompletePrivilegetoInflictIntentionalInvasionsofIn…
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — Alexander,S.S.(1952)EffectsofaDevaluationonaTradeBalance—IMFStaffPape…

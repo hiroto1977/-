@@ -2,28 +2,28 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 650
+entry_count: 647
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（650件）
+# 学習パス — 学術概念／人間科学（647件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 140）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 144）
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 103）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
-- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 31）
 - [[human-bias-blind-spot|バイアスの盲点]]（接続 30）
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 30）
 - [[human-attribution-theory|帰属理論]]（接続 29）
-- [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 28）
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 27）
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 27）
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 26）
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 25）
+- [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 25）
 - [[human-cognitive-appraisal|認知的評価理論（感情）]]（接続 25）
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 25）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 25）
@@ -213,11 +213,13 @@ tags:
 - 1986年: [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]]
 - 1986年: [[human-terror-management|存在脅威管理理論（恐怖管理理論）]]
 - 1986年: [[human-triangular-theory-of-love-sternberg|愛の三角理論——親密さ・情熱・コミットメントの3要素とブランド・ラブへの応用]]
+- 1987年: [[human-adult-attachment-hazan-shaver|成人愛着スタイル（ハザン＝シェイバー）——乳児期の愛着理論を恋愛関係へ拡張し、安定・不安・回避の個人差で親密な関係を説明する]]
 - 1987年: [[human-object-permanence|対象の永続性（Object Permanence）]]
 - 1988年: [[human-allostasis|アロスタシス（Allostasis）]]
 - 1988年: [[human-allostatic-load-model|アロスタティック負荷モデル（McEwen・Stellar）]]
 - 1988年: [[human-cognitive-flexibility-theory|認知的柔軟性理論]]
 - 1988年: [[human-self-evaluation-maintenance|自己評価維持モデル（SEM）]]
+- 1988年: [[human-situation-awareness-endsley|エンズリーの状況認識（SA）モデル——知覚・理解・予測の三層がつくる動的意思決定の認知基盤]]
 - 1988年: [[human-status-quo-bias|現状維持バイアス]]
 - 1989年: [[human-cognitive-apprenticeship|認知的徒弟制]]
 - 1989年: [[human-compromise-effect|妥協効果（極端回避性）]]
@@ -310,7 +312,6 @@ tags:
 ## 第 3 部 — 年代情報のない項目
 - [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]]
 - [[human-acquired-needs-theory|獲得欲求理論]]
-- [[human-adult-attachment-hazan-shaver|成人愛着スタイルとロマンティック関係の愛着理論（ハザン＝シェイバー）]]
 - [[human-affect-heuristic-slovic|感情ヒューリスティック——良い悪いの感じが判断と意思決定を導く近道]]
 - [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]]
 - [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]]
@@ -328,10 +329,6 @@ tags:
 - [[human-appraisal-theory-of-emotion|感情の評価理論]]
 - [[human-approach-avoidance-elliot|接近回避動機——望ましいものへの接近と望ましくないものの回避の二系統]]
 - [[human-aristotle-illusion|アリストテレスの錯覚——指を交差させると一つの物が二つに感じる]]
-- [[human-attachment-adult-hazan-shaver|成人愛着スタイル（ハザン＆シェイバー）と親密関係の研究]]
-- [[human-attachment-style-theory|愛着スタイル理論]]
-- [[human-attachment-styles-hazan-shaver|成人の愛着スタイル——乳児期の愛着理論の恋愛関係への拡張]]
-- [[human-attachment-theory-adult|成人愛着理論]]
 - [[human-attention-restoration|注意回復理論（ART）：自然環境による指向性注意の回復メカニズム]]
 - [[human-attentional-blink-raymond|注意の瞬き——連続提示で第二の標的の検出が一時的に低下する]]
 - [[human-autobiographical-memory-conway|コンウェイの自己記憶システム（SMS）と自伝的記憶の階層構造モデル]]

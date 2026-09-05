@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[human-schema-therapy-young-maladaptive|スキーマ療法——ヤングの早期不適応スキーマ理論と人格障害・慢性うつへの統合的アプローチ]] — 語彙が近い
 - [[infosoc-media-materialism-kittler|キットラーのメディア唯物論——技術メディアが我々の状況を規定する]] — 同じ思想家
-- [[human-rumination-response-styles-nolen-hoeksema|反すう反応スタイル理論——ノーレン＝ホークセマの抑うつ的反すうと気分障害の維持]] — 同分野の近傍
+- [[human-hyperbolic-discounting|双曲割引]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

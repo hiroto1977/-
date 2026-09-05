@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 662
+entry_count: 663
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（662件）
+# 学習パス — 学術概念／経営学（663件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -22,8 +22,8 @@ tags:
 - [[mgmt-csr|企業の社会的責任（CSR）]]（接続 24）
 - [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]]（接続 23）
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 23）
-- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 23）
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 23）
+- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 22）
 - [[mgmt-managerial-cognition|経営者認知理論]]（接続 22）
 - [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]]（接続 22）
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 22）
@@ -95,6 +95,7 @@ tags:
 - 1964年: [[mgmt-thomas-kilmann-conflict-modes|トーマス＝キルマンのコンフリクト対処モード（TKI）——対立行動を自己主張性と協調性の二軸で五類型に分ける枠組み]]
 - 1965年: [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]]
 - 1965年: [[mgmt-leavitt-diamond|リービットのダイヤモンド]]
+- 1965年: [[mgmt-levers-of-control-simons|サイモンズの統制のレバー——信条・境界・診断型・インタラクティブ型の四レバーで革新と統制を両立させる経営統制論]]
 - 1965年: [[mgmt-liability-of-newness|新しさの負債（Liability of Newness）]]
 - 1965年: [[mgmt-organizational-ecology|組織エコロジー（Organizational Ecology）]]
 - 1965年: [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]]

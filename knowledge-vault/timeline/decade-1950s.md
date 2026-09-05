@@ -2,14 +2,14 @@
 title: "1950年代"
 type: timeline-decade
 decade: 1950
-entry_count: 110
+entry_count: 111
 tags:
   - timeline
 ---
 
-# 1950年代 — 110 件
+# 1950年代 — 111 件
 
-- [[year-1950|1950年]]（20件）
+- [[year-1950|1950年]]（21件）
 - [[year-1951|1951年]]（5件）
 - [[year-1952|1952年]]（5件）
 - [[year-1953|1953年]]（10件）

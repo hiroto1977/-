@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経営学"
 type: flashcard-deck
 deck_key: "academic-management"
-card_count: 662
+card_count: 663
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経営学（662枚）
+# フラッシュカード — 学術概念／経営学（663枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -648,6 +648,8 @@ tags:
   - **A:** 正統性理論（Legitimacy Theory）は、組織が社会からの承認（正統性）を獲得・維持・修復するプロセスを分析する組織理論であり、ダウリングとフェファー（1975）が組織の正統性と組織存続の関連を理論化したことに始まる。（→ [[mgmt-legitimacy-theory-suchman-dowling]]）
 - **Q:** レベル5リーダーシップ
   - **A:** ジム・コリンズが2001年の著書『ビジョナリーカンパニー2 飛躍の法則（Good to Great）』および同名のHBR論文「Level 5 Leadership: The Triumph of Humility and Fierce Resolve」で提示した、「良い」企業から「偉大」な企業へ持続的に飛躍した企業の実証研究から見出された逆説的なリーダー類型。（→ [[mgmt-level-5-leadership]]）
+- **Q:** サイモンズの統制のレバー——信条・境界・診断型・インタラクティブ型の四レバーで革新と統制を両立させる経営統制論
+  - **A:** サイモンズの統制のレバー（Levers of Control）は、ハーバード・ビジネス・スクールのロバート・サイモンズが著書『Levers of Control: How Managers Use Innovative Control Systems to Drive Strategic Renewal』(1995)で提示した経営統制の枠組みで、米国企業への十年間の調査と、『Strategic Management Journal』1…（→ [[mgmt-levers-of-control-simons]]）
 - **Q:** レヴィンの変革モデル（解凍・変革・再凍結）
   - **A:** 組織や集団の計画的変革を3つの段階で捉える、組織開発の古典的モデル。(1)解凍（Unfreeze）は、既存のやり方・態度・行動を支える均衡を崩し、変化の必要性を認識させて変化を受け入れる準備をする段階。(2)変革（Change／Move）は、新しい行動・価値観・やり方へ移行する段階。（→ [[mgmt-lewin-change]]）
 - **Q:** 外国性の不利益（Liability of Foreignness, LOF）——多国籍企業が外国市場で現地企業より余分に負う社会的コスト

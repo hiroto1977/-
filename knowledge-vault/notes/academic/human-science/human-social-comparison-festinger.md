@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-social-comparison-social-media|ソーシャルメディアにおける社会比較と主観的幸福感]] — 語彙が近い
-- [[human-social-comparison-theory-festinger|社会比較理論と自己評価プロセスの社会心理学（フェスティンガー）]] — 語彙が近い
+- [[human-social-comparison-theory-festinger|社会比較理論と自己評価プロセスの社会心理学（フェスティンガー）]] — 同じ思想家
 - [[infosoc-selective-exposure|選択的接触理論]] — 同じ思想家
 - [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]] — 同じ思想家
 - [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]] — 同じ思想家

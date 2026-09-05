@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／ビジネス法務"
 type: flashcard-deck
 deck_key: "academic-business-law"
-card_count: 693
+card_count: 694
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／ビジネス法務（693枚）
+# フラッシュカード — 学術概念／ビジネス法務（694枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -1262,6 +1262,8 @@ tags:
   - **A:** タグアロング（tag-along right / co-sale right）とは、支配株主が第三者に株式を売却する際に、少数株主が同一条件で売却に参加できる権利であり、少数株主の出口（exit）を保護する条項である。（→ [[bizlaw-tag-along-drag-along]]）
 - **Q:** タグアロング権・ドラッグアロング権
   - **A:** ベンチャー投資契約における株主間の権利調整条項。タグアロング権は少数株主が支配株主と同条件で売却参加できる共同売却権、ドラッグアロング権は多数株主がM&A時に少数株主へ売却を強制できる権利。KaplanとStrömbergが実証的に体系化した。（→ [[bizlaw-tag-along-drag-along-rights]]）
+- **Q:** タラソフ対カリフォルニア大学理事会事件——心理療法士に第三者保護義務を認めた判例
+  - **A:** タラソフ対カリフォルニア大学理事会事件は、心理療法士が患者による第三者への暴力を防ぐ義務を負うと認めたカリフォルニア州最高裁判決である。1969年、学生プロセンジット・ポダーは心理学者ローレンス・ムーア博士にタチアナ・タラソフを殺害する意図を告げ、大学警察は一時拘束後に釈放、誰も警告せず同年10月にポダーは彼女を殺害した。（→ [[bizlaw-tarasoff-v-regents-duty-to-protect]]）
 - **Q:** タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革
   - **A:** BEPS（税源侵食と利益移転、Base Erosion and Profit Shifting）とは、多国籍企業が各国の課税制度間の差異・ギャップを利用し、利益を低税率国・タックスヘイブンへ移転させることで法人税負担を過度に減少させる租税回避戦略を指す。（→ [[bizlaw-tax-avoidance-beps-regulation]]）
 - **Q:** 気候関連財務情報開示タスクフォース（TCFD）

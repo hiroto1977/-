@@ -37,8 +37,8 @@ aliases:
 - [[infosoc-doomscrolling|ドゥームスクローリング]] — 出典を共有
 - [[infosoc-cancel-culture|キャンセルカルチャー]] — 出典を共有
 - [[infosoc-metaverse|メタバース]] — 出典を共有
-- [[mgmt-ooda-loop|OODAループ]] — 同分野の近傍
 - [[mgmt-action-learning|アクションラーニング]] — 同分野の近傍
+- [[mgmt-intrapreneurship|社内起業（イントラプレナーシップ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

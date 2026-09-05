@@ -2,7 +2,7 @@
 title: "hbs.edu"
 type: source-domain
 host: "hbs.edu"
-cite_count: 26
+cite_count: 27
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # hbs.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **26 件**（学術 21 ・ リファレンス 5）
+> [!info] 出典ドメイン索引 ・ 引用 **27 件**（学術 22 ・ リファレンス 5）
 
 ## このドメインを出典とする項目
 
@@ -32,6 +32,7 @@ tags:
 - [[mgmt-institutional-void|制度的空白（Institutional Voids）]] — Khanna&Palepu(2005)SpottingInstitutionalVoidsinEmergingMarkets,HBSBac…
 - [[mgmt-jobs-to-be-done|ジョブ理論（片付けるべき用事）]] — HarvardBusinessSchoolFaculty&Research—“KnowYourCustomers’‘JobstoBeDon…
 - [[mgmt-kanter-tokenism-theory|カンターのトークニズム理論（Tokenism Theory）]] — HarvardBusinessSchoolFaculty&Research—MenandWomenoftheCorporation(Kan…
+- [[mgmt-levers-of-control-simons|サイモンズの統制のレバー——信条・境界・診断型・インタラクティブ型の四レバーで革新と統制を両立させる経営統制論]] — Simons,R.(1995).LeversofControl:HowManagersUseInnovativeControlSystem…
 - [[mgmt-modularity|モジュール化]] — Baldwin&Clark,TheOptionValueofModularityinDesign—HarvardBusinessSchool
 - [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — O'Reilly&Tushman(2013)OrganizationalAmbidexterity:Past,Present,andFut…
 - [[mgmt-shared-value|共有価値の創造（CSV）]] — HarvardBusinessSchoolFaculty&Research—"CreatingSharedValue"（書誌・要旨）

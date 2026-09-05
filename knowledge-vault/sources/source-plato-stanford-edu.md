@@ -2,7 +2,7 @@
 title: "plato.stanford.edu"
 type: source-domain
 host: "plato.stanford.edu"
-cite_count: 65
+cite_count: 66
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # plato.stanford.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **65 件**（リファレンス 40 ・ 学術 25）
+> [!info] 出典ドメイン索引 ・ 引用 **66 件**（リファレンス 41 ・ 学術 25）
 
 ## このドメインを出典とする項目
 
@@ -57,6 +57,7 @@ tags:
 - [[infosoc-algorithmic-bias|アルゴリズムバイアス]] — StanfordEncyclopediaofPhilosophy—AlgorithmicFairness
 - [[infosoc-algorithmic-fairness|アルゴリズム公正性（機械学習の公平性理論）]] — StanfordEncyclopediaofPhilosophy—AlgorithmicFairness
 - [[infosoc-bricolage|ブリコラージュ（文化人類学・メディア文化論）]] — StanfordEncyclopediaofPhilosophy—ClaudeLévi-Strauss（ブリコラージュ・『野生の思考』・神…
+- [[infosoc-chinese-room-argument-searle|サールの中国語の部屋（Chinese Room Argument）——構文操作は意味理解を保証しないとする「強いAI」批判]] — Cole,D.TheChineseRoomArgument.TheStanfordEncyclopediaofPhilosophy—sys…
 - [[infosoc-colonization-lifeworld|生活世界の植民地化]] — StanfordEncyclopediaofPhilosophy—JürgenHabermas（生活世界の植民地化・制御媒体・病理）
 - [[infosoc-communicative-action|コミュニケーション的行為（ハーバーマス）]] — JürgenHabermas—StanfordEncyclopediaofPhilosophy（妥当性請求・生活世界・コミュニケーション的…
 - [[infosoc-culture-industry|文化産業（フランクフルト学派）]] — StanfordEncyclopediaofPhilosophy—"TheodorW.Adorno"（大衆文化と文化産業への批判）

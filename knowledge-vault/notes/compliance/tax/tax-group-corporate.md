@@ -32,8 +32,7 @@ aliases:
 
 ## 関連概念
 - [[tax-dividends-received|受取配当等の益金不算入]] — 語彙が近い
-- [[tax-group-taxation|法人税のグループ通算制度]] — 語彙が近い
-- [[tax-retained-earnings|特定同族会社の留保金課税（特別税率）]] — 同分野の近傍
+- [[tax-group-taxation|法人税のグループ通算制度]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

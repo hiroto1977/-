@@ -39,7 +39,7 @@ aliases:
 - [[mgmt-information-processing-galbraith|組織の情報処理理論——不確実性に応じた情報処理能力の設計]] — 同じ思想家
 - [[mgmt-mechanistic-organic-burns-stalker|機械的組織と有機的組織——環境の安定性に適合する二つの管理システム]] — 同じ思想家
 - [[mgmt-normalization-of-deviance-vaughan|逸脱の正常化——小さな逸脱の反復的許容が組織の「正常」の基準を書き換える]] — 同じ思想家
-- [[mgmt-kanban|かんばん方式]] — 同分野の近傍
+- [[mgmt-real-options-theory|リアル・オプション理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

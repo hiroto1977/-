@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[human-theory-of-mind|心の理論]] — 語彙が近い
 - [[human-theory-of-mind-baron-cohen|心の理論と自閉症スペクトラム——バロン＝コーエンのサリーとアン課題と共感システム論]] — 語彙が近い
-- [[human-strange-situation-ainsworth|ストレンジ・シチュエーション法——乳児の愛着の質を測定する標準化手続き]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 語彙が近い
 - [[bizlaw-companies-act|会社法]] — 語彙が近い
-- [[bizlaw-piercing-corporate-veil-reverse|法人格否認の法理（逆方向）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,6 +32,7 @@ aliases:
 - [SimplyPsychology — John Bowlby’s Attachment Theory（生得的・進化的基盤、安全基地、内的作業モデル）](https://www.simplypsychology.org/bowlby.html) `リファレンス`
 
 ## 関連概念
+- [[human-strange-situation-ainsworth|ストレンジ・シチュエーション法——乳児の愛着の質を測定する標準化手続き]] — 語彙が近い
 - [[human-attachment-theory-bowlby|アタッチメント理論]] — 出典を共有
 - [[human-attribution-theory|帰属理論]] — 出典を共有
 - [[human-big-five|ビッグファイブ（5因子性格モデル）]] — 出典を共有
@@ -41,7 +42,6 @@ aliases:
 - [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — 出典を共有
 - [[human-object-permanence|対象の永続性（Object Permanence）]] — 出典を共有
 - [[human-opponent-process|対抗過程理論（Opponent-Process Theory of Acquired Motivation）]] — 出典を共有
-- [[human-planned-behavior|計画的行動理論（TPB）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

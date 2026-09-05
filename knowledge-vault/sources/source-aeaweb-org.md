@@ -2,7 +2,7 @@
 title: "aeaweb.org"
 type: source-domain
 host: "aeaweb.org"
-cite_count: 44
+cite_count: 45
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # aeaweb.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **44 件**（学術 44）
+> [!info] 出典ドメイン索引 ・ 引用 **45 件**（学術 45）
 
 ## このドメインを出典とする項目
 
@@ -43,6 +43,7 @@ tags:
 - [[econ-quadratic-voting-weyl|二次の投票（クアドラティック・ボーティング）——選好の強度を表す投票]] — Lalley,S.P.&Weyl,E.G.(2018)QuadraticVoting:HowMechanismDesignCanRadic…
 - [[econ-rand-health-insurance-experiment|RAND医療保険実験（The RAND Health Insurance Experiment, HIE）——自己負担率を無作為に変え、医療需要の費用分担効果（モラルハザード）を実証した大規模社会実験]] — Aron-Dine,A.,Einav,L.,Finkelstein,A.(2013)“TheRANDHealthInsuranceExpe…
 - [[econ-rational-inattention-sims|合理的不注意理論——情報処理コストに基づく意思決定と価格硬直性]] — Matějka,F.&McKay,A.(2015)RationalInattentiontoDiscreteChoices:ANewFou…
+- [[econ-relationship-lending-petersen-rajan-berger-udell|リレーションシップ・レンディング（関係型融資）——長期関係で蓄積した「ソフト情報」が中小企業の資金調達力を高める仕組み]] — Peek,J.&Rosengren,E.S.(2005)."UnnaturalSelection:PerverseIncentivesan…
 - [[econ-saving-glut-hypothesis|過剰貯蓄仮説]] — Caballero,Farhi&Gourinchas(2008)AnEquilibriumModelofGlobalImbalancesa…
 - [[econ-school-choice-mechanism-design|学校選択メカニズムデザイン（School Choice Mechanism Design）]] — Abdulkadiroğlu,A.&Sönmez,T.(2003)"SchoolChoice:AMechanismDesignApproa…
 - [[econ-synthetic-control-method|合成コントロール法（synthetic control method）]] — Abadie,A.(2021)"UsingSyntheticControls:Feasibility,DataRequirements,a…
