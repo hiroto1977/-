@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — 語彙が近い
-- [[mgmt-change-management-kotter-8-step|コッターの8段階変革モデル——組織変革の失敗要因分析と変革リーダーシップの実践フレームワーク]] — 語彙が近い
 - [[mgmt-lewin-change|レヴィンの変革モデル（解凍・変革・再凍結）]] — 語彙が近い
 - [[human-approach-avoidance-elliot|接近回避動機——望ましいものへの接近と望ましくないものの回避の二系統]] — 同じ思想家
 - [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[mgmt-action-centred-leadership-adair|アクション・センタード・リーダーシップ——課題・チーム・個人の三つの輪]] — 同じ思想家
 - [[mgmt-bridges-transition-model-ending-neutral-zone-beginning|ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み]] — 同じ思想家
 - [[mgmt-kotter-change|コッターの変革の8段階プロセス]] — 出典を共有
+- [[mgmt-change-management-kotter-8-step|コッターの8段階変革モデル——組織変革の失敗要因分析と変革リーダーシップの実践フレームワーク]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

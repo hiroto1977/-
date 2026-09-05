@@ -34,6 +34,7 @@ aliases:
 - [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 語彙が近い
 - [[mgmt-strategic-issue-selling|戦略的イシュー・セリング（Strategic Issue Selling）]] — 同分野の近傍
 - [[mgmt-delphi-method|デルファイ法]] — 同分野の近傍
+- [[mgmt-strategic-reference-point-theory|戦略的参照点理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

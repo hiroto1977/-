@@ -37,9 +37,9 @@ aliases:
 - [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 語彙が近い
 - [[mgmt-asset-stock-accumulation-dierickx-cool|資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性]] — 同じ思想家
 - [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同じ思想家
-- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同じ思想家
+- [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（フェリン＆フォス）——組織能力やルーティンといった集合的概念を、個人の行為・相互作用・異質性から説明しようとする研究プログラム]] — 同じ思想家
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 同じ思想家
-- [[mgmt-strategic-groups-hunt-porter|戦略グループ論——産業内の競争構造と移動障壁の分析]] — 同じ思想家
+- [[mgmt-strategic-group-theory|戦略グループ（ハント／ケイブス＆ポーター）——同一産業内で似た戦略をとる企業群を単位に、移動障壁がグループ間の収益差を持続させる]] — 同じ思想家
 - [[mgmt-servqual|SERVQUAL（サービス品質モデル）]] — 出典を共有
 - [[mgmt-ge-mckinsey-matrix|GE・マッキンゼー・マトリクス（ビジネス・スクリーン）]] — 出典を共有
 

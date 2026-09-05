@@ -34,7 +34,6 @@ Pablo Martin de Holan ／ Nelson Phillips ／ Thomas B. Lawrence ／ Linda Argot
 
 ## 関連概念
 - [[mgmt-institutional-work|制度的ワーク]] — 同じ思想家
-- [[mgmt-managerial-cognition|経営者認知理論]] — 同じ思想家
 - [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
 - [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
 - [[human-bias-blind-spot|バイアスの盲点]] — 出典を共有
@@ -43,6 +42,7 @@ Pablo Martin de Holan ／ Nelson Phillips ／ Thomas B. Lawrence ／ Linda Argot
 - [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — 出典を共有
 - [[mgmt-knowledge-based-view|知識ベース企業観（グラント）——企業を個人に分散した専門知識を統合する制度と捉え、統合能力に持続的競争優位の源泉を見る]] — 出典を共有
 - [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 出典を共有
+- [[mgmt-managerial-cognition|経営者認知（ウォルシュ）——経営者は環境そのものではなく知識構造を通した解釈に反応し、その認知地図が注意・判断・競争行動を規定する]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

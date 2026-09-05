@@ -39,9 +39,8 @@ aliases:
 - [[mgmt-institutional-entrepreneurship-dimaggio|制度的起業家精神（ディマジオ）]] — 同じ思想家
 - [[mgmt-institutional-work-lawrence|制度的ワーク論——アクターによる制度の創造・維持・破壊の実践]] — 同じ思想家
 - [[mgmt-organizational-ambivalence-rothman|組織的アンビヴァレンス——矛盾する感情の共存とその機能]] — 同じ思想家
-- [[mgmt-psychological-ownership-pierce|心理的所有権理論（ピアース＆コストバ）]] — 同じ思想家
-- [[mgmt-organizational-socialization|組織社会化]] — 同分野の近傍
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

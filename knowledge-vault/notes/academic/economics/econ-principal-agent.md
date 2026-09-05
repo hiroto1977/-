@@ -31,8 +31,8 @@ aliases:
 - [Jensen & Meckling (1976) Theory of the Firm, Journal of Financial Economics 3:305-360（RePEc）](https://ideas.repec.org/a/eee/jfinec/v3y1976i4p305-360.html) `学術`
 
 ## 関連概念
-- [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — 同分野の近傍
 - [[econ-moral-hazard|モラルハザード（道徳的危険）]] — 同分野の近傍
+- [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — 同分野の近傍
 - [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 同分野の近傍
 
 ## 関連

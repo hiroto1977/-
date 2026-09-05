@@ -39,7 +39,6 @@ aliases:
 - [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — 同じ思想家
 - [[econ-poverty-trap|貧困の罠——低所得が貯蓄と投資を妨げて貧困を自己強化的に再生産する複数均衡と、その存在をめぐる実証]] — 同じ思想家
 - [[econ-tariff-escalation-effective-protection|関税エスカレーションと実効保護率——加工段階別保護構造]] — 同じ思想家
-- [[econ-optimal-tariff|最適関税論]] — 同分野の近傍
 - [[econ-blp-demand-estimation-berry-levinsohn-pakes|BLP法（ランダム係数ロジット需要推定）——IIA制約と価格の内生性を解消し差別化財市場の需要を推定する構造推定法]] — 同分野の近傍
 
 ## 関連

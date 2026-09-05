@@ -34,7 +34,7 @@ aliases:
 - [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]] — 同じ思想家
 - [[human-cannon-bard-emotion|キャノン＝バード説——情動経験と身体反応が視床を起点に並行して生じる]] — 同じ思想家
 - [[human-excitation-transfer|興奮転移理論——残った興奮が次の感情を強める]] — 同じ思想家
-- [[human-hostile-attribution-bias|敵意的帰属バイアス]] — 同分野の近傍
+- [[human-actor-observer-bias|行為者-観察者バイアス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

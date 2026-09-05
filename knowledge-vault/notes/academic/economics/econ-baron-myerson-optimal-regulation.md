@@ -31,7 +31,6 @@ aliases:
 - [NobelPrize.org — The Sveriges Riksbank Prize in Economic Sciences 2007 (Hurwicz, Maskin, Myerson — mechanism design theory)](https://www.nobelprize.org/prizes/economic-sciences/2007/summary/) `公的`
 
 ## 関連概念
-- [[mgmt-tempered-radical|穏健な急進主義者（Tempered Radicals）]] — 同じ思想家
 - [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 同じ思想家
 - [[bizlaw-competition-law-market-definition|競争法における市場画定とHHI集中度分析の法的枠組み]] — 同じ思想家
 - [[econ-edgeworth-price-cycles-maskin-tirole|エッジワース価格サイクル——マスキン＝ティロールの動学的価格競争と小売ガソリン価格の鋸歯状変動]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[econ-two-sided-markets|両面市場（two-sided markets）]] — 同じ思想家
 - [[econ-war-of-attrition|消耗戦ゲーム——どちらが先に降りるかを競う持久戦]] — 同じ思想家
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]] — 同じ思想家
+- [[infosoc-platform-envelopment-eisenmann|プラットフォーム包囲戦略（アイゼンマン）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

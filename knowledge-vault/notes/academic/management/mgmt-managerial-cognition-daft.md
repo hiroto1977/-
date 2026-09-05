@@ -32,7 +32,8 @@ aliases:
 - [Wikipedia: Managerial cognition — schemas, enactment, sensemaking, cognitive biases, TMT diversity](https://en.wikipedia.org/wiki/Managerial_cognition) `リファレンス`
 
 ## 関連概念
-- [[mgmt-managerial-cognition-walsh|経営者認知論（ウォルシュ）]] — 語彙が近い
+- [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]] — 語彙が近い
+- [[mgmt-managerial-cognition|経営者認知（ウォルシュ）——経営者は環境そのものではなく知識構造を通した解釈に反応し、その認知地図が注意・判断・競争行動を規定する]] — 同じ思想家
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
 - [[human-error-management-theory-frese|エラー管理理論（フレゼ）]] — 同じ思想家
 - [[infosoc-media-richness-daft-lengel|メディアリッチネス理論——課題の曖昧性に適合した伝達媒体の選択]] — 同じ思想家
@@ -41,7 +42,6 @@ aliases:
 - [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — 同じ思想家
 - [[mgmt-enactment-weick|イナクトメント——組織が行為を通じて自らの環境を能動的に作り出す]] — 同じ思想家
 - [[mgmt-organizational-improvisation-weick|組織的即興——計画と実行が時間的に融合する行為としての組織化]] — 同じ思想家
-- [[mgmt-organizational-resilience-sutcliffe|組織的レジリエンスと高信頼組織の理論（サトクリフ＆ワイク）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "Cameron, Kim S."
 type: thinker
 person_key: "cameron|k"
-concept_count: 3
+concept_count: 2
 tags:
   - person
   - index
@@ -10,10 +10,9 @@ tags:
 
 # Cameron, Kim S.
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（3件）
-- [[mgmt-organizational-decline-theory|組織衰退理論]] — Weitzel&Jonsson（1989）は組織衰退を5段階モデル（盲目・不作為・誤作為・危機・解散）で定式化し、各段…
+## 学術概念（2件）
 - [[mgmt-organizational-virtuousness|組織的美徳性理論（キャメロン）]] — 組織的美徳性（OrganizationalVirtuousness）とは、キム・キャメロンらがミシガン大学のポジティブ…
 - [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — KimS.Cameron、JaneE.Dutton、RobertE.Quinnが2003年に編んだ論文集『Positi…
 

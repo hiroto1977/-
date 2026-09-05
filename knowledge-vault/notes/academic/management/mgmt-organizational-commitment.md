@@ -35,7 +35,6 @@ aliases:
 - [[mgmt-relational-leadership|関係性リーダーシップ理論]] — 出典を共有
 - [[mgmt-lmx-theory|LMX理論（リーダー・メンバー交換理論）]] — 出典を共有
 - [[mgmt-affective-commitment|感情的コミットメント（情緒的組織コミットメント）]] — 同分野の近傍
-- [[mgmt-organizational-equilibrium|組織均衡論（誘因と貢献）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

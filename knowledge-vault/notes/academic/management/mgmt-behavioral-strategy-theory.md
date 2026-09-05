@@ -33,15 +33,14 @@ Thomas C. Powell ／ Dan Lovallo ／ Craig G. Fox ／ Giovanni Gavetti ／ Danie
 - [Encyclopaedia Britannica — Behavioral Economics (行動経済学・行動戦略の理論的基盤)](https://www.britannica.com/topic/behavioral-economics) `リファレンス`
 
 ## 関連概念
-- [[mgmt-strategic-reference-point-theory|戦略的参照点理論]] — 語彙が近い
 - [[mgmt-behavioral-strategy-powell-lovallo|行動戦略論——認知バイアスと限定合理性が戦略的意思決定に及ぼす体系的影響]] — 語彙が近い
+- [[mgmt-strategic-reference-point-theory|戦略的参照点理論]] — 語彙が近い
 - [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]] — 語彙が近い
 - [[econ-endowment-effect-loss-aversion|保有効果と損失回避]] — 同じ思想家
 - [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同じ思想家
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
 - [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 同じ思想家
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
-- [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
 - [[mgmt-vicarious-learning|代理学習（Vicarious Learning in Organizations）]] — 同じ思想家
 
 ## 関連

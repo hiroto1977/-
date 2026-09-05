@@ -34,6 +34,7 @@ aliases:
 - [[human-attribution-theory|帰属理論]] — 同分野の近傍
 - [[human-locus-of-control|統制の所在（ローカス・オブ・コントロール）]] — 同分野の近傍
 - [[human-social-baseline-theory-coan|社会的ベースライン理論——社会的近接性と神経生理的効率]] — 同分野の近傍
+- [[human-two-factor-emotion|情動二要因理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

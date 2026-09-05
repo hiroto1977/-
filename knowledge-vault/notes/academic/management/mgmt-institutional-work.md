@@ -32,7 +32,7 @@ Thomas B. Lawrence ／ Roy Suddaby ／ Bernard Leca
 
 ## 関連概念
 - [[mgmt-organizational-forgetting|組織的忘却]] — 同じ思想家
-- [[mgmt-managerial-cognition|経営者認知理論]] — 同分野の近傍
+- [[mgmt-managerial-cognition|経営者認知（ウォルシュ）——経営者は環境そのものではなく知識構造を通した解釈に反応し、その認知地図が注意・判断・競争行動を規定する]] — 同分野の近傍
 - [[mgmt-corporate-culture-schein-artifacts|組織文化論——シャインの三層モデル（人工物・信念・基本的仮定）と文化変革]] — 同分野の近傍
 - [[mgmt-institutional-work-lawrence|制度的ワーク論——アクターによる制度の創造・維持・破壊の実践]] — 同分野の近傍
 - [[mgmt-institutional-entrepreneurship|制度的アントレプレナーシップ（Institutional Entrepreneurship）]] — 同分野の近傍

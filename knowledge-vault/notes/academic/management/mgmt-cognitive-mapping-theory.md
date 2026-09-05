@@ -34,8 +34,8 @@ Robert Axelrod ／ Colin Eden ／ Anne Sigismund Huff ／ Fran Ackermann ／ Kar
 
 ## 関連概念
 - [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]] — 語彙が近い
+- [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 語彙が近い
 - [[mgmt-paradox-of-organizing|組織化のパラドックス（Paradox of Organizing）]] — 同じ思想家
-- [[mgmt-managerial-cognition|経営者認知理論]] — 同じ思想家
 - [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]] — 同じ思想家
 - [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 同じ思想家
 - [[mgmt-organizational-improvisation-theory|組織即興理論]] — 同じ思想家

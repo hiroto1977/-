@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[mgmt-contingency-theory-lawrence-lorsch|コンティンジェンシー理論——ローレンス＆ローシュの環境・組織適合と「最適解はない」命題]] — 同じ思想家
 - [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同じ思想家
-- [[mgmt-strategic-choice-child|戦略的選択論——環境決定論に抗する意思決定者の主体的選択]] — 同じ思想家
+- [[mgmt-strategic-choice-child|戦略的選択論（チャイルド）——組織構造は環境に一義的に決まるのではなく、支配的連合の政治的な選択を介して形づくられる]] — 同じ思想家
 - [[mgmt-thompson-technology-typology|トンプソンの技術類型——技術が規定する相互依存と調整の様式]] — 同じ思想家
 - [[mgmt-holacracy|ホラクラシー]] — 同分野の近傍
 - [[mgmt-knowledge-based-view|知識ベース企業観（グラント）——企業を個人に分散した専門知識を統合する制度と捉え、統合能力に持続的競争優位の源泉を見る]] — 同分野の近傍

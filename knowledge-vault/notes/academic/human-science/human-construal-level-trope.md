@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[human-heuristic-systematic-chaiken|ヒューリスティック＝システマティックモデル——説得情報処理の二過程理論]] — 同じ思想家
 - [[human-source-monitoring-johnson|ソース・モニタリング——記憶の出所を判別する認知過程とその誤り]] — 同分野の近傍
-- [[human-illusory-truth-effect|真理の錯誤効果（真実性の錯覚）]] — 同分野の近傍
+- [[human-ostrich-effect|ダチョウ効果（情報回避）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

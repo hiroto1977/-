@@ -34,7 +34,6 @@ aliases:
 - [[human-cutaneous-rabbit-illusion|皮膚ウサギ錯覚——後の刺激が前の刺激の位置を書き換える]] — 同じ思想家
 - [[human-theory-of-mind|心の理論]] — 同分野の近傍
 - [[human-neonatal-imitation|新生児模倣（Neonatal Imitation）]] — 同分野の近傍
-- [[human-attentional-blink-raymond|注意の瞬き——連続提示で第二の標的の検出が一時的に低下する]] — 同分野の近傍
 - [[human-troxler-fading|トロクスラー効果——固視によって周辺視野の刺激が消失する現象]] — 同分野の近傍
 
 ## 関連

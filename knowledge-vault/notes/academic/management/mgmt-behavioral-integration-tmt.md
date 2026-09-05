@@ -32,13 +32,12 @@ Donald C. Hambrick ／ Zeki Simsek ／ John F. Veiga ／ Michael H. Lubatkin
 
 ## 関連概念
 - [[mgmt-behavioral-integration|行動的統合（Behavioral Integration）]] — 同じ思想家
-- [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
 - [[mgmt-strategic-leadership-theory|戦略的リーダーシップ理論]] — 同じ思想家
 - [[mgmt-ba-knowledge-creation-nonaka|場（Ba）と知識創造（野中・紺野）]] — 出典を共有
 - [[mgmt-evidence-based-management|証拠に基づく経営（エビデンスに基づく経営）]] — 出典を共有
 - [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 出典を共有
-- [[mgmt-psychological-ownership|心理的所有感]] — 同分野の近傍
-- [[mgmt-managerial-cognition|経営者認知理論]] — 同分野の近傍
+- [[mgmt-organizational-resilience-sutcliffe|組織的レジリエンスと高信頼組織の理論（サトクリフ＆ワイク）]] — 同分野の近傍
+- [[mgmt-boundaryspanning-roles|バウンダリースパニング役割：組織と環境を結ぶ境界連結機能・ゲートキーパー・役割葛藤の組織論的体系]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

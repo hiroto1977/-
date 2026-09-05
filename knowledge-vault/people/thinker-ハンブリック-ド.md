@@ -2,7 +2,7 @@
 title: "ドナルド・ハンブリック"
 type: thinker
 person_key: "ハンブリック|ド"
-concept_count: 7
+concept_count: 8
 tags:
   - person
   - index
@@ -10,15 +10,16 @@ tags:
 
 # ドナルド・ハンブリック
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **7 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **8 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（7件）
+## 学術概念（8件）
 - [[mgmt-attention-based-view|注意ベース理論（オカシオ）——企業の行動は、意思決定者の希少な注意をどの争点と答えに向けるかを組織の構造が配分した結果である]] — ウィリアム・オカシオが1997年の論文（StrategicManagementJournal18巻夏季特集号）で提示し…
 - [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]] — CEOサクセッション・プランニング（CEOsuccessionplanning）は、ファマ＆ジェンセン（1983）のエ…
 - [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 競争動態論（competitivedynamics）は、チェン（1996）が体系化した、企業間の競争的行動と対抗（ac…
 - [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する]] — 動的経営者能力（dynamicmanagerialcapabilities）は、ロン・アドナーとコンスタンス・ヘルファ…
 - [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — 組織トップの交代が企業業績にどのような影響を及ぼすかを分析する経営学の研究領域。
 - [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]] — 経営者裁量とは、トップマネジャーが利用可能な行動の自由度（latitudeofaction）を指す。
+- [[mgmt-organizational-decline-weitzel|組織衰退（ウェイツェル＝ヨンソンの五段階モデル）——盲目・不作為・誤った行動・危機・解体と進み、段階が進むほど反転が難しくなる衰退の動態]] — 組織衰退（organizationaldecline）研究は、組織が資源や正統性を失って縮小・消滅へ向かう過程とその機…
 - [[mgmt-upper-echelons-theory|上層部理論（ハンブリック＝メイソン）——組織はトップ経営陣の反映であり、経営者の経歴と特性が認知のフィルターとして戦略的選択と業績を部分的に予測する]] — 上層部理論（upperechelonstheory）は、ドナルド・ハンブリックとフィリス・メイソンが1984年の論文（…
 
 ## 関連

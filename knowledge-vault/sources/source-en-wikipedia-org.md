@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2210
+cite_count: 2209
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2210 件**（リファレンス 2210）
+> [!info] 出典ドメイン索引 ・ 引用 **2209 件**（リファレンス 2209）
 
 ## このドメインを出典とする項目
 
@@ -2032,14 +2032,14 @@ tags:
 - [[mgmt-loose-coupling-weick|疎結合システム（組織論）]] — Wikipedia:Loosecoupling—organizationaltheoryoverview
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — Wikipedia—NormalAccidents(Perrow):tightvs.loosecouplinginaccidentanal…
 - [[mgmt-management-fashion-abrahamson|経営ファッション論——経営技法の流行とその供給・需要の力学]] — Wikipedia:Managementfashion/fad—Abrahamson,fashionsetters,bell-shaped…
+- [[mgmt-managerial-cognition|経営者認知（ウォルシュ）——経営者は環境そのものではなく知識構造を通した解釈に反応し、その認知地図が注意・判断・競争行動を規定する]] — Wikipedia:Managerialcognition—知識構造、認知地図、行動戦略論との関係
 - [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — Wikipedia:Managerialcognition—schemas,enactment,sensemaking,cognitive…
-- [[mgmt-managerial-cognition-walsh|経営者認知論（ウォルシュ）]] — Wikipedia:Managerialcognition—経営者認知論の概説
 - [[mgmt-market-orientation|市場志向]] — Wikipedia:Marketorientation
 - [[mgmt-mass-customization|マス・カスタマイゼーション]] — Wikipedia—Masscustomization（デイビス1987命名・パイン1993・定義）
 - [[mgmt-mbo|目標による管理（MBO）]] — Wikipedia(English)—Managementbyobjectives
 - [[mgmt-mckinsey-7s|マッキンゼーの7Sフレームワーク]] — Wikipedia—McKinsey7SFramework
 - [[mgmt-mechanistic-organic-burns-stalker|機械的組織と有機的組織——環境の安定性に適合する二つの管理システム]] — Wikipedia:Mechanisticandorganicsystems—Burns&Stalker,environmentfit,c…
-- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — Wikipedia:Microfoundations—ミクロ的基礎の経済学・経営学における議論の概説
+- [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（フェリン＆フォス）——組織能力やルーティンといった集合的概念を、個人の行為・相互作用・異質性から説明しようとする研究プログラム]] — Wikipedia:Microfoundations—経済学・経営学におけるミクロ的基礎の議論
 - [[mgmt-middle-status-conformity-phillips|中位地位同調性——組織階層における地位と逸脱の非線形的関係]] — Wikipedia:IdiosyncrasyCredit—Hollanderstatusanddeviationtolerancetheo…
 - [[mgmt-middle-up-down-management-nonaka|ミドル・アップダウン・マネジメント（野中郁次郎）]] — Wikipedia:Middle-up-downmanagement—Nonakamodel,comparisonwithtop-down…
 - [[mgmt-mintzberg-managerial-roles|ミンツバーグの管理者の役割——観察に基づく管理職の実際の仕事の十類型]] — Wikipedia:Mintzbergsmanagerialroles—interpersonal/informational/decis…
@@ -2105,8 +2105,7 @@ tags:
 - [[mgmt-psychological-contract|心理的契約（ルソー）——雇用関係における明文化されない相互義務についての従業員の主観的信念と、その違反が信頼とコミットメントに与える影響]] — Wikipedia:Psychologicalcontract—Rousseau、取引的／関係的契約、違反
 - [[mgmt-psychological-detachment-sonnentag|心理的距離——仕事から心理的に離れて回復する]] — Wikipedia:Recoveryexperiences—psychologicaldetachment,relaxation,mast…
 - [[mgmt-psychological-empowerment-spreitzer|心理的エンパワーメント——仕事への内発的動機を構成する四つの認知]] — Wikipedia:Empowerment—Spreitzer,meaning/competence/self-determination…
-- [[mgmt-psychological-ownership|心理的所有感]] — Wikipedia「Ownership(psychology)」—定義・3ルート・自己アイデンティティ・テリトリアリティ・IKEA効果
-- [[mgmt-psychological-ownership-pierce|心理的所有権理論（ピアース＆コストバ）]] — Wikipedia:Psychologicalownership—心理的所有権の概説
+- [[mgmt-psychological-ownership|心理的所有感（ピアース＆コストバ＆ダークス）——法的所有と無関係に対象を「自分のもの」と感じる状態が、支配・熟知・自己投資の三経路で生まれ、責任感と縄張り意識の両面をもたらす]] — Wikipedia:Ownership(psychology)—三つの経路、自己アイデンティティ、テリトリアリティ、IKEA効果
 - [[mgmt-psychological-safety-edmondson|心理的安全性（エドモンドソン）]] — Wikipedia:Psychologicalsafety—Edmondson,ProjectAristotle,fearlessorga…
 - [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — Wikipedia—Punctuatedequilibriuminsocialtheory
 - [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — Wikipedia:RayDalio—BridgewaterAssociates,principles,ideameritocracy,r…
@@ -2154,14 +2153,14 @@ tags:
 - [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]] — Wikipedia:SimonSinek—GoldenCircle,StartWithWhy,purpose-drivenleadersh…
 - [[mgmt-stp-marketing|STPマーケティング]] — Wikipedia—Segmenting-targeting-positioning（STP,Kotler;STP戦略vs4P戦術）
 - [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — Wikipedia—Strategicalignment
-- [[mgmt-strategic-choice-child|戦略的選択論——環境決定論に抗する意思決定者の主体的選択]] — Wikipedia:Strategicchoice—Child,dominantcoalition,agency,critiqueofco…
+- [[mgmt-strategic-choice-child|戦略的選択論（チャイルド）——組織構造は環境に一義的に決まるのではなく、支配的連合の政治的な選択を介して形づくられる]] — Wikipedia:Strategicchoicetheory—Child、支配的連合、コンティンジェンシー理論批判
 - [[mgmt-strategic-cognition|戦略的認知（Strategic Cognition）]] — StrategicManagement(cognitiveschool)—Wikipedia
 - [[mgmt-strategic-consensus-bourgeois|戦略的コンセンサスとトップ・マネジメント・チーム（ブルジョワ）]] — Wikipedia:Strategicconsensus—Bourgeois,TMTagreement,dominantlogic,Eis…
 - [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]] — Wikipedia:Strategicentrepreneurship—戦略的アントレプレナーシップの概説
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — Wikipedia:Resource-basedview—資源ベース理論と戦略的要素市場の概説
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — Wikipedia:Strategicfactormarket
 - [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — Wikipedia:Strategicflexibility—Volberda,operationalvsstrategic,hyperc…
-- [[mgmt-strategic-groups-hunt-porter|戦略グループ論——産業内の競争構造と移動障壁の分析]] — Wikipedia:Strategicgroup—mobilitybarriers,industrystructure,competiti…
+- [[mgmt-strategic-group-theory|戦略グループ（ハント／ケイブス＆ポーター）——同一産業内で似た戦略をとる企業群を単位に、移動障壁がグループ間の収益差を持続させる]] — Wikipedia:Strategicgroup—Hunt1972、移動障壁、産業構造
 - [[mgmt-strategic-hrm|戦略的人的資源管理（SHRM）]] — Wikipedia「Humanresourcemanagement」—HRMの戦略的・統合的アプローチ
 - [[mgmt-strategic-hrm|戦略的人的資源管理（SHRM）]] — Wikipedia「MarkA.Huselid」—1995AMJ論文（38(3):635–672）でHR慣行と業績の関係を実証
 - [[mgmt-strategic-hrm|戦略的人的資源管理（SHRM）]] — Wikipedia「Strategicfit」—適合（fit）と資源ベース理論・競争優位の関係
@@ -2187,7 +2186,7 @@ tags:
 - [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — Wikipedia:Teamreflexivity—collectivereflectionandadaptationoverview
 - [[mgmt-team-roles-belbin|ベルビンのチーム役割——有効なチームに必要な九つの行動類型のバランス]] — Wikipedia:Belbinteamroles—nineroles,action/people/thinking,allowablew…
 - [[mgmt-technology-acceptance-model|技術受容モデル（TAM）——情報システム採用の知覚有用性と知覚容易性]] — Wikipedia:Technologyacceptancemodel—技術受容モデルの理論と拡張の概説
-- [[mgmt-tempered-radicalism-meyerson|テンパード・ラジカリズム（メイヤーソン）]] — Wikipedia:Temperedradical—Meyerson&Scully,everydayresistance,diversit…
+- [[mgmt-tempered-radical|穏健な急進主義者（マイヤーソン＆スカリー）——組織への帰属を保ちながら、支配的文化と相容れない価値を小さな勝利の積み重ねで内側から推し進める個人]] — Wikipedia:Temperedradical—Meyerson&Scully、日常の抵抗、ダイバーシティ推進
 - [[mgmt-theory-of-constraints|制約理論（TOC）]] — Wikipedia:EliyahuM.Goldratt（提唱者・略歴・TOC派生手法）
 - [[mgmt-theory-of-constraints|制約理論（TOC）]] — Wikipedia:Theoryofconstraints（五ステップ・スループット会計・DBR）
 - [[mgmt-theory-x-y-mcgregor|X理論・Y理論——人間観の前提がマネジメント・スタイルを規定する]] — Wikipedia:TheoryXandTheoryY—McGregor,managerialassumptions,Maslow,sel…

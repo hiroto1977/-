@@ -41,8 +41,8 @@ aliases:
 - [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 同じ思想家
 - [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 同じ思想家
 - [[mgmt-attention-based-view|注意ベース理論（オカシオ）——企業の行動は、意思決定者の希少な注意をどの争点と答えに向けるかを組織の構造が配分した結果である]] — 同じ思想家
-- [[mgmt-strategic-leadership-theory|戦略的リーダーシップ理論]] — 同分野の近傍
-- [[mgmt-ringi|稟議制]] — 同分野の近傍
+- [[mgmt-organizational-decline-weitzel|組織衰退（ウェイツェル＝ヨンソンの五段階モデル）——盲目・不作為・誤った行動・危機・解体と進み、段階が進むほど反転が難しくなる衰退の動態]] — 同じ思想家
+- [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

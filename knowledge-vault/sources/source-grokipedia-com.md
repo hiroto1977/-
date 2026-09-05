@@ -2,7 +2,7 @@
 title: "grokipedia.com"
 type: source-domain
 host: "grokipedia.com"
-cite_count: 2
+cite_count: 1
 tags:
   - source-domain
   - index
@@ -10,12 +10,11 @@ tags:
 
 # grokipedia.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **2 件**（リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **1 件**（リファレンス 1）
 
 ## このドメインを出典とする項目
 
 - [[econ-tobin-separation|トービンの分離定理（Tobin Separation Theorem）]] — Grokipedia:MutualFundSeparationTheorem
-- [[mgmt-strategic-choice-theory|戦略的選択理論]] — Grokipedia:StrategicChoiceTheory—overviewofcoreconceptsandkeyscholars
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

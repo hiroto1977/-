@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[mgmt-escalation-of-commitment|コミットメントのエスカレーション]] — 同じ思想家
 - [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 同じ思想家
+- [[mgmt-organizational-decline-weitzel|組織衰退（ウェイツェル＝ヨンソンの五段階モデル）——盲目・不作為・誤った行動・危機・解体と進み、段階が進むほど反転が難しくなる衰退の動態]] — 同じ思想家
 - [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同じ思想家
 - [[econ-auction-theory|オークション理論]] — 同分野の近傍
 - [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同分野の近傍

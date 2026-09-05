@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — 同分野の近傍
-- [[human-chronostasis-stopped-clock|クロノスタシス（止まった時計の錯覚）——視線移動後の時間が引き延ばされる]] — 同分野の近傍
 - [[human-anton-syndrome|アントン症候群——皮質盲なのに見えないことを否認する]] — 同分野の近傍
 
 ## 関連

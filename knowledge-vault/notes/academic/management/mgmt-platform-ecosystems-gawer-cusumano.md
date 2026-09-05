@@ -40,7 +40,6 @@ aliases:
 - [[econ-edgeworth-price-cycles-maskin-tirole|エッジワース価格サイクル——マスキン＝ティロールの動学的価格競争と小売ガソリン価格の鋸歯状変動]] — 同じ思想家
 - [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]] — 同じ思想家
 - [[econ-price-discrimination-monopoly|価格差別と独占力——一・二・三級差別の福祉効果と規制政策への含意]] — 同じ思想家
-- [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -13,19 +13,19 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 152）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 151）
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 108）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-framing-effect|フレーミング効果（framing effect）]]（接続 32）
-- [[human-bias-blind-spot|バイアスの盲点]]（接続 30）
+- [[human-bias-blind-spot|バイアスの盲点]]（接続 31）
 - [[human-attribution-theory|帰属理論]]（接続 29）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 29）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 27）
+- [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 26）
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 26）
+- [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 25）
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 25）
 - [[human-conjunction-fallacy|連言錯誤]]（接続 25）
-- [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 25）
-- [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 24）
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 24）
 - [[human-base-rate-fallacy|基準率の無視]]（接続 24）
 

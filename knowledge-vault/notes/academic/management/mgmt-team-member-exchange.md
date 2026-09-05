@@ -31,8 +31,8 @@ Seers, Anson （1989 Team-Member Exchange Quality: A New Construct for Role-Maki
 - [A Cross-Level Investigation of Team-Member Exchange on Team and Individual Job Crafting (PMC/NCBI) — TMX theory background and citation of Seers (1989)](https://pmc.ncbi.nlm.nih.gov/articles/PMC7143217/) `公的`
 
 ## 関連概念
-- [[mgmt-psychological-ownership-pierce|心理的所有権理論（ピアース＆コストバ）]] — 同分野の近傍
-- [[mgmt-lmx-theory|LMX理論（リーダー・メンバー交換理論）]] — 同分野の近傍
+- [[mgmt-psychological-ownership|心理的所有感（ピアース＆コストバ＆ダークス）——法的所有と無関係に対象を「自分のもの」と感じる状態が、支配・熟知・自己投資の三経路で生まれ、責任感と縄張り意識の両面をもたらす]] — 同分野の近傍
+- [[mgmt-team-effectiveness-model|チーム有効性モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,15 +34,15 @@ aliases:
 
 ## 関連概念
 - [[mgmt-knowledge-governance|知識ガバナンス（Knowledge Governance）]] — 同じ思想家
-- [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（Microfoundations of Strategy）]] — 同じ思想家
 - [[mgmt-corporate-entrepreneurship-zahra|コーポレート・アントレプレナーシップ（ザーラ）]] — 同じ思想家
 - [[mgmt-corporate-venturing-burgelman|コーポレート・ベンチャリング（バーゲルマン）]] — 同じ思想家
 - [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — 同じ思想家
 - [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同じ思想家
 - [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 同じ思想家
 - [[mgmt-strategic-renewal-volberda|戦略的刷新と組織アンビデクストリティの動態能力論（フォルベルダ）]] — 同じ思想家
-- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同じ思想家
+- [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（フェリン＆フォス）——組織能力やルーティンといった集合的概念を、個人の行為・相互作用・異質性から説明しようとする研究プログラム]] — 同じ思想家
 - [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]] — 同じ思想家
+- [[mgmt-experience-curve|経験曲線効果・学習曲線（experience/learning curve）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

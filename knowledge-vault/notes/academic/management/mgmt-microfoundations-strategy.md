@@ -3,40 +3,46 @@ collection: academic
 id: mgmt-microfoundations-strategy
 category: "management"
 category_ja: "経営学"
-title: "戦略のミクロ的基礎（Microfoundations of Strategy）"
-as_of: "2026-06"
-source_count: 3
+title: "戦略のミクロ的基礎（フェリン＆フォス）——組織能力やルーティンといった集合的概念を、個人の行為・相互作用・異質性から説明しようとする研究プログラム"
+as_of: "2026-09"
+source_count: 5
 authoritative: true
 tags:
   - collection/academic
   - academic/management
   - knowledge/verified
 aliases:
-  - "戦略のミクロ的基礎（Microfoundations of Strategy）"
+  - "戦略のミクロ的基礎（フェリン＆フォス）——組織能力やルーティンといった集合的概念を、個人の行為・相互作用・異質性から説明しようとする研究プログラム"
 ---
 
-# 戦略のミクロ的基礎（Microfoundations of Strategy）
+# 戦略のミクロ的基礎（フェリン＆フォス）——組織能力やルーティンといった集合的概念を、個人の行為・相互作用・異質性から説明しようとする研究プログラム
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-09 ・ 出典: 5件（うち権威ある出典 ✓）
 
 ## 概要
-戦略のミクロ的基礎（Microfoundations of Strategy）とは、企業レベルの戦略的成果（競争優位・ケイパビリティ・イノベーション等）を個人レベルの行為・相互作用・異質性から説明しようとする研究プログラムである。テッペン・フェリン（Teppo Felin）とニコライ・フォス（Nicolai Foss）が2005年に、戦略・組織理論が企業レベルの説明に偏重し個人と相互作用への注意が不十分であると批判して体系化を開始した。中核的主張は、組織レベルのケイパビリティ・知識・学習・アイデンティティといった集合的概念を完全に説明するには、構成要素である個人の性質・選択・能力・動機・異質性と、個人間の相互作用が集合的・創発的な組織成果をいかに生み出すかの解明が不可欠であるという点にある。管理者はケイパビリティに直接介入できないが、採用や人事政策の変更というミクロレベルの操作を通じて間接的に影響を及ぼしうる。
+戦略のミクロ的基礎（microfoundations of strategy）は、企業レベルの戦略的成果——競争優位、ケイパビリティ、ルーティン、イノベーション——を個人の行為・相互作用・異質性から説明しようとする研究プログラムで、テッポ・フェリンとニコライ・フォス（2005）が、資源ベース論や動的ケイパビリティ論が組織レベルの構成概念に依拠しすぎて個人のメカニズムの解明が不十分だと批判して体系化を始めた。中核的主張は、集合的な能力・知識・学習・アイデンティティを完全に説明するには、構成要素である個人の性質・選択・能力・動機と、個人間の相互作用が集合的で創発的な組織成果をどう生むかの解明が不可欠だという点にあり、フェリン、フォス、プロイハート（2015、Academy of Management Annals）は「個人→集合的構成概念→成果」の枠組みで運動を整理し、個人の属性が組織の特性に変換される集約問題の重要性を強調した。バーニーとフェリン（2013）は資源ベース論のミクロ的基礎として人的資本が競争優位に至る経路を精緻化し。経営者はケイパビリティに直接介入できないが、採用や人事方針といったミクロの操作を通じて間接的に影響を及ぼしうるという実践的含意を持つ。批判として、シドニー・ウィンターらは過度の還元主義を懸念し、創発的特性やルーティンの集合的性質を軽視する危険を指摘し、「ミクロ」の水準が個人なのか相互作用なのかをめぐる定義の揺れがある。中小企業には、組織の力といっても実体は特定の人と人の組み合わせであるため、誰を採り誰と組ませるかが戦略そのものであること、一方で仕組み（ルーティン）に落とさなければ個人の退職で消えることが含意となる。
 
 ## 提唱者・初出
-テッペン・フェリン＆ニコライ・フォス（2005 初期提唱）／フェリン・フォス・ポルマン（2015 Academy of Management Annals レビュー）
+テッポ・フェリン＆ニコライ・フォス（2005 提唱）／テッポ・フェリン＆ニコライ・フォス＆ロバート・プロイハート（2015 運動のレビュー）／ジェイ・バーニー＆テッポ・フェリン（2013 資源ベース論のミクロ的基礎）／対比: シドニー・ウィンター（還元主義批判）
 
 ## 出典
-- [Felin, Foss & Ployhart (2015) The Microfoundations Movement in Strategy and Organization Theory — Academy of Management Annals](https://doi.org/10.5465/19416520.2015.1007651) `学術`
-- [Molina-Azorín (2014) Microfoundations of Strategic Management — BRQ Business Research Quarterly (SAGE)](https://journals.sagepub.com/doi/10.1016/j.brq.2014.01.001) `学術`
-- [Felin et al. (eds.) Microfoundations — Cambridge University Press](https://www.cambridge.org/core/books/microfoundations/079FF73BB164AE480BA997395B7245E1) `学術`
+- [Felin, T., Foss, N. J. & Ployhart, R. E. (2015) The Microfoundations Movement in Strategy and Organization Theory — Academy of Management Annals 9(1)（運動のレビュー）](https://doi.org/10.5465/19416520.2015.1007651) `学術`
+- [Barney, J. & Felin, T. (2013) What Are Microfoundations? — Academy of Management Perspectives 27(2)](https://doi.org/10.5465/amp.2012.0107) `学術`
+- [Molina-Azorín, J. F. (2014) Microfoundations of Strategic Management: Toward Micro–Macro Research in the Resource-Based Theory — BRQ Business Research Quarterly 17(2)](https://journals.sagepub.com/doi/10.1016/j.brq.2014.01.001) `学術`
+- [Cambridge University Press: Felin, T. et al. (eds.) Microfoundations（論集）](https://www.cambridge.org/core/books/microfoundations/079FF73BB164AE48) `学術`
+- [Wikipedia: Microfoundations — 経済学・経営学におけるミクロ的基礎の議論](https://en.wikipedia.org/wiki/Microfoundations) `リファレンス`
 
 ## 関連概念
-- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同じ思想家
-- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]] — 同じ思想家
 - [[mgmt-knowledge-governance|知識ガバナンス（Knowledge Governance）]] — 同じ思想家
-- [[mgmt-microfoundations-movement|ミクロ基礎運動（Microfoundations Movement）]] — 同分野の近傍
-- [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 同分野の近傍
-- [[mgmt-team-diversity-performance|チーム多様性とパフォーマンスの関係論——情報精緻化理論と価値・情報的多様性]] — 同分野の近傍
+- [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — 同じ思想家
+- [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 同じ思想家
+- [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同じ思想家
+- [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 同じ思想家
+- [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 同じ思想家
+- [[mgmt-vrio-framework-barney|VRIOフレームワーク——持続的競争優位をもたらす経営資源の四条件]] — 同じ思想家
+- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]] — 同じ思想家
+- [[mgmt-asset-stock-accumulation-dierickx-cool|資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性]] — 同じ思想家
+- [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

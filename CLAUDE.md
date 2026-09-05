@@ -32,7 +32,7 @@ live REST fetch. The `useServiceData(serviceId, snapshot)` hook returns `data`, 
 All verified (sourced) knowledge datasets — academic concepts (`academicKnowledge.ts`), tax/labor/legal
 compliance (`complianceKnowledge.ts`), subsidies (`subsidyKnowledge.ts`), support hotlines
 (`counselorKnowledge.ts`), and economic history (`economicHistoryKnowledge.ts`) — are the single source
-of truth for an **Obsidian knowledge vault** (`knowledge-vault/`, 7,500+ notes, `npm run vault:build`)
+of truth for an **Obsidian knowledge vault** (`knowledge-vault/`, 7,000+ notes, `npm run vault:build`)
 and are injected as context into the AI-orchestration runtime per executive role
 (`orchestration/knowledge-map.json`, `orchestration/knowledge-context.cjs`, `npm run orchestrate:context`
 / dispatch). `vault:check` (in `verify:all`/CI) enforces vault sync, forbids duplicate ids

@@ -38,9 +38,9 @@ aliases:
 - [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]] — 同じ思想家
 - [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する]] — 同じ思想家
 - [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — 同じ思想家
+- [[mgmt-organizational-decline-weitzel|組織衰退（ウェイツェル＝ヨンソンの五段階モデル）——盲目・不作為・誤った行動・危機・解体と進み、段階が進むほど反転が難しくなる衰退の動態]] — 同じ思想家
 - [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同じ思想家
 - [[mgmt-upper-echelons-theory|上層部理論（ハンブリック＝メイソン）——組織はトップ経営陣の反映であり、経営者の経歴と特性が認知のフィルターとして戦略的選択と業績を部分的に予測する]] — 同じ思想家
-- [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 同分野の近傍
 - [[mgmt-eisenhower-matrix|アイゼンハワーマトリクス（緊急・重要マトリクス）]] — 同分野の近傍
 
 ## 関連

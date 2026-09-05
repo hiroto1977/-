@@ -38,7 +38,7 @@ William Adams & Janet Yellen（1976, QJE）／Yannis Bakos & Erik Brynjolfsson�
 - [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — 出典を共有
 - [[mgmt-knowledge-based-view|知識ベース企業観（グラント）——企業を個人に分散した専門知識を統合する制度と捉え、統合能力に持続的競争優位の源泉を見る]] — 出典を共有
 - [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 出典を共有
-- [[mgmt-managerial-cognition|経営者認知理論]] — 出典を共有
+- [[mgmt-managerial-cognition|経営者認知（ウォルシュ）——経営者は環境そのものではなく知識構造を通した解釈に反応し、その認知地図が注意・判断・競争行動を規定する]] — 出典を共有
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 出典を共有
 - [[mgmt-real-options-reasoning-mcgrath|リアル・オプション推論——マクグラスの不確実性下の段階的投資と戦略的柔軟性]] — 出典を共有
 

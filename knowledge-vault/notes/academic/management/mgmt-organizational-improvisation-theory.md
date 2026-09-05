@@ -38,10 +38,10 @@ Christine Moorman ／ Anne S. Miner ／ Karl E. Weick ／ Miguel Pina e Cunha
 - [[mgmt-affective-events-theory|感情イベント理論（AET）]] — 同じ思想家
 - [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]] — 同じ思想家
 - [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — 同じ思想家
-- [[mgmt-managerial-cognition|経営者認知理論]] — 同じ思想家
 - [[mgmt-organizational-entropy|組織エントロピー]] — 同じ思想家
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同じ思想家
 - [[mgmt-vicarious-learning|代理学習（Vicarious Learning in Organizations）]] — 同じ思想家
+- [[mgmt-growth-mindset|成長マインドセット（Growth Mindset）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

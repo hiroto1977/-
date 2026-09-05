@@ -616,11 +616,13 @@
     "provenanceDelta": "keep src 3→4。減少なし。"
    },
    {
-    "keep": "mgmt-organizational-decline-theory",
+    "keep": "mgmt-organizational-decline-weitzel",
     "drop": "mgmt-organizational-decline",
     "reason": "同一理論。keep は脅威硬直・下降螺旋・ターンアラウンド接続まで持つ超集合。",
     "migrate": "「段階が進むほど逆転困難」「自己認識能力が要」の句を本文へ。drop の JSTOR 258039（ASQ 論文に AMR 帯の id）は実体不整合の疑いで移送しない。",
-    "provenanceDelta": "本文 +約80字。減少なし。"
+    "provenanceDelta": "本文 +約80字。減少なし。",
+    "keepFormerly": "mgmt-organizational-decline-theory",
+    "keepMovedNote": "2026-09-05 統合パス 50: 当時の keep（mgmt-organizational-decline-theory）を、ready の keep である mgmt-organizational-decline-weitzel へ統合した。lint:knowledge-refs は keep の実在を要求するので統合先へ付け替え、旧 id は keepFormerly に残す"
    },
    {
     "keep": "mgmt-strategic-renewal",

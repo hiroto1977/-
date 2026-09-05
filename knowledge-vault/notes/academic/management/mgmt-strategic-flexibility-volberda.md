@@ -41,7 +41,6 @@ aliases:
 - [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]] — 同じ思想家
 - [[mgmt-strategic-renewal-volberda|戦略的刷新と組織アンビデクストリティの動態能力論（フォルベルダ）]] — 同じ思想家
 - [[mgmt-strategic-flexibility-theory|戦略的柔軟性理論]] — 同分野の近傍
-- [[mgmt-platform-ecosystems-gawer-cusumano|プラットフォーム・エコシステム——インダストリアル・プラットフォームとネットワーク効果の戦略論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

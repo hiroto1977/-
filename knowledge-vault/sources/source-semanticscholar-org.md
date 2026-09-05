@@ -2,7 +2,7 @@
 title: "semanticscholar.org"
 type: source-domain
 host: "semanticscholar.org"
-cite_count: 87
+cite_count: 86
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # semanticscholar.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **87 件**（学術 78 ・ リファレンス 9）
+> [!info] 出典ドメイン索引 ・ 引用 **86 件**（学術 78 ・ リファレンス 8）
 
 ## このドメインを出典とする項目
 
@@ -94,7 +94,6 @@ tags:
 - [[mgmt-role-exit-theory|役割退出理論]] — Ashforth,B.E."RoleTransitionsinOrganizationalLife:AnIdentity-basedPer…
 - [[mgmt-servqual|SERVQUAL（サービス品質モデル）]] — Parasuraman,Zeithaml&Berry(1988)"SERVQUAL:AMultiple-ItemScale...",Jou…
 - [[mgmt-shared-mental-models|共有メンタルモデル（チーム認知理論）]] — Cannon-Bowers,Salas&Converse(1993)—Sharedmentalmodelsinexpertteamdeci…
-- [[mgmt-strategic-choice-theory|戦略的選択理論]] — SemanticScholar—Child(1972)paperrecordwithcitationdata
 - [[mgmt-strategic-cognition|戦略的認知（Strategic Cognition）]] — Poracetal.(1989)—SemanticScholar
 - [[mgmt-strategic-issue-diagnosis|戦略的争点の診断（Strategic Issue Diagnosis）]] — Dutton&Jackson(1987)—SemanticScholar
 - [[mgmt-strategic-narratives-humphreys|戦略的ナラティブ（ハンフリーズ＆ブラウン）]] — Boje,D.M.(1991)TheStorytellingOrganization:AStudyofStoryPerformancein…

@@ -36,7 +36,6 @@ Ji-Yub (Jay) Kim & Anne S. Miner（AMJ 50(3), 2007 — 他組織の失敗・ニ�
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
 - [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
-- [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同分野の近傍
 

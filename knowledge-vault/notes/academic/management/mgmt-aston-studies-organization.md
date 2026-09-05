@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: Aston studies — organizational structure, contingency theory](https://en.wikipedia.org/wiki/Aston_studies) `リファレンス`
 
 ## 関連概念
-- [[mgmt-strategic-choice-child|戦略的選択論——環境決定論に抗する意思決定者の主体的選択]] — 同じ思想家
+- [[mgmt-strategic-choice-child|戦略的選択論（チャイルド）——組織構造は環境に一義的に決まるのではなく、支配的連合の政治的な選択を介して形づくられる]] — 同じ思想家
 - [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]] — 同分野の近傍
 - [[mgmt-configurational-theory-fiss|構成理論——等結果性と因果的複雑性の組織分析アプローチ]] — 同分野の近傍
 

@@ -39,6 +39,7 @@ aliases:
 - [[mgmt-information-processing-galbraith|組織の情報処理理論——不確実性に応じた情報処理能力の設計]] — 同じ思想家
 - [[mgmt-strategic-renewal-volberda|戦略的刷新と組織アンビデクストリティの動態能力論（フォルベルダ）]] — 同じ思想家
 - [[mgmt-boundaryspanning-roles|バウンダリースパニング役割：組織と環境を結ぶ境界連結機能・ゲートキーパー・役割葛藤の組織論的体系]] — 同分野の近傍
+- [[mgmt-resource-dependence-pfeffer|資源依存理論と組織間権力関係のマネジメント（ファーファー＝サランシク）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -38,7 +38,7 @@ aliases:
 - [[mgmt-resource-dependence|資源依存理論]] — 出典を共有
 - [[infosoc-media-materialism-kittler|キットラーのメディア唯物論——技術メディアが我々の状況を規定する]] — 出典を共有
 - [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 同分野の近傍
-- [[mgmt-sensegiving|センスギビング（ジョイア＆チッティペディ）——リーダーが他者の意味形成に働きかけ、変革の望ましい解釈を組織に広めるコミュニケーション過程]] — 同分野の近傍
+- [[mgmt-resource-dependence-pfeffer|資源依存理論と組織間権力関係のマネジメント（ファーファー＝サランシク）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

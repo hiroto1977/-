@@ -30,6 +30,7 @@ aliases:
 - [OECD (1996) "The Knowledge-Based Economy"（知識・認知が経済の中心となる変容を分析した先駆的報告書）](https://www.oecd.org/en/publications/knowledge-based-economy_230700m2nik7.html) `公的`
 
 ## 関連概念
+- [[infosoc-boundary-work-gieryn|境界画定作業——科学と非科学の境界を引く営み]] — 同分野の近傍
 - [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 同分野の近傍
 - [[infosoc-connectivism|コネクティビズム]] — 同分野の近傍
 

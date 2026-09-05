@@ -37,8 +37,8 @@ aliases:
 - [[mgmt-learning-organization-senge|学習する組織（センゲ）]] — 同じ思想家
 - [[mgmt-organizational-learning-argyris|組織学習とシングル・ダブルループ学習（アージリス）]] — 同じ思想家
 - [[mgmt-psychological-contract|心理的契約（ルソー）——雇用関係における明文化されない相互義務についての従業員の主観的信念と、その違反が信頼とコミットメントに与える影響]] — 同じ思想家
-- [[mgmt-team-cognition|チーム認知・共有メンタルモデル：チームの暗黙的協調を支える認知的基盤と集合的知識構造]] — 同分野の近傍
 - [[mgmt-behavioral-integration|行動的統合（Behavioral Integration）]] — 同分野の近傍
+- [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

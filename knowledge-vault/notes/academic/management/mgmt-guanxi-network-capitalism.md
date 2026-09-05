@@ -31,7 +31,6 @@ Boisot, Max ／Child, John （1996 Administrative Science Quarterly）／Yeung, 
 - [Luo, Y. — Guanxi and Business, World Scientific (Asia-Pacific Business Series)](https://www.worldscientific.com/worldscibooks/10.1142/6256) `リファレンス`
 
 ## 関連概念
-- [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]] — 同分野の近傍
 - [[mgmt-time-pacing-eisenhardt|タイム・ペーシング戦略とリズム的製品開発（アイゼンハート）]] — 同分野の近傍
 

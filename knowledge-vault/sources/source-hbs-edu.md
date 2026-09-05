@@ -2,7 +2,7 @@
 title: "hbs.edu"
 type: source-domain
 host: "hbs.edu"
-cite_count: 25
+cite_count: 24
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # hbs.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **25 件**（学術 21 ・ リファレンス 4）
+> [!info] 出典ドメイン索引 ・ 引用 **24 件**（学術 21 ・ リファレンス 3）
 
 ## このドメインを出典とする項目
 
@@ -36,8 +36,7 @@ tags:
 - [[mgmt-shared-value|共有価値の創造（CSV）]] — HarvardBusinessSchoolFaculty&Research—"CreatingSharedValue"（書誌・要旨）
 - [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — Doz,Y.&Hamel,G.(1998)AllianceAdvantage:TheArtofCreatingValuethroughPa…
 - [[mgmt-team-effectiveness-hackman-wageman|チーム有効性理論——ハックマンの条件モデルとチームコーチング]] — Wageman,R.,Nunes,D.A.,Burruss,J.A.&Hackman,J.R.(2008)SeniorLeadership…
-- [[mgmt-tempered-radical|穏健な急進主義者（Tempered Radicals）]] — HarvardBusinessSchool—TemperedRadicals:HowPeopleUseDifferencetoInspir…
-- [[mgmt-tempered-radicalism-meyerson|テンパード・ラジカリズム（メイヤーソン）]] — Meyerson,D.E.(2001)TemperedRadicals:HowEverydayLeadersInspireChangeat…
+- [[mgmt-tempered-radical|穏健な急進主義者（マイヤーソン＆スカリー）——組織への帰属を保ちながら、支配的文化と相容れない価値を小さな勝利の積み重ねで内側から推し進める個人]] — HarvardBusinessSchool:Meyerson,D.E.(2001)TemperedRadicals:HowPeopleUs…
 - [[mgmt-temporal-ambidexterity|時間的両利き性]] — Tushman&Romanelli(1985)OrganizationalEvolution—ResearchinOrganization…
 
 ## 関連

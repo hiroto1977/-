@@ -34,13 +34,13 @@ Richard M. Cyert／James G. March／Herbert A. Simon／Henrich R. Greve／Daniel
 - [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同じ思想家
 - [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
-- [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
 - [[infosoc-bandwagon-underdog-effect|バンドワゴン効果・アンダードッグ効果（bandwagon / underdog effect）——公表された世論調査が投票行動そのものを動かすフィードバック現象]] — 同じ思想家
 - [[mgmt-temporal-ambidexterity|時間的両利き性]] — 同じ思想家
 - [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 同じ思想家
 - [[infosoc-information-overload-theory|情報過負荷理論]] — 同じ思想家
 - [[mgmt-vicarious-learning|代理学習（Vicarious Learning in Organizations）]] — 同じ思想家
 - [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
+- [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

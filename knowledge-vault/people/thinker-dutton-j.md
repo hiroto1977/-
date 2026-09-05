@@ -2,7 +2,7 @@
 title: "Jane Dutton"
 type: thinker
 person_key: "dutton|j"
-concept_count: 5
+concept_count: 4
 tags:
   - person
   - index
@@ -10,12 +10,11 @@ tags:
 
 # Jane Dutton
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **5 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **4 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（5件）
+## 学術概念（4件）
 - [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]] — WrzesniewskiとDutton（2001）が提唱したジョブ・クラフティングの一形態。
 - [[mgmt-organizational-compassion|組織的コンパッション（集合的苦痛応答理論）]] — Kanov・Dutton・Worlineらが提唱。
-- [[mgmt-organizational-decline-theory|組織衰退理論]] — Weitzel&Jonsson（1989）は組織衰退を5段階モデル（盲目・不作為・誤作為・危機・解散）で定式化し、各段…
 - [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — KimS.Cameron、JaneE.Dutton、RobertE.Quinnが2003年に編んだ論文集『Positi…
 - [[mgmt-threat-rigidity-effect|脅威による硬直化効果（Threat-Rigidity Effect）]] — 脅威による硬直化効果（Threat-RigidityEffect）とは、組織が存立的脅威に直面したとき、情報処理の制限…
 

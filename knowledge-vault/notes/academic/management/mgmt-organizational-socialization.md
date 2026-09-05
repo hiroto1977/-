@@ -37,9 +37,9 @@ aliases:
 - [[mgmt-attraction-selection-attrition-schneider|魅力＝選択＝消耗の枠組み（シュナイダー）——「人が場所をつくる」]] — 出典を共有
 - [[human-foot-in-the-door|フット・イン・ザ・ドア・テクニック（段階的要請法）]] — 出典を共有
 - [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（ベイトマン＆クラント）——環境に順応するのではなく自ら機会を探し状況を変えようとする安定した性格傾向]] — 同分野の近傍
+- [[mgmt-psychological-ownership|心理的所有感（ピアース＆コストバ＆ダークス）——法的所有と無関係に対象を「自分のもの」と感じる状態が、支配・熟知・自己投資の三経路で生まれ、責任感と縄張り意識の両面をもたらす]] — 同分野の近傍
 - [[mgmt-toxic-leadership-whicker|トキシック・リーダーシップ（ウィッカー）]] — 同分野の近傍
 - [[mgmt-bricolage-entrepreneurship-baker|アントレプレナー的ブリコラージュ（ベイカー＝ネルソン）——手元にある資源の組み合わせを新しい問題や機会に当てはめて「無から有」を生む資源構築]] — 同分野の近傍
-- [[mgmt-identity-work-pratt|アイデンティティ・ワーク（プラット＆フォアマン）]] — 同分野の近傍
 - [[mgmt-inclusive-leadership-catalyst|インクルーシブ・リーダーシップ——多様性・公平性・帰属感を生み出すリーダー行動と組織文化]] — 同分野の近傍
 
 ## 関連

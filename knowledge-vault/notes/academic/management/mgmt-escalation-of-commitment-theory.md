@@ -33,8 +33,7 @@ Barry M. Staw ／ Jerry Ross ／ Joel Brockner ／ Dustin J. Sleesman
 - [Whyte 1986 — prospect theory link](https://doi.org/10.5465/amr.1986.4306006) `学術`
 
 ## 関連概念
-- [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
-- [[mgmt-escalation-of-commitment|コミットメントのエスカレーション]] — 同分野の近傍
+- [[mgmt-threat-rigidity-effect|脅威による硬直化効果（Threat-Rigidity Effect）]] — 同分野の近傍
 - [[mgmt-organizational-entropy|組織エントロピー]] — 同分野の近傍
 
 ## 関連

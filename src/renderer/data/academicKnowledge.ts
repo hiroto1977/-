@@ -6629,18 +6629,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-psychological-ownership',
     discipline: 'management',
-    title: '心理的所有感',
+    title: '心理的所有感（ピアース＆コストバ＆ダークス）——法的所有と無関係に対象を「自分のもの」と感じる状態が、支配・熟知・自己投資の三経路で生まれ、責任感と縄張り意識の両面をもたらす',
     statement:
-      '心理的所有感（psychological ownership）とは、法的な所有権の有無にかかわらず、ある対象（仕事・組織・製品・アイデア・チーム等）を「自分のもの（mine／our）」と感じる心理状態を指す。所有対象に自己を投影し、自己アイデンティティの一部として組み込む点が核心であり、対象は具体物だけでなく抽象的概念にも及ぶ。' +
-      'Pierce・Kostova・Dirksが2001年の論文（Academy of Management Review）で組織研究へ体系的に導入した。生起の主要な経路（ルート）は、(1)対象をコントロールすること、(2)対象を深く知ること（親密な知識）、(3)対象に自己を投資すること（時間・労力・アイデアの投入）の3つである。高まると組織コミットメント・職務満足・組織市民行動・責任感・スチュワードシップを促す正の効果がある一方、縄張り意識（テリトリアリティ）・変化への抵抗・情報共有の拒否・喪失時の強い感情といった負の側面（ダークサイド）も生じうる。従業員持株制度（ESOP）・参加型経営・ジョブ・クラフティング・ユーザー・イノベーション（DIY効果／IKEA効果）と関連して論じられる。',
-    keyFigures:
-      'ジョン・L・ピアース（Jon L. Pierce）／タチアナ・カストロ（Tatiana Kostova）／カート・ダークス（Kurt T. Dirks）（2001 Academy of Management Review）／3ルート＝コントロール・親密な知識・自己投資／関連＝IKEA効果',
-    asOf: '2026-06',
+      '心理的所有感（psychological ownership）とは、法的な所有権の有無にかかわらず、仕事・組織・製品・アイデア・チームといった対象を「自分のもの」と感じる心理状態で、所有対象に自己を投影し自己アイデンティティの一部として組み込む点を核心とし、対象は具体物だけでなく抽象的概念にも及ぶ。ジョン・ピアース、タチアナ・コストバ、カート・ダークスが2001年の論文（Academy of Management Review 26巻2号）で組織研究に体系的に導入し、2003年の論文で心理学的基盤を整理した。生起の経路は三つ——対象を支配・制御すること、対象を深く知ること（親密な知識）、対象に時間・労力・アイデアを投資すること——で、根底には効力感、自己アイデンティティ、居場所の欲求がある。高まると組織コミットメント、職務満足、組織市民行動、責任感とスチュワードシップ、役割外の革新行動を促す一方、縄張り意識（テリトリアリティ）、変化への抵抗、情報共有の拒否、喪失時の強い感情といった負の側面も生じうる。従業員持株制度（ESOP）の心理的効果、参加型経営、ジョブ・クラフティング、自律型チーム、ユーザー・イノベーション（IKEA 効果）と関連づけて論じられる。批判として、所有感と組織同一化やコミットメントとの弁別妥当性、集合的所有感の測定、正負の効果を分ける条件の理論化が課題である。中小企業には、株式を分けなくても裁量・情報・関与を通じて従業員の所有感を高められる一方、所有感が強い古参の縄張り意識が新人や変化を拒む原因にもなるため、対象を「私の」から「私たちの」へ広げる設計が含意となる。',
+    keyFigures: 'ジョン・ピアース＆タチアナ・コストバ＆カート・ダークス（2001 理論化／2003 心理学的基盤）／関連: 従業員持株制度、IKEA 効果',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://journals.aom.org/doi/10.5465/amr.2001.4378028', type: 'academic', label: 'Pierce, Kostova & Dirks (2001) “Toward a Theory of Psychological Ownership in Organizations,” Academy of Management Review 26(2): 298–310' },
-      { url: 'https://journals.sagepub.com/doi/10.1037/1089-2680.7.1.84', type: 'academic', label: 'Pierce, Kostova & Dirks (2003) “The State of Psychological Ownership,” Review of General Psychology 7(1): 84–107' },
-      { url: 'https://en.wikipedia.org/wiki/Ownership_(psychology)', type: 'reference', label: 'Wikipedia「Ownership (psychology)」— 定義・3ルート・自己アイデンティティ・テリトリアリティ・IKEA効果' },
-      { url: 'https://www.jstage.jst.go.jp/article/jshrm/22/2/22_87/_html/-char/en', type: 'academic', label: '“Psychological Ownership: A 20-Year Review,” Japanese Journal of Human Resource Management（査読・学会誌）' },
+      { url: 'https://journals.aom.org/doi/10.5465/amr.2001.4378028', type: 'academic', label: 'Pierce, J. L., Kostova, T. & Dirks, K. T. (2001) Toward a Theory of Psychological Ownership in Organizations — Academy of Management Review 26(2)（原典）' },
+      { url: 'https://journals.sagepub.com/doi/10.1037/1089-2680.7.1.84', type: 'academic', label: 'Pierce, J. L., Kostova, T. & Dirks, K. T. (2003) The State of Psychological Ownership: Integrating and Extending a Century of Research — Review of General Psychology 7(1)' },
+      { url: 'https://www.jstage.jst.go.jp/article/jshrm/22/2/22_87/_html/-char/en', type: 'academic', label: 'Japanese Journal of Human Resource Management 22(2): Psychological Ownership: A 20-Year Review（J-STAGE）' },
+      { url: 'https://en.wikipedia.org/wiki/Ownership_(psychology)', type: 'reference', label: 'Wikipedia: Ownership (psychology) — 三つの経路、自己アイデンティティ、テリトリアリティ、IKEA 効果' },
     ],
   },
   {
@@ -17447,15 +17445,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-tempered-radical',
     discipline: 'management',
-    title: '穏健な急進主義者（Tempered Radicals）',
+    title: '穏健な急進主義者（マイヤーソン＆スカリー）——組織への帰属を保ちながら、支配的文化と相容れない価値を小さな勝利の積み重ねで内側から推し進める個人',
     statement:
-      '穏健な急進主義者（Tempered Radicals）とは、組織への帰属意識とインサイダーとしての信頼性を維持しながら、同時に組織の支配的文化と根本的に相容れない大義・コミュニティ・イデオロギーを推進する個人を指す概念である。デブラ・E・マイヤーソン（ミシガン大学、後にスタンフォード大学）とモーリーン・A・スカリー（MITスローン経営大学院）が1995年にOrganization Science 6巻5号（pp.585–600）に発表した論文 "Tempered Radicalism and the Politics of Ambivalence and Change" で提唱した。' +
-      'マイヤーソンは2001年にハーバード・ビジネス・スクール・プレスから『Tempered Radicals: How People Use Difference to Inspire Change at Work』を刊行し、概念を体系化した。「tempered」は二重の意味を持ち、(1)怒りや急進性が節制（temper）されていること、(2)鍛錬によって強靱にされた（tempered steel）ことを含意する。穏健な急進主義者は革命的ではなく漸進的な変革戦術を採用し、(a)小さな勝利（small wins）の積み重ね、(b)個人的なアイデンティティの差異を組織変革の触媒として活用、(c)組織内の非公式な関係を通じた草の根連合構築、(d)個人への脅威を制度的機会に転換する戦略を用いる。この概念は組織内部からの制度変革、ダイバーシティ推進、社会正義アドボカシーの分析枠組みとして組織行動論で広く援用されている。',
-    keyFigures: 'デブラ・E・マイヤーソン & モーリーン・A・スカリー（1995 Organization Science 6(5), 585–600）／マイヤーソン（2001『Tempered Radicals』Harvard Business School Press）',
-    asOf: '2026-06',
+      '穏健な急進主義者（tempered radicals）とは、組織への帰属意識とインサイダーとしての信頼性を維持しながら、同時に組織の支配的文化と根本的に相容れない大義・コミュニティ・価値を推進する個人を指す概念で、デブラ・マイヤーソンとモーリーン・スカリーが1995年の論文（Organization Science 6巻5号）で提唱し、マイヤーソンが2001年の著書『Tempered Radicals』で体系化した。「tempered」は怒りや急進性が節制されていることと、鍛錬によって強靱になった鋼のように鍛えられていることの二重の意味を持つ。彼らは主流文化に完全には同化せず、かといって内側から変えるために急進的な行動も避け、小さな勝利（small wins）の積み重ね、自らのアイデンティティの差異を変革の触媒として活かすこと、非公式な関係を通じた草の根の連合形成、機会の窓の利用、日常のルーティンの微修正といった漸進的な戦術を用いる。両義性（ambivalence）を抱え続けること自体が戦略であり、多様性・公正・持続可能性の推進者が担うことが多く、社会運動論と組織変革論の交差点に位置づけられ、組織内部からの制度変革やダイバーシティ推進の分析枠組みとして広く援用される。批判として、穏健さが現状維持のアリバイになる「共謀」の危険、個人の消耗と孤立、効果が事例研究に依存し測定しにくいことが指摘される。中小企業には、経営者の方針に全面的には同意しない従業員が、辞めるか黙るかの二択ではなく小さな改善提案や現場の実験を通じて変化を起こす存在でありうること、経営者側もそうした声を「不忠」ではなく変革の資源として扱うことが含意となる。',
+    keyFigures: 'デブラ・マイヤーソン＆モーリーン・スカリー（1995 提唱）／デブラ・マイヤーソン（2001『Tempered Radicals』）／カール・ワイク（small wins）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1287/orsc.6.5.585', type: 'academic', label: 'Meyerson & Scully (1995) "Tempered Radicalism and the Politics of Ambivalence and Change", Organization Science 6(5), 585–600' },
-      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=6410', type: 'reference', label: 'Harvard Business School — Tempered Radicals: How People Use Difference to Inspire Change at Work (2001)' },
+      { url: 'https://doi.org/10.1287/orsc.6.5.585', type: 'academic', label: 'Meyerson, D. E. & Scully, M. A. (1995) Tempered Radicalism and the Politics of Ambivalence and Change — Organization Science 6(5), 585–600（原典）' },
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=6410', type: 'reference', label: 'Harvard Business School: Meyerson, D. E. (2001) Tempered Radicals: How People Use Difference to Inspire Change at Work — Harvard Business School Press' },
+      { url: 'https://en.wikipedia.org/wiki/Tempered_radical', type: 'reference', label: 'Wikipedia: Tempered radical — Meyerson & Scully、日常の抵抗、ダイバーシティ推進' },
     ],
   },
   {
@@ -19460,16 +19458,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-microfoundations-strategy',
     discipline: 'management',
-    title: '戦略のミクロ的基礎（Microfoundations of Strategy）',
+    title: '戦略のミクロ的基礎（フェリン＆フォス）——組織能力やルーティンといった集合的概念を、個人の行為・相互作用・異質性から説明しようとする研究プログラム',
     statement:
-      '戦略のミクロ的基礎（Microfoundations of Strategy）とは、企業レベルの戦略的成果（競争優位・ケイパビリティ・イノベーション等）を個人レベルの行為・相互作用・異質性から説明しようとする研究プログラムである。テッペン・フェリン（Teppo Felin）とニコライ・フォス（Nicolai Foss）が2005年に、戦略・組織理論が企業レベルの説明に偏重し個人と相互作用への注意が不十分であると批判して体系化を開始した。' +
-      '中核的主張は、組織レベルのケイパビリティ・知識・学習・アイデンティティといった集合的概念を完全に説明するには、構成要素である個人の性質・選択・能力・動機・異質性と、個人間の相互作用が集合的・創発的な組織成果をいかに生み出すかの解明が不可欠であるという点にある。管理者はケイパビリティに直接介入できないが、採用や人事政策の変更というミクロレベルの操作を通じて間接的に影響を及ぼしうる。',
-    keyFigures: 'テッペン・フェリン＆ニコライ・フォス（2005 初期提唱）／フェリン・フォス・ポルマン（2015 Academy of Management Annals レビュー）',
-    asOf: '2026-06',
+      '戦略のミクロ的基礎（microfoundations of strategy）は、企業レベルの戦略的成果——競争優位、ケイパビリティ、ルーティン、イノベーション——を個人の行為・相互作用・異質性から説明しようとする研究プログラムで、テッポ・フェリンとニコライ・フォス（2005）が、資源ベース論や動的ケイパビリティ論が組織レベルの構成概念に依拠しすぎて個人のメカニズムの解明が不十分だと批判して体系化を始めた。中核的主張は、集合的な能力・知識・学習・アイデンティティを完全に説明するには、構成要素である個人の性質・選択・能力・動機と、個人間の相互作用が集合的で創発的な組織成果をどう生むかの解明が不可欠だという点にあり、フェリン、フォス、プロイハート（2015、Academy of Management Annals）は「個人→集合的構成概念→成果」の枠組みで運動を整理し、個人の属性が組織の特性に変換される集約問題の重要性を強調した。バーニーとフェリン（2013）は資源ベース論のミクロ的基礎として人的資本が競争優位に至る経路を精緻化し。経営者はケイパビリティに直接介入できないが、採用や人事方針といったミクロの操作を通じて間接的に影響を及ぼしうるという実践的含意を持つ。批判として、シドニー・ウィンターらは過度の還元主義を懸念し、創発的特性やルーティンの集合的性質を軽視する危険を指摘し、「ミクロ」の水準が個人なのか相互作用なのかをめぐる定義の揺れがある。中小企業には、組織の力といっても実体は特定の人と人の組み合わせであるため、誰を採り誰と組ませるかが戦略そのものであること、一方で仕組み（ルーティン）に落とさなければ個人の退職で消えることが含意となる。',
+    keyFigures: 'テッポ・フェリン＆ニコライ・フォス（2005 提唱）／テッポ・フェリン＆ニコライ・フォス＆ロバート・プロイハート（2015 運動のレビュー）／ジェイ・バーニー＆テッポ・フェリン（2013 資源ベース論のミクロ的基礎）／対比: シドニー・ウィンター（還元主義批判）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.5465/19416520.2015.1007651', type: 'academic', label: 'Felin, Foss & Ployhart (2015) The Microfoundations Movement in Strategy and Organization Theory — Academy of Management Annals' },
-      { url: 'https://journals.sagepub.com/doi/10.1016/j.brq.2014.01.001', type: 'academic', label: 'Molina-Azorín (2014) Microfoundations of Strategic Management — BRQ Business Research Quarterly (SAGE)' },
-      { url: 'https://www.cambridge.org/core/books/microfoundations/079FF73BB164AE480BA997395B7245E1', type: 'academic', label: 'Felin et al. (eds.) Microfoundations — Cambridge University Press' },
+      { url: 'https://doi.org/10.5465/19416520.2015.1007651', type: 'academic', label: 'Felin, T., Foss, N. J. & Ployhart, R. E. (2015) The Microfoundations Movement in Strategy and Organization Theory — Academy of Management Annals 9(1)（運動のレビュー）' },
+      { url: 'https://doi.org/10.5465/amp.2012.0107', type: 'academic', label: 'Barney, J. & Felin, T. (2013) What Are Microfoundations? — Academy of Management Perspectives 27(2)' },
+      { url: 'https://journals.sagepub.com/doi/10.1016/j.brq.2014.01.001', type: 'academic', label: 'Molina-Azorín, J. F. (2014) Microfoundations of Strategic Management: Toward Micro–Macro Research in the Resource-Based Theory — BRQ Business Research Quarterly 17(2)' },
+      { url: 'https://www.cambridge.org/core/books/microfoundations/079FF73BB164AE48', type: 'academic', label: 'Cambridge University Press: Felin, T. et al. (eds.) Microfoundations（論集）' },
+      { url: 'https://en.wikipedia.org/wiki/Microfoundations', type: 'reference', label: 'Wikipedia: Microfoundations — 経済学・経営学におけるミクロ的基礎の議論' },
     ],
   },
   {
@@ -21607,15 +21606,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-managerial-cognition',
     discipline: 'management',
-    title: '経営者認知理論',
+    title: '経営者認知（ウォルシュ）——経営者は環境そのものではなく知識構造を通した解釈に反応し、その認知地図が注意・判断・競争行動を規定する',
     statement:
-      '経営者認知理論は、経営者が客観的な環境に直接反応するのではなく、認知スキーマや心的モデルを通じて環境を解釈・構築するという前提に立つ。Walsh（1995）の体系的レビューは、知識構造が注意の配分・情報の符号化・貯蔵・検索という情報処理の各段階を規定することを整理し、スキーマが認知資源を節約して迅速な判断を可能にする便益と、盲点や時代遅れの地図が変化の兆候を見落とさせる負債の両面を持つこと、そして分析水準が個人・集団・組織・産業へ入れ子状に広がることを示して分野の見取り図を与えた。Porac・Thomas・Baden-Fuller（1989）はスコットランドのニット業者の研究で、経営者が共有する「誰が競争相手か」の心的モデル——競合認知コミュニティ——が取引ネットワークと模倣を通じて再生産され、客観的な代替可能性ではなく認知された競争構造が実際の競争行動を規定することを実証した（認知的寡占）。Fiol と Huff は因果マップなどの認知地図法を経営研究の方法として整備し、経営者の注意と解釈を測定可能にした。上位階層理論（経営者の濾過された知覚）、支配的論理、戦略転換を遅らせる認知慣性・競争上の盲点の研究と接続し、注意の配分を組織構造に結びつける後続理論の基礎となって、戦略の微視的基礎（マイクロファウンデーション）研究の中核領域を形成している。',
-    keyFigures: 'James P. Walsh ／ Karl E. Weick ／ Anne Sigismund Huff ／ Joseph F. Porac ／ Howard Thomas',
-    asOf: '2026-06',
+      '経営者認知（managerial cognition）研究は、経営者が客観的な環境に直接反応するのではなく、認知スキーマや心的モデル（知識構造）を通じて環境を解釈し構築するという前提に立つ。ジェームズ・ウォルシュの1995年の体系的レビュー（Organization Science 6巻3号）は、知識構造が注意の配分・情報の符号化・貯蔵・検索という情報処理の各段階を規定すること、スキーマが認知資源を節約して迅速な判断を可能にする便益と、盲点や時代遅れの地図が変化の兆候を見落とさせる負債の両面を持つこと、分析水準が個人・集団・組織・産業へ入れ子状に広がることを整理して分野の見取り図を与えた。ポラック、トーマス、ベイデン＝フラー（1989）はスコットランドのニット業者の研究で、経営者が共有する「誰が競争相手か」の心的モデル（競合認知コミュニティ）が取引ネットワークと模倣を通じて再生産され、客観的な代替可能性ではなく認知された競争構造が競争行動を規定することを示し、フィオルとハフは因果マップなどの認知地図法を整備して経営者の注意と解釈を測定可能にした。ワイクのエナクトメント（環境は経営者が構成する）、上層部理論、ドミナント・ロジック、注意ベース理論と接続し、戦略転換を遅らせる認知慣性や競争上の盲点の研究、行動戦略論（behavioral strategy）の源泉となった。批判として、認知の測定が文書や発言の分析に頼り因果の識別が難しいこと、個人の認知を組織の行為に集約する機構の理論化が弱いことがある。中小企業には、経営者自身の「業界の地図」が競争相手と顧客の範囲を狭めていないかを、取引先や異業種の目で定期的に描き直すことが含意となる。',
+    keyFigures: 'ジェームズ・ウォルシュ（1995 レビュー）／ジョセフ・ポラック＆ハワード・トーマス＆チャールズ・ベイデン＝フラー（1989 競合認知コミュニティ）／マーリーン・フィオル＆アン・ハフ（1992 認知地図法）／カール・ワイク（エナクトメント）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.6.3.280', type: 'academic', label: 'Walsh (1995) Managerial and Organizational Cognition — Organization Science' },
-      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1467-6486.1989.tb00736.x', type: 'academic', label: 'Porac, Thomas & Baden-Fuller (1989) Competitive Groups as Cognitive Communities — Journal of Management Studies' },
-      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-6486.1992.tb00665.x', type: 'reference', label: 'Fiol & Huff (1992) Maps for Managers — Journal of Management Studies' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.6.3.280', type: 'academic', label: 'Walsh, J. P. (1995) Managerial and Organizational Cognition: Notes from a Trip Down Memory Lane — Organization Science 6(3)（レビュー）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1467-6486.1989.tb00736.x', type: 'academic', label: 'Porac, J. F., Thomas, H. & Baden-Fuller, C. (1989) Competitive Groups as Cognitive Communities: The Case of Scottish Knitwear Manufacturers — Journal of Management Studies 26(4)' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-6486.1992.tb00664.x', type: 'reference', label: 'Fiol, C. M. & Huff, A. S. (1992) Maps for Managers: Where Are We? Where Do We Go from Here? — Journal of Management Studies 29(3)' },
+      { url: 'https://en.wikipedia.org/wiki/Managerial_cognition', type: 'reference', label: 'Wikipedia: Managerial cognition — 知識構造、認知地図、行動戦略論との関係' },
     ],
   },
   {
@@ -22676,41 +22676,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-strategic-choice-theory',
-    discipline: 'management',
-    title: '戦略的選択理論',
-    statement: 'Child（1972）は、組織構造・環境・業績の関係を論じた論文において、コンティンジェンシー理論が組織設計を環境や技術などの外部条件によって受動的に決定されるものとして捉える点を批判し、「戦略的選択」の視点を提唱した。この理論の核心は、組織内の支配的連合（dominant coalition）と呼ばれる権力保持者集団が、環境の解釈・構造設計・パフォーマンス基準の選択において意図的かつ政治的な判断を行うという点にある。すなわち、組織構造は環境に一義的に規定されるのではなく、トップマネジメントの意思決定と価値判断を介して形成されるとされる。この視点はCyert & March（1963）の行動理論における連合概念を組織構造論に組み込んだものであり、経営者の能動的エージェンシーを組織分析の中心に据えた点で画期的であった。Child（1997）は後にこの視点を再検討し、行為・構造・環境の相互作用を統合する枠組みとして戦略的選択論の現代的意義を再確認している。',
-    keyFigures: 'John Child ／ Richard M. Cyert ／ James G. March ／ Alfred D. Chandler Jr. ／ Tom Burns ／ George M. Stalker',
-    asOf: '2026-06',
-    sources: [
-      {
-        url: 'https://doi.org/10.1177/003803857200600101',
-        type: 'academic',
-        label: 'Child, J. (1972). Organizational Structure, Environment and Performance: The Role of Strategic Choice. Sociology, 6(1), 2–22.',
-      },
-      {
-        url: 'https://doi.org/10.1177/017084069701800104',
-        type: 'academic',
-        label: 'Child, J. (1997). Strategic Choice in the Analysis of Action, Structure, Organizations and Environment: Retrospect and Prospect. Organization Studies, 18(1), 43–76.',
-      },
-      {
-        url: 'https://www.semanticscholar.org/paper/Organizational-Structure,-Environment-and-The-Role-Child/cd0ee7e614f8f4a1c40ea1de4485e2aea6e2b9cb',
-        type: 'reference',
-        label: 'Semantic Scholar — Child (1972) paper record with citation data',
-      },
-      {
-        url: 'https://grokipedia.com/page/strategic_choice_theory',
-        type: 'reference',
-        label: 'Grokipedia: Strategic Choice Theory — overview of core concepts and key scholars',
-      },
-      {
-        url: 'https://www.elgaronline.com/edcollchap/book/9781035308767/ch40.xml',
-        type: 'academic',
-        label: 'Elgar Online: Strategic Choice Theory — chapter in A Guide to Key Theories for Human Resource Management Research',
-      },
-    ],
-  },
-  {
     id: 'mgmt-organizational-ambivalence-theory',
     discipline: 'management',
     title: '組織的アンビバレンス理論',
@@ -23221,15 +23186,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-strategic-group-theory',
     discipline: 'management',
-    title: '戦略グループ理論',
-    statement: 'Huntは1972年のハーバード博士論文において、同一産業内で類似した戦略を採用する企業群を「戦略グループ」として概念化し、産業内の競争構造を説明する枠組みを初めて提示した。Porterはこの概念を発展させ、戦略グループ間の移動を困難にする「移動障壁（mobility barriers）」を定式化し、グループ内競争の強度やグループ間の収益差異を説明した。Caves & Porterは1977年の論文で移動障壁理論を精緻化し、戦略グループが産業組織論における中間レベルの分析単位として有効であることを示した。Cool & Schendelは1988年の研究で、戦略グループのメンバーシップとパフォーマンスの関係を実証的に検証し、グループ内でも有意な業績差異が存在することを明らかにした。McGee & Thomasは戦略グループ研究のレビューを通じて、方法論的課題や構成概念の妥当性について整理し、理論的・実証的研究の発展に貢献した。',
-    keyFigures: 'Michael S. Hunt ／ Michael E. Porter ／ Richard E. Caves ／ Karel Cool ／ Dan E. Schendel ／ John McGee ／ Howard Thomas',
-    asOf: '2026-06',
+    title: '戦略グループ（ハント／ケイブス＆ポーター）——同一産業内で似た戦略をとる企業群を単位に、移動障壁がグループ間の収益差を持続させる',
+    statement:
+      '戦略グループ（strategic groups）は、マイケル・ハントが1972年のハーバード大学博士論文で、同一産業内で製品多角化・垂直統合・研究開発投資といった戦略的次元に沿って似た戦略を採る企業群として概念化した分析単位で、産業全体と個別企業の中間の水準で競争構造を説明する。マイケル・ポーターはこれを発展させ、リチャード・ケイブスとポーター（1977、Quarterly Journal of Economics）は参入障壁を一般化した「移動障壁（mobility barriers）」——規模の経済、ブランド・ロイヤルティ、流通チャネル、技術の蓄積など——がグループ間の移動を困難にし、グループ間の収益格差を持続させると論じた。同一グループ内の企業は似た業績を示す傾向があるとされたが、カレル・クールとダン・シェンデル（1988）は製薬産業の実証でグループ内にも有意な業績差があることを示し、ジョン・マギーとハワード・トーマス（1986）は研究のレビューでグループの定義と方法論の課題を整理した。批判として、グループの境界がクラスター分析の手法や変数の選択に依存して恣意的になりやすいこと、グループ帰属と業績の因果が曖昧なこと、ジェイ・バーニーらが指摘したグループ効果と企業固有の資源効果の弁別の難しさ、経営者の主観的分類を扱う認知的アプローチ（競合認知コミュニティ）との整合がある。中小企業には、自社が実際に競っている相手は産業全体ではなく同じ戦略グループの企業であること、別グループへの移動には障壁の費用がかかる一方、障壁の内側にいることが小規模でも収益を守る理由になりうることが含意となる。',
+    keyFigures: 'マイケル・ハント（1972 博士論文で概念化）／リチャード・ケイブス＆マイケル・ポーター（1977 移動障壁）／カレル・クール＆ダン・シェンデル（1988 グループ内の業績差）／ジョン・マギー＆ハワード・トーマス（1986 レビュー）／対比: ジェイ・バーニー（資源ベース論からの批判）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.2307/1885416', type: 'academic', label: 'Caves & Porter (1977) "From Entry Barriers to Mobility Barriers" — Quarterly Journal of Economics' },
-      { url: 'https://doi.org/10.1002/smj.4250090103', type: 'academic', label: 'Cool & Schendel (1988) "Performance Differences Among Strategic Group Members" — Strategic Management Journal' },
-      { url: 'https://doi.org/10.1002/smj.4250070105', type: 'academic', label: 'McGee & Thomas (1986) "Strategic Groups: Theory, Research and Taxonomy" — Strategic Management Journal' },
-      { url: 'https://doi.org/10.1016/0024-6301(80)90041-5', type: 'academic', label: 'Porter (1980) Competitive Strategy — Free Press (mobility barriers & strategic groups)' },
+      { url: 'https://doi.org/10.2307/1885416', type: 'academic', label: 'Caves, R. E. & Porter, M. E. (1977) From Entry Barriers to Mobility Barriers: Conjectural Decisions and Contrived Deterrence to New Competition — Quarterly Journal of Economics 91(2)（移動障壁の原典）' },
+      { url: 'https://doi.org/10.1002/smj.4250090103', type: 'academic', label: 'Cool, K. & Schendel, D. (1988) Performance Differences Among Strategic Group Members — Strategic Management Journal 9(3)' },
+      { url: 'https://doi.org/10.1002/smj.4250070105', type: 'academic', label: 'McGee, J. & Thomas, H. (1986) Strategic Groups: Theory, Research and Taxonomy — Strategic Management Journal 7(2)' },
+      { url: 'https://en.wikipedia.org/wiki/Strategic_group', type: 'reference', label: 'Wikipedia: Strategic group — Hunt 1972、移動障壁、産業構造' },
     ],
   },
   {
@@ -23306,21 +23272,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.2307/1914185', type: 'academic', label: 'Kahneman & Tversky, "Prospect Theory: An Analysis of Decision under Risk", Econometrica Vol.47 No.2 (1979)' },
       { url: 'https://hbr.org/2010/06/the-case-for-behavioral-strategy', type: 'media', label: 'Lovallo & Sibony, "The Case for Behavioral Strategy", Harvard Business Review (2010)' },
       { url: 'https://www.britannica.com/topic/behavioral-economics', type: 'reference', label: 'Encyclopaedia Britannica — Behavioral Economics (行動経済学・行動戦略の理論的基盤)' },
-    ],
-  },
-  {
-    id: 'mgmt-organizational-decline-theory',
-    discipline: 'management',
-    title: '組織衰退理論',
-    statement: 'Weitzel & Jonsson（1989）は組織衰退を5段階モデル（盲目・不作為・誤作為・危機・解散）で定式化し、各段階で適切な介入がなければ衰退が進行し、段階が進むほど逆転は困難になると論じた。衰退の早期段階は外形的な業績にまだ表れないため、組織の自己認識能力がモデル全体の要になる。Cameron・Whetten・Kim（1987）は衰退を「停滞（資源縮小）」と「削減（意図的なコスト削減）」に区別し、それぞれが組織行動に異なる影響を与えることを明らかにした。Staw・Sandelands・Dutton（1981）の脅威―硬直効果（threat-rigidity effect）は、外部脅威にさらされた組織が情報処理を制限し、既存の行動レパートリーに固執することを示した。Hambrick & D\'Aveni（1988）は経営資源の消耗と経営陣の交代が悪循環を形成する「下降螺旋（downward spiral）」を提示し、衰退の自己強化的メカニズムを強調した。組織衰退研究はターンアラウンド研究と表裏一体であり、衰退の深刻さ・原因・段階を診断することが回復戦略の設計前提となる。',
-    keyFigures: 'William Weitzel ／ Ellen Jonsson ／ Kim S. Cameron ／ David A. Whetten ／ Myung Un Kim ／ Barry M. Staw ／ Lance E. Sandelands ／ Jane E. Dutton ／ Donald C. Hambrick ／ Richard A. D\'Aveni',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.2307/2392987', type: 'academic', label: 'Weitzel & Jonsson (1989) "Decline in Organizations: A Literature Integration and Extension" — Administrative Science Quarterly' },
-      { url: 'https://doi.org/10.2307/256246', type: 'academic', label: 'Cameron, Whetten & Kim (1987) "Organizational Dysfunctions of Decline" — Academy of Management Journal' },
-      { url: 'https://doi.org/10.2307/2392337', type: 'academic', label: 'Staw, Sandelands & Dutton (1981) "Threat-Rigidity Effects in Organizational Behavior" — Administrative Science Quarterly' },
-      { url: 'https://doi.org/10.2307/2392853', type: 'academic', label: 'Hambrick & D\'Aveni (1988) "Large Corporate Failures as Downward Spirals" — Administrative Science Quarterly' },
-      { url: 'https://doi.org/10.1002/smj.4250050104', type: 'academic', label: 'Schendel, Patton & Riggs (1976) "Corporate Turnaround Strategies" — Strategic Management Journal' },
     ],
   },
   {
@@ -29097,20 +29048,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.aeaweb.org/articles?id=10.1257/aer.90.3.407', type: 'academic', label: 'Kashyap, A. K. & Stein, J. C. (2000) What Do a Million Observations on Banks Say about the Transmission of Monetary Policy? — American Economic Review 90(3)（銀行貸出チャネルの実証）' },
       { url: 'https://www.federalreserve.gov/newsevents/speech/bernanke20070615a.htm', type: 'government', label: 'Bernanke, B. (2007) The Financial Accelerator and the Credit Channel — Federal Reserve Board speech（概説）' },
       { url: 'https://en.wikipedia.org/wiki/Credit_channel', type: 'reference', label: 'Wikipedia: Credit channel — bank lending channel, balance sheet channel, financial accelerator' },
-    ],
-  },
-  {
-    id: 'mgmt-tempered-radicalism-meyerson',
-    discipline: 'management',
-    title: 'テンパード・ラジカリズム（メイヤーソン）',
-    statement: 'テンパード・ラジカリズム（tempered radicalism）は、メイヤーソン＆スカリー（1995）が提唱し、メイヤーソン（2001）が書籍で展開した、組織の価値観や慣行に根本的な疑義を持ちながらも、組織内に留まって漸進的・局所的変革を通じて制度変化を推進する個人の戦略・アイデンティティポジションを指す。「穏健な過激主義者（tempered radical）」は組織の主流文化に完全同化せず、かつ「内側から変革」するために急進的行動も避け、小さな実験・連合形成・機会的ウィンドウの利用・日常的ルーティンの微修正（everyday acts of resistance）を戦術とする。多様性・公正・持続可能性の推進者がこの役割を担うことが多く、社会運動と組織変革理論の交差点に位置する。測定研究としてメイヤーソン＆ロッホ（2000）は「小さな勝利（small wins）」の累積が組織文化変革をもたらす定性的事例を体系化した。批判として、穏健さが現状維持のアリバイになる「共謀（complicity）」リスクも指摘される。',
-    keyFigures: 'デブラ・メイヤーソン ／ マウリーン・スカリー ／ カール・ワイク ／ ジョーン・ロッチ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1287/orsc.6.5.585', type: 'academic', label: 'Meyerson, D. & Scully, M. (1995) Tempered Radicalism and the Politics of Ambivalence and Change — Organization Science, 6(5), 585–600（原典論文）' },
-      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=10226', type: 'reference', label: 'Meyerson, D. E. (2001) Tempered Radicals: How Everyday Leaders Inspire Change at Work — Harvard Business School Press（体系書）' },
-      { url: 'https://doi.org/10.5465/amr.2000.4965960', type: 'academic', label: 'Meyerson, D. E. & Fletcher, J. K. (2000) A Modest Manifesto for Shattering the Glass Ceiling — Harvard Business Review, 78(1), 126–136（小さな勝利戦略の応用）' },
-      { url: 'https://en.wikipedia.org/wiki/Tempered_radical', type: 'reference', label: 'Wikipedia: Tempered radical — Meyerson & Scully, everyday resistance, diversity leadership, complicity risk' },
     ],
   },
   {
@@ -35941,13 +35878,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-strategic-choice-child',
     discipline: 'management',
-    title: '戦略的選択論——環境決定論に抗する意思決定者の主体的選択',
-    statement: '戦略的選択論（strategic choice）は、ジョン・チャイルドが1972年の論文「組織構造・環境・業績——戦略的選択の役割」で提唱した組織論の視座で、当時支配的であった決定論的なコンティンジェンシー理論への批判として展開された。1960年代のコンティンジェンシー理論は、組織構造が環境、技術、規模といった客観的な状況要因によってほぼ一義的に決定されると考え、有効な組織はこれらの状況に機械的に適合した構造を持つと論じた。これに対しチャイルドは、組織を取り巻く状況が構造を直接決めるのではなく、その間に組織の意思決定者——彼が「支配的連合（dominant coalition）」と呼ぶ、組織内で権力を握る集団——の能動的な選択が介在すると主張した。意思決定者は、環境を一義的に与えられたものとして受け取るのではなく、自らの知覚・価値観・利害を通じて環境を解釈し、その解釈に基づいて戦略・構造・技術を選択する。さらに彼らは、どの市場や環境で事業を営むかという環境そのものの選択や、環境への働きかけによる環境の改変さえも行いうる。チャイルドは、組織が満たすべき業績基準には通常「ゆとり（slack）」があり、最高水準でなくても許容されるため、意思決定者には選択の自由度が残されていると論じた。すなわち、組織構造は環境への受動的適応の産物ではなく、権力を持つ主体の政治的な選択の帰結である。戦略的選択論の意義は、組織論に行為主体性（agency）と政治・権力の視点を再び持ち込んだ点にある。状況が組織を一方的に形づくるという構造決定論に対し、組織のリーダーが状況の制約の中で主体的に選び取る余地を強調し、戦略経営論や組織の権力分析へと連なる重要な理論的転回をもたらした。',
-    keyFigures: 'ジョン・チャイルド ／ トム・バーンズ ／ デレク・プフ ／ カール・ワイク',
-    asOf: '2026-06-26',
+    title: '戦略的選択論（チャイルド）——組織構造は環境に一義的に決まるのではなく、支配的連合の政治的な選択を介して形づくられる',
+    statement:
+      '戦略的選択論（strategic choice）は、ジョン・チャイルドが1972年の論文（Sociology 6巻1号）で提唱した組織論の視座で、組織構造が環境・技術・規模といった状況要因にほぼ一義的に決まるとする当時のコンティンジェンシー理論への批判として展開された。チャイルドは、状況が構造を直接決めるのではなく、その間に組織内で権力を握る「支配的連合（dominant coalition）」の能動的な選択が介在すると主張した。意思決定者は環境を与えられたものとして受け取るのではなく、自らの知覚・価値観・利害を通じて解釈し、その解釈に基づいて戦略・構造・技術を選び、どの市場や環境で事業を営むかという環境そのものの選択や、環境への働きかけによる改変さえ行いうる。組織が満たすべき業績基準には通常ゆとり（スラック）があり最高水準でなくても許容されるため、選択の自由度が残る。サイアートとマーチの行動理論の連合概念を組織構造論に組み込み、行為主体性（エージェンシー）と政治・権力の視点を組織論に取り戻した点に意義があり、チャイルド（1997）は行為・構造・環境の相互作用を統合する枠組みとして現代的意義を再確認した。批判として、選択の余地がどの程度あるかは産業や規模で大きく異なり、支配的連合の内部の対立や制度的圧力の扱いが弱いこと、環境決定論との対立が経験的に決着しにくいことがある。中小企業には、業種や規模を理由に「構造はこうするしかない」と考える前に、誰が決めているか（支配的連合）と、どの市場・取引先を選ぶかという環境の選択自体が経営判断であることが含意となる。',
+    keyFigures: 'ジョン・チャイルド（1972 提唱／1997 回顧）／リチャード・サイアート＆ジェームズ・マーチ（支配的連合の源流）／対比: トム・バーンズ＆ジョージ・ストーカー、コンティンジェンシー理論',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1177/003803857200600101', type: 'academic', label: 'Child, J. (1972) Organizational Structure, Environment and Performance: The Role of Strategic Choice — Sociology 6(1)' },
-      { url: 'https://en.wikipedia.org/wiki/Strategic_choice_theory', type: 'reference', label: 'Wikipedia: Strategic choice — Child, dominant coalition, agency, critique of contingency determinism' },
+      { url: 'https://doi.org/10.1177/003803857200600101', type: 'academic', label: 'Child, J. (1972) Organizational Structure, Environment and Performance: The Role of Strategic Choice — Sociology 6(1)（原典）' },
+      { url: 'https://doi.org/10.1177/017084069701800104', type: 'academic', label: 'Child, J. (1997) Strategic Choice in the Analysis of Action, Structure, Organizations and Environment: Retrospect and Prospect — Organization Studies 18(1)' },
+      { url: 'https://en.wikipedia.org/wiki/Strategic_choice_theory', type: 'reference', label: 'Wikipedia: Strategic choice theory — Child、支配的連合、コンティンジェンシー理論批判' },
     ],
   },
   {
@@ -39158,14 +39097,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-organizational-decline-weitzel',
     discipline: 'management',
-    title: '組織衰退の段階モデル——早期警戒・不作為・誤った行動・危機・解体',
-    statement: '組織衰退の段階モデル（stages of organizational decline）は、ウェイツェルとジョンソンが1989年に提唱した枠組みであり、組織が衰退する過程を五つの段階に区分して分析する。第一段階「盲目」（blinded）では経営陣が環境変化の兆候を認識できず、第二段階「不作為」（inaction）では認識するも対応を先送りし、第三段階「誤った行動」（faulty action）では不適切な対応策が事態を悪化させ、第四段階「危機」（crisis）では組織存続が脅かされ、第五段階「解体」（dissolution）では回復不能に至る。各段階で適切な介入が行われれば衰退は反転可能であるが、段階が進むほど回復のための資源と時間が制約される。この段階モデルはキャメロンとウェッテンの組織有効性研究やハンバリックとダベニの下降スパイラル研究と理論的に接続し、組織再生・ターンアラウンド研究の基盤を提供している。関連して、ダニー・ミラーは『イカロスの逆説』（1990）で過去の成功パターンへの固着が衰退を招く「成功の罠」を分析し、バリー・スタウの「投資の段階的拡大（escalation of commitment）」は誤った行動の段階が持続してしまう機構を説明する。アイゼンハートらのシンプル・ルール戦略は、環境変化下での硬直化を避ける処方として位置づけられる。',
-    keyFigures: 'ウィリアム・ウェイツェル ／ エレン・ジョンソン ／ キム・キャメロン ／ ドナルド・ハンバリック',
-    asOf: '2026-06-26',
+    title: '組織衰退（ウェイツェル＝ヨンソンの五段階モデル）——盲目・不作為・誤った行動・危機・解体と進み、段階が進むほど反転が難しくなる衰退の動態',
+    statement:
+      '組織衰退（organizational decline）研究は、組織が資源や正統性を失って縮小・消滅へ向かう過程とその機構を扱う。ウィリアム・ウェイツェルとエレン・ヨンソン（1989、Administrative Science Quarterly 34巻1号）は先行研究を統合し、衰退を五段階で定式化した。経営陣が環境変化の兆候を認識できない「盲目」、認識しても対応を先送りする「不作為」、不適切な対応が事態を悪化させる「誤った行動」、存続が脅かされる「危機」、回復不能の「解体」であり、各段階で適切な介入があれば反転しうるが、段階が進むほど回復に使える資源と時間が減る。初期段階は業績に表れないため、組織の自己認識能力がモデルの要になる。キム・キャメロン、デイヴィッド・ウェッテン、キム（1987）は衰退を資源縮小としての停滞と意図的な削減に区別してそれぞれの組織行動への影響を示し、スタウ、サンデランズ、ダットン（1981）の脅威硬直効果は、脅威に晒された組織が情報処理を狭めて既存の行動レパートリーに固執することを、ハンブリックとダベニ（1988）の下降螺旋は資源の消耗と経営陣の交代が悪循環を形成する自己強化的機構を示した。ターンアラウンド研究と表裏一体で、衰退の段階・原因・深刻さの診断が回復戦略の前提となる。批判として、段階の境界が事後的にしか判定しにくく、衰退の原因（環境か経営か）の識別が難しいことがある。中小企業には、売上が落ちる前の「兆候を見ない」段階で衰退が始まっていること、赤字が出てからの一律のコスト削減は脅威硬直の典型であり、早い段階で外部の目を入れて事業の組み替えを検討することが含意となる。',
+    keyFigures: 'ウィリアム・ウェイツェル＆エレン・ヨンソン（1989 五段階モデル）／キム・キャメロン＆デイヴィッド・ウェッテン（1987 停滞と削減の区別）／バリー・スタウ＆ランス・サンデランズ＆ジェーン・ダットン（1981 脅威硬直効果）／ドナルド・ハンブリック＆リチャード・ダベニ（1988 下降螺旋）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.2307/2392987', type: 'academic', label: 'Weitzel, W. & Jonsson, E. (1989) Decline in Organizations: A Literature Integration and Extension — Administrative Science Quarterly 34(1), 91-109' },
-      { url: 'https://doi.org/10.2307/2392853', type: 'academic', label: "Hambrick, D. C. & D'Aveni, R. A. (1988) Large Corporate Failures as Downward Spirals — Administrative Science Quarterly 33(1), 1-23" },
-      { url: 'https://doi.org/10.1590/1807-7692bar2017160110', type: 'academic', label: 'Serra, F. A. R., Pinto, R., Guerrazzi, L. & Ferreira, M. P. (2017) Organizational Decline Research Review: Challenges and Issues for a Future Research Agenda — Brazilian Administration Review 14(2), e160110（組織衰退研究のレビュー）' },
+      { url: 'https://doi.org/10.2307/2392987', type: 'academic', label: 'Weitzel, W. & Jonsson, E. (1989) Decline in Organizations: A Literature Integration and Extension — Administrative Science Quarterly 34(1)（五段階モデルの原典）' },
+      { url: 'https://doi.org/10.2307/256246', type: 'academic', label: 'Cameron, K. S., Whetten, D. A. & Kim, M. U. (1987) Organizational Dysfunctions of Decline — Academy of Management Journal 30(1)' },
+      { url: 'https://doi.org/10.2307/2392337', type: 'academic', label: 'Staw, B. M., Sandelands, L. E. & Dutton, J. E. (1981) Threat Rigidity Effects in Organizational Behavior: A Multilevel Analysis — Administrative Science Quarterly 26(4)' },
+      { url: 'https://doi.org/10.2307/2392853', type: 'academic', label: 'Hambrick, D. C. & D\'Aveni, R. A. (1988) Large Corporate Failures as Downward Spirals — Administrative Science Quarterly 33(1)' },
+      { url: 'https://doi.org/10.1590/1807-7692bar2017160110', type: 'academic', label: 'Serra, F. A. R., Pinto, R., Guerrazzi, L. & Ferreira, M. P. (2017) Organizational Decline: A Yet Largely Neglected Topic in Organizational Studies — BAR, Brazilian Administration Review 14(1)' },
     ],
   },
   {
@@ -40831,19 +40773,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-micro-foundations-movement-felin-foss',
-    discipline: 'management',
-    title: 'ミクロ的基礎運動——組織・戦略現象の個人レベル還元',
-    statement: 'ミクロ的基礎（Microfoundations）運動は、組織能力・ルーティン・制度などのマクロレベルの組織現象を、個人の行為・相互作用・認知プロセスに還元して説明することを主張する経営学の方法論的潮流である。フェリンとフォス（2005）は、リソース・ベースト・ビューやダイナミック・ケイパビリティ論が組織レベルの構成概念に依拠しすぎており、個人レベルのメカニズムの解明が不十分であると批判した。フェリン、フォス、プロヴァンジ（2012）はミクロ的基礎を「個人→集合的構成概念→結果」の3段階で体系化し、集約問題（個人の属性がどのように組織レベルの特性に変換されるか）の重要性を強調した。バーニーとフェリン（2013）はRBVのミクロ的基礎を展開し、個人の人的資本がどのように企業の競争優位に貢献するかの経路を精緻化した。アーベルら（2008）はルーティンのミクロ的基礎として、組織メンバーの遂行的・表象的側面の相互作用を分析した。批判としてウィンター（2013）は過度の還元主義への懸念を表明し、創発的特性の重要性を主張した。',
-    keyFigures: 'テプポ・フェリン ／ ニコライ・フォス ／ ジェイ・バーニー ／ マーサ・フェルドマン ／ シドニー・ウィンター',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.5465/19416520.2015.1007651', type: 'academic', label: 'Felin, Foss & Ployhart (2015) The Microfoundations Movement in Strategy and Organization Theory — Academy of Management Annals' },
-      { url: 'https://doi.org/10.5465/amp.2012.0107', type: 'academic', label: 'Barney & Felin (2013) What Are Microfoundations? — Academy of Management Perspectives' },
-      { url: 'https://en.wikipedia.org/wiki/Microfoundations', type: 'reference', label: 'Wikipedia: Microfoundations — ミクロ的基礎の経済学・経営学における議論の概説' },
-    ],
-  },
-  {
     id: 'human-psychoneuroimmunology-ader-cohen',
     discipline: 'human-science',
     title: '精神神経免疫学——心理・神経・免疫系の双方向的相互作用',
@@ -42033,18 +41962,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1016/0304-3932(83)90060-0', type: 'academic', label: 'Calvo, G. (1983) Staggered Prices in a Utility-Maximizing Framework — Journal of Monetary Economics' },
       { url: 'https://en.wikipedia.org/wiki/Calvo_(staggered)_contracts', type: 'reference', label: 'Wikipedia: Calvo contracts — staggered pricing, NKPC, sticky prices, DSGE' },
-    ],
-  },
-  {
-    id: 'mgmt-strategic-groups-hunt-porter',
-    discipline: 'management',
-    title: '戦略グループ論——産業内の競争構造と移動障壁の分析',
-    statement: 'マイケル・ハントは1972年の博士論文において，同一産業内の企業群が類似した戦略的次元（製品多角化，垂直統合，研究開発投資など）に沿って「戦略グループ（strategic groups）」に分類されるという概念を提示した。マイケル・ポーターは1979年の研究でこの概念を発展させ，戦略グループ間の移動には「移動障壁（mobility barriers）」が存在し，グループ間の収益格差を持続させるメカニズムを論じた。移動障壁は参入障壁の一般化であり，規模の経済，ブランド・ロイヤルティ，流通チャネルの確保，技術的蓄積などが含まれる。リチャード・ケイブスとマイケル・ポーターはグループ構造が産業の競争ダイナミクスを決定し，同一グループ内の企業は類似した業績を示す傾向があることを実証した。しかし，戦略グループの境界の恣意性，グループ帰属と業績の因果関係の曖昧さ，認知的アプローチ（経営者の主観的分類）との整合性など，方法論的批判も多く，ジェイ・バーニーはグループ効果と企業固有の資源効果の弁別を問題視した。',
-    keyFigures: 'マイケル・ハント ／ マイケル・ポーター ／ リチャード・ケイブス ／ ジェイ・バーニー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/1885416', type: 'academic', label: 'Caves, R. E. & Porter, M. E. (1977) From Entry Barriers to Mobility Barriers — Quarterly Journal of Economics 91(2), 241-261' },
-      { url: 'https://en.wikipedia.org/wiki/Strategic_group', type: 'reference', label: 'Wikipedia: Strategic group — mobility barriers, industry structure, competitive dynamics' },
     ],
   },
   {
@@ -46200,18 +46117,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-managerial-cognition-walsh',
-    discipline: 'management',
-    title: '経営者認知論（ウォルシュ）',
-    statement: 'ウォルシュ（James Walsh）は1995年に，経営者が環境情報を解釈する際に使用する認知的スキーマ（managerial cognition）——信念・価値観・知識構造——が戦略的意思決定・業界競争認識・組織行動に深く影響することを包括的にレビューした。ポーターの産業構造分析が外部客観的であるのに対し，ウォルシュらは「認知された環境（enacted environment）」がマネジャーによって主体的に構成されるとし，競合他社の認知マッピング（competitive cognition）・認知バイアス・注意の焦点（attentional focus）が戦略的選択を規定するという「マネジャーとしての問題解決者」モデルを強調した。行動戦略論（behavioral strategy）の源泉の一つとして位置づけられており，アッパー・エシェロン理論・注意ベース観とも密接に接合する。',
-    keyFigures: 'ジェームズ・ウォルシュ ／ チャールズ・ファーブ ／ ウィリアム・オカジオ ／ ウィリアム・ストーブナー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1287/orsc.6.3.280', type: 'academic', label: 'Walsh, J.P. (1995) Managerial and Organizational Cognition: Notes from a Trip Down Memory Lane — Organization Science 6(3), 280–321（経営者認知論の包括的レビュー）' },
-      { url: 'https://en.wikipedia.org/wiki/Managerial_cognition', type: 'reference', label: 'Wikipedia: Managerial cognition — 経営者認知論の概説' },
-    ],
-  },
-  {
     id: 'human-temporal-motivation-steel',
     discipline: 'human-science',
     title: '時間的動機付け理論（スティール＆クーニング）',
@@ -46389,18 +46294,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://ideas.repec.org/a/aea/aecrev/v62y1972i5p777-95.html', type: 'academic', label: 'Alchian, A. A. & Demsetz, H. (1972) Production, Information Costs, and Economic Organization — American Economic Review 62(5), 777–795（チーム生産理論の原論文・RePEc 書誌）' },
       { url: 'https://en.wikipedia.org/wiki/Alchian%E2%80%93Demsetz_production', type: 'reference', label: 'Wikipedia: Alchian–Demsetz production — チーム生産と残余請求権の概説' },
-    ],
-  },
-  {
-    id: 'mgmt-psychological-ownership-pierce',
-    discipline: 'management',
-    title: '心理的所有権理論（ピアース＆コストバ）',
-    statement: 'ピアース（Jon Pierce）とコストバ（Tatiana Kostova）は2001年に，人が「これは私のものだ」という心理的感覚（psychological ownership）を仕事・組織・成果物に対して発達させるプロセスを理論化した。所有感は①対象を制御する，②対象を深く知る，③対象に自己を投資する，の三経路で形成されるとされる。この感覚が組織市民行動・役割外行動・革新行動を促進する一方で，過剰な所有感は組織変化への抵抗・テリトリー確保行動を招くという二面性を持つ。近年は自律型チーム・副業・スタートアップ文脈でのエンゲージメント説明に応用され，従業員持株制度（ESOPs）の心理的効果の解明にも援用されており，ウェルビーイング・帰属意識の向上を狙う職場設計の理論的根拠として広く引用されている。',
-    keyFigures: 'ジョン・ピアース ／ タチアナ・コストバ ／ アダム・グラント ／ ブレイク・アシュフォース',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.5465/amr.2001.4378028', type: 'academic', label: 'Pierce, J.L., Kostova, T. & Dirks, K.T. (2001) Toward a Theory of Psychological Ownership in Organizations — Academy of Management Review 26(2), 298–310（心理的所有権理論の原論文）' },
-      { url: 'https://en.wikipedia.org/wiki/Psychological_ownership', type: 'reference', label: 'Wikipedia: Psychological ownership — 心理的所有権の概説' },
     ],
   },
   {

@@ -37,10 +37,10 @@ Norbert Wiener ／ W. Ross Ashby ／ Anthony Stafford Beer ／ Ilya Prigogine �
 - [[mgmt-organizational-improvisation-theory|組織即興理論]] — 同じ思想家
 - [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]] — 同じ思想家
 - [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — 同じ思想家
-- [[mgmt-managerial-cognition|経営者認知理論]] — 同じ思想家
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同じ思想家
 - [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 出典を共有
 - [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 出典を共有
+- [[mgmt-career-anchor|キャリア・アンカー（シャイン）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

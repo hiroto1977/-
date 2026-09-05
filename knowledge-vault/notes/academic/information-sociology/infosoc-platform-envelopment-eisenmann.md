@@ -32,16 +32,16 @@ aliases:
 - [Wikipedia: Platform envelopment — Eisenmann, bundling, gatekeeper, DMA, multi-homing](https://en.wikipedia.org/wiki/Platform_envelopment) `リファレンス`
 
 ## 関連概念
-- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 語彙が近い
 - [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 同じ思想家
 - [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 同じ思想家
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 同じ思想家
 - [[mgmt-dynamic-delegation|公式的権限と実質的権限（Formal and Real Authority）]] — 同じ思想家
 - [[bizlaw-competition-law-market-definition|競争法における市場画定とHHI集中度分析の法的枠組み]] — 同じ思想家
 - [[econ-edgeworth-price-cycles-maskin-tirole|エッジワース価格サイクル——マスキン＝ティロールの動学的価格競争と小売ガソリン価格の鋸歯状変動]] — 同じ思想家
 - [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]] — 同じ思想家
 - [[econ-price-discrimination-monopoly|価格差別と独占力——一・二・三級差別の福祉効果と規制政策への含意]] — 同じ思想家
 - [[econ-price-discrimination-pigou-varian|価格差別の経済学——ピグーの三類型とデジタル経済における動的価格設定]] — 同じ思想家
-- [[human-alexithymia-sifneos|アレキシサイミア（失感情症・シフネオス）——自分の感情を識別し言葉にすることが難しく、身体感覚と区別できず、外向きの思考に傾く特性]] — 同じ思想家
+- [[econ-two-sided-markets|両面市場（two-sided markets）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

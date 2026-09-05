@@ -41,6 +41,7 @@ C.クリステンセン1997『The Innovator's Dilemma』／持続的イノベー
 - [[mgmt-crossing-the-chasm|キャズム理論（Crossing the Chasm）]] — 同分野の近傍
 - [[mgmt-teal-organization|ティール組織]] — 同分野の近傍
 - [[mgmt-competitive-positions|競争地位別戦略（リーダー・チャレンジャー・フォロワー・ニッチャー）]] — 同分野の近傍
+- [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
