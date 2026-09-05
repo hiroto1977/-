@@ -60,7 +60,10 @@ const EXEC = fs.existsSync('/opt/pw-browsers/chromium') ? '/opt/pw-browsers/chro
 const PASS = 'e2e-pass-12345';
 
 const failures = [];
+/** 走った検査の数。0 のまま終わったら「合格」ではなく「何も見ていない」(下の最終判定で落とす)。 */
+let checks = 0;
 function ok(cond, label) {
+  checks += 1;
   console.log((cond ? '  ✅ ' : '  ❌ ') + label);
   if (!cond) failures.push(label);
 }
@@ -874,6 +877,29 @@ async function kessanTaxSuite(browser) {
     { timeout: 15000 },
   );
   ok(true, 'kessan: 納付と還付の両建てを検算が指摘する');
+
+  // 書面タブ (2026-09-05、依頼「計算書類4点を個別に記載出来る仕様にして」): 1 点ずつ開くと
+  // 入力欄と書面がその書面の分だけになり、「まとめて」に戻すと全部出る。値の入れ物は 1 つ。
+  const sheetAttr = async () => page.locator('[data-kessan-sheets]').getAttribute('data-kessan-sheets');
+  ok((await sheetAttr()) === 'all', 'kessan: 既定は「4点まとめて」');
+  await page.locator('button[data-kessan-sheet="bs"]').click();
+  await page.waitForSelector('[data-kessan-sheets="bs"]', { timeout: 15000 });
+  ok((await page.getByLabel('現金及び預金', { exact: false }).count()) > 0, 'kessan[bs]: 貸借対照表の科目は入力欄に在る');
+  ok((await page.getByLabel('売上高', { exact: true }).count()) === 0, 'kessan[bs]: 損益計算書の科目は入力欄に出ない');
+  ok((await page.locator('table[data-statement="損益計算書"]').count()) === 0, 'kessan[bs]: 損益計算書の書面は出ない');
+  ok((await page.locator('table[data-statement="資産の部"]').count()) > 0, 'kessan[bs]: 貸借対照表の書面は出る');
+  const bsSheet = (await page.locator('[data-kessan-sheets]').innerText()).replace(/,/g, '');
+  ok(/仮払消費税等[\s\S]{0,40}80/.test(bsSheet), 'kessan[bs]: まとめてで入れた値が 1 点ずつの書面にも出る (入れ物は 1 つ)');
+  ok(((await page.locator('[data-legal-panel]').innerText().catch(() => '')) || '').includes('貸借対照表'), 'kessan[bs]: 法的地位パネルが貸借対照表の物になる');
+  await page.locator('button[data-kessan-sheet="pl"]').click();
+  await page.waitForSelector('[data-kessan-sheets="pl"]', { timeout: 15000 });
+  ok((await page.getByLabel('売上高', { exact: true }).count()) > 0, 'kessan[pl]: 損益計算書の科目は入力欄に在る');
+  ok((await page.getByLabel('現金及び預金', { exact: false }).count()) === 0, 'kessan[pl]: 貸借対照表の科目は入力欄に出ない');
+  ok((await page.locator('table[data-statement="資産の部"]').count()) === 0, 'kessan[pl]: 貸借対照表の書面は出ない');
+  await page.locator('button[data-kessan-sheet="all"]').click();
+  await page.waitForSelector('[data-kessan-sheets="all"]', { timeout: 15000 });
+  ok((await page.getByLabel('売上高', { exact: true }).count()) > 0 && (await page.getByLabel('現金及び預金', { exact: false }).count()) > 0, 'kessan[all]: まとめてに戻すと全科目が入力欄に戻る');
+  ok((await page.locator('table[data-statement="損益計算書"]').count()) > 0 && (await page.locator('table[data-statement="資産の部"]').count()) > 0, 'kessan[all]: 4 点の書面が全部出る');
 
   ok(errors.length === 0, `kessan: ページエラー 0 (実際 ${errors.length})`);
   if (errors.length > 0) errors.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
@@ -2381,7 +2407,23 @@ async function parameterSuite(browser) {
   // 目的は対照実験 — 「本体を壊したらこの検査が実際に落ちるのか」を確かめる時、
   // 全 suite (数分) を回さずに済む。既定 (未設定) は全 suite。
   const only = (process.env.SERVICE_HUB_E2E_ONLY ?? '').split(',').map((s) => s.trim()).filter(Boolean);
-  const run = (name) => only.length === 0 || only.includes(name);
+  // 知らない名前は**落とす**。2026-09-05 に `kessanTaxSuite` (正しくは kessanTax) と書いて
+  // 1 つも走らないまま「ALL E2E CHECKS PASSED」が出た —— 空振りを合格と読む穴。
+  const SUITES = [
+    'desktop', 'manualData', 'dataOrigin', 'credential', 'businessComparison', 'kessanTax', 'frameGuard', 'noBeacon',
+    'vaultPassword', 'credentialEgress', 'proxyEnvelope', 'cspEnforced', 'vaultOpacity', 'storageDurability',
+    'securityPosture', 'thirdPartyDisclosure', 'realtime', 'phone', 'talent', 'parameters', 'tablet',
+  ];
+  const unknown = only.filter((n) => !SUITES.includes(n));
+  if (unknown.length > 0) {
+    console.error(`❌ SERVICE_HUB_E2E_ONLY に知らない suite: ${unknown.join(', ')} (使える名前: ${SUITES.join(', ')})`);
+    await browser.close();
+    process.exit(1);
+  }
+  const run = (name) => {
+    if (!SUITES.includes(name)) throw new Error(`suite '${name}' が SUITES に無い — 登録漏れ`);
+    return only.length === 0 || only.includes(name);
+  };
   if (only.length > 0) console.log(`(SERVICE_HUB_E2E_ONLY=${only.join(',')})`);
   if (run('desktop')) await desktopSuite(browser);
   if (run('manualData')) await manualDataSuite(browser);
@@ -2409,7 +2451,12 @@ async function parameterSuite(browser) {
     console.log(`\nFAILED: ${failures.length} 件`);
     process.exit(1);
   }
-  console.log('\nALL E2E CHECKS PASSED');
+  if (checks === 0) {
+    // 走らなかった検査は「合格」ではない (対照が鳴らないのと同じ)。
+    console.error('\n❌ 検査が 1 件も走っていません (suite の選択か、検査の配線が壊れています)');
+    process.exit(1);
+  }
+  console.log(`\nALL E2E CHECKS PASSED (${checks} 件)`);
 })().catch((e) => {
   console.error('FATAL:', e);
   process.exit(1);
