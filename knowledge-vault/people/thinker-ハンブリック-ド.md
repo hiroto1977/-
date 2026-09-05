@@ -2,7 +2,7 @@
 title: "ドナルド・ハンブリック"
 type: thinker
 person_key: "ハンブリック|ド"
-concept_count: 6
+concept_count: 7
 tags:
   - person
   - index
@@ -10,9 +10,10 @@ tags:
 
 # ドナルド・ハンブリック
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **6 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **7 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（6件）
+## 学術概念（7件）
+- [[mgmt-attention-based-view|注意ベース理論（オカシオ）——企業の行動は、意思決定者の希少な注意をどの争点と答えに向けるかを組織の構造が配分した結果である]] — ウィリアム・オカシオが1997年の論文（StrategicManagementJournal18巻夏季特集号）で提示し…
 - [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]] — CEOサクセッション・プランニング（CEOsuccessionplanning）は、ファマ＆ジェンセン（1983）のエ…
 - [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 競争動態論（competitivedynamics）は、チェン（1996）が体系化した、企業間の競争的行動と対抗（ac…
 - [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する]] — 動的経営者能力（dynamicmanagerialcapabilities）は、ロン・アドナーとコンスタンス・ヘルファ…

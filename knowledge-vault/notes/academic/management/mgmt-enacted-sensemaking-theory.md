@@ -41,7 +41,7 @@ Karl E. Weick ／ Sally Maitlis ／ Marlys Christianson
 - [[mgmt-organizational-entropy|組織エントロピー]] — 同じ思想家
 - [[mgmt-organizational-improvisation-theory|組織即興理論]] — 同じ思想家
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同じ思想家
-- [[mgmt-sensegiving|センスギビング（Sensegiving）]] — 同じ思想家
+- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

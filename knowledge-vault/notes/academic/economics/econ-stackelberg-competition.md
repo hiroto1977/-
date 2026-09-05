@@ -40,6 +40,7 @@ aliases:
 - [[econ-rational-addiction|合理的依存]] — 同分野の近傍
 - [[econ-kreps-scheinkman-capacity-precommitment-cournot|クレプス＝シャインクマンの生産能力事前コミットメント・モデル——価格競争でもクールノー的寡占均衡へ至る二段階ゲーム]] — 同分野の近傍
 - [[econ-herfindahl-hirschman-index|ハーフィンダール・ハーシュマン指数（HHI）]] — 同分野の近傍
+- [[econ-principal-agent-problem|プリンシパル＝エージェント理論：委任関係における利益相反と情報非対称性が生む代理費用の経済学的分析]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

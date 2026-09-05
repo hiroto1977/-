@@ -34,15 +34,15 @@ Richard R. Nelson ／ Sidney G. Winter ／ Martha S. Feldman ／ Brian T. Pentla
 
 ## 関連概念
 - [[mgmt-organizational-routines-feldman-pentland|組織ルーティン論——フェルドマンとペントランドの遂行的・表象的側面の二元論]] — 語彙が近い
+- [[mgmt-organizational-routines-as-grammars|組織ルーティンの生成文法モデル]] — 語彙が近い
 - [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同じ思想家
-- [[mgmt-organizational-routines-as-grammars|組織ルーティンの生成文法モデル]] — 同じ思想家
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
 - [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
-- [[mgmt-organizational-attention-theory|組織注意理論]] — 同じ思想家
 - [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
 - [[mgmt-vicarious-learning|代理学習（Vicarious Learning in Organizations）]] — 同じ思想家
 - [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
 - [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
+- [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -36,8 +36,8 @@ Amy Wrzesniewski ／ Jane E. Dutton ／ Justin M. Berg
 - [[mgmt-organizational-compassion|組織的コンパッション（集合的苦痛応答理論）]] — 同じ思想家
 - [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
 - [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — 同じ思想家
-- [[mgmt-authentic-leadership-avolio-gardner|真正リーダーシップ——自己認識・関係的透明性・道徳的行為]] — 同分野の近傍
 - [[mgmt-calling-wrzesniewski|コーリング（天職意識）とジョブ・クラフティング（ヴルゼシニェウスキー）]] — 同分野の近傍
+- [[mgmt-authentic-leadership-avolio-gardner|オーセンティック・リーダーシップ（アボリオ＆ガードナー）——自己認識・内面化された道徳的視点・バランスのとれた情報処理・関係の透明性を核とする真正なリーダーシップ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

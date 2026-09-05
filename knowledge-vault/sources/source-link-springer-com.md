@@ -2,7 +2,7 @@
 title: "link.springer.com"
 type: source-domain
 host: "link.springer.com"
-cite_count: 146
+cite_count: 145
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # link.springer.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **146 件**（学術 126 ・ リファレンス 20）
+> [!info] 出典ドメイン索引 ・ 引用 **145 件**（学術 125 ・ リファレンス 20）
 
 ## このドメインを出典とする項目
 
@@ -150,7 +150,6 @@ tags:
 - [[mgmt-organizational-virtuousness|組織的美徳性理論（キャメロン）]] — Cameron,K.S.,Bright,D.&Caza,A.(2005)"TheAmplifyingandBufferingEffects…
 - [[mgmt-product-architecture|製品アーキテクチャ（モジュラー/インテグラル）]] — ProductArchitecture—SpringerNaturereferenceworkentry
 - [[mgmt-product-life-cycle|プロダクト・ライフサイクル（製品ライフサイクル）]] — SpringerLink（ThePalgraveEncyclopediaofStrategicManagement）"ProductLif…
-- [[mgmt-psychological-contract|心理的契約]] — Rousseau,D.M.(1989).Psychologicalandimpliedcontractsinorganizations.E…
 - [[mgmt-self-concordance-model|自己一致モデル（セルフ・コンコーダンス）]] — MotivationalMechanismsofSelf-ConcordanceTheory—JournalofBusinessandPs…
 - [[mgmt-sensemaking|センスメイキング]] — SenseMaking,Organizational—SpringerNatureリファレンス
 - [[mgmt-stakeholder-salience-theory|ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性で経営者が誰に注意を払うかを予測する]] — Neville,B.A.&Menguc,B.(2006)StakeholderMultiplicity:TowardanUnderstan…

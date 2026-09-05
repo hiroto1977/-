@@ -37,7 +37,6 @@ Pamela Tierney ／ Steven M. Farmer ／ Albert Bandura
 - [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]] — 同分野の近傍
 - [[mgmt-behavioral-integrity|行動的誠実性（ビヘイビオラル・インテグリティ）]] — 同分野の近傍
 - [[mgmt-path-goal-theory-house|パス・ゴール理論——リーダーが部下の目標達成経路を整備する条件適応的指導]] — 同分野の近傍
-- [[mgmt-upper-echelons-theory|上層部理論（ハンブリック＝メイソン）——組織はトップ経営陣の反映であり、経営者の経歴と特性が認知のフィルターとして戦略的選択と業績を部分的に予測する]] — 同分野の近傍
 - [[mgmt-ethical-leadership-theory|倫理的リーダーシップ理論]] — 同分野の近傍
 
 ## 関連

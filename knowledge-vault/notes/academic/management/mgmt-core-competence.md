@@ -31,12 +31,11 @@ C.K.プラハラード／ゲイリー・ハメル（1990 HBR）
 - [Wikipedia — Core competency](https://en.wikipedia.org/wiki/Core_competency) `リファレンス`
 
 ## 関連概念
-- [[mgmt-dominant-logic-prahalad-bettis|支配的論理——経営者の事業の捉え方が資源配分と適応を方向づける認知枠組み]] — 同じ思想家
 - [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — 同じ思想家
 - [[mgmt-strategic-intent|戦略的意図（ストラテジック・インテント）]] — 同じ思想家
 - [[mgmt-bop|BOP（ベース・オブ・ザ・ピラミッド）]] — 出典を共有
 - [[mgmt-psychological-safety-edmondson|心理的安全性（エドモンドソン）]] — 同分野の近傍
-- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同分野の近傍
+- [[mgmt-red-queen-competition|赤の女王競争（バーネット＆ハンセン）——競争が組織の学習を促すが競合も同時に鍛えるため、走り続けてやっと相対的地位を保てる共進化の動態]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

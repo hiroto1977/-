@@ -2,7 +2,7 @@
 title: "pmc.ncbi.nlm.nih.gov"
 type: source-domain
 host: "pmc.ncbi.nlm.nih.gov"
-cite_count: 66
+cite_count: 65
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # pmc.ncbi.nlm.nih.gov
 
-> [!info] 出典ドメイン索引 ・ 引用 **66 件**（学術 63 ・ 公的 2 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **65 件**（学術 62 ・ 公的 2 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -77,7 +77,6 @@ tags:
 - [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]] — PMC—CraftingTaskandCognitiveJobBoundariestoEnhanceSelf-Determination
 - [[mgmt-knowledge-hiding-behavior|知識隠蔽行動理論]] — 2024meta-analysis,socialexchangetheory
 - [[mgmt-learning-agility|学習敏捷性（ラーニング・アジリティ）]] — Developmentandvalidationoftheleadershiplearningagilityscale—PMC/NCBI
-- [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（主体的性格特性）]] — PMC(2022)—Meta-analysisofproactivepersonalityandcareersuccess
 - [[mgmt-relational-leadership|関係性リーダーシップ理論]] — PMC(2022)—LeadershipDevelopment:RelationalLeadershipinHealthcareOrgan…
 - [[mgmt-team-member-exchange|チーム・メンバー交換理論（Team-Member Exchange, TMX）]] — ACross-LevelInvestigationofTeam-MemberExchangeonTeamandIndividualJobC…
 

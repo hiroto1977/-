@@ -32,7 +32,7 @@ Martha S. Feldman ／ Brian T. Pentland ／ Henry H. Rueter
 - [Feldman & Pentland (2022) Routine Dynamics — Strategic Organization 20](https://journals.sagepub.com/doi/10.1177/14761270221130876) `学術`
 
 ## 関連概念
-- [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
+- [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 語彙が近い
 - [[mgmt-experience-curve|経験曲線効果・学習曲線（experience/learning curve）]] — 同分野の近傍
 - [[mgmt-expectancy-theory|期待理論（ブルーム）]] — 同分野の近傍
 

@@ -20,11 +20,11 @@ tags:
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 26）
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 25）
 - [[infosoc-polymedia|ポリメディア（Polymedia）]]（接続 25）
-- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 22）
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]]（接続 22）
 - [[infosoc-dataveillance|データヴェイランス（データ監視）]]（接続 22）
 - [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]]（接続 22）
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]]（接続 22）
+- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 21）
 - [[infosoc-banal-nationalism|バナール・ナショナリズム]]（接続 21）
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]]（接続 21）
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 21）

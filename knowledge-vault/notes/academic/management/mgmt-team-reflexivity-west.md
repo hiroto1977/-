@@ -36,10 +36,9 @@ aliases:
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
 - [[mgmt-learning-organization-senge|学習する組織（センゲ）]] — 同じ思想家
 - [[mgmt-organizational-learning-argyris|組織学習とシングル・ダブルループ学習（アージリス）]] — 同じ思想家
-- [[mgmt-psychological-contract|心理的契約]] — 同じ思想家
+- [[mgmt-psychological-contract|心理的契約（ルソー）——雇用関係における明文化されない相互義務についての従業員の主観的信念と、その違反が信頼とコミットメントに与える影響]] — 同じ思想家
 - [[mgmt-team-cognition|チーム認知・共有メンタルモデル：チームの暗黙的協調を支える認知的基盤と集合的知識構造]] — 同分野の近傍
 - [[mgmt-behavioral-integration|行動的統合（Behavioral Integration）]] — 同分野の近傍
-- [[mgmt-communities-of-practice|実践共同体（コミュニティ・オブ・プラクティス）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

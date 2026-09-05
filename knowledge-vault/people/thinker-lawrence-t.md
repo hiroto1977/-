@@ -2,7 +2,7 @@
 title: "Thomas Lawrence"
 type: thinker
 person_key: "lawrence|t"
-concept_count: 3
+concept_count: 2
 tags:
   - person
   - index
@@ -10,12 +10,11 @@ tags:
 
 # Thomas Lawrence
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（3件）
+## 学術概念（2件）
 - [[mgmt-institutional-work|制度的ワーク]] — 制度的ワーク（InstitutionalWork）とは、制度を創造・維持・破壊することを目的とした個人や組織による意図…
 - [[mgmt-organizational-forgetting|組織的忘却]] — 組織的忘却（OrganizationalForgetting）とは、組織が時間の経過とともに知識・ルーティン・能力を失…
-- [[mgmt-sensegiving|センスギビング（Sensegiving）]] — センスギビング（sensegiving）とは、組織のリーダーやステークホルダーが、他者のセンスメイキング（意味形成）過…
 
 ## 関連
 - 索引: [[人物索引]]

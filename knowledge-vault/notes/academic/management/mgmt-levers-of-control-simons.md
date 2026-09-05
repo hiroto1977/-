@@ -35,7 +35,6 @@ aliases:
 ## 関連概念
 - [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 出典を共有
 - [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
-- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 出典を共有
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 出典を共有
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
@@ -43,6 +42,7 @@ aliases:
 - [[mgmt-demand-side-strategy|需要サイド戦略論]] — 出典を共有
 - [[mgmt-family-business-governance-gersick|ファミリービジネスの三円モデル（ガーシック）]] — 出典を共有
 - [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]] — 出典を共有
+- [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

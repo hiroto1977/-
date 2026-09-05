@@ -32,7 +32,6 @@ Richard M. Cyert／James G. March／Herbert A. Simon／Henrich R. Greve／Daniel
 
 ## 関連概念
 - [[mgmt-behavioral-theory-firm|企業の行動理論（A Behavioral Theory of the Firm）]] — 同じ思想家
-- [[mgmt-organizational-attention-theory|組織注意理論]] — 同じ思想家
 - [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
 - [[mgmt-organizational-routines-theory|組織ルーティン理論]] — 同じ思想家
 - [[mgmt-strategic-choice-theory|戦略的選択理論]] — 同じ思想家
@@ -41,6 +40,7 @@ Richard M. Cyert／James G. March／Herbert A. Simon／Henrich R. Greve／Daniel
 - [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 同じ思想家
 - [[infosoc-information-overload-theory|情報過負荷理論]] — 同じ思想家
 - [[mgmt-vicarious-learning|代理学習（Vicarious Learning in Organizations）]] — 同じ思想家
+- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

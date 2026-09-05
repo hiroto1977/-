@@ -34,7 +34,7 @@ Mark Warschauer ／ Jan van Dijk ／ Manuel Castells
 
 ## 関連概念
 - [[mgmt-paradox-of-organizing|組織化のパラドックス（Paradox of Organizing）]] — 出典を共有
-- [[mgmt-sensegiving-gioia|センスギビング理論（ジョイア＆チッタンパリー）]] — 出典を共有
+- [[mgmt-sensegiving|センスギビング（ジョイア＆チッティペディ）——リーダーが他者の意味形成に働きかけ、変革の望ましい解釈を組織に広めるコミュニケーション過程]] — 出典を共有
 - [[mgmt-lmx-theory|LMX理論（リーダー・メンバー交換理論）]] — 出典を共有
 - [[infosoc-media-literacy|メディア・リテラシー]] — 出典を共有
 - [[mgmt-burke-litwin-causal-model-organizational-change|バーク＝リトウィン・モデル——外部環境から個人業績までを12要因の因果連鎖で結ぶ組織診断モデル]] — 出典を共有

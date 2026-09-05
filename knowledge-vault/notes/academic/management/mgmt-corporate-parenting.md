@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-scenario-planning|シナリオ・プランニング]] — 同分野の近傍
-- [[mgmt-organizational-learning-argyris|組織学習とシングル・ダブルループ学習（アージリス）]] — 同分野の近傍
+- [[mgmt-ge-mckinsey-matrix|GE・マッキンゼー・マトリクス（ビジネス・スクリーン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

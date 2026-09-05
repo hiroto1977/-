@@ -36,7 +36,6 @@ H.ミンツバーグ『組織の構造化』1979／組織の5つの基本部分�
 - [[mgmt-technology-s-curve|技術のSカーブ]] — 出典を共有
 - [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同分野の近傍
 - [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — 同分野の近傍
-- [[mgmt-upper-echelons-theory|上層部理論（ハンブリック＝メイソン）——組織はトップ経営陣の反映であり、経営者の経歴と特性が認知のフィルターとして戦略的選択と業績を部分的に予測する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[econ-microeconomic-foundations-general-equilibrium|一般均衡理論——ワルラスからアロー＝ドブリューへの競争均衡存在と効率性の数理証明]] — 語彙が近い
-- [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]] — 語彙が近い
+- [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]] — 同分野の近傍
 - [[econ-general-equilibrium-walras|ワルラスの一般均衡理論]] — 同分野の近傍
 - [[econ-melitz-heterogeneous-firms-trade|メリッツ・モデル（「新」新貿易理論）——企業の生産性の異質性を導入し、貿易自由化が企業の選別と資源再配分を通じて産業の生産性を高めることを示す]] — 同分野の近傍
 - [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 同分野の近傍

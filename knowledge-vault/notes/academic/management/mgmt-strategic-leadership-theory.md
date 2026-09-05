@@ -34,10 +34,10 @@ Donald C. Hambrick／Sydney Finkelstein／Albert A. Cannella Jr.／Mason A. Carp
 - [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]] — 語彙が近い
 - [[mgmt-behavioral-integration|行動的統合（Behavioral Integration）]] — 同じ思想家
 - [[mgmt-behavioral-integration-tmt|トップ・マネジメント・チームの行動統合]] — 同じ思想家
-- [[mgmt-organizational-attention-theory|組織注意理論]] — 同じ思想家
 - [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
 - [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]] — 同分野の近傍
-- [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — 同分野の近傍
+- [[mgmt-upper-echelons-theory|上層部理論（ハンブリック＝メイソン）——組織はトップ経営陣の反映であり、経営者の経歴と特性が認知のフィルターとして戦略的選択と業績を部分的に予測する]] — 同分野の近傍
+- [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

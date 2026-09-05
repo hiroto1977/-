@@ -31,7 +31,6 @@ Donald C. Hambrick（1994, Research in Organizational Behavior — 行動的統�
 
 ## 関連概念
 - [[mgmt-behavioral-integration-tmt|トップ・マネジメント・チームの行動統合]] — 同じ思想家
-- [[mgmt-organizational-attention-theory|組織注意理論]] — 同じ思想家
 - [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
 - [[mgmt-strategic-leadership-theory|戦略的リーダーシップ理論]] — 同じ思想家
 - [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同分野の近傍

@@ -31,9 +31,9 @@ aliases:
 
 ## 関連概念
 - [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 語彙が近い
-- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同分野の近傍
-- [[mgmt-bcg-advantage-matrix|BCGアドバンテージ・マトリクス]] — 同分野の近傍
+- [[mgmt-attention-based-view|注意ベース理論（オカシオ）——企業の行動は、意思決定者の希少な注意をどの争点と答えに向けるかを組織の構造が配分した結果である]] — 同分野の近傍
 - [[mgmt-legitimacy-theory-suchman-dowling|正統性理論——組織の社会的承認と正統性管理の戦略]] — 同分野の近傍
+- [[mgmt-bcg-advantage-matrix|BCGアドバンテージ・マトリクス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

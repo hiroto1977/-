@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[mgmt-expectancy-theory|期待理論（ブルーム）]] — 同じ思想家
-- [[mgmt-authentic-leadership-avolio-gardner|真正リーダーシップ——自己認識・関係的透明性・道徳的行為]] — 同分野の近傍
 - [[mgmt-person-environment-fit|人と環境の適合理論（P-Eフィット）]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

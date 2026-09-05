@@ -38,8 +38,8 @@ aliases:
 - [[infosoc-boundary-work-gieryn|境界画定作業——科学と非科学の境界を引く営み]] — 同じ思想家
 - [[infosoc-looking-glass-self-cooley|鏡に映った自己——他者の眼差しの想像を通じて形成される社会的自己]] — 同じ思想家
 - [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同じ思想家
-- [[infosoc-information-horizons-sonnenwald|情報の地平——文脈のなかで認識される情報資源の広がり]] — 同分野の近傍
 - [[infosoc-social-construction|現実の社会的構成（社会構築主義）]] — 同分野の近傍
+- [[infosoc-algorithmic-accountability-sandvig|アルゴリズムの説明責任——自動化された意思決定の監査と透明性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

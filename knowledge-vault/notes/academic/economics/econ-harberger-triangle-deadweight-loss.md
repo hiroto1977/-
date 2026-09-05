@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Deadweight loss — Harberger triangle, monopoly, taxation, consumer surplus](https://en.wikipedia.org/wiki/Deadweight_loss) `リファレンス`
 
 ## 関連概念
-- [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 語彙が近い
 - [[econ-deadweight-loss|死荷重（死重損失・超過負担）]] — 語彙が近い
+- [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 語彙が近い
 - [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同じ思想家
 - [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
 - [[econ-feldstein-horioka|フェルドシュタイン＝ホリオカのパズル]] — 同じ思想家

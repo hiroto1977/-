@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[econ-diminishing-marginal-utility|限界効用逓減の法則]] — 語彙が近い
-- [[econ-general-equilibrium|一般均衡理論]] — 語彙が近い
 - [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同じ思想家
 - [[econ-tatonnement|タトヌマン（模索過程）]] — 同じ思想家
 - [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[econ-walras-law|ワルラスの法則]] — 同じ思想家
 - [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同じ思想家
 - [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 同じ思想家
+- [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

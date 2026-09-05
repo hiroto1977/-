@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-defensive-routines-argyris|組織の防衛的ルーチン——脅威を避けて学習を妨げる習慣]] — 同じ思想家
 - [[mgmt-humble-leadership-owens|謙虚なリーダーシップ——自己認識・他者尊重・学習志向による影響過程]] — 同じ思想家
 - [[mgmt-mintzberg-managerial-roles|ミンツバーグの管理者の役割——観察に基づく管理職の実際の仕事の十類型]] — 同じ思想家
-- [[mgmt-psychological-contract|心理的契約]] — 同じ思想家
+- [[mgmt-psychological-contract|心理的契約（ルソー）——雇用関係における明文化されない相互義務についての従業員の主観的信念と、その違反が信頼とコミットメントに与える影響]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

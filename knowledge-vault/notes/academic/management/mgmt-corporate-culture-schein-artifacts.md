@@ -34,7 +34,7 @@ aliases:
 - [[mgmt-defensive-routines-argyris|組織の防衛的ルーチン——脅威を避けて学習を妨げる習慣]] — 同じ思想家
 - [[mgmt-humble-leadership-owens|謙虚なリーダーシップ——自己認識・他者尊重・学習志向による影響過程]] — 同じ思想家
 - [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — 同じ思想家
-- [[mgmt-psychological-contract|心理的契約]] — 同じ思想家
+- [[mgmt-psychological-contract|心理的契約（ルソー）——雇用関係における明文化されない相互義務についての従業員の主観的信念と、その違反が信頼とコミットメントに与える影響]] — 同じ思想家
 - [[mgmt-strategic-drift|戦略的漂流（Strategic Drift）]] — 同分野の近傍
 - [[mgmt-feedforward|フィードフォワード]] — 同分野の近傍
 - [[mgmt-institutional-work|制度的ワーク]] — 同分野の近傍

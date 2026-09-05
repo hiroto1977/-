@@ -34,7 +34,6 @@ aliases:
 - [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — 語彙が近い
 - [[mgmt-organizational-ecology|組織エコロジー（ハナン＝フリーマン）——個別組織の適応ではなく組織個体群レベルの環境淘汰が、構造的慣性・密度依存・新しさの不利益を通じて組織形態の多様性を説明する]] — 同じ思想家
 - [[mgmt-liability-of-newness|新しさの負債（Liability of Newness）]] — 同分野の近傍
-- [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -3,38 +3,45 @@ collection: academic
 id: mgmt-sensegiving
 category: "management"
 category_ja: "経営学"
-title: "センスギビング（Sensegiving）"
-as_of: "2026-06"
-source_count: 2
+title: "センスギビング（ジョイア＆チッティペディ）——リーダーが他者の意味形成に働きかけ、変革の望ましい解釈を組織に広めるコミュニケーション過程"
+as_of: "2026-09"
+source_count: 4
 authoritative: true
 tags:
   - collection/academic
   - academic/management
   - knowledge/verified
 aliases:
-  - "センスギビング（Sensegiving）"
+  - "センスギビング（ジョイア＆チッティペディ）——リーダーが他者の意味形成に働きかけ、変革の望ましい解釈を組織に広めるコミュニケーション過程"
 ---
 
-# センスギビング（Sensegiving）
+# センスギビング（ジョイア＆チッティペディ）——リーダーが他者の意味形成に働きかけ、変革の望ましい解釈を組織に広めるコミュニケーション過程
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06 ・ 出典: 2件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-09 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-センスギビング（sensegiving）とは、組織のリーダーやステークホルダーが、他者のセンスメイキング（意味形成）過程に影響を与え、組織的現実の望ましい再定義に向けて意味の方向づけを試みるコミュニケーション的プロセスを指す概念であり、米国の経営学者デニス・A・ジオイア（Dennis A. Gioia, ペンシルベニア州立大学スミール経営大学院）とクマール・チッティペディ（Kumar Chittipeddi）が1991年の論文「Sensemaking and Sensegiving in Strategic Change Initiation」（Strategic Management Journal, Vol.12, No.6, pp.433-448, DOI: 10.1002/smj.4250120604）において提唱した。ジオイアとチッティペディは、ある大規模公立大学における新学長就任後の戦略的変革開始過程を12か月間にわたる参与観察と半構造化インタビューによって研究し、戦略的変革がCEO（学長）による「センスメイキング」（環境と組織の現状を理解し認知的枠組みを構築する過程）と「センスギビング」（構築した意味枠組みをステークホルダーに伝達し、彼らの意味形成に影響を与える過程）の二つの相互連関的プロセスの反復的循環として展開されることを発見した。この論文の理論的意義は、カール・E・ワイク（Karl E. Weick）が1979年の『The Social Psychology of Organizing』および1995年の『Sensemaking in Organizations』で確立したセンスメイキング概念を補完する能動的・方向づけ的過程としてセンスギビングを概念化し、戦略的変革研究における認知的・解釈的アプローチの基盤を提供した点にある。サリー・メイトリス（Sally Maitlis, ブリティッシュコロンビア大学）とトーマス・B・ローレンス（Thomas B. Lawrence, オックスフォード大学サイード経営大学院）は2007年の論文「Triggers and Enablers of Sensegiving in Organizations」（Academy of Management Journal, Vol.50, No.1, pp.57-84, DOI: 10.5465/amj.2007.24160971）において、英国の3つのオーケストラ組織における縦断的比較事例研究を通じて、センスギビングの発動条件（triggers）と促進条件（enablers）を体系化した。メイトリスとローレンスは、リーダーのセンスギビングが生起するには (1) 解釈の不確実性または既存の意味枠組みへの脅威というトリガーと、(2) 予測能力（expertise）・正統性（legitimacy）・組織的プロセスへのアクセスというイネーブラーが必要であることを示し、センスギビングが組織内の政治的プロセスと不可分であることを明らかにした。
+センスギビング（sensegiving）は、デニス・ジョイアとクマール・チッティペディが1991年の論文（Strategic Management Journal 12巻6号）で提唱した概念で、リーダーやステークホルダーが他者のセンスメイキング（意味形成）に影響を与え、組織の現実の望ましい再定義に向けて意味を方向づけようとするコミュニケーション過程を指す。二人はある大規模公立大学で新学長が戦略的変革を始める過程を参与観察と面接で追い、変革が学長による意味の構築（センスメイキング）と、構築した枠組みを構成員に伝えて彼らの解釈に働きかける段階（センスギビング）の反復的な循環として進むことを見いだした。カール・ワイクが確立したセンスメイキング概念を補完する能動的で方向づけの過程として位置づけられ、解釈の幅を意図的に残して多様な支持を得る戦略的曖昧さ、言語・メタファー・物語といった手段が論じられる。サリー・メイトリスとトーマス・ローレンス（2007）は英国の三つのオーケストラの比較事例から、センスギビングが起きるには解釈の不確実性や既存の枠組みへの脅威という発動条件と、専門性・正統性・組織過程へのアクセスという促進条件が要り、組織内の政治過程と不可分であることを示した。批判として、質的事例研究が中心で効果の測定が難しく、リーダー中心の見方が下からの意味形成を軽視しがちで、操作や印象管理との境界が曖昧である。中小企業には、事業転換や事業承継で経営者が「なぜ変えるのか」の解釈を先に示し、従業員の疑問に応じて語り直す往復がなければ、制度だけ変わって行動が変わらないことが含意となる。
 
 ## 提唱者・初出
-Dennis A. Gioia & Kumar Chittipeddi（SMJ 12(6), 1991, 概念提唱）／Sally Maitlis & Thomas B. Lawrence（AMJ 50(1), 2007, トリガーとイネーブラー）
+デニス・ジョイア＆クマール・チッティペディ（1991 提唱）／サリー・メイトリス＆トーマス・ローレンス（2007 発動条件と促進条件）／カール・ワイク（センスメイキング論）
 
 ## 出典
-- [Gioia & Chittipeddi (1991) Sensemaking and Sensegiving in Strategic Change Initiation — SMJ 12(6), pp.433-448](https://doi.org/10.1002/smj.4250120604) `学術`
-- [Maitlis & Lawrence (2007) Triggers and Enablers of Sensegiving in Organizations — AMJ 50(1), pp.57-84](https://doi.org/10.5465/amj.2007.24160971) `学術`
+- [Gioia, D. A. & Chittipeddi, K. (1991) Sensemaking and Sensegiving in Strategic Change Initiation — Strategic Management Journal 12(6), 433–448（原典）](https://doi.org/10.1002/smj.4250120604) `学術`
+- [Maitlis, S. & Lawrence, T. B. (2007) Triggers and Enablers of Sensegiving in Organizations — Academy of Management Journal 50(1), 57–84](https://doi.org/10.5465/amj.2007.24160971) `学術`
+- [Weick, K. E. (1995) Sensemaking in Organizations — Sage Publications（センスメイキング論の原典）](https://us.sagepub.com/en-us/nam/sensemaking-in-organizations/book4988) `学術`
+- [Wikipedia: Sensemaking — Weick、Gioia のセンスギビング、戦略的曖昧さ](https://en.wikipedia.org/wiki/Sensemaking) `リファレンス`
 
 ## 関連概念
-- [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]] — 同じ思想家
-- [[mgmt-institutional-work|制度的ワーク]] — 同じ思想家
-- [[mgmt-organizational-forgetting|組織的忘却]] — 同じ思想家
-- [[mgmt-sensegiving-gioia|センスギビング理論（ジョイア＆チッタンパリー）]] — 同分野の近傍
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — 同じ思想家
+- [[mgmt-enactment-weick|イナクトメント——組織が行為を通じて自らの環境を能動的に作り出す]] — 同じ思想家
+- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
+- [[mgmt-sensemaking-weick|意味構築（オーガニゼーショナル・センスメーキング）]] — 同じ思想家
+- [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 同じ思想家
+- [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 同じ思想家
+- [[human-error-management-theory-frese|エラー管理理論（フレゼ）]] — 同じ思想家
+- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
+- [[mgmt-institutional-work-lawrence|制度的ワーク論——アクターによる制度の創造・維持・破壊の実践]] — 同じ思想家
+- [[mgmt-organizational-identity-albert|組織アイデンティティ理論（アルバート＆ウェッテン）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

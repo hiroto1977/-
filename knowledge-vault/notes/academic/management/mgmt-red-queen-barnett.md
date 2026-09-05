@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: Red Queen hypothesis — Van Valen, coevolution, organizational evolution](https://en.wikipedia.org/wiki/Red_Queen_hypothesis) `リファレンス`
 
 ## 関連概念
-- [[mgmt-red-queen-effect|赤の女王効果（Red Queen Effect）]] — 語彙が近い
+- [[mgmt-red-queen-competition|赤の女王競争（バーネット＆ハンセン）——競争が組織の学習を促すが競合も同時に鍛えるため、走り続けてやっと相対的地位を保てる共進化の動態]] — 同じ思想家
 - [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]] — 同じ思想家
 - [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]] — 同じ思想家
 - [[mgmt-competency-trap|コンピテンシー・トラップと成功の罠（レヴィット＝マーチ／レヴィンタール＝マーチ）——過去の成功への習熟が学習を深化に偏らせ、より優れた選択肢への転換を妨げる]] — 同分野の近傍

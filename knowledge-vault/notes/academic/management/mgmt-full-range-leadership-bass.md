@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[mgmt-transformational-leadership|変革型リーダーシップ]] — 語彙が近い
 - [[mgmt-charismatic-leadership-house|カリスマ的リーダーシップ——非凡な影響を生む行動と帰属の理論]] — 同じ思想家
-- [[mgmt-authentic-leadership-george|オーセンティック・リーダーシップ——自己認識と価値の一貫性に基づく真正な指導]] — 同じ思想家
+- [[mgmt-authentic-leadership-avolio-gardner|オーセンティック・リーダーシップ（アボリオ＆ガードナー）——自己認識・内面化された道徳的視点・バランスのとれた情報処理・関係の透明性を核とする真正なリーダーシップ]] — 同じ思想家
 - [[mgmt-contingency-fiedler|フィードラーのコンティンジェンシー理論——リーダー特性と状況好意性の適合]] — 同じ思想家
 - [[mgmt-cross-cultural-leadership-house-globe|GLOBEプロジェクト——文化次元とリーダーシップの国際比較]] — 同じ思想家
 - [[mgmt-path-goal-theory-house|パス・ゴール理論——リーダーが部下の目標達成経路を整備する条件適応的指導]] — 同じ思想家

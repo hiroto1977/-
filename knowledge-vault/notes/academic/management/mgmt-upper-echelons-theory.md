@@ -40,8 +40,8 @@ aliases:
 - [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]] — 同じ思想家
 - [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 同じ思想家
 - [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 同じ思想家
-- [[mgmt-mintzberg-organization|ミンツバーグの組織構造の5類型]] — 同分野の近傍
-- [[mgmt-creative-self-efficacy|創造的自己効力感]] — 同分野の近傍
+- [[mgmt-attention-based-view|注意ベース理論（オカシオ）——企業の行動は、意思決定者の希少な注意をどの争点と答えに向けるかを組織の構造が配分した結果である]] — 同じ思想家
+- [[mgmt-strategic-leadership-theory|戦略的リーダーシップ理論]] — 同分野の近傍
 - [[mgmt-ringi|稟議制]] — 同分野の近傍
 
 ## 関連

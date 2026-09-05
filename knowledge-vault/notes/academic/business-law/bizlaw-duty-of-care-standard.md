@@ -38,6 +38,7 @@ William T. Allen ／ Melvin A. Eisenberg ／ Bernard S. Black
 - [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 同じ思想家
 - [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 同じ思想家
 - [[bizlaw-change-of-circumstances|事情変更の原則]] — 同分野の近傍
+- [[bizlaw-negligence-per-se|法定過失（Negligence Per Se）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

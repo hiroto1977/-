@@ -36,6 +36,7 @@ aliases:
 - [[human-ironic-process-wegner|皮肉過程理論——思考抑制がかえって抑制対象を意識に侵入させる逆説]] — 同じ思想家
 - [[infosoc-digital-amnesia-google-effect|デジタル健忘症（グーグル効果）]] — 同じ思想家
 - [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — 同じ思想家
+- [[mgmt-red-queen-competition|赤の女王競争（バーネット＆ハンセン）——競争が組織の学習を促すが競合も同時に鍛えるため、走り続けてやっと相対的地位を保てる共進化の動態]] — 同じ思想家
 - [[mgmt-team-cognition|チーム認知・共有メンタルモデル：チームの暗黙的協調を支える認知的基盤と集合的知識構造]] — 同分野の近傍
 - [[mgmt-aston-studies-organization|アストン研究——組織構造の多次元的・実証的測定]] — 同分野の近傍
 - [[mgmt-okr|OKR（目標と主要な結果）]] — 同分野の近傍

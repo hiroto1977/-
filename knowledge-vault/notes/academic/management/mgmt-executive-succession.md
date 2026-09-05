@@ -36,7 +36,7 @@ aliases:
 - [[mgmt-upper-echelons-theory|上層部理論（ハンブリック＝メイソン）——組織はトップ経営陣の反映であり、経営者の経歴と特性が認知のフィルターとして戦略的選択と業績を部分的に予測する]] — 同じ思想家
 - [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]] — 同じ思想家
 - [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 同じ思想家
-- [[mgmt-strategic-leadership-theory|戦略的リーダーシップ理論]] — 同分野の近傍
+- [[mgmt-attention-based-view|注意ベース理論（オカシオ）——企業の行動は、意思決定者の希少な注意をどの争点と答えに向けるかを組織の構造が配分した結果である]] — 同じ思想家
 - [[mgmt-social-identity-theory-of-leadership|リーダーシップの社会的アイデンティティ理論]] — 同分野の近傍
 
 ## 関連

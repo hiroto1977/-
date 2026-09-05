@@ -3753,16 +3753,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-psychological-contract',
     discipline: 'management',
-    title: '心理的契約',
+    title: '心理的契約（ルソー）——雇用関係における明文化されない相互義務についての従業員の主観的信念と、その違反が信頼とコミットメントに与える影響',
     statement:
-      '心理的契約（psychological contract）とは、従業員と組織（雇用者）の間に存在する、明文化されていない相互の義務・期待についての、従業員側の主観的な信念を指す。給与・雇用保障・昇進機会・能力開発などをめぐり「会社はこうしてくれるはず」「自分はこう貢献する」といった、互恵的交換関係に基づく暗黙の約束として認知される。内容に応じて、金銭的・短期的・限定的な義務からなる「取引的契約（transactional）」と、忠誠・長期雇用・情緒的サポートを含む「関係的契約（relational）」に類型化される。' +
-      '従業員がこの契約を組織に破られた（違反された）と認知すると（心理的契約の違反 breach/violation）、信頼の低下、職務満足や組織コミットメントの低下、離職意図の増大といった負の反応が生じる。組織コミットメントや公平理論とは区別される独立した概念である。',
-    keyFigures: 'デニス・M・ルソー（Denise M. Rousseau, 1989年に現代的に再定義・体系化、取引的／関係的の類型化）／初期の概念的言及：クリス・アージリス（1960）／ハリー・レビンソン／エドガー・シャイン／違反研究：Robinson & Morrison (2000)',
-    asOf: '2026-06',
+      '心理的契約（psychological contract）とは、従業員と組織の間に存在する明文化されない相互の義務と期待についての従業員側の主観的な信念で、デニス・ルソーが1989年の論文で現代的に再定義・体系化した。初期の言及はクリス・アージリス（1960）、ハリー・レビンソン、エドガー・シャインに遡る。給与、雇用保障、昇進機会、能力開発をめぐり「会社はこうしてくれるはず」「自分はこう貢献する」と認知される互恵的な約束であり、金銭的・短期的・限定的な義務からなる取引的契約と、忠誠・長期雇用・情緒的支援を含む関係的契約に類型化される。従業員が契約を破られたと認知する違反（breach／violation）は、怒りや裏切り感、信頼と職務満足・組織コミットメントの低下、組織市民行動の減少、離職意図の増大を生むことがロビンソンとモリソンの研究やジャオら（2007）のメタ分析で示され、ニール・アンダーソンとレネ・シャルクは従業員が契約の履行を継続的に監視する認知過程を明らかにし、大規模リストラや組織変革で断絶が深刻化することを示した。ギグワークやテレワークの普及で関係的契約から取引的契約への移行が研究課題となり、人材確保では期待管理が重視される。組織コミットメントや公平理論とは区別される独立した概念である。批判として、従業員側の認知のみを扱い雇用者側の契約観を軽視すること、内容が文化や雇用制度に依存すること、違反の測定が回顧的な自己報告に頼ることがある。中小企業には、採用時の口約束や「昇給するつもり」といった曖昧な期待が心理的契約として蓄積し、守れなかったときの離職や士気低下は明文の契約より大きいため、期待を言葉にして更新し続けることが含意となる。',
+    keyFigures: 'デニス・ルソー（1989 現代的定義・取引的／関係的の類型）／サンドラ・ロビンソン＆モリソン（違反の研究）／ニール・アンダーソン＆レネ・シャルク（契約の認知的監視）／初期の言及: クリス・アージリス（1960）／ハリー・レビンソン／エドガー・シャイン',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://link.springer.com/article/10.1007/BF01384942', type: 'academic', label: 'Rousseau, D. M. (1989). Psychological and implied contracts in organizations. Employee Responsibilities and Rights Journal, 2, 121–139.（Springer／一次文献）' },
-      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1744-6570.2007.00087.x', type: 'academic', label: 'Zhao, H. et al. (2007). The Impact of Psychological Contract Breach on Work-Related Outcomes: A Meta-Analysis. Personnel Psychology (Wiley／査読メタ分析)' },
-      { url: 'https://en.wikipedia.org/wiki/Psychological_contract', type: 'reference', label: 'Psychological contract — Wikipedia' },
+      { url: 'https://doi.org/10.1007/BF01384942', type: 'academic', label: 'Rousseau, D. M. (1989) Psychological and Implied Contracts in Organizations — Employee Responsibilities and Rights Journal 2(2)（原典）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1744-6570.2007.00087.x', type: 'academic', label: 'Zhao, H. et al. (2007) The Impact of Psychological Contract Breach on Work-Related Outcomes: A Meta-Analysis — Personnel Psychology 60(3)' },
+      { url: 'https://hbr.org/2019/03/rethinking-the-psychological-contract', type: 'media', label: 'Harvard Business Review (2019) Rethinking the Psychological Contract' },
+      { url: 'https://en.wikipedia.org/wiki/Psychological_contract', type: 'reference', label: 'Wikipedia: Psychological contract — Rousseau、取引的／関係的契約、違反' },
     ],
   },
   {
@@ -11355,16 +11355,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-knowledge-based-view',
     discipline: 'management',
-    title: '知識ベース理論（ナレッジ・ベースト・ビュー）',
+    title: '知識ベース企業観（グラント）——企業を個人に分散した専門知識を統合する制度と捉え、統合能力に持続的競争優位の源泉を見る',
     statement:
-      '知識ベース理論（KBV）は資源ベース理論（RBV）を拡張した戦略経営の視座で、知識——とくに暗黙知——を企業の最も戦略的に重要な資源とみなす。知識は社会的に複雑で模倣・移転が困難、かつ企業間で異質なため、持続的競争優位の源泉となる。企業は個人に宿る専門知識を統合・適用するための制度（知識統合）として捉えられ、' +
-      '分散した専門知識を生産のために統合する必要と、費用のかかる知識移転を節約する要請から、企業の存在・境界、組織構造、権限配分や調整メカニズムが説明される。代表的にはロバート・M・グラント（1996, Strategic Management Journal）とコグート＆ザンダー（1992, Organization Science）。組織学習・ダイナミックケイパビリティや野中のSECIと関連するが、資源ベース理論やSECI/知識移転の項目とは区別される。',
-    keyFigures: 'ロバート・M・グラント（1996）／コグート＆ザンダー（1992）',
-    asOf: '2026-06',
+      '知識ベース企業観（knowledge-based view、KBV）は、ロバート・グラントが1996年の論文（Strategic Management Journal 17巻冬季特集号）で体系化した戦略理論で、資源ベース論（RBV）を発展させ、知識——とりわけ言語化が難しく経験を通じてしか伝わらない暗黙知——を企業の最も戦略的に重要な資源とみなす。知識は社会的に複雑で模倣・移転が困難かつ企業間で異質なため持続的競争優位の源泉となるが、KBV の中心的主張は、企業が存在する理由を、多数の個人に分散して宿る専門化された知識を統合して財やサービスを生む「制度」としての役割に見いだす点にある。グラントは、規則と指示、業務の順序づけ、ルーティン、問題解決のためのグループ化といった知識統合のメカニズムが市場取引より効率的に専門知識を結合できるがゆえに企業が組織として存在すると論じ、競争優位の源泉を個別の知識ではなく、多様で専門的な知識をいかに広く深く効率的に統合できるかという組織能力に置いた。ブルース・コグートとウド・ザンダー（1992）の結合能力や野中郁次郎の知識創造理論と響き合い、企業の境界、組織構造、権限配分と調整の説明、組織学習やイノベーション・マネジメントの基礎となった。批判として、知識と情報や能力の境界が曖昧で「知識」が何でも説明する概念になりやすいこと、統合能力の測定が難しいこと、資源ベース論からの独立性を疑う見方がある。中小企業には、競争力の核が特定の人に宿る暗黙知であるほどその人の退職が事業の存続に直結するため、ペアでの作業、手順の文書化、顧客対応の共有といった統合の仕組みを小さくても持つことが含意となる。',
+    keyFigures: 'ロバート・グラント（1996 提唱）／ブルース・コグート＆ウド・ザンダー（1992 結合能力）／野中郁次郎（知識創造理論）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250171110', type: 'academic', label: 'Grant, R. M. (1996) "Toward a Knowledge-Based Theory of the Firm," Strategic Management Journal 17, 109–122 (Wiley Online Library)' },
-      { url: 'https://www.encyclopedia.com/management/encyclopedias-almanacs-transcripts-and-maps/knowledge-based-view-firm', type: 'reference', label: 'Encyclopedia.com — "Knowledge-Based View of the Firm"' },
-      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.3.3.383', type: 'academic', label: 'Kogut, B. & Zander, U. (1992) "Knowledge of the Firm...," Organization Science 3(3), 383–397 (INFORMS)' },
+      { url: 'https://doi.org/10.1002/smj.4250171110', type: 'academic', label: 'Grant, R. M. (1996) Toward a Knowledge-Based Theory of the Firm — Strategic Management Journal 17(S2)（原典）' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.3.3.383', type: 'academic', label: 'Kogut, B. & Zander, U. (1992) Knowledge of the Firm, Combinative Capabilities, and the Replication of Technology — Organization Science 3(3)' },
+      { url: 'https://en.wikipedia.org/wiki/Knowledge-based_theory_of_the_firm', type: 'reference', label: 'Wikipedia: Knowledge-based theory of the firm — Grant、知識統合、暗黙知' },
+      { url: 'https://www.encyclopedia.com/management/encyclopedias-almanacs-transcripts-and-maps/knowledge-based-view-firm', type: 'reference', label: 'Encyclopedia.com: Knowledge-Based View of the Firm（概説）' },
     ],
   },
   {
@@ -11636,18 +11636,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-attention-based-view',
     discipline: 'management',
-    title: '注意ベース理論（アテンション・ベースト・ビュー）',
+    title: '注意ベース理論（オカシオ）——企業の行動は、意思決定者の希少な注意をどの争点と答えに向けるかを組織の構造が配分した結果である',
     statement:
-      'ウィリアム・オカシオが1997年に『Strategic Management Journal』誌（第18巻187-206頁）の論文「Towards an Attention-Based View of the Firm」で提示した理論。企業の行動は、希少な資源である意思決定者の「注意（アテンション）」を、企業がどの争点や答えに振り向け配分するかの結果だとする。ハーバート・サイモンの限定合理性と『経営行動』を継承し、注意を限られた認知資源と捉える。またジョセフ・バウワーの資源配分プロセス研究（1970）を先行知見として位置づける。' +
-      '3つの原則から成る。(1)注意の焦点＝意思決定者の行動は、彼らが注目する争点と答えに依存する。(2)状況づけられた注意＝何に注目するかは、置かれた具体的な状況や文脈に依存する。(3)注意の構造的配分＝その状況的な注意は、企業のルール・資源・プレイヤー・構造的位置によってパターン化され配分される。これにより組織の適応・慣性・戦略変化を注意の配分という観点から説明する。オカシオは2011年のOrganization Science誌論文「Attention to Attention」で理論を拡張し、研究プログラムとして体系化した。',
-    keyFigures: 'ウィリアム・オカシオ（William Ocasio, 1997）／ハーバート・サイモン（限定合理性）',
-    asOf: '2026-06',
+      'ウィリアム・オカシオが1997年の論文（Strategic Management Journal 18巻夏季特集号）で提示した注意ベース理論（attention-based view）は、企業の行動を、希少な認知資源である意思決定者の「注意」がどの争点と答えに振り向けられるかの結果として説明する。ハーバート・サイモンの限定合理性、マーチとサイアートのカーネギー学派の行動理論、ジョセフ・バウワーの資源配分プロセス研究（1970）を継承し、三つの原則から成る。注意の焦点（意思決定者の行動は注目する争点と答えに依存する）、状況づけられた注意（何に注目するかは置かれた状況と文脈に依存する）、注意の構造的配分（その状況的な注意は、コミュニケーション経路と手続き、インセンティブと資源、プレイヤーと構造的位置といった組織の注意構造によってパターン化される）である。これにより組織の適応と慣性、戦略変化を注意の配分から説明し、チョーとハンブリック（2006）は経営陣の注意配分が戦略変化の方向と速度を左右することを実証した。オカシオは2011年の論文で注意の選択・活性化・持続を区別して研究プログラムとして体系化し、ブリールマイアーとフリースル（2023）のレビューは注意の構造と経営者の認知をつなぐ研究の蓄積を整理した。批判として、注意の測定が文書や発言の言語分析に頼りがちで因果の識別が難しく、構造と個人の認知の相互作用の理論化が途上にある。中小企業には、経営者の注意こそ最も希少な経営資源であり、会議の議題、報告の形式、評価指標が「何が見えるか」を決めているため、顧客の苦情や新技術を定例で目に入れる仕組みのように注意構造を意図的に設計することが含意となる。',
+    keyFigures: 'ウィリアム・オカシオ（1997 提唱／2011 体系化）／テレサ・チョー＆ドナルド・ハンブリック（2006 経営陣の注意配分の実証）／ブリールマイアー＆フリースル（2023 レビュー）／ハーバート・サイモン（限定合理性）／ジョセフ・バウワー（1970 資源配分プロセス）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://sms.onlinelibrary.wiley.com/doi/10.1002/(SICI)1097-0266(199707)18:1+%3C187::AID-SMJ936%3E3.0.CO;2-K', type: 'academic', label: 'Ocasio, W. (1997) Towards an Attention-Based View of the Firm, Strategic Management Journal 18: 187-206 (Wiley, 原典)' },
-      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/ijmr.12306', type: 'academic', label: 'Brielmaier & Friesl (2023) The attention-based view: Review and conceptual extension, International Journal of Management Reviews' },
-      { url: 'https://www.mv.helsinki.fi/home/aula/Top20/ocasio-attention-based-view-of-the-firm.pdf', type: 'reference', label: 'University of Helsinki hosted full text of Ocasio (1997)' },
-      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.1100.0602', type: 'academic', label: 'Ocasio, W. (2011) Attention to Attention — Organization Science 22(5): 1286-1296' },
-      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=4884', type: 'reference', label: 'Bower, J. L. (1970) Managing the Resource Allocation Process — Harvard Business School（先行知見）' },
+      { url: 'https://doi.org/10.1002/(SICI)1097-0266(199707)18:1+<187::AID-SMJ936>3.0.CO;2-K', type: 'academic', label: 'Ocasio, W. (1997) Towards an Attention-Based View of the Firm — Strategic Management Journal 18(S1), 187–206（原典）' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.1100.0602', type: 'academic', label: 'Ocasio, W. (2011) Attention to Attention — Organization Science 22(5), 1286–1296（研究プログラムとしての体系化）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/ijmr.12306', type: 'academic', label: 'Brielmaier & Friesl (2023) The Attention-Based View: Review and Conceptual Extension — International Journal of Management Reviews' },
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=4884', type: 'reference', label: 'Harvard Business School: Bower, J. L. (1970) Managing the Resource Allocation Process（先行研究）' },
     ],
   },
   {
@@ -17304,20 +17302,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-red-queen-effect',
-    discipline: 'management',
-    title: '赤の女王効果（Red Queen Effect）',
-    statement:
-      '赤の女王効果とは、進化生物学者リー・ヴァン・ヴァーレンが1973年の論文「A New Evolutionary Law」(Evolutionary Theory, 1:1–30)で提唱した進化的法則に由来する概念である。名称はルイス・キャロルの『鏡の国のアリス』(1871)で赤の女王が述べる「同じ場所にとどまるためには、全力で走り続けなければならない」という台詞に因む。生物学では、種は共進化する競争相手・捕食者・寄生者に対して相対的適応度を維持するために絶えず進化し続けなければならないとする。' +
-      '経営学では、ウィリアム・P・バーネットとモーテン・T・ハンセンが1996年のStrategic Management Journal論文「The Red Queen in Organizational Evolution」(17(S1):139–157)で組織間競争に応用し、激しい競争に直面した企業はより強い能力を発達させるが、競合も同時に強化されるため、競争優位は一時的であり「走り続ける」ことでようやく現在の地位を維持できるという動態を示した。バーネットは2008年の著書『The Red Queen among Organizations: How Competitiveness Evolves』(Princeton University Press)でこの理論を体系化し、競争経験が組織学習を促すが競合の学習も加速するため均衡的な優位が生じにくいことを実証的に論じた。',
-    keyFigures: 'リー・ヴァン・ヴァーレン（1973 "A New Evolutionary Law"）／W.P.バーネット & M.T.ハンセン（1996 Strategic Management Journal）／バーネット（2008 Princeton UP）／着想: ルイス・キャロル『鏡の国のアリス』(1871)',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1002/smj.4250171010', type: 'academic', label: 'Barnett & Hansen (1996) "The Red Queen in Organizational Evolution", Strategic Management Journal 17(S1), 139–157' },
-      { url: 'https://press.princeton.edu/books/paperback/9780691173689/the-red-queen-among-organizations', type: 'academic', label: 'Barnett (2008) The Red Queen among Organizations: How Competitiveness Evolves, Princeton University Press' },
-    ],
-  },
-  {
     id: 'mgmt-icarus-paradox',
     discipline: 'management',
     title: 'イカロスのパラドックス（Icarus Paradox）',
@@ -17705,29 +17689,29 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-dominant-logic',
     discipline: 'management',
-    title: 'ドミナント・ロジック（Dominant Logic）',
+    title: 'ドミナント・ロジック（プラハラード＆ベティス）——経営陣が事業を捉え資源を配分する支配的な認知枠組みが、多角化の成否と環境変化への適応を左右する',
     statement:
-      'ドミナント・ロジック（dominant logic / dominant general management logic）とは、インド出身の経営学者C・K・プラハラード（C. K. Prahalad, 1941-2010, ミシガン大学ロス経営大学院）とリチャード・A・ベティス（Richard A. Bettis, ノースカロライナ大学キーナン＝フラグラー経営大学院）が1986年の論文「The Dominant Logic: A New Linkage Between Diversity and Performance」（Strategic Management Journal, Vol.7, No.6, pp.485-501, DOI: 10.1002/smj.4250070602）において提唱した概念であり、トップマネジメント・チームが事業環境を概念化し重要な資源配分決定を行う際の支配的な認知枠組み（cognitive map / mental model）を指す。プラハラードとベティスは、多角化企業のパフォーマンスが事業ポートフォリオの「戦略的多様性」（strategic variety）ではなく、経営者が多様な事業を統括するために用いる認知的スキーマの適合性によって規定されるという命題を提示した。具体的には、トップマネジメントは過去の成功体験から形成されたドミナント・ロジックを通じて環境情報をフィルタリングし、注意配分（attention allocation）・情報処理・意思決定を行うため、中核事業と「支配的論理」が適合する関連多角化は高業績をもたらすが、異なるロジックを要求する非関連多角化では認知的不適合が生じ業績が低下する。' +
-      'ベティスとプラハラードは1995年の論文「The Dominant Logic: Retrospective and Extension」（Strategic Management Journal, Vol.16, No.1, pp.5-14, DOI: 10.1002/smj.4250160104）において、ドミナント・ロジックの概念を回顧的に再検討し、情報フィルター・スキーマ・認知バイアスの観点から理論的精緻化を行った。彼らはドミナント・ロジックを「組織内で情報がフィルタリングされ、戦略的に関連する情報のみが抽出される情報漏斗（information funnel）」として再定式化し、組織学習（organizational learning）との接点を強調した。この概念はハーバート・サイモン（Herbert Simon）の限定合理性（bounded rationality）、認知科学におけるスキーマ理論、カーネマン（Kahneman）の注意の二重過程理論と理論的に接続し、戦略的認知（strategic cognition / managerial cognition）研究の基盤的概念として定着している。なお、ヴァーゴ＝ラッシュ（Vargo & Lusch, 2004）のサービス・ドミナント・ロジック（service-dominant logic）はマーケティング・パラダイムに関する全く異なる概念であり、本概念とは無関係である。',
-    keyFigures: 'C. K. Prahalad & Richard A. Bettis（SMJ 7(6), 1986, 原提唱）／Bettis & Prahalad（SMJ 16(1), 1995, 回顧と拡張）',
-    asOf: '2026-06',
+      'ドミナント・ロジック（dominant logic）は、C・K・プラハラードとリチャード・ベティスが1986年の論文（Strategic Management Journal 7巻6号）で提唱した概念で、トップマネジメントが事業をどう概念化し重要な資源配分の決定をどう下すかを規定する、共有された認知の枠組み（メンタルマップ）を指す。多角化企業の業績を左右するのは事業構成の多様性そのものではなく、経営者が多様な事業を統括するために用いる認知スキーマの適合であり、中核事業での成功体験から形成された論理と整合する関連多角化は高業績をもたらすが、異なる論理を要する事業では認知的不適合が生じて業績が落ちる。ベティスとプラハラード（1995）は概念を回顧し、ドミナント・ロジックを戦略的に関連する情報だけを通す「情報の漏斗」として再定式化して組織学習との接点を強調した。枠組みは迅速な判断を可能にする道具である一方、整合しない情報を無意識に濾過するフィルターとして働くため、環境が根本的に変わったときに経営者が新しい現実を認識できず、過去の成功体験に基づく判断を続けてしまう。組織の慣性、中核硬直性、能力の罠といった過去の強みが変化の足枷に転じる現象を経営者の認知の水準から説明し、限定合理性やスキーマ理論と接続して戦略的認知研究の基盤となった。批判として、ロジックの直接測定が難しく事例と業績の相関からの推論に頼ること、ロジックを意図的に更新する条件の理論化が弱いことがある。中小企業には、創業事業で身につけた「儲かる勘所」が新規事業や環境変化の局面では見落としの原因になること、異なる論理を持つ人材や外部の視点を意図的に判断に入れることが含意となる。',
+    keyFigures: 'C・K・プラハラード＆リチャード・ベティス（1986 提唱／1995 回顧と拡張）／対比: スティーヴン・ヴァーゴ＆ロバート・ラッシュ（サービス・ドミナント・ロジック）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1002/smj.4250070602', type: 'academic', label: 'Prahalad & Bettis (1986) The Dominant Logic: A New Linkage Between Diversity and Performance — SMJ 7(6), pp.485-501' },
-      { url: 'https://doi.org/10.1002/smj.4250160104', type: 'academic', label: 'Bettis & Prahalad (1995) The Dominant Logic: Retrospective and Extension — SMJ 16(1), pp.5-14' },
+      { url: 'https://doi.org/10.1002/smj.4250070602', type: 'academic', label: 'Prahalad, C. K. & Bettis, R. A. (1986) The Dominant Logic: A New Linkage Between Diversity and Performance — Strategic Management Journal 7(6), 485–501（原典）' },
+      { url: 'https://doi.org/10.1002/smj.4250160104', type: 'academic', label: 'Bettis, R. A. & Prahalad, C. K. (1995) The Dominant Logic: Retrospective and Extension — Strategic Management Journal 16(1), 5–14' },
     ],
   },
   {
     id: 'mgmt-sensegiving',
     discipline: 'management',
-    title: 'センスギビング（Sensegiving）',
+    title: 'センスギビング（ジョイア＆チッティペディ）——リーダーが他者の意味形成に働きかけ、変革の望ましい解釈を組織に広めるコミュニケーション過程',
     statement:
-      'センスギビング（sensegiving）とは、組織のリーダーやステークホルダーが、他者のセンスメイキング（意味形成）過程に影響を与え、組織的現実の望ましい再定義に向けて意味の方向づけを試みるコミュニケーション的プロセスを指す概念であり、米国の経営学者デニス・A・ジオイア（Dennis A. Gioia, ペンシルベニア州立大学スミール経営大学院）とクマール・チッティペディ（Kumar Chittipeddi）が1991年の論文「Sensemaking and Sensegiving in Strategic Change Initiation」（Strategic Management Journal, Vol.12, No.6, pp.433-448, DOI: 10.1002/smj.4250120604）において提唱した。ジオイアとチッティペディは、ある大規模公立大学における新学長就任後の戦略的変革開始過程を12か月間にわたる参与観察と半構造化インタビューによって研究し、戦略的変革がCEO（学長）による「センスメイキング」（環境と組織の現状を理解し認知的枠組みを構築する過程）と「センスギビング」（構築した意味枠組みをステークホルダーに伝達し、彼らの意味形成に影響を与える過程）の二つの相互連関的プロセスの反復的循環として展開されることを発見した。' +
-      'この論文の理論的意義は、カール・E・ワイク（Karl E. Weick）が1979年の『The Social Psychology of Organizing』および1995年の『Sensemaking in Organizations』で確立したセンスメイキング概念を補完する能動的・方向づけ的過程としてセンスギビングを概念化し、戦略的変革研究における認知的・解釈的アプローチの基盤を提供した点にある。サリー・メイトリス（Sally Maitlis, ブリティッシュコロンビア大学）とトーマス・B・ローレンス（Thomas B. Lawrence, オックスフォード大学サイード経営大学院）は2007年の論文「Triggers and Enablers of Sensegiving in Organizations」（Academy of Management Journal, Vol.50, No.1, pp.57-84, DOI: 10.5465/amj.2007.24160971）において、英国の3つのオーケストラ組織における縦断的比較事例研究を通じて、センスギビングの発動条件（triggers）と促進条件（enablers）を体系化した。メイトリスとローレンスは、リーダーのセンスギビングが生起するには (1) 解釈の不確実性または既存の意味枠組みへの脅威というトリガーと、(2) 予測能力（expertise）・正統性（legitimacy）・組織的プロセスへのアクセスというイネーブラーが必要であることを示し、センスギビングが組織内の政治的プロセスと不可分であることを明らかにした。',
-    keyFigures: 'Dennis A. Gioia & Kumar Chittipeddi（SMJ 12(6), 1991, 概念提唱）／Sally Maitlis & Thomas B. Lawrence（AMJ 50(1), 2007, トリガーとイネーブラー）',
-    asOf: '2026-06',
+      'センスギビング（sensegiving）は、デニス・ジョイアとクマール・チッティペディが1991年の論文（Strategic Management Journal 12巻6号）で提唱した概念で、リーダーやステークホルダーが他者のセンスメイキング（意味形成）に影響を与え、組織の現実の望ましい再定義に向けて意味を方向づけようとするコミュニケーション過程を指す。二人はある大規模公立大学で新学長が戦略的変革を始める過程を参与観察と面接で追い、変革が学長による意味の構築（センスメイキング）と、構築した枠組みを構成員に伝えて彼らの解釈に働きかける段階（センスギビング）の反復的な循環として進むことを見いだした。カール・ワイクが確立したセンスメイキング概念を補完する能動的で方向づけの過程として位置づけられ、解釈の幅を意図的に残して多様な支持を得る戦略的曖昧さ、言語・メタファー・物語といった手段が論じられる。サリー・メイトリスとトーマス・ローレンス（2007）は英国の三つのオーケストラの比較事例から、センスギビングが起きるには解釈の不確実性や既存の枠組みへの脅威という発動条件と、専門性・正統性・組織過程へのアクセスという促進条件が要り、組織内の政治過程と不可分であることを示した。批判として、質的事例研究が中心で効果の測定が難しく、リーダー中心の見方が下からの意味形成を軽視しがちで、操作や印象管理との境界が曖昧である。中小企業には、事業転換や事業承継で経営者が「なぜ変えるのか」の解釈を先に示し、従業員の疑問に応じて語り直す往復がなければ、制度だけ変わって行動が変わらないことが含意となる。',
+    keyFigures: 'デニス・ジョイア＆クマール・チッティペディ（1991 提唱）／サリー・メイトリス＆トーマス・ローレンス（2007 発動条件と促進条件）／カール・ワイク（センスメイキング論）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1002/smj.4250120604', type: 'academic', label: 'Gioia & Chittipeddi (1991) Sensemaking and Sensegiving in Strategic Change Initiation — SMJ 12(6), pp.433-448' },
-      { url: 'https://doi.org/10.5465/amj.2007.24160971', type: 'academic', label: 'Maitlis & Lawrence (2007) Triggers and Enablers of Sensegiving in Organizations — AMJ 50(1), pp.57-84' },
+      { url: 'https://doi.org/10.1002/smj.4250120604', type: 'academic', label: 'Gioia, D. A. & Chittipeddi, K. (1991) Sensemaking and Sensegiving in Strategic Change Initiation — Strategic Management Journal 12(6), 433–448（原典）' },
+      { url: 'https://doi.org/10.5465/amj.2007.24160971', type: 'academic', label: 'Maitlis, S. & Lawrence, T. B. (2007) Triggers and Enablers of Sensegiving in Organizations — Academy of Management Journal 50(1), 57–84' },
+      { url: 'https://us.sagepub.com/en-us/nam/sensemaking-in-organizations/book4988', type: 'academic', label: 'Weick, K. E. (1995) Sensemaking in Organizations — Sage Publications（センスメイキング論の原典）' },
+      { url: 'https://en.wikipedia.org/wiki/Sensemaking', type: 'reference', label: 'Wikipedia: Sensemaking — Weick、Gioia のセンスギビング、戦略的曖昧さ' },
     ],
   },
   {
@@ -21823,15 +21807,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-red-queen-competition',
     discipline: 'management',
-    title: '赤の女王競争理論',
+    title: '赤の女王競争（バーネット＆ハンセン）——競争が組織の学習を促すが競合も同時に鍛えるため、走り続けてやっと相対的地位を保てる共進化の動態',
     statement:
-      '赤の女王競争理論とは、Van Valen（1973）が進化生物学で提唱した「赤の女王仮説」——共進化する競争者のせいで、種は絶えず進化して初めて相対的地位を保てる（その場に留まるために走り続ける）——を経営学に応用した競争理論であり、Barnett & Hansen（1996）が組織進化の文脈で定式化した。競争に晒された組織は探索と学習を促されて能力を高めるが、それは競合他社の学習を誘発してさらに強い競争環境を生むため、改善の絶対量が増えても相対的地位は変わらないという自己強化的なサイクルが持続する。理論の要点は学習の近視眼性にもある——目の前の競争相手への適応は文脈特殊的であり、過去の・異なる環境での競争経験はむしろ現在の適応力を損ないうる（有能性の罠の共進化版）ため、競争経験の新しさと文脈適合が生存を分ける。銀行の長期生存データやディスクドライブ産業の技術競走（Barnett & McKendrick 2004）による実証は、競争経験を積んだ組織ほど強くなる一方、その競争力が相手を鍛える双方向性を確認し、Barnett（2008）は競争の論理の歴史依存性として体系化した。含意は、業績を絶対水準でなく競争相手との相対で測るべきこと、どの競争アリーナで鍛えられるかという土俵選択の重要性、そして軍拡競争的な同質的競争から抜け出す差別化の価値であり、ハイパーコンペティション論とは、環境記述ではなく共進化的学習という微視的機構を与える点で補完関係にある。',
-    keyFigures: 'William P. Barnett ／ Morten T. Hansen ／ Leigh Van Valen',
-    asOf: '2026-06',
+      '赤の女王競争理論は、進化生物学者リー・ヴァン・ヴェイレンが1973年に提唱した赤の女王仮説——共進化する競争相手のせいで種は絶えず進化して初めて相対的な地位を保てる——を、ウィリアム・バーネットとモーテン・ハンセンが1996年の論文（Strategic Management Journal 17巻夏季特集号）で組織間競争に応用したものである。名称はルイス・キャロル『鏡の国のアリス』で赤の女王が語る「同じ場所にとどまるには全力で走り続けなければならない」に由来する。競争に晒された組織は探索と学習を促されて能力を高めるが、それが競合の学習を誘発してさらに強い競争環境を生むため、改善の絶対量が増えても相対的地位は変わらない自己強化的な循環が続く。理論の要点は学習の近視眼性にもある。目の前の競争相手への適応は文脈特殊的で、過去の異なる環境での競争経験はむしろ現在の適応力を損ないうるため、競争経験の新しさと文脈適合が生存を分ける。銀行の長期生存データやディスクドライブ産業の技術競走（バーネットとマッケンドリック 2004）の実証は、競争経験を積んだ組織ほど強くなる一方でその競争力が相手を鍛える双方向性を確認し、バーネット（2008）は競争の論理の歴史依存性として体系化した。ハイパーコンペティション論に対しては、環境の記述ではなく共進化的学習という微視的機構を与える点で補完関係にある。批判として、学習と競争の因果を観察データで識別しにくく、産業や時期によって効果が反転する条件の理論化が途上である。中小企業には、業績を絶対水準ではなく競争相手との相対で測るべきこと、どの競争の土俵で鍛えられるかという土俵選択、そして同質的な軍拡競争から抜け出す差別化の価値が含意となる。',
+    keyFigures: 'ウィリアム・バーネット＆モーテン・ハンセン（1996 組織進化への応用）／バーネット＆マッケンドリック（2004 ディスクドライブ産業の実証）／ウィリアム・バーネット（2008『The Red Queen among Organizations』）／リー・ヴァン・ヴェイレン（1973 赤の女王仮説）／着想: ルイス・キャロル『鏡の国のアリス』',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250171010', type: 'academic', label: 'Barnett & Hansen (1996) "The Red Queen in Organizational Evolution" Strategic Management Journal' },
-      { url: 'https://journals.sagepub.com/doi/10.2307/4131490', type: 'academic', label: 'Barnett & McKendrick (2004) "Why Are Some Organizations More Competitive Than Others?" Administrative Science Quarterly' },
-      { url: 'https://en.wikipedia.org/wiki/Red_Queen_hypothesis', type: 'reference', label: 'Wikipedia — Red Queen hypothesis' },
+      { url: 'https://doi.org/10.1002/smj.4250171010', type: 'academic', label: 'Barnett, W. P. & Hansen, M. T. (1996) The Red Queen in Organizational Evolution — Strategic Management Journal 17(S1), 139–157（原典）' },
+      { url: 'https://journals.sagepub.com/doi/10.2307/4131490', type: 'academic', label: 'Barnett & McKendrick (2004) Why Are Some Organizations More Competitive Than Others? Evidence from a Changing Global Market — Administrative Science Quarterly 49(4)' },
+      { url: 'https://press.princeton.edu/books/paperback/9780691173689/the-red-queen-among-organizations', type: 'reference', label: 'Princeton University Press: Barnett, W. P. (2008) The Red Queen among Organizations: How Competitiveness Evolves' },
+      { url: 'https://en.wikipedia.org/wiki/Red_Queen_hypothesis', type: 'reference', label: 'Wikipedia: Red Queen hypothesis — Van Valen 1973、共進化、経営学への応用' },
     ],
   },
   {
@@ -23199,20 +23184,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1086/226424', type: 'academic', label: 'Hannan & Freeman (1977) "The Population Ecology of Organizations" — American Journal of Sociology 82(5), 929–964' },
       { url: 'https://doi.org/10.2307/2393017', type: 'academic', label: 'Carroll & Hannan (1989) "Density Delay in the Evolution of Organizational Populations" — Administrative Science Quarterly' },
       { url: 'https://press.princeton.edu/books/paperback/9780691034775/organizations-in-industry', type: 'reference', label: 'Carroll & Hannan (1995) "Organizations in Industry" — Princeton University Press' },
-    ],
-  },
-  {
-    id: 'mgmt-organizational-attention-theory',
-    discipline: 'management',
-    title: '組織注意理論',
-    statement: 'Ocasioの注意ベース理論（ABV）は、企業の行動は意思決定者がどのように注意を配分・規制するかによって決まると主張する。組織は「注意構造」——すなわちルール・資源・関係性——を通じて注意を分配し、戦略的選択を形成する。この理論はSimonおよびMarch & Cyertのカーネギー学派に起源をもち、限定合理性と組織的意思決定の行動理論を継承している。Ocasioは「コミュニケーション・チャンネルと手続き」「インセンティブと資源」という二つの注意構造次元を定式化し、組織ルーティンの安定性と変化を説明した。Cho & Hambrickの実証研究は、CEOの注意配分パターンが戦略的変化の方向性と速度に直接影響することを示し、ABVの経営幹部レベルへの適用を拡張した。',
-    keyFigures: 'William Ocasio ／ Herbert A. Simon ／ James G. March ／ Richard M. Cyert ／ Theresa S. Cho ／ Donald C. Hambrick ／ Joseph L. Bower',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1002/(SICI)1097-0266(199707)18:1+<187::AID-SMJ936>3.0.CO;2-K', type: 'academic', label: 'Ocasio, W. (1997) "Towards an Attention-Based View of the Firm" — Strategic Management Journal, 18(S1), 187–206' },
-      { url: 'https://doi.org/10.2307/2393499', type: 'academic', label: 'Cho & Hambrick (2006) "Attention as the Mediator Between Top Management Team Characteristics and Strategic Change" — Academy of Management Journal' },
-      { url: 'https://doi.org/10.1111/j.1467-6486.2011.01020.x', type: 'academic', label: 'Ocasio & Joseph (2012) "The Attention-Based View of the Firm: A 15-Year Review" — Journal of Management Studies' },
-      { url: 'https://doi.org/10.1093/0195044320.001.0001', type: 'reference', label: 'March & Simon (1958) "Organizations" — Wiley (Carnegie School foundation for bounded rationality)' },
     ],
   },
   {
@@ -25562,18 +25533,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-proactive-personality',
     discipline: 'management',
-    title: 'プロアクティブ・パーソナリティ（主体的性格特性）',
-    statement: 'BatemanとCrant（1993）が概念化した、環境に受動的に適応するのではなく自ら主体的に行動し環境を変革しようとする安定した性格傾向。プロアクティブ・パーソナリティ尺度（PPS）により測定され、職務業績やキャリア成功との正の相関がメタ分析で実証されている。' +
-      '機会を見つけて行動を起こし、障害があっても意味ある変化を実現するまでやり抜く傾向として定義され、ビッグファイブでは誠実性・外向性・開放性と関連しつつも独自の予測力を持つ。' +
-      'Fuller & Marler (2009) のメタ分析は、客観的キャリア成功（昇進・昇給）と主観的成功（満足）の双方との関連を確認し、媒介経路としてネットワーキング・上司との交換関係（LMX）・スキル獲得・声を上げる行動（voice）を特定した。' +
-      '個人特性としてのプロアクティブ性は、行動レベルのプロアクティブ行動（仕事の再設計＝ジョブ・クラフティング、フィードバック探索、イシュー・セリング）研究へ展開し、選抜面接での評価や自律裁量の大きい職務設計との適合（特性×状況の相互作用）が実務上の論点になっている。過剰なプロアクティブ性が上司に脅威と受け取られる境界条件の研究も進む。',
-    keyFigures: 'Thomas S. Bateman ／ J. Michael Crant ／ Adam M. Grant',
-    asOf: '2026-06',
+    title: 'プロアクティブ・パーソナリティ（ベイトマン＆クラント）——環境に順応するのではなく自ら機会を探し状況を変えようとする安定した性格傾向',
+    statement:
+      'プロアクティブ・パーソナリティ（proactive personality）は、トーマス・ベイトマンとマイケル・クラントが1993年の論文（Journal of Organizational Behavior 14巻2号）で概念化した、環境の制約に縛られず自ら機会を探索し、行動を起こして状況を変え、障害があっても意味のある変化を実現するまでやり抜く安定した性格傾向である。環境に適応・順応する反応的な傾向と対比され、17項目の尺度（PPS）で測定される。ビッグファイブの誠実性・外向性・開放性と関連しつつ独自の予測力を持ち、クラント（2000）はプロアクティブ行動——発意による変化の開始、問題の予防、ボイス、フィードバック探索、キャリアの自律的管理——の組織研究を整理し、パーカー、ビンドル、シュトラウス（2010）はそれを目標の生成と努力の過程としてモデル化した。フラーとマーラー（2009）のメタ分析は昇進や昇給という客観的キャリア成功と満足という主観的成功の双方との関連を確認し、ネットワーキング、上司との交換関係（LMX）、スキル獲得、ボイスを媒介経路として特定した。研究はジョブ・クラフティングやイシュー・セリングといった行動レベルへ展開し、選抜での評価や裁量の大きい職務設計との適合（特性と状況の相互作用）が実務上の論点となる。批判として、自己報告尺度への依存、過剰なプロアクティブ性が上司に脅威と受け取られる境界条件、文化差の検討不足が指摘される。中小企業には、少人数ゆえに一人の主体性が業績を左右する一方、権限と情報を与えなければ特性は行動にならないこと、採用で見抜くより職務設計で引き出すほうが確実であることが含意となる。',
+    keyFigures: 'トーマス・ベイトマン＆マイケル・クラント（1993 提唱・尺度）／マイケル・クラント（2000 プロアクティブ行動の整理）／パーカー＆ビンドル＆シュトラウス（2010 過程モデル）／フラー＆マーラー（2009 メタ分析）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/job.4030140202', type: 'academic', label: 'Bateman & Crant (1993) — The Proactive Component of Organizational Behavior, JOB' },
-      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S000187910900075X', type: 'academic', label: 'Fuller & Marler (2009) — Meta-analytic review, J. of Vocational Behavior' },
-      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9606340/', type: 'academic', label: 'PMC (2022) — Meta-analysis of proactive personality and career success' },
-      { url: 'https://emerge.ucsd.edu/r_ymqnqptjjnf1jqr/', type: 'reference', label: 'UCSD EMERGE Lab — Proactive Personality Scale overview' },
+      { url: 'https://doi.org/10.1002/job.4030140202', type: 'academic', label: 'Bateman, T. S. & Crant, J. M. (1993) The Proactive Component of Organizational Behavior: A Measure and Correlates — Journal of Organizational Behavior 14(2)（原典）' },
+      { url: 'https://doi.org/10.1177/014920630002600304', type: 'academic', label: 'Crant, J. M. (2000) Proactive Behavior in Organizations — Journal of Management 26(3)' },
+      { url: 'https://doi.org/10.1177/0149206310363732', type: 'academic', label: 'Parker, S. K., Bindl, U. K. & Strauss, K. (2010) Making Things Happen: A Model of Proactive Motivation — Journal of Management 36(4)' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S000187910900075X', type: 'academic', label: 'Fuller & Marler (2009) Change Driven by Nature: A Meta-Analytic Review of the Proactive Personality Literature — Journal of Vocational Behavior 75(3)' },
+      { url: 'https://en.wikipedia.org/wiki/Proactivity', type: 'reference', label: 'Wikipedia: Proactivity — Bateman & Crant、Proactive Personality Scale、プロアクティブ行動' },
     ],
   },
   {
@@ -29619,20 +29589,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.2307/2550759', type: 'academic', label: 'Phillips, A. W. (1958) The Relation Between Unemployment and the Rate of Change of Money Wage Rates in the United Kingdom — Economica, 25(100), 283–299（フィリップス曲線原典）' },
       { url: 'https://doi.org/10.1016/0304-3932(76)90002-1', type: 'academic', label: 'Lucas, R. E. (1976) Econometric Policy Evaluation: A Critique — Carnegie-Rochester Conference Series on Public Policy, 1, 19–46（ルーカス批判原典）' },
       { url: 'https://en.wikipedia.org/wiki/Phillips_curve', type: 'reference', label: 'Wikipedia: Phillips curve — Friedman-Phelps natural rate, stagflation, Lucas critique, NAIRU' },
-    ],
-  },
-  {
-    id: 'mgmt-sensegiving-gioia',
-    discipline: 'management',
-    title: 'センスギビング理論（ジョイア＆チッタンパリー）',
-    statement: 'センスギビング（sensegiving）は、ジョイア＆チッタンパリー（1991）が組織変革研究の文脈で提唱した、リーダーや組織エリートが他者の意味形成（sensemaking）に影響を与えるプロセスを指す概念である。ワイク（1979/1995）のセンスメーキング論が「組織メンバーが環境の意味をいかに構成するか」を扱うのに対し、センスギビングはエグゼクティブが「特定の解釈を組織全体に普及させる戦略的コミュニケーション行為」に焦点を当てる。ジョイアらは変革リーダーが「戦略的曖昧さ（strategic ambiguity）」——解釈の幅を意図的に残すことで多様なステークホルダーの支持を得るレトリック——を活用する実例をGMの事例研究で示した。その後ウィーバー＆ジョイア（1994）は言語・メタファー・物語（narrative）がセンスギビングの主要ツールであることを精緻化した。CSRコミュニケーション・M&A統合・組織危機においてセンスギビングとセンスメーキングのサイクルが組織アイデンティティの変容を規定する過程として広く研究されている。',
-    keyFigures: 'デニス・ジョイア ／ クマール・チッタンパリー ／ カール・ワイク ／ デービッド・ウィーバー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1002/smj.4250120604', type: 'academic', label: 'Gioia, D. A. & Chittipeddi, K. (1991) Sensemaking and Sensegiving in Strategic Change Initiation — Strategic Management Journal, 12(6), 433–448（センスギビング原典）' },
-      { url: 'https://us.sagepub.com/en-us/nam/sensemaking-in-organizations/book4988', type: 'academic', label: 'Weick, K. E. (1995) Sensemaking in Organizations — Sage Publications（センスメーキング理論の体系書）' },
-      { url: 'https://doi.org/10.5465/amj.2007.24160971', type: 'academic', label: 'Maitlis, S. & Lawrence, T. B. (2007) Triggers and Enablers of Sensegiving in Organizations — Academy of Management Journal, 50(1), 57–84（センスギビングの先行因子と組織動態）' },
-      { url: 'https://en.wikipedia.org/wiki/Sensemaking', type: 'reference', label: 'Wikipedia: Sensemaking — Weick, Gioia sensegiving, strategic ambiguity, organizational change' },
     ],
   },
   {
@@ -35563,18 +35519,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-authentic-leadership-george',
-    discipline: 'management',
-    title: 'オーセンティック・リーダーシップ——自己認識と価値の一貫性に基づく真正な指導',
-    statement: 'オーセンティック・リーダーシップ（authentic leadership、真正のリーダーシップ）は、リーダーの自己への誠実さ、自己認識、そして自らの価値観と行動の一貫性を重視するリーダーシップの理論で、メドトロニック社の元CEOビル・ジョージが2003年の著書『オーセンティック・リーダーシップ』で実務家の視点から提唱し、ブルース・アボリオとウィリアム・ガードナーが2005年以降に学術的な理論として体系化した。この理論は、ポジティブ心理学とポジティブ組織研究の潮流を背景に、リーダーが演じられた役割や外的な期待にではなく、自らの真の自己に忠実に行動することが、フォロワーの信頼と幸福を育むという考えに立つ。オーセンティック・リーダーシップは通常、四つの構成要素から捉えられる。第一は「自己認識（self-awareness）」で、自らの強み・弱み・価値観・感情、そして自分が他者に与える影響を深く理解していることである。第二は「内面化された道徳的視座（internalized moral perspective）」で、外部からの圧力や状況の都合にではなく、自らの内なる道徳的基準に従って自己を律し行動することである。第三は「バランスのとれた情報処理（balanced processing）」で、自分の見解に反する情報や異論を含めて、関連する情報を客観的かつ偏りなく検討してから決定を下すことである。第四は「関係の透明性（relational transparency）」で、取り繕った見せかけの自分ではなく、ありのままの自己を他者に示し、情報や感情を率直に開示することである。これらを体現するリーダーは、フォロワーから真正で信頼に値すると受け取られ、フォロワー自身の真正さや積極的な関与、心理的な幸福を引き出すとされる。オーセンティック・リーダーシップの理論は、エンロン事件をはじめとする企業倫理の崩壊や、見せかけのカリスマによる弊害への反省を背景に、倫理性と誠実さを核に据えたリーダーシップ像として注目を集めた。一方で、「真正さ」の概念の測定の難しさや、状況適応との緊張をめぐる批判的検討も続いている。',
-    keyFigures: 'ビル・ジョージ ／ ブルース・アボリオ ／ ウィリアム・ガードナー ／ フレッド・ルーサンス',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1016/j.leaqua.2005.03.001', type: 'academic', label: 'Avolio, B.J. & Gardner, W.L. (2005) Authentic Leadership Development — The Leadership Quarterly 16(3)' },
-      { url: 'https://en.wikipedia.org/wiki/Authentic_leadership', type: 'reference', label: 'Wikipedia: Authentic leadership — George, Avolio & Gardner, self-awareness, moral perspective, transparency' },
-    ],
-  },
-  {
     id: 'human-cannon-bard-emotion',
     discipline: 'human-science',
     title: 'キャノン＝バード説——情動経験と身体反応が視床を起点に並行して生じる',
@@ -36638,18 +36582,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-dominant-logic-prahalad-bettis',
-    discipline: 'management',
-    title: '支配的論理——経営者の事業の捉え方が資源配分と適応を方向づける認知枠組み',
-    statement: '支配的論理（dominant logic）は、C・K・プラハラードとリチャード・ベティスが1986年の論文「支配的論理——多角化と業績の新たな連結」で提唱した戦略経営の概念で、経営者が自社の事業をどのように概念化し、いかにして重要な資源配分の意思決定を下すかを規定する、共有された思考様式・心的地図を指す。経営者は、自らが長年携わってきた中核事業での経験を通じて、何が成功の鍵であり、どこに注意を向け、いかに利益を生むかについての一貫した認知の枠組みを形成する。この枠組みは、複雑で曖昧な経営環境から関連する情報を選別し、迅速な判断を可能にする有用な道具である一方、重大な負の側面を持つ。支配的論理は、それと整合しない情報を無意識に濾過し排除してしまう「フィルター」として機能するため、企業が中核事業とは異なる論理を要する新規事業へ多角化したとき、あるいは環境が根本的に変化したときに、経営者が新しい現実を正しく認識できず、過去の成功体験に基づく不適切な判断を続けてしまう。プラハラードとベティスは、関連性の低い事業への多角化が業績を悪化させやすいのは、単一の支配的論理では性質の異なる複数の事業を適切に管理できないためだと論じた。この概念は、組織の慣性（inertia）や中核硬直性（core rigidity）、能力の罠といった、過去の強みが変化の足枷に転じる現象を、経営者の認知のレベルから説明するものであり、組織学習論や戦略的認知（managerial cognition）研究の重要な礎となった。',
-    keyFigures: 'C・K・プラハラード ／ リチャード・ベティス ／ ゲイリー・ハメル ／ リチャード・ルメルト',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1002/smj.4250070602', type: 'academic', label: 'Prahalad, C.K. & Bettis, R.A. (1986) The Dominant Logic: A New Linkage Between Diversity and Performance — SMJ 7(6)' },
-      { url: 'https://en.wikipedia.org/wiki/Dominant_design', type: 'reference', label: 'Wikipedia: Managerial cognition / dominant logic — Prahalad & Bettis, mental map, resource allocation, inertia' },
-    ],
-  },
-  {
     id: 'human-social-loafing-latane',
     discipline: 'human-science',
     title: '社会的手抜き——集団作業で個人の努力が低下する現象',
@@ -36851,18 +36783,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/1927758', type: 'academic', label: 'Samuelson, P.A. (1939) Interactions between the Multiplier Analysis and the Principle of Acceleration — REStat 21(2)' },
       { url: 'https://en.wikipedia.org/wiki/Multiplier%E2%80%93accelerator_model', type: 'reference', label: 'Wikipedia: Multiplier–accelerator model — Samuelson, induced investment, endogenous business cycle' },
-    ],
-  },
-  {
-    id: 'mgmt-knowledge-based-view-grant',
-    discipline: 'management',
-    title: '知識ベース企業観——専門知識の統合機構としての企業',
-    statement: '知識ベース企業観（knowledge-based view of the firm、KBV）は、ロバート・グラントが1996年の論文「企業の知識ベース理論に向けて」で体系化した戦略理論で、資源ベース論（RBV）を発展させ、知識を企業にとって最も戦略的に重要な資源として位置づける。KBVの中心的主張は、企業が存在する根本的理由を、多数の個人が保有する専門化された知識を統合して財やサービスを生み出す「制度」としての役割に見いだす点にある。知識、とりわけ言語化が困難で経験を通じてしか伝わらない暗黙知（tacit knowledge）は、個人に分散して宿るため、それを生産活動に動員するには、個々人の専門知識を組み合わせ調整する統合の仕組みが不可欠となる。グラントは、規則や指示、業務の順序づけ、ルーティン、問題解決のためのグループ化といった「知識統合のメカニズム」が、市場取引よりも効率的に専門知識を結合できるがゆえに企業が組織として存在すると論じた。この見方では、競争優位の源泉は個別の知識そのものではなく、多様で専門的な知識をいかに広く深く効率的に統合できるかという組織能力にあり、模倣困難な統合の質が持続的優位を支える。KBVは、イクジロウ・ノナカの知識創造理論やブルース・コグット＝ウド・ザンダーの「結合能力」の議論と響き合い、知識経済における企業の理論、組織学習、イノベーション・マネジメントの基礎的視座を提供している。',
-    keyFigures: 'ロバート・グラント ／ ブルース・コグット ／ ウド・ザンダー ／ イクジロウ・ノナカ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1002/smj.4250171110', type: 'academic', label: 'Grant, R.M. (1996) Toward a Knowledge-Based Theory of the Firm — Strategic Management Journal 17(S2)' },
-      { url: 'https://en.wikipedia.org/wiki/Knowledge-based_theory_of_the_firm', type: 'reference', label: 'Wikipedia: Knowledge-based theory of the firm — Grant, knowledge integration, tacit knowledge, RBV' },
     ],
   },
   {
@@ -40108,14 +40028,14 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-authentic-leadership-avolio-gardner',
     discipline: 'management',
-    title: '真正リーダーシップ——自己認識・関係的透明性・道徳的行為',
-    statement: 'ブルース・アヴォリオとウィリアム・ガードナーが2005年に体系化した真正リーダーシップ（authentic leadership）理論は、リーダーの自己認識（self-awareness: 自己の価値観・強み・弱み・感情の深い理解）、内面化された道徳的視点（internalized moral perspective: 外的圧力ではなく内面の倫理基準に基づく行動）、バランスの取れた情報処理（balanced processing: 意思決定前に多角的情報を客観的に評価）、関係的透明性（relational transparency: フォロワーとの率直で開放的な関係）の四次元から構成される。この理論はポジティブ組織行動論の文脈で変革型リーダーシップやサーバント・リーダーシップの「根底にある」メタ理論として位置づけられた。ワルンベワらのAuthentic Leadership Questionnaire（ALQ）は四次元を測定する標準尺度として広く使用されているが、フォード＝ヘリンの批判は、真正性概念の本質主義的前提——固定的な「本来の自己」の存在——がポスト構造主義的自己理解と矛盾すると指摘している。',
-    keyFigures: 'ブルース・アヴォリオ ／ ウィリアム・ガードナー ／ フレッド・ワルンベワ ／ ビル・ジョージ ／ ジャッキー・フォード',
-    asOf: '2026-06-26',
+    title: 'オーセンティック・リーダーシップ（アボリオ＆ガードナー）——自己認識・内面化された道徳的視点・バランスのとれた情報処理・関係の透明性を核とする真正なリーダーシップ',
+    statement:
+      'オーセンティック・リーダーシップ（authentic leadership）は、リーダーの自己への誠実さ、自己認識、価値観と行動の一貫性を重視する理論で、メドトロニック元 CEO のビル・ジョージが2003年の著書で実務家の視点から提唱し、ブルース・アボリオとウィリアム・ガードナーが2005年の論文（The Leadership Quarterly 16巻3号）でポジティブ組織行動論の文脈で学術的に体系化した。四つの構成要素から捉えられる。自らの強み・弱み・価値観・感情と他者への影響を深く理解する自己認識、外的圧力ではなく内面の倫理基準に従って行動する内面化された道徳的視点、自分の見解に反する情報や異論も客観的に検討してから決めるバランスのとれた情報処理、そして取り繕わずありのままの自己と情報・感情を率直に開示する関係の透明性である。これらを体現するリーダーはフォロワーから真正で信頼に値すると受け取られ、フォロワー自身の真正さ、関与、心理的な幸福を引き出すとされ、変革型やサーバント・リーダーシップの根底にあるメタ理論として位置づけられた。ワルンベワら（2008）の Authentic Leadership Questionnaire（ALQ）は四次元を測る標準尺度として広く使われる。批判として、固定的な「本来の自己」を前提とする本質主義への疑問（フォードとハーディング）、真正さの測定の難しさ、状況適応との緊張、ALQ の因子構造への疑義がある。中小企業には、経営者の言行不一致は少人数の組織ほど直ちに見抜かれて信頼を損なうこと、弱みや判断の根拠を開示する透明性が従業員の主体性を引き出す一方、「ありのまま」を理由に感情的な言動を正当化しないことが含意となる。',
+    keyFigures: 'ブルース・アボリオ＆ウィリアム・ガードナー（2005 理論の体系化）／フレッド・ワルンベワら（2008 ALQ 尺度）／ビル・ジョージ（2003 実務家からの提唱）／対比: ジャッキー・フォード＆ハーディング（本質主義批判）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1016/j.leaqua.2005.03.001', type: 'academic', label: 'Avolio, B. J. & Gardner, W. L. (2005) "Authentic Leadership Development" — Leadership Quarterly' },
-      { url: 'https://doi.org/10.1016/j.leaqua.2007.03.003', type: 'academic', label: 'Walumbwa, F. O. et al. (2008) "Authentic Leadership: Development and Validation of a Theory-Based Measure" — LQ' },
-      { url: 'https://en.wikipedia.org/wiki/Authentic_leadership', type: 'reference', label: 'Wikipedia: Authentic leadership — 理論・測定・批判的議論' },
+      { url: 'https://doi.org/10.1016/j.leaqua.2005.03.001', type: 'academic', label: 'Avolio, B. J. & Gardner, W. L. (2005) Authentic Leadership Development: Getting to the Root of Positive Forms of Leadership — The Leadership Quarterly 16(3)（原典）' },
+      { url: 'https://en.wikipedia.org/wiki/Authentic_leadership', type: 'reference', label: 'Wikipedia: Authentic leadership — George、Avolio & Gardner、四つの構成要素、ALQ、批判' },
     ],
   },
   {
@@ -44500,19 +44420,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-psychological-contract-rousseau',
-    discipline: 'management',
-    title: '心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態',
-    statement: '心理的契約（Psychological Contract）とは、雇用者と従業員の間の書面化されない相互義務の認識・期待の集合であり、デニス・ルソーが1989年の論文で現代的定義を確立した。従業員は「安定した雇用・キャリア発展支援・公正な評価」を提供される期待を持ち、組織は「努力・忠誠・柔軟性」を求める。心理的契約の「違反（Violation）」は、実際の組織行動が期待を下回った際に生じ、怒り・裏切り感・信頼低下・組織市民行動の減少を引き起こす。ニール・アンダーソンとレネ・シャルクはその継続的な認知的監視プロセスを解明し、特に大規模リストラ・組織変革時に心理的契約の断絶が深刻化することを示した。近年のギグエコノミー・テレワーク普及は雇用形態の多様化を促し、「関係的契約」（長期信頼型）から「取引的契約」（短期成果型）へのシフトが研究課題となっている。人材確保・エンゲージメント戦略においては、期待管理（Expectation Management）と心理的安全性の確保が重視される。',
-    keyFigures: 'デニス・ルソー ／ ニール・アンダーソン ／ サンドラ・ロビンソン ／ エリック・モリソン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1007/BF01384942', type: 'academic', label: 'Rousseau, D.M. (1989) Psychological and Implied Contracts in Organizations — Employee Responsibilities and Rights Journal' },
-      { url: 'https://hbr.org/2019/03/rethinking-the-psychological-contract', type: 'media', label: 'Harvard Business Review (2019) Rethinking the Psychological Contract — HBR' },
-      { url: 'https://ja.wikipedia.org/wiki/%E5%BF%83%E7%90%86%E7%9A%84%E5%A5%91%E7%B4%84', type: 'reference', label: 'Wikipedia: 心理的契約 — 雇用関係における暗黙の期待の解説' },
-    ],
-  },
-  {
     id: 'human-phenomenology-lived-body-merleau',
     discipline: 'human-science',
     title: '生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学',
@@ -46928,20 +46835,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.2307/j.ctt1njknw', type: 'academic', label: 'Benkler, Y. (2006) The Wealth of Networks: How Social Production Transforms Markets and Freedom — Yale University Press（社会的生産の体系書）' },
       { url: 'https://doi.org/10.1145/1134307.1134387', type: 'academic', label: 'Crowston, K. & Howison, J. (2005) The Social Structure of Free and Open Source Software Development — First Monday, 10(2)（オープンソース開発のコミュニティ構造）' },
       { url: 'https://en.wikipedia.org/wiki/Commons-based_peer_production', type: 'reference', label: 'Wikipedia: Commons-based peer production — Benkler, Linux, Wikipedia, copyleft, Creative Commons' },
-    ],
-  },
-  {
-    id: 'mgmt-proactive-personality-bateman',
-    discipline: 'management',
-    title: 'プロアクティブ・パーソナリティと主体的行動（ベイトマン＆クラント）',
-    statement: 'プロアクティブ・パーソナリティ（proactive personality）は、ベイトマン＆クラント（1993）が提唱した、個人が環境制約に縛られず機会を積極的に探索し、状況を変化させるための主体的行動（proactive behavior）を取る傾向を指すパーソナリティ特性の個人差概念である。反応的（reactive）パーソナリティが環境に適応・順応するのに対し、プロアクティブ・パーソナリティは「行動エージェンシー（agentic behavior）」——目標設定・機会探索・スキル習得・ネットワーク構築における先取り行動——を内発的に動機づけられる。ベイトマン＆クラント（1993）の17項目のProactive Personality Scale（PPS）は個人・組織・起業研究で広く使用されている。クランタ他（2000）のメタ分析はプロアクティブ・パーソナリティが職務パフォーマンス・キャリア成功・イノベーション貢献・起業意図の有意な予測因子であることを示した。「プロアクティブ行動（proactive behavior）」の組織研究では、個人の発意による変化開始・問題予防・ボイス行動・キャリア管理の自律的実行が「組織市民行動（OCB）」の拡張概念として研究されている。',
-    keyFigures: 'トーマス・ベイトマン ／ マイケル・クラント ／ デービッド・バーク ／ シャロン・パーカー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1002/job.4030140202', type: 'academic', label: 'Bateman, T. S. & Crant, J. M. (1993) The Proactive Component of Organizational Behavior: A Measure and Correlates — Journal of Organizational Behavior, 14(2), 103–118（原典）' },
-      { url: 'https://doi.org/10.1177/014920630002600304', type: 'academic', label: 'Crant, J. M. (2000) Proactive Behavior in Organizations — Journal of Management, 26(3), 435–462（プロアクティブ行動のレビュー）' },
-      { url: 'https://doi.org/10.1177/0149206310363732', type: 'academic', label: 'Parker, S. K., Bindl, U. K. & Strauss, K. (2010) Making Things Happen: A Model of Proactive Motivation — Journal of Management, 36(4), 827–856（プロアクティブ動機づけモデル）' },
-      { url: 'https://en.wikipedia.org/wiki/Proactivity', type: 'reference', label: 'Wikipedia: Proactivity — Bateman & Crant, proactive personality scale, proactive behavior, career initiative' },
     ],
   },
   {

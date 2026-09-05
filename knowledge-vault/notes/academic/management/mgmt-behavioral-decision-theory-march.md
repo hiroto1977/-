@@ -38,9 +38,9 @@ aliases:
 - [[human-framing-effect|フレーミング効果（framing effect）]] — 同じ思想家
 - [[human-loss-aversion|損失回避]] — 同じ思想家
 - [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 同じ思想家
-- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同じ思想家
 - [[mgmt-organizational-slack-bourgeois|組織スラック理論——余剰資源の緩衝機能と戦略的活用]] — 同じ思想家
 - [[mgmt-slack-resources-bourgeois|組織スラック論——余剰資源の緩衝・革新・政治的機能]] — 同じ思想家
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

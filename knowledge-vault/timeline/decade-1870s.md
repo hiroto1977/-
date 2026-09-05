@@ -2,14 +2,13 @@
 title: "1870年代"
 type: timeline-decade
 decade: 1870
-entry_count: 10
+entry_count: 9
 tags:
   - timeline
 ---
 
-# 1870年代 — 10 件
+# 1870年代 — 9 件
 
-- [[year-1871|1871年]]（1件）
 - [[year-1873|1873年]]（1件）
 - [[year-1874|1874年]]（2件）
 - [[year-1875|1875年]]（1件）

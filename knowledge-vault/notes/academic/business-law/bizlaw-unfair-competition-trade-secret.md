@@ -35,7 +35,6 @@ aliases:
 - [[bizlaw-trade-secret-misappropriation|営業秘密の不正取得（トレード・シークレット法）]] — 語彙が近い
 - [[bizlaw-securities-class-action-litigation|証券集団訴訟と投資家保護——米国Rule 10b-5訴訟・日本の金融商品取引法と情報開示責任]] — 同分野の近傍
 - [[bizlaw-data-governance-data-act|データガバナンス法制——EU Data Act・データ利活用促進法とデータ共有の権利・義務]] — 同分野の近傍
-- [[bizlaw-electronically-recorded-claims|電子記録債権（電子記録債権法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -37,6 +37,7 @@ aliases:
 - [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]] — 出典を共有
 - [[mgmt-kanban|かんばん方式]] — 同分野の近傍
 - [[mgmt-logical-incrementalism-quinn|論理的漸進主義——意図的に少しずつ進める戦略形成]] — 同分野の近傍
+- [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（ベイトマン＆クラント）——環境に順応するのではなく自ら機会を探し状況を変えようとする安定した性格傾向]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

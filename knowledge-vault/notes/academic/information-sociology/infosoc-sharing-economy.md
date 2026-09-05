@@ -31,8 +31,8 @@ aliases:
 - [総務省 平成29年版 情報通信白書「シェアリング・エコノミー（C to Cサービス）」](https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/h29/html/nc112220.html) `公的`
 
 ## 関連概念
-- [[infosoc-gig-economy|ギグ・エコノミー]] — 同分野の近傍
 - [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 同分野の近傍
+- [[infosoc-gig-economy|ギグ・エコノミー]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

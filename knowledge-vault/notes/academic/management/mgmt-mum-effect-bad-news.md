@@ -38,8 +38,8 @@ MUM効果（MUM effect）は、社会心理学者シドニー・ローゼンと�
 - [[econ-tournament-theory-lazear-rosen|トーナメント理論——相対的順位に基づく報酬が努力を引き出す仕組み]] — 同じ思想家
 - [[econ-winner-take-all-frank|勝者総取り市場——わずかな能力差が報酬の巨大格差に転化する競争構造]] — 同じ思想家
 - [[human-psychological-contract-rousseau|心理的契約理論——ルソーの暗黙的雇用関係と契約違反の帰結]] — 同じ思想家
-- [[mgmt-psychological-contract-rousseau|心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態]] — 同じ思想家
 - [[mgmt-upper-echelons-tournament-theory|トーナメント理論と経営者インセンティブ（レイザー＆ローゼン）]] — 同じ思想家
+- [[mgmt-defensive-routines-argyris|組織の防衛的ルーチン——脅威を避けて学習を妨げる習慣]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

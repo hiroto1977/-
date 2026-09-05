@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[infosoc-digital-wellbeing|デジタル・ウェルビーイング]] — 同じ思想家
+- [[human-psychological-contract-rousseau|心理的契約理論——ルソーの暗黙的雇用関係と契約違反の帰結]] — 同分野の近傍
 - [[human-psychobiological-model-personality|人格の精神生物学モデル]] — 同分野の近傍
-- [[human-self-serving-bias|自己奉仕バイアス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

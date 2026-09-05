@@ -31,9 +31,9 @@ aliases:
 - [Mohammed & Nadkarni (2011) — ResearchGate](https://www.researchgate.net/publication/280077033_Temporal_Diversity_and_Team_Performance_The_Moderating_Role_of_Team_Temporal_Leadership) `学術`
 
 ## 関連概念
+- [[mgmt-team-diversity-performance|チーム多様性とパフォーマンスの関係論——情報精緻化理論と価値・情報的多様性]] — 同分野の近傍
 - [[mgmt-peter-principle|ピーターの法則]] — 同分野の近傍
 - [[mgmt-social-impact-bond|社会的インパクト・ボンド（SIB）]] — 同分野の近傍
-- [[mgmt-team-diversity-performance|チーム多様性とパフォーマンスの関係論——情報精緻化理論と価値・情報的多様性]] — 同分野の近傍
 - [[mgmt-impression-management-organizational|組織的印象管理——ステークホルダーへの組織イメージの戦略的構築]] — 同分野の近傍
 
 ## 関連

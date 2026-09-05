@@ -34,8 +34,7 @@ aliases:
 - [[human-need-for-cognition-cacioppo|認知欲求——努力を要する思考に従事し楽しむ個人差特性]] — 同じ思想家
 - [[infosoc-context-collapse-marwick|コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ]] — 同じ思想家
 - [[infosoc-warranting-walther|ワランティング理論（ウォルサー）——オンラインの印象形成と「操作されにくい情報」]] — 同じ思想家
-- [[mgmt-authentic-leadership-avolio-gardner|真正リーダーシップ——自己認識・関係的透明性・道徳的行為]] — 同じ思想家
-- [[mgmt-authentic-leadership-george|オーセンティック・リーダーシップ——自己認識と価値の一貫性に基づく真正な指導]] — 同じ思想家
+- [[mgmt-authentic-leadership-avolio-gardner|オーセンティック・リーダーシップ（アボリオ＆ガードナー）——自己認識・内面化された道徳的視点・バランスのとれた情報処理・関係の透明性を核とする真正なリーダーシップ]] — 同じ思想家
 - [[mgmt-impression-management-goffman|印象管理——ゴフマンの演劇的アプローチと組織における自己呈示]] — 同じ思想家
 - [[mgmt-temporal-leadership|テンポラル・リーダーシップ（Temporal Leadership）]] — 同分野の近傍
 - [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — 同分野の近傍

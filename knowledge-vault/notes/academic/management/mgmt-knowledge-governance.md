@@ -34,7 +34,7 @@ aliases:
 - [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]] — 同じ思想家
 - [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同じ思想家
 - [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（Microfoundations of Strategy）]] — 同じ思想家
-- [[mgmt-knowledge-based-view|知識ベース理論（ナレッジ・ベースト・ビュー）]] — 同分野の近傍
+- [[mgmt-dynamic-delegation|公式的権限と実質的権限（Formal and Real Authority）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

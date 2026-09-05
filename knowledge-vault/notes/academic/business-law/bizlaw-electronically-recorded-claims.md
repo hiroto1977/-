@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-bona-fide-acquisition|即時取得（善意取得・民法192条）]] — 同分野の近傍
+- [[bizlaw-cheque-act|小切手法]] — 同分野の近傍
 - [[bizlaw-marshalling-doctrine|マーシャリングの法理]] — 同分野の近傍
-- [[bizlaw-unfair-competition-trade-secret|不正競争防止と営業秘密保護の比較法制]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

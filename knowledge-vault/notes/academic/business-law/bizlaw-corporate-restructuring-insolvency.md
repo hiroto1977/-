@@ -36,8 +36,8 @@ aliases:
 - [[bizlaw-insolvency-law-fresh-start-discharge|倒産法と免責制度——新出発主義（フレッシュ・スタート）と債権者保護の均衡]] — 同じ思想家
 - [[bizlaw-ipso-facto-clause-insolvency|イプソ・ファクト条項——倒産を契機とする契約終了条項の法的規制]] — 同じ思想家
 - [[bizlaw-corporate-insolvency-restructuring|会社更生法と企業倒産法制——日本の会社更生・民事再生と米国Chapter11の国際比較]] — 出典を共有
-- [[bizlaw-civil-rehabilitation|民事再生（民事再生法）]] — 同分野の近傍
 - [[bizlaw-corporate-insolvency-rescue|企業救済型倒産手続と「救済文化」（rescue culture）]] — 同分野の近傍
+- [[bizlaw-civil-rehabilitation|民事再生（民事再生法）]] — 同分野の近傍
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]] — 同分野の近傍
 
 ## 関連

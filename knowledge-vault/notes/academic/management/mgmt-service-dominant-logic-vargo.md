@@ -33,8 +33,8 @@ aliases:
 
 ## 関連概念
 - [[mgmt-customer-value-co-creation|顧客価値の共創とサービス・エコシステム（バーゴ＆ラッシュ）]] — 語彙が近い
+- [[mgmt-dominant-logic|ドミナント・ロジック（プラハラード＆ベティス）——経営陣が事業を捉え資源を配分する支配的な認知枠組みが、多角化の成否と環境変化への適応を左右する]] — 同じ思想家
 - [[mgmt-value-co-creation|価値共創]] — 同分野の近傍
-- [[mgmt-dominant-logic|ドミナント・ロジック（Dominant Logic）]] — 同分野の近傍
 - [[mgmt-servitization|サービタイゼーション（サービス化）]] — 同分野の近傍
 
 ## 関連

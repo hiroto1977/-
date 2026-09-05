@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-goal-setting-theory|目標設定理論（goal-setting theory）]] — 同分野の近傍
-- [[mgmt-slack-resources-bourgeois|組織スラック論——余剰資源の緩衝・革新・政治的機能]] — 同分野の近傍
+- [[mgmt-psychological-contract|心理的契約（ルソー）——雇用関係における明文化されない相互義務についての従業員の主観的信念と、その違反が信頼とコミットメントに与える影響]] — 同分野の近傍
 - [[mgmt-escalation-of-commitment|コミットメントのエスカレーション]] — 同分野の近傍
 
 ## 関連

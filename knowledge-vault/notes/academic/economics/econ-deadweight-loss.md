@@ -31,8 +31,8 @@ aliases:
 - [New Palgrave Dictionary of Economics (Springer) — Excess Burden of Taxation](https://link.springer.com/rwe/10.1057/978-1-349-95121-5_2374-1) `学術`
 
 ## 関連概念
-- [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 語彙が近い
 - [[econ-harberger-triangle-deadweight-loss|ハーバーガーの三角形——独占・課税による死荷重損失と余剰分析]] — 語彙が近い
+- [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 語彙が近い
 - [[econ-rent-seeking-tullock|レント・シーキング理論と政治経済学的非効率性（タロック・クルーガー）]] — 同分野の近傍
 - [[econ-land-value-tax-george|土地価値税とジョージズム]] — 同分野の近傍
 

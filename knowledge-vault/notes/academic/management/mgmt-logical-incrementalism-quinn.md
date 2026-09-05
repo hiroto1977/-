@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 同じ思想家
 - [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]] — 同じ思想家
-- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同じ思想家
 - [[mgmt-emergent-strategy|創発戦略]] — 同じ思想家
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同じ思想家
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[econ-x-inefficiency-leibenstein|X非効率——競争圧力の欠如が生む費用最小化からの組織的乖離]] — 同じ思想家
 - [[human-chunking|チャンク化（チャンキング）]] — 同じ思想家
 - [[infosoc-attention-economy-citton|注意経済論——デジタル時代における注意の希少性と資源化]] — 同じ思想家
+- [[infosoc-attention-economy-goldhaber|注意経済（ゴールドハーバー）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

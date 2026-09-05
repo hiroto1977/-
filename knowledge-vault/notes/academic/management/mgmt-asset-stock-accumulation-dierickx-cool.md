@@ -42,7 +42,7 @@ aliases:
 - [[mgmt-vrio-framework-barney|VRIOフレームワーク——持続的競争優位をもたらす経営資源の四条件]] — 同じ思想家
 - [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同じ思想家
 - [[mgmt-deliberate-learning-zollo-winter|意図的学習とダイナミック・ケイパビリティの進化——経験蓄積・知識の明示化・コード化による組織能力の体系的な更新]] — 出典を共有
-- [[mgmt-knowledge-based-view|知識ベース理論（ナレッジ・ベースト・ビュー）]] — 出典を共有
+- [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

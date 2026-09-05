@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[infosoc-wisdom-of-crowds|群衆の叡智]] — 同じ思想家
-- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 同じ思想家
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
 - [[econ-x-inefficiency-leibenstein|X非効率——競争圧力の欠如が生む費用最小化からの組織的乖離]] — 同じ思想家
 - [[human-chunking|チャンク化（チャンキング）]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[infosoc-attention-economy-goldhaber-citton|アテンション・エコノミー——注意の希少性と経済的価値]] — 同じ思想家
 - [[infosoc-clickbait-attention-economy|クリックベイト・ジャーナリズムとアテンション・エコノミー]] — 同じ思想家
 - [[infosoc-convergence-culture-jenkins|コンバージェンス・カルチャー——旧来メディアと新興メディアの衝突と参加文化]] — 同じ思想家
+- [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

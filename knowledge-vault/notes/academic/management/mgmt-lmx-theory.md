@@ -35,7 +35,7 @@ LMX理論（leader–member exchange theory）は、リーダーシップを、�
 - [[mgmt-organizational-commitment|組織コミットメント]] — 出典を共有
 - [[mgmt-paradox-of-organizing|組織化のパラドックス（Paradox of Organizing）]] — 出典を共有
 - [[mgmt-relational-leadership|関係性リーダーシップ理論]] — 出典を共有
-- [[mgmt-sensegiving-gioia|センスギビング理論（ジョイア＆チッタンパリー）]] — 出典を共有
+- [[mgmt-sensegiving|センスギビング（ジョイア＆チッティペディ）——リーダーが他者の意味形成に働きかけ、変革の望ましい解釈を組織に広めるコミュニケーション過程]] — 出典を共有
 - [[infosoc-digital-divide-warschauer|デジタルデバイド（情報アクセス格差）]] — 出典を共有
 - [[mgmt-burke-litwin-causal-model-organizational-change|バーク＝リトウィン・モデル——外部環境から個人業績までを12要因の因果連鎖で結ぶ組織診断モデル]] — 出典を共有
 - [[mgmt-sensemaking-weick|意味構築（オーガニゼーショナル・センスメーキング）]] — 出典を共有

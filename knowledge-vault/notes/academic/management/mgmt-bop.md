@@ -32,7 +32,6 @@ C・K・プラハラード／スチュアート・ハート（Prahalad & Hart, 2
 
 ## 関連概念
 - [[mgmt-strategic-intent|戦略的意図（ストラテジック・インテント）]] — 同じ思想家
-- [[mgmt-dominant-logic|ドミナント・ロジック（Dominant Logic）]] — 同じ思想家
 - [[mgmt-core-competence|コアコンピタンス（中核的能力）]] — 出典を共有
 - [[mgmt-strategic-silence|組織における戦略的沈黙]] — 出典を共有
 - [[mgmt-reverse-innovation|リバース・イノベーション]] — 出典を共有

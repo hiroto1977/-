@@ -34,6 +34,7 @@ aliases:
 - [[infosoc-connected-learning-ito|コネクテッド・ラーニング——デジタル環境における興味・仲間・社会的機会の連結と学習の民主化]] — 同じ思想家
 - [[infosoc-platform-cooperativism-scholz-schneider|プラットフォーム協同組合主義——デジタル経済における労働者所有の代替モデル]] — 同じ思想家
 - [[infosoc-platform-labor-control|プラットフォーム労働とアルゴリズム的統制]] — 同じ思想家
+- [[infosoc-platform-labor-gig-economy|プラットフォーム労働とギグエコノミー——デジタル仲介による労働の再編と社会的保護]] — 同分野の近傍
 - [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — 同分野の近傍
 
 ## 関連

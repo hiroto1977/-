@@ -10,7 +10,7 @@ tags:
 
 # press.princeton.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **26 件**（学術 18 ・ リファレンス 8）
+> [!info] 出典ドメイン索引 ・ 引用 **26 件**（学術 17 ・ リファレンス 9）
 
 ## このドメインを出典とする項目
 
@@ -38,7 +38,7 @@ tags:
 - [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — Cohen1963—ThePressandForeignPolicy,PrincetonUniversityPress
 - [[infosoc-recursive-publics-kelty|再帰的公共——自らの存在基盤である技術・法的インフラそのものを作り変える公共]] — E.GabriellaColeman,CodingFreedom:TheEthicsandAestheticsofHacking,Prin…
 - [[mgmt-real-options-theory|リアル・オプション理論]] — Dixit,A.K.&Pindyck,R.S.(1994)InvestmentunderUncertainty—PrincetonUniv…
-- [[mgmt-red-queen-effect|赤の女王効果（Red Queen Effect）]] — Barnett(2008)TheRedQueenamongOrganizations:HowCompetitivenessEvolves,…
+- [[mgmt-red-queen-competition|赤の女王競争（バーネット＆ハンセン）——競争が組織の学習を促すが競合も同時に鍛えるため、走り続けてやっと相対的地位を保てる共進化の動態]] — PrincetonUniversityPress:Barnett,W.P.(2008)TheRedQueenamongOrganizati…
 - [[mgmt-structural-inertia-theory|構造的慣性理論]] — Carroll&Hannan(1995)"OrganizationsinIndustry"—PrincetonUniversityPress
 
 ## 関連

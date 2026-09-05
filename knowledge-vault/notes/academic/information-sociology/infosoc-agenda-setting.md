@@ -31,7 +31,7 @@ aliases:
 - [Springer Nature, Communication and Change (2025) — agenda-setting研究の系譜 1972-2025](https://link.springer.com/article/10.1007/s44382-025-00016-x) `学術`
 
 ## 関連概念
-- [[infosoc-attribute-agenda-setting|第二レベルの議題設定（属性アジェンダ設定）]] — 語彙が近い
+- [[infosoc-attribute-agenda-setting|第二レベルの議題設定（属性アジェンダ設定）]] — 同じ思想家
 - [[infosoc-public-opinion-lippmann|リップマンの世論論——擬似環境とステレオタイプが現実認識を媒介する]] — 同じ思想家
 - [[human-motor-theory-speech-liberman|音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する]] — 出典を共有
 - [[human-role-conflict|役割葛藤（役割理論）]] — 出典を共有

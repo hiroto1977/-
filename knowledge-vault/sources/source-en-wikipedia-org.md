@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2212
+cite_count: 2210
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2212 件**（リファレンス 2212）
+> [!info] 出典ドメイン索引 ・ 引用 **2210 件**（リファレンス 2210）
 
 ## このドメインを出典とする項目
 
@@ -1865,8 +1865,7 @@ tags:
 - [[mgmt-appreciative-inquiry-cooperrider|アプリシエイティブ・インクワイアリー（AI）と組織開発の強み志向]] — Wikipedia:Appreciativeinquiry—positiveorganizationaldevelopment
 - [[mgmt-architectural-innovation-henderson-clark|アーキテクチュラル・イノベーション——構成要素のつなぎ方を変える革新]] — Wikipedia:Architecturalinnovation—components,architecture,incumbentfa…
 - [[mgmt-aston-studies-organization|アストン研究——組織構造の多次元的・実証的測定]] — Wikipedia:Astonstudies—organizationalstructure,contingencytheory
-- [[mgmt-authentic-leadership-avolio-gardner|真正リーダーシップ——自己認識・関係的透明性・道徳的行為]] — Wikipedia:Authenticleadership—理論・測定・批判的議論
-- [[mgmt-authentic-leadership-george|オーセンティック・リーダーシップ——自己認識と価値の一貫性に基づく真正な指導]] — Wikipedia:Authenticleadership—George,Avolio&Gardner,self-awareness,mo…
+- [[mgmt-authentic-leadership-avolio-gardner|オーセンティック・リーダーシップ（アボリオ＆ガードナー）——自己認識・内面化された道徳的視点・バランスのとれた情報処理・関係の透明性を核とする真正なリーダーシップ]] — Wikipedia:Authenticleadership—George、Avolio&Gardner、四つの構成要素、ALQ、批判
 - [[mgmt-ba-knowledge-creation-nonaka|場（Ba）と知識創造（野中・紺野）]] — Wikipedia:Ba(knowledge)—overviewoftheBaconceptanditsroleintheSECImodel
 - [[mgmt-balanced-scorecard-kaplan-norton|バランスト・スコアカード——カプラン＆ノートンによる四つの視点を統合した戦略的業績管理]] — Wikipedia:Balancedscorecard—BSCの概念・進化・応用
 - [[mgmt-bass-diffusion-model|バスの普及モデル（Bass diffusion model）——新製品の採用を革新係数pと模倣係数qで記述する数理予測モデル]] — Wikipedia,"Bassdiffusionmodel"—p（革新係数）,q（模倣係数）,微分方程式dF/dt=\[p+qF\](1−F)…
@@ -1934,7 +1933,6 @@ tags:
 - [[mgmt-design-thinking-brown-ideo|デザイン思考——ブラウンとIDEOの共感・定義・発想・プロトタイプ・テストの革新プロセス]] — Wikipedia:Designthinking—human-centeredinnovation
 - [[mgmt-diamond-model-porter|ポーターのダイヤモンドモデル——国の競争優位を生む四つの決定要因]] — Wikipedia:Diamondmodel—Porter,factor/demandconditions,relatedindustri…
 - [[mgmt-distributed-leadership-spillane|分散型リーダーシップ（スピレイン）と実践共同体の組織論]] — Wikipedia:Distributedleadership—organizationalpractice
-- [[mgmt-dominant-logic-prahalad-bettis|支配的論理——経営者の事業の捉え方が資源配分と適応を方向づける認知枠組み]] — Wikipedia:Managerialcognition/dominantlogic—Prahalad&Bettis,mentalmap…
 - [[mgmt-double-diamond|ダブルダイヤモンド（デザインプロセス）]] — Wikipedia—DoubleDiamond(designprocessmodel)
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — Wikipedia:Double-looplearning—Argyris&Schön,governingvariables,theory…
 - [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ]] — Dynamiccapabilities—Wikipedia（RBV/バーニーとの関係）
@@ -2015,7 +2013,7 @@ tags:
 - [[mgmt-kanban|かんばん方式]] — Wikipedia"Kanban"—Ohno/Toyotaorigin,pullsystem,supermarketinspiration…
 - [[mgmt-katz-kahn-open-systems|組織のオープン・システム理論——環境と相互作用する開放系としての組織]] — Wikipedia:Opensystem(systemstheory)—negativeentropy,equifinality,orga…
 - [[mgmt-kirkpatrick-evaluation|カークパトリックの4段階評価モデル（Kirkpatrick Model）——研修の効果を反応・学習・行動・結果の4層で測る]] — Wikipedia,“Kirkpatrickmodel”（4段階＝反応・学習・行動・結果、1959年ASTD連載・1994年著書、Phil…
-- [[mgmt-knowledge-based-view-grant|知識ベース企業観——専門知識の統合機構としての企業]] — Wikipedia:Knowledge-basedtheoryofthefirm—Grant,knowledgeintegration,t…
+- [[mgmt-knowledge-based-view|知識ベース企業観（グラント）——企業を個人に分散した専門知識を統合する制度と捉え、統合能力に持続的競争優位の源泉を見る]] — Wikipedia:Knowledge-basedtheoryofthefirm—Grant、知識統合、暗黙知
 - [[mgmt-knowledge-brokering-hargadon|知識ブローカリングとイノベーション（ハーガドン＆サットン）]] — Wikipedia:IDEO—知識ブローカリングの典型企業の概説
 - [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — Wikipedia—SECImodelofknowledgedimensions
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — Wikipedia:SECImodel—Nonaka,knowledgeconversion,tacit–explicitspiral
@@ -2100,11 +2098,11 @@ tags:
 - [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]] — Wikipedia:Organizationalpolitics—politicalskill,socialastuteness,inte…
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]] — Wikipedia:Growth–sharematrix—BCGマトリクスの概念と限界
 - [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — Wikipedia:Positiveorganizationalbehavior—Luthans,PsyCap,HERO,POBvsPER…
-- [[mgmt-proactive-personality-bateman|プロアクティブ・パーソナリティと主体的行動（ベイトマン＆クラント）]] — Wikipedia:Proactivity—Bateman&Crant,proactivepersonalityscale,proacti…
+- [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（ベイトマン＆クラント）——環境に順応するのではなく自ら機会を探し状況を変えようとする安定した性格傾向]] — Wikipedia:Proactivity—Bateman&Crant、ProactivePersonalityScale、プロアクティブ…
 - [[mgmt-profit-pool|プロフィットプール分析（Profit Pool／利益プール・マッピング）——産業の利益はバリューチェーン上で偏在し、売上シェアと一致しない]] — "Profitpools",Wikipedia—conceptintroducedbyOritGadieshandJamesL.Gilbe…
 - [[mgmt-profiting-from-innovation|技術革新からの利益専有（PFIフレームワーク）]] — Wikipedia「Complementaryassets」—PFI枠組み・三構成要素・統合/ライセンス
 - [[mgmt-prosocial-motivation-grant|向社会的動機付けと他者指向的動機の組織行動論（グラント）]] — Wikipedia:Prosocialmotivation—organizationalbehavior
-- [[mgmt-psychological-contract|心理的契約]] — Psychologicalcontract—Wikipedia
+- [[mgmt-psychological-contract|心理的契約（ルソー）——雇用関係における明文化されない相互義務についての従業員の主観的信念と、その違反が信頼とコミットメントに与える影響]] — Wikipedia:Psychologicalcontract—Rousseau、取引的／関係的契約、違反
 - [[mgmt-psychological-detachment-sonnentag|心理的距離——仕事から心理的に離れて回復する]] — Wikipedia:Recoveryexperiences—psychologicaldetachment,relaxation,mast…
 - [[mgmt-psychological-empowerment-spreitzer|心理的エンパワーメント——仕事への内発的動機を構成する四つの認知]] — Wikipedia:Empowerment—Spreitzer,meaning/competence/self-determination…
 - [[mgmt-psychological-ownership|心理的所有感]] — Wikipedia「Ownership(psychology)」—定義・3ルート・自己アイデンティティ・テリトリアリティ・IKEA効果
@@ -2116,7 +2114,7 @@ tags:
 - [[mgmt-real-options-theory|リアル・オプション理論]] — Wikipedia—Realoptionsvaluation
 - [[mgmt-realistic-job-preview-wanous|現実的職務予告——入社前の率直な情報提供が定着と満足を高める]] — Wikipedia:Realisticjobpreview—Wanous,expectationcalibration,self-sele…
 - [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — Wikipedia:RedQueenhypothesis—VanValen,coevolution,organizationalevolu…
-- [[mgmt-red-queen-competition|赤の女王競争理論]] — Wikipedia—RedQueenhypothesis
+- [[mgmt-red-queen-competition|赤の女王競争（バーネット＆ハンセン）——競争が組織の学習を促すが競合も同時に鍛えるため、走り続けてやっと相対的地位を保てる共進化の動態]] — Wikipedia:RedQueenhypothesis—VanValen1973、共進化、経営学への応用
 - [[mgmt-regulatory-focus-theory-higgins|制御焦点理論——促進焦点と予防焦点が動機づけと意思決定を形成するメカニズム]] — Wikipedia:RegulatoryFocusTheory—promotionandpreventionself-regulation…
 - [[mgmt-regulatory-focus-theory-work|制御焦点理論（職場応用）]] — Wikipedia—Regulatoryfocustheory
 - [[mgmt-relational-coordination-gittell|リレーショナル・コーディネーション（ギッテル）]] — Wikipedia:Relationalcoordination—リレーショナル・コーディネーションの概説
@@ -2132,7 +2130,7 @@ tags:
 - [[mgmt-scenario-planning|シナリオ・プランニング]] — Wikipedia—PierreWack（H.カーン／RAND起源、シェル応用、1985年HBR論文）
 - [[mgmt-seci-model-nonaka|SECIモデルと知識変換（野中郁次郎）]] — Wikipedia:SECImodel—Nonaka&Takeuchi,tacit/explicitknowledge,Ba,knowle…
 - [[mgmt-second-curve-handy|セカンド・カーブ——衰退する前に次の成長曲線を始める]] — Wikipedia:CharlesHandy—sigmoidcurve,secondcurve,organizationalrenewal
-- [[mgmt-sensegiving-gioia|センスギビング理論（ジョイア＆チッタンパリー）]] — Wikipedia:Sensemaking—Weick,Gioiasensegiving,strategicambiguity,organ…
+- [[mgmt-sensegiving|センスギビング（ジョイア＆チッティペディ）——リーダーが他者の意味形成に働きかけ、変革の望ましい解釈を組織に広めるコミュニケーション過程]] — Wikipedia:Sensemaking—Weick、Gioiaのセンスギビング、戦略的曖昧さ
 - [[mgmt-sensemaking|センスメイキング]] — KarlE.Weick—Wikipedia（提唱者・7特性・1995年著書）
 - [[mgmt-servant-leadership-spears|サーバント・リーダーシップ（グリーンリーフ／スピアーズ）]] — Wikipedia:Servantleadership—Greenleaf,Spearstencharacteristics,empiri…
 - [[mgmt-service-blueprint|サービス・ブループリント]] — Wikipedia「Serviceblueprint」（起源・構成要素・物理的証拠・failpoint）

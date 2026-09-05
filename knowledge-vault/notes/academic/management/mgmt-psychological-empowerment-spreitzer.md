@@ -34,6 +34,8 @@ aliases:
 - [[mgmt-shared-leadership-pearce|シェアード・リーダーシップ——チーム成員間で分有され交替する影響過程]] — 同じ思想家
 - [[mgmt-empowerment-theory-spreitzer|心理的エンパワーメント理論（Spreitzer）]] — 同分野の近傍
 - [[mgmt-profiting-from-innovation|技術革新からの利益専有（PFIフレームワーク）]] — 同分野の近傍
+- [[mgmt-dominant-logic|ドミナント・ロジック（プラハラード＆ベティス）——経営陣が事業を捉え資源を配分する支配的な認知枠組みが、多角化の成否と環境変化への適応を左右する]] — 同分野の近傍
+- [[mgmt-authentic-leadership-avolio-gardner|オーセンティック・リーダーシップ（アボリオ＆ガードナー）——自己認識・内面化された道徳的視点・バランスのとれた情報処理・関係の透明性を核とする真正なリーダーシップ]] — 同分野の近傍
 - [[mgmt-leavitt-diamond|リービットのダイヤモンド]] — 同分野の近傍
 
 ## 関連

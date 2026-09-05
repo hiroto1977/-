@@ -34,7 +34,6 @@ aliases:
 - [[bizlaw-commercial-frustration|契約の挫折法理（履行不能による契約解消）]] — 同じ思想家
 - [[bizlaw-force-majeure|不可抗力条項——支配を超えた異常事態による契約上の免責の合意]] — 同じ思想家
 - [[bizlaw-agency-apparent-authority|表見代理——本人の表示への合理的信頼が代理権の外観を拘束力に変える]] — 同分野の近傍
-- [[bizlaw-negligence-per-se|法定過失（Negligence Per Se）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

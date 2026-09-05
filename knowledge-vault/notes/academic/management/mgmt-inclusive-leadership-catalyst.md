@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-level-5-leadership|レベル5リーダーシップ]] — 同分野の近傍
-- [[mgmt-team-member-exchange|チーム・メンバー交換理論（Team-Member Exchange, TMX）]] — 同分野の近傍
+- [[mgmt-organizational-socialization|組織社会化]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

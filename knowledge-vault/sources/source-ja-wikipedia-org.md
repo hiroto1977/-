@@ -2,7 +2,7 @@
 title: "ja.wikipedia.org"
 type: source-domain
 host: "ja.wikipedia.org"
-cite_count: 138
+cite_count: 137
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ja.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **138 件**（リファレンス 136 ・ メディア 2）
+> [!info] 出典ドメイン索引 ・ 引用 **137 件**（リファレンス 135 ・ メディア 2）
 
 ## このドメインを出典とする項目
 
@@ -147,7 +147,6 @@ tags:
 - [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 狩野モデル—ウィキペディア日本語版
 - [[mgmt-knowledge-transfer-multinational|多国籍企業における知識移転——粘着性・吸収能力・本社—子会社ネットワーク]] — Wikipedia:知識移転—多国籍企業における知識管理の解説
 - [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — Wikipedia:組織変革—コッターの8ステップと変革管理の解説
-- [[mgmt-psychological-contract-rousseau|心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態]] — Wikipedia:心理的契約—雇用関係における暗黙の期待の解説
 - [[mgmt-stakeholder-mapping-power-interest|ステークホルダー・マッピングと利害権力分析——戦略的ステークホルダー管理の実践論]] — Wikipedia:ステークホルダー—ステークホルダー理論と管理の解説
 - [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — Wikipedia:戦略的提携—アライアンスと協調戦略の解説
 - [[mgmt-supply-chain-resilience-disruption|サプライチェーン・レジリエンス——中断リスク管理とコロナ禍・地政学的断絶への対応]] — Wikipedia:サプライチェーン—レジリエンスと断絶リスク管理の解説
