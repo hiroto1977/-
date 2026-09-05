@@ -114,7 +114,8 @@ function canonicalKnowledgeTotal() {
 function canonicalCitationLedgerCount() {
   const src = read(path.join(REPO_ROOT, 'scripts/lint-doi-prefix.cjs'));
   if (src == null) return null;
-  const names = ['ALLOWLIST', 'ISBN_ALLOWLIST', 'JOURNAL_ALLOWLIST', 'DUPLICATE_ID_ALLOWLIST'];
+  // 2026-09-05: ISSN_ALLOWLIST (埋め込み ISSN の検査数字) が 5 つ目の台帳として加わった。
+  const names = ['ALLOWLIST', 'ISBN_ALLOWLIST', 'JOURNAL_ALLOWLIST', 'DUPLICATE_ID_ALLOWLIST', 'ISSN_ALLOWLIST'];
   let total = 0;
   for (const name of names) {
     // `const NAME = new Map([` から対応する `]);` までを粗く切り出し、
