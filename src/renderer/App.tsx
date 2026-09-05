@@ -13,6 +13,7 @@ import { lockWorkspace } from './security/lockWorkspace';
 import { usePlan } from './plan/usePlan';
 import { VoiceCommandBar } from './components/VoiceCommandBar';
 import { ChatbotWidget } from './components/ChatbotWidget';
+import { PageErrorBoundary } from './components/PageErrorBoundary';
 import {
   PLAN_ORDER,
   PLANS,
@@ -454,7 +455,9 @@ export function App() {
         </header>
         <section className="content">
           {activeUnlocked ? (
-            <>
+            // 画面の描画エラーはこの枠に閉じる (境界が無いと React はツリー全体を外し、サイドバーごと白くなる)。
+            // key で画面ごとに張り直す —— 別の画面へ移れば新しい境界。
+            <PageErrorBoundary key={active.id} label={active.label} onGoHome={() => selectService('home')}>
               <PageComponent />
               {/*
                 手入力欄は**ここ 1 か所**に置く。画面ごとに貼って回ると必ず
@@ -462,7 +465,7 @@ export function App() {
                 置き換えの一覧を持たない画面では「足す」側だけが出る。
               */}
               <ManualDataSection scope={active.id} />
-            </>
+            </PageErrorBoundary>
           ) : (
             <UpgradeNotice
               requiredPlan={requiredPlan}

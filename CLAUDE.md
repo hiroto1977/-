@@ -157,7 +157,8 @@ Three TypeScript build contexts, kept separate via `tsconfig` project references
   `contextBridge.exposeInMainWorld`. The bridge type is re-declared globally in
   `src/shared/bridge.d.ts` so the renderer calls it without imports.
 - **`src/renderer/`** — React app. `App.tsx` renders the category-grouped sidebar from `SERVICES`
-  (`services.ts`). The renderer never sees raw tokens — it only calls
+  (`services.ts`) and mounts the active page inside `components/PageErrorBoundary.tsx` (a render
+  error stays inside that page's frame; the sidebar keeps working). The renderer never sees raw tokens — it only calls
   `serviceHub.setToken / clearToken / listConfigured / fetchSnapshot / invoke / openExternal`.
 
 ### The single source of truth for services
