@@ -1212,10 +1212,18 @@
       "leafCount": 65,
       "note": "update ci.yml",
       "hash": "69589af155d3ae5d4aecabb3480e3076e00df8077d77e4063a7614d32668405c"
+    },
+    {
+      "index": 143,
+      "prevHash": "69589af155d3ae5d4aecabb3480e3076e00df8077d77e4063a7614d32668405c",
+      "merkleRoot": "8aea0c2f52f8138b0a83ede077fd7185df8860d354be7dff06a7ab2367ba44a7",
+      "leafCount": 65,
+      "note": "update ci.yml",
+      "hash": "400e4edecfbd6f11ba0d6ad20fab2e15d63d9348bd189ce6ea70d2fe81f53c1d"
     }
   ],
   "tipManifest": {
-    ".github/workflows/ci.yml": "02cc20d4413ac74b44496d382bb2831b18c63e93e10d712fe8d5848484f5a9df",
+    ".github/workflows/ci.yml": "6e05d15633784dfc54a3401a14b82148888313b97353d461bbf542fc40da41d0",
     ".github/workflows/pages.yml": "3b3202789c03c79a7d55129027327cd52f0ad3189ebf2c2478af09a5c98f2a39",
     ".github/workflows/release.yml": "3201579d407a46e557d38566e288de8e8740d38679eff02e313c8dcfeb12e7d9",
     "assets/manifest.webmanifest": "e23432bb858936404e7661559be8a8f95e5842569f13162c0f7a2e5cc3fd412b",
