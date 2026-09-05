@@ -76,6 +76,7 @@
     "src/renderer/data/chatbot.ts",
     "src/renderer/data/cloudBackup.ts",
     "src/renderer/data/cloudSync.ts",
+    "src/renderer/data/collectionShapes.ts",
     "src/renderer/data/complianceResearch.ts",
     "src/renderer/data/connectionStatus.ts",
     "src/renderer/data/connectorExecution.ts",

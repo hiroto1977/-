@@ -153,6 +153,19 @@ describe('バックアップの復元', () => {
     expect(await getRecordStore().count(SALES_COLLECTION)).toBe(0);
   });
 
+  it('★ 形の違うレコードは捨て、捨てた件数を言う (中身の形 — collectionShapes)', async () => {
+    const backup = await serializeBackup([
+      { id: 'r1', collection: SALES_COLLECTION, createdAt: 1, updatedAt: 1, data: { date: '2026-04-01', channel: 'amazon', amount: 1000, orders: 1, note: '' } },
+      { id: 'r2', collection: SALES_COLLECTION, createdAt: 1, updatedAt: 1, data: { date: '2026-04-02', channel: 'amazon', amount: 'abc', orders: 1, note: '' } },
+    ]);
+    await mount(BackupPanel);
+    const { file } = fakeFile(backup, 'backup.json');
+    await chooseFile(file);
+    expect(container.textContent).toContain('1 件のレコードを復元しました');
+    expect(container.textContent).toContain('1 件は形式が不正なため取り込みませんでした');
+    expect(await getRecordStore().count(SALES_COLLECTION)).toBe(1);
+  });
+
   it('対照: 上限以下のバックアップは読んで復元する', async () => {
     const backup = await serializeBackup([
       { id: 'r1', collection: SALES_COLLECTION, createdAt: 1, updatedAt: 1, data: { date: '2026-04-01', channel: 'amazon', amount: 1000, orders: 1, note: '' } },

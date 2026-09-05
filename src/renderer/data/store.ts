@@ -17,6 +17,7 @@
  */
 
 import { IDENTITY_CIPHER, isSealedData, type RecordCipher } from './recordCipher';
+import { hasCollectionShape } from './collectionShapes';
 
 const DB_NAME = 'business-hub-data';
 const DB_VERSION = 1;
@@ -464,7 +465,9 @@ class IndexedDBRecordStore implements RecordStore {
    * トランザクションは待っている間に自動で閉じるため。
    */
   async importAll(records: readonly StoredRecord[], opts?: { replace?: boolean }): Promise<number> {
-    const valid = records.filter(isValidStoredRecord);
+    // 封筒の形 (`isValidStoredRecord`) に加えて **中身の形** (`collectionShapes.ts`) も見る。
+    // 封緘済みの中身は見られないので封筒だけ。捨てた件数は呼び出し側 (BackupPanel) が利用者に言う。
+    const valid = records.filter((r) => isValidStoredRecord(r) && (isSealedData(r.data) || hasCollectionShape(r.collection, r.data)));
     const prepared = await Promise.all(
       valid.map(async (rec) =>
         isSealedData(rec.data) ? rec : { ...rec, data: await this.cipher.encrypt(rec.data) },
