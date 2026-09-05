@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-payment-services-act|資金決済法]] — 同分野の近傍
 - [[bizlaw-patent-pool|パテント・プール（特許プール）]] — 同分野の近傍
+- [[bizlaw-broadcast-act|放送法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

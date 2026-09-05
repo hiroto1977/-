@@ -35,11 +35,11 @@ aliases:
 - [[infosoc-media-priming|メディア・プライミング（政治的プライミング）]] — 同じ思想家
 - [[infosoc-political-polarization|政治的分極化]] — 同じ思想家
 - [[infosoc-self-presentation|自己呈示とドラマトゥルギー（ゴッフマン）]] — 同じ思想家
-- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 同じ思想家
 - [[human-choice-overload|選択過多（選択のオーバーロード）]] — 同じ思想家
 - [[human-choice-overload-iyengar|選択過負荷——過剰な選択肢が意思決定を麻痺させるパラドックス]] — 同じ思想家
 - [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — 同じ思想家
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 同じ思想家
+- [[infosoc-total-institution-goffman|全制的施設——隔離された生活世界と自己の剥奪・再社会化]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 644
+entry_count: 634
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（644件）
+# 学習パス — 学術概念／人間科学（634件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 143）
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 103）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 150）
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 109）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-framing-effect|フレーミング効果（framing effect）]]（接続 32）
 - [[human-attribution-theory|帰属理論]]（接続 30）
 - [[human-bias-blind-spot|バイアスの盲点]]（接続 30）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 29）
-- [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 27）
-- [[human-base-rate-fallacy|基準率の無視]]（接続 26）
-- [[human-conjunction-fallacy|連言錯誤]]（接続 26）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 26）
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 26）
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 25）
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 25）
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 25）
+- [[human-conjunction-fallacy|連言錯誤]]（接続 25）
+- [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 25）
+- [[human-base-rate-fallacy|基準率の無視]]（接続 24）
 
 ## 第 2 部 — 年代順の展開
 - 1510年: [[human-phantom-limb|幻肢（ファントムリム）]]
@@ -44,6 +44,7 @@ tags:
 - 1882年: [[human-cotard-syndrome|コタール症候群（Cotard Syndrome）]]
 - 1884年: [[human-sapir-whorf|サピア・ウォーフ仮説（言語相対性仮説）]]
 - 1885年: [[human-serial-position|系列位置効果（初頭効果・新近効果）]]
+- 1885年: [[human-spacing-effect-cepeda|間隔効果（分散効果）——同じ学習時間でも間隔をあけて分散させた方が集中して行うより長く記憶に残る]]
 - 1890年: [[human-visual-agnosia|視覚性失認（Visual Agnosia）]]
 - 1893年: [[human-catharsis-hypothesis|カタルシス仮説（攻撃性の浄化理論）]]
 - 1897年: [[human-stroop-effect|ストループ効果]]
@@ -72,7 +73,7 @@ tags:
 - 1932年: [[human-goal-gradient|目標勾配効果]]
 - 1932年: [[human-schema|スキーマ理論]]
 - 1933年: [[human-stanford-prison-experiment|スタンフォード監獄実験]]
-- 1933年: [[human-von-restorff-effect|フォン・レストルフ効果（孤立効果）]]
+- 1933年: [[human-von-restorff-effect|フォン・レストルフ効果（孤立効果）——均質な項目の中で一つだけ異質な項目が際立って記憶される]]
 - 1934年: [[human-flynn-effect|フリン効果]]
 - 1936年: [[human-defense-mechanisms|防衛機制]]
 - 1936年: [[human-general-adaptation-syndrome-selye|汎適応症候群——警告反応期・抵抗期・疲憊期を経る非特異的ストレス反応]]
@@ -143,9 +144,11 @@ tags:
 - 1971年: [[human-actor-observer-bias|行為者-観察者バイアス]]
 - 1971年: [[human-gamblers-fallacy|ギャンブラーの誤謬]]
 - 1971年: [[human-hedonic-treadmill|快楽の踏み車（快楽適応）]]
+- 1971年: [[human-mental-rotation-shepard-metzler|心的回転（シェパード＝メッツラー）——反応時間が回転角度に比例することが心的イメージのアナログ的変換を示す]]
 - 1971年: [[human-place-cells|場所細胞（Place Cells）]]
 - 1971年: [[human-priming|プライミング効果]]
 - 1971年: [[human-undermining-effect|アンダーマイニング効果（過正当化効果）]]
+- 1972年: [[human-alexithymia-sifneos|アレキシサイミア（失感情症・シフネオス）——自分の感情を識別し言葉にすることが難しく、身体感覚と区別できず、外向きの思考に傾く特性]]
 - 1972年: [[human-groupthink|集団思考（グループシンク, groupthink）]]
 - 1972年: [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]]
 - 1973年: [[human-biological-motion-johansson|バイオロジカルモーション——十数個の光点の動きだけからヒトの歩行や動作を瞬時に知覚する現象]]
@@ -234,9 +237,11 @@ tags:
 - 1990年: [[human-reactive-devaluation|反応的価値低減（リアクティブ・デバリュエーション／Reactive devaluation）——相手が出した案というだけで価値が下がる認知バイアス]]
 - 1990年: [[human-selective-optimization-with-compensation-baltes|選択・最適化・補償（SOC）モデル——資源が減る中で目標を絞り、手段を磨き、失った機能を補って発達を続けるバルテスの生涯発達論]]
 - 1990年: [[human-swiss-cheese-model-accident-causation-reason|スイスチーズモデル——多層防護に開いた穴が一列に並んだ瞬間に事故が起きるとする、能動的失敗と潜在的条件の事故因果モデル]]
+- 1991年: [[human-affective-forecasting-wilson-gilbert|感情予測（ウィルソン＝ギルバート）——将来の出来事が自分の感情に与える影響の予測は、強さと持続を過大評価する方向に体系的に歪む]]
 - 1991年: [[human-legitimate-peripheral-participation|正統的周辺参加と実践共同体]]
 - 1991年: [[human-optimal-distinctiveness|最適弁別性理論（Optimal Distinctiveness Theory／Brewer 1991）——人は所属（同化）と差異化（独自性）の相反する欲求の均衡点で社会的アイデンティティを選ぶ]]
 - 1991年: [[human-rumination|反芻思考]]
+- 1991年: [[human-self-construal-markus-kitayama|文化的自己観（マーカス＝北山）——相互独立的自己観と相互協調的自己観が認知・感情・動機づけを体系的に方向づける]]
 - 1992年: [[human-dunbars-number|ダンバー数（社会脳仮説）]]
 - 1992年: [[human-four-horsemen-gottman|ゴットマンの黙示録の四騎士——批判・侮蔑・自己防衛・逃避が関係の破綻を予測する]]
 - 1992年: [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]]
@@ -261,7 +266,7 @@ tags:
 - 1997年: [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]]
 - 1997年: [[human-hyperbolic-discounting|双曲割引]]
 - 1998年: [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論（フレドリクソン）——ポジティブ感情が思考と行動のレパートリーを広げ、持続的な個人資源を築くという機能理論]]
-- 1998年: [[human-ego-depletion|自我消耗（エゴ・ディプリーション）]]
+- 1998年: [[human-ego-depletion-baumeister|自我消耗（バウマイスター）——意志力は使うと一時的に枯渇する有限の資源だとする強さモデルと、その再現性論争]]
 - 1998年: [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]]
 - 1998年: [[human-growth-mindset|マインドセット理論（ドゥエック）]]
 - 1998年: [[human-illusion-of-transparency|透明性の錯覚]]
@@ -314,14 +319,9 @@ tags:
 - [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]]
 - [[human-acquired-needs-theory|獲得欲求理論]]
 - [[human-affect-heuristic-slovic|感情ヒューリスティック——良い悪いの感じが判断と意思決定を導く近道]]
-- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]]
-- [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]]
 - [[human-affective-neuroscience-panksepp|情動神経科学——基本情動システムの神経生物学的基盤]]
 - [[human-affordance-theory|アフォーダンス理論]]
 - [[human-akinetopsia-motion-blindness|運動盲（アキネトプシア）——動きが見えなくなる神経心理障害]]
-- [[human-alexithymia-emotional-awareness|アレキシシミアと感情認識障害——心身医学・感情神経科学の視点]]
-- [[human-alexithymia-emotional-regulation|アレキシサイミアと感情調節障害——感情の言語化困難・身体化・心身症との関連]]
-- [[human-alexithymia-sifneos|アレキシサイミア（感情失認）（シフネオス）]]
 - [[human-alien-hand-syndrome|エイリアンハンド症候群——手が自分の意志とは無関係に動く]]
 - [[human-anton-syndrome|アントン症候群——皮質盲なのに見えないことを否認する]]
 - [[human-aphantasia|アファンタジア——心の中に像を思い描けない]]
@@ -378,13 +378,11 @@ tags:
 - [[human-cultural-formulation-distress|文化的定式化と苦悩のイディオム（DSM-5）の医療人類学]]
 - [[human-cultural-historical-activity-theory-engestrom|文化歴史的活動理論——エンゲストロームの拡張的学習と活動システム分析]]
 - [[human-cultural-neuroscience-chiao|文化神経科学——文化と脳機能の双方向的相互作用]]
-- [[human-cultural-self-construal-markus|文化的自己観（マーカス＆北山）]]
 - [[human-cutaneous-rabbit-illusion|皮膚ウサギ錯覚——後の刺激が前の刺激の位置を書き換える]]
 - [[human-default-mode-network-raichle|デフォルト・モード・ネットワーク——安静時脳活動と自己参照的処理]]
 - [[human-defensive-pessimism-norem|防衛的悲観主義——低い期待と最悪の予行演習が不安を制御し成果を高める]]
 - [[human-deindividuation-zimbardo|没個性化——集団状況における自己意識の低下と脱抑制的行動]]
 - [[human-deja-vu|デジャヴ（既視感）——初めての経験を「前にもあった」と感じる]]
-- [[human-depletion-ego-model-critique|自我消耗モデルの再検討——意志力の限界資源仮説とその論争]]
 - [[human-depressive-realism-alloy|抑うつリアリズム——軽度抑うつ者における判断の正確性仮説]]
 - [[human-desensitization-systematic|系統的脱感作法：不安・恐怖症に対する段階的行動療法の基盤理論]]
 - [[human-developmental-origins-of-health-disease|健康と疾病の発達起源説（DOHaD）]]
@@ -404,8 +402,6 @@ tags:
 - [[human-dual-process-theory-kahneman-stanovich|二重過程理論——システム1・システム2の認知的二元構造]]
 - [[human-ecological-systems-theory-bronfenbrenner|生態学的システム理論——ブロンフェンブレンナーの入れ子モデルと人間発達の環境的文脈]]
 - [[human-ecopsychology-roszak-nature-wellbeing|エコサイコロジーと自然体験——ロザックの「地球の声」論と人間-自然の心理的相互作用]]
-- [[human-ego-depletion-baumeister|自我消耗理論（バウマイスター）]]
-- [[human-ego-depletion-baumeister-willpower|自我消耗と意志力——バウマイスターの有限資源モデルとその再現可能性論争]]
 - [[human-elaboration-likelihood-model-petty-cacioppo|精緻化見込みモデル——ペティとカシオッポの二重過程的態度変容理論]]
 - [[human-embodied-cognition-barsalou|身体化認知——知覚シミュレーションと概念的知識の身体的基盤]]
 - [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]]
@@ -482,7 +478,6 @@ tags:
 - [[human-interpersonal-theory-leary|対人関係理論（リアリー／サリヴァン）]]
 - [[human-intersectionality-theory|インターセクショナリティ理論（交差性理論）]]
 - [[human-ironic-process-wegner|皮肉過程理論——思考抑制がかえって抑制対象を意識に侵入させる逆説]]
-- [[human-isolation-effect-restorff|孤立効果——均質なリスト中の異質項目が優先的に記憶される現象]]
 - [[human-james-lange-emotion|ジェームズ＝ランゲ説——身体反応の知覚こそが情動であるとする理論]]
 - [[human-just-world-hypothesis-lerner|公正世界仮説——人は相応しい結果を得るという信念とその社会的帰結]]
 - [[human-kanizsa-triangle|カニッツァの三角形——存在しない輪郭を見る主観的輪郭]]
@@ -498,8 +493,6 @@ tags:
 - [[human-memory-reconsolidation|記憶の再固定化]]
 - [[human-memory-reconsolidation-nader-schiller|記憶再固定化——想起時の記憶可塑性とトラウマ治療への応用]]
 - [[human-mental-health-continuum-keyes|精神的健康の連続体モデル（キーズ）]]
-- [[human-mental-rotation-shepard|メンタル・ローテーション（シェパード＆メッツラー）]]
-- [[human-mental-rotation-shepard-metzler|心的回転——心的イメージのアナログ的変換を示す実験]]
 - [[human-mentalization-fonagy|メンタライジングと反省的機能（フォナジー）]]
 - [[human-mentalizing-fonagy-bateman|メンタライゼーション理論——フォナギーの心の理論と境界性パーソナリティ障害への治療的介入]]
 - [[human-mere-exposure-zajonc|単純接触効果——反復的接触が対象への好意を増大させる現象]]
@@ -586,7 +579,6 @@ tags:
 - [[human-schema-therapy-young-maladaptive|スキーマ療法——ヤングの早期不適応スキーマ理論と人格障害・慢性うつへの統合的アプローチ]]
 - [[human-self-affirmation-steele|自己肯定化理論——別領域の価値の確認が自己統合性を回復し防衛を緩める]]
 - [[human-self-categorization-theory|自己カテゴリー化理論]]
-- [[human-self-construal-markus-kitayama|自己解釈理論——相互独立的・相互協調的自己観と文化的認知の基盤]]
 - [[human-self-determination|自己決定理論（SDT）]]
 - [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]]
 - [[human-self-determination-theory-mini|自己決定ミニ理論群]]
@@ -621,8 +613,6 @@ tags:
 - [[human-somatic-experiencing-levine|ソマティック・エクスペリエンシング（レバイン）とトラウマの身体的解放]]
 - [[human-somatic-experiencing-levine-trauma|ソマティック・エクスペリエンシング——レヴィンの身体的トラウマ解放と神経系の自己調整]]
 - [[human-source-monitoring-johnson|ソース・モニタリング——記憶の出所を判別する認知過程とその誤り]]
-- [[human-spacing-effect-cepeda|間隔効果——分散学習が集中学習より記憶保持を向上させるメカニズム]]
-- [[human-spacing-effect-ebbinghaus|分散効果——学習を時間的に分散させると記憶が長く定着する]]
 - [[human-spatial-cueing-posner|ポズナーの手がかり課題——空間的注意のスポットライトを測る]]
 - [[human-spiritual-wellbeing|スピリチュアル・ウェルビーイング尺度：宗教的ウェルビーイングと実存的ウェルビーイングの二因子モデル]]
 - [[human-split-brain-sperry-gazzaniga|分離脳研究]]

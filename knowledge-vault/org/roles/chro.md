@@ -28,14 +28,14 @@ aliases:
 - [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]]
 - …ほか 689 件 → [[学術概念]]
 
-### 学術概念 / 人間科学（全644件）
+### 学術概念 / 人間科学（全634件）
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]
 - [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]]
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]]
 - [[human-acquired-needs-theory|獲得欲求理論]]
 - [[human-action-bias|行動バイアス（アクション・バイアス）]]
-- …ほか 638 件 → [[学術概念]]
+- …ほか 628 件 → [[学術概念]]
 
 ### 法務・税務・労務 / 労務（全124件）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]

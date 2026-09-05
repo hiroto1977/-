@@ -33,7 +33,7 @@ aliases:
 - [[human-social-comparison-theory-festinger|社会比較理論と自己評価プロセスの社会心理学（フェスティンガー）]] — 語彙が近い
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — 分野横断
 - [[infosoc-digital-divide-stratification|デジタル格差と情報不平等の社会的成層論]] — 同分野の近傍
-- [[infosoc-context-collapse-marwick|コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ]] — 同分野の近傍
+- [[infosoc-technostress-tarafdar|テクノストレス——ICT利用がもたらす心理的負荷と組織的対応]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,14 +33,14 @@ aliases:
 ## 関連概念
 - [[human-decision-fatigue|決定疲労（decision fatigue）]] — 同じ思想家
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同じ思想家
-- [[human-depletion-ego-model-critique|自我消耗モデルの再検討——意志力の限界資源仮説とその論争]] — 同じ思想家
-- [[human-ego-depletion|自我消耗（エゴ・ディプリーション）]] — 同じ思想家
-- [[human-ego-depletion-baumeister|自我消耗理論（バウマイスター）]] — 同じ思想家
-- [[human-ego-depletion-baumeister-willpower|自我消耗と意志力——バウマイスターの有限資源モデルとその再現可能性論争]] — 同じ思想家
+- [[human-ego-depletion-baumeister|自我消耗（バウマイスター）——意志力は使うと一時的に枯渇する有限の資源だとする強さモデルと、その再現性論争]] — 同じ思想家
 - [[human-identity-process-theory-breakwell|アイデンティティ・プロセス理論（ブレイクウェル）]] — 同じ思想家
 - [[human-marshmallow-test|マシュマロ・テスト（満足の遅延）]] — 同じ思想家
 - [[human-negativity-bias|ネガティビティ・バイアス]] — 同じ思想家
 - [[human-rejection-sensitivity-downey|拒絶感受性（ダウニー＆フェルドマン）]] — 同じ思想家
+- [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 同じ思想家
+- [[human-temporal-motivation-steel|時間的動機付け理論（スティール＆クーニング）]] — 同じ思想家
+- [[human-split-brain-sperry-gazzaniga|分離脳研究]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

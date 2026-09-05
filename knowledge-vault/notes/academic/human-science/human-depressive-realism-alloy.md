@@ -39,7 +39,7 @@ aliases:
 - [[human-self-verification-swann|自己確証理論（スワン）——自己像を裏づける評価を求める動機]] — 同じ思想家
 - [[human-tend-and-befriend-taylor|思いやり・絆反応——闘争逃走に並ぶストレス対処と養護・連帯の様式]] — 同じ思想家
 - [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 同じ思想家
-- [[human-schema|スキーマ理論]] — 同分野の近傍
+- [[human-optimism-bias|楽観バイアス]] — 同分野の近傍
 - [[human-recognition-heuristic|再認ヒューリスティック]] — 同分野の近傍
 
 ## 関連

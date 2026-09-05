@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[bizlaw-fraudulent-rescission|詐害行為取消権（民法424条）]] — 同分野の近傍
 - [[bizlaw-general-incorporated-associations|一般社団・財団法人法]] — 同分野の近傍
-- [[bizlaw-broadcast-act|放送法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

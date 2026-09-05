@@ -6386,23 +6386,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-ego-depletion',
-    discipline: 'human-science',
-    title: '自我消耗（エゴ・ディプリーション）',
-    statement:
-      '自我消耗とは、自己制御（セルフコントロール）や意志力が筋肉のように「使うと一時的に枯渇する有限の資源」であり、ある課題で自己制御を行使するとその後の別課題での遂行が低下するとする仮説（強さモデル strength model of self-control）。R・バウマイスターらが1998年（JPSP）で提唱し、代表的な二重課題（sequential-task）では、クッキーを我慢してラディッシュを食べた群が後続の難パズルへの忍耐を早く諦めた（持続時間が約21分→約8分）。' +
-      '後にグルコース（血糖）を意志力の資源とする説も示されたが、生物学的妥当性が批判された。さらに2010年代の再現性の危機において、Carter & McCullough（2014）は出版バイアスにより効果（先行メタ分析d=0.62）が過大評価されていると指摘し、Hagger et al.（2016）の23研究室・約2141名による事前登録の多施設追試では効果がほぼゼロ（d=0.04, 95%CI[-0.07, 0.15]）であった。効果の存否・大きさ・機序は現在も論争中である。',
-    keyFigures:
-      'ロイ・バウマイスター（Roy Baumeister）／マーク・ムラベン（Mark Muraven）／ダイアン・タイス（Dianne Tice）（1998 JPSP, 強さモデル）／批判: マーティン・ハガー（Hagger et al. 2016 多施設追試）・エヴァン・カーター（Carter & McCullough 2014 出版バイアス）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'http://faculty.washington.edu/jdb/345/345%20Articles/Baumeister%20et%20al.%20(1998).pdf', type: 'academic', label: 'Baumeister, Bratslavsky, Muraven & Tice (1998) “Ego Depletion: Is the Active Self a Limited Resource?” J. Personality and Social Psychology 74(5), 1252-1265（原典PDF）' },
-      { url: 'https://journals.sagepub.com/doi/10.1177/1745691616652873', type: 'academic', label: 'Hagger et al. (2016) “A Multilab Preregistered Replication of the Ego-Depletion Effect” Perspectives on Psychological Science 11(4)（効果ほぼゼロ）' },
-      { url: 'https://pubmed.ncbi.nlm.nih.gov/25126083/', type: 'academic', label: 'Carter & McCullough (2014) “Publication bias and the limited strength model of self-control” Frontiers in Psychology' },
-      { url: 'https://en.wikipedia.org/wiki/Ego_depletion', type: 'reference', label: 'Wikipedia「Ego depletion」（概説・再現性論争の整理）' },
-    ],
-  },
-  {
     id: 'bizlaw-public-order',
     discipline: 'business-law',
     title: '公序良俗（民法90条）',
@@ -12109,16 +12092,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'human-von-restorff-effect',
     discipline: 'human-science',
-    title: 'フォン・レストルフ効果（孤立効果）',
+    title: 'フォン・レストルフ効果（孤立効果）——均質な項目の中で一つだけ異質な項目が際立って記憶される',
     statement:
-      'ヘートヴィヒ・フォン・レストルフが1933年の研究で示した記憶現象で、周囲の項目から際立つ異質な（孤立した）項目は、均質な周囲の項目よりずっと記憶されやすいというもの。例えば黒い単語の列に1つだけ赤い単語があるとき、あるいは単語の列に1つだけ数字が混じるときなど、目立つ項目の再生成績が他より優れる。' +
-      'これは記憶の符号化における際立ち（顕著性・独自性）と、孤立項目への注意の差次的配分の役割を反映するとされる。広告・デザイン・教育・UIにおいて重要情報を強調・差異化すると記憶に残りやすい根拠となる。なお本効果は項目自体の独自性に由来する点で、リスト内の位置（先頭・末尾）による初頭効果・新近効果を扱う系列位置効果とは区別される。',
-    keyFigures: 'ヘートヴィヒ・フォン・レストルフ（Hedwig von Restorff, 1933）',
-    asOf: '2026-06',
+      'フォン・レストルフ効果（孤立効果）は、ヘートヴィヒ・フォン・レストルフが1933年の論文（Psychologische Forschung）で報告した記憶現象で、均質な項目群の中に色・大きさ・カテゴリーなどが異なる項目が一つだけ含まれると、その異質な項目が周囲の均質な項目よりもはるかによく記憶されるというものである。黒い文字の単語リストに一語だけ赤い単語を入れる、単語の列に一つだけ数字を混ぜるといった場面で、目立つ項目の再生成績が他を上回る。機序としては、異質な項目が注意を自動的に引きつけるという注意説、追加的な精緻化符号化を受けるという精緻化説、検索時に異質性が弁別的な手がかりになるという弁別性説が提案され、シュミットの弁別性理論は項目固有の処理と項目間の関係的処理の相互作用として統一的に説明する。ハント（1995）はフォン・レストルフの原著を再検討し、効果が単なる「目立ち」ではなく処理の質の差に由来することを整理した。本効果は項目自体の独自性に由来する点で、リスト内の位置による初頭効果・新近効果（系列位置効果）とは区別される。限界としては、孤立項目の記憶向上が周囲の項目の記憶低下を伴うことがあり、全体の記憶量を増やすわけではない点がある。中小企業には、広告・ウェブ画面・教材・見積書で本当に覚えてほしい一点だけを色や形で際立たせ、強調を乱発して効果を打ち消さないという含意がある。',
+    keyFigures: 'ヘートヴィヒ・フォン・レストルフ（1933『Über die Wirkung von Bereichsbildungen im Spurenfeld』Psychologische Forschung）／R・リード・ハント（1995 原著の再検討）／スティーブン・シュミット（弁別性理論）／対比: 系列位置効果（初頭効果・新近効果）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://link.springer.com/article/10.1007/BF02409636', type: 'academic', label: 'von Restorff, H. (1933) Über die Wirkung von Bereichsbildungen im Spurenfeld, Psychologische Forschung 18:299-342（原典）' },
-      { url: 'https://link.springer.com/article/10.3758/BF03214414', type: 'academic', label: 'The subtlety of distinctiveness: What von Restorff really did, Psychonomic Bulletin & Review（査読論文）' },
-      { url: 'https://en.wikipedia.org/wiki/Von_Restorff_effect', type: 'reference', label: 'Von Restorff effect — Wikipedia' },
+      { url: 'https://doi.org/10.1007/BF02409636', type: 'academic', label: 'von Restorff, H. (1933) Über die Wirkung von Bereichsbildungen im Spurenfeld — Psychologische Forschung 18, 299–342（原著）' },
+      { url: 'https://link.springer.com/article/10.3758/BF03214414', type: 'academic', label: 'Hunt, R. R. (1995) The subtlety of distinctiveness: What von Restorff really did — Psychonomic Bulletin & Review 2(1)（原著の再検討と弁別性の整理）' },
+      { url: 'https://en.wikipedia.org/wiki/Von_Restorff_effect', type: 'reference', label: 'Wikipedia: Von Restorff effect — isolation effect and distinctiveness in memory' },
     ],
   },
   {
@@ -28759,20 +28741,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-mental-rotation-shepard',
-    discipline: 'human-science',
-    title: 'メンタル・ローテーション（シェパード＆メッツラー）',
-    statement: 'メンタル・ローテーション（mental rotation）は、シェパード＆メッツラー（1971）が発見した、三次元形状を心的に回転させるときの反応時間が回転角度に線形比例するという認知現象である。これは心的操作が空間的アナログ表現（analogue representation）を用いて行われる証拠として解釈され、「イメージ論争（imagery debate）」において命題的符号化説（Pylyshyn）に対するアナログ論（Kosslyn）の主要根拠となった。シェパード＆クーパー（1982）はメンタル・ローテーションの研究を詳細に発展させ、ピッツ（1981）は3次元ブロック図形の男女差（男性が優れる）を示した。神経基盤はfMRIで頭頂葉（特にIPS）の活性化が確認され、頂頂皮質が空間的視覚処理に関与することが示された。メンタル・ローテーション課題はパイロット選抜・建築デザイン・外科医の訓練など空間的才能の評価に応用されている。',
-    keyFigures: 'ロジャー・シェパード ／ ジャクリーン・メッツラー ／ リン・クーパー ／ スティーブン・コスリン ／ ゼノン・ピッツ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1126/science.171.3972.701', type: 'academic', label: 'Shepard, R. N. & Metzler, J. (1971) Mental Rotation of Three-Dimensional Objects — Science, 171(3972), 701–703' },
-      { url: 'https://pubmed.ncbi.nlm.nih.gov/6109557/', type: 'academic', label: 'Peters, M., Laeng, B., Latham, K., Jackson, M., Zaiyouna, R. & Richardson, C. (1995) A Redrawn Vandenberg and Kuse Mental Rotations Test — Brain and Cognition, 28(4), 364–376（標準化版）' },
-      { url: 'https://pubmed.ncbi.nlm.nih.gov/6745226/', type: 'academic', label: 'Shepard, R. N. & Cooper, L. A. (1982) Mental Images and Their Transformations — MIT Press' },
-      { url: 'https://en.wikipedia.org/wiki/Mental_rotation', type: 'reference', label: 'Wikipedia: Mental rotation — paradigm, findings, sex differences, and neural basis' },
-    ],
-  },
-  {
     id: 'bizlaw-corporate-manslaughter',
     discipline: 'business-law',
     title: '法人の業務上過失致死（コーポレート・マンスローター）',
@@ -29517,20 +29485,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.federalreserve.gov/BOARDDOCS/SPEECHES/2002/20021108/', type: 'government', label: 'Bernanke, B. S. (2002) On Milton Friedman\'s Ninetieth Birthday — Federal Reserve Board Remarks（バーナンキの謝罪スピーチ）' },
       { url: 'https://doi.org/10.1257/mac.2.1.1', type: 'academic', label: 'Romer, C. D. & Romer, D. H. (2013) The Missing Transmission Mechanism in the Money and Great Depression — American Economic Review, 103(3), 66–72（需要ショック独立性の再検討）' },
       { url: 'https://en.wikipedia.org/wiki/A_Monetary_History_of_the_United_States', type: 'reference', label: 'Wikipedia: A Monetary History of the United States — Friedman & Schwartz, Great Depression, Bernanke, monetarism' },
-    ],
-  },
-  {
-    id: 'human-cultural-self-construal-markus',
-    discipline: 'human-science',
-    title: '文化的自己観（マーカス＆北山）',
-    statement: '文化的自己観（cultural self-construal）理論は、マーカス＆北山忍（1991）が提唱した、自己概念の構造が文化によって体系的に異なるという跨文化心理学の枠組みである。独立的自己観（independent self-construal）——北米・西欧に多い、自己を他者から独立した固有・安定的存在として定義——と相互依存的自己観（interdependent self-construal）——東アジア・南アジアに多い、自己を関係・文脈・役割の中で定義——の二類型が基本モデルである。この自己観の違いが認知（基本的帰属の誤りの文化差）・感情表現（感情の表出vs.制御）・動機（個人的成功vs.調和の維持）・認識論（分析的vs.全体論的思考）に系統的に影響することが膨大な実証研究で確認された。近年のメタ分析（Oyserman他 2002）は自己観の文化差が存在する一方、個人内での文脈的変動（situational priming）が大きく、単純な「東vs.西」二分法への批判が高まっている。',
-    keyFigures: 'ヘイゼル・マーカス ／ 北山忍 ／ デフ・オイセルマン ／ 増田貴彦',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1037/0033-295X.98.2.224', type: 'academic', label: 'Markus, H. R. & Kitayama, S. (1991) Culture and the Self: Implications for Cognition, Emotion, and Motivation — Psychological Review, 98(2), 224–253（原典・最多引用クラス）' },
-      { url: 'https://doi.org/10.1037/0033-2909.128.1.3', type: 'academic', label: 'Oyserman, D., Coon, H. M. & Kemmelmeier, M. (2002) Rethinking Individualism and Collectivism — Psychological Bulletin, 128(1), 3–72（メタ分析・批判的検討）' },
-      { url: 'https://doi.org/10.1037/0022-3514.84.1.60', type: 'academic', label: 'Masuda, T. & Nisbett, R. E. (2001) Attending Holistically Versus Analytically: Comparing the Context Sensitivity of Japanese and Americans — Journal of Personality and Social Psychology, 81(5), 922–934（認知スタイルの文化差実証）' },
-      { url: 'https://en.wikipedia.org/wiki/Self-construal', type: 'reference', label: 'Wikipedia: Self-construal — Markus & Kitayama, independent/interdependent, cognitive and emotional consequences' },
     ],
   },
   {
@@ -34859,13 +34813,14 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'human-mental-rotation-shepard-metzler',
     discipline: 'human-science',
-    title: '心的回転——心的イメージのアナログ的変換を示す実験',
-    statement: '心的回転（mental rotation）は、ロジャー・シェパードとジャクリーン・メッツラーが1971年に行った、認知心理学の画期的な実験によって明らかにされた現象で、人が心の中でイメージを回転させて操作する能力を指す。彼らの実験は、心的イメージの性質をめぐる議論に決定的な証拠を与えた。実験では、被験者に、互いに異なる向きで提示された二つの三次元の立体図形のペアを見せ、その二つが、回転させれば一致する同じ形なのか、それとも鏡像（裏返しの関係）で決して一致しない異なる形なのかを、できるだけ速く正確に判断させた。シェパードとメッツラーが見いだした決定的な発見は、被験者が判断にかかる時間（反応時間）が、二つの図形の向きの角度差に比例して直線的に増加することであった。すなわち、二つの図形の向きの違いが大きいほど、判断に長い時間がかかった。この結果は、被験者が、一方の図形を心の中で、あたかも物理的な物体を回転させるかのように、一定の速度で連続的に回転させて、もう一方の図形と向きを合わせてから、両者が一致するかどうかを判断していることを強く示唆する。向きの差が大きければ、それだけ多く回転させねばならず、時間がかかるのである。この発見の理論的な重要性は、心的イメージの性質に関する「イメージ論争（imagery debate）」における意義にある。心的イメージが、対象の空間的・幾何学的な性質を保持した「アナログ的（類似的）」な表象であり、物理的な物体のように連続的に変換できるのか、それとも、命題のような抽象的・記号的な表象にすぎないのかが争われていた。スティーブン・コスリンらはアナログ説を、ゼノン・パイリシンらは命題説を主張した。心的回転の実験は、反応時間が角度差に比例するという結果によって、心的イメージが空間的な構造を保持したアナログ的な表象であり、連続的な変換を受けることを示す有力な証拠となり、アナログ説を支持した。心的回転の能力は、空間認知の重要な要素であり、その個人差や性差、発達、訓練による向上が広く研究され、また神経科学的には、空間処理に関わる頭頂葉の活動を伴うことが示されている。シェパードとメッツラーの心的回転の実験は、心的イメージを客観的な実験で測定可能なものとして確立し、認知心理学における心的表象の研究の礎を築いた古典である。',
-    keyFigures: 'ロジャー・シェパード ／ ジャクリーン・メッツラー ／ スティーブン・コスリン ／ リン・クーパー',
-    asOf: '2026-06-27',
+    title: '心的回転（シェパード＝メッツラー）——反応時間が回転角度に比例することが心的イメージのアナログ的変換を示す',
+    statement:
+      '心的回転（mental rotation）は、ロジャー・シェパードとジャクリーン・メッツラーが1971年の論文『Mental Rotation of Three-Dimensional Objects』（Science 171巻）で示した現象で、人が心の中でイメージを回転させて操作する能力を指す。実験では、異なる向きで提示された二つの三次元立体図形が、回転させれば一致する同じ形か、鏡像で決して一致しない形かを、できるだけ速く正確に判断させた。決定的な発見は、判断に要する反応時間が二つの図形の向きの角度差に比例して直線的に増加したことで、被験者が物理的な物体を回すように一定の速度で連続的に心的イメージを回転させていることを示唆した。この結果は、心的操作が空間的なアナログ表現で行われる証拠と解釈され、コスリンらのアナログ論とピリシンらの命題的符号化説が対立した「イメージ論争」の主要な根拠となった。シェパードとクーパー（1982）は研究を体系化し、その後の研究では課題成績に平均的な男女差が報告され、fMRI により頭頂葉（頭頂間溝）の活性化が確認されて空間的視覚処理との関わりが示された。限界としては、反応時間の線形性が必ずしも連続的回転を意味しないという反論や、練習と方略で成績が大きく変わることが指摘される。応用はパイロットや外科医の選抜・訓練、建築・製造の図面理解に及び、中小企業には図面や組立手順の理解に個人差と訓練効果があることを踏まえ、立体図や実物モデルで説明を補う含意がある。',
+    keyFigures: 'ロジャー・シェパード＆ジャクリーン・メッツラー（1971『Mental Rotation of Three-Dimensional Objects』Science）／ロジャー・シェパード＆リン・クーパー（1982『Mental Images and Their Transformations』MIT Press）／対比: スティーブン・コスリン（アナログ論）／ゼノン・ピリシン（命題的符号化説）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1126/science.171.3972.701', type: 'academic', label: 'Shepard, R.N. & Metzler, J. (1971) Mental Rotation of Three-Dimensional Objects — Science 171(3972)' },
-      { url: 'https://en.wikipedia.org/wiki/Mental_rotation', type: 'reference', label: 'Wikipedia: Mental rotation — Shepard & Metzler, reaction time linear with angle, analog imagery, imagery debate' },
+      { url: 'https://doi.org/10.1126/science.171.3972.701', type: 'academic', label: 'Shepard, R. N. & Metzler, J. (1971) Mental Rotation of Three-Dimensional Objects — Science 171(3972), 701–703（原論文）' },
+      { url: 'https://en.wikipedia.org/wiki/Mental_rotation', type: 'reference', label: 'Wikipedia: Mental rotation — Shepard & Metzler, reaction time linear with angle, imagery debate, sex differences, neural basis' },
     ],
   },
   {
@@ -35432,18 +35387,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://www.worldcat.org/oclc/345922', type: 'academic', label: 'Blake, R.R. & Mouton, J.S. (1964) The Managerial Grid — Gulf Publishing (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Managerial_grid_model', type: 'reference', label: 'Wikipedia: Managerial grid model — Blake & Mouton, concern for production/people, team management 9,9' },
-    ],
-  },
-  {
-    id: 'human-spacing-effect-ebbinghaus',
-    discipline: 'human-science',
-    title: '分散効果——学習を時間的に分散させると記憶が長く定着する',
-    statement: '分散効果（spacing effect、間隔効果）は、同じ総学習時間であっても、学習を時間的に間隔をあけて分散させた方が、一度にまとめて行うよりも記憶が長く定着するという現象で、記憶研究において最も頑健で再現性の高い知見の一つである。この効果は、記憶研究の祖ヘルマン・エビングハウスが1885年の著作『記憶について』で、自らを被験者とする実験を通じて最初に報告した。学習の方法は、大きく二つに分けられる。「集中学習（massed practice）」は、学習を間隔をあけずに一気に詰め込む方法で、試験前夜の一夜漬けがその典型である。「分散学習（distributed practice / spaced practice）」は、学習を複数の機会に分け、それぞれの間に時間的な間隔をおいて繰り返す方法である。分散効果が示すのは、総学習時間が同じであれば、分散学習の方が集中学習よりも、とりわけ長期的な保持において優れているということである。間隔をあけて繰り返し情報に触れることで、その情報はより強固に、より長持ちする形で記憶に刻まれる。たとえば、ある単語を一日に集中して10回復習するよりも、10日間にわたって一日一回ずつ復習する方が、後の記憶の保持は良好である。分散効果の機序については、いくつかの説明が提案されている。間隔をおくことで、学習が異なる文脈や心的状態のもとで行われ、符号化が多様になるという「符号化変動性」説。次の学習機会に、前に学んだ情報をいったん思い出そうとする検索の努力が働き、それが記憶を強化するという「学習段階での検索」説。集中した反復は、二度目以降の情報がすでに意識にあるため処理が浅くなり、定着が弱まるという「集中反復の処理不全」説などである。分散効果は、フラッシュカードや間隔反復ソフトウェア（ライトナー・システムなど）といった効率的な学習システムの基礎をなし、教育心理学において、一夜漬けよりも計画的に間隔をあけて反復する学習が、知識の長期的な定着にはるかに有効であることを示す実践的に重要な知見となっている。',
-    keyFigures: 'ヘルマン・エビングハウス ／ ハリー・バーリック ／ フランク・デンプスター ／ ニコラス・セペダ',
-    asOf: '2026-06-27',
-    sources: [
-      { url: 'https://doi.org/10.1037/0033-2909.132.3.354', type: 'academic', label: 'Cepeda, N.J. et al. (2006) Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis — Psychological Bulletin 132(3)' },
-      { url: 'https://en.wikipedia.org/wiki/Spacing_effect', type: 'reference', label: 'Wikipedia: Spacing effect — Ebbinghaus, distributed vs massed practice, spaced repetition, retention' },
     ],
   },
   {
@@ -38197,19 +38140,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-isolation-effect-restorff',
-    discipline: 'human-science',
-    title: '孤立効果——均質なリスト中の異質項目が優先的に記憶される現象',
-    statement: '孤立効果（isolation effect / von Restorff effect）は、ヘートヴィヒ・フォン・レストルフが1933年に報告した記憶現象で、均質な項目群の中に一つだけ異質な項目（色・サイズ・カテゴリーなどが異なる）が含まれる場合、その異質な項目の記憶が周囲の均質な項目よりも有意に向上する効果である。例えば、黒い文字で書かれた単語リストの中に一語だけ赤い文字の単語を挿入すると、その赤い単語の再生率が飛躍的に高まる。この効果のメカニズムとして、異質項目が注意を自動的に捕捉する「注意仮説」、異質項目が追加的な精緻化符号化を受ける「精緻化仮説」、検索時に異質性が弁別的手がかりとして機能する「弁別性仮説」が提案されている。シュミットの弁別性理論は、孤立効果を項目固有の処理（各項目の個別的特徴の符号化）と関係的処理（項目間の共通特徴の符号化）の相互作用から統一的に説明する。広告デザイン・ウェブUI設計・教育教材における注目要素の配置に応用されている。',
-    keyFigures: 'ヘートヴィヒ・フォン・レストルフ ／ スティーブン・シュミット ／ ラリー・ハント ／ ヘンリー・ロディガー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1007/BF02409636', type: 'academic', label: 'von Restorff, H. (1933) Über die Wirkung von Bereichsbildungen im Spurenfeld — Psychologische Forschung 18(1)' },
-      { url: 'https://en.wikipedia.org/wiki/Von_Restorff_effect', type: 'reference', label: 'Wikipedia: Von Restorff Effect — isolation effect and distinctiveness in memory' },
-      { url: 'https://doi.org/10.1037/h0094069', type: 'academic', label: 'Schmidt, S.R. (1991) Can We Have a Distinctive Theory of Memory? — Memory & Cognition 19(6)' },
-    ],
-  },
-  {
     id: 'bizlaw-minority-oppression-remedy',
     discipline: 'business-law',
     title: '少数株主の抑圧救済——閉鎖会社における不公正行為からの保護法理',
@@ -38816,14 +38746,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'human-spacing-effect-cepeda',
     discipline: 'human-science',
-    title: '間隔効果——分散学習が集中学習より記憶保持を向上させるメカニズム',
-    statement: '間隔効果（Spacing Effect）とは、同じ学習時間を費やす場合、学習セッションを時間的に分散させる方が（分散学習）、集中的に連続して行うよりも（集中学習）、長期的な記憶保持が優れるという頑健な心理学的現象である。エビングハウスが1885年に初めて報告して以来、間隔効果は認知心理学で最も再現性の高い知見の一つとされている。セペダらは2006年の大規模メタ分析で、間隔効果が言語学習、概念学習、運動スキル等の広範な領域で堅牢に再現されることを確認し、最適な学習間隔がテストまでの保持間隔の約10-20%であることを示した。間隔効果のメカニズムについては、検索困難性仮説（より困難な想起がより強い記憶痕跡を形成する）、エンコーディング変動性仮説（異なる文脈でのエンコーディングが多様な検索手がかりを生成する）等の説明が提案されている。この知見はフラッシュカード学習、e-learning、医学教育等における効率的な学習設計に広く応用されている。',
-    keyFigures: 'ヘルマン・エビングハウス ／ ニコラス・セペダ ／ ハル・パシュラー ／ ロバート・ビョーク',
-    asOf: '2026-06-26',
+    title: '間隔効果（分散効果）——同じ学習時間でも間隔をあけて分散させた方が集中して行うより長く記憶に残る',
+    statement:
+      '間隔効果（spacing effect、分散効果）は、総学習時間が同じでも、学習を時間的に間隔をあけて分散させる分散学習の方が、一度にまとめて行う集中学習よりも長期的な記憶保持に優れるという現象で、ヘルマン・エビングハウスが1885年の『記憶について』で自らを被験者とする実験から最初に報告して以来、記憶研究で最も頑健で再現性の高い知見の一つとされる。試験前夜の一夜漬けは集中学習の典型で、ある単語を一日に10回復習するより10日間にわたって一日一回ずつ復習する方が後の保持は良い。ニコラス・セペダ、ハル・パシュラーらは2006年の論文（Psychological Bulletin 132巻3号）で分散学習の研究を大規模に総括し、言語学習・概念学習・運動技能など広い領域で効果が再現されること、そして2008年の論文（Psychological Science）では最適な学習間隔がテストまでの保持期間に依存し、保持期間の約1〜2割の間隔が良いことを示した。機序としては、間隔をあけた想起の方が困難で強い記憶痕跡を作るという検索困難性説、異なる文脈での符号化が多様な検索手がかりを生むという符号化変動性説、集中反復では二回目の処理が手抜きになるという処理欠損説が提案されている。限界としては、最適間隔が課題と保持期間で変わり万能の処方がないこと、短期の試験には集中学習が有利に見えるため学習者が分散学習を過小評価しやすいことがある。フラッシュカードや間隔反復ソフト、医学教育に応用され、中小企業には、新人研修や資格学習、安全手順の教育を一度の集合研修で済ませず、間隔をあけて短く繰り返す設計に変える含意がある。',
+    keyFigures: 'ヘルマン・エビングハウス（1885『記憶について』最初の報告）／ニコラス・セペダ＆ハル・パシュラーら（2006 Psychological Bulletin 総括／2008 Psychological Science 最適間隔）／ロバート・ビョーク（望ましい困難）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1037/0033-2909.132.3.354', type: 'academic', label: 'Cepeda, Pashler, Vul, Wixted & Rohrer (2006) Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis — Psychological Bulletin' },
-      { url: 'https://doi.org/10.1111/j.1467-9280.2008.02209.x', type: 'academic', label: 'Cepeda, Vul, Rohrer, Wixted & Pashler (2008) Spacing Effects in Learning: A Temporal Ridgeline of Optimal Retention — Psychological Science' },
-      { url: 'https://en.wikipedia.org/wiki/Spacing_effect', type: 'reference', label: 'Wikipedia: Spacing effect — 間隔効果の実験的証拠と応用の概説' },
+      { url: 'https://doi.org/10.1037/0033-2909.132.3.354', type: 'academic', label: 'Cepeda, N. J., Pashler, H., Vul, E., Wixted, J. T. & Rohrer, D. (2006) Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis — Psychological Bulletin 132(3), 354–380（分散学習の総括）' },
+      { url: 'https://doi.org/10.1111/j.1467-9280.2008.02209.x', type: 'academic', label: 'Cepeda, N. J., Vul, E., Rohrer, D., Wixted, J. T. & Pashler, H. (2008) Spacing Effects in Learning: A Temporal Ridgeline of Optimal Retention — Psychological Science 19(11)（最適間隔と保持期間の関係）' },
+      { url: 'https://en.wikipedia.org/wiki/Spacing_effect', type: 'reference', label: 'Wikipedia: Spacing effect — Ebbinghaus, distributed vs massed practice, spaced repetition' },
     ],
   },
   {
@@ -39752,19 +39683,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-depletion-ego-model-critique',
-    discipline: 'human-science',
-    title: '自我消耗モデルの再検討——意志力の限界資源仮説とその論争',
-    statement: '自我消耗モデル（ego depletion model）は、バウマイスターらが1998年に提唱した自己制御の理論であり、意志力が限られたエネルギー資源に依存し、自己制御の行使がこの資源を消耗させて後続の自己制御課題のパフォーマンスを低下させるという仮説を主張した。初期の実験では、認知課題の前に誘惑を抑制した被験者がその後の課題で早く諦める傾向が繰り返し報告された。しかし、2016年のカーターらによる大規模事前登録レプリケーション研究（23研究室、約2000名）では自我消耗効果が検出されず、効果量はほぼゼロであった。この再現の失敗は心理学の「再現性の危機」を象徴する事例となった。ジョブ・ドゥイック・ウォルトンは意志力についての暗黙の信念（無限 vs. 有限）が自己制御パフォーマンスを媒介するという代替モデルを提示し、消耗効果が生理的資源の枯渇ではなく動機づけ・信念・注意配分の変化によって説明されうることを論じた。',
-    keyFigures: 'ロイ・バウマイスター ／ マーティン・ハガー ／ キャロル・ドゥエック ／ ヴェロニカ・ジョブ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1037/0022-3514.74.5.1252', type: 'academic', label: 'Baumeister, R. F. et al. (1998) Ego Depletion — Journal of Personality and Social Psychology' },
-      { url: 'https://doi.org/10.1177/1745691616652873', type: 'academic', label: 'Hagger, M. S. et al. (2016) A Multilab Preregistered Replication of the Ego-Depletion Effect — Perspectives on Psychological Science' },
-      { url: 'https://en.wikipedia.org/wiki/Ego_depletion', type: 'reference', label: 'Wikipedia: Ego depletion — willpower resource model and replication debate overview' },
-    ],
-  },
-  {
     id: 'bizlaw-waiver-doctrine-contract',
     discipline: 'business-law',
     title: '権利放棄の法理——契約上の権利の意図的不行使と法的効果',
@@ -40106,14 +40024,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'human-self-construal-markus-kitayama',
     discipline: 'human-science',
-    title: '自己解釈理論——相互独立的・相互協調的自己観と文化的認知の基盤',
-    statement: '自己解釈（self-construal）理論は、マーカスと北山が1991年の画期的論文で提唱した文化心理学の中核的枠組みである。彼らは、西洋文化圏で優勢な相互独立的自己観（independent self-construal）と東アジア文化圏で優勢な相互協調的自己観（interdependent self-construal）を区別し、この自己観の差異が認知・感情・動機づけの広範な心理過程を体系的に規定することを論じた。相互独立的自己は個人の内的属性（能力・選好・権利）を自己の核とし、相互協調的自己は社会的関係と役割の中に自己を位置づける。この枠組みはトリアンディスの個人主義・集団主義論を個人レベルの自己認知に翻訳し、比較文化研究における認知・感情・行動の文化差を統一的に説明する理論装置として広く採用されている。',
-    keyFigures: 'ヘイゼル・マーカス ／ 北山忍 ／ ハリー・トリアンディス ／ スティーヴン・ハイネ',
-    asOf: '2026-06-26',
+    title: '文化的自己観（マーカス＝北山）——相互独立的自己観と相互協調的自己観が認知・感情・動機づけを体系的に方向づける',
+    statement:
+      '文化的自己観（self-construal）の理論は、ヘイゼル・マーカスと北山忍が1991年の論文『Culture and the Self: Implications for Cognition, Emotion, and Motivation』（Psychological Review 98巻2号）で提唱した文化心理学の中核的枠組みで、自己概念の構造が文化によって体系的に異なると論じる。北米や西欧で優勢な相互独立的自己観は、自己を他者から独立した固有で安定した存在と捉え、能力・選好・権利といった内的属性を自己の核とする。東アジアなどで優勢な相互協調的自己観は、自己を関係・文脈・役割の中に位置づけ、他者との調和や期待への応答を自己の一部とする。この違いが、基本的帰属の誤りの文化差、感情の表出と抑制、個人的成功か調和の維持かという動機づけ、分析的思考と包括的思考の差など広範な心理過程を方向づけることが多数の実証研究で示され、トリアンディスの個人主義・集団主義論を個人の自己認知の水準に翻訳した理論として広く採用された。一方でオイサーマンら（2002）のメタ分析は、自己観の文化差は存在するものの個人内の文脈による変動が大きく、単純な「東対西」の二分法には無理があると批判し、プライミングで自己観を一時的に切り替えられることも示された。限界としては、国を文化の単位とする粗さ、測定尺度の妥当性、文化内の多様性の軽視が指摘される。中小企業には、海外の顧客や従業員、また国内でも世代や職場で異なる自己観を前提に、評価・称賛・叱責の伝え方（個人を名指すか集団の成果として扱うか）を変える含意がある。',
+    keyFigures: 'ヘイゼル・マーカス＆北山忍（1991『Culture and the Self』Psychological Review）／対比: ダフナ・オイサーマンら（2002 メタ分析による批判）／ハリー・トリアンディス（個人主義・集団主義）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1037/0033-295X.98.2.224', type: 'academic', label: 'Markus, H. R. & Kitayama, S. (1991) Culture and the Self — Psychological Review' },
-      { url: 'https://doi.org/10.1146/annurev-psych-010213-115123', type: 'academic', label: 'Markus, H. R. & Kitayama, S. (2010) Cultures and Selves — Perspectives on Psychological Science' },
-      { url: 'https://en.wikipedia.org/wiki/Self-construal', type: 'reference', label: 'Wikipedia: Self-construal — independent and interdependent self overview' },
+      { url: 'https://doi.org/10.1037/0033-295X.98.2.224', type: 'academic', label: 'Markus, H. R. & Kitayama, S. (1991) Culture and the Self: Implications for Cognition, Emotion, and Motivation — Psychological Review 98(2), 224–253（原論文）' },
+      { url: 'https://doi.org/10.1037/0033-2909.128.1.3', type: 'academic', label: 'Oyserman, D., Coon, H. M. & Kemmelmeier, M. (2002) Rethinking Individualism and Collectivism: Evaluation of Theoretical Assumptions and Meta-Analyses — Psychological Bulletin 128(1)（二分法への批判）' },
+      { url: 'https://en.wikipedia.org/wiki/Self-construal', type: 'reference', label: 'Wikipedia: Self-construal — Markus & Kitayama, independent/interdependent self, priming' },
     ],
   },
   {
@@ -40237,14 +40156,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'human-affective-forecasting-wilson-gilbert',
     discipline: 'human-science',
-    title: '感情予測——将来の感情状態の体系的予測バイアス',
-    statement: 'ティモシー・ウィルソンとダニエル・ギルバートが2003年に体系化した感情予測（affective forecasting）研究は、人間が将来の出来事に対する自身の感情反応——その種類・強度・持続期間——を予測する際に示す体系的なバイアスを分析する。最も頑健な知見は「インパクト・バイアス」——将来の出来事（良い出来事も悪い出来事も）の感情的影響の持続期間を過大評価する傾向——であり、その主要因として「焦点化の錯覚」（focalism: 予測時に対象出来事に注意を集中し他の同時的経験を無視する）と「免疫システム無視」（immune neglect: 心理的免疫システム——合理化・意味づけ・適応——の作用を予測に組み込まない）が特定された。ギルバートらの実証研究は、テニュア審査・選挙結果・恋人との別離等の多様な文脈でインパクト・バイアスを確認した。カーネマンの「経験する自己と記憶する自己」の区別はこの研究と共鳴し、ウェルビーイング測定の方法論的再検討を促している。',
-    keyFigures: 'ダニエル・ギルバート ／ ティモシー・ウィルソン ／ ダニエル・カーネマン ／ ジョージ・ローウェンスタイン ／ デイル・グリフィン',
-    asOf: '2026-06-26',
+    title: '感情予測（ウィルソン＝ギルバート）——将来の出来事が自分の感情に与える影響の予測は、強さと持続を過大評価する方向に体系的に歪む',
+    statement:
+      '感情予測（affective forecasting）は、人が将来の出来事に対する自分の感情反応の種類・強さ・持続を予測する過程を指し、ティモシー・ウィルソンとダニエル・ギルバートが2003年の論文『Affective Forecasting』（Advances in Experimental Social Psychology 35巻）で研究領域として体系化した。最も頑健な知見はインパクト・バイアスで、良い出来事の喜びも悪い出来事の苦しみも、その強さと持続期間を実際より大きく見積もる。主な原因として、予測時に対象の出来事だけに注意を集中し同時に続く他の生活の側面を無視する焦点化（focalism）と、合理化や意味づけによって不快な感情を和らげる心理的免疫システムの働きを予測に組み込まない免疫無視（immune neglect、ギルバートら1998）が特定された。ギルバートらはテニュア審査や選挙結果、恋人との別離など多様な文脈でこのバイアスを確認し、カーネマンとセイラー（1991）が論じた効用の予測と経験のずれ、カーネマンの「経験する自己と記憶する自己」の区別とも響き合う。限界としては、効果の大きさが文脈や測定法に依存すること、免疫システムの概念が事後的な説明に流れやすいことが指摘される。応用は医療の意思決定（治療後の生活の質の予測）、幸福指標を用いる政策設計、購買後の満足の予測に及び、中小企業には、顧客が購入前に想像する満足も自分が新規事業の成否に感じる感情も過大に見積もられがちだと知り、意思決定を一時の感情予測でなく実績データで補う含意がある。',
+    keyFigures: 'ティモシー・ウィルソン＆ダニエル・ギルバート（2003『Affective Forecasting』Advances in Experimental Social Psychology）／ダニエル・ギルバートら（1998 免疫無視 JPSP）／対比: ダニエル・カーネマン＆リチャード・セイラー（1991 効用の予測と経験）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1016/S0065-2601(03)01006-2', type: 'academic', label: 'Wilson, T. D. & Gilbert, D. T. (2003) "Affective Forecasting" — Advances in Experimental Social Psychology' },
-      { url: 'https://doi.org/10.1037/0022-3514.75.3.617', type: 'academic', label: 'Gilbert, D. T. et al. (1998) "Immune Neglect" — Journal of Personality and Social Psychology' },
-      { url: 'https://en.wikipedia.org/wiki/Affective_forecasting', type: 'reference', label: 'Wikipedia: Affective forecasting — 感情予測バイアスの理論と実証' },
+      { url: 'https://doi.org/10.1016/S0065-2601(03)01006-2', type: 'academic', label: 'Wilson, T. D. & Gilbert, D. T. (2003) Affective Forecasting — Advances in Experimental Social Psychology 35, 345–411（研究領域の体系化）' },
+      { url: 'https://doi.org/10.1037/0022-3514.75.3.617', type: 'academic', label: 'Gilbert, D. T., Pinel, E. C., Wilson, T. D., Blumberg, S. J. & Wheatley, T. P. (1998) Immune Neglect: A Source of Durability Bias in Affective Forecasting — Journal of Personality and Social Psychology 75(3)（免疫無視）' },
+      { url: 'https://doi.org/10.1111/j.0963-7214.2004.01501003.x', type: 'academic', label: 'Gilbert, D. T., Lieberman, M. D., Morewedge, C. K. & Wilson, T. D. (2004) The Peculiar Longevity of Things Not So Bad — Psychological Science 15(1)（軽微な出来事ほど長引く逆説）' },
+      { url: 'https://econpapers.repec.org/article/aeaaecrev/v_3a81_3ay_3a1991_3ai_3a2_3ap_3a341-46.htm', type: 'academic', label: 'Kahneman, D. & Thaler, R. H. (1991) Economic Analysis and the Psychology of Utility: Applications to Compensation Policy — American Economic Review 81(2)（効用の予測と経験のずれ）' },
+      { url: 'https://en.wikipedia.org/wiki/Affective_forecasting', type: 'reference', label: 'Wikipedia: Affective forecasting — Wilson & Gilbert, impact bias, focalism, immune neglect' },
     ],
   },
   {
@@ -43120,18 +43042,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-ego-depletion-baumeister-willpower',
-    discipline: 'human-science',
-    title: '自我消耗と意志力——バウマイスターの有限資源モデルとその再現可能性論争',
-    statement: '自我消耗（ego depletion）とは，意志力（self-control）が限られた心理的資源であり，一方の課題で使い果たすと他の課題での自己制御能力が低下するという，ロイ・バウマイスターらが1998年の論文で提唱した理論である。グルコースモデルは，脳のエネルギー（血糖）が意志力の生理的基盤であり，消耗状態で補給すると回復するという説を加え，広く普及した。「ラディッシュとクッキー」実験など多数の実験的証拠が示された一方，2010年代の再現可能性運動（Open Science Collaboration）で「自我消耗は再現できない」という大規模追試研究が相次ぎ，自我消耗論争（ego depletion debate）が生じた。現在では，限界資源モデルの単純版は批判されながらも，認知的努力が動機づけ・信念・疲労感と複雑に相互作用するという修正版理解が展開されている。健康行動・ダイエット・反社会的行動への応用では実践的知見（休憩・報酬設計）が有効とされる。',
-    keyFigures: 'ロイ・バウマイスター ／ エレン・ブラッツラフスキー ／ マーク・ムレイベン ／ マーティン・ヘイガー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1037/0022-3514.74.5.1252', type: 'academic', label: 'Baumeister, R.F. et al. (1998) Ego Depletion — JPSP' },
-      { url: 'https://en.wikipedia.org/wiki/Ego_depletion', type: 'reference', label: 'Wikipedia: Ego depletion — willpower research and controversy' },
-    ],
-  },
-  {
     id: 'bizlaw-product-safety-regulations-liability',
     discipline: 'business-law',
     title: '製品安全規制と不法行為責任——PL法・消費者保護法制と欧州製品安全指令',
@@ -43886,19 +43796,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.2307/2549973', type: 'academic', label: 'Lerner (1943) Functional Finance and the Federal Debt — Social Research' },
       { url: 'https://doi.org/10.1057/9781137539922', type: 'academic', label: 'Wray (2015) Modern Money Theory — Palgrave Macmillan' },
       { url: 'https://en.wikipedia.org/wiki/Functional_finance', type: 'reference', label: 'Wikipedia: Functional finance — 機能的財政論とMMTの系譜' },
-    ],
-  },
-  {
-    id: 'human-alexithymia-emotional-regulation',
-    discipline: 'human-science',
-    title: 'アレキシサイミアと感情調節障害——感情の言語化困難・身体化・心身症との関連',
-    statement: 'アレキシサイミア（失感情症）はピーター・シフネオスが1973年に命名した概念で、自分の感情状態を識別・言語化する能力の著しい低下、想像・空想の貧困、外向き思考への傾向を特徴とする感情処理様式である。一般人口の約10%に見られ、身体化障害・過敏性腸症候群・心身症・摂食障害との高い共起性が報告されている。神経科学的にはアミグダラ—前帯状皮質—mPFCの感情-認知統合回路の機能不全が関与するとされる。自閉スペクトラム症（ASD）との重複率が高く（約50%）、ASDに見られる感情理解困難の神経多様性的側面として近年再解釈されている。治療には感情的マインドフルネス・感情表現ライティング・身体感覚フォーカシングなどが用いられ、感情調節スキルの段階的構築が目標となる。',
-    keyFigures: 'ピーター・シフネオス ／ グレアム・テイラー ／ ジョン・デイフィー ／ バーバラ・マクドゥーガル',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1159/000286529', type: 'academic', label: 'Sifneos (1973) The Prevalence of Alexithymic Characteristics in Psychosomatic Patients — Psychotherapy & Psychosomatics' },
-      { url: 'https://doi.org/10.1176/appi.ajp.163.2.198', type: 'academic', label: 'Taylor, Bagby & Parker (2000) The 20-Item Toronto Alexithymia Scale — Journal of Psychosomatic Research' },
-      { url: 'https://en.wikipedia.org/wiki/Alexithymia', type: 'reference', label: 'Wikipedia: Alexithymia — アレキシサイミアの概念と研究動向' },
     ],
   },
   {
@@ -45210,18 +45107,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1086/260062', type: 'academic', label: 'Black & Scholes (1973) The Pricing of Options and Corporate Liabilities — Journal of Political Economy 81(3)' },
       { url: 'https://en.wikipedia.org/wiki/Black%E2%80%93Scholes_model', type: 'reference', label: 'Wikipedia: Black-Scholes model — option pricing, risk-neutral measure, volatility smile, Greeks' },
-    ],
-  },
-  {
-    id: 'human-alexithymia-emotional-awareness',
-    discipline: 'human-science',
-    title: 'アレキシシミアと感情認識障害——心身医学・感情神経科学の視点',
-    statement: 'アレキシシミア（alexithymia）とは、ピーター・シフネオスが1972年に命名した概念で、自己の感情を識別・表現することの困難（感情の言語化障害）・身体感覚と感情の混同・想像力の貧困・外志向的思考を特徴とする人格特性を指す。「多倫多アレキシシミア尺度（TAS-20）」が国際的測定ツールとして普及しており、一般集団の10〜15%程度が高アレキシシミアを示すと推定される。アレキシシミアは身体化障害（psychosomatic disorder）・摂食障害・物質依存・PTSD・自閉スペクトラム症（ASD）との高い共起が実証されており、感情調節困難の一形態として理解される。神経科学的には島皮質（insula）や帯状皮質（ACC）の機能的変化が関連するとされ、インターセプション（身体内部感覚の知覚）の鈍化が感情認識の基盤的障害である可能性が検討されている。治療的アプローチとして感情焦点化療法・身体志向心理療法・マインドフルネス介入が感情認識能力（emotional awareness）の向上に効果を示す。',
-    keyFigures: 'ピーター・シフネオス ／ グレアム・テイラー ／ マイケル・バグビー ／ ノルベルト・フリーダー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1097/00005053-197203000-00004', type: 'academic', label: 'Sifneos (1972) Short-Term Psychotherapy and Emotional Crisis — Harvard University Press' },
-      { url: 'https://en.wikipedia.org/wiki/Alexithymia', type: 'reference', label: 'Wikipedia: Alexithymia — Sifneos, TAS-20, interoception, insula, somatic disorders, ASD' },
     ],
   },
   {
@@ -47126,20 +47011,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-affective-forecasting-wilson',
-    discipline: 'human-science',
-    title: '情動予測バイアス（ウィルソン＆ギルバート）',
-    statement: '情動予測（affective forecasting）は、ティモシー・ウィルソン＆ダニエル・ギルバート（2003）が体系化した、人間が将来の出来事が自分の感情・幸福に与える影響を予測する過程を指す概念であり、この予測が体系的に誤っている「情動予測バイアス」の研究領域である。四つの主要バイアスが確認されている：①過大評価バイアス（impact bias）——良い出来事の喜びと悪い出来事の苦しみの強度・持続を過大評価する、②焦点化バイアス（focalism）——将来の一つの側面に過度に注目し、他の生活側面を無視する、③感情的免疫（psychological immune system）——適応的自己修正（rationalization・意味付け）能力を過小評価する、④持続期間バイアス（duration neglect）——感情の持続時間を誤って見積もる——がある。「免疫無視（immune neglect）」——心理的適応機能を予測に含めない——が過大評価バイアスの主要メカニズムとされる。行動経済学・政策デザイン（幸福指標）・医療意思決定（治療後の生活の質予測）・消費者行動（購買後幸福の予測）への応用が広い。',
-    keyFigures: 'ティモシー・ウィルソン ／ ダニエル・ギルバート ／ カーネマン ／ シーナ・アイエンガー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1016/S0065-2601(03)01006-2', type: 'academic', label: 'Wilson, T. D. & Gilbert, D. T. (2003) Affective Forecasting — Advances in Experimental Social Psychology, 35, 345–411（情動予測研究の体系的レビュー）' },
-      { url: 'https://doi.org/10.1111/j.0963-7214.2004.01501003.x', type: 'academic', label: 'Gilbert, D. T. et al. (2004) The Peculiar Longevity of Things Not So Bad — Psychological Science, 15(1), 14–19（免疫無視の実証）' },
-      { url: 'https://econpapers.repec.org/article/aeaaecrev/v_3a81_3ay_3a1991_3ai_3a2_3ap_3a341-46.htm', type: 'academic', label: 'Kahneman, D. & Thaler, R. H. (1991) Economic Analysis and the Psychology of Utility: Applications to Compensation Policy — American Economic Review 81(2) Papers & Proceedings, 341-346' },
-      { url: 'https://en.wikipedia.org/wiki/Affective_forecasting', type: 'reference', label: 'Wikipedia: Affective forecasting — Wilson & Gilbert, impact bias, focalism, immune neglect, duration bias' },
-    ],
-  },
-  {
     id: 'bizlaw-capital-reduction-procedure',
     discipline: 'business-law',
     title: '資本金減少（減資）手続と債権者保護',
@@ -47268,15 +47139,14 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'human-alexithymia-sifneos',
     discipline: 'human-science',
-    title: 'アレキシサイミア（感情失認）（シフネオス）',
-    statement: 'アレキシサイミア（alexithymia; 感情失認）は、ピーター・シフネオス（1973）が提唱した、①感情状態の識別・言語化の困難、②身体感覚と感情の区別の困難、③想像力の乏しさ・外向き思考（外部指向的思考: externally-oriented thinking）——を特徴とするパーソナリティ特性である。「アレキシサイミア（alexithymia）」はギリシャ語でa（なし）＋lexis（言葉）＋thymos（感情）を意味する造語で、心身症患者に多く観察されると報告した。テイラー他（1985）の「多倫多アレキシサイミア尺度（Toronto Alexithymia Scale; TAS-20）」は国際的に最も広く使用される測定ツールであり、20項目の自己報告尺度として確立されている。アレキシサイミアは自閉スペクトラム症（ASD）・PTSD・うつ病・摂食障害・物質依存と高い併存率を示し、感情調節障害の根底にある共通メカニズムとして研究されている。神経科学研究では前頭葉—辺縁系回路の機能的非効率性（reduced connectivity in the anterior insula and ACC）との関連が示唆されている。',
-    keyFigures: 'ピーター・シフネオス ／ グレアム・テイラー ／ ジョン・バグビー ／ ジョルジオ・ネムイア',
-    asOf: '2026-06-26',
+    title: 'アレキシサイミア（失感情症・シフネオス）——自分の感情を識別し言葉にすることが難しく、身体感覚と区別できず、外向きの思考に傾く特性',
+    statement:
+      'アレキシサイミア（alexithymia、失感情症）は、精神科医ピーター・シフネオスがギリシャ語の「a（欠如）・lexis（言葉）・thymos（感情）」から1972年に造語し、1973年の論文（Psychotherapy and Psychosomatics）で心身症患者に多く見られることを報告したパーソナリティ特性である。特徴は、自分の感情状態を識別し言語化することの困難、身体感覚と感情の区別の困難、空想や想像の乏しさ、そして内面より外的な事柄に向かう外向的思考の四つで、感情処理の様式として理解される。グレアム・テイラー、マイケル・バグビー、ジェームズ・パーカーらが開発した20項目のトロント・アレキシサイミア尺度（TAS-20）が国際的に最も広く使われる自己報告尺度で、一般人口のおよそ1割が高い値を示すとされる。身体化障害・過敏性腸症候群などの心身症、摂食障害、PTSD、うつ病、物質依存との併存率が高く、自閉スペクトラム症との重複も大きいことから、感情調節困難の根底にある共通の機構として研究されている。神経科学的には島皮質や前帯状皮質を含む感情と認知の統合回路の機能変化、身体内部感覚（内受容感覚）の鈍さとの関連が検討され、治療には感情焦点化療法、身体志向の心理療法、マインドフルネス介入、感情表現ライティングなどが用いられる。限界としては、特性か状態かの区別、自己報告尺度が「自分の感情が分からない人の自己報告」に依存する矛盾、文化差が指摘される。中小企業には、ストレスを言葉にできない従業員が不調を身体症状として訴えることがあると知り、産業医や相談窓口につなぐ導線を用意し、感情の表現を求めるより行動や体調の変化に注意を払うという含意がある。',
+    keyFigures: 'ピーター・シフネオス（1972 造語／1973 心身症患者の有病率報告）／グレアム・テイラー＆マイケル・バグビー＆ジェームズ・パーカー（TAS-20 尺度）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1159/000286529', type: 'academic', label: 'Sifneos, P. E. (1973) The Prevalence of "Alexithymic" Characteristics in Psychosomatic Patients — Psychotherapy and Psychosomatics, 22(2–6), 255–262（アレキシサイミア原典）' },
-      { url: 'https://doi.org/10.1037/0022-3514.70.3.525', type: 'academic', label: 'Taylor, G. J., Bagby, R. M. & Parker, J. D. (1991) The Alexithymia Construct: A Potential Paradigm for Psychosomatic Medicine — Psychosomatics, 32(2), 153–164（TAS尺度と理論体系化）' },
-      { url: 'https://doi.org/10.1016/j.concog.2010.11.001', type: 'academic', label: 'Bird, G. & Cook, R. (2013) Mixed Emotions: The Contribution of Alexithymia to the Emotional Symptoms of Autism — Translational Psychiatry, 3(7), e285（ASDとアレキシサイミアの関係）' },
-      { url: 'https://en.wikipedia.org/wiki/Alexithymia', type: 'reference', label: 'Wikipedia: Alexithymia — Sifneos, TAS-20, emotional regulation, ASD, psychosomatic' },
+      { url: 'https://doi.org/10.1159/000286529', type: 'academic', label: 'Sifneos, P. E. (1973) The Prevalence of \'Alexithymic\' Characteristics in Psychosomatic Patients — Psychotherapy and Psychosomatics 22(2–6), 255–262（概念の初期報告）' },
+      { url: 'https://en.wikipedia.org/wiki/Alexithymia', type: 'reference', label: 'Wikipedia: Alexithymia — Sifneos, TAS-20, interoception, comorbidity with ASD and psychosomatic disorders' },
     ],
   },
   {
@@ -47436,15 +47306,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'human-ego-depletion-baumeister',
     discipline: 'human-science',
-    title: '自我消耗理論（バウマイスター）',
-    statement: '自我消耗（ego depletion）は、ロイ・バウマイスター＆ティエルニー（1998/2011）が提唱した、意志力（willpower）や自己制御能力が有限の心理的資源に依存し、一つの課題での自己制御は後続の課題での自己制御能力を低下させるという理論である。ガソリンタンク比喩——意志力は筋肉のように使えば疲弊するが、訓練で強化できる——が広く普及した。バウマイスター＆ティエルニー（2011）の『意志力の科学（Willpower）』はこれを一般書として展開した。実験パラダイムとして「ラディッシュ vs クッキー課題」——クッキーを前にラディッシュを食べることで自己制御資源を消耗した後、難問への持続時間が短縮される——が典型例として引用された。ただし2016年以降の大規模再現研究（マニー・ニルベ等; Psychological Science）で再現失敗が相次ぎ、「再現性危機（replication crisis）」の代表的事例となった。批判として、グランタ＆ホフマン（2017）等は自我消耗効果は確信度・動機づけの変化で説明できると論じており、現在はオリジナル効果の程度と境界条件を精緻化する研究が続いている。',
-    keyFigures: 'ロイ・バウマイスター ／ ジョン・ティエルニー ／ エフロン・ムラベン ／ クリストファー・グランタ',
-    asOf: '2026-06-26',
+    title: '自我消耗（バウマイスター）——意志力は使うと一時的に枯渇する有限の資源だとする強さモデルと、その再現性論争',
+    statement:
+      '自我消耗（ego depletion）は、自己制御や意志力が筋肉のように使うと一時的に枯渇する有限の資源であり、ある課題で自己制御を行使すると後続の別の課題での遂行が低下するという仮説（自己制御の強さモデル）で、ロイ・バウマイスター、エレン・ブラツラフスキー、マーク・ムラベン、ダイアン・タイスが1998年の論文『Ego Depletion: Is the Active Self a Limited Resource?』（Journal of Personality and Social Psychology 74巻5号）で提唱した。代表的な二重課題実験では、クッキーを我慢してラディッシュを食べた群が後続の解けないパズルに粘る時間が約21分から約8分へ短くなった。のちに血糖を資源とするグルコース説が加わりバウマイスターとジョン・ティエルニーの一般書（2011）で広く知られたが、生物学的妥当性は批判された。2010年代の再現性の危機の中で、カーターとマカロー（2014）は出版バイアスによって先行メタ分析の効果量が過大評価されていると指摘し、ハガーら（2016）の23研究室・約2,100名による事前登録の多施設追試では効果がほぼゼロで、自我消耗は再現性論争の代表例となった。ジョブ、ドゥエック、ウォルトン（2010）は意志力についての暗黙の信念が消耗の現れ方を左右することを示し、インズリヒトらは動機づけと注意の配分の変化として説明する修正モデルを提示した。効果の存否・大きさ・境界条件は現在も論争中である。中小企業には、休憩や報酬の設計が自己制御を要する作業の質を左右しうる一方、「意志力の枯渇」を科学的定説として研修や評価に持ち込まないという含意がある。',
+    keyFigures: 'ロイ・バウマイスター＆エレン・ブラツラフスキー＆マーク・ムラベン＆ダイアン・タイス（1998 JPSP 強さモデル）／ロイ・バウマイスター＆ジョン・ティエルニー（2011『Willpower』）／対比: マーティン・ハガーら（2016 多施設追試）／エヴァン・カーター＆マイケル・マカロー（2014 出版バイアス）／ヴェロニカ・ジョブ＆キャロル・ドゥエック＆グレゴリー・ウォルトン（2010 暗黙の信念）／マイケル・インズリヒト（動機づけ・注意モデル）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1037/0022-3514.74.5.1252', type: 'academic', label: 'Baumeister, R. F. et al. (1998) Ego Depletion: Is the Active Self a Limited Resource? — Journal of Personality and Social Psychology, 74(5), 1252–1265（原典）' },
-      { url: 'https://doi.org/10.1177/0956797616631357', type: 'academic', label: 'Hagger, M. S. et al. (2016) A Multilab Preregistered Replication of the Ego-Depletion Effect — Perspectives on Psychological Science, 11(4), 546–573（大規模再現研究）' },
-      { url: 'https://doi.org/10.1037/pspa0000116', type: 'academic', label: 'Inzlicht, M., Schmeichel, B. J. & Macrae, C. N. (2014) Why Self-Control Seems (But May Not Be) Limited — Trends in Cognitive Sciences, 18(3), 127–133（批判的理論的展開）' },
-      { url: 'https://en.wikipedia.org/wiki/Ego_depletion', type: 'reference', label: 'Wikipedia: Ego depletion — Baumeister, limited resource model, replication crisis, willpower' },
+      { url: 'https://doi.org/10.1037/0022-3514.74.5.1252', type: 'academic', label: 'Baumeister, R. F., Bratslavsky, E., Muraven, M. & Tice, D. M. (1998) Ego Depletion: Is the Active Self a Limited Resource? — Journal of Personality and Social Psychology 74(5), 1252–1265（原論文・ラディッシュとクッキー）' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/1745691616652873', type: 'academic', label: 'Hagger, M. S. et al. (2016) A Multilab Preregistered Replication of the Ego-Depletion Effect — Perspectives on Psychological Science 11(4)（23 研究室の追試で効果ほぼゼロ）' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/25126083/', type: 'academic', label: 'Carter, E. C. & McCullough, M. E. (2014) Publication bias and the limited strength model of self-control: has the evidence for ego depletion been overestimated? — Frontiers in Psychology 5（出版バイアスの指摘）' },
+      { url: 'https://en.wikipedia.org/wiki/Ego_depletion', type: 'reference', label: 'Wikipedia: Ego depletion — strength model, glucose hypothesis, replication debate' },
     ],
   },
   {

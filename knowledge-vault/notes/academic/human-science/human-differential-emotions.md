@@ -33,9 +33,8 @@ aliases:
 ## 関連概念
 - [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同じ思想家
 - [[infosoc-affective-computing-picard|アフェクティブコンピューティング——ピカードの感情認識AI論と機械が感情を扱う倫理的課題]] — 同じ思想家
-- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 同分野の近傍
 - [[human-cognitive-appraisal|認知的評価理論（感情）]] — 同分野の近傍
-- [[human-self-discrepancy-higgins|自己不一致理論——現実自己と自己指針の乖離が異なる感情を生む]] — 同分野の近傍
+- [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,8 +33,8 @@ aliases:
 
 ## 関連概念
 - [[infosoc-platform-capitalism|プラットフォーム資本主義]] — 出典を共有
+- [[econ-rational-partisan-theory-alesina|合理的パルチザン理論——選挙の不確実性が政治的景気循環を生む]] — 同分野の近傍
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

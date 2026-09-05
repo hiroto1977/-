@@ -38,8 +38,8 @@ aliases:
 - [[human-action-observation-mismatch|アクション・オブザベーション・ミスマッチ（Action-Observation Mismatch）]] — 同分野の近傍
 - [[human-adult-attachment-hazan-shaver|成人愛着スタイル（ハザン＝シェイバー）——乳児期の愛着理論を恋愛関係へ拡張し、安定・不安・回避の個人差で親密な関係を説明する]] — 同分野の近傍
 - [[human-akinetopsia-motion-blindness|運動盲（アキネトプシア）——動きが見えなくなる神経心理障害]] — 同分野の近傍
+- [[human-alexithymia-sifneos|アレキシサイミア（失感情症・シフネオス）——自分の感情を識別し言葉にすることが難しく、身体感覚と区別できず、外向きの思考に傾く特性]] — 同分野の近傍
 - [[human-alien-hand-syndrome|エイリアンハンド症候群——手が自分の意志とは無関係に動く]] — 同分野の近傍
-- [[human-anosognosia|病態失認（アノソグノシア / Anosognosia）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

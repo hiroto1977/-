@@ -31,12 +31,12 @@ aliases:
 - [Wikipedia「Impact bias」](https://en.wikipedia.org/wiki/Impact_bias) `リファレンス`
 
 ## 関連概念
-- [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — 語彙が近い
-- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 語彙が近い
+- [[human-affective-forecasting-wilson-gilbert|感情予測（ウィルソン＝ギルバート）——将来の出来事が自分の感情に与える影響の予測は、強さと持続を過大評価する方向に体系的に歪む]] — 語彙が近い
 - [[human-end-of-history-illusion|歴史の終わり錯覚]] — 同じ思想家
 - [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 同じ思想家
 - [[human-mind-wandering|マインドワンダリング]] — 同じ思想家
 - [[human-defensive-attribution-hypothesis|防衛的帰属仮説（defensive attribution hypothesis）——事故の責任帰属が自己防衛動機で歪むとする社会心理学の説]] — 同分野の近傍
+- [[human-peak-end-rule-kahneman|ピーク・エンドの法則——経験の記憶における最高点と終了時の偏重]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

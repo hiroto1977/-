@@ -39,8 +39,8 @@ aliases:
 - [[infosoc-political-polarization|政治的分極化]] — 同じ思想家
 - [[infosoc-third-wave|第三の波（トフラー）]] — 同じ思想家
 - [[human-belief-perseverance|信念の保続（信念固執）]] — 同じ思想家
-- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 同じ思想家
 - [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]] — 同じ思想家
+- [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

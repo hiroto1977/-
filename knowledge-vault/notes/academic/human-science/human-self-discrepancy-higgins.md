@@ -32,7 +32,7 @@ E・トーリー・ヒギンズ ／ ティモシー・ストローマン ／ ジ
 ## 関連概念
 - [[human-possible-selves-markus|可能自己理論——なりたい自己・なりうる自己の動機づけ機能]] — 同じ思想家
 - [[mgmt-regulatory-focus-theory-higgins|制御焦点理論——促進焦点と予防焦点が動機づけと意思決定を形成するメカニズム]] — 同じ思想家
-- [[human-differential-emotions|分化感情理論（ディファレンシャル・エモーションズ理論）]] — 同分野の近傍
+- [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

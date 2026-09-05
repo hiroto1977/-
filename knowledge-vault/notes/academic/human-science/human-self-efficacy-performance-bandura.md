@@ -39,7 +39,6 @@ aliases:
 - [[mgmt-prosocial-motivation-grant|向社会的動機付けと他者指向的動機の組織行動論（グラント）]] — 同じ思想家
 - [[human-mindset|マインドセット（成長/固定）]] — 同分野の近傍
 - [[human-stress-immune-axis|ストレス-免疫軸：HPA軸を介した心理的ストレスと免疫機能の双方向的調節機構]] — 同分野の近傍
-- [[human-growth-mindset|マインドセット理論（ドゥエック）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

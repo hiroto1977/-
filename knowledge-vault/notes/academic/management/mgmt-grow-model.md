@@ -33,6 +33,7 @@ aliases:
 - [[mgmt-sensegiving-gioia|センスギビング理論（ジョイア＆チッタンパリー）]] — 語彙が近い
 - [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]] — 同分野の近傍
 - [[mgmt-situational-leadership|状況的リーダーシップ理論]] — 同分野の近傍
+- [[mgmt-mbo|目標による管理（MBO）]] — 同分野の近傍
 - [[mgmt-net-promoter-score|ネット・プロモーター・スコア（NPS）]] — 同分野の近傍
 - [[mgmt-bureaucracy|官僚制（ウェーバー）]] — 同分野の近傍
 

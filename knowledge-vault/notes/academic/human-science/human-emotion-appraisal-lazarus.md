@@ -35,6 +35,7 @@ aliases:
 - [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]] — 同じ思想家
 - [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 同じ思想家
 - [[human-appraisal-theory-of-emotion|感情の評価理論]] — 同分野の近傍
+- [[human-differential-emotions|分化感情理論（ディファレンシャル・エモーションズ理論）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

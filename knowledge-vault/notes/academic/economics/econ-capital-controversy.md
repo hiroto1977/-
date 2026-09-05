@@ -31,9 +31,9 @@ aliases:
 - [Samuelson, P.A. (1966) A Summing Up — Quarterly Journal of Economics](https://doi.org/10.2307/1882916) `学術`
 
 ## 関連概念
-- [[econ-sraffian-price|スラッファ価格理論（Sraffian Price Theory）]] — 語彙が近い
 - [[econ-monopolistic-competition|独占的競争]] — 同じ思想家
 - [[econ-sraffa-commodities|スラッファの商品による商品の生産（ケンブリッジ資本論争）]] — 同じ思想家
+- [[econ-sraffian-price|スラッファ価格理論（Sraffian Price Theory）]] — 同じ思想家
 - [[econ-wicksell-effect-capital|ヴィクセル効果——利子率の変化が資本の価値を動かす]] — 同じ思想家
 - [[econ-heterodox-post-keynesian-kalecki|ポスト・ケインズ派経済学とカレツキ——有効需要・所得分配・マクロ投資決定の代替的枠組み]] — 同じ思想家
 - [[econ-leontief-dynamic-model|動学的レオンチェフ・モデル——資本蓄積を組み込んだ産業連関分析]] — 同じ思想家

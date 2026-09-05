@@ -34,6 +34,7 @@ aliases:
 ## 関連概念
 - [[econ-shadow-banking-pozsar|シャドーバンキング・システム——規制外金融仲介の構造とシステミック・リスク]] — 語彙が近い
 - [[econ-too-big-to-fail|大きすぎて潰せない]] — 出典を共有
+- [[econ-carry-trade-foreign-exchange|キャリートレード（外国為替）]] — 同分野の近傍
 - [[econ-housing-market-bubble-case-shiller|住宅市場バブルとケース＝シラー指数——行動的資産価格と不動産市場の周期的変動]] — 同分野の近傍
 
 ## 関連

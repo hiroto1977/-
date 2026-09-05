@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[human-experiential-avoidance-hayes|体験の回避と心理的柔軟性——ヘイズのACTモデルにおける中核的病理プロセス]] — 同分野の近傍
 - [[human-social-identity-theory-tajfel|社会的アイデンティティ理論——タジフェルの最小集団パラダイムと集団間関係]] — 同分野の近傍
-- [[human-aphantasia|アファンタジア——心の中に像を思い描けない]] — 同分野の近傍
 - [[human-schema-therapy-young-maladaptive|スキーマ療法——ヤングの早期不適応スキーマ理論と人格障害・慢性うつへの統合的アプローチ]] — 同分野の近傍
 
 ## 関連

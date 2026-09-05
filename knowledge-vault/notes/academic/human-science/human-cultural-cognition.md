@@ -32,7 +32,7 @@ Kahan, Dan M. （2012 Nature Climate Change）／Slovic, Paul ／Braman, Donald 
 
 ## 関連概念
 - [[human-identifiable-victim|特定可能な被害者効果（Identifiable Victim Effect）]] — 同じ思想家
-- [[human-depletion-ego-model-critique|自我消耗モデルの再検討——意志力の限界資源仮説とその論争]] — 同分野の近傍
+- [[human-cognitive-dissonance-revision|認知的不協和理論の現代的改訂——行為ベースモデルとアクション同定理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

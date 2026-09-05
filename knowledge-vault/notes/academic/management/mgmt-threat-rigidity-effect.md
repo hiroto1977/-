@@ -35,7 +35,6 @@ Barry M. Staw, Lance E. Sandelands & Jane E. Dutton（Administrative Science Qua
 - [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
 - [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — 同じ思想家
 - [[mgmt-strategic-cognition|戦略的認知（Strategic Cognition）]] — 同分野の近傍
-- [[mgmt-escalation-of-commitment-theory|コミットメント・エスカレーション理論]] — 同分野の近傍
 - [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — 同分野の近傍
 
 ## 関連

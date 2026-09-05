@@ -33,8 +33,8 @@ aliases:
 - [[human-filter-model-attention-broadbent|ブロードベントのフィルターモデル——選択的注意の早期選択ボトルネック理論]] — 同じ思想家
 - [[human-simultanagnosia-balint|同時失認（バリント症候群）——一度に一つの物しか見えない]] — 同じ思想家
 - [[human-spatial-cueing-posner|ポズナーの手がかり課題——空間的注意のスポットライトを測る]] — 同じ思想家
-- [[human-temporal-motivation-steel|時間的動機付け理論（スティール＆クーニング）]] — 同分野の近傍
 - [[human-conjunction-fallacy|連言錯誤]] — 同分野の近傍
+- [[human-von-restorff-effect|フォン・レストルフ効果（孤立効果）——均質な項目の中で一つだけ異質な項目が際立って記憶される]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -3,44 +3,46 @@ collection: academic
 id: human-affective-forecasting-wilson-gilbert
 category: "human-science"
 category_ja: "人間科学"
-title: "感情予測——将来の感情状態の体系的予測バイアス"
-as_of: "2026-06-26"
-source_count: 3
+title: "感情予測（ウィルソン＝ギルバート）——将来の出来事が自分の感情に与える影響の予測は、強さと持続を過大評価する方向に体系的に歪む"
+as_of: "2026-09"
+source_count: 5
 authoritative: true
 tags:
   - collection/academic
   - academic/human-science
   - knowledge/verified
 aliases:
-  - "感情予測——将来の感情状態の体系的予測バイアス"
+  - "感情予測（ウィルソン＝ギルバート）——将来の出来事が自分の感情に与える影響の予測は、強さと持続を過大評価する方向に体系的に歪む"
 ---
 
-# 感情予測——将来の感情状態の体系的予測バイアス
+# 感情予測（ウィルソン＝ギルバート）——将来の出来事が自分の感情に与える影響の予測は、強さと持続を過大評価する方向に体系的に歪む
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 人間科学 ・ asOf: 2026-06-26 ・ 出典: 3件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 人間科学 ・ asOf: 2026-09 ・ 出典: 5件（うち権威ある出典 ✓）
 
 ## 概要
-ティモシー・ウィルソンとダニエル・ギルバートが2003年に体系化した感情予測（affective forecasting）研究は、人間が将来の出来事に対する自身の感情反応——その種類・強度・持続期間——を予測する際に示す体系的なバイアスを分析する。最も頑健な知見は「インパクト・バイアス」——将来の出来事（良い出来事も悪い出来事も）の感情的影響の持続期間を過大評価する傾向——であり、その主要因として「焦点化の錯覚」（focalism: 予測時に対象出来事に注意を集中し他の同時的経験を無視する）と「免疫システム無視」（immune neglect: 心理的免疫システム——合理化・意味づけ・適応——の作用を予測に組み込まない）が特定された。ギルバートらの実証研究は、テニュア審査・選挙結果・恋人との別離等の多様な文脈でインパクト・バイアスを確認した。カーネマンの「経験する自己と記憶する自己」の区別はこの研究と共鳴し、ウェルビーイング測定の方法論的再検討を促している。
+感情予測（affective forecasting）は、人が将来の出来事に対する自分の感情反応の種類・強さ・持続を予測する過程を指し、ティモシー・ウィルソンとダニエル・ギルバートが2003年の論文『Affective Forecasting』（Advances in Experimental Social Psychology 35巻）で研究領域として体系化した。最も頑健な知見はインパクト・バイアスで、良い出来事の喜びも悪い出来事の苦しみも、その強さと持続期間を実際より大きく見積もる。主な原因として、予測時に対象の出来事だけに注意を集中し同時に続く他の生活の側面を無視する焦点化（focalism）と、合理化や意味づけによって不快な感情を和らげる心理的免疫システムの働きを予測に組み込まない免疫無視（immune neglect、ギルバートら1998）が特定された。ギルバートらはテニュア審査や選挙結果、恋人との別離など多様な文脈でこのバイアスを確認し、カーネマンとセイラー（1991）が論じた効用の予測と経験のずれ、カーネマンの「経験する自己と記憶する自己」の区別とも響き合う。限界としては、効果の大きさが文脈や測定法に依存すること、免疫システムの概念が事後的な説明に流れやすいことが指摘される。応用は医療の意思決定（治療後の生活の質の予測）、幸福指標を用いる政策設計、購買後の満足の予測に及び、中小企業には、顧客が購入前に想像する満足も自分が新規事業の成否に感じる感情も過大に見積もられがちだと知り、意思決定を一時の感情予測でなく実績データで補う含意がある。
 
 ## 提唱者・初出
-ダニエル・ギルバート ／ ティモシー・ウィルソン ／ ダニエル・カーネマン ／ ジョージ・ローウェンスタイン ／ デイル・グリフィン
+ティモシー・ウィルソン＆ダニエル・ギルバート（2003『Affective Forecasting』Advances in Experimental Social Psychology）／ダニエル・ギルバートら（1998 免疫無視 JPSP）／対比: ダニエル・カーネマン＆リチャード・セイラー（1991 効用の予測と経験）
 
 ## 出典
-- [Wilson, T. D. & Gilbert, D. T. (2003) "Affective Forecasting" — Advances in Experimental Social Psychology](https://doi.org/10.1016/S0065-2601(03)01006-2) `学術`
-- [Gilbert, D. T. et al. (1998) "Immune Neglect" — Journal of Personality and Social Psychology](https://doi.org/10.1037/0022-3514.75.3.617) `学術`
-- [Wikipedia: Affective forecasting — 感情予測バイアスの理論と実証](https://en.wikipedia.org/wiki/Affective_forecasting) `リファレンス`
+- [Wilson, T. D. & Gilbert, D. T. (2003) Affective Forecasting — Advances in Experimental Social Psychology 35, 345–411（研究領域の体系化）](https://doi.org/10.1016/S0065-2601(03)01006-2) `学術`
+- [Gilbert, D. T., Pinel, E. C., Wilson, T. D., Blumberg, S. J. & Wheatley, T. P. (1998) Immune Neglect: A Source of Durability Bias in Affective Forecasting — Journal of Personality and Social Psychology 75(3)（免疫無視）](https://doi.org/10.1037/0022-3514.75.3.617) `学術`
+- [Gilbert, D. T., Lieberman, M. D., Morewedge, C. K. & Wilson, T. D. (2004) The Peculiar Longevity of Things Not So Bad — Psychological Science 15(1)（軽微な出来事ほど長引く逆説）](https://doi.org/10.1111/j.0963-7214.2004.01501003.x) `学術`
+- [Kahneman, D. & Thaler, R. H. (1991) Economic Analysis and the Psychology of Utility: Applications to Compensation Policy — American Economic Review 81(2)（効用の予測と経験のずれ）](https://econpapers.repec.org/article/aeaaecrev/v_3a81_3ay_3a1991_3ai_3a2_3ap_3a341-46.htm) `学術`
+- [Wikipedia: Affective forecasting — Wilson & Gilbert, impact bias, focalism, immune neglect](https://en.wikipedia.org/wiki/Affective_forecasting) `リファレンス`
 
 ## 関連概念
 - [[human-impact-bias|インパクト・バイアス（感情予測の偏り）]] — 語彙が近い
-- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 語彙が近い
-- [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 語彙が近い
-- [[human-hot-cold-empathy-gap|ホット・コールド共感ギャップ]] — 同じ思想家
-- [[human-base-rate-fallacy|基準率の無視]] — 同じ思想家
-- [[human-conjunction-fallacy|連言錯誤]] — 同じ思想家
+- [[infosoc-persuasive-technology-fogg|説得的テクノロジー（フォッグ）]] — 同じ思想家
+- [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 同じ思想家
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
+- [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-behavioral-nudge-thaler|ナッジと行動経済学的介入設計（セイラー・サンスタイン）]] — 同じ思想家
+- [[econ-endowment-effect-kahneman-thaler|授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意]] — 同じ思想家
 - [[human-end-of-history-illusion|歴史の終わり錯覚]] — 同じ思想家
-- [[human-curse-of-knowledge|知識の呪縛]] — 同じ思想家
-- [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — 同じ思想家
-- [[human-mind-wandering|マインドワンダリング]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

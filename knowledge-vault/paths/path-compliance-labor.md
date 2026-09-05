@@ -22,9 +22,9 @@ tags:
 - [[labor-social-insurance-expansion|短時間労働者への社会保険適用拡大（2024年10月〜従業員51人以上）]]（接続 18）
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 16）
 - [[labor-work-rules|就業規則の作成・届出義務]]（接続 16）
-- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]（接続 15）
 - [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]]（接続 15）
 - [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]]（接続 15）
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]（接続 14）
 - [[labor-flextime|フレックスタイム制（労働基準法32条の3）]]（接続 14）
 - [[labor-paid-leave-grant|年次有給休暇の付与]]（接続 14）
 - [[labor-survivor-pension|遺族年金（遺族基礎年金・遺族厚生年金）]]（接続 14）

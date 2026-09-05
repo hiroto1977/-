@@ -31,7 +31,6 @@ aliases:
 - [PMC（NIH）— Serial-Position Effects on a Free-Recall Task（U字型曲線・初頭/新近効果の実証）](https://pmc.ncbi.nlm.nih.gov/articles/PMC4633394/) `学術`
 
 ## 関連概念
-- [[human-von-restorff-effect|フォン・レストルフ効果（孤立効果）]] — 語彙が近い
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — 出典を共有
 - [[human-attachment-theory-bowlby|アタッチメント理論]] — 出典を共有
 - [[human-attribution-theory|帰属理論]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[human-hawthorne-effect|ホーソン効果]] — 出典を共有
 - [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — 出典を共有
 - [[human-object-permanence|対象の永続性（Object Permanence）]] — 出典を共有
+- [[human-opponent-process|対抗過程理論（Opponent-Process Theory of Acquired Motivation）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

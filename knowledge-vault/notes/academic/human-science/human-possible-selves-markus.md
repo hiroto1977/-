@@ -31,8 +31,7 @@ aliases:
 - [Wikipedia: Possible selves — future-oriented self-concept and motivation overview](https://en.wikipedia.org/wiki/Possible_selves) `リファレンス`
 
 ## 関連概念
-- [[human-cultural-self-construal-markus|文化的自己観（マーカス＆北山）]] — 同じ思想家
-- [[human-self-construal-markus-kitayama|自己解釈理論——相互独立的・相互協調的自己観と文化的認知の基盤]] — 同じ思想家
+- [[human-self-construal-markus-kitayama|文化的自己観（マーカス＝北山）——相互独立的自己観と相互協調的自己観が認知・感情・動機づけを体系的に方向づける]] — 同じ思想家
 - [[human-self-discrepancy-higgins|自己不一致理論——現実自己と自己指針の乖離が異なる感情を生む]] — 同じ思想家
 - [[mgmt-regulatory-focus-theory-higgins|制御焦点理論——促進焦点と予防焦点が動機づけと意思決定を形成するメカニズム]] — 同じ思想家
 - [[human-approach-avoidance-elliot|接近回避動機——望ましいものへの接近と望ましくないものの回避の二系統]] — 同分野の近傍
