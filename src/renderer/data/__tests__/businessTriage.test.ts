@@ -32,11 +32,19 @@ describe('仕分けの網羅', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('対象は 52 書式 + 定款2 + 就業規則 + 決算書', () => {
+  it('対象は 52 書式 + 定款2 + 就業規則 + 決算書 (4点まとめて + 1点ずつ 4)', () => {
     expect(STUDIO_TEMPLATES).toHaveLength(52);
-    expect(EXTRA_DOC_IDS).toHaveLength(4);
+    expect(EXTRA_DOC_IDS).toHaveLength(8);
+    // 1 点ずつの計算書類 4 つは `kessan` の行を共有するので、行は増えない。
     expect(TRIAGE_ROWS).toHaveLength(56);
-    expect(expectedDocIds()).toHaveLength(56);
+    expect(expectedDocIds()).toHaveLength(60);
+  });
+
+  it('計算書類を 1 点ずつ開いても仕分けは 4 点と同じ行', () => {
+    for (const id of ['kessan-pl', 'kessan-bs', 'kessan-equity', 'kessan-notes']) {
+      expect(triageFor(id), id).toBe(triageFor('kessan'));
+    }
+    expect(triageFor('kessan-')).toBeNull();
   });
 });
 

@@ -269,6 +269,31 @@ export const DOC_LEGAL_STATUS: Readonly<Record<string, DocLegalInfo>> = {
     retention: '10年',
     caveat: '各事業年度に係る計算書類（貸借対照表・損益計算書・株主資本等変動計算書・個別注記表）と事業報告の作成義務。',
   },
+  // 計算書類を 1 点ずつ扱うときの書類 id。義務・根拠・保存期間は 4 点で共通（会社計算規則59条1項が 4 点を列挙する）。
+  'kessan-pl': {
+    status: 'mandatory',
+    basis: '会社法435条2項・4項、会社計算規則59条1項',
+    retention: '10年',
+    caveat: '損益計算書は計算書類 4 点の 1 つ。当期純利益は貸借対照表・株主資本等変動計算書と一致していなければならない。',
+  },
+  'kessan-bs': {
+    status: 'mandatory',
+    basis: '会社法435条2項・4項、会社計算規則59条1項',
+    retention: '10年',
+    caveat: '貸借対照表は計算書類 4 点の 1 つ。定時株主総会の承認後は公告も要る（会社法440条1項。大会社は損益計算書も）。',
+  },
+  'kessan-equity': {
+    status: 'mandatory',
+    basis: '会社法435条2項・4項、会社計算規則59条1項',
+    retention: '10年',
+    caveat: '株主資本等変動計算書は計算書類 4 点の 1 つ。当期末残高は貸借対照表の純資産の部と一致していなければならない。',
+  },
+  'kessan-notes': {
+    status: 'mandatory',
+    basis: '会社法435条2項・4項、会社計算規則59条1項',
+    retention: '10年',
+    caveat: '個別注記表は計算書類 4 点の 1 つ。注記すべき範囲は会社の区分（公開会社か、会計監査人設置会社か）で変わる。',
+  },
 };
 
 const UNCLASSIFIED: DocLegalInfo = { status: 'unclassified' };

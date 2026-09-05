@@ -37,6 +37,7 @@ import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../data/kpiActuals';
 import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceSheet';
 import { BANK_SUBMISSION_COLLECTION, settingsFromRecord, type BankSubmissionSettings } from '../data/bankSubmission';
 import { buildKessanImport } from '../data/kessanImport';
+import { KESSAN_SHEETS, docIdOfSheet, fieldsForSheet, inheritedNote, sheetDef, sheetOfDoc, type KessanSheet } from '../data/kessanSheets';
 import { buildBusinessPlanImport, buildCashPlanImport, type ImportPreview } from '../data/docImports';
 import { tableStyle, thStyle, tdStyle, tdNum } from '../components/tableStyles';
 import {
@@ -117,6 +118,8 @@ interface StoreShape {
   teikan?: { kk?: Values; gk?: Values };
   shugyo?: Values;
   kessan?: Values;
+  /** 計算書類で選んでいる書面（4点まとめて / 1 点ずつ）。値の入れ物は kessan の 1 つのまま。 */
+  kessanSheet?: KessanSheet;
   /** 最近使った書式 id（新しい順）。書式が増えたので探す手間を減らす。 */
   recent?: string[];
 }
@@ -609,39 +612,50 @@ function NotesSheet({ sections }: { sections: readonly NoteSection[] }) {
  * 当期末残高は貸借対照表から取る。4 枚を別々に組むと連結が切れて、貸借だけ合っているのに
  * 利益が反映されていない書面が出来上がる。
  */
-function KessanSheets({ values, fields }: { values: Values; fields: readonly DocField[] }) {
+function KessanSheets({ values, fields, sheet }: { values: Values; fields: readonly DocField[]; sheet: KessanSheet }) {
+  // 1 点ずつ出すときも値は同じ 1 つの科目残高から組む（連結を切らない）。
+  const show = (id: Exclude<KessanSheet, 'all'>) => sheet === 'all' || sheet === id;
   const inc = incomeTotals(values);
   const opt = kessanOptions(values);
   const bs = buildBalanceRows(values, opt, inc.netIncome);
   return (
-    <div data-kessan-sheets>
+    <div data-kessan-sheets={sheet}>
+      {show('pl') && (<>
       <div className="ds-title"><Fill text="{{company}} 損益計算書" fields={fields} values={values} /></div>
       <div className="ds-right">
         <Fill text="自 {{fyStart}}　至 {{fyEnd}}" fields={fields} values={values} />
       </div>
       <StatementTable title="損益計算書" rows={buildIncomeRows(values)} />
+      </>)}
 
-      <div className="ds-title" style={{ marginTop: 24 }}>
+      {show('bs') && (<>
+      <div className="ds-title" style={{ marginTop: sheet === 'bs' ? 0 : 24 }}>
         <Fill text="{{company}} 貸借対照表" fields={fields} values={values} />
       </div>
       <div className="ds-right"><Fill text="{{fyEnd}} 現在" fields={fields} values={values} /></div>
       <StatementTable title="資産の部" rows={bs.assets} />
       <StatementTable title="負債・純資産の部" rows={bs.liabilitiesEquity} />
+      </>)}
 
-      <div className="ds-title" style={{ marginTop: 24 }}>
+      {show('equity') && (<>
+      <div className="ds-title" style={{ marginTop: sheet === 'equity' ? 0 : 24 }}>
         <Fill text="{{company}} 株主資本等変動計算書" fields={fields} values={values} />
       </div>
       <div className="ds-right">
         <Fill text="自 {{fyStart}}　至 {{fyEnd}}" fields={fields} values={values} />
       </div>
       <EquityTable rows={buildEquityRows(values, opt, inc.netIncome)} />
+      </>)}
 
-      <div className="ds-title" style={{ marginTop: 24 }}>
+      {show('notes') && (<>
+      <div className="ds-title" style={{ marginTop: sheet === 'notes' ? 0 : 24 }}>
         <Fill text="{{company}} 個別注記表" fields={fields} values={values} />
       </div>
       <div className="ds-right"><Fill text="{{fyEnd}} 現在" fields={fields} values={values} /></div>
       <NotesSheet sections={buildNoteSections(values, opt, inc.netIncome)} />
+      </>)}
 
+      {show('bs') && (<>
       <div className="ds-title" style={{ marginTop: 24 }}>決算公告（貸借対照表の要旨）</div>
       <div className="ds-right">
         <Fill text="{{company}}　{{fyEnd}} 現在" fields={fields} values={values} />
@@ -651,6 +665,7 @@ function KessanSheets({ values, fields }: { values: Values; fields: readonly Doc
         定時株主総会の終結後、遅滞なく公告してください。官報・日刊新聞紙を公告方法とする会社はこの要旨で足ります（会社法440条1項・2項）。
         <strong>電子公告を公告方法としている場合は要旨では足りず、貸借対照表の全文が必要です。</strong>
       </div>
+      </>)}
     </div>
   );
 }
@@ -1199,12 +1214,12 @@ const KESSAN_STEPS: readonly (readonly [string, string])[] = [
   ['① 残高を入れる', '試算表（決算整理後）の科目残高を、区分ごとに正の値で入力します。期末商品棚卸高・減価償却累計額・貸倒引当金は控除項目なので、そのまま正の値で入れれば自動で差し引きます。'],
   ['② 当期の変動を入れる', '繰越利益剰余金の期首残高、剰余金の配当、利益準備金への積立、新株発行による増加額を入れます。期首残高は入力しません。期末残高から当期変動額を引いて逆算するので、内訳と食い違う期首を書けないようになっています。'],
   ['③ 貸借の一致を確認', '資産合計と負債・純資産合計が一致しているかを自動で検算します。差額が当期純利益と一致した場合は、繰越利益剰余金の期首残高に当期純利益を二重に足している可能性が高いです。'],
-  ['④ 印刷 / PDF 保存', '「印刷 / PDF 保存」で計算書類4点（損益計算書・貸借対照表・株主資本等変動計算書・個別注記表）をまとめて出力します。'],
+  ['④ 書面を選んで印刷 / PDF 保存', '「書面」で 4 点まとめてか 1 点ずつ（損益計算書・貸借対照表・株主資本等変動計算書・個別注記表）かを選び、「印刷 / PDF 保存」で選んだ書面だけを出力します。1 点ずつ扱っても値の入れ物は 1 つなので、当期純利益と純資産の連結は切れません。'],
   ['⑤ 承認と公告', '定時株主総会の承認を受けたうえで、貸借対照表（大会社は損益計算書も）を公告してください。作成した計算書類は10年間の保存義務があります。'],
 ];
 
 const KESSAN_NOTES: readonly string[] = [
-  '計算書類は貸借対照表・損益計算書・株主資本等変動計算書・個別注記表の4点で、作成した時から10年間の保存義務があります（会社法435条2項・4項）。この画面は4点すべてを同じ科目残高から組み立てます。',
+  '計算書類は貸借対照表・損益計算書・株主資本等変動計算書・個別注記表の4点で、作成した時から10年間の保存義務があります（会社法435条2項・4項）。この画面は4点すべてを同じ科目残高から組み立て、「書面」のタブで 1 点ずつ入力・出力することもできます（値の入れ物は 1 つのまま）。',
   '株主資本等変動計算書の当期末残高は、貸借対照表の純資産の部と一致します。期首残高は入力させず期末から逆算するので、二表がずれることはありません。',
   '剰余金の配当をするときは、配当により減少する剰余金の10分の1を資本準備金または利益準備金として計上する必要があります（会社法445条4項）。ただし準備金の合計が資本金の4分の1に達している場合を除きます。',
   '定時株主総会の終結後は遅滞なく貸借対照表（大会社は損益計算書も）の公告が必要です（会社法440条1項）。'
@@ -1303,6 +1318,11 @@ export function DocstudioPage() {
   const [cat, setCat] = useState<string>('すべて');
 
   useEffect(() => saveStore(store), [store]);
+  /** 計算書類で見ている書面。store に持たせるので、開き直しても同じ書面から続けられる。 */
+  const kessanSheet: KessanSheet = store.kessanSheet ?? 'all';
+  function setKessanSheet(sheet: KessanSheet) {
+    setStore((prev) => ({ ...prev, kessanSheet: sheet }));
+  }
 
   // 経営サマリー → 計算書類。KPI 実績・貸借対照表・提出者情報は record store に
   // あり、書類スタジオの入力は localStorage にある。ここで読んで写す (押すまで書かない)。
@@ -1362,8 +1382,10 @@ export function DocstudioPage() {
 
   /** 書類 id から画面の状態へ (士業のページや経営サマリーからの遷移)。知らない id は何もしない。 */
   function openDoc(doc: string) {
-    if (doc === 'kessan') {
+    const sheet = sheetOfDoc(doc);
+    if (sheet !== null) {
       setCollection('kessan');
+      setKessanSheet(sheet);
     } else if (doc === 'shugyo') {
       setCollection('shugyo');
     } else if (doc === 'teikan-kk' || doc === 'teikan-gk') {
@@ -1438,6 +1460,8 @@ export function DocstudioPage() {
 
   // 書面の描画・チェック・入力欄はすべてこの値を見る（既定値のズレを作らない）。
   const filled = useMemo(() => withDefaults(fields, values), [fields, values]);
+  // 計算書類は書面ごとに入力欄を絞る。書面と検算は 4 点分の値で組むので `fields` はそのまま。
+  const inputFields: readonly DocField[] = collection === 'kessan' ? fieldsForSheet(kessanSheet, KESSAN_FIELDS) : fields;
 
   const val = (k: string) => values[k] ?? '';
   const teikanChapters = useMemo(
@@ -1673,6 +1697,31 @@ export function DocstudioPage() {
           )}
 
           {collection === 'kessan' && (
+            <Section title="書面（4点まとめて / 1点ずつ）" count={KESSAN_SHEETS.length}>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }} data-kessan-sheet-tabs={kessanSheet}>
+                {KESSAN_SHEETS.map((sh) => (
+                  <button
+                    key={sh.id}
+                    type="button"
+                    data-kessan-sheet={sh.id}
+                    data-doc-id={sh.docId}
+                    className={kessanSheet === sh.id ? 'primary' : ''}
+                    onClick={() => setKessanSheet(sh.id)}
+                    style={{ padding: '8px 10px', fontSize: 12 }}
+                  >
+                    {sh.label}
+                  </button>
+                ))}
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+                {sheetDef(kessanSheet).note}
+                {inheritedNote(kessanSheet) !== null && (
+                  <div data-kessan-inherited style={{ marginTop: 4 }}>※ {inheritedNote(kessanSheet)}</div>
+                )}
+              </div>
+            </Section>
+          )}
+          {collection === 'kessan' && (
             <OverviewImportPanel
               intro="経営サマリーの KPI 実績・貸借対照表・提出者情報を計算書類の科目残高に写します。出所の無い科目 (資本金・役員報酬・地代家賃など) は今の値のまま残します。内訳の無い額は「その他」の科目に置き、置いた理由を下に出します。"
               result={kessanImport}
@@ -1701,18 +1750,18 @@ export function DocstudioPage() {
             docId={
               collection === 'teikan' ? `teikan-${teikanType}`
                 : collection === 'shugyo' ? 'shugyo'
-                  : collection === 'kessan' ? 'kessan'
+                  : collection === 'kessan' ? docIdOfSheet(kessanSheet)
                     : docId
             }
           />
 
-          <Section title="差込フォーム（入力は端末内に自動保存）" count={fields.length}>
+          <Section title="差込フォーム（入力は端末内に自動保存）" count={inputFields.length}>
             {collection === 'studio' && (
               <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8 }}>
                 ＊ は空欄のまま交付すると書類として成立しない項目。未入力 {blanks} / {fields.length} 件。
               </div>
             )}
-            <FieldInputs fields={fields} values={filled} onChange={setValue} flagged={flagged} />
+            <FieldInputs fields={inputFields} values={filled} onChange={setValue} flagged={flagged} />
             {collection === 'studio' && docId === 'kabunushi-meibo' && (
               <ShareholderInputs values={values} onPatch={setValues} onChange={setValue} />
             )}
@@ -1785,7 +1834,7 @@ export function DocstudioPage() {
                 <Chapters chapters={SHUGYO_CHAPTERS} fields={fields} values={values} />
               </>
             )}
-            {collection === 'kessan' && <KessanSheets values={filled} fields={fields} />}
+            {collection === 'kessan' && <KessanSheets values={filled} fields={fields} sheet={kessanSheet} />}
             <div className="ds-disclaimer">{DOC_DISCLAIMER}</div>
           </div>
         </div>
