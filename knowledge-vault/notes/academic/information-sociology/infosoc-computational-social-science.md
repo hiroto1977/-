@@ -31,7 +31,6 @@ aliases:
 - [University of Sydney「What is computational social science?」（大学による分野解説）](https://www.sydney.edu.au/arts/news-and-events/news/2022/06/23/what-is-computational-social-science.html) `学術`
 
 ## 関連概念
-- [[human-anchoring|アンカリング効果（係留と調整）]] — 出典を共有
 - [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 出典を共有
 - [[human-framing-effect|フレーミング効果（framing effect）]] — 出典を共有
 - [[human-phoneme-restoration|音素修復効果（Phonemic Restoration Effect／Warren 1970）——雑音で消された音を脳が補って「聞こえた」と感じる、トップダウンの知覚]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
 - [[econ-anticommons|アンチコモンズの悲劇]] — 出典を共有
 - [[human-biopsychosocial-model-chronic-pain|慢性疼痛の生物心理社会モデル]] — 出典を共有
+- [[human-default-effect|デフォルト効果（初期設定効果）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,7 +32,6 @@ George A. Akerlof ／ Michael Spence ／ Joseph E. Stiglitz
 
 ## 関連概念
 - [[econ-adverse-selection|逆選択（レモン市場）]] — 語彙が近い
-- [[econ-signaling-screening-spence|シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）]] — 語彙が近い
 - [[infosoc-information-asymmetry-akerlof-stiglitz|情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ]] — 語彙が近い
 - [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — 同じ思想家
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家
@@ -40,6 +39,7 @@ George A. Akerlof ／ Michael Spence ／ Joseph E. Stiglitz
 - [[econ-henry-george-theorem|ヘンリー・ジョージ定理（Henry George Theorem）]] — 同じ思想家
 - [[econ-joint-liability-group-lending|連帯責任型グループ貸付理論（Joint Liability Group Lending）]] — 同じ思想家
 - [[econ-nutrition-efficiency-wage|栄養効率賃金理論（nutrition-based efficiency wage theory／ダスグプタ＝レイ）——貧困農村では高賃金が栄養を通じて生産性を高め、市場清算を上回る賃金と非自発的失業を均衡として生む]] — 同じ思想家
+- [[econ-screening|スクリーニング（選別理論）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

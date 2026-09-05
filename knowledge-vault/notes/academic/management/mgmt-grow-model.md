@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[mgmt-sensegiving-gioia|センスギビング理論（ジョイア＆チッタンパリー）]] — 語彙が近い
+- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]] — 同分野の近傍
 - [[mgmt-situational-leadership|状況的リーダーシップ理論]] — 同分野の近傍
-- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 同分野の近傍
 - [[mgmt-greiner-growth|グレイナーの企業成長モデル]] — 同分野の近傍
 - [[mgmt-net-promoter-score|ネット・プロモーター・スコア（NPS）]] — 同分野の近傍
 - [[mgmt-bureaucracy|官僚制（ウェーバー）]] — 同分野の近傍

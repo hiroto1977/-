@@ -35,7 +35,6 @@ Harvey Leibenstein（ハーヴェイ・ライベンシュタイン, 1957） ／ 
 - [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — 同じ思想家
 - [[econ-harberger-triangle|ハーバーガーの三角形（独占の死荷重損失計測）]] — 同じ思想家
 - [[econ-lemons-problem-akerlof|レモン市場]] — 同じ思想家
-- [[econ-signaling-screening-spence|シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）]] — 同じ思想家
 - [[econ-henry-george-theorem|ヘンリー・ジョージ定理（Henry George Theorem）]] — 同じ思想家
 - [[econ-joint-liability-group-lending|連帯責任型グループ貸付理論（Joint Liability Group Lending）]] — 同じ思想家
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家

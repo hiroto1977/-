@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2260
+cite_count: 2254
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2260 件**（リファレンス 2260）
+> [!info] 出典ドメイン索引 ・ 引用 **2254 件**（リファレンス 2254）
 
 ## このドメインを出典とする項目
 
@@ -913,9 +913,7 @@ tags:
 - [[econ-shapley-value|シャープレー値]] — Wikipedia—Shapleyvalue（定義・公理・応用）
 - [[econ-sheepskin-effect|シープスキン効果（sheepskin effect／卒業証書効果）——学位取得そのものがもたらす賃金の非連続的上昇]] — Wikipedia—Sheepskineffect（学位取得時の非連続的賃金プレミアム／シグナリング対人的資本の論点）
 - [[econ-siegel-paradox-exchange|シーゲルのパラドックス——為替の期待は両通貨で同時に不偏たりえない]] — Wikipedia:Siegel'sparadox—Jensen'sinequality,forwardexchangerate,nume…
-- [[econ-signaling|シグナリング]] — Wikipedia「Signalling(economics)」（コストのかかる信頼できるシグナル／スクリーニングとの対比）
-- [[econ-signaling-theory-spence|教育シグナリング理論（スペンス）]] — Wikipedia:Signalling(economics)—経済学的シグナリングの概説
-- [[econ-signaling-theory-spence-job-market|シグナリング理論——スペンスの学歴シグナルと情報非対称性下の資格獲得行動]] — Wikipedia:Signalling(economics)—informationeconomics
+- [[econ-signaling-theory-spence-job-market|シグナリング理論（スペンス）——情報を持つ側が模倣にコストのかかる行動で自らの質を伝え、分離均衡が成立する仕組み]] — Wikipedia:Signalling(economics)—コストのかかる信頼できるシグナルとスクリーニングとの対比
 - [[econ-size-effect-banz|規模効果（小型株効果）——小型株が大型株を上回る収益を上げる異常]] — Wikipedia:Sizepremium/small-firmeffect—Banz,CAPManomaly,Fama-FrenchSM…
 - [[econ-slutsky-decomposition|スルツキー分解（代替効果と所得効果）]] — Wikipedia—Slutskyequation（価格効果＝代替効果＋所得効果、劣等財・ギッフェン財）
 - [[econ-smooth-ambiguity-klibanoff|スムーズ曖昧性モデル——曖昧性への態度を信念から分離する]] — Wikipedia:Ambiguityaversion—smoothambiguitymodel,second-orderprior,El…
@@ -1067,8 +1065,7 @@ tags:
 - [[human-alexithymia-sifneos|アレキシサイミア（感情失認）（シフネオス）]] — Wikipedia:Alexithymia—Sifneos,TAS-20,emotionalregulation,ASD,psychoso…
 - [[human-alien-hand-syndrome|エイリアンハンド症候群——手が自分の意志とは無関係に動く]] — Wikipedia:Alienhandsyndrome—agency,corpuscallosum,supplementarymotora…
 - [[human-allostatic-load-model|アロスタティック負荷モデル（McEwen・Stellar）]] — Wikipedia—AllostaticLoad
-- [[human-anchoring|アンカリング効果（係留と調整）]] — Wikipedia—Anchoringeffect（回転盤実験10→25%/60→45%）
-- [[human-anchoring-adjustment-tversky|アンカリングと調整——初期値への不十分な修正による判断バイアス]] — Wikipedia:Anchoring—Tversky&Kahnemancognitivebiasandinsufficientadjus…
+- [[human-anchoring-adjustment-tversky|アンカリングと調整（係留と調整）——最初に示された数値が基準点となり、そこからの修正が不十分なまま判断が偏るヒューリスティック]] — Wikipedia—Anchoringeffect（回転盤実験と機序をめぐる説の概説）
 - [[human-anton-syndrome|アントン症候群——皮質盲なのに見えないことを否認する]] — Wikipedia:Antonsyndrome—corticalblindness,anosognosia,confabulation,a…
 - [[human-aphantasia|アファンタジア——心の中に像を思い描けない]] — Wikipedia:Aphantasia—mentalimagery,mind'seye,VVIQ,imagerydebate
 - [[human-appraisal-theory-of-emotion|感情の評価理論]] — AppraisalTheory—Wikipedia
@@ -1096,9 +1093,7 @@ tags:
 - [[human-biological-motion-johansson|バイオロジカルモーション——十数個の光点の動きだけからヒトの歩行や動作を瞬時に知覚する現象]] — Wikipedia:Biologicalmotionperception—Johanssonpoint-lightwalker,poste…
 - [[human-biopsychosocial-model|生物心理社会モデル]] — Biopsychosocialmodel—Wikipedia
 - [[human-bouba-kiki-effect|ブーバ／キキ効果——音と形の非恣意的な結びつき]] — Wikipedia:Bouba/kikieffect—soundsymbolism,cross-modal,arbitrarinessof…
-- [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — Wikipedia:Broaden-and-build—Fredrickson,positiveemotions,resourcesacc…
-- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — Wikipedia:Broaden-and-build—拡張＝形成理論の概要
-- [[human-broaden-build-upward-spiral|拡張＝形成理論の上昇スパイラル——ポジティブ感情と個人資源の相互強化]] — Wikipedia:Broaden-and-build—positiveemotionsandupwardspiraldynamicsov…
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論（フレドリクソン）——ポジティブ感情が思考と行動のレパートリーを広げ、持続的な個人資源を築くという機能理論]] — Wikipedia:Broaden-and-build—理論の概要とpositivityratio論争
 - [[human-broken-windows-theory|割れ窓理論]] — Wikipedia—Brokenwindowstheory（原典Wilson&Kelling1982,TheAtlantic）
 - [[human-burnout|バーンアウト（燃え尽き症候群）]] — Wikipedia「MaslachBurnoutInventory」（情緒的消耗感・脱人格化・個人的達成感の低下）
 - [[human-cafe-wall-illusion|カフェウォール錯視——平行な線が傾いて見える幾何学的錯視]] — Wikipedia:Caféwallillusion—contrast,mortarlines,borderlocking,geometry
@@ -1923,7 +1918,6 @@ tags:
 - [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — Wikipedia:Bricolage—creativerecombinationofavailableresourcesoverview
 - [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — Wikipedia:Bricolage—Lévi-Strauss,Baker&Nelson,resourceconstraint,effe…
 - [[mgmt-bridges-transition-model-ending-neutral-zone-beginning|ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み]] — Wikipedia"WilliamBridges(author)"—ブリッジズの生没年・経歴および3段階モデルの概要を確認
-- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — Wikipedia:Broaden-and-Build—Fredricksonpositiveemotionstheoryoverview
 - [[mgmt-bureaucracy|官僚制（ウェーバー）]] — Rational-legalauthority—Wikipedia（合法的支配と官僚制の特徴）
 - [[mgmt-bureaucratic-phenomenon-crozier|クロジエの官僚制現象——規則の増殖が不確実性支配という権力を生み悪循環を招く]] — MichelCrozier.Wikipedia(English)—confirmsCrozier'sdates(1922-2013)and…
 - [[mgmt-business-ecosystem-moore|ビジネス・エコシステム——企業が共進化する競争と協調の生態系]] — Wikipedia:Businessecosystem—Moore,coevolution,keystone,platformstrate…

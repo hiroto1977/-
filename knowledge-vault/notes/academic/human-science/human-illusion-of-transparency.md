@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[human-spotlight-effect-gilovich|スポットライト効果——自己の顕著性に対する過大推定バイアス]] — 同じ思想家
-- [[human-anchoring-adjustment-tversky|アンカリングと調整——初期値への不十分な修正による判断バイアス]] — 同分野の近傍
 - [[human-implicit-bias|潜在的バイアス（潜在連合テスト・IAT）]] — 同分野の近傍
 
 ## 関連

@@ -34,13 +34,13 @@ aliases:
 - [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — 語彙が近い
 - [[human-impact-bias|インパクト・バイアス（感情予測の偏り）]] — 同じ思想家
 - [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 同じ思想家
-- [[human-anchoring|アンカリング効果（係留と調整）]] — 同じ思想家
+- [[human-base-rate-fallacy|基準率の無視]] — 同じ思想家
+- [[human-conjunction-fallacy|連言錯誤]] — 同じ思想家
 - [[human-end-of-history-illusion|歴史の終わり錯覚]] — 同じ思想家
 - [[human-framing-effect|フレーミング効果（framing effect）]] — 同じ思想家
-- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 同じ思想家
+- [[human-loss-aversion|損失回避]] — 同じ思想家
+- [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 同じ思想家
 - [[econ-time-inconsistency|動学的不整合（時間的非整合性）]] — 同じ思想家
-- [[human-mind-wandering|マインドワンダリング]] — 同じ思想家
-- [[human-door-in-the-face|ドア・イン・ザ・フェイス・テクニック（譲歩的要請法）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

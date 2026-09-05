@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経営学"
 type: flashcard-deck
 deck_key: "academic-management"
-card_count: 664
+card_count: 663
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経営学（664枚）
+# フラッシュカード — 学術概念／経営学（663枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -162,8 +162,6 @@ tags:
   - **A:** 組織的ブリコラージュ（organizational bricolage）は、ベイカー＆ネルソン（2005）がレヴィ＝ストロースの人類学的概念を企業家論に応用した概念であり、「手元にある資源の組み合わせ（making do with what's at hand）」によって新たな問題解決やイノベーションを創出する資源活用行動を指す。（→ [[mgmt-bricolage-organizational-baker]]）
 - **Q:** ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み
   - **A:** ブリッジズのトランジション・モデルは、ウィリアム・ブリッジズが『Transitions: Making Sense of Life's Changes』（1980、Addison-Wesley）で提示し、『Managing Transitions』（1991年、Addison-Wesley。スーザン・ブリッジズとの共著第4版は2016年刊）で組織向けに発展させた枠組みである。（→ [[mgmt-bridges-transition-model-ending-neutral-zone-beginning]]）
-- **Q:** 拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム
-  - **A:** バーバラ・フレドリクソンが提唱した拡張形成理論（broaden-and-build theory）は、ポジティブ感情がネガティブ感情とは質的に異なる適応的機能を持つことを体系化した理論である。喜び・興味・感謝・愛情などのポジティブ感情は、瞬間的に個人の思考と行動のレパートリーを「拡張（broaden）」し、探索・創造・遊びといった幅広い認知・行動パターンを促進する。（→ [[mgmt-broaden-and-build-theory]]）
 - **Q:** 官僚制（ウェーバー）
   - **A:** ドイツの社会学者マックス・ウェーバーが、近代社会で最も合理的・効率的な組織管理形態として理念型（ideal type）で定式化した組織モデル。（→ [[mgmt-bureaucracy]]）
 - **Q:** クロジエの官僚制現象——規則の増殖が不確実性支配という権力を生み悪循環を招く

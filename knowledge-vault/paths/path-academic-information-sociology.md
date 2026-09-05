@@ -24,10 +24,10 @@ tags:
 - [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]]（接続 22）
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]]（接続 22）
 - [[infosoc-digital-labour|デジタル労働（digital labour）]]（接続 22）
-- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 22）
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 21）
-- [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]]（接続 21）
-- [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]]（接続 20）
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 21）
+- [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]]（接続 20）
+- [[infosoc-datafication|データ化（データ化現象）]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -245,7 +245,6 @@ tags:
 - 2012年: [[infosoc-polymedia|ポリメディア（Polymedia）]]
 - 2012年: [[infosoc-social-bots|ソーシャルボット]]
 - 2013年: [[infosoc-algorithmic-governmentality|アルゴリズム的統治性（Algorithmic Governmentality）]]
-- 2013年: [[infosoc-datafication|データ化（データ化現象）]]
 - 2013年: [[infosoc-differential-susceptibility-media-effects|メディア効果の分化感受性モデル（DSMM／Differential Susceptibility to the Media Effects Model）——同じ内容が人により違う効果を生む理由を説明する統合枠組み]]
 - 2013年: [[infosoc-digital-disconnect|デジタル・ディスコネクト（Digital Disconnect）]]
 - 2013年: [[infosoc-hybrid-media-system|ハイブリッド・メディア・システム]]
@@ -321,6 +320,7 @@ tags:
 - [[infosoc-banopticon-bigo|バノプティコン——危険視された少数を選別し排除する監視]]
 - [[infosoc-behavioral-surplus-zuboff|行動余剰と監視資本主義（ズボフ）]]
 - [[infosoc-berrypicking-bates|ベリーピッキング——進化しながら断片的に集める情報探索]]
+- [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]]
 - [[infosoc-blockchain-governance-decentralized|ブロックチェーン・ガバナンスと分散型自律組織（DAO）の社会学]]
 - [[infosoc-boundary-work-gieryn|境界画定作業——科学と非科学の境界を引く営み]]
 - [[infosoc-broken-world-thinking|壊れた世界の思考（ブロークン・ワールド・シンキング）]]

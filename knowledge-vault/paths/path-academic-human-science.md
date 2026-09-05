@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 648
+entry_count: 644
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（648件）
+# 学習パス — 学術概念／人間科学（644件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 145）
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 103）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 144）
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 102）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
+- [[human-framing-effect|フレーミング効果（framing effect）]]（接続 32）
 - [[human-attribution-theory|帰属理論]]（接続 30）
 - [[human-bias-blind-spot|バイアスの盲点]]（接続 30）
-- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 30）
-- [[human-anchoring|アンカリング効果（係留と調整）]]（接続 27）
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 29）
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 27）
-- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 26）
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 27）
+- [[human-base-rate-fallacy|基準率の無視]]（接続 26）
+- [[human-conjunction-fallacy|連言錯誤]]（接続 26）
+- [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 26）
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 25）
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 25）
-- [[human-cognitive-appraisal|認知的評価理論（感情）]]（接続 25）
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 25）
-- [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 25）
-- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]（接続 24）
 
 ## 第 2 部 — 年代順の展開
 - 1510年: [[human-phantom-limb|幻肢（ファントムリム）]]
@@ -104,6 +104,7 @@ tags:
 - 1959年: [[human-latent-inhibition|潜在制止（latent inhibition）——結果を伴わない刺激への事前接触が、その刺激の後続の条件づけ学習を遅らせる現象]]
 - 1959年: [[human-premack-principle|プレマックの原理]]
 - 1959年: [[human-riasec-vocational-interests-holland|ホランドのRIASEC理論——六類型の適合度で職業選択と職務満足を説明する六角形モデル]]
+- 1960年: [[human-cognitive-appraisal|認知的評価理論（感情）]]
 - 1960年: [[human-confirmation-bias|確証バイアス（confirmation bias）]]
 - 1960年: [[human-item-response-theory|項目反応理論（Item Response Theory, IRT）]]
 - 1960年: [[human-visual-cliff|視覚的断崖実験（Visual Cliff Experiment）]]
@@ -147,9 +148,9 @@ tags:
 - 1971年: [[human-undermining-effect|アンダーマイニング効果（過正当化効果）]]
 - 1972年: [[human-groupthink|集団思考（グループシンク, groupthink）]]
 - 1972年: [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]]
-- 1973年: [[human-base-rate-fallacy|基準率の無視]]
 - 1973年: [[human-biological-motion-johansson|バイオロジカルモーション——十数個の光点の動きだけからヒトの歩行や動作を瞬時に知覚する現象]]
 - 1973年: [[human-prototype-theory-rosch|プロトタイプ理論（カテゴリー化の原型理論）]]
+- 1974年: [[human-anchoring-adjustment-tversky|アンカリングと調整（係留と調整）——最初に示された数値が基準点となり、そこからの修正が不十分なまま判断が偏るヒューリスティック]]
 - 1974年: [[human-blindsight|ブラインドサイト（Blindsight）]]
 - 1974年: [[human-burnout|バーンアウト（燃え尽き症候群）]]
 - 1974年: [[human-cortical-magnification|皮質拡大係数（Cortical Magnification Factor）]]
@@ -187,7 +188,6 @@ tags:
 - 1980年: [[human-cognitive-load|認知負荷理論]]
 - 1980年: [[human-endowment-effect|保有効果（授かり効果）]]
 - 1980年: [[human-optimism-bias|楽観バイアス]]
-- 1981年: [[human-framing-effect|フレーミング効果（framing effect）]]
 - 1981年: [[human-mood-congruent-memory|気分一致効果（気分一致記憶）]]
 - 1981年: [[human-perceptual-fluency|知覚的流暢性（Perceptual Fluency）]]
 - 1981年: [[human-social-referencing|社会的参照（Social Referencing）]]
@@ -195,7 +195,6 @@ tags:
 - 1982年: [[human-outgroup-homogeneity-effect|外集団均質性効果]]
 - 1982年: [[human-sensory-gating|感覚ゲーティング（Sensory Gating / P50抑制）]]
 - 1983年: [[human-componential-theory-creativity-amabile|創造性の構成要素理論（アマビル）——領域スキル・創造的思考・内発的動機づけと社会環境が交わって生まれる創造性]]
-- 1983年: [[human-conjunction-fallacy|連言錯誤]]
 - 1983年: [[human-emotional-labor|感情労働（ホックシールド）]]
 - 1983年: [[human-false-belief-task|誤信念課題（False Belief Task）]]
 - 1983年: [[human-multiple-intelligences|多重知能理論（ガードナー）]]
@@ -261,6 +260,7 @@ tags:
 - 1996年: [[human-statistical-learning|統計的学習（Statistical Learning）]]
 - 1997年: [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]]
 - 1997年: [[human-hyperbolic-discounting|双曲割引]]
+- 1998年: [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論（フレドリクソン）——ポジティブ感情が思考と行動のレパートリーを広げ、持続的な個人資源を築くという機能理論]]
 - 1998年: [[human-ego-depletion|自我消耗（エゴ・ディプリーション）]]
 - 1998年: [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]]
 - 1998年: [[human-growth-mindset|マインドセット理論（ドゥエック）]]
@@ -323,7 +323,6 @@ tags:
 - [[human-alexithymia-emotional-regulation|アレキシサイミアと感情調節障害——感情の言語化困難・身体化・心身症との関連]]
 - [[human-alexithymia-sifneos|アレキシサイミア（感情失認）（シフネオス）]]
 - [[human-alien-hand-syndrome|エイリアンハンド症候群——手が自分の意志とは無関係に動く]]
-- [[human-anchoring-adjustment-tversky|アンカリングと調整——初期値への不十分な修正による判断バイアス]]
 - [[human-anton-syndrome|アントン症候群——皮質盲なのに見えないことを否認する]]
 - [[human-aphantasia|アファンタジア——心の中に像を思い描けない]]
 - [[human-apperceptive-mass|統覚塊（アペルツェプツィオンスマッセ）]]
@@ -338,6 +337,7 @@ tags:
 - [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]]
 - [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]]
 - [[human-baroreceptor-reflex|圧受容器反射（バロレフレックス）]]
+- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]
 - [[human-bayesian-brain-hypothesis|ベイジアン脳仮説]]
 - [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]]
 - [[human-biased-competition|バイアス付き競合理論（biased competition theory／注意のバイアス競合モデル）——複数刺激が限られた神経表現をめぐって争い、注意がその競合を行動上重要な対象に有利となるよう偏らせる]]
@@ -346,9 +346,6 @@ tags:
 - [[human-biopsychosocial-model-chronic-pain|慢性疼痛の生物心理社会モデル]]
 - [[human-body-schema|身体図式（ボディスキーマ）]]
 - [[human-bouba-kiki-effect|ブーバ／キキ効果——音と形の非恣意的な結びつき]]
-- [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]]
-- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]]
-- [[human-broaden-build-upward-spiral|拡張＝形成理論の上昇スパイラル——ポジティブ感情と個人資源の相互強化]]
 - [[human-cafe-wall-illusion|カフェウォール錯視——平行な線が傾いて見える幾何学的錯視]]
 - [[human-cannon-bard-emotion|キャノン＝バード説——情動経験と身体反応が視床を起点に並行して生じる]]
 - [[human-central-pattern-generator|中枢パターン発生器（CPG）]]
@@ -554,7 +551,6 @@ tags:
 - [[human-polyvagal-porges|ポリヴェーガル理論（ポージェス）]]
 - [[human-ponzo-illusion|ポンゾ錯視——奥行き手がかりが生む大きさの錯覚]]
 - [[human-positive-illusions-taylor|積極的錯覚（テイラー＆ブラウン）]]
-- [[human-positive-psychology-broaden-build|ポジティブ心理学と拡張形成理論：ポジティブ感情が思考・行動レパートリーを広げ持続的個人資源を構築するメカニズム]]
 - [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]]
 - [[human-positive-youth-development-lerner|ポジティブ青少年発達——ラーナーの5C理論と強みに基づく青年期研究]]
 - [[human-possible-selves-markus|可能自己理論——なりたい自己・なりうる自己の動機づけ機能]]

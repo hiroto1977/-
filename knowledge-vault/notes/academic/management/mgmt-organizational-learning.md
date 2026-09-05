@@ -40,6 +40,7 @@ aliases:
 - [[mgmt-psychological-contract|心理的契約]] — 同じ思想家
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 同分野の近傍
 - [[mgmt-seci-model-nonaka|SECIモデルと知識変換（野中郁次郎）]] — 同分野の近傍
+- [[mgmt-grow-model|GROWモデル（コーチング）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -35,11 +35,11 @@ aliases:
 - [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 語彙が近い
 - [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 語彙が近い
 - [[human-hot-cold-empathy-gap|ホット・コールド共感ギャップ]] — 同じ思想家
+- [[human-base-rate-fallacy|基準率の無視]] — 同じ思想家
+- [[human-conjunction-fallacy|連言錯誤]] — 同じ思想家
 - [[human-end-of-history-illusion|歴史の終わり錯覚]] — 同じ思想家
 - [[human-curse-of-knowledge|知識の呪縛]] — 同じ思想家
-- [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — 同じ思想家
 - [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — 同じ思想家
-- [[human-anchoring-adjustment-tversky|アンカリングと調整——初期値への不十分な修正による判断バイアス]] — 同じ思想家
 - [[human-mind-wandering|マインドワンダリング]] — 同じ思想家
 
 ## 関連

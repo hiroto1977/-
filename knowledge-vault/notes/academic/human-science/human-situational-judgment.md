@@ -32,9 +32,16 @@ aliases:
 - [Tversky & Kahneman 1974 — Judgment under Uncertainty: Heuristics and Biases, Science 185(4157):1124-1131](https://doi.org/10.1126/science.185.4157.1124) `学術`
 
 ## 関連概念
-- [[human-recognition-primed-decision-klein|認知主導型意思決定（RPD）モデル——消防指揮官は選択肢を比較せず、状況認識とメンタルシミュレーションで単一の行動案を評価する]] — 同じ思想家
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
+- [[human-base-rate-fallacy|基準率の無視]] — 同じ思想家
+- [[human-conjunction-fallacy|連言錯誤]] — 同じ思想家
+- [[human-framing-effect|フレーミング効果（framing effect）]] — 同じ思想家
+- [[human-loss-aversion|損失回避]] — 同じ思想家
+- [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 同じ思想家
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 同じ思想家
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-behavioral-nudge-thaler|ナッジと行動経済学的介入設計（セイラー・サンスタイン）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

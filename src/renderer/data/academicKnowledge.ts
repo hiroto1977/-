@@ -429,21 +429,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-anchoring',
-    discipline: 'human-science',
-    title: 'アンカリング効果（係留と調整）',
-    statement:
-      '最初に提示された数値（アンカー）が、その後の数量推定や判断の基準点となり、人はそこから十分に調整せず判断がアンカーに偏る認知バイアス。' +
-      'エイモス・トベルスキーとダニエル・カーネマンが1974年の論文「Judgment under Uncertainty: Heuristics and Biases」(Science誌)で「係留と調整（anchoring and adjustment）ヒューリスティック」として実証した。回転盤で得た無関係な数字を見せた後に国連加盟国に占めるアフリカ諸国の割合を推定させると、回転盤が10で止まった群の推定中央値は約25%、60で止まった群では約45%となり、本来無関係な初期値が推定を大きく左右した。価格交渉・販売・量刑・各種見積りなど数量判断を伴う多くの場面に広く影響する。',
-    keyFigures: 'エイモス・トベルスキー & ダニエル・カーネマン（1974, Science 185:1124-1131）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.science.org/doi/10.1126/science.185.4157.1124', type: 'academic', label: 'Tversky & Kahneman (1974) Judgment under Uncertainty, Science 185(4157):1124-1131（一次資料）' },
-      { url: 'https://www.britannica.com/topic/heuristic-reasoning', type: 'reference', label: 'Encyclopaedia Britannica — Heuristic（係留と調整ヒューリスティックの帰属）' },
-      { url: 'https://en.wikipedia.org/wiki/Anchoring_effect', type: 'reference', label: 'Wikipedia — Anchoring effect（回転盤実験 10→25%/60→45%）' },
-    ],
-  },
-  {
     id: 'bizlaw-keihyo-misrepresentation',
     discipline: 'business-law',
     title: '景品表示法の優良誤認・有利誤認表示',
@@ -3457,22 +3442,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.encyclopedia.com/economics/encyclopedias-almanacs-transcripts-and-maps/metcalfes-law', type: 'reference', label: 'Encyclopedia.com「Metcalfe’s Law」（百科事典級リファレンス、独立第二情報源）' },
       { url: 'https://spectrum.ieee.org/metcalfes-law-is-wrong', type: 'academic', label: 'Briscoe, Odlyzko & Tilly「Metcalfe’s Law is Wrong」IEEE Spectrum 43(7):34–39, 2006（n log n提案・学会刊行物）' },
       { url: 'https://experts.umn.edu/en/publications/metcalfes-law-is-wrong/', type: 'academic', label: 'University of Minnesota Experts（Odlyzko所属大学による同論文の書誌）' },
-    ],
-  },
-  {
-    id: 'econ-signaling',
-    discipline: 'economics',
-    title: 'シグナリング',
-    statement:
-      '情報の非対称性がある市場で、私的情報を持つ側（売り手・求職者など）が、自らのタイプ（質・能力）を、観察可能で模倣にコストのかかる行動を通じて、情報を持たない側へ信頼できる形で伝える仕組み。シグナルが信頼できるのは「単一交差（single-crossing）」性、すなわち高いタイプほど同じシグナルを発する限界費用が低く、低いタイプには模倣が割に合わないため。' +
-      '古典例はマイケル・スペンス（1973）の教育シグナル（学歴）で、教育が生産性を高めずとも能力の代理指標として機能し、能力別に行動が分かれる分離均衡が生じうる。情報を持たない側が契約メニュー等で相手を選別するスティグリッツのスクリーニングとは情報伝達の方向が逆で、アカロフのレモン市場（逆選択）とも区別される別概念である。',
-    keyFigures: '提唱者: A・マイケル・スペンス（A. Michael Spence）／初出: “Job Market Signaling”, Quarterly Journal of Economics, 1973, 87(3), 355–374／対概念スクリーニングの提唱者: ジョセフ・E・スティグリッツ／2001年ノーベル経済学賞をアカロフ・スペンス・スティグリッツの3名が「情報の非対称性のある市場の分析」で共同受賞',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2001/popular-information/', type: 'government', label: 'NobelPrize.org「The 2001 Prize in Economic Sciences — Popular information」（シグナリングとスクリーニングの区別）' },
-      { url: 'https://academic.oup.com/qje/article-abstract/87/3/355/1909092', type: 'academic', label: 'Michael Spence, “Job Market Signaling”, The Quarterly Journal of Economics 87(3): 355–374 (1973), Oxford Academic' },
-      { url: 'https://en.wikipedia.org/wiki/Signalling_(economics)', type: 'reference', label: 'Wikipedia「Signalling (economics)」（コストのかかる信頼できるシグナル／スクリーニングとの対比）' },
-      { url: 'https://www.nber.org/news/joseph-e-stiglitz-george-akerlof-and-michael-spence-won-2001-nobel-prize-their-analyses-markets', type: 'academic', label: 'NBER「Stiglitz, Akerlof, and Spence Won 2001 Nobel Prize for Analyses of Markets with Asymmetric Information」' },
     ],
   },
   {
@@ -26357,22 +26326,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-signaling-screening-spence',
-    discipline: 'economics',
-    title: 'シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）',
-    statement: '情報非対称下で高能力者が教育等のコストのかかるシグナルを発信し低能力者と自己選別するとSpenceが1973年に定式化。Stiglitzはスクリーニングとして補完的に体系化し、Akerlofのレモンモデルとともに2001年ノーベル経済学賞の基盤となった。' +
-      'シグナルが機能する条件は、シグナル取得のコストがタイプによって異なること（シングル・クロッシング）にある。教育の生産性効果がゼロでも、高能力者にとって取得コストが十分低ければ、教育水準だけで賃金が分離する分離均衡が成立し得る——教育の私的収益と社会的収益が乖離するという含意が論争を呼んだ。' +
-      '情報を持つ側が先に動くのがシグナリング、持たない側が契約メニューを設計して自己選択させるのがスクリーニングで、免責金額の異なる保険メニュー（Rothschild & Stiglitz）や賃金・昇進体系がその典型である。' +
-      '応用は保証・配当・IPO の過小値付け・広告支出（燃やして見せる資金力）など広く、「観察可能でコストのかかる行動が私的情報を伝える」という設計原理として、資本構成論やプラットフォームの評価制度設計にまで及ぶ。',
-    keyFigures: 'A. Michael Spence ／ Joseph E. Stiglitz ／ George A. Akerlof',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.jstor.org/stable/1882010', type: 'academic', label: 'Spence (1973) Job Market Signaling, QJE 87(3) 355-374' },
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2001/press-release/', type: 'reference', label: 'Nobel Prize press release (2001) — Akerlof, Spence, Stiglitz: markets with asymmetric information' },
-      { url: 'https://www.jstor.org/stable/1879431', type: 'academic', label: 'Akerlof (1970) The Market for Lemons, QJE 84(3) 488-500' },
-    ],
-  },
-  {
     id: 'mgmt-sensemaking-weick',
     discipline: 'management',
     title: '意味構築（オーガニゼーショナル・センスメーキング）',
@@ -26742,21 +26695,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-quality-signaling',
-    discipline: 'economics',
-    title: '市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論',
-    statement:
-      'マイケル・スペンスが創始した品質シグナリング理論は、売り手が買い手に観察不可能な製品・人材品質を伝える費用的シグナル（保証・認証・学歴・ブランド）に投資することで、低品質者が採算割れとなる分離均衡が成立する機制を説明する。スペンス（1973）の職業市場モデルでは、教育の取得費用が生産性の高い者ほど低いという単一交差条件の下で、高生産性者だけが割に合う教育水準を選ぶ分離均衡が成立し、雇用主の信念と行動が相互に確認し合う自己確認的な期待均衡として定式化される——教育が生産性を全く高めなくても賃金差を支えうる点が人的資本理論との根本的対立点であり、均衡が複数存在して社会的に過剰なシグナル投資（私的収益と社会的収益の乖離）が生じうることも導かれる。アカロフ（1970）のレモン市場は、品質の非対称情報が良品を市場から駆逐する逆選択の崩壊機構を示しており、シグナリングはこの崩壊を防いで取引を部分的に回復させる制度的応答と位置づけられる——情報を持つ側が先に動くシグナリングと、持たない側が契約メニューで選別するスクリーニングの区別も確立した。ワイス（1995）は、卒業証書自体に不連続な賃金プレミアムが付く羊皮紙効果などの証拠から、賃金の教育プレミアムの一部が選別・シグナル機能に起因すると整理した。保証・広告支出・ブランド構築・第三者認証といった市場シグナルの分析へ一般化され、アカロフ・スペンス・スティグリッツは2001年にノーベル経済学賞を受賞した。',
-    keyFigures: 'マイケル・スペンス ／ ジョージ・A・アカロフ ／ アンドリュー・ワイス',
-    asOf: '2026-06-24',
-    sources: [
-      { url: 'https://doi.org/10.2307/1882010', type: 'academic', label: 'Spence 1973 — Job Market Signaling, Quarterly Journal of Economics 87(3):355-374' },
-      { url: 'https://www.hup.harvard.edu/books/9780674549906', type: 'academic', label: 'Spence 1974 — Market Signaling: Informational Transfer in Hiring and Related Screening Processes, Harvard University Press' },
-      { url: 'https://doi.org/10.2307/1879431', type: 'academic', label: 'Akerlof 1970 — The Market for Lemons: Quality Uncertainty and the Market Mechanism, Quarterly Journal of Economics 84(3):488-500' },
-      { url: 'https://www.jstor.org/stable/2138873', type: 'academic', label: 'Weiss 1995 — Human Capital vs. Signaling Explanations of Wages, Journal of Economic Perspectives 9(4):133-154' },
-    ],
-  },
-  {
     id: 'econ-behavioral-game-theory',
     discipline: 'economics',
     title: '行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究',
@@ -26921,21 +26859,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1257/000282803321455214', type: 'academic', label: 'Anderson & van Wincoop 2003 — Gravity with Gravitas: A Solution to the Border Puzzle, American Economic Review 93(1):170-192' },
       { url: 'https://doi.org/10.1016/B978-0-444-54314-1.00003-3', type: 'academic', label: 'Head & Mayer 2014 — Gravity Equations: Workhorse, Toolkit, and Cookbook, Handbook of International Economics 4:131-195' },
       { url: 'https://archive.org/details/shapingworldecon0000tinb', type: 'reference', label: 'Tinbergen 1962 — Shaping the World Economy: Suggestions for an International Economic Policy, Twentieth Century Fund' },
-    ],
-  },
-  {
-    id: 'human-positive-psychology-broaden-build',
-    discipline: 'human-science',
-    title: 'ポジティブ心理学と拡張形成理論：ポジティブ感情が思考・行動レパートリーを広げ持続的個人資源を構築するメカニズム',
-    statement:
-      'ポジティブ心理学は、フレデリクソン（Barbara Fredrickson）が提唱した拡張形成理論（Broaden-and-Build Theory）を中核理論の一つとして位置づける。同理論によれば、喜び・感謝・愛情などのポジティブ感情は、個人の瞬間的な思考・行動レパートリーを拡張（broaden）し、長期的な身体的・知的・社会的・心理的資源の形成（build）を促進する。またフレデリクソンは、ポジティブ感情がストレス後の心血管系活性を迅速に回復させる「取り消し効果（undoing effect）」を実証した。セリグマン（Martin Seligman）とチクセントミハイ（Mihaly Csikszentmihalyi）はポジティブ心理学の創設を宣言し、セリグマンはウェルビーイングの多次元モデルとしてPERMAモデル（Positive emotions・Engagement・Relationships・Meaning・Accomplishment）を提唱した。ピーターソン（Christopher Peterson）はセリグマンとともに人格的強みの分類体系（VIA分類）を構築し、ウェルビーイング研究の理論的基盤を確立した。',
-    keyFigures: 'フレデリクソン ／ セリグマン ／ ピーターソン',
-    asOf: '2026-06-24',
-    sources: [
-      { url: 'https://doi.org/10.1037/0003-066X.56.3.218', type: 'academic', label: 'Fredrickson2001 — The Role of Positive Emotions in Positive Psychology: The Broaden-and-Build Theory of Positive Emotions, American Psychologist 56(3):218-226' },
-      { url: 'https://doi.org/10.1111/1467-9280.00431', type: 'academic', label: 'Fredrickson & Joiner2002 — Positive Emotions Trigger Upward Spirals Toward Emotional Well-Being, Psychological Science 13(2):172-175' },
-      { url: 'https://doi.org/10.1037/0003-066X.55.1.5', type: 'academic', label: 'Seligman & Csikszentmihalyi2000 — Positive Psychology: An Introduction, American Psychologist 55(1):5-14' },
-      { url: 'https://www.simonandschuster.com/books/Flourish/Martin-E-P-Seligman/9781439190760', type: 'reference', label: 'Seligman2011 — Flourish: A Visionary New Understanding of Happiness and Well-being, Free Press ISBN:9781439190760' },
     ],
   },
   {
@@ -30142,20 +30065,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1002/smj.2380', type: 'academic', label: 'Bengtsson, M. & Kock, S. (2000) "Coopetition" in Business Networks — Industrial Marketing Management, 29(5), 411–426（B2B文脈での体系的研究）' },
       { url: 'https://doi.org/10.1177/0149206318801823', type: 'academic', label: 'Dorn, S. et al. (2016) A Systematic Review of Coopetition Research — Journal of Management, 42(7), 1898–1938（文献メタ分析）' },
       { url: 'https://en.wikipedia.org/wiki/Coopetition', type: 'reference', label: 'Wikipedia: Coopetition — Brandenburger & Nalebuff, value net, simultaneous cooperation and competition' },
-    ],
-  },
-  {
-    id: 'human-broaden-and-build-fredrickson',
-    discipline: 'human-science',
-    title: '拡張＆構築理論（フレドリクソン）',
-    statement: '拡張＆構築理論（broaden-and-build theory of positive emotions）は、バーバラ・フレドリクソン（1998, 2001）が提唱した、ポジティブ感情（喜び・好奇心・愛情・感謝・平静）が認知・行動の瞬時的レパートリーを「拡張（broaden）」し、長期的に心理的・社会的・身体的・知的「資源（resources）を構築（build）する」という機能的理論である。ネガティブ感情の「縮小」機能（Narrowing; 脅威への特定行動への収束）との対比で、ポジティブ感情が創造性・探索・社会的結合・レジリエンスを長期的に蓄積する逆説的（over-the-moment）な適応価値を持つと論じた。ポジティビティ比（positivity ratio）——ポジティブ対ネガティブ感情の比率が2.9013:1以上で「繁栄（flourishing）」する——という主張はロサダ波（Losada wave）問題として再現性批判（Brown他 2013）を受けたが、理論の核心である拡張・構築機能自体の実証的支持は維持されている。ポジティブ心理学（セリグマン）・マインドフルネス・ウェルビーイング介入の理論的基盤として広く採用されている。',
-    keyFigures: 'バーバラ・フレドリクソン ／ マーティン・セリグマン ／ マルシアル・ロサダ ／ ジュリア・ロウ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1037/0033-295X.108.3.218', type: 'academic', label: 'Fredrickson, B. L. (2001) The Role of Positive Emotions in Positive Psychology: The Broaden-and-Build Theory of Positive Emotions — American Psychologist, 56(3), 218–226（拡張＆構築理論の原典）' },
-      { url: 'https://doi.org/10.1023/A:1021390324292', type: 'academic', label: 'Fredrickson, B. L. & Branigan, C. (2005) Positive Emotions Broaden the Scope of Attention and Thought-Action Repertoires — Cognition & Emotion, 19(3), 313–332（拡張機能の実験的検証）' },
-      { url: 'https://doi.org/10.1037/a0032850', type: 'academic', label: 'Brown, N. J. L., Sokal, A. D. & Friedman, H. L. (2013) The Complex Dynamics of Wishful Thinking: The Critical Positivity Ratio — American Psychologist, 68(9), 801–813（ポジティビティ比批判）' },
-      { url: 'https://en.wikipedia.org/wiki/Broaden-and-build', type: 'reference', label: 'Wikipedia: Broaden-and-build — Fredrickson, positive emotions, resources accumulation, positivity ratio debate' },
     ],
   },
   {
@@ -39112,14 +39021,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'human-anchoring-adjustment-tversky',
     discipline: 'human-science',
-    title: 'アンカリングと調整——初期値への不十分な修正による判断バイアス',
-    statement: 'エイモス・トベルスキーとダニエル・カーネマンが1974年に同定したアンカリングと調整（anchoring and adjustment）は、人間が不確実な状況で数値的判断を行う際、最初に提示された情報（アンカー）に過度に依存し、そこからの調整が不十分になるヒューリスティックである。彼らの古典的実験では、ルーレットで得た任意の数値がアフリカ諸国の国連加盟割合の推定に系統的に影響を及ぼすことが示された。アンカリング効果は、アンカーが明らかに無関連であっても、判断者が専門家であっても、注意を喚起されていても持続する極めて頑健なバイアスである。メカニズムについては、不十分な調整仮説（エプリー＆ギロビッチ）と選択的アクセス仮説（ムスワイラー＆シュトラック）の二つの理論的説明が提案されている。前者はアンカーからの意識的調整の不足を強調し、後者はアンカー一致的な情報の選択的活性化を重視する。価格交渉、不動産評価、量刑判断、医療診断など広範な領域で応用的含意が確認されている。',
-    keyFigures: 'エイモス・トベルスキー ／ ダニエル・カーネマン ／ ニコラス・エプリー ／ トーマス・ムスワイラー',
-    asOf: '2026-06-26',
+    title: 'アンカリングと調整（係留と調整）——最初に示された数値が基準点となり、そこからの修正が不十分なまま判断が偏るヒューリスティック',
+    statement:
+      'アンカリングと調整（anchoring and adjustment）は、エイモス・トヴェルスキーとダニエル・カーネマンが1974年の論文『Judgment under Uncertainty: Heuristics and Biases』（Science 185巻4157号）で同定したヒューリスティックで、人が不確実な状況で数値を推定するとき、最初に提示された値（アンカー）を出発点にして調整するが、その調整が不十分なため判断がアンカーの側に偏る現象をいう。古典的な実験では、回転盤で得た無関係な数字を見せた後に国連加盟国に占めるアフリカ諸国の割合を推定させると、回転盤が10で止まった群の推定の中央値は25％、65で止まった群では45％となり、本来無関係な初期値が推定を大きく左右した。この効果は、アンカーが明らかに無関係でも、判断者が専門家でも、注意を促されていても消えない頑健なバイアスで、価格交渉・見積り・販売・量刑など数量判断を伴う場面に広く現れる。機序については、自分で生成したアンカーからの調整が途中で止まるとする不十分な調整説（エプリーとギロビッチ 2001）と、アンカーと整合的な知識が選択的に活性化されるとする選択的アクセス説（ムスワイラーとシュトラック）が対立し、実験で提示されるアンカーの多くは後者で説明されると考えられている。中小企業では、見積書や価格表の最初の数字、値引き交渉の最初の提示額、交渉相手の希望価格がアンカーとして働くため、自社から先に根拠のある基準値を示すこと、相手のアンカーに対しては独自の根拠で再計算してから応じることが実務上の含意となる。',
+    keyFigures: 'エイモス・トヴェルスキー＆ダニエル・カーネマン（1974『Judgment under Uncertainty: Heuristics and Biases』Science 185, 1124-1131）／ニコラス・エプリー＆トーマス・ギロビッチ（2001 不十分な調整説）／トーマス・ムスワイラー＆フリッツ・シュトラック（選択的アクセス説）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1126/science.185.4157.1124', type: 'academic', label: 'Tversky, A. & Kahneman, D. (1974) Judgment Under Uncertainty: Heuristics and Biases — Science 185(4157)' },
-      { url: 'https://en.wikipedia.org/wiki/Anchoring_(cognitive_bias)', type: 'reference', label: 'Wikipedia: Anchoring — Tversky & Kahneman cognitive bias and insufficient adjustment' },
-      { url: 'https://doi.org/10.1111/1467-9280.00372', type: 'academic', label: 'Epley, N. & Gilovich, T. (2001) Putting Adjustment Back in the Anchoring and Adjustment Heuristic — Psychological Science 12(5)' },
+      { url: 'https://doi.org/10.1126/science.185.4157.1124', type: 'academic', label: 'Tversky, A. & Kahneman, D. (1974) Judgment under Uncertainty: Heuristics and Biases — Science 185(4157), 1124–1131（一次資料。係留と調整ヒューリスティックと回転盤実験）' },
+      { url: 'https://doi.org/10.1111/1467-9280.00372', type: 'academic', label: 'Epley, N. & Gilovich, T. (2001) Putting Adjustment Back in the Anchoring and Adjustment Heuristic — Psychological Science 12(5)（不十分な調整説）' },
+      { url: 'https://www.britannica.com/topic/heuristic-reasoning', type: 'reference', label: 'Encyclopaedia Britannica — Heuristic（係留と調整ヒューリスティックの帰属）' },
+      { url: 'https://en.wikipedia.org/wiki/Anchoring_effect', type: 'reference', label: 'Wikipedia — Anchoring effect（回転盤実験と機序をめぐる説の概説）' },
     ],
   },
   {
@@ -39251,19 +39162,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Transfer_problem', type: 'reference', label: 'Wikipedia: Transfer Problem — Keynes–Ohlin debate overview' },
       { url: 'https://doi.org/10.2307/2227005', type: 'academic', label: 'Samuelson, P. A. (1952) The Transfer Problem and Transport Costs: The Terms of Trade When Impediments Are Absent — Economic Journal 62(246), 278-304' },
       { url: 'https://doi.org/10.1016/S1573-4404(84)01006-4', type: 'academic', label: 'Jones, R. W. & Neary, J. P. (1984) The Positive Theory of International Trade — Handbook of International Economics' },
-    ],
-  },
-  {
-    id: 'mgmt-broaden-and-build-theory',
-    discipline: 'management',
-    title: '拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム',
-    statement: 'バーバラ・フレドリクソンが提唱した拡張形成理論（broaden-and-build theory）は、ポジティブ感情がネガティブ感情とは質的に異なる適応的機能を持つことを体系化した理論である。喜び・興味・感謝・愛情などのポジティブ感情は、瞬間的に個人の思考と行動のレパートリーを「拡張（broaden）」し、探索・創造・遊びといった幅広い認知・行動パターンを促進する。この拡張された思考・行動は時間の経過とともに身体的・知的・社会的・心理的な「個人資源を形成（build）」し、長期的なレジリエンスと適応能力の向上に寄与する。実験研究では、ポジティブ感情誘導により注意の幅が広がり、創造的問題解決能力が向上し、社会的つながりが強化されることが示された。組織心理学においては、職場でのポジティブ感情の涵養がイノベーション・チームワーク・従業員のウェルビーイングを促進する経営介入の根拠として広く活用されている。',
-    keyFigures: 'バーバラ・フレドリクソン ／ マーティン・セリグマン ／ ミハイ・チクセントミハイ ／ エド・ディーナー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1037/0003-066X.56.3.218', type: 'academic', label: 'Fredrickson, B.L. (2001) The Role of Positive Emotions in Positive Psychology — American Psychologist 56(3)' },
-      { url: 'https://en.wikipedia.org/wiki/Broaden-and-build', type: 'reference', label: 'Wikipedia: Broaden-and-Build — Fredrickson positive emotions theory overview' },
-      { url: 'https://doi.org/10.1037/a0033584', type: 'academic', label: 'Fredrickson, B.L. (2013) Updated Thinking on Positivity Ratios — American Psychologist 68(9)' },
     ],
   },
   {
@@ -39917,19 +39815,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.3386/w10036', type: 'academic', label: 'Eichengreen, B., Hausmann, R. & Panizza, U. (2003) The Pain of Original Sin — NBER Working Paper' },
       { url: 'https://doi.org/10.1257/jel.41.3.599', type: 'academic', label: 'Eichengreen, B. & Hausmann, R. (1999) Exchange Rates and Financial Fragility — NBER' },
       { url: 'https://en.wikipedia.org/wiki/Original_sin_(economics)', type: 'reference', label: 'Wikipedia: Original sin — emerging market foreign currency borrowing constraint overview' },
-    ],
-  },
-  {
-    id: 'human-broaden-build-upward-spiral',
-    discipline: 'human-science',
-    title: '拡張＝形成理論の上昇スパイラル——ポジティブ感情と個人資源の相互強化',
-    statement: '拡張＝形成理論の上昇スパイラル（upward spiral）は、バーバラ・フレデリクソンとトーマス・ジョイナーが2002年に実証した動態的プロセスであり、ポジティブ感情の経験が注意・思考・行動のレパートリーを拡張し（拡張効果）、その拡張が個人の身体的・知的・社会的・心理的資源の持続的な形成（形成効果）を促進し、形成された資源がさらなるポジティブ感情を喚起するという自己強化的な循環を指す。フレデリクソンとジョイナーは5週間の縦断研究で、ポジティブ感情と広範な対処行動（broad-minded coping）が相互に予測し合う上昇スパイラルの存在を実証した。この上昇スパイラルはフレデリクソンの拡張＝形成理論（1998年）の動態的拡張であり、レジリエンスの構築・心血管系の回復促進・社会的つながりの強化がフィードバック・ループとして機能するメカニズムを示している。ネガティブ感情の下降スパイラル（抑うつの悪循環）と対照的なモデルとして位置づけられる。',
-    keyFigures: 'バーバラ・フレデリクソン ／ トーマス・ジョイナー ／ ソニア・リュボミルスキー ／ マイケル・コーン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1111/1467-9280.00431', type: 'academic', label: 'Fredrickson, B. L. & Joiner, T. (2002) Positive Emotions Trigger Upward Spirals — Psychological Science' },
-      { url: 'https://doi.org/10.1037/0003-066X.56.3.218', type: 'academic', label: 'Fredrickson, B. L. (2001) The Role of Positive Emotions in Positive Psychology — American Psychologist' },
-      { url: 'https://en.wikipedia.org/wiki/Broaden-and-build', type: 'reference', label: 'Wikipedia: Broaden-and-build — positive emotions and upward spiral dynamics overview' },
     ],
   },
   {
@@ -42135,14 +42020,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'human-broaden-and-build-theory-fredrickson',
     discipline: 'human-science',
-    title: '拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築',
-    statement: '拡張＝形成理論（broaden-and-build theory）は、バーバラ・フレドリクソンが1998年に提唱した、ポジティブ感情（喜び・興味・満足・愛等）が注意・認知・行動のレパートリーを一時的に拡張し（broaden）、その結果として持続的な個人的資源（身体的・知的・社会的・心理的資源）が蓄積・形成される（build）という進化心理学的機能理論である。ネガティブ感情が特定行動傾向（fight-or-flight）を狭めるのに対し、ポジティブ感情は思考-行動レパートリーを広げ、創造性・社会的結びつき・レジリエンスを促進する。フレドリクソンとジョイナーの研究はポジティブ感情と拡張的認知の間の上方螺旋（upward spiral）を実証し、フレドリクソンのポジティビティ比率研究は一定の閾値（約3:1）以上のポジティブ感情対ネガティブ感情の比率が繁栄を予測することを示した（ただしこの比率の数学的根拠は後に批判された）。',
-    keyFigures: 'バーバラ・フレドリクソン ／ トーマス・ジョイナー ／ ソニア・リュボミルスキー ／ アリス・アイゼン',
-    asOf: '2026-06-26',
+    title: '拡張＝形成理論（フレドリクソン）——ポジティブ感情が思考と行動のレパートリーを広げ、持続的な個人資源を築くという機能理論',
+    statement:
+      '拡張＝形成理論（broaden-and-build theory）は、バーバラ・フレドリクソンが1998年に提唱し2001年の論文『The Role of Positive Emotions in Positive Psychology』（American Psychologist 56巻3号）で体系化した、ポジティブ感情の適応的機能に関する理論である。恐れや怒りといったネガティブ感情が闘争か逃走かのような特定の行動傾向へ思考と行動を狭めるのに対し、喜び・興味・満足・愛情・感謝などのポジティブ感情は瞬間的に注意・認知・行動のレパートリーを拡張し（broaden）、探索・遊び・創造・社会的結合を促す。この拡張が時間とともに身体的・知的・社会的・心理的な個人資源を蓄積し（build）、レジリエンスや適応能力を高める。フレドリクソンとジョイナー（2002）は5週間の縦断研究でポジティブ感情と広い視野の対処行動が互いを予測し合う上昇スパイラルを示し、ポジティブ感情がストレス後の心血管系の活性を速やかに戻す取り消し効果や、注意の幅を広げる実験的証拠も報告された。一方、ポジティブ感情対ネガティブ感情の比率が約3対1を超えると繁栄するというポジティビティ比の主張は、ブラウン、ソーカル、フリードマン（2013）が数理的根拠を批判し、フレドリクソン自身が同年に比率の主張を撤回して理論の中核部分と切り離した。効果量の小ささや自己報告への依存、文化差も限界として指摘される。中小企業では、職場でのポジティブ感情の涵養が創造性や協働、離職の抑制につながるという知見を、感情を強制する「ポジティブ思考の押しつけ」ではなく、承認・裁量・小さな成功体験の設計として活かすことが含意となる。',
+    keyFigures: 'バーバラ・フレドリクソン（1998 提唱／2001 American Psychologist／2013 ポジティビティ比の撤回）／トーマス・ジョイナー（2002 上昇スパイラルの縦断研究）／対比: ニック・ブラウン＆アラン・ソーカル＆ハリス・フリードマン（2013 ポジティビティ比批判）／マーティン・セリグマン（ポジティブ心理学の創設）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1037/0003-066X.56.3.218', type: 'academic', label: 'Fredrickson, B. (2001) The Role of Positive Emotions in Positive Psychology — American Psychologist' },
-      { url: 'https://doi.org/10.1111/1467-9280.00431', type: 'academic', label: 'Fredrickson, B. & Joiner, T. (2002) Positive Emotions Trigger Upward Spirals — Psychological Science' },
-      { url: 'https://en.wikipedia.org/wiki/Broaden-and-build', type: 'reference', label: 'Wikipedia: Broaden-and-build — 拡張＝形成理論の概要' },
+      { url: 'https://doi.org/10.1037/0003-066X.56.3.218', type: 'academic', label: 'Fredrickson, B. L. (2001) The Role of Positive Emotions in Positive Psychology: The Broaden-and-Build Theory of Positive Emotions — American Psychologist 56(3), 218–226（理論の体系化）' },
+      { url: 'https://doi.org/10.1111/1467-9280.00431', type: 'academic', label: 'Fredrickson, B. L. & Joiner, T. (2002) Positive Emotions Trigger Upward Spirals Toward Emotional Well-Being — Psychological Science 13(2), 172–175（上昇スパイラルの縦断研究）' },
+      { url: 'https://doi.org/10.1037/a0032850', type: 'academic', label: 'Brown, N. J. L., Sokal, A. D. & Friedman, H. L. (2013) The Complex Dynamics of Wishful Thinking: The Critical Positivity Ratio — American Psychologist 68(9), 801–813（ポジティビティ比批判）' },
+      { url: 'https://doi.org/10.1037/a0033584', type: 'academic', label: 'Fredrickson, B. L. (2013) Updated Thinking on Positivity Ratios — American Psychologist 68(9)（比率の主張の撤回と理論の切り分け）' },
+      { url: 'https://en.wikipedia.org/wiki/Broaden-and-build', type: 'reference', label: 'Wikipedia: Broaden-and-build — 理論の概要と positivity ratio 論争' },
     ],
   },
   {
@@ -43482,13 +43370,18 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-signaling-theory-spence-job-market',
     discipline: 'economics',
-    title: 'シグナリング理論——スペンスの学歴シグナルと情報非対称性下の資格獲得行動',
-    statement: 'シグナリング理論（signaling theory）は，マイケル・スペンスが1973年の論文「労働市場のシグナリング」で提唱した，情報の非対称性が存在する市場において，情報を持つ側（求職者）が持たない側（雇用主）に自己の質を伝えるために「シグナル（signal）」を発信するという枠組みである。スペンスは大学教育を「生産性を高める投資」としてではなく，「高能力者が低能力者より低コストで取得できるシグナル」として分析し，均衡において高能力者は教育を取得し，低能力者は取得しないという「分離均衡」が成立することを示した（2001年ノーベル経済学賞）。シグナリングはアカーロフ・スティグリッツとともに情報経済学の三大理論（逆選択・シグナリング・スクリーニング）を構成する。就職活動・学歴社会・資格・保証・広告（コストリーシグナルとしての宣伝費）・ESGレーティングなど多様な応用を持つ。シグナリングの純粋なコスト面は社会的浪費を生じうるという批判もある。',
-    keyFigures: 'マイケル・スペンス ／ ジョージ・アカロフ ／ ジョセフ・スティグリッツ ／ ジェームズ・ライリー',
-    asOf: '2026-06-26',
+    title: 'シグナリング理論（スペンス）——情報を持つ側が模倣にコストのかかる行動で自らの質を伝え、分離均衡が成立する仕組み',
+    statement:
+      'シグナリング理論は、マイケル・スペンスが1973年の論文『Job Market Signaling』（Quarterly Journal of Economics 87巻3号）で提唱した、情報の非対称性がある市場で私的情報を持つ側（求職者・売り手）が、観察可能で模倣にコストのかかる行動によって自らの質を情報を持たない側（雇用主・買い手）に信頼できる形で伝える枠組みである。古典例は学歴で、教育が生産性をまったく高めなくても、能力の高い者ほど同じ教育水準を低い費用で取得できるという単一交差条件の下では、高能力者だけが割に合う教育を選び、雇用主の信念と行動が互いを確認し合う分離均衡が成立して賃金差を支えうる。均衡は複数存在し、私的収益と社会的収益が乖離して社会的に過剰なシグナル投資が生じうることも導かれ、教育を生産性向上と見る人的資本理論との対立点となった。情報を持たない側が契約メニューで相手を選別するスティグリッツのスクリーニングとは情報伝達の方向が逆で、アカロフのレモン市場（逆選択）と併せて2001年のノーベル経済学賞の対象となった。応用は保証・認証・ブランド・配当・広告支出（資金力を燃やして見せる）など製品市場や金融に広がり、ワイス（1995）は賃金の人的資本説明とシグナル説明の識別が実証上難しいことを整理した。限界としては、教育の生産性効果を完全に否定する想定は極端で、実証的にはシグナルと人的資本の双方が働くと考えられること、均衡の選択に理論だけでは答えられないことがある。中小企業には、採用における資格・学歴の読み方だけでなく、自社の品質を顧客に信じてもらうための保証・第三者認証・返品制度といった「安売りでは真似できないコスト」を伴うシグナルの設計が含意となる。',
+    keyFigures: 'マイケル・スペンス（1973『Job Market Signaling』QJE／1974『Market Signaling』Harvard University Press／2001 ノーベル経済学賞）／ジョージ・アカロフ（1970 レモン市場）／ジョセフ・スティグリッツ（スクリーニング）／アンドリュー・ワイス（1995 人的資本説とシグナル説の識別）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.2307/1882010', type: 'academic', label: 'Spence, M. (1973) Job Market Signaling — QJE' },
-      { url: 'https://en.wikipedia.org/wiki/Signalling_(economics)', type: 'reference', label: 'Wikipedia: Signalling (economics) — information economics' },
+      { url: 'https://doi.org/10.2307/1882010', type: 'academic', label: 'Spence, M. (1973) Job Market Signaling — Quarterly Journal of Economics 87(3), 355–374（シグナリング理論の原論文）' },
+      { url: 'https://www.hup.harvard.edu/books/9780674549906', type: 'academic', label: 'Spence, M. (1974) Market Signaling: Informational Transfer in Hiring and Related Screening Processes — Harvard University Press（理論の展開）' },
+      { url: 'https://doi.org/10.2307/1879431', type: 'academic', label: 'Akerlof, G. A. (1970) The Market for Lemons: Quality Uncertainty and the Market Mechanism — Quarterly Journal of Economics 84(3), 488–500（逆選択との関係）' },
+      { url: 'https://www.jstor.org/stable/2138873', type: 'academic', label: 'Weiss, A. (1995) Human Capital vs. Signalling Explanations of Wages — Journal of Economic Perspectives 9(4), 133–154（人的資本説との識別）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2001/popular-information/', type: 'reference', label: 'NobelPrize.org — The 2001 Prize in Economic Sciences, Popular information（シグナリングとスクリーニングの区別）' },
+      { url: 'https://en.wikipedia.org/wiki/Signalling_(economics)', type: 'reference', label: 'Wikipedia: Signalling (economics) — コストのかかる信頼できるシグナルとスクリーニングとの対比' },
     ],
   },
   {
@@ -47296,18 +47189,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1177/10465688980060010', type: 'academic', label: 'Eisenhardt, K.M. & Brown, S.L. (1998). Time pacing — Harvard Business Review' },
       { url: 'https://en.wikipedia.org/wiki/Time_pacing', type: 'reference', label: 'Wikipedia: Time pacing — strategic management' },
-    ],
-  },
-  {
-    id: 'econ-signaling-theory-spence',
-    discipline: 'economics',
-    title: '教育シグナリング理論（スペンス）',
-    statement: 'スペンス（Michael Spence）は1973年に，高等教育が生産性を向上させる（人的資本理論）のではなく，もともと高い能力を持つ人が低い費用でシグナル（signal）を送ることで雇用主に自身の能力を識別可能にする仕組みとして機能するという「教育シグナリング理論」を提唱した。教育の費用（時間・費用・負担）が低能力者には高すぎるため高能力者だけが割に合う——この「分離均衡（separating equilibrium）」が労働市場での情報の非対称性問題を解決する。スペンスはアカーロフの逆選択モデル・スティグリッツの情報スクリーニング理論とともに「非対称情報下の市場分析」として2001年ノーベル経済学賞を受賞した。資格インフレ・MBA・学歴フィルタリングの社会的機能に対する批判的視座として広く引用されている。',
-    keyFigures: 'マイケル・スペンス ／ ジョージ・アカーロフ ／ ジョセフ・スティグリッツ ／ ゲイリー・ベッカー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/1882010', type: 'academic', label: 'Spence, M. (1973) Job Market Signaling — Quarterly Journal of Economics 87(3), 355–374（シグナリング理論の原論文）' },
-      { url: 'https://en.wikipedia.org/wiki/Signalling_(economics)', type: 'reference', label: 'Wikipedia: Signalling (economics) — 経済学的シグナリングの概説' },
     ],
   },
   {

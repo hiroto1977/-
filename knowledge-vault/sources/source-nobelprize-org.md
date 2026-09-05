@@ -2,7 +2,7 @@
 title: "nobelprize.org"
 type: source-domain
 host: "nobelprize.org"
-cite_count: 96
+cite_count: 95
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nobelprize.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **96 件**（リファレンス 58 ・ 公的 36 ・ 学術 2）
+> [!info] 出典ドメイン索引 ・ 引用 **95 件**（リファレンス 58 ・ 公的 35 ・ 学術 2）
 
 ## このドメインを出典とする項目
 
@@ -86,8 +86,7 @@ tags:
 - [[econ-screening|スクリーニング（選別理論）]] — NobelPrize.org—The2001PrizeinEconomicSciences,Popularinformation（保険会社…
 - [[econ-search-matching|サーチ理論／マッチング理論]] — RoyalSwedishAcademyofSciences,“MarketswithSearchFrictions”(Scientific…
 - [[econ-shapley-value|シャープレー値]] — NobelPrize.org—LloydS.Shapley,2012年経済学賞
-- [[econ-signaling|シグナリング]] — NobelPrize.org「The2001PrizeinEconomicSciences—Popularinformation」（シグナ…
-- [[econ-signaling-screening-spence|シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）]] — NobelPrizepressrelease(2001)—Akerlof,Spence,Stiglitz:marketswithasymm…
+- [[econ-signaling-theory-spence-job-market|シグナリング理論（スペンス）——情報を持つ側が模倣にコストのかかる行動で自らの質を伝え、分離均衡が成立する仕組み]] — NobelPrize.org—The2001PrizeinEconomicSciences,Popularinformation（シグナリ…
 - [[econ-solow-growth-model|ソロー成長モデル]] — NobelPrize.org—SverigesRiksbankPrizeinEconomicSciences1987(RobertM.So…
 - [[econ-time-inconsistency|動学的不整合（時間的非整合性）]] — NobelPrize.org—2004年経済学賞一般向け解説（時間整合性とインフレ）
 - [[econ-tobins-q|トービンのq]] — NobelPrize.org—ThePrizeinEconomics1981,Pressrelease（市場価値／再取得費用の比とq>1の…

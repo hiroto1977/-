@@ -2,7 +2,7 @@
 title: "academic.oup.com"
 type: source-domain
 host: "academic.oup.com"
-cite_count: 141
+cite_count: 140
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # academic.oup.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **141 件**（学術 139 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **140 件**（学術 138 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -88,7 +88,6 @@ tags:
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — Kaldor(1939)"WelfarePropositionsofEconomicsandInterpersonalComparison…
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — Scitovsky(1941),Rev.Econ.Studies9(1):77-88
 - [[econ-screening|スクリーニング（選別理論）]] — Rothschild&Stiglitz(1976),“EquilibriuminCompetitiveInsuranceMarkets,”…
-- [[econ-signaling|シグナリング]] — MichaelSpence,“JobMarketSignaling”,TheQuarterlyJournalofEconomics87(3…
 - [[econ-solow-residual-total-factor-productivity|ソロー残差と全要素生産性——技術進歩の計測とその解釈を巡る論争]] — Jorgenson,D.W.&Griliches,Z.(1967)TheExplanationofProductivityChange—R…
 - [[econ-sticky-information|粘着情報モデル]] — Mankiw&Reis(2002),"StickyInformationversusStickyPrices,"QuarterlyJour…
 - [[econ-strategic-complementarity|戦略的補完性]] — Cooper&John(1988)“CoordinatingCoordinationFailuresinKeynesianModels,”…

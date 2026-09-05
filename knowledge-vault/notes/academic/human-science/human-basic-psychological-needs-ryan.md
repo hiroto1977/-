@@ -36,7 +36,7 @@ aliases:
 - [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 同じ思想家
 - [[econ-fine-is-a-price-gneezy-rustichini|「罰金は価格である」——金銭的インセンティブが内発的・社会的動機を締め出し関係を取引に変える現象]] — 同じ思想家
 - [[human-learned-helplessness|学習性無力感（learned helplessness）]] — 同じ思想家
-- [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同じ思想家
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論（フレドリクソン）——ポジティブ感情が思考と行動のレパートリーを広げ、持続的な個人資源を築くという機能理論]] — 同じ思想家
 - [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同じ思想家
 - [[human-explanatory-style-seligman|説明スタイル——出来事の原因をどう説明するかが楽観と悲観を分ける]] — 同じ思想家
 - [[human-garcia-taste-aversion|ガルシア効果（味覚嫌悪学習）——学習の生物学的制約]] — 同じ思想家

@@ -36,6 +36,7 @@ aliases:
 - [[econ-menu-costs|メニューコスト]] — 出典を共有
 - [[econ-okuns-law-output-unemployment|オークンの法則——産出ギャップと失業率の経験的関係]] — 同分野の近傍
 - [[econ-implicit-contract-theory|暗黙的契約理論]] — 同分野の近傍
+- [[econ-signaling-theory-spence-job-market|シグナリング理論（スペンス）——情報を持つ側が模倣にコストのかかる行動で自らの質を伝え、分離均衡が成立する仕組み]] — 同分野の近傍
 - [[econ-gender-wage-gap-goldin|ジェンダー賃金格差と職業分離の経済学——ゴールディンの労働経済分析]] — 同分野の近傍
 
 ## 関連

@@ -17,8 +17,9 @@ tags:
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 60）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 38）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 37）
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]]（接続 34）
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 31）
-- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]]（接続 30）
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]]（接続 29）
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]]（接続 29）
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 28）
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 27）
@@ -27,7 +28,6 @@ tags:
 - [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]]（接続 26）
 - [[bizlaw-toushiho|出資法]]（接続 26）
 - [[bizlaw-earnest-money|手付（民法557条）]]（接続 25）
-- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]]（接続 25）
 
 ## 第 2 部 — 年代順の展開
 - 1511年: [[bizlaw-lucy-v-zehmer-objective-theory-of-contract|ルーシー対ゼーマー事件と契約成立の客観説——内心でなく言葉と行為の外形で合意を判断する原則]]
@@ -315,7 +315,6 @@ tags:
 - [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]]
 - [[bizlaw-alter-ego-doctrine|法人格否認の法理（分身理論）]]
 - [[bizlaw-alter-ego-doctrine-reverse|逆法人格否認（リバース・ピアシング）]]
-- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]]
 - [[bizlaw-anti-bribery-fcpa-ukba|贈収賄禁止法とコンプライアンス——米国FCPA・英国贈収賄防止法と国際腐敗防止規制]]
 - [[bizlaw-anti-dilution-venture|アンチダイリューション条項（ベンチャー投資）]]
 - [[bizlaw-anti-money-laundering-directive-eu|EUマネーロンダリング防止指令——金融システムの健全性保護]]
@@ -481,6 +480,7 @@ tags:
 - [[bizlaw-fault-liability|過失責任の原則と無過失責任]]
 - [[bizlaw-fictitious-manifestation|通謀虚偽表示（民法94条）]]
 - [[bizlaw-fiduciary-duty|信認義務（受託者責任）]]
+- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]]
 - [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]]
 - [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]]
 - [[bizlaw-fisher-v-bell|フィッシャー対ベル——「陳列」は申込みか、申込みの誘引か]]

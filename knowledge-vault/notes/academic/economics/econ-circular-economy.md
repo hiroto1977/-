@@ -39,7 +39,7 @@ aliases:
 - [[subsidy-mado-renovation|先進的窓リノベ事業]] — 出典を共有
 - [[subsidy-zeb|ZEB（ネット・ゼロ・エネルギー・ビル）化支援補助事業]] — 出典を共有
 - [[subsidy-zeh|ZEH支援事業]] — 出典を共有
-- [[econ-signaling|シグナリング]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

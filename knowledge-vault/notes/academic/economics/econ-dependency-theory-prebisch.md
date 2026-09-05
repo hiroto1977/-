@@ -34,6 +34,7 @@ aliases:
 - [[econ-prebisch-singer-terms-of-trade|プレビッシュ＝シンガー仮説——一次産品の交易条件悪化と開発経済学]] — 同じ思想家
 - [[econ-prebisch-singer-thesis|プレビッシュ＝シンガー命題]] — 同分野の近傍
 - [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]] — 同分野の近傍
+- [[econ-limit-pricing-bain|参入阻止価格——潜在的参入者を思いとどまらせる戦略的な低価格設定]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -36,11 +36,11 @@ aliases:
 - [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — 同じ思想家
 - [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 同じ思想家
 - [[human-mind-wandering|マインドワンダリング]] — 同じ思想家
-- [[human-anchoring|アンカリング効果（係留と調整）]] — 出典を共有
 - [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 出典を共有
 - [[human-framing-effect|フレーミング効果（framing effect）]] — 出典を共有
 - [[human-phoneme-restoration|音素修復効果（Phonemic Restoration Effect／Warren 1970）——雑音で消された音を脳が補って「聞こえた」と感じる、トップダウンの知覚]] — 出典を共有
 - [[human-trolley-problem|トロッコ問題]] — 出典を共有
+- [[infosoc-social-influence-network-theory-friedkin-johnsen|フリードキン＝ジョンセンの社会的影響ネットワーク理論——初期意見への係留を残す加重平均が持続的な不一致を説明する]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

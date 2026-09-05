@@ -38,8 +38,6 @@ aliases:
 - [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]] — 同じ思想家
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 同じ思想家
 - [[infosoc-serious-leisure-stebbins|シリアスレジャー——余暇を「キャリア」として追求する営み]] — 同じ思想家
-- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 同じ思想家
-- [[human-positive-psychology-broaden-build|ポジティブ心理学と拡張形成理論：ポジティブ感情が思考・行動レパートリーを広げ持続的個人資源を構築するメカニズム]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

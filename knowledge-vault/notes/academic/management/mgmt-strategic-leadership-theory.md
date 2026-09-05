@@ -33,12 +33,12 @@ Donald C. Hambrick／Sydney Finkelstein／Albert A. Cannella Jr.／Mason A. Carp
 ## 関連概念
 - [[mgmt-dynamic-managerial-cognition|動的経営認知と戦略的変化（トゥイッテル＆ロウランズ）]] — 語彙が近い
 - [[mgmt-upper-echelons-theory|アッパー・エシュロン理論（Upper Echelons Theory）]] — 語彙が近い
+- [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]] — 語彙が近い
 - [[mgmt-upper-echelons-refinement|上層部理論精緻化]] — 同じ思想家
 - [[mgmt-behavioral-integration|行動的統合（Behavioral Integration）]] — 同じ思想家
 - [[mgmt-behavioral-integration-tmt|トップ・マネジメント・チームの行動統合]] — 同じ思想家
 - [[mgmt-organizational-attention-theory|組織注意理論]] — 同じ思想家
 - [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
-- [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]] — 同分野の近傍
 - [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — 同分野の近傍
 - [[mgmt-upper-echelons-hambrick|上層部理論（ハンブリック＆メイソン）]] — 同分野の近傍
 

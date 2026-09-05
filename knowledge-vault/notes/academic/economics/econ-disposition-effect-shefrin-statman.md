@@ -30,12 +30,16 @@ aliases:
 - [Wikipedia: Disposition effect — Shefrin & Statman, prospect theory, sell winners/hold losers, Odean](https://en.wikipedia.org/wiki/Disposition_effect) `リファレンス`
 
 ## 関連概念
+- [[human-base-rate-fallacy|基準率の無視]] — 同じ思想家
+- [[human-conjunction-fallacy|連言錯誤]] — 同じ思想家
 - [[human-framing-effect|フレーミング効果（framing effect）]] — 同じ思想家
 - [[human-loss-aversion|損失回避]] — 同じ思想家
 - [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 同じ思想家
-- [[econ-rank-dependent-utility-quiggin|順位依存効用——累積確率を歪めてリスク態度を表す]] — 同じ思想家
-- [[econ-regret-theory-loomes-sugden|後悔理論——選ばなかった選択肢との比較が選択を左右する]] — 同じ思想家
-- [[econ-debreu-scarf-core|ドブルー＝スカーフの定理——コアの競争均衡への収束]] — 同分野の近傍
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 同じ思想家
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
+- [[human-gamblers-fallacy|ギャンブラーの誤謬]] — 同じ思想家
+- [[human-peak-end-rule-kahneman|ピーク・エンドの法則——経験の記憶における最高点と終了時の偏重]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

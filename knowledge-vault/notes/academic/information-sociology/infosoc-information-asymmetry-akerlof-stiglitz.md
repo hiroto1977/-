@@ -34,13 +34,13 @@ aliases:
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 語彙が近い
 - [[econ-lemons-problem-akerlof|レモン市場]] — 語彙が近い
 - [[econ-screening-rothschild-stiglitz|スクリーニング理論——情報を持たない側が契約メニューで相手の型を選別する]] — 同じ思想家
-- [[econ-signaling-theory-spence-job-market|シグナリング理論——スペンスの学歴シグナルと情報非対称性下の資格獲得行動]] — 同じ思想家
+- [[econ-signaling-theory-spence-job-market|シグナリング理論（スペンス）——情報を持つ側が模倣にコストのかかる行動で自らの質を伝え、分離均衡が成立する仕組み]] — 同じ思想家
 - [[bizlaw-securities-insider-trading-regulation|インサイダー取引規制——証券市場の公正性と情報の非対称性への法的対応]] — 同じ思想家
 - [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同じ思想家
 - [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]] — 同じ思想家
 - [[econ-identity-economics|アイデンティティ経済学]] — 同じ思想家
 - [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — 同じ思想家
-- [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]] — 同じ思想家
+- [[econ-job-competition-thurow|仕事をめぐる競争モデル（サロー）——賃金競争への対抗と「労働の待ち行列」]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

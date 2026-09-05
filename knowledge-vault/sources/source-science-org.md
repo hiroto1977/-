@@ -2,7 +2,7 @@
 title: "science.org"
 type: source-domain
 host: "science.org"
-cite_count: 22
+cite_count: 21
 tags:
   - source-domain
   - index
@@ -10,13 +10,12 @@ tags:
 
 # science.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **22 件**（学術 22）
+> [!info] 出典ドメイン索引 ・ 引用 **21 件**（学術 21）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — Tversky,A.&Kahneman,D.1974.JudgmentunderUncertainty:HeuristicsandBias…
 - [[econ-anticommons|アンチコモンズの悲劇]] — Heller&Eisenberg,"CanPatentsDeterInnovation?TheAnticommonsinBiomedica…
-- [[human-anchoring|アンカリング効果（係留と調整）]] — Tversky&Kahneman(1974)JudgmentunderUncertainty,Science185(4157):1124-…
 - [[human-biopsychosocial-model-chronic-pain|慢性疼痛の生物心理社会モデル]] — Engel(1977)Theneedforanewmedicalmodel—Science196(4286)
 - [[human-default-effect|デフォルト効果（初期設定効果）]] — Johnson&Goldstein,“DoDefaultsSaveLives?”Science302:1338–1339(2003)
 - [[human-end-of-history-illusion|歴史の終わり錯覚]] — Quoidbach,Gilbert&Wilson,"TheEndofHistoryIllusion,"Science339:96–98(2…

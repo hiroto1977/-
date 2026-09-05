@@ -39,7 +39,7 @@ aliases:
 - [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — 同じ思想家
 - [[econ-near-rationality-akerlof-yellen|近似合理性とメニューコスト——僅かな最適化の怠りが大きな景気変動を生む]] — 同じ思想家
 - [[econ-screening-rothschild-stiglitz|スクリーニング理論——情報を持たない側が契約メニューで相手の型を選別する]] — 同じ思想家
-- [[econ-signaling-theory-spence-job-market|シグナリング理論——スペンスの学歴シグナルと情報非対称性下の資格獲得行動]] — 同じ思想家
+- [[econ-signaling-theory-spence-job-market|シグナリング理論（スペンス）——情報を持つ側が模倣にコストのかかる行動で自らの質を伝え、分離均衡が成立する仕組み]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

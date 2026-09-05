@@ -33,7 +33,6 @@ aliases:
 - [French, J. R. P., Jr. (1956). A formal theory of social power. Psychological Review, 63(3), 181-194 — 理論が継承する対人影響・社会的権力の先行定式化](https://pubmed.ncbi.nlm.nih.gov/13323174/) `リファレンス`
 
 ## 関連概念
-- [[human-anchoring|アンカリング効果（係留と調整）]] — 出典を共有
 - [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 出典を共有
 - [[human-framing-effect|フレーミング効果（framing effect）]] — 出典を共有
 - [[human-phoneme-restoration|音素修復効果（Phonemic Restoration Effect／Warren 1970）——雑音で消された音を脳が補って「聞こえた」と感じる、トップダウンの知覚]] — 出典を共有
@@ -43,6 +42,7 @@ aliases:
 - [[econ-anticommons|アンチコモンズの悲劇]] — 出典を共有
 - [[human-biopsychosocial-model-chronic-pain|慢性疼痛の生物心理社会モデル]] — 出典を共有
 - [[human-default-effect|デフォルト効果（初期設定効果）]] — 出典を共有
+- [[human-end-of-history-illusion|歴史の終わり錯覚]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -138,7 +138,7 @@ tags:
 - [[eh-2009|2009年（平成21年）]] — BritannicaMoney—GreatRecession
 - [[eh-2021|2021年（令和3年）]] — Britannica—FumioKishida（2021/10/4首相就任）
 - [[human-acquired-needs-theory|獲得欲求理論]] — EncyclopaediaBritannica—McClelland'sTheoryofNeeds
-- [[human-anchoring|アンカリング効果（係留と調整）]] — EncyclopaediaBritannica—Heuristic（係留と調整ヒューリスティックの帰属）
+- [[human-anchoring-adjustment-tversky|アンカリングと調整（係留と調整）——最初に示された数値が基準点となり、そこからの修正が不十分なまま判断が偏るヒューリスティック]] — EncyclopaediaBritannica—Heuristic（係留と調整ヒューリスティックの帰属）
 - [[human-apperceptive-mass|統覚塊（アペルツェプツィオンスマッセ）]] — Herbartianism—EncyclopaediaBritannica.
 - [[human-asch-conformity|アッシュの同調実験（同調圧力）]] — EncyclopaediaBritannica—Conformity（同調と実験設計）
 - [[human-asch-conformity|アッシュの同調実験（同調圧力）]] — EncyclopaediaBritannica—SolomonAsch

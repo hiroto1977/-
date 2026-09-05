@@ -34,6 +34,7 @@ J・L・オースティン（J. L. Austin, 1911–1960）／ジョン・サー�
 - [[infosoc-cooperative-principle-grice|協調の原理（グライス）——会話の格率と含意]] — 同じ思想家
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — 同分野の近傍
 - [[infosoc-code-switching|コードスイッチング]] — 同分野の近傍
+- [[infosoc-information-fiduciary|情報受託義務者（インフォメーション・フィデューシャリー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

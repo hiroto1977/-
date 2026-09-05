@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 950
+entry_count: 946
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（950件）
+# 学習パス — 学術概念／経済学（946件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 85）
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 86）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 50）
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 43）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 43）
 - [[econ-liquidity-trap|流動性のわな]]（接続 43）
 - [[econ-agglomeration-economies|集積の経済]]（接続 42）
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 41）
-- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 38）
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]]（接続 37）
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 37）
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]]（接続 37）
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 37）
-- [[econ-becker-crime|犯罪の経済学]]（接続 36）
+- [[econ-becker-crime|犯罪の経済学]]（接続 35）
+- [[econ-behavioral-finance|行動ファイナンス]]（接続 35）
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 34）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 34）
-- [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]]（接続 33）
-- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 33）
 
 ## 第 2 部 — 年代順の展開
 - 1623年: [[econ-petty-clark-law|ペティ＝クラークの法則]]
@@ -261,6 +261,7 @@ tags:
 - 1970年: [[econ-peso-problem|ペソ問題（Peso Problem）]]
 - 1970年: [[econ-poole-instrument-choice|プールの政策手段選択モデル（Poole's instrument problem）——金利目標か貨幣供給量目標かはショックの源泉で決まる]]
 - 1970年: [[econ-sen-paradox|センのリベラル・パラドックス（パレート派リベラルの不可能性）]]
+- 1970年: [[econ-signaling-theory-spence-job-market|シグナリング理論（スペンス）——情報を持つ側が模倣にコストのかかる行動で自らの質を伝え、分離均衡が成立する仕組み]]
 - 1970年: [[econ-wage-price-spiral|賃金・物価スパイラル]]
 - 1971年: [[econ-diamond-mirrlees|ダイヤモンド＝マーリーズの生産効率定理]]
 - 1971年: [[econ-dual-labor-market|二重労働市場論]]
@@ -284,7 +285,6 @@ tags:
 - 1973年: [[econ-harsanyi-purification-theorem|ハルサーニの純化定理——混合戦略は私的情報に基づく確定的行動の極限である]]
 - 1973年: [[econ-j-curve-effect|Jカーブ効果（J-Curve Effect）]]
 - 1973年: [[econ-revelation-principle|顕示原理（メカニズムデザイン）]]
-- 1973年: [[econ-signaling|シグナリング]]
 - 1974年: [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]]
 - 1974年: [[econ-henry-george-theorem|ヘンリー・ジョージ定理（Henry George Theorem）]]
 - 1974年: [[econ-mincer-earnings|ミンサー方程式（賃金関数）]]
@@ -309,7 +309,6 @@ tags:
 - 1977年: [[econ-time-inconsistency|動学的不整合（時間的非整合性）]]
 - 1977年: [[econ-varian-model-of-sales-informed-uninformed-consumers|ヴァリアンのセールのモデル——情報客と非情報客の混在が生む価格分散と特売の均衡]]
 - 1978年: [[econ-lucas-span-of-control-firm-size-distribution|ルーカスのスパン・オブ・コントロール・モデル——経営者の才能分布と管理限界が企業規模の分布を決める]]
-- 1979年: [[econ-behavioral-finance|行動ファイナンス]]
 - 1979年: [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]]
 - 1979年: [[econ-costly-state-verification|コストのかかる状態検証（Costly State Verification／Townsend 1979）——なぜ「標準的な負債契約」が最適になるのか]]
 - 1979年: [[econ-heckman-selection-model|ヘックマンの標本選択モデル（Heckman Selection Model／ヘックマン補正）]]
@@ -349,6 +348,7 @@ tags:
 - 1983年: [[econ-raising-rivals-costs|ライバルの費用引き上げ理論（Raising Rivals' Costs／RRC、サロップ＝シェフマン）——支配的企業が略奪的安売りではなく競争相手の費用を高めて排除する反トラスト理論]]
 - 1983年: [[econ-sunspot-equilibrium|サンスポット均衡]]
 - 1984年: [[econ-forward-premium-puzzle|フォワード・プレミアム・パズル]]
+- 1984年: [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]]
 - 1984年: [[econ-rotemberg-saloner-price-wars-booms|ロテンバーグ＝サローナー・モデル——好況期に協調的価格が崩れ価格戦争が生じる反循環的マークアップ理論]]
 - 1984年: [[econ-shapiro-stiglitz|シャピロ=スティグリッツの効率賃金モデル（怠業モデル）]]
 - 1984年: [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]]
@@ -478,7 +478,6 @@ tags:
 - [[econ-baumol-sales-maximization|売上高最大化モデル（ボーモル）——利潤ではなく売上を追う経営者]]
 - [[econ-bayesian-persuasion-kamenica|ベイズ説得——情報の設計によって合理的な相手を動かす]]
 - [[econ-becker-quantity-quality|子どもの数と質のトレードオフ（ベッカー）——なぜ豊かになると出生率が下がるのか]]
-- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]]
 - [[econ-behavioral-development-economics-banerjee|行動開発経済学——バネルジー＆デュフロのRCTによる貧困の罠と政策介入の評価]]
 - [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]]
 - [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]]
@@ -708,6 +707,7 @@ tags:
 - [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]]
 - [[econ-kinked-demand-sweezy|屈折需要曲線——寡占における価格の硬直性を説明するモデル]]
 - [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]]
+- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]
 - [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]]
 - [[econ-krugman-target-zone-exchange|クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果]]
 - [[econ-labor-market-search-diamond|労働市場の探索・マッチング理論と摩擦的失業の分析（ダイアモンド・モーテンセン・ピサリデス）]]
@@ -835,7 +835,6 @@ tags:
 - [[econ-purchasing-power-parity-cassel|購買力平価説（カッセル）]]
 - [[econ-purchasing-power-parity-uip-fisher|購買力平価・カバーなし金利平価・フィッシャー効果——為替レート決定の三大理論]]
 - [[econ-quadratic-voting-weyl|二次の投票（クアドラティック・ボーティング）——選好の強度を表す投票]]
-- [[econ-quality-signaling|市場における品質シグナリング：情報の非対称性下で分離均衡を成立させる費用的シグナル投資の経済理論]]
 - [[econ-quantity-theory-money-fisher-friedman|貨幣数量説——MV=PYの古典的枠組みとマネタリズムの現代的展開]]
 - [[econ-ramsey-boiteux-pricing|ラムゼイ＝ボワトー価格——収支均衡制約下で厚生損失を最小化する価格設定]]
 - [[econ-ramsey-optimal-taxation|ラムゼイの最適課税理論——効率的税制設計と超過負担最小化の原理]]
@@ -882,9 +881,6 @@ tags:
 - [[econ-shadow-banking-pozsar|シャドーバンキング・システム——規制外金融仲介の構造とシステミック・リスク]]
 - [[econ-shapley-folkman-lemma|シャプリー＝フォルクマンの補題——多数の和は近似的に凸になる]]
 - [[econ-siegel-paradox-exchange|シーゲルのパラドックス——為替の期待は両通貨で同時に不偏たりえない]]
-- [[econ-signaling-screening-spence|シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）]]
-- [[econ-signaling-theory-spence|教育シグナリング理論（スペンス）]]
-- [[econ-signaling-theory-spence-job-market|シグナリング理論——スペンスの学歴シグナルと情報非対称性下の資格獲得行動]]
 - [[econ-size-effect-banz|規模効果（小型株効果）——小型株が大型株を上回る収益を上げる異常]]
 - [[econ-smooth-ambiguity-klibanoff|スムーズ曖昧性モデル——曖昧性への態度を信念から分離する]]
 - [[econ-social-capital-putnam|ソーシャル・キャピタル（パットナム）]]

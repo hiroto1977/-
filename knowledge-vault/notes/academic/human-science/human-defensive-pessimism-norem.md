@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[human-stereotype-threat-steele|ステレオタイプ脅威——否定的固定観念の顕在化が当事者の遂行を損なう]] — 同じ思想家
 - [[human-golem-effect|ゴーレム効果]] — 同分野の近傍
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論（フレドリクソン）——ポジティブ感情が思考と行動のレパートリーを広げ、持続的な個人資源を築くという機能理論]] — 同分野の近傍
 - [[human-dark-triad|ダークトライアド（暗黒の三特性／Dark Triad）——マキャヴェリアニズム・ナルシシズム・サイコパシーという、有害だが非臨床的な三つの重なり合う人格特性の集合]] — 同分野の近傍
 - [[human-self-fulfilling-prophecy|自己成就的予言（マートン）]] — 同分野の近傍
 

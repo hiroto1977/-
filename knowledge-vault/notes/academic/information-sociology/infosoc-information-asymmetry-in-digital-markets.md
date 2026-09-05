@@ -35,7 +35,6 @@ George Arthur Akerlof ／ Shoshana Zuboff ／ Joseph Eugene Stiglitz ／ Michael
 ## 関連概念
 - [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — 同じ思想家
 - [[econ-lemons-problem-akerlof|レモン市場]] — 同じ思想家
-- [[econ-signaling-screening-spence|シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）]] — 同じ思想家
 - [[econ-credit-rationing-stiglitz-weiss|スティグリッツ＝ワイス信用割当モデル]] — 同じ思想家
 - [[infosoc-information-asymmetry-platform|プラットフォーム情報非対称性理論]] — 同じ思想家
 - [[econ-henry-george-theorem|ヘンリー・ジョージ定理（Henry George Theorem）]] — 同じ思想家
@@ -43,6 +42,7 @@ George Arthur Akerlof ／ Shoshana Zuboff ／ Joseph Eugene Stiglitz ／ Michael
 - [[econ-nutrition-efficiency-wage|栄養効率賃金理論（nutrition-based efficiency wage theory／ダスグプタ＝レイ）——貧困農村では高賃金が栄養を通じて生産性を高め、市場清算を上回る賃金と非自発的失業を均衡として生む]] — 同じ思想家
 - [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 同じ思想家
 - [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 同じ思想家
+- [[bizlaw-anti-monopoly-digital-platforms|デジタルプラットフォームの独占禁止規制——ゲートキーパー規制とデジタル市場競争法の展開]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

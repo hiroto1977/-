@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[human-naive-realism|素朴実在論（ナイーブ・リアリズム）]] — 出典を共有
 - [[human-procrastination|先延ばしと時間的動機づけ理論（TMT）]] — 同分野の近傍
-- [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同分野の近傍
 - [[human-ostrich-effect|ダチョウ効果（情報回避）]] — 同分野の近傍
 
 ## 関連

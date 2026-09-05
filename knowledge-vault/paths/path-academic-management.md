@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 664
+entry_count: 663
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（664件）
+# 学習パス — 学術概念／経営学（663件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -20,9 +20,9 @@ tags:
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 27）
 - [[mgmt-mbo|目標による管理（MBO）]]（接続 25）
 - [[mgmt-csr|企業の社会的責任（CSR）]]（接続 24）
+- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 24）
 - [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]]（接続 23）
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 23）
-- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 23）
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 23）
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 22）
 - [[mgmt-managerial-cognition|経営者認知理論]]（接続 22）
@@ -341,7 +341,6 @@ tags:
 - [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]]
 - [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]]
 - [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]]
-- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]]
 - [[mgmt-business-ecosystem-moore|ビジネス・エコシステム——企業が共進化する競争と協調の生態系]]
 - [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]]
 - [[mgmt-calling-wrzesniewski|コーリング（天職意識）とジョブ・クラフティング（ヴルゼシニェウスキー）]]

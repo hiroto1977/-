@@ -2,7 +2,7 @@
 title: "nber.org"
 type: source-domain
 host: "nber.org"
-cite_count: 86
+cite_count: 85
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nber.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **86 件**（学術 85 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **85 件**（学術 84 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -85,7 +85,6 @@ tags:
 - [[econ-rotemberg-saloner-price-wars-booms|ロテンバーグ＝サローナー・モデル——好況期に協調的価格が崩れ価格戦争が生じる反循環的マークアップ理論]] — Rotemberg,J.J.&Saloner,G.(1984).ASupergame-TheoreticModelofBusinessCy…
 - [[econ-screening|スクリーニング（選別理論）]] — Stiglitz&Weiss,“SortingOuttheDifferencesBetweenSignalingandScreeningM…
 - [[econ-search-matching|サーチ理論／マッチング理論]] — NBER—Diamond,Mortensen&PissaridesShared2010NobelPrizeforResearchonJob…
-- [[econ-signaling|シグナリング]] — NBER「Stiglitz,Akerlof,andSpenceWon2001NobelPrizeforAnalysesofMarketsw…
 - [[econ-stagflation|スタグフレーション]] — NBERWorkingPaperNo.19267「TheNaturalRateHypothesis」
 - [[econ-stagflation|スタグフレーション]] — NBERWorkingPaperNo.24891「FriedmanandPhelpsonthePhillipsCurve」
 - [[econ-sticky-information|粘着情報モデル]] — NBERWorkingPaperNo.8290—Mankiw&Reis,"StickyInformationVersusStickyPri…

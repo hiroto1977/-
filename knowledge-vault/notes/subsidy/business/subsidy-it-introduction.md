@@ -38,7 +38,6 @@ national
 
 ## 関連概念
 - [[subsidy-monodukuri|ものづくり・商業・サービス生産性向上促進補助金（ものづくり補助金）]] — 語彙が近い
-- [[subsidy-fukushima|福島県中小企業等生産性向上推進事業補助金（福島県）]] — 語彙が近い
 - [[subsidy-labor-saving-investment|中小企業省力化投資補助金]] — 語彙が近い
 - [[subsidy-jizokuka|小規模事業者持続化補助金]] — 同分野の近傍
 

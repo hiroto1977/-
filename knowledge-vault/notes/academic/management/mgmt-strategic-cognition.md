@@ -34,6 +34,7 @@ aliases:
 - [[mgmt-managerial-cognition|経営者認知理論]] — 同分野の近傍
 - [[mgmt-strategy-as-practice-whittington|実践としての戦略——戦略を組織が「持つ」ものではなく人が「行う」活動として捉える]] — 同分野の近傍
 - [[mgmt-corporate-political-activity|コーポレート・ポリティカル・アクティビティ（バロン）]] — 同分野の近傍
+- [[mgmt-threat-rigidity-effect|脅威による硬直化効果（Threat-Rigidity Effect）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

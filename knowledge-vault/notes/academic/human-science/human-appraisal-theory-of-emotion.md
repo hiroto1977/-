@@ -38,6 +38,7 @@ Magda Blondiau Arnold ／ Richard S. Lazarus ／ Klaus R. Scherer
 - [[mgmt-organizational-death-theory|組織死亡理論]] — 出典を共有
 - [[econ-islamic-finance|イスラム金融とシャリア准拠の融資メカニズム]] — 出典を共有
 - [[human-emotional-regulation-gross|感情調節理論（グロス）と認知的再評価・表現抑制]] — 同分野の近傍
+- [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]] — 同分野の近傍
 - [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]] — 同分野の近傍
 
 ## 関連

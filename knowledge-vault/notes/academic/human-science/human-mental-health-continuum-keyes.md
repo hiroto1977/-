@@ -35,7 +35,7 @@ aliases:
 - [[human-learned-optimism|学習性楽観主義]] — 同じ思想家
 - [[human-learned-helplessness|学習性無力感（learned helplessness）]] — 同じ思想家
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同じ思想家
-- [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同じ思想家
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論（フレドリクソン）——ポジティブ感情が思考と行動のレパートリーを広げ、持続的な個人資源を築くという機能理論]] — 同じ思想家
 - [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同じ思想家
 - [[human-explanatory-style-seligman|説明スタイル——出来事の原因をどう説明するかが楽観と悲観を分ける]] — 同じ思想家
 - [[human-flow-optimal-experience-csikszentmihalyi|フロー理論と最適経験の積極心理学（チクセントミハイ）]] — 同じ思想家

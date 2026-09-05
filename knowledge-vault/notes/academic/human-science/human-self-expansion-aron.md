@@ -32,11 +32,9 @@ aliases:
 - [Wikipedia: Self-expansion model — Aron & Aron, including other in self, relationship boredom, novel activities](https://en.wikipedia.org/wiki/Self-expansion_model) `リファレンス`
 
 ## 関連概念
-- [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 同じ思想家
-- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 同じ思想家
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論（フレドリクソン）——ポジティブ感情が思考と行動のレパートリーを広げ、持続的な個人資源を築くという機能理論]] — 同じ思想家
 - [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]] — 同じ思想家
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 同じ思想家
-- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 同じ思想家
 - [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 同分野の近傍
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]] — 同分野の近傍
 - [[human-chameleon-effect-chartrand|カメレオン効果（シャートランド＆バーク）]] — 同分野の近傍

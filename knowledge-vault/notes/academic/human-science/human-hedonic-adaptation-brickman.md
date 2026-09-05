@@ -37,7 +37,6 @@ aliases:
 - [[econ-regression-discontinuity|回帰不連続デザイン（RDD）]] — 同じ思想家
 - [[human-deindividuation-zimbardo|没個性化——集団状況における自己意識の低下と脱抑制的行動]] — 同じ思想家
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — 同じ思想家
-- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]
