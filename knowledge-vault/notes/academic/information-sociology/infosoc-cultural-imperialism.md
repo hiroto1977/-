@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-transmedia-storytelling|トランスメディア・ストーリーテリング]] — 出典を共有
 - [[infosoc-media-events|メディア・イベント]] — 出典を共有
 - [[infosoc-bricolage|ブリコラージュ（文化人類学・メディア文化論）]] — 同分野の近傍
-- [[infosoc-technostress-theory|テクノストレス理論]] — 同分野の近傍
+- [[infosoc-obfuscation-brunton-nissenbaum|難読化（オブファスケーション）——ノイズを加えて監視を妨げる]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,7 +31,7 @@ Yee, Nick （2007 The Proteus Effect, Human Communication Research）／Bailenso
 - [Wikipedia: Proteus effect — Yee & Bailenson (2007)、自己知覚理論・SIDEモデルによる説明、追試・メタ分析の概観](https://en.wikipedia.org/wiki/Proteus_effect) `リファレンス`
 
 ## 関連概念
-- [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — 同分野の近傍
+- [[infosoc-media-agenda-setting|アジェンダ設定理論（マコームズ＆ショー）——メディアは「何を考えるか」ではなく「何について考えるか」を方向づけ、争点と属性の顕出性を公衆に転写する]] — 同分野の近傍
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連

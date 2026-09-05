@@ -13,21 +13,21 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 151）
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 108）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 150）
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 107）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-framing-effect|フレーミング効果（framing effect）]]（接続 32）
 - [[human-bias-blind-spot|バイアスの盲点]]（接続 31）
 - [[human-attribution-theory|帰属理論]]（接続 29）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 29）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 27）
-- [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 26）
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 26）
-- [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 25）
-- [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 25）
 - [[human-conjunction-fallacy|連言錯誤]]（接続 25）
+- [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 25）
+- [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 24）
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 24）
 - [[human-base-rate-fallacy|基準率の無視]]（接続 24）
+- [[human-cognitive-appraisal|認知的評価理論（感情）]]（接続 24）
 
 ## 第 2 部 — 年代順の展開
 - 1510年: [[human-phantom-limb|幻肢（ファントムリム）]]
@@ -105,7 +105,6 @@ tags:
 - 1959年: [[human-latent-inhibition|潜在制止（latent inhibition）——結果を伴わない刺激への事前接触が、その刺激の後続の条件づけ学習を遅らせる現象]]
 - 1959年: [[human-premack-principle|プレマックの原理]]
 - 1959年: [[human-riasec-vocational-interests-holland|ホランドのRIASEC理論——六類型の適合度で職業選択と職務満足を説明する六角形モデル]]
-- 1960年: [[human-cognitive-appraisal|認知的評価理論（感情）]]
 - 1960年: [[human-confirmation-bias|確証バイアス（confirmation bias）]]
 - 1960年: [[human-item-response-theory|項目反応理論（Item Response Theory, IRT）]]
 - 1960年: [[human-visual-cliff|視覚的断崖実験（Visual Cliff Experiment）]]
@@ -205,6 +204,7 @@ tags:
 - 1983年: [[human-multiple-intelligences|多重知能理論（ガードナー）]]
 - 1983年: [[human-place-identity|場所アイデンティティ（Place Identity）]]
 - 1984年: [[human-cialdini-influence|チャルディーニの影響力の6原理]]
+- 1984年: [[human-cognitive-miser|認知的倹約家（cognitive miser）]]
 - 1984年: [[human-perceptual-narrowing|知覚的狭窄化（Perceptual Narrowing）]]
 - 1984年: [[human-social-proof|社会的証明]]
 - 1984年: [[human-spontaneous-trait-inference|自発的特性推論]]

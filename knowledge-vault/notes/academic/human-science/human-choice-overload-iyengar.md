@@ -40,7 +40,7 @@ aliases:
 - [[human-undermining-effect|アンダーマイニング効果（過正当化効果）]] — 同じ思想家
 - [[infosoc-framing-entman|フレーミング理論——現実の特定側面の選択と顕在化による意味の方向づけ]] — 同じ思想家
 - [[infosoc-hostile-media-effect|敵対的メディア認知]] — 同じ思想家
-- [[infosoc-information-overload-toffler|情報過負荷（トフラー）と認知的過飽和]] — 同じ思想家
+- [[infosoc-information-overload-eppler-mengis|情報過負荷（トフラー／エプラー＝メンギス）——処理能力を超える情報が意思決定の質を下げる現象と、その原因を個人・情報・課題・組織・技術の五要因に整理する枠組み]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

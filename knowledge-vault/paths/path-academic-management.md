@@ -26,8 +26,8 @@ tags:
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 22）
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 22）
 - [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]]（接続 21）
-- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]]（接続 20）
-- [[mgmt-high-performance-work-systems-huselid|高業績労働システム——ヒューセリッドの人的資源管理バンドルと企業業績]]（接続 20）
+- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]]（接続 21）
+- [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1629年: [[mgmt-fmea|故障モード影響解析（FMEA／Failure Mode and Effects Analysis）——起こりうる故障を体系的に洗い出し、深刻度・発生度・検出度で優先順位づける]]
@@ -339,7 +339,6 @@ tags:
 - [[mgmt-cannibalization|カニバリゼーション（市場共食い）]]
 - [[mgmt-career-construction-theory-savickas|キャリア構築理論（サビカス理論）]]
 - [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]]
-- [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]]
 - [[mgmt-change-management-kotter-8-step|コッターの8段階変革モデル——組織変革の失敗要因分析と変革リーダーシップの実践フレームワーク]]
 - [[mgmt-charismatic-leadership-house|カリスマ的リーダーシップ——非凡な影響を生む行動と帰属の理論]]
 - [[mgmt-clan-control-ouchi|クラン統制理論——大内の市場・官僚制・クランの三類型と組織文化による制御]]
@@ -394,6 +393,7 @@ tags:
 - [[mgmt-empowering-leadership-ahearne|エンパワリング・リーダーシップ——権限を分かち自律を高めるリーダー]]
 - [[mgmt-empowerment-theory-spreitzer|心理的エンパワーメント理論（Spreitzer）]]
 - [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]]
+- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]]
 - [[mgmt-enactment-weick|イナクトメント——組織が行為を通じて自らの環境を能動的に作り出す]]
 - [[mgmt-entrepreneurial-ecosystems|アントレプレナーシップ・エコシステム：起業家・投資家・大学・政府の共進化]]
 - [[mgmt-entrepreneurial-orientation-miller|起業家的志向性（ミラー）]]
@@ -415,6 +415,7 @@ tags:
 - [[mgmt-growth-mindset|成長マインドセット（Growth Mindset）]]
 - [[mgmt-hedgehog-concept-collins|ハリネズミの概念——三つの円の交わりに焦点を絞る]]
 - [[mgmt-high-performance-work-systems|高業績ワークシステム]]
+- [[mgmt-high-performance-work-systems-huselid|高業績労働システム——ヒューセリッドの人的資源管理バンドルと企業業績]]
 - [[mgmt-high-reliability-organization-theory|高信頼性組織理論]]
 - [[mgmt-hoshin-kanri|方針管理]]
 - [[mgmt-humble-leadership-owens|謙虚なリーダーシップ——自己認識・他者尊重・学習志向による影響過程]]
@@ -521,7 +522,6 @@ tags:
 - [[mgmt-person-environment-fit|人と環境の適合理論（P-Eフィット）]]
 - [[mgmt-pestel-analysis|PESTEL分析——マクロ環境を六つの外部要因から分析する枠組み]]
 - [[mgmt-platform-ecosystems-gawer-cusumano|プラットフォーム・エコシステム——インダストリアル・プラットフォームとネットワーク効果の戦略論]]
-- [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]]
 - [[mgmt-poka-yoke|ポカヨケ]]
 - [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]]
 - [[mgmt-polychronicity|ポリクロニシティ（多時間並行志向）]]

@@ -37,7 +37,7 @@ aliases:
 - [[human-choice-overload-iyengar|選択過負荷——過剰な選択肢が意思決定を麻痺させるパラドックス]] — 同じ思想家
 - [[human-mental-health-continuum-keyes|精神的健康の連続体モデル（キーズ）]] — 同じ思想家
 - [[human-self-efficacy-theory|自己効力感（バンデューラ）——課題を遂行できるという自分への信念が行動の開始・持続・努力量を規定し、四つの源泉から形成される]] — 同じ思想家
-- [[infosoc-information-overload-toffler|情報過負荷（トフラー）と認知的過飽和]] — 同じ思想家
+- [[infosoc-information-overload-eppler-mengis|情報過負荷（トフラー／エプラー＝メンギス）——処理能力を超える情報が意思決定の質を下げる現象と、その原因を個人・情報・課題・組織・技術の五要因に整理する枠組み]] — 同じ思想家
 - [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]] — 同じ思想家
 - [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる]] — 同じ思想家
 

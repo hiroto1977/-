@@ -2,7 +2,7 @@
 title: "クレイ・シャーキー"
 type: thinker
 person_key: "シャーキー|ク"
-concept_count: 8
+concept_count: 7
 tags:
   - person
   - index
@@ -10,12 +10,11 @@ tags:
 
 # クレイ・シャーキー
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **8 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **7 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（8件）
+## 学術概念（7件）
 - [[infosoc-civic-tech-govtech|シビックテックとGovTech——市民技術と行政デジタル改革の社会学]] — シビックテック（civictech）とは、市民・NPO・コミュニティが公益目的でデジタル技術を活用し、行政課題・社会問…
-- [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 情報過負荷（InformationOverload）とは、個人が処理可能な容量を超える情報に曝され、意思決定の質が低下…
-- [[infosoc-information-overload-toffler|情報過負荷（トフラー）と認知的過飽和]] — トフラー（AlvinToffler）は1970年の著書『FutureShock（未来の衝撃）』で，変化のペースが人間の…
+- [[infosoc-information-overload-eppler-mengis|情報過負荷（トフラー／エプラー＝メンギス）——処理能力を超える情報が意思決定の質を下げる現象と、その原因を個人・情報・課題・組織・技術の五要因に整理する枠組み]] — 情報過負荷（informationoverload）とは、個人が処理できる容量を超える情報に曝され、意思決定の質が低下…
 - [[infosoc-long-tail-anderson|ロングテール——デジタル経済におけるニッチ需要の集積の価値]] — ロングテール（thelongtail）は、クリス・アンダーソンが2004年の『ワイアード』誌の論考と2006年の著書『…
 - [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — ハーバーマスの「公共圏（Öffentlichkeit）」理論は、市民が自由な討議を通じて公的意見を形成する空間として概…
 - [[infosoc-spreadability-jenkins|スプレッダビリティ——参加型文化におけるメディアコンテンツの拡散メカニズム]] — ヘンリー・ジェンキンズ、サム・フォード、ジョシュア・グリーンが2013年に提唱した「スプレッダビリティ（spreada…

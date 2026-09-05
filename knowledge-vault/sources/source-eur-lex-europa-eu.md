@@ -2,7 +2,7 @@
 title: "eur-lex.europa.eu"
 type: source-domain
 host: "eur-lex.europa.eu"
-cite_count: 51
+cite_count: 50
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # eur-lex.europa.eu
 
-> [!info] 出典ドメイン索引 ・ 引用 **51 件**（公的 51）
+> [!info] 出典ドメイン索引 ・ 引用 **50 件**（公的 50）
 
 ## このドメインを出典とする項目
 
@@ -52,8 +52,6 @@ tags:
 - [[bizlaw-whistleblower-protection-directive-eu|EU公益通報者保護指令——内部告発者の法的保護と通報チャネルの制度設計]] — EuropeanParliament(2019)Directive2019/1937onWhistleblowerProtection—E…
 - [[bizlaw-whistleblower-protection-eu-directive|内部通報者保護法——EU通報者保護指令と企業コンプライアンス]] — Directive(EU)2019/1937—EU通報者保護指令原文
 - [[infosoc-affective-computing-picard|アフェクティブコンピューティング——ピカードの感情認識AI論と機械が感情を扱う倫理的課題]] — EU(2024)AIAct—Regulation2024/1689
-- [[infosoc-algorithmic-amplification-gillespie|アルゴリズム的増幅と文化的仲介（ギレスピー）]] — EuropeanParliament(2022)DigitalServicesAct—Regulation(EU)2022/2065（アル…
-- [[infosoc-behavioral-surplus-zuboff|行動余剰と監視資本主義（ズボフ）]] — EuropeanParliament(2016)Regulation(EU)2016/679—GDPR（行動データ保護の立法）
 - [[infosoc-computational-propaganda-woolley|計算プロパガンダ（ウーリー＆ハワード）]] — EuropeanParliament(2022)Regulation(EU)2022/2065—DigitalServicesAct(DS…
 - [[infosoc-data-portability|データポータビリティの権利（GDPR20条）]] — EUR-Lex—Regulation(EU)2016/679(GDPR)第20条原文（EU公式法令データベース）
 - [[infosoc-deceptive-design-gray|欺瞞的デザインとダーク・パターン（グレイ他）]] — EuropeanParliament(2022)DigitalServicesActArt.25—ProhibitionofDarkPat…
@@ -65,6 +63,7 @@ tags:
 - [[infosoc-new-governors-online-speech-klonick|新しい統治者論——プラットフォームを独自の規則・手続・文化でオンライン言論を統治する私的統治システムとみなす議論]] — Regulation(EU)2022/2065oftheEuropeanParliamentandoftheCouncilof19Octo…
 - [[infosoc-platform-envelopment-eisenmann|プラットフォーム包囲戦略（アイゼンマン）]] — EuropeanParliament(2022)Regulation(EU)2022/1925—DigitalMarketsAct（ゲート…
 - [[infosoc-profiling|プロファイリングと自動意思決定]] — Regulation(EU)2016/679(GDPR)consolidatedtext—Art.4(4)/Art.22,EUR-Lex
+- [[infosoc-surveillance-capitalism-zuboff|監視資本主義（ズボフ）——人間の経験を無償の原材料として採取し、行動余剰を予測製品に加工して行動先物市場で売る資本主義の新しい論理]] — Regulation(EU)2016/679(GDPR)—EUR-Lex（行動データ保護の立法）
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

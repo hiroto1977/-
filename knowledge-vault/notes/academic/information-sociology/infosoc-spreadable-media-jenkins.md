@@ -36,9 +36,9 @@ aliases:
 - [[infosoc-spreadability-jenkins|スプレッダビリティ——参加型文化におけるメディアコンテンツの拡散メカニズム]] — 同じ思想家
 - [[human-trolley-problem|トロッコ問題]] — 同じ思想家
 - [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 同じ思想家
+- [[infosoc-remix-culture-lessig-jenkins|リミックス文化（レシッグ／ジェンキンス）——既存の文化的素材を再構成して創作するデジタル時代の実践と、それを抑圧しうる著作権制度との緊張]] — 同じ思想家
 - [[infosoc-collective-intelligence-levy|集合知——レヴィの「知識の宇宙」とウェブ2.0・ウィキペディア・クラウドソーシングへの展開]] — 同じ思想家
 - [[infosoc-produsage-bruns|プロデュセージ——生産と利用が融合する協働的なコンテンツ創造]] — 同じ思想家
-- [[infosoc-remix-culture-lessig-jenkins|リミックス文化論——デジタル技術による文化的再利用と著作権の緊張]] — 同じ思想家
 - [[infosoc-textual-poaching-jenkins|テクストの密猟——ファンによる能動的なメディアの流用と作り替え]] — 同じ思想家
 
 ## 関連

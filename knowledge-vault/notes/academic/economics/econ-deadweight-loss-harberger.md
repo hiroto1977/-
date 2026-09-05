@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Deadweight loss — Harberger triangle, tax/monopoly welfare cost, elasticity](https://en.wikipedia.org/wiki/Deadweight_loss) `リファレンス`
 
 ## 関連概念
-- [[econ-deadweight-loss|死荷重（死重損失・超過負担）]] — 語彙が近い
 - [[econ-harberger-triangle-deadweight-loss|ハーバーガーの三角形——独占・課税による死荷重損失と余剰分析]] — 語彙が近い
+- [[econ-deadweight-loss|死荷重（死重損失・超過負担）]] — 語彙が近い
 - [[econ-cross-price-income-elasticity|クロス価格弾力性と所得弾力性]] — 同じ思想家
 - [[econ-hotelling-rule|ホテリングのルール（枯渇性資源）]] — 同じ思想家
 - [[econ-agglomeration-economies|集積の経済]] — 同じ思想家

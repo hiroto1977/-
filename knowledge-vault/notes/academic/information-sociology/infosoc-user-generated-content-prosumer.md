@@ -31,14 +31,14 @@ aliases:
 
 ## 関連概念
 - [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 同じ思想家
-- [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 同じ思想家
-- [[infosoc-information-overload-toffler|情報過負荷（トフラー）と認知的過飽和]] — 同じ思想家
+- [[infosoc-information-overload-eppler-mengis|情報過負荷（トフラー／エプラー＝メンギス）——処理能力を超える情報が意思決定の質を下げる現象と、その原因を個人・情報・課題・組織・技術の五要因に整理する枠組み]] — 同じ思想家
 - [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同じ思想家
 - [[infosoc-produsage-bruns|プロデュセージ——生産と利用が融合する協働的なコンテンツ創造]] — 同じ思想家
 - [[infosoc-prosumption-ritzer|プロシューマー論——生産と消費の融合がもたらす社会経済的変容]] — 同じ思想家
 - [[infosoc-third-wave|第三の波（トフラー）]] — 同じ思想家
 - [[infosoc-civic-tech-govtech|シビックテックとGovTech——市民技術と行政デジタル改革の社会学]] — 同じ思想家
 - [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 同じ思想家
+- [[infosoc-remix-culture-lessig-jenkins|リミックス文化（レシッグ／ジェンキンス）——既存の文化的素材を再構成して創作するデジタル時代の実践と、それを抑圧しうる著作権制度との緊張]] — 同じ思想家
 - [[infosoc-wikinomics-tapscott|ウィキノミクス——マス・コラボレーションが変える生産と経済]] — 同じ思想家
 
 ## 関連

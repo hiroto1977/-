@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[infosoc-participatory-culture|参加型文化]] — 同じ思想家
 - [[infosoc-transmedia-storytelling|トランスメディア・ストーリーテリング]] — 同じ思想家
+- [[infosoc-remix-culture-lessig-jenkins|リミックス文化（レシッグ／ジェンキンス）——既存の文化的素材を再構成して創作するデジタル時代の実践と、それを抑圧しうる著作権制度との緊張]] — 同じ思想家
 - [[infosoc-convergence-culture-jenkins|コンバージェンス・カルチャー——旧来メディアと新興メディアの衝突と参加文化]] — 同じ思想家
 - [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 同じ思想家
 - [[infosoc-third-wave|第三の波（トフラー）]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — 同じ思想家
 - [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 同じ思想家
 - [[infosoc-wikinomics-tapscott|ウィキノミクス——マス・コラボレーションが変える生産と経済]] — 同じ思想家
-- [[human-choice-overload|選択過多（選択のオーバーロード）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

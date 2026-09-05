@@ -35,8 +35,8 @@ aliases:
 - [[infosoc-indexing-hypothesis-bennett|インデックス仮説——報道は公的エリートの論争の幅に従う]] — 同じ思想家
 - [[infosoc-propaganda-model-herman-chomsky|プロパガンダ・モデル——五つのフィルターによる合意の製造]] — 同じ思想家
 - [[infosoc-the-shallows-carr|カーの「浅瀬」論——ネットの断片的・多重的な情報環境が深い読みと持続的注意を蝕むという主張]] — 同じ思想家
+- [[human-stereotype-threat|ステレオタイプ脅威]] — 同分野の近傍
 - [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

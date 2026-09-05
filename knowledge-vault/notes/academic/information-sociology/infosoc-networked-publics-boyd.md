@@ -33,14 +33,14 @@ aliases:
 ## 関連概念
 - [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 語彙が近い
 - [[infosoc-networked-publics|ネットワーク化された公衆]] — 語彙が近い
-- [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — 同じ思想家
-- [[infosoc-context-collapse-marwick|コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ]] — 同じ思想家
+- [[infosoc-context-collapse|コンテキストの崩壊（マーウィック＆ボイド）——ソーシャルメディアで別々の聴衆が一つの場に折り重なり、相手ごとの自己呈示の使い分けが崩れる]] — 同じ思想家
 - [[infosoc-imagined-audience-litt|想像された観衆——不可視の受け手を思い描いて自己呈示を調整する]] — 同じ思想家
 - [[infosoc-microcelebrity|マイクロセレブリティ]] — 同じ思想家
 - [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]] — 同じ思想家
 - [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同じ思想家
 - [[infosoc-critical-data-studies-kitchin-dalton|批判的データ研究——データの政治性と知識生産の権力構造]] — 同じ思想家
 - [[infosoc-digital-natives-prensky|デジタルネイティブ——デジタル環境で育った世代をめぐる概念とその批判]] — 同じ思想家
+- [[infosoc-urban-data-commons|アーバン・データ・コモンズとスマート都市統治]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

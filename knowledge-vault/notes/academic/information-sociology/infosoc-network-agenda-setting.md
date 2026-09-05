@@ -31,7 +31,6 @@ Guo, Lei （2011 Network Agenda Setting: A Third Level of Media Effects）／McC
 - [Guo, Lei — Network Agenda Setting Model (research summary, third level of agenda-setting theory)](https://www.leiguo.net/research/network-agenda-setting-model/) `リファレンス`
 
 ## 関連概念
-- [[infosoc-agenda-setting-theory-digital|議題設定理論（デジタル時代の展開）]] — 同じ思想家
 - [[human-affordance-theory|アフォーダンス理論]] — 出典を共有
 - [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 出典を共有
 - [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — 出典を共有
@@ -41,6 +40,7 @@ Guo, Lei （2011 Network Agenda Setting: A Third Level of Media Effects）／McC
 - [[infosoc-polymedia|ポリメディア（Polymedia）]] — 出典を共有
 - [[mgmt-growth-mindset|成長マインドセット（Growth Mindset）]] — 出典を共有
 - [[mgmt-smed|シングル段取り（SMED：Single-Minute Exchange of Die）——段取り替え時間を一桁分に縮める手法]] — 出典を共有
+- [[human-relational-autonomy-philosophy|関係的自律性（リレーショナル・オートノミー）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

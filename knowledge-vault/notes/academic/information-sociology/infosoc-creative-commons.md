@@ -32,7 +32,7 @@ aliases:
 - [Wikipedia — Creative Commons license（CC0・要素・ライセンス一覧）](https://en.wikipedia.org/wiki/Creative_Commons_license) `リファレンス`
 
 ## 関連概念
-- [[infosoc-remix-copyright-digital-culture|リミックス文化とデジタル著作権のジレンマ——クリエイティブ・コモンズの思想と実践]] — 語彙が近い
+- [[infosoc-remix-culture-lessig-jenkins|リミックス文化（レシッグ／ジェンキンス）——既存の文化的素材を再構成して創作するデジタル時代の実践と、それを抑圧しうる著作権制度との緊張]] — 語彙が近い
 - [[infosoc-remix-culture-lessig|リミックス文化とクリエイティブ・コモンズ（レシッグ）]] — 語彙が近い
 - [[infosoc-synopticon|シノプティコン]] — 同分野の近傍
 

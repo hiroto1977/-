@@ -37,7 +37,6 @@ Blake Ashforth ／ Fred Mael ／ Michael Pratt
 - [[mgmt-work-family-border-theory|仕事─家庭境界理論（ボーダー理論）]] — 同じ思想家
 - [[mgmt-strategic-drift|戦略的漂流（Strategic Drift）]] — 同分野の近傍
 - [[mgmt-social-identity-theory-of-leadership|リーダーシップの社会的アイデンティティ理論]] — 同分野の近傍
-- [[mgmt-feedforward|フィードフォワード]] — 同分野の近傍
 - [[mgmt-organizational-citizenship-organ|組織市民行動——報酬制度に明示されない自発的貢献が組織を機能させる]] — 同分野の近傍
 
 ## 関連

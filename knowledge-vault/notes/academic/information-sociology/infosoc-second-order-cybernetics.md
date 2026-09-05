@@ -40,8 +40,8 @@ Heinz von Foerster ／ Humberto Maturana ／ Francisco Varela
 - [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 出典を共有
 - [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有
 - [[mgmt-heavyweight-product-manager-clark-fujimoto|重量級プロダクト・マネジャー——組織内外の統合を一身に担い製品コンセプトを守る開発責任者]] — 出典を共有
+- [[infosoc-context-collapse|コンテキストの崩壊（マーウィック＆ボイド）——ソーシャルメディアで別々の聴衆が一つの場に折り重なり、相手ごとの自己呈示の使い分けが崩れる]] — 同分野の近傍
 - [[infosoc-algorithmic-culture|アルゴリズム文化論]] — 同分野の近傍
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -30,6 +30,7 @@ aliases:
 - [Wikipedia: Conversion (law) — serious interference, full value, strict-ish liability, Kuwait Airways](https://en.wikipedia.org/wiki/Conversion_(law)) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-trespass-to-land|土地不法侵入——占有地への直接的な侵入を損害の証明なしに保護する不法行為]] — 語彙が近い
 - [[bizlaw-negligence-per-se|法定過失（Negligence Per Se）]] — 同じ思想家
 - [[bizlaw-vicarious-liability|代位責任（使用者責任）——被用者の不法行為について使用者が負う責任]] — 同じ思想家
 - [[bizlaw-negligence-duty-of-care|過失と注意義務——隣人原則に基づく合理的注意の懈怠による不法行為責任]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[bizlaw-consideration-doctrine|約因の法理——約束が拘束力を持つために要する交換的対価]] — 同じ思想家
 - [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 同じ思想家
 - [[bizlaw-liquidated-damages-clause|損害賠償額の予定条項（清算損害賠償条項）]] — 同じ思想家
-- [[bizlaw-lucy-v-zehmer-objective-theory-of-contract|ルーシー対ゼーマー事件と契約成立の客観説——内心でなく言葉と行為の外形で合意を判断する原則]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

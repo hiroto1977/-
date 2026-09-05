@@ -39,7 +39,7 @@ aliases:
 - [[infosoc-algorithmic-accountability-sandvig|アルゴリズムの説明責任——自動化された意思決定の監査と透明性]] — 同じ思想家
 - [[infosoc-algorithmic-governance-yeung|アルゴリズム統治——自動化された意思決定の社会的制御と民主的正統性]] — 同じ思想家
 - [[infosoc-algorithmic-opacity-burrell|アルゴリズム不透明性の三類型——企業秘密・技術的リテラシー・機械学習の規模に起因する不透明性]] — 同じ思想家
-- [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — 同じ思想家
+- [[infosoc-context-collapse|コンテキストの崩壊（マーウィック＆ボイド）——ソーシャルメディアで別々の聴衆が一つの場に折り重なり、相手ごとの自己呈示の使い分けが崩れる]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

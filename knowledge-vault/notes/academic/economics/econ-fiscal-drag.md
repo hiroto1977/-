@@ -31,8 +31,8 @@ aliases:
 - [ITEP: Indexing Income Taxes for Inflation（インデクセーション対策）](https://itep.org/indexing-income-taxes-for-inflation-why-it-matters-1/) `学術`
 
 ## 関連概念
+- [[econ-automatic-stabilizers|自動安定化装置（ビルトイン・スタビライザー）]] — 語彙が近い
 - [[econ-pigouvian-tax|ピグー税]] — 出典を共有
-- [[econ-automatic-stabilizers|自動安定化装置（ビルトイン・スタビライザー）]] — 同分野の近傍
 - [[econ-monetarism|マネタリズム]] — 同分野の近傍
 - [[econ-double-dividend|二重の配当（環境税）]] — 同分野の近傍
 

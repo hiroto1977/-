@@ -3,8 +3,8 @@ collection: academic
 id: infosoc-algorithmic-curation-theory
 category: "information-sociology"
 category_ja: "情報社会学"
-title: "アルゴリズムキュレーション理論"
-as_of: "2026-06"
+title: "アルゴリズム的キュレーションと増幅（ギレスピー）——プラットフォームのランキング・推薦・フィルタリングは中立の配管ではなく、価値と権力を埋め込んだ文化的仲介として情報環境を形づくる"
+as_of: "2026-09"
 source_count: 5
 authoritative: true
 tags:
@@ -12,37 +12,37 @@ tags:
   - academic/information-sociology
   - knowledge/verified
 aliases:
-  - "アルゴリズムキュレーション理論"
+  - "アルゴリズム的キュレーションと増幅（ギレスピー）——プラットフォームのランキング・推薦・フィルタリングは中立の配管ではなく、価値と権力を埋め込んだ文化的仲介として情報環境を形づくる"
 ---
 
-# アルゴリズムキュレーション理論
+# アルゴリズム的キュレーションと増幅（ギレスピー）——プラットフォームのランキング・推薦・フィルタリングは中立の配管ではなく、価値と権力を埋め込んだ文化的仲介として情報環境を形づくる
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-06 ・ 出典: 5件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-09 ・ 出典: 5件（うち権威ある出典 ✓）
 
 ## 概要
-アルゴリズムキュレーション理論は、プラットフォームが自動化されたアルゴリズムによってコンテンツを選別・ランク付け・フィルタリングし、ユーザーの情報環境を形成する過程を分析する理論的枠組みである。Gillespieは「プラットフォームの政治性」という概念を提唱し、アルゴリズムが中立的な技術ではなく、価値観や権力関係を埋め込んだ政治的装置であることを論じた。Bucherは「アルゴリズム的想像力（algorithmic imaginary）」の概念を通じて、ユーザーがアルゴリズムの動作を推測・内面化し、それに応じて行動を変容させるメカニズムを明らかにした。Pariserは「フィルターバブル」という概念を提示し、パーソナライズされたアルゴリズムが利用者を自分の既存の関心・意見と合致した情報のみに囲まれた閉鎖的な情報空間に閉じ込めるリスクを指摘した。レコメンダーシステムによるコンテンツ配信の最適化は、公共的議論の分極化や文化的消費パターンの均質化・多様化の両面において、現代の情報社会に深刻な影響を与えている。
+アルゴリズム的キュレーション（algorithmic curation）は、プラットフォームが自動化されたアルゴリズムでコンテンツを選別・順位づけ・フィルタリングして利用者の情報環境を形成する過程を分析する枠組みで、ターレトン・ギレスピー（2014、「The Relevance of Algorithms」）はアルゴリズムが中立的な技術ではなく価値観や権力関係を埋め込んだ政治的装置であり、プラットフォームは「中立の配管」ではなく文化的仲介者だと論じた。特定のコンテンツを優先表示してリーチと可視性を広げる作用はアルゴリズム的増幅（amplification）と呼ばれ、フェレンツ・フサールら（2022、PNAS）は Twitter の推薦が政治的コンテンツを増幅する実態を示し、イーサン・バクシーら（2015、Science）はフェイスブックで多様な意見への接触を狭めるのはアルゴリズムより個人の選択が大きいことを示した。イーライ・パリサーの「フィルターバブル」はパーソナライズが利用者を既存の関心に合う情報に閉じ込める危険を、EU のデジタルサービス法（2022）は大規模プラットフォームにシステミック・リスク評価とアルゴリズムの説明責任を義務づけた。批判として、増幅の効果測定はプラットフォーム内部データへの依存が大きく外部検証が難しいこと、「アルゴリズムのせい」という説明が利用者の選択や既存メディアの偏りを見えにくくすることがある。中小企業には、集客がプラットフォームのキュレーションに依存するほど仕様変更の影響を直接受けること、自社の推薦や並び順も顧客にとっては価値を埋め込んだキュレーションであり、根拠を説明できる設計が信頼につながることが含意となる。
 
 ## 提唱者・初出
-Tarleton Gillespie ／ Taina Bucher ／ Eli Pariser ／ Cathy O'Neil ／ Frank Pasquale
+ターレトン・ギレスピー（2014 アルゴリズムの関連性・プラットフォームの政治）／イーライ・パリサー（2011 フィルターバブル）／イーサン・バクシーら（2015 接触の多様性）／フェレンツ・フサールら（2022 政治的コンテンツの増幅）
 
 ## 出典
-- [Gillespie, T. (2014) The Relevance of Algorithms — in Media Technologies, MIT Press, pp.167–194](https://doi.org/10.7551/mitpress/9780262525374.003.0009) `学術`
-- [Bucher, T. (2017). The algorithmic imaginary: exploring the ordinary affects of Facebook algorithms. Information, Communication & Society.](https://doi.org/10.1080/1369118X.2016.1154086) `学術`
-- [Pariser, E. (2011). The Filter Bubble: What the Internet Is Hiding from You. Penguin Press.](https://www.penguinrandomhouse.com/books/309214/the-filter-bubble-by-eli-pariser/) `リファレンス`
-- [Bucher, T. (2018). If...Then: Algorithmic Power and Politics. Oxford University Press.](https://doi.org/10.1093/oso/9780190905491.001.0001) `学術`
-- [Bakshy, E., Messing, S., & Adamic, L. A. (2015). Exposure to ideologically diverse news and opinion on Facebook. Science.](https://doi.org/10.1126/science.aaa1160) `学術`
+- [Gillespie, T. (2014) The Relevance of Algorithms — in Media Technologies: Essays on Communication, Materiality, and Society, MIT Press（原典）](https://doi.org/10.7551/mitpress/9780262525374.003.0009) `学術`
+- [Bakshy, E., Messing, S. & Adamic, L. A. (2015) Exposure to Ideologically Diverse News and Opinion on Facebook — Science 348(6239)](https://doi.org/10.1126/science.aaa1160) `学術`
+- [Huszár, F. et al. (2022) Algorithmic Amplification of Politics on Twitter — PNAS 119(1)](https://doi.org/10.1073/pnas.2025334119) `学術`
+- [Penguin Random House: Pariser, E. (2011) The Filter Bubble: What the Internet Is Hiding from You](https://www.penguinrandomhouse.com/books/309214/the-filter-bubble-by-eli-pariser/) `リファレンス`
+- [Wikipedia: Algorithmic amplification — Gillespie、engagement optimization、DSA](https://en.wikipedia.org/wiki/Algorithmic_amplification) `リファレンス`
 
 ## 関連概念
-- [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 同じ思想家
-- [[infosoc-algorithmic-culture|アルゴリズム文化論]] — 同じ思想家
-- [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同じ思想家
-- [[infosoc-epistemic-bubbles-echo-chambers|認識論的バブルとエコーチェンバー]] — 同じ思想家
-- [[infosoc-information-asymmetry-platform|プラットフォーム情報非対称性理論]] — 同じ思想家
-- [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]] — 出典を共有
-- [[econ-poverty-trap|貧困の罠——低所得が貯蓄と投資を妨げて貧困を自己強化的に再生産する複数均衡と、その存在をめぐる実証]] — 出典を共有
-- [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 出典を共有
-- [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]] — 出典を共有
-- [[infosoc-techno-feudalism-theory|テクノ封建主義論]] — 出典を共有
+- [[infosoc-calculated-publics|算出された公衆（calculated publics）]] — 同じ思想家
+- [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 同じ思想家
+- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
+- [[infosoc-platform-moderation-content-governance|プラットフォームのコンテンツモデレーション——ソーシャルメディアのコンテンツガバナンスと表現の自由]] — 同じ思想家
+- [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像（ブッヒャー）——利用者がアルゴリズムをどう感じ意味づけるかが、想像に導かれた行動を通じてアルゴリズムの力そのものを構成する]] — 同じ思想家
+- [[infosoc-algorithmic-personalization-critique|アルゴリズム的パーソナライゼーションと認知的閉鎖の社会学]] — 同じ思想家
+- [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 同じ思想家
+- [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — 同じ思想家
+- [[infosoc-new-governors-online-speech-klonick|新しい統治者論——プラットフォームを独自の規則・手続・文化でオンライン言論を統治する私的統治システムとみなす議論]] — 同じ思想家
+- [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -39,8 +39,8 @@ aliases:
 - [[infosoc-onlife|オンライフ]] — 同じ思想家
 - [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]] — 同じ思想家
 - [[infosoc-misinformation-disinformation|誤情報・偽情報：インフォメーション・ディスオーダーの分類体系とデジタルメディアにおける虚偽情報拡散の実証研究]] — 同じ思想家
-- [[infosoc-algorithmic-amplification-gillespie|アルゴリズム的増幅と文化的仲介（ギレスピー）]] — 同じ思想家
 - [[infosoc-digital-sovereignty-floridi|デジタル主権——国家・市民のデータ統制権とテクノロジー地政学]] — 同じ思想家
+- [[infosoc-fake-news|フェイクニュース（情報の無秩序）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

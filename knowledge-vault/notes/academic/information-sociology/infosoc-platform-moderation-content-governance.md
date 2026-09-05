@@ -33,10 +33,11 @@ aliases:
 - [[infosoc-calculated-publics|算出された公衆（calculated publics）]] — 同じ思想家
 - [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 同じ思想家
 - [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — 同じ思想家
-- [[infosoc-algorithmic-amplification-gillespie|アルゴリズム的増幅と文化的仲介（ギレスピー）]] — 同じ思想家
+- [[infosoc-algorithmic-curation-theory|アルゴリズム的キュレーションと増幅（ギレスピー）——プラットフォームのランキング・推薦・フィルタリングは中立の配管ではなく、価値と権力を埋め込んだ文化的仲介として情報環境を形づくる]] — 同じ思想家
 - [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像（ブッヒャー）——利用者がアルゴリズムをどう感じ意味づけるかが、想像に導かれた行動を通じてアルゴリズムの力そのものを構成する]] — 同じ思想家
 - [[infosoc-new-governors-online-speech-klonick|新しい統治者論——プラットフォームを独自の規則・手続・文化でオンライン言論を統治する私的統治システムとみなす議論]] — 同じ思想家
 - [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 同じ思想家
+- [[infosoc-ambient-awareness|アンビエント・アウェアネス]] — 同分野の近傍
 - [[infosoc-main-model-credibility|MAINモデル（技術的特性が信憑性判断に与える影響のヒューリスティック・モデル）]] — 同分野の近傍
 
 ## 関連

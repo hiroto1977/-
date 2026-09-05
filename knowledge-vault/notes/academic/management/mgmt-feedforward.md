@@ -30,8 +30,8 @@ I・A・リチャーズ（I. A. Richards, 1893–1979）／マーシャル・ゴ
 - [Wikipedia — Marshall Goldsmith](https://en.wikipedia.org/wiki/Marshall_Goldsmith) `リファレンス`
 
 ## 関連概念
+- [[mgmt-grow-model|GROWモデル（コーチング）]] — 同分野の近傍
 - [[mgmt-corporate-culture-schein-artifacts|組織文化論——シャインの三層モデル（人工物・信念・基本的仮定）と文化変革]] — 同分野の近傍
-- [[mgmt-organizational-identification|組織アイデンティフィケーション理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

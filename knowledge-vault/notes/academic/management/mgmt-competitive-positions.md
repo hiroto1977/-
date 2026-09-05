@@ -32,8 +32,8 @@ P.コトラー／リーダー・チャレンジャー・フォロワー・ニッ
 
 ## 関連概念
 - [[econ-frey-osborne-computerisation-susceptibility|フレイ＝オズボーンの職業別コンピュータ化確率——「米国雇用の47%が高リスク」]] — 出典を共有
-- [[mgmt-innovators-dilemma|イノベーションのジレンマ（破壊的イノベーション）]] — 同分野の近傍
 - [[mgmt-stp-marketing|STPマーケティング]] — 同分野の近傍
+- [[mgmt-innovators-dilemma|イノベーションのジレンマ（破壊的イノベーション）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

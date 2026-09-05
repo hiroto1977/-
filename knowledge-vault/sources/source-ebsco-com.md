@@ -2,7 +2,7 @@
 title: "ebsco.com"
 type: source-domain
 host: "ebsco.com"
-cite_count: 70
+cite_count: 69
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ebsco.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **70 件**（リファレンス 56 ・ 学術 14）
+> [!info] 出典ドメイン索引 ・ 引用 **69 件**（リファレンス 56 ・ 学術 13）
 
 ## このドメインを出典とする項目
 
@@ -39,7 +39,6 @@ tags:
 - [[human-social-facilitation|社会的促進と社会的抑制]] — EBSCOResearchStarters(Psychology)—Socialfacilitation
 - [[human-stress-coping|ストレスとコーピング（ラザルス）]] — EBSCOResearchStarters—Transactionalmodelofstressandcoping
 - [[human-trolley-problem|トロッコ問題]] — EBSCOResearchStarters「Trolleyproblem」（フット1967・トムソン1976/1985・歩道橋＝fatma…
-- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — EBSCOResearchStarters—Agenda-settingtheory
 - [[infosoc-banal-nationalism|バナール・ナショナリズム]] — EBSCOResearchStarters:Banalnationalism
 - [[infosoc-collective-memory|集合的記憶]] — CollectiveMemory—EBSCOResearchStarters
 - [[infosoc-communication-accommodation-theory|コミュニケーション適応理論（Communication Accommodation Theory, CAT）]] — EBSCOResearchStarters—Communicationaccommodationtheory(CAT)

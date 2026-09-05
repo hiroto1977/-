@@ -40,7 +40,7 @@ Philip Brickman ／ Donald T. Campbell ／ Ronnie Janoff-Bulman ／ Shane Freder
 - [[human-overconfidence|自信過剰（過信バイアス）]] — 出典を共有
 - [[human-role-conflict|役割葛藤（役割理論）]] — 出典を共有
 - [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — 出典を共有
-- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 出典を共有
+- [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

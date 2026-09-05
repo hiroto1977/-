@@ -36,8 +36,8 @@ EU TERREG（テロリストコンテンツ規則 Regulation 2021/784, 2022年施
 - [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]] — 出典を共有
 - [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 出典を共有
 - [[mgmt-delphi-method|デルファイ法]] — 出典を共有
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
-- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+- [[infosoc-algorithmic-curation-theory|アルゴリズム的キュレーションと増幅（ギレスピー）——プラットフォームのランキング・推薦・フィルタリングは中立の配管ではなく、価値と権力を埋め込んだ文化的仲介として情報環境を形づくる]] — 同分野の近傍
+- [[infosoc-remix-culture-lessig-jenkins|リミックス文化（レシッグ／ジェンキンス）——既存の文化的素材を再構成して創作するデジタル時代の実践と、それを抑圧しうる著作権制度との緊張]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

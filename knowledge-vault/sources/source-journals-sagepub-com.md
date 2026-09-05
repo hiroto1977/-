@@ -2,7 +2,7 @@
 title: "journals.sagepub.com"
 type: source-domain
 host: "journals.sagepub.com"
-cite_count: 180
+cite_count: 179
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.sagepub.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **180 件**（学術 179 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **179 件**（学術 178 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -78,7 +78,6 @@ tags:
 - [[infosoc-broken-world-thinking|壊れた世界の思考（ブロークン・ワールド・シンキング）]] — Graham&Thrift(2007)—OutofOrder,TheoryCulture&Society
 - [[infosoc-clickbait|クリックベイト（釣り見出し）]] — Lischka&Garz(2023)“Clickbaitnewsandalgorithmiccuration”,NewMedia&Soci…
 - [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — EuropeanJournalofCommunication—Review:CognitiveSurplus(Shirky2010)and…
-- [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — Marwick,A.E.&boyd,d.(2011)“Itweethonestly,Itweetpassionately:Twitteru…
 - [[infosoc-critical-discourse-analysis|批判的談話分析（CDA）]] — Fairclough(1992)"DiscourseandText:LinguisticandIntertextualAnalysiswi…
 - [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — Sadowski,J.(2019).Whendataiscapital:Datafication,accumulation,andextr…
 - [[infosoc-data-colonialism|データ植民地主義]] — Couldry&Mejias,“DataColonialism:RethinkingBigData’sRelationtotheConte…

@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[infosoc-smart-city-governance-kitchin|スマートシティ・ガバナンス——データ駆動型都市管理の批判的検討]] — 語彙が近い
-- [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティングとアンビエント情報環境——マーク・ワイザーの「消えるコンピュータ」ビジョン]] — 同じ思想家
 - [[infosoc-smart-city-urban-informatics|スマートシティと都市情報学の批判的・社会技術的分析]] — 同じ思想家
 - [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 出典を共有
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[econ-welfare-economics-pigou-kaldor-hicks|厚生経済学——ピグーの外部性補正とカルドア＝ヒックス補償原理]] — 出典を共有
 - [[human-allostasis|アロスタシス（Allostasis）]] — 出典を共有
 - [[human-salutogenesis-theory|サルトジェネシス理論]] — 出典を共有
+- [[infosoc-gamification|ゲーミフィケーション]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

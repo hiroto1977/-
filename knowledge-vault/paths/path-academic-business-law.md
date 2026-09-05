@@ -19,15 +19,15 @@ tags:
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 37）
 - [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]]（接続 35）
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 31）
-- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]]（接続 30）
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]]（接続 29）
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]]（接続 29）
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 28）
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 27）
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
 - [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]]（接続 26）
-- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]]（接続 26）
 - [[bizlaw-toushiho|出資法]]（接続 26）
 - [[bizlaw-earnest-money|手付（民法557条）]]（接続 25）
+- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]]（接続 25）
 
 ## 第 2 部 — 年代順の展開
 - 1511年: [[bizlaw-lucy-v-zehmer-objective-theory-of-contract|ルーシー対ゼーマー事件と契約成立の客観説——内心でなく言葉と行為の外形で合意を判断する原則]]
@@ -480,7 +480,6 @@ tags:
 - [[bizlaw-fault-liability|過失責任の原則と無過失責任]]
 - [[bizlaw-fictitious-manifestation|通謀虚偽表示（民法94条）]]
 - [[bizlaw-fiduciary-duty|信認義務（受託者責任）]]
-- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]]
 - [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]]
 - [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]]
 - [[bizlaw-fisher-v-bell|フィッシャー対ベル——「陳列」は申込みか、申込みの誘引か]]
@@ -647,6 +646,7 @@ tags:
 - [[bizlaw-shareholder-activism-proxy-fight|株主アクティビズムと委任状争奪戦——コーポレートガバナンスにおける物言う株主の法的地位]]
 - [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]]
 - [[bizlaw-shareholder-primacy-doctrine|株主優先主義（シェアホルダー・プライマシー）]]
+- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]]
 - [[bizlaw-shozoken-publicity|肖像権・パブリシティ権]]
 - [[bizlaw-silent-partnership-tokumei-kumiai|匿名組合（商法535条）——名を出さず出資し、利益の分配を受ける]]
 - [[bizlaw-sovereign-immunity-waiver|主権免除と放棄（ソブリン・イミュニティ）]]

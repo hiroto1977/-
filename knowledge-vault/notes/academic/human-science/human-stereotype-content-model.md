@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[human-motor-theory-speech-liberman|音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する]] — 出典を共有
 - [[human-role-conflict|役割葛藤（役割理論）]] — 出典を共有
-- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 出典を共有
 - [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — 出典を共有
 - [[mgmt-core-self-evaluations-judge|中核的自己評価——自尊心・一般的自己効力感・統制の所在・情緒安定性を束ねる高次特性]] — 出典を共有
 - [[mgmt-tannenbaum-schmidt|タンネンバウム＝シュミットのリーダーシップ連続体]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[human-kamin-blocking-effect|ブロッキング効果（カミンの阻止効果 / Kamin blocking effect）——既知の手がかりが新しい手がかりの学習を「阻止」する古典的条件づけ現象]] — 出典を共有
 - [[human-procrastination|先延ばしと時間的動機づけ理論（TMT）]] — 出典を共有
 - [[infosoc-information-subsidy|情報補助金]] — 出典を共有
+- [[infosoc-networked-publics|ネットワーク化された公衆]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

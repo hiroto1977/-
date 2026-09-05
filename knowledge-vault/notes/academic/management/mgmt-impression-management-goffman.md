@@ -33,12 +33,11 @@ aliases:
 - [[infosoc-self-presentation|自己呈示とドラマトゥルギー（ゴッフマン）]] — 語彙が近い
 - [[human-self-handicapping-jones-berglas|セルフ・ハンディキャッピング——失敗の言い訳を先取りし自尊心を防衛する方略]] — 同じ思想家
 - [[human-self-perception-bem|自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する]] — 同じ思想家
-- [[infosoc-context-collapse-marwick|コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ]] — 同じ思想家
 - [[infosoc-techno-nationalism-digital-sovereignty|テクノナショナリズムとデジタル主権戦略の比較政治経済学]] — 同じ思想家
 - [[infosoc-warranting-walther|ワランティング理論（ウォルサー）——オンラインの印象形成と「操作されにくい情報」]] — 同じ思想家
 - [[mgmt-impression-management-organizational|組織的印象管理——ステークホルダーへの組織イメージの戦略的構築]] — 同じ思想家
-- [[mgmt-career-anchor|キャリア・アンカー（シャイン）]] — 同分野の近傍
 - [[mgmt-organizational-ambivalence-rothman|組織的アンビヴァレンス——矛盾する感情の共存とその機能]] — 同分野の近傍
+- [[mgmt-career-anchor|キャリア・アンカー（シャイン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

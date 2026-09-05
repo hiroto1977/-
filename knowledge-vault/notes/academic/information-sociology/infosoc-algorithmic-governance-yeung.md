@@ -37,7 +37,6 @@ aliases:
 - [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]] — 同じ思想家
 - [[infosoc-algorithmic-opacity-burrell|アルゴリズム不透明性の三類型——企業秘密・技術的リテラシー・機械学習の規模に起因する不透明性]] — 同じ思想家
 - [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同じ思想家
-- [[infosoc-protocol-politics-galloway|プロトコル政治論：分散化後の制御様式]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

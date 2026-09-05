@@ -33,15 +33,15 @@ aliases:
 - [Erik Hurst and Benjamin Pugsley (2011) "What Do Small Businesses Do?", Brookings Papers on Economic Activity, Fall 2011, pp.73-118 — 多くの小規模事業者が成長や革新を意図していないという実証知見の典拠](https://muse.jhu.edu/article/475018/summary) `学術`
 
 ## 関連概念
-- [[infosoc-data-double|データ・ダブル／監視的アサンブラージュ（Data Double / Surveillant Assemblage）]] — 同じ思想家
-- [[infosoc-data-double-haggerty-ericson|データ・ダブルと監視アサンブラージュ——データから再構成される情報的分身]] — 同じ思想家
 - [[infosoc-surveillance-society|監視社会]] — 同じ思想家
 - [[econ-lucas-span-of-control-firm-size-distribution|ルーカスのスパン・オブ・コントロール・モデル——経営者の才能分布と管理限界が企業規模の分布を決める]] — 同じ思想家
+- [[infosoc-data-double|データ・ダブルと監視アサンブラージュ（ハガティ＆エリクソン）——別々の監視システムが収束し、身体から切り離されたデータの流れから再構成された「情報上の分身」が判断と介入の対象になる]] — 同じ思想家
 - [[econ-reputation-effects-kreps-wilson-milgrom-roberts|不完備情報下の評判効果——わずかなタイプの不確実性が参入阻止と協調を合理化する]] — 同じ思想家
 - [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 出典を共有
 - [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]] — 出典を共有
 - [[econ-generalized-method-of-moments-hansen|一般化モーメント法（GMM）——モーメント条件のみから分布を仮定せず母数を推定するハンセンの一般理論]] — 出典を共有
 - [[econ-rubinstein-bargaining|ルービンシュタイン交渉モデル]] — 出典を共有
+- [[human-hot-hand-fallacy|ホットハンドの誤謬]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

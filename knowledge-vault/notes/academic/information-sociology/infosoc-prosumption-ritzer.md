@@ -36,11 +36,11 @@ aliases:
 - [[infosoc-user-generated-content-prosumer|ユーザー生成コンテンツとプロシューマー経済の情報社会論]] — 同じ思想家
 - [[human-choice-overload|選択過多（選択のオーバーロード）]] — 同じ思想家
 - [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]] — 同じ思想家
-- [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 同じ思想家
-- [[infosoc-information-overload-toffler|情報過負荷（トフラー）と認知的過飽和]] — 同じ思想家
+- [[infosoc-information-overload-eppler-mengis|情報過負荷（トフラー／エプラー＝メンギス）——処理能力を超える情報が意思決定の質を下げる現象と、その原因を個人・情報・課題・組織・技術の五要因に整理する枠組み]] — 同じ思想家
 - [[infosoc-produsage-bruns|プロデュセージ——生産と利用が融合する協働的なコンテンツ創造]] — 同じ思想家
 - [[mgmt-adhocracy|アドホクラシー]] — 同じ思想家
 - [[infosoc-prosumption-theory|プロシューマー理論]] — 同分野の近傍
+- [[infosoc-playbour-kucklich|プレイバー——遊びと労働の境界が溶解しゲーム文化で価値を生む無償活動]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

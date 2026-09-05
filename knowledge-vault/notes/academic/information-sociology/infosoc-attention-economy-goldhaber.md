@@ -39,7 +39,7 @@ aliases:
 - [[human-chunking|チャンク化（チャンキング）]] — 同じ思想家
 - [[infosoc-clickbait-attention-economy|クリックベイト・ジャーナリズムとアテンション・エコノミー]] — 同じ思想家
 - [[infosoc-collective-intelligence-levy|集合知——レヴィの「知識の宇宙」とウェブ2.0・ウィキペディア・クラウドソーシングへの展開]] — 同じ思想家
-- [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 同じ思想家
+- [[infosoc-information-overload-eppler-mengis|情報過負荷（トフラー／エプラー＝メンギス）——処理能力を超える情報が意思決定の質を下げる現象と、その原因を個人・情報・課題・組織・技術の五要因に整理する枠組み]] — 同じ思想家
 - [[mgmt-attention-based-view|注意ベース理論（オカシオ）——企業の行動は、意思決定者の希少な注意をどの争点と答えに向けるかを組織の構造が配分した結果である]] — 同じ思想家
 - [[mgmt-behavioral-decision-theory-march|行動的意思決定理論——限定合理性下の組織的選択プロセス]] — 同じ思想家
 

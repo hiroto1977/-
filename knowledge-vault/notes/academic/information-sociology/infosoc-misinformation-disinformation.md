@@ -34,11 +34,11 @@ aliases:
 ## 関連概念
 - [[infosoc-fake-news-ecosystem-wardle|誤情報エコシステムの類型（ウォードル）]] — 同じ思想家
 - [[infosoc-troll-farms-howard|トロール・ファームと計算論的プロパガンダ（ハワード）]] — 同じ思想家
-- [[infosoc-algorithmic-amplification-gillespie|アルゴリズム的増幅と文化的仲介（ギレスピー）]] — 同じ思想家
 - [[infosoc-disinformation|誤情報・偽情報（情報の無秩序）]] — 同じ思想家
 - [[infosoc-hate-speech-online-moderation|ヘイトスピーチとオンライン・コンテンツ・モデレーションの社会法学]] — 同じ思想家
 - [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 同じ思想家
 - [[infosoc-information-disorder-taxonomy|情報障害の分類体系（ワードル＆デラクシャン）]] — 出典を共有
+- [[infosoc-fake-news|フェイクニュース（情報の無秩序）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

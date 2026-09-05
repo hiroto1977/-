@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[infosoc-technological-frames-orlikowski|技術フレーム——オーリコウスキーとガッシュの情報技術に関する認知的枠組み分析]] — 同じ思想家
-- [[infosoc-framing-entman|フレーミング理論——現実の特定側面の選択と顕在化による意味の方向づけ]] — 同分野の近傍
 - [[infosoc-technological-determinism-mcluhan|技術決定論——技術とりわけメディアが社会と意識を規定するという見方]] — 同分野の近傍
 
 ## 関連

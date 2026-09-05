@@ -2,7 +2,7 @@
 title: "semanticscholar.org"
 type: source-domain
 host: "semanticscholar.org"
-cite_count: 86
+cite_count: 85
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # semanticscholar.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **86 件**（学術 78 ・ リファレンス 8）
+> [!info] 出典ドメイン索引 ・ 引用 **85 件**（学術 77 ・ リファレンス 8）
 
 ## このドメインを出典とする項目
 
@@ -51,7 +51,6 @@ tags:
 - [[human-teleological-reasoning|目的論的推論（Teleological Reasoning in Infancy）]] — Gergely&Csibra(2003)—SemanticScholar
 - [[human-temporal-discounting|時間割引（Temporal Discounting / 遅延割引）]] — Ainslie(1975)SpeciousReward—PsychologicalBulletin82(4)
 - [[human-two-factor-emotion|情動二要因理論]] — Schachter&Singer(1962)"Cognitive,social,andphysiologicaldeterminantso…
-- [[infosoc-data-double|データ・ダブル／監視的アサンブラージュ（Data Double / Surveillant Assemblage）]] — Haggerty&Ericson(2000)—SemanticScholar
 - [[infosoc-data-doubles|データ・ダブル]] — Haggerty&Ericson(2000)—SemanticScholar
 - [[infosoc-digital-disconnect|デジタル・ディスコネクト（Digital Disconnect）]] — McChesney(2013)DigitalDisconnect—SemanticScholar
 - [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]] — Silverstone,Hirsch&Morley(1992)ICTsandtheMoralEconomyoftheHousehold

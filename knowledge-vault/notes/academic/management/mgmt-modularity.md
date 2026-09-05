@@ -39,7 +39,7 @@ aliases:
 - [[infosoc-attention-economy-goldhaber-citton|アテンション・エコノミー——注意の希少性と経済的価値]] — 同じ思想家
 - [[infosoc-clickbait-attention-economy|クリックベイト・ジャーナリズムとアテンション・エコノミー]] — 同じ思想家
 - [[infosoc-collective-intelligence-levy|集合知——レヴィの「知識の宇宙」とウェブ2.0・ウィキペディア・クラウドソーシングへの展開]] — 同じ思想家
-- [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 同じ思想家
+- [[infosoc-information-overload-eppler-mengis|情報過負荷（トフラー／エプラー＝メンギス）——処理能力を超える情報が意思決定の質を下げる現象と、その原因を個人・情報・課題・組織・技術の五要因に整理する枠組み]] — 同じ思想家
 - [[mgmt-architectural-innovation-henderson-clark|アーキテクチュラル・イノベーション——構成要素のつなぎ方を変える革新]] — 同じ思想家
 
 ## 関連

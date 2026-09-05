@@ -39,9 +39,9 @@ Lawrence Lessig ／ Pamela Samuelson ／ Tarleton Gillespie ／ Yochai Benkler �
 - [[infosoc-algorithmic-culture|アルゴリズム文化論]] — 同じ思想家
 - [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 同じ思想家
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 同じ思想家
-- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 同じ思想家
 - [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 同じ思想家
 - [[infosoc-commons-based-peer-production|コモンズに基づくピア生産]] — 同じ思想家
+- [[infosoc-remix-culture-lessig|リミックス文化とクリエイティブ・コモンズ（レシッグ）]] — 同分野の近傍
 - [[infosoc-enshittification|エンシティフィケーション（Enshittification）]] — 同分野の近傍
 
 ## 関連

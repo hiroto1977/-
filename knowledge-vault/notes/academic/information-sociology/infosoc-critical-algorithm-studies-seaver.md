@@ -36,8 +36,8 @@ aliases:
 - [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]] — 同じ思想家
 - [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — 同じ思想家
 - [[infosoc-techno-feminism-wajcman|テクノフェミニズム——技術とジェンダーの相互構成的関係]] — 同じ思想家
+- [[infosoc-algorithmic-curation-theory|アルゴリズム的キュレーションと増幅（ギレスピー）——プラットフォームのランキング・推薦・フィルタリングは中立の配管ではなく、価値と権力を埋め込んだ文化的仲介として情報環境を形づくる]] — 同分野の近傍
 - [[infosoc-calculated-publics|算出された公衆（calculated publics）]] — 同分野の近傍
-- [[infosoc-platform-labor-control|プラットフォーム労働とアルゴリズム的統制]] — 同分野の近傍
 - [[infosoc-digital-ethnography-hine|デジタル・エスノグラフィー——ハインのヴァーチャル方法論とオンライン社会調査]] — 同分野の近傍
 - [[infosoc-panopticon|パノプティコンと規律権力]] — 同分野の近傍
 

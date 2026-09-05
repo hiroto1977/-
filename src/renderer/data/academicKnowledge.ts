@@ -639,21 +639,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-agenda-setting',
-    discipline: 'information-sociology',
-    title: '議題設定理論（アジェンダ・セッティング）',
-    statement:
-      'マスメディアは人々に「何を考えるか（what to think）」を直接決めることはできないが、「何について考えるか（what to think about）」――すなわち何が重要な争点かという認識（議題＝アジェンダ）を方向づける力を持つ、とする理論。メディアが特定の争点を繰り返し強調するほど、その争点を重要だと受け手が認知する（顕著性の転移）。' +
-      'マックスウェル・マコームズとドナルド・ショーが、1968年の米大統領選におけるノースカロライナ州チャペルヒルの有権者調査とメディアの報道分析を通じて、有権者が重視する争点とメディアが強調する争点との強い相関を実証し、1972年の論文「The Agenda-Setting Function of Mass Media」(Public Opinion Quarterly 36:176-187)で提示した。後に、争点の属性（特徴づけ）の顕著性の転移を扱う第二レベル（属性アジェンダ設定）やフレーミング論へと発展した。なお「what to think about」の元表現はバーナード・コーエン(1963)に由来する。',
-    keyFigures: 'マックスウェル・マコームズ & ドナルド・ショー（1972, POQ, チャペルヒル研究）／淵源: B.コーエン(1963)',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=2376233', type: 'academic', label: 'McCombs & Shaw (1972) The Agenda-Setting Function of Mass Media, POQ 36:176-187（書誌）' },
-      { url: 'https://www.ebsco.com/research-starters/communication-and-mass-media/agenda-setting-theory', type: 'academic', label: 'EBSCO Research Starters — Agenda-setting theory' },
-      { url: 'https://link.springer.com/article/10.1007/s44382-025-00016-x', type: 'academic', label: 'Springer Nature, Communication and Change (2025) — agenda-setting研究の系譜 1972-2025' },
-    ],
-  },
-  {
     id: 'econ-natural-monopoly',
     discipline: 'economics',
     title: '自然独占（natural monopoly）',
@@ -7008,17 +6993,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'infosoc-context-collapse',
     discipline: 'information-sociology',
-    title: 'コンテキストの崩壊（文脈崩壊）',
+    title: 'コンテキストの崩壊（マーウィック＆ボイド）——ソーシャルメディアで別々の聴衆が一つの場に折り重なり、相手ごとの自己呈示の使い分けが崩れる',
     statement:
-      'コンテキストの崩壊（context collapse）とは、ソーシャルメディア上で、本来は別々の文脈（友人・家族・同僚・上司・見知らぬ他人など異なる相手や場面）に向けられていた複数の聴衆が一つの場に集約・折り重なり、それぞれに適した自己呈示や発言の使い分けが困難になる現象を指す。対面では人は相手・場面ごとに振る舞いを調整し聴衆を分離する（ゴッフマンの自己呈示論・audience segregation）が、SNSでは一つの投稿が多様な聴衆に同時に届くため、その切り替えが崩れる。' +
-      'アリス・マーウィックとダナ・ボイドが2011年論文「I tweet honestly, I tweet passionately」（New Media & Society）で概念を広め、投稿者は実際の聴衆を把握できず頭の中で想定した「想像された聴衆（imagined audience）」へ発信すると論じた。先行してメイロウィッツ（1985『No Sense of Place』）が電子メディアによる社会的場面の融合を指摘していた。誰に見られても無難な投稿へ収斂する「最低共通分母（lowest common denominator）」効果、自己検閲、プライバシー管理、炎上（文脈外流出）と関連する。',
-    keyFigures:
-      'アリス・マーウィック（Alice E. Marwick）／ダナ・ボイド（danah boyd）／ジョシュア・メイロウィッツ（Joshua Meyrowitz）／アーヴィング・ゴッフマン（Erving Goffman）',
-    asOf: '2026-06',
+      'コンテキストの崩壊（context collapse）とは、ソーシャルメディア上で、本来は別々の文脈（友人・家族・同僚・上司・見知らぬ他人）に向けられていた複数の聴衆が一つの場に集約され、相手や場面ごとに適した自己呈示や発言の使い分けが困難になる現象である。対面では人はアーヴィング・ゴッフマンの印象管理論が示すように相手ごとに振る舞いを調整し聴衆を分離するが、SNS では一つの投稿が多様な聴衆に同時に届くためその切り替えが崩れる。アリス・マーウィックとダナ・ボイドは2011年の論文（New Media & Society 13巻1号）で Twitter 利用者の実践研究から概念を広め、投稿者は実際の聴衆を把握できないため頭の中で構築した「想像された聴衆」に向けて発信し、誰に見られても無難な内容へ収斂する最低共通分母の戦略、自己検閲、あるいは特定の聴衆を想定して他の聴衆との不調和を招くジレンマに対処すると論じた。先行してジョシュア・メイロウィッツ（1985）が電子メディアによる社会的場面の融合を指摘しており、ジェニー・デイヴィスとネイサン・ジャーゲンソン（2014）は意図せぬ「衝突」と意図的な「共謀」を区別して概念を精緻化した。プライバシー管理、炎上（文脈外への流出）、複数アカウントの使い分け、プラットフォームの公開範囲の設計に接続する。批判として、聴衆分離は対面でも不完全であること、利用者が複数アカウントや非公開設定で文脈を再構築している実態を過小評価しやすいことがある。中小企業には、経営者や従業員の個人アカウントの発言が取引先・顧客・採用候補にも届くこと、公式アカウントは誰が読んでも成り立つ文脈で運用し私的な発信と分けることが含意となる。',
+    keyFigures: 'アリス・マーウィック＆ダナ・ボイド（2011 概念の普及）／アーヴィング・ゴッフマン（印象管理・聴衆分離）／ジョシュア・メイロウィッツ（1985 場面の融合）／ジェニー・デイヴィス＆ネイサン・ジャーゲンソン（2014 衝突と共謀）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://journals.sagepub.com/doi/10.1177/1461444810365313', type: 'academic', label: 'Marwick, A. E. & boyd, d. (2011) “I tweet honestly, I tweet passionately: Twitter users, context collapse, and the imagined audience.” New Media & Society 13(1): 114–133 (SAGE)' },
-      { url: 'https://academic.oup.com/jcmc/article/23/3/127/4962540', type: 'academic', label: '“One Size Fits All: Context Collapse, Self-Presentation Strategies and Language Styles on Facebook.” Journal of Computer-Mediated Communication 23(3) (Oxford Academic)' },
-      { url: 'https://en.wikipedia.org/wiki/Context_collapse', type: 'reference', label: 'Wikipedia: Context collapse（概念・最低共通分母・ゴッフマンの聴衆分離との関係）' },
+      { url: 'https://doi.org/10.1177/1461444810365313', type: 'academic', label: 'Marwick, A. E. & boyd, d. (2011) I Tweet Honestly, I Tweet Passionately: Twitter Users, Context Collapse, and the Imagined Audience — New Media & Society 13(1)（原典）' },
+      { url: 'https://doi.org/10.1080/1369118X.2013.862563', type: 'academic', label: 'Davis, J. L. & Jurgenson, N. (2014) Context Collapse: Theorizing Context Collusions and Collisions — Information, Communication & Society 17(4)' },
+      { url: 'https://academic.oup.com/jcmc/article/23/3/127/4962540', type: 'academic', label: 'One Size Fits All: Context Collapse, Self-Presentation Strategies and Language Styles on Facebook — Journal of Computer-Mediated Communication 23(3), 2018' },
+      { url: 'https://en.wikipedia.org/wiki/Context_collapse', type: 'reference', label: 'Wikipedia: Context collapse — 想像された聴衆、最低共通分母、ゴッフマンの聴衆分離' },
     ],
   },
   {
@@ -10969,16 +10953,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'infosoc-dataveillance',
     discipline: 'information-sociology',
-    title: 'データヴェイランス（データ監視）',
+    title: 'データヴェイランス（クラーク）——個人データのシステムを体系的に用いて人々の行動や通信を監視する、安価で大規模な監視様式',
     statement:
-      'データヴェイランスとは、ロジャー・クラークが1988年の論文「Information Technology and Dataveillance」（Communications of the ACM, 31巻5号, 498–512頁）で確立した概念で、「data（データ）」と「surveillance（監視）」を合成した造語である。個人データや情報システム（記録）を体系的に用いて、一人または複数の人々の行動や通信を調査・監視することを指し、従来の物理的・視覚的な監視と対比される。' +
-      'クラークは、特定された個人を対象とする「個人データヴェイランス」と、集団や母集団を対象とする「マス（集団）データヴェイランス」とを区別した。データを介した監視は物理的監視よりはるかに安価かつ大規模に実施でき、日常的で網羅的な監視を可能にする。クラークはこれがプライバシーにもたらす危険を警告し、適切な保護措置と政策枠組みの必要性を訴えた。デイヴィッド・ライアン（2001）はこれを監視社会論へ発展させ、データによって人々を社会的・経済的カテゴリへ振り分ける「ソーシャル・ソーティング（社会的選別）」が現代の権力構造と不平等を再生産すると論じた。',
-    keyFigures: 'ロジャー・クラーク（Roger Clarke, 1988）／デイヴィッド・ライアン（David Lyon, 2001 — social sorting）',
-    asOf: '2026-06',
+      'データヴェイランス（dataveillance）は、ロジャー・クラークが1988年の論文（Communications of the ACM 31巻5号）で確立した概念で、データ（data）と監視（surveillance）の合成語である。一人または複数の人々の行動や通信を調査・監視するために個人データのシステムを体系的に利用することを指し、物理的・視覚的な監視と対比される。伝統的な監視が対象を直接見張る人手と費用を要し対象数に限りがあったのに対し、データヴェイランスは購買・通信・移動・行政の記録といった日常の活動が残すデータの痕跡を使うため、リアルタイムの見張りを必要とせず、安価で大規模に拡張できる。クラークは、既に関心の対象となっている特定の個人をデータで監視する個人データヴェイランスと、集団や人口全体を網羅的に監視して関心の対象やパターンを抽出するマス・データヴェイランスを区別し、証拠なしにデータ上の関連性だけで疑いの対象とされうるため無罪の推定が掘り崩されること、文脈を欠き誤りを含むデータが処遇を左右することを警告して、保護措置と政策枠組みの必要性を訴えた。デイヴィッド・ライアン（2001）は監視社会論へ発展させ、データで人々を社会的・経済的カテゴリへ振り分けるソーシャル・ソーティングが権力構造と不平等を再生産すると論じ、オスカー・ガンディのパノプティック・ソート、ハガティらの監視アサンブラージュへ連なる。批判として、概念が広く「記録の利用」一般と区別しにくいこと、便益との比較衡量を欠きやすいことがある。中小企業には、顧客管理や勤怠・位置情報の記録が目的を超えて監視に転じやすいこと、収集目的の明示と保存期間の限定が信頼と法令順守の両面で要ることが含意となる。',
+    keyFigures: 'ロジャー・クラーク（1988 概念の確立）／デイヴィッド・ライアン（2001 ソーシャル・ソーティング）／オスカー・ガンディ（パノプティック・ソート）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://dl.acm.org/doi/10.1145/42411.42413', type: 'academic', label: 'Roger A. Clarke, "Information Technology and Dataveillance," Communications of the ACM 31(5):498–512 (1988)' },
-      { url: 'https://archive.org/details/surveillancesoci0000lyon', type: 'academic', label: 'Lyon (2001) Surveillance Society: Monitoring Everyday Life — Open University Press' },
-      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095701590', type: 'reference', label: 'Oxford Reference — Dataveillance（data+surveillanceの合成語・クラークの定義）' },
+      { url: 'https://doi.org/10.1145/42411.42413', type: 'academic', label: 'Clarke, R. A. (1988) Information Technology and Dataveillance — Communications of the ACM 31(5), 498–512（原典）' },
+      { url: 'https://archive.org/details/surveillancesoci0000lyon', type: 'academic', label: 'Lyon, D. (2001) Surveillance Society: Monitoring Everyday Life — Open University Press（Internet Archive）' },
+      { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095700529', type: 'reference', label: 'Oxford Reference: Dataveillance — data と surveillance の合成語・クラークの定義' },
+      { url: 'https://en.wikipedia.org/wiki/Dataveillance', type: 'reference', label: 'Wikipedia: Dataveillance — Clarke、個人／マス・データヴェイランス、データの痕跡' },
     ],
   },
   {
@@ -19278,16 +19262,14 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'infosoc-data-double',
     discipline: 'information-sociology',
-    title: 'データ・ダブル／監視的アサンブラージュ（Data Double / Surveillant Assemblage）',
+    title: 'データ・ダブルと監視アサンブラージュ（ハガティ＆エリクソン）——別々の監視システムが収束し、身体から切り離されたデータの流れから再構成された「情報上の分身」が判断と介入の対象になる',
     statement:
-      'データ・ダブル（Data Double）とは、デジタル監視システムが人間の身体を領域的文脈から抽象化し離散的な情報フローに分解した後、別の場所で再構成する仮想的な写像体を指す概念である。ケヴィン・ハガティ（Kevin D. Haggerty）とリチャード・エリクソン（Richard V. Ericson）が2000年にBritish Journal of Sociology（Vol.51, No.4, pp.605-622）で発表した「The Surveillant Assemblage」において提唱した。' +
-      'ジル・ドゥルーズとフェリックス・ガタリのアサンブラージュ概念を監視研究に適用し、かつて離散的であった監視システムがデジタル化により収斂・統合される「監視的アサンブラージュ」の形成を理論化した。フーコーのパノプティコンモデルを超えて、現代の監視システムをネットワーク化された非階層的アサンブラージュとして把握する枠組みを提供した。',
-    keyFigures: 'ケヴィン・ハガティ＆リチャード・エリクソン（2000 British Journal of Sociology 51(4):605-622）／ドゥルーズ＆ガタリ（アサンブラージュ概念）',
-    asOf: '2026-06',
+      'データ・ダブル（data double）と監視アサンブラージュ（surveillant assemblage）は、ケヴィン・ハガティとリチャード・エリクソンが2000年の論文（British Journal of Sociology 51巻4号）で提唱した概念で、ジル・ドゥルーズとフェリックス・ガタリの「アサンブラージュ（集合体）」を援用して現代の監視を理論化する。刑務所・病院・職場・国家がそれぞれ独自に行っていた監視は、デジタル化により相互に接続されて中心も統一された主体も持たない一つの緩やかな全体へ収束しつつあり、その作動の核心がデータ・ダブルの構築である。アサンブラージュは生身の身体を置かれた場所や文脈から引き剥がし、購買・移動・通信・健康・信用といった離散的なデータの流れに分解し、それらを別の場所で再び組み立てて、その人の情報上の分身を作る。マーケティング、リスク評価、信用判断、管理において実際に精査され分類され処遇されるのは本人ではなくこの分身であり、しばしば分身のほうが本人の運命を大きく左右する。二人はまた、捕捉の網が広がりデータ収集から逃れることが困難になる「消失の消失」を指摘し、フーコーのパノプティコンを超えてネットワーク化された非階層的な監視を捉える枠組みを与え、監視研究の中心的な視座となった。批判として、アサンブラージュ概念が記述的で権力の所在や責任の帰属を曖昧にしやすいこと、逃れられないという診断が抵抗や規制の可能性を過小評価することが指摘される。中小企業には、与信・広告・採用のスコアで自社や顧客が「データ上の分身」として判断されていること、誤った分身が取引に影響するため自社の公開データを点検し訂正する経路を持つことが含意となる。',
+    keyFigures: 'ケヴィン・ハガティ＆リチャード・エリクソン（2000 提唱）／ジル・ドゥルーズ＆フェリックス・ガタリ（アサンブラージュ概念）／対比: ミシェル・フーコー（パノプティコン）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1080/00071310020015280', type: 'academic', label: 'Haggerty & Ericson (2000) The Surveillant Assemblage — BJS 51(4) / Wiley' },
-      { url: 'https://www.semanticscholar.org/paper/The-surveillant-assemblage.-Haggerty-Ericson/4911a1630b63096f6748fcc5424635c6e5860961', type: 'academic', label: 'Haggerty & Ericson (2000) — Semantic Scholar' },
-      { url: 'https://www.researchgate.net/publication/12188129_The_Surveillant_Assemblage', type: 'academic', label: 'Haggerty & Ericson (2000) — ResearchGate' },
+      { url: 'https://doi.org/10.1080/00071310020015280', type: 'academic', label: 'Haggerty, K. D. & Ericson, R. V. (2000) The Surveillant Assemblage — British Journal of Sociology 51(4), 605–622（原典）' },
+      { url: 'https://en.wikipedia.org/wiki/Surveillance#Surveillant_assemblage', type: 'reference', label: 'Wikipedia: Surveillance — Surveillant assemblage（Haggerty & Ericson、data double、Deleuze & Guattari）' },
     ],
   },
   {
@@ -22693,36 +22675,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'infosoc-technostress-theory',
     discipline: 'information-sociology',
-    title: 'テクノストレス理論',
-    statement: 'Brod（1984）は著書 "Technostress: The Human Cost of the Computer Revolution" において、テクノストレスを「新しいコンピュータ技術への適応不能から生じる現代的な適応障害」と定義し、この概念を初めて学術的に提唱した。Ragu-Nathanら（2008）はその後、情報通信技術（ICT）利用者が経験するストレスを生み出す五つの「テクノストレス要因（technostress creators）」として、テクノ過負荷（techno-overload）・テクノ侵食（techno-invasion）・テクノ複雑性（techno-complexity）・テクノ不安（techno-insecurity）・テクノ不確実性（techno-uncertainty）を概念化・実証した。テクノ過負荷とはICTがより多くかつ速い作業を強いる状況、テクノ侵食とは仕事と私生活の境界がICTによって侵害される状況、テクノ複雑性とは技術習得に対する自己効力感の低下、テクノ不安とは技術に長けた者への職の置き換えへの恐れ、テクノ不確実性とは絶え間ないシステム更新がもたらす不安定感をそれぞれ指す。Tarafdarら（2007）はこれらの要因が役割ストレスの増大と個人生産性の低下を招くことを構造方程式モデリングにより実証し、IS（情報システム）研究における個人レベルの技術利用の負の側面を体系的に扱う基礎理論として位置づけた。テクノストレス理論はその後、ウェルビーイング、組織コミットメント、および技術受容研究と接続されながら急速に発展し、デジタル化が進む現代の組織行動・労働環境研究において中心的な分析枠組みとなっている。',
-    keyFigures: 'Craig Brod ／ Monideepa Tarafdar ／ T. S. Ragu-Nathan ／ Bhanu S. Ragu-Nathan ／ Qiang Tu',
-    asOf: '2026-06',
+    title: 'テクノストレス（ブロード／タラフダー＝ラグ＝ネイサン）——ICT の利用が過負荷・侵入・複雑性・不安・不確実性の五要因を通じて役割ストレスと生産性の低下を生む',
+    statement:
+      'テクノストレス（technostress）は、クレイグ・ブロードが1984年の著書で、新しいコンピュータ技術への適応不能から生じる現代的な適応障害として初めて提唱した概念である。モニデーパ・タラフダーら（2007、Journal of Management Information Systems 24巻1号）と T・S・ラグ＝ネイサンら（2008、Information Systems Research 19巻4号）は、情報通信技術（ICT）の利用者が経験するストレスを生む五つの要因（テクノストレス・クリエーター）を概念化・実証した。ICT がより多くより速い作業を強いるテクノ過負荷、仕事と私生活の境界が侵されるテクノ侵入、技術習得への自己効力感が下がるテクノ複雑性、技術に長けた者に職を奪われる恐れのテクノ不安、絶え間ないシステム更新がもたらすテクノ不確実性である。タラフダーらはこれらが役割過負荷・役割葛藤を媒介して職務満足・生産性・組織コミットメントを下げることを構造方程式モデリングで示し、リテラシー向上支援、技術サポート、導入への関与促進といった組織的な抑制要因（インヒビター）の効果を示した。情報システム研究で技術利用の負の側面を個人水準で扱う基礎理論であり、ウェルビーイング、技術受容、組織行動研究と接続する。批判として、自己報告の横断調査に依存して因果が弱いこと、ストレスを個人の適応の問題に還元して設計や労働条件の責任を見えにくくすることがある。中小企業には、新しいツールの導入自体より導入の仕方（研修、相談先、段階的移行、連絡時間の線引き）がストレスと離職を左右すること、小規模ほど一人が複数のツールを抱えて過負荷になりやすいことが含意となる。',
+    keyFigures: 'クレイグ・ブロード（1984 概念の提唱）／モニデーパ・タラフダーら（2007 役割ストレスと生産性への影響／2015 緩和策）／T・S・ラグ＝ネイサンら（2008 五つのクリエーター）',
+    asOf: '2026-09',
     sources: [
-      {
-        url: 'https://dl.acm.org/doi/10.2753/MIS0742-1222240109',
-        type: 'academic',
-        label: 'Tarafdar et al. (2007) — The Impact of Technostress on Role Stress and Productivity, Journal of Management Information Systems, 24(1), 301-328',
-      },
-      {
-        url: 'https://pubsonline.informs.org/doi/10.1287/isre.1070.0165',
-        type: 'academic',
-        label: 'Ragu-Nathan et al. (2008) — The Consequences of Technostress for End Users in Organizations, Information Systems Research, 19(4), 417-433',
-      },
-      {
-        url: 'https://archive.org/details/technostresshuma0000brod',
-        type: 'reference',
-        label: 'Brod, Craig (1984) — Technostress: The Human Cost of the Computer Revolution, Addison-Wesley',
-      },
-      {
-        url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/isj.12042',
-        type: 'academic',
-        label: 'Tarafdar et al. (2015) — Technostress: Negative Effect on Performance and Possible Mitigations, Information Systems Journal, 25(2)',
-      },
-      {
-        url: 'https://en.wikipedia.org/wiki/Technostress',
-        type: 'reference',
-        label: 'Technostress — Wikipedia (概念の概観と文献案内)',
-      },
+      { url: 'https://dl.acm.org/doi/10.2753/MIS0742-1222240109', type: 'academic', label: 'Tarafdar, M., Tu, Q., Ragu-Nathan, B. S. & Ragu-Nathan, T. S. (2007) The Impact of Technostress on Role Stress and Productivity — Journal of Management Information Systems 24(1), 301–328' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/isre.1070.0165', type: 'academic', label: 'Ragu-Nathan, T. S., Tarafdar, M., Ragu-Nathan, B. S. & Tu, Q. (2008) The Consequences of Technostress for End Users in Organizations: Conceptual Development and Empirical Validation — Information Systems Research 19(4), 417–433' },
+      { url: 'https://archive.org/details/technostresshuma0000brod', type: 'academic', label: 'Brod, C. (1984) Technostress: The Human Cost of the Computer Revolution — Addison-Wesley（Internet Archive）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/isj.12042', type: 'academic', label: 'Tarafdar, M., Pullins, E. B. & Ragu-Nathan, T. S. (2015) Technostress: Negative Effect on Performance and Possible Mitigations — Information Systems Journal 25(2)' },
+      { url: 'https://en.wikipedia.org/wiki/Technostress', type: 'reference', label: 'Wikipedia: Technostress — Brod、五つのクリエーター、インヒビター' },
     ],
   },
   {
@@ -23154,16 +23117,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'infosoc-algorithmic-curation-theory',
     discipline: 'information-sociology',
-    title: 'アルゴリズムキュレーション理論',
-    statement: 'アルゴリズムキュレーション理論は、プラットフォームが自動化されたアルゴリズムによってコンテンツを選別・ランク付け・フィルタリングし、ユーザーの情報環境を形成する過程を分析する理論的枠組みである。Gillespieは「プラットフォームの政治性」という概念を提唱し、アルゴリズムが中立的な技術ではなく、価値観や権力関係を埋め込んだ政治的装置であることを論じた。Bucherは「アルゴリズム的想像力（algorithmic imaginary）」の概念を通じて、ユーザーがアルゴリズムの動作を推測・内面化し、それに応じて行動を変容させるメカニズムを明らかにした。Pariserは「フィルターバブル」という概念を提示し、パーソナライズされたアルゴリズムが利用者を自分の既存の関心・意見と合致した情報のみに囲まれた閉鎖的な情報空間に閉じ込めるリスクを指摘した。レコメンダーシステムによるコンテンツ配信の最適化は、公共的議論の分極化や文化的消費パターンの均質化・多様化の両面において、現代の情報社会に深刻な影響を与えている。',
-    keyFigures: 'Tarleton Gillespie ／ Taina Bucher ／ Eli Pariser ／ Cathy O\'Neil ／ Frank Pasquale',
-    asOf: '2026-06',
+    title: 'アルゴリズム的キュレーションと増幅（ギレスピー）——プラットフォームのランキング・推薦・フィルタリングは中立の配管ではなく、価値と権力を埋め込んだ文化的仲介として情報環境を形づくる',
+    statement:
+      'アルゴリズム的キュレーション（algorithmic curation）は、プラットフォームが自動化されたアルゴリズムでコンテンツを選別・順位づけ・フィルタリングして利用者の情報環境を形成する過程を分析する枠組みで、ターレトン・ギレスピー（2014、「The Relevance of Algorithms」）はアルゴリズムが中立的な技術ではなく価値観や権力関係を埋め込んだ政治的装置であり、プラットフォームは「中立の配管」ではなく文化的仲介者だと論じた。特定のコンテンツを優先表示してリーチと可視性を広げる作用はアルゴリズム的増幅（amplification）と呼ばれ、フェレンツ・フサールら（2022、PNAS）は Twitter の推薦が政治的コンテンツを増幅する実態を示し、イーサン・バクシーら（2015、Science）はフェイスブックで多様な意見への接触を狭めるのはアルゴリズムより個人の選択が大きいことを示した。イーライ・パリサーの「フィルターバブル」はパーソナライズが利用者を既存の関心に合う情報に閉じ込める危険を、EU のデジタルサービス法（2022）は大規模プラットフォームにシステミック・リスク評価とアルゴリズムの説明責任を義務づけた。批判として、増幅の効果測定はプラットフォーム内部データへの依存が大きく外部検証が難しいこと、「アルゴリズムのせい」という説明が利用者の選択や既存メディアの偏りを見えにくくすることがある。中小企業には、集客がプラットフォームのキュレーションに依存するほど仕様変更の影響を直接受けること、自社の推薦や並び順も顧客にとっては価値を埋め込んだキュレーションであり、根拠を説明できる設計が信頼につながることが含意となる。',
+    keyFigures: 'ターレトン・ギレスピー（2014 アルゴリズムの関連性・プラットフォームの政治）／イーライ・パリサー（2011 フィルターバブル）／イーサン・バクシーら（2015 接触の多様性）／フェレンツ・フサールら（2022 政治的コンテンツの増幅）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.7551/mitpress/9780262525374.003.0009', type: 'academic', label: 'Gillespie, T. (2014) The Relevance of Algorithms — in Media Technologies, MIT Press, pp.167–194' },
-      { url: 'https://doi.org/10.1080/1369118X.2016.1154086', type: 'academic', label: 'Bucher, T. (2017). The algorithmic imaginary: exploring the ordinary affects of Facebook algorithms. Information, Communication & Society.' },
-      { url: 'https://www.penguinrandomhouse.com/books/309214/the-filter-bubble-by-eli-pariser/', type: 'reference', label: 'Pariser, E. (2011). The Filter Bubble: What the Internet Is Hiding from You. Penguin Press.' },
-      { url: 'https://doi.org/10.1093/oso/9780190905491.001.0001', type: 'academic', label: 'Bucher, T. (2018). If...Then: Algorithmic Power and Politics. Oxford University Press.' },
-      { url: 'https://doi.org/10.1126/science.aaa1160', type: 'academic', label: 'Bakshy, E., Messing, S., & Adamic, L. A. (2015). Exposure to ideologically diverse news and opinion on Facebook. Science.' },
+      { url: 'https://doi.org/10.7551/mitpress/9780262525374.003.0009', type: 'academic', label: 'Gillespie, T. (2014) The Relevance of Algorithms — in Media Technologies: Essays on Communication, Materiality, and Society, MIT Press（原典）' },
+      { url: 'https://doi.org/10.1126/science.aaa1160', type: 'academic', label: 'Bakshy, E., Messing, S. & Adamic, L. A. (2015) Exposure to Ideologically Diverse News and Opinion on Facebook — Science 348(6239)' },
+      { url: 'https://doi.org/10.1073/pnas.2025334119', type: 'academic', label: 'Huszár, F. et al. (2022) Algorithmic Amplification of Politics on Twitter — PNAS 119(1)' },
+      { url: 'https://www.penguinrandomhouse.com/books/309214/the-filter-bubble-by-eli-pariser/', type: 'reference', label: 'Penguin Random House: Pariser, E. (2011) The Filter Bubble: What the Internet Is Hiding from You' },
+      { url: 'https://en.wikipedia.org/wiki/Algorithmic_amplification', type: 'reference', label: 'Wikipedia: Algorithmic amplification — Gillespie、engagement optimization、DSA' },
     ],
   },
   {
@@ -23989,23 +23953,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://pubmed.ncbi.nlm.nih.gov/11584306/', type: 'academic', label: 'PubMed: Ramachandran & Hubbard (2001) neural basis of synaesthesia' },
       { url: 'https://www.nature.com/articles/nn1906', type: 'academic', label: 'Rouw & Scholte (2007) Increased structural connectivity in grapheme-color synesthesia — Nature Neuroscience 10, 792–797' },
       { url: 'https://www.cell.com/neuron/fulltext/S0896-6273(05)00835-4', type: 'academic', label: 'Hubbard & Ramachandran (2005) Neurocognitive Mechanisms of Synesthesia — Neuron 48(3), 509–520' },
-    ],
-  },
-  {
-    id: 'infosoc-agenda-setting-theory-digital',
-    discipline: 'information-sociology',
-    title: '議題設定理論（デジタル時代の展開）',
-    statement: 'McCombsとShawが1972年に提唱した議題設定理論は、マスメディアが公衆の関心議題の顕著性を形成すると主張する。デジタル時代にはアルゴリズム・SNS・検索エンジンがネットワーク型の議題設定主体となっている。' +
-      '古典のチャペルヒル研究は、1968年米大統領選の浮動票有権者で、メディアが強調した争点の順位と有権者が重要とみなす争点の順位に極めて高い相関を見出し、「何を考えるかではなく、何について考えるかを決める」効果として定式化した。属性型議題設定（第2レベル: 争点のどの側面を目立たせるか）とネットワーク議題設定（第3レベル: 要素間の連想構造ごと転写される）へと理論は階層化されている。' +
-      'デジタル環境の論点は担い手の多元化で、トレンド欄・推薦アルゴリズム・インフルエンサー・オンライン世論が従来の報道機関と議題を奪い合い、逆向きの議題設定（ソーシャルの話題が報道を動かす）が常態化した。プラットフォームごとに議題が分裂するため「公衆の議題」という単数形の前提自体が揺らいでいる。' +
-      '一方でメタ分析は伝統メディアの議題設定力が縮小しつつも消滅していないことを示し、選挙報道・危機コミュニケーション・広報戦略（アジェンダ・ビルディング）の設計に、注意の希少性をめぐる競争という現代的な形で生き続けている。',
-    keyFigures: 'Maxwell McCombs ／ Donald Shaw ／ Guy Golan',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1086/267990', type: 'academic', label: 'McCombs & Shaw (1972) The Agenda-Setting Function of Mass Media — POQ' },
-      { url: 'https://fupubco.com/futech/article/view/312', type: 'academic', label: 'Agenda-setting theory in the digital media age — literature review' },
-      { url: 'https://link.springer.com/article/10.1007/s44382-025-00016-x', type: 'academic', label: 'Evolution of agenda-setting research 1972-2025' },
-      { url: 'https://en.wikipedia.org/wiki/Agenda-setting_theory', type: 'reference', label: 'Agenda-setting theory — Wikipedia overview' },
     ],
   },
   {
@@ -26164,16 +26111,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'infosoc-media-agenda-setting',
     discipline: 'information-sociology',
-    title: 'メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み',
+    title: 'アジェンダ設定理論（マコームズ＆ショー）——メディアは「何を考えるか」ではなく「何について考えるか」を方向づけ、争点と属性の顕出性を公衆に転写する',
     statement:
-      'アジェンダ設定理論は、マコームズとショーが1968年の米国大統領選のチャペルヒル研究で実証した理論で、マスメディアは受け手に「何を考えるか（意見の方向）」ではなく「何について考えるか（争点の重要度）」を方向づけるという主張を核心とする——「メディアは何を考えるべきかを告げるのは不得手だが、何について考えるべきかを告げるのは驚くほど巧みだ」というコーエン（1963）の定式がその原型である。実証は、有権者が重要と考える争点の順位とメディアの報道量の順位が強く相関することを示し、限定効果論以後のメディア強力効果の再興を担った。理論は、どの争点が顕出するかを扱う第一水準から、争点や候補者のどの属性（側面）が強調されるかを扱う第二水準（属性アジェンダ設定）へ拡張され、後者はフレーミング（争点を特定の解釈枠で提示する）と接近する。関連機構として、メディアが強調した争点が政治指導者の評価基準として使われるプライミング、報道量への注意を左右する個人の方向づけ欲求といった条件変数が整理され、シュファーレとテウクスバーリー（2007）はアジェンダ設定・フレーミング・プライミングを区別しつつ統合するメタ理論的整理を与えた。誰がメディアのアジェンダを設定するかを問うアジェンダ構築、ハイチョイス・SNS 環境での送り手と受け手のアジェンダの相互作用（ネットワーク・アジェンダ設定）へと展開し、公衆の注意の配分をめぐるコミュニケーション研究の基幹理論であり続けている。',
-    keyFigures: 'マコームズ ／ ショー ／ コーエン',
-    asOf: '2026-06-24',
+      'アジェンダ設定理論は、マックスウェル・マコームズとドナルド・ショーが1968年の米国大統領選のチャペルヒル研究で実証し1972年の論文（Public Opinion Quarterly 36巻2号）で提示した理論で、マスメディアは受け手に「何を考えるか」ではなく「何について考えるか（争点の重要度）」を方向づけるという主張を核心とし、バーナード・コーエン（1963）の定式を原型とする。理論は、どの争点が顕出するかを扱う第一水準から、争点や候補者のどの属性が強調されるかを扱う第二水準（属性アジェンダ設定）へ拡張されてフレーミングと接近し、要素間の連想構造ごと転写されるネットワーク・アジェンダ設定へ階層化された。強調された争点が政治指導者の評価基準になるプライミング、報道への注意を左右する方向づけ欲求といった条件変数が整理され、ディートラム・シュファーレとデイヴィッド・テウクスバーリー（2007）はアジェンダ設定・フレーミング・プライミングを区別しつつ統合した。誰がメディアのアジェンダを設定するかを問うアジェンダ構築へ展開し、SNS 環境ではトレンド欄・推薦アルゴリズム・インフルエンサーが報道機関と議題を奪い合い、ソーシャルの話題が報道を動かす逆向きの設定が常態化してプラットフォームごとに議題が分裂する一方、メタ分析は伝統メディアの設定力が縮小しつつ消滅していないことを示す。批判として、相関研究が多く因果の方向を識別しにくいこと、選択的接触が強い環境で効果が縮むことがある。中小企業には、地域メディアや業界紙、SNS のトレンドが顧客の関心の順位を決めるため、自社の争点を報道や検索の議題に載せる広報（アジェンダ構築）が価格や品質と同じくらい需要を左右することが含意となる。',
+    keyFigures: 'マックスウェル・マコームズ＆ドナルド・ショー（1972 チャペルヒル研究）／バーナード・コーエン（1963 原型）／ディートラム・シュファーレ＆デイヴィッド・テウクスバーリー（2007 フレーミング・プライミングとの統合）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1086/267990', type: 'academic', label: 'McCombs & Shaw 1972 — The Agenda-Setting Function of Mass Media, Public Opinion Quarterly 36(2):176-187' },
-      { url: 'https://press.princeton.edu/books/paperback/9780691030036/the-press-and-foreign-policy', type: 'reference', label: 'Cohen 1963 — The Press and Foreign Policy, Princeton University Press' },
-      { url: 'https://www.wiley.com/en-us/Setting+the+Agenda%3A+The+Mass+Media+and+Public+Opinion-p-9780745623474', type: 'reference', label: 'McCombs 2004 — Setting the Agenda: The Mass Media and Public Opinion, Polity Press' },
-      { url: 'https://doi.org/10.1111/j.0021-9916.2007.00326.x', type: 'academic', label: 'Scheufele & Tewksbury 2007 — Framing, Agenda Setting, and Priming: The Evolution of Three Media Effects Models, Journal of Communication 57(1):9-20' },
+      { url: 'https://doi.org/10.1086/267990', type: 'academic', label: 'McCombs, M. E. & Shaw, D. L. (1972) The Agenda-Setting Function of Mass Media — Public Opinion Quarterly 36(2)（原典）' },
+      { url: 'https://doi.org/10.1111/j.0021-9916.2007.00326.x', type: 'academic', label: 'Scheufele, D. A. & Tewksbury, D. (2007) Framing, Agenda Setting, and Priming: The Evolution of Three Media Effects Models — Journal of Communication 57(1)' },
+      { url: 'https://press.princeton.edu/books/paperback/9780691030036/the-press-and-foreign-policy', type: 'reference', label: 'Princeton University Press: Cohen, B. C. (1963) The Press and Foreign Policy（「何について考えるか」の原型）' },
+      { url: 'https://www.wiley.com/en-us/Setting+the+Agenda%3A+The+Mass+Media+and+Public+Opinion%2C+2nd+Edition-p-9780745661100', type: 'reference', label: 'Wiley: McCombs, M. (2004) Setting the Agenda: The Mass Media and Public Opinion — Polity' },
+      { url: 'https://en.wikipedia.org/wiki/Agenda-setting_theory', type: 'reference', label: 'Wikipedia: Agenda-setting theory — Chapel Hill study、第二水準、ネットワーク・アジェンダ設定' },
     ],
   },
   {
@@ -28952,15 +28900,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'infosoc-surveillance-capitalism-zuboff',
     discipline: 'information-sociology',
-    title: '監視資本主義（ズボフ）',
-    statement: '監視資本主義（surveillance capitalism）は、ショシャナ・ズボフ（2019）が提唱した、グーグル・フェイスブックら大規模プラットフォームが人間の経験（行動・感情・社会関係）を無償で採取し「行動余剰（behavioral surplus）」として商品化・予測製品化し、「行動先物市場（behavioral futures markets）」で広告主に販売する新たな資本主義の論理である。ズボフはデジタル監視を過去の工業資本主義による自然の商品化と同列に置き、「人間経験の剥奪」として規範的に批判した。政策論文脈では、ケンブリッジ・アナリティカ事件・GDPR・DSA（デジタルサービス法）・データポータビリティ論議と連動し、プライバシー権の集合的・民主的側面の強化が要請されている。批判としてはコリン・ベネット・ダニエル・ソロブらから、プライバシー法の文脈で語られてきた概念を「資本主義批判」の語彙で無用に肥大化させたとの指摘がある。一方マルティナ・ラークら欧州デジタル社会学者はズボフの概念を経験的研究に組み込む試みを進めている。',
-    keyFigures: 'ショシャナ・ズボフ ／ エドワード・スノーデン ／ ニック・スルニチェク ／ カイト・クロフォード',
-    asOf: '2026-06-26',
+    title: '監視資本主義（ズボフ）——人間の経験を無償の原材料として採取し、行動余剰を予測製品に加工して行動先物市場で売る資本主義の新しい論理',
+    statement:
+      '監視資本主義（surveillance capitalism）は、ショシャナ・ズボフが2015年の論文「Big Other」（Journal of Information Technology 30巻1号）で提起し、2019年の著書『監視資本主義の時代』で体系化した概念で、グーグルやフェイスブックのような大規模プラットフォームが人間の経験を無償の原材料として採取し、サービス改善に必要な分を超える「行動余剰（behavioral surplus）」を機械学習で予測製品に加工して、広告主などが将来の行動に賭ける「行動先物市場」で販売する資本主義の新しい論理を指す。ズボフはグーグルが2000年代初頭の広告事業で行動データの活用を始めた経緯を監視資本主義の誕生として描き、予測の確実性を高めるためにナッジ・報酬・罰を通じて行動そのものを誘導する「行動修正」が経済モデルの核心になると論じて、工業資本主義が自然を商品化したのと同列に「人間経験の収奪」として規範的に批判した。ケンブリッジ・アナリティカ事件、GDPR、デジタルサービス法の議論と連動し、プライバシーの権利から「行動データからの解放」への規範の転換が論じられる。批判として、コリン・ベネットやダニエル・ソロブらはプライバシー法で語られてきた問題を資本主義批判の語彙で不必要に肥大化させたと指摘し、ニック・スルニチェクのプラットフォーム資本主義論は広告以外の収益モデルを重視する。中小企業には、無料の広告・分析ツールの対価が自社と顧客の行動データであること、顧客データを第三者の予測製品に流さない設計と説明が信頼の条件になること、プラットフォームの予測に依存した集客は条件変更で一夜にして崩れることが含意となる。',
+    keyFigures: 'ショシャナ・ズボフ（2015「Big Other」／2019『監視資本主義の時代』）／対比: ニック・スルニチェク（プラットフォーム資本主義）／コリン・ベネット＆ダニエル・ソロブ（概念の肥大化への批判）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1057/jit.2015.5', type: 'academic', label: 'Zuboff, S. (2015) Big Other: Surveillance Capitalism and the Prospects of an Information Civilization — Journal of Information Technology, 30(1), 75–89（監視資本主義の概念論文）' },
-      { url: 'https://www.publicaffairsbooks.com/titles/shoshana-zuboff/the-age-of-surveillance-capitalism/9781610395694/', type: 'reference', label: 'Zuboff, S. (2019) The Age of Surveillance Capitalism — PublicAffairs（概念の体系書）' },
-      { url: 'https://doi.org/10.1093/ijlit/eax005', type: 'academic', label: 'Cohen, J. E. (2017) The Biopolitical Public Domain: The Legal Construction of the Surveillance Economy — Philosophy & Technology, 31(2), 213–233（法的次元の分析）' },
-      { url: 'https://en.wikipedia.org/wiki/Surveillance_capitalism', type: 'reference', label: 'Wikipedia: Surveillance capitalism — Zuboff, behavioral surplus, behavioral futures, GDPR, critiques' },
+      { url: 'https://doi.org/10.1057/jit.2015.5', type: 'academic', label: 'Zuboff, S. (2015) Big Other: Surveillance Capitalism and the Prospects of an Information Civilization — Journal of Information Technology 30(1)（原典）' },
+      { url: 'https://www.publicaffairsbooks.com/titles/shoshana-zuboff/the-age-of-surveillance-capitalism/9781610395694/', type: 'reference', label: 'PublicAffairs: Zuboff, S. (2019) The Age of Surveillance Capitalism（概念の体系化）' },
+      { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679', type: 'government', label: 'Regulation (EU) 2016/679 (GDPR) — EUR-Lex（行動データ保護の立法）' },
+      { url: 'https://en.wikipedia.org/wiki/Surveillance_capitalism', type: 'reference', label: 'Wikipedia: Surveillance capitalism — Zuboff、behavioral surplus、行動先物市場、批判' },
     ],
   },
   {
@@ -34878,18 +34827,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-data-double-haggerty-ericson',
-    discipline: 'information-sociology',
-    title: 'データ・ダブルと監視アサンブラージュ——データから再構成される情報的分身',
-    statement: 'データ・ダブル（data double）と監視アサンブラージュ（surveillant assemblage）は、ケヴィン・ハガティとリチャード・エリクソンが2000年の論文「監視アサンブラージュ」で提唱した概念で、現代の監視のあり方を捉える枠組みである。彼らは、ジル・ドゥルーズとフェリックス・ガタリの哲学的概念である「アサンブラージュ（assemblage、集合体・組み立て）」を援用して、現代の監視を理論化した。かつて監視は、刑務所・病院・職場・国家といった別々の制度がそれぞれ独自に行うものであった。ハガティとエリクソンは、これらの個別の監視システムが、相互に接続され、ゆるやかに結びついた一つの全体——「監視アサンブラージュ」——へと収束しつつあると論じた。この監視アサンブラージュは、特定の中心や統一された主体を持たず、多様な技術・組織・データの流れが寄り集まって機能する。監視アサンブラージュの作動の核心が「データ・ダブル」の構築である。アサンブラージュは、まず生身の人間の身体を、それが置かれた具体的な場所や文脈から引き剥がし、抽象化する。そして人間を、購買・移動・通信・健康・信用といった、別々の離散的なデータの流れへと分解する。これらのデータの流れは、さまざまな場所で収集・処理され、そして再び組み立てられて、その個人の「データ・ダブル（データ上の分身）」——データから再構成された、その人の情報的・仮想的な複製——が作り出される。重要なのは、実際に監視され、精査され、判断と介入の対象とされるのは、生身の人間そのものではなく、このデータ・ダブルだという点である。マーケティング、リスク評価、信用判断、管理において、人々はそのデータ・ダブルに基づいて分類され、処遇される。そしてしばしば、データ・ダブルの方が、生身の本人よりも、その人の運命を左右する大きな帰結をもたらす。ハガティとエリクソンはまた、監視アサンブラージュが、人々を捕捉する網の目を絶えず広げ、データの収集を逃れることをますます困難にする「消失の消失（disappearance of disappearance）」という傾向を生むことを指摘した。データ・ダブルと監視アサンブラージュの概念は、現代の監視が、特定の権力者が特定の対象を見張るという古典的なモデルではなく、無数のデータの流れが寄り集まって個人のデータ上の分身を構築し、それに作用するという、分散的で流動的な性質を持つことを鋭く捉え、ビッグデータと監視資本主義の時代の監視研究の中心的な枠組みとなっている。',
-    keyFigures: 'ケヴィン・ハガティ ／ リチャード・エリクソン ／ ジル・ドゥルーズ ／ フェリックス・ガタリ',
-    asOf: '2026-06-27',
-    sources: [
-      { url: 'https://doi.org/10.1080/00071310020015280', type: 'academic', label: 'Haggerty, K.D. & Ericson, R.V. (2000) The Surveillant Assemblage — British Journal of Sociology 51(4)' },
-      { url: 'https://en.wikipedia.org/wiki/Surveillance#Surveillant_assemblage', type: 'reference', label: 'Wikipedia: Surveillant assemblage — Haggerty & Ericson, data double, Deleuze/Guattari, disappearance of disappearance' },
-    ],
-  },
-  {
     id: 'econ-liquidity-preference-keynes',
     discipline: 'economics',
     title: '流動性選好——貨幣保有の三動機と利子率の決定',
@@ -34947,18 +34884,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://www.law.cornell.edu/wex/suretyship', type: 'reference', label: 'Cornell LII Wex: Suretyship — secondary obligation, vs indemnity, Statute of Frauds, subrogation, contribution' },
       { url: 'https://en.wikipedia.org/wiki/Surety', type: 'reference', label: 'Wikipedia: Surety / guarantee — secondary obligation, co-extensive, discharge by alteration, subrogation' },
-    ],
-  },
-  {
-    id: 'infosoc-dataveillance-clarke',
-    discipline: 'information-sociology',
-    title: 'データ監視（デイタヴェイランス）——個人データを通じた体系的な監視',
-    statement: 'データ監視（dataveillance、デイタヴェイランス）は、ロジャー・クラークが1988年の論文「情報技術とデータ監視」で提唱した概念で、「データ（data）」と「監視（surveillance）」を組み合わせた造語である。クラークはこれを、「一人または複数の人々の行動やコミュニケーションを調査・監視するために、個人データのシステムを体系的に利用すること」と定義した。データ監視は、伝統的な監視——尾行や張り込み、監視カメラによる視覚的・物理的な監視——とは質的に異なる、新しい監視の様式である。伝統的な監視が、対象を直接その場で見張ることを必要とし、人手と費用を要し、それゆえ監視できる対象の数に限りがあったのに対し、データ監視は、人々が日々の活動の中で残していくデータの痕跡——購買記録、通信記録、移動の記録、行政上の記録——を通じて人々を監視する。これにはリアルタイムでの見張りが不要であり、はるかに安価で、しかも大規模に拡張できる。クラークは、データ監視を二つの類型に区別した。一つは「個人的データ監視（personal dataveillance）」で、すでに疑いや関心の対象となっている特定の個人を、そのデータを通じて監視するものである。もう一つは「大量データ監視（mass dataveillance）」で、特定の対象を定めず、集団や人口全体のデータを網羅的に監視し、その中から関心の対象となる個人やパターンを抽出しようとするものである。クラークは、データ監視がもたらす危険を早くから警告した。それは、プライバシーを侵害するだけでなく、人々が何か疑わしいことをしたという証拠なしに、ただデータの中の関連性やパターンに基づいて疑いの対象とされうるため、「疑わしきは罰せず」「無罪の推定」という原則を掘り崩しかねない。データに基づく判断は、しばしば文脈を欠き、誤りを含み、にもかかわらず人々の処遇を左右する。データ監視の概念は、ビッグデータや人工知能、監視資本主義をめぐる現代の議論に先立って、個人データの体系的な利用がもたらす監視の問題を鋭く捉えた先駆的な貢献である。デヴィッド・ライアンの監視社会論、オスカー・ガンディのパノプティック・ソート、ケヴィン・ハガティらの監視研究へと連なり、データ監視は、デジタル時代の監視を理解する基礎的な概念となっている。',
-    keyFigures: 'ロジャー・クラーク ／ デヴィッド・ライアン ／ オスカー・ガンディ ／ ケヴィン・ハガティ',
-    asOf: '2026-06-27',
-    sources: [
-      { url: 'https://doi.org/10.1145/42411.42413', type: 'academic', label: 'Clarke, R. (1988) Information Technology and Dataveillance — Communications of the ACM 31(5)' },
-      { url: 'https://en.wikipedia.org/wiki/Dataveillance', type: 'reference', label: 'Wikipedia: Dataveillance — Clarke, data trails, personal vs mass dataveillance, privacy, presumption of innocence' },
     ],
   },
   {
@@ -38275,19 +38200,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-context-collapse-marwick',
-    discipline: 'information-sociology',
-    title: 'コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ',
-    statement: 'コンテクスト崩壊（context collapse）は、アリス・マーウィックとダナ・ボイドが2011年に体系化した概念で、ソーシャルメディアが本来異なる社会的文脈に属する多様な聴衆を単一の情報空間に統合してしまう現象を指す。対面コミュニケーションでは、人々はゴフマンの「印象管理」理論が示すように、相手や状況に応じて自己提示を調整するが、Twitter・Facebook・Instagramなどのプラットフォームでは、上司・友人・家族・見知らぬフォロワーが同一の投稿を閲覧する。この聴衆の「平坦化」により、発信者はどの文脈に合わせてコミュニケーションすべきか判断できなくなり、最も保守的な自己検閲を行うか、特定の聴衆を想定して他の聴衆との不調和を引き起こすかのジレンマに直面する。マーウィックらはTwitterユーザーの実践研究から、人々がこの崩壊に対処するために「想像上の聴衆」を構築し、その想定に基づいて発信内容を調整することを明らかにした。プライバシー設計やアルゴリズム的フィード制御にも影響を与えている。',
-    keyFigures: 'アリス・マーウィック ／ ダナ・ボイド ／ アーヴィング・ゴフマン ／ ジョシュア・メイロウィッツ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1177/1461444810365313', type: 'academic', label: 'Marwick, A.E. & boyd, d. (2011) I Tweet Honestly, I Tweet Passionately — New Media & Society 13(1)' },
-      { url: 'https://en.wikipedia.org/wiki/Context_collapse', type: 'reference', label: 'Wikipedia: Context Collapse — audience flattening on social media platforms' },
-      { url: 'https://doi.org/10.1080/1369118X.2013.862563', type: 'academic', label: 'Davis, J.L. & Jurgenson, N. (2014) Context Collapse: Theorizing Context Collusions — Information, Communication & Society 17(4)' },
-    ],
-  },
-  {
     id: 'econ-backwash-spread-myrdal',
     discipline: 'economics',
     title: '逆流効果と波及効果——ミュルダールの循環的累積的因果関係論',
@@ -40503,14 +40415,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'infosoc-remix-culture-lessig-jenkins',
     discipline: 'information-sociology',
-    title: 'リミックス文化論——デジタル技術による文化的再利用と著作権の緊張',
-    statement: 'リミックス文化（Remix Culture）論は、デジタル技術の普及により既存の文化的素材（音楽・映像・テキスト・画像）を再構成・再結合して新たな創作を行う文化的実践の意義と法的課題を分析する学際的枠組みである。レシッグ（2008）は『リミックス』で、現代のデジタル文化を「読み取り/書き込み（RW）文化」と特徴づけ、著作権法の過度な厳格化がこの創造的実践を抑圧していると批判した。レシッグは商業経済とシェアリング経済のハイブリッドとしての「ハイブリッド経済」を提案し、クリエイティブ・コモンズ・ライセンスを制度的解決策として創設した。ジェンキンス（2006）は「参加型文化」（participatory culture）概念でファン・フィクション、マッシュアップ、ファン・ヴィッドなどの実践を分析し、消費者が能動的な文化生産者（プロデューサー）となる「コンバージェンス文化」を理論化した。ナヴァス（2012）はリミックスの系譜学をDJカルチャーからデジタルメディアまで辿り、選択的リミックス・反省的リミックス・再生的リミックスの3類型を提示した。',
-    keyFigures: 'ローレンス・レシッグ ／ ヘンリー・ジェンキンス ／ エドゥアルド・ナヴァス ／ ヤーチャイ・ベンクラー ／ ジョアンナ・デモーズ',
-    asOf: '2026-06-26',
+    title: 'リミックス文化（レシッグ／ジェンキンス）——既存の文化的素材を再構成して創作するデジタル時代の実践と、それを抑圧しうる著作権制度との緊張',
+    statement:
+      'リミックス文化（remix culture）論は、デジタル技術の普及により既存の文化的素材を再構成・再結合して新たな作品を創る文化的実践の意義と法的課題を分析する学際的枠組みである。ローレンス・レシッグは2008年の『Remix』で現代のデジタル文化を消費するだけの「読み取り専用（RO）」に対する「読み書き（RW）」文化と特徴づけ、著作権法の過度な厳格化がこの創造的実践を犯罪化・抑圧していると批判して、商業経済と共有経済を組み合わせた「ハイブリッド経済」を提案した。2001年設立のクリエイティブ・コモンズは、表示（BY）・非営利（NC）・継承（SA）・改変禁止（ND）の組み合わせで著作者が利用条件を選択的に緩和できるライセンス体系を提供し、ヨハイ・ベンクラー（2006）はこれとオープンソースが「共有ベースのピア生産」という第三の生産様式を可能にすると論じた。ヘンリー・ジェンキンス（2006）はファン・フィクションやマッシュアップを参加型文化として分析し、消費者が能動的な文化生産者になる「コンバージェンス文化」を理論化し、EU の DSM 著作権指令（2019）第17条のアップロードフィルター義務は、プラットフォーム責任の強化とユーザー生成コンテンツの過剰削除の緊張を新たな形で顕在化させた。批判として、リミックスの自由が原作者の報酬と両立する条件が示されにくいこと、参加型文化の称揚がプラットフォームによる無償労働の搾取を見えにくくすることがある。中小企業には、素材の二次利用は許諾やライセンスの確認が前提であること、逆に自社コンテンツに CC ライセンスを付けて拡散を促す選択肢があること、プラットフォームの自動削除に備えて権利の記録を残すことが含意となる。',
+    keyFigures: 'ローレンス・レシッグ（2008『Remix』・クリエイティブ・コモンズ）／ヘンリー・ジェンキンス（2006 コンバージェンス文化）／ヨハイ・ベンクラー（2006 共有ベースのピア生産）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.5040/9781849662505', type: 'academic', label: 'Lessig (2008) Remix: Making Art and Commerce Thrive in the Hybrid Economy — Penguin Press' },
-      { url: 'https://doi.org/10.18574/nyu/9780814743096.001.0001', type: 'academic', label: 'Jenkins (2006) Convergence Culture: Where Old and New Media Collide — NYU Press' },
-      { url: 'https://en.wikipedia.org/wiki/Remix_culture', type: 'reference', label: 'Wikipedia: Remix culture — リミックス文化の歴史と著作権問題の概説' },
+      { url: 'https://doi.org/10.5040/9781849662505', type: 'academic', label: 'Lessig, L. (2008) Remix: Making Art and Commerce Thrive in the Hybrid Economy — Bloomsbury Academic（原典）' },
+      { url: 'https://doi.org/10.18574/nyu/9780814743096.001.0001', type: 'academic', label: 'Jenkins, H. (2006) Convergence Culture: Where Old and New Media Collide — NYU Press' },
+      { url: 'https://en.wikipedia.org/wiki/Remix_culture', type: 'reference', label: 'Wikipedia: Remix culture — Lessig、Creative Commons、参加型文化、DSM 指令' },
     ],
   },
   {
@@ -40658,14 +40571,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'infosoc-information-overload-eppler-mengis',
     discipline: 'information-sociology',
-    title: '情報過負荷——デジタル時代における認知的過剰と意思決定劣化',
-    statement: '情報過負荷（Information Overload）とは、個人が処理可能な容量を超える情報に曝され、意思決定の質が低下・遅延する現象であり、トフラー（1970）が『未来の衝撃』で大衆化した概念である。エプラーとメンギス（2004）は情報過負荷研究の包括的レビューを行い、原因を個人要因（認知能力、経験）、情報要因（量、複雑性、曖昧性）、タスク要因（時間圧力、新規性）、組織要因（構造、プロセス）、技術要因（インターフェース、プッシュ型通知）の5カテゴリーに整理した。ミラー（1956）のマジカルナンバー7±2は短期記憶の情報処理容量制限を示し、サイモン（1971）は情報の豊富さが注意の希少性をもたらすと指摘した。ヒルツ（2011）は、電子メール・ソーシャルメディアの普及によるデジタル時代の情報過負荷を「フィルター失敗」（filter failure）として再概念化した。組織レベルではシュルツとバネルバー（2006）が知識集約型作業における情報過負荷と組織パフォーマンスの関係を分析し、情報キュレーションとフィルタリング戦略の重要性を論じた。',
-    keyFigures: 'マーティン・エプラー ／ ジャネット・メンギス ／ アルヴィン・トフラー ／ ハーバート・サイモン ／ クレイ・シャーキー',
-    asOf: '2026-06-26',
+    title: '情報過負荷（トフラー／エプラー＝メンギス）——処理能力を超える情報が意思決定の質を下げる現象と、その原因を個人・情報・課題・組織・技術の五要因に整理する枠組み',
+    statement:
+      '情報過負荷（information overload）とは、個人が処理できる容量を超える情報に曝され、意思決定の質が低下・遅延し、不安や混乱、心理的な麻痺が生じる現象で、アルビン・トフラーが1970年の『未来の衝撃』で変化のペースが適応能力を超える「未来ショック」の中核として大衆化した。ジョージ・ミラー（1956）のマジカルナンバー7±2は短期記憶の処理容量の限界を、ハーバート・サイモン（1971）は情報の豊富さが注意の希少性を生むことを示した先行知見である。マーティン・エプラーとジャンヌ・メンギス（2004、The Information Society 20巻5号）は組織科学・会計・マーケティング・情報システムの研究を包括的にレビューし、過負荷を情報の量と質、課題の特性、処理能力の不整合として再定義したうえで、原因を個人要因（認知能力・経験）、情報要因（量・複雑性・曖昧性）、課題要因（時間圧力・新規性）、組織要因（構造・プロセス）、技術要因（インターフェース・プッシュ型通知）の五つに整理し、対策も同じ枠で体系化した。クレイ・シャーキーは電子メールやソーシャルメディアの過負荷を情報の過剰ではなく「フィルターの失敗」と再定義し、バリー・シュワルツの選択のパラドックス（選択肢の過多が選択麻痺を生む）と接合する。批判として、過負荷の閾値が個人と課題で大きく異なり測定が難しいこと、原因を技術に帰しがちで組織の情報設計の責任が見えにくいことがある。中小企業には、通知・チャット・報告の多さが判断を遅らせるため、情報の入口を減らし要約と優先順位のルールを決めること、顧客向けの情報も量より選別が価値になることが含意となる。',
+    keyFigures: 'アルビン・トフラー（1970『未来の衝撃』）／マーティン・エプラー＆ジャンヌ・メンギス（2004 レビューと五要因）／ジョージ・ミラー（1956）／ハーバート・サイモン（1971 注意の希少性）／クレイ・シャーキー（フィルターの失敗）／バリー・シュワルツ（選択のパラドックス）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1080/01972240490507974', type: 'academic', label: 'Eppler & Mengis (2004) The Concept of Information Overload: A Review of Literature — The Information Society' },
-      { url: 'https://doi.org/10.1037/h0043158', type: 'academic', label: 'Miller (1956) The Magical Number Seven, Plus or Minus Two — Psychological Review' },
-      { url: 'https://en.wikipedia.org/wiki/Information_overload', type: 'reference', label: 'Wikipedia: Information overload — 情報過負荷の歴史・理論・対策の概説' },
+      { url: 'https://doi.org/10.1080/01972240490507974', type: 'academic', label: 'Eppler, M. J. & Mengis, J. (2004) The Concept of Information Overload: A Review of Literature from Organization Science, Accounting, Marketing, MIS, and Related Disciplines — The Information Society 20(5)（レビュー）' },
+      { url: 'https://doi.org/10.1037/h0043158', type: 'academic', label: 'Miller, G. A. (1956) The Magical Number Seven, Plus or Minus Two: Some Limits on Our Capacity for Processing Information — Psychological Review 63(2)' },
+      { url: 'https://en.wikipedia.org/wiki/Information_overload', type: 'reference', label: 'Wikipedia: Information overload — Toffler、Eppler & Mengis、filter failure' },
     ],
   },
   {
@@ -41941,18 +41855,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-technostress-tarafdar',
-    discipline: 'information-sociology',
-    title: 'テクノストレス——ICT利用がもたらす心理的負荷と組織的対応',
-    statement: 'モニデーパ・タラフダーらは2007年の論文「The Impact of Technostress on Role Stress and Productivity」において，情報通信技術（ICT）の職場利用が引き起こす心理的ストレス——テクノストレス（technostress）——を5つの構成要素に分類した：テクノ・オーバーロード（情報過多），テクノ・インベーション（私生活への侵入），テクノ・コンプレキシティ（技術的複雑性），テクノ・インセキュリティ（技術による職の不安定化），テクノ・アンサートゥインティ（技術の急速な変化への不安）。クレイグ・ブロードは1984年の著作で「テクノストレス」の概念を初めて提示し，コンピュータ技術への適応困難を心理学的に分析した。タラフダーらの研究はテクノストレスが役割過負荷・役割葛藤を媒介して職務満足・生産性・組織コミットメントを低下させることを実証し，組織的な「テクノストレス抑制要因（technostress inhibitors）」——リテラシー向上支援，技術サポート，関与促進——の重要性を示した。COVID-19パンデミックによるリモートワークの急速な普及は，テクノストレス研究の社会的重要性を飛躍的に高めた。',
-    keyFigures: 'モニデーパ・タラフダー ／ クレイグ・ブロード ／ チーチャン・ライ ／ クンアー・ラグー・ラマン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2753/MIS0742-1222240109', type: 'academic', label: 'Tarafdar, M. et al. (2007) The Impact of Technostress on Role Stress and Productivity — Journal of Management Information Systems, 24(1), 301–328' },
-      { url: 'https://en.wikipedia.org/wiki/Technostress', type: 'reference', label: 'Wikipedia: Technostress — ICT overload, invasion, complexity, insecurity, job performance' },
-    ],
-  },
-  {
     id: 'econ-time-inconsistency-calvo',
     discipline: 'economics',
     title: '時間非整合性とカルヴォ型価格設定——粘着価格のミクロ的基礎とニューケインジアン・フィリップス曲線',
@@ -42772,18 +42674,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-internet-of-things-weiser-ubicomp',
-    discipline: 'information-sociology',
-    title: 'IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会',
-    statement: 'ユビキタスコンピューティング（ubiquitous computing）は，マーク・ワイザーがXerox PARCでの研究を経て1991年論文「21世紀のコンピュータ」で提唱した概念であり，コンピュータが環境に溶け込み人々が意識せずに使う「静かなテクノロジー（calm technology）」の時代像を描いた。モノのインターネット（IoT）はこの思想の産業的実装であり，センサー・RFID・Bluetooth・Wi-Fiを組み込んだ家電・工場機器・医療機器・インフラが相互に通信し，データを収集・制御するネットワークエコシステムを形成する。2023年時点で接続デバイス数は150億超とされ，スマートホーム・スマートシティ・精密農業・産業IoT（IIoT）・ウェアラブルへ展開する。セキュリティ（デバイスの脆弱性・DDoS攻撃リスク）・プライバシー（常時データ収集）・標準化（通信プロトコルの乱立：Matter/Thread等）が主要な課題である。欧州のサイバーレジリエンス法がIoTデバイスのセキュリティ要件を義務付けた。',
-    keyFigures: 'マーク・ワイザー ／ ジョン・シーリー・ブラウン ／ ケビン・アシュトン ／ ニール・ガーシェンフェルド',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://dl.acm.org/doi/10.1145/329124.329126', type: 'academic', label: 'Weiser, M. (1991) The Computer for the 21st Century — Scientific American' },
-      { url: 'https://en.wikipedia.org/wiki/Internet_of_things', type: 'reference', label: 'Wikipedia: Internet of things — ubiquitous computing' },
-    ],
-  },
-  {
     id: 'econ-externality-pigou-coase-theorem',
     discipline: 'economics',
     title: '外部性とピグー税——コースの定理と市場による外部性内部化の比較',
@@ -43347,14 +43237,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'infosoc-ambient-computing-ubicomp-weiser',
     discipline: 'information-sociology',
-    title: 'ユビキタスコンピューティングとアンビエント情報環境——マーク・ワイザーの「消えるコンピュータ」ビジョン',
-    statement: 'マーク・ワイザーが1991年のScientific American論文で提示した「ユビキタスコンピューティング（ubicomp）」は、コンピュータが環境に溶け込み意識されることなく使われる状態を理想とし、「最も深い技術は消えてしまうもの」という設計哲学を示した。これはPCデスクトップへの人間の積極的注意集中を前提とするパラダイムからの根本的転換を意味し、後のスマートホーム・IoT・ウェアラブル・AR/MRデバイス設計の理念的先駆けとなった。アンビエント情報表示（Ambient Orb・情報可視化装置）、コンテキストアウェアコンピューティング、スマート環境研究へと発展した。一方、デバイスの不可視化はプライバシーへの無意識的同意・サーベイランス資本主義との親和性を持つため、「設計倫理（design ethics）」として不可視コンピューティングの同意・透明性原則が議論されている。',
-    keyFigures: 'マーク・ワイザー ／ アダム・グリーンフィールド ／ ジョン・スリー ／ アニンド・ダッタ',
-    asOf: '2026-06-26',
+    title: 'ユビキタスコンピューティング（ワイザー）——コンピュータが環境に溶け込み意識されずに使われる「消えるコンピュータ」の構想と、IoT・アンビエント環境への展開',
+    statement:
+      'ユビキタスコンピューティング（ubiquitous computing）は、ゼロックス PARC のマーク・ワイザーが1991年の論文「The Computer for the 21st Century」で提唱した構想で、コンピュータが環境に溶け込み人々が意識せずに使う状態を理想とし、「最も深い技術は消えてしまう」という設計哲学と、注意を奪わず周辺に留まる「静かなテクノロジー」の時代像を示した。利用者の注意集中を前提とするデスクトップ PC のパラダイムからの転換であり、グレゴリー・アボウドとエリザベス・マイナット（2000）は研究領域を整理して自然なインターフェース、コンテキスト認識、日常経験の自動記録を課題に挙げた。アンビエント情報表示、コンテキストアウェア・コンピューティング、スマート環境の研究へ発展し、モノのインターネット（IoT）はセンサー・RFID・無線通信を組み込んだ家電・工場設備・医療機器・インフラが相互に通信しデータを収集・制御する、この思想の産業的実装としてへ展開した。一方、機器の不可視化は常時のデータ収集への無意識の同意と監視資本主義との親和性を持ち、脆弱な機器を踏み台にした攻撃、通信プロトコルの乱立、EU のサイバーレジリエンス法のようなセキュリティ要件の義務化が課題となり、不可視のコンピューティングにおける同意と透明性の設計倫理が論じられる。批判として、構想が技術決定論的で社会的文脈や不平等を軽視すること、「静けさ」の理想と実際の通知過多との落差がある。中小企業には、店舗・工場・車両のセンサー化は保守と更新の負担と機器のセキュリティ責任を伴うこと、収集したデータの用途を顧客と従業員に説明できる範囲に絞ることが含意となる。',
+    keyFigures: 'マーク・ワイザー（1991 提唱／ジョン・シーリー・ブラウンと静かなテクノロジー）／グレゴリー・アボウド＆エリザベス・マイナット（2000 研究課題の整理）／ケビン・アシュトン（IoT の命名）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1145/329124.329126', type: 'academic', label: 'Weiser (1991) The Computer for the 21st Century — Scientific American' },
-      { url: 'https://doi.org/10.1145/344949.344988', type: 'academic', label: 'Abowd & Mynatt (2000) Charting Past, Present, and Future Research in Ubiquitous Computing — ACM TOCHI' },
-      { url: 'https://en.wikipedia.org/wiki/Ubiquitous_computing', type: 'reference', label: 'Wikipedia: Ubiquitous computing — ユビキタスコンピューティングの概念と実現' },
+      { url: 'https://doi.org/10.1145/329124.329126', type: 'academic', label: 'Weiser, M. (1991) The Computer for the 21st Century — Scientific American 265(3)（ACM SIGMOBILE 再録の DOI）' },
+      { url: 'https://doi.org/10.1145/344949.344988', type: 'academic', label: 'Abowd, G. D. & Mynatt, E. D. (2000) Charting Past, Present, and Future Research in Ubiquitous Computing — ACM Transactions on Computer-Human Interaction 7(1)' },
+      { url: 'https://en.wikipedia.org/wiki/Ubiquitous_computing', type: 'reference', label: 'Wikipedia: Ubiquitous computing — Weiser、calm technology、コンテキスト認識' },
+      { url: 'https://en.wikipedia.org/wiki/Internet_of_things', type: 'reference', label: 'Wikipedia: Internet of things — ユビキタスコンピューティングの産業的実装、セキュリティと標準化' },
     ],
   },
   {
@@ -44673,18 +44565,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://www.sec.gov/divisions/corpfin/guidance/cfguidance.shtml', type: 'government', label: 'SEC — Division of Corporation Finance: disclosure requirements, registration, prospectus rules' },
       { url: 'https://en.wikipedia.org/wiki/Securities_regulation_in_the_United_States', type: 'reference', label: 'Wikipedia: Securities regulation — SEC, insider trading, disclosure, MAR, prospectus, 1933/34 Acts' },
-    ],
-  },
-  {
-    id: 'infosoc-remix-copyright-digital-culture',
-    discipline: 'information-sociology',
-    title: 'リミックス文化とデジタル著作権のジレンマ——クリエイティブ・コモンズの思想と実践',
-    statement: 'リミックス文化（remix culture）とは、既存のコンテンツ（音楽・映像・テキスト・コード）を素材として新たな作品を創出するデジタル創造文化の総称で、ローレンス・レシッグが「リミックス——デジタル時代の自由と創造力」（2008年）で著作権制度がこの創造的実践を犯罪化・抑制する問題を告発した。クリエイティブ・コモンズ（CC）ライセンス体系（2001年設立）はレシッグらが設計した著作権の柔軟な共有フレームワークで、表示（BY）・非営利（NC）・継承（SA）・改変禁止（ND）の組み合わせにより著作者が利用条件を選択的に緩和できる。ヤーチャイ・ベンクラーは「ネットワークの富」（2006年）でCCライセンスとオープンソースが「共有ベース・ピア生産（CBPP）」という第三の経済モデルを可能にすると論じた。欧州著作権指令（DSM指令、2019年）第17条（旧第13条）のアップロードフィルター義務は、プラットフォームへの責任強化とユーザー生成コンテンツへの検閲リスクの間の緊張を新たな形で顕在化させた。',
-    keyFigures: 'ローレンス・レシッグ ／ ヤーチャイ・ベンクラー ／ ジョナサン・ジットレイン ／ キャリー・グリシェム',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.5040/9781849662505', type: 'academic', label: 'Lessig (2008) Remix: Making Art and Commerce Thrive in the Hybrid Economy — Penguin Press' },
-      { url: 'https://en.wikipedia.org/wiki/Remix_culture', type: 'reference', label: 'Wikipedia: Remix culture — Lessig, Creative Commons, CBPP, DSM Directive, copyright, mash-up' },
     ],
   },
   {
@@ -46237,18 +46117,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-information-overload-toffler',
-    discipline: 'information-sociology',
-    title: '情報過負荷（トフラー）と認知的過飽和',
-    statement: 'トフラー（Alvin Toffler）は1970年の著書『Future Shock（未来の衝撃）』で，変化のペースが人間の適応能力を超えた状態を「未来ショック」と呼び，その中核として情報過負荷（information overload）を提唱した。処理能力を超えた情報量にさらされると意思決定の質が低下し，不安・混乱・心理的麻痺が生じるとされる。後にエプラー（Martin Eppler）とメンギス（Jeanne Mengis）が組織科学・会計・マーケティング・MIS領域の研究を体系化し，情報過負荷を情報の量・品質・タスク特性・処理能力の不整合として再定義した。デジタル時代のソーシャルメディア・ニュース洪水・アルゴリズム推薦による認知的枯渇や，「過度な選択肢」が選択麻痺をもたらすパラドックス・オブ・チョイス（バリー・シュワルツ）とも接合する重要な概念となっている。',
-    keyFigures: 'アルビン・トフラー ／ マーティン・エプラー ／ バリー・シュワルツ ／ クレイ・シャーキー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1080/01972240490507974', type: 'academic', label: 'Eppler, M.J. & Mengis, J. (2004) The Concept of Information Overload: A Review of Literature — The Information Society 20(5), 325–344（情報過負荷研究の体系的レビュー）' },
-      { url: 'https://en.wikipedia.org/wiki/Information_overload', type: 'reference', label: 'Wikipedia: Information overload — 情報過負荷の概説' },
-    ],
-  },
-  {
     id: 'bizlaw-transfer-pricing-arm-length',
     discipline: 'business-law',
     title: '移転価格税制と独立企業間価格原則',
@@ -46632,20 +46500,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-algorithmic-amplification-gillespie',
-    discipline: 'information-sociology',
-    title: 'アルゴリズム的増幅と文化的仲介（ギレスピー）',
-    statement: 'アルゴリズム的増幅（algorithmic amplification）は、ソーシャルメディアプラットフォームのレコメンデーション・ランキング・フィルタリングアルゴリズムが特定のコンテンツを優先的に表示することで、そのリーチ・エンゲージメント・文化的可視性を指数的に拡大する現象を指す概念である。タルトン・ギレスピー（2014）の「プラットフォームの政治学（The Politics of Platforms）」は、プラットフォームが「単なる中立的技術（neutral pipes）」ではなく、キュレーション・ポリシー策定・アルゴリズム設計を通じた「文化的仲介者（cultural intermediary）」として機能していると論じた。ソーシャルメディアのエンゲージメント最大化アルゴリズムは怒り・不安・分断を誘発するコンテンツを優先的に増幅することが内部研究（Facebook 2021年内部文書）・学術研究（ヘイス他 2021年Science誌）で示されている。EU DSA（デジタルサービス法, 2022）はゲートキーパーに「システミックリスク評価」と「アルゴリズムの説明責任（algorithmic accountability）」を義務付け、増幅の透明性確保を要求する。アルゴリズムの社会的影響の監査・監視・規制設計が情報社会学・プラットフォームガバナンス研究の中心課題となっている。',
-    keyFigures: 'タルトン・ギレスピー ／ ニック・ドラエール ／ ケイト・スターバード ／ シナン・アラル',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.7551/mitpress/9780262525374.003.0009', type: 'academic', label: 'Gillespie, T. (2014) The Relevance of Algorithms — in Media Technologies: Essays on Communication, Materiality, and Society, MIT Press, pp.167–194（アルゴリズム的文化仲介の原典）' },
-      { url: 'https://doi.org/10.1073/pnas.2025334119', type: 'academic', label: 'Huszár, F. et al. (2022) Algorithmic Amplification of Politics on Twitter — PNAS, 119(1), e2025334119（アルゴリズム増幅の実証）' },
-      { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R2065', type: 'government', label: 'European Parliament (2022) Digital Services Act — Regulation (EU) 2022/2065（アルゴリズム透明性・システミックリスク規制）' },
-      { url: 'https://en.wikipedia.org/wiki/Algorithmic_amplification', type: 'reference', label: 'Wikipedia: Algorithmic amplification — Gillespie, engagement optimization, DSA, systemic risk, platform governance' },
-    ],
-  },
-  {
     id: 'mgmt-issue-selling-dutton',
     discipline: 'management',
     title: '課題の売り込み（ダットン＆アシュフォード）',
@@ -46770,20 +46624,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1093/jlb/lsab019', type: 'academic', label: 'Edelman, J. (2020) Nominee Directors and the Conflict of Interests in Company Law — Melbourne University Law Review, 44(1), 1–45（ノミニー取締役利益相反の法的分析）' },
       { url: 'https://elaws.e-gov.go.jp/document?lawid=417AC0000000086', type: 'government', label: '日本法務省 (2005) 会社法356条（取締役の競業禁止義務・利益相反取引）e-Gov' },
       { url: 'https://en.wikipedia.org/wiki/Nominee_director', type: 'reference', label: 'Wikipedia: Nominee director — Companies Act 2006, duty of loyalty, PE/VC conflicts, fiduciary duty' },
-    ],
-  },
-  {
-    id: 'infosoc-behavioral-surplus-zuboff',
-    discipline: 'information-sociology',
-    title: '行動余剰と監視資本主義（ズボフ）',
-    statement: '監視資本主義（surveillance capitalism）は、ショシャナ・ズボフ（2019）の『監視資本主義の時代（The Age of Surveillance Capitalism）』で体系化された、デジタルプラットフォーム企業が人間の行動・経験データを「行動余剰（behavioral surplus）」として採掘し、将来の行動予測商品（prediction products）として広告主に販売する新しい資本主義のロジックを指す。GoogleがAdSense開発（2002年頃）で広告ターゲティングに行動データを活用し始めた経緯を「監視資本主義の誕生」として詳述し、Facebookのニュースフィードアルゴリズム・Amazonのレコメンドエンジンへと拡張する過程を分析した。「行動修正（behavioral modification）」——ナッジ・報酬・罰則を通じて人間行動を予測通りに誘導する実践——がこの経済モデルの核心であり、ズボフはこれを「個人の自律と民主主義への第三の脅威」として批判した。EU GDPR（2018）・AI法・DSAはこの診断への立法的対応として機能し、「プライバシーの権利」から「行動データからの解放の権利」への規範的転換が論じられている。',
-    keyFigures: 'ショシャナ・ズボフ ／ ニック・クルドリー ／ ユリゲン・モエ ／ ロジャー・マクネーミー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1057/jit.2015.5', type: 'academic', label: 'Zuboff, S. (2015) Big Other: Surveillance Capitalism and the Prospects of an Information Civilization — Journal of Information Technology, 30(1), 75–89（監視資本主義の先行論文）' },
-      { url: 'https://doi.org/10.1177/20539517211062037', type: 'academic', label: 'Couldry, N. & Mejias, U. A. (2021) The Costs of Connection: How Data Is Colonizing Human Life and Appropriating It for Capitalism — Stanford University Press（データ植民地主義の視点）' },
-      { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679', type: 'government', label: 'European Parliament (2016) Regulation (EU) 2016/679 — GDPR（行動データ保護の立法）' },
-      { url: 'https://en.wikipedia.org/wiki/Surveillance_capitalism', type: 'reference', label: 'Wikipedia: Surveillance capitalism — Zuboff, behavioral surplus, Google Adsense, behavioral modification, GDPR' },
     ],
   },
   {

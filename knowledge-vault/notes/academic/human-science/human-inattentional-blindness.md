@@ -40,7 +40,7 @@ aliases:
 - [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 出典を共有
 - [[human-gain-loss-effect|ゲイン・ロス効果（アロンソン）]] — 出典を共有
 - [[human-hebbian-learning|ヘブ則とシナプス可塑性：神経回路の学習原理]] — 出典を共有
-- [[human-necker-cube-bistable-perception|双安定知覚（ネッカーキューブ現象）]] — 出典を共有
+- [[human-kamin-blocking-effect|ブロッキング効果（カミンの阻止効果 / Kamin blocking effect）——既知の手がかりが新しい手がかりの学習を「阻止」する古典的条件づけ現象]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,7 +32,6 @@ aliases:
 
 ## 関連概念
 - [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — 語彙が近い
-- [[human-magical-number-seven|マジカルナンバー7±2]] — 同分野の近傍
 - [[human-deindividuation-zimbardo|没個性化——集団状況における自己意識の低下と脱抑制的行動]] — 同分野の近傍
 - [[human-goal-gradient|目標勾配効果]] — 同分野の近傍
 

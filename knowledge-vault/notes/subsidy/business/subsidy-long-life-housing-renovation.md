@@ -37,7 +37,6 @@ national
 - [リフォーム評価ナビ 長期優良住宅化リフォーム推進事業 解説](https://www.refonavi.or.jp/how-to/hojokin/424) `運営団体`
 
 ## 関連概念
-- [[subsidy-kosodate-green-housing|子育てグリーン住宅支援事業]] — 語彙が近い
 - [[bizlaw-auto-liability-act|自動車損害賠償保障法（自賠法）]] — 出典を共有
 - [[bizlaw-building-standards|建築基準法]] — 出典を共有
 - [[bizlaw-real-estate-transactions-act|宅地建物取引業法（宅建業法）]] — 出典を共有
@@ -47,6 +46,7 @@ national
 - [[tax-tax-free-shop|輸出物品販売場制度（消費税免税店制度）]] — 出典を共有
 - [[econ-housing-market-bubble-case-shiller|住宅市場バブルとケース＝シラー指数——行動的資産価格と不動産市場の周期的変動]] — 出典を共有
 - [[legal-building-energy-compliance|改正建築物省エネ法による省エネ基準適合の全面義務化（2025年4月施行）]] — 出典を共有
+- [[legal-logistics-efficiency-act|改正物流効率化法（物流2法・物流2024年問題への対応）]] — 出典を共有
 
 ## 関連
 - コレクション: [[補助金・助成金]]

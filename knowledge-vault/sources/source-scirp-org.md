@@ -2,7 +2,7 @@
 title: "scirp.org"
 type: source-domain
 host: "scirp.org"
-cite_count: 23
+cite_count: 22
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # scirp.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **23 件**（学術 19 ・ リファレンス 4）
+> [!info] 出典ドメイン索引 ・ 引用 **22 件**（学術 18 ・ リファレンス 4）
 
 ## このドメインを出典とする項目
 
@@ -22,7 +22,6 @@ tags:
 - [[human-procrastination|先延ばしと時間的動機づけ理論（TMT）]] — Steel,P.,&König,C.J.(2006).IntegratingTheoriesofMotivation,AcademyofM…
 - [[human-role-conflict|役割葛藤（役割理論）]] — Goode,W.J.(1960)“ATheoryofRoleStrain,”AmericanSociologicalReview25:48…
 - [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — Fiske,Cuddy,Glick&Xu(2002),JournalofPersonalityandSocialPsychology,82…
-- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — McCombs&Shaw(1972)TheAgenda-SettingFunctionofMassMedia,POQ36:176-187（…
 - [[infosoc-information-subsidy|情報補助金]] — Gandy,O.H.,Jr.(1982).BeyondAgenda-Setting:InformationSubsidiesandPubl…
 - [[infosoc-networked-publics|ネットワーク化された公衆]] — Boyd,D.(2010),inZ.Papacharissi(Ed.),ANetworkedSelf,Routledge—citation…
 - [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — Reicher,Spears&Postmes(1995)ASocialIdentityModelofDeindividuationPhen…

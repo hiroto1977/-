@@ -31,7 +31,6 @@ Ted Striphas ／ Tarleton Gillespie ／ Alexander R. Galloway
 - [Wikipedia — Algorithmic culture](https://en.wikipedia.org/wiki/Algorithmic_culture) `リファレンス`
 
 ## 関連概念
-- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 同じ思想家
 - [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 同じ思想家
 - [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同じ思想家
 - [[infosoc-propaganda-model-herman-chomsky|プロパガンダ・モデル——五つのフィルターによる合意の製造]] — 同分野の近傍

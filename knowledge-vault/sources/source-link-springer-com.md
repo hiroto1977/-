@@ -2,7 +2,7 @@
 title: "link.springer.com"
 type: source-domain
 host: "link.springer.com"
-cite_count: 145
+cite_count: 143
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # link.springer.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **145 件**（学術 125 ・ リファレンス 20）
+> [!info] 出典ドメイン索引 ・ 引用 **143 件**（学術 123 ・ リファレンス 20）
 
 ## このドメインを出典とする項目
 
@@ -86,8 +86,6 @@ tags:
 - [[human-theory-of-mind|心の理論]] — SpringerNature—“DoestheChimpanzeeHaveTheoryofMind?”（プレマック&ウッドラフ1978の定…
 - [[human-von-restorff-effect|フォン・レストルフ効果（孤立効果）——均質な項目の中で一つだけ異質な項目が際立って記憶される]] — Hunt,R.R.(1995)Thesubtletyofdistinctiveness:WhatvonRestorffreallydid—…
 - [[human-westermarck-effect|ウェスタマーク効果（Westermarck effect／逆性的刷り込み）——幼少期に近接して育った者どうしが成人後に性的魅力を感じにくくなる近親相姦回避の心理機構]] — Shepher,J.(1971)Mateselectionamongsecondgenerationkibbutzadolescentsa…
-- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — SpringerNature,CommunicationandChange(2025)—agenda-setting研究の系譜1972-2…
-- [[infosoc-agenda-setting-theory-digital|議題設定理論（デジタル時代の展開）]] — Evolutionofagenda-settingresearch1972-2025
 - [[infosoc-attention-ecology|注意のエコロジー（Ecology of Attention）]] — BeyondtheAttentionEconomy,TowardsanEcologyofAttending—AI&Society/Spri…
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — Hepp&Hasebrink(2018)AFigurationalApproach—SpringerChapter2
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]] — Hepp,Breiter&Hasebrinkeds.(2018)CommunicativeFigurations—Springer

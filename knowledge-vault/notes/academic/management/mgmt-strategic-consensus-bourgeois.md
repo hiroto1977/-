@@ -32,10 +32,10 @@ aliases:
 - [Wikipedia: Strategic consensus — Bourgeois, TMT agreement, dominant logic, Eisenhardt fast decisions](https://en.wikipedia.org/wiki/Strategic_consensus) `リファレンス`
 
 ## 関連概念
-- [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 語彙が近い
 - [[mgmt-complexity-leadership-uhl-bien|複雑性リーダーシップ理論（ウール＝ビエン）と適応的機能]] — 同じ思想家
 - [[mgmt-organizational-tempo-entrainment|組織テンポとエントレインメント：時間的同期と戦略的ペーシング]] — 同じ思想家
 - [[mgmt-time-pacing-eisenhardt|タイム・ペーシング戦略とリズム的製品開発（アイゼンハート）]] — 同じ思想家
+- [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]] — 同分野の近傍
 - [[mgmt-dominant-logic|ドミナント・ロジック（プラハラード＆ベティス）——経営陣が事業を捉え資源を配分する支配的な認知枠組みが、多角化の成否と環境変化への適応を左右する]] — 同分野の近傍
 - [[mgmt-lawrence-lorsch|分化と統合（ローレンス＆ローシュ）]] — 同分野の近傍
 - [[mgmt-lmx-theory-graen|リーダー・メンバー交換理論——上司と部下が築く差異化された二者関係の質]] — 同分野の近傍

@@ -33,13 +33,13 @@ Wanda J. Orlikowski & Debra C. Gash（ACM TOIS 12(2), 1994 — テクノロジ�
 - [[infosoc-technological-frames-orlikowski|技術フレーム——オーリコウスキーとガッシュの情報技術に関する認知的枠組み分析]] — 語彙が近い
 - [[infosoc-sociomateriality|ソシオマテリアリティ（Sociomateriality）]] — 同じ思想家
 - [[mgmt-sociomaterial-assemblage|社会物質的アセンブラージュ論]] — 同じ思想家
-- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
-- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 出典を共有
 - [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 出典を共有
 - [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]] — 出典を共有
 - [[infosoc-eliza-effect-weizenbaum|ワイゼンバウムのイライザとイライザ効果——単純な模式応答に理解と親密さを読み込む錯覚]] — 出典を共有
 - [[infosoc-participation-inequality|参加格差（90-9-1の法則）]] — 出典を共有
 - [[infosoc-participatory-design|参加型デザイン（Participatory Design）]] — 出典を共有
+- [[infosoc-participatory-design-information-systems|情報システムにおける参加型デザイン]] — 出典を共有
+- [[infosoc-smart-mob|スマートモブ]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

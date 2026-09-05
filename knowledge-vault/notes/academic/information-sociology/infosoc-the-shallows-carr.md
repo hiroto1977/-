@@ -37,12 +37,12 @@ aliases:
 - [[infosoc-civic-tech-govtech|シビックテックとGovTech——市民技術と行政デジタル改革の社会学]] — 同じ思想家
 - [[human-language-acquisition-chomsky|言語獲得装置と普遍文法——言語習得の生得的基盤をめぐる生成文法理論]] — 同じ思想家
 - [[infosoc-digital-amnesia-google-effect|デジタル健忘症（グーグル効果）]] — 同じ思想家
-- [[infosoc-information-overload-toffler|情報過負荷（トフラー）と認知的過飽和]] — 同じ思想家
 - [[infosoc-long-tail-anderson|ロングテール——デジタル経済におけるニッチ需要の集積の価値]] — 同じ思想家
 - [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同じ思想家
 - [[infosoc-spreadability-jenkins|スプレッダビリティ——参加型文化におけるメディアコンテンツの拡散メカニズム]] — 同じ思想家
 - [[infosoc-user-generated-content-prosumer|ユーザー生成コンテンツとプロシューマー経済の情報社会論]] — 同じ思想家
-- [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 同じ思想家
+- [[infosoc-information-overload-eppler-mengis|情報過負荷（トフラー／エプラー＝メンギス）——処理能力を超える情報が意思決定の質を下げる現象と、その原因を個人・情報・課題・組織・技術の五要因に整理する枠組み]] — 同じ思想家
+- [[econ-boserup-agricultural-intensification|ボズラップの仮説（Boserup's hypothesis／人口圧力による農業集約化）——人口増加が農業技術革新を駆動するという、マルサスとは逆の因果]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

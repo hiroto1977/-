@@ -33,6 +33,7 @@ aliases:
 - [Wikipedia — Echo chamber (media)](https://en.wikipedia.org/wiki/Echo_chamber_(media)) `リファレンス`
 
 ## 関連概念
+- [[infosoc-algorithmic-curation-theory|アルゴリズム的キュレーションと増幅（ギレスピー）——プラットフォームのランキング・推薦・フィルタリングは中立の配管ではなく、価値と権力を埋め込んだ文化的仲介として情報環境を形づくる]] — 同じ思想家
 - [[infosoc-algorithmic-personalization-critique|アルゴリズム的パーソナライゼーションと認知的閉鎖の社会学]] — 同じ思想家
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 同じ思想家
 - [[infosoc-post-truth-society|ポスト真実社会——感情と信念が事実を凌駕する情報環境の社会学]] — 同じ思想家
@@ -42,7 +43,6 @@ aliases:
 - [[infosoc-bounded-confidence-opinion-dynamics|限定信頼モデル——意見差が信頼限界εを超える相手を無視し合意と分極を分ける意見動学の枠組み]] — 出典を共有
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
 - [[infosoc-echo-chamber|エコーチェンバー（反響室効果）]] — 出典を共有
-- [[infosoc-cypherpunk-movement|サイファーパンク運動]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

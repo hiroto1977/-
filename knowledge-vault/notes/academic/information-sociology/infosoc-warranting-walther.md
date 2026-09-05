@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Warranting theory — Walther & Parks (2002), warranting value, other-generated vs. self-generated cues, online impression formation](https://en.wikipedia.org/wiki/Warranting_theory) `リファレンス`
 
 ## 関連概念
-- [[infosoc-context-collapse-marwick|コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ]] — 同じ思想家
 - [[infosoc-media-richness-daft-lengel|メディアリッチネス理論——課題の曖昧性に適合した伝達媒体の選択]] — 同じ思想家
 - [[mgmt-impression-management-goffman|印象管理——ゴフマンの演劇的アプローチと組織における自己呈示]] — 同じ思想家
 - [[mgmt-impression-management-organizational|組織的印象管理——ステークホルダーへの組織イメージの戦略的構築]] — 同じ思想家

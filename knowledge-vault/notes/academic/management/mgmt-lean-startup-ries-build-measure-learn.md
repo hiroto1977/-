@@ -36,7 +36,7 @@ aliases:
 ## 関連概念
 - [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 同じ思想家
 - [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]] — 出典を共有
-- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 出典を共有
+- [[infosoc-algorithmic-curation-theory|アルゴリズム的キュレーションと増幅（ギレスピー）——プラットフォームのランキング・推薦・フィルタリングは中立の配管ではなく、価値と権力を埋め込んだ文化的仲介として情報環境を形づくる]] — 出典を共有
 - [[econ-poverty-trap|貧困の罠——低所得が貯蓄と投資を妨げて貧困を自己強化的に再生産する複数均衡と、その存在をめぐる実証]] — 出典を共有
 - [[mgmt-jidoka|自働化（ニンベンの付いた自動化）]] — 出典を共有
 - [[mgmt-six-sigma|シックス・シグマ]] — 出典を共有

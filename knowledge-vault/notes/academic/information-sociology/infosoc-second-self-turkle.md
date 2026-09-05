@@ -33,7 +33,7 @@ aliases:
 - [[infosoc-alone-together|つながっていても孤独（アローン・トゥギャザー）]] — 語彙が近い
 - [[infosoc-eliza-effect-weizenbaum|ワイゼンバウムのイライザとイライザ効果——単純な模式応答に理解と親密さを読み込む錯覚]] — 同じ思想家
 - [[infosoc-convergence-culture-jenkins|コンバージェンス・カルチャー——旧来メディアと新興メディアの衝突と参加文化]] — 同分野の近傍
-- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 同分野の近傍
+- [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティング（ワイザー）——コンピュータが環境に溶け込み意識されずに使われる「消えるコンピュータ」の構想と、IoT・アンビエント環境への展開]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

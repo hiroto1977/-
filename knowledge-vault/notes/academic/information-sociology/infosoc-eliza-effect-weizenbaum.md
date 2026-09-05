@@ -35,14 +35,14 @@ aliases:
 ## 関連概念
 - [[infosoc-second-self-turkle|セカンド・セルフ——コンピュータが映し出す自己と精神への問い]] — 同じ思想家
 - [[infosoc-chinese-room-argument-searle|サールの中国語の部屋（Chinese Room Argument）——構文操作は意味理解を保証しないとする「強いAI」批判]] — 同じ思想家
-- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
-- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 出典を共有
 - [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 出典を共有
 - [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 出典を共有
 - [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]] — 出典を共有
 - [[infosoc-participation-inequality|参加格差（90-9-1の法則）]] — 出典を共有
 - [[infosoc-participatory-design|参加型デザイン（Participatory Design）]] — 出典を共有
 - [[infosoc-participatory-design-information-systems|情報システムにおける参加型デザイン]] — 出典を共有
+- [[infosoc-smart-mob|スマートモブ]] — 出典を共有
+- [[infosoc-technostress-theory|テクノストレス（ブロード／タラフダー＝ラグ＝ネイサン）——ICT の利用が過負荷・侵入・複雑性・不安・不確実性の五要因を通じて役割ストレスと生産性の低下を生む]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

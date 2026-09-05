@@ -38,7 +38,7 @@ aliases:
 - [[mgmt-action-centred-leadership-adair|アクション・センタード・リーダーシップ——課題・チーム・個人の三つの輪]] — 同じ思想家
 - [[mgmt-bridges-transition-model-ending-neutral-zone-beginning|ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み]] — 同じ思想家
 - [[infosoc-media-literacy|メディア・リテラシー]] — 同分野の近傍
-- [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
