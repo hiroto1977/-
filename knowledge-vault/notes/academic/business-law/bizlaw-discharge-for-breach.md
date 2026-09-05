@@ -36,8 +36,8 @@ Guenter Treitel ／ E. Allan Farnsworth
 - [[bizlaw-force-majeure-doctrine|不可抗力の法理]] — 同じ思想家
 - [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 同じ思想家
 - [[bizlaw-implied-covenant-good-faith|誠実義務・公正取引の黙示的誓約]] — 同じ思想家
-- [[bizlaw-contract-termination|契約の解除（民法541条・542条）]] — 同分野の近傍
 - [[bizlaw-efficient-breach-theory|効率的契約違反論]] — 同分野の近傍
+- [[bizlaw-contract-termination|契約の解除（民法541条・542条）]] — 同分野の近傍
 - [[bizlaw-mitigation-of-damages|損害軽減義務——違反後に合理的努力で回避しえた損害は回復できない]] — 同分野の近傍
 
 ## 関連

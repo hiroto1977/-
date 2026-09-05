@@ -2,14 +2,14 @@
 title: "1890年代"
 type: timeline-decade
 decade: 1890
-entry_count: 21
+entry_count: 22
 tags:
   - timeline
 ---
 
-# 1890年代 — 21 件
+# 1890年代 — 22 件
 
-- [[year-1890|1890年]]（4件）
+- [[year-1890|1890年]]（5件）
 - [[year-1891|1891年]]（1件）
 - [[year-1893|1893年]]（2件）
 - [[year-1894|1894年]]（1件）

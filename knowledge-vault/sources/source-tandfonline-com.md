@@ -2,7 +2,7 @@
 title: "tandfonline.com"
 type: source-domain
 host: "tandfonline.com"
-cite_count: 49
+cite_count: 50
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # tandfonline.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **49 件**（学術 49）
+> [!info] 出典ドメイン索引 ・ 引用 **50 件**（学術 50）
 
 ## このドメインを出典とする項目
 
@@ -33,6 +33,7 @@ tags:
 - [[human-pygmalion-effect|ピグマリオン効果（教師期待効果）]] — EducationalResearchandEvaluation(2018)—Expectationeffects:Pygmalion（査…
 - [[human-self-compassion|セルフ・コンパッション（自己への思いやり）]] — Neff,K.D.(2003).Self-Compassion:AnAlternativeConceptualizationofaHeal…
 - [[human-self-efficacy-theory|自己効力感理論]] — Schunk,D.H.(2003).Self-efficacyforreadingandwriting:Influenceofmodeli…
+- [[human-triangular-theory-of-love-sternberg|愛の三角理論——親密さ・情熱・コミットメントの3要素とブランド・ラブへの応用]] — Sorokowski,P.etal.(2021)UniversalityoftheTriangularTheoryofLove:Adapt…
 - [[human-unimodel-persuasion-kruglanski-thompson|ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論]] — Kruglanski,A.W.&Thompson,E.P.(1999)PersuasionbyaSingleRoute:AViewFrom…
 - [[human-zone-of-proximal-development|発達の最近接領域（ZPD）]] — Mind,Culture,andActivity（査読誌）—scaffoldingmetaphor（ウッド／ブルーナー／ロス1976とZP…
 - [[infosoc-automated-journalism|自動ジャーナリズム（ロボットジャーナリズム）]] — Clerwall,C.(2014)"EntertheRobotJournalist"JournalismPractice8(5)

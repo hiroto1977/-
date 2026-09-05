@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 664
+entry_count: 662
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（664件）
+# 学習パス — 学術概念／経営学（662件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[agile-development|アジャイルソフトウェア開発]]（接続 60）
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 38）
-- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 30）
+- [[agile-development|アジャイルソフトウェア開発]]（接続 61）
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 39）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
-- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 26）
+- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 29）
+- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 27）
 - [[mgmt-mbo|目標による管理（MBO）]]（接続 25）
 - [[mgmt-csr|企業の社会的責任（CSR）]]（接続 24）
+- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]]（接続 23）
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 23）
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 23）
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 23）
-- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]]（接続 22）
+- [[mgmt-managerial-cognition|経営者認知理論]]（接続 22）
 - [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]]（接続 22）
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 22）
-- [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]]（接続 21）
-- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]]（接続 21）
+- [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]]（接続 21）
 
 ## 第 2 部 — 年代順の展開
 - 1629年: [[mgmt-fmea|故障モード影響解析（FMEA／Failure Mode and Effects Analysis）——起こりうる故障を体系的に洗い出し、深刻度・発生度・検出度で優先順位づける]]
@@ -104,6 +104,7 @@ tags:
 - 1967年: [[mgmt-pest-analysis|PEST分析（PESTLE分析）]]
 - 1968年: [[mgmt-adhocracy|アドホクラシー]]
 - 1968年: [[mgmt-altman-z-score|アルトマンのZスコア（Altman Z-Score／1968）——財務比率の判別分析による企業倒産予測]]
+- 1968年: [[mgmt-burke-litwin-causal-model-organizational-change|バーク＝リトウィン・モデル——外部環境から個人業績までを12要因の因果連鎖で結ぶ組織診断モデル]]
 - 1968年: [[mgmt-conways-law|コンウェイの法則（組織構造とシステム設計の同型性）]]
 - 1968年: [[mgmt-job-enrichment|職務拡大と職務充実]]
 - 1969年: [[mgmt-bass-diffusion-model|バスの普及モデル（Bass diffusion model）——新製品の採用を革新係数pと模倣係数qで記述する数理予測モデル]]
@@ -155,6 +156,7 @@ tags:
 - 1984年: [[mgmt-experiential-learning|経験学習（コルブの経験学習サイクル）]]
 - 1984年: [[mgmt-high-reliability-organizations|高信頼性組織（High Reliability Organizations / HRO）]]
 - 1984年: [[mgmt-service-blueprint|サービス・ブループリント]]
+- 1984年: [[mgmt-stakeholder-salience-theory|ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性で経営者が誰に注意を払うかを予測する]]
 - 1984年: [[mgmt-upper-echelons-theory|アッパー・エシュロン理論（Upper Echelons Theory）]]
 - 1985年: [[mgmt-emergent-strategy|創発戦略]]
 - 1985年: [[mgmt-intrapreneurship|社内起業（イントラプレナーシップ）]]
@@ -313,7 +315,6 @@ tags:
 - [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]]
 - [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]]
 - [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ——探索と活用の動的切替え]]
-- [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]]
 - [[mgmt-ambidextrous-organization-theory|両利き組織理論]]
 - [[mgmt-amoeba-management|アメーバ経営（稲盛和夫）]]
 - [[mgmt-appreciative-inquiry-cooperrider|アプリシエイティブ・インクワイアリー（AI）と組織開発の強み志向]]
@@ -375,6 +376,7 @@ tags:
 - [[mgmt-corporate-governance|コーポレートガバナンス（経営監視機構）]]
 - [[mgmt-corporate-governance-stewardship|コーポレートガバナンスとスチュワードシップ理論——エージェンシー論との対比]]
 - [[mgmt-corporate-political-activity|コーポレート・ポリティカル・アクティビティ（バロン）]]
+- [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]]
 - [[mgmt-corporate-social-performance|企業社会的パフォーマンスモデル]]
 - [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]]
 - [[mgmt-corporate-social-responsibility-csr|企業の社会的責任（CSR）とステークホルダー資本主義の経営論]]
@@ -403,6 +405,7 @@ tags:
 - [[mgmt-empowering-leadership-ahearne|エンパワリング・リーダーシップ——権限を分かち自律を高めるリーダー]]
 - [[mgmt-empowerment-theory-spreitzer|心理的エンパワーメント理論（Spreitzer）]]
 - [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]]
+- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]]
 - [[mgmt-enactment-weick|イナクトメント——組織が行為を通じて自らの環境を能動的に作り出す]]
 - [[mgmt-entrepreneurial-ecosystems|アントレプレナーシップ・エコシステム：起業家・投資家・大学・政府の共進化]]
 - [[mgmt-entrepreneurial-orientation-miller|起業家的志向性（ミラー）]]
@@ -474,7 +477,6 @@ tags:
 - [[mgmt-lmx-theory-graen|リーダー・メンバー交換理論——上司と部下が築く差異化された二者関係の質]]
 - [[mgmt-logical-incrementalism-quinn|論理的漸進主義——意図的に少しずつ進める戦略形成]]
 - [[mgmt-management-fashion-abrahamson|経営ファッション論——経営技法の流行とその供給・需要の力学]]
-- [[mgmt-managerial-cognition|経営者認知理論]]
 - [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]]
 - [[mgmt-managerial-cognition-walsh|経営者認知論（ウォルシュ）]]
 - [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]]
@@ -602,10 +604,6 @@ tags:
 - [[mgmt-stakeholder-capitalism-freeman|ステークホルダー資本主義と企業の目的（フリーマン）]]
 - [[mgmt-stakeholder-integration-freeman|ステークホルダー統合戦略（フリーマン）]]
 - [[mgmt-stakeholder-mapping-power-interest|ステークホルダー・マッピングと利害権力分析——戦略的ステークホルダー管理の実践論]]
-- [[mgmt-stakeholder-salience-mitchell|ステークホルダー・サリエンス（ミッチェル）]]
-- [[mgmt-stakeholder-salience-mitchell-agle|ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性モデル]]
-- [[mgmt-stakeholder-salience-mitchell-agle-wood|ステークホルダー顕著性——権力・正統性・緊急性による利害関係者の優先順位]]
-- [[mgmt-stakeholder-salience-theory|ステークホルダー顕出性理論]]
 - [[mgmt-stakeholder-theory-freeman-strategic|ステークホルダー理論——フリーマンの戦略的管理と全ステークホルダー利害調整]]
 - [[mgmt-star-model|スター・モデル（ガルブレイス）]]
 - [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]]

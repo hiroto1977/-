@@ -2,7 +2,7 @@
 title: "aeaweb.org"
 type: source-domain
 host: "aeaweb.org"
-cite_count: 42
+cite_count: 44
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # aeaweb.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **42 件**（学術 42）
+> [!info] 出典ドメイン索引 ・ 引用 **44 件**（学術 44）
 
 ## このドメインを出典とする項目
 
@@ -52,6 +52,8 @@ tags:
 - [[econ-value-added-tax-theory|付加価値税の理論と最適間接課税]] — Diamond&Mirrlees(1971)OptimalTaxationandPublicProduction—AmericanEcon…
 - [[econ-varian-model-of-sales-informed-uninformed-consumers|ヴァリアンのセールのモデル——情報客と非情報客の混在が生む価格分散と特売の均衡]] — Baye,M.R.&Morgan,J.（2001）『InformationGatekeepersontheInternetandtheCo…
 - [[econ-wage-curve|賃金カーブ（ブランチフラワー＝オズワルド則）]] — Blanchflower&Oswald(1995)—AnIntroductiontotheWageCurve,JEP
+- [[econ-zipf-law-for-cities-gabaix|都市のジップ法則とガベックスの説明——人口は都市の順位にほぼ反比例し、ジブラの法則的な比例成長の極限として生じる]] — Eeckhout,J.(2004)"Gibrat'sLawfor(All)Cities,"AmericanEconomicReview94…
+- [[econ-zipf-law-for-cities-gabaix|都市のジップ法則とガベックスの説明——人口は都市の順位にほぼ反比例し、ジブラの法則的な比例成長の極限として生じる]] — Rozenfeld,H.D.,Rybski,D.,Gabaix,X.andMakse,H.A.(2011)"TheAreaandPopul…
 - [[human-cognitive-reflection-test|認知反映テスト（CRT）]] — Frederick(2005)"CognitiveReflectionandDecisionMaking,"JournalofEconom…
 - [[human-endowment-effect|保有効果（授かり効果）]] — Kahneman,Knetsch&Thaler(1991),"Anomalies:TheEndowmentEffect,LossAvers…
 - [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — Arrieta-Ibarra,I.,Goff,L.,Jiménez-Hernández,D.,Lanier,J.,&Weyl,E.G.(2…

@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-weber-fechner-law|ウェーバー・フェヒナーの法則]] — 同じ思想家
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-triangular-theory-of-love-sternberg|愛の三角理論——親密さ・情熱・コミットメントの3要素とブランド・ラブへの応用]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

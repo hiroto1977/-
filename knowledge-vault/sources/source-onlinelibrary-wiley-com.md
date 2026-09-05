@@ -2,7 +2,7 @@
 title: "onlinelibrary.wiley.com"
 type: source-domain
 host: "onlinelibrary.wiley.com"
-cite_count: 106
+cite_count: 107
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # onlinelibrary.wiley.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **106 件**（学術 91 ・ リファレンス 15）
+> [!info] 出典ドメイン索引 ・ 引用 **107 件**（学術 92 ・ リファレンス 15）
 
 ## このドメインを出典とする項目
 
@@ -44,6 +44,7 @@ tags:
 - [[human-structural-family-therapy-minuchin|ミニューチンの構造派家族療法——家族を下位システムと境界からなる構造とみなし、絡み合い／遊離した境界を組み替えて問題を解く]] — Carr,A.(2019).Familytherapyandsystemicinterventionsforchild-focusedpr…
 - [[human-structural-family-therapy-minuchin|ミニューチンの構造派家族療法——家族を下位システムと境界からなる構造とみなし、絡み合い／遊離した境界を組み替えて問題を解く]] — Hare-Mustin,R.T.(1978).AFeministApproachtoFamilyTherapy.FamilyProcess…
 - [[human-synaptic-pruning|シナプスの刈り込み（synaptic pruning／シナプス・プルーニング）——脳が過剰なシナプスを除去し神経回路を最適化する発達過程]] — Huttenlocher,P.R.&Dabholkar,A.S.(1997)Regionaldifferencesinsynaptogen…
+- [[human-triangular-theory-of-love-sternberg|愛の三角理論——親密さ・情熱・コミットメントの3要素とブランド・ラブへの応用]] — Sternberg,R.J.(1997)Constructvalidationofatriangularlovescale—Europea…
 - [[human-unimodel-persuasion-kruglanski-thompson|ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論]] — Kruglanski,A.W.,Pierro,A.,Manetti,L.,Erb,H.P.&Spiegel,S.(2006)Persuas…
 - [[infosoc-attribute-agenda-setting|第二レベルの議題設定（属性アジェンダ設定）]] — McCombs,López-Escobar&Llamas,"SettingtheAgendaofAttributesinthe1996Sp…
 - [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — Wiley—Petronio,CPMTheory(majorreferencework)

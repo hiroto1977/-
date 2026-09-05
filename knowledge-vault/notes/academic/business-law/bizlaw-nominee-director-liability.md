@@ -38,7 +38,7 @@ aliases:
 - [[bizlaw-golden-share-state-ownership|黄金株（特別議決権株）と国家所有権保護の比較法]] — 同じ思想家
 - [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — 同じ思想家
 - [[bizlaw-whitewash-procedure-hk|ホワイトウォッシュ手続き（違法財務支援除外申請）]] — 同じ思想家
-- [[bizlaw-director-conflict|取締役の競業避止義務・利益相反取引（会社法356条）]] — 同分野の近傍
+- [[bizlaw-money-lending-act|貸金業法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

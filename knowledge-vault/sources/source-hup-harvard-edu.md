@@ -2,7 +2,7 @@
 title: "hup.harvard.edu"
 type: source-domain
 host: "hup.harvard.edu"
-cite_count: 22
+cite_count: 23
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # hup.harvard.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **22 件**（学術 20 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **23 件**（学術 21 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -35,6 +35,7 @@ tags:
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — Zuboff—TheAgeofSurveillanceCapitalism(HarvardUniversityPress,2019)
 - [[infosoc-media-events|メディア・イベント]] — HarvardUniversityPress—MediaEvents（公式書誌・概要）
 - [[infosoc-preference-falsification-kuran|選好偽装理論（preference falsification）——本音と建前の乖離が生む予測不能な体制転換]] — Kuran,T.(1995)PrivateTruths,PublicLies:TheSocialConsequencesofPrefere…
+- [[infosoc-taxonomy-of-privacy-solove|ソロブのプライバシー類型論——プライバシー侵害を情報収集・情報処理・情報拡散・侵入の四群十六類型に分ける枠組み]] — DanielJ.Solove(2008)UnderstandingPrivacy,HarvardUniversityPress—類型論を単…
 - [[mgmt-adaptive-leadership-heifetz|適応的リーダーシップ（変化への適応と組織学習）]] — Heifetz,R.A.(1994).LeadershipWithoutEasyAnswers.HarvardUniversityPres…
 
 ## 関連

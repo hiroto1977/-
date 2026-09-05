@@ -24053,19 +24053,19 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-stakeholder-salience-theory',
     discipline: 'management',
-    title: 'ステークホルダー顕出性理論',
-    statement: 'Mitchell・Agle・Wood（1997）が提唱。パワー・正当性・緊急性の3属性の組合せによりステークホルダーを7類型（休眠型・任意型・要求型・支配型・危険型・依存型・確定型）に分類し、経営者が注目する優先度を規定する理論。' +
-      'Freeman のステークホルダー概念が「誰でも入る」広さゆえに実務指針を欠いた問題に対し、「経営者は誰にどれだけ注意を配るか」を予測する記述理論として提出された。属性は固定的な地位ではなく知覚され獲得・喪失される変数で、3 属性がそろう確定型（definitive）が最優先になり、2 属性の期待型（危険型＝パワー＋緊急性は正当性を欠くが無視できない等）が動態の焦点になる。' +
-      'Agle ら (1999) の CEO 調査は顕出性が実際に経営者の優先づけを予測することを確認し、後続実証（Parent & Deephouse ほか）は緊急性の効果が文脈依存であること、経営者の価値観が知覚をフィルターすることを示した。' +
-      '批判と発展としては、正当性とパワーの独立性への疑義、道徳的義務を持つ弱いステークホルダー（依存型）が構造的に後回しになる規範的問題（Wood 自身が後年強調）、ネットワーク視点（ステークホルダー間の連携が属性を変える）への拡張があり、ESG 実務のステークホルダー・マッピング（影響度×関心度マトリクスの理論的祖形）として広く使われている。',
-    keyFigures: 'Ronald K. Mitchell ／ Bradley R. Agle ／ Donna J. Wood',
-    asOf: '2026-06',
+    title: 'ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性で経営者が誰に注意を払うかを予測する',
+    statement:
+      'ステークホルダー顕出性（stakeholder salience）理論は、ロナルド・ミッチェル、ブラッドリー・アグル、ドナ・ウッドが1997年の論文「Toward a Theory of Stakeholder Identification and Salience」（Academy of Management Review 22巻4号853–886頁）で提唱した。フリーマン（1984）のステークホルダー概念が「誰でも入る」広さゆえに実務指針を欠いた問題に対し、経営者が誰にどれだけ注意を配るかを、①パワー（意図した結果を押し付ける能力）、②正統性（主張が社会的に正当とみなされる程度）、③緊急性（時間的切迫と重要性）の三属性の組合せで予測する記述理論である。属性を1つ持つ潜在的3類型（休眠型・任意型・要求型）、2つ持つ期待的3類型（支配型・危険型・依存型）、3つそろう確定型の計7類型に分け、属性は固定した地位でなく知覚され獲得・喪失される変数だとする。アグル・ミッチェル・ソネンフェルド（1999）の大企業CEO調査は属性と顕出性の関係を支持したが顕出性と財務業績の関係は確認されず、ペアレント＆ディープハウス（2007）はパワーの効果が最も強く緊急性の効果は文脈依存だと示した。ネヴィル・ベル＆ホイットウェル（2011）は概念の精緻化を試み、ロウリーはステークホルダー間のネットワーク構造（密度・中心性）が顕出性を左右すると論じた。批判として、正統性とパワーの独立性への疑義、道徳的義務を負う弱い依存型が構造的に後回しになる規範的問題がある。ESG実務のマテリアリティ分析や影響度×関心度マトリクスの理論的祖形として広く使われ、中小企業でも取引先・金融機関・従業員・地域を三属性で棚卸しし、注意配分を意識的に決める指針となる。',
+    keyFigures: 'ロナルド・ミッチェル ／ ブラッドリー・アグル ／ ドナ・ウッド（1997 AMR）／ジェフリー・ソネンフェルド（1999 AMJ 共著）／ミレナ・ペアレント＆デイヴィッド・ディープハウス（2007 JBE）／ベンジャミン・ネヴィル（2006 JBE メングッチと共著／2011 JBE ベル＆ホイットウェルと共著）／ティモシー・ロウリー（ネットワーク視点）／土台: R・エドワード・フリーマン（1984『Strategic Management: A Stakeholder Approach』）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.5465/amr.1997.9711022105', type: 'academic', label: 'Mitchell, Agle & Wood (1997) AMR' },
-      { url: 'https://doi.org/10.5465/256898', type: 'academic', label: 'Agle, Mitchell & Sonnenfeld (1999) AMJ' },
-      { url: 'https://doi.org/10.1002/smj.4250131006', type: 'academic', label: 'Freeman (1984) Stakeholder Theory origin' },
-      { url: 'https://doi.org/10.1177/0007650305280102', type: 'academic', label: 'Neville & Menguc (2006) empirical test' },
-      { url: 'https://doi.org/10.1111/j.1467-8551.2011.00784.x', type: 'academic', label: 'Parent & Deephouse (2007) salience empirics' },
+      { url: 'https://doi.org/10.5465/amr.1997.9711022105', type: 'academic', label: 'Mitchell, R. K., Agle, B. R. & Wood, D. J. (1997) Toward a Theory of Stakeholder Identification and Salience: Defining the Principle of Who and What Really Counts — Academy of Management Review 22(4), 853–886（顕出性理論の原典）' },
+      { url: 'https://journals.aom.org/doi/abs/10.5465/256973', type: 'academic', label: 'Agle, B. R., Mitchell, R. K. & Sonnenfeld, J. A. (1999) Who Matters to CEOs? An Investigation of Stakeholder Attributes and Salience, Corporate Performance, and CEO Values — Academy of Management Journal 42(5), 507–525（大企業 80 社の CEO 調査。旧ラベルの DOI 10.5465/256898 は別論文だったため差し替え）' },
+      { url: 'https://link.springer.com/article/10.1007/s10551-007-9533-y', type: 'academic', label: 'Parent, M. M. & Deephouse, D. L. (2007) A Case Study of Stakeholder Identification and Prioritization by Managers — Journal of Business Ethics 75(1), 1–23（パワーの効果が最大という実証。旧ラベルは British Journal of Management 2011 の DOI を付けていたため差し替え）' },
+      { url: 'https://link.springer.com/article/10.1007/s10551-011-0818-9', type: 'academic', label: 'Neville, B. A., Bell, S. J. & Whitwell, G. J. (2011) Stakeholder Salience Revisited: Refining, Redefining, and Refueling an Underdeveloped Conceptual Tool — Journal of Business Ethics 102(3), 357–378（顕出性概念の精緻化——緊急性はステークホルダーの識別には無関係とし、主張の道徳的正統性を中心に据え、属性の程度に応じて顕出性が変わると論じた）' },
+      { url: 'https://link.springer.com/article/10.1007/s10551-006-0015-4', type: 'academic', label: 'Neville, B. A. & Menguc, B. (2006) Stakeholder Multiplicity: Toward an Understanding of the Interactions between Stakeholders — Journal of Business Ethics 66(4), 377–391（ステークホルダー間の相互作用への拡張。旧ラベルは Business & Society の DOI を付けていたため差し替え）' },
+      { url: 'https://doi.org/10.1017/CBO9781139192675', type: 'academic', label: 'Freeman, R. E. (1984) Strategic Management: A Stakeholder Approach — Pitman（Cambridge University Press 2010 年再刊の DOI）。ステークホルダー理論の原典' },
+      { url: 'https://en.wikipedia.org/wiki/Stakeholder_theory', type: 'reference', label: 'Wikipedia: Stakeholder theory — Mitchell, Agle & Wood の三属性・顕出性の類型・ESG マテリアリティ' },
     ],
   },
   {
@@ -29380,7 +29380,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://www.businessroundtable.org/business-roundtable-redefines-the-purpose-of-a-corporation-to-promote-an-economy-that-serves-all-americans', type: 'reference', label: 'Business Roundtable (2019) Statement on the Purpose of a Corporation — businessroundtable.org（181 CEO署名声明）' },
-      { url: 'https://doi.org/10.2307/2095lass', type: 'academic', label: 'Freeman, R. E. (1984) Strategic Management: A Stakeholder Approach — Pitman Publishing（ステークホルダー理論の原典）' },
+      { url: 'https://doi.org/10.1017/CBO9781139192675', type: 'academic', label: 'Freeman, R. E. (1984) Strategic Management: A Stakeholder Approach — Pitman（Cambridge University Press 2010 年再刊の DOI。旧 URL 10.2307/2095lass は存在しない DOI だったため差し替え）' },
       { url: 'https://global.oup.com/academic/product/prosperity-9780198799887', type: 'academic', label: 'Mayer, C. (2018) Prosperity: Better Business Makes the Greater Good — Oxford University Press' },
       { url: 'https://en.wikipedia.org/wiki/Stakeholder_capitalism', type: 'reference', label: 'Wikipedia: Stakeholder capitalism — history, BRT 2019 statement, and critique of purpose-washing' },
     ],
@@ -30279,20 +30279,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1093/oso/9780190931407.001.0001', type: 'academic', label: 'Woolley, S. C. & Howard, P. N. eds. (2019) Computational Propaganda: Political Parties, Politicians, and Political Manipulation on Social Media — Oxford University Press（体系書）' },
       { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R2065', type: 'government', label: 'European Parliament (2022) Regulation (EU) 2022/2065 — Digital Services Act (DSA) — Very Large Online Platforms obligations' },
       { url: 'https://en.wikipedia.org/wiki/Computational_propaganda', type: 'reference', label: 'Wikipedia: Computational propaganda — Woolley & Howard, social bots, astroturfing, COMPROP, DSA' },
-    ],
-  },
-  {
-    id: 'mgmt-stakeholder-salience-mitchell',
-    discipline: 'management',
-    title: 'ステークホルダー・サリエンス（ミッチェル）',
-    statement: 'ステークホルダー・サリエンス（stakeholder salience）理論は、ミッチェル・アグル・ウッド（1997）が提唱した、マネジャーが誰をステークホルダーとして認識し優先するかを規定する三属性——①権力（power: 意図した結果を押し付ける能力）、②合法性（legitimacy: 主張が社会的に正当とみなされる程度）、③緊急性（urgency: タイムリーな対応を要求する程度）——の組み合わせで説明するフレームワークである。三属性すべてを持つ「決定的ステークホルダー（definitive stakeholder）」、二属性を持つ「期待的ステークホルダー（expectant）」、一属性のみの「潜在的ステークホルダー（latent）」に類型化され、マネジャーはサリエンスの高い順に注意を配分するとされる。フリーマンのステークホルダー理論を「誰が重要で、なぜか」という問いで精緻化した貢献として評価される。後続のCSR・ESG研究においては、環境・社会問題の「緊急性」が高まった現代的文脈で再評価され、ESG格付けにおける重要性（materiality）分析の理論的基盤となっている。',
-    keyFigures: 'ロナルド・ミッチェル ／ ブラッドリー・アグル ／ ドナ・ウッド ／ エドワード・フリーマン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.5465/amr.1997.9711022105', type: 'academic', label: 'Mitchell, R. K., Agle, B. R. & Wood, D. J. (1997) Toward a Theory of Stakeholder Identification and Salience: Defining the Principle of Who and What Really Counts — Academy of Management Review, 22(4), 853–886（サリエンス理論の原典）' },
-      { url: 'https://doi.org/10.5465/amr.2007.24345536', type: 'academic', label: 'Neville, B. A., Bell, S. J. & Whitwell, G. J. (2011) Stakeholder Salience Revisited: Refining, Redefining, and Refueling an Underdeveloped Conceptual Tool — Journal of Business Ethics, 102(3), 357–378（理論の精緻化）' },
-      { url: 'https://doi.org/10.5465/256973', type: 'academic', label: 'Agle, B. R., Mitchell, R. K. & Sonnenfeld, J. A. (1999) Who Matters to CEOs? An Investigation of Stakeholder Attributes and Salience, Corporate Performance, and CEO Values — Academy of Management Journal, 42(5), 507–525（実証研究）' },
-      { url: 'https://en.wikipedia.org/wiki/Stakeholder_theory', type: 'reference', label: 'Wikipedia: Stakeholder theory — Mitchell, Agle & Wood, three attributes, salience typology, ESG materiality' },
     ],
   },
   {
@@ -36242,18 +36228,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://www.worldcat.org/oclc/156968', type: 'academic', label: 'Pigou, A.C. (1920) The Economics of Welfare — Macmillan (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Pigouvian_tax', type: 'reference', label: 'Wikipedia: Pigouvian tax — externality, private vs social cost, internalization, carbon tax, vs Coase' },
-    ],
-  },
-  {
-    id: 'mgmt-stakeholder-salience-mitchell-agle-wood',
-    discipline: 'management',
-    title: 'ステークホルダー顕著性——権力・正統性・緊急性による利害関係者の優先順位',
-    statement: 'ステークホルダー顕著性（stakeholder salience）の理論は、ロナルド・ミッチェル、ブラッドリー・アグル、ドナ・ウッドが1997年の論文「ステークホルダーの識別と顕著性の理論に向けて」で提示した枠組みで、「誰が、あるいは何が本当に重要なのか」という問い——経営者は数あるステークホルダー（利害関係者）のうち、どれに注意を払い、その要求を優先すべきか——に答えようとする。R・エドワード・フリーマンが提唱したステークホルダー理論は、企業が株主だけでなく、従業員・顧客・供給者・地域社会・政府など、企業の活動に影響を与え、また影響を受けるすべての主体の利害を考慮すべきだと論じた。しかし、これらすべてのステークホルダーを等しく扱うことは現実には不可能であり、経営者は限られた注意と資源をどう配分するかという問題に直面する。ミッチェルらは、経営者がステークホルダーをどの程度重視するか（顕著性）が、そのステークホルダーが三つの属性をどれだけ備えているかによって決まると論じた。第一は「権力（power）」で、自らの意思を相手に強制できる能力である。たとえば、企業に重大な影響を及ぼせる大口取引先や規制当局がこれを持つ。第二は「正統性（legitimacy）」で、その要求が社会的に適切で正当だとみなされる度合いである。法的・道徳的に認められた利害がこれにあたる。第三は「緊急性（urgency）」で、その要求が時間的に切迫し、重要で、ただちに対応を要する度合いである。ミッチェルらは、これらの属性を多く備えるステークホルダーほど顕著性が高く、経営者の注意を強く引くと論じた。三つの属性すべてを備える「決定的（definitive）」なステークホルダーが最も優先され、二つを備える「期待的（expectant）」なもの、一つだけを持つ「潜在的（latent）」なものへと顕著性が下がる。さらにこれらの属性は固定的ではなく、状況に応じて獲得・喪失され、ステークホルダーの顕著性は動的に変化する。この理論は、フリーマンのステークホルダー理論に、誰の声に耳を傾けるべきかを判断する動的で属性に基づく優先順位づけの枠組みを加え、企業の社会的責任、利害関係者管理、経営倫理の実践と研究に重要な道具を提供した。',
-    keyFigures: 'ロナルド・ミッチェル ／ ブラッドリー・アグル ／ ドナ・ウッド ／ R・エドワード・フリーマン',
-    asOf: '2026-06-27',
-    sources: [
-      { url: 'https://doi.org/10.5465/amr.1997.9711022105', type: 'academic', label: 'Mitchell, R.K., Agle, B.R. & Wood, D.J. (1997) Toward a Theory of Stakeholder Identification and Salience — AMR 22(4)' },
-      { url: 'https://en.wikipedia.org/wiki/Stakeholder_theory', type: 'reference', label: 'Wikipedia: Stakeholder salience — Mitchell, Agle & Wood, power/legitimacy/urgency, definitive stakeholders' },
     ],
   },
   {
@@ -43206,18 +43180,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/1882508', type: 'academic', label: 'Singer, H. (1950) The Distribution of Gains between Investing and Borrowing Countries — American Economic Review' },
       { url: 'https://en.wikipedia.org/wiki/Prebisch%E2%80%93Singer_hypothesis', type: 'reference', label: 'Wikipedia: Prebisch-Singer hypothesis — terms of trade, primary commodities, ISI' },
-    ],
-  },
-  {
-    id: 'mgmt-stakeholder-salience-mitchell-agle',
-    discipline: 'management',
-    title: 'ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性モデル',
-    statement: 'ロナルド・ミッチェル，ブラッドリー・エイグル，ドナ・ウッドは1997年の論文「Toward a Theory of Stakeholder Identification and Salience」において，経営者がどのステークホルダーに注意を向けるかを決定する「ステークホルダー顕出性（stakeholder salience）」の理論的枠組みを提示した。この理論はステークホルダーの三属性——パワー（組織に影響を及ぼす能力），正統性（関係の社会的正当性），緊急性（要求の時間的切迫性と重要性）——の組み合わせによって7つのステークホルダー類型（潜在的3類型，期待的3類型，確定的1類型）を分類し，より多くの属性を持つステークホルダーほど経営者の注意を引く（顕出性が高い）と論じた。この理論はR・エドワード・フリーマンの戦略的ステークホルダー・マネジメント論（1984年）を発展させ，「すべてのステークホルダーは等しく重要か」という実践的問題に対する分析枠組みを提供した。ティモシー・ロウリーはステークホルダー間の社会的ネットワーク構造（密度・中心性）が顕出性に影響することを論じ，ネットワーク理論との統合を図った。',
-    keyFigures: 'ロナルド・ミッチェル ／ ブラッドリー・エイグル ／ ドナ・ウッド ／ R・エドワード・フリーマン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/259247', type: 'academic', label: 'Mitchell, R. K., Agle, B. R. & Wood, D. J. (1997) Toward a Theory of Stakeholder Identification and Salience — Academy of Management Review' },
-      { url: 'https://en.wikipedia.org/wiki/Stakeholder_theory', type: 'reference', label: 'Wikipedia: Stakeholder theory — salience, power, legitimacy, urgency, Freeman' },
     ],
   },
   {
@@ -50769,6 +50731,102 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.science.org/doi/10.1126/science.aag2624', type: 'academic', label: 'Friedkin, N. E., Proskurnikov, A. V., Tempo, R., & Parsegov, S. E. (2016). Network science on belief system dynamics under logic constraints. Science, 354(6310), 321-326 — 論理制約を持つ信念系へのフリードキン自身の拡張' },
       { url: 'https://www.sciencedirect.com/science/article/abs/pii/S1367578817300172', type: 'academic', label: 'Proskurnikov, A. V., & Tempo, R. (2017). A tutorial on modeling and analysis of dynamic social networks. Part I. Annual Reviews in Control, 43, 65-79 — 制御理論からの受容とフリードキン＝ジョンセン・モデルの体系的レビュー' },
       { url: 'https://pubmed.ncbi.nlm.nih.gov/13323174/', type: 'reference', label: 'French, J. R. P., Jr. (1956). A formal theory of social power. Psychological Review, 63(3), 181-194 — 理論が継承する対人影響・社会的権力の先行定式化' },
+    ],
+  },
+  {
+    id: 'econ-lucas-span-of-control-firm-size-distribution',
+    discipline: 'economics',
+    title: 'ルーカスのスパン・オブ・コントロール・モデル——経営者の才能分布と管理限界が企業規模の分布を決める',
+    statement:
+      'ロバート・ルーカス（1978年）が「On the Size Distribution of Business Firms」（『Bell Journal of Economics』9巻2号508–523頁）で示した企業規模分布の理論。人は経営者としての「才能」の分布に従って異なり、各人は労働者か経営者かを選択する。経営者は自らの才能と労働・資本の凹関数（収穫逓減）の積で生産し、この企業レベルの収穫逓減が管理できる範囲、すなわち「スパン・オブ・コントロール」を規定する。才能の高い者ほど大企業を営み、才能の閾値（カットオフ）が経営者数すなわち企業数を決める。企業規模分布は才能分布の形を継承し、資本深化と賃金上昇に伴い平均企業規模が長期的に拡大するという予測は米国の時系列データと整合的とされた。ガリカーノ（2000）は知識階層組織へ、ガリカーノ＆ロッシ・ハンスバーグ（2006）は知識経済の不平等分析へ拡張した。グナーらの研究（2008）は雇用者数等の閾値に依存する規制・税制が企業規模分布を歪めることを示し、日本でも消費税の適用免除閾値の直下に法人が集積する現象が恩地一樹（2009）により確認されている。才能を外生的な「ブラックボックス」とし、学習・動態や資金制約を欠く点が批判され、誤配分研究にも接続される。中小企業経営者にとっては、成長の限界は自身の管理能力にあり、権限委任や管理職登用がスパン・オブ・コントロールを緩和する一方、規模依存的な政策の閾値が成長を阻害しうる点に注意が必要である。',
+    keyFigures: 'ロバート・ルーカス（1978『On the Size Distribution of Business Firms』）／ルイス・ガリカーノ（2000『Hierarchies and the Organization of Knowledge in Production』）／エステバン・ロッシ・ハンスバーグ（ガリカーノとの共著2006『Organization and Inequality in a Knowledge Economy』）／ネジフ・グナー他（2008『Macroeconomic Implications of Size-Dependent Policies』）／恩地一樹（2009 日本の消費税免税点への集積の実証）／対比: ボヤン・ジョバノビッチ（選択モデル、1982『Selection and the Evolution of Industry』）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://ideas.repec.org/a/rje/bellje/v9y1978iautumnp508-523.html', type: 'academic', label: 'Robert E. Lucas Jr. (1978) "On the Size Distribution of Business Firms," Bell Journal of Economics, 9(2), 508–523 — モデルの原典。経営者の才能分布・企業レベルの収穫逓減（スパン・オブ・コントロール）・平均企業規模の長期的拡大という予測を提示' },
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/317671', type: 'academic', label: 'Luis Garicano (2000) "Hierarchies and the Organization of Knowledge in Production," Journal of Political Economy, 108(5), 874–904 — 知識階層組織へのスパン・オブ・コントロール概念の拡張' },
+      { url: 'https://academic.oup.com/qje/article-abstract/121/4/1383/1855229', type: 'academic', label: 'Luis Garicano and Esteban Rossi-Hansberg (2006) "Organization and Inequality in a Knowledge Economy," Quarterly Journal of Economics, 121(4), 1383–1435 — 知識経済における組織階層と賃金不平等の理論的分析' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S1094202508000070', type: 'academic', label: 'Nezih Guner, Gustavo Ventura and Yi Xu (2008) "Macroeconomic Implications of Size-Dependent Policies," Review of Economic Dynamics, 11(4), 721–744 — 規模依存的な規制・税制が企業規模分布を歪める効果の定量分析' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0047272708001953', type: 'academic', label: 'Kazuki Onji (2009) "The Response of Firms to Eligibility Thresholds: Evidence from the Japanese Value-Added Tax," Journal of Public Economics, 93(5–6), 766–775 — 日本における消費税適用免除閾値の直下への法人集積の実証例' },
+    ],
+  },
+  {
+    id: 'econ-zipf-law-for-cities-gabaix',
+    discipline: 'economics',
+    title: '都市のジップ法則とガベックスの説明——人口は都市の順位にほぼ反比例し、ジブラの法則的な比例成長の極限として生じる',
+    statement:
+      'ジップの法則は、一国の都市を人口順に並べると人口と順位の積がほぼ一定になる（上位都市のパレート指数がほぼ1）という経験則で、物理学者フェリックス・アウエルバッハが1913年の論文「Das Gesetz der Bevölkerungskonzentration」で示し、ジョージ・キングズレー・ジップが1949年の『Human Behavior and the Principle of Least Effort』で一般化し名を残した。グザヴィエ・ガベックスは1999年の論文「Zipf\'s Law for Cities: An Explanation」で、都市の成長率が規模に無関係にランダムに決まる「ジブラの法則」的な比例成長に規模の下限で反射する摩擦を加えるだけで、成長メカニズムの詳細を問わず定常分布の上位裾が指数1のパレート分布へ収束すると示した。ヤン・エークハウトは2004年の論文で、米国の全自治体データから全体分布は対数正規分布でありジップの法則は最大都市群に限られた近似と批判し、ロゼンフェルドらは2011年、行政区分でなく人口集積として都市を再定義すれば英国で人口5000人、米国で1万2000人規模までジップの法則が成立すると再検証した。指数のずれは行政境界の変更や政策的摩擦を映す指標で、日本でも市町村合併期に指数が一時的に崩れ中位都市の成長で回復した例が報告されており、中小企業には少数の大都市圏が需要の大半を占め地方市場が薄いという含意がある。',
+    keyFigures: 'フェリックス・アウエルバッハ（1913年論文『Das Gesetz der Bevölkerungskonzentration』）／ジョージ・キングズレー・ジップ（1949『Human Behavior and the Principle of Least Effort』）／グザヴィエ・ガベックス（1999『Zipf\'s Law for Cities: An Explanation』／2011共著論文）／対比: ヤン・エークハウト（2004『Gibrat\'s Law for (All) Cities』——全体分布は対数正規と反論）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://archive.org/details/in.ernet.dli.2015.90211', type: 'reference', label: 'Zipf, G. K. (1949) Human Behavior and the Principle of Least Effort: An Introduction to Human Ecology, Addison-Wesley, 573pp — 「ジップの法則」の名の由来となった原典。都市規模を含む複数分野の順位・規模規則性を「最小努力の原理」として一般化した' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/23998083221147139', type: 'academic', label: 'Auerbach, F. (1913; trans. A. Ciccone, 2023) "The Law of Population Concentration" [原題 "Das Gesetz der Bevölkerungskonzentration," Petermanns Geographische Mitteilungen 59, 74-76], Environment and Planning B 50(2), 290-298 — 都市の順位・規模の経験的規則性を最初に示した1913年原論文の英訳・確認' },
+      { url: 'https://academic.oup.com/qje/article-abstract/114/3/739/1848099', type: 'academic', label: 'Gabaix, X. (1999) "Zipf\'s Law for Cities: An Explanation," The Quarterly Journal of Economics 114(3), 739-767 — ジブラの法則的な比例成長と反射的下限からジップ則への収束を導くガベックスの中心的説明' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2F0002828043052303', type: 'academic', label: 'Eeckhout, J. (2004) "Gibrat\'s Law for (All) Cities," American Economic Review 94(5), 1429-1451 — 米国センサス全自治体データでは全体分布は対数正規分布であり、ジップ則は上位裾のみの近似だとする批判' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2Faer.101.5.2205', type: 'academic', label: 'Rozenfeld, H. D., Rybski, D., Gabaix, X. and Makse, H. A. (2011) "The Area and Population of Cities: New Insights from a Different Perspective on Cities," American Economic Review 101(5), 2205-2225 — 都市を行政区分でなく人口集積として下から再定義し、小規模都市までジップ則の成立を再検証' },
+    ],
+  },
+  {
+    id: 'mgmt-burke-litwin-causal-model-organizational-change',
+    discipline: 'management',
+    title: 'バーク＝リトウィン・モデル——外部環境から個人業績までを12要因の因果連鎖で結ぶ組織診断モデル',
+    statement:
+      'バーク＝リトウィン・モデルは、W・ウォーナー・バークとジョージ・H・リトウィンが1992年にJournal of Management誌18巻3号（523–545頁）で発表した、組織の業績と変革を12要因の因果連鎖として描く診断モデルである。起源はリトウィンとストリンガーの組織風土研究『Motivation and Organizational Climate』（1968）に遡る。外部環境・使命と戦略・リーダーシップ・組織文化の四要因を「変革的要因」、構造・制度・管理慣行・風土・課題とスキル・モチベーション・欲求と価値観という残る七要因を「取引的要因」とし、両者が個人と組織の業績に至り外部環境へフィードバックする循環を持ち、外部環境を最も強い入力とみなす。ワイズボードの六箱モデル（1976）やナドラー＆タッシュマンのコングルエンス・モデルより外部環境を重視する点で異なる。マーティンズとクッツェーは2009年、従業員147名・経営幹部11名の調査で有効性を検証した（SA Journal of Human Resource Management 7巻1号）一方、シュパンゲンバーグとテロンは2013年の批判的レビュー（Management Dynamics 22巻2号）で複雑さ・大規模標本での検証不足・線形的因果の前提を限界とした。中小企業の経営者には、業績不振が戦略・リーダーシップ・文化に根差す変革的問題か、業務手順や風土・スキルに根差す取引的問題かを見極め介入を選ぶ指針となる。',
+    keyFigures: 'W・ウォーナー・バーク（1992『A Causal Model of Organizational Performance and Change』Journal of Management誌／2018『Organization Change: Theory and Practice』第5版）／ジョージ・H・リトウィン（1992年にバークと共同発表／1968『Motivation and Organizational Climate』はロバート・A・ストリンガーJr.と共著）／ニコ・マーティンズ＆メリンデ・クッツェー（2009年に実証的検証、SA Journal of Human Resource Management）／ヘルマン・シュパンゲンバーグ＆カリー・テロン（2013年に批判的レビュー、Management Dynamics）／対比: マーヴィン・ワイズボード（六箱モデル、1976）、デービッド・ナドラー＆マイケル・タッシュマン（コングルエンス・モデル）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/014920639201800306', type: 'academic', label: 'W. Warner Burke & George H. Litwin (1992) "A Causal Model of Organizational Performance and Change", Journal of Management, 18(3), 523–545 — 12要因・変革的／取引的の区別・因果とフィードバックの構造を定義した原典' },
+      { url: 'https://search.worldcat.org/title/Motivation-and-Organizational-Climate-By-George-H.-Litwin-And-Robert-A.-Stringer-Jr/oclc/635794888', type: 'reference', label: 'George H. Litwin & Robert A. Stringer Jr. (1968) Motivation and Organizational Climate, Division of Research, Graduate School of Business Administration, Harvard University, Boston — モデルの母体となった 1968 年の組織風土研究の書誌' },
+      { url: 'https://us.sagepub.com/en-us/nam/organization-change/book244771', type: 'academic', label: 'W. Warner Burke (2018) Organization Change: Theory and Practice, 5th ed., Thousand Oaks, CA: SAGE Publications, 454 pp. — バーク自身によるモデルの拡張的解説と適用' },
+      { url: 'https://sajhrm.co.za/index.php/sajhrm/article/view/177', type: 'academic', label: 'Nico Martins & Melinde Coetzee (2009) "Applying the Burke–Litwin model as a diagnostic framework for assessing organisational effectiveness", SA Journal of Human Resource Management, 7(1), Art. #177, 1–13 — 多国籍企業（従業員 147 名・幹部 11 名）でモデルの診断妥当性を検証した実証研究' },
+      { url: 'https://www.researchgate.net/publication/256474169_A_critical_review_of_the_Burke-Litwin_model_of_leadership_change_and_performance', type: 'academic', label: 'Hermann Spangenberg & Callie Theron (2013) "A critical review of the Burke-Litwin model of leadership, change and performance", Management Dynamics: Journal of the Southern African Institute for Management Scientists, 22(2), 29–48 — モデルの複雑さと実証的検証の不足への批判' },
+    ],
+  },
+  {
+    id: 'human-triangular-theory-of-love-sternberg',
+    discipline: 'human-science',
+    title: '愛の三角理論——親密さ・情熱・コミットメントの3要素とブランド・ラブへの応用',
+    statement:
+      '愛の三角理論は、ロバート・スターンバーグが1986年の論文「A Triangular Theory of Love」で提唱した理論で、愛を「親密さ（親しさ・結びつきの情緒的な感覚）」「情熱（ロマンスや性的欲求への動機づけ）」「コミットメント（愛を維持し続ける決断）」という3成分の組合せとして捉える。三角形の面積は愛の「量」を、正三角形からの歪みは3成分の「均衡」を表し、各成分の有無の組合せから非愛・好意・熱中・空虚な愛・ロマンティックな愛・友愛的な愛・愚愛・完全な愛という8種類の愛が導かれ、情熱は関係初期に急伸し、コミットメントは時間とともに積み上がるとされる。1997年にスターンバーグ自身が三角愛尺度の構成概念妥当性を検証し、アッカーとデイヴィス（1992）はコミットメントが満足度の最強の予測因である一方、親密さ・情熱の想定された時間変化は部分的にしか支持されないことを実証した。後続の因子分析研究は親密さとコミットメントの高い相関という成分間の重なりを、ソロコフスキらの2021年25か国調査は尺度の文化的普遍性を支持しつつも文化差による偏りをそれぞれ指摘している。1988年にシンプとマッデンがこの枠組みを消費者と製品・ブランドの関係に応用し、後年のブランド・ラブ研究の起点となった。中小企業でも顧客関係を親密さ（顧客理解）・情熱（購買体験への高揚感）・コミットメント（継続購買という忠誠）の3成分に分けて診断し、どの成分が欠けているかを見極めることが関係の立て直しに役立つ。',
+    keyFigures: 'ロバート・スターンバーグ（1986 Psychological Review／1997 European Journal of Social Psychology／1998『Love Is a Story』）／ミシェル・アッカー＆マーク・デイヴィス（1992）／ピョートル・ソロコフスキら（2021・25か国調査）／テレンス・シンプ＆トーマス・マッデン（1988・消費者・ブランド関係への応用）／ラジーヴ・バトラ、アーロン・アフービア＆リチャード・バゴッツィ（2012『Brand Love』）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://doi.org/10.1037/0033-295X.93.2.119', type: 'academic', label: 'Sternberg, R.J. (1986) A Triangular Theory of Love — Psychological Review, 93(2), 119-135 — 理論の原典：3成分の定義、8種類の愛、三角形の幾何学モデル（面積＝量、形＝均衡）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1002/(SICI)1099-0992(199705)27:3%3C313::AID-EJSP824%3E3.0.CO;2-4', type: 'academic', label: 'Sternberg, R.J. (1997) Construct validation of a triangular love scale — European Journal of Social Psychology, 27(3), 313-335 — 三角愛尺度（STLS）の構成概念妥当性検証（内的・外的妥当性の2研究）' },
+      { url: 'https://journals.sagepub.com/doi/abs/10.1177/0265407592091002', type: 'academic', label: 'Acker, M. & Davis, M.H. (1992) Intimacy, Passion and Commitment in Adult Romantic Relationships: A Test of the Triangular Theory of Love — Journal of Social and Personal Relationships, 9(1), 21-50 — 実証的検証：コミットメントが満足度の最強の予測因、時間変化の予測は部分的支持のみ' },
+      { url: 'https://www.tandfonline.com/doi/abs/10.1080/00224499.2020.1787318', type: 'academic', label: 'Sorokowski, P. et al. (2021) Universality of the Triangular Theory of Love: Adaptation and Psychometric Properties of the Triangular Love Scale in 25 Countries — The Journal of Sex Research, 58(1), 106-115 — 25か国・7,332名による尺度の文化を超えた構造的普遍性の検証' },
+      { url: 'https://www.acrwebsite.org/volumes/6810/volumes/v15/NA', type: 'academic', label: 'Shimp, T.A. & Madden, T.J. (1988) Consumer-Object Relations: A Conceptual Framework Based Analogously on Sternberg\'s Triangular Theory of Love — Advances in Consumer Research, 15, 163-168 — 消費者・製品／ブランド関係へのトライアングル理論の最初期の応用（ACR会議論文）' },
+    ],
+  },
+  {
+    id: 'bizlaw-vincent-v-lake-erie-private-necessity',
+    discipline: 'business-law',
+    title: 'ヴィンセント対レイク・エリー運送事件——緊急時に他人の財産を使うことは許されるが、生じた損害は賠償しなければならないという「不完全な特権」の法理',
+    statement:
+      'ヴィンセント対レイク・エリー運送事件（Vincent v. Lake Erie Transportation Co., 109 Minn. 456, 124 N.W. 221、1910年）は、1905年11月にデュルースのヴィンセント桟橋で貨物を降ろしていた蒸気船レイノルズ号が暴風に見舞われ、船長が係留を解かず擦り切れる繋留索を張り替え続けたため桟橋を繰り返し損傷した事件である。オブライエン判事の多数意見（ルイス判事反対）は、係留続行は思慮深い私的緊急避難として不法侵入責任を免れるが、自己の財産を守るため他人の財産を意図的に犠牲にした以上、損害は賠償すべきとした。ボーレン（1926）はこれを「不完全な特権」と呼び、後のリステイトメント（第二次）第197条（私的緊急避難、特権はあるが賠償責任）となり、無責の第196条公的緊急避難（例：サロッコ対ギアリー事件）と対比される。係留拒否を認めなかったプルーフ対パットナム事件（1908年）は立入り自体の特権を認め、本件はその後の損害負担を問う点で対照的である。法と経済学は、緊急時に裁判所が事後的に価格（損害額）を定め強制交換を成立させ、資源の効率利用と桟橋維持双方のインセンティブを保つ仕組みと読むが、ボーレンの財産権的説明はキーティング（2005）らに再検討されている。中小事業者への含意は、緊急時に隣接他社の設備を無断で使い得るが事後の賠償を要する点にあり、緊急性の記録化・保険・相互扶助条項の整備が実務上重要である。',
+    keyFigures: 'フランシス・H・ボーレン（1926『Incomplete Privilege to Inflict Intentional Invasions of Interests of Property and Personality』Harvard Law Review 39巻307頁）／グレゴリー・キーティング（2005『Property Right and Tortious Wrong in Vincent v. Lake Erie』Issues in Legal Scholarship 5巻2号）／スティーブン・シュガーマン（2005、同号所収の関連論文）／オブライエン判事（1910年、多数意見執筆）・ルイス判事（反対意見）／対比: リチャード・ポズナー（法と経済学、強制交換としての分析）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://law.justia.com/cases/minnesota/supreme-court/1910/109-minn-456-124-n-w-221-1910.html', type: 'government', label: 'Vincent v. Lake Erie Transportation Co., 109 Minn. 456, 124 N.W. 221 (Minn. 1910) — 事実関係、オブライエン判事の多数意見、ルイス判事の反対意見を確認' },
+      { url: 'https://en.wikipedia.org/wiki/Ploof_v._Putnam', type: 'reference', label: 'Ploof v. Putnam, 81 Vt. 471, 71 A. 188 (Vt. 1908) — 私的緊急避難による立入り特権を認めた先例としての事実関係と判旨を確認' },
+      { url: 'https://www.jstor.org/stable/1329309', type: 'academic', label: 'Francis H. Bohlen, "Incomplete Privilege to Inflict Intentional Invasions of Interests of Property and Personality," Harvard Law Review, Vol. 39, No. 3 (1926), pp. 307-324 — 「不完全な特権」概念の初出を確認' },
+      { url: 'https://www.degruyterbrill.com/document/doi/10.2202/1539-8323.1066/html', type: 'academic', label: 'Gregory C. Keating, "Property Right and Tortious Wrong in Vincent v. Lake Erie," Issues in Legal Scholarship, Vol. 5, No. 2 (2005), Article 6 (DOI 10.2202/1539-8323.1066) — ボーレンの財産権的説明に対する現代の批判的検討を確認' },
+      { url: 'https://www.law.cornell.edu/wex/private_necessity', type: 'reference', label: '"Private Necessity," Wex, Legal Information Institute, Cornell Law School — リステイトメント（第二次）第197条に基づく私的緊急避難の定義を確認' },
+    ],
+  },
+  {
+    id: 'infosoc-taxonomy-of-privacy-solove',
+    discipline: 'information-sociology',
+    title: 'ソロブのプライバシー類型論——プライバシー侵害を情報収集・情報処理・情報拡散・侵入の四群十六類型に分ける枠組み',
+    statement:
+      'ダニエル・J・ソロブが2006年の論文『A Taxonomy of Privacy』（『University of Pennsylvania Law Review』154巻3号477–564頁）で提示した枠組みである。プライバシーに単一の本質はないとする立場（2002年『Conceptualizing Privacy』カリフォルニア・ロー・レビュー90巻1087–1155頁のウィトゲンシュタイン的家族的類似性論）に立ち、法は概念そのものでなく個々の有害な活動を対象とすべきだと説き、侵害過程を①情報収集（監視・尋問）②情報処理（集約・識別・二次利用・排除・不安全な管理）③情報拡散（守秘義務違反・開示・暴露・アクセス可能性の増大・恐喝・盗用・歪曲）④侵入（物理的侵入・意思決定への干渉）の四群十六類型に整理し、ウィリアム・プロッサーが1960年『Privacy』（カリフォルニア・ロー・レビュー48巻383–423頁）で示した四つの不法行為類型を情報社会向けに拡張した。2008年『Understanding Privacy』（ハーバード大学出版局）で理論化され、プライバシーエンジニアリングやHCIで広く参照される一方、記述的で類型間の境界が重なる、米国判例に偏り普遍性への疑問が残るとの批判（アンヘル＆カロ2023年）もある。中小事業者にとっては、顧客データの取得から廃棄までの各局面で十六類型をチェックリストとして当て、特に気づかれにくい集約や目的外の二次利用を点検する実務指針となる。',
+    keyFigures: 'ダニエル・J・ソロブ（2002『Conceptualizing Privacy』／2006『A Taxonomy of Privacy』／2008『Understanding Privacy』）／ウィリアム・L・プロッサー（1960『Privacy』・4類型の不法行為論）／サミュエル・D・ウォーレン＆ルイス・D・ブランダイス（1890『The Right to Privacy』）／M・ライアン・カロ（2011『The Boundaries of Privacy Harm』）／ダニエル・キーツ・シトロン（2022『Privacy Harms』ソロブと共著）／マリア・P・アンヘル＆ライアン・カロ（2023年・批判）／対比: ヘレン・ニッセンバウム（文脈的整合性論）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=667622', type: 'academic', label: 'Daniel J. Solove (2006) "A Taxonomy of Privacy," University of Pennsylvania Law Review, Vol. 154, No. 3, pp. 477-564 — 情報収集・処理・拡散・侵入の4群16類型を提示する原論文' },
+      { url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=313103', type: 'academic', label: 'Daniel J. Solove (2002) "Conceptualizing Privacy," California Law Review, Vol. 90, No. 4, pp. 1087-1155 — プライバシーを単一定義でなく家族的類似性で捉える前段の議論' },
+      { url: 'https://www.hup.harvard.edu/books/9780674035072', type: 'academic', label: 'Daniel J. Solove (2008) Understanding Privacy, Harvard University Press — 類型論を単著として理論的に展開した書籍' },
+      { url: 'https://lawcat.berkeley.edu/record/1109651?ln=en', type: 'academic', label: 'William L. Prosser (1960) "Privacy," California Law Review, Vol. 48, No. 3, pp. 383-423 — ソロブが拡張した4つのプライバシー不法行為の原典' },
+      { url: 'https://www.repository.law.indiana.edu/ilj/vol86/iss3/8/', type: 'academic', label: 'M. Ryan Calo (2011) "The Boundaries of Privacy Harm," Indiana Law Journal, Vol. 86, No. 3, pp. 1131-1162 — ソロブ類型論を主観的害・客観的害の区別で補う後続研究' },
     ],
   },
 ];

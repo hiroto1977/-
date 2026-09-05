@@ -40,6 +40,7 @@ aliases:
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
 - [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — 同じ思想家
 - [[human-spotlight-effect-gilovich|スポットライト効果——自己の顕著性に対する過大推定バイアス]] — 同分野の近傍
+- [[human-illusion-of-transparency|透明性の錯覚]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,14 +34,8 @@ Robert Giffen ／ Alfred Marshall ／ Robert T. Jensen ／ Nolan H. Miller
 ## 関連概念
 - [[econ-backward-bending-supply-curve|後屈労働供給曲線]] — 同じ思想家
 - [[econ-tax-incidence-theory|租税帰着理論]] — 同じ思想家
-- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
-- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
-- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 出典を共有
-- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 出典を共有
-- [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 出典を共有
-- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 出典を共有
-- [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — 出典を共有
-- [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 出典を共有
+- [[econ-giffen-goods-inferior-demand|ギッフェン財と需要法則の例外——所得効果が代替効果を凌駕する極限的ケース]] — 同分野の近傍
+- [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

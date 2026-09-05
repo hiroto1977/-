@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 616
+entry_count: 617
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（616件）
+# 学習パス — 学術概念／情報社会学（617件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -19,15 +19,15 @@ tags:
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 25）
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 24）
-- [[infosoc-digital-labour|デジタル労働（digital labour）]]（接続 23）
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]]（接続 22）
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]]（接続 22）
+- [[infosoc-digital-labour|デジタル労働（digital labour）]]（接続 22）
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 22）
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 21）
 - [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]]（接続 21）
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]]（接続 21）
+- [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]]（接続 21）
 - [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]]（接続 20）
-- [[infosoc-datafication|データ化（データ化現象）]]（接続 20）
-- [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -38,6 +38,7 @@ tags:
 - 1886年: [[infosoc-polanyi-great-transformation|ポランニーの大転換（市場の埋め込みと脱埋め込み）]]
 - 1887年: [[infosoc-gemeinschaft-gesellschaft|ゲマインシャフトとゲゼルシャフト]]
 - 1890年: [[infosoc-informational-self-determination|情報自己決定権]]
+- 1890年: [[infosoc-taxonomy-of-privacy-solove|ソロブのプライバシー類型論——プライバシー侵害を情報収集・情報処理・情報拡散・侵入の四群十六類型に分ける枠組み]]
 - 1907年: [[infosoc-wisdom-of-crowds|群衆の叡智]]
 - 1908年: [[infosoc-bricolage|ブリコラージュ（文化人類学・メディア文化論）]]
 - 1910年: [[infosoc-social-exchange-theory|社会交換理論]]
@@ -135,7 +136,6 @@ tags:
 - 1986年: [[infosoc-risk-society|リスク社会（ベック）]]
 - 1987年: [[infosoc-media-priming|メディア・プライミング（政治的プライミング）]]
 - 1988年: [[infosoc-cypherpunk-movement|サイファーパンク運動]]
-- 1988年: [[infosoc-dataveillance|データヴェイランス（データ監視）]]
 - 1988年: [[infosoc-mcluhan-tetrad|メディアの四法則（テトラッド）]]
 - 1988年: [[infosoc-participatory-design|参加型デザイン（Participatory Design）]]
 - 1989年: [[infosoc-boundary-objects|境界オブジェクト（Boundary Objects）]]
@@ -243,6 +243,7 @@ tags:
 - 2012年: [[infosoc-polymedia|ポリメディア（Polymedia）]]
 - 2012年: [[infosoc-social-bots|ソーシャルボット]]
 - 2013年: [[infosoc-algorithmic-governmentality|アルゴリズム的統治性（Algorithmic Governmentality）]]
+- 2013年: [[infosoc-datafication|データ化（データ化現象）]]
 - 2013年: [[infosoc-differential-susceptibility-media-effects|メディア効果の分化感受性モデル（DSMM／Differential Susceptibility to the Media Effects Model）——同じ内容が人により違う効果を生む理由を説明する統合枠組み]]
 - 2013年: [[infosoc-digital-disconnect|デジタル・ディスコネクト（Digital Disconnect）]]
 - 2013年: [[infosoc-hybrid-media-system|ハイブリッド・メディア・システム]]

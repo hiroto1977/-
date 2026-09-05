@@ -2,23 +2,23 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 649
+entry_count: 650
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（649件）
+# 学習パス — 学術概念／人間科学（650件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 143）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 140）
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 103）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 31）
+- [[human-bias-blind-spot|バイアスの盲点]]（接続 30）
 - [[human-attribution-theory|帰属理論]]（接続 29）
-- [[human-bias-blind-spot|バイアスの盲点]]（接続 29）
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 28）
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 27）
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 27）
@@ -212,6 +212,7 @@ tags:
 - 1986年: [[human-reminiscence-bump|レミニセンス・バンプ]]
 - 1986年: [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]]
 - 1986年: [[human-terror-management|存在脅威管理理論（恐怖管理理論）]]
+- 1986年: [[human-triangular-theory-of-love-sternberg|愛の三角理論——親密さ・情熱・コミットメントの3要素とブランド・ラブへの応用]]
 - 1987年: [[human-object-permanence|対象の永続性（Object Permanence）]]
 - 1988年: [[human-allostasis|アロスタシス（Allostasis）]]
 - 1988年: [[human-allostatic-load-model|アロスタティック負荷モデル（McEwen・Stellar）]]

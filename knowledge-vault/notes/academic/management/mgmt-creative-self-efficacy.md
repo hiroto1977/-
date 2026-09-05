@@ -39,7 +39,6 @@ Pamela Tierney ／ Steven M. Farmer ／ Albert Bandura
 - [[mgmt-upper-echelons-theory|アッパー・エシュロン理論（Upper Echelons Theory）]] — 同分野の近傍
 - [[mgmt-behavioral-integrity|行動的誠実性（ビヘイビオラル・インテグリティ）]] — 同分野の近傍
 - [[mgmt-path-goal-theory-house|パス・ゴール理論——リーダーが部下の目標達成経路を整備する条件適応的指導]] — 同分野の近傍
-- [[mgmt-ethical-leadership-theory|倫理的リーダーシップ理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

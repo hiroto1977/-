@@ -2,7 +2,7 @@
 title: "law.justia.com"
 type: source-domain
 host: "law.justia.com"
-cite_count: 35
+cite_count: 36
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # law.justia.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **35 件**（リファレンス 24 ・ 公的 11）
+> [!info] 出典ドメイン索引 ・ 引用 **36 件**（リファレンス 24 ・ 公的 12）
 
 ## このドメインを出典とする項目
 
@@ -49,6 +49,7 @@ tags:
 - [[bizlaw-staggered-board-classified-board|期差任期取締役会（クラシファイド・ボード）——買収防衛策としての効果と機関投資家による解体]] — DelawareCode,Title8,§141—Boardofdirectors;classesofdirectors(subsecti…
 - [[bizlaw-successor-liability-doctrine|承継人責任の法理]] — Rayv.AladCorp.,19Cal.3d22(Cal.1977)—Justia
 - [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — Williamsv.Walker-ThomasFurnitureCo.,350F.2d445(D.C.Cir.1965)—Justia
+- [[bizlaw-vincent-v-lake-erie-private-necessity|ヴィンセント対レイク・エリー運送事件——緊急時に他人の財産を使うことは許されるが、生じた損害は賠償しなければならないという「不完全な特権」の法理]] — Vincentv.LakeErieTransportationCo.,109Minn.456,124N.W.221(Minn.1910)—…
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

@@ -31,7 +31,6 @@ Archie B. Carroll ／ Donna J. Wood
 - [Wikipedia — Corporate social responsibility](https://en.wikipedia.org/wiki/Corporate_social_responsibility) `リファレンス`
 
 ## 関連概念
-- [[mgmt-stakeholder-salience-theory|ステークホルダー顕出性理論]] — 同じ思想家
 - [[mgmt-five-forces|ファイブフォース分析（5つの競争要因）]] — 同分野の近傍
 - [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 

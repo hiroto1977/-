@@ -32,7 +32,6 @@ aliases:
 ## 関連概念
 - [[mgmt-strategic-choice-child|戦略的選択論——環境決定論に抗する意思決定者の主体的選択]] — 同じ思想家
 - [[mgmt-organizational-attention-theory|組織注意理論]] — 同分野の近傍
-- [[mgmt-contingency-theory-lawrence-lorsch|コンティンジェンシー理論——ローレンス＆ローシュの環境・組織適合と「最適解はない」命題]] — 同分野の近傍
 - [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]] — 同分野の近傍
 
 ## 関連

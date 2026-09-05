@@ -2,7 +2,7 @@
 title: "archive.org"
 type: source-domain
 host: "archive.org"
-cite_count: 26
+cite_count: 27
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # archive.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **26 件**（学術 14 ・ リファレンス 12）
+> [!info] 出典ドメイン索引 ・ 引用 **27 件**（学術 14 ・ リファレンス 13）
 
 ## このドメインを出典とする項目
 
@@ -28,6 +28,7 @@ tags:
 - [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — Schumpeter(1954)HistoryofEconomicAnalysis,OxfordUP(ed.E.B.Schumpeter)
 - [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — Tinbergen1962—ShapingtheWorldEconomy:SuggestionsforanInternationalEco…
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — Pigou1920—TheEconomicsofWelfare,Macmillan
+- [[econ-zipf-law-for-cities-gabaix|都市のジップ法則とガベックスの説明——人口は都市の順位にほぼ反比例し、ジブラの法則的な比例成長の極限として生じる]] — Zipf,G.K.(1949)HumanBehaviorandthePrincipleofLeastEffort:AnIntroducti…
 - [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — Kahneman,AttentionandEffort(Prentice-Hall,1973)
 - [[human-minority-stress-theory|マイノリティ・ストレス理論]] — Brooks(1981)MinorityStressandLesbianWomen,LexingtonBooks
 - [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — Davenport,T.H.&Beck,J.C.(2001)TheAttentionEconomy:UnderstandingtheNew…

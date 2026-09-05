@@ -34,8 +34,8 @@ Wendy K. Smith ／ Marianne W. Lewis
 ## 関連概念
 - [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 同じ思想家
 - [[mgmt-organizational-paradox-theory|組織パラドックス理論（Organizational Paradox Theory）]] — 同じ思想家
-- [[mgmt-dynamic-managerial-capabilities-adner|動的経営能力——マネジャーの人的資本・社会関係資本・認知]] — 同分野の近傍
 - [[mgmt-shared-leadership-pearce|シェアード・リーダーシップ——チーム成員間で分有され交替する影響過程]] — 同分野の近傍
+- [[mgmt-evidence-based-management|証拠に基づく経営（エビデンスに基づく経営）]] — 同分野の近傍
 - [[mgmt-technology-s-curve|技術のSカーブ]] — 同分野の近傍
 
 ## 関連

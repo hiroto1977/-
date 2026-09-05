@@ -40,9 +40,9 @@ William Blackstone ／ Herbert Hardy Cozens-Hardy ／ John Fletcher Moulton ／ 
 - [[bizlaw-environmental-law|環境法：公共信託理論・ポーター仮説・国際気候法が形成する自然環境保護の法的体系]] — 出典を共有
 - [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 出典を共有
 - [[bizlaw-parole-evidence-rule|口頭証拠排除法則]] — 出典を共有
+- [[bizlaw-rule-against-perpetuities|永久拘束禁止原則]] — 出典を共有
 - [[bizlaw-secured-transactions-ucc9|担保付取引法（UCC第9条）]] — 出典を共有
 - [[bizlaw-trade-secret-misappropriation|営業秘密の不正取得（トレード・シークレット法）]] — 出典を共有
-- [[econ-anticommons|アンチコモンズの悲劇]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

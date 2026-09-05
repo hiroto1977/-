@@ -2,7 +2,7 @@
 title: "ideas.repec.org"
 type: source-domain
 host: "ideas.repec.org"
-cite_count: 98
+cite_count: 99
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ideas.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **98 件**（学術 83 ・ リファレンス 15）
+> [!info] 出典ドメイン索引 ・ 引用 **99 件**（学術 84 ・ リファレンス 15）
 
 ## このドメインを出典とする項目
 
@@ -63,6 +63,7 @@ tags:
 - [[econ-keynesian-beauty-contest|ケインズの美人投票]] — Nagel,R.(1995)“UnravelinginGuessingGames:AnExperimentalStudy,”America…
 - [[econ-lucas-islands-monetary-misperception|ルーカスの島モデル（Lucas islands model／貨幣的誤認・信号抽出問題）——局所価格しか見えない合理的主体の誤認から右上がりの総供給曲線を導く]] — Lucas,R.E.,Jr.(1973)"SomeInternationalEvidenceonOutput-InflationTrade…
 - [[econ-lucas-paradox|ルーカスのパラドックス]] — Lucas(1990)"WhyDoesn'tCapitalFlowfromRichtoPoorCountries?",AmericanEc…
+- [[econ-lucas-span-of-control-firm-size-distribution|ルーカスのスパン・オブ・コントロール・モデル——経営者の才能分布と管理限界が企業規模の分布を決める]] — RobertE.LucasJr.(1978)"OntheSizeDistributionofBusinessFirms,"BellJour…
 - [[econ-maskin-monotonicity-nash-implementation|マスキンの遂行理論とマスキン単調性——ナッシュ均衡で社会的目標を実現できる条件]] — RePEc/IDEAS—Maskin(1999)NashEquilibriumandWelfareOptimality,ReviewofE…
 - [[econ-misallocation-tfp-hsieh-klenow|資源配分の非効率と集計的生産性——シェ＝クレノウのミスアロケーション理論（Misallocation and Aggregate TFP）]] — IDEAS/RePEcbibliographicrecord—Hsieh&Klenow(2009),QJE124(4):1403-1448
 - [[econ-neo-fisherian-effect|ネオ・フィッシャー効果（Neo-Fisherian effect／ネオ・フィッシャー命題）——名目金利の恒久的引き上げが長期的にインフレを押し上げるという反直観的命題]] — Uribe,Martín(2022)"TheNeo-FisherEffect:EconometricEvidencefromEmpiric…

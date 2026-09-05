@@ -35,7 +35,6 @@ aliases:
 - [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同じ思想家
 - [[mgmt-thompson-technology-typology|トンプソンの技術類型——技術が規定する相互依存と調整の様式]] — 同じ思想家
 - [[mgmt-strategic-choice-child|戦略的選択論——環境決定論に抗する意思決定者の主体的選択]] — 同じ思想家
-- [[mgmt-aston-studies-organization|アストン研究——組織構造の多次元的・実証的測定]] — 同分野の近傍
 - [[mgmt-configurational-theory-miller|構成的理論（ミラー）]] — 同分野の近傍
 - [[mgmt-contingency-fiedler|フィードラーのコンティンジェンシー理論——リーダー特性と状況好意性の適合]] — 同分野の近傍
 - [[mgmt-theory-x-y-mcgregor|X理論・Y理論——人間観の前提がマネジメント・スタイルを規定する]] — 同分野の近傍

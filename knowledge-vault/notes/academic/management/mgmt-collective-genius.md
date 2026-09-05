@@ -36,7 +36,7 @@ aliases:
 - [[econ-corridor-of-stability-theory|安定の回廊理論]] — 出典を共有
 - [[infosoc-techno-feudalism-theory|テクノ封建主義論]] — 出典を共有
 - [[mgmt-growth-mindset|成長マインドセット（Growth Mindset）]] — 同分野の近傍
-- [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — 同分野の近傍
+- [[mgmt-agile-scrum-organizational|アジャイル・スクラムと組織アジリティの経営論——ソフトウェア開発から経営変革へ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

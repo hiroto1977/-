@@ -36,8 +36,8 @@ Pat K. Chew／Victor Brudney／Robert C. Clark／Eric Talley／Gabriel Rauterber
 - [[bizlaw-staggered-board-classified-board|期差任期取締役会（クラシファイド・ボード）——買収防衛策としての効果と機関投資家による解体]] — 出典を共有
 - [[bizlaw-standstill-agreement|スタンドスティル契約]] — 出典を共有
 - [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 出典を共有
-- [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同分野の近傍
 - [[bizlaw-greenmail|グリーンメール（敵対的買収防衛の株式買戻し）]] — 同分野の近傍
+- [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

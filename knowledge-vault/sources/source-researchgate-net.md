@@ -2,7 +2,7 @@
 title: "researchgate.net"
 type: source-domain
 host: "researchgate.net"
-cite_count: 52
+cite_count: 53
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # researchgate.net
 
-> [!info] 出典ドメイン索引 ・ 引用 **52 件**（学術 45 ・ リファレンス 7）
+> [!info] 出典ドメイン索引 ・ 引用 **53 件**（学術 46 ・ リファレンス 7）
 
 ## このドメインを出典とする項目
 
@@ -45,6 +45,7 @@ tags:
 - [[mgmt-adaptive-performance-griffin|適応的パフォーマンス（グリフィン・ニール・パーカー）]] — Pulakos,E.D.,Arad,S.,Donovan,M.A.,&Plamondon,K.E.(2000)Adaptabilityin…
 - [[mgmt-affective-events-theory|感情イベント理論（AET）]] — Weiss&Cropanzano(1996)AffectiveEventsTheory—ResearchGate
 - [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — Appelbaum,Bailey,Berg&Kalleberg(2000)ManufacturingAdvantage(CornellUn…
+- [[mgmt-burke-litwin-causal-model-organizational-change|バーク＝リトウィン・モデル——外部環境から個人業績までを12要因の因果連鎖で結ぶ組織診断モデル]] — HermannSpangenberg&CallieTheron(2013)"AcriticalreviewoftheBurke-Litwi…
 - [[mgmt-career-construction-theory-savickas|キャリア構築理論（サビカス理論）]] — ResearchGate—Savickas(2013)Careerconstructiontheoryandpractice
 - [[mgmt-collective-efficacy-bandura|集合的効力感理論]] — Feltzetal.—DevelopmentandPreliminaryValidationoftheCollectiveEfficacy…
 - [[mgmt-competing-values|競合価値フレームワーク（CVF）]] — AReviewofStudyontheCompetingValuesFramework（2軸・4象限と因子分析的起源の学術レビュー）

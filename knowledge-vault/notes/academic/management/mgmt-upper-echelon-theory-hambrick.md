@@ -41,7 +41,7 @@ aliases:
 - [[mgmt-dynamic-managerial-cognition|動的経営認知と戦略的変化（トゥイッテル＆ロウランズ）]] — 同じ思想家
 - [[mgmt-strategic-leadership-theory|戦略的リーダーシップ理論]] — 同分野の近傍
 - [[mgmt-upper-echelons-refinement|上層部理論精緻化]] — 同分野の近傍
-- [[mgmt-stakeholder-salience-theory|ステークホルダー顕出性理論]] — 同分野の近傍
+- [[mgmt-stakeholder-salience-theory|ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性で経営者が誰に注意を払うかを予測する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

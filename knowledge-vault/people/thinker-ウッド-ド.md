@@ -2,7 +2,7 @@
 title: "ドナルド・ウッド"
 type: thinker
 person_key: "ウッド|ド"
-concept_count: 4
+concept_count: 2
 tags:
   - person
   - index
@@ -10,13 +10,11 @@ tags:
 
 # ドナルド・ウッド
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **4 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（4件）
+## 学術概念（2件）
 - [[mgmt-stakeholder-mapping-power-interest|ステークホルダー・マッピングと利害権力分析——戦略的ステークホルダー管理の実践論]] — ステークホルダー・マッピング（StakeholderMapping）とは、組織の決定に利害関係を持つ個人・集団を特定し…
-- [[mgmt-stakeholder-salience-mitchell|ステークホルダー・サリエンス（ミッチェル）]] — ステークホルダー・サリエンス（stakeholdersalience）理論は、ミッチェル・アグル・ウッド（1997）が…
-- [[mgmt-stakeholder-salience-mitchell-agle|ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性モデル]] — ロナルド・ミッチェル，ブラッドリー・エイグル，ドナ・ウッドは1997年の論文「TowardaTheoryofStake…
-- [[mgmt-stakeholder-salience-mitchell-agle-wood|ステークホルダー顕著性——権力・正統性・緊急性による利害関係者の優先順位]] — ステークホルダー顕著性（stakeholdersalience）の理論は、ロナルド・ミッチェル、ブラッドリー・アグル、…
+- [[mgmt-stakeholder-salience-theory|ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性で経営者が誰に注意を払うかを予測する]] — ステークホルダー顕出性（stakeholdersalience）理論は、ロナルド・ミッチェル、ブラッドリー・アグル、ド…
 
 ## 関連
 - 索引: [[人物索引]]

@@ -35,6 +35,7 @@ aliases:
 - [[labor-maternity-harassment|妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）]] — 出典を共有
 - [[bizlaw-installment-sales-act|割賦販売法]] — 同分野の近傍
 - [[bizlaw-administrative-procedure-act|行政手続法]] — 同分野の近傍
+- [[bizlaw-labor-tribunal|労働審判法（労働審判制度）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

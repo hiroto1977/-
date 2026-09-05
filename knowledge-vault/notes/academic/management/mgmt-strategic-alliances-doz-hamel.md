@@ -36,7 +36,6 @@ aliases:
 - [[mgmt-dominant-logic-prahalad-bettis|支配的論理——経営者の事業の捉え方が資源配分と適応を方向づける認知枠組み]] — 同じ思想家
 - [[mgmt-leadership-substitutes-kerr-jermier|リーダーシップ代替論——リーダー行動を不要化・無効化する状況要因]] — 同分野の近傍
 - [[mgmt-organizational-equilibrium|組織均衡論（誘因と貢献）]] — 同分野の近傍
-- [[mgmt-collective-genius|集合的天才（Collective Genius）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

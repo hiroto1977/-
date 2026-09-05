@@ -31,12 +31,12 @@ aliases:
 - [Wikipedia — 1% rule (Internet culture)](https://en.wikipedia.org/wiki/1%25_rule) `リファレンス`
 
 ## 関連概念
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
 - [[infosoc-information-foraging|情報採餌理論（インフォメーション・フォージング）]] — 出典を共有
 - [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 出典を共有
 - [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 出典を共有
 - [[mgmt-service-blueprint|サービス・ブループリント]] — 出典を共有
 - [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 出典を共有
-- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
 - [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]] — 出典を共有
 - [[infosoc-participatory-design|参加型デザイン（Participatory Design）]] — 出典を共有
 - [[infosoc-participatory-design-information-systems|情報システムにおける参加型デザイン]] — 出典を共有

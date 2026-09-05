@@ -31,7 +31,6 @@ aliases:
 - [Encyclopaedia Britannica, "Dark triad: Definition, Traits, Personality, & Causes" — 三特性の共有特徴（情緒的冷淡さ・二面性・攻撃性）と非病理的位置づけ](https://www.britannica.com/science/dark-triad) `リファレンス`
 
 ## 関連概念
-- [[human-occupational-burnout-maslach-leiter|職業性バーンアウト——マスラックの3次元モデルと組織的要因]] — 同分野の近傍
 - [[human-burnout|バーンアウト（燃え尽き症候群）]] — 同分野の近傍
 - [[human-defensive-pessimism-norem|防衛的悲観主義——低い期待と最悪の予行演習が不安を制御し成果を高める]] — 同分野の近傍
 

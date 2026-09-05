@@ -31,13 +31,12 @@ aliases:
 
 ## 関連概念
 - [[infosoc-copyleft-free-software|コピーレフトとフリーソフトウェア運動（ストールマン）]] — 語彙が近い
+- [[infosoc-knowledge-commons-theory|知識コモンズ理論]] — 語彙が近い
 - [[infosoc-open-source-software-movement|オープンソースソフトウェア運動——フリーソフトウェア倫理・バザール開発モデルと情報コモンズ]] — 同じ思想家
 - [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 同じ思想家
 - [[infosoc-commons-based-peer-production-benkler|コモンズ型ピア生産（ベンクラー）]] — 同じ思想家
 - [[infosoc-open-source-governance-ostrom|オープンソースガバナンスとコモンズ——オストロムの共有資源論とデジタルコモンズ]] — 同じ思想家
-- [[infosoc-knowledge-commons-theory|知識コモンズ理論]] — 同分野の近傍
 - [[infosoc-ambient-awareness|アンビエント・アウェアネス]] — 同分野の近傍
-- [[infosoc-information-goods|情報財の経済的特性（高固定費・ゼロ限界費用・非競合性・経験財）]] — 同分野の近傍
 - [[infosoc-smart-city-urban-informatics|スマートシティと都市情報学の批判的・社会技術的分析]] — 同分野の近傍
 - [[infosoc-media-system-dependency-ball-rokeach|メディア・システム依存理論——メディアへの依存が効果の強さを規定する]] — 同分野の近傍
 

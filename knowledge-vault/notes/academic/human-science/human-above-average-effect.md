@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[human-overconfidence|自信過剰（過信バイアス）]] — 同分野の近傍
 - [[human-bias-blind-spot|バイアスの盲点]] — 同分野の近傍
-- [[human-acquired-needs-theory|獲得欲求理論]] — 同分野の近傍
 - [[human-action-observation-mismatch|アクション・オブザベーション・ミスマッチ（Action-Observation Mismatch）]] — 同分野の近傍
 - [[human-akinetopsia-motion-blindness|運動盲（アキネトプシア）——動きが見えなくなる神経心理障害]] — 同分野の近傍
 - [[human-alien-hand-syndrome|エイリアンハンド症候群——手が自分の意志とは無関係に動く]] — 同分野の近傍
@@ -41,6 +40,7 @@ aliases:
 - [[human-anosognosia|病態失認（アノソグノシア / Anosognosia）]] — 同分野の近傍
 - [[human-apperceptive-mass|統覚塊（アペルツェプツィオンスマッセ）]] — 同分野の近傍
 - [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]] — 同分野の近傍
+- [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

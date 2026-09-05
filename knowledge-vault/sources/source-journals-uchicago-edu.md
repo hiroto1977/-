@@ -2,7 +2,7 @@
 title: "journals.uchicago.edu"
 type: source-domain
 host: "journals.uchicago.edu"
-cite_count: 43
+cite_count: 44
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.uchicago.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **43 件**（学術 43）
+> [!info] 出典ドメイン索引 ・ 引用 **44 件**（学術 44）
 
 ## このドメインを出典とする項目
 
@@ -29,6 +29,7 @@ tags:
 - [[econ-fiscal-federalism-tiebout|財政連邦主義とティブー・モデル（足による投票と分権定理）]] — Tiebout(1956)APureTheoryofLocalExpenditures—JournalofPoliticalEconomy
 - [[econ-hotelling-rule|ホテリングのルール（枯渇性資源）]] — Hotelling,"TheEconomicsofExhaustibleResources,"JournalofPoliticalEcon…
 - [[econ-implicit-contract-theory|暗黙的契約理論]] — Azariadis,C.(1975)"ImplicitContractsandUnderemploymentEquilibria,"Jou…
+- [[econ-lucas-span-of-control-firm-size-distribution|ルーカスのスパン・オブ・コントロール・モデル——経営者の才能分布と管理限界が企業規模の分布を決める]] — LuisGaricano(2000)"HierarchiesandtheOrganizationofKnowledgeinProducti…
 - [[econ-median-voter|中位投票者定理]] — Black,D.(1948)“OntheRationaleofGroupDecision-making”,JournalofPolitic…
 - [[econ-neo-fisherian-effect|ネオ・フィッシャー効果（Neo-Fisherian effect／ネオ・フィッシャー命題）——名目金利の恒久的引き上げが長期的にインフレを押し上げるという反直観的命題]] — Cochrane,JohnH.(2018)"Michelson-Morley,Fisher,andOccam:TheRadicalImpl…
 - [[econ-nirvana-fallacy|ニルヴァーナ・アプローチ（ニルヴァーナの誤謬）]] — Demsetz,H.(1969)"InformationandEfficiency:AnotherViewpoint,"Journalof…

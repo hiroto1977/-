@@ -34,6 +34,7 @@ aliases:
 - [[econ-varian-model-of-sales-informed-uninformed-consumers|ヴァリアンのセールのモデル——情報客と非情報客の混在が生む価格分散と特売の均衡]] — 同じ思想家
 - [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同分野の近傍
 - [[econ-monopolistic-competition|独占的競争]] — 同分野の近傍
+- [[econ-lucas-span-of-control-firm-size-distribution|ルーカスのスパン・オブ・コントロール・モデル——経営者の才能分布と管理限界が企業規模の分布を決める]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

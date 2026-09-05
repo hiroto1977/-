@@ -2,7 +2,7 @@
 title: "law.cornell.edu"
 type: source-domain
 host: "law.cornell.edu"
-cite_count: 150
+cite_count: 151
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # law.cornell.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **150 件**（リファレンス 125 ・ 公的 24 ・ 学術 1）
+> [!info] 出典ドメイン索引 ・ 引用 **151 件**（リファレンス 126 ・ 公的 24 ・ 学術 1）
 
 ## このドメインを出典とする項目
 
@@ -161,6 +161,7 @@ tags:
 - [[bizlaw-unconscionability|非良心性の法理（Unconscionability）]] — CornellLII—UCC§2-302UnconscionableContractorClause
 - [[bizlaw-undue-influence|不当威圧——信頼関係の濫用による意思の歪曲と取引の取消]] — CornellLIIWex:Undueinfluence—relationshipoftrust,presumed/actual,inde…
 - [[bizlaw-vicarious-liability|代位責任（使用者責任）——被用者の不法行為について使用者が負う責任]] — CornellLIIWex:Respondeatsuperior—employerliability,courseofemployment…
+- [[bizlaw-vincent-v-lake-erie-private-necessity|ヴィンセント対レイク・エリー運送事件——緊急時に他人の財産を使うことは許されるが、生じた損害は賠償しなければならないという「不完全な特権」の法理]] — "PrivateNecessity,"Wex,LegalInformationInstitute,CornellLawSchool—リステ…
 - [[bizlaw-warranty-condition-distinction|条件と担保条項の区別——契約条項の重要性に応じた救済の差異]] — CornellLIIWex:Warranty/condition—termclassification,terminationvsdama…
 - [[bizlaw-warranty-of-merchantability|商品性の黙示的保証——商人が売る物品の通常の用途への適合性]] — CornellLII:UCC§2-314—impliedwarrantyofmerchantability,fitforordinaryp…
 - [[econ-tying|抱き合わせ販売（tying）]] — CornellLawSchool,LegalInformationInstitute(Wex):Tyingarrangement

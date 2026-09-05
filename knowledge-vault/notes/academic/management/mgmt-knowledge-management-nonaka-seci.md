@@ -39,6 +39,7 @@ aliases:
 - [[mgmt-communities-practice-wenger|実践共同体理論と組織学習のコミュニティ論（ウェンガー）]] — 同じ思想家
 - [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 同じ思想家
 - [[mgmt-ba-knowledge-creation-nonaka|場（Ba）と知識創造（野中・紺野）]] — 同分野の近傍
+- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

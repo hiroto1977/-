@@ -34,7 +34,6 @@ aliases:
 - [[mgmt-toyota-production|トヨタ生産方式（リーン生産方式）]] — 同分野の近傍
 - [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 同分野の近傍
 - [[mgmt-thompson-technology-typology|トンプソンの技術類型——技術が規定する相互依存と調整の様式]] — 同分野の近傍
-- [[mgmt-bpr|ビジネスプロセス・リエンジニアリング（BPR）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

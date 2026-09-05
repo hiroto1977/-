@@ -31,9 +31,9 @@ aliases:
 - [Acquisti, A. & Grossklags, J. “What Can Behavioral Economics Teach Us About Privacy?”（Carnegie Mellon University, Heinz College）](https://www.heinz.cmu.edu/~acquisti/papers/Acquisti-Grossklags-Chapter-Etrics.pdf) `学術`
 
 ## 関連概念
+- [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 出典を共有
 - [[infosoc-digital-materiality|デジタル・マテリアリティ]] — 出典を共有
 - [[infosoc-second-level-digital-divide|第二のデジタル・デバイド（スキル・利用の格差）]] — 出典を共有
-- [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 出典を共有
 - [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 出典を共有
 - [[infosoc-information-ecology-theory|情報生態学理論]] — 出典を共有
 - [[infosoc-social-bots|ソーシャルボット]] — 出典を共有

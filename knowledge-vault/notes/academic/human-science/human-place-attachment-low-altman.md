@@ -35,7 +35,6 @@ aliases:
 - [[human-illusory-correlation|錯誤相関]] — 同じ思想家
 - [[infosoc-social-penetration-altman-taylor|社会的浸透理論（アルトマン＝テイラー）——自己開示と関係の深化]] — 同じ思想家
 - [[human-place-attachment-theory-scannell|場所愛着理論——人間-場所間の情動的絆の三次元モデル]] — 同じ思想家
-- [[human-social-identity-threat|社会的アイデンティティ脅威]] — 同分野の近傍
 - [[human-nostalgia-psychology-sedikides|ノスタルジアの心理学——過去への情緒的回帰と自己連続性の維持]] — 同分野の近傍
 
 ## 関連

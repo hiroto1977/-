@@ -27,7 +27,7 @@ R・エドワード・フリーマン ／ ミルトン・フリードマン ／ 
 
 ## 出典
 - [Business Roundtable (2019) Statement on the Purpose of a Corporation — businessroundtable.org（181 CEO署名声明）](https://www.businessroundtable.org/business-roundtable-redefines-the-purpose-of-a-corporation-to-promote-an-economy-that-serves-all-americans) `リファレンス`
-- [Freeman, R. E. (1984) Strategic Management: A Stakeholder Approach — Pitman Publishing（ステークホルダー理論の原典）](https://doi.org/10.2307/2095lass) `学術`
+- [Freeman, R. E. (1984) Strategic Management: A Stakeholder Approach — Pitman（Cambridge University Press 2010 年再刊の DOI。旧 URL 10.2307/2095lass は存在しない DOI だったため差し替え）](https://doi.org/10.1017/CBO9781139192675) `学術`
 - [Mayer, C. (2018) Prosperity: Better Business Makes the Greater Good — Oxford University Press](https://global.oup.com/academic/product/prosperity-9780198799887) `学術`
 - [Wikipedia: Stakeholder capitalism — history, BRT 2019 statement, and critique of purpose-washing](https://en.wikipedia.org/wiki/Stakeholder_capitalism) `リファレンス`
 

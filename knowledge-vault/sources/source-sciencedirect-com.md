@@ -2,7 +2,7 @@
 title: "sciencedirect.com"
 type: source-domain
 host: "sciencedirect.com"
-cite_count: 129
+cite_count: 131
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # sciencedirect.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **129 件**（学術 117 ・ リファレンス 12）
+> [!info] 出典ドメイン索引 ・ 引用 **131 件**（学術 119 ・ リファレンス 12）
 
 ## このドメインを出典とする項目
 
@@ -44,6 +44,8 @@ tags:
 - [[econ-kemp-wan-customs-union|ケンプ＝ウァンの定理（Kemp-Wan Theorem／1976）——どんな国の組み合わせでも、域外との貿易を変えない共通関税で必ず厚生改善的な関税同盟をつくれる]] — Kemp,M.C.,&Wan,H.Y.,Jr.(1976).AnElementaryPropositionConcerningtheFor…
 - [[econ-laffer-curve-supply-side|ラッファー曲線——供給側経済学と税率・税収の非線形関係]] — Fullerton,D.(1982)OnthePossibilityofanInverseRelationshipbetweenTaxRa…
 - [[econ-lindahl-equilibrium|リンダール均衡（リンダール価格）]] — JournalofPublicEconomics「TheSamuelsonconditionandtheLindahlschemeinne…
+- [[econ-lucas-span-of-control-firm-size-distribution|ルーカスのスパン・オブ・コントロール・モデル——経営者の才能分布と管理限界が企業規模の分布を決める]] — KazukiOnji(2009)"TheResponseofFirmstoEligibilityThresholds:Evidencefr…
+- [[econ-lucas-span-of-control-firm-size-distribution|ルーカスのスパン・オブ・コントロール・モデル——経営者の才能分布と管理限界が企業規模の分布を決める]] — NezihGuner,GustavoVenturaandYiXu(2008)"MacroeconomicImplicationsofSiz…
 - [[econ-overshooting-model|ドーンブッシュ・オーバーシューティング・モデル（Dornbusch Overshooting Model）]] — Bjørnland(2009)MonetaryPolicyandExchangeRateOvershooting:DornbuschWas…
 - [[econ-overshooting-model|ドーンブッシュ・オーバーシューティング・モデル（Dornbusch Overshooting Model）]] — ShiftsinMonetaryPolicyandExchangeRateDynamics:IsDornbusch'sOvershooti…
 - [[econ-price-discrimination|価格差別（price discrimination）]] — ScienceDirectTopics—PriceDiscrimination:anoverview

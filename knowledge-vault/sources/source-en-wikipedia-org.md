@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2271
+cite_count: 2270
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2271 件**（リファレンス 2271）
+> [!info] 出典ドメイン索引 ・ 引用 **2270 件**（リファレンス 2270）
 
 ## このドメインを出典とする項目
 
@@ -350,6 +350,7 @@ tags:
 - [[bizlaw-vandervell-v-irc|ヴァンダーヴェル対内国歳入庁——復帰信託と衡平法上の権益の処分]] — Wikipedia:VandervellvIRC[1967]2AC291—resultingtrust,LPA1925s.53(1)(c)…
 - [[bizlaw-veil-piercing-corporate-liability|法人格否認の法理と株主責任（コーポレート・ベール）]] — Wikipedia:Piercingthecorporateveil—corporateliability
 - [[bizlaw-vicarious-liability|代位責任（使用者責任）——被用者の不法行為について使用者が負う責任]] — Wikipedia:Vicariousliability—respondeatsuperior,ListervHesleyHall,clo…
+- [[bizlaw-vincent-v-lake-erie-private-necessity|ヴィンセント対レイク・エリー運送事件——緊急時に他人の財産を使うことは許されるが、生じた損害は賠償しなければならないという「不完全な特権」の法理]] — Ploofv.Putnam,81Vt.471,71A.188(Vt.1908)—私的緊急避難による立入り特権を認めた先例としての事実関係と…
 - [[bizlaw-wagon-mound-remoteness|ウェイゴン・マウンド事件——過失責任における損害の「予見可能性」]] — Wikipedia:RemotenessinEnglishlaw—WagonMound,reasonableforeseeability,…
 - [[bizlaw-wagon-mound-remoteness|ウェイゴン・マウンド事件——過失責任における損害の「予見可能性」]] — Wikipedia:TheWagonMound(No1)[1961]AC388—remotenessinnegligence,reason…
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — Wikipedia:Waiver—voluntaryrelinquishmentofcontractualrightsoverview
@@ -2207,9 +2208,7 @@ tags:
 - [[mgmt-sociotechnical-systems|社会技術システム論（Sociotechnical Systems Theory）]] — Wikipedia—SociotechnicalSystem
 - [[mgmt-stakeholder-capitalism-freeman|ステークホルダー資本主義と企業の目的（フリーマン）]] — Wikipedia:Stakeholdercapitalism—corporategovernance
 - [[mgmt-stakeholder-integration-freeman|ステークホルダー統合戦略（フリーマン）]] — Wikipedia:Stakeholdertheory—Freeman,descriptive/instrumental/normativ…
-- [[mgmt-stakeholder-salience-mitchell|ステークホルダー・サリエンス（ミッチェル）]] — Wikipedia:Stakeholdertheory—Mitchell,Agle&Wood,threeattributes,salien…
-- [[mgmt-stakeholder-salience-mitchell-agle|ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性モデル]] — Wikipedia:Stakeholdertheory—salience,power,legitimacy,urgency,Freeman
-- [[mgmt-stakeholder-salience-mitchell-agle-wood|ステークホルダー顕著性——権力・正統性・緊急性による利害関係者の優先順位]] — Wikipedia:Stakeholdersalience—Mitchell,Agle&Wood,power/legitimacy/urg…
+- [[mgmt-stakeholder-salience-theory|ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性で経営者が誰に注意を払うかを予測する]] — Wikipedia:Stakeholdertheory—Mitchell,Agle&Woodの三属性・顕出性の類型・ESGマテリアリティ
 - [[mgmt-stakeholder-theory-freeman-strategic|ステークホルダー理論——フリーマンの戦略的管理と全ステークホルダー利害調整]] — Wikipedia:Stakeholdertheory—corporatepurposeandethics
 - [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]] — Wikipedia:SimonSinek—GoldenCircle,StartWithWhy,purpose-drivenleadersh…
 - [[mgmt-stp-marketing|STPマーケティング]] — Wikipedia—Segmenting-targeting-positioning（STP,Kotler;STP戦略vs4P戦術）

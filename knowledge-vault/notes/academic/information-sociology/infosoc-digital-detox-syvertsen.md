@@ -31,6 +31,7 @@ aliases:
 - [Wikipedia: Digital detox — デジタルデトックスの定義と社会的意義の概説](https://en.wikipedia.org/wiki/Digital_detox) `リファレンス`
 
 ## 関連概念
+- [[infosoc-visibility-digital-thompson|新しい可視性——デジタルメディアによる権力と監視の変容]] — 同分野の近傍
 - [[infosoc-digital-detox|デジタルデトックス]] — 同分野の近傍
 - [[infosoc-digital-wellbeing|デジタル・ウェルビーイング]] — 同分野の近傍
 - [[infosoc-attention-ecology|注意のエコロジー（Ecology of Attention）]] — 同分野の近傍

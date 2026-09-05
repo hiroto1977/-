@@ -37,6 +37,7 @@ Mark Warschauer ／ Jan van Dijk ／ Manuel Castells
 - [[mgmt-sensegiving-gioia|センスギビング理論（ジョイア＆チッタンパリー）]] — 出典を共有
 - [[mgmt-lmx-theory|LMX理論（リーダー・メンバー交換理論）]] — 出典を共有
 - [[infosoc-media-literacy|メディア・リテラシー]] — 出典を共有
+- [[mgmt-burke-litwin-causal-model-organizational-change|バーク＝リトウィン・モデル——外部環境から個人業績までを12要因の因果連鎖で結ぶ組織診断モデル]] — 出典を共有
 - [[mgmt-sensemaking-weick|意味構築（オーガニゼーショナル・センスメーキング）]] — 出典を共有
 - [[infosoc-script-akrich|技術の「スクリプト」（アクリッシュ）——設計者が物に書き込む利用者像]] — 同分野の近傍
 - [[infosoc-second-level-digital-divide|第二のデジタル・デバイド（スキル・利用の格差）]] — 同分野の近傍

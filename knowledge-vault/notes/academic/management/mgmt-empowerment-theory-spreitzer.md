@@ -34,10 +34,10 @@ Gretchen M. Spreitzer ／ Kenneth W. Thomas ／ Betty A. Velthouse
 ## 関連概念
 - [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 同じ思想家
 - [[mgmt-resource-dependence|資源依存理論]] — 出典を共有
+- [[mgmt-knowledge-hiding-behavior|知識隠蔽行動理論]] — 同分野の近傍
 - [[mgmt-psychological-empowerment-spreitzer|心理的エンパワーメント——仕事への内発的動機を構成する四つの認知]] — 同分野の近傍
 - [[mgmt-illegitimate-tasks-semmer|不当な課業——役割や自尊心にそぐわない仕事がストレスを生む]] — 同分野の近傍
 - [[mgmt-empowering-leadership-ahearne|エンパワリング・リーダーシップ——権限を分かち自律を高めるリーダー]] — 同分野の近傍
-- [[mgmt-knowledge-hiding-behavior|知識隠蔽行動理論]] — 同分野の近傍
 - [[mgmt-workplace-deviance-theory|職場逸脱行動理論]] — 同分野の近傍
 
 ## 関連

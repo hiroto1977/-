@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[mgmt-okr|OKR（目標と主要な結果）]] — 出典を共有
+- [[mgmt-burke-litwin-causal-model-organizational-change|バーク＝リトウィン・モデル——外部環境から個人業績までを12要因の因果連鎖で結ぶ組織診断モデル]] — 同分野の近傍
 - [[mgmt-management-fashion-abrahamson|経営ファッション論——経営技法の流行とその供給・需要の力学]] — 同分野の近傍
-- [[mgmt-kanban|かんばん方式]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

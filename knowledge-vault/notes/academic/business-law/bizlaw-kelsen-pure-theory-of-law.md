@@ -31,16 +31,8 @@ aliases:
 - [Kelsen, H. (1967). Pure Theory of Law (trans. Max Knight). University of California Press.](https://archive.org/details/puretheoryoflaw00kels) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
-- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 出典を共有
-- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 出典を共有
-- [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 出典を共有
-- [[econ-giffen-good-theory|ギッフェン財理論]] — 出典を共有
-- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 出典を共有
-- [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — 出典を共有
-- [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 出典を共有
-- [[human-minority-stress-theory|マイノリティ・ストレス理論]] — 出典を共有
-- [[infosoc-digital-nomadism|デジタルノマディズム（場所非依存型ナレッジワーク）]] — 出典を共有
+- [[bizlaw-calvo-doctrine|カルヴォ・ドクトリン（Calvo Doctrine）]] — 同分野の近傍
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

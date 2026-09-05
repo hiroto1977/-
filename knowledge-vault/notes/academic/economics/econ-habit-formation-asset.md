@@ -40,7 +40,7 @@ aliases:
 - [[econ-interest-rate-term-structure-expectations|金利の期間構造と期待仮説——イールドカーブ理論と金融政策の波及経路]] — 同じ思想家
 - [[econ-modigliani-cohn-inflation-illusion|モディリアーニ＝コーンのインフレ錯覚——株式市場はインフレで株を過小評価する]] — 同じ思想家
 - [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 同分野の近傍
-- [[econ-search-matching-theory-diamond-mortensen|サーチ・マッチング理論——労働市場の摩擦と失業の均衡モデル]] — 同分野の近傍
+- [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

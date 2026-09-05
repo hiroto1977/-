@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経営学"
 type: flashcard-deck
 deck_key: "academic-management"
-card_count: 664
+card_count: 662
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経営学（664枚）
+# フラッシュカード — 学術概念／経営学（662枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -168,6 +168,8 @@ tags:
   - **A:** ドイツの社会学者マックス・ウェーバーが、近代社会で最も合理的・効率的な組織管理形態として理念型（ideal type）で定式化した組織モデル。（→ [[mgmt-bureaucracy]]）
 - **Q:** クロジエの官僚制現象——規則の増殖が不確実性支配という権力を生み悪循環を招く
   - **A:** フランスの社会学者ミシェル・クロジエが『Le Phénomène bureaucratique』（1963年、Éditions du Seuil）、英訳『The Bureaucratic Phenomenon』（1964年、University of Chicago Press）で提示した組織理論。（→ [[mgmt-bureaucratic-phenomenon-crozier]]）
+- **Q:** バーク＝リトウィン・モデル——外部環境から個人業績までを12要因の因果連鎖で結ぶ組織診断モデル
+  - **A:** バーク＝リトウィン・モデルは、W・ウォーナー・バークとジョージ・H・リトウィンが1992年にJournal of Management誌18巻3号（523–545頁）で発表した、組織の業績と変革を12要因の因果連鎖として描く診断モデルである。起源はリトウィンとストリンガーの組織風土研究『Motivation and Organizational Climate』（1968）に遡る。（→ [[mgmt-burke-litwin-causal-model-organizational-change]]）
 - **Q:** ビジネス・エコシステム——企業が共進化する競争と協調の生態系
   - **A:** ビジネス・エコシステム（business ecosystem）は、ジェームズ・ムーアが1993年の論文「捕食者と獲物——競争の新しい生態学」で提唱した概念で、企業を単独の業界内で競う存在としてではなく、業界の境界を越えて相互依存する生態系の一員として捉える視座を提示した。（→ [[mgmt-business-ecosystem-moore]]）
 - **Q:** ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク
@@ -1078,14 +1080,8 @@ tags:
   - **A:** ステークホルダー統合戦略（stakeholder integration）は、フリーマン（1984）の『Strategic Management: A Stakeholder Approach』を基盤として発展した、企業が株主のみならず顧客・従業員・サプライヤー・地域社会・規制当局等の多様なステークホルダーの利益を戦略計画に組み込む経営アプローチである。（→ [[mgmt-stakeholder-integration-freeman]]）
 - **Q:** ステークホルダー・マッピングと利害権力分析——戦略的ステークホルダー管理の実践論
   - **A:** ステークホルダー・マッピング（Stakeholder Mapping）とは、組織の決定に利害関係を持つ個人・集団を特定し、その影響力（権力）と関心度（利害）を二次元で分類する分析ツールであり、エドワード・フリーマンのステークホルダー理論（1984年）を実務的に具体化したフレームワークである。（→ [[mgmt-stakeholder-mapping-power-interest]]）
-- **Q:** ステークホルダー・サリエンス（ミッチェル）
-  - **A:** ステークホルダー・サリエンス（stakeholder salience）理論は、ミッチェル・アグル・ウッド（1997）が提唱した、マネジャーが誰をステークホルダーとして認識し優先するかを規定する三属性——①権力（power: 意図した結果を押し付ける能力）、②合法性（legitimacy: 主張が社会的に正当とみなされる程度）、③緊急性（urgency: タイムリーな対応を要求する程度）——の組み合わせで説明するフレームワークである。（→ [[mgmt-stakeholder-salience-mitchell]]）
-- **Q:** ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性モデル
-  - **A:** ロナルド・ミッチェル，ブラッドリー・エイグル，ドナ・ウッドは1997年の論文「Toward a Theory of Stakeholder Identification and Salience」において，経営者がどのステークホルダーに注意を向けるかを決定する「ステークホルダー顕出性（stakeholder salience）」の理論的枠組みを提示した。（→ [[mgmt-stakeholder-salience-mitchell-agle]]）
-- **Q:** ステークホルダー顕著性——権力・正統性・緊急性による利害関係者の優先順位
-  - **A:** ステークホルダー顕著性（stakeholder salience）の理論は、ロナルド・ミッチェル、ブラッドリー・アグル、ドナ・ウッドが1997年の論文「ステークホルダーの識別と顕著性の理論に向けて」で提示した枠組みで、「誰が、あるいは何が本当に重要なのか」という問い——経営者は数あるステークホルダー（利害関係者）のうち、どれに注意を払い、その要求を優先すべきか——に答えようとする。（→ [[mgmt-stakeholder-salience-mitchell-agle-wood]]）
-- **Q:** ステークホルダー顕出性理論
-  - **A:** Mitchell・Agle・Wood（1997）が提唱。パワー・正当性・緊急性の3属性の組合せによりステークホルダーを7類型（休眠型・任意型・要求型・支配型・危険型・依存型・確定型）に分類し、経営者が注目する優先度を規定する理論。Freeman のステークホルダー概念が「誰でも入る」広さゆえに実務指針を欠いた問題に対し、「経営者は誰にどれだけ注意を配るか」を予測する記述理論として提出された。（→ [[mgmt-stakeholder-salience-theory]]）
+- **Q:** ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性で経営者が誰に注意を払うかを予測する
+  - **A:** ステークホルダー顕出性（stakeholder salience）理論は、ロナルド・ミッチェル、ブラッドリー・アグル、ドナ・ウッドが1997年の論文「Toward a Theory of Stakeholder Identification and Salience」（Academy of Management Review 22巻4号853–886頁）で提唱した。（→ [[mgmt-stakeholder-salience-theory]]）
 - **Q:** ステークホルダー理論——フリーマンの戦略的管理と全ステークホルダー利害調整
   - **A:** ステークホルダー理論（stakeholder theory）は，R・エドワード・フリーマンが著作『戦略的管理：ステークホルダーアプローチ』（1984年）で提唱した，企業の目的を株主利益最大化に限定せず，従業員・顧客・供給者・コミュニティ・政府などすべてのステークホルダーの利害を考慮した管理を行うべきとする規範的・道具的理論である。（→ [[mgmt-stakeholder-theory-freeman-strategic]]）
 - **Q:** スター・モデル（ガルブレイス）

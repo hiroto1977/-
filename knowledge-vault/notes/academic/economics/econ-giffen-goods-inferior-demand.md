@@ -39,6 +39,7 @@ aliases:
 - [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同じ思想家
 - [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 同じ思想家
 - [[econ-elasticity-pessimism-thesis|弾力性ペシミズム——為替レート調整による貿易収支改善への懐疑論]] — 同じ思想家
+- [[econ-giffen-good-theory|ギッフェン財理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

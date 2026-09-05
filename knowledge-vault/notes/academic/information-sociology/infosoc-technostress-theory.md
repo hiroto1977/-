@@ -33,16 +33,16 @@ Craig Brod ／ Monideepa Tarafdar ／ T. S. Ragu-Nathan ／ Bhanu S. Ragu-Nathan
 - [Technostress — Wikipedia (概念の概観と文献案内)](https://en.wikipedia.org/wiki/Technostress) `リファレンス`
 
 ## 関連概念
-- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
-- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
-- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
 - [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
-- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 出典を共有
-- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 出典を共有
-- [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 出典を共有
-- [[econ-giffen-good-theory|ギッフェン財理論]] — 出典を共有
-- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 出典を共有
-- [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — 出典を共有
+- [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
+- [[human-bias-blind-spot|バイアスの盲点]] — 出典を共有
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
+- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 出典を共有
+- [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 出典を共有
+- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 出典を共有
+- [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — 出典を共有
+- [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 出典を共有
+- [[mgmt-managerial-cognition|経営者認知理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

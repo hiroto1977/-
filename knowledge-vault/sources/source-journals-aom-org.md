@@ -2,7 +2,7 @@
 title: "journals.aom.org"
 type: source-domain
 host: "journals.aom.org"
-cite_count: 72
+cite_count: 73
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.aom.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **72 件**（学術 72）
+> [!info] 出典ドメイン索引 ・ 引用 **73 件**（学術 73）
 
 ## このドメインを出典とする項目
 
@@ -68,6 +68,7 @@ tags:
 - [[mgmt-social-capital-intellectual-capital-nahapiet-ghoshal|ナハピエト＝ゴシャールの社会関係資本論——構造的・関係的・認知的の三次元による知的資本創造と組織の優位性]] — Tsai,W.&Ghoshal,S.(1998).SocialCapitalandValueCreation:TheRoleofIntra…
 - [[mgmt-social-exchange-theory|社会的交換理論]] — Cropanzano,Anthony,Daniels&Hall—SocialExchangeTheory:ACriticalRevieww…
 - [[mgmt-stakeholder-mapping-power-interest|ステークホルダー・マッピングと利害権力分析——戦略的ステークホルダー管理の実践論]] — Mitchell,R.K.etal.(1997)TowardaTheoryofStakeholderIdentificationandSa…
+- [[mgmt-stakeholder-salience-theory|ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性で経営者が誰に注意を払うかを予測する]] — Agle,B.R.,Mitchell,R.K.&Sonnenfeld,J.A.(1999)WhoMatterstoCEOs?AnInves…
 - [[mgmt-strategic-alliance|戦略的提携理論（Strategic Alliance Theory）]] — TheTwoFacetsofCollaboration:CooperationandCoordinationinStrategicAlli…
 - [[mgmt-strategic-human-capital|戦略的人的資本論]] — CampbellCoffKryscynski2012RethinkingSCA
 - [[mgmt-strategic-human-capital|戦略的人的資本論]] — Lepak&Snell1999AMRHRArchitecture

@@ -35,7 +35,6 @@ EU企業結合規則（EC Merger Regulation、Regulation 139/2004）は、EU域�
 - [[bizlaw-enterprise-combination|企業結合規制（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]] — 同分野の近傍
 - [[bizlaw-howey-investment-contract|投資契約の判定基準（ハウィー・テスト／Howey test）——「他人の努力から利益を期待する共同事業への金銭出資」を有価証券とみなす経済的実質基準]] — 同分野の近傍
-- [[bizlaw-antitrust-essential-facility-doctrine|不可欠施設の法理——独占インフラへのアクセス義務と競争法上のオープンアクセス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

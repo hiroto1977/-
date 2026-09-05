@@ -41,8 +41,8 @@ aliases:
 - [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 出典を共有
 - [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
 - [[bizlaw-employee-invention-japan-patent-act-35|職務発明制度（特許法第35条）——従業者の発明の帰属と「相当の利益」]] — 出典を共有
+- [[human-hindsight-bias|後知恵バイアス]] — 同分野の近傍
 - [[human-minority-influence-moscovici|少数派の影響——一貫した少数派が多数派の私的態度を変える社会的影響]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

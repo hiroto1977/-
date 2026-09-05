@@ -33,6 +33,7 @@ aliases:
 - [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ]] — 語彙が近い
 - [[agile-development|アジャイルソフトウェア開発]] — 語彙が近い
 - [[mgmt-organizational-tempo-entrainment|組織テンポとエントレインメント：時間的同期と戦略的ペーシング]] — 同分野の近傍
+- [[mgmt-collective-genius|集合的天才（Collective Genius）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

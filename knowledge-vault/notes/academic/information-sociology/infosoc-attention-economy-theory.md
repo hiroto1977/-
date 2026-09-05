@@ -42,7 +42,7 @@ Herbert Alexander Simon ／ Michael H. Goldhaber ／ Thomas H. Davenport ／ Joh
 - [[infosoc-information-overload-theory|情報過負荷理論]] — 同じ思想家
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同じ思想家
 - [[mgmt-organizational-attention-theory|組織注意理論]] — 同じ思想家
-- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
+- [[infosoc-digital-materiality|デジタル・マテリアリティ]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

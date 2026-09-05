@@ -37,7 +37,8 @@ aliases:
 - [[mgmt-identity-work-pratt|アイデンティティ・ワーク（プラット＆フォアマン）]] — 同じ思想家
 - [[mgmt-organizational-ambivalence-rothman|組織的アンビヴァレンス——矛盾する感情の共存とその機能]] — 同じ思想家
 - [[human-enactivism|エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]] — 同分野の近傍
+- [[human-acquired-needs-theory|獲得欲求理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

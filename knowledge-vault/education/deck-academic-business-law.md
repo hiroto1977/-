@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／ビジネス法務"
 type: flashcard-deck
 deck_key: "academic-business-law"
-card_count: 692
+card_count: 693
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／ビジネス法務（692枚）
+# フラッシュカード — 学術概念／ビジネス法務（693枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -1358,6 +1358,8 @@ tags:
   - **A:** 法人格否認の法理（piercing the corporate veil）とは、法人格の独立性の原則（Salomon原則）を貫通して、株主・取締役に法人の債務について直接責任を負わせる例外的法理である。英米法では「詐欺の手段」「エージェンシー（代理人）」「企業集団の統合性」「シャム（幌法人）」といった法理が発展してきたが、裁判所はその適用に慎重であり、基準の不明確さが批判されてきた。（→ [[bizlaw-veil-piercing-corporate-liability]]）
 - **Q:** 代位責任（使用者責任）——被用者の不法行為について使用者が負う責任
   - **A:** 代位責任（vicarious liability）は、ある者（通常は使用者）が、自らに過失がなくても、他者（通常は被用者）が職務の過程で行った不法行為について法的責任を負わされる、二次的かつ厳格な責任の一形態である。英米法では使用者責任の準則は「上位者が応答せよ（respondeat superior）」というラテン語の格言で表される。（→ [[bizlaw-vicarious-liability]]）
+- **Q:** ヴィンセント対レイク・エリー運送事件——緊急時に他人の財産を使うことは許されるが、生じた損害は賠償しなければならないという「不完全な特権」の法理
+  - **A:** ヴィンセント対レイク・エリー運送事件（Vincent v. Lake Erie Transportation Co., 109 Minn. 456, 124 N.W. 221、1910年）は、1905年11月にデュルースのヴィンセント桟橋で貨物を降ろしていた蒸気船レイノルズ号が暴風に見舞われ、船長が係留を解かず擦り切れる繋留索を張り替え続けたため桟橋を繰り返し損傷した事件である。（→ [[bizlaw-vincent-v-lake-erie-private-necessity]]）
 - **Q:** ウェイゴン・マウンド事件——過失責任における損害の「予見可能性」
   - **A:** ウェイゴン・マウンド事件（Overseas Tankship (UK) Ltd v Morts Dock & Engineering Co Ltd、通称 The Wagon Mound (No 1) [1961] AC 388）は、イギリス枢密院司法委員会が、過失（ネグリジェンス）の不法行為における「損害の遠隔性（remoteness of damage）」——加害者はどこまでの範囲の損害について責任を負うか——の基準を、根本的に転換…（→ [[bizlaw-wagon-mound-remoteness]]）
 - **Q:** 権利放棄の法理——契約上の権利の意図的不行使と法的効果
