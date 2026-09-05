@@ -41,8 +41,8 @@ George Arthur Akerlof ／ Shoshana Zuboff ／ Joseph Eugene Stiglitz ／ Michael
 - [[econ-henry-george-theorem|ヘンリー・ジョージ定理（Henry George Theorem）]] — 同じ思想家
 - [[econ-joint-liability-group-lending|連帯責任型グループ貸付理論（Joint Liability Group Lending）]] — 同じ思想家
 - [[econ-nutrition-efficiency-wage|栄養効率賃金理論（nutrition-based efficiency wage theory／ダスグプタ＝レイ）——貧困農村では高賃金が栄養を通じて生産性を高め、市場清算を上回る賃金と非自発的失業を均衡として生む]] — 同じ思想家
-- [[econ-optimal-taxation-theory|最適課税理論]] — 同じ思想家
 - [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 同じ思想家
+- [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

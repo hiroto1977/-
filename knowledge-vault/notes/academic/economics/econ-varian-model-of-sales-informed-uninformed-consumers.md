@@ -40,9 +40,9 @@ aliases:
 - [[infosoc-information-goods|情報財の経済的特性（高固定費・ゼロ限界費用・非競合性・経験財）]] — 同じ思想家
 - [[econ-greenwald-stiglitz-theorem|グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）]] — 同じ思想家
 - [[econ-grossman-stiglitz|グロスマン＝スティグリッツのパラドックス]] — 同じ思想家
+- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（マーリーズ）——政府が個人の能力を観察できない情報制約の下で、再分配と効率の二律背反を最小化する税率構造を導く]] — 同じ思想家
 - [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]] — 同じ思想家
 - [[econ-shapiro-stiglitz|シャピロ=スティグリッツの効率賃金モデル（怠業モデル）]] — 同じ思想家
-- [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

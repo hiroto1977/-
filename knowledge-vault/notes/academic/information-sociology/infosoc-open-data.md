@@ -30,8 +30,8 @@ aliases:
 - [データカタログサイト DATA.GO.JP（日本政府オープンデータポータル）](https://www.data.go.jp/) `公的`
 
 ## 関連概念
-- [[infosoc-open-government-data|オープンガバメントデータ：行政保有データの公開・再利用と透明性・説明責任・市民参加を促進する政策パラダイム]] — 語彙が近い
 - [[infosoc-citizen-journalism-networked|市民ジャーナリズムとネットワーク化されたニュース生産——参加・速報・正確性の緊張]] — 同じ思想家
+- [[infosoc-open-government-data|オープンガバメントデータ：行政保有データの公開・再利用と透明性・説明責任・市民参加を促進する政策パラダイム]] — 同じ思想家
 - [[infosoc-semantic-web|セマンティック・ウェブ]] — 同じ思想家
 - [[infosoc-gig-economy-platform-labor|ギグエコノミーとプラットフォーム労働の法的・社会学的課題]] — 同分野の近傍
 

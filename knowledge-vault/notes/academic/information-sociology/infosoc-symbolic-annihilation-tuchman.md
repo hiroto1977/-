@@ -36,7 +36,7 @@ aliases:
 - [[infosoc-moral-panic-cohen|モラル・パニック——メディアが増幅する社会的逸脱への集合的過剰反応]] — 同じ思想家
 - [[infosoc-textual-poaching-jenkins|テクストの密猟——ファンによる能動的なメディアの流用と作り替え]] — 同じ思想家
 - [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 同分野の近傍
-- [[infosoc-second-self-turkle|セカンド・セルフ——コンピュータが映し出す自己と精神への問い]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

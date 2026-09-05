@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: The Great Divergence (Pomeranz, 2000) — England vs. Yangzi delta, coal, New World colonies, California School](https://en.wikipedia.org/wiki/The_Great_Divergence_(book)) `リファレンス`
 
 ## 関連概念
-- [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 同じ思想家
+- [[econ-elasticity-of-substitution-ces|代替の弾力性と CES 生産関数——要素比率が相対価格にどれだけ反応するかを一つの数 σ で表し、コブ＝ダグラスとレオンチェフを特殊ケースに含む]] — 同じ思想家
 - [[econ-hicks-allen-consumer-demand|序数効用と無差別曲線分析（ヒックス＆アレン）]] — 同じ思想家
 - [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 出典を共有
 - [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 出典を共有

@@ -35,8 +35,8 @@ aliases:
 ## 関連概念
 - [[econ-stag-hunt|鹿狩りゲーム（スタグハント）]] — 出典を共有
 - [[econ-statistical-discrimination-arrow-phelps|統計的差別——不完全情報下で集団属性を代理指標とする合理的差別]] — 同分野の近傍
-- [[econ-optimal-taxation-theory|最適課税理論]] — 同分野の近傍
 - [[econ-bilateral-monopoly|双方独占]] — 同分野の近傍
+- [[econ-second-best-lipsey-lancaster|次善の理論——最適条件の一部不達成時における政策評価の困難]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

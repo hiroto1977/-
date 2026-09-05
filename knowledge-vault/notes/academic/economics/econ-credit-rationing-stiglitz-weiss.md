@@ -36,7 +36,6 @@ Joseph E. Stiglitz／Andrew Weiss
 - [[econ-joint-liability-group-lending|連帯責任型グループ貸付理論（Joint Liability Group Lending）]] — 同じ思想家
 - [[econ-lemons-problem-akerlof|レモン市場]] — 同じ思想家
 - [[econ-nutrition-efficiency-wage|栄養効率賃金理論（nutrition-based efficiency wage theory／ダスグプタ＝レイ）——貧困農村では高賃金が栄養を通じて生産性を高め、市場清算を上回る賃金と非自発的失業を均衡として生む]] — 同じ思想家
-- [[econ-optimal-taxation-theory|最適課税理論]] — 同じ思想家
 - [[econ-signaling-screening-spence|シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）]] — 同じ思想家
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家
 - [[econ-double-coincidence-of-wants|欲望の二重の一致]] — 同分野の近傍

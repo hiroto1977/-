@@ -38,6 +38,7 @@ Y=A·L^α·K^β／A=全要素生産性、α・β=産出弾力性／α+β=1で規
 - [[econ-trust-game|信頼ゲーム（投資ゲーム）]] — 出典を共有
 - [[infosoc-cultural-capital|文化資本（ブルデュー）]] — 出典を共有
 - [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — 同分野の近傍
+- [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同分野の近傍
 - [[econ-trade-balance-j-curve|Jカーブ効果と経常収支調整]] — 同分野の近傍
 - [[econ-transfer-problem-keynes|移転問題——ケインズ＝オリーン論争と国際資本移動の交易条件効果]] — 同分野の近傍
 

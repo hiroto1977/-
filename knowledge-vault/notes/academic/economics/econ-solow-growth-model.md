@@ -33,15 +33,15 @@ aliases:
 
 ## 関連概念
 - [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 語彙が近い
-- [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 同じ思想家
+- [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 語彙が近い
 - [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 同じ思想家
 - [[econ-long-run-aggregate-supply-solow-growth|ソロー成長モデルと長期総供給——資本蓄積・技術進歩・収束仮説の新古典派成長論]] — 同じ思想家
-- [[econ-ces-production|CES生産関数]] — 同じ思想家
 - [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
-- [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 同じ思想家
-- [[econ-elasticity-substitution-ces-arrow|CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化]] — 同じ思想家
 - [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — 同じ思想家
 - [[econ-golden-rule-capital-phelps|資本蓄積の黄金律——定常状態の消費を最大化する貯蓄水準]] — 同じ思想家
+- [[econ-golden-rule-saving-phelps|貯蓄の黄金律——定常状態における消費最大化の最適貯蓄率]] — 同じ思想家
+- [[econ-green-golden-rule-phelps-sustainability|黄金律と修正黄金律——フェルプスの最適貯蓄率と世代間公平性]] — 同じ思想家
+- [[econ-growth-accounting-solow-residual|成長会計とソロー残差——全要素生産性（TFP）と技術進歩の計測]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

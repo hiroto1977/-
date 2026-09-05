@@ -70,7 +70,7 @@ tags:
 - [[econ-nash-equilibrium|ナッシュ均衡（Nash equilibrium）]] — NobelPrize.org—1994Prize（非協力ゲームの均衡分析）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — NobelPrize.org—2006年経済学賞Phelps（Friedman1976も併記）
 - [[econ-nudge-theory|ナッジ理論（nudge theory）]] — NobelPrize.org—RichardH.Thaler2017（行動経済学への貢献）
-- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（ミラーリーズ）]] — NobelPrize1996:JamesMirrlees—prizemotivationandscientificbackgroundon…
+- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（マーリーズ）——政府が個人の能力を観察できない情報制約の下で、再分配と効率の二律背反を最小化する税率構造を導く]] — NobelPrize1996:JamesMirrlees—受賞理由と最適課税の科学的背景
 - [[econ-ostrom-commons|オストロムのコモンズ統治]] — NobelPrize.org—ElinorOstromFacts
 - [[econ-ostrom-commons|オストロムのコモンズ統治]] — NobelPrize.org—ThePrizeinEconomicSciences2009(Pressrelease)
 - [[econ-principal-agent|プリンシパル・エージェント理論（agency theory）]] — NobelPrize.org—2016年経済学賞Hart&Holmström（契約理論・本人-代理人モデル）

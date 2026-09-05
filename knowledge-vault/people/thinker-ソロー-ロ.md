@@ -2,7 +2,7 @@
 title: "ロバート・ソロー"
 type: thinker
 person_key: "ソロー|ロ"
-concept_count: 21
+concept_count: 18
 tags:
   - person
   - index
@@ -10,14 +10,11 @@ tags:
 
 # ロバート・ソロー
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **21 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **18 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（21件）
+## 学術概念（18件）
 - [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 資本深化（CapitalDeepening）とは、労働者一人当たりの資本ストックが時間の経過とともに増加する過程を指す。
-- [[econ-ces-production|CES生産関数]] — CES生産関数（ConstantElasticityofSubstitution、固定代替弾力性生産関数）は、資本と労…
 - [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 収束仮説（convergencehypothesis）は、新古典派のソロー成長モデルから導かれる予測で、一人当たり所得…
-- [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 代替の弾力性（ElasticityofSubstitution）は、生産要素の相対価格が変化した際に、要素投入比率がど…
-- [[econ-elasticity-substitution-ces-arrow|CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化]] — CES（ConstantElasticityofSubstitution）生産関数は、ケネス・アロー、ホリス・チェネリ…
 - [[econ-golden-rule-capital-phelps|資本蓄積の黄金律——定常状態の消費を最大化する貯蓄水準]] — 資本蓄積の黄金律（goldenruleofcapitalaccumulation）は、エドムンド・フェルプスが1961…
 - [[econ-golden-rule-saving-phelps|貯蓄の黄金律——定常状態における消費最大化の最適貯蓄率]] — 貯蓄の黄金律（GoldenRuleofSaving）とは、フェルプスが1961年にソローの新古典派成長モデルの文脈で導…
 - [[econ-green-golden-rule-phelps-sustainability|黄金律と修正黄金律——フェルプスの最適貯蓄率と世代間公平性]] — 黄金律（GoldenRule）は、エドマンド・フェルプスが1961年に提唱した、定常状態における一人当たり消費を最大化…

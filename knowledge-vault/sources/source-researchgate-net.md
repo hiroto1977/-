@@ -2,7 +2,7 @@
 title: "researchgate.net"
 type: source-domain
 host: "researchgate.net"
-cite_count: 53
+cite_count: 52
 tags:
   - source-domain
   - index
@@ -10,13 +10,12 @@ tags:
 
 # researchgate.net
 
-> [!info] 出典ドメイン索引 ・ 引用 **53 件**（学術 46 ・ リファレンス 7）
+> [!info] 出典ドメイン索引 ・ 引用 **52 件**（学術 45 ・ リファレンス 7）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-clean-hands-doctrine|クリーンハンズ法理（不正行為の抗弁）]] — BeyondChafee:AProcess-BasedTheoryofUncleanHands
 - [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — Myrdal'sTheoryofCumulativeCausation—ResearchGate
-- [[econ-ces-production|CES生産関数]] — TheOriginsoftheCESProductionFunction（Arrow-Chenery-Minhas-Solow1961の出…
 - [[econ-eaton-lipsey-local-clustering|イートン＝リプシーの局所的集塊の原理（Eaton-Lipsey's Principle of Local Clustering）]] — ResearchGaterecordofEaton&Lipsey(1975)—fullpapermetadataandabstract,p…
 - [[econ-juglar-cycle|ジュグラー・サイクル（Juglar Cycle）]] — LeGrand&Hagemann—BusinessCyclesinJuglarandSchumpeter—ResearchGate
 - [[econ-user-cost-of-capital|資本の使用者費用]] — Jorgenson,"CapitalTheoryandInvestmentBehavior,"AmericanEconomicReview…

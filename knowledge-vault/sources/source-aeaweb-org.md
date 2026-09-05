@@ -2,7 +2,7 @@
 title: "aeaweb.org"
 type: source-domain
 host: "aeaweb.org"
-cite_count: 46
+cite_count: 45
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # aeaweb.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **46 件**（学術 46）
+> [!info] 出典ドメイン索引 ・ 引用 **45 件**（学術 45）
 
 ## このドメインを出典とする項目
 
@@ -37,8 +37,7 @@ tags:
 - [[econ-lerner-index|ラーナーの独占度（ラーナー指数）]] — AEA—TheLernerIndexofMonopolyPower:OriginsandUses
 - [[econ-monetary-transmission-mechanism|金融政策の波及メカニズム（monetary transmission mechanism）]] — Mishkin(1995)SymposiumontheMonetaryTransmissionMechanism,JournalofEco…
 - [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — Shiller,R.J.2017.NarrativeEconomics.AmericanEconomicReview,107(4),967…
-- [[econ-optimal-tax-theory-diamond-mirrlees|最適税制論（ダイアモンド＆マーリース）]] — Diamond,P.A.&Mirrlees,J.A.(1971)OptimalTaxationandPublicProductionI:P…
-- [[econ-optimal-taxation-theory|最適課税理論]] — Diamond&Mirrlees(1971)OptimalTaxationandPublicProductionI:ProductionE…
+- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（マーリーズ）——政府が個人の能力を観察できない情報制約の下で、再分配と効率の二律背反を最小化する税率構造を導く]] — Diamond,P.A.&Mirrlees,J.A.(1971)OptimalTaxationandPublicProductionI:P…
 - [[econ-overborrowing-externality|過剰借入の外部性（Overborrowing Externality）]] — Bianchi(2011)OverborrowingandSystemicExternalitiesintheBusinessCycle—…
 - [[econ-public-goods-game|公共財ゲーム]] — Fehr&Gächter(2000)“CooperationandPunishmentinPublicGoodsExperiments,”…
 - [[econ-quadratic-voting-weyl|二次の投票（クアドラティック・ボーティング）——選好の強度を表す投票]] — Lalley,S.P.&Weyl,E.G.(2018)QuadraticVoting:HowMechanismDesignCanRadic…

@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同じ思想家
-- [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 同じ思想家
 - [[econ-hicks-trade-cycle|ヒックスの景気循環論——天井と床に挟まれた持続的な循環]] — 同じ思想家
 - [[econ-multiplier-accelerator-samuelson|乗数＝加速度モデル——消費乗数と投資加速度の相互作用が景気循環を生む]] — 同じ思想家
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
 - [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同じ思想家
 - [[econ-balance-of-payments-constraint-thirlwall|サールウォールの法則——国際収支制約のもとでの長期成長率]] — 同じ思想家
+- [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

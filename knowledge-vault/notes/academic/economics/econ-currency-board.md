@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[econ-triffin-dilemma|トリフィンのジレンマ]] — 同分野の近傍
-- [[econ-currency-substitution-girton|通貨代替と為替市場圧力——複数通貨選択のマクロ経済分析]] — 同分野の近傍
+- [[econ-nominal-anchor-mishkin|名目アンカー——インフレ期待を安定化する金融政策の制度的枠組み]] — 同分野の近傍
 - [[econ-k-percent-rule|フリードマンのk%ルール（貨幣供給量固定成長率準則）]] — 同分野の近傍
 
 ## 関連

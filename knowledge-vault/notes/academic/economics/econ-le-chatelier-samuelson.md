@@ -37,9 +37,9 @@ aliases:
 - [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
 - [[econ-lindahl-equilibrium|リンダール均衡（リンダール価格）]] — 同じ思想家
 - [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 同じ思想家
-- [[econ-ces-production|CES生産関数]] — 同じ思想家
 - [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
 - [[econ-damaged-goods-deneckere-mcafee|損傷財——あえて劣化させて価格差別する]] — 同じ思想家
+- [[econ-envelope-theorem-milgrom-segal|包絡線定理——最適化問題のパラメータ感応度と経済学的応用]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

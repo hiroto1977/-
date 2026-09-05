@@ -13,7 +13,7 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 73）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 74）
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 46）
 - [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]]（接続 30）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）

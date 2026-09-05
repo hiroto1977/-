@@ -2,7 +2,7 @@
 title: "nber.org"
 type: source-domain
 host: "nber.org"
-cite_count: 88
+cite_count: 86
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nber.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **88 件**（学術 87 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **86 件**（学術 85 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -36,8 +36,7 @@ tags:
 - [[econ-dual-labor-market|二重労働市場論]] — ATheoryofDualLaborMarkets—NBERWorkingPaper
 - [[econ-dutch-disease-corden|オランダ病（コーデン＝ニアリー）——資源ブームが支出効果と資源移動効果で交易財部門を萎縮させる脱工業化のメカニズム]] — Sachs,J.D.&Warner,A.M.(1995)NaturalResourceAbundanceandEconomicGrowth…
 - [[econ-efficiency-wage|効率賃金仮説（efficiency wage hypothesis）]] — Raff&Summers—DidHenryFordPayEfficiencyWages?NBERWP2101
-- [[econ-elasticity-of-substitution-ces|代替の弾力性とCES生産関数]] — Chirinko(2008)σ:TheLongandShortofIt—NBERWorkingPaper13351（推計値のサーベイ）
-- [[econ-elasticity-of-substitution-ces|代替の弾力性とCES生産関数]] — NBERchapter:RecentEmpiricalStudiesoftheCESandRelatedProductionFunctio…
+- [[econ-elasticity-of-substitution-ces|代替の弾力性と CES 生産関数——要素比率が相対価格にどれだけ反応するかを一つの数 σ で表し、コブ＝ダグラスとレオンチェフを特殊ケースに含む]] — Chirinko,R.S.(2008)σ:TheLongandShortofIt—NBERWorkingPaper13351（推計値のサー…
 - [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — NBERWorkingPaper—TheEnvironmentalKuznetsCurve:ExploringaFreshSpecific…
 - [[econ-export-led-growth-model|輸出主導型成長モデル]] — Krueger,A.O.(1987)TheImportanceofEconomicPolicyinDevelopment:Contrast…
 - [[econ-fear-of-floating|変動相場回避（フィア・オブ・フローティング）]] — Calvo&Reinhart,"FearofFloating,"NBERWorkingPaper7993
@@ -75,7 +74,6 @@ tags:
 - [[econ-new-keynesian|ニュー・ケインジアン経済学]] — NBERWorkingPaper:UnderstandingtheNew-KeynesianModel（IS曲線・NKフィリップス曲線・政…
 - [[econ-noise-trader|ノイズトレーダー]] — DSSW,"TheEconomicConsequencesofNoiseTraders",NBERWorkingPaperNo.2395
 - [[econ-okuns-law|オーカンの法則]] — LaurenceM.Balletal.,“Okun’sLaw:FitatFifty?”NBERWorkingPaperNo.18668
-- [[econ-optimal-taxation-theory|最適課税理論]] — Saez(2001)UsingElasticitiestoDeriveOptimalIncomeTaxRates,ReviewofEcon…
 - [[econ-patinkin-monetary-theory|パティンキンの貨幣理論／実質残高効果]] — Money,InterestandPrices—NBERWorkingPaper,StanleyFischer(1991)
 - [[econ-peacock-wiseman-displacement|ピーコック＝ワイズマン転位効果（Peacock-Wiseman Displacement Effect）]] — Peacock&Wiseman(1961)TheGrowthofPublicExpenditureintheUnitedKingdom—N…
 - [[econ-peso-problem|ペソ問題（Peso Problem）]] — Lewis(1995)PuzzlesinInternationalFinancialMarkets—NBERWorkingPaper4951

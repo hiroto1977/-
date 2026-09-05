@@ -30,6 +30,7 @@ W・J・コーレット ／ D・C・ヘイグ ／ フランク・ラムゼイ �
 - [Wikipedia: Optimal tax — Ramsey rule, Corlett–Hague rule, leisure complementarity](https://en.wikipedia.org/wiki/Optimal_tax) `リファレンス`
 
 ## 関連概念
+- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（マーリーズ）——政府が個人の能力を観察できない情報制約の下で、再分配と効率の二律背反を最小化する税率構造を導く]] — 同じ思想家
 - [[econ-ramsey-optimal-taxation|ラムゼイの最適課税理論——効率的税制設計と超過負担最小化の原理]] — 同じ思想家
 - [[econ-atkinson-stiglitz-theorem|アトキンソン＝スティグリッツの定理——最適な所得税があれば物品税はいらない]] — 同じ思想家
 - [[econ-diamond-mirrlees|ダイヤモンド＝マーリーズの生産効率定理]] — 同じ思想家
@@ -39,7 +40,6 @@ W・J・コーレット ／ D・C・ヘイグ ／ フランク・ラムゼイ �
 - [[econ-social-discount-rate|社会的割引率——将来の費用と便益を現在価値に換算する公共の割引率]] — 同じ思想家
 - [[econ-value-added-tax-theory|付加価値税の理論と最適間接課税]] — 同じ思想家
 - [[econ-balanced-budget-multiplier|均衡予算乗数]] — 同分野の近傍
-- [[econ-kaldor-stylized-facts-growth|カルドアの定型化された事実——長期成長に見られる6つの経験的規則性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

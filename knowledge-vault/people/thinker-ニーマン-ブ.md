@@ -1,21 +1,20 @@
 ---
-title: "ロバート・アレン"
+title: "ブレント・ニーマン"
 type: thinker
-person_key: "アレン|ロ"
-concept_count: 3
+person_key: "ニーマン|ブ"
+concept_count: 2
 tags:
   - person
   - index
 ---
 
-# ロバート・アレン
+# ブレント・ニーマン
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（3件）
+## 学術概念（2件）
 - [[econ-elasticity-of-substitution-ces|代替の弾力性と CES 生産関数——要素比率が相対価格にどれだけ反応するかを一つの数 σ で表し、コブ＝ダグラスとレオンチェフを特殊ケースに含む]] — ジョン・ヒックスは1932年の『TheTheoryofWages』で、資本と労働の間の代替の弾力性（elasticit…
-- [[econ-great-divergence-pomeranz|大分岐（ポメランツ）——なぜ西欧が先に工業化したのか]] — 大分岐（theGreatDivergence）は、歴史家ケネス・ポメランツが2000年の著作『大分岐——中国、ヨーロッ…
-- [[econ-hicks-allen-consumer-demand|序数効用と無差別曲線分析（ヒックス＆アレン）]] — ヒックス（J.R.Hicks）とアレン（R.G.D.Allen）は1934年の共著論文「価値理論の再定式化」で，基数的…
+- [[econ-kaldor-stylized-facts-growth|カルドアの定型化された事実——長期成長に見られる6つの経験的規則性]] — ニコラス・カルドアが1961年の論文「CapitalAccumulationandEconomicGrowth」（F.…
 
 ## 関連
 - 索引: [[人物索引]]

@@ -34,6 +34,7 @@ aliases:
 - [[econ-gravity-equation-structural-estimation|構造的重力モデル——貿易フローの理論的基盤と推定]] — 語彙が近い
 - [[human-dual-coding-paivio|二重符号化理論——言語と心像の二つの系統による情報処理]] — 同じ思想家
 - [[econ-prebisch-singer-thesis|プレビッシュ＝シンガー命題]] — 同分野の近傍
+- [[econ-eaton-kortum-trade|イートン＝コータム・モデル——確率的リカード・モデルと貿易の定量分析]] — 同分野の近傍
 - [[econ-ellsberg-paradox|エルズバーグのパラドックス（曖昧性回避）]] — 同分野の近傍
 
 ## 関連

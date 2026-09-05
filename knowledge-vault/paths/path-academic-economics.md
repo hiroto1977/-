@@ -2,29 +2,29 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 957
+entry_count: 950
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（957件）
+# 学習パス — 学術概念／経済学（950件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 85）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 50）
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 43）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 43）
 - [[econ-liquidity-trap|流動性のわな]]（接続 43）
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 42）
 - [[econ-agglomeration-economies|集積の経済]]（接続 42）
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 41）
-- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 39）
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 38）
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 37）
+- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]]（接続 37）
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 37）
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
-- [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]]（接続 36）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 34）
 - [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]]（接続 33）
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 33）
@@ -117,6 +117,7 @@ tags:
 - 1924年: [[econ-solow-growth-model|ソロー成長モデル]]
 - 1924年: [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]]
 - 1926年: [[econ-greenspan-put|グリーンスパン・プット]]
+- 1927年: [[econ-optimal-income-taxation-mirrlees|最適所得税理論（マーリーズ）——政府が個人の能力を観察できない情報制約の下で、再分配と効率の二律背反を最小化する税率構造を導く]]
 - 1927年: [[econ-ramsey-pricing|ラムゼイ価格（逆弾力性ルール）]]
 - 1928年: [[econ-hyperinflation|ハイパーインフレーション（超インフレ）]]
 - 1928年: [[econ-ramsey-cass-koopmans|ラムゼー＝キャス＝クープマンス・モデル（最適成長）]]
@@ -133,6 +134,7 @@ tags:
 - 1931年: [[econ-gibrat-law|ジブラの法則]]
 - 1931年: [[econ-hotelling-rule|ホテリングのルール（枯渇性資源）]]
 - 1931年: [[econ-production-fragmentation|生産のフラグメンテーション理論（ジョーンズ＝キエルジャコウスキー）]]
+- 1932年: [[econ-elasticity-of-substitution-ces|代替の弾力性と CES 生産関数——要素比率が相対価格にどれだけ反応するかを一つの数 σ で表し、コブ＝ダグラスとレオンチェフを特殊ケースに含む]]
 - 1932年: [[econ-shephards-lemma-cost-function-duality|シェパードの補題——費用関数を要素価格で微分すると条件付き要素需要が得られるという双対理論の基本命題]]
 - 1933年: [[econ-debt-deflation|負債デフレ（債務デフレ理論）]]
 - 1933年: [[econ-deposit-insurance|預金保険制度（ペイオフ）]]
@@ -215,7 +217,6 @@ tags:
 - 1960年: [[econ-rostow-stages|ロストウの経済成長段階説]]
 - 1960年: [[econ-sraffian-price|スラッファ価格理論（Sraffian Price Theory）]]
 - 1961年: [[econ-auction-theory|オークション理論]]
-- 1961年: [[econ-ces-production|CES生産関数]]
 - 1961年: [[econ-diamond-paradox-search-costs-monopoly-price|ダイアモンドのパラドックス——探索費用がごくわずかでも、均衡価格が独占価格になってしまう逆説]]
 - 1961年: [[econ-ellsberg-paradox|エルズバーグのパラドックス（曖昧性回避）]]
 - 1961年: [[econ-fei-ranis|フェイ＝ラニス・モデル]]
@@ -583,10 +584,7 @@ tags:
 - [[econ-effective-rate-of-protection|実効保護率——付加価値基準での貿易保護の実質的水準]]
 - [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]]
 - [[econ-efficient-market-hypothesis-fama|効率的市場仮説とファーマの資産価格形成論]]
-- [[econ-elasticity-of-substitution-ces|代替の弾力性とCES生産関数]]
 - [[econ-elasticity-pessimism-thesis|弾力性ペシミズム——為替レート調整による貿易収支改善への懐疑論]]
-- [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]]
-- [[econ-elasticity-substitution-ces-arrow|CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化]]
 - [[econ-endogenous-growth-romer|内生的成長理論（ローマー）]]
 - [[econ-endogenous-growth-romer-knowledge-spillovers|内生的成長論——ローマーの知識スピルオーバーとアイデアの非競合性が生む収穫逓増の成長論]]
 - [[econ-endogenous-money-post-keynesian-moore|内生的貨幣論——ムーアの信用貨幣観と中央銀行の利子率コントロール]]
@@ -799,12 +797,7 @@ tags:
 - [[econ-okuns-law-output-unemployment|オークンの法則——産出ギャップと失業率の経験的関係]]
 - [[econ-oligopoly-cournot-bertrand|複占・寡占市場の均衡理論——クールノー均衡とベルトラン均衡の対比]]
 - [[econ-opportunity-cost|機会費用（opportunity cost）]]
-- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（ミラーリーズ）]]
 - [[econ-optimal-tariff-terms-of-trade|最適関税と交易条件——大国の市場支配力と関税政策の国際経済学的根拠]]
-- [[econ-optimal-tax-theory-diamond-mirrlees|最適税制論（ダイアモンド＆マーリース）]]
-- [[econ-optimal-taxation-mirrlees|最適課税理論——ミルリーズの情報の非対称性と効率性・公平性のトレードオフ]]
-- [[econ-optimal-taxation-mirrlees-diamond|最適課税論——効率性と公平性のトレードオフにおける税制設計]]
-- [[econ-optimal-taxation-theory|最適課税理論]]
 - [[econ-option-pricing-black-scholes|ブラック＝ショールズ・オプション価格理論と金融デリバティブの数理経済学]]
 - [[econ-original-sin-eichengreen|原罪仮説——新興国の自国通貨建て対外借入の構造的不能]]
 - [[econ-output-gap|GDPギャップ（需給ギャップ）]]

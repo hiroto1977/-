@@ -38,6 +38,7 @@ aliases:
 - [[econ-mohring-effect|モーリング効果——利用者の増加が公共交通の便益を高める]] — 同分野の近傍
 - [[econ-fiscal-multiplier-keynes|財政乗数とケインズ乗数効果の経済政策論]] — 同分野の近傍
 - [[econ-harrod-domar|ハロッド＝ドーマー成長モデル]] — 同分野の近傍
+- [[econ-kaldor-stylized-facts-growth|カルドアの定型化された事実——長期成長に見られる6つの経験的規則性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

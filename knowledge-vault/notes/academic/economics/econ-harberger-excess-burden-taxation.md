@@ -32,15 +32,15 @@ aliases:
 
 ## 関連概念
 - [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 語彙が近い
-- [[econ-optimal-tax-theory-diamond-mirrlees|最適税制論（ダイアモンド＆マーリース）]] — 同じ思想家
-- [[econ-optimal-taxation-mirrlees|最適課税理論——ミルリーズの情報の非対称性と効率性・公平性のトレードオフ]] — 同じ思想家
 - [[econ-ramsey-cass-koopmans|ラムゼー＝キャス＝クープマンス・モデル（最適成長）]] — 同じ思想家
 - [[econ-burdett-mortensen-wage-dispersion|バーデット＝モーテンセン・モデル——同一労働者でも賃金が分散する均衡]] — 同じ思想家
 - [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 同じ思想家
 - [[econ-harberger-triangle-deadweight-loss|ハーバーガーの三角形——独占・課税による死荷重損失と余剰分析]] — 同じ思想家
 - [[econ-labor-market-search-diamond|労働市場の探索・マッチング理論と摩擦的失業の分析（ダイアモンド・モーテンセン・ピサリデス）]] — 同じ思想家
-- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（ミラーリーズ）]] — 同じ思想家
-- [[econ-optimal-taxation-mirrlees-diamond|最適課税論——効率性と公平性のトレードオフにおける税制設計]] — 同じ思想家
+- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（マーリーズ）——政府が個人の能力を観察できない情報制約の下で、再分配と効率の二律背反を最小化する税率構造を導く]] — 同じ思想家
+- [[econ-overlapping-generations-samuelson|世代重複モデル——有限の生涯を生きる世代が共存する動学的一般均衡]] — 同じ思想家
+- [[econ-ramsey-optimal-taxation|ラムゼイの最適課税理論——効率的税制設計と超過負担最小化の原理]] — 同じ思想家
+- [[econ-search-matching-theory-diamond-mortensen|サーチ・マッチング理論——労働市場の摩擦と失業の均衡モデル]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

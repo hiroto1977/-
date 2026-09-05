@@ -12635,21 +12635,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-ces-production',
-    discipline: 'economics',
-    title: 'CES生産関数',
-    statement:
-      'CES生産関数（Constant Elasticity of Substitution、固定代替弾力性生産関数）は、資本と労働などの投入要素間の代替の弾力性σが一定だが必ずしも1ではない生産関数である。ケネス・アロー、ホリス・チェネリー、バギチャ・ミナス、ロバート・ソローの1961年論文「資本・労働代替と経済効率」（Review of Economics and Statistics）で定式化され、頭文字からACMS（またはSMAC）関数と呼ばれる。' +
-      '代替パラメータρ（σ=1/(1−ρ)）の値に応じて、コブ＝ダグラス生産関数（弾力性σ=1）、レオンチェフ／固定比率生産関数（σ=0）、線形／完全代替の生産関数（σ→∞）を特殊・極限ケースとして包含する点が特徴である。成長理論や貿易論、マクロ経済学で広く用いられ、ディキシット＝スティグリッツの「多様性愛好」を表すCES効用関数としても応用される。弾力性が常に1に固定されるコブ＝ダグラス生産関数とは区別される。',
-    keyFigures: 'ケネス・アロー／ホリス・チェネリー／バギチャ・ミナス／ロバート・ソロー（1961, ACMS）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://en.wikipedia.org/wiki/Constant_elasticity_of_substitution', type: 'reference', label: 'Constant elasticity of substitution — Wikipedia（σ一定・コブ=ダグラス/レオンチェフ/線形の特殊ケース・ACMS 1961）' },
-      { url: 'https://www.cbo.gov/sites/default/files/cbofiles/ftpdocs/94xx/doc9497/2008-05.pdf', type: 'government', label: 'An Assessment of CES and Cobb-Douglas Production Functions — U.S. Congressional Budget Office (Eric Miller, 2008)' },
-      { url: 'https://www.researchgate.net/publication/342612626_The_Origins_of_the_CES_Production_Function', type: 'academic', label: 'The Origins of the CES Production Function（Arrow-Chenery-Minhas-Solow 1961 の出自と特殊ケース）' },
-    ],
-  },
-  {
     id: 'econ-hotelling-rule',
     discipline: 'economics',
     title: 'ホテリングのルール（枯渇性資源）',
@@ -21535,23 +21520,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-optimal-taxation-theory',
-    discipline: 'economics',
-    title: '最適課税理論',
-    statement:
-      '最適課税理論は、政府が一定の歳入を確保しつつ社会厚生を最大化する税制設計を研究する公共経済学の中核分野である。' +
-      'Ramsey（1927）は逆弾力性ルールによる最適間接税の基礎を築き、Diamond & Mirrlees（1971）は生産効率性定理を導いて最適税制下では公的部門も生産効率性を満たすべきことを示した。' +
-      'Mirrlees（1971）は情報の非対称性のもとで最適非線形所得税の理論を構築し、Atkinson & Stiglitz（1976）は所得課税が最適化されている場合には均一な財税率が望ましいことを証明した。' +
-      'Saez（2001）は補償・非補償弾力性を用いて最適限界税率の明示的公式を導出し、実証的な政策応用への道を開いた。',
-    keyFigures: 'Frank P. Ramsey／James A. Mirrlees／Peter A. Diamond／Anthony B. Atkinson／Joseph E. Stiglitz／Emmanuel Saez',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.2307/2296779', type: 'academic', label: 'Mirrlees (1971) An Exploration in the Theory of Optimum Income Taxation, Review of Economic Studies 38(2):175-208' },
-      { url: 'https://www.aeaweb.org/aer/top20/61.1.8-27.pdf', type: 'academic', label: 'Diamond & Mirrlees (1971) Optimal Taxation and Public Production I: Production Efficiency, AER 61(1):8-27' },
-      { url: 'https://www.nber.org/papers/w7628', type: 'academic', label: 'Saez (2001) Using Elasticities to Derive Optimal Income Tax Rates, Review of Economic Studies 68(1):205-229' },
-    ],
-  },
-  {
     id: 'human-minority-stress-theory',
     discipline: 'human-science',
     title: 'マイノリティ・ストレス理論',
@@ -21730,19 +21698,19 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-elasticity-of-substitution-ces',
     discipline: 'economics',
-    title: '代替の弾力性とCES生産関数',
+    title: '代替の弾力性と CES 生産関数——要素比率が相対価格にどれだけ反応するかを一つの数 σ で表し、コブ＝ダグラスとレオンチェフを特殊ケースに含む',
     statement:
-      'Hicks（1932）は著書 The Theory of Wages において、資本と労働の間の代替の弾力性（elasticity of substitution）の概念を導入し、要素比率が相対価格の変化にどの程度反応するかを一つの指標で表した。操作的には、二要素の相対価格が1％変化したときに要素投入比率が何％変化するかを示す。同概念は1933年にジョーン・ロビンソンによっても独立に導入されている。' +
-      'Arrow・Chenery・Minhas・Solow（1961）はこの概念を発展させ、代替の弾力性が定数値σをとる定常代替弾力性（CES）生産関数を定式化した。' +
-      'CES関数はコブ＝ダグラス関数（σ=1）やレオンティエフ関数（σ=0）を特殊ケースとして包含し、実証的にも広く応用されてきた。' +
-      'この枠組みは以後の成長理論・貿易理論・一般均衡分析において標準的な生産技術の記述として定着している。代替の弾力性の推計値は技術進歩・所得分配・経済成長の分析において中心的な役割を担い、とりわけ資本分配率の長期的変動を説明するうえで不可欠とされる（推計値のばらつきについては Chirinko 2008 のサーベイを参照）。',
-    keyFigures: 'Kenneth J. Arrow／Hollis B. Chenery／Bagicha S. Minhas／Robert M. Solow／John R. Hicks',
-    asOf: '2026-06',
+      'ジョン・ヒックスは1932年の『The Theory of Wages』で、資本と労働の間の代替の弾力性（elasticity of substitution）σを導入し、相対価格の変化に対する要素投入比率の変化の弾力性として要素代替の容易さを一つの数で表した。σが1より大きければ要素は代替的、小さければ補完的で、σ＝1はコブ＝ダグラス生産関数に対応する。アロー、チェネリー、ミンハス、ソローは1961年の論文『Capital-Labor Substitution and Economic Efficiency』（Review of Economics and Statistics 43巻3号）で、σが一定値をとる CES（constant elasticity of substitution）生産関数を定式化した。代替パラメータの値に応じてコブ＝ダグラス（σ＝1）、レオンチェフの固定比率（σ＝0）、完全代替の線形（σ→∞）を特殊・極限ケースとして包含し、成長理論・貿易理論・一般均衡分析の標準的な生産技術として定着した。多要素への拡張にはロイ・アレンと宇沢弘文の偏代替弾力性があり、その性質をめぐる論争からモリシマ代替弾力性も用いられる。σの推計値は技術進歩の方向・所得分配・成長の分析で中心的な役割を担い、ピケティの資本分配率上昇の議論では σ＞1 かどうかが論争になった。カラバルブニスとニーマン（2014）は σ＞1 を、オバーフィールドとラヴァル（2021）は1未満を推計するなど値は割れている（チリンコ 2008 のサーベイ）。中小企業には、賃金や設備価格の変化に応じて人手と機械をどれだけ入れ替えられるかがσに当たり、σが低い工程ほど賃上げが原価に乗るという含意がある。',
+    keyFigures: 'ジョン・ヒックス（1932『The Theory of Wages』代替の弾力性の導入）／ケネス・アロー、ホリス・チェネリー、バギチャ・ミンハス、ロバート・ソロー（1961 CES 生産関数＝ACMS）／ロイ・アレン＆宇沢弘文（偏代替弾力性）／ロバート・チリンコ（2008 推計値のサーベイ）／ルカス・カラバルブニス＆ブレント・ニーマン（2014 QJE）／エゼキエル・オバーフィールド＆デヴィン・ラヴァル（2021 Econometrica）／対比: コブ＝ダグラス生産関数（σ＝1 に固定）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.2307/1927286', type: 'academic', label: 'Arrow, Chenery, Minhas & Solow (1961) Capital-Labor Substitution and Economic Efficiency, Review of Economics and Statistics 43(3):225-250' },
-      { url: 'https://link.springer.com/referenceworkentry/10.1057/978-1-349-95121-5_468-1', type: 'reference', label: 'Elasticity of Substitution — The New Palgrave Dictionary of Economics (Springer)' },
-      { url: 'https://www.nber.org/system/files/chapters/c1477/c1477.pdf', type: 'academic', label: 'NBER chapter: Recent Empirical Studies of the CES and Related Production Functions' },
-      { url: 'https://www.nber.org/papers/w13351', type: 'academic', label: 'Chirinko (2008) σ: The Long and Short of It — NBER Working Paper 13351（推計値のサーベイ）' },
+      { url: 'https://doi.org/10.2307/1927286', type: 'academic', label: 'Arrow, K. J., Chenery, H. B., Minhas, B. S. & Solow, R. M. (1961) Capital-Labor Substitution and Economic Efficiency — Review of Economics and Statistics 43(3), 225–250（CES 生産関数の原典）' },
+      { url: 'https://academic.oup.com/qje/article-abstract/129/1/61/1899422', type: 'academic', label: 'Karabarbounis, L. & Neiman, B. (2014) The Global Decline of the Labor Share — Quarterly Journal of Economics 129(1), 61–103（労働分配率の低下から σ＞1 を推計）' },
+      { url: 'https://doi.org/10.3982/ECTA12807', type: 'academic', label: 'Oberfield, E. & Raval, D. (2021) Micro Data and Macro Technology — Econometrica（ミクロデータからの σ 推計）' },
+      { url: 'https://www.nber.org/papers/w13351', type: 'academic', label: 'Chirinko, R. S. (2008) σ: The Long and Short of It — NBER Working Paper 13351（推計値のサーベイ）' },
+      { url: 'https://link.springer.com/referenceworkentry/10.1057/978-1-349-95121-5_468-1', type: 'reference', label: 'Elasticity of Substitution — The New Palgrave Dictionary of Economics（定義と歴史）' },
+      { url: 'https://www.cbo.gov/sites/default/files/cbofiles/ftpdocs/94xx/doc9497/2008-05.pdf', type: 'government', label: 'An Assessment of CES and Cobb-Douglas Production Functions — U.S. Congressional Budget Office (Eric Miller, 2008)' },
+      { url: 'https://en.wikipedia.org/wiki/Elasticity_of_substitution', type: 'reference', label: 'Wikipedia: Elasticity of substitution — 代替の弾力性の定義と拡張の概説' },
     ],
   },
   {
@@ -29095,15 +29063,19 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-optimal-income-taxation-mirrlees',
     discipline: 'economics',
-    title: '最適所得税理論（ミラーリーズ）',
-    statement: '最適所得税理論は、ミラーリーズ（1971）が情報の非対称性（政府は個人の稼得能力を観察できない）の下で社会厚生を最大化する累進課税の最適構造を導出したことに始まる。高能力者ほど多く稼ぐが、税率が高いと労働供給を抑制する。最適税率はラムゼー・ルールの逆弾力性命題を非線形に拡張した「ミラーリーズ条件」に基づき、最高税率は1より小さく通常は逓減的となる。ダイアモンド＆サエズ（2011）の「45%最適最高税率」は高所得弾力性を反映した実証的改訂で政策論争を喚起した。最適非線形所得税は、情報制約の下で再分配と効率の二律背反を定式化した公共経済学の中核モデルであり、1996年ノーベル経済学賞（ヴィックリー共同受賞）の対象となった。',
-    keyFigures: 'ジェームズ・ミラーリーズ ／ ピーター・ダイアモンド ／ エマニュエル・サエズ ／ ウィリアム・ヴィックリー',
-    asOf: '2026-06-26',
+    title: '最適所得税理論（マーリーズ）——政府が個人の能力を観察できない情報制約の下で、再分配と効率の二律背反を最小化する税率構造を導く',
+    statement:
+      'ジェームズ・マーリーズは1971年の論文『An Exploration in the Theory of Optimum Income Taxation』（Review of Economic Studies 38巻2号）で、政府が個人の稼得能力を観察できず所得しか見えないという情報の非対称性の下で、社会厚生を最大化する非線形所得税の構造を導いた。高い税率は再分配を進める一方で労働供給を抑えるため、最適な限界税率は所得分布・労働供給の弾力性・社会的厚生関数の三要素で決まり、モデルの仮定の下では最上位の限界税率がゼロになる（ゼロ最上位税率定理）という直感に反する帰結も示した。この理論はフランク・ラムゼイ（1927）の逆弾力性ルールによる最適間接税、ダイアモンドとマーリーズ（1971）の生産効率定理、アトキンソンとスティグリッツ（1976）の「最適な非線形所得税があれば差別的物品税は不要」という定理と並ぶ最適課税論の中核をなし、1996年のノーベル経済学賞の対象となった。エマニュエル・サエズ（2001）は課税所得の弾力性を用いて最適限界税率の明示的な公式を導いて実証的な政策応用への道を開き、ダイアモンドとサエズ（2011）は米国の最適最高税率が現行より大幅に高くなりうると推計して論争を呼び、ピケティとサエズは上位層の税の弾力性の多くが租税回避に由来すると論じた。限界としては、ゼロ最上位税率が現実の分布では最上位のごく一点にしか当てはまらないこと、行動的反応や租税回避の扱い、社会的厚生関数の選択に結論が依存することが指摘される。中小企業には、税率より課税ベースと控除の設計が行動を変えること、経営者報酬や所得分割の選択が税の弾力性として現れることの理解が含意となる。',
+    keyFigures: 'ジェームズ・マーリーズ（1971 RES／1996 ノーベル経済学賞）／ピーター・ダイアモンド（1971 生産効率定理／2011 サエズと共著）／エマニュエル・サエズ（2001 RES 弾力性による最適税率公式）／アンソニー・アトキンソン＆ジョセフ・スティグリッツ（1976 定理）／対比: フランク・ラムゼイ（1927 最適間接税の逆弾力性ルール）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.2307/2296779', type: 'academic', label: 'Mirrlees, J. A. (1971) An Exploration in the Theory of Optimum Income Taxation — Review of Economic Studies, 38(2), 175–208' },
-      { url: 'https://doi.org/10.1257/jep.25.4.165', type: 'academic', label: 'Diamond, P. & Saez, E. (2011) The Case for a Progressive Tax: From Basic Research to Policy Recommendations — Journal of Economic Perspectives, 25(4), 165–190' },
-      { url: 'https://en.wikipedia.org/wiki/Optimal_tax', type: 'reference', label: 'Wikipedia: Optimal tax — Ramsey rule, Mirrlees model, and Diamond-Saez extension' },
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1996/mirrlees/facts/', type: 'reference', label: 'Nobel Prize 1996: James Mirrlees — prize motivation and scientific background on optimal taxation' },
+      { url: 'https://doi.org/10.2307/2296779', type: 'academic', label: 'Mirrlees, J. A. (1971) An Exploration in the Theory of Optimum Income Taxation — Review of Economic Studies 38(2), 175–208（原典）' },
+      { url: 'https://doi.org/10.1111/1467-937X.00166', type: 'academic', label: 'Saez, E. (2001) Using Elasticities to Derive Optimal Income Tax Rates — Review of Economic Studies 68(1), 205–229（弾力性に基づく最適税率公式）' },
+      { url: 'https://doi.org/10.1257/jep.25.4.165', type: 'academic', label: 'Diamond, P. & Saez, E. (2011) The Case for a Progressive Tax: From Basic Research to Policy Recommendations — Journal of Economic Perspectives 25(4), 165–190（政策応用と最高税率の推計）' },
+      { url: 'https://www.aeaweb.org/aer/top20/61.1.8-27.pdf', type: 'academic', label: 'Diamond, P. A. & Mirrlees, J. A. (1971) Optimal Taxation and Public Production I: Production Efficiency — American Economic Review 61(1), 8–27（AEA 公開 PDF）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/1996/mirrlees/facts/', type: 'reference', label: 'Nobel Prize 1996: James Mirrlees — 受賞理由と最適課税の科学的背景' },
+      { url: 'https://en.wikipedia.org/wiki/Optimal_tax', type: 'reference', label: 'Wikipedia: Optimal tax — Ramsey rule, Mirrlees model, zero-top-rate theorem, Saez analysis' },
+      { url: 'https://ja.wikipedia.org/wiki/%E6%9C%80%E9%81%A9%E8%AA%B2%E7%A8%8E', type: 'reference', label: 'Wikipedia（日本語）: 最適課税 — 理論と効率性・公平性の解説' },
     ],
   },
   {
@@ -30086,20 +30058,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1002/smj.576', type: 'academic', label: 'Nadkarni, S. & Narayanan, V. K. (2007) Strategic Schemas, Strategic Flexibility, and Firm Performance: The Moderating Role of Industry Clockspeed — Strategic Management Journal, 28(3), 243–270（実証研究）' },
       { url: 'https://doi.org/10.5465/ame.1998.1333922', type: 'academic', label: 'Hitt, M. A., Keats, B. W. & DeMarie, S. M. (1998) Navigating in the New Competitive Landscape — Academy of Management Executive, 12(4), 22–42（超競争環境と柔軟性）' },
       { url: 'https://en.wikipedia.org/wiki/Strategic_flexibility', type: 'reference', label: 'Wikipedia: Strategic flexibility — Volberda, operational vs strategic, hypercompetition, dynamic capabilities connection' },
-    ],
-  },
-  {
-    id: 'econ-optimal-tax-theory-diamond-mirrlees',
-    discipline: 'economics',
-    title: '最適税制論（ダイアモンド＆マーリース）',
-    statement: '最適税制論（optimal tax theory）は、ダイアモンド＆マーリース（1971）が厚生経済学的基盤に基づいて体系化した、効率性と公平性のトレードオフを数学的に分析する規範的財政学の枠組みである。ラムゼー（1927）の逆弾力性ルール（需要が非弾力的な財に高い税率を課すことで死荷重を最小化）を拡張し、マーリースは情報の非対称性（所得の観察不能）を前提とした所得税の最適税率構造を分析した。主要な結果として①頂点でのゼロ限界税率定理（最高所得者・最低所得者の最適限界税率はゼロ）、②租税の包括性（課税ベースの広さ）が重要、③第二の最善（second best）での生産効率性確保（ダイアモンド＝マーリース生産効率定理）がある。サエズ（2001）はマーリースモデルに現実的な所得分布を当てはめ、米国の最適税率が50〜70%になり得ることを示し政策論争を呼んだ。行動的最適税（Behavioral optimal tax）——Mullainathan＆Shafir型の内省バイアスを考慮した拡張——も近年の潮流である。',
-    keyFigures: 'ピーター・ダイアモンド ／ ジェームズ・マーリース ／ フランク・ラムゼー ／ エマニュエル・サエズ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://www.aeaweb.org/aer/top20/61.1.8-27.pdf', type: 'academic', label: 'Diamond, P. A. & Mirrlees, J. A. (1971) Optimal Taxation and Public Production I: Production Efficiency — American Economic Review, 61(1), 8–27（最適税制論の原典前半）（American Economic Review 61(1), 8–27。AEA 公開の論文 PDF。1971 年の本論文に DOI は確認できない）' },
-      { url: 'https://doi.org/10.2307/2296779', type: 'academic', label: 'Mirrlees, J. A. (1971) An Exploration in the Theory of Optimum Income Taxation — Review of Economic Studies, 38(2), 175–208（所得税の最適設計）' },
-      { url: 'https://doi.org/10.1111/1467-937X.00166', type: 'academic', label: 'Saez, E. (2001) Using Elasticities to Derive Optimal Income Tax Rates — Review of Economic Studies, 68(1), 205–229（現実的弾力性に基づく最適税率計算）' },
-      { url: 'https://en.wikipedia.org/wiki/Optimal_tax', type: 'reference', label: 'Wikipedia: Optimal tax — Diamond-Mirrlees, Ramsey rule, Mirrlees zero-top-rate theorem, Saez analysis' },
     ],
   },
   {
@@ -41444,19 +41402,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-elasticity-substitution-allen-uzawa',
-    discipline: 'economics',
-    title: '代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定',
-    statement: '代替の弾力性（Elasticity of Substitution）は、生産要素の相対価格が変化した際に、要素投入比率がどの程度変化するかを測る経済学の基本的概念であり、ヒックス（1932）が2要素のケースで導入した。ヒックスの代替の弾力性σは、要素価格比の変化に対する要素投入比率の変化の弾力性として定義され、σ>1なら要素間は代替的、σ<1なら補完的、σ=1はコブ＝ダグラス生産関数に対応する。アレン（1938）とウザワ（1962）は多要素への拡張としてアレン＝ウザワの偏代替弾力性（Allen-Uzawa Elasticity of Substitution, AUES）を定義したが、ブラックビーとラッセル（1989）はこの尺度の理論的問題を指摘し、モリシマ代替弾力性（MES）のより優れた性質を主張した。CES生産関数（アロー、チェネリー、ミンハス、ソロー, 1961）は一定の代替弾力性を仮定するパラメトリックな生産関数として広く使用される。近年ではカラベリスとニーマン（2014）が資本と労働の代替弾力性が1未満であるという実証的証拠を提示し、ピケティ（2014）のr>g不等式との関連で議論を呼んだ。',
-    keyFigures: 'ジョン・ヒックス ／ ロイ・アレン ／ ヒロフミ・ウザワ ／ ケネス・アロー ／ ロバート・ソロー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/1927286', type: 'academic', label: 'Arrow, Chenery, Minhas & Solow (1961) Capital-Labor Substitution and Economic Efficiency — Review of Economics and Statistics' },
-      { url: 'https://academic.oup.com/qje/article-abstract/129/1/61/1899422', type: 'academic', label: 'Karabarbounis, L. & Neiman, B. (2014) The Global Decline of the Labor Share — Quarterly Journal of Economics 129(1), 61–103（誤った AEA DOI 10.1257/aer.104.5.218 を OUP 論文ページへ差し替え）' },
-      { url: 'https://en.wikipedia.org/wiki/Elasticity_of_substitution', type: 'reference', label: 'Wikipedia: Elasticity of substitution — 代替の弾力性の定義と拡張の概説' },
-    ],
-  },
-  {
     id: 'econ-envelope-theorem-milgrom-segal',
     discipline: 'economics',
     title: '包絡線定理——最適化問題のパラメータ感応度と経済学的応用',
@@ -42071,19 +42016,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-optimal-taxation-mirrlees-diamond',
-    discipline: 'economics',
-    title: '最適課税論——効率性と公平性のトレードオフにおける税制設計',
-    statement: '最適課税論は、政府が必要な税収を確保しつつ経済的歪みを最小化し、社会厚生を最大化する税制を設計する規範的経済理論である。ミアリーズ（1971）は情報の非対称性（政府は個人の能力を直接観察できない）の下での最適所得税率スケジュールを導出し、最高限界税率が必ずしも高くなるとは限らないことを示した。ダイアモンドとミアリーズ（1971）のラムゼイ課税の拡張は、財の需要弾力性に反比例して税率を設定する逆弾力性ルールを一般化した。サーズ（2001）はミアリーズ・モデルを実証的に操作可能な形に変換し、最適限界税率が課税所得の弾力性、所得分布、社会的厚生関数の3要素で決まることを示した。アトキンソンとスティグリッツ（1976）は、最適非線形所得税が存在する場合には差別的物品税は不要であるという画期的結果を導出した。ピケティとサーズ（2013）は所得上位層の税の弾力性が主に租税回避行動に起因することを実証し、高税率の正当化根拠を提供した。',
-    keyFigures: 'ジェームズ・ミアリーズ ／ ピーター・ダイアモンド ／ エマニュエル・サーズ ／ アンソニー・アトキンソン ／ トマ・ピケティ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/2296779', type: 'academic', label: 'Mirrlees (1971) An Exploration in the Theory of Optimum Income Taxation — Review of Economic Studies' },
-      { url: 'https://doi.org/10.1257/jep.25.4.165', type: 'academic', label: 'Diamond & Saez (2011) The Case for a Progressive Tax — Journal of Economic Perspectives' },
-      { url: 'https://en.wikipedia.org/wiki/Optimal_tax', type: 'reference', label: 'Wikipedia: Optimal tax — 最適課税理論の歴史と主要結果の概説' },
-    ],
-  },
-  {
     id: 'human-dual-process-theory-kahneman-stanovich',
     discipline: 'human-science',
     title: '二重過程理論——システム1・システム2の認知的二元構造',
@@ -42592,19 +42524,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.2307/2222721', type: 'academic', label: 'Ramsey, F. (1927) A Contribution to the Theory of Taxation — Economic Journal' },
       { url: 'https://doi.org/10.2307/2296779', type: 'academic', label: 'Mirrlees, J. (1971) An Exploration in the Theory of Optimum Income Taxation — REStud' },
       { url: 'https://en.wikipedia.org/wiki/Optimal_tax', type: 'reference', label: 'Wikipedia: Optimal tax — 最適課税理論の概要' },
-    ],
-  },
-  {
-    id: 'econ-elasticity-substitution-ces-arrow',
-    discipline: 'economics',
-    title: 'CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化',
-    statement: 'CES（Constant Elasticity of Substitution）生産関数は、ケネス・アロー、ホリス・チェネリー、バハス・ミンハス、ロバート・ソローの4名が1961年に提唱した、資本と労働の代替の弾力性を一定と仮定するマクロ生産関数である。コブ=ダグラス型生産関数が代替の弾力性を1に固定するのに対し、CES関数はパラメータσによって完全補完（σ=0、レオンチェフ型）から完全代替（σ→∞、線形型）までの連続的な代替可能性を表現する。代替の弾力性はマクロ経済学において資本分配率の変動・技術進歩の方向性・所得分配の長期動向を分析する上で中核的なパラメータであり、トマ・ピケティの『21世紀の資本』における資本分配率上昇の議論でもσ>1の推定が論争を呼んだ。オビラルーの推計やクレンアウとシュロット=ロドリゲスのマクロ推計が実証的基盤を提供している。',
-    keyFigures: 'ケネス・アロー ／ ロバート・ソロー ／ ホリス・チェネリー ／ トマ・ピケティ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/1927286', type: 'academic', label: 'Arrow, K. et al. (1961) Capital-Labor Substitution and Economic Efficiency — REStat' },
-      { url: 'https://doi.org/10.3982/ECTA12807', type: 'academic', label: 'Oberfield, E. & Raval, D. (2021) Micro Data and Macro Technology — Econometrica' },
-      { url: 'https://en.wikipedia.org/wiki/Constant_elasticity_of_substitution', type: 'reference', label: 'Wikipedia: CES — CES生産関数の概要' },
     ],
   },
   {
@@ -45222,19 +45141,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.nber.org/papers/w1249', type: 'academic', label: 'Brander, J. & Spencer, B. (1983) Strategic Commitment with R&D: The Symmetric Case — Bell Journal of Economics' },
       { url: 'https://www.meti.go.jp/policy/mono_info_service/joho/conference/semicon/', type: 'government', label: '経済産業省 半導体・デジタル産業戦略 — METI' },
       { url: 'https://ja.wikipedia.org/wiki/%E7%94%A3%E6%A5%AD%E6%94%BF%E7%AD%96', type: 'reference', label: 'Wikipedia: 産業政策 — 戦略的通商政策とインダストリアル・ポリシーの解説' },
-    ],
-  },
-  {
-    id: 'econ-optimal-taxation-mirrlees',
-    discipline: 'economics',
-    title: '最適課税理論——ミルリーズの情報の非対称性と効率性・公平性のトレードオフ',
-    statement: '最適課税理論（Optimal Tax Theory）は、情報の非対称性のもとで政府が税収を確保しつつ効率性・公平性のトレードオフを最小化する税体系を設計する問題を扱う厚生経済学の分野である。ジェームズ・ミルリーズは1971年の論文「最適所得税に関する探求」で、政府が個人の能力（生産性）を直接観察できない状況での最適所得税率を情報制約付き最大化問題として定式化し、1996年ノーベル経済学賞を受賞した。重要な帰結として、能力最上位層の限界税率はゼロが最適とされ（「ゼロ最上位税率定理」）、直感に反した政策含意が議論を呼んだ。フランク・ラムゼーの「逆弾力性命題」——需要の価格弾力性が低い財ほど高い税率が望ましい——は物品税の最適設計を与える。ピーター・ダイアモンドとジェームズ・ミルリーズは「生産効率定理」（1971年）で生産側には歪みを与えない中間財非課税が望ましいことを示した。日本の消費税率引き上げ・所得税体系の見直し・金融所得課税の一体化論争においても最適課税理論が分析の枠組みを提供する。',
-    keyFigures: 'ジェームズ・ミルリーズ ／ フランク・ラムゼー ／ ピーター・ダイアモンド ／ エマニュエル・サエズ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://www.jstor.org/stable/2296779', type: 'academic', label: 'Mirrlees, J.A. (1971) An Exploration in the Theory of Optimum Income Taxation — Review of Economic Studies' },
-      { url: 'https://www.nta.go.jp/about/introduction/torikumi/report/', type: 'government', label: '国税庁 税制改革の議論——最適課税と日本の税体系' },
-      { url: 'https://ja.wikipedia.org/wiki/%E6%9C%80%E9%81%A9%E8%AA%B2%E7%A8%8E', type: 'reference', label: 'Wikipedia: 最適課税 — ミルリーズ理論と効率性・公平性の解説' },
     ],
   },
   {

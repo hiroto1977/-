@@ -2,7 +2,7 @@
 title: "jstor.org"
 type: source-domain
 host: "jstor.org"
-cite_count: 148
+cite_count: 147
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jstor.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **148 件**（学術 147 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **147 件**（学術 146 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -91,7 +91,6 @@ tags:
 - [[econ-natural-monopoly-subadditivity|自然独占と費用劣加法性——単一企業の生産が最も低費用となる市場]] — Baumol,W.J.(1977)OntheProperCostTestsforNaturalMonopolyinaMultiproduc…
 - [[econ-natural-rate-friedman-phelps|自然失業率仮説——インフレと失業の長期トレードオフの不在]] — Friedman,M.(1968)TheRoleofMonetaryPolicy—AmericanEconomicReview58(1)
 - [[econ-okishio-theorem|置塩定理——資本家的な技術選択と利潤率の動態]] — Okishio,N.(1961)Technicalchangesandtherateofprofit—KobeUniversityEcon…
-- [[econ-optimal-taxation-mirrlees|最適課税理論——ミルリーズの情報の非対称性と効率性・公平性のトレードオフ]] — Mirrlees,J.A.(1971)AnExplorationintheTheoryofOptimumIncomeTaxation—Re…
 - [[econ-path-dependence-david|経路依存性——歴史的偶然が固定化し劣位の技術が存続する]] — David,P.A.(1985)ClioandtheEconomicsofQWERTY—AmericanEconomicReview75(…
 - [[econ-prebisch-singer-hypothesis|プレビッシュ＝シンガー仮説]] — Singer,H.W.(1950)TheDistributionofGainsbetweenInvestingandBorrowingCo…
 - [[econ-price-discrimination-monopoly|価格差別と独占力——一・二・三級差別の福祉効果と規制政策への含意]] — Pigou,A.C.(1920)TheEconomicsofWelfare—Macmillan

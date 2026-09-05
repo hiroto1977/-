@@ -38,6 +38,7 @@ aliases:
 - [[econ-hyperinflation-cagan|カガンのハイパーインフレーション・モデル——貨幣需要と期待が織りなす物価爆発]] — 同じ思想家
 - [[econ-rational-expectations-muth|合理的期待——主観的予想が利用可能情報のもとでの客観的期待値に一致する仮説]] — 同じ思想家
 - [[econ-seigniorage-hyperinflation-cagan|インフレ税と超インフレ——ケーガンモデルが解明するハイパーインフレの自己強化メカニズム]] — 同じ思想家
+- [[econ-inequality-piketty-capital21|不平等と資本——ピケティの「r>g」命題と21世紀の富の集中]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

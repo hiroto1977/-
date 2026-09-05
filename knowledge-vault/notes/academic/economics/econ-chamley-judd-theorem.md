@@ -31,7 +31,7 @@ aliases:
 - [Straub, L. & Werning, I. (2020) Positive Long-Run Capital Taxation: Chamley-Judd Revisited — American Economic Review 110(1): 86-119](https://www.aeaweb.org/articles?id=10.1257/aer.20150210) `学術`
 
 ## 関連概念
-- [[econ-optimal-taxation-theory|最適課税理論]] — 同分野の近傍
+- [[econ-real-business-cycle-kydland|実物的景気循環理論（キドランド＆プレスコット）]] — 同分野の近傍
 - [[econ-interest-rate-term-structure-expectations|金利の期間構造と期待仮説——イールドカーブ理論と金融政策の波及経路]] — 同分野の近傍
 
 ## 関連

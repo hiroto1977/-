@@ -31,16 +31,16 @@ aliases:
 - [Wikipedia: Optimal tax — 最適課税理論の概要](https://en.wikipedia.org/wiki/Optimal_tax) `リファレンス`
 
 ## 関連概念
-- [[econ-optimal-tax-theory-diamond-mirrlees|最適税制論（ダイアモンド＆マーリース）]] — 語彙が近い
-- [[econ-optimal-taxation-mirrlees-diamond|最適課税論——効率性と公平性のトレードオフにおける税制設計]] — 語彙が近い
-- [[econ-optimal-taxation-theory|最適課税理論]] — 語彙が近い
-- [[econ-optimal-taxation-mirrlees|最適課税理論——ミルリーズの情報の非対称性と効率性・公平性のトレードオフ]] — 語彙が近い
+- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（マーリーズ）——政府が個人の能力を観察できない情報制約の下で、再分配と効率の二律背反を最小化する税率構造を導く]] — 語彙が近い
+- [[econ-ramsey-pricing|ラムゼイ価格（逆弾力性ルール）]] — 語彙が近い
+- [[econ-laffer-curve-supply-side|ラッファー曲線——供給側経済学と税率・税収の非線形関係]] — 語彙が近い
 - [[econ-corlett-hague-rule|コーレット＝ヘイグの規則——余暇と補完的な財を重く課税する]] — 同じ思想家
-- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（ミラーリーズ）]] — 同じ思想家
-- [[econ-ramsey-pricing|ラムゼイ価格（逆弾力性ルール）]] — 同じ思想家
 - [[econ-value-added-tax-theory|付加価値税の理論と最適間接課税]] — 同じ思想家
 - [[econ-diamond-mirrlees|ダイヤモンド＝マーリーズの生産効率定理]] — 同じ思想家
-- [[econ-overlapping-generations-samuelson|世代重複モデル——有限の生涯を生きる世代が共存する動学的一般均衡]] — 同じ思想家
+- [[econ-atkinson-stiglitz-theorem|アトキンソン＝スティグリッツの定理——最適な所得税があれば物品税はいらない]] — 同じ思想家
+- [[econ-burdett-mortensen-wage-dispersion|バーデット＝モーテンセン・モデル——同一労働者でも賃金が分散する均衡]] — 同じ思想家
+- [[econ-harberger-excess-burden-taxation|ハーバーガーの超過負担——課税の厚生損失と最適税制設計]] — 同じ思想家
+- [[econ-income-inequality-piketty|所得格差と資本収益率の長期分析——ピケティの資本論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

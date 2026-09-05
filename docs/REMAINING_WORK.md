@@ -723,7 +723,7 @@ loopback 以外の平文 http を必ず弾く**。LAN を名前で絞らない�
 - [x] **GitHub Release v0.1.0 を 4 資産で配布済み**（2026-07-27）
       — AppImage / `.deb` / arm64 `.dmg` / Windows `.exe`
 - [x] GitHub Pages 配信（landing + デモ 3 種 + lite）
-- [x] 知識コーパス **4,205 項目**（学術 3,583 / 法令実務 393 / 補助金 140 / 経済史 86 / 相談窓口 3）
+- [x] 知識コーパス **4,198 項目**（学術 3,576 / 法令実務 393 / 補助金 140 / 経済史 86 / 相談窓口 3）
       + Obsidian vault 7,543 ノート + knowledge-graph（nodes 4,140 / edges 20,978）
 - [x] 重複疑いキュー **3 系列すべて 0 件** / 出典ベースライン **0 件**（識別子衝突も 0）
 - [x] **全 74 画面で任意の数値・事業を追加できる**（`manual-metrics` / `business-units`）。

@@ -38,9 +38,9 @@ Harvey Leibenstein（ハーヴェイ・ライベンシュタイン, 1957） ／ 
 - [[econ-signaling-screening-spence|シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）]] — 同じ思想家
 - [[econ-henry-george-theorem|ヘンリー・ジョージ定理（Henry George Theorem）]] — 同じ思想家
 - [[econ-joint-liability-group-lending|連帯責任型グループ貸付理論（Joint Liability Group Lending）]] — 同じ思想家
-- [[econ-optimal-taxation-theory|最適課税理論]] — 同じ思想家
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家
 - [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 同分野の近傍
+- [[econ-bertrand-competition|ベルトラン競争（価格競争モデル）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
