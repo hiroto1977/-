@@ -158,8 +158,45 @@ export async function setProxyConfig(cfg: ProxyConfig | null): Promise<void> {
 
 interface ProxyResponseEnvelope {
   status: number;
-  headers?: Record<string, string>;
-  body?: string;
+  headers: Record<string, string>;
+  body: string;
+}
+
+/** RFC 9110 token — `new Headers()` は空白などを含む名前で TypeError を投げる。 */
+const HEADER_NAME_RE = /^[!#$%&'*+.^_`|~0-9A-Za-z-]+$/;
+/** 値に CR / LF / NUL があると `new Headers()` が TypeError を投げる (ヘッダ注入の形でもある)。 */
+const HEADER_VALUE_RE = /^[^\r\n\0]*$/;
+
+const INVALID_ENVELOPE: ProxyResponseEnvelope = { status: 502, headers: {}, body: 'proxy returned an invalid envelope' };
+
+/**
+ * プロキシの応答封筒を読む。**相手は利用者が用意した Worker で、形は信じない。**
+ *
+ * 2026-09-05 まで `JSON.parse(text) as ProxyResponseEnvelope` をそのまま `new Response()` へ渡していた。
+ * JSON が `null` なら `env.body` で TypeError、`status: 999` なら RangeError (200–599 の外)、
+ * `headers` が配列や空白入りの名前・CR/LF 入りの値なら TypeError —— どれも「プロキシが壊れている」
+ * ではなく `Failed to construct 'Response'` という文言で画面に出ていた。ここで形を確かめ、
+ * 封筒として読めない物は 502 (bad gateway) に畳む。空の本文も同じ 502 (「何も返さなかった」)。
+ * status が範囲外・欠落なら 502 にして本文は残す (相手のエラー文が読めるように)。
+ */
+export function parseProxyEnvelope(bodyText: string): ProxyResponseEnvelope {
+  if (bodyText.length === 0) return { status: 502, headers: {}, body: '' };
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(bodyText);
+  } catch {
+    return INVALID_ENVELOPE;
+  }
+  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return INVALID_ENVELOPE;
+  const env = parsed as Record<string, unknown>;
+  const status = typeof env.status === 'number' && Number.isInteger(env.status) && env.status >= 200 && env.status <= 599 ? env.status : 502;
+  const headers: Record<string, string> = {};
+  if (typeof env.headers === 'object' && env.headers !== null && !Array.isArray(env.headers)) {
+    for (const [name, value] of Object.entries(env.headers as Record<string, unknown>)) {
+      if (typeof value === 'string' && HEADER_NAME_RE.test(name) && HEADER_VALUE_RE.test(value)) headers[name] = value;
+    }
+  }
+  return { status, headers, body: typeof env.body === 'string' ? env.body : '' };
 }
 
 /** Stream-read a Response body with a hard byte cap. Throws if the cap
@@ -615,16 +652,10 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
   // すり抜けるので、壊れた宣言は byte 単位の門へ委ねる —— も向こうへ移した。
   // 文言は同じ (`proxy response too large (N > 上限 bytes)`)。
   const bodyText = await readWithCap(proxyRes, MAX_PROXY_RESPONSE_BYTES);
-  // Empty-body fast path: `JSON.parse('')` throws SyntaxError, so when the
-  // proxy returns no body we substitute an empty envelope; the Response
-  // constructor below then falls back to status 502 + empty body — i.e.
-  // we surface "proxy returned nothing" as a bad-gateway, not as a crash.
-  const env = bodyText.length === 0 ? {} as ProxyResponseEnvelope : JSON.parse(bodyText) as ProxyResponseEnvelope;
-  // Reconstruct a Response that callers can treat normally.
-  return new Response(env.body ?? '', {
-    status: typeof env.status === 'number' ? env.status : 502,
-    headers: env.headers ?? {},
-  });
+  // 封筒の形はここで確かめる (空・非 JSON・範囲外の status・壊れた headers は 502 に畳む —
+  // `new Response()` に投げさせない)。呼び出し側は普通の Response として扱える。
+  const env = parseProxyEnvelope(bodyText);
+  return new Response(env.body, { status: env.status, headers: env.headers });
 }
 
 /*
