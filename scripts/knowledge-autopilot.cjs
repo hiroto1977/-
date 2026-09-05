@@ -346,6 +346,29 @@ function sharedSourceDedupeSuspects(entries, distinct) {
 }
 
 /**
+ * 学術項目で「提唱者・初出」(keyFigures) が無い物。
+ *
+ * 2026-09-05 に生ファイルを `keyFigures:` の行頭で数える正規表現で 210 件の欠落を
+ * 「見つけた」が、**誤報**だった —— 複数行に折り返した keyFigures を見落としていた。
+ * 正規化後の項目で数え直すと 0 件。ただし欠落すれば概念表 docs/ACADEMIC_KNOWLEDGE.md の
+ * 「提唱者・初出」列が空になるのに、増強 (enrich) は summary の長さしか見ないので
+ * 誰も気付かない。以後の欠落を止めるキューとして残す (合格条件は「増えないこと」)。
+ * 対象は学術だけ: 他コレクションは keyFigures を持たない設計。
+ */
+function missingKeyFiguresSuspects(entries) {
+  const out = [];
+  for (const e of entries) {
+    if (e.collection !== 'academic') continue;
+    const meta = Array.isArray(e.meta) ? e.meta : [];
+    const kf = meta.find((m) => m && m.label === '提唱者・初出');
+    const value = kf && typeof kf.value === 'string' ? kf.value.trim() : '';
+    if (value === '') out.push({ id: e.id, collection: e.collection });
+  }
+  out.sort((a, b) => (a.id < b.id ? -1 : 1));
+  return out;
+}
+
+/**
  * 知識グラフ由来の重複疑い: term-overlap スコアが閾値以上のペアは
  * 「語彙がほぼ同一」であり、副題違いで titleCore 照合をすり抜けた残存重複の
  * 有力候補（例: リーンスタートアップの第 3 変種を実際に発見）。裁定済みペアは除外。
@@ -583,6 +606,7 @@ async function main() {
   const dedupeId = idDedupeSuspects(entries, q.distinct);
   const dedupeSource = sourceDedupeSuspects(entries, q.distinct);
   const dedupeShared = sharedSourceDedupeSuspects(entries, q.distinct);
+  const missingKeyFigures = missingKeyFiguresSuspects(entries);
   let links = { checked: 0, totalUrls: 0, dead: [], suspect: [] };
   if (args.links) {
     const n = Number(args.links) || 100;
@@ -619,6 +643,7 @@ async function main() {
       dedupeId,
       dedupeSource,
       dedupeShared,
+      missingKeyFigures,
       sourceHygiene: q.sourceHygiene,
       deadLinks: links.dead,
       suspectLinks: links.suspect,
@@ -632,6 +657,7 @@ async function main() {
       dedupeId: dedupeId.length,
       dedupeSource: dedupeSource.length,
       dedupeShared: dedupeShared.length,
+      missingKeyFigures: missingKeyFigures.length,
       sourceHygiene: q.sourceHygiene.length,
       deadLinks: links.dead.length,
       suspectLinks: links.suspect.length,
@@ -650,6 +676,7 @@ async function main() {
     `重複疑い（id 正規化＝人名の翻字ゆれ・裁定済み除外後）: ${s.dedupeId}`,
     `重複疑い（第一出典の DOI 一致・裁定済み除外後）: ${s.dedupeSource}`,
     `重複疑い（任意位置の出典 DOI 共有＋id 類似・裁定済み除外後）: ${s.dedupeShared}`,
+    `提唱者・初出（keyFigures）欠落（学術）: ${s.missingKeyFigures}`,
     `出典衛生（<2件 or 権威なし）: ${s.sourceHygiene}`,
     `リンク切れ: ${s.deadLinks}（要確認 ${s.suspectLinks} / 検査 ${s.linksChecked}）`,
   ];
@@ -673,6 +700,7 @@ async function main() {
       `| 重複疑い（id 翻字ゆれ） | ${s.dedupeId} |`,
       `| 重複疑い（第一出典 DOI） | ${s.dedupeSource} |`,
       `| 重複疑い（出典 DOI 共有） | ${s.dedupeShared} |`,
+      `| 提唱者・初出の欠落（学術） | ${s.missingKeyFigures} |`,
       `| 出典衛生 | ${s.sourceHygiene} |`,
       `| リンク切れ | ${s.deadLinks} (要確認 ${s.suspectLinks} / 検査 ${s.linksChecked}) |`,
       '',
@@ -682,7 +710,7 @@ async function main() {
   }
 
   const actionable =
-    s.enrich + s.reverify + s.missingAsOf + s.dedupe + s.dedupeGraph + s.dedupeId + s.dedupeSource + s.dedupeShared + s.sourceHygiene + s.deadLinks;
+    s.enrich + s.reverify + s.missingAsOf + s.dedupe + s.dedupeGraph + s.dedupeId + s.dedupeSource + s.dedupeShared + s.missingKeyFigures + s.sourceHygiene + s.deadLinks;
   console.log(actionable > 0 ? `\n⏳ LLM 作業 ${actionable} 件が待機中` : '\n✅ 全て最新 — LLM 作業なし');
 }
 
@@ -693,4 +721,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { corpusFingerprint, staleQueueReport, firstSourceDoi, sourceDois, sourceDedupeSuspects, sharedSourceDedupeSuspects, idSimilarity, SHARED_ID_SIMILARITY, weekIndex, shardOffset, isCheckableUrl, checkLinks, fetchWithCheckedRedirects, MAX_LINK_REDIRECTS };
+module.exports = { corpusFingerprint, staleQueueReport, firstSourceDoi, sourceDois, sourceDedupeSuspects, sharedSourceDedupeSuspects, missingKeyFiguresSuspects, idSimilarity, SHARED_ID_SIMILARITY, weekIndex, shardOffset, isCheckableUrl, checkLinks, fetchWithCheckedRedirects, MAX_LINK_REDIRECTS };
