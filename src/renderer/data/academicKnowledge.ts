@@ -23735,7 +23735,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://www.jstor.org/stable/258550', type: 'academic', label: 'Weick, Sensemaking in Organizations (Sage, 1995) — JSTOR review' },
-      { url: 'https://doi.org/10.5465/amr.2005.16387885', type: 'academic', label: 'Weick, Sutcliffe & Obstfeld, "Organizing and the Process of Sensemaking," AMR 30(4), 2005' },
+      { url: 'https://doi.org/10.1287/orsc.1050.0133', type: 'academic', label: 'Weick, K. E., Sutcliffe, K. M. & Obstfeld, D. (2005) Organizing and the Process of Sensemaking — Organization Science 16(4)' },
       { url: 'https://doi.org/10.5465/19416520.2014.873177', type: 'academic', label: 'Maitlis & Christianson, "Sensemaking in Organizations: Taking Stock," Academy of Management Annals (2014)' },
       { url: 'https://www.oxfordbibliographies.com/display/document/obo-9780199846740/obo-9780199846740-0090.xml', type: 'reference', label: 'Oxford Bibliographies — Sensemaking in Organizations' },
     ],
@@ -34094,7 +34094,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-09',
     sources: [
       { url: 'https://doi.org/10.1177/014920639101700108', type: 'academic', label: 'Barney, J. B. (1991) Firm Resources and Sustained Competitive Advantage — Journal of Management 17(1)（原典）' },
-      { url: 'https://doi.org/10.1002/smj.4250141009', type: 'academic', label: 'Peteraf, M. A. (1993) The Cornerstones of Competitive Advantage: A Resource-Based View — Strategic Management Journal 14(3)' },
+      { url: 'https://doi.org/10.1002/smj.4250140303', type: 'academic', label: 'Peteraf, M. A. (1993) The Cornerstones of Competitive Advantage: A Resource-Based View — Strategic Management Journal 14(3)' },
       { url: 'https://en.wikipedia.org/wiki/VRIO', type: 'reference', label: 'Wikipedia: VRIO — Barney、価値・希少性・模倣困難性・組織' },
       { url: 'https://en.wikipedia.org/wiki/Competitive_advantage', type: 'reference', label: 'Wikipedia: Competitive advantage — 資源ベース論、競争同等性と優位' },
     ],
@@ -41273,7 +41273,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://doi.org/10.7551/mitpress/3880.001.0001', type: 'academic', label: 'Nardi, B. & O\'Day, V. (1999) Information Ecologies — MIT Press' },
-      { url: 'https://doi.org/10.1177/1461444809342738', type: 'academic', label: 'Nardi, B. (2010) My Life as a Night Elf Priest — University of Michigan Press' },
       { url: 'https://en.wikipedia.org/wiki/Information_ecology', type: 'reference', label: 'Wikipedia: Information ecology — 情報エコロジーの概要' },
     ],
   },

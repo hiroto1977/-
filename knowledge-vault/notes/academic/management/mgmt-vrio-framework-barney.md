@@ -27,7 +27,7 @@ VRIO フレームワークは、ジェイ・バーニーが1991年の論文の�
 
 ## 出典
 - [Barney, J. B. (1991) Firm Resources and Sustained Competitive Advantage — Journal of Management 17(1)（原典）](https://doi.org/10.1177/014920639101700108) `学術`
-- [Peteraf, M. A. (1993) The Cornerstones of Competitive Advantage: A Resource-Based View — Strategic Management Journal 14(3)](https://doi.org/10.1002/smj.4250141009) `学術`
+- [Peteraf, M. A. (1993) The Cornerstones of Competitive Advantage: A Resource-Based View — Strategic Management Journal 14(3)](https://doi.org/10.1002/smj.4250140303) `学術`
 - [Wikipedia: VRIO — Barney、価値・希少性・模倣困難性・組織](https://en.wikipedia.org/wiki/VRIO) `リファレンス`
 - [Wikipedia: Competitive advantage — 資源ベース論、競争同等性と優位](https://en.wikipedia.org/wiki/Competitive_advantage) `リファレンス`
 

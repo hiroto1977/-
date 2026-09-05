@@ -18,6 +18,25 @@
  * ラベルが別々の出版年を主張していたら、少なくとも一方は誤り**。これは著者名の
  * 表記揺れや引用スタイルの違いに影響されず、人間の判断を必要としない。
  *
+ * ## 判定するもの 2: 1 DOI = 1 著作 — ラベル同士が同じ著作を指しているか (2026-09-05)
+ *
+ * 上の規則は**年しか**見ない。同じ年の別著作に同じ DOI が付いていると黙る。
+ * 統合パス 54 のあと、任意位置の出典を DOI で束ね直して実測したところ、
+ * 135 件の多重引用 DOI のうち 4 件がそれだった:
+ *   - 10.1002/smj.4250141009 に Levinthal & March 1993 と Peteraf 1993 (どちらも SMJ 14 巻)
+ *   - 10.5465/amr.2005.16387885 に Weick et al. 2005 (実体は Organization Science) と Hackman & Wageman 2005
+ *   - 10.1177/1461444809342738 (Gillespie 2010, New Media & Society) に Nardi 2010 の**書籍**
+ *   - 10.1016/S1573-4404(84)01006-4 に Jones & Neary 1984 と Deardorff 1984 (同じ Handbook の別章)
+ * 年の規則は 4 件とも素通りした (年が同じだから)。
+ *
+ * 規則: 同じ DOI を引くラベルは、**著者姓を 1 つ以上共有する**か、**タイトル語を 2 つ以上共有する**。
+ * どちらも無ければ別著作を指している。引用様式の違い (Robert J. Barro / Barro, R.J.)、
+ * 誌名で始まるラベル (Journal of Political Economy (1977) — Rules Rather Than Discretion)、
+ * 名・姓の順 (Ziad Obermeyer …)、出版社名で始まるラベル (SAGE Journals — Cheney-Lippold) は
+ * 姓かタイトル語のどちらかで一致するので通る。ラテン文字の無いラベルは判定しない。
+ * コーパス全体で対照を取った: 135 件中、鳴ったのは上の 4 件だけで誤検出 0。
+ * 確定できない矛盾は knowledge-citation-baseline.json の knownLabelConflicts に置く (双方向)。
+ *
  * ## 意図的に判定しないもの
  *
  * 「同一著作が別々の DOI で引かれている」も誤りの兆候だが、著者姓 + 年では
@@ -59,6 +78,16 @@ function loadBaseline() {
   }
 }
 
+/** ラベル照合の既知の矛盾 (DOI は小文字で照合)。knownConflicts と同じく双方向。 */
+function loadLabelBaseline() {
+  try {
+    const raw = JSON.parse(fs.readFileSync(BASELINE_FILE, 'utf8'));
+    return new Set((Array.isArray(raw.knownLabelConflicts) ? raw.knownLabelConflicts : []).map((d) => String(d).toLowerCase()));
+  } catch {
+    return new Set();
+  }
+}
+
 /** その年が "1972-2025" のような年範囲の一部か (タイトルや対象期間の表記)。 */
 function isYearRange(label, year) {
   return new RegExp(`${year}\\s*[-–—]\\s*(?:1[89]\\d\\d|20\\d\\d)`).test(label);
@@ -79,6 +108,76 @@ function citedYear(label) {
 function extractDoi(url) {
   const m = url.match(/(10\.\d{4,9}\/[^\s"'<>]+)/);
   return m ? m[1] : '';
+}
+
+/*
+ * --- 1 DOI = 1 著作 (ラベル照合) ---
+ *
+ * ラベルは自由記述なので、著者姓とタイトル語の**どちらか**で一致すれば同じ著作とみなす。
+ * 誌名・出版社名・一般語は姓にもタイトル語にも数えない (下の停止語)。
+ */
+const LABEL_STOPWORDS = new Set([
+  'the', 'and', 'for', 'from', 'with', 'into', 'its', 'their', 'between', 'toward', 'towards', 'versus',
+  'new', 'journal', 'journals', 'review', 'press', 'university', 'oxford', 'cambridge', 'wiley', 'elsevier',
+  'sage', 'springer', 'routledge', 'academy', 'management', 'economics', 'economic', 'economy', 'american',
+  'quarterly', 'annual', 'annals', 'handbook', 'vol', 'chapter', 'theory', 'model', 'study', 'studies',
+  'science', 'sciences', 'research', 'psychology', 'psychological', 'social', 'organization',
+  'organizational', 'organisation', 'international', 'political', 'edition', 'online', 'wikipedia',
+  'reprint', 'reprinted', 'translated', 'book', 'books', 'foundational', 'original', 'paper', 'article',
+]);
+
+/** ラベルの照合語 (小文字・3 文字以上・数字と停止語を除く)。 */
+function labelTokens(label) {
+  return new Set(
+    String(label)
+      .toLowerCase()
+      .replace(/[\u2019']/g, '')
+      .split(/[^a-z0-9\u00c0-\u024f-]+/)
+      .filter((t) => t.length >= 3 && !/^\d+$/.test(t) && !LABEL_STOPWORDS.has(t)),
+  );
+}
+
+/** ラベル先頭 (最初の年の手前) の大文字始まりの語 = 著者姓の候補。 */
+function labelSurnames(label) {
+  const head = String(label).split(/\(?\b(?:1[89]\d\d|20\d\d)\b/)[0];
+  const words = head.match(/[A-Z\u00c0-\u00de][A-Za-z\u00c0-\u024f\u2019'-]{2,}/g) || [];
+  return new Set(words.map((w) => w.toLowerCase().replace(/[\u2019']/g, '')).filter((w) => !LABEL_STOPWORDS.has(w)));
+}
+
+/** 2 つのラベルが同じ著作を指していると言えるか。判定できないラベル (ラテン文字なし) は true。 */
+function labelsAgree(a, b) {
+  const ta = labelTokens(a);
+  const tb = labelTokens(b);
+  if (ta.size === 0 || tb.size === 0) return true;
+  const sa = labelSurnames(a);
+  const sb = labelSurnames(b);
+  for (const w of sa) if (sb.has(w)) return true;
+  let shared = 0;
+  for (const w of ta) if (tb.has(w)) shared++;
+  return shared >= 2;
+}
+
+/**
+ * usesByDoi: doi(小文字) -> [{ id, label }]。ラベルが一致しない組を DOI ごとに 1 つ返す。
+ * 戻り値は doi 順。
+ */
+function findLabelConflicts(usesByDoi) {
+  const out = [];
+  for (const [doi, uses] of usesByDoi) {
+    if (uses.length < 2) continue;
+    let hit = null;
+    for (let i = 0; i < uses.length && hit === null; i++) {
+      for (let j = i + 1; j < uses.length; j++) {
+        if (!labelsAgree(uses[i].label, uses[j].label)) {
+          hit = { doi, a: uses[i], b: uses[j] };
+          break;
+        }
+      }
+    }
+    if (hit !== null) out.push(hit);
+  }
+  out.sort((x, y) => x.doi.localeCompare(y.doi));
+  return out;
 }
 
 /*
@@ -187,6 +286,8 @@ function main() {
   const entries = kc.loadEntries();
   /** doi -> year -> [{id, label}] */
   const byDoi = new Map();
+  /** doi (小文字) -> [{id, label}] — ラベル照合用 (年が取れないラベルも入る) */
+  const usesByDoi = new Map();
 
   for (const entry of entries) {
     const sources = Array.isArray(entry.sources) ? entry.sources : [];
@@ -196,6 +297,11 @@ function main() {
       const doi = extractDoi(source.url.trim());
       if (doi === '') continue;
       const label = typeof source.label === 'string' ? source.label.trim() : '';
+      if (label !== '') {
+        const key = doi.toLowerCase();
+        if (!usesByDoi.has(key)) usesByDoi.set(key, []);
+        usesByDoi.get(key).push({ id: entry.id, label });
+      }
       const year = citedYear(label);
       if (year === '') continue;
       if (!byDoi.has(doi)) byDoi.set(doi, new Map());
@@ -215,6 +321,23 @@ function main() {
   const found = new Set(conflicts.map((c) => c.doi));
   const fresh = conflicts.filter((c) => !baseline.has(c.doi));
   const stale = [...baseline].filter((doi) => !found.has(doi)).sort();
+
+  /* --- 1 DOI = 1 著作 (ラベル照合) --- */
+  const labelConflicts = findLabelConflicts(usesByDoi);
+  const labelBaseline = loadLabelBaseline();
+  const labelFound = new Set(labelConflicts.map((c) => c.doi));
+  const labelFresh = labelConflicts.filter((c) => !labelBaseline.has(c.doi));
+  const labelStale = [...labelBaseline].filter((doi) => !labelFound.has(doi)).sort();
+  const multiCited = [...usesByDoi.values()].filter((u) => u.length >= 2).length;
+  // 多重引用が 0 件なら、ラベル照合は何も言っていない (実測 135 件、2026-09-05)。
+  const MIN_MULTI_CITED = 50;
+  if (multiCited < MIN_MULTI_CITED) {
+    console.error(
+      `❌ 複数の項目から引かれている DOI が ${multiCited} 件しかありません (${MIN_MULTI_CITED} 件以上を期待)。`
+        + ' ラベル照合の対象が消えています —— 0 件でも「矛盾なし」になってしまうため落とします。',
+    );
+    process.exit(1);
+  }
 
 /*
  * 検査した件数の**床**。0 件でも「✅」を返す状態を塞ぐ (2026-08-22)。
@@ -265,16 +388,36 @@ function main() {
   console.log(
     `Checked ${byDoi.size} DOI citation(s) across ${entries.length} entries ` +
       `(既知 ${baseline.size} 件は台帳で除外) / ` +
+      `多重引用 ${multiCited} 件のラベル照合 (既知 ${labelBaseline.size} 件は台帳で除外) / ` +
       `出典 URL ${scheme.seen} 件のスキーム OK (平文 http は台帳の ${PLAINTEXT_ALLOWLIST.size} 件のみ)`,
   );
 
-  if (fresh.length === 0 && stale.length === 0) {
+  if (fresh.length === 0 && stale.length === 0 && labelFresh.length === 0 && labelStale.length === 0) {
     console.log(
-      baseline.size === 0
-        ? '✅ 同一 DOI が複数の出版年で引かれている箇所はありません'
-        : `✅ 新規の矛盾はありません (既知 ${baseline.size} 件は要照合のまま)`,
+      baseline.size === 0 && labelBaseline.size === 0
+        ? '✅ 同一 DOI が複数の出版年・別々の著作で引かれている箇所はありません'
+        : `✅ 新規の矛盾はありません (既知 ${baseline.size + labelBaseline.size} 件は要照合のまま)`,
     );
     return;
+  }
+
+  if (labelFresh.length > 0) {
+    console.error(`❌ ${labelFresh.length} 件の DOI が別々の著作として引かれています (新規)`);
+    console.error('   (1 DOI = 1 著作。ラベル同士が著者姓もタイトル語も共有していません — 少なくとも一方の書誌が誤りです)');
+    for (const { doi, a, b } of labelFresh) {
+      console.error('');
+      console.error(`  ${doi}`);
+      console.error(`    [${a.id}] ${a.label.slice(0, 110)}`);
+      console.error(`    [${b.id}] ${b.label.slice(0, 110)}`);
+    }
+    console.error('');
+    console.error('直し方: 一次資料で DOI の実体を確かめ、誤っている側の出典を差し替えてください。');
+    console.error('        確定できないときは knowledge-citation-baseline.json の knownLabelConflicts に置く (直したら外す)。');
+  }
+  if (labelStale.length > 0) {
+    console.error('');
+    console.error(`❌ knownLabelConflicts に載っているが矛盾していない DOI が ${labelStale.length} 件あります (直したなら外すこと)`);
+    for (const doi of labelStale) console.error(`  ${doi}`);
   }
 
   if (fresh.length > 0) {
@@ -338,6 +481,54 @@ function selfTest() {
   const seenOk = seen === 1;
   if (!seenOk) bad++;
   console.log(`  ${seenOk ? '✓' : '✗'} 走査が URL を数えている: ${seen} 件 (期待 1)`);
+
+  /* --- 1 DOI = 1 著作 (ラベル照合)。実測で拾った 4 件は鳴り、様式違いは通る。 --- */
+  /** [説明, ラベル A, ラベル B, 期待 (true = 同じ著作)] */
+  const labelCases = [
+    ['★ 同年の別著作は鳴る (Peteraf 1993 / Levinthal & March 1993)',
+      'Peteraf, M. A. (1993) The Cornerstones of Competitive Advantage: A Resource-Based View — Strategic Management Journal 14(3)',
+      'Levinthal, D. A. & March, J. G. (1993) The Myopia of Learning — Strategic Management Journal 14(S2)', false],
+    ['★ 書籍に雑誌論文の DOI (Nardi 2010 / Gillespie 2010)',
+      'Nardi, B. (2010) My Life as a Night Elf Priest — University of Michigan Press',
+      'Gillespie, T. (2010) The Politics of "Platforms" — New Media & Society 12(3)', false],
+    ['★ 同じ号の別論文 (Weick et al. 2005 / Hackman & Wageman 2005)',
+      'Weick, Sutcliffe & Obstfeld, "Organizing and the Process of Sensemaking," AMR 30(4), 2005',
+      'Hackman, J. R. & Wageman, R. (2005) A Theory of Team Coaching, Academy of Management Review 30(2): 269-287', false],
+    ['★ 同じ Handbook の別章 (Jones & Neary 1984 / Deardorff 1984)',
+      'Jones, R. W. & Neary, J. P. (1984) The Positive Theory of International Trade — Handbook of International Economics',
+      'Deardorff, A. V. (1984) Testing Trade Theories and Predicting Trade Flows — Handbook of International Economics', false],
+    ['引用様式の違いは通す (Robert J. Barro / Barro, R.J.)',
+      'Robert J. Barro, "Are Government Bonds Net Wealth?" Journal of Political Economy 82(6), 1974',
+      'Barro, R.J. (1974) Are Government Bonds Net Wealth? — JPE', true],
+    ['誌名で始まるラベルはタイトル語で照合 (Kydland & Prescott)',
+      'Journal of Political Economy (1977) — Rules Rather Than Discretion: The Inconsistency of Optimal Plans',
+      'Kydland, F. E. & Prescott, E. C. (1977) Rules Rather Than Discretion — JPE 85(3)', true],
+    ['名・姓の順でも姓で一致 (Ziad Obermeyer / Obermeyer et al.)',
+      'Ziad Obermeyer, Brian Powers, Christine Vogeli, Sendhil Mullainathan (2019) Dissecting racial bias — Science 366',
+      'Obermeyer et al. (2019) Dissecting Racial Bias in an Algorithm Used to Manage the Health of Populations — Science', true],
+    ['出版社名で始まるラベル (SAGE Journals — Cheney-Lippold)',
+      'SAGE Journals — Cheney-Lippold (2011), Theory, Culture & Society 28(6)',
+      'Cheney-Lippold, J. (2011) A New Algorithmic Identity — Theory, Culture & Society', true],
+    ['ラテン文字の無いラベルは判定しない',
+      '野中郁次郎（1994）組織的知識創造の動態理論',
+      'Nonaka, I. (1994) A Dynamic Theory of Organizational Knowledge Creation — Organization Science 5(1)', true],
+  ];
+  for (const [label, a, b, want] of labelCases) {
+    const got = labelsAgree(a, b);
+    const ok = got === want;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got ? '同一' : '別著作'} (期待 ${want ? '同一' : '別著作'})`);
+  }
+  // 束ねた形でも 1 件だけ鳴る (一致する DOI は黙る)。
+  const uses = new Map([
+    ['10.1/agree', [{ id: 'x', label: labelCases[4][1] }, { id: 'y', label: labelCases[4][2] }]],
+    ['10.1/conflict', [{ id: 'p', label: labelCases[0][1] }, { id: 'q', label: labelCases[0][2] }]],
+    ['10.1/single', [{ id: 'z', label: labelCases[0][1] }]],
+  ]);
+  const hits = findLabelConflicts(uses);
+  const hitsOk = hits.length === 1 && hits[0].doi === '10.1/conflict' && hits[0].a.id === 'p' && hits[0].b.id === 'q';
+  if (!hitsOk) bad++;
+  console.log(`  ${hitsOk ? '✓' : '✗'} findLabelConflicts: 3 DOI 中 1 件 (期待 1 件 = 10.1/conflict)`);
   if (bad > 0) {
     console.error(`❌ self-test 不一致 ${bad} 件`);
     return 1;
@@ -351,4 +542,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { checkSchemes, selfTest, PLAINTEXT_ALLOWLIST };
+module.exports = { checkSchemes, selfTest, PLAINTEXT_ALLOWLIST, labelTokens, labelSurnames, labelsAgree, findLabelConflicts };

@@ -85,7 +85,7 @@ npm run lint:workflow-security # .github/workflows/: permissions の明示・第
                            #   pull_request_target 禁止・run: への信用できない値の埋め込み
 npm run lint:network-targets # 送り先ホストが変数で決まる通信の台帳 (資格情報の流出経路)
 npm run lint:docs          # cross-document consistency
-npm run lint:citations     # 出典の内部矛盾 (同一 DOI が別々の出版年で引かれていないか)
+npm run lint:citations     # 出典の内部矛盾 (同一 DOI が別々の出版年・別々の著作で引かれていないか)
 npm run lint:doi-prefix    # DOI プレフィックス(=登録機関=出版社) とラベルの出版社の矛盾
 npm run lint:charset       # 他文字種・簡体字の混入 (CJK は共有ブロックなので字を列挙するしかない)
 npm run lint:knowledge-refs # 裁定台帳が実在しない知識 id を参照していないか

@@ -89,3 +89,120 @@ describe('sourceDedupeSuspects — 第一出典の DOI が同じペア', () => {
     expect(out).toEqual([]);
   });
 });
+
+// --- 2026-09-05: 任意の位置の出典 DOI 共有 + id 類似（dedupeShared） ---
+const { sourceDois, sharedSourceDedupeSuspects, idSimilarity, SHARED_ID_SIMILARITY } = req(
+  '../../../scripts/knowledge-autopilot.cjs',
+) as {
+  sourceDois: (entry: { sources?: unknown[] }) => string[];
+  sharedSourceDedupeSuspects: (
+    entries: { id: string; collection: string; sources?: unknown[] }[],
+    distinct: Set<string>,
+  ) => { a: string; b: string; dois: string[]; idSimilarity: number }[];
+  idSimilarity: (a: string, b: string) => number;
+  SHARED_ID_SIMILARITY: number;
+};
+
+describe('sourceDois — 出典のすべての位置から DOI を集める', () => {
+  it('位置を問わず拾い、表記ゆれは畳み、重複は 1 つにする', () => {
+    expect(
+      sourceDois(
+        entry('a', [
+          'https://en.wikipedia.org/wiki/X',
+          'https://doi.org/10.1037/0022-3514.52.3.511',
+          'https://journals.sagepub.com/doi/10.1177/014920639201800306',
+          'https://doi.org/10.1037/0022-3514.52.3.511.',
+        ]),
+      ),
+    ).toEqual(['10.1037/0022-3514.52.3.511', '10.1177/014920639201800306']);
+  });
+
+  it('DOI の無い項目・出典なしは空配列', () => {
+    expect(sourceDois(entry('a', ['https://laws.e-gov.go.jp/law/417AC0000000086']))).toEqual([]);
+    expect(sourceDois({ sources: [] })).toEqual([]);
+    expect(sourceDois({})).toEqual([]);
+  });
+});
+
+describe('idSimilarity — 分野接頭辞を除いた id 語彙の Jaccard', () => {
+  it('人名や修飾語が付いただけの id は高い', () => {
+    expect(idSimilarity('econ-time-inconsistency', 'econ-time-inconsistency-kydland-prescott')).toBeCloseTo(0.5);
+    expect(idSimilarity('human-transactive-memory', 'mgmt-transactive-memory-wegner')).toBeCloseTo(2 / 3);
+  });
+
+  it('分野接頭辞は語彙に数えない（同じ接頭辞だけでは 0）', () => {
+    expect(idSimilarity('econ-public-goods-samuelson', 'econ-tiebout-hypothesis')).toBe(0);
+  });
+
+  it('2 文字以下の語は数えない・語彙が空同士なら 0', () => {
+    expect(idSimilarity('econ-is-lm', 'econ-is-lm-model')).toBeCloseTo(0);
+    expect(idSimilarity('a', 'b')).toBe(0);
+  });
+
+  it('しきい値は 0 と 1 の間', () => {
+    expect(SHARED_ID_SIMILARITY).toBeGreaterThan(0);
+    expect(SHARED_ID_SIMILARITY).toBeLessThan(1);
+  });
+});
+
+describe('sharedSourceDedupeSuspects — 任意位置の出典 DOI 共有 + id 類似', () => {
+  const HS = 'https://doi.org/10.1037/0022-3514.52.3.511';
+  const KP = 'https://doi.org/10.1086/260580';
+  const WIKI = 'https://en.wikipedia.org/wiki/X';
+
+  it('標本: 第一出典が違っても、2 番目に同じ DOI があり id が近ければ鳴る（dedupeSource が素通りする形）', () => {
+    const out = sharedSourceDedupeSuspects(
+      [entry('econ-time-inconsistency', [WIKI, KP]), entry('econ-time-inconsistency-kydland-prescott', [KP])],
+      new Set(),
+    );
+    expect(out).toEqual([
+      { a: 'econ-time-inconsistency', b: 'econ-time-inconsistency-kydland-prescott', dois: ['10.1086/260580'], idSimilarity: 0.5 },
+    ]);
+  });
+
+  it('標本: id が別物でも、共有 DOI が 2 件以上なら鳴る', () => {
+    const out = sharedSourceDedupeSuspects([entry('econ-alpha', [HS, KP]), entry('econ-beta', [KP, WIKI, HS])], new Set());
+    expect(out).toHaveLength(1);
+    expect(out[0]!.dois).toEqual(['10.1037/0022-3514.52.3.511', '10.1086/260580']);
+    expect(out[0]!.idSimilarity).toBe(0);
+  });
+
+  it('対照: 共有 DOI が 1 件だけで id が別物なら鳴らない（別概念が同じ古典を引いているだけ）', () => {
+    const out = sharedSourceDedupeSuspects([entry('econ-public-goods-samuelson', [HS]), entry('econ-tiebout-hypothesis', [WIKI, HS])], new Set());
+    expect(out).toEqual([]);
+  });
+
+  it('対照: 裁定済み「別概念」ペアは除外する', () => {
+    const out = sharedSourceDedupeSuspects(
+      [entry('econ-time-inconsistency', [KP]), entry('econ-time-inconsistency-kydland-prescott', [KP])],
+      new Set(['econ-time-inconsistency|econ-time-inconsistency-kydland-prescott']),
+    );
+    expect(out).toEqual([]);
+  });
+
+  it('対照: コレクションが違えば鳴らない', () => {
+    const out = sharedSourceDedupeSuspects(
+      [entry('econ-time-inconsistency', [KP], 'academic'), entry('econ-time-inconsistency-kydland', [KP], 'compliance')],
+      new Set(),
+    );
+    expect(out).toEqual([]);
+  });
+
+  it('対照: DOI でない共通の出典（Wikipedia）は数えない', () => {
+    const out = sharedSourceDedupeSuspects([entry('econ-time-inconsistency', [WIKI]), entry('econ-time-inconsistency-kydland', [WIKI])], new Set());
+    expect(out).toEqual([]);
+  });
+
+  it('a<b で並べ、同じペアは共有 DOI が何件でも 1 行（1 件共有で id 語彙 1/3 のペアは鳴らない）', () => {
+    const out = sharedSourceDedupeSuspects(
+      [entry('mgmt-z-sensemaking', [HS, KP]), entry('mgmt-a-sensemaking-weick', [KP, HS]), entry('mgmt-m-sensemaking-theory', [HS])],
+      new Set(),
+    );
+    // a|z: 共有 2 件 → 鳴る。m|z: 共有 1 件・語彙 {sensemaking,theory} vs {sensemaking} = 0.5 → 鳴る。
+    // a|m: 共有 1 件・語彙 {sensemaking,weick} vs {sensemaking,theory} = 1/3 → 鳴らない（対照）。
+    expect(out.map((p) => `${p.a}|${p.b}`)).toEqual(['mgmt-a-sensemaking-weick|mgmt-z-sensemaking', 'mgmt-m-sensemaking-theory|mgmt-z-sensemaking']);
+    expect(out[0]!.dois).toHaveLength(2);
+    expect(out[1]!.dois).toEqual(['10.1037/0022-3514.52.3.511']);
+    expect(out[1]!.idSimilarity).toBe(0.5);
+  });
+});
