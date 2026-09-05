@@ -2,7 +2,7 @@
 title: "read.dukeupress.edu"
 type: source-domain
 host: "read.dukeupress.edu"
-cite_count: 5
+cite_count: 6
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # read.dukeupress.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **5 件**（学術 5）
+> [!info] 出典ドメイン索引 ・ 引用 **6 件**（学術 6）
 
 ## このドメインを出典とする項目
 
@@ -19,6 +19,7 @@ tags:
 - [[infosoc-communicative-capitalism|コミュニカティブ・キャピタリズム（Communicative Capitalism）]] — Dean(2005)CommunicativeCapitalism—CulturalPolitics1(1)/DukeUP
 - [[infosoc-communicative-capitalism|コミュニカティブ・キャピタリズム（Communicative Capitalism）]] — Dean(2009)DemocracyandOtherNeoliberalFantasies—DukeUP
 - [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — RuhaBenjamin,ed.(2019)CaptivatingTechnology:Race,CarceralTechnoscienc…
+- [[infosoc-recursive-publics-kelty|再帰的公共——自らの存在基盤である技術・法的インフラそのものを作り変える公共]] — ChristopherM.Kelty,TwoBits:TheCulturalSignificanceofFreeSoftware,Duke…
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

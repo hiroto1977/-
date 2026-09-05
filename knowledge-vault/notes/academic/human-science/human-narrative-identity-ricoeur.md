@@ -34,6 +34,7 @@ aliases:
 ## 関連概念
 - [[human-story-of-self-mcadams|人生物語とナラティブ・アイデンティティ（マクアダムス）]] — 同じ思想家
 - [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 同じ思想家
+- [[infosoc-recursive-publics-kelty|再帰的公共——自らの存在基盤である技術・法的インフラそのものを作り変える公共]] — 同じ思想家
 - [[human-temporal-self-appraisal|時間的自己評価理論——過去の自己との比較による現在の自己高揚]] — 同分野の近傍
 - [[human-mirror-neuron-controversy|ミラーニューロン論争（Mirror Neuron Controversy）]] — 同分野の近傍
 

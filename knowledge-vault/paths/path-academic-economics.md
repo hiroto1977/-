@@ -2,20 +2,20 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 950
+entry_count: 952
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（950件）
+# 学習パス — 学術概念／経済学（952件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 81）
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 80）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 49）
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 44）
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 43）
 - [[econ-agglomeration-economies|集積の経済]]（接続 43）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 42）
 - [[econ-liquidity-trap|流動性のわな]]（接続 42）
@@ -237,6 +237,7 @@ tags:
 - 1967年: [[econ-olivera-tanzi-effect|オリベラ＝タンジ効果]]
 - 1967年: [[econ-rent-seeking|レントシーキング]]
 - 1967年: [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]]
+- 1968年: [[econ-budget-maximizing-bureaucrat-niskanen|ニスカネンの予算最大化官僚モデル——独占的官庁が情報優位で総予算を極大化し過剰供給を導く公共選択理論]]
 - 1968年: [[econ-entrepreneurial-state|起業家国家（マッツカートの公共イノベーション論）]]
 - 1968年: [[econ-precautionary-saving|予備的貯蓄]]
 - 1968年: [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]]
@@ -273,6 +274,7 @@ tags:
 - 1973年: [[econ-j-curve-effect|Jカーブ効果（J-Curve Effect）]]
 - 1973年: [[econ-revelation-principle|顕示原理（メカニズムデザイン）]]
 - 1973年: [[econ-signaling|シグナリング]]
+- 1974年: [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]]
 - 1974年: [[econ-henry-george-theorem|ヘンリー・ジョージ定理（Henry George Theorem）]]
 - 1974年: [[econ-mincer-earnings|ミンサー方程式（賃金関数）]]
 - 1974年: [[econ-prices-vs-quantities|価格規制と数量規制（プライシズ・バーサス・クオンティティーズ）]]

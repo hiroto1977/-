@@ -35,6 +35,7 @@ aliases:
 - [[bizlaw-doctrine-of-frustration|契約目的の達成不能法理——予見不能な事情変更による契約消滅]] — 同じ思想家
 - [[bizlaw-good-faith-dealing-obligation|信義誠実の義務——契約履行における善意と公正取引の法的要請]] — 同じ思想家
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 同じ思想家
+- [[bizlaw-consumer-protection-law|消費者保護法の国際的展開と日本における法体系の形成]] — 同分野の近傍
 - [[bizlaw-unfair-contract-terms-directive-eu|EU不公正契約条項指令——消費者契約の実質的公正]] — 同分野の近傍
 - [[bizlaw-best-efforts-obligation|最善努力義務]] — 同分野の近傍
 - [[bizlaw-telecom-business|電気通信事業法]] — 同分野の近傍

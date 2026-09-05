@@ -2,7 +2,7 @@
 title: "psycnet.apa.org"
 type: source-domain
 host: "psycnet.apa.org"
-cite_count: 45
+cite_count: 46
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # psycnet.apa.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **45 件**（学術 41 ・ リファレンス 4）
+> [!info] 出典ドメイン索引 ・ 引用 **46 件**（学術 42 ・ リファレンス 4）
 
 ## このドメインを出典とする項目
 
@@ -27,6 +27,7 @@ tags:
 - [[human-diathesis-stress-model|素因ストレスモデル]] — MonroeSM&SimonsAD(1991)Diathesis-stresstheoriesinthecontextoflifestre…
 - [[human-double-bind|ダブルバインド（二重拘束）]] — Bateson,Jackson,Haley&Weakland(1956)"TowardaTheoryofSchizophrenia,"Be…
 - [[human-emerging-adulthood|新興成人期（エマージング・アダルトフッド）]] — APAPsycNet—Arnett(2000)"EmergingAdulthood:ATheoryofDevelopmentfromthe…
+- [[human-expressive-writing-pennebaker|エクスプレッシブ・ライティング——感情体験を書き出す筆記開示の健康効果]] — Frattaroli,J.(2006).Experimentaldisclosureanditsmoderators:Ameta-anal…
 - [[human-golem-effect|ゴーレム効果]] — Eden&Shani(1982)"PygmalionGoestoBootCamp:Expectancy,Leadership,andTra…
 - [[human-halo-effect|ハロー効果（後光効果, halo effect）]] — Thorndike(1920)AConstantErrorinPsychologicalRatings—APAPsycNet（原典書誌）
 - [[human-hostile-attribution-bias|敵意的帰属バイアス]] — Dodge,K.A.(1986)"Asocialinformationprocessingmodelofsocialcompetencei…

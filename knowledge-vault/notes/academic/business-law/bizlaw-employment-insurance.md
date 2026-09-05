@@ -37,7 +37,6 @@ aliases:
 - [[bizlaw-workers-comp|労働者災害補償保険法（労災保険）]] — 同分野の近傍
 - [[bizlaw-telecom-business|電気通信事業法]] — 同分野の近傍
 - [[bizlaw-unauthorized-agency|無権代理（民法113条・117条）]] — 同分野の近傍
-- [[bizlaw-employment-law-dismissal|雇用法と解雇規制の法律体系——正当事由と解雇権濫用法理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

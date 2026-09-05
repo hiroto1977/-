@@ -2,7 +2,7 @@
 title: "nobelprize.org"
 type: source-domain
 host: "nobelprize.org"
-cite_count: 94
+cite_count: 95
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nobelprize.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **94 件**（リファレンス 56 ・ 公的 36 ・ 学術 2）
+> [!info] 出典ドメイン索引 ・ 引用 **95 件**（リファレンス 57 ・ 公的 36 ・ 学術 2）
 
 ## このドメインを出典とする項目
 
@@ -31,6 +31,7 @@ tags:
 - [[econ-black-scholes|ブラック＝ショールズ・モデル]] — NobelPrize.org—1997年経済学賞学術解説（リスク中立評価・5つの決定要因・受賞者）
 - [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]] — 1998年スウェーデン国立銀行賞（ノーベル経済学賞）受賞:AmartyaSen—NobelPrize.org（公式）
 - [[econ-coase-theorem|コースの定理（Coase theorem）]] — NobelPrize.org—RonaldCoase,1991PrizeLecture
+- [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]] — TheSverigesRiksbankPrizeinEconomicSciencesinMemoryofAlfredNobel2003—N…
 - [[econ-credit-rationing-stiglitz-weiss|スティグリッツ＝ワイス信用割当モデル]] — NobelPrize.org—2001年経済学賞（非対称情報下の市場分析）
 - [[econ-diamond-dybvig|ダイアモンド＝ディビッグ・モデル]] — NobelPrize.org—2022SverigesRiksbankPrizeinEconomicSciences(Bernanke,D…
 - [[econ-diamond-dybvig-bank-run|ダイアモンド＝ディブビグ銀行取付モデル]] — 2022年ノーベル経済学賞（Diamond・Dybvig・Bernanke）

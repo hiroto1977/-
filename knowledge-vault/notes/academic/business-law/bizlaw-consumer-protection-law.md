@@ -32,8 +32,8 @@ aliases:
 - [消費者庁 — 消費者政策の概要](https://www.caa.go.jp/policies/policy/consumer_policy/) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-consumer-contract-unfair-terms|消費者契約と不当条項——EU不当条項指令と日本の消費者契約法の情報格差是正]] — 同分野の近傍
-- [[bizlaw-worker-cooperative|労働者協同組合法]] — 同分野の近傍
+- [[bizlaw-consumer-protection-unfair-terms|消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応]] — 同分野の近傍
+- [[bizlaw-consumer-contract-act|消費者契約法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

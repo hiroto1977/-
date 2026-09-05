@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経営学"
 type: flashcard-deck
 deck_key: "academic-management"
-card_count: 658
+card_count: 659
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経営学（658枚）
+# フラッシュカード — 学術概念／経営学（659枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -260,6 +260,8 @@ tags:
   - **A:** コアコンピタンスとは、C.K.プラハラードとゲイリー・ハメルが1990年のHarvard Business Review論文「The Core Competence of the Corporation」で提唱した、企業の持続的競争優位の源泉となる中核的な能力である。彼らはこれを「組織における集合的な学習、とりわけ多様な生産技能を調整し複数の技術の流れを統合する能力」と定義した。（→ [[mgmt-core-competence]]）
 - **Q:** コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説
   - **A:** コア・リジディティ（core rigidities、中核的硬直性）は、ドロシー・レナード＝バートンが1992年の論文「コア・ケイパビリティとコア・リジディティ——新製品開発を管理するパラドックス」で示した経営学・イノベーション論の概念で、企業の競争優位を支える「中核的能力（コア・ケイパビリティ）」が、まさにその同じ性質ゆえに変化や革新を阻む「中核的硬直性」へと転化してしまう逆説を指す。（→ [[mgmt-core-rigidities-leonard-barton]]）
+- **Q:** 中核的自己評価——自尊心・一般的自己効力感・統制の所在・情緒安定性を束ねる高次特性
+  - **A:** 中核的自己評価（コア・セルフ・エバリュエーションズ、CSE）は、個人が自己に下す最も基本的で評価的な自己評定であり、ティモシー・A・ジャッジ、エドウィン・A・ロック、キャシー・C・ダラムが『The Dispositional Causes of Job Satisfaction: A Core Evaluations Approach』（Research in Organizational Behavior, 19巻, 1997年, …（→ [[mgmt-core-self-evaluations-judge]]）
 - **Q:** 組織文化論——シャインの三層モデル（人工物・信念・基本的仮定）と文化変革
   - **A:** 組織文化（organizational culture）論は，エドガー・シャインが著作『組織文化とリーダーシップ』（1985年，第四版2010年）で，組織が共有する基本的前提・信念・価値観・人工物の体系として文化を三層モデルで定式化したことで発展した。（→ [[mgmt-corporate-culture-schein-artifacts]]）
 - **Q:** コーポレート・アントレプレナーシップ（ザーラ）

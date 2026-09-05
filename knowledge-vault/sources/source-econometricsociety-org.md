@@ -2,7 +2,7 @@
 title: "econometricsociety.org"
 type: source-domain
 host: "econometricsociety.org"
-cite_count: 15
+cite_count: 17
 tags:
   - source-domain
   - index
@@ -10,12 +10,14 @@ tags:
 
 # econometricsociety.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **15 件**（学術 15）
+> [!info] 出典ドメイン索引 ・ 引用 **17 件**（学術 17）
 
 ## このドメインを出典とする項目
 
 - [[econ-balanced-budget-multiplier|均衡予算乗数]] — Haavelmo,T.(1945)"MultiplierEffectsofaBalancedBudget,"Econometrica13(…
 - [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — Baron,D.P.&Myerson,R.B.(1982)RegulatingaMonopolistwithUnknownCosts,Ec…
+- [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]] — Engle,R.F.&Granger,C.W.J.(1987).Co-IntegrationandErrorCorrection:Repr…
+- [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]] — Johansen,S.(1991).EstimationandHypothesisTestingofCointegrationVector…
 - [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — TheEconometricSociety—Fisher(1933),"TheDebt-DeflationTheoryofGreatDep…
 - [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — Fisher,"TheDebt-DeflationTheoryofGreatDepressions,"Econometrica1(4),1…
 - [[econ-entry-thresholds-bresnahan-reiss|ブレスナハン＝ライス参入閾値モデル——市場規模と参入企業数から競争の強さを推定する実証手法]] — Berry,S.T.(1992)."EstimationofaModelofEntryintheAirlineIndustry."Econ…

@@ -36,6 +36,7 @@ aliases:
 - [[econ-contestable-markets|コンテスタブル市場]] — 出典を共有
 - [[econ-marginal-productivity-distribution|限界生産力説]] — 出典を共有
 - [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — 出典を共有
+- [[infosoc-recursive-publics-kelty|再帰的公共——自らの存在基盤である技術・法的インフラそのものを作り変える公共]] — 出典を共有
 - [[infosoc-smart-city-governance-kitchin|スマートシティ・ガバナンス——データ駆動型都市管理の批判的検討]] — 同分野の近傍
 - [[infosoc-information-theory|情報理論（シャノン）]] — 同分野の近傍
 

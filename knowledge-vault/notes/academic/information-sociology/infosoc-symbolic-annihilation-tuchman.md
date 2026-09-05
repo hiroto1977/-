@@ -35,8 +35,8 @@ aliases:
 - [[infosoc-media-system-dependency-ball-rokeach|メディア・システム依存理論——メディアへの依存が効果の強さを規定する]] — 同じ思想家
 - [[infosoc-moral-panic-cohen|モラル・パニック——メディアが増幅する社会的逸脱への集合的過剰反応]] — 同じ思想家
 - [[infosoc-textual-poaching-jenkins|テクストの密猟——ファンによる能動的なメディアの流用と作り替え]] — 同じ思想家
-- [[infosoc-ambient-awareness|アンビエント・アウェアネス]] — 同分野の近傍
 - [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 同分野の近傍
+- [[infosoc-second-self-turkle|セカンド・セルフ——コンピュータが映し出す自己と精神への問い]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

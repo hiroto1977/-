@@ -31,7 +31,7 @@ aliases:
 - [国税庁 法令解釈通達 質問検査権（74条の2〜6）](https://www.nta.go.jp/law/tsutatsu/kobetsu/zeimuchosa/120912/01.htm) `公的`
 
 ## 関連概念
-- [[tax-payment-grace|国税の納税の猶予・換価の猶予]] — 同分野の近傍
+- [[tax-payment-grace|国税の納税の猶予・換価の猶予]] — 語彙が近い
 - [[tax-estimated-prepayment|所得税の予定納税]] — 同分野の近傍
 
 ## 関連

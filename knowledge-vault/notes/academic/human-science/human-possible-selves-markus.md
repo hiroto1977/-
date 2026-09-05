@@ -36,6 +36,7 @@ aliases:
 - [[human-self-discrepancy-higgins|自己不一致理論——現実自己と自己指針の乖離が異なる感情を生む]] — 同じ思想家
 - [[mgmt-regulatory-focus-theory-higgins|制御焦点理論——促進焦点と予防焦点が動機づけと意思決定を形成するメカニズム]] — 同じ思想家
 - [[human-approach-avoidance-elliot|接近回避動機——望ましいものへの接近と望ましくないものの回避の二系統]] — 同分野の近傍
+- [[human-tip-of-the-tongue-brown-mcneill|舌先現象——知っている語を一時的に思い出せない検索の部分的失敗]] — 同分野の近傍
 - [[human-sensory-integration-theory|感覚統合理論]] — 同分野の近傍
 
 ## 関連

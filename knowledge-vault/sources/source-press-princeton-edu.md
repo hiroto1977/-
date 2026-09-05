@@ -2,7 +2,7 @@
 title: "press.princeton.edu"
 type: source-domain
 host: "press.princeton.edu"
-cite_count: 24
+cite_count: 25
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # press.princeton.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **24 件**（学術 16 ・ リファレンス 8）
+> [!info] 出典ドメイン索引 ・ 引用 **25 件**（学術 17 ・ リファレンス 8）
 
 ## このドメインを出典とする項目
 
@@ -35,6 +35,7 @@ tags:
 - [[infosoc-information-cocoon|情報の繭（インフォメーション・コクーン）]] — PrincetonUniversityPress—CassR.Sunstein,#Republic:informationcocoons,…
 - [[infosoc-information-environmentalism|情報環境主義（Information Environmentalism）]] — Mayer-Schönberger,V.2009.Delete:TheVirtueofForgettingintheDigitalAge.…
 - [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — Cohen1963—ThePressandForeignPolicy,PrincetonUniversityPress
+- [[infosoc-recursive-publics-kelty|再帰的公共——自らの存在基盤である技術・法的インフラそのものを作り変える公共]] — E.GabriellaColeman,CodingFreedom:TheEthicsandAestheticsofHacking,Prin…
 - [[mgmt-real-options-theory|リアル・オプション理論]] — Dixit,A.K.&Pindyck,R.S.(1994)InvestmentunderUncertainty—PrincetonUniv…
 - [[mgmt-red-queen-effect|赤の女王効果（Red Queen Effect）]] — Barnett(2008)TheRedQueenamongOrganizations:HowCompetitivenessEvolves,…
 - [[mgmt-structural-inertia-theory|構造的慣性理論]] — Carroll&Hannan(1995)"OrganizationsinIndustry"—PrincetonUniversityPress

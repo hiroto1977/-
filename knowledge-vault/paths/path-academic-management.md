@@ -2,18 +2,18 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 658
+entry_count: 659
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（658件）
+# 学習パス — 学術概念／経営学（659件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[agile-development|アジャイルソフトウェア開発]]（接続 63）
+- [[agile-development|アジャイルソフトウェア開発]]（接続 62）
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 40）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 29）
@@ -229,6 +229,7 @@ tags:
 - 1997年: [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]]
 - 1997年: [[mgmt-brand-personality|ブランドパーソナリティ（アーカーの5次元モデル）]]
 - 1997年: [[mgmt-collective-efficacy-bandura|集合的効力感理論]]
+- 1997年: [[mgmt-core-self-evaluations-judge|中核的自己評価——自尊心・一般的自己効力感・統制の所在・情緒安定性を束ねる高次特性]]
 - 1997年: [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ]]
 - 1997年: [[mgmt-dynamic-delegation|公式的権限と実質的権限（Formal and Real Authority）]]
 - 1997年: [[mgmt-innovators-dilemma|イノベーションのジレンマ（破壊的イノベーション）]]

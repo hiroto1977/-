@@ -36,7 +36,6 @@ aliases:
 - [[econ-fiscal-federalism-tiebout|財政連邦主義とティブー・モデル（足による投票と分権定理）]] — 同じ思想家
 - [[econ-fiscal-decentralization-tiebout|財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争]] — 同じ思想家
 - [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 同じ思想家
-- [[econ-lindahl-equilibrium|リンダール均衡（リンダール価格）]] — 同じ思想家
 - [[econ-club-goods-buchanan|クラブ財——排除可能だが混雑するまで非競合的な財の最適規模]] — 同じ思想家
 - [[econ-club-goods-buchanan-tiebout|クラブ財理論——ブキャナンの共同消費と最適メンバーシップ]] — 同じ思想家
 - [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — 同じ思想家

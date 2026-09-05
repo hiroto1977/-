@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／人間科学"
 type: flashcard-deck
 deck_key: "academic-human-science"
-card_count: 643
+card_count: 644
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／人間科学（643枚）
+# フラッシュカード — 学術概念／人間科学（644枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -466,6 +466,8 @@ tags:
   - **A:** 説明スタイル（explanatory style）とは、個人が否定的出来事をどのように説明・解釈する傾向を持つかを表す認知的特性であり、「永続性」（一時的vs.永続的）・「普遍性」（特定的vs.全般的）・「個人性」（外的vs.内的）の3次元で特徴づけられる。マーティン・セリグマンとクリストファー・ペターソンは帰属スタイル質問紙（ASQ）を開発し、悲観的説明スタイルとうつ病・学習性無力感との関連を示した。（→ [[human-explanatory-style-attribution]]）
 - **Q:** 説明スタイル——出来事の原因をどう説明するかが楽観と悲観を分ける
   - **A:** 説明スタイル（explanatory style）は、マーティン・セリグマンらが1980年代に展開した概念で、人が出来事、とりわけ否定的な出来事の原因をどのように習慣的に説明するかの個人差を指し、楽観主義と悲観主義の認知的基盤をなす。この概念は、セリグマンが当初動物実験から定式化した「学習性無力感」の理論を、人間に適用する際にリン・アブラムソン、ジョン・ティーズデールとともに行った改訂（1978年）から生まれた。（→ [[human-explanatory-style-seligman]]）
+- **Q:** エクスプレッシブ・ライティング——感情体験を書き出す筆記開示の健康効果
+  - **A:** エクスプレッシブ・ライティング（筆記開示）は、心理学者ジェームズ・W・ペネベーカーとサンドラ・K・ビールが論文『Confronting a Traumatic Event』（Journal of Abnormal Psychology 95巻3号274–281頁、1986年）で報告した筆記法である。（→ [[human-expressive-writing-pennebaker]]）
 - **Q:** 顔倒立効果——倒立させると顔だけが不釣り合いに認識困難になる現象
   - **A:** 顔倒立効果（face inversion effect）とは、上下逆さまに提示された顔の同定・再認成績が直立時に比べて著しく低下し、しかもその低下幅が家屋や飛行機など他の物体を倒立させた場合よりはるかに大きいという知覚現象である。ロバート・K・インが1969年に『Journal of Experimental Psychology』誌の論文「Looking at upside-down faces」で報告した。（→ [[human-face-inversion-effect-yin]]）
 - **Q:** 感情消失バイアス

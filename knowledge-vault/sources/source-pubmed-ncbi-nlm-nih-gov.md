@@ -2,7 +2,7 @@
 title: "pubmed.ncbi.nlm.nih.gov"
 type: source-domain
 host: "pubmed.ncbi.nlm.nih.gov"
-cite_count: 92
+cite_count: 93
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # pubmed.ncbi.nlm.nih.gov
 
-> [!info] 出典ドメイン索引 ・ 引用 **92 件**（学術 86 ・ リファレンス 5 ・ 公的 1）
+> [!info] 出典ドメイン索引 ・ 引用 **93 件**（学術 87 ・ リファレンス 5 ・ 公的 1）
 
 ## このドメインを出典とする項目
 
@@ -96,6 +96,7 @@ tags:
 - [[infosoc-narrative-transportation|ナラティブ・トランスポーテーション理論（narrative transportation／物語移入）——物語世界に没入した受け手の信念が物語の含意へ傾く説得メカニズム]] — Green,M.C.,&Brock,T.C.(2000).Theroleoftransportationinthepersuasivene…
 - [[infosoc-pluralistic-ignorance|多元的無知（pluralistic ignorance）——皆が内心で否定する規範を、皆が支持していると誤って思い込む状態]] — Prentice,D.A.&Miller,D.T.(1993)PluralisticIgnoranceandAlcoholUseonCam…
 - [[mgmt-collective-efficacy-bandura|集合的効力感理論]] — Stajkovicetal.—Collectiveefficacy,grouppotency,andgroupperformance:me…
+- [[mgmt-core-self-evaluations-judge|中核的自己評価——自尊心・一般的自己効力感・統制の所在・情緒安定性を束ねる高次特性]] — Judge,T.A.,&Bono,J.E.(2001).RelationshipofCoreSelf-EvaluationsTraits—…
 - [[mgmt-creative-self-efficacy|創造的自己効力感]] — Tierney&Farmer(2011)CreativeSelf-EfficacyDevelopmentandCreativePerfor…
 - [[mgmt-diversity-management|ダイバーシティ・マネジメント]] — vanKnippenberg&Schippers(2007),Workgroupdiversity,AnnualReviewofPsych…
 - [[mgmt-idiosyncrasy-credit|特異性クレジット理論]] — Hollander(1958)—Conformity,status,andidiosyncrasycredit(PubMed)

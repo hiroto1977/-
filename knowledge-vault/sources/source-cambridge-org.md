@@ -2,7 +2,7 @@
 title: "cambridge.org"
 type: source-domain
 host: "cambridge.org"
-cite_count: 59
+cite_count: 60
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # cambridge.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **59 件**（学術 57 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **60 件**（学術 58 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -23,6 +23,7 @@ tags:
 - [[bizlaw-shadow-director-liability|影の取締役の責任（シャドー・ダイレクター）]] — Moore(2016)—ObligationsintheShade,LegalStudies
 - [[econ-backwash-spread-myrdal|逆流効果と波及効果——ミュルダールの循環的累積的因果関係論]] — Fujita,M.&Thisse,J.-F.(2002)EconomicsofAgglomeration—CambridgeUPch.12
 - [[econ-barzel-measurement-cost-property-rights|財産権の測定費用理論（バーゼルのメジャーメント・コスト・アプローチ）]] — Barzel,Y.(1989/1997)EconomicAnalysisofPropertyRights,CambridgeUnivers…
+- [[econ-budget-maximizing-bureaucrat-niskanen|ニスカネンの予算最大化官僚モデル——独占的官庁が情報優位で総予算を極大化し過剰供給を導く公共選択理論]] — AmericanPoliticalScienceReview(CambridgeUniversityPress)—contemporary…
 - [[econ-chartalism-modern-monetary-theory|チャータリズムと現代貨幣理論（MMT）]] — Kelton(2020)TheDeficitMyth:ModernMonetaryTheory,PublicAffairs\[Cambrid…
 - [[econ-cobweb|クモの巣理論]] — Poitras,"CobwebTheory,MarketStability,andPriceExpectations",Journalof…
 - [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — JournalofInstitutionalEconomics(CambridgeCore)—'UnderstandingMasahiko…

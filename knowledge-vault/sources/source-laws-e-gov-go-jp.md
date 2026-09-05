@@ -2,7 +2,7 @@
 title: "laws.e-gov.go.jp"
 type: source-domain
 host: "laws.e-gov.go.jp"
-cite_count: 210
+cite_count: 211
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # laws.e-gov.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **210 件**（公的 209 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **211 件**（公的 210 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -106,6 +106,7 @@ tags:
 - [[bizlaw-limited-liability|株主有限責任の原則]] — e-Gov法令検索—会社法第104条（株主の責任）
 - [[bizlaw-local-autonomy|地方自治法]] — e-Gov法令検索地方自治法（昭和二十二年法律第六十七号）
 - [[bizlaw-local-tax-act|地方税法]] — e-Gov法令検索「地方税法（昭和25年法律第226号）」
+- [[bizlaw-macpherson-v-buick-privity|マクファーソン対ビュイック事件——過失責任における契約当事者関係（プリヴィティ）要件の崩壊と製造物責任の出発点]] — 製造物責任法（平成六年法律第八十五号）e-Gov法令検索—日本の製造物責任法の公布年・法律番号・欠陥要件への転換を裏付け
 - [[bizlaw-maritime-law|海商法・海事法：海上運送と船舶に関する国際的法秩序の体系]] — 商法（明治32年法律第48号）海商編—e-Gov法令検索
 - [[bizlaw-market-manipulation|相場操縦の禁止]] — e-Gov法令検索「金融商品取引法」（158条風説の流布等・159条相場操縦行為等の禁止）
 - [[bizlaw-mental-reservation|心裡留保（民法93条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号）第93条

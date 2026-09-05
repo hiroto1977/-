@@ -38,6 +38,7 @@ Finn E. Kydland／Edward C. Prescott／Robert J. Barro／David B. Gordon／Kenne
 - [[econ-nash-equilibrium|ナッシュ均衡（Nash equilibrium）]] — 同分野の近傍
 - [[econ-backus-kehoe-kydland-puzzle|バックス＝ケホー＝カイランド・パズル（Backus-Kehoe-Kydland Puzzle / 数量異常）]] — 同分野の近傍
 - [[econ-central-bank-independence-rogoff|中央銀行の独立性——ロゴフの保守的中央銀行論とインフレ目標政策]] — 同分野の近傍
+- [[econ-peso-problem|ペソ問題（Peso Problem）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

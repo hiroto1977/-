@@ -42,7 +42,7 @@ Irving Fisher ／ Ben S. Bernanke ／ Hyman P. Minsky
 - [[econ-saving-glut-hypothesis|過剰貯蓄仮説]] — 同じ思想家
 - [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 出典を共有
 - [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 出典を共有
-- [[econ-debt-deflation-fisher-irving|債務デフレーション論——フィッシャーの過剰債務螺旋と大恐慌の金融的説明]] — 出典を共有
+- [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

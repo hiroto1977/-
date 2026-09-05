@@ -39,8 +39,8 @@ aliases:
 - [[econ-trembling-hand-perfection-selten|震える手の完全均衡——ミスの可能性に頑健なナッシュ均衡]] — 同じ思想家
 - [[econ-zeuthen-bargaining|ツォイテンの交渉モデル——衝突を賭ける覚悟が譲歩を決める]] — 同じ思想家
 - [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 出典を共有
+- [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]] — 出典を共有
 - [[econ-generalized-method-of-moments-hansen|一般化モーメント法（GMM）——モーメント条件のみから分布を仮定せず母数を推定するハンセンの一般理論]] — 出典を共有
-- [[econ-reference-dependent-preferences-koszegi-rabin|期待ベースの参照点モデル（Kőszegi-Rabin 2006）——参照点は過去の現実ではなく「最近抱いた合理的期待」で内生的に決まる]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

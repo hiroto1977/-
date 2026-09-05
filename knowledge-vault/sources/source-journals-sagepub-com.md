@@ -2,7 +2,7 @@
 title: "journals.sagepub.com"
 type: source-domain
 host: "journals.sagepub.com"
-cite_count: 171
+cite_count: 173
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.sagepub.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **171 件**（学術 170 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **173 件**（学術 172 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -101,6 +101,7 @@ tags:
 - [[infosoc-profiling|プロファイリングと自動意思決定]] — Mittelstadtetal.(2016)“Theethicsofalgorithms:Mappingthedebate”,BigDat…
 - [[infosoc-prosumption-theory|プロシューマー理論]] — Ritzer&Jurgenson(2010)Production,Consumption,Prosumption—JournalofCon…
 - [[infosoc-protocol-politics-galloway|プロトコル政治論：分散化後の制御様式]] — Galloway,A.R.2006.Protocol.Theory,Culture&Society,23(2-3).
+- [[infosoc-recursive-publics-kelty|再帰的公共——自らの存在基盤である技術・法的インフラそのものを作り変える公共]] — ChristinaDunbar-Hester,"Geeks,Meta-Geeks,andGenderTrouble:Activism,Id…
 - [[infosoc-repair-work|修繕の労働（Repair Work）]] — Graham&Thrift(2007)OutofOrder:UnderstandingRepairandMaintenance—Theor…
 - [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — Postmes,Spears,Sakhel&deGroot(2001)SocialInfluenceinComputer-Mediated…
 - [[infosoc-sociotechnical-imaginaries|社会技術的想像論（ソシオテクニカル・イマジナリーズ）]] — Sismondo(2020)Sociotechnicalimaginaries—SocialStudiesofScience
@@ -119,6 +120,7 @@ tags:
 - [[mgmt-collective-efficacy-bandura|集合的効力感理論]] — Bandura(2000)ExerciseofHumanAgencyThroughCollectiveEfficacy—CurrentDi…
 - [[mgmt-collective-efficacy-bandura|集合的効力感理論]] — Goddard,Hoy&WoolfolkHoy(2000)CollectiveTeacherEfficacy:ItsMeaning,Mea…
 - [[mgmt-conjoint-analysis|コンジョイント分析（コンジョイント測定／Conjoint analysis）——属性の組み合わせを評価させ、各属性の部分効用と重要度を分解して推定するサーベイ型マーケティング手法]] — Green,PaulE.;Rao,VithalaR.(1971)."ConjointMeasurementforQuantifyingJu…
+- [[mgmt-core-self-evaluations-judge|中核的自己評価——自尊心・一般的自己効力感・統制の所在・情緒安定性を束ねる高次特性]] — Chang,C.-H.(Daisy),Ferris,D.L.,Johnson,R.E.,Rosen,C.C.,&Tan,J.A.(2012…
 - [[mgmt-customer-journey|カスタマージャーニー]] — Lemon&Verhoef,"UnderstandingCustomerExperienceThroughouttheCustomerJo…
 - [[mgmt-demand-side-strategy|需要サイド戦略論]] — Priem,Li&Carr(2012)—Demand-SideApproaches,JournalofManagement
 - [[mgmt-demand-side-strategy|需要サイド戦略論]] — Schmidt,Priem&Zanella(2024)—FiveArchetypicalValueCreationLogics,JoM

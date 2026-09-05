@@ -2,7 +2,7 @@
 title: "jstor.org"
 type: source-domain
 host: "jstor.org"
-cite_count: 144
+cite_count: 145
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jstor.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **144 件**（学術 143 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **145 件**（学術 144 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -44,6 +44,7 @@ tags:
 - [[econ-behavioral-finance|行動ファイナンス]] — Kahneman&Tversky(1979)ProspectTheory:AnAnalysisofDecisionunderRisk—Ec…
 - [[econ-bergson-welfare-function|バーグソン＝サムエルソン社会厚生関数]] — Bergson,A.(1938)"AReformulationofCertainAspectsofWelfareEconomics,"Qu…
 - [[econ-blanchard-quah-long-run-restrictions|ブランシャール＝クアの長期制約による構造VAR識別——需要ショックと供給ショックの分解]] — Shapiro,M.D.&Watson,M.W.(1988)."SourcesofBusinessCycleFluctuations."N…
+- [[econ-budget-maximizing-bureaucrat-niskanen|ニスカネンの予算最大化官僚モデル——独占的官庁が情報優位で総予算を極大化し過剰供給を導く公共選択理論]] — Blais,A.&Dion,S.(eds.)(1991).TheBudget-MaximizingBureaucrat:Appraisal…
 - [[econ-bullwhip-effect|ブルウィップ効果——需要の小さな変動が供給連鎖を遡って増幅される現象]] — Lee,H.L.,Padmanabhan,V.&Whang,S.(1997)InformationDistortioninaSupplyC…
 - [[econ-chamley-judd-theorem|チャムリー＝ジャッド定理——長期の最適な資本所得税はゼロである]] — Chamley,C.(1986)OptimalTaxationofCapitalIncomeinGeneralEquilibriumwit…
 - [[econ-cobweb-theorem-agricultural-cycles|蜘蛛の巣理論（農業価格循環）]] — Ezekiel(1938)TheCobwebTheorem—QuarterlyJournalofEconomics

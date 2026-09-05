@@ -36,7 +36,6 @@ aliases:
 - [[mgmt-authentic-leadership-george|オーセンティック・リーダーシップ——自己認識と価値の一貫性に基づく真正な指導]] — 同じ思想家
 - [[mgmt-impression-management-organizational|組織的印象管理——ステークホルダーへの組織イメージの戦略的構築]] — 同じ思想家
 - [[human-heuristic-systematic-chaiken|ヒューリスティック＝システマティックモデル——説得情報処理の二過程理論]] — 同分野の近傍
-- [[human-tip-of-the-tongue-brown-mcneill|舌先現象——知っている語を一時的に思い出せない検索の部分的失敗]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

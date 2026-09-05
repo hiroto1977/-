@@ -33,8 +33,8 @@ aliases:
 ## 関連概念
 - [[mgmt-substitutes-leadership|リーダーシップの代替要因理論]] — 同分野の近傍
 - [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]] — 同分野の近傍
-- [[mgmt-subscription-model|サブスクリプション・モデル]] — 同分野の近傍
 - [[mgmt-mechanistic-organic-burns-stalker|機械的組織と有機的組織——環境の安定性に適合する二つの管理システム]] — 同分野の近傍
+- [[mgmt-subscription-model|サブスクリプション・モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

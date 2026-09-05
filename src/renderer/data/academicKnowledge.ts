@@ -50195,5 +50195,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.newstatesman.com/science-tech/2019/09/new-jim-code-ruha-benjamin-racial-discrimination-algorithm', type: 'media', label: 'New Statesman (2019) "\'The New Jim Code\' – Ruha Benjamin on racial discrimination by algorithm" — 定義と論点についての報道による独立確認' },
     ],
   },
+  {
+    id: 'econ-cointegration-error-correction-engle-granger',
+    discipline: 'economics',
+    title: '共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理',
+    statement:
+      '共和分（cointegration）とは、単位根を持つ非定常なI(1)系列の線型結合がI(0)（定常）となる関係を指す。クライブ・グレンジャーが1981年の論文（Journal of Econometrics 16巻121–130頁）で提示し、ロバート・エングルとの1987年の共著論文『Co-Integration and Error Correction: Representation, Estimation, and Testing』（Econometrica 55巻251–276頁）で、共和分する系列は誤差修正モデル（ECM）として表現でき逆も成り立つという同値性（グレンジャーの表現定理）を証明した。二段階法は水準同士をOLS回帰し残差の単位根検定で定常性を確認後、その残差を1期ラグの誤差修正項として組み込むが単一ベクトルのみで検定統計量は非標準分布に従う。ソーレン・ヨハンセンは1988年・1991年の論文でVARに基づく最尤法（VECM）とトレース検定・最大固有値検定を示し、複数の共和分ベクトルを同時に推定・検定できるようにした。2003年にはエングル（ARCH）とグレンジャーが共和分の功績でノーベル経済学賞を共同受賞した。購買力パリティ・貨幣需要・ペアトレーディングに応用されるが、検定力の低さや構造変化への脆弱性が限界となる。中小企業経営者には、自社売上と景気指標を安易に回帰する前に共和分の有無を確認し、見せかけの相関による誤った予測を避けるべきという含意がある。',
+    keyFigures: 'クライブ・グレンジャー（1981 Journal of Econometrics／1987 共著 Econometrica／2003 ノーベル経済学賞: 共和分）／ロバート・エングル（1987 共著 Econometrica／2003 ノーベル経済学賞: ARCH）／ソーレン・ヨハンセン（1988 Journal of Economic Dynamics and Control／1991 Econometrica: VECM・トレース検定）／関連: グレンジャー＆ニューボルド（1974 見せかけの回帰）／デヴィッドソン＆ヘンドリー＆スルバ＆イェオ（1978 英国消費関数、ECM の先駆）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1987/03/01/co-integration-and-error-correction-representation-estimation', type: 'academic', label: 'Engle, R. F. & Granger, C. W. J. (1987). Co-Integration and Error Correction: Representation, Estimation, and Testing. Econometrica, 55(2), 251-276. — Engle-Granger 二段階法とグレンジャーの表現定理の原典' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/0304407681900798', type: 'academic', label: 'Granger, C. W. J. (1981). Some Properties of Time Series Data and Their Use in Econometric Model Specification. Journal of Econometrics (Elsevier), 16(1), 121-130. — 共和分概念の初出' },
+      { url: 'https://ideas.repec.org/a/eee/dyncon/v12y1988i2-3p231-254.html', type: 'academic', label: 'Johansen, S. (1988). Statistical Analysis of Cointegration Vectors. Journal of Economic Dynamics and Control (Elsevier), 12(2-3), 231-254 (DOI: 10.1016/0165-1889(88)90041-3; IDEAS/RePEc record). — 最尤法（VECM）による共和分ベクトル推定の原典' },
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1991/11/01/estimation-and-hypothesis-testing-cointegration-vectors', type: 'academic', label: 'Johansen, S. (1991). Estimation and Hypothesis Testing of Cointegration Vectors in Gaussian Vector Autoregressive Models. Econometrica, 59(6), 1551-1580. — トレース検定・最大固有値検定の原典' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2003/summary/', type: 'reference', label: 'The Sveriges Riksbank Prize in Economic Sciences in Memory of Alfred Nobel 2003 — NobelPrize.org. — エングル（ARCH）とグレンジャー（共和分）の共同受賞を確認' },
+    ],
+  },
+  {
+    id: 'econ-budget-maximizing-bureaucrat-niskanen',
+    discipline: 'economics',
+    title: 'ニスカネンの予算最大化官僚モデル——独占的官庁が情報優位で総予算を極大化し過剰供給を導く公共選択理論',
+    statement:
+      'ニスカネンの予算最大化官僚モデルは、ウィリアム・A・ニスカネンが1968年の論文「The Peculiar Economics of Bureaucracy」（American Economic Review 58巻2号）で提起し、1971年の著書『Bureaucracy and Representative Government』で完成させた公共選択理論である。官庁を公共サービスの独占的供給者、予算を与える議会を「スポンサー」とみなし双方独占と捉え、官庁が生産費用を独占的に知り議会は総予算と総出力しか観察できない情報非対称のもとで官庁は予算の最大化を図り、スポンサーの余剰を奪い効率的水準の最大2倍まで生産を膨張させると結論した。1975年論文「Bureaucrats and Politicians」（Journal of Law and Economics）では議会監視を制約に加え、最大化対象を予算と最小費用の差である「裁量的予算」に修正した。ミゲ＆ベランジェ（1974）は経営者裁量の一般理論に拡張し、ブレトン＆ウィントローブ（1975）は監視により情報非対称を縮小できると批判し、ダンリーヴィ（1991）は上級官僚が小規模で威信の高い政策官庁を好むとする「官庁形成モデル」で対抗、ブレ＆ディオン編（1991）は支持と反証の混在を報告した。中小企業は許認可・補助金窓口との交渉で情報劣位を前提とし、社内各部門も予算最大化者たり得る点から成果連動型予算の検討が実務上の含意となる。',
+    keyFigures: 'ウィリアム・A・ニスカネン（1968 AER 論文「The Peculiar Economics of Bureaucracy」／1971『Bureaucracy and Representative Government』／1975 JLE 論文「Bureaucrats and Politicians」）／ミゲ＆ベランジェ（1974 managerial discretion 一般理論への拡張）／ブレトン＆ウィントローブ（1975 監視による批判）／対比: パトリック・ダンリーヴィ（1991『Democracy, Bureaucracy and Public Choice』・官庁形成モデル）／アンドレ・ブレ＆ステファヌ・ディオン編（1991 実証的検討）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://sites.socsci.uci.edu/~jkbrueck/course%20readings/Econ%20272B%20readings/niskanen.pdf', type: 'academic', label: 'Niskanen, W. A. (1968). "The Peculiar Economics of Bureaucracy." American Economic Review, 58(2) [Papers and Proceedings of the Eightieth Annual Meeting of the American Economic Association], pp. 293-305 (course-hosted copy, UC Irvine). — モデルの初出論文。官庁を独占供給者、議会をスポンサーとする双方独占の枠組みと予算最大化仮説の原典を確認。' },
+      { url: 'https://www.cambridge.org/core/journals/american-political-science-review/article/abs/bureaucracy-and-representative-government-by-william-a-niskanenjr-chicago-new-york-aldineatherton-inc-1971-pp-241-775/43B31CFA1139C94B5DEB6A17C7354CAC', type: 'academic', label: 'American Political Science Review (Cambridge University Press) — contemporary book review confirming: Niskanen, W. A., Jr., Bureaucracy and Representative Government (Chicago & New York: Aldine-Atherton, Inc., 1971), 241 pp. — 1971年原典の出版社・刊年・頁数を確認。' },
+      { url: 'https://www.journals.uchicago.edu/doi/pdfplus/10.1086/466829', type: 'academic', label: 'Niskanen, W. A. (1975). "Bureaucrats and Politicians." Journal of Law and Economics (University of Chicago Press), 18(3), pp. 617-643 (DOI 10.1086/466829). — 1975年の理論修正（議会監視・「裁量的予算」概念の導入）を確認。' },
+      { url: 'https://ideas.repec.org/a/eee/poleco/v8y1992i3p497-499.html', type: 'academic', label: 'Keizer, P. K. (1992). Review of P. Dunleavy, Democracy, Bureaucracy and Public Choice: Economic Explanations in Political Science (Harvester Wheatsheaf, Hemel Hempstead, 1991). European Journal of Political Economy, 8(3), pp. 497-499 (IDEAS/RePEc). — ダンリーヴィ（1991）の書誌情報（出版社・刊年）と「官庁形成モデル」によるニスカネン批判の存在を確認。' },
+      { url: 'https://www.jstor.org/stable/jj.6167291', type: 'academic', label: 'Blais, A. & Dion, S. (eds.) (1991). The Budget-Maximizing Bureaucrat: Appraisals and Evidence. Pittsburgh: University of Pittsburgh Press, pp. vii+366 (JSTOR). — モデルの実証的検証をめぐる支持・反証混在の総括の存在を確認。' },
+    ],
+  },
+  {
+    id: 'mgmt-core-self-evaluations-judge',
+    discipline: 'management',
+    title: '中核的自己評価——自尊心・一般的自己効力感・統制の所在・情緒安定性を束ねる高次特性',
+    statement:
+      '中核的自己評価（コア・セルフ・エバリュエーションズ、CSE）は、個人が自己に下す最も基本的で評価的な自己評定であり、ティモシー・A・ジャッジ、エドウィン・A・ロック、キャシー・C・ダラムが『The Dispositional Causes of Job Satisfaction: A Core Evaluations Approach』（Research in Organizational Behavior, 19巻, 1997年, 151–188頁）で提唱した。根源的・評価的・広範な特性として自尊心・一般的自己効力感・統制の所在・情緒安定性（低神経症傾向）の4つを選び単一の上位特性とした。ジャッジ・ロック・ダラム・クルーガー（1998, JAP 83巻17–34頁）は3標本でこれを実証し、ジャッジ＆ボノ（2001, JAP 86巻1号80–92頁）のメタ分析は職務満足を.24〜.45、職務業績を.19〜.26の真実相関で報告した。効果は職務特性の知覚や目標の自己一致で媒介されるとされる。ジャッジら（2003, Personnel Psychology 56巻303–331頁）は12項目のCore Self-Evaluations Scale（CSES）を開発した。後続研究では神経症傾向との弁別性や過度に高いCSEに伴う過信・統制感の錯覚が指摘されている。中小企業の採用・指導では選抜の唯一基準とせず、自律性とフィードバックを伴う職務設計で強みを活かすとよい。',
+    keyFigures: 'ティモシー・A・ジャッジ（1997『The Dispositional Causes of Job Satisfaction: A Core Evaluations Approach』／2001『Relationship of Core Self-Evaluations Traits... A Meta-Analysis』／2003『The Core Self-Evaluations Scale: Development of a Measure』）／エドウィン・A・ロック（1997 共著・目標設定理論の提唱者としても知られる）／キャシー・C・ダラム（1997 共著）／ジョイス・E・ボノ（2001 メタ分析共著）／批判的レビュー: チャン＆フェリス＆ジョンソン＆ローゼン＆タン（2012『Core Self-Evaluations: A Review and Evaluation of the Literature』Journal of Management）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.scirp.org/reference/referencespapers?referenceid=461784', type: 'reference', label: 'Judge, T. A., Locke, E. A., & Durham, C. C. (1997). The Dispositional Causes of Job Satisfaction: A Core Evaluations Approach. Research in Organizational Behavior, 19, 151-188 (bibliographic record, Scientific Research Publishing). — 中核的自己評価概念の初提示と4特性選定基準（根源的・評価的・広範）の根拠' },
+      { url: 'https://doi.org/10.1037/0021-9010.83.1.17', type: 'academic', label: 'Judge, T. A., Locke, E. A., Durham, C. C., & Kluger, A. N. (1998). Dispositional Effects on Job and Life Satisfaction: The Role of Core Evaluations. Journal of Applied Psychology (American Psychological Association), 83(1), 17-34. — 4特性が単一潜在因子として職務・生活満足に直接効果を持つことを3独立標本で実証' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/11302235/', type: 'academic', label: 'Judge, T. A., & Bono, J. E. (2001). Relationship of Core Self-Evaluations Traits—Self-Esteem, Generalized Self-Efficacy, Locus of Control, and Emotional Stability—With Job Satisfaction and Job Performance: A Meta-Analysis. Journal of Applied Psychology, 86(1), 80-92 (PubMed). — 職務満足（.24〜.45）・職務業績（.19〜.26、コンシェンシャスネスと同水準）との真実相関のメタ分析的根拠' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1744-6570.2003.tb00152.x', type: 'academic', label: 'Judge, T. A., Erez, A., Bono, J. E., & Thoresen, C. J. (2003). The Core Self-Evaluations Scale: Development of a Measure. Personnel Psychology (Wiley), 56, 303-331. — 12項目 CSES 尺度の開発と単一因子構造の実証' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/0149206311419661', type: 'academic', label: 'Chang, C.-H. (Daisy), Ferris, D. L., Johnson, R. E., Rosen, C. C., & Tan, J. A. (2012). Core Self-Evaluations: A Review and Evaluation of the Literature. Journal of Management (SAGE), 38(1), 81-128. — 15年間の媒介・調整変数レビューおよび構造妥当性（ビッグファイブ神経症傾向との弁別性）への批判の根拠' },
+    ],
+  },
+  {
+    id: 'human-expressive-writing-pennebaker',
+    discipline: 'human-science',
+    title: 'エクスプレッシブ・ライティング——感情体験を書き出す筆記開示の健康効果',
+    statement:
+      'エクスプレッシブ・ライティング（筆記開示）は、心理学者ジェームズ・W・ペネベーカーとサンドラ・K・ビールが論文『Confronting a Traumatic Event』（Journal of Abnormal Psychology 95巻3号274–281頁、1986年）で報告した筆記法である。標準手順は、感情を揺さぶる出来事を1日15〜20分、3〜4日連続で「深い思考と感情」を書く実験群と些末な事実を書く対照群を比較する手法で、1986年の実験では執筆直後に血圧と陰性感情が一時的に高まったが、その後6か月の保健センター受診数は対照群より少なかった。機序としては、感情抑制を慢性的負荷とみる抑制理論、記憶への反復による馴化（暴露効果）、経験を一貫した物語に再構成する認知的処理——LIWC分析では原因語・洞察語の増加が転職や成績向上と関連——が提唱され、免疫指標の改善も報告される。応用面では、1994年のスペラらの研究で解雇専門職の8か月以内再就職率が53%（対照群24%）に達し、日本でも大森美香が大学新入生や退職勧奨者を対象に応用可能性を検討している。一方、スマイスの1998年メタ分析（健常者、d≈0.47）とフラッタロリの2006年メタ分析（146研究、r≈0.075）は効果量推定が異なり、出版バイアスや臨床サンプルでの非有意な結果が限界とされる。中小企業経営者にとっては専門治療の代替ではないが、離職者支援やストレス対処に使える無料・低コストの自助手段である。',
+    keyFigures: 'ジェームズ・W・ペネベーカー（1986『Confronting a Traumatic Event』／1997『Writing About Emotional Experiences as a Therapeutic Process』／LIWC 開発）／サンドラ・K・ビール（1986 共著）／スティーブン・スペラ（1994 解雇者再就職研究）／ジョシュア・スマイス（1998 メタ分析 d≈0.47）／ジョアン・フラッタロリ（2006 メタ分析 r≈0.075）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://doi.org/10.1037/0021-843X.95.3.274', type: 'academic', label: 'Pennebaker, J. W., & Beall, S. K. (1986). Confronting a traumatic event: Toward an understanding of inhibition and disease. Journal of Abnormal Psychology (American Psychological Association), 95(3), 274–281. — 標準的パラダイムの初出論文で、執筆直後の血圧・陰性気分の上昇と、その後6か月間の保健センター受診数の減少という結果を確認' },
+      { url: 'https://pure.psu.edu/en/publications/written-emotional-expression-effect-sizes-outcome-types-and-moder/', type: 'academic', label: 'Smyth, J. M. (1998). Written emotional expression: Effect sizes, outcome types, and moderating variables. Journal of Consulting and Clinical Psychology, 66(1), 174–184 (Penn State Pure record). — 健常者を対象としたメタ分析の効果量（d≈0.47）を確認' },
+      { url: 'https://psycnet.apa.org/record/2006-20202-001', type: 'academic', label: 'Frattaroli, J. (2006). Experimental disclosure and its moderators: A meta-analysis. Psychological Bulletin (APA), 132(6), 823–865. — 146件の実験的開示研究を統合した大規模メタ分析の効果量（r≈0.075）と、効果量推定の不一致という限界を確認' },
+      { url: 'https://journals.aom.org/doi/full/10.5465/256708', type: 'academic', label: 'Spera, S. P., Buhrfeind, E. D., & Pennebaker, J. W. (1994). Expressive writing and coping with job loss. Academy of Management Journal, 37(3), 722–733. — 解雇された専門職の8か月以内再就職率（53% vs 対照群24%）という実務関連の知見を確認' },
+      { url: 'https://www.rieti.go.jp/jp/publications/nts/13j076.html', type: 'government', label: '大森美香（2013）「心理社会的ストレス対処のための筆記表現法の応用可能性の検討」RIETI Discussion Paper Series 13-J-076（経済産業研究所）. — 日本における筆記表現法の応用可能性（大学新入生を対象とする予備的検討）を確認' },
+    ],
+  },
+  {
+    id: 'bizlaw-macpherson-v-buick-privity',
+    discipline: 'business-law',
+    title: 'マクファーソン対ビュイック事件——過失責任における契約当事者関係（プリヴィティ）要件の崩壊と製造物責任の出発点',
+    statement:
+      'マクファーソン対ビュイック事件（MacPherson v. Buick Motor Co., 217 N.Y. 382, 111 N.E. 1050, 1916年）で判事ベンジャミン・N・カードーゾは、製造者と使用者に契約関係（プリヴィティ）がなくても過失上の注意義務を認め、1842年ウィンターボトム対ライト事件以来の壁を崩した。原告の車は他社製の木製車輪のスポークが破損したが、ビュイック社は検査を怠り販売店経由で売っていた。カードーゾは「過失により製造されれば生命身体を危険にさらすことが合理的に確実な物は危険物である」とし、トマス対ウィンチェスター事件（1852年）以来の本質的危険物例外を、デブリン対スミス事件（1882年）、スタトラー対レイ製造事件（1909年）を経て自動車に一般化した（バートレット反対）。本判決は1932年英国ドナヒュー対スティーブンソン事件でアトキン卿の隣人原則に採用され、1944年エスコラ事件（トレイナー同意意見）、1963年グリーンマン事件を経て1965年第二次不法行為法リステイトメント402A条の厳格責任に至った。ゴールドバーグ＝ジプルスキー（2016年）は「世界に対する義務」との通説を神話と論証し、責任は予見可能な使用者に限られ経済的損失には及ばないと指摘する。日本の製造物責任法（1994年公布・1995年施行）も過失要件を欠陥に置換えた。中小製造業者・輸入業者は、販売店経由でも末端使用者への注意義務が消えず、仕入れ部品の品質管理と製造物責任保険が不可欠である。',
+    keyFigures: 'ベンジャミン・N・カードーゾ（1916 MacPherson v. Buick Motor Co. 主筆判事）／ウィラード・バートレット（同事件反対意見）／アトキン卿（1932 Donoghue v. Stevenson・隣人原則）／ロジャー・J・トレイナー（1944 Escola v. Coca-Cola Bottling Co. 同意意見）／ジョン・C・P・ゴールドバーグ＆ベンジャミン・C・ジプルスキー（2016『The Myths of MacPherson』／1998『The Moral of MacPherson』）／ジェイムズ・A・ヘンダーソン Jr.（2003『Torts Stories』所収章）／アンドリュー・L・カウフマン（1998『Cardozo』伝記）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.degruyterbrill.com/document/doi/10.1515/jtl-2016-0009/html', type: 'academic', label: 'Goldberg, John C. P. & Zipursky, Benjamin C. (2016). "The Myths of MacPherson." Journal of Tort Law (De Gruyter), vol. 9. DOI: 10.1515/jtl-2016-0009 — MacPherson 判決の通説的解釈（「世界への義務」論・事実上の厳格責任論）を批判し判決の限定的射程を論証する分析を裏付け' },
+      { url: 'https://doi.org/10.1017/S0738248000000043', type: 'academic', label: 'Clarke, Sally H. (2005). "Unmanageable Risks: MacPherson v. Buick and the Emergence of a Mass Consumer Market." Law and History Review (Cambridge University Press), 23(1), 1–52 — 欠陥車輪の供給網・販売店経由の取引構造など事件の歴史的背景を裏付け' },
+      { url: 'https://law.justia.com/cases/new-york/court-of-appeals/1916/217-n-y-382-1916.html', type: 'reference', label: 'Justia — MacPherson v. Buick Motor Co., 217 N.Y. 382, 111 N.E. 1050 (N.Y. 1916), New York Court of Appeals — カードーゾ法廷意見・バートレット反対意見の全文で判旨・引用判例・引用文を裏付け' },
+      { url: 'https://en.wikipedia.org/wiki/MacPherson_v._Buick_Motor_Co.', type: 'reference', label: 'Wikipedia, "MacPherson v. Buick Motor Co." — 事件概要、先行判例の系譜、Donoghue v. Stevenson への影響に関する記述を裏付け' },
+      { url: 'https://laws.e-gov.go.jp/law/406AC0000000085', type: 'government', label: '製造物責任法（平成六年法律第八十五号）e-Gov 法令検索 — 日本の製造物責任法の公布年・法律番号・欠陥要件への転換を裏付け' },
+    ],
+  },
+  {
+    id: 'infosoc-recursive-publics-kelty',
+    discipline: 'information-sociology',
+    title: '再帰的公共——自らの存在基盤である技術・法的インフラそのものを作り変える公共',
+    statement:
+      '再帰的公共は、人類学者クリストファー・ケルティが提示した概念で、自らが公共として存在するための技術的・法的・実務的・概念的手段の維持と改変に本質的に関与する公共を指す。初出は論文「Geeks, Social Imaginaries, and Recursive Publics」（Cultural Anthropology 誌20巻2号、2005年、185–214頁）、著書『Two Bits: The Cultural Significance of Free Software』（Duke University Press、2008年）で展開された。フリーソフトウェアを、ソースコード共有・オープンシステムの構想・ライセンス執筆（GPLなど）・共同作業の組織化・運動の育成という五実践が絡む実験系として分析し、UNIXからインターネット標準、ストールマンのGNU、Linux、Apacheへの系譜と、クリエイティブ・コモンズやRice大学Connexionsへの「変調」を描く。マイケル・ウォーナーの公共論とチャールズ・テイラーの社会的想像を土台とする。ガブリエラ・コールマン『Coding Freedom』（2013年）が継承する一方、ダンバー＝ヘスター（2008年）が示したギーク文化のジェンダー的盲点や、米国・英語圏中心の事例選択という限界も指摘される。中小企業にとっては、オープンソースの利用・貢献自体がライセンス遵守と開放性の規範の受容、コミュニティ自治という基盤への関与を意味する。',
+    keyFigures: 'クリストファー・ケルティ（2005 Cultural Anthropology 論文「Geeks, Social Imaginaries, and Recursive Publics」／2008『Two Bits: The Cultural Significance of Free Software』／2017『Too Much Democracy in All the Wrong Places』）／ガブリエラ・コールマン（2013『Coding Freedom: The Ethics and Aesthetics of Hacking』）／理論的土台: マイケル・ウォーナー（2002『Publics and Counterpublics』）／チャールズ・テイラー（2004『Modern Social Imaginaries』）／批判: クリスティーナ・ダンバー＝ヘスター（2008 Social Studies of Science 論文「Geeks, Meta-Geeks, and Gender Trouble」）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://read.dukeupress.edu/books/book/1136/Two-BitsThe-Cultural-Significance-of-Free-Software', type: 'academic', label: 'Christopher M. Kelty, Two Bits: The Cultural Significance of Free Software, Duke University Press, 2008 — 「再帰的公共」概念の本格的展開、フリーソフトウェアの五実践と UNIX〜Creative Commons/Connexions への系譜の記述を確認' },
+      { url: 'https://anthrosource.onlinelibrary.wiley.com/doi/abs/10.1525/can.2005.20.2.185', type: 'academic', label: 'Christopher Kelty, "Geeks, Social Imaginaries, and Recursive Publics," Cultural Anthropology 20(2), 185-214, 2005 (DOI: 10.1525/can.2005.20.2.185) — 概念の初出論文であることと定義文言を確認' },
+      { url: 'https://www.journals.uchicago.edu/doi/full/10.1086/688705', type: 'academic', label: 'Christopher M. Kelty, "Too Much Democracy in All the Wrong Places: Toward a Grammar of Participation," Current Anthropology (University of Chicago Press) 58(S15), S77-S90, 2017 (DOI: 10.1086/688705) — 参加論への理論的拡張を確認' },
+      { url: 'https://press.princeton.edu/books/paperback/9780691144610/coding-freedom', type: 'academic', label: 'E. Gabriella Coleman, Coding Freedom: The Ethics and Aesthetics of Hacking, Princeton University Press, 2013 — Debian 開発者の民族誌によるフリーソフトウェア論の継承を確認' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/0306312707082954', type: 'academic', label: 'Christina Dunbar-Hester, "Geeks, Meta-Geeks, and Gender Trouble: Activism, Identity, and Low-power FM Radio," Social Studies of Science (SAGE) 38(2), 201-232, 2008 (DOI: 10.1177/0306312707082954) — ギーク文化のジェンダー的盲点への批判を確認' },
+    ],
+  },
 ];
 // Stryker restore all

@@ -31,6 +31,7 @@ aliases:
 - [tutor2u — Strategic Drift 解説（英国教育メディア）](https://www.tutor2u.net/business/reference/strategic-drift) `メディア`
 
 ## 関連概念
+- [[mgmt-core-self-evaluations-judge|中核的自己評価——自尊心・一般的自己効力感・統制の所在・情緒安定性を束ねる高次特性]] — 同じ思想家
 - [[mgmt-pestel-analysis|PESTEL分析——マクロ環境を六つの外部要因から分析する枠組み]] — 同じ思想家
 - [[mgmt-strategy-as-practice-whittington|実践としての戦略——戦略を組織が「持つ」ものではなく人が「行う」活動として捉える]] — 同じ思想家
 - [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[econ-welfare-economics-pigou-kaldor-hicks|厚生経済学——ピグーの外部性補正とカルドア＝ヒックス補償原理]] — 出典を共有
 - [[human-allostasis|アロスタシス（Allostasis）]] — 出典を共有
 - [[human-salutogenesis-theory|サルトジェネシス理論]] — 出典を共有
-- [[infosoc-gig-economy-platform-labor|ギグエコノミーとプラットフォーム労働の法的・社会学的課題]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

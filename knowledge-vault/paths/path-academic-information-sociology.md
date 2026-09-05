@@ -2,18 +2,18 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 610
+entry_count: 611
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（610件）
+# 学習パス — 学術概念／情報社会学（611件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 80）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 79）
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 47）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 25）
@@ -22,9 +22,9 @@ tags:
 - [[infosoc-digital-labour|デジタル労働（digital labour）]]（接続 23）
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]]（接続 22）
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 22）
+- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 21）
 - [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]]（接続 21）
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]]（接続 21）
-- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 20）
 - [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]]（接続 20）
 - [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]]（接続 20）
 - [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]]（接続 20）
@@ -180,6 +180,7 @@ tags:
 - 2001年: [[infosoc-smart-mob|スマートモブ]]
 - 2001年: [[infosoc-splinternet|スプリンターネット（インターネットの分断）]]
 - 2001年: [[infosoc-surveillance-society|監視社会]]
+- 2002年: [[infosoc-recursive-publics-kelty|再帰的公共——自らの存在基盤である技術・法的インフラそのものを作り変える公共]]
 - 2002年: [[infosoc-second-level-digital-divide|第二のデジタル・デバイド（スキル・利用の格差）]]
 - 2003年: [[infosoc-infodemic|インフォデミック]]
 - 2003年: [[infosoc-presumed-media-influence-gunther|推定されたメディア影響の影響（IPMI: Influence of Presumed Media Influence）——他者への影響の推定を介してメディアが間接的に作用するモデル]]

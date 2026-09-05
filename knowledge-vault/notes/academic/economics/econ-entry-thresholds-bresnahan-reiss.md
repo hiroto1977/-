@@ -35,6 +35,7 @@ aliases:
 ## 関連概念
 - [[econ-automatic-stabilizers|自動安定化装置（ビルトイン・スタビライザー）]] — 出典を共有
 - [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 出典を共有
+- [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]] — 出典を共有
 - [[econ-generalized-method-of-moments-hansen|一般化モーメント法（GMM）——モーメント条件のみから分布を仮定せず母数を推定するハンセンの一般理論]] — 出典を共有
 - [[econ-liquidity-trap-keynes|流動性の罠——名目金利の下限で金融政策が有効性を失う状況]] — 出典を共有
 - [[econ-rubinstein-bargaining|ルービンシュタイン交渉モデル]] — 出典を共有
@@ -42,7 +43,6 @@ aliases:
 - [[human-hot-hand-fallacy|ホットハンドの誤謬]] — 出典を共有
 - [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 出典を共有
 - [[econ-balanced-budget-multiplier|均衡予算乗数]] — 出典を共有
-- [[econ-folk-theorem|フォーク定理（繰り返しゲーム）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

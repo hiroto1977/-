@@ -39,7 +39,7 @@ aliases:
 - [[econ-property-rights-demsetz|財産権の生成理論——外部性の内部化が私的所有権を生む]] — 同じ思想家
 - [[econ-salience-theory-bordalo|顕著性理論（ボルダロ＝ジェンナイオリ＝シュライファー）——目立つ属性が選択を歪める]] — 同じ思想家
 - [[mgmt-managerial-entrenchment|経営者の塹壕化（マネジリアル・エントレンチメント／managerial entrenchment）——経営者が自らを交代困難にして規律を逃れる現象]] — 同じ思想家
-- [[econ-hyperinflation-cagan|カガンのハイパーインフレーション・モデル——貨幣需要と期待が織りなす物価爆発]] — 同分野の近傍
+- [[econ-oligopoly-cournot|寡占とクールノー競争（oligopoly / Cournot competition）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

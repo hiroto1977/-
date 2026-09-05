@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／ビジネス法務"
 type: learning-path
 path_key: "academic-business-law"
-entry_count: 686
+entry_count: 687
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／ビジネス法務（686件）
+# 学習パス — 学術概念／ビジネス法務（687件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -22,11 +22,11 @@ tags:
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]]（接続 29）
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 28）
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 27）
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]]（接続 27）
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 27）
 - [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]]（接続 26）
-- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]]（接続 26）
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]]（接続 26）
 - [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]]（接続 26）
-- [[bizlaw-contractual-unconscionability|契約の非良心性法理]]（接続 25）
 - [[bizlaw-earnest-money|手付（民法557条）]]（接続 25）
 
 ## 第 2 部 — 年代順の展開
@@ -67,6 +67,7 @@ tags:
 - 1897年: [[bizlaw-act-of-state-doctrine|国家行為の法理（Act of State Doctrine）]]
 - 1899年: [[bizlaw-commercial-code|商法]]
 - 1900年: [[bizlaw-nachfrist|ナッハフリスト制度（付加期間催告による解除）]]
+- 1916年: [[bizlaw-macpherson-v-buick-privity|マクファーソン対ビュイック事件——過失責任における契約当事者関係（プリヴィティ）要件の崩壊と製造物責任の出発点]]
 - 1922年: [[bizlaw-health-insurance|健康保険法]]
 - 1929年: [[bizlaw-assumption-of-risk|危険の引受——原告が任意に引き受けた既知の危険につき被告の不法行為責任を否定するコモンロー上の抗弁]]
 - 1932年: [[bizlaw-berle-means-thesis|バーリ＝ミーンズ命題（The Berle-Means thesis／所有と経営の分離）——大規模公開会社では株式が分散し、支配が株主から専門経営者へ移る]]

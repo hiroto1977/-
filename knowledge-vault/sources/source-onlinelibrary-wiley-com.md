@@ -2,7 +2,7 @@
 title: "onlinelibrary.wiley.com"
 type: source-domain
 host: "onlinelibrary.wiley.com"
-cite_count: 96
+cite_count: 97
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # onlinelibrary.wiley.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **96 件**（学術 81 ・ リファレンス 15）
+> [!info] 出典ドメイン索引 ・ 引用 **97 件**（学術 82 ・ リファレンス 15）
 
 ## このドメインを出典とする項目
 
@@ -73,6 +73,7 @@ tags:
 - [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — Brielmaier&Friesl(2023)Theattention-basedview:Reviewandconceptualexte…
 - [[mgmt-behavioral-integration-tmt|トップ・マネジメント・チームの行動統合]] — Hambrick—TopManagementTeams,WileyEncyclopediaofManagement
 - [[mgmt-category-theory-markets|市場カテゴリー理論]] — Goldfarb&Yan(2021)RevisitingZuckerman's(1999)CategoricalImperative:An…
+- [[mgmt-core-self-evaluations-judge|中核的自己評価——自尊心・一般的自己効力感・統制の所在・情緒安定性を束ねる高次特性]] — Judge,T.A.,Erez,A.,Bono,J.E.,&Thoresen,C.J.(2003).TheCoreSelf-Evaluat…
 - [[mgmt-cultural-intelligence|文化的知能（CQ：カルチュラル・インテリジェンス）——文化的に多様な環境で効果的に機能・適応する個人の能力]] — Ang,S.,VanDyne,L.,Koh,C.,Ng,K.Y.,Templer,K.J.,Tay,C.,&Chandrasekar,N.…
 - [[mgmt-demand-side-strategy|需要サイド戦略論]] — Vinokurova(2019)—ReshapingDemandLandscapes:HowFirmsChangeCustomerPref…
 - [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — Teece,"ExplicatingDynamicCapabilities,"StrategicManagementJournal28(1…

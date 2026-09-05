@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2261
+cite_count: 2262
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2261 件**（リファレンス 2261）
+> [!info] 出典ドメイン索引 ・ 引用 **2262 件**（リファレンス 2262）
 
 ## このドメインを出典とする項目
 
@@ -216,6 +216,7 @@ tags:
 - [[bizlaw-liquidated-damages|損害賠償額の予定——違約金条項の有効性と違約罰との区別]] — Wikipedia:Liquidateddamages—DunlopvNewGarage,CavendishvMakdessi,penal…
 - [[bizlaw-liquidated-damages-clause|損害賠償額の予定条項（清算損害賠償条項）]] — Wikipedia:Liquidateddamages—genuinepre-estimate,penaltyclause,UCC2-71…
 - [[bizlaw-lost-volume-seller|逸失販売量売主の法理——転売しても消えない一件分の利益を売主に補填する理論]] — Wikipedia,"Lostvolumeseller"—corroboratesthedoctrine'sdefinitionandit…
+- [[bizlaw-macpherson-v-buick-privity|マクファーソン対ビュイック事件——過失責任における契約当事者関係（プリヴィティ）要件の崩壊と製造物責任の出発点]] — Wikipedia,"MacPhersonv.BuickMotorCo."—事件概要、先行判例の系譜、Donoghuev.Stevenso…
 - [[bizlaw-mailbox-rule|発信主義（郵便箱の法則）]] — Wikipedia—PostalAcceptanceRule
 - [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]] — Wikipedia:Postingrule—発信主義の歴史と各国法制における適用の概説
 - [[bizlaw-mareva-injunction|マレーバ差止命令——判決前に被告の資産を凍結する救済]] — Wikipedia:Freezingorder(Marevainjunction)—assetpreservation,inpersona…

@@ -35,6 +35,7 @@ aliases:
 - [[human-deferred-imitation|遅延模倣（Deferred Imitation）]] — 語彙が近い
 - [[human-chronostasis-stopped-clock|クロノスタシス（止まった時計の錯覚）——視線移動後の時間が引き延ばされる]] — 同分野の近傍
 - [[human-ego-depletion|自我消耗（エゴ・ディプリーション）]] — 同分野の近傍
+- [[human-neonatal-perception|新生児知覚と選好注視法（Neonatal Perception & Preferential Looking）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

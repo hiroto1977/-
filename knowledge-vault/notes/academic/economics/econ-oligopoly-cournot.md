@@ -38,6 +38,7 @@ aliases:
 - [[econ-monopolistic-competition|独占的競争]] — 同分野の近傍
 - [[econ-herfindahl-hirschman-index|ハーフィンダール・ハーシュマン指数（HHI）]] — 同分野の近傍
 - [[econ-averch-johnson-effect|アバーチ＝ジョンソン効果——収益率規制が過剰な資本投資を誘発する歪み]] — 同分野の近傍
+- [[econ-yardstick-competition-shleifer|ヤードスティック競争——他社の費用を基準とする規制が費用削減を誘発する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

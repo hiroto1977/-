@@ -34,8 +34,8 @@ aliases:
 ## 関連概念
 - [[human-narrative-identity-ricoeur|物語的アイデンティティ（リクール）]] — 同じ思想家
 - [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 同じ思想家
-- [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 同分野の近傍
 - [[human-narrative-identity|ナラティブ・アイデンティティ（Narrative Identity）]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

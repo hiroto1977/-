@@ -39,7 +39,7 @@ Jean-François Blanchette ／ Paul Dourish
 - [[infosoc-information-ecology-theory|情報生態学理論]] — 出典を共有
 - [[infosoc-social-bots|ソーシャルボット]] — 出典を共有
 - [[infosoc-digital-heritage-preservation|デジタル文化遺産保存——ビットロット・フォーマット陳腐化とデジタルアーカイブの持続可能性]] — 同分野の近傍
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-recursive-publics-kelty|再帰的公共——自らの存在基盤である技術・法的インフラそのものを作り変える公共]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

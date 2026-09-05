@@ -2,25 +2,25 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 643
+entry_count: 644
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（643件）
+# 学習パス — 学術概念／人間科学（644件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 143）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 145）
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 103）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 31）
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 28）
 - [[human-attribution-theory|帰属理論]]（接続 28）
 - [[human-bias-blind-spot|バイアスの盲点]]（接続 28）
-- [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 28）
+- [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 27）
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 26）
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 26）
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 25）
@@ -206,6 +206,7 @@ tags:
 - 1985年: [[human-hot-hand-fallacy|ホットハンドの誤謬]]
 - 1986年: [[human-counterfactual-thinking|反実仮想思考（反事実的思考）]]
 - 1986年: [[human-developmental-niche-theory|発達的ニッチ理論（Super & Harkness）]]
+- 1986年: [[human-expressive-writing-pennebaker|エクスプレッシブ・ライティング——感情体験を書き出す筆記開示の健康効果]]
 - 1986年: [[human-reminiscence-bump|レミニセンス・バンプ]]
 - 1986年: [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]]
 - 1986年: [[human-terror-management|存在脅威管理理論（恐怖管理理論）]]

@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Benchmarking — Camp, Xerox, best practices, internal/competitive/functional/generic, continuous improvement](https://en.wikipedia.org/wiki/Benchmarking) `リファレンス`
 
 ## 関連概念
+- [[mgmt-generic-strategies-porter|ポーターの基本戦略——コスト・リーダーシップ・差別化・集中]] — 同分野の近傍
 - [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

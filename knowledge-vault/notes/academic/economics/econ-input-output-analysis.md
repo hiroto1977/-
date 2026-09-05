@@ -38,7 +38,6 @@ aliases:
 - [[econ-leontief-paradox|レオンチェフの逆説]] — 同じ思想家
 - [[econ-leontief-paradox-trade|レオンチェフ・パラドックス——要素賦存理論への実証的挑戦]] — 同じ思想家
 - [[econ-von-neumann-growth-model|フォン・ノイマンの成長モデル——均斉成長と利子率＝成長率]] — 同じ思想家
-- [[econ-harsanyi-utilitarianism|ハルサニの功利主義（集計定理）——不偏な観察者と期待効用の和]] — 同分野の近傍
 - [[econ-quadratic-voting-weyl|二次の投票（クアドラティック・ボーティング）——選好の強度を表す投票]] — 同分野の近傍
 - [[econ-tying|抱き合わせ販売（tying）]] — 同分野の近傍
 

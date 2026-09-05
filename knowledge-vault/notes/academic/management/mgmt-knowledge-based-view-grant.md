@@ -34,7 +34,6 @@ aliases:
 - [[mgmt-knowledge-management|ナレッジマネジメント（知識管理）：SECIモデルと「場」による組織的知識創造理論]] — 語彙が近い
 - [[mgmt-knowledge-brokering-hargadon|知識ブローカリングとイノベーション（ハーガドン＆サットン）]] — 同じ思想家
 - [[mgmt-mechanistic-organic-burns-stalker|機械的組織と有機的組織——環境の安定性に適合する二つの管理システム]] — 同分野の近傍
-- [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

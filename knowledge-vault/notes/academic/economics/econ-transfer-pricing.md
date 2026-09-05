@@ -31,6 +31,7 @@ OECD移転価格ガイドライン（初版1979年、累次改訂）／アーム
 - [Wikipedia: Transfer pricing — 移転価格の定義と国際的規制動向の概説](https://en.wikipedia.org/wiki/Transfer_pricing) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-tax-avoidance-beps-regulation|タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革]] — 語彙が近い
 - [[bizlaw-transfer-pricing-arms-length-principle|移転価格税制と独立企業間原則——多国籍企業の利益移転と国際課税の攻防]] — 語彙が近い
 - [[econ-transfer-pricing-arm-length|移転価格と独立企業間価格原則——多国籍企業の利益配分]] — 同分野の近傍
 - [[econ-fear-of-floating|変動相場回避（フィア・オブ・フローティング）]] — 同分野の近傍

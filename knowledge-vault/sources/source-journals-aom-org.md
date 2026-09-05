@@ -2,7 +2,7 @@
 title: "journals.aom.org"
 type: source-domain
 host: "journals.aom.org"
-cite_count: 71
+cite_count: 72
 tags:
   - source-domain
   - index
@@ -10,13 +10,14 @@ tags:
 
 # journals.aom.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **71 件**（学術 71）
+> [!info] 出典ドメイン索引 ・ 引用 **72 件**（学術 72）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-corporate-governance-structures|コーポレート・ガバナンス構造の比較制度分析]] — Aguilera,R.V.,&Jackson,G.(2003)TheCross-NationalDiversityofCorporateG…
 - [[bizlaw-corporate-governance-structures|コーポレート・ガバナンス構造の比較制度分析]] — Aguilera,R.V.,&Jackson,G.(2010)ComparativeandInternationalCorporateGo…
 - [[human-componential-theory-creativity-amabile|創造性の構成要素理論（アマビル）——領域スキル・創造的思考・内発的動機づけと社会環境が交わって生まれる創造性]] — Amabile,T.M.,Conti,R.,Coon,H.,Lazenby,J.,&Herron,M.(1996).Assessingth…
+- [[human-expressive-writing-pennebaker|エクスプレッシブ・ライティング——感情体験を書き出す筆記開示の健康効果]] — Spera,S.P.,Buhrfeind,E.D.,&Pennebaker,J.W.(1994).Expressivewritingand…
 - [[mgmt-absorptive-capacity-theory|吸収能力理論]] — Zahra&George(2002)—AbsorptiveCapacity:AReview,Reconceptualization,and…
 - [[mgmt-adaptive-performance-griffin|適応的パフォーマンス（グリフィン・ニール・パーカー）]] — Griffin,M.A.,Neal,A.,&Parker,S.K.(2007)Anewmodelofworkroleperformance…
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — Gibson&Birkinshaw(2004)OrganizationalAmbidexterity—AcademyofManagemen…

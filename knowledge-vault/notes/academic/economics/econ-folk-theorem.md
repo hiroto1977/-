@@ -32,6 +32,7 @@ James W. Friedman（1971・部分ゲーム完全版）／Drew Fudenberg & Eric M
 
 ## 関連概念
 - [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 出典を共有
+- [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]] — 出典を共有
 - [[econ-generalized-method-of-moments-hansen|一般化モーメント法（GMM）——モーメント条件のみから分布を仮定せず母数を推定するハンセンの一般理論]] — 出典を共有
 - [[econ-rubinstein-bargaining|ルービンシュタイン交渉モデル]] — 出典を共有
 - [[human-hot-hand-fallacy|ホットハンドの誤謬]] — 出典を共有
@@ -40,7 +41,6 @@ James W. Friedman（1971・部分ゲーム完全版）／Drew Fudenberg & Eric M
 - [[econ-balanced-budget-multiplier|均衡予算乗数]] — 出典を共有
 - [[econ-entry-thresholds-bresnahan-reiss|ブレスナハン＝ライス参入閾値モデル——市場規模と参入企業数から競争の強さを推定する実証手法]] — 出典を共有
 - [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]] — 出典を共有
-- [[econ-nash-bargaining|ナッシュ交渉解]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]
