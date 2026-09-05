@@ -87,8 +87,9 @@ npm run lint:network-targets # 送り先ホストが変数で決まる通信の�
 npm run lint:docs          # cross-document consistency
 npm run lint:citations     # 出典の内部矛盾 (同一 DOI が別々の出版年・別々の著作で引かれていないか)
 npm run lint:doi-prefix    # DOI プレフィックス(=登録機関=出版社) とラベルの出版社の矛盾。
-                           #   ISSN を埋め込む DOI (APA / Elsevier PII / Wiley j. / SAGE) は台帳 164 誌で
-                           #   誌名も照合し、ISSN の検査数字も検算する (1 回しか引かれない誤 DOI を拾う)
+                           #   ISSN を埋め込む DOI (APA / Elsevier PII / Wiley j. / SAGE) は台帳 164 誌で、誌の略号を
+                           #   持つ DOI (INFORMS / Oxford / Wiley / Springer / Annual Reviews / MIT / Emerald) は
+                           #   台帳 153 誌で誌名も照合し、ISSN の検査数字も検算する (1 回しか引かれない誤 DOI を拾う)
 npm run lint:charset       # 他文字種・簡体字の混入 (CJK は共有ブロックなので字を列挙するしかない)
 npm run lint:knowledge-refs # 裁定台帳が実在しない知識 id を参照していないか
 npm run lint:test-coverage # every service must have a test + an action registered

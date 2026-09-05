@@ -1657,21 +1657,22 @@ compliance / subsidy / counselor / econ-history のデータ（LITE は
 
 ---
 
-## 出典照合 — 台帳 5 つ（2026-09-05 に ISSN 照合を足して 32 件が要照合）
+## 出典照合 — 台帳 5 つ（2026-09-05 に ISSN 照合と誌略号照合を足して 46 件が要照合）
 
-**出典台帳の未確認件数: **32 件****
+**出典台帳の未確認件数: **46 件****
 
 `lint:doi-prefix` は 5 つの台帳を持ち、いずれも**双方向**（直したのに載っていたら落ちる）。
-2026-08-17 時点で当時の 4 つはすべて空だった。2026-09-05 に誌コード照合を ISSN 台帳 164 誌へ広げ、
+2026-08-17 時点で当時の 4 つはすべて空だった。2026-09-05 に誌コード照合を ISSN 台帳 164 誌と
+誌略号台帳 153 誌（INFORMS／Oxford／Wiley／Springer／Annual Reviews／MIT／Emerald）へ広げ、
 ISSN の検査数字の検算（5 つ目の台帳）を足したところ、**1 回しか引かれていない DOI の誤り**が
-32 件見つかった。この環境は doi.org へ出られないので推測で直さず、理由つきで台帳に置いてある
+46 件見つかった。この環境は doi.org へ出られないので推測で直さず、理由つきで台帳に置いてある
 （検索できる環境での最優先の照合バックログ。`scripts/lint-doi-prefix.cjs` の各台帳が作業一覧）:
 
 | 台帳 | 何を退避するか | 現在 |
 |---|---|---|
 | `ALLOWLIST` | DOI プレフィックスとラベルの出版社が矛盾 | 0 件 |
 | `ISBN_ALLOWLIST` | 書籍 DOI の ISBN-13 チェックディジット不正 | 0 件 |
-| `JOURNAL_ALLOWLIST` | 誌コード（AOM／AEA の略号、APA／Elsevier PII／Wiley j.／SAGE の ISSN）とラベルの誌が不一致 | 30 件 |
+| `JOURNAL_ALLOWLIST` | 誌コード（AOM／AEA の略号、APA／Elsevier PII／Wiley j.／SAGE の ISSN、INFORMS／Oxford／Wiley／Springer／Annual Reviews／MIT／Emerald の略号）とラベルの誌が不一致 | 44 件 |
 | `DUPLICATE_ID_ALLOWLIST` | 同一文献に別々の識別子 | 0 件 |
 | `ISSN_ALLOWLIST` | DOI に埋め込まれた ISSN の検査数字が不成立（＝解決しない DOI） | 2 件 |
 

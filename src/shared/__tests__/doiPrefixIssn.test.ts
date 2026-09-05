@@ -117,3 +117,48 @@ describe('ISSN_JOURNALS 台帳の自己整合', () => {
     expect(JOURNAL_CODES.some((j) => j.issn === '0033-295X' && j.form === 'apa')).toBe(true);
   });
 });
+
+describe('CODE_JOURNALS 台帳 — 誌の略号を接尾辞に持つ出版社 (2026-09-05)', () => {
+  const { CODE_JOURNALS, CODE_FORMS } = gate as unknown as {
+    CODE_JOURNALS: [string, string, string, RegExp][];
+    CODE_FORMS: Record<string, (code: string) => RegExp>;
+  };
+
+  it('台帳は 7 形式・100 件以上で、誌名の正規表現は誌名自身に当たる', () => {
+    expect(CODE_JOURNALS.length).toBeGreaterThan(100);
+    expect([...new Set(CODE_JOURNALS.map((r) => r[0]))].sort()).toEqual(['annualreviews', 'emerald', 'informs', 'mit', 'oxford', 'springer', 'wiley']);
+    for (const [form, code, name, label] of CODE_JOURNALS) {
+      expect(label.test(name), `${form}/${code} ${name}`).toBe(true);
+      expect(Object.keys(CODE_FORMS)).toContain(form);
+    }
+    const keys = CODE_JOURNALS.map((r) => `${r[0]}|${r[1]}`);
+    expect(new Set(keys).size).toBe(keys.length);
+  });
+
+  it('★ 標本: 略号の誌とラベルの誌が違えば鳴る (実測した 10 件から)', () => {
+    expect(journalConflict('10.1093/qje/qjr014', 'Lustig, Roussanov & Verdelhan (2011) Common Risk Factors in Currency Markets — Review of Financial Studies 24(11)')?.named).toEqual(['Review of Financial Studies']);
+    expect(journalConflict('10.1002/smj.4250130606', 'Eden, C. (1992) On the Nature of Cognitive Maps — Journal of Management Studies 29(3)')?.named).toEqual(['Journal of Management Studies']);
+    expect(journalConflict('10.1287/mnsc.1120.1541', 'Shaw & Hill (2014) Laboratories of Oligarchy? — Journal of Communication 64(2)')?.named).toEqual(['Journal of Communication']);
+    expect(journalConflict('10.1007/s11948-016-9776-z', 'Danaher, J. (2016) The Threat of Algocracy — Philosophy & Technology 29(3)')?.named).toEqual(['Philosophy & Technology']);
+    expect(journalConflict('10.1146/annurev-financial-012820-012020', 'Du & Schreger (2022) CIP Deviations — Annual Review of Economics 14')?.named).toEqual(['Annual Review of Economics']);
+  });
+
+  it('対照: 正しい誌名・略号・誌名を含む誌は通る', () => {
+    expect(journalConflict('10.1287/orsc.1050.0133', 'Weick, Sutcliffe & Obstfeld (2005) — Organization Science 16(4)')?.named).toBeNull();
+    expect(journalConflict('10.1287/mnsc.35.12.1504', 'Dierickx & Cool (1989) — Management Science 35(12)')?.named).toBeNull();
+    expect(journalConflict('10.1093/qje/qjt001', 'X (2013) — QJE 128(1)')?.named).toBeNull();
+    expect(journalConflict('10.1002/smj.640', 'Teece (2007) Explicating Dynamic Capabilities — SMJ 28(13)')?.named).toBeNull();
+    expect(journalConflict('10.1002/job.678', 'Oldham & Hackman (2010) — Journal of Organizational Behavior 31(2-3)')?.named).toBeNull();
+    expect(journalConflict('10.1007/s10551-015-2693-2', 'X (2015) — Journal of Business Ethics 130')?.named).toBeNull();
+    expect(journalConflict('10.1146/annurev-psych-010213-115208', 'Parker (2014) — Annual Review of Psychology 65')?.named).toBeNull();
+    expect(journalConflict('10.1146/annurev-orgpsych-031413-091235', 'X (2014) — Annual Review of Organizational Psychology and Organizational Behavior 1')?.named).toBeNull();
+    expect(journalConflict('10.1162/rest.2010.11855', 'X (2010) — Review of Economics and Statistics 92')?.named).toBeNull();
+    expect(journalConflict('10.1108/tlo-01-2019-0001', 'X (2019) — The Learning Organization 26')?.named).toBeNull();
+  });
+
+  it('対照: 台帳に無い略号 (書籍コード oso / acprof など) と誌名を名乗らないラベルは判定しない', () => {
+    expect(journalConflict('10.1093/oso/9780195092691.001.0001', 'Nonaka & Takeuchi (1995) — Oxford University Press')).toBeNull();
+    expect(journalConflict('10.1093/acprof:oso/9780195073683.001.0001', 'Hasbrouck (2007) — Oxford University Press')).toBeNull();
+    expect(journalConflict('10.1002/smj.4250050207', 'Wernerfelt (1984) A Resource-Based View of the Firm')?.named).toBeNull();
+  });
+});
