@@ -28,14 +28,14 @@ aliases:
 - [[bizlaw-accord-and-satisfaction|和解合意と履行——係争中の債務の合意的解決の法理]]
 - …ほか 689 件 → [[学術概念]]
 
-### 学術概念 / 情報社会学（全592件）
+### 学術概念 / 情報社会学（全591件）
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]
 - [[infosoc-affective-computing-picard|アフェクティブコンピューティング——ピカードの感情認識AI論と機械が感情を扱う倫理的課題]]
 - [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]]
 - [[infosoc-affordance-theory-gibson|アフォーダンス理論——環境が提供する行為可能性と技術の社会的利用への展開]]
 - [[infosoc-agnotology-proctor|アグノトロジー——無知はいかに作り出されるか]]
-- …ほか 586 件 → [[学術概念]]
+- …ほか 585 件 → [[学術概念]]
 
 ### 法務・税務・労務 / 法務（全138件）
 - [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]]

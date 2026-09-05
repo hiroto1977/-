@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[infosoc-computational-propaganda-bots|コンピュテーショナル・プロパガンダとソーシャルボット——自動化された世論操作の情報社会論]] — 語彙が近い
+- [[infosoc-computational-propaganda-woolley|計算プロパガンダ（ウーリー＆ハワード）]] — 語彙が近い
 - [[infosoc-misinformation-disinformation|誤情報・偽情報：インフォメーション・ディスオーダーの分類体系とデジタルメディアにおける虚偽情報拡散の実証研究]] — 同じ思想家
-- [[infosoc-computational-propaganda-woolley|計算プロパガンダ（ウーリー＆ハワード）]] — 同じ思想家
 - [[infosoc-fake-news-ecosystem-wardle|誤情報エコシステムの類型（ウォードル）]] — 同じ思想家
 - [[infosoc-disinformation|誤情報・偽情報（情報の無秩序）]] — 同じ思想家
 - [[infosoc-hate-speech-online-moderation|ヘイトスピーチとオンライン・コンテンツ・モデレーションの社会法学]] — 同じ思想家

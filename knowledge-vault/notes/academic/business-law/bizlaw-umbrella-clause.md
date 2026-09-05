@@ -32,6 +32,7 @@ SGS v. パキスタン事件（2003 ICSID 制限的解釈）／SGS v. フィリ�
 
 ## 関連概念
 - [[bizlaw-hardship-clause|ハードシップ条項（Hardship Clause）]] — 同分野の近傍
+- [[bizlaw-good-faith-dealing-obligation|信義誠実の義務——契約履行における善意と公正取引の法的要請]] — 同分野の近傍
 - [[bizlaw-denial-of-justice|裁判拒否（Denial of Justice）]] — 同分野の近傍
 - [[bizlaw-quistclose-trust|クイストクローズ信託——特定目的の資金は目的が失われれば貸し手に戻る]] — 同分野の近傍
 

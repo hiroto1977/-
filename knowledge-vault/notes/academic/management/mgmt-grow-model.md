@@ -36,6 +36,7 @@ aliases:
 - [[mgmt-mbo|目標による管理（MBO）]] — 同分野の近傍
 - [[mgmt-net-promoter-score|ネット・プロモーター・スコア（NPS）]] — 同分野の近傍
 - [[mgmt-bureaucracy|官僚制（ウェーバー）]] — 同分野の近傍
+- [[mgmt-experience-economy|経験経済（パイン＆ギルモア）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

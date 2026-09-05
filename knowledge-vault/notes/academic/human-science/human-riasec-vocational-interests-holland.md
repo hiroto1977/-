@@ -41,8 +41,8 @@ aliases:
 - [[mgmt-job-based-employment|ジョブ型雇用]] — 出典を共有
 - [[mgmt-job-embeddedness-theory|職務埋め込み理論]] — 出典を共有
 - [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
+- [[human-processing-fluency|処理流暢性（レーバー＝シュワルツ＝ヴィンキールマン）——情報を処理する主観的な容易さが快として誤帰属され、真実らしさ・好ましさ・親近感・美しさの判断を押し上げる]] — 同分野の近傍
 - [[human-selective-optimization-with-compensation-baltes|選択・最適化・補償（SOC）モデル——資源が減る中で目標を絞り、手段を磨き、失った機能を補って発達を続けるバルテスの生涯発達論]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

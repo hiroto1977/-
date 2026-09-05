@@ -10788,16 +10788,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'human-processing-fluency',
     discipline: 'human-science',
-    title: '処理流暢性',
+    title: '処理流暢性（レーバー＝シュワルツ＝ヴィンキールマン）——情報を処理する主観的な容易さが快として誤帰属され、真実らしさ・好ましさ・親近感・美しさの判断を押し上げる',
     statement:
-      '処理流暢性とは、情報を知覚・読解・理解・想起する際に経験される主観的な容易さ／困難さを指す。流暢に（容易に）処理できる刺激ほど肯定的に体験され、より真実らしい・好ましい・なじみがある・頻繁である・確信できると判断され、美的にも好まれる。流暢性は「快」としてマークされており（hedonically marked）、人はこの流暢さの感覚を刺激そのものの性質に誤帰属しがちである。' +
-      'この構成概念は、反復が流暢性と好意を高める単純接触効果や、流暢な（反復された）言明が真実らしく見える錯誤的真実効果の基盤をなし、読みやすいフォント・高コントラスト・韻を踏む格言・発音しやすい名前といった知覚的特徴が判断に及ぼす影響をも説明する、メタ認知的手がかりとして機能する。レーバー／シュワルツ／ウィンキルマン（2004）やアルター&オッペンハイマー（2009）が体系化した。',
-    keyFigures: 'ロルフ・レーバー／ノルベルト・シュワルツ／ピオトル・ウィンキルマン（Reber, Schwarz & Winkielman, 2004）／アルター&オッペンハイマー（2009）',
-    asOf: '2026-06',
+      '処理流暢性（processing fluency）とは、情報を知覚・読解・理解・想起する際に経験される主観的な容易さのことで、流暢に処理できる刺激ほど肯定的に体験され、真実らしく好ましくなじみがあると判断され、美的にも好まれる。ロルフ・レーバー、ノルベルト・シュワルツ、ピオトル・ヴィンキールマン（2004）は、流暢な処理それ自体が微弱な正の感情価を帯び（快楽的標識づけ）、その快が対象の性質へ誤帰属されることで判断が押し上げられると体系化し、対称性・プロトタイプ性・図と地のコントラストの高さや反復接触が好まれる現象群を処理流暢性の美学として統一的に説明した。ラリー・ジャコビーとマーク・ダラス（1981）は、先行曝露が知覚的同定を速く正確にする反復プライミングを示し、流暢性の高まりが「過去に見た」という親近感の源泉として想起とは別経路の再認記憶を支えることを実証した。流暢性を過去性や真実性へ誤帰属する仕組みは、反復が好意を高める単純接触効果や、繰り返された主張ほど真と判断される真実性錯覚の基盤であり、読みやすいフォントや発音しやすい名前が判断に及ぼす影響を説明する。アダム・アルターとダニエル・オッペンハイマー（2009）は知覚・概念・想起の流暢性を統合するレビューを与えた。流暢さの原因が明示されると効果は割り引かれ、読みにくいフォントが分析的思考を促すという非流暢性効果は再現性に留保が付く。批判として、効果量が小さく文脈依存で、快の誤帰属という機構の直接証拠が限られる。中小企業には、商品名・価格表示・契約書の読みやすさがそのまま信頼と選好に影響すること、逆に「読みやすいから正しい」という判断の癖を自社の意思決定でも疑うことが含意となる。',
+    keyFigures: 'ロルフ・レーバー＆ノルベルト・シュワルツ＆ピオトル・ヴィンキールマン（2004 処理流暢性の美学）／ラリー・ジャコビー＆マーク・ダラス（1981 反復プライミングと再認）／アダム・アルター＆ダニエル・オッペンハイマー（2009 統合レビュー）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://journals.sagepub.com/doi/10.1207/s15327957pspr0804_3', type: 'academic', label: 'Reber, Schwarz & Winkielman (2004), Processing Fluency and Aesthetic Pleasure, Personality and Social Psychology Review' },
-      { url: 'https://journals.sagepub.com/doi/10.1177/1088868309341564', type: 'academic', label: 'Alter & Oppenheimer (2009), Uniting the Tribes of Fluency to Form a Metacognitive Nation, PSPR' },
-      { url: 'https://en.wikipedia.org/wiki/Processing_fluency', type: 'reference', label: 'Wikipedia: Processing fluency' },
+      { url: 'https://doi.org/10.1207/s15327957pspr0804_3', type: 'academic', label: 'Reber, R., Schwarz, N. & Winkielman, P. (2004) Processing Fluency and Aesthetic Pleasure: Is Beauty in the Perceiver\'s Processing Experience? — Personality and Social Psychology Review 8(4)（原典）' },
+      { url: 'https://doi.org/10.1037/0096-3445.110.3.306', type: 'academic', label: 'Jacoby, L. L. & Dallas, M. (1981) On the Relationship Between Autobiographical Memory and Perceptual Learning — Journal of Experimental Psychology: General 110(3)' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/1088868309341564', type: 'academic', label: 'Alter, A. L. & Oppenheimer, D. M. (2009) Uniting the Tribes of Fluency to Form a Metacognitive Nation — Personality and Social Psychology Review 13(3)' },
+      { url: 'https://en.wikipedia.org/wiki/Processing_fluency', type: 'reference', label: 'Wikipedia: Processing fluency — 快楽的標識づけ、誤帰属、単純接触効果、真実性錯覚' },
     ],
   },
   {
@@ -17597,15 +17597,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'infosoc-sociomateriality',
     discipline: 'information-sociology',
-    title: 'ソシオマテリアリティ（Sociomateriality）',
+    title: 'ソシオマテリアリティ（オーリコウスキー）——社会的なものと物質的・技術的なものは実践のなかで構成的に絡み合い、独立の実体としては存在しないとする存在論的立場',
     statement:
-      'ソシオマテリアリティ（sociomateriality）とは、社会的なもの（the social）と物質的・技術的なもの（the material）が本質的に絡み合い（entangled）、相互に構成し合う（mutually constitutive）不可分の関係にあるとする存在論的立場であり、情報システム研究および組織研究における技術と組織の関係の理論化に根本的な転換をもたらした概念である。この概念を情報システム研究において体系的に定式化したのはワンダ・J・オーリコウスキー（Wanda J. Orlikowski）の2007年の論文「Sociomaterial Practices: Exploring Technology at Work」（Organization Studies, Vol.28, No.9, pp.1435-1448, DOI: 10.1177/0170840607081138）である。オーリコウスキーはカレン・バラド（Karen Barad）の行為的実在論（agential realism）およびアンドリュー・ピカリング（Andrew Pickering）の実践の交錯（mangle of practice）を理論的基盤として援用し、技術と人間の組織実践が事前に独立した実体として存在するのではなく、実践の遂行（performativity）を通じて相互に構成されることを主張した。' +
-      'Orlikowski and Scott (2008)「Sociomateriality: Challenging the Separation of Technology, Work and Organization」（Academy of Management Annals, Vol.2, No.1, pp.433-474, DOI: 10.1080/19416520802211644）は、情報システム研究における技術決定論（technological determinism）と社会構成主義（social constructivism）の二項対立を批判的に検討し、ソシオマテリアリティの存在論的基盤を精緻化した包括的レビュー論文である。彼女らは従来の研究が技術と社会を分析的に分離可能な独立実体として扱ってきた「分離の存在論」（ontology of separateness）を批判し、技術と社会が実践において不可分に絡み合う「構成的絡み合い」（constitutive entanglement）の存在論を提唱した。これに対し、Paul M. Leonardi (2013)「Theoretical foundations for the study of sociomateriality」（Information and Organization, Vol.23, No.2, pp.59-76, DOI: 10.1016/j.infoandorg.2013.02.002）は、オーリコウスキーの強い絡み合い（strong entanglement）の立場に対して、技術の物質性（materiality）と人間の行為主体性（human agency）を分析的に区別可能な独立した実体として維持しつつ、両者の相互作用の経験的分析を可能にする「弱いソシオマテリアリティ」（weak/critical realist sociomateriality）を対置し、imbrication（重ね合わせ）メタファーによる代替的理論化を提示した。',
-    keyFigures: 'Wanda J. Orlikowski（Organization Studies 28(9), 2007, 概念定式化）／Orlikowski & Susan V. Scott（AMA Annals 2(1), 2008, 包括的レビュー）／Paul M. Leonardi（I&O 23(2), 2013, 弱いソシオマテリアリティ）',
-    asOf: '2026-06',
+      'ソシオマテリアリティ（sociomateriality）とは、社会的なものと物質的・技術的なものが本質的に絡み合い相互に構成し合う不可分の関係にあるとする存在論的立場で、ワンダ・オーリコウスキーが2007年の論文で情報システム研究と組織研究に体系的に定式化した。組織研究が物質性を無視するか自明視してきたと批判し、カレン・バラドの行為的実在論とアンドリュー・ピカリングの実践の交錯を援用して、人間も技術も関係のなかで遂行される以前に固有の性質を持つ実体としては存在しないという関係的存在論を採る。例に挙げる検索エンジンは、コードであると同時に無数の人々がページを作り検索語を入力して初めて機能する配置で、社会と技術のどちらにも還元できない。オーリコウスキーとスーザン・スコット（2008）は主要経営学誌の論文の九割以上が技術の役割を扱っていないと示し、技術と社会を分離可能な独立実体として扱う「分離の存在論」を批判し、「構成的な絡み合い」の存在論を精緻化した。ポール・レオナルディ（2013）は物質性と人間の行為主体性を区別したまま相互作用を分析する「弱い」ソシオマテリアリティ（重ね合わせ）を対置し、アクターネットワーク理論やアセンブラージュ論と接続する議論が続く。批判として、存在論的主張が経験的研究の方法へ翻訳しにくいこと、「すべては絡み合っている」では因果や責任の分析ができないこと、用語の乱立がある。中小企業には、業務システムの導入は道具の追加ではなく仕事のやり方と役割そのものの組み替えであり、システムと人の運用を切り分けて評価すると失敗の原因を見誤ることが含意となる。',
+    keyFigures: 'ワンダ・オーリコウスキー（2007 定式化）／ワンダ・オーリコウスキー＆スーザン・スコット（2008 レビュー）／ポール・レオナルディ（2013 弱いソシオマテリアリティ）／カレン・バラド（行為的実在論）／アンドリュー・ピカリング（実践の交錯）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1177/0170840607081138', type: 'academic', label: 'Orlikowski (2007) Sociomaterial Practices: Exploring Technology at Work — Organization Studies 28(9), pp.1435-1448' },
-      { url: 'https://doi.org/10.1080/19416520802211644', type: 'academic', label: 'Orlikowski & Scott (2008) Sociomateriality: Challenging the Separation of Technology, Work and Organization — AMA Annals 2(1), pp.433-474' },
+      { url: 'https://doi.org/10.1177/0170840607081138', type: 'academic', label: 'Orlikowski, W. J. (2007) Sociomaterial Practices: Exploring Technology at Work — Organization Studies 28(9), 1435–1448（原典）' },
+      { url: 'https://doi.org/10.1080/19416520802211644', type: 'academic', label: 'Orlikowski, W. J. & Scott, S. V. (2008) Sociomateriality: Challenging the Separation of Technology, Work and Organization — Academy of Management Annals 2(1), 433–474' },
+      { url: 'https://doi.org/10.1016/j.infoandorg.2013.02.002', type: 'academic', label: 'Leonardi, P. M. (2013) Theoretical Foundations for the Study of Sociomateriality — Information and Organization 23(2), 59–76' },
+      { url: 'https://en.wikipedia.org/wiki/Sociomateriality', type: 'reference', label: 'Wikipedia: Sociomateriality — Orlikowski、構成的絡み合い、Leonardi の批判' },
     ],
   },
   {
@@ -20434,20 +20435,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-perceptual-fluency',
-    discipline: 'human-science',
-    title: '知覚的流暢性（Perceptual Fluency）',
-    statement:
-      '刺激が処理される主観的な容易さが、真実性・親近性・選好・美的価値の判断に影響を及ぼす認知メカニズム。レーバー、シュワルツ＆ヴィンキールマン（2004）は、流暢な処理それ自体が微弱な正の感情価を帯びる（快楽的標識づけ）ため、その快が対象の性質へ誤帰属されて「美しい・良い・真実らしい・馴染みがある」の判断を押し上げると体系化し、対称性・プロトタイプ性・図地コントラストの高さや反復接触が好まれる現象群——単純接触効果を含む——を処理流暢性の美学として統一的に説明した。ジャコビー＆ダラス（1981）は、先行曝露が知覚的同定を速く正確にする反復プライミングを示し、この流暢性の高まりが「過去に見た」という親近感の源泉として想起とは別経路の再認記憶を支えることを実証した——流暢性を過去性へ誤帰属する仕組みは、繰り返された主張ほど真と判断される真実性錯覚（イリュージョリー・トゥルース）の基盤でもある。効果は帰属可能性に依存し、流暢さの原因（露出歴・活字の読みやすさ・韻など）が明示されると割引かれて消失する。読みにくいフォントが分析的思考を促すという非流暢性効果も提案されたが再現性には留保が付く。知覚的流暢性と概念的流暢性の区別、ブランド名・消費者判断・教育（望ましい困難との緊張）への応用を含め、メタ認知的手がかりが判断を形成する代表的経路として研究が続いている。',
-    keyFigures: 'ロルフ・レーバー、ノルベルト・シュワルツ＆ピオトル・ヴィンキールマン（2004 Personality and Social Psychology Review）／ラリー・ジャコビー＆マーク・ダラス（1981）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1207/s15327957pspr0804_3', type: 'academic', label: 'Reber, Schwarz & Winkielman (2004) Processing Fluency and Aesthetic Pleasure — PSPR' },
-      { url: 'https://doi.org/10.1037/0096-3445.110.3.306', type: 'academic', label: 'Jacoby & Dallas (1981) On the Relationship Between Autobiographical Memory and Perceptual Learning — JEP:General' },
-      { url: 'https://en.wikipedia.org/wiki/Processing_fluency', type: 'reference', label: 'Processing Fluency — Wikipedia' },
-    ],
-  },
-  {
     id: 'bizlaw-ratchet-clause',
     discipline: 'business-law',
     title: 'ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）',
@@ -21544,15 +21531,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'human-biopsychosocial-model',
     discipline: 'human-science',
-    title: '生物心理社会モデル',
+    title: '生物心理社会モデル（エンゲル）——疾病と健康を生物・心理・社会の各水準の相互作用として捉える枠組みと、慢性疼痛への応用',
     statement:
-      'Engel（1977）が Science 誌で提唱した生物心理社会モデルは、疾病と健康が生物学的・心理的・社会的要因の相互作用によって規定されるとする統合的枠組みであり、疾患を分子・生理の異常に還元し心身二元論の下で患者の経験を扱えない生物医学モデルの限界——検査値の異常がなくても病い（イルネス）はあり、異常があっても受診・回復は心理社会的文脈に左右される——を克服するために登場した。理論的支柱は一般システム理論で、細胞・器官から個人・家族・コミュニティ・社会へ続く階層のどの水準の変化も他水準へ波及するとみなす。Engel（1980）は狭心症様症状の症例を用いて臨床応用を具体化し、患者の主観的経験・感情・生活文脈を聴取して各水準の情報を診断と治療計画へ統合する医療面接の方法論を示した——患者を疾患の担体ではなく人として扱う患者中心ケアの理論的基礎である。精神医学・臨床心理学・プライマリケア・リハビリテーション・慢性疾患管理の教育と実践に広く採用され、障害の医学モデルと社会モデルを統合する国際的枠組みにも連なる一方、三要因の関係や比重を特定しない折衷主義で反証可能性を欠くという批判、実践では結局生物医学が優越する形骸化の指摘があり、これに答える精緻化（各要因の機序特定・測定）が続いている。',
-    keyFigures: 'George Libman Engel ／ John Romano ／ Adolph Meyer',
-    asOf: '2026-06',
+      'ジョージ・エンゲルが1977年に Science 誌で提唱した生物心理社会モデル（biopsychosocial model）は、疾病と健康が生物学的・心理的・社会的要因の相互作用によって規定されるとする統合的枠組みで、疾患を分子や生理の異常に還元し心身二元論の下で患者の経験を扱えない生物医学モデルの限界——検査値が正常でも病いはあり、異常があっても回復は心理社会的文脈に左右される——を克服するために登場した。一般システム理論を支柱に、細胞から社会へ続く階層のどの水準の変化も他へ波及するとみなす。エンゲル（1980）は患者の経験と生活文脈を聴取して診断と治療計画へ統合する面接法を示し、患者中心ケアの理論的基礎となった。慢性疼痛への応用では、ロバート・ガッチェル、デニス・ターク、ゴードン・ワデルらが、画像所見と症状の乖離から「損傷＝痛み」という生物医学モデルの破綻を示し、ワデル（1987）は安静と手術に偏る腰痛医療が障害をむしろ増やしたと批判して活動維持への転換を導いた。破局的思考と恐怖回避（痛み・恐怖・回避・廃用の循環）が障害化を予測し、認知行動的疼痛管理と学際的プログラムがそこへ介入する（ガッチェルら 2007）。広く採用される一方、批判として、三要因の関係や比重を特定しない折衷主義で反証可能性を欠くこと、実践では結局生物医学が優越して形骸化することが指摘される。中小企業には、従業員の腰痛やメンタル不調が職場の要因（裁量、人間関係、補償の仕組み）と切り離せないため、休ませるだけでなく仕事の設計と復帰の支援を組み合わせることが含意となる。',
+    keyFigures: 'ジョージ・エンゲル（1977 提唱／1980 臨床応用）／ロバート・ガッチェル＆デニス・ターク（慢性疼痛への応用・認知行動的疼痛管理）／ゴードン・ワデル（1987 腰痛医療の転換）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1126/science.847460', type: 'academic', label: 'Engel (1977) The Need for a New Medical Model — Science' },
-      { url: 'https://doi.org/10.1176/ajp.137.5.535', type: 'academic', label: 'Engel (1980) The Clinical Application of the Biopsychosocial Model — Am J Psychiatry' },
-      { url: 'https://en.wikipedia.org/wiki/Biopsychosocial_model', type: 'reference', label: 'Biopsychosocial model — Wikipedia' },
+      { url: 'https://doi.org/10.1126/science.847460', type: 'academic', label: 'Engel, G. L. (1977) The Need for a New Medical Model: A Challenge for Biomedicine — Science 196(4286)（原典）' },
+      { url: 'https://doi.org/10.1176/ajp.137.5.535', type: 'academic', label: 'Engel, G. L. (1980) The Clinical Application of the Biopsychosocial Model — American Journal of Psychiatry 137(5)' },
+      { url: 'https://doi.org/10.1037/0033-2909.133.4.581', type: 'academic', label: 'Gatchel, R. J. et al. (2007) The Biopsychosocial Approach to Chronic Pain: Scientific Advances and Future Directions — Psychological Bulletin 133(4)' },
+      { url: 'https://doi.org/10.1097/00007632-198709000-00002', type: 'academic', label: 'Waddell, G. (1987) A New Clinical Model for the Treatment of Low-Back Pain — Spine 12(7)' },
+      { url: 'https://en.wikipedia.org/wiki/Biopsychosocial_model', type: 'reference', label: 'Wikipedia: Biopsychosocial model — Engel、一般システム理論、批判' },
     ],
   },
   {
@@ -21889,18 +21878,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-knowledge-creation-theory',
     discipline: 'management',
-    title: '組織的知識創造理論',
+    title: '組織的知識創造理論と SECI モデル（野中＝竹内）——暗黙知と形式知が共同化・表出化・連結化・内面化の四モードで相互変換され、「場」を基盤に個人から組織へ螺旋的に増幅する',
     statement:
-      'Nonaka（1994）が提唱し、Nonaka & Takeuchi（1995）が体系化した組織的知識創造理論は、組織が新たな知識を生み出すプロセスを解明する経営学理論である。' +
-      '言語化できない「暗黙知」と形式化された「形式知」の2種類の知識が、共同化（Socialization）・表出化（Externalization）・連結化（Combination）・内面化（Internalization）の4モードを通じて相互に変換・増幅されるとするSECIモデルを中核とする。' +
-      'これらが個人・集団・組織の各レベルで螺旋的に循環する「知識スパイラル」が革新の源泉とされ、知識創造が生起する共有された文脈としての「場（Ba）」の概念が後に補完された。' +
-      '暗黙知と形式知の対立はPolanyi（1966）の知識論を基盤とし、日本企業の革新プロセスを説明する枠組みとして国際的に広く援用されている。',
-    keyFigures: 'Ikujiro Nonaka ／ Hirotaka Takeuchi',
-    asOf: '2026-06',
+      '組織的知識創造理論は、野中郁次郎が1994年の論文（Organization Science 5巻1号）で提唱し、野中と竹内弘高が1995年の『知識創造企業』で体系化した経営学理論で、組織が新たな知識を生み出す過程を解明する。マイケル・ポランニーの暗黙知（言語化困難な経験・勘・ノウハウ）と形式知（言語・数式・マニュアルで表現できる知識）の区別を組織論に導入し、知識が四つのモード——身体的な共体験で暗黙知を共有する共同化、メタファーや概念化で暗黙知を形式知に言語化する表出化、形式知どうしを体系化・再構成する連結化、学習と実践で形式知を身体化する内面化——を通じて相互に変換・増幅される SECI モデルを中核とする。これらが個人・集団・組織の各水準で螺旋的に循環する知識スパイラルが革新の源泉とされ、野中と紺野登（1998）は知識創造が生起する共有された文脈としての「場（Ba）」を提唱し、野中とゲオルク・フォン・クローグ（2009）は暗黙知概念をめぐる論争を整理した。日本企業の革新過程を説明する枠組みとして国際的に援用され、ナレッジマネジメント、組織学習、イノベーション論の標準的な参照枠組みとなり、知識の創造・移転・活用・蓄積を戦略的に扱うナレッジマネジメント論の基盤を与えた。批判として、暗黙知の測定が困難で理論の検証が難しいこと、形式知への変換可能性を前提とする点がポランニー自身の暗黙知概念と食い違うという指摘、西洋の組織や個人主義的文化への適用可能性、概念の循環性がある。中小企業には、熟練者の勘を無理に文書化する前に共同化（一緒に働く、観察する）と表出化（言葉にする場を設ける）を意図的に設計すること、朝礼や現場の打ち合わせが「場」として機能しているかを見直すことが含意となる。',
+    keyFigures: '野中郁次郎（1994 提唱）／野中郁次郎＆竹内弘高（1995『知識創造企業』）／野中郁次郎＆紺野登（1998「場」）／野中郁次郎＆ゲオルク・フォン・クローグ（2009 暗黙知論争の整理）／マイケル・ポランニー（暗黙知）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.5.1.14', type: 'academic', label: 'Nonaka (1994) A Dynamic Theory of Organizational Knowledge Creation, Organization Science 5(1):14-37' },
-      { url: 'https://global.oup.com/academic/product/the-knowledge-creating-company-9780195092691', type: 'academic', label: 'Nonaka & Takeuchi (1995) The Knowledge-Creating Company, Oxford University Press' },
-      { url: 'https://en.wikipedia.org/wiki/SECI_model_of_knowledge_dimensions', type: 'reference', label: 'Wikipedia — SECI model of knowledge dimensions' },
+      { url: 'https://doi.org/10.1287/orsc.5.1.14', type: 'academic', label: 'Nonaka, I. (1994) A Dynamic Theory of Organizational Knowledge Creation — Organization Science 5(1)（原典）' },
+      { url: 'https://doi.org/10.1093/oso/9780195092691.001.0001', type: 'academic', label: 'Nonaka, I. & Takeuchi, H. (1995) The Knowledge-Creating Company: How Japanese Companies Create the Dynamics of Innovation — Oxford University Press' },
+      { url: 'https://doi.org/10.2307/41165942', type: 'academic', label: 'Nonaka, I. & Konno, N. (1998) The Concept of "Ba": Building a Foundation for Knowledge Creation — California Management Review 40(3)' },
+      { url: 'https://doi.org/10.1287/orsc.1080.0412', type: 'academic', label: 'Nonaka, I. & von Krogh, G. (2009) Tacit Knowledge and Knowledge Conversion: Controversy and Advancement in Organizational Knowledge Creation Theory — Organization Science 20(3)' },
+      { url: 'https://en.wikipedia.org/wiki/SECI_model_of_knowledge_dimensions', type: 'reference', label: 'Wikipedia: SECI model of knowledge dimensions — 共同化・表出化・連結化・内面化、場' },
     ],
   },
   {
@@ -23359,24 +23347,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.5465/amr.1992.4279568', type: 'academic', label: 'Brockner 1992 — entrapment' },
       { url: 'https://doi.org/10.5465/amj.2012.0847', type: 'academic', label: 'Sleesman et al. 2012 — meta-analysis' },
       { url: 'https://doi.org/10.5465/amr.1986.4306006', type: 'academic', label: 'Whyte 1986 — prospect theory link' },
-    ],
-  },
-  {
-    id: 'human-biopsychosocial-model-chronic-pain',
-    discipline: 'human-science',
-    title: '慢性疼痛の生物心理社会モデル',
-    statement: 'Engelが提唱した生物心理社会モデルを慢性疼痛に適用したGatchel・Turk・Waddellらの研究により、疼痛と障害は生物学的・心理的・社会的要因の相互作用によって規定され、純粋な組織損傷だけでは説明できないことが確立された。' +
-      '転換の核心は「損傷＝痛み」という生物医学モデルの破綻にある——画像所見と症状の乖離（無症状者の椎間板変性は普通にあり、逆に所見なき激痛もある）が積み重なり、Waddell (1987) は腰痛医療について、安静と手術に偏る従来モデルが障害をむしろ増やしたと批判して活動維持への転換を導いた。' +
-      '心理的要因では、破局的思考（痛みの反芻・拡大視・無力感）と恐怖回避モデル（痛み→恐怖→回避→廃用→さらなる痛みの悪循環）が障害への移行を予測する中核変数で、Turk らの認知行動的疼痛管理はここへ介入する。社会的要因は労災補償・職場要因・家族の応答（過保護が疼痛行動を強化）を含む。' +
-      '臨床実装は学際的疼痛プログラム（医師・心理士・理学療法士の協働、機能回復を主目標に）で、Gatchel ら (2007) のレビューが費用対効果を含めて有効性を整理した。ICD-11 の慢性疼痛分類（慢性一次性疼痛＝痛み自体が疾患）と IASP の疼痛定義改訂（2020: 組織損傷「類似の」経験を含む）に、このモデルの制度的定着が読み取れる。',
-    keyFigures: 'George L. Engel ／ Robert J. Gatchel ／ Dennis C. Turk ／ Gordon Waddell',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.science.org/doi/10.1126/science.847460', type: 'academic', label: 'Engel (1977) The need for a new medical model — Science 196(4286)' },
-      { url: 'https://doi.org/10.1037/0033-2909.133.4.581', type: 'academic', label: 'Gatchel et al. (2007) The biopsychosocial approach to chronic pain — Psychological Bulletin 133(4)' },
-      { url: 'https://doi.org/10.1097/00007632-198709000-00002', type: 'academic', label: 'Waddell (1987) A new clinical model for the treatment of low-back pain — Spine 12(7)' },
-      { url: 'https://doi.org/10.1037/0022-006X.70.3.678', type: 'academic', label: 'Turk & Okifuji (2002) Psychological factors in chronic pain — Journal of Consulting and Clinical Psychology 70(3)' },
-      { url: 'https://www.iasp-pain.org/resources/terminology/', type: 'reference', label: 'IASP Pain Terminology — Classification of Chronic Pain' },
     ],
   },
   {
@@ -25182,28 +25152,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-sociomaterial-assemblage',
-    discipline: 'management',
-    title: '社会物質的アセンブラージュ論',
-    statement:
-      '社会物質的アセンブラージュ論は、組織を人間と技術と実践が分かちがたく絡み合った動的な配置として捉える見方である。' +
-      'Wanda J. Orlikowskiは2007年のOrganization Studies論文で、日々の組織化は不可避的に物質性と結びついているにもかかわらず、組織研究はそれを無視するか、自明視するか、例外的な事例として扱ってきたと批判し、社会的なものと物質的なものの構成的な絡み合いという立場を提示した。' +
-      'ここで採られるのは関係的存在論であり、人間も技術も、関係のなかで遂行される以前に固有の性質をもつ実体としては存在しないと考える。' +
-      '例に挙げられるのは検索エンジンで、それは技術者が書き保守するコードであると同時に、無数の人々がウェブページを作成・更新し検索語を入力することによって初めて機能する配置であり、社会と技術のどちらか一方に還元できない。' +
-      'OrlikowskiとSusan V. Scottは2008年のAcademy of Management Annals論文で、主要な経営学誌の論文の九割以上が技術の役割を扱っていないことを示したうえで、Karen Baradの行為的実在論と遂行性の議論を援用し、技術・仕事・組織を別々の領域として分離する前提そのものを問い直した。' +
-      'アセンブラージュという語はGilles DeleuzeとFelix Guattariの議論に由来し、異質な要素が外在的な関係のもとで一時的にまとまり、脱領土化と再領土化を繰り返す集合を指す。' +
-      '近年はアクターネットワーク理論との接合や差異を整理する研究も進んでいる。' +
-      '他方、人間と技術を分析上分離できないとする強い立場に対しては、具体的な分析が難しくなり、制度や構造の持続性を捉えにくいという批判があり、両者を分離可能とみなしたうえで相互の絡み合いを論じる立場との論争が続いている。',
-    keyFigures: 'Wanda J. Orlikowski ／ Susan V. Scott ／ Gilles Deleuze',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://journals.sagepub.com/doi/10.1177/0170840607081138', type: 'academic', label: 'Orlikowski (2007) — Sociomaterial Practices, Organization Studies' },
-      { url: 'https://www.tandfonline.com/doi/abs/10.1080/19416520802211644', type: 'academic', label: 'Orlikowski & Scott (2008) — Sociomateriality, Academy of Management Annals' },
-      { url: 'https://en.wikipedia.org/wiki/Sociomateriality', type: 'reference', label: 'Wikipedia — Sociomateriality' },
-      { url: 'https://rgs-ibg.onlinelibrary.wiley.com/doi/10.1111/tran.12117', type: 'academic', label: 'Müller (2015) — Assemblage thinking and actor-network theory, Transactions IBG' },
-    ],
-  },
-  {
     id: 'infosoc-digital-resignation',
     discipline: 'information-sociology',
     title: 'デジタル諦念（デジタル・レジグネーション）',
@@ -25998,21 +25946,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://illinoislawreview.org/print/volume-2009-issue-2/securities-disclosure-in-a-globalizing-market-who-should-regulate-whom/', type: 'academic', label: 'Fox 2009 — Securities Disclosure in a Globalizing Market: Who Should Regulate Whom?, University of Illinois Law Review 2009(2):1009-1062' },
       { url: 'https://global.oup.com/academic/product/selling-hope-selling-risk-9780199988631', type: 'reference', label: 'Langevoort 2016 — Selling Hope, Selling Risk: Corporations, Wall Street, and the Dilemmas of Investor Protection, Oxford University Press' },
       { url: 'https://www.sec.gov/about/what-we-do', type: 'government', label: 'SEC 2024 — What We Do: Mission and Regulatory Framework, U.S. Securities and Exchange Commission' },
-    ],
-  },
-  {
-    id: 'mgmt-knowledge-management',
-    discipline: 'management',
-    title: 'ナレッジマネジメント（知識管理）：SECIモデルと「場」による組織的知識創造理論',
-    statement:
-      'ナレッジマネジメントとは、組織が競争優位を持続するために知識を戦略的に創造・移転・活用・蓄積するマネジメント論の総称である。ノナカ・イクジロウとタケウチ・ヒロタカは1995年の著書『知識創造企業』で、マイケル・ポランニーの暗黙知（言語化困難な経験・勘・ノウハウ）と形式知（言語・数式・マニュアルで表現可能な知識）の区別を援用し、組織的知識創造を四つのモード——共同化（Socialization）・表出化（Externalization）・連結化（Combination）・内面化（Internalization）——からなるSECIモデルで説明した。さらにノナカとコノは「場（Ba）」の概念を提唱し、知識創造の文脈的基盤を論じた。スヴェイビーは知識ベース資産の測定と無形資産管理の枠組みを示し、知的資本経営論の礎を築いた。',
-    keyFigures: 'ノナカ・イクジロウ ／ タケウチ・ヒロタカ ／ カール=エリック・スヴェイビー',
-    asOf: '2026-06-24',
-    sources: [
-      { url: 'https://doi.org/10.1287/orsc.5.1.14', type: 'academic', label: 'Nonaka 1994 — A Dynamic Theory of Organizational Knowledge Creation, Organization Science 5(1):14-37' },
-      { url: 'https://doi.org/10.2307/41165942', type: 'academic', label: 'Nonaka & Konno 1998 — The Concept of \'Ba\': Building a Foundation for Knowledge Creation, California Management Review 40(3):40-54' },
-      { url: 'https://global.oup.com/academic/product/the-knowledge-creating-company-9780195092691', type: 'reference', label: 'Nonaka & Takeuchi 1995 — The Knowledge-Creating Company, Oxford University Press ISBN 9780195092691' },
-      { url: 'https://www.bkconnection.com/books/title/The-New-Organizational-Wealth', type: 'reference', label: 'Sveiby 1997 — The New Organizational Wealth: Managing and Measuring Knowledge-Based Assets, Berrett-Koehler Publishers' },
     ],
   },
   {
@@ -29281,20 +29214,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-competitive-parity-resource',
-    discipline: 'management',
-    title: '競争均衡と資源ベースの優位の侵食（バーニー）',
-    statement: '競争均衡（competitive parity）は、バーニー（1991）のRBV（資源ベース・ビュー）フレームワークの中で、ある戦略資源が「価値があり（Valuable）・希少でなく（not Rare）・代替可能（Substitutable）」な場合に企業が達成する状態を指す概念であり、競争優位ではなく「競合他社と同等の利益」に留まる状態である。持続的競争優位（sustainable competitive advantage）は「価値・希少・模倣困難・組織（VRIO）」の四条件を満たす資源から生まれる。競争均衡から競争優位への移行を阻む「模倣障壁（isolating mechanisms）」として、ルメルト（1984）は因果関係の曖昧性・歴史的特殊性・経路依存性を挙げた。動的競争（dynamic competition）研究では、競争均衡は持続的でなく競合他社が模倣・代替手段を開発することで優位が侵食される「競争均衡への収束プロセス」が分析され、アグレッシブな対抗行動タイミング・強度が競合動態の測定変数となる。',
-    keyFigures: 'ジェイ・バーニー ／ リチャード・ルメルト ／ マーガレット・ピーテラフ ／ ビル・フナーバック',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1177/014920639101700108', type: 'academic', label: 'Barney, J. B. (1991) Firm Resources and Sustained Competitive Advantage — Journal of Management, 17(1), 99–120（RBV原典・VRIO枠組み）' },
-      { url: 'https://doi.org/10.2307/2392376', type: 'academic', label: 'Rumelt, R. P. (1984) Towards a Strategic Theory of the Firm — in Lamb ed., Competitive Strategic Management, 556–570（模倣障壁の概念）' },
-      { url: 'https://doi.org/10.1002/smj.4250141009', type: 'academic', label: 'Peteraf, M. A. (1993) The Cornerstones of Competitive Advantage: A Resource-Based View — Strategic Management Journal, 14(3), 179–191（RBVの精緻化）' },
-      { url: 'https://en.wikipedia.org/wiki/Competitive_advantage', type: 'reference', label: 'Wikipedia: Competitive advantage — RBV, VRIO, parity vs. advantage, isolating mechanisms' },
-    ],
-  },
-  {
     id: 'human-mental-health-continuum-keyes',
     discipline: 'human-science',
     title: '精神的健康の連続体モデル（キーズ）',
@@ -29418,20 +29337,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1080/17512786.2020.1833980', type: 'academic', label: 'Wardle, C. (2018) The Need for Smarter Definitions and Practical, Timely Empirical Research on Information Disorder — Digital Journalism, 6(8), 951–963（理論の精緻化）' },
       { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689', type: 'government', label: 'European Parliament (2024) Regulation (EU) 2024/1689 — EU AI Act（ディープフェイク・操作コンテンツ規制）' },
       { url: 'https://en.wikipedia.org/wiki/Misinformation', type: 'reference', label: 'Wikipedia: Misinformation — Wardle & Derakhshan typology, disinformation, malinformation, deepfakes, DSA' },
-    ],
-  },
-  {
-    id: 'mgmt-work-design-hackman',
-    discipline: 'management',
-    title: 'ジョブ特性モデル（ハックマン＆オルダム）',
-    statement: 'ジョブ特性モデル（Job Characteristics Model; JCM）は、ハックマン＆オルダム（1976）が提唱した、職務設計（work design）が従業員の内発的動機・満足・パフォーマンスに与える影響を規定する五つのコア特性——①技能多様性（skill variety）、②課題の同一性（task identity）、③課題の重要性（task significance）、④自律性（autonomy）、⑤フィードバック（feedback from job）——を中心としたモデルである。五特性の相乗値として「動機付けポテンシャル・スコア（MPS）」を算出し、MPS＝（技能多様性＋課題同一性＋課題重要性）/3 × 自律性 × フィードバック と定式化した。成長欲求強度（growth need strength; GNS）が高い従業員ほどJCMの予測が精度高く成立する調整効果も示された。測定にはHackman＆Oldham（1980）のJob Diagnostic Survey（JDS）が広く使われ、1,300以上の研究をメタ分析したHumphreyら（2007）の研究は五特性と満足・コミットメント・離職意図の有意な相関を確認している。近年のバーチャルワーク環境では自律性・フィードバックの設計が特に重要な設計変数となっている。',
-    keyFigures: 'リチャード・ハックマン ／ グレッグ・オルダム ／ フレデリック・ハーツバーグ ／ ネイサン・ハンフリー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1016/0030-5073(76)90016-7', type: 'academic', label: 'Hackman, J. R. & Oldham, G. R. (1976) Motivation Through the Design of Work: Test of a Theory — Organizational Behavior and Human Performance, 16(2), 250–279（JCMの原典）' },
-      { url: 'https://doi.org/10.1037/0021-9010.92.5.1332', type: 'academic', label: 'Humphrey, S. E., Nahrgang, J. D. & Morgeson, F. P. (2007) Integrating Motivational, Social, and Contextual Work Design Features: A Meta-Analytic Summary and Theoretical Extension — Journal of Applied Psychology, 92(5), 1332–1356（メタ分析）' },
-      { url: 'https://doi.org/10.1146/annurev-psych-010213-115208', type: 'academic', label: 'Parker, S. K. (2014) Beyond Motivation: Job and Work Design for Development, Health, Ambidexterity, and More — Annual Review of Psychology, 65, 661–691（JCMの拡張と現代的展望）' },
-      { url: 'https://en.wikipedia.org/wiki/Job_characteristics_model', type: 'reference', label: 'Wikipedia: Job characteristics model — Hackman & Oldham, five core dimensions, MPS formula, meta-analysis' },
     ],
   },
   {
@@ -34182,13 +34087,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-vrio-framework-barney',
     discipline: 'management',
-    title: 'VRIOフレームワーク——持続的競争優位をもたらす経営資源の四条件',
-    statement: 'VRIOフレームワーク（VRIO framework）は、ジェイ・バーニーが資源ベース論（resource-based view）に基づいて体系化した、企業の内部の経営資源や能力が持続的な競争優位の源泉となるかどうかを分析するための枠組みである。資源ベース論は、企業の競争優位の源泉を、マイケル・ポーターらが注目した外部の業界構造ではなく、企業が内部に保有する独自の経営資源や能力に求める。バーニーは、ある経営資源や能力が持続的競争優位をもたらすためには、四つの条件を満たさねばならないと論じ、それらの頭文字をとってVRIOと名づけた。第一は「経済価値（Value、価値）」である。その資源が、企業が外部環境の機会を活用し、あるいは脅威を無力化することを可能にし、それによって効率や効果を高めるか、という問いである。価値のない資源は、たとえ希少でも、競争優位にはつながらず、むしろ弱みとなりうる。第二は「希少性（Rarity、稀少性）」である。その資源を、現在および潜在の競争相手のうち、ごく少数しか保有していないか、という問いである。多くの企業が保有する価値ある資源は、競争上の「同等性（パリティ）」をもたらすにすぎず、優位の源泉とはならない。第三は「模倣困難性（Imitability、模倣可能性）」である。その資源を保有しない企業が、それを獲得したり開発したりするのに、大きな費用がかかるか、という問いである。模倣が困難な理由としては、その資源が企業独自の歴史的経緯の中で築かれたこと（経路依存性）、なぜその資源が競争優位を生むのかが因果的に不明瞭であること（因果の曖昧性）、その資源が複雑な社会的関係に根ざしていること（社会的複雑性）などが挙げられる。容易に模倣・代替できる資源による優位は、競争相手に追いつかれて一時的なものに終わる。第四は「組織（Organization、組織体制）」である。企業が、その資源の価値を十分に引き出して活用できるように組織されているか、という問いである。優れた資源を持っていても、それを活かす組織の仕組み——方針、手続き、報酬制度、組織構造——が整っていなければ、資源の潜在的な価値は実現されない。これら四つの条件をすべて満たす資源——価値があり、希少で、模倣困難で、それを活用する組織体制が整っている資源——は、持続的競争優位をもたらす。条件を満たす数が少ないほど、優位は弱まる。価値はあるが希少でない資源は競争同等性を、価値があり希少だが模倣容易な資源は一時的な優位を、そしてすべてを満たす資源だけが持続的な優位をもたらす。VRIOフレームワークは、マイケル・ポーターのファイブ・フォース分析が業界の外部環境に注目するのに対し、企業の内部の資源と能力に注目してその競争優位の源泉を分析する、内部分析の代表的な枠組みであり、エディス・ペンローズの企業成長論やバーガー・ワーナーフェルトの資源ベース論を継承して、戦略経営に大きな影響を与えた。',
-    keyFigures: 'ジェイ・バーニー ／ バーガー・ワーナーフェルト ／ エディス・ペンローズ ／ マーガレット・ピーターラフ',
-    asOf: '2026-06-27',
+    title: 'VRIO フレームワーク（バーニー）——価値・希少性・模倣困難性・組織の四条件を満たす経営資源だけが持続的競争優位をもたらし、欠けるほど同等性や一時的優位にとどまる',
+    statement:
+      'VRIO フレームワークは、ジェイ・バーニーが1991年の論文の資源ベース論を基に体系化した、企業内部の経営資源や能力が持続的競争優位の源泉となるかを分析する枠組みである。資源ベース論は競争優位の源泉を、マイケル・ポーターらの業界構造ではなく、エディス・ペンローズやバーガー・ワーナーフェルトを継承して企業内部の独自の資源と能力に求める。四つの問い——価値（機会を活用し脅威を無力化するか）、希少性（競争相手のごく少数しか保有しないか）、模倣困難性（獲得・開発に大きな費用がかかるか）、組織（方針・報酬制度・構造が資源の価値を引き出せるか）——から成る。模倣を阻むのは企業独自の歴史的経緯（経路依存性）、因果の曖昧性、社会的複雑性で、リチャード・ルメルトはこれらを隔離メカニズムと呼んだ。価値はあるが希少でない資源は競合と同等の利益にとどまる競争同等性（パリティ）を、価値があり希少だが模倣容易な資源は一時的な優位を、四条件をすべて満たす資源だけが持続的な優位をもたらし、マーガレット・ピーターラフ（1993）は異質性・事後的な競争制限・不完全な移動性・事前の競争制限の四つの礎石として整理した。動的競争の研究は、競合の模倣や代替の開発で優位が同等性へ収束する過程を扱う。批判として、資源の「価値」が市場環境で決まるため定義が循環すること、事後的な説明に流れやすいこと、資源の測定と検証が難しいことがある。中小企業には、「うちの強み」を四つの問いで点検すると多くは同等性か一時的優位にすぎないと分かること、模倣困難性は特許より人間関係や歴史に宿ること、組織の仕組みが伴わなければ強みは収益にならないことが含意となる。',
+    keyFigures: 'ジェイ・バーニー（1991 提唱）／マーガレット・ピーターラフ（1993 競争優位の礎石）／リチャード・ルメルト（隔離メカニズム）／エディス・ペンローズ＆バーガー・ワーナーフェルト（資源ベース論の源流）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1177/014920639101700108', type: 'academic', label: 'Barney, J. (1991) Firm Resources and Sustained Competitive Advantage — Journal of Management 17(1)' },
-      { url: 'https://en.wikipedia.org/wiki/VRIO', type: 'reference', label: 'Wikipedia: VRIO — Barney, value/rarity/imitability/organization, resource-based view, sustained competitive advantage' },
+      { url: 'https://doi.org/10.1177/014920639101700108', type: 'academic', label: 'Barney, J. B. (1991) Firm Resources and Sustained Competitive Advantage — Journal of Management 17(1)（原典）' },
+      { url: 'https://doi.org/10.1002/smj.4250141009', type: 'academic', label: 'Peteraf, M. A. (1993) The Cornerstones of Competitive Advantage: A Resource-Based View — Strategic Management Journal 14(3)' },
+      { url: 'https://en.wikipedia.org/wiki/VRIO', type: 'reference', label: 'Wikipedia: VRIO — Barney、価値・希少性・模倣困難性・組織' },
+      { url: 'https://en.wikipedia.org/wiki/Competitive_advantage', type: 'reference', label: 'Wikipedia: Competitive advantage — 資源ベース論、競争同等性と優位' },
     ],
   },
   {
@@ -41069,20 +40977,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-knowledge-management-nonaka-takeuchi',
-    discipline: 'information-sociology',
-    title: '知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス',
-    statement: '知識創造理論は、野中郁次郎と竹内弘高が1995年の著作『知識創造企業』で提唱した、組織が暗黙知と形式知の相互変換を通じて新たな知識を創造するプロセスを分析する理論的枠組みである。SECIモデルは知識変換の四つのモード——共同化（Socialization：暗黙知→暗黙知、身体的共体験による知の共有）、表出化（Externalization：暗黙知→形式知、メタファーや概念化による言語化）、連結化（Combination：形式知→形式知、情報の体系化と再構成）、内面化（Internalization：形式知→暗黙知、学習と実践による身体化）——を提示し、これらが螺旋的に繰り返されることで組織的知識が拡大するメカニズムを理論化した。知識は個人→集団→組織へとスパイラル状に増幅しながら創造されると説き、野中はその創造の共有文脈となる「場（Ba）」の概念も提唱した。マイケル・ポランニーの暗黙知概念を組織論に導入した点に独自性があり、ナレッジ・マネジメントの実践的基盤として世界的に影響を与えた。',
-    keyFigures: '野中郁次郎 ／ 竹内弘高 ／ マイケル・ポランニー ／ 紺野登',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1093/oso/9780195092691.001.0001', type: 'academic', label: 'Nonaka, I. & Takeuchi, H. (1995) The Knowledge-Creating Company — Oxford University Press' },
-      { url: 'https://doi.org/10.1287/orsc.5.1.14', type: 'academic', label: 'Nonaka, I. (1994) A Dynamic Theory of Organizational Knowledge Creation — Organization Science' },
-      { url: 'https://en.wikipedia.org/wiki/SECI_model_of_knowledge_dimensions', type: 'reference', label: 'Wikipedia: SECI model — SECIモデルの概要' },
-      { url: 'https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2019.02730/full', type: 'academic', label: 'Managing Knowledge in Organizations — Nonaka の SECI モデル操作化（Frontiers in Psychology 査読論文）' },
-    ],
-  },
-  {
     id: 'econ-goodharts-law-lucas-critique',
     discipline: 'economics',
     title: 'グッドハートの法則とルーカス批判——政策目標化された統計的関係の崩壊',
@@ -42804,14 +42698,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-job-characteristics-model-hackman-oldham',
     discipline: 'management',
-    title: '職務特性モデル——ハックマン＆オールダムによる動機づけ・満足・パフォーマンスを規定する五つの職務次元',
-    statement: 'J・リチャード・ハックマンとグレッグ・オールダムが1976年に発展させた職務特性モデル（Job Characteristics Model: JCM）は、職務の内発的動機づけをいかに高めるかを五つのコア職務次元で説明する。①技能多様性・②課題完結性・③課題重要性・④自律性・⑤フィードバックの五次元のうち、特に①〜③の合計が「経験された有意味感」、④が「成果への責任感」、⑤が「実際の成果の知識」を生み出し、これら三つの「重要な心理状態」が内発的動機・高業績・低欠勤・高満足につながるとした。成長欲求強度（GNS: growth need strength）が個人差の調整変数として機能する。JCMは職務再設計（job redesign）・職務エンリッチメント（job enrichment）・自律的チーム設計の理論的根拠となり、リモートワークや就業柔軟性の効果研究にも応用されている。',
-    keyFigures: 'J・リチャード・ハックマン ／ グレッグ・オールダム ／ フレデリック・ハーツバーグ ／ エドワード・デシ',
-    asOf: '2026-06-26',
+    title: '職務特性モデル（ハックマン＆オルダム）——技能多様性・課題完結性・課題重要性・自律性・フィードバックの五次元が三つの心理状態を通じて内発的動機と業績を規定する',
+    statement:
+      '職務特性モデル（Job Characteristics Model）は、J・リチャード・ハックマンとグレッグ・オルダムが1976年の論文で提唱した職務設計の理論で、職務の内発的動機づけを五つのコア職務次元——技能多様性、課題完結性（課題の同一性）、課題重要性、自律性、職務からのフィードバック——で説明する。前三者の合計が「経験された有意味感」、自律性が「成果への責任感」、フィードバックが「実際の成果の知識」という三つの重要な心理状態を生み、それらが内発的動機・高い業績・低い欠勤・高い満足につながるとし、五特性を掛け合わせた動機づけポテンシャル・スコア（MPS）で職務を診断する。成長欲求強度（GNS）が高い従業員ほど予測が成り立つ調整効果も示され、測定には職務診断調査（JDS、1980）が広く使われる。スティーヴン・ハンフリーら（2007）のメタ分析は五特性と満足・コミットメント・離職意図の有意な関連を確認し、シャロン・パーカー（2014）は動機づけを超えて学習・健康・協働を含む職務設計研究へ拡張した。ハーズバーグの職務充実論を精緻化した理論として職務再設計や自律的チーム、リモートワーク研究の基礎であり、自律性とフィードバックの設計はバーチャルワークで特に重要になる。批判として、測定が自己報告に依存すること、MPS の乗法形の妥当性が弱いこと、社会的・文脈的特性（相互依存、感情労働）を扱わないことがある。中小企業には、賃金を上げなくても仕事の切り分け方（一つの仕事を最初から最後まで任せる、顧客の反応が直接届くようにする、判断を委ねる）で動機づけを高められること、逆に分業を進めすぎると有意味感が失われることが含意となる。',
+    keyFigures: 'J・リチャード・ハックマン＆グレッグ・オルダム（1976 提唱／1980 職務診断調査）／スティーヴン・ハンフリーら（2007 メタ分析）／シャロン・パーカー（2014 職務設計研究の拡張）／源流: フレデリック・ハーズバーグ（職務充実）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1016/0030-5073(76)90016-7', type: 'academic', label: 'Hackman & Oldham (1976) Motivation Through the Design of Work — Organizational Behavior & Human Performance' },
-      { url: 'https://doi.org/10.2307/2392331', type: 'academic', label: 'Oldham & Hackman (2010) Not What It Was and Not What It Will Be — Journal of Organizational Behavior' },
-      { url: 'https://en.wikipedia.org/wiki/Job_characteristic_theory', type: 'reference', label: 'Wikipedia: Job characteristic theory — 職務特性モデルと動機づけ' },
+      { url: 'https://doi.org/10.1016/0030-5073(76)90016-7', type: 'academic', label: 'Hackman, J. R. & Oldham, G. R. (1976) Motivation Through the Design of Work: Test of a Theory — Organizational Behavior and Human Performance 16(2)（原典）' },
+      { url: 'https://doi.org/10.1037/0021-9010.92.5.1332', type: 'academic', label: 'Humphrey, S. E., Nahrgang, J. D. & Morgeson, F. P. (2007) Integrating Motivational, Social, and Contextual Work Design Features: A Meta-Analytic Summary — Journal of Applied Psychology 92(5)' },
+      { url: 'https://doi.org/10.1146/annurev-psych-010213-115208', type: 'academic', label: 'Parker, S. K. (2014) Beyond Motivation: Job and Work Design for Development, Health, Ambidexterity, and More — Annual Review of Psychology 65' },
+      { url: 'https://en.wikipedia.org/wiki/Job_characteristics_model', type: 'reference', label: 'Wikipedia: Job characteristics model — Hackman & Oldham、五つの中核次元、MPS' },
     ],
   },
   {
@@ -45401,18 +45297,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-customer-value-co-creation',
-    discipline: 'management',
-    title: '顧客価値の共創とサービス・エコシステム（バーゴ＆ラッシュ）',
-    statement: '顧客価値共創（customer value co-creation）は、スティーブン・バーゴとロバート・ラッシュのサービス・ドミナント・ロジック（SDL）を基盤に展開する概念であり、価値は企業の一方的な「埋め込み（embedded）」ではなく、顧客・従業員・パートナーを含む複数のアクターが資源を統合し合うサービス・エコシステムを通じて共創されるとする。SDLの基礎的命題（Foundational Premises）は2004年以降に改訂が重ねられ、ヒューリスティクスを10から11に拡張した。「オペランド資源（物的製品）」から「オペラント資源（知識・スキル）」への視点転換は、製造業のサービタイゼーション・プラットフォームビジネス・デジタル共創コミュニティの経営論的解釈に広く援用される。ウォルター・ウルフソンらはSDLと複雑系理論・制度論を接合し、サービス生態系（service ecosystem）概念を精緻化した。',
-    keyFigures: 'スティーブン・バーゴ ／ ロバート・ラッシュ ／ クリスティアン・グロンロース ／ ジャニス・ドブニー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1509/jmkg.68.1.1.24036', type: 'academic', label: 'Vargo, S.L. & Lusch, R.F. (2004). Evolving to a new dominant logic — Journal of Marketing' },
-      { url: 'https://en.wikipedia.org/wiki/Service-dominant_logic', type: 'reference', label: 'Wikipedia: Service-dominant logic — value co-creation' },
-    ],
-  },
-  {
     id: 'infosoc-social-comparison-social-media',
     discipline: 'information-sociology',
     title: 'ソーシャルメディアにおける社会比較と主観的幸福感',
@@ -46185,15 +46069,14 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-service-dominant-logic-vargo',
     discipline: 'management',
-    title: 'サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）',
-    statement: 'サービス・ドミナント・ロジック（Service-Dominant Logic; S-D Logic）は、ヴァーゴ＆ラッシュ（2004）がJournal of Marketingで提唱した、マーケティング・経営の基盤理論を「モノ（goods）の交換」から「知識・スキルを通じたサービスの共創（co-creation of value through service）」へと転換するパラダイムシフト論である。従来の「グッズ・ドミナント・ロジック（G-D Logic）」——製品を生産・配送・消費するプロセスとして市場を捉える——に対し、S-Dロジックは「すべての経済・社会活動はサービスである」という命題の下、資源の「オペランド資源（operand resource；物理的資源）」と「オペラント資源（operant resource；知識・スキル）」を区別し、後者が価値創造の源泉であると論じた。「価値は使用を通じて共創される（value-in-use）」という視点は、製品ではなく経験・関係性・エコシステムの中でこそ価値が生まれることを示す。IoT・プラットフォーム経済・サービス化（servitization）・DX時代の産業論との親和性が高く、多くの実務・学術領域に応用されている。',
-    keyFigures: 'スティーブン・ヴァーゴ ／ ロバート・ラッシュ ／ エバート・グミッソン ／ ジャン・ポール・フィッツシモンズ',
-    asOf: '2026-06-26',
+    title: 'サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）——すべての交換をサービスの交換と捉え、知識と技能というオペラント資源を統合する複数のアクターの共創として価値を理解するパラダイム',
+    statement:
+      'サービス・ドミナント・ロジック（S-D logic）は、スティーヴン・ヴァーゴとロバート・ラッシュが2004年に Journal of Marketing で提唱した、マーケティングと経営の基盤を「モノ（グッズ）の交換」から「知識と技能を通じたサービスの共創」へ転換するパラダイムである。製品を生産・配送・消費する過程として市場を捉えるグッズ・ドミナント・ロジックに対し、「すべての経済・社会活動はサービスの交換である」という命題の下、加工される物的資源であるオペランド資源と、作用を及ぼす知識・技能であるオペラント資源を区別して後者を価値創造の源泉とし、価値は企業が製品に埋め込むのではなく、使用を通じて顧客・従業員・パートナーを含む複数のアクターが資源を統合し合うことで共創される（value-in-use）と論じた。基礎的命題は2008年以降も改訂を重ね、共創が制度と制度配置によって調整されるサービス・エコシステムの視点へ拡張され、製造業のサービタイゼーション、プラットフォーム事業、デジタル共創コミュニティ、IoT の解釈に広く援用される。C・K・プラハラードとヴェンカト・ラマスワミの価値共創論や北欧学派の関係性マーケティングと接続する。批判として、「すべてはサービス」という命題が反証不能に近く実証研究の設計が難しいこと、価値共創の失敗（共破壊）や顧客への負担転嫁を軽視しがちなこと、規範的なパラダイム主張が経験的知見に先行することがある。中小企業には、売っているのが製品ではなく顧客が使って得る価値であるという見方が、保守・研修・カスタマイズといったサービス収益の設計と、顧客を共創の担い手として巻き込む仕組み（レビュー、共同開発）につながることが含意となる。',
+    keyFigures: 'スティーヴン・ヴァーゴ＆ロバート・ラッシュ（2004 提唱／2008 命題の改訂）／エヴェルト・グメソン（北欧学派の関係性マーケティング）／C・K・プラハラード＆ヴェンカト・ラマスワミ（価値共創論）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1509/jmkg.68.1.1.24036', type: 'academic', label: 'Vargo, S. L. & Lusch, R. F. (2004) Evolving to a New Dominant Logic for Marketing — Journal of Marketing, 68(1), 1–17（S-Dロジックの原典）' },
-      { url: 'https://doi.org/10.1509/jmkg.72.1.5.21180', type: 'academic', label: 'Vargo, S. L. & Lusch, R. F. (2008) Service-Dominant Logic: Continuing the Evolution — Journal of the Academy of Marketing Science, 36(1), 1–10（理論の発展）' },
-      { url: 'https://doi.org/10.1016/j.jretai.2016.03.004', type: 'academic', label: 'Lusch, R. F. & Nambisan, S. (2015) Service Innovation: A Service-Dominant Logic Perspective — MIS Quarterly, 39(1), 155–175（デジタルイノベーションへの応用）' },
-      { url: 'https://en.wikipedia.org/wiki/Service-dominant_logic', type: 'reference', label: 'Wikipedia: Service-dominant logic — Vargo & Lusch, operant resources, value-in-use, co-creation' },
+      { url: 'https://doi.org/10.1509/jmkg.68.1.1.24036', type: 'academic', label: 'Vargo, S. L. & Lusch, R. F. (2004) Evolving to a New Dominant Logic for Marketing — Journal of Marketing 68(1)（原典）' },
+      { url: 'https://en.wikipedia.org/wiki/Service-dominant_logic', type: 'reference', label: 'Wikipedia: Service-dominant logic — Vargo & Lusch、オペラント資源、価値共創、サービス・エコシステム' },
     ],
   },
   {
@@ -46277,20 +46160,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689', type: 'government', label: 'European Parliament (2024) Regulation (EU) 2024/1689 — EU AI Act（リスクベースAI規制枠組みの制定）' },
       { url: 'https://www.imf.org/en/Publications/WP/Issues/2024/01/14/Gen-AI', type: 'government', label: 'IMF (2024) Gen-AI: Artificial Intelligence and the Future of Work — IMF Staff Discussion Note（生成AIと雇用の影響分析）' },
       { url: 'https://en.wikipedia.org/wiki/Regulation_of_artificial_intelligence', type: 'reference', label: 'Wikipedia: Regulation of artificial intelligence — EU AI Act, Executive Order 14110, Bletchley Declaration, GPAI' },
-    ],
-  },
-  {
-    id: 'mgmt-seci-model-nonaka',
-    discipline: 'management',
-    title: 'SECIモデルと知識変換（野中郁次郎）',
-    statement: 'SECIモデルは、野中郁次郎＆竹内弘高（1995）が『知識創造企業（The Knowledge-Creating Company）』で提唱した、暗黙知（tacit knowledge）と形式知（explicit knowledge）の相互変換を通じた組織知識創造の四段階サイクルである。①共同化（Socialization）——暗黙知から暗黙知：直接体験・観察・模倣による知識移転（親方—徒弟関係）、②表出化（Externalization）——暗黙知から形式知：メタファー・モデル・コンセプト言語化、③連結化（Combination）——形式知から形式知：複数の形式知の組み合わせ・体系化、④内面化（Internalization）——形式知から暗黙知：学習・訓練を通じた身体化（learning-by-doing）——の四プロセスがスパイラルに進展するとした。SECIは「場（Ba）」——知識創造を促進する共有コンテキスト——とともに運用され、日本企業の競争優位の源泉として分析された。マネジメント・イノベーション論・KM（知識管理）システム設計・組織学習理論の標準的参照枠組みとなっている。批判として、暗黙知の測定困難性・西洋組織への適用可能性・概念の循環性が指摘される。',
-    keyFigures: '野中郁次郎 ／ 竹内弘高 ／ マイケル・ポランニー ／ 勝見明',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1093/oso/9780195092691.001.0001', type: 'academic', label: 'Nonaka, I. & Takeuchi, H. (1995) The Knowledge-Creating Company: How Japanese Companies Create the Dynamics of Innovation — Oxford University Press（SECIモデルの原典）' },
-      { url: 'https://doi.org/10.2307/259056', type: 'academic', label: 'Nonaka, I. (1994) A Dynamic Theory of Organizational Knowledge Creation — Organization Science, 5(1), 14–37（SECIの先行論文）' },
-      { url: 'https://doi.org/10.1287/orsc.1080.0412', type: 'academic', label: 'Nonaka, I. & von Krogh, G. (2009) Tacit Knowledge and Knowledge Conversion: Controversy and Advancement in Organizational Knowledge Creation Theory — Organization Science, 20(3), 635–652（理論の精緻化・批判への応答）' },
-      { url: 'https://en.wikipedia.org/wiki/SECI_model', type: 'reference', label: 'Wikipedia: SECI model — Nonaka & Takeuchi, tacit/explicit knowledge, Ba, knowledge conversion' },
     ],
   },
   {

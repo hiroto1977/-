@@ -34,7 +34,6 @@ Ronald Melzack ／ Patrick D. Wall
 
 ## 関連概念
 - [[human-phantom-limb-ramachandran|幻肢痛とミラーセラピー]] — 同じ思想家
-- [[human-biopsychosocial-model-chronic-pain|慢性疼痛の生物心理社会モデル]] — 出典を共有
 - [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 出典を共有
 - [[human-framing-effect|フレーミング効果（framing effect）]] — 出典を共有
 - [[human-phoneme-restoration|音素修復効果（Phonemic Restoration Effect／Warren 1970）——雑音で消された音を脳が補って「聞こえた」と感じる、トップダウンの知覚]] — 出典を共有
@@ -43,6 +42,7 @@ Ronald Melzack ／ Patrick D. Wall
 - [[mgmt-likert-systems|リッカートのシステム4]] — 出典を共有
 - [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
 - [[econ-anticommons|アンチコモンズの悲劇]] — 出典を共有
+- [[human-default-effect|デフォルト効果（初期設定効果）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

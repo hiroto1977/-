@@ -2,21 +2,21 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 614
+entry_count: 608
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（614件）
+# 学習パス — 学術概念／経営学（608件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 68）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 58）
-- [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]]（接続 35）
-- [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる]]（接続 31）
+- [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]]（接続 34）
+- [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる]]（接続 30）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 30）
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 26）
 - [[mgmt-csr|企業の社会的責任（CSR）]]（接続 26）
@@ -25,9 +25,9 @@ tags:
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 23）
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 23）
 - [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]]（接続 21）
+- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]]（接続 20）
 - [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]]（接続 20）
-- [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]]（接続 20）
-- [[mgmt-organizational-decline-weitzel|組織衰退（ウェイツェル＝ヨンソンの五段階モデル）——盲目・不作為・誤った行動・危機・解体と進み、段階が進むほど反転が難しくなる衰退の動態]]（接続 20）
+- [[mgmt-managerial-cognition|経営者認知（ウォルシュ）——経営者は環境そのものではなく知識構造を通した解釈に反応し、その認知地図が注意・判断・競争行動を規定する]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1629年: [[mgmt-fmea|故障モード影響解析（FMEA／Failure Mode and Effects Analysis）——起こりうる故障を体系的に洗い出し、深刻度・発生度・検出度で優先順位づける]]
@@ -128,6 +128,7 @@ tags:
 - 1973年: [[mgmt-vroom-yetton|ヴルーム＝イェットン・モデル]]
 - 1975年: [[mgmt-lmx-theory|LMX理論（リーダー・メンバー交換理論）]]
 - 1976年: [[mgmt-escalation-of-commitment|コミットメントのエスカレーション]]
+- 1976年: [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル（ハックマン＆オルダム）——技能多様性・課題完結性・課題重要性・自律性・フィードバックの五次元が三つの心理状態を通じて内発的動機と業績を規定する]]
 - 1977年: [[mgmt-boundary-spanning|境界連結（バウンダリー・スパニング）]]
 - 1977年: [[mgmt-institutional-theory|制度理論（制度的同型化）]]
 - 1977年: [[mgmt-kanter-tokenism-theory|カンターのトークニズム理論（Tokenism Theory）]]
@@ -141,13 +142,13 @@ tags:
 - 1979年: [[mgmt-mintzberg-organization|ミンツバーグの組織構造の5類型]]
 - 1979年: [[mgmt-organizational-socialization|組織社会化]]
 - 1979年: [[mgmt-paradox-of-organizing|組織化のパラドックス（Paradox of Organizing）]]
-- 1980年: [[mgmt-activity-based-costing|活動基準原価計算（ABC）]]
 - 1980年: [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]]
 - 1980年: [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]]
 - 1980年: [[mgmt-hofstede-dimensions|ホフステッドの文化次元論]]
 - 1980年: [[mgmt-mckinsey-7s|マッキンゼーの7Sフレームワーク]]
 - 1980年: [[mgmt-six-sigma|シックス・シグマ]]
 - 1980年: [[mgmt-t-shaped-skills|T字型人材（T型スキル）]]
+- 1981年: [[mgmt-organizational-decline-weitzel|組織衰退（ウェイツェル＝ヨンソンの五段階モデル）——盲目・不作為・誤った行動・危機・解体と進み、段階が進むほど反転が難しくなる衰退の動態]]
 - 1981年: [[mgmt-organizational-unlearning|組織的アンラーニング]]
 - 1981年: [[mgmt-theory-z|セオリーZ]]
 - 1981年: [[mgmt-threat-rigidity-effect|脅威による硬直化効果（Threat-Rigidity Effect）]]
@@ -177,6 +178,7 @@ tags:
 - 1986年: [[mgmt-social-capital-intellectual-capital-nahapiet-ghoshal|ナハピエト＝ゴシャールの社会関係資本論——構造的・関係的・認知的の三次元による知的資本創造と組織の優位性]]
 - 1986年: [[mgmt-technology-s-curve|技術のSカーブ]]
 - 1987年: [[mgmt-mass-customization|マス・カスタマイゼーション]]
+- 1987年: [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]]
 - 1987年: [[mgmt-pims|PIMS研究（市場戦略の利益への影響）]]
 - 1987年: [[mgmt-strategic-issue-diagnosis|戦略的争点の診断（Strategic Issue Diagnosis）]]
 - 1988年: [[mgmt-competency-trap|コンピテンシー・トラップと成功の罠（レヴィット＝マーチ／レヴィンタール＝マーチ）——過去の成功への習熟が学習を深化に偏らせ、より優れた選択肢への転換を妨げる]]
@@ -188,7 +190,6 @@ tags:
 - 1988年: [[mgmt-time-based-competition|時間ベース競争——リードタイムの短縮そのものをコスト・品質と並ぶ競争優位の源泉とする戦略パラダイム]]
 - 1988年: [[mgmt-value-proposition|バリュープロポジション]]
 - 1988年: [[mgmt-vicarious-learning|代理学習（Vicarious Learning in Organizations）]]
-- 1989年: [[mgmt-managerial-cognition|経営者認知（ウォルシュ）——経営者は環境そのものではなく知識構造を通した解釈に反応し、その認知地図が注意・判断・競争行動を規定する]]
 - 1989年: [[mgmt-strategic-cognition|戦略的認知（Strategic Cognition）]]
 - 1989年: [[mgmt-strategic-intent|戦略的意図（ストラテジック・インテント）]]
 - 1989年: [[mgmt-team-member-exchange|チーム・メンバー交換理論（Team-Member Exchange, TMX）]]
@@ -209,6 +210,7 @@ tags:
 - 1991年: [[mgmt-organizational-commitment|組織コミットメント]]
 - 1991年: [[mgmt-sensegiving|センスギビング（ジョイア＆チッティペディ）——リーダーが他者の意味形成に働きかけ、変革の望ましい解釈を組織に広めるコミュニケーション過程]]
 - 1991年: [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]]
+- 1991年: [[mgmt-vrio-framework-barney|VRIO フレームワーク（バーニー）——価値・希少性・模倣困難性・組織の四条件を満たす経営資源だけが持続的競争優位をもたらし、欠けるほど同等性や一時的優位にとどまる]]
 - 1992年: [[mgmt-coopetition|コーペティション（協調的競争）]]
 - 1992年: [[mgmt-knowledge-based-view|知識ベース企業観（グラント）——企業を個人に分散した専門知識を統合する制度と捉え、統合能力に持続的競争優位の源泉を見る]]
 - 1992年: [[mgmt-strategic-consensus|戦略的コンセンサス（Strategic Consensus）]]
@@ -218,6 +220,7 @@ tags:
 - 1994年: [[mgmt-behavioral-integration|行動的統合（Behavioral Integration）]]
 - 1994年: [[mgmt-corporate-parenting|ペアレンティング戦略]]
 - 1994年: [[mgmt-hypercompetition|ハイパーコンペティション]]
+- 1994年: [[mgmt-knowledge-creation-theory|組織的知識創造理論と SECI モデル（野中＝竹内）——暗黙知と形式知が共同化・表出化・連結化・内面化の四モードで相互変換され、「場」を基盤に個人から組織へ螺旋的に増幅する]]
 - 1994年: [[mgmt-service-profit-chain|サービス・プロフィット・チェーン]]
 - 1994年: [[mgmt-triple-bottom-line|トリプルボトムライン（TBL）]]
 - 1995年: [[mgmt-discovery-driven-planning|発見志向計画法（ディスカバリー・ドリブン・プランニング）]]
@@ -279,6 +282,7 @@ tags:
 - 2004年: [[mgmt-digital-transformation|デジタルトランスフォーメーション（DX）]]
 - 2004年: [[mgmt-double-diamond|ダブルダイヤモンド（デザインプロセス）]]
 - 2004年: [[mgmt-organizational-virtuousness|組織的美徳性理論（キャメロン）]]
+- 2004年: [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）——すべての交換をサービスの交換と捉え、知識と技能というオペラント資源を統合する複数のアクターの共創として価値を理解するパラダイム]]
 - 2004年: [[mgmt-value-co-creation|価値共創]]
 - 2005年: [[mgmt-idiosyncratic-deals|アイディール（Idiosyncratic Deals / I-deals）]]
 - 2005年: [[mgmt-microfoundations-movement|ミクロ基礎運動（Microfoundations Movement）]]
@@ -350,7 +354,6 @@ tags:
 - [[mgmt-competing-values-framework-quinn|競合価値観フレームワーク——クインの組織文化類型と管理的リーダーシップ]]
 - [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]]
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]]
-- [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]]
 - [[mgmt-competitive-positions|競争地位別戦略（リーダー・チャレンジャー・フォロワー・ニッチャー）]]
 - [[mgmt-complexity-leadership-uhl-bien|複雑性リーダーシップ理論（ウール＝ビエン）と適応的機能]]
 - [[mgmt-complexity-theory-stacey|複雑性理論と組織管理（ステーシー）]]
@@ -376,7 +379,6 @@ tags:
 - [[mgmt-cross-cultural-leadership-house-globe|GLOBEプロジェクト——文化次元とリーダーシップの国際比較]]
 - [[mgmt-cultural-intelligence|文化的知能（CQ：カルチュラル・インテリジェンス）——文化的に多様な環境で効果的に機能・適応する個人の能力]]
 - [[mgmt-customer-lifetime-value|顧客生涯価値（LTV）]]
-- [[mgmt-customer-value-co-creation|顧客価値の共創とサービス・エコシステム（バーゴ＆ラッシュ）]]
 - [[mgmt-decoupling-meyer-rowan|デカップリング——正統性のための公式構造と実際の業務活動の分離]]
 - [[mgmt-defensive-routines-argyris|組織の防衛的ルーチン——脅威を避けて学習を妨げる習慣]]
 - [[mgmt-deliberate-practice-ericsson|意図的練習理論（エリクソン）]]
@@ -435,7 +437,6 @@ tags:
 - [[mgmt-intellectual-capital-edvinsson|知的資本（エドビンソン＆マローン）]]
 - [[mgmt-issue-selling-dutton|課題の売り込み（ダットン＆アシュフォード）]]
 - [[mgmt-jidoka|自働化（ニンベンの付いた自動化）]]
-- [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル——ハックマン＆オールダムによる動機づけ・満足・パフォーマンスを規定する五つの職務次元]]
 - [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]]
 - [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]]
 - [[mgmt-job-demands-resources-bakker|職務要求-資源モデル——ストレスとエンゲージメントの二重過程]]
@@ -448,9 +449,7 @@ tags:
 - [[mgmt-kanban|かんばん方式]]
 - [[mgmt-katz-kahn-open-systems|組織のオープン・システム理論——環境と相互作用する開放系としての組織]]
 - [[mgmt-knowledge-brokering-hargadon|知識ブローカリングとイノベーション（ハーガドン＆サットン）]]
-- [[mgmt-knowledge-creation-theory|組織的知識創造理論]]
 - [[mgmt-knowledge-hiding-behavior|知識隠蔽行動理論]]
-- [[mgmt-knowledge-management|ナレッジマネジメント（知識管理）：SECIモデルと「場」による組織的知識創造理論]]
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]]
 - [[mgmt-leadership-substitutes-kerr-jermier|リーダーシップ代替論——リーダー行動を不要化・無効化する状況要因]]
 - [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]]
@@ -552,19 +551,16 @@ tags:
 - [[mgmt-romance-of-leadership-meindl|リーダーシップの幻想——成果をリーダーに帰属させる認知的傾向]]
 - [[mgmt-sandcone-ferdows|サンドコーン・モデル（ファードウズ＝デ・メイヤー）——能力は積み上げる順序がある]]
 - [[mgmt-scenario-planning|シナリオ・プランニング]]
-- [[mgmt-seci-model-nonaka|SECIモデルと知識変換（野中郁次郎）]]
 - [[mgmt-second-curve-handy|セカンド・カーブ——衰退する前に次の成長曲線を始める]]
 - [[mgmt-self-determination-theory-work|自己決定理論（職場応用）]]
 - [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]]
 - [[mgmt-servant-leadership-spears|サーバント・リーダーシップ（グリーンリーフ／スピアーズ）]]
-- [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）]]
 - [[mgmt-shamrock-organization-handy|シャムロック型組織——三つの異なる働き手からなる柔軟な組織]]
 - [[mgmt-shared-leadership-pearce|シェアード・リーダーシップ——チーム成員間で分有され交替する影響過程]]
 - [[mgmt-shared-mental-models|共有メンタルモデル（チーム認知理論）]]
 - [[mgmt-slack-resources-bourgeois|組織スラック論——余剰資源の緩衝・革新・政治的機能]]
 - [[mgmt-social-exchange-theory|社会的交換理論]]
 - [[mgmt-social-identity-theory-of-leadership|リーダーシップの社会的アイデンティティ理論]]
-- [[mgmt-sociomaterial-assemblage|社会物質的アセンブラージュ論]]
 - [[mgmt-stage-gate|ステージゲート法]]
 - [[mgmt-star-model|スター・モデル（ガルブレイス）]]
 - [[mgmt-start-with-why-sinek|ゴールデン・サークル——「なぜ」から始めるリーダーシップ]]
@@ -621,11 +617,9 @@ tags:
 - [[mgmt-tuckman-team-stages|タックマンのチーム発達段階——形成・混乱・規範化・遂行・解散]]
 - [[mgmt-uppsala-internationalization|ウプサラ・モデル——企業の漸進的な国際化プロセス]]
 - [[mgmt-value-disciplines-treacy-wiersema|価値基準（バリュー・ディシプリン）——市場リーダーが選ぶ三つの卓越]]
-- [[mgmt-vrio-framework-barney|VRIOフレームワーク——持続的競争優位をもたらす経営資源の四条件]]
 - [[mgmt-vroom-yetton-decision|ブルーム＝イェットンの意思決定モデル——状況に応じた部下参加の規範的処方]]
 - [[mgmt-wisdom-of-teams-katzenbach|チームの知恵——作業集団と真のチームを分かつもの]]
 - [[mgmt-work-design-growth-model|職務設計成長モデル]]
-- [[mgmt-work-design-hackman|ジョブ特性モデル（ハックマン＆オルダム）]]
 - [[mgmt-work-family-border-theory|仕事─家庭境界理論（ボーダー理論）]]
 - [[mgmt-workplace-deviance-robinson|職場逸脱行動——組織規範に反する自発的行為の分類と規定要因]]
 - [[mgmt-workplace-deviance-theory|職場逸脱行動理論]]

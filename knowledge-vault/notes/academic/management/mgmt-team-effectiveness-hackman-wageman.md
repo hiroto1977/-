@@ -34,12 +34,12 @@ J・リチャード・ハックマン ／ ルス・ワゲマン ／ スティー
 - [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 語彙が近い
 - [[mgmt-team-cognition|チーム認知・共有メンタルモデル：チームの暗黙的協調を支える認知的基盤と集合的知識構造]] — 同じ思想家
 - [[mgmt-five-dysfunctions-lencioni|チームの五つの機能不全——信頼の欠如から始まる連鎖]] — 同じ思想家
-- [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル——ハックマン＆オールダムによる動機づけ・満足・パフォーマンスを規定する五つの職務次元]] — 同じ思想家
 - [[mgmt-psychological-safety-edmondson|心理的安全性（エドモンドソン）]] — 同じ思想家
 - [[mgmt-team-roles-belbin|ベルビンのチーム役割——有効なチームに必要な九つの行動類型のバランス]] — 同じ思想家
 - [[mgmt-wisdom-of-teams-katzenbach|チームの知恵——作業集団と真のチームを分かつもの]] — 同じ思想家
-- [[mgmt-work-design-hackman|ジョブ特性モデル（ハックマン＆オルダム）]] — 同じ思想家
+- [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル（ハックマン＆オルダム）——技能多様性・課題完結性・課題重要性・自律性・フィードバックの五次元が三つの心理状態を通じて内発的動機と業績を規定する]] — 同じ思想家
 - [[mgmt-team-mental-models-cannon-bowers|チーム・メンタルモデル——共有認知とチーム・パフォーマンス]] — 同じ思想家
+- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
 - [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]] — 出典を共有
 
 ## 関連

@@ -38,7 +38,6 @@ aliases:
 - [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]] — 同じ思想家
 - [[econ-repugnant-markets-roth|忌避される市場——道徳が市場に課す制約]] — 同じ思想家
 - [[human-undermining-effect|アンダーマイニング効果（過正当化効果）]] — 同じ思想家
-- [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル——ハックマン＆オールダムによる動機づけ・満足・パフォーマンスを規定する五つの職務次元]] — 同じ思想家
 - [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]] — 同分野の近傍
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 

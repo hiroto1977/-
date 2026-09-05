@@ -32,6 +32,7 @@ aliases:
 - [Charbonnier-Voirin, A. & Roussel, P. (2012) Adaptive Performance: A New Scale to Measure Individual Performance in Organizations — Canadian Journal of Administrative Sciences, 29(3)](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1744-6570.2012.01240.x) `学術`
 
 ## 関連概念
+- [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル（ハックマン＆オルダム）——技能多様性・課題完結性・課題重要性・自律性・フィードバックの五次元が三つの心理状態を通じて内発的動機と業績を規定する]] — 同じ思想家
 - [[mgmt-mbo|目標による管理（MBO）]] — 同分野の近傍
 - [[mgmt-situational-leadership|状況的リーダーシップ理論]] — 同分野の近傍
 

@@ -35,6 +35,7 @@ aliases:
 - [[mgmt-empowering-leadership-ahearne|エンパワリング・リーダーシップ——権限を分かち自律を高めるリーダー]] — 同じ思想家
 - [[mgmt-team-effectiveness-hackman-wageman|チーム有効性理論——ハックマンの条件モデルとチームコーチング]] — 同じ思想家
 - [[mgmt-implicit-leadership-theories|暗黙のリーダーシップ理論]] — 同分野の近傍
+- [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 同分野の近傍
 - [[mgmt-wisdom-of-teams-katzenbach|チームの知恵——作業集団と真のチームを分かつもの]] — 同分野の近傍
 
 ## 関連

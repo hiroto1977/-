@@ -2,26 +2,26 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 630
+entry_count: 628
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（630件）
+# 学習パス — 学術概念／人間科学（628件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 150）
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 107）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 151）
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 106）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
-- [[human-framing-effect|フレーミング効果（framing effect）]]（接続 32）
-- [[human-bias-blind-spot|バイアスの盲点]]（接続 31）
+- [[human-framing-effect|フレーミング効果（framing effect）]]（接続 31）
+- [[human-bias-blind-spot|バイアスの盲点]]（接続 30）
 - [[human-attribution-theory|帰属理論]]（接続 29）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 29）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 27）
-- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 26）
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 27）
 - [[human-conjunction-fallacy|連言錯誤]]（接続 25）
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 25）
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 24）
@@ -171,6 +171,7 @@ tags:
 - 1975年: [[human-spreading-activation|活性化拡散]]
 - 1975年: [[human-temporal-discounting|時間割引（Temporal Discounting / 遅延割引）]]
 - 1976年: [[human-mcgurk-effect|マガーク効果]]
+- 1977年: [[human-biopsychosocial-model|生物心理社会モデル（エンゲル）——疾病と健康を生物・心理・社会の各水準の相互作用として捉える枠組みと、慢性疼痛への応用]]
 - 1977年: [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]]
 - 1977年: [[human-illusory-truth-effect|真理の錯誤効果（真実性の錯覚）]]
 - 1977年: [[human-intermodal-matching|感覚間マッチング（Intermodal Matching）]]
@@ -194,7 +195,7 @@ tags:
 - 1980年: [[human-endowment-effect|保有効果（授かり効果）]]
 - 1980年: [[human-optimism-bias|楽観バイアス]]
 - 1981年: [[human-mood-congruent-memory|気分一致効果（気分一致記憶）]]
-- 1981年: [[human-perceptual-fluency|知覚的流暢性（Perceptual Fluency）]]
+- 1981年: [[human-processing-fluency|処理流暢性（レーバー＝シュワルツ＝ヴィンキールマン）——情報を処理する主観的な容易さが快として誤帰属され、真実らしさ・好ましさ・親近感・美しさの判断を押し上げる]]
 - 1981年: [[human-social-referencing|社会的参照（Social Referencing）]]
 - 1982年: [[human-decoy-effect|おとり効果（非対称的優位性効果）]]
 - 1982年: [[human-outgroup-homogeneity-effect|外集団均質性効果]]
@@ -296,7 +297,6 @@ tags:
 - 2003年: [[human-default-effect|デフォルト効果（初期設定効果）]]
 - 2003年: [[human-fading-affect-bias|感情消失バイアス]]
 - 2003年: [[human-self-compassion|セルフ・コンパッション（自己への思いやり）]]
-- 2004年: [[human-processing-fluency|処理流暢性]]
 - 2005年: [[human-action-observation-mismatch|アクション・オブザベーション・ミスマッチ（Action-Observation Mismatch）]]
 - 2005年: [[human-cognitive-reflection-test|認知反映テスト（CRT）]]
 - 2006年: [[human-control-value-theory-achievement-emotions-pekrun|制御価値理論——達成感情の生起を統制評価と価値評価で説明する]]
@@ -345,8 +345,6 @@ tags:
 - [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]]
 - [[human-biased-competition|バイアス付き競合理論（biased competition theory／注意のバイアス競合モデル）——複数刺激が限られた神経表現をめぐって争い、注意がその競合を行動上重要な対象に有利となるよう偏らせる]]
 - [[human-big-five|ビッグファイブ（5因子性格モデル）]]
-- [[human-biopsychosocial-model|生物心理社会モデル]]
-- [[human-biopsychosocial-model-chronic-pain|慢性疼痛の生物心理社会モデル]]
 - [[human-body-schema|身体図式（ボディスキーマ）]]
 - [[human-bouba-kiki-effect|ブーバ／キキ効果——音と形の非恣意的な結びつき]]
 - [[human-cafe-wall-illusion|カフェウォール錯視——平行な線が傾いて見える幾何学的錯視]]

@@ -33,11 +33,10 @@ aliases:
 - [[mgmt-five-dysfunctions-lencioni|チームの五つの機能不全——信頼の欠如から始まる連鎖]] — 同じ思想家
 - [[mgmt-team-roles-belbin|ベルビンのチーム役割——有効なチームに必要な九つの行動類型のバランス]] — 同じ思想家
 - [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 同じ思想家
-- [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル——ハックマン＆オールダムによる動機づけ・満足・パフォーマンスを規定する五つの職務次元]] — 同じ思想家
+- [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル（ハックマン＆オルダム）——技能多様性・課題完結性・課題重要性・自律性・フィードバックの五次元が三つの心理状態を通じて内発的動機と業績を規定する]] — 同じ思想家
 - [[mgmt-psychological-safety-edmondson|心理的安全性（エドモンドソン）]] — 同じ思想家
 - [[mgmt-team-effectiveness-hackman-wageman|チーム有効性理論——ハックマンの条件モデルとチームコーチング]] — 同じ思想家
 - [[mgmt-tuckman-team-stages|タックマンのチーム発達段階——形成・混乱・規範化・遂行・解散]] — 同じ思想家
-- [[mgmt-work-design-hackman|ジョブ特性モデル（ハックマン＆オルダム）]] — 同じ思想家
 - [[mgmt-growth-mindset|成長マインドセット（Growth Mindset）]] — 同分野の近傍
 - [[mgmt-team-mental-models-cannon-bowers|チーム・メンタルモデル——共有認知とチーム・パフォーマンス]] — 同分野の近傍
 

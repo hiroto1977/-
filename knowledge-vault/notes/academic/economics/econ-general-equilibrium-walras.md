@@ -31,7 +31,7 @@ aliases:
 - [Wikipedia: Sonnenschein-Mantel-Debreu theorem.](https://en.wikipedia.org/wiki/Sonnenschein%E2%80%93Mantel%E2%80%93Debreu_theorem) `リファレンス`
 
 ## 関連概念
-- [[econ-tatonnement|タトヌマン（模索過程）]] — 同じ思想家
+- [[econ-tatonnement|タトヌマン（模索過程）]] — 語彙が近い
 - [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家
 - [[econ-microeconomic-foundations-general-equilibrium|一般均衡理論——ワルラスからアロー＝ドブリューへの競争均衡存在と効率性の数理証明]] — 同じ思想家
 - [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家

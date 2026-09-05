@@ -41,7 +41,7 @@ aliases:
 - [[mgmt-organizational-decline-weitzel|組織衰退（ウェイツェル＝ヨンソンの五段階モデル）——盲目・不作為・誤った行動・危機・解体と進み、段階が進むほど反転が難しくなる衰退の動態]] — 同じ思想家
 - [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同じ思想家
 - [[mgmt-upper-echelons-theory|上層部理論（ハンブリック＝メイソン）——組織はトップ経営陣の反映であり、経営者の経歴と特性が認知のフィルターとして戦略的選択と業績を部分的に予測する]] — 同じ思想家
-- [[mgmt-eisenhower-matrix|アイゼンハワーマトリクス（緊急・重要マトリクス）]] — 同分野の近傍
+- [[mgmt-team-mental-models-cannon-bowers|チーム・メンタルモデル——共有認知とチーム・パフォーマンス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

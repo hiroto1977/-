@@ -93,10 +93,12 @@
    "migrate": "**必須**: Hicks (1937) Econometrica 5(2) 147-159 の原典 DOI 10.2307/1907242（移さないと keep 側の権威ある出典が大学の講義ページのみになり確証ゲートの水準が下がる）。あわせてクラウディングアウトの語、ヒックス1972年ノーベル賞・生没年"
   },
   {
-   "keep": "infosoc-knowledge-management-nonaka-takeuchi",
+   "keep": "mgmt-knowledge-creation-theory",
    "drop": "infosoc-seci",
    "why": "どちらも野中・竹内1995のSECIモデルを同一粒度で解説し、4モードもポランニーへの言及も一致。keep 側は書籍 DOI と Organization Science DOI で権威性が高い",
-   "migrate": "「Ba（場）」概念、「個人→集団→組織へのスパイラル増幅」の記述、Frontiers in Psychology の SECI 操作化論文の出典"
+   "migrate": "「Ba（場）」概念、「個人→集団→組織へのスパイラル増幅」の記述、Frontiers in Psychology の SECI 操作化論文の出典",
+   "keepFormerly": "infosoc-knowledge-management-nonaka-takeuchi",
+   "keepMovedNote": "2026-09-05 統合パス 54: 当時の keep（infosoc-knowledge-management-nonaka-takeuchi）を、同じ野中＝竹内の知識創造理論を保持する mgmt-knowledge-creation-theory へ統合した。lint:knowledge-refs は keep の実在を要求するので統合先へ付け替え、旧 id は keepFormerly に残す"
   },
   {
    "keep": "econ-bandwagon-snob",

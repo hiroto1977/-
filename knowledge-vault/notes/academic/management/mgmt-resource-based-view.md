@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — 語彙が近い
-- [[mgmt-vrio-framework-barney|VRIOフレームワーク——持続的競争優位をもたらす経営資源の四条件]] — 語彙が近い
 - [[mgmt-penrose-growth|ペンローズの企業成長理論]] — 同じ思想家
+- [[mgmt-vrio-framework-barney|VRIO フレームワーク（バーニー）——価値・希少性・模倣困難性・組織の四条件を満たす経営資源だけが持続的競争優位をもたらし、欠けるほど同等性や一時的優位にとどまる]] — 同じ思想家
 - [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同じ思想家
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 同じ思想家
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有

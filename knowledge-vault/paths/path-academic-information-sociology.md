@@ -2,19 +2,19 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 592
+entry_count: 591
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（592件）
+# 学習パス — 学術概念／情報社会学（591件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 77）
-- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 45）
+- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 44）
 - [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]]（接続 29）
 - [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]]（接続 29）
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 27）
@@ -25,9 +25,9 @@ tags:
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]]（接続 21）
 - [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]]（接続 21）
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]]（接続 21）
+- [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 21）
 - [[infosoc-information-overload-eppler-mengis|情報過負荷（トフラー／エプラー＝メンギス）——処理能力を超える情報が意思決定の質を下げる現象と、その原因を個人・情報・課題・組織・技術の五要因に整理する枠組み]]（接続 21）
 - [[infosoc-algorithmic-curation-theory|アルゴリズム的キュレーションと増幅（ギレスピー）——プラットフォームのランキング・推薦・フィルタリングは中立の配管ではなく、価値と権力を埋め込んだ文化的仲介として情報環境を形づくる]]（接続 20）
-- [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -86,6 +86,7 @@ tags:
 - 1956年: [[infosoc-social-influence-network-theory-friedkin-johnsen|フリードキン＝ジョンセンの社会的影響ネットワーク理論——初期意見への係留を残す加重平均が持続的な不一致を説明する]]
 - 1959年: [[infosoc-connectivism|コネクティビズム]]
 - 1959年: [[infosoc-dramaturgy|ドラマトゥルギー（演劇論的アプローチ）]]
+- 1960年: [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]]
 - 1962年: [[infosoc-diffusion-of-innovations|イノベーションの普及理論（ロジャーズ）]]
 - 1962年: [[infosoc-global-village|グローバル・ヴィレッジ（地球村）]]
 - 1962年: [[infosoc-public-sphere|公共圏（ハーバーマス）]]
@@ -167,7 +168,6 @@ tags:
 - 1995年: [[infosoc-digital-divide|デジタルディバイド（情報格差）]]
 - 1995年: [[infosoc-distributed-cognition|分散認知（Distributed Cognition／Hutchins 1995）——認知は個人の頭の中でなく、人・道具・環境からなるシステムに分散する]]
 - 1995年: [[infosoc-triple-helix|トリプルヘリックス（三重らせんモデル）]]
-- 1996年: [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]
 - 1996年: [[infosoc-immaterial-labor|非物質的労働（immaterial labor）]]
 - 1996年: [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]]
 - 1996年: [[infosoc-media-equation|メディアの等式（メディア・イクエーション）]]
@@ -221,7 +221,7 @@ tags:
 - 2007年: [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]]
 - 2007年: [[infosoc-reinforcing-spirals-model|強化スパイラルモデル（相互強化スパイラル・モデル／Reinforcing Spirals Model, RSM）——選択的接触と効果が時間とともに互いを強める動的フィードバック・ループ]]
 - 2007年: [[infosoc-repair-work|修繕の労働（Repair Work）]]
-- 2007年: [[infosoc-sociomateriality|ソシオマテリアリティ（Sociomateriality）]]
+- 2007年: [[infosoc-sociomateriality|ソシオマテリアリティ（オーリコウスキー）——社会的なものと物質的・技術的なものは実践のなかで構成的に絡み合い、独立の実体としては存在しないとする存在論的立場]]
 - 2008年: [[infosoc-ambient-awareness|アンビエント・アウェアネス]]
 - 2008年: [[infosoc-main-model-credibility|MAINモデル（技術的特性が信憑性判断に与える影響のヒューリスティック・モデル）]]
 - 2008年: [[infosoc-media-synchronicity-theory|メディア同期性理論（Media Synchronicity Theory／Dennis, Fuller & Valacich 2008）——伝達と収束という二過程からメディア適合を捉え直す]]
@@ -455,7 +455,6 @@ tags:
 - [[infosoc-information-society-webster|情報社会論の批判的検討——情報社会は新たな社会か資本主義の連続か]]
 - [[infosoc-information-worlds-theory|情報世界理論]]
 - [[infosoc-knowledge-commons-theory|知識コモンズ理論]]
-- [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]]
 - [[infosoc-lay-expertise-epstein|素人専門知——資格なき人々が科学に参加し知を変える]]
 - [[infosoc-long-tail-anderson|ロングテール——デジタル経済におけるニッチ需要の集積の価値]]
 - [[infosoc-looking-glass-self-cooley|鏡に映った自己——他者の眼差しの想像を通じて形成される社会的自己]]

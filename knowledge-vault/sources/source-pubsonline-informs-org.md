@@ -2,7 +2,7 @@
 title: "pubsonline.informs.org"
 type: source-domain
 host: "pubsonline.informs.org"
-cite_count: 28
+cite_count: 27
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # pubsonline.informs.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **28 件**（学術 28）
+> [!info] 出典ドメイン索引 ・ 引用 **27 件**（学術 27）
 
 ## このドメインを出典とする項目
 
@@ -33,7 +33,6 @@ tags:
 - [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — Harris(1913/1990reprint)HowManyPartstoMakeatOnce—OperationsResearch38…
 - [[mgmt-exploration-exploitation|知の探索と知の深化（探索と活用）]] — March,J.G.(1991)"ExplorationandExploitationinOrganizationalLearning",…
 - [[mgmt-knowledge-based-view|知識ベース企業観（グラント）——企業を個人に分散した専門知識を統合する制度と捉え、統合能力に持続的競争優位の源泉を見る]] — Kogut,B.&Zander,U.(1992)KnowledgeoftheFirm,CombinativeCapabilities,an…
-- [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — Nonaka(1994)ADynamicTheoryofOrganizationalKnowledgeCreation,Organizat…
 - [[mgmt-lead-user|リードユーザー法]] — INFORMS/ManagementScience公式書誌(doi:10.1287/mnsc.32.7.791)
 - [[mgmt-managerial-cognition|経営者認知（ウォルシュ）——経営者は環境そのものではなく知識構造を通した解釈に反応し、その認知地図が注意・判断・競争行動を規定する]] — Walsh,J.P.(1995)ManagerialandOrganizationalCognition:NotesfromaTripDo…
 - [[mgmt-organizational-forgetting|組織的忘却]] — deHolan&Phillips—RemembranceofThingsPast?TheDynamicsofOrganizationalF…

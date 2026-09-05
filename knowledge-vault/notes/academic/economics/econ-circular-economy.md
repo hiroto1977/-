@@ -39,7 +39,7 @@ aliases:
 - [[subsidy-mado-renovation|先進的窓リノベ事業]] — 出典を共有
 - [[subsidy-zeb|ZEB（ネット・ゼロ・エネルギー・ビル）化支援補助事業]] — 出典を共有
 - [[subsidy-zeh|ZEH支援事業]] — 出典を共有
-- [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]] — 同分野の近傍
+- [[econ-signaling-theory-spence-job-market|シグナリング理論（スペンス）——情報を持つ側が模倣にコストのかかる行動で自らの質を伝え、分離均衡が成立する仕組み]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

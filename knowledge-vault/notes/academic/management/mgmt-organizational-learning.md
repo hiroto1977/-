@@ -32,14 +32,13 @@ aliases:
 - [Nonaka & Takeuchi 1995 — The Knowledge-Creating Company](https://global.oup.com/academic/product/the-knowledge-creating-company-9780195092691) `学術`
 
 ## 関連概念
+- [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 語彙が近い
 - [[mgmt-learning-organization-senge|学習する組織（センゲ）]] — 語彙が近い
 - [[mgmt-defensive-routines-argyris|組織の防衛的ルーチン——脅威を避けて学習を妨げる習慣]] — 同じ思想家
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
 - [[mgmt-organizational-learning-argyris|組織学習とシングル・ダブルループ学習（アージリス）]] — 同じ思想家
 - [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同じ思想家
 - [[mgmt-psychological-contract|心理的契約（ルソー）——雇用関係における明文化されない相互義務についての従業員の主観的信念と、その違反が信頼とコミットメントに与える影響]] — 同じ思想家
-- [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 同分野の近傍
-- [[mgmt-seci-model-nonaka|SECIモデルと知識変換（野中郁次郎）]] — 同分野の近傍
 - [[mgmt-grow-model|GROWモデル（コーチング）]] — 同分野の近傍
 
 ## 関連

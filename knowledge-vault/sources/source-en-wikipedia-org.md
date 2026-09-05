@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2199
+cite_count: 2194
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2199 件**（リファレンス 2199）
+> [!info] 出典ドメイン索引 ・ 引用 **2194 件**（リファレンス 2194）
 
 ## このドメインを出典とする項目
 
@@ -1076,7 +1076,7 @@ tags:
 - [[human-biased-competition|バイアス付き競合理論（biased competition theory／注意のバイアス競合モデル）——複数刺激が限られた神経表現をめぐって争い、注意がその競合を行動上重要な対象に有利となるよう偏らせる]] — Wikipedia「Biasedcompetitiontheory」—Desimone&Duncan(1995)によるバイアス付き競合理論…
 - [[human-binocular-rivalry|両眼視野闘争（Binocular Rivalry）]] — BinocularRivalry—Wikipedia
 - [[human-biological-motion-johansson|バイオロジカルモーション——十数個の光点の動きだけからヒトの歩行や動作を瞬時に知覚する現象]] — Wikipedia:Biologicalmotionperception—Johanssonpoint-lightwalker,poste…
-- [[human-biopsychosocial-model|生物心理社会モデル]] — Biopsychosocialmodel—Wikipedia
+- [[human-biopsychosocial-model|生物心理社会モデル（エンゲル）——疾病と健康を生物・心理・社会の各水準の相互作用として捉える枠組みと、慢性疼痛への応用]] — Wikipedia:Biopsychosocialmodel—Engel、一般システム理論、批判
 - [[human-bouba-kiki-effect|ブーバ／キキ効果——音と形の非恣意的な結びつき]] — Wikipedia:Bouba/kikieffect—soundsymbolism,cross-modal,arbitrarinessof…
 - [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論（フレドリクソン）——ポジティブ感情が思考と行動のレパートリーを広げ、持続的な個人資源を築くという機能理論]] — Wikipedia:Broaden-and-build—理論の概要とpositivityratio論争
 - [[human-broken-windows-theory|割れ窓理論]] — Wikipedia—Brokenwindowstheory（原典Wilson&Kelling1982,TheAtlantic）
@@ -1321,7 +1321,6 @@ tags:
 - [[human-own-race-bias-meissner|自人種バイアス——同人種の顔認識優位性と異人種顔識別の困難]] — Wikipedia:Cross-RaceEffect—own-racebiasinfacerecognition
 - [[human-patient-hm-scoville-milner|患者H・M（スコヴィルとミルナー）——海馬と記憶システムの解離]] — Wikipedia:HenryMolaison(patientH.M.)—bilateralmedialtemporallobectomy…
 - [[human-peak-end-rule-kahneman|ピーク・エンドの法則——経験の記憶における最高点と終了時の偏重]] — Wikipedia:Peak-endrule—ピーク・エンドの法則と持続時間無視の概説
-- [[human-perceptual-fluency|知覚的流暢性（Perceptual Fluency）]] — ProcessingFluency—Wikipedia
 - [[human-phenomenological-psychology-husserl-merleau-ponty|現象学的心理学——フッサールとメルロ＝ポンティの生きられた経験の探究]] — Wikipedia:Phenomenologicalpsychology—現象学的心理学の歴史と方法論の概説
 - [[human-phi-phenomenon-wertheimer|ファイ現象——静止刺激の継起が生む仮現運動とゲシュタルト心理学の出発点]] — Wikipedia:Phiphenomenon—apparentmotion,Gestaltpsychology,Wertheimer
 - [[human-phonological-loop|音韻ループ（Phonological Loop）]] — Wikipedia:Baddeley'sModelofWorkingMemory
@@ -1341,7 +1340,7 @@ tags:
 - [[human-pratfall-effect|失態効果（プラットフォール効果）]] — Wikipedia—Pratfalleffect（概要・コーヒーこぼし実験・調整要因）
 - [[human-premack-principle|プレマックの原理]] — Wikipedia—Premack’sprinciple
 - [[human-priming|プライミング効果]] — Lexicaldecisiontask—Meyer&Schvaneveldt(1971)と意味的プライミング
-- [[human-processing-fluency|処理流暢性]] — Wikipedia:Processingfluency
+- [[human-processing-fluency|処理流暢性（レーバー＝シュワルツ＝ヴィンキールマン）——情報を処理する主観的な容易さが快として誤帰属され、真実らしさ・好ましさ・親近感・美しさの判断を押し上げる]] — Wikipedia:Processingfluency—快楽的標識づけ、誤帰属、単純接触効果、真実性錯覚
 - [[human-procrastination|先延ばしと時間的動機づけ理論（TMT）]] — Temporalmotivationtheory—Wikipedia（TMTの公式・統合理論・先延ばし説明）
 - [[human-proprioception|固有受容覚（プロプリオセプション / Proprioception）]] — CharlesScottSherrington—Wikipedia
 - [[human-proprioception|固有受容覚（プロプリオセプション / Proprioception）]] — Proprioception—Wikipedia
@@ -1651,7 +1650,6 @@ tags:
 - [[infosoc-informational-self-determination|情報自己決定権]] — Wikipedia「Informationalself-determination」
 - [[infosoc-issue-attention-cycle|争点注目サイクル（イシュー・アテンション・サイクル、Issue-Attention Cycle）——社会問題への世論の注目が解決ではなく注目資源の周期的消耗によって浮上・衰退する五段階モデル]] — Wikipedia「Issue-attentioncycle」—アンソニー・ダウンズ1972年の五段階モデル（前問題／警戒的発見・熱狂／代…
 - [[infosoc-knowledge-gap-tichenor|知識ギャップ仮説——マスメディアの情報流入が社会階層間の知識格差を拡大する]] — Wikipedia:Knowledgegaphypothesis—Tichenor,Donohue&Olien、社会経済的地位、デジタル・…
-- [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]] — Wikipedia:SECImodel—SECIモデルの概要
 - [[infosoc-knowledge-society|知識社会（ナレッジ・ソサエティ）]] — PeterDrucker,Post-CapitalistSociety(1993):知識を基本的資源とし知識労働者を支配集団とする論
 - [[infosoc-lay-expertise-epstein|素人専門知——資格なき人々が科学に参加し知を変える]] — Wikipedia:Layexpertise—AIDSactivism,credibility,deficitmodel,publicpa…
 - [[infosoc-lippmann-pseudo-environment|擬似環境とステレオタイプ（リップマン『世論』）]] — Wikipedia—PublicOpinion(book,1922)（擬似環境・頭の中の像）
@@ -1782,6 +1780,7 @@ tags:
 - [[infosoc-social-penetration-altman-taylor|社会的浸透理論（アルトマン＝テイラー）——自己開示と関係の深化]] — Wikipedia:Socialpenetrationtheory—Altman&Taylor(1973),onionmodel,brea…
 - [[infosoc-social-presence|社会的存在感理論（ソーシャル・プレゼンス）]] — Wikipedia—Socialpresencetheory
 - [[infosoc-society-of-spectacle-debord|スペクタクルの社会——イメージに媒介された社会関係と消費社会批判]] — Wikipedia:TheSocietyoftheSpectacle—Debord,Situationist,socialrelation…
+- [[infosoc-sociomateriality|ソシオマテリアリティ（オーリコウスキー）——社会的なものと物質的・技術的なものは実践のなかで構成的に絡み合い、独立の実体としては存在しないとする存在論的立場]] — Wikipedia:Sociomateriality—Orlikowski、構成的絡み合い、Leonardiの批判
 - [[infosoc-sociotechnical-imaginaries|社会技術的想像論（ソシオテクニカル・イマジナリーズ）]] — Wikipedia—Sociotechnicalsystem
 - [[infosoc-sousveillance|スーヴェイランス（逆監視）]] — Wikipedia:Sousveillance（語源sur/sous・下からの監視・市民が警察を撮影）
 - [[infosoc-spiral-of-silence-noelle-neumann|沈黙の螺旋——孤立の恐れが少数意見を沈黙させ多数意見を増幅する]] — Wikipedia:Spiralofsilence—Noelle-Neumann,fearofisolation,quasi-statis…
@@ -1893,7 +1892,6 @@ tags:
 - [[mgmt-competency-trap|コンピテンシー・トラップと成功の罠（レヴィット＝マーチ／レヴィンタール＝マーチ）——過去の成功への習熟が学習を深化に偏らせ、より優れた選択肢への転換を妨げる]] — Wikipedia:Competencytrap—March,Levinthal,exploration/exploitation,suc…
 - [[mgmt-competing-values-framework-quinn|競合価値観フレームワーク——クインの組織文化類型と管理的リーダーシップ]] — Wikipedia:Competingvaluesframework—Quinn,clan,adhocracy,market,hierar…
 - [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — Wikipedia:Competitivedynamics—ChenAMCmodel,action-responsedyad,market…
-- [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — Wikipedia:Competitiveadvantage—RBV,VRIO,parityvs.advantage,isolatingm…
 - [[mgmt-complexity-leadership-uhl-bien|複雑性リーダーシップ理論（ウール＝ビエン）と適応的機能]] — Wikipedia:Complexityleadershiptheory—adaptivefunctions
 - [[mgmt-complexity-theory-stacey|複雑性理論と組織管理（ステーシー）]] — Wikipedia:Cynefinframework—Snowden,Staceymatrix,complexadaptivesystem…
 - [[mgmt-configurational-theory-fiss|構成理論——等結果性と因果的複雑性の組織分析アプローチ]] — Wikipedia:QualitativeComparativeAnalysis—Raginset-theoreticmethodsins…
@@ -1917,7 +1915,6 @@ tags:
 - [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — Wikipedia:Creativedestruction—Schumpeterianinnovationandindustrialtra…
 - [[mgmt-cross-cultural-leadership-house-globe|GLOBEプロジェクト——文化次元とリーダーシップの国際比較]] — Wikipedia:GLOBEproject—文化次元とリーダーシップの国際比較
 - [[mgmt-crossing-the-chasm|キャズム理論（Crossing the Chasm）]] — Wikipedia—CrossingtheChasm（1991年刊・ビジョナリーと実利主義者の断絶）
-- [[mgmt-customer-value-co-creation|顧客価値の共創とサービス・エコシステム（バーゴ＆ラッシュ）]] — Wikipedia:Service-dominantlogic—valueco-creation
 - [[mgmt-cynefin|クネビン・フレームワーク]] — Cynefinframework—Wikipedia
 - [[mgmt-decoupling-meyer-rowan|デカップリング——正統性のための公式構造と実際の業務活動の分離]] — Wikipedia:Institutionaltheory—Meyer&Rowan,rationalmyths,decoupling,le…
 - [[mgmt-defensive-routines-argyris|組織の防衛的ルーチン——脅威を避けて学習を妨げる習慣]] — Wikipedia:ChrisArgyris—defensiveroutines,single/double-looplearning,t…
@@ -1990,7 +1987,7 @@ tags:
 - [[mgmt-intrapreneurship|社内起業（イントラプレナーシップ）]] — Wikipedia—Intrapreneurship
 - [[mgmt-issue-selling-dutton|課題の売り込み（ダットン＆アシュフォード）]] — Wikipedia:Issueselling—Dutton&Ashford,middlemanagers,attentionmanagem…
 - [[mgmt-jidoka|自働化（ニンベンの付いた自動化）]] — Wikipedia:Autonomation(Jidoka)
-- [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル——ハックマン＆オールダムによる動機づけ・満足・パフォーマンスを規定する五つの職務次元]] — Wikipedia:Jobcharacteristictheory—職務特性モデルと動機づけ
+- [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル（ハックマン＆オルダム）——技能多様性・課題完結性・課題重要性・自律性・フィードバックの五次元が三つの心理状態を通じて内発的動機と業績を規定する]] — Wikipedia:Jobcharacteristicsmodel—Hackman&Oldham、五つの中核次元、MPS
 - [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — Wikipedia:Jobcrafting—Wrzesniewski&Dutton,threedimensions,JD-Rintegra…
 - [[mgmt-job-demands-control-karasek|仕事の要求度－コントロールモデル——ストレスを生むのは要求と裁量の組合せ]] — Wikipedia:Jobdemands-controlmodel—strainhypothesis,decisionlatitude,d…
 - [[mgmt-job-demands-resources-bakker|職務要求-資源モデル——ストレスとエンゲージメントの二重過程]] — Wikipedia:Jobdemands-resourcesmodel—理論構造と実証的展開
@@ -2007,7 +2004,7 @@ tags:
 - [[mgmt-kirkpatrick-evaluation|カークパトリックの4段階評価モデル（Kirkpatrick Model）——研修の効果を反応・学習・行動・結果の4層で測る]] — Wikipedia,“Kirkpatrickmodel”（4段階＝反応・学習・行動・結果、1959年ASTD連載・1994年著書、Phil…
 - [[mgmt-knowledge-based-view|知識ベース企業観（グラント）——企業を個人に分散した専門知識を統合する制度と捉え、統合能力に持続的競争優位の源泉を見る]] — Wikipedia:Knowledge-basedtheoryofthefirm—Grant、知識統合、暗黙知
 - [[mgmt-knowledge-brokering-hargadon|知識ブローカリングとイノベーション（ハーガドン＆サットン）]] — Wikipedia:IDEO—知識ブローカリングの典型企業の概説
-- [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — Wikipedia—SECImodelofknowledgedimensions
+- [[mgmt-knowledge-creation-theory|組織的知識創造理論と SECI モデル（野中＝竹内）——暗黙知と形式知が共同化・表出化・連結化・内面化の四モードで相互変換され、「場」を基盤に個人から組織へ螺旋的に増幅する]] — Wikipedia:SECImodelofknowledgedimensions—共同化・表出化・連結化・内面化、場
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — Wikipedia:SECImodel—Nonaka,knowledgeconversion,tacit–explicitspiral
 - [[mgmt-knowledge-transfer|知識移転（シュランスキー／アーゴット＝イングラム）——ノウハウやベストプラクティスを送り手から受け手へ伝え、受け手が吸収して使えるようにする過程と、それを妨げる知識の粘着性]] — Wikipedia:Tacitknowledge—Polanyi『TheTacitDimension』(1966)、形式知との区別
 - [[mgmt-kraljic-matrix|クラルジック・マトリクス（購買ポートフォリオ）]] — Wikipedia—Kraljicmatrix
@@ -2119,13 +2116,12 @@ tags:
 - [[mgmt-rfm-analysis|RFM分析]] — Wikipedia—RFM(marketresearch)
 - [[mgmt-romance-of-leadership-meindl|リーダーシップの幻想——成果をリーダーに帰属させる認知的傾向]] — Wikipedia:Romanceofleadership—attribution,follower-centric,socialcons…
 - [[mgmt-scenario-planning|シナリオ・プランニング]] — Wikipedia—PierreWack（H.カーン／RAND起源、シェル応用、1985年HBR論文）
-- [[mgmt-seci-model-nonaka|SECIモデルと知識変換（野中郁次郎）]] — Wikipedia:SECImodel—Nonaka&Takeuchi,tacit/explicitknowledge,Ba,knowle…
 - [[mgmt-second-curve-handy|セカンド・カーブ——衰退する前に次の成長曲線を始める]] — Wikipedia:CharlesHandy—sigmoidcurve,secondcurve,organizationalrenewal
 - [[mgmt-sensegiving|センスギビング（ジョイア＆チッティペディ）——リーダーが他者の意味形成に働きかけ、変革の望ましい解釈を組織に広めるコミュニケーション過程]] — Wikipedia:Sensemaking—Weick、Gioiaのセンスギビング、戦略的曖昧さ
 - [[mgmt-sensemaking|センスメイキング]] — KarlE.Weick—Wikipedia（提唱者・7特性・1995年著書）
 - [[mgmt-servant-leadership-spears|サーバント・リーダーシップ（グリーンリーフ／スピアーズ）]] — Wikipedia:Servantleadership—Greenleaf,Spearstencharacteristics,empiri…
 - [[mgmt-service-blueprint|サービス・ブループリント]] — Wikipedia「Serviceblueprint」（起源・構成要素・物理的証拠・failpoint）
-- [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）]] — Wikipedia:Service-dominantlogic—Vargo&Lusch,operantresources,value-in…
+- [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）——すべての交換をサービスの交換と捉え、知識と技能というオペラント資源を統合する複数のアクターの共創として価値を理解するパラダイム]] — Wikipedia:Service-dominantlogic—Vargo&Lusch、オペラント資源、価値共創、サービス・エコシステム
 - [[mgmt-service-profit-chain|サービス・プロフィット・チェーン]] — Wikipedia—Service–profitchain
 - [[mgmt-shamrock-organization-handy|シャムロック型組織——三つの異なる働き手からなる柔軟な組織]] — Wikipedia:CharlesHandy—shamrockorganization,portfolioworker,flexiblef…
 - [[mgmt-shared-leadership-pearce|シェアード・リーダーシップ——チーム成員間で分有され交替する影響過程]] — Wikipedia:Sharedleadership—Pearce&Conger,distributedinfluence,rotatin…
@@ -2136,7 +2132,6 @@ tags:
 - [[mgmt-slack-resources-bourgeois|組織スラック論——余剰資源の緩衝・革新・政治的機能]] — Wikipedia:Organizationalslack—組織スラックの概念と戦略的含意の概説
 - [[mgmt-smed|シングル段取り（SMED：Single-Minute Exchange of Die）——段取り替え時間を一桁分に縮める手法]] — Wikipedia「Single-minuteexchangeofdie(SMED)」——新郷重夫が体系化した段取り替え時間短縮手法、内段…
 - [[mgmt-social-exchange-theory|社会的交換理論]] — Wikipedia—Socialexchangetheory(Homans,Blau,Emersonoverview)
-- [[mgmt-sociomaterial-assemblage|社会物質的アセンブラージュ論]] — Wikipedia—Sociomateriality
 - [[mgmt-sociotechnical-systems|社会技術システム論（Sociotechnical Systems Theory）]] — Wikipedia—SociotechnicalSystem
 - [[mgmt-stakeholder-salience-theory|ステークホルダー顕出性理論——パワー・正統性・緊急性の三属性で経営者が誰に注意を払うかを予測する]] — Wikipedia:Stakeholdertheory—Mitchell,Agle&Woodの三属性・顕出性の類型・ESGマテリアリティ
 - [[mgmt-stakeholder-theory-freeman-strategic|ステークホルダー理論（フリーマン）——企業の目的を株主利益に限定せず、目的達成に影響を与え影響を受けるすべての集団の利害を戦略に組み込む規範的・道具的・記述的理論]] — Wikipedia:Corporatesocialresponsibility—Bowen1953、Friedman1970、ESG・CS…
@@ -2201,14 +2196,14 @@ tags:
 - [[mgmt-uppsala-internationalization|ウプサラ・モデル——企業の漸進的な国際化プロセス]] — Wikipedia:Uppsalamodel—Johanson&Vahlne,incrementalinternationalizatio…
 - [[mgmt-value-proposition|バリュープロポジション]] — Wikipedia—Valueproposition（定義・ランニング&マイケルズ1988起源）
 - [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — Wikipedia:VRIO（1991VRIN提唱、1995VRIO公表、4基準の定義）
-- [[mgmt-vrio-framework-barney|VRIOフレームワーク——持続的競争優位をもたらす経営資源の四条件]] — Wikipedia:VRIO—Barney,value/rarity/imitability/organization,resource-…
+- [[mgmt-vrio-framework-barney|VRIO フレームワーク（バーニー）——価値・希少性・模倣困難性・組織の四条件を満たす経営資源だけが持続的競争優位をもたらし、欠けるほど同等性や一時的優位にとどまる]] — Wikipedia:Competitiveadvantage—資源ベース論、競争同等性と優位
+- [[mgmt-vrio-framework-barney|VRIO フレームワーク（バーニー）——価値・希少性・模倣困難性・組織の四条件を満たす経営資源だけが持続的競争優位をもたらし、欠けるほど同等性や一時的優位にとどまる]] — Wikipedia:VRIO—Barney、価値・希少性・模倣困難性・組織
 - [[mgmt-vroom-yetton|ヴルーム＝イェットン・モデル]] — Wikipedia—Vroom–Yettondecisionmodel
 - [[mgmt-vroom-yetton-decision|ブルーム＝イェットンの意思決定モデル——状況に応じた部下参加の規範的処方]] — Wikipedia:Vroom–Yettondecisionmodel—fivedecisionstyles,decisiontree,p…
 - [[mgmt-vuca|VUCA（ブーカ）]] — Wikipedia—VUCA
 - [[mgmt-wisdom-of-teams-katzenbach|チームの知恵——作業集団と真のチームを分かつもの]] — Wikipedia:TheWisdomofTeams—workinggroupvsteam,mutualaccountability,pe…
 - [[mgmt-woodward-technology|ウッドワードの技術類型]] — Wikipedia—JoanWoodward（生産技術3類型と組織構造研究）
 - [[mgmt-work-design-growth-model|職務設計成長モデル]] — Jobcharacteristictheory—Wikipedia
-- [[mgmt-work-design-hackman|ジョブ特性モデル（ハックマン＆オルダム）]] — Wikipedia:Jobcharacteristicsmodel—Hackman&Oldham,fivecoredimensions,M…
 - [[mgmt-work-engagement|ワーク・エンゲージメント]] — Workengagement—Wikipedia
 - [[mgmt-workplace-deviance-robinson|職場逸脱行動——組織規範に反する自発的行為の分類と規定要因]] — Wikipedia:WorkplaceDeviance—Robinson&Bennetttaxonomyofdeviantbehavior
 - [[mgmt-workplace-spirituality|職場のスピリチュアリティ（意味・目的・共同体意識）]] — Wikipedia—WorkplaceSpirituality

@@ -35,8 +35,8 @@ Jane E. Dutton ／ Monica C. Worline ／ Jacoba M. Lilius
 - [[mgmt-threat-rigidity-effect|脅威による硬直化効果（Threat-Rigidity Effect）]] — 同じ思想家
 - [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]] — 同じ思想家
 - [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — 同じ思想家
+- [[mgmt-paradox-embedded-agency-seo|埋め込まれたエージェンシーのパラドクス——制度変革者の制度的条件付け]] — 同分野の近傍
 - [[mgmt-stp-marketing|STPマーケティング]] — 同分野の近傍
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

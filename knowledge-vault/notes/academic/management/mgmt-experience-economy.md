@@ -33,7 +33,7 @@ B・ジョセフ・パインⅡ（B. Joseph Pine II）／ジェームズ・H・�
 ## 関連概念
 - [[mgmt-mass-customization|マス・カスタマイゼーション]] — 同じ思想家
 - [[mgmt-likert-systems|リッカートのシステム4]] — 同分野の近傍
-- [[mgmt-vrio-framework-barney|VRIOフレームワーク——持続的競争優位をもたらす経営資源の四条件]] — 同分野の近傍
+- [[mgmt-grow-model|GROWモデル（コーチング）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

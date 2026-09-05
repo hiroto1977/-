@@ -35,8 +35,8 @@ aliases:
 ## 関連概念
 - [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — 同じ思想家
 - [[infosoc-information-ecology-nardi|情報エコロジー——ナルディとオデイの技術・人間・実践の相互作用分析]] — 同じ思想家
-- [[infosoc-network-society-castells|ネットワーク社会論——カステルスの情報資本主義・流れの空間・アイデンティティの政治]] — 同分野の近傍
 - [[infosoc-gaming-disorder-who-classification|ゲーム障害とWHO疾病分類——ICD-11に見るデジタルゲーム依存の医療化と研究論争]] — 同分野の近傍
+- [[infosoc-network-society-castells|ネットワーク社会論——カステルスの情報資本主義・流れの空間・アイデンティティの政治]] — 同分野の近傍
 - [[infosoc-trading-zones|トレーディング・ゾーン（Trading Zones）]] — 同分野の近傍
 
 ## 関連

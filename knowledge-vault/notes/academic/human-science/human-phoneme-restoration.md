@@ -37,9 +37,9 @@ Richard M. Warren（リチャード・ウォレン・1970年論文・効果の�
 - [[mgmt-likert-systems|リッカートのシステム4]] — 出典を共有
 - [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
 - [[econ-anticommons|アンチコモンズの悲劇]] — 出典を共有
-- [[human-biopsychosocial-model-chronic-pain|慢性疼痛の生物心理社会モデル]] — 出典を共有
 - [[human-default-effect|デフォルト効果（初期設定効果）]] — 出典を共有
 - [[human-end-of-history-illusion|歴史の終わり錯覚]] — 出典を共有
+- [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

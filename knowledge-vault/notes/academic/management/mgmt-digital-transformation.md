@@ -37,6 +37,7 @@ aliases:
 - [[mgmt-theory-u|セオリーU（プレゼンシング）]] — 出典を共有
 - [[mgmt-ansoff-matrix|アンゾフの成長マトリクス]] — 同分野の近傍
 - [[mgmt-attraction-selection-attrition-schneider|魅力＝選択＝消耗の枠組み（シュナイダー）——「人が場所をつくる」]] — 同分野の近傍
+- [[mgmt-strategic-renewal-crossan|戦略的リニューアル——組織学習と戦略変革の動態モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

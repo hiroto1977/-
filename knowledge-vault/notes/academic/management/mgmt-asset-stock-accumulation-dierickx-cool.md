@@ -38,11 +38,11 @@ aliases:
 - [[mgmt-strategic-group-theory|戦略グループ（ハント／ケイブス＆ポーター）——同一産業内で似た戦略をとる企業群を単位に、移動障壁がグループ間の収益差を持続させる]] — 同じ思想家
 - [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — 同じ思想家
 - [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同じ思想家
-- [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 同じ思想家
-- [[mgmt-vrio-framework-barney|VRIOフレームワーク——持続的競争優位をもたらす経営資源の四条件]] — 同じ思想家
 - [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（フェリン＆フォス）——組織能力やルーティンといった集合的概念を、個人の行為・相互作用・異質性から説明しようとする研究プログラム]] — 同じ思想家
+- [[mgmt-vrio-framework-barney|VRIO フレームワーク（バーニー）——価値・希少性・模倣困難性・組織の四条件を満たす経営資源だけが持続的競争優位をもたらし、欠けるほど同等性や一時的優位にとどまる]] — 同じ思想家
 - [[mgmt-deliberate-learning-zollo-winter|意図的学習とダイナミック・ケイパビリティの進化——経験蓄積・知識の明示化・コード化による組織能力の体系的な更新]] — 出典を共有
 - [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
+- [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

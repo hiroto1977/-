@@ -30,9 +30,9 @@ aliases:
 - [Andy Neely (Cambridge) What is Servitization? — PSS定義・サービス化のパラドックス](http://andyneely.blogspot.com/2013/11/what-is-servitization.html) `学術`
 
 ## 関連概念
-- [[mgmt-customer-value-co-creation|顧客価値の共創とサービス・エコシステム（バーゴ＆ラッシュ）]] — 同分野の近傍
-- [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）]] — 同分野の近傍
 - [[mgmt-exploration-exploitation|知の探索と知の深化（探索と活用）]] — 同分野の近傍
+- [[mgmt-employee-engagement-kahn|従業員エンゲージメント理論と心理的安全性の組織行動論（カーン）]] — 同分野の近傍
+- [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）——すべての交換をサービスの交換と捉え、知識と技能というオペラント資源を統合する複数のアクターの共創として価値を理解するパラダイム]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,10 +31,10 @@ C・K・プラハラード／ベンカト・ラマスワミ（2004）
 - [国立国会図書館サーチ：邦訳『価値共創の未来へ―顧客と企業のco-creation』(2004)](https://iss.ndl.go.jp/books/R100000002-I000007561849-00) `公的`
 
 ## 関連概念
-- [[mgmt-customer-value-co-creation|顧客価値の共創とサービス・エコシステム（バーゴ＆ラッシュ）]] — 語彙が近い
 - [[infosoc-post-industrial|脱工業社会論（ダニエル・ベル）]] — 出典を共有
 - [[infosoc-umesao-information-industry|情報産業論（梅棹忠夫）]] — 出典を共有
-- [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）]] — 同分野の近傍
+- [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — 同分野の近傍
+- [[mgmt-competing-values|競合価値フレームワーク（CVF）]] — 同分野の近傍
 - [[mgmt-psychological-detachment-sonnentag|心理的距離——仕事から心理的に離れて回復する]] — 同分野の近傍
 
 ## 関連

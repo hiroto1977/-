@@ -30,8 +30,7 @@ C・K・プラハラード＆リチャード・ベティス（1986 提唱／1995
 - [Bettis, R. A. & Prahalad, C. K. (1995) The Dominant Logic: Retrospective and Extension — Strategic Management Journal 16(1), 5–14](https://doi.org/10.1002/smj.4250160104) `学術`
 
 ## 関連概念
-- [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）]] — 同じ思想家
-- [[mgmt-customer-value-co-creation|顧客価値の共創とサービス・エコシステム（バーゴ＆ラッシュ）]] — 同じ思想家
+- [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）——すべての交換をサービスの交換と捉え、知識と技能というオペラント資源を統合する複数のアクターの共創として価値を理解するパラダイム]] — 同じ思想家
 - [[mgmt-strategic-consensus-bourgeois|戦略的コンセンサスとトップ・マネジメント・チーム（ブルジョワ）]] — 同分野の近傍
 - [[mgmt-psychological-empowerment-spreitzer|心理的エンパワーメント——仕事への内発的動機を構成する四つの認知]] — 同分野の近傍
 

@@ -36,7 +36,6 @@ John Torous ／ Jukka-Pekka Onnela ／ Matcheri Keshavan ／ Sherry Chou ／ Ian
 - [[human-cognitive-reserve-theory|認知的予備力理論]] — 出典を共有
 - [[infosoc-presumed-media-influence-gunther|推定されたメディア影響の影響（IPMI: Influence of Presumed Media Influence）——他者への影響の推定を介してメディアが間接的に作用するモデル]] — 同分野の近傍
 - [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 同分野の近傍
-- [[infosoc-affective-computing-picard|アフェクティブコンピューティング——ピカードの感情認識AI論と機械が感情を扱う倫理的課題]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

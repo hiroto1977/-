@@ -36,7 +36,6 @@ Finn E. Kydland／Edward C. Prescott／Robert J. Barro／David B. Gordon／Kenne
 - [[econ-helicopter-money-overt-monetary-financing|ヘリコプターマネーと財政・金融政策の統合——ミルトン・フリードマンからバーナンキまでの政策論争]] — 同分野の近傍
 - [[econ-nash-equilibrium|ナッシュ均衡（Nash equilibrium）]] — 同分野の近傍
 - [[econ-backus-kehoe-kydland-puzzle|バックス＝ケホー＝カイランド・パズル（Backus-Kehoe-Kydland Puzzle / 数量異常）]] — 同分野の近傍
-- [[econ-peso-problem|ペソ問題（Peso Problem）]] — 同分野の近傍
 - [[econ-time-inconsistency-kydland-prescott|時間的非整合性（キドランド＝プレスコット）——事前に最適だった政策を事後に覆す誘因が信頼性を損ない、ルールへのコミットメントと中央銀行の独立性を正当化する]] — 同分野の近傍
 
 ## 関連

@@ -2,7 +2,7 @@
 title: "iasp-pain.org"
 type: source-domain
 host: "iasp-pain.org"
-cite_count: 2
+cite_count: 1
 tags:
   - source-domain
   - index
@@ -10,11 +10,10 @@ tags:
 
 # iasp-pain.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2 件**（リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **1 件**（リファレンス 1）
 
 ## このドメインを出典とする項目
 
-- [[human-biopsychosocial-model-chronic-pain|慢性疼痛の生物心理社会モデル]] — IASPPainTerminology—ClassificationofChronicPain
 - [[human-gate-control-theory|ゲートコントロール理論]] — IASP—Painmechanisms:anewtheory（ゲートコントロール理論紹介ページ）
 
 ## 関連

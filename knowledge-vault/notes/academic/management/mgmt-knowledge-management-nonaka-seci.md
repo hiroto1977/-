@@ -30,16 +30,13 @@ aliases:
 - [Wikipedia: SECI model — Nonaka, knowledge conversion, tacit–explicit spiral](https://en.wikipedia.org/wiki/SECI_model_of_knowledge_dimensions) `リファレンス`
 
 ## 関連概念
-- [[mgmt-seci-model-nonaka|SECIモデルと知識変換（野中郁次郎）]] — 語彙が近い
-- [[mgmt-knowledge-management|ナレッジマネジメント（知識管理）：SECIモデルと「場」による組織的知識創造理論]] — 語彙が近い
-- [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 語彙が近い
-- [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]] — 分野横断
+- [[mgmt-knowledge-creation-theory|組織的知識創造理論と SECI モデル（野中＝竹内）——暗黙知と形式知が共同化・表出化・連結化・内面化の四モードで相互変換され、「場」を基盤に個人から組織へ螺旋的に増幅する]] — 語彙が近い
+- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]] — 語彙が近い
 - [[human-legitimate-peripheral-participation|正統的周辺参加と実践共同体]] — 同じ思想家
 - [[mgmt-communities-of-practice|実践共同体（コミュニティ・オブ・プラクティス）]] — 同じ思想家
 - [[mgmt-communities-practice-wenger|実践共同体理論と組織学習のコミュニティ論（ウェンガー）]] — 同じ思想家
 - [[mgmt-knowledge-transfer|知識移転（シュランスキー／アーゴット＝イングラム）——ノウハウやベストプラクティスを送り手から受け手へ伝え、受け手が吸収して使えるようにする過程と、それを妨げる知識の粘着性]] — 同じ思想家
 - [[mgmt-ba-knowledge-creation-nonaka|場（Ba）と知識創造（野中・紺野）]] — 同分野の近傍
-- [[mgmt-organizational-learning|組織学習（オーガニゼーショナル・ラーニング）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

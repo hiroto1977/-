@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同じ思想家
 - [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 同じ思想家
-- [[mgmt-vrio-framework-barney|VRIOフレームワーク——持続的競争優位をもたらす経営資源の四条件]] — 同じ思想家
+- [[mgmt-vrio-framework-barney|VRIO フレームワーク（バーニー）——価値・希少性・模倣困難性・組織の四条件を満たす経営資源だけが持続的競争優位をもたらし、欠けるほど同等性や一時的優位にとどまる]] — 同じ思想家
 - [[bizlaw-consumer-contract-act|消費者契約法]] — 出典を共有
 - [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 出典を共有
 - [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 出典を共有

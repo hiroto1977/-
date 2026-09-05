@@ -34,6 +34,7 @@ ERG理論は、心理学者クレイトン・アルダーファーが1969年の�
 - [[human-maslow-hierarchy-of-needs|マズローの欲求階層説]] — 同じ思想家
 - [[mgmt-job-enrichment|職務拡大と職務充実]] — 同じ思想家
 - [[mgmt-competency|コンピテンシー]] — 同じ思想家
+- [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル（ハックマン＆オルダム）——技能多様性・課題完結性・課題重要性・自律性・フィードバックの五次元が三つの心理状態を通じて内発的動機と業績を規定する]] — 同じ思想家
 - [[mgmt-theory-x-y-mcgregor|X理論・Y理論——人間観の前提がマネジメント・スタイルを規定する]] — 同じ思想家
 - [[mgmt-adaptive-leadership-heifetz|適応的リーダーシップ（変化への適応と組織学習）]] — 同分野の近傍
 - [[mgmt-self-determination-theory-work|自己決定理論（職場応用）]] — 同分野の近傍

@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — 出典を共有
 - [[mgmt-core-self-evaluations-judge|中核的自己評価——自尊心・一般的自己効力感・統制の所在・情緒安定性を束ねる高次特性]] — 出典を共有
 - [[mgmt-tannenbaum-schmidt|タンネンバウム＝シュミットのリーダーシップ連続体]] — 出典を共有
-- [[mgmt-dynamic-pricing|ダイナミック・プライシング]] — 同分野の近傍
+- [[mgmt-value-co-creation|価値共創]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

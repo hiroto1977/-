@@ -32,8 +32,7 @@ aliases:
 - [Wikipedia: Tacit knowledge — Polanyi『The Tacit Dimension』(1966)、形式知との区別](https://en.wikipedia.org/wiki/Tacit_knowledge) `リファレンス`
 
 ## 関連概念
-- [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]] — 同じ思想家
-- [[mgmt-seci-model-nonaka|SECIモデルと知識変換（野中郁次郎）]] — 同じ思想家
+- [[mgmt-knowledge-creation-theory|組織的知識創造理論と SECI モデル（野中＝竹内）——暗黙知と形式知が共同化・表出化・連結化・内面化の四モードで相互変換され、「場」を基盤に個人から組織へ螺旋的に増幅する]] — 同じ思想家
 - [[mgmt-knowledge-management-nonaka-seci|知識経営とSECIモデル——野中郁次郎の組織的知識創造理論]] — 同じ思想家
 - [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — 出典を共有
 - [[econ-chartalism-modern-monetary-theory|チャータリズムと現代貨幣理論（MMT）]] — 出典を共有
@@ -42,6 +41,7 @@ aliases:
 - [[econ-rotemberg-saloner-price-wars-booms|ロテンバーグ＝サローナー・モデル——好況期に協調的価格が崩れ価格戦争が生じる反循環的マークアップ理論]] — 出典を共有
 - [[econ-schumpeterian-growth-aghion-howitt|アギオン＝ハウイットのシュンペーター型内生成長モデル——創造的破壊による成長]] — 出典を共有
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 出典を共有
+- [[econ-trilemma-financial-regulation|金融規制のトリレンマ]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

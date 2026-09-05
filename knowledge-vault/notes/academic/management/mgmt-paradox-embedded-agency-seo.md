@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-sensegiving|センスギビング（ジョイア＆チッティペディ）——リーダーが他者の意味形成に働きかけ、変革の望ましい解釈を組織に広めるコミュニケーション過程]] — 同じ思想家
 - [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 同分野の近傍
 - [[mgmt-institutional-logics-thornton|制度的ロジック理論：制度的多元性と組織的合理性の再解釈]] — 同分野の近傍
-- [[mgmt-institutional-logic-friedland|制度的ロジック（フリードランド＆アルフォード）]] — 同分野の近傍
+- [[mgmt-organizational-compassion|組織的コンパッション（集合的苦痛応答理論）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

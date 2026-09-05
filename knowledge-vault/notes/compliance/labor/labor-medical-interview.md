@@ -37,6 +37,7 @@ aliases:
 - [[labor-managerial-supervisor|労働基準法上の管理監督者（労基法41条2号）]] — 出典を共有
 - [[labor-break-time|休憩時間（労働基準法34条）]] — 同分野の近傍
 - [[labor-work-rules|就業規則の作成・届出義務]] — 同分野の近傍
+- [[labor-childbirth-lumpsum|健康保険の出産育児一時金（原則50万円）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]
