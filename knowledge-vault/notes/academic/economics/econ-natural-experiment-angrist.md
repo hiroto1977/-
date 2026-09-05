@@ -33,13 +33,13 @@ aliases:
 - [[econ-natural-experiments-rdd|自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価]] — 同じ思想家
 - [[econ-natural-experiment-card-krueger|自然実験と最低賃金論争——カード＝クルーガーの差の差分析が覆した通説]] — 同じ思想家
 - [[econ-difference-in-differences|差の差分析（DID）]] — 同じ思想家
+- [[econ-bartik-shift-share-instrument|バーティック操作変数（シフトシェア操作変数）——全国産業成長率と地域産業構成の積で地域労働需要ショックを予測する識別戦略]] — 同じ思想家
 - [[econ-minimum-wage-card-krueger|最低賃金の雇用効果（カード＆クルーガー）]] — 同じ思想家
 - [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]] — 同じ思想家
 - [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — 出典を共有
 - [[econ-chartalism-modern-monetary-theory|チャータリズムと現代貨幣理論（MMT）]] — 出典を共有
 - [[econ-rotemberg-saloner-price-wars-booms|ロテンバーグ＝サローナー・モデル——好況期に協調的価格が崩れ価格戦争が生じる反循環的マークアップ理論]] — 出典を共有
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 出典を共有
-- [[econ-trilemma-financial-regulation|金融規制のトリレンマ]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,19 +2,19 @@
 title: "学習パス: 学術概念／ビジネス法務"
 type: learning-path
 path_key: "academic-business-law"
-entry_count: 682
+entry_count: 683
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／ビジネス法務（682件）
+# 学習パス — 学術概念／ビジネス法務（683件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 80）
-- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 57）
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 56）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 38）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 36）
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 29）
@@ -23,9 +23,9 @@ tags:
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 28）
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 28）
 - [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]]（接続 26）
+- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]]（接続 26）
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
 - [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]]（接続 26）
-- [[bizlaw-contractual-unconscionability|契約の非良心性法理]]（接続 25）
 - [[bizlaw-earnest-money|手付（民法557条）]]（接続 25）
 - [[bizlaw-retention-lien|留置権（民法295条）]]（接続 25）
 
@@ -103,6 +103,7 @@ tags:
 - 1950年: [[bizlaw-radio-act|電波法]]
 - 1952年: [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]]
 - 1952年: [[bizlaw-real-estate-transactions-act|宅地建物取引業法（宅建業法）]]
+- 1953年: [[bizlaw-regulation-d-private-placement|レギュレーションD——「自ら身を守れる」投資家を前提に登録義務を免除する私募のセーフハーバー]]
 - 1954年: [[bizlaw-employees-pension|厚生年金保険法]]
 - 1954年: [[bizlaw-interest-rate-restriction|利息制限法]]
 - 1954年: [[bizlaw-toushiho|出資法]]
@@ -342,7 +343,6 @@ tags:
 - [[bizlaw-bona-fide-purchaser|善意有償取得者——通知なく対価を払い善意で取得した者の保護]]
 - [[bizlaw-bristol-west-mothew-fiduciary|ブリストル対モスュー——受認義務の分類と「忠実義務」の核心]]
 - [[bizlaw-business-judgment-rule|取締役の善管注意義務・忠実義務と経営判断の原則]]
-- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]]
 - [[bizlaw-business-judgment-rule-enhanced|経営判断原則の拡張理論]]
 - [[bizlaw-business-necessity-defense|事業上の必要性の抗弁]]
 - [[bizlaw-capacity-contract|契約締結能力——拘束力ある契約を結ぶための法的な資格]]
@@ -387,6 +387,7 @@ tags:
 - [[bizlaw-contract-law-unconscionability|不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限]]
 - [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]]
 - [[bizlaw-contractual-estoppel|契約上の禁反言——合意された前提を後から否定できない]]
+- [[bizlaw-contractual-unconscionability|契約の非良心性法理]]
 - [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]]
 - [[bizlaw-corporate-governance-code-japan|コーポレートガバナンス・コード——日本のスチュワードシップと取締役会改革]]
 - [[bizlaw-corporate-governance-stewardship|スチュワードシップ・コードと機関投資家の責任投資——コーポレートガバナンス改革の法的枠組み]]

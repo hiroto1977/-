@@ -2,7 +2,7 @@
 title: "ideas.repec.org"
 type: source-domain
 host: "ideas.repec.org"
-cite_count: 86
+cite_count: 87
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ideas.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **86 件**（学術 72 ・ リファレンス 14）
+> [!info] 出典ドメイン索引 ・ 引用 **87 件**（学術 72 ・ リファレンス 15）
 
 ## このドメインを出典とする項目
 
@@ -93,6 +93,7 @@ tags:
 - [[infosoc-privacy-calculus|プライバシー計算——開示はリスクと便益の天秤]] — Dinev,T.&Hart,P.(2006)AnExtendedPrivacyCalculusModelforE-CommerceTran…
 - [[mgmt-altman-z-score|アルトマンのZスコア（Altman Z-Score／1968）——財務比率の判別分析による企業倒産予測]] — IDEAS/RePEc収録の書誌（Altman[1968],JournalofFinance23(4):589-609・判別分析による倒産…
 - [[mgmt-cultural-intelligence|文化的知能（CQ：カルチュラル・インテリジェンス）——文化的に多様な環境で効果的に機能・適応する個人の能力]] — Angetal.(2007),'CulturalIntelligence:ItsMeasurementandEffects...',Man…
+- [[mgmt-deliberate-learning-zollo-winter|意図的学習とダイナミック・ケイパビリティの進化——経験蓄積・知識の明示化・コード化による組織能力の体系的な更新]] — IDEAS/RePEcbibliographicentry:Zollo,M.&Winter,S.G.(2002).'DeliberateL…
 - [[mgmt-dynamic-delegation|公式的権限と実質的権限（Formal and Real Authority）]] — Aghion&Tirole(1997)—IDEAS/RePEc
 - [[mgmt-managerial-entrenchment|経営者の塹壕化（マネジリアル・エントレンチメント／managerial entrenchment）——経営者が自らを交代困難にして規律を逃れる現象]] — RePEc/IDEAS—Shleifer&Vishny(1989)"Managemententrenchment:Thecaseofman…
 - [[mgmt-multimarket-contact-mutual-forbearance|多市場接触と相互自制の理論（マルチマーケット・コンペティション）]] — Bernheim,B.D.&Whinston,M.D.(1990)"MultimarketContactandCollusiveBehav…

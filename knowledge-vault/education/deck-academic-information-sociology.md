@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／情報社会学"
 type: flashcard-deck
 deck_key: "academic-information-sociology"
-card_count: 606
+card_count: 607
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／情報社会学（606枚）
+# フラッシュカード — 学術概念／情報社会学（607枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -320,6 +320,8 @@ tags:
   - **A:** 状況の定義（definition of the situation）は、社会学者ウィリアム・アイザック・トマスが提唱した概念で、人間が行為に先立って状況を主観的に解釈し意味づける過程を指し、その帰結を凝縮したのが、トマスがドロシー・スウェイン・トマスとの1928年の著作で記した「人々がある状況を現実であると定義すれば、その状況は結果において現実である」という一文——後に「トマスの公理（Thomas theorem）」と呼ばれる命題であ…（→ [[infosoc-definition-of-situation-thomas]]）
 - **Q:** 熟議民主主義
   - **A:** 熟議民主主義（deliberative democracy）とは、民主的正統性の源泉を、単なる投票や選好の集計（aggregation）でも利益の交渉でもなく、自由で平等な市民による公共的な討議・熟議（deliberation）に求める政治理論である。政治的決定は、影響を受ける人々が互いに受容可能な理由を提示し合い（reason-giving）、それを吟味する公共的討議を経てこそ正統性をもつとされる。（→ [[infosoc-deliberative-democracy]]）
+- **Q:** 差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義
+  - **A:** 差分プライバシーは、ドワーク・マクシェリー・ニッシム・スミスの論文『Calibrating Noise to Sensitivity in Private Data Analysis』（TCC 2006）とドワーク単著『Differential Privacy』（ICALP 2006）で定式化された。（→ [[infosoc-differential-privacy-dwork]]）
 - **Q:** メディア効果の分化感受性モデル（DSMM／Differential Susceptibility to the Media Effects Model）——同じ内容が人により違う効果を生む理由を説明する統合枠組み
   - **A:** パティ・バルケンブルフ（Patti Valkenburg）とヨッヘン・ペーター（Jochen Peter）が2013年に提唱した、メディア効果研究のミクロ理論を一つに束ねる統合モデル。中核は四つの命題にある。第一に、メディア利用は三種類の「分化感受性変数」、すなわち気質的（性格・態度など）、発達的（年齢・認知発達段階）、社会的（家族・友人・規範）要因に依存する。（→ [[infosoc-differential-susceptibility-media-effects]]）
 - **Q:** イノベーションの普及理論（ロジャーズ）

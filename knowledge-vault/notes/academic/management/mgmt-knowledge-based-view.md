@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-knowledge-based-view-grant|知識ベース企業観——専門知識の統合機構としての企業]] — 語彙が近い
+- [[mgmt-deliberate-learning-zollo-winter|意図的学習とダイナミック・ケイパビリティの進化——経験蓄積・知識の明示化・コード化による組織能力の体系的な更新]] — 出典を共有
 - [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
 - [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]] — 出典を共有
 - [[human-bias-blind-spot|バイアスの盲点]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
 - [[mgmt-demand-side-strategy|需要サイド戦略論]] — 出典を共有
-- [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

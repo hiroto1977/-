@@ -37,6 +37,7 @@ aliases:
 - [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 同じ思想家
 - [[human-unimodel-persuasion-kruglanski-thompson|ユニモデル——クルグランスキーとトンプソンによる単一過程説得理論]] — 同じ思想家
 - [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]] — 同分野の近傍
+- [[human-componential-theory-creativity-amabile|創造性の構成要素理論（アマビル）——領域スキル・創造的思考・内発的動機づけと社会環境が交わって生まれる創造性]] — 同分野の近傍
 - [[human-sapir-whorf|サピア・ウォーフ仮説（言語相対性仮説）]] — 同分野の近傍
 
 ## 関連

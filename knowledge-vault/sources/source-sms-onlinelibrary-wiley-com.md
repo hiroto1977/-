@@ -2,7 +2,7 @@
 title: "sms.onlinelibrary.wiley.com"
 type: source-domain
 host: "sms.onlinelibrary.wiley.com"
-cite_count: 19
+cite_count: 22
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # sms.onlinelibrary.wiley.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **19 件**（学術 19）
+> [!info] 出典ドメイン索引 ・ 引用 **22 件**（学術 22）
 
 ## このドメインを出典とする項目
 
@@ -19,6 +19,9 @@ tags:
 - [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — Ocasio,W.(1997)TowardsanAttention-BasedViewoftheFirm,StrategicManagem…
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — Larraza-Kintana,Wiseman,Gómez-Mejía&Welbourne(2007)DisentanglingCompe…
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — Chen&Miller(2015)ReconceptualizingCompetitiveDynamics—StrategicManage…
+- [[mgmt-deliberate-learning-zollo-winter|意図的学習とダイナミック・ケイパビリティの進化——経験蓄積・知識の明示化・コード化による組織能力の体系的な更新]] — Teece,D.J.,Pisano,G.,&Shuen,A.(1997).'DynamicCapabilitiesandStrategic…
+- [[mgmt-deliberate-learning-zollo-winter|意図的学習とダイナミック・ケイパビリティの進化——経験蓄積・知識の明示化・コード化による組織能力の体系的な更新]] — Winter,S.G.(2003).'UnderstandingDynamicCapabilities.'StrategicManagem…
+- [[mgmt-deliberate-learning-zollo-winter|意図的学習とダイナミック・ケイパビリティの進化——経験蓄積・知識の明示化・コード化による組織能力の体系的な更新]] — Zollo,M.,&Singh,H.(2004).'DeliberateLearninginCorporateAcquisitions:P…
 - [[mgmt-demand-side-strategy|需要サイド戦略論]] — Adner&Zemsky(2006)—Demand-BasedSustainableCompetitiveAdvantage,SMJ
 - [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ]] — Teece,Pisano&Shuen(1997)“DynamicCapabilitiesandStrategicManagement”,S…
 - [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — Adner&Helfat(2003)CorporateEffectsandDynamicManagerialCapabilities—SM…

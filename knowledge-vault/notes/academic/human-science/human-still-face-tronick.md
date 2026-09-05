@@ -34,8 +34,8 @@ aliases:
 - [[human-harlow-contact-comfort|ハーロウの代理母実験——「接触の安らぎ」と愛着]] — 同じ思想家
 - [[human-mentalizing-fonagy-bateman|メンタライゼーション理論——フォナギーの心の理論と境界性パーソナリティ障害への治療的介入]] — 同じ思想家
 - [[human-strange-situation-ainsworth|ストレンジ・シチュエーション法——乳児の愛着の質を測定する標準化手続き]] — 同じ思想家
+- [[human-interpersonal-process-recall-kagan|対人プロセス・リコール——ケイガンの映像刺激再生法と対人関係の内省的探索]] — 同分野の近傍
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

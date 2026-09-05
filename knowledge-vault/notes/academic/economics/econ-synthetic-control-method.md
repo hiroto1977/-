@@ -31,8 +31,8 @@ Abadie, Alberto （2003 "The Economic Costs of Conflict: A Case Study of the Bas
 - [Wikipedia — Synthetic control method (Abadie & Gardeazabal 2003 Basque Country origin, weighted counterfactual construction, applications overview)](https://en.wikipedia.org/wiki/Synthetic_control_method) `リファレンス`
 
 ## 関連概念
+- [[econ-macroprudential-policy|マクロプルーデンス政策]] — 同分野の近傍
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

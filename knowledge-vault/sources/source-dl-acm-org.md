@@ -2,7 +2,7 @@
 title: "dl.acm.org"
 type: source-domain
 host: "dl.acm.org"
-cite_count: 12
+cite_count: 13
 tags:
   - source-domain
   - index
@@ -10,12 +10,13 @@ tags:
 
 # dl.acm.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **12 件**（学術 11 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **13 件**（学術 12 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
 - [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — Brynjolfsson,E.(1993).TheProductivityParadoxofInformationTechnology.C…
 - [[infosoc-dataveillance|データヴェイランス（データ監視）]] — RogerA.Clarke,"InformationTechnologyandDataveillance,"Communicationso…
+- [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]] — Narayanan,A.,Shmatikov,V.(2008)."RobustDe-anonymizationofLargeSparseD…
 - [[infosoc-information-ecology-theory|情報生態学理論]] — Davenport&Prusak"InformationEcology"—ACMGuidetoComputingLiterature
 - [[infosoc-information-worlds-theory|情報世界理論]] — ACMDigitalLibrarybookrecord
 - [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — Weiser,M.(1991)TheComputerforthe21stCentury—ScientificAmerican

@@ -33,6 +33,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-securities-fraud-materiality|証券詐欺における重要性基準（マテリアリティ）と民事責任]] — 語彙が近い
+- [[bizlaw-regulation-d-private-placement|レギュレーションD——「自ら身を守れる」投資家を前提に登録義務を免除する私募のセーフハーバー]] — 同じ思想家
 - [[bizlaw-securities-regulation-disclosure|証券規制と開示制度の法律体系——インサイダー取引・目論見書規制]] — 同じ思想家
 - [[bizlaw-howey-investment-contract|投資契約の判定基準（ハウィー・テスト／Howey test）——「他人の努力から利益を期待する共同事業への金銭出資」を有価証券とみなす経済的実質基準]] — 出典を共有
 - [[bizlaw-insider-trading-regulation|インサイダー取引規制と情報開示義務——金融商品取引法の内部者取引禁止と市場の公正性]] — 出典を共有
@@ -41,7 +42,6 @@ aliases:
 - [[bizlaw-shareholder-activism-proxy-fight|株主アクティビズムと委任状争奪戦——コーポレートガバナンスにおける物言う株主の法的地位]] — 出典を共有
 - [[bizlaw-whistleblower-protection-sarbanes|内部告発者保護制度——サーベンス・オクスリー法・公益通報者保護法とコーポレートガバナンス]] — 出典を共有
 - [[econ-mark-to-market-accounting-theory|時価会計理論（マーク・トゥ・マーケット会計）]] — 出典を共有
-- [[bizlaw-materiality-securities-law|証券法における重要性基準]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

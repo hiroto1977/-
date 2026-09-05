@@ -35,8 +35,8 @@ aliases:
 - [[econ-insider-outsider|インサイダー・アウトサイダー理論]] — 出典を共有
 - [[econ-mincer-earnings|ミンサー方程式（賃金関数）]] — 出典を共有
 - [[econ-internal-labor-market|内部労働市場（ドリンジャー＆ピオレ）]] — 出典を共有
+- [[econ-bartik-shift-share-instrument|バーティック操作変数（シフトシェア操作変数）——全国産業成長率と地域産業構成の積で地域労働需要ショックを予測する識別戦略]] — 同分野の近傍
 - [[econ-tragedy-anticommons-heller|反コモンズの悲劇——過剰な排除権の細分化が資源の過少利用を招く]] — 同分野の近傍
-- [[econ-agglomeration-economies|集積の経済]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

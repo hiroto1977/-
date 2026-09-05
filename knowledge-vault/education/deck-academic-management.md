@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経営学"
 type: flashcard-deck
 deck_key: "academic-management"
-card_count: 654
+card_count: 655
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経営学（654枚）
+# フラッシュカード — 学術概念／経営学（655枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -304,6 +304,8 @@ tags:
   - **A:** デカップリング（decoupling、分離）は、ジョン・マイヤーとブライアン・ローワンが1977年の論文「制度化された組織——神話と儀礼としての公式構造」で提示した新制度派組織論の概念で、組織が、外部環境において正統とされる制度化された構造や慣行を採用しつつ、それを実際の日常的な業務活動から意図的に切り離して維持する現象を指す。（→ [[mgmt-decoupling-meyer-rowan]]）
 - **Q:** 組織の防衛的ルーチン——脅威を避けて学習を妨げる習慣
   - **A:** 組織の防衛的ルーチン（organizational defensive routines）は、経営学者クリス・アージリスが提唱した概念で、個人や組織が、当惑や脅威を経験せずに済むようにとる、行動や方針のパターンを指す。アージリスはこれを、「個人や組織の各部分が、当惑や脅威を経験するのを防ぐと同時に、その当惑や脅威の原因を特定して取り除くことをも妨げてしまう、あらゆる行動や方針」と定義した。（→ [[mgmt-defensive-routines-argyris]]）
+- **Q:** 意図的学習とダイナミック・ケイパビリティの進化——経験蓄積・知識の明示化・コード化による組織能力の体系的な更新
+  - **A:** マウリツィオ・ゾロとシドニー・G・ウィンターが2002年に学術誌『Organization Science』13巻3号339–351頁の論文「Deliberate Learning and the Evolution of Dynamic Capabilities」で示した学習理論。（→ [[mgmt-deliberate-learning-zollo-winter]]）
 - **Q:** 意図的練習理論（エリクソン）
   - **A:** エリクソン（K. Anders Ericsson）は1993年の論文で，チェスチャンピオン・音楽家・スポーツ選手などの専門家は生来の才能よりも長期にわたる「意図的練習（deliberate practice）」——即時フィードバックを受けながら現在の能力の限界付近で集中的に取り組む活動——の累積によって卓越したパフォーマンスが形成されると論じた。（→ [[mgmt-deliberate-practice-ericsson]]）
 - **Q:** デルファイ法

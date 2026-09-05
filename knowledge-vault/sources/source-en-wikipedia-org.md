@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2254
+cite_count: 2255
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2254 件**（リファレンス 2254）
+> [!info] 出典ドメイン索引 ・ 引用 **2255 件**（リファレンス 2255）
 
 ## このドメインを出典とする項目
 
@@ -1137,6 +1137,7 @@ tags:
 - [[human-compassion-fatigue-burnout-stamm|共感疲労とバーンアウト・二次的外傷性ストレス（スタム）]] — Wikipedia:Compassionfatigue—secondarytraumaticstress
 - [[human-compassion-fatigue-figley|共感疲労（フィグリー）]] — Wikipedia:Compassionfatigue—definition,measurement,causes,protectivef…
 - [[human-compassion-focused-therapy-gilbert|コンパッション焦点化療法——ギルバートの三情動制御システムと自己批判への介入]] — Wikipedia:Compassion-focusedtherapy—Gilbert,threesystems,self-critici…
+- [[human-componential-theory-creativity-amabile|創造性の構成要素理論（アマビル）——領域スキル・創造的思考・内発的動機づけと社会環境が交わって生まれる創造性]] — TeresaAmabile—Wikipedia—アマビルの経歴および理論概要に関する独立した参照情報を裏付け
 - [[human-confirmation-bias|確証バイアス（confirmation bias）]] — Wikipedia—Confirmationbias
 - [[human-conjunction-fallacy|連言錯誤]] — Wikipedia:Conjunctionfallacy(Lindaproblem,conjunctionrule,representat…
 - [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]] — Wikipedia:Piaget—conservation,centration,reversibility,concreteoperat…

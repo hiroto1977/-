@@ -34,6 +34,7 @@ aliases:
 - [[econ-disposition-effect-shefrin-statman|ディスポジション効果——値上がり株を早く売り値下がり株を持ち続ける傾向]] — 同じ思想家
 - [[econ-rank-dependent-utility-quiggin|順位依存効用——累積確率を歪めてリスク態度を表す]] — 同じ思想家
 - [[econ-two-part-tariff|二部料金制（two-part tariff）]] — 同分野の近傍
+- [[econ-condorcet-jury-theorem|コンドルセの陪審定理（Condorcet Jury Theorem）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

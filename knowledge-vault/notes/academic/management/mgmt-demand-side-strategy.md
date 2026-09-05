@@ -42,7 +42,7 @@ Richard L. Priem（2007 消費者便益に基づく需要側の価値創造論�
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 出典を共有
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
 - [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 出典を共有
-- [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — 出典を共有
+- [[mgmt-deliberate-learning-zollo-winter|意図的学習とダイナミック・ケイパビリティの進化——経験蓄積・知識の明示化・コード化による組織能力の体系的な更新]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

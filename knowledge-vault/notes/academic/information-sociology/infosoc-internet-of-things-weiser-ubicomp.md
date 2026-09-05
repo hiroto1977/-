@@ -38,8 +38,8 @@ aliases:
 - [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 出典を共有
 - [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 出典を共有
 - [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
+- [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]] — 出典を共有
 - [[infosoc-participation-inequality|参加格差（90-9-1の法則）]] — 出典を共有
-- [[infosoc-participatory-design|参加型デザイン（Participatory Design）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

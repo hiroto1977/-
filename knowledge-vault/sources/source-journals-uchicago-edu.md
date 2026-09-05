@@ -2,7 +2,7 @@
 title: "journals.uchicago.edu"
 type: source-domain
 host: "journals.uchicago.edu"
-cite_count: 36
+cite_count: 37
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.uchicago.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **36 件**（学術 36）
+> [!info] 出典ドメイン索引 ・ 引用 **37 件**（学術 37）
 
 ## このドメインを出典とする項目
 
@@ -35,6 +35,7 @@ tags:
 - [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — RobertJ.Barro,"AreGovernmentBondsNetWealth?",JournalofPoliticalEconom…
 - [[econ-sen-paradox|センのリベラル・パラドックス（パレート派リベラルの不可能性）]] — AmartyaSen,"TheImpossibilityofaParetianLiberal,"JournalofPoliticalEco…
 - [[econ-sunspot-equilibrium|サンスポット均衡]] — Cass&Shell,"DoSunspotsMatter?",JournalofPoliticalEconomy91(2),1983
+- [[econ-task-based-automation-acemoglu-restrepo|アセモグル＝レストレポのタスクベース自動化モデル——置換効果・生産性効果・復元効果の綱引き]] — Acemoglu,D.andRestrepo,P.(2020).RobotsandJobs:EvidencefromUSLaborMark…
 - [[econ-time-inconsistency|動学的不整合（時間的非整合性）]] — JournalofPoliticalEconomy(1977)—RulesRatherthanDiscretion（一次文献）
 - [[human-curse-of-knowledge|知識の呪縛]] — Camerer,Loewenstein&Weber,"TheCurseofKnowledgeinEconomicSettings,"Jou…
 - [[infosoc-complex-contagion|複雑伝染（complex contagion／コンプレックス・コンテイジョン）——採用に複数の社会的補強を要する行動の拡散]] — Centola,D.&Macy,M.(2007)"ComplexContagionsandtheWeaknessofLongTies,"A…

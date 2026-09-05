@@ -31,11 +31,11 @@ aliases:
 - [Wikipedia: Specific factors model — 特殊要素モデルの理論と応用](https://en.wikipedia.org/wiki/Specific_factors_model) `リファレンス`
 
 ## 関連概念
-- [[econ-stolper-samuelson-trade-wages|ストルパー＝サミュエルソン定理——貿易自由化と要素価格の変動]] — 語彙が近い
 - [[econ-factor-price-equalization|要素価格均等化定理]] — 同じ思想家
 - [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 同じ思想家
 - [[econ-transfer-problem-keynes|移転問題——ケインズ＝オリーン論争と国際資本移動の交易条件効果]] — 同じ思想家
 - [[econ-rybczynski-theorem-factor-growth|リプチンスキー定理——要素賦存変化と産出構成の変動]] — 同じ思想家
+- [[econ-stolper-samuelson-trade-wages|ストルパー＝サミュエルソン定理——貿易自由化と要素価格の変動]] — 同じ思想家
 - [[econ-customs-union-theory-viner|関税同盟の理論——貿易創出効果と貿易転換効果の厚生分析]] — 同じ思想家
 - [[econ-lerner-symmetry-theorem-trade|ラーナーの対称性定理——輸入関税と輸出税の等価性]] — 同じ思想家
 - [[econ-metzler-paradox-tariff|メッツラー・パラドックス——関税が国内価格を引き下げる逆説]] — 同じ思想家

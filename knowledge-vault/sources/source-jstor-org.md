@@ -2,7 +2,7 @@
 title: "jstor.org"
 type: source-domain
 host: "jstor.org"
-cite_count: 140
+cite_count: 141
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jstor.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **140 件**（学術 139 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **141 件**（学術 140 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -38,6 +38,7 @@ tags:
 - [[econ-backward-bending-supply-curve|後屈労働供給曲線]] — Robbins(1930)"OntheElasticityofDemandforIncomeinTermsofEffort"—Econom…
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — Kolb(1992)IsNormalBackwardationNormal?—JournalofFuturesMarkets/JSTOR
 - [[econ-balance-of-payments-crisis-model|国際収支危機モデル]] — Obstfeld,M.(1996)."ModelsofCurrencyCriseswithSelf-FulfillingFeatures.…
+- [[econ-bartik-shift-share-instrument|バーティック操作変数（シフトシェア操作変数）——全国産業成長率と地域産業構成の積で地域労働需要ショックを予測する識別戦略]] — Blanchard,O.J.,&Katz,L.F.(1992).RegionalEvolutions.BrookingsPapersonE…
 - [[econ-baumol-oates-standards-charges|ボーモル＝オーツの標準・価格アプローチ——政治的に定めた環境基準を一律の排出課徴金で費用最小に達成する]] — Baumol,W.J.&Oates,W.E.(1971)"TheUseofStandardsandPricesforProtectiono…
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — Kahneman&Tversky1979—ProspectTheory:AnAnalysisofDecisionunderRisk,Eco…
 - [[econ-behavioral-finance|行動ファイナンス]] — Kahneman&Tversky(1979)ProspectTheory:AnAnalysisofDecisionunderRisk—Ec…

@@ -37,7 +37,6 @@ aliases:
 - [[infosoc-infrastructural-inversion-bowker-star|インフラの逆転——分類システムの不可視的政治性]] — 同じ思想家
 - [[infosoc-platform-capitalism|プラットフォーム資本主義]] — 同分野の近傍
 - [[infosoc-participatory-design-information-systems|情報システムにおける参加型デザイン]] — 同分野の近傍
-- [[infosoc-privacy-paradox|プライバシー・パラドックス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

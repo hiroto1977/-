@@ -2,22 +2,22 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 606
+entry_count: 607
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（606件）
+# 学習パス — 学術概念／情報社会学（607件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 81）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 82）
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 48）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
-- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 25）
-- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 25）
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 26）
+- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 24）
 - [[infosoc-digital-labour|デジタル労働（digital labour）]]（接続 24）
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]]（接続 23）
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]]（接続 22）
@@ -162,6 +162,7 @@ tags:
 - 1996年: [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]]
 - 1996年: [[infosoc-media-equation|メディアの等式（メディア・イクエーション）]]
 - 1996年: [[infosoc-space-of-flows|フローの空間（スペース・オブ・フローズ）]]
+- 1997年: [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]]
 - 1997年: [[infosoc-synopticon|シノプティコン]]
 - 1997年: [[infosoc-trading-zones|トレーディング・ゾーン（Trading Zones）]]
 - 1998年: [[infosoc-information-goods|情報財の経済的特性（高固定費・ゼロ限界費用・非競合性・経験財）]]

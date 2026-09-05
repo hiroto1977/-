@@ -2,7 +2,7 @@
 title: "law.cornell.edu"
 type: source-domain
 host: "law.cornell.edu"
-cite_count: 147
+cite_count: 148
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # law.cornell.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **147 件**（リファレンス 123 ・ 公的 23 ・ 学術 1）
+> [!info] 出典ドメイン索引 ・ 引用 **148 件**（リファレンス 123 ・ 公的 24 ・ 学術 1）
 
 ## このドメインを出典とする項目
 
@@ -136,6 +136,7 @@ tags:
 - [[bizlaw-promissory-note|約束手形——一定金額の支払を約する二当事者間の流通証券]] — CornellLIIWex:Promissorynote—unconditionalpromisetopay,two-party,nego…
 - [[bizlaw-quantum-meruit|クォンタム・メルイット——契約が存在しない場合の役務の相当価値の回復]] — CornellLIIWex:Quantummeruit—unjustenrichment,implied-in-lawcontract,r…
 - [[bizlaw-quasi-contract|準契約——合意なき法定の債務による不当利得の回復]] — CornellLIIWex:Quasicontract—implied-in-law,unjustenrichment,restituti…
+- [[bizlaw-regulation-d-private-placement|レギュレーションD——「自ら身を守れる」投資家を前提に登録義務を免除する私募のセーフハーバー]] — SECv.RalstonPurinaCo.,346U.S.119(1953),fullopiniontexthostedbyCornell…
 - [[bizlaw-res-judicata|既判力（Res Judicata）]] — ResJudicata—CornellLawInstituteLegalInformationInstitute(Wex)
 - [[bizlaw-rescission|契約の取消（リシジョン）——契約を解消し当事者を原状に復させる救済]] — CornellLIIWex:Rescission—unwindingcontract,restitution,misrepresentat…
 - [[bizlaw-respondeat-superior|使用者責任の法理（Respondeat Superior）]] — CornellLII—RespondeatSuperior(Wex)

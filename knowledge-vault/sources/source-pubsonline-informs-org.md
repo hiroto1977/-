@@ -2,7 +2,7 @@
 title: "pubsonline.informs.org"
 type: source-domain
 host: "pubsonline.informs.org"
-cite_count: 22
+cite_count: 23
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # pubsonline.informs.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **22 件**（学術 22）
+> [!info] 出典ドメイン索引 ・ 引用 **23 件**（学術 23）
 
 ## このドメインを出典とする項目
 
@@ -23,6 +23,7 @@ tags:
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — March(1991)ExplorationandExploitationinOrganizationalLearning—Organiz…
 - [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — Ocasio,W.(2011)AttentiontoAttention—OrganizationScience22(5):1286-1296
 - [[mgmt-behavioral-integrity|行動的誠実性（ビヘイビオラル・インテグリティ）]] — Simons(2002)—BehavioralIntegrity:ThePerceivedAlignmentBetweenManagers…
+- [[mgmt-deliberate-learning-zollo-winter|意図的学習とダイナミック・ケイパビリティの進化——経験蓄積・知識の明示化・コード化による組織能力の体系的な更新]] — Zollo,M.&Winter,S.G.(2002).'DeliberateLearningandtheEvolutionofDynami…
 - [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — Erlenkotter(1990)FordWhitmanHarrisandtheEOQModel—OperationsResearch38…
 - [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — Harris(1913/1990reprint)HowManyPartstoMakeatOnce—OperationsResearch38…
 - [[mgmt-exploration-exploitation|知の探索と知の深化（探索と活用）]] — March,J.G.(1991)"ExplorationandExploitationinOrganizationalLearning",…

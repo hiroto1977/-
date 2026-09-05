@@ -2,23 +2,23 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 640
+entry_count: 641
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（640件）
+# 学習パス — 学術概念／人間科学（641件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 140）
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 102）
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 101）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 28）
 - [[human-attribution-theory|帰属理論]]（接続 28）
-- [[human-bias-blind-spot|バイアスの盲点]]（接続 27）
+- [[human-bias-blind-spot|バイアスの盲点]]（接続 28）
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 27）
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 27）
 - [[human-anchoring|アンカリング効果（係留と調整）]]（接続 26）
@@ -190,6 +190,7 @@ tags:
 - 1982年: [[human-decoy-effect|おとり効果（非対称的優位性効果）]]
 - 1982年: [[human-outgroup-homogeneity-effect|外集団均質性効果]]
 - 1982年: [[human-sensory-gating|感覚ゲーティング（Sensory Gating / P50抑制）]]
+- 1983年: [[human-componential-theory-creativity-amabile|創造性の構成要素理論（アマビル）——領域スキル・創造的思考・内発的動機づけと社会環境が交わって生まれる創造性]]
 - 1983年: [[human-conjunction-fallacy|連言錯誤]]
 - 1983年: [[human-emotional-labor|感情労働（ホックシールド）]]
 - 1983年: [[human-false-belief-task|誤信念課題（False Belief Task）]]

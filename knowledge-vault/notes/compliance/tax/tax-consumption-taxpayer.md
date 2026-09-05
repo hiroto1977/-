@@ -34,8 +34,8 @@ aliases:
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 語彙が近い
 - [[tax-newco-consumption-exemption|新設法人の消費税納税義務免除の特例]] — 語彙が近い
 - [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 語彙が近い
-- [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 語彙が近い
 - [[tax-consumption-interim|消費税の中間申告・中間納付]] — 語彙が近い
+- [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 語彙が近い
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 出典を共有
 - [[tax-disability-deduction|所得税の障害者控除]] — 出典を共有
 - [[tax-sme-investment-credit|中小企業投資促進税制]] — 出典を共有

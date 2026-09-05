@@ -49822,5 +49822,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://reutersinstitute.politics.ox.ac.uk/echo-chambers-filter-bubbles-and-polarisation-literature-review', type: 'reference', label: 'Reuters Institute for the Study of Journalism, "Echo chambers, filter bubbles, and polarisation: a literature review" — SNS上の意見分極・フィルターバブル研究への応用文脈を確認する文献レビュー' },
     ],
   },
+  {
+    id: 'econ-bartik-shift-share-instrument',
+    discipline: 'economics',
+    title: 'バーティック操作変数（シフトシェア操作変数）——全国産業成長率と地域産業構成の積で地域労働需要ショックを予測する識別戦略',
+    statement:
+      'バーティック操作変数（シフトシェア操作変数）とは、産業別の全国成長率と地域の初期産業シェアの積で地域の予測労働需要ショックを表す操作変数で、ティモシー・バーティックが『Who Benefits from State and Local Economic Development Policies?』（1991年、アップジョン雇用研究所）で労働供給弾力性推定の道具として提示した。ブランシャール＆カッツ（1992年「Regional Evolutions」）も州レベルの労働需要指標に同種のショックを用い、以後、移民流入を分析したカード（2001年）や対中輸入競争を分析したオーター・ドーン・ハンソン（2013年）など地域労働市場研究の標準手法となった。識別根拠は論争的で、ゴールドスミス＝ピンカム・ソーキン・スウィフト（2020年）は産業シェアの外生性が識別根拠だと示し、ボルーシャク・ハル・ジャラベル（2022年）は多数の産業ショックの準ランダム性から識別する対案を示した。アダオ・コレサール・モラレス（2019年）は、シェアの近い地域間で残差が相関し、有意水準5%の検定が最大55%誤って棄却するプラセボ結果を示した。シェアが地域固有の未観測な成長トレンドと相関しうる点、実質的な独立ショック数の少なさも限界とされる。中小企業の実務では、自社商圏の産業別従業員構成に全国の産業別成長見通しを重み付けして足し合わせ、来期の地域需要を簡便に予測する指標として応用できる。',
+    keyFigures: 'ティモシー・バーティック（1991『Who Benefits from State and Local Economic Development Policies?』）／オリヴィエ・ブランシャール＆ローレンス・カッツ（1992「Regional Evolutions」）／デイヴィッド・カード（2001 移民研究に応用）／オーター＆ドーン＆ハンソン（2013「The China Syndrome」）／ゴールドスミス＝ピンカム・ソーキン・スウィフト（2020 識別はシェアの外生性）／ボルーシャク・ハル・ジャラベル（2022 識別はショックの準ランダム性）／アダオ・コレサール・モラレス（2019 推論の限界を指摘）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://research.upjohn.org/up_press/77/', type: 'academic', label: 'Bartik, T. J. (1991). Who Benefits from State and Local Economic Development Policies? W.E. Upjohn Institute for Employment Research — original construction of the instrument (local industry employment shares x national industry growth rates) and its use to estimate the inverse elasticity of local labor supply' },
+      { url: 'https://www.jstor.org/stable/2534556', type: 'academic', label: 'Blanchard, O. J., & Katz, L. F. (1992). Regional Evolutions. Brookings Papers on Economic Activity, 1992(1), 1-75 — early empirical use of an industry-mix-based measure of state-level labor demand shocks' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2Faer.20181047', type: 'academic', label: 'Goldsmith-Pinkham, P., Sorkin, I., & Swift, H. (2020). Bartik Instruments: What, When, Why, and How. American Economic Review, 110(8), 2586-2624 (DOI 10.1257/aer.20181047) — shows identification rests on the exogeneity of the shares' },
+      { url: 'https://academic.oup.com/restud/article-abstract/89/1/181/6294942', type: 'academic', label: 'Borusyak, K., Hull, P., & Jaravel, X. (2022). Quasi-Experimental Shift-Share Research Designs. Review of Economic Studies, 89(1), 181-213 (DOI 10.1093/restud/rdab030) — alternative identification from quasi-random shocks with many industries, allowing shares to be endogenous' },
+      { url: 'https://academic.oup.com/qje/article-abstract/134/4/1949/5552146', type: 'academic', label: 'Adao, R., Kolesar, M., & Morales, E. (2019). Shift-Share Designs: Theory and Inference. Quarterly Journal of Economics, 134(4), 1949-2010 (DOI 10.1093/qje/qjz025) — shows conventional standard errors over-reject (up to 55% at nominal 5%) because residuals correlate across regions with similar shares' },
+    ],
+  },
+  {
+    id: 'econ-task-based-automation-acemoglu-restrepo',
+    discipline: 'economics',
+    title: 'アセモグル＝レストレポのタスクベース自動化モデル——置換効果・生産性効果・復元効果の綱引き',
+    statement:
+      'タスクベース自動化モデルは、ダロン・アセモグルとパスカル・レストレポが『The Race between Man and Machine』（American Economic Review 108巻6号、2018年）で提示し、『Automation and New Tasks』（Journal of Economic Perspectives、2019年）で発展させた枠組みである。生産タスクを連続体とし、比較優位により資本か労働へ配分する。自動化は資本の担うタスクを広げ労働分配率・雇用・賃金を下げる「置換効果」を生む一方、需要拡大の「生産性効果」と新タスク創出の「復元効果」が雇用を押し上げ、三者の綱引きで結果が決まる。『Robots and Jobs』（Journal of Political Economy 128巻6号、2020年）は1990–2007年の米国722通勤圏データから、労働者千人当たりロボット1台の増加が雇用人口比率を約0.2ポイント、賃金を約0.42%下げたと推定した。ゼイラ（1998, QJE）やオーター・レヴィ・マーナン（2003, QJE）の先行研究を継承するが、後年は生産性に乏しい「そこそこの技術」を自ら批判し、グレーツ＆マイケルズ（2018）は総雇用への打撃は小さいと報告するなど論争が続く。中小企業への含意は、自動化で浮いた人員を新タスクへ再配置し、生産性・復元効果を意図的に作ることが人員削減型自動化を避ける鍵となる点にある。',
+    keyFigures: 'ダロン・アセモグル＆パスカル・レストレポ（2018 AER『The Race between Man and Machine』／2019 JEP『Automation and New Tasks』／2020 JPE『Robots and Jobs』）／先駆: ジョセフ・ゼイラ（1998 QJE『Workers, Machines, and Economic Growth』）／デイビッド・オーター（2003 QJE, Levy & Murnane と共著）／対比: デイビッド・オーター＆アンナ・サロモンズ（2018 Brookings/NBER）／ゲオルク・グレーツ＆ガイ・マイケルズ（2018 Review of Economics and Statistics）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2Faer.20160696', type: 'academic', label: 'Acemoglu, D. and Restrepo, P. (2018). The Race between Man and Machine: Implications of Technology for Growth, Factor Shares, and Employment. American Economic Review, 108(6), 1488–1542. DOI 10.1257/aer.20160696 — タスクベース自動化モデル（置換効果・生産性効果）の提示論文' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2Fjep.33.2.3', type: 'academic', label: 'Acemoglu, D. and Restrepo, P. (2019). Automation and New Tasks: How Technology Displaces and Reinstates Labor. Journal of Economic Perspectives, 33(2), 3–30. DOI 10.1257/jep.33.2.3 — 置換効果と復元（reinstatement）効果の枠組みを整理した論文' },
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/705716', type: 'academic', label: 'Acemoglu, D. and Restrepo, P. (2020). Robots and Jobs: Evidence from US Labor Markets. Journal of Political Economy, 128(6), 2188–2244. DOI 10.1086/705716 — 米国722通勤圏データに基づく実証（ロボット1台当たりの雇用・賃金への効果の推定値の根拠）' },
+      { url: 'https://academic.oup.com/qje/article-abstract/113/4/1091/1916985', type: 'academic', label: 'Zeira, J. (1998). Workers, Machines, and Economic Growth. Quarterly Journal of Economics, 113(4), 1091–1117. DOI 10.1162/003355398555847 — タスクベース自動化モデルの先駆となる資本・労働代替モデルの出典' },
+      { url: 'https://direct.mit.edu/rest/article/100/5/753/58489/Robots-at-Work', type: 'academic', label: 'Graetz, G. and Michaels, G. (2018). Robots at Work. Review of Economics and Statistics, 100(5), 753–768. DOI 10.1162/rest_a_00754 — ロボットが総雇用に与える影響は限定的とする対照的な実証結果の出典' },
+    ],
+  },
+  {
+    id: 'mgmt-deliberate-learning-zollo-winter',
+    discipline: 'management',
+    title: '意図的学習とダイナミック・ケイパビリティの進化——経験蓄積・知識の明示化・コード化による組織能力の体系的な更新',
+    statement:
+      'マウリツィオ・ゾロとシドニー・G・ウィンターが2002年に学術誌『Organization Science』13巻3号339–351頁の論文「Deliberate Learning and the Evolution of Dynamic Capabilities」で示した学習理論。ダイナミック・ケイパビリティを「組織が有効性の向上をめざしオペレーティング・ルーティンを体系的に生成・修正する、学習された安定的な集団活動のパターン」と定義し、（1）半自動的な経験蓄積、（2）会議・事後検討会による知識の明示化、（3）マニュアルやチェックリスト・ソフトウェアへの知識のコード化という3学習メカニズムの変異・選択・複製・保持の進化サイクルで能力形成を説明する。タスクの頻度が低く異質性・因果的曖昧性が高いほど、明示化・コード化への投資が経験蓄積単独より有効になるという反直観的命題が核心である。ティース・ピサノ・シューエン（1997）やアイゼンハート＆マーティン（2000）の能力論、ウィンター（2003）の階層論、ネルソン＆ウィンター（1982）のルーティン論を継承し、ゾロ＆シン（2004）の企業買収研究やケール＆シン（2007）のアライアンス研究が実証を重ねた一方、過度なコード化は硬直化を招く費用も批判されている。中小企業にはM&Aや新規出店など頻度は低いが重要な業務ほど、事後デブリーフィングとチェックリスト整備への投資が有効という含意がある。',
+    keyFigures: 'マウリツィオ・ゾロ（2002 Zollo & Winter, Organization Science／2004 Zollo & Singh, Strategic Management Journal）／シドニー・G・ウィンター（1982『An Evolutionary Theory of Economic Change』リチャード・ネルソンと共著／2003『Understanding Dynamic Capabilities』Strategic Management Journal）／関連: デビッド・J・ティース（Teece, Pisano & Shuen 1997）／キャスリーン・M・アイゼンハート＆ジェフリー・A・マーティン（2000 Strategic Management Journal）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://pubsonline.informs.org/doi/abs/10.1287/orsc.13.3.339.2780', type: 'academic', label: 'Zollo, M. & Winter, S. G. (2002). \'Deliberate Learning and the Evolution of Dynamic Capabilities.\' Organization Science (INFORMS), 13(3), 339–351. DOI: 10.1287/orsc.13.3.339.2780 — 概念の原論文（定義・3学習メカニズム・進化サイクル・タスク特性命題の一次資料）' },
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/10.1002/smj.318', type: 'academic', label: 'Winter, S. G. (2003). \'Understanding Dynamic Capabilities.\' Strategic Management Journal (Wiley), 24(10), 991–995. DOI: 10.1002/smj.318 — ケイパビリティの階層（ゼロレベル能力とダイナミック・ケイパビリティ）とアドホックな問題解決という代替経路を確認' },
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/(SICI)1097-0266(199708)18:7%3C509::AID-SMJ882%3E3.0.CO;2-Z', type: 'academic', label: 'Teece, D. J., Pisano, G., & Shuen, A. (1997). \'Dynamic Capabilities and Strategic Management.\' Strategic Management Journal (Wiley), 18(7), 509–533. — ダイナミック・ケイパビリティ概念の先行研究として資産の統合・構築・再構成という定義を確認' },
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.426', type: 'academic', label: 'Zollo, M., & Singh, H. (2004). \'Deliberate Learning in Corporate Acquisitions: Post-Acquisition Strategies and Integration Capability in U.S. Bank Mergers.\' Strategic Management Journal (Wiley), 25, 1233–1256. DOI: 10.1002/smj.426 — 知識のコード化が買収統合能力に与える効果を実証した後続研究' },
+      { url: 'https://ideas.repec.org/a/inm/ororsc/v13y2002i3p339-351.html', type: 'reference', label: 'IDEAS/RePEc bibliographic entry: Zollo, M. & Winter, S. G. (2002). \'Deliberate Learning and the Evolution of Dynamic Capabilities.\' Organization Science, 13(3), 339–351 — 巻・号・頁の書誌情報をINFORMSページと独立に再確認' },
+    ],
+  },
+  {
+    id: 'human-componential-theory-creativity-amabile',
+    discipline: 'human-science',
+    title: '創造性の構成要素理論（アマビル）——領域スキル・創造的思考・内発的動機づけと社会環境が交わって生まれる創造性',
+    statement:
+      'テレサ・アマビルが『The Social Psychology of Creativity: A Componential Conceptualization』（Journal of Personality and Social Psychology, 1983, 45巻2号, 357–376頁）で示した理論。創造的成果は個人内の三要素——領域関連スキル（専門知識・技能）、創造性関連プロセス（拡散的思考など柔軟な作業様式）、課題への内発的動機づけ——と、これを取り巻く社会環境（職場風土）との相互作用から生まれるとする。核となる「内発的動機づけの原理」は、評価予期・監視・競争・選択の制限といった統制的な外的制約が創造性を損なうとし、報酬を約束してコラージュを作らせる子ども対象の実験などが根拠となった。創造性は専門家の独立採点による合意評定法（1982年）で測り、コンティらとの1996年Academy of Management Journal論文で職場環境測定尺度KEYSを開発した。報酬の悪影響を巡ってはアイゼンバーガー＆キャメロン（1996）とデシ・コエストナー・ライアン（1999）のメタ分析が対立し、アマビル自身もプラットとの2016年論文で外発的要因が内発的動機づけと共存し得ると修正した。初期実証が実験室的課題に偏るとの限界も指摘される。中小企業の経営者には、社員に裁量と意味ある挑戦を与え統制的な評価を避けることが実務的含意となる。',
+    keyFigures: 'テレサ・アマビル（1983『The Social Psychology of Creativity: A Componential Conceptualization』JPSP／1983『The Social Psychology of Creativity』／1996『Creativity in Context』／2011『The Progress Principle』クレイマーと共著）／レジーナ・コンティ＆ヘザー・クーン（1996 KEYS 共同開発）／マイケル・プラット（2016 動的モデルへ共同拡張）／対比: アイゼンバーガー＆キャメロン（1996 報酬の悪影響は限定的と反論）／対比: デシ＆コエストナー＆ライアン（1999 報酬の阻害効果を支持するメタ分析）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://doi.org/10.1037/0022-3514.45.2.357', type: 'academic', label: 'Amabile, T. M. (1983). The Social Psychology of Creativity: A Componential Conceptualization. Journal of Personality and Social Psychology (American Psychological Association), 45(2), 357–376. — 理論の原典。四要素モデルと内発的動機づけの原理の提示を裏付け' },
+      { url: 'https://journals.aom.org/doi/10.5465/256995', type: 'academic', label: 'Amabile, T. M., Conti, R., Coon, H., Lazenby, J., & Herron, M. (1996). Assessing the Work Environment for Creativity. Academy of Management Journal, 39(5), 1154–1184. — 職場環境測定尺度KEYSの開発と実証的検証を裏付け' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S0191308516300053', type: 'academic', label: 'Amabile, T. M., & Pratt, M. G. (2016). The Dynamic Componential Model of Creativity and Innovation in Organizations: Making Progress, Making Meaning. Research in Organizational Behavior, 36, 157–183. — 理論の更新（相乗的外発的動機づけ・進歩の実感の統合）を裏付け' },
+      { url: 'https://www.researchgate.net/publication/14270444_Detrimental_Effects_of_Reward_Reality_or_Myth', type: 'academic', label: 'Eisenberger, R., & Cameron, J. (1996). Detrimental Effects of Reward: Reality or Myth? American Psychologist, 51(11), 1153–1166. — 報酬の悪影響は限定的とする対抗メタ分析（学説上の論争）を裏付け' },
+      { url: 'https://en.wikipedia.org/wiki/Teresa_Amabile', type: 'reference', label: 'Teresa Amabile — Wikipedia — アマビルの経歴および理論概要に関する独立した参照情報を裏付け' },
+    ],
+  },
+  {
+    id: 'bizlaw-regulation-d-private-placement',
+    discipline: 'business-law',
+    title: 'レギュレーションD——「自ら身を守れる」投資家を前提に登録義務を免除する私募のセーフハーバー',
+    statement:
+      'レギュレーションDは、米国証券取引委員会（SEC）が1982年に17 C.F.R. §230.500以下として制定した、1933年証券法4条(a)(2)項（旧4条(2)項、発行者による公募に当たらない取引の免除）の登録免除セーフハーバーである。判断枠組みは連邦最高裁のSEC対ラルストン・ピュリナ事件（SEC v. Ralston Purina Co., 346 U.S. 119, 1953年）に遡り、同判決は勧誘対象者が登録同様の情報に接し「自ら身を守れる」（fend for themselves）か否かで免除の可否を判断すべきとした。中核はルール506(b)（金額無制限・一般勧誘禁止・適格投資家無制限＋非適格投資家35名まで）と506(c)（2012年JOBS法で追加、2013年9月施行、購入者全員が適格投資家であることの合理的確認を条件に一般勧誘を許容）で、適格投資家（規則501(a)）は個人所得20万ドル・夫婦合算30万ドルまたは資産100万ドル超を基準に、2020年改正で専門資格保有者にも拡大された。発行者はForm Dを15日以内に届出し、バッドアクター排除（506(d)）や1996年NSMIAによる州登録免除が枠組みを補う。近年は調達額が登録公募を上回る規模に達した一方、一般勧誘解禁後の投資家保護と市場の不透明性が批判される。中小企業がエンジェル投資家から資金を募る際は506(b)で適格投資家に限定しForm Dと州のブルースカイ通知を怠らないことが要点となる。',
+    keyFigures: 'トム・C・クラーク（連邦最高裁判事、1953 SEC v. Ralston Purina 法廷意見）／米国証券取引委員会 SEC（1982 Regulation D 制定／2013 Rule 506(c)・506(d)／2020 適格投資家定義の改正）／ルイス・ロス＆ジョエル・セリグマン（『Securities Regulation』3d ed. 1989、同判決の体系的解説）／批判: ジョン・L・オーカット（2025 Fordham Journal of Corporate & Financial Law、適格投資家定義の見直し論）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.law.cornell.edu/supremecourt/text/346/119', type: 'government', label: 'SEC v. Ralston Purina Co., 346 U.S. 119 (1953), full opinion text hosted by Cornell LII — confirms the 1953 decision, Justice Clark\'s opinion, and the "fend for themselves"/access-to-registration-type-information holding on the private-offering exemption' },
+      { url: 'https://www.ecfr.gov/current/title-17/chapter-II/part-230/subject-group-ECFR6e651a4c86c0174', type: 'government', label: 'eCFR, 17 C.F.R. Part 230, Regulation D (§§230.500-230.508), current version — confirms 1982 adoption (47 FR 11262, Mar. 16, 1982) and the structure of Rules 504/506(b)/506(c)' },
+      { url: 'https://www.sec.gov/newsroom/press-releases/2020-191', type: 'government', label: 'SEC Press Release 2020-191, "SEC Modernizes the Accredited Investor Definition" (Aug. 26, 2020) — confirms the 2020 amendment adding Rule 501(a)(10) professional-certification qualification (e.g., Series 7/65/82 licenses)' },
+      { url: 'https://www.federalregister.gov/documents/2013/07/24/2013-16883/eliminating-the-prohibition-against-general-solicitation-and-general-advertising-in-rule-506-and', type: 'government', label: 'Federal Register, "Eliminating the Prohibition Against General Solicitation and General Advertising in Rule 506 and Rule 144A Offerings" (July 24, 2013) — confirms new Rule 506(c) under JOBS Act §201(a), Sept. 23, 2013 effective date, and the companion Rule 506(d) bad-actor disqualification' },
+      { url: 'https://ir.lawnet.fordham.edu/jcfl/vol30/iss1/2/', type: 'academic', label: 'John L. Orcutt, "Amending Regulation D\'s Accredited-Investor Definition to Allow Natural Persons to Opt Out of Unwanted Regulatory Protections," Fordham Journal of Corporate & Financial Law, Vol. 30, Iss. 1, Art. 2 (2025) — supports the critique of the accredited-investor definition\'s income/net-worth gatekeeping' },
+    ],
+  },
+  {
+    id: 'infosoc-differential-privacy-dwork',
+    discipline: 'information-sociology',
+    title: '差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義',
+    statement:
+      '差分プライバシーは、ドワーク・マクシェリー・ニッシム・スミスの論文『Calibrating Noise to Sensitivity in Private Data Analysis』（TCC 2006）とドワーク単著『Differential Privacy』（ICALP 2006）で定式化された。1レコードのみ異なる隣接データベースD・D′と任意の出力集合Sについて、乱択機構MでM(D)がSに入る確率がM(D′)がSに入る確率のe^ε倍以下に収まるときε-差分プライバシーとし、クエリの最大変化量（大域的センシティビティ）に比例したラプラス雑音を加えて実現する。背景には、スウィーニーによる1990年代のマサチューセッツ州知事医療記録の再識別や、ナラヤナン＆シュマトフによる2008年Netflix Prizeデータの再匿名化など、k匿名化のような従来の匿名化を破る連結攻撃があった。ドワーク＆ロス（2014）は（ε,δ）-緩和・合成定理・プライバシー予算を整理し、米国センサス局は2020年国勢調査に採用したが小地域精度を理由にアラバマ州が2021年提訴、Appleは2016年から、GoogleはRAPPOR（2014）で端末内のローカル差分プライバシーを採用する一方、バンバウアーらは実データで無意味な結果を生むと批判し、εの値は技術でなく政策判断である点も限界とされる。顧客統計を公開する中小事業者には、匿名化を装うのでなくノイズ量とεを明示して説明責任を果たす設計指標となる。',
+    keyFigures: 'シンシア・ドワーク（2006『Calibrating Noise to Sensitivity in Private Data Analysis』TCC／2006『Differential Privacy』ICALP／2014『The Algorithmic Foundations of Differential Privacy』ロスと共著）／フランク・マクシェリー＆コビ・ニッシム＆アダム・スミス（Calibrating Noise 共著・2017年ゲーデル賞共同受賞）／アーロン・ロス（2014 共著者）／対比: ラタニヤ・スウィーニー（k匿名化・1997年再識別実験）／アルビンド・ナラヤナン＆ヴィタリー・シュマトフ（2008 Netflix Prize 再匿名化）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://doi.org/10.1007/11681878_14', type: 'academic', label: 'Dwork, C., McSherry, F., Nissim, K., Smith, A. (2006). "Calibrating Noise to Sensitivity in Private Data Analysis." Theory of Cryptography Conference (TCC 2006), Springer LNCS 3876, pp. 265–284 — ε-差分プライバシーの定義とラプラス機構（大域的センシティビティに比例した雑音付加）の初出典拠。2017年ゲーデル賞受賞論文' },
+      { url: 'https://doi.org/10.1007/11787006_1', type: 'academic', label: 'Dwork, C. (2006). "Differential Privacy." ICALP 2006 (33rd International Colloquium, Venice), Springer LNCS 4052, pp. 1–12 — 「差分プライバシー」の命名と一般定式化の初出典拠' },
+      { url: 'https://doi.org/10.1561/0400000042', type: 'academic', label: 'Dwork, C., Roth, A. (2014). "The Algorithmic Foundations of Differential Privacy." Foundations and Trends in Theoretical Computer Science (now Publishers), 9(3–4), pp. 211–407 — (ε,δ)-差分プライバシーの緩和・合成定理・プライバシー予算の体系的整理' },
+      { url: 'https://dl.acm.org/doi/10.1109/SP.2008.33', type: 'academic', label: 'Narayanan, A., Shmatikov, V. (2008). "Robust De-anonymization of Large Sparse Datasets." Proceedings of the 2008 IEEE Symposium on Security and Privacy, pp. 111–125 — Netflix Prize データセットの再匿名化事例。従来型匿名化（k匿名化等）の限界を示した動機付けとなった研究' },
+      { url: 'https://www2.census.gov/library/publications/decennial/2020/census-briefs/c2020br-03.pdf', type: 'government', label: 'U.S. Census Bureau. "Why the Census Bureau Chose Differential Privacy." 2020 Census Brief C2020BR-03 — 2020年米国国勢調査の開示回避システム（TopDown アルゴリズム）への差分プライバシー採用を示す一次資料' },
+    ],
+  },
 ];
 // Stryker restore all

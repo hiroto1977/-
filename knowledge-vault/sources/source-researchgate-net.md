@@ -2,7 +2,7 @@
 title: "researchgate.net"
 type: source-domain
 host: "researchgate.net"
-cite_count: 50
+cite_count: 51
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # researchgate.net
 
-> [!info] 出典ドメイン索引 ・ 引用 **50 件**（学術 43 ・ リファレンス 7）
+> [!info] 出典ドメイン索引 ・ 引用 **51 件**（学術 44 ・ リファレンス 7）
 
 ## このドメインを出典とする項目
 
@@ -23,6 +23,7 @@ tags:
 - [[human-action-observation-mismatch|アクション・オブザベーション・ミスマッチ（Action-Observation Mismatch）]] — Bosbachetal.(2005)Full-TextPDF—ResearchGate
 - [[human-autobiographical-memory|自伝的記憶（Autobiographical Memory）]] — Conway&Pleydell-Pearce(2000)TheConstructionofAutobiographicalMemories…
 - [[human-cognitive-appraisal|認知的評価理論（感情）]] — AppraisalTheoryofEmotion（学術レビュー：アーノルド1960／一次・二次評価）
+- [[human-componential-theory-creativity-amabile|創造性の構成要素理論（アマビル）——領域スキル・創造的思考・内発的動機づけと社会環境が交わって生まれる創造性]] — Eisenberger,R.,&Cameron,J.(1996).DetrimentalEffectsofReward:Realityor…
 - [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — Loewenstein1994ThePsychologyofCuriosity:AReviewandReinterpretation,Ps…
 - [[human-ideomotor|観念運動効果（Ideomotor Effect）]] — Stock&Stock(2004)AShortHistoryofIdeo-MotorAction—ResearchGate
 - [[human-implicit-association-test-greenwald|潜在的連合テスト（IAT）]] — Greenwald,Nosek&Banaji(2003)UnderstandingandUsingtheIAT:I.AnImprovedS…

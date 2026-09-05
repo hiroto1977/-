@@ -2,23 +2,23 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 654
+entry_count: 655
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（654件）
+# 学習パス — 学術概念／経営学（655件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[agile-development|アジャイルソフトウェア開発]]（接続 67）
+- [[agile-development|アジャイルソフトウェア開発]]（接続 66）
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 40）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 29）
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 27）
-- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 24）
+- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 25）
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 24）
 - [[mgmt-csr|企業の社会的責任（CSR）]]（接続 24）
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 24）
@@ -143,6 +143,7 @@ tags:
 - 1981年: [[mgmt-organizational-unlearning|組織的アンラーニング]]
 - 1981年: [[mgmt-theory-z|セオリーZ]]
 - 1981年: [[mgmt-threat-rigidity-effect|脅威による硬直化効果（Threat-Rigidity Effect）]]
+- 1982年: [[mgmt-deliberate-learning-zollo-winter|意図的学習とダイナミック・ケイパビリティの進化——経験蓄積・知識の明示化・コード化による組織能力の体系的な更新]]
 - 1983年: [[mgmt-competing-values|競合価値フレームワーク（CVF）]]
 - 1983年: [[mgmt-conjoint-analysis|コンジョイント分析（コンジョイント測定／Conjoint analysis）——属性の組み合わせを評価させ、各属性の部分効用と重要度を分解して推定するサーベイ型マーケティング手法]]
 - 1983年: [[mgmt-institutional-isomorphism|制度的同型化]]

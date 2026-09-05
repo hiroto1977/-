@@ -37,10 +37,10 @@ aliases:
 - [[econ-new-keynesian|ニュー・ケインジアン経済学]] — 同じ思想家
 - [[econ-hysteresis|ヒステリシス（履歴効果）]] — 同じ思想家
 - [[econ-new-keynesian-phillips|ニューケインジアン・フィリップス曲線（New Keynesian Phillips Curve）]] — 同じ思想家
+- [[econ-bartik-shift-share-instrument|バーティック操作変数（シフトシェア操作変数）——全国産業成長率と地域産業構成の積で地域労働需要ショックを予測する識別戦略]] — 同じ思想家
 - [[econ-disinflation-sacrifice-ratio|犠牲率——ディスインフレーション政策における産出量コストの測定]] — 同じ思想家
 - [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]] — 同じ思想家
 - [[econ-eurosclerosis-giersch|ユーロスクレローシス——欧州経済の構造的硬直性と高失業の持続]] — 同じ思想家
-- [[econ-fiscal-multiplier-auerbach-gorodnichenko|財政乗数——景気局面依存性とアウアーバッハ＝ゴロドニチェンコの状態依存推定]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

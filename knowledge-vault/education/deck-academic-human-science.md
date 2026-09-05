@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／人間科学"
 type: flashcard-deck
 deck_key: "academic-human-science"
-card_count: 640
+card_count: 641
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／人間科学（640枚）
+# フラッシュカード — 学術概念／人間科学（641枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -248,6 +248,8 @@ tags:
   - **A:** ポール・ギルバートは2010年の著作『コンパッション焦点化療法（Compassion Focused Therapy: Distinctive Features）』において，進化心理学・愛着理論・神経科学の知見を統合し，高い自己批判性と恥の感情に苦しむクライエントに対する心理療法——「コンパッション焦点化療法（Compassion Focused Therapy: CFT）」——を体系化した。（→ [[human-compassion-focused-therapy-gilbert]]）
 - **Q:** 補償的制御理論（コンペンサトリー・コントロール理論）
   - **A:** 補償的制御理論（compensatory control theory）は、アーロン・ケイらが2008年から2009年にかけて提唱した社会心理学理論であり、人が世界を秩序立ち予測可能な場だと信じることは、個人が統制感を築くための根源的な心理的土台であるとする。（→ [[human-compensatory-control-kay]]）
+- **Q:** 創造性の構成要素理論（アマビル）——領域スキル・創造的思考・内発的動機づけと社会環境が交わって生まれる創造性
+  - **A:** テレサ・アマビルが『The Social Psychology of Creativity: A Componential Conceptualization』（Journal of Personality and Social Psychology, 1983, 45巻2号, 357–376頁）で示した理論。（→ [[human-componential-theory-creativity-amabile]]）
 - **Q:** 妥協効果（極端回避性）
   - **A:** 妥協効果（compromise effect）とは、3つ以上の選択肢があるとき、人々が両極端を避けて中間の「妥協的」な選択肢を選びやすくなる傾向で、極端回避性（extremeness aversion）に基づく。「松竹梅」の真ん中の竹、価格帯で最高でも最安でもない中間グレードが選ばれやすい現象がこれにあたる。（→ [[human-compromise-effect]]）
 - **Q:** 確証バイアス（confirmation bias）

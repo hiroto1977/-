@@ -39,7 +39,6 @@ aliases:
 - [[econ-greenwald-stiglitz-theorem|グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）]] — 同分野の近傍
 - [[econ-macroprudential-policy|マクロプルーデンス政策]] — 同分野の近傍
 - [[econ-gift-exchange|贈与交換（労働の部分的贈与交換）]] — 同分野の近傍
-- [[econ-tax-incidence|租税の帰着]] — 同分野の近傍
 - [[econ-hayek-knowledge|ハイエクの知識の分散と価格メカニズム]] — 同分野の近傍
 
 ## 関連

@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経済学"
 type: flashcard-deck
 deck_key: "academic-economics"
-card_count: 942
+card_count: 944
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経済学（942枚）
+# フラッシュカード — 学術概念／経済学（944枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -122,6 +122,8 @@ tags:
   - **A:** バロン＝マイヤーソンの最適規制理論は、デビッド・P・バロンとロジャー・B・マイヤーソンが1982年に『エコノメトリカ』誌に発表した論文「未知の費用を持つ独占企業の規制」で確立した、情報の非対称性下における規制設計の基礎理論である。規制対象の独占企業は自然独占（電力・通信・水道等）を想定し、その真の限界費用の水準を私的情報として保有するが、規制当局はその分布のみを知り、実現値を観察できない。（→ [[econ-baron-myerson-optimal-regulation]]）
 - **Q:** バロー成長回帰（Barro Growth Regression）
   - **A:** バロー成長回帰（Barro Growth Regression）とは、1人あたりGDPの初期水準と各種の制度的・政策的・人的資本変数を説明変数として多国間の経済成長率を回帰分析する実証的手法であり、条件付き収束仮説の検証手法として確立された。（→ [[econ-barro-growth]]）
+- **Q:** バーティック操作変数（シフトシェア操作変数）——全国産業成長率と地域産業構成の積で地域労働需要ショックを予測する識別戦略
+  - **A:** バーティック操作変数（シフトシェア操作変数）とは、産業別の全国成長率と地域の初期産業シェアの積で地域の予測労働需要ショックを表す操作変数で、ティモシー・バーティックが『Who Benefits from State and Local Economic Development Policies?』（1991年、アップジョン雇用研究所）で労働供給弾力性推定の道具として提示した。（→ [[econ-bartik-shift-share-instrument]]）
 - **Q:** 財産権の測定費用理論（バーゼルのメジャーメント・コスト・アプローチ）
   - **A:** 財産権の測定費用理論（measurement cost theory of property rights）は、ヨラム・バーゼルが1982年の論文「Measurement Cost and the Organization of Markets」（Journal of Law and Economics誌）および1989年の著書『Economic Analysis of Property Rights』（ケンブリッジ大学出版局）で展開…（→ [[econ-barzel-measurement-cost-property-rights]]）
 - **Q:** 両性の闘い（battle of the sexes）
@@ -1698,6 +1700,8 @@ tags:
   - **A:** 関税エスカレーション（tariff escalation）とは、原材料から半製品・完成品へと加工段階が進むにつれ従価関税率が段階的に引き上げられる関税構造であり、先進国の通商政策に広く観察される。この構造は名目関税率以上に国内付加価値を保護し、途上国の加工・工業化を阻害するとして南北問題の文脈で批判された。（→ [[econ-tariff-escalation-effective-protection]]）
 - **Q:** 関税回避型直接投資——貿易障壁が誘発する海外直接投資の理論
   - **A:** 関税回避型直接投資（Tariff-Jumping FDI）とは、輸入先国の関税やその他の貿易障壁を回避するために、外国企業が当該国に生産拠点を設立する海外直接投資の形態を指す。この理論はホルストが1971年に体系化し、関税水準が高い産業ほど外国企業による現地生産投資が増加するという実証的関係を示した。（→ [[econ-tariff-jumping-fdi]]）
+- **Q:** アセモグル＝レストレポのタスクベース自動化モデル——置換効果・生産性効果・復元効果の綱引き
+  - **A:** タスクベース自動化モデルは、ダロン・アセモグルとパスカル・レストレポが『The Race between Man and Machine』（American Economic Review 108巻6号、2018年）で提示し、『Automation and New Tasks』（Journal of Economic Perspectives、2019年）で発展させた枠組みである。（→ [[econ-task-based-automation-acemoglu-restrepo]]）
 - **Q:** タトヌマン（模索過程）
   - **A:** レオン・ワルラスが一般均衡理論（『純粋経済学要論』1874/1877年）で示した、市場が均衡価格へ収束する仮想的な調整過程。フランス語で「手探り」を意味するtâtonnementを名称とする。オークショニア（競売人）が試験的な価格を提示し、各主体がその価格のもとでの需給を申告し、超過需要があれば価格を引き上げ、超過供給があれば引き下げる操作を繰り返す。（→ [[econ-tatonnement]]）
 - **Q:** 租税の帰着

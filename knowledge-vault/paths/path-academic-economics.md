@@ -2,21 +2,21 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 942
+entry_count: 944
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（942件）
+# 学習パス — 学術概念／経済学（944件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 80）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 49）
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 45）
-- [[econ-agglomeration-economies|集積の経済]]（接続 44）
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 44）
+- [[econ-agglomeration-economies|集積の経済]]（接続 43）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 42）
 - [[econ-liquidity-trap|流動性のわな]]（接続 42）
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 40）
@@ -357,6 +357,7 @@ tags:
 - 1990年: [[econ-ostrom-commons|オストロムのコモンズ統治]]
 - 1990年: [[econ-rct-development|開発経済学におけるランダム化比較試験（RCT in Development Economics）]]
 - 1991年: [[econ-barro-growth|バロー成長回帰（Barro Growth Regression）]]
+- 1991年: [[econ-bartik-shift-share-instrument|バーティック操作変数（シフトシェア操作変数）——全国産業成長率と地域産業構成の積で地域労働需要ショックを予測する識別戦略]]
 - 1991年: [[econ-double-dividend|二重の配当（環境税）]]
 - 1991年: [[econ-environmental-kuznets-curve|環境クズネッツ曲線]]
 - 1991年: [[econ-home-bias|ホームバイアス（自国バイアス・パズル）]]
@@ -382,6 +383,7 @@ tags:
 - 1998年: [[econ-forward-guidance|フォワードガイダンス（時間軸政策）]]
 - 1998年: [[econ-retirement-consumption-puzzle|退職消費パズル（Retirement-Consumption Puzzle）]]
 - 1998年: [[econ-sudden-stop|サドンストップ（資本流入の急停止）]]
+- 1998年: [[econ-task-based-automation-acemoglu-restrepo|アセモグル＝レストレポのタスクベース自動化モデル——置換効果・生産性効果・復元効果の綱引き]]
 - 1999年: [[econ-switching-cost|スイッチングコストとロックイン]]
 - 2000年: [[econ-public-goods-game|公共財ゲーム]]
 - 2001年: [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]]

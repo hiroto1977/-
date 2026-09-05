@@ -39,7 +39,7 @@ aliases:
 - [[econ-marginal-efficiency-capital|資本の限界効率——期待収益に基づく投資決定とアニマル・スピリッツ]] — 同じ思想家
 - [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]] — 同じ思想家
 - [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]] — 同じ思想家
-- [[econ-twin-peaks-quah|双峰分布仮説——世界所得分布の二極化と収束クラブの形成]] — 同じ思想家
+- [[econ-task-based-automation-acemoglu-restrepo|アセモグル＝レストレポのタスクベース自動化モデル——置換効果・生産性効果・復元効果の綱引き]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

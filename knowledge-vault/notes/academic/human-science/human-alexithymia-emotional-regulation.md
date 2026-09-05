@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[human-alexithymia-sifneos|アレキシサイミア（感情失認）（シフネオス）]] — 語彙が近い
 - [[human-alexithymia-emotional-awareness|アレキシシミアと感情認識障害——心身医学・感情神経科学の視点]] — 同じ思想家
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-statistical-learning|統計的学習（Statistical Learning）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

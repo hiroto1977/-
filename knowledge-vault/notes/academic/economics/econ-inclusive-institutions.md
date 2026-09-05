@@ -34,11 +34,11 @@ aliases:
 ## 関連概念
 - [[econ-north-institutions-economic-history|ノースの制度論と経済史——取引費用・財産権・路径依存性による長期経済変化の解明]] — 語彙が近い
 - [[econ-reversal-of-fortune-acemoglu|運命の逆転——制度が長期の発展を分ける]] — 同じ思想家
+- [[econ-task-based-automation-acemoglu-restrepo|アセモグル＝レストレポのタスクベース自動化モデル——置換効果・生産性効果・復元効果の綱引き]] — 同じ思想家
 - [[econ-twin-peaks-quah|双峰分布仮説——世界所得分布の二極化と収束クラブの形成]] — 同じ思想家
 - [[bizlaw-ungps-business-human-rights|ビジネスと人権に関する指導原則（UNGPs）]] — 出典を共有
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
 - [[econ-rct-development|開発経済学におけるランダム化比較試験（RCT in Development Economics）]] — 出典を共有
-- [[econ-monopolistic-competition|独占的競争]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

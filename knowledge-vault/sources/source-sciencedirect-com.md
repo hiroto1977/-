@@ -2,7 +2,7 @@
 title: "sciencedirect.com"
 type: source-domain
 host: "sciencedirect.com"
-cite_count: 108
+cite_count: 109
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # sciencedirect.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **108 件**（学術 96 ・ リファレンス 12）
+> [!info] 出典ドメイン索引 ・ 引用 **109 件**（学術 97 ・ リファレンス 12）
 
 ## このドメインを出典とする項目
 
@@ -50,6 +50,7 @@ tags:
 - [[human-automation-bias|オートメーション・バイアス（自動化バイアス）]] — Skitka,Mosier&Burdick(1999)"Doesautomationbiasdecision-making?"Intern…
 - [[human-bias-blind-spot|バイアスの盲点]] — Pronin&Kugler(2007)Introspectionillusionasasourceofthebiasblindspot,J…
 - [[human-cognitive-dissonance-reduction|認知的不協和低減]] — Cooper&Fazio(1984)ANewLookatDissonanceTheory.AdvancesinExperimentalSo…
+- [[human-componential-theory-creativity-amabile|創造性の構成要素理論（アマビル）——領域スキル・創造的思考・内発的動機づけと社会環境が交わって生まれる創造性]] — Amabile,T.M.,&Pratt,M.G.(2016).TheDynamicComponentialModelofCreativit…
 - [[human-conservatism-bias|保守性バイアス（信念更新）]] — Amodelofinvestorsentiment,JournalofFinancialEconomics49(3),307–343（決算…
 - [[human-context-dependent-memory|文脈依存記憶]] — ScienceDirectTopics：Context-DependentMemory概説
 - [[human-dark-triad|ダークトライアド（暗黒の三特性／Dark Triad）——マキャヴェリアニズム・ナルシシズム・サイコパシーという、有害だが非臨床的な三つの重なり合う人格特性の集合]] — Paulhus,D.L.,&Williams,K.M.(2002).TheDarkTriadofpersonality:Narcissis…
