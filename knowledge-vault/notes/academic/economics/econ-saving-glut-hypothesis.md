@@ -34,8 +34,6 @@ Ben Shalom Bernanke ／ Ricardo J. Caballero ／ Emmanuel Farhi ／ Pierre-Olivi
 - [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 同じ思想家
 - [[econ-debt-deflation-theory|債務デフレ理論]] — 同じ思想家
 - [[econ-brainard-attenuation-principle|ブレイナードの減衰原理（Brainard attenuation principle／保守主義原理）——乗数が不確かなら政策は控えめに]] — 同じ思想家
-- [[econ-credit-channel-monetary-transmission|金融政策伝達の信用チャネル]] — 同じ思想家
-- [[econ-credit-channel-theory|信用チャネル理論]] — 同じ思想家
 - [[econ-credit-cycle-theory|信用循環理論]] — 同じ思想家
 - [[econ-savings-glut-bernanke|世界的過剰貯蓄仮説——グローバル・インバランスと低金利の構造的要因]] — 同分野の近傍
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍

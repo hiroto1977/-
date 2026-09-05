@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[econ-liquidity-trap-keynes|流動性の罠——名目金利の下限で金融政策が有効性を失う状況]] — 同分野の近傍
-- [[econ-credit-channel-monetary-transmission|金融政策伝達の信用チャネル]] — 同分野の近傍
+- [[econ-fear-of-floating|変動相場回避（フィア・オブ・フローティング）]] — 同分野の近傍
 - [[econ-juglar-cycle|ジュグラー・サイクル（Juglar Cycle）]] — 同分野の近傍
 
 ## 関連

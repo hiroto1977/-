@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: 組織変革 — コッターの8ステップと変革管理の解説](https://ja.wikipedia.org/wiki/%E7%B5%84%E7%B9%94%E5%A4%89%E9%9D%A9) `リファレンス`
 
 ## 関連概念
-- [[mgmt-change-management-kotter-8-step|コッターの8段階変革モデル——組織変革の失敗要因分析と変革リーダーシップの実践フレームワーク]] — 語彙が近い
 - [[mgmt-kotter-8-steps|コッターの変革8段階モデル]] — 語彙が近い
+- [[mgmt-change-management-kotter-8-step|コッターの8段階変革モデル——組織変革の失敗要因分析と変革リーダーシップの実践フレームワーク]] — 語彙が近い
 - [[mgmt-kotter-change|コッターの変革の8段階プロセス]] — 同じ思想家
 - [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — 同じ思想家
 - [[mgmt-bridges-transition-model-ending-neutral-zone-beginning|ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み]] — 同じ思想家

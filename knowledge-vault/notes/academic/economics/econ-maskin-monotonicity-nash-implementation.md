@@ -38,9 +38,9 @@ aliases:
 - [[econ-auction-theory-vickrey-mechanism-design|オークション理論とメカニズムデザイン——ヴィックリーの第二価格競売と資源配分の設計]] — 同じ思想家
 - [[econ-centipede-game|ムカデゲーム——後ろ向き帰納と協調のジレンマ]] — 同じ思想家
 - [[econ-clarke-tax-pivotal|クラーク税とピボタル・メカニズム——公共財の選好をどう正直に語らせるか]] — 同じ思想家
-- [[econ-financial-accelerator-bernanke-gertler|金融アクセラレーター——信用市場の摩擦と景気変動の増幅メカニズム]] — 同じ思想家
 - [[econ-hold-up-problem-williamson|ホールドアップ問題——関係特殊投資の搾取懸念が過少投資を招く]] — 同じ思想家
 - [[econ-incomplete-contracts-hart-moore|不完備契約理論——残余コントロール権の配分としての所有権]] — 同じ思想家
+- [[econ-mechanism-design-hurwicz|メカニズム設計理論と誘因両立性の経済分析（ハービッツ・マスキン・マイヤーソン）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

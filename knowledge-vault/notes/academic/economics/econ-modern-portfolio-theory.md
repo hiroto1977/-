@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[econ-tobin-separation|トービンの分離定理（Tobin Separation Theorem）]] — 語彙が近い
-- [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル——シャープのCAPMとリスク・リターンの均衡理論]] — 同じ思想家
+- [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル（CAPM）——資産の期待収益率は市場全体と連動するリスク（ベータ）だけに比例するという均衡理論]] — 同じ思想家
 - [[econ-global-value-chain|グローバル・バリューチェーン（GVC）]] — 同分野の近傍
 - [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 同分野の近傍
 

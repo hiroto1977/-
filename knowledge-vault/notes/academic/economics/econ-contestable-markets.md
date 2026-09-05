@@ -38,7 +38,6 @@ William J. Baumol／John C. Panzar／Robert D. Willig（1982）／サンクコ�
 - [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — 出典を共有
 - [[infosoc-recursive-publics-kelty|再帰的公共——自らの存在基盤である技術・法的インフラそのものを作り変える公共]] — 出典を共有
 - [[econ-greenspan-put|グリーンスパン・プット]] — 同分野の近傍
-- [[econ-credit-rationing-stiglitz-weiss|スティグリッツ＝ワイス信用割当モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

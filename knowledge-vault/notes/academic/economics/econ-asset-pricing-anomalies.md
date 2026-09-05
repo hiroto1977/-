@@ -32,15 +32,15 @@ aliases:
 
 ## 関連概念
 - [[econ-fama-french-factor-model|ファーマ＝フレンチ・ファクターモデル]] — 語彙が近い
-- [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル——シャープのCAPMとリスク・リターンの均衡理論]] — 同じ思想家
+- [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル（CAPM）——資産の期待収益率は市場全体と連動するリスク（ベータ）だけに比例するという均衡理論]] — 同じ思想家
 - [[econ-efficient-market-hypothesis|効率的市場仮説（efficient market hypothesis, EMH）]] — 同じ思想家
 - [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — 同じ思想家
 - [[econ-alchian-demsetz-team-production|チーム生産と残余請求権（アルチャン＆デムセッツ）]] — 同じ思想家
 - [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]] — 同じ思想家
-- [[econ-asset-pricing-capm|資本資産価格モデル（CAPM）と株式リターンのリスク・リターン関係]] — 同じ思想家
 - [[econ-career-concerns-holmstrom|キャリア・コンサーン（ホルムストローム）——評判が生む暗黙の誘因]] — 同じ思想家
 - [[econ-efficient-market-hypothesis-fama|効率的市場仮説とファーマの資産価格形成論]] — 同じ思想家
 - [[econ-generalized-method-of-moments-hansen|一般化モーメント法（GMM）——モーメント条件のみから分布を仮定せず母数を推定するハンセンの一般理論]] — 同じ思想家
+- [[econ-home-bias|ホームバイアス（自国バイアス・パズル）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

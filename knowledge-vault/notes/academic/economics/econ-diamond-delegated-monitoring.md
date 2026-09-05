@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: Financial intermediary — delegated monitoring, banks, diversification](https://en.wikipedia.org/wiki/Financial_intermediary) `リファレンス`
 
 ## 関連概念
-- [[econ-diamond-dybvig|ダイアモンド＝ディビッグ・モデル]] — 同じ思想家
+- [[econ-diamond-dybvig-bank-run|ダイアモンド＝ディビッグの銀行取付モデル——流動性変換という銀行の本質的機能そのものが自己実現的な取付の脆弱性を生む]] — 同じ思想家
 - [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同じ思想家
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する]] — 同じ思想家
 - [[econ-greenwald-stiglitz-theorem|グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）]] — 同じ思想家

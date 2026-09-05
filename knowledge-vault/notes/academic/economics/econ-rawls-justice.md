@@ -40,6 +40,7 @@ aliases:
 - [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]] — 出典を共有
 - [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 出典を共有
 - [[human-collective-effervescence|集合的沸騰：儀礼的集合における感情の高揚と社会的連帯]] — 出典を共有
+- [[econ-brainard-attenuation-principle|ブレイナードの減衰原理（Brainard attenuation principle／保守主義原理）——乗数が不確かなら政策は控えめに]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

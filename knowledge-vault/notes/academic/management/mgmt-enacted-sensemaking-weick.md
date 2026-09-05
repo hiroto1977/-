@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Sensemaking — retrospective meaning construction in organizations overview](https://en.wikipedia.org/wiki/Sensemaking) `リファレンス`
 
 ## 関連概念
-- [[econ-wage-rigidity-bewley|賃金の下方硬直性——ビューリーのインタビュー研究による実証的解明]] — 語彙が近い
 - [[mgmt-sensemaking|センスメイキング]] — 語彙が近い
+- [[econ-wage-rigidity-bewley|賃金の下方硬直性——ビューリーのインタビュー研究による実証的解明]] — 語彙が近い
 - [[mgmt-enactment-weick|イナクトメント——組織が行為を通じて自らの環境を能動的に作り出す]] — 同じ思想家
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
 - [[mgmt-organizational-resilience-sutcliffe|組織的レジリエンスと高信頼組織の理論（サトクリフ＆ワイク）]] — 同じ思想家

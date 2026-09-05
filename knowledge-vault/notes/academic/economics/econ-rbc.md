@@ -39,8 +39,8 @@ F.キドランド&E.プレスコット1982「Time to Build and Aggregate Fluctua
 - [[econ-superstar-economics|スーパースターの経済学]] — 出典を共有
 - [[econ-central-bank-independence-kydland|中央銀行の独立性と時間非一貫性問題——キドランド＝プレスコットの規則対裁量論]] — 同分野の近傍
 - [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]] — 同分野の近傍
+- [[econ-financial-accelerator-bernanke-gertler|金融加速度効果（バーナンキ＝ガートラー＝ギルクリスト）——借り手の純資産と外部資金プレミアムの相互作用が景気のショックを増幅する]] — 同分野の近傍
 - [[econ-ak-model|AKモデル（内生的成長の基本モデル）]] — 同分野の近傍
-- [[econ-near-rationality-akerlof-yellen|近似合理性とメニューコスト——僅かな最適化の怠りが大きな景気変動を生む]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

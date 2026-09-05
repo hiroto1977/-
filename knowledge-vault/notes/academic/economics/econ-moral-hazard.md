@@ -39,7 +39,6 @@ aliases:
 - [[econ-superstar-economics|スーパースターの経済学]] — 出典を共有
 - [[econ-principal-agent|プリンシパル・エージェント理論（agency theory）]] — 同分野の近傍
 - [[econ-bundling-tying|バンドリングと抱き合わせ——複数財の組み合わせ販売による余剰の抽出]] — 同分野の近傍
-- [[econ-milgrom-stokey-no-trade|ノートレード定理——合理的な投機的取引は成立しない]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

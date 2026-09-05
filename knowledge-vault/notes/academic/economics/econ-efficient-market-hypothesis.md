@@ -37,10 +37,10 @@ aliases:
 - [[econ-alchian-demsetz-team-production|チーム生産と残余請求権（アルチャン＆デムセッツ）]] — 同じ思想家
 - [[econ-asset-price-bubbles-kindleberger-minsky|資産価格バブル——キンドルバーガーとミンスキーの信用サイクルと崩壊のモデル]] — 同じ思想家
 - [[econ-asset-pricing-anomalies|資産価格アノマリー（Asset Pricing Anomalies）]] — 同じ思想家
-- [[econ-asset-pricing-capm|資本資産価格モデル（CAPM）と株式リターンのリスク・リターン関係]] — 同じ思想家
 - [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
 - [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]] — 同じ思想家
-- [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル——シャープのCAPMとリスク・リターンの均衡理論]] — 同じ思想家
+- [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル（CAPM）——資産の期待収益率は市場全体と連動するリスク（ベータ）だけに比例するという均衡理論]] — 同じ思想家
+- [[econ-career-concerns-holmstrom|キャリア・コンサーン（ホルムストローム）——評判が生む暗黙の誘因]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -38,7 +38,6 @@ aliases:
 - [[econ-twin-deficits-hypothesis-feldstein|双子の赤字仮説——財政赤字と経常収支赤字の連動メカニズム]] — 同分野の近傍
 - [[econ-money-creation|信用創造と貨幣乗数]] — 同分野の近傍
 - [[econ-chartalism-modern-monetary-theory|チャータリズムと現代貨幣理論（MMT）]] — 同分野の近傍
-- [[econ-hyperinflation|ハイパーインフレーション（超インフレ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

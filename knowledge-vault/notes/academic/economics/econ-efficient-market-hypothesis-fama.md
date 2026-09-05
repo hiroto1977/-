@@ -39,7 +39,7 @@ aliases:
 - [[econ-asset-pricing-anomalies|資産価格アノマリー（Asset Pricing Anomalies）]] — 同じ思想家
 - [[econ-housing-market-bubble-case-shiller|住宅市場バブルとケース＝シラー指数——行動的資産価格と不動産市場の周期的変動]] — 同じ思想家
 - [[econ-asset-price-bubbles-kindleberger-minsky|資産価格バブル——キンドルバーガーとミンスキーの信用サイクルと崩壊のモデル]] — 同じ思想家
-- [[econ-asset-pricing-capm|資本資産価格モデル（CAPM）と株式リターンのリスク・リターン関係]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

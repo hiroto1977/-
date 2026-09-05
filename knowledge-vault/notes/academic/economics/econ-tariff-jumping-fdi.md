@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[econ-optimal-tariff-terms-of-trade|最適関税と交易条件——大国の市場支配力と関税政策の国際経済学的根拠]] — 同分野の近傍
-- [[econ-product-cycle-trade|プロダクト・サイクル理論（貿易）]] — 同分野の近傍
+- [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

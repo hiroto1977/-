@@ -34,14 +34,14 @@ aliases:
 ## 関連概念
 - [[econ-savings-glut|世界的貯蓄過剰（グローバル・セービング・グラット）]] — 同じ思想家
 - [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
-- [[econ-monetary-policy-rules-taylor|テイラー・ルールと中央銀行の政策ガイドライン——インフレ格差・需給ギャップに基づく金利設定の定式化]] — 同じ思想家
-- [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利から実体経済への伝達メカニズム]] — 同じ思想家
 - [[econ-nominal-anchor-inflation-targeting|インフレ目標政策（ノミナル・アンカー）]] — 同じ思想家
-- [[econ-credit-channel|信用経路（クレジット・チャネル）]] — 同じ思想家
-- [[econ-financial-accelerator|金融加速度効果（フィナンシャル・アクセラレータ）]] — 同じ思想家
+- [[econ-diamond-dybvig-bank-run|ダイアモンド＝ディビッグの銀行取付モデル——流動性変換という銀行の本質的機能そのものが自己実現的な取付の脆弱性を生む]] — 同じ思想家
 - [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 同じ思想家
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]] — 同じ思想家
 - [[econ-bagehot-lender-last-resort|最後の貸し手とバジョットの原則——金融危機における中央銀行の役割]] — 同じ思想家
+- [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — 同じ思想家
+- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 同じ思想家
+- [[econ-credit-channel-bernanke|信用チャネル（バーナンキ＝ガートラー）——金融政策が銀行貸出と借り手のバランスシートを通じて金利経路を増幅しながら実体経済に波及する]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

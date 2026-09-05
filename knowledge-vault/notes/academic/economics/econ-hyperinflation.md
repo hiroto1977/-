@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[econ-seigniorage-hyperinflation-cagan|インフレ税と超インフレ——ケーガンモデルが解明するハイパーインフレの自己強化メカニズム]] — 同じ思想家
+- [[econ-taylor-rule|テイラー・ルール——政策金利をインフレ率と産出ギャップに反応させる金融政策の指針と、中央銀行行動のベンチマーク]] — 同分野の近傍
 - [[econ-olivera-tanzi-effect|オリベラ＝タンジ効果]] — 同分野の近傍
-- [[econ-chartalism-modern-money|シャルタリズムと現代貨幣理論（MMT）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

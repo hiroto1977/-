@@ -38,8 +38,8 @@ aliases:
 - [[econ-mundell-tobin-effect|マンデル＝トービン効果]] — 同じ思想家
 - [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — 同じ思想家
 - [[econ-tinbergen-rule-policy-targets|ティンバーゲンの定理——政策目標と政策手段の対応関係]] — 同じ思想家
-- [[econ-credit-channel|信用経路（クレジット・チャネル）]] — 同じ思想家
-- [[econ-financial-accelerator|金融加速度効果（フィナンシャル・アクセラレータ）]] — 同じ思想家
+- [[econ-diamond-dybvig-bank-run|ダイアモンド＝ディビッグの銀行取付モデル——流動性変換という銀行の本質的機能そのものが自己実現的な取付の脆弱性を生む]] — 同じ思想家
+- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

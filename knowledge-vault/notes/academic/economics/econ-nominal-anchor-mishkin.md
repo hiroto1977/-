@@ -36,11 +36,11 @@ aliases:
 - [[econ-central-bank-independence-rogoff|中央銀行の独立性——ロゴフの保守的中央銀行論とインフレ目標政策]] — 同じ思想家
 - [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]] — 同じ思想家
 - [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
-- [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利から実体経済への伝達メカニズム]] — 同じ思想家
-- [[econ-monetary-transmission-mechanism|金融政策の波及メカニズム（monetary transmission mechanism）]] — 同じ思想家
+- [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利の変更が金利・為替・資産価格・信用・期待の各チャネルを通じて物価と実体経済に届くまで]] — 同じ思想家
 - [[econ-nominal-anchor-inflation-targeting|インフレ目標政策（ノミナル・アンカー）]] — 同じ思想家
 - [[econ-real-business-cycle-kydland|実物的景気循環理論（キドランド＆プレスコット）]] — 同じ思想家
 - [[econ-real-business-cycle-kydland-prescott|リアル・ビジネス・サイクル理論——キドランド＆プレスコットの技術ショックと景気循環]] — 同じ思想家
+- [[econ-time-inconsistency-kydland-prescott|時間的非整合性——最適計画の事後的破棄とルール対裁量の問題]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

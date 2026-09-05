@@ -36,6 +36,7 @@ aliases:
 - [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 出典を共有
 - [[econ-credit-cycle-minsky-financial-fragility|ミンスキーの金融不安定性仮説——信用サイクルと「ミンスキー・モーメント」の経済学]] — 同分野の近傍
 - [[econ-hot-money-flows-calvo|ホットマネー・フローと急停止——新興国資本移動の不安定性]] — 同分野の近傍
+- [[econ-too-big-to-fail|大きすぎて潰せない]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

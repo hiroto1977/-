@@ -42,8 +42,8 @@ aliases:
 - [[econ-endogenous-money-post-keynesian-moore|内生的貨幣論——ムーアの信用貨幣観と中央銀行の利子率コントロール]] — 同じ思想家
 - [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 同じ思想家
 - [[econ-fiscal-dominance-sargent|財政支配と物価水準の財政理論——政府債務が金融政策を拘束するメカニズム]] — 同じ思想家
-- [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利から実体経済への伝達メカニズム]] — 同じ思想家
 - [[econ-new-keynesian|ニュー・ケインジアン経済学]] — 同じ思想家
+- [[econ-price-level-targeting|物価水準目標政策]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

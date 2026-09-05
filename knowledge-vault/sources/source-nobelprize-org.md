@@ -2,7 +2,7 @@
 title: "nobelprize.org"
 type: source-domain
 host: "nobelprize.org"
-cite_count: 92
+cite_count: 91
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nobelprize.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **92 件**（リファレンス 56 ・ 公的 34 ・ 学術 2）
+> [!info] 出典ドメイン索引 ・ 引用 **91 件**（リファレンス 55 ・ 公的 34 ・ 学術 2）
 
 ## このドメインを出典とする項目
 
@@ -31,8 +31,7 @@ tags:
 - [[econ-coase-theorem|コースの定理（Coase theorem）]] — NobelPrize.org—RonaldCoase,1991PrizeLecture
 - [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]] — TheSverigesRiksbankPrizeinEconomicSciencesinMemoryofAlfredNobel2003—N…
 - [[econ-credit-rationing-stiglitz-weiss|スティグリッツ＝ワイス信用割当モデル]] — NobelPrize.org—2001年経済学賞（非対称情報下の市場分析）
-- [[econ-diamond-dybvig|ダイアモンド＝ディビッグ・モデル]] — NobelPrize.org—2022SverigesRiksbankPrizeinEconomicSciences(Bernanke,D…
-- [[econ-diamond-dybvig-bank-run|ダイアモンド＝ディブビグ銀行取付モデル]] — 2022年ノーベル経済学賞（Diamond・Dybvig・Bernanke）
+- [[econ-diamond-dybvig-bank-run|ダイアモンド＝ディビッグの銀行取付モデル——流動性変換という銀行の本質的機能そのものが自己実現的な取付の脆弱性を生む]] — NobelPrize.org—2022SverigesRiksbankPrizeinEconomicSciences（Bernanke,D…
 - [[econ-double-auction|連続ダブルオークション]] — NobelPrize.org—VernonL.Smith,2002年ノーベル経済学賞（実験室実験の確立）
 - [[econ-efficient-market-hypothesis|効率的市場仮説（efficient market hypothesis, EMH）]] — NobelPrize.org—2013年経済学賞Advancedinformation
 - [[econ-efficient-market-hypothesis|効率的市場仮説（efficient market hypothesis, EMH）]] — NobelPrize.org—EugeneF.Fama2013（資産価格の実証分析）

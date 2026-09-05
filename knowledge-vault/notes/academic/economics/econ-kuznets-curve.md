@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[econ-harris-todaro|ハリス＝トダロ・モデル]] — 同分野の近傍
-- [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 同分野の近傍
+- [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同分野の近傍
 - [[econ-engel-curve|エンゲル曲線とエンゲルの法則（Engel Curve & Engel's Law）]] — 同分野の近傍
 - [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 同分野の近傍
 

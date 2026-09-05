@@ -3,8 +3,8 @@ collection: academic
 id: econ-taylor-rule
 category: "economics"
 category_ja: "経済学"
-title: "テイラールール"
-as_of: "2026-06"
+title: "テイラー・ルール——政策金利をインフレ率と産出ギャップに反応させる金融政策の指針と、中央銀行行動のベンチマーク"
+as_of: "2026-09"
 source_count: 7
 authoritative: true
 tags:
@@ -12,39 +12,39 @@ tags:
   - academic/economics
   - knowledge/verified
 aliases:
-  - "テイラールール"
+  - "テイラー・ルール——政策金利をインフレ率と産出ギャップに反応させる金融政策の指針と、中央銀行行動のベンチマーク"
 ---
 
-# テイラールール
+# テイラー・ルール——政策金利をインフレ率と産出ギャップに反応させる金融政策の指針と、中央銀行行動のベンチマーク
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-06 ・ 出典: 7件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-09 ・ 出典: 7件（うち権威ある出典 ✓）
 
 ## 概要
-中央銀行が政策金利をどの水準に設定すべきかを、インフレ率と産出（GDP）ギャップに反応させる形で示した金融政策の指針（ルール）。経済学者ジョン・B・テイラーが1993年の論文で提示した。基本形は、政策金利＝均衡実質金利＋目標インフレ率＋a×（実際のインフレ率−目標インフレ率）＋b×（産出ギャップ）で、a・bは反応係数（テイラーの原型はともに0.5、均衡実質金利・目標インフレ率はともに2％と置かれた）。インフレが目標を上回れば金利を引き上げ、景気が過熱（産出ギャップがプラス）でも引き上げる。特にインフレ率に対する名目金利の反応が1を超える（名目金利をインフレ以上に動かし実質金利を上げる）べきとする「テイラー原理」は物価安定の条件とされる。裁量的政策に対しルールに基づく政策の利点を示すものとして、また実際の中央銀行行動を記述・評価するベンチマークとして広く使われる。後続研究では、ウッドフォードが動学的確率的一般均衡（DSGE）モデルの枠組みでルールの最適性を基礎づけ、クラリダ＝ガリ＝ガートラーが各国中央銀行の政策反応関数として実証した。
+テイラー・ルールは、中央銀行が政策金利をどの水準に設定すべきかを、インフレ率の目標からの乖離と産出（GDP）ギャップに反応させる形で示した金融政策の指針で、ジョン・テイラーが1993年の論文『Discretion versus Policy Rules in Practice』（Carnegie-Rochester Conference Series on Public Policy）で提示した。基本形は、政策金利＝均衡実質金利＋インフレ率＋a×（インフレ率−目標）＋b×産出ギャップで、原型では反応係数 a・b をともに0.5、均衡実質金利と目標インフレ率をともに2％と置き、この単純な線形式が1987年から92年の FRB の実際の政策をよく説明することを示した。インフレへの名目金利の反応が1を超えて実質金利を動かすべきだという「テイラー原理」は物価安定の条件とされ、クラリダ、ガリ、ガートラー（2000）は各国中央銀行の政策反応関数として実証し、1980年代以降の反応係数の上昇が安定化に寄与したと論じた。マイケル・ウッドフォードは動学的確率的一般均衡モデルの枠組みでルールの最適性を基礎づけた。テイラー自身は2000年代のルールからの緩和的乖離が住宅バブルと金融危機を招いたと主張し、ゼロ金利制約の下では量的緩和やフォワードガイダンスの「逸脱度合い」を測る物差しとしても参照される。限界としては、産出ギャップや均衡実質金利の推定値がリアルタイムでは不確かで、パラメータの選び方が政策評価の結論を左右すること、金融安定や為替を扱わないことが指摘される。中小企業には、中央銀行がインフレと景気にどう反応するかの目安として借入金利や為替の見通しを立てる含意がある。
 
 ## 提唱者・初出
-J.B.テイラー1993提唱／政策金利をインフレ率と産出ギャップに反応させるルール／反応係数(原型は各0.5、均衡実質金利・目標インフレ率は各2%)／テイラー原理＝インフレへの反応>1で実質金利を上げ物価安定／ルールに基づく政策・中央銀行行動のベンチマーク
+ジョン・テイラー（1993『Discretion versus Policy Rules in Practice』Carnegie-Rochester Conference Series）／リチャード・クラリダ＆ジョルディ・ガリ＆マーク・ガートラー（2000 QJE 政策反応関数の実証）／マイケル・ウッドフォード（DSGE 枠組みでの最適性）／対比: 裁量的金融政策
 
 ## 出典
-- [Federal Reserve Board — Policy Rules and How Policymakers Use Them](https://www.federalreserve.gov/monetarypolicy/policy-rules-and-how-policymakers-use-them.htm) `公的`
-- [Federal Reserve Bank of St. Louis — Output Gaps, Taylor Rule and the Stance of Monetary Policy](https://www.stlouisfed.org/on-the-economy/2024/mar/output-gaps-taylor-rule-stance-monetary-policy) `公的`
-- [Brookings Institution — The Taylor Rule: A benchmark for monetary policy?](https://www.brookings.edu/articles/the-taylor-rule-a-benchmark-for-monetary-policy/) `リファレンス`
-- [Federal Reserve Bank of San Francisco — Taylor's Rule and the Fed: 1970–1997](https://www.frbsf.org/wp-content/uploads/3-16.pdf) `公的`
-- [Taylor, J. (1993) Discretion versus Policy Rules in Practice — Carnegie-Rochester Conference Series](https://doi.org/10.1016/0167-2231(93)90009-L) `学術`
-- [Clarida, R. et al. (2000) Monetary Policy Rules and Macroeconomic Stability — QJE](https://doi.org/10.1162/003355300554692) `学術`
+- [Taylor, J. B. (1993) Discretion versus Policy Rules in Practice — Carnegie-Rochester Conference Series on Public Policy 39, 195–214（原論文）](https://doi.org/10.1016/0167-2231(93)90009-L) `学術`
+- [Clarida, R., Galí, J. & Gertler, M. (2000) Monetary Policy Rules and Macroeconomic Stability: Evidence and Some Theory — Quarterly Journal of Economics 115(1)（政策反応関数の実証）](https://doi.org/10.1162/003355300554692) `学術`
+- [Federal Reserve Board — Policy Rules and How Policymakers Use Them（FRB による政策ルールの解説）](https://www.federalreserve.gov/monetarypolicy/policy-rules-and-how-policymakers-use-them.htm) `公的`
+- [Federal Reserve Bank of St. Louis (2024) Output Gaps, the Taylor Rule and the Stance of Monetary Policy（産出ギャップ推定の影響）](https://www.stlouisfed.org/on-the-economy/2024/mar/output-gaps-taylor-rule-stance-monetary-policy) `公的`
+- [Federal Reserve Bank of San Francisco — Taylor's Rule and the Fed: 1970–1997（歴史的当てはまり）](https://www.frbsf.org/wp-content/uploads/3-16.pdf) `公的`
+- [Brookings Institution — The Taylor Rule: A benchmark for monetary policy?（ベンチマークとしての使われ方）](https://www.brookings.edu/articles/the-taylor-rule-a-benchmark-for-monetary-policy/) `リファレンス`
 - [Wikipedia: Taylor rule — テイラー・ルールの概要](https://en.wikipedia.org/wiki/Taylor_rule) `リファレンス`
 
 ## 関連概念
 - [[econ-taylor-principle|テイラー原理（Taylor Principle）]] — 語彙が近い
-- [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 出典を共有
+- [[econ-price-stickiness-calvo|カルボ型価格設定——確率的な価格改定が生む名目硬直性とニューケインジアン曲線]] — 同じ思想家
+- [[econ-new-keynesian-phillips|ニューケインジアン・フィリップス曲線（New Keynesian Phillips Curve）]] — 同じ思想家
+- [[econ-new-keynesian|ニュー・ケインジアン経済学]] — 同じ思想家
+- [[econ-time-inconsistency-calvo|時間非整合性とカルヴォ型価格設定——粘着価格のミクロ的基礎とニューケインジアン・フィリップス曲線]] — 同じ思想家
+- [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利の変更が金利・為替・資産価格・信用・期待の各チャネルを通じて物価と実体経済に届くまで]] — 同じ思想家
+- [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 同じ思想家
+- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 同じ思想家
+- [[econ-credit-rationing-stiglitz|信用割当理論（スティグリッツ＆ワイス）]] — 同じ思想家
 - [[econ-automatic-stabilizers|自動安定化装置（ビルトイン・スタビライザー）]] — 出典を共有
-- [[econ-liquidity-trap-keynes|流動性の罠——名目金利の下限で金融政策が有効性を失う状況]] — 出典を共有
-- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 出典を共有
-- [[econ-neo-fisherian-effect|ネオ・フィッシャー効果（Neo-Fisherian effect／ネオ・フィッシャー命題）——名目金利の恒久的引き上げが長期的にインフレを押し上げるという反直観的命題]] — 出典を共有
-- [[econ-time-inconsistency|動学的不整合（時間的非整合性）]] — 出典を共有
-- [[econ-wage-rigidity|名目賃金の下方硬直性]] — 出典を共有
-- [[econ-beveridge-curve|ベバリッジ曲線（UV曲線）]] — 出典を共有
-- [[econ-lump-of-labour-fallacy|労働塊の誤謬（Lump of Labour Fallacy）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

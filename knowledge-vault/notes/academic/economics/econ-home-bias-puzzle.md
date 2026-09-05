@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[econ-asset-pricing-anomalies|資産価格アノマリー（Asset Pricing Anomalies）]] — 同じ思想家
 - [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]] — 同じ思想家
-- [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル——シャープのCAPMとリスク・リターンの均衡理論]] — 同じ思想家
+- [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル（CAPM）——資産の期待収益率は市場全体と連動するリスク（ベータ）だけに比例するという均衡理論]] — 同じ思想家
 - [[econ-home-bias|ホームバイアス（自国バイアス・パズル）]] — 同じ思想家
 - [[econ-size-effect-banz|規模効果（小型株効果）——小型株が大型株を上回る収益を上げる異常]] — 同じ思想家
 - [[econ-value-premium-fama-french|バリュー・プレミアム——割安株が割高株を上回る収益を上げる現象]] — 同じ思想家

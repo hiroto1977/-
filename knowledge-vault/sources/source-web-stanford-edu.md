@@ -2,7 +2,7 @@
 title: "web.stanford.edu"
 type: source-domain
 host: "web.stanford.edu"
-cite_count: 5
+cite_count: 4
 tags:
   - source-domain
   - index
@@ -10,13 +10,12 @@ tags:
 
 # web.stanford.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **5 件**（学術 5）
+> [!info] 出典ドメイン索引 ・ 引用 **4 件**（学術 4）
 
 ## このドメインを出典とする項目
 
 - [[econ-cobb-douglas|コブ＝ダグラス生産関数]] — StanfordUniversity(C.I.Jones)—Growth,CapitalShares,andProductionFunct…
 - [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — AvnerGreif(Stanford)—'Self-enforcingandSelf-reinforcingEconomicInstit…
-- [[econ-monetary-transmission-mechanism|金融政策の波及メカニズム（monetary transmission mechanism）]] — Taylor(1993)DiscretionversusPolicyRulesinPractice,Carnegie-RochesterS…
 - [[econ-trust-game|信頼ゲーム（投資ゲーム）]] — StanfordUniversitycoursenotes—Berg,Dickhaut&McCabetrustgame(structure…
 - [[infosoc-cultural-capital|文化資本（ブルデュー）]] — PierreBourdieu,"TheFormsofCapital"(1986)—原典PDF（StanfordUniversityホスト）
 

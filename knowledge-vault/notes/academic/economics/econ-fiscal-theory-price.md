@@ -37,10 +37,10 @@ aliases:
 - [[econ-goodharts-law-lucas-critique|グッドハートの法則とルーカス批判——政策目標化された統計的関係の崩壊]] — 同じ思想家
 - [[econ-habit-formation-asset|習慣形成資産価格モデル（Habit Formation in Asset Pricing）]] — 同じ思想家
 - [[econ-interest-rate-term-structure-expectations|金利の期間構造と期待仮説——イールドカーブ理論と金融政策の波及経路]] — 同じ思想家
-- [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利から実体経済への伝達メカニズム]] — 同じ思想家
 - [[econ-new-keynesian|ニュー・ケインジアン経済学]] — 同じ思想家
 - [[econ-price-level-targeting|物価水準目標政策]] — 同じ思想家
 - [[econ-price-puzzle|プライス・パズル（Price Puzzle）]] — 同じ思想家
+- [[econ-price-stickiness-calvo|カルボ型価格設定——確率的な価格改定が生む名目硬直性とニューケインジアン曲線]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

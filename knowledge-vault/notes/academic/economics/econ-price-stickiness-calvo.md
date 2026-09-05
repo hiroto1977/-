@@ -32,13 +32,14 @@ aliases:
 ## 関連概念
 - [[econ-time-inconsistency-calvo|時間非整合性とカルヴォ型価格設定——粘着価格のミクロ的基礎とニューケインジアン・フィリップス曲線]] — 語彙が近い
 - [[econ-taylor-principle|テイラー原理（Taylor Principle）]] — 同じ思想家
+- [[econ-taylor-rule|テイラー・ルール——政策金利をインフレ率と産出ギャップに反応させる金融政策の指針と、中央銀行行動のベンチマーク]] — 同じ思想家
 - [[econ-new-keynesian|ニュー・ケインジアン経済学]] — 同じ思想家
 - [[econ-sudden-stop|サドンストップ（資本流入の急停止）]] — 同じ思想家
 - [[econ-fear-of-floating|変動相場回避（フィア・オブ・フローティング）]] — 同じ思想家
 - [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 同じ思想家
 - [[econ-new-keynesian-phillips|ニューケインジアン・フィリップス曲線（New Keynesian Phillips Curve）]] — 同じ思想家
 - [[econ-blanchard-quah-long-run-restrictions|ブランシャール＝クアの長期制約による構造VAR識別——需要ショックと供給ショックの分解]] — 同じ思想家
-- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 同じ思想家
+- [[econ-okuns-law-output-unemployment|オークンの法則——産出ギャップと失業率の経験的関係]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

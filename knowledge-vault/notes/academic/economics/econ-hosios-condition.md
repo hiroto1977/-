@@ -37,6 +37,7 @@ aliases:
 - [[econ-golden-rule-saving-phelps|貯蓄の黄金律——定常状態における消費最大化の最適貯蓄率]] — 同じ思想家
 - [[econ-search-matching|サーチ理論／マッチング理論]] — 同分野の近傍
 - [[econ-credit-rationing-stiglitz|信用割当理論（スティグリッツ＆ワイス）]] — 同分野の近傍
+- [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 同分野の近傍
 - [[econ-limit-pricing-bain|参入阻止価格——潜在的参入者を思いとどまらせる戦略的な低価格設定]] — 同分野の近傍
 
 ## 関連

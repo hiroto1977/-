@@ -37,7 +37,7 @@ aliases:
 - [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 出典を共有
 - [[eh-1993|1993年（平成5年）]] — 出典を共有
 - [[infosoc-third-place|サードプレイス]] — 出典を共有
-- [[econ-taylor-rule|テイラールール]] — 出典を共有
+- [[econ-taylor-rule|テイラー・ルール——政策金利をインフレ率と産出ギャップに反応させる金融政策の指針と、中央銀行行動のベンチマーク]] — 出典を共有
 - [[econ-too-big-to-fail|大きすぎて潰せない]] — 出典を共有
 - [[eh-2013|2013年（平成25年）]] — 出典を共有
 - [[econ-keynesian-effective-demand|有効需要の原理と乗数効果（ケインズ経済学）]] — 同分野の近傍

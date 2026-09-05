@@ -2309,21 +2309,18 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-taylor-rule',
     discipline: 'economics',
-    title: 'テイラールール',
+    title: 'テイラー・ルール——政策金利をインフレ率と産出ギャップに反応させる金融政策の指針と、中央銀行行動のベンチマーク',
     statement:
-      '中央銀行が政策金利をどの水準に設定すべきかを、インフレ率と産出（GDP）ギャップに反応させる形で示した金融政策の指針（ルール）。経済学者ジョン・B・テイラーが1993年の論文で提示した。' +
-      '基本形は、政策金利＝均衡実質金利＋目標インフレ率＋a×（実際のインフレ率−目標インフレ率）＋b×（産出ギャップ）で、a・bは反応係数（テイラーの原型はともに0.5、均衡実質金利・目標インフレ率はともに2％と置かれた）。インフレが目標を上回れば金利を引き上げ、景気が過熱（産出ギャップがプラス）でも引き上げる。特にインフレ率に対する名目金利の反応が1を超える（名目金利をインフレ以上に動かし実質金利を上げる）べきとする「テイラー原理」は物価安定の条件とされる。' +
-      '裁量的政策に対しルールに基づく政策の利点を示すものとして、また実際の中央銀行行動を記述・評価するベンチマークとして広く使われる。' +
-      '後続研究では、ウッドフォードが動学的確率的一般均衡（DSGE）モデルの枠組みでルールの最適性を基礎づけ、クラリダ＝ガリ＝ガートラーが各国中央銀行の政策反応関数として実証した。',
-    keyFigures: 'J.B.テイラー1993提唱／政策金利をインフレ率と産出ギャップに反応させるルール／反応係数(原型は各0.5、均衡実質金利・目標インフレ率は各2%)／テイラー原理＝インフレへの反応>1で実質金利を上げ物価安定／ルールに基づく政策・中央銀行行動のベンチマーク',
-    asOf: '2026-06',
+      'テイラー・ルールは、中央銀行が政策金利をどの水準に設定すべきかを、インフレ率の目標からの乖離と産出（GDP）ギャップに反応させる形で示した金融政策の指針で、ジョン・テイラーが1993年の論文『Discretion versus Policy Rules in Practice』（Carnegie-Rochester Conference Series on Public Policy）で提示した。基本形は、政策金利＝均衡実質金利＋インフレ率＋a×（インフレ率−目標）＋b×産出ギャップで、原型では反応係数 a・b をともに0.5、均衡実質金利と目標インフレ率をともに2％と置き、この単純な線形式が1987年から92年の FRB の実際の政策をよく説明することを示した。インフレへの名目金利の反応が1を超えて実質金利を動かすべきだという「テイラー原理」は物価安定の条件とされ、クラリダ、ガリ、ガートラー（2000）は各国中央銀行の政策反応関数として実証し、1980年代以降の反応係数の上昇が安定化に寄与したと論じた。マイケル・ウッドフォードは動学的確率的一般均衡モデルの枠組みでルールの最適性を基礎づけた。テイラー自身は2000年代のルールからの緩和的乖離が住宅バブルと金融危機を招いたと主張し、ゼロ金利制約の下では量的緩和やフォワードガイダンスの「逸脱度合い」を測る物差しとしても参照される。限界としては、産出ギャップや均衡実質金利の推定値がリアルタイムでは不確かで、パラメータの選び方が政策評価の結論を左右すること、金融安定や為替を扱わないことが指摘される。中小企業には、中央銀行がインフレと景気にどう反応するかの目安として借入金利や為替の見通しを立てる含意がある。',
+    keyFigures: 'ジョン・テイラー（1993『Discretion versus Policy Rules in Practice』Carnegie-Rochester Conference Series）／リチャード・クラリダ＆ジョルディ・ガリ＆マーク・ガートラー（2000 QJE 政策反応関数の実証）／マイケル・ウッドフォード（DSGE 枠組みでの最適性）／対比: 裁量的金融政策',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://www.federalreserve.gov/monetarypolicy/policy-rules-and-how-policymakers-use-them.htm', type: 'government', label: 'Federal Reserve Board — Policy Rules and How Policymakers Use Them' },
-      { url: 'https://www.stlouisfed.org/on-the-economy/2024/mar/output-gaps-taylor-rule-stance-monetary-policy', type: 'government', label: 'Federal Reserve Bank of St. Louis — Output Gaps, Taylor Rule and the Stance of Monetary Policy' },
-      { url: 'https://www.brookings.edu/articles/the-taylor-rule-a-benchmark-for-monetary-policy/', type: 'reference', label: 'Brookings Institution — The Taylor Rule: A benchmark for monetary policy?' },
-      { url: 'https://www.frbsf.org/wp-content/uploads/3-16.pdf', type: 'government', label: 'Federal Reserve Bank of San Francisco — Taylor\'s Rule and the Fed: 1970–1997' },
-      { url: 'https://doi.org/10.1016/0167-2231(93)90009-L', type: 'academic', label: 'Taylor, J. (1993) Discretion versus Policy Rules in Practice — Carnegie-Rochester Conference Series' },
-      { url: 'https://doi.org/10.1162/003355300554692', type: 'academic', label: 'Clarida, R. et al. (2000) Monetary Policy Rules and Macroeconomic Stability — QJE' },
+      { url: 'https://doi.org/10.1016/0167-2231(93)90009-L', type: 'academic', label: 'Taylor, J. B. (1993) Discretion versus Policy Rules in Practice — Carnegie-Rochester Conference Series on Public Policy 39, 195–214（原論文）' },
+      { url: 'https://doi.org/10.1162/003355300554692', type: 'academic', label: 'Clarida, R., Galí, J. & Gertler, M. (2000) Monetary Policy Rules and Macroeconomic Stability: Evidence and Some Theory — Quarterly Journal of Economics 115(1)（政策反応関数の実証）' },
+      { url: 'https://www.federalreserve.gov/monetarypolicy/policy-rules-and-how-policymakers-use-them.htm', type: 'government', label: 'Federal Reserve Board — Policy Rules and How Policymakers Use Them（FRB による政策ルールの解説）' },
+      { url: 'https://www.stlouisfed.org/on-the-economy/2024/mar/output-gaps-taylor-rule-stance-monetary-policy', type: 'government', label: 'Federal Reserve Bank of St. Louis (2024) Output Gaps, the Taylor Rule and the Stance of Monetary Policy（産出ギャップ推定の影響）' },
+      { url: 'https://www.frbsf.org/wp-content/uploads/3-16.pdf', type: 'government', label: 'Federal Reserve Bank of San Francisco — Taylor\'s Rule and the Fed: 1970–1997（歴史的当てはまり）' },
+      { url: 'https://www.brookings.edu/articles/the-taylor-rule-a-benchmark-for-monetary-policy/', type: 'reference', label: 'Brookings Institution — The Taylor Rule: A benchmark for monetary policy?（ベンチマークとしての使われ方）' },
       { url: 'https://en.wikipedia.org/wiki/Taylor_rule', type: 'reference', label: 'Wikipedia: Taylor rule — テイラー・ルールの概要' },
     ],
   },
@@ -9338,21 +9335,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-financial-accelerator',
-    discipline: 'economics',
-    title: '金融加速度効果（フィナンシャル・アクセラレータ）',
-    statement:
-      '金融加速度効果は、ベン・バーナンキ、マーク・ガートラー、サイモン・ギルクリスト（1996年「The Financial Accelerator and the Flight to Quality」、1999年のハンドブック章）が体系化した、信用市場の摩擦を通じて経済への当初のショックが増幅・伝播するメカニズムである。情報の非対称性とエージェンシーコストにより、外部資金調達は内部資金より割高となり、その上乗せ分を「外部資金プレミアム」と呼ぶ。' +
-      'このプレミアムは借り手の純資産・バランスシートの状態に依存する。資産価格や純資産が下落すると外部資金プレミアムが上昇し、投資・支出が減少して産出が一段と落ち込み、それが再び資産価格と純資産を押し下げるという自己増幅的なフィードバック・ループが生じる。原型はバーナンキ＝ガートラー（1989年「Agency Costs, Net Worth, and Business Fluctuations」）にあり、景気循環の振幅拡大を説明する枠組みとして広く用いられている。',
-    keyFigures: 'ベン・バーナンキ／マーク・ガートラー／サイモン・ギルクリスト（1996/1999）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.federalreserve.gov/newsevents/speech/bernanke20070615a.htm', type: 'government', label: 'Federal Reserve Board — Bernanke, "The Financial Accelerator and the Credit Channel" (2007)' },
-      { url: 'https://www.nber.org/system/files/working_papers/w4789/w4789.pdf', type: 'academic', label: 'Bernanke, Gertler & Gilchrist, "The Financial Accelerator and the Flight to Quality" (NBER WP 4789, 1996)' },
-      { url: 'https://faculty.wcas.northwestern.edu/lchrist/course/Czech/BGG%201999%20Handbook%20chapter.pdf', type: 'academic', label: 'Bernanke, Gertler & Gilchrist, "The Financial Accelerator in a Quantitative Business Cycle Framework" (Handbook of Macroeconomics, 1999)' },
-    ],
-  },
-  {
     id: 'mgmt-servqual',
     discipline: 'management',
     title: 'SERVQUAL（サービス品質モデル）',
@@ -9708,20 +9690,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://pdodds.w3.uvm.edu/files/papers/others/1981/rosen1981a.pdf', type: 'academic', label: 'Rosen, S. (1981) "The Economics of Superstars," American Economic Review 71(5): 845–858 (原論文全文)' },
       { url: 'https://www.minneapolisfed.org/article/2002/perfectly-competitive-superstars', type: 'government', label: 'Federal Reserve Bank of Minneapolis — Perfectly Competitive Superstars' },
       { url: 'https://ideas.repec.org/a/aea/aecrev/v71y1981i5p845-58.html', type: 'reference', label: 'IDEAS/RePEc — The Economics of Superstars 書誌情報' },
-    ],
-  },
-  {
-    id: 'econ-diamond-dybvig',
-    discipline: 'economics',
-    title: 'ダイアモンド＝ディビッグ・モデル',
-    statement:
-      'ダグラス・ダイアモンドとフィリップ・ディビッグが1983年（Journal of Political Economy「Bank Runs, Deposit Insurance, and Liquidity」）で示した銀行取り付けの理論。銀行は満期・流動性変換を行い、流動性の低い長期貸出を、いつでも引き出せる要求払預金で賄うため、本質的に取り付けに対して脆弱である。預金者の流動性需要は不確実で、要求払預金契約は流動性保険を提供する。' +
-      'モデルには複数均衡が存在し、真に資金を必要とする者だけが早期に引き出す正常均衡と、他者の引出しを予想すると皆が一斉に引き出すのが各自にとって合理的になる取り付け均衡（自己実現的パニック）がある。後者では銀行は健全（支払能力あり）でも資産を投げ売りして破綻しうる。預金保険や中央銀行による最後の貸し手機能は、この取り付け均衡を排除できる。ダイアモンドとディビッグはバーナンキとともに2022年ノーベル経済学賞を受賞した。',
-    keyFigures: 'ダグラス・ダイアモンド／フィリップ・ディビッグ（1983、2022年ノーベル経済学賞）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://ideas.repec.org/a/ucp/jpolec/v91y1983i3p401-19.html', type: 'academic', label: 'Diamond & Dybvig (1983) "Bank Runs, Deposit Insurance, and Liquidity," Journal of Political Economy 91(3):401-419' },
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2022/press-release/', type: 'reference', label: 'NobelPrize.org — 2022 Sveriges Riksbank Prize in Economic Sciences (Bernanke, Diamond, Dybvig) press release' },
     ],
   },
   {
@@ -13949,21 +13917,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://journals.sagepub.com/doi/10.1177/026327690007002017', type: 'academic', label: 'Arjun Appadurai, "Disjuncture and Difference in the Global Cultural Economy", Theory, Culture & Society (1990) — 一次文献（査読誌）' },
       { url: 'https://en.wikipedia.org/wiki/Global_cultural_flows', type: 'reference', label: 'Wikipedia: Global cultural flows（5つのスケープ・パースペクティブ的構築物・非同型/ディスジャンクチャー）' },
-    ],
-  },
-  {
-    id: 'econ-credit-channel',
-    discipline: 'economics',
-    title: '信用経路（クレジット・チャネル）',
-    statement:
-      'バーナンキとガートラーが1995年「Inside the Black Box: The Credit Channel of Monetary Policy Transmission」（Journal of Economic Perspectives 9巻4号）で体系化した、金融政策が信用の利用可能性やコストへの影響を通じて実体経済に波及する枠組み。金融市場の摩擦や情報の非対称性ゆえに内部資金と外部資金の費用差（外部資金調達プレミアム）が生じ、金融引締め時にこの摩擦が悪化することで、従来の金利（貨幣）経路を増幅する。' +
-      '下位経路は二つある。(1)バランスシート経路（広義の信用経路）は、政策が借り手の純資産・担保価値やキャッシュフローを左右して外部資金調達プレミアムを変化させ、金融加速度効果に連なる。引締めは資産価格と純資産を下げプレミアムを高め投資・支出を抑制する。(2)銀行貸出経路（狭義）は、準備・預金・自己資本を通じ銀行の貸出供給を左右し、銀行に依存する中小企業の支出を変える。摩擦に基づく波及機構である点で金融加速度効果と密接だが、信用割当とは区別される。',
-    keyFigures: 'ベン・バーナンキ／マーク・ガートラー（Bernanke & Gertler, 1995）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.aeaweb.org/articles?id=10.1257%2Fjep.9.4.27', type: 'academic', label: 'Bernanke & Gertler (1995), "Inside the Black Box: The Credit Channel of Monetary Policy Transmission," Journal of Economic Perspectives 9(4): 27–48 (American Economic Association)' },
-      { url: 'https://www.nber.org/papers/w5146', type: 'academic', label: 'NBER Working Paper No. 5146 — Bernanke & Gertler, "Inside the Black Box"' },
-      { url: 'https://www.federalreserve.gov/newsevents/speech/bernanke20070615a.htm', type: 'government', label: 'Ben Bernanke, "The Financial Accelerator and the Credit Channel," Federal Reserve Board (2007)' },
     ],
   },
   {
@@ -21125,14 +21078,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-diamond-dybvig-bank-run',
     discipline: 'economics',
-    title: 'ダイアモンド＝ディブビグ銀行取付モデル',
+    title: 'ダイアモンド＝ディビッグの銀行取付モデル——流動性変換という銀行の本質的機能そのものが自己実現的な取付の脆弱性を生む',
     statement:
-      'ダイアモンドとディブビグ（1983）は、銀行が非流動的な長期資産を流動性の高い要求払預金に転換する流動性変換機能を提供する際、預金者の自己実現的な期待により銀行取付（バンクラン）が均衡として発生しうることを理論的に示した。モデルでは、いつ消費したくなるか事前に分からない預金者に対し、要求払預金が消費タイミングの不確実性に対する保険を提供して自給自足や市場取引を上回る厚生を実現する一方、先着順の払い戻し（逐次サービス制約）の下では「他の皆が引き出すなら自分も並ぶのが合理的」となる悪い均衡が併存する——取付は預金者の非合理ではなく、期待の座標が切り替わるだけで発生する自己実現的現象である。取付が起これば長期資産の投げ売りで健全な銀行も破綻するため、対策として、早期引出人の割合が既知なら払戻停止（兌換停止）が有効だが、割合が不確実な現実では課税権を持つ政府の預金保険が悪い均衡そのものを消去し、均衡では発動されずコストも生じないことを示した。流動性・満期変換という銀行の本質的機能自体が脆弱性の源泉であるというこの洞察は、金融危機での短期資金市場や影の銀行部門への取付の分析枠組みとなり、最後の貸し手・預金保険・流動性規制の理論的基礎として、2022年ノーベル経済学賞（バーナンキと共同受賞）の対象となった。',
-    keyFigures: 'Douglas W. Diamond／Philip H. Dybvig',
-    asOf: '2026-06',
+      'ダグラス・ダイアモンドとフィリップ・ディビッグは1983年の論文『Bank Runs, Deposit Insurance, and Liquidity』（Journal of Political Economy 91巻3号）で、銀行の存在意義と脆弱性を統一的に説明するモデルを示した。いつ消費したくなるか事前に分からない預金者に対し、要求払預金は消費時期の不確実性への保険を提供し、自給自足や市場取引を上回る厚生を実現する。銀行は流動性の低い長期資産をいつでも引き出せる預金で賄う満期・流動性変換を行うが、先着順の払戻し（逐次サービス制約）の下では複数の均衡が存在する。真に資金を必要とする者だけが引き出す正常均衡のほかに、「他の皆が引き出すなら自分も並ぶのが合理的」となる取付均衡があり、預金者が非合理でなくても期待の切り替えだけで取付が起こり、支払能力のある健全な銀行も資産の投げ売りで破綻しうる。対策として、早期引出者の割合が既知なら払戻停止が有効だが、割合が不確実な現実では課税権を持つ政府の預金保険が悪い均衡そのものを消去し、均衡では発動されずコストも生じないことを示し、中央銀行の最後の貸し手機能とともに銀行規制の理論的基礎となった。この洞察は短期資金市場や影の銀行部門への取付、2023年のシリコンバレー銀行破綻の分析枠組みにもなり、二人は2022年にベン・バーナンキとともにノーベル経済学賞を受けた。限界としては、取付を引き起こす期待の切り替えがモデル内で説明されないこと、預金保険が銀行のモラルハザードを招くことが指摘される。中小企業には、預金保険の上限を超える資金の分散と、短期の借入で長期の資産を賄えば自社も同じ脆弱性を抱えるという含意がある。',
+    keyFigures: 'ダグラス・ダイアモンド＆フィリップ・ディビッグ（1983『Bank Runs, Deposit Insurance, and Liquidity』JPE／2022 ノーベル経済学賞をベン・バーナンキと共同受賞）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1086/261155', type: 'academic', label: 'Diamond & Dybvig (1983) Bank Runs, Deposit Insurance, and Liquidity, JPE 91(3):401-419' },
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2022/summary/', type: 'reference', label: '2022年ノーベル経済学賞（Diamond・Dybvig・Bernanke）' },
+      { url: 'https://doi.org/10.1086/261155', type: 'academic', label: 'Diamond, D. W. & Dybvig, P. H. (1983) Bank Runs, Deposit Insurance, and Liquidity — Journal of Political Economy 91(3), 401–419（原論文）' },
+      { url: 'https://ideas.repec.org/a/ucp/jpolec/v91y1983i3p401-19.html', type: 'academic', label: 'IDEAS/RePEc — Diamond & Dybvig (1983) 書誌記録' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2022/press-release/', type: 'reference', label: 'NobelPrize.org — 2022 Sveriges Riksbank Prize in Economic Sciences（Bernanke, Diamond, Dybvig）プレスリリース' },
+      { url: 'https://en.wikipedia.org/wiki/Diamond%E2%80%93Dybvig_model', type: 'reference', label: 'Wikipedia: Diamond–Dybvig model — 銀行取付モデルの概説' },
     ],
   },
   {
@@ -21748,23 +21703,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-credit-channel-monetary-transmission',
-    discipline: 'economics',
-    title: '金融政策伝達の信用チャネル',
-    statement:
-      '信用チャネルとは、金融政策が銀行貸出と借り手のバランスシートを通じて実体経済に波及するメカニズムを指す。' +
-      '銀行貸出チャネルでは、政策金利の引き上げが銀行の預金調達コストを高め貸出供給を抑制することで投資・消費を冷やすとBernanke & Gertler（1995）は論じた。' +
-      'バランスシートチャネルでは、資産価格や純資産の変化が情報の非対称性を拡大し、外部資金プレミアムを通じて借り手の資金調達を制約するとBernanke, Gertler & Gilchrist（1999）が定式化した。' +
-      'Kashyap & Stein（2000）は百万件を超える銀行データを用いて、流動性の低い銀行ほど金融引き締めに対し貸出を大きく削減することを実証した。',
-    keyFigures: 'Ben S. Bernanke／Mark Gertler／Simon Gilchrist／Anil K. Kashyap／Jeremy C. Stein',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.aeaweb.org/articles?id=10.1257/jep.9.4.27', type: 'academic', label: 'Bernanke & Gertler (1995) Inside the Black Box: The Credit Channel of Monetary Policy Transmission, JEP 9(4):27-48' },
-      { url: 'https://www.aeaweb.org/articles?id=10.1257/aer.90.3.407', type: 'academic', label: 'Kashyap & Stein (2000) What Do a Million Observations on Banks Say about the Transmission of Monetary Policy? AER 90(3):407-428' },
-      { url: 'https://www.sciencedirect.com/science/article/pii/S1574004899100182', type: 'academic', label: 'Bernanke, Gertler & Gilchrist (1999) The Financial Accelerator in a Quantitative Business Cycle Framework, Handbook of Macroeconomics' },
-    ],
-  },
-  {
     id: 'human-intersectionality-theory',
     discipline: 'human-science',
     title: 'インターセクショナリティ理論（交差性理論）',
@@ -22203,23 +22141,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.journals.uchicago.edu/doi/10.1086/226424', type: 'academic', label: 'Hannan & Freeman (1977). The Population Ecology of Organizations. American Journal of Sociology, 82(5), 929–964.' },
       { url: 'https://www.semanticscholar.org/paper/Structural-Inertia-and-Organizational-Change-Hannan/ef6388bd6e27ae56054e3a2aa58cda91842ef729', type: 'academic', label: 'Hannan & Freeman (1984). Structural Inertia and Organizational Change. American Sociological Review, 49(2), 149–164.' },
       { url: 'https://en.wikipedia.org/wiki/Organizational_ecology', type: 'reference', label: 'Wikipedia — Organizational ecology' },
-    ],
-  },
-  {
-    id: 'econ-credit-channel-theory',
-    discipline: 'economics',
-    title: '信用チャネル理論',
-    statement:
-      '信用チャネル理論は、金融政策が利子率を通じるだけでなく、銀行貸出チャネルとバランスシートチャネルという2つの経路で実体経済に影響を与えるという理論である。' +
-      'Bernanke and Blinder（1988）は銀行貸出チャネルを理論化し、金融引締めが銀行の準備預金を減少させることで貸出供給を制約するメカニズムを示した。' +
-      'Bernanke, Gertler and Gilchrist（1999）はバランスシートチャネルを「金融アクセラレータ」として定式化し、借り手の純資産の変動が外部資金調達プレミアムを通じて投資と産出の変動を増幅する過程を明らかにした。' +
-      'これらの研究により、情報の非対称性が存在する信用市場では、金融政策の効果が伝統的な金利経路だけでは説明できないほど大きくなることが理論的・実証的に示された。',
-    keyFigures: 'Ben Bernanke ／ Mark Gertler ／ Simon Gilchrist ／ Alan Blinder',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.federalreserve.gov/newsevents/speech/Bernanke20070615a.htm', type: 'government', label: 'Bernanke, B. "The Financial Accelerator and the Credit Channel," Federal Reserve Board Speech' },
-      { url: 'https://www.nber.org/papers/w6455', type: 'academic', label: 'Bernanke, Gertler, & Gilchrist "The Financial Accelerator..." NBER Working Paper 6455, 1998' },
-      { url: 'https://glossary.mizuho-sc.com/faq/show/1217?site_domain=default', type: 'reference', label: '信用経路 — みずほ証券ファイナンス用語集' },
     ],
   },
   {
@@ -27861,22 +27782,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-monetary-transmission-mechanism',
-    discipline: 'economics',
-    title: '金融政策の波及メカニズム（monetary transmission mechanism）',
-    statement:
-      '中央銀行の金融政策（政策金利の変更・量的緩和等）が実体経済（産出・雇用・物価）に影響を及ぼす経路の総称。フレデリック・ミシュキンが1995年のJournal of Economic Perspectives誌サーベイで体系的に整理した主要チャネルは以下の通り。(1)金利チャネル（ケインズ以来の伝統的経路）: 政策金利引下げ→実質金利低下→投資・耐久消費財需要増→GDP増。(2)信用チャネル（バーナンキ & ブラインダー, 1988）: 銀行貸出チャネル（金融緩和→銀行準備増→貸出増→投資増）とバランスシート・チャネル（企業純資産増→逆選択・モラルハザード軽減→貸出拡大）に分かれる。' +
-      '(3)為替レート・チャネル: 金利低下→自国通貨減価→純輸出増。(4)資産価格チャネル: トービンのq理論（株価上昇→q上昇→設備投資増）および資産効果（家計金融資産増→消費増）。政策運営面ではテイラー（1993）が提唱したテイラー・ルール（インフレ率と産出ギャップに基づく政策金利の体系的調整式）が各国中央銀行のベンチマークとなっている。',
-    keyFigures: 'フレデリック・ミシュキン ／ ベン・バーナンキ ／ アラン・ブラインダー ／ ジョン・テイラー ／ ジェームズ・トービン',
-    asOf: '2026-06-25',
-    sources: [
-      { url: 'https://www.aeaweb.org/articles?id=10.1257/jep.9.4.3', type: 'academic', label: 'Mishkin (1995) Symposium on the Monetary Transmission Mechanism, Journal of Economic Perspectives 9(4)' },
-      { url: 'https://www.nber.org/papers/w2534', type: 'academic', label: 'Bernanke & Blinder (1988) Credit, Money, and Aggregate Demand, NBER Working Paper 2534' },
-      { url: 'https://web.stanford.edu/~johntayl/Onlinepaperscombinedbyyear/1993/Discretion_versus_Policy_Rules_in_Practice.pdf', type: 'academic', label: 'Taylor (1993) Discretion versus Policy Rules in Practice, Carnegie-Rochester Series on Public Policy 39' },
-      { url: 'https://www.nber.org/papers/w8617', type: 'academic', label: 'Mishkin (2001) The Transmission Mechanism and the Role of Asset Prices in Monetary Policy, NBER WP 8617' },
-    ],
-  },
-  {
     id: 'human-desensitization-systematic',
     discipline: 'human-science',
     title: '系統的脱感作法：不安・恐怖症に対する段階的行動療法の基盤理論',
@@ -29460,15 +29365,18 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-credit-channel-bernanke',
     discipline: 'economics',
-    title: '信用チャンネル（バーナンキ）',
-    statement: '信用チャンネル（credit channel）は、バーナンキ＆ブラインダー（1988）・バーナンキ＆ガートラー（1989）が体系化した、金融政策の波及メカニズムとして「資産価格・株式市場を通じたマネー・サプライチャンネル」に加え「信用市場の摩擦・情報の非対称性を通じた信用供給の変化」が実体経済に影響を与えるという理論である。主な二経路は①銀行貸出チャンネル（bank lending channel）——政策金利引き上げ→準備金減少→銀行の貸出能力低下→企業投資抑制、②バランスシート・チャンネル（balance sheet channel）——資産価格下落→担保価値低下→外部金融プレミアム（external finance premium）上昇→設備投資抑制 である。バーナンキ＆ガートラー（1989）はエージェンシー費用（moral hazard・adverse selection）が外部金融プレミアムを生む金融加速器（financial accelerator）モデルを構築し、景気変動の増幅メカニズムを示した。2007〜2009年危機ではバランスシートチャンネルが顕著に作動し、バーナンキ議長下でのFRBの量的緩和（QE）・信用緩和（CE）はこの理論の応用として位置づけられる。',
-    keyFigures: 'ベン・バーナンキ ／ アラン・ブラインダー ／ マーク・ガートラー ／ サイモン・ギルクリスト',
-    asOf: '2026-06-26',
+    title: '信用チャネル（バーナンキ＝ガートラー）——金融政策が銀行貸出と借り手のバランスシートを通じて金利経路を増幅しながら実体経済に波及する',
+    statement:
+      '信用チャネル（credit channel）は、金融政策が信用の利用可能性とコストを通じて実体経済に波及する枠組みで、ベン・バーナンキとマーク・ガートラーが1995年の論文『Inside the Black Box: The Credit Channel of Monetary Policy Transmission』（Journal of Economic Perspectives 9巻4号）で体系化した。情報の非対称性のために内部資金と外部資金の費用差（外部資金プレミアム）が生じ、引締めでこの摩擦が悪化して金利経路が増幅される。下位経路は二つある。バランスシート・チャネルでは、政策が借り手の純資産・担保価値・キャッシュフローを左右してプレミアムを変え、金融加速度効果につながる。銀行貸出チャネル（狭義）は、バーナンキとアラン・ブラインダー（1988）が理論化したもので、引締めが銀行の準備・預金・自己資本を通じて貸出供給を絞り、銀行に依存する中小企業の支出を変える。アニル・カシャップとジェレミー・スタイン（2000）は百万件を超える銀行データから、流動性の低い銀行ほど引締め時に貸出を大きく削減することを実証し、バーナンキらは1999年にバランスシート・チャネルを金融加速度としてマクロモデルに組み込んだ。2007〜09年の危機ではバランスシート・チャネルが顕著に作動し、FRB の量的緩和と信用緩和はこの理論の応用とされる。限界として金利経路との識別の難しさや証券化による銀行貸出チャネルの変質があり、信用割当とは区別される。銀行依存度が高く純資産の薄い中小企業は引締め局面で最初に貸出を絞られるため、複数行との関係、純資産の充実、手元流動性の確保が含意となる。',
+    keyFigures: 'ベン・バーナンキ＆マーク・ガートラー（1995『Inside the Black Box』JEP／1989 AER エージェンシー費用モデル）／ベン・バーナンキ＆アラン・ブラインダー（1988 銀行貸出チャネル）／アニル・カシャップ＆ジェレミー・スタイン（2000 AER 銀行データの実証）／対比: 信用割当（スティグリッツ＝ワイス）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1257/aer.78.2.435', type: 'academic', label: 'Bernanke, B. S. & Blinder, A. S. (1988) Credit, Money, and Aggregate Demand — American Economic Review, 78(2), 435–439（信用チャンネルの提唱）' },
-      { url: 'https://doi.org/10.2307/1804770', type: 'academic', label: 'Bernanke, B. S. & Gertler, M. (1989) Agency Costs, Net Worth, and Business Fluctuations — American Economic Review, 79(1), 14–31（金融加速器の原典）' },
-      { url: 'https://doi.org/10.1257/jep.9.4.27', type: 'academic', label: 'Bernanke, B. S. & Gertler, M. (1995) Inside the Black Box: The Credit Channel of Monetary Policy Transmission — Journal of Economic Perspectives, 9(4), 27–48（信用チャンネルの体系的解説）' },
-      { url: 'https://en.wikipedia.org/wiki/Credit_channel', type: 'reference', label: 'Wikipedia: Credit channel — bank lending channel, balance sheet channel, financial accelerator, QE applications' },
+      { url: 'https://doi.org/10.1257/jep.9.4.27', type: 'academic', label: 'Bernanke, B. S. & Gertler, M. (1995) Inside the Black Box: The Credit Channel of Monetary Policy Transmission — Journal of Economic Perspectives 9(4), 27–48（原論文）' },
+      { url: 'https://www.nber.org/papers/w2534', type: 'academic', label: 'Bernanke, B. S. & Blinder, A. S. (1988) Credit, Money, and Aggregate Demand — NBER Working Paper 2534（銀行貸出チャネルの理論化）' },
+      { url: 'https://doi.org/10.2307/1804770', type: 'academic', label: 'Bernanke, B. S. & Gertler, M. (1989) Agency Costs, Net Worth, and Business Fluctuations — American Economic Review 79(1)（エージェンシー費用と純資産）' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/aer.90.3.407', type: 'academic', label: 'Kashyap, A. K. & Stein, J. C. (2000) What Do a Million Observations on Banks Say about the Transmission of Monetary Policy? — American Economic Review 90(3)（銀行貸出チャネルの実証）' },
+      { url: 'https://www.federalreserve.gov/newsevents/speech/bernanke20070615a.htm', type: 'government', label: 'Bernanke, B. (2007) The Financial Accelerator and the Credit Channel — Federal Reserve Board speech（概説）' },
+      { url: 'https://en.wikipedia.org/wiki/Credit_channel', type: 'reference', label: 'Wikipedia: Credit channel — bank lending channel, balance sheet channel, financial accelerator' },
     ],
   },
   {
@@ -37686,18 +37594,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-financial-accelerator-bernanke',
-    discipline: 'economics',
-    title: '金融加速度メカニズム——信用市場の摩擦が実体経済の変動を増幅する',
-    statement: '金融加速度（financial accelerator）メカニズムは、ベン・バーナンキ、マーク・ガートラー、サイモン・ギルクリストらが1990年代に展開した理論で、信用市場の不完全性が実体経済への小さなショックを増幅し、景気変動を長期化させる経路を説明する。情報の非対称性とエージェンシー費用のために、企業が外部資金を調達する際には自己資金より割高な「外部資金プレミアム」を支払わねばならず、このプレミアムは借り手の純資産（ネットワース）や担保価値に反比例する。純資産が厚ければ利害が一致し監視費用が下がるためプレミアムは小さく、薄ければ逆選択やモラルハザードの懸念からプレミアムが跳ね上がる。ここに増幅の循環が生じる。景気後退で資産価格と企業の純資産が下落すると外部資金プレミアムが上昇し、投資と生産が抑制され、それがさらに需要・資産価格・純資産を押し下げて後退を深める。逆に好況期には資産価格上昇が純資産を厚くし借入を容易にして拡大を加速する。この見方は、アーヴィング・フィッシャーの負債デフレ論を現代的なミクロ的基礎の上に再構築したものであり、金融システムが単なる中立的仲介ではなく景気循環を能動的に増幅する装置であることを示した。2008年の世界金融危機後、量的緩和や信用政策の理論的支柱として広く参照された。',
-    keyFigures: 'ベン・バーナンキ ／ マーク・ガートラー ／ サイモン・ギルクリスト ／ アーヴィング・フィッシャー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1016/S1574-0048(99)10034-X', type: 'academic', label: 'Bernanke, B., Gertler, M. & Gilchrist, S. (1999) The Financial Accelerator in a Quantitative Business Cycle Framework — Handbook of Macroeconomics' },
-      { url: 'https://en.wikipedia.org/wiki/Financial_accelerator', type: 'reference', label: 'Wikipedia: Financial accelerator — Bernanke-Gertler-Gilchrist, external finance premium, net worth' },
-    ],
-  },
-  {
     id: 'econ-time-inconsistency-kydland-prescott',
     discipline: 'economics',
     title: '時間的非整合性——最適計画の事後的破棄とルール対裁量の問題',
@@ -38946,14 +38842,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-monetary-policy-transmission',
     discipline: 'economics',
-    title: '金融政策の波及経路——政策金利から実体経済への伝達メカニズム',
-    statement: '金融政策の波及経路（Monetary Policy Transmission Mechanism）とは、中央銀行の政策金利の変更が最終的に物価水準と実体経済活動に影響を及ぼすまでの一連のチャネルを指す。ミシュキンは1995年の包括的サーベイで主要な波及経路を体系化した。金利チャネルは最も伝統的な経路であり、政策金利の変更が市場金利→資本コスト→投資・消費に影響する。為替レートチャネルは開放経済において金利差が為替レートを変動させ純輸出に影響する経路である。資産価格チャネルはトービンのqや住宅資産効果を通じて作用する。信用チャネルはバーナンキとガートラーの金融加速器モデルに基づき、バランスシートチャネル（借り手の純資産変動）と銀行貸出チャネル（銀行の貸出供給量変動）に分けられる。期待チャネルはフォワードガイダンスを通じて将来の金利経路に関する期待を操作する。非伝統的金融政策（量的緩和、イールドカーブ・コントロール）は、ゼロ金利制約下でこれらのチャネルを代替的に活用する試みである。',
-    keyFigures: 'フレデリック・ミシュキン ／ ベン・バーナンキ ／ マーク・ガートラー ／ マイケル・ウッドフォード',
-    asOf: '2026-06-26',
+    title: '金融政策の波及経路——政策金利の変更が金利・為替・資産価格・信用・期待の各チャネルを通じて物価と実体経済に届くまで',
+    statement:
+      '金融政策の波及経路（monetary transmission mechanism）とは、中央銀行の政策金利の変更や量的緩和が最終的に物価と産出・雇用に影響を及ぼすまでの一連のチャネルの総称で、フレデリック・ミシュキンが1995年の Journal of Economic Perspectives のシンポジウム論文で体系的に整理した。金利チャネルはケインズ以来の伝統的経路で、政策金利の変更が市場金利と実質金利を動かし、資本コストを通じて設備投資や耐久消費財の需要に影響する。為替レート・チャネルは開放経済で金利差が通貨価値を変え純輸出に影響する経路、資産価格チャネルはトービンの q（株価上昇が設備投資を促す）と資産効果（家計の金融・住宅資産の増加が消費を促す）を通じて働く。信用チャネルはバーナンキとブラインダー（1988）の銀行貸出チャネルと、バーナンキとガートラー（1995）が整理した借り手の純資産を通じるバランスシート・チャネルからなり、情報の非対称性ゆえに金融政策の効果が金利経路だけでは説明できないほど大きくなることを示す。期待チャネルはフォワードガイダンスで将来の金利経路への期待に働きかける経路で、ゼロ金利制約の下では量的緩和やイールドカーブ・コントロールがこれらのチャネルを代替的に使う試みとなる。限界としては、各チャネルの相対的重要性が国や時期、金融構造で異なり、効果が現れるまでの時差が長く不確実なこと、非伝統的政策の波及の実証が難しいことがある。中小企業には、利上げが借入金利だけでなく為替、顧客の資産効果、銀行の貸出姿勢を通じても届くことを踏まえ、金利局面の転換時に資金調達と価格転嫁の計画を早めに見直す含意がある。',
+    keyFigures: 'フレデリック・ミシュキン（1995 JEP シンポジウム）／ベン・バーナンキ＆アラン・ブラインダー（1988 銀行貸出チャネル）／ベン・バーナンキ＆マーク・ガートラー（1995 信用チャネル）／ジェームズ・トービン（q 理論）／対比: ジョン・テイラー（政策金利の設定ルール）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1257/jep.9.4.3', type: 'academic', label: 'Mishkin (1995) Symposium on the Monetary Transmission Mechanism — Journal of Economic Perspectives' },
-      { url: 'https://doi.org/10.1257/jep.9.4.27', type: 'academic', label: 'Bernanke & Gertler (1995) Inside the Black Box: The Credit Channel of Monetary Policy Transmission — Journal of Economic Perspectives' },
-      { url: 'https://en.wikipedia.org/wiki/Monetary_policy#Transmission_mechanism', type: 'reference', label: 'Wikipedia: Monetary policy transmission mechanism — 金融政策の波及経路の概説' },
+      { url: 'https://doi.org/10.1257/jep.9.4.3', type: 'academic', label: 'Mishkin, F. S. (1995) Symposium on the Monetary Transmission Mechanism — Journal of Economic Perspectives 9(4), 3–10（波及経路の体系的整理）' },
+      { url: 'https://doi.org/10.1257/jep.9.4.27', type: 'academic', label: 'Bernanke, B. S. & Gertler, M. (1995) Inside the Black Box: The Credit Channel of Monetary Policy Transmission — Journal of Economic Perspectives 9(4), 27–48（信用チャネル）' },
+      { url: 'https://www.nber.org/papers/w2534', type: 'academic', label: 'Bernanke, B. S. & Blinder, A. S. (1988) Credit, Money, and Aggregate Demand — NBER Working Paper 2534（銀行貸出チャネル）' },
+      { url: 'https://www.nber.org/papers/w8617', type: 'academic', label: 'Mishkin, F. S. (2001) The Transmission Mechanism and the Role of Asset Prices in Monetary Policy — NBER Working Paper 8617（資産価格チャネル）' },
+      { url: 'https://en.wikipedia.org/wiki/Monetary_policy#Transmission_mechanism', type: 'reference', label: 'Wikipedia: Monetary policy — transmission mechanism（波及経路の概説）' },
     ],
   },
   {
@@ -41577,14 +41476,18 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-financial-accelerator-bernanke-gertler',
     discipline: 'economics',
-    title: '金融アクセラレーター——信用市場の摩擦と景気変動の増幅メカニズム',
-    statement: '金融アクセラレーター（Financial Accelerator）とは、信用市場における情報の非対称性と担保制約がマクロ経済ショックを増幅・伝播させるメカニズムを指す概念であり、バーナンキ、ガートラー、ギルクリスト（1999）により体系化された。その核心は「外部資金調達プレミアム」（external finance premium）にある。企業の純資産（担保価値）が景気後退で下落すると、エージェンシー・コストの増加を通じて外部資金調達プレミアムが上昇し、投資と生産がさらに縮小する。好況期には逆のメカニズムが働き、担保価値の上昇が借入条件を緩和して投資を促進する。この正のフィードバック・ループが、初期ショックの数倍の景気変動をもたらす。キヨタキとムーア（1997）は土地を担保とするモデルで、資産価格と信用制約の相互作用による永続的景気循環を理論化した。2008年のグローバル金融危機は金融アクセラレーター理論の現実妥当性を劇的に実証し、ブルネルマイアーとサニコフ（2014）の連続時間マクロ金融モデルなど理論の精緻化を加速させた。',
-    keyFigures: 'ベン・バーナンキ ／ マーク・ガートラー ／ サイモン・ギルクリスト ／ 清滝信宏 ／ ジョン・ムーア',
-    asOf: '2026-06-26',
+    title: '金融加速度効果（バーナンキ＝ガートラー＝ギルクリスト）——借り手の純資産と外部資金プレミアムの相互作用が景気のショックを増幅する',
+    statement:
+      '金融加速度効果（financial accelerator）は、信用市場の摩擦を通じて経済への当初のショックが増幅・伝播するメカニズムで、ベン・バーナンキとマーク・ガートラーが1989年の論文『Agency Costs, Net Worth, and Business Fluctuations』（American Economic Review）で原型を示し、サイモン・ギルクリストを加えた1996年の論文と1999年のマクロ経済学ハンドブックの章で体系化した。情報の非対称性とエージェンシー費用のため外部資金は内部資金より割高になり、その上乗せ分である外部資金プレミアムは借り手の純資産や担保価値に反比例する。景気後退で資産価格と純資産が下がるとプレミアムが上がって投資と支出が減り、産出の落ち込みがさらに資産価格と純資産を押し下げるという自己増幅の循環が生じ、好況期には逆に拡大を加速する。清滝信宏とジョン・ムーア（1997）は土地を担保とするモデルで資産価格と信用制約の相互作用が持続的な景気循環を生むことを示し、この見方はアーヴィング・フィッシャーの負債デフレ論の現代的再構築と位置づけられる。2008年の世界金融危機で理論の現実妥当性が広く認められ、量的緩和や信用政策の理論的支柱となり、ブルネルマイアーとサニコフ（2014）の連続時間マクロ金融モデルなどへ精緻化が進んだ。限界として、線形近似に依存して危機時の非線形性を捉えにくいこと、増幅の大きさの推定が難しいことが指摘される。中小企業は担保と純資産が薄く外部資金プレミアムの変動を最も強く受けるため、好況期に自己資本を厚くしておくことと、資産価格の下落局面で借入条件が急に悪化する前提で資金計画を立てることが含意となる。',
+    keyFigures: 'ベン・バーナンキ＆マーク・ガートラー（1989 AER 原型）／ベン・バーナンキ＆マーク・ガートラー＆サイモン・ギルクリスト（1996『The Financial Accelerator and the Flight to Quality』／1999 ハンドブック章）／清滝信宏＆ジョン・ムーア（1997『Credit Cycles』JPE）／対比: アーヴィング・フィッシャー（負債デフレ論）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1016/S1574-0048(99)10034-X', type: 'academic', label: 'Bernanke, Gertler & Gilchrist (1999) The Financial Accelerator in a Quantitative Business Cycle Framework — Handbook of Macroeconomics' },
-      { url: 'https://doi.org/10.1086/262072', type: 'academic', label: 'Kiyotaki & Moore (1997) Credit Cycles — Journal of Political Economy' },
-      { url: 'https://en.wikipedia.org/wiki/Financial_accelerator', type: 'reference', label: 'Wikipedia: Financial accelerator — 信用市場と景気変動の増幅メカニズムの概説' },
+      { url: 'https://doi.org/10.1016/S1574-0048(99)10034-X', type: 'academic', label: 'Bernanke, B., Gertler, M. & Gilchrist, S. (1999) The Financial Accelerator in a Quantitative Business Cycle Framework — Handbook of Macroeconomics vol. 1C（体系化）' },
+      { url: 'https://www.nber.org/system/files/working_papers/w4789/w4789.pdf', type: 'academic', label: 'Bernanke, B., Gertler, M. & Gilchrist, S. (1996) The Financial Accelerator and the Flight to Quality — NBER Working Paper 4789（質への逃避）' },
+      { url: 'https://doi.org/10.2307/1804770', type: 'academic', label: 'Bernanke, B. S. & Gertler, M. (1989) Agency Costs, Net Worth, and Business Fluctuations — American Economic Review 79(1)（原型）' },
+      { url: 'https://doi.org/10.1086/262072', type: 'academic', label: 'Kiyotaki, N. & Moore, J. (1997) Credit Cycles — Journal of Political Economy 105(2)（担保制約と資産価格の相互作用）' },
+      { url: 'https://www.federalreserve.gov/newsevents/speech/bernanke20070615a.htm', type: 'government', label: 'Bernanke, B. (2007) The Financial Accelerator and the Credit Channel — Federal Reserve Board speech（概説）' },
+      { url: 'https://en.wikipedia.org/wiki/Financial_accelerator', type: 'reference', label: 'Wikipedia: Financial accelerator — Bernanke-Gertler-Gilchrist, external finance premium' },
     ],
   },
   {
@@ -42444,13 +42347,14 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-capital-asset-pricing-model-sharpe',
     discipline: 'economics',
-    title: '資本資産価格モデル——シャープのCAPMとリスク・リターンの均衡理論',
-    statement: 'ウィリアム・シャープは1964年の論文「Capital Asset Prices: A Theory of Market Equilibrium under Conditions of Risk」において，ハリー・マーコウィッツの平均分散ポートフォリオ理論を均衡モデルに拡張し，資本資産価格モデル（Capital Asset Pricing Model: CAPM）を導出した。CAPMは個別資産の期待収益率がリスクフリーレートとベータ（市場ポートフォリオとの共分散をリスク量として測定）の線形関数として表されるという均衡関係——証券市場線（Security Market Line: SML）——を示す。ジョン・リントナーとヤン・モッシンが独立に同様のモデルを導出したため，シャープ＝リントナー＝モッシンCAPMとも呼ばれる。CAPMは企業の資本コスト推定（加重平均資本コスト：WACC），投資パフォーマンス評価（ジェンセンのアルファ），資産価格の適正水準の判断において実務的に広く利用されている。しかし，ユージン・ファーマとケネス・フレンチの三因子モデル（1993年）は，企業規模効果とバリュー効果がCAPMでは説明できない異常収益率（アノマリー）を生むことを示し，CAPMの実証的妥当性に重大な疑問を提起した。',
-    keyFigures: 'ウィリアム・シャープ ／ ハリー・マーコウィッツ ／ ユージン・ファーマ ／ ケネス・フレンチ',
-    asOf: '2026-06-26',
+    title: '資本資産価格モデル（CAPM）——資産の期待収益率は市場全体と連動するリスク（ベータ）だけに比例するという均衡理論',
+    statement:
+      '資本資産価格モデル（Capital Asset Pricing Model、CAPM）は、ウィリアム・シャープが1964年の論文『Capital Asset Prices: A Theory of Market Equilibrium under Conditions of Risk』（Journal of Finance）で、ハリー・マーコウィッツの平均・分散ポートフォリオ理論を均衡モデルへ拡張して導いた理論で、ジョン・リントナーとヤン・モッシンも独立に導いた。投資家が同じ期待を持ち無リスク金利で自由に貸借できる完全資本市場では市場ポートフォリオが効率的フロンティア上にあり、個別資産の期待収益率は無リスク金利に市場リスクプレミアムをベータ（市場ポートフォリオとの共分散で測る体系的リスク）倍したものを加えた線形関係、すなわち証券市場線で表される。分散投資で消せる固有リスクには対価が付かず、消せない体系的リスクだけが報われるというのが核心である。シャープは1990年にノーベル経済学賞を受け、CAPM は資本コストの推定や投資成果の評価（ジェンセンのアルファ、シャープ比率）に広く使われる。しかしユージン・ファーマとケネス・フレンチは、小型株効果やバリュー効果など CAPM で説明できない異常収益を示して3ファクター・モデル（1993）を提案し、実証的妥当性に疑問を投げかけた。同質的期待や無制限の貸借といった仮定の非現実性、市場ポートフォリオの観測不能性（ロールの批判）も限界として指摘される。中小企業には、事業のリスクのうち分散で消せない部分だけが割引率に乗るという理解が、設備投資の採算判断や事業承継時の株価算定の含意となる。',
+    keyFigures: 'ウィリアム・シャープ（1964『Capital Asset Prices』Journal of Finance／1990 ノーベル経済学賞）／ジョン・リントナー＆ヤン・モッシン（独立に導出）／ハリー・マーコウィッツ（平均・分散ポートフォリオ理論）／対比: ユージン・ファーマ＆ケネス・フレンチ（3ファクター・モデル）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.2307/2977928', type: 'academic', label: 'Sharpe, W. F. (1964) Capital Asset Prices — Journal of Finance' },
-      { url: 'https://en.wikipedia.org/wiki/Capital_asset_pricing_model', type: 'reference', label: 'Wikipedia: CAPM — beta, security market line, Sharpe, Markowitz, Fama-French' },
+      { url: 'https://doi.org/10.2307/2977928', type: 'academic', label: 'Sharpe, W. F. (1964) Capital Asset Prices: A Theory of Market Equilibrium under Conditions of Risk — Journal of Finance 19(3), 425–442（CAPM の原論文）' },
+      { url: 'https://en.wikipedia.org/wiki/Capital_asset_pricing_model', type: 'reference', label: 'Wikipedia: Capital asset pricing model — beta, security market line, Sharpe-Lintner-Mossin, Fama-French, Jensen\'s alpha' },
     ],
   },
   {
@@ -44284,19 +44188,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-monetary-policy-rules-taylor',
-    discipline: 'economics',
-    title: 'テイラー・ルールと中央銀行の政策ガイドライン——インフレ格差・需給ギャップに基づく金利設定の定式化',
-    statement: 'ジョン・テイラーが1993年に提唱したテイラー・ルールは、中央銀行の政策金利を「均衡実質金利 ＋ 現在インフレ率 ＋ α×（インフレ率 − 目標インフレ率） ＋ β×（GDP成長率 − 潜在成長率）」で近似する定式で、α・β各約0.5が推奨されている。この単純な線形ルールが1987〜92年のFRBの実際の政策行動をきわめてよく説明することが示され、裁量vs.ルール論争において「ルール型」政策の有用性を示す根拠となった。テイラー・ルールはフォワードガイダンス・インフレ目標政策の評価基準としても参照され、ゼロ下限制約（ZLB）下の量的緩和政策の「逸脱度合い」を議論する際にも用いられる。欧州中央銀行・BOE・日本銀行など主要中央銀行の政策レビューでも参照されるが、算式のパラメータ推定が政策評価の帰結を大きく左右するという批判もある。',
-    keyFigures: 'ジョン・テイラー ／ ベン・バーナンキ ／ ラース・スベンソン ／ ジャネット・イエレン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1016/0167-2231(93)90009-L', type: 'academic', label: 'Taylor (1993) Discretion versus Policy Rules in Practice — Carnegie-Rochester Conference Series' },
-      { url: 'https://doi.org/10.1353/eca.0.0056', type: 'academic', label: 'Bernanke (2010) Monetary Policy and the Housing Bubble — BPEA' },
-      { url: 'https://en.wikipedia.org/wiki/Taylor_rule', type: 'reference', label: 'Wikipedia: Taylor rule — テイラー・ルールと中央銀行政策' },
-    ],
-  },
-  {
     id: 'econ-financial-repression-mckinnon-shaw',
     discipline: 'economics',
     title: '金融抑圧と金融深化——マッキノン＝ショウ仮説と発展途上国の金融自由化',
@@ -45244,18 +45135,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-asset-pricing-capm',
-    discipline: 'economics',
-    title: '資本資産価格モデル（CAPM）と株式リターンのリスク・リターン関係',
-    statement: '資本資産価格モデル（Capital Asset Pricing Model: CAPM）は、ウィリアム・シャープ・ジョン・リントナー・ジャン・モシン・トレイナーが1960年代に独立に開発したポートフォリオ理論の均衡拡張で、資産の期待収益率がその体系的リスク（ベータ）の線形関数として決まるという命題を示す：E(r) = rf + β[E(rm) − rf]。マーコビッツの平均・分散ポートフォリオ理論（1952年）を基盤とし、すべての投資家が同質な期待を持ち完全資本市場で行動するとの仮定のもと市場ポートフォリオが効率的フロンティア上にあることを示す。シャープは1990年ノーベル経済学賞を受賞し、実務のリスク評価・資本コスト計算・パフォーマンス評価（シャープ比率、ジェンセンのα）にCAPMが広く活用されている。ファーマ＝フレンチの3ファクターモデル（1992年）はCAPMの実証的失敗（バリュー株効果・サイズ効果）を説明するためにヘッジポートフォリオファクターを追加し、5ファクターモデルへと発展した。',
-    keyFigures: 'ウィリアム・シャープ ／ ジョン・リントナー ／ ハリー・マーコビッツ ／ ユージン・ファーマ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/2977928', type: 'academic', label: 'Sharpe (1964) Capital Asset Prices: A Theory of Market Equilibrium under Conditions of Risk — JF 19(3)' },
-      { url: 'https://en.wikipedia.org/wiki/Capital_asset_pricing_model', type: 'reference', label: 'Wikipedia: CAPM — beta, SML, Fama-French, Jensen alpha, Sharpe ratio, market portfolio' },
-    ],
-  },
-  {
     id: 'mgmt-resource-dependence-pfeffer',
     discipline: 'management',
     title: '資源依存理論と組織間権力関係のマネジメント（ファーファー＝サランシク）',
@@ -45595,18 +45474,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1086/260580', type: 'academic', label: 'Kydland & Prescott (1977) Rules Rather Than Discretion: The Inconsistency of Optimal Plans — JPE 85(3)' },
       { url: 'https://en.wikipedia.org/wiki/Kydland%E2%80%93Prescott_award', type: 'reference', label: 'Wikipedia: Time consistency — Kydland, Prescott, central bank independence, inflation bias, commitment' },
-    ],
-  },
-  {
-    id: 'econ-monetary-policy-taylor-rule',
-    discipline: 'economics',
-    title: 'テイラールールと金融政策の最適化理論——インフレ・雇用の安定化',
-    statement: 'テイラールール（Taylor rule）とは、ジョン・テイラーが1993年に提唱した金融政策の操作的指針で、政策金利（フェデラル・ファンドレート）をインフレ率の均衡からの乖離と産出量ギャップ（実際のGDPと潜在GDPの差）の加重線形結合として設定することを定式化する。標準的テイラールールは「r = r* + π + 0.5(π - π*) + 0.5(y - y*)」（r*=均衡実質金利、π*=インフレ目標、y-y*=産出量ギャップ）で表され、実証的に多くの中央銀行の行動を良く近似することが確認されている。テイラーは同ルールが1980年代以降の米国金融政策の安定化に貢献したと論じ、逸脱（特に2000年代の緩和的乖離）が住宅バブル・金融危機を招いたと主張した。現代では「量的緩和」・「フォワードガイダンス」・「インフレターゲティング」などの政策革新がテイラールールの適用限界を示し、ゼロ金利制約下での均衡金利r*の低下（秋田・ウィリアムズ推計）が政策の実効的余地縮小をもたらしている。',
-    keyFigures: 'ジョン・テイラー ／ ベン・バーナンキ ／ トーマス・ロバック ／ ジョン・ウィリアムズ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1016/0167-2231(93)90009-L', type: 'academic', label: 'Taylor (1993) Discretion versus Policy Rules in Practice — Carnegie-Rochester Conference Series on Public Policy 39' },
-      { url: 'https://en.wikipedia.org/wiki/Taylor_rule', type: 'reference', label: 'Wikipedia: Taylor rule — interest rate, inflation gap, output gap, ZLB, forward guidance' },
     ],
   },
   {
@@ -46940,18 +46807,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/2232763', type: 'academic', label: 'Arrow, K.J. (1969) The Organization of Economic Activity: Issues Pertinent to the Choice of Market vs. Non-Market Allocation — Joint Economic Committee（調整コスト論の源泉論文）' },
       { url: 'https://en.wikipedia.org/wiki/Kenneth_Arrow', type: 'reference', label: 'Wikipedia: Kenneth Arrow — アローの学術的業績の概説' },
-    ],
-  },
-  {
-    id: 'econ-diamond-dybvig-bank-runs',
-    discipline: 'economics',
-    title: '銀行取付モデル（ダイヤモンド＆ディブビッグ）',
-    statement: 'ダイヤモンド（Douglas Diamond）とディブビッグ（Philip Dybvig）は1983年に，銀行の存在意義（流動性変換）と脆弱性（取付け）を統一的に説明するモデルを提唱した。銀行は流動性の低い長期資産を短期預金で調達することで経済的価値を創出するが，この「満期変換（maturity transformation）」が自己実現型の取付け（bank run）を引き起こす均衡を内包する。預金保険制度や最後の貸し手（lender of last resort）としての中央銀行がこの悪い均衡を排除できることを示し，銀行規制の理論的基礎を提供した。このモデルは2022年ノーベル経済学賞（ダイヤモンド・ディブビッグ・バーナンキ）の受賞対象となり，シリコンバレー銀行（SVB）破綻（2023年）での取付けでも改めて注目された。',
-    keyFigures: 'ダグラス・ダイヤモンド ／ フィリップ・ディブビッグ ／ ベン・バーナンキ ／ チャールズ・カロミリス',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1086/261155', type: 'academic', label: 'Diamond, D.W. & Dybvig, P.H. (1983) Bank Runs, Deposit Insurance, and Liquidity — Journal of Political Economy 91(3), 401–419（銀行取付モデルの原論文）' },
-      { url: 'https://en.wikipedia.org/wiki/Diamond%E2%80%93Dybvig_model', type: 'reference', label: 'Wikipedia: Diamond–Dybvig model — 銀行取付モデルの概説' },
     ],
   },
   {

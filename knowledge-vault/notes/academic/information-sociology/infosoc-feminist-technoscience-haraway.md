@@ -34,7 +34,6 @@ Donna Haraway ／ Sandra Harding ／ Karen Barad
 ## 関連概念
 - [[infosoc-techno-feminist-theory|テクノフェミニスト理論]] — 同じ思想家
 - [[infosoc-techno-feminism-wajcman|テクノフェミニズム——技術とジェンダーの相互構成的関係]] — 同分野の近傍
-- [[infosoc-quantum-computing-social-implications|量子コンピューティングの社会的含意——暗号の危機・科学革命・デジタル格差の新次元]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

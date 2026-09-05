@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: User-generated content — prosumer economy](https://en.wikipedia.org/wiki/User-generated_content) `リファレンス`
 
 ## 関連概念
-- [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 語彙が近い
 - [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 同じ思想家
 - [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 同じ思想家
 - [[infosoc-information-overload-toffler|情報過負荷（トフラー）と認知的過飽和]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[infosoc-third-wave|第三の波（トフラー）]] — 同じ思想家
 - [[infosoc-civic-tech-govtech|シビックテックとGovTech——市民技術と行政デジタル改革の社会学]] — 同じ思想家
 - [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 同じ思想家
+- [[infosoc-wikinomics-tapscott|ウィキノミクス——マス・コラボレーションが変える生産と経済]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

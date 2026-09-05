@@ -34,15 +34,15 @@ aliases:
 
 ## 関連概念
 - [[econ-savings-glut|世界的貯蓄過剰（グローバル・セービング・グラット）]] — 同じ思想家
+- [[econ-diamond-dybvig-bank-run|ダイアモンド＝ディビッグの銀行取付モデル——流動性変換という銀行の本質的機能そのものが自己実現的な取付の脆弱性を生む]] — 同じ思想家
 - [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — 同じ思想家
-- [[econ-diamond-dybvig|ダイアモンド＝ディビッグ・モデル]] — 同じ思想家
 - [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
 - [[bizlaw-contract-theory|契約理論：情報の非対称性とインセンティブ設計の経済・法学的分析]] — 同じ思想家
 - [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 同じ思想家
-- [[econ-credit-channel|信用経路（クレジット・チャネル）]] — 同じ思想家
-- [[econ-financial-accelerator|金融加速度効果（フィナンシャル・アクセラレータ）]] — 同じ思想家
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]] — 同じ思想家
 - [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]] — 同じ思想家
+- [[econ-merit-goods|メリット財（価値財）]] — 同じ思想家
+- [[mgmt-dynamic-delegation|公式的権限と実質的権限（Formal and Real Authority）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

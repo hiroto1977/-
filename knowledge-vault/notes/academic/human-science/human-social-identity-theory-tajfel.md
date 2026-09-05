@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[human-ingroup-bias|内集団バイアス（内集団びいき）]] — 語彙が近い
-- [[human-social-identity-tajfel-turner|社会的アイデンティティ理論と内集団・外集団の社会心理学（タジフェル・ターナー）]] — 語彙が近い
 - [[human-minimal-group-paradigm|最小条件集団パラダイム]] — 語彙が近い
+- [[human-social-identity-tajfel-turner|社会的アイデンティティ理論と内集団・外集団の社会心理学（タジフェル・ターナー）]] — 同じ思想家
 - [[human-identity-process-theory-breakwell|アイデンティティ・プロセス理論（ブレイクウェル）]] — 同じ思想家
 - [[human-social-identity-complexity-roccas|社会的アイデンティティ複雑性（ロッカス＆ブリューワー）と集団間関係]] — 同じ思想家
 - [[human-outgroup-homogeneity-effect|外集団均質性効果]] — 同分野の近傍

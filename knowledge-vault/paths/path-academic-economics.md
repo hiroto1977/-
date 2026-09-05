@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 941
+entry_count: 930
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（941件）
+# 学習パス — 学術概念／経済学（930件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 86）
-- [[econ-helicopter-money|ヘリコプターマネー]]（接続 50）
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 43）
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 87）
+- [[econ-helicopter-money|ヘリコプターマネー]]（接続 47）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 43）
 - [[econ-liquidity-trap|流動性のわな]]（接続 43）
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 42）
 - [[econ-agglomeration-economies|集積の経済]]（接続 42）
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 41）
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]]（接続 37）
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]]（接続 37）
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 37）
+- [[econ-behavioral-finance|行動ファイナンス]]（接続 36）
 - [[econ-becker-crime|犯罪の経済学]]（接続 35）
-- [[econ-behavioral-finance|行動ファイナンス]]（接続 35）
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 35）
-- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 34）
-- [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]]（接続 33）
+- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 33）
+- [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]]（接続 32）
 
 ## 第 2 部 — 年代順の展開
 - 1623年: [[econ-petty-clark-law|ペティ＝クラークの法則]]
@@ -233,6 +233,7 @@ tags:
 - 1963年: [[econ-mundell-tobin-effect|マンデル＝トービン効果]]
 - 1963年: [[econ-user-cost-of-capital|資本の使用者費用]]
 - 1964年: [[econ-alonso-monocentric-city|アロンソの単一中心都市モデル（Alonso–Muth–Mills monocentric city model）——通勤費と地代のトレードオフが都市内土地利用を決める]]
+- 1964年: [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル（CAPM）——資産の期待収益率は市場全体と連動するリスク（ベータ）だけに比例するという均衡理論]]
 - 1964年: [[econ-risk-aversion|リスク回避（アロー＝プラット測度）]]
 - 1965年: [[econ-corridor-of-stability-theory|安定の回廊理論]]
 - 1965年: [[econ-free-rider|フリーライダー問題]]
@@ -342,12 +343,13 @@ tags:
 - 1982年: [[econ-ultimatum-game|最後通牒ゲーム]]
 - 1983年: [[econ-bootleggers-baptists|密造者と聖職者（ブートレガーとバプテスト）]]
 - 1983年: [[econ-currency-board|カレンシーボード制（通貨委員会制度）]]
-- 1983年: [[econ-diamond-dybvig|ダイアモンド＝ディビッグ・モデル]]
+- 1983年: [[econ-diamond-dybvig-bank-run|ダイアモンド＝ディビッグの銀行取付モデル——流動性変換という銀行の本質的機能そのものが自己実現的な取付の脆弱性を生む]]
 - 1983年: [[econ-kreps-scheinkman-capacity-precommitment-cournot|クレプス＝シャインクマンの生産能力事前コミットメント・モデル——価格競争でもクールノー的寡占均衡へ至る二段階ゲーム]]
 - 1983年: [[econ-new-keynesian-phillips|ニューケインジアン・フィリップス曲線（New Keynesian Phillips Curve）]]
 - 1983年: [[econ-raising-rivals-costs|ライバルの費用引き上げ理論（Raising Rivals' Costs／RRC、サロップ＝シェフマン）——支配的企業が略奪的安売りではなく競争相手の費用を高めて排除する反トラスト理論]]
 - 1983年: [[econ-sunspot-equilibrium|サンスポット均衡]]
 - 1984年: [[econ-forward-premium-puzzle|フォワード・プレミアム・パズル]]
+- 1984年: [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]]
 - 1984年: [[econ-rotemberg-saloner-price-wars-booms|ロテンバーグ＝サローナー・モデル——好況期に協調的価格が崩れ価格戦争が生じる反循環的マークアップ理論]]
 - 1984年: [[econ-shapiro-stiglitz|シャピロ=スティグリッツの効率賃金モデル（怠業モデル）]]
 - 1984年: [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]]
@@ -368,10 +370,13 @@ tags:
 - 1987年: [[econ-entry-thresholds-bresnahan-reiss|ブレスナハン＝ライス参入閾値モデル——市場規模と参入企業数から競争の強さを推定する実証手法]]
 - 1987年: [[econ-sheepskin-effect|シープスキン効果（sheepskin effect／卒業証書効果）——学位取得そのものがもたらす賃金の非連続的上昇]]
 - 1988年: [[econ-blanchard-quah-long-run-restrictions|ブランシャール＝クアの長期制約による構造VAR識別——需要ショックと供給ショックの分解]]
+- 1988年: [[econ-credit-channel-bernanke|信用チャネル（バーナンキ＝ガートラー）——金融政策が銀行貸出と借り手のバランスシートを通じて金利経路を増幅しながら実体経済に波及する]]
 - 1988年: [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]]
 - 1988年: [[econ-insider-outsider|インサイダー・アウトサイダー理論]]
+- 1988年: [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利の変更が金利・為替・資産価格・信用・期待の各チャネルを通じて物価と実体経済に届くまで]]
 - 1988年: [[econ-rational-addiction|合理的依存]]
 - 1989年: [[econ-epstein-zin|エプスタイン＝ジン再帰的効用（Epstein-Zin Recursive Utility）]]
+- 1989年: [[econ-financial-accelerator-bernanke-gertler|金融加速度効果（バーナンキ＝ガートラー＝ギルクリスト）——借り手の純資産と外部資金プレミアムの相互作用が景気のショックを増幅する]]
 - 1990年: [[econ-fair-wage-effort|公正賃金・努力仮説]]
 - 1990年: [[econ-inflation-targeting|インフレ・ターゲティング]]
 - 1990年: [[econ-joint-liability-group-lending|連帯責任型グループ貸付理論（Joint Liability Group Lending）]]
@@ -395,15 +400,13 @@ tags:
 - 1993年: [[econ-backus-smith|バッカス＝スミス・パズル（Backus-Smith Puzzle）]]
 - 1993年: [[econ-laffont-tirole|ラフォン＝ティロールのインセンティブ規制理論（Laffont-Tirole Incentive Regulation）]]
 - 1993年: [[econ-taylor-principle|テイラー原理（Taylor Principle）]]
-- 1993年: [[econ-taylor-rule|テイラールール]]
+- 1993年: [[econ-taylor-rule|テイラー・ルール——政策金利をインフレ率と産出ギャップに反応させる金融政策の指針と、中央銀行行動のベンチマーク]]
 - 1994年: [[econ-dictator-game|独裁者ゲーム]]
 - 1994年: [[econ-difference-in-differences|差の差分析（DID）]]
 - 1994年: [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]]
 - 1994年: [[econ-grossman-helpman-protection-for-sale|保護の販売モデル（グロスマン＝ヘルプマン「Protection for Sale」）——貿易保護の政治経済学]]
 - 1995年: [[econ-blp-demand-estimation-berry-levinsohn-pakes|BLP法（ランダム係数ロジット需要推定）——IIA制約と価格の内生性を解消し差別化財市場の需要を推定する構造推定法]]
-- 1995年: [[econ-credit-channel|信用経路（クレジット・チャネル）]]
 - 1995年: [[econ-trust-game|信頼ゲーム（投資ゲーム）]]
-- 1996年: [[econ-financial-accelerator|金融加速度効果（フィナンシャル・アクセラレータ）]]
 - 1998年: [[econ-anticommons|アンチコモンズの悲劇]]
 - 1998年: [[econ-forward-guidance|フォワードガイダンス（時間軸政策）]]
 - 1998年: [[econ-retirement-consumption-puzzle|退職消費パズル（Retirement-Consumption Puzzle）]]
@@ -453,7 +456,6 @@ tags:
 - [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]]
 - [[econ-asset-bubble|資産価格バブル]]
 - [[econ-asset-price-bubbles-kindleberger-minsky|資産価格バブル——キンドルバーガーとミンスキーの信用サイクルと崩壊のモデル]]
-- [[econ-asset-pricing-capm|資本資産価格モデル（CAPM）と株式リターンのリスク・リターン関係]]
 - [[econ-atkinson-stiglitz-theorem|アトキンソン＝スティグリッツの定理——最適な所得税があれば物品税はいらない]]
 - [[econ-auction-theory-vickrey-mechanism-design|オークション理論とメカニズムデザイン——ヴィックリーの第二価格競売と資源配分の設計]]
 - [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]]
@@ -492,7 +494,6 @@ tags:
 - [[econ-business-cycles|景気循環とその諸波動]]
 - [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]]
 - [[econ-cap-and-trade-dales|排出量取引——総量規制と取引可能な排出権による費用最小の汚染削減]]
-- [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル——シャープのCAPMとリスク・リターンの均衡理論]]
 - [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]]
 - [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]]
 - [[econ-capital-levy-debate|資本課徴金論争——戦後債務処理のための一回的資産課税]]
@@ -526,9 +527,6 @@ tags:
 - [[econ-corlett-hague-rule|コーレット＝ヘイグの規則——余暇と補完的な財を重く課税する]]
 - [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]]
 - [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]]
-- [[econ-credit-channel-bernanke|信用チャンネル（バーナンキ）]]
-- [[econ-credit-channel-monetary-transmission|金融政策伝達の信用チャネル]]
-- [[econ-credit-channel-theory|信用チャネル理論]]
 - [[econ-credit-cycle-minsky-financial-fragility|ミンスキーの金融不安定性仮説——信用サイクルと「ミンスキー・モーメント」の経済学]]
 - [[econ-credit-cycle-theory|信用循環理論]]
 - [[econ-credit-rationing-stiglitz|信用割当理論（スティグリッツ＆ワイス）]]
@@ -554,8 +552,6 @@ tags:
 - [[econ-demography-ageing-dependency-ratio|人口高齢化と従属人口比率——少子高齢化の経済的影響と社会保障持続可能性]]
 - [[econ-dependency-theory-prebisch|従属理論——中心＝周辺構造が低開発を再生産する世界経済の不平等]]
 - [[econ-diamond-delegated-monitoring|ダイアモンドの委任された監視——銀行はなぜ存在するのか]]
-- [[econ-diamond-dybvig-bank-run|ダイアモンド＝ディブビグ銀行取付モデル]]
-- [[econ-diamond-dybvig-bank-runs|銀行取付モデル（ダイヤモンド＆ディブビッグ）]]
 - [[econ-diminishing-returns|収穫逓減の法則（限界生産力逓減）]]
 - [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]]
 - [[econ-disappointment-aversion-gul|失望回避——期待を下回る結果を重く評価する]]
@@ -596,7 +592,6 @@ tags:
 - [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]]
 - [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]]
 - [[econ-exorbitant-privilege-eichengreen|法外な特権——基軸通貨国アメリカの国際通貨体制上の優位性]]
-- [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]]
 - [[econ-expectations-hypothesis|金利の期間構造の期待仮説]]
 - [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]]
 - [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]]
@@ -605,8 +600,6 @@ tags:
 - [[econ-externality-pigou-coase-theorem|外部性とピグー税——コースの定理と市場による外部性内部化の比較]]
 - [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]]
 - [[econ-fama-french-factor-model|ファーマ＝フレンチ・ファクターモデル]]
-- [[econ-financial-accelerator-bernanke|金融加速度メカニズム——信用市場の摩擦が実体経済の変動を増幅する]]
-- [[econ-financial-accelerator-bernanke-gertler|金融アクセラレーター——信用市場の摩擦と景気変動の増幅メカニズム]]
 - [[econ-financial-contagion|金融コンタジオン：銀行間ネットワークのトポロジーとシステミックリスクの連鎖波及メカニズム]]
 - [[econ-financial-repression-mckinnon-shaw|金融抑圧と金融深化——マッキノン＝ショウ仮説と発展途上国の金融自由化]]
 - [[econ-financialization|金融化——経済の金融部門支配]]
@@ -752,11 +745,7 @@ tags:
 - [[econ-momentum-jegadeesh-titman|モメンタム効果——過去の勝者が勝ち続ける市場の異常現象]]
 - [[econ-monetary-approach-balance-payments|国際収支の貨幣的アプローチ——貨幣の需給不均衡としての国際収支]]
 - [[econ-monetary-history-friedman-schwartz|米国貨幣史（フリードマン＆シュワルツ）]]
-- [[econ-monetary-policy-rules-taylor|テイラー・ルールと中央銀行の政策ガイドライン——インフレ格差・需給ギャップに基づく金利設定の定式化]]
-- [[econ-monetary-policy-taylor-rule|テイラールールと金融政策の最適化理論——インフレ・雇用の安定化]]
-- [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利から実体経済への伝達メカニズム]]
 - [[econ-monetary-policy-trilemma|金融政策のトリレンマ（不可能の三位一体）]]
-- [[econ-monetary-transmission-mechanism|金融政策の波及メカニズム（monetary transmission mechanism）]]
 - [[econ-money-illusion-fisher|貨幣錯覚（アーヴィング・フィッシャー）]]
 - [[econ-monopsony-robinson|買い手独占（モノプソニー）——単一の買い手が価格と取引量を抑制する市場]]
 - [[econ-moral-hazard|モラルハザード（道徳的危険）]]

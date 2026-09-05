@@ -2,7 +2,7 @@
 title: "sciencedirect.com"
 type: source-domain
 host: "sciencedirect.com"
-cite_count: 132
+cite_count: 131
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # sciencedirect.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **132 件**（学術 121 ・ リファレンス 11）
+> [!info] 出典ドメイン索引 ・ 引用 **131 件**（学術 120 ・ リファレンス 11）
 
 ## このドメインを出典とする項目
 
@@ -23,7 +23,6 @@ tags:
 - [[econ-cobb-douglas|コブ＝ダグラス生産関数]] — ScienceDirectTopics—Cobb-DouglasProductionFunction(overview)
 - [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]] — Granger,C.W.J.(1981).SomePropertiesofTimeSeriesDataandTheirUseinEcono…
 - [[econ-costly-state-verification|コストのかかる状態検証（Costly State Verification／Townsend 1979）——なぜ「標準的な負債契約」が最適になるのか]] — Townsend,R.M.(1979).OptimalContractsandCompetitiveMarketswithCostlySt…
-- [[econ-credit-channel-monetary-transmission|金融政策伝達の信用チャネル]] — Bernanke,Gertler&Gilchrist(1999)TheFinancialAcceleratorinaQuantitativ…
 - [[econ-debt-overhang|デット・オーバーハング]] — Krugman,P.(1988)"Financingvs.ForgivingaDebtOverhang,"JournalofDevelop…
 - [[econ-debt-overhang|デット・オーバーハング]] — Myers,S.C.(1977)"DeterminantsofCorporateBorrowing,"JournalofFinancial…
 - [[econ-degrowth-ecological-economics|デグロース（脱成長）と生態経済学]] — EcologicalEconomicsJournal—Primaryvenuefordegrowthscholarship(1,821+a…
