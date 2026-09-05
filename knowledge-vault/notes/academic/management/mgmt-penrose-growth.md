@@ -32,14 +32,13 @@ aliases:
 
 ## 関連概念
 - [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同じ思想家
-- [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 同じ思想家
-- [[mgmt-vrio-framework-barney|VRIO フレームワーク（バーニー）——価値・希少性・模倣困難性・組織の四条件を満たす経営資源だけが持続的競争優位をもたらし、欠けるほど同等性や一時的優位にとどまる]] — 同じ思想家
+- [[mgmt-vrio-framework-barney|資源ベース理論と VRIO フレームワーク（バーニー）——競争優位の源泉を企業内部の資源に求め、価値・希少性・模倣困難性・組織の四条件を満たす資源だけが持続的優位をもたらすとする]] — 同じ思想家
 - [[bizlaw-consumer-contract-act|消費者契約法]] — 出典を共有
 - [[legal-edoc-stamp-exempt|電子契約・電子文書には印紙税が課されない]] — 出典を共有
 - [[tax-stamp-duty-electronic|印紙税の課税文書の判断と電子契約の課税対象外扱い]] — 出典を共有
 - [[econ-innovation-schumpeter|シュンペーターの革新論と創造的破壊：資本主義の動態理論]] — 出典を共有
 - [[mgmt-diversification|多角化戦略]] — 同分野の近傍
-- [[mgmt-ansoff-matrix|アンゾフの成長マトリクス]] — 同分野の近傍
+- [[mgmt-strategic-issue-management-ansoff|戦略的イシュー・マネジメント——アンソフの弱信号検知と戦略的サプライズへの備え]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

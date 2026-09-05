@@ -36,7 +36,7 @@ aliases:
 - [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]] — 同じ思想家
 - [[econ-poverty-trap|貧困の罠——低所得が貯蓄と投資を妨げて貧困を自己強化的に再生産する複数均衡と、その存在をめぐる実証]] — 同じ思想家
 - [[econ-lucas-paradox|ルーカスのパラドックス]] — 同分野の近傍
-- [[econ-behavioral-development-economics-banerjee|行動開発経済学——バネルジー＆デュフロのRCTによる貧困の罠と政策介入の評価]] — 同分野の近傍
+- [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

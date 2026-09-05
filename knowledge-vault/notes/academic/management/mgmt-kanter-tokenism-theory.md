@@ -40,7 +40,7 @@ Kanter, Rosabeth Moss（1977 Men and Women of the Corporation, Basic Books）／
 - [[mgmt-institutional-void|制度的空白（Institutional Voids）]] — 出典を共有
 - [[mgmt-shared-value|共有価値の創造（CSV）]] — 出典を共有
 - [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — 出典を共有
-- [[mgmt-team-effectiveness-hackman-wageman|チーム有効性理論——ハックマンの条件モデルとチームコーチング]] — 出典を共有
+- [[mgmt-tempered-radical|穏健な急進主義者（マイヤーソン＆スカリー）——組織への帰属を保ちながら、支配的文化と相容れない価値を小さな勝利の積み重ねで内側から推し進める個人]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,7 +34,7 @@ aliases:
 - [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同じ思想家
 - [[mgmt-t-shaped-skills|T字型人材（T型スキル）]] — 同じ思想家
 - [[mgmt-implicit-leadership-theories|暗黙のリーダーシップ理論]] — 同じ思想家
-- [[mgmt-institutional-work|制度的ワーク]] — 同分野の近傍
+- [[mgmt-institutional-work|制度的ワーク（ローレンス＝サダビー）——制度を創造・維持・破壊しようとする個人と組織の意図的な実践の総体として、埋め込まれた行為者性のパラドクスに応える]] — 同分野の近傍
 - [[mgmt-lead-user|リードユーザー法]] — 同分野の近傍
 - [[mgmt-six-sigma|シックス・シグマ]] — 同分野の近傍
 

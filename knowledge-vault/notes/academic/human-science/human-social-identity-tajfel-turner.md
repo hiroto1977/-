@@ -34,8 +34,8 @@ aliases:
 - [[human-social-identity-theory-tajfel|社会的アイデンティティ理論——タジフェルの最小集団パラダイムと集団間関係]] — 同じ思想家
 - [[human-minimal-group-paradigm|最小条件集団パラダイム]] — 同分野の近傍
 - [[human-role-conflict|役割葛藤（役割理論）]] — 同分野の近傍
-- [[human-contact-hypothesis-allport|接触仮説：集団間接触による偏見低減理論]] — 同分野の近傍
 - [[human-self-categorization-theory|自己カテゴリー化理論]] — 同分野の近傍
+- [[human-contact-hypothesis-allport|接触仮説：集団間接触による偏見低減理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

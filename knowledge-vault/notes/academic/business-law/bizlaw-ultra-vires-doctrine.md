@@ -36,7 +36,6 @@ Ashbury Railway Carriage & Iron Co Ltd v Riche [1875] LR 7 HL 653（権限踰越
 - [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]] — 同じ思想家
 - [[bizlaw-cy-pres|サイプレ原則（近接原則／Cy-près doctrine）]] — 同じ思想家
 - [[bizlaw-de-facto-corporation|事実上の会社——設立手続きに瑕疵があっても会社として扱う法理]] — 同分野の近傍
-- [[bizlaw-internal-affairs-doctrine|内部事項の法理（Internal Affairs Doctrine／インターナル・アフェアーズ・ドクトリン）——会社の内部関係は設立準拠州の法で規律されるという抵触法原則]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

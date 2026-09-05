@@ -33,8 +33,9 @@ aliases:
 ## 関連概念
 - [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同分野の近傍
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同分野の近傍
-- [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — 同分野の近傍
+- [[mgmt-profiting-from-innovation|技術革新からの利益専有（PFIフレームワーク）]] — 同分野の近傍
 - [[mgmt-executive-hubris|ヒューブリス仮説（経営者の過信）]] — 同分野の近傍
+- [[mgmt-vrio-framework-barney|資源ベース理論と VRIO フレームワーク（バーニー）——競争優位の源泉を企業内部の資源に求め、価値・希少性・模倣困難性・組織の四条件を満たす資源だけが持続的優位をもたらすとする]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

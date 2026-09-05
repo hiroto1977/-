@@ -37,9 +37,9 @@ Sandra Petronio ／ Irwin Altman ／ Leslie A. Baxter
 - [[infosoc-actor-network-theory|アクターネットワーク理論]] — 出典を共有
 - [[mgmt-bureaucracy|官僚制（ウェーバー）]] — 出典を共有
 - [[mgmt-coopetition|コーペティション（協調的競争）]] — 出典を共有
-- [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — 出典を共有
 - [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する]] — 出典を共有
 - [[mgmt-liability-of-foreignness|外国性の不利益（Liability of Foreignness, LOF）——多国籍企業が外国市場で現地企業より余分に負う社会的コスト]] — 出典を共有
+- [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ（ティース）——急速に変化する環境で内外のコンピタンスを統合・構築・再配置する企業の能力を、感知・捕捉・変容の三つの活動とその微視的基盤で捉える]] — 出典を共有
 - [[infosoc-symbolic-interactionism|象徴的相互作用論（symbolic interactionism）]] — 同分野の近傍
 - [[infosoc-data-justice|データ正義（Data Justice）]] — 同分野の近傍
 

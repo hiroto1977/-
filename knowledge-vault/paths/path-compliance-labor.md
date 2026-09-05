@@ -23,11 +23,11 @@ tags:
 - [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]]（接続 16）
 - [[labor-overtime-cap|時間外労働の上限規制（36協定）]]（接続 16）
 - [[labor-work-rules|就業規則の作成・届出義務]]（接続 16）
+- [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]]（接続 15）
 - [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]]（接続 15）
-- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]（接続 14）
-- [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]]（接続 14）
 - [[labor-flextime|フレックスタイム制（労働基準法32条の3）]]（接続 14）
 - [[labor-paid-leave-grant|年次有給休暇の付与]]（接続 14）
+- [[labor-survivor-pension|遺族年金（遺族基礎年金・遺族厚生年金）]]（接続 14）
 
 ## 第 2 部 — 年代順の展開
 - 2024年: [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]]
@@ -40,6 +40,7 @@ tags:
 - 2025年: [[labor-postbirth-support-benefit|出生後休業支援給付金（2025年4月新設）]]
 
 ## 第 3 部 — 年代情報のない項目
+- [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]
 - [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]]
 - [[labor-average-wage|平均賃金（労働基準法12条）]]
 - [[labor-break-time|休憩時間（労働基準法34条）]]
@@ -122,7 +123,6 @@ tags:
 - [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]]
 - [[labor-stress-check|ストレスチェック制度（労働安全衛生法）]]
 - [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]]
-- [[labor-survivor-pension|遺族年金（遺族基礎年金・遺族厚生年金）]]
 - [[labor-trial-period|試用期間の労働法上の取扱い]]
 - [[labor-tribunal|労働審判制度（労働審判法）]]
 - [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]]

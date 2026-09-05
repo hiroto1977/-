@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2194
+cite_count: 2191
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2194 件**（リファレンス 2194）
+> [!info] 出典ドメイン索引 ・ 引用 **2191 件**（リファレンス 2191）
 
 ## このドメインを出典とする項目
 
@@ -1924,7 +1924,7 @@ tags:
 - [[mgmt-distributed-leadership-spillane|分散型リーダーシップ（スピレイン）と実践共同体の組織論]] — Wikipedia:Distributedleadership—organizationalpractice
 - [[mgmt-double-diamond|ダブルダイヤモンド（デザインプロセス）]] — Wikipedia—DoubleDiamond(designprocessmodel)
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — Wikipedia:Double-looplearning—Argyris&Schön,governingvariables,theory…
-- [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ]] — Dynamiccapabilities—Wikipedia（RBV/バーニーとの関係）
+- [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ（ティース）——急速に変化する環境で内外のコンピタンスを統合・構築・再配置する企業の能力を、感知・捕捉・変容の三つの活動とその微視的基盤で捉える]] — Wikipedia:Dynamiccapabilities—資源ベース論との関係、感知・捕捉・変容
 - [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する]] — Wikipedia:Dynamiccapabilities—組織・経営者レベルの能力論の概説
 - [[mgmt-dynamic-pricing|ダイナミック・プライシング]] — Wikipedia—Dynamicpricing
 - [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — Wikipedia—EconomicOrderQuantity
@@ -1932,7 +1932,6 @@ tags:
 - [[mgmt-effort-reward-imbalance-siegrist|努力－報酬不均衡モデル——払った努力に見合う報酬がないとき]] — Wikipedia:Effort-rewardimbalance—effort,reward,overcommitment,recipro…
 - [[mgmt-employee-engagement-kahn|従業員エンゲージメント理論と心理的安全性の組織行動論（カーン）]] — Wikipedia:Employeeengagement—Kahn,psychologicalsafety,GallupQ12,UWES,…
 - [[mgmt-empowering-leadership-ahearne|エンパワリング・リーダーシップ——権限を分かち自律を高めるリーダー]] — Wikipedia:Empowerment—empoweringleadership,psychologicalempowerment,a…
-- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — Wikipedia:Sensemaking—retrospectivemeaningconstructioninorganizations…
 - [[mgmt-enactment-weick|イナクトメント——組織が行為を通じて自らの環境を能動的に作り出す]] — Wikipedia:Enactment/sensemaking—Weick,enactedenvironment,enactment-se…
 - [[mgmt-entrepreneurial-orientation-miller|起業家的志向性（ミラー）]] — Wikipedia:Entrepreneurialorientation—Miller,Covin&Slevin,Lumpkin&Dess…
 - [[mgmt-equity-theory-adams|公平理論——投入と報酬の比率の社会的比較が動機づけを左右する]] — Wikipedia:Equitytheory—Adams,input-outcomeratio,referent,distributive…
@@ -1981,8 +1980,7 @@ tags:
 - [[mgmt-institutional-entrepreneurship-dimaggio|制度的起業家精神（ディマジオ）]] — Wikipedia:Institutionalentrepreneurship—制度的起業家精神の概説
 - [[mgmt-institutional-logic-friedland|制度的ロジック（フリードランド＆アルフォード）]] — Wikipedia:Institutionallogic—Friedland&Alford,Thornton,plurality,hybr…
 - [[mgmt-institutional-logics-thornton|制度的ロジック理論：制度的多元性と組織的合理性の再解釈]] — Wikipedia—Institutionallogic
-- [[mgmt-institutional-work|制度的ワーク]] — Wikipedia—InstitutionalTheory
-- [[mgmt-institutional-work-lawrence|制度的ワーク論——アクターによる制度の創造・維持・破壊の実践]] — Wikipedia:Institutionalwork—制度的ワーク論の理論と応用の概説
+- [[mgmt-institutional-work|制度的ワーク（ローレンス＝サダビー）——制度を創造・維持・破壊しようとする個人と組織の意図的な実践の総体として、埋め込まれた行為者性のパラドクスに応える]] — Wikipedia:Institutionalwork—創造・維持・破壊の三類型と応用
 - [[mgmt-intellectual-capital-edvinsson|知的資本（エドビンソン＆マローン）]] — Wikipedia:Intellectualcapital—human,structural,relationalcapital;Skan…
 - [[mgmt-intrapreneurship|社内起業（イントラプレナーシップ）]] — Wikipedia—Intrapreneurship
 - [[mgmt-issue-selling-dutton|課題の売り込み（ダットン＆アシュフォード）]] — Wikipedia:Issueselling—Dutton&Ashford,middlemanagers,attentionmanagem…
@@ -2021,8 +2019,7 @@ tags:
 - [[mgmt-loose-coupling-weick|疎結合システム（組織論）]] — Wikipedia:Loosecoupling—organizationaltheoryoverview
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — Wikipedia—NormalAccidents(Perrow):tightvs.loosecouplinginaccidentanal…
 - [[mgmt-management-fashion-abrahamson|経営ファッション論——経営技法の流行とその供給・需要の力学]] — Wikipedia:Managementfashion/fad—Abrahamson,fashionsetters,bell-shaped…
-- [[mgmt-managerial-cognition|経営者認知（ウォルシュ）——経営者は環境そのものではなく知識構造を通した解釈に反応し、その認知地図が注意・判断・競争行動を規定する]] — Wikipedia:Managerialcognition—知識構造、認知地図、行動戦略論との関係
-- [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — Wikipedia:Managerialcognition—schemas,enactment,sensemaking,cognitive…
+- [[mgmt-managerial-cognition|経営者認知（ウォルシュ／ダフト＝ワイク）——経営者は環境そのものではなく知識構造を通した解釈に反応し、その認知地図が注意・判断・競争行動を規定する]] — Wikipedia:Managerialcognition—知識構造、認知地図、エナクトメント、行動戦略論との関係
 - [[mgmt-market-orientation|市場志向]] — Wikipedia:Marketorientation
 - [[mgmt-mass-customization|マス・カスタマイゼーション]] — Wikipedia—Masscustomization（デイビス1987命名・パイン1993・定義）
 - [[mgmt-mbo|目標による管理（MBO）]] — Wikipedia(English)—Managementbyobjectives
@@ -2107,7 +2104,6 @@ tags:
 - [[mgmt-regulatory-focus-theory-work|制御焦点理論（職場応用）]] — Wikipedia—Regulatoryfocustheory
 - [[mgmt-relational-coordination-gittell|リレーショナル・コーディネーション（ギッテル）]] — Wikipedia:Relationalcoordination—リレーショナル・コーディネーションの概説
 - [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — Wikipedia:Variety(cybernetics)—必要多様性の法則とサイバネティクスにおける多様性概念
-- [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — Wikipedia—Resource-basedview（VRIN→VRIOの経緯・限界）
 - [[mgmt-resource-dependence|資源依存理論]] — Resourcedependencetheory—Wikipedia
 - [[mgmt-resource-dependence-pfeffer|資源依存理論と組織間権力関係のマネジメント（ファーファー＝サランシク）]] — Wikipedia:Resourcedependencetheory—Pfeffer,Salancik,power,interlockin…
 - [[mgmt-resource-dependence-theory|リソース・ディペンデンス理論（Resource Dependence Theory）]] — Wikipedia—ResourceDependenceTheory
@@ -2119,6 +2115,7 @@ tags:
 - [[mgmt-second-curve-handy|セカンド・カーブ——衰退する前に次の成長曲線を始める]] — Wikipedia:CharlesHandy—sigmoidcurve,secondcurve,organizationalrenewal
 - [[mgmt-sensegiving|センスギビング（ジョイア＆チッティペディ）——リーダーが他者の意味形成に働きかけ、変革の望ましい解釈を組織に広めるコミュニケーション過程]] — Wikipedia:Sensemaking—Weick、Gioiaのセンスギビング、戦略的曖昧さ
 - [[mgmt-sensemaking|センスメイキング]] — KarlE.Weick—Wikipedia（提唱者・7特性・1995年著書）
+- [[mgmt-sensemaking-weick|センスメイキングとイナクトメント（ワイク）——曖昧な出来事から手がかりを抽出し、行為によって環境を構成しながら事後的にもっともらしい意味を集合的に作り上げる組織化の過程]] — Wikipedia:Sensemaking—回顧的な意味構築、七つの特性、イナクトメント
 - [[mgmt-servant-leadership-spears|サーバント・リーダーシップ（グリーンリーフ／スピアーズ）]] — Wikipedia:Servantleadership—Greenleaf,Spearstencharacteristics,empiri…
 - [[mgmt-service-blueprint|サービス・ブループリント]] — Wikipedia「Serviceblueprint」（起源・構成要素・物理的証拠・failpoint）
 - [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）——すべての交換をサービスの交換と捉え、知識と技能というオペラント資源を統合する複数のアクターの共創として価値を理解するパラダイム]] — Wikipedia:Service-dominantlogic—Vargo&Lusch、オペラント資源、価値共創、サービス・エコシステム
@@ -2166,8 +2163,7 @@ tags:
 - [[mgmt-teal-organization|ティール組織]] — Wikipedia—ReinventingOrganizations（書誌・3つの柱・色の段階）
 - [[mgmt-teal-organization|ティール組織]] — Wikipedia—Tealorganisation（定義・自主経営／全体性／存在目的）
 - [[mgmt-team-cohesion-carron|チーム凝集性（キャロン）]] — Wikipedia:Groupcohesiveness—definitions,measurement(GEQ),performancel…
-- [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — Wikipedia—Teameffectiveness
-- [[mgmt-team-effectiveness-hackman-wageman|チーム有効性理論——ハックマンの条件モデルとチームコーチング]] — Wikipedia:Teameffectiveness—チーム有効性モデルの概説
+- [[mgmt-team-effectiveness-hackman|チーム有効性モデル（ハックマン）——IPO／IMOI 枠組みの上に、真のチーム・魅力的な方向性・イネーブリング構造・支援的文脈・専門的コーチングの五条件を置く]] — Wikipedia:Teameffectiveness—IPO／IMOI、ハックマンの五条件
 - [[mgmt-team-mental-models-cannon-bowers|チーム・メンタルモデル——共有認知とチーム・パフォーマンス]] — Wikipedia:Teammentalmodel—共有認知の理論と測定法
 - [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — Wikipedia:Teamreflexivity—collectivereflectionandadaptationoverview
 - [[mgmt-team-roles-belbin|ベルビンのチーム役割——有効なチームに必要な九つの行動類型のバランス]] — Wikipedia:Belbinteamroles—nineroles,action/people/thinking,allowablew…
@@ -2196,8 +2192,9 @@ tags:
 - [[mgmt-uppsala-internationalization|ウプサラ・モデル——企業の漸進的な国際化プロセス]] — Wikipedia:Uppsalamodel—Johanson&Vahlne,incrementalinternationalizatio…
 - [[mgmt-value-proposition|バリュープロポジション]] — Wikipedia—Valueproposition（定義・ランニング&マイケルズ1988起源）
 - [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — Wikipedia:VRIO（1991VRIN提唱、1995VRIO公表、4基準の定義）
-- [[mgmt-vrio-framework-barney|VRIO フレームワーク（バーニー）——価値・希少性・模倣困難性・組織の四条件を満たす経営資源だけが持続的競争優位をもたらし、欠けるほど同等性や一時的優位にとどまる]] — Wikipedia:Competitiveadvantage—資源ベース論、競争同等性と優位
-- [[mgmt-vrio-framework-barney|VRIO フレームワーク（バーニー）——価値・希少性・模倣困難性・組織の四条件を満たす経営資源だけが持続的競争優位をもたらし、欠けるほど同等性や一時的優位にとどまる]] — Wikipedia:VRIO—Barney、価値・希少性・模倣困難性・組織
+- [[mgmt-vrio-framework-barney|資源ベース理論と VRIO フレームワーク（バーニー）——競争優位の源泉を企業内部の資源に求め、価値・希少性・模倣困難性・組織の四条件を満たす資源だけが持続的優位をもたらすとする]] — Wikipedia:Competitiveadvantage—資源ベース論、競争同等性と優位
+- [[mgmt-vrio-framework-barney|資源ベース理論と VRIO フレームワーク（バーニー）——競争優位の源泉を企業内部の資源に求め、価値・希少性・模倣困難性・組織の四条件を満たす資源だけが持続的優位をもたらすとする]] — Wikipedia:Resource-basedview—VRINからVRIOへの経緯、限界
+- [[mgmt-vrio-framework-barney|資源ベース理論と VRIO フレームワーク（バーニー）——競争優位の源泉を企業内部の資源に求め、価値・希少性・模倣困難性・組織の四条件を満たす資源だけが持続的優位をもたらすとする]] — Wikipedia:VRIO—Barney、価値・希少性・模倣困難性・組織
 - [[mgmt-vroom-yetton|ヴルーム＝イェットン・モデル]] — Wikipedia—Vroom–Yettondecisionmodel
 - [[mgmt-vroom-yetton-decision|ブルーム＝イェットンの意思決定モデル——状況に応じた部下参加の規範的処方]] — Wikipedia:Vroom–Yettondecisionmodel—fivedecisionstyles,decisiontree,p…
 - [[mgmt-vuca|VUCA（ブーカ）]] — Wikipedia—VUCA
@@ -2205,7 +2202,7 @@ tags:
 - [[mgmt-woodward-technology|ウッドワードの技術類型]] — Wikipedia—JoanWoodward（生産技術3類型と組織構造研究）
 - [[mgmt-work-design-growth-model|職務設計成長モデル]] — Jobcharacteristictheory—Wikipedia
 - [[mgmt-work-engagement|ワーク・エンゲージメント]] — Workengagement—Wikipedia
-- [[mgmt-workplace-deviance-robinson|職場逸脱行動——組織規範に反する自発的行為の分類と規定要因]] — Wikipedia:WorkplaceDeviance—Robinson&Bennetttaxonomyofdeviantbehavior
+- [[mgmt-workplace-deviance-robinson|職場逸脱行動（ロビンソン＝ベネット）——組織の規範に反し組織や成員の福利を脅かす自発的行為を対象と深刻度の二軸で四類型に分け、不公正や契約違反への反応として捉える]] — Wikipedia:Workplacedeviance—ロビンソン＝ベネットの四類型
 - [[mgmt-workplace-spirituality|職場のスピリチュアリティ（意味・目的・共同体意識）]] — Wikipedia—WorkplaceSpirituality
 - [[mgmt-zone-of-indifference-barnard|無関心圏——権威の受容理論と命令が受け入れられる範囲]] — Wikipedia:ChesterBarnard—acceptancetheoryofauthority,zoneofindifferen…
 

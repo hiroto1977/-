@@ -2,7 +2,7 @@
 title: "apa.org"
 type: source-domain
 host: "apa.org"
-cite_count: 18
+cite_count: 17
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # apa.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **18 件**（学術 10 ・ リファレンス 8）
+> [!info] 出典ドメイン索引 ・ 引用 **17 件**（学術 10 ・ リファレンス 7）
 
 ## このドメインを出典とする項目
 
@@ -31,7 +31,6 @@ tags:
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]] — APA(2018)SocialMediaUseandMentalHealth—AmericanPsychologicalAssociati…
 - [[human-tend-and-befriend|思いやり・絆形成反応（テンド・アンド・ビフレンド）]] — AmericanPsychologicalAssociation,MonitoronPsychology—tendingandbefrie…
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — ConsultingPsychologyJournal(APA):Evidence-BasedAnswersto15QuestionsAb…
-- [[mgmt-team-effectiveness-model|チーム有効性モデル]] — Hackman(2002)LeadingTeams:SettingtheStageforGreatPerformances—APA
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

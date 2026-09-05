@@ -34,7 +34,6 @@ aliases:
 - [[mgmt-diversification|多角化戦略]] — 語彙が近い
 - [[mgmt-digital-transformation|デジタルトランスフォーメーション（DX）]] — 同分野の近傍
 - [[mgmt-lead-user|リードユーザー法]] — 同分野の近傍
-- [[mgmt-penrose-growth|ペンローズの企業成長理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,7 +34,7 @@ aliases:
 ## 関連概念
 - [[human-cultural-dimensions-hofstede|ホフステッドの文化次元理論]] — 分野横断
 - [[mgmt-organizational-culture-theory|組織文化理論]] — 出典を共有
-- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — 同分野の近傍
+- [[mgmt-cross-cultural-leadership-house-globe|GLOBEプロジェクト——文化次元とリーダーシップの国際比較]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

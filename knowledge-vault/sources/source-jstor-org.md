@@ -2,7 +2,7 @@
 title: "jstor.org"
 type: source-domain
 host: "jstor.org"
-cite_count: 143
+cite_count: 140
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jstor.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **143 件**（学術 143）
+> [!info] 出典ドメイン索引 ・ 引用 **140 件**（学術 140）
 
 ## このドメインを出典とする項目
 
@@ -150,11 +150,8 @@ tags:
 - [[mgmt-paradox-of-embeddedness|埋め込みのパラドックス（Paradox of Embeddedness）]] — Uzzi(1997)SocialStructureandCompetitioninInterfirmNetworks:TheParadox…
 - [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — Barnett,W.P.&Hansen,M.T.(1996)TheRedQueeninOrganizationalEvolution—St…
 - [[mgmt-resource-dependence-theory|リソース・ディペンデンス理論（Resource Dependence Theory）]] — Davis,Schoorman&Donaldson—TowardaStewardshipTheory—AcademyofManagemen…
-- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — Weick,SensemakinginOrganizations(Sage,1995)—JSTORreview
-- [[mgmt-sensemaking-weick|意味構築（オーガニゼーショナル・センスメーキング）]] — Weick,K.E.(1993).TheCollapseofSensemakinginOrganizations:TheMannGulch…
 - [[mgmt-strategic-entrepreneurship|戦略的起業家精神（Strategic Entrepreneurship）]] — StrategicEntrepreneurship:EntrepreneurialStrategiesforWealthCreation—…
 - [[mgmt-strategic-reference-point-theory|戦略的参照点理論]] — Kahneman&Tversky(1979)"ProspectTheory:AnAnalysisofDecisionunderRisk"—…
-- [[mgmt-team-effectiveness-model|チーム有効性モデル]] — Hackman(1987)Thedesignofworkteams—チーム有効性条件モデル
 - [[mgmt-threat-rigidity-effect|脅威による硬直化効果（Threat-Rigidity Effect）]] — Staw,Sandelands&Dutton(1981)Threat-RigidityEffectsinOrganizationalBeh…
 - [[mgmt-trust-integrative-model|組織的信頼統合モデル（メイヤー＝デイビス＝シューアマンの信頼モデル）]] — Mayer,R.C.,Davis,J.H.&Schoorman,F.D.(1995)"AnIntegrativeModelofOrgani…
 

@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-emotional-intelligence|情動知能（EQ）]] — 同分野の近傍
+- [[human-predictive-processing-theory|予測処理理論]] — 同分野の近傍
 - [[human-group-polarization|集団極性化]] — 同分野の近傍
 - [[human-hot-hand-fallacy|ホットハンドの誤謬]] — 同分野の近傍
 

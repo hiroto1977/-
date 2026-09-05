@@ -32,7 +32,7 @@ R.コース1937「企業の本質」（理論の起源・1991年ノーベル賞�
 
 ## 関連概念
 - [[mgmt-transaction-cost-economics|取引コスト理論（取引費用経済学）]] — 同分野の近傍
-- [[mgmt-coordination-costs-arrow|調整コスト理論と情報経済学（アロー）]] — 同分野の近傍
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

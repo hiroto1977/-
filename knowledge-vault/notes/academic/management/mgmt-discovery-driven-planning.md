@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[mgmt-real-options-reasoning-mcgrath|リアル・オプション推論——マクグラスの不確実性下の段階的投資と戦略的柔軟性]] — 語彙が近い
 - [[mgmt-transient-advantage|一時的競争優位（トランジェント・アドバンテージ）]] — 同じ思想家
-- [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 同分野の近傍
+- [[mgmt-team-effectiveness-hackman|チーム有効性モデル（ハックマン）——IPO／IMOI 枠組みの上に、真のチーム・魅力的な方向性・イネーブリング構造・支援的文脈・専門的コーチングの五条件を置く]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

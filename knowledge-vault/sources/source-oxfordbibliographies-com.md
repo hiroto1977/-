@@ -2,7 +2,7 @@
 title: "oxfordbibliographies.com"
 type: source-domain
 host: "oxfordbibliographies.com"
-cite_count: 6
+cite_count: 5
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # oxfordbibliographies.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **6 件**（リファレンス 5 ・ 学術 1）
+> [!info] 出典ドメイン索引 ・ 引用 **5 件**（リファレンス 4 ・ 学術 1）
 
 ## このドメインを出典とする項目
 
@@ -19,7 +19,6 @@ tags:
 - [[infosoc-media-events|メディア・イベント]] — OxfordBibliographies(Communication)—MediaEvents
 - [[infosoc-media-logic|メディア・ロジック]] — Mazzoleni&Splendore,"MediaLogicandMediatization",OxfordBibliographies…
 - [[infosoc-transmedia-storytelling|トランスメディア・ストーリーテリング]] — OxfordBibliographies(OUP)—TransmediaStorytelling
-- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — OxfordBibliographies—SensemakinginOrganizations
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

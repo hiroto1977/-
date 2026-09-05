@@ -17,11 +17,11 @@ tags:
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 106）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-framing-effect|フレーミング効果（framing effect）]]（接続 31）
-- [[human-bias-blind-spot|バイアスの盲点]]（接続 30）
 - [[human-attribution-theory|帰属理論]]（接続 29）
-- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 29）
+- [[human-bias-blind-spot|バイアスの盲点]]（接続 29）
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 28）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 27）
-- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 27）
+- [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 26）
 - [[human-conjunction-fallacy|連言錯誤]]（接続 25）
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 25）
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 24）

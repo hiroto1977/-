@@ -32,6 +32,7 @@ Heinz von Foerster ／ Humberto Maturana ／ Francisco Varela
 - [Wikipedia — Second-order cybernetics](https://en.wikipedia.org/wiki/Second-order_cybernetics) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-internal-affairs-doctrine|内部事項の法理（Internal Affairs Doctrine／インターナル・アフェアーズ・ドクトリン）——会社の内部関係は設立準拠州の法で規律されるという抵触法原則]] — 語彙が近い
 - [[human-embodied-cognition-theory|身体化された認知]] — 同じ思想家
 - [[bizlaw-ultra-vires-doctrine-modern|近代企業法における越権行為法理（Ultra Vires Doctrine）]] — 出典を共有
 - [[mgmt-appreciative-inquiry|アプリシエイティブ・インクワイアリー（AI）]] — 出典を共有
@@ -41,7 +42,6 @@ Heinz von Foerster ／ Humberto Maturana ／ Francisco Varela
 - [[infosoc-information-worlds-theory|情報世界理論]] — 出典を共有
 - [[mgmt-heavyweight-product-manager-clark-fujimoto|重量級プロダクト・マネジャー——組織内外の統合を一身に担い製品コンセプトを守る開発責任者]] — 出典を共有
 - [[infosoc-context-collapse|コンテキストの崩壊（マーウィック＆ボイド）——ソーシャルメディアで別々の聴衆が一つの場に折り重なり、相手ごとの自己呈示の使い分けが崩れる]] — 同分野の近傍
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

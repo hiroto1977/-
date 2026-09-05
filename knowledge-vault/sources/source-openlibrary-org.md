@@ -2,7 +2,7 @@
 title: "openlibrary.org"
 type: source-domain
 host: "openlibrary.org"
-cite_count: 2
+cite_count: 1
 tags:
   - source-domain
   - index
@@ -10,12 +10,11 @@ tags:
 
 # openlibrary.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2 件**（学術 1 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **1 件**（学術 1）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-tort-law|不法行為法：過失・厳格責任・経済分析による民事損害賠償の理論体系]] — Prosser1971—HandbookoftheLawofTorts(4thed.),WestPublishing
-- [[mgmt-sensemaking-weick|意味構築（オーガニゼーショナル・センスメーキング）]] — OpenLibrary—SensemakinginOrganizations
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

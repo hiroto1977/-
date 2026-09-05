@@ -33,7 +33,6 @@ J. Richard Hackman ／ Greg R. Oldham ／ Sharon K. Parker
 
 ## 関連概念
 - [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル（ハックマン＆オルダム）——技能多様性・課題完結性・課題重要性・自律性・フィードバックの五次元が三つの心理状態を通じて内発的動機と業績を規定する]] — 語彙が近い
-- [[mgmt-team-effectiveness-model|チーム有効性モデル]] — 同じ思想家
 - [[mgmt-order-winners-hill|受注獲得基準と受注資格基準（ヒル）——製造を市場に結びつける]] — 出典を共有
 - [[mgmt-value-disciplines-treacy-wiersema|価値基準（バリュー・ディシプリン）——市場リーダーが選ぶ三つの卓越]] — 出典を共有
 - [[mgmt-star-model|スター・モデル（ガルブレイス）]] — 出典を共有

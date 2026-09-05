@@ -31,7 +31,7 @@ aliases:
 - [特許庁／経済産業省知的財産政策室「不正競争防止法の概要」](https://www.jpo.go.jp/news/shinchaku/event/seminer/document/chizai_setumeikai_jitsumu/30_text.pdf) `公的`
 
 ## 関連概念
-- [[legal-unfair-competition|不正競争防止法（混同惹起・著名表示冒用・形態模倣）]] — 分野横断
+- [[legal-unfair-competition|不正競争防止法（混同惹起・著名表示冒用・形態模倣）]] — 語彙が近い
 - [[bizlaw-design-right|意匠権（意匠法）]] — 出典を共有
 - [[bizlaw-trademark|商標法]] — 出典を共有
 - [[bizlaw-utility-model|実用新案法]] — 出典を共有

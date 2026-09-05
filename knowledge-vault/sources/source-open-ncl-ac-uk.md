@@ -2,7 +2,7 @@
 title: "open.ncl.ac.uk"
 type: source-domain
 host: "open.ncl.ac.uk"
-cite_count: 4
+cite_count: 3
 tags:
   - source-domain
   - index
@@ -10,12 +10,11 @@ tags:
 
 # open.ncl.ac.uk
 
-> [!info] 出典ドメイン索引 ・ 引用 **4 件**（学術 3 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **3 件**（学術 2 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
 - [[infosoc-self-presentation|自己呈示とドラマトゥルギー（ゴッフマン）]] — NewcastleUniversityTheoryHub「Self-PresentationTheory」
-- [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ]] — DynamicCapabilitiesTheory—TheoryHub,NewcastleUniversity（sensing/seizi…
 - [[mgmt-servqual|SERVQUAL（サービス品質モデル）]] — NewcastleUniversity—SERVQUALacademictheoryreference
 - [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — NewcastleUniversity—TheoryHub:Resource-BasedTheory（VRIN→VRIO、Barneyの位…
 

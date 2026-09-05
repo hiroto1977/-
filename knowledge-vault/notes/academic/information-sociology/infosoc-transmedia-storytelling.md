@@ -39,8 +39,8 @@ aliases:
 - [[infosoc-spreadable-media-jenkins|スプレッダブル・メディア——能動的な受け手の共有が価値を循環させる]] — 同じ思想家
 - [[infosoc-textual-poaching-jenkins|テクストの密猟——ファンによる能動的なメディアの流用と作り替え]] — 同じ思想家
 - [[infosoc-hostile-media-effect|敵対的メディア認知]] — 出典を共有
-- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 出典を共有
 - [[infosoc-media-logic|メディア・ロジック]] — 出典を共有
+- [[infosoc-cultural-imperialism|文化帝国主義（メディア帝国主義）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

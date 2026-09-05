@@ -33,7 +33,7 @@ aliases:
 - [優越的地位の濫用 概説](https://ja.wikipedia.org/wiki/%E5%84%AA%E8%B6%8A%E7%9A%84%E5%9C%B0%E4%BD%8D%E3%81%AE%E6%BF%AB%E7%94%A8) `メディア`
 
 ## 関連概念
-- [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]] — 語彙が近い
+- [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]] — 分野横断
 - [[legal-keihyo-commitment|景品表示法の確約手続（2024年10月施行）]] — 同分野の近傍
 - [[legal-stealth-marketing|ステルスマーケティング規制（景品表示法）]] — 同分野の近傍
 - [[legal-adult-age-18|成年年齢の18歳への引下げ（2022年4月1日施行の改正民法）]] — 同分野の近傍

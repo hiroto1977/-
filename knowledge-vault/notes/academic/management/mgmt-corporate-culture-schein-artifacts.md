@@ -37,7 +37,7 @@ aliases:
 - [[mgmt-psychological-contract|心理的契約（ルソー）——雇用関係における明文化されない相互義務についての従業員の主観的信念と、その違反が信頼とコミットメントに与える影響]] — 同じ思想家
 - [[mgmt-strategic-drift|戦略的漂流（Strategic Drift）]] — 同分野の近傍
 - [[mgmt-feedforward|フィードフォワード]] — 同分野の近傍
-- [[mgmt-institutional-work|制度的ワーク]] — 同分野の近傍
+- [[mgmt-institutional-work|制度的ワーク（ローレンス＝サダビー）——制度を創造・維持・破壊しようとする個人と組織の意図的な実践の総体として、埋め込まれた行為者性のパラドクスに応える]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

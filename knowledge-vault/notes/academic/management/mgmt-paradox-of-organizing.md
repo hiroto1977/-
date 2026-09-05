@@ -31,15 +31,15 @@ Karl E. Weick（1979, The Social Psychology of Organizing — 組織化のパラ
 
 ## 関連概念
 - [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]] — 同じ思想家
-- [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]] — 同じ思想家
 - [[mgmt-high-reliability-organization-theory|高信頼性組織理論]] — 同じ思想家
 - [[mgmt-organizational-entropy|組織エントロピー]] — 同じ思想家
 - [[mgmt-organizational-improvisation-theory|組織即興理論]] — 同じ思想家
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同じ思想家
-- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 同じ思想家
 - [[mgmt-sensegiving|センスギビング（ジョイア＆チッティペディ）——リーダーが他者の意味形成に働きかけ、変革の望ましい解釈を組織に広めるコミュニケーション過程]] — 出典を共有
+- [[mgmt-sensemaking-weick|センスメイキングとイナクトメント（ワイク）——曖昧な出来事から手がかりを抽出し、行為によって環境を構成しながら事後的にもっともらしい意味を集合的に作り上げる組織化の過程]] — 出典を共有
 - [[infosoc-digital-divide-warschauer|デジタルデバイド（情報アクセス格差）]] — 出典を共有
 - [[mgmt-lmx-theory|LMX理論（リーダー・メンバー交換理論）]] — 出典を共有
+- [[mgmt-burke-litwin-causal-model-organizational-change|バーク＝リトウィン・モデル——外部環境から個人業績までを12要因の因果連鎖で結ぶ組織診断モデル]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -337,21 +337,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-resource-based-view',
-    discipline: 'management',
-    title: '資源ベース理論（Resource-Based View, RBV）とVRIO',
-    statement:
-      '持続的競争優位の源泉を業界構造（外部要因）ではなく企業内部に蓄積された経営資源・ケイパビリティの異質性に求める経営戦略論。バーガー・ワーナーフェルトの1984年論文「A Resource-Based View of the Firm」が起点とされ、エディス・ペンローズの1959年『企業成長の理論』が源流的影響を与えた。' +
-      'ジェイ・バーニーは1991年論文で体系化し、資源が価値(Value)・希少性(Rarity)・模倣困難性(Inimitability)・組織(Organization)の条件＝VRIOを満たすとき持続的競争優位がもたらされると論じた。当初の枠組みはVRIN（価値・希少・模倣困難・代替不可能）で、後に代替不可能性を模倣困難性に統合し組織(O)を加えてVRIOとなった。限界として、資源価値を成功から事後的に推論する循環論法的・静態的で反証困難との批判（Priem & Butler 2001 ほか）や急速な環境変化への対応の弱さが指摘される。',
-    keyFigures: 'ジェイ・B・バーニー（1991体系化・VRIO）／バーガー・ワーナーフェルト（1984起点）／エディス・ペンローズ（1959源流）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250050207', type: 'academic', label: 'Wernerfelt (1984) A Resource-Based View of the Firm, SMJ 5(2):171-180（原典）' },
-      { url: 'https://journals.sagepub.com/doi/10.1177/014920639101700108', type: 'academic', label: 'Barney (1991) Firm Resources and Sustained Competitive Advantage, J. of Management 17(1):99-120（原典）' },
-      { url: 'https://en.wikipedia.org/wiki/Resource-based_view', type: 'reference', label: 'Wikipedia — Resource-based view（VRIN→VRIOの経緯・限界）' },
-    ],
-  },
-  {
     id: 'human-confirmation-bias',
     discipline: 'human-science',
     title: '確証バイアス（confirmation bias）',
@@ -5282,18 +5267,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-dynamic-capabilities',
     discipline: 'management',
-    title: 'ダイナミック・ケイパビリティ',
+    title: 'ダイナミック・ケイパビリティ（ティース）——急速に変化する環境で内外のコンピタンスを統合・構築・再配置する企業の能力を、感知・捕捉・変容の三つの活動とその微視的基盤で捉える',
     statement:
-      'ダイナミック・ケイパビリティとは、急速に変化する環境に対応するため、企業が内外の能力・コンピタンスを統合・構築・再構成（integrate, build, reconfigure）する組織的・経営的な能力を指す。デイヴィッド・ティース、ゲイリー・ピサノ、エイミー・シューエンが1997年の論文「Dynamic Capabilities and Strategic Management」（Strategic Management Journal 18巻7号）で提示した。静的な資源・能力に着目する資源ベース理論（RBV＝バーニー）が、環境変化への対応＝資源・能力の更新を十分扱えない点を補い、競争優位の持続を動学的に説明する。' +
-      'ティースは後に、ダイナミック・ケイパビリティを3つの活動に整理した：(1)感知（sensing＝機会・脅威の察知）、(2)捕捉（seizing＝資源を動員し機会から価値を獲得）、(3)変容・再配置（transforming/reconfiguring＝組織・資源の継続的な刷新）。日常業務を効率的にこなす「通常のケイパビリティ（ordinary capabilities）」とは区別され、模倣・外注が難しく、投資と学習を通じて構築・維持される点に特徴がある。',
-    keyFigures:
-      'デイヴィッド・J・ティース（David J. Teece）／ゲイリー・ピサノ（Gary Pisano）／エイミー・シューエン（Amy Shuen）（1997, Strategic Management Journal 18(7):509-533）／3活動＝感知・捕捉・変容／資源ベース理論（RBV）の動学的拡張',
-    asOf: '2026-06',
+      'ダイナミック・ケイパビリティとは、急速に変化する環境に対処するために企業が内外のコンピタンスを統合・構築・再配置する能力で、デイヴィッド・ティース、ゲイリー・ピサノ、エイミー・シューエンが1997年の論文で定義し、組織プロセス・資産ポジション・経路依存性の三要素で企業間の差を説明した。価値があり稀少で模倣困難な資源を保有するだけでは技術と市場が変化する環境での優位を説明できないという資源ベース論への不満から生まれ、静的な資源観を動学化する。ティース（2007）は枠組みを三つの活動群に精緻化した。感知（sensing）は機会・脅威・顧客ニーズを識別し評価する走査活動で、研究開発投資や顧客・供給業者の監視に支えられる。捕捉（seizing）は認識した機会に資源を動員して価値を獲得することで、ビジネスモデルの設計、補完資産への投資、意思決定バイアスの抑制が中核となる。変容（transforming）は環境変化に応じて資産を再配置し組織を刷新することで、分権化やガバナンス、知識移転の設計が関わる。これらを支える固有の技能・プロセス・組織構造・意思決定ルールが微視的基盤であり、模倣困難な優位の源泉はこの層にあるとされ、日常業務を効率的にこなす通常のケイパビリティとは区別される。ティース（2009）は体系を著書にまとめ、企業家的な経営者機能を戦略論の中心に置き直した。批判として、通常能力との境界の曖昧さ、定義の同語反復性、測定と実証の難しさが根強く、後続研究は三活動の操作化と環境の変化速度に応じた有効性の条件づけを課題とする。中小企業には、強みの保有よりも変化を早く察知して資源を組み替える手順を持つことが優位の源泉であり、経営者自身の走査と判断の質がその大半を占めることが含意となる。',
+    keyFigures: 'デイヴィッド・J・ティース（1997 定義／2007 感知・捕捉・変容／2009 著書）／ゲイリー・ピサノ＆エイミー・シューエン（1997 共著）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/(SICI)1097-0266(199708)18:7%3C509::AID-SMJ882%3E3.0.CO;2-Z', type: 'academic', label: 'Teece, Pisano & Shuen (1997) “Dynamic Capabilities and Strategic Management”, Strategic Management Journal 18(7):509-533（Wiley Online Library・原典）' },
-      { url: 'https://open.ncl.ac.uk/theories/19/dynamic-capabilities-theory/', type: 'academic', label: 'Dynamic Capabilities Theory — TheoryHub, Newcastle University（sensing/seizing/transforming と ordinary capabilities の区別）' },
-      { url: 'https://en.wikipedia.org/wiki/Dynamic_capabilities', type: 'reference', label: 'Dynamic capabilities — Wikipedia（RBV/バーニーとの関係）' },
-      { url: 'https://www.strategy-business.com/article/00225', type: 'media', label: 'The Dynamic Capabilities of David Teece — strategy+business（ティース本人へのインタビュー）' },
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/(SICI)1097-0266(199708)18:7%3C509::AID-SMJ882%3E3.0.CO;2-Z', type: 'academic', label: 'Teece, D. J., Pisano, G. & Shuen, A. (1997) Dynamic Capabilities and Strategic Management — Strategic Management Journal 18(7)' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1002/smj.640', type: 'academic', label: 'Teece, D. J. (2007) Explicating Dynamic Capabilities: The Nature and Microfoundations of (Sustainable) Enterprise Performance — Strategic Management Journal 28(13)' },
+      { url: 'https://global.oup.com/academic/product/dynamic-capabilities-and-strategic-management-9780199545124', type: 'academic', label: 'Teece, D. J. (2009) Dynamic Capabilities and Strategic Management — Oxford University Press' },
+      { url: 'https://oxfordre.com/business/display/10.1093/acrefore/9780190224851.001.0001/acrefore-9780190224851-e-11', type: 'reference', label: 'Oxford Research Encyclopedia of Business and Management — Dynamic Capabilities' },
+      { url: 'https://en.wikipedia.org/wiki/Dynamic_capabilities', type: 'reference', label: 'Wikipedia: Dynamic capabilities — 資源ベース論との関係、感知・捕捉・変容' },
     ],
   },
   {
@@ -21547,16 +21531,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-managerial-cognition',
     discipline: 'management',
-    title: '経営者認知（ウォルシュ）——経営者は環境そのものではなく知識構造を通した解釈に反応し、その認知地図が注意・判断・競争行動を規定する',
+    title: '経営者認知（ウォルシュ／ダフト＝ワイク）——経営者は環境そのものではなく知識構造を通した解釈に反応し、その認知地図が注意・判断・競争行動を規定する',
     statement:
-      '経営者認知（managerial cognition）研究は、経営者が客観的な環境に直接反応するのではなく、認知スキーマや心的モデル（知識構造）を通じて環境を解釈し構築するという前提に立つ。ジェームズ・ウォルシュの1995年の体系的レビュー（Organization Science 6巻3号）は、知識構造が注意の配分・情報の符号化・貯蔵・検索という情報処理の各段階を規定すること、スキーマが認知資源を節約して迅速な判断を可能にする便益と、盲点や時代遅れの地図が変化の兆候を見落とさせる負債の両面を持つこと、分析水準が個人・集団・組織・産業へ入れ子状に広がることを整理して分野の見取り図を与えた。ポラック、トーマス、ベイデン＝フラー（1989）はスコットランドのニット業者の研究で、経営者が共有する「誰が競争相手か」の心的モデル（競合認知コミュニティ）が取引ネットワークと模倣を通じて再生産され、客観的な代替可能性ではなく認知された競争構造が競争行動を規定することを示し、フィオルとハフは因果マップなどの認知地図法を整備して経営者の注意と解釈を測定可能にした。ワイクのエナクトメント（環境は経営者が構成する）、上層部理論、ドミナント・ロジック、注意ベース理論と接続し、戦略転換を遅らせる認知慣性や競争上の盲点の研究、行動戦略論（behavioral strategy）の源泉となった。批判として、認知の測定が文書や発言の分析に頼り因果の識別が難しいこと、個人の認知を組織の行為に集約する機構の理論化が弱いことがある。中小企業には、経営者自身の「業界の地図」が競争相手と顧客の範囲を狭めていないかを、取引先や異業種の目で定期的に描き直すことが含意となる。',
-    keyFigures: 'ジェームズ・ウォルシュ（1995 レビュー）／ジョセフ・ポラック＆ハワード・トーマス＆チャールズ・ベイデン＝フラー（1989 競合認知コミュニティ）／マーリーン・フィオル＆アン・ハフ（1992 認知地図法）／カール・ワイク（エナクトメント）',
+      '経営者認知（managerial cognition）研究は、経営者が客観的な環境に直接反応するのではなく、認知スキーマや心的モデル（知識構造）を通じて環境を解釈し構築するという前提に立つ。リチャード・ダフトとカール・ワイク（1984）は組織を解釈システムとみなし、環境の分析可能性と組織の介入姿勢の組み合わせで走査と解釈の様式を四類型化して、環境は経営者の解釈と行為を通じて構成されるとした。ジェームズ・ウォルシュの1995年の体系的レビューは、知識構造が注意の配分と情報の符号化・貯蔵・検索を規定すること、スキーマが認知資源を節約して迅速な判断を可能にする便益と、盲点や時代遅れの地図が変化の兆候を見落とさせる負債の両面を持つことを整理して分野の見取り図を与えた。ポラック、トーマス、ベイデン＝フラー（1989）はスコットランドのニット業者で、経営者が共有する「誰が競争相手か」の心的モデル（競合認知コミュニティ）が取引ネットワークと模倣を通じて再生産され、認知された競争構造が競争行動を規定することを示し、フィオルとハフ（1992）は認知地図法を整備して経営者の注意と解釈を測定可能にした。上層部理論、ドミナント・ロジック、注意ベース理論と接続し、確証バイアスやコミットメントのエスカレーションなど認知の障壁、経営陣の認知的多様性が戦略的革新を促すという実証、戦略転換を遅らせる認知慣性の研究と行動戦略論の源泉となった。批判として、認知の測定が文書や発言の分析に頼り因果の識別が難しいこと、個人の認知を組織の行為に集約する機構の理論化が弱いことがある。中小企業には、経営者自身の「業界の地図」が競争相手と顧客の範囲を狭めていないかを、取引先や異業種の目で定期的に描き直すことが含意となる。',
+    keyFigures: 'ジェームズ・ウォルシュ（1995 レビュー）／リチャード・ダフト＆カール・ワイク（1984 解釈システムとしての組織）／ジョセフ・ポラック＆ハワード・トーマス＆チャールズ・ベイデン＝フラー（1989 競合認知コミュニティ）／マーリーン・フィオル＆アン・ハフ（1992 認知地図法）',
     asOf: '2026-09',
     sources: [
-      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.6.3.280', type: 'academic', label: 'Walsh, J. P. (1995) Managerial and Organizational Cognition: Notes from a Trip Down Memory Lane — Organization Science 6(3)（レビュー）' },
+      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.6.3.280', type: 'academic', label: 'Walsh, J. P. (1995) Managerial and Organizational Cognition: Notes from a Trip Down Memory Lane — Organization Science 6(3)' },
+      { url: 'https://doi.org/10.5465/amr.1984.4277608', type: 'academic', label: 'Daft, R. L. & Weick, K. E. (1984) Toward a Model of Organizations as Interpretation Systems — Academy of Management Review 9(2)' },
       { url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1467-6486.1989.tb00736.x', type: 'academic', label: 'Porac, J. F., Thomas, H. & Baden-Fuller, C. (1989) Competitive Groups as Cognitive Communities: The Case of Scottish Knitwear Manufacturers — Journal of Management Studies 26(4)' },
       { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-6486.1992.tb00664.x', type: 'reference', label: 'Fiol, C. M. & Huff, A. S. (1992) Maps for Managers: Where Are We? Where Do We Go from Here? — Journal of Management Studies 29(3)' },
-      { url: 'https://en.wikipedia.org/wiki/Managerial_cognition', type: 'reference', label: 'Wikipedia: Managerial cognition — 知識構造、認知地図、行動戦略論との関係' },
+      { url: 'https://en.wikipedia.org/wiki/Managerial_cognition', type: 'reference', label: 'Wikipedia: Managerial cognition — 知識構造、認知地図、エナクトメント、行動戦略論との関係' },
     ],
   },
   {
@@ -21660,15 +21645,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-institutional-work',
     discipline: 'management',
-    title: '制度的ワーク',
+    title: '制度的ワーク（ローレンス＝サダビー）——制度を創造・維持・破壊しようとする個人と組織の意図的な実践の総体として、埋め込まれた行為者性のパラドクスに応える',
     statement:
-      '制度的ワーク（Institutional Work）とは、制度を創造・維持・破壊することを目的とした個人や組織による意図的な実践の総体であり、Lawrence & Suddaby（2006）によって体系化された概念である。同型化圧力の下で行為者はどうやって自分を規定する制度を変えられるのかという「埋め込まれた行為者性のパラドクス」への応答であり、英雄的な制度的企業家像に偏った先行研究に対して、日常的・分散的で、しばしば失敗に終わる実践までを分析対象へ広げた点に特徴がある。創造のワーク（唱道、定義、権利付与、アイデンティティ構築、規範の連結替え、理論化、教育など）、見過ごされがちな維持のワーク（可能化、取締り、抑止、価値付けと悪魔化、神話化、ルーティンへの埋め込み）、破壊のワーク（制裁との切断、道徳的基盤との切り離し、前提の掘り崩し）という三大類型と多数の下位形態のカタログが研究の見取り図となった。Lawrence・Suddaby・Leca（2009）は実践理論（ブルデュー、ギデンズ）の系譜に位置づけて行為・意図・努力の概念を精錬し、以後、感情のワーク、物質性・人工物の役割、境界のワークとの接続へと展開している。専門職の管轄闘争、サステナビリティ移行、新興フィールドの形成などの実証で標準枠組みとなる一方、あらゆる行為がワークと呼ばれて概念が拡散する危険と、意図性の帰属の難しさが方法論的課題として議論されている。',
-    keyFigures: 'Thomas B. Lawrence ／ Roy Suddaby ／ Bernard Leca',
-    asOf: '2026-06',
+      '制度的ワーク（institutional work）とは、制度を創造・維持・破壊することを目的とした個人や組織の意図的な実践の総体で、トーマス・ローレンスとロイ・サダビーが2006年に体系化した。同型化圧力の下で行為者はどうやって自分を規定する制度を変えられるのかという「埋め込まれた行為者性のパラドクス」への応答であり、英雄的な制度的企業家像に偏った先行研究に対し、日常的・分散的で、しばしば失敗に終わる実践までを分析対象へ広げた。創造のワーク（唱道、定義、権利付与、アイデンティティ構築、規範の連結替え、理論化、教育）、見過ごされがちな維持のワーク（可能化、取締り、抑止、価値付けと悪魔化、神話化、ルーティンへの埋め込み）、破壊のワーク（制裁との切断、道徳的基盤との切り離し、前提の掘り崩し）という三類型と下位形態のカタログが研究の見取り図となった。ローレンス、サダビー、レカ（2009）は実践理論（ブルデュー、ギデンズ）の系譜に位置づけて行為・意図・努力の概念を精錬し、以後、感情のワーク、物質性・人工物の役割、境界のワークとの接続へ展開した。専門職の管轄闘争、CSR の制度化、サステナビリティ移行、新興市場での制度構築の実証で標準枠組みとなる一方、批判として、あらゆる行為がワークと呼ばれて概念が拡散する危険と、意図性の帰属の難しさが方法論的課題として議論される。中小企業には、業界の慣行や規制は与件ではなく、業界団体や取引先との日常的な働きかけで維持も変更もされるものであり、そこに小さな事業者の参加余地があることが含意となる。',
+    keyFigures: 'トーマス・B・ローレンス＆ロイ・サダビー（2006 提唱）／Bernard Leca（2009 共編『Institutional Work』）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.4135/9781848608030.n8', type: 'academic', label: 'Lawrence & Suddaby (2006) Institutions and Institutional Work — SAGE Handbook of Organization Studies' },
-      { url: 'https://doi.org/10.1017/CBO9780511596605', type: 'academic', label: 'Lawrence, Suddaby & Leca (2009) Institutional Work: Actors and Agency — Cambridge UP' },
-      { url: 'https://en.wikipedia.org/wiki/Institutional_theory', type: 'reference', label: 'Wikipedia — Institutional Theory' },
+      { url: 'https://doi.org/10.4135/9781848608030.n8', type: 'academic', label: 'Lawrence, T. B. & Suddaby, R. (2006) Institutions and Institutional Work — The SAGE Handbook of Organization Studies, 2nd ed.' },
+      { url: 'https://doi.org/10.1017/CBO9780511596605', type: 'academic', label: 'Lawrence, T. B., Suddaby, R. & Leca, B. (eds.) (2009) Institutional Work: Actors and Agency in Institutional Studies of Organizations — Cambridge University Press' },
+      { url: 'https://en.wikipedia.org/wiki/Institutional_work', type: 'reference', label: 'Wikipedia: Institutional work — 創造・維持・破壊の三類型と応用' },
     ],
   },
   {
@@ -22551,21 +22536,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-team-effectiveness-model',
-    discipline: 'management',
-    title: 'チーム有効性モデル',
-    statement: 'McGrath（1964）は、チームの有効性を投入（Input）・プロセス（Process）・産出（Output）の連鎖として捉えるIPOモデルを提唱し、チーム研究の基礎的枠組みを確立した。Hackman（1987）は、有効なチームの条件として「真のチームであること」「明確な方向性」「有能なメンバー構成」「支援的な組織文脈」「適切なコーチング」の五つを挙げ、チームデザインと組織支援の重要性を強調した。Ilgenら（2005）は、プロセス変数の動態的・反復的性質を重視し、仲介変数として「創発的状態（emergent states）」を導入したIMOIモデルを提案し、IPOモデルの静的な直線性を克服した。IMOIモデルはインプットとアウトカムが相互に影響し合うフィードバックループを明示することで、チームの学習・適応サイクルの説明を可能にした。これらの枠組みは、組織設計において自律型チームやクロスファンクショナルチームの編成・評価基準を検討する際の理論的根拠として広く援用されている。',
-    keyFigures: 'Joseph Edward McGrath ／ J. Richard Hackman ／ Daniel R. Ilgen ／ John R. Hollenbeck ／ Michael D. Johnson',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://psycnet.apa.org/record/1965-00452-000', type: 'academic', label: 'McGrath (1964) Social Psychology: A Brief Introduction — IPOモデル原典' },
-      { url: 'https://www.jstor.org/stable/256294', type: 'academic', label: 'Hackman (1987) The design of work teams — チーム有効性条件モデル' },
-      { url: 'https://doi.org/10.1146/annurev.psych.56.091103.070250', type: 'academic', label: 'Ilgen et al. (2005) Teams in Organizations: From I-P-O Models to IMOI Models' },
-      { url: 'https://doi.org/10.1111/j.1529-1006.2006.00030.x', type: 'academic', label: 'Kozlowski & Ilgen (2006) Enhancing the Effectiveness of Work Groups and Teams' },
-      { url: 'https://www.apa.org/pubs/books/4316012', type: 'reference', label: 'Hackman (2002) Leading Teams: Setting the Stage for Great Performances — APA' },
-    ],
-  },
-  {
     id: 'infosoc-information-ecology-theory',
     discipline: 'information-sociology',
     title: '情報生態学理論',
@@ -22659,20 +22629,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1017/CBO9781139167154', type: 'academic', label: 'Cooke (2000) "The Modern Law of Estoppel" — Cambridge University Press' },
       { url: 'https://www.unidroit.org/instruments/commercial-contracts/unidroit-principles-2016/', type: 'reference', label: 'UNIDROIT Principles of International Commercial Contracts 2016, Art. 1.8' },
       { url: 'https://www.jstor.org/stable/1228534', type: 'academic', label: 'Atiyah (1976) "When is an Enforceable Agreement Not a Contract?" — Law Quarterly Review' },
-    ],
-  },
-  {
-    id: 'mgmt-enacted-sensemaking-theory',
-    discipline: 'management',
-    title: '制定的センスメイキング理論',
-    statement: '制定的センスメイキング理論とは、Weick（1988）が提唱した組織理論の中心概念であり、行為者は客観的に存在する環境をただ解釈するのではなく、自らの行動によって環境そのものを「制定（enact）」し、その後にその意味を解釈するという逆説的プロセスを説明する。すなわち、行動が先行し、意味付けはその行動を通じて後から構築されるため、認知と行動は相互構成的な関係にある。危機状況においては、この制定プロセスが特に重大な影響を持ち、危機を理解しようとする行動が危機そのものを悪化させる可能性があることをWeickはBhopal事故分析で示した。また、Weick（1993）はMann Gulch山火事の分析において、役割構造とセンスメイキングの崩壊が組織的惨事を招くことを明らかにし、危機管理研究に大きな影響を与えた。本理論は、組織が不確実な環境に適応するプロセスや意思決定研究においても広く援用され、Maitlis & Christianson（2014）による総括的レビューを経て現代組織論の基盤的概念として確立されている。',
-    keyFigures: 'Karl E. Weick ／ Sally Maitlis ／ Marlys Christianson',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-6486.1988.tb00039.x', type: 'academic', label: 'Weick (1988) Enacted sensemaking in crisis situations — Journal of Management Studies 25(4): 305–317' },
-      { url: 'https://doi.org/10.2307/2393339', type: 'academic', label: 'Weick (1993) The collapse of sensemaking in organizations: The Mann Gulch disaster — ASQ 38(4): 628–652' },
-      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1467-6486.2010.00900.x', type: 'academic', label: 'Weick (2010) Reflections on enacted sensemaking in the Bhopal disaster — Journal of Management Studies 47(3): 537–550' },
-      { url: 'https://journals.aom.org/doi/10.5465/19416520.2014.873177', type: 'academic', label: 'Maitlis & Christianson (2014) Sensemaking in organizations: Taking stock and moving forward — Academy of Management Annals 8(1): 57–125' },
     ],
   },
   {
@@ -23632,29 +23588,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'mgmt-dynamic-capabilities-sensing-seizing',
-    discipline: 'management',
-    title: '動的ケイパビリティ：感知・捕捉・変容',
-    statement:
-      '動的ケイパビリティ論は、価値が高く稀少で模倣困難な資源を保有するだけでは技術と市場が急速に変化する環境での優位を説明できない、という資源ベース理論への不満から生まれた。' +
-      'Teece・Pisano・Shuenは1997年のStrategic Management Journal論文で、これを急速に変化する環境に対処するため内外のコンピタンスを統合・構築・再配置する企業の能力と定義し、組織プロセス・資産ポジション・経路依存性の三要素で企業間の差を説明した。' +
-      'Teeceは2007年の同誌論文でこの枠組みを三つのクラスターに精緻化する。' +
-      '第一の感知は、機会・脅威・顧客ニーズを識別し評価する走査活動であり、研究開発投資や顧客・供給業者・補完業者の動向を継続的に監視する仕組みに支えられる。' +
-      '第二の捕捉は、認識した機会に資源を動員して価値を獲得することであり、ビジネスモデルの設計、補完資産や共特化資産への投資判断、意思決定バイアスの抑制が中核となる。' +
-      '第三の変容は、成長と環境変化に応じて資産を再配置し組織を継続的に刷新することで、分権化やガバナンス、知識移転の設計が関わる。' +
-      'Teeceが微視的基盤と呼ぶのは、これら三つを支える固有のスキル、プロセス、手続、組織構造、意思決定ルール、規律であり、模倣困難な優位の源泉はこの層にあるとされる。' +
-      'Teeceは2009年の著書で体系をまとめ、企業家的な経営者機能を戦略論の中心に置き直した。' +
-      '他方、通常の業務遂行能力との境界の曖昧さ、定義の同語反復性、測定と実証の難しさへの批判も根強く、後続研究は感知・捕捉・変容それぞれの操作化と、環境の変化速度に応じた有効性の条件づけを課題としている。',
-    keyFigures: 'David J. Teece ／ Gary Pisano ／ Amy Shuen',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://onlinelibrary.wiley.com/doi/10.1002/smj.640', type: 'academic', label: 'Teece, "Explicating Dynamic Capabilities," Strategic Management Journal 28(13), 2007' },
-      { url: 'https://onlinelibrary.wiley.com/doi/10.1002/(SICI)1097-0266(199708)18:7%3C509::AID-SMJ882%3E3.0.CO;2-Z', type: 'academic', label: 'Teece, Pisano & Shuen, "Dynamic Capabilities and Strategic Management," SMJ 18(7), 1997' },
-      { url: 'https://oxfordre.com/business/display/10.1093/acrefore/9780190224851.001.0001/acrefore-9780190224851-e-11', type: 'reference', label: 'Oxford Research Encyclopedia — Dynamic Capabilities' },
-      { url: 'https://global.oup.com/academic/product/dynamic-capabilities-and-strategic-management-9780199545124', type: 'reference', label: 'Teece, Dynamic Capabilities and Strategic Management (OUP, 2009)' },
-    ],
-  },
-  {
     id: 'econ-endowment-effect-loss-aversion',
     discipline: 'economics',
     title: '保有効果と損失回避',
@@ -23714,30 +23647,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://psycnet.apa.org/doi/10.1037/0033-2909.116.2.220', type: 'academic', label: 'Pashler, "Dual-Task Interference in Simple Tasks," Psychological Bulletin 116(2), 1994' },
       { url: 'https://en.wikipedia.org/wiki/Cognitive_load', type: 'reference', label: 'Wikipedia — Cognitive load' },
       { url: 'https://archive.org/details/attentioneffort00kahn', type: 'reference', label: 'Kahneman, Attention and Effort (Prentice-Hall, 1973)' },
-    ],
-  },
-  {
-    id: 'mgmt-sensemaking-enactment-weick',
-    discipline: 'management',
-    title: 'センスメイキングとイナクトメント',
-    statement:
-      'ワイク（一九九五年）によれば組織的センスメイキングとは曖昧な状況について事後的に妥当な説明を構築する回顧的プロセスであり、イナクトメントを通じて組織は行動によって自らの環境を創出する。' +
-      '彼は同書でこの過程を七つの特性で整理した。' +
-      'すなわち、アイデンティティの構築に根ざすこと、回顧的であること、有意味な環境を自ら作り出すこと、社会的であること、進行中であること、抽出された手がかりに焦点を当てること、そして正確さよりももっともらしさに駆動されることである。' +
-      'イナクトメントの発想は一九七九年の組織化の社会心理学に遡る。組織は独立に存在する環境に適応するのではなく、行動によって環境の一部を切り出し制約を生み出し、それを事後に解釈する。' +
-      '組織化はこうしてイナクトメント、淘汰、保持という循環を通じて、経験の多義性を削減する過程として捉えられる。' +
-      '一九九三年の論考は、一九四九年のマンガルチ火災で十三人の消防降下隊員が死亡した事故を素材に、意味の崩壊と役割構造の崩壊が相互に増幅する様を描いた。' +
-      '隊員たちは翌朝十時までに鎮圧できる火災という枠組みに固執し、矛盾する情報を合理化し続けた結果、見えるものが意味をなさなくなった。' +
-      '隊長ドッジが自ら火を放ち焼け跡に伏せるという前例のない行動をとったとき、部下たちはその指示を解釈する枠組みを持たず、従わなかった。' +
-      'ワイク、サトクリフ、オブストフェルドは二〇〇五年の共著論文で、センスメイキングを人々が自らの行いを合理化するもっともらしいイメージの継続的で回顧的な展開と定義し、状況を言語化して行動への踏み台に変える過程だと述べている。' +
-      'メイティスとクリスチャンソンの二〇一四年の総説が研究の到達点を整理している。',
-    keyFigures: 'Karl E. Weick ／ Kathleen M. Sutcliffe ／ David Obstfeld',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.jstor.org/stable/258550', type: 'academic', label: 'Weick, Sensemaking in Organizations (Sage, 1995) — JSTOR review' },
-      { url: 'https://doi.org/10.1287/orsc.1050.0133', type: 'academic', label: 'Weick, K. E., Sutcliffe, K. M. & Obstfeld, D. (2005) Organizing and the Process of Sensemaking — Organization Science 16(4)' },
-      { url: 'https://doi.org/10.5465/19416520.2014.873177', type: 'academic', label: 'Maitlis & Christianson, "Sensemaking in Organizations: Taking Stock," Academy of Management Annals (2014)' },
-      { url: 'https://www.oxfordbibliographies.com/display/document/obo-9780199846740/obo-9780199846740-0090.xml', type: 'reference', label: 'Oxford Bibliographies — Sensemaking in Organizations' },
     ],
   },
   {
@@ -24193,23 +24102,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1002/job.4030130204', type: 'academic', label: 'Mael & Ashforth (1992) Alumni identification, JOB' },
       { url: 'https://en.wikipedia.org/wiki/Organizational_identification', type: 'reference', label: 'Wikipedia — Organizational identification' },
       { url: 'https://www.jstor.org/stable/256406', type: 'academic', label: 'Ashforth & Mael (1989) AMR — JSTOR' },
-    ],
-  },
-  {
-    id: 'mgmt-workplace-deviance-theory',
-    discipline: 'management',
-    title: '職場逸脱行動理論',
-    statement: 'RobinsonとBennettが1995年に提唱。組織の規範を意図的に違反し組織や成員の福祉を脅かす自発的行動を「職場逸脱行動」と定義し、対象と深刻さの2軸で4類型に分類した。組織行動管理の基盤理論となっている。' +
-      '4類型は、組織対象×軽微＝生産逸脱（怠業・早退）、組織対象×深刻＝財産逸脱（窃盗・破壊）、対人対象×軽微＝政治的逸脱（えこひいき・噂話）、対人対象×深刻＝人身攻撃（ハラスメント・暴言）で、多次元尺度法により従業員の知覚から帰納的に導かれた点に方法論的特徴がある。' +
-      'Bennett & Robinson (2000) は組織的逸脱と対人的逸脱の2因子測定尺度を開発し、以後の実証研究の標準になった。先行要因としては不公正感（特に相互作用的公正の欠如）・心理的契約違反・職務ストレス・監視の弱さが繰り返し確認され、逸脱は「壊れた個人」の問題ではなく組織条件への反応として生じるという含意が管理施策（公正な手続・上司の対人的取扱い）に接続する。' +
-      '隣接概念（反生産的職務行動 CWB・非礼 incivility・攻撃）との統合と区別、良い逸脱（建設的逸脱：規範を破る内部告発や革新）への拡張が近年の論点になっている。',
-    keyFigures: 'Sandra Robinson ／ Rebecca Bennett',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.2307/256693', type: 'academic', label: 'Robinson & Bennett 1995 AMJ typology paper' },
-      { url: 'https://doi.org/10.1037/0021-9010.85.3.349', type: 'academic', label: 'Bennett & Robinson 2000 deviance measure scale' },
-      { url: 'https://journals.sagepub.com/doi/10.1177/10564926241261927', type: 'academic', label: 'Robinson & Bennett 2024 revisionist history' },
-      { url: 'https://www.tandfonline.com/doi/abs/10.1080/08959285.2021.1948548', type: 'academic', label: '18-year review of workplace deviance research' },
     ],
   },
   {
@@ -25537,19 +25429,20 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-sensemaking-weick',
     discipline: 'management',
-    title: '意味構築（オーガニゼーショナル・センスメーキング）',
+    title: 'センスメイキングとイナクトメント（ワイク）——曖昧な出来事から手がかりを抽出し、行為によって環境を構成しながら事後的にもっともらしい意味を集合的に作り上げる組織化の過程',
     statement:
-      '意味構築（オーガニゼーショナル・センスメーキング）とは、組織成員が曖昧で多義的な出来事の流れから手がかりを抽出して言語化し、行為の足場となるもっともらしい状況理解を集合的に作り上げていく継続的プロセスを指す組織論の中核概念である。ミシガン大学のカール・E・ワイクが1995年の著書『Sensemaking in Organizations』（Sage社）で体系化し、(1)アイデンティティ構築に根ざす、(2)回顧的、(3)環境を自ら創出する（イナクトメント）、(4)社会的、(5)進行中、(6)抽出された手がかりに焦点化、(7)正確性よりもっともらしさ重視、という7特性を提示した。行為が先行し意味づけが事後的に構築されるとする点で、計画が実行に先立つという合理的意思決定モデルの前提を逆転させたところに理論的核心がある。ワイクは1993年のAdministrative Science Quarterly誌（38巻4号628-652頁）で、1949年にモンタナ州マン・ガルチ森林火災で隊員13名が死亡した事例を分析し、役割構造と意味構築の同時崩壊が組織的惨事を招くことを示した。Weick, Sutcliffe & Obstfeld（2005年、Organization Science誌16巻4号409-421頁）は本概念を「状況を言葉で明示的に把握し行為への跳躍台へと転換する」プロセスとして精緻化し、Maitlis & Christianson（2014年、Academy of Management Annals誌8巻1号57-125頁）の包括的レビューを経て組織変革・組織学習・危機管理研究の基盤概念となった。他方、Brown, Colville & Pye（2015年）が定義の多義化を指摘するなど批判的検討も続く。実務では、経営者が変革の意味を物語として語り従業員の解釈を導くセンスギビング、危機時の状況把握、新規事業の仮説検証など、不確実性下の意思決定と組織コミュニケーション設計の理論的支柱となっている。',
-    keyFigures: 'カール・E・ワイク（1995年 『Sensemaking in Organizations』でセンスメーキングの7特性を体系化）／キャスリーン・M・サトクリフ（2005年 Organization Science誌「Organizing and the Process of Sensemaking」を共著）／デイヴィッド・オブストフェルド（2005年 同論文で組織化と意味構築の統合モデルを提示）／サリー・メイトリス（2014年 Academy of Management Annals誌で分野の包括的レビューを主導）',
-    asOf: '2026-07',
+      'センスメイキング（意味構築）とは、組織成員が曖昧で多義的な出来事の流れから手がかりを抽出して言語化し、行為の足場となるもっともらしい状況理解を集合的に作り上げていく継続的過程で、カール・ワイクが1995年の『Sensemaking in Organizations』で体系化した。七つの特性——アイデンティティ構築に根ざす、回顧的、環境を自ら創出する（イナクトメント）、社会的、進行中、抽出された手がかりに焦点化、正確さよりもっともらしさ——を持ち、行為が先行し意味づけが事後に構築されるとする点で、計画が実行に先立つ合理的意思決定モデルの前提を逆転させる。イナクトメントは1979年の『組織化の社会心理学』に遡り、組織は所与の環境に適応するのではなく行為によって環境の一部を切り出し、生態学的変化・イナクトメント・淘汰・保持の循環で多義性を削減する。1988年の論文は危機を理解しようとする行為が危機を悪化させうることをボパール事故で示し、1993年のマン・ガルチ森林火災の分析は、役割構造と意味構築の同時崩壊が惨事を招く様を描いた。ワイク、サトクリフ、オブストフェルド（2005）は状況を言語化して行為への踏み台に変える過程として精緻化し、メイトリスとクリスチャンソン（2014）の総説を経て組織変革・組織学習・危機管理研究の基盤概念となった。批判として、ブラウンらが定義の多義化を指摘するほか、回顧的説明に流れやすく検証可能な予測を出しにくい。中小企業には、変化の意味を経営者が物語として語り解釈を導くこと、危機では「いつもの火災」という枠組みに固執せず矛盾する手がかりを拾う仕組みを持つことが含意となる。',
+    keyFigures: 'カール・E・ワイク（1979 組織化の社会心理学／1988 危機のイナクトメント／1993 マン・ガルチ／1995 『Sensemaking in Organizations』）／キャスリーン・M・サトクリフ＆デイヴィッド・オブストフェルド（2005 組織化と意味構築）／サリー・メイトリス＆マーリス・クリスチャンソン（2014 総説）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://us.sagepub.com/en-us/nam/sensemaking-in-organizations/book4988', type: 'academic', label: 'Weick, K.E. (1995). Sensemaking in Organizations. Sage Publications.' },
-      { url: 'https://pubsonline.informs.org/doi/10.1287/orsc.1050.0133', type: 'academic', label: 'Weick, K.E., Sutcliffe, K.M., & Obstfeld, D. (2005). Organizing and the Process of Sensemaking. Organization Science, 16(4).' },
-      { url: 'https://onlinelibrary.wiley.com/doi/book/10.1002/9781119206453', type: 'academic', label: 'Weick, K.E. (2009). Making Sense of the Organization, Volume 2. Wiley-Blackwell.' },
-      { url: 'https://journals.sagepub.com/doi/10.1177/0170840614559259', type: 'academic', label: 'Brown, A.D., Colville, I., & Pye, A. (2015). Making Sense of Sensemaking in Organization Studies. Organization Studies, 36(2).' },
-      { url: 'https://openlibrary.org/books/OL1276566M/Sensemaking_in_organizations', type: 'reference', label: 'Open Library — Sensemaking in Organizations' },
-      { url: 'https://doi.org/10.5465/19416520.2014.873177', type: 'academic', label: 'Maitlis, S. & Christianson, M. (2014). Sensemaking in Organizations: Taking Stock and Moving Forward. Academy of Management Annals, 8(1), 57-125.' },
-      { url: 'https://www.jstor.org/stable/2393339', type: 'academic', label: 'Weick, K.E. (1993). The Collapse of Sensemaking in Organizations: The Mann Gulch Disaster. Administrative Science Quarterly, 38(4), 628-652.' },
+      { url: 'https://us.sagepub.com/en-us/nam/sensemaking-in-organizations/book4988', type: 'academic', label: 'Weick, K. E. (1995) Sensemaking in Organizations — Sage' },
+      { url: 'https://doi.org/10.2307/2393339', type: 'academic', label: 'Weick, K. E. (1993) The Collapse of Sensemaking in Organizations: The Mann Gulch Disaster — Administrative Science Quarterly 38(4)' },
+      { url: 'https://doi.org/10.1287/orsc.1050.0133', type: 'academic', label: 'Weick, K. E., Sutcliffe, K. M. & Obstfeld, D. (2005) Organizing and the Process of Sensemaking — Organization Science 16(4)' },
+      { url: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-6486.1988.tb00039.x', type: 'academic', label: 'Weick, K. E. (1988) Enacted Sensemaking in Crisis Situations — Journal of Management Studies 25(4)' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1467-6486.2010.00900.x', type: 'academic', label: 'Weick, K. E. (2010) Reflections on Enacted Sensemaking in the Bhopal Disaster — Journal of Management Studies 47(3)' },
+      { url: 'https://doi.org/10.5465/19416520.2014.873177', type: 'academic', label: 'Maitlis, S. & Christianson, M. (2014) Sensemaking in Organizations: Taking Stock and Moving Forward — Academy of Management Annals 8(1)' },
+      { url: 'https://journals.sagepub.com/doi/10.1177/0170840614559259', type: 'academic', label: 'Brown, A. D., Colville, I. & Pye, A. (2015) Making Sense of Sensemaking in Organization Studies — Organization Studies 36(2)' },
+      { url: 'https://en.wikipedia.org/wiki/Sensemaking', type: 'reference', label: 'Wikipedia: Sensemaking — 回顧的な意味構築、七つの特性、イナクトメント' },
     ],
   },
   {
@@ -27367,17 +27260,19 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-team-effectiveness-hackman',
     discipline: 'management',
-    title: 'ハックマンのチーム有効性モデル（5つの促進条件）',
+    title: 'チーム有効性モデル（ハックマン）——IPO／IMOI 枠組みの上に、真のチーム・魅力的な方向性・イネーブリング構造・支援的文脈・専門的コーチングの五条件を置く',
     statement:
-      'J・リチャード・ハックマンが著書『Leading Teams: Setting the Stage for Great Performances』(2002)で体系化した、チームの有効性を左右する5つの促進条件（enabling conditions）のモデル。条件は(1)リアルチーム＝メンバーの境界が明確で構成が安定し課題に相互依存性がある、(2)コンペリング・ディレクション（明確な方向性）＝挑戦的で意義ある目的がメンバーを動機づけ戦略を方向づける、(3)イネーブリング・ストラクチャー（適切な構造）＝課題設計・チーム規模・スキル構成・行動規範が協働を支える、' +
-      '(4)サポーティブ・コンテクスト（支援的な組織環境）＝報酬・情報・教育訓練・資源が提供される、(5)エキスパート・コーチング＝開始時・中間点・終了時に適切なタイミングで介入し努力・戦略・知識を支援する。前3条件が「必須要件」、後2条件が「促進要件」とされる。ハックマンとワゲマンは2005年にコーチング機能の理論を精緻化した。本モデルはIPOパラダイムに根ざし、イルゲンらが2005年にIMOI（Input-Mediator-Output-Input）モデルへと発展させた。',
-    keyFigures: 'J・リチャード・ハックマン ／ ルース・ワゲマン ／ ダニエル・イルゲン',
-    asOf: '2026-06-25',
+      'チーム有効性（team effectiveness）研究は、ジョセフ・マクグラス（1964）の投入・プロセス・産出（IPO）モデルを基礎枠組みとし、J・リチャード・ハックマンが『Leading Teams』（2002）で体系化した五つの促進条件で実務に接続した。(1) 真のチームであること——境界が明確で構成が安定し課題に相互依存性がある、(2) 魅力的で明確な方向性——挑戦的で意義ある目的が動機づけと戦略を方向づける、(3) イネーブリング構造——課題設計・規模・技能構成・行動規範が協働を支える、(4) 支援的な組織文脈——報酬・情報・教育訓練・資源が提供される、(5) 専門的コーチング——開始時・中間点・終了時に努力・戦略・知識へ介入する。前三条件が必須要件、後二条件が促進要件とされ、ハックマンとルース・ワゲマン（2005）はコーチングをチームの努力・遂行戦略・知識と技能の三過程への時機を得た介入として理論化し、ワゲマンら（2008）は上級リーダーシップチームへ適用した。ダニエル・イルゲンら（2005）はプロセスを媒介変数へ広げ、共有メンタルモデルや集団効力感などの創発状態と、産出が次の投入へ戻るフィードバックを明示する IMOI モデルへ発展させ、コズロウスキーとイルゲン（2006）の総説が発達段階・認知過程・情動過程の多層的枠組みを整理した。批判として、条件が相関研究に基づき因果と介入効果の証拠が薄いこと、仮想・流動的なチームでは境界の明確さという前提が崩れることがある。中小企業には、チームの不調をメンバーの資質ではなく設計——誰がチームか、何のためか、判断をどこまで委ねるか——から見直し、コーチングは節目に集中させることが含意となる。',
+    keyFigures: 'J・リチャード・ハックマン（2002 五条件モデル）／ルース・ワゲマン（2005 チームコーチング理論／2008 上級リーダーシップチーム）／ジョセフ・E・マクグラス（1964 IPO モデル）／ダニエル・R・イルゲン（2005 IMOI モデル）／スティーブ・コズロウスキー（2006 総説）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://scholar.harvard.edu/rhackman/publications/leading-teams-setting-stage-great-performances', type: 'academic', label: 'Hackman, J. R. (2002) Leading Teams: Setting the Stage for Great Performances, Harvard Business School Press' },
-      { url: 'https://journals.aom.org/doi/10.5465/amr.2005.16387885', type: 'academic', label: 'Hackman, J. R. & Wageman, R. (2005) A Theory of Team Coaching, Academy of Management Review 30(2): 269-287' },
-      { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev.psych.56.091103.070250', type: 'academic', label: 'Ilgen, D. R. et al. (2005) Teams in Organizations: From IPO to IMOI Models, Annual Review of Psychology 56: 517-543' },
-      { url: 'https://en.wikipedia.org/wiki/Team_effectiveness', type: 'reference', label: 'Wikipedia — Team effectiveness' },
+      { url: 'https://scholar.harvard.edu/rhackman/publications/leading-teams-setting-stage-great-performances', type: 'academic', label: 'Hackman, J. R. (2002) Leading Teams: Setting the Stage for Great Performances — Harvard Business School Press' },
+      { url: 'https://journals.aom.org/doi/10.5465/amr.2005.16387885', type: 'academic', label: 'Hackman, J. R. & Wageman, R. (2005) A Theory of Team Coaching — Academy of Management Review 30(2)' },
+      { url: 'https://doi.org/10.1146/annurev.psych.56.091103.070250', type: 'academic', label: 'Ilgen, D. R., Hollenbeck, J. R., Johnson, M. & Jundt, D. (2005) Teams in Organizations: From Input-Process-Output Models to IMOI Models — Annual Review of Psychology 56' },
+      { url: 'https://doi.org/10.1111/j.1529-1006.2006.00030.x', type: 'academic', label: 'Kozlowski, S. W. J. & Ilgen, D. R. (2006) Enhancing the Effectiveness of Work Groups and Teams — Psychological Science in the Public Interest 7(3)' },
+      { url: 'https://psycnet.apa.org/record/1965-00452-000', type: 'academic', label: 'McGrath, J. E. (1964) Social Psychology: A Brief Introduction — Holt, Rinehart & Winston（IPO モデルの原典）' },
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=34413', type: 'academic', label: 'Wageman, R., Nunes, D. A., Burruss, J. A. & Hackman, J. R. (2008) Senior Leadership Teams — Harvard Business School Press' },
+      { url: 'https://en.wikipedia.org/wiki/Team_effectiveness', type: 'reference', label: 'Wikipedia: Team effectiveness — IPO／IMOI、ハックマンの五条件' },
     ],
   },
   {
@@ -28999,20 +28894,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.4324/9780203584552', type: 'academic', label: 'Braidotti, R. (2013) The Posthuman — Polity Press（批判的ポストヒューマニズムの体系書）' },
       { url: 'https://doi.org/10.2307/4140875', type: 'academic', label: 'Bostrom, N. (2003) Human Genetic Enhancements: A Transhumanist Perspective — Journal of Value Inquiry, 37(4), 493–506（トランスヒューマニズムの代表論文）' },
       { url: 'https://en.wikipedia.org/wiki/Posthumanism', type: 'reference', label: 'Wikipedia: Posthumanism — Hayles, Braidotti, transhumanism, AI governance, cyborg theory' },
-    ],
-  },
-  {
-    id: 'mgmt-managerial-cognition-daft',
-    discipline: 'management',
-    title: '経営者認知とエナクトメント（ダフト＆ウィック）',
-    statement: '経営者認知（managerial cognition）は、ウォルシュ（1995）の文献レビューが整理したように、意思決定者が組織環境の因果関係・機会・脅威を理解する認知的枠組み（cognitive framework / schema）の研究領域であり、信念、信念体系、認知マップ、ドミナント・ロジックなど多様な呼称で研究されている。ダフト＆ウィック（1984）は「エナクトメント（enactment）」概念を導入し、組織環境は客観的に存在するのでなくマネジャーの解釈・行動を通じて「作られる（enacted）」と論じた。これはワイクの組織化（organizing）理論の応用であり、「センス・メイキング（sensemaking）」——過去の行動を意味付けで事後的に合理化するプロセス——と密接に関わる。認知バイアス——確証バイアス・近視眼・過去コミットメントへのエスカレーション——は経営者認知の障壁として研究され、認知的多様性（TMTメンバーの異なる経験・信念体系）が戦略的イノベーションを促すという実証が積み重なっている。',
-    keyFigures: 'リチャード・ダフト ／ カール・ワイク ／ ジェームズ・ウォルシュ ／ C・K・プラハラード',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.5465/amr.1984.4277608', type: 'academic', label: 'Daft, R. L. & Weick, K. E. (1984) Toward a Model of Organizations as Interpretation Systems — Academy of Management Review, 9(2), 284–295（エナクトメントと解釈システムの原典）' },
-      { url: 'https://doi.org/10.1287/orsc.6.3.280', type: 'academic', label: 'Walsh, J. P. (1995) Managerial and Organizational Cognition: Notes from a Trip Down Memory Lane — Organization Science, 6(3), 280–321（文献レビュー）' },
-      { url: 'https://doi.org/10.2307/259373', type: 'academic', label: 'Prahalad, C. K. & Bettis, R. A. (1986) The Dominant Logic: A New Linkage Between Diversity and Performance — Strategic Management Journal, 7(6), 485–501（ドミナント・ロジック）' },
-      { url: 'https://en.wikipedia.org/wiki/Managerial_cognition', type: 'reference', label: 'Wikipedia: Managerial cognition — schemas, enactment, sensemaking, cognitive biases, TMT diversity' },
     ],
   },
   {
@@ -34087,14 +33968,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-vrio-framework-barney',
     discipline: 'management',
-    title: 'VRIO フレームワーク（バーニー）——価値・希少性・模倣困難性・組織の四条件を満たす経営資源だけが持続的競争優位をもたらし、欠けるほど同等性や一時的優位にとどまる',
+    title: '資源ベース理論と VRIO フレームワーク（バーニー）——競争優位の源泉を企業内部の資源に求め、価値・希少性・模倣困難性・組織の四条件を満たす資源だけが持続的優位をもたらすとする',
     statement:
-      'VRIO フレームワークは、ジェイ・バーニーが1991年の論文の資源ベース論を基に体系化した、企業内部の経営資源や能力が持続的競争優位の源泉となるかを分析する枠組みである。資源ベース論は競争優位の源泉を、マイケル・ポーターらの業界構造ではなく、エディス・ペンローズやバーガー・ワーナーフェルトを継承して企業内部の独自の資源と能力に求める。四つの問い——価値（機会を活用し脅威を無力化するか）、希少性（競争相手のごく少数しか保有しないか）、模倣困難性（獲得・開発に大きな費用がかかるか）、組織（方針・報酬制度・構造が資源の価値を引き出せるか）——から成る。模倣を阻むのは企業独自の歴史的経緯（経路依存性）、因果の曖昧性、社会的複雑性で、リチャード・ルメルトはこれらを隔離メカニズムと呼んだ。価値はあるが希少でない資源は競合と同等の利益にとどまる競争同等性（パリティ）を、価値があり希少だが模倣容易な資源は一時的な優位を、四条件をすべて満たす資源だけが持続的な優位をもたらし、マーガレット・ピーターラフ（1993）は異質性・事後的な競争制限・不完全な移動性・事前の競争制限の四つの礎石として整理した。動的競争の研究は、競合の模倣や代替の開発で優位が同等性へ収束する過程を扱う。批判として、資源の「価値」が市場環境で決まるため定義が循環すること、事後的な説明に流れやすいこと、資源の測定と検証が難しいことがある。中小企業には、「うちの強み」を四つの問いで点検すると多くは同等性か一時的優位にすぎないと分かること、模倣困難性は特許より人間関係や歴史に宿ること、組織の仕組みが伴わなければ強みは収益にならないことが含意となる。',
-    keyFigures: 'ジェイ・バーニー（1991 提唱）／マーガレット・ピーターラフ（1993 競争優位の礎石）／リチャード・ルメルト（隔離メカニズム）／エディス・ペンローズ＆バーガー・ワーナーフェルト（資源ベース論の源流）',
+      '資源ベース理論（RBV）は持続的競争優位の源泉を業界構造ではなく企業内部の資源と能力の異質性に求める戦略論で、VRIO はジェイ・バーニーが1991年の論文で体系化した、資源がその源泉となるかを分析する枠組みである。バーガー・ワーナーフェルト（1984）が起点、エディス・ペンローズ（1959）の企業成長論が源流で、当初の VRIN（価値・希少・模倣困難・代替不可能）は代替不可能性を模倣困難性に統合し組織を加えて VRIO となった。四つの問い——価値（機会を活用し脅威を無力化するか）、希少性（競争相手のごく少数しか保有しないか）、模倣困難性（獲得・開発に大きな費用がかかるか）、組織（方針・報酬制度・構造が資源の価値を引き出せるか）——から成る。模倣を阻む経路依存性・因果の曖昧性・社会的複雑性をリチャード・ルメルトは隔離メカニズムと呼んだ。価値はあるが希少でない資源は競合と同等の利益にとどまる競争同等性（パリティ）を、価値があり希少だが模倣容易な資源は一時的な優位を、四条件をすべて満たす資源だけが持続的な優位をもたらし、マーガレット・ピーターラフ（1993）は異質性・事後的な競争制限・不完全な移動性・事前の競争制限の四つの礎石として整理した。競合の模倣や代替で優位は同等性へ収束しうる。批判として、プリームとバトラー（2001）が指摘したように資源の「価値」が市場環境で決まるため定義が循環すること、事後的な説明に流れやすいこと、資源の測定と検証が難しいことがある。中小企業には、「うちの強み」を四つの問いで点検すると多くは同等性か一時的優位にすぎないと分かること、模倣困難性は特許より人間関係や歴史に宿ること、組織の仕組みが伴わなければ強みは収益にならないことが含意となる。',
+    keyFigures: 'ジェイ・B・バーニー（1991 提唱・VRIO）／バーガー・ワーナーフェルト（1984 起点）／エディス・ペンローズ（1959 源流）／マーガレット・ペテラフ（1993 競争優位の礎石）／リチャード・ルメルト（隔離メカニズム）／対比: プリーム＆バトラー（2001 トートロジー批判）',
     asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1177/014920639101700108', type: 'academic', label: 'Barney, J. B. (1991) Firm Resources and Sustained Competitive Advantage — Journal of Management 17(1)（原典）' },
+      { url: 'https://doi.org/10.1177/014920639101700108', type: 'academic', label: 'Barney, J. B. (1991) Firm Resources and Sustained Competitive Advantage — Journal of Management 17(1)' },
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250050207', type: 'academic', label: 'Wernerfelt, B. (1984) A Resource-Based View of the Firm — Strategic Management Journal 5(2)' },
       { url: 'https://doi.org/10.1002/smj.4250140303', type: 'academic', label: 'Peteraf, M. A. (1993) The Cornerstones of Competitive Advantage: A Resource-Based View — Strategic Management Journal 14(3)' },
+      { url: 'https://en.wikipedia.org/wiki/Resource-based_view', type: 'reference', label: 'Wikipedia: Resource-based view — VRIN から VRIO への経緯、限界' },
       { url: 'https://en.wikipedia.org/wiki/VRIO', type: 'reference', label: 'Wikipedia: VRIO — Barney、価値・希少性・模倣困難性・組織' },
       { url: 'https://en.wikipedia.org/wiki/Competitive_advantage', type: 'reference', label: 'Wikipedia: Competitive advantage — 資源ベース論、競争同等性と優位' },
     ],
@@ -37864,14 +37747,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-workplace-deviance-robinson',
     discipline: 'management',
-    title: '職場逸脱行動——組織規範に反する自発的行為の分類と規定要因',
-    statement: 'サンドラ・ロビンソンとレベッカ・ベネットが1995年に体系化した職場逸脱行動（workplace deviance）は、組織の重要な規範に違反し、組織またはそのメンバーの福利を脅かす自発的な行動として定義される。彼女らは逸脱行動を対象（組織向け vs 個人向け）と深刻度（軽微 vs 重大）の二次元で分類する類型論を提唱した。「生産逸脱」（軽微・組織向け）には遅刻・怠業・意図的な低品質業務が、「財産逸脱」（重大・組織向け）には窃盗・横領・器物損壊が、「政治的逸脱」（軽微・個人向け）にはゴシップ・えこひいき・責任転嫁が、「個人攻撃」（重大・個人向け）にはハラスメント・暴力・いじめが含まれる。規定要因として組織的公正認知（特に手続的公正と相互作用的公正の欠如）、心理的契約違反、低い職務満足、否定的感情傾向が実証されている。ロビンソンとベネットはさらに逸脱行動の測定尺度を開発し、この研究領域の実証的基盤を確立した。',
-    keyFigures: 'サンドラ・ロビンソン ／ レベッカ・ベネット ／ ジェラルド・グリーンバーグ ／ ポール・スペクター',
-    asOf: '2026-06-26',
+    title: '職場逸脱行動（ロビンソン＝ベネット）——組織の規範に反し組織や成員の福利を脅かす自発的行為を対象と深刻度の二軸で四類型に分け、不公正や契約違反への反応として捉える',
+    statement:
+      '職場逸脱行動（workplace deviance）とは、組織の重要な規範に違反し、組織またはそのメンバーの福利を脅かす自発的な行動で、サンドラ・ロビンソンとレベッカ・ベネットが1995年に体系化した。二人は従業員の知覚を多次元尺度法で分析し、対象（組織向け／個人向け）と深刻度（軽微／重大）の二軸から帰納的に四類型を導いた。生産逸脱（軽微・組織向け）には遅刻・怠業・意図的な低品質業務、財産逸脱（重大・組織向け）には窃盗・横領・器物損壊、政治的逸脱（軽微・個人向け）にはゴシップ・えこひいき・責任転嫁、個人攻撃（重大・個人向け）にはハラスメント・暴力・いじめが含まれる。ベネットとロビンソン（2000）は組織的逸脱と対人的逸脱の二因子測定尺度を開発し、以後の実証研究の標準となった。先行要因としては組織的公正の欠如（特に手続的公正と相互作用的公正）、心理的契約違反、低い職務満足、否定的感情傾向、職務ストレス、監視の弱さが繰り返し確認され、逸脱は「壊れた個人」の問題ではなく組織条件への反応として生じるという含意が、公正な手続や上司の対人的取り扱いといった管理施策に接続する。反生産的職務行動（CWB）・非礼（incivility）・攻撃との統合と区別、規範を破る内部告発や革新を含む建設的逸脱への拡張が近年の論点である。批判として、自己報告に依存して実際の行動より知覚を測っていること、四類型の境界が文化や職種で揺れることがある。中小企業には、小さな不正や怠業を個人の資質で片付けず、評価の手続と上司の接し方という自社側の条件をまず点検することが含意となる。',
+    keyFigures: 'サンドラ・L・ロビンソン＆レベッカ・J・ベネット（1995 類型論／2000 測定尺度）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.2307/256989', type: 'academic', label: 'Robinson, S.L. & Bennett, R.J. (1995) A Typology of Deviant Workplace Behaviors — Academy of Management Journal 38(2)' },
-      { url: 'https://en.wikipedia.org/wiki/Workplace_deviance', type: 'reference', label: 'Wikipedia: Workplace Deviance — Robinson & Bennett taxonomy of deviant behavior' },
-      { url: 'https://doi.org/10.1037/0021-9010.85.3.349', type: 'academic', label: 'Bennett, R.J. & Robinson, S.L. (2000) Development of a Measure of Workplace Deviance — JAP 85(3)' },
+      { url: 'https://doi.org/10.2307/256989', type: 'academic', label: 'Robinson, S. L. & Bennett, R. J. (1995) A Typology of Deviant Workplace Behaviors: A Multidimensional Scaling Study — Academy of Management Journal 38(2)' },
+      { url: 'https://doi.org/10.1037/0021-9010.85.3.349', type: 'academic', label: 'Bennett, R. J. & Robinson, S. L. (2000) Development of a Measure of Workplace Deviance — Journal of Applied Psychology 85(3)' },
+      { url: 'https://en.wikipedia.org/wiki/Workplace_deviance', type: 'reference', label: 'Wikipedia: Workplace deviance — ロビンソン＝ベネットの四類型' },
     ],
   },
   {
@@ -38334,19 +38218,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.2307/1881974', type: 'academic', label: 'Horst (1971) The Theory of the Multinational Firm: Optimal Behavior under Different Tariff and Tax Rate Structures — Journal of Political Economy' },
       { url: 'https://doi.org/10.1257/aer.87.4.520', type: 'academic', label: 'Brainard (1997) An Empirical Assessment of the Proximity-Concentration Trade-Off Between Multinational Sales and Trade — American Economic Review' },
       { url: 'https://en.wikipedia.org/wiki/Tariff-jumping_hypothesis', type: 'reference', label: 'Wikipedia: Tariff-jumping hypothesis — 関税回避型FDIの理論と実証の概説' },
-    ],
-  },
-  {
-    id: 'mgmt-institutional-work-lawrence',
-    discipline: 'management',
-    title: '制度的ワーク論——アクターによる制度の創造・維持・破壊の実践',
-    statement: '制度的ワーク（Institutional Work）論は、ローレンスとサダビーが2006年に提唱した理論的枠組みであり、組織フィールドにおいてアクター（個人、組織、集団）が制度を意図的に創造（creating）、維持（maintaining）、破壊（disrupting）するために行う目的的な行動を分析する。従来の新制度論が制度の同型化圧力と構造的決定論を強調したのに対し、制度的ワーク論はアクターのエージェンシー（能動的行為主体性）を前面に据え、制度変化の微視的メカニズムを解明する。ローレンスらは制度的ワークを9つの類型に分類し、創造のワーク（唱導、理論化、教育等）、維持のワーク（規範の強化、日常的再生産等）、破壊のワーク（既存規範の切り崩し、正統性の否定等）のそれぞれについて具体的な実践を特定した。この枠組みはCSR実践の制度化、専門職の境界変動、新興市場における制度構築等の分析に広く応用されている。',
-    keyFigures: 'トーマス・ローレンス ／ ロイ・サダビー ／ バーナード・ラモ ／ シンシア・ハーディ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.5465/amr.2006.19379628', type: 'academic', label: 'Lawrence & Suddaby (2006) Institutions and Institutional Work — in Handbook of Organization Studies (2nd ed.)' },
-      { url: 'https://doi.org/10.1017/CBO9780511596605', type: 'academic', label: 'Lawrence, Suddaby & Leca (2009) Institutional Work: Actors and Agency in Institutional Studies of Organizations — Cambridge University Press' },
-      { url: 'https://en.wikipedia.org/wiki/Institutional_work', type: 'reference', label: 'Wikipedia: Institutional work — 制度的ワーク論の理論と応用の概説' },
     ],
   },
   {
@@ -38996,19 +38867,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.2307/2228226', type: 'academic', label: 'Swan, T. W. (1963) Longer-Run Problems of the Balance of Payments — Economic Record' },
       { url: 'https://direct.mit.edu/books/book/2465/Too-SensationalOn-the-Choice-of-Exchange-Rate', type: 'academic', label: 'Corden, W. M. (2002) Too Sensational: On the Choice of Exchange Rate Regimes — MIT Press' },
       { url: 'https://en.wikipedia.org/wiki/Swan_diagram', type: 'reference', label: 'Wikipedia: Swan diagram — internal-external balance policy framework overview' },
-    ],
-  },
-  {
-    id: 'mgmt-enacted-sensemaking-weick',
-    discipline: 'management',
-    title: 'イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出',
-    statement: 'イナクトメント（enactment）は、カール・ワイクが1979年の著書で体系化した組織論の中核概念であり、組織メンバーが環境を受動的に認知するのではなく、自らの行為を通じて環境を能動的に構成するプロセスを指す。ワイクのセンスメイキング理論においてイナクトメントは、生態学的変化（ecological change）→イナクトメント→選択（selection）→保持（retention）という組織化プロセスの第二段階に位置する。組織メンバーは行為することで環境に変化を生じさせ、その変化を遡及的に解釈することで意味を創出する。この「行為が認知に先行する」という逆転は、計画的・分析的な意思決定モデルに対する根本的な代替を提示する。ワイクはマン・ガルチの森林火災事件やテネリフェ空港衝突事故の分析を通じて、危機状況においてセンスメイキングの崩壊が組織の壊滅的失敗をもたらすことを実証的に示した。',
-    keyFigures: 'カール・ワイク ／ キャスリーン・サトクリフ ／ デニス・ジョイア ／ サリー・メイトリス',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/2392295', type: 'academic', label: 'Weick, K. E. (1979) The Social Psychology of Organizing — 2nd ed., Random House' },
-      { url: 'https://doi.org/10.2307/2393339', type: 'academic', label: 'Weick, K. E. (1993) The Collapse of Sensemaking in Organizations: The Mann Gulch Disaster — Administrative Science Quarterly' },
-      { url: 'https://en.wikipedia.org/wiki/Sensemaking', type: 'reference', label: 'Wikipedia: Sensemaking — retrospective meaning construction in organizations overview' },
     ],
   },
   {
@@ -40465,19 +40323,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.2307/2977633', type: 'academic', label: 'Vickrey (1961) Counterspeculation, Auctions, and Competitive Sealed Tenders — Journal of Finance' },
       { url: 'https://doi.org/10.2307/1911865', type: 'academic', label: 'Milgrom & Weber (1982) A Theory of Auctions and Competitive Bidding — Econometrica' },
       { url: 'https://en.wikipedia.org/wiki/Auction_theory', type: 'reference', label: 'Wikipedia: Auction theory — オークション理論の主要結果とメカニズム設計の概説' },
-    ],
-  },
-  {
-    id: 'mgmt-team-effectiveness-hackman-wageman',
-    discipline: 'management',
-    title: 'チーム有効性理論——ハックマンの条件モデルとチームコーチング',
-    statement: 'チーム有効性（Team Effectiveness）理論は、作業チームが高い成果を達成するための条件と促進要因を解明する組織行動論の中核領域である。ハックマン（2002）は「チームが効果的に機能するための5条件モデル」を提示し、（1）真のチームであること（明確な境界・相互依存性・安定した成員）、（2）魅力的な方向性、（3）イネーブリング構造（適切な規模・多様性・規範）、（4）支援的な組織的コンテクスト（報酬・情報・教育・物的資源）、（5）利用可能な専門的コーチングの5要因を特定した。ワゲマン、ハックマンら（2008）はリーダーシップの役割をチーム・コーチング機能として再概念化し、タスクの努力・パフォーマンス戦略・知識とスキルの3つのプロセスへの介入として体系化した。コズロウスキーとイルゲン（2006）の包括的レビューは、チームの発達段階、認知的プロセス（共有メンタルモデル・トランザクティブメモリー）、情動的プロセス（チーム信頼・集団効力感）の多層的分析枠組みを整理した。',
-    keyFigures: 'J・リチャード・ハックマン ／ ルス・ワゲマン ／ スティーブ・コズロウスキー ／ ダニエル・イルゲン ／ エドゥアルド・サラス',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1111/j.1529-1006.2006.00030.x', type: 'academic', label: 'Kozlowski & Ilgen (2006) Enhancing the Effectiveness of Work Groups and Teams — Psychological Science in the Public Interest' },
-      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=34413', type: 'academic', label: 'Wageman, R., Nunes, D. A., Burruss, J. A. & Hackman, J. R. (2008) Senior Leadership Teams: What It Takes to Make Them Great — Harvard Business Review Press' },
-      { url: 'https://en.wikipedia.org/wiki/Team_effectiveness', type: 'reference', label: 'Wikipedia: Team effectiveness — チーム有効性モデルの概説' },
     ],
   },
   {

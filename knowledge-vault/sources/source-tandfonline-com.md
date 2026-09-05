@@ -2,7 +2,7 @@
 title: "tandfonline.com"
 type: source-domain
 host: "tandfonline.com"
-cite_count: 50
+cite_count: 49
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # tandfonline.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **50 件**（学術 50）
+> [!info] 出典ドメイン索引 ・ 引用 **49 件**（学術 49）
 
 ## このドメインを出典とする項目
 
@@ -63,7 +63,6 @@ tags:
 - [[mgmt-supply-chain-resilience|サプライチェーン強靭化（supply chain resilience）]] — InternationalJournalofLogistics,Christopher&Peck(2004)"BuildingtheRes…
 - [[mgmt-taguchi-methods|品質工学（タグチメソッド／田口メソッド）——品質を目標値からのずれによる社会的損失の最小化として捉え、ロバスト設計で上流から品質を作り込む]] — Kackar,R.N.(1985)."Off-LineQualityControl,ParameterDesign,andtheTaguc…
 - [[mgmt-value-co-creation|価値共創]] — Taylor&Francis査読論文:co-creation(DART)の4要素Dialogue/Access/Risk-assessme…
-- [[mgmt-workplace-deviance-theory|職場逸脱行動理論]] — 18-yearreviewofworkplacedevianceresearch
 
 ## 関連
 - 索引: [[出典ドメイン索引]]
