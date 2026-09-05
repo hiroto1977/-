@@ -107,6 +107,18 @@ const { ACTIONS, fetchEmotionsSnapshot } = await import('../emotions');
 
 const STORE_FILE = 'service-hub-emotions.json';
 const storeFile = (): string => path.join(tmpDir, STORE_FILE);
+/** 保存要素の形は両ビルドで検査される (`shared/emotionsShape.ts`) ので、詰め物も本物の形で作る。 */
+function analysisFixture(id: string) {
+  return {
+    id,
+    timestamp: 1_700_000_000_000,
+    excerpt: 'x',
+    scores: { joy: 0, sadness: 0, anger: 0, fear: 0, surprise: 0, disgust: 0 },
+    sentiment: 'neutral' as const,
+    dominant: 'joy',
+  };
+}
+
 const readStored = async (): Promise<{ moods: unknown[]; analyses: unknown[] }> =>
   JSON.parse(await fs.readFile(storeFile(), 'utf8'));
 const seed = async (store: unknown): Promise<void> => {
@@ -304,7 +316,7 @@ describe('fetchEmotionsSnapshot', () => {
       score: 3,
       note: `m${i}`,
     }));
-    const analyses = Array.from({ length: 15 }, (_, i) => ({ id: `a${i}` }));
+    const analyses = Array.from({ length: 15 }, (_, i) => analysisFixture(`a${i}`));
     await seed({ moods, analyses });
 
     const snap = await fetchEmotionsSnapshot({ token: '' });
@@ -639,7 +651,7 @@ describe('ACTIONS["analyze-text"] — 送り先と中身', () => {
   });
 
   it('50 件を超えたら古い解析から捨てる', async () => {
-    const analyses = Array.from({ length: 50 }, (_, i) => ({ id: `old${i}` }));
+    const analyses = Array.from({ length: 50 }, (_, i) => analysisFixture(`old${i}`));
     await seed({ moods: [], analyses });
 
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(anthropicOk(okBody));
@@ -664,7 +676,7 @@ describe('ACTIONS["clear-history"] — 何が消えて何が残るか', () => {
     tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'emotions-clear-'));
     await seed({
       moods: [{ date: '2026-05-01', score: 3, note: 'm' }],
-      analyses: [{ id: 'a1' }, { id: 'a2' }],
+      analyses: [analysisFixture('a1'), analysisFixture('a2')],
     });
   });
   afterEach(async () => {
@@ -898,5 +910,47 @@ describe('解析の指示文 —— 読み直して問う', () => {
     expect(body.system).toContain('valid JSON');
     expect(body.system).toContain('"sentiment"');
     expect(body.system.length).toBeGreaterThan(100);
+  });
+});
+
+/*
+ * 要素の形はブラウザ版と同じ規則で確かめる (`shared/emotionsShape.ts`)。2026-09-05 まで
+ * `as Partial<EmotionsStore>` で要素を信じていて、null が 1 つ混じると `m.date` で落ちた。
+ * 方針もブラウザ版と同じ: 読み出しは残りを返し、書き込みは断り (上書きで消えるため)、「履歴を消去」は通す。
+ */
+describe('保存要素の形 (ブラウザ版と同じ規則)', () => {
+  const GOOD = { date: '2026-01-01', score: 4, note: '大事なメモ' };
+
+  it('★ 形の違う要素が混じった保存先: 読み出しは残りを返す', async () => {
+    await seed({ moods: [GOOD, null, { date: 5 }, { date: '2026-01-02', score: '3', note: '' }], analyses: [analysisFixture('a1'), 'junk'] });
+    const snap = await fetchEmotionsSnapshot({ token: '' });
+    expect(snap.moods).toEqual([GOOD]);
+    expect(snap.analyses.map((a) => a.id)).toEqual(['a1']);
+  });
+
+  it('★ そのとき log-mood は断り、保存先は書き換えない', async () => {
+    await seed({ moods: [GOOD, null], analyses: [] });
+    const before = await readStored();
+    await expect(ACTIONS['log-mood']!({ token: '', payload: { date: '2026-02-02', score: 3, note: 'new' } })).rejects.toThrow(/記録を中止/);
+    expect(await readStored()).toEqual(before);
+  });
+
+  it('★ 欄が在るのに配列でない (moods: "x") も同じ扱い', async () => {
+    await seed({ moods: 'x', analyses: [] });
+    expect((await fetchEmotionsSnapshot({ token: '' })).moods).toEqual([]);
+    await expect(ACTIONS['log-mood']!({ token: '', payload: { date: '2026-02-02', score: 3, note: 'new' } })).rejects.toThrow(/記録を中止/);
+  });
+
+  it('対照: 欄が無いだけの古い形は読めた扱いで、普通に書ける', async () => {
+    await seed({ moods: [GOOD] });
+    expect(await fetchEmotionsSnapshot({ token: '' })).toMatchObject({ moods: [GOOD], analyses: [] });
+    await ACTIONS['log-mood']!({ token: '', payload: { date: '2026-02-02', score: 3, note: 'new' } });
+    expect((await readStored()).moods).toHaveLength(2);
+  });
+
+  it('対照: 「履歴を消去」は壊れていても通る (抜け出す道)', async () => {
+    await seed({ moods: [null], analyses: ['junk'] });
+    await expect(ACTIONS['clear-history']!({ token: '', payload: { kind: 'all' } })).resolves.toEqual({ moods: 0, analyses: 0 });
+    expect(await readStored()).toEqual({ moods: [], analyses: [] });
   });
 });

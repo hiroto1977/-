@@ -39,6 +39,7 @@ import {
 } from './types';
 import { ANTHROPIC_FAST_MODEL } from '../../shared/ai/providers';
 import { localIsoDate } from '../../shared/localDate';
+import { isAnalysisEntry, isMoodEntry, readStoredList } from '../../shared/emotionsShape';
 
 
 const EMOTION_KEYS = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust'] as const;
@@ -76,21 +77,36 @@ function storePath(): string {
   return path.join(app.getPath('userData'), 'service-hub-emotions.json');
 }
 
-async function readStore(): Promise<EmotionsStore> {
+/**
+ * 保存先を読む。ENOENT だけを飲み、壊れた JSON は投げ直す (黙って消すより良い)。
+ *
+ * 要素の形はブラウザ版と同じ規則 (`shared/emotionsShape.ts`) で確かめる —— 2026-09-05 まで
+ * `as Partial<EmotionsStore>` で要素を信じていて、null が 1 つ混じると `m.date` で落ちた。
+ * 欄が在るのに配列でない・形の違う要素が混じる = **在るのに読めない**: 読み出しは残りを返し、
+ * `forWrite` の読み (log-mood / analyze-text) は断る —— 上書きすると読めなかった分が消える。
+ * `clear-history` だけは通す (壊れた保存先から抜け出す唯一の道)。
+ */
+async function readStore(opts: { forWrite?: boolean } = {}): Promise<EmotionsStore> {
+  let raw: string;
   try {
     // encoding を空にすると Buffer が返るが、`JSON.parse` は toString()
     // 経由で読むため結果は変わらない (実測)。型のために明示している。
     // Stryker disable next-line StringLiteral: 空文字でも Buffer 経由で同じ結果 (実測)
-    const raw = await fs.readFile(storePath(), 'utf8');
-    const parsed = JSON.parse(raw) as Partial<EmotionsStore>;
-    return {
-      moods: Array.isArray(parsed.moods) ? parsed.moods : [],
-      analyses: Array.isArray(parsed.analyses) ? parsed.analyses : [],
-    };
+    raw = await fs.readFile(storePath(), 'utf8');
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') return { moods: [], analyses: [] };
     throw err;
   }
+  const parsed: unknown = JSON.parse(raw);
+  const rec = typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed) ? (parsed as Record<string, unknown>) : {};
+  const moods = readStoredList(rec.moods, isMoodEntry);
+  const analyses = readStoredList(rec.analyses, isAnalysisEntry);
+  if (opts.forWrite && (moods.dropped > 0 || analyses.dropped > 0)) {
+    throw new Error(
+      '保存された記録の一部を読めませんでした。上書きすると失われるため、記録を中止しました。「履歴を消去」で作り直せます。',
+    );
+  }
+  return { moods: moods.items as MoodEntry[], analyses: analyses.items as AnalysisEntry[] };
 }
 
 /**
@@ -155,7 +171,7 @@ async function logMood(ctx: ActionContext): Promise<{ date: string; score: numbe
     throw new Error('score must be a number between 1 and 5');
   }
   const finalDate = (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : null) ?? todayLocal();
-  const store = await readStore();
+  const store = await readStore({ forWrite: true });
   // Replace today's entry if it exists, else append.
   const idx = store.moods.findIndex((m) => m.date === finalDate);
   // note の上限。当初「ブラウザ版だけが持っていた」と書いたが**それは誤り**で、
@@ -295,7 +311,7 @@ async function analyzeText(ctx: ActionContext): Promise<AnalysisEntry> {
     ...normalized,
   };
 
-  const store = await readStore();
+  const store = await readStore({ forWrite: true });
   store.analyses.unshift(entry);
   // 上と同じ理由 — `slice(0, MAX)` は短い配列に対しては恒等。
   store.analyses = store.analyses.slice(0, MAX_ANALYSES);
