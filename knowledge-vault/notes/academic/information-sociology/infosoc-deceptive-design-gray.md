@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-dark-patterns-ux-deception|ダークパターンとUXデザインの倫理——ユーザー操作技法と規制の情報社会論]] — 語彙が近い
-- [[infosoc-dark-patterns-ui-deceptive|ダーク・パターンと欺瞞的UXデザインの規制論]] — 同じ思想家
+- [[infosoc-dark-patterns|ダークパターン（ブリグナル）——利用者を欺き・操作して本来しない行動へ誘導する UI 設計の類型と、その規制]] — 同じ思想家
 - [[bizlaw-franchise-law|フランチャイズ法と加盟店保護——情報開示規制とフランチャイズ契約の法的構造]] — 出典を共有
 - [[bizlaw-holder-in-due-course-doctrine|正当所持人の法理]] — 出典を共有
 - [[bizlaw-noerr-pennington-doctrine|ノア・ペニントン法理——政府への請願活動を反トラスト法責任から免責する憲法的法理]] — 出典を共有
@@ -41,7 +41,7 @@ aliases:
 - [[infosoc-native-advertising-persuasion-knowledge|ネイティブ広告と説得知識モデル（Native Advertising / Persuasion Knowledge Model）]] — 出典を共有
 - [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 出典を共有
 - [[econ-predatory-pricing|略奪的価格設定]] — 出典を共有
-- [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]] — 出典を共有
+- [[infosoc-ghost-work|ゴーストワーク（AI背後の不可視労働）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

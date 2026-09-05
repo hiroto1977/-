@@ -39,8 +39,8 @@ aliases:
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 出典を共有
 - [[mgmt-vrio-framework-barney|資源ベース理論と VRIO フレームワーク（バーニー）——競争優位の源泉を企業内部の資源に求め、価値・希少性・模倣困難性・組織の四条件を満たす資源だけが持続的優位をもたらすとする]] — 出典を共有
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 出典を共有
-- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 出典を共有
 - [[mgmt-asset-stock-accumulation-dierickx-cool|資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性]] — 出典を共有
+- [[mgmt-deliberate-learning-zollo-winter|意図的学習とダイナミック・ケイパビリティの進化——経験蓄積・知識の明示化・コード化による組織能力の体系的な更新]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

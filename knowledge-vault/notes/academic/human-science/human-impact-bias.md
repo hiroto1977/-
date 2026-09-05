@@ -36,7 +36,6 @@ aliases:
 - [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 同じ思想家
 - [[human-mind-wandering|マインドワンダリング]] — 同じ思想家
 - [[human-defensive-attribution-hypothesis|防衛的帰属仮説（defensive attribution hypothesis）——事故の責任帰属が自己防衛動機で歪むとする社会心理学の説]] — 同分野の近傍
-- [[human-peak-end-rule-kahneman|ピーク・エンドの法則——経験の記憶における最高点と終了時の偏重]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

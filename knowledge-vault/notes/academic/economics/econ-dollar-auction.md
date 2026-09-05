@@ -35,8 +35,9 @@ aliases:
 - [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 同じ思想家
 - [[mgmt-organizational-decline-weitzel|組織衰退（ウェイツェル＝ヨンソンの五段階モデル）——盲目・不作為・誤った行動・危機・解体と進み、段階が進むほど反転が難しくなる衰退の動態]] — 同じ思想家
 - [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同じ思想家
+- [[econ-new-institutional-economics-north|新制度経済学と制度変化（ノース）——制度は人間が考案した「ゲームのルール」であり、取引費用と経路依存性を通じて経済パフォーマンスの長期的な差を生む]] — 同分野の近傍
 - [[econ-auction-theory|オークション理論]] — 同分野の近傍
-- [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同分野の近傍
+- [[econ-all-pay-auction|オールペイ・オークション]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

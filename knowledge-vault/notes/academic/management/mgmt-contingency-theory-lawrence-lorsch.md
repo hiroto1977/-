@@ -38,6 +38,7 @@ aliases:
 - [[mgmt-configurational-theory-miller|構成的理論（ミラー）]] — 同分野の近傍
 - [[mgmt-contingency-fiedler|フィードラーのコンティンジェンシー理論——リーダー特性と状況好意性の適合]] — 同分野の近傍
 - [[mgmt-theory-x-y-mcgregor|X理論・Y理論——人間観の前提がマネジメント・スタイルを規定する]] — 同分野の近傍
+- [[mgmt-aston-studies-organization|アストン研究——組織構造の多次元的・実証的測定]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -37,7 +37,7 @@ aliases:
 - [[infosoc-cooperative-principle-grice|協調の原理（グライス）——会話の格率と含意]] — 同じ思想家
 - [[infosoc-eliza-effect-weizenbaum|ワイゼンバウムのイライザとイライザ効果——単純な模式応答に理解と親密さを読み込む錯覚]] — 同じ思想家
 - [[econ-peak-oil|ピークオイル（Peak Oil）とハバート曲線]] — 出典を共有
-- [[human-mirror-neuron-theory|ミラーニューロン理論]] — 出典を共有
+- [[human-mirror-neuron-system|ミラーニューロン・システム（リゾラッティ／ガレーゼ）——行為の実行時と観察時の双方で発火するニューロン群が行為理解・模倣・共感の神経基盤とされる仮説と、その証拠をめぐる論争]] — 出典を共有
 - [[human-dunbars-number|ダンバー数（社会脳仮説）]] — 出典を共有
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 - [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍

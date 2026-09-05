@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 出典を共有
-- [[econ-time-inconsistency|動学的不整合（時間的非整合性）]] — 出典を共有
+- [[econ-time-inconsistency-kydland-prescott|時間的非整合性（キドランド＝プレスコット）——事前に最適だった政策を事後に覆す誘因が信頼性を損ない、ルールへのコミットメントと中央銀行の独立性を正当化する]] — 出典を共有
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 出典を共有
 - [[econ-natural-rate-of-interest|自然利子率（ヴィクセル）]] — 出典を共有
 - [[econ-new-keynesian-phillips|ニューケインジアン・フィリップス曲線（New Keynesian Phillips Curve）]] — 出典を共有

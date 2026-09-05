@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 916
+entry_count: 911
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（916件）
+# 学習パス — 学術概念／経済学（911件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -23,8 +23,8 @@ tags:
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]]（接続 39）
 - [[econ-behavioral-finance|行動ファイナンス]]（接続 38）
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]]（接続 38）
-- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 37）
-- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 36）
+- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 37）
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]]（接続 36）
 - [[econ-becker-crime|犯罪の経済学]]（接続 35）
 - [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]]（接続 34）
 - [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]]（接続 33）
@@ -233,6 +233,7 @@ tags:
 - 1962年: [[econ-logrolling|ログローリング（票の取引）]]
 - 1962年: [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]]
 - 1962年: [[econ-public-choice-buchanan-tullock|公共選択論（ブキャナン＝タロック）——政治家・官僚・有権者も自己利益を追う合理的個人として政治的意思決定を経済学の方法で分析する]]
+- 1962年: [[econ-trade-gravity-model|貿易の重力モデル（ティンバーゲン／アンダーソン＝ヴァン・ウィンクープ）——二国間貿易量は経済規模に比例し距離に反比例するという規則性と、多角的抵抗項を含む構造的導出・推定]]
 - 1963年: [[econ-mundell-tobin-effect|マンデル＝トービン効果]]
 - 1963年: [[econ-user-cost-of-capital|資本の使用者費用]]
 - 1964年: [[econ-alonso-monocentric-city|アロンソの単一中心都市モデル（Alonso–Muth–Mills monocentric city model）——通勤費と地代のトレードオフが都市内土地利用を決める]]
@@ -253,6 +254,7 @@ tags:
 - 1968年: [[econ-budget-maximizing-bureaucrat-niskanen|ニスカネンの予算最大化官僚モデル——独占的官庁が情報優位で総予算を極大化し過剰供給を導く公共選択理論]]
 - 1968年: [[econ-corridor-of-stability-theory|安定性の回廊（レイヨンフーヴッド）——市場の自己調整は均衡からの乖離が小さい「回廊」の内側でしか働かず、外へ出ると累積的な不安定化が支配する]]
 - 1968年: [[econ-entrepreneurial-state|起業家国家（マッツカートの公共イノベーション論）]]
+- 1968年: [[econ-market-microstructure|市場ミクロ構造（デムセッツ／カイル／グロステン＝ミルグロム）——注文フロー・スプレッド・情報の非対称性が流動性と価格発見を規定する過程を分析する金融経済学の分野]]
 - 1968年: [[econ-precautionary-saving|予備的貯蓄]]
 - 1968年: [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]]
 - 1969年: [[econ-armington-elasticity-national-product-differentiation|アーミントンの仮定とアーミントン弾力性——同じ財でも生産国が違えば不完全代替とみなし、その代替の弾力性で貿易モデルを閉じる考え方]]
@@ -311,7 +313,6 @@ tags:
 - 1977年: [[econ-debt-overhang|デット・オーバーハング]]
 - 1977年: [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]]
 - 1977年: [[econ-dutch-disease-corden|オランダ病（コーデン＝ニアリー）——資源ブームが支出効果と資源移動効果で交易財部門を萎縮させる脱工業化のメカニズム]]
-- 1977年: [[econ-time-inconsistency|動学的不整合（時間的非整合性）]]
 - 1977年: [[econ-time-inconsistency-kydland-prescott|時間的非整合性（キドランド＝プレスコット）——事前に最適だった政策を事後に覆す誘因が信頼性を損ない、ルールへのコミットメントと中央銀行の独立性を正当化する]]
 - 1977年: [[econ-varian-model-of-sales-informed-uninformed-consumers|ヴァリアンのセールのモデル——情報客と非情報客の混在が生む価格分散と特売の均衡]]
 - 1978年: [[econ-lucas-span-of-control-firm-size-distribution|ルーカスのスパン・オブ・コントロール・モデル——経営者の才能分布と管理限界が企業規模の分布を決める]]
@@ -369,6 +370,7 @@ tags:
 - 1985年: [[econ-strategic-complementarity|戦略的補完性]]
 - 1985年: [[econ-sunk-cost|サンクコスト（埋没費用）とサンクコストの誤謬]]
 - 1986年: [[econ-ak-model|AKモデル（内生的成長の基本モデル）]]
+- 1986年: [[econ-endogenous-growth-romer|内生的成長理論（ローマー／ルーカス）——アイデアの非競合性と知識の外部性が生む収穫逓増により、技術進歩を経済内部の投資の産物として説明する成長論]]
 - 1986年: [[econ-greenwald-stiglitz-theorem|グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）]]
 - 1986年: [[econ-hysteresis|ヒステリシス（履歴効果）]]
 - 1986年: [[econ-hysteresis-unemployment|失業のヒステリシス（Hysteresis in Unemployment）]]
@@ -448,6 +450,7 @@ tags:
 - 2009年: [[econ-economic-complexity|経済的複雑性指数（ECI）]]
 - 2010年: [[econ-macroprudential-policy|マクロプルーデンス政策]]
 - 2010年: [[econ-search-matching|サーチ理論／マッチング理論]]
+- 2010年: [[econ-shadow-banking-fsb|シャドーバンキング（ポズサー／FSB）——銀行規制の外で満期・流動性・信用の変換を行う金融仲介の連鎖が、預金保険と最後の貸し手を欠くために取り付けに脆弱であること]]
 - 2011年: [[econ-islamic-finance|イスラム金融とシャリア准拠の融資メカニズム]]
 - 2013年: [[econ-frey-osborne-computerisation-susceptibility|フレイ＝オズボーンの職業別コンピュータ化確率——「米国雇用の47%が高リスク」]]
 - 2013年: [[econ-inequality-piketty-capital21|ピケティの r＞g（『21世紀の資本』）——資本収益率が成長率を上回り続ける限り富は労働所得より速く蓄積し、格差は構造的に拡大する]]
@@ -582,8 +585,6 @@ tags:
 - [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]]
 - [[econ-efficient-market-hypothesis-fama|効率的市場仮説とファーマの資産価格形成論]]
 - [[econ-elasticity-pessimism-thesis|弾力性ペシミズム——為替レート調整による貿易収支改善への懐疑論]]
-- [[econ-endogenous-growth-romer|内生的成長理論（ローマー）]]
-- [[econ-endogenous-growth-romer-knowledge-spillovers|内生的成長論——ローマーの知識スピルオーバーとアイデアの非競合性が生む収穫逓増の成長論]]
 - [[econ-endogenous-money-post-keynesian-moore|内生的貨幣論——ムーアの信用貨幣観と中央銀行の利子率コントロール]]
 - [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]]
 - [[econ-endowment-effect-kahneman-thaler|授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意]]
@@ -636,7 +637,6 @@ tags:
 - [[econ-goodharts-law-lucas-critique|グッドハートの法則とルーカス批判——政策目標化された統計的関係の崩壊]]
 - [[econ-goodharts-law-monetary|グッドハートの法則——指標が目標となるとき有効性を失う統計的規則性]]
 - [[econ-goodwin-growth-cycle|グッドウィンの成長循環——分配をめぐる階級闘争が生む景気循環]]
-- [[econ-gravity-equation-structural-estimation|構造的重力モデル——貿易フローの理論的基盤と推定]]
 - [[econ-great-divergence-pomeranz|大分岐（ポメランツ）——なぜ西欧が先に工業化したのか]]
 - [[econ-green-golden-rule-phelps-sustainability|黄金律と修正黄金律——フェルプスの最適貯蓄率と世代間公平性]]
 - [[econ-green-paradox-sinn|グリーン・パラドックス——将来の環境規制予告が化石燃料の前倒し採掘を促す]]
@@ -728,8 +728,6 @@ tags:
 - [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]]
 - [[econ-mark-to-market-accounting-theory|時価会計理論（マーク・トゥ・マーケット会計）]]
 - [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]]
-- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）]]
-- [[econ-market-microstructure-kyle-glosten|市場マイクロストラクチャー——情報の非対称性と価格形成メカニズム]]
 - [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]]
 - [[econ-matching-law-herrnstein|マッチング法則——行動は報酬の相対比率に比例して配分される]]
 - [[econ-matching-markets-gale-shapley|安定マッチング理論——ゲール＝シャプレーの受入保留アルゴリズム]]
@@ -851,8 +849,6 @@ tags:
 - [[econ-secular-stagnation-hansen|長期停滞論（ハンセン＆サマーズ）]]
 - [[econ-seigniorage|シニョリッジ（通貨発行益）]]
 - [[econ-seigniorage-hyperinflation-cagan|インフレ税と超インフレ——ケーガンモデルが解明するハイパーインフレの自己強化メカニズム]]
-- [[econ-shadow-banking-fsb|シャドーバンキング（金融安定理事会定義）]]
-- [[econ-shadow-banking-pozsar|シャドーバンキング・システム——規制外金融仲介の構造とシステミック・リスク]]
 - [[econ-shapley-folkman-lemma|シャプリー＝フォルクマンの補題——多数の和は近似的に凸になる]]
 - [[econ-siegel-paradox-exchange|シーゲルのパラドックス——為替の期待は両通貨で同時に不偏たりえない]]
 - [[econ-size-effect-banz|規模効果（小型株効果）——小型株が大型株を上回る収益を上げる異常]]
@@ -889,7 +885,6 @@ tags:
 - [[econ-trade-balance-j-curve|Jカーブ効果と経常収支調整]]
 - [[econ-trade-costs-iceberg-samuelson|アイスバーグ型貿易費用——サミュエルソンの溶解モデルと貿易障壁の定量化]]
 - [[econ-trade-creation-diversion-viner|貿易創出と貿易転換——関税同盟の厚生効果]]
-- [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]]
 - [[econ-trade-off-theory-capital-structure|資本構成のトレードオフ理論——負債の節税効果と財務破綻費用の均衡]]
 - [[econ-trade-policy-strategic-industries|戦略的通商政策と産業政策——クルーグマンの貿易政策論とインダストリアル・ポリシー復権]]
 - [[econ-tragedy-anticommons-heller|反コモンズの悲劇——過剰な排除権の細分化が資源の過少利用を招く]]

@@ -2,7 +2,7 @@
 title: "journals.uchicago.edu"
 type: source-domain
 host: "journals.uchicago.edu"
-cite_count: 43
+cite_count: 42
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.uchicago.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **43 件**（学術 43）
+> [!info] 出典ドメイン索引 ・ 引用 **42 件**（学術 42）
 
 ## このドメインを出典とする項目
 
@@ -42,7 +42,6 @@ tags:
 - [[econ-sunspot-equilibrium|サンスポット均衡]] — Cass&Shell,"DoSunspotsMatter?",JournalofPoliticalEconomy91(2),1983
 - [[econ-task-based-automation-acemoglu-restrepo|アセモグル＝レストレポのタスクベース自動化モデル——置換効果・生産性効果・復元効果の綱引き]] — Acemoglu,D.andRestrepo,P.(2020).RobotsandJobs:EvidencefromUSLaborMark…
 - [[econ-tiebout-hypothesis-local-public-goods|ティブー仮説（足による投票）——住民が税と公共サービスの組み合わせで自治体を選ぶことで地方公共財の選好が顕示され効率的供給が実現する]] — Tiebout,C.M.(1956)APureTheoryofLocalExpenditures—JournalofPoliticalEc…
-- [[econ-time-inconsistency|動学的不整合（時間的非整合性）]] — JournalofPoliticalEconomy(1977)—RulesRatherthanDiscretion（一次文献）
 - [[human-curse-of-knowledge|知識の呪縛]] — Camerer,Loewenstein&Weber,"TheCurseofKnowledgeinEconomicSettings,"Jou…
 - [[infosoc-complex-contagion|複雑伝染（complex contagion／コンプレックス・コンテイジョン）——採用に複数の社会的補強を要する行動の拡散]] — Centola,D.&Macy,M.(2007)"ComplexContagionsandtheWeaknessofLongTies,"A…
 - [[infosoc-feminist-technoscience-haraway|フェミニスト・テクノサイエンス論]] — Barad(2003)PosthumanistPerformativity—SignsVol.28No.3

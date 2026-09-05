@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[econ-product-cycle-trade|プロダクト・サイクル理論（貿易）]] — 同分野の近傍
 - [[econ-greenfield-effect-multinational|グリーンフィールド投資効果——海外直接投資の参入形態と成長]] — 同分野の近傍
+- [[econ-trade-costs-iceberg-samuelson|アイスバーグ型貿易費用——サミュエルソンの溶解モデルと貿易障壁の定量化]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

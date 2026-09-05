@@ -31,8 +31,8 @@ aliases:
 - [Sally Anne Test: Understanding False Belief in Children — Arab Psychology Database](https://db.arabpsychology.com/sally-anne-test/) `リファレンス`
 
 ## 関連概念
-- [[human-sensory-integration-theory|感覚統合理論]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-theory-of-mind|心の理論]] — 同分野の近傍
+- [[human-theory-of-mind-frith-baron-cohen|心の理論（ToM）とメンタライジング——フリス＝バロン=コーエンによる他者心理の推論と社会認知の神経科学]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

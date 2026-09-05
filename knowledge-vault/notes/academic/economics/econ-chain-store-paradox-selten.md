@@ -39,7 +39,7 @@ aliases:
 - [[econ-envelope-theorem-milgrom-segal|包絡線定理——最適化問題のパラメータ感応度と経済学的応用]] — 同じ思想家
 - [[econ-limit-pricing-bain|参入阻止価格——潜在的参入者を思いとどまらせる戦略的な低価格設定]] — 同じ思想家
 - [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]] — 同じ思想家
-- [[econ-market-microstructure-kyle-glosten|市場マイクロストラクチャー——情報の非対称性と価格形成メカニズム]] — 同じ思想家
+- [[econ-market-microstructure|市場ミクロ構造（デムセッツ／カイル／グロステン＝ミルグロム）——注文フロー・スプレッド・情報の非対称性が流動性と価格発見を規定する過程を分析する金融経済学の分野]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

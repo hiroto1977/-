@@ -33,16 +33,16 @@ aliases:
 - [Jones, C. I. (1995). "R&D-Based Models of Economic Growth." Journal of Political Economy, 103(4), 759–784 (EconPapers) — スケール効果批判の根拠（掲載誌は QJE ではなく JPE）](https://econpapers.repec.org/RePEc:ucp:jpolec:v:103:y:1995:i:4:p:759-84) `学術`
 
 ## 関連概念
-- [[econ-endogenous-growth-romer|内生的成長理論（ローマー）]] — 同じ思想家
+- [[econ-endogenous-growth-romer|内生的成長理論（ローマー／ルーカス）——アイデアの非競合性と知識の外部性が生む収穫逓増により、技術進歩を経済内部の投資の産物として説明する成長論]] — 同じ思想家
 - [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 同じ思想家
 - [[econ-ak-model|AKモデル（内生的成長の基本モデル）]] — 同じ思想家
 - [[econ-grossman-helpman-protection-for-sale|保護の販売モデル（グロスマン＝ヘルプマン「Protection for Sale」）——貿易保護の政治経済学]] — 同じ思想家
 - [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 同じ思想家
 - [[mgmt-dynamic-delegation|公式的権限と実質的権限（Formal and Real Authority）]] — 同じ思想家
 - [[econ-kaldor-stylized-facts-growth|カルドアの定型化された事実——長期成長に見られる6つの経験的規則性]] — 同じ思想家
-- [[econ-endogenous-growth-romer-knowledge-spillovers|内生的成長論——ローマーの知識スピルオーバーとアイデアの非競合性が生む収穫逓増の成長論]] — 同じ思想家
 - [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]] — 同じ思想家
 - [[econ-reciprocal-dumping-brander-krugman|相互ダンピング・モデル（ブランダー＝クルーグマン）——寡占がもたらす産業内貿易]] — 同じ思想家
+- [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

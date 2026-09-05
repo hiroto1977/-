@@ -43,7 +43,7 @@ aliases:
 - [[econ-neutrality-of-money|貨幣の中立性（Neutrality of Money）]] — 同じ思想家
 - [[econ-debt-deflation-fisher|負債デフレーション理論——過剰債務と物価下落の悪循環メカニズム]] — 同じ思想家
 - [[econ-debt-deflation-fisher-irving|債務デフレーション論——フィッシャーの過剰債務螺旋と大恐慌の金融的説明]] — 同じ思想家
-- [[econ-endogenous-growth-romer|内生的成長理論（ローマー）]] — 同じ思想家
+- [[econ-fisher-separation-theorem|フィッシャーの分離定理——投資決定と消費選好の分離]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

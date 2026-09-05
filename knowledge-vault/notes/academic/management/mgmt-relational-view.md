@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-supply-chain-resilience|サプライチェーン強靭化（supply chain resilience）]] — 同分野の近傍
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+- [[mgmt-transactive-memory-wegner|トランザクティブ・メモリー・システム（ウェグナー）——「誰が何を知っているか」の共有メタ知識により、集団が記憶と知識を分業し統合する仕組み]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

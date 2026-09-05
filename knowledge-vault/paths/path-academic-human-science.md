@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 628
+entry_count: 624
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（628件）
+# 学習パス — 学術概念／人間科学（624件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 151）
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 106）
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 105）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-framing-effect|フレーミング効果（framing effect）]]（接続 31）
-- [[human-attribution-theory|帰属理論]]（接続 29）
+- [[human-attribution-theory|帰属理論]]（接続 30）
 - [[human-bias-blind-spot|バイアスの盲点]]（接続 29）
-- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 28）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 27）
+- [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 27）
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 26）
 - [[human-conjunction-fallacy|連言錯誤]]（接続 25）
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 25）
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 24）
 - [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 24）
 - [[human-base-rate-fallacy|基準率の無視]]（接続 24）
-- [[human-cognitive-appraisal|認知的評価理論（感情）]]（接続 24）
+- [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 24）
 
 ## 第 2 部 — 年代順の展開
 - 1510年: [[human-phantom-limb|幻肢（ファントムリム）]]
@@ -105,6 +105,7 @@ tags:
 - 1959年: [[human-latent-inhibition|潜在制止（latent inhibition）——結果を伴わない刺激への事前接触が、その刺激の後続の条件づけ学習を遅らせる現象]]
 - 1959年: [[human-premack-principle|プレマックの原理]]
 - 1959年: [[human-riasec-vocational-interests-holland|ホランドのRIASEC理論——六類型の適合度で職業選択と職務満足を説明する六角形モデル]]
+- 1960年: [[human-cognitive-appraisal|認知的評価理論（感情）]]
 - 1960年: [[human-confirmation-bias|確証バイアス（confirmation bias）]]
 - 1960年: [[human-item-response-theory|項目反応理論（Item Response Theory, IRT）]]
 - 1960年: [[human-visual-cliff|視覚的断崖実験（Visual Cliff Experiment）]]
@@ -142,7 +143,7 @@ tags:
 - 1970年: [[human-planned-behavior|計画的行動理論（TPB）]]
 - 1971年: [[human-actor-observer-bias|行為者-観察者バイアス]]
 - 1971年: [[human-gamblers-fallacy|ギャンブラーの誤謬]]
-- 1971年: [[human-hedonic-treadmill|快楽の踏み車（快楽適応）]]
+- 1971年: [[human-hedonic-treadmill|快楽の踏み車／快楽適応（ブリックマン＝キャンベル）——重大な出来事の後も主観的幸福が基準水準へ戻る傾向と、その適応が不完全で個人差を持つという修正]]
 - 1971年: [[human-mental-rotation-shepard-metzler|心的回転（シェパード＝メッツラー）——反応時間が回転角度に比例することが心的イメージのアナログ的変換を示す]]
 - 1971年: [[human-place-cells|場所細胞（Place Cells）]]
 - 1971年: [[human-priming|プライミング効果]]
@@ -206,7 +207,6 @@ tags:
 - 1983年: [[human-multiple-intelligences|多重知能理論（ガードナー）]]
 - 1983年: [[human-place-identity|場所アイデンティティ（Place Identity）]]
 - 1984年: [[human-cialdini-influence|チャルディーニの影響力の6原理]]
-- 1984年: [[human-cognitive-miser|認知的倹約家（cognitive miser）]]
 - 1984年: [[human-perceptual-narrowing|知覚的狭窄化（Perceptual Narrowing）]]
 - 1984年: [[human-social-proof|社会的証明]]
 - 1984年: [[human-spontaneous-trait-inference|自発的特性推論]]
@@ -245,10 +245,11 @@ tags:
 - 1991年: [[human-legitimate-peripheral-participation|正統的周辺参加と実践共同体]]
 - 1991年: [[human-optimal-distinctiveness|最適弁別性理論（Optimal Distinctiveness Theory／Brewer 1991）——人は所属（同化）と差異化（独自性）の相反する欲求の均衡点で社会的アイデンティティを選ぶ]]
 - 1991年: [[human-rumination|反芻思考]]
+- 1991年: [[human-rumination-nolen-hoeksema|反すう／反応スタイル理論（ノーレン＝ホークセマ）——抑うつ気分に対して症状と原因に受動的・反復的に注意を向ける反応様式が抑うつを延長・増悪させる]]
 - 1991年: [[human-self-construal-markus-kitayama|文化的自己観（マーカス＝北山）——相互独立的自己観と相互協調的自己観が認知・感情・動機づけを体系的に方向づける]]
 - 1992年: [[human-dunbars-number|ダンバー数（社会脳仮説）]]
 - 1992年: [[human-four-horsemen-gottman|ゴットマンの黙示録の四騎士——批判・侮蔑・自己防衛・逃避が関係の破綻を予測する]]
-- 1992年: [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]]
+- 1992年: [[human-mirror-neuron-system|ミラーニューロン・システム（リゾラッティ／ガレーゼ）——行為の実行時と観察時の双方で発火するニューロン群が行為理解・模倣・共感の神経基盤とされる仮説と、その証拠をめぐる論争]]
 - 1992年: [[human-socioemotional-selectivity|社会情動的選択性理論（Socioemotional Selectivity Theory）]]
 - 1993年: [[human-emotional-contagion|情動感染]]
 - 1993年: [[human-narrative-identity|ナラティブ・アイデンティティ（Narrative Identity）]]
@@ -453,7 +454,6 @@ tags:
 - [[human-health-belief-model|ヘルス・ビリーフ・モデル：予防的健康行動の心理的予測理論]]
 - [[human-hebbian-learning|ヘブ則とシナプス可塑性：神経回路の学習原理]]
 - [[human-hedonic-adaptation|快楽順応]]
-- [[human-hedonic-adaptation-brickman|快楽適応理論——幸福度のセットポイントと重大な生活事象からの回復]]
 - [[human-hermann-grid|ヘルマン格子錯視——白い交差点に現れる灰色の幻]]
 - [[human-heuristic-systematic-chaiken|ヒューリスティック＝システマティックモデル——説得情報処理の二過程理論]]
 - [[human-hick-law|ヒックの法則——選択肢が増えるほど決定に時間がかかる]]
@@ -502,7 +502,6 @@ tags:
 - [[human-minority-influence-moscovici|少数派の影響——一貫した少数派が多数派の私的態度を変える社会的影響]]
 - [[human-minority-stress-theory|マイノリティ・ストレス理論]]
 - [[human-mirror-neuron-controversy|ミラーニューロン論争（Mirror Neuron Controversy）]]
-- [[human-mirror-neuron-theory|ミラーニューロン理論]]
 - [[human-misinformation-effect-loftus|誤情報効果——事後情報による記憶の歪曲と変容メカニズム]]
 - [[human-moral-foundations-haidt|道徳基盤理論——多元的道徳直観の進化的・文化的基盤]]
 - [[human-mortality-salience-worldview|死の顕著性と世界観防衛（恐怖管理理論）]]
@@ -569,8 +568,6 @@ tags:
 - [[human-resilience-bonanno-adversity|レジリエンスと逆境後の軌跡——ボナンノの回復力類型と精神的健康の動態モデル]]
 - [[human-resilience-theory-masten|レジリエンス理論——逆境からの回復力と「普通の魔法」]]
 - [[human-retrieval-induced-forgetting|検索誘導性忘却（Retrieval-Induced Forgetting）——思い出す行為そのものが、関連する競合記憶を一時的に抑制する]]
-- [[human-rumination-nolen-hoeksema|ルミネーション（反芻思考）理論（ノレン＝ホークスマ）]]
-- [[human-rumination-response-styles-nolen-hoeksema|反すう反応スタイル理論——ノーレン＝ホークセマの抑うつ的反すうと気分障害の維持]]
 - [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]]
 - [[human-schema-therapy-young|スキーマ療法（ヤング）と早期不適応スキーマの臨床的応用]]
 - [[human-schema-therapy-young-maladaptive|スキーマ療法——ヤングの早期不適応スキーマ理論と人格障害・慢性うつへの統合的アプローチ]]
@@ -635,7 +632,6 @@ tags:
 - [[human-tilt-aftereffect|傾き残効——傾いた線を見続けると垂直が逆に傾いて見える]]
 - [[human-tip-of-the-tongue-brown-mcneill|舌先現象——知っている語を一時的に思い出せない検索の部分的失敗]]
 - [[human-transactional-analysis-berne|交流分析——バーンの自我状態モデルとゲーム理論的対人関係分析]]
-- [[human-transactive-memory|トランザクティブ・メモリー・システム：集団における分散型記憶と知識共有の理論]]
 - [[human-transpersonal-psychology-maslow|トランスパーソナル心理学と至高体験——マズローの欲求段階論を超えた存在レベルの探求]]
 - [[human-triarchic-intelligence-sternberg|知能の鼎立理論——分析的・創造的・実践的知能の三側面]]
 - [[human-trichromatic-young-helmholtz|ヤング＝ヘルムホルツの三色説——色覚の三種類の受容体]]

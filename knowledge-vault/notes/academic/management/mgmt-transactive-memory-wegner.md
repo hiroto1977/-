@@ -3,43 +3,41 @@ collection: academic
 id: mgmt-transactive-memory-wegner
 category: "management"
 category_ja: "経営学"
-title: "トランザクティブ記憶システム（ウェグナー）"
-as_of: "2026-06-26"
-source_count: 4
+title: "トランザクティブ・メモリー・システム（ウェグナー）——「誰が何を知っているか」の共有メタ知識により、集団が記憶と知識を分業し統合する仕組み"
+as_of: "2026-09"
+source_count: 5
 authoritative: true
 tags:
   - collection/academic
   - academic/management
   - knowledge/verified
 aliases:
-  - "トランザクティブ記憶システム（ウェグナー）"
+  - "トランザクティブ・メモリー・システム（ウェグナー）——「誰が何を知っているか」の共有メタ知識により、集団が記憶と知識を分業し統合する仕組み"
 ---
 
-# トランザクティブ記憶システム（ウェグナー）
+# トランザクティブ・メモリー・システム（ウェグナー）——「誰が何を知っているか」の共有メタ知識により、集団が記憶と知識を分業し統合する仕組み
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06-26 ・ 出典: 4件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-09 ・ 出典: 5件（うち権威ある出典 ✓）
 
 ## 概要
-トランザクティブ記憶システム（transactive memory system; TMS）は、ダニエル・ウェグナー（1987）が提唱した、グループが共有する「誰が何を知っているか」に関するメタ知識（知識のディレクトリ）であり、個人の認知能力の限界を超えた集合的記憶・知識システムを形成する過程を説明する概念である。親密なカップル・職場チーム・家族がそれぞれの専門領域（知識の分化・differentiation）を認識し合い、必要な時に適切なメンバーの知識にアクセスする「記憶の分業（division of cognitive labor）」を可能にする。TMSの三次元として①専門化（specialization：誰がどの領域の専門家か）、②信頼性（credibility：メンバーの専門性への信頼）、③協調（coordination：情報が必要な時に適切な人に接触する調整）が確立されている。組織の知識管理・新技術のオンボーディング・チームの解散・M&A後の知識統合において、TMS崩壊（key personの喪失等）が組織効率を著しく低下させる問題として研究されている。テレワーク・バーチャルチームの環境ではTMSの構築・維持コストが増大し、電子的知識ディレクトリ・スキルタグ・ナレッジグラフが代替的TMS形成ツールとして注目される。
+トランザクティブ・メモリー・システム（TMS）とは、集団の成員が「誰が何を知っているか」についての共有認識（知識のディレクトリ）を通じて記憶を分担・統合する仕組みで、社会心理学者ダニエル・ウェグナーが1987年に提唱した。親密なカップルの研究から、個人が他者の専門領域を把握し必要なときにその知識へアクセスする「記憶の分業」を示し、個人の認知能力の限界を超えた集合的な記憶・知識システムが形成される過程を説明した。三つの次元——専門化（誰がどの領域の専門家か）、信頼性（成員の専門性への信頼）、協調（必要な情報を持つ人へ的確に接触する調整）——が確立され、リチャード・モルランド（1999）の実験は共同で訓練したチームほど三次元が高まり課題成績が向上することを示し、カイル・ルイス（2003）は現場で測定する尺度を開発し、ジョン・オースティン（2003）は組織集団で内容・合意・正確性の各側面が業績と関係することを実証した。知識マネジメント、新技術のオンボーディング、チームの解散、M&A 後の知識統合において、キーパーソンの離脱による TMS の崩壊が組織効率を大きく下げる問題として研究され、テレワークや仮想チームでは構築・維持の費用が増すため電子的な知識ディレクトリやスキルタグが代替手段として注目される。批判として、測定が成員の自己報告に頼り実際の知識分布と一致しない可能性があること、専門化が進みすぎると冗長性を失い一人の離脱で機能不全に陥ることがある。中小企業には、「あの人しか知らない」状態は TMS が働いている証拠であると同時に単一障害点であり、誰が何を知っているかの一覧を共有しつつ主要領域には二人目を育てることが含意となる。
 
 ## 提唱者・初出
-ダニエル・ウェグナー ／ リン・スタッサー ／ ドリス・テイタス ／ モーテン・ハンセン
+ダニエル・ウェグナー（1987 提唱）／リチャード・モルランド（1999 共同訓練の実験）／カイル・ルイス（2003 測定尺度）／ジョン・オースティン（2003 組織集団での実証）
 
 ## 出典
-- [Wegner, D. M. (1995) A Computer Network Model of Human Transactive Memory — Social Cognition, 13(3), 319–339（TMS理論の発展）](https://doi.org/10.1037/0033-2909.118.2.247) `学術`
-- [Moreland, R. L. (1999) Transactive Memory: Learning Who Knows What in Work Groups and Organizations — in Shared Cognition in Organizations（組織的TMSの研究）](https://doi.org/10.4324/9781410603227-1) `学術`
-- [Austin, J. R. (2003) Transactive Memory in Organizational Groups: The Effects of Content, Consensus, Specialization, and Accuracy — Journal of Applied Psychology, 88(5), 866–878（TMSの三次元実証）](https://doi.org/10.2307/30040696) `学術`
-- [Wikipedia: Transactive memory — Wegner, differentiation, credibility, coordination, remote work](https://en.wikipedia.org/wiki/Transactive_memory) `リファレンス`
+- [Wegner, D. M. (1987) Transactive Memory: A Contemporary Analysis of the Group Mind — in Mullen & Goethals (eds.) Theories of Group Behavior, Springer](https://doi.org/10.1007/978-1-4612-4634-3_9) `学術`
+- [Moreland, R. L. (1999) Transactive Memory: Learning Who Knows What in Work Groups and Organizations — in Thompson, Levine & Messick (eds.) Shared Cognition in Organizations, Psychology Press](https://doi.org/10.4324/9781410603227-1) `学術`
+- [Lewis, K. (2003) Measuring Transactive Memory Systems in the Field: Scale Development and Validation — Journal of Applied Psychology 88(4)](https://doi.org/10.1037/0021-9010.88.4.587) `学術`
+- [Austin, J. R. (2003) Transactive Memory in Organizational Groups: The Effects of Content, Consensus, Specialization, and Accuracy on Group Performance — Journal of Applied Psychology 88(5)](https://doi.org/10.2307/30040696) `学術`
+- [Wikipedia: Transactive memory — Wegner、専門化・信頼性・協調、リモートワーク](https://en.wikipedia.org/wiki/Transactive_memory) `リファレンス`
 
 ## 関連概念
-- [[human-transactive-memory|トランザクティブ・メモリー・システム：集団における分散型記憶と知識共有の理論]] — 語彙が近い
 - [[human-ironic-process-wegner|皮肉過程理論——思考抑制がかえって抑制対象を意識に侵入させる逆説]] — 同じ思想家
 - [[infosoc-digital-amnesia-google-effect|デジタル健忘症（グーグル効果）]] — 同じ思想家
-- [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — 同じ思想家
-- [[mgmt-red-queen-competition|赤の女王競争（バーネット＆ハンセン）——競争が組織の学習を促すが競合も同時に鍛えるため、走り続けてやっと相対的地位を保てる共進化の動態]] — 同じ思想家
-- [[mgmt-team-cognition|チーム認知・共有メンタルモデル：チームの暗黙的協調を支える認知的基盤と集合的知識構造]] — 同分野の近傍
-- [[mgmt-aston-studies-organization|アストン研究——組織構造の多次元的・実証的測定]] — 同分野の近傍
-- [[mgmt-okr|OKR（目標と主要な結果）]] — 同分野の近傍
+- [[mgmt-team-mental-models-cannon-bowers|チーム・メンタルモデル——共有認知とチーム・パフォーマンス]] — 同分野の近傍
+- [[mgmt-jobs-to-be-done|ジョブ理論（片付けるべき用事）]] — 同分野の近傍
+- [[mgmt-relational-view|関係的視座（Relational View）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

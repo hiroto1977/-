@@ -34,7 +34,7 @@ tags:
 - [[eh-1964|1964年（昭和39年）]] — OECDEconomicSurveys:Japan1964
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — OECDBetterLifeIndex—Well-BeingMeasurementFramework
 - [[infosoc-cognitive-capitalism|認知資本主義]] — OECD(1996)"TheKnowledge-BasedEconomy"（知識・認知が経済の中心となる変容を分析した先駆的報告書）
-- [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]] — OECD(2022)“Darkcommercialpatterns”,OECDDigitalEconomyPapersNo.336
+- [[infosoc-dark-patterns|ダークパターン（ブリグナル）——利用者を欺き・操作して本来しない行動へ誘導する UI 設計の類型と、その規制]] — OECD(2022)DarkCommercialPatterns—OECDDigitalEconomyPapersNo.336
 - [[infosoc-digital-divide|デジタルディバイド（情報格差）]] — OECD「UnderstandingtheDigitalDivide」—標準的定義
 - [[infosoc-digital-divide-warschauer|デジタルデバイド（情報アクセス格差）]] — OECD.ClosingBroadbandConnectivityDividesforAll:PolicyFrameworkandImpl…
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — OECD—DigitalEconomyPolicyoverviewincludingplatformtransparency

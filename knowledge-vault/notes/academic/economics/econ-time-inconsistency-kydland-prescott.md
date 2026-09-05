@@ -5,7 +5,7 @@ category: "economics"
 category_ja: "経済学"
 title: "時間的非整合性（キドランド＝プレスコット）——事前に最適だった政策を事後に覆す誘因が信頼性を損ない、ルールへのコミットメントと中央銀行の独立性を正当化する"
 as_of: "2026-09"
-source_count: 2
+source_count: 4
 authoritative: true
 tags:
   - collection/academic
@@ -17,7 +17,7 @@ aliases:
 
 # 時間的非整合性（キドランド＝プレスコット）——事前に最適だった政策を事後に覆す誘因が信頼性を損ない、ルールへのコミットメントと中央銀行の独立性を正当化する
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-09 ・ 出典: 2件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-09 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
 時間的非整合性（time inconsistency）は、フィン・キドランドとエドワード・プレスコットが1977年の論文「裁量よりルール」で定式化した政策理論上の問題で、事前に最適とされた政策が、民間主体がその予想に基づいて行動した後の事後の時点ではもはや最適でなくなる現象を指す。当局には事後的に約束を反故にする誘因が生じ、合理的な民間主体はこれを見越して行動するため、裁量的政策は信頼性を失ってかえって悪い結果を招く。古典的な例が金融政策のインフレ・バイアスで、中央銀行が物価安定を約束しても、人々が低インフレを予想して賃金と価格を設定した後には予想外のインフレで一時的に失業を減らす誘因が生じ、人々はそれを見抜いて高いインフレ予想を形成するため、均衡では失業は減らないままインフレ率だけが高止まりする。ロバート・バローとデイヴィッド・ゴードン（1983）はこれをゲーム理論的に定式化し、評判メカニズムによる信認の形成を分析した。この洞察から、当局が裁量を自制して信頼できるルールに事前にコミットする価値、中央銀行の独立性、インフレ目標、保守的な中央銀行家の任命、政策の評判の重要性が導かれ、1990年代以降の各国の中央銀行改革の理論的根拠となった。キドランドとプレスコットは実物的景気循環理論とともにこの業績で2004年にノーベル経済学賞を受賞した。批判として、インフレ・バイアスの経験的な大きさには論争があり、ルールへの拘束が予期せぬ危機での柔軟性を奪うこと、独立性が民主的説明責任と緊張することが指摘される。中小企業には、経営者の「今回だけ」の例外が従業員や取引先の予想を通じて信頼を損ない次回の交渉を不利にすること、方針を事前に決めて公表し守ることの価値が含意となる。
@@ -27,10 +27,11 @@ aliases:
 
 ## 出典
 - [Kydland, F. E. & Prescott, E. C. (1977) Rules Rather than Discretion: The Inconsistency of Optimal Plans — Journal of Political Economy 85(3)（原典）](https://doi.org/10.1086/260580) `学術`
+- [NobelPrize.org (2004) Popular information — 2004 年経済学賞（時間整合性とインフレ）](https://www.nobelprize.org/prizes/economic-sciences/2004/popular-information/) `リファレンス`
+- [Federal Reserve Bank of San Francisco (2003) Time-Inconsistent Monetary Policies: Recent Research — FRBSF Economic Letter](https://www.frbsf.org/research-and-insights/publications/economic-letter/2003/04/time-inconsistent-monetary-policies-recent-research/) `公的`
 - [Wikipedia: Dynamic inconsistency — Kydland & Prescott、インフレ・バイアス、中央銀行の独立性](https://en.wikipedia.org/wiki/Dynamic_inconsistency) `リファレンス`
 
 ## 関連概念
-- [[econ-time-inconsistency|動学的不整合（時間的非整合性）]] — 語彙が近い
 - [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 同じ思想家
 - [[econ-central-bank-independence-rogoff|中央銀行の独立性——ロゴフの保守的中央銀行論とインフレ目標政策]] — 同じ思想家
 - [[econ-barro-growth|バロー成長回帰（Barro Growth Regression）]] — 同じ思想家
@@ -40,6 +41,7 @@ aliases:
 - [[econ-real-business-cycle-kydland-prescott|リアル・ビジネス・サイクル理論——キドランド＆プレスコットの技術ショックと景気循環]] — 同じ思想家
 - [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 同じ思想家
 - [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]] — 同じ思想家
+- [[econ-becker-quantity-quality|子どもの数と質のトレードオフ（ベッカー）——なぜ豊かになると出生率が下がるのか]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

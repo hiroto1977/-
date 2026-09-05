@@ -30,7 +30,7 @@ M. King Hubbert（Shell Development Company, Drilling and Production Practice, 1
 - [Campbell & Laherrère (1998) The End of Cheap Oil — Scientific American 278(3), pp.78-83](https://www.scientificamerican.com/article/the-end-of-cheap-oil/) `メディア`
 
 ## 関連概念
-- [[human-mirror-neuron-theory|ミラーニューロン理論]] — 出典を共有
+- [[human-mirror-neuron-system|ミラーニューロン・システム（リゾラッティ／ガレーゼ）——行為の実行時と観察時の双方で発火するニューロン群が行為理解・模倣・共感の神経基盤とされる仮説と、その証拠をめぐる論争]] — 出典を共有
 - [[infosoc-chinese-room-argument-searle|サールの中国語の部屋（Chinese Room Argument）——構文操作は意味理解を保証しないとする「強いAI」批判]] — 出典を共有
 - [[human-dunbars-number|ダンバー数（社会脳仮説）]] — 出典を共有
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍

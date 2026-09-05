@@ -3152,23 +3152,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-time-inconsistency',
-    discipline: 'economics',
-    title: '動学的不整合（時間的非整合性）',
-    statement:
-      'ある時点で最適だと宣言した将来の政策が、その将来の時点になると最適でなくなり、政策当局が約束を破る誘因をもつ、という問題。フィン・キドランドとエドワード・プレスコットが1977年の論文「Rules Rather than Discretion（裁量よりルールを）」で示した。' +
-      '代表例が金融政策のインフレ・バイアスである：中央銀行が「物価を安定させる」と約束し、人々がそれを信じて低いインフレ期待を形成すると、当局は事後的に金融緩和で失業を一時的に減らす誘因をもつ。しかし合理的な人々はこの誘因を見越すため約束は信用されず、結果として失業は下がらないのに高いインフレだけが定着する（裁量的政策の罠）。' +
-      'この問題への対処として、当局が裁量でなく事前にコミットした「ルール」に従うこと、中央銀行の独立性、インフレ目標、評判の確立などが有効とされる。キドランドとプレスコットは2004年にノーベル経済学賞を受賞した。',
-    keyFigures: '事前に最適な政策が事後には最適でなくなり約束破りの誘因／キドランド&プレスコット1977「Rules Rather than Discretion」(JPE)／金融政策のインフレ・バイアス(裁量だと高インフレが定着)／対処：ルール・コミットメント・中央銀行の独立性・インフレ目標・評判／2004ノーベル賞',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2004/popular-information/', type: 'reference', label: 'NobelPrize.org — 2004年経済学賞 一般向け解説（時間整合性とインフレ）' },
-      { url: 'https://www.frbsf.org/research-and-insights/publications/economic-letter/2003/04/time-inconsistent-monetary-policies-recent-research/', type: 'government', label: 'サンフランシスコ連銀 Economic Letter — Time-Inconsistent Monetary Policies' },
-      { url: 'https://www.britannica.com/money/Finn-E-Kydland', type: 'reference', label: 'Encyclopaedia Britannica — Finn E. Kydland（1977年論文と動学的不整合の定義）' },
-      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/260580', type: 'academic', label: 'Journal of Political Economy (1977) — Rules Rather than Discretion（一次文献）' },
-    ],
-  },
-  {
     id: 'mgmt-bpr',
     discipline: 'management',
     title: 'ビジネスプロセス・リエンジニアリング（BPR）',
@@ -6357,22 +6340,19 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'infosoc-dark-patterns',
     discipline: 'information-sociology',
-    title: 'ダークパターン（欺瞞的デザイン）',
+    title: 'ダークパターン（ブリグナル）——利用者を欺き・操作して本来しない行動へ誘導する UI 設計の類型と、その規制',
     statement:
-      'ダークパターン（dark patterns）とは、ウェブサイトやアプリのユーザーインターフェース（UI）に意図的に組み込まれ、利用者を欺き・操作・誘導して、本来しないはずの行動（不要な購入、サブスク登録、個人情報の過剰提供、解約の断念など）を取らせる設計上の手口を指す。UXデザイナーのハリー・ブリヌル（Harry Brignull）が2010年に造語し当初の類型を整理した（現在は中立的に「欺瞞的デザイン deceptive design」とも呼ばれる）。' +
-      '代表的類型に、こっそり（sneaking、隠れた費用・無断のカゴ追加）、偽の緊急性・希少性、確認シェイミング（confirmshaming）、妨害（ローチモーテル＝登録は容易だが解約困難）、強制、誘導的初期設定や視覚的干渉（misdirection、プリチェック同意）があり、プライバシー領域でも問題視される。透明で利用者の利益に資する「ナッジ」とは異なり、利用者の自律性を損なう操作である点が本質。OECD・米FTC・EU（DSA第25条が禁止）・日本（消費者庁／特定商取引法のサブスク規制）が規制・報告を進める。' +
-      'EU では EDPB ガイドライン 3/2022 が SNS 上のダークパターンを類型化するなど、規制の具体化が進んでいる。',
-    keyFigures:
-      'ハリー・ブリヌル（Harry Brignull、概念の提唱者・2010年造語）／OECD（2022「Dark commercial patterns」報告）／米FTC（2022「Bringing Dark Patterns to Light」報告）／EU（Digital Services Act 第25条で禁止）／日本・消費者庁',
-    asOf: '2026-06',
+      'ダークパターン（dark patterns）とは、ウェブサイトやアプリのユーザーインターフェースに意図的に組み込まれ、利用者を欺き・操作・誘導して、本来しないはずの行動（不要な購入、サブスクリプション登録、個人情報の過剰提供、解約の断念）を取らせる設計上の手口で、UX デザイナーのハリー・ブリグナルが2010年に造語し類型を整理した。代表的類型に、こっそり（隠れた費用・無断のカゴ追加）、偽の緊急性・希少性、確認シェイミング、妨害（登録は容易だが解約は困難なローチモーテル）、強制、誘導的な初期設定や視覚的干渉、トリック・クエスチョンがある。コリン・グレイら（2018）は UX 実践者の倫理の観点から類型を整理し、アルネシュ・マトゥールら（2019）は約1.1万の通販サイトを走査して1,818件のダークパターンを実測し、規模と手口の分布を明らかにした。透明で利用者の利益に資するナッジとは異なり、利用者の自律性を損なう操作である点が本質で、プライバシー領域でも問題視される。OECD（2022）と米 FTC（2022）が報告書をまとめ、EU ではデジタルサービス法第25条が禁止し EDPB ガイドライン 3/2022 が SNS 上の類型を示し、米国では FTC が解約容易化の規則を進め、日本では消費者庁と特定商取引法のサブスクリプション表示規制が対応する。批判として、「欺瞞」と正当な説得の境界が曖昧で、類型が増殖して規制の要件化が難しいことがある。中小企業には、自社の申込・解約フローに解約困難化や偽の希少性が紛れ込めば法的責任と信頼の喪失を招くこと、逆に透明な設計は差別化になることが含意となる。',
+    keyFigures: 'ハリー・ブリグナル（2010 命名・類型）／コリン・グレイ（2018 UX 倫理からの類型）／アルネシュ・マトゥール（2019 1.1 万サイトの実測）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://www.oecd.org/content/dam/oecd/en/publications/reports/2022/10/dark-commercial-patterns_9f6169cd/44f5e846-en.pdf', type: 'government', label: 'OECD (2022) “Dark commercial patterns”, OECD Digital Economy Papers No.336' },
-      { url: 'https://www.ftc.gov/reports/bringing-dark-patterns-light', type: 'government', label: 'U.S. Federal Trade Commission (2022) “Bringing Dark Patterns to Light”' },
-      { url: 'https://www.deceptive.design/', type: 'reference', label: 'Harry Brignull, Deceptive Design (旧 darkpatterns.org, 2010〜) 概念の一次情報源' },
-      { url: 'https://en.wikipedia.org/wiki/Dark_pattern', type: 'reference', label: 'Wikipedia「Dark pattern」（DSA・CPRA等の規制状況含む）' },
-      { url: 'https://doi.org/10.1145/3359183', type: 'academic', label: 'Mathur, A. et al. (2019) Dark Patterns at Scale: Findings from a Crawl of 11K Shopping Websites — Proceedings of the ACM on Human-Computer Interaction 3(CSCW), Article 81' },
-      { url: 'https://edpb.europa.eu/system/files/2023-02/edpb_03-2022_guidelines_dark_patterns_social_media_platform_en.pdf', type: 'government', label: 'EDPB (2023) Guidelines 3/2022 on Dark Patterns in Social Media Platforms — European Data Protection Board' },
-      { url: 'https://doi.org/10.1145/3173574.3174108', type: 'academic', label: 'Gray, C. M. et al. (2018) The Dark (Patterns) Side of UX Design — CHI 2018（dark pattern 類型と UX 倫理）' },
+      { url: 'https://www.oecd.org/content/dam/oecd/en/publications/reports/2022/10/dark-commercial-patterns_9f6169cd/44f5e846-en.pdf', type: 'government', label: 'OECD (2022) Dark Commercial Patterns — OECD Digital Economy Papers No. 336' },
+      { url: 'https://www.ftc.gov/reports/bringing-dark-patterns-light', type: 'government', label: 'U.S. Federal Trade Commission (2022) Bringing Dark Patterns to Light' },
+      { url: 'https://doi.org/10.1145/3359183', type: 'academic', label: 'Mathur, A. et al. (2019) Dark Patterns at Scale: Findings from a Crawl of 11K Shopping Websites — Proceedings of the ACM on Human-Computer Interaction 3(CSCW)' },
+      { url: 'https://doi.org/10.1145/3173574.3174108', type: 'academic', label: 'Gray, C. M. et al. (2018) The Dark (Patterns) Side of UX Design — CHI 2018' },
+      { url: 'https://edpb.europa.eu/system/files/2023-02/edpb_03-2022_guidelines_dark_patterns_social_media_platform_en.pdf', type: 'government', label: 'European Data Protection Board (2023) Guidelines 3/2022 on Deceptive Design Patterns in Social Media Platform Interfaces' },
+      { url: 'https://www.deceptive.design/', type: 'reference', label: 'Brignull, H. — Deceptive Design（旧 darkpatterns.org、2010〜）概念の一次情報源' },
+      { url: 'https://en.wikipedia.org/wiki/Dark_pattern', type: 'reference', label: 'Wikipedia: Dark pattern — 類型と DSA・CPRA 等の規制状況' },
     ],
   },
   {
@@ -16715,15 +16695,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'infosoc-platform-envelopment',
     discipline: 'information-sociology',
-    title: 'プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）',
+    title: 'プラットフォーム・エンベロープメント（アイゼンマン＝パーカー＝ヴァン・アルスタイン）——隣接するプラットフォーム市場へ自社機能とのバンドルで参入し、既存のネットワーク効果を武器に転用して相手の利用者基盤を奪う競争戦略',
     statement:
-      'プラットフォーム・エンベロープメント（platform envelopment）とは、あるプラットフォーム市場のプロバイダーが隣接する別のプラットフォーム市場へ参入し、自社機能と標的プラットフォームの機能を束ねた「マルチプラットフォーム・バンドル」を提供することで、既存プレイヤーのユーザーへのアクセスを遮断して市場シェアを奪取する競争戦略である。トーマス・アイゼンマン（ハーバード・ビジネス・スクール）、ジェフリー・パーカー（ダートマス大学）、マーシャル・ヴァン・アルスタイン（ボストン大学）の共著論文（Strategic Management Journal, 2011）で体系化された。' +
-      'エンベロープメントの特徴は、シュンペーター的イノベーションに依存せず、既存ネットワーク効果を「武器として転用」する点にある。攻撃類型は①補完的プラットフォーム（機能的に補完し合うペア）、②弱い代替プラットフォーム（部分的に重複）、③機能的に無関係なプラットフォームへの参入に分類される。侵食される側は、かつてのネットワーク効果が自社を守る「堀」にならず、攻撃者の参入後に集客力を失う。実例として、Microsoftのメディアプレイヤー・ブラウザ同梱、AppleのiPhoneへのPodcast統合、GoogleのAndroidによるナビゲーション統合などが挙げられる。規制上はバンドリングの反競争性の評価が争点となる。',
-    keyFigures: 'トーマス・アイゼンマン（Thomas Eisenmann、ハーバード・ビジネス・スクール）、ジェフリー・パーカー（Geoffrey Parker、ダートマス大学）、マーシャル・ヴァン・アルスタイン（Marshall W. Van Alstyne、ボストン大学）／初出: Eisenmann, Parker & Van Alstyne (2011) "Platform Envelopment," Strategic Management Journal, Vol. 32, pp. 1270–1285',
-    asOf: '2026-06',
+      'プラットフォーム・エンベロープメント（platform envelopment）とは、あるプラットフォーム市場の事業者が隣接する別のプラットフォーム市場へ参入し、自社機能と標的の機能を束ねたマルチプラットフォーム・バンドルを提供して、既存事業者の利用者へのアクセスを遮断し市場シェアを奪う競争戦略で、トーマス・アイゼンマン、ジェフリー・パーカー、マーシャル・ヴァン・アルスタインが2011年の論文で体系化した。シュンペーター的な革新に依存せず、共有された利用者基盤、補完的・代替的機能の結合、バンドル価格の三つの経路で参入費用を下げ、既存のネットワーク効果を武器として転用する点に特徴があり、標的との関係により補完的プラットフォーム、弱い代替プラットフォーム、機能的に無関係なプラットフォームへの三類型に分けられる。実例として Microsoft の Windows へのメディアプレイヤー同梱、Apple の iOS への FaceTime 統合、Google の Android への地図のバンドルが分析され、防衛策としてニッチへの特化、API 公開によるエコシステム拡大、新市場への転換が論じられる。規制上はバンドリングの反競争性の評価が争点で、EU デジタル市場法（2022）のゲートキーパー義務は包囲戦略への立法的対応と位置づけられる。批判として、包囲と正当な範囲の経済の区別が事後的にしかつかないことがある。中小企業には、自社のサービスが大手プラットフォームの「次の同梱機能」になりうるかを常に点検し、乗り換え費用と専門性で守るか、大手の上で補完者として生きるかを早めに決めることが含意となる。',
+    keyFigures: 'トーマス・アイゼンマン（2011 提唱）／ジェフリー・パーカー＆マーシャル・ヴァン・アルスタイン（2011 共著）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.935', type: 'academic', label: 'Strategic Management Journal — Platform Envelopment（Eisenmann, Parker & Van Alstyne、2011、Vol. 32、pp. 1270–1285）' },
-      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=38631', type: 'academic', label: 'Harvard Business School Faculty Research — Platform Envelopment（Thomas Eisenmann）' },
+      { url: 'https://doi.org/10.1002/smj.935', type: 'academic', label: 'Eisenmann, T., Parker, G. & Van Alstyne, M. (2011) Platform Envelopment — Strategic Management Journal 32(12)' },
+      { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=38631', type: 'academic', label: 'Harvard Business School Faculty Research — Platform Envelopment（Eisenmann, Parker & Van Alstyne）' },
+      { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R1925', type: 'government', label: 'Regulation (EU) 2022/1925 — Digital Markets Act（ゲートキーパー義務・抱き合わせの制限）' },
+      { url: 'https://en.wikipedia.org/wiki/Platform_envelopment', type: 'reference', label: 'Wikipedia: Platform envelopment — Eisenmann、バンドリング、ゲートキーパー、DMA' },
     ],
   },
   {
@@ -17164,15 +17145,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'human-hedonic-treadmill',
     discipline: 'human-science',
-    title: '快楽の踏み車（快楽適応）',
+    title: '快楽の踏み車／快楽適応（ブリックマン＝キャンベル）——重大な出来事の後も主観的幸福が基準水準へ戻る傾向と、その適応が不完全で個人差を持つという修正',
     statement:
-      '快楽の踏み車（hedonic treadmill）とは、人間は重大な人生の出来事—宝くじ当選や重度の事故—を経験しても、比較的短期間のうちに主観的幸福感が以前の基準水準（セットポイント）に回帰する傾向を指す心理学的概念である。フィリップ・ブリックマンとドナルド・T・キャンベルが1971年の論文「Hedonic Relativism and Planning the Good Society」（M.H. Appley編『Adaptation-Level Theory: A Symposium』所収、Academic Press）で「快楽の踏み車」の比喩を導入した。ブリックマン、コーツ、ジャノフ＝バルマンの1978年の画期的研究（JPSP, Vol. 36, No. 8, pp. 917–927）は、宝くじ当選者22名・脊髄損傷事故被害者29名・対照群22名を比較し、当選者の幸福度が対照群と有意差がないことを実証した。' +
-      'ディーナーらは2006年のAmerican Psychologist誌論文「Beyond the Hedonic Treadmill」で、セットポイントは完全に固定的ではなく個人差があること、異なる幸福の構成要素（生活満足度・ポジティブ感情・ネガティブ感情）が異なる適応速度を持つこと、長期失業や重度障害など適応が不完全な事象が存在することを示し、原理論を5つの改訂点で修正した。現代のポジティブ心理学では、意図的活動（感謝・親切行為・マインドフルネス）による持続的な幸福向上の可能性が検討されている。',
-    keyFigures: 'フィリップ・ブリックマン＆ドナルド・T・キャンベル（1971 "Hedonic Relativism and Planning the Good Society"）／ブリックマン・コーツ・ジャノフ＝バルマン（1978, JPSP 36(8):917–927, 宝くじ当選者研究）／エド・ディーナーほか（2006 "Beyond the Hedonic Treadmill," American Psychologist 61(4):305–314）',
-    asOf: '2026-06',
+      '快楽の踏み車（hedonic treadmill）とは、宝くじの当選や重度の事故のような重大な出来事を経験しても、主観的幸福感が比較的短期間で以前の基準水準（セットポイント）へ回帰する傾向を指し、フィリップ・ブリックマンとドナルド・キャンベルが1971年の論文「Hedonic Relativism and Planning the Good Society」で比喩を導入した。ブリックマン、コーツ、ジャノフ＝バルマン（1978）は宝くじ当選者22名・脊髄損傷者29名・対照群22名を比較し、当選者の幸福度が対照群と有意差を持たないことを示した。適応は、新しい状況への感覚的な順応と、比較基準の更新という認知的過程の二要因で説明される（フレデリックとロウエンスタイン）。エド・ディーナー、リチャード・ルーカス、クリスティ・スコロン（2006）はセットポイントが完全には固定的でなく個人差があること、生活満足・肯定的感情・否定的感情が異なる速度で適応すること、長期失業・配偶者との死別・重度障害など適応が不完全な事象があることを示し、原理論を五点で修正した。ポジティブ心理学では、感謝・親切・マインドフルネスなど意図的活動による持続的な幸福向上の余地が検討されている。批判として、1978年の研究は標本が小さく横断的であること、「戻る」速度と程度が出来事の種類で大きく異なり単一の踏み車では語れないことがある。中小企業には、昇給や設備更新の満足は薄れるため報酬は金額より頻度と意味づけで設計すること、逆に不況や事故のあとも人と組織は思うより早く立ち直るので過剰な悲観で判断を誤らないことが含意となる。',
+    keyFigures: 'フィリップ・ブリックマン＆ドナルド・T・キャンベル（1971 比喩の導入）／ブリックマン＆ダン・コーツ＆ロニー・ジャノフ＝バルマン（1978 宝くじ当選者研究）／エド・ディーナー＆リチャード・ルーカス＆クリスティ・スコロン（2006 五つの修正）／シェーン・フレデリック＆ジョージ・ロウエンスタイン（適応の二要因）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1037/0003-066X.61.4.305', type: 'academic', label: 'Diener, Lucas & Scollon (2006) "Beyond the Hedonic Treadmill: Revising the Adaptation Theory of Well-Being," American Psychologist 61(4), 305–314' },
-      { url: 'https://doi.org/10.1037/0022-3514.36.8.917', type: 'academic', label: 'Brickman, Coates & Janoff-Bulman (1978) "Lottery Winners and Accident Victims: Is Happiness Relative?" JPSP 36(8), 917–927（宝くじ当選者・事故被害者の幸福度比較研究）' },
+      { url: 'https://doi.org/10.1037/0022-3514.36.8.917', type: 'academic', label: 'Brickman, P., Coates, D. & Janoff-Bulman, R. (1978) Lottery Winners and Accident Victims: Is Happiness Relative? — Journal of Personality and Social Psychology 36(8)' },
+      { url: 'https://doi.org/10.1037/0003-066X.61.4.305', type: 'academic', label: 'Diener, E., Lucas, R. E. & Scollon, C. N. (2006) Beyond the Hedonic Treadmill: Revising the Adaptation Theory of Well-Being — American Psychologist 61(4)' },
+      { url: 'https://en.wikipedia.org/wiki/Hedonic_treadmill', type: 'reference', label: 'Wikipedia: Hedonic treadmill — セットポイントと適応の概説' },
     ],
   },
   {
@@ -18536,20 +18517,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'human-mirror-neuron-system',
     discipline: 'human-science',
-    title: 'ミラーニューロンシステム（Mirror Neuron System）',
+    title: 'ミラーニューロン・システム（リゾラッティ／ガレーゼ）——行為の実行時と観察時の双方で発火するニューロン群が行為理解・模倣・共感の神経基盤とされる仮説と、その証拠をめぐる論争',
     statement:
-      'ミラーニューロンシステム（Mirror Neuron System）とは、個体が特定の運動行為を実行する際と、他個体が同じ行為を実行するのを観察する際の双方で発火する視覚運動ニューロン群およびその脳内ネットワークを指す神経科学概念である。ディ・ペレグリーノ（di Pellegrino）ら（1992）がマカクザルの腹側運動前野（F5野）で初めて報告し、ガレーゼ（Gallese）、リゾラッティ（Rizzolatti）ら（1996, Brain誌）が532ニューロンから92個のミラーニューロンを同定して体系的に特性を確立した。' +
-      'ヒトではfMRIによる下前頭回・腹側運動前野・下頭頂小葉の活性化、μ律動（8-13Hz）抑制、およびムカメル（Mukamel）ら（2010）のてんかん患者における直接単一ニューロン記録が証拠を提供している。行為理解（直接マッチング仮説）、共感、言語進化への関与が提唱されているが、ヒコック（Hickok 2009）は「ミラーニューロン理論の8つの問題」で行為理解への必要性に疑問を呈した。自閉症の「壊れた鏡」仮説（ラマチャンドラン＆オーバーマン2006）も提唱されたが、追試結果は一貫せず議論が続いている。' +
-      'なお、キルナーとレモン（2013）は、ヒトでの単一細胞記録による直接証拠が乏しいことを指摘し、ヒトのミラーシステム解釈には方法論的注意が必要だとしている。',
-    keyFigures: 'ジャコモ・リゾラッティほか（1992/1996 マカクザルF5野でのミラーニューロン発見・パルマ大学）／グレゴリー・ヒコック（2009 8つの問題・批判）',
-    asOf: '2026-06',
+      'ミラーニューロン・システムとは、個体が特定の運動行為を実行するときと、他個体が同じ行為を行うのを観察するときの双方で発火する視覚運動ニューロン群とその脳内ネットワークを指す。ディ・ペレグリーノら（1992）がマカクザルの腹側運動前野（F5野）で初めて報告し、ヴィットリオ・ガレーゼ、ルチアーノ・ファディガ、レオナルド・フォガッシ、ジャコモ・リゾラッティ（1996）が532個中92個のミラーニューロンを同定して特性を体系化した。中核の主張は、他者の行為を観察する際に観察者自身の運動系が内的にシミュレーションすることで行為理解が成立するという直接照合仮説で、リゾラッティと Craighero（2004）はヒトにも下前頭回・腹側運動前野・下頭頂小葉からなる類似のシステムがあり、模倣・意図理解・共感・言語の神経基盤となりうると総説し、ガレーゼは具現化シミュレーション概念へ拡張した。ヒトでの証拠は fMRI の活性化、μ律動の抑制、ムカメルら（2010）のてんかん患者での単一ニューロン記録である。ラマチャンドランとオーバーマン（2007）はミラーニューロン機能不全で自閉スペクトラム症を説明する「壊れた鏡」仮説を提示したが追試は一貫しない。批判として、グレゴリー・ヒコック（2009）が「ミラーニューロン理論の八つの問題」で行為理解にミラーニューロンが必要だという証拠の弱さを指摘し、キルナーとレモン（2013）はヒトでの直接証拠の乏しさから解釈に方法論的注意を求めた。中小企業には、模範を見せる訓練や共感的な接客の背後にある模倣と共鳴の仕組みは実在するが、「ミラーニューロン」を万能の説明として持ち出す研修や商品の宣伝は科学的裏付けが薄いことが含意となる。',
+    keyFigures: 'ジャコモ・リゾラッティ＆ヴィットリオ・ガレーゼ＆ルチアーノ・ファディガ＆レオナルド・フォガッシ（1992／1996 マカクザル F5 野での発見）／Rizzolatti & Craighero（2004 総説）／ヴィラヤヌル・ラマチャンドラン（2007 壊れた鏡仮説）／対比: グレゴリー・ヒコック（2009 八つの問題）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://academic.oup.com/brain/article-abstract/119/2/593/382476', type: 'academic', label: 'Gallese et al. (1996) Action Recognition in the Premotor Cortex — Brain 119(2)' },
-      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2773693/', type: 'academic', label: 'Hickok (2009) Eight Problems for the Mirror Neuron Theory — PMC / J Cognitive Neuroscience' },
-      { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev.neuro.27.070203.144230', type: 'academic', label: 'Rizzolatti & Craighero (2004) The Mirror-Neuron System — Annual Review of Neuroscience' },
-      { url: 'https://doi.org/10.1016/0926-6410(96)00022-5', type: 'academic', label: 'Gallese, V. et al. (1996) "Action Recognition in the Premotor Cortex" — Brain' },
-      { url: 'https://doi.org/10.1177/0963721411410837', type: 'academic', label: 'Hickok, G. (2009) "Eight Problems for the Mirror Neuron Theory" — Journal of Cognitive Neuroscience' },
-      { url: 'https://en.wikipedia.org/wiki/Mirror_neuron', type: 'reference', label: 'Wikipedia: Mirror neuron — ミラーニューロンの発見・機能・論争' },
+      { url: 'https://academic.oup.com/brain/article-abstract/119/2/593/382476', type: 'academic', label: 'Gallese, V., Fadiga, L., Fogassi, L. & Rizzolatti, G. (1996) Action Recognition in the Premotor Cortex — Brain 119(2)' },
+      { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev.neuro.27.070203.144230', type: 'academic', label: 'Rizzolatti, G. & Craighero, L. (2004) The Mirror-Neuron System — Annual Review of Neuroscience 27' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2773693/', type: 'academic', label: 'Hickok, G. (2009) Eight Problems for the Mirror Neuron Theory of Action Understanding in Monkeys and Humans — Journal of Cognitive Neuroscience 21(7)（PMC）' },
+      { url: 'https://www.scientificamerican.com/article/broken-mirrors-a-theory-of-autism-2007-06/', type: 'media', label: 'Ramachandran, V. S. & Oberman, L. M. (2007) Broken Mirrors: A Theory of Autism — Scientific American' },
+      { url: 'https://en.wikipedia.org/wiki/Mirror_neuron', type: 'reference', label: 'Wikipedia: Mirror neuron — 発見、機能、論争' },
     ],
   },
   {
@@ -22047,24 +22025,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.nobelprize.org/prizes/economic-sciences/2004/summary/', type: 'reference', label: 'The Sveriges Riksbank Prize in Economic Sciences 2004 — Nobel Prize Summary (Kydland & Prescott)' },
       { url: 'https://mpra.ub.uni-muenchen.de/17932/', type: 'academic', label: 'Real Business Cycle Theory — A Systematic Review, Munich Personal RePEC Archive (MPRA)' },
       { url: 'https://ideas.repec.org/a/ecm/emetrp/v50y1982i6p1345-70.html', type: 'academic', label: 'Kydland & Prescott (1982): Time to Build and Aggregate Fluctuations — Econometrica, IDEAS/RePEC' },
-    ],
-  },
-  {
-    id: 'human-mirror-neuron-theory',
-    discipline: 'human-science',
-    title: 'ミラーニューロン理論',
-    statement:
-      'Rizzolatti（1996）らはマカクザルの腹側運動前野（F5野）において、行為の実行時と観察時の双方に発火するニューロン（ミラーニューロン）を発見し、Gallese・Fadiga・Fogassiらとともにその神経生理学的特性を記述した。' +
-      'この理論の核心的主張は、他者の行為を観察する際に観察者自身の運動系が内的シミュレーションを行うことで行為理解が成立するという「直接照合仮説」である。' +
-      'Rizzolatti and Craighero（2004）はヒトにも類似のミラーニューロンシステムが存在し、模倣・意図理解・感情共鳴（共感）・言語の神経基盤となりうると総説した。' +
-      'Gallese（2001）は「具現化シミュレーション（Embodied Simulation）」概念を提唱し、ミラーニューロン系が社会的認知の統合的基盤を構成すると論じた。' +
-      'Ramachandran（2006）はミラーニューロン機能不全が自閉スペクトラム症の中核症状を説明しうるとする「壊れた鏡」仮説を提示したが、同仮説の実証的根拠については現在も議論が続いている。',
-    keyFigures: 'Giacomo Rizzolatti ／ Vittorio Gallese ／ Leonardo Fogassi ／ Marco Iacoboni ／ Vilayanur S. Ramachandran',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev.neuro.27.070203.144230', type: 'academic', label: 'Rizzolatti & Craighero (2004) — The Mirror-Neuron System, Annual Review of Neuroscience 27: 169–192' },
-      { url: 'https://academic.oup.com/brain/article/119/2/593/284429', type: 'academic', label: 'Gallese, Fadiga, Fogassi & Rizzolatti (1996) — Action recognition in the premotor cortex, Brain 119: 593–609' },
-      { url: 'https://www.scientificamerican.com/article/broken-mirrors-a-theory-of-autism-2007-06/', type: 'media', label: 'Ramachandran & Oberman (2007) — Broken Mirrors: A Theory of Autism, Scientific American' },
     ],
   },
   {
@@ -25627,19 +25587,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-market-microstructure',
     discipline: 'economics',
-    title: '市場ミクロ構造（マーケット・マイクロストラクチャー）',
+    title: '市場ミクロ構造（デムセッツ／カイル／グロステン＝ミルグロム）——注文フロー・スプレッド・情報の非対称性が流動性と価格発見を規定する過程を分析する金融経済学の分野',
     statement:
-      '市場ミクロ構造とは、金融市場における価格形成メカニズム・注文フロー・ビッド・アスク・スプレッド・情報非対称性が流動性と価格発見にいかに影響するかを研究する領域である。' +
-      'Demsetz (1968) が取引の即時性に対する価格（スプレッド）として取引コストを定式化して領域を開き、Kyle (1985) はインサイダーが私的情報を戦略的に小出しにする連続オークションモデルで市場の深さ（カイルのλ＝注文フローが価格を動かす度合い）を定義した。Glosten-Milgrom 系のモデルはスプレッドを情報を持つ相手と取引してしまう逆選択への補償として説明し、在庫モデルはマーケットメーカーの在庫リスク補償として説明する——スプレッドの分解（逆選択・在庫・注文処理）が実証の定番になった。' +
-      'Hasbrouck (2007) が体系化した実証手法（価格発見の情報シェア等）とオハラの理論総説がこの分野の標準文献である。' +
-      '実務・政策への含意が濃い領域で、ティックサイズ・注文優先ルール・市場分裂（フラグメンテーション）・高頻度取引の評価、取引所設計や最良執行規制はミクロ構造の知見の上に設計されている。',
-    keyFigures: 'ハリー・デムセッツ ／ モーリーン・オハラ ／ アルベルト・カイル',
-    asOf: '2026-06-24',
+      '市場ミクロ構造（market microstructure）とは、金融市場における注文の到着・約定・価格形成の具体的過程を分析し、注文フロー、ビッド・アスク・スプレッド、情報の非対称性が流動性と価格発見にいかに影響するかを研究する領域である。ハリー・デムセッツ（1968）が取引の即時性に対する価格としてスプレッドを定式化して領域を開き、アルバート・カイル（1985）は私的情報を持つトレーダーが情報を隠すために段階的に取引する連続オークション均衡で、注文フローが価格を動かす度合い（カイルのλ）として市場の深さを定義した。ローレンス・グロステンとポール・ミルグロム（1985）はスプレッドを情報を持つ相手と取引してしまう逆選択への補償として説明し、在庫モデルはマーケットメーカーの在庫リスク補償として説明する——スプレッドの逆選択・在庫・注文処理への分解が実証の定番となった。モーリーン・オハラ（1995）が分野を体系化し、ジョエル・ハスブルック（2007）が価格発見の情報シェアなどの実証手法を整理した。ティックサイズ、注文優先ルール、市場分裂、アルゴリズム取引と高頻度取引の評価、取引所設計や最良執行規制はこの知見の上に設計される。批判として、モデルが単一資産・単一情報トレーダーなど強い仮定に依存し、高頻度取引下の市場では逆選択の担い手が入れ替わって古典的分解が当てはまりにくいことがある。中小企業には、自社株式や社債に市場があるなら流動性の低さがそのまま資本コストに跳ね返ること、上場を考えるなら投資家との情報の非対称性を減らす開示がスプレッドと調達条件を左右することが含意となる。',
+    keyFigures: 'ハリー・デムセッツ（1968 取引費用）／アルバート・カイル（1985 連続オークションとλ）／ローレンス・グロステン＆ポール・ミルグロム（1985 逆選択スプレッド）／モーリーン・オハラ（1995 体系化）／ジョエル・ハスブルック（2007 実証手法）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1086/466623', type: 'academic', label: 'Demsetz 1968 — The Cost of Transacting' },
-      { url: 'https://doi.org/10.1111/j.1540-6261.2003.00616.x', type: 'academic', label: 'O\'Hara 2003 — Liquidity and Price Discovery' },
-      { url: 'https://doi.org/10.2307/1913210', type: 'academic', label: 'Kyle 1985 — Continuous Auctions and Insider Trading' },
-      { url: 'https://doi.org/10.1093/acprof:oso/9780195073683.001.0001', type: 'academic', label: 'Hasbrouck 2007 — Empirical Market Microstructure' },
+      { url: 'https://doi.org/10.2307/1913210', type: 'academic', label: 'Kyle, A. S. (1985) Continuous Auctions and Insider Trading — Econometrica 53(6)' },
+      { url: 'https://doi.org/10.1016/0304-405X(85)90044-3', type: 'academic', label: 'Glosten, L. R. & Milgrom, P. R. (1985) Bid, Ask and Transaction Prices in a Specialist Market with Heterogeneously Informed Traders — Journal of Financial Economics 14(1)' },
+      { url: 'https://doi.org/10.1111/j.1540-6261.2003.00616.x', type: 'academic', label: 'O\'Hara, M. (2003) Presidential Address: Liquidity and Price Discovery — Journal of Finance 58(4)' },
+      { url: 'https://doi.org/10.1093/acprof:oso/9780195073683.001.0001', type: 'academic', label: 'Hasbrouck, J. (2007) Empirical Market Microstructure — Oxford University Press' },
+      { url: 'https://en.wikipedia.org/wiki/Market_microstructure', type: 'reference', label: 'Wikipedia: Market microstructure — 価格形成、スプレッド、情報の非対称性' },
     ],
   },
   {
@@ -25938,16 +25896,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-trade-gravity-model',
     discipline: 'economics',
-    title: '貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用',
+    title: '貿易の重力モデル（ティンバーゲン／アンダーソン＝ヴァン・ウィンクープ）——二国間貿易量は経済規模に比例し距離に反比例するという規則性と、多角的抵抗項を含む構造的導出・推定',
     statement:
-      '貿易の重力モデルは、二国間の貿易量が両国の経済規模（GDP）に比例し、地理的距離に反比例するという実証的規則性を定式化した国際貿易理論の基盤モデルである。1962年にティンバーゲン（Jan Tinbergen）が著書 Shaping the World Economy の付録IVでニュートンの万有引力の法則に着想を得て初めて計量的に定式化し、輸出国・輸入国のGDPを「質量」、両国間の距離を「引力の逆数」として貿易フローを説明した。ただし同モデルは長らく理論的基礎を欠くとされていた。アンダーソン（James Anderson）は1979年にアーミントン需要仮定に基づく理論的基礎を確立し、さらにアンダーソンとヴァン・ウィンクープ（van Wincoop）は2003年に「多角的抵抗項（multilateral resistance terms）」の概念を導入することで、二国間の貿易障壁が世界全体の相対的コスト構造に依存するという境界効果パズルを解決した。ヘッド（Keith Head）とメイヤー（Mayer）は2014年にポワソン擬似最尤推定（PPML）を含む推定手法を体系化し、FTA評価・通商政策分析・国境効果の計測など実証研究への応用を広げた。現在、重力モデルは国際貿易実証分析の標準的ワークホースとして広く活用されている。',
-    keyFigures: 'ティンバーゲン ／ アンダーソン ／ ヘッド',
-    asOf: '2026-06-24',
+      '貿易の重力モデルは、二国間の貿易量が両国の経済規模（GDP）に比例し地理的距離に反比例するという実証的規則性で、ヤン・ティンバーゲンが1962年の著書『Shaping the World Economy』でニュートンの万有引力に着想を得て初めて計量的に定式化した。長く理論的基盤を欠くとされたが、ジェームズ・アンダーソン（1979）がアーミントン型の需要仮定から導出し、アンダーソンとエリック・ヴァン・ウィンクープ（2003）は CES 選好とアイスバーグ型貿易費用から厳密に導いて、各国の貿易が全相手国との相対的な貿易費用に依存する「多角的抵抗項」を制御しなければ推定が偏ることを示し、国境効果パズルを解いた。この構造的重力モデルは FTA・関税・非関税障壁の効果推定の標準枠組みとなり、キース・ヘッドとティエリー・マイヤー（2014）の総説は距離の弾力性が約 −1、GDP の弾力性が約 1 で時代を通じて安定していることを確認し、サントス・シルバとテネイレイロのポアソン擬似最尤（PPML）推定が零貿易と不均一分散に頑健な手法として広く採用された。批判として、距離弾力性が輸送費の低下にもかかわらず下がらない「距離のパズル」、貿易費用の測定が代理変数に頼ること、政策評価では一般均衡効果の扱いが結果を左右することがある。中小企業には、輸出先の選定で相手国の市場規模と距離（輸送・言語・制度の近さ）がまず効くこと、FTA や共通言語圏はその「距離」を縮める要因として貿易量に直接現れることが含意となる。',
+    keyFigures: 'ヤン・ティンバーゲン（1962 定式化）／ジェームズ・アンダーソン（1979 理論的基礎）／ジェームズ・アンダーソン＆エリック・ヴァン・ウィンクープ（2003 多角的抵抗項）／キース・ヘッド＆ティエリー・マイヤー（2014 総説）／サントス・シルバ＆テネイレイロ（PPML 推定）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://www.jstor.org/stable/1802501', type: 'academic', label: 'Anderson 1979 — A Theoretical Foundation for the Gravity Equation, American Economic Review 69(1):106-116' },
-      { url: 'https://doi.org/10.1257/000282803321455214', type: 'academic', label: 'Anderson & van Wincoop 2003 — Gravity with Gravitas: A Solution to the Border Puzzle, American Economic Review 93(1):170-192' },
-      { url: 'https://doi.org/10.1016/B978-0-444-54314-1.00003-3', type: 'academic', label: 'Head & Mayer 2014 — Gravity Equations: Workhorse, Toolkit, and Cookbook, Handbook of International Economics 4:131-195' },
-      { url: 'https://archive.org/details/shapingworldecon0000tinb', type: 'reference', label: 'Tinbergen 1962 — Shaping the World Economy: Suggestions for an International Economic Policy, Twentieth Century Fund' },
+      { url: 'https://archive.org/details/shapingworldecon0000tinb', type: 'reference', label: 'Tinbergen, J. (1962) Shaping the World Economy: Suggestions for an International Economic Policy — Twentieth Century Fund（Internet Archive）' },
+      { url: 'https://www.jstor.org/stable/1802501', type: 'academic', label: 'Anderson, J. E. (1979) A Theoretical Foundation for the Gravity Equation — American Economic Review 69(1)' },
+      { url: 'https://doi.org/10.1257/000282803321455214', type: 'academic', label: 'Anderson, J. E. & van Wincoop, E. (2003) Gravity with Gravitas: A Solution to the Border Puzzle — American Economic Review 93(1)' },
+      { url: 'https://doi.org/10.1016/B978-0-444-54314-1.00003-3', type: 'academic', label: 'Head, K. & Mayer, T. (2014) Gravity Equations: Workhorse, Toolkit, and Cookbook — Handbook of International Economics vol. 4' },
+      { url: 'https://en.wikipedia.org/wiki/Gravity_model_of_trade', type: 'reference', label: 'Wikipedia: Gravity model of trade — 重力方程式の導出と推定' },
     ],
   },
   {
@@ -26605,19 +26564,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://journals.sagepub.com/doi/10.1177/009164718301100406', type: 'academic', label: 'Ellison 1983 Spiritual Well-Being: Conceptualization and Measurement. Journal of Psychology and Theology 11(4) 330-340' },
       { url: 'https://journals.sagepub.com/doi/10.1177/009164719101900106', type: 'academic', label: 'Bufford, Paloutzian & Ellison 1991 Norms for the Spiritual Well-Being Scale. Journal of Psychology and Theology 19(1) 56-70' },
       { url: 'https://link.springer.com/rwe/10.1007/978-3-030-89738-3_36-1', type: 'reference', label: 'Paloutzian & Bufford — Spiritual Well-Being Scale (SWBS): Measuring Spiritual Well-being in International Contexts. Springer Encyclopedia' },
-    ],
-  },
-  {
-    id: 'human-transactive-memory',
-    discipline: 'human-science',
-    title: 'トランザクティブ・メモリー・システム：集団における分散型記憶と知識共有の理論',
-    statement: 'トランザクティブ・メモリー・システム（TMS）は、社会心理学者ダニエル・ウェグナーが1987年に提唱した、集団の成員が「誰が何を知っているか」についての共有認識を通じて記憶を分担・統合する仕組みを説明する理論である。ウェグナーは親密なカップルの研究から、個人が他者の専門領域を把握し必要時にアクセスする「外部記憶装置」として機能することを示した。モルランドらの1999年の実験研究により、TMSが発達したチームは共同訓練を通じて専門化・信頼性・調整の3要素を高め課題遂行成績が有意に向上することが実証された。ルイスはTMS尺度を開発し知識マネジメントやチーム有効性研究の中核概念として広く援用されている。',
-    keyFigures: 'ダニエル・ウェグナー ／ リチャード・モルランド ／ カイル・ルイス',
-    asOf: '2026-06-25',
-    sources: [
-      { url: 'https://doi.org/10.1007/978-1-4612-4634-3_9', type: 'academic', label: 'Wegner, D.M. 1987 Transactive memory: A contemporary analysis of the group mind. In Theories of Group Behavior, Springer 185-208' },
-      { url: 'https://doi.org/10.4324/9781410603227-1', type: 'academic', label: 'Moreland, R.L. 1999 Transactive memory: Learning who knows what in work groups and organizations. Shared Cognition in Organizations 所収の書籍章（Lawrence Erlbaum／Routledge）' },
-      { url: 'https://doi.org/10.1037/0021-9010.88.4.587', type: 'academic', label: 'Lewis, K. 2003 Measuring transactive memory systems in the field. Journal of Applied Psychology 88(4) 587-604' },
     ],
   },
   {
@@ -28123,15 +28069,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-endogenous-growth-romer',
     discipline: 'economics',
-    title: '内生的成長理論（ローマー）',
-    statement: '内生的成長理論は、ローマー（1986, 1990）とルーカス（1988）が新古典派成長理論（ソロー・モデル）の「外生的技術進歩」という限界を克服するため提唱した枠組みである。ローマーの1986年モデルは知識の外部性と収穫逓増を組み込み、資本蓄積が技術水準を内部的に引き上げることで長期成長率を内生化した。1990年モデルは独占競争・多様な中間財・研究開発投資による意図的な技術革新をモデル化し、知的財産権が研究へのインセンティブを与える独占的補償の役割を明示した。ルーカスはヒューマン・キャピタル（人的資本）の外部性を通じた内生的成長経路を定式化した。政策含意として、R&D補助・教育投資・開放経済における知識スピルオーバーが長期成長に決定的であるという新たな根拠を提供した。ローマーは2018年にノーベル経済学賞を受賞した。',
-    keyFigures: 'ポール・ローマー ／ ロバート・ルーカス ／ フィリップ・アジオン ／ ピーター・ハウイット',
-    asOf: '2026-06-26',
+    title: '内生的成長理論（ローマー／ルーカス）——アイデアの非競合性と知識の外部性が生む収穫逓増により、技術進歩を経済内部の投資の産物として説明する成長論',
+    statement:
+      '内生的成長理論は、ポール・ローマー（1986、1990）とロバート・ルーカス（1988）が、新古典派成長理論（ソロー・モデル）が長期成長率を外生的な技術進歩に委ねる限界を克服するために提唱した枠組みである。ローマーの1986年モデルは知識の外部性と収穫逓増を組み込み、資本蓄積が技術水準を内部的に引き上げることで長期成長率を内生化した。1990年モデルは独占競争・多様な中間財・研究開発投資による意図的な技術革新を定式化し、アイデアが非競合性（一人が使っても他の人も使える）と部分的排除可能性を持つために経済全体で収穫逓増が成立すること、知的財産権が研究への誘因を与える独占的補償の役割を明示した。ルーカスは人的資本の外部性を通じた内生的成長経路を定式化し、フィリップ・アギオンとピーター・ハウイットは創造的破壊による品質改良のシュンペーター的成長モデルへ展開した。政策含意として、研究開発補助・教育投資・特許制度・開放経済における知識スピルオーバーが長期成長に決定的だという根拠を与え、1990年代の情報通信産業の成長を理解する枠組みとなった。ローマーは2018年にウィリアム・ノードハウスと共同でノーベル経済学賞を受賞した。批判として、研究者数が増えるほど成長率が上がるという規模効果が先進国のデータと合わないこと（ジョーンズの批判）、知識の外部性の大きさを実証的に識別しにくいことがある。中小企業には、自社の成長も学習と知識の蓄積に依存し、業界や地域の知識スピルオーバー（取引先・大学・同業者との接点）が無料の成長資源であること、独自のノウハウは特許や秘匿で部分的に守るしかないことが含意となる。',
+    keyFigures: 'ポール・ローマー（1986 収穫逓増／1990 内生的技術変化／2018 ノーベル賞）／ロバート・ルーカス（1988 人的資本）／フィリップ・アギオン＆ピーター・ハウイット（シュンペーター的成長）／対比: ロバート・ソロー（外生的成長）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1086/261420', type: 'academic', label: 'Romer, P. M. (1986) Increasing Returns and Long-Run Growth — Journal of Political Economy, 94(5), 1002–1037' },
-      { url: 'https://doi.org/10.1086/261725', type: 'academic', label: 'Romer, P. M. (1990) Endogenous Technological Change — Journal of Political Economy, 98(5, Part 2), S71–S102' },
-      { url: 'https://doi.org/10.1016/0304-3932(88)90168-7', type: 'academic', label: 'Lucas, R. E. (1988) On the Mechanics of Economic Development — Journal of Monetary Economics, 22(1), 3–42' },
-      { url: 'https://en.wikipedia.org/wiki/Endogenous_growth_theory', type: 'reference', label: 'Wikipedia: Endogenous growth theory — Romer and Lucas models, knowledge spillovers, and policy implications' },
+      { url: 'https://doi.org/10.1086/261420', type: 'academic', label: 'Romer, P. M. (1986) Increasing Returns and Long-Run Growth — Journal of Political Economy 94(5)' },
+      { url: 'https://doi.org/10.1086/261725', type: 'academic', label: 'Romer, P. M. (1990) Endogenous Technological Change — Journal of Political Economy 98(5, Part 2)' },
+      { url: 'https://doi.org/10.1016/0304-3932(88)90168-7', type: 'academic', label: 'Lucas, R. E. (1988) On the Mechanics of Economic Development — Journal of Monetary Economics 22(1)' },
+      { url: 'https://en.wikipedia.org/wiki/Endogenous_growth_theory', type: 'reference', label: 'Wikipedia: Endogenous growth theory — Romer と Lucas のモデル、知識スピルオーバー、政策含意' },
     ],
   },
   {
@@ -28487,15 +28434,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-shadow-banking-fsb',
     discipline: 'economics',
-    title: 'シャドーバンキング（金融安定理事会定義）',
-    statement: 'シャドーバンキング（shadow banking）は、金融安定理事会（FSB）が2011年以来定義・監視する「銀行システム外で信用仲介（credit intermediation）を行う実体と活動の総体」であり、マネー・マーケット・ファンド・証券化ビークル（SIV/SPV）・レポ市場・ヘッジファンド・証券貸借などが含まれる。ポスナー（2013）はシャドーバンキングが正規銀行の規制コストを迂回して流動性変換・信用リスク移転・満期変換を行う点で伝統的銀行と機能的に同一である一方、預金保険・中央銀行のLLR機能から切り離されるため取り付け（run）に脆弱であることを論じた。2007〜2009年の金融危機では、MMFのブレーキング・ザ・バック、レポ市場の流動性収縮、ABS/CDO市場の凍結がシャドーバンキングの連鎖的崩壊として現れ、FSBは年次グローバル・モニタリング報告（GMR）で規模（2022年：約63兆ドル）を継続的に集計している。G20委託により策定されたポリシー・フレームワークは、経済機能別（EF1〜EF5）分類と比例的規制を柱とする。',
-    keyFigures: 'ポール・マカリー ／ ゾルタン・ポズサール ／ アンドレアス・バックス ／ ゲーリー・ゴートン',
-    asOf: '2026-06-26',
+    title: 'シャドーバンキング（ポズサー／FSB）——銀行規制の外で満期・流動性・信用の変換を行う金融仲介の連鎖が、預金保険と最後の貸し手を欠くために取り付けに脆弱であること',
+    statement:
+      'シャドーバンキング（shadow banking）とは、伝統的な銀行規制の枠外で信用仲介を行う金融機関・取引・市場の総体で、マネー・マーケット・ファンド（MMF）、証券化ビークル、資産担保コマーシャルペーパー、レポ市場、ヘッジファンドなどを含む。ポール・マカリーの造語で、ゾルタン・ポズサー、トビアス・エイドリアン、アダム・アシュクラフト、ヘイリー・ボスキーは2010年のニューヨーク連銀スタッフレポートで、その全体像を初めて体系的に地図化し、正規銀行と同様に満期変換・流動性変換・信用リスク移転を行いながら預金保険や中央銀行の最後の貸し手機能から切り離されているため取り付けに脆弱であることを示した。ゲイリー・ゴートンとアンドリュー・メトリック（2012）は2007〜09年の危機をレポ市場における取り付けとして分析し、伝統的な銀行取り付けと構造的に同型であることを示した。危機ではMMFの元本割れ、レポ市場の流動性収縮、ABS／CDO市場の凍結が連鎖的崩壊として現れた。金融安定理事会（FSB）は2011年以降「銀行システム外の信用仲介」として定義・監視し、経済機能別（EF1〜EF5）の分類と比例的規制を柱とする政策枠組みを策定して年次のグローバル・モニタリング報告で規模を集計し、近年は「ノンバンク金融仲介」へ呼称を改めた。マクロプルーデンス規制の理論的基盤となっている。批判として、定義が広すぎて健全な市場型金融まで含むこと、規制を強めるほど仲介がさらに外側へ移る規制裁定が繰り返されることがある。中小企業には、リース・ファクタリング・ノンバンク融資・決済アプリの残高など銀行外の資金調達と資金保管が預金保険の外にあり、危機時に真っ先に細る経路であることが含意となる。',
+    keyFigures: 'ゾルタン・ポズサー＆トビアス・エイドリアン＆アダム・アシュクラフト＆ヘイリー・ボスキー（2010 NY 連銀）／ゲイリー・ゴートン＆アンドリュー・メトリック（2012 レポの取り付け）／ポール・マカリー（造語）／金融安定理事会（2011〜 監視枠組み）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://www.fsb.org/2023/12/global-monitoring-report-on-non-bank-financial-intermediation-2023/', type: 'government', label: 'FSB (2023) Global Monitoring Report on Non-Bank Financial Intermediation 2023 — Financial Stability Board（年次グローバル監視報告）' },
-      { url: 'https://doi.org/10.1016/j.jfineco.2011.03.016', type: 'academic', label: 'Gorton, G. & Metrick, A. (2012) Securitized Banking and the Run on Repo — Journal of Financial Economics, 104(3), 425–451（レポ市場取り付けの実証）' },
-      { url: 'https://doi.org/10.1093/rfs/hhs100', type: 'academic', label: 'Pozsar, Z. et al. (2013) Shadow Banking — Federal Reserve Bank of New York Staff Reports No. 458（体系的整理）' },
-      { url: 'https://en.wikipedia.org/wiki/Shadow_banking_system', type: 'reference', label: 'Wikipedia: Shadow banking system — definition, components, FSB framework, 2008 crisis role' },
+      { url: 'https://www.newyorkfed.org/research/staff_reports/sr458', type: 'government', label: 'Pozsar, Z., Adrian, T., Ashcraft, A. & Boesky, H. (2010) Shadow Banking — Federal Reserve Bank of New York Staff Report No. 458' },
+      { url: 'https://doi.org/10.1016/j.jfineco.2011.03.016', type: 'academic', label: 'Gorton, G. & Metrick, A. (2012) Securitized Banking and the Run on Repo — Journal of Financial Economics 104(3)' },
+      { url: 'https://www.fsb.org/2023/12/global-monitoring-report-on-non-bank-financial-intermediation-2023/', type: 'government', label: 'Financial Stability Board (2023) Global Monitoring Report on Non-Bank Financial Intermediation 2023' },
+      { url: 'https://en.wikipedia.org/wiki/Shadow_banking_system', type: 'reference', label: 'Wikipedia: Shadow banking system — 定義、構成要素、FSB の枠組み、2008 年危機での役割' },
     ],
   },
   {
@@ -28671,15 +28619,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'human-rumination-nolen-hoeksema',
     discipline: 'human-science',
-    title: 'ルミネーション（反芻思考）理論（ノレン＝ホークスマ）',
-    statement: 'ルミネーション（rumination）またはうつ反芻理論（response styles theory of depression）は、ノレン＝ホークスマ（1991）が提唱した、抑うつ気分に応答して症状・原因・意味に焦点を当てた反復的・受動的思考パターンがうつ病エピソードを延長・増悪させるという理論である。蒸し返し（brooding）と熟考（reflection）の二要素が弁別され、蒸し返しは症状の原因・帰結への焦点化（「なぜ私がこうなるのか」）、熟考は問題解決に向けた思索として区別された。性差研究ではノレン＝ホークスマ（1993）が女性が男性より多くルミネートする傾向がうつ病の性差を部分的に説明するとした。ルミネーションはまたPTSD・不安症・社会不安のトランスダイアグノスティック（transdiagnostic）な維持要因として位置づけられ、認知行動療法（CBT）のルミネーション焦点型（RFCBT）・マインドフルネスによる介入が有効とされる。測定にはノレン＝ホークスマ＆モロー（1991）のRRSが用いられ、蒸し返し・熟考の二因子を測定する改訂版RRS（Treynor他 2003）も広く使用される。',
-    keyFigures: 'スーザン・ノレン＝ホークスマ ／ ジュディス・モロー ／ エドワード・ウォーターズ ／ ニール・ジュッス',
-    asOf: '2026-06-26',
+    title: '反すう／反応スタイル理論（ノーレン＝ホークセマ）——抑うつ気分に対して症状と原因に受動的・反復的に注意を向ける反応様式が抑うつを延長・増悪させる',
+    statement:
+      '反すう（rumination）とは、抑うつ気分に応答して自分の症状・その原因・結果・意味に繰り返し受動的に注意を向ける思考パターンで、スーザン・ノーレン＝ホークセマが1991年に提唱した反応スタイル理論は、この反応様式の個人差が抑うつエピソードの持続と重症度を予測すると論じた。反すうは注意・記憶・解釈の否定的バイアスを活性化し、否定的な自己概念を強め、効果的な問題解決や道具的行動を阻害することで抑うつを維持・悪化させ、逆に注意を転換する気晴らしの反応様式は抑うつを和らげる。トレイナー、ゴンザレス、ノーレン＝ホークセマ（2003）は反すう反応尺度（RRS）の心理測定的分析から、症状の原因と帰結に囚われる「蒸し返し（brooding）」と問題解決に向かう「熟考（reflection）」を弁別し、抑うつを予測するのは前者だとした。女性が男性より反すうしやすい傾向は抑うつの性差を部分的に説明するとされ、エドワード・ワトキンス（2008）は建設的な反復思考と非建設的な反復思考を区別する枠組みを整理した。反すうは抑うつに限らず不安症・PTSD・社会不安に共通する診断横断的な維持要因と位置づけられ、反すう焦点型認知行動療法やマインドフルネスによる介入が有効とされる。批判として、自己報告尺度と抑うつ症状の項目が重なるため関連が過大になりうること、蒸し返しと熟考の区別が文化や標本で安定しないことがある。中小企業には、失敗の後に「なぜ自分は」と回り続ける社員や経営者自身には原因探しでなく次の一手を決める熟考へ切り替える支援が効くこと、長時間の反すうを促す評価面談や叱責の設計を避けることが含意となる。',
+    keyFigures: 'スーザン・ノーレン＝ホークセマ（1991 反応スタイル理論）／ウェンディ・トレイナー＆リチャード・ゴンザレス（2003 蒸し返しと熟考）／エドワード・ワトキンス（2008 建設的／非建設的反復思考）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1037/0033-295X.98.3.569', type: 'academic', label: 'Nolen-Hoeksema, S. (1991) Responses to Depression and Their Effects on the Duration of Depressive Episodes — Journal of Abnormal Psychology, 100(4), 569–582（ルミネーション理論の原典）' },
-      { url: 'https://doi.org/10.1037/0021-843X.112.4.558', type: 'academic', label: 'Treynor, W., Gonzalez, R. & Nolen-Hoeksema, S. (2003) Rumination Reconsidered: A Psychometric Analysis — Cognitive Therapy and Research, 27(3), 247–259（改訂RRS・二因子モデル）' },
-      { url: 'https://doi.org/10.1037/0033-2909.134.2.163', type: 'academic', label: 'Watkins, E. R. (2008) Constructive and Unconstructive Repetitive Thought — Psychological Bulletin, 134(2), 163–206（ルミネーションのメタ分析・介入）' },
-      { url: 'https://en.wikipedia.org/wiki/Rumination_(psychology)', type: 'reference', label: 'Wikipedia: Rumination (psychology) — Nolen-Hoeksema, brooding vs reflection, depression sex differences, RFCBT' },
+      { url: 'https://doi.org/10.1037/0033-295X.98.3.569', type: 'academic', label: 'Nolen-Hoeksema, S. (1991) Responses to Depression and Their Effects on the Duration of Depressive Episodes — Journal of Abnormal Psychology 100(4)' },
+      { url: 'https://doi.org/10.1037/0021-843X.112.4.558', type: 'academic', label: 'Treynor, W., Gonzalez, R. & Nolen-Hoeksema, S. (2003) Rumination Reconsidered: A Psychometric Analysis — Cognitive Therapy and Research 27(3)' },
+      { url: 'https://doi.org/10.1037/0033-2909.134.2.163', type: 'academic', label: 'Watkins, E. R. (2008) Constructive and Unconstructive Repetitive Thought — Psychological Bulletin 134(2)' },
+      { url: 'https://en.wikipedia.org/wiki/Rumination_(psychology)', type: 'reference', label: 'Wikipedia: Rumination (psychology) — Nolen-Hoeksema、蒸し返しと熟考、抑うつの性差' },
     ],
   },
   {
@@ -29260,20 +29209,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1093/jlb/lsv032', type: 'academic', label: 'Coffee, J. C. & Petzold, D. (2015) The Wolf at the Door: The Impact of Hedge Fund Activism on Corporate Governance — Annals of Corporate Governance, 1(1), 1–94（長期的影響論）' },
       { url: 'https://www.fsa.go.jp/singi/corporategovernance/siryou/20230331/01.pdf', type: 'government', label: '金融庁 (2023) コーポレートガバナンス・コード改訂版（スチュワードシップ責任・アクティビスト対応）' },
       { url: 'https://en.wikipedia.org/wiki/Shareholder_activism', type: 'reference', label: 'Wikipedia: Shareholder activism — hedge fund campaigns, SEC 13D, short-termism, CGC Japan' },
-    ],
-  },
-  {
-    id: 'infosoc-platform-envelopment-eisenmann',
-    discipline: 'information-sociology',
-    title: 'プラットフォーム包囲戦略（アイゼンマン）',
-    statement: 'プラットフォーム包囲（platform envelopment）は、アイゼンマン・パーカー・ヴァン・アルスタイン（2006/2011）が提唱した、既存プラットフォームの機能を自社製品にバンドルすることで、隣接市場のプラットフォーム事業者を排除または弱体化させる競争戦略である。包囲者（enveloper）は①共有ユーザーベースへのアクセス、②補完的・代替的製品機能の結合、③バンドル価格設定の優位——三つの経路で市場参入コストを大幅に低下させる。実例として、MicrosoftのWindowsへのMediaPlayer統合（RealNetworksへの包囲）・AppleのiOSへのFaceTime統合（Skypeへの包囲）・GoogleのAndroidへのGmaps・Chromeバンドル（競合アプリへの包囲）が典型的事例として分析されている。包囲を受けたプラットフォームの防衛策として、ニッチへの特化・オープンAPI公開によるエコシステム拡大・新市場への転換が論じられる。EU Digital Markets Act（DMA, 2022）が指定する「ゲートキーパー（gatekeeper）」義務——バンドル禁止・インターオペラビリティ要件——は包囲戦略を直接規制する立法的対応として注目される。',
-    keyFigures: 'トーマス・アイゼンマン ／ ジェフリー・パーカー ／ マーシャル・ヴァン・アルスタイン ／ ジャン・ティロール',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1287/mnsc.1060.0550', type: 'academic', label: 'Eisenmann, T., Parker, G. & Van Alstyne, M. (2006) Strategies for Two-Sided Markets — Harvard Business Review, 84(10), 92–101（二面市場戦略の原典）' },
-      { url: 'https://doi.org/10.1002/smj.935', type: 'academic', label: 'Eisenmann, T., Parker, G. & Van Alstyne, M. (2011) Platform Envelopment — Strategic Management Journal, 32(12), 1270–1285（包囲戦略の体系化）' },
-      { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R1925', type: 'government', label: 'European Parliament (2022) Regulation (EU) 2022/1925 — Digital Markets Act（ゲートキーパー規制・バンドル禁止）' },
-      { url: 'https://en.wikipedia.org/wiki/Platform_envelopment', type: 'reference', label: 'Wikipedia: Platform envelopment — Eisenmann, bundling, gatekeeper, DMA, multi-homing' },
     ],
   },
   {
@@ -36886,6 +36821,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-09',
     sources: [
       { url: 'https://doi.org/10.1086/260580', type: 'academic', label: 'Kydland, F. E. & Prescott, E. C. (1977) Rules Rather than Discretion: The Inconsistency of Optimal Plans — Journal of Political Economy 85(3)（原典）' },
+      { url: 'https://www.nobelprize.org/prizes/economic-sciences/2004/popular-information/', type: 'reference', label: 'NobelPrize.org (2004) Popular information — 2004 年経済学賞（時間整合性とインフレ）' },
+      { url: 'https://www.frbsf.org/research-and-insights/publications/economic-letter/2003/04/time-inconsistent-monetary-policies-recent-research/', type: 'government', label: 'Federal Reserve Bank of San Francisco (2003) Time-Inconsistent Monetary Policies: Recent Research — FRBSF Economic Letter' },
       { url: 'https://en.wikipedia.org/wiki/Dynamic_inconsistency', type: 'reference', label: 'Wikipedia: Dynamic inconsistency — Kydland & Prescott、インフレ・バイアス、中央銀行の独立性' },
     ],
   },
@@ -38474,19 +38411,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-shadow-banking-pozsar',
-    discipline: 'economics',
-    title: 'シャドーバンキング・システム——規制外金融仲介の構造とシステミック・リスク',
-    statement: 'シャドーバンキング（Shadow Banking）とは、伝統的な銀行規制の枠外で信用仲介機能を果たす金融機関・取引・市場の総体を指す概念である。ポズサーらは2010年のニューヨーク連銀スタッフレポートで、シャドーバンキング・システムの全体像を初めて体系的にマッピングし、レポ取引、資産担保コマーシャルペーパー（ABCP）、証券化ビークル（SPV）、マネー・マーケット・ファンド（MMF）等の相互連関を明らかにした。ゲイリー・ゴートンは2008年の金融危機をレポ市場における「取り付け」（run）として分析し、シャドーバンキングが伝統的な銀行取り付けと構造的に同型であることを示した。金融安定理事会（FSB）は2011年以降、シャドーバンキングの監視枠組みを策定し、「ノンバンク金融仲介」として再定義する方向に移行している。この概念はマクロプルーデンス規制の理論的基盤となっている。',
-    keyFigures: 'ゾルタン・ポズサー ／ ゲイリー・ゴートン ／ トビアス・エイドリアン ／ ヒュン・ソン・シン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://www.newyorkfed.org/research/staff_reports/sr458', type: 'government', label: 'Pozsar, Adrian, Ashcraft & Boesky (2010) Shadow Banking — Federal Reserve Bank of New York Staff Report 458' },
-      { url: 'https://doi.org/10.1016/j.jfineco.2011.03.016', type: 'academic', label: 'Gorton & Metrick (2012) Securitized Banking and the Run on Repo — Journal of Financial Economics' },
-      { url: 'https://en.wikipedia.org/wiki/Shadow_banking_system', type: 'reference', label: 'Wikipedia: Shadow banking system — シャドーバンキングの定義と規制動向の概説' },
-    ],
-  },
-  {
     id: 'human-temporal-discounting-ainslie',
     discipline: 'human-science',
     title: '時間割引と双曲割引——即時的報酬への選好と衝動性の行動経済学',
@@ -38975,19 +38899,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.5465/annals.2014.0066', type: 'academic', label: 'Rothman, N. B., Pratt, M. G., Rees, L. & Vogus, T. J. (2017) Understanding the Dual Nature of Ambivalence — Academy of Management Annals' },
       { url: 'https://doi.org/10.5465/amr.2008.0494', type: 'academic', label: 'Pratt, M. G. & Doucet, L. (2000) Ambivalent Feelings in Organizational Relationships — Academy of Management Review' },
       { url: 'https://en.wikipedia.org/wiki/Ambivalence', type: 'reference', label: 'Wikipedia: Ambivalence — coexistence of conflicting attitudes and emotions overview' },
-    ],
-  },
-  {
-    id: 'human-hedonic-adaptation-brickman',
-    discipline: 'human-science',
-    title: '快楽適応理論——幸福度のセットポイントと重大な生活事象からの回復',
-    statement: '快楽適応（hedonic adaptation）は、ブリックマンとキャンベルが1971年に提唱した「快楽のトレッドミル」仮説に端を発する幸福研究の中核的理論である。ブリックマンらは1978年の古典的研究で、宝くじ当選者と脊髄損傷による麻痺患者の主観的幸福度を比較し、極端にポジティブまたはネガティブな出来事の後でも、人々の幸福度が比較的短期間で基準水準（セットポイント）に回復する傾向を報告した。この現象は、人間が新しい状況に感覚的・認知的に順応し、当該状況からの快・不快の信号が減衰する適応過程として説明される。ディーナーとルーカスらの後続研究は、セットポイント仮説を修正し、適応は完全ではなく個人差があること、失業や配偶者の死など一部の出来事については長期的な幸福度の低下が持続することを実証した。フレデリックとロウエンスタインは適応のメカニズムを感覚的適応と認知的比較の二要因に分解した。',
-    keyFigures: 'フィリップ・ブリックマン ／ ドナルド・キャンベル ／ エド・ディーナー ／ リチャード・ルーカス',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1037/0022-3514.36.8.917', type: 'academic', label: 'Brickman, P., Coates, D. & Janoff-Bulman, R. (1978) Lottery Winners and Accident Victims — Journal of Personality and Social Psychology' },
-      { url: 'https://doi.org/10.1037/0003-066X.61.4.305', type: 'academic', label: 'Diener, E., Lucas, R. E. & Scollon, C. N. (2006) Beyond the Hedonic Treadmill — American Psychologist' },
-      { url: 'https://en.wikipedia.org/wiki/Hedonic_treadmill', type: 'reference', label: 'Wikipedia: Hedonic treadmill — happiness set point and adaptation overview' },
     ],
   },
   {
@@ -39503,19 +39414,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1016/0022-1996(85)90006-6', type: 'academic', label: 'Brander, J. A. & Spencer, B. J. (1985) "Export Subsidies and International Market Share Rivalry" — JIE' },
       { url: 'https://doi.org/10.2307/1891121', type: 'academic', label: 'Eaton, J. & Grossman, G. M. (1986) "Optimal Trade and Industrial Policy under Oligopoly" — QJE' },
       { url: 'https://en.wikipedia.org/wiki/Strategic_trade_theory', type: 'reference', label: 'Wikipedia: Strategic trade theory — 寡占市場と貿易政策の理論' },
-    ],
-  },
-  {
-    id: 'econ-gravity-equation-structural-estimation',
-    discipline: 'economics',
-    title: '構造的重力モデル——貿易フローの理論的基盤と推定',
-    statement: 'ティンバーゲンが1962年に提示した重力方程式は、二国間貿易量が両国のGDPに正比例し地理的距離に反比例するという経験的規則性を記述したが、長く理論的基盤を欠いていた。アンダーソンとヴァン・ウィンクープの2003年の研究は、CES選好とアイスバーグ型貿易費用を仮定するアルミントン・モデルから重力方程式を厳密に導出し、「多角的抵抗項」（multilateral resistance terms）——各国の貿易が全貿易相手国との相対的な貿易費用に依存する——の適切な制御が不可欠であることを示した。この構造的重力モデルはFTA・関税・非関税障壁の貿易効果の推定における標準的枠組みとなり、ヘッドとマイヤーの包括的サーベイは距離の弾力性が約-1、GDPの弾力性が約1で時代を通じて安定していることを確認した。サントス・シルバとテネイレイロのPPML推定量は零貿易フローとヘテロスケダスティシティに頑健な推定手法として広く採用されている。',
-    keyFigures: 'ヤン・ティンバーゲン ／ ジェームズ・アンダーソン ／ エリック・ヴァン・ウィンクープ ／ キース・ヘッド ／ ティエリー・マイヤー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1257/000282803321455214', type: 'academic', label: 'Anderson, J. E. & van Wincoop, E. (2003) "Gravity with Gravitas" — AER' },
-      { url: 'https://doi.org/10.1016/B978-0-444-54314-1.00003-3', type: 'academic', label: 'Head, K. & Mayer, T. (2014) "Gravity Equations: Workhorse, Toolkit, and Cookbook" — Handbook of International Economics, Vol. 4（Elsevier）' },
-      { url: 'https://en.wikipedia.org/wiki/Gravity_model_of_trade', type: 'reference', label: 'Wikipedia: Gravity model of trade — 重力方程式の理論的導出と推定' },
     ],
   },
   {
@@ -40205,19 +40103,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.2307/1812792', type: 'academic', label: 'Mundell (1961) A Theory of Optimum Currency Areas — AER' },
       { url: 'https://doi.org/10.1111/1468-0297.00327', type: 'academic', label: 'Frankel & Rose (1998) The Endogeneity of the Optimum Currency Area Criteria — Economic Journal' },
       { url: 'https://en.wikipedia.org/wiki/Optimum_currency_area', type: 'reference', label: 'Wikipedia: Optimum currency area — 最適通貨圏理論の概説' },
-    ],
-  },
-  {
-    id: 'econ-market-microstructure-kyle-glosten',
-    discipline: 'economics',
-    title: '市場マイクロストラクチャー——情報の非対称性と価格形成メカニズム',
-    statement: '市場マイクロストラクチャーは、金融市場における取引の具体的プロセス——注文の到着・マッチング・約定・価格形成——を分析する金融経済学の分野であり、情報の非対称性が市場の効率性と流動性に与える影響を中心テーマとする。カイル（1985）は、私的情報を持つ情報トレーダーが自身の情報を隠蔽するために段階的に取引する均衡モデルを構築し、市場の厚み（lambda: 価格影響係数）の決定要因を明らかにした。グロステンとミルグロム（1985）は、マーケットメイカーのビッド・アスク・スプレッドが情報の非対称性に対する逆選択コストを反映していることを示した。これらのモデルは、スプレッドの構成要素（逆選択コスト・在庫コスト・注文処理コスト）の分解に理論的基礎を与えた。オハラ（1995）はこの分野を「取引が価格に与える影響を研究する学問」と定義し包括的に体系化した。近年ではアルゴリズム取引・高頻度取引（HFT）がマイクロストラクチャーに与える影響（メンクヴェルド, 2013）が重要な研究テーマとなっている。',
-    keyFigures: 'アルバート・カイル ／ ローレンス・グロステン ／ ポール・ミルグロム ／ モーリン・オハラ ／ アルバート・メンクヴェルド',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/1913210', type: 'academic', label: 'Kyle (1985) Continuous Auctions and Insider Trading — Econometrica' },
-      { url: 'https://doi.org/10.1016/0304-405X(85)90044-3', type: 'academic', label: 'Glosten & Milgrom (1985) Bid, Ask, and Transaction Prices in a Specialist Market — Journal of Financial Economics' },
-      { url: 'https://en.wikipedia.org/wiki/Market_microstructure', type: 'reference', label: 'Wikipedia: Market microstructure — 市場マイクロストラクチャーの概説' },
     ],
   },
   {
@@ -40975,19 +40860,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1086/258965', type: 'academic', label: 'Balassa, B. (1964) The Purchasing-Power Parity Doctrine — Journal of Political Economy' },
       { url: 'https://doi.org/10.2307/1928178', type: 'academic', label: 'Samuelson, P. (1964) Theoretical Notes on Trade Problems — Review of Economics and Statistics' },
       { url: 'https://en.wikipedia.org/wiki/Balassa%E2%80%93Samuelson_effect', type: 'reference', label: 'Wikipedia: Balassa–Samuelson effect — 効果の概要' },
-    ],
-  },
-  {
-    id: 'human-rumination-response-styles-nolen-hoeksema',
-    discipline: 'human-science',
-    title: '反すう反応スタイル理論——ノーレン＝ホークセマの抑うつ的反すうと気分障害の維持',
-    statement: '反すう反応スタイル理論は、スーザン・ノーレン＝ホークセマが1991年に提唱した、抑うつ気分に対する反応スタイルの個人差が抑うつエピソードの持続期間と重症度を予測するとする認知的脆弱性モデルである。反すう（rumination）とは、自己の抑うつ症状・その原因・結果に繰り返し受動的に注意を向ける思考パターンであり、問題解決ではなく自己没入的な反復思考が特徴である。ノーレン＝ホークセマは反すうが注意・記憶・解釈の認知バイアスを活性化し、否定的な自己概念を強化し、効果的な問題解決行動を阻害することで抑うつを維持・悪化させるメカニズムを理論化した。一方「気晴らし」反応スタイルは注意を転換させることで抑うつの軽減に寄与する。反すう反応尺度（RRS）は広く使用される測度であり、ジル・アルドとマッカリー・ノーレン＝ホークセマの研究は反すうの二成分（brooding vs. reflection）の区別を精緻化した。',
-    keyFigures: 'スーザン・ノーレン＝ホークセマ ／ エド・ワトキンス ／ ジル・アルド ／ ソニア・リュボミルスキー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1037/0033-295X.98.4.569', type: 'academic', label: 'Nolen-Hoeksema, S. (1991) Responses to Depression and Their Effects on the Duration of Depressive Episodes — JAPS' },
-      { url: 'https://doi.org/10.1037/0021-843X.112.4.558', type: 'academic', label: 'Treynor, W. et al. (2003) Rumination Reconsidered: A Psychometric Analysis — Cognitive Therapy and Research' },
-      { url: 'https://en.wikipedia.org/wiki/Rumination_(psychology)', type: 'reference', label: 'Wikipedia: Rumination (psychology) — 心理学における反すうの概要' },
     ],
   },
   {
@@ -42591,19 +42463,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1145/1979742.1979773', type: 'academic', label: 'Gershenfeld (2012) How to Make Almost Anything — Foreign Affairs' },
       { url: 'https://www.fablabs.io/labs', type: 'reference', label: 'Fab Foundation (2023) FabLab Network Global Directory' },
       { url: 'https://en.wikipedia.org/wiki/Maker_culture', type: 'reference', label: 'Wikipedia: Maker culture — メイカー文化の歴史と社会的影響' },
-    ],
-  },
-  {
-    id: 'econ-endogenous-growth-romer-knowledge-spillovers',
-    discipline: 'economics',
-    title: '内生的成長論——ローマーの知識スピルオーバーとアイデアの非競合性が生む収穫逓増の成長論',
-    statement: 'ポール・ローマーが1986〜90年に展開した内生的成長論は、技術進歩（アイデア）を外生的ショックではなく経済内部の合理的な投資の産物として理論化した。アイデアは「非競合性（nonrivalry）」を持ち（一人が使っても他の人も使える）かつ「部分的排除可能性（partial excludability）」があるため、規模の経済を生み出す「収穫逓増」が経済全体レベルで成立する。これにより、新古典派成長論（ソロー）の「定常状態に収束する低成長」ではなく「持続的な技術進歩と高成長」が説明可能となる。ローマーの研究は特許・R&D補助・大学研究への公的投資・知識集約産業の立地政策が長期成長に持つ意義を理論的に支持し、1990年代の情報通信産業の成長を理解する枠組みを提供した。ローマーは2018年ノーベル経済学賞をウィリアム・ノードハウスと共同受賞した。',
-    keyFigures: 'ポール・ローマー ／ ロバート・ルーカス ／ フィリップ・アギョン ／ ペーター・ハウィット',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1086/261725', type: 'academic', label: 'Romer (1990) Endogenous Technological Change — Journal of Political Economy' },
-      { url: 'https://doi.org/10.1086/298777', type: 'academic', label: 'Romer (1986) Increasing Returns and Long-Run Growth — Journal of Political Economy' },
-      { url: 'https://en.wikipedia.org/wiki/Endogenous_growth_theory', type: 'reference', label: 'Wikipedia: Endogenous growth theory — 内生的成長論の概念と発展' },
     ],
   },
   {
@@ -44949,18 +44808,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-dark-patterns-ui-deceptive',
-    discipline: 'information-sociology',
-    title: 'ダーク・パターンと欺瞞的UXデザインの規制論',
-    statement: 'ダーク・パターン（dark patterns）とは、UX（ユーザーエクスペリエンス）デザインにおいて利用者を意図せず、あるいは利用者の利益に反する行動（購読登録・個人情報の開示・退会困難化等）に誘導するために設計されたインターフェース手法の総称であり、ハリー・ブリグナルが2010年に命名した。主要な類型として「トリック・クエスチョン」「スニーキング（隠れた追加費用）」「偽の緊急性」「コンファームシェイミング（恥辱的確認）」「ロックイン（退会困難化）」などが分類される。EUのダーク・パターン規制はGDPR・消費者権利指令・DSA（デジタルサービス法）を通じて多層的に禁止される。米国ではFTCがダーク・パターン業者への制裁を強化し、2022年の「Click-to-Cancel」規則案が注目された。AIによるパーソナライズされたダーク・パターンの出現が新たな規制課題となっている。',
-    keyFigures: 'ハリー・ブリグナル ／ アーバジ・マシュア ／ コリン・グレイ ／ アーウィン・チェリン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1145/3359183', type: 'academic', label: 'Mathur, A. et al. (2019) Dark Patterns at Scale: Findings from a Crawl of 11K Shopping Websites — Proceedings of the ACM on Human-Computer Interaction 3(CSCW), Article 81' },
-      { url: 'https://en.wikipedia.org/wiki/Dark_pattern', type: 'reference', label: 'Wikipedia: Dark pattern — deceptive UX design' },
-    ],
-  },
-  {
     id: 'infosoc-networked-public-sphere-fraser',
     discipline: 'information-sociology',
     title: 'ネットワーク化された公共圏とデジタル・デモクラシー論',
@@ -45843,15 +45690,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'mgmt-transactive-memory-wegner',
     discipline: 'management',
-    title: 'トランザクティブ記憶システム（ウェグナー）',
-    statement: 'トランザクティブ記憶システム（transactive memory system; TMS）は、ダニエル・ウェグナー（1987）が提唱した、グループが共有する「誰が何を知っているか」に関するメタ知識（知識のディレクトリ）であり、個人の認知能力の限界を超えた集合的記憶・知識システムを形成する過程を説明する概念である。親密なカップル・職場チーム・家族がそれぞれの専門領域（知識の分化・differentiation）を認識し合い、必要な時に適切なメンバーの知識にアクセスする「記憶の分業（division of cognitive labor）」を可能にする。TMSの三次元として①専門化（specialization：誰がどの領域の専門家か）、②信頼性（credibility：メンバーの専門性への信頼）、③協調（coordination：情報が必要な時に適切な人に接触する調整）が確立されている。組織の知識管理・新技術のオンボーディング・チームの解散・M&A後の知識統合において、TMS崩壊（key personの喪失等）が組織効率を著しく低下させる問題として研究されている。テレワーク・バーチャルチームの環境ではTMSの構築・維持コストが増大し、電子的知識ディレクトリ・スキルタグ・ナレッジグラフが代替的TMS形成ツールとして注目される。',
-    keyFigures: 'ダニエル・ウェグナー ／ リン・スタッサー ／ ドリス・テイタス ／ モーテン・ハンセン',
-    asOf: '2026-06-26',
+    title: 'トランザクティブ・メモリー・システム（ウェグナー）——「誰が何を知っているか」の共有メタ知識により、集団が記憶と知識を分業し統合する仕組み',
+    statement:
+      'トランザクティブ・メモリー・システム（TMS）とは、集団の成員が「誰が何を知っているか」についての共有認識（知識のディレクトリ）を通じて記憶を分担・統合する仕組みで、社会心理学者ダニエル・ウェグナーが1987年に提唱した。親密なカップルの研究から、個人が他者の専門領域を把握し必要なときにその知識へアクセスする「記憶の分業」を示し、個人の認知能力の限界を超えた集合的な記憶・知識システムが形成される過程を説明した。三つの次元——専門化（誰がどの領域の専門家か）、信頼性（成員の専門性への信頼）、協調（必要な情報を持つ人へ的確に接触する調整）——が確立され、リチャード・モルランド（1999）の実験は共同で訓練したチームほど三次元が高まり課題成績が向上することを示し、カイル・ルイス（2003）は現場で測定する尺度を開発し、ジョン・オースティン（2003）は組織集団で内容・合意・正確性の各側面が業績と関係することを実証した。知識マネジメント、新技術のオンボーディング、チームの解散、M&A 後の知識統合において、キーパーソンの離脱による TMS の崩壊が組織効率を大きく下げる問題として研究され、テレワークや仮想チームでは構築・維持の費用が増すため電子的な知識ディレクトリやスキルタグが代替手段として注目される。批判として、測定が成員の自己報告に頼り実際の知識分布と一致しない可能性があること、専門化が進みすぎると冗長性を失い一人の離脱で機能不全に陥ることがある。中小企業には、「あの人しか知らない」状態は TMS が働いている証拠であると同時に単一障害点であり、誰が何を知っているかの一覧を共有しつつ主要領域には二人目を育てることが含意となる。',
+    keyFigures: 'ダニエル・ウェグナー（1987 提唱）／リチャード・モルランド（1999 共同訓練の実験）／カイル・ルイス（2003 測定尺度）／ジョン・オースティン（2003 組織集団での実証）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1037/0033-2909.118.2.247', type: 'academic', label: 'Wegner, D. M. (1995) A Computer Network Model of Human Transactive Memory — Social Cognition, 13(3), 319–339（TMS理論の発展）' },
-      { url: 'https://doi.org/10.4324/9781410603227-1', type: 'academic', label: 'Moreland, R. L. (1999) Transactive Memory: Learning Who Knows What in Work Groups and Organizations — in Shared Cognition in Organizations（組織的TMSの研究）' },
-      { url: 'https://doi.org/10.2307/30040696', type: 'academic', label: 'Austin, J. R. (2003) Transactive Memory in Organizational Groups: The Effects of Content, Consensus, Specialization, and Accuracy — Journal of Applied Psychology, 88(5), 866–878（TMSの三次元実証）' },
-      { url: 'https://en.wikipedia.org/wiki/Transactive_memory', type: 'reference', label: 'Wikipedia: Transactive memory — Wegner, differentiation, credibility, coordination, remote work' },
+      { url: 'https://doi.org/10.1007/978-1-4612-4634-3_9', type: 'academic', label: 'Wegner, D. M. (1987) Transactive Memory: A Contemporary Analysis of the Group Mind — in Mullen & Goethals (eds.) Theories of Group Behavior, Springer' },
+      { url: 'https://doi.org/10.4324/9781410603227-1', type: 'academic', label: 'Moreland, R. L. (1999) Transactive Memory: Learning Who Knows What in Work Groups and Organizations — in Thompson, Levine & Messick (eds.) Shared Cognition in Organizations, Psychology Press' },
+      { url: 'https://doi.org/10.1037/0021-9010.88.4.587', type: 'academic', label: 'Lewis, K. (2003) Measuring Transactive Memory Systems in the Field: Scale Development and Validation — Journal of Applied Psychology 88(4)' },
+      { url: 'https://doi.org/10.2307/30040696', type: 'academic', label: 'Austin, J. R. (2003) Transactive Memory in Organizational Groups: The Effects of Content, Consensus, Specialization, and Accuracy on Group Performance — Journal of Applied Psychology 88(5)' },
+      { url: 'https://en.wikipedia.org/wiki/Transactive_memory', type: 'reference', label: 'Wikipedia: Transactive memory — Wegner、専門化・信頼性・協調、リモートワーク' },
     ],
   },
   {

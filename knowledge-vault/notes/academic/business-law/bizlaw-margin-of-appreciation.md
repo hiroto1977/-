@@ -33,8 +33,8 @@ Handyside v. United Kingdom（1976 ECtHR — 法理の初の明示的定式化�
 ## 関連概念
 - [[bizlaw-administrative-law-proportionality|行政法における比例原則と権利制限の正当化理論]] — 同分野の近傍
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 同分野の近傍
-- [[bizlaw-letter-of-credit|信用状——銀行の支払確約による国際貿易の決済の保障]] — 同分野の近傍
 - [[bizlaw-margin-squeeze-abuse|マージン・スクイーズ（鋏状圧縮）の競争法上の位置づけ]] — 同分野の近傍
+- [[bizlaw-letter-of-credit|信用状——銀行の支払確約による国際貿易の決済の保障]] — 同分野の近傍
 - [[bizlaw-nuisance|ニューサンス（生活妨害）——土地の使用収益に対する不当な干渉の不法行為]] — 同分野の近傍
 
 ## 関連

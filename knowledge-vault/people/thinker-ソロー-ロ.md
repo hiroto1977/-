@@ -2,7 +2,7 @@
 title: "ロバート・ソロー"
 type: thinker
 person_key: "ソロー|ロ"
-concept_count: 19
+concept_count: 20
 tags:
   - person
   - index
@@ -10,12 +10,13 @@ tags:
 
 # ロバート・ソロー
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **19 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **20 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（19件）
+## 学術概念（20件）
 - [[econ-capital-controversy|ケンブリッジ資本論争（ロビンソン／スラッファ対サミュエルソン）——異質な資本財を一つの量に集計できるかをめぐり、再スイッチングと資本逆行が新古典派の限界生産力理論に根本的な疑義を投じた]] — ケンブリッジ資本論争（Cambridgecapitalcontroversy）は、1950年代から1970年代にかけて…
 - [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 資本深化（CapitalDeepening）とは、労働者一人当たりの資本ストックが時間の経過とともに増加する過程を指す。
 - [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 収束仮説（convergencehypothesis）は、新古典派のソロー成長モデルから導かれる予測で、一人当たり所得…
+- [[econ-endogenous-growth-romer|内生的成長理論（ローマー／ルーカス）——アイデアの非競合性と知識の外部性が生む収穫逓増により、技術進歩を経済内部の投資の産物として説明する成長論]] — 内生的成長理論は、ポール・ローマー（1986、1990）とロバート・ルーカス（1988）が、新古典派成長理論（ソロー・…
 - [[econ-golden-rule-capital-phelps|資本蓄積の黄金律——定常状態の消費を最大化する貯蓄水準]] — 資本蓄積の黄金律（goldenruleofcapitalaccumulation）は、エドムンド・フェルプスが1961…
 - [[econ-golden-rule-saving-phelps|貯蓄の黄金律——定常状態における消費最大化の最適貯蓄率]] — 貯蓄の黄金律（GoldenRuleofSaving）とは、フェルプスが1961年にソローの新古典派成長モデルの文脈で導…
 - [[econ-green-golden-rule-phelps-sustainability|黄金律と修正黄金律——フェルプスの最適貯蓄率と世代間公平性]] — 黄金律（GoldenRule）は、エドマンド・フェルプスが1961年に提唱した、定常状態における一人当たり消費を最大化…

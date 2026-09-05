@@ -37,6 +37,7 @@ aliases:
 - [[econ-internal-labor-market|内部労働市場（ドリンジャー＆ピオレ）]] — 同分野の近傍
 - [[econ-efficiency-wage|効率賃金仮説（efficiency wage hypothesis）]] — 同分野の近傍
 - [[econ-trade-policy-strategic-industries|戦略的通商政策と産業政策——クルーグマンの貿易政策論とインダストリアル・ポリシー復権]] — 同分野の近傍
+- [[econ-human-capital|人的資本論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

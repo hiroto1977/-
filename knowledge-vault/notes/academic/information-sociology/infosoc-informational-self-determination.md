@@ -32,8 +32,8 @@ aliases:
 - [総務省『情報通信政策研究』（自己情報コントロール権論を扱う論文）](https://www.soumu.go.jp/main_content/000656383.pdf) `公的`
 
 ## 関連概念
-- [[infosoc-platform-envelopment-eisenmann|プラットフォーム包囲戦略（アイゼンマン）]] — 同分野の近傍
 - [[infosoc-information-bank|情報銀行（情報利用信用銀行）]] — 同分野の近傍
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

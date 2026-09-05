@@ -27,32 +27,32 @@ aliases:
 - [[bizlaw-accord-and-satisfaction|和解合意と履行——係争中の債務の合意的解決の法理]]
 - …ほか 689 件 → [[学術概念]]
 
-### 学術概念 / 経済学（全916件）
+### 学術概念 / 経済学（全911件）
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]
 - [[econ-accelerator-principle|加速度原理（投資の加速度原理）]]
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]]
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する]]
 - [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]]
-- …ほか 910 件 → [[学術概念]]
+- …ほか 905 件 → [[学術概念]]
 
-### 学術概念 / 人間科学（全628件）
+### 学術概念 / 人間科学（全624件）
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]
 - [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]]
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]]
 - [[human-acquired-needs-theory|獲得欲求理論]]
 - [[human-action-bias|行動バイアス（アクション・バイアス）]]
-- …ほか 622 件 → [[学術概念]]
+- …ほか 618 件 → [[学術概念]]
 
-### 学術概念 / 情報社会学（全591件）
+### 学術概念 / 情報社会学（全589件）
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]
 - [[infosoc-affective-computing-picard|アフェクティブコンピューティング——ピカードの感情認識AI論と機械が感情を扱う倫理的課題]]
 - [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]]
 - [[infosoc-affordance-theory-gibson|アフォーダンス理論——環境が提供する行為可能性と技術の社会的利用への展開]]
 - [[infosoc-agnotology-proctor|アグノトロジー——無知はいかに作り出されるか]]
-- …ほか 585 件 → [[学術概念]]
+- …ほか 583 件 → [[学術概念]]
 
 ### 学術概念 / 経営学（全598件）
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]

@@ -31,8 +31,8 @@ aliases:
 - [Stanford Encyclopedia of Philosophy — Game Theory](https://plato.stanford.edu/entries/game-theory/) `学術`
 
 ## 関連概念
-- [[econ-time-inconsistency-monetary-policy|金融政策の時間的非整合性（裁量 vs. ルール）]] — 同分野の近傍
 - [[econ-optimal-tariff-terms-of-trade|最適関税と交易条件——大国の市場支配力と関税政策の国際経済学的根拠]] — 同分野の近傍
+- [[econ-time-inconsistency-monetary-policy|金融政策の時間的非整合性（裁量 vs. ルール）]] — 同分野の近傍
 - [[econ-global-games-carlsson-vandamme|グローバルゲーム——わずかな情報の不完全さが均衡を一つに絞る]] — 同分野の近傍
 - [[econ-screening-rothschild-stiglitz|スクリーニング理論（ロスチャイルド＝スティグリッツ）——情報を持たない側が契約メニューを設計し、相手の自己選択で隠れた型を選別する]] — 同分野の近傍
 

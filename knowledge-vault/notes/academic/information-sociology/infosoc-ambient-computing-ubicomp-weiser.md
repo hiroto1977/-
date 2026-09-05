@@ -36,7 +36,6 @@ aliases:
 - [[human-depressive-realism-alloy|抑うつリアリズム——軽度抑うつ者における判断の正確性仮説]] — 同じ思想家
 - [[human-positive-illusions-taylor|積極的錯覚（テイラー＆ブラウン）]] — 同じ思想家
 - [[infosoc-second-self-turkle|セカンド・セルフ——コンピュータが映し出す自己と精神への問い]] — 同分野の近傍
-- [[infosoc-feminist-technoscience-haraway|フェミニスト・テクノサイエンス論]] — 同分野の近傍
 - [[infosoc-information-foraging|情報採餌理論（インフォメーション・フォージング）]] — 同分野の近傍
 - [[infosoc-social-media-mental-health-youth|SNSと青少年の精神健康——ハイトのスマートフォン再配線仮説と集合的証拠の評価]] — 同分野の近傍
 

@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Monopsony — single buyer, marginal factor cost, labor markets, minimum wage](https://en.wikipedia.org/wiki/Monopsony) `リファレンス`
 
 ## 関連概念
-- [[econ-bilateral-monopoly|双方独占]] — 語彙が近い
 - [[econ-difference-in-differences|差の差分析（DID）]] — 同じ思想家
 - [[econ-monopolistic-competition|独占的競争]] — 同じ思想家
 - [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家
 - [[econ-natural-experiments-rdd|自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価]] — 同じ思想家
 - [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 同じ思想家
+- [[econ-bartik-shift-share-instrument|バーティック操作変数（シフトシェア操作変数）——全国産業成長率と地域産業構成の積で地域労働需要ショックを予測する識別戦略]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

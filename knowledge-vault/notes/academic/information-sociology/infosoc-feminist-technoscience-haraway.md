@@ -34,7 +34,7 @@ Donna Haraway ／ Sandra Harding ／ Karen Barad
 ## 関連概念
 - [[infosoc-techno-feminist-theory|テクノフェミニスト理論]] — 同じ思想家
 - [[infosoc-techno-feminism-wajcman|テクノフェミニズム——技術とジェンダーの相互構成的関係]] — 同分野の近傍
-- [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティング（ワイザー）——コンピュータが環境に溶け込み意識されずに使われる「消えるコンピュータ」の構想と、IoT・アンビエント環境への展開]] — 同分野の近傍
+- [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

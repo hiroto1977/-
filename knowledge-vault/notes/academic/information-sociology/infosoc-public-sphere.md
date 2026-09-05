@@ -38,6 +38,7 @@ aliases:
 - [[infosoc-deliberative-democracy|熟議民主主義]] — 同じ思想家
 - [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同じ思想家
 - [[infosoc-culture-industry|文化産業（フランクフルト学派）]] — 同分野の近傍
+- [[infosoc-cultural-capital|文化資本（ブルデュー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

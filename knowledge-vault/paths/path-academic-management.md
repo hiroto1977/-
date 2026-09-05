@@ -13,21 +13,21 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 70）
-- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 59）
-- [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]]（接続 33）
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 69）
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 60）
+- [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]]（接続 34）
 - [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる]]（接続 29）
-- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 28）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 28）
 - [[mgmt-csr|企業の社会的責任（CSR）]]（接続 26）
+- [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 25）
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 25）
 - [[mgmt-mbo|目標による管理（MBO）]]（接続 25）
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 23）
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 23）
 - [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]]（接続 21）
 - [[mgmt-managerial-cognition|経営者認知（ウォルシュ／ダフト＝ワイク）——経営者は環境そのものではなく知識構造を通した解釈に反応し、その認知地図が注意・判断・競争行動を規定する]]（接続 21）
-- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]]（接続 20）
 - [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]]（接続 20）
+- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1629年: [[mgmt-fmea|故障モード影響解析（FMEA／Failure Mode and Effects Analysis）——起こりうる故障を体系的に洗い出し、深刻度・発生度・検出度で優先順位づける]]
@@ -144,6 +144,7 @@ tags:
 - 1979年: [[mgmt-organizational-socialization|組織社会化]]
 - 1979年: [[mgmt-paradox-of-organizing|組織化のパラドックス（Paradox of Organizing）]]
 - 1979年: [[mgmt-sensemaking-weick|センスメイキングとイナクトメント（ワイク）——曖昧な出来事から手がかりを抽出し、行為によって環境を構成しながら事後的にもっともらしい意味を集合的に作り上げる組織化の過程]]
+- 1980年: [[mgmt-activity-based-costing|活動基準原価計算（ABC）]]
 - 1980年: [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]]
 - 1980年: [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]]
 - 1980年: [[mgmt-hofstede-dimensions|ホフステッドの文化次元論]]
@@ -183,6 +184,7 @@ tags:
 - 1987年: [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]]
 - 1987年: [[mgmt-pims|PIMS研究（市場戦略の利益への影響）]]
 - 1987年: [[mgmt-strategic-issue-diagnosis|戦略的争点の診断（Strategic Issue Diagnosis）]]
+- 1987年: [[mgmt-transactive-memory-wegner|トランザクティブ・メモリー・システム（ウェグナー）——「誰が何を知っているか」の共有メタ知識により、集団が記憶と知識を分業し統合する仕組み]]
 - 1988年: [[mgmt-competency-trap|コンピテンシー・トラップと成功の罠（レヴィット＝マーチ／レヴィンタール＝マーチ）——過去の成功への習熟が学習を深化に偏らせ、より優れた選択肢への転換を妨げる]]
 - 1988年: [[mgmt-first-mover-advantage|先発者優位]]
 - 1988年: [[mgmt-followership|フォロワーシップ論]]
@@ -276,7 +278,6 @@ tags:
 - 2002年: [[mgmt-platform-leadership|プラットフォーム・リーダーシップ]]
 - 2002年: [[mgmt-work-engagement|ワーク・エンゲージメント]]
 - 2003年: [[mgmt-authentic-leadership-avolio-gardner|オーセンティック・リーダーシップ（アボリオ＆ガードナー）——自己認識・内面化された道徳的視点・バランスのとれた情報処理・関係の透明性を核とする真正なリーダーシップ]]
-- 2003年: [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する]]
 - 2003年: [[mgmt-net-promoter-score|ネット・プロモーター・スコア（NPS）]]
 - 2003年: [[mgmt-open-innovation|オープン・イノベーション]]
 - 2004年: [[mgmt-blue-ocean-strategy|ブルー・オーシャン戦略]]
@@ -604,7 +605,6 @@ tags:
 - [[mgmt-total-quality-management-deming-pdca|TQM（総合品質管理）——デミングのPDCAサイクルと品質改善の経営哲学]]
 - [[mgmt-toxic-leadership-whicker|トキシック・リーダーシップ（ウィッカー）]]
 - [[mgmt-toxic-triangle-padilla|有害な三角形——破壊的リーダー・脆弱なフォロワー・助長する環境]]
-- [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]]
 - [[mgmt-triple-bottom-line-elkington|トリプルボトムラインとCSR測定——エルキントンによる経済・環境・社会の三重成果会計]]
 - [[mgmt-tuckman-team-stages|タックマンのチーム発達段階——形成・混乱・規範化・遂行・解散]]
 - [[mgmt-uppsala-internationalization|ウプサラ・モデル——企業の漸進的な国際化プロセス]]

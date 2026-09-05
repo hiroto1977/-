@@ -40,8 +40,8 @@ aliases:
 - [[mgmt-organizational-decline-weitzel|組織衰退（ウェイツェル＝ヨンソンの五段階モデル）——盲目・不作為・誤った行動・危機・解体と進み、段階が進むほど反転が難しくなる衰退の動態]] — 同じ思想家
 - [[mgmt-organizational-identity-albert|組織アイデンティティ理論（アルバート＆ウェッテン）]] — 同じ思想家
 - [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同じ思想家
-- [[mgmt-strategic-alignment-model|戦略的アラインメント・モデル]] — 同分野の近傍
 - [[mgmt-strategic-silence|組織における戦略的沈黙]] — 同分野の近傍
+- [[mgmt-executive-hubris|ヒューブリス仮説（経営者の過信）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

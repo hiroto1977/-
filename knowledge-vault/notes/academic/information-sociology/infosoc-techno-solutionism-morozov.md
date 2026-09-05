@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-solutionism|テクノロジカル・ソリューショニズム（技術的解決主義）]] — 語彙が近い
+- [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — 語彙が近い
 - [[infosoc-privacy-surveillance|プライバシーと監視研究：デジタル社会における権力・データ・自由の社会学的考察]] — 同じ思想家
 - [[infosoc-technofeudalism|テクノ封建制（デジタル封建制）]] — 同じ思想家
 - [[infosoc-algorithmic-accountability-sandvig|アルゴリズムの説明責任——自動化された意思決定の監査と透明性]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — 同じ思想家
 - [[infosoc-critical-data-studies-kitchin-dalton|批判的データ研究——データの政治性と知識生産の権力構造]] — 同じ思想家
 - [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — 同じ思想家
-- [[infosoc-data-sovereignty-digital-rights|データ主権とデジタル自決権の国際政治経済学]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

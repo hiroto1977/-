@@ -39,8 +39,8 @@ aliases:
 - [[econ-specific-factors-model-jones|特殊要素モデル——部門間要素移動の不完全性と所得分配]] — 同じ思想家
 - [[econ-strategic-trade-policy-brander-spencer|戦略的貿易政策——寡占市場における輸出補助金のレント移転]] — 同じ思想家
 - [[econ-melitz-heterogeneous-firms-trade|メリッツ・モデル（「新」新貿易理論）——企業の生産性の異質性を導入し、貿易自由化が企業の選別と資源再配分を通じて産業の生産性を高めることを示す]] — 同じ思想家
-- [[econ-effective-rate-of-protection|実効保護率——付加価値基準での貿易保護の実質的水準]] — 同分野の近傍
 - [[econ-happiness-economics|幸福の経済学：イースタリン・パラドックスと主観的幸福の計量的研究が示す所得・政策・社会関係の役割]] — 同分野の近傍
+- [[econ-effective-rate-of-protection|実効保護率——付加価値基準での貿易保護の実質的水準]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -24,7 +24,7 @@ tags:
 - [[subsidy-disability-employment-grant|障害者雇用調整金・報奨金（障害者雇用納付金制度）]]（接続 9）
 - [[subsidy-disabled-facility|障害者作業施設設置等助成金（障害者雇用納付金関係助成金）]]（接続 9）
 - [[subsidy-elderly-employment-promotion|65歳超雇用推進助成金]]（接続 9）
-- [[subsidy-work-improvement|業務改善助成金]]（接続 6）
+- [[subsidy-work-improvement|業務改善助成金]]（接続 7）
 - [[subsidy-regional-employment|地域雇用開発助成金]]（接続 5）
 - [[subsidy-work-life-balance|両立支援等助成金（子ども・子育て両立支援等助成金）]]（接続 5）
 - [[subsidy-occupational-health|産業保健関係助成金（団体経由産業保健活動推進助成金 等）]]（接続 4）

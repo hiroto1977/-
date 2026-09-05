@@ -31,9 +31,9 @@ aliases:
 - [Fostel & Geanakoplos, "Endogenous Collateral Constraints and the Leverage Cycle," Annual Review of Economics (2014)](https://pages.stern.nyu.edu/~dbackus/BFZ/Literature/FostelGeanakoplos_ARE_14.pdf) `学術`
 
 ## 関連概念
-- [[econ-shadow-banking-pozsar|シャドーバンキング・システム——規制外金融仲介の構造とシステミック・リスク]] — 出典を共有
 - [[econ-arbitrage|裁定取引（アービトラージ）と一物一価の法則]] — 出典を共有
 - [[econ-gordon-growth-model|配当割引モデル（ゴードン成長モデル）]] — 出典を共有
+- [[econ-shadow-banking-fsb|シャドーバンキング（ポズサー／FSB）——銀行規制の外で満期・流動性・信用の変換を行う金融仲介の連鎖が、預金保険と最後の貸し手を欠くために取り付けに脆弱であること]] — 出典を共有
 - [[econ-zero-lower-bound|ゼロ金利下限（実効下限制約）]] — 出典を共有
 - [[econ-crowding-out|クラウディングアウト（押し出し効果）]] — 出典を共有
 - [[eh-2007|2007年（平成19年）]] — 出典を共有

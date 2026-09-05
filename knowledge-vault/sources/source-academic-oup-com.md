@@ -2,7 +2,7 @@
 title: "academic.oup.com"
 type: source-domain
 host: "academic.oup.com"
-cite_count: 139
+cite_count: 138
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # academic.oup.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **139 件**（学術 138 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **138 件**（学術 137 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -113,8 +113,7 @@ tags:
 - [[human-hyperbolic-discounting|双曲割引]] — TheQuarterlyJournalofEconomics(OxfordAcademic)—上記論文の収録記録（pp.443–478）
 - [[human-loss-aversion|損失回避]] — Tversky&Kahneman(1991)LossAversioninRisklessChoice:AReference-Depende…
 - [[human-mind-wandering|マインドワンダリング]] — Soc.Cogn.Affect.Neurosci.(Oxford):マインドワンダリングを支えるDMNの構成過程
-- [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — Galleseetal.(1996)ActionRecognitioninthePremotorCortex—Brain119(2)
-- [[human-mirror-neuron-theory|ミラーニューロン理論]] — Gallese,Fadiga,Fogassi&Rizzolatti(1996)—Actionrecognitioninthepremoto…
+- [[human-mirror-neuron-system|ミラーニューロン・システム（リゾラッティ／ガレーゼ）——行為の実行時と観察時の双方で発火するニューロン群が行為理解・模倣・共感の神経基盤とされる仮説と、その証拠をめぐる論争]] — Gallese,V.,Fadiga,L.,Fogassi,L.&Rizzolatti,G.(1996)ActionRecognitioni…
 - [[human-phantom-limb|幻肢（ファントムリム）]] — Ramachandran&Hirstein(1998)"Theperceptionofphantomlimbs"Brain121(9)
 - [[human-role-conflict|役割葛藤（役割理論）]] — Kahn,Wolfe,Quinn&Snoek(1964)OrganizationalStress（SocialForces誌書評：役割葛藤…
 - [[human-visual-agnosia|視覚性失認（Visual Agnosia）]] — Behrmann&Plaut(2021)VisualAgnosiaandImageryafterLissauer—Brain144(9)

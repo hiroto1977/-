@@ -2,14 +2,14 @@
 title: "2010年代"
 type: timeline-decade
 decade: 2010
-entry_count: 149
+entry_count: 150
 tags:
   - timeline
 ---
 
-# 2010年代 — 149 件
+# 2010年代 — 150 件
 
-- [[year-2010|2010年]]（11件）
+- [[year-2010|2010年]]（12件）
 - [[year-2011|2011年]]（16件）
 - [[year-2012|2012年]]（10件）
 - [[year-2013|2013年]]（19件）

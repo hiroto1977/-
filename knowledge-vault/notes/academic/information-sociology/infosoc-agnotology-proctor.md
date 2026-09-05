@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: Agnotology — culturally induced ignorance, manufactured doubt, tobacco, undone science](https://en.wikipedia.org/wiki/Agnotology) `リファレンス`
 
 ## 関連概念
-- [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]] — 同分野の近傍
+- [[infosoc-dark-patterns|ダークパターン（ブリグナル）——利用者を欺き・操作して本来しない行動へ誘導する UI 設計の類型と、その規制]] — 同分野の近傍
 - [[infosoc-enshittification|エンシティフィケーション（Enshittification）]] — 同分野の近傍
 
 ## 関連

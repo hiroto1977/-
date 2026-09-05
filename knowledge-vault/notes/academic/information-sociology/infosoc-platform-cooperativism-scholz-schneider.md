@@ -38,7 +38,7 @@ aliases:
 - [[infosoc-sharing-economy-platform-trust|シェアリングエコノミーとプラットフォーム信頼の社会学]] — 同じ思想家
 - [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]] — 同じ思想家
 - [[infosoc-platform-labor-control|プラットフォーム労働とアルゴリズム的統制]] — 同じ思想家
-- [[infosoc-platform-envelopment-eisenmann|プラットフォーム包囲戦略（アイゼンマン）]] — 同分野の近傍
+- [[infosoc-platform-labor-theory|プラットフォーム労働論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

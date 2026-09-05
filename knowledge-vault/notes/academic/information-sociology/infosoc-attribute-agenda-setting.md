@@ -36,7 +36,6 @@ aliases:
 - [[infosoc-symbolic-interactionism|象徴的相互作用論（symbolic interactionism）]] — 出典を共有
 - [[infosoc-digital-divide-second-level-hargittai|第二レベルのデジタルデバイド——アクセスからスキル格差へ]] — 同分野の近傍
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 同分野の近傍
-- [[infosoc-network-agenda-setting|ネットワーク議題設定モデル（Network Agenda Setting、議題設定理論の第三レベル）]] — 同分野の近傍
 - [[infosoc-splinternet|スプリンターネット（インターネットの分断）]] — 同分野の近傍
 
 ## 関連

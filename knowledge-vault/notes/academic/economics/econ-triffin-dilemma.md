@@ -32,6 +32,7 @@ aliases:
 - [米連邦準備制度（Federal Reserve History）「Nixon Ends Convertibility of U.S. Dollars to Gold」（1971ニクソン・ショック）](https://www.federalreservehistory.org/essays/gold-convertibility-ends) `公的`
 
 ## 関連概念
+- [[econ-exorbitant-privilege-eichengreen|法外な特権——基軸通貨国アメリカの国際通貨体制上の優位性]] — 語彙が近い
 - [[eh-1980|1980年（昭和55年）]] — 出典を共有
 - [[econ-armington-elasticity-national-product-differentiation|アーミントンの仮定とアーミントン弾力性——同じ財でも生産国が違えば不完全代替とみなし、その代替の弾力性で貿易モデルを閉じる考え方]] — 出典を共有
 - [[econ-hysteresis|ヒステリシス（履歴効果）]] — 出典を共有
@@ -41,7 +42,6 @@ aliases:
 - [[econ-sticky-information|粘着情報モデル]] — 出典を共有
 - [[eh-1989|1989年（昭和64/平成元年）]] — 出典を共有
 - [[eh-1990|1990年（平成2年）]] — 出典を共有
-- [[eh-2009|2009年（平成21年）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

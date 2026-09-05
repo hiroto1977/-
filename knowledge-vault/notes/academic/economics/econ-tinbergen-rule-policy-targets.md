@@ -39,8 +39,8 @@ aliases:
 - [[econ-trade-balance-current-account-absorption|経常収支と吸収アプローチ——アレキサンダーの国民所得恒等式と為替政策の効果]] — 同じ思想家
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同じ思想家
 - [[econ-customs-union-theory-viner|関税同盟の理論——貿易創出効果と貿易転換効果の厚生分析]] — 同じ思想家
-- [[econ-gravity-equation-structural-estimation|構造的重力モデル——貿易フローの理論的基盤と推定]] — 同じ思想家
 - [[econ-hicks-trade-cycle|ヒックスの景気循環論——天井と床に挟まれた持続的な循環]] — 同じ思想家
+- [[econ-laffer-curve-supply-side|ラッファー曲線——供給側経済学と税率・税収の非線形関係]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

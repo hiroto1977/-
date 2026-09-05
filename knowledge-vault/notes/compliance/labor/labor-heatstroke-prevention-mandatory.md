@@ -31,8 +31,8 @@ aliases:
 - [釜石市 職場における熱中症対策強化（令和7年6月1日施行）](https://www.city.kamaishi.iwate.jp/docs/2025052100056/) `自治体`
 
 ## 関連概念
-- [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]] — 同分野の近傍
 - [[labor-health-checkup|定期健康診断の実施義務]] — 同分野の近傍
+- [[labor-accident-report|労働者死傷病報告（労働安全衛生規則97条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

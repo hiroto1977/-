@@ -2,7 +2,7 @@
 title: "britannica.com"
 type: source-domain
 host: "britannica.com"
-cite_count: 275
+cite_count: 274
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # britannica.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **275 件**（リファレンス 275）
+> [!info] 出典ドメイン索引 ・ 引用 **274 件**（リファレンス 274）
 
 ## このドメインを出典とする項目
 
@@ -115,7 +115,6 @@ tags:
 - [[econ-sunk-cost|サンクコスト（埋没費用）とサンクコストの誤謬]] — EncyclopaediaBritannicaMoney—Sunkcost
 - [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — EncyclopædiaBritannicaMoney—AlfredMarshall（はさみの両刃・1890）
 - [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — EncyclopædiaBritannicaMoney—Supplyanddemand:Marketequilibrium
-- [[econ-time-inconsistency|動学的不整合（時間的非整合性）]] — EncyclopaediaBritannica—FinnE.Kydland（1977年論文と動学的不整合の定義）
 - [[econ-tobins-q|トービンのq]] — EncyclopaediaBritannica—Tobin'sq（資産の市場価値の再取得費用に対する比、q>1で新規投資が有利）
 - [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — EncyclopaediaBritannica—GarrettHardin
 - [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — EncyclopaediaBritannica—Tragedyofthecommons

@@ -33,7 +33,7 @@ aliases:
 - [Simons, R. (1995). Control in an Age of Empowerment. Harvard Business Review, 73(2), 80–88. — 四レバー（診断型・信条・境界・インタラクティブ型コントロール）の実務向け要約を確認。](https://hbr.org/1995/03/control-in-an-age-of-empowerment) `メディア`
 
 ## 関連概念
-- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 出典を共有
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（アイゼンマン＝パーカー＝ヴァン・アルスタイン）——隣接するプラットフォーム市場へ自社機能とのバンドルで参入し、既存のネットワーク効果を武器に転用して相手の利用者基盤を奪う競争戦略]] — 出典を共有
 - [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
 - [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 出典を共有

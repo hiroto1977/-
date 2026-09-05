@@ -30,7 +30,7 @@ aliases:
 - [Library of Economics and Liberty (Econlib) — Relative Income Hypothesis（デューゼンベリーの仮説・ラチェット効果の理論的根拠）](https://www.econlib.org/library/Enc/RelativeIncome.html) `リファレンス`
 
 ## 関連概念
-- [[econ-demonstration-effect|デモンストレーション効果]] — 語彙が近い
+- [[econ-demonstration-effect|デモンストレーション効果]] — 同じ思想家
 - [[econ-sheepskin-effect|シープスキン効果（sheepskin effect／卒業証書効果）——学位取得そのものがもたらす賃金の非連続的上昇]] — 同分野の近傍
 
 ## 関連

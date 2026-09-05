@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 591
+entry_count: 589
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（591件）
+# 学習パス — 学術概念／情報社会学（589件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 76）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 77）
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 44）
 - [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]]（接続 30）
 - [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]]（接続 30）
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 27）
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 27）
 - [[infosoc-polymedia|ポリメディア（Polymedia）]]（接続 26）
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（アイゼンマン＝パーカー＝ヴァン・アルスタイン）——隣接するプラットフォーム市場へ自社機能とのバンドルで参入し、既存のネットワーク効果を武器に転用して相手の利用者基盤を奪う競争戦略]]（接続 24）
 - [[infosoc-remix-culture-lessig-jenkins|リミックス文化（レシッグ／ジェンキンス）——既存の文化的素材を再構成して創作するデジタル時代の実践と、それを抑圧しうる著作権制度との緊張]]（接続 22）
 - [[infosoc-banal-nationalism|バナール・ナショナリズム]]（接続 21）
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]]（接続 21）
 - [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]]（接続 21）
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]]（接続 21）
+- [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]（接続 21）
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 21）
-- [[infosoc-information-overload-eppler-mengis|情報過負荷（トフラー／エプラー＝メンギス）——処理能力を超える情報が意思決定の質を下げる現象と、その原因を個人・情報・課題・組織・技術の五要因に整理する枠組み]]（接続 21）
-- [[infosoc-algorithmic-curation-theory|アルゴリズム的キュレーションと増幅（ギレスピー）——プラットフォームのランキング・推薦・フィルタリングは中立の配管ではなく、価値と権力を埋め込んだ文化的仲介として情報環境を形づくる]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -48,7 +48,6 @@ tags:
 - 1920年: [[infosoc-media-ownership-concentration|メディア所有の集中（メディア独占論）]]
 - 1920年: [[infosoc-umesao-information-industry|情報産業論（梅棹忠夫）]]
 - 1922年: [[infosoc-code-switching|コードスイッチング]]
-- 1922年: [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]]
 - 1922年: [[infosoc-lippmann-pseudo-environment|擬似環境とステレオタイプ（リップマン『世論』）]]
 - 1925年: [[infosoc-digital-markets-act|デジタル市場法（DMA）]]
 - 1925年: [[infosoc-gift-economy|贈与経済（贈与論）]]
@@ -81,6 +80,7 @@ tags:
 - 1954年: [[infosoc-solutionism|テクノロジカル・ソリューショニズム（技術的解決主義）]]
 - 1955年: [[infosoc-open-data|オープンデータ]]
 - 1955年: [[infosoc-semantic-web|セマンティック・ウェブ]]
+- 1956年: [[infosoc-information-overload-eppler-mengis|情報過負荷（トフラー／エプラー＝メンギス）——処理能力を超える情報が意思決定の質を下げる現象と、その原因を個人・情報・課題・組織・技術の五要因に整理する枠組み]]
 - 1956年: [[infosoc-parasocial|パラソーシャル関係]]
 - 1956年: [[infosoc-self-presentation|自己呈示とドラマトゥルギー（ゴッフマン）]]
 - 1956年: [[infosoc-social-influence-network-theory-friedkin-johnsen|フリードキン＝ジョンセンの社会的影響ネットワーク理論——初期意見への係留を残す加重平均が持続的な不一致を説明する]]
@@ -231,18 +231,18 @@ tags:
 - 2009年: [[infosoc-media-multitasking|メディア・マルチタスキング]]
 - 2009年: [[infosoc-techno-moral-change|テクノモラル・チェンジ]]
 - 2010年: [[infosoc-cancel-culture|キャンセルカルチャー]]
-- 2010年: [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]]
+- 2010年: [[infosoc-dark-patterns|ダークパターン（ブリグナル）——利用者を欺き・操作して本来しない行動へ誘導する UI 設計の類型と、その規制]]
 - 2010年: [[infosoc-networked-publics|ネットワーク化された公衆]]
 - 2010年: [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]]
 - 2010年: [[infosoc-platform-governance-tarleton|プラットフォームの政治学（ギレスピー）——「プラットフォーム」という語の多義性が中立で開かれた場のイメージを作り、選別・推薦・削除という編集的介入と私的統治を見えなくする]]
 - 2010年: [[infosoc-sharing-economy|シェアリングエコノミー]]
+- 2011年: [[infosoc-algorithmic-curation-theory|アルゴリズム的キュレーションと増幅（ギレスピー）——プラットフォームのランキング・推薦・フィルタリングは中立の配管ではなく、価値と権力を埋め込んだ文化的仲介として情報環境を形づくる]]
 - 2011年: [[infosoc-algorithmic-identity|アルゴリズム的アイデンティティ——データから統計的に推論・付与される、本人の自認から切り離された可変的な「私」]]
 - 2011年: [[infosoc-alone-together|つながっていても孤独（アローン・トゥギャザー）]]
 - 2011年: [[infosoc-cognitive-capitalism|認知資本主義]]
 - 2011年: [[infosoc-critical-making|クリティカル・メイキング（Critical Making）]]
 - 2011年: [[infosoc-digital-dualism|デジタル・デュアリズム]]
 - 2011年: [[infosoc-fourth-industrial-revolution|第四次産業革命]]
-- 2011年: [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]]
 - 2012年: [[infosoc-connective-action|つながりの行為論理（コネクティブ・アクション）]]
 - 2012年: [[infosoc-digital-detox|デジタルデトックス]]
 - 2012年: [[infosoc-networked-protest-tufekci|トゥフェックチのネットワーク化された抗議——能力を伴わないシグナルの拡大と戦術的凍結]]
@@ -359,7 +359,6 @@ tags:
 - [[infosoc-cybersecurity-threat-landscape|サイバーセキュリティの社会的地平——国家・犯罪・ハクティビズムの脅威と安全保障ガバナンス]]
 - [[infosoc-cyberspace-barlow|サイバースペース独立宣言——国家主権から自律したネット空間という理想]]
 - [[infosoc-cyborg-haraway|サイボーグ宣言——機械と有機体の混淆が脱構築する近代の二項対立]]
-- [[infosoc-dark-patterns-ui-deceptive|ダーク・パターンと欺瞞的UXデザインの規制論]]
 - [[infosoc-dark-patterns-ux-deception|ダークパターンとUXデザインの倫理——ユーザー操作技法と規制の情報社会論]]
 - [[infosoc-dark-web-anonymity-tor|ダークウェブと匿名性技術の社会学——Tor・I2P・暗号通貨の重層的分析]]
 - [[infosoc-data-doubles|データ・ダブル]]
@@ -500,7 +499,6 @@ tags:
 - [[infosoc-platform-cooperativism-scholz-schneider|プラットフォーム協同組合主義——デジタル経済における労働者所有の代替モデル]]
 - [[infosoc-platform-economics|プラットフォーム経済学・二面市場理論：デジタル市場の仲介構造と価格戦略]]
 - [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]]
-- [[infosoc-platform-envelopment-eisenmann|プラットフォーム包囲戦略（アイゼンマン）]]
 - [[infosoc-platform-feudalism|プラットフォーム封建制（デジタル封建制）]]
 - [[infosoc-platform-labor-control|プラットフォーム労働とアルゴリズム的統制]]
 - [[infosoc-platform-labor-gig-economy|プラットフォーム労働とギグエコノミー——デジタル仲介による労働の再編と社会的保護]]

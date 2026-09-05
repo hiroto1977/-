@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: General equilibrium theory — welfare theorems](https://en.wikipedia.org/wiki/General_equilibrium_theory) `リファレンス`
 
 ## 関連概念
-- [[econ-welfare-economics-bergson-samuelson|厚生経済学の基本定理——バーグソン＝サミュエルソン社会厚生関数とパレート効率性]] — 語彙が近い
+- [[econ-general-equilibrium|一般均衡理論]] — 語彙が近い
 - [[econ-tatonnement|タトヌマン（模索過程）]] — 同じ思想家
 - [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家
 - [[econ-general-equilibrium-walras|ワルラスの一般均衡理論]] — 同じ思想家

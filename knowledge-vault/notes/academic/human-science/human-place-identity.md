@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[human-place-attachment-theory|場所愛着理論]] — 語彙が近い
 - [[human-place-attachment|プレイス・アタッチメント（場所愛着）]] — 語彙が近い
-- [[human-place-attachment-theory-scannell|場所愛着理論——人間-場所間の情動的絆の三次元モデル]] — 語彙が近い
+- [[human-place-attachment-theory-scannell|場所愛着理論——人間-場所間の情動的絆の三次元モデル]] — 同じ思想家
 - [[human-kamin-blocking-effect|ブロッキング効果（カミンの阻止効果 / Kamin blocking effect）——既知の手がかりが新しい手がかりの学習を「阻止」する古典的条件づけ現象]] — 同分野の近傍
 
 ## 関連

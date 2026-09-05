@@ -33,6 +33,7 @@ aliases:
 - [[human-own-race-bias-meissner|自人種バイアス——同人種の顔認識優位性と異人種顔識別の困難]] — 同分野の近傍
 - [[human-social-identity-theory-tajfel|社会的アイデンティティ理論——タジフェルの最小集団パラダイムと集団間関係]] — 同分野の近傍
 - [[human-social-identity-complexity-roccas|社会的アイデンティティ複雑性（ロッカス＆ブリューワー）と集団間関係]] — 同分野の近傍
+- [[human-priming|プライミング効果]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

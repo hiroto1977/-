@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: 心の理論 — 誤信念課題とASD研究の解説](https://ja.wikipedia.org/wiki/%E5%BF%83%E3%81%AE%E7%90%86%E8%AB%96) `リファレンス`
 
 ## 関連概念
-- [[human-theory-of-mind-frith-baron-cohen|心の理論（ToM）とメンタライジング——フリス＝バロン=コーエンによる他者心理の推論と社会認知の神経科学]] — 語彙が近い
 - [[human-theory-of-mind|心の理論]] — 語彙が近い
+- [[human-theory-of-mind-frith-baron-cohen|心の理論（ToM）とメンタライジング——フリス＝バロン=コーエンによる他者心理の推論と社会認知の神経科学]] — 語彙が近い
 - [[human-premack-principle|プレマックの原理]] — 同じ思想家
 - [[human-self-handicapping-jones-berglas|セルフ・ハンディキャッピング——失敗の言い訳を先取りし自尊心を防衛する方略]] — 同分野の近傍
 

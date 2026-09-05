@@ -38,6 +38,7 @@ Richard Thaler ／ Daniel Kahneman ／ Amos Tversky
 - [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 同じ思想家
 - [[econ-endowment-effect-kahneman-thaler|授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意]] — 同分野の近傍
 - [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 同分野の近傍
+- [[econ-trade-gravity-model|貿易の重力モデル（ティンバーゲン／アンダーソン＝ヴァン・ウィンクープ）——二国間貿易量は経済規模に比例し距離に反比例するという規則性と、多角的抵抗項を含む構造的導出・推定]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

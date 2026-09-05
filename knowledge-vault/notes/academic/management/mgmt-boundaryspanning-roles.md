@@ -36,7 +36,6 @@ aliases:
 - [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]] — 語彙が近い
 - [[mgmt-innovation-s-curve-foster|イノベーションのSカーブとテクノロジーサイクル——技術的限界と不連続的イノベーションの経営戦略]] — 同じ思想家
 - [[mgmt-resource-munificence-aldrich|資源余剰性と組織生態学（アルドリッチ）]] — 同じ思想家
-- [[mgmt-behavioral-integration-tmt|トップ・マネジメント・チームの行動統合]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -31,9 +31,9 @@ aliases:
 - [Abernathy, W.J. (1978). The Productivity Dilemma: Roadblock to Innovation in the Automobile Industry. Johns Hopkins University Press.](https://jhupbooks.press.jhu.edu/title/productivity-dilemma) `リファレンス`
 
 ## 関連概念
+- [[mgmt-experiential-learning|経験学習（コルブの経験学習サイクル）]] — 同分野の近傍
 - [[mgmt-stage-gate|ステージゲート法]] — 同分野の近傍
 - [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 同分野の近傍
-- [[mgmt-experiential-learning|経験学習（コルブの経験学習サイクル）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

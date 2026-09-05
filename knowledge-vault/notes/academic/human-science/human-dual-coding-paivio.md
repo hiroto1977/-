@@ -33,8 +33,8 @@ aliases:
 - [[econ-accelerator-principle|加速度原理（投資の加速度原理）]] — 同じ思想家
 - [[econ-marginal-productivity-distribution|限界生産力説]] — 同じ思想家
 - [[infosoc-generative-ai-regulation-stanford|生成AIの社会的影響と規制枠組み]] — 同じ思想家
-- [[econ-gravity-equation-structural-estimation|構造的重力モデル——貿易フローの理論的基盤と推定]] — 同じ思想家
 - [[econ-trade-costs-iceberg-samuelson|アイスバーグ型貿易費用——サミュエルソンの溶解モデルと貿易障壁の定量化]] — 同じ思想家
+- [[econ-trade-gravity-model|貿易の重力モデル（ティンバーゲン／アンダーソン＝ヴァン・ウィンクープ）——二国間貿易量は経済規模に比例し距離に反比例するという規則性と、多角的抵抗項を含む構造的導出・推定]] — 同じ思想家
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 
