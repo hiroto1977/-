@@ -40,7 +40,6 @@ aliases:
 - [[econ-wage-rigidity|名目賃金の下方硬直性]] — 同分野の近傍
 - [[econ-dual-labor-market|二重労働市場論]] — 同分野の近傍
 - [[econ-land-value-tax-george|土地価値税とジョージズム]] — 同分野の近傍
-- [[econ-harris-todaro|ハリス＝トダロ・モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

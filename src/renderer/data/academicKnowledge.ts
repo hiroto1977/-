@@ -2575,23 +2575,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-piketty',
-    discipline: 'economics',
-    title: 'ピケティの r>g（資本収益率と格差）',
-    statement:
-      'フランスの経済学者トマ・ピケティが著書『21世紀の資本（Capital in the Twenty-First Century）』（仏語2013、英訳2014）で示した格差拡大のメカニズム。' +
-      '資本収益率（r、資産が生む利潤・配当・利子・地代等の年率）が経済成長率（g、所得や生産の伸び）を長期的に上回る（r>g）と、資本（富）が労働所得より速く増え、すでに資産を持つ者やその相続人に富が蓄積していくため、富の格差が自動的に拡大すると論じた。ピケティは欧米の数百年に及ぶ税務・歴史データを用いて、戦争や大恐慌で一時縮小した格差が再び拡大していることを示した。対策として累進的な富裕税（グローバルな資本課税）を提案した。' +
-      '一方、rとgの測り方、r>gが直ちに格差拡大を意味するかなどをめぐっては経済学界で活発な論争がある。',
-    keyFigures: 'T.ピケティ『21世紀の資本』2013(仏)/2014(英訳)／資本収益率r>経済成長率gで富が労働所得より速く増え格差が拡大／長期の税務・歴史データに依拠／対策に累進的富裕税(グローバル資本課税)／r>gの含意・測定をめぐる論争(IGM調査で約80%が不同意)',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://www.britannica.com/money/Thomas-Piketty', type: 'reference', label: 'Encyclopaedia Britannica — Thomas Piketty（r>gを資本主義の中心的矛盾とする主張、累進的富裕税の提案）' },
-      { url: 'https://libertystreeteconomics.newyorkfed.org/2015/07/a-discussion-of-thomas-pikettys-capital-in-the-twenty-first-century-by-how-much-is-r-greater-than-g/', type: 'government', label: 'Liberty Street Economics（ニューヨーク連邦準備銀行）— r>gとrの構成を解説' },
-      { url: 'https://en.wikipedia.org/wiki/Capital_in_the_Twenty-First_Century', type: 'reference', label: 'Wikipedia — Capital in the Twenty-First Century（仏語2013/英訳2014、Goldhammer訳、Belknap/Harvard、論争）' },
-      { url: 'https://www.chicagobooth.edu/review/piketty-on-inequality-34-economists-who-arent-convinced-and-one-who-is', type: 'academic', label: 'Chicago Booth Review（シカゴ大学）— IGM調査で約80%がr>gを最強要因とする見方に不同意' },
-    ],
-  },
-  {
     id: 'human-barnum-effect',
     discipline: 'human-science',
     title: 'バーナム効果（フォアラー効果）',
@@ -21355,23 +21338,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-new-new-trade-theory-melitz',
-    discipline: 'economics',
-    title: '「新」新貿易理論（メリッツ・モデル）',
-    statement:
-      'Melitz（2003）は、企業間の生産性格差を明示的に導入したモデルを構築し、貿易自由化が産業内資源配分を通じて集計的生産性を向上させるメカニズムを理論化した。' +
-      '同モデルでは、輸出に際して固定参入費用が存在するため、生産性の高い企業のみが輸出市場に参入し、低生産性企業は退出を余儀なくされることが示される。' +
-      'Helpman, Melitz and Yeaple（2004）はこの枠組みを多国籍企業の水平的FDIにも拡張し、輸出・FDI・国内販売の間の企業選択を分析した。' +
-      'Bernard, Jensen, Redding and Schott（2007）らによる実証研究は、輸出企業が非輸出企業よりも大規模かつ高生産性であるという事実と理論の整合性を確認している。',
-    keyFigures: 'Marc J. Melitz／Elhanan Helpman／Andrew B. Bernard／Thierry Mayer／Marc-Andreas Muendler',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1111/1468-0262.00467', type: 'academic', label: 'Melitz (2003) The Impact of Trade on Intra-Industry Reallocations and Aggregate Industry Productivity, Econometrica 71(6):1695-1725' },
-      { url: 'https://doi.org/10.1257/000282804322970814', type: 'academic', label: 'Helpman, Melitz & Yeaple (2004) Export Versus FDI with Heterogeneous Firms, American Economic Review 94(1):300-316' },
-      { url: 'https://doi.org/10.1257/jep.21.3.105', type: 'academic', label: 'Bernard, Jensen, Redding & Schott (2007) Firms in International Trade, Journal of Economic Perspectives 21(3):105-130' },
-    ],
-  },
-  {
     id: 'human-theory-of-constructed-emotion',
     discipline: 'human-science',
     title: '情動の構成理論',
@@ -23751,18 +23717,18 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-corridor-of-stability-theory',
     discipline: 'economics',
-    title: '安定の回廊理論',
+    title: '安定性の回廊（レイヨンフーヴッド）——市場の自己調整は均衡からの乖離が小さい「回廊」の内側でしか働かず、外へ出ると累積的な不安定化が支配する',
     statement:
-      '安定の回廊理論（corridor of stability）は、市場経済の自己調整能力が均衡からの乖離幅に依存して非線形に働き、均衡経路を取り巻く「回廊」の内側では逸脱を打ち消すフィードバックが支配して小さな撹乱は自動的に吸収されるが、大きなショックで回廊の外へ押し出されると逸脱増幅的な累積過程が支配し市場の自己修復が機能不全に陥る、とするマクロ経済学の仮説である。スウェーデン出身でUCLAやトレント大学の教授を務めたアクセル・レイヨンフーヴッドが1973年に『Swedish Journal of Economics』75巻1号の論文「Effective Demand Failures（有効需要の失敗）」で提唱した。回廊内では家計や企業が保有する流動資産・在庫などの緩衝ストックが所得ショックを吸収して支出が維持されるのに対し、大きく持続的なショックが緩衝を枯渇させると支出は現金収入に拘束され、クラウアーの双対決定仮説が示す有効需要の欠落が乗数過程で連鎖的に増幅し、デフレによる実質債務負担の上昇（フィッシャーの負債デフレ）が不安定化をさらに強める。通常の景気変動は政策なしでも減衰する一方、大恐慌や2008年世界金融危機では自己修復が働かなかったという非対称性と整合的で、レイヨンフーヴッド自身も2009年『Cambridge Journal of Economics』33巻4号の論文「Out of the corridor: Keynes and the crisis」で金融危機を回廊からの逸脱として分析した。ミンスキーの金融不安定性仮説と共鳴し、線形近似と自己安定性を前提とする主流マクロモデルへの批判や状態依存的な政策設計の論拠となり、ウッドフォードが2022年『American Economic Review』112巻5号の論文で同概念を引いてコロナ禍における金融政策の限界を分析するなど再評価が進む。実務でも平時の自己回復力を危機時に外挿せず、流動性バッファーの維持と回廊外シナリオへの備えを促す点で、企業のリスク管理や中央銀行の危機対応の指針となっている。',
-    keyFigures: 'アクセル・レイヨンフーヴッド（1973 「有効需要の失敗」論文で回廊仮説を提唱）／ロバート・クラウアー（1965 双対決定仮説で不均衡分析の基礎を構築）／ハイマン・ミンスキー（1986 金融不安定性仮説で不安定化機構を補完）／マイケル・ウッドフォード（2022 有効需要の失敗概念をコロナ禍の政策分析に再導入）',
-    asOf: '2026-07',
+      '安定性の回廊（corridor of stability）は、市場経済の自己調整能力が均衡からの乖離の大きさに依存して非線形に働くというマクロ経済学の仮説で、アクセル・レイヨンフーヴッドが1973年の論文『Effective Demand Failures』（Swedish Journal of Economics 75巻1号）で提唱した。回廊の内側では逸脱を打ち消すフィードバックが支配し、家計や企業が持つ流動資産や在庫といった緩衝ストックが所得ショックを吸収して支出が維持されるが、大きく持続的なショックで緩衝が枯渇し回廊の外へ押し出されると、支出は現金収入に拘束され、クラウアーの双対決定仮説が示す有効需要の欠落が乗数過程で連鎖的に増幅し、フィッシャーの負債デフレが不安定化をさらに強めて市場の自己修復は機能不全に陥る。ケインズの再解釈として新古典派総合の普遍的安定性を否定するこの見方は、通常の景気変動は減衰する一方で大恐慌や2008年の危機では自己修復が働かなかった非対称性と整合的で、レイヨンフーヴッド自身が2009年の論文『Out of the Corridor: Keynes and the Crisis』（Cambridge Journal of Economics）で金融危機に当てはめ、マイケル・ウッドフォード（2022、American Economic Review）は有効需要の失敗と金融政策の限界を現代的に定式化した。限界として、回廊の幅を事前に測れず実証が難しいことが指摘される。中小企業には、平時の資金繰りは市場と取引先の調整で回るが、大きなショックで手元流動性という緩衝が尽きると回復が効かなくなるため、緩衝を回廊の幅として意識して確保する含意がある。',
+    keyFigures: 'アクセル・レイヨンフーヴッド（1973『Effective Demand Failures』／2009『Out of the Corridor』／1968『On Keynesian Economics and the Economics of Keynes』）／ロバート・クラウアー（双対決定仮説）／アーヴィング・フィッシャー（負債デフレ）／マイケル・ウッドフォード（2022 AER 有効需要の失敗の現代的定式化）／ピーター・ハウイット（2022 追悼評論）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.2307/3439273', type: 'academic', label: 'Leijonhufvud (1973) Effective Demand Failures — Swedish Journal of Economics 75(1)' },
-      { url: 'https://doi.org/10.1093/cje/bep022', type: 'academic', label: 'Leijonhufvud (2009) Out of the Corridor: Keynes and the Crisis — Cambridge Journal of Economics 33(4)' },
-      { url: 'https://www.amazon.com/Information-Coordination-Essays-Macroeconomic-Theory/dp/0195028155', type: 'reference', label: 'Leijonhufvud (1981) Information and Coordination — Oxford University Press' },
-      { url: 'https://cepr.org/voxeu/columns/axel-leijonhufvud-life-among-econ-1933-2022', type: 'reference', label: 'Howitt (2022) Axel Leijonhufvud: A life among the Econ — CEPR VoxEU' },
-      { url: 'https://doi.org/10.1257/aer.20201529', type: 'academic', label: 'Woodford (2022) Effective Demand Failures and the Limits of Monetary Stabilization Policy — American Economic Review 112(5)' },
-      { url: 'https://cepr.org/voxeu/columns/stabilities-and-instabilities-macroeconomy', type: 'reference', label: 'Leijonhufvud (2009) Stabilities and instabilities in the macroeconomy — CEPR VoxEU column' },
+      { url: 'https://doi.org/10.2307/3439273', type: 'academic', label: 'Leijonhufvud, A. (1973) Effective Demand Failures — Swedish Journal of Economics 75(1), 27–48（回廊仮説の原論文）' },
+      { url: 'https://doi.org/10.1093/cje/bep022', type: 'academic', label: 'Leijonhufvud, A. (2009) Out of the Corridor: Keynes and the Crisis — Cambridge Journal of Economics 33(4)（金融危機への適用）' },
+      { url: 'https://doi.org/10.1257/aer.20201529', type: 'academic', label: 'Woodford, M. (2022) Effective Demand Failures and the Limits of Monetary Stabilization Policy — American Economic Review 112(5)（現代的定式化）' },
+      { url: 'https://archive.org/details/onkeynesianecono0000leij', type: 'academic', label: 'Leijonhufvud, A. (1968) On Keynesian Economics and the Economics of Keynes — Oxford University Press（Internet Archive）' },
+      { url: 'https://cepr.org/voxeu/columns/axel-leijonhufvud-life-among-econ-1933-2022', type: 'reference', label: 'Howitt, P. (2022) Axel Leijonhufvud: A life among the Econ — CEPR VoxEU（業績の概観）' },
+      { url: 'https://en.wikipedia.org/wiki/Axel_Leijonhufvud', type: 'reference', label: 'Wikipedia: Axel Leijonhufvud — corridor hypothesis and Keynesian reinterpretation' },
     ],
   },
   {
@@ -26371,16 +26337,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-poverty-trap',
     discipline: 'economics',
-    title: '貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析',
+    title: '貧困の罠——低所得が貯蓄と投資を妨げて貧困を自己強化的に再生産する複数均衡と、その存在をめぐる実証',
     statement:
-      '貧困の罠（Poverty Trap）とは、低所得が将来の投資能力を制約し、その結果として貧困状態が自己強化的に持続する均衡を指す。生存水準近傍では食料・医療・教育への支出が不可欠であるため貯蓄余力が生まれず、人的・物的資本の蓄積が妨げられる「生存制約（Subsistence Constraint）」が核心にある。サックスは大規模な外部援助による「ビッグ・プッシュ」で低位均衡から高位均衡への移行を促せると論じた。バナジーとデュフロはランダム化比較試験（RCT）を用いて貧困世帯の実態を精緻に分析し、2019年ノーベル経済学賞を受賞した。クレイとマッケンジーは実証研究を総覧し、罠の存在は文脈依存的であり普遍的ではないと指摘している。',
-    keyFigures: 'ジェフリー・サックス ／ アビジット・バナジー ／ エステル・デュフロ',
-    asOf: '2026-06-24',
+      '貧困の罠（poverty trap）とは、低所得が将来の投資能力を制約し、その結果として貧困状態が自己強化的に持続する均衡を指す。生存水準の近くでは食料・医療・教育への支出が不可欠で貯蓄の余力が生まれず資本の蓄積が妨げられるという生存制約が核心にあり、低栄養・低教育・協調の失敗が相互に作用して低い均衡から抜け出せない複数均衡を生む。開発経済学では、複数均衡の下では大規模な同時投資が必要だとする「ビッグ・プッシュ」論が古典的処方で、ジェフリー・サックスは『The End of Poverty』（2005）で大規模な外部援助によって低位均衡から高位均衡への移行を促せると論じた。これに対しアビジット・バナジーとエステル・デュフロは2007年の論文『The Economic Lives of the Poor』（Journal of Economic Perspectives）と著書『Poor Economics』（2011）で、貧困世帯の実際の意思決定をデータとランダム化比較試験で精緻に分析し、マイクロファイナンス・教育・保健への小規模介入の効果を検証して2019年にノーベル経済学賞を受けた。アート・クレイとデイヴィッド・マッケンジー（2014、同誌）は実証研究を総覧し、罠の存在は地理や制度に依存する文脈的なもので普遍的ではないと結論した。制度的アプローチではアセモグルとロビンソンが制度の分岐を長期の貧困と繁栄の決定要因とみる。罠の識別は難しく、援助の効果をめぐる論争が続く。中小企業には、最低限の投資規模を下回ると低収益が固定化する「事業の罠」の類推が成り立ち、閾値を越える投資を一度に行うか小さな検証で確かめてから拡大するかの判断が含意となる。',
+    keyFigures: 'ジェフリー・サックス（2005『The End of Poverty』ビッグ・プッシュ）／アビジット・バナジー＆エステル・デュフロ（2007 JEP／2011『Poor Economics』／2019 ノーベル経済学賞）／アート・クレイ＆デイヴィッド・マッケンジー（2014 JEP 実証の総覧）／対比: ダロン・アセモグル＆ジェームズ・ロビンソン（制度的アプローチ）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1257/jep.21.1.141', type: 'academic', label: 'Banerjee & Duflo 2007 — The Economic Lives of the Poor, Journal of Economic Perspectives 21(1):141-167' },
-      { url: 'https://doi.org/10.1257/jep.28.3.127', type: 'academic', label: 'Kraay & McKenzie 2014 — Do Poverty Traps Exist? Assessing the Evidence, Journal of Economic Perspectives 28(3):127-148' },
-      { url: 'https://www.penguinrandomhouse.com/books/292403/the-end-of-poverty-by-jeffrey-d-sachs/', type: 'reference', label: 'Sachs 2005 — The End of Poverty: Economic Possibilities for Our Time, Penguin Press' },
-      { url: 'https://www.publicaffairsbooks.com/titles/abhijit-v-banerjee/poor-economics/9781586487980/', type: 'reference', label: 'Banerjee & Duflo 2011 — Poor Economics: A Radical Rethinking of the Way to Fight Global Poverty, PublicAffairs' },
+      { url: 'https://doi.org/10.1257/jep.21.1.141', type: 'academic', label: 'Banerjee, A. V. & Duflo, E. (2007) The Economic Lives of the Poor — Journal of Economic Perspectives 21(1), 141–168（貧困世帯の実態）' },
+      { url: 'https://doi.org/10.1257/jep.28.3.127', type: 'academic', label: 'Kraay, A. & McKenzie, D. (2014) Do Poverty Traps Exist? Assessing the Evidence — Journal of Economic Perspectives 28(3), 127–148（罠の存在をめぐる実証の総覧）' },
+      { url: 'https://www.penguinrandomhouse.com/books/292403/the-end-of-poverty-by-jeffrey-d-sachs/', type: 'reference', label: 'Sachs, J. D. (2005) The End of Poverty: Economic Possibilities for Our Time — Penguin Press（ビッグ・プッシュ論）' },
+      { url: 'https://www.publicaffairsbooks.com/titles/abhijit-v-banerjee/poor-economics/9781586487980/', type: 'reference', label: 'Banerjee, A. V. & Duflo, E. (2011) Poor Economics — PublicAffairs（ランダム化比較試験による貧困研究）' },
+      { url: 'https://en.wikipedia.org/wiki/Poverty_trap', type: 'reference', label: 'Wikipedia: Poverty trap — multiple equilibria, Big Push, RCT, coordination failure' },
     ],
   },
   {
@@ -35620,12 +35587,14 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-club-goods-buchanan',
     discipline: 'economics',
-    title: 'クラブ財——排除可能だが混雑するまで非競合的な財の最適規模',
-    statement: 'クラブ財（club goods）は、ジェームズ・ブキャナンが1965年の論文「クラブの経済理論」で定式化した財の類型で、排除が可能でありながら、ある一定の利用水準（混雑が生じる点）までは非競合的に共同消費できる財を指す。経済学の伝統的な財の分類は、誰もが自由に利用でき消費が競合しない「純粋公共財」（ポール・サミュエルソンが定式化）と、排除可能で消費が競合する「私的財」という両極を区別してきた。クラブ財はこの二分法の隙間を埋める中間的な財である。スイミングプール、ゴルフクラブ、有料道路、動画配信サービスなどがその例で、料金を払わない者は利用から排除できる（排除可能性）一方、利用者がそれほど多くない間は、一人が利用しても他者の利用を妨げない（非競合性）。しかし利用者が増えて混雑すると、互いの利用を妨げ合うようになる（競合性の発生）。ブキャナンの理論の核心は、こうした財を共同で利用し費用を分担する集団（クラブ）の「最適規模」を分析した点にある。クラブに新たな会員を加えることには二つの相反する効果がある。一方で、会員が増えれば一人当たりの費用負担が軽くなる（費用分担の便益）。他方で、会員が増えれば混雑がひどくなり、各人が得る便益が減る（混雑の費用）。最適なクラブの規模は、追加的な会員がもたらす費用分担の限界便益と、混雑の限界費用が釣り合う点で決まる。さらに、クラブが提供する財の規模・水準そのものと、会員数とは、同時に決定される。クラブ財の理論は、なぜ人々が自発的に結社を作って財を共同供給するのか、地方公共サービスの最適な供給単位はどう決まるのか、有料の会員制サービスの設計はどうあるべきかといった問題に光を当て、マンサー・オルソンの集合行為論やチャールズ・ティブーの地方公共財の理論、トッド・サンドラーの集合行為の経済学と並んで、公共経済学と財政連邦主義の重要な基礎をなしている。',
-    keyFigures: 'ジェームズ・ブキャナン ／ マンサー・オルソン ／ チャールズ・ティブー ／ トッド・サンドラー',
-    asOf: '2026-06-27',
+    title: 'クラブ財（ブキャナン）——排除できるが混雑するまでは非競合的な財の最適な供給規模と会員数',
+    statement:
+      'クラブ財（club goods）は、ジェームズ・ブキャナンが1965年の論文『An Economic Theory of Clubs』（Economica 32巻125号）で定式化した財の類型で、料金を払わない者を排除できる一方、混雑が生じる利用水準までは非競合的に共同消費できる財を指す。サミュエルソンが定式化した純粋公共財と私的財の二分法の隙間を埋める中間的な財で、スイミングプール、ゴルフクラブ、有料道路、動画配信サービスなどが例となる。理論の核心は、財を共同利用し費用を分担する集団（クラブ）の最適規模の分析にある。会員が増えれば一人当たりの費用負担は軽くなるが混雑で各人の便益は減るため、最適な会員数は費用分担の限界便益と混雑の限界費用が釣り合う点で決まり、提供する財の規模と会員数は同時に決定される。この分析は人々が自発的に結社を作って財を共同供給する理由、地方公共サービスの最適な供給単位、会員制サービスの設計に光を当て、ティブーの「足による投票」による地方公共財の理論、オルソンの集合行為論と並ぶ公共経済学と財政連邦主義の基礎となった。リチャード・コーンズとトッド・サンドラー（1996）は外部性・公共財・クラブ財の理論を体系化し、NATO のような同盟や国際機関の分析へ応用して、グローバル公共財とクラブ財の区別が国際協力の仕組みの設計に持つ含意を論じた。限界としては、混雑費用の測定、会員の異質性、排除の技術的・法的可能性が現実の適用を左右することが指摘される。中小企業には、会員制・サブスクリプション・共同利用設備（コワーキング、共同配送）を設計する際に、混雑と費用分担の均衡点で定員と料金を決めるという直接の含意がある。',
+    keyFigures: 'ジェームズ・ブキャナン（1965『An Economic Theory of Clubs』Economica）／リチャード・コーンズ＆トッド・サンドラー（1996『The Theory of Externalities, Public Goods, and Club Goods』）／対比: ポール・サミュエルソン（純粋公共財）／チャールズ・ティブー（足による投票）／マンサー・オルソン（集合行為論）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.2307/2552442', type: 'academic', label: 'Buchanan, J.M. (1965) An Economic Theory of Clubs — Economica 32(125)' },
+      { url: 'https://doi.org/10.2307/2552442', type: 'academic', label: 'Buchanan, J. M. (1965) An Economic Theory of Clubs — Economica 32(125), 1–14（原論文）' },
+      { url: 'https://doi.org/10.1017/CBO9781139174800', type: 'academic', label: 'Cornes, R. & Sandler, T. (1996) The Theory of Externalities, Public Goods, and Club Goods, 2nd ed. — Cambridge University Press（体系化と国際的応用）' },
       { url: 'https://en.wikipedia.org/wiki/Club_good', type: 'reference', label: 'Wikipedia: Club good — Buchanan, excludable but non-rival, congestion, optimal club size' },
     ],
   },
@@ -38286,19 +38255,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-corridor-of-stability-leijonhufvud',
-    discipline: 'economics',
-    title: '安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析',
-    statement: 'アクセル・レイヨンフーヴッドが1973年に提唱した「安定性の回廊（corridor of stability）」は、マクロ経済システムの自己調整能力が均衡からの乖離の大きさに依存するという非線形的な安定性概念である。均衡の近傍（回廊の内部）では、価格メカニズム・在庫調整・信用制度などの市場の自動安定化装置が有効に機能し、小さなショックは比較的速やかに吸収される。しかし均衡からの乖離が一定の閾値（回廊の境界）を超えると、これらの安定化メカニズムが機能不全に陥り、経済は累積的な不安定化プロセス——債務デフレーション、信用収縮、需要の崩壊——に突入する。この概念はケインズの「一般理論」の再解釈として提示され、新古典派総合が想定する経済の普遍的な安定性への反論となった。レイヨンフーヴッドの分析は、2008年金融危機における金融システムの急激な崩壊を事前に理論的に示唆していたものとして再評価されている。',
-    keyFigures: 'アクセル・レイヨンフーヴッド ／ ロバート・クラウアー ／ ハイマン・ミンスキー ／ アーヴィング・フィッシャー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/3439273', type: 'academic', label: 'Leijonhufvud, A. (1973) Effective Demand Failures — Swedish Journal of Economics 75(1)' },
-      { url: 'https://en.wikipedia.org/wiki/Axel_Leijonhufvud', type: 'reference', label: 'Wikipedia: Axel Leijonhufvud — corridor hypothesis and Keynesian economics reinterpretation' },
-      { url: 'https://archive.org/details/onkeynesianecono0000leij', type: 'academic', label: 'Leijonhufvud, A. (1968) On Keynesian Economics and the Economics of Keynes: A Study in Monetary Theory — Oxford University Press, New York, ISBN 0195009487 (Internet Archive)' },
-    ],
-  },
-  {
     id: 'mgmt-middle-status-conformity-phillips',
     discipline: 'management',
     title: '中位地位同調性——組織階層における地位と逸脱の非線形的関係',
@@ -40117,13 +40073,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-melitz-heterogeneous-firms-trade',
     discipline: 'economics',
-    title: 'メリッツ・モデル——企業の異質性と貿易による選別効果',
-    statement: 'マーク・メリッツが2003年に発表した異質的企業貿易モデルは、クルーグマンの新貿易理論が同質的企業を仮定したのに対し、企業間の生産性の異質性を導入し、貿易自由化が企業レベルでの選別（selection）と資源再配分（reallocation）を通じて産業全体の生産性を向上させるメカニズムを理論化した。モデルでは、貿易の固定費用の存在により最も生産性の高い企業のみが輸出市場に参入し、生産性の低い企業は国内市場での競争激化により退出を強いられ、中間的生産性の企業は国内市場のみで操業する。この三層構造は「輸出企業プレミアム」——輸出企業が非輸出企業より大規模・高生産性・高賃金である——という広範な実証的事実と整合する。バーナードとイェンセンの米国製造業データを用いた先駆的実証研究がこのプレミアムを文書化し、メリッツ・モデルの理論的基盤を提供した。',
-    keyFigures: 'マーク・メリッツ ／ アンドリュー・バーナード ／ ブラッドフォード・イェンセン ／ エルハナン・ヘルプマン ／ マーク・ロバーツ',
-    asOf: '2026-06-26',
+    title: 'メリッツ・モデル（「新」新貿易理論）——企業の生産性の異質性を導入し、貿易自由化が企業の選別と資源再配分を通じて産業の生産性を高めることを示す',
+    statement:
+      'メリッツ・モデルは、マーク・メリッツが2003年の論文『The Impact of Trade on Intra-Industry Reallocations and Aggregate Industry Productivity』（Econometrica 71巻6号）で示した異質的企業の貿易モデルで、同質的な企業を仮定したクルーグマンの新貿易理論に企業間の生産性の違いを導入したもので「新」新貿易理論とも呼ばれる。輸出には固定費用がかかるため、最も生産性の高い企業だけが輸出市場に参入し、中間的な企業は国内市場だけで操業し、生産性の低い企業は貿易自由化による競争激化で退出を迫られる。この選別と、生き残った高生産性企業への資源の再配分を通じて、産業全体の生産性が上がるというのが核心である。この三層構造は、輸出企業が非輸出企業より大規模で生産性と賃金が高いという「輸出企業プレミアム」の実証事実と整合する。ヘルプマン、メリッツ、イープル（2004、American Economic Review）は枠組みを多国籍企業の水平的直接投資に拡張して輸出・直接投資・国内販売の企業選択を分析し、バーナード、イェンセン、レディング、ショット（2007、Journal of Economic Perspectives）は企業レベルの貿易の実証を総括した。限界として、生産性が外生的で企業の学習や投資が扱われないこと、退出企業の労働者の調整費用を軽視することが指摘される。中小企業には、輸出には固定費用の壁があり自社の生産性がその閾値を越えるかが参入の可否を決めること、貿易自由化は国内市場でも競争を強めるので生産性向上か撤退かの選択を迫ることが含意となる。',
+    keyFigures: 'マーク・メリッツ（2003 Econometrica）／エルハナン・ヘルプマン＆マーク・メリッツ＆スティーブン・イープル（2004 AER 輸出と直接投資）／アンドリュー・バーナード＆ブラッドフォード・イェンセン＆スティーブン・レディング＆ピーター・ショット（2007 JEP 企業レベルの貿易）／対比: ポール・クルーグマン（同質的企業の新貿易理論）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1111/1468-0262.00467', type: 'academic', label: 'Melitz, M. J. (2003) "The Impact of Trade on Intra-Industry Reallocations and Aggregate Industry Productivity" — Econometrica' },
-      { url: 'https://doi.org/10.1257/aer.89.1.1', type: 'academic', label: 'Bernard, A. B. & Jensen, J. B. (1999) "Exceptional Exporter Performance" — AER' },
+      { url: 'https://doi.org/10.1111/1468-0262.00467', type: 'academic', label: 'Melitz, M. J. (2003) The Impact of Trade on Intra-Industry Reallocations and Aggregate Industry Productivity — Econometrica 71(6), 1695–1725（原論文）' },
+      { url: 'https://doi.org/10.1257/000282804322970814', type: 'academic', label: 'Helpman, E., Melitz, M. J. & Yeaple, S. R. (2004) Export Versus FDI with Heterogeneous Firms — American Economic Review 94(1)（多国籍企業への拡張）' },
+      { url: 'https://doi.org/10.1257/jep.21.3.105', type: 'academic', label: 'Bernard, A. B., Jensen, J. B., Redding, S. J. & Schott, P. K. (2007) Firms in International Trade — Journal of Economic Perspectives 21(3)（企業レベルの実証の総括）' },
       { url: 'https://en.wikipedia.org/wiki/Melitz_model', type: 'reference', label: 'Wikipedia: Melitz model — 異質的企業と貿易の選別効果' },
     ],
   },
@@ -41053,19 +41011,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-club-goods-buchanan-tiebout',
-    discipline: 'economics',
-    title: 'クラブ財理論——ブキャナンの共同消費と最適メンバーシップ',
-    statement: 'クラブ財（Club Goods）理論は、非競合的だが排除可能な財（有料道路、ゴルフクラブ、ストリーミングサービス等）の最適供給と最適メンバーシップ規模を分析する公共経済学の枠組みである。ブキャナン（1965）は純粋公共財と純粋私的財の中間に位置するクラブ財の概念を提示し、メンバーシップの拡大がもたらす費用分担の利益と混雑コストのトレードオフから最適クラブ規模が決定されることを示した。この分析はサミュエルソン（1954）の公共財の最適供給条件を拡張するものである。ティブー（1956）の「足による投票」モデルは、住民が自身の選好に最も合致する地方政府（公共財のクラブ）を選択して移動することで、地方公共財の効率的供給が実現されると主張した。コーンズとサンドラー（1996）はクラブ理論を国際的な同盟（NATO等）や国際機関の分析に応用し、サンドラー（2013）はグローバル公共財とクラブ財の区別が国際協力のメカニズム設計に持つ含意を論じた。',
-    keyFigures: 'ジェームズ・ブキャナン ／ チャールズ・ティブー ／ トッド・サンドラー ／ リチャード・コーンズ ／ マンカー・オルソン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/2552442', type: 'academic', label: 'Buchanan (1965) An Economic Theory of Clubs — Economica' },
-      { url: 'https://doi.org/10.1017/CBO9781139174800', type: 'academic', label: 'Cornes & Sandler (1996) The Theory of Externalities, Public Goods, and Club Goods — Cambridge University Press' },
-      { url: 'https://en.wikipedia.org/wiki/Club_good', type: 'reference', label: 'Wikipedia: Club good — クラブ財の定義と経済理論の概説' },
-    ],
-  },
-  {
     id: 'mgmt-legitimacy-theory-suchman-dowling',
     discipline: 'management',
     title: '正統性理論——組織の社会的承認と正統性管理の戦略',
@@ -41981,14 +41926,15 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-public-choice-buchanan-tullock',
     discipline: 'economics',
-    title: '公共選択論——ブキャナンとタロックの政治的意思決定の経済分析',
-    statement: '公共選択論は、政治的意思決定を経済学の方法論（合理的個人・効用最大化・均衡分析）で分析する学際領域であり、ジェームズ・ブキャナンとゴードン・タロックの1962年の著作『合意の計算』を理論的出発点とする。従来の公共経済学が政府を「慈悲深い独裁者」と仮定していたのに対し、公共選択論は政治家・官僚・有権者もまた自己利益を追求する合理的経済人であることを前提とし、投票行動・ロビイング・レントシーキング・官僚制の肥大化といった現象を分析する。ブキャナンは立憲政治経済学を提唱し、政策内容よりも政策決定のルール（憲法的制約）の設計が重要であると主張した。マンサー・オルソンの集合行為論やウィリアム・ニスカネンの官僚制モデルも同系譜に属し、政府の失敗の体系的分析に貢献した。ブキャナンは1986年にノーベル経済学賞を受賞した。',
-    keyFigures: 'ジェームズ・ブキャナン ／ ゴードン・タロック ／ マンサー・オルソン ／ ウィリアム・ニスカネン',
-    asOf: '2026-06-26',
+    title: '公共選択論（ブキャナン＝タロック）——政治家・官僚・有権者も自己利益を追う合理的個人として政治的意思決定を経済学の方法で分析する',
+    statement:
+      '公共選択論（public choice）は、政治的意思決定を合理的個人・効用最大化・均衡分析という経済学の方法で分析する学際領域で、ジェームズ・ブキャナンとゴードン・タロックの1962年の著作『The Calculus of Consent』（合意の計算、ミシガン大学出版局）を理論的出発点とする。従来の公共経済学が政府を公益に仕える「慈悲深い独裁者」と仮定したのに対し、公共選択論は有権者・議員・官僚・圧力集団もまた自己利益を追求する合理的経済人だと前提し、民主主義を「政治的市場」として投票行動・ロビイング・レントシーキング・官僚制の肥大化を分析する。主要命題は、市場の失敗への対応としての政府介入もまた偏りと非効率を生むという「政府の失敗」、議員の再選動機がもたらす財政赤字やばら撒きへの短期的偏り、ニスカネンの予算最大化官僚モデル、集合行為問題とロビイングによる政策の歪みである。ブキャナンは政策の中身より政策を決めるルールの設計が重要だとする立憲政治経済学を提唱し、財政均衡ルール・権力分立・直接民主制などの制度設計論に影響を与え、1986年にノーベル経済学賞を受けた。マンサー・オルソンの集合行為論、デニス・ミューラーの体系的教科書『Public Choice III』（2003）も同じ系譜に属する。批判としては、政治家や官僚の動機を自己利益に還元しすぎること、投票のパラドックス（合理的無知）など理論の予測と現実の投票率の乖離、規範的な反政府偏向が指摘される。中小企業には、補助金や規制の設計が公益だけでなく政治的動機で決まることを踏まえ、業界団体を通じた意見表明の効果と、制度そのものの安定性（ルール）を見る視点が含意となる。',
+    keyFigures: 'ジェームズ・ブキャナン＆ゴードン・タロック（1962『The Calculus of Consent』／ブキャナンは1986 ノーベル経済学賞）／ウィリアム・ニスカネン（予算最大化官僚）／マンサー・オルソン（集合行為論）／デニス・ミューラー（2003『Public Choice III』）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.3998/mpub.7687', type: 'academic', label: 'Buchanan, J. & Tullock, G. (1962) The Calculus of Consent — University of Michigan Press' },
-      { url: 'https://www.cambridge.org/highereducation/books/public-choice-iii/32B490B6DAE290EC773E4F4ACB7BB451', type: 'academic', label: 'Mueller, D. (2003) Public Choice III — Cambridge University Press' },
-      { url: 'https://en.wikipedia.org/wiki/Public_choice', type: 'reference', label: 'Wikipedia: Public choice — 公共選択論の概要' },
+      { url: 'https://doi.org/10.3998/mpub.7687', type: 'academic', label: 'Buchanan, J. M. & Tullock, G. (1962) The Calculus of Consent: Logical Foundations of Constitutional Democracy — University of Michigan Press（公共選択論の出発点）' },
+      { url: 'https://www.cambridge.org/highereducation/books/public-choice-iii/32B490B6DAE290EC773E4F4ACB7BB451', type: 'academic', label: 'Mueller, D. C. (2003) Public Choice III — Cambridge University Press（体系的教科書）' },
+      { url: 'https://en.wikipedia.org/wiki/Public_choice', type: 'reference', label: 'Wikipedia: Public choice — Buchanan, Tullock, government failure, rent-seeking, constitutional economics' },
     ],
   },
   {
@@ -43145,13 +43091,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-inequality-piketty-capital21',
     discipline: 'economics',
-    title: '不平等と資本——ピケティの「r>g」命題と21世紀の富の集中',
-    statement: 'トマ・ピケティは著作『21世紀の資本』（2013年仏語，2014年英訳）で，資本収益率（r）が経済成長率（g）を上回る限り富は集中し続けるという「r>g」命題を歴史的データで示した。15ヵ国・200年超の所得・富の分布データを構築し，20世紀中盤の格差縮小が戦争・大恐慌・高累進課税による例外であり，現在は格差拡大の「常態」に回帰しつつあると論じた。政策提言として，グローバルな累進資本課税（年率1〜2%の富裕税）と高い限界所得税率を主張した。批判としては，データの信頼性（フィナンシャル・タイムズとの論争）・資本の異質性（住宅 vs 生産資本）・r>gのメカニズム不明確性・政策の実現可能性が指摘された。クズネッツ曲線（格差は発展とともに逆U字）との対比で，ピケティの長期格差増大傾向は既存パラダイムへの挑戦として学界・政策・メディアで広く議論された。',
-    keyFigures: 'トマ・ピケティ ／ エマニュエル・サエズ ／ アンソニー・アトキンソン ／ ガブリエル・ズックマン',
-    asOf: '2026-06-26',
+    title: 'ピケティの r＞g（『21世紀の資本』）——資本収益率が成長率を上回り続ける限り富は労働所得より速く蓄積し、格差は構造的に拡大する',
+    statement:
+      'トマ・ピケティは著書『21世紀の資本』（仏語版2013年、英訳2014年、ハーバード大学出版局）で、資本収益率 r（利潤・配当・利子・地代などの年率）が経済成長率 g（所得や生産の伸び）を長期的に上回る限り、資本の蓄積が労働所得の伸びを追い越し、資産を持つ者とその相続人に富が集中して格差が構造的に拡大するという「r＞g」の命題を提示した。十数か国・二百年を超える税務・相続・国民所得のデータを構築し、20世紀中盤の格差縮小は二つの世界大戦・大恐慌・高い累進課税・高成長という歴史的例外であり、21世紀は相続資産の比重が高い19世紀型の高格差社会へ回帰する圧力があると論じた。エマニュエル・サエズやガブリエル・ズックマンとの共同研究は米国の所得・富の集中に関する長期統計を整備し、上位1％のシェアが20世紀初頭の水準に近づいていることを示した。政策提言はグローバルな累進資本課税（年率1〜2％程度の富裕税）と高い限界所得税率、金融の透明性の強化で、租税回避への国際的対応をめぐる議論を活性化させた。批判としては、フィナンシャル・タイムズとのデータの信頼性をめぐる論争、住宅と生産資本を区別しない資本概念の粗さ、r＞g が格差拡大を導く機序が明確でないこと、政策の実現可能性があり、シカゴ大学ブースの IGM 調査では経済学者の約8割が「r＞g が格差拡大の最も強い要因」という見方に同意しなかった。クズネッツ曲線（格差は発展とともに逆U字を描く）との対比で、長期の格差拡大傾向という主張は既存の見方への挑戦として学界・政策・メディアで広く論じられた。中小企業には、資産の蓄積が事業所得の伸びを上回りやすい長期の力学を、事業承継・相続対策や賃金と配当の配分を考える文脈で理解する含意がある。',
+    keyFigures: 'トマ・ピケティ（2013／2014『21世紀の資本』）／エマニュエル・サエズ＆ガブリエル・ズックマン（所得・富の集中の長期統計）／アンソニー・アトキンソン（格差研究の先駆）／対比: サイモン・クズネッツ（クズネッツ曲線）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.4159/9780674369542', type: 'academic', label: 'Piketty, T. (2014) Capital in the Twenty-First Century — Harvard UP' },
-      { url: 'https://en.wikipedia.org/wiki/Capital_in_the_Twenty-First_Century', type: 'reference', label: 'Wikipedia: Capital in the Twenty-First Century — inequality research' },
+      { url: 'https://doi.org/10.4159/9780674369542', type: 'academic', label: 'Piketty, T. (2014) Capital in the Twenty-First Century — Harvard University Press（原著の英訳）' },
+      { url: 'https://libertystreeteconomics.newyorkfed.org/2015/07/a-discussion-of-thomas-pikettys-capital-in-the-twenty-first-century-by-how-much-is-r-greater-than-g/', type: 'government', label: 'Liberty Street Economics（ニューヨーク連邦準備銀行、2015）— r＞g の大きさと r の構成の解説' },
+      { url: 'https://www.chicagobooth.edu/review/piketty-on-inequality-34-economists-who-arent-convinced-and-one-who-is', type: 'reference', label: 'Chicago Booth Review — IGM 調査で経済学者の約8割が r＞g を最強の要因とする見方に不同意' },
+      { url: 'https://www.britannica.com/money/Thomas-Piketty', type: 'reference', label: 'Encyclopaedia Britannica — Thomas Piketty（r＞g を資本主義の中心的矛盾とする主張と累進的富裕税の提案）' },
+      { url: 'https://en.wikipedia.org/wiki/Capital_in_the_Twenty-First_Century', type: 'reference', label: 'Wikipedia: Capital in the Twenty-First Century — r > g, wealth inequality, inheritance, global wealth tax, FT dispute' },
     ],
   },
   {
@@ -45146,18 +45096,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-public-choice-theory-buchanan',
-    discipline: 'economics',
-    title: '公共選択論と政治的市場の経済学——ブキャナンの自己利益政府モデル',
-    statement: '公共選択論（public choice theory）とは、政治的意思決定過程に経済学の合理的選択モデルを適用する分野で、有権者・議員・官僚・圧力集団が自己利益を追求する「政治的市場」として民主主義制度を分析する。ジェームズ・ブキャナンとゴードン・タロックの「合意の計算」（1962年）が理論的礎を構築し、ブキャナンは1986年にノーベル経済学賞を受賞した。公共選択論の主要命題は①「政府の失敗（government failure）」——市場の失敗の対応策としての政府介入もバイアス・非効率性を生む——②議員の再選動機による短期的政策バイアス（財政赤字・ばら撒き型政策）③官僚の予算最大化動機（ニスカネン・モデル）④集団的行動問題とロビイングによる政策歪曲、の四点から構成される。憲法的経済学（constitutional economics）においてブキャナンはゲームのルール段階（憲法）での合意が政策アウトカムを規律することを重視し、財政均衡ルール・権力分立・直接民主制の制度設計論に影響を与えた。',
-    keyFigures: 'ジェームズ・ブキャナン ／ ゴードン・タロック ／ ウィリアム・ニスカネン ／ マンサー・オルソン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.3998/mpub.7687', type: 'academic', label: 'Buchanan & Tullock (1962) The Calculus of Consent — University of Michigan Press' },
-      { url: 'https://en.wikipedia.org/wiki/Public_choice', type: 'reference', label: 'Wikipedia: Public choice — Buchanan, Tullock, government failure, rent-seeking, constitutional economics' },
-    ],
-  },
-  {
     id: 'mgmt-agile-scrum-organizational',
     discipline: 'management',
     title: 'アジャイル・スクラムと組織アジリティの経営論——ソフトウェア開発から経営変革へ',
@@ -45494,18 +45432,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-poverty-trap-multiple-equilibria',
-    discipline: 'economics',
-    title: '貧困の罠と複数均衡理論——開発経済学の構造的困窮分析',
-    statement: '貧困の罠（poverty trap）とは、貧困状態が自己強化的なメカニズムによって持続・再生産される経済的ダイナミクスを指し、貯蓄不能・低栄養・低教育・社会的排除などが相互作用して低均衡から脱出困難な構造を生み出す。ナーセル・シェイクとジェフリー・サックスは「大きな推進力」（Big Push）理論を現代的に復元し、協調の失敗（coordination failure）が複数均衡を生み出す条件を分析した。ランダム化比較実験（RCT）によるアプローチをバナジーとデュフロが開拓し（2019年ノーベル経済学賞）、貧困家庭の意思決定・マイクロファイナンス・教育・衛生への小規模介入が行動変容と貧困脱出にどう寄与するかを実証した。制度的アプローチでは、アジェモグルとロビンソンが「国家はなぜ衰退するのか」（2012年）で収奪的制度と包括的制度の分岐が長期的な貧困と繁栄を決定すると論じ、複数均衡の歴史的・制度的起源を重視する。',
-    keyFigures: 'アビジット・バナジー ／ エステル・デュフロ ／ ジェフリー・サックス ／ ダロン・アジェモグル',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1257/jep.21.1.141', type: 'academic', label: 'Banerjee & Duflo (2007) The Economic Lives of the Poor — Journal of Economic Perspectives 21(1)' },
-      { url: 'https://en.wikipedia.org/wiki/Poverty_trap', type: 'reference', label: 'Wikipedia: Poverty trap — multiple equilibria, Big Push, RCT, coordination failure, institutions' },
-    ],
-  },
-  {
     id: 'mgmt-strategic-renewal-volberda',
     discipline: 'management',
     title: '戦略的刷新と組織アンビデクストリティの動態能力論（フォルベルダ）',
@@ -45551,18 +45477,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.1080/01900692.2013.786164', type: 'academic', label: 'Hollands (2008) Will the Real Smart City Please Stand Up? — City 12(3)' },
       { url: 'https://en.wikipedia.org/wiki/Smart_city', type: 'reference', label: 'Wikipedia: Smart city — ICT, urban informatics, surveillance, civic tech, Alphabet Sidewalk Labs' },
-    ],
-  },
-  {
-    id: 'econ-income-inequality-piketty',
-    discipline: 'economics',
-    title: '所得格差と資本収益率の長期分析——ピケティの資本論',
-    statement: 'トマ・ピケティは「21世紀の資本」（2013年）において、18世紀から現代に至る20ヶ国以上の税務・相続・国民所得データを分析し、資本収益率（r）が経済成長率（g）を上回るとき（r > g）格差は構造的に拡大するという「中心的矛盾」を提示した。富の集中は主に相続資産の再生産により加速し、20世紀前半の格差縮小（戦争・大恐慌・高成長期）は歴史的例外であり、21世紀は19世紀型の高格差社会への回帰圧力があるという。ピケティとサエズ・ズックマンの共同研究は米国の所得・富の集中に関する長期統計を整備し、上位1%のシェアが2010年代に19世紀初頭水準に近接していることを示した。格差対策として累進的グローバル富裕税・年次富裕税・金融透明性強化を提唱し、税逃れ・オフショア金融センターへの国際的対応をめぐる政策議論を活性化させた。',
-    keyFigures: 'トマ・ピケティ ／ エマニュエル・サエズ ／ ガブリエル・ズックマン ／ アンソニー・アトキンソン',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.4159/9780674369542', type: 'academic', label: 'Piketty (2014) Capital in the Twenty-First Century — Harvard University Press' },
-      { url: 'https://en.wikipedia.org/wiki/Capital_in_the_Twenty-First_Century', type: 'reference', label: 'Wikipedia: Capital in the 21st Century — r > g, wealth inequality, inheritance, global wealth tax' },
     ],
   },
   {

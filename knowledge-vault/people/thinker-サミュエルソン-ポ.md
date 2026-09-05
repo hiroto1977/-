@@ -2,7 +2,7 @@
 title: "ポール・サミュエルソン"
 type: thinker
 person_key: "サミュエルソン|ポ"
-concept_count: 35
+concept_count: 36
 tags:
   - person
   - index
@@ -10,12 +10,13 @@ tags:
 
 # ポール・サミュエルソン
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **35 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **36 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（35件）
+## 学術概念（36件）
 - [[econ-accelerator-principle|加速度原理（投資の加速度原理）]] — 加速度原理とは、企業の純投資（資本ストックの増加分）が、産出量（需要）の水準ではなくその「変化（増加分）」に比例して決…
 - [[econ-balassa-samuelson-effect-productivity|バラッサ＝サミュエルソン効果——生産性格差と実質為替レートの体系的乖離]] — バラッサ＝サミュエルソン効果は、ベラ・バラッサとポール・サミュエルソンがそれぞれ1964年に独立に提唱した、貿易財部門…
 - [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — ケンブリッジ資本論争（TwoCambridgesdebate）は、1950年代から1970年代にかけて、英国ケンブリッ…
+- [[econ-club-goods-buchanan|クラブ財（ブキャナン）——排除できるが混雑するまでは非競合的な財の最適な供給規模と会員数]] — クラブ財（clubgoods）は、ジェームズ・ブキャナンが1965年の論文『AnEconomicTheoryofClu…
 - [[econ-envelope-theorem-milgrom-segal|包絡線定理——最適化問題のパラメータ感応度と経済学的応用]] — 包絡線定理（EnvelopeTheorem）は、パラメータ付き最適化問題において、最適値関数のパラメータに関する微分が…
 - [[econ-factor-price-equalization|要素価格均等化定理]] — 要素価格均等化定理は、ヘクシャー=オリーン・モデルの第4の基本定理であり、ポール・サミュエルソンが1948年・1949…
 - [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 合成の誤謬（fallacyofcomposition）は、個々の経済主体にとって合理的な行動が、全員が同時に行った場合…

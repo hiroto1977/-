@@ -39,8 +39,8 @@ aliases:
 - [[econ-magnitude-effect-discounting|大きさ効果——金額が大きいほど将来を割り引く率が下がる]] — 同じ思想家
 - [[econ-sunk-cost|サンクコスト（埋没費用）とサンクコストの誤謬]] — 出典を共有
 - [[human-action-bias|行動バイアス（アクション・バイアス）]] — 出典を共有
-- [[human-normalcy-bias|正常性バイアス]] — 同分野の近傍
 - [[human-cognitive-dissonance-reduction|認知的不協和低減]] — 同分野の近傍
+- [[human-normalcy-bias|正常性バイアス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

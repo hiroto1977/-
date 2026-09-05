@@ -40,7 +40,7 @@ aliases:
 - [[subsidy-kagoshima|鹿児島県中小企業経営革新支援事業費補助金（鹿児島県）]] — 出典を共有
 - [[labor-dispatch-prohibited|労働者派遣の適用除外業務（派遣禁止業務）]] — 同分野の近傍
 - [[labor-leave-allowance|休業手当（労働基準法26条）]] — 同分野の近傍
-- [[labor-tribunal|労働審判制度（労働審判法）]] — 同分野の近傍
+- [[labor-work-injury-recognition|労災保険における業務災害の認定（業務遂行性・業務起因性）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

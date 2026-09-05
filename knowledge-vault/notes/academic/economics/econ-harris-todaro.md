@@ -31,8 +31,8 @@ aliases:
 - [Todaro paradox (Wikipedia)](https://en.wikipedia.org/wiki/Todaro_paradox) `リファレンス`
 
 ## 関連概念
+- [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 同分野の近傍
 - [[econ-kuznets-curve|クズネッツ曲線]] — 同分野の近傍
-- [[econ-insider-outsider|インサイダー・アウトサイダー理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

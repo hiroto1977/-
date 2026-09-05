@@ -33,14 +33,14 @@ aliases:
 ## 関連概念
 - [[econ-asset-price-bubbles-kindleberger-minsky|資産価格バブル——キンドルバーガーとミンスキーの信用サイクルと崩壊のモデル]] — 同じ思想家
 - [[econ-speculative-bubbles-kindleberger|投機的バブルの解剖——キンドルバーガーのマニア＝パニック＝崩壊モデル]] — 同じ思想家
-- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 同じ思想家
-- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 同じ思想家
 - [[econ-debt-deflation-fisher|負債デフレーション理論——過剰債務と物価下落の悪循環メカニズム]] — 同じ思想家
 - [[econ-debt-deflation-fisher-irving|債務デフレーション論——フィッシャーの過剰債務螺旋と大恐慌の金融的説明]] — 同じ思想家
 - [[econ-endogenous-money-post-keynesian-moore|内生的貨幣論——ムーアの信用貨幣観と中央銀行の利子率コントロール]] — 同じ思想家
 - [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 同じ思想家
 - [[econ-hot-money-flows-kindleberger|ホットマネーと国際資本移動——投機的資本フローの不安定化効果]] — 同じ思想家
+- [[econ-financialization|金融化——経済の金融部門支配]] — 同分野の近傍
 - [[econ-minsky-moment|ミンスキー・モーメント（金融不安定性仮説）]] — 同分野の近傍
+- [[econ-relationship-lending-petersen-rajan-berger-udell|リレーションシップ・レンディング（関係型融資）——長期関係で蓄積した「ソフト情報」が中小企業の資金調達力を高める仕組み]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

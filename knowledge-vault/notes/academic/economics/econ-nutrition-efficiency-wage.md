@@ -38,6 +38,7 @@ Harvey Leibenstein（ハーヴェイ・ライベンシュタイン, 1957） ／ 
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家
 - [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]] — 同分野の近傍
 - [[econ-bertrand-competition|ベルトラン競争（価格競争モデル）]] — 同分野の近傍
+- [[econ-giffen-goods-inferior-demand|ギッフェン財——価格が上がると需要が増える需要法則の例外は、負の所得効果が代替効果を上回る下級財で生じる]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

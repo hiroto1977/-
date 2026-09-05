@@ -36,8 +36,8 @@ aliases:
 - [[human-cultural-formulation-distress|文化的定式化と苦悩のイディオム（DSM-5）の医療人類学]] — 同じ思想家
 - [[human-emotional-labor|感情労働（ホックシールド）]] — 出典を共有
 - [[infosoc-platform-labor-politics|プラットフォーム労働の政治学]] — 出典を共有
-- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同分野の近傍
 - [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同分野の近傍
+- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同分野の近傍
 - [[human-mental-health-continuum-keyes|精神的健康の連続体モデル（キーズ）]] — 同分野の近傍
 
 ## 関連

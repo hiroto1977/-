@@ -14,7 +14,7 @@ tags:
 
 ## このドメインを出典とする項目
 
-- [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — Banerjee&Duflo2011—PoorEconomics:ARadicalRethinkingoftheWaytoFightGlo…
+- [[econ-poverty-trap|貧困の罠——低所得が貯蓄と投資を妨げて貧困を自己強化的に再生産する複数均衡と、その存在をめぐる実証]] — Banerjee,A.V.&Duflo,E.(2011)PoorEconomics—PublicAffairs（ランダム化比較試験による貧…
 - [[infosoc-surveillance-capitalism-zuboff|監視資本主義（ズボフ）]] — Zuboff,S.(2019)TheAgeofSurveillanceCapitalism—PublicAffairs（概念の体系書）
 
 ## 関連

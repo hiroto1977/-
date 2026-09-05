@@ -37,7 +37,7 @@ aliases:
 - [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 同じ思想家
 - [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]] — 出典を共有
 - [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 出典を共有
-- [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 出典を共有
+- [[econ-poverty-trap|貧困の罠——低所得が貯蓄と投資を妨げて貧困を自己強化的に再生産する複数均衡と、その存在をめぐる実証]] — 出典を共有
 - [[mgmt-jidoka|自働化（ニンベンの付いた自動化）]] — 出典を共有
 - [[mgmt-six-sigma|シックス・シグマ]] — 出典を共有
 - [[mgmt-toyota-production|トヨタ生産方式（リーン生産方式）]] — 出典を共有

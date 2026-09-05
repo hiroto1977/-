@@ -31,8 +31,9 @@ aliases:
 - [Encyclopedia.com — Environmental Kuznets Curves（派生概念）](https://www.encyclopedia.com/social-sciences/applied-and-social-sciences-magazines/environmental-kuznets-curves) `リファレンス`
 
 ## 関連概念
+- [[econ-inequality-piketty-capital21|ピケティの r＞g（『21世紀の資本』）——資本収益率が成長率を上回り続ける限り富は労働所得より速く蓄積し、格差は構造的に拡大する]] — 同じ思想家
 - [[econ-harris-todaro|ハリス＝トダロ・モデル]] — 同分野の近傍
-- [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同分野の近傍
+- [[econ-dual-economy-lewis|ルイスの二重経済モデル：無制限労働供給と経済発展]] — 同分野の近傍
 - [[econ-engel-curve|エンゲル曲線とエンゲルの法則（Engel Curve & Engel's Law）]] — 同分野の近傍
 - [[econ-environmental-kuznets-curve|環境クズネッツ曲線]] — 同分野の近傍
 

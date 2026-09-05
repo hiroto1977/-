@@ -33,6 +33,7 @@ Walter Y. Oi（ウォルター・オイ, 1929-2013, 原典1962） ／ firm-speci
 ## 関連概念
 - [[econ-okuns-law-output-unemployment|オークンの法則——産出ギャップと失業率の経験的関係]] — 同分野の近傍
 - [[econ-financial-repression|金融抑圧]] — 同分野の近傍
+- [[econ-two-part-tariff|二部料金制（two-part tariff）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

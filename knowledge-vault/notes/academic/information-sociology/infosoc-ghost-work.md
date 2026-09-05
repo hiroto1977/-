@@ -34,7 +34,7 @@ aliases:
 ## 関連概念
 - [[infosoc-calculated-publics|算出された公衆（calculated publics）]] — 出典を共有
 - [[infosoc-digital-labour|デジタル労働（digital labour）]] — 同分野の近傍
-- [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — 同分野の近傍
+- [[infosoc-platform-labor-control|プラットフォーム労働とアルゴリズム的統制]] — 同分野の近傍
 - [[infosoc-deceptive-design-gray|欺瞞的デザインとダーク・パターン（グレイ他）]] — 同分野の近傍
 
 ## 関連

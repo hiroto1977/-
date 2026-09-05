@@ -37,6 +37,8 @@ national
 - [補助金ポータル 産業雇用安定助成金 全コース解説](https://hojyokin-portal.jp/columns/sangyo_yoken_minaoshi) `メディア`
 
 ## 関連概念
+- [[labor-employment-adjustment-subsidy|雇用調整助成金]] — 語彙が近い
+- [[subsidy-employment-adjustment|雇用調整助成金]] — 語彙が近い
 - [[subsidy-career-up|キャリアアップ助成金]] — 出典を共有
 - [[subsidy-jinzai-kakuho|人材確保等支援助成金]] — 出典を共有
 - [[subsidy-trial-employment|トライアル雇用助成金]] — 出典を共有
@@ -45,8 +47,6 @@ national
 - [[subsidy-chiba-city|千葉市創業支援補助金]] — 出典を共有
 - [[subsidy-kawasaki|川崎市新技術・新製品開発等支援事業補助金]] — 出典を共有
 - [[subsidy-nagoya|名古屋市スタートアップ企業支援補助金]] — 出典を共有
-- [[subsidy-akita|あきた農商工応援ファンド事業（助成金）（秋田県）]] — 出典を共有
-- [[subsidy-fukui|企業における省エネ設備等導入支援事業補助金（福井県）]] — 出典を共有
 
 ## 関連
 - コレクション: [[補助金・助成金]]

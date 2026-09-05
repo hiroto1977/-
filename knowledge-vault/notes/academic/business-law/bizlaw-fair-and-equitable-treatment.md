@@ -37,7 +37,6 @@ OECD（2004 FET基準の体系的分析）／クリストフ・シュロイア�
 - [[bizlaw-fork-in-the-road|分岐条項（Fork-in-the-Road Clause）]] — 出典を共有
 - [[bizlaw-arbitration-clause|仲裁条項——紛争を裁判ではなく仲裁で解決する合意]] — 同分野の近傍
 - [[bizlaw-de-facto-merger-doctrine|事実上の合併の法理（デ・ファクト・マージャー法理）]] — 同分野の近傍
-- [[bizlaw-cramdown-doctrine|クラムダウン法理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

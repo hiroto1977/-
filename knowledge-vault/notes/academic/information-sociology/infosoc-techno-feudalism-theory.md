@@ -40,9 +40,9 @@ Yanis Varoufakis ／ Cédric Durand ／ Evgeny Morozov
 - [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 出典を共有
 - [[infosoc-information-goods|情報財の経済的特性（高固定費・ゼロ限界費用・非競合性・経験財）]] — 出典を共有
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 出典を共有
-- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 出典を共有
-- [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 出典を共有
+- [[econ-poverty-trap|貧困の罠——低所得が貯蓄と投資を妨げて貧困を自己強化的に再生産する複数均衡と、その存在をめぐる実証]] — 出典を共有
 - [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 出典を共有
+- [[mgmt-collective-genius|集合的天才（Collective Genius）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

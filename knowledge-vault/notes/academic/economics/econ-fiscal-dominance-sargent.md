@@ -33,14 +33,14 @@ aliases:
 ## 関連概念
 - [[econ-sargent-wallace-unpleasant-arithmetic|サージェント＝ウォレスの不愉快な貨幣主義の算術]] — 語彙が近い
 - [[econ-fiscal-dominance|財政支配（Fiscal Dominance）]] — 語彙が近い
+- [[labor-employment-adjustment-subsidy|雇用調整助成金]] — 語彙が近い
+- [[subsidy-employment-adjustment|雇用調整助成金]] — 語彙が近い
 - [[econ-fiscal-theory-price|物価水準の財政理論（Fiscal Theory of the Price Level）]] — 同じ思想家
 - [[econ-policy-ineffectiveness|政策無効命題]] — 同じ思想家
 - [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]] — 同じ思想家
-- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 同じ思想家
+- [[econ-corridor-of-stability-theory|安定性の回廊（レイヨンフーヴッド）——市場の自己調整は均衡からの乖離が小さい「回廊」の内側でしか働かず、外へ出ると累積的な不安定化が支配する]] — 同じ思想家
 - [[econ-disinflation-sacrifice-ratio|犠牲率——ディスインフレーション政策における産出量コストの測定]] — 同じ思想家
-- [[econ-goodharts-law-lucas-critique|グッドハートの法則とルーカス批判——政策目標化された統計的関係の崩壊]] — 同じ思想家
 - [[econ-habit-formation-asset|習慣形成資産価格モデル（Habit Formation in Asset Pricing）]] — 同じ思想家
-- [[econ-seigniorage-hyperinflation-cagan|インフレ税と超インフレ——ケーガンモデルが解明するハイパーインフレの自己強化メカニズム]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

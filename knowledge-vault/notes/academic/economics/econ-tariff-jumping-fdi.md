@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Tariff-jumping hypothesis — 関税回避型FDIの理論と実証の概説](https://en.wikipedia.org/wiki/Tariff-jumping_hypothesis) `リファレンス`
 
 ## 関連概念
-- [[econ-optimal-tariff-terms-of-trade|最適関税と交易条件——大国の市場支配力と関税政策の国際経済学的根拠]] — 同分野の近傍
-- [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — 同分野の近傍
+- [[econ-product-cycle-trade|プロダクト・サイクル理論（貿易）]] — 同分野の近傍
+- [[econ-greenfield-effect-multinational|グリーンフィールド投資効果——海外直接投資の参入形態と成長]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

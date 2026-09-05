@@ -2,7 +2,7 @@
 title: "cepr.org"
 type: source-domain
 host: "cepr.org"
-cite_count: 6
+cite_count: 5
 tags:
   - source-domain
   - index
@@ -10,13 +10,12 @@ tags:
 
 # cepr.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **6 件**（リファレンス 4 ・ 学術 2）
+> [!info] 出典ドメイン索引 ・ 引用 **5 件**（リファレンス 3 ・ 学術 2）
 
 ## このドメインを出典とする項目
 
 - [[econ-career-concerns-holmstrom|キャリア・コンサーン（ホルムストローム）——評判が生む暗黙の誘因]] — CEPR/VoxEU:BengtHolmströmandtheblackboxofthefirm—careerconcerns,impli…
-- [[econ-corridor-of-stability-theory|安定の回廊理論]] — Howitt(2022)AxelLeijonhufvud:AlifeamongtheEcon—CEPRVoxEU
-- [[econ-corridor-of-stability-theory|安定の回廊理論]] — Leijonhufvud(2009)Stabilitiesandinstabilitiesinthemacroeconomy—CEPRVo…
+- [[econ-corridor-of-stability-theory|安定性の回廊（レイヨンフーヴッド）——市場の自己調整は均衡からの乖離が小さい「回廊」の内側でしか働かず、外へ出ると累積的な不安定化が支配する]] — Howitt,P.(2022)AxelLeijonhufvud:AlifeamongtheEcon—CEPRVoxEU（業績の概観）
 - [[econ-helicopter-money|ヘリコプターマネー]] — CEPR/VoxEU—Aprimeronhelicoptermoney
 - [[econ-mechanism-design|メカニズムデザイン]] — CEPR/VoxEU—Whatismechanismdesignandwhydoesitmatterforpolicy-making?
 - [[econ-retirement-consumption-puzzle|退職消費パズル（Retirement-Consumption Puzzle）]] — CEPRVoxEU—"Theretirement-consumptionpuzzle:Newevidencefrompersonalfin…

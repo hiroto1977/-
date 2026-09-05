@@ -2,7 +2,7 @@
 title: "ハイマン・ミンスキー"
 type: thinker
 person_key: "ミンスキー|ハ"
-concept_count: 8
+concept_count: 6
 tags:
   - person
   - index
@@ -10,12 +10,10 @@ tags:
 
 # ハイマン・ミンスキー
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **8 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **6 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（8件）
+## 学術概念（6件）
 - [[econ-asset-price-bubbles-kindleberger-minsky|資産価格バブル——キンドルバーガーとミンスキーの信用サイクルと崩壊のモデル]] — 資産価格バブル（assetpricebubble）は，ファンダメンタルズに基づく価値を大幅に超えて資産価格が持続的に上…
-- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — アクセル・レイヨンフーヴッドが1973年に提唱した「安定性の回廊（corridorofstability）」は、マクロ…
-- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 安定の回廊理論（corridorofstability）は、市場経済の自己調整能力が均衡からの乖離幅に依存して非線形に…
 - [[econ-credit-cycle-minsky-financial-fragility|ミンスキーの金融不安定性仮説——信用サイクルと「ミンスキー・モーメント」の経済学]] — ハイマン・ミンスキーが提唱した金融不安定性仮説は、資本主義経済においては長期安定期ほど金融システムが脆弱化するという逆…
 - [[econ-debt-deflation-fisher|負債デフレーション理論——過剰債務と物価下落の悪循環メカニズム]] — 負債デフレーション（Debt-Deflation）理論は、アーヴィング・フィッシャーが1933年の論文で大恐慌の原因を…
 - [[econ-endogenous-money-post-keynesian-moore|内生的貨幣論——ムーアの信用貨幣観と中央銀行の利子率コントロール]] — 内生的貨幣（endogenousmoney）論は，マネーサプライが中央銀行による外生的コントロールではなく，銀行の信用…

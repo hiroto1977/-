@@ -68,6 +68,7 @@ tags:
 - [[econ-hyperinflation|ハイパーインフレーション（超インフレ）]] — EncyclopaediaBritannicaMoney—Hyperinflation（定義・原因・歴史的事例の概説）
 - [[econ-income-substitution-effect|所得効果と代替効果]] — EncyclopaediaBritannica—Incomeeffect
 - [[econ-income-substitution-effect|所得効果と代替効果]] — EncyclopaediaBritannica—Substitutioneffect
+- [[econ-inequality-piketty-capital21|ピケティの r＞g（『21世紀の資本』）——資本収益率が成長率を上回り続ける限り富は労働所得より速く蓄積し、格差は構造的に拡大する]] — EncyclopaediaBritannica—ThomasPiketty（r＞gを資本主義の中心的矛盾とする主張と累進的富裕税の提案）
 - [[econ-input-output-analysis|産業連関分析（投入産出分析）]] — EncyclopaediaBritannica—WassilyLeontief:Input-OutputAnalysis
 - [[econ-invisible-hand|見えざる手]] — EncyclopædiaBritannica「invisiblehand」（自己利益と意図せぬ公益・スミス帰属・留保）
 - [[econ-jevons-paradox|ジェヴォンズのパラドックス]] — EncyclopaediaBritannica—TheCoalQuestion(workbyJevons)
@@ -97,7 +98,6 @@ tags:
 - [[econ-petty-clark-law|ペティ＝クラークの法則]] — EncyclopaediaBritannica—ColinClark（ペティの観察とクラークによる三部門分類の体系化）
 - [[econ-pigou-effect|ピグー効果（実質残高効果）]] — EncyclopaediaBritannicaMoney—ArthurCecilPigou（厚生経済学・Pigoueffectの名祖）
 - [[econ-pigouvian-tax|ピグー税]] — EncyclopaediaBritannica—Pigouviantax
-- [[econ-piketty|ピケティの r>g（資本収益率と格差）]] — EncyclopaediaBritannica—ThomasPiketty（r>gを資本主義の中心的矛盾とする主張、累進的富裕税の提案）
 - [[econ-price-discrimination|価格差別（price discrimination）]] — BritannicaMoney—Pricediscrimination
 - [[econ-price-elasticity-demand|需要の価格弾力性]] — EncyclopaediaBritannicaMoney—Elasticity
 - [[econ-principal-agent|プリンシパル・エージェント理論（agency theory）]] — BritannicaMoney—Financialagencytheory

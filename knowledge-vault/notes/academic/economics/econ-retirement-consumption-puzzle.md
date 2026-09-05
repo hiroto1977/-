@@ -32,8 +32,8 @@ Banks, James （1998 Is There a Retirement-Savings Puzzle?）／Blundell, Richar
 
 ## 関連概念
 - [[econ-career-concerns-holmstrom|キャリア・コンサーン（ホルムストローム）——評判が生む暗黙の誘因]] — 出典を共有
+- [[econ-corridor-of-stability-theory|安定性の回廊（レイヨンフーヴッド）——市場の自己調整は均衡からの乖離が小さい「回廊」の内側でしか働かず、外へ出ると累積的な不安定化が支配する]] — 出典を共有
 - [[econ-mechanism-design|メカニズムデザイン]] — 出典を共有
-- [[econ-corridor-of-stability-theory|安定の回廊理論]] — 出典を共有
 - [[econ-helicopter-money|ヘリコプターマネー]] — 出典を共有
 - [[econ-real-business-cycle-kydland-prescott|リアル・ビジネス・サイクル理論——キドランド＆プレスコットの技術ショックと景気循環]] — 同分野の近傍
 - [[econ-wage-rigidity|名目賃金の下方硬直性]] — 同分野の近傍

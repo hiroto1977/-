@@ -2,23 +2,23 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 930
+entry_count: 923
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（930件）
+# 学習パス — 学術概念／経済学（923件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 86）
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 88）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 47）
+- [[econ-liquidity-trap|流動性のわな]]（接続 44）
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 43）
+- [[econ-agglomeration-economies|集積の経済]]（接続 43）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 43）
-- [[econ-liquidity-trap|流動性のわな]]（接続 43）
-- [[econ-agglomeration-economies|集積の経済]]（接続 42）
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 41）
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 41）
 - [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]]（接続 38）
 - [[econ-behavioral-finance|行動ファイナンス]]（接続 37）
@@ -230,12 +230,13 @@ tags:
 - 1962年: [[econ-hirshleifer-private-social-value-information|情報の私的価値と社会的価値の乖離（ハーシュライファー）——予見的情報は私的に有利でも社会的には過剰・無価値になりうる]]
 - 1962年: [[econ-logrolling|ログローリング（票の取引）]]
 - 1962年: [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]]
+- 1962年: [[econ-public-choice-buchanan-tullock|公共選択論（ブキャナン＝タロック）——政治家・官僚・有権者も自己利益を追う合理的個人として政治的意思決定を経済学の方法で分析する]]
 - 1963年: [[econ-mundell-tobin-effect|マンデル＝トービン効果]]
 - 1963年: [[econ-user-cost-of-capital|資本の使用者費用]]
 - 1964年: [[econ-alonso-monocentric-city|アロンソの単一中心都市モデル（Alonso–Muth–Mills monocentric city model）——通勤費と地代のトレードオフが都市内土地利用を決める]]
 - 1964年: [[econ-capital-asset-pricing-model-sharpe|資本資産価格モデル（CAPM）——資産の期待収益率は市場全体と連動するリスク（ベータ）だけに比例するという均衡理論]]
 - 1964年: [[econ-risk-aversion|リスク回避（アロー＝プラット測度）]]
-- 1965年: [[econ-corridor-of-stability-theory|安定の回廊理論]]
+- 1965年: [[econ-club-goods-buchanan|クラブ財（ブキャナン）——排除できるが混雑するまでは非競合的な財の最適な供給規模と会員数]]
 - 1965年: [[econ-free-rider|フリーライダー問題]]
 - 1965年: [[econ-population-growth-technological-change-kremer|クレマーの人口成長と技術変化——紀元前100万年からの超長期データが示すアイデア駆動型成長]]
 - 1965年: [[econ-stagflation|スタグフレーション]]
@@ -248,6 +249,7 @@ tags:
 - 1967年: [[econ-rent-seeking|レントシーキング]]
 - 1967年: [[econ-zero-price-effect|ゼロ価格効果（Zero-Price Effect）]]
 - 1968年: [[econ-budget-maximizing-bureaucrat-niskanen|ニスカネンの予算最大化官僚モデル——独占的官庁が情報優位で総予算を極大化し過剰供給を導く公共選択理論]]
+- 1968年: [[econ-corridor-of-stability-theory|安定性の回廊（レイヨンフーヴッド）——市場の自己調整は均衡からの乖離が小さい「回廊」の内側でしか働かず、外へ出ると累積的な不安定化が支配する]]
 - 1968年: [[econ-entrepreneurial-state|起業家国家（マッツカートの公共イノベーション論）]]
 - 1968年: [[econ-precautionary-saving|予備的貯蓄]]
 - 1968年: [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]]
@@ -423,11 +425,13 @@ tags:
 - 2002年: [[econ-sticky-information|粘着情報モデル]]
 - 2003年: [[econ-buycott|バイコット（Buycott / 政治的消費行動）]]
 - 2003年: [[econ-job-polarization|雇用の二極化とタスク・アプローチ（Job Polarization／Autor-Levy-Murnane 2003）——コンピュータ化は中位のルーティン職を掘り崩す]]
+- 2003年: [[econ-melitz-heterogeneous-firms-trade|メリッツ・モデル（「新」新貿易理論）——企業の生産性の異質性を導入し、貿易自由化が企業の選別と資源再配分を通じて産業の生産性を高めることを示す]]
 - 2003年: [[econ-new-keynesian|ニュー・ケインジアン経済学]]
 - 2003年: [[econ-school-choice-mechanism-design|学校選択メカニズムデザイン（School Choice Mechanism Design）]]
 - 2003年: [[econ-synthetic-control-method|合成コントロール法（synthetic control method）]]
 - 2003年: [[econ-two-sided-markets|両面市場（two-sided markets）]]
 - 2004年: [[econ-stag-hunt|鹿狩りゲーム（スタグハント）]]
+- 2005年: [[econ-poverty-trap|貧困の罠——低所得が貯蓄と投資を妨げて貧困を自己強化的に再生産する複数均衡と、その存在をめぐる実証]]
 - 2005年: [[econ-savings-glut|世界的貯蓄過剰（グローバル・セービング・グラット）]]
 - 2006年: [[econ-esg-investing|ESG投資（環境・社会・ガバナンス投資）]]
 - 2006年: [[econ-reference-dependent-preferences-koszegi-rabin|期待ベースの参照点モデル（Kőszegi-Rabin 2006）——参照点は過去の現実ではなく「最近抱いた合理的期待」で内生的に決まる]]
@@ -439,7 +443,7 @@ tags:
 - 2010年: [[econ-search-matching|サーチ理論／マッチング理論]]
 - 2011年: [[econ-islamic-finance|イスラム金融とシャリア准拠の融資メカニズム]]
 - 2013年: [[econ-frey-osborne-computerisation-susceptibility|フレイ＝オズボーンの職業別コンピュータ化確率——「米国雇用の47%が高リスク」]]
-- 2013年: [[econ-piketty|ピケティの r>g（資本収益率と格差）]]
+- 2013年: [[econ-inequality-piketty-capital21|ピケティの r＞g（『21世紀の資本』）——資本収益率が成長率を上回り続ける限り富は労働所得より速く蓄積し、格差は構造的に拡大する]]
 - 2013年: [[econ-stranded-assets|座礁資産（Stranded Assets）]]
 - 2014年: [[econ-crowdfunding-equity|クラウドファンディングと資本市場の民主化]]
 - 2014年: [[econ-money-creation|信用創造と貨幣乗数]]
@@ -510,8 +514,6 @@ tags:
 - [[econ-chicken-game|チキンゲーム（タカ・ハト・ゲーム）]]
 - [[econ-clarke-tax-pivotal|クラーク税とピボタル・メカニズム——公共財の選好をどう正直に語らせるか]]
 - [[econ-clientele-effect-dividend|配当の顧客効果——配当政策が選好の合う投資家層を引きつける]]
-- [[econ-club-goods-buchanan|クラブ財——排除可能だが混雑するまで非競合的な財の最適規模]]
-- [[econ-club-goods-buchanan-tiebout|クラブ財理論——ブキャナンの共同消費と最適メンバーシップ]]
 - [[econ-colonel-blotto-game|ブロット大佐ゲーム——限られた資源を複数の戦線に配分する競争]]
 - [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]]
 - [[econ-commons-tragedy-hardin-ostrom|共有地の悲劇とオストロムの制度分析——コモンズ管理のガバナンス設計]]
@@ -525,7 +527,6 @@ tags:
 - [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]]
 - [[econ-coordination-failure-rosenstein-rodan|協調の失敗と大推進論——ロゼンシュタイン＝ローダンの発展経済学的基盤]]
 - [[econ-corlett-hague-rule|コーレット＝ヘイグの規則——余暇と補完的な財を重く課税する]]
-- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]]
 - [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]]
 - [[econ-credit-cycle-minsky-financial-fragility|ミンスキーの金融不安定性仮説——信用サイクルと「ミンスキー・モーメント」の経済学]]
 - [[econ-credit-cycle-theory|信用循環理論]]
@@ -668,10 +669,8 @@ tags:
 - [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]]
 - [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]]
 - [[econ-income-distribution-gini-lorenz|所得分配とジニ係数・ローレンツ曲線——不平等計測の理論と政策含意]]
-- [[econ-income-inequality-piketty|所得格差と資本収益率の長期分析——ピケティの資本論]]
 - [[econ-incomplete-contracts-hart-moore|不完備契約理論——残余コントロール権の配分としての所有権]]
 - [[econ-inequality-measurement|不平等測定・所得格差の計量：ジニ係数・ローレンツ曲線・アトキンソン指数による経済的不平等の定量化体系]]
-- [[econ-inequality-piketty-capital21|不平等と資本——ピケティの「r>g」命題と21世紀の富の集中]]
 - [[econ-inequity-aversion|不公平回避：利他的懲罰と互恵的公正選好の行動経済学的モデル]]
 - [[econ-infant-industry-argument-mill-bastable|幼稚産業保護論——一時的保護と動学的比較優位の育成]]
 - [[econ-inflation-deflation|インフレーションとデフレーション（物価変動と金融政策）]]
@@ -733,7 +732,6 @@ tags:
 - [[econ-matching-markets-gale-shapley|安定マッチング理論——ゲール＝シャプレーの受入保留アルゴリズム]]
 - [[econ-meade-conflict-internal-external|ミードの内外均衡葛藤——開放経済における政策目標の両立問題]]
 - [[econ-mechanism-design-hurwicz|メカニズム設計理論と誘因両立性の経済分析（ハービッツ・マスキン・マイヤーソン）]]
-- [[econ-melitz-heterogeneous-firms-trade|メリッツ・モデル——企業の異質性と貿易による選別効果]]
 - [[econ-merit-goods-musgrave|価値財——個人の選好を超えて社会が消費を奨励すべきとされる財]]
 - [[econ-metzler-paradox-tariff|メッツラー・パラドックス——関税が国内価格を引き下げる逆説]]
 - [[econ-microeconomic-foundations-general-equilibrium|一般均衡理論——ワルラスからアロー＝ドブリューへの競争均衡存在と効率性の数理証明]]
@@ -768,7 +766,6 @@ tags:
 - [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]]
 - [[econ-new-institutional-economics|新制度派経済学]]
 - [[econ-new-institutional-economics-north|新制度経済学と制度変化の歴史的分析——ノースの経路依存性論]]
-- [[econ-new-new-trade-theory-melitz|「新」新貿易理論（メリッツ・モデル）]]
 - [[econ-new-open-economy-macro-obstfeld|新しい開放経済マクロ経済学——ミクロ的基礎と名目硬直性の統合]]
 - [[econ-new-trade-theory-krugman-helpman|新貿易理論——規模の経済と差別化財による産業内貿易の説明]]
 - [[econ-noise-trader-delong|ノイズトレーダー・リスク——非合理な取引者が市場で生き残る仕組み]]
@@ -797,8 +794,6 @@ tags:
 - [[econ-pigou-externality|ピグー的外部性とピグー税——私的費用と社会的費用の乖離の是正]]
 - [[econ-political-business-cycle-nordhaus|政治的景気循環——選挙を見据えた政策操作が生む景気の周期的変動]]
 - [[econ-porter-hypothesis|ポーター仮説——適切な環境規制がイノベーションを通じて競争力を高める]]
-- [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]]
-- [[econ-poverty-trap-multiple-equilibria|貧困の罠と複数均衡理論——開発経済学の構造的困窮分析]]
 - [[econ-prebisch-singer-terms-of-trade|プレビッシュ＝シンガー仮説——一次産品の交易条件悪化と開発経済学]]
 - [[econ-prebisch-singer-thesis|プレビッシュ＝シンガー命題]]
 - [[econ-predatory-pricing-mcgee|略奪的価格設定——競争相手の排除を狙う原価割れ価格とその合理性論争]]
@@ -813,8 +808,6 @@ tags:
 - [[econ-probabilistic-serial-bogomolnaia-moulin|確率的シリアル・メカニズム——同時消費による公平な確率配分]]
 - [[econ-procedural-utility-frey|手続き効用——「何を」だけでなく「どのように」も大切である]]
 - [[econ-property-rights-demsetz|財産権の生成理論——外部性の内部化が私的所有権を生む]]
-- [[econ-public-choice-buchanan-tullock|公共選択論——ブキャナンとタロックの政治的意思決定の経済分析]]
-- [[econ-public-choice-theory-buchanan|公共選択論と政治的市場の経済学——ブキャナンの自己利益政府モデル]]
 - [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]]
 - [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]]
 - [[econ-purchasing-power-parity-cassel|購買力平価説（カッセル）]]
