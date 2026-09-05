@@ -2,7 +2,7 @@
 title: "press.princeton.edu"
 type: source-domain
 host: "press.princeton.edu"
-cite_count: 25
+cite_count: 26
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # press.princeton.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **25 件**（学術 17 ・ リファレンス 8）
+> [!info] 出典ドメイン索引 ・ 引用 **26 件**（学術 18 ・ リファレンス 8）
 
 ## このドメインを出典とする項目
 
@@ -20,6 +20,7 @@ tags:
 - [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — Oates,W.E.(1972)FiscalFederalism—HarcourtBraceJovanovich（財政的連邦主義の原典）
 - [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — vonNeumann&Morgenstern1944—TheoryofGamesandEconomicBehavior,Princeton…
 - [[econ-great-divergence-pomeranz|大分岐（ポメランツ）——なぜ西欧が先に工業化したのか]] — Pomeranz,K.(2000)TheGreatDivergence:China,Europe,andtheMakingoftheMod…
+- [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]] — JeanTirole(2006)TheTheoryofCorporateFinance,PrincetonUniversityPress—…
 - [[econ-identity-economics|アイデンティティ経済学]] — PrincetonUniversityPress—IdentityEconomics(Akerlof&Kranton,2010)
 - [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — Akerlof,G.A.&Shiller,R.J.2009.AnimalSpirits:HowHumanPsychologyDrivest…
 - [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — Shiller,R.J.2019.NarrativeEconomics:HowStoriesGoViralandDriveMajorEco…

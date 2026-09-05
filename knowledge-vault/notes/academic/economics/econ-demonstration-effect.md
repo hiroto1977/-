@@ -30,7 +30,7 @@ aliases:
 - [Library of Economics and Liberty (Econlib) — Relative Income Hypothesis（相対所得・デモンストレーション効果の理論的背景）](https://www.econlib.org/library/Enc/RelativeIncome.html) `リファレンス`
 
 ## 関連概念
-- [[econ-duesenberry-ratchet|ラチェット効果（デューゼンベリーの相対所得仮説）]] — 同じ思想家
+- [[econ-duesenberry-ratchet|ラチェット効果（デューゼンベリーの相対所得仮説）]] — 語彙が近い
 - [[econ-vent-for-surplus-myint|余剰のはけ口理論（ミント）——貿易が遊休資源を動かす]] — 同じ思想家
 - [[econ-rawls-difference-principle-social-justice|ロールズの格差原理と正義論——「無知のヴェール」から導く社会的不平等の倫理的許容条件]] — 同分野の近傍
 

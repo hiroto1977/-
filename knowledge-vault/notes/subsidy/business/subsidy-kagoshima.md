@@ -40,13 +40,13 @@ prefecture
 - [[subsidy-iwate|中小企業者等賃上げ環境整備支援事業費補助金（岩手県）]] — 語彙が近い
 - [[subsidy-mie|三重県経営向上計画・経営革新計画に基づく支援（三重県）]] — 語彙が近い
 - [[subsidy-shiga|中小企業経営革新等応援事業補助金（滋賀県）]] — 語彙が近い
-- [[subsidy-gifu|岐阜県地域活性化ファンド事業費助成金]] — 語彙が近い
 - [[labor-overtime-2024-problem|時間外労働の上限規制 適用猶予業種への適用（2024年問題）]] — 語彙が近い
 - [[subsidy-fukushima|福島県中小企業等生産性向上推進事業補助金（福島県）]] — 語彙が近い
 - [[subsidy-career-up|キャリアアップ助成金]] — 出典を共有
 - [[subsidy-industrial-employment-stability|産業雇用安定助成金]] — 出典を共有
 - [[subsidy-jinzai-kakuho|人材確保等支援助成金]] — 出典を共有
 - [[subsidy-trial-employment|トライアル雇用助成金]] — 出典を共有
+- [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]] — 出典を共有
 
 ## 関連
 - コレクション: [[補助金・助成金]]

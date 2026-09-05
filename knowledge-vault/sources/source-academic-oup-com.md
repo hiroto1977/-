@@ -2,7 +2,7 @@
 title: "academic.oup.com"
 type: source-domain
 host: "academic.oup.com"
-cite_count: 139
+cite_count: 141
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # academic.oup.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **139 件**（学術 137 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **141 件**（学術 139 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -57,6 +57,8 @@ tags:
 - [[econ-greenwald-stiglitz-theorem|グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）]] — Greenwald&Stiglitz(1986)ExternalitiesinEconomieswithImperfectInformat…
 - [[econ-henry-george-theorem|ヘンリー・ジョージ定理（Henry George Theorem）]] — Arnott&Stiglitz(1979)AggregateLandRents,ExpenditureonPublicGoods,andO…
 - [[econ-hicks-allen-consumer-demand|序数効用と無差別曲線分析（ヒックス＆アレン）]] — Hicks,J.R.&Allen,R.G.D.(1934)AReconsiderationoftheTheoryofValue—Revie…
+- [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]] — BengtHolmström&JeanTirole(1997)"FinancialIntermediation,LoanableFunds…
+- [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]] — DouglasW.Diamond(1984)"FinancialIntermediationandDelegatedMonitoring,…
 - [[econ-hosios-condition|ホシオス条件——サーチ市場が効率的になる分配のルール]] — Hosios,A.J.(1990)OntheEfficiencyofMatchingandRelatedModelsofSearchand…
 - [[econ-identity-economics|アイデンティティ経済学]] — Akerlof&Kranton(2000)"EconomicsandIdentity",QuarterlyJournalofEconomi…
 - [[econ-immiserizing-growth|窮乏化成長]] — Bhagwati,J.N."ImmiserizingGrowth:AGeometricalNote,"ReviewofEconomicSt…

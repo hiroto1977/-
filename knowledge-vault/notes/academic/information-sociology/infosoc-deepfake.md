@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-misinformation-prebunking|ミスインフォメーションとプリバンキング——接種理論とファクトチェックの情報社会論]] — 同分野の近傍
 - [[infosoc-participatory-culture|参加型文化]] — 同分野の近傍
 - [[infosoc-reed-law|リードの法則——グループ形成ネットワークの指数関数的価値]] — 同分野の近傍
-- [[infosoc-hostile-media-effect|敵対的メディア認知]] — 同分野の近傍
+- [[infosoc-digital-natives-prensky|デジタルネイティブ——デジタル環境で育った世代をめぐる概念とその批判]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "aeaweb.org"
 type: source-domain
 host: "aeaweb.org"
-cite_count: 45
+cite_count: 46
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # aeaweb.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **45 件**（学術 45）
+> [!info] 出典ドメイン索引 ・ 引用 **46 件**（学術 46）
 
 ## このドメインを出典とする項目
 
@@ -29,6 +29,7 @@ tags:
 - [[econ-focal-point|フォーカルポイント（シェリングの焦点）]] — AmericanEconomicAssociation:Schellingの焦点と交渉に関する解説
 - [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]] — Jensen&Miller(2008)GiffenBehaviorandSubsistenceConsumption,AmericanEc…
 - [[econ-grossman-helpman-protection-for-sale|保護の販売モデル（グロスマン＝ヘルプマン「Protection for Sale」）——貿易保護の政治経済学]] — Goldberg,P.K.&Maggi,G.(1999)"ProtectionforSale:AnEmpiricalInvestigati…
+- [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]] — JoePeek&EricS.Rosengren(2000)"CollateralDamage:EffectsoftheJapaneseBa…
 - [[econ-inclusive-institutions|包摂的制度と収奪的制度]] — Acemoglu,Johnson&Robinson,“TheColonialOriginsofComparativeDevelopment…
 - [[econ-insider-outsider|インサイダー・アウトサイダー理論]] — Lindbeck&Snower,"InsidersversusOutsiders",JournalofEconomicPerspectiv…
 - [[econ-job-polarization|雇用の二極化とタスク・アプローチ（Job Polarization／Autor-Levy-Murnane 2003）——コンピュータ化は中位のルーティン職を掘り崩す]] — Autor,D.H.,&Dorn,D.(2013).TheGrowthofLow-SkillServiceJobsandthePolari…

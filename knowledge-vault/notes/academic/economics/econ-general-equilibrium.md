@@ -34,6 +34,7 @@ aliases:
 ## 関連概念
 - [[econ-microeconomic-foundations-general-equilibrium|一般均衡理論——ワルラスからアロー＝ドブリューへの競争均衡存在と効率性の数理証明]] — 語彙が近い
 - [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]] — 同分野の近傍
+- [[econ-general-equilibrium-walras|ワルラスの一般均衡理論]] — 同分野の近傍
 - [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 同分野の近傍
 
 ## 関連

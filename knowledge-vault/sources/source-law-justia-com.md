@@ -2,7 +2,7 @@
 title: "law.justia.com"
 type: source-domain
 host: "law.justia.com"
-cite_count: 38
+cite_count: 39
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # law.justia.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **38 件**（リファレンス 24 ・ 公的 14）
+> [!info] 出典ドメイン索引 ・ 引用 **39 件**（リファレンス 24 ・ 公的 15）
 
 ## このドメインを出典とする項目
 
@@ -32,6 +32,7 @@ tags:
 - [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — Smithv.VanGorkom(488A.2d858,Del.1985)fulltext
 - [[bizlaw-inevitable-disclosure-doctrine|不可避的開示の法理——転職者の知識のみで差止めを認めるか州で分裂した米国営業秘密理論]] — Justia—PepsiCo,Inc.v.Redmond,54F.3d1262(7thCir.1995)—不可避的開示の法理を確立した第七…
 - [[bizlaw-inevitable-disclosure-doctrine|不可避的開示の法理——転職者の知識のみで差止めを認めるか州で分裂した米国営業秘密理論]] — Justia—Whytev.SchlageLockCo.,101Cal.App.4th1443,125Cal.Rptr.2d277(Cal…
+- [[bizlaw-katko-v-briney-spring-gun-defense-of-property|カトコ対ブライニー事件——仕掛け銃による財産防衛と生命尊重の限界]] — Katkov.Briney,183N.W.2d657(Iowa1971),SupremeCourtofIowa,decidedFebrua…
 - [[bizlaw-kenford-v-erie-lost-profits-reasonable-certainty|ケンフォード対エリー郡事件——新規事業の逸失利益は合理的確実性なき限り投機的として退けられる]] — AshlandManagementIncorporatedv.C.ChristopherJanien,82N.Y.2d395(N.Y.19…
 - [[bizlaw-lender-liability-doctrine|貸手責任法理（レンダー・ライアビリティ）]] — K.M.C.Co.v.IrvingTrustCo.,757F.2d752(6thCir.1985)—Justia
 - [[bizlaw-lucy-v-zehmer-objective-theory-of-contract|ルーシー対ゼーマー事件と契約成立の客観説——内心でなく言葉と行為の外形で合意を判断する原則]] — W.O.Lucy&J.C.Lucyv.A.H.Zehmer&IdaS.Zehmer,196Va.493,84S.E.2d516(Supre…

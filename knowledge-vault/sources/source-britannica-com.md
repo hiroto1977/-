@@ -2,7 +2,7 @@
 title: "britannica.com"
 type: source-domain
 host: "britannica.com"
-cite_count: 278
+cite_count: 277
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # britannica.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **278 件**（リファレンス 278）
+> [!info] 出典ドメイン索引 ・ 引用 **277 件**（リファレンス 277）
 
 ## このドメインを出典とする項目
 
@@ -54,7 +54,6 @@ tags:
 - [[econ-engels-law|エンゲルの法則]] — EncyclopaediaBritannica—ErnstEngel（人物・1857年/ベルギー家計調査）
 - [[econ-expected-utility|期待効用理論]] — Britannica「VonNeumann–Morgensternutilityfunction」（VNM公理・期待効用最大化）
 - [[econ-externality-market-failure|外部性と市場の失敗]] — EncyclopaediaBritannicaMoney—Externality
-- [[econ-fiscal-federalism-tiebout|財政連邦主義とティブー・モデル（足による投票と分権定理）]] — EncyclopaediaBritannica—FiscalFederalism
 - [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — BritannicaMoney—IrvingFisher
 - [[econ-free-rider|フリーライダー問題]] — EncyclopædiaBritannica—“Freeriding”（集合財の便益にコストを負担せず与ること、Olson1965に由来）
 - [[econ-gdp-triple-equivalence|GDPと三面等価の原則]] — EncyclopædiaBritannicaMoney—Grossdomesticproduct（定義・支出法）

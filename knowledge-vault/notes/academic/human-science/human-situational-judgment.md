@@ -32,6 +32,7 @@ aliases:
 - [Tversky & Kahneman 1974 — Judgment under Uncertainty: Heuristics and Biases, Science 185(4157):1124-1131](https://doi.org/10.1126/science.185.4157.1124) `学術`
 
 ## 関連概念
+- [[human-recognition-primed-decision-klein|認知主導型意思決定（RPD）モデル——消防指揮官は選択肢を比較せず、状況認識とメンタルシミュレーションで単一の行動案を評価する]] — 同じ思想家
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 

@@ -2,7 +2,7 @@
 title: "econpapers.repec.org"
 type: source-domain
 host: "econpapers.repec.org"
-cite_count: 20
+cite_count: 21
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # econpapers.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **20 件**（学術 19 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **21 件**（学術 19 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -21,6 +21,7 @@ tags:
 - [[econ-chartalism-modern-monetary-theory|チャータリズムと現代貨幣理論（MMT）]] — Tcherneva(2006)ChartalismandtheTax-DrivenApproachtoMoney,inHandbookof…
 - [[econ-edgeworth-price-cycles-maskin-tirole|エッジワース価格サイクル——マスキン＝ティロールの動学的価格競争と小売ガソリン価格の鋸歯状変動]] — DavidP.Byrne&NicolasdeRoos(2019)"LearningtoCoordinate:AStudyinRetailG…
 - [[econ-hodrick-prescott-filter|ホドリック＝プレスコット・フィルター——景気循環をトレンドから分離する平滑化フィルターとその妥当性論争]] — Hodrick,R.J.,&Prescott,E.C.(1997).PostwarU.S.BusinessCycles:AnEmpiric…
+- [[econ-kreps-scheinkman-capacity-precommitment-cournot|クレプス＝シャインクマンの生産能力事前コミットメント・モデル——価格競争でもクールノー的寡占均衡へ至る二段階ゲーム]] — Davidson,C.andDeneckere,R.(1986)"Long-RunCompetitioninCapacity,Short-…
 - [[econ-natural-experiment-angrist|自然実験と操作変数法による因果識別戦略（アングリスト）]] — Angrist,J.D.(1990)LifetimeEarningsandtheVietnamEraDraftLottery:Eviden…
 - [[econ-rational-addiction|合理的依存]] — EconPapers/RePEcbibliographicrecord—Becker&Murphy,JPE1988
 - [[econ-rotemberg-saloner-price-wars-booms|ロテンバーグ＝サローナー・モデル——好況期に協調的価格が崩れ価格戦争が生じる反循環的マークアップ理論]] — Borenstein,S.&Shepard,A.(1996).DynamicPricinginRetailGasolineMarkets.…

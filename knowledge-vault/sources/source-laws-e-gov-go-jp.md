@@ -2,7 +2,7 @@
 title: "laws.e-gov.go.jp"
 type: source-domain
 host: "laws.e-gov.go.jp"
-cite_count: 211
+cite_count: 212
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # laws.e-gov.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **211 件**（公的 210 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **212 件**（公的 211 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -97,6 +97,7 @@ tags:
 - [[bizlaw-joint-tort|共同不法行為（民法719条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号）第719条
 - [[bizlaw-judicial-scrivener-act|司法書士法]] — e-Gov法令検索—司法書士法（昭和25年法律第197号）
 - [[bizlaw-juvenile-act|少年法]] — e-Gov法令検索—少年法（昭和23年法律第168号）
+- [[bizlaw-katko-v-briney-spring-gun-defense-of-property|カトコ対ブライニー事件——仕掛け銃による財産防衛と生命尊重の限界]] — 刑法（明治40年法律第45号）第36条（正当防衛）—e-Gov法令検索—「やむを得ずにした行為」に限る日本法の均衡要件との一句の比較を支持
 - [[bizlaw-kyodou-shinken|共同親権（2024年民法改正）]] — e-Gov法令検索—民法（第819条離婚後の親権、改正後条文）
 - [[bizlaw-labor-contract-act|労働契約法]] — e-Gov法令検索労働契約法（平成19年法律第128号）
 - [[bizlaw-labor-union-act|労働組合法]] — e-Gov法令検索「労働組合法」（昭和24年法律第174号）

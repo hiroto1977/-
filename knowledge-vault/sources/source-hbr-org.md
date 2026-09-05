@@ -2,7 +2,7 @@
 title: "hbr.org"
 type: source-domain
 host: "hbr.org"
-cite_count: 73
+cite_count: 75
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # hbr.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **73 件**（学術 45 ・ メディア 26 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **75 件**（学術 45 ・ メディア 28 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -18,6 +18,7 @@ tags:
 - [[econ-versioning-shapiro-varian|バージョニング——情報財を複数の版で提供し自己選択を促す価格差別]] — Shapiro,C.&Varian,H.R.(1998)Versioning:TheSmartWaytoSellInformation—H…
 - [[human-acquired-needs-theory|獲得欲求理論]] — McClelland,D.C.(1962).BusinessDriveandNationalAchievement.HarvardBusi…
 - [[human-presenteeism|プレゼンティーイズム：疾病就業による労働生産性損失の概念と測定]] — Hemp,P.2004Presenteeism:AtWork—ButOutofIt.HarvardBusinessReview82(10)…
+- [[human-recognition-primed-decision-klein|認知主導型意思決定（RPD）モデル——消防指揮官は選択肢を比較せず、状況認識とメンタルシミュレーションで単一の行動案を評価する]] — Klein,G.(2007).PerformingaProjectPremortem.HarvardBusinessReview,85(9…
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — O'Reilly&Tushman(2004)TheAmbidextrousOrganization—HarvardBusinessRevi…
 - [[mgmt-balanced-scorecard-kaplan-norton|バランスト・スコアカード——カプラン＆ノートンによる四つの視点を統合した戦略的業績管理]] — Kaplan&Norton(1992)TheBalancedScorecard—HarvardBusinessReview
 - [[mgmt-behavioral-strategy-theory|行動戦略理論]] — Lovallo&Sibony,"TheCaseforBehavioralStrategy",HarvardBusinessReview(2…
@@ -42,6 +43,7 @@ tags:
 - [[mgmt-five-forces|ファイブフォース分析（5つの競争要因）]] — M.E.Porter,TheFiveCompetitiveForcesThatShapeStrategy,HarvardBusinessR…
 - [[mgmt-focused-factory-skinner|集中工場（スキナー）——「絞り込み」が競争力を生む製造戦略]] — Skinner,W.(1974)TheFocusedFactory—HarvardBusinessReview,52(3),113–121
 - [[mgmt-followership|フォロワーシップ論]] — Kelley,R.E.(1988)"InPraiseofFollowers"HarvardBusinessReview66(6)
+- [[mgmt-good-strategy-kernel-rumelt|ルメルトの「良い戦略」のカーネル——診断・基本方針・一貫した行動の三要素で戦略を判定する]] — Collis,D.J.,&Rukstad,M.G.(2008).CanYouSayWhatYourStrategyIs?HarvardBu…
 - [[mgmt-greiner-growth|グレイナーの企業成長モデル]] — LarryE.Greiner,“EvolutionandRevolutionasOrganizationsGrow,”HarvardBus…
 - [[mgmt-heavyweight-product-manager-clark-fujimoto|重量級プロダクト・マネジャー——組織内外の統合を一身に担い製品コンセプトを守る開発責任者]] — Clark,K.B.&Fujimoto,T.(1990)"ThePowerofProductIntegrity",HarvardBusin…
 - [[mgmt-innovation-s-curve-foster|イノベーションのSカーブとテクノロジーサイクル——技術的限界と不連続的イノベーションの経営戦略]] — Foster(1986)Innovation:TheAttacker'sAdvantage—HarvardBusinessReview

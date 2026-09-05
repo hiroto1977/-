@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[infosoc-civic-epistemology-jasanoff|市民認識論——社会ごとに異なる知の公的な評価のしかた]] — 同じ思想家
+- [[infosoc-algorithmic-culture|アルゴリズム文化論]] — 同分野の近傍
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
-- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

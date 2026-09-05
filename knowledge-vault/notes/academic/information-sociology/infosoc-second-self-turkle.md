@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-alone-together|つながっていても孤独（アローン・トゥギャザー）]] — 語彙が近い
+- [[infosoc-eliza-effect-weizenbaum|ワイゼンバウムのイライザとイライザ効果——単純な模式応答に理解と親密さを読み込む錯覚]] — 同じ思想家
 - [[infosoc-convergence-culture-jenkins|コンバージェンス・カルチャー——旧来メディアと新興メディアの衝突と参加文化]] — 同分野の近傍
 - [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 同分野の近傍
 - [[infosoc-symbolic-annihilation-tuchman|象徴的消滅（タックマン）——メディアが集団を「存在しないこと」にする]] — 同分野の近傍

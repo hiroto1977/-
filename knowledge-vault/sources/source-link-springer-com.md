@@ -2,7 +2,7 @@
 title: "link.springer.com"
 type: source-domain
 host: "link.springer.com"
-cite_count: 145
+cite_count: 147
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # link.springer.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **145 件**（学術 125 ・ リファレンス 20）
+> [!info] 出典ドメイン索引 ・ 引用 **147 件**（学術 127 ・ リファレンス 20）
 
 ## このドメインを出典とする項目
 
@@ -34,6 +34,8 @@ tags:
 - [[econ-kaldor-stylized-facts-growth|カルドアの定型化された事実——長期成長に見られる6つの経験的規則性]] — Kaldor,N.(1961)."CapitalAccumulationandEconomicGrowth."InF.A.Lutz&D.C…
 - [[econ-kaldor-verdoorn|ヴェルドゥーンの法則（カルドア＝ヴェルドゥーン法則）]] — TheNewPalgraveDictionaryofEconomics—Verdoorn'sLaw
 - [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — Verdoorn(1949/2002)Fattoricheregolanolosviluppodellaproduttivitàdella…
+- [[econ-kreps-scheinkman-capacity-precommitment-cournot|クレプス＝シャインクマンの生産能力事前コミットメント・モデル——価格競争でもクールノー的寡占均衡へ至る二段階ゲーム]] — Deneckere,R.J.andKovenock,D.(1996)"Bertrand-EdgeworthDuopolywithUnitC…
+- [[econ-kreps-scheinkman-capacity-precommitment-cournot|クレプス＝シャインクマンの生産能力事前コミットメント・モデル——価格競争でもクールノー的寡占均衡へ至る二段階ゲーム]] — Madden,P.(1998)"ElasticDemand,SunkCostsandtheKreps-ScheinkmanExtensio…
 - [[econ-leontief-paradox|レオンチェフの逆説]] — TheNewPalgraveDictionaryofEconomics「LeontiefParadox」(SpringerLink)
 - [[econ-lindahl-equilibrium|リンダール均衡（リンダール価格）]] — TheNewPalgrave(Springer)“LindahlEquilibrium”—個別価格と限界効用に等しい税率・公共経済学の標準…
 - [[econ-logrolling|ログローリング（票の取引）]] — PublicChoice(Springer)—Logrolling,VoteTrading,andtheParadoxofVoting

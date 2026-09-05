@@ -2,7 +2,7 @@
 title: "sms.onlinelibrary.wiley.com"
 type: source-domain
 host: "sms.onlinelibrary.wiley.com"
-cite_count: 24
+cite_count: 25
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # sms.onlinelibrary.wiley.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **24 件**（学術 24）
+> [!info] 出典ドメイン索引 ・ 引用 **25 件**（学術 25）
 
 ## このドメインを出典とする項目
 
@@ -28,6 +28,7 @@ tags:
 - [[mgmt-dynamic-managerial-capabilities|動的経営者能力（Dynamic Managerial Capabilities）]] — Adner&Helfat(2003)CorporateEffectsandDynamicManagerialCapabilities—SM…
 - [[mgmt-emergent-strategy|創発戦略]] — Mintzberg&Waters(1985)"OfStrategies,DeliberateandEmergent,"StrategicM…
 - [[mgmt-first-mover-advantage|先発者優位]] — Lieberman&Montgomery(1988)"First-MoverAdvantages,"StrategicManagement…
+- [[mgmt-good-strategy-kernel-rumelt|ルメルトの「良い戦略」のカーネル——診断・基本方針・一貫した行動の三要素で戦略を判定する]] — Rumelt,R.P.(1991).Howmuchdoesindustrymatter?StrategicManagementJourna…
 - [[mgmt-hypercompetition|ハイパーコンペティション]] — D'Aveni,Dagnino&Smith「Theageoftemporaryadvantage」StrategicManagementJ…
 - [[mgmt-knowledge-based-view|知識ベース理論（ナレッジ・ベースト・ビュー）]] — Grant,R.M.(1996)"TowardaKnowledge-BasedTheoryoftheFirm,"StrategicMana…
 - [[mgmt-knowledge-transfer|知識移転（ナレッジ・トランスファー）]] — Szulanski,G.(1996)“Exploringinternalstickiness...”,StrategicManagemen…

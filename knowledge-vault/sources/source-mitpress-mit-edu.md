@@ -2,7 +2,7 @@
 title: "mitpress.mit.edu"
 type: source-domain
 host: "mitpress.mit.edu"
-cite_count: 27
+cite_count: 28
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # mitpress.mit.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **27 件**（学術 19 ・ リファレンス 8）
+> [!info] 出典ドメイン索引 ・ 引用 **28 件**（学術 20 ・ リファレンス 8）
 
 ## このドメインを出典とする項目
 
@@ -21,6 +21,7 @@ tags:
 - [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — Glimcher2003Decisions,Uncertainty,andtheBrain:TheScienceofNeuroeconom…
 - [[econ-patinkin-monetary-theory|パティンキンの貨幣理論／実質残高効果]] — Money,Interest,andPrices—MITPress(Patinkin,1956/1965)
 - [[econ-wage-bargaining-model|賃金交渉モデル（ナッシュ交渉・組合モデル）]] — Lindbeck&Snower(1988)TheInsider-OutsiderTheoryofEmploymentandUnemploy…
+- [[human-recognition-primed-decision-klein|認知主導型意思決定（RPD）モデル——消防指揮官は選択肢を比較せず、状況認識とメンタルシミュレーションで単一の行動案を評価する]] — Klein,G.A.(1998).SourcesofPower:HowPeopleMakeDecisions.Cambridge,MA:M…
 - [[human-situational-judgment|状況判断と認識主導型意思決定モデル（RPD）：専門家が高度パターン認識を通じて行う直感的認知と迅速な行動選択]] — Klein1998—SourcesofPower:HowPeopleMakeDecisions,MITPress
 - [[infosoc-critical-making|クリティカル・メイキング（Critical Making）]] — Ratto&Bolereds.(2014)DIYCitizenship:CriticalMakingandSocialMedia—MITP…
 - [[infosoc-cybernetics|サイバネティクス]] — MITPress:NorbertWiener,Cybernetics（1948年初版／一次資料の刊行元）

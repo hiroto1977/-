@@ -35,6 +35,7 @@ aliases:
 ## 関連概念
 - [[infosoc-speech-act-theory|言語行為論]] — 同じ思想家
 - [[infosoc-cooperative-principle-grice|協調の原理（グライス）——会話の格率と含意]] — 同じ思想家
+- [[infosoc-eliza-effect-weizenbaum|ワイゼンバウムのイライザとイライザ効果——単純な模式応答に理解と親密さを読み込む錯覚]] — 同じ思想家
 - [[econ-peak-oil|ピークオイル（Peak Oil）とハバート曲線]] — 出典を共有
 - [[human-mirror-neuron-theory|ミラーニューロン理論]] — 出典を共有
 - [[human-dunbars-number|ダンバー数（社会脳仮説）]] — 出典を共有

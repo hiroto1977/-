@@ -78,7 +78,7 @@ tags:
 - [[econ-demography-ageing-dependency-ratio|人口高齢化と従属人口比率——少子高齢化の経済的影響と社会保障持続可能性]] — Wikipedia:従属人口指数—少子高齢化と経済的依存比率の解説
 - [[econ-difference-in-differences|差の差分析（DID）]] — ウィキペディア日本語版「差分の差分法」
 - [[econ-fei-ranis|フェイ＝ラニス・モデル]] — ウィキペディア日本語版:フェイ＝ラニス・モデル（商業化点・ルイスの転換点・農業余剰）
-- [[econ-fiscal-decentralization-tiebout|財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争]] — Wikipedia:財政分権—ティブー仮説と地方財政連邦主義の解説
+- [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — Wikipedia:財政分権—ティブー仮説と地方財政連邦主義の解説
 - [[econ-growth-accounting-solow-residual|成長会計とソロー残差——全要素生産性（TFP）と技術進歩の計測]] — Wikipedia:全要素生産性—ソロー残差と技術進歩の計測の解説
 - [[econ-helicopter-money-overt-monetary-financing|ヘリコプターマネーと財政・金融政策の統合——ミルトン・フリードマンからバーナンキまでの政策論争]] — Wikipedia:ヘリコプターマネー—財政金融統合政策と中央銀行論の解説
 - [[econ-housing-market-bubble-case-shiller|住宅市場バブルとケース＝シラー指数——行動的資産価格と不動産市場の周期的変動]] — Wikipedia:ケース＝シラー指数—住宅市場バブルと行動経済学の解説

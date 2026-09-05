@@ -2,19 +2,19 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 966
+entry_count: 965
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（966件）
+# 学習パス — 学術概念／経済学（965件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 82）
-- [[econ-helicopter-money|ヘリコプターマネー]]（接続 49）
+- [[econ-helicopter-money|ヘリコプターマネー]]（接続 50）
 - [[econ-agglomeration-economies|集積の経済]]（接続 43）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 42）
 - [[econ-liquidity-trap|流動性のわな]]（接続 42）
@@ -26,8 +26,8 @@ tags:
 - [[econ-becker-crime|犯罪の経済学]]（接続 36）
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]]（接続 36）
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]]（接続 34）
-- [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]]（接続 33）
-- [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]]（接続 32）
+- [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]]（接続 33）
+- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]（接続 33）
 
 ## 第 2 部 — 年代順の展開
 - 1553年: [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]]
@@ -188,6 +188,7 @@ tags:
 - 1954年: [[econ-harberger-triangle|ハーバーガーの三角形（独占の死荷重損失計測）]]
 - 1954年: [[econ-public-goods|公共財（非競合性・非排除性）]]
 - 1954年: [[econ-samuelson-condition|公共財供給のサミュエルソン条件]]
+- 1954年: [[econ-tiebout-hypothesis-local-public-goods|ティブー仮説（足による投票）——住民が税と公共サービスの組み合わせで自治体を選ぶことで地方公共財の選好が顕示され効率的供給が実現する]]
 - 1954年: [[econ-welfare-theorems|厚生経済学の基本定理]]
 - 1955年: [[econ-kuznets-curve|クズネッツ曲線]]
 - 1955年: [[econ-nominal-gdp-targeting|名目GDP目標（マーケット・マネタリズム）]]
@@ -196,6 +197,7 @@ tags:
 - 1955年: [[econ-rybczynski-theorem|リプチンスキーの定理（Rybczynski Theorem）]]
 - 1956年: [[econ-kaldor-stylized-facts-growth|カルドアの定型化された事実——長期成長に見られる6つの経験的規則性]]
 - 1956年: [[econ-peak-oil|ピークオイル（Peak Oil）とハバート曲線]]
+- 1956年: [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]]
 - 1957年: [[econ-battle-of-sexes|両性の闘い（battle of the sexes）]]
 - 1957年: [[econ-bop-stages|国際収支の発展段階説]]
 - 1957年: [[econ-merit-goods|メリット財（価値財）]]
@@ -340,6 +342,7 @@ tags:
 - 1983年: [[econ-bootleggers-baptists|密造者と聖職者（ブートレガーとバプテスト）]]
 - 1983年: [[econ-currency-board|カレンシーボード制（通貨委員会制度）]]
 - 1983年: [[econ-diamond-dybvig|ダイアモンド＝ディビッグ・モデル]]
+- 1983年: [[econ-kreps-scheinkman-capacity-precommitment-cournot|クレプス＝シャインクマンの生産能力事前コミットメント・モデル——価格競争でもクールノー的寡占均衡へ至る二段階ゲーム]]
 - 1983年: [[econ-new-keynesian-phillips|ニューケインジアン・フィリップス曲線（New Keynesian Phillips Curve）]]
 - 1983年: [[econ-raising-rivals-costs|ライバルの費用引き上げ理論（Raising Rivals' Costs／RRC、サロップ＝シェフマン）——支配的企業が略奪的安売りではなく競争相手の費用を高めて排除する反トラスト理論]]
 - 1983年: [[econ-sunspot-equilibrium|サンスポット均衡]]
@@ -605,6 +608,7 @@ tags:
 - [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]]
 - [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]]
 - [[econ-exorbitant-privilege-eichengreen|法外な特権——基軸通貨国アメリカの国際通貨体制上の優位性]]
+- [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]]
 - [[econ-expectations-hypothesis|金利の期間構造の期待仮説]]
 - [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]]
 - [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]]
@@ -619,11 +623,9 @@ tags:
 - [[econ-financial-repression-mckinnon-shaw|金融抑圧と金融深化——マッキノン＝ショウ仮説と発展途上国の金融自由化]]
 - [[econ-financialization|金融化——経済の金融部門支配]]
 - [[econ-financialization-lazonick-shareholder|金融化とシェアホルダー・バリュー——ラゾニックの「保持・再投資」から「縮小・分配」への転換]]
-- [[econ-fiscal-decentralization-tiebout|財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争]]
 - [[econ-fiscal-dominance-sargent|財政支配と物価水準の財政理論——政府債務が金融政策を拘束するメカニズム]]
 - [[econ-fiscal-drag|財政ドラッグ（ブラケットクリープ）]]
 - [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]]
-- [[econ-fiscal-federalism-tiebout|財政連邦主義とティブー・モデル（足による投票と分権定理）]]
 - [[econ-fiscal-illusion-buchanan|財政錯覚——政府支出の費用を過小評価させる課税構造の不透明性]]
 - [[econ-fiscal-multiplier-auerbach-gorodnichenko|財政乗数——景気局面依存性とアウアーバッハ＝ゴロドニチェンコの状態依存推定]]
 - [[econ-fiscal-multiplier-crowding-out-debate|財政乗数とクラウディングアウト論争——IS-LMモデルから実証的な乗数推定への展開]]
@@ -716,7 +718,6 @@ tags:
 - [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]]
 - [[econ-kinked-demand-sweezy|屈折需要曲線——寡占における価格の硬直性を説明するモデル]]
 - [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]]
-- [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]]
 - [[econ-knowledge-economy-machlup|知識経済論と情報財の経済的特性——マクルップからドラッカーへ]]
 - [[econ-krugman-target-zone-exchange|クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果]]
 - [[econ-labor-market-search-diamond|労働市場の探索・マッチング理論と摩擦的失業の分析（ダイアモンド・モーテンセン・ピサリデス）]]
@@ -739,7 +740,6 @@ tags:
 - [[econ-liquidity-premium-keynes|流動性プレミアム——資産の換金容易性に対する利回り上乗せ]]
 - [[econ-liquidity-trap-keynes|流動性の罠——名目金利の下限で金融政策が有効性を失う状況]]
 - [[econ-loanable-funds|貸付資金説（可貸資金市場）]]
-- [[econ-local-public-goods-tiebout|ティブー・モデル——足による投票が地方公共財の選好を顕示する]]
 - [[econ-lock-in-switching-costs|ロックインとスイッチングコスト——乗り換え費用が生む顧客の囲い込み]]
 - [[econ-long-run-aggregate-supply-solow-growth|ソロー成長モデルと長期総供給——資本蓄積・技術進歩・収束仮説の新古典派成長論]]
 - [[econ-magnitude-effect-discounting|大きさ効果——金額が大きいほど将来を割り引く率が下がる]]
@@ -923,7 +923,6 @@ tags:
 - [[econ-tax-incidence-theory|租税帰着理論]]
 - [[econ-temptation-self-control-gul-pesendorfer|誘惑と自制の選好——選択肢の集合そのものを評価する]]
 - [[econ-theil-index-inequality|タイル指数——情報理論にもとづく分解可能な不平等尺度]]
-- [[econ-tiebout-hypothesis-local-public-goods|ティブー仮説——「足による投票」と地方公共財の効率的供給メカニズム]]
 - [[econ-time-inconsistency-calvo|時間非整合性とカルヴォ型価格設定——粘着価格のミクロ的基礎とニューケインジアン・フィリップス曲線]]
 - [[econ-time-inconsistency-kydland-prescott|時間的非整合性——最適計画の事後的破棄とルール対裁量の問題]]
 - [[econ-time-inconsistency-monetary-policy|金融政策の時間的非整合性（裁量 vs. ルール）]]

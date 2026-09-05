@@ -2,7 +2,7 @@
 title: "en.wikipedia.org"
 type: source-domain
 host: "en.wikipedia.org"
-cite_count: 2268
+cite_count: 2269
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # en.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2268 件**（リファレンス 2268）
+> [!info] 出典ドメイン索引 ・ 引用 **2269 件**（リファレンス 2269）
 
 ## このドメインを出典とする項目
 
@@ -201,6 +201,7 @@ tags:
 - [[bizlaw-ip-exhaustion-first-sale|知的財産権の消尽（ファースト・セール）]] — Wikipedia:First-saledoctrine—USlaw,EUexhaustion,digitalgoods,andparal…
 - [[bizlaw-ipso-facto-clause-insolvency|イプソ・ファクト条項——倒産を契機とする契約終了条項の法的規制]] — Wikipedia:IpsoFactoClause—insolvency-triggeredcontractterminationrest…
 - [[bizlaw-joint-venture-doctrine|ジョイント・ベンチャー法理（共同事業の法的枠組み）]] — Wikipedia—Meinhardv.Salmon,249N.Y.458(1928)
+- [[bizlaw-katko-v-briney-spring-gun-defense-of-property|カトコ対ブライニー事件——仕掛け銃による財産防衛と生命尊重の限界]] — Wikipedia:Katkov.Briney—事件の引用と背景の概説
 - [[bizlaw-keech-v-sandford|キーチ対サンドフォード——受託者は地位から利益を得てはならない]] — Wikipedia:Fiduciary—no-profit/no-conflictrules,KeechvSandford,strictl…
 - [[bizlaw-keech-v-sandford|キーチ対サンドフォード——受託者は地位から利益を得てはならない]] — Wikipedia:KeechvSandford—no-profitrule,no-conflictrule,fiduciary,cons…
 - [[bizlaw-knowing-receipt|悪意の受領——信託違反で移転された財産を知りつつ受け取る責任]] — Wikipedia:Englishtrustslaw—knowingreceipt,dishonestassistance,breacho…
@@ -582,7 +583,6 @@ tags:
 - [[econ-fiscal-dominance-sargent|財政支配と物価水準の財政理論——政府債務が金融政策を拘束するメカニズム]] — Wikipedia:Fiscaldominance—財政支配の定義と政策含意の概説
 - [[econ-fiscal-drag|財政ドラッグ（ブラケットクリープ）]] — Wikipedia:Fiscaldrag（定義・累進課税・自動安定化装置）
 - [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — Wikipedia:Fiscalfederalism—Oatestheorem,Tiebout,racetothebottom,fisca…
-- [[econ-fiscal-federalism-tiebout|財政連邦主義とティブー・モデル（足による投票と分権定理）]] — Fiscalfederalism—Wikipedia
 - [[econ-fiscal-illusion-buchanan|財政錯覚——政府支出の費用を過小評価させる課税構造の不透明性]] — Wikipedia:Fiscalillusion—Buchanan,Puviani,hiddentaxes,deficitfinancin…
 - [[econ-fiscal-multiplier|乗数効果（財政乗数）]] — Wikipedia:Fiscalmultiplier（mechanism,formula,Kahn1931origin）
 - [[econ-fiscal-multiplier-auerbach-gorodnichenko|財政乗数——景気局面依存性とアウアーバッハ＝ゴロドニチェンコの状態依存推定]] — Wikipedia:Fiscalmultiplier—state-dependence,recession,austerity,crowd…
@@ -727,7 +727,6 @@ tags:
 - [[econ-liquidity-trap|流動性のわな]] — Wikipedia—Liquiditytrap(Keynes1936/HicksIS-LM)
 - [[econ-liquidity-trap-keynes|流動性の罠——名目金利の下限で金融政策が有効性を失う状況]] — Wikipedia:Liquiditytrap—Keynes,zerolowerbound,monetarypolicyineffecti…
 - [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — Wikipedia—Loanablefunds（起源：ヴィクセル／ロバートソン／オリーン、流動性選好説との対比）
-- [[econ-local-public-goods-tiebout|ティブー・モデル——足による投票が地方公共財の選好を顕示する]] — Wikipedia:Tieboutmodel—votingwithfeet,localpublicgoods,preferencereve…
 - [[econ-lock-in-switching-costs|ロックインとスイッチングコスト——乗り換え費用が生む顧客の囲い込み]] — Wikipedia:Switchingcosts/lock-in—Shapiro&Varian,installedbase,marketp…
 - [[econ-logrolling|ログローリング（票の取引）]] — Wikipedia—Logrolling(votetrading,porkbarrel,CalculusofConsent)
 - [[econ-long-run-aggregate-supply-solow-growth|ソロー成長モデルと長期総供給——資本蓄積・技術進歩・収束仮説の新古典派成長論]] — Wikipedia:Solow–Swanmodel—ソロー成長モデルの理論と実証
@@ -960,7 +959,7 @@ tags:
 - [[econ-taylor-rule|テイラールール]] — Wikipedia:Taylorrule—テイラー・ルールの概要
 - [[econ-temptation-self-control-gul-pesendorfer|誘惑と自制の選好——選択肢の集合そのものを評価する]] — Wikipedia:Temptationandself-control—menupreferences,commitment,Gul–Pe…
 - [[econ-theil-index-inequality|タイル指数——情報理論にもとづく分解可能な不平等尺度]] — Wikipedia:Theilindex—entropy,decomposability,inequalitymeasurement
-- [[econ-tiebout-hypothesis-local-public-goods|ティブー仮説——「足による投票」と地方公共財の効率的供給メカニズム]] — Wikipedia:Tieboutmodel—ティブーモデルの概要
+- [[econ-tiebout-hypothesis-local-public-goods|ティブー仮説（足による投票）——住民が税と公共サービスの組み合わせで自治体を選ぶことで地方公共財の選好が顕示され効率的供給が実現する]] — Wikipedia:Tieboutmodel—足による投票・地方公共財・選好顕示・自治体間競争・仮定と批判の概説
 - [[econ-time-inconsistency-calvo|時間非整合性とカルヴォ型価格設定——粘着価格のミクロ的基礎とニューケインジアン・フィリップス曲線]] — Wikipedia:Calvocontracts—staggeredpricing,NKPC,stickyprices,DSGE
 - [[econ-time-inconsistency-kydland-prescott|時間的非整合性——最適計画の事後的破棄とルール対裁量の問題]] — Wikipedia:Dynamicinconsistency—Kydland-Prescott,inflationbias,commitm…
 - [[econ-tinbergen-rule-policy-targets|ティンバーゲンの定理——政策目標と政策手段の対応関係]] — Wikipedia:Tinbergenrule—policyinstrumentsandtargetsassignmentoverview
@@ -1635,6 +1634,8 @@ tags:
 - [[infosoc-dramaturgy|ドラマトゥルギー（演劇論的アプローチ）]] — Wikipedia:ThePresentationofSelfinEverydayLife(1956/1959,front/backsta…
 - [[infosoc-e-government-digital-public|電子政府とデジタル公共サービスの情報社会分析——利便性・参加・監視の緊張]] — Wikipedia:E-government—Estonia,digitalpublicservices,participation,su…
 - [[infosoc-e-government-digital-public-services|電子政府とデジタル公共サービス——行政DXと市民・政府間インターフェースの変革]] — Wikipedia:E-government—電子政府の国際動向と理論
+- [[infosoc-eliza-effect-weizenbaum|ワイゼンバウムのイライザとイライザ効果——単純な模式応答に理解と親密さを読み込む錯覚]] — Wikipedia,"ComputerPowerandHumanReason"—1976年の著書（W.H.Freeman刊）の主題（計算と…
+- [[infosoc-eliza-effect-weizenbaum|ワイゼンバウムのイライザとイライザ効果——単純な模式応答に理解と親密さを読み込む錯覚]] — Wikipedia,"ELIZAeffect"—イライザ効果の定義、および1995年にホフスタッターが『FluidConceptsandC…
 - [[infosoc-enshittification|エンシティフィケーション（Enshittification）]] — Enshittification—Wikipedia（ドクトロウ原典・ADS選出・プラットフォーム劣化三段階モデルの包括的解説）
 - [[infosoc-enshittification-doctorow|エンシッティフィケーション（ドクトロウ）]] — Wikipedia:Enshittification—Doctorow,three-phaseplatformdecay,lock-in,…
 - [[infosoc-epistemic-cultures-knorr-cetina|認識文化——科学分野ごとに異なる知の作り方]] — Wikipedia:KarinKnorrCetina—epistemiccultures,machineriesofknowing,STS

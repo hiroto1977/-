@@ -38,8 +38,8 @@ W・アーサー・ルイス ／ ジョン・フェイ ／ グスタフ・ラニ
 - [[econ-behavioral-game-theory|行動ゲーム理論：心理学的洞察と実験経済学を統合した戦略的相互作用における公平性・互恵性・限定合理性の研究]] — 出典を共有
 - [[econ-fiscal-federalism-oates|財政的連邦主義（オーツ）]] — 出典を共有
 - [[econ-great-divergence-pomeranz|大分岐（ポメランツ）——なぜ西欧が先に工業化したのか]] — 出典を共有
+- [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]] — 出典を共有
 - [[econ-identity-economics|アイデンティティ経済学]] — 出典を共有
-- [[econ-narrative-economics|ナラティブ経済学：物語の伝播が経済変動を駆動するメカニズム]] — 出典を共有
 - [[econ-natural-experiments-rdd|自然実験と回帰不連続デザインによる因果推論：外生的変動を用いた処置効果の識別と政策評価]] — 出典を共有
 - [[econ-real-options-theory-dixit-pindyck|リアル・オプション理論——不確実性下の不可逆的投資と待機の価値]] — 出典を共有
 

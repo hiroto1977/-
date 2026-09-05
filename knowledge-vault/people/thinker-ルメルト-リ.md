@@ -2,7 +2,7 @@
 title: "リチャード・ルメルト"
 type: thinker
 person_key: "ルメルト|リ"
-concept_count: 6
+concept_count: 7
 tags:
   - person
   - index
@@ -10,13 +10,14 @@ tags:
 
 # リチャード・ルメルト
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **6 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **7 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（6件）
+## 学術概念（7件）
 - [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 因果的曖昧性（causalambiguity）は、スティーブン・リップマンとリチャード・ルメルトが1982年の論文「不…
 - [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 競争均衡（competitiveparity）は、バーニー（1991）のRBV（資源ベース・ビュー）フレームワークの中…
 - [[mgmt-diversification|多角化戦略]] — 多角化戦略（diversificationstrategy）とは、企業が既存の事業・製品・市場にとどまらず、新しい製品…
 - [[mgmt-dominant-logic-prahalad-bettis|支配的論理——経営者の事業の捉え方が資源配分と適応を方向づける認知枠組み]] — 支配的論理（dominantlogic）は、C・K・プラハラードとリチャード・ベティスが1986年の論文「支配的論理—…
+- [[mgmt-good-strategy-kernel-rumelt|ルメルトの「良い戦略」のカーネル——診断・基本方針・一貫した行動の三要素で戦略を判定する]] — 良い戦略のカーネルは、UCLA教授リチャード・ルメルトが2011年の著書『GoodStrategy/BadStrate…
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]] — ボストン・コンサルティング・グループ（BCG）が1970年代に開発したGrowth-ShareMatrix（BCGマト…
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 戦略的要素市場（StrategicFactorMarkets）理論は、バーニーが1986年に提唱した概念であり、企業が…
 

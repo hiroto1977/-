@@ -17194,12 +17194,14 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     discipline: 'economics',
     title: '財政連邦主義（オーツの分権化定理）',
     statement:
-      '財政連邦主義（Fiscal Federalism）とは、中央政府・地方政府間の歳入・歳出権限の最適な配分を分析する公共経済学の分野である。ウォレス・オーツが1972年の著書 Fiscal Federalism で体系化し、「地域ごとに選好が異なる公共財は、国全体に一律供給するより各地方政府が供給する方が（スピルオーバーがなく費用が同じならば）パレート効率的」という分権化定理を提示した。マスグレイブの三機能論はこの役割分担の骨格を与える——資源配分機能は地域公共財について分権化に馴染む一方、再分配は住民移動による選別を招き、安定化はマクロの外部性ゆえに中央が担うべきとされる。足による投票で選好が顕示されるというティブーの仮説が分権の情報上の利点を補完し、便益の及ぶ範囲と決定単位を一致させる対応原理、地域を越える便益漏出への補助金による矯正、移動性の高い課税ベースは中央へ・便益課税と固定資産は地方へという税源配分論、垂直的財政ギャップを埋める政府間移転（財政調整）の設計が理論の主要部品をなす。実務では、分権が説明責任と効率を高めるという期待に対し、行政能力・汚職・マクロ財政規律の喪失（軟らかい予算制約と救済期待）というリスクが対置され、底辺への競争と物差し競争の両論、政治的インセンティブを明示する第二世代の理論へと展開した。EU の補完性原則から途上国の分権化改革まで、多層政府の制度設計を導く規範枠組みとして OECD・IMF の政策分析にも組み込まれている。',
-    keyFigures: 'ウォレス・オーツ（Wallace E. Oates, 1936–2015）／主著: "Fiscal Federalism"（1972）／リチャード・マスグレイブ（財政三機能論）',
+      '財政連邦主義（Fiscal Federalism）とは、中央政府・地方政府間の歳入・歳出権限の最適な配分を分析する公共経済学の分野である。ウォレス・オーツが1972年の著書 Fiscal Federalism で体系化し、「地域ごとに選好が異なる公共財は、国全体に一律供給するより各地方政府が供給する方が（スピルオーバーがなく費用が同じならば）パレート効率的」という分権化定理を提示した。マスグレイブの三機能論はこの役割分担の骨格を与える——資源配分機能は地域公共財について分権化に馴染む一方、再分配は住民移動による選別を招き、安定化はマクロの外部性ゆえに中央が担うべきとされる。足による投票で選好が顕示されるというティブーの仮説が分権の情報上の利点を補完し、便益の及ぶ範囲と決定単位を一致させる対応原理、地域を越える便益漏出への補助金による矯正、移動性の高い課税ベースは中央へ・便益課税と固定資産は地方へという税源配分論、垂直的財政ギャップを埋める政府間移転（財政調整）の設計が理論の主要部品をなす。実務では、分権が説明責任と効率を高めるという期待に対し、行政能力・汚職・マクロ財政規律の喪失（軟らかい予算制約と救済期待）というリスクが対置され、底辺への競争と物差し競争の両論、政治的インセンティブを明示する第二世代の理論へと展開した。EU の補完性原則から途上国の分権化改革まで、多層政府の制度設計を導く規範枠組みとして OECD・IMF の政策分析にも組み込まれている。日本では2000年の地方分権一括法施行と三位一体改革（2003-2006年）を通じて補助金削減・地方交付税改革・税源移譲が実施されたが、財政力格差の拡大と「ふるさと納税」による水平的財政調整の歪みが問題化している。',
+    keyFigures: 'ウォレス・オーツ（Wallace E. Oates, 1936–2015）／主著: "Fiscal Federalism"（1972）／リチャード・マスグレイブ（財政三機能論）／バリー・ウィンガスト（政治的インセンティブを明示する第二世代財政連邦主義）',
     asOf: '2026-06',
     sources: [
       { url: 'https://www.imf.org/external/pubs/ft/fandd/1999/06/tanzi.htm', type: 'government', label: 'IMF Finance & Development (1999) — Fiscal Federalism（定義・分権化定理・各国政策応用の概説）' },
       { url: 'https://www.oecd.org/regional/fiscal-federalism-20786533.htm', type: 'government', label: 'OECD Fiscal Federalism Network — 財政連邦主義の理論・各国実践・政策指針' },
+      { url: 'https://www.soumu.go.jp/menu_seisaku/chiho/02zeimu01_03000023.html', type: 'government', label: '総務省 地方財政制度の概要 — 地方分権と財政調整の解説（地方分権一括法・三位一体改革後の制度）' },
+      { url: 'https://ja.wikipedia.org/wiki/%E8%B2%A1%E6%94%BF%E5%88%86%E6%A8%A9', type: 'reference', label: 'Wikipedia: 財政分権 — ティブー仮説と地方財政連邦主義の解説' },
     ],
   },
   {
@@ -28315,19 +28317,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-fiscal-federalism-tiebout',
-    discipline: 'economics',
-    title: '財政連邦主義とティブー・モデル（足による投票と分権定理）',
-    statement: '財政連邦主義（fiscal federalism）は、政府間の歳入・歳出機能の最適配分を分析する公共経済学の枠組みである。マスグレイブが『財政理論』(1959)で政府の3機能（資源配分・所得再分配・経済安定化）を整理し、地方政府は資源配分に比較優位を持つと論じた。ティブーは1956年論文「A Pure Theory of Local Expenditures」(JPE)で、住民が選好に合う公共サービス・税の組合せを提供する自治体へ移住する「足による投票（voting with their feet）」により、地方公共財の効率的供給が達成されうると主張した。オーツは『財政連邦主義』(1972)で分権定理（decentralization theorem）を定式化し、地域ごとに異なる選好がある場合、画一的な中央供給よりも地方分権的供給が厚生上優れることを示した。',
-    keyFigures: 'チャールズ・ティブー ／ リチャード・マスグレイブ ／ ウォレス・オーツ',
-    asOf: '2026-06-25',
-    sources: [
-      { url: 'https://www.journals.uchicago.edu/doi/10.1086/257839', type: 'academic', label: 'Tiebout (1956) A Pure Theory of Local Expenditures — Journal of Political Economy' },
-      { url: 'https://en.wikipedia.org/wiki/Fiscal_federalism', type: 'reference', label: 'Fiscal federalism — Wikipedia' },
-      { url: 'https://www.britannica.com/topic/fiscal-federalism', type: 'reference', label: 'Encyclopaedia Britannica — Fiscal Federalism' },
-    ],
-  },
-  {
     id: 'mgmt-executive-succession',
     discipline: 'management',
     title: '経営者承継理論：CEO交代と企業業績',
@@ -36321,18 +36310,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'econ-local-public-goods-tiebout',
-    discipline: 'economics',
-    title: 'ティブー・モデル——足による投票が地方公共財の選好を顕示する',
-    statement: 'ティブー・モデル（Tiebout model）は、チャールズ・ティブーが1956年の論文「地方支出の純粋理論」で提唱した、地方公共財の供給に関する理論で、ポール・サミュエルソンが提起した難問への一つの解答である。サミュエルソンは、公共財について、人々が自らの真の選好を表明する誘因を持たないため（表明すれば負担を求められるので過小申告する誘因がある）、市場メカニズムでは公共財に対する選好を顕示させ最適な供給を実現することができない、と論じた。ティブーは、この難問が、国レベルの公共財には当てはまるとしても、地方レベルの公共財については当てはまらないと主張した。彼の中心的な着想は、地方公共財については、人々が「足による投票（voting with their feet）」によって自らの選好を顕示するというものである。多数の地方自治体（町）が、それぞれ異なる組み合わせの税負担と公共サービス（教育、治安、公園、ごみ収集など）を提供しているとき、人々は、自分の選好に最もよく合った税とサービスの組み合わせを提供する自治体を選んで居住地を決める。低い税と最小限のサービスを望む人はそのような町に、手厚いサービスとそれに見合う高い税を望む人は別の町に住む。こうした住民の移動と選別（ソーティング）を通じて、人々は自らの公共財への選好を、言葉ではなく行動によって明らかにし、結果として地方公共財の効率的な配分が実現されうる。さらに、自治体どうしが住民を引きつけるために競争することで、地方政府が非効率な運営や過大な課税を行うのを規律する効果も生じる。このモデルは、完全な移動可能性と情報、十分な数の自治体、外部効果（スピルオーバー）の不在、雇用の制約からの独立といった強い仮定に依存するため、現実への適用には限界がある。それでもティブー・モデルは、地方公共財の供給、財政連邦主義、地方分権の便益、自治体間競争を分析する基礎理論となり、ウォーレス・オーツの財政連邦主義論やヴィンセント・オストロムの多元的統治の議論へと発展した、公共経済学の古典的貢献である。',
-    keyFigures: 'チャールズ・ティブー ／ ポール・サミュエルソン ／ ウォーレス・オーツ ／ ヴィンセント・オストロム',
-    asOf: '2026-06-27',
-    sources: [
-      { url: 'https://doi.org/10.1086/257839', type: 'academic', label: 'Tiebout, C.M. (1956) A Pure Theory of Local Expenditures — Journal of Political Economy 64(5)' },
-      { url: 'https://en.wikipedia.org/wiki/Tiebout_model', type: 'reference', label: 'Wikipedia: Tiebout model — voting with feet, local public goods, preference revelation, jurisdiction competition' },
-    ],
-  },
-  {
     id: 'mgmt-shared-leadership-pearce',
     discipline: 'management',
     title: 'シェアード・リーダーシップ——チーム成員間で分有され交替する影響過程',
@@ -42657,14 +42634,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'econ-tiebout-hypothesis-local-public-goods',
     discipline: 'economics',
-    title: 'ティブー仮説——「足による投票」と地方公共財の効率的供給メカニズム',
-    statement: 'ティブー仮説は、チャールズ・ティブーが1956年の論文で提唱した、住民が自身の選好に合った公共サービスと税負担の組合せを提供する地方自治体を選択して移住する（「足による投票」）ことで、サミュエルソンの公共財の過少供給問題が地方レベルでは解決されうるとする理論である。完全な移動性・十分な数の自治体・完全情報等の仮定のもとで、住民の移動が地方公共財の効率的供給を実現するという結論は、公共経済学における地方分権論の理論的基盤となった。オーツの財政連邦主義論はティブーの洞察を制度設計論に発展させ、中央政府と地方政府の最適な機能配分を分析した。しかし移動コスト・情報の不完全性・外部性・再分配政策との矛盾等の現実的制約から、実証的妥当性については多くの批判と修正が加えられている。',
-    keyFigures: 'チャールズ・ティブー ／ ウォレス・オーツ ／ ポール・サミュエルソン ／ リチャード・マスグレイヴ',
-    asOf: '2026-06-26',
+    title: 'ティブー仮説（足による投票）——住民が税と公共サービスの組み合わせで自治体を選ぶことで地方公共財の選好が顕示され効率的供給が実現する',
+    statement:
+      'ティブー仮説（ティブー・モデル）は、チャールズ・ティブーが1956年の論文『A Pure Theory of Local Expenditures』（Journal of Political Economy 64巻5号）で提唱した地方公共財の供給理論である。サミュエルソン（1954）は、公共財では人々が真の選好を表明する誘因を持たないため市場は最適供給に失敗すると論じたが、ティブーはこの難問が地方公共財には当てはまらないと主張した。多数の自治体が異なる税負担と公共サービス（教育・治安・公園など）の組み合わせを示していれば、住民は自分の選好に最も合う自治体を選んで移住し、「足による投票」によって選好を言葉でなく行動で顕示する。住民の移動と選別（ソーティング）が地方公共財の効率的配分をもたらし、自治体どうしの住民獲得競争が非効率な運営や過大な課税を規律する。この結論は、完全な移動可能性と情報、十分な数の自治体、外部効果（スピルオーバー）の不在、雇用の制約からの独立といった強い仮定に依存する。ウォレス・オーツ（1969）は地方の税と支出が住宅価格に資本化されることを示して実証的検証の道を開き、『Fiscal Federalism』（1972）の分権化定理へと発展させ、ヴィンセント・オストロムの多元的統治論にも受け継がれた。他方、移動費用や情報の不完全性、再分配政策との矛盾（貧しい住民を排除する誘因）、均衡の存在と効率性が特殊な条件でしか成り立たないという理論的批判があり、実証的妥当性をめぐる論争が続く。中小企業には、事業所の立地選択そのものが自治体の税と公共サービスへの「投票」であり、自治体間競争が企業誘致の条件（税・補助金・インフラ）を左右するという含意がある。',
+    keyFigures: 'チャールズ・ティブー（1956『A Pure Theory of Local Expenditures』JPE）／ポール・サミュエルソン（1954『The Pure Theory of Public Expenditure』——ティブーが応答した難問）／ウォレス・オーツ（1969 資本化の実証／1972『Fiscal Federalism』分権化定理／1999 JEL 展望論文）／リチャード・マスグレイブ（政府の三機能論）／ヴィンセント・オストロム（多元的統治）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1086/257839', type: 'academic', label: 'Tiebout, C. (1956) A Pure Theory of Local Expenditures — Journal of Political Economy' },
-      { url: 'https://doi.org/10.2307/1818022', type: 'academic', label: 'Oates, W. (1969) The Effects of Property Taxes and Local Public Spending on Property Values — JPE' },
-      { url: 'https://en.wikipedia.org/wiki/Tiebout_model', type: 'reference', label: 'Wikipedia: Tiebout model — ティブーモデルの概要' },
+      { url: 'https://www.journals.uchicago.edu/doi/10.1086/257839', type: 'academic', label: 'Tiebout, C. M. (1956) A Pure Theory of Local Expenditures — Journal of Political Economy 64(5), 416–424（原典。足による投票と地方公共財の選好顕示）' },
+      { url: 'https://doi.org/10.2307/1925895', type: 'academic', label: 'Samuelson, P. A. (1954) The Pure Theory of Public Expenditure — Review of Economics and Statistics 36(4), 387–389（ティブーが応答した公共財の選好顕示問題）' },
+      { url: 'https://doi.org/10.1257/jel.37.3.1120', type: 'academic', label: 'Oates, W. E. (1999) An Essay on Fiscal Federalism — Journal of Economic Literature 37(3), 1120–1149（ティブー以後の財政連邦主義論の展望。分権化定理と実証研究の整理）' },
+      { url: 'https://en.wikipedia.org/wiki/Tiebout_model', type: 'reference', label: 'Wikipedia: Tiebout model — 足による投票・地方公共財・選好顕示・自治体間競争・仮定と批判の概説' },
     ],
   },
   {
@@ -45682,19 +45661,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://academic.oup.com/restud/article/70/4/990/1571401', type: 'academic', label: 'Rochet, J.C. & Tirole, J. (2003) Platform Competition in Two-Sided Markets — Journal of the European Economic Association' },
       { url: 'https://digital-markets-act.ec.europa.eu/', type: 'government', label: 'European Commission Digital Markets Act (DMA) — EU Platform Regulation' },
       { url: 'https://ja.wikipedia.org/wiki/%E3%83%97%E3%83%A9%E3%83%83%E3%83%88%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%E7%B5%8C%E6%B8%88', type: 'reference', label: 'Wikipedia: プラットフォーム経済 — 多面市場とネットワーク外部性の解説' },
-    ],
-  },
-  {
-    id: 'econ-fiscal-decentralization-tiebout',
-    discipline: 'economics',
-    title: '財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争',
-    statement: '財政分権化（Fiscal Decentralization）とは、公共サービスの提供権限・財源・責任を中央政府から地方政府に移譲する制度的枠組みであり、チャールズ・ティブーは1956年の論文「公共支出の純粋理論——地方財政版」で「足による投票（Voting with Feet）」仮説を提唱した。住民が税負担と公共サービスの最適パッケージを提供する自治体を選択・移住することで、市場競争に類似した地方財政効率が実現するとする。ウォレス・オーツは「財政連邦主義（Fiscal Federalism）」理論を確立し、外部性や規模の経済のある財は上位政府が担い、地域の選好に依存する財は地方が担うべきという「分権化定理」を導いた。日本では2000年の地方分権一括法施行・三位一体改革（2003-2006年）を通じて補助金削減・地方交付税改革・税源移譲が実施されたが、財政力格差の拡大と「ふるさと納税」による水平的財政調整の歪みが問題化している。第二世代財政連邦主義（エルナン・ウィアードら）は政治的インセンティブ・ソフトな予算制約・汚職のリスクも分析の射程に入れる。',
-    keyFigures: 'チャールズ・ティブー ／ ウォレス・オーツ ／ ポール・ピーターソン ／ バリー・ウィンガスト',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://www.journals.uchicago.edu/doi/10.1086/257839', type: 'academic', label: 'Tiebout, C.M. (1956) A Pure Theory of Local Expenditures — Journal of Political Economy' },
-      { url: 'https://www.soumu.go.jp/menu_seisaku/chiho/02zeimu01_03000023.html', type: 'government', label: '総務省 地方財政制度の概要 — 地方分権と財政調整の解説' },
-      { url: 'https://ja.wikipedia.org/wiki/%E8%B2%A1%E6%94%BF%E5%88%86%E6%A8%A9', type: 'reference', label: 'Wikipedia: 財政分権 — ティブー仮説と地方財政連邦主義の解説' },
     ],
   },
   {
@@ -50875,6 +50841,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.sciencedirect.com/science/article/abs/pii/0167278990900876', type: 'academic', label: 'Harnad, S. (1990). The Symbol Grounding Problem. Physica D: Nonlinear Phenomena, 42(1-3), pp.335-346 — 記号接地問題としての批判的継承を確認' },
       { url: 'https://www.scientificamerican.com/article/is-the-brains-mind-a-computer-progr/', type: 'media', label: 'Searle, J. R. (1990). Is the Brain\'s Mind a Computer Program? Scientific American, 262(1), pp.25-31 — 一般向け解説と、同号のChurchland夫妻による反論記事との論争構図を確認' },
       { url: 'https://aclanthology.org/2020.acl-main.463/', type: 'academic', label: 'Bender, E. M., & Koller, A. (2020). Climbing towards NLU: On Meaning, Form, and Understanding in the Age of Data. Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics, pp.5185-5198 — 大規模言語モデルの「理解」論争における現代的引用を確認' },
+    ],
+  },
+  {
+    id: 'econ-kreps-scheinkman-capacity-precommitment-cournot',
+    discipline: 'economics',
+    title: 'クレプス＝シャインクマンの生産能力事前コミットメント・モデル——価格競争でもクールノー的寡占均衡へ至る二段階ゲーム',
+    statement:
+      'クレプス＝シャインクマンの生産能力事前コミットメント・モデルは、デイヴィッド・クレプスとホセ・シャインクマンが1983年の論文『Quantity Precommitment and Bertrand Competition Yield Cournot Outcomes』（Bell Journal of Economics, 14(2), 326-337）で示した二段階複占モデルである。第1段階でコスト付きの生産能力を同時に選び、公表後の第2段階でベルトラン＝エッジワース的な価格競争を行う設定で、需要超過分を効率的に割り振る効率的配給規則のもとでは、部分ゲーム完全均衡の生産能力・価格がクールノー複占の均衡と一致し、価格を限界コストへ導く「ベルトラン・パラドックス」と量的寡占の現実との緊張を能力の事前コミットメントで解消した。デイヴィッドソン＆デネッケレ（1986）は一致が効率的配給規則に依存し、比例配給規則ではより競争的になると批判し、オズボーン＆ピチック（1986）は制約下の価格競争が混合戦略均衡になることを示し、デネッケレ＆コヴェノック（1996）は非対称コストの下でクールノー的均衡が崩れる場合を示した。実験室実験（ムーレン2000、アンダーハブ他2003）は、理論予測を部分的に支持するが一致しない結果を報告している。中小企業にとっては、機械・座席・売場・人員への能力投資が後続の価格競争を規定する信頼できるコミットメントであり、能力の裏付けなき値付けは価格戦争を招く。',
+    keyFigures: 'クレプス＆シャインクマン（1983『Quantity Precommitment and Bertrand Competition Yield Cournot Outcomes』, Bell Journal of Economics 14(2)）／デイヴィッドソン＆デネッケレ（1986・効率的配給規則批判、RAND Journal of Economics 17(3)）／オズボーン＆ピチック（1986・混合戦略均衡の解析、Journal of Economic Theory 38(2)）／デネッケレ＆コヴェノック（1996・非対称コストの分析、Economic Theory 8(1)）／マッデン（1998・弾力的需要への拡張、Economic Theory 12(1)）／対比: ベルトラン（価格競争のパラドックス）／クールノー（量競争モデル）／エッジワース（配給規則・価格循環）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://doi.org/10.2307/3003636', type: 'academic', label: 'Kreps, D.M. and Scheinkman, J.A. (1983) "Quantity Precommitment and Bertrand Competition Yield Cournot Outcomes," The Bell Journal of Economics, 14(2), pp.326-337 — モデルの原論文。効率的配給規則のもとで部分ゲーム完全均衡がクールノー結果に一致することの証明を確認' },
+      { url: 'https://link.springer.com/article/10.1007/BF01212009', type: 'academic', label: 'Deneckere, R.J. and Kovenock, D. (1996) "Bertrand-Edgeworth Duopoly with Unit Cost Asymmetry," Economic Theory, 8(1), pp.1-25 — 非対称な単位コストのもとでクールノー的生産能力が部分ゲーム完全均衡として成立しない場合があることを確認' },
+      { url: 'https://link.springer.com/content/pdf/10.1007/s001990050218.pdf', type: 'academic', label: 'Madden, P. (1998) "Elastic Demand, Sunk Costs and the Kreps-Scheinkman Extension of the Cournot Model," Economic Theory, 12(1), pp.199-212 — 需要弾力性と沈没コストの仮定のもとへの拡張を確認' },
+      { url: 'https://econpapers.repec.org/RePEc:rje:randje:v:17:y:1986:i:autumn:p:404-415', type: 'reference', label: 'Davidson, C. and Deneckere, R. (1986) "Long-Run Competition in Capacity, Short-Run Competition in Price, and the Cournot Model," RAND Journal of Economics, 17(3), pp.404-415 — 効率的配給規則という仮定への依存を指摘した批判の書誌情報を確認' },
+      { url: 'https://ideas.repec.org/a/eee/jetheo/v38y1986i2p238-260.html', type: 'reference', label: 'Osborne, M.J. and Pitchik, C. (1986) "Price Competition in a Capacity-Constrained Duopoly," Journal of Economic Theory, 38(2), pp.238-260 — 生産能力制約下の混合戦略価格競争の分析の書誌情報を確認' },
+    ],
+  },
+  {
+    id: 'econ-holmstrom-tirole-financial-intermediation-loanable-funds',
+    discipline: 'economics',
+    title: 'ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論',
+    statement:
+      '本モデルは、ベント・ホルムストローム（Bengt Holmström）とジャン・ティロール（Jean Tirole）が1997年の論文「Financial Intermediation, Loanable Funds, and the Real Sector」（The Quarterly Journal of Economics, 112巻3号, 663-691頁）で示した金融仲介のモラルハザード理論である。起業家には努力を怠り私的利益を得る誘因があり外部投資家への「譲渡可能所得」に上限があるため、自己資本の乏しい企業は市場から直接借入れできない。銀行など仲介機関の監視はこれを緩和するが、監視自体も費用がかかり観察不可能で、仲介機関も自己資本を投じない限り監視を怠る二重モラルハザードに陥る。企業は自己資本水準に応じ市場直接調達層・銀行監視付き融資層・資金枯渇層の三つに分かれ、仲介機関資本の減少（信用収縮）・企業資本の減少（担保逼迫）・非監視型資金の減少（貯蓄逼迫）は金利や監視強度、投資量に異なる影響を与える。ダイアモンド（1984）の委託監視理論を精緻化した枠組みは、ピーク＆ローゼングレン（2000）が示した銀行資本収縮の実体経済への伝播に整合的だが、二期間の定型モデルで監視を単純化し実証定量化の難しさも指摘される。中小企業にとっては自己資本と透明な会計の蓄積が銀行の監視付き融資へのアクセスを左右し、取引銀行の資本悪化が自社の資金繰りを直撃しうる点への備えが実務上の含意となる。',
+    keyFigures: 'ベント・ホルムストローム（1997『Financial Intermediation, Loanable Funds, and the Real Sector』／1998『Private and Public Supply of Liquidity』）／ジャン・ティロール（1997 同論文／2006『The Theory of Corporate Finance』）／ダグラス・ダイアモンド（1984『Financial Intermediation and Delegated Monitoring』・委託監視理論の先行研究）／ジョー・ピーク＆エリック・ローゼングレン（2000『Collateral Damage: Effects of the Japanese Bank Crisis on Real Activity in the United States』・実証研究）／対比: ベン・バーナンキ＝マーク・ガートラー（1989 エージェンシーコストモデル）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://academic.oup.com/qje/article-abstract/112/3/663/1926881', type: 'academic', label: 'Bengt Holmström & Jean Tirole (1997) "Financial Intermediation, Loanable Funds, and The Real Sector," The Quarterly Journal of Economics, 112(3), pp.663-691 — 本概念の一次資料（原論文）' },
+      { url: 'https://academic.oup.com/restud/article-abstract/51/3/393/1545858', type: 'academic', label: 'Douglas W. Diamond (1984) "Financial Intermediation and Delegated Monitoring," The Review of Economic Studies, 51(3), pp.393-414 — 委託監視理論の先行研究、本モデルの理論的基盤を確認' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2Faer.90.1.30', type: 'academic', label: 'Joe Peek & Eric S. Rosengren (2000) "Collateral Damage: Effects of the Japanese Bank Crisis on Real Activity in the United States," American Economic Review, 90(1), pp.30-45 — 銀行資本収縮が実体経済に伝播する実証例を確認' },
+      { url: 'https://press.princeton.edu/books/hardcover/9780691125565/the-theory-of-corporate-finance', type: 'academic', label: 'Jean Tirole (2006) The Theory of Corporate Finance, Princeton University Press — モデルの教科書的体系化を確認' },
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/250001', type: 'academic', label: 'Bengt Holmström & Jean Tirole (1998) "Private and Public Supply of Liquidity," Journal of Political Economy, 106(1), pp.1-40 — 姉妹論文（流動性供給への拡張）の存在を確認、言及のみ' },
+    ],
+  },
+  {
+    id: 'mgmt-good-strategy-kernel-rumelt',
+    discipline: 'management',
+    title: 'ルメルトの「良い戦略」のカーネル——診断・基本方針・一貫した行動の三要素で戦略を判定する',
+    statement:
+      '良い戦略のカーネルは、UCLA教授リチャード・ルメルトが2011年の著書『Good Strategy/Bad Strategy: The Difference and Why It Matters』（Crown Business。邦訳『良い戦略、悪い戦略』日本経済新聞出版、村井章子訳、2012）で示した、良い戦略に共通する論理構造である。診断（課題の本質を見極める）、基本方針（障害への対処方針。全てを決めるのではなく方向と制約を与える）、一貫した行動（方針を実行する、互いに補強し合う具体的な資源配分）という三要素がかみ合うことを核とし、「悪い戦略」は空疎な言葉（fluff）、課題を直視しない姿勢、目標と戦略の取り違え、実行不能な目標の乱立という徴候で見分けられるとする。同年のMcKinsey Quarterly論考「The Perils of Bad Strategy」はトラファルガー海戦の例でこれを要約し、2022年の『The Crux: How Leaders Become Strategists』（PublicAffairs）は克服可能で前進をもたらす課題の核心＝cruxの発見へと議論を絞り直した。枠組みは事例中心・処方的で、診断の妥当性を事後にしか検証しづらく、基本方針の生成手法には乏しいとの限界が指摘される。中小企業にとっては、ビジョンや目標リストではなく、最重要の障害・とるべき方針・実行可能な三〜五個の一貫した行動を一枚にまとめる実務的価値が大きい。',
+    keyFigures: 'リチャード・ルメルト（2011『Good Strategy/Bad Strategy: The Difference and Why It Matters』／2022『The Crux: How Leaders Become Strategists』／1991「How much does industry matter?」Strategic Management Journal 12(3)）／対比: ポーター（ポジショニング論）／ミンツバーグ（創発的戦略）／ラフリー＆マーティン（Playing to Win・選択のカスケード）／コリス（2008「Can You Say What Your Strategy Is?」Harvard Business Review 86(4)）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250120302', type: 'academic', label: 'Rumelt, R. P. (1991). How much does industry matter? Strategic Management Journal, 12(3), 167–185. — ルメルト自身の実証的な戦略研究者としての経歴を裏付ける背景資料（言及のみ）' },
+      { url: 'https://www.penguinrandomhouse.com/books/208668/good-strategy-bad-strategy-by-richard-rumelt/', type: 'reference', label: 'Rumelt, R. (2011). Good Strategy/Bad Strategy: The Difference and Why It Matters. Crown Business (Random House), New York. — カーネル（診断・基本方針・一貫した行動）と悪い戦略の四つの徴候の初出' },
+      { url: 'https://www.mckinsey.com/capabilities/strategy-and-corporate-finance/our-insights/the-perils-of-bad-strategy', type: 'media', label: 'Rumelt, R. (2011). The Perils of Bad Strategy. McKinsey Quarterly, Issue 1, pp. 30–39. — 同書の議論をネルソン提督とトラファルガー海戦の例で要約した記事' },
+      { url: 'https://ndlsearch.ndl.go.jp/en/books/R100000002-I023737528', type: 'reference', label: 'リチャード・P・ルメルト（著）、村井章子（訳）『良い戦略、悪い戦略』日本経済新聞出版社、2012年、ISBN 9784532318093（国立国会図書館サーチ書誌情報）— 邦訳の書誌情報を確認' },
+      { url: 'https://hbr.org/2008/04/can-you-say-what-your-strategy-is', type: 'media', label: 'Collis, D. J., & Rukstad, M. G. (2008). Can You Say What Your Strategy Is? Harvard Business Review, 86(4), 82–90. — 対比対象となる戦略記述フレームワーク（戦略ステートメント）の原典' },
+    ],
+  },
+  {
+    id: 'human-recognition-primed-decision-klein',
+    discipline: 'human-science',
+    title: '認知主導型意思決定（RPD）モデル——消防指揮官は選択肢を比較せず、状況認識とメンタルシミュレーションで単一の行動案を評価する',
+    statement:
+      '認知主導型意思決定（RPD）モデルは、ゲイリー・クラインがカルダーウッド、クリントン＝チロッコと消防指揮官を調査した論文『Rapid Decision Making on the Fire Ground』（Proceedings of the Human Factors Society, 1986, 30(6), 576–580）で提示した。指揮官が複数案を同時比較した意思決定点は全体の12％未満で、大半は状況を典型例として即座に認識し（手がかり・期待・目標・典型行動を伴う）、想起した単一の行動案をメンタルシミュレーションで検討し、不都合が見えれば修正・棄却した。クラインは1989年『Recognition-Primed Decisions』（Rouse編、JAI Press）と1998年『Sources of Power』（MIT Press）で理論を精緻化し、サイモンの「直感とは再認である」という洞察と接続する。カーネマンとの共著（2009, American Psychologist 64(6), 515–526）は、専門家の直感が信頼できるのは手がかりの妥当性が高く学習機会のある環境に限られるとし、記述的で反証しにくく低妥当性領域では過信を招くという限界も示した。中小企業の経営者は、常連客対応や生産現場など手応えのある領域では直感的判断を活かせるが、新規市場や大型投資ではメンタルシミュレーションやプレモーテムを併用すべきである。',
+    keyFigures: 'ゲイリー・クライン（1986『Rapid Decision Making on the Fire Ground』／1989『Recognition-Primed Decisions』／1998『Sources of Power』）／カルダーウッド（1986年共著者）／クリントン＝チロッコ（1986年共著者）／カーネマン（2009年共著『Conditions for Intuitive Expertise』）／サイモン（先行洞察「直感とは再認である」）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://journals.sagepub.com/doi/10.1177/154193128603000616', type: 'academic', label: 'Klein, G. A., Calderwood, R., & Clinton-Cirocco, A. (1986). Rapid Decision Making on the Fire Ground. Proceedings of the Human Factors Society 30th Annual Meeting, 30(6), 576-580 — RPD モデルの原典。指揮官が複数案を比較した意思決定点は 12％未満という知見の出所' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/19739881/', type: 'academic', label: 'Kahneman, D., & Klein, G. (2009). Conditions for Intuitive Expertise: A Failure to Disagree. American Psychologist, 64(6), 515-526 — 直感的専門性が信頼できる境界条件（手がかりの妥当性・学習機会）と、低妥当性領域での過信という批判の出所' },
+      { url: 'https://journals.sagepub.com/doi/10.1518/001872008X288385', type: 'academic', label: 'Klein, G. (2008). Naturalistic Decision Making. Human Factors, 50(3), 456-460 — RPD モデルを生んだ自然主義的意思決定（NDM）研究プログラムについてのクライン自身の回顧' },
+      { url: 'https://mitpress.mit.edu/9780262611466/sources-of-power/', type: 'academic', label: 'Klein, G. A. (1998). Sources of Power: How People Make Decisions. Cambridge, MA: MIT Press — 消防以外の現場事例を含む RPD モデルの単著としての展開' },
+      { url: 'https://hbr.org/2007/09/performing-a-project-premortem', type: 'media', label: 'Klein, G. (2007). Performing a Project Premortem. Harvard Business Review, 85(9) — 新規・低フィードバック領域の判断でパターン認識を補うプレモーテム技法の出所' },
+    ],
+  },
+  {
+    id: 'bizlaw-katko-v-briney-spring-gun-defense-of-property',
+    discipline: 'business-law',
+    title: 'カトコ対ブライニー事件——仕掛け銃による財産防衛と生命尊重の限界',
+    statement:
+      'カトコ対ブライニー事件（Katko v. Briney, 183 N.W.2d 657, アイオワ州最高裁, 1971年）は、財産防衛のための仕掛け銃使用が人身傷害の免責事由になるかを争った判例である。ブライニー夫妻は再三空き巣に入られていた無人の農家の寝室に、ドアが開くと発射される仕掛け銃を警告表示なしに設置し、古い瓶を盗みに入ったマーヴィン・カトコが右脚を撃たれ重傷を負った。陪審は実損害2万ドルと懲罰的損害1万ドルを認め、ムーア首席裁判官執筆の多数意見はこれを支持し、Restatement of Torts §85やプロッサーの体系書を引用して、法は人の安全を単なる財産権より高く評価し、本人が現場にいても許されない致死的な力は器械によって間接的にも用いえないと述べた。ラーソン裁判官は故意の認定と懲罰的損害の是認に反対し、窃盗犯を利する結果になると批判した。英国のBird v. Holbrook（4 Bing. 628, 1828年）が同種の原則を先に示し、ポズナー（1971, Journal of Law and Economics 14巻1号）は経済分析を加えたが、警報器や犬・柵といった抑止策と致死的な仕掛けとの線引きは事例ごとに難しく、後にモデル刑法典§3.06も無人建物への器械的死力を除外した。日本の刑法36条も正当防衛を「やむを得ずにした行為」に限っている。防犯カメラや照明・保険といった比例的手段に留めるべきで、侵入者に対してであっても加害的装置の設置者は免責されず、懲罰的損害と保険の免責条項が中小事業者に破滅的打撃を与えかねない。',
+    keyFigures: 'ムーア（1971 Katko v. Briney, 183 N.W.2d 657 多数意見執筆・アイオワ州最高裁首席裁判官）／ポズナー（1971『Killing or Wounding to Protect a Property Interest』Journal of Law and Economics 14(1), 201-232）／対比: ラーソン（同判決・反対意見）／カトコ（原告）とブライニー（被告夫妻）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://law.justia.com/cases/iowa/supreme-court/1971/54169-0.html', type: 'government', label: 'Katko v. Briney, 183 N.W.2d 657 (Iowa 1971), Supreme Court of Iowa, decided February 9, 1971（Justia）— 事件の引用・事実関係・陪審評決額・ムーア首席裁判官の多数意見・ラーソン裁判官の反対意見' },
+      { url: 'https://doi.org/10.1086/466708', type: 'academic', label: 'Richard A. Posner, "Killing or Wounding to Protect a Property Interest," The Journal of Law and Economics, vol. 14, no. 1 (1971), pp. 201-232 — 財産防衛のための致死的な力を禁じる法理の法と経済学的分析' },
+      { url: 'https://en.wikipedia.org/wiki/Katko_v._Briney', type: 'reference', label: 'Wikipedia: Katko v. Briney — 事件の引用と背景の概説' },
+      { url: 'https://laws.e-gov.go.jp/law/140AC0000000045', type: 'government', label: '刑法（明治40年法律第45号）第36条（正当防衛）— e-Gov 法令検索 — 「やむを得ずにした行為」に限る日本法の均衡要件との一句の比較を支持' },
+    ],
+  },
+  {
+    id: 'infosoc-eliza-effect-weizenbaum',
+    discipline: 'information-sociology',
+    title: 'ワイゼンバウムのイライザとイライザ効果——単純な模式応答に理解と親密さを読み込む錯覚',
+    statement:
+      'イライザ効果とは、機械の出力に見合わない理解や共感を読み込んでしまう心理的傾向を指す。1966年、ジョセフ・ワイゼンバウムはCommunications of the ACM誌9巻1号（36-45頁）の論文で、入力中のキーワードを照合し文脈を最小限に変形・反転して返す対話プログラムELIZAを発表した。搭載のDOCTORスクリプトはロジャース派の来談者中心療法を模し、利用者の発言を疑問形に置き換えるだけの単純さながら、プログラムの仕組みを知る秘書がワイゼンバウムに席を外すよう頼むほどの親密さを感じさせた。ワイゼンバウムはこれに危機感を抱き、精神科医コルビーが同年に治療応用を提案したことも問題視し、1976年の著書『Computer Power and Human Reason』（W. H. Freeman）で計算と判断を区別し人間の判断領域までは委ねるべきでないと論じたが、AI研究者マッカーシーはこの姿勢を道徳家的だと批判した。「イライザ効果」は1995年にホフスタッターが『Fluid Concepts and Creative Analogies』の序文で命名し、タークルやリーブス＆ナスの研究が同様の傾向を裏付けた一方、効果自体は擬人化全般の理論ではなく現象の記述にとどまる。中小企業にとっては、流暢な応答だけで信頼を安易に得られる分、AIとの対話であることを開示し、金銭・安全・法律の判断は出力に委ねず人へ引き上げる経路を用意することが要点となる。',
+    keyFigures: 'ジョセフ・ワイゼンバウム（1966『ELIZA—a computer program for the study of natural language communication between man and machine』Communications of the ACM／1976『Computer Power and Human Reason: From Judgment to Calculation』W. H. Freeman）／コルビー（1966 Colby, Watt & Gilbert『A Computer Method of Psychotherapy: Preliminary Communication』で治療応用を提案／1972 PARRY開発）／ホフスタッター（1995『Fluid Concepts and Creative Analogies』でイライザ効果を命名）／タークル（1984『The Second Self』／2011『Alone Together』）／リーブス＆ナス（1996『The Media Equation』）／対比: サール（中国語の部屋）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://dl.acm.org/doi/10.1145/365153.365168', type: 'academic', label: 'Weizenbaum, J. (1966). ELIZA—a computer program for the study of natural language communication between man and machine. Communications of the ACM, 9(1), 36–45. — ELIZA原論文。発表媒体・巻号・頁とキーワード照合の技術的枠組みを裏付け' },
+      { url: 'https://pubmed.ncbi.nlm.nih.gov/5936301/', type: 'academic', label: 'Colby, K.M., Watt, J.B., & Gilbert, J.P. (1966). A computer method of psychotherapy: preliminary communication. Journal of Nervous and Mental Disease, 142, 148–152. — 精神科医コルビーが同年に治療応用を提案した事実を裏付け' },
+      { url: 'https://en.wikipedia.org/wiki/Computer_Power_and_Human_Reason', type: 'reference', label: 'Wikipedia, "Computer Power and Human Reason" — 1976年の著書（W. H. Freeman刊）の主題（計算と判断の区別）と、AI研究者ジョン・マッカーシーによる批判（moralistic and incoherent）を裏付け' },
+      { url: 'https://en.wikipedia.org/wiki/ELIZA_effect', type: 'reference', label: 'Wikipedia, "ELIZA effect" — イライザ効果の定義、および1995年にホフスタッターが『Fluid Concepts and Creative Analogies』（Basic Books）の序文で命名した経緯を裏付け' },
+      { url: 'https://atmarkit.itmedia.co.jp/ait/articles/2304/17/news018.html', type: 'media', label: '＠IT「イライザ効果（ELIZA effect）とは？：AI・機械学習の用語辞典」ITmedia, 2023年4月17日 — 日本語での定義および現代の対話AIへの言及を裏付け' },
     ],
   },
 ];

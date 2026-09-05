@@ -35,8 +35,8 @@ aliases:
 - [[infosoc-communicative-action|コミュニケーション的行為（ハーバーマス）]] — 出典を共有
 - [[human-priming|プライミング効果]] — 出典を共有
 - [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 出典を共有
-- [[human-autobiographical-memory|自伝的記憶（Autobiographical Memory）]] — 同分野の近傍
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 同分野の近傍
+- [[human-autobiographical-memory|自伝的記憶（Autobiographical Memory）]] — 同分野の近傍
 - [[human-dunning-kruger|ダニング＝クルーガー効果]] — 同分野の近傍
 
 ## 関連

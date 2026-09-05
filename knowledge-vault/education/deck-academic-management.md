@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経営学"
 type: flashcard-deck
 deck_key: "academic-management"
-card_count: 663
+card_count: 664
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経営学（663枚）
+# フラッシュカード — 学術概念／経営学（664枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -472,6 +472,8 @@ tags:
   - **A:** ガラスの天井とは、女性やマイノリティが能力・実績にかかわらず組織上層部への昇進を阻まれる見えない障壁を指す比喩で、1978年にマリリン・ローデンがニューヨーク女性博覧会のパネル討論で初めて使用した。1986年ウォール・ストリート・ジャーナル紙の特集記事で広く認知された。（→ [[mgmt-glass-ceiling]]）
 - **Q:** 目標設定理論（goal-setting theory）
   - **A:** 具体的で挑戦的（困難）な目標は、曖昧な目標（「ベストを尽くせ」）や容易な目標、あるいは目標なしの状態よりも高い業績をもたらす、とする動機づけ理論。目標は注意と行動を方向づけ、努力を喚起し、粘り強さ（持続）を高め、課題に適した方略の探索・活用を促す、という4つのメカニズムを通じて作用する。（→ [[mgmt-goal-setting-theory]]）
+- **Q:** ルメルトの「良い戦略」のカーネル——診断・基本方針・一貫した行動の三要素で戦略を判定する
+  - **A:** 良い戦略のカーネルは、UCLA教授リチャード・ルメルトが2011年の著書『Good Strategy/Bad Strategy: The Difference and Why It Matters』（Crown Business。邦訳『良い戦略、悪い戦略』日本経済新聞出版、村井章子訳、2012）で示した、良い戦略に共通する論理構造である。（→ [[mgmt-good-strategy-kernel-rumelt]]）
 - **Q:** グレイナーの企業成長モデル
   - **A:** ラリー・グレイナーが1972年のHarvard Business Review論文「Evolution and Revolution as Organizations Grow」で提示した組織成長モデル。組織は規模と年齢の拡大に伴い、比較的安定した「進化（evolution）」の局面と、それを終わらせる「危機（revolution）」の局面を交互に経て発展すると説く。（→ [[mgmt-greiner-growth]]）
 - **Q:** GROWモデル（コーチング）

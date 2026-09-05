@@ -2,7 +2,7 @@
 title: "エリック・ローゼングレン"
 type: thinker
 person_key: "ローゼングレン|エ"
-concept_count: 2
+concept_count: 3
 tags:
   - person
   - index
@@ -10,10 +10,11 @@ tags:
 
 # エリック・ローゼングレン
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（2件）
+## 学術概念（3件）
 - [[econ-bank-lending-channel-kashyap|銀行貸出チャネル——金融政策が銀行の信用供給を通じて作用する経路]] — 銀行貸出チャネル（BankLendingChannel）とは、金融政策の波及メカニズムの一つであり、中央銀行の政策変更…
+- [[econ-holmstrom-tirole-financial-intermediation-loanable-funds|ホルムストローム＝ティロールの金融仲介と貸付可能資金モデル——自己資本が銀行の監視付き融資へのアクセスを決める二重モラルハザード理論]] — 本モデルは、ベント・ホルムストローム（BengtHolmström）とジャン・ティロール（JeanTirole）が19…
 - [[econ-relationship-lending-petersen-rajan-berger-udell|リレーションシップ・レンディング（関係型融資）——長期関係で蓄積した「ソフト情報」が中小企業の資金調達力を高める仕組み]] — リレーションシップ・レンディング（関係型融資）とは、担保や財務諸表などの「ハード情報」に基づく取引型融資と異なり、銀行…
 
 ## 関連

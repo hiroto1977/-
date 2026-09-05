@@ -32,8 +32,9 @@ aliases:
 
 ## 関連概念
 - [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同分野の近傍
-- [[econ-greenspan-put|グリーンスパン・プット]] — 同分野の近傍
+- [[econ-gibson-paradox|ギブソンのパラドックス]] — 同分野の近傍
 - [[econ-probabilistic-voting|確率的投票モデル（probabilistic voting model）——有権者の選択が政策に確率的に反応すると仮定し、多次元でも均衡を与える選挙競争理論]] — 同分野の近傍
+- [[econ-schelling-segregation|シェリングの分居モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

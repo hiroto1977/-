@@ -38,8 +38,8 @@ aliases:
 - [[econ-samaritan-dilemma-buchanan|サマリア人のジレンマ（ブキャナン）——利他の時間非整合性と「戦略的勇気」]] — 同じ思想家
 - [[econ-tullock-paradox|タロックのパラドックス——レントシーキング支出はなぜ過少なのか]] — 同じ思想家
 - [[econ-directly-unproductive-bhagwati|直接的に非生産的な利潤追求活動（DUP）——資源を浪費する利得の追求]] — 同じ思想家
-- [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 同じ思想家
-- [[econ-fiscal-federalism-tiebout|財政連邦主義とティブー・モデル（足による投票と分権定理）]] — 同じ思想家
+- [[econ-club-goods-buchanan|クラブ財——排除可能だが混雑するまで非競合的な財の最適規模]] — 同じ思想家
+- [[econ-club-goods-buchanan-tiebout|クラブ財理論——ブキャナンの共同消費と最適メンバーシップ]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

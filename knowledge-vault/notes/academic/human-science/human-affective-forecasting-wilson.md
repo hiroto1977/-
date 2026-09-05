@@ -41,7 +41,7 @@ aliases:
 - [[human-choice-overload|選択過多（選択のオーバーロード）]] — 同じ思想家
 - [[human-choice-overload-iyengar|選択過負荷——過剰な選択肢が意思決定を麻痺させるパラドックス]] — 同じ思想家
 - [[human-mind-wandering|マインドワンダリング]] — 同じ思想家
-- [[infosoc-framing-entman|フレーミング理論——現実の特定側面の選択と顕在化による意味の方向づけ]] — 同じ思想家
+- [[human-recognition-primed-decision-klein|認知主導型意思決定（RPD）モデル——消防指揮官は選択肢を比較せず、状況認識とメンタルシミュレーションで単一の行動案を評価する]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

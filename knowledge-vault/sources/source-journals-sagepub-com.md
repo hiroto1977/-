@@ -2,7 +2,7 @@
 title: "journals.sagepub.com"
 type: source-domain
 host: "journals.sagepub.com"
-cite_count: 182
+cite_count: 184
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.sagepub.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **182 件**（学術 181 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **184 件**（学術 183 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -51,6 +51,8 @@ tags:
 - [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — Christopheetal.(2008)BootstrappingLexicalandSyntacticAcquisition—Lang…
 - [[human-prospective-memory|展望的記憶（Prospective Memory）]] — Einstein&McDaniel(2005)ProspectiveMemory—CurrentDirectionsinPsycholog…
 - [[human-reactive-devaluation|反応的価値低減（リアクティブ・デバリュエーション／Reactive devaluation）——相手が出した案というだけで価値が下がる認知バイアス]] — Maoz,I.,Ward,A.,Katz,M.&Ross,L.(2002)"ReactiveDevaluationofan'Israeli…
+- [[human-recognition-primed-decision-klein|認知主導型意思決定（RPD）モデル——消防指揮官は選択肢を比較せず、状況認識とメンタルシミュレーションで単一の行動案を評価する]] — Klein,G.(2008).NaturalisticDecisionMaking.HumanFactors,50(3),456-460—…
+- [[human-recognition-primed-decision-klein|認知主導型意思決定（RPD）モデル——消防指揮官は選択肢を比較せず、状況認識とメンタルシミュレーションで単一の行動案を評価する]] — Klein,G.A.,Calderwood,R.,&Clinton-Cirocco,A.(1986).RapidDecisionMakin…
 - [[human-riasec-vocational-interests-holland|ホランドのRIASEC理論——六類型の適合度で職業選択と職務満足を説明する六角形モデル]] — Nye,C.D.,Su,R.,Rounds,J.,&Drasgow,F.(2012).Vocationalinterestsandperf…
 - [[human-rumination|反芻思考]] — Nolen-Hoeksema,Wisco&Lyubomirsky(2008)"RethinkingRumination",Perspect…
 - [[human-semantic-satiation|意味飽和（セマンティック・サティエイション）]] — Jakobovits(1967)SemanticSatiationandCognitiveDynamics—PsychologicalRe…

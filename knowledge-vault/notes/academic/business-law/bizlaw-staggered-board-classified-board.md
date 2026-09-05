@@ -42,7 +42,7 @@ aliases:
 - [[bizlaw-corporate-opportunity-doctrine|会社機会の流用禁止原則]] — 出典を共有
 - [[bizlaw-standstill-agreement|スタンドスティル契約]] — 出典を共有
 - [[bizlaw-derivative-suit-demand-futility|株主代表訴訟における提訴請求免除法理]] — 出典を共有
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-holder-in-due-course-doctrine|正当所持人の法理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

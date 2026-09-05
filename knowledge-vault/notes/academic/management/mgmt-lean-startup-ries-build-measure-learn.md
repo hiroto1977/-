@@ -43,7 +43,7 @@ aliases:
 - [[mgmt-toyota-production|トヨタ生産方式（リーン生産方式）]] — 出典を共有
 - [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 出典を共有
 - [[infosoc-techno-feudalism-theory|テクノ封建主義論]] — 出典を共有
-- [[mgmt-evidence-based-management-rousseau|エビデンス・ベースド・マネジメント——科学的根拠に基づく経営判断と「管理職の神話」の打破]] — 同分野の近傍
+- [[mgmt-good-strategy-kernel-rumelt|ルメルトの「良い戦略」のカーネル——診断・基本方針・一貫した行動の三要素で戦略を判定する]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

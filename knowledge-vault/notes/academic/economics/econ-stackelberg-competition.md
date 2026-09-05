@@ -38,6 +38,7 @@ aliases:
 - [[mgmt-emergent-strategy|創発戦略]] — 出典を共有
 - [[econ-trust-game|信頼ゲーム（投資ゲーム）]] — 同分野の近傍
 - [[econ-rational-addiction|合理的依存]] — 同分野の近傍
+- [[econ-kreps-scheinkman-capacity-precommitment-cournot|クレプス＝シャインクマンの生産能力事前コミットメント・モデル——価格競争でもクールノー的寡占均衡へ至る二段階ゲーム]] — 同分野の近傍
 - [[econ-zero-sum-game|ゼロサムゲーム（ミニマックス定理）]] — 同分野の近傍
 - [[econ-herfindahl-hirschman-index|ハーフィンダール・ハーシュマン指数（HHI）]] — 同分野の近傍
 

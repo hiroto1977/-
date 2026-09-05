@@ -33,7 +33,6 @@ aliases:
 ## 関連概念
 - [[econ-arrow-impossibility|アローの不可能性定理]] — 語彙が近い
 - [[econ-condorcet-jury-theorem|コンドルセの陪審定理（Condorcet Jury Theorem）]] — 語彙が近い
-- [[econ-gibbard-satterthwaite|ギバード＝サタースウェイトの定理]] — 語彙が近い
 - [[econ-sen-paradox|センのリベラル・パラドックス（パレート派リベラルの不可能性）]] — 同じ思想家
 - [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[econ-median-voter|中位投票者定理]] — 同じ思想家
 - [[econ-welfare-economics-bergson-samuelson|厚生経済学の基本定理——バーグソン＝サミュエルソン社会厚生関数とパレート効率性]] — 同じ思想家
 - [[econ-capability-approach|潜在能力アプローチ（ケイパビリティ・アプローチ）]] — 同じ思想家
+- [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,7 +2,7 @@
 title: "ideas.repec.org"
 type: source-domain
 host: "ideas.repec.org"
-cite_count: 100
+cite_count: 101
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ideas.repec.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **100 件**（学術 85 ・ リファレンス 15）
+> [!info] 出典ドメイン索引 ・ 引用 **101 件**（学術 85 ・ リファレンス 16）
 
 ## このドメインを出典とする項目
 
@@ -61,6 +61,7 @@ tags:
 - [[econ-joint-liability-group-lending|連帯責任型グループ貸付理論（Joint Liability Group Lending）]] — Stiglitz,J.E.(1990)"PeerMonitoringandCreditMarkets,"TheWorldBankEcono…
 - [[econ-kemp-wan-customs-union|ケンプ＝ウァンの定理（Kemp-Wan Theorem／1976）——どんな国の組み合わせでも、域外との貿易を変えない共通関税で必ず厚生改善的な関税同盟をつくれる]] — IDEAS/RePEc収録の書誌（Kemp&Wan[1976],JIE6(1):95-97・域外との純貿易を不変に保つ共通関税＋一括移転に…
 - [[econ-keynesian-beauty-contest|ケインズの美人投票]] — Nagel,R.(1995)“UnravelinginGuessingGames:AnExperimentalStudy,”America…
+- [[econ-kreps-scheinkman-capacity-precommitment-cournot|クレプス＝シャインクマンの生産能力事前コミットメント・モデル——価格競争でもクールノー的寡占均衡へ至る二段階ゲーム]] — Osborne,M.J.andPitchik,C.(1986)"PriceCompetitioninaCapacity-Constrain…
 - [[econ-lucas-islands-monetary-misperception|ルーカスの島モデル（Lucas islands model／貨幣的誤認・信号抽出問題）——局所価格しか見えない合理的主体の誤認から右上がりの総供給曲線を導く]] — Lucas,R.E.,Jr.(1973)"SomeInternationalEvidenceonOutput-InflationTrade…
 - [[econ-lucas-paradox|ルーカスのパラドックス]] — Lucas(1990)"WhyDoesn'tCapitalFlowfromRichtoPoorCountries?",AmericanEc…
 - [[econ-lucas-span-of-control-firm-size-distribution|ルーカスのスパン・オブ・コントロール・モデル——経営者の才能分布と管理限界が企業規模の分布を決める]] — RobertE.LucasJr.(1978)"OntheSizeDistributionofBusinessFirms,"BellJour…

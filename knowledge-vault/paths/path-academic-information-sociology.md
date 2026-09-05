@@ -2,31 +2,31 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 618
+entry_count: 619
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（618件）
+# 学習パス — 学術概念／情報社会学（619件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 72）
-- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 47）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 73）
+- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 46）
 - [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]]（接続 30）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 25）
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 24）
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]]（接続 22）
+- [[infosoc-dataveillance|データヴェイランス（データ監視）]]（接続 22）
+- [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]]（接続 22）
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]]（接続 22）
 - [[infosoc-digital-labour|デジタル労働（digital labour）]]（接続 22）
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 22）
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]（接続 21）
 - [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]]（接続 21）
-- [[infosoc-dataveillance|データヴェイランス（データ監視）]]（接続 21）
-- [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]]（接続 21）
 - [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]]（接続 20）
 
 ## 第 2 部 — 年代順の展開
@@ -97,6 +97,7 @@ tags:
 - 1965年: [[infosoc-moores-law|ムーアの法則]]
 - 1965年: [[infosoc-news-values|ニュース・バリュー（ニュースの価値）]]
 - 1965年: [[infosoc-social-judgment-theory|社会的判断理論（Social Judgment Theory）——受け手の基準態度と三つの幅で説得効果を説明する枠組み]]
+- 1966年: [[infosoc-eliza-effect-weizenbaum|ワイゼンバウムのイライザとイライザ効果——単純な模式応答に理解と親密さを読み込む錯覚]]
 - 1966年: [[infosoc-social-construction|現実の社会的構成（社会構築主義）]]
 - 1968年: [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]]
 - 1969年: [[infosoc-cultural-imperialism|文化帝国主義（メディア帝国主義）]]

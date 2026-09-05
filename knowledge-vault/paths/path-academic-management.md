@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 663
+entry_count: 664
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（663件）
+# 学習パス — 学術概念／経営学（664件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -23,10 +23,10 @@ tags:
 - [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]]（接続 23）
 - [[mgmt-configuration-theory|コンフィギュレーション理論（組織形態論）：有効な組織は一貫したアーキタイプに収束するという組織類型論的アプローチ]]（接続 23）
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]]（接続 23）
+- [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 23）
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 22）
 - [[mgmt-managerial-cognition|経営者認知理論]]（接続 22）
 - [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]]（接続 22）
-- [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 22）
 - [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]]（接続 21）
 
 ## 第 2 部 — 年代順の展開
@@ -202,6 +202,7 @@ tags:
 - 1991年: [[mgmt-communities-of-practice|実践共同体（コミュニティ・オブ・プラクティス）]]
 - 1991年: [[mgmt-crossing-the-chasm|キャズム理論（Crossing the Chasm）]]
 - 1991年: [[mgmt-exploration-exploitation|知の探索と知の深化（探索と活用）]]
+- 1991年: [[mgmt-good-strategy-kernel-rumelt|ルメルトの「良い戦略」のカーネル——診断・基本方針・一貫した行動の三要素で戦略を判定する]]
 - 1991年: [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]]
 - 1991年: [[mgmt-organizational-commitment|組織コミットメント]]
 - 1991年: [[mgmt-sensegiving|センスギビング（Sensegiving）]]

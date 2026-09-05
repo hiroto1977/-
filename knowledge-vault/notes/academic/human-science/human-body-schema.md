@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[human-simultanagnosia-balint|同時失認（バリント症候群）——一度に一つの物しか見えない]] — 同じ思想家
 - [[human-james-lange-emotion|ジェームズ＝ランゲ説——身体反応の知覚こそが情動であるとする理論]] — 同分野の近傍
-- [[human-sensory-integration-theory|感覚統合理論]] — 同分野の近傍
+- [[human-sensory-gating|感覚ゲーティング（Sensory Gating / P50抑制）]] — 同分野の近傍
 - [[human-emotional-contagion|情動感染]] — 同分野の近傍
 
 ## 関連

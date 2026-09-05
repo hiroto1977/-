@@ -2,19 +2,19 @@
 title: "学習パス: 学術概念／ビジネス法務"
 type: learning-path
 path_key: "academic-business-law"
-entry_count: 694
+entry_count: 695
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／ビジネス法務（694件）
+# 学習パス — 学術概念／ビジネス法務（695件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 86）
-- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 59）
+- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 87）
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 60）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 38）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 37）
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 31）
@@ -138,6 +138,7 @@ tags:
 - 1970年: [[bizlaw-sec-rule-14a8-shareholder-proposals|SEC規則14a-8（株主提案の委任状記載制度）]]
 - 1971年: [[bizlaw-deposit-insurance-act|預金保険法]]
 - 1971年: [[bizlaw-elderly-employment|高年齢者雇用安定法]]
+- 1971年: [[bizlaw-katko-v-briney-spring-gun-defense-of-property|カトコ対ブライニー事件——仕掛け銃による財産防衛と生命尊重の限界]]
 - 1972年: [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]]
 - 1972年: [[bizlaw-industrial-safety|労働安全衛生法]]
 - 1972年: [[bizlaw-lost-volume-seller|逸失販売量売主の法理——転売しても消えない一件分の利益を売主に補填する理論]]
