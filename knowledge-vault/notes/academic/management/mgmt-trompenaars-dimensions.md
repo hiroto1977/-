@@ -30,6 +30,7 @@ aliases:
 - [Int. J. of Intercultural Relations: Riding the waves of commerce — A test of Trompenaars' model](https://www.sciencedirect.com/science/article/abs/pii/014717679600003X) `学術`
 
 ## 関連概念
+- [[mgmt-culture-map-eight-scales-meyer|カルチャーマップ——8つの尺度で各国のビジネス行動を相対的に位置づける枠組み]] — 同じ思想家
 - [[mgmt-organizational-unlearning|組織的アンラーニング]] — 同分野の近傍
 - [[mgmt-brand-personality|ブランドパーソナリティ（アーカーの5次元モデル）]] — 同分野の近傍
 

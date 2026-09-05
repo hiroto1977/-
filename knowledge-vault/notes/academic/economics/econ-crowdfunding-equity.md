@@ -31,7 +31,7 @@ Belleflamme, Paul （2014 Journal of Business Venturing）／Lambert, Thomas ／
 
 ## 関連概念
 - [[econ-entrepreneurial-state|起業家国家（マッツカートの公共イノベーション論）]] — 同分野の近傍
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-fine-is-a-price-gneezy-rustichini|「罰金は価格である」——金銭的インセンティブが内発的・社会的動機を締め出し関係を取引に変える現象]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

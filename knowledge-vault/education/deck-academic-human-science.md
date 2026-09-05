@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／人間科学"
 type: flashcard-deck
 deck_key: "academic-human-science"
-card_count: 647
+card_count: 648
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／人間科学（647枚）
+# フラッシュカード — 学術概念／人間科学（648枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -1210,6 +1210,8 @@ tags:
   - **A:** 構造的暴力と健康の理論は、医療人類学者ポール・ファーマーが平和学者ヨハン・ガルトゥングの「構造的暴力」概念（1969年）を医療人類学に応用し、2004年のCurrent Anthropology論文で体系的に展開した枠組みである。（→ [[human-structural-violence-health]]）
 - **Q:** 生存者バイアス
   - **A:** 生存者バイアス（survivorship bias）とは、ある選別・淘汰のプロセスを「生き残った（生存した）」対象だけを観察対象とし、脱落・失敗・消滅して見えなくなった対象を見落とすことで生じる、系統的な判断の誤りである。統計学的には選択（標本）バイアスの一種で、成功者や現存するものだけを見て一般化すると、成功要因を過大評価し失敗確率を過小評価する。（→ [[human-survivorship-bias]]）
+- **Q:** スイスチーズモデル——多層防護に開いた穴が一列に並んだ瞬間に事故が起きるとする、能動的失敗と潜在的条件の事故因果モデル
+  - **A:** ジェームズ・リーズン（マンチェスター大学）が『Human Error』（1990年、Cambridge University Press）のGEMS（スリップ・ラプス・ミステイク・違反の分類）を土台に、『Managing the Risks of Organizational Accidents』（1997年、Ashgate）で定式化した事故モデル。（→ [[human-swiss-cheese-model-accident-causation-reason]]）
 - **Q:** シナプスの刈り込み（synaptic pruning／シナプス・プルーニング）——脳が過剰なシナプスを除去し神経回路を最適化する発達過程
   - **A:** シナプスの刈り込み（シナプス・プルーニング）とは、発達初期にシナプスが過剰に形成された後、弱いシナプスや使われないシナプス・余剰のシナプスを脳が除去し、神経回路を精密化していく発達神経科学上の過程をいう。仕組みは「使えば残り、使わなければ失われる（use it or lose it）」という活動依存的な選択であり、よく使われる結合は維持・強化され、ほとんど活動しない結合は標的とされて取り除かれる。（→ [[human-synaptic-pruning]]）
 - **Q:** 共感覚（シナスタジア）

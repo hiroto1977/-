@@ -2,7 +2,7 @@
 title: "doi.org"
 type: source-domain
 host: "doi.org"
-cite_count: 2136
+cite_count: 2137
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # doi.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **2136 件**（学術 2128 ・ リファレンス 5 ・ 公的 3）
+> [!info] 出典ドメイン索引 ・ 引用 **2137 件**（学術 2129 ・ リファレンス 5 ・ 公的 3）
 
 ## このドメインを出典とする項目
 
@@ -1245,6 +1245,7 @@ tags:
 - [[human-structural-violence-health|構造的暴力と健康：医療人類学における不平等の身体化理論]] — Farmer,P.2004AnAnthropologyofStructuralViolence.CurrentAnthropology45…
 - [[human-structural-violence-health|構造的暴力と健康：医療人類学における不平等の身体化理論]] — Farmer,P.E.etal.2006StructuralViolenceandClinicalMedicine.PLoSMedicin…
 - [[human-structural-violence-health|構造的暴力と健康：医療人類学における不平等の身体化理論]] — Galtung,J.1969Violence,Peace,andPeaceResearch.JournalofPeaceResearch6…
+- [[human-swiss-cheese-model-accident-causation-reason|スイスチーズモデル——多層防護に開いた穴が一列に並んだ瞬間に事故が起きるとする、能動的失敗と潜在的条件の事故因果モデル]] — JamesReason(2000)"Humanerror:modelsandmanagement",BMJ,320(7237),768-7…
 - [[human-synaptic-pruning|シナプスの刈り込み（synaptic pruning／シナプス・プルーニング）——脳が過剰なシナプスを除去し神経回路を最適化する発達過程]] — Sekar,A.etal.(2016)Schizophreniariskfromcomplexvariationofcomplementc…
 - [[human-system-justification-jost|システム正当化理論——不平等な社会体制を支持する心理的動機]] — Jost,J.T.&Banaji,M.R.(1994)TheRoleofStereotypinginSystem-Justificatio…
 - [[human-system-justification-jost|システム正当化理論——不平等な社会体制を支持する心理的動機]] — Jost,J.T.,Banaji,M.R.&Nosek,B.A.(2004)ADecadeofSystemJustificationThe…

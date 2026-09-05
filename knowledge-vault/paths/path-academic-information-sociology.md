@@ -2,18 +2,18 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 614
+entry_count: 615
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（614件）
+# 学習パス — 学術概念／情報社会学（615件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 75）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 74）
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 46）
 - [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]]（接続 30）
 - [[infosoc-digital-labor|デジタル・レイバー（デジタル労働）]]（接続 26）
@@ -272,6 +272,7 @@ tags:
 - 2017年: [[infosoc-surveillance-realism|監視リアリズム（Surveillance Realism）]]
 - 2018年: [[infosoc-information-bank|情報銀行（情報利用信用銀行）]]
 - 2018年: [[infosoc-infrastructural-globalism|インフラストラクチャーとプラットフォームの収斂（Infrastructural Globalism）]]
+- 2018年: [[infosoc-new-governors-online-speech-klonick|新しい統治者論——プラットフォームを独自の規則・手続・文化でオンライン言論を統治する私的統治システムとみなす議論]]
 - 2018年: [[infosoc-platform-affordance|プラットフォーム・アフォーダンス（Platform Affordances）]]
 - 2019年: [[infosoc-data-colonialism|データ植民地主義]]
 - 2019年: [[infosoc-digital-constitutionalism|デジタル立憲主義]]

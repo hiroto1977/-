@@ -19,23 +19,23 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / 経営学（全662件）
+### 学術概念 / 経営学（全663件）
 - [[agile-development|アジャイルソフトウェア開発]]
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]]
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]
 - [[mgmt-aaker-brand-identity|アーカーのブランド・アイデンティティ]]
 - [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]]
 - [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＆レヴィンソール）]]
-- …ほか 656 件 → [[学術概念]]
+- …ほか 657 件 → [[学術概念]]
 
-### 学術概念 / 経済学（全958件）
+### 学術概念 / 経済学（全960件）
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]
 - [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]
 - [[econ-accelerator-principle|加速度原理（投資の加速度原理）]]
 - [[econ-ad-as|総需要・総供給モデル（AD-AS）]]
 - [[econ-adverse-selection|逆選択（レモン市場）]]
 - [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]]
-- …ほか 952 件 → [[学術概念]]
+- …ほか 954 件 → [[学術概念]]
 
 ### 経済史 / 1940年代（全10件）
 - [[eh-1940|1940年（昭和15年）]]

@@ -41,7 +41,6 @@ prefecture
 - [[legal-business-opportunity-sales|業務提供誘引販売取引（内職商法・モニター商法）]] — 出典を共有
 - [[subsidy-okayama|岡山市創業者支援事業補助金]] — 同分野の近傍
 - [[subsidy-wakayama|和歌山県中小企業成長促進補助金（和歌山県）]] — 同分野の近傍
-- [[subsidy-saigai-nariwai|なりわい再建支援補助金（中小企業等グループ補助金）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[補助金・助成金]]

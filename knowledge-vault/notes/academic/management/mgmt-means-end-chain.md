@@ -31,8 +31,8 @@ Jonathan Gutman ／ Thomas J. Reynolds ／ Jerry C. Olson ／ Milton Rokeach
 - [Kilwinger, F. B. M. & van Dam, Y. K. (2021) Methodological considerations on the means-end chain analysis revisited. Psychology & Marketing, 38(9), 1513–1524（MEC・ラダリングの前提と限界の批判的検討）](https://onlinelibrary.wiley.com/doi/full/10.1002/mar.21521) `学術`
 
 ## 関連概念
+- [[mgmt-red-queen-barnett|レッドクイーン競争——競争を通じた相互適応が淘汰圧を絶えず再生産する]] — 同分野の近傍
 - [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

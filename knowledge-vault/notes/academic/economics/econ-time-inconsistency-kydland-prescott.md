@@ -30,10 +30,10 @@ aliases:
 - [Wikipedia: Dynamic inconsistency — Kydland-Prescott, inflation bias, commitment, central bank independence](https://en.wikipedia.org/wiki/Dynamic_inconsistency) `リファレンス`
 
 ## 関連概念
-- [[econ-time-inconsistency-monetary-policy|金融政策の時間的非整合性（裁量 vs. ルール）]] — 語彙が近い
 - [[econ-time-inconsistency|動学的不整合（時間的非整合性）]] — 語彙が近い
+- [[econ-time-inconsistency-monetary-policy|金融政策の時間的非整合性（裁量 vs. ルール）]] — 語彙が近い
+- [[econ-central-bank-independence-kydland|中央銀行の独立性と時間非一貫性問題——キドランド＝プレスコットの規則対裁量論]] — 語彙が近い
 - [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 同じ思想家
-- [[econ-central-bank-independence-kydland|中央銀行の独立性と時間非一貫性問題——キドランド＝プレスコットの規則対裁量論]] — 同じ思想家
 - [[econ-barro-growth|バロー成長回帰（Barro Growth Regression）]] — 同じ思想家
 - [[econ-central-bank-independence-rogoff|中央銀行の独立性——ロゴフの保守的中央銀行論とインフレ目標政策]] — 同じ思想家
 - [[econ-dsge-models|動的確率的一般均衡（DSGE）モデル]] — 同じ思想家

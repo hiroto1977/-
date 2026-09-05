@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[infosoc-data-double|データ・ダブル／監視的アサンブラージュ（Data Double / Surveillant Assemblage）]] — 語彙が近い
 - [[infosoc-surveillance-society|監視社会]] — 語彙が近い
+- [[econ-jovanovic-selection-firm-dynamics|ジョバノビッチの選択モデル——参入後の学習によって成長と退出が決まる企業動学の理論]] — 同じ思想家
 - [[infosoc-algorithmic-identity|アルゴリズム的アイデンティティ——データから統計的に推論・付与される、本人の自認から切り離された可変的な「私」]] — 同じ思想家
 - [[infosoc-banopticon-bigo|バノプティコン——危険視された少数を選別し排除する監視]] — 同じ思想家
 - [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同じ思想家

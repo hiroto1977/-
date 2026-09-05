@@ -2,7 +2,7 @@
 title: "eur-lex.europa.eu"
 type: source-domain
 host: "eur-lex.europa.eu"
-cite_count: 50
+cite_count: 51
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # eur-lex.europa.eu
 
-> [!info] 出典ドメイン索引 ・ 引用 **50 件**（公的 50）
+> [!info] 出典ドメイン索引 ・ 引用 **51 件**（公的 51）
 
 ## このドメインを出典とする項目
 
@@ -62,6 +62,7 @@ tags:
 - [[infosoc-gdpr-right-erasure|GDPRと忘れられる権利（消去権）]] — Regulation(EU)2016/679—EUR-Lex（EU公式法令データベース原典）
 - [[infosoc-generative-ai-regulation-stanford|生成AIの社会的影響と規制枠組み]] — EuropeanParliament(2024)Regulation(EU)2024/1689—EUAIAct（リスクベースAI規制枠組み…
 - [[infosoc-gig-economy|ギグ・エコノミー]] — EUR-Lex—Directive(EU)2024/2831（EUプラットフォーム労働指令：雇用関係の法的推定・アルゴリズム管理の透明性）
+- [[infosoc-new-governors-online-speech-klonick|新しい統治者論——プラットフォームを独自の規則・手続・文化でオンライン言論を統治する私的統治システムとみなす議論]] — Regulation(EU)2022/2065oftheEuropeanParliamentandoftheCouncilof19Octo…
 - [[infosoc-platform-envelopment-eisenmann|プラットフォーム包囲戦略（アイゼンマン）]] — EuropeanParliament(2022)Regulation(EU)2022/1925—DigitalMarketsAct（ゲート…
 - [[infosoc-profiling|プロファイリングと自動意思決定]] — Regulation(EU)2016/679(GDPR)consolidatedtext—Art.4(4)/Art.22,EUR-Lex
 

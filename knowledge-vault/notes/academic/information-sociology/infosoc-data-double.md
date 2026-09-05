@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[infosoc-data-double-haggerty-ericson|データ・ダブルと監視アサンブラージュ——データから再構成される情報的分身]] — 語彙が近い
 - [[infosoc-surveillance-society|監視社会]] — 語彙が近い
+- [[econ-jovanovic-selection-firm-dynamics|ジョバノビッチの選択モデル——参入後の学習によって成長と退出が決まる企業動学の理論]] — 同じ思想家
 - [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]] — 同じ思想家
 - [[infosoc-data-doubles|データ・ダブル]] — 同分野の近傍
 

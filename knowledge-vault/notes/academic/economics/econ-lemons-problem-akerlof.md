@@ -31,8 +31,8 @@ George A. Akerlof ／ Michael Spence ／ Joseph E. Stiglitz
 - [2001年ノーベル経済学賞 公式概要（NobelPrize.org）](https://www.nobelprize.org/prizes/economic-sciences/2001/summary/) `リファレンス`
 
 ## 関連概念
-- [[econ-signaling-screening-spence|シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）]] — 語彙が近い
 - [[econ-adverse-selection|逆選択（レモン市場）]] — 語彙が近い
+- [[econ-signaling-screening-spence|シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）]] — 語彙が近い
 - [[infosoc-information-asymmetry-akerlof-stiglitz|情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ]] — 語彙が近い
 - [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — 同じ思想家
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家

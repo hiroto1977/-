@@ -2,7 +2,7 @@
 title: "journals.uchicago.edu"
 type: source-domain
 host: "journals.uchicago.edu"
-cite_count: 41
+cite_count: 42
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # journals.uchicago.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **41 件**（学術 41）
+> [!info] 出典ドメイン索引 ・ 引用 **42 件**（学術 42）
 
 ## このドメインを出典とする項目
 
@@ -23,6 +23,7 @@ tags:
 - [[econ-diamond-coconut-model|ダイアモンドのココナッツ・モデル（Diamond 1982）——探索の外部性が生む複数均衡と協調の失敗]] — Diamond,P.A.(1982).AggregateDemandManagementinSearchEquilibrium.Journ…
 - [[econ-director-law|ディレクターの法則（Director's Law／Stigler 1970）——公共支出は中間層を主たる受益者として設計され、その負担は貧者と富者に及ぶ]] — Stigler,G.J.(1970).Director'sLawofPublicIncomeRedistribution.Journalo…
 - [[econ-entry-thresholds-bresnahan-reiss|ブレスナハン＝ライス参入閾値モデル——市場規模と参入企業数から競争の強さを推定する実証手法]] — Bresnahan,T.F.&Reiss,P.C.(1991)."EntryandCompetitioninConcentratedMar…
+- [[econ-fine-is-a-price-gneezy-rustichini|「罰金は価格である」——金銭的インセンティブが内発的・社会的動機を締め出し関係を取引に変える現象]] — Gneezy,U.,&Rustichini,A.(2000)."AFineisaPrice."TheJournalofLegalStudi…
 - [[econ-fiscal-decentralization-tiebout|財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争]] — Tiebout,C.M.(1956)APureTheoryofLocalExpenditures—JournalofPoliticalEc…
 - [[econ-fiscal-federalism-tiebout|財政連邦主義とティブー・モデル（足による投票と分権定理）]] — Tiebout(1956)APureTheoryofLocalExpenditures—JournalofPoliticalEconomy
 - [[econ-hotelling-rule|ホテリングのルール（枯渇性資源）]] — Hotelling,"TheEconomicsofExhaustibleResources,"JournalofPoliticalEcon…

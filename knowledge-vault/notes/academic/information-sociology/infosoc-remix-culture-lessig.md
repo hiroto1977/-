@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[infosoc-remix-culture-lessig-jenkins|リミックス文化論——デジタル技術による文化的再利用と著作権の緊張]] — 語彙が近い
-- [[infosoc-creative-commons|クリエイティブ・コモンズ（CCライセンス）]] — 語彙が近い
 - [[infosoc-remix-copyright-digital-culture|リミックス文化とデジタル著作権のジレンマ——クリエイティブ・コモンズの思想と実践]] — 語彙が近い
+- [[infosoc-creative-commons|クリエイティブ・コモンズ（CCライセンス）]] — 語彙が近い
 - [[infosoc-digital-commons-benkler|デジタル・コモンズとコモンズ・ベースド・ピア・プロダクション——ベンクラーの協働的知識生産]] — 同じ思想家
 - [[infosoc-generativity-zittrain|生成力（ジットレイン）——インターネットの革新力とその脆さ]] — 同じ思想家
 - [[infosoc-information-fiduciary|情報受託義務者（インフォメーション・フィデューシャリー）]] — 同じ思想家

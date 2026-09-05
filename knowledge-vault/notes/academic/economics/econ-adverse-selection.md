@@ -31,8 +31,8 @@ aliases:
 - [Encyclopaedia Britannica（Money）— George Akerlof：中古車市場での逆選択と1970年論文](https://www.britannica.com/money/George-Akerlof) `リファレンス`
 
 ## 関連概念
-- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 語彙が近い
 - [[econ-lemons-problem-akerlof|レモン市場]] — 語彙が近い
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 語彙が近い
 - [[econ-moral-hazard|モラルハザード（道徳的危険）]] — 語彙が近い
 - [[bizlaw-securities-insider-trading-regulation|インサイダー取引規制——証券市場の公正性と情報の非対称性への法的対応]] — 同じ思想家
 - [[econ-identity-economics|アイデンティティ経済学]] — 同じ思想家

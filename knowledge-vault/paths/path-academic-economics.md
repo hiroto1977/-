@@ -2,23 +2,23 @@
 title: "学習パス: 学術概念／経済学"
 type: learning-path
 path_key: "academic-economics"
-entry_count: 958
+entry_count: 960
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経済学（958件）
+# 学習パス — 学術概念／経済学（960件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 83）
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]]（接続 82）
 - [[econ-helicopter-money|ヘリコプターマネー]]（接続 49）
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 43）
 - [[econ-agglomeration-economies|集積の経済]]（接続 43）
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]]（接続 42）
 - [[econ-liquidity-trap|流動性のわな]]（接続 42）
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]]（接続 41）
 - [[econ-environmental-economics|環境経済学：外部性の内部化と持続可能な経済成長の理論的枠組み]]（接続 41）
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]]（接続 39）
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]]（接続 37）
@@ -250,6 +250,7 @@ tags:
 - 1970年: [[econ-adverse-selection|逆選択（レモン市場）]]
 - 1970年: [[econ-director-law|ディレクターの法則（Director's Law／Stigler 1970）——公共支出は中間層を主たる受益者として設計され、その負担は貧者と富者に及ぶ]]
 - 1970年: [[econ-efficient-market-hypothesis|効率的市場仮説（efficient market hypothesis, EMH）]]
+- 1970年: [[econ-fine-is-a-price-gneezy-rustichini|「罰金は価格である」——金銭的インセンティブが内発的・社会的動機を締め出し関係を取引に変える現象]]
 - 1970年: [[econ-harris-todaro|ハリス＝トダロ・モデル]]
 - 1970年: [[econ-peso-problem|ペソ問題（Peso Problem）]]
 - 1970年: [[econ-poole-instrument-choice|プールの政策手段選択モデル（Poole's instrument problem）——金利目標か貨幣供給量目標かはショックの源泉で決まる]]
@@ -323,6 +324,7 @@ tags:
 - 1982年: [[econ-diamond-coconut-model|ダイアモンドのココナッツ・モデル（Diamond 1982）——探索の外部性が生む複数均衡と協調の失敗]]
 - 1982年: [[econ-generalized-method-of-moments-hansen|一般化モーメント法（GMM）——モーメント条件のみから分布を仮定せず母数を推定するハンセンの一般理論]]
 - 1982年: [[econ-gift-exchange|贈与交換（労働の部分的贈与交換）]]
+- 1982年: [[econ-jovanovic-selection-firm-dynamics|ジョバノビッチの選択モデル——参入後の学習によって成長と退出が決まる企業動学の理論]]
 - 1982年: [[econ-rational-bubble|合理的バブル]]
 - 1982年: [[econ-rbc|実物的景気循環論（RBC）]]
 - 1982年: [[econ-reputation-effects-kreps-wilson-milgrom-roberts|不完備情報下の評判効果——わずかなタイプの不確実性が参入阻止と協調を合理化する]]

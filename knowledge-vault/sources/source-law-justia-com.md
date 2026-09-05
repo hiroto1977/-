@@ -2,7 +2,7 @@
 title: "law.justia.com"
 type: source-domain
 host: "law.justia.com"
-cite_count: 31
+cite_count: 34
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # law.justia.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **31 件**（リファレンス 24 ・ 公的 7）
+> [!info] 出典ドメイン索引 ・ 引用 **34 件**（リファレンス 24 ・ 公的 10）
 
 ## このドメインを出典とする項目
 
@@ -38,6 +38,9 @@ tags:
 - [[bizlaw-material-adverse-change-clause|MAC条項法理]] — Akornv.FreseniusKabi(Del.Ch.2018)
 - [[bizlaw-material-adverse-change-clause|MAC条項法理]] — Hexionv.Huntsman,965A.2d715(Del.Ch.2008)
 - [[bizlaw-material-adverse-change-clause|MAC条項法理]] — IBPv.TysonFoods,789A.2d14(Del.Ch.2001)
+- [[bizlaw-procd-v-zeidenberg-shrinkwrap-clickwrap|プロCD対ザイデンバーグ事件——包装を開けた・クリックしたことで成立するライセンス契約の拘束力を認めた米連邦控訴審判例]] — Hillv.Gateway2000,Inc.,105F.3d1147(7thCir.1997),JustiaLaw—箱内条項・仲裁条項にP…
+- [[bizlaw-procd-v-zeidenberg-shrinkwrap-clickwrap|プロCD対ザイデンバーグ事件——包装を開けた・クリックしたことで成立するライセンス契約の拘束力を認めた米連邦控訴審判例]] — Klocekv.Gateway,Inc.,104F.Supp.2d1332(D.Kan.2000),JustiaLaw—UCC§2-207…
+- [[bizlaw-procd-v-zeidenberg-shrinkwrap-clickwrap|プロCD対ザイデンバーグ事件——包装を開けた・クリックしたことで成立するライセンス契約の拘束力を認めた米連邦控訴審判例]] — ProCD,Inc.v.Zeidenberg,86F.3d1447(7thCir.1996),JustiaLaw—事件の事実、UCC§2-…
 - [[bizlaw-res-ipsa-loquitur|過失の推認法理レス・イプサ・ロクィトゥル（res ipsa loquitur／「事物自体が語る」）——Byrne v Boadle 1863が確立した、状況証拠から過失を推認する枠組み]] — Byrnev.Boadle,159Eng.Rep.299(Exch.1863)（Justia収録の判決原文・PollockC.B.の判示）
 - [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]] — Justia—Revlon,Inc.v.MacAndrews&ForbesHoldings,506A.2d173(Del.1986)
 - [[bizlaw-shareholder-primacy-doctrine|株主優先主義（シェアホルダー・プライマシー）]] — Dodgev.FordMotorCo.,204Mich.459,170N.W.668(1919)

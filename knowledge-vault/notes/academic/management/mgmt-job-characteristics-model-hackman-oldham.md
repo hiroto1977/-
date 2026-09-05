@@ -35,11 +35,11 @@ J・リチャード・ハックマン ／ グレッグ・オールダム ／ フ
 - [[mgmt-work-design-growth-model|職務設計成長モデル]] — 語彙が近い
 - [[mgmt-job-enrichment|職務拡大と職務充実]] — 語彙が近い
 - [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 同じ思想家
+- [[econ-fine-is-a-price-gneezy-rustichini|「罰金は価格である」——金銭的インセンティブが内発的・社会的動機を締め出し関係を取引に変える現象]] — 同じ思想家
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同じ思想家
 - [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 同じ思想家
 - [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]] — 同じ思想家
 - [[human-undermining-effect|アンダーマイニング効果（過正当化効果）]] — 同じ思想家
-- [[mgmt-five-dysfunctions-lencioni|チームの五つの機能不全——信頼の欠如から始まる連鎖]] — 同じ思想家
 - [[mgmt-team-effectiveness-hackman-wageman|チーム有効性理論——ハックマンの条件モデルとチームコーチング]] — 同じ思想家
 
 ## 関連

@@ -39,7 +39,7 @@ aliases:
 - [[human-explanatory-style-attribution|説明スタイルと帰属理論（ペターソン＆セリグマン）]] — 同じ思想家
 - [[human-flow-optimal-experience-csikszentmihalyi|フロー理論と最適経験の積極心理学（チクセントミハイ）]] — 同じ思想家
 - [[human-flow-psychology-csikszentmihalyi|フロー理論と最適経験——チクセントミハイによる没入状態と人間の幸福の心理学]] — 同じ思想家
-- [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 同じ思想家
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

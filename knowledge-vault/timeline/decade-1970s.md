@@ -2,14 +2,14 @@
 title: "1970年代"
 type: timeline-decade
 decade: 1970
-entry_count: 178
+entry_count: 179
 tags:
   - timeline
 ---
 
-# 1970年代 — 178 件
+# 1970年代 — 179 件
 
-- [[year-1970|1970年]]（17件）
+- [[year-1970|1970年]]（18件）
 - [[year-1971|1971年]]（17件）
 - [[year-1972|1972年]]（18件）
 - [[year-1973|1973年]]（25件）

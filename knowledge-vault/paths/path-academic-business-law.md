@@ -2,13 +2,13 @@
 title: "学習パス: 学術概念／ビジネス法務"
 type: learning-path
 path_key: "academic-business-law"
-entry_count: 690
+entry_count: 691
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／ビジネス法務（690件）
+# 学習パス — 学術概念／ビジネス法務（691件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
@@ -17,17 +17,17 @@ tags:
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 59）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 37）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 37）
-- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 30）
-- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]]（接続 29）
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 31）
+- [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]]（接続 30）
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]]（接続 29）
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 28）
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 27）
-- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 27）
 - [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]]（接続 26）
+- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
 - [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]]（接続 26）
 - [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]]（接続 26）
 - [[bizlaw-earnest-money|手付（民法557条）]]（接続 25）
-- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]]（接続 25）
+- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]]（接続 25）
 
 ## 第 2 部 — 年代順の展開
 - 1511年: [[bizlaw-lucy-v-zehmer-objective-theory-of-contract|ルーシー対ゼーマー事件と契約成立の客観説——内心でなく言葉と行為の外形で合意を判断する原則]]
@@ -174,6 +174,7 @@ tags:
 - 1995年: [[bizlaw-inevitable-disclosure-doctrine|不可避的開示の法理——転職者の知識のみで差止めを認めるか州で分裂した米国営業秘密理論]]
 - 1995年: [[bizlaw-insurance-business-act|保険業法]]
 - 1996年: [[bizlaw-civil-procedure|民事訴訟法]]
+- 1996年: [[bizlaw-procd-v-zeidenberg-shrinkwrap-clickwrap|プロCD対ザイデンバーグ事件——包装を開けた・クリックしたことで成立するライセンス契約の拘束力を認めた米連邦控訴審判例]]
 - 1996年: [[bizlaw-slapp|SLAPP訴訟（戦略的言論封殺訴訟）]]
 - 1997年: [[bizlaw-long-term-care-insurance|介護保険法]]
 - 1998年: [[bizlaw-e-bookkeeping|電子帳簿保存法]]
@@ -476,7 +477,6 @@ tags:
 - [[bizlaw-fault-liability|過失責任の原則と無過失責任]]
 - [[bizlaw-fictitious-manifestation|通謀虚偽表示（民法94条）]]
 - [[bizlaw-fiduciary-duty|信認義務（受託者責任）]]
-- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]]
 - [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]]
 - [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]]
 - [[bizlaw-fisher-v-bell|フィッシャー対ベル——「陳列」は申込みか、申込みの誘引か]]
@@ -504,6 +504,7 @@ tags:
 - [[bizlaw-illegality-contract|違法な契約——法令や公序に反する契約の執行不能性]]
 - [[bizlaw-implied-covenant-good-faith|誠実義務・公正取引の黙示的誓約]]
 - [[bizlaw-implied-terms|黙示の契約条項——当事者が明示せずとも契約に読み込まれる条項]]
+- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]]
 - [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]]
 - [[bizlaw-in-pari-delicto-doctrine|均等違法原則（インパリ・デリクト）]]
 - [[bizlaw-incoterms|インコタームズ——国際売買における売主と買主の責任を定める定型取引条件]]

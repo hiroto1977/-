@@ -2,19 +2,19 @@
 title: "学習パス: 学術概念／経営学"
 type: learning-path
 path_key: "academic-management"
-entry_count: 662
+entry_count: 663
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／経営学（662件）
+# 学習パス — 学術概念／経営学（663件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
 - [[agile-development|アジャイルソフトウェア開発]]（接続 61）
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 39）
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 38）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 30）
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
 - [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]]（接続 26）
@@ -75,6 +75,7 @@ tags:
 - 1958年: [[mgmt-job-based-employment|ジョブ型雇用]]
 - 1958年: [[mgmt-tannenbaum-schmidt|タンネンバウム＝シュミットのリーダーシップ連続体]]
 - 1958年: [[mgmt-woodward-technology|ウッドワードの技術類型]]
+- 1959年: [[mgmt-culture-map-eight-scales-meyer|カルチャーマップ——8つの尺度で各国のビジネス行動を相対的に位置づける枠組み]]
 - 1959年: [[mgmt-penrose-growth|ペンローズの企業成長理論]]
 - 1959年: [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]]
 - 1960年: [[mgmt-goal-setting-theory|目標設定理論（goal-setting theory）]]

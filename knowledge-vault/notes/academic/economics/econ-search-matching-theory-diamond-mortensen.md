@@ -40,7 +40,7 @@ aliases:
 - [[econ-fiscal-multiplier-keynes|財政乗数とケインズ乗数効果の経済政策論]] — 同じ思想家
 - [[econ-harberger-excess-burden-taxation|ハーバーガーの超過負担——課税の厚生損失と最適税制設計]] — 同じ思想家
 - [[econ-kinked-demand-sweezy|屈折需要曲線——寡占における価格の硬直性を説明するモデル]] — 同じ思想家
-- [[econ-leverage-cycle|レバレッジ・サイクル]] — 同分野の近傍
+- [[econ-habit-formation-asset|習慣形成資産価格モデル（Habit Formation in Asset Pricing）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

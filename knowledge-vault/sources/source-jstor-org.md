@@ -2,7 +2,7 @@
 title: "jstor.org"
 type: source-domain
 host: "jstor.org"
-cite_count: 145
+cite_count: 146
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # jstor.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **145 件**（学術 144 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **146 件**（学術 145 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -78,6 +78,7 @@ tags:
 - [[econ-home-bias-puzzle|ホームバイアス・パズル——投資家が自国資産に過度に偏る謎]] — French,K.R.&Poterba,J.M.(1991)InvestorDiversificationandInternational…
 - [[econ-home-market-effect|本国市場効果（ホーム・マーケット効果、home market effect）——大きな国内市場が純輸出を生む]] — Krugman,P.R.(1980)"ScaleEconomies,ProductDifferentiation,andthePatter…
 - [[econ-inequality-measurement|不平等測定・所得格差の計量：ジニ係数・ローレンツ曲線・アトキンソン指数による経済的不平等の定量化体系]] — Lorenz1905—MethodsofMeasuringtheConcentrationofWealth,Publicationsoft…
+- [[econ-jovanovic-selection-firm-dynamics|ジョバノビッチの選択モデル——参入後の学習によって成長と退出が決まる企業動学の理論]] — TimothyDunne,MarkJ.RobertsandLarrySamuelson(1988)"PatternsofFirmEntry…
 - [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — Kitchin,J.1923.CyclesandTrendsinEconomicFactors.ReviewofEconomicsandS…
 - [[econ-kitchin-cycle|キッチン循環：在庫投資の短期景気循環]] — Metzler,L.A.1941.TheNatureandStabilityofInventoryCycles.ReviewofEcono…
 - [[econ-limit-pricing-bain|参入阻止価格——潜在的参入者を思いとどまらせる戦略的な低価格設定]] — Modigliani,F.(1958)NewDevelopmentsontheOligopolyFront—JournalofPoliti…

@@ -2,19 +2,19 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 647
+entry_count: 648
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（647件）
+# 学習パス — 学術概念／人間科学（648件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 144）
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 102）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 145）
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 103）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 31）
 - [[human-attribution-theory|帰属理論]]（接続 29）
@@ -27,7 +27,7 @@ tags:
 - [[human-cognitive-appraisal|認知的評価理論（感情）]]（接続 25）
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 25）
 - [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 25）
-- [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]]（接続 24）
+- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]（接続 24）
 
 ## 第 2 部 — 年代順の展開
 - 1510年: [[human-phantom-limb|幻肢（ファントムリム）]]
@@ -229,6 +229,7 @@ tags:
 - 1990年: [[human-prospective-memory|展望的記憶（Prospective Memory）]]
 - 1990年: [[human-reactive-devaluation|反応的価値低減（リアクティブ・デバリュエーション／Reactive devaluation）——相手が出した案というだけで価値が下がる認知バイアス]]
 - 1990年: [[human-selective-optimization-with-compensation-baltes|選択・最適化・補償（SOC）モデル——資源が減る中で目標を絞り、手段を磨き、失った機能を補って発達を続けるバルテスの生涯発達論]]
+- 1990年: [[human-swiss-cheese-model-accident-causation-reason|スイスチーズモデル——多層防護に開いた穴が一列に並んだ瞬間に事故が起きるとする、能動的失敗と潜在的条件の事故因果モデル]]
 - 1991年: [[human-legitimate-peripheral-participation|正統的周辺参加と実践共同体]]
 - 1991年: [[human-optimal-distinctiveness|最適弁別性理論（Optimal Distinctiveness Theory／Brewer 1991）——人は所属（同化）と差異化（独自性）の相反する欲求の均衡点で社会的アイデンティティを選ぶ]]
 - 1991年: [[human-rumination|反芻思考]]
@@ -337,7 +338,6 @@ tags:
 - [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]]
 - [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]]
 - [[human-baroreceptor-reflex|圧受容器反射（バロレフレックス）]]
-- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]
 - [[human-bayesian-brain-hypothesis|ベイジアン脳仮説]]
 - [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]]
 - [[human-biased-competition|バイアス付き競合理論（biased competition theory／注意のバイアス競合モデル）——複数刺激が限られた神経表現をめぐって争い、注意がその競合を行動上重要な対象に有利となるよう偏らせる]]
@@ -370,6 +370,7 @@ tags:
 - [[human-compassion-fatigue-burnout-stamm|共感疲労とバーンアウト・二次的外傷性ストレス（スタム）]]
 - [[human-compassion-fatigue-figley|共感疲労（フィグリー）]]
 - [[human-compassion-focused-therapy-gilbert|コンパッション焦点化療法——ギルバートの三情動制御システムと自己批判への介入]]
+- [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]]
 - [[human-construal-level-trope|解釈レベル理論——心理的距離が対象の抽象的・具体的表象を規定する]]
 - [[human-constructive-developmental-kegan|構成的発達理論——意味構成の段階的変容と主体-客体均衡]]
 - [[human-contact-hypothesis-allport|接触仮説：集団間接触による偏見低減理論]]

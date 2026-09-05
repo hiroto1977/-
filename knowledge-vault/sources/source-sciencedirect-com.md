@@ -2,7 +2,7 @@
 title: "sciencedirect.com"
 type: source-domain
 host: "sciencedirect.com"
-cite_count: 126
+cite_count: 127
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # sciencedirect.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **126 件**（学術 114 ・ リファレンス 12）
+> [!info] 出典ドメイン索引 ・ 引用 **127 件**（学術 115 ・ リファレンス 12）
 
 ## このドメインを出典とする項目
 
@@ -98,6 +98,7 @@ tags:
 - [[human-social-referencing|社会的参照（Social Referencing）]] — SocialReferencing—ScienceDirectTopics
 - [[human-somatic-marker-hypothesis|ソマティック・マーカー仮説（Somatic Marker Hypothesis）]] — Bechara&Damasio(2005)TheSomaticMarkerHypothesis:ANeuralTheoryofEconom…
 - [[human-status-characteristics|地位特性理論（期待状態理論）]] — Berger,Zelditch&Anderson(1977)StatusCharacteristicsandSocialInteracti…
+- [[human-swiss-cheese-model-accident-causation-reason|スイスチーズモデル——多層防護に開いた穴が一列に並んだ瞬間に事故が起きるとする、能動的失敗と潜在的条件の事故因果モデル]] — JustinLarouzée&Jean-ChristopheLeCoze(2020)"Goodandbadreasons:TheSwiss…
 - [[human-teleological-reasoning|目的論的推論（Teleological Reasoning in Infancy）]] — Gergely&Csibra(2003)TeleologicalReasoninginInfancy—TrendsinCognitiveS…
 - [[human-theory-of-mind-baron-cohen|心の理論と自閉症スペクトラム——バロン＝コーエンのサリーとアン課題と共感システム論]] — Baron-Cohen,S.etal.(1985)DoestheAutisticChildHavea"TheoryofMind"?—Cog…
 - [[human-visual-agnosia|視覚性失認（Visual Agnosia）]] — VisualAgnosia—ScienceDirectTopicsOverview

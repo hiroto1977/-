@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-intellectual-property-trade-secret|営業秘密と知的財産保護——不正競争防止法の秘密管理性要件と情報漏洩対策]] — 同じ思想家
+- [[bizlaw-procd-v-zeidenberg-shrinkwrap-clickwrap|プロCD対ザイデンバーグ事件——包装を開けた・クリックしたことで成立するライセンス契約の拘束力を認めた米連邦控訴審判例]] — 同じ思想家
 - [[bizlaw-trade-secret-protection-trips|営業秘密保護法——不正競争防止と国際的調和の法的枠組み]] — 同じ思想家
 - [[bizlaw-disclose-or-abstain-rule|開示又は断念の法理（disclose-or-abstain rule／情報平等理論）——重要未公開情報を持つ者は「公表して取引するか、取引を断念するか」を迫られる]] — 出典を共有
 - [[infosoc-techno-nationalism|テクノナショナリズム（Techno-nationalism）]] — 出典を共有

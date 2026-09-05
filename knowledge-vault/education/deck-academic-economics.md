@@ -2,13 +2,13 @@
 title: "フラッシュカード: 学術概念／経済学"
 type: flashcard-deck
 deck_key: "academic-economics"
-card_count: 958
+card_count: 960
 tags:
   - education
   - flashcards
 ---
 
-# フラッシュカード — 学術概念／経済学（958枚）
+# フラッシュカード — 学術概念／経済学（960枚）
 
 > [!info] 表=概念名 / 裏=検証済み定義の先頭文。`knowledge-graph/education/flashcards.ndjson` と同一の純関数から生成。
 
@@ -640,6 +640,8 @@ tags:
   - **A:** 金融化とは、Krippner が定義した「利潤獲得が貿易・財生産ではなく金融チャネルを通じて行われる蓄積パターン」であり、GDP に占める金融部門比率の増大、非金融企業による配当・利子・キャピタルゲイン依存の深化、株主価値最大化規範の普及を指す。（→ [[econ-financialization]]）
 - **Q:** 金融化とシェアホルダー・バリュー——ラゾニックの「保持・再投資」から「縮小・分配」への転換
   - **A:** 金融化（financialization）とは，非金融企業・家計・国家が金融的論理と活動により強く従属するようになる長期的傾向であり，1980年代以降の先進国経済を特徴づける構造変化として論じられる。（→ [[econ-financialization-lazonick-shareholder]]）
+- **Q:** 「罰金は価格である」——金銭的インセンティブが内発的・社会的動機を締め出し関係を取引に変える現象
+  - **A:** 「罰金は価格である」（A Fine Is a Price）は、罰金などの外的インセンティブが内発的動機づけや社会的規範を締め出す現象を示した知見で、ウリ・ニーズィーとアルド・ルスティキーニの論文『A Fine is a Price』（The Journal of Legal Studies第29巻1号、2000年）に由来する。（→ [[econ-fine-is-a-price-gneezy-rustichini]]）
 - **Q:** 財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争
   - **A:** 財政分権化（Fiscal Decentralization）とは、公共サービスの提供権限・財源・責任を中央政府から地方政府に移譲する制度的枠組みであり、チャールズ・ティブーは1956年の論文「公共支出の純粋理論——地方財政版」で「足による投票（Voting with Feet）」仮説を提唱した。住民が税負担と公共サービスの最適パッケージを提供する自治体を選択・移住することで、市場競争に類似した地方財政効率が実現するとする。（→ [[econ-fiscal-decentralization-tiebout]]）
 - **Q:** 財政支配（Fiscal Dominance）
@@ -962,6 +964,8 @@ tags:
   - **A:** 雇用の二極化（job polarization）は、技術進歩が労働需要を高技能職と低技能職の両端に偏らせ、中位の職を相対的に痩せ細らせる現象を指す。（→ [[econ-job-polarization]]）
 - **Q:** 連帯責任型グループ貸付理論（Joint Liability Group Lending）
   - **A:** 連帯責任型グループ貸付理論とは、無担保の貧困層向け融資において、借り手同士に互いの返済を連帯保証させる仕組み（joint liability lending）が、情報の非対称性下での逆選択とモラルハザードをいかに緩和しうるかを説明する開発金融論の理論である。（→ [[econ-joint-liability-group-lending]]）
+- **Q:** ジョバノビッチの選択モデル——参入後の学習によって成長と退出が決まる企業動学の理論
+  - **A:** ジョバノビッチの選択モデルは、ボヤン・ジョバノビッチが論文『Selection and the Evolution of Industry』（Econometrica第50巻3号、1982年、649–670頁）で示した産業進化の理論である。（→ [[econ-jovanovic-selection-firm-dynamics]]）
 - **Q:** ジュグラー・サイクル（Juglar Cycle）
   - **A:** ジュグラー・サイクル（Juglar Cycle）とは、固定資本投資の変動を主因とする約7〜11年の周期性を持つ中期的景気循環である。（→ [[econ-juglar-cycle]]）
 - **Q:** フリードマンのk%ルール（貨幣供給量固定成長率準則）

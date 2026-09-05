@@ -2,7 +2,7 @@
 title: "hbr.org"
 type: source-domain
 host: "hbr.org"
-cite_count: 70
+cite_count: 72
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # hbr.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **70 件**（学術 43 ・ メディア 25 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **72 件**（学術 45 ・ メディア 25 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -29,6 +29,8 @@ tags:
 - [[mgmt-clan-control-ouchi|クラン統制理論——大内の市場・官僚制・クランの三類型と組織文化による制御]] — Ouchi,W.G.(1981)TheoryZ—HBRReview
 - [[mgmt-core-competence|コアコンピタンス（中核的能力）]] — Prahalad&Hamel,TheCoreCompetenceoftheCorporation,HBR(1990)
 - [[mgmt-corporate-parenting|ペアレンティング戦略]] — Campbell,Goold&Alexander,"CorporateStrategy:TheQuestforParentingAdvan…
+- [[mgmt-culture-map-eight-scales-meyer|カルチャーマップ——8つの尺度で各国のビジネス行動を相対的に位置づける枠組み]] — Meyer,E.(2014)."NavigatingtheCulturalMinefield."HarvardBusinessReview…
+- [[mgmt-culture-map-eight-scales-meyer|カルチャーマップ——8つの尺度で各国のビジネス行動を相対的に位置づける枠組み]] — Meyer,E.(2015)."WhenCultureDoesn'tTranslate."HarvardBusinessReview,93…
 - [[mgmt-cynefin|クネビン・フレームワーク]] — Snowden&Boone,"ALeader'sFrameworkforDecisionMaking",HarvardBusinessRe…
 - [[mgmt-design-thinking-brown-ideo|デザイン思考——ブラウンとIDEOの共感・定義・発想・プロトタイプ・テストの革新プロセス]] — Brown,T.(2008)DesignThinking—HarvardBusinessReview
 - [[mgmt-diamond-model-porter|ポーターのダイヤモンドモデル——国の競争優位を生む四つの決定要因]] — MichaelE.Porter,"TheCompetitiveAdvantageofNations,"HarvardBusinessRev…

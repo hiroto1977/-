@@ -35,8 +35,8 @@ aliases:
 ## 関連概念
 - [[econ-signaling|シグナリング]] — 同じ思想家
 - [[econ-lerner-index-market-power|ラーナー指数（市場支配力の測定）]] — 同じ思想家
+- [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — 同分野の近傍
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

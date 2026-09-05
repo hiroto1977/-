@@ -41,7 +41,7 @@ aliases:
 - [[infosoc-fake-news-ecosystem-wardle|誤情報エコシステムの類型（ウォードル）]] — 同じ思想家
 - [[infosoc-hate-speech-online-moderation|ヘイトスピーチとオンライン・コンテンツ・モデレーションの社会法学]] — 同じ思想家
 - [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 同じ思想家
-- [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 同じ思想家
+- [[infosoc-new-governors-online-speech-klonick|新しい統治者論——プラットフォームを独自の規則・手続・文化でオンライン言論を統治する私的統治システムとみなす議論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

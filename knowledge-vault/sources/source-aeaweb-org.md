@@ -2,7 +2,7 @@
 title: "aeaweb.org"
 type: source-domain
 host: "aeaweb.org"
-cite_count: 40
+cite_count: 41
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # aeaweb.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **40 件**（学術 40）
+> [!info] 出典ドメイン索引 ・ 引用 **41 件**（学術 41）
 
 ## このドメインを出典とする項目
 
@@ -25,6 +25,7 @@ tags:
 - [[econ-credit-channel-monetary-transmission|金融政策伝達の信用チャネル]] — Kashyap&Stein(2000)WhatDoaMillionObservationsonBanksSayabouttheTransm…
 - [[econ-diamond-mirrlees|ダイヤモンド＝マーリーズの生産効率定理]] — Diamond&Mirrlees(1971)"OptimalTaxationandPublicProductionI:Production…
 - [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — Dixit&Stiglitz,"MonopolisticCompetitionandOptimumProductDiversity,"Am…
+- [[econ-fine-is-a-price-gneezy-rustichini|「罰金は価格である」——金銭的インセンティブが内発的・社会的動機を締め出し関係を取引に変える現象]] — Gneezy,U.,Meier,S.,&Rey-Biel,P.(2011)."WhenandWhyIncentives(Don't)Wor…
 - [[econ-focal-point|フォーカルポイント（シェリングの焦点）]] — AmericanEconomicAssociation:Schellingの焦点と交渉に関する解説
 - [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]] — Jensen&Miller(2008)GiffenBehaviorandSubsistenceConsumption,AmericanEc…
 - [[econ-grossman-helpman-protection-for-sale|保護の販売モデル（グロスマン＝ヘルプマン「Protection for Sale」）——貿易保護の政治経済学]] — Goldberg,P.K.&Maggi,G.(1999)"ProtectionforSale:AnEmpiricalInvestigati…

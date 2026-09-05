@@ -4453,5 +4453,11 @@ Service Hub が参照する学際的知識（経済学・経営学・人間科�
 | 人間科学 | 選択・最適化・補償（SOC）モデル——資源が減る中で目標を絞り、手段を磨き、失った機能を補って発達を続けるバルテスの生涯発達論 | ポール・B・バルテス（1990『Successful Aging』共編 ／ 1997 American Psychologist「On the Incomplete Architecture of Human Ontogeny」） ／ マーガレット・M・バルテス（1990『Successful Aging』共編） |
 | 商法 | ピーヴィーハウス対ガーランド石炭事件——完成費用か価値減少分か、契約損害賠償の測り方 | ジャクソン判事（多数意見・1962） ／ アーウィン判事（反対意見・1962） ／ ジュディス・マウテ（1995『Peevyhouse v. Garland Coal & Mining Co. Revisited: The Ballad of Willie and Lucille』Northwestern University Law Review 89） |
 | 情報社会学 | カーの「浅瀬」論——ネットの断片的・多重的な情報環境が深い読みと持続的注意を蝕むという主張 | ニコラス・カー（2008『Is Google Making Us Stupid?』The Atlantic ／ 2010『The Shallows』W. W. Norton） ／ マイケル・マーゼニック（神経可塑性研究） |
+| 経済学 | ジョバノビッチの選択モデル——参入後の学習によって成長と退出が決まる企業動学の理論 | ボヤン・ジョバノビッチ（1982『Selection and the Evolution of Industry』） ／ ヒューゴ・ホペンハイン（1992『Entry, Exit, and Firm Dynamics in Long Run Equilibrium』） ／ リチャード・エリクソン＆アリエル・パックス（1995『Markov-Perfect Industry Dynamics』） |
+| 経済学 | 「罰金は価格である」——金銭的インセンティブが内発的・社会的動機を締め出し関係を取引に変える現象 | ウリ・ニーズィー＆アルド・ルスティキーニ（2000『A Fine is a Price』 ／ 2000『Pay Enough or Don't Pay at All』） ／ ブルーノ・S・フライ＆レト・イェーゲン（2001『Motivation Crowding Theory』） |
+| 経営学 | カルチャーマップ——8つの尺度で各国のビジネス行動を相対的に位置づける枠組み | エリン・メイヤー（INSEAD教授。2014『The Culture Map: Breaking Through the Invisible Boundaries of Global Business』 ／ 2014 HBR論文「Navigating the Cultural Minefield」 ／ 2015 HBR論文「When Culture Doesn't Translate」） |
+| 人間科学 | スイスチーズモデル——多層防護に開いた穴が一列に並んだ瞬間に事故が起きるとする、能動的失敗と潜在的条件の事故因果モデル | ジェームズ・リーズン（1990『Human Error』Cambridge University Press ／ 1997『Managing the Risks of Organizational Accidents』Ashgate ／ 2000 BMJ「Human error: models and management」／2006 EUROCONTROL論考でモデルを自己検証） |
+| 商法 | プロCD対ザイデンバーグ事件——包装を開けた・クリックしたことで成立するライセンス契約の拘束力を認めた米連邦控訴審判例 | フランク・イースターブルック（1996 ProCD, Inc. v. Zeidenberg, 86 F.3d 1447 ／ 1997 Hill v. Gateway 2000, Inc., 105 F.3d 1147） ／ マーク・レムリー（2006『Terms of Use』Minnesota Law Review 91巻2号459-483頁） |
+| 情報社会学 | 新しい統治者論——プラットフォームを独自の規則・手続・文化でオンライン言論を統治する私的統治システムとみなす議論 | ケイト・クロニック（2018『The New Governors: The People, Rules, and Processes Governing Online Speech』 ／ 2020『The Facebook Oversight Board: Creating an Independent Institution to Adjudicate Online Free Expression』） ／ ジャック・M・バルキン（2018『Free Speech is a Triangle』・言論の三角形モデル） |
 
 出典 URL は `academicKnowledge.ts` の各 `sources` に機械可読で保持。概念の追加・更新は本書と当該データを PR で更新する。

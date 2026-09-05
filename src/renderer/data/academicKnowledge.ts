@@ -50579,5 +50579,101 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.forbes.com/2010/05/30/clay-shirky-nicholas-carr-technology-internet.html', type: 'media', label: 'Forbes (2010), "Eeek! The Internet!" — カー『The Shallows』とシャーキー『Cognitive Surplus』の論争を伝える同時代報道' },
     ],
   },
+  {
+    id: 'econ-jovanovic-selection-firm-dynamics',
+    discipline: 'economics',
+    title: 'ジョバノビッチの選択モデル——参入後の学習によって成長と退出が決まる企業動学の理論',
+    statement:
+      'ジョバノビッチの選択モデルは、ボヤン・ジョバノビッチが論文『Selection and the Evolution of Industry』（Econometrica第50巻3号、1982年、649–670頁）で示した産業進化の理論である。企業は参入時点で自社の効率性を知らず、操業で得る利潤という雑音を含む信号から自己の効率性を学習し直す——効率が高いとわかれば投資を増やして成長・存続し、低いとわかれば縮小・撤退する「ノイズを伴う選択」である。この結果、若く小さい企業ほど成長率が高く分散も大きく退出確率も高く、規模・年齢が上がるほど成長率は下がる（ジブラの法則は小規模・若年企業では成り立たない）。ホペンハイン（1992年、Econometrica第60巻5号）は参入コストと生産性ショックを組み込み定常均衡へ拡張し、政策分析にも使われる。エリクソン＆パックス（1995年）は企業が投資で成功確率を能動的に上げるマルコフ完全均衡版を示し、ジョバノビッチ型の受動的学習との対比で能動的探索モデルとして知られる。ダン＝ロバーツ＝サミュエルソン（1988年）の米国製造業データは、参入率と退出率の強い相関、新規企業ほど退出しやすい傾向を確認し、これらの予測を裏付けた。批判には、資金制約や需要変動が成長低下を説明しうる点、生存企業しか観察できないサバイバーシップ・バイアスがある。実務上は、創業初期の利益の変動を自社効率性の情報信号として読み、撤退を失敗でなく合理的判断として受け止めるべきである。',
+    keyFigures: 'ボヤン・ジョバノビッチ（1982『Selection and the Evolution of Industry』）／ヒューゴ・ホペンハイン（1992『Entry, Exit, and Firm Dynamics in Long Run Equilibrium』）／リチャード・エリクソン＆アリエル・パックス（1995『Markov-Perfect Industry Dynamics』）／ティモシー・ダン＆マーク・ロバーツ＆ラリー・サミュエルソン（1988、実証研究）／対比: エリック・ハースト＆ベンジャミン・パグズリー（2011、実務含意）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1982/05/01/selection-and-evolution-industry', type: 'academic', label: 'Boyan Jovanovic (1982) "Selection and the Evolution of Industry", Econometrica, 50(3), pp.649-670 — 選択モデルの原典。企業が参入後に自社の効率性を学習するという中心主張の典拠' },
+      { url: 'https://www.econometricsociety.org/publications/econometrica/1992/09/01/entry-exit-and-firm-dynamics-long-run-equilibrium', type: 'academic', label: 'Hugo A. Hopenhayn (1992) "Entry, Exit, and Firm Dynamics in Long Run Equilibrium", Econometrica, 60(5), pp.1127-1150 — 参入コストと生産性ショックを組み込んだ定常均衡モデルへの拡張の典拠' },
+      { url: 'https://academic.oup.com/restud/article-abstract/62/1/53/1568000', type: 'academic', label: 'Richard Ericson and Ariel Pakes (1995) "Markov-Perfect Industry Dynamics: A Framework for Empirical Work", The Review of Economic Studies, 62(1), pp.53-82 — 企業が投資により能動的に成功確率へ影響する版（能動的学習）の典拠' },
+      { url: 'https://www.jstor.org/stable/2555454', type: 'academic', label: 'Timothy Dunne, Mark J. Roberts and Larry Samuelson (1988) "Patterns of Firm Entry and Exit in U.S. Manufacturing Industries", RAND Journal of Economics, 19(4), pp.495-515 — 参入率と退出率の強い相関、新規企業ほど退出しやすいという実証パターンの典拠' },
+      { url: 'https://muse.jhu.edu/article/475018/summary', type: 'academic', label: 'Erik Hurst and Benjamin Pugsley (2011) "What Do Small Businesses Do?", Brookings Papers on Economic Activity, Fall 2011, pp.73-118 — 多くの小規模事業者が成長や革新を意図していないという実証知見の典拠' },
+    ],
+  },
+  {
+    id: 'econ-fine-is-a-price-gneezy-rustichini',
+    discipline: 'economics',
+    title: '「罰金は価格である」——金銭的インセンティブが内発的・社会的動機を締め出し関係を取引に変える現象',
+    statement:
+      '「罰金は価格である」（A Fine Is a Price）は、罰金などの外的インセンティブが内発的動機づけや社会的規範を締め出す現象を示した知見で、ウリ・ニーズィーとアルド・ルスティキーニの論文『A Fine is a Price』（The Journal of Legal Studies第29巻1号、2000年）に由来する。ハイファの保育園10園中6園で閉園後10分超の遅刻に児童1人当たり10シェケルの罰金を課すと、遅刻はほぼ倍増し撤廃後も元に戻らなかった。罰金が「時間を守る義務」を「延長保育を買う取引」に変え、一度商品化した関係は元に戻らないためと解釈された。同年の『Pay Enough or Don\'t Pay at All』も、IQテストと訪問募金の実験で少額支払いが無報酬より成果を下げる非単調性を確認し、フライ＝イェーゲンの「モチベーション・クラウディング理論」（2001年）が自己決定理論を基に体系化した。メルストローム＝ヨハンソン（2008年）の献血実験はティトマスの仮説を部分的に支持し、ニーズィーらの2011年の総説（Journal of Economic Perspectives）は単純作業や信頼を伝える場面で機能するが利他的・イメージが絡む行動では逆効果になりやすいとした。追試では再現性に疑問が呈されている。中小企業には、遅刻料や社員ボーナスの設計を誤ると信頼関係を取引に変質させ善意を損なう恐れがあるとの含意がある。',
+    keyFigures: 'ウリ・ニーズィー＆アルド・ルスティキーニ（2000『A Fine is a Price』／2000『Pay Enough or Don\'t Pay at All』）／ブルーノ・S・フライ＆レト・イェーゲン（2001『Motivation Crowding Theory』）／カール・メルストローム＆マグヌス・ヨハンソン（2008『Crowding Out in Blood Donation』）／リチャード・ティトマス（1970『The Gift Relationship』）／サミュエル・ボウルズ（2016『The Moral Economy』）／対比: エドワード・デシ＆リチャード・ライアン（自己決定理論）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/10.1086/468061', type: 'academic', label: 'Gneezy, U., & Rustichini, A. (2000). "A Fine is a Price." The Journal of Legal Studies, 29(1), 1-17. — ハイファの保育園でのフィールド実験。罰金で遅刻がほぼ倍増し、撤廃後も戻らなかった' },
+      { url: 'https://academic.oup.com/qje/article-abstract/115/3/791/1828156', type: 'academic', label: 'Gneezy, U., & Rustichini, A. (2000). "Pay Enough or Don\'t Pay at All." The Quarterly Journal of Economics, 115(3), 791-810. — IQ テストと訪問募金の実験。少額の支払いは無報酬より成果を下げる（非単調性）' },
+      { url: 'https://onlinelibrary.wiley.com/doi/10.1111/1467-6419.00150', type: 'academic', label: 'Frey, B. S., & Jegen, R. (2001). "Motivation Crowding Theory." Journal of Economic Surveys, 15(5), 589-611. — 外的インセンティブが内発的動機を締め出す／引き込む条件を自己決定理論を基に総合' },
+      { url: 'https://academic.oup.com/jeea/article/6/4/845/2295788', type: 'academic', label: 'Mellström, C., & Johannesson, M. (2008). "Crowding Out in Blood Donation: Was Titmuss Right?" Journal of the European Economic Association, 6(4), 845-863. — ティトマス仮説のフィールド実験。報酬は女性の献血率を半減させ、寄付選択肢で効果が消えた' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257%2Fjep.25.4.191', type: 'academic', label: 'Gneezy, U., Meier, S., & Rey-Biel, P. (2011). "When and Why Incentives (Don\'t) Work to Modify Behavior." Journal of Economic Perspectives, 25(4), 191-210. — 境界条件の総説。単純作業や信頼を示す場面では機能し、利他的・イメージが絡む行動では逆効果' },
+    ],
+  },
+  {
+    id: 'mgmt-culture-map-eight-scales-meyer',
+    discipline: 'management',
+    title: 'カルチャーマップ——8つの尺度で各国のビジネス行動を相対的に位置づける枠組み',
+    statement:
+      'エリン・メイヤー（INSEAD教授）が2014年の著書『The Culture Map』（PublicAffairs、邦訳『異文化理解力』英治出版2015）およびハーバード・ビジネス・レビュー論文（2014）で提示した枠組みで、多数の経営幹部への聞き取りと研修での観察から、各国のビジネス行動を「コミュニケーション（低文脈対高文脈）」「評価（直接対間接の否定フィードバック）」「説得（原則優先対応用優先）」「リード（平等対階層）」「決断（合意対トップダウン）」「信頼（タスク対関係）」「見解の相違（対立を厭わない対回避）」「スケジューリング（直線的対柔軟）」の8尺度上に位置づける。核心は位置が絶対値でなく相手国との相対比較でのみ意味を持つ点で、米国人は日本人に対しては直接的でもオランダ人に対しては間接的に映る。日本は高文脈・間接フィードバック・対立回避・直線的時間・関係ベースの信頼という位置づけの一方、根回しや稟議による合意形成を伴う階層主義という組み合わせを示すという。エドワード・ホールの高低文脈概念やホフステードの権力距離を土台にするが、統計調査でなく面談・観察が根拠のため、後続の学術書評（2021年）は実証性の薄さと国単位平均による固定観念化・国内差の看過を指摘する。海外の取引先や外国人従業員を持つ中小企業には、交渉前に双方の位置を確認しフィードバックや意思決定・スケジュール感の期待をすり合わせる実務的意義がある。',
+    keyFigures: 'エリン・メイヤー（INSEAD教授。2014『The Culture Map: Breaking Through the Invisible Boundaries of Global Business』／2014 HBR論文「Navigating the Cultural Minefield」／2015 HBR論文「When Culture Doesn\'t Translate」）／先行研究: エドワード・T・ホール（高低コンテクスト・モノクロニック対ポリクロニック時間、『The Silent Language』1959）・ヘールト・ホフステード（権力格差など国民文化の6次元モデル）／対比: フォンス・トロンペナールス＆チャールズ・ハンプデン＝ターナー（1997『Riding the Waves of Culture』、7次元・大規模調査ベース）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://place.asburyseminary.edu/gcrj/vol13/iss2/13/', type: 'academic', label: 'Nehrbass, K. (2021). "Book Review: The Culture Map by Erin Meyer." Great Commission Research Journal, 13(2), 109–110. — 面談・観察中心の方法論の実証性の限界と、国単位平均が生む固定観念化リスクへの学術的批判を確認。' },
+      { url: 'https://www.hachettebookgroup.com/titles/erin-meyer/the-culture-map/9781610392501/?lens=publicaffairs', type: 'reference', label: 'Meyer, E. (2014). The Culture Map: Breaking Through the Invisible Boundaries of Global Business. PublicAffairs. — 原著の書誌情報（出版社・刊行年・題名）を確認。' },
+      { url: 'https://hbr.org/2014/05/navigating-the-cultural-minefield', type: 'academic', label: 'Meyer, E. (2014). "Navigating the Cultural Minefield." Harvard Business Review, 92(5), 119–123. — 8つの尺度の枠組みを最初に発表した原論文であることを確認。' },
+      { url: 'https://hbr.org/2015/10/when-culture-doesnt-translate', type: 'academic', label: 'Meyer, E. (2015). "When Culture Doesn\'t Translate." Harvard Business Review, 93(10), 66–72. — 多国籍化した企業文化への応用を論じた続編論文であることを確認。' },
+      { url: 'https://eijipress.co.jp/en/products/2208', type: 'reference', label: 'エリン・メイヤー著、田岡恵監訳、樋口武志訳（2015）『異文化理解力――相手と自分の真意がわかる ビジネスパーソン必須の教養』英治出版。— 日本語版の書誌情報（訳者・出版社・刊行年）を確認。' },
+    ],
+  },
+  {
+    id: 'human-swiss-cheese-model-accident-causation-reason',
+    discipline: 'human-science',
+    title: 'スイスチーズモデル——多層防護に開いた穴が一列に並んだ瞬間に事故が起きるとする、能動的失敗と潜在的条件の事故因果モデル',
+    statement:
+      'ジェームズ・リーズン（マンチェスター大学）が『Human Error』（1990年、Cambridge University Press）のGEMS（スリップ・ラプス・ミステイク・違反の分類）を土台に、『Managing the Risks of Organizational Accidents』（1997年、Ashgate）で定式化した事故モデル。複雑な系を設計・手順・監督・現場の多層防護スライスに見立て、各層の「穴」は開閉・移動するが、まれに全層で瞬間的に一直線に並んだときのみ危険が貫通し事故に至る。現場の不安全行為を能動的失敗、設計者・管理者の判断に潜む欠陥を潜在的条件と呼び、BMJ論文（2000年、320巻7237号、768-770頁）は個人非難の「個人アプローチ」に代え「システムアプローチ」を提唱、医療・航空・原子力へ普及した（ペローのノーマル・アクシデント論、ヴォーンの逸脱の正常化論と相補的）。パーネジェ（2005年、BMC Health Services Research）の調査は専門家間でも比喩の解釈が食い違うことを示し、ラルゼ＆ル・コーズ（2020年、Safety Science）は直線的因果や層の独立性という前提を批判、リーズン自身も2006年のEUROCONTROL論考で誤用への懸念を記した。中小事業者への含意は、非難のないヒヤリハット報告を仕組み化し、ミス発生時はシフト・人員配置・手順設計を遡って点検し、取消不能操作に独立した二重確認を組み込むことである。',
+    keyFigures: 'ジェームズ・リーズン（1990『Human Error』Cambridge University Press／1997『Managing the Risks of Organizational Accidents』Ashgate／2000 BMJ「Human error: models and management」／2006 EUROCONTROL論考でモデルを自己検証）／トーマス・パーネジェ（2005、BMC Health Services Researchで比喩解釈のばらつきを実証）／ジュスタン・ラルゼ＆ジャン＝クリストフ・ル・コーズ（2020、Safety Scienceで学説史と批判を整理）／対比: ペロー（ノーマル・アクシデント論）、ヴォーン（逸脱の正常化論）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.cambridge.org/9780521314190', type: 'academic', label: 'James Reason (1990) Human Error, Cambridge University Press, ISBN 9780521314190 — モデルの理論的基盤（GEMS、スリップ／ラプス／ミステイク／違反の分類）の原典' },
+      { url: 'https://doi.org/10.1136/bmj.320.7237.768', type: 'academic', label: 'James Reason (2000) "Human error: models and management", BMJ, 320(7237), 768-770 — 個人アプローチ対システムアプローチとスイスチーズ図を医療向けに要約' },
+      { url: 'https://bmchealthservres.biomedcentral.com/articles/10.1186/1472-6963-5-71', type: 'academic', label: 'Thomas V. Perneger (2005) "The Swiss cheese model of safety incidents: are there holes in the metaphor?", BMC Health Services Research, 5, 71 — 安全の専門家でも比喩の構成要素の解釈が一致しないことを示した調査' },
+      { url: 'https://www.sciencedirect.com/science/article/pii/S0925753520300576', type: 'academic', label: 'Justin Larouzée & Jean-Christophe Le Coze (2020) "Good and bad reasons: The Swiss cheese model and its critics", Safety Science, 126, 104660 — モデルの学説史と、直線的因果・層の独立性という前提への批判の整理' },
+      { url: 'https://www.eurocontrol.int/publication/revisiting-swiss-cheese-model-accidents', type: 'reference', label: 'James Reason, Erik Hollnagel & Jean Paries (2006) "Revisiting the \'Swiss Cheese\' Model of Accidents", EUROCONTROL Experimental Centre, EEC Note No. 13/06 — リーズン自身によるモデルの変遷と誤用の再評価' },
+    ],
+  },
+  {
+    id: 'bizlaw-procd-v-zeidenberg-shrinkwrap-clickwrap',
+    discipline: 'business-law',
+    title: 'プロCD対ザイデンバーグ事件——包装を開けた・クリックしたことで成立するライセンス契約の拘束力を認めた米連邦控訴審判例',
+    statement:
+      'ProCD, Inc. v. Zeidenberg, 86 F.3d 1447（第七巡回区控訴裁、1996年、イースターブルック判事）は、電話番号データベースを消費者向け安価・業務用高価で販売し、商業利用禁止のライセンスを箱に封入したProCD社と、これを無視して転売したザイデンバーグの事案で、統一商事法典（UCC）§2-204のもと、条件を読み不服なら返品できる機会がある限り開封後の使用継続を承諾行為とみなしてライセンスの拘束力を認め、著作権法17 U.S.C. §301の専占の主張も、対世的な専有権と等価でないとして退けた。同判事はHill v. Gateway 2000（1997年）でも同様に判断したが、Klocek v. Gateway（2000年、D. Kan.）はUCC §2-207を適用してこれに反し、Specht v. Netscape Communications Corp.（2002年、2d Cir.）は能動的同意を欠くリンクのみの規約を無効とし、通知・同意基準を発展させた。マーク・レムリーは論文『Terms of Use』（2006、Minnesota Law Review 91巻2号459-483頁）でこの潮流を批判した。日本では経済産業省の準則と2020年施行の民法548条の2以下の定型約款規定が組み入れ要件と不当条項排除を定め、中小事業者は規約を明示して同意を記録し、商用利用前に規約を確認すべきである。',
+    keyFigures: 'フランク・イースターブルック（1996 ProCD, Inc. v. Zeidenberg, 86 F.3d 1447／1997 Hill v. Gateway 2000, Inc., 105 F.3d 1147）／マーク・レムリー（2006『Terms of Use』Minnesota Law Review 91巻2号459-483頁）／対比: ソニア・ソトマイヨール（2002 Specht v. Netscape Communications Corp., 306 F.3d 17）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://law.justia.com/cases/federal/appellate-courts/F3/86/1447/538242/', type: 'government', label: 'ProCD, Inc. v. Zeidenberg, 86 F.3d 1447 (7th Cir. 1996), Justia Law — 事件の事実、UCC §2-204に基づく契約成立の論理、著作権法17 U.S.C. §301の先占否定の判示原文' },
+      { url: 'https://law.justia.com/cases/federal/appellate-courts/F3/105/1147/598523/', type: 'government', label: 'Hill v. Gateway 2000, Inc., 105 F.3d 1147 (7th Cir. 1997), Justia Law — 箱内条項・仲裁条項にProCDと同様の論理を適用した判示原文' },
+      { url: 'https://law.justia.com/cases/federal/district-courts/FSupp2/104/1332/2503865/', type: 'government', label: 'Klocek v. Gateway, Inc., 104 F. Supp. 2d 1332 (D. Kan. 2000), Justia Law — UCC §2-207を適用してHill／ProCDの論理を否定した反対系列の判示原文' },
+      { url: 'https://scholarship.law.umn.edu/mlr/624', type: 'academic', label: 'Mark A. Lemley (2006), "Terms of Use," Minnesota Law Review, 91(2), 459-483 — shrinkwrap／clickwrap／browsewrap規約が実際の同意なく執行される潮流への批判' },
+      { url: 'https://www.meti.go.jp/policy/it_policy/ec/20220401-1.pdf', type: 'government', label: '経済産業省「電子商取引及び情報財取引等に関する準則」（令和4年4月） — 日本におけるシュリンクラップ契約・クリックオン契約の成立要件の整理' },
+    ],
+  },
+  {
+    id: 'infosoc-new-governors-online-speech-klonick',
+    discipline: 'information-sociology',
+    title: '新しい統治者論——プラットフォームを独自の規則・手続・文化でオンライン言論を統治する私的統治システムとみなす議論',
+    statement:
+      'クロニックの「新しい統治者」論は、プラットフォームを、国家でも私企業でもない、独自の規則・手続・文化でオンライン言論を統治する私的統治システムとみなす議論である。ケイト・クロニックが論文『The New Governors』（Harvard Law Review 131巻6号、2018年）で提示した。同論文は取材と内部文書に基づき、Facebook・Twitter・YouTubeが投稿前の自動フィルタリング（ex ante）と投稿後の人的審査（ex post）からなる三層のモデレーション体制を築き、規範が米国的な表現の自由文化・企業の社会的責任・利用者の期待に応える経済性という三要因から形成されてきたことを実証した。続く論文（Yale Law Journal 129巻8号、2020年）はFacebook監督委員会の設立を分析、同委員会は2021年1月、乳がん啓発投稿の復元等の最初の裁定を下した。バルキンの「言論の三角形」論（Columbia Law Review、2018年）も国家・プラットフォーム・利用者の三者関係を論じ、EUデジタルサービス法（2022年）は苦情処理・透明性報告を義務化した。「統治」の語が私的権力を正当化するとの批判や、ドウェックのシステム思考論（2022年）等、自主規制の限界を問う声もある。中小事業者にとっては、自社アカウントも独自規則と申立て制度を持つ私的統治下にあり、規約と異議申立て経路の把握・記録保存・単一プラットフォーム依存の回避が要点となる。',
+    keyFigures: 'ケイト・クロニック（2018『The New Governors: The People, Rules, and Processes Governing Online Speech』／2020『The Facebook Oversight Board: Creating an Independent Institution to Adjudicate Online Free Expression』）／ジャック・M・バルキン（2018『Free Speech is a Triangle』・言論の三角形モデル）／タールトン・ギレスピー（2018『Custodians of the Internet』）／批判的継承: エヴェリン・ドウェック（2022『Content Moderation as Systems Thinking』）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://harvardlawreview.org/print/vol-131/the-new-governors-the-people-rules-and-processes-governing-online-speech/', type: 'academic', label: 'Kate Klonick (2018) "The New Governors: The People, Rules, and Processes Governing Online Speech," Harvard Law Review 131(6), pp. 1598-1670 — 原論文。ex ante／ex post の三層モデレーション類型と、米国的な表現の自由規範・企業の社会的責任・利用者期待への経済的必要から形成された私的統治という主張' },
+      { url: 'https://yalelawjournal.org/feature/the-facebook-oversight-board', type: 'academic', label: 'Kate Klonick (2020) "The Facebook Oversight Board: Creating an Independent Institution to Adjudicate Online Free Expression," Yale Law Journal 129(8), pp. 2418-2499 — コンテンツ・モデレーションの上訴機関としての Facebook 監督委員会の設計と設立過程の分析' },
+      { url: 'https://www.columbialawreview.org/content/free-speech-is-a-triangle/', type: 'academic', label: 'Jack M. Balkin (2018) "Free Speech is a Triangle," Columbia Law Review 118(7), pp. 2011-2056 — 国家・プラットフォーム・話者の三角形モデル。クロニックと同時期の対抗的な枠組み' },
+      { url: 'https://harvardlawreview.org/print/vol-136/content-moderation-as-systems-thinking/', type: 'academic', label: 'Evelyn Douek (2022) "Content Moderation as Systems Thinking," Harvard Law Review 136, pp. 526-607 — 個別裁定中心のプラットフォーム統治像を批判しシステム／行政的枠組みを提案。クロニックの直接の応答を招いた' },
+      { url: 'https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=LEGISSUM%3A4625430', type: 'government', label: 'Regulation (EU) 2022/2065 of the European Parliament and of the Council of 19 October 2022 (Digital Services Act), Official Journal of the EU L 277, 27.10.2022 — 透明性報告と苦情処理をプラットフォームに義務づける後続の EU 法制' },
+    ],
+  },
 ];
 // Stryker restore all

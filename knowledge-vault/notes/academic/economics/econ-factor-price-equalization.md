@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[econ-heckscher-ohlin|ヘクシャー＝オリーン理論]] — 同じ思想家
 - [[econ-metzler-paradox-tariff|メッツラー・パラドックス——関税が国内価格を引き下げる逆説]] — 同じ思想家
+- [[econ-rybczynski-theorem-factor-growth|リプチンスキー定理——要素賦存変化と産出構成の変動]] — 同じ思想家
 - [[econ-specific-factors-model-jones|特殊要素モデル——部門間要素移動の不完全性と所得分配]] — 同じ思想家
 - [[econ-tiebout-hypothesis-local-public-goods|ティブー仮説——「足による投票」と地方公共財の効率的供給メカニズム]] — 同じ思想家
 - [[econ-diamond-mirrlees|ダイヤモンド＝マーリーズの生産効率定理]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[mgmt-diamond-model-porter|ポーターのダイヤモンドモデル——国の競争優位を生む四つの決定要因]] — 出典を共有
 - [[econ-edgeworth-box|エッジワース・ボックス]] — 出典を共有
 - [[econ-monopolistic-competition|独占的競争]] — 出典を共有
-- [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

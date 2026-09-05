@@ -35,6 +35,7 @@ aliases:
 - [[infosoc-social-construction-technology-bijker|技術の社会的構成（SCOT）——技術は社会集団の解釈を通じて形づくられる]] — 同じ思想家
 - [[infosoc-technoculture|テクノカルチャー（技術文化研究）：技術と文化の相互構成論]] — 同分野の近傍
 - [[infosoc-code-switching|コードスイッチング]] — 同分野の近傍
+- [[infosoc-connected-learning-ito|コネクテッド・ラーニング——デジタル環境における興味・仲間・社会的機会の連結と学習の民主化]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

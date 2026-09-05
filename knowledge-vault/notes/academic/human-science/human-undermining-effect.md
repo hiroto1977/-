@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]] — 同じ思想家
 - [[human-belief-perseverance|信念の保続（信念固執）]] — 同じ思想家
+- [[econ-fine-is-a-price-gneezy-rustichini|「罰金は価格である」——金銭的インセンティブが内発的・社会的動機を締め出し関係を取引に変える現象]] — 同じ思想家
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同じ思想家
 - [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]] — 同じ思想家
 - [[human-choice-overload|選択過多（選択のオーバーロード）]] — 同じ思想家

@@ -38,8 +38,8 @@ aliases:
 - [[infosoc-algorithmic-amplification-gillespie|アルゴリズム的増幅と文化的仲介（ギレスピー）]] — 同じ思想家
 - [[infosoc-algorithmic-imaginaries-bucher|アルゴリズムの想像力——利用者によるアルゴリズム認知と日常的対応]] — 同じ思想家
 - [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同じ思想家
+- [[infosoc-new-governors-online-speech-klonick|新しい統治者論——プラットフォームを独自の規則・手続・文化でオンライン言論を統治する私的統治システムとみなす議論]] — 同じ思想家
 - [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]] — 同じ思想家
-- [[infosoc-social-exchange-theory|社会交換理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

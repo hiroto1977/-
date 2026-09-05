@@ -39,7 +39,6 @@ aliases:
 - [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — 同じ思想家
 - [[infosoc-techno-feminism-wajcman|テクノフェミニズム——技術とジェンダーの相互構成的関係]] — 同じ思想家
 - [[infosoc-techno-moral-change-verbeek|技術道徳変容論——技術的媒介による道徳的知覚と行為の再構成]] — 同じ思想家
-- [[infosoc-calculated-publics|算出された公衆（calculated publics）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
