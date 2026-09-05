@@ -34,12 +34,12 @@ aliases:
 ## 関連概念
 - [[bizlaw-pacta-sunt-servanda|合意は拘束する（Pacta Sunt Servanda）]] — 出典を共有
 - [[bizlaw-trail-smelter-principle|トレイル・スメルター原則（Trail Smelter Principle）]] — 出典を共有
+- [[infosoc-datafication-mayer-schoenberger|データ化（データフィケーション）——計量されてこなかった生活や行動を機械可読データへ変換し、分析・予測・資本化の対象にする過程]] — 出典を共有
 - [[bizlaw-most-favoured-nation|最恵国待遇条項（Most-Favoured-Nation Clause）]] — 出典を共有
 - [[bizlaw-sovereign-equality|主権平等原則（Principle of Sovereign Equality）]] — 出典を共有
 - [[eh-1950|1950年（昭和25年）]] — 出典を共有
 - [[eh-1951|1951年（昭和26年）]] — 出典を共有
 - [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]] — 出典を共有
-- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 同分野の近傍
 
 ## 関連

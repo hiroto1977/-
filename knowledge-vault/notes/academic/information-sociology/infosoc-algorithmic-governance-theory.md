@@ -34,13 +34,13 @@ Antoinette Rouvroy ／ Thomas Berns ／ Tarleton Gillespie ／ Frank Pasquale �
 - [[infosoc-algorithmic-governmentality|アルゴリズム的統治性（Algorithmic Governmentality）]] — 語彙が近い
 - [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 同じ思想家
 - [[infosoc-algorithmic-culture|アルゴリズム文化論]] — 同じ思想家
-- [[infosoc-algorithmic-experience|アルゴリズム経験]] — 同じ思想家
 - [[infosoc-digital-rights-management-theory|デジタル著作権管理理論]] — 同じ思想家
 - [[infosoc-information-asymmetry-platform|プラットフォーム情報非対称性理論]] — 同じ思想家
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 出典を共有
 - [[infosoc-platformization|プラットフォーム化（Platformization）]] — 出典を共有
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
 - [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — 出典を共有
+- [[infosoc-cypherpunk-movement|サイファーパンク運動]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

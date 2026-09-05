@@ -1,6 +1,6 @@
 ---
 collection: academic
-id: antimonopoly-surcharge
+id: bizlaw-antimonopoly-surcharge
 category: "business-law"
 category_ja: "ビジネス法務"
 title: "課徴金制度（独占禁止法）"

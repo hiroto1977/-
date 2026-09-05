@@ -33,8 +33,8 @@ aliases:
 - [Victor P. Goldberg, "The New Business Rule and Compensation for Lost Profits," Columbia Law & Economics Working Paper No. 544 (2016) — 資本の機会コストの観点からの新規事業の法理の経済学的批判](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2817600) `学術`
 
 ## 関連概念
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

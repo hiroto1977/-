@@ -26,9 +26,9 @@ aliases:
 ジョージ・A・アカロフ（George A. Akerlof, 1970 QJE「レモン市場」, 2001年ノーベル経済学賞）／スーリン・バ＆ポール・A・パヴロウ（Sulin Ba & Paul A. Pavlou, 2002 MISQ — 電子市場における信頼構築と価格プレミアム）／アンジェリカ・ディモカ, イーリ・ホン＆パヴロウ（Dimoka, Hong & Pavlou, 2012 MISQ — 製品不確実性の二次元理論）
 
 ## 出典
-- [Akerlof, G.A. (1970) The Market for "Lemons", QJE 84(3):488-500](https://doi.org/10.2307/1879431) `学術`
 - [Ba, S. & Pavlou, P.A. (2002) Evidence of the Effect of Trust Building Technology in Electronic Markets, MISQ 26(3):243-268](https://doi.org/10.2307/4132332) `学術`
 - [Dimoka, A., Hong, Y. & Pavlou, P.A. (2012) On Product Uncertainty in Online Markets, MISQ 36(2):395-426](https://doi.org/10.2307/41703461) `学術`
+- [Akerlof, G.A. (1970) The Market for "Lemons", QJE 84(3):488-500](https://doi.org/10.2307/1879431) `学術`
 
 ## 関連概念
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同分野の近傍

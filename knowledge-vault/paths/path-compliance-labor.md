@@ -25,9 +25,9 @@ tags:
 - [[labor-work-rules|就業規則の作成・届出義務]]（接続 16）
 - [[labor-overtime-premium|割増賃金率（時間外・休日・深夜）]]（接続 15）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]（接続 14）
+- [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]]（接続 14）
 - [[labor-flextime|フレックスタイム制（労働基準法32条の3）]]（接続 14）
 - [[labor-paid-leave-grant|年次有給休暇の付与]]（接続 14）
-- [[labor-survivor-pension|遺族年金（遺族基礎年金・遺族厚生年金）]]（接続 14）
 
 ## 第 2 部 — 年代順の展開
 - 2024年: [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]]
@@ -54,7 +54,6 @@ tags:
 - [[labor-commuting-injury|通勤災害（労災保険）]]
 - [[labor-contract-period-cap|有期労働契約の契約期間の上限（労働基準法14条）]]
 - [[labor-corporate-dc-pension|企業型確定拠出年金（企業型DC）]]
-- [[labor-deemed-working-hours|事業場外労働のみなし労働時間制（労働基準法38条の2）]]
 - [[labor-digital-wage-payment|賃金のデジタル払い（指定資金移動業者口座への賃金支払）]]
 - [[labor-disability-accommodation-employment|障害者雇用促進法における差別禁止と合理的配慮]]
 - [[labor-disability-employment-levy|障害者雇用納付金制度（事業主間の経済的負担の調整）]]
@@ -123,6 +122,7 @@ tags:
 - [[labor-statutory-ledgers|法定三帳簿の作成・保存義務]]
 - [[labor-stress-check|ストレスチェック制度（労働安全衛生法）]]
 - [[labor-substitute-holiday|振替休日と代休の違い（労働基準法上の取扱い）]]
+- [[labor-survivor-pension|遺族年金（遺族基礎年金・遺族厚生年金）]]
 - [[labor-trial-period|試用期間の労働法上の取扱い]]
 - [[labor-tribunal|労働審判制度（労働審判法）]]
 - [[labor-unemployment-benefit|雇用保険の基本手当（失業給付）の受給要件]]

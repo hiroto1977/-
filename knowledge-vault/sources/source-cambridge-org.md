@@ -2,7 +2,7 @@
 title: "cambridge.org"
 type: source-domain
 host: "cambridge.org"
-cite_count: 66
+cite_count: 65
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # cambridge.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **66 件**（学術 64 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **65 件**（学術 63 ・ リファレンス 2）
 
 ## このドメインを出典とする項目
 
@@ -45,7 +45,6 @@ tags:
 - [[human-category-formation|乳児カテゴリ形成（Infant Category Formation）]] — InfantCategorization—CambridgeHandbookofCognitiveDevelopment
 - [[human-compromise-effect|妥協効果（極端回避性）]] — JudgmentandDecisionMaking(Cambridge)—おとり効果と妥協効果の構造的区別
 - [[human-developmental-psychology-vygotsky|文化歴史的発達理論——ヴィゴツキーの最近接発達領域と社会的学習の認知科学]] — Vygotsky,L.S.(1978)MindinSociety:TheDevelopmentofHigherPsychologicalP…
-- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — Baddeley,A.&Hitch,G.J.(1974)WorkingMemory—PsychologyofLearningandMoti…
 - [[human-explanatory-models|病気の説明モデル：医療人類学における患者・治療者の疾病解釈枠組み]] — Good,B.J.1994Medicine,RationalityandExperience:AnAnthropologicalPersp…
 - [[human-legitimate-peripheral-participation|正統的周辺参加と実践共同体]] — Lave&Wenger,SituatedLearning:LegitimatePeripheralParticipation—Cambri…
 - [[human-predictive-processing-theory|予測処理理論]] — Clark,A.(2013).Whatevernext?Predictivebrains,situatedagents,andthefut…

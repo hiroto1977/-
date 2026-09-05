@@ -31,12 +31,12 @@ aliases:
 - [Wikipedia: Psychological capital — PsyCap概念・測定・介入の概要](https://en.wikipedia.org/wiki/Psychological_capital) `リファレンス`
 
 ## 関連概念
-- [[mgmt-psychological-capital-theory|心理的資本理論]] — 語彙が近い
 - [[mgmt-positive-organizational-behavior-luthans|ポジティブ組織行動論（ルーサンズ）]] — 語彙が近い
+- [[mgmt-psychological-capital-theory|心理的資本理論]] — 語彙が近い
 - [[mgmt-authentic-leadership-george|オーセンティック・リーダーシップ——自己認識と価値の一貫性に基づく真正な指導]] — 同じ思想家
 - [[mgmt-authentic-leadership-avolio-gardner|真正リーダーシップ——自己認識・関係的透明性・道徳的行為]] — 同じ思想家
 - [[human-grit|グリット（やり抜く力）]] — 同分野の近傍
-- [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 同分野の近傍
+- [[human-identity-process-theory-breakwell|アイデンティティ・プロセス理論（ブレイクウェル）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

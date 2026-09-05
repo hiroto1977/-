@@ -14,7 +14,7 @@ tags:
 
 ## このドメインを出典とする項目
 
-- [[agile-development|アジャイルソフトウェア開発]] — AgileManifesto—アジャイルソフトウェア開発宣言（2001年原典）
+- [[mgmt-agile-development|アジャイルソフトウェア開発]] — AgileManifesto—アジャイルソフトウェア開発宣言（2001年原典）
 - [[mgmt-agile-scrum-organizational|アジャイル・スクラムと組織アジリティの経営論——ソフトウェア開発から経営変革へ]] — Becketal.(2001)ManifestoforAgileSoftwareDevelopment—agilemanifesto.org
 
 ## 関連

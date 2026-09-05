@@ -32,10 +32,9 @@ aliases:
 
 ## 関連概念
 - [[infosoc-information-ecology-nardi|情報エコロジー——ナルディとオデイの技術・人間・実践の相互作用分析]] — 同じ思想家
-- [[infosoc-infrastructural-inversion-bowker|インフラストラクチャーの逆転——不可視の情報基盤を可視化する方法論]] — 同じ思想家
-- [[infosoc-infrastructural-inversion-bowker-star|インフラの逆転——分類システムの不可視的政治性]] — 同じ思想家
-- [[infosoc-infrastructural-inversion|インフラストラクチャル・インヴァージョン（基盤構造の可視化）]] — 同分野の近傍
-- [[infosoc-hostile-media-effect|敵対的メディア認知]] — 同分野の近傍
+- [[infosoc-infrastructural-inversion|インフラストラクチャの逆転（ボウカー＆スター）——背景に退いて不可視になった分類・標準・データ基盤を前景化し、その政治性を可視化する方法論]] — 同じ思想家
+- [[infosoc-sousveillance|スーヴェイランス（逆監視）]] — 同分野の近傍
+- [[infosoc-trading-zones|トレーディング・ゾーン（Trading Zones）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

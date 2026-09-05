@@ -6881,18 +6881,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'human-executive-function',
     discipline: 'human-science',
-    title: '実行機能（遂行機能）',
+    title: '実行機能（エグゼクティブ・ファンクション）——抑制制御・ワーキングメモリ・認知的柔軟性を中核に、目標に向けて思考と行動を制御する前頭前野の高次過程',
     statement:
-      '実行機能（executive functions）とは、目標志向的な思考・行動を可能にする高次の認知制御プロセスの総称であり、注意・思考・行動を意識的に制御して計画・問題解決・適応的行動を支える。主に前頭前野が関与する。Diamond（2013）の整理では中核は3つ——抑制制御（衝動や優位反応・注意妨害を抑える自己制御を含む）、ワーキングメモリ（情報を保持・操作する）、認知的柔軟性（視点や課題の切り替え）——で、これらを基盤に推論・計画など高次の実行機能が築かれる。' +
-      'Miyake et al.（2000）は更新・抑制・シフティングが分離可能だが相互に関連する（unity and diversity）ことを因子分析で示した。小児期から成人期に発達し高齢で低下し、ADHDや前頭葉損傷と関連、教育・健康・社会経済的成功の予測因子とされる。代表的測定にウィスコンシン・カード分類課題、ストループ課題、ハノイの塔がある。',
-    keyFigures:
-      'アデル・ダイアモンド（Adele Diamond）／ミヤケ・アキラ（Akira Miyake）／ナオミ・フリードマン（Naomi P. Friedman）',
-    asOf: '2026-06',
+      '実行機能（executive functions）とは、目標志向的な思考と行動を可能にする高次の認知制御過程の総称で、注意・思考・行動を意識的に制御して計画・問題解決・適応的行動を支える。アデル・ダイアモンド（2013）の整理では中核は三つ——衝動や優位反応・注意妨害を抑える抑制制御、情報を保持し操作するワーキングメモリ、視点や課題を切り替える認知的柔軟性——で、これらを基盤に推論・計画・問題解決といった高次の実行機能が築かれる。アキラ・ミヤケら（2000）は更新・抑制・シフティングが分離可能だが相互に関連する（unity and diversity）ことを潜在変数分析で示し、フリードマンとミヤケ（2017）はその再分析で共通因子と固有因子の構造を確認した。アラン・バッデレーとグラハム・ヒッチの作動記憶モデル（1974）の中央実行系は、この制御機能の古典的な定式化である。神経基盤は前頭前野で、背外側部が計画と意思決定、眼窩前頭皮質が感情調節と報酬評価に関わる。就学前期から青年期にかけて段階的に発達して高齢で低下し、可塑性が高く身体活動・マインドフルネス・劇遊びなどの介入で改善しうる。早期の実行機能は学業達成・社会的コンピテンス・精神的健康の長期的予測因子で、ADHD・前頭葉損傷・統合失調症の理解枠組みでもある。批判として、構成概念の境界が曖昧で課題が純粋に一機能を測れないこと（課題不純性）、訓練効果の転移が限定的との報告がある。中小企業には、経営者や従業員の計画・切り替え・衝動抑制の力は疲労と割り込みで著しく落ちるため、重要な判断をまとめて行う時間の確保、手順の外部化（チェックリスト）、休息と運動の設計が実務上の含意となる。',
+    keyFigures: 'アデル・ダイアモンド（2013 三成分の整理）／アキラ・ミヤケ＆ナオミ・フリードマン（2000／2017 unity and diversity）／アラン・バッデレー＆グラハム・ヒッチ（1974 作動記憶の中央実行系）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://www.annualreviews.org/content/journals/10.1146/annurev-psych-113011-143750', type: 'academic', label: 'Diamond, A. (2013). Executive Functions. Annual Review of Psychology, 64, 135–168.' },
-      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S001002859990734X', type: 'academic', label: 'Miyake, A. et al. (2000). The Unity and Diversity of Executive Functions ... A Latent Variable Analysis. Cognitive Psychology, 41, 49–100.' },
-      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6197939/', type: 'academic', label: 'Friedman, N. P. & Miyake, A. (2017). Unity and Diversity of Executive Functions: A Systematic Review and Re-Analysis of Latent Variable Studies. Cortex, 86, 186–204 (PMC).' },
-      { url: 'https://en.wikipedia.org/wiki/Executive_functions', type: 'reference', label: 'Wikipedia: Executive functions（定義・中核要素・測定課題）' },
+      { url: 'https://doi.org/10.1146/annurev-psych-113011-143750', type: 'academic', label: 'Diamond, A. (2013) Executive Functions — Annual Review of Psychology 64, 135–168（三成分の整理・発達と介入）' },
+      { url: 'https://www.sciencedirect.com/science/article/abs/pii/S001002859990734X', type: 'academic', label: 'Miyake, A. et al. (2000) The Unity and Diversity of Executive Functions and Their Contributions to Complex "Frontal Lobe" Tasks: A Latent Variable Analysis — Cognitive Psychology 41(1)' },
+      { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6197939/', type: 'academic', label: 'Friedman, N. P. & Miyake, A. (2017) Unity and Diversity of Executive Functions: Individual Differences as a Window on Cognitive Structure — Cortex 86（PMC 全文）' },
+      { url: 'https://en.wikipedia.org/wiki/Executive_functions', type: 'reference', label: 'Wikipedia: Executive functions — 定義・中核要素・前頭前野・測定課題・発達' },
     ],
   },
   {
@@ -8736,24 +8734,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://www.jftc.go.jp/freelancelaw_2024/', type: 'government', label: '公正取引委員会 フリーランス法特設サイト（2024年施行）' },
       { url: 'https://www.chusho.meti.go.jp/keiei/torihiki/download/freelance/law_02.pdf', type: 'government', label: '公正取引委員会・中小企業庁 説明資料（令和6年11月1日施行・60日支払・明示義務）' },
       { url: 'https://hourei.ndl.go.jp/simple/detail?lawId=0000160208', type: 'reference', label: '日本法令索引 令和5年5月12日法律第25号' },
-    ],
-  },
-  {
-    id: 'infosoc-datafication',
-    discipline: 'information-sociology',
-    title: 'データ化（データ化現象）',
-    statement:
-      'データ化（datafication）は、ビクター・マイヤー＝ショーンベルガーとケネス・クキエが2013年の著書『ビッグデータの正体』で広めた概念で、位置情報（GPS）、人間関係（ソーシャルグラフ）、感情（テキスト分析）など、これまで定量化されてこなかった社会生活や人間行動の側面を、計算・分析可能な機械可読データへと変換する過程を指す。' +
-      'これはアナログ情報をデジタル形式に変換するデジタル化（digitization）とは区別され、現象を構造化・定量化して追跡・分析・予測を可能にする点に特徴がある。ビッグデータを支える基盤的営みであり、ホセ・ファン・ダイク（2014）は、データの客観性を無批判に信奉しデータ収集と解釈を新たなパラダイムとみなす態度を「データイズム（dataism）」と呼び、監視との関連から批判的に論じた。さらにニック・クドリーとウリセス・メヒアスは、生活のデータ化を通じた人間生活の収奪を植民地主義の継続と捉える「データ植民地主義（data colonialism）」論を提示し、データ化の政治経済学的批判を体系化した。',
-    keyFigures: 'ビクター・マイヤー＝ショーンベルガー／ケネス・クキエ（2013）／ホセ・ファン・ダイク（2014, dataism）／ニック・クドリー & ウリセス・メヒアス（2019, data colonialism）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.24908/ss.v12i2.4776', type: 'academic', label: 'José van Dijck (2014) "Datafication, dataism and dataveillance," Surveillance & Society 12(2)' },
-      { url: 'https://www.foreignaffairs.com/articles/2013-04-03/rise-big-data', type: 'media', label: 'Mayer-Schönberger & Cukier (2013) The Rise of Big Data — Foreign Affairs' },
-      { url: 'https://www.sup.org/books/sociology/costs-connection', type: 'academic', label: 'Couldry & Mejias (2019) The Costs of Connection — Stanford University Press' },
-      { url: 'https://doi.org/10.1177/1527476418796632', type: 'academic', label: 'Couldry & Mejias (2019) Data Colonialism — Television & New Media 20(4)' },
-      { url: 'https://policyreview.info/concepts/datafication', type: 'reference', label: 'Internet Policy Review — concept entry "Datafication"' },
-      { url: 'https://en.wikipedia.org/wiki/Datafication', type: 'reference', label: 'Wikipedia — Datafication' },
     ],
   },
   {
@@ -14572,7 +14552,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'maslow-hierarchy',
+    id: 'human-maslow-hierarchy-of-needs',
     discipline: 'human-science',
     title: 'マズローの欲求階層説',
     statement:
@@ -14586,7 +14566,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'antimonopoly-surcharge',
+    id: 'bizlaw-antimonopoly-surcharge',
     discipline: 'business-law',
     title: '課徴金制度（独占禁止法）',
     statement:
@@ -14600,7 +14580,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'agile-development',
+    id: 'mgmt-agile-development',
     discipline: 'management',
     title: 'アジャイルソフトウェア開発',
     statement:
@@ -14611,20 +14591,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://agilemanifesto.org/', type: 'academic', label: 'Agile Manifesto — アジャイルソフトウェア開発宣言（2001年原典）' },
       { url: 'https://scrumguides.org/', type: 'academic', label: 'The Scrum Guide — Schwaber & Sutherland（Scrum公式定義）' },
-    ],
-  },
-  {
-    id: 'knowledge-gap-hypothesis',
-    discipline: 'information-sociology',
-    title: '知識格差仮説',
-    statement:
-      '知識格差仮説（Knowledge Gap Hypothesis）は、1970年にティチェナー、ドノヒュー、オリエンが提唱したマスコミュニケーション理論である。社会におけるマスメディア情報の流入量が増加すると、社会経済的地位（SES）の高い層は低い層よりも速く知識を獲得するため、両者の知識格差は縮小するのではなくむしろ拡大するという仮説である。' +
-      '教育水準が知識獲得速度を左右する主要変数とされ、情報へのアクセス能力・処理能力・既有知識・社会的接触の差異がメカニズムとして指摘される。現代ではデジタル・ディバイド研究の理論的基盤としても重要視され、インターネットやSNSの普及が格差を縮小するか拡大するかが議論されている。',
-    keyFigures: 'フィリップ・ティチェナー（Philip J. Tichenor, 1930–2014）／ジョージ・ドノヒュー（George A. Donohue, 1928–2008）／クラリス・オリエン（Clarice N. Olien, 1929–2011）（1970年提唱）',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1086/267786', type: 'academic', label: 'Tichenor, Donohue & Olien (1970) "Mass Media Flow and Differential Growth in Knowledge", Public Opinion Quarterly 34(2), 159–170（原著論文）' },
-      { url: 'https://en.wikipedia.org/wiki/Knowledge_gap_hypothesis', type: 'reference', label: 'Wikipedia — Knowledge gap hypothesis（包括的参考文献付き）' },
     ],
   },
   {
@@ -18028,15 +17994,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'infosoc-infrastructural-inversion',
     discipline: 'information-sociology',
-    title: 'インフラストラクチャル・インヴァージョン（基盤構造の可視化）',
+    title: 'インフラストラクチャの逆転（ボウカー＆スター）——背景に退いて不可視になった分類・標準・データ基盤を前景化し、その政治性を可視化する方法論',
     statement:
-      'インフラストラクチャル・インヴァージョン（Infrastructural Inversion）とは、科学技術と社会（STS）の研究領域における方法論的戦略で、通常は非可視的・取り当たり前視されているインフラストラクチャの相互依存性・社会的次元・政治的含意を前景化・顕在化させるアナリティカルな試みである。ジェフリー・C・バウカー（Geoffrey C. Bowker）とスーザン・リー・スター（Susan Leigh Star）は1999年の著書『Sorting Things Out: Classification and Its Consequences』（MIT Press, Inside Technology series, pp.34）において、インフラストラクチャル・インヴァージョンを「技術ネットワークと標準化の深い相互依存性と、政治的知識生産の実践との間の相互依存性を認識すること」と定義した。この方法論的移動は「設計と習慣により背景に消えるインフラストラクチャ（故障時にのみ可視化）に対する闘争」と特徴付けられている。' +
-      'スター＝ルーラー（Star & Ruhleder, 1996, "Steps Toward an Ecology of Infrastructure," Information Systems Research 7(1): 111-134, DOI: 10.1287/isre.7.1.111）はインフラストラクチャを物理的事物でなく、有機的実践に関連的に出現する特性として再定義した。彼らは「インフラストラクチャとは何か」から「いつがインフラストラクチャなのか」への分析的転換を提唱し、インフラストラクチャの関係的・生態学的性質を示唆した。インフラストラクチャル・インヴァージョンはこの関係的存在論に対応する方法論であり、通常は不可視な（しかし関係的枠組みでは明らかに）基盤構造を分析的に表面化させ、その社会的・政治的側面を露呈させる意図的努力である。スターは1999年の論文「The Ethnography of Infrastructure」（American Behavioral Scientist 43(3): 377-391, DOI: 10.1177/00027649921955326）において、インフラストラクチャの9つの特質—埋め込み性・透明性・到達域・成員学習・慣行との結合・標準化の具現化・既存基盤への依存・故障時の可視化・モジュール的段階的構築—を提示し、インフラストラクチャ研究の分析的基盤を確立した。',
-    keyFigures: 'Geoffrey C. Bowker & Susan Leigh Star（MIT Press, 1999, Sorting Things Out — インフラストラクチャル・インヴァージョン概念の導入）／Susan Leigh Star & Karen Ruhleder（Information Systems Research 7(1), 1996, インフラストラクチャ研究の関係的転換）',
-    asOf: '2026-06',
+      'インフラストラクチャの逆転（infrastructural inversion）は、ジェフリー・ボウカーが1994年の『Science on the Run』で提唱し、ボウカーとスーザン・リー・スターが1999年の『Sorting Things Out』（MIT Press）で発展させた科学技術社会論（STS）の方法論で、通常は背景に退き故障時にしか意識されないインフラストラクチャ（分類体系・標準・データベース）を前景化し、技術ネットワークと標準化の相互依存やそこに埋め込まれた政治的・倫理的選択を可視化する。二人は国際疾病分類（ICD）、看護介入分類（NIC）の歴史分析から、分類システムが社会的現実を中立に映す鏡ではなく、何を可視化し何を不可視化するかの選択を通じて知識生産・労働の可視性・社会秩序を構成する政治的技術であることを示した。スターとカレン・ルーラー（1996）はインフラを物ではなく実践との関係のなかで立ち現れる性質と捉えて問いを「何がインフラか」から「いつインフラになるか」へ転換し、スター（1999）は埋め込み性・透明性・到達域・成員学習・慣行との結合・標準の具現化・既存基盤への依存・故障時の可視化・モジュール的構築というインフラの九つの特質を整理した。ポール・エドワーズらのインフラ研究へ継承され、境界オブジェクト概念と結んで異なる社会世界の間の翻訳・調整・排除を分析する基盤となった。批判として、記述的な事例研究が中心で処方を与えにくく、何を「逆転」するかが分析者の視点に依存する。中小企業には、会計科目・商品コード・顧客区分といった自社の分類が何を見えなくしているかを定期的に点検すること、SaaS の標準に合わせた分類が経営の見え方を規定することが含意となる。',
+    keyFigures: 'ジェフリー・ボウカー＆スーザン・リー・スター（1999『Sorting Things Out』／ボウカー 1994 提唱）／スーザン・リー・スター＆カレン・ルーラー（1996 インフラの生態学）／スーザン・リー・スター（1999 インフラの九つの特質）／ポール・エドワーズら（2009 インフラ研究の課題）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.7551/mitpress/6352.001.0001', type: 'academic', label: 'Bowker & Star (1999) Sorting Things Out: Classification and Its Consequences — MIT Press' },
-      { url: 'https://doi.org/10.1287/isre.7.1.111', type: 'academic', label: 'Star & Ruhleder (1996) Steps Toward an Ecology of Infrastructure — Information Systems Research 7(1), pp.111-134' },
+      { url: 'https://doi.org/10.7551/mitpress/6352.001.0001', type: 'academic', label: 'Bowker, G. C. & Star, S. L. (1999) Sorting Things Out: Classification and Its Consequences — MIT Press（原典）' },
+      { url: 'https://doi.org/10.1287/isre.7.1.111', type: 'academic', label: 'Star, S. L. & Ruhleder, K. (1996) Steps Toward an Ecology of Infrastructure: Design and Access for Large Information Spaces — Information Systems Research 7(1), 111–134' },
+      { url: 'https://doi.org/10.1177/00027649921955326', type: 'academic', label: 'Star, S. L. (1999) The Ethnography of Infrastructure — American Behavioral Scientist 43(3), 377–391（インフラの九つの特質）' },
+      { url: 'https://doi.org/10.17705/1jais.00200', type: 'academic', label: 'Edwards, P. N., Bowker, G. C., Jackson, S. J. & Williams, R. (2009) Introduction: An Agenda for Infrastructure Studies — Journal of the Association for Information Systems 10(5)' },
+      { url: 'https://mitpress.mit.edu/9780262023672/science-on-the-run/', type: 'reference', label: 'MIT Press: Bowker, G. C. (1994) Science on the Run: Information Management and Industrial Geophysics at Schlumberger, 1920–1940（概念の初出）' },
     ],
   },
   {
@@ -20822,15 +20790,13 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     discipline: 'information-sociology',
     title: 'オンライン市場における情報の非対称性',
     statement:
-      'オンライン市場では売り手と買い手の間に構造的な情報格差が存在し、Akerlof（1970）が提唱した「レモン市場」現象——低品質財が高品質財を駆逐する逆選択——がeコマース・プラットフォーム上で再現される。' +
-      'Ba & Pavlou（2002, MIS Quarterly 26(3):243-268）はeBayの評判フィードバック機構が情報の非対称性に起因するリスク認知を低下させ信頼できる売り手に有意な価格プレミアムを生み出すことを実証し、Dimoka, Hong & Pavlou（2012, MIS Quarterly 36(2):395-426）は「製品不確実性」を概念化してプラットフォームのシグナリング設計が逆選択を緩和することを示した。' +
-      'この研究領域はユーザーレビュー・格付けシステム・サードパーティ認証といったプラットフォーム設計が市場効率と社会的厚生を高める鍵であることを明らかにしている。',
+      'オンライン市場では売り手と買い手の間に構造的な情報格差が存在し、Akerlof（1970）が提唱した「レモン市場」現象——低品質財が高品質財を駆逐する逆選択——がeコマース・プラットフォーム上で再現される。Ba & Pavlou（2002, MIS Quarterly 26(3):243-268）はeBayの評判フィードバック機構が情報の非対称性に起因するリスク認知を低下させ信頼できる売り手に有意な価格プレミアムを生み出すことを実証し、Dimoka, Hong & Pavlou（2012, MIS Quarterly 36(2):395-426）は「製品不確実性」を概念化してプラットフォームのシグナリング設計が逆選択を緩和することを示した。この研究領域はユーザーレビュー・格付けシステム・サードパーティ認証といったプラットフォーム設計が市場効率と社会的厚生を高める鍵であることを明らかにしている。',
     keyFigures: 'ジョージ・A・アカロフ（George A. Akerlof, 1970 QJE「レモン市場」, 2001年ノーベル経済学賞）／スーリン・バ＆ポール・A・パヴロウ（Sulin Ba & Paul A. Pavlou, 2002 MISQ — 電子市場における信頼構築と価格プレミアム）／アンジェリカ・ディモカ, イーリ・ホン＆パヴロウ（Dimoka, Hong & Pavlou, 2012 MISQ — 製品不確実性の二次元理論）',
     asOf: '2026-06',
     sources: [
-      { url: 'https://doi.org/10.2307/1879431', type: 'academic', label: 'Akerlof, G.A. (1970) The Market for "Lemons", QJE 84(3):488-500' },
       { url: 'https://doi.org/10.2307/4132332', type: 'academic', label: 'Ba, S. & Pavlou, P.A. (2002) Evidence of the Effect of Trust Building Technology in Electronic Markets, MISQ 26(3):243-268' },
       { url: 'https://doi.org/10.2307/41703461', type: 'academic', label: 'Dimoka, A., Hong, Y. & Pavlou, P.A. (2012) On Product Uncertainty in Online Markets, MISQ 36(2):395-426' },
+      { url: 'https://doi.org/10.2307/1879431', type: 'academic', label: 'Akerlof, G.A. (1970) The Market for "Lemons", QJE 84(3):488-500' },
     ],
   },
   {
@@ -20923,20 +20889,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1016/0006-8993(71)90358-1', type: 'academic', label: 'O\'Keefe, J. & Dostrovsky, J. (1971) The hippocampus as a spatial map, Brain Research 34(1):171-175' },
       { url: 'https://doi.org/10.1038/nature03721', type: 'academic', label: 'Hafting, T. et al. (2005) Microstructure of a spatial map in the entorhinal cortex, Nature 436:801-806' },
       { url: 'https://www.nobelprize.org/prizes/medicine/2014/summary/', type: 'reference', label: 'Nobel Prize 2014 — The brain\'s positioning system (O\'Keefe, Moser & Moser)' },
-    ],
-  },
-  {
-    id: 'infosoc-algorithmic-experience',
-    discipline: 'information-sociology',
-    title: 'アルゴリズム経験',
-    statement:
-      'アルゴリズム経験とは、日常的なデジタル生活においてユーザーがアルゴリズムシステムをどのように知覚・解釈・対応するかを包括的に捉える概念である。Bucher（2017）の「アルゴリズム的想像力」は、人々がアルゴリズムとは何か・どう働いているか・どうあるべきかについて抱く思考と感情——身に覚えを突く広告の不気味さ、表示順位の低下への苛立ち、可視性を得るための工夫——を指し、想像力に導かれた利用者の行動変化が入力としてアルゴリズム自体を変えるという再帰的な生産的権力を特定した。Eslami ら（2015）はフィードの生の時系列と表示結果を並べて見せる実験で、参加者の過半がキュレーションの存在自体を知らず、気づきは当初の憤りを経てフィードへの能動的な調整行動へ転じることを示し、Rader と Gray（2015）は利用者がキュレーションについて抱く信念の分布と、素朴理論が投稿・閲覧行動を導く様を明らかにした——見えない基盤を利用者の意味づけから研究する方法論の確立である。以後、素朴理論・アルゴリズム認知の研究、クリエイターが推薦の機嫌を読んで自己最適化する可視性の駆け引き、回避・撹乱による抵抗の実践へと展開し、アルゴリズム・リテラシー教育や説明可能性の設計（気づきをどの程度促すべきか）という HCI・政策の問いに接続している。文化の水準を扱うアルゴリズム文化論に対し、生活経験の微視的水準を担う相補的な研究領域である。',
-    keyFigures: 'Taina Bucher／Motahhare Eslami／Emilee Rader／Tarleton Gillespie',
-    asOf: '2026-06',
-    sources: [
-      { url: 'https://doi.org/10.1080/1369118X.2016.1154086', type: 'academic', label: 'Bucher, T. (2017) The algorithmic imaginary, Information, Communication & Society 20(1):30-44' },
-      { url: 'https://doi.org/10.1145/2702123.2702556', type: 'academic', label: 'Eslami, M. et al. (2015) Reasoning about Invisible Algorithms in News Feeds, CHI \'15:153-162' },
-      { url: 'https://doi.org/10.1145/2702123.2702174', type: 'academic', label: 'Rader, E. & Gray, R. (2015) Understanding User Beliefs About Algorithmic Curation, CHI \'15:173-182' },
     ],
   },
   {
@@ -22526,16 +22478,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'human-self-efficacy-theory',
     discipline: 'human-science',
-    title: '自己効力感理論',
-    statement: 'Bandura（1977）は、自己効力感（self-efficacy）を「特定の行動を遂行する自己の能力に対する信念」と定義し、社会的認知理論（social cognitive theory）の中核概念として位置づけた。自己効力感の源泉として、Banduraは①遂行経験（mastery experiences）、②代理経験（vicarious experiences）、③言語的説得（verbal persuasion）、④生理的・情動的状態（physiological and affective states）の4つを特定した。遂行経験は最も強力な源泉であり、成功体験の積み重ねが効力感を高め、失敗体験はそれを低下させる。Bandura（1986）はさらに、人間の行動は個人・行動・環境の三者が相互に影響し合う「三者相互決定論（triadic reciprocal determinism）」によって説明されると論じた。自己効力感は学業達成、健康行動、職業的選択など幅広い領域での行動・動機・感情に影響することが多くの研究で示されており、教育・臨床・組織心理学における介入設計の重要な基盤となっている。',
-    keyFigures: 'Albert Bandura ／ Dale H. Schunk ／ Frank Pajares',
-    asOf: '2026-06',
+    title: '自己効力感（バンデューラ）——課題を遂行できるという自分への信念が行動の開始・持続・努力量を規定し、四つの源泉から形成される',
+    statement:
+      '自己効力感（self-efficacy）は、アルバート・バンデューラが1977年の論文（Psychological Review 84巻2号）で「特定の行動を遂行できるという自分の能力への信念」と定義した概念で、社会的認知理論の中核変数として、行動の開始・持続・努力量・困難や失敗への対処を規定する。その源泉は四つに整理される。最も強力な遂行経験（成功体験の積み重ねが効力感を高め、失敗が下げる）、代理経験（自分に似た他者の成功を観察する）、言語的説得、そして生理的・感情的状態の解釈である。バンデューラ（1982、1986）は人間の行動を個人・行動・環境の三者が相互に影響し合う三者相互決定論で説明し、刺激と反応の一方向モデルを超えた。ロックとレイサムの目標設定理論との統合では、効力感の高い者ほど困難な目標を選び障害に直面しても粘り強く取り組むことが示され、学業達成・健康行動・職業選択・起業意図の予測因子として多くの領域で確認されている。デール・シュンクは学習場面での効力感の形成を、フランク・パジャレスは測定と教育への応用を発展させた。批判として、効力感と実際の能力や結果期待の区別が曖昧になりやすいこと、過大な効力感が無謀な継続を生むこと、測定が課題特異的で一般化しにくいことがある。中小企業には、従業員の効力感は叱咤や説得より小さな成功体験の設計と身近な同僚の手本で育つこと、経営者自身の効力感も撤退判断を遅らせうるため外部の目で検証することが含意となる。',
+    keyFigures: 'アルバート・バンデューラ（1977 原典／1986 社会的認知理論）／デール・シュンク（学習場面での応用）／フランク・パジャレス（測定と教育への応用）／エドウィン・ロック＆ゲイリー・レイサム（目標設定理論との統合）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://www.uky.edu/~eushe2/Bandura/Bandura1977PR.pdf', type: 'academic', label: 'Bandura, A. (1977). Self-efficacy: Toward a unifying theory of behavioral change. Psychological Review, 84(2), 191-215.' },
+      { url: 'https://doi.org/10.1037/0033-295X.84.2.191', type: 'academic', label: 'Bandura, A. (1977) Self-Efficacy: Toward a Unifying Theory of Behavioral Change — Psychological Review 84(2), 191–215（原典）' },
+      { url: 'https://doi.org/10.1037/0003-066X.37.2.122', type: 'academic', label: 'Bandura, A. (1982) Self-Efficacy Mechanism in Human Agency — American Psychologist 37(2), 122–147' },
       { url: 'https://www.tandfonline.com/doi/abs/10.1207/s15326985ep3801_10', type: 'academic', label: 'Schunk, D. H. (2003). Self-efficacy for reading and writing: Influence of modeling, goal setting, and self-evaluation. Reading & Writing Quarterly, 19(2), 159-172.' },
       { url: 'https://www.uky.edu/~eushe2/Pajares/effpage.html', type: 'reference', label: 'Pajares, F. - Self-Efficacy Theory: Overview (Emory University reference page)' },
-      { url: 'https://positivepsychology.com/self-efficacy-bandura/', type: 'reference', label: 'Ackerman, C. E. (2024). Self-Efficacy Theory: Bandura\'s 4 Sources of Efficacy Beliefs. PositivePsychology.com' },
-      { url: 'https://www.apa.org/pi/aids/resources/education/self-efficacy', type: 'reference', label: 'American Psychological Association - Self-Efficacy Overview' },
+      { url: 'https://en.wikipedia.org/wiki/Self-efficacy', type: 'reference', label: 'Wikipedia: Self-efficacy — Bandura、四つの源泉、目標設定との関係' },
     ],
   },
   {
@@ -22985,17 +22938,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'human-social-learning-theory',
     discipline: 'human-science',
     title: '社会的学習理論',
-    statement: 'Bandura（1977）は、人間の行動が直接的な強化だけでなく、他者の行動を観察することによっても学習されると主張し、社会的学習理論を体系化した。観察学習（observational learning）では、モデルの行動を見るだけで新たな行動パターンを習得でき、モデリング（modeling）と代理強化（vicarious reinforcement）がその中心的メカニズムである。観察学習の成立には、注意（モデルへの注目）・保持（観察した行動の記憶）・運動再生（記憶を再現できる運動能力）・動機づけ（模倣する誘因。モデルが報われるのを見ると模倣されやすい＝代理強化）の4過程が必要とされ、直接的な条件づけのみで学習を説明する行動主義を認知過程の導入によって拡張した点に理論史的意義がある。Banduraが1961年に行ったボボ人形実験（Bobo doll experiment）では、攻撃的なモデルを観察した子どもがモデルの攻撃行動を模倣することが実証され、メディアや環境が行動に与える影響の科学的根拠となった。Rotter（1954）は、行動の生起確率が強化の期待と価値に依存するという社会的学習理論の基礎を築き、内的・外的統制の概念（locus of control）を提唱した。Banduraはその後、自己効力感（self-efficacy）の概念を中心に理論を発展させ、1986年に社会的認知理論（social cognitive theory）として再構成した。攻撃行動や向社会的行動の獲得、メディアの影響の理解に広く応用されている。',
+    statement:
+      'Bandura（1977）は、人間の行動が直接的な強化だけでなく、他者の行動を観察することによっても学習されると主張し、社会的学習理論を体系化した。観察学習（observational learning）では、モデルの行動を見るだけで新たな行動パターンを習得でき、モデリング（modeling）と代理強化（vicarious reinforcement）がその中心的メカニズムである。観察学習の成立には、注意（モデルへの注目）・保持（観察した行動の記憶）・運動再生（記憶を再現できる運動能力）・動機づけ（模倣する誘因。モデルが報われるのを見ると模倣されやすい＝代理強化）の4過程が必要とされ、直接的な条件づけのみで学習を説明する行動主義を認知過程の導入によって拡張した点に理論史的意義がある。Banduraが1961年に行ったボボ人形実験（Bobo doll experiment）では、攻撃的なモデルを観察した子どもがモデルの攻撃行動を模倣することが実証され、メディアや環境が行動に与える影響の科学的根拠となった。Rotter（1954）は、行動の生起確率が強化の期待と価値に依存するという社会的学習理論の基礎を築き、内的・外的統制の概念（locus of control）を提唱した。Banduraはその後、自己効力感（self-efficacy）の概念を中心に理論を発展させ、1986年に社会的認知理論（social cognitive theory）として再構成した。攻撃行動や向社会的行動の獲得、メディアの影響の理解に広く応用されている。',
     keyFigures: 'Albert Bandura ／ Julian B. Rotter',
     asOf: '2026-06',
     sources: [
-      { url: 'https://doi.org/10.1037/0033-295X.84.2.191', type: 'academic', label: 'Bandura (1977) Self-efficacy: Toward a unifying theory of behavioral change — Psychological Review' },
       { url: 'https://doi.org/10.1037/h0045692', type: 'academic', label: 'Bandura, Ross & Ross (1961) Transmission of aggression through imitation of aggressive models — Journal of Abnormal and Social Psychology' },
       { url: 'https://doi.org/10.1037/10004-000', type: 'academic', label: 'Rotter (1954) Social learning and clinical psychology — Prentice-Hall' },
-      { url: 'https://www.simplypsychology.org/bandura.html', type: 'reference', label: 'Simply Psychology — Bandura\'s Social Learning Theory' },
-      { url: 'https://psychclassics.yorku.ca/Bandura/bobo.htm', type: 'reference', label: 'Classics in the History of Psychology — Bandura (1961) Bobo Doll Experiment full text' },
+      { url: 'https://doi.org/10.1037/0033-295X.84.2.191', type: 'academic', label: 'Bandura (1977) Self-efficacy: Toward a unifying theory of behavioral change — Psychological Review' },
       { url: 'https://www.britannica.com/science/observational-learning', type: 'reference', label: 'Encyclopaedia Britannica「Observational learning」' },
-      { url: 'https://wsu.pressbooks.pub/psych105/chapter/6-5-observational-learning-modeling/', type: 'academic', label: 'Washington State University, Introductory Psychology「6.5 Observational Learning (Modeling)」' },
+      { url: 'https://psychclassics.yorku.ca/Bandura/bobo.htm', type: 'reference', label: 'Classics in the History of Psychology — Bandura (1961) Bobo Doll Experiment full text' },
     ],
   },
   {
@@ -29460,15 +29412,17 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'infosoc-datafication-mayer-schoenberger',
     discipline: 'information-sociology',
-    title: 'データ化（ダタフィケーション）とビッグデータ社会',
-    statement: 'ダタフィケーション（datafication、データフィケーションとも訳される）は、ヴィクトル・マイヤー＝シェーンベルガー＆ケネス・クキエが『ビッグデータの正体』（2013）で論じた、これまで計量されなかった人間行動・社会現象・物理世界のあらゆる側面をデータに変換（数値化・デジタル記録）するプロセスである。ランシマン（2014）はダタフィケーションを「質的現象の量的記号への変換とその蓄積・分析」として社会学的に位置づけた。予測・最適化・資本化（データから商品・サービス・意思決定価値を生む）の三機能を持ち、感情のデータ化（ライク・顔認識）・移動のデータ化（GPSログ）・社会関係のデータ化（SNGネットワーク）・健康のデータ化（ウェアラブル）が代表例である。批判的視点からはクロフォード（2021）が「AIアトラス」でデータの産出が「労働・自然・権力の構造的不平等」を反映・再生産すると論じた。実装面では信用スコアリング（アリペイ等の個人信用評価）・採用AI・医療診断・犯罪予測など多領域に浸透し、プロファイリングによるプライバシー侵害・アルゴリズム差別・自律性の喪失が批判される。GDPR・AI法・データガバナンス法はダタフィケーションによる個人・集合的権利への影響を規制しようとする制度的応答であり、とくにGDPR（2018年施行）はプロファイリングに基づく自動決定に異議を申し立てる権利を明文化してデータ主権の法的根拠となっている。',
-    keyFigures: 'ヴィクター・マイヤー＝シェーンベルガー ／ ケネス・クキエ ／ ジョゼ・ファン・ダイク ／ ケイト・クロフォード',
-    asOf: '2026-06-26',
+    title: 'データ化（データフィケーション）——計量されてこなかった生活や行動を機械可読データへ変換し、分析・予測・資本化の対象にする過程',
+    statement:
+      'データ化（datafication）は、ビクター・マイヤー＝ショーンベルガーとケネス・クキエが2013年の著書『ビッグデータの正体』で広めた概念で、位置情報、人間関係（ソーシャルグラフ）、感情（「いいね」やテキスト分析）、健康（ウェアラブル）など、これまで定量化されてこなかった社会生活や人間行動の側面を、計算・分析可能な機械可読データへ変換する過程を指す。アナログ情報をデジタル形式に変えるデジタル化（digitization）とは区別され、現象を構造化・定量化して追跡・分析・予測・資本化を可能にする点に特徴がある。ホセ・ファン・ダイク（2014）は、データの客観性を無批判に信奉しデータ収集と解釈を新たなパラダイムとみなす態度を「データイズム（dataism）」と呼び、プラットフォームが接続性をデータに変えて商業価値にする「接続性の文化」と監視（データヴェイランス）の関連から批判した。ニック・クドリーとウリセス・メヒアスは生活のデータ化による人間生活の収奪を植民地主義の継続と捉える「データ植民地主義」論を提示し、リネット・テイラー（2017）は測定されないものが数に入らないこと、データへのアクセスと利益の不平等を「データ正義」として論じた。学習分析、スマートシティ、信用スコアリング、採用 AI へ浸透し、GDPR はプロファイリングに基づく自動決定に異議を申し立てる権利を定めた。批判として、概念が「計測」一般と区別しにくく、実証研究が事例記述に偏る。中小企業には、顧客や従業員の行動をデータ化する際に何を測り何を測らないかが経営判断を偏らせること、収集の目的と利用範囲を説明できなければ信頼を失うこと、自社もまたプラットフォームの評価やスコアで測られる側であることが含意となる。',
+    keyFigures: 'ビクター・マイヤー＝ショーンベルガー＆ケネス・クキエ（2013『ビッグデータの正体』）／ホセ・ファン・ダイク（2014 dataism・接続性の文化）／ニック・クドリー＆ウリセス・メヒアス（2019 データ植民地主義）／リネット・テイラー（2017 データ正義）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.24908/ss.v12i2.4776', type: 'academic', label: 'van Dijck, J. (2014) Datafication, Dataism and Dataveillance: Big Data Between Scientific Paradigm and Ideology — Surveillance & Society, 12(2), 197–208（ダタフィケーションの社会学的分析）' },
-      { url: 'https://www.hmhbooks.com/shop/books/Big-Data/9780544227750', type: 'reference', label: 'Mayer-Schönberger, V. & Cukier, K. (2013) Big Data: A Revolution That Will Transform How We Live, Work, and Think — Houghton Mifflin（ビッグデータ論の一般書）' },
-      { url: 'https://doi.org/10.12794/metaverse.2021.9.5', type: 'academic', label: 'Crawford, K. (2021) Atlas of AI: Power, Politics, and the Planetary Costs of Artificial Intelligence — Yale University Press（データ産出の批判的政治経済学）' },
-      { url: 'https://en.wikipedia.org/wiki/Datafication', type: 'reference', label: 'Wikipedia: Datafication — Mayer-Schönberger & Cukier, quantification of human behavior, GDPR context' },
+      { url: 'https://doi.org/10.24908/ss.v12i2.4776', type: 'academic', label: 'van Dijck, J. (2014) Datafication, Dataism and Dataveillance: Big Data between Scientific Paradigm and Ideology — Surveillance & Society 12(2)' },
+      { url: 'https://www.foreignaffairs.com/articles/2013-04-03/rise-big-data', type: 'media', label: 'Mayer-Schönberger, V. & Cukier, K. (2013) The Rise of Big Data — Foreign Affairs（『ビッグデータの正体』の要旨）' },
+      { url: 'https://doi.org/10.1177/1527476418796632', type: 'academic', label: 'Couldry, N. & Mejias, U. A. (2019) Data Colonialism: Rethinking Big Data\'s Relation to the Contemporary Subject — Television & New Media 20(4)' },
+      { url: 'https://journals.sagepub.com/doi/full/10.1177/2053951717736335', type: 'academic', label: 'Taylor, L. (2017) What Is Data Justice? The Case for Connecting Digital Rights and Freedoms Globally — Big Data & Society 4(2)' },
+      { url: 'https://en.wikipedia.org/wiki/Datafication', type: 'reference', label: 'Wikipedia: Datafication — Mayer-Schönberger & Cukier、van Dijck、digitization との区別' },
     ],
   },
   {
@@ -34886,13 +34840,16 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
   {
     id: 'infosoc-algorithmic-imaginary-bucher',
     discipline: 'information-sociology',
-    title: 'アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか',
-    statement: 'アルゴリズム的想像（the algorithmic imaginary）は、タイナ・ブッヒャーが2017年の論文で提唱した概念で、一般の利用者がアルゴリズム——とりわけフェイスブックのニュースフィードのようなソーシャルメディアのアルゴリズム——をどのように知覚し、経験し、意味づけているか、そしてその想像が、アルゴリズムが実際にどう作動しているかとは独立に、利用者の行動や感情をどう形づくっているかを問う。アルゴリズム研究の多くが、アルゴリズムの技術的な仕組みやそれを設計する企業の側に注目してきたのに対し、ブッヒャーは、アルゴリズムを日々経験する利用者の側に視点を置く。利用者は、アルゴリズムの実際の動作を知ることはできない。その仕組みは企業秘密であり、複雑で不透明である。それにもかかわらず、利用者は、アルゴリズムについての独自の理解——彼女が「アルゴリズム的想像」と呼ぶもの——を形成する。ブッヒャーは、人々が語る「個人的なアルゴリズム体験談（personal algorithm stories）」を分析した。利用者は、なぜ特定の投稿が表示されるのか、なぜ昔の知人が突然フィードに現れるのか、なぜ自分の投稿が誰にも見られないように感じるのかについて、素朴な理論（フォーク・セオリー）を作り上げ、アルゴリズムに対して感情的な関係を結ぶ。彼らは、フィードに「見られている」と感じたり、アルゴリズムに「驚かされた」り、「誤解されている」と感じたりする。ブッヒャーの理論の核心的な洞察は、こうしたアルゴリズム的想像が、単なる主観的な感想にとどまらず、現実を生み出す力を持つという点にある。アルゴリズムについての想像は、利用者の行動を変える。利用者は、想像したアルゴリズムの働きに合わせて、投稿の仕方を調整したり、アルゴリズムを「攻略」しようとしたり、見られたくないことを自己検閲したりする。こうして、アルゴリズム的想像は、利用者の実践を通じて、アルゴリズムの社会的な力を構成する一部となる。すなわち、アルゴリズムが何であるかは、その技術的な実装だけでなく、人々がそれをどう想像し、その想像に応じてどう振る舞うかによっても形づくられる。アルゴリズム的想像の概念は、アルゴリズムの研究の焦点を、技術的なブラックボックスの解明から、アルゴリズムをめぐる生きられた経験と感情、そしてそれが生み出す実践へと移し、ターレトン・ギレスピーやジョン・チェイニー＝リッポルドらのアルゴリズム文化研究とともに、人々とアルゴリズムの関係を理解する重要な視座を提供している。',
-    keyFigures: 'タイナ・ブッヒャー ／ ターレトン・ギレスピー ／ ジョン・チェイニー＝リッポルド ／ ニック・シーヴァー',
-    asOf: '2026-06-27',
+    title: 'アルゴリズム的想像（ブッヒャー）——利用者がアルゴリズムをどう感じ意味づけるかが、想像に導かれた行動を通じてアルゴリズムの力そのものを構成する',
+    statement:
+      'アルゴリズム的想像（the algorithmic imaginary）は、タイナ・ブッヒャーが2017年の論文で提唱した概念で、利用者がフェイスブックのニュースフィードのようなアルゴリズムをどう知覚し、経験し、意味づけているか、そしてその想像が実際の仕組みとは独立に利用者の感情と行動をどう形づくるかを問う。企業秘密で不透明な仕組みを知り得ない利用者は、身に覚えを突く広告の不気味さや表示順位の低下への苛立ちといった「個人的なアルゴリズム体験談」から素朴理論（フォーク・セオリー）を組み立て、投稿の時機やハッシュタグを調整し、可視性を得るために自己最適化や自己検閲を行う。想像に導かれた行動変化が入力としてアルゴリズム自体を変えるため、想像は主観的な感想にとどまらず現実を生む生産的な力を持つ。エスラミら（2015）はフィードの生の時系列と表示結果を並べて見せる実験で参加者の過半がキュレーションの存在を知らず、気づきが憤りを経て能動的な調整行動へ転じることを示し、レイダーとグレイ（2015）は利用者の信念の分布と素朴理論が投稿・閲覧を導く様を明らかにした。以後、アルゴリズム・リテラシー教育、説明可能性の設計、回避や撹乱による抵抗の実践へ展開し、文化の水準を扱うアルゴリズム文化論（ギレスピー、シーヴァー）に対して生活経験の微視的水準を担う。批判として、質的研究に基づく概念で一般化と測定が難しく、想像とアルゴリズムの実際の変化の因果を特定しにくい。中小企業には、SNS 運用の「アルゴリズム攻略」の多くが検証不能な素朴理論であること、顧客もまた想像に基づいて推薦や広告を不気味に感じうるため、表示の理由を説明できる誠実な運用が信頼につながることが含意となる。',
+    keyFigures: 'タイナ・ブッヒャー（2017 概念の提唱）／モタハレ・エスラミら（2015 フィードのキュレーションへの気づき）／エミリー・レイダー＆レベッカ・グレイ（2015 利用者の信念）／対比: ターレトン・ギレスピー＆ニック・シーヴァー（アルゴリズム文化論）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1080/1369118X.2016.1154086', type: 'academic', label: 'Bucher, T. (2017) The Algorithmic Imaginary: Exploring the Ordinary Affects of Facebook Algorithms — Information, Communication & Society 20(1)' },
-      { url: 'https://en.wikipedia.org/wiki/Algorithmic_culture', type: 'reference', label: 'Wikipedia: Algorithmic culture / imaginary — Bucher, folk theories, affective experience, behavior modification' },
+      { url: 'https://doi.org/10.1080/1369118X.2016.1154086', type: 'academic', label: 'Bucher, T. (2017) The Algorithmic Imaginary: Exploring the Ordinary Affects of Facebook Algorithms — Information, Communication & Society 20(1), 30–44（原典）' },
+      { url: 'https://doi.org/10.1145/2702123.2702556', type: 'academic', label: 'Eslami, M. et al. (2015) "I always assumed that I wasn\'t really that close to [her]": Reasoning about Invisible Algorithms in News Feeds — Proceedings of CHI 2015 (ACM), 153–162' },
+      { url: 'https://doi.org/10.1145/2702123.2702174', type: 'academic', label: 'Rader, E. & Gray, R. (2015) Understanding User Beliefs About Algorithmic Curation in the Facebook News Feed — Proceedings of CHI 2015 (ACM), 173–182' },
+      { url: 'https://en.wikipedia.org/wiki/Algorithmic_culture', type: 'reference', label: 'Wikipedia: Algorithmic culture — Bucher の algorithmic imaginary、folk theories、利用者の行動調整の概観' },
     ],
   },
   {
@@ -37552,12 +37509,13 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     id: 'infosoc-knowledge-gap-tichenor',
     discipline: 'information-sociology',
     title: '知識ギャップ仮説——マスメディアの情報流入が社会階層間の知識格差を拡大する',
-    statement: '知識ギャップ仮説（knowledge gap hypothesis）は、フィリップ・ティチェナー、ジョージ・ドナヒュー、クラリス・オリエンが1970年の論文で提唱したコミュニケーション理論で、社会システムへのマスメディア情報の流入が増大するにつれ、社会経済的地位の高い層が低い層よりも速くその情報を獲得し、結果として両層の知識格差はむしろ拡大する傾向があると説く。マスメディアの普及はすべての人を等しく啓発し情報格差を埋めるという素朴な期待に反し、情報が豊富になるほど格差が開くという逆説を提示した点に理論の核心がある。この差が生じる要因として、高地位層が持つ高い教育水準と読解・処理能力、すでに保有する関連知識の蓄積、選択的接触・記憶を可能にする社会的接触の広さ、そして情報の流通経路へのアクセスの優位が挙げられる。仮説は公共問題や科学に関する知識でとくに顕著に現れ、健康キャンペーンや選挙報道が意図せず格差を広げうることを示唆した。この視座は後にインターネットへのアクセスと利用能力の格差を論じる「デジタル・デバイド」研究へと継承され、情報技術が自動的に平等化をもたらすという技術楽観論への批判的対抗軸となった。',
-    keyFigures: 'フィリップ・ティチェナー ／ ジョージ・ドナヒュー ／ クラリス・オリエン ／ セシリエ・ガジアノ',
-    asOf: '2026-06-26',
+    statement:
+      '知識ギャップ仮説（knowledge gap hypothesis）は、フィリップ・ティチェナー、ジョージ・ドノヒュー、クラリス・オリエンが1970年の論文で提唱したコミュニケーション理論で、社会システムへのマスメディア情報の流入が増大するにつれ、社会経済的地位の高い層が低い層よりも速くその情報を獲得し、結果として両層の知識格差はむしろ拡大する傾向があると説く。マスメディアの普及はすべての人を等しく啓発し情報格差を埋めるという素朴な期待に反し、情報が豊富になるほど格差が開くという逆説を提示した点に理論の核心がある。この差が生じる要因として、高地位層が持つ高い教育水準と読解・処理能力、すでに保有する関連知識の蓄積、選択的接触・記憶を可能にする社会的接触の広さ、そして情報の流通経路へのアクセスの優位が挙げられる。仮説は公共問題や科学に関する知識でとくに顕著に現れ、健康キャンペーンや選挙報道が意図せず格差を広げうることを示唆した。この視座は後にインターネットへのアクセスと利用能力の格差を論じる「デジタル・デバイド」研究へと継承され、情報技術が自動的に平等化をもたらすという技術楽観論への批判的対抗軸となった。批判として、格差は関心や動機の差で説明でき時間が経てば天井効果で縮むという反論があり、争点や地域社会の規模によって結果が分かれる。中小企業には、補助金・制度変更・DX の情報が「知っている人ほど早く得る」構造で流れるため、業界団体や専門家との接点を持たない事業者ほど取り残されること、顧客への情報提供も一律の発信では届かない層があることが含意となる。',
+    keyFigures: 'フィリップ・ティチェナー＆ジョージ・ドノヒュー＆クラリス・オリエン（1970 提唱）／セシリエ・ガジアノ（メタ分析による検証）',
+    asOf: '2026-09',
     sources: [
-      { url: 'https://doi.org/10.1086/267786', type: 'academic', label: 'Tichenor, P.J., Donohue, G.A. & Olien, C.N. (1970) Mass Media Flow and Differential Growth in Knowledge — POQ 34(2)' },
-      { url: 'https://en.wikipedia.org/wiki/Knowledge_gap_hypothesis', type: 'reference', label: 'Wikipedia: Knowledge gap hypothesis — Tichenor, socioeconomic status, digital divide' },
+      { url: 'https://doi.org/10.1086/267786', type: 'academic', label: 'Tichenor, P. J., Donohue, G. A. & Olien, C. N. (1970) Mass Media Flow and Differential Growth in Knowledge — Public Opinion Quarterly 34(2), 159–170（原典）' },
+      { url: 'https://en.wikipedia.org/wiki/Knowledge_gap_hypothesis', type: 'reference', label: 'Wikipedia: Knowledge gap hypothesis — Tichenor, Donohue & Olien、社会経済的地位、デジタル・デバイド' },
     ],
   },
   {
@@ -39317,19 +39275,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-infrastructural-inversion-bowker',
-    discipline: 'information-sociology',
-    title: 'インフラストラクチャーの逆転——不可視の情報基盤を可視化する方法論',
-    statement: 'インフラストラクチャーの逆転（infrastructural inversion）は、ジェフリー・ボウカーが1994年に提唱し、ボウカーとスターが1999年の著書で発展させた情報インフラストラクチャー研究の方法論的概念である。通常の使用状況ではインフラストラクチャーは背景に退き不可視となるが、インフラストラクチャーの逆転は前景と背景の関係を意図的に反転させ、通常は注意を向けられない技術的・組織的・制度的基盤を分析の中心に据える操作を指す。ボウカーとスターは国際疾病分類（ICD）や看護介入分類（NIC）の歴史的分析を通じて、分類システムが知識生産・労働の可視性・社会的カテゴリーの構成において果たす政治的役割を明らかにした。この方法論はラーキンのインフラ研究やパークスとスタロシエルスキーのメディア・インフラストラクチャー研究に継承され、情報基盤の物質性・政治性・歴史性を分析する学際的研究領域を形成している。',
-    keyFigures: 'ジェフリー・ボウカー ／ スーザン・リー・スター ／ ブライアン・ラーキン ／ リサ・パークス',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.7551/mitpress/6352.001.0001', type: 'academic', label: 'Bowker, G. C. & Star, S. L. (1999) Sorting Things Out: Classification and Its Consequences — MIT Press' },
-      { url: 'https://mitpress.mit.edu/9780262023672/science-on-the-run/', type: 'academic', label: 'Bowker, G. C. (1994) Science on the Run: Information Management and Industrial Geophysics at Schlumberger, 1920-1940 — MIT Press (Inside Technology), ISBN 978-0-262-02367-2' },
-      { url: 'https://en.wikipedia.org/wiki/Information_infrastructure', type: 'reference', label: 'Wikipedia: Information infrastructure — invisible systems and classification politics overview' },
-    ],
-  },
-  {
     id: 'econ-krugman-target-zone-exchange',
     discipline: 'economics',
     title: 'クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果',
@@ -39392,19 +39337,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1093/law/9780199664917.001.0001', type: 'academic', label: 'Collins, H. (2014) Good Faith in European Contract Law — Oxford Journal of Legal Studies' },
       { url: 'https://www.cambridge.org/us/academic/subjects/law/european-law/good-faith-european-contract-law', type: 'academic', label: 'Zimmermann, R. & Whittaker, S. (2000) Good Faith in European Contract Law — Cambridge University Press' },
       { url: 'https://en.wikipedia.org/wiki/Good_faith_(law)', type: 'reference', label: 'Wikipedia: Good faith — contractual duty of fair dealing overview' },
-    ],
-  },
-  {
-    id: 'infosoc-algorithmic-imaginaries-bucher',
-    discipline: 'information-sociology',
-    title: 'アルゴリズムの想像力——利用者によるアルゴリズム認知と日常的対応',
-    statement: 'アルゴリズムの想像力（algorithmic imaginaries）は、テイナ・ビュッヒャーが2017年の研究で提唱した概念であり、ソーシャルメディア利用者がプラットフォームのアルゴリズムについて形成する民俗理論（folk theories）と、それに基づく日常的な対応行動を分析する枠組みである。利用者はアルゴリズムの技術的仕組みを正確に理解しているわけではないが、自らの経験から推論的にアルゴリズムの動作についての「想像」を構築し、その想像に基づいてコンテンツの投稿タイミング・ハッシュタグの使用・エンゲージメント行動を戦略的に調整する。ビュッヒャーはFacebook利用者の質的研究から、利用者がアルゴリズムを「脅威」「機会」「不可視の力」として多様に認知していることを示した。この研究はギデンズの構造化理論を援用し、アルゴリズムと利用者の相互構成的関係を明らかにしている。',
-    keyFigures: 'テイナ・ビュッヒャー ／ タールトン・ギリスピー ／ ニック・シーヴァー ／ マイク・アナニー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1080/1369118X.2016.1154086', type: 'academic', label: 'Bucher, T. (2017) The Algorithmic Imaginary: Exploring the Ordinary Affects of Facebook Algorithms — Information, Communication & Society' },
-      { url: 'https://doi.org/10.1177/2053951718757253', type: 'academic', label: 'Seaver, N. (2017) Algorithms as Culture: Some Tactics for the Ethnography of Algorithmic Systems — Big Data & Society' },
-      { url: 'https://en.wikipedia.org/wiki/Algorithmic_curation', type: 'reference', label: 'Wikipedia: Algorithmic curation — user perception and platform content management overview' },
     ],
   },
   {
@@ -40391,19 +40323,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'infosoc-infrastructural-inversion-bowker-star',
-    discipline: 'information-sociology',
-    title: 'インフラの逆転——分類システムの不可視的政治性',
-    statement: 'ジェフリー・ボウカーとスーザン・リー・スターが1999年の著作で提示した「インフラの逆転」（infrastructural inversion）は、通常は背景に退いて不可視化された情報インフラストラクチャ——分類体系・標準・データベース・コード——を前景化し、その設計に埋め込まれた政治的・倫理的選択を可視化する分析方法論である。南アフリカのアパルトヘイト下の人種分類、国際疾病分類（ICD）、看護介入分類（NIC）等の事例分析を通じて、分類システムが社会的現実を中立的に映す鏡ではなく、何を可視化し何を不可視化するかの選択を通じて社会秩序を積極的に構成する「政治的技術」であることを示した。スターの「境界オブジェクト」概念と結合して、異なる社会世界の交差点で分類システムがいかに翻訳・調整・排除の作業を遂行するかを分析する情報インフラ研究の基盤を築いた。',
-    keyFigures: 'ジェフリー・ボウカー ／ スーザン・リー・スター ／ ポール・エドワーズ ／ ブライアン・ラーキン ／ ローラ・ネイダー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.7551/mitpress/6352.001.0001', type: 'academic', label: 'Bowker, G. C. & Star, S. L. (1999) Sorting Things Out — MIT Press' },
-      { url: 'https://doi.org/10.17705/1jais.00200', type: 'academic', label: 'Edwards, P. N., Bowker, G. C., Jackson, S. J. & Williams, R. (2009) Introduction: An Agenda for Infrastructure Studies — Journal of the Association for Information Systems 10(5), 364-374' },
-      { url: 'https://mitpress.mit.edu/9780262522953/sorting-things-out/', type: 'reference', label: 'MIT Press: Sorting Things Out — Classification and Its Consequences（ボウカー＆スターの分類研究・出版社ページ）' },
-    ],
-  },
-  {
     id: 'econ-tariff-escalation-effective-protection',
     discipline: 'economics',
     title: '関税エスカレーションと実効保護率——加工段階別保護構造',
@@ -41328,19 +41247,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.1037/a0032850', type: 'academic', label: 'Brown, N. J. L., Sokal, A. D. & Friedman, H. L. (2013) The Complex Dynamics of Wishful Thinking: The Critical Positivity Ratio — American Psychologist 68(9), 801–813（ポジティビティ比批判）' },
       { url: 'https://doi.org/10.1037/a0033584', type: 'academic', label: 'Fredrickson, B. L. (2013) Updated Thinking on Positivity Ratios — American Psychologist 68(9)（比率の主張の撤回と理論の切り分け）' },
       { url: 'https://en.wikipedia.org/wiki/Broaden-and-build', type: 'reference', label: 'Wikipedia: Broaden-and-build — 理論の概要と positivity ratio 論争' },
-    ],
-  },
-  {
-    id: 'infosoc-information-asymmetry-akerlof-stiglitz',
-    discipline: 'information-sociology',
-    title: '情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ',
-    statement: '情報の非対称性理論は、ジョージ・アカロフが1970年に「レモン市場」モデルで提示した、売り手と買い手の間の情報格差が市場の効率的機能を阻害するメカニズムの分析から発展した。アカロフは中古車市場において売り手が品質情報を持ち買い手が持たない場合、逆選択（adverse selection）により高品質車が市場から駆逐され、市場全体の品質が劣化する過程を理論化した。マイケル・スペンスは労働市場におけるシグナリング（教育という費用のかかるシグナルによる能力の伝達）モデルを、ジョセフ・スティグリッツとアンドリュー・ロスチャイルドは保険市場におけるスクリーニング（情報劣位者が契約メニューの設計を通じて情報優位者の類型を識別する）モデルを発展させた。三者は2001年にノーベル経済学賞を共同受賞した。情報社会学において本理論はデジタルプラットフォームの信頼メカニズム・評判システム・情報仲介者の役割分析にも応用される。',
-    keyFigures: 'ジョージ・アカロフ ／ マイケル・スペンス ／ ジョセフ・スティグリッツ ／ アンドリュー・ロスチャイルド',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.2307/1879431', type: 'academic', label: 'Akerlof, G. (1970) The Market for Lemons — Quarterly Journal of Economics' },
-      { url: 'https://doi.org/10.2307/1882010', type: 'academic', label: 'Spence, M. (1973) Job Market Signaling — QJE' },
-      { url: 'https://en.wikipedia.org/wiki/Information_asymmetry', type: 'reference', label: 'Wikipedia: Information asymmetry — 情報の非対称性の概要' },
     ],
   },
   {
@@ -43849,19 +43755,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-self-efficacy-bandura-social-learning',
-    discipline: 'human-science',
-    title: '自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論',
-    statement: 'アルバート・バンデューラが1977年に提唱した自己効力感（セルフ・エフィカシー）は、「特定の課題を達成できるという自分への信念」であり、行動の開始・持続・困難への対処を規定する中核的認知変数である。社会的学習理論の枠組みでは、人間の行動は（1）行動・（2）個人的要因（認知・感情）・（3）環境の三者の相互決定論（reciprocal determinism）により説明され、刺激—反応モデルの一方向性を超える。自己効力感の源泉は①遂行行動の達成（mastery experience）・②代理体験（他者の成功観察）・③社会的説得・④生理的・感情的状態の四種に整理される。学業成績・健康行動・職業的成功への予測妥当性が多くの領域で確認されており、認知行動療法・キャリア教育・職場研修において介入の標的変数として広く用いられている。',
-    keyFigures: 'アルバート・バンデューラ ／ ウォルター・ミシェル ／ マーティン・セリグマン ／ デール・シュンク',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1037/0033-295X.84.2.191', type: 'academic', label: 'Bandura (1977) Self-Efficacy: Toward a Unifying Theory of Behavioral Change — Psychological Review' },
-      { url: 'https://doi.org/10.1037/0003-066X.37.2.122', type: 'academic', label: 'Bandura (1982) Self-Efficacy Mechanism in Human Agency — American Psychologist' },
-      { url: 'https://en.wikipedia.org/wiki/Self-efficacy', type: 'reference', label: 'Wikipedia: Self-efficacy — バンデューラの自己効力感理論' },
-    ],
-  },
-  {
     id: 'bizlaw-intellectual-property-exhaustion',
     discipline: 'business-law',
     title: '知的財産権の権利消尽原則——並行輸入・中古品市場と特許・著作権の国際的域外効力',
@@ -44568,19 +44461,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-executive-function-baddeley',
-    discipline: 'human-science',
-    title: '実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御',
-    statement: '実行機能（Executive Function）とは、目標志向的行動の計画・開始・監視・修正を可能にする高次認知プロセスの集合であり、アラン・バッデレーとグラハム・ヒッチの作動記憶（Working Memory）モデル（1974年）はその中核的基盤を提供する。マルチコンポーネントモデルでは「中央実行系」が注意・制御機能を担い、「音韻ループ」（言語的情報の一時保持）と「視空間スケッチパッド」（視覚的情報の保持）が従属システムとして機能する。2000年代にバッデレーは「エピソード・バッファ」を追加し、長期記憶との統合機能を組み込んだ。アドリール・ダイアモンドは神経科学的研究から実行機能の三成分——抑制制御・認知的柔軟性・更新（ワーキングメモリ）——を同定し、発達・老化・ADHD・統合失調症との関連を明らかにした。教育研究では幼児期の実行機能発達が学業成就・社会性の予測因として注目され、「就学前介入」プログラムの標的とされている。マインドフルネスや二言語習得が実行機能を強化するという研究も蓄積されている。',
-    keyFigures: 'アラン・バッデレー ／ グラハム・ヒッチ ／ アドリール・ダイアモンド ／ ジョアキム・フスター',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1146/annurev-psych-113011-143750', type: 'academic', label: 'Diamond, A. (2013) Executive Functions — Annual Review of Psychology' },
-      { url: 'https://www.cambridge.org/core/journals/quarterly-journal-of-experimental-psychology', type: 'academic', label: 'Baddeley, A. & Hitch, G.J. (1974) Working Memory — Psychology of Learning and Motivation' },
-      { url: 'https://ja.wikipedia.org/wiki/%E5%AE%9F%E8%A1%8C%E6%A9%9F%E8%83%BD', type: 'reference', label: 'Wikipedia: 実行機能 — 作動記憶と認知制御の解説' },
-    ],
-  },
-  {
     id: 'bizlaw-competition-law-merger-control',
     discipline: 'business-law',
     title: '企業結合規制と競争法——独占禁止法における合併審査の基準と実務',
@@ -45020,18 +44900,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     ],
   },
   {
-    id: 'human-self-efficacy-performance-bandura',
-    discipline: 'human-science',
-    title: '自己効力感と目標設定・パフォーマンスの社会認知理論（バンデューラ）',
-    statement: '自己効力感（self-efficacy）とは、特定の課題を遂行する自己の能力への主観的確信をアルバート・バンデューラが1977年に概念化したもので、行動の開始・持続・努力量・失敗への対処を決定する最重要な自己調節機制の一つとされる。バンデューラは4つの情報源——遂行経験（mastery experiences）・代理経験（vicarious experiences）・言語的説得（verbal persuasion）・生理的覚醒状態（physiological states）——が自己効力感を形成・修正すると論じた。ロックとラタムの目標設定理論（goal-setting theory）との統合では、高い自己効力感を持つ者が困難な目標を設定し、障害に直面しても粘り強く取り組む傾向が示されている。自己効力感は学業・スポーツ・職場・健康行動・起業など幅広い文脈でパフォーマンスの強力な予測因子であることが確認されており、メタ分析ではr≒0.38の中程度〜強度の相関が報告される。成長マインドセット（ドゥエック）・希望理論（スナイダー）とともにポジティブ心理学の理論的支柱の一つを形成する。',
-    keyFigures: 'アルバート・バンデューラ ／ エドウィン・ロック ／ ゲーリー・ラタム ／ アーバン・フルンク',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1037/0033-295X.84.2.191', type: 'academic', label: 'Bandura (1977) Self-Efficacy: Toward a Unifying Theory of Behavioral Change — Psychological Review 84(2)' },
-      { url: 'https://en.wikipedia.org/wiki/Self-efficacy', type: 'reference', label: 'Wikipedia: Self-efficacy — Bandura, four sources, goal-setting, performance, positive psychology' },
-    ],
-  },
-  {
     id: 'bizlaw-tax-avoidance-beps-regulation',
     discipline: 'business-law',
     title: 'タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革',
@@ -45389,18 +45257,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/256287', type: 'academic', label: 'Kahn (1990) Psychological Conditions of Personal Engagement and Disengagement at Work — AMJ 33(4)' },
       { url: 'https://en.wikipedia.org/wiki/Employee_engagement', type: 'reference', label: 'Wikipedia: Employee engagement — Kahn, psychological safety, Gallup Q12, UWES, Edmondson' },
-    ],
-  },
-  {
-    id: 'human-executive-function-development',
-    discipline: 'human-science',
-    title: '実行機能の発達と前頭前野の神経科学的基盤',
-    statement: '実行機能（executive function）とは、目標指向的行動を計画・調整・モニタリングするための高次認知過程の総称であり、ワーキングメモリ・認知的柔軟性・抑制制御の三要素を中核とする。前頭前野（PFC）が実行機能の主要な神経基盤とされ、特に外側前頭前野の背外側部（dlPFC）が計画・意思決定を、眼窩前頭皮質（OFC）が感情調節と報酬評価を担う。アデル・ダイアモンドはマウスからヒトまでの比較発達研究を通じ、実行機能が就学前期から青年期にかけて段階的に発達し可塑性が高いこと、身体活動・マインドフルネス・劇遊びなど介入によって改善可能なことを示した。実行機能の早期発達は学業達成・社会的コンピテンス・精神的健康の長期的予測因子であり、ADHD・前頭側頭型認知症・統合失調症における機能障害の主要な理解枠組みとなっている。',
-    keyFigures: 'アデル・ダイアモンド ／ ジョアキム・フスター ／ パトリシア・ゴールドマン＝ラキック ／ ユウコ・ミヤケ',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.1146/annurev-psych-113011-143750', type: 'academic', label: 'Diamond (2013) Executive Functions — Annual Review of Psychology 64' },
-      { url: 'https://en.wikipedia.org/wiki/Executive_functions', type: 'reference', label: 'Wikipedia: Executive functions — PFC, working memory, cognitive flexibility, inhibitory control, development' },
     ],
   },
   {
@@ -46834,20 +46690,6 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://curia.europa.eu/juris/liste.jsf?num=C-411/03', type: 'government', label: 'Court of Justice of the EU (2005) Case C-411/03 SEVIC Systems AG — ECJ判決（越境合併の設立自由原則適用）' },
       { url: 'https://www.wildy.com/isbn/9780414022720/gower-davies-principles-of-modern-company-law-9th-ed-paperback-sweet-maxwell-ltd', type: 'academic', label: 'Davies, P. L. & Worthington, S. (2012) Gower & Davies: Principles of Modern Company Law — 9th ed., Sweet & Maxwell, ISBN 9780414022720（EU会社法越境合併解説）' },
       { url: 'https://en.wikipedia.org/wiki/Cross-border_mergers_in_the_European_Union', type: 'reference', label: 'Wikipedia: Cross-border mergers in the EU — CBMD, SEVIC, co-determination, 2017/1132/EU' },
-    ],
-  },
-  {
-    id: 'infosoc-datafication-van-dijck',
-    discipline: 'information-sociology',
-    title: 'データ化（ダタフィケーション）と社会的実践（ヴァン・ダイク）',
-    statement: 'データ化（datafication）は、ホセ・ヴァン・ダイク（2014）および以前のマイヤー＝シェーンベルガー＆クキエ（2013）が体系化した、社会的現象・人間行動・物理的環境が量化・計測・データ化されることで、従来は「非数値的（non-quantitative）」であった生活領域が分析・予測・制御の対象となる過程を指す概念である。ヴァン・ダイクはソーシャルメディアのプラットフォーム化を「接続性の文化（culture of connectivity）」として分析し、Facebookの「いいね」・Twitterのリツイート・Spotifyの再生データが「感情・関係性・嗜好」をデータ化して商業的価値に変換する仕組みを詳述した。教育データ化（learning analytics）・健康データ化（wearable health monitoring）・都市データ化（smart city）・金融データ化（fintech credit scoring）が現代のデータ化の主要領域である。批判として、①インフラ化された不可視性（infrastructural invisibility）、②測定されないものの消滅（if it can\'t be measured, it doesn\'t count）、③データへの平等なアクセス不能（data justice）が論じられる。',
-    keyFigures: 'ホセ・ヴァン・ダイク ／ ヴィクター・マイヤー＝シェーンベルガー ／ ケネス・クキエ ／ ダニエル・チャバジー',
-    asOf: '2026-06-26',
-    sources: [
-      { url: 'https://doi.org/10.24908/ss.v12i2.4776', type: 'academic', label: 'van Dijck, J. (2014) Datafication, Dataism and Dataveillance: Big Data Between Scientific Paradigm and Ideology — Surveillance & Society, 12(2), 197–208（データ化の批判的分析）' },
-      { url: 'https://doi.org/10.1177/2053951717751551', type: 'academic', label: 'Kitchin, R. & McArdle, G. (2016) What Makes Big Data, Big Data? Exploring the Ontological Characteristics of 26 Datasets — Big Data & Society, 3(1)（データの存在論的分析）' },
-      { url: 'https://journals.sagepub.com/doi/full/10.1177/2053951717736335', type: 'academic', label: 'Taylor, L. (2017) What Is Data Justice? The Case for Connecting Digital Rights and Freedoms Globally — Big Data & Society 4(2)（旧 DOI は Information, Communication & Society 2019 の別論文を指していたため差し替え）' },
-      { url: 'https://en.wikipedia.org/wiki/Datafication', type: 'reference', label: 'Wikipedia: Datafication — van Dijck, Mayer-Schönberger, social media quantification, data justice, smart city' },
     ],
   },
   {

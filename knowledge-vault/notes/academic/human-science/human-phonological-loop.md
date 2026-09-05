@@ -33,6 +33,8 @@ aliases:
 ## 関連概念
 - [[human-context-dependent-memory|文脈依存記憶]] — 同じ思想家
 - [[human-emotional-contagion|情動感染]] — 同分野の近傍
+- [[human-emotional-regulation-gross|感情調節理論（グロス）と認知的再評価・表現抑制]] — 同分野の近傍
+- [[human-working-memory-baddeley|ワーキングメモリ——情報を一時的に保持し操作する多成分システム]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

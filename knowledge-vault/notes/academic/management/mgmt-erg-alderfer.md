@@ -31,7 +31,7 @@ ERG理論は、心理学者クレイトン・アルダーファーが1969年の�
 
 ## 関連概念
 - [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — 同じ思想家
-- [[maslow-hierarchy|マズローの欲求階層説]] — 同じ思想家
+- [[human-maslow-hierarchy-of-needs|マズローの欲求階層説]] — 同じ思想家
 - [[mgmt-job-enrichment|職務拡大と職務充実]] — 同じ思想家
 - [[mgmt-competency|コンピテンシー]] — 同じ思想家
 - [[mgmt-theory-x-y-mcgregor|X理論・Y理論——人間観の前提がマネジメント・スタイルを規定する]] — 同じ思想家

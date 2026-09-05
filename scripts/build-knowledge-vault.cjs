@@ -773,6 +773,35 @@ function buildOrgFiles(registry, map, entries) {
 // ---------------------------------------------------------------------------
 // 生成
 // ---------------------------------------------------------------------------
+/**
+ * 学術 id は分野の接頭辞で始まる（econ- / mgmt- / human- / bizlaw- / infosoc-）。
+ * 書き手の規約 (docs/BATCH_APPEND_SPECIFICATION.md) であって、検査は無かった ——
+ * 2026-09-05 に接頭辞の無い id が 4 件 (maslow-hierarchy / antimonopoly-surcharge /
+ * agile-development / knowledge-gap-hypothesis) 見つかり、うち 1 件は接頭辞つきの
+ * 同じ概念と二重になっていた。autopilot の id 正規化 (dedupeId) も接頭辞を前提に
+ * しているので、無印の id は重複検出からも外れる。ここで止める。
+ */
+const ACADEMIC_ID_PREFIX = Object.freeze({
+  economics: 'econ',
+  management: 'mgmt',
+  'human-science': 'human',
+  'business-law': 'bizlaw',
+  'information-sociology': 'infosoc',
+});
+function assertAcademicIdPrefixes(entries) {
+  const bad = [];
+  for (const e of entries) {
+    if (e.collection !== 'academic') continue;
+    const prefix = ACADEMIC_ID_PREFIX[e.category];
+    if (!prefix) bad.push(`${e.id} (discipline "${e.category}" に接頭辞の定義がない)`);
+    else if (!String(e.id).startsWith(`${prefix}-`)) bad.push(`${e.id} (${e.category} → ${prefix}-)`);
+  }
+  if (bad.length) {
+    throw new Error(`学術 id が分野の接頭辞で始まっていません（${bad.length} 件）。データ側で直してください: ${bad.slice(0, 20).join(', ')}`);
+  }
+  return entries.length;
+}
+
 function buildFiles() {
   const entries = kc.loadEntries();
 
@@ -786,6 +815,7 @@ function buildFiles() {
   if (dups.length) {
     throw new Error(`ノート id が重複しています（${dups.length} 件）。データ側で解消してください: ${dups.slice(0, 20).join(', ')}`);
   }
+  assertAcademicIdPrefixes(entries);
 
   const byCollection = new Map();
   for (const e of entries) {
@@ -947,6 +977,6 @@ function main() {
 
 // 読み込むだけで生成が走り、しかも process.exit で落ちていた。外から証人を
 // 立てられない構造そのものだったので、CLI として呼ばれたときだけ走らせる。
-module.exports = { yamlStr, linkSafe, mdInline, assertWikiAliasSafe, assertBareYamlScalar, buildFiles };
+module.exports = { yamlStr, linkSafe, mdInline, assertWikiAliasSafe, assertBareYamlScalar, assertAcademicIdPrefixes, ACADEMIC_ID_PREFIX, buildFiles };
 
 if (require.main === module) process.exit(main());

@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-assumption-of-debt|債務引受（民法470条）]] — 語彙が近い
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

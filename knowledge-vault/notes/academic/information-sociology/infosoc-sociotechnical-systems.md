@@ -40,7 +40,6 @@ aliases:
 - [[econ-welfare-economics-pigou-kaldor-hicks|厚生経済学——ピグーの外部性補正とカルドア＝ヒックス補償原理]] — 出典を共有
 - [[human-allostasis|アロスタシス（Allostasis）]] — 出典を共有
 - [[human-salutogenesis-theory|サルトジェネシス理論]] — 出典を共有
-- [[infosoc-algorithmic-experience|アルゴリズム経験]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

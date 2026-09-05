@@ -1,6 +1,6 @@
 ---
 collection: academic
-id: maslow-hierarchy
+id: human-maslow-hierarchy-of-needs
 category: "human-science"
 category_ja: "人間科学"
 title: "マズローの欲求階層説"

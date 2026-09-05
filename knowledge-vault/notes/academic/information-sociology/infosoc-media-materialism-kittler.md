@@ -42,7 +42,7 @@ aliases:
 - [[infosoc-contextual-integrity|文脈的完全性（コンテクスチュアル・インテグリティ）——情報規範としてのプライバシー]] — 出典を共有
 - [[infosoc-data-colonialism|データ植民地主義]] — 出典を共有
 - [[mgmt-resource-dependence|資源依存理論]] — 出典を共有
-- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

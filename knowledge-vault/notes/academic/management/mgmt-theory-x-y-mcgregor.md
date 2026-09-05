@@ -30,7 +30,7 @@ X理論・Y理論は、ダグラス・マグレガーが1960年の著作『企�
 - [Wikipedia: Theory X and Theory Y — McGregor, managerial assumptions, Maslow, self-fulfilling prophecy](https://en.wikipedia.org/wiki/Theory_X_and_Theory_Y) `リファレンス`
 
 ## 関連概念
-- [[maslow-hierarchy|マズローの欲求階層説]] — 同じ思想家
+- [[human-maslow-hierarchy-of-needs|マズローの欲求階層説]] — 同じ思想家
 - [[mgmt-likert-systems|リッカートのシステム4]] — 同じ思想家
 - [[mgmt-theory-z|セオリーZ]] — 同じ思想家
 - [[mgmt-action-centred-leadership-adair|アクション・センタード・リーダーシップ——課題・チーム・個人の三つの輪]] — 同じ思想家

@@ -32,7 +32,7 @@ Kelvin G. Shaver (1970, defensive attribution) ／ Elaine Walster/Hatfield (1966
 
 ## 関連概念
 - [[human-impact-bias|インパクト・バイアス（感情予測の偏り）]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-premack-principle|プレマックの原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

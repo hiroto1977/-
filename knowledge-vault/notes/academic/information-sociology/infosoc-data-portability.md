@@ -38,7 +38,7 @@ aliases:
 - [[infosoc-gdpr-right-erasure|GDPRと忘れられる権利（消去権）]] — 出典を共有
 - [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]] — 出典を共有
 - [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 出典を共有
-- [[infosoc-datafication-van-dijck|データ化（ダタフィケーション）と社会的実践（ヴァン・ダイク）]] — 同分野の近傍
+- [[infosoc-digital-rights-management-critique|DRM批判論——デジタル著作権管理の社会的統制機能と利用者の自律性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

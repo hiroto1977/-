@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — 語彙が近い
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
+- [[bizlaw-antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
 - [[bizlaw-joint-several-obligation|連帯債務（民法436条）]] — 出典を共有
 - [[bizlaw-joint-tort|共同不法行為（民法719条）]] — 出典を共有
 - [[bizlaw-assignment-security|譲渡担保]] — 出典を共有

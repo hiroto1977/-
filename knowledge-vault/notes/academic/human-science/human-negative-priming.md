@@ -33,8 +33,8 @@ aliases:
 - [[human-simon-effect|サイモン効果——刺激の位置が無関係でも反応に影響する]] — 同じ思想家
 - [[human-simultanagnosia-balint|同時失認（バリント症候群）——一度に一つの物しか見えない]] — 同じ思想家
 - [[human-spatial-cueing-posner|ポズナーの手がかり課題——空間的注意のスポットライトを測る]] — 同じ思想家
+- [[human-executive-function|実行機能（エグゼクティブ・ファンクション）——抑制制御・ワーキングメモリ・認知的柔軟性を中核に、目標に向けて思考と行動を制御する前頭前野の高次過程]] — 同分野の近傍
 - [[human-stroop-effect|ストループ効果]] — 同分野の近傍
-- [[human-load-theory-attention-lavie|注意の負荷理論——課題の知覚的負荷が選択の段階を決める]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,8 +32,8 @@ aliases:
 - [刑法（明治40年法律第45号）第36条（正当防衛）— e-Gov 法令検索 — 「やむを得ずにした行為」に限る日本法の均衡要件との一句の比較を支持](https://laws.e-gov.go.jp/law/140AC0000000045) `公的`
 
 ## 関連概念
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

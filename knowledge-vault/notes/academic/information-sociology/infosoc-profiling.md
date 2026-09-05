@@ -35,7 +35,6 @@ GDPR 4条4号＝プロファイリングの定義（評価目的の自動処理�
 - [[infosoc-data-portability|データポータビリティの権利（GDPR20条）]] — 同じ思想家
 - [[infosoc-privacy-by-design|プライバシー・バイ・デザイン]] — 同じ思想家
 - [[infosoc-algorithmic-accountability-diakopoulos|アルゴリズム説明責任——自動的意思決定の透明性と監査]] — 同分野の近傍
-- [[infosoc-datafication-van-dijck|データ化（ダタフィケーション）と社会的実践（ヴァン・ダイク）]] — 同分野の近傍
 - [[infosoc-script-akrich|技術の「スクリプト」（アクリッシュ）——設計者が物に書き込む利用者像]] — 同分野の近傍
 
 ## 関連

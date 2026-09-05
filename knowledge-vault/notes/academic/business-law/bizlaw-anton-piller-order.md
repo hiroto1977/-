@@ -34,7 +34,7 @@ aliases:
 - [[bizlaw-equitable-set-off|衡平法上の相殺——密接に関連する反対債権による相殺]] — 同じ思想家
 - [[bizlaw-vandervell-v-irc|ヴァンダーヴェル対内国歳入庁——復帰信託と衡平法上の権益の処分]] — 同じ思想家
 - [[bizlaw-trade-secret-misappropriation-dtsa|営業秘密不正流用と連邦防衛営業秘密法——DTSAによる統一的民事救済の確立]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

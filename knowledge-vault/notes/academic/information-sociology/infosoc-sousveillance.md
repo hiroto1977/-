@@ -36,6 +36,7 @@ aliases:
 - [[infosoc-panopticon|パノプティコンと規律権力]] — 出典を共有
 - [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 同分野の近傍
 - [[infosoc-visibility-digital-thompson|新しい可視性——デジタルメディアによる権力と監視の変容]] — 同分野の近傍
+- [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

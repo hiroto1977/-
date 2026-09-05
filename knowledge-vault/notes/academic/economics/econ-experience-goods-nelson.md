@@ -39,7 +39,7 @@ aliases:
 - [[econ-search-theory-stigler|情報の経済学と探索理論——最適な探索が価格分散を均衡として説明する]] — 同じ思想家
 - [[econ-tobin-q-investment|トービンのq理論——資本の市場価値と再取得費用の比が投資を規定する]] — 同分野の近傍
 - [[econ-near-rationality-akerlof-yellen|近似合理性とメニューコスト——僅かな最適化の怠りが大きな景気変動を生む]] — 同分野の近傍
-- [[econ-diamond-paradox-search-costs-monopoly-price|ダイアモンドのパラドックス——探索費用がごくわずかでも、均衡価格が独占価格になってしまう逆説]] — 同分野の近傍
+- [[econ-aumann-correlated-equilibrium|相関均衡——共有された信号による協調とナッシュ均衡の一般化]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

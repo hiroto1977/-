@@ -34,7 +34,6 @@ aliases:
 - [[econ-leland-pyle-signaling|リーランド＝パイルのシグナリング——経営者の出資比率が質を伝える]] — 同じ思想家
 - [[econ-screening-rothschild-stiglitz|スクリーニング理論（ロスチャイルド＝スティグリッツ）——情報を持たない側が契約メニューを設計し、相手の自己選択で隠れた型を選別する]] — 同じ思想家
 - [[econ-signaling-theory-spence-job-market|シグナリング理論（スペンス）——情報を持つ側が模倣にコストのかかる行動で自らの質を伝え、分離均衡が成立する仕組み]] — 同じ思想家
-- [[infosoc-information-asymmetry-akerlof-stiglitz|情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ]] — 同じ思想家
 - [[econ-internal-labor-market|内部労働市場（ドリンジャー＆ピオレ）]] — 同分野の近傍
 - [[econ-efficiency-wage|効率賃金仮説（efficiency wage hypothesis）]] — 同分野の近傍
 - [[econ-trade-policy-strategic-industries|戦略的通商政策と産業政策——クルーグマンの貿易政策論とインダストリアル・ポリシー復権]] — 同分野の近傍

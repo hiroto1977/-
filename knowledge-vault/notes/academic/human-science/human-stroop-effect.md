@@ -34,10 +34,10 @@ aliases:
 - [[human-simon-effect|サイモン効果——刺激の位置が無関係でも反応に影響する]] — 同じ思想家
 - [[human-cognitive-dissonance|認知的不協和（cognitive dissonance）]] — 出典を共有
 - [[human-frustration-aggression|フラストレーション＝攻撃仮説]] — 出典を共有
-- [[human-weber-fechner-law|ウェーバー・フェヒナーの法則]] — 出典を共有
 - [[human-social-learning-theory|社会的学習理論]] — 出典を共有
+- [[human-weber-fechner-law|ウェーバー・フェヒナーの法則]] — 出典を共有
 - [[human-self-monitoring|セルフ・モニタリング（スナイダー）]] — 同分野の近傍
-- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 同分野の近傍
+- [[human-context-dependent-memory|文脈依存記憶]] — 同分野の近傍
 - [[human-negative-priming|負のプライミング——無視した刺激への反応が遅れる]] — 同分野の近傍
 
 ## 関連

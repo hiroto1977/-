@@ -40,8 +40,8 @@ aliases:
 - [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 出典を共有
 - [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 出典を共有
 - [[human-temporal-discounting|時間割引（Temporal Discounting / 遅延割引）]] — 同分野の近傍
-- [[human-temporal-discounting-ainslie|時間割引と双曲割引——即時的報酬への選好と衝動性の行動経済学]] — 同分野の近傍
 - [[human-schema-therapy-young|スキーマ療法（ヤング）と早期不適応スキーマの臨床的応用]] — 同分野の近傍
+- [[human-cognitive-reflection-test|認知反映テスト（CRT）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

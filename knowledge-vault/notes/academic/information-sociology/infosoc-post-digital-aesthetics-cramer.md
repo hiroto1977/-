@@ -35,8 +35,8 @@ aliases:
 - [Monoskop — Post-digital (メディアアート理論アーカイブ)](https://monoskop.org/Post-digital) `リファレンス`
 
 ## 関連概念
-- [[infosoc-algorithmic-imaginaries-bucher|アルゴリズムの想像力——利用者によるアルゴリズム認知と日常的対応]] — 同分野の近傍
 - [[infosoc-postdigital-culture-cramer|ポストデジタル文化（クレーマー）]] — 同分野の近傍
+- [[infosoc-algorithmic-governmentality|アルゴリズム的統治性（Algorithmic Governmentality）]] — 同分野の近傍
 - [[infosoc-obfuscation-brunton-nissenbaum|難読化（オブファスケーション）——ノイズを加えて監視を妨げる]] — 同分野の近傍
 
 ## 関連

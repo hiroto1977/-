@@ -38,7 +38,6 @@ aliases:
 - [[econ-leontief-paradox|レオンチェフの逆説]] — 同じ思想家
 - [[econ-leontief-paradox-trade|レオンチェフ・パラドックス——要素賦存理論への実証的挑戦]] — 同じ思想家
 - [[econ-von-neumann-growth-model|フォン・ノイマンの成長モデル——均斉成長と利子率＝成長率]] — 同じ思想家
-- [[econ-tying|抱き合わせ販売（tying）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -38,9 +38,9 @@ Helen Nissenbaum（ヘレン・ニッセンバウム, 理論提唱者） ／ Pri
 - [[bizlaw-trust-fund-doctrine|信託基金の法理（trust fund doctrine／資本＝債権者のための信託基金）——会社資本は債権者のための信託財産とみる古典法理]] — 出典を共有
 - [[infosoc-data-colonialism|データ植民地主義]] — 出典を共有
 - [[mgmt-resource-dependence|資源依存理論]] — 出典を共有
-- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 - [[infosoc-media-materialism-kittler|キットラーのメディア唯物論——技術メディアが我々の状況を規定する]] — 出典を共有
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同分野の近傍
+- [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

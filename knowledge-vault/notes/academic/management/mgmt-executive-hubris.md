@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[econ-arbitrage-pricing-theory-ross|裁定価格理論（APT）——複数のリスク要因による資産価格の決定]] — 同じ思想家
 - [[mgmt-strategic-human-capital-coff-kryscynski|戦略的人的資本——知識労働者の獲得・保持と持続的競争優位]] — 同分野の近傍
-- [[mgmt-issue-selling-dutton|課題の売り込み（ダットン＆アシュフォード）]] — 同分野の近傍
+- [[mgmt-sensegiving-gioia|センスギビング理論（ジョイア＆チッタンパリー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

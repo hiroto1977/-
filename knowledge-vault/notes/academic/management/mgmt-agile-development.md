@@ -1,6 +1,6 @@
 ---
 collection: academic
-id: agile-development
+id: mgmt-agile-development
 category: "management"
 category_ja: "経営学"
 title: "アジャイルソフトウェア開発"
@@ -33,13 +33,6 @@ aliases:
 - [[mgmt-agile-scrum-organizational|アジャイル・スクラムと組織アジリティの経営論——ソフトウェア開発から経営変革へ]] — 語彙が近い
 - [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]] — 同分野の近傍
 - [[mgmt-order-winners-hill|受注獲得基準と受注資格基準（ヒル）——製造を市場に結びつける]] — 同分野の近傍
-- [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]] — 同分野の近傍
-- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]] — 同分野の近傍
-- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 同分野の近傍
-- [[mgmt-affective-events-theory|感情イベント理論（AET）]] — 同分野の近傍
-- [[mgmt-altman-z-score|アルトマンのZスコア（Altman Z-Score／1968）——財務比率の判別分析による企業倒産予測]] — 同分野の近傍
-- [[mgmt-amoeba-management|アメーバ経営（稲盛和夫）]] — 同分野の近傍
-- [[mgmt-bass-diffusion-model|バスの普及モデル（Bass diffusion model）——新製品の採用を革新係数pと模倣係数qで記述する数理予測モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

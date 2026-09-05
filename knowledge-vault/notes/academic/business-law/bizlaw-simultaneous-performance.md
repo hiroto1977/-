@@ -31,8 +31,8 @@ aliases:
 - [Wikibooks 民法第533条（条文・2017年改正の趣旨）](https://ja.wikibooks.org/wiki/民法第533条) `リファレンス`
 
 ## 関連概念
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -36,11 +36,11 @@ aliases:
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — 同じ思想家
 - [[infosoc-algorithmic-opacity-burrell|アルゴリズム不透明性の三類型——企業秘密・技術的リテラシー・機械学習の規模に起因する不透明性]] — 同じ思想家
 - [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — 同じ思想家
+- [[infosoc-datafication-mayer-schoenberger|データ化（データフィケーション）——計量されてこなかった生活や行動を機械可読データへ変換し、分析・予測・資本化の対象にする過程]] — 同じ思想家
 - [[infosoc-media-repertoire-theory|メディア・レパートリー理論]] — 同じ思想家
 - [[infosoc-networked-protest-tufekci|トゥフェックチのネットワーク化された抗議——能力を伴わないシグナルの拡大と戦術的凍結]] — 同じ思想家
 - [[infosoc-repair-work|修繕の労働（Repair Work）]] — 同じ思想家
 - [[infosoc-data-colonialism|データ植民地主義]] — 同分野の近傍
-- [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

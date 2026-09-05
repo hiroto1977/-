@@ -35,6 +35,7 @@ aliases:
 - [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 同分野の近傍
 - [[econ-lump-of-labour-fallacy|労働塊の誤謬（Lump of Labour Fallacy）]] — 同分野の近傍
 - [[econ-trickle-down|トリクルダウン理論（サプライサイド経済学）]] — 同分野の近傍
+- [[econ-hyperinflation-cagan|カガンのハイパーインフレーション・モデル——貨幣需要と期待が織りなす物価爆発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,8 +34,8 @@ aliases:
 - [[infosoc-media-richness-daft-lengel|メディアリッチネス理論——課題の曖昧性に適合した伝達媒体の選択]] — 同じ思想家
 - [[mgmt-impression-management-goffman|印象管理——ゴフマンの演劇的アプローチと組織における自己呈示]] — 同じ思想家
 - [[mgmt-impression-management-organizational|組織的印象管理——ステークホルダーへの組織イメージの戦略的構築]] — 同じ思想家
+- [[infosoc-information-asymmetry-platform|プラットフォーム情報非対称性理論]] — 同分野の近傍
 - [[infosoc-web2|Web 2.0]] — 同分野の近傍
-- [[infosoc-self-presentation|自己呈示とドラマトゥルギー（ゴッフマン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

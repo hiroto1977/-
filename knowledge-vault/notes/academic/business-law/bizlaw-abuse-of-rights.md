@@ -34,6 +34,13 @@ aliases:
 - [[bizlaw-disability-employment|障害者雇用促進法]] — 同分野の近傍
 - [[bizlaw-pledge|質権（民法342条）]] — 同分野の近傍
 - [[bizlaw-numerus-clausus|物権法定主義（民法175条）]] — 同分野の近傍
+- [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]] — 同分野の近傍
+- [[bizlaw-adverse-possession|時効取得——長期の占有により非所有者が土地の権原を取得する法理]] — 同分野の近傍
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 同分野の近傍
+- [[bizlaw-anti-bribery-fcpa-ukba|贈収賄禁止法とコンプライアンス——米国FCPA・英国贈収賄防止法と国際腐敗防止規制]] — 同分野の近傍
+- [[bizlaw-anti-suit-injunction|アンチスーツ・インジャンクション（Anti-Suit Injunction）]] — 同分野の近傍
+- [[bizlaw-assumption-of-risk|危険の引受——原告が任意に引き受けた既知の危険につき被告の不法行為責任を否定するコモンロー上の抗弁]] — 同分野の近傍
+- [[bizlaw-berle-means-thesis|バーリ＝ミーンズ命題（The Berle-Means thesis／所有と経営の分離）——大規模公開会社では株式が分散し、支配が株主から専門経営者へ移る]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

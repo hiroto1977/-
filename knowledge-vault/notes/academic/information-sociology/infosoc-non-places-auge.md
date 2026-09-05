@@ -35,7 +35,6 @@ aliases:
 - [[infosoc-grobalization-ritzer|グロウバリゼーション——画一的な「無」が世界を覆う]] — 同じ思想家
 - [[infosoc-liquid-modernity|リキッド・モダニティ（液状化する近代）]] — 同じ思想家
 - [[infosoc-textual-poaching-jenkins|テクストの密猟——ファンによる能動的なメディアの流用と作り替え]] — 同じ思想家
-- [[infosoc-mobile-privatization-williams|モバイル・プライバタイゼーション——移動性と私生活化を両立させる放送]] — 同分野の近傍
 - [[infosoc-wisdom-of-crowds|群衆の叡智]] — 同分野の近傍
 - [[infosoc-technological-singularity|技術的特異点（シンギュラリティ）]] — 同分野の近傍
 

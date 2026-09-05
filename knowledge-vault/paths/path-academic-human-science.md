@@ -2,32 +2,32 @@
 title: "学習パス: 学術概念／人間科学"
 type: learning-path
 path_key: "academic-human-science"
-entry_count: 634
+entry_count: 630
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／人間科学（634件）
+# 学習パス — 学術概念／人間科学（630件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 150）
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 109）
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]]（接続 152）
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]（接続 108）
 - [[human-belief-perseverance|信念の保続（信念固執）]]（接続 33）
 - [[human-framing-effect|フレーミング効果（framing effect）]]（接続 32）
-- [[human-attribution-theory|帰属理論]]（接続 30）
 - [[human-bias-blind-spot|バイアスの盲点]]（接続 30）
+- [[human-attribution-theory|帰属理論]]（接続 29）
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]]（接続 29）
-- [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 26）
+- [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]]（接続 27）
 - [[human-social-comparison-festinger|社会的比較理論——フェスティンガーの自己評価欲求と上方・下方比較の心理]]（接続 26）
-- [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 25）
-- [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 25）
-- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]（接続 25）
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]]（接続 25）
 - [[human-conjunction-fallacy|連言錯誤]]（接続 25）
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]]（接続 25）
+- [[human-attachment|愛着理論（ボウルビィ／エインズワース）]]（接続 24）
+- [[human-attachment-theory-bowlby|アタッチメント理論]]（接続 24）
+- [[human-base-rate-fallacy|基準率の無視]]（接続 24）
 
 ## 第 2 部 — 年代順の展開
 - 1510年: [[human-phantom-limb|幻肢（ファントムリム）]]
@@ -56,7 +56,7 @@ tags:
 - 1905年: [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]]
 - 1906年: [[human-proprioception|固有受容覚（プロプリオセプション / Proprioception）]]
 - 1907年: [[human-semantic-satiation|意味飽和（セマンティック・サティエイション）]]
-- 1908年: [[maslow-hierarchy|マズローの欲求階層説]]
+- 1908年: [[human-maslow-hierarchy-of-needs|マズローの欲求階層説]]
 - 1910年: [[human-merton-strain|マートンの緊張理論（社会構造とアノミー）]]
 - 1914年: [[human-anosognosia|病態失認（アノソグノシア / Anosognosia）]]
 - 1914年: [[human-vestibular-perception-theory|前庭知覚理論]]
@@ -151,13 +151,13 @@ tags:
 - 1972年: [[human-alexithymia-sifneos|アレキシサイミア（失感情症・シフネオス）——自分の感情を識別し言葉にすることが難しく、身体感覚と区別できず、外向きの思考に傾く特性]]
 - 1972年: [[human-groupthink|集団思考（グループシンク, groupthink）]]
 - 1972年: [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]]
-- 1973年: [[human-base-rate-fallacy|基準率の無視]]
 - 1973年: [[human-biological-motion-johansson|バイオロジカルモーション——十数個の光点の動きだけからヒトの歩行や動作を瞬時に知覚する現象]]
 - 1973年: [[human-prototype-theory-rosch|プロトタイプ理論（カテゴリー化の原型理論）]]
 - 1974年: [[human-anchoring-adjustment-tversky|アンカリングと調整（係留と調整）——最初に示された数値が基準点となり、そこからの修正が不十分なまま判断が偏るヒューリスティック]]
 - 1974年: [[human-blindsight|ブラインドサイト（Blindsight）]]
 - 1974年: [[human-burnout|バーンアウト（燃え尽き症候群）]]
 - 1974年: [[human-cortical-magnification|皮質拡大係数（Cortical Magnification Factor）]]
+- 1974年: [[human-executive-function|実行機能（エグゼクティブ・ファンクション）——抑制制御・ワーキングメモリ・認知的柔軟性を中核に、目標に向けて思考と行動を制御する前頭前野の高次過程]]
 - 1974年: [[human-misattribution-arousal|覚醒の誤帰属（吊り橋効果）]]
 - 1974年: [[human-opponent-process|対抗過程理論（Opponent-Process Theory of Acquired Motivation）]]
 - 1974年: [[human-phonological-loop|音韻ループ（Phonological Loop）]]
@@ -175,6 +175,7 @@ tags:
 - 1977年: [[human-illusory-truth-effect|真理の錯誤効果（真実性の錯覚）]]
 - 1977年: [[human-intermodal-matching|感覚間マッチング（Intermodal Matching）]]
 - 1977年: [[human-neonatal-imitation|新生児模倣（Neonatal Imitation）]]
+- 1977年: [[human-self-efficacy-theory|自己効力感（バンデューラ）——課題を遂行できるという自分への信念が行動の開始・持続・努力量を規定し、四つの源泉から形成される]]
 - 1977年: [[human-self-reference-effect|自己参照効果]]
 - 1978年: [[human-fast-mapping|高速マッピング（Fast Mapping）]]
 - 1978年: [[human-theory-of-mind|心の理論]]
@@ -338,6 +339,7 @@ tags:
 - [[human-awe-emotion-keltner|畏敬（オー）の感情（ケルトナー＆ハイト）]]
 - [[human-balance-theory-heider|認知的バランス理論（ハイダー）——P-O-X三者関係の均衡]]
 - [[human-baroreceptor-reflex|圧受容器反射（バロレフレックス）]]
+- [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]]
 - [[human-bayesian-brain-hypothesis|ベイジアン脳仮説]]
 - [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]]
 - [[human-biased-competition|バイアス付き競合理論（biased competition theory／注意のバイアス競合モデル）——複数刺激が限られた神経表現をめぐって争い、注意がその競合を行動上重要な対象に有利となるよう偏らせる]]
@@ -425,9 +427,6 @@ tags:
 - [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]]
 - [[human-error-management-theory-frese|エラー管理理論（フレゼ）]]
 - [[human-excitation-transfer|興奮転移理論——残った興奮が次の感情を強める]]
-- [[human-executive-function|実行機能（遂行機能）]]
-- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]]
-- [[human-executive-function-development|実行機能の発達と前頭前野の神経科学的基盤]]
 - [[human-existential-therapy-yalom|実存療法——ヤーロムの四つの究極的関心と治療的対峙]]
 - [[human-experiential-avoidance-hayes|体験の回避と心理的柔軟性——ヘイズのACTモデルにおける中核的病理プロセス]]
 - [[human-explanatory-models|病気の説明モデル：医療人類学における患者・治療者の疾病解釈枠組み]]
@@ -583,9 +582,6 @@ tags:
 - [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]]
 - [[human-self-determination-theory-mini|自己決定ミニ理論群]]
 - [[human-self-discrepancy-higgins|自己不一致理論——現実自己と自己指針の乖離が異なる感情を生む]]
-- [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]]
-- [[human-self-efficacy-performance-bandura|自己効力感と目標設定・パフォーマンスの社会認知理論（バンデューラ）]]
-- [[human-self-efficacy-theory|自己効力感理論]]
 - [[human-self-expansion-aron|自己拡張モデル（アーロン）]]
 - [[human-self-handicapping-jones-berglas|セルフ・ハンディキャッピング——失敗の言い訳を先取りし自尊心を防衛する方略]]
 - [[human-self-perception-bem|自己知覚理論——内的手がかりが曖昧なとき人は自らの行動から態度を推論する]]

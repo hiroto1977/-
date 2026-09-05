@@ -39,7 +39,7 @@ Kim S. Cameron ／ Jane E. Dutton ／ Robert E. Quinn
 - [[mgmt-organizational-virtuousness|組織的美徳性理論（キャメロン）]] — 同じ思想家
 - [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 出典を共有
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -2,21 +2,21 @@
 title: "学習パス: 学術概念／情報社会学"
 type: learning-path
 path_key: "academic-information-sociology"
-entry_count: 612
+entry_count: 604
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／情報社会学（612件）
+# 学習パス — 学術概念／情報社会学（604件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 73）
-- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 44）
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]（接続 75）
+- [[infosoc-actor-network-theory|アクターネットワーク理論]]（接続 45）
 - [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]]（接続 30）
-- [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]]（接続 28）
+- [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]]（接続 27）
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]]（接続 26）
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]]（接続 25）
 - [[infosoc-polymedia|ポリメディア（Polymedia）]]（接続 25）
@@ -24,10 +24,10 @@ tags:
 - [[infosoc-communicative-figurations|コミュニカティブ・フィギュレーション（Communicative Figurations）]]（接続 22）
 - [[infosoc-dataveillance|データヴェイランス（データ監視）]]（接続 22）
 - [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]]（接続 22）
+- [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]]（接続 22）
 - [[infosoc-banal-nationalism|バナール・ナショナリズム]]（接続 21）
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]]（接続 21）
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]]（接続 21）
-- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]]（接続 21）
 
 ## 第 2 部 — 年代順の展開
 - 1689年: [[infosoc-eu-ai-act|EU AI規制法（AI Act）]]
@@ -56,7 +56,6 @@ tags:
 - 1925年: [[infosoc-liquid-modernity|リキッド・モダニティ（液状化する近代）]]
 - 1925年: [[infosoc-liquid-surveillance|リキッド・サーベイランス（液状監視）]]
 - 1926年: [[infosoc-illich-deschooling|脱学校化社会（イリイチ）]]
-- 1928年: [[knowledge-gap-hypothesis|知識格差仮説]]
 - 1930年: [[infosoc-issue-attention-cycle|争点注目サイクル（イシュー・アテンション・サイクル、Issue-Attention Cycle）——社会問題への世論の注目が解決ではなく注目資源の周期的消耗によって浮上・衰退する五段階モデル]]
 - 1931年: [[infosoc-technopoly|テクノポリ（技術独占）]]
 - 1935年: [[infosoc-orientalism-said|オリエンタリズム（エドワード・サイード）]]
@@ -104,6 +103,7 @@ tags:
 - 1969年: [[infosoc-cultural-imperialism|文化帝国主義（メディア帝国主義）]]
 - 1969年: [[infosoc-knowledge-society|知識社会（ナレッジ・ソサエティ）]]
 - 1970年: [[infosoc-information-asymmetry-online|オンライン市場における情報の非対称性]]
+- 1970年: [[infosoc-knowledge-gap-tichenor|知識ギャップ仮説——マスメディアの情報流入が社会階層間の知識格差を拡大する]]
 - 1972年: [[infosoc-attribute-agenda-setting|第二レベルの議題設定（属性アジェンダ設定）]]
 - 1972年: [[infosoc-information-poverty-chatman|情報貧困論（チャトマン理論）]]
 - 1972年: [[infosoc-moral-panic|道徳的パニック（モラル・パニック）]]
@@ -155,6 +155,7 @@ tags:
 - 1992年: [[infosoc-media-events|メディア・イベント]]
 - 1992年: [[infosoc-metaverse|メタバース]]
 - 1993年: [[infosoc-mcdonaldization|マクドナルド化]]
+- 1994年: [[infosoc-infrastructural-inversion|インフラストラクチャの逆転（ボウカー＆スター）——背景に退いて不可視になった分類・標準・データ基盤を前景化し、その政治性を可視化する方法論]]
 - 1994年: [[infosoc-native-advertising-persuasion-knowledge|ネイティブ広告と説得知識モデル（Native Advertising / Persuasion Knowledge Model）]]
 - 1994年: [[infosoc-techno-nationalism|テクノナショナリズム（Techno-nationalism）]]
 - 1994年: [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]]
@@ -163,7 +164,6 @@ tags:
 - 1995年: [[infosoc-distributed-cognition|分散認知（Distributed Cognition／Hutchins 1995）——認知は個人の頭の中でなく、人・道具・環境からなるシステムに分散する]]
 - 1995年: [[infosoc-triple-helix|トリプルヘリックス（三重らせんモデル）]]
 - 1996年: [[infosoc-immaterial-labor|非物質的労働（immaterial labor）]]
-- 1996年: [[infosoc-infrastructural-inversion|インフラストラクチャル・インヴァージョン（基盤構造の可視化）]]
 - 1996年: [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]]
 - 1996年: [[infosoc-media-equation|メディアの等式（メディア・イクエーション）]]
 - 1996年: [[infosoc-space-of-flows|フローの空間（スペース・オブ・フローズ）]]
@@ -243,7 +243,7 @@ tags:
 - 2012年: [[infosoc-networked-protest-tufekci|トゥフェックチのネットワーク化された抗議——能力を伴わないシグナルの拡大と戦術的凍結]]
 - 2012年: [[infosoc-social-bots|ソーシャルボット]]
 - 2013年: [[infosoc-algorithmic-governmentality|アルゴリズム的統治性（Algorithmic Governmentality）]]
-- 2013年: [[infosoc-datafication|データ化（データ化現象）]]
+- 2013年: [[infosoc-datafication-mayer-schoenberger|データ化（データフィケーション）——計量されてこなかった生活や行動を機械可読データへ変換し、分析・予測・資本化の対象にする過程]]
 - 2013年: [[infosoc-differential-susceptibility-media-effects|メディア効果の分化感受性モデル（DSMM／Differential Susceptibility to the Media Effects Model）——同じ内容が人により違う効果を生む理由を説明する統合枠組み]]
 - 2013年: [[infosoc-digital-disconnect|デジタル・ディスコネクト（Digital Disconnect）]]
 - 2013年: [[infosoc-hybrid-media-system|ハイブリッド・メディア・システム]]
@@ -257,6 +257,7 @@ tags:
 - 2014年: [[infosoc-slacktivism|スラックティビズム]]
 - 2014年: [[infosoc-smart-city-governance|スマートシティのガバナンス]]
 - 2014年: [[infosoc-web3|Web3]]
+- 2015年: [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像（ブッヒャー）——利用者がアルゴリズムをどう感じ意味づけるかが、想像に導かれた行動を通じてアルゴリズムの力そのものを構成する]]
 - 2015年: [[infosoc-algorithmic-opacity-burrell|アルゴリズム不透明性の三類型——企業秘密・技術的リテラシー・機械学習の規模に起因する不透明性]]
 - 2015年: [[infosoc-platformization|プラットフォーム化（Platformization）]]
 - 2016年: [[infosoc-algorithmic-accountability|アルゴリズムの説明責任]]
@@ -299,15 +300,12 @@ tags:
 - [[infosoc-algorithmic-bias-fairness|アルゴリズムの偏りと公平性（アルゴリズム的公正性）]]
 - [[infosoc-algorithmic-culture|アルゴリズム文化論]]
 - [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]]
-- [[infosoc-algorithmic-experience|アルゴリズム経験]]
 - [[infosoc-algorithmic-fairness|アルゴリズム公正性（機械学習の公平性理論）]]
 - [[infosoc-algorithmic-governance|アルゴリズムによる統治（アルゴクラシー）]]
 - [[infosoc-algorithmic-governance-danaher|アルゴリズミック・ガバナンス——ダナハーの自動化された意思決定と民主的正統性]]
 - [[infosoc-algorithmic-governance-rouvroy|アルゴリズム的統治性とデータ主義——ルーブロワのガバナメンタリティ批判]]
 - [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]]
 - [[infosoc-algorithmic-governance-yeung|アルゴリズム統治——自動化された意思決定の社会的制御と民主的正統性]]
-- [[infosoc-algorithmic-imaginaries-bucher|アルゴリズムの想像力——利用者によるアルゴリズム認知と日常的対応]]
-- [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか]]
 - [[infosoc-algorithmic-personalization-critique|アルゴリズム的パーソナライゼーションと認知的閉鎖の社会学]]
 - [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティングとアンビエント情報環境——マーク・ワイザーの「消えるコンピュータ」ビジョン]]
 - [[infosoc-aspirational-labor-duffy|アスピレーショナル労働（aspirational labour／夢追い型デジタル労働）——「好きを仕事に」の約束に支えられた、ほぼ無償のセルフブランディング労働]]
@@ -370,10 +368,8 @@ tags:
 - [[infosoc-data-ethics|データ倫理とアルゴリズム公正性の学際的枠組み]]
 - [[infosoc-data-sovereignty-digital-rights|データ主権とデジタル自決権の国際政治経済学]]
 - [[infosoc-database-aesthetics-manovich|ニューメディアの言語——データベースと物語という二つの文化形式]]
-- [[infosoc-datafication-mayer-schoenberger|データ化（ダタフィケーション）とビッグデータ社会]]
 - [[infosoc-datafication-quantified-self|数量化された自己（クオンティファイド・セルフ）——ウェアラブル技術と自己監視の情報社会論]]
 - [[infosoc-datafication-social-life|ソーシャルライフのデータ化とアルゴリズム的統治の情報社会論]]
-- [[infosoc-datafication-van-dijck|データ化（ダタフィケーション）と社会的実践（ヴァン・ダイク）]]
 - [[infosoc-dataveillance-clarke|データ監視（デイタヴェイランス）——個人データを通じた体系的な監視]]
 - [[infosoc-deceptive-design-gray|欺瞞的デザインとダーク・パターン（グレイ他）]]
 - [[infosoc-deepfake-synthetic-media-ethics|ディープフェイクと合成メディア倫理——生成AI時代の真正性の危機と規制の展望]]
@@ -438,7 +434,6 @@ tags:
 - [[infosoc-imagined-communities-anderson-digital|想像の共同体とデジタル・ナショナリズム——アンダーソンのメディア論の情報社会への拡張]]
 - [[infosoc-immutable-mobiles-latour|不変の可動物——形を変えずに運ばれる記録が知と権力を支える]]
 - [[infosoc-indexing-hypothesis-bennett|インデックス仮説——報道は公的エリートの論争の幅に従う]]
-- [[infosoc-information-asymmetry-akerlof-stiglitz|情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ]]
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]]
 - [[infosoc-information-asymmetry-platform|プラットフォーム情報非対称性理論]]
 - [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]]
@@ -464,10 +459,8 @@ tags:
 - [[infosoc-information-society-machlup|知識産業論——知識の生産と分配を経済の主要部門として計量する]]
 - [[infosoc-information-society-webster|情報社会論の批判的検討——情報社会は新たな社会か資本主義の連続か]]
 - [[infosoc-information-worlds-theory|情報世界理論]]
-- [[infosoc-infrastructural-inversion-bowker|インフラストラクチャーの逆転——不可視の情報基盤を可視化する方法論]]
-- [[infosoc-infrastructural-inversion-bowker-star|インフラの逆転——分類システムの不可視的政治性]]
+- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]]
 - [[infosoc-knowledge-commons-theory|知識コモンズ理論]]
-- [[infosoc-knowledge-gap-tichenor|知識ギャップ仮説——マスメディアの情報流入が社会階層間の知識格差を拡大する]]
 - [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]]
 - [[infosoc-lay-expertise-epstein|素人専門知——資格なき人々が科学に参加し知を変える]]
 - [[infosoc-long-tail-anderson|ロングテール——デジタル経済におけるニッチ需要の集積の価値]]
@@ -514,7 +507,6 @@ tags:
 - [[infosoc-phenomenological-technology|技術の現象学]]
 - [[infosoc-platform-cooperativism-scholz-schneider|プラットフォーム協同組合主義——デジタル経済における労働者所有の代替モデル]]
 - [[infosoc-platform-economics|プラットフォーム経済学・二面市場理論：デジタル市場の仲介構造と価格戦略]]
-- [[infosoc-platform-economy-multi-sided|プラットフォーム経済と多面市場——ネットワーク外部性とプラットフォーム・ガバナンス]]
 - [[infosoc-platform-envelopment-eisenmann|プラットフォーム包囲戦略（アイゼンマン）]]
 - [[infosoc-platform-feudalism|プラットフォーム封建制（デジタル封建制）]]
 - [[infosoc-platform-governance-tarleton|プラットフォーム・ガバナンス（ギレスピー）]]

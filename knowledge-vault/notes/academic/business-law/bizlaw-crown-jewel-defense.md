@@ -31,8 +31,8 @@ Mills Acquisition Co. v. MacMillan, Inc., 559 A.2d 1261（1989年　デラウェ
 - [Justia — Revlon, Inc. v. MacAndrews & Forbes Holdings, 506 A.2d 173 (Del. 1986)](https://law.justia.com/cases/delaware/supreme-court/1986/506-a-2d-173-1.html) `リファレンス`
 
 ## 関連概念
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

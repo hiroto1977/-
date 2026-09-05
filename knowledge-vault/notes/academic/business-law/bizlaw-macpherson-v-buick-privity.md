@@ -35,8 +35,8 @@ aliases:
 ## 関連概念
 - [[bizlaw-vincent-v-lake-erie-private-necessity|ヴィンセント対レイク・エリー運送事件——緊急時に他人の財産を使うことは許されるが、生じた損害は賠償しなければならないという「不完全な特権」の法理]] — 出典を共有
 - [[human-structural-family-therapy-minuchin|ミニューチンの構造派家族療法——家族を下位システムと境界からなる構造とみなし、絡み合い／遊離した境界を組み替えて問題を解く]] — 出典を共有
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

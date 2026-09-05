@@ -2,7 +2,7 @@
 title: "annualreviews.org"
 type: source-domain
 host: "annualreviews.org"
-cite_count: 23
+cite_count: 22
 tags:
   - source-domain
   - index
@@ -10,14 +10,13 @@ tags:
 
 # annualreviews.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **23 件**（学術 23）
+> [!info] 出典ドメイン索引 ・ 引用 **22 件**（学術 22）
 
 ## このドメインを出典とする項目
 
 - [[human-corollary-discharge|遠心性コピー／随伴発射（Corollary Discharge / Efference Copy）]] — Sommer&Wurtz(2008)BrainCircuitsfortheInternalMonitoringofMovements—An…
 - [[human-default-mode-network-raichle|デフォルト・モード・ネットワーク——安静時脳活動と自己参照的処理]] — Raichle(2015)AnnualReviewNeuroscience—DMNreview
 - [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — Posner&Petersen(1990)TheAttentionSystemoftheHumanBrain—AnnualReviewof…
-- [[human-executive-function|実行機能（遂行機能）]] — Diamond,A.(2013).ExecutiveFunctions.AnnualReviewofPsychology,64,135–1…
 - [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — Tulving,E.(2002).Episodicmemory:Frommindtobrain.AnnualReviewofPsychol…
 - [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — Rizzolatti&Craighero(2004)TheMirror-NeuronSystem—AnnualReviewofNeuros…
 - [[human-mirror-neuron-theory|ミラーニューロン理論]] — Rizzolatti&Craighero(2004)—TheMirror-NeuronSystem,AnnualReviewofNeuro…

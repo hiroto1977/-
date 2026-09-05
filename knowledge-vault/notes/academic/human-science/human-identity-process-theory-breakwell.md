@@ -38,6 +38,7 @@ aliases:
 - [[human-optimal-distinctiveness|最適弁別性理論（Optimal Distinctiveness Theory／Brewer 1991）——人は所属（同化）と差異化（独自性）の相反する欲求の均衡点で社会的アイデンティティを選ぶ]] — 同分野の近傍
 - [[human-interpersonal-psychotherapy-klerman|対人関係療法（IPT）——うつ病治療における対人プロセスと役割移行への介入]] — 同分野の近傍
 - [[human-sociometer-theory|ソシオメーター理論]] — 同分野の近傍
+- [[human-psychological-capital-luthans|心理的資本——自己効力・楽観・希望・レジリエンスの統合構成概念]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

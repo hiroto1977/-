@@ -31,8 +31,10 @@ aliases:
 - [Wikipedia: Robert Kegan — 構成的発達理論の概要](https://en.wikipedia.org/wiki/Robert_Kegan) `リファレンス`
 
 ## 関連概念
-- [[human-developmental-regulation-brandtstadter|発達的行為調整理論（ブランツテッター）]] — 同分野の近傍
 - [[human-piaget-cognitive-development|ピアジェの認知発達段階説]] — 同分野の近傍
+- [[human-developmental-regulation-brandtstadter|発達的行為調整理論（ブランツテッター）]] — 同分野の近傍
+- [[human-fluid-crystallized-intelligence|流動性知能と結晶性知能]] — 同分野の近傍
+- [[human-psychosocial-development-erikson|心理社会的発達理論——エリクソンの八段階モデルとアイデンティティ形成]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

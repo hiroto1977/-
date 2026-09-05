@@ -40,7 +40,7 @@ aliases:
 - [[human-conservation-piaget|保存の概念（ピアジェ）——見かけが変わっても量は変わらない]] — 出典を共有
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 出典を共有
 - [[human-hawthorne-effect|ホーソン効果]] — 出典を共有
-- [[human-object-permanence|対象の永続性（Object Permanence）]] — 出典を共有
+- [[human-maslow-hierarchy-of-needs|マズローの欲求階層説]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

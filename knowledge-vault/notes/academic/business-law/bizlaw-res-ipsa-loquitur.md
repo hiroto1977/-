@@ -30,8 +30,8 @@ Byrne v. Boadle（1863・2 H&C 722／159 ER 299・法理確立の記念碑的判
 - [Byrne v. Boadle, 159 Eng. Rep. 299 (Exch. 1863)（Justia 収録の判決原文・Pollock C.B. の判示）](https://law.justia.com/cases/foreign/united-kingdom/159-eng-rep-299-1863.html) `リファレンス`
 
 ## 関連概念
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

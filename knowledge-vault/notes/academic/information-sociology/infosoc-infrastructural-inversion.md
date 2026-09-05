@@ -3,36 +3,41 @@ collection: academic
 id: infosoc-infrastructural-inversion
 category: "information-sociology"
 category_ja: "情報社会学"
-title: "インフラストラクチャル・インヴァージョン（基盤構造の可視化）"
-as_of: "2026-06"
-source_count: 2
+title: "インフラストラクチャの逆転（ボウカー＆スター）——背景に退いて不可視になった分類・標準・データ基盤を前景化し、その政治性を可視化する方法論"
+as_of: "2026-09"
+source_count: 5
 authoritative: true
 tags:
   - collection/academic
   - academic/information-sociology
   - knowledge/verified
 aliases:
-  - "インフラストラクチャル・インヴァージョン（基盤構造の可視化）"
+  - "インフラストラクチャの逆転（ボウカー＆スター）——背景に退いて不可視になった分類・標準・データ基盤を前景化し、その政治性を可視化する方法論"
 ---
 
-# インフラストラクチャル・インヴァージョン（基盤構造の可視化）
+# インフラストラクチャの逆転（ボウカー＆スター）——背景に退いて不可視になった分類・標準・データ基盤を前景化し、その政治性を可視化する方法論
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-06 ・ 出典: 2件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-09 ・ 出典: 5件（うち権威ある出典 ✓）
 
 ## 概要
-インフラストラクチャル・インヴァージョン（Infrastructural Inversion）とは、科学技術と社会（STS）の研究領域における方法論的戦略で、通常は非可視的・取り当たり前視されているインフラストラクチャの相互依存性・社会的次元・政治的含意を前景化・顕在化させるアナリティカルな試みである。ジェフリー・C・バウカー（Geoffrey C. Bowker）とスーザン・リー・スター（Susan Leigh Star）は1999年の著書『Sorting Things Out: Classification and Its Consequences』（MIT Press, Inside Technology series, pp.34）において、インフラストラクチャル・インヴァージョンを「技術ネットワークと標準化の深い相互依存性と、政治的知識生産の実践との間の相互依存性を認識すること」と定義した。この方法論的移動は「設計と習慣により背景に消えるインフラストラクチャ（故障時にのみ可視化）に対する闘争」と特徴付けられている。スター＝ルーラー（Star & Ruhleder, 1996, "Steps Toward an Ecology of Infrastructure," Information Systems Research 7(1): 111-134, DOI: 10.1287/isre.7.1.111）はインフラストラクチャを物理的事物でなく、有機的実践に関連的に出現する特性として再定義した。彼らは「インフラストラクチャとは何か」から「いつがインフラストラクチャなのか」への分析的転換を提唱し、インフラストラクチャの関係的・生態学的性質を示唆した。インフラストラクチャル・インヴァージョンはこの関係的存在論に対応する方法論であり、通常は不可視な（しかし関係的枠組みでは明らかに）基盤構造を分析的に表面化させ、その社会的・政治的側面を露呈させる意図的努力である。スターは1999年の論文「The Ethnography of Infrastructure」（American Behavioral Scientist 43(3): 377-391, DOI: 10.1177/00027649921955326）において、インフラストラクチャの9つの特質—埋め込み性・透明性・到達域・成員学習・慣行との結合・標準化の具現化・既存基盤への依存・故障時の可視化・モジュール的段階的構築—を提示し、インフラストラクチャ研究の分析的基盤を確立した。
+インフラストラクチャの逆転（infrastructural inversion）は、ジェフリー・ボウカーが1994年の『Science on the Run』で提唱し、ボウカーとスーザン・リー・スターが1999年の『Sorting Things Out』（MIT Press）で発展させた科学技術社会論（STS）の方法論で、通常は背景に退き故障時にしか意識されないインフラストラクチャ（分類体系・標準・データベース）を前景化し、技術ネットワークと標準化の相互依存やそこに埋め込まれた政治的・倫理的選択を可視化する。二人は国際疾病分類（ICD）、看護介入分類（NIC）の歴史分析から、分類システムが社会的現実を中立に映す鏡ではなく、何を可視化し何を不可視化するかの選択を通じて知識生産・労働の可視性・社会秩序を構成する政治的技術であることを示した。スターとカレン・ルーラー（1996）はインフラを物ではなく実践との関係のなかで立ち現れる性質と捉えて問いを「何がインフラか」から「いつインフラになるか」へ転換し、スター（1999）は埋め込み性・透明性・到達域・成員学習・慣行との結合・標準の具現化・既存基盤への依存・故障時の可視化・モジュール的構築というインフラの九つの特質を整理した。ポール・エドワーズらのインフラ研究へ継承され、境界オブジェクト概念と結んで異なる社会世界の間の翻訳・調整・排除を分析する基盤となった。批判として、記述的な事例研究が中心で処方を与えにくく、何を「逆転」するかが分析者の視点に依存する。中小企業には、会計科目・商品コード・顧客区分といった自社の分類が何を見えなくしているかを定期的に点検すること、SaaS の標準に合わせた分類が経営の見え方を規定することが含意となる。
 
 ## 提唱者・初出
-Geoffrey C. Bowker & Susan Leigh Star（MIT Press, 1999, Sorting Things Out — インフラストラクチャル・インヴァージョン概念の導入）／Susan Leigh Star & Karen Ruhleder（Information Systems Research 7(1), 1996, インフラストラクチャ研究の関係的転換）
+ジェフリー・ボウカー＆スーザン・リー・スター（1999『Sorting Things Out』／ボウカー 1994 提唱）／スーザン・リー・スター＆カレン・ルーラー（1996 インフラの生態学）／スーザン・リー・スター（1999 インフラの九つの特質）／ポール・エドワーズら（2009 インフラ研究の課題）
 
 ## 出典
-- [Bowker & Star (1999) Sorting Things Out: Classification and Its Consequences — MIT Press](https://doi.org/10.7551/mitpress/6352.001.0001) `学術`
-- [Star & Ruhleder (1996) Steps Toward an Ecology of Infrastructure — Information Systems Research 7(1), pp.111-134](https://doi.org/10.1287/isre.7.1.111) `学術`
+- [Bowker, G. C. & Star, S. L. (1999) Sorting Things Out: Classification and Its Consequences — MIT Press（原典）](https://doi.org/10.7551/mitpress/6352.001.0001) `学術`
+- [Star, S. L. & Ruhleder, K. (1996) Steps Toward an Ecology of Infrastructure: Design and Access for Large Information Spaces — Information Systems Research 7(1), 111–134](https://doi.org/10.1287/isre.7.1.111) `学術`
+- [Star, S. L. (1999) The Ethnography of Infrastructure — American Behavioral Scientist 43(3), 377–391（インフラの九つの特質）](https://doi.org/10.1177/00027649921955326) `学術`
+- [Edwards, P. N., Bowker, G. C., Jackson, S. J. & Williams, R. (2009) Introduction: An Agenda for Infrastructure Studies — Journal of the Association for Information Systems 10(5)](https://doi.org/10.17705/1jais.00200) `学術`
+- [MIT Press: Bowker, G. C. (1994) Science on the Run: Information Management and Industrial Geophysics at Schlumberger, 1920–1940（概念の初出）](https://mitpress.mit.edu/9780262023672/science-on-the-run/) `リファレンス`
 
 ## 関連概念
-- [[infosoc-trading-zones|トレーディング・ゾーン（Trading Zones）]] — 同じ思想家
-- [[infosoc-boundary-objects|境界オブジェクト（Boundary Objects）]] — 同じ思想家
-- [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — 同分野の近傍
+- [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — 同じ思想家
+- [[infosoc-information-ecology-nardi|情報エコロジー——ナルディとオデイの技術・人間・実践の相互作用分析]] — 同じ思想家
+- [[infosoc-network-society-castells|ネットワーク社会論——カステルスの情報資本主義・流れの空間・アイデンティティの政治]] — 同分野の近傍
+- [[infosoc-gaming-disorder-who-classification|ゲーム障害とWHO疾病分類——ICD-11に見るデジタルゲーム依存の医療化と研究論争]] — 同分野の近傍
+- [[infosoc-trading-zones|トレーディング・ゾーン（Trading Zones）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

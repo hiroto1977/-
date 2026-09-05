@@ -42,7 +42,7 @@ aliases:
 - [[human-durkheim-suicide|デュルケームの自殺論（社会的統合と自殺）]] — 出典を共有
 - [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 出典を共有
 - [[human-executive-attention|実行注意ネットワーク（Executive Attention Network）]] — 出典を共有
-- [[human-executive-function|実行機能（遂行機能）]] — 出典を共有
+- [[human-mental-time-travel|精神的時間旅行（エピソード記憶の時間的自己投射能力）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -35,6 +35,7 @@ C・K・プラハラード／ベンカト・ラマスワミ（2004）
 - [[infosoc-post-industrial|脱工業社会論（ダニエル・ベル）]] — 出典を共有
 - [[infosoc-umesao-information-industry|情報産業論（梅棹忠夫）]] — 出典を共有
 - [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）]] — 同分野の近傍
+- [[mgmt-psychological-detachment-sonnentag|心理的距離——仕事から心理的に離れて回復する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

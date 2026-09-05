@@ -32,10 +32,11 @@ aliases:
 - [Harvard GSE Explore SEL「Four Branch Model of Emotional Intelligence」](http://exploresel.gse.harvard.edu/frameworks/4/) `学術`
 
 ## 関連概念
-- [[mgmt-emotional-intelligence|感情知性（EQ）]] — 語彙が近い
+- [[mgmt-emotional-intelligence|感情知性（EQ）]] — 分野横断
 - [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]] — 同じ思想家
 - [[human-theory-of-mind|心の理論]] — 同分野の近傍
 - [[human-confirmation-bias|確証バイアス（confirmation bias）]] — 同分野の近傍
+- [[human-implicit-association-test-greenwald|潜在的連合テスト（IAT）]] — 同分野の近傍
 - [[human-interpersonal-emotion-regulation|対人感情調節と感情の社会的共有・コ・レギュレーション理論]] — 同分野の近傍
 
 ## 関連

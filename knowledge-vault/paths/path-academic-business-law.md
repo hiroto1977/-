@@ -13,8 +13,8 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 86）
-- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 60）
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 83）
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]（接続 57）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 38）
 - [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 37）
 - [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]]（接続 35）
@@ -126,7 +126,6 @@ tags:
 - 1962年: [[bizlaw-administrative-litigation|行政事件訴訟法]]
 - 1964年: [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]]
 - 1964年: [[bizlaw-hickenlooper-amendment|ヒッケンルーパー修正条項（Hickenlooper Amendment）]]
-- 1965年: [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]
 - 1965年: [[bizlaw-corporation-tax|法人税法]]
 - 1965年: [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]]
 - 1965年: [[bizlaw-income-tax-act|所得税法]]
@@ -148,6 +147,7 @@ tags:
 - 1976年: [[bizlaw-margin-of-appreciation|評価の余地の法理（Margin of Appreciation）]]
 - 1976年: [[bizlaw-specified-commercial-transactions|特定商取引法]]
 - 1976年: [[bizlaw-tarasoff-v-regents-duty-to-protect|タラソフ対カリフォルニア大学理事会事件——心理療法士に第三者保護義務を認めた判例]]
+- 1977年: [[bizlaw-antimonopoly-surcharge|課徴金制度（独占禁止法）]]
 - 1979年: [[bizlaw-civil-execution|民事執行法]]
 - 1980年: [[bizlaw-greenmail|グリーンメール（敵対的買収防衛の株式買戻し）]]
 - 1981年: [[bizlaw-banking-act|銀行法]]

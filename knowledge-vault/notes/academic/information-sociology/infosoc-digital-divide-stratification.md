@@ -30,7 +30,6 @@ aliases:
 - [Wikipedia: Digital divide — information stratification](https://en.wikipedia.org/wiki/Digital_divide) `リファレンス`
 
 ## 関連概念
-- [[infosoc-datafication-mayer-schoenberger|データ化（ダタフィケーション）とビッグデータ社会]] — 同じ思想家
 - [[infosoc-second-level-digital-divide|第二のデジタル・デバイド（スキル・利用の格差）]] — 同分野の近傍
 - [[infosoc-critical-information-literacy-elmborg|批判的情報リテラシー——エルムボーグのフレイレ的図書館教育論と権力分析]] — 同分野の近傍
 - [[infosoc-social-comparison-social-media|ソーシャルメディアにおける社会比較と主観的幸福感]] — 同分野の近傍

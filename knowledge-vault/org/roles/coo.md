@@ -18,22 +18,13 @@ aliases:
 
 ## 参照する確証済み知識（knowledge-map）
 
-### 学術概念 / 経営学（全635件）
-- [[agile-development|アジャイルソフトウェア開発]]
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]]
-- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]
-- [[mgmt-aaker-brand-identity|アーカーのブランド・アイデンティティ]]
-- [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]]
-- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]]
-- …ほか 629 件 → [[学術概念]]
-
 ### 学術概念 / ビジネス法務（全695件）
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]
 - [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]]
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]]
 - [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]]
+- [[bizlaw-accord-and-satisfaction|和解合意と履行——係争中の債務の合意的解決の法理]]
 - …ほか 689 件 → [[学術概念]]
 
 ### 学術概念 / 経済学（全923件）
@@ -45,23 +36,32 @@ aliases:
 - [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]]
 - …ほか 917 件 → [[学術概念]]
 
-### 学術概念 / 人間科学（全634件）
+### 学術概念 / 人間科学（全630件）
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]]
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]]
 - [[human-acceptance-commitment-therapy-hayes|ACT（受容コミットメント療法）——ヘイズの心理的柔軟性と六つのコアプロセス]]
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]]
 - [[human-acquired-needs-theory|獲得欲求理論]]
 - [[human-action-bias|行動バイアス（アクション・バイアス）]]
-- …ほか 628 件 → [[学術概念]]
+- …ほか 624 件 → [[学術概念]]
 
-### 学術概念 / 情報社会学（全612件）
+### 学術概念 / 情報社会学（全604件）
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]]
 - [[infosoc-actor-network-theory|アクターネットワーク理論]]
 - [[infosoc-affective-computing-picard|アフェクティブコンピューティング——ピカードの感情認識AI論と機械が感情を扱う倫理的課題]]
 - [[infosoc-affective-publics-papacharissi|感情的公衆——デジタルメディアにおける情動的ネットワーク形成]]
 - [[infosoc-affordance-theory-gibson|アフォーダンス理論——環境が提供する行為可能性と技術の社会的利用への展開]]
 - [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]]
-- …ほか 606 件 → [[学術概念]]
+- …ほか 598 件 → [[学術概念]]
+
+### 学術概念 / 経営学（全635件）
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]]
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]
+- [[mgmt-aaker-brand-identity|アーカーのブランド・アイデンティティ]]
+- [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]]
+- [[mgmt-absorptive-capacity-cohen|吸収能力（コーエン＝レヴィンソール／ザーラ＝ジョージ）——外部の知識の価値を認識し、同化し、商業的に活用する組織の能力は先行知識に依存して累積する]]
+- [[mgmt-abusive-supervision-tepper|虐待的監督——上司による持続的な敵対的言動]]
+- …ほか 629 件 → [[学術概念]]
 
 ### 法務・税務・労務 / 労務（全124件）
 - [[labor-36-agreement|36協定（時間外・休日労働に関する労使協定）]]

@@ -13,11 +13,10 @@ tags:
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[agile-development|アジャイルソフトウェア開発]]（接続 63）
-- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 41）
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]]（接続 65）
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 58）
 - [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]]（接続 36）
 - [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる]]（接続 32）
-- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]]（接続 29）
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]]（接続 29）
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]]（接続 28）
 - [[mgmt-mbo|目標による管理（MBO）]]（接続 26）
@@ -27,7 +26,8 @@ tags:
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]]（接続 23）
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]]（接続 23）
 - [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]]（接続 22）
-- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]]（接続 21）
+- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]]（接続 21）
+- [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]]（接続 21）
 
 ## 第 2 部 — 年代順の展開
 - 1629年: [[mgmt-fmea|故障モード影響解析（FMEA／Failure Mode and Effects Analysis）——起こりうる故障を体系的に洗い出し、深刻度・発生度・検出度で優先順位づける]]
@@ -93,7 +93,6 @@ tags:
 - 1963年: [[mgmt-organizational-slack|組織スラック]]
 - 1964年: [[mgmt-expectancy-theory|期待理論（ブルーム）]]
 - 1964年: [[mgmt-thomas-kilmann-conflict-modes|トーマス＝キルマンのコンフリクト対処モード（TKI）——対立行動を自己主張性と協調性の二軸で五類型に分ける枠組み]]
-- 1965年: [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]]
 - 1965年: [[mgmt-leavitt-diamond|リービットのダイヤモンド]]
 - 1965年: [[mgmt-levers-of-control-simons|サイモンズの統制のレバー——信条・境界・診断型・インタラクティブ型の四レバーで革新と統制を両立させる経営統制論]]
 - 1965年: [[mgmt-liability-of-newness|新しさの負債（Liability of Newness）]]
@@ -138,6 +137,7 @@ tags:
 - 1979年: [[mgmt-mintzberg-organization|ミンツバーグの組織構造の5類型]]
 - 1979年: [[mgmt-organizational-socialization|組織社会化]]
 - 1979年: [[mgmt-paradox-of-organizing|組織化のパラドックス（Paradox of Organizing）]]
+- 1980年: [[mgmt-activity-based-costing|活動基準原価計算（ABC）]]
 - 1980年: [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]]
 - 1980年: [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]]
 - 1980年: [[mgmt-hofstede-dimensions|ホフステッドの文化次元論]]
@@ -255,6 +255,7 @@ tags:
 - 2000年: [[mgmt-paradox-theory-smith-lewis|組織パラドックス理論（ルイス／スミス＝ルイス）——相互に矛盾しつつ相互依存する要求を排除せず受容し、動態的均衡として管理する]]
 - 2000年: [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]]
 - 2000年: [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]]
+- 2001年: [[mgmt-agile-development|アジャイルソフトウェア開発]]
 - 2001年: [[mgmt-cage-distance-framework-ghemawat|CAGEディスタンス・フレームワーク——文化・制度・地理・経済の4つの距離で海外市場の遠さを測るゲマワットの枠組み]]
 - 2001年: [[mgmt-effectuation|エフェクチュエーション]]
 - 2001年: [[mgmt-flywheel|フライホイール効果（弾み車の法則）]]
@@ -389,7 +390,6 @@ tags:
 - [[mgmt-empowering-leadership-ahearne|エンパワリング・リーダーシップ——権限を分かち自律を高めるリーダー]]
 - [[mgmt-empowerment-theory-spreitzer|心理的エンパワーメント理論（Spreitzer）]]
 - [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]]
-- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]]
 - [[mgmt-enactment-weick|イナクトメント——組織が行為を通じて自らの環境を能動的に作り出す]]
 - [[mgmt-entrepreneurial-ecosystems|アントレプレナーシップ・エコシステム：起業家・投資家・大学・政府の共進化]]
 - [[mgmt-entrepreneurial-orientation-miller|起業家的志向性（ミラー）]]

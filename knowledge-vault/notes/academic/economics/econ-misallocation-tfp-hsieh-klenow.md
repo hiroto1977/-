@@ -31,8 +31,8 @@ aliases:
 - [IDEAS/RePEc bibliographic record — Hsieh & Klenow (2009), QJE 124(4):1403-1448](https://ideas.repec.org/a/oup/qjecon/v124y2009i4p1403-1448..html) `リファレンス`
 
 ## 関連概念
-- [[econ-solow-growth-model|ソロー成長モデル]] — 同分野の近傍
 - [[econ-real-business-cycle-kydland-prescott|リアル・ビジネス・サイクル理論——キドランド＆プレスコットの技術ショックと景気循環]] — 同分野の近傍
+- [[econ-solow-growth-model|ソロー成長モデル]] — 同分野の近傍
 - [[econ-braess-paradox|ブライスのパラドックス——道路を増やすと渋滞が悪化する逆説]] — 同分野の近傍
 
 ## 関連

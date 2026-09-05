@@ -34,7 +34,7 @@ aliases:
 - [[labor-dispatch-equal-treatment|派遣労働者の同一労働同一賃金（不合理な待遇差の禁止）]] — 語彙が近い
 - [[bizlaw-employment-security|職業安定法]] — 語彙が近い
 - [[labor-dispatch-deemed-offer|労働契約申込みみなし制度（労働者派遣法40条の6）]] — 分野横断
-- [[bizlaw-consumer-basic-act|消費者基本法]] — 同分野の近傍
+- [[bizlaw-part-time-labor|パートタイム・有期雇用労働法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

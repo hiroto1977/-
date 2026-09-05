@@ -2,7 +2,7 @@
 title: "ジョージ・アカロフ"
 type: thinker
 person_key: "アカロフ|ジ"
-concept_count: 12
+concept_count: 11
 tags:
   - person
   - index
@@ -10,9 +10,9 @@ tags:
 
 # ジョージ・アカロフ
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **12 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **11 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（12件）
+## 学術概念（11件）
 - [[bizlaw-securities-insider-trading-regulation|インサイダー取引規制——証券市場の公正性と情報の非対称性への法的対応]] — インサイダー取引規制とは，上場会社の役員・従業員・関係者など重要事実（materialnonpublicinforma…
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する]] — 逆選択（adverseselection）とは、取引前に一方だけが品質やリスクを知る情報の非対称性の下で、質の悪い財や…
 - [[econ-efficiency-wage-shapiro-stiglitz|効率賃金理論——市場清算水準を超える賃金が労働規律と生産性を高める]] — 効率賃金理論（efficiencywagetheory）は、企業が労働市場を清算する均衡賃金よりも高い賃金を支払うこと…
@@ -24,7 +24,6 @@ tags:
 - [[econ-screening-rothschild-stiglitz|スクリーニング理論（ロスチャイルド＝スティグリッツ）——情報を持たない側が契約メニューを設計し、相手の自己選択で隠れた型を選別する]] — スクリーニング理論（screening）は、情報を持たない側が複数の契約からなるメニューを提示し、相手の自己選択を通じ…
 - [[econ-signaling-theory-spence-job-market|シグナリング理論（スペンス）——情報を持つ側が模倣にコストのかかる行動で自らの質を伝え、分離均衡が成立する仕組み]] — シグナリング理論は、マイケル・スペンスが1973年の論文『JobMarketSignaling』（QuarterlyJ…
 - [[econ-wage-rigidity-bewley|賃金の下方硬直性——ビューリーのインタビュー研究による実証的解明]] — トゥルーマン・ビューリーが1999年に発表した研究は、300人以上のビジネスリーダー・労働者・失業者・カウンセラーへの…
-- [[infosoc-information-asymmetry-akerlof-stiglitz|情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ]] — 情報の非対称性理論は、ジョージ・アカロフが1970年に「レモン市場」モデルで提示した、売り手と買い手の間の情報格差が市…
 
 ## 関連
 - 索引: [[人物索引]]

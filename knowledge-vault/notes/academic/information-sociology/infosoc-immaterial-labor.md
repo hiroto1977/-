@@ -30,8 +30,8 @@ aliases:
 - [Stanford Encyclopedia of Philosophy — "Exploitation"（搾取論の哲学的文脈・非物質的労働と関連する議論）](https://plato.stanford.edu/entries/exploitation/) `リファレンス`
 
 ## 関連概念
-- [[infosoc-datafication|データ化（データ化現象）]] — 同分野の近傍
 - [[infosoc-platform-labor-gig-economy|プラットフォーム労働とギグエコノミー——デジタル仲介による労働の再編と社会的保護]] — 同分野の近傍
+- [[infosoc-information-pollution|情報汚染：情報エコシステムにおける誤情報・偽情報の拡散メカニズム]] — 同分野の近傍
 - [[infosoc-platform-temporality-helmond|プラットフォーム時間性——デジタルプラットフォームによる時間経験の再構成]] — 同分野の近傍
 
 ## 関連

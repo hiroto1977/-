@@ -36,8 +36,9 @@ J.ハーバーマス『コミュニケーション的行為の理論』(1981)／
 - [[human-rubber-hand-illusion|ラバーハンド錯覚（ゴムの手錯覚）]] — 出典を共有
 - [[human-priming|プライミング効果]] — 出典を共有
 - [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 出典を共有
-- [[infosoc-colonization-lifeworld|生活世界の植民地化]] — 同分野の近傍
+- [[infosoc-symbolic-interactionism|象徴的相互作用論（symbolic interactionism）]] — 同分野の近傍
 - [[infosoc-deliberative-democracy|熟議民主主義]] — 同分野の近傍
+- [[infosoc-colonization-lifeworld|生活世界の植民地化]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

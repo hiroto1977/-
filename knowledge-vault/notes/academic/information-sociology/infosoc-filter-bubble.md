@@ -41,8 +41,8 @@ aliases:
 - [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 出典を共有
 - [[infosoc-bounded-confidence-opinion-dynamics|限定信頼モデル——意見差が信頼限界εを超える相手を無視し合意と分極を分ける意見動学の枠組み]] — 出典を共有
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
-- [[infosoc-datafication|データ化（データ化現象）]] — 出典を共有
 - [[infosoc-echo-chamber|エコーチェンバー（反響室効果）]] — 出典を共有
+- [[infosoc-cypherpunk-movement|サイファーパンク運動]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

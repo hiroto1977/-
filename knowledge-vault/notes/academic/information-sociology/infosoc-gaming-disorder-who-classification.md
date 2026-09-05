@@ -37,9 +37,7 @@ WHO（国際保健機関） ／ マーク・グリフィス ／ ダリウス・�
 - [[infosoc-digital-wellbeing|デジタル・ウェルビーイング]] — 出典を共有
 - [[infosoc-infodemic|インフォデミック]] — 出典を共有
 - [[human-burnout|バーンアウト（燃え尽き症候群）]] — 出典を共有
-- [[infosoc-infrastructural-inversion-bowker|インフラストラクチャーの逆転——不可視の情報基盤を可視化する方法論]] — 同分野の近傍
-- [[infosoc-infrastructural-inversion-bowker-star|インフラの逆転——分類システムの不可視的政治性]] — 同分野の近傍
-- [[infosoc-information-worlds-theory|情報世界理論]] — 同分野の近傍
+- [[infosoc-infrastructural-inversion|インフラストラクチャの逆転（ボウカー＆スター）——背景に退いて不可視になった分類・標準・データ基盤を前景化し、その政治性を可視化する方法論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

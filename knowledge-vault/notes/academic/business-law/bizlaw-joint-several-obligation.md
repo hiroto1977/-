@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-release-of-debt|免除（民法519条）]] — 語彙が近い
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
+- [[bizlaw-antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 出典を共有
 - [[bizlaw-joint-tort|共同不法行為（民法719条）]] — 出典を共有
 - [[bizlaw-assignment-security|譲渡担保]] — 出典を共有
 - [[bizlaw-employer-liability|使用者責任（民法715条）]] — 出典を共有

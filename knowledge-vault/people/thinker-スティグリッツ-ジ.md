@@ -2,7 +2,7 @@
 title: "ジョセフ・スティグリッツ"
 type: thinker
 person_key: "スティグリッツ|ジ"
-concept_count: 23
+concept_count: 22
 tags:
   - person
   - index
@@ -10,9 +10,9 @@ tags:
 
 # ジョセフ・スティグリッツ
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **23 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **22 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（23件）
+## 学術概念（22件）
 - [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する]] — 逆選択（adverseselection）とは、取引前に一方だけが品質やリスクを知る情報の非対称性の下で、質の悪い財や…
 - [[econ-atkinson-stiglitz-theorem|アトキンソン＝スティグリッツの定理——最適な所得税があれば物品税はいらない]] — アトキンソン＝スティグリッツの定理（Atkinson–Stiglitztheorem）は、経済学者アンソニー・アトキン…
 - [[econ-credit-rationing-stiglitz|信用割当理論（スティグリッツ＆ワイス）]] — 信用割当（creditrationing）は、スティグリッツ＆ワイス（1981）が論じた、信用市場で金利を上げても資金…
@@ -35,7 +35,6 @@ tags:
 - [[econ-tobin-tax-financial|トービン税——国際金融取引への課税による投機的資本移動の抑制]] — トービン税（TobinTax）とは、ジェームズ・トービンが1972年に提案した、すべての外国為替取引に対して低率の取引…
 - [[econ-tournament-theory-lazear-rosen|トーナメント理論——相対的順位に基づく報酬が努力を引き出す仕組み]] — トーナメント理論（tournamenttheory）は、エドワード・ラジアーとシャーウィン・ローゼンが1981年の論文…
 - [[econ-varian-model-of-sales-informed-uninformed-consumers|ヴァリアンのセールのモデル——情報客と非情報客の混在が生む価格分散と特売の均衡]] — ヴァリアンのセールのモデルは、ハル・ヴァリアンが『AModelofSales』（1980、AmericanEconom…
-- [[infosoc-information-asymmetry-akerlof-stiglitz|情報の非対称性と市場の失敗——アカロフのレモン市場からスティグリッツのスクリーニングへ]] — 情報の非対称性理論は、ジョージ・アカロフが1970年に「レモン市場」モデルで提示した、売り手と買い手の間の情報格差が市…
 
 ## 関連
 - 索引: [[人物索引]]

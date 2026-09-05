@@ -31,7 +31,6 @@ aliases:
 - [雇用調整助成金（雇用安定事業）解説](https://ja.wikipedia.org/wiki/雇用調整助成金) `メディア`
 
 ## 関連概念
-- [[subsidy-industrial-employment-stability|産業雇用安定助成金]] — 語彙が近い
 - [[econ-fiscal-dominance-sargent|財政支配と物価水準の財政理論——政府債務が金融政策を拘束するメカニズム]] — 語彙が近い
 - [[subsidy-employment-adjustment|雇用調整助成金]] — 分野横断
 - [[labor-break-time|休憩時間（労働基準法34条）]] — 同分野の近傍

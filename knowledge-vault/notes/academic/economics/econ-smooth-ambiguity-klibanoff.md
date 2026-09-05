@@ -30,11 +30,10 @@ aliases:
 - [Wikipedia: Ambiguity aversion — smooth ambiguity model, second-order prior, Ellsberg](https://en.wikipedia.org/wiki/Ambiguity_aversion) `リファレンス`
 
 ## 関連概念
+- [[econ-kinked-demand-sweezy|屈折需要曲線——寡占における価格の硬直性を説明するモデル]] — 同分野の近傍
 - [[econ-expected-utility|期待効用理論]] — 同分野の近傍
-- [[econ-krugman-target-zone-exchange|クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果]] — 同分野の近傍
 - [[econ-aumann-agreement-theorem|オーマンの合意定理（Agreeing to Disagree／Aumann 1976）——共通の事前確率と共有知識のもとでは、二人は「見解の相違に同意」できない]] — 同分野の近傍
 - [[econ-informal-economy|インフォーマル経済]] — 同分野の近傍
-- [[econ-kinked-demand-sweezy|屈折需要曲線——寡占における価格の硬直性を説明するモデル]] — 同分野の近傍
 - [[econ-volatility-clustering-engle|ボラティリティ・クラスタリングとARCH——時間変動するリスクのモデル化]] — 同分野の近傍
 
 ## 関連

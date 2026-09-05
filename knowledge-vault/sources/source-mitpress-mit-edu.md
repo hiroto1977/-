@@ -2,7 +2,7 @@
 title: "mitpress.mit.edu"
 type: source-domain
 host: "mitpress.mit.edu"
-cite_count: 28
+cite_count: 27
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # mitpress.mit.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **28 件**（学術 20 ・ リファレンス 8）
+> [!info] 出典ドメイン索引 ・ 引用 **27 件**（学術 19 ・ リファレンス 8）
 
 ## このドメインを出典とする項目
 
@@ -30,8 +30,7 @@ tags:
 - [[infosoc-distributed-cognition|分散認知（Distributed Cognition／Hutchins 1995）——認知は個人の頭の中でなく、人・道具・環境からなるシステムに分散する]] — Hutchins,E.(1995).CognitionintheWild.Cambridge,MA:MITPress.（MITPress書…
 - [[infosoc-filter-sovereignty|フィルター主権（Filter Sovereignty）]] — Deibertetal.(2008)AccessDenied—MITPress
 - [[infosoc-information-ecology-theory|情報生態学理論]] — Nardi&O'Day"InformationEcologies:UsingTechnologywithHeart"(MITPress,1…
-- [[infosoc-infrastructural-inversion-bowker|インフラストラクチャーの逆転——不可視の情報基盤を可視化する方法論]] — Bowker,G.C.(1994)ScienceontheRun:InformationManagementandIndustrialGe…
-- [[infosoc-infrastructural-inversion-bowker-star|インフラの逆転——分類システムの不可視的政治性]] — MITPress:SortingThingsOut—ClassificationandItsConsequences（ボウカー＆スターの分…
+- [[infosoc-infrastructural-inversion|インフラストラクチャの逆転（ボウカー＆スター）——背景に退いて不可視になった分類・標準・データ基盤を前景化し、その政治性を可視化する方法論]] — MITPress:Bowker,G.C.(1994)ScienceontheRun:InformationManagementandInd…
 - [[infosoc-main-model-credibility|MAINモデル（技術的特性が信憑性判断に与える影響のヒューリスティック・モデル）]] — MITPress—DigitalMedia,Youth,andCredibility(Metzger&Flanagineds.,MacAr…
 - [[infosoc-meme-culture|インターネット・ミーム文化：デジタル模倣子の伝播とオンライン文化形成の社会学的分析]] — Shifman,Limor2014MemesinDigitalCulture
 - [[infosoc-post-truth-theory|ポスト真実論]] — McIntyre,LeeC.—Post-Truth(MITPress,2018)

@@ -2,7 +2,7 @@
 title: "sup.org"
 type: source-domain
 host: "sup.org"
-cite_count: 9
+cite_count: 8
 tags:
   - source-domain
   - index
@@ -10,13 +10,12 @@ tags:
 
 # sup.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **9 件**（学術 8 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **8 件**（学術 7 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
 - [[infosoc-contextual-integrity|文脈的完全性（コンテクスチュアル・インテグリティ）——情報規範としてのプライバシー]] — Nissenbaum,H.(2010).PrivacyinContext:Technology,Policy,andtheIntegrit…
 - [[infosoc-data-colonialism|データ植民地主義]] — Couldry&Mejias,TheCostsofConnection(StanfordUniversityPress,2019)—出版社…
-- [[infosoc-datafication|データ化（データ化現象）]] — Couldry&Mejias(2019)TheCostsofConnection—StanfordUniversityPress
 - [[infosoc-media-materialism-kittler|キットラーのメディア唯物論——技術メディアが我々の状況を規定する]] — FriedrichA.Kittler,DiscourseNetworks,1800/1900(StanfordUniversityPres…
 - [[infosoc-media-materialism-kittler|キットラーのメディア唯物論——技術メディアが我々の状況を規定する]] — FriedrichA.Kittler,Gramophone,Film,Typewriter(StanfordUniversityPress…
 - [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — Benkler,Y.(2006)TheWealthofNetworks—YaleUniversityPress（commons-based…

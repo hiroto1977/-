@@ -2,7 +2,7 @@
 title: "ja.wikipedia.org"
 type: source-domain
 host: "ja.wikipedia.org"
-cite_count: 139
+cite_count: 138
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ja.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **139 件**（リファレンス 137 ・ メディア 2）
+> [!info] 出典ドメイン索引 ・ 引用 **138 件**（リファレンス 136 ・ メディア 2）
 
 ## このドメインを出典とする項目
 
@@ -117,7 +117,6 @@ tags:
 - [[eh-2010|2010年（平成22年）]] — Wikipedia（日本語）—尖閣諸島中国漁船衝突事件
 - [[human-cognitive-aging-fluid-crystallized|流動性知能と結晶性知能——キャッテルの知能二元モデルと認知的老化の軌跡]] — Wikipedia:流動性知能—キャッテルのGf-Gcモデルと老化の解説
 - [[human-developmental-psychology-vygotsky|文化歴史的発達理論——ヴィゴツキーの最近接発達領域と社会的学習の認知科学]] — Wikipedia:ヴィゴツキー—最近接発達領域と文化歴史的発達理論の解説
-- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — Wikipedia:実行機能—作動記憶と認知制御の解説
 - [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — Wikipedia:メルロ＝ポンティ—知覚の現象学と身体論の解説
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — Wikipedia:ポジティブ心理学—PERMAモデルと幸福科学の解説
 - [[human-resilience-bonanno-adversity|レジリエンスと逆境後の軌跡——ボナンノの回復力類型と精神的健康の動態モデル]] — Wikipedia:レジリエンス—逆境後の心理的回復力の解説

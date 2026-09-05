@@ -33,8 +33,8 @@ aliases:
 - [Michel Crozier. Wikipedia (English) — confirms Crozier's dates (1922-2013) and his 1977 co-authored book with Erhard Friedberg, L'Acteur et le système, as the systematization of strategic analysis (analyse stratégique).](https://en.wikipedia.org/wiki/Michel_Crozier) `リファレンス`
 
 ## 関連概念
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

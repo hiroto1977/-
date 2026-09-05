@@ -34,7 +34,7 @@ aliases:
 - [[infosoc-platform-labor-theory|プラットフォーム労働論]] — 出典を共有
 - [[infosoc-platform-labor-politics|プラットフォーム労働の政治学]] — 出典を共有
 - [[econ-smooth-ambiguity-klibanoff|スムーズ曖昧性モデル——曖昧性への態度を信念から分離する]] — 同分野の近傍
-- [[econ-kinked-demand-sweezy|屈折需要曲線——寡占における価格の硬直性を説明するモデル]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

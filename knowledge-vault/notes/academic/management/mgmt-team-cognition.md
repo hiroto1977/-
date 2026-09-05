@@ -37,6 +37,7 @@ aliases:
 - [[mgmt-team-effectiveness-hackman-wageman|チーム有効性理論——ハックマンの条件モデルとチームコーチング]] — 同じ思想家
 - [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]] — 同分野の近傍
 - [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同分野の近傍
+- [[mgmt-team-mental-models-theory|チーム・メンタルモデル理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

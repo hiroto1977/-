@@ -33,7 +33,6 @@ W.S.ジェヴォンズ『石炭問題』1865／効率改善→コスト低下→
 ## 関連概念
 - [[econ-keynesian-effective-demand|有効需要の原理と乗数効果（ケインズ経済学）]] — 同分野の近傍
 - [[econ-malthusian-trap|マルサスの罠]] — 同分野の近傍
-- [[econ-solow-growth-model|ソロー成長モデル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

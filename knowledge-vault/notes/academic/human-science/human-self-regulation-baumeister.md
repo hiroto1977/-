@@ -38,9 +38,9 @@ aliases:
 - [[human-marshmallow-test|マシュマロ・テスト（満足の遅延）]] — 同じ思想家
 - [[human-negativity-bias|ネガティビティ・バイアス]] — 同じ思想家
 - [[human-rejection-sensitivity-downey|拒絶感受性（ダウニー＆フェルドマン）]] — 同じ思想家
-- [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 同じ思想家
 - [[human-temporal-motivation-steel|時間的動機付け理論（スティール＆クーニング）]] — 同じ思想家
 - [[human-split-brain-sperry-gazzaniga|分離脳研究]] — 出典を共有
+- [[human-frequency-illusion|頻度錯覚（バーダー・マインホフ現象）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

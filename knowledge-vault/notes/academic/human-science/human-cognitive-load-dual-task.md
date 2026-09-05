@@ -36,7 +36,6 @@ John Sweller ／ Harold Pashler ／ Daniel Kahneman
 - [[econ-endowment-effect-loss-aversion|保有効果と損失回避]] — 同じ思想家
 - [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
 - [[mgmt-strategic-reference-point-theory|戦略的参照点理論]] — 同じ思想家
-- [[human-retrieval-induced-forgetting|検索誘導性忘却（Retrieval-Induced Forgetting）——思い出す行為そのものが、関連する競合記憶を一時的に抑制する]] — 同分野の近傍
 - [[human-socioemotional-selectivity|社会情動的選択性理論（Socioemotional Selectivity Theory）]] — 同分野の近傍
 
 ## 関連

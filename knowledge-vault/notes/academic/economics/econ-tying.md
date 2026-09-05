@@ -38,7 +38,6 @@ tying product（結合財）×tied product（被結合財）／レバレッジ�
 - [[bizlaw-oppression-remedy|少数株主抑圧救済（オプレッション・レメディ）]] — 出典を共有
 - [[econ-bundling-tying|バンドリングと抱き合わせ——複数財の組み合わせ販売による余剰の抽出]] — 同分野の近傍
 - [[econ-credit-rationing-stiglitz|信用割当理論（スティグリッツ＆ワイス）]] — 同分野の近傍
-- [[econ-input-output-analysis|産業連関分析（投入産出分析）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

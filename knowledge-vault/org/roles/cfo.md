@@ -20,12 +20,12 @@ aliases:
 ## 参照する確証済み知識（knowledge-map）
 
 ### 学術概念 / ビジネス法務（全695件）
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]
 - [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]]
 - [[bizlaw-abusive-dismissal|解雇権濫用法理（労働契約法16条）]]
 - [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]]
+- [[bizlaw-accord-and-satisfaction|和解合意と履行——係争中の債務の合意的解決の法理]]
 - …ほか 689 件 → [[学術概念]]
 
 ### 学術概念 / 経済学（全923件）

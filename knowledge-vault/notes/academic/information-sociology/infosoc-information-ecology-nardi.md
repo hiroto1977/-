@@ -33,8 +33,7 @@ aliases:
 ## 関連概念
 - [[infosoc-information-ecology-nardi-oday|情報生態学——技術・人・実践・価値からなる局所的システムとしての技術利用]] — 語彙が近い
 - [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — 同じ思想家
-- [[infosoc-infrastructural-inversion-bowker|インフラストラクチャーの逆転——不可視の情報基盤を可視化する方法論]] — 同じ思想家
-- [[infosoc-infrastructural-inversion-bowker-star|インフラの逆転——分類システムの不可視的政治性]] — 同じ思想家
+- [[infosoc-infrastructural-inversion|インフラストラクチャの逆転（ボウカー＆スター）——背景に退いて不可視になった分類・標準・データ基盤を前景化し、その政治性を可視化する方法論]] — 同じ思想家
 - [[infosoc-platform-capitalism|プラットフォーム資本主義]] — 同分野の近傍
 - [[infosoc-participatory-design-information-systems|情報システムにおける参加型デザイン]] — 同分野の近傍
 - [[infosoc-privacy-paradox|プライバシー・パラドックス]] — 同分野の近傍

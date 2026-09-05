@@ -31,11 +31,11 @@ aliases:
 - [SAGE Journals — Cheney-Lippold (2011), Theory, Culture & Society（査読誌掲載ページ・measurable type / soft biopolitics）](https://journals.sagepub.com/doi/10.1177/0263276411424420) `リファレンス`
 
 ## 関連概念
-- [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像——利用者がアルゴリズムをどう感じ意味づけるか]] — 同じ思想家
 - [[infosoc-banopticon-bigo|バノプティコン——危険視された少数を選別し排除する監視]] — 同じ思想家
 - [[infosoc-protocol-galloway|プロトコル——脱中心化したネットワークに内在する新たな統制の様式]] — 同じ思想家
 - [[infosoc-synopticon|シノプティコン]] — 同じ思想家
 - [[infosoc-visibility-digital-thompson|新しい可視性——デジタルメディアによる権力と監視の変容]] — 同じ思想家
+- [[infosoc-algorithmic-imaginary-bucher|アルゴリズム的想像（ブッヒャー）——利用者がアルゴリズムをどう感じ意味づけるかが、想像に導かれた行動を通じてアルゴリズムの力そのものを構成する]] — 同じ思想家
 - [[infosoc-data-double-haggerty-ericson|データ・ダブルと監視アサンブラージュ——データから再構成される情報的分身]] — 同じ思想家
 - [[infosoc-mode-of-information-poster|情報様式論——電子的コミュニケーションが主体と社会関係を再構成する]] — 同じ思想家
 - [[infosoc-panoptic-sort-gandy|パノプティック・ソート——個人情報による選別と差別的処遇の政治経済学]] — 同じ思想家

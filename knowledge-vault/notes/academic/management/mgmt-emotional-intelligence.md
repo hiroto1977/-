@@ -31,7 +31,7 @@ aliases:
 - [Noba Project: Emotional Intelligence（能力モデル・4枝の解説）](https://nobaproject.com/modules/emotional-intelligence) `リファレンス`
 
 ## 関連概念
-- [[human-emotional-intelligence|情動知能（EQ）]] — 語彙が近い
+- [[human-emotional-intelligence|情動知能（EQ）]] — 分野横断
 - [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]] — 同じ思想家
 - [[econ-supplier-induced-demand|供給者誘発需要——医師は自らの需要を生み出すのか]] — 出典を共有
 - [[human-compromise-effect|妥協効果（極端回避性）]] — 出典を共有
