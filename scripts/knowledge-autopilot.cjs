@@ -61,11 +61,30 @@ function parseArgs(argv) {
   return out;
 }
 
-/** "YYYY-MM" / "YYYY-MM-DD" → 経過月数（不正・空は null）。 */
+/**
+ * "YYYY-MM" / "YYYY-MM-DD" → 経過月数。**読めない・暦に無い・未来は null**。
+ *
+ * ## 未来を null にする理由 (2026-09-06)
+ *
+ * 以前は正規表現に当たればそのまま差を返していた。すると `asOf: '2027-06'` は
+ * **負の月数**になり、`age === null` でもなく `age >= limit` でもないので
+ * **再確証キューに一度も入らない** —— 打ち間違い 1 つで、その項目は
+ * 永久に「新しい」ことになる。**古くなるのを見張る仕組み自身の穴**だった。
+ * `2026-13` も同じ (月を検査していなかったので負になる)。
+ * `2026-00` はもっと悪く、**9 か月前として通っていた** (それらしい値なので気付けない)。
+ *
+ * null にすると呼び出し側の既存の経路 (「asOf が読めない」件数) に乗るので、
+ * 週次レポートに出て人が直せる。**黙って免除されるより、数えられるほうがよい。**
+ *
+ * 経過月数は負にならない (未来を弾いたので)。同じ月なら 0。
+ */
 function monthsSince(asOf, today) {
   const m = /^(\d{4})-(\d{2})/.exec(asOf || '');
   if (!m) return null;
-  return (today.getFullYear() - Number(m[1])) * 12 + (today.getMonth() + 1 - Number(m[2]));
+  const month = Number(m[2]);
+  if (month < 1 || month > 12) return null;
+  const age = (today.getFullYear() - Number(m[1])) * 12 + (today.getMonth() + 1 - month);
+  return age < 0 ? null : age;
 }
 
 /** タイトルの「コア」正規化 — 副題（——以降）・括弧・空白/記号を除去して同一概念の別表記を束ねる。 */
@@ -670,7 +689,7 @@ async function main() {
   const lines = [
     `増強待ち（コレクション別閾値未満）: ${s.enrich}`,
     `再検証待ち（鮮度切れ）: ${s.reverify}`,
-    `asOf 欠落: ${s.missingAsOf}（${q.missingAsOf.map((m) => `${m.collection} ${m.count}`).join(' / ') || 'なし'}）`,
+    `asOf 欠落・不正: ${s.missingAsOf}（${q.missingAsOf.map((m) => `${m.collection} ${m.count}`).join(' / ') || 'なし'}）`,
     `重複疑い（タイトルコア一致・裁定済み除外後）: ${s.dedupe}`,
     `重複疑い（グラフ term-overlap ≥ ${GRAPH_DUP_SCORE}・裁定済み除外後）: ${s.dedupeGraph}`,
     `重複疑い（id 正規化＝人名の翻字ゆれ・裁定済み除外後）: ${s.dedupeId}`,
@@ -694,7 +713,7 @@ async function main() {
       '|---|---:|',
       `| 増強待ち (コレクション別閾値) | ${s.enrich} |`,
       `| 再検証待ち (鮮度切れ) | ${s.reverify} |`,
-      `| asOf 欠落 | ${s.missingAsOf} |`,
+      `| asOf 欠落・不正 | ${s.missingAsOf} |`,
       `| 重複疑い（タイトルコア） | ${s.dedupe} |`,
       `| 重複疑い（グラフ語彙） | ${s.dedupeGraph} |`,
       `| 重複疑い（id 翻字ゆれ） | ${s.dedupeId} |`,
@@ -721,4 +740,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { corpusFingerprint, staleQueueReport, firstSourceDoi, sourceDois, sourceDedupeSuspects, sharedSourceDedupeSuspects, missingKeyFiguresSuspects, idSimilarity, SHARED_ID_SIMILARITY, weekIndex, shardOffset, isCheckableUrl, checkLinks, fetchWithCheckedRedirects, MAX_LINK_REDIRECTS };
+module.exports = { monthsSince, corpusFingerprint, staleQueueReport, firstSourceDoi, sourceDois, sourceDedupeSuspects, sharedSourceDedupeSuspects, missingKeyFiguresSuspects, idSimilarity, SHARED_ID_SIMILARITY, weekIndex, shardOffset, isCheckableUrl, checkLinks, fetchWithCheckedRedirects, MAX_LINK_REDIRECTS };

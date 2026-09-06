@@ -802,6 +802,43 @@ function assertAcademicIdPrefixes(entries) {
   return entries.length;
 }
 
+/**
+ * `asOf` は**確認した時点**なので、暦に無い月や未来は書かない (2026-09-06)。
+ *
+ * この値はノート 1 枚ごとの frontmatter (`as_of:`) と info コールアウトに載る。
+ * 未来の月を許すと**7,000 枚超のノートが「まだ来ていない時点で確認した」と
+ * 名乗る**うえ、autopilot の再確証キューからも静かに外れる (経過月数が負になり、
+ * 「読めない」にも「期限超過」にも当たらないため —— 同日に `monthsSince` を
+ * 直したが、**書く側でも止める**。週次を待たずに push で気付けるほうがよい)。
+ *
+ * 空の `asOf` は従来どおり許す (frontmatter に出さないだけ)。ここで見るのは
+ * 「値が在るのに時点として成り立たない」場合だけ。
+ */
+function assertAsOfIsPast(entries, today = new Date()) {
+  const nowKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+  const bad = [];
+  for (const e of entries) {
+    if (!e.asOf) continue;
+    const m = /^(\d{4})-(\d{2})/.exec(String(e.asOf));
+    if (!m) {
+      bad.push(`${e.id}: "${e.asOf}" (YYYY-MM として読めない)`);
+      continue;
+    }
+    const month = Number(m[2]);
+    if (month < 1 || month > 12) {
+      bad.push(`${e.id}: "${e.asOf}" (暦に無い月)`);
+      continue;
+    }
+    if (`${m[1]}-${m[2]}` > nowKey) bad.push(`${e.id}: "${e.asOf}" (未来。今月は ${nowKey})`);
+  }
+  if (bad.length) {
+    throw new Error(
+      `asOf が時点として成り立ちません（${bad.length} 件）。データ側で直してください: ${bad.slice(0, 20).join(', ')}`,
+    );
+  }
+  return entries.length;
+}
+
 function buildFiles() {
   const entries = kc.loadEntries();
 
@@ -816,6 +853,7 @@ function buildFiles() {
     throw new Error(`ノート id が重複しています（${dups.length} 件）。データ側で解消してください: ${dups.slice(0, 20).join(', ')}`);
   }
   assertAcademicIdPrefixes(entries);
+  assertAsOfIsPast(entries);
 
   const byCollection = new Map();
   for (const e of entries) {
@@ -977,6 +1015,6 @@ function main() {
 
 // 読み込むだけで生成が走り、しかも process.exit で落ちていた。外から証人を
 // 立てられない構造そのものだったので、CLI として呼ばれたときだけ走らせる。
-module.exports = { yamlStr, linkSafe, mdInline, assertWikiAliasSafe, assertBareYamlScalar, assertAcademicIdPrefixes, ACADEMIC_ID_PREFIX, buildFiles };
+module.exports = { assertAsOfIsPast, yamlStr, linkSafe, mdInline, assertWikiAliasSafe, assertBareYamlScalar, assertAcademicIdPrefixes, ACADEMIC_ID_PREFIX, buildFiles };
 
 if (require.main === module) process.exit(main());
