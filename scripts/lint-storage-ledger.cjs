@@ -203,6 +203,15 @@ const INDIRECT_SITES = [
     why: '`KEY_PREFIX + k` を組み立てる。`KEYS` は 4 つに固定で、増やすならその配列だけ (同ファイルにそう書いてある)。',
   },
   {
+    file: 'src/renderer/data/localWrite.ts',
+    expr: 'key',
+    keys: ['servicehub.docstudio.v1', 'servicehub.teamradar.draft.v1'],
+    why:
+      '書き込みの成否を返す共通の入口 (2026-09-06)。鍵は呼び出し元の定数で、いま通るのは書類スタジオの'
+      + '差込値と Team Radar の下書きの 2 つ。**新しい呼び出し元を足したら、その鍵をここへ書く** ——'
+      + '`writeLocalJson(key, …)` は鍵を組み立てないので、台帳が唯一の一覧になる。',
+  },
+  {
     file: 'src/renderer/web-shim.ts',
     expr: 'TALENT_STORAGE_KEY',
     keys: ['servicehub.talent.state.v1'],

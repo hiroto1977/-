@@ -101,6 +101,7 @@ import {
   type TaxKind,
   type TaxLine,
 } from '../../shared/invoiceTax';
+import { writeLocalJson, type LocalWriteResult } from '../data/localWrite';
 
 /**
  * 書類スタジオ — これまで単体 HTML として配布していた 3 ツール
@@ -123,12 +124,13 @@ function loadStore(): StoreShape {
     return {};
   }
 }
-function saveStore(s: StoreShape): void {
-  try {
-    localStorage.setItem(LS_KEY, JSON.stringify(s));
-  } catch {
-    /* private mode / quota — best-effort */
-  }
+/**
+ * 差込値を保存する。**失敗を黙って捨てない** —— この画面は「入力は端末内に自動保存」と
+ * 書いてあるので、容量超過やプライベートモードで書けないまま打ち続けさせると画面が嘘をつく
+ * (2026-09-06。`data/localWrite.ts` に理由の分類がある)。呼び出し側が結果を画面に出す。
+ */
+function saveStore(s: StoreShape): LocalWriteResult {
+  return writeLocalJson(LS_KEY, s);
 }
 
 const fmt = (n: number) => n.toLocaleString('ja-JP');
@@ -1305,7 +1307,12 @@ export function DocstudioPage() {
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState<string>('すべて');
 
-  useEffect(() => saveStore(store), [store]);
+  /** 保存できなかった理由 (undefined なら保存できている)。画面の「自動保存」の主張と対にする。 */
+  const [saveError, setSaveError] = useState<string>();
+  useEffect(() => {
+    const r = saveStore(store);
+    setSaveError(r.ok ? undefined : r.message);
+  }, [store]);
   /** 計算書類で見ている書面。store に持たせるので、開き直しても同じ書面から続けられる。 */
   // 保存値は型が守らない（古い版・手で直した JSON）。知らない値は「まとめて」に倒し、画面を壊さない。
   const kessanSheet: KessanSheet = isKessanSheet(store.kessanSheet) ? store.kessanSheet : 'all';
@@ -1745,7 +1752,19 @@ export function DocstudioPage() {
             }
           />
 
-          <Section title="差込フォーム（入力は端末内に自動保存）" count={inputFields.length}>
+          <Section
+            title={saveError ? '差込フォーム（⚠ 端末に保存できていません）' : '差込フォーム（入力は端末内に自動保存）'}
+            count={inputFields.length}
+          >
+            {saveError && (
+              <div
+                role="alert"
+                data-save-error
+                style={{ fontSize: 12, color: '#f87171', border: '1px solid #f87171', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
+              >
+                ⚠ {saveError}
+              </div>
+            )}
             {collection === 'studio' && (
               <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8 }}>
                 ＊ は空欄のまま交付すると書類として成立しない項目。未入力 {blanks} / {fields.length} 件。

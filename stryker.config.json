@@ -110,6 +110,7 @@
     "src/renderer/data/kpiActuals.ts",
     "src/renderer/data/kpiActualsCsv.ts",
     "src/renderer/data/latestRecord.ts",
+    "src/renderer/data/localWrite.ts",
     "src/renderer/data/managementHighlights.ts",
     "src/renderer/data/managementReport.ts",
     "src/renderer/data/manualData.ts",
