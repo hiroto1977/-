@@ -93,8 +93,6 @@ import {
   isTaxExempt,
   calcStandardTaxDetailed,
   compareInputCreditMethods,
-  FULL_CREDIT_RATIO_THRESHOLD,
-  FULL_CREDIT_SALES_THRESHOLD,
 } from '../../shared/taxConsumptionBusiness';
 import { calcSocialInsurance, calcSocialInsuranceWithBonus } from '../../shared/taxSocialInsurance';
 import { calcFurusatoBreakdown, furusatoOneStopEligibility } from '../../shared/taxFurusato';
@@ -1378,8 +1376,8 @@ export function TaxPage() {
       <Section title="⑩-3 本則課税の仕入控除税額 (全額控除 / 個別対応 / 一括比例配分)" count={3}>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
           上の ⑩ の「本則課税」は<strong>課税仕入れの消費税を全額引ける</strong>前提の概算です。全額引けるのは
-          <strong>課税売上割合 {Math.round(FULL_CREDIT_RATIO_THRESHOLD * 100)}% 以上</strong>かつ
-          <strong>課税売上高 {jpy(FULL_CREDIT_SALES_THRESHOLD)} 以下</strong>のときだけで、住宅家賃・利子・保険料・医療・教育のような
+          <strong>課税売上割合 {Math.round(bizParams.fullCreditRatioThreshold * 100)}% 以上</strong>かつ
+          <strong>課税売上高 {jpy(bizParams.fullCreditSalesThreshold)} 以下</strong>のときだけで、住宅家賃・利子・保険料・医療・教育のような
           <strong>非課税売上</strong>があると按分が必要です。按分せずに全額を引くと<strong>納付が過少に出ます</strong>。
           ここでは実際の 2 方式（個別対応方式・一括比例配分方式）で計算します。売上 (標準/軽減) は ⑩ の入力を使います。
           ※ 概算試算です。課税売上割合に準ずる割合の承認・調整対象固定資産の調整等は反映しません。
@@ -1425,7 +1423,7 @@ export function TaxPage() {
             </div>
           ) : (
             <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4 }}>
-              ⚠️ 全額控除の要件を満たしません（割合 {Math.round(FULL_CREDIT_RATIO_THRESHOLD * 100)}% 未満、または課税売上高 {jpy(FULL_CREDIT_SALES_THRESHOLD)} 超）。
+              ⚠️ 全額控除の要件を満たしません（割合 {Math.round(bizParams.fullCreditRatioThreshold * 100)}% 未満、または課税売上高 {jpy(bizParams.fullCreditSalesThreshold)} 超）。
               下の 2 方式のいずれかで按分します。控除が多い方が有利です:{' '}
               <strong>{inputCredit.compare.better === 'itemized' ? '個別対応方式' : '一括比例配分方式'}</strong>
             </div>

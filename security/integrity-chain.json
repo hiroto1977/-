@@ -1309,10 +1309,18 @@
       "leafCount": 66,
       "note": "update integrity-chain.cjs,localWrite.ts",
       "hash": "372531b5494570e1097b5d1c1cbac993556b1086c4c2670f0d1b19f684223ae2"
+    },
+    {
+      "index": 155,
+      "prevHash": "372531b5494570e1097b5d1c1cbac993556b1086c4c2670f0d1b19f684223ae2",
+      "merkleRoot": "6cefc543f6675d950963a92799d8e2a817f4dbc79d4736829126b94936ec2cfe",
+      "leafCount": 66,
+      "note": "update ci.yml",
+      "hash": "e7983061ca3ecf071614949365aba2c060ba07720bca4565fa6f9a26f6d8bb85"
     }
   ],
   "tipManifest": {
-    ".github/workflows/ci.yml": "6e05d15633784dfc54a3401a14b82148888313b97353d461bbf542fc40da41d0",
+    ".github/workflows/ci.yml": "d4fd5a6a677206867876bc6efa8996a861bfd1b5863d76d1d44cba8626f0c6da",
     ".github/workflows/pages.yml": "3b3202789c03c79a7d55129027327cd52f0ad3189ebf2c2478af09a5c98f2a39",
     ".github/workflows/release.yml": "3201579d407a46e557d38566e288de8e8740d38679eff02e313c8dcfeb12e7d9",
     "assets/manifest.webmanifest": "e23432bb858936404e7661559be8a8f95e5842569f13162c0f7a2e5cc3fd412b",

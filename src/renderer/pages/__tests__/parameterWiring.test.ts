@@ -406,6 +406,31 @@ describe('税 — 消費税率', () => {
     expect(text()).toContain('課税売上が¥20,000,000以下です');
   });
 
+  /**
+   * ⑩-3 の全額控除の要件は**台帳に載っているのに、ここで留められていなかった**。
+   * 2026-09-06 の実測では、判定 (`canDeductFully`) は上書きされた値で行いながら、
+   * 説明文と ⚠ 警告は**モジュールの既定定数を刷っていた** —— 割合の境目を 90% に
+   * した利用者に、90% で発火した警告が「割合 95% 未満」と言う状態。
+   */
+  it('消費税 (事業者): 全額控除の要件の上書きが ⑩-3 の文言と判定の両方に出る', async () => {
+    await mount(TaxPage);
+    expect(text()).toContain('課税売上割合 95% 以上');
+    expect(text()).toContain('課税売上高 ¥500,000,000 以下');
+    await unmount();
+
+    await seed({
+      'consumptionBusiness.fullCreditRatioThreshold': 0.6,
+      'consumptionBusiness.fullCreditSalesThreshold': 300_000_000,
+    });
+    await mount(TaxPage);
+    expect(text()).toContain('課税売上割合 60% 以上');
+    expect(text()).toContain('課税売上高 ¥300,000,000 以下');
+    // 既定の入力 (課税 800 万 + 免税 0 / 非課税 200 万) の割合は 80% —— 既定の 95% では
+    // 満たさないが、60% に緩めると**満たす**。文言だけでなく判定も動く。
+    expect(text()).toContain('全額控除の要件を満たします');
+    expect(text()).not.toContain('全額控除の要件を満たしません');
+  });
+
   it('年金・一時所得・ふるさと納税・貿易: 上書きが計算と文言に出る', async () => {
     await mount(TaxPage);
     expect(statValue('課税所得への算入額 (×1/2)')).toBe(jpy(250_000)); // (300 万 − 200 万 − 50 万) ÷ 2

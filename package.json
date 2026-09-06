@@ -82,7 +82,7 @@
     "typecheck": "tsc -b --noEmit --force",
     "vault:build": "node scripts/build-knowledge-vault.cjs",
     "vault:check": "node scripts/build-knowledge-vault.cjs --check && node scripts/safe-vault-write.cjs && node scripts/build-academic-md.cjs --check && node scripts/build-academic-md.cjs --self-test",
-    "verify:all": "npm run typecheck && npm run verify:arch && npm run lint:forbidden && npm run lint:workflow-security && npm run lint:network-targets && npm run lint:url-encoding && npm run lint:regex && npm run lint:imports && npm run lint:docs && npm run lint:citations && npm run lint:doi-prefix && npm run lint:charset && npm run lint:knowledge-refs && npm run lint:sample-data && npm run lint:test-coverage && npm run verify:release-artifacts && npm run lint:shell && npm run lint:repo-size && npm run lint:deps && npm run lint:mcp-servers && npm run lint:storage && npm run lint:csp && npm run lint:data-origin && npm run lint:credential-use && npm run lint:ipc-handlers && npm run lint:mutation-scope && npm run lint:collection-time && npm run lint:rate-freshness && npm run verify:orchestration && npm run vault:check && npm run verify:graph && npm run verify:knowledge && npm run chain:verify && npm run lint",
+    "verify:all": "npm run typecheck && npm run verify:arch && npm run lint:forbidden && npm run lint:workflow-security && npm run lint:network-targets && npm run lint:url-encoding && npm run lint:regex && npm run lint:imports && npm run lint:docs && npm run lint:citations && npm run lint:doi-prefix && npm run lint:charset && npm run lint:knowledge-refs && npm run lint:sample-data && npm run lint:test-coverage && npm run verify:release-artifacts && npm run lint:shell && npm run lint:repo-size && npm run lint:deps && npm run lint:mcp-servers && npm run lint:storage && npm run lint:csp && npm run lint:data-origin && npm run lint:credential-use && npm run lint:ipc-handlers && npm run lint:mutation-scope && npm run lint:collection-time && npm run lint:parameter-prose && npm run lint:rate-freshness && npm run verify:orchestration && npm run vault:check && npm run verify:graph && npm run verify:knowledge && npm run chain:verify && npm run lint",
     "verify:arch": "node scripts/verify-architecture.cjs && node scripts/verify-architecture.cjs --self-test",
     "verify:graph": "node scripts/verify-graph.cjs && node scripts/verify-graph.cjs --self-test",
     "verify:knowledge": "node scripts/verify-knowledge-provenance.cjs && node scripts/verify-knowledge-provenance.cjs --self-test",
@@ -96,6 +96,7 @@
     "lint:ipc-handlers": "node scripts/lint-ipc-handlers.cjs && node scripts/lint-ipc-handlers.cjs --self-test",
     "lint:rate-freshness": "node scripts/lint-rate-freshness.cjs && node scripts/lint-rate-freshness.cjs --self-test",
     "lint:collection-time": "node scripts/lint-collection-time-tests.cjs && node scripts/lint-collection-time-tests.cjs --self-test",
+    "lint:parameter-prose": "node scripts/lint-parameter-prose.cjs && node scripts/lint-parameter-prose.cjs --self-test",
     "lint:mutation-scope": "node scripts/lint-mutation-scope.cjs && node scripts/lint-mutation-scope.cjs --self-test"
   },
   "devDependencies": {
