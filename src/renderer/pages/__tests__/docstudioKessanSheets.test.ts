@@ -239,3 +239,48 @@ describe('書類スタジオ — 計算書類を 1 点ずつ', () => {
     expect(q.sheets()?.dataset['kessanSheets']).toBe('equity');
   });
 });
+
+/**
+ * **畳んだまま印刷させない。** 計算書類の検算パネルは画面の下にあり、
+ * 「印刷 / PDF 保存」の隣の件数だけが上にある。2026-09-06 まで、その件数は
+ * `collection === 'studio'` の指摘しか数えていなかったので、**貸借が一致して
+ * いない計算書類でもボタンの隣は無言**だった (検算パネル自身は数えていた)。
+ * 貸借の合わない書面は「貸借対照表として成立しない」ので、そのまま印刷して
+ * 提出されるのが一番痛い。
+ */
+describe('印刷の隣は計算書類の検算も数える', () => {
+  const seed = (kessan: Record<string, string>): void => {
+    localStorage.setItem(LS_KEY, JSON.stringify({ kessan, kessanSheet: 'all' }));
+  };
+
+  it('★ 貸借が一致していないと、印刷ボタンの隣に件数が出る', async () => {
+    seed({ cash: '1000000' }); // 資産だけ = 負債・純資産と一致しない
+    navigateTo('docstudio', { doc: 'kessan' });
+    await mount();
+
+    // 検算パネルは fatal を数えている (下にある)
+    const panel = container.querySelector('[data-kessan-check]');
+    expect(Number(panel?.getAttribute('data-fatal') ?? '0')).toBeGreaterThanOrEqual(1);
+
+    // 印刷ボタンの隣にも出る (上にある)
+    const badge = container.querySelector('[data-fatal-badge]');
+    expect(badge?.textContent).toContain('検算の合わない指摘');
+  });
+
+  it('対照: 貸借が一致していれば件数は出ない', async () => {
+    seed({ cash: '1000000', capitalStock: '1000000' });
+    navigateTo('docstudio', { doc: 'kessan' });
+    await mount();
+
+    expect(container.querySelector('[data-kessan-check]')?.getAttribute('data-fatal')).toBe('0');
+    expect(container.querySelector('[data-fatal-badge]')).toBeNull();
+  });
+
+  it('対照: 書式 (studio) 側の文面は変わっていない', async () => {
+    // 極度額を空にした身元保証書は fatal (民法465条の2)。文面は書式側のまま。
+    localStorage.setItem(LS_KEY, JSON.stringify({ docId: 'mimoto-hosho', values: {} }));
+    await mount();
+    const badge = container.querySelector('[data-fatal-badge]');
+    if (badge !== null) expect(badge.textContent).toContain('このままでは無効になる指摘');
+  });
+});

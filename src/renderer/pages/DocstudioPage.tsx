@@ -1028,14 +1028,13 @@ function StatementTable({ title, rows }: { title: string; rows: readonly Stateme
  * 交付前チェックと役割は同じだが、見るものが違う。こちらは貸借の一致と
  * 二表の連結という、合計欄を眺めていても気づけない失敗を挙げる。
  */
-function KessanCheckPanel({ values }: { values: Values }) {
-  const opt = kessanOptions(values);
-  const netIncome = incomeTotals(values).netIncome;
-  // 貸借対照表側と株主資本等変動計算書側を 1 枚のパネルに集約する。
-  // 別々に出すと片方を閉じたまま印刷され、指摘が読まれない。
-  const issues = [...checkStatements(values, opt), ...checkEquity(values, opt, netIncome)]
-    .slice()
-    .sort(byIssueLevel);
+/**
+ * 計算書類の検算パネル。**指摘は呼び出し側から受ける** ——
+ * 印刷ボタンの隣に出す件数と、ここに並べる指摘が同じ物であるために
+ * (2026-09-06 まで別々で、ボタンの側は `collection === 'studio'` の指摘しか
+ * 数えていなかったので、**貸借が一致していない計算書類でもボタンの隣は無言**だった)。
+ */
+function KessanCheckPanel({ issues }: { issues: readonly DocIssue[] }) {
   const { fatal, warn } = countByLevel(issues);
   return (
     <div
@@ -1511,6 +1510,18 @@ export function DocstudioPage() {
   );
 
   const issues = useMemo(() => (collection === 'studio' ? checkDoc(studioDoc, filled) : []), [collection, studioDoc, filled]);
+  /**
+   * 計算書類の検算。**印刷ボタンの隣に出す件数と同じ物**を使うために、
+   * パネルの中ではなくここで組む (パネルは受け取って並べるだけ)。
+   */
+  const kessanIssues = useMemo(() => {
+    if (collection !== 'kessan') return [];
+    const opt = kessanOptions(filled);
+    const netIncome = incomeTotals(filled).netIncome;
+    // 貸借対照表側と株主資本等変動計算書側を 1 枚に集約する
+    // (別々に出すと片方を閉じたまま印刷され、指摘が読まれない)。
+    return [...checkStatements(filled, opt), ...checkEquity(filled, opt, netIncome)].slice().sort(byIssueLevel);
+  }, [collection, filled]);
   const flagged = useMemo(() => {
     const out: Record<string, DocIssue['level']> = {};
     for (const it of issues) {
@@ -1520,7 +1531,10 @@ export function DocstudioPage() {
     return out;
   }, [issues]);
   const blanks = collection === 'studio' ? countBlank(studioDoc, filled) : 0;
-  const fatalCount = issues.filter((i) => i.level === 'fatal').length;
+  // **書式の指摘と計算書類の検算を両方数える。** 2026-09-06 まで studio だけを
+  // 見ていたので、貸借が一致していない計算書類でも「印刷 / PDF 保存」の隣は
+  // 無言だった —— 検算パネルは下にあり、畳んだまま印刷されうる。
+  const fatalCount = [...issues, ...kessanIssues].filter((i) => i.level === 'fatal').length;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -1553,7 +1567,7 @@ export function DocstudioPage() {
               data-fatal-badge
               style={{ marginLeft: 'auto', alignSelf: 'center', fontSize: 12, fontWeight: 700, color: LEVEL_COLOR.fatal }}
             >
-              ⛔ このままでは無効になる指摘 {fatalCount} 件
+              ⛔ {collection === 'kessan' ? '検算の合わない指摘' : 'このままでは無効になる指摘'} {fatalCount} 件
             </span>
           )}
           <button
@@ -1791,7 +1805,7 @@ export function DocstudioPage() {
           )}
 
           {collection === 'studio' && <CheckPanel issues={issues} />}
-          {collection === 'kessan' && <KessanCheckPanel values={filled} />}
+          {collection === 'kessan' && <KessanCheckPanel issues={kessanIssues} />}
           <TriagePanel
             doc={
               collection === 'teikan' ? `teikan-${teikanType}`
