@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **11247** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11256** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 467 | 自己検証 |
+| `file:line` 参照数 | 468 | 自己検証 |
 
 ### 統合フロー図
 
@@ -2674,6 +2674,33 @@ auto、年初来は 0)、`normalizeBalanceSheet` + `balanceSheetOrNull` (内数�
 既定で埋めると「その人の数字」として参考値が印刷されうる。0 で埋めるのも過小に
 断言する。扱いは docs/REMAINING_WORK.md に選択肢を残した (低カリウムの**実測**欄は
 型でも任意なので、この穴には入っていない)。
+
+#### 同梱の形と取ってきた形 (`src/main/clients/__tests__/snapshotShapeParity.test.ts`)
+
+CLAUDE.md は「fetcher は `SNAPSHOT[id]` と**同じ形**を返す」と約束しているが、
+**文章だけで誰も測っていなかった** (2026-09-06)。画面は
+`useServiceData(id, SNAPSHOT[id])` でまず同梱を描き、取得できたら差し替えるので、
+欄が食い違うと**片方の道でだけ** `undefined` を読む —— 同梱にしか無い欄は
+**取得できた瞬間に**空欄や `¥NaN` になり (最も気づきにくい壊れ方)、取得にしか無い欄は
+未連携のあいだずっと出ない。
+
+資格情報の要らない `LOCAL_SERVICES` は fetcher をその場で呼べるので、**50 件すべて**
+同梱と突き合わせた。実測は**全件一致** —— これは直す検査ではなく「崩れたら気づく」検査。
+`village` だけ同梱を持たない (registry.json から renderer 側で組む画面で
+`useServiceData` を通らない) ので、理由つきの台帳に 1 件だけ載せて双方向に検査する。
+
+**最初に書いた版は上端の鍵だけを比べていて、対照が鳴らなかった** ——
+同梱から `summary.consumptionTaxEstimate` を消しても `summary` という鍵は残るので
+差にならない。入れ子を歩く形に直したら、その場で 2 件を報告した。どちらも
+**偽陽性**だったが、境界の決め方を教えてくれた: (1) `funding.diversification` は
+同梱が `null as {…}` (「まだ無い」を表す普通の値・画面が真偽で守っている)、
+(2) `talent.ladder.byStep` は**中身で鍵が決まる表**で同梱は空。よって
+`null` / `undefined` の欄と、片方が空の配列・空の物は**比べない** ——
+分からないことを鳴らすと、台帳が「鳴って当たり前」になって守らなくなる。
+
+対照は 2 本とも入れ子で取った: 同梱から 1 欄消すと `取得だけ=[summary.consumptionTaxEstimate]`、
+fetcher に 1 欄足すと `取得だけ=[extraFieldForControl]` で落ちる。標本は 6 本
+(欄の増減・入れ子・空配列・空の物・null・物と非物)。
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 
