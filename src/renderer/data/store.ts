@@ -158,6 +158,14 @@ function uuid(): string {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
+/**
+ * Web Locks の最小の形 (`lib.dom` の `LockManager` に依存しない)。
+ * 実行環境に無いこともあるので、**存在を確かめてから使う**。
+ */
+interface LockManagerLike {
+  request<R>(name: string, callback: () => Promise<R>): Promise<R>;
+}
+
 class IndexedDBRecordStore implements RecordStore {
   /** Save-time encryption layer. Default = plaintext (identity). */
   private cipher: RecordCipher = IDENTITY_CIPHER;
@@ -200,11 +208,56 @@ class IndexedDBRecordStore implements RecordStore {
     }));
   }
 
+  /**
+   * **鎖はこの JS 文脈の中だけの物である。** タブを 2 枚開けば、上の実測
+   * (lost update / 消したはずの復活) が**そのまま再現する** —— `perId` は
+   * メモリの Map なので、別タブは別の鎖を持つ。ブラウザ版は 1 枚の HTML を
+   * 開くだけなので、2 枚目を開くのは普通に起きる。
+   *
+   * そこで **Web Locks (`navigator.locks`) があれば、オリジン単位の錠で
+   * 同じ id の書き換えを囲む** (2026-09-06)。無い環境 (jsdom の検査・
+   * 不透明オリジンで拒まれる場合) では鎖だけで進む —— 単一タブでの保証は
+   * 変わらないので、**壊れるより遅れるほうを選ぶ**。
+   *
+   * ## 失敗の切り分けが要る
+   *
+   * `locks.request(name, cb)` は **cb の失敗もそのまま reject する**。
+   * 素朴に catch して `run()` を呼び直すと、**書き換えが 2 回走る**
+   * (1 回目は錠の中で実際に書いている)。`entered` の旗で
+   * 「錠が取れたか」と「操作が失敗したか」を分け、**後者は再実行しない**。
+   */
+  private crossTabLocked<R>(id: string, run: () => Promise<R>): () => Promise<R> {
+    return async () => {
+      const locks = (globalThis.navigator as { locks?: LockManagerLike } | undefined)?.locks;
+      /*
+       * 下の try/catch が「錠が取れなかった」を既に救うので、**この番人は
+       * 観測できる差を作らない** —— 実測 (2026-09-06): `locks = {}` にして
+       * この行を消しても、`locks.request(...)` の TypeError が catch に落ちて
+       * `run()` へ回り、書き換えは同じに成功する。番人が省くのは
+       * 「投げると分かっている呼び出しを組むこと」だけである。
+       * 例外を通常の流れに使わないために残す (等価変異として黙らせる)。
+       */
+      // Stryker disable next-line ConditionalExpression,LogicalOperator: try/catch が同じ結果へ落とすので等価 (上の注記に実測)
+      if (locks === undefined || typeof locks.request !== 'function') return run();
+      let entered = false;
+      try {
+        return await locks.request(`servicehub.record.${id}`, async () => {
+          entered = true;
+          return run();
+        });
+      } catch (e) {
+        if (entered) throw e; // 操作そのものの失敗。錠の中で走り切っているので再実行しない
+        return run(); // 錠が取れなかっただけ (未対応・不透明オリジン等) → 鎖だけで進む
+      }
+    };
+  }
+
   /** `id` の鎖の最後尾に `run` を繋いで、その結果を返す。 */
   private serialize<R>(id: string, run: () => Promise<R>): Promise<R> {
+    const guarded = this.crossTabLocked(id, run);
     const prev = this.perId.get(id) ?? Promise.resolve();
     // 前が失敗しても後続は動かす (失敗は呼んだ側が受け取っている)。
-    const started = prev.then(run, run);
+    const started = prev.then(guarded, guarded);
     const settled = started.then(
       () => undefined,
       () => undefined,
