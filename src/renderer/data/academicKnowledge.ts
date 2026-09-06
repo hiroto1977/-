@@ -50547,5 +50547,83 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://en.wikipedia.org/wiki/Andrew_Feenberg', type: 'reference', label: 'Wikipedia: Andrew Feenberg — critical theory of technology, technical code, instrumentalization theory, student of Herbert Marcuse' },
     ],
   },
+  {
+    id: 'econ-information-cascade',
+    discipline: 'economics',
+    title: '情報カスケード',
+    statement:
+      '情報カスケードとは、先行する他者の行動を観察した個人が、自分自身の持つ私的情報よりも他者の選択を優先して同じ行動を模倣し続ける結果、社会全体の意思決定が特定の方向へ雪崩のように収斂していく現象を指す。観察情報が私的情報を上回ると判断された時点で個人の合理的模倣が連鎖する。各個人の模倣自体は主観的合理性を持つにもかかわらず、集団全体としては誤った結論に固着しうる点が特徴で、流行・金融市場のバブルやパニック、投票行動の説明に応用される。私的情報が公に共有されないため、脆弱で突然崩れる「カスケードの反転」が起こりうる。',
+    keyFigures: 'Sushil Bikhchandani, David Hirshleifer, Ivo Welch（1992）「A Theory of Fads, Fashion, Custom, and Cultural Change as Informational Cascades」Journal of Political Economy, Vol.100, No.5, pp.992–1026',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.journals.uchicago.edu/doi/abs/10.1086/261849', type: 'academic', label: 'Bikhchandani, S., Hirshleifer, D. & Welch, I. (1992) Journal of Political Economy — 情報カスケード理論の原典' },
+      { url: 'https://link.springer.com/rwe/10.1057/978-1-349-95121-5_2727-1', type: 'academic', label: 'The New Palgrave Dictionary of Economics「Information Cascades」著者による解説' },
+    ],
+  },
+  {
+    id: 'econ-winners-curse',
+    discipline: 'economics',
+    title: '勝者の呪い',
+    statement:
+      '勝者の呪いとは、共通価値（全入札者にとって真の価値が同一）のオークションにおいて、資産の価値を最も楽観的に見積もった者が落札するため、落札額が期待される真の価値を上回りやすくなる現象を指す。落札という結果自体が「自分の見積もりが最も高かった」という選択バイアスの証拠となる。石油採掘権の入札分析から発見され、M&Aの買収プレミアムや不動産入札、新規株式公開など幅広い競争入札状況の説明に応用される。合理的な入札者はこのバイアスを事前に織り込んで入札額を下方修正する必要があるとされる。',
+    keyFigures: 'Edward C. Capen, Robert V. Clapp, William M. Campbell（1971）「Competitive Bidding in High-Risk Situations」Journal of Petroleum Technology, Vol.23, pp.641–653',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.britannica.com/topic/winners-curse', type: 'reference', label: 'Encyclopaedia Britannica「Winner\'s curse」基礎解説' },
+      { url: 'https://www.aeaweb.org/articles?id=10.1257/jep.2.1.191', type: 'academic', label: 'Richard H. Thaler (1988) 「Anomalies: The Winner\'s Curse」Journal of Economic Perspectives 2(1)' },
+    ],
+  },
+  {
+    id: 'bizlaw-business-judgment-rule',
+    discipline: 'business-law',
+    title: 'ビジネス・ジャッジメント・ルール',
+    statement:
+      'ビジネス・ジャッジメント・ルールとは、取締役が十分な情報に基づき、誠実に、会社の利益のためであると合理的に信じて行った経営判断について、事後的に結果が悪くとも裁判所が実体的当否に踏み込まず尊重するという米国会社法上の判例法理である。取締役の善管注意義務違反の推定を覆す防御法理として機能する。1985年のSmith v. Van Gorkom判決（デラウェア州最高裁）では、取締役会がわずか2時間の口頭説明のみで買収提案を承認し、合意書の事前検討も行わなかったため「情報に基づいた判断」の要件を満たさないとしてルールの保護が否定され、注意義務違反による責任が認められた。',
+    keyFigures: 'Smith v. Van Gorkom, 488 A.2d 858 (Del. 1985)（1985年1月29日判決）— デラウェア州最高裁によるリーディングケース',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://law.justia.com/cases/delaware/supreme-court/1985/488-a-2d-858-4.html', type: 'government', label: 'Justia — Smith v. Van Gorkom, 488 A.2d 858 (Del. 1985)' },
+      { url: 'https://scholarship.law.cornell.edu/clr/vol65/iss4/4', type: 'academic', label: 'Cornell Law Review — Business Judgment Rule論文' },
+    ],
+  },
+  {
+    id: 'bizlaw-poison-pill',
+    discipline: 'business-law',
+    title: 'ポイズンピル',
+    statement:
+      'ポイズンピルとは、敵対的買収者が一定比率（例：20%）以上の株式を取得した場合、既存株主（買収者を除く）に市場価格より大幅に安い価格で新株を購入する権利を発生させ、買収者の持株比率を大きく希薄化させることで買収コストを跳ね上げる防衛策である。取締役会が交渉上の時間と主導権を確保する目的で導入される。1982年、ニューヨークの企業弁護士マーティン・リプトンが、T・ブーン・ピケンズによるGeneral American Oil社への敵対的買収、およびEl Paso社の防衛の中で考案・実装した。1985年のデラウェア州最高裁判決（Moran v. Household International）で適法性が認められ、以後米国企業の標準的な買収防衛手法として定着した。',
+    keyFigures: 'Martin Lipton（1931年6月22日生、Wachtell, Lipton, Rosen & Katz創設パートナー、1982年考案）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.law.cornell.edu/wex/Poison_pill', type: 'reference', label: 'Cornell Legal Information Institute, Wex「Poison pill」' },
+      { url: 'https://corpgov.law.harvard.edu/2020/04/24/the-rise-of-the-aggressive-poison-pill/', type: 'academic', label: 'Harvard Law School Forum on Corporate Governance「The Rise of the Aggressive Poison Pill」' },
+    ],
+  },
+  {
+    id: 'infosoc-filter-bubble',
+    discipline: 'information-sociology',
+    title: 'フィルターバブル',
+    statement:
+      'フィルターバブルとは、検索エンジンやSNSのアルゴリズムがユーザーの過去の閲覧履歴・クリック行動に基づいて情報をパーソナライズした結果、ユーザーが自分の既存の関心や意見に合致する情報にのみ囲まれ、異なる視点や反対意見に触れる機会が知らぬ間に減少していく状態を指す。提唱者パリサーは、この個人化されたフィルタリングが利用者の同意や認識を経ずに作動する「見えない編集」である点を問題視し、民主的な公共圏における多様な情報への接触機会の縮小や、政治的分極化への懸念と結びつけて論じた。エコーチェンバー（人間関係の同質性起因）とは発生メカニズムが異なり、アルゴリズムのパーソナライゼーションが起因するため独立した概念である。',
+    keyFigures: 'Eli Pariser（1980年12月17日生、MoveOn.org元事務局長、Upworthy共同創業者、2011）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://www.penguinrandomhouse.com/books/309214/the-filter-bubble-by-eli-pariser/', type: 'media', label: 'Pariser, E. (2011) The Filter Bubble: What the Internet Is Hiding from You. Penguin Press' },
+      { url: 'https://policyreview.info/concepts/filter-bubble', type: 'academic', label: 'Internet Policy Review — Alexander von Humboldt Institute for Internet and Society「Filter Bubble」' },
+    ],
+  },
+  {
+    id: 'humansci-forer-effect',
+    discipline: 'human-science',
+    title: 'フォアラー効果',
+    statement:
+      'フォアラー効果とは、曖昧で一般的な性格記述であっても、それが自分専用に作成されたものだと信じた場合、多くの人が高い的中率を感じてしまう心理現象である。フォアラーは学生に性格診断を実施すると偽り、全員に新聞占星術欄から作成した同一の記述を「個別診断結果」として配布した。学生たちはその的中度を5点満点中平均4.26点と評価し、全員が同一文面を受け取っていたことに気づかなかった。この現象は後にポール・ミール(1956)により見世物師P.T.バーナムに因み「バーナム効果」とも呼ばれるようになり、占星術・性格診断・血液型診断などの妥当性検証における古典的批判の根拠となっている。確証バイアス・認知的不協和等の隣接概念とはメカニズムが異なり、曖昧記述の自己適用という特定現象に焦点を当てた独立概念である。',
+    keyFigures: 'Bertram R. Forer（1914年10月24日–2000年4月6日、UCLA博士、臨床心理学者、1949）',
+    asOf: '2026-09',
+    sources: [
+      { url: 'https://dictionary.apa.org/barnum-effect', type: 'academic', label: 'American Psychological Association「Barnum effect」心理学辞典' },
+      { url: 'https://doi.org/10.1037/h0059240', type: 'academic', label: 'Forer, B. R. (1949) "The Fallacy of Personal Validation: A Classroom Demonstration of Gullibility" Journal of Abnormal and Social Psychology, Vol.44, No.1, pp.118–123' },
+    ],
+  },
 ];
 // Stryker restore all
