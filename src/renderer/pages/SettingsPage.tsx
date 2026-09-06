@@ -134,7 +134,8 @@ const SLOTS: readonly CredentialSlot[] = [
   },
 ];
 
-function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChange: () => void }) {
+/** 保管庫スロット 1 行。**jsdom の検査から直接 mount するため export している。** */
+export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChange: () => void }) {
   const [configured, setConfigured] = useState<boolean | null>(null);
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState('');
@@ -176,10 +177,17 @@ function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChange: () 
   async function clear() {
     if (!confirm(`${slot.label} を削除しますか?`)) return;
     setBusy(true);
+    setErr(null);
     try {
+      // **削除の失敗を黙らない。** 保管庫は施錠中なら投げ (`vault.clearToken`)、
+      // IndexedDB も容量やプライベートモードで失敗しうる。捨てると
+      // 「消したつもりの資格情報が残っている」状態になる (main の
+      // `secrets:clear` は同じ理由で `{ ok: false }` を返している)。
       await getVault().clearToken(slot.vaultKey);
       await refresh();
       onChange();
+    } catch (e) {
+      setErr(`削除できませんでした: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
       setBusy(false);
     }
@@ -688,9 +696,11 @@ function ConnectionHub({ refreshKey }: { refreshKey: number }) {
  * 該当が無ければ何も描かない。「0 件です」を常時出すと、他の警告と混ざって
  * 読み飛ばされる。
  */
-function UnusedCredentialSection({ refreshKey }: { refreshKey: number }) {
+/** 使われていない資格情報の一覧。**jsdom の検査から直接 mount するため export している。** */
+export function UnusedCredentialSection({ refreshKey }: { refreshKey: number }) {
   const [ids, setIds] = useState<readonly ServiceId[] | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
+  const [forgetError, setForgetError] = useState<string | null>(null);
 
   const reload = useCallback(async () => {
     const hub = window.serviceHub;
@@ -709,13 +719,27 @@ function UnusedCredentialSection({ refreshKey }: { refreshKey: number }) {
     void reload();
   }, [reload, refreshKey]);
 
+  // `forget` から呼ぶので、宣言はその前に置く (早期 return の後ろだと TDZ を踏みうる)。
+  const labelOf = (id: ServiceId) => SERVICES.find((s) => s.id === id)?.label ?? id;
+
   const forget = async (id: ServiceId) => {
     const hub = window.serviceHub;
     if (!hub) return;
     setBusy(id);
+    setForgetError(null);
     try {
-      await hub.clearToken(id);
+      // **戻り値を見る。** main の `secrets:clear` は「削除の失敗を黙ると
+      // 『消したつもりの資格情報が残っている』状態になる」から `{ ok: false }` を
+      // 返す設計で、ここがそれを捨てていた (2026-09-06)。預かりを減らす画面が
+      // 減らせていないことを黙るのは、この節の目的そのものに反する。
+      const res = await hub.clearToken(id);
+      if (!res.ok) {
+        setForgetError(`${labelOf(id)} を削除できませんでした: ${res.message}`);
+        return;
+      }
       await reload();
+    } catch (e) {
+      setForgetError(`${labelOf(id)} を削除できませんでした: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
       setBusy(null);
     }
@@ -723,7 +747,6 @@ function UnusedCredentialSection({ refreshKey }: { refreshKey: number }) {
 
   if (ids === null || ids.length === 0) return null;
 
-  const labelOf = (id: ServiceId) => SERVICES.find((s) => s.id === id)?.label ?? id;
 
   return (
     <section data-unused-credentials>
@@ -733,6 +756,15 @@ function UnusedCredentialSection({ refreshKey }: { refreshKey: number }) {
         保存したままにしても接続はされず、預かっているぶんだけ漏えいの面が広がります。
         削除しても表示中のデータは変わりません。
       </div>
+      {forgetError !== null && (
+        <div
+          role="alert"
+          data-forget-error
+          style={{ fontSize: 12, color: '#e5484d', marginBottom: 8, lineHeight: 1.6 }}
+        >
+          ⛔ {forgetError}（預かりは減っていません）
+        </div>
+      )}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         {ids.map((id) => (
           <div key={id} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
