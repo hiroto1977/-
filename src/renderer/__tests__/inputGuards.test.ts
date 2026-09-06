@@ -4,6 +4,7 @@ import {
   guardCounts,
   guardNumber,
   hasUnitWord,
+  hasInteriorNoise,
   readNumber,
   readNumberOr0,
   type NumSpec,
@@ -157,6 +158,139 @@ describe('guardAll / guardCounts', () => {
  * 以下は mutation testing で生き残った変異体を狙って足したケース。
  * 「呼べば通る」ではなく、値・分岐・文面を実際に固定する。
  * ------------------------------------------------------------------ */
+
+/**
+ * **飾りの位置 —— 「読めている」のに別の数だった入力の台帳。**
+ *
+ * 2026-09-06 まで `readNumber` は飾り (通貨記号・単位・桁区切り) を
+ * **位置を見ずに**落としていた。飾りが数字の**間**にあると離れた桁が
+ * つながって別の数になり、しかも `readNumber` が値を返すので
+ * `guardNumber` は何も言わない —— このモジュールが潰したはずの
+ * 「黙って間違った数で計算する」が、0 ではなく**別の数**の形で残っていた。
+ *
+ * 下の表は、そのとき**実際に返っていた数**を第 2 欄に持つ。
+ * 各行について
+ *   (1) 旧実装なら数として読めた   ← 対照。表が「元から弾いていた入力」に
+ *                                  すり替わったら落ちる
+ *   (2) 今は読まない
+ *   (3) 指摘は「数字の間に…」の文面で出る (単位語の文面と混ざらない)
+ * を見る。
+ */
+const POSITION_CENSUS: [string, number][] = [
+  ['100m2', 1002], // 面積 100 ㎡ → 1002 ㎡
+  ['100㎡2', 1002],
+  ['0.5m3', 0.53], // 小数が壊れる
+  ['3年6月', 36], // 3 年 6 か月 → 36 年
+  ['1月2日', 12],
+  ['2024年12月31日', 20241231], // 日付を金額欄に貼ると 2,024 万円
+  ['30 000', 30000], // 空白区切りは区別できないので読まない
+  ['1 2 3', 123],
+  ['12%3', 123],
+  ['3人4', 34],
+  ['5株6', 56],
+  ['1,5', 15],
+  ['1,23', 123],
+  ['12,3456', 123456],
+  ['1,000,00', 100000],
+  ['1,000,000,00', 100000000],
+  ['¥1,2', 12],
+  ['5%5', 55],
+  ['1ｍ2', 12],
+  ['１００ｍ２', 1002],
+];
+
+/** 2026-09-06 までの読み取り (飾りを位置を見ずに全部落とす)。対照に使う。 */
+function readIgnoringPosition(raw: string): number | null {
+  const half = raw.replace(/[！-～]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
+  if (/[万億兆千]|[０-９0-9]\s*[kKmMbB]\b/.test(half)) return null;
+  const bare = half.replace(/[¥￥$,\s円％%人年月日個株㎡ｍm]/g, '');
+  if (!/^[+-]?\d+(\.\d+)?$/.test(bare)) return null;
+  const n = Number(bare);
+  return Number.isFinite(n) ? n : null;
+}
+
+describe('readNumber — 飾りの位置 (数字の間の単位・区切り)', () => {
+  it.each(POSITION_CENSUS)('対照: 「%s」は旧実装なら %d と読めていた', (raw, was) => {
+    // これが落ちるなら、台帳の行が「元から弾いていた入力」になっている
+    // (= 検査が何も守っていない)。
+    expect(readIgnoringPosition(raw)).toBe(was);
+  });
+
+  it.each(POSITION_CENSUS)('★ 「%s」は読まない (別の数として通していた)', (raw) => {
+    expect(readNumber(raw)).toBeNull();
+    expect(hasInteriorNoise(raw)).toBe(true);
+  });
+
+  it.each(POSITION_CENSUS)('★ 「%s」の指摘は位置の話として出る', (raw) => {
+    const issue = guardNumber(raw, { label: '面積', kind: 'area' });
+    expect(issue?.level).toBe('fatal');
+    expect(issue?.message).toContain('数字の間に単位や区切りが入っている');
+    // 何 ㎡ として計算されているかは、これまでどおり書く。
+    expect(issue?.message).toContain('0 ㎡ として計算されています');
+  });
+
+  it('★ 単位語 (万・億) は今までの文面のまま (位置の文面に飲まれない)', () => {
+    const issue = guardNumber('4200万', { label: '取得価格', kind: 'money' });
+    expect(issue?.message).toContain('単位付きのため読み取れません');
+    expect(issue?.message).not.toContain('数字の間に');
+    expect(hasInteriorNoise('4200万')).toBe(false);
+  });
+
+  it('★ 元から数値でない入力は「数値として読み取れません」のまま', () => {
+    for (const raw of ['abc', '未定', '1/2', '1_000', '1e3', '0x10', '-']) {
+      expect(hasInteriorNoise(raw), raw).toBe(false);
+      const issue = guardNumber(raw, { label: '取得価格', kind: 'money' });
+      expect(issue?.message, raw).toContain('を数値として読み取れません');
+      expect(issue?.message, raw).not.toContain('数字の間に');
+    }
+  });
+
+  it('対照: 飾りが正しい位置にある入力は今までどおり読める', () => {
+    // 位置を見る前と後で**同じ値**になること (KEEP 集合)。
+    const keep: [string, number][] = [
+      ['30,000', 30_000],
+      ['¥1,200,000', 1_200_000],
+      ['500円', 500],
+      ['5%', 5],
+      ['300 ㎡', 300],
+      [' 42 ', 42],
+      ['3.5', 3.5],
+      ['-8', -8],
+      ['+5', 5],
+      ['5.0', 5],
+      ['１２３４５', 12_345],
+      ['１，０００', 1_000],
+      ['３．５', 3.5],
+      ['1,000㎡', 1000],
+      ['3人', 3],
+      ['12日', 12],
+      ['¥ 1,000 円', 1000],
+      ['-¥500', -500],
+      ['¥-500', -500],
+    ];
+    for (const [raw, value] of keep) {
+      expect(readNumber(raw), raw).toBe(value);
+      expect(readIgnoringPosition(raw), raw).toBe(value);
+      expect(hasInteriorNoise(raw), raw).toBe(false);
+      // 負数も許す spec で見る (符号は「位置」の話ではない)。
+      expect(
+        guardNumber(raw, { label: '任意', kind: 'money', allowZero: true, min: -1_000_000 }),
+        raw,
+      ).toBeNull();
+    }
+  });
+
+  it('桁区切りは 3 桁ごとでなければ読まない (境界)', () => {
+    expect(readNumber('1,000')).toBe(1000);
+    expect(readNumber('12,000')).toBe(12_000);
+    expect(readNumber('123,000')).toBe(123_000);
+    expect(readNumber('1,234,567')).toBe(1_234_567);
+    expect(readNumber('1234,567')).toBeNull();
+    expect(readNumber('1,2345')).toBeNull();
+    expect(readNumber(',000')).toBeNull();
+    expect(readNumber('1,')).toBeNull();
+  });
+});
 
 describe('readNumber — 境界と実装の細部', () => {
   it('null / undefined は "null" "undefined" として正規表現に弾かれ null になる', () => {

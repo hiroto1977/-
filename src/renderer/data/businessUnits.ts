@@ -13,6 +13,7 @@
  */
 
 import type { MonthlyBusinessKpi } from './businessFinancials';
+import { readNumeric } from '../../shared/readNumeric';
 import { hasControlChar } from '../../shared/controlChars';
 
 export const BUSINESS_UNITS_COLLECTION = 'business-units';
@@ -138,12 +139,13 @@ function parseAmounts(input: {
   for (const key of ['revenue', 'variableCost', 'fixedCost'] as const) {
     const raw = (input[key] ?? '').trim();
     if (raw.length === 0) continue;
-    // 桁区切りと全角数字は日常的に貼り付けられるので受ける。
-    const normalized = raw.replace(/,/g, '').replace(/[０-９]/g, (c) =>
-      String.fromCharCode(c.charCodeAt(0) - 0xfee0),
-    );
-    const value = Number(normalized);
-    if (!Number.isFinite(value)) {
+    // 読み取りはアプリで 1 つ (`shared/readNumeric.ts`)。桁区切りと全角数字は
+    // 日常的に貼り付けられるので受けるが、**位置**は見る —— ここだけ
+    // `Number(カンマを外した文字列)` で読んでいた 2026-09-06 までは、
+    // `1,5` が 15、`0x10` が 16、`1e3` が 1000 として通っていた
+    // (打った数と保存された数が黙って食い違う)。
+    const value = readNumeric(raw);
+    if (value === null) {
       return { ok: false, reason: `${AMOUNT_LABEL[key]}は数値で入力してください。` };
     }
     if (value < 0) {

@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **10986** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11006** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 422 | 自己検証 |
+| `file:line` 参照数 | 428 | 自己検証 |
 
 ### 統合フロー図
 
@@ -2138,7 +2138,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **267 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **268 ファイル**。
 
 #### 点数の定義 (分母に何を入れないか)
 
@@ -2492,6 +2492,21 @@ Claude のモデル ID の直書き / 表への所属判定に `in` を使う形
 1 つにすると片方の意図が壊れる。ゲートは等値比較 (`=== 0x7f`) だけを見て
 範囲比較は通すことで、この 2 つを区別している（**ゲートを足した直後に
 これを誤検出し、畳まない判断をした**）。
+
+**数字の読み取り**も 1 本ではなかった。画面の入力欄は
+`src/renderer/data/inputGuards.ts` の `readNumber` を通すのに、
+`src/shared/hydroponicCrops.ts` の `parseCropNumber` は `Number(カンマを外した文字列)`、
+`src/renderer/data/investments.ts` の `toAmount` は `Number(カンマと空白を外した文字列)`、
+`src/renderer/data/businessUnits.ts` はまた別の写しで、**同じ文字列が場所によって
+別の数**になっていた。`1,2` は画面では読めず品目では 12 (pH 1.2 と打った値が pH 12 として
+範囲 0〜14 を通る)、家賃は**画面が ⛔ を出しながら 15 円が保存され**、全角の「１２００」は
+逆に画面が読めて保存が断っていた。読み取りを `src/shared/readNumeric.ts` に寄せ、
+4 つの口をそこへ通した (69 mutants / 100%)。同時に飾り (通貨記号・単位・桁区切り) を
+落とす**位置**を決めた —— 位置を見ずに落としていた 2026-09-06 までは `100m2` が 1002、
+`0.5m3` が 0.53、`2024年12月31日` が 20241231 と読め、**値が返るので指摘も出なかった**
+(このモジュールが潰したはずの「黙って間違った数で計算する」が、0 ではなく別の数の形で
+残っていた)。`src/renderer/__tests__/numberReadingParity.test.ts` が口ごとに読みの一致を
+見るので、また 2 本目が生えたときに鳴る。
 
 `body.slice(` の検査は、連携先の**エラー応答本文をそのままエラー文字列へ**
 入れている箇所を捕まえる。この文字列は画面に出て不具合報告にも貼られるため、

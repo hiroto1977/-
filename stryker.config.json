@@ -226,6 +226,7 @@
     "src/shared/payroll.ts",
     "src/shared/plan.ts",
     "src/shared/proxyEndpoint.ts",
+    "src/shared/readNumeric.ts",
     "src/shared/realEstateMetrics.ts",
     "src/shared/redact.ts",
     "src/shared/safeFilename.ts",

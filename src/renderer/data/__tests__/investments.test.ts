@@ -73,6 +73,25 @@ describe('parsePropertyEntry (不動産の任意追加)', () => {
       .toThrow('月次返済額は 0 以上の数値で入力してください');
   });
 
+  it('★ 家賃の空欄・空白だけは 0 円 (番人も「0 円 として計算されています」と言う)', () => {
+    expect(parsePropertyEntry({ ...valid, monthlyRent: '' }).monthlyRent).toBe(0);
+    expect(parsePropertyEntry({ ...valid, monthlyRent: '   ' }).monthlyRent).toBe(0);
+    // 対照: 読めない文字列は 0 に倒さず断る (空欄と「読めない」を混ぜない)
+    expect(() => parsePropertyEntry({ ...valid, monthlyRent: 'abc' })).toThrow('家賃');
+  });
+
+  it('★ 桁区切りの位置が違う値は保存しない — 画面の指摘と保存が食い違っていた (2026-09-06)', () => {
+    // 旧実装は `Number('1,5'.replace(/[,，\s]/g, ''))` = 15。入力欄は ⛔ を出しながら
+    // 15 円が保存される、という食い違いだった (読み取りを画面と 1 つにした)。
+    for (const bad of ['1,5', '1 5', '0x10', '1e3', '100m2']) {
+      expect(() => parsePropertyEntry({ ...valid, monthlyRent: bad }), bad).toThrow('家賃');
+    }
+    // 対照: 桁区切りが正しい値は読む
+    expect(parsePropertyEntry({ ...valid, monthlyRent: '1,200,000' }).monthlyRent).toBe(1_200_000);
+    // 対照: 全角も読む (旧実装は NaN で断っていた —— 画面は読めていたので逆向きに食い違っていた)
+    expect(parsePropertyEntry({ ...valid, monthlyRent: '１２００' }).monthlyRent).toBe(1200);
+  });
+
   it('物件名は 64 文字・種別は 16 文字まで受理し 1 文字超過で拒否 (境界)', () => {
     expect(parsePropertyEntry({ ...valid, name: 'あ'.repeat(64) }).name).toBe('あ'.repeat(64));
     expect(() => parsePropertyEntry({ ...valid, name: 'あ'.repeat(65) })).toThrow('物件名');
@@ -295,6 +314,14 @@ describe('parseHoldingEntry (投資信託の任意追加)', () => {
     expect(parseHoldingEntry({ ...valid, ytdReturnPct: 12.5 }).ytdReturnPct).toBe(12.5);
     expect(() => parseHoldingEntry({ ...valid, ytdReturnPct: '-101' })).toThrow('YTD');
     expect(() => parseHoldingEntry({ ...valid, ytdReturnPct: 'abc' })).toThrow('YTD');
+  });
+
+  it('★ YTD も画面と同じ読み取り (1,5 を 15% にしない)', () => {
+    expect(() => parseHoldingEntry({ ...valid, ytdReturnPct: '1,5' })).toThrow('YTD');
+    expect(() => parseHoldingEntry({ ...valid, ytdReturnPct: '1e2' })).toThrow('YTD');
+    // 対照: 空欄は 0 のまま (読めない ≠ 未入力。この門を外すと往復で落ちる)
+    expect(parseHoldingEntry({ ...valid, ytdReturnPct: '' }).ytdReturnPct).toBe(0);
+    expect(parseHoldingEntry({ ...valid, ytdReturnPct: '-1.5' }).ytdReturnPct).toBe(-1.5);
   });
 
   it('holdingToForm: manual の 0 の任意欄 (口数・基準価額・YTD) は空欄へ戻す', () => {
