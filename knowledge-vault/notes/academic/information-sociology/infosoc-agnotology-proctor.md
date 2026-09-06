@@ -26,7 +26,7 @@ aliases:
 ロバート・プロクター ／ ロンダ・シービンガー ／ ナオミ・オレスケス ／ デヴィッド・マイケルズ
 
 ## 出典
-- [Proctor, R. N. & Schiebinger, L. (eds.) (2008) Agnotology: The Making and Unmaking of Ignorance — Stanford University Press](https://www.worldcat.org/oclc/166384062) `学術`
+- [Proctor, R. N. & Schiebinger, L. (eds.) (2008) Agnotology: The Making and Unmaking of Ignorance — Stanford University Press](https://www.worldcat.org/oclc/166384062) `リファレンス`
 - [Wikipedia: Agnotology — culturally induced ignorance, manufactured doubt, tobacco, undone science](https://en.wikipedia.org/wiki/Agnotology) `リファレンス`
 
 ## 関連概念

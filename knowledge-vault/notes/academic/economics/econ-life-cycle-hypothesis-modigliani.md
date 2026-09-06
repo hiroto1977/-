@@ -26,7 +26,7 @@ aliases:
 フランコ・モディリアーニ ／ リチャード・ブランバーグ ／ アルバート・アンドー ／ ミルトン・フリードマン
 
 ## 出典
-- [Modigliani, F. & Brumberg, R. (1954) Utility Analysis and the Consumption Function — Post-Keynesian Economics (WorldCat)](https://www.worldcat.org/oclc/651838929) `学術`
+- [Modigliani, F. & Brumberg, R. (1954) Utility Analysis and the Consumption Function — Post-Keynesian Economics (WorldCat)](https://www.worldcat.org/oclc/651838929) `リファレンス`
 - [Wikipedia: Life-cycle hypothesis — Modigliani, consumption smoothing, saving and demographics](https://en.wikipedia.org/wiki/Life-cycle_hypothesis) `リファレンス`
 
 ## 関連概念

@@ -26,7 +26,7 @@ aliases:
 アダム・グリーンフィールド ／ ロブ・キトチン ／ シャノン・マッターン ／ テイラー・シェルトン ／ マシュー・ゾック
 
 ## 出典
-- [Greenfield, A. (2013) Against the Smart City — Do Projects](https://search.worldcat.org/title/against-the-smart-city/oclc/869266837) `学術`
+- [Greenfield, A. (2013) Against the Smart City — Do Projects](https://search.worldcat.org/title/against-the-smart-city/oclc/869266837) `リファレンス`
 - [Kitchin, R. (2014) "The Real-Time City? Big Data and Smart Urbanism" — GeoJournal](https://doi.org/10.1007/s10708-013-9516-8) `学術`
 - [Wikipedia: Smart city — スマートシティの概念と批判的議論](https://en.wikipedia.org/wiki/Smart_city) `リファレンス`
 

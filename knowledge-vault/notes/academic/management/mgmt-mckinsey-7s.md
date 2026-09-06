@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Wikipedia — McKinsey 7S Framework](https://en.wikipedia.org/wiki/McKinsey_7S_Framework) `リファレンス`
-- [EBSCO Research Starters — McKinsey 7S Framework](https://www.ebsco.com/research-starters/business-and-management/mckinsey-7s-framework) `学術`
+- [EBSCO Research Starters — McKinsey 7S Framework](https://www.ebsco.com/research-starters/business-and-management/mckinsey-7s-framework) `リファレンス`
 - [Waterman, Peters & Phillips (1980) Structure Is Not Organization, Business Horizons 23(3):14-26（原典）](https://www.sciencedirect.com/science/article/abs/pii/0007681380900270) `学術`
 
 ## 関連概念

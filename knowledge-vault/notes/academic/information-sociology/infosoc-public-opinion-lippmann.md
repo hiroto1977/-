@@ -26,7 +26,7 @@ aliases:
 ウォルター・リップマン ／ エドワード・バーネイズ ／ ハロルド・ラスウェル ／ マックスウェル・マコームズ
 
 ## 出典
-- [Lippmann, W. (1922) Public Opinion — Harcourt Brace; pseudo-environment, stereotypes (WorldCat)](https://www.worldcat.org/oclc/1297149) `学術`
+- [Lippmann, W. (1922) Public Opinion — Harcourt Brace; pseudo-environment, stereotypes (WorldCat)](https://www.worldcat.org/oclc/1297149) `リファレンス`
 - [Wikipedia: Public Opinion (Lippmann) — pseudo-environment, pictures in our heads, stereotypes](https://en.wikipedia.org/wiki/Public_Opinion_(book)) `リファレンス`
 
 ## 関連概念

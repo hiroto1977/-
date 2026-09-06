@@ -26,7 +26,7 @@ aliases:
 ローレンス・レッシグ ／ ジョエル・ライデンバーグ ／ ジョン・ペリー・バーロウ ／ ヨハイ・ベンクラー
 
 ## 出典
-- [Lessig, L. (1999) Code and Other Laws of Cyberspace — Basic Books (WorldCat)](https://www.worldcat.org/oclc/40340890) `学術`
+- [Lessig, L. (1999) Code and Other Laws of Cyberspace — Basic Books (WorldCat)](https://www.worldcat.org/oclc/40340890) `リファレンス`
 - [Wikipedia: Code is law — Lessig, four modalities of regulation, architecture/code, cyber-libertarianism critique](https://en.wikipedia.org/wiki/Lawrence_Lessig#Code_and_Other_Laws_of_Cyberspace) `リファレンス`
 
 ## 関連概念

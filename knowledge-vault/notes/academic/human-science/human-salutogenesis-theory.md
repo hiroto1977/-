@@ -26,8 +26,8 @@ aliases:
 アーロン・アントノフスキー（1979 『Health, Stress and Coping』で健康生成論を提唱、1987 SOC概念を体系化）／モニカ・エリクソン（2006 SOC研究458論文の系統的レビュー）／ベングト・リンドストローム（2006 同レビュー共著）／モーリス・B・ミッテルマーク（2017 『Handbook of Salutogenesis』編集）
 
 ## 出典
-- [Antonovsky, A. (1979) Health, Stress, and Coping: New Perspectives on Mental and Physical Well-Being — Jossey-Bass（ISBN 978-0-87589-412-6・WorldCat 目録）](https://search.worldcat.org/title/Health-stress-and-coping/oclc/16490606) `学術`
-- [Antonovsky, A. (1987) Unraveling the Mystery of Health: How People Manage Stress and Stay Well — Jossey-Bass（ISBN 978-1-55542-028-4・WorldCat 目録）](https://search.worldcat.org/title/14904689) `学術`
+- [Antonovsky, A. (1979) Health, Stress, and Coping: New Perspectives on Mental and Physical Well-Being — Jossey-Bass（ISBN 978-0-87589-412-6・WorldCat 目録）](https://search.worldcat.org/title/Health-stress-and-coping/oclc/16490606) `リファレンス`
+- [Antonovsky, A. (1987) Unraveling the Mystery of Health: How People Manage Stress and Stay Well — Jossey-Bass（ISBN 978-1-55542-028-4・WorldCat 目録）](https://search.worldcat.org/title/14904689) `リファレンス`
 - [Eriksson & Lindström (2010)](https://doi.org/10.1093/heapro/dap038) `学術`
 - [Mittelmark et al. (2017) Handbook of Salutogenesis](https://doi.org/10.1007/978-3-319-04600-6) `学術`
 - [Eriksson & Lindström (2006)](https://doi.org/10.1093/heapro/dah609) `学術`

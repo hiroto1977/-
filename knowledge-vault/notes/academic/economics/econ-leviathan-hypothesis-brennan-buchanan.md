@@ -26,7 +26,7 @@ aliases:
 ジェフリー・ブレナン ／ ジェームズ・ブキャナン ／ ゴードン・タロック ／ ウォーレス・オーツ
 
 ## 出典
-- [Brennan, G. & Buchanan, J.M. (1980) The Power to Tax: Analytical Foundations of a Fiscal Constitution — Cambridge UP (WorldCat)](https://www.worldcat.org/oclc/5946953) `学術`
+- [Brennan, G. & Buchanan, J.M. (1980) The Power to Tax: Analytical Foundations of a Fiscal Constitution — Cambridge UP (WorldCat)](https://www.worldcat.org/oclc/5946953) `リファレンス`
 - [Wikipedia: Leviathan (public choice) — Brennan-Buchanan, revenue maximization, fiscal decentralization](https://en.wikipedia.org/wiki/Leviathan_(government)) `リファレンス`
 
 ## 関連概念

@@ -26,7 +26,7 @@ aliases:
 チャールズ・ハンディ ／ クレイトン・クリステンセン ／ アンドリュー・グローブ ／ リチャード・フォスター
 
 ## 出典
-- [Handy, C. (1994) The Empty Raincoat: Making Sense of the Future — Hutchinson](https://www.worldcat.org/oclc/30894155) `学術`
+- [Handy, C. (1994) The Empty Raincoat: Making Sense of the Future — Hutchinson](https://www.worldcat.org/oclc/30894155) `リファレンス`
 - [Wikipedia: Charles Handy — sigmoid curve, second curve, organizational renewal](https://en.wikipedia.org/wiki/Charles_Handy) `リファレンス`
 
 ## 関連概念

@@ -26,7 +26,7 @@ aliases:
 ウィリアム・アイザック・トマス ／ ドロシー・スウェイン・トマス ／ ロバート・マートン ／ ハーバート・ブルーマー
 
 ## 出典
-- [Thomas, W.I. & Thomas, D.S. (1928) The Child in America — Knopf; Thomas theorem (WorldCat)](https://www.worldcat.org/oclc/1530574) `学術`
+- [Thomas, W.I. & Thomas, D.S. (1928) The Child in America — Knopf; Thomas theorem (WorldCat)](https://www.worldcat.org/oclc/1530574) `リファレンス`
 - [Wikipedia: Thomas theorem — definition of the situation, social construction, self-fulfilling prophecy](https://en.wikipedia.org/wiki/Thomas_theorem) `リファレンス`
 
 ## 関連概念

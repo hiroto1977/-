@@ -26,7 +26,7 @@ aliases:
 アルバート・ハーシュマン ／ ポール・ストリーテン ／ フランソワ・ペルー ／ グンナー・ミュルダール
 
 ## 出典
-- [Hirschman, A.O. (1958) The Strategy of Economic Development — Yale University Press (WorldCat)](https://www.worldcat.org/oclc/192767) `学術`
+- [Hirschman, A.O. (1958) The Strategy of Economic Development — Yale University Press (WorldCat)](https://www.worldcat.org/oclc/192767) `リファレンス`
 - [Wikipedia: Unbalanced growth — Hirschman, backward/forward linkages, strategic sectors](https://en.wikipedia.org/wiki/Unbalanced_growth) `リファレンス`
 
 ## 関連概念

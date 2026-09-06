@@ -26,7 +26,7 @@ aliases:
 ダニエル・カッツ ／ ロバート・カーン ／ ルートヴィヒ・フォン・ベルタランフィ ／ フレッド・エメリー
 
 ## 出典
-- [Katz, D. & Kahn, R. L. (1966) The Social Psychology of Organizations — Wiley](https://www.worldcat.org/oclc/255184) `学術`
+- [Katz, D. & Kahn, R. L. (1966) The Social Psychology of Organizations — Wiley](https://www.worldcat.org/oclc/255184) `リファレンス`
 - [Wikipedia: Open system (systems theory) — negative entropy, equifinality, organizations](https://en.wikipedia.org/wiki/Open_system_(systems_theory)) `リファレンス`
 
 ## 関連概念

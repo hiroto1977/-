@@ -26,7 +26,7 @@ aliases:
 ジェームズ・ブライアン・クイン ／ チャールズ・リンドブロム ／ ヘンリー・ミンツバーグ ／ ハーバート・サイモン
 
 ## 出典
-- [Quinn, J. B. (1980) Strategies for Change: Logical Incrementalism — Richard D. Irwin](https://www.worldcat.org/oclc/6088200) `学術`
+- [Quinn, J. B. (1980) Strategies for Change: Logical Incrementalism — Richard D. Irwin](https://www.worldcat.org/oclc/6088200) `リファレンス`
 - [Wikipedia: Logical incrementalism — strategy formation, emergent strategy, incrementalism](https://en.wikipedia.org/wiki/Logical_incrementalism) `リファレンス`
 
 ## 関連概念

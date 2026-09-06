@@ -26,7 +26,7 @@ aliases:
 A・G・ラフリー ／ ロジャー・マーティン ／ マイケル・ポーター ／ ピーター・ドラッカー
 
 ## 出典
-- [Lafley, A. G. & Martin, R. L. (2013) Playing to Win: How Strategy Really Works — Harvard Business Review Press](https://www.worldcat.org/oclc/812254346) `学術`
+- [Lafley, A. G. & Martin, R. L. (2013) Playing to Win: How Strategy Really Works — Harvard Business Review Press](https://www.worldcat.org/oclc/812254346) `リファレンス`
 - [Wikipedia: Roger Martin — Playing to Win, strategic choice cascade, where to play / how to win](https://en.wikipedia.org/wiki/Roger_Martin_(professor)) `リファレンス`
 
 ## 関連概念

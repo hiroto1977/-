@@ -26,7 +26,7 @@ aliases:
 アドルフ・バーリ ／ ウィリアム・ケアリー ／ メルヴィン・アイゼンバーグ ／ ロバート・クラーク
 
 ## 出典
-- [Cary, W. L. & Eisenberg, M. A. Corporations: Cases and Materials — Foundation Press](https://www.worldcat.org/oclc/2598415) `学術`
+- [Cary, W. L. & Eisenberg, M. A. Corporations: Cases and Materials — Foundation Press](https://www.worldcat.org/oclc/2598415) `リファレンス`
 - [Wikipedia: De facto corporation and corporation by estoppel — defective incorporation, limited liability](https://en.wikipedia.org/wiki/De_facto_corporation_and_corporation_by_estoppel) `リファレンス`
 
 ## 関連概念

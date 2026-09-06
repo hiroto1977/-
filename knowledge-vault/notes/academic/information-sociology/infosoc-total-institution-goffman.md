@@ -26,7 +26,7 @@ aliases:
 アーヴィング・ゴッフマン ／ ミシェル・フーコー ／ スタンレー・コーエン ／ マイケル・イグナティエフ
 
 ## 出典
-- [Goffman, E. (1961) Asylums: Essays on the Social Situation of Mental Patients — Anchor (WorldCat)](https://www.worldcat.org/oclc/353809) `学術`
+- [Goffman, E. (1961) Asylums: Essays on the Social Situation of Mental Patients — Anchor (WorldCat)](https://www.worldcat.org/oclc/353809) `リファレンス`
 - [Wikipedia: Total institution — Goffman, batch living, mortification of self, resocialization](https://en.wikipedia.org/wiki/Total_institution) `リファレンス`
 
 ## 関連概念

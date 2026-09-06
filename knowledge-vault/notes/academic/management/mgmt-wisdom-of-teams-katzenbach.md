@@ -26,7 +26,7 @@ aliases:
 ジョン・カッツェンバック ／ ダグラス・スミス ／ J・リチャード・ハックマン ／ ブルース・タックマン
 
 ## 出典
-- [Katzenbach, J. R. & Smith, D. K. (1993) The Wisdom of Teams — Harvard Business School Press](https://www.worldcat.org/oclc/27034101) `学術`
+- [Katzenbach, J. R. & Smith, D. K. (1993) The Wisdom of Teams — Harvard Business School Press](https://www.worldcat.org/oclc/27034101) `リファレンス`
 - [Wikipedia: The Wisdom of Teams — working group vs team, mutual accountability, performance curve](https://en.wikipedia.org/wiki/The_Wisdom_of_Teams) `リファレンス`
 
 ## 関連概念

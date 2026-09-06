@@ -26,7 +26,7 @@ aliases:
 ヘンリー・ジェンキンス ／ サム・フォード ／ ジョシュア・グリーン ／ ピエール・レヴィ
 
 ## 出典
-- [Jenkins, H., Ford, S. & Green, J. (2013) Spreadable Media: Creating Value and Meaning in a Networked Culture — NYU Press (WorldCat)](https://www.worldcat.org/oclc/779263182) `学術`
+- [Jenkins, H., Ford, S. & Green, J. (2013) Spreadable Media: Creating Value and Meaning in a Networked Culture — NYU Press (WorldCat)](https://www.worldcat.org/oclc/779263182) `リファレンス`
 - [Wikipedia: Spreadable media — Jenkins/Ford/Green, vs viral, spreadability vs stickiness, participatory circulation](https://en.wikipedia.org/wiki/Spreadable_media) `リファレンス`
 
 ## 関連概念

@@ -26,7 +26,7 @@ aliases:
 カリン・クノール・セティナ ／ ブルーノ・ラトゥール ／ スティーヴ・ウルガー ／ ルートヴィヒ・フレック
 
 ## 出典
-- [Knorr Cetina, K. (1999) Epistemic Cultures: How the Sciences Make Knowledge — Harvard University Press](https://www.worldcat.org/oclc/39539508) `学術`
+- [Knorr Cetina, K. (1999) Epistemic Cultures: How the Sciences Make Knowledge — Harvard University Press](https://www.worldcat.org/oclc/39539508) `リファレンス`
 - [Wikipedia: Karin Knorr Cetina — epistemic cultures, machineries of knowing, STS](https://en.wikipedia.org/wiki/Karin_Knorr_Cetina) `リファレンス`
 
 ## 関連概念

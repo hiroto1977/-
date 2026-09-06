@@ -26,7 +26,7 @@ aliases:
 アーヴィング・フィッシャー ／ ミルトン・フリードマン ／ クヌート・ヴィクセル ／ ジョン・メイナード・ケインズ
 
 ## 出典
-- [Fisher, I. (1911) The Purchasing Power of Money — Macmillan; equation of exchange (WorldCat)](https://www.worldcat.org/oclc/1297455) `学術`
+- [Fisher, I. (1911) The Purchasing Power of Money — Macmillan; equation of exchange (WorldCat)](https://www.worldcat.org/oclc/1297455) `リファレンス`
 - [Wikipedia: Velocity of money — equation of exchange, quantity theory, income velocity](https://en.wikipedia.org/wiki/Velocity_of_money) `リファレンス`
 
 ## 関連概念

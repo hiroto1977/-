@@ -26,7 +26,7 @@ aliases:
 クリス・アージリス ／ ドナルド・ショーン ／ ピーター・センゲ ／ カール・ワイク
 
 ## 出典
-- [Argyris, C. & Schön, D.A. (1978) Organizational Learning: A Theory of Action Perspective — Addison-Wesley (WorldCat)](https://www.worldcat.org/oclc/3415944) `学術`
+- [Argyris, C. & Schön, D.A. (1978) Organizational Learning: A Theory of Action Perspective — Addison-Wesley (WorldCat)](https://www.worldcat.org/oclc/3415944) `リファレンス`
 - [Wikipedia: Double-loop learning — Argyris & Schön, governing variables, theory-in-use, Model I defensiveness](https://en.wikipedia.org/wiki/Double-loop_learning) `リファレンス`
 
 ## 関連概念

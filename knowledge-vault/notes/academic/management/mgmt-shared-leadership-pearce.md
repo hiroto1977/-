@@ -26,7 +26,7 @@ aliases:
 クレイグ・ピアース ／ ジェイ・コンガー ／ チャールズ・マンツ ／ ヘンリー・シムズ
 
 ## 出典
-- [Pearce, C.L. & Conger, J.A. (2003) Shared Leadership: Reframing the Hows and Whys of Leadership — Sage (WorldCat)](https://www.worldcat.org/oclc/49942939) `学術`
+- [Pearce, C.L. & Conger, J.A. (2003) Shared Leadership: Reframing the Hows and Whys of Leadership — Sage (WorldCat)](https://www.worldcat.org/oclc/49942939) `リファレンス`
 - [Wikipedia: Shared leadership — Pearce & Conger, distributed influence, rotating leadership, knowledge work](https://en.wikipedia.org/wiki/Shared_leadership) `リファレンス`
 
 ## 関連概念

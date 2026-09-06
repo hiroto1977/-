@@ -26,7 +26,7 @@ aliases:
 アンソニー・ギデンズ ／ ハロルド・イニス ／ デイヴィッド・ハーヴェイ ／ マヌエル・カステル
 
 ## 出典
-- [Giddens, A. (1984) The Constitution of Society — Polity Press; time-space distanciation (WorldCat)](https://www.worldcat.org/oclc/11444856) `学術`
+- [Giddens, A. (1984) The Constitution of Society — Polity Press; time-space distanciation (WorldCat)](https://www.worldcat.org/oclc/11444856) `リファレンス`
 - [Wikipedia: Time–space distanciation — Giddens, disembedding, symbolic tokens, expert systems, modernity](https://en.wikipedia.org/wiki/Time%E2%80%93space_distanciation) `リファレンス`
 
 ## 関連概念

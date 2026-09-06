@@ -26,7 +26,7 @@ aliases:
 アレクサンダー・ギャロウェイ ／ ジル・ドゥルーズ ／ ミシェル・フーコー ／ ユージン・サッカー
 
 ## 出典
-- [Galloway, A.R. (2004) Protocol: How Control Exists After Decentralization — MIT Press (WorldCat)](https://www.worldcat.org/oclc/52312371) `学術`
+- [Galloway, A.R. (2004) Protocol: How Control Exists After Decentralization — MIT Press (WorldCat)](https://www.worldcat.org/oclc/52312371) `リファレンス`
 - [Wikipedia: Protocol (Galloway) — TCP/IP distributed, DNS hierarchical, control after decentralization, Deleuze](https://en.wikipedia.org/wiki/Protocol_(book)) `リファレンス`
 
 ## 関連概念

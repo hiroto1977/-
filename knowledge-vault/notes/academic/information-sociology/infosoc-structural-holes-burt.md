@@ -26,7 +26,7 @@ aliases:
 ロナルド・バート ／ マーク・グラノヴェッター ／ ジェームズ・コールマン ／ ゲオルク・ジンメル
 
 ## 出典
-- [Burt, R.S. (1992) Structural Holes: The Social Structure of Competition — Harvard University Press (WorldCat)](https://www.worldcat.org/oclc/25008425) `学術`
+- [Burt, R.S. (1992) Structural Holes: The Social Structure of Competition — Harvard University Press (WorldCat)](https://www.worldcat.org/oclc/25008425) `リファレンス`
 - [Wikipedia: Structural holes — Burt, brokerage, tertius gaudens, information/control benefits, social capital](https://en.wikipedia.org/wiki/Structural_holes) `リファレンス`
 
 ## 関連概念

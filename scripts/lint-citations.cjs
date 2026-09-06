@@ -261,6 +261,36 @@ const PLAINTEXT_ALLOWLIST = new Set([
 ]);
 
 /*
+ * ## 出版物 **についての記録** は、出版物ではない (2026-09-06)
+ *
+ * 図書館の目録・書店の商品頁・検索結果の URL は、「その出版物が存在する」ことしか示さない。
+ * 主張の中身はそこに書かれていないので、査読誌論文と同じ 'academic' で数えるのは種別の偽装である
+ * (上の雑誌・ブログと同じ形)。実測 (2026-09-06): **172 件**が 'academic' を名乗っていた ——
+ * worldcat 154 / EBSCO Research Starters 12 / books.google 2 / NLA・Open Library・HathiTrust 各 1 /
+ * **Google Scholar の検索クエリ URL 1 件**。しかもどのホストでも**大半は既に 'reference'** で
+ * (worldcat 22・EBSCO 57・scholar 3)、同じホストの中で種別が揺れていた。
+ *
+ * `checkUrlTypes` (同じ URL は同じ種別) はこれを拾えない —— **目録の記録は 1 件ごとに URL が違う**。
+ * URL 単位で見る規則には、ホスト単位の死角がある。だから台帳で名指しする。
+ *
+ * この一覧は `verify-knowledge-provenance.cjs` も読む (権威ある出典が目録の記録だけ、を禁じる)。
+ * 2 か所に同じ一覧を書くと必ず片方が腐るので、**export して 1 つにしている**。
+ *
+ * 全文を載せるホスト (archive.org の蔵書スキャン・JSTOR の論文 PDF) は入れない ——
+ * そこに在るのは出版物そのものなので 'academic' が正しい。
+ */
+const METADATA_ONLY_HOSTS = [
+  // 図書館・書誌の目録 (OCLC・各国立図書館・Open Library)
+  'worldcat.org', 'openlibrary.org', 'catalog.hathitrust.org', 'catalogue.nla.gov.au',
+  // 書誌情報・書店の商品頁
+  'books.google.com', 'amazon.com', 'amazon.co.jp', 'goodreads.com',
+  // 検索結果 (資料ではなく問い合わせ)
+  'scholar.google.com',
+  // 出版社ではなくデータベース事業者の要約記事 (EBSCO Research Starters)
+  'ebsco.com',
+];
+
+/*
  * ## 種別の偽装 — 'academic' が雑誌・ブログ・百科事典の URL に付いていないか (2026-09-05)
  *
  * 確証ゲート (verify-knowledge-provenance.cjs) は「権威ある出典 1 件以上」を
@@ -282,6 +312,8 @@ const NON_ACADEMIC_HOSTS = [
   'linkedin.com', 'ted.com', 'x.com', 'twitter.com', 'facebook.com', 'positivepsychology.com',
   // 百科事典・辞書 (reference)
   'wikipedia.org', 'wikibooks.org', 'britannica.com', 'kotobank.jp', 'weblio.jp', 'investopedia.com',
+  // 出版物についての記録 (目録・書店・検索結果)。一覧は上の台帳 1 つ。
+  ...METADATA_ONLY_HOSTS,
 ];
 
 function hostOf(url) {
@@ -294,6 +326,11 @@ function hostOf(url) {
 
 function isNonAcademicHost(host) {
   return NON_ACADEMIC_HOSTS.some((h) => host === h || host.endsWith('.' + h));
+}
+
+/** 出版物についての記録 (目録・書店・検索結果) を出すホストか。確証ゲートも同じ判定を読む。 */
+function isMetadataOnlyHost(host) {
+  return METADATA_ONLY_HOSTS.some((h) => host === h || host.endsWith('.' + h));
 }
 
 /** 'academic' を名乗る出典のうち、雑誌・ブログ・百科事典のホストに置かれた物。 */
@@ -702,6 +739,13 @@ function selfTest() {
     ['doi.org の academic は通る', A('https://doi.org/10.1002/smj.4250140303'), 0],
     ['出版社ページの academic は通る', A('https://journals.sagepub.com/doi/10.1177/0170840607081138'), 0],
     ['似た名前の別ホスト (hbr.org.example) は通る', A('https://hbr.org.example/x'), 0],
+    ['★ worldcat の目録に academic は鳴る', A('https://www.worldcat.org/title/1234'), 1],
+    ['★ サブドメイン (search.worldcat.org) も鳴る', A('https://search.worldcat.org/title/17234042'), 1],
+    ['★ EBSCO Research Starters に academic は鳴る', A('https://www.ebsco.com/research-starters/economics/x'), 1],
+    ['★ Google Scholar の検索 URL に academic は鳴る', A('https://scholar.google.com/scholar?q=x'), 1],
+    ['worldcat でも reference なら通る', A('https://search.worldcat.org/title/17234042', 'reference'), 0],
+    ['似た名前の別ホスト (worldcat.org.example) は通る', A('https://worldcat.org.example/x'), 0],
+    ['全文を置くホスト (archive.org の蔵書スキャン) の academic は通る', A('https://archive.org/details/logiclimitsofb00jack'), 0],
   ];
   for (const [label, entries, want] of hostCases) {
     const got = checkAcademicHosts(entries).bad.length;
@@ -754,4 +798,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { checkSchemes, selfTest, PLAINTEXT_ALLOWLIST, labelTokens, labelSurnames, labelsAgree, findLabelConflicts, checkAcademicHosts, isNonAcademicHost, NON_ACADEMIC_HOSTS, normalizeSourceUrl, checkUrlTypes, vocabularyOf };
+module.exports = { checkSchemes, selfTest, hostOf, PLAINTEXT_ALLOWLIST, labelTokens, labelSurnames, labelsAgree, findLabelConflicts, checkAcademicHosts, isNonAcademicHost, NON_ACADEMIC_HOSTS, METADATA_ONLY_HOSTS, isMetadataOnlyHost, normalizeSourceUrl, checkUrlTypes, vocabularyOf };

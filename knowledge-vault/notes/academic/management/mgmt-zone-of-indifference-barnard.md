@@ -26,7 +26,7 @@ aliases:
 チェスター・バーナード ／ ハーバート・サイモン ／ メアリー・パーカー・フォレット ／ マックス・ウェーバー
 
 ## 出典
-- [Barnard, C. I. (1938) The Functions of the Executive — Harvard University Press](https://www.worldcat.org/oclc/180404) `学術`
+- [Barnard, C. I. (1938) The Functions of the Executive — Harvard University Press](https://www.worldcat.org/oclc/180404) `リファレンス`
 - [Wikipedia: Chester Barnard — acceptance theory of authority, zone of indifference](https://en.wikipedia.org/wiki/Chester_Barnard) `リファレンス`
 
 ## 関連概念

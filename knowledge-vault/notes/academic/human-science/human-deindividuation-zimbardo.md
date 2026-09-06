@@ -26,7 +26,7 @@ aliases:
 フィリップ・ジンバルドー ／ レオン・フェスティンガー ／ エド・ディーナー ／ スティーブン・ライカー
 
 ## 出典
-- [Festinger, L., Pepitone, A. & Newcomb, T. (1952) Some Consequences of De-Individuation in a Group — J. Abnormal & Social Psychology 47 (WorldCat)](https://www.worldcat.org/oclc/1607616) `学術`
+- [Festinger, L., Pepitone, A. & Newcomb, T. (1952) Some Consequences of De-Individuation in a Group — J. Abnormal & Social Psychology 47 (WorldCat)](https://www.worldcat.org/oclc/1607616) `リファレンス`
 - [Wikipedia: Deindividuation — Zimbardo, anonymity, diffusion of responsibility, SIDE model](https://en.wikipedia.org/wiki/Deindividuation) `リファレンス`
 
 ## 関連概念

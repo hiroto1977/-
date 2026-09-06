@@ -27,7 +27,7 @@ PPM（BCGマトリクス）は、ボストン・コンサルティング・グ�
 
 ## 出典
 - [BCG — What Is the Growth Share Matrix?（提唱者BCGの原典解説）](https://www.bcg.com/about/overview/our-history/growth-share-matrix) `リファレンス`
-- [EBSCO Research Starters — Growth–share matrix](https://www.ebsco.com/research-starters/business-and-management/growth-share-matrix) `学術`
+- [EBSCO Research Starters — Growth–share matrix](https://www.ebsco.com/research-starters/business-and-management/growth-share-matrix) `リファレンス`
 - [Wikipedia — Growth–share matrix](https://en.wikipedia.org/wiki/Growth%E2%80%93share_matrix) `リファレンス`
 
 ## 関連概念

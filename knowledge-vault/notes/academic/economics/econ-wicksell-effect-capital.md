@@ -26,7 +26,7 @@ aliases:
 クヌート・ヴィクセル ／ ピエロ・スラッファ ／ ジョーン・ロビンソン ／ ポール・サミュエルソン
 
 ## 出典
-- [Harcourt, G. C. (1972) Some Cambridge Controversies in the Theory of Capital — Cambridge University Press](https://www.worldcat.org/oclc/385183) `学術`
+- [Harcourt, G. C. (1972) Some Cambridge Controversies in the Theory of Capital — Cambridge University Press](https://www.worldcat.org/oclc/385183) `リファレンス`
 - [Wikipedia: Cambridge capital controversy — Wicksell effect, reswitching, aggregate capital](https://en.wikipedia.org/wiki/Cambridge_capital_controversy) `リファレンス`
 
 ## 関連概念

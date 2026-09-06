@@ -26,7 +26,7 @@ aliases:
 アヴィナッシュ・ディキシット ／ ロバート・ピンディック ／ マイケル・ブレナン ／ エドゥアルド・シュワルツ
 
 ## 出典
-- [Dixit, A.K. & Pindyck, R.S. (1994) Investment under Uncertainty — Princeton University Press (WorldCat)](https://www.worldcat.org/oclc/29361643) `学術`
+- [Dixit, A.K. & Pindyck, R.S. (1994) Investment under Uncertainty — Princeton University Press (WorldCat)](https://www.worldcat.org/oclc/29361643) `リファレンス`
 - [Wikipedia: Real options / irreversible investment — Dixit & Pindyck, option value of waiting, NPV wedge](https://en.wikipedia.org/wiki/Real_options_valuation) `リファレンス`
 
 ## 関連概念

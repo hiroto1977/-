@@ -26,7 +26,7 @@ aliases:
 森嶋通夫 ／ 置塩信雄 ／ カール・マルクス ／ ジョン・ローマー
 
 ## 出典
-- [Morishima, M. (1973) Marx's Economics: A Dual Theory of Value and Growth — Cambridge University Press](https://www.worldcat.org/oclc/610137) `学術`
+- [Morishima, M. (1973) Marx's Economics: A Dual Theory of Value and Growth — Cambridge University Press](https://www.worldcat.org/oclc/610137) `リファレンス`
 - [Wikipedia: Fundamental Marxian theorem — exploitation, profit, Okishio, Morishima](https://en.wikipedia.org/wiki/Fundamental_Marxian_theorem) `リファレンス`
 
 ## 関連概念

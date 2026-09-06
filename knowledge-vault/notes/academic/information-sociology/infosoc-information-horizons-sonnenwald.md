@@ -26,7 +26,7 @@ aliases:
 ダイアン・ゾンネンヴァルト ／ リーフ・サヴォライネン ／ トーマス・D・ウィルソン ／ エルフレダ・チャットマン
 
 ## 出典
-- [Sonnenwald, D. H. (1999) Evolving perspectives on human information behavior — in Exploring the Contexts of Information Behaviour](https://www.worldcat.org/oclc/471863509) `学術`
+- [Sonnenwald, D. H. (1999) Evolving perspectives on human information behavior — in Exploring the Contexts of Information Behaviour](https://www.worldcat.org/oclc/471863509) `リファレンス`
 - [Wikipedia: Information behavior — information horizons, contexts, situations, social networks](https://en.wikipedia.org/wiki/Information_behavior) `リファレンス`
 
 ## 関連概念

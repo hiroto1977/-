@@ -26,7 +26,7 @@ aliases:
 リチャード・フロリダ ／ ジェイン・ジェイコブズ ／ ダニエル・ベル ／ ロバート・パットナム
 
 ## 出典
-- [Florida, R. (2002) The Rise of the Creative Class — Basic Books](https://www.worldcat.org/oclc/49544499) `学術`
+- [Florida, R. (2002) The Rise of the Creative Class — Basic Books](https://www.worldcat.org/oclc/49544499) `リファレンス`
 - [Wikipedia: Creative class — three Ts, talent, tolerance, creative city](https://en.wikipedia.org/wiki/Creative_class) `リファレンス`
 
 ## 関連概念

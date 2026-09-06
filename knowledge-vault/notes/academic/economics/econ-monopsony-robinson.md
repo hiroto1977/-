@@ -26,7 +26,7 @@ aliases:
 ジョーン・ロビンソン ／ アラン・マニング ／ デヴィッド・カード ／ アラン・クルーガー
 
 ## 出典
-- [Robinson, J. (1933) The Economics of Imperfect Competition — Macmillan; coins monopsony (WorldCat)](https://www.worldcat.org/oclc/152442) `学術`
+- [Robinson, J. (1933) The Economics of Imperfect Competition — Macmillan; coins monopsony (WorldCat)](https://www.worldcat.org/oclc/152442) `リファレンス`
 - [Wikipedia: Monopsony — single buyer, marginal factor cost, labor markets, minimum wage](https://en.wikipedia.org/wiki/Monopsony) `リファレンス`
 
 ## 関連概念

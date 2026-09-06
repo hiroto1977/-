@@ -26,7 +26,7 @@ aliases:
 ジョン・アデア ／ クルト・レヴィン ／ ダグラス・マグレガー ／ ロバート・ブレイク
 
 ## 出典
-- [Adair, J. (1973) Action-Centred Leadership — McGraw-Hill](https://www.worldcat.org/oclc/16276) `学術`
+- [Adair, J. (1973) Action-Centred Leadership — McGraw-Hill](https://www.worldcat.org/oclc/16276) `リファレンス`
 - [Wikipedia: John Adair — action-centred leadership, task/team/individual, functional leadership](https://en.wikipedia.org/wiki/John_Adair_(author)) `リファレンス`
 
 ## 関連概念

@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Calabresi 1970 — The Cost of Accidents: A Legal and Economic Analysis, Yale University Press](https://yalebooks.yale.edu/book/9780300011159/the-cost-of-accidents/) `学術`
-- [Prosser 1971 — Handbook of the Law of Torts (4th ed.), West Publishing](https://openlibrary.org/works/OL4956948W/Handbook_of_the_law_of_torts) `学術`
+- [Prosser 1971 — Handbook of the Law of Torts (4th ed.), West Publishing](https://openlibrary.org/works/OL4956948W/Handbook_of_the_law_of_torts) `リファレンス`
 - [Posner 2014 — Economic Analysis of Law (9th ed.), Wolters Kluwer](https://www.wolterskluwer.com/en/solutions/aspen-education/economic-analysis-of-law-posner-9e) `学術`
 
 ## 関連概念

@@ -26,7 +26,7 @@ aliases:
 マイケル・ポーター ／ ダニー・ミラー ／ チャールズ・ヒル ／ ロバート・マイルズ
 
 ## 出典
-- [Porter, M.E. (1980) Competitive Strategy: Techniques for Analyzing Industries and Competitors — Free Press (WorldCat)](https://www.worldcat.org/oclc/5726400) `学術`
+- [Porter, M.E. (1980) Competitive Strategy: Techniques for Analyzing Industries and Competitors — Free Press (WorldCat)](https://www.worldcat.org/oclc/5726400) `リファレンス`
 - [Wikipedia: Porters generic strategies — cost leadership, differentiation, focus, stuck in the middle](https://en.wikipedia.org/wiki/Porter%27s_generic_strategies) `リファレンス`
 
 ## 関連概念

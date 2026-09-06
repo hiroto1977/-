@@ -26,7 +26,7 @@ aliases:
 ロバート・スターンバーグ ／ ハワード・ガードナー ／ レイモンド・キャッテル ／ リンダ・ゴットフレッドソン
 
 ## 出典
-- [Sternberg, R.J. (1985) Beyond IQ: A Triarchic Theory of Human Intelligence — Cambridge UP (WorldCat)](https://www.worldcat.org/oclc/11468492) `学術`
+- [Sternberg, R.J. (1985) Beyond IQ: A Triarchic Theory of Human Intelligence — Cambridge UP (WorldCat)](https://www.worldcat.org/oclc/11468492) `リファレンス`
 - [Wikipedia: Triarchic theory of intelligence — Sternberg, analytical/creative/practical, successful intelligence](https://en.wikipedia.org/wiki/Triarchic_theory_of_intelligence) `リファレンス`
 
 ## 関連概念

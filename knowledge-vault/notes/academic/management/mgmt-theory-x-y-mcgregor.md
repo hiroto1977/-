@@ -26,7 +26,7 @@ X理論・Y理論は、ダグラス・マグレガーが1960年の著作『企�
 ダグラス・マグレガー ／ アブラハム・マズロー ／ レンシス・リッカート ／ ウィリアム・オオウチ
 
 ## 出典
-- [McGregor, D. (1960) The Human Side of Enterprise — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/256632) `学術`
+- [McGregor, D. (1960) The Human Side of Enterprise — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/256632) `リファレンス`
 - [Wikipedia: Theory X and Theory Y — McGregor, managerial assumptions, Maslow, self-fulfilling prophecy](https://en.wikipedia.org/wiki/Theory_X_and_Theory_Y) `リファレンス`
 
 ## 関連概念

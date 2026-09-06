@@ -26,7 +26,7 @@ aliases:
 オスカー・ガンディ・ジュニア ／ ミシェル・フーコー ／ デヴィッド・ライアン ／ ショシャナ・ズボフ
 
 ## 出典
-- [Gandy, O.H. (1993) The Panoptic Sort: A Political Economy of Personal Information — Westview Press (WorldCat)](https://www.worldcat.org/oclc/27266286) `学術`
+- [Gandy, O.H. (1993) The Panoptic Sort: A Political Economy of Personal Information — Westview Press (WorldCat)](https://www.worldcat.org/oclc/27266286) `リファレンス`
 - [Wikipedia: Oscar H. Gandy Jr. — panoptic sort, data-based discriminatory sorting, surveillance, Foucault](https://en.wikipedia.org/wiki/Oscar_H._Gandy_Jr.) `リファレンス`
 
 ## 関連概念

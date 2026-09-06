@@ -26,7 +26,7 @@ aliases:
 ヘンリー・ジェンキンス ／ ピエール・レヴィ ／ アクセル・ブランス ／ ジョン・フィスク
 
 ## 出典
-- [Jenkins, H. (2006) Convergence Culture: Where Old and New Media Collide — NYU Press (WorldCat)](https://www.worldcat.org/oclc/64594290) `学術`
+- [Jenkins, H. (2006) Convergence Culture: Where Old and New Media Collide — NYU Press (WorldCat)](https://www.worldcat.org/oclc/64594290) `リファレンス`
 - [Wikipedia: Convergence culture — Jenkins, participatory culture, collective intelligence, transmedia](https://en.wikipedia.org/wiki/Convergence_culture) `リファレンス`
 
 ## 関連概念

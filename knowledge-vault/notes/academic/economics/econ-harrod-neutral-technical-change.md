@@ -26,7 +26,7 @@ aliases:
 ロイ・ハロッド ／ ジョン・ヒックス ／ ロバート・ソロー ／ 宇沢弘文
 
 ## 出典
-- [Harrod, R. F. (1948) Towards a Dynamic Economics — Macmillan（技術進歩の中立性の定式化）](https://www.worldcat.org/oclc/1670459) `学術`
+- [Harrod, R. F. (1948) Towards a Dynamic Economics — Macmillan（技術進歩の中立性の定式化）](https://www.worldcat.org/oclc/1670459) `リファレンス`
 - [Wikipedia: Neutral technological change — Harrod-neutral, labor-augmenting, balanced growth](https://en.wikipedia.org/wiki/Neutral_technological_change) `リファレンス`
 
 ## 関連概念

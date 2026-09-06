@@ -26,7 +26,7 @@ aliases:
 ヘンリー・ミンツバーグ ／ ローズマリー・スチュワート ／ ジョン・コッター ／ アンリ・ファヨール
 
 ## 出典
-- [Mintzberg, H. (1973) The Nature of Managerial Work — Harper & Row (WorldCat)](https://www.worldcat.org/oclc/653927) `学術`
+- [Mintzberg, H. (1973) The Nature of Managerial Work — Harper & Row (WorldCat)](https://www.worldcat.org/oclc/653927) `リファレンス`
 - [Wikipedia: Mintzbergs managerial roles — interpersonal/informational/decisional, ten roles, structured observation](https://en.wikipedia.org/wiki/Henry_Mintzberg) `リファレンス`
 
 ## 関連概念

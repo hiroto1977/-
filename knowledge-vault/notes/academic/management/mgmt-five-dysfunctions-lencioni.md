@@ -26,7 +26,7 @@ aliases:
 パトリック・レンシオーニ ／ ブルース・タックマン ／ エイミー・エドモンドソン ／ J・リチャード・ハックマン
 
 ## 出典
-- [Lencioni, P. (2002) The Five Dysfunctions of a Team — Jossey-Bass](https://www.worldcat.org/oclc/48868620) `学術`
+- [Lencioni, P. (2002) The Five Dysfunctions of a Team — Jossey-Bass](https://www.worldcat.org/oclc/48868620) `リファレンス`
 - [Wikipedia: The Five Dysfunctions of a Team — trust, conflict, commitment, accountability, results](https://en.wikipedia.org/wiki/The_Five_Dysfunctions_of_a_Team) `リファレンス`
 
 ## 関連概念

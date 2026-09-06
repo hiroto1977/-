@@ -26,7 +26,7 @@ aliases:
 ラウル・プレビッシュ ／ ハンス・シンガー ／ アンドレ・グンダー・フランク ／ フェルナンド・エンリケ・カルドーゾ
 
 ## 出典
-- [Prebisch, R. (1950) The Economic Development of Latin America and Its Principal Problems — UN ECLA (WorldCat)](https://www.worldcat.org/oclc/3030120) `学術`
+- [Prebisch, R. (1950) The Economic Development of Latin America and Its Principal Problems — UN ECLA (WorldCat)](https://www.worldcat.org/oclc/3030120) `リファレンス`
 - [Wikipedia: Dependency theory — Prebisch-Singer, core-periphery, terms of trade, underdevelopment](https://en.wikipedia.org/wiki/Dependency_theory) `リファレンス`
 
 ## 関連概念

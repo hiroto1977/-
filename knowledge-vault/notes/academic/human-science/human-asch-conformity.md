@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Encyclopaedia Britannica — Solomon Asch](https://www.britannica.com/biography/Solomon-Asch) `リファレンス`
 - [Encyclopaedia Britannica — Conformity（同調と実験設計）](https://www.britannica.com/topic/conformity) `リファレンス`
-- [EBSCO Research Starters — Asch conformity experiments](https://www.ebsco.com/research-starters/history/asch-conformity-experiments) `学術`
+- [EBSCO Research Starters — Asch conformity experiments](https://www.ebsco.com/research-starters/history/asch-conformity-experiments) `リファレンス`
 
 ## 関連概念
 - [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]] — 同じ思想家

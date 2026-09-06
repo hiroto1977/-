@@ -26,7 +26,7 @@ aliases:
 アンソニー・ダウンズ ／ J・M・トムソン ／ ハーバート・モーリング ／ ディートリッヒ・ブライス
 
 ## 出典
-- [Thomson, J. M. (1977) Great Cities and Their Traffic — Gollancz](https://www.worldcat.org/oclc/3186950) `学術`
+- [Thomson, J. M. (1977) Great Cities and Their Traffic — Gollancz](https://www.worldcat.org/oclc/3186950) `リファレンス`
 - [Wikipedia: Downs–Thomson paradox — road capacity, public transport, Mohring effect](https://en.wikipedia.org/wiki/Downs%E2%80%93Thomson_paradox) `リファレンス`
 
 ## 関連概念

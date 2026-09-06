@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Cavendish Square v El Makdessi [2015] UKSC 67 — penalty clause modern test](https://www.bailii.org/uk/cases/UKSC/2015/67.html) `公的`
-- [Peel, E. (2015) Remedies for Breach — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397](https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405) `学術`
+- [Peel, E. (2015) Remedies for Breach — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397](https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405) `リファレンス`
 - [Wikipedia: Penalty clause — liquidated damages and judicial control overview](https://en.wikipedia.org/wiki/Penalty_clause) `リファレンス`
 
 ## 関連概念

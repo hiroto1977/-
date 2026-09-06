@@ -26,7 +26,7 @@ aliases:
 フィン・ブラントン ／ ヘレン・ニッセンバウム ／ ジェームズ・スコット ／ ガリー・マルクス
 
 ## 出典
-- [Brunton, F. & Nissenbaum, H. (2015) Obfuscation: A User's Guide for Privacy and Protest — MIT Press](https://www.worldcat.org/oclc/904756159) `学術`
+- [Brunton, F. & Nissenbaum, H. (2015) Obfuscation: A User's Guide for Privacy and Protest — MIT Press](https://www.worldcat.org/oclc/904756159) `リファレンス`
 - [Wikipedia: Obfuscation — privacy, noise, surveillance, TrackMeNot, weapons of the weak](https://en.wikipedia.org/wiki/Obfuscation) `リファレンス`
 
 ## 関連概念

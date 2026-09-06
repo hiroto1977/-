@@ -26,7 +26,7 @@ aliases:
 ロード・モールトン ／ パトリック・アティヤ ／ ガンター・トライテル ／ フレデリック・ポロック
 
 ## 出典
-- [Treitel, G. H. The Law of Contract — Sweet & Maxwell（付随的契約の体系的解説）](https://www.worldcat.org/oclc/872617915) `学術`
+- [Treitel, G. H. The Law of Contract — Sweet & Maxwell（付随的契約の体系的解説）](https://www.worldcat.org/oclc/872617915) `リファレンス`
 - [Wikipedia: Collateral contract — parol evidence, privity, Shanklin Pier v Detel](https://en.wikipedia.org/wiki/Collateral_contract) `リファレンス`
 
 ## 関連概念

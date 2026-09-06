@@ -26,7 +26,7 @@ aliases:
 ヘルマン・エビングハウス ／ ハリー・バーリック ／ フィリップ・バラード ／ ヤープ・ムル
 
 ## 出典
-- [Ebbinghaus, H. (1885) Über das Gedächtnis (Memory: A Contribution to Experimental Psychology) (WorldCat)](https://www.worldcat.org/oclc/1373773) `学術`
+- [Ebbinghaus, H. (1885) Über das Gedächtnis (Memory: A Contribution to Experimental Psychology) (WorldCat)](https://www.worldcat.org/oclc/1373773) `リファレンス`
 - [Wikipedia: Forgetting curve — Ebbinghaus, nonsense syllables, savings, overlearning, spaced repetition](https://en.wikipedia.org/wiki/Forgetting_curve) `リファレンス`
 
 ## 関連概念

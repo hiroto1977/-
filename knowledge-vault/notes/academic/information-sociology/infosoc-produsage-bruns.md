@@ -26,7 +26,7 @@ aliases:
 アクセル・ブランス ／ アルビン・トフラー ／ ヨハイ・ベンクラー ／ ヘンリー・ジェンキンス
 
 ## 出典
-- [Bruns, A. (2008) Blogs, Wikipedia, Second Life, and Beyond: From Production to Produsage — Peter Lang (WorldCat)](https://www.worldcat.org/oclc/166358264) `学術`
+- [Bruns, A. (2008) Blogs, Wikipedia, Second Life, and Beyond: From Production to Produsage — Peter Lang (WorldCat)](https://www.worldcat.org/oclc/166358264) `リファレンス`
 - [Wikipedia: Produsage — Bruns, producer/user, open participation, heterarchy, unfinished artifacts, prosumer](https://en.wikipedia.org/wiki/Produsage) `リファレンス`
 
 ## 関連概念

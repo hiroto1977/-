@@ -26,7 +26,7 @@ aliases:
 シェリー・タークル ／ シーモア・パパート ／ ジョセフ・ワイゼンバウム ／ マーヴィン・ミンスキー
 
 ## 出典
-- [Turkle, S. (1984) The Second Self: Computers and the Human Spirit — Simon & Schuster (WorldCat)](https://www.worldcat.org/oclc/9946048) `学術`
+- [Turkle, S. (1984) The Second Self: Computers and the Human Spirit — Simon & Schuster (WorldCat)](https://www.worldcat.org/oclc/9946048) `リファレンス`
 - [Wikipedia: Sherry Turkle / The Second Self — computer as evocative object, identity, mind, second self](https://en.wikipedia.org/wiki/Sherry_Turkle) `リファレンス`
 
 ## 関連概念

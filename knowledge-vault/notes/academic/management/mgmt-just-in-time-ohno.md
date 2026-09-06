@@ -26,7 +26,7 @@ aliases:
 大野耐一 ／ 豊田英二 ／ 新郷重夫 ／ 豊田佐吉
 
 ## 出典
-- [Ohno, T. (1988) Toyota Production System: Beyond Large-Scale Production — Productivity Press (WorldCat)](https://www.worldcat.org/oclc/19589142) `学術`
+- [Ohno, T. (1988) Toyota Production System: Beyond Large-Scale Production — Productivity Press (WorldCat)](https://www.worldcat.org/oclc/19589142) `リファレンス`
 - [Wikipedia: Just-in-time manufacturing — Ohno, Toyota Production System, pull/kanban, waste elimination, lean](https://en.wikipedia.org/wiki/Just-in-time_manufacturing) `リファレンス`
 
 ## 関連概念

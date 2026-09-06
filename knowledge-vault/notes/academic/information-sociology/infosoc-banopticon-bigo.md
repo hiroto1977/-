@@ -26,7 +26,7 @@ aliases:
 ディディエ・ビゴ ／ ミシェル・フーコー ／ ジョルジョ・アガンベン ／ ジル・ドゥルーズ
 
 ## 出典
-- [Bigo, D. (2008) Globalized (in)security: the field and the ban-opticon — in Terror, Insecurity and Liberty (Routledge)](https://www.worldcat.org/oclc/123091532) `学術`
+- [Bigo, D. (2008) Globalized (in)security: the field and the ban-opticon — in Terror, Insecurity and Liberty (Routledge)](https://www.worldcat.org/oclc/123091532) `リファレンス`
 - [Wikipedia: Mass surveillance — panopticon, profiling, security and exclusion](https://en.wikipedia.org/wiki/Mass_surveillance) `リファレンス`
 
 ## 関連概念

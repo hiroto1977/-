@@ -26,7 +26,7 @@ aliases:
 ブルース・ヘンダーソン ／ T・P・ライト ／ ケネス・アロー ／ パンカジ・ゲマワット
 
 ## 出典
-- [Henderson, B.D. (1968/1973) The Experience Curve — Boston Consulting Group Perspectives (WorldCat)](https://www.worldcat.org/oclc/4515065) `学術`
+- [Henderson, B.D. (1968/1973) The Experience Curve — Boston Consulting Group Perspectives (WorldCat)](https://www.worldcat.org/oclc/4515065) `リファレンス`
 - [Wikipedia: Experience curve effects — Henderson, BCG, Wright learning curve, cumulative production, cost decline](https://en.wikipedia.org/wiki/Experience_curve_effects) `リファレンス`
 
 ## 関連概念

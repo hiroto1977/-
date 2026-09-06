@@ -26,7 +26,7 @@ aliases:
 ジョン・ヒックス ／ ポール・サミュエルソン ／ ロイ・ハロッド ／ ラグナル・フリッシュ
 
 ## 出典
-- [Hicks, J. R. (1950) A Contribution to the Theory of the Trade Cycle — Oxford University Press](https://www.worldcat.org/oclc/1368330) `学術`
+- [Hicks, J. R. (1950) A Contribution to the Theory of the Trade Cycle — Oxford University Press](https://www.worldcat.org/oclc/1368330) `リファレンス`
 - [Wikipedia: Multiplier–accelerator model — Hicks ceiling and floor, endogenous cycle](https://en.wikipedia.org/wiki/Multiplier%E2%80%93accelerator_model) `リファレンス`
 
 ## 関連概念

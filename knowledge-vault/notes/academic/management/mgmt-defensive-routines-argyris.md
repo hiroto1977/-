@@ -26,7 +26,7 @@ aliases:
 クリス・アージリス ／ ドナルド・ショーン ／ ピーター・センゲ ／ エドガー・シャイン
 
 ## 出典
-- [Argyris, C. (1990) Overcoming Organizational Defenses — Allyn & Bacon](https://www.worldcat.org/oclc/20826933) `学術`
+- [Argyris, C. (1990) Overcoming Organizational Defenses — Allyn & Bacon](https://www.worldcat.org/oclc/20826933) `リファレンス`
 - [Wikipedia: Chris Argyris — defensive routines, single/double-loop learning, theory-in-use](https://en.wikipedia.org/wiki/Chris_Argyris) `リファレンス`
 
 ## 関連概念

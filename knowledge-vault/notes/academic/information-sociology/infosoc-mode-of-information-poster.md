@@ -26,7 +26,7 @@ aliases:
 マーク・ポスター ／ ジャン・ボードリヤール ／ ミシェル・フーコー ／ マニュエル・カステル
 
 ## 出典
-- [Poster, M. (1990) The Mode of Information: Poststructuralism and Social Context — Chicago UP (WorldCat)](https://www.worldcat.org/oclc/21227851) `学術`
+- [Poster, M. (1990) The Mode of Information: Poststructuralism and Social Context — Chicago UP (WorldCat)](https://www.worldcat.org/oclc/21227851) `リファレンス`
 - [Wikipedia: Mark Poster — mode of information, second media age, decentered subject, poststructuralism](https://en.wikipedia.org/wiki/Mark_Poster) `リファレンス`
 
 ## 関連概念

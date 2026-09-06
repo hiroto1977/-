@@ -26,7 +26,7 @@ aliases:
 フランク・ウェブスター ／ ダニエル・ベル ／ マヌエル・カステル ／ ハーバート・シラー
 
 ## 出典
-- [Webster, F. (1995) Theories of the Information Society — Routledge (WorldCat)](https://www.worldcat.org/oclc/31518673) `学術`
+- [Webster, F. (1995) Theories of the Information Society — Routledge (WorldCat)](https://www.worldcat.org/oclc/31518673) `リファレンス`
 - [Wikipedia: Information society — Webster, five definitions, continuity vs discontinuity, critique](https://en.wikipedia.org/wiki/Information_society) `リファレンス`
 
 ## 関連概念

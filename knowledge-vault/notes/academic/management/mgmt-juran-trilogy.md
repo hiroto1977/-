@@ -26,7 +26,7 @@ aliases:
 ジョセフ・ジュラン ／ W・エドワーズ・デミング ／ 石川馨 ／ ヴィルフレド・パレート
 
 ## 出典
-- [Juran, J. M. (1986) The quality trilogy — Quality Progress（品質トリロジーの原典）](https://www.worldcat.org/oclc/19514461) `学術`
+- [Juran, J. M. (1986) The quality trilogy — Quality Progress（品質トリロジーの原典）](https://www.worldcat.org/oclc/19514461) `リファレンス`
 - [Wikipedia: Joseph M. Juran — quality trilogy, fitness for use, Pareto principle](https://en.wikipedia.org/wiki/Joseph_M._Juran) `リファレンス`
 
 ## 関連概念

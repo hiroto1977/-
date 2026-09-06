@@ -26,7 +26,7 @@ aliases:
 ヘンリー・タイル ／ クロード・シャノン ／ アンソニー・アトキンソン ／ アマルティア・セン
 
 ## 出典
-- [Theil, H. (1967) Economics and Information Theory — North-Holland（タイル指数の原典）](https://www.worldcat.org/oclc/356896) `学術`
+- [Theil, H. (1967) Economics and Information Theory — North-Holland（タイル指数の原典）](https://www.worldcat.org/oclc/356896) `リファレンス`
 - [Wikipedia: Theil index — entropy, decomposability, inequality measurement](https://en.wikipedia.org/wiki/Theil_index) `リファレンス`
 
 ## 関連概念

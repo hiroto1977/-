@@ -26,7 +26,7 @@ aliases:
 ルーディマー・ヘルマン ／ エヴァルト・ヘリング ／ ハルダン・ハートライン ／ ベルント・リンゲルバッハ
 
 ## 出典
-- [Gregory, R. L. Eye and Brain: The Psychology of Seeing — Princeton University Press（側抑制と明るさの錯視）](https://www.worldcat.org/oclc/35780015) `学術`
+- [Gregory, R. L. Eye and Brain: The Psychology of Seeing — Princeton University Press（側抑制と明るさの錯視）](https://www.worldcat.org/oclc/35780015) `リファレンス`
 - [Wikipedia: Grid illusion — Hermann grid, lateral inhibition, scintillating grid](https://en.wikipedia.org/wiki/Grid_illusion) `リファレンス`
 
 ## 関連概念

@@ -26,7 +26,7 @@ aliases:
 ジョシュア・メイロウィッツ ／ マーシャル・マクルーハン ／ アーヴィング・ゴッフマン ／ ウォルター・オング
 
 ## 出典
-- [Meyrowitz, J. (1985) No Sense of Place: The Impact of Electronic Media on Social Behavior — Oxford UP (WorldCat)](https://www.worldcat.org/oclc/11468029) `学術`
+- [Meyrowitz, J. (1985) No Sense of Place: The Impact of Electronic Media on Social Behavior — Oxford UP (WorldCat)](https://www.worldcat.org/oclc/11468029) `リファレンス`
 - [Wikipedia: Joshua Meyrowitz — medium theory, No Sense of Place, situations, front/back regions](https://en.wikipedia.org/wiki/Joshua_Meyrowitz) `リファレンス`
 
 ## 関連概念

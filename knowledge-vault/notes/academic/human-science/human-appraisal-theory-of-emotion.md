@@ -28,7 +28,7 @@ Magda Blondiau Arnold ／ Richard S. Lazarus ／ Klaus R. Scherer
 ## 出典
 - [Appraisal Theory — Wikipedia](https://en.wikipedia.org/wiki/Appraisal_theory) `リファレンス`
 - [Magda B. Arnold — Wikipedia](https://en.wikipedia.org/wiki/Magda_B._Arnold) `リファレンス`
-- [Lazarus & Folkman — Stress, Appraisal, and Coping (1984)](https://books.google.com/books/about/Stress_Appraisal_and_Coping.html?id=i-ySQQuUpr8C) `学術`
+- [Lazarus & Folkman — Stress, Appraisal, and Coping (1984)](https://books.google.com/books/about/Stress_Appraisal_and_Coping.html?id=i-ySQQuUpr8C) `リファレンス`
 - [Reflection on Lazarus — Emotion and Adaptation (Cambridge Core)](https://www.cambridge.org/core/journals/the-british-journal-of-psychiatry/article/reflection-on-richard-lazarus-emotion-and-adaptation/F665277BCE36BE80C6760A60E6543C71) `学術`
 - [Scherer, Schorr & Johnstone — Appraisal Processes in Emotion (Oxford Academic)](https://academic.oup.com/book/53557) `学術`
 

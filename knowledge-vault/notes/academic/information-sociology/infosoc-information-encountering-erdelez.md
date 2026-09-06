@@ -26,7 +26,7 @@ aliases:
 サンダ・エルデレズ ／ マーシャ・ベイツ ／ トーマス・D・ウィルソン ／ カレン・フィッシャー
 
 ## 出典
-- [Erdelez, S. (1999) Information encountering: It's more than just bumping into information — Bulletin of the ASIS](https://www.worldcat.org/oclc/42654818) `学術`
+- [Erdelez, S. (1999) Information encountering: It's more than just bumping into information — Bulletin of the ASIS](https://www.worldcat.org/oclc/42654818) `リファレンス`
 - [Wikipedia: Information seeking — information encountering, serendipity, opportunistic acquisition](https://en.wikipedia.org/wiki/Information_seeking) `リファレンス`
 
 ## 関連概念

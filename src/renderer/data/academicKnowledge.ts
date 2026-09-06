@@ -227,7 +227,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://www.bcg.com/about/overview/our-history/growth-share-matrix', type: 'reference', label: 'BCG — What Is the Growth Share Matrix?（提唱者BCGの原典解説）' },
-      { url: 'https://www.ebsco.com/research-starters/business-and-management/growth-share-matrix', type: 'academic', label: 'EBSCO Research Starters — Growth–share matrix' },
+      { url: 'https://www.ebsco.com/research-starters/business-and-management/growth-share-matrix', type: 'reference', label: 'EBSCO Research Starters — Growth–share matrix' },
       { url: 'https://en.wikipedia.org/wiki/Growth%E2%80%93share_matrix', type: 'reference', label: 'Wikipedia — Growth–share matrix' },
     ],
   },
@@ -589,7 +589,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://en.wikipedia.org/wiki/McKinsey_7S_Framework', type: 'reference', label: 'Wikipedia — McKinsey 7S Framework' },
-      { url: 'https://www.ebsco.com/research-starters/business-and-management/mckinsey-7s-framework', type: 'academic', label: 'EBSCO Research Starters — McKinsey 7S Framework' },
+      { url: 'https://www.ebsco.com/research-starters/business-and-management/mckinsey-7s-framework', type: 'reference', label: 'EBSCO Research Starters — McKinsey 7S Framework' },
       { url: 'https://www.sciencedirect.com/science/article/abs/pii/0007681380900270', type: 'academic', label: 'Waterman, Peters & Phillips (1980) Structure Is Not Organization, Business Horizons 23(3):14-26（原典）' },
     ],
   },
@@ -605,7 +605,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://www.britannica.com/biography/Solomon-Asch', type: 'reference', label: 'Encyclopaedia Britannica — Solomon Asch' },
       { url: 'https://www.britannica.com/topic/conformity', type: 'reference', label: 'Encyclopaedia Britannica — Conformity（同調と実験設計）' },
-      { url: 'https://www.ebsco.com/research-starters/history/asch-conformity-experiments', type: 'academic', label: 'EBSCO Research Starters — Asch conformity experiments' },
+      { url: 'https://www.ebsco.com/research-starters/history/asch-conformity-experiments', type: 'reference', label: 'EBSCO Research Starters — Asch conformity experiments' },
     ],
   },
   {
@@ -740,7 +740,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ロバート・ローゼンタール & レノア・ジェイコブソン（1968『Pygmalion in the Classroom』）／批判: Thorndike(1968)・Snow(1969)',
     asOf: '2026-06',
     sources: [
-      { url: 'https://www.ebsco.com/research-starters/education/pygmalion-effect-rosenthal-effect', type: 'academic', label: 'EBSCO Research Starters — Pygmalion effect (Rosenthal effect)' },
+      { url: 'https://www.ebsco.com/research-starters/education/pygmalion-effect-rosenthal-effect', type: 'reference', label: 'EBSCO Research Starters — Pygmalion effect (Rosenthal effect)' },
       { url: 'https://en.wikipedia.org/wiki/Pygmalion_in_the_Classroom', type: 'reference', label: 'Wikipedia — Pygmalion in the Classroom（1968研究と方法論批判）' },
       { url: 'https://www.tandfonline.com/doi/abs/10.1080/13803611.2018.1548817', type: 'academic', label: 'Educational Research and Evaluation (2018) — Expectation effects: Pygmalion（査読・効果と限界）' },
     ],
@@ -1086,7 +1086,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://www.britannica.com/money/diminishing-returns', type: 'reference', label: 'Britannica Money — Diminishing returns' },
-      { url: 'https://www.ebsco.com/research-starters/economics/diminishing-returns-economics', type: 'academic', label: 'EBSCO Research Starters — Diminishing returns (economics)' },
+      { url: 'https://www.ebsco.com/research-starters/economics/diminishing-returns-economics', type: 'reference', label: 'EBSCO Research Starters — Diminishing returns (economics)' },
       { url: 'https://www.encyclopedia.com/finance/encyclopedias-almanacs-transcripts-and-maps/law-diminishing-returns', type: 'reference', label: 'Encyclopedia.com — Law of Diminishing Returns' },
     ],
   },
@@ -1371,7 +1371,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://www.hbs.edu/faculty/Pages/item.aspx?num=193', type: 'academic', label: 'Harvard Business School — Competitive Advantage (Michael E. Porter) 書誌' },
-      { url: 'https://www.ebsco.com/research-starters/marketing/porters-generic-strategies', type: 'academic', label: 'EBSCO Research Starters — Porter’s Generic Strategies' },
+      { url: 'https://www.ebsco.com/research-starters/marketing/porters-generic-strategies', type: 'reference', label: 'EBSCO Research Starters — Porter’s Generic Strategies' },
       { url: 'https://en.wikipedia.org/wiki/Porter%27s_generic_strategies', type: 'reference', label: 'Wikipedia — Porter’s generic strategies' },
     ],
   },
@@ -5125,7 +5125,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://www.oxfordreference.com/display/10.1093/oi/authority.20110803095909939', type: 'reference', label: 'Oxford Reference — Group polarization（Moscovici & Zavalloni 1969 命名）' },
-      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/group-polarization', type: 'academic', label: 'EBSCO Research Starters — Group Polarization（Stoner 1961 起源、2機構）' },
+      { url: 'https://www.ebsco.com/research-starters/social-sciences-and-humanities/group-polarization', type: 'reference', label: 'EBSCO Research Starters — Group Polarization（Stoner 1961 起源、2機構）' },
       { url: 'https://www.simplypsychology.org/group-polarization.html', type: 'reference', label: 'SimplyPsychology — Group Polarization: Definition & Examples' },
       { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5131349/', type: 'academic', label: 'PNAS / PMC — Echo Chambers: Emotional Contagion and Group Polarization on Facebook（査読論文）' },
     ],
@@ -5307,7 +5307,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://languages.oup.com/word-of-the-year/2016/', type: 'reference', label: 'Oxford Languages — Word of the Year 2016: Post-Truth（公式定義・語法）' },
-      { url: 'https://www.ebsco.com/research-starters/religion-and-philosophy/post-truth-politics', type: 'academic', label: 'EBSCO Research Starters — Post-truth politics' },
+      { url: 'https://www.ebsco.com/research-starters/religion-and-philosophy/post-truth-politics', type: 'reference', label: 'EBSCO Research Starters — Post-truth politics' },
       { url: 'https://direct.mit.edu/books/book/3594/Post-Truth', type: 'academic', label: 'Lee McIntyre, Post-Truth, MIT Press (2018) — Books Gateway' },
       { url: 'https://philpapers.org/rec/KEYTPE', type: 'academic', label: 'Ralph Keyes, The Post-Truth Era (2004) — PhilPapers 書誌' },
     ],
@@ -6384,7 +6384,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://www.britannica.com/money/what-is-dynamic-pricing', type: 'reference', label: 'Britannica Money — Dynamic Pricing & Surge Pricing: How Does It Work?' },
-      { url: 'https://www.ebsco.com/research-starters/business-and-management/dynamic-pricing-surge-pricing', type: 'academic', label: 'EBSCO Research Starters (Business and Management) — Dynamic pricing (surge pricing)' },
+      { url: 'https://www.ebsco.com/research-starters/business-and-management/dynamic-pricing-surge-pricing', type: 'reference', label: 'EBSCO Research Starters (Business and Management) — Dynamic pricing (surge pricing)' },
       { url: 'https://en.wikipedia.org/wiki/Dynamic_pricing', type: 'reference', label: 'Wikipedia — Dynamic pricing' },
       { url: 'https://kinder.rice.edu/urbanedge/why-do-consumers-hate-ubers-surge-pricing', type: 'academic', label: 'Rice University, Kinder Institute — Why Do Consumers Hate Uber’s Surge Pricing?（公平感の問題）' },
     ],
@@ -18405,7 +18405,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://en.wikipedia.org/wiki/Metacognition', type: 'reference', label: 'Wikipedia — Metacognition' },
       { url: 'https://www.jstor.org/stable/1422286', type: 'academic', label: 'Flavell (1979) Metacognition and Cognitive Monitoring — American Psychologist 34(10)' },
-      { url: 'https://scholar.google.com/scholar?q=Schraw+Dennison+metacognitive+awareness+inventory', type: 'academic', label: 'Schraw & Dennison (1994) Assessing Metacognitive Awareness — Contemporary Educational Psychology' },
+      { url: 'https://scholar.google.com/scholar?q=Schraw+Dennison+metacognitive+awareness+inventory', type: 'reference', label: 'Schraw & Dennison (1994) Assessing Metacognitive Awareness — Contemporary Educational Psychology' },
     ],
   },
   {
@@ -20482,7 +20482,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.4250090107', type: 'academic', label: 'Johnson, Rethinking Incrementalism, Strategic Management Journal (1988) — Wiley' },
-      { url: 'https://search.worldcat.org/title/mapping-strategic-thought/oclc/20722225', type: 'academic', label: 'Sammut-Bonnici, Strategic Drift, Wiley Encyclopedia of Management (2015)（Wiley, 1990, ISBN 978-0-471-92632-0）' },
+      { url: 'https://search.worldcat.org/title/mapping-strategic-thought/oclc/20722225', type: 'reference', label: 'Sammut-Bonnici, Strategic Drift, Wiley Encyclopedia of Management (2015)（Wiley, 1990, ISBN 978-0-471-92632-0）' },
       { url: 'https://www.tutor2u.net/business/reference/strategic-drift', type: 'media', label: 'tutor2u — Strategic Drift 解説（英国教育メディア）' },
     ],
   },
@@ -22283,7 +22283,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://en.wikipedia.org/wiki/Appraisal_theory', type: 'reference', label: 'Appraisal Theory — Wikipedia' },
       { url: 'https://en.wikipedia.org/wiki/Magda_B._Arnold', type: 'reference', label: 'Magda B. Arnold — Wikipedia' },
-      { url: 'https://books.google.com/books/about/Stress_Appraisal_and_Coping.html?id=i-ySQQuUpr8C', type: 'academic', label: 'Lazarus & Folkman — Stress, Appraisal, and Coping (1984)' },
+      { url: 'https://books.google.com/books/about/Stress_Appraisal_and_Coping.html?id=i-ySQQuUpr8C', type: 'reference', label: 'Lazarus & Folkman — Stress, Appraisal, and Coping (1984)' },
       { url: 'https://www.cambridge.org/core/journals/the-british-journal-of-psychiatry/article/reflection-on-richard-lazarus-emotion-and-adaptation/F665277BCE36BE80C6760A60E6543C71', type: 'academic', label: 'Reflection on Lazarus — Emotion and Adaptation (Cambridge Core)' },
       { url: 'https://academic.oup.com/book/53557', type: 'academic', label: 'Scherer, Schorr & Johnstone — Appraisal Processes in Emotion (Oxford Academic)' },
     ],
@@ -22851,7 +22851,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/2391519', type: 'academic', label: 'Axelrod (1976) Structure of Decision: The Cognitive Maps of Political Elites — Princeton University Press' },
       { url: 'https://doi.org/10.1002/smj.4250130802', type: 'academic', label: 'Eden (1992) On the nature of cognitive maps — Journal of Management Studies' },
-      { url: 'https://search.worldcat.org/title/mapping-strategic-thought/oclc/20722225', type: 'academic', label: 'Huff (1990) Mapping Strategic Thought — Wiley（Wiley, 1990, ISBN 978-0-471-92632-0）' },
+      { url: 'https://search.worldcat.org/title/mapping-strategic-thought/oclc/20722225', type: 'reference', label: 'Huff (1990) Mapping Strategic Thought — Wiley（Wiley, 1990, ISBN 978-0-471-92632-0）' },
       { url: 'https://doi.org/10.1111/j.1467-6486.1992.tb00667.x', type: 'academic', label: 'Eden, Ackermann & Cropper (1992) The analysis of cause maps — Journal of Management Studies' },
       { url: 'https://www.sciencedirect.com/science/article/pii/S0149206310001382', type: 'academic', label: 'Gary & Wood (2011) Mental models, decision rules, and performance heterogeneity — Strategic Management Journal' },
     ],
@@ -23124,7 +23124,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
       { url: 'https://doi.org/10.2307/j.ctt1287kz5', type: 'academic', label: 'Pasquale, F. (2015). The Black Box Society: The Secret Algorithms That Control Money and Information. Harvard University Press.' },
       { url: 'https://doi.org/10.1145/355019.355026', type: 'academic', label: 'Resnick, P., Kuwabara, K., Zeckhauser, R., & Friedman, E. (2000). Reputation systems. Communications of the ACM, 43(12), 45-48.' },
       { url: 'https://doi.org/10.1257/aer.104.6.1609', type: 'academic', label: 'Tirole, J. (2014). Market failures and public policy. Nobel Prize Lecture / American Economic Review, 104(6), 1609-1652.' },
-      { url: 'https://search.worldcat.org/title/Platform-capitalism/oclc/974841289', type: 'academic', label: 'Srnicek, N. (2017). Platform Capitalism. Polity Press.（Polity, 2017, ISBN 978-1-5095-0487-9）' },
+      { url: 'https://search.worldcat.org/title/Platform-capitalism/oclc/974841289', type: 'reference', label: 'Srnicek, N. (2017). Platform Capitalism. Polity Press.（Polity, 2017, ISBN 978-1-5095-0487-9）' },
     ],
   },
   {
@@ -23217,8 +23217,8 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アーロン・アントノフスキー（1979 『Health, Stress and Coping』で健康生成論を提唱、1987 SOC概念を体系化）／モニカ・エリクソン（2006 SOC研究458論文の系統的レビュー）／ベングト・リンドストローム（2006 同レビュー共著）／モーリス・B・ミッテルマーク（2017 『Handbook of Salutogenesis』編集）',
     asOf: '2026-07',
     sources: [
-      { url: 'https://search.worldcat.org/title/Health-stress-and-coping/oclc/16490606', type: 'academic', label: 'Antonovsky, A. (1979) Health, Stress, and Coping: New Perspectives on Mental and Physical Well-Being — Jossey-Bass（ISBN 978-0-87589-412-6・WorldCat 目録）' },
-      { url: 'https://search.worldcat.org/title/14904689', type: 'academic', label: 'Antonovsky, A. (1987) Unraveling the Mystery of Health: How People Manage Stress and Stay Well — Jossey-Bass（ISBN 978-1-55542-028-4・WorldCat 目録）' },
+      { url: 'https://search.worldcat.org/title/Health-stress-and-coping/oclc/16490606', type: 'reference', label: 'Antonovsky, A. (1979) Health, Stress, and Coping: New Perspectives on Mental and Physical Well-Being — Jossey-Bass（ISBN 978-0-87589-412-6・WorldCat 目録）' },
+      { url: 'https://search.worldcat.org/title/14904689', type: 'reference', label: 'Antonovsky, A. (1987) Unraveling the Mystery of Health: How People Manage Stress and Stay Well — Jossey-Bass（ISBN 978-1-55542-028-4・WorldCat 目録）' },
       { url: 'https://doi.org/10.1093/heapro/dap038', type: 'academic', label: 'Eriksson & Lindström (2010)' },
       { url: 'https://doi.org/10.1007/978-3-319-04600-6', type: 'academic', label: 'Mittelmark et al. (2017) Handbook of Salutogenesis' },
       { url: 'https://doi.org/10.1093/heapro/dah609', type: 'academic', label: 'Eriksson & Lindström (2006)' },
@@ -26179,7 +26179,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-24',
     sources: [
       { url: 'https://yalebooks.yale.edu/book/9780300011159/the-cost-of-accidents/', type: 'academic', label: 'Calabresi 1970 — The Cost of Accidents: A Legal and Economic Analysis, Yale University Press' },
-      { url: 'https://openlibrary.org/works/OL4956948W/Handbook_of_the_law_of_torts', type: 'academic', label: 'Prosser 1971 — Handbook of the Law of Torts (4th ed.), West Publishing' },
+      { url: 'https://openlibrary.org/works/OL4956948W/Handbook_of_the_law_of_torts', type: 'reference', label: 'Prosser 1971 — Handbook of the Law of Torts (4th ed.), West Publishing' },
       { url: 'https://www.wolterskluwer.com/en/solutions/aspen-education/economic-analysis-of-law-posner-9e', type: 'academic', label: 'Posner 2014 — Economic Analysis of Law (9th ed.), Wolters Kluwer' },
     ],
   },
@@ -26365,7 +26365,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-24',
     sources: [
       { url: 'https://doi.org/10.1177/001872675100400101', type: 'academic', label: 'Trist & Bamforth 1951 Some Social and Psychological Consequences of the Longwall Method of Coal-Getting, Human Relations 4(1)' },
-      { url: 'https://search.worldcat.org/title/oclc/25724367', type: 'academic', label: 'Emery & Trist 1960 Socio-Technical Systems, in Management Sciences Models and Techniques Vol.2, Pergamon' },
+      { url: 'https://search.worldcat.org/title/oclc/25724367', type: 'reference', label: 'Emery & Trist 1960 Socio-Technical Systems, in Management Sciences Models and Techniques Vol.2, Pergamon' },
       { url: 'https://doi.org/10.1177/001872677602900806', type: 'academic', label: 'Cherns 1976 The Principles of Sociotechnical Design, Human Relations 29(8)' },
     ],
   },
@@ -26377,7 +26377,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョン・H・ジャクソン ／ ロバート・ハデック ／ ペーター・ファン・デン・ボッシェ',
     asOf: '2026-06-24',
     sources: [
-      { url: 'https://www.worldcat.org/title/world-trade-and-the-law-of-gatt/oclc/11656', type: 'academic', label: 'Jackson 1969 World Trade and the Law of GATT' },
+      { url: 'https://www.worldcat.org/title/world-trade-and-the-law-of-gatt/oclc/11656', type: 'reference', label: 'Jackson 1969 World Trade and the Law of GATT' },
       { url: 'https://www.wto.org/english/docs_e/legal_e/04-wto_e.htm', type: 'government', label: 'WTO Marrakesh Agreement Establishing the WTO 1995' },
       { url: 'https://www.wto.org/english/docs_e/legal_e/28-dsu_e.htm', type: 'government', label: 'WTO Understanding on Rules and Procedures Governing the Settlement of Disputes (DSU)' },
       { url: 'https://www.cambridge.org/core/books/law-and-policy-of-the-world-trade-organization/E52A862D68B07E34E57F13EB764A30B1', type: 'reference', label: 'Van den Bossche & Zdouc 2021 The Law and Policy of the World Trade Organization (4th ed.)' },
@@ -30113,7 +30113,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-27',
     sources: [
       { url: 'https://en.wikipedia.org/wiki/Social_judgment_theory', type: 'reference', label: 'Wikipedia「Social judgment theory」(三つの幅・同化/対比効果・自我関与・Sherif & Hovland 1961 と Sherif, Sherif & Nebergall 1965 の解説)' },
-      { url: 'https://search.worldcat.org/oclc/255508', type: 'academic', label: 'Sherif, M. & Hovland, C. I. (1961) Social Judgment: Assimilation and Contrast Effects in Communication and Attitude Change. New Haven: Yale University Press (Yale Studies in Attitude and Communication) — WorldCat OCLC 255508' },
+      { url: 'https://search.worldcat.org/oclc/255508', type: 'reference', label: 'Sherif, M. & Hovland, C. I. (1961) Social Judgment: Assimilation and Contrast Effects in Communication and Attitude Change. New Haven: Yale University Press (Yale Studies in Attitude and Communication) — WorldCat OCLC 255508' },
       { url: 'https://www.cambridge.org/core/journals/the-british-journal-of-psychiatry/article/abs/attitude-and-attitude-changes-the-social-judgmentinvolvement-approach-by-caro-lyn-w-sherif-muzafer-sherif-and-roger-e-nebergalk-philadelphia-and-london-w-b-saunders-company-1965-pp-264-price-2-18s-od/5AC604AB150601BC120EC0558C8F0406', type: 'academic', label: 'Sherif, C. W., Sherif, M. & Nebergall, R. E. (1965) Attitude and Attitude Change: The Social Judgment-Involvement Approach. Philadelphia & London: W. B. Saunders, pp. 264 — book review, The British Journal of Psychiatry (Cambridge Core)' },
     ],
   },
@@ -31504,7 +31504,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ヘンリー・ジェンキンス ／ ミシェル・ド・セルトー ／ ジョン・フィスク ／ スチュアート・ホール',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/24503865', type: 'academic', label: 'Jenkins, H. (1992) Textual Poachers: Television Fans and Participatory Culture — Routledge' },
+      { url: 'https://www.worldcat.org/oclc/24503865', type: 'reference', label: 'Jenkins, H. (1992) Textual Poachers: Television Fans and Participatory Culture — Routledge' },
       { url: 'https://en.wikipedia.org/wiki/Textual_poaching', type: 'reference', label: 'Wikipedia: Textual poaching — fans, appropriation, de Certeau, participatory culture' },
     ],
   },
@@ -31576,7 +31576,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョージ・リッツァ ／ ローランド・ロバートソン ／ マルク・オジェ ／ ベンジャミン・バーバー',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/54503871', type: 'academic', label: 'Ritzer, G. (2004) The Globalization of Nothing — Pine Forge Press' },
+      { url: 'https://www.worldcat.org/oclc/54503871', type: 'reference', label: 'Ritzer, G. (2004) The Globalization of Nothing — Pine Forge Press' },
       { url: 'https://en.wikipedia.org/wiki/George_Ritzer', type: 'reference', label: 'Wikipedia: George Ritzer — grobalization, glocalization, something/nothing, McDonaldization' },
     ],
   },
@@ -31648,7 +31648,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'フィン・ブラントン ／ ヘレン・ニッセンバウム ／ ジェームズ・スコット ／ ガリー・マルクス',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/904756159', type: 'academic', label: 'Brunton, F. & Nissenbaum, H. (2015) Obfuscation: A User\'s Guide for Privacy and Protest — MIT Press' },
+      { url: 'https://www.worldcat.org/oclc/904756159', type: 'reference', label: 'Brunton, F. & Nissenbaum, H. (2015) Obfuscation: A User\'s Guide for Privacy and Protest — MIT Press' },
       { url: 'https://en.wikipedia.org/wiki/Obfuscation', type: 'reference', label: 'Wikipedia: Obfuscation — privacy, noise, surveillance, TrackMeNot, weapons of the weak' },
     ],
   },
@@ -31720,7 +31720,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'スティーヴン・エプスタイン ／ ブライアン・ウィン ／ ハリー・コリンズ ／ ロバート・エヴァンズ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/33665204', type: 'academic', label: 'Epstein, S. (1996) Impure Science: AIDS, Activism, and the Politics of Knowledge — University of California Press' },
+      { url: 'https://www.worldcat.org/oclc/33665204', type: 'reference', label: 'Epstein, S. (1996) Impure Science: AIDS, Activism, and the Politics of Knowledge — University of California Press' },
       { url: 'https://en.wikipedia.org/wiki/Citizen_science', type: 'reference', label: 'Wikipedia: Lay expertise — AIDS activism, credibility, deficit model, public participation' },
     ],
   },
@@ -31792,7 +31792,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ロバート・プロクター ／ ロンダ・シービンガー ／ ナオミ・オレスケス ／ デヴィッド・マイケルズ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/166384062', type: 'academic', label: 'Proctor, R. N. & Schiebinger, L. (eds.) (2008) Agnotology: The Making and Unmaking of Ignorance — Stanford University Press' },
+      { url: 'https://www.worldcat.org/oclc/166384062', type: 'reference', label: 'Proctor, R. N. & Schiebinger, L. (eds.) (2008) Agnotology: The Making and Unmaking of Ignorance — Stanford University Press' },
       { url: 'https://en.wikipedia.org/wiki/Agnotology', type: 'reference', label: 'Wikipedia: Agnotology — culturally induced ignorance, manufactured doubt, tobacco, undone science' },
     ],
   },
@@ -31864,7 +31864,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'シーラ・ジャサノフ ／ ブライアン・ウィン ／ ハリー・コリンズ ／ スティーヴン・ヒルガートナー',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/57010936', type: 'academic', label: 'Jasanoff, S. (2005) Designs on Nature: Science and Democracy in Europe and the United States — Princeton University Press' },
+      { url: 'https://www.worldcat.org/oclc/57010936', type: 'reference', label: 'Jasanoff, S. (2005) Designs on Nature: Science and Democracy in Europe and the United States — Princeton University Press' },
       { url: 'https://en.wikipedia.org/wiki/Civic_epistemology', type: 'reference', label: 'Wikipedia: Civic epistemology — public knowledge, political culture, Jasanoff, co-production' },
     ],
   },
@@ -31936,7 +31936,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'シーラ・ジャサノフ ／ ブルーノ・ラトゥール ／ ドナ・ハラウェイ ／ ヘルガ・ノヴォトニー',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/53389809', type: 'academic', label: 'Jasanoff, S. (ed.) (2004) States of Knowledge: The Co-Production of Science and Social Order — Routledge' },
+      { url: 'https://www.worldcat.org/oclc/53389809', type: 'reference', label: 'Jasanoff, S. (ed.) (2004) States of Knowledge: The Co-Production of Science and Social Order — Routledge' },
       { url: 'https://en.wikipedia.org/wiki/Sheila_Jasanoff', type: 'reference', label: 'Wikipedia: Sheila Jasanoff — co-production, civic epistemology, sociotechnical imaginaries, STS' },
     ],
   },
@@ -32080,7 +32080,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'マイケル・ギボンズ ／ ヘルガ・ノヴォトニー ／ ピーター・スコット ／ マーティン・トロウ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/30894174', type: 'academic', label: 'Gibbons, M. et al. (1994) The New Production of Knowledge — Sage' },
+      { url: 'https://www.worldcat.org/oclc/30894174', type: 'reference', label: 'Gibbons, M. et al. (1994) The New Production of Knowledge — Sage' },
       { url: 'https://en.wikipedia.org/wiki/Mode_2', type: 'reference', label: 'Wikipedia: Mode 2 — context of application, transdisciplinarity, knowledge production' },
     ],
   },
@@ -32104,7 +32104,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'インダーミット・ギル ／ ホミ・カラス ／ バリー・アイケングリーン ／ ダニ・ロドリック',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/77520482', type: 'academic', label: 'Gill, I. & Kharas, H. (2007) An East Asian Renaissance: Ideas for Economic Growth — World Bank' },
+      { url: 'https://www.worldcat.org/oclc/77520482', type: 'reference', label: 'Gill, I. & Kharas, H. (2007) An East Asian Renaissance: Ideas for Economic Growth — World Bank' },
       { url: 'https://en.wikipedia.org/wiki/Middle_income_trap', type: 'reference', label: 'Wikipedia: Middle income trap — growth slowdown, innovation, convergence, development' },
     ],
   },
@@ -32176,7 +32176,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'リカルド・ハウスマン ／ ダニ・ロドリック ／ アンドレス・ベラスコ ／ ジョン・ウィリアムソン',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/181368015', type: 'academic', label: 'Hausmann, R., Rodrik, D. & Velasco, A. (2008) Growth diagnostics — in The Washington Consensus Reconsidered' },
+      { url: 'https://www.worldcat.org/oclc/181368015', type: 'reference', label: 'Hausmann, R., Rodrik, D. & Velasco, A. (2008) Growth diagnostics — in The Washington Consensus Reconsidered' },
       { url: 'https://en.wikipedia.org/wiki/Growth_diagnostics', type: 'reference', label: 'Wikipedia: Growth diagnostics — binding constraints, decision tree, development policy' },
     ],
   },
@@ -32188,7 +32188,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'バーナード・バス ／ ブルース・アボリオ ／ ジェームズ・マクレガー・バーンズ ／ ロバート・ハウス',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/30736792', type: 'academic', label: 'Bass, B. M. & Avolio, B. J. (1994) Improving Organizational Effectiveness Through Transformational Leadership — Sage' },
+      { url: 'https://www.worldcat.org/oclc/30736792', type: 'reference', label: 'Bass, B. M. & Avolio, B. J. (1994) Improving Organizational Effectiveness Through Transformational Leadership — Sage' },
       { url: 'https://en.wikipedia.org/wiki/Full_range_leadership_model', type: 'reference', label: 'Wikipedia: Full range leadership model — transformational, transactional, laissez-faire, MLQ' },
     ],
   },
@@ -32296,7 +32296,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ダイアン・ゾンネンヴァルト ／ リーフ・サヴォライネン ／ トーマス・D・ウィルソン ／ エルフレダ・チャットマン',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/471863509', type: 'academic', label: 'Sonnenwald, D. H. (1999) Evolving perspectives on human information behavior — in Exploring the Contexts of Information Behaviour' },
+      { url: 'https://www.worldcat.org/oclc/471863509', type: 'reference', label: 'Sonnenwald, D. H. (1999) Evolving perspectives on human information behavior — in Exploring the Contexts of Information Behaviour' },
       { url: 'https://en.wikipedia.org/wiki/Information_behavior', type: 'reference', label: 'Wikipedia: Information behavior — information horizons, contexts, situations, social networks' },
     ],
   },
@@ -32332,7 +32332,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ムザファー・シェリフ ／ ヘルマン・フォン・ヘルムホルツ ／ ソロモン・アッシュ ／ レオン・フェスティンガー',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/2557530', type: 'academic', label: 'Sherif, M. (1936) The Psychology of Social Norms — Harper（自動運動効果と社会規範の形成）' },
+      { url: 'https://www.worldcat.org/oclc/2557530', type: 'reference', label: 'Sherif, M. (1936) The Psychology of Social Norms — Harper（自動運動効果と社会規範の形成）' },
       { url: 'https://en.wikipedia.org/wiki/Autokinetic_effect', type: 'reference', label: 'Wikipedia: Autokinetic effect — illusory motion, Sherif, social norm formation' },
     ],
   },
@@ -32356,7 +32356,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ブルーノ・ラトゥール ／ ミシェル・カロン ／ ジョン・ロー ／ スティーヴ・ウルガー',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/15282467', type: 'academic', label: 'Latour, B. (1986) Visualisation and cognition: Drawing things together — Knowledge and Society' },
+      { url: 'https://www.worldcat.org/oclc/15282467', type: 'reference', label: 'Latour, B. (1986) Visualisation and cognition: Drawing things together — Knowledge and Society' },
       { url: 'https://en.wikipedia.org/wiki/Actor%E2%80%93network_theory', type: 'reference', label: 'Wikipedia: Actor–network theory — immutable mobiles, inscriptions, centres of calculation' },
     ],
   },
@@ -32392,7 +32392,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'チャールズ・ハンディ ／ クレイトン・クリステンセン ／ アンドリュー・グローブ ／ リチャード・フォスター',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/30894155', type: 'academic', label: 'Handy, C. (1994) The Empty Raincoat: Making Sense of the Future — Hutchinson' },
+      { url: 'https://www.worldcat.org/oclc/30894155', type: 'reference', label: 'Handy, C. (1994) The Empty Raincoat: Making Sense of the Future — Hutchinson' },
       { url: 'https://en.wikipedia.org/wiki/Charles_Handy', type: 'reference', label: 'Wikipedia: Charles Handy — sigmoid curve, second curve, organizational renewal' },
     ],
   },
@@ -32464,7 +32464,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'サイモン・シネック ／ ピーター・ドラッカー ／ ダニエル・ピンク ／ ジム・コリンズ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/932969809', type: 'academic', label: 'Sinek, S. (2009) Start With Why: How Great Leaders Inspire Everyone to Take Action — Portfolio' },
+      { url: 'https://www.worldcat.org/oclc/932969809', type: 'reference', label: 'Sinek, S. (2009) Start With Why: How Great Leaders Inspire Everyone to Take Action — Portfolio' },
       { url: 'https://en.wikipedia.org/wiki/Simon_Sinek', type: 'reference', label: 'Wikipedia: Simon Sinek — Golden Circle, Start With Why, purpose-driven leadership' },
     ],
   },
@@ -32500,7 +32500,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'カリン・クノール・セティナ ／ ブルーノ・ラトゥール ／ スティーヴ・ウルガー ／ ルートヴィヒ・フレック',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/39539508', type: 'academic', label: 'Knorr Cetina, K. (1999) Epistemic Cultures: How the Sciences Make Knowledge — Harvard University Press' },
+      { url: 'https://www.worldcat.org/oclc/39539508', type: 'reference', label: 'Knorr Cetina, K. (1999) Epistemic Cultures: How the Sciences Make Knowledge — Harvard University Press' },
       { url: 'https://en.wikipedia.org/wiki/Karin_Knorr_Cetina', type: 'reference', label: 'Wikipedia: Karin Knorr Cetina — epistemic cultures, machineries of knowing, STS' },
     ],
   },
@@ -32536,7 +32536,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'A・G・ラフリー ／ ロジャー・マーティン ／ マイケル・ポーター ／ ピーター・ドラッカー',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/812254346', type: 'academic', label: 'Lafley, A. G. & Martin, R. L. (2013) Playing to Win: How Strategy Really Works — Harvard Business Review Press' },
+      { url: 'https://www.worldcat.org/oclc/812254346', type: 'reference', label: 'Lafley, A. G. & Martin, R. L. (2013) Playing to Win: How Strategy Really Works — Harvard Business Review Press' },
       { url: 'https://en.wikipedia.org/wiki/Roger_Martin_(professor)', type: 'reference', label: 'Wikipedia: Roger Martin — Playing to Win, strategic choice cascade, where to play / how to win' },
     ],
   },
@@ -32584,7 +32584,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アンソニー・ダウンズ ／ J・M・トムソン ／ ハーバート・モーリング ／ ディートリッヒ・ブライス',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/3186950', type: 'academic', label: 'Thomson, J. M. (1977) Great Cities and Their Traffic — Gollancz' },
+      { url: 'https://www.worldcat.org/oclc/3186950', type: 'reference', label: 'Thomson, J. M. (1977) Great Cities and Their Traffic — Gollancz' },
       { url: 'https://en.wikipedia.org/wiki/Downs%E2%80%93Thomson_paradox', type: 'reference', label: 'Wikipedia: Downs–Thomson paradox — road capacity, public transport, Mohring effect' },
     ],
   },
@@ -32608,7 +32608,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョン・カッツェンバック ／ ダグラス・スミス ／ J・リチャード・ハックマン ／ ブルース・タックマン',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/27034101', type: 'academic', label: 'Katzenbach, J. R. & Smith, D. K. (1993) The Wisdom of Teams — Harvard Business School Press' },
+      { url: 'https://www.worldcat.org/oclc/27034101', type: 'reference', label: 'Katzenbach, J. R. & Smith, D. K. (1993) The Wisdom of Teams — Harvard Business School Press' },
       { url: 'https://en.wikipedia.org/wiki/The_Wisdom_of_Teams', type: 'reference', label: 'Wikipedia: The Wisdom of Teams — working group vs team, mutual accountability, performance curve' },
     ],
   },
@@ -32680,7 +32680,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョン・アデア ／ クルト・レヴィン ／ ダグラス・マグレガー ／ ロバート・ブレイク',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/16276', type: 'academic', label: 'Adair, J. (1973) Action-Centred Leadership — McGraw-Hill' },
+      { url: 'https://www.worldcat.org/oclc/16276', type: 'reference', label: 'Adair, J. (1973) Action-Centred Leadership — McGraw-Hill' },
       { url: 'https://en.wikipedia.org/wiki/John_Adair_(author)', type: 'reference', label: 'Wikipedia: John Adair — action-centred leadership, task/team/individual, functional leadership' },
     ],
   },
@@ -32752,7 +32752,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'パトリック・レンシオーニ ／ ブルース・タックマン ／ エイミー・エドモンドソン ／ J・リチャード・ハックマン',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/48868620', type: 'academic', label: 'Lencioni, P. (2002) The Five Dysfunctions of a Team — Jossey-Bass' },
+      { url: 'https://www.worldcat.org/oclc/48868620', type: 'reference', label: 'Lencioni, P. (2002) The Five Dysfunctions of a Team — Jossey-Bass' },
       { url: 'https://en.wikipedia.org/wiki/The_Five_Dysfunctions_of_a_Team', type: 'reference', label: 'Wikipedia: The Five Dysfunctions of a Team — trust, conflict, commitment, accountability, results' },
     ],
   },
@@ -32764,7 +32764,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ルーディマー・ヘルマン ／ エヴァルト・ヘリング ／ ハルダン・ハートライン ／ ベルント・リンゲルバッハ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/35780015', type: 'academic', label: 'Gregory, R. L. Eye and Brain: The Psychology of Seeing — Princeton University Press（側抑制と明るさの錯視）' },
+      { url: 'https://www.worldcat.org/oclc/35780015', type: 'reference', label: 'Gregory, R. L. Eye and Brain: The Psychology of Seeing — Princeton University Press（側抑制と明るさの錯視）' },
       { url: 'https://en.wikipedia.org/wiki/Grid_illusion', type: 'reference', label: 'Wikipedia: Grid illusion — Hermann grid, lateral inhibition, scintillating grid' },
     ],
   },
@@ -32788,7 +32788,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'サンダ・エルデレズ ／ マーシャ・ベイツ ／ トーマス・D・ウィルソン ／ カレン・フィッシャー',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/42654818', type: 'academic', label: 'Erdelez, S. (1999) Information encountering: It\'s more than just bumping into information — Bulletin of the ASIS' },
+      { url: 'https://www.worldcat.org/oclc/42654818', type: 'reference', label: 'Erdelez, S. (1999) Information encountering: It\'s more than just bumping into information — Bulletin of the ASIS' },
       { url: 'https://en.wikipedia.org/wiki/Information_seeking', type: 'reference', label: 'Wikipedia: Information seeking — information encountering, serendipity, opportunistic acquisition' },
     ],
   },
@@ -32824,7 +32824,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジム・コリンズ ／ アイザイア・バーリン ／ ピーター・ドラッカー ／ ジェリー・ポラス',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/44732499', type: 'academic', label: 'Collins, J. (2001) Good to Great — HarperBusiness' },
+      { url: 'https://www.worldcat.org/oclc/44732499', type: 'reference', label: 'Collins, J. (2001) Good to Great — HarperBusiness' },
       { url: 'https://en.wikipedia.org/wiki/Good_to_Great', type: 'reference', label: 'Wikipedia: Good to Great — Hedgehog Concept, three circles, Level 5 leadership' },
     ],
   },
@@ -32836,7 +32836,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ヴォルフガング・ケーラー ／ ヴィラヤヌル・ラマチャンドラン ／ エドワード・ハバード ／ フェルディナン・ド・ソシュール',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/48417854', type: 'academic', label: 'Ramachandran, V. S. & Hubbard, E. M. (2001) Synaesthesia—a window into perception, thought and language — Journal of Consciousness Studies' },
+      { url: 'https://www.worldcat.org/oclc/48417854', type: 'reference', label: 'Ramachandran, V. S. & Hubbard, E. M. (2001) Synaesthesia—a window into perception, thought and language — Journal of Consciousness Studies' },
       { url: 'https://en.wikipedia.org/wiki/Bouba/kiki_effect', type: 'reference', label: 'Wikipedia: Bouba/kiki effect — sound symbolism, cross-modal, arbitrariness of the sign' },
     ],
   },
@@ -32896,7 +32896,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'チャールズ・ハンディ ／ ジョン・アトキンソン ／ トム・ピーターズ ／ ピーター・ドラッカー',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/20012068', type: 'academic', label: 'Handy, C. (1989) The Age of Unreason — Harvard Business School Press' },
+      { url: 'https://www.worldcat.org/oclc/20012068', type: 'reference', label: 'Handy, C. (1989) The Age of Unreason — Harvard Business School Press' },
       { url: 'https://en.wikipedia.org/wiki/Charles_Handy', type: 'reference', label: 'Wikipedia: Charles Handy — shamrock organization, portfolio worker, flexible firm' },
     ],
   },
@@ -32932,7 +32932,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョン・アーキラ ／ デヴィッド・ロンフェルト ／ ジョセフ・ナイ ／ ピエール・テイヤール・ド・シャルダン',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/43367015', type: 'academic', label: 'Arquilla, J. & Ronfeldt, D. (1999) The Emergence of Noopolitik — RAND Corporation' },
+      { url: 'https://www.worldcat.org/oclc/43367015', type: 'reference', label: 'Arquilla, J. & Ronfeldt, D. (1999) The Emergence of Noopolitik — RAND Corporation' },
       { url: 'https://en.wikipedia.org/wiki/Noopolitik', type: 'reference', label: 'Wikipedia: Noopolitik — noosphere, soft power, Realpolitik, information strategy' },
     ],
   },
@@ -32944,7 +32944,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: '森嶋通夫 ／ 置塩信雄 ／ カール・マルクス ／ ジョン・ローマー',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/610137', type: 'academic', label: 'Morishima, M. (1973) Marx\'s Economics: A Dual Theory of Value and Growth — Cambridge University Press' },
+      { url: 'https://www.worldcat.org/oclc/610137', type: 'reference', label: 'Morishima, M. (1973) Marx\'s Economics: A Dual Theory of Value and Growth — Cambridge University Press' },
       { url: 'https://en.wikipedia.org/wiki/Fundamental_Marxian_theorem', type: 'reference', label: 'Wikipedia: Fundamental Marxian theorem — exploitation, profit, Okishio, Morishima' },
     ],
   },
@@ -32968,7 +32968,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジェームズ・ブライアン・クイン ／ チャールズ・リンドブロム ／ ヘンリー・ミンツバーグ ／ ハーバート・サイモン',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/6088200', type: 'academic', label: 'Quinn, J. B. (1980) Strategies for Change: Logical Incrementalism — Richard D. Irwin' },
+      { url: 'https://www.worldcat.org/oclc/6088200', type: 'reference', label: 'Quinn, J. B. (1980) Strategies for Change: Logical Incrementalism — Richard D. Irwin' },
       { url: 'https://en.wikipedia.org/wiki/Logical_incrementalism', type: 'reference', label: 'Wikipedia: Logical incrementalism — strategy formation, emergent strategy, incrementalism' },
     ],
   },
@@ -33004,7 +33004,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ロジャー・フィドラー ／ マーシャル・マクルーハン ／ ニコラス・ネグロポンテ ／ ジェイ・ボルター',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/36126237', type: 'academic', label: 'Fidler, R. (1997) Mediamorphosis: Understanding New Media — Pine Forge Press' },
+      { url: 'https://www.worldcat.org/oclc/36126237', type: 'reference', label: 'Fidler, R. (1997) Mediamorphosis: Understanding New Media — Pine Forge Press' },
       { url: 'https://en.wikipedia.org/wiki/Mediamorphosis', type: 'reference', label: 'Wikipedia: Mediamorphosis — coevolution, metamorphosis, propagation, new media' },
     ],
   },
@@ -33016,7 +33016,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョン・ヒックス ／ ポール・サミュエルソン ／ ロイ・ハロッド ／ ラグナル・フリッシュ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/1368330', type: 'academic', label: 'Hicks, J. R. (1950) A Contribution to the Theory of the Trade Cycle — Oxford University Press' },
+      { url: 'https://www.worldcat.org/oclc/1368330', type: 'reference', label: 'Hicks, J. R. (1950) A Contribution to the Theory of the Trade Cycle — Oxford University Press' },
       { url: 'https://en.wikipedia.org/wiki/Multiplier%E2%80%93accelerator_model', type: 'reference', label: 'Wikipedia: Multiplier–accelerator model — Hicks ceiling and floor, endogenous cycle' },
     ],
   },
@@ -33028,7 +33028,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'クヌート・ヴィクセル ／ ピエロ・スラッファ ／ ジョーン・ロビンソン ／ ポール・サミュエルソン',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/385183', type: 'academic', label: 'Harcourt, G. C. (1972) Some Cambridge Controversies in the Theory of Capital — Cambridge University Press' },
+      { url: 'https://www.worldcat.org/oclc/385183', type: 'reference', label: 'Harcourt, G. C. (1972) Some Cambridge Controversies in the Theory of Capital — Cambridge University Press' },
       { url: 'https://en.wikipedia.org/wiki/Cambridge_capital_controversy', type: 'reference', label: 'Wikipedia: Cambridge capital controversy — Wicksell effect, reswitching, aggregate capital' },
     ],
   },
@@ -33088,7 +33088,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ワシリー・レオンチェフ ／ フランソワ・ケネー ／ ジョン・フォン・ノイマン ／ ピエロ・スラッファ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/542840', type: 'academic', label: 'Leontief, W. (1941) The Structure of American Economy, 1919–1929 — Harvard University Press' },
+      { url: 'https://www.worldcat.org/oclc/542840', type: 'reference', label: 'Leontief, W. (1941) The Structure of American Economy, 1919–1929 — Harvard University Press' },
       { url: 'https://en.wikipedia.org/wiki/Input%E2%80%93output_model', type: 'reference', label: 'Wikipedia: Input–output model — Leontief inverse, technical coefficients, dynamic model' },
     ],
   },
@@ -33160,7 +33160,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'リチャード・グッドウィン ／ カール・マルクス ／ アルフレッド・ロトカ ／ ヴィト・ヴォルテラ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/977195', type: 'academic', label: 'Goodwin, R. M. (1967) A growth cycle — in Socialism, Capitalism and Economic Growth (Cambridge UP)' },
+      { url: 'https://www.worldcat.org/oclc/977195', type: 'reference', label: 'Goodwin, R. M. (1967) A growth cycle — in Socialism, Capitalism and Economic Growth (Cambridge UP)' },
       { url: 'https://en.wikipedia.org/wiki/Goodwin_model_(economics)', type: 'reference', label: 'Wikipedia: Goodwin model (economics) — predator-prey, employment, wage share, class struggle' },
     ],
   },
@@ -33196,7 +33196,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'エルンスト・マッハ ／ ハルダン・ハートライン ／ フロイド・ラトリフ ／ ゲオルク・フォン・ベーケーシ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/345413', type: 'academic', label: 'Ratliff, F. (1965) Mach Bands: Quantitative Studies on Neural Networks in the Retina — Holden-Day' },
+      { url: 'https://www.worldcat.org/oclc/345413', type: 'reference', label: 'Ratliff, F. (1965) Mach Bands: Quantitative Studies on Neural Networks in the Retina — Holden-Day' },
       { url: 'https://en.wikipedia.org/wiki/Mach_bands', type: 'reference', label: 'Wikipedia: Mach bands — lateral inhibition, edge enhancement, brightness perception' },
     ],
   },
@@ -33220,7 +33220,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'マルク・オジェ ／ ミシェル・ド・セルトー ／ アンリ・ルフェーヴル ／ ジグムント・バウマン',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/32855043', type: 'academic', label: 'Augé, M. (1995) Non-Places: Introduction to an Anthropology of Supermodernity — Verso' },
+      { url: 'https://www.worldcat.org/oclc/32855043', type: 'reference', label: 'Augé, M. (1995) Non-Places: Introduction to an Anthropology of Supermodernity — Verso' },
       { url: 'https://en.wikipedia.org/wiki/Non-place', type: 'reference', label: 'Wikipedia: Non-place — supermodernity, transience, anthropological place' },
     ],
   },
@@ -33232,7 +33232,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'フレデリック・ツォイテン ／ ジョン・ハーサニ ／ ジョン・ナッシュ ／ ジョン・ヒックス',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/953185', type: 'academic', label: 'Zeuthen, F. (1930) Problems of Monopoly and Economic Warfare — Routledge' },
+      { url: 'https://www.worldcat.org/oclc/953185', type: 'reference', label: 'Zeuthen, F. (1930) Problems of Monopoly and Economic Warfare — Routledge' },
       { url: 'https://en.wikipedia.org/wiki/Bargaining', type: 'reference', label: 'Wikipedia: Bargaining — Zeuthen model, risk limit, Nash bargaining solution, Harsanyi' },
     ],
   },
@@ -33256,7 +33256,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'クリス・アージリス ／ ドナルド・ショーン ／ ピーター・センゲ ／ エドガー・シャイン',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/20826933', type: 'academic', label: 'Argyris, C. (1990) Overcoming Organizational Defenses — Allyn & Bacon' },
+      { url: 'https://www.worldcat.org/oclc/20826933', type: 'reference', label: 'Argyris, C. (1990) Overcoming Organizational Defenses — Allyn & Bacon' },
       { url: 'https://en.wikipedia.org/wiki/Chris_Argyris', type: 'reference', label: 'Wikipedia: Chris Argyris — defensive routines, single/double-loop learning, theory-in-use' },
     ],
   },
@@ -33268,7 +33268,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ガエタノ・カニッツァ ／ フリードリヒ・シューマン ／ マックス・ヴェルトハイマー ／ クルト・コフカ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/5727628', type: 'academic', label: 'Kanizsa, G. (1979) Organization in Vision: Essays on Gestalt Perception — Praeger（主観的輪郭の体系的考察）' },
+      { url: 'https://www.worldcat.org/oclc/5727628', type: 'reference', label: 'Kanizsa, G. (1979) Organization in Vision: Essays on Gestalt Perception — Praeger（主観的輪郭の体系的考察）' },
       { url: 'https://en.wikipedia.org/wiki/Illusory_contours', type: 'reference', label: 'Wikipedia: Illusory contours — Kanizsa triangle, modal/amodal completion, Gestalt' },
     ],
   },
@@ -33304,7 +33304,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ロイ・ハロッド ／ ジョン・ヒックス ／ ロバート・ソロー ／ 宇沢弘文',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/1670459', type: 'academic', label: 'Harrod, R. F. (1948) Towards a Dynamic Economics — Macmillan（技術進歩の中立性の定式化）' },
+      { url: 'https://www.worldcat.org/oclc/1670459', type: 'reference', label: 'Harrod, R. F. (1948) Towards a Dynamic Economics — Macmillan（技術進歩の中立性の定式化）' },
       { url: 'https://en.wikipedia.org/wiki/Neutral_technological_change', type: 'reference', label: 'Wikipedia: Neutral technological change — Harrod-neutral, labor-augmenting, balanced growth' },
     ],
   },
@@ -33328,7 +33328,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョセフ・ジュラン ／ W・エドワーズ・デミング ／ 石川馨 ／ ヴィルフレド・パレート',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/19514461', type: 'academic', label: 'Juran, J. M. (1986) The quality trilogy — Quality Progress（品質トリロジーの原典）' },
+      { url: 'https://www.worldcat.org/oclc/19514461', type: 'reference', label: 'Juran, J. M. (1986) The quality trilogy — Quality Progress（品質トリロジーの原典）' },
       { url: 'https://en.wikipedia.org/wiki/Joseph_M._Juran', type: 'reference', label: 'Wikipedia: Joseph M. Juran — quality trilogy, fitness for use, Pareto principle' },
     ],
   },
@@ -33340,7 +33340,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ヤン・プルキニェ ／ ヨハネス・フォン・クリース ／ ヘルマン・フォン・ヘルムホルツ ／ ジョージ・ウォルド',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/35780015', type: 'academic', label: 'Gregory, R. L. Eye and Brain: The Psychology of Seeing — Princeton University Press（明所視・暗所視と視覚の二重説）' },
+      { url: 'https://www.worldcat.org/oclc/35780015', type: 'reference', label: 'Gregory, R. L. Eye and Brain: The Psychology of Seeing — Princeton University Press（明所視・暗所視と視覚の二重説）' },
       { url: 'https://en.wikipedia.org/wiki/Purkinje_effect', type: 'reference', label: 'Wikipedia: Purkinje effect — photopic/scotopic vision, rods and cones, spectral sensitivity' },
     ],
   },
@@ -33364,7 +33364,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ディディエ・ビゴ ／ ミシェル・フーコー ／ ジョルジョ・アガンベン ／ ジル・ドゥルーズ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/123091532', type: 'academic', label: 'Bigo, D. (2008) Globalized (in)security: the field and the ban-opticon — in Terror, Insecurity and Liberty (Routledge)' },
+      { url: 'https://www.worldcat.org/oclc/123091532', type: 'reference', label: 'Bigo, D. (2008) Globalized (in)security: the field and the ban-opticon — in Terror, Insecurity and Liberty (Routledge)' },
       { url: 'https://en.wikipedia.org/wiki/Mass_surveillance', type: 'reference', label: 'Wikipedia: Mass surveillance — panopticon, profiling, security and exclusion' },
     ],
   },
@@ -33400,7 +33400,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'チェスター・バーナード ／ ハーバート・サイモン ／ メアリー・パーカー・フォレット ／ マックス・ウェーバー',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/180404', type: 'academic', label: 'Barnard, C. I. (1938) The Functions of the Executive — Harvard University Press' },
+      { url: 'https://www.worldcat.org/oclc/180404', type: 'reference', label: 'Barnard, C. I. (1938) The Functions of the Executive — Harvard University Press' },
       { url: 'https://en.wikipedia.org/wiki/Chester_Barnard', type: 'reference', label: 'Wikipedia: Chester Barnard — acceptance theory of authority, zone of indifference' },
     ],
   },
@@ -33412,7 +33412,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'マリオ・ポンゾ ／ リチャード・グレゴリー ／ ヘルマン・フォン・ヘルムホルツ ／ アデルベルト・エイムズ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/35780015', type: 'academic', label: 'Gregory, R. L. Eye and Brain: The Psychology of Seeing — Princeton University Press（大きさの恒常性の誤適用）' },
+      { url: 'https://www.worldcat.org/oclc/35780015', type: 'reference', label: 'Gregory, R. L. Eye and Brain: The Psychology of Seeing — Princeton University Press（大きさの恒常性の誤適用）' },
       { url: 'https://en.wikipedia.org/wiki/Ponzo_illusion', type: 'reference', label: 'Wikipedia: Ponzo illusion — linear perspective, size constancy, depth cues' },
     ],
   },
@@ -33436,7 +33436,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'リチャード・フロリダ ／ ジェイン・ジェイコブズ ／ ダニエル・ベル ／ ロバート・パットナム',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/49544499', type: 'academic', label: 'Florida, R. (2002) The Rise of the Creative Class — Basic Books' },
+      { url: 'https://www.worldcat.org/oclc/49544499', type: 'reference', label: 'Florida, R. (2002) The Rise of the Creative Class — Basic Books' },
       { url: 'https://en.wikipedia.org/wiki/Creative_class', type: 'reference', label: 'Wikipedia: Creative class — three Ts, talent, tolerance, creative city' },
     ],
   },
@@ -33484,7 +33484,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'マックス・ヴェルトハイマー ／ ヴォルフガング・ケーラー ／ クルト・コフカ ／ クリスチャン・フォン・エーレンフェルス',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/5184644', type: 'academic', label: 'Wertheimer, M. (1912) Experimentelle Studien über das Sehen von Bewegung — Zeitschrift für Psychologie' },
+      { url: 'https://www.worldcat.org/oclc/5184644', type: 'reference', label: 'Wertheimer, M. (1912) Experimentelle Studien über das Sehen von Bewegung — Zeitschrift für Psychologie' },
       { url: 'https://en.wikipedia.org/wiki/Phi_phenomenon', type: 'reference', label: 'Wikipedia: Phi phenomenon — apparent motion, Gestalt psychology, Wertheimer' },
     ],
   },
@@ -33544,7 +33544,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ダニエル・カッツ ／ ロバート・カーン ／ ルートヴィヒ・フォン・ベルタランフィ ／ フレッド・エメリー',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/255184', type: 'academic', label: 'Katz, D. & Kahn, R. L. (1966) The Social Psychology of Organizations — Wiley' },
+      { url: 'https://www.worldcat.org/oclc/255184', type: 'reference', label: 'Katz, D. & Kahn, R. L. (1966) The Social Psychology of Organizations — Wiley' },
       { url: 'https://en.wikipedia.org/wiki/Open_system_(systems_theory)', type: 'reference', label: 'Wikipedia: Open system (systems theory) — negative entropy, equifinality, organizations' },
     ],
   },
@@ -33568,7 +33568,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アドルフ・バーリ ／ ウィリアム・ケアリー ／ メルヴィン・アイゼンバーグ ／ ロバート・クラーク',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/2598415', type: 'academic', label: 'Cary, W. L. & Eisenberg, M. A. Corporations: Cases and Materials — Foundation Press' },
+      { url: 'https://www.worldcat.org/oclc/2598415', type: 'reference', label: 'Cary, W. L. & Eisenberg, M. A. Corporations: Cases and Materials — Foundation Press' },
       { url: 'https://en.wikipedia.org/wiki/De_facto_corporation_and_corporation_by_estoppel', type: 'reference', label: 'Wikipedia: De facto corporation and corporation by estoppel — defective incorporation, limited liability' },
     ],
   },
@@ -33592,7 +33592,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ヘンリー・タイル ／ クロード・シャノン ／ アンソニー・アトキンソン ／ アマルティア・セン',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/356896', type: 'academic', label: 'Theil, H. (1967) Economics and Information Theory — North-Holland（タイル指数の原典）' },
+      { url: 'https://www.worldcat.org/oclc/356896', type: 'reference', label: 'Theil, H. (1967) Economics and Information Theory — North-Holland（タイル指数の原典）' },
       { url: 'https://en.wikipedia.org/wiki/Theil_index', type: 'reference', label: 'Wikipedia: Theil index — entropy, decomposability, inequality measurement' },
     ],
   },
@@ -33640,7 +33640,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ロード・モールトン ／ パトリック・アティヤ ／ ガンター・トライテル ／ フレデリック・ポロック',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/872617915', type: 'academic', label: 'Treitel, G. H. The Law of Contract — Sweet & Maxwell（付随的契約の体系的解説）' },
+      { url: 'https://www.worldcat.org/oclc/872617915', type: 'reference', label: 'Treitel, G. H. The Law of Contract — Sweet & Maxwell（付随的契約の体系的解説）' },
       { url: 'https://en.wikipedia.org/wiki/Collateral_contract', type: 'reference', label: 'Wikipedia: Collateral contract — parol evidence, privity, Shanklin Pier v Detel' },
     ],
   },
@@ -33689,7 +33689,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'マイケル・ポーター ／ ポール・クルーグマン ／ アルフレッド・マーシャル ／ オリャン・ソルベル',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/21227966', type: 'academic', label: 'Porter, M.E. (1990) The Competitive Advantage of Nations — Free Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/21227966', type: 'reference', label: 'Porter, M.E. (1990) The Competitive Advantage of Nations — Free Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Diamond_model', type: 'reference', label: 'Wikipedia: Diamond model — Porter, factor/demand conditions, related industries, firm strategy/rivalry, clusters' },
       { url: 'https://hbr.org/1990/03/the-competitive-advantage-of-nations', type: 'media', label: 'Michael E. Porter, "The Competitive Advantage of Nations," Harvard Business Review (1990) — 原典論文' },
       { url: 'https://saylordotorg.github.io/text_fundamentals-of-global-strategy/s04-03-clustering-porter-s-national-d.html', type: 'academic', label: 'Saylor Academy open textbook — "Clustering: Porter\'s National Diamond"' },
@@ -33728,7 +33728,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ロジャー・シルバーストーン ／ エリック・ハーシュ ／ デヴィッド・モーレイ ／ レスリー・ハドン',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/25008143', type: 'academic', label: 'Silverstone, R. & Hirsch, E. (eds.) (1992) Consuming Technologies: Media and Information in Domestic Spaces — Routledge (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/25008143', type: 'reference', label: 'Silverstone, R. & Hirsch, E. (eds.) (1992) Consuming Technologies: Media and Information in Domestic Spaces — Routledge (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Domestication_(media)', type: 'reference', label: 'Wikipedia: Domestication of technology — Silverstone/Hirsch/Morley, appropriation/objectification/incorporation/conversion, moral economy' },
     ],
   },
@@ -33764,7 +33764,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'マイケル・ポーター ／ ダニー・ミラー ／ チャールズ・ヒル ／ ロバート・マイルズ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/5726400', type: 'academic', label: 'Porter, M.E. (1980) Competitive Strategy: Techniques for Analyzing Industries and Competitors — Free Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/5726400', type: 'reference', label: 'Porter, M.E. (1980) Competitive Strategy: Techniques for Analyzing Industries and Competitors — Free Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Porter%27s_generic_strategies', type: 'reference', label: 'Wikipedia: Porters generic strategies — cost leadership, differentiation, focus, stuck in the middle' },
     ],
   },
@@ -33800,7 +33800,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'レイモンド・ウィリアムズ ／ マーシャル・マクルーハン ／ ロジャー・シルバーストーン ／ リン・スピーゲル',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/1085898', type: 'academic', label: 'Williams, R. (1974) Television: Technology and Cultural Form — Fontana (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/1085898', type: 'reference', label: 'Williams, R. (1974) Television: Technology and Cultural Form — Fontana (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Mobile_privatization', type: 'reference', label: 'Wikipedia: Mobile privatization — Williams, mobility and privatization, broadcasting, critique of technological determinism' },
     ],
   },
@@ -33836,7 +33836,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ヘンリー・ミンツバーグ ／ マックス・ウェーバー ／ ジョーン・ウッドワード ／ トム・バーンズ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/4136131', type: 'academic', label: 'Mintzberg, H. (1979) The Structuring of Organizations — Prentice-Hall (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/4136131', type: 'reference', label: 'Mintzberg, H. (1979) The Structuring of Organizations — Prentice-Hall (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Henry_Mintzberg#Organizational_configurations', type: 'reference', label: 'Wikipedia: Mintzberg organizational configurations — simple/machine/professional/divisional/adhocracy, coordination mechanisms' },
     ],
   },
@@ -33848,7 +33848,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ドナルド・ブロードベント ／ コリン・チェリー ／ アン・トライスマン ／ J・A・ドイチュ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/598382', type: 'academic', label: 'Broadbent, D.E. (1958) Perception and Communication — Pergamon Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/598382', type: 'reference', label: 'Broadbent, D.E. (1958) Perception and Communication — Pergamon Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Broadbent%27s_filter_model_of_attention', type: 'reference', label: 'Wikipedia: Broadbents filter model — early selection, dichotic listening, bottleneck, Treisman attenuation' },
     ],
   },
@@ -33872,7 +33872,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ギー・ドゥボール ／ 状況主義インターナショナル ／ カール・マルクス ／ ジャン・ボードリヤール',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/30736961', type: 'academic', label: 'Debord, G. (1967) La Société du spectacle (The Society of the Spectacle) — Buchet-Chastel (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/30736961', type: 'reference', label: 'Debord, G. (1967) La Société du spectacle (The Society of the Spectacle) — Buchet-Chastel (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/The_Society_of_the_Spectacle', type: 'reference', label: 'Wikipedia: The Society of the Spectacle — Debord, Situationist, social relation mediated by images, consumer society' },
     ],
   },
@@ -33949,7 +33949,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'シェリー・タークル ／ シーモア・パパート ／ ジョセフ・ワイゼンバウム ／ マーヴィン・ミンスキー',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/9946048', type: 'academic', label: 'Turkle, S. (1984) The Second Self: Computers and the Human Spirit — Simon & Schuster (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/9946048', type: 'reference', label: 'Turkle, S. (1984) The Second Self: Computers and the Human Spirit — Simon & Schuster (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Sherry_Turkle', type: 'reference', label: 'Wikipedia: Sherry Turkle / The Second Self — computer as evocative object, identity, mind, second self' },
     ],
   },
@@ -33985,7 +33985,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'フランシス・アギラー ／ リアム・フェイヒー ／ ジェリー・ジョンソン ／ ケヴァン・スコールズ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/385778', type: 'academic', label: 'Aguilar, F.J. (1967) Scanning the Business Environment — Macmillan; ETPS (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/385778', type: 'reference', label: 'Aguilar, F.J. (1967) Scanning the Business Environment — Macmillan; ETPS (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/PEST_analysis', type: 'reference', label: 'Wikipedia: PEST/PESTEL analysis — Aguilar, political/economic/social/technological/environmental/legal, macro-environment' },
     ],
   },
@@ -34057,7 +34057,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ロバート・キャンプ ／ マイケル・スペンドリーニ ／ グレゴリー・ワトソン ／ デヴィッド・カーンズ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/19222137', type: 'academic', label: 'Camp, R.C. (1989) Benchmarking: The Search for Industry Best Practices That Lead to Superior Performance — ASQC Quality Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/19222137', type: 'reference', label: 'Camp, R.C. (1989) Benchmarking: The Search for Industry Best Practices That Lead to Superior Performance — ASQC Quality Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Benchmarking', type: 'reference', label: 'Wikipedia: Benchmarking — Camp, Xerox, best practices, internal/competitive/functional/generic, continuous improvement' },
     ],
   },
@@ -34069,7 +34069,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アリエン・マック ／ アーヴィン・ロック ／ ダニエル・シモンズ ／ クリストファー・チャブリス',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/38966531', type: 'academic', label: 'Mack, A. & Rock, I. (1998) Inattentional Blindness — MIT Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/38966531', type: 'reference', label: 'Mack, A. & Rock, I. (1998) Inattentional Blindness — MIT Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Inattentional_blindness', type: 'reference', label: 'Wikipedia: Inattentional blindness — Mack & Rock, invisible gorilla, Simons & Chabris, attention and perception' },
     ],
   },
@@ -34093,7 +34093,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アンソニー・ギデンズ ／ ハロルド・イニス ／ デイヴィッド・ハーヴェイ ／ マヌエル・カステル',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/11444856', type: 'academic', label: 'Giddens, A. (1984) The Constitution of Society — Polity Press; time-space distanciation (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/11444856', type: 'reference', label: 'Giddens, A. (1984) The Constitution of Society — Polity Press; time-space distanciation (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Time%E2%80%93space_distanciation', type: 'reference', label: 'Wikipedia: Time–space distanciation — Giddens, disembedding, symbolic tokens, expert systems, modernity' },
     ],
   },
@@ -34129,7 +34129,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: '大野耐一 ／ 豊田英二 ／ 新郷重夫 ／ 豊田佐吉',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/19589142', type: 'academic', label: 'Ohno, T. (1988) Toyota Production System: Beyond Large-Scale Production — Productivity Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/19589142', type: 'reference', label: 'Ohno, T. (1988) Toyota Production System: Beyond Large-Scale Production — Productivity Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Just-in-time_manufacturing', type: 'reference', label: 'Wikipedia: Just-in-time manufacturing — Ohno, Toyota Production System, pull/kanban, waste elimination, lean' },
     ],
   },
@@ -34214,7 +34214,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アラン・パイビオ ／ リチャード・メイヤー ／ ジェームズ・クラーク ／ ジョン・アンダーソン',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/12235651', type: 'academic', label: 'Paivio, A. (1986) Mental Representations: A Dual Coding Approach — Oxford University Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/12235651', type: 'reference', label: 'Paivio, A. (1986) Mental Representations: A Dual Coding Approach — Oxford University Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Dual-coding_theory', type: 'reference', label: 'Wikipedia: Dual-coding theory — Paivio, verbal/imagery systems, logogens/imagens, picture superiority, concreteness' },
     ],
   },
@@ -34238,7 +34238,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'クリス・アンダーソン ／ エリック・ブリニョルフソン ／ アニタ・エルバース ／ クレイ・シャーキー',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/64453479', type: 'academic', label: 'Anderson, C. (2006) The Long Tail: Why the Future of Business Is Selling Less of More — Hyperion (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/64453479', type: 'reference', label: 'Anderson, C. (2006) The Long Tail: Why the Future of Business Is Selling Less of More — Hyperion (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Long_tail', type: 'reference', label: 'Wikipedia: Long tail — Anderson, niche aggregation, low distribution costs, Amazon/Netflix, Elberse critique' },
     ],
   },
@@ -34262,7 +34262,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ロバート・マンデル ／ ハリー・ジョンソン ／ ジェイコブ・フレンケル ／ デイヴィッド・ヒューム',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/2331668', type: 'academic', label: 'Frenkel, J.A. & Johnson, H.G. (eds.) (1976) The Monetary Approach to the Balance of Payments — Allen & Unwin (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/2331668', type: 'reference', label: 'Frenkel, J.A. & Johnson, H.G. (eds.) (1976) The Monetary Approach to the Balance of Payments — Allen & Unwin (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Monetary_approach_to_the_balance_of_payments', type: 'reference', label: 'Wikipedia: Monetary approach to the balance of payments — Mundell, Johnson, money demand/supply, Hume specie-flow' },
     ],
   },
@@ -34274,7 +34274,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: '今井正明 ／ 大野耐一 ／ W・エドワーズ・デミング ／ 新郷重夫',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/13096733', type: 'academic', label: 'Imai, M. (1986) Kaizen: The Key to Japans Competitive Success — McGraw-Hill (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/13096733', type: 'reference', label: 'Imai, M. (1986) Kaizen: The Key to Japans Competitive Success — McGraw-Hill (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Kaizen', type: 'reference', label: 'Wikipedia: Kaizen — Imai, continuous incremental improvement, everyone participates, Toyota Production System, PDCA' },
     ],
   },
@@ -34286,7 +34286,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ケオスのシモニデス ／ キケロ ／ クインティリアヌス ／ フランシス・イェイツ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/235660', type: 'academic', label: 'Yates, F.A. (1966) The Art of Memory — University of Chicago Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/235660', type: 'reference', label: 'Yates, F.A. (1966) The Art of Memory — University of Chicago Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Method_of_loci', type: 'reference', label: 'Wikipedia: Method of loci — Simonides, memory palace, spatial memory, Roman rhetoric, memory champions' },
     ],
   },
@@ -34310,7 +34310,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アクセル・ブランス ／ アルビン・トフラー ／ ヨハイ・ベンクラー ／ ヘンリー・ジェンキンス',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/166358264', type: 'academic', label: 'Bruns, A. (2008) Blogs, Wikipedia, Second Life, and Beyond: From Production to Produsage — Peter Lang (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/166358264', type: 'reference', label: 'Bruns, A. (2008) Blogs, Wikipedia, Second Life, and Beyond: From Production to Produsage — Peter Lang (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Produsage', type: 'reference', label: 'Wikipedia: Produsage — Bruns, producer/user, open participation, heterarchy, unfinished artifacts, prosumer' },
     ],
   },
@@ -34346,7 +34346,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: '大前研一 ／ マイケル・ポーター ／ セオドア・レビット ／ ヘンリー・ミンツバーグ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/8170169', type: 'academic', label: 'Ohmae, K. (1982) The Mind of the Strategist: The Art of Japanese Business — McGraw-Hill (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/8170169', type: 'reference', label: 'Ohmae, K. (1982) The Mind of the Strategist: The Art of Japanese Business — McGraw-Hill (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/3C%27s_model', type: 'reference', label: 'Wikipedia: 3Cs model — Ohmae, customer/company/competition, strategic triangle' },
       { url: 'https://www.mindtools.com/avi3qka/ohmaes-3cs-model/', type: 'reference', label: 'MindTools — Ohmae\'s 3Cs Model' },
       { url: 'https://keiei-shinri.or.jp/word/3c/', type: 'reference', label: '一般社団法人日本経営心理士協会 — 3C分析' },
@@ -34399,7 +34399,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アルフレッド・マーシャル ／ アバ・ラーナー ／ ジョーン・ロビンソン ／ ゴットフリート・ハーバラー',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/1296599', type: 'academic', label: 'Lerner, A.P. (1944) The Economics of Control — Macmillan; Marshall-Lerner condition (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/1296599', type: 'reference', label: 'Lerner, A.P. (1944) The Economics of Control — Macmillan; Marshall-Lerner condition (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Marshall%E2%80%93Lerner_condition', type: 'reference', label: 'Wikipedia: Marshall–Lerner condition — elasticities sum > 1, depreciation, trade balance, J-curve' },
     ],
   },
@@ -34423,7 +34423,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アンリ・ファヨール ／ フレデリック・テイラー ／ リンダル・アーウィック ／ ルーサー・ギューリック',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/1392559', type: 'academic', label: 'Fayol, H. (1916/1949) General and Industrial Management — Pitman (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/1392559', type: 'reference', label: 'Fayol, H. (1916/1949) General and Industrial Management — Pitman (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Henri_Fayol', type: 'reference', label: 'Wikipedia: Henri Fayol — five functions of management, 14 principles, administrative theory, POSDCORB' },
     ],
   },
@@ -34471,7 +34471,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョン・メイナード・ケインズ ／ アーヴィング・フィッシャー ／ アバ・ラーナー ／ ジョーン・ロビンソン',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/180851', type: 'academic', label: 'Keynes, J.M. (1936) The General Theory of Employment, Interest and Money — Ch. 11, Marginal Efficiency of Capital (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/180851', type: 'reference', label: 'Keynes, J.M. (1936) The General Theory of Employment, Interest and Money — Ch. 11, Marginal Efficiency of Capital (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Marginal_efficiency_of_capital', type: 'reference', label: 'Wikipedia: Marginal efficiency of capital — Keynes, expected yield vs interest rate, animal spirits, investment' },
     ],
   },
@@ -34483,7 +34483,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ポール・サミュエルソン ／ ジョン・メイナード・ケインズ ／ アルヴィン・ハンセン ／ ジョン・ヒックス',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/166603', type: 'academic', label: 'Samuelson, P.A. (1948) Economics: An Introductory Analysis — McGraw-Hill; 45-degree diagram (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/166603', type: 'reference', label: 'Samuelson, P.A. (1948) Economics: An Introductory Analysis — McGraw-Hill; 45-degree diagram (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Keynesian_cross', type: 'reference', label: 'Wikipedia: Keynesian cross — Samuelson, aggregate expenditure, 45-degree line, multiplier, paradox of thrift' },
     ],
   },
@@ -34507,7 +34507,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ヘルマン・エビングハウス ／ ハリー・バーリック ／ フィリップ・バラード ／ ヤープ・ムル',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/1373773', type: 'academic', label: 'Ebbinghaus, H. (1885) Über das Gedächtnis (Memory: A Contribution to Experimental Psychology) (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/1373773', type: 'reference', label: 'Ebbinghaus, H. (1885) Über das Gedächtnis (Memory: A Contribution to Experimental Psychology) (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Forgetting_curve', type: 'reference', label: 'Wikipedia: Forgetting curve — Ebbinghaus, nonsense syllables, savings, overlearning, spaced repetition' },
     ],
   },
@@ -34531,7 +34531,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョン・メイナード・ケインズ ／ ジョン・ヒックス ／ ジェームズ・トービン ／ デニス・ロバートソン',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/180851', type: 'academic', label: 'Keynes, J.M. (1936) The General Theory of Employment, Interest and Money — Macmillan (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/180851', type: 'reference', label: 'Keynes, J.M. (1936) The General Theory of Employment, Interest and Money — Macmillan (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Liquidity_preference', type: 'reference', label: 'Wikipedia: Liquidity preference — Keynes, transactions/precautionary/speculative motives, interest rate' },
     ],
   },
@@ -34543,7 +34543,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アーヴィング・フィッシャー ／ ジャック・ハーシュライファー ／ フランコ・モディリアーニ ／ マートン・ミラー',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/977657', type: 'academic', label: 'Fisher, I. (1930) The Theory of Interest — Macmillan (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/977657', type: 'reference', label: 'Fisher, I. (1930) The Theory of Interest — Macmillan (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Fisher_separation_theorem', type: 'reference', label: 'Wikipedia: Fisher separation theorem — investment vs consumption decision, present value maximization, capital market' },
     ],
   },
@@ -34555,7 +34555,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'メレディス・ベルビン ／ ラルフ・ストッグディル ／ ブルース・タックマン ／ J・リチャード・ハックマン',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/7948526', type: 'academic', label: 'Belbin, R.M. (1981) Management Teams: Why They Succeed or Fail — Heinemann (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/7948526', type: 'reference', label: 'Belbin, R.M. (1981) Management Teams: Why They Succeed or Fail — Heinemann (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Team_Role_Inventories', type: 'reference', label: 'Wikipedia: Belbin team roles — nine roles, action/people/thinking, allowable weakness, Apollo syndrome' },
     ],
   },
@@ -34627,7 +34627,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'フレデリック・バートレット ／ エリザベス・ロフタス ／ ウルリック・ナイサー ／ ジャン・ピアジェ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/179702', type: 'academic', label: 'Bartlett, F.C. (1932) Remembering: A Study in Experimental and Social Psychology — Cambridge UP (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/179702', type: 'reference', label: 'Bartlett, F.C. (1932) Remembering: A Study in Experimental and Social Psychology — Cambridge UP (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Reconstructive_memory', type: 'reference', label: 'Wikipedia: Reconstructive memory — Bartlett, War of the Ghosts, schema, systematic distortion' },
     ],
   },
@@ -34651,7 +34651,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'マーシャル・マクルーハン ／ ハロルド・イニス ／ レイモンド・ウィリアムズ ／ ラングドン・ウィナー',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/45198868', type: 'academic', label: 'McLuhan, M. (1964) Understanding Media: The Extensions of Man — McGraw-Hill (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/45198868', type: 'reference', label: 'McLuhan, M. (1964) Understanding Media: The Extensions of Man — McGraw-Hill (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Technological_determinism', type: 'reference', label: 'Wikipedia: Technological determinism — McLuhan, Innis, medium is the message, global village, social construction critique' },
     ],
   },
@@ -34675,7 +34675,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アヴィナッシュ・ディキシット ／ ロバート・ピンディック ／ マイケル・ブレナン ／ エドゥアルド・シュワルツ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/29361643', type: 'academic', label: 'Dixit, A.K. & Pindyck, R.S. (1994) Investment under Uncertainty — Princeton University Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/29361643', type: 'reference', label: 'Dixit, A.K. & Pindyck, R.S. (1994) Investment under Uncertainty — Princeton University Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Real_options_valuation', type: 'reference', label: 'Wikipedia: Real options / irreversible investment — Dixit & Pindyck, option value of waiting, NPV wedge' },
     ],
   },
@@ -34687,7 +34687,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ロバート・ブレイク ／ ジェーン・ムートン ／ ラルフ・ストッグディル ／ レンシス・リッカート',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/345922', type: 'academic', label: 'Blake, R.R. & Mouton, J.S. (1964) The Managerial Grid — Gulf Publishing (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/345922', type: 'reference', label: 'Blake, R.R. & Mouton, J.S. (1964) The Managerial Grid — Gulf Publishing (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Managerial_grid_model', type: 'reference', label: 'Wikipedia: Managerial grid model — Blake & Mouton, concern for production/people, team management 9,9' },
     ],
   },
@@ -34747,7 +34747,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ヴィクター・ブルーム ／ フィリップ・イェットン ／ アーサー・ジャゴ ／ ロバート・タンネンバウム',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/759939', type: 'academic', label: 'Vroom, V.H. & Yetton, P.W. (1973) Leadership and Decision-Making — University of Pittsburgh Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/759939', type: 'reference', label: 'Vroom, V.H. & Yetton, P.W. (1973) Leadership and Decision-Making — University of Pittsburgh Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Vroom%E2%80%93Yetton_decision_model', type: 'reference', label: 'Wikipedia: Vroom–Yetton decision model — five decision styles, decision tree, participation, normative' },
     ],
   },
@@ -34783,7 +34783,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ヘンリー・ジェンキンス ／ サム・フォード ／ ジョシュア・グリーン ／ ピエール・レヴィ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/779263182', type: 'academic', label: 'Jenkins, H., Ford, S. & Green, J. (2013) Spreadable Media: Creating Value and Meaning in a Networked Culture — NYU Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/779263182', type: 'reference', label: 'Jenkins, H., Ford, S. & Green, J. (2013) Spreadable Media: Creating Value and Meaning in a Networked Culture — NYU Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Spreadable_media', type: 'reference', label: 'Wikipedia: Spreadable media — Jenkins/Ford/Green, vs viral, spreadability vs stickiness, participatory circulation' },
     ],
   },
@@ -34797,7 +34797,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-09',
     sources: [
       { url: 'https://doi.org/10.2307/2224835', type: 'academic', label: 'Kaldor, N. (1939) Welfare Propositions of Economics and Interpersonal Comparisons of Utility — Economic Journal 49(195)（原典）' },
-      { url: 'https://search.worldcat.org/title/140528', type: 'academic', label: 'Sen, A. K. (1970) Collective Choice and Social Welfare — Holden-Day（WorldCat）' },
+      { url: 'https://search.worldcat.org/title/140528', type: 'reference', label: 'Sen, A. K. (1970) Collective Choice and Social Welfare — Holden-Day（WorldCat）' },
       { url: 'https://en.wikipedia.org/wiki/Kaldor%E2%80%93Hicks_efficiency', type: 'reference', label: 'Wikipedia: Kaldor–Hicks efficiency — 潜在的パレート改善、シトフスキーのパラドックス' },
       { url: 'https://en.wikipedia.org/wiki/Welfare_economics', type: 'reference', label: 'Wikipedia: Welfare economics — 厚生経済学の基本定理と補償原理' },
     ],
@@ -34810,7 +34810,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アーサー・ピグー ／ アルフレッド・マーシャル ／ ロナルド・コース ／ ウィリアム・ボーモル',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/156968', type: 'academic', label: 'Pigou, A.C. (1920) The Economics of Welfare — Macmillan (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/156968', type: 'reference', label: 'Pigou, A.C. (1920) The Economics of Welfare — Macmillan (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Pigouvian_tax', type: 'reference', label: 'Wikipedia: Pigouvian tax — externality, private vs social cost, internalization, carbon tax, vs Coase' },
     ],
   },
@@ -34882,7 +34882,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ヘンリー・ミンツバーグ ／ ローズマリー・スチュワート ／ ジョン・コッター ／ アンリ・ファヨール',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/653927', type: 'academic', label: 'Mintzberg, H. (1973) The Nature of Managerial Work — Harper & Row (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/653927', type: 'reference', label: 'Mintzberg, H. (1973) The Nature of Managerial Work — Harper & Row (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Henry_Mintzberg', type: 'reference', label: 'Wikipedia: Mintzbergs managerial roles — interpersonal/informational/decisional, ten roles, structured observation' },
     ],
   },
@@ -34918,7 +34918,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アレクサンダー・ギャロウェイ ／ ジル・ドゥルーズ ／ ミシェル・フーコー ／ ユージン・サッカー',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/52312371', type: 'academic', label: 'Galloway, A.R. (2004) Protocol: How Control Exists After Decentralization — MIT Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/52312371', type: 'reference', label: 'Galloway, A.R. (2004) Protocol: How Control Exists After Decentralization — MIT Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Protocol_(book)', type: 'reference', label: 'Wikipedia: Protocol (Galloway) — TCP/IP distributed, DNS hierarchical, control after decentralization, Deleuze' },
     ],
   },
@@ -34944,7 +34944,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'クレイグ・ピアース ／ ジェイ・コンガー ／ チャールズ・マンツ ／ ヘンリー・シムズ',
     asOf: '2026-06-27',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/49942939', type: 'academic', label: 'Pearce, C.L. & Conger, J.A. (2003) Shared Leadership: Reframing the Hows and Whys of Leadership — Sage (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/49942939', type: 'reference', label: 'Pearce, C.L. & Conger, J.A. (2003) Shared Leadership: Reframing the Hows and Whys of Leadership — Sage (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Shared_leadership', type: 'reference', label: 'Wikipedia: Shared leadership — Pearce & Conger, distributed influence, rotating leadership, knowledge work' },
     ],
   },
@@ -35016,7 +35016,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ダグラス・マグレガー ／ アブラハム・マズロー ／ レンシス・リッカート ／ ウィリアム・オオウチ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/256632', type: 'academic', label: 'McGregor, D. (1960) The Human Side of Enterprise — McGraw-Hill (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/256632', type: 'reference', label: 'McGregor, D. (1960) The Human Side of Enterprise — McGraw-Hill (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Theory_X_and_Theory_Y', type: 'reference', label: 'Wikipedia: Theory X and Theory Y — McGregor, managerial assumptions, Maslow, self-fulfilling prophecy' },
     ],
   },
@@ -35052,7 +35052,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ローレンス・レッシグ ／ ジョエル・ライデンバーグ ／ ジョン・ペリー・バーロウ ／ ヨハイ・ベンクラー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/40340890', type: 'academic', label: 'Lessig, L. (1999) Code and Other Laws of Cyberspace — Basic Books (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/40340890', type: 'reference', label: 'Lessig, L. (1999) Code and Other Laws of Cyberspace — Basic Books (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Lawrence_Lessig#Code_and_Other_Laws_of_Cyberspace', type: 'reference', label: 'Wikipedia: Code is law — Lessig, four modalities of regulation, architecture/code, cyber-libertarianism critique' },
     ],
   },
@@ -35112,7 +35112,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'オスカー・ガンディ・ジュニア ／ ミシェル・フーコー ／ デヴィッド・ライアン ／ ショシャナ・ズボフ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/27266286', type: 'academic', label: 'Gandy, O.H. (1993) The Panoptic Sort: A Political Economy of Personal Information — Westview Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/27266286', type: 'reference', label: 'Gandy, O.H. (1993) The Panoptic Sort: A Political Economy of Personal Information — Westview Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Oscar_H._Gandy_Jr.', type: 'reference', label: 'Wikipedia: Oscar H. Gandy Jr. — panoptic sort, data-based discriminatory sorting, surveillance, Foucault' },
     ],
   },
@@ -35148,7 +35148,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ロバート・ハウス ／ マックス・ウェーバー ／ バーナード・バス ／ ボアス・シャミル',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/2729158', type: 'academic', label: 'House, R.J. (1977) A 1976 Theory of Charismatic Leadership — in Leadership: The Cutting Edge (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/2729158', type: 'reference', label: 'House, R.J. (1977) A 1976 Theory of Charismatic Leadership — in Leadership: The Cutting Edge (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Charismatic_authority', type: 'reference', label: 'Wikipedia: Charismatic leadership — House, Weber, vision, follower attribution, transformational leadership' },
     ],
   },
@@ -35232,7 +35232,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'メアリー・エインズワース ／ ジョン・ボウルビィ ／ メアリー・メイン ／ エヴェレット・ウォーターズ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/3517064', type: 'academic', label: 'Ainsworth, M.D.S. et al. (1978) Patterns of Attachment: A Psychological Study of the Strange Situation — Erlbaum (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/3517064', type: 'reference', label: 'Ainsworth, M.D.S. et al. (1978) Patterns of Attachment: A Psychological Study of the Strange Situation — Erlbaum (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Strange_situation', type: 'reference', label: 'Wikipedia: Strange situation — Ainsworth, secure/avoidant/resistant/disorganized, secure base, Bowlby' },
     ],
   },
@@ -35256,7 +35256,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'フランク・ウェブスター ／ ダニエル・ベル ／ マヌエル・カステル ／ ハーバート・シラー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/31518673', type: 'academic', label: 'Webster, F. (1995) Theories of the Information Society — Routledge (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/31518673', type: 'reference', label: 'Webster, F. (1995) Theories of the Information Society — Routledge (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Information_society', type: 'reference', label: 'Wikipedia: Information society — Webster, five definitions, continuity vs discontinuity, critique' },
     ],
   },
@@ -35305,7 +35305,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ノーム・チョムスキー ／ スティーブン・ピンカー ／ エリック・レネバーグ ／ エリック・ワナー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/309976', type: 'academic', label: 'Chomsky, N. (1965) Aspects of the Theory of Syntax — MIT Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/309976', type: 'reference', label: 'Chomsky, N. (1965) Aspects of the Theory of Syntax — MIT Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Universal_grammar', type: 'reference', label: 'Wikipedia: Universal grammar — Chomsky, language acquisition device, poverty of the stimulus, nativism' },
     ],
   },
@@ -35353,7 +35353,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ブルース・ヘンダーソン ／ T・P・ライト ／ ケネス・アロー ／ パンカジ・ゲマワット',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/4515065', type: 'academic', label: 'Henderson, B.D. (1968/1973) The Experience Curve — Boston Consulting Group Perspectives (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/4515065', type: 'reference', label: 'Henderson, B.D. (1968/1973) The Experience Curve — Boston Consulting Group Perspectives (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Experience_curve_effects', type: 'reference', label: 'Wikipedia: Experience curve effects — Henderson, BCG, Wright learning curve, cumulative production, cost decline' },
     ],
   },
@@ -35401,7 +35401,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ロナルド・バート ／ マーク・グラノヴェッター ／ ジェームズ・コールマン ／ ゲオルク・ジンメル',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/25008425', type: 'academic', label: 'Burt, R.S. (1992) Structural Holes: The Social Structure of Competition — Harvard University Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/25008425', type: 'reference', label: 'Burt, R.S. (1992) Structural Holes: The Social Structure of Competition — Harvard University Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Structural_holes', type: 'reference', label: 'Wikipedia: Structural holes — Burt, brokerage, tertius gaudens, information/control benefits, social capital' },
     ],
   },
@@ -35437,7 +35437,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'クリス・アージリス ／ ドナルド・ショーン ／ ピーター・センゲ ／ カール・ワイク',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/3415944', type: 'academic', label: 'Argyris, C. & Schön, D.A. (1978) Organizational Learning: A Theory of Action Perspective — Addison-Wesley (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/3415944', type: 'reference', label: 'Argyris, C. & Schön, D.A. (1978) Organizational Learning: A Theory of Action Perspective — Addison-Wesley (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Double-loop_learning', type: 'reference', label: 'Wikipedia: Double-loop learning — Argyris & Schön, governing variables, theory-in-use, Model I defensiveness' },
     ],
   },
@@ -35449,7 +35449,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'コンラート・ローレンツ ／ ニコ・ティンバーゲン ／ カール・フォン・フリッシュ ／ ウィリアム・ソープ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/657072', type: 'academic', label: 'Tinbergen, N. (1951) The Study of Instinct — Oxford University Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/657072', type: 'reference', label: 'Tinbergen, N. (1951) The Study of Instinct — Oxford University Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Fixed_action_pattern', type: 'reference', label: 'Wikipedia: Fixed action pattern — Lorenz, Tinbergen, sign stimulus, innate releasing mechanism, supranormal stimulus' },
     ],
   },
@@ -35497,7 +35497,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'カール・シャピロ ／ ハル・ヴァリアン ／ ポール・クレンペラー ／ ジョセフ・ファレル',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/39733830', type: 'academic', label: 'Shapiro, C. & Varian, H.R. (1999) Information Rules: A Strategic Guide to the Network Economy — HBS Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/39733830', type: 'reference', label: 'Shapiro, C. & Varian, H.R. (1999) Information Rules: A Strategic Guide to the Network Economy — HBS Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Switching_barriers', type: 'reference', label: 'Wikipedia: Switching costs / lock-in — Shapiro & Varian, installed base, market power, network effects' },
     ],
   },
@@ -35535,7 +35535,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ダナ・ハラウェイ ／ キャサリン・ヘイルズ ／ サディ・プラント ／ ブルーノ・ラトゥール',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/23656278', type: 'academic', label: 'Haraway, D. (1985/1991) A Cyborg Manifesto — in Simians, Cyborgs and Women (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/23656278', type: 'reference', label: 'Haraway, D. (1985/1991) A Cyborg Manifesto — in Simians, Cyborgs and Women (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/A_Cyborg_Manifesto', type: 'reference', label: 'Wikipedia: A Cyborg Manifesto — Haraway, cyberfeminism, dualisms, informatics of domination, posthumanism' },
     ],
   },
@@ -35571,7 +35571,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジェームズ・D・トンプソン ／ チャールズ・ペロー ／ ジェイ・ガルブレイス ／ ポール・ローレンス',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/240798', type: 'academic', label: 'Thompson, J.D. (1967) Organizations in Action — McGraw-Hill (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/240798', type: 'reference', label: 'Thompson, J.D. (1967) Organizations in Action — McGraw-Hill (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/James_D._Thompson', type: 'reference', label: 'Wikipedia: James D. Thompson — long-linked/mediating/intensive technology, pooled/sequential/reciprocal interdependence' },
     ],
   },
@@ -35583,7 +35583,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ロバート・スターンバーグ ／ ハワード・ガードナー ／ レイモンド・キャッテル ／ リンダ・ゴットフレッドソン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/11468492', type: 'academic', label: 'Sternberg, R.J. (1985) Beyond IQ: A Triarchic Theory of Human Intelligence — Cambridge UP (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/11468492', type: 'reference', label: 'Sternberg, R.J. (1985) Beyond IQ: A Triarchic Theory of Human Intelligence — Cambridge UP (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Triarchic_theory_of_intelligence', type: 'reference', label: 'Wikipedia: Triarchic theory of intelligence — Sternberg, analytical/creative/practical, successful intelligence' },
     ],
   },
@@ -35718,7 +35718,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'カール・ワイク ／ キャスリーン・サトクリフ ／ バーバラ・チャルニアフスカ ／ サリー・メイトリス',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/4135117', type: 'academic', label: 'Weick, K.E. (1979) The Social Psychology of Organizing — Addison-Wesley (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/4135117', type: 'reference', label: 'Weick, K.E. (1979) The Social Psychology of Organizing — Addison-Wesley (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Enactment_(psychology)', type: 'reference', label: 'Wikipedia: Enactment / sensemaking — Weick, enacted environment, enactment-selection-retention' },
     ],
   },
@@ -35766,7 +35766,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アンソニー・ダウンズ ／ ゴードン・タロック ／ ブライアン・カプラン ／ イリヤ・ソミン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/254163', type: 'academic', label: 'Downs, A. (1957) An Economic Theory of Democracy — Harper & Row (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/254163', type: 'reference', label: 'Downs, A. (1957) An Economic Theory of Democracy — Harper & Row (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Rational_ignorance', type: 'reference', label: 'Wikipedia: Rational ignorance — Downs, cost-benefit of information, voting, special interests' },
     ],
   },
@@ -35778,7 +35778,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アダム・スミス ／ シャーウィン・ローゼン ／ ロバート・E・B・ルーカス ／ ジョン・ヒックス',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/2304948', type: 'academic', label: 'Smith, A. (1776) An Inquiry into the Nature and Causes of the Wealth of Nations — Book I, Ch. 10 (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/2304948', type: 'reference', label: 'Smith, A. (1776) An Inquiry into the Nature and Causes of the Wealth of Nations — Book I, Ch. 10 (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Compensating_differential', type: 'reference', label: 'Wikipedia: Compensating differential — Adam Smith, net advantages, hedonic wages, Rosen' },
     ],
   },
@@ -35790,7 +35790,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジェイ・ガルブレイス ／ ジェームズ・トンプソン ／ マイケル・タッシュマン ／ デイヴィッド・ナドラー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/615372', type: 'academic', label: 'Galbraith, J.R. (1973) Designing Complex Organizations — Addison-Wesley (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/615372', type: 'reference', label: 'Galbraith, J.R. (1973) Designing Complex Organizations — Addison-Wesley (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Organizational_information_theory', type: 'reference', label: 'Wikipedia: Organizational information processing — Galbraith, uncertainty, slack, lateral relations, fit' },
     ],
   },
@@ -35850,7 +35850,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ゲイリー・ベッカー ／ ケネス・アロー ／ エドムンド・フェルプス ／ カーウィン・チャールズ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/658553', type: 'academic', label: 'Becker, G.S. (1957) The Economics of Discrimination — University of Chicago Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/658553', type: 'reference', label: 'Becker, G.S. (1957) The Economics of Discrimination — University of Chicago Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/The_Economics_of_Discrimination', type: 'reference', label: 'Wikipedia: The Economics of Discrimination — Becker, taste for discrimination, competition erodes discrimination' },
     ],
   },
@@ -35910,7 +35910,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジェフリー・ブレナン ／ ジェームズ・ブキャナン ／ ゴードン・タロック ／ ウォーレス・オーツ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/5946953', type: 'academic', label: 'Brennan, G. & Buchanan, J.M. (1980) The Power to Tax: Analytical Foundations of a Fiscal Constitution — Cambridge UP (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/5946953', type: 'reference', label: 'Brennan, G. & Buchanan, J.M. (1980) The Power to Tax: Analytical Foundations of a Fiscal Constitution — Cambridge UP (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Leviathan_(government)', type: 'reference', label: 'Wikipedia: Leviathan (public choice) — Brennan-Buchanan, revenue maximization, fiscal decentralization' },
     ],
   },
@@ -35922,7 +35922,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジェームズ・ブキャナン ／ アミルカレ・プヴィアーニ ／ リチャード・ワーグナー ／ ウェルナー・ポマレーネ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/394102', type: 'academic', label: 'Buchanan, J.M. (1967) Public Finance in Democratic Process — University of North Carolina Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/394102', type: 'reference', label: 'Buchanan, J.M. (1967) Public Finance in Democratic Process — University of North Carolina Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Fiscal_illusion', type: 'reference', label: 'Wikipedia: Fiscal illusion — Buchanan, Puviani, hidden taxes, deficit financing, flypaper effect' },
     ],
   },
@@ -35946,7 +35946,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'フィリップ・ジンバルドー ／ レオン・フェスティンガー ／ エド・ディーナー ／ スティーブン・ライカー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/1607616', type: 'academic', label: 'Festinger, L., Pepitone, A. & Newcomb, T. (1952) Some Consequences of De-Individuation in a Group — J. Abnormal & Social Psychology 47 (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/1607616', type: 'reference', label: 'Festinger, L., Pepitone, A. & Newcomb, T. (1952) Some Consequences of De-Individuation in a Group — J. Abnormal & Social Psychology 47 (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Deindividuation', type: 'reference', label: 'Wikipedia: Deindividuation — Zimbardo, anonymity, diffusion of responsibility, SIDE model' },
     ],
   },
@@ -35970,7 +35970,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ボニー・ナルディ ／ ヴィッキ・オデイ ／ グレゴリー・ベイトソン ／ マーシャル・マクルーハン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/40193223', type: 'academic', label: 'Nardi, B.A. & ODay, V.L. (1999) Information Ecologies: Using Technology with Heart — MIT Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/40193223', type: 'reference', label: 'Nardi, B.A. & ODay, V.L. (1999) Information Ecologies: Using Technology with Heart — MIT Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Information_ecology', type: 'reference', label: 'Wikipedia: Information ecology — Nardi & ODay, system of people/practices/values/technology, keystone species' },
     ],
   },
@@ -35982,7 +35982,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ラウル・プレビッシュ ／ ハンス・シンガー ／ アンドレ・グンダー・フランク ／ フェルナンド・エンリケ・カルドーゾ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/3030120', type: 'academic', label: 'Prebisch, R. (1950) The Economic Development of Latin America and Its Principal Problems — UN ECLA (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/3030120', type: 'reference', label: 'Prebisch, R. (1950) The Economic Development of Latin America and Its Principal Problems — UN ECLA (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Dependency_theory', type: 'reference', label: 'Wikipedia: Dependency theory — Prebisch-Singer, core-periphery, terms of trade, underdevelopment' },
     ],
   },
@@ -36042,7 +36042,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョシュア・メイロウィッツ ／ マーシャル・マクルーハン ／ アーヴィング・ゴッフマン ／ ウォルター・オング',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/11468029', type: 'academic', label: 'Meyrowitz, J. (1985) No Sense of Place: The Impact of Electronic Media on Social Behavior — Oxford UP (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/11468029', type: 'reference', label: 'Meyrowitz, J. (1985) No Sense of Place: The Impact of Electronic Media on Social Behavior — Oxford UP (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Joshua_Meyrowitz', type: 'reference', label: 'Wikipedia: Joshua Meyrowitz — medium theory, No Sense of Place, situations, front/back regions' },
     ],
   },
@@ -36066,7 +36066,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アルバート・ハーシュマン ／ ポール・ストリーテン ／ フランソワ・ペルー ／ グンナー・ミュルダール',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/192767', type: 'academic', label: 'Hirschman, A.O. (1958) The Strategy of Economic Development — Yale University Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/192767', type: 'reference', label: 'Hirschman, A.O. (1958) The Strategy of Economic Development — Yale University Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Unbalanced_growth', type: 'reference', label: 'Wikipedia: Unbalanced growth — Hirschman, backward/forward linkages, strategic sectors' },
     ],
   },
@@ -36078,7 +36078,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'レイモンド・マイルズ ／ チャールズ・スノー ／ ヘンリー・ミンツバーグ ／ ダニー・ミラー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/3650499', type: 'academic', label: 'Miles, R.E. & Snow, C.C. (1978) Organizational Strategy, Structure, and Process — McGraw-Hill (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/3650499', type: 'reference', label: 'Miles, R.E. & Snow, C.C. (1978) Organizational Strategy, Structure, and Process — McGraw-Hill (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Miles_and_Snow_strategic_typologies', type: 'reference', label: 'Wikipedia: Miles and Snow strategic typologies — Defenders/Prospectors/Analyzers/Reactors, adaptive cycle' },
     ],
   },
@@ -36178,7 +36178,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'エドワード・ハーマン ／ ノーム・チョムスキー ／ ウォルター・リップマン ／ ロバート・マクチェスニー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/17441737', type: 'academic', label: 'Herman, E.S. & Chomsky, N. (1988) Manufacturing Consent: The Political Economy of the Mass Media — Pantheon (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/17441737', type: 'reference', label: 'Herman, E.S. & Chomsky, N. (1988) Manufacturing Consent: The Political Economy of the Mass Media — Pantheon (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Propaganda_model', type: 'reference', label: 'Wikipedia: Propaganda model — Herman & Chomsky, five filters, ownership/advertising/sourcing/flak/ideology' },
     ],
   },
@@ -36250,7 +36250,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ウォルター・リップマン ／ エドワード・バーネイズ ／ ハロルド・ラスウェル ／ マックスウェル・マコームズ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/1297149', type: 'academic', label: 'Lippmann, W. (1922) Public Opinion — Harcourt Brace; pseudo-environment, stereotypes (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/1297149', type: 'reference', label: 'Lippmann, W. (1922) Public Opinion — Harcourt Brace; pseudo-environment, stereotypes (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Public_Opinion_(book)', type: 'reference', label: 'Wikipedia: Public Opinion (Lippmann) — pseudo-environment, pictures in our heads, stereotypes' },
     ],
   },
@@ -36322,7 +36322,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジェイ・デヴィッド・ボルター ／ リチャード・グルーシン ／ マーシャル・マクルーハン ／ レフ・マノヴィッチ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/39605388', type: 'academic', label: 'Bolter, J.D. & Grusin, R. (1999) Remediation: Understanding New Media — MIT Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/39605388', type: 'reference', label: 'Bolter, J.D. & Grusin, R. (1999) Remediation: Understanding New Media — MIT Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Remediation_(media)', type: 'reference', label: 'Wikipedia: Remediation (media) — Bolter & Grusin, immediacy, hypermediacy, double logic' },
     ],
   },
@@ -36514,7 +36514,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ヘンリー・ジェンキンス ／ ピエール・レヴィ ／ アクセル・ブランス ／ ジョン・フィスク',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/64594290', type: 'academic', label: 'Jenkins, H. (2006) Convergence Culture: Where Old and New Media Collide — NYU Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/64594290', type: 'reference', label: 'Jenkins, H. (2006) Convergence Culture: Where Old and New Media Collide — NYU Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Convergence_culture', type: 'reference', label: 'Wikipedia: Convergence culture — Jenkins, participatory culture, collective intelligence, transmedia' },
     ],
   },
@@ -36587,7 +36587,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'マーク・ポスター ／ ジャン・ボードリヤール ／ ミシェル・フーコー ／ マニュエル・カステル',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/21227851', type: 'academic', label: 'Poster, M. (1990) The Mode of Information: Poststructuralism and Social Context — Chicago UP (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/21227851', type: 'reference', label: 'Poster, M. (1990) The Mode of Information: Poststructuralism and Social Context — Chicago UP (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Mark_Poster', type: 'reference', label: 'Wikipedia: Mark Poster — mode of information, second media age, decentered subject, poststructuralism' },
     ],
   },
@@ -36627,7 +36627,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'デニス・オーガン ／ トーマス・ベイトマン ／ フィリップ・ポドサコフ ／ スコット・マッケンジー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/16755938', type: 'academic', label: 'Organ, D.W. (1988) Organizational Citizenship Behavior: The Good Soldier Syndrome — Lexington (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/16755938', type: 'reference', label: 'Organ, D.W. (1988) Organizational Citizenship Behavior: The Good Soldier Syndrome — Lexington (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Organizational_citizenship_behavior', type: 'reference', label: 'Wikipedia: Organizational citizenship behavior — Organ, extra-role, altruism/conscientiousness/civic virtue' },
     ],
   },
@@ -36663,7 +36663,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アーヴィング・ゴッフマン ／ ミシェル・フーコー ／ スタンレー・コーエン ／ マイケル・イグナティエフ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/353809', type: 'academic', label: 'Goffman, E. (1961) Asylums: Essays on the Social Situation of Mental Patients — Anchor (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/353809', type: 'reference', label: 'Goffman, E. (1961) Asylums: Essays on the Social Situation of Mental Patients — Anchor (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Total_institution', type: 'reference', label: 'Wikipedia: Total institution — Goffman, batch living, mortification of self, resocialization' },
     ],
   },
@@ -36675,7 +36675,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジョーン・ロビンソン ／ アラン・マニング ／ デヴィッド・カード ／ アラン・クルーガー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/152442', type: 'academic', label: 'Robinson, J. (1933) The Economics of Imperfect Competition — Macmillan; coins monopsony (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/152442', type: 'reference', label: 'Robinson, J. (1933) The Economics of Imperfect Competition — Macmillan; coins monopsony (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Monopsony', type: 'reference', label: 'Wikipedia: Monopsony — single buyer, marginal factor cost, labor markets, minimum wage' },
     ],
   },
@@ -36699,7 +36699,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'トム・バーンズ ／ G・M・ストーカー ／ ポール・ローレンス ／ ジェイ・ローシュ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/253045', type: 'academic', label: 'Burns, T. & Stalker, G.M. (1961) The Management of Innovation — Tavistock (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/253045', type: 'reference', label: 'Burns, T. & Stalker, G.M. (1961) The Management of Innovation — Tavistock (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Mechanistic_and_organic_systems', type: 'reference', label: 'Wikipedia: Mechanistic and organic systems — Burns & Stalker, environment fit, contingency theory' },
     ],
   },
@@ -36735,7 +36735,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'フリッツ・マハループ ／ マーク・ポラット ／ ダニエル・ベル ／ ピーター・ドラッカー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/491747', type: 'academic', label: 'Machlup, F. (1962) The Production and Distribution of Knowledge in the United States — Princeton UP (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/491747', type: 'reference', label: 'Machlup, F. (1962) The Production and Distribution of Knowledge in the United States — Princeton UP (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Fritz_Machlup', type: 'reference', label: 'Wikipedia: Fritz Machlup — knowledge industry, knowledge economy, information society measurement' },
     ],
   },
@@ -36759,7 +36759,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アーヴィング・フィッシャー ／ ミルトン・フリードマン ／ クヌート・ヴィクセル ／ ジョン・メイナード・ケインズ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/1297455', type: 'academic', label: 'Fisher, I. (1911) The Purchasing Power of Money — Macmillan; equation of exchange (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/1297455', type: 'reference', label: 'Fisher, I. (1911) The Purchasing Power of Money — Macmillan; equation of exchange (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Velocity_of_money', type: 'reference', label: 'Wikipedia: Velocity of money — equation of exchange, quantity theory, income velocity' },
     ],
   },
@@ -36834,7 +36834,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'フレッド・フィードラー ／ ジョセフ・ガルシア ／ ロバート・ハウス ／ ゲイリー・ユークル',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/263587', type: 'academic', label: 'Fiedler, F.E. (1967) A Theory of Leadership Effectiveness — McGraw-Hill (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/263587', type: 'reference', label: 'Fiedler, F.E. (1967) A Theory of Leadership Effectiveness — McGraw-Hill (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Fiedler_contingency_model', type: 'reference', label: 'Wikipedia: Fiedler contingency model — LPC scale, situational favorableness, task/relationship orientation' },
     ],
   },
@@ -36858,7 +36858,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'チャールズ・ホートン・クーリー ／ ジョージ・ハーバート・ミード ／ ハーバート・ブルーマー ／ アーヴィング・ゴッフマン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/1150090', type: 'academic', label: 'Cooley, C.H. (1902) Human Nature and the Social Order — Scribner; looking-glass self (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/1150090', type: 'reference', label: 'Cooley, C.H. (1902) Human Nature and the Social Order — Scribner; looking-glass self (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Looking-glass_self', type: 'reference', label: 'Wikipedia: Looking-glass self — Cooley, imagined judgment, symbolic interactionism' },
     ],
   },
@@ -36870,7 +36870,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'フィリップ・カガン ／ ミルトン・フリードマン ／ トーマス・サージェント ／ ルディガー・ドーンブッシュ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/123825', type: 'academic', label: 'Cagan, P. (1956) The Monetary Dynamics of Hyperinflation — in Friedman (ed.) Studies in the Quantity Theory of Money (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/123825', type: 'reference', label: 'Cagan, P. (1956) The Monetary Dynamics of Hyperinflation — in Friedman (ed.) Studies in the Quantity Theory of Money (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Hyperinflation', type: 'reference', label: 'Wikipedia: Hyperinflation — Cagan model, money demand, seigniorage, adaptive expectations' },
     ],
   },
@@ -36930,7 +36930,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ウィリアム・アイザック・トマス ／ ドロシー・スウェイン・トマス ／ ロバート・マートン ／ ハーバート・ブルーマー',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/1530574', type: 'academic', label: 'Thomas, W.I. & Thomas, D.S. (1928) The Child in America — Knopf; Thomas theorem (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/1530574', type: 'reference', label: 'Thomas, W.I. & Thomas, D.S. (1928) The Child in America — Knopf; Thomas theorem (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Thomas_theorem', type: 'reference', label: 'Wikipedia: Thomas theorem — definition of the situation, social construction, self-fulfilling prophecy' },
     ],
   },
@@ -36942,7 +36942,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'フランコ・モディリアーニ ／ リチャード・ブランバーグ ／ アルバート・アンドー ／ ミルトン・フリードマン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/651838929', type: 'academic', label: 'Modigliani, F. & Brumberg, R. (1954) Utility Analysis and the Consumption Function — Post-Keynesian Economics (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/651838929', type: 'reference', label: 'Modigliani, F. & Brumberg, R. (1954) Utility Analysis and the Consumption Function — Post-Keynesian Economics (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Life-cycle_hypothesis', type: 'reference', label: 'Wikipedia: Life-cycle hypothesis — Modigliani, consumption smoothing, saving and demographics' },
     ],
   },
@@ -37039,7 +37039,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ジャック・ブレーム ／ シャロン・ブレーム ／ ロバート・チャルディーニ ／ ジェームズ・ディラード',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://www.worldcat.org/oclc/255578', type: 'academic', label: 'Brehm, J.W. (1966) A Theory of Psychological Reactance — Academic Press (WorldCat)' },
+      { url: 'https://www.worldcat.org/oclc/255578', type: 'reference', label: 'Brehm, J.W. (1966) A Theory of Psychological Reactance — Academic Press (WorldCat)' },
       { url: 'https://en.wikipedia.org/wiki/Reactance_(psychology)', type: 'reference', label: 'Wikipedia: Reactance (psychology) — Brehm, threatened freedom, boomerang effect, forbidden fruit' },
     ],
   },
@@ -37272,7 +37272,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://doi.org/10.2307/1907187', type: 'academic', label: 'Arrow, K.J. (1950) A Difficulty in the Concept of Social Welfare — Journal of Political Economy 58(4)' },
       { url: 'https://en.wikipedia.org/wiki/Condorcet_paradox', type: 'reference', label: 'Wikipedia: Condorcet Paradox — voting cycle and intransitivity of majority rule' },
-      { url: 'https://search.worldcat.org/title/140528', type: 'academic', label: 'Sen, A.K. (1970) Collective Choice and Social Welfare — Holden-Day（Holden-Day, 1970, ISBN 978-0-8162-7765-0）' },
+      { url: 'https://search.worldcat.org/title/140528', type: 'reference', label: 'Sen, A.K. (1970) Collective Choice and Social Welfare — Holden-Day（Holden-Day, 1970, ISBN 978-0-8162-7765-0）' },
     ],
   },
   {
@@ -38562,7 +38562,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://www.bailii.org/ew/cases/EWHC/QB/1853/J72.html', type: 'government', label: 'Hochster v De La Tour [1853] EWHC QB J72 — anticipatory breach landmark' },
-      { url: 'https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405', type: 'academic', label: 'Peel, E. (2015) Anticipatory Breach — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397' },
+      { url: 'https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405', type: 'reference', label: 'Peel, E. (2015) Anticipatory Breach — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397' },
       { url: 'https://en.wikipedia.org/wiki/Anticipatory_repudiation', type: 'reference', label: 'Wikipedia: Anticipatory repudiation — pre-performance breach doctrine overview' },
     ],
   },
@@ -38815,7 +38815,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://www.bailii.org/uk/cases/UKSC/2015/67.html', type: 'government', label: 'Cavendish Square v El Makdessi [2015] UKSC 67 — penalty clause modern test' },
-      { url: 'https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405', type: 'academic', label: 'Peel, E. (2015) Remedies for Breach — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397' },
+      { url: 'https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405', type: 'reference', label: 'Peel, E. (2015) Remedies for Breach — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397' },
       { url: 'https://en.wikipedia.org/wiki/Penalty_clause', type: 'reference', label: 'Wikipedia: Penalty clause — liquidated damages and judicial control overview' },
     ],
   },
@@ -38870,7 +38870,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'エドウィン・ペール ／ ヒュー・コリンズ ／ ジョン・カータライト ／ アンドリュー・バロウズ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405', type: 'academic', label: 'Peel, E. (2015) Waiver and Estoppel — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397' },
+      { url: 'https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405', type: 'reference', label: 'Peel, E. (2015) Waiver and Estoppel — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397' },
       { url: 'https://doi.org/10.1093/law/9780198755166.001.0001', type: 'academic', label: 'Cartwright, J. (2016) Contract Law: An Introduction — 3rd ed., Hart Publishing' },
       { url: 'https://en.wikipedia.org/wiki/Waiver', type: 'reference', label: 'Wikipedia: Waiver — voluntary relinquishment of contractual rights overview' },
     ],
@@ -39091,7 +39091,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'エドウィン・ペール ／ ギュンター・トレーテル ／ ジョン・カータライト ／ アンドリュー・バロウズ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405', type: 'academic', label: 'Peel, E. (2015) Misrepresentation and Non-Disclosure — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397' },
+      { url: 'https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405', type: 'reference', label: 'Peel, E. (2015) Misrepresentation and Non-Disclosure — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397' },
       { url: 'https://www.legislation.gov.uk/ukpga/1967/7', type: 'government', label: 'UK Misrepresentation Act 1967 — statutory remedies for pre-contractual misstatements' },
       { url: 'https://en.wikipedia.org/wiki/Misrepresentation', type: 'reference', label: 'Wikipedia: Misrepresentation — false statement and contractual remedies overview' },
     ],
@@ -39144,7 +39144,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'デニング卿 ／ ジョン・カーター ／ アンドリュー・バロウズ ／ エドウィン・ペール',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405', type: 'academic', label: 'Peel, E. (2015) Treitel on the Law of Contract — 14th ed., Sweet & Maxwell, ISBN 9780414037397 (OCLC 910717405)' },
+      { url: 'https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405', type: 'reference', label: 'Peel, E. (2015) Treitel on the Law of Contract — 14th ed., Sweet & Maxwell, ISBN 9780414037397 (OCLC 910717405)' },
       { url: 'https://www.bailii.org/ew/cases/EWHC/KB/1947/1.html', type: 'government', label: 'Central London Property Trust v High Trees House [1947] KB 130 — promissory estoppel landmark' },
       { url: 'https://en.wikipedia.org/wiki/Estoppel', type: 'reference', label: 'Wikipedia: Estoppel — reliance-based preclusion doctrine overview' },
     ],
@@ -39346,7 +39346,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'アダム・グリーンフィールド ／ ロブ・キトチン ／ シャノン・マッターン ／ テイラー・シェルトン ／ マシュー・ゾック',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://search.worldcat.org/title/against-the-smart-city/oclc/869266837', type: 'academic', label: 'Greenfield, A. (2013) Against the Smart City — Do Projects' },
+      { url: 'https://search.worldcat.org/title/against-the-smart-city/oclc/869266837', type: 'reference', label: 'Greenfield, A. (2013) Against the Smart City — Do Projects' },
       { url: 'https://doi.org/10.1007/s10708-013-9516-8', type: 'academic', label: 'Kitchin, R. (2014) "The Real-Time City? Big Data and Smart Urbanism" — GeoJournal' },
       { url: 'https://en.wikipedia.org/wiki/Smart_city', type: 'reference', label: 'Wikipedia: Smart city — スマートシティの概念と批判的議論' },
     ],
@@ -39359,7 +39359,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ハーバート・グルーベル ／ ピーター・ロイド ／ ポール・クルーグマン ／ リオネル・フォンターニェ ／ マイケル・フロイデンベルク',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://catalog.hathitrust.org/Record/010552788', type: 'academic', label: 'Grubel, H. G. & Lloyd, P. J. (1975) Intra-Industry Trade: The Theory and Measurement of International Trade in Differentiated Products — Macmillan（HathiTrust 目録）' },
+      { url: 'https://catalog.hathitrust.org/Record/010552788', type: 'reference', label: 'Grubel, H. G. & Lloyd, P. J. (1975) Intra-Industry Trade: The Theory and Measurement of International Trade in Differentiated Products — Macmillan（HathiTrust 目録）' },
       { url: 'https://doi.org/10.1016/0022-1996(79)90017-5', type: 'academic', label: 'Krugman, P. (1979) "Increasing Returns, Monopolistic Competition, and International Trade" — JIE' },
       { url: 'https://en.wikipedia.org/wiki/Intra-industry_trade', type: 'reference', label: 'Wikipedia: Intra-industry trade — 産業内貿易の理論と測定' },
     ],
@@ -40818,7 +40818,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06-26',
     sources: [
       { url: 'https://www.wiley.com/en-us/Uberworked+and+Underpaid:+How+Workers+Are+Disrupting+the+Digital+Economy-p-9780745653563', type: 'academic', label: 'Scholz, T. (2016) Uberworked and Underpaid: How Workers Are Disrupting the Digital Economy — Polity Press（ISBN 978-0-7456-5356-3・初版ハードカバー）' },
-      { url: 'https://search.worldcat.org/title/Platform-capitalism/oclc/974841289', type: 'academic', label: 'Srnicek, N. (2017) Platform Capitalism — Polity Press（Polity, 2017, ISBN 978-1-5095-0487-9）' },
+      { url: 'https://search.worldcat.org/title/Platform-capitalism/oclc/974841289', type: 'reference', label: 'Srnicek, N. (2017) Platform Capitalism — Polity Press（Polity, 2017, ISBN 978-1-5095-0487-9）' },
       { url: 'https://en.wikipedia.org/wiki/Platform_cooperativism', type: 'reference', label: 'Wikipedia: Platform cooperativism — プラットフォーム協同組合主義の概要' },
     ],
   },
@@ -41615,7 +41615,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ニック・スルニチェク ／ ヴィリ・レヘドンヴィルタ ／ ジュリエット・スコア ／ トレバー・ショルツ',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://search.worldcat.org/title/Platform-capitalism/oclc/974841289', type: 'academic', label: 'Srnicek, N. (2017) Platform Capitalism — Polity Press（Polity, 2017, ISBN 978-1-5095-0487-9）' },
+      { url: 'https://search.worldcat.org/title/Platform-capitalism/oclc/974841289', type: 'reference', label: 'Srnicek, N. (2017) Platform Capitalism — Polity Press（Polity, 2017, ISBN 978-1-5095-0487-9）' },
       { url: 'https://en.wikipedia.org/wiki/Gig_economy', type: 'reference', label: 'Wikipedia: Gig economy — platform labor, independent contractors, algorithmic management' },
     ],
   },
@@ -45054,7 +45054,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ロジャー・トレイナー ／ ウィリアム・プロッサー ／ テリー・ドブス ／ 升田純',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://catalogue.nla.gov.au/Record/2648578', type: 'academic', label: 'Howells, G. G. (1993) Comparative Product Liability — Dartmouth（ISBN 978-1-85521-078-3・NLA 目録）' },
+      { url: 'https://catalogue.nla.gov.au/Record/2648578', type: 'reference', label: 'Howells, G. G. (1993) Comparative Product Liability — Dartmouth（ISBN 978-1-85521-078-3・NLA 目録）' },
       { url: 'https://en.wikipedia.org/wiki/Product_liability', type: 'reference', label: 'Wikipedia: Product liability — strict liability standard' },
     ],
   },
@@ -45150,7 +45150,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     keyFigures: 'ニック・スルニセク ／ アレックス・ロスエンブラット ／ アルン・サンドララジャン ／ ジャニス・フィン',
     asOf: '2026-06-26',
     sources: [
-      { url: 'https://search.worldcat.org/title/Platform-capitalism/oclc/974841289', type: 'academic', label: 'Srnicek, N. (2017). Platform Capitalism — Polity Press（Polity, 2017, ISBN 978-1-5095-0487-9）' },
+      { url: 'https://search.worldcat.org/title/Platform-capitalism/oclc/974841289', type: 'reference', label: 'Srnicek, N. (2017). Platform Capitalism — Polity Press（Polity, 2017, ISBN 978-1-5095-0487-9）' },
       { url: 'https://en.wikipedia.org/wiki/Gig_economy', type: 'reference', label: 'Wikipedia: Gig economy — platform labor and regulation' },
     ],
   },
@@ -46599,7 +46599,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     asOf: '2026-06',
     sources: [
       { url: 'https://en.wikipedia.org/wiki/Communication_accommodation_theory', type: 'reference', label: 'Wikipedia — Communication accommodation theory（収束・分岐・過剰適応の概説）' },
-      { url: 'https://www.ebsco.com/research-starters/communication-and-mass-media/communication-accommodation-theory-cat', type: 'academic', label: 'EBSCO Research Starters — Communication accommodation theory (CAT)' },
+      { url: 'https://www.ebsco.com/research-starters/communication-and-mass-media/communication-accommodation-theory-cat', type: 'reference', label: 'EBSCO Research Starters — Communication accommodation theory (CAT)' },
       { url: 'https://www.jstor.org/stable/i30029505', type: 'academic', label: 'Giles, H. (1973) "Accent Mobility: A Model and Some Data", Anthropological Linguistics 15(2), 87–105（原著論文が収録された巻号・JSTOR）' },
     ],
   },
@@ -46754,7 +46754,7 @@ export const VERIFIED_CONCEPTS: VerifiedConcept[] = [
     sources: [
       { url: 'https://en.wikipedia.org/wiki/Item_response_theory', type: 'reference', label: 'Wikipedia, "Item response theory" (definition, history, ICC, parameters, invariance, applications)' },
       { url: 'https://en.wikipedia.org/wiki/Georg_Rasch', type: 'reference', label: 'Wikipedia, "Georg Rasch" (1960 Probabilistic Models for Some Intelligence and Attainment Tests, specific objectivity, one-parameter logistic model)' },
-      { url: 'https://books.google.com/books/about/Statistical_Theories_of_Mental_Test_Scor.html?id=0nkMX_MqEQ4C', type: 'academic', label: 'Lord, F.M. & Novick, M.R. (1968) Statistical Theories of Mental Test Scores — Addison-Wesley (contains Birnbaum\'s logistic IRT chapters)' },
+      { url: 'https://books.google.com/books/about/Statistical_Theories_of_Mental_Test_Scor.html?id=0nkMX_MqEQ4C', type: 'reference', label: 'Lord, F.M. & Novick, M.R. (1968) Statistical Theories of Mental Test Scores — Addison-Wesley (contains Birnbaum\'s logistic IRT chapters)' },
     ],
   },
   {

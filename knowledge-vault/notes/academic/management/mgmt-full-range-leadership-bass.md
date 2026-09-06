@@ -26,7 +26,7 @@ aliases:
 バーナード・バス ／ ブルース・アボリオ ／ ジェームズ・マクレガー・バーンズ ／ ロバート・ハウス
 
 ## 出典
-- [Bass, B. M. & Avolio, B. J. (1994) Improving Organizational Effectiveness Through Transformational Leadership — Sage](https://www.worldcat.org/oclc/30736792) `学術`
+- [Bass, B. M. & Avolio, B. J. (1994) Improving Organizational Effectiveness Through Transformational Leadership — Sage](https://www.worldcat.org/oclc/30736792) `リファレンス`
 - [Wikipedia: Full range leadership model — transformational, transactional, laissez-faire, MLQ](https://en.wikipedia.org/wiki/Full_range_leadership_model) `リファレンス`
 
 ## 関連概念

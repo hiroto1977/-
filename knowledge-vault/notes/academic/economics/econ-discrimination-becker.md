@@ -26,7 +26,7 @@ aliases:
 ゲイリー・ベッカー ／ ケネス・アロー ／ エドムンド・フェルプス ／ カーウィン・チャールズ
 
 ## 出典
-- [Becker, G.S. (1957) The Economics of Discrimination — University of Chicago Press (WorldCat)](https://www.worldcat.org/oclc/658553) `学術`
+- [Becker, G.S. (1957) The Economics of Discrimination — University of Chicago Press (WorldCat)](https://www.worldcat.org/oclc/658553) `リファレンス`
 - [Wikipedia: The Economics of Discrimination — Becker, taste for discrimination, competition erodes discrimination](https://en.wikipedia.org/wiki/The_Economics_of_Discrimination) `リファレンス`
 
 ## 関連概念

@@ -26,7 +26,7 @@ aliases:
 アルフレッド・マーシャル ／ アバ・ラーナー ／ ジョーン・ロビンソン ／ ゴットフリート・ハーバラー
 
 ## 出典
-- [Lerner, A.P. (1944) The Economics of Control — Macmillan; Marshall-Lerner condition (WorldCat)](https://www.worldcat.org/oclc/1296599) `学術`
+- [Lerner, A.P. (1944) The Economics of Control — Macmillan; Marshall-Lerner condition (WorldCat)](https://www.worldcat.org/oclc/1296599) `リファレンス`
 - [Wikipedia: Marshall–Lerner condition — elasticities sum > 1, depreciation, trade balance, J-curve](https://en.wikipedia.org/wiki/Marshall%E2%80%93Lerner_condition) `リファレンス`
 
 ## 関連概念

@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Hochster v De La Tour [1853] EWHC QB J72 — anticipatory breach landmark](https://www.bailii.org/ew/cases/EWHC/QB/1853/J72.html) `公的`
-- [Peel, E. (2015) Anticipatory Breach — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397](https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405) `学術`
+- [Peel, E. (2015) Anticipatory Breach — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397](https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405) `リファレンス`
 - [Wikipedia: Anticipatory repudiation — pre-performance breach doctrine overview](https://en.wikipedia.org/wiki/Anticipatory_repudiation) `リファレンス`
 
 ## 関連概念

@@ -26,7 +26,7 @@ aliases:
 トム・バーンズ ／ G・M・ストーカー ／ ポール・ローレンス ／ ジェイ・ローシュ
 
 ## 出典
-- [Burns, T. & Stalker, G.M. (1961) The Management of Innovation — Tavistock (WorldCat)](https://www.worldcat.org/oclc/253045) `学術`
+- [Burns, T. & Stalker, G.M. (1961) The Management of Innovation — Tavistock (WorldCat)](https://www.worldcat.org/oclc/253045) `リファレンス`
 - [Wikipedia: Mechanistic and organic systems — Burns & Stalker, environment fit, contingency theory](https://en.wikipedia.org/wiki/Mechanistic_and_organic_systems) `リファレンス`
 
 ## 関連概念

@@ -26,7 +26,7 @@ aliases:
 カール・ワイク ／ キャスリーン・サトクリフ ／ バーバラ・チャルニアフスカ ／ サリー・メイトリス
 
 ## 出典
-- [Weick, K.E. (1979) The Social Psychology of Organizing — Addison-Wesley (WorldCat)](https://www.worldcat.org/oclc/4135117) `学術`
+- [Weick, K.E. (1979) The Social Psychology of Organizing — Addison-Wesley (WorldCat)](https://www.worldcat.org/oclc/4135117) `リファレンス`
 - [Wikipedia: Enactment / sensemaking — Weick, enacted environment, enactment-selection-retention](https://en.wikipedia.org/wiki/Enactment_(psychology)) `リファレンス`
 
 ## 関連概念

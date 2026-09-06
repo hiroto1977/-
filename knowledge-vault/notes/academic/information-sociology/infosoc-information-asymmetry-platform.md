@@ -30,7 +30,7 @@ Shoshana Zuboff ／ Frank Pasquale ／ Paul Resnick ／ Jean Tirole ／ Nick Srn
 - [Pasquale, F. (2015). The Black Box Society: The Secret Algorithms That Control Money and Information. Harvard University Press.](https://doi.org/10.2307/j.ctt1287kz5) `学術`
 - [Resnick, P., Kuwabara, K., Zeckhauser, R., & Friedman, E. (2000). Reputation systems. Communications of the ACM, 43(12), 45-48.](https://doi.org/10.1145/355019.355026) `学術`
 - [Tirole, J. (2014). Market failures and public policy. Nobel Prize Lecture / American Economic Review, 104(6), 1609-1652.](https://doi.org/10.1257/aer.104.6.1609) `学術`
-- [Srnicek, N. (2017). Platform Capitalism. Polity Press.（Polity, 2017, ISBN 978-1-5095-0487-9）](https://search.worldcat.org/title/Platform-capitalism/oclc/974841289) `学術`
+- [Srnicek, N. (2017). Platform Capitalism. Polity Press.（Polity, 2017, ISBN 978-1-5095-0487-9）](https://search.worldcat.org/title/Platform-capitalism/oclc/974841289) `リファレンス`
 
 ## 関連概念
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家

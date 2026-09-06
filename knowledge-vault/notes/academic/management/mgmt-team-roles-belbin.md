@@ -26,7 +26,7 @@ aliases:
 メレディス・ベルビン ／ ラルフ・ストッグディル ／ ブルース・タックマン ／ J・リチャード・ハックマン
 
 ## 出典
-- [Belbin, R.M. (1981) Management Teams: Why They Succeed or Fail — Heinemann (WorldCat)](https://www.worldcat.org/oclc/7948526) `学術`
+- [Belbin, R.M. (1981) Management Teams: Why They Succeed or Fail — Heinemann (WorldCat)](https://www.worldcat.org/oclc/7948526) `リファレンス`
 - [Wikipedia: Belbin team roles — nine roles, action/people/thinking, allowable weakness, Apollo syndrome](https://en.wikipedia.org/wiki/Team_Role_Inventories) `リファレンス`
 
 ## 関連概念

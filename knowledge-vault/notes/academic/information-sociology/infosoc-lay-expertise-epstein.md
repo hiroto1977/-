@@ -26,7 +26,7 @@ aliases:
 スティーヴン・エプスタイン ／ ブライアン・ウィン ／ ハリー・コリンズ ／ ロバート・エヴァンズ
 
 ## 出典
-- [Epstein, S. (1996) Impure Science: AIDS, Activism, and the Politics of Knowledge — University of California Press](https://www.worldcat.org/oclc/33665204) `学術`
+- [Epstein, S. (1996) Impure Science: AIDS, Activism, and the Politics of Knowledge — University of California Press](https://www.worldcat.org/oclc/33665204) `リファレンス`
 - [Wikipedia: Lay expertise — AIDS activism, credibility, deficit model, public participation](https://en.wikipedia.org/wiki/Citizen_science) `リファレンス`
 
 ## 関連概念

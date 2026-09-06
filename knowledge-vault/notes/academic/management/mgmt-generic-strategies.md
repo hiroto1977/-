@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Harvard Business School — Competitive Advantage (Michael E. Porter) 書誌](https://www.hbs.edu/faculty/Pages/item.aspx?num=193) `学術`
-- [EBSCO Research Starters — Porter’s Generic Strategies](https://www.ebsco.com/research-starters/marketing/porters-generic-strategies) `学術`
+- [EBSCO Research Starters — Porter’s Generic Strategies](https://www.ebsco.com/research-starters/marketing/porters-generic-strategies) `リファレンス`
 - [Wikipedia — Porter’s generic strategies](https://en.wikipedia.org/wiki/Porter%27s_generic_strategies) `リファレンス`
 
 ## 関連概念

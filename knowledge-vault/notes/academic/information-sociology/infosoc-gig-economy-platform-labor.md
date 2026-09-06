@@ -26,7 +26,7 @@ aliases:
 ニック・スルニセク ／ アレックス・ロスエンブラット ／ アルン・サンドララジャン ／ ジャニス・フィン
 
 ## 出典
-- [Srnicek, N. (2017). Platform Capitalism — Polity Press（Polity, 2017, ISBN 978-1-5095-0487-9）](https://search.worldcat.org/title/Platform-capitalism/oclc/974841289) `学術`
+- [Srnicek, N. (2017). Platform Capitalism — Polity Press（Polity, 2017, ISBN 978-1-5095-0487-9）](https://search.worldcat.org/title/Platform-capitalism/oclc/974841289) `リファレンス`
 - [Wikipedia: Gig economy — platform labor and regulation](https://en.wikipedia.org/wiki/Gig_economy) `リファレンス`
 
 ## 関連概念

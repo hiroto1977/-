@@ -26,7 +26,7 @@ aliases:
 アラン・パイビオ ／ リチャード・メイヤー ／ ジェームズ・クラーク ／ ジョン・アンダーソン
 
 ## 出典
-- [Paivio, A. (1986) Mental Representations: A Dual Coding Approach — Oxford University Press (WorldCat)](https://www.worldcat.org/oclc/12235651) `学術`
+- [Paivio, A. (1986) Mental Representations: A Dual Coding Approach — Oxford University Press (WorldCat)](https://www.worldcat.org/oclc/12235651) `リファレンス`
 - [Wikipedia: Dual-coding theory — Paivio, verbal/imagery systems, logogens/imagens, picture superiority, concreteness](https://en.wikipedia.org/wiki/Dual-coding_theory) `リファレンス`
 
 ## 関連概念

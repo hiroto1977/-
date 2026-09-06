@@ -27,7 +27,7 @@ Oxford Dictionaries（2016 Word of the Year に選定・定義）／ラルフ・
 
 ## 出典
 - [Oxford Languages — Word of the Year 2016: Post-Truth（公式定義・語法）](https://languages.oup.com/word-of-the-year/2016/) `リファレンス`
-- [EBSCO Research Starters — Post-truth politics](https://www.ebsco.com/research-starters/religion-and-philosophy/post-truth-politics) `学術`
+- [EBSCO Research Starters — Post-truth politics](https://www.ebsco.com/research-starters/religion-and-philosophy/post-truth-politics) `リファレンス`
 - [Lee McIntyre, Post-Truth, MIT Press (2018) — Books Gateway](https://direct.mit.edu/books/book/3594/Post-Truth) `学術`
 - [Ralph Keyes, The Post-Truth Era (2004) — PhilPapers 書誌](https://philpapers.org/rec/KEYTPE) `学術`
 

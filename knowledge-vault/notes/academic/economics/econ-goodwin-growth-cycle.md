@@ -26,7 +26,7 @@ aliases:
 リチャード・グッドウィン ／ カール・マルクス ／ アルフレッド・ロトカ ／ ヴィト・ヴォルテラ
 
 ## 出典
-- [Goodwin, R. M. (1967) A growth cycle — in Socialism, Capitalism and Economic Growth (Cambridge UP)](https://www.worldcat.org/oclc/977195) `学術`
+- [Goodwin, R. M. (1967) A growth cycle — in Socialism, Capitalism and Economic Growth (Cambridge UP)](https://www.worldcat.org/oclc/977195) `リファレンス`
 - [Wikipedia: Goodwin model (economics) — predator-prey, employment, wage share, class struggle](https://en.wikipedia.org/wiki/Goodwin_model_(economics)) `リファレンス`
 
 ## 関連概念

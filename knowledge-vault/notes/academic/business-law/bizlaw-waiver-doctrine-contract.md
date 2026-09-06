@@ -26,7 +26,7 @@ aliases:
 エドウィン・ペール ／ ヒュー・コリンズ ／ ジョン・カータライト ／ アンドリュー・バロウズ
 
 ## 出典
-- [Peel, E. (2015) Waiver and Estoppel — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397](https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405) `学術`
+- [Peel, E. (2015) Waiver and Estoppel — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397](https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405) `リファレンス`
 - [Cartwright, J. (2016) Contract Law: An Introduction — 3rd ed., Hart Publishing](https://doi.org/10.1093/law/9780198755166.001.0001) `学術`
 - [Wikipedia: Waiver — voluntary relinquishment of contractual rights overview](https://en.wikipedia.org/wiki/Waiver) `リファレンス`
 

@@ -26,7 +26,7 @@ aliases:
 ヴォルフガング・ケーラー ／ ヴィラヤヌル・ラマチャンドラン ／ エドワード・ハバード ／ フェルディナン・ド・ソシュール
 
 ## 出典
-- [Ramachandran, V. S. & Hubbard, E. M. (2001) Synaesthesia—a window into perception, thought and language — Journal of Consciousness Studies](https://www.worldcat.org/oclc/48417854) `学術`
+- [Ramachandran, V. S. & Hubbard, E. M. (2001) Synaesthesia—a window into perception, thought and language — Journal of Consciousness Studies](https://www.worldcat.org/oclc/48417854) `リファレンス`
 - [Wikipedia: Bouba/kiki effect — sound symbolism, cross-modal, arbitrariness of the sign](https://en.wikipedia.org/wiki/Bouba/kiki_effect) `リファレンス`
 
 ## 関連概念

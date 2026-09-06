@@ -26,7 +26,7 @@ aliases:
 大前研一 ／ マイケル・ポーター ／ セオドア・レビット ／ ヘンリー・ミンツバーグ
 
 ## 出典
-- [Ohmae, K. (1982) The Mind of the Strategist: The Art of Japanese Business — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/8170169) `学術`
+- [Ohmae, K. (1982) The Mind of the Strategist: The Art of Japanese Business — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/8170169) `リファレンス`
 - [Wikipedia: 3Cs model — Ohmae, customer/company/competition, strategic triangle](https://en.wikipedia.org/wiki/3C%27s_model) `リファレンス`
 - [MindTools — Ohmae's 3Cs Model](https://www.mindtools.com/avi3qka/ohmaes-3cs-model/) `リファレンス`
 - [一般社団法人日本経営心理士協会 — 3C分析](https://keiei-shinri.or.jp/word/3c/) `リファレンス`

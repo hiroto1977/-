@@ -26,7 +26,7 @@ aliases:
 ヘンリー・ジェンキンス ／ ミシェル・ド・セルトー ／ ジョン・フィスク ／ スチュアート・ホール
 
 ## 出典
-- [Jenkins, H. (1992) Textual Poachers: Television Fans and Participatory Culture — Routledge](https://www.worldcat.org/oclc/24503865) `学術`
+- [Jenkins, H. (1992) Textual Poachers: Television Fans and Participatory Culture — Routledge](https://www.worldcat.org/oclc/24503865) `リファレンス`
 - [Wikipedia: Textual poaching — fans, appropriation, de Certeau, participatory culture](https://en.wikipedia.org/wiki/Textual_poaching) `リファレンス`
 
 ## 関連概念

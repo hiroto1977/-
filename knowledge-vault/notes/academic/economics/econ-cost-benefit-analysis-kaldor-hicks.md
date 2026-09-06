@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Kaldor, N. (1939) Welfare Propositions of Economics and Interpersonal Comparisons of Utility — Economic Journal 49(195)（原典）](https://doi.org/10.2307/2224835) `学術`
-- [Sen, A. K. (1970) Collective Choice and Social Welfare — Holden-Day（WorldCat）](https://search.worldcat.org/title/140528) `学術`
+- [Sen, A. K. (1970) Collective Choice and Social Welfare — Holden-Day（WorldCat）](https://search.worldcat.org/title/140528) `リファレンス`
 - [Wikipedia: Kaldor–Hicks efficiency — 潜在的パレート改善、シトフスキーのパラドックス](https://en.wikipedia.org/wiki/Kaldor%E2%80%93Hicks_efficiency) `リファレンス`
 - [Wikipedia: Welfare economics — 厚生経済学の基本定理と補償原理](https://en.wikipedia.org/wiki/Welfare_economics) `リファレンス`
 

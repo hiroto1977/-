@@ -26,7 +26,7 @@ aliases:
 メアリー・エインズワース ／ ジョン・ボウルビィ ／ メアリー・メイン ／ エヴェレット・ウォーターズ
 
 ## 出典
-- [Ainsworth, M.D.S. et al. (1978) Patterns of Attachment: A Psychological Study of the Strange Situation — Erlbaum (WorldCat)](https://www.worldcat.org/oclc/3517064) `学術`
+- [Ainsworth, M.D.S. et al. (1978) Patterns of Attachment: A Psychological Study of the Strange Situation — Erlbaum (WorldCat)](https://www.worldcat.org/oclc/3517064) `リファレンス`
 - [Wikipedia: Strange situation — Ainsworth, secure/avoidant/resistant/disorganized, secure base, Bowlby](https://en.wikipedia.org/wiki/Strange_situation) `リファレンス`
 
 ## 関連概念

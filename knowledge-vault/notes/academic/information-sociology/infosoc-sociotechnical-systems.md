@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Trist & Bamforth 1951 Some Social and Psychological Consequences of the Longwall Method of Coal-Getting, Human Relations 4(1)](https://doi.org/10.1177/001872675100400101) `学術`
-- [Emery & Trist 1960 Socio-Technical Systems, in Management Sciences Models and Techniques Vol.2, Pergamon](https://search.worldcat.org/title/oclc/25724367) `学術`
+- [Emery & Trist 1960 Socio-Technical Systems, in Management Sciences Models and Techniques Vol.2, Pergamon](https://search.worldcat.org/title/oclc/25724367) `リファレンス`
 - [Cherns 1976 The Principles of Sociotechnical Design, Human Relations 29(8)](https://doi.org/10.1177/001872677602900806) `学術`
 
 ## 関連概念

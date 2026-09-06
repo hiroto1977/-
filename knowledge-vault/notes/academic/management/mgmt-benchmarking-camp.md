@@ -26,7 +26,7 @@ aliases:
 ロバート・キャンプ ／ マイケル・スペンドリーニ ／ グレゴリー・ワトソン ／ デヴィッド・カーンズ
 
 ## 出典
-- [Camp, R.C. (1989) Benchmarking: The Search for Industry Best Practices That Lead to Superior Performance — ASQC Quality Press (WorldCat)](https://www.worldcat.org/oclc/19222137) `学術`
+- [Camp, R.C. (1989) Benchmarking: The Search for Industry Best Practices That Lead to Superior Performance — ASQC Quality Press (WorldCat)](https://www.worldcat.org/oclc/19222137) `リファレンス`
 - [Wikipedia: Benchmarking — Camp, Xerox, best practices, internal/competitive/functional/generic, continuous improvement](https://en.wikipedia.org/wiki/Benchmarking) `リファレンス`
 
 ## 関連概念

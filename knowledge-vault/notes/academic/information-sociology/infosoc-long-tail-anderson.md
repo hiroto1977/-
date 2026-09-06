@@ -26,7 +26,7 @@ aliases:
 クリス・アンダーソン ／ エリック・ブリニョルフソン ／ アニタ・エルバース ／ クレイ・シャーキー
 
 ## 出典
-- [Anderson, C. (2006) The Long Tail: Why the Future of Business Is Selling Less of More — Hyperion (WorldCat)](https://www.worldcat.org/oclc/64453479) `学術`
+- [Anderson, C. (2006) The Long Tail: Why the Future of Business Is Selling Less of More — Hyperion (WorldCat)](https://www.worldcat.org/oclc/64453479) `リファレンス`
 - [Wikipedia: Long tail — Anderson, niche aggregation, low distribution costs, Amazon/Netflix, Elberse critique](https://en.wikipedia.org/wiki/Long_tail) `リファレンス`
 
 ## 関連概念

@@ -26,7 +26,7 @@ aliases:
 ワシリー・レオンチェフ ／ フランソワ・ケネー ／ ジョン・フォン・ノイマン ／ ピエロ・スラッファ
 
 ## 出典
-- [Leontief, W. (1941) The Structure of American Economy, 1919–1929 — Harvard University Press](https://www.worldcat.org/oclc/542840) `学術`
+- [Leontief, W. (1941) The Structure of American Economy, 1919–1929 — Harvard University Press](https://www.worldcat.org/oclc/542840) `リファレンス`
 - [Wikipedia: Input–output model — Leontief inverse, technical coefficients, dynamic model](https://en.wikipedia.org/wiki/Input%E2%80%93output_model) `リファレンス`
 
 ## 関連概念

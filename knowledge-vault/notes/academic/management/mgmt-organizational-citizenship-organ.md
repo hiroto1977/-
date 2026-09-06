@@ -26,7 +26,7 @@ aliases:
 デニス・オーガン ／ トーマス・ベイトマン ／ フィリップ・ポドサコフ ／ スコット・マッケンジー
 
 ## 出典
-- [Organ, D.W. (1988) Organizational Citizenship Behavior: The Good Soldier Syndrome — Lexington (WorldCat)](https://www.worldcat.org/oclc/16755938) `学術`
+- [Organ, D.W. (1988) Organizational Citizenship Behavior: The Good Soldier Syndrome — Lexington (WorldCat)](https://www.worldcat.org/oclc/16755938) `リファレンス`
 - [Wikipedia: Organizational citizenship behavior — Organ, extra-role, altruism/conscientiousness/civic virtue](https://en.wikipedia.org/wiki/Organizational_citizenship_behavior) `リファレンス`
 
 ## 関連概念

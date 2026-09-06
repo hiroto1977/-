@@ -27,7 +27,7 @@ Muzafer Sherif（ムザファー・シェリフ） ／ Carl Hovland（カール�
 
 ## 出典
 - [Wikipedia「Social judgment theory」(三つの幅・同化/対比効果・自我関与・Sherif & Hovland 1961 と Sherif, Sherif & Nebergall 1965 の解説)](https://en.wikipedia.org/wiki/Social_judgment_theory) `リファレンス`
-- [Sherif, M. & Hovland, C. I. (1961) Social Judgment: Assimilation and Contrast Effects in Communication and Attitude Change. New Haven: Yale University Press (Yale Studies in Attitude and Communication) — WorldCat OCLC 255508](https://search.worldcat.org/oclc/255508) `学術`
+- [Sherif, M. & Hovland, C. I. (1961) Social Judgment: Assimilation and Contrast Effects in Communication and Attitude Change. New Haven: Yale University Press (Yale Studies in Attitude and Communication) — WorldCat OCLC 255508](https://search.worldcat.org/oclc/255508) `リファレンス`
 - [Sherif, C. W., Sherif, M. & Nebergall, R. E. (1965) Attitude and Attitude Change: The Social Judgment-Involvement Approach. Philadelphia & London: W. B. Saunders, pp. 264 — book review, The British Journal of Psychiatry (Cambridge Core)](https://www.cambridge.org/core/journals/the-british-journal-of-psychiatry/article/abs/attitude-and-attitude-changes-the-social-judgmentinvolvement-approach-by-caro-lyn-w-sherif-muzafer-sherif-and-roger-e-nebergalk-philadelphia-and-london-w-b-saunders-company-1965-pp-264-price-2-18s-od/5AC604AB150601BC120EC0558C8F0406) `学術`
 
 ## 関連概念

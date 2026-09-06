@@ -26,7 +26,7 @@ aliases:
 ノーム・チョムスキー ／ スティーブン・ピンカー ／ エリック・レネバーグ ／ エリック・ワナー
 
 ## 出典
-- [Chomsky, N. (1965) Aspects of the Theory of Syntax — MIT Press (WorldCat)](https://www.worldcat.org/oclc/309976) `学術`
+- [Chomsky, N. (1965) Aspects of the Theory of Syntax — MIT Press (WorldCat)](https://www.worldcat.org/oclc/309976) `リファレンス`
 - [Wikipedia: Universal grammar — Chomsky, language acquisition device, poverty of the stimulus, nativism](https://en.wikipedia.org/wiki/Universal_grammar) `リファレンス`
 
 ## 関連概念

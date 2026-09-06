@@ -26,7 +26,7 @@ aliases:
 ジェームズ・D・トンプソン ／ チャールズ・ペロー ／ ジェイ・ガルブレイス ／ ポール・ローレンス
 
 ## 出典
-- [Thompson, J.D. (1967) Organizations in Action — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/240798) `学術`
+- [Thompson, J.D. (1967) Organizations in Action — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/240798) `リファレンス`
 - [Wikipedia: James D. Thompson — long-linked/mediating/intensive technology, pooled/sequential/reciprocal interdependence](https://en.wikipedia.org/wiki/James_D._Thompson) `リファレンス`
 
 ## 関連概念

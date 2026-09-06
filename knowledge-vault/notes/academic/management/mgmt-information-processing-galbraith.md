@@ -26,7 +26,7 @@ aliases:
 ジェイ・ガルブレイス ／ ジェームズ・トンプソン ／ マイケル・タッシュマン ／ デイヴィッド・ナドラー
 
 ## 出典
-- [Galbraith, J.R. (1973) Designing Complex Organizations — Addison-Wesley (WorldCat)](https://www.worldcat.org/oclc/615372) `学術`
+- [Galbraith, J.R. (1973) Designing Complex Organizations — Addison-Wesley (WorldCat)](https://www.worldcat.org/oclc/615372) `リファレンス`
 - [Wikipedia: Organizational information processing — Galbraith, uncertainty, slack, lateral relations, fit](https://en.wikipedia.org/wiki/Organizational_information_theory) `リファレンス`
 
 ## 関連概念

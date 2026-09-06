@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Britannica Money — Diminishing returns](https://www.britannica.com/money/diminishing-returns) `リファレンス`
-- [EBSCO Research Starters — Diminishing returns (economics)](https://www.ebsco.com/research-starters/economics/diminishing-returns-economics) `学術`
+- [EBSCO Research Starters — Diminishing returns (economics)](https://www.ebsco.com/research-starters/economics/diminishing-returns-economics) `リファレンス`
 - [Encyclopedia.com — Law of Diminishing Returns](https://www.encyclopedia.com/finance/encyclopedias-almanacs-transcripts-and-maps/law-diminishing-returns) `リファレンス`
 
 ## 関連概念

@@ -26,7 +26,7 @@ aliases:
 ジェームズ・ブキャナン ／ アミルカレ・プヴィアーニ ／ リチャード・ワーグナー ／ ウェルナー・ポマレーネ
 
 ## 出典
-- [Buchanan, J.M. (1967) Public Finance in Democratic Process — University of North Carolina Press (WorldCat)](https://www.worldcat.org/oclc/394102) `学術`
+- [Buchanan, J.M. (1967) Public Finance in Democratic Process — University of North Carolina Press (WorldCat)](https://www.worldcat.org/oclc/394102) `リファレンス`
 - [Wikipedia: Fiscal illusion — Buchanan, Puviani, hidden taxes, deficit financing, flypaper effect](https://en.wikipedia.org/wiki/Fiscal_illusion) `リファレンス`
 
 ## 関連概念
