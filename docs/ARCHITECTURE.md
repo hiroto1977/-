@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **11218** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11222** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 463 | 自己検証 |
+| `file:line` 参照数 | 465 | 自己検証 |
 
 ### 統合フロー図
 
@@ -2608,6 +2608,33 @@ CLAUDE.md の作法の後半 ——「**既定値はモジュールの定数を�
 これは `fetchSnapshot` にパラメータを流す口が無いためで、同ページのデータは
 `isMock: true` の同梱データなので実害は「見本の数字」に留まる。手当ては
 docs/REMAINING_WORK.md に残した。
+
+#### 割る値の下限は、割る側にも置く (`src/shared/taxConsumptionSchedule.ts`)
+
+同じ日の続きで「画面に `¥NaN` / `¥Infinity` が出る道」を探した。`jpy()`
+(`src/shared/formatters.ts`) は `toLocaleString` に素で渡すので**非有限値を弾かない**
+—— 画面の 201 か所がこれを呼び、`Number.isFinite` を持つページは 3 つだけ。
+
+走査は総当たりで行った: `src/shared` と `src/renderer/data` の 216 モジュールの
+export 関数を 0・`[]`・`{}` で呼び (成功した呼び出し 2,621 件)、返り値の中の
+非有限値を数える。ヒット 259 件のうち引数がすべて `number` 宣言の物は
+**1 つだけ**だった —— `localRatioOf(0)` が `Infinity` を返す。ほかの 258 件は
+型の外の呼び出し (オブジェクトを取る関数に 0 を渡した) で、TypeScript が止める。
+
+`localRatioOf` は地方消費税の比を `(1 − 割合) ÷ 割合` で作る。割合 0 なら
+`calcAnnualTax` の `local` / `total` を通って税ページに `¥Infinity` が出る。
+守っていたのは台帳 `consumptionSchedule.nationalShare` の `min: 0.01` という
+**リテラル 1 個**で、なぜ 0.01 なのかはどこにも書かれていなかった (下限を 1 行
+下げれば画面が壊れる)。`MIN_NATIONAL_SHARE` を定数にして台帳の `min` がそれを
+参照し、割る側でも `[MIN_NATIONAL_SHARE, 1]` に丸める (非有限値は下限扱い)。
+守りが 2 つ独立に在ることは対照で確かめた —— 丸めを外すと「0・負値・非有限値でも
+有限」が落ち、台帳の下限を 0 にすると「下限がこの定数」だけが落ちて**年税額の
+非有限値の走査は通ったまま** (丸めが効いている)。
+
+その走査は台帳の値を端 (min / max / 既定) に振って `calcAnnualTax` と
+`planInterim` の全欄を見る形で残した。`jpy()` 側に「非有限なら ―」を入れるのは
+**やめた** —— 実際に届く道が 1 つも無い今それを入れると、次に生まれた NaN が
+画面から消えて開発時に見えなくなる (この方針は docs/REMAINING_WORK.md に記録)。
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 

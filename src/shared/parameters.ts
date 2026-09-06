@@ -171,6 +171,7 @@ import {
   INTERIM_TIER1,
   INTERIM_TIER2,
   INTERIM_TIER3,
+  MIN_NATIONAL_SHARE,
   NATIONAL_SHARE,
   type ScheduleParams,
 } from './taxConsumptionSchedule';
@@ -840,7 +841,7 @@ export function parameterDefinitions() {
   // --- 消費税 (申告・納付) --------------------------------------------------
   {
     id: 'consumptionSchedule.nationalShare', feature: '消費税 (申告・納付)', label: '消費税のうち国税分の割合', unit: '%', scale: 100,
-    defaultValue: NATIONAL_SHARE, min: 0.01, max: 1, kind: 'law', source: '消費税法 29 条・地方税法 72 条の83 (7.8 / 10 = 78%)',
+    defaultValue: NATIONAL_SHARE, min: MIN_NATIONAL_SHARE, max: 1, kind: 'law', source: '消費税法 29 条・地方税法 72 条の83 (7.8 / 10 = 78%)',
     note: '地方消費税は (100% − 割合) ÷ 割合 (既定 22/78) で組む。2 割特例の割合は「消費税 (事業者)」の項を共有',
   },
   {
