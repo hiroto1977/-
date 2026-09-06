@@ -91,9 +91,39 @@ export function scaleAmount(yen: number, f: BankFormat): number {
 /** 金額。null / 非数 / ∞ は「―」。 */
 export function formatAmount(yen: number | null | undefined, f: BankFormat): string {
   if (!isFiniteNumber(yen)) return BLANK;
-  const n = scaleAmount(yen, f);
-  const body = grouping.format(Math.abs(n));
-  return n < 0 ? `${NEGATIVE_MARK[f.negative]}${body}` : body;
+  return formatScaled(scaleAmount(yen, f), f);
+}
+
+/**
+ * **表示単位の整数**をそのまま書式化する (円ではない)。
+ *
+ * 使うのは、書面の中で**印刷した行同士の足し算が合う**必要があるとき。
+ * 各行を円から別々に丸めると、式を隣に書いておきながら数字が合わない:
+ *
+ * ```
+ *   総資産    10,000,000 円 → 10,000 千円
+ *   負債合計   3,999,999 円 →  3,999 千円 (千円未満切捨て)
+ *   純資産     6,000,001 円 →  6,000 千円   ← 10,000 − 3,999 = 6,001 と合わない
+ * ```
+ *
+ * 実測 (2026-09-06): 貸借対照表の値を 40 通り振ると **21 通り**で
+ * 「純資産 = 総資産 − 負債合計」が印刷した数字では成り立たなかった。
+ * 金融機関へ出す書面で式と数字が食い違うのは通らないので、
+ * **丸めた後の値で計算してから**書式に通す。差は表示単位未満なので、
+ * 表頭の「千円未満切捨て」の範囲に収まる。
+ *
+ * (同じ形を `data/workingCapital.ts` は正しく扱っている —— DSO / DIO / DPO を
+ * 先に小数 1 桁へ丸め、CCC はその**丸めた値の和**で作るので、印刷した 4 行は
+ * 必ず合う。実測 3,000 通りで食い違い 0。)
+ */
+export function formatScaled(units: number | null | undefined, f: BankFormat): string {
+  if (!isFiniteNumber(units)) return BLANK;
+  // -0 の正規化は**要らない**: `Math.abs(-0)` は +0 で、`-0 < 0` も false なので
+  // どちらの経路でも「0」になる (実測 2026-09-06 —— 置いた -0 → 0 は観測できない
+  // 分岐だったので落とした)。`scaleAmount` 側の -0 → 0 は表示ではなく
+  // **計算へ渡す値**の正規化なので、あちらには残っている。
+  const body = grouping.format(Math.abs(units));
+  return units < 0 ? `${NEGATIVE_MARK[f.negative]}${body}` : body;
 }
 
 /** 比率 (%)。小数 `digits` 桁 (既定 1) で四捨五入。 */

@@ -390,6 +390,99 @@ describe('parseSubmissionProfile / settingsFromRecord', () => {
   });
 });
 
+/**
+ * **印刷した式が、印刷した数字で成り立つこと。**
+ *
+ * 4. 財政状態は「純資産」の備考に **総資産 − 負債合計** と書いてある。
+ * 各行を円から別々に丸めていた 2026-09-06 まで、この式は印刷した数字では
+ * 成り立たなかった —— 実測で下の 40 通りのうち **21 通り**がずれた
+ * (例: 総資産 10,000 千円 − 負債合計 3,999 千円 = 6,001 なのに純資産は 6,000)。
+ * 金融機関へ出す書面で、式を隣に書いておきながら数字が合わないのは通らない。
+ *
+ * 対照は 2 つ: (1) 丸めた値で作った純資産が**厳密値から表示単位 1 つ以上離れない**
+ * こと (勝手な数字を書いていない)、(2) 円単位表示では丸めが無いので厳密値と一致すること。
+ */
+describe('書面の中で式が成り立つ (印刷した行同士の足し算)', () => {
+  /** 印刷された金額を数に戻す (△ / ▲ / - と 3 桁区切りを外す)。 */
+  const printed = (v: string): number => {
+    if (v === BLANK) return Number.NaN;
+    const neg = /^[△▲-]/.test(v);
+    const body = Number(v.replace(/^[△▲-]/, '').replace(/,/g, ''));
+    return neg ? -body : body;
+  };
+
+  /** 貸借対照表を 1 つ作る (端数が揃わない値を狙って振る)。 */
+  const bsAt = (i: number): BalanceSheet => ({
+    asOf: '2026-03-31',
+    currentAssets: 6_000_000 + i * 137,
+    cash: 3_000_000,
+    inventory: 1_000_000 + i * 11,
+    accountsReceivable: 2_000_000 + i * 7,
+    fixedAssets: 4_000_000 + i * 91,
+    currentLiabilities: 999_999 + i * 313,
+    accountsPayable: 1_500_000 + i * 3,
+    fixedLiabilities: 3_000_000 + i * 29,
+    netIncome: 600_000,
+  });
+
+  const positionOf = (bs: BalanceSheet, settings: BankSubmissionSettings = SETTINGS): SheetSection =>
+    section(buildBankSubmissionSheet(inputWith(overviewWith({ balanceSheet: bs }), settings)).sections, '4.');
+
+  it('★ 純資産 = 総資産 − 負債合計 (40 通り・千円切捨て)', () => {
+    const broken: string[] = [];
+    for (let i = 0; i < 40; i += 1) {
+      const s4 = positionOf(bsAt(i));
+      const assets = printed(value(s4, '総資産'));
+      const liabilities = printed(value(s4, '負債合計'));
+      const net = printed(value(s4, '純資産'));
+      if (assets - liabilities !== net) broken.push(`i=${i}: ${assets} − ${liabilities} ≠ ${net}`);
+    }
+    expect(broken).toEqual([]);
+  });
+
+  it('★ 記録に残す 1 例 (2026-09-06 まで 6,000 と出ていた)', () => {
+    const s4 = positionOf(bsAt(0));
+    expect(value(s4, '総資産')).toBe('10,000');
+    expect(value(s4, '負債合計')).toBe('3,999');
+    expect(value(s4, '純資産')).toBe('6,001');
+    expect(note(s4, '純資産')).toBe('総資産 − 負債合計');
+  });
+
+  it('対照: 丸めた値で作っても、厳密値から表示単位 1 つ以上は離れない', () => {
+    for (let i = 0; i < 40; i += 1) {
+      const bs = bsAt(i);
+      const exact = formatAmount(
+        bs.currentAssets + bs.fixedAssets - (bs.currentLiabilities + bs.fixedLiabilities),
+        BANK_FORMAT_DEFAULT,
+      );
+      const shown = value(positionOf(bs), '純資産');
+      expect(Math.abs(printed(shown) - printed(exact)), `i=${i}`).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it('対照: 円単位表示なら丸めが無いので厳密値と一致する', () => {
+    const yenFormat: BankSubmissionSettings = {
+      ...SETTINGS,
+      format: { ...BANK_FORMAT_DEFAULT, unit: 'yen' },
+    };
+    for (let i = 0; i < 5; i += 1) {
+      const bs = bsAt(i);
+      const s4 = positionOf(bs, yenFormat);
+      const exact = bs.currentAssets + bs.fixedAssets - (bs.currentLiabilities + bs.fixedLiabilities);
+      expect(printed(value(s4, '純資産')), `i=${i}`).toBe(exact);
+    }
+  });
+
+  it('対照: CCC は元から合っている (回転日数を先に丸め、その和で作っている)', () => {
+    // `data/workingCapital.ts` の `day()` が小数 1 桁へ丸めた値を CCC の材料にする。
+    // 同じ形をこちらだけ間違えていた、という記録のために対照を置く。
+    const s5 = section(buildBankSubmissionSheet(inputWith(overviewWith())).sections, '5.');
+    const days = (label: string): number => Number(value(s5, label).replace('日', ''));
+    const sum = Math.round((days('売上債権回転日数（DSO）') + days('棚卸資産回転日数（DIO）') - days('仕入債務回転日数（DPO）')) * 10) / 10;
+    expect(days('現金化サイクル（CCC）')).toBe(sum);
+  });
+});
+
 describe('境目の追加検査 (変異検査で残った分岐)', () => {
   it('決算期・期の正規表現は前後に余分な文字を許さない', () => {
     expect(parseSubmissionProfile({ fiscalYearEnd: 'x2026-03' }).ok).toBe(false);
