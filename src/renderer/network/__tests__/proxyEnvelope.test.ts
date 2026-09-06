@@ -50,6 +50,72 @@ describe('parseProxyEnvelope', () => {
   });
 });
 
+/**
+ * **読み込み直してから、同じ規則をもう一度当てる。**
+ *
+ * ヘッダ名 / 値の正規表現と `INVALID_ENVELOPE` は**モジュール読み込み時に組まれる**。
+ * 静的 import のままだと、その初期化子を変異させても既に組み終わった写しが使われ、
+ * 上の検査は緑のまま通る (2026-09-06 実測で 14 件生存。`localWrite` の
+ * `const OK` と `deviceStoreFailure` の文面表で踏んだのと同じ形)。
+ * `vi.resetModules()` → 動的 import で、変異した定数をテストの中で組ませる。
+ */
+describe('読み込み直しても同じ規則 (定数の初期化子を測る)', () => {
+  async function load(): Promise<typeof import('../proxy')> {
+    vi.resetModules();
+    return import('../proxy');
+  }
+
+  it('★ ヘッダ名は token だけ (空白・記号は落ちる)', async () => {
+    const { parseProxyEnvelope: parse } = await load();
+    const env = parse(JSON.stringify({
+      status: 200,
+      headers: { 'x-ok': 'fine', 'bad name': 'x', 'x(paren)': 'y', 'x;semi': 'z' },
+      body: 'b',
+    }));
+    expect(env).toEqual({ status: 200, headers: { 'x-ok': 'fine' }, body: 'b' });
+  });
+
+  it('★ 値に CR / LF / NUL があれば落とす (ヘッダ注入の形)', async () => {
+    const { parseProxyEnvelope: parse } = await load();
+    const env = parse(JSON.stringify({
+      status: 200,
+      headers: { 'x-cr': `a${CR}b`, 'x-lf': `a${LF}b`, 'x-nul': `a${NUL}b`, 'x-ok': 'plain' },
+      body: 'b',
+    }));
+    expect(env).toEqual({ status: 200, headers: { 'x-ok': 'plain' }, body: 'b' });
+  });
+
+  it('★ headers が辞書でなければ 1 件も採らない (文字列は添字が名前に化ける)', async () => {
+    const { parseProxyEnvelope: parse } = await load();
+    // `Object.entries('xy')` は [['0','x'],['1','y']] で、どちらも token かつ文字列 ——
+    // 「オブジェクトか」の門を外すと**でっち上げのヘッダ 2 件**が通る。
+    expect(parse(JSON.stringify({ status: 200, headers: 'xy', body: 'b' }))).toEqual({
+      status: 200,
+      headers: {},
+      body: 'b',
+    });
+    // `typeof null === 'object'` なので、null の門を外すと `Object.entries(null)` で投げる。
+    expect(parse(JSON.stringify({ status: 200, headers: null, body: 'b' }))).toEqual({
+      status: 200,
+      headers: {},
+      body: 'b',
+    });
+  });
+
+  it('★ 壊れた封筒の既定値は 502 と「invalid envelope」の本文', async () => {
+    const { parseProxyEnvelope: parse } = await load();
+    expect(parse('null')).toEqual({ status: 502, headers: {}, body: 'proxy returned an invalid envelope' });
+  });
+
+  it('★ status の範囲は 200–599 の整数 (境界)', async () => {
+    const { parseProxyEnvelope: parse } = await load();
+    expect(parse(JSON.stringify({ status: 200, body: 'a' })).status).toBe(200);
+    expect(parse(JSON.stringify({ status: 599, body: 'a' })).status).toBe(599);
+    expect(parse(JSON.stringify({ status: 199, body: 'a' })).status).toBe(502);
+    expect(parse(JSON.stringify({ status: 600, body: 'a' })).status).toBe(502);
+  });
+});
+
 describe('fetchViaProxy — 壊れた封筒でも Response が返る', () => {
   const stubProxy = (bodyText: string) =>
     vi.stubGlobal('fetch', vi.fn(async () => new Response(bodyText, { status: 200, headers: { 'content-type': 'application/json' } })));

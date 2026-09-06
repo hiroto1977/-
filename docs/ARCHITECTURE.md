@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **11099** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11119** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 434 | 自己検証 |
+| `file:line` 参照数 | 439 | 自己検証 |
 
 ### 統合フロー図
 
@@ -2418,13 +2418,27 @@ allowlist のパスだけを受ける — 任意のパスを書けると `__prot
 分かりにくい壊れ方をする (2026-08 に実測)。
 
 **断られた読み書きは、入口が 1 本の経路へ写す** (`data/deviceStoreFailure.ts`)。
-対象は**同じ端末の同じ容量を分け合う 2 つの保管庫**で、文面の主語だけが変わる ——
-`records` (業務レコード) と `files` (書き出した書類の実体 = `library/library.ts`)。
+対象は**同じ端末の同じ容量を分け合う 3 つの保管庫**で、文面の主語だけが変わる ——
+`records` (業務レコード) / `files` (書き出した書類の実体 = `library/library.ts`) /
+`settings` (端末ごとの設定 = `network/proxy.ts` のプロキシ設定と `fs/fsa.ts` のフォルダ handle)。
 `useCollection` の `add` / `addMany` / `edit` / `remove` は失敗を `save` / `delete` として
 報せてから投げ直し、`reload` は `read` として報せる (こちらは**投げない** —— マウント
 effect と他 instance からの通知は戻り値を受け取らないので、投げても誰も気付けない)。
 `pages/LibraryPage.tsx` は一覧・1 件・削除・全件削除の 4 か所を `files` として報せる。
 画面側は `components/DeviceStoreFailureBanner.tsx` が内容領域の先頭で最後の 1 件を出す。
+
+**設定の 2 つは「未設定」と「確認できない」を分ける** (2026-09-06)。`network/proxy.ts` の
+`readStoredProxyConfig` と `fs/fsa.ts` の `loadFolderHandle` はどちらも
+`catch { return null; }` で開けないことを飲み込んでおり、その `null` が
+(a) 設定画面の**「未設定」の札**、(b) ブラウザ版の**「設定で URL を登録してください」**、
+(c) `fs/folderMirror.ts` の `off` (警告を出さない側) になっていた ——
+**登録した本人に登録し直させ、共有シークレットを打ち直させた末に同じ所で失敗する**。
+`folderMirror` は「読めないのは `off` ではなく `failed`」と決めて書いてあったが、
+**差を消していたのは 1 つ下の層**なので、その分岐には決して入らなかった。
+今は両方が投げ、`inspectStoredProxyConfig` が `unreadable` を返し、
+設定画面は `確認できません` の札と理由を出す (`data-proxy-unreadable` /
+`data-fsa-unreadable`)。`getProxyConfig` も飲み込まない ——
+「未設定でも構わない」呼び出し側がその場で `.catch()` を書く。
 
 実測 (2026-09-06): 書き込みを呼ぶ 15 か所のうち 12 か所が拒否された Promise を捨てて
 いた (`void add()` / `onClick={async () => { await onSave(...) }}`)。容量超過・プライベート

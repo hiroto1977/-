@@ -16,6 +16,7 @@ import { credentialUseOf, unusedStoredCredentials } from '../../shared/credentia
 import { EVICTION_RECOVERY, isEvictableStorage } from '../../shared/storageDurability';
 import type { ServiceId } from '../../shared/serviceId';
 import { inspectStoredProxyConfig, setProxyConfig, type ProxyConfig } from '../network/proxy';
+import { deviceStoreFailureMessage } from '../data/deviceStoreFailure';
 import {
   MAX_PROXY_SECRET_LENGTH,
   MAX_PROXY_URL_LENGTH,
@@ -1131,7 +1132,8 @@ function UpdateSection() {
   );
 }
 
-function ProxySection() {
+/** 検査のために公開 (実物の札と文面を jsdom で確かめる)。 */
+export function ProxySection() {
   const [cfg, setCfg] = useState<ProxyConfig | null>(null);
   const [url, setUrl] = useState('');
   const [secret, setSecret] = useState('');
@@ -1141,9 +1143,18 @@ function ProxySection() {
   // 「保存はされているが、今の規則では使えない」状態。黙って未設定に見せると
   // 利用者はプロキシが効かない理由に辿り着けない。
   const [rejected, setRejected] = useState<ProxyEndpointFailure | null>(null);
+  /**
+   * **「未設定」と「確認できない」を分ける。**
+   *
+   * 保管先 (IndexedDB) が開けないと `config` は `null` になる。それを「未設定」の
+   * 札で見せると、**設定した本人に「登録してください」と言う**ことになり、
+   * URL と共有シークレットを打ち直した末に同じ所で失敗する。
+   */
+  const [unreadable, setUnreadable] = useState<string | null>(null);
 
   async function refresh() {
-    const { config, rejected: why } = await inspectStoredProxyConfig();
+    const { config, rejected: why, unreadable: cause } = await inspectStoredProxyConfig();
+    setUnreadable(cause === null ? null : deviceStoreFailureMessage('settings', 'read', cause));
     setCfg(config);
     setRejected(why);
     setUrl(config?.url ?? '');
@@ -1171,7 +1182,15 @@ function ProxySection() {
 
   async function disconnect() {
     if (!confirm('プロキシ設定を削除しますか?')) return;
-    await setProxyConfig(null);
+    setErr(null);
+    setMsg(null);
+    try {
+      await setProxyConfig(null);
+    } catch (e) {
+      // 消せていないので「削除しました」とは言わない。設定はそのまま残る。
+      setErr(deviceStoreFailureMessage('settings', 'delete', e));
+      return;
+    }
     await refresh();
     setMsg('プロキシ設定を削除しました');
   }
@@ -1183,7 +1202,9 @@ function ProxySection() {
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>BYO プロキシ</div>
-            {cfg ? (
+            {unreadable !== null ? (
+              <span data-proxy-unreadable style={{ fontSize: 10, padding: '2px 6px', background: '#fbbf24', color: '#000', borderRadius: 4 }}>確認できません</span>
+            ) : cfg ? (
               <span style={{ fontSize: 10, padding: '2px 6px', background: '#22c55e', color: '#fff', borderRadius: 4 }}>設定済み</span>
             ) : (
               <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--bg)', color: 'var(--text-mute)', border: '1px solid var(--border)', borderRadius: 4 }}>未設定</span>
@@ -1284,6 +1305,15 @@ function ProxySection() {
         </div>
       )}
 
+      {unreadable !== null && (
+        <div
+          role="alert"
+          data-proxy-unreadable-reason
+          style={{ fontSize: 11, color: '#fbbf24', marginTop: 6, lineHeight: 1.6 }}
+        >
+          ⚠ {unreadable}
+        </div>
+      )}
       {rejected !== null && (
         <div
           data-proxy-rejected
@@ -1301,16 +1331,31 @@ function ProxySection() {
 
 // --- Phase D2: File System Access -------------------------------------
 
-function FsaSection() {
+/** 検査のために公開 (同上)。 */
+export function FsaSection() {
   const supported = isFsaSupported();
   const [hasHandle, setHasHandle] = useState<boolean | null>(null);
   const [permission, setPermission] = useState<string>('unknown');
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  /**
+   * **「フォルダ未設定」と「確認できない」を分ける。** handle の保管先が開けない
+   * だけで「未設定」の札を出すと、**設定した本人に選び直させる**ことになる
+   * (しかも選び直しても同じ所で失敗する)。書き出し側 (`fs/folderMirror.ts`) は
+   * この区別を持っていたのに、1 つ下の層が `null` に丸めていた。
+   */
+  const [unreadable, setUnreadable] = useState<string | null>(null);
 
   async function refresh() {
     if (!supported) return;
-    const loaded = await loadFolderHandle();
+    let loaded: Awaited<ReturnType<typeof loadFolderHandle>>;
+    try {
+      loaded = await loadFolderHandle();
+    } catch (e) {
+      setUnreadable(deviceStoreFailureMessage('settings', 'read', e));
+      return;
+    }
+    setUnreadable(null);
     setHasHandle(loaded !== null);
     setPermission(loaded?.permission ?? 'unknown');
   }
@@ -1335,7 +1380,15 @@ function FsaSection() {
   }
 
   async function regrant() {
-    const loaded = await loadFolderHandle();
+    setErr(null);
+    setMsg(null);
+    let loaded: Awaited<ReturnType<typeof loadFolderHandle>>;
+    try {
+      loaded = await loadFolderHandle();
+    } catch (e) {
+      setErr(deviceStoreFailureMessage('settings', 'read', e));
+      return;
+    }
     if (!loaded) return;
     const r = await ensurePermission(loaded.handle);
     if (r === 'granted') setMsg('権限を再取得しました');
@@ -1345,7 +1398,15 @@ function FsaSection() {
 
   async function disconnect() {
     if (!confirm('フォルダ連携を解除しますか?')) return;
-    await clearFolderHandle();
+    setErr(null);
+    setMsg(null);
+    try {
+      await clearFolderHandle();
+    } catch (e) {
+      // 解除できていないので「解除しました」とは言わない (連携はそのまま)。
+      setErr(deviceStoreFailureMessage('settings', 'delete', e));
+      return;
+    }
     setMsg('連携を解除しました');
     await refresh();
   }
@@ -1360,14 +1421,17 @@ function FsaSection() {
             {!supported && (
               <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--bg)', color: 'var(--text-mute)', border: '1px solid var(--border)', borderRadius: 4 }}>非対応ブラウザ</span>
             )}
-            {supported && hasHandle && permission === 'granted' && (
+            {supported && unreadable === null && hasHandle && permission === 'granted' && (
               <span style={{ fontSize: 10, padding: '2px 6px', background: '#22c55e', color: '#fff', borderRadius: 4 }}>有効</span>
             )}
-            {supported && hasHandle && permission !== 'granted' && (
+            {supported && unreadable === null && hasHandle && permission !== 'granted' && (
               <span style={{ fontSize: 10, padding: '2px 6px', background: '#fbbf24', color: '#000', borderRadius: 4 }}>権限再要求</span>
             )}
-            {supported && !hasHandle && (
+            {supported && unreadable === null && !hasHandle && (
               <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--bg)', color: 'var(--text-mute)', border: '1px solid var(--border)', borderRadius: 4 }}>未設定</span>
+            )}
+            {supported && unreadable !== null && (
+              <span data-fsa-unreadable style={{ fontSize: 10, padding: '2px 6px', background: '#fbbf24', color: '#000', borderRadius: 4 }}>確認できません</span>
             )}
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.5 }}>
@@ -1400,6 +1464,11 @@ function FsaSection() {
         </div>
       )}
 
+      {unreadable !== null && (
+        <div role="alert" data-fsa-unreadable-reason style={{ fontSize: 11, color: '#fbbf24', marginTop: 6, lineHeight: 1.6 }}>
+          ⚠ {unreadable}
+        </div>
+      )}
       {msg && <div style={{ fontSize: 11, color: '#22c55e', marginTop: 6 }}>{msg}</div>}
       {err && <div style={{ fontSize: 11, color: '#ef4444', marginTop: 6 }}>{err}</div>}
     </div>

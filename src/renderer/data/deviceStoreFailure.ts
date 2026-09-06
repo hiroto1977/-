@@ -3,8 +3,10 @@
  *
  * 対象は**同じ端末の同じ容量を分け合う 2 つ**である:
  *
- *   records … 業務レコード (`data/store.ts`。売上・KPI・事業・士業 CRM …)
- *   files   … 書き出した書類・図の実体 (`library/library.ts`)
+ *   records  … 業務レコード (`data/store.ts`。売上・KPI・事業・士業 CRM …)
+ *   files    … 書き出した書類・図の実体 (`library/library.ts`)
+ *   settings … 端末ごとの設定 (`network/proxy.ts` のプロキシ設定・`fs/fsa.ts` の
+ *              フォルダ handle)。**読めないことを「未設定」と言うと嘘になる**
  *
  * どちらも IndexedDB で、**片方が容量を埋めれば他方も断られる**。断られた
  * ときの打ち手 (何かを消す / 通常のウィンドウで開く / やり直す) も同じなので、
@@ -45,8 +47,8 @@
  */
 import { describeStorageError } from './localWrite';
 
-/** どちらの保管庫か。文面の主語が変わる。 */
-export type DeviceStore = 'records' | 'files';
+/** どの保管庫か。文面の主語が変わる。 */
+export type DeviceStore = 'records' | 'files' | 'settings';
 
 /** 断られた操作。文面の動詞と「今どうなっているか」が変わる。 */
 export type DeviceStoreOp = 'read' | 'save' | 'delete';
@@ -73,6 +75,11 @@ const HEADING: Record<DeviceStore, Record<DeviceStoreOp, string>> = {
     save: 'この端末にファイルを保存できませんでした',
     delete: 'この端末からファイルを削除できませんでした',
   },
+  settings: {
+    read: 'この端末に保存した設定を読めませんでした',
+    save: 'この端末に設定を保存できませんでした',
+    delete: 'この端末から設定を削除できませんでした',
+  },
 };
 
 /** 「今どうなっているか」。**利用者が次に何を見るか**を先に言う。 */
@@ -86,6 +93,13 @@ const STATE: Record<DeviceStore, Record<DeviceStoreOp, string>> = {
     read: '一覧が 0 件でも、ファイルが消えたとは限りません。',
     save: '書き出した内容は端末に残っていません。',
     delete: '一覧はそのままです。',
+  },
+  settings: {
+    // **「未設定」ではなく「確認できない」。** 設定した本人に「登録してください」と
+    // 言うと、設定し直させた上で同じ所で失敗する。
+    read: '「未設定」と出ていても、設定が消えたとは限りません。',
+    save: '設定は変わっていません。',
+    delete: '設定はそのままです。',
   },
 };
 

@@ -27,6 +27,8 @@ vi.mock('../security/vault', () => ({
 vi.mock('../library/library', () => ({ getLibrary: () => ({ put: async () => {}, list: async () => [] }) }));
 vi.mock('../network/proxy', () => ({
   getProxyConfig: async () => null,
+  // 読み出しの新しい入口 (「未設定」と「読めない」を分ける)。既定は「読めた・未設定」。
+  inspectStoredProxyConfig: async () => ({ config: null, rejected: null, unreadable: null }),
   fetchViaProxy: async () => new Response('{}', { status: 200 }),
   PROXY_REQUIRED_SERVICES: new Set<string>(),
 }));

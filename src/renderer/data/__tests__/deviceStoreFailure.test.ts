@@ -152,6 +152,41 @@ describe('deviceStoreFailureMessage — 保管庫ごとの主語', () => {
   });
 });
 
+describe('deviceStoreFailureMessage — 設定の保管庫', () => {
+  it('★ 設定 × 読み: 「未設定」と出ていても消えたとは限らないと言う', async () => {
+    const m = await load();
+    expect(m.deviceStoreFailureMessage('settings', 'read', err('InvalidStateError'))).toBe(
+      'この端末に保存した設定を読めませんでした（ブラウザの設定 (プライベートモードなど) で端末への保存が禁じられています）。'
+        + '「未設定」と出ていても、設定が消えたとは限りません。'
+        + '通常のウィンドウで開き直してください。',
+    );
+  });
+
+  it('★ 設定 × 保存 / 削除: 何ができなかったかと、設定が変わっていないことを言う', async () => {
+    const m = await load();
+    expect(m.deviceStoreFailureMessage('settings', 'save', err('QuotaExceededError'))).toBe(
+      'この端末に設定を保存できませんでした（この端末の保存領域が一杯です）。'
+        + '設定は変わっていません。'
+        + 'ライブラリの不要なファイルを削除してから、やり直してください。',
+    );
+    expect(m.deviceStoreFailureMessage('settings', 'delete', err('QuotaExceededError'))).toBe(
+      'この端末から設定を削除できませんでした（この端末の保存領域が一杯です）。'
+        + '設定はそのままです。'
+        + 'ライブラリの不要なファイルを削除してから、やり直してください。',
+    );
+  });
+
+  it('★ 3 つの保管庫は、どの操作でも別の文面になる (主語が効いている)', async () => {
+    const m = await load();
+    for (const op of ['read', 'save', 'delete'] as DeviceStoreOp[]) {
+      const lines = (['records', 'files', 'settings'] as const).map((store) =>
+        m.deviceStoreFailureMessage(store, op, err('QuotaExceededError')),
+      );
+      expect(new Set(lines).size, op).toBe(3);
+    }
+  });
+});
+
 describe('fireReported — 押しただけの操作', () => {
   it('★ 渡された約束を受け取る (拒否を宙に浮かせない)', async () => {
     const m = await load();

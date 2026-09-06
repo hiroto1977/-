@@ -131,7 +131,8 @@ import {
   parseSecurityKeys,
   type Transport,
 } from './data/saasWriteWeb';
-import { getProxyConfig, fetchViaProxy } from './network/proxy';
+import { inspectStoredProxyConfig, fetchViaProxy } from './network/proxy';
+import { deviceStoreFailureMessage } from './data/deviceStoreFailure';
 import { liveRead, canLiveRead } from './network/liveRead';
 import { AI_PROVIDERS, ANTHROPIC_FAST_MODEL } from '../shared/ai/providers';
 import {
@@ -167,9 +168,18 @@ async function requestAndReadDurability(): Promise<'persistent' | 'best-effort'>
 const RECORD_ENTRY_SERVICES = new Set(['uber-eats', 'demae-can', 'real-estate', 'mutual-funds']);
 
 /** CORS をブロックする SaaS 用のトランスポート。ユーザー設定のプロキシ
- *  (Cloudflare Worker) 経由で呼ぶ。未設定なら案内付きで throw する。 */
+ *  (Cloudflare Worker) 経由で呼ぶ。未設定なら案内付きで throw する。
+ *
+ *  **「未設定」と「読めなかった」を分ける。** 分けずに一方の案内を出していた頃は、
+ *  設定を保管している IndexedDB が開けないだけで
+ *  「設定で…URL を登録してください」と言っていた —— **登録した本人に、
+ *  登録し直せと言う**ことになり、URL と共有シークレットを打ち直した末に
+ *  同じ所で失敗する。 */
 async function getProxyTransport(): Promise<Transport> {
-  const cfg = await getProxyConfig();
+  const { config: cfg, unreadable } = await inspectStoredProxyConfig();
+  if (unreadable !== null) {
+    throw new Error(deviceStoreFailureMessage('settings', 'read', unreadable));
+  }
   if (!cfg) {
     throw new Error(
       'この連携はブラウザの制約 (CORS) でプロキシが必要です。設定でプロキシ (Cloudflare Worker) のURLを登録してください',
@@ -823,11 +833,15 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
   const spec = AI_PROVIDERS[resolved.id];
   let fetchFn: typeof fetch | undefined;
   if (!spec.browserDirect) {
-    const proxyCfg = await getProxyConfig().catch(() => null);
+    // **読めなかったことを「未設定」と混ぜない** (`network/proxy.ts` の注記と同じ理由)。
+    const proxy = await inspectStoredProxyConfig();
+    const proxyCfg = proxy.config;
     if (!proxyCfg) {
       return err(
         'not_configured',
-        `${spec.label} はブラウザから直接呼び出せません。「設定」ページでプロキシ (Cloudflare Worker) を構成するか、Claude / Gemini / Ollama を利用してください`,
+        proxy.unreadable !== null
+          ? deviceStoreFailureMessage('settings', 'read', proxy.unreadable)
+          : `${spec.label} はブラウザから直接呼び出せません。「設定」ページでプロキシ (Cloudflare Worker) を構成するか、Claude / Gemini / Ollama を利用してください`,
       );
     }
     fetchFn = (input, init) => fetchViaProxy(String(input), init ?? {}, proxyCfg);
@@ -879,7 +893,8 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
   if (ids.length === 0) {
     return err('not_configured', '設定済みの AI プロバイダがありません (⚙ エージェント設定で API キーを保存してください)');
   }
-  const proxyCfg = await getProxyConfig().catch(() => null);
+  const proxy = await inspectStoredProxyConfig();
+  const proxyCfg = proxy.config;
   const answers = await Promise.all(
     ids.map(async (id) => {
       const spec = AI_PROVIDERS[id];
@@ -891,7 +906,10 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
             model: '',
             text: '',
             ok: false,
-            error: `${spec.label} はブラウザから直接呼び出せません (プロキシ未設定)`,
+            error:
+              proxy.unreadable !== null
+                ? deviceStoreFailureMessage('settings', 'read', proxy.unreadable)
+                : `${spec.label} はブラウザから直接呼び出せません (プロキシ未設定)`,
           };
         }
         fetchFn = (input: Parameters<typeof fetch>[0], init?: Parameters<typeof fetch>[1]) =>

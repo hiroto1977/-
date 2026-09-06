@@ -94,26 +94,49 @@ function txDone(tx: IDBTransaction): Promise<void> {
 export async function inspectStoredProxyConfig(): Promise<{
   config: ProxyConfig | null;
   rejected: ProxyEndpointFailure | null;
+  /**
+   * 保管先そのものが読めなかったときの例外。**`config: null` の理由が
+   * 「設定していない」なのか「確認できない」なのかを分ける** ——
+   * 混ぜると、設定済みの利用者に「登録してください」と言うことになる。
+   */
+  unreadable: unknown;
 }> {
-  return reviewStoredProxyConfig(await readStoredProxyConfig());
-}
-
-/** 使える設定だけを返す。弾かれた理由が要るときは inspectStoredProxyConfig。 */
-export async function getProxyConfig(): Promise<ProxyConfig | null> {
-  return (await inspectStoredProxyConfig()).config;
-}
-
-async function readStoredProxyConfig(): Promise<ProxyConfig | null> {
-  let db: IDBDatabase;
-  // IndexedDB の読み出しが失敗したときの既定。fake-indexeddb では失敗させられず
-  // 到達しないが、設定が読めないときに例外を投げず「未設定」として扱う防御として残す。
-  /* Stryker disable BlockStatement */
+  let stored: ProxyConfig | null;
   try {
-    db = await openDb();
-  } catch {
-    return null;
+    stored = await readStoredProxyConfig();
+  } catch (err) {
+    return { config: null, rejected: null, unreadable: err };
   }
-  /* Stryker restore BlockStatement */
+  return { ...reviewStoredProxyConfig(stored), unreadable: null };
+}
+
+/**
+ * 使える設定だけを返す。弾かれた理由が要るときは `inspectStoredProxyConfig`。
+ *
+ * **読めなければ投げる。** `inspectStoredProxyConfig` を通して `null` に丸めると、
+ * 読み出しの失敗が「未設定」と区別できなくなる —— それは 2026-09-06 に直した
+ * ばかりの形である (`readStoredProxyConfig` の注記)。呼び出し側が「未設定でも
+ * 構わない」と決めているなら、その場で `.catch()` を書けばよい。
+ */
+export async function getProxyConfig(): Promise<ProxyConfig | null> {
+  return reviewStoredProxyConfig(await readStoredProxyConfig()).config;
+}
+
+/**
+ * 保管された設定を読む。**開けなければ投げる。**
+ *
+ * 2026-09-06 まではここで `catch { return null; }` していた (「未設定として扱う
+ * 防御」)。ところが `null` は上まで通り、設定画面は**「未設定」の札**を出し、
+ * ブラウザ版の shim は**「設定でプロキシの URL を登録してください」**と言う ——
+ * **登録した本人に、登録し直せと言う**ことになる。しかも URL と共有シークレット
+ * を打ち直した末に、同じ所で失敗する。
+ *
+ * 「無い」と「確認できない」を分けるのは、`dbPosture.ts` が診断について
+ * 書いているのと同じ理由である。使える設定だけが要る側 (`getProxyConfig`) は
+ * これまでどおり `null` を受け取る。
+ */
+async function readStoredProxyConfig(): Promise<ProxyConfig | null> {
+  const db = await openDb();
   try {
     const cfg = await new Promise<ProxyConfig | undefined>((resolve, reject) => {
       const tx = db.transaction(STORE, 'readonly');
@@ -185,10 +208,18 @@ export function parseProxyEnvelope(bodyText: string): ProxyResponseEnvelope {
   try {
     parsed = JSON.parse(bodyText);
   } catch {
-    return INVALID_ENVELOPE;
+    /*
+     * **ここでは返さない。** 早期 return を置くと、消しても `parsed` は undefined の
+     * ままで下の門が同じ `INVALID_ENVELOPE` を返す —— つまり**測れない分岐**が 1 つ
+     * 残る (2026-09-06 の変異検査で生存。`localWrite` の `const OK` や `bankFormat` の
+     * `-0` 正規化と同じ判断で、pragma で黙らせるのではなく分岐ごと消す)。
+     */
   }
   if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return INVALID_ENVELOPE;
   const env = parsed as Record<string, unknown>;
+  // Stryker disable next-line ConditionalExpression: 先頭の `typeof env.status === 'number'` を
+  // true 固定にしても、後ろの `Number.isInteger` は数値以外に対して必ず false を返すため
+  // 観測差が出ない (等価変異)。型の門を先に置くのは読み手のためである。
   const status = typeof env.status === 'number' && Number.isInteger(env.status) && env.status >= 200 && env.status <= 599 ? env.status : 502;
   const headers: Record<string, string> = {};
   if (typeof env.headers === 'object' && env.headers !== null && !Array.isArray(env.headers)) {
