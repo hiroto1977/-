@@ -79,7 +79,8 @@ import {
 import { AI_CHAT_TIMEOUT_MS } from '../shared/ai/chat';
 import { bearerFromStoredToken } from '../shared/vaultToken';
 import { getLibrary } from './library/library';
-import { loadFolderHandle, writeBlobToFolder } from './fs/fsa';
+import { REAL_MIRROR, mirrorToFolder } from './fs/folderMirror';
+import type { ExportSinks, SinkOutcome } from './data/exportOutcome';
 import { filenameFromTitle } from '../shared/safeFilename';
 import { chatOllama, loadEndpointSetting, probeOllama } from './network/ollamaWeb';
 import {
@@ -265,25 +266,29 @@ function downloadBlob(filename: string, content: string, mime: string): boolean 
   }
 }
 
-/** Save an artifact to the in-app Library and optionally to the user's
- *  picked OS folder (File System Access API). Failures are non-fatal so
- *  the user still gets the browser download. */
-async function saveToLibrary(serviceId: string, filename: string, mime: string, content: string): Promise<void> {
+/**
+ * 成果物をライブラリと (設定されていれば) PC のフォルダへ置き、**どこに収まったかを返す**。
+ *
+ * どちらの失敗も書き出し自体を止めない (端末へのダウンロードは別に走る) —— そこは
+ * 元のままだが、2026-09-06 まで**失敗が利用者に届く経路が 1 つも無かった**。
+ * 呼び出し側は戻り値を action の結果に載せ、画面が `exportWarning()` で 1 行にする。
+ * 飛ばす条件の判断は `fs/folderMirror.ts` に 1 つだけ置く。
+ */
+async function saveToLibrary(
+  serviceId: string,
+  filename: string,
+  mime: string,
+  content: string,
+): Promise<ExportSinks> {
   const blob = new Blob([content], { type: mime + ';charset=utf-8' });
+  let libraryCopy: SinkOutcome = 'saved';
   try {
     await library.put(serviceId, filename, mime, blob);
   } catch {
-    // ignore — library is best-effort
+    libraryCopy = 'failed';
   }
-  // FSA mirror: only attempt if the user has granted a folder.
-  try {
-    const loaded = await loadFolderHandle();
-    if (loaded && loaded.permission === 'granted') {
-      await writeBlobToFolder(loaded.handle, filename, blob);
-    }
-  } catch {
-    // ignore — folder write is best-effort
-  }
+  const folderCopy = await mirrorToFolder(REAL_MIRROR, filename, blob);
+  return { libraryCopy, folderCopy };
 }
 
 function notSupportedAlert(): Promise<OsOpResult> {
@@ -1248,9 +1253,9 @@ const shim = {
         return err('action_failed', e instanceof Error ? e.message : String(e));
       }
       const filename = `${def.id}-${Date.now()}.svg`;
-      await saveToLibrary('templates', filename, 'image/svg+xml', svg);
+      const sinks = await saveToLibrary('templates', filename, 'image/svg+xml', svg);
       const downloaded = downloadBlob(filename, svg, 'image/svg+xml');
-      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded }) as ActionResult<T>;
+      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded, ...sinks }) as ActionResult<T>;
     }
 
     // TeamRadar export: grab the inline svg already rendered on the page.
@@ -1262,9 +1267,9 @@ const shim = {
       const p = payload as ExportSvgPayload;
       const title = typeof p.title === 'string' && p.title.length > 0 ? p.title : 'team-radar';
       const filename = filenameFromTitle(title, Date.now(), '.svg');
-      await saveToLibrary('teamradar', filename, 'image/svg+xml', svg);
+      const sinks = await saveToLibrary('teamradar', filename, 'image/svg+xml', svg);
       const downloaded = downloadBlob(filename, svg, 'image/svg+xml');
-      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded }) as ActionResult<T>;
+      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded, ...sinks }) as ActionResult<T>;
     }
 
     /*
@@ -1429,9 +1434,9 @@ const shim = {
       const content = isMd ? renderStockDashboardMarkdown(input) : renderStockDashboardHtml(input);
       const ext = isMd ? '.md' : '.html';
       const filename = 'stocks-dashboard-' + Date.now() + ext;
-      await saveToLibrary('stocks', filename, isMd ? 'text/markdown' : 'text/html', content);
+      const sinks = await saveToLibrary('stocks', filename, isMd ? 'text/markdown' : 'text/html', content);
       const downloaded = downloadBlob(filename, content, isMd ? 'text/markdown' : 'text/html');
-      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: input.generatedAt, downloaded }) as ActionResult<T>;
+      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: input.generatedAt, downloaded, ...sinks }) as ActionResult<T>;
     }
 
     // Emotions: 気分ログ / 履歴クリアは localStorage で完結。
@@ -1630,9 +1635,9 @@ const shim = {
         ? '# 事業ダッシュボード (ブラウザ版)\n\nブラウザ版では完全な事業データのエクスポートに対応していません。\nElectron 版または `npm run dev` で完全な機能をお試しください。\n'
         : '<!doctype html><html><head><meta charset="utf-8"><title>事業ダッシュボード</title></head><body style="font-family:sans-serif;padding:24px;background:#0f1117;color:#e6e8ec"><h1>事業ダッシュボード (ブラウザ版)</h1><p>ブラウザ版では完全な事業データのエクスポートに対応していません。</p><p>Electron 版または <code>npm run dev</code> で完全な機能をお試しください。</p></body></html>';
       const filename = 'business-dashboard-' + Date.now() + ext;
-      await saveToLibrary('business', filename, isMd ? 'text/markdown' : 'text/html', content);
+      const sinks = await saveToLibrary('business', filename, isMd ? 'text/markdown' : 'text/html', content);
       const downloaded = downloadBlob(filename, content, isMd ? 'text/markdown' : 'text/html');
-      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: new Date().toISOString(), downloaded }) as ActionResult<T>;
+      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: new Date().toISOString(), downloaded, ...sinks }) as ActionResult<T>;
     }
 
     return err(

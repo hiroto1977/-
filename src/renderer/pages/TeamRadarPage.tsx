@@ -7,6 +7,7 @@ import { buildTeamEmotionRadar, teamEmotionSummary, type MemberEmotion } from '.
 import { buildTeamCare, type CarePriority } from '../data/memberCare';
 import { sanitizeRadarDraft, type RadarDraft, type TeamMember } from '../data/teamRadarDraft';
 import { writeLocalJson, type LocalWriteResult } from '../data/localWrite';
+import { exportWarning } from '../data/exportOutcome';
 
 
 /** snapshot 由来の読み取り専用メンバー (state に入る前の初期値の型)。
@@ -196,7 +197,7 @@ export function TeamRadarPage() {
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
   const [exportBusy, setExportBusy] = useState(false);
   const [exportMsg, setExportMsg] = useState<string | null>(null);
-  const [lastExport, setLastExport] = useState<{ path: string; bytes: number } | null>(null);
+  const [lastExport, setLastExport] = useState<{ path: string; bytes: number; warning?: string } | null>(null);
   // 感情ウェルビーイング連携: メンバーごとの「今日の気分」(1-5)。
   const [moods, setMoods] = useState<Record<string, number>>({});
 
@@ -344,7 +345,7 @@ export function TeamRadarPage() {
         { title: `${title}｜${department} (${evaluatedAt})` },
       );
       if (r.ok) {
-        setLastExport({ path: r.data.path, bytes: r.data.bytes });
+        setLastExport({ path: r.data.path, bytes: r.data.bytes, warning: exportWarning(r.data) });
       } else {
         setExportMsg('エクスポート失敗: ' + r.message);
       }
@@ -788,6 +789,7 @@ export function TeamRadarPage() {
               bytes={lastExport.bytes}
               openLabel="Canva を開く"
               openUrl="https://www.canva.com/"
+              warning={lastExport.warning}
             />
           </div>
         )}

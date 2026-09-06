@@ -1341,6 +1341,9 @@ function FsaSection() {
           <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.5 }}>
             設定すると、「ライブラリ」に加えて PC の指定フォルダにも自動保存します。
             Chrome / Edge / Opera のみ対応。Safari / Firefox は非対応のため Library のみ。
+            <strong>フォルダの許可はブラウザを再起動すると切れることがあります</strong>
+            （そのときは上の「権限を再取得」で取り直してください）。書き込めなかった場合は、
+            書き出した画面に理由が出ます。
           </div>
         </div>
       </div>

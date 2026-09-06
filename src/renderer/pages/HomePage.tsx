@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { useServiceData } from '../hooks/useServiceData';
 import type { ServiceId } from '../../shared/serviceId';
+import { exportWarning } from '../data/exportOutcome';
 
 interface HomeSnapshot {
   greeting: string;
@@ -122,7 +123,9 @@ const QUICK_ACTIONS: QuickAction[] = [
 type Status =
   | { kind: 'idle' }
   | { kind: 'busy' }
-  | { kind: 'done'; path: string }
+  // 出来上がった後も「どこに収まらなかったか」を持つ。done を壊さずに載せる
+  // ——「作れたが指定フォルダには置けていない」は成功と失敗の間の状態である。
+  | { kind: 'done'; path: string; warning?: string }
   | { kind: 'error'; message: string };
 
 function basename(p: string): string {
@@ -144,7 +147,7 @@ function ActionCard({ action }: { action: QuickAction }) {
         // popup is jarring for non-technical users. Instead, surface a
         // "ファイルを開く" button in the success state so the user
         // explicitly chooses to view the result.
-        setStatus({ kind: 'done', path: r.data.path });
+        setStatus({ kind: 'done', path: r.data.path, warning: exportWarning(r.data) });
       } else {
         setStatus({ kind: 'error', message: r.message });
       }
@@ -220,6 +223,15 @@ function ActionCard({ action }: { action: QuickAction }) {
           <div style={{ fontSize: 10, color: 'var(--text-mute)' }}>
             ファイル名: {basename(status.path)}
           </div>
+          {status.warning ? (
+            <div
+              data-export-warning
+              role="alert"
+              style={{ fontSize: 10, color: '#f59e0b', lineHeight: 1.6 }}
+            >
+              ⚠ {status.warning}
+            </div>
+          ) : null}
           {openFailure ? (
             <div data-os-op-error role="alert" style={{ fontSize: 10, color: 'var(--danger)' }}>
               {openFailure}
