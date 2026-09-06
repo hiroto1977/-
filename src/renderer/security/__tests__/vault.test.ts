@@ -705,7 +705,20 @@ describe('Vault — wipeAndReset', () => {
 });
 
 describe('Vault — status() 堅牢化 (IndexedDB 読取失敗)', () => {
-  it('idbGet が throw しても reject せず uninitialized を返す (ログイン画面に到達)', async () => {
+  /**
+   * **2026-09-06 に方針を 1 つだけ変えた。**
+   *
+   * ここは元々「読取失敗でも reject せず `uninitialized` を返す」だった。
+   * reject しないのは正しい —— 投げると App がハングしてロック画面に到達できない。
+   * だが `uninitialized` は「保管庫が無い」の意味なので、ロック画面は
+   * **「ようこそ — はじめてのご利用」**を出し、トークンを預けている本人に
+   * 初回起動の画面を見せていた。`initialize()` は書く前にもう一度読んで断るので
+   * アプリが上書きすることはないが、「消えた」と読んだ利用者は
+   * **サイトデータの削除**へ進みうる —— そちらは本当に消える。
+   *
+   * なので `unreadable` を返す。**投げないことは変えていない。**
+   */
+  it('★ idbGet が throw しても reject せず unreadable を返す (画面には到達する)', async () => {
     const v = getVault();
     // 先に初期化して meta を書き込んでおく (本来は locked が返る状態)。
     await v.initialize('robustness-pw-123456');
@@ -720,11 +733,90 @@ describe('Vault — status() 堅牢化 (IndexedDB 読取失敗)', () => {
       throw new Error('synthetic idb failure');
     };
     try {
-      // reject せず uninitialized に縮退すること (App はこれでロック画面を表示)。
-      await expect(v2.status()).resolves.toBe('uninitialized');
+      await expect(v2.status()).resolves.toBe('unreadable');
     } finally {
       proto.transaction = orig;
     }
+  });
+
+  it('★ DB そのものを開けない端末でも unreadable (「保管庫が無い」と混ぜない)', async () => {
+    const realIdb = globalThis.indexedDB;
+    const err = new Error('store unavailable');
+    err.name = 'InvalidStateError';
+    // `indexedDB.open` が必ず失敗する端末 (プライベートウィンドウ等)。
+    (globalThis as unknown as { indexedDB: unknown }).indexedDB = {
+      open: () => {
+        const req: Record<string, unknown> = { error: err };
+        setTimeout(() => {
+          (req.onerror as (() => void) | undefined)?.();
+        }, 0);
+        return req;
+      },
+    };
+    try {
+      _resetVaultForTests();
+      await expect(getVault().status()).resolves.toBe('unreadable');
+    } finally {
+      (globalThis as unknown as { indexedDB: unknown }).indexedDB = realIdb;
+      _resetVaultForTests();
+    }
+  });
+
+  it('対照: 読める端末では uninitialized / locked を返し分ける', async () => {
+    _resetVaultForTests();
+    const v = getVault();
+    expect(await v.status()).toBe('uninitialized'); // 本当に何も無い
+    await v.initialize('robustness-pw-123456');
+    expect(await v.status()).toBe('unlocked');
+    _resetVaultForTests();
+    expect(await getVault().status()).toBe('locked'); // meta は在るが鍵はメモリに無い
+  });
+});
+
+/*
+ * 文面そのものを留める。
+ *
+ * ロック画面側の検査は `VAULT_UNREADABLE_TEXT` を**本物から読んで**表示と突き合わせる
+ * ——「画面がこの定数を出しているか」を見るには正しいが、**定数の中身については
+ * 何も言っていない** (定数と表示が同時に変わるので、どちらを削っても通る)。
+ * 実際に変異検査が 5 本の生存として鳴らした (2026-09-06)。約束は 5 つあるので
+ * 5 つ検査する —— どれか 1 つを消したら鳴る。
+ *
+ * 定数の初期化は読み込み時に走るので、`resetModules` して**検査の中で**評価させる
+ * (静的なままだと変異が測れない。`network/proxy.ts` で同じ形を使っている)。
+ */
+describe('VAULT_UNREADABLE_TEXT — 5 つの約束', () => {
+  async function text(): Promise<string> {
+    vi.resetModules();
+    return (await import('../vault')).VAULT_UNREADABLE_TEXT;
+  }
+
+  it('★ 「確認できなかった」と言う (「無い」と言い切らない)', async () => {
+    expect(await text()).toContain('この端末の保管庫を確認できませんでした。');
+  });
+
+  it('★ 「はじめての利用」に見えることを先に訂正する', async () => {
+    expect(await text()).toContain('はじめての利用のように見えても、預けたトークンが消えたとは限りません。');
+  });
+
+  it('★ 直せる原因その 1 — プライベートウィンドウ', async () => {
+    expect(await text()).toContain('プライベートウィンドウで開いている場合は通常のウィンドウで開き直し、');
+  });
+
+  it('★ 直せる原因その 2 — 保存領域が一杯', async () => {
+    expect(await text()).toContain('保存領域が一杯の場合はライブラリの不要なファイルを削除してから、');
+  });
+
+  it('★ この画面の上に在るボタンを名前で指す', async () => {
+    // 「もう一度確認」は `LockScreen` が実際に出すボタンの文字 (別の検査が押している)。
+    expect(await text()).toContain('この画面の「もう一度確認」を押してください。');
+  });
+
+  it('対照: 5 つを繋いだ全体が文面である (順序も落とさない)', async () => {
+    const t = await text();
+    expect(t.indexOf('確認できませんでした')).toBeLessThan(t.indexOf('はじめての利用'));
+    expect(t.indexOf('プライベートウィンドウ')).toBeLessThan(t.indexOf('保存領域が一杯'));
+    expect(t.endsWith('を押してください。')).toBe(true);
   });
 });
 

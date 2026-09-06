@@ -1276,6 +1276,14 @@
       "leafCount": 65,
       "note": "update main.ts,secrets.ts",
       "hash": "98bae01596737bac4950f3331a9ec75f1fb116f39d485e5b37cf44cca8b38997"
+    },
+    {
+      "index": 151,
+      "prevHash": "98bae01596737bac4950f3331a9ec75f1fb116f39d485e5b37cf44cca8b38997",
+      "merkleRoot": "fdd11550ff27c3e42932f5f7df0016299fadfc345ab48b6c6a9ca9801b694245",
+      "leafCount": 65,
+      "note": "update LockScreen.tsx,vault.ts",
+      "hash": "89246daa726d738bc71225c6e995e1e64cb3c884b982b4d4e878a835113cf2c8"
     }
   ],
   "tipManifest": {
@@ -1317,14 +1325,14 @@
     "src/renderer/network/proxy.ts": "d1f1e9dab213f299907c43f81a0d636e83be20aec9e30b41d71b9616d9d279cb",
     "src/renderer/oauth/pkce.ts": "ce9841741983b525c65f1ae7debd45c6ebd5cf516c9b7f5eea5218c4bc5d0681",
     "src/renderer/oauth/pkceSession.ts": "a6b79405ca270449c0ec2c883d7a0ed66b357c803450d47652d0fe635709f389",
-    "src/renderer/security/LockScreen.tsx": "a123592ed121d0d0c559e57906dd1d7acae784cb07b3dfb1d5fbc48b00f860dc",
+    "src/renderer/security/LockScreen.tsx": "54d75363de990ceec7c9964d3e82fdb71058d2068e21fdc6e106532443251479",
     "src/renderer/security/autoLock.ts": "ed7ffa56ef1c6068c4f66e5db06f91fc02b58a4fb348e8422ff9f28584769fff",
     "src/renderer/security/bip39-wordlist.ts": "158d4c3eed64474223aefe917c6497f4afd0200054efd089d9d0f323332d6761",
     "src/renderer/security/dataCrypto.ts": "33afebf4774cb7ace5a2e10a74778a44a0c7e8b070fde34ad5e62135b0ca7cd2",
     "src/renderer/security/frameGuard.ts": "66ad10cf7e5a48fcc4a406aa66b9de544609877944fd073c7bf3af8190991559",
     "src/renderer/security/lockWorkspace.ts": "a6ebfe22324acc0a4cfd02a12262001d49c23963c02f03460bb9aefcd0e701c2",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
-    "src/renderer/security/vault.ts": "723dbb27ec8409092ecb1932d624156c793b7af501b831be7ddbc0155c5f002f",
+    "src/renderer/security/vault.ts": "3f459397736801bbadd955a78ac6aa805bdef3ea7df9a817af98a481d33938ff",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
     "src/shared/ai/chat.ts": "a90292c80854c9feb016141107710d8929179371119dcee830556191a274b80a",
     "src/shared/ai/credentials.ts": "69603ba457c124794e3e2c38f75eb35bc487e9766eab2d03bd53d035c885d85a",

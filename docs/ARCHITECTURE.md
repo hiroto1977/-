@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **11131** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11142** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 439 | 自己検証 |
+| `file:line` 参照数 | 441 | 自己検証 |
 
 ### 統合フロー図
 
@@ -2450,6 +2450,23 @@ effect と他 instance からの通知は戻り値を受け取らないので、
 設定画面は `確認できません` の札と理由を出す (`data-proxy-unreadable` /
 `data-fsa-unreadable`)。`getProxyConfig` も飲み込まない ——
 「未設定でも構わない」呼び出し側がその場で `.catch()` を書く。
+
+**保管庫そのものが最後の 1 つだった** (2026-09-06)。ブラウザ版 `security/vault.ts` の
+`status()` は `openDb()` の失敗と meta の読取失敗を**どちらも飲み込んで `uninitialized`**
+を返しており、`LockScreen` はそれを見て「ようこそ — はじめての利用です」の画面
+(新しいマスターパスワードを作る画面) を出していた。**トークンを預けている本人に
+「はじめての利用」と告げる**ので、まず「消えた」と読める。しかもその画面は行き止まりで、
+「作る」を押しても `initialize()` は同じ `openDb()` で転ぶか、meta が読めれば
+「既に初期化されています」で断る (上書きはしない —— `initialize()` が自分で meta を
+読み直すため)。今は `VaultStatus` に `unreadable` を足し、`status()` は開けない場合と
+読めない場合の両方でそれを返す。`LockScreen` は**パスワード欄を出さない**専用の画面
+(`data-vault-unreadable`) で、直せる 2 つの原因 (プライベートウィンドウ・保存領域が一杯) と
+「もう一度確認」だけを出す。文面は `VAULT_UNREADABLE_TEXT` に置き、画面側の試験は
+`importOriginal` で**本物を読み直す** (綴りを写すと、変えたときに鳴らない検査になる) ——
+**ただしそれだけでは文面の中身を誰も見ていない**。定数と表示が同時に変わるので、どの断片を
+削っても通る同語反復になっており、変異検査が 5 本の生存として鳴らした。約束は 5 つ
+(確認できなかったこと・「はじめて」に見えることの訂正・原因 2 つ・押すボタンの名前) なので
+5 つに分けて `src/renderer/security/__tests__/vault.test.ts` で個別に留め、順序の対照を 1 本置いた。
 
 実測 (2026-09-06): 書き込みを呼ぶ 15 か所のうち 12 か所が拒否された Promise を捨てて
 いた (`void add()` / `onClick={async () => { await onSave(...) }}`)。容量超過・プライベート
