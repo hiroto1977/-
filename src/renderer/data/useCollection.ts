@@ -107,6 +107,10 @@ export function useCollection<T extends Record<string, unknown>>(collection: str
   // 変異させても観測上の振る舞いは変わらない (equivalent)。防御の明示性のため残す。
   /* Stryker disable all */
   const alive = useRef(true);
+  /* Stryker restore all */
+  /** 最新の読みの札。古い読みの結果を捨てるために持つ (`reload` の冒頭を参照)。 */
+  const latestRead = useRef<object>({});
+  /* Stryker disable all */
   useEffect(() => {
     alive.current = true;
     return () => {
@@ -127,12 +131,24 @@ export function useCollection<T extends Record<string, unknown>>(collection: str
    * `loading` は落とす。落とさないと「読み込み中…」が永遠に出続ける。
    */
   const reload = useCallback(async () => {
+    // **後から返った古い読みで records を戻さない。**
+    //
+    // `reload()` は重なる: 書いた本人が await する分と、`notifyCollection` で
+    // 他 instance に飛ぶ分、マウント effect の分がある。`list()` は IndexedDB の
+    // 読みだけでは終わらず、**1 件ずつ復号してから**返る (`recordEncryption` を
+    // 有効にした端末)。読みの要求順は IndexedDB が守っても、**復号にかかる時間は
+    // 件数で変わる**ので、返る順は要求順とは限らない。先に始まった大きい読みが
+    // 後から返ると、書いた直後の一覧が書く前の姿に戻る。
+    // 番人は `useServiceData` と同じ形 (最新の札を持つ読みだけが書き換える)。
+    const mine = {};
+    latestRead.current = mine;
     let list: readonly StoredRecord<T>[] | null = null;
     try {
       list = await getRecordStore().list<T>(collection);
     } catch (err) {
       reportDeviceStoreFailure('records', 'read', collection, err);
     }
+    if (mine !== latestRead.current) return;
     // Stryker disable next-line ConditionalExpression: 上記のとおり alive ガードは React 18 では equivalent。
     if (alive.current) {
       // 読めなかったときは**今持っている records を残す** —— 空に置き換えると

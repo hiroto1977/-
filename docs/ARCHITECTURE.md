@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **11268** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11270** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 472 | 自己検証 |
+| `file:line` 参照数 | 473 | 自己検証 |
 
 ### 統合フロー図
 
@@ -2740,6 +2740,23 @@ fetcher に 1 欄足すと `取得だけ=[extraFieldForControl]` で落ちる。
 
 対照 3 本: 番人を外すと「古い応答が画面を戻さない」「古い失敗が赤くしない」
 「古い例外が赤くしない」が落ち、重ならない場合の対照は通ったまま。
+
+**同じ番人を `useCollection.reload()` にも置いた。** こちらの読みが重なる理由は 3 つ
+(書いた本人が await する分・`notifyCollection` で他 instance に飛ぶ分・マウント
+effect の分) で、`list()` は IndexedDB の読みだけでは終わらず**1 件ずつ復号してから**
+返る (`recordEncryption` を有効にした端末)。読みの要求順は IndexedDB が守っても、
+**復号にかかる時間は件数で変わる**ので返る順は要求順とは限らない —— 先に始まった
+大きい読みが後から返ると、書いた直後の一覧が**書く前の姿に戻る** (記録は残っている
+のに画面から消える)。対照は `list()` を手で解決できる store に差し替えて返る順を
+逆にし、番人を外すと `expected [ '記録するまえ' ] to deeply equal [ '記録したあと' ]`
+で落ちることを見た。`src/renderer/data/useCollection.ts` は変異検査 100% (54)。
+
+一方で**書き込み側の順序は既に守られていた**: `store.update` / `remove` は id ごとの
+鎖 (`serialize`) に載り、書く直前に存在を再確認する (2026-08 の
+`importAll({replace:true})` との競合の直しがそのまま効いている)。
+`SettingsPage` の資格情報スロットの `refresh()` は `busy` でボタンを止めた上で
+`await` するので、残る隙はマウント直後の 1 回だけ —— 影響は「登録済み」の札が
+1 描画分古いことなので、据え置いた (docs/REMAINING_WORK.md に記録)。
 併せて `declaresMock` を簡素化した —— `typeof value === 'object'` は数・文字列に
 `.isMock` が無いので要らず、置くと「関数が isMock を持つ場合」でしか差が出ない
 等価な分岐だった。変異検査は `src/renderer/hooks/useServiceData.ts` が

@@ -10898,3 +10898,26 @@ JSON で受ける」かを決める。前者は画面の行が増えるが、既
 (編集フォームに載せるときは `value={undefined}` が制御されない入力になるので、
 そのときに補うこと)。`highlight-settings` は下流の `managementHighlights` が
 `{ ...DEFAULT_HIGHLIGHT_THRESHOLDS, ...thresholds }` で畳むので実害なし。
+
+### 追記 (2026-09-06 夜・続) — 重なった取得と読みの番人: どこまで置いたか
+
+置いた: `useServiceData.refresh()` (取得・失敗・橋の reject の 3 経路) と
+`useCollection.reload()`。どちらも「最新の札を持つ物だけが画面を書き換える」形。
+
+**置いていない所と理由** (再訪する人向け):
+
+1. `SettingsPage` の資格情報スロットの `refresh()` (2 か所) —— 保存・削除は `busy` で
+   ボタンを止めた上で `await refresh()` するので、重なるのは**マウント直後の 1 回**と
+   保存の分だけ。しかも読むのは金庫の一覧 1 本で、遅れて返っても影響は
+   「登録済み」の札が 1 描画分古いこと。番人を置くより、置いた所と同じ形に
+   揃える価値が薄いので据え置いた (置くなら同じ 3 行)。
+2. `LibraryPage.refresh()` —— 同じ形だが、読むのは blob の一覧 (復号なし) で
+   IndexedDB の要求順がそのまま返る順になる。据え置き。
+3. **書き込み側**は既に守られている: `store.update` / `remove` は id ごとの鎖
+   (`serialize`) に載り、書く直前に存在を再確認する (2026-08-23 の
+   `importAll({replace:true})` 競合の直し)。読み取り専用の `list` は鎖に載らないが、
+   上の番人で画面側が守られる。
+
+**次に同じ形を探すときの目印**: `async function refresh()` / `reload()` の中で
+`await` の後に `setState` する形。`await` を挟んだ後の `setState` は「自分がまだ
+最新か」を確かめてから書くこと。
