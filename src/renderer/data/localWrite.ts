@@ -21,8 +21,6 @@
 /** 書き込みの結果。失敗しても入力は画面に残るので、`message` は「どうすればよいか」まで書く。 */
 export type LocalWriteResult = { readonly ok: true } | { readonly ok: false; readonly message: string };
 
-const OK: LocalWriteResult = { ok: true };
-
 /**
  * 容量超過を表す名前。ブラウザによって name が違う (Firefox は NS_ERROR_DOM_QUOTA_REACHED)。
  * code 22 / 1014 も同じ意味だが、name だけで両ブラウザを拾えるので数値は見ない。
@@ -50,7 +48,7 @@ export function writeLocalJson(key: string, value: unknown): LocalWriteResult {
   try {
     json = JSON.stringify(value);
   } catch (err) {
-    return { ok: false, message: `保存する値を組み立てられませんでした (${describe(err)})。` };
+    return { ok: false, message: `保存する値を組み立てられませんでした (${describeStorageError(err)})。` };
   }
   return writeLocalString(key, json);
 }
@@ -59,7 +57,14 @@ export function writeLocalJson(key: string, value: unknown): LocalWriteResult {
 export function writeLocalString(key: string, json: string): LocalWriteResult {
   try {
     localStorage.setItem(key, json);
-    return OK;
+    /*
+     * ここで組む。モジュールの定数 (`const OK = { ok: true }`) にしていたが、
+     * **読み込み時に組まれる値は変異検査が測れない** —— 定数を `{}` へ潰しても、
+     * その差が出るのは import の瞬間だけで、テストが走る時点では既に
+     * 組み終わった写しが使われる (2026-09-06 実測で 2 件生存)。
+     * 呼ばれるたびに組めば、成功の形を見ている検査がそのまま鳴る。
+     */
+    return { ok: true };
   } catch (err) {
     if (isQuota(err)) {
       return {
@@ -77,7 +82,7 @@ export function writeLocalString(key: string, json: string): LocalWriteResult {
           + '通常のウィンドウで開くか、印刷して控えを取ってください。',
       };
     }
-    return { ok: false, message: `端末に保存できませんでした (${describe(err)})。控えを取ってください。` };
+    return { ok: false, message: `端末に保存できませんでした (${describeStorageError(err)})。控えを取ってください。` };
   }
 }
 
@@ -85,8 +90,11 @@ export function writeLocalString(key: string, json: string): LocalWriteResult {
  * 例外の説明を 1 行に。Error でない物を投げる実装もあるので `String()` に落とし、
  * 文面が画面を埋めないよう 60 字で切る。`name` が空の Error もあるので既定を置く
  * (`message` は秘密を含みうるので出さない —— 出すのは種別だけ)。
+ *
+ * レコードストア側 (`recordStoreFailure.ts`) も同じ名乗り方を使う ——
+ * 保存先が違っても「どの種別で断られたか」の書き方を 2 つ持つ理由が無い。
  */
-function describe(err: unknown): string {
+export function describeStorageError(err: unknown): string {
   if (err instanceof Error) return err.name || 'Error';
   return String(err).slice(0, MAX_REASON_CHARS);
 }

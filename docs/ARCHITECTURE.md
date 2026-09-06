@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **11039** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11087** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 430 | 自己検証 |
+| `file:line` 参照数 | 432 | 自己検証 |
 
 ### 統合フロー図
 
@@ -2138,7 +2138,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **269 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **270 ファイル**。
 
 #### 点数の定義 (分母に何を入れないか)
 
@@ -2416,6 +2416,27 @@ allowlist のパスだけを受ける — 任意のパスを書けると `__prot
 これが無いと**画面共通の入力欄が保存しても、その値を使うページは古いまま**になる。
 入力欄には「手入力」と印が付くのに画面の数字が変わらないという、いちばん
 分かりにくい壊れ方をする (2026-08 に実測)。
+
+**断られた読み書きは、入口が 1 本の経路へ写す** (`data/recordStoreFailure.ts`)。
+`useCollection` の `add` / `addMany` / `edit` / `remove` は失敗を `save` / `delete` として
+報せてから投げ直し、`reload` は `read` として報せる (こちらは**投げない** —— マウント
+effect と他 instance からの通知は戻り値を受け取らないので、投げても誰も気付けない)。
+画面側は `components/RecordStoreFailureBanner.tsx` が内容領域の先頭で最後の 1 件を出す。
+
+実測 (2026-09-06): 書き込みを呼ぶ 15 か所のうち 12 か所が拒否された Promise を捨てて
+いた (`void add()` / `onClick={async () => { await onSave(...) }}`)。容量超過・プライベート
+モード・別タブの versionchange で断られると**行は増えず、文言も出ない** —— 打ち込んだ値
+だけが残るので「押せていない」ように見える。読みの側はさらに静かで、`indexedDB` が
+開けない端末では**全コレクションが空**になり、「まだ何も入力していない」画面と区別が
+付かなかった (利用者から見れば業務データが消えたのと同じ)。読めなかった回は
+**今持っている records を残す** —— 空へ置き換えると、報せより先に「消えた」が目に入る。
+
+15 か所へ同じ try/catch を配らないのは `ManualDataSection` を 1 か所に置いたのと同じ
+理由 (配ると必ずどれか 1 つが漏れる)。押しただけの場所は `fireReported()` を通す ——
+`void p` だと拒否が宙に浮き、画面には何も出ないまま `unhandledrejection` になる。
+`__tests__/recordWritePolicy.test.ts` が「書き込みは台帳の場所からしか行わない」と
+「`void` で捨てていない」を双方向に検査し、認めた例外には理由を要求する
+(localStorage 側の `__tests__/storageWritePolicy.test.ts` と同じ形)。
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 

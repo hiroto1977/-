@@ -14,6 +14,7 @@ import { usePlan } from './plan/usePlan';
 import { VoiceCommandBar } from './components/VoiceCommandBar';
 import { ChatbotWidget } from './components/ChatbotWidget';
 import { PageErrorBoundary } from './components/PageErrorBoundary';
+import { RecordStoreFailureBanner } from './components/RecordStoreFailureBanner';
 import {
   PLAN_ORDER,
   PLANS,
@@ -460,6 +461,12 @@ export function App() {
           </span>
         </header>
         <section className="content">
+          {/*
+            端末が業務レコードの読み書きを断ったことは、**どの画面でも同じ打ち手**に
+            なるので 1 か所で出す。画面の境界の外に置く —— 中だと画面が落ちたときに
+            報せも消える。
+          */}
+          <RecordStoreFailureBanner />
           {activeUnlocked ? (
             // 画面の描画エラーはこの枠に閉じる (境界が無いと React はツリー全体を外し、サイドバーごと白くなる)。
             // key で画面ごとに張り直す —— 別の画面へ移れば新しい境界。

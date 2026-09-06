@@ -1,12 +1,37 @@
 # Service Hub — 残りの作業手順書
 
-最終更新: 2026-09-02
+最終更新: 2026-09-06
 対象ブランチ: `claude/eager-brown-7cev3c`（既定ブランチは `main`）
 
 このドキュメントは「今の状態から先に何が残っているか」を並べたランブックです。
 **2026-05-12 版は 10 サービス / PR #2 draft を前提にしていて 2 か月半ズレていた**ため、
 実測値で書き直しました。以後もズレたら実測で直してください（件数の一部は
 `npm run lint:docs` が機械照合します）。
+
+---
+
+## 次に測る所 — 同じ形が**ライブラリ (blob ストア)** に残っている (2026-09-06)
+
+業務レコード (IndexedDB) の読み書きは入口 1 か所で報せるようにした
+(`data/recordStoreFailure.ts` + `components/RecordStoreFailureBanner.tsx`)。
+**同じ端末の同じ容量を共有している `library/library.ts` (書き出した書類・SVG の実体) は
+まだ同じ形のまま**である。実測 (2026-09-06) で書き込み・削除は 3 か所:
+
+```
+  data/connectorSinks.ts:18   getLibrary().put(...)     コネクタ実行の保存 (段の結果には出る)
+  pages/LibraryPage.tsx:111   getLibrary().remove(id)   onClick={() => remove(it.id)} —— 拒否は宙に浮く
+  pages/LibraryPage.tsx:119   getLibrary().clear()      onClick={removeAll} —— 同じ
+  renderer/web-shim.ts:286    library.put(...)          action の結果に出る
+```
+
+`LibraryPage` の 2 か所は「削除しました」を await の**後**に置いてあるので
+**嘘は言わない** (失敗すれば文言も出ない) が、**理由も出ない**。容量が一杯なのは
+まさにライブラリが太ったときなので、断られる可能性はレコード側より高い。
+
+手順は今回と同じでよい: `recordStoreFailure` の経路を blob 側からも使う
+(操作は `save` / `delete` と同じ 3 通りで足りる) → `LibraryPage` の 2 か所を
+`fireReported()` へ → `recordWritePolicy.test.ts` の走査に `getLibrary()` を足す
+(台帳の形はそのまま)。**やっていないのは、1 回のパスで 2 つの保存層を混ぜないため。**
 
 ---
 

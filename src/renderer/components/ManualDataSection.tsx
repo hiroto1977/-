@@ -16,6 +16,7 @@
 
 import { useState } from 'react';
 import { useCollection } from '../data/useCollection';
+import { fireReported } from '../data/recordStoreFailure';
 import {
   BUSINESS_UNITS_COLLECTION,
   findBusinessName,
@@ -215,7 +216,7 @@ function BusinessUnits({
               {typeof u.data.fixedCost === 'number' && ` / 固定費 ${u.data.fixedCost.toLocaleString()} 円`}
             </span>
           )}
-          <button type="button" onClick={() => void onRemove(u.id)} style={{ fontSize: 12 }}>
+          <button type="button" onClick={() => fireReported(onRemove(u.id))} style={{ fontSize: 12 }}>
             削除
           </button>
         </div>
@@ -280,7 +281,7 @@ function BusinessUnits({
           onChange={(e) => setDraft((d) => ({ ...d, fixedCost: e.target.value }))}
           style={{ ...input, width: 150 }}
         />
-        <button type="button" onClick={() => void add()} style={{ fontSize: 12 }}>
+        <button type="button" onClick={() => fireReported(add())} style={{ fontSize: 12 }}>
           事業を追加
         </button>
         {error !== undefined && <span style={{ fontSize: 11, color: '#ef4444' }}>{error}</span>}
@@ -344,7 +345,7 @@ function ManualMetrics({
             {typeof r.data.note === 'string' && (
               <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>{r.data.note}</span>
             )}
-            <button type="button" onClick={() => void onRemove(r.id)} style={{ fontSize: 12 }}>
+            <button type="button" onClick={() => fireReported(onRemove(r.id))} style={{ fontSize: 12 }}>
               削除
             </button>
           </div>
@@ -401,7 +402,7 @@ function ManualMetrics({
           onChange={(e) => setDraft((d) => ({ ...d, note: e.target.value }))}
           style={{ ...input, width: 170 }}
         />
-        <button type="button" onClick={() => void add()} style={{ fontSize: 12 }}>
+        <button type="button" onClick={() => fireReported(add())} style={{ fontSize: 12 }}>
           数値を追加
         </button>
         {error !== undefined && <span style={{ fontSize: 11, color: '#ef4444' }}>{error}</span>}
@@ -485,11 +486,11 @@ function Overrides({
                   onChange={(e) => setDraft((d) => ({ ...d, [f.path]: e.target.value }))}
                   style={{ ...input, width: 110 }}
                 />
-                <button type="button" onClick={() => void save(f.path, f.unit)} style={{ fontSize: 12 }}>
+                <button type="button" onClick={() => fireReported(save(f.path, f.unit))} style={{ fontSize: 12 }}>
                   保存
                 </button>
                 {hit !== undefined && (
-                  <button type="button" onClick={() => void onClear(hit.id)} style={{ fontSize: 12 }}>
+                  <button type="button" onClick={() => fireReported(onClear(hit.id))} style={{ fontSize: 12 }}>
                     自動に戻す
                   </button>
                 )}
