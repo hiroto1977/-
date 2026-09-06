@@ -34,7 +34,7 @@ import { navigateTo, takeNavigationIntent } from '../navigate';
 import { useCollection } from '../data/useCollection';
 import { latestRecord } from '../data/latestRecord';
 import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../data/kpiActuals';
-import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceSheet';
+import { BALANCE_SHEET_COLLECTION, balanceSheetOrNull, type BalanceSheet } from '../data/balanceSheet';
 import { BANK_SUBMISSION_COLLECTION, settingsFromRecord, type BankSubmissionSettings } from '../data/bankSubmission';
 import { buildKessanImport } from '../data/kessanImport';
 import { KESSAN_SHEETS, docIdOfSheet, fieldsForSheet, inheritedNote, isKessanSheet, sheetDef, sheetOfDoc, type KessanSheet } from '../data/kessanSheets';
@@ -1387,7 +1387,7 @@ export function DocstudioPage() {
     () =>
       buildKessanImport({
         kpiActuals: kpiCol.records.map((r) => r.data),
-        balanceSheet: latestRecord(bsCol.records)?.data ?? null,
+        balanceSheet: balanceSheetOrNull(latestRecord(bsCol.records)?.data),
         profile: settingsFromRecord(latestRecord(submissionCol.records)?.data).profile,
         existing: store.kessan ?? {},
       }),
@@ -1403,7 +1403,7 @@ export function DocstudioPage() {
     () =>
       buildCashPlanImport({
         accounting: freeeData.monthly,
-        balanceSheet: latestRecord(bsCol.records)?.data ?? null,
+        balanceSheet: balanceSheetOrNull(latestRecord(bsCol.records)?.data),
         profile: submissionProfile,
         existing: store.studio?.['shikin-guri'] ?? {},
       }),

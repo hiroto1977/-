@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **11222** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11247** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 465 | 自己検証 |
+| `file:line` 参照数 | 467 | 自己検証 |
 
 ### 統合フロー図
 
@@ -2635,6 +2635,45 @@ export 関数を 0・`[]`・`{}` で呼び (成功した呼び出し 2,621 件)�
 `planInterim` の全欄を見る形で残した。`jpy()` 側に「非有限なら ―」を入れるのは
 **やめた** —— 実際に届く道が 1 つも無い今それを入れると、次に生まれた NaN が
 画面から消えて開発時に見えなくなる (この方針は docs/REMAINING_WORK.md に記録)。
+
+#### 形の検査が「任意」と言う欄を、型は「必須」と言っていた (読み取りの境界に補いを 1 つ)
+
+復元の形の検査 (`src/renderer/data/collectionShapes.ts`) は意図して**緩い** ——
+「必須は中核の欄だけ・任意は在るなら型を見る (前方互換。落とし過ぎは復元の欠落 =
+別の事故)」と自分で書いてある。ところが**レコードの型はその欄を必須と宣言していた**
+ので、欄の無い控え (古い版・手で直した JSON・別の道具が書いた控え) が復元を通ると
+型が嘘になる。TypeScript は実行時には居ないので、行き着くのは画面である
+(2026-09-06 実測・3 か所):
+
+| 収集 | 形は任意 / 型は必須 | 起きること |
+|---|---|---|
+| `mutualfund-holdings` | `ytdReturnPct` | 一覧の `h.ytdReturnPct.toFixed(1)` が **TypeError**。投資信託の画面が `PageErrorBoundary` の枠になり、**その画面が保有銘柄の一覧なので利用者は消せない**。形は正しいので設定の「形式の合わないレコード」点検にも出ない |
+| `mutualfund-holdings` | `acquisitionCost` / `code` / `valuationMode` | 取得原価の合計が NaN → 「¥NaN」。`valuationMode` だけは画面側に `?? 'auto'` が在った (**1 つだけ補われていて残りが漏れていた**) |
+| `balance-sheet` | `inventory` / `accountsReceivable` / `accountsPayable` | `computeBalanceSheetMetrics` の足し算が NaN → 経営サマリーのタイルと**金融機関等へ出す書面に NaN が印刷される**。書面は「上記のとおり相違ありません。」と代表者印を添えて出す物なので、いちばん出てはいけない場所 |
+| `realestate-properties` | `monthlyExpenses` / `monthlyLoan` | 年間キャッシュフローの引き算が NaN → 不動産ページの「¥NaN」 |
+
+直し方は**読む所を 1 つにする** —— 使う場所ごとに `??` を置くと必ずどれか 1 つが
+漏れる (`valuationMode` だけ補われていたのがまさにそれ)。既定値は型の注記と入力側の
+約束をそのまま使う: `normalizeHolding` (取得額が無ければ評価額 = 損益 0、評価モードは
+auto、年初来は 0)、`normalizeBalanceSheet` + `balanceSheetOrNull` (内数は 0。
+**未入力 `null` は `null` のまま** —— ゼロの貸借対照表に化けさせると画面が「―」ではなく
+0 円を断言する)、`normalizeProperty` (経費・返済は 0)。数でない値・非有限値も既定へ倒す。
+
+**形の検査は緩いままにした。** 厳しくすると古い控えの復元でレコードが黙って消える
+(それは別の事故)。緩い入口 + 読む所の補い、が今の形である。
+
+対照は 3 本とも実物で取った: 旧の読み方に戻すと、投資信託は
+`Cannot read properties of undefined (reading 'toFixed')` で画面が枠になり、
+**金融機関等提出用の書面には NaN が印刷される** (`src/renderer/pages/__tests__/overviewBankSheet.test.ts` の
+★ が落ち、揃った控えの対照は通ったまま)。変異検査で 1 か所**自分の検査の穴**も出た
+—— 任意の欄の `typeof v === 'number' && Number.isFinite(v)` は、文字列だけを
+標本にすると `&&`→`||` の差が出ない (NaN は typeof が number)。NaN と ±∞ の標本を足した。
+
+まだ残っているのは `hydroponics-setup` の経済の欄 (歩留まり・単価・電力原単位ほか)。
+ここは既定値が**参考値であって実績ではない**と自分で書いてあるので、欠けた欄を
+既定で埋めると「その人の数字」として参考値が印刷されうる。0 で埋めるのも過小に
+断言する。扱いは docs/REMAINING_WORK.md に選択肢を残した (低カリウムの**実測**欄は
+型でも任意なので、この穴には入っていない)。
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 

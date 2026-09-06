@@ -5,6 +5,8 @@ import {
   computeBalanceSheetInsights,
   BALANCE_SHEET_COLLECTION,
   type BalanceSheet,
+  normalizeBalanceSheet,
+  balanceSheetOrNull,
 } from '../balanceSheet';
 
 const VALID = { currentAssets: 100, currentLiabilities: 100, fixedAssets: 0, fixedLiabilities: 0, netIncome: 0 };
@@ -462,5 +464,76 @@ describe('computeBalanceSheetInsights — substantive insolvency risk', () => {
     // netDebt 100 - 500 = -400 → not > netAssets → no risk
     expect(i.netDebt).toBe(-400);
     expect(i.substantiveInsolvencyRisk).toBe(false);
+  });
+});
+
+// --- 保存された 1 件を読む境界 -------------------------------------------
+//
+// 復元の形の検査は `inventory` / `accountsReceivable` / `accountsPayable` も
+// **任意**にしている (前方互換) のに、型は必須と言う。欄の無い控えが復元を
+// 通ると足し算が NaN になり、行き先は経営サマリーのタイルと**金融機関等へ出す
+// 書面** —— NaN の純資産が印刷される。0 と読むのは入力側 (`parseBalanceSheet`)
+// の「空欄 = 0 円」と同じ約束。
+describe('normalizeBalanceSheet / balanceSheetOrNull', () => {
+  const core = { asOf: '2026-03-31', currentAssets: 5_000_000, fixedAssets: 3_000_000,
+    currentLiabilities: 2_000_000, fixedLiabilities: 1_000_000, netIncome: 500_000 };
+
+  it('内数の欄が無い控えでも合計が有限で、指標が NaN にならない', () => {
+    const bs = normalizeBalanceSheet(core);
+    expect(bs.inventory).toBe(0);
+    expect(bs.accountsReceivable).toBe(0);
+    expect(bs.accountsPayable).toBe(0);
+    const m = computeBalanceSheetMetrics(bs);
+    for (const [k, v] of Object.entries(m)) {
+      if (typeof v === 'number') expect(Number.isFinite(v), k).toBe(true);
+    }
+    expect(m.netAssets).toBe(5_000_000);
+  });
+
+  it('対照: 揃った控えは 1 つも書き換えない', () => {
+    const full = { ...core, cash: 1_000_000, inventory: 400_000, accountsReceivable: 900_000,
+      accountsPayable: 700_000, interestBearingDebt: 2_500_000 };
+    expect(normalizeBalanceSheet(full)).toEqual(full);
+  });
+
+  it('任意の欄 (現預金・有利子負債) は無いまま残す (0 を作らない)', () => {
+    const bs = normalizeBalanceSheet(core);
+    expect(bs.cash).toBeUndefined();
+    expect(bs.interestBearingDebt).toBeUndefined();
+  });
+
+  it('数でない値・非有限値も 0 に倒す', () => {
+    const bs = normalizeBalanceSheet({ ...core, inventory: '400000', currentAssets: Number.NaN,
+      netIncome: Number.POSITIVE_INFINITY, cash: 'たくさん', asOf: 42 });
+    expect(bs.inventory).toBe(0);
+    expect(bs.currentAssets).toBe(0);
+    expect(bs.netIncome).toBe(0);
+    expect(bs.cash).toBeUndefined();
+    expect(bs.asOf).toBe('');
+  });
+
+  it('任意の欄が NaN / ±∞ の控えも「無い」として扱う (数であるだけでは通さない)', () => {
+    // 変異検査が拾った穴: `typeof v === 'number' && Number.isFinite(v)` の `&&` を
+    // `||` にしても、上の「文字列の金額」だけでは差が出ない —— NaN は typeof が
+    // number なので、`||` だと NaN がそのまま残ってランウェイの計算に流れる。
+    for (const bad of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+      const bs = normalizeBalanceSheet({ ...core, cash: bad, interestBearingDebt: bad });
+      expect(bs.cash).toBeUndefined();
+      expect(bs.interestBearingDebt).toBeUndefined();
+    }
+  });
+
+  it('未入力 (null / undefined) は null のまま —— ゼロの貸借対照表を作らない', () => {
+    expect(balanceSheetOrNull(null)).toBeNull();
+    expect(balanceSheetOrNull(undefined)).toBeNull();
+    expect(balanceSheetOrNull(core)?.currentAssets).toBe(5_000_000);
+  });
+
+  it('物でない引数も落ちずに空の形になる', () => {
+    for (const raw of [42, 'x', [] as unknown]) {
+      const bs = normalizeBalanceSheet(raw);
+      expect(bs.currentAssets).toBe(0);
+      expect(Number.isFinite(computeBalanceSheetMetrics(bs).netAssets)).toBe(true);
+    }
   });
 });

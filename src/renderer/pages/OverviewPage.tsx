@@ -20,7 +20,7 @@ import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import { KPI_ACTUALS_COLLECTION, monthlyTrendSeries, summarizeFundamentals, type KpiActual } from '../data/kpiActuals';
 import { profitSensitivity, breakEvenDeltaPct, requiredRevenueForTarget, fixedCostReductionImpact, operatingLeverage } from '../data/profitSensitivity';
 import { KPI_BUDGETS_COLLECTION } from '../data/budgetVariance';
-import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceSheet';
+import { BALANCE_SHEET_COLLECTION, balanceSheetOrNull, type BalanceSheet } from '../data/balanceSheet';
 import { MEMBERS_COLLECTION, type Member } from '../data/members';
 import {
   HYDROPONICS_COLLECTION,
@@ -685,7 +685,7 @@ export function OverviewPage() {
         kpiActuals: kpiRecords.map((r) => r.data),
         kpiBudgets: budgetRecords.map((r) => r.data),
         // BS は最新の 1 レコードを採用。
-        balanceSheet: latestRecord(bsRecords)?.data ?? null,
+        balanceSheet: balanceSheetOrNull(latestRecord(bsRecords)?.data),
         accounting: accountingMonthly,
         members: memberRecords.map((r) => ({ role: r.data.role })),
         hydroponics,
@@ -799,7 +799,7 @@ export function OverviewPage() {
     if (takeNavigationIntent('overview')?.action === 'bank-sheet') setSheetOpen(true);
   }, []);
   const kpiPeriods = useMemo(() => kpiRecords.map((r) => r.data.period), [kpiRecords]);
-  const balanceSheetAsOf = latestRecord(bsRecords)?.data.asOf ?? null;
+  const balanceSheetAsOf = balanceSheetOrNull(latestRecord(bsRecords)?.data)?.asOf ?? null;
   const sheetModel = useMemo(
     () =>
       buildBankSubmissionSheet({

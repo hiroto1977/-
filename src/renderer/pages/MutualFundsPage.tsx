@@ -15,6 +15,7 @@ import { useServiceData } from '../hooks/useServiceData';
 import { useCollection } from '../data/useCollection';
 import {
   HOLDINGS_COLLECTION,
+  normalizeHolding,
   parseHoldingEntry,
   holdingToForm,
   computeFundPortfolio,
@@ -69,11 +70,18 @@ export function MutualFundsPage() {
   /** デモ (snapshot) 行 + ユーザー行の結合リスト (追加行は「追加」チップ)。 */
   const holdings = useMemo(
     () => [
-      ...data.holdings.map((h) => ({ ...h, rowId: h.code, user: false as const, valuationMode: undefined })),
+      ...data.holdings.map((h) => ({
+        ...normalizeHolding(h),
+        rowId: h.code,
+        user: false as const,
+        valuationMode: undefined,
+        userTag: undefined,
+      })),
+      // 欄の無い控え (古い版・手で直した JSON) も読める形に整えてから使う。
+      // 補いは `normalizeHolding` の 1 か所だけ —— 画面側に `??` を散らすと、
+      // 実際に起きたように 1 つ (valuationMode) だけ補われて残りが漏れる。
       ...userHoldings.map((r) => ({
-        ...r.data,
-        // 旧データ (valuationMode なし) は auto 扱い。
-        valuationMode: r.data.valuationMode ?? ('auto' as const),
+        ...normalizeHolding(r.data),
         userTag: '追加',
         rowId: r.id,
         user: true as const,
@@ -88,7 +96,7 @@ export function MutualFundsPage() {
       computeFundPortfolio(
         holdings,
         data.portfolio.totalCostBasis,
-        userHoldings.map((r) => r.data.acquisitionCost),
+        userHoldings.map((r) => normalizeHolding(r.data).acquisitionCost),
       ),
     [holdings, data.portfolio.totalCostBasis, userHoldings],
   );

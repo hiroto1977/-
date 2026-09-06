@@ -24,6 +24,7 @@ import {
 } from '../data/manualData';
 import {
   BALANCE_SHEET_COLLECTION,
+  normalizeBalanceSheet,
   parseBalanceSheet,
   computeBalanceSheetMetrics,
   type BalanceSheet,
@@ -585,7 +586,11 @@ function BalanceSheetPanel() {
   // 最新の 1 レコードを採用 (BS は時点情報)。createdAt で選ぶ — list は新しい順なので
   // 末尾は最古 (`latestRecord` の説明を参照)。
   const latest = latestRecord(records) ?? undefined;
-  const metrics = useMemo(() => (latest ? computeBalanceSheetMetrics(latest.data) : undefined), [latest]);
+  // 欄の無い控えも 0 と読んでから集計する (NaN のタイルを出さない)。
+  const metrics = useMemo(
+    () => (latest ? computeBalanceSheetMetrics(normalizeBalanceSheet(latest.data)) : undefined),
+    [latest],
+  );
 
   async function onAdd() {
     try {

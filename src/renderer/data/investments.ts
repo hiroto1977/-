@@ -42,6 +42,29 @@ export interface PropertyEntry extends Record<string, unknown> {
 }
 
 /**
+ * 保存された 1 件を `PropertyEntry` の形に整える (**読み取りの境界**)。
+ *
+ * `normalizeHolding` と同じ穴 (2026-09-06): 復元の形の検査は
+ * `realestate-properties` の `monthlyExpenses` / `monthlyLoan` を**任意**に
+ * しているのに、型は必須と言う。欄の無い控えが復元を通ると年間キャッシュフローの
+ * 引き算が NaN になり、不動産ページの「¥NaN」になる。既定 0 は型の注記
+ * (「任意、既定 0」) と入力側 `parsePropertyEntry` の「空欄は 0」と同じ約束。
+ */
+export function normalizeProperty(raw: unknown): PropertyEntry {
+  const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
+  const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
+  return {
+    name: typeof r.name === 'string' ? r.name : '',
+    type: typeof r.type === 'string' ? r.type : '',
+    monthlyRent: num(r.monthlyRent),
+    purchasePrice: num(r.purchasePrice),
+    occupied: r.occupied === true,
+    monthlyExpenses: num(r.monthlyExpenses),
+    monthlyLoan: num(r.monthlyLoan),
+  };
+}
+
+/**
  * 数値入力 (文字列可) を非負の有限数に。不正は null。空欄は 0
  * (入力欄の番人も「未入力です。0 円 として計算されています」と言う)。
  *
@@ -227,6 +250,52 @@ export interface HoldingEntry extends Record<string, unknown> {
 /** 基準価額 (1 万口あたり) と口数から評価額を導出する。 */
 export function fundValuation(units: number, navPerUnit: number): number {
   return Math.round((units / 10_000) * navPerUnit);
+}
+
+/**
+ * 保存された 1 件を `HoldingEntry` の形に整える (**読み取りの境界**)。
+ *
+ * なぜ要るか (2026-09-06): 復元の形の検査 (`data/collectionShapes.ts`) は
+ * `mutualfund-holdings` の `code` / `valuationMode` / `acquisitionCost` /
+ * `ytdReturnPct` を**任意**にしている —— 前方互換のため意図してそうしてあり、
+ * `valuationMode` の説明も「過去データに無い場合は auto 扱い」と書いている。
+ * ところが `HoldingEntry` の型はこの 4 つを**必須**と言うので、欄の無いレコード
+ * (古い版・手で直した控え・別の道具が書いた控え) が復元を通ると型が嘘になる:
+ *
+ *   `ytdReturnPct` が無い … 一覧の `h.ytdReturnPct.toFixed(1)` が TypeError で、
+ *     **投資信託の画面が枠になる**。しかもその画面が保有銘柄の一覧なので、
+ *     利用者はそのレコードを消せない (形は正しいので設定の点検にも出ない)。
+ *   `acquisitionCost` が無い … 取得原価の合計が NaN になり「¥NaN」が出る。
+ *
+ * 直し方は「使う場所ごとに `??` を置く」ではなく**読む所を 1 つにする** ——
+ * 散らすと必ずどれか 1 つが漏れる (`valuationMode` だけ画面側で補われていて、
+ * 残り 3 つが漏れていたのがまさにそれ)。既定値は型の注記どおり:
+ * 銘柄コードは空文字、評価モードは auto、取得額は評価額と同額 (損益 0)、
+ * 年初来リターンは 0。数でない値・非有限値も既定に倒す。
+ */
+export function normalizeHolding(raw: unknown): HoldingEntry {
+  const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
+  const str = (v: unknown): string => (typeof v === 'string' ? v : '');
+  const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
+  const units = num(r.units);
+  const navPerUnit = num(r.navPerUnit);
+  // 評価額が無い控えは口数 × 基準価額 から導く (auto と同じ式)。
+  const valuation = typeof r.valuation === 'number' && Number.isFinite(r.valuation)
+    ? r.valuation
+    : fundValuation(units, navPerUnit);
+  return {
+    code: str(r.code),
+    name: str(r.name),
+    units,
+    navPerUnit,
+    valuation,
+    valuationMode: r.valuationMode === 'manual' ? 'manual' : 'auto',
+    // 取得額が無い / 読めない控えは評価額と同額 = 損益 0 (型の注記どおり)。
+    acquisitionCost: typeof r.acquisitionCost === 'number' && Number.isFinite(r.acquisitionCost)
+      ? r.acquisitionCost
+      : valuation,
+    ytdReturnPct: num(r.ytdReturnPct),
+  };
 }
 
 /**

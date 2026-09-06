@@ -10,6 +10,8 @@ import {
   PROPERTIES_COLLECTION,
   HOLDINGS_COLLECTION,
   PROPERTY_TYPES,
+  normalizeHolding,
+  normalizeProperty,
 } from '../investments';
 import { SNAPSHOT } from '../snapshot';
 
@@ -384,5 +386,122 @@ describe('computeFundPortfolio', () => {
   it('-0 の取得原価は +0 に正規化する (「-0 円」表示の防止)', () => {
     const p = computeFundPortfolio([], -0, []);
     expect(Object.is(p.totalCostBasis, 0)).toBe(true);
+  });
+});
+
+// --- 保存された 1 件を読む境界 -------------------------------------------
+//
+// 復元の形の検査 (`collectionShapes.ts`) は `mutualfund-holdings` の
+// code / valuationMode / acquisitionCost / ytdReturnPct を**任意**にしている
+// (前方互換。`valuationMode` の注記は「過去データに無い場合は auto 扱い」)。
+// 型 `HoldingEntry` はこの 4 つを必須と言うので、欄の無い控えが復元を通ると
+// 型が嘘になり、2026-09-06 の時点で画面が 2 通りに壊れた:
+//   ytdReturnPct が無い → 一覧の `.toFixed(1)` が TypeError で画面が枠になる
+//     (しかもその画面が保有銘柄の一覧なので、利用者はそのレコードを消せない)
+//   acquisitionCost が無い → 取得原価の合計が NaN になり「¥NaN」が出る
+// 補いは読む所 1 か所 (`normalizeHolding`) に置く。
+describe('normalizeHolding', () => {
+  const full = {
+    code: '0331C152', name: 'eMAXIS Slim', units: 1_000_000, navPerUnit: 20_000,
+    valuation: 2_000_000, valuationMode: 'manual', acquisitionCost: 1_500_000, ytdReturnPct: 12.5,
+  };
+
+  it('揃っている控えは 1 つも書き換えない (対照)', () => {
+    expect(normalizeHolding(full)).toEqual(full);
+  });
+
+  it('年初来リターンが無い控えは 0 になる (旧: .toFixed で TypeError)', () => {
+    const { ytdReturnPct: _drop, ...without } = full;
+    expect(normalizeHolding(without).ytdReturnPct).toBe(0);
+  });
+
+  it('取得額が無い控えは評価額と同額 = 損益 0 (旧: NaN)', () => {
+    const { acquisitionCost: _drop, ...without } = full;
+    expect(normalizeHolding(without).acquisitionCost).toBe(2_000_000);
+  });
+
+  it('評価モードが無い / 知らない値の控えは auto', () => {
+    const { valuationMode: _drop, ...without } = full;
+    expect(normalizeHolding(without).valuationMode).toBe('auto');
+    expect(normalizeHolding({ ...full, valuationMode: 'ぜんぶ' }).valuationMode).toBe('auto');
+    expect(normalizeHolding(full).valuationMode).toBe('manual');
+  });
+
+  it('銘柄コード・名前が無い控えは空文字 (表示は「—」に落ちる)', () => {
+    expect(normalizeHolding({}).code).toBe('');
+    expect(normalizeHolding({}).name).toBe('');
+  });
+
+  it('評価額が無い控えは 口数 ÷ 1万 × 基準価額 から導く', () => {
+    const { valuation: _drop, ...without } = full;
+    expect(normalizeHolding(without).valuation).toBe(2_000_000);
+    expect(normalizeHolding(without).acquisitionCost).toBe(1_500_000);
+  });
+
+  it('数でない値・非有限値も既定に倒す (文字列の金額・NaN・Infinity)', () => {
+    const junk = normalizeHolding({
+      code: 42, name: null, units: '1000', navPerUnit: Number.NaN,
+      valuation: Number.POSITIVE_INFINITY, acquisitionCost: 'たくさん', ytdReturnPct: Number.NaN,
+    });
+    expect(junk).toEqual({
+      code: '', name: '', units: 0, navPerUnit: 0, valuation: 0,
+      valuationMode: 'auto', acquisitionCost: 0, ytdReturnPct: 0,
+    });
+    for (const v of Object.values(junk)) {
+      if (typeof v === 'number') expect(Number.isFinite(v)).toBe(true);
+    }
+  });
+
+  it('数であるだけでは通さない —— NaN / ±∞ の欄も既定に倒す', () => {
+    // 変異検査が拾った穴: `typeof v === 'number' && Number.isFinite(v)` の `&&` を
+    // `||` にしても、標本が文字列だけだと差が出ない (NaN は typeof が number)。
+    for (const bad of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+      const h = normalizeHolding({ ...full, units: bad, navPerUnit: bad, valuation: bad,
+        acquisitionCost: bad, ytdReturnPct: bad });
+      expect(h.units).toBe(0);
+      expect(h.navPerUnit).toBe(0);
+      expect(h.valuation).toBe(0); // 導出も 0 × 0
+      expect(h.acquisitionCost).toBe(0); // = 評価額
+      expect(h.ytdReturnPct).toBe(0);
+    }
+  });
+
+  it('物でない引数 (null / 配列 / 数) も落ちずに空の形になる', () => {
+    for (const raw of [null, undefined, 42, 'x', [] as unknown]) {
+      const h = normalizeHolding(raw);
+      expect(h.name).toBe('');
+      expect(h.ytdReturnPct).toBe(0);
+    }
+  });
+});
+
+describe('normalizeProperty', () => {
+  const core = { name: '一棟目', type: 'アパート', monthlyRent: 400_000, purchasePrice: 40_000_000, occupied: true };
+
+  it('経費・返済が無い控えは 0 になる (旧: 年間CF が NaN)', () => {
+    const p = normalizeProperty(core);
+    expect(p.monthlyExpenses).toBe(0);
+    expect(p.monthlyLoan).toBe(0);
+  });
+
+  it('対照: 揃った控えは 1 つも書き換えない', () => {
+    const full = { ...core, monthlyExpenses: 50_000, monthlyLoan: 120_000 };
+    expect(normalizeProperty(full)).toEqual(full);
+  });
+
+  it('NaN / ±∞ の欄も 0 に倒す (数であるだけでは通さない)', () => {
+    for (const bad of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+      const p = normalizeProperty({ ...core, monthlyRent: bad, purchasePrice: bad,
+        monthlyExpenses: bad, monthlyLoan: bad });
+      expect([p.monthlyRent, p.purchasePrice, p.monthlyExpenses, p.monthlyLoan]).toEqual([0, 0, 0, 0]);
+    }
+  });
+
+  it('数でない値・非有限値・物でない引数も既定に倒す', () => {
+    const p = normalizeProperty({ ...core, monthlyRent: '400000', monthlyExpenses: Number.NaN, occupied: 'yes' });
+    expect(p.monthlyRent).toBe(0);
+    expect(p.monthlyExpenses).toBe(0);
+    expect(p.occupied).toBe(false);
+    expect(normalizeProperty(null).name).toBe('');
   });
 });
