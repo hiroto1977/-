@@ -22,6 +22,7 @@ import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
 import { CAPABILITIES } from './VoiceCommandBar';
 import { isExecutableIntent, type VoiceIntent } from '../data/voiceCommand';
 import { org as registryOrg, teams as registryTeams } from '../../../orchestration/registry.json';
+import { writeLocalJson, type LocalWriteResult } from '../data/localWrite';
 
 /** チャット履歴 1 件。 */
 interface ChatMessage {
@@ -69,15 +70,28 @@ function saveHistory(messages: ChatMessage[]): void {
   }
 }
 
-function recordRequest(text: string): void {
+/**
+ * 要望を記録する。**成否を返す。**
+ *
+ * 返事は「最高戦略責任者 (CSO) 配下のバックログ候補として記録します」と言い切る。
+ * 2026-09-06 まで、ここは `catch {}` で失敗を捨てていた —— 容量超過や
+ * プライベートモードでは**記録しないまま「記録します」と答えていた**。
+ * すぐ上の `runIntent` には「`persisted: false` を見ずに『実行しました』と
+ * 言うな」(2026-08 監査) と書いてあるのに、同じ理屈がこちらには掛かっていなかった。
+ *
+ * 読み出しが壊れているときは空から積み直す —— その保存値はもう誰にも読めないので、
+ * 残しても取り出せず、残せば以後どの要望も記録できなくなる。
+ */
+function recordRequest(text: string): LocalWriteResult {
+  let list: FeatureRequest[] = [];
   try {
     const raw = localStorage.getItem(REQUESTS_KEY);
-    const list: FeatureRequest[] = arrayOf(raw ? JSON.parse(raw) : [], isFeatureRequest);
-    list.push({ text, at: new Date().toISOString() });
-    localStorage.setItem(REQUESTS_KEY, JSON.stringify(list));
+    list = arrayOf(raw ? JSON.parse(raw) : [], isFeatureRequest);
   } catch {
-    // 記録失敗は無視。
+    list = [];
   }
+  list.push({ text, at: new Date().toISOString() });
+  return writeLocalJson(REQUESTS_KEY, list);
 }
 
 /** 記録済み要望を Markdown でダウンロードする (オーケストレーション backlog 連携用)。 */
@@ -228,8 +242,12 @@ export function ChatbotWidget() {
 
     const reply: ChatReply = replyTo(text, CHAT_CONTEXT);
 
+    // 記録できなかったら、**その返事に足す** (別の場所に出すと、言い切った文と
+    // 離れてしまう)。返事の文面は `data/chatbot.ts` が持つので、ここでは足すだけ。
+    let storeNote = '';
     if (reply.kind === 'request') {
-      recordRequest(text);
+      const stored = recordRequest(text);
+      if (!stored.ok) storeNote = `\n\n⚠ ただし、この端末に記録できませんでした。${stored.message}`;
     }
 
     // 解釈不能のときだけ、Ollama 接続環境なら自由質問として LLM へ。
@@ -243,7 +261,7 @@ export function ChatbotWidget() {
       }
     }
 
-    append({ role: 'bot', text: reply.text, routedThrough: reply.routedThrough });
+    append({ role: 'bot', text: reply.text + storeNote, routedThrough: reply.routedThrough });
 
     if (reply.kind === 'action' && reply.intent) {
       if (reply.needsConfirmation) {
