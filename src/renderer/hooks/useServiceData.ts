@@ -12,11 +12,31 @@ export interface ServiceState<T> {
   /** この画面の数字がどこから来るか (`shared/dataOrigin.ts` の宣言)。 */
   origin: DataOrigin;
   source: Source;
+  /**
+   * **取ってきた中身が同梱データを名乗っているか** (`isMock: true`)。
+   *
+   * `main/clients/` の 11 モジュールは、実 API を差し込む前の値を返すときに
+   * この印を立てる。画面が読まないと「更新」を押した人には取得できたように
+   * 見える (バッジが緑になる)。台帳と検査は
+   * `src/renderer/__tests__/mockPayloadPolicy.test.ts`。
+   */
+  payloadIsMock: boolean;
   status: Status;
   errorMessage?: string;
   errorKind?: ErrorKind;
   refresh: () => void;
   isConfigured: boolean;
+}
+
+/**
+ * 中身が自分を同梱データだと名乗っているか。
+ *
+ * 型は `T` なので構造で見るしかない。`isMock` が真の値でも `true` 以外
+ * (文字列の 'true' など) は名乗りとして扱わない —— 名乗りは `main/clients` が
+ * 立てる真偽値だけである。
+ */
+function declaresMock(value: unknown): boolean {
+  return typeof value === 'object' && value !== null && (value as { isMock?: unknown }).isMock === true;
 }
 
 function classifyError(message: string): ErrorKind {
@@ -39,6 +59,7 @@ export function useServiceData<T>(
 ): ServiceState<T> {
   const [data, setData] = useState<T>(snapshot);
   const [source, setSource] = useState<Source>('snapshot');
+  const [payloadIsMock, setPayloadIsMock] = useState(false);
   const [status, setStatus] = useState<Status>('idle');
   const [errorMessage, setErrorMessage] = useState<string>();
   const [errorKind, setErrorKind] = useState<ErrorKind>();
@@ -73,6 +94,7 @@ export function useServiceData<T>(
     if (result.ok) {
       setData(result.data);
       setSource('live');
+      setPayloadIsMock(declaresMock(result.data));
       setStatus('idle');
     } else {
       setStatus('error');
@@ -149,5 +171,5 @@ export function useServiceData<T>(
     /* Stryker restore all */
   }, [serviceId, refresh, options.autoFetch]);
 
-  return { data, origin, source, status, errorMessage, errorKind, refresh, isConfigured };
+  return { data, origin, source, payloadIsMock, status, errorMessage, errorKind, refresh, isConfigured };
 }

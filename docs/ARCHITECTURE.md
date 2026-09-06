@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **11190** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11204** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 453 | 自己検証 |
+| `file:line` 参照数 | 454 | 自己検証 |
 
 ### 統合フロー図
 
@@ -280,7 +280,7 @@ stateDiagram-v2
 
 `classifyError()` (`useServiceData.ts:21-27`) が message の HTTP code / phrase からエラー種別を
 4 値 (`auth / rate_limit / network / unknown`) に分類し、UI が auth 時に再認証 CTA を出す。
-`autoRefreshFired` ref (`useServiceData.ts:46`) が React.StrictMode の二重 effect から
+`autoRefreshFired` ref (`useServiceData.ts:68`) が React.StrictMode の二重 effect から
 保護する。
 
 #### 取得元の宣言 (`src/shared/dataOrigin.ts`) — 2026-08 監査で入れた 5 軸目
@@ -2518,6 +2518,25 @@ effect と他 instance からの通知は戻り値を受け取らないので、
 いません）」。文面は `dataOrigin.ts` に置く (取得元の言い回しを 2 か所へ散らさない)。
 `loading` では出さない (すぐ決まる) し、取得しない画面にも出さない
 (`data-sample-note` が常設で同梱データだと書いている)。
+
+**取ってきた中身が作り物のときも、同じ嘘が付いていた** (2026-09-06)。
+`main/clients/` の 11 モジュールは、実 API を差し込む前の値を返すときに
+`isMock: true` を立てる。ところが**画面がそれを読まないと緑のバッジが付く** ——
+`describeOrigin` の `tone: 'ok'` は「実際に取ってきた」時の色だと決めているのに、
+`live` になっているだけで中身は同梱値である。いちばん重かったのが `funding`:
+`fetchFundingSnapshot` は `MOCK_ITEMS` / `MOCK_ACCOUNTING` と固定の期首残高
+300 万円から、補助金・融資の一覧・キャッシュランウェイ・債務償還年数・
+**特定収入割合 (消費税の計算に関わる)** を組み立てて返し、「更新」を押すと
+緑の「ローカル」が付いた。画面の既存の注記は「概算であり保証しない」で、
+*その数字が自分のものではない*ことは言っていない。
+実測で名乗る 11 件のうち画面が何か言っていたのは 3 件 (stocks / business / kpi) だけ。
+今は `useServiceData` が取得した中身の名乗りを `payloadIsMock` として持ち、
+`describeOrigin(origin, source, payloadIsMock)` が緑をやめて「同梱データ」を返す
+(図表を持つ残り 2 画面 funding / teamradar が渡す)。未取得のときは名乗りを見ない ——
+そちらは既に「サンプル（未連携）」と言い切っており、差し替えると弱くなる。
+`src/renderer/__tests__/mockPayloadPolicy.test.ts` が台帳を双方向に検査し、
+`badge` / `notice` と登録した画面に実際の配線が在ることまで見る
+(数字を出すのに `no-figures` と登録する腐り方を別途 1 本で塞ぐ)。
 
 実測 (2026-09-06): 書き込みを呼ぶ 15 か所のうち 12 か所が拒否された Promise を捨てて
 いた (`void add()` / `onClick={async () => { await onSave(...) }}`)。容量超過・プライベート

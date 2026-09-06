@@ -147,8 +147,26 @@ export interface OriginLabel {
  * メールの形をしている分、実在の同僚と受け取られる余地があった
  * (実際にそう問われて気付いた)。連携していないことを言葉に出す。
  */
-export function describeOrigin(origin: DataOrigin, source: 'snapshot' | 'live'): OriginLabel {
+export function describeOrigin(
+  origin: DataOrigin,
+  source: 'snapshot' | 'live',
+  payloadIsMock = false,
+): OriginLabel {
   if (origin === 'sample') return { text: '内蔵サンプル', tone: 'neutral' };
+  /*
+   * **取ってきた中身が「同梱データ」を名乗っているなら、緑にしない** (2026-09-06)。
+   *
+   * `tone: 'ok'` は上の注記どおり「実際に取ってきた」時だけの色である。ところが
+   * `main/clients/funding.ts` の `fetchFundingSnapshot` は `MOCK_ITEMS` と
+   * `MOCK_ACCOUNTING` から組み立てた値 (期首残高 300 万円も固定) を返し、
+   * 自ら `isMock: true` を立てている —— それでも「更新」を押すと `source` が
+   * `live` になるので、バッジは**緑の「ローカル」**になっていた。資金調達の画面が
+   * 出すのは補助金・融資の一覧、キャッシュランウェイ、債務償還年数、そして
+   * 特定収入割合 (消費税の計算に関わる) で、どれも「取ってきた実績」に見える。
+   *
+   * 中身が自分を同梱データだと言っているなら、画面もそう言う。
+   */
+  if (source === 'live' && payloadIsMock) return { text: '同梱データ', tone: 'neutral' };
   if (origin === 'remote' && source === 'snapshot') {
     return { text: 'サンプル（未連携）', tone: 'neutral' };
   }

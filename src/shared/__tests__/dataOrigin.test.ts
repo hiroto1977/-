@@ -208,3 +208,41 @@ describe('staleDataNote — 失敗時に数字の出どころを言う', () => {
     expect(last).toContain('今回の更新は反映されていません');
   });
 });
+
+/*
+ * **取ってきた中身が「同梱データ」を名乗るなら、緑にしない** (2026-09-06)。
+ *
+ * `tone: 'ok'` は上の `describeOrigin` の注記どおり「実際に取ってきた」時だけの色。
+ * ところが `main/clients/funding.ts` は `MOCK_ITEMS` と固定の期首残高 300 万円から
+ * 補助金・融資の一覧・キャッシュランウェイ・債務償還年数・特定収入割合を組み立てて
+ * 返し、自ら `isMock: true` を立てている —— それでも「更新」を押すと `source` が
+ * `live` になるので緑の「ローカル」が付いていた。
+ */
+describe('describeOrigin — 同梱データを名乗る中身', () => {
+  it('★ local + live でも、名乗っていれば「同梱データ」で緑にしない', () => {
+    expect(describeOrigin('local', 'live', true)).toEqual({ text: '同梱データ', tone: 'neutral' });
+  });
+
+  it('★ remote + live でも同じ (取得先の種別で緩めない)', () => {
+    expect(describeOrigin('remote', 'live', true)).toEqual({ text: '同梱データ', tone: 'neutral' });
+  });
+
+  it('対照: 名乗っていなければ従来どおり緑の「ローカル」/「ライブ」', () => {
+    expect(describeOrigin('local', 'live', false)).toEqual({ text: 'ローカル', tone: 'ok' });
+    expect(describeOrigin('remote', 'live', false)).toEqual({ text: 'ライブ', tone: 'ok' });
+  });
+
+  it('対照: 既定 (引数を省略) は名乗っていない扱い —— 既存の呼び出しを変えない', () => {
+    expect(describeOrigin('local', 'live')).toEqual({ text: 'ローカル', tone: 'ok' });
+  });
+
+  it('★ 未取得のときは名乗りを見ない (札は「サンプル（未連携）」のまま)', () => {
+    // 同梱の値を表示しているのは snapshot でも同じだが、そちらは既に言い切っている。
+    // ここで「同梱データ」に差し替えると、未連携であることが消えて弱くなる。
+    expect(describeOrigin('remote', 'snapshot', true)).toEqual({ text: 'サンプル（未連携）', tone: 'neutral' });
+  });
+
+  it('★ `sample` の画面は変わらない (常に「内蔵サンプル」)', () => {
+    expect(describeOrigin('sample', 'live', true)).toEqual({ text: '内蔵サンプル', tone: 'neutral' });
+  });
+});

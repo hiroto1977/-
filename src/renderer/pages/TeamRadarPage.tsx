@@ -177,7 +177,7 @@ function uniqueId(name: string, existing: string[]): string {
 }
 
 export function TeamRadarPage() {
-  const { data, source, status, errorMessage, refresh } = useServiceData<TeamRadarSnapshot>(
+  const { data, source, payloadIsMock, status, errorMessage, refresh } = useServiceData<TeamRadarSnapshot>(
     'teamradar',
     SNAPSHOT.teamradar,
   );
@@ -362,6 +362,7 @@ export function TeamRadarPage() {
         who={`チームレーダーチャート · ${title}`}
         serviceId="teamradar"
         source={source}
+        payloadIsMock={payloadIsMock}
         status={status}
         errorMessage={errorMessage}
         isConfigured

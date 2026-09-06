@@ -12,6 +12,8 @@ interface Props {
   who: ReactNode;
   serviceId?: ServiceId;
   source?: Source;
+  /** 取ってきた中身が同梱データを名乗っているか (`useServiceData` の `payloadIsMock`)。 */
+  payloadIsMock?: boolean;
   status?: Status;
   errorMessage?: string;
   errorKind?: ErrorKind;
@@ -53,6 +55,7 @@ export function StatusBar({
   who,
   serviceId,
   source = 'snapshot',
+  payloadIsMock = false,
   status = 'idle',
   errorMessage,
   errorKind,
@@ -120,7 +123,7 @@ export function StatusBar({
   // 必ず漏れる — 74 画面ぶんの判断を書き写さないための 1 箇所。
   // `serviceId` を渡さない呼び出し元 (汎用パネル) は従来どおりの表示にする。
   const origin = serviceId ? originOf(serviceId) : 'remote';
-  const originLabel = describeOrigin(origin, source);
+  const originLabel = describeOrigin(origin, source, payloadIsMock);
 
   const badge =
     status === 'loading' ? { cls: 'badge', text: '読込中…' }
