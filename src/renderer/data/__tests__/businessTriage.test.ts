@@ -71,6 +71,47 @@ describe('仕分けの中身', () => {
     expect(PROFESSIONAL_MAP['sme-consultant'].exclusive).toContain('独占業務なし');
   });
 
+  /*
+   * **上の検査は診断士を名指ししている。** 今日 `scope: 'exclusive'` の職務を
+   * 1 つも持たない士業は診断士だけなので**偶然覆えている**が、規則は
+   * 「独占業務を持たない士業は exclusiveTo に現れない」であって
+   * 「診断士は現れない」ではない。名簿から導く (2026-09-06)。
+   *
+   * さらに **散文と構造が食い違いうる**: 各士業は `exclusive` の一行要約 (散文) と
+   * `duties[].scope` (機械可読) の 2 つで独占を語る。片方だけ直せば、
+   * 「独占業務なし」と書いてある士業の職務一覧に「独占」の職務が並ぶ ——
+   * **誰が業として行えるかについて、2 つの画面が違うことを言う**。
+   * 資格の独占は無資格者の業務が違法になりうる話なので、表示の齟齬で済まない。
+   */
+  const exclusiveDutyCount = (id: (typeof PROFESSIONAL_IDS)[number]): number =>
+    PROFESSIONAL_MAP[id].duties.filter((d) => d.scope === 'exclusive').length;
+
+  it('★ 独占業務を持たない士業は、どの書式の exclusiveTo にも現れない (名簿から導く)', () => {
+    const noExclusive = PROFESSIONAL_IDS.filter((id) => exclusiveDutyCount(id) === 0);
+    // 走査が死んで空にならないこと (今日は診断士 1 人)。
+    expect(noExclusive.length).toBeGreaterThanOrEqual(1);
+    const offenders = TRIAGE_ROWS.flatMap((r) =>
+      r.exclusiveTo.filter((id) => noExclusive.includes(id)).map((id) => `${r.doc}: ${id}`),
+    );
+    expect(offenders).toEqual([]);
+  });
+
+  it('★ 「独占業務なし」の散文と、職務の scope が一致する (両方向)', () => {
+    for (const id of PROFESSIONAL_IDS) {
+      const saysNone = PROFESSIONAL_MAP[id].exclusive.includes('独占業務なし');
+      const hasNone = exclusiveDutyCount(id) === 0;
+      expect(saysNone, `${id}: 散文は「独占業務なし」だが scope: 'exclusive' の職務がある`).toBe(hasNone);
+    }
+  });
+
+  it('対照: 独占を持つ士業は散文でも独占を語り、職務にも exclusive がある', () => {
+    const withExclusive = PROFESSIONAL_IDS.filter((id) => exclusiveDutyCount(id) > 0);
+    expect(withExclusive.length).toBeGreaterThanOrEqual(7); // 診断士以外の 7 士業
+    for (const id of withExclusive) {
+      expect(PROFESSIONAL_MAP[id].exclusive, id).not.toContain('独占業務なし');
+    }
+  });
+
   it('exclusiveTo と consult が同じ士業で重複しない', () => {
     for (const r of TRIAGE_ROWS) {
       const dup = r.exclusiveTo.filter((id) => r.consult.includes(id));
