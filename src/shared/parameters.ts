@@ -137,6 +137,7 @@ import {
   type SocialInsuranceRates,
 } from './taxSocialInsurance';
 import { DEFAULT_EFFECTIVE_TAX_RATE } from './funding';
+import { EMERGENCY_FUND_MONTHS_DEFAULT } from './savingsPlanning';
 import {
   CORNER_LOT_COVERAGE_BONUS_PCT,
   FIREPROOF_COVERAGE_BONUS_PCT,
@@ -876,6 +877,13 @@ export function parameterDefinitions() {
   {
     id: 'emotion.triggerMinCount', feature: '感情ログ', label: '「よく出る言葉」に拾う最小の出現回数', unit: '回',
     defaultValue: TRIGGER_MIN_COUNT, min: 1, max: 100, integer: true, kind: 'threshold',
+  },
+  // --- 貯蓄・資産形成 -----------------------------------------------------
+  {
+    id: 'savings.emergencyFundMonths', feature: '貯蓄・資産形成', label: '緊急予備資金の月数', unit: 'か月',
+    defaultValue: EMERGENCY_FUND_MONTHS_DEFAULT, min: 0, max: 24, integer: true, kind: 'reference',
+    source: '一般的な目安 (会社員 3〜6 か月 / 自営 6〜12 か月)',
+    note: '生活費の何か月分を現金で持つか。自営業・フリーランスは長めに取る',
   },
   ] as const satisfies readonly ParameterDef[];
 }

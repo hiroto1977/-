@@ -15,6 +15,7 @@ import { TeamPage } from '../TeamPage';
 import { RealEstatePage } from '../RealEstatePage';
 import { TaxPage } from '../TaxPage';
 import { EmotionsPage } from '../EmotionsPage';
+import { MutualFundsPage } from '../MutualFundsPage';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { PARAMETER_OVERRIDES_COLLECTION } from '../../data/parameterOverrides';
@@ -627,5 +628,29 @@ describe('感情ログ — 台帳のしきい値が見立ての文言に効く',
     expect(text()).toContain('傾向 横ばい →');
     expect(text()).not.toContain('連続して低調');
     expect(text()).not.toContain('よく出る言葉');
+  });
+});
+
+// --- 貯蓄・資産形成 -------------------------------------------------------
+//
+// 緊急予備資金の月数は「会社員 3〜6 / 自営 6〜12 か月」と幅のある参考値で、
+// この画面 (投資信託) の**目標額と充足率の分母**になる。2026-09-06 まで 6 が
+// 4 か所 (関数の既定値 2・呼び出し 2) にリテラルで散っており、自営業者向けの
+// 目安 (6〜12) に合わせる手段が無かった。
+describe('savings.emergencyFundMonths — 緊急予備資金の月数', () => {
+  // 生活費 300,000 円 / 手元現金 900,000 円 は画面の初期値。
+  it('対照: 既定は生活費 6 か月分 (充足率 50%)', async () => {
+    await mount(MutualFundsPage);
+    expect(statValue('緊急予備資金 (生活費6か月)')).toBe(jpy(1_800_000));
+    expect(statValue('予備資金 充足率')).toBe('50%');
+    expect(text()).toContain('生活費の6か月分');
+  });
+
+  it('12 か月に上書きすると目標額・充足率・文言が動く', async () => {
+    await seed({ 'savings.emergencyFundMonths': 12 });
+    await mount(MutualFundsPage);
+    expect(statValue('緊急予備資金 (生活費12か月)')).toBe(jpy(3_600_000));
+    expect(statValue('予備資金 充足率')).toBe('25%');
+    expect(text()).toContain('生活費の12か月分');
   });
 });

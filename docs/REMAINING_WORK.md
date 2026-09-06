@@ -10761,7 +10761,7 @@ JS では `&&` が先に束縛するので `a === 192 || (b === 0 && c === 2)` �
 足し (計 59 件)、wave 2d で法人税 15 / 事業者の消費税 5 / 年金・一時所得・ふるさと納税 5 /
 貿易 4 を足した (計 88 件)、wave 2e-1 で敷地計画 (建築基準法) 8 / 排水基準 4 を足し、
 wave 2e-2 で財務診断 36 を足し、wave 2f で消費税の申告・納付 4 / 配当 1 / 感情ログ 4 を足した
-(計 145 件)。残りは
+(計 145 件)、2026-09-06 に緊急予備資金の月数 1 件を足した (計 146 件)。残りは
 「同じ型で 1 件ずつ、**配線と検査を同じコミットで**」足す。
 
 登録の条件 (台帳の冒頭と同じ):
@@ -10796,8 +10796,46 @@ wave 2e-2 で財務診断 36 を足し、wave 2f で消費税の申告・納付 
 
 やらないと決めた物: `funding.ts` の `monthlyFlow` / `summarize` (実効税率・消費税率を
 引数で受けるが、**呼び出し元が renderer に無い** — 配線先が無い物は台帳に載せない)。
+この判断は今もそのままだが、**既定値がリテラルだったのは別問題**だった (2026-09-06):
+`summarize` の `consumptionTaxRate = 0.1` は消費税法の標準税率の写しで、台帳
+`tax.consumptionStandardRate` が参照する `shared/taxCalc.ts` の
+`CONSUMPTION_TAX_STANDARD` と**同じ法定値が 2 か所**に在った。定数参照へ直し、
+`src/shared/__tests__/rateDefaultPolicy.test.ts` で「引数の既定値の位置に素の数字が
+増えたら理由を書かせる」形にした (実測 23 か所を登録)。
 
 税の候補は 1 件が表 (率の階段) になる物が多い。台帳の `ParameterDef` は**スカラー**しか
 持たないので、表を置く前に「段の境目と率を別々の id にする」か「表を 1 つの id にして
 JSON で受ける」かを決める。前者は画面の行が増えるが、既存の検査・保存・配線の型を
 そのまま使える (推奨)。
+
+### 追記 (2026-09-06) — 緊急予備資金の月数を足した / 残した観察 3 件
+
+足した 1 件: `savings.emergencyFundMonths` (`kind: 'reference'`・既定は
+`src/shared/savingsPlanning.ts` の `EMERGENCY_FUND_MONTHS_DEFAULT`)。
+6 が**関数の既定値 2 か所と `src/renderer/pages/MutualFundsPage.tsx` の呼び出し
+2 か所**に散っていて、しかもこの月数は「会社員 3〜6 / 自営 6〜12 か月」と幅のある
+目安なのに、自営業者が長い側へ寄せる手段が無かった。配線は
+`src/renderer/pages/__tests__/parameterWiring.test.ts` に対照つきで入れた。
+
+残した観察 (次に触る人向け):
+
+1. **資金調達ページの図表は設定の実効税率に追随しない。** 税引後の折れ線・
+   純資金繰り・ランウェイ・シナリオ・DSCR は主プロセス
+   (`src/main/clients/funding.ts`) が既定 30% で算出した結果で、
+   `fetchSnapshot` にパラメータを渡す口が無い。数字を画面側で作り直すには
+   `buildFundingSnapshot` を `shared` へ移し、月次の会計CF・評価額・期首残高を
+   結果から組み直す必要がある (期首残高は `runway.openingBalance` に在る)。
+   今のところ同ページのデータは `isMock: true` の同梱データなので、実害は
+   「見本の数字」に留まる。台帳側の判断 (配線先が無いので載せない) は据え置き。
+2. **本番の呼び出し元が無い指標関数が 3 つある。** `calcSharpeRatio`
+   (`src/shared/mutualFundsMetrics.ts`)・`assessVariance`
+   (`src/renderer/data/budgetVariance.ts`)・`computePareto`
+   (`src/renderer/data/revenueConcentration.ts`) は export されテストも在るが、
+   画面から呼ばれていない。だから無リスク金利 0.5% / 予実差異 ±10% /
+   パレート 80% を台帳に載せていない (載せると「設定できるのに効かない」項目に
+   なる)。**画面へ出すときに同じコミットで登録する。**
+3. **通勤手当の非課税限度と同じ形の二重定義**は上の表に既出 (`employerBenefits.ts`)。
+   `rateDefaultPolicy` は**引数の既定値**だけを見るので、モジュール定数の重複は
+   拾わない。値の一致で探す形は偽陽性が多すぎて採れなかった (`kind: 'law'` 91 件の
+   既定値と 0.5 / 10 / 12 / 80 が容積率のボーナス率・硝酸性窒素 mg/L・道路幅員 m と
+   衝突する) ので、ここは人の目に残す。

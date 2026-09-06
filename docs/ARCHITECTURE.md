@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **11204** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11218** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 454 | 自己検証 |
+| `file:line` 参照数 | 463 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1681,7 +1681,7 @@ union を参照する。
 | `talent` | 人材育成 (組織病の診断 / 登用判定 / 達成確率100%キープ / 育成ロードマップ) | none | ✅ | | `save-state`, `judge-leader` (判定は `src/shared/talent.ts` — main とブラウザ版が同じ関数を読む) |
 | `templates` | Canva 連動テンプレートギャラリー (8 種) | none | ✅ | | `export-template` (プレゼン / 名刺 / SNS / チラシ / 証明書 / 請求書 / 履歴書、SVG 出力) |
 | `library` | アプリ内ライブラリ (IndexedDB) | none | ✅ | | (read-only — ブラウザ版で全エクスポート結果を保管) |
-| `settings` | 設定 (API キー管理 + Vault + **数値パラメータ**) | none | ✅ | | (read-only — Vault で全 token を AES-GCM-256 で暗号化。数値パラメータは `components/ParametersPanel.tsx` — 台帳 `src/shared/parameters.ts` の 145 件〔法定値 / 参考値 / しきい値 / 前提〕を機能ごとに並べ、上書きは `parameter-overrides` collection の **1 レコード**を書き換える〔`data/parameterOverrides.ts`〕。下の「数値パラメータ」節) |
+| `settings` | 設定 (API キー管理 + Vault + **数値パラメータ**) | none | ✅ | | (read-only — Vault で全 token を AES-GCM-256 で暗号化。数値パラメータは `components/ParametersPanel.tsx` — 台帳 `src/shared/parameters.ts` の 146 件〔法定値 / 参考値 / しきい値 / 前提〕を機能ごとに並べ、上書きは `parameter-overrides` collection の **1 レコード**を書き換える〔`data/parameterOverrides.ts`〕。下の「数値パラメータ」節) |
 | `uber-eats` | Uber Eats (フードデリバリー、snapshot のみ) | Bearer (Eats Merchants API、未配線) | ✅ | | (read-only — 店舗別売上 / 注文数 / 評価 / 人気メニュー) |
 | `demae-can` | 出前館 (フードデリバリー、snapshot のみ) | Bearer (公開 API 無し、scrape 想定) | ✅ | | (read-only — 進行中注文 / 月次サマリ / 人気エリア) |
 | `real-estate` | 不動産投資 (snapshot + 物件の任意追加 = record store) | Bearer (将来 REIT/楽待) | ✅ | | (ローカル編集 — 保有物件の追加/削除 / 月次キャッシュフロー / 利回り / 入居率。数値入力は `data/inputGuards.ts` + `components/GuardedNumber.tsx` で検査し、読み取れない入力が黙って 0 になるのを防ぐ) |
@@ -2560,6 +2560,54 @@ effect と他 instance からの通知は戻り値を受け取らないので、
 「`void` で捨てていない」を双方向に検査し、認めた例外には理由を要求する
 (localStorage 側の `__tests__/storageWritePolicy.test.ts` と同じ形)。走査は
 **2 つの保管庫の両方**に当たっていることを標本で確かめる (片方だけ拾う走査では通らない)。
+
+#### 一つの数字に、出所は一つ (`src/shared/__tests__/rateDefaultPolicy.test.ts`)
+
+CLAUDE.md の作法の後半 ——「**既定値はモジュールの定数をそのまま参照する
+(数字を写さない)**」—— が破れている場所を 2 件見つけた (2026-09-06)。
+
+1 件目は**法定値の写し**。`src/shared/funding.ts` の `summarize()` が
+`consumptionTaxRate = 0.1` を持っていた。この `0.1` は消費税法の標準税率で、
+出所は `src/shared/taxCalc.ts` の `CONSUMPTION_TAX_STANDARD` 1 つだけであり、
+台帳 `tax.consumptionStandardRate` (`kind: 'law'`) の既定値もその定数を参照して
+いる。ところが funding 側はリテラルで持ち、しかも**唯一の呼び出し元
+(`src/main/clients/funding.ts` の `summarize(items)`) は率を渡していない**ので、
+実際に使われるのは台帳と繋がっていない側だった。法が変わった日に、税ページと
+資金調達ページが同じ法定値について違うことを言う。既定値を定数参照に変え、
+`src/main/clients/__tests__/funding.test.ts` が `vi.doMock` で `taxCalc` の定数を
+0.2 に差し替えて**消費税相当が追随する**ことを見る (字面走査ではなく値の比較なので、
+リテラルへ戻すと落ちる)。
+
+2 件目は**参考値の 4 重の写し**。緊急予備資金の月数 6 が
+`src/shared/savingsPlanning.ts` の既定値 2 か所と
+`src/renderer/pages/MutualFundsPage.tsx` の呼び出し 2 か所に散っていた。
+6 は暦の定義ではなく**判断の要る目安** (会社員 3〜6 / 自営 6〜12 か月) で、
+この画面は自営業者が見るのに長い側へ寄せる手段が無かった。
+`EMERGENCY_FUND_MONTHS_DEFAULT` を唯一の出所にし、台帳へ
+`savings.emergencyFundMonths` (`kind: 'reference'`) として登録して画面は
+`useParameters()` で読む。配線は
+`src/renderer/pages/__tests__/parameterWiring.test.ts` が対照つきで留める
+(12 か月に上書きすると目標額 1,800,000 → 3,600,000・充足率 50% → 25%・
+文言が動く。読まない形へ戻すと落ちる)。
+
+再発を止めるゲートは「**引数の既定値の位置に居る素の数値リテラル**」を数える。
+`src/shared` と `src/renderer/data` を走査し、名前が率・割合・しきい値・期間を
+思わせる引数の既定値が素の数字なら、台帳 (ファイル + 引数名 + 値 + 個数) に
+理由つきで載っていなければ落ちる。実測 23 か所を登録済み。
+「台帳の定数と同じ値のリテラルを禁じる」形は**採れなかった** —— `kind: 'law'` の
+既定値 91 件を実測すると 0.5 / 10 / 12 / 80 は容積率のボーナス率や地下水の
+硝酸性窒素 (mg/L)、道路幅員 (m) と偶然一致し、偽陽性だらけになる。値の一致では
+なく「素の数字が既定値の位置に増えたら人が理由を書く」に振った。
+
+注記の中の字面 (`funding.ts` の JSDoc「無利息 (rate=0) は単純に P/n」) を拾って
+しまったので、行頭が `*` / `//` の行は除いている。この除外が走査を殺していない
+ことは標本 4 本 (拾う形 / 定数参照 / 代入文 / 注記) で確かめる。
+
+なお資金調達ページの図表 (税引後の折れ線・純資金繰り・ランウェイ・シナリオ) は
+主プロセス側で既定の実効税率 30% で算出されており、**設定の実効税率には追随しない**。
+これは `fetchSnapshot` にパラメータを流す口が無いためで、同ページのデータは
+`isMock: true` の同梱データなので実害は「見本の数字」に留まる。手当ては
+docs/REMAINING_WORK.md に残した。
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 
