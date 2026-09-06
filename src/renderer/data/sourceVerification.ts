@@ -97,3 +97,77 @@ export function filterConfirmed<T>(
 ): SourcedClaim<T>[] {
   return claims.filter((c) => isConfirmed(c, policy));
 }
+
+/**
+ * **危機時に見せる窓口の検査は、向きを間違えると誰も守らない。**
+ *
+ * 2026-09-06 の実測。`counselorKnowledge.ts` は「テストで**全窓口が確証済み**を
+ * 不変条件化する」と書いていたが、実際の検査は
+ *
+ *   確証済みの各件が、出荷する一覧に**在る**か
+ *
+ * だけを見ていた。危ないのは**逆向き**である —— 出荷する一覧
+ * (`SUPPORT_RESOURCES`。危機応答で人に見せる番号) に手打ちの窓口を 1 行足すと、
+ * **出典が 1 件も無くても、検査は全部緑のまま**通る。番号が古ければ、
+ * いま最も助けが要る人が誰にも繋がらない電話を掛ける。
+ *
+ * ここは**出荷する側から**照合する。`kind` が
+ * - `hotline` … 同じ `label|detail` の確証済み主張が在り、`verifyClaim` が
+ *   `confirmed` を返すこと (受付時間を書き換えれば `detail` が変わるので、
+ *   **再確証なしの時間の変更も鳴る**)
+ * - `emergency` … 119 / 110 を必ず含み、自前のダイヤルイン番号を持たないこと
+ *   (未確証の窓口を `emergency` に隠せないようにする)
+ *
+ * 純関数にしてあるのは、合成した一覧を流し込んで**規則が実際に当たること**を
+ * 標本で確かめられるようにするため (「不在を主張する検査には標本を添える」)。
+ */
+export interface SupportResourceLike {
+  readonly label: string;
+  readonly detail: string;
+  readonly kind: 'hotline' | 'emergency';
+}
+
+/** ダイヤルイン番号らしい並び (0 で始まる 9 桁以上の数字列。区切りは無視)。 */
+function looksLikeDialIn(detail: string): boolean {
+  for (const run of detail.normalize('NFKC').match(/[0-9][0-9-]{7,}[0-9]/g) ?? []) {
+    if (run.replace(/-/g, '').length >= 9) return true;
+  }
+  return false;
+}
+
+/**
+ * 出荷する窓口一覧のうち、規則に反する件を理由つきで返す (空なら適合)。
+ *
+ * @param resources 実際に見せる一覧
+ * @param verified 確証済みの窓口 (`VERIFIED_SUPPORT_RESOURCES` と同じ形)
+ */
+export function unverifiedSupportResources(
+  resources: readonly SupportResourceLike[],
+  verified: readonly SourcedClaim<{ readonly label: string; readonly detail: string }>[],
+  policy: VerificationPolicy = DEFAULT_POLICY,
+): string[] {
+  const confirmed = new Map<string, SourcedClaim<{ label: string; detail: string }>>();
+  for (const c of verified) confirmed.set(`${c.value.label}|${c.value.detail}`, c);
+  const problems: string[] = [];
+  for (const r of resources) {
+    const key = `${r.label}|${r.detail}`;
+    if (r.kind === 'emergency') {
+      if (!/119|110/.test(r.detail.normalize('NFKC'))) {
+        problems.push(`${r.label}: kind 'emergency' なのに 119 / 110 を案内していません`);
+      }
+      if (looksLikeDialIn(r.detail)) {
+        problems.push(`${r.label}: kind 'emergency' が自前のダイヤルイン番号を持っています (窓口なら kind 'hotline' にして確証を取ってください)`);
+      }
+      continue;
+    }
+    const claim = confirmed.get(key);
+    if (claim === undefined) {
+      problems.push(`${r.label}: 確証済みの窓口に同じ label|detail が在りません (${r.detail})`);
+      continue;
+    }
+    if (verifyClaim(claim, policy) !== 'confirmed') {
+      problems.push(`${r.label}: 出典が方針を満たしません (独立 ${policy.minSources} 件以上・公的 1 件以上)`);
+    }
+  }
+  return problems;
+}

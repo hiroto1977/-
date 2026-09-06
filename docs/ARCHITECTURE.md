@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **11316** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11330** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 30 / 35 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 481 | 自己検証 |
+| `file:line` 参照数 | 486 | 自己検証 |
 
 ### 統合フロー図
 
@@ -2871,6 +2871,43 @@ UTC 日付だと日本の 0〜9 時に前日として判定する)。文字列�
 (2027-09-10) でしか見えない。自作の ISO 日付の読み取りは
 `bankFormat.parseIsoDate` へ寄せた —— 日の検査が月の検査に包含されて**殺せない
 変異体**になっていたため (2 桁の日がどう外れても繰り上がりで月が変わる)。
+
+#### 危機時に見せる窓口の照合が、片方向だった (2026-09-06)
+
+`src/renderer/data/counselorKnowledge.ts` は「テストで**全窓口が確証済み**を不変条件化する」と
+書いていた。実際の検査 (`src/renderer/data/__tests__/sourceVerification.test.ts`) が
+見ていたのは
+
+> 確証済みの各件が、出荷する一覧に**在る**か
+
+だけである。**危ないのは逆向き**で、危機応答で人に見せる `SUPPORT_RESOURCES`
+(`src/renderer/data/counseling.ts`) に手打ちの窓口を 1 行足すと、**出典が 1 件も
+無くても検査は全部緑のまま**通った。番号が古ければ、いま最も助けが要る人が
+誰にも繋がらない電話を掛ける。自殺予防のダイヤルなので、影響は「表示の誤り」で
+済まない。
+
+`SupportResource` に `kind` を足し (`hotline` / `emergency`)、
+`unverifiedSupportResources()` (`src/renderer/data/sourceVerification.ts`) が
+**出荷する側から**照合する:
+
+- `kind: 'hotline'` … `VERIFIED_SUPPORT_RESOURCES` に同じ `label|detail` が在り、
+  `verifyClaim` が `confirmed` (独立 2 出典・うち公的 1) を返すこと。
+  `detail` まで鍵にするので、**受付時間だけ書き換えた再確証なしの変更も鳴る**
+- `kind: 'emergency'` … 119 / 110 を必ず含み、**自前のダイヤルイン番号を持てない**
+  (未確証の窓口を `emergency` に隠せないようにする)
+
+種別を欄にしたのは、**足す人の手元で規則が見える**ようにするため —— 窓口を
+足す = `kind: 'hotline'` を書く = 出典が要る、が型から辿れる。
+
+対照が決定的だった: 出典の無い窓口を 1 行足すと、**新しい検査だけが落ち、
+以前からある片方向の検査は通り続ける** (24 passed / 1 failed)。守っていたつもりの
+向きでは何も守れていなかったことが、そのまま見える。
+
+番号の判定の境目も標本で留めた —— 先頭・末尾に置いた番号、区切りを除いた桁数
+(8 桁は番号扱いしない・9 桁から番号扱い)。最初は緩い標本しか無く、変異検査で
+5 件生き残って気づいた。`src/renderer/data/sourceVerification.ts` は **100% (80 変異体・無視 0)**
+—— 以前は 28 殺・**5 件が未到達の static** だったので、方針の定数
+(`DEFAULT_POLICY` / 公的種別) も読み直しで殺した。
 
 #### lint:parameter-prose (`scripts/lint-parameter-prose.cjs`) —— 画面が刷る数字の出所
 
