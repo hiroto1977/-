@@ -22,6 +22,16 @@ export function isDocstudioCollection(value: unknown): value is DocstudioCollect
   return typeof value === 'string' && COLLECTION_IDS.some((id) => id === value);
 }
 
+/** 電子定款の会社形態。入力値は `teikan.kk` / `teikan.gk` に別々に残る。 */
+export type TeikanType = 'kk' | 'gk';
+
+const TEIKAN_TYPES: readonly TeikanType[] = ['kk', 'gk'];
+
+/** 端末に残した値が会社形態か。 */
+export function isTeikanType(value: unknown): value is TeikanType {
+  return typeof value === 'string' && TEIKAN_TYPES.some((id) => id === value);
+}
+
 export interface StoreShape {
   studio?: Record<string, Values>;
   teikan?: { kk?: Values; gk?: Values };
@@ -37,6 +47,15 @@ export interface StoreShape {
    * 続けられる」が**嘘になる**ので、対で保存する。
    */
   collection?: DocstudioCollection;
+  /**
+   * 電子定款で選んでいた会社形態。
+   *
+   * `collection` だけを保存していた間は、合同会社を書いていても開き直すと株式会社に
+   * 戻っていた —— 「同じ書類から続けられる」が半分しか成立していない状態で、
+   * `docs/REMAINING_WORK.md` に観察として書いてあった。入力値は `teikan.kk` /
+   * `teikan.gk` に別々に残るので壊れはしないが、**開いた先が違う**。
+   */
+  teikanType?: TeikanType;
   /** 計算書類で選んでいる書面（4点まとめて / 1 点ずつ）。値の入れ物は kessan の 1 つのまま。 */
   kessanSheet?: KessanSheet;
   /** 最近使った書式 id（新しい順）。書式が増えたので探す手間を減らす。 */
@@ -61,6 +80,7 @@ export function sanitizeDocstudioStore(value: unknown): StoreShape {
   if (isRecord(value.shugyo)) out.shugyo = stringRecord(value.shugyo);
   if (isRecord(value.kessan)) out.kessan = stringRecord(value.kessan);
   if (isDocstudioCollection(value.collection)) out.collection = value.collection;
+  if (isTeikanType(value.teikanType)) out.teikanType = value.teikanType;
   if (isKessanSheet(value.kessanSheet)) out.kessanSheet = value.kessanSheet;
   if (Array.isArray(value.recent)) out.recent = value.recent.filter((id): id is string => typeof id === 'string');
   return out;

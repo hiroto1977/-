@@ -38,7 +38,7 @@ import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceShee
 import { BANK_SUBMISSION_COLLECTION, settingsFromRecord, type BankSubmissionSettings } from '../data/bankSubmission';
 import { buildKessanImport } from '../data/kessanImport';
 import { KESSAN_SHEETS, docIdOfSheet, fieldsForSheet, inheritedNote, isKessanSheet, sheetDef, sheetOfDoc, type KessanSheet } from '../data/kessanSheets';
-import { sanitizeDocstudioStore, type DocstudioCollection, type StoreShape, type Values } from '../data/docstudioStore';
+import { sanitizeDocstudioStore, type DocstudioCollection, type StoreShape, type TeikanType, type Values } from '../data/docstudioStore';
 import { buildBusinessPlanImport, buildCashPlanImport, type ImportPreview } from '../data/docImports';
 import { tableStyle, thStyle, tdStyle, tdNum } from '../components/tableStyles';
 import {
@@ -1353,7 +1353,15 @@ export function DocstudioPage() {
     setStore((prev) => ({ ...prev, collection: next }));
   }, []);
   const [docId, setDocId] = useState<string>(STUDIO_TEMPLATES[0]!.id);
-  const [teikanType, setTeikanType] = useState<'kk' | 'gk'>('kk');
+  /** 電子定款の会社形態。**保存値から復元する** —— `collection` と対で覚えないと、
+   *  合同会社を書いていても開き直すと株式会社に戻る (`docstudioStore.ts` の注記)。 */
+  const [teikanType, setTeikanTypeState] = useState<TeikanType>(
+    () => loadStore().teikanType ?? 'kk',
+  );
+  const setTeikanType = useCallback((next: TeikanType) => {
+    setTeikanTypeState(next);
+    setStore((prev) => ({ ...prev, teikanType: next }));
+  }, []);
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState<string>('すべて');
 

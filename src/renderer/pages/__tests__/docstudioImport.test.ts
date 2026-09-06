@@ -89,7 +89,7 @@ const q = {
     }
     return null;
   },
-  store: (): { kessan?: Record<string, string>; recent?: string[]; collection?: string } => JSON.parse(localStorage.getItem(LS_KEY) ?? '{}') as { kessan?: Record<string, string>; recent?: string[]; collection?: string },
+  store: (): { kessan?: Record<string, string>; recent?: string[]; collection?: string; teikanType?: string } => JSON.parse(localStorage.getItem(LS_KEY) ?? '{}') as { kessan?: Record<string, string>; recent?: string[]; collection?: string; teikanType?: string },
 };
 
 async function click(el: HTMLElement): Promise<void> {
@@ -180,9 +180,10 @@ describe('書類スタジオ — 経営サマリーから計算書類を取り�
     // 「経営書類へ戻る」ではなく「動かない」が正しい (2026-09-06)。
     expect(q.store().collection).toBe('teikan');
     expect(q.buttonStartsWith('🗂 経営書類')?.className).toBe('');
-    // 会社形態 (`teikanType`) は保存対象ではないので、開き直すと株式会社に戻る。
-    // 群れだけを保存している範囲をここに書いておく (`docs/REMAINING_WORK.md` にも記録)。
-    expect(container.querySelector<HTMLButtonElement>('button[data-doc-id="teikan-kk"]')?.className).toBe('primary');
+    // ★ 会社形態も対で保存しているので、合同会社を書いていたなら合同会社で開く
+    //    (`collection` だけを保存していた間は株式会社に戻っていた)。
+    expect(q.store().teikanType).toBe('gk');
+    expect(container.querySelector<HTMLButtonElement>('button[data-doc-id="teikan-gk"]')?.className).toBe('primary');
   });
 
   it('事業仕分けから士業のページへ飛べる', async () => {
