@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **11261** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11268** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 471 | 自己検証 |
+| `file:line` 参照数 | 472 | 自己検証 |
 
 ### 統合フロー図
 
@@ -278,7 +278,7 @@ stateDiagram-v2
   Auth --> [*]: StatusBar が再認証 UI 表示
 ```
 
-`classifyError()` (`useServiceData.ts:21-27`) が message の HTTP code / phrase からエラー種別を
+`classifyError()` (`useServiceData.ts:45-51`) が message の HTTP code / phrase からエラー種別を
 4 値 (`auth / rate_limit / network / unknown`) に分類し、UI が auth 時に再認証 CTA を出す。
 `autoRefreshFired` ref (`useServiceData.ts:68`) が React.StrictMode の二重 effect から
 保護する。
@@ -2716,6 +2716,34 @@ fetcher に 1 欄足すと `取得だけ=[extraFieldForControl]` で落ちる。
 空の物 (Map 相当) と区別できないので鳴らない。最初に書いた標本がまさにその形で、
 **自分の標本が落ちて**気づいた —— 「全部見ている」と思い込まないよう、
 拾える形と拾えない形の両方を検査に残した。
+
+#### 重なった取得 —— 後から返った古い応答が新しい内容を消していた
+
+`useServiceData` の `refresh()` には**順序の番人が無かった** (2026-09-06)。更新ボタンは
+`status === 'loading'` で無効になるが、**書き込みの操作は無効にならない** ——
+気分の記録・銘柄の登録・人材の保存・Team Radar の保存・Microsoft 365 は成功後に
+`refresh()` を呼ぶ (実測 5 画面 7 か所)。だから
+
+1. 「更新」を押す → 取得 A が始まる (遅い)
+2. その間に記録する → 書き込みは成功し、その直後の取得 B が**先に**返る (画面に反映)
+3. A が後から返り、`setData(A)` で**さっき記録した物が消える**
+
+しかも `source='live'` / `status='idle'` のままなので、画面は**取得できた顔で古い数字**を
+出す (「記録しました」の文言だけが残り、一覧にその記録が無い)。
+
+直しは**札 (identity)** で行う: 取得のたびに新しい物を `useRef` に置き、返ってきた
+ときに自分の札がまだ最新かを見て、古ければ**何も書かずに返る**。数の増減で書くと
+「+1 でも −1 でも同じに動く」等価な変異が残るだけで、守っている物 (最新だけが
+書き換える) は札のほうが素直に表せる。失敗の側にも同じ番人を置く ——
+遅れて返った古い失敗を拾うと、**成功した新しい取得の上に赤いバッジ**が乗る
+(橋が reject する道にも同じ番人が要る。約束の外で throw する main を踏んだ実例がある)。
+
+対照 3 本: 番人を外すと「古い応答が画面を戻さない」「古い失敗が赤くしない」
+「古い例外が赤くしない」が落ち、重ならない場合の対照は通ったまま。
+併せて `declaresMock` を簡素化した —— `typeof value === 'object'` は数・文字列に
+`.isMock` が無いので要らず、置くと「関数が isMock を持つ場合」でしか差が出ない
+等価な分岐だった。変異検査は `src/renderer/hooks/useServiceData.ts` が
+**81.32% (生存 17) → 100% (82 変異体)**。
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 

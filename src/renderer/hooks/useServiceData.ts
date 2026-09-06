@@ -36,7 +36,10 @@ export interface ServiceState<T> {
  * 立てる真偽値だけである。
  */
 function declaresMock(value: unknown): boolean {
-  return typeof value === 'object' && value !== null && (value as { isMock?: unknown }).isMock === true;
+  // `typeof value === 'object'` は要らない —— 数・文字列に `.isMock` は無いので
+  // undefined になり、`=== true` で落ちる。置くと「関数が isMock を持つ場合」
+  // でしか差が出ない等価な分岐が増えるだけだった (JSON の中身に関数は来ない)。
+  return (value as { isMock?: unknown } | null | undefined)?.isMock === true;
 }
 
 function classifyError(message: string): ErrorKind {
@@ -66,6 +69,24 @@ export function useServiceData<T>(
   const [isConfigured, setIsConfigured] = useState(false);
   // Guard against duplicate auto-refresh in React.StrictMode (double-invoke).
   const autoRefreshFired = useRef(false);
+  /**
+   * 取得の世代。**遅れて返った古い応答で画面を上書きしないため**に置く。
+   *
+   * 2026-09-06 実測: `refresh()` は重なりうる。更新ボタンは
+   * `status === 'loading'` で無効になるが、**書き込みの操作は無効にならない** ——
+   * 気分の記録・銘柄の登録・人材の保存・Team Radar の保存・Microsoft 365 は
+   * 成功後に `refresh()` を呼ぶ (実測 5 画面 7 か所)。だから
+   * 「更新を押す (遅い) → 記録する (速い・成功後に再取得)」の順で、
+   * **後から返った古い応答が新しい内容を消す**。しかも `source='live'` /
+   * `status='idle'` のままなので、画面には**取得できた顔で古い数字**が出る
+   * (「記録しました」の文言だけが残り、一覧にはその記録が無い)。
+   *
+   * 数えるのではなく**札を持たせる**: 取得のたびに新しい物 (identity) を置き、
+   * 返ってきたときに自分の札がまだ最新かを見る。数の増減で書くと「+1 でも −1 でも
+   * 同じに動く」等価な変異が残るだけで、守っている物 (最新だけが書き換える) は
+   * 札のほうが素直に表せる。
+   */
+  const latest = useRef<object>({});
   const origin = originOf(serviceId);
 
   const refresh = useCallback(async () => {
@@ -73,6 +94,8 @@ export function useServiceData<T>(
     // 取得先が無いサービス (`sample`) は呼ばない。呼ぶと stub の空データで
     // 画面を上書きし、しかも source='live' になって「取得できた」と嘘をつく。
     if (!isRefreshable(originOf(serviceId))) return;
+    const mine = {};
+    latest.current = mine;
     setStatus('loading');
     setErrorMessage(undefined);
     setErrorKind(undefined);
@@ -85,12 +108,17 @@ export function useServiceData<T>(
     try {
       result = await window.serviceHub.fetchSnapshot<T>(serviceId);
     } catch (e) {
+      // 新しい取得が始まっているなら、この失敗は**もう誰の失敗でもない**。
+      // 拾うと、成功した新しい取得の上に赤いバッジが出る。
+      if (mine !== latest.current) return;
       setStatus('error');
       const message = e instanceof Error ? e.message : String(e);
       setErrorMessage(message);
       setErrorKind(classifyError(message));
       return;
     }
+    // ここから下は画面を書き換える。古い取得の応答は捨てる。
+    if (mine !== latest.current) return;
     if (result.ok) {
       setData(result.data);
       setSource('live');
