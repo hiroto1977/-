@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **11173** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11185** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 448 | 自己検証 |
+| `file:line` 参照数 | 451 | 自己検証 |
 
 ### 統合フロー図
 
@@ -2502,6 +2502,22 @@ effect と他 instance からの通知は戻り値を受け取らないので、
 `src/renderer/__tests__/storageWritePolicy.test.ts` と対になる)。
 判定は波括弧の入れ子で `try` の内側かを見るので、**素の呼び出し・`try` の中・
 `catch` の中**の 3 標本で判定そのものを確かめてから使う。
+
+**取得元の札は、失敗した瞬間に消えていた** (2026-09-06)。`components/StatusBar.tsx` の
+バッジは**枠が 1 つ**で、`status === 'error'` のときは「認証エラー」/「レート制限」/
+「エラー」に差し替わる。つまり `src/shared/dataOrigin.ts` の `describeOrigin` が返す
+取得元の宣言 —— 未取得の remote なら「サンプル（未連携）」—— が**押し出される**。
+ところが画面の下では `SNAPSHOT[id]` の同梱データがそのまま並んでいるので、
+トークンを保存して「更新」を押し 401 が返った人に見えるのは**数字の入った
+ダッシュボードと `401 Bad credentials` の 1 行だけ**になる。`describeOrigin` の注記が
+「『スナップショット』は実データを写したものと読める」「同梱の作り物 (架空の 3 人) が
+実在の同僚と受け取られた」と書いているその危険が、**エラーのときだけ札の無い状態で
+再現していた**。今は `staleDataNote(origin, source, failed)` が別枠の 1 行を返す
+(`data-stale-note`) —— 未取得なら「同梱のサンプルです（まだあなたのデータでは
+ありません）」、取得済みなら「前回取得できた内容です（今回の更新は反映されて
+いません）」。文面は `dataOrigin.ts` に置く (取得元の言い回しを 2 か所へ散らさない)。
+`loading` では出さない (すぐ決まる) し、取得しない画面にも出さない
+(`data-sample-note` が常設で同梱データだと書いている)。
 
 実測 (2026-09-06): 書き込みを呼ぶ 15 か所のうち 12 か所が拒否された Promise を捨てて
 いた (`void add()` / `onClick={async () => { await onSave(...) }}`)。容量超過・プライベート

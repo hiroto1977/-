@@ -1,11 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  SERVICE_DATA_ORIGIN,
-  describeOrigin,
-  isRefreshable,
-  originOf,
-  type DataOrigin,
-} from '../dataOrigin';
+import { SERVICE_DATA_ORIGIN, describeOrigin, isRefreshable, originOf, type DataOrigin, staleDataNote } from '../dataOrigin';
 import { SERVICE_IDS, type ServiceId } from '../serviceId';
 
 /**
@@ -164,5 +158,53 @@ describe('describeOrigin', () => {
       ['remote', 'live', 'ok'],
       ['local', 'live', 'ok'],
     ]);
+  });
+});
+
+/*
+ * **`describeOrigin` の札は 1 枠しか無いバッジに出る。**
+ *
+ * `StatusBar` は `status === 'error'` のときそのバッジを「認証エラー」等へ
+ * 差し替えるので、**取得が失敗したまさにその時に取得元の宣言が消えていた**
+ * (2026-09-06 実測)。画面の下には `SNAPSHOT[id]` の同梱データ —— このファイルの
+ * `describeOrigin` の注記が「架空の 3 人」と書いているあの類 —— がそのまま
+ * 並んでおり、残る手掛かりは `401 Bad credentials` だけだった。
+ */
+describe('staleDataNote — 失敗時に数字の出どころを言う', () => {
+  it('★ 未取得の remote で失敗: 同梱のサンプルだと言う', () => {
+    expect(staleDataNote('remote', 'snapshot', true)).toBe(
+      '表示中の数字は同梱のサンプルです（まだあなたのデータではありません）',
+    );
+  });
+
+  it('★ 取得済みで失敗: 前回取得できた内容だと言う (実データだが今回の更新は入っていない)', () => {
+    expect(staleDataNote('remote', 'live', true)).toBe(
+      '表示中の数字は前回取得できた内容です（今回の更新は反映されていません）',
+    );
+  });
+
+  it('★ local も同じ規則 (取得先が手元でも、失敗したら出どころを言う)', () => {
+    expect(staleDataNote('local', 'snapshot', true)).toContain('同梱のサンプル');
+    expect(staleDataNote('local', 'live', true)).toContain('前回取得できた内容');
+  });
+
+  it('対照: 失敗していなければ出さない', () => {
+    expect(staleDataNote('remote', 'snapshot', false)).toBeNull();
+    expect(staleDataNote('remote', 'live', false)).toBeNull();
+    expect(staleDataNote('local', 'snapshot', false)).toBeNull();
+  });
+
+  it('★ 取得しない画面では出さない (常設の注記と二重に言わない)', () => {
+    // 標本: 取得する画面なら同じ引数で文が返る (走査が空振りしていない)。
+    expect(staleDataNote('sample', 'snapshot', true)).toBeNull();
+    expect(staleDataNote('remote', 'snapshot', true)).not.toBeNull();
+  });
+
+  it('★ 2 つの文面は取り違えられない (どちらも「あなたのデータ」の扱いが逆)', () => {
+    const sample = staleDataNote('remote', 'snapshot', true);
+    const last = staleDataNote('remote', 'live', true);
+    expect(sample).not.toBe(last);
+    expect(sample).toContain('まだあなたのデータではありません');
+    expect(last).toContain('今回の更新は反映されていません');
   });
 });

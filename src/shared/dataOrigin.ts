@@ -156,3 +156,34 @@ export function describeOrigin(origin: DataOrigin, source: 'snapshot' | 'live'):
   if (origin === 'local') return { text: 'ローカル', tone: 'ok' };
   return { text: 'ライブ', tone: 'ok' };
 }
+
+/**
+ * **取得に失敗したときに、画面の数字が何なのかを言う 1 行。**
+ *
+ * 上の `describeOrigin` は言葉を慎重に選んだが (「スナップショット」を
+ * 「サンプル（未連携）」へ改めた経緯が直前に書いてある)、**その札は
+ * 1 枠しか無いバッジに出る**。`StatusBar` は `status === 'error'` のとき
+ * バッジを「認証エラー」等に差し替えるので、**取得が失敗したまさにその時に
+ * 取得元の宣言が消えていた** (2026-09-06 実測)。画面の下には
+ * `SNAPSHOT[id]` の同梱データ —— つまり架空の数字 —— がそのまま並んでおり、
+ * 残る手掛かりは `401 Bad credentials` のような機械の文だけだった。
+ *
+ * 言葉はここに置く (取得元の言い回しを 2 か所に散らさない)。返すのは
+ * バッジではなく**別枠の 1 行**で、バッジは従来どおり状態を出す。
+ *
+ * `loading` では出さない —— すぐ決まるので、点滅する警告は邪魔になる。
+ * だから引数は `failed` (= `status === 'error'`) だけを受け取る。
+ * 取得しない画面 (`isRefreshable` が false) も `null` を返す ——
+ * あちらは常設の注記が同梱データだと書いており、二重に言う必要が無い。
+ */
+export function staleDataNote(
+  origin: DataOrigin,
+  source: 'snapshot' | 'live',
+  failed: boolean,
+): string | null {
+  if (!failed) return null;
+  if (!isRefreshable(origin)) return null;
+  return source === 'snapshot'
+    ? '表示中の数字は同梱のサンプルです（まだあなたのデータではありません）'
+    : '表示中の数字は前回取得できた内容です（今回の更新は反映されていません）';
+}

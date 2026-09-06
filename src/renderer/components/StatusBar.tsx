@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { professionalsForService } from '../data/businessTriage';
-import { describeOrigin, isRefreshable, originOf } from '../../shared/dataOrigin';
+import { describeOrigin, isRefreshable, originOf, staleDataNote } from '../../shared/dataOrigin';
 import { collectsCredential, credentialUseOf } from '../../shared/credentialUse';
 import type { ServiceId } from '../../preload/preload';
 import type { ErrorKind, Source, Status } from '../hooks/useServiceData';
@@ -129,6 +129,18 @@ export function StatusBar({
     : status === 'error' ? { cls: 'badge warn', text: 'エラー' }
     : { cls: originLabel.tone === 'ok' ? 'badge ok' : 'badge', text: originLabel.text };
 
+  /*
+   * **バッジは 1 枠しか無い** (2026-09-06)。`status === 'error'` のときバッジは
+   * 「認証エラー」等に変わり、`describeOrigin` が返す取得元の宣言 —— 未取得の
+   * remote なら「サンプル（未連携）」—— が**消える**。ところが画面の下では
+   * `SNAPSHOT[id]` の同梱データがそのまま並んでいるので、トークンを保存して
+   * 「更新」を押し 401 が返った人に見えるのは**数字の入ったダッシュボードと
+   * エラー 1 行だけ**になる。取得元の宣言はエラーのときこそ要るので、
+   * バッジとは別の枠で出す。文面は `shared/dataOrigin.ts` が持つ
+   * (取得元の言い回しを 2 か所に散らさない)。
+   */
+  const staleNote = staleDataNote(origin, source, status === 'error');
+
   const saveToken = async () => {
     if (!serviceId || !window.serviceHub) return;
     setCredentialError(undefined);
@@ -217,6 +229,11 @@ export function StatusBar({
       {credentialError ? (
         <span data-credential-error role="alert" style={{ color: 'var(--danger)', fontSize: 12 }}>
           {credentialError}
+        </span>
+      ) : null}
+      {staleNote ? (
+        <span data-stale-note style={{ fontSize: 11, color: 'var(--warn, #fbbf24)' }}>
+          {staleNote}
         </span>
       ) : null}
       {errorMessage ? (
