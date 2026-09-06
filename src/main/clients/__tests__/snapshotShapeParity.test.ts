@@ -28,6 +28,7 @@ vi.mock('electron', () => ({
 const { LIVE_FETCHERS, LOCAL_SERVICES } = await import('../index');
 const { SNAPSHOT } = await import('../../../renderer/data/snapshot');
 const { SERVICE_IDS } = await import('../../../shared/serviceId');
+const { shapeDiff } = await import('../../../shared/__tests__/shapeDiff');
 
 /**
  * 同梱スナップショットの鍵は id と綴りが違うものがある (kebab のまま置いた 3 件と、
@@ -72,59 +73,6 @@ async function fetchedShape(id: string): Promise<unknown> {
       throw new Error(`local service ${id} must not use the network`);
     },
   });
-}
-
-function isObj(v: unknown): v is Record<string, unknown> {
-  return v !== null && typeof v === 'object' && !Array.isArray(v);
-}
-
-/**
- * 欄の差を**入れ子まで**見る (`path.to.field` で報告)。
- *
- * 上端だけ比べる形では足りない —— 対照で `summary.consumptionTaxEstimate` を
- * 同梱から消しても `summary` という鍵は残るので、差として出なかった (2026-09-06、
- * 最初に書いた版がこれで、対照が鳴らないことで分かった)。
- *
- * 配列は**両方に 1 件以上あるときだけ**先頭要素の形を比べる。片方が空の配列
- * (同梱に「まだ 1 件も無い」を置くのはこのアプリの普通の形) では要素の形が
- * 分からないので、そこは黙る —— 分からないことを差として鳴らすと、
- * 台帳が「鳴って当たり前」になって守らなくなる。
- */
-export function shapeDiff(snapshotValue: unknown, fetchedValue: unknown): {
-  snapshotOnly: string[];
-  fetchedOnly: string[];
-} {
-  const snapshotOnly: string[] = [];
-  const fetchedOnly: string[] = [];
-  const walk = (a: unknown, b: unknown, path: string, depth: number): void => {
-    if (depth > 6) return;
-    // `null` は「まだ無い」を表す普通の値 (同梱には `null as {…}` で置く欄がある。
-    // 例: funding の diversification —— 画面側が真偽で守っている)。形は比べられない。
-    if (a === null || b === null || a === undefined || b === undefined) return;
-    if (Array.isArray(a) && Array.isArray(b)) {
-      if (a.length > 0 && b.length > 0) walk(a[0], b[0], `${path}[]`, depth + 1);
-      return;
-    }
-    if (isObj(a) && isObj(b)) {
-      // 中身で鍵が決まる表 (talent の `ladder.byStep` のような Map 相当) は、
-      // 片方が空なら鍵の集合を比べても意味が無い。配列と同じ扱いにする。
-      if (Object.keys(a).length === 0 || Object.keys(b).length === 0) return;
-      for (const k of Object.keys(a)) {
-        if (!Object.hasOwn(b, k)) snapshotOnly.push(path ? `${path}.${k}` : k);
-        else walk(a[k], b[k], path ? `${path}.${k}` : k, depth + 1);
-      }
-      for (const k of Object.keys(b)) {
-        if (!Object.hasOwn(a, k)) fetchedOnly.push(path ? `${path}.${k}` : k);
-      }
-      return;
-    }
-    // 物と物でない値が向き合っている場合だけ形の違いとして報告する。
-    if (isObj(a) !== isObj(b) || Array.isArray(a) !== Array.isArray(b)) {
-      snapshotOnly.push(`${path || '<root>'}:型が違う`);
-    }
-  };
-  walk(snapshotValue, fetchedValue, '', 0);
-  return { snapshotOnly, fetchedOnly };
 }
 
 const LOCAL_IDS = SERVICE_IDS.filter((id) => LOCAL_SERVICES.has(id));

@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **11256** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11261** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 468 | 自己検証 |
+| `file:line` 参照数 | 471 | 自己検証 |
 
 ### 統合フロー図
 
@@ -2701,6 +2701,21 @@ CLAUDE.md は「fetcher は `SNAPSHOT[id]` と**同じ形**を返す」と約束
 対照は 2 本とも入れ子で取った: 同梱から 1 欄消すと `取得だけ=[summary.consumptionTaxEstimate]`、
 fetcher に 1 欄足すと `取得だけ=[extraFieldForControl]` で落ちる。標本は 6 本
 (欄の増減・入れ子・空配列・空の物・null・物と非物)。
+
+**ブラウザ版にも同じ物差しを当てた** (`src/renderer/__tests__/webShimSnapshotParity.test.ts`)。
+`web-shim.ts` は別実装で **4 サービスだけ**自前に合成する
+(stocks / emotions / talent / security) ので、ここがずれると
+公開しているブラウザ版 (github.io の app.html) **でだけ**画面が壊れる。実測は 4 件とも一致。
+残りは `not_implemented` で画面が同梱を見続けるか、`liveRead` 経由で **shared の
+実装**を通る (`LIVE_READERS` は今 cursor 1 件・main と同じ
+`fetchCursorSnapshotWith` を呼ぶので形はずれようがない)。物差しは
+`src/shared/__tests__/shapeDiff.ts` に 1 つだけ置く —— 2 つ持つと片方だけ緩くなる。
+対照はブラウザ版の合成に 1 欄足すと `合成だけ=[controlOnlyField]` で落ちる。
+
+**この物差しが拾えない形も標本にしてある**: 片方の物の中身が**全部**消えた場合は
+空の物 (Map 相当) と区別できないので鳴らない。最初に書いた標本がまさにその形で、
+**自分の標本が落ちて**気づいた —— 「全部見ている」と思い込まないよう、
+拾える形と拾えない形の両方を検査に残した。
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 
