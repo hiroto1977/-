@@ -445,8 +445,15 @@ export function validateAdvisorJson(raw: unknown, allowed: ReadonlySet<string>):
   for (const item of o.recommendations) {
     if (item === null || typeof item !== 'object') throw new Error('entry is not an object');
     const r = item as Record<string, unknown>;
-    if (typeof r.categoryId !== 'string' || !allowed.has(r.categoryId)) throw new Error('invalid categoryId: ' + String(r.categoryId));
-    if (typeof r.rank !== 'number' || !Number.isFinite(r.rank) || r.rank < 1) throw new Error('invalid rank');
+    // **型の門と値の門を分ける。** 束ねると `typeof` の句が観測できない ——
+    // 型違いは後ろの判定 (`allowed.has` / `Number.isFinite`) が同じ文面で落とすので、
+    // 句を消しても振る舞いが変わらず、変異体が生き残る (2026-09-06 実測。main 側は
+    // 同じ形に帯で `Stryker disable ConditionalExpression` を当てている)。
+    // 分ければ「型が違う」と「値が許されない」を別の文面で区別でき、どちらの門も測れる。
+    if (typeof r.categoryId !== 'string') throw new Error('categoryId is not a string');
+    if (!allowed.has(r.categoryId)) throw new Error('invalid categoryId: ' + r.categoryId);
+    if (typeof r.rank !== 'number') throw new Error('rank is not a number');
+    if (!Number.isFinite(r.rank) || r.rank < 1) throw new Error('invalid rank');
     if (typeof r.rationale !== 'string' || r.rationale.length === 0 || r.rationale.length > MAX_ADVISOR_RATIONALE_CHARS) throw new Error('invalid rationale');
     if (!Array.isArray(r.actionItems) || r.actionItems.length === 0 || r.actionItems.length > MAX_ADVISOR_ACTION_ITEMS) throw new Error('invalid actionItems');
     const actionItems: string[] = [];
