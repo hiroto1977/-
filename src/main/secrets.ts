@@ -72,11 +72,19 @@ function parseStore(text: string | null): Record<string, string> | null {
  *
  * 読み出しの安全側 (`{}`) と、書き込みの安全側 (**触らない**) は逆向きである。
  */
+/**
+ * 読めなかったことを伝える 1 行。**書き込み側と読み出し側で前半を共有する** ——
+ * 「なぜ読めなかったか」は同じ事実なので、2 通りの言い方を持たない。
+ */
+function unreadableStoreMessage(reason: string): string {
+  return `保管ファイルを読めませんでした (${reason})。`;
+}
+
 class SecretsUnreadableError extends Error {
   constructor(reason: string) {
     super(
-      `保管ファイルを読めませんでした (${reason})。` +
-        '上書きすると既存の資格情報が失われるため、保存を中止しました。',
+      `${unreadableStoreMessage(reason)}`
+        + '上書きすると既存の資格情報が失われるため、保存を中止しました。',
     );
     this.name = 'SecretsUnreadableError';
   }
@@ -171,7 +179,18 @@ export type StoredTokenRead =
   /** 保存されていない。 */
   | { readonly ok: false; readonly reason: 'absent' }
   /** 保存はされているが今は読めない (キーチェーン不在 / 値の破損 / 鍵の変化)。 */
-  | { readonly ok: false; readonly reason: 'undecryptable'; readonly message: string };
+  | { readonly ok: false; readonly reason: 'undecryptable'; readonly message: string }
+  /**
+   * **保管ファイルそのものが読めなかった** (大きすぎる / JSON が壊れて控えも無い)。
+   *
+   * 2026-09-06 まではこれが `absent` に化けていた —— `readStore` が `{}` を返し、
+   * `Object.hasOwn` が false になるため。つまり「保存されていない」と
+   * 名乗っていたので、画面は「トークン未設定」と案内し、利用者は
+   * **鍵を貼り直そうとして** `setToken` に (正しく) 断られる。
+   * このファイルの冒頭が「読み出しの安全側と書き込みの安全側は逆向き」と
+   * 書いているとおり、読み出しは落ちない方がよい —— だが**嘘は別の話**である。
+   */
+  | { readonly ok: false; readonly reason: 'store-unreadable'; readonly message: string };
 
 const UNDECRYPTABLE_NO_KEYCHAIN =
   '保存された資格情報を復号できません。OS キーチェーン (safeStorage) が利用できない状態です。' +
@@ -244,6 +263,11 @@ async function readStoreForWrite(): Promise<Record<string, string>> {
 /** 保存値をそのまま読む (OAuth の TokenSet か生トークン文字列)。 */
 export async function readStoredToken(serviceId: string): Promise<StoredTokenRead> {
   const store = await readStore();
+  // **読めなかったことを「保存されていない」と混ぜない。** `readStore` の `{}` は
+  // 読み出しとしては正しいが、そのまま `absent` に落とすと画面が嘘を言う。
+  if (lastReadDegraded !== null) {
+    return { ok: false, reason: 'store-unreadable', message: unreadableStoreMessage(lastReadDegraded) };
+  }
   const value = Object.hasOwn(store, serviceId) ? store[serviceId] : undefined;
   if (!value) return { ok: false, reason: 'absent' };
   return decode(value);
@@ -265,8 +289,22 @@ export async function clearToken(serviceId: string): Promise<void> {
   });
 }
 
+/**
+ * 登録済みサービスの一覧。**読めなかったときは投げる。**
+ *
+ * `readStore` は読めないとき `{}` を返す (読み出しとしては正しい)。ところが
+ * その `{}` の鍵を数えて返すと、**「1 件も登録されていない」と名乗る**ことに
+ * なる —— 画面はすべてのサービスに「トークン未設定」を出し、設定画面の
+ * 接続一覧も預かりの節も空になる。利用者の自然な次の手は **API キーの再入力**で、
+ * それは `setToken` が (正しく) 断るので徒労に終わる。
+ *
+ * このファイルは既に `readStoredToken` で「保存されていない (absent)」と
+ * 「保存はされているが今は読めない (unreadable)」を分けており、書き込み側も
+ * `readStoreForWrite` で断っている。**一覧だけが嘘を言える最後の読み口**だった。
+ */
 export async function listConfiguredServices(): Promise<string[]> {
   const store = await readStore();
+  if (lastReadDegraded !== null) throw new SecretsUnreadableError(lastReadDegraded);
   return Object.keys(store);
 }
 

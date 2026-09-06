@@ -404,6 +404,31 @@ describe('fetch:snapshot — 取得の入口', () => {
     expect(r).toEqual({ ok: false, code: 'not_configured', message: 'キーチェーンが使えません' });
   });
 
+  /*
+   * **「保管ファイルを読めなかった」を「トークン未設定」と言わない** (2026-09-06)。
+   *
+   * 読めなかったとき `readStore` は `{}` を返すので、`readStoredToken` は
+   * `absent` を名乗り、ここは「トークン未設定」と案内していた —— 保存済みの
+   * 利用者は鍵を貼り直そうとし、`setToken` に (正しく) 断られる。
+   */
+  it('★ 保管ファイルが読めないときは理由を伝える (「トークン未設定」と言わない)', async () => {
+    validToken = { ok: false, reason: 'store-unreadable', message: '保管ファイルを読めませんでした (too large)。' };
+    const r = (await invoke('fetch:snapshot', 'github')) as { ok: boolean; code: string; message: string };
+    expect(r).toEqual({
+      ok: false,
+      code: 'not_configured',
+      message: '保管ファイルを読めませんでした (too large)。',
+    });
+    expect(fetcherCalls, '読めないのに取りに行っている').toEqual([]);
+  });
+
+  it('★ ローカルのサービスでも黙らない (資格情報が要らないのは「未設定」のときだけ)', async () => {
+    validToken = { ok: false, reason: 'store-unreadable', message: '保管ファイルを読めませんでした (broken JSON)。' };
+    const r = (await invoke('fetch:snapshot', 'skills')) as { ok: boolean; message: string };
+    expect(r.ok).toBe(false);
+    expect(r.message).toContain('保管ファイルを読めませんでした');
+  });
+
   it('資格情報の読み出しが投げても reject しない (画面が止まらない)', async () => {
     validToken = new Error('decrypt exploded');
     const r = (await invoke('fetch:snapshot', 'github')) as { ok: boolean; code: string };
@@ -497,6 +522,16 @@ describe('action:invoke — 書き込み側の入口', () => {
     } finally {
       LIVE_ACTIONS.github!['create-issue'] = original;
     }
+  });
+
+  it('★ action も、保管ファイルが読めないときは理由を伝える', async () => {
+    validToken = { ok: false, reason: 'store-unreadable', message: '保管ファイルを読めませんでした (too large)。' };
+    expect(await invoke('action:invoke', 'github', 'create-issue', {})).toEqual({
+      ok: false,
+      code: 'not_configured',
+      message: '保管ファイルを読めませんでした (too large)。',
+    });
+    expect(actionCalls).toEqual([]);
   });
 
   it('資格情報が無ければ action を呼ばない', async () => {

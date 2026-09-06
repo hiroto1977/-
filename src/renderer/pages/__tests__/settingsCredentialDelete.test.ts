@@ -40,10 +40,12 @@ const UNUSED: ServiceId = unusedStoredCredentials([...SERVICE_IDS])[0]!;
 type ClearResult = { ok: true } | { ok: false; message: string };
 let clearResult: ClearResult = { ok: true };
 let configured: ServiceId[] = [UNUSED];
+/** 一覧そのものが読めない端末 (保管ファイルが大きすぎる / 壊れている)。 */
+let listRejection: Error | null = null;
 
 function stubHub(): void {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
-    listConfigured: () => Promise.resolve(configured),
+    listConfigured: () => (listRejection === null ? Promise.resolve(configured) : Promise.reject(listRejection)),
     clearToken: (_id: string) => {
       if (clearResult.ok) configured = [];
       return Promise.resolve(clearResult);
@@ -86,6 +88,7 @@ const button = (text: string): HTMLButtonElement => {
 beforeEach(() => {
   clearResult = { ok: true };
   configured = [UNUSED];
+  listRejection = null;
   vaultClear.mockReset();
   vaultClear.mockResolvedValue(undefined);
   stubHub();
@@ -101,6 +104,31 @@ afterEach(async () => {
   }
   container.remove();
   vi.restoreAllMocks();
+});
+
+describe('使われていない資格情報 — 数えられなかったら「0 件」と言わない', () => {
+  /*
+   * **この節は「0 件」に意味がある。** 預かりを減らすための節なので、一覧が
+   * 読めなかっただけで空にすると「減らす物は無い」と読めてしまう
+   * (実測 2026-09-06: `catch { setIds([]); }` で節ごと消えていた)。
+   */
+  it('★ 一覧が読めなければ、節を消さずに理由を出す', async () => {
+    const { UnusedCredentialSection } = await import('../SettingsPage');
+    listRejection = new Error('保管ファイルを読めませんでした (too large)。');
+    await mount(createElement(UnusedCredentialSection, { refreshKey: 0 }));
+    const alert = container.querySelector('[data-unused-unreadable]');
+    expect(alert, '節ごと消えている').not.toBeNull();
+    expect(alert?.getAttribute('role')).toBe('alert');
+    expect(alert?.textContent).toContain('この端末に保存した設定を読めませんでした');
+    expect(alert?.textContent).toContain('「未設定」と出ていても、設定が消えたとは限りません');
+  });
+
+  it('対照: 読めるときは理由を出さず、これまでどおり件数を出す', async () => {
+    const { UnusedCredentialSection } = await import('../SettingsPage');
+    await mount(createElement(UnusedCredentialSection, { refreshKey: 0 }));
+    expect(container.querySelector('[data-unused-unreadable]')).toBeNull();
+    expect(container.textContent).toContain('使われていない資格情報 1 件');
+  });
 });
 
 describe('使われていない資格情報 — 削除できなかったら言う', () => {

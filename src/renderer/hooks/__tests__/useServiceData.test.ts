@@ -4,6 +4,10 @@ import { createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { act } from 'react-dom/test-utils';
 import { useServiceData, type ServiceState, type ErrorKind } from '../useServiceData';
+import {
+  _resetDeviceStoreFailureForTests,
+  currentDeviceStoreFailure,
+} from '../../data/deviceStoreFailure';
 import type { FetchResult, ServiceId } from '../../../preload/preload';
 
 // React 18 の act() 警告を抑止。
@@ -71,7 +75,10 @@ const errHub = (code: 'not_configured' | 'fetch_failed' | 'not_implemented', mes
   fetchSnapshot: async () => ({ ok: false, code, message }) as FetchResult<unknown>,
 });
 
-beforeEach(() => setHub(undefined));
+beforeEach(() => {
+  setHub(undefined);
+  _resetDeviceStoreFailureForTests();
+});
 
 describe('useServiceData — initial state', () => {
   it('starts from the snapshot, idle, not configured', async () => {
@@ -109,6 +116,53 @@ describe('useServiceData — initial state', () => {
     expect(h.ref.current.status).toBe('idle');
     expect(h.ref.current.source).toBe('snapshot');
     expect(h.ref.current.data).toEqual({ v: 1 });
+    h.unmount();
+  });
+
+  /*
+   * **「未設定」の札は 75 画面が同じ形で出すので消せない。だから理由を 1 か所で言う。**
+   *
+   * 資格情報の一覧が取れないと `isConfigured` は false になり、画面は
+   * 「トークン未設定」を出す。保管ファイルが読めないだけのときにそれを出すと、
+   * 利用者は鍵を貼り直そうとする —— なので橋が**答えを返せなかった**ことを
+   * `deviceStoreFailure` の `settings` へ写す (文面は「『未設定』と出ていても、
+   * 設定が消えたとは限りません」)。
+   *
+   * **橋がまだ無いだけのときは報せない** —— 起動直後に赤を出さないための区別で、
+   * 元のコメントが言っていた懸念をそのまま守る。
+   */
+  it('★ 一覧が取れなかったら、理由を経路へ写す (画面上端の報せになる)', async () => {
+    setHub({
+      listConfigured: async () => { throw new Error('IPC broke'); },
+      fetchSnapshot: async () => ({ ok: true, data: { v: 2 } }) as FetchResult<unknown>,
+    });
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    const f = currentDeviceStoreFailure();
+    expect(f?.store).toBe('settings');
+    expect(f?.op).toBe('read');
+    expect(f?.where).toBe('credentials');
+    expect(f?.message).toContain('「未設定」と出ていても、設定が消えたとは限りません');
+    h.unmount();
+  });
+
+  it('対照: 橋がまだ無いだけなら報せない (起動直後に赤を出さない)', async () => {
+    setHub(undefined);
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    expect(h.ref.current.isConfigured).toBe(false);
+    expect(currentDeviceStoreFailure(), '橋の不在を「読めない」と報せている').toBeNull();
+    h.unmount();
+  });
+
+  it('対照: 一覧が取れれば何も報せない', async () => {
+    setHub({
+      listConfigured: async () => ['github'],
+      fetchSnapshot: async () => ({ ok: true, data: { v: 2 } }) as FetchResult<unknown>,
+    });
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    expect(currentDeviceStoreFailure()).toBeNull();
     h.unmount();
   });
 

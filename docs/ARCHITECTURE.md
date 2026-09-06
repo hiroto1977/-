@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **11119** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11131** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -2426,6 +2426,17 @@ allowlist のパスだけを受ける — 任意のパスを書けると `__prot
 effect と他 instance からの通知は戻り値を受け取らないので、投げても誰も気付けない)。
 `pages/LibraryPage.tsx` は一覧・1 件・削除・全件削除の 4 か所を `files` として報せる。
 画面側は `components/DeviceStoreFailureBanner.tsx` が内容領域の先頭で最後の 1 件を出す。
+
+**資格情報の一覧も同じだった** (2026-09-06)。main の `listConfiguredServices` は
+`readStore()` が返す `{}` の鍵を数えており、ブラウザ版の `listConfigured` は
+`catch { return []; }` だった —— どちらも**読めなかったことを「1 件も登録されていない」と
+名乗る**。画面は 75 サービスすべてに「トークン未設定」を出すので、利用者の自然な次の手は
+**API キーの再入力**で、それは `setToken` が (正しく) 断るので徒労に終わる。
+`readStoredToken` は既に `absent` / `undecryptable` を分けていたが、**保管ファイルが
+読めない場合は `absent` に化けていた** —— `readStore` の `{}` に鍵が無いためである。
+今は `store-unreadable` を名乗り、`fetch:snapshot` / `action:invoke` はその理由を出す
+(「トークン未設定」は `absent` のときだけ)。一覧は両ビルドとも投げ、`useServiceData` が
+`settings` として経路へ写す (橋がまだ無いだけのときは `?.` が短絡するのでここへ来ない)。
 
 **設定の 2 つは「未設定」と「確認できない」を分ける** (2026-09-06)。`network/proxy.ts` の
 `readStoredProxyConfig` と `fs/fsa.ts` の `loadFolderHandle` はどちらも

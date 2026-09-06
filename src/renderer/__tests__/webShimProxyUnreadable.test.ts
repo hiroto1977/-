@@ -9,7 +9,7 @@
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const h = vi.hoisted(() => ({ unreadable: null as unknown }));
+const h = vi.hoisted(() => ({ unreadable: null as unknown, vaultListRejection: null as Error | null }));
 
 vi.mock('../network/proxy', () => ({
   getProxyConfig: async () => null,
@@ -22,6 +22,10 @@ vi.mock('../security/vault', () => ({
     setToken: async () => {},
     clearToken: async () => {},
     listServices: async () => ['calendar'],
+    listConfigured: async () => {
+      if (h.vaultListRejection !== null) throw h.vaultListRejection;
+      return ['calendar'];
+    },
     status: async () => 'unlocked',
   }),
 }));
@@ -32,7 +36,10 @@ vi.mock('electron', () => ({
 }));
 
 type Result = { ok: boolean; code?: string; message?: string };
-type Hub = { invoke: (s: string, a: string, p: Record<string, unknown>) => Promise<Result> };
+type Hub = {
+  invoke: (s: string, a: string, p: Record<string, unknown>) => Promise<Result>;
+  listConfigured: () => Promise<string[]>;
+};
 
 async function loadHub(): Promise<Hub> {
   vi.resetModules();
@@ -46,6 +53,7 @@ const PAYLOAD = { summary: '打ち合わせ', start: '2026-09-07T10:00:00Z', end
 beforeEach(() => {
   localStorage.clear();
   h.unreadable = null;
+  h.vaultListRejection = null;
 });
 
 describe('プロキシ設定が読めないとき', () => {
@@ -67,5 +75,18 @@ describe('プロキシ設定が読めないとき', () => {
     expect(r.ok).toBe(false);
     expect(r.message).toContain('登録してください');
     expect(r.message).not.toContain('読めませんでした');
+  });
+});
+
+describe('資格情報の一覧が読めないとき (ブラウザ版)', () => {
+  it('★ 投げ返す —— 「1 件も登録されていない」と名乗らない', async () => {
+    h.vaultListRejection = new Error('store unavailable');
+    const hub = await loadHub();
+    await expect(hub.listConfigured()).rejects.toThrow('store unavailable');
+  });
+
+  it('対照: 読めるときは一覧を返す', async () => {
+    const hub = await loadHub();
+    await expect(hub.listConfigured()).resolves.toEqual(['calendar']);
   });
 });

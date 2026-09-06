@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FetchResult, ServiceId } from '../../preload/preload';
 import { isRefreshable, originOf, type DataOrigin } from '../../shared/dataOrigin';
+import { reportDeviceStoreFailure } from '../data/deviceStoreFailure';
 
 export type Source = 'snapshot' | 'live';
 export type Status = 'idle' | 'loading' | 'error';
@@ -110,7 +111,7 @@ export function useServiceData<T>(
         autoRefreshFired.current = true;
         refresh();
       }
-    })().catch(() => {
+    })().catch((err: unknown) => {
       /*
        * IPC が **reject** した場合の受け皿。同じファイルの `refresh` には
        * 受け皿があるのに (「約束の外で throw されると…」のコメント)、
@@ -125,7 +126,20 @@ export function useServiceData<T>(
        * 取れなかったときは「未設定」として扱う —— 上の `?? []` と同じ意図で、
        * 初期状態と同じ。ここで画面にエラーを出すと、橋がまだ無いだけの
        * 起動直後にも赤が出る。
+       *
+       * **ただし黙ってはいない (2026-09-06)。** 「未設定」の札は 75 画面が
+       * 同じ形で出しているので消せないが、**橋が答えを返せなかった**のなら
+       * その理由は 1 か所で言える —— `deviceStoreFailure` の `settings` は
+       * まさに「『未設定』と出ていても、設定が消えたとは限りません」と書いてある。
+       *
+       * **橋がまだ無いだけのときは、ここに来ない。** `window.serviceHub?.…` は
+       * 橋が無ければ短絡して `?? []` に落ちるので、この受け皿に入るのは
+       * **橋が答えを返せなかったとき**だけである。だから番人は置かない ——
+       * 置いても入力が作れず (`if` を true 固定にしても差が出ない)、
+       * 測れない分岐が 1 つ増えるだけだった (2026-09-06 の変異検査で実測)。
+       * 「起動直後に赤を出さない」という上のコメントの懸念は、短絡が守っている。
        */
+      reportDeviceStoreFailure('settings', 'read', 'credentials', err);
       setIsConfigured(false);
     });
     /* Stryker disable all */

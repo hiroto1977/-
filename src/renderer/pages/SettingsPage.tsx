@@ -16,7 +16,7 @@ import { credentialUseOf, unusedStoredCredentials } from '../../shared/credentia
 import { EVICTION_RECOVERY, isEvictableStorage } from '../../shared/storageDurability';
 import type { ServiceId } from '../../shared/serviceId';
 import { inspectStoredProxyConfig, setProxyConfig, type ProxyConfig } from '../network/proxy';
-import { deviceStoreFailureMessage } from '../data/deviceStoreFailure';
+import { deviceStoreFailureMessage, reportDeviceStoreFailure } from '../data/deviceStoreFailure';
 import {
   MAX_PROXY_SECRET_LENGTH,
   MAX_PROXY_URL_LENGTH,
@@ -604,7 +604,10 @@ function ConnectionHub({ refreshKey }: { refreshKey: number }) {
       .then((ids) => {
         if (!cancelled) setConfigured(new Set(ids));
       })
-      .catch(() => {
+      .catch((err: unknown) => {
+        // 読めなかっただけで「1 件も設定していない」と見せない —— 一覧の札は
+        // 画面上端の報せが訂正する (`data/deviceStoreFailure.ts` の settings)。
+        reportDeviceStoreFailure('settings', 'read', 'credentials', err);
         if (!cancelled) setConfigured(new Set());
       });
     return () => {
@@ -702,6 +705,8 @@ export function UnusedCredentialSection({ refreshKey }: { refreshKey: number }) 
   const [ids, setIds] = useState<readonly ServiceId[] | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [forgetError, setForgetError] = useState<string | null>(null);
+  /** 一覧が読めなかった理由。**0 件と混ぜない** (この節は 0 件に意味がある)。 */
+  const [unreadable, setUnreadable] = useState<string | null>(null);
 
   const reload = useCallback(async () => {
     const hub = window.serviceHub;
@@ -711,7 +716,16 @@ export function UnusedCredentialSection({ refreshKey }: { refreshKey: number }) 
     }
     try {
       setIds(unusedStoredCredentials(await hub.listConfigured()));
-    } catch {
+      setUnreadable(null);
+    } catch (err) {
+      /*
+       * **この節は「0 件」に意味がある。** 預かりを減らすための節なので、
+       * 読めなかっただけで空にすると「減らす物は無い」と読めてしまう。
+       * 理由をこの場に出し (節が消えるので上端の報せだけでは足りない)、
+       * 経路にも写す。
+       */
+      setUnreadable(deviceStoreFailureMessage('settings', 'read', err));
+      reportDeviceStoreFailure('settings', 'read', 'credentials', err);
       setIds([]);
     }
   }, []);
@@ -745,6 +759,21 @@ export function UnusedCredentialSection({ refreshKey }: { refreshKey: number }) 
       setBusy(null);
     }
   };
+
+  /*
+   * **読めなかったときは、節を消さずに理由を出す。** 0 件で消すと
+   * 「減らす物は無い」と読めるが、そもそも数えられていない。
+   */
+  if (unreadable !== null) {
+    return (
+      <section data-unused-credentials>
+        <h3 style={{ margin: '0 0 8px', fontSize: 14 }}>使われていない資格情報</h3>
+        <div role="alert" data-unused-unreadable style={{ fontSize: 12, color: '#fbbf24', lineHeight: 1.7 }}>
+          ⚠ {unreadable}
+        </div>
+      </section>
+    );
+  }
 
   if (ids === null || ids.length === 0) return null;
 

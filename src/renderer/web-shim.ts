@@ -1111,13 +1111,14 @@ const shim = {
     }
     return { ok: true };
   },
-  listConfigured: async (): Promise<string[]> => {
-    try {
-      return await vault.listConfigured();
-    } catch {
-      return [];
-    }
-  },
+  /**
+   * 登録済みサービスの一覧。**読めなかったときは投げる** (main 側と同じ規則)。
+   *
+   * `catch { return []; }` にしていた頃は、保管庫が読めないだけで
+   * **「1 件も登録されていない」**と名乗り、画面は全サービスに「トークン未設定」を
+   * 出していた —— 利用者の次の手は API キーの再入力になる。
+   */
+  listConfigured: async (): Promise<string[]> => vault.listConfigured(),
   // ブラウザ版は常に WebCrypto Vault (AES-GCM-256 + PBKDF2 600k) を通るため、
   // Electron 版のような「OS キーチェーン不在で平文」状態は原理的に起きない。
   storageProtection: async (): Promise<{
