@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **11270** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11280** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 473 | 自己検証 |
+| `file:line` 参照数 | 474 | 自己検証 |
 
 ### 統合フロー図
 
@@ -2761,6 +2761,30 @@ effect の分) で、`list()` は IndexedDB の読みだけでは終わらず**1
 `.isMock` が無いので要らず、置くと「関数が isMock を持つ場合」でしか差が出ない
 等価な分岐だった。変異検査は `src/renderer/hooks/useServiceData.ts` が
 **81.32% (生存 17) → 100% (82 変異体)**。
+
+#### 同じ不変条件を、片方の入口だけが守っていた (最後のオーナー)
+
+`src/shared/team.ts` の `canRemoveMember` は「組織にはオーナーが 1 人以上必要」を
+守り、`TeamPage` の × ボタンも無効になって「最後のオーナーは削除できません。」と
+言う。ところが**役割の `<select>` には守りが無かった** (2026-09-06 実測) ——
+全員に 3 つの選択肢が出て、`onChangeRole` は素で `edit(id, { role })` を呼ぶだけ。
+オーナーが 1 人の組織でその 1 人を「メンバー」にすると**オーナーが 0 人**になる。
+
+0 人になると何が起きるかが厄介で、**削除の守り自体が外れる** ——
+`canRemoveMember(*, 0)` は「誰でも削除できる」と答えるので、最後の 1 人まで
+消せるようになる。さらに `canAssignRole` は「自分より下の役割しか与えられない」
+規則なので (owner より上は無い)、その規則を UI に配線した将来の版では
+**オーナーを作り直す道が無い**。
+
+直しは同じ強さの述語を 1 つ増やして両方の入口で使う:
+`canChangeRole(currentRole, nextRole, ownerCount)` は、オーナーが 1 人のときの
+降格だけを断る (昇格・オーナーのまま・オーナー以外の変更は通す。既に 0 人に
+なっている端末から立て直す道も閉じない)。`TeamPage` は断りの文言を出し、
+**選べない選択肢は `<option disabled>` にする** (押してから断られるより早い)。
+
+対照は実物の record store に 1 人だけオーナーを入れて `<select>` を動かす形で
+取った: 守りを外すと「断りの文言が出る」と「選択肢が無効になっている」が落ち、
+オーナー 2 人の対照と「メンバーをオーナーへ上げられる」対照は通ったまま。
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 
