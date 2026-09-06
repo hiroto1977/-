@@ -116,7 +116,9 @@ describe('書類スタジオ — 計算書類を 1 点ずつ', () => {
   it('既定は「4点まとめて」: 5 つのタブがあり、4 つの書面と決算公告の要旨が全部出る', async () => {
     navigateTo('docstudio', { doc: 'kessan' });
     await mount();
-    expect(q.tabs()).toEqual(['all', 'pl', 'bs', 'equity', 'notes']);
+    // 一覧の並び: 4 点それぞれが独立した書類として先に並び、「まとめて」は最後
+    // (2026-09-06 に一覧へ移した。それまでは書類の中のタブだった)。
+    expect(q.tabs()).toEqual(['pl', 'bs', 'equity', 'notes', 'all']);
     expect(q.tab('all')?.className).toBe('primary');
     expect(q.sheets()?.dataset['kessanSheets']).toBe('all');
     for (const t of ['損益計算書', '資産の部', '負債・純資産の部', '貸借対照表の要旨']) expect(q.statement(t), t).not.toBeNull();
@@ -187,16 +189,15 @@ describe('書類スタジオ — 計算書類を 1 点ずつ', () => {
     const openFromList = async () => {
       _resetNavigationIntentForTests();
       await mount();
-      await click(container.querySelector<HTMLButtonElement>('button[data-doc-id="kessan"]') ?? (Array.from(container.querySelectorAll('button')).find((b) => (b.textContent ?? '').startsWith('📊 計算書類')) as HTMLButtonElement));
     };
-    localStorage.setItem(LS_KEY, JSON.stringify({ kessanSheet: 'foo', kessan: { company: '壊れた保存値株式会社' } }));
+    localStorage.setItem(LS_KEY, JSON.stringify({ collection: 'kessan', kessanSheet: 'foo', kessan: { company: '壊れた保存値株式会社' } }));
     await openFromList();
     expect(q.tab('all')?.className).toBe('primary');
     expect(q.sheets()?.dataset['kessanSheets']).toBe('all');
     expect(q.paperText()).toContain('壊れた保存値株式会社');
     await unmount();
     // 標本: 同じ経路で有効な保存値 'bs' なら貸借対照表が開く (上の検査が「開く」を本当に見ている対照)
-    localStorage.setItem(LS_KEY, JSON.stringify({ kessanSheet: 'bs' }));
+    localStorage.setItem(LS_KEY, JSON.stringify({ collection: 'kessan', kessanSheet: 'bs' }));
     await openFromList();
     expect(q.tab('bs')?.className).toBe('primary');
     expect(q.sheets()?.dataset['kessanSheets']).toBe('bs');
@@ -206,7 +207,8 @@ describe('書類スタジオ — 計算書類を 1 点ずつ', () => {
     localStorage.setItem(LS_KEY, JSON.stringify({ recent: 'not-an-array', kessanSheet: 'pl' }));
     _resetNavigationIntentForTests();
     await mount();
-    expect(container.querySelector('button[data-doc-id="kessan"]') ?? Array.from(container.querySelectorAll('button')).find((b) => (b.textContent ?? '').startsWith('📊 計算書類'))).toBeTruthy();
+    // 一覧が描けていること (計算書類のエントリが在る) を安定な属性で見る。
+    expect(container.querySelector('button[data-collection="kessan"]')).toBeTruthy();
     expect(container.textContent).not.toContain('最近使った書類');
     await unmount();
     // 標本: 配列なら (数値や null を飛ばして) 最近使った書類に並ぶ —— 上の not.toContain が本当にその見出しを見ている対照
@@ -231,10 +233,12 @@ describe('書類スタジオ — 計算書類を 1 点ずつ', () => {
     // 遷移の指示 `kessan` は「まとめて」を指すので、指示があればそちらが勝つ
     expect(q.tab('all')?.className).toBe('primary');
     await unmount();
-    localStorage.setItem(LS_KEY, JSON.stringify({ kessanSheet: 'equity' }));
+    // **開き直しは保存値から復元する。** 一覧の 4 点が独立した書類になったので、
+    // 群れ (`collection`) も対で保存している —— 押していたボタンを覚えていないと
+    // 「同じ書面から続く」が成り立たない (`docstudioStore.ts` の注記)。
+    localStorage.setItem(LS_KEY, JSON.stringify({ collection: 'kessan', kessanSheet: 'equity' }));
     _resetNavigationIntentForTests();
     await mount();
-    await click(container.querySelector<HTMLButtonElement>('button[data-doc-id="kessan"]') ?? (Array.from(container.querySelectorAll('button')).find((b) => (b.textContent ?? '').startsWith('📊 計算書類')) as HTMLButtonElement));
     expect(q.tab('equity')?.className).toBe('primary');
     expect(q.sheets()?.dataset['kessanSheets']).toBe('equity');
   });
@@ -248,6 +252,82 @@ describe('書類スタジオ — 計算書類を 1 点ずつ', () => {
  * 貸借の合わない書面は「貸借対照表として成立しない」ので、そのまま印刷して
  * 提出されるのが一番痛い。
  */
+/*
+ * **一覧そのものを 4 点に分ける** (利用者の依頼・2026-09-06)。
+ *
+ * それまで一覧には「📊 計算書類（4点）」の 1 つだけが在り、4 点は開いた先のタブで
+ * 切り替える形だった —— 一覧を見ただけでは**4 点が 1 つの書類にまとめられている**
+ * ように見えていた (実際にそう報告された)。会社法435条2項の計算書類は 4 点それぞれが
+ * 別の書類なので、一覧もそう見えるべきである。
+ *
+ * 値の入れ物は 1 つのままなので、当期純利益 → 繰越利益剰余金 → 当期変動額の連結は
+ * 切れていない (それは既存の検査が押さえている)。ここで見るのは**一覧の見え方**と
+ * 「押した書類が開くこと」。
+ */
+describe('書類スタジオ — 計算書類 4 点が一覧で独立している', () => {
+  /** 一覧のボタンの文字。計算書類のエントリだけを拾う。 */
+  const listLabels = (): string[] =>
+    Array.from(container.querySelectorAll<HTMLButtonElement>('button[data-kessan-sheet]')).map(
+      (b) => (b.textContent ?? '').trim(),
+    );
+
+  it('★ 4 点がそれぞれ独立した書類として一覧に並ぶ (正式名で)', async () => {
+    await mount();
+    const labels = listLabels();
+    expect(labels.some((t) => t.includes('損益計算書'))).toBe(true);
+    expect(labels.some((t) => t.includes('貸借対照表'))).toBe(true);
+    expect(labels.some((t) => t.includes('株主資本等変動計算書'))).toBe(true);
+    expect(labels.some((t) => t.includes('個別注記表'))).toBe(true);
+    // 「まとめて」も残す (決算公告の要旨つきで 1 枚に出す従来の出力)。
+    expect(labels.some((t) => t.includes('まとめて'))).toBe(true);
+  });
+
+  it('★ 一覧から貸借対照表を押すと、貸借対照表だけが開く (中のタブを探さなくてよい)', async () => {
+    await mount();
+    await click(q.tab('bs')!);
+    expect(q.sheets()?.dataset['kessanSheets']).toBe('bs');
+    expect(q.statement('資産の部')).not.toBeNull();
+    expect(q.statement('損益計算書')).toBeNull();
+    // 入力欄も貸借対照表の科目だけ
+    expect(q.input('現金及び預金')).not.toBeNull();
+    expect(q.input('売上高')).toBeNull();
+  });
+
+  it('★ 「まとめて」を押したら、まとめてが開く (札の通りに動く)', async () => {
+    // 直前に 1 点ずつを見ていても、押した書類が勝つ —— ボタンの文字と結果を食い違わせない。
+    await mount();
+    await click(q.tab('equity')!);
+    expect(q.sheets()?.dataset['kessanSheets']).toBe('equity');
+    await click(q.tab('all')!);
+    expect(q.sheets()?.dataset['kessanSheets']).toBe('all');
+    expect(q.statement('損益計算書')).not.toBeNull();
+  });
+
+  it('★ 押した書類は端末に残り、開き直すとその書類から続く (群れと書面を対で保存)', async () => {
+    await mount();
+    await click(q.tab('notes')!);
+    expect(q.store().kessanSheet).toBe('notes');
+    expect((q.store() as { collection?: string }).collection).toBe('kessan');
+    await unmount();
+    _resetNavigationIntentForTests();
+    await mount();
+    expect(q.sheets()?.dataset['kessanSheets']).toBe('notes');
+  });
+
+  it('対照: 群れの保存値が壊れていても経営書類で開く (計算書類へは飛ばない)', async () => {
+    localStorage.setItem(LS_KEY, JSON.stringify({ collection: 'not-a-collection', kessanSheet: 'bs' }));
+    _resetNavigationIntentForTests();
+    await mount();
+    // 計算書類の書面は出ない (群れが studio に倒れている)。
+    expect(q.sheets()).toBeNull();
+    // 標本: 同じ経路で有効な保存値なら計算書類が開く (上の検査が空振りでない)。
+    await unmount();
+    localStorage.setItem(LS_KEY, JSON.stringify({ collection: 'kessan', kessanSheet: 'bs' }));
+    await mount();
+    expect(q.sheets()?.dataset['kessanSheets']).toBe('bs');
+  });
+});
+
 describe('印刷の隣は計算書類の検算も数える', () => {
   const seed = (kessan: Record<string, string>): void => {
     localStorage.setItem(LS_KEY, JSON.stringify({ kessan, kessanSheet: 'all' }));

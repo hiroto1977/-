@@ -89,7 +89,7 @@ const q = {
     }
     return null;
   },
-  store: (): { kessan?: Record<string, string>; recent?: string[] } => JSON.parse(localStorage.getItem(LS_KEY) ?? '{}') as { kessan?: Record<string, string>; recent?: string[] },
+  store: (): { kessan?: Record<string, string>; recent?: string[]; collection?: string } => JSON.parse(localStorage.getItem(LS_KEY) ?? '{}') as { kessan?: Record<string, string>; recent?: string[]; collection?: string },
 };
 
 async function click(el: HTMLElement): Promise<void> {
@@ -126,7 +126,8 @@ describe('書類スタジオ — 経営サマリーから計算書類を取り�
     await getRecordStore().insert(BANK_SUBMISSION_COLLECTION, SETTINGS);
     navigateTo('docstudio', { doc: 'kessan', action: 'import-overview' });
     await mount('docstudio');
-    expect(q.buttonStartsWith('📊 計算書類')?.className).toBe('primary');
+    // 一覧は 4 点に分かれたので、まとめての判定は属性で行う (ラベルの絵文字に依存しない)。
+    expect(container.querySelector<HTMLButtonElement>('button[data-collection="kessan"]')?.className).toBe('primary');
     expect(q.importTable()).not.toBeNull();
     expect(q.importRow('会社名')).toBe('株式会社テスト');
     expect(q.importRow('事業年度（至）')).toBe('2026年3月31日');
@@ -158,7 +159,7 @@ describe('書類スタジオ — 経営サマリーから計算書類を取り�
 
   it('遷移の指示なしで開くと経営書類のタブのまま (古い指示は発火しない)', async () => {
     await mount('docstudio');
-    expect(q.buttonStartsWith('📊 計算書類')?.className).toBe('');
+    expect(container.querySelector<HTMLButtonElement>('button[data-collection="kessan"]')?.className).toBe('');
     expect(q.importTable()).toBeNull();
   });
 
@@ -174,7 +175,14 @@ describe('書類スタジオ — 経営サマリーから計算書類を取り�
     await unmount();
     navigateTo('docstudio', { doc: 'no-such-doc' });
     await mount('docstudio');
-    expect(q.buttonStartsWith('🗂 経営書類')?.className).toBe('primary');
+    // **知らない id は何もしない。** 直前に開いていた電子定款がそのまま残る ——
+    // 書類の群れは端末に保存されるようになったので (`docstudioStore.ts` の `collection`)、
+    // 「経営書類へ戻る」ではなく「動かない」が正しい (2026-09-06)。
+    expect(q.store().collection).toBe('teikan');
+    expect(q.buttonStartsWith('🗂 経営書類')?.className).toBe('');
+    // 会社形態 (`teikanType`) は保存対象ではないので、開き直すと株式会社に戻る。
+    // 群れだけを保存している範囲をここに書いておく (`docs/REMAINING_WORK.md` にも記録)。
+    expect(container.querySelector<HTMLButtonElement>('button[data-doc-id="teikan-kk"]')?.className).toBe('primary');
   });
 
   it('事業仕分けから士業のページへ飛べる', async () => {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { printDocument } from '../data/printDocument';
 import { localIsoDate } from '../../shared/localDate';
 import { SNAPSHOT } from '../data/snapshot';
@@ -38,7 +38,7 @@ import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceShee
 import { BANK_SUBMISSION_COLLECTION, settingsFromRecord, type BankSubmissionSettings } from '../data/bankSubmission';
 import { buildKessanImport } from '../data/kessanImport';
 import { KESSAN_SHEETS, docIdOfSheet, fieldsForSheet, inheritedNote, isKessanSheet, sheetDef, sheetOfDoc, type KessanSheet } from '../data/kessanSheets';
-import { sanitizeDocstudioStore, type StoreShape, type Values } from '../data/docstudioStore';
+import { sanitizeDocstudioStore, type DocstudioCollection, type StoreShape, type Values } from '../data/docstudioStore';
 import { buildBusinessPlanImport, buildCashPlanImport, type ImportPreview } from '../data/docImports';
 import { tableStyle, thStyle, tdStyle, tdNum } from '../components/tableStyles';
 import {
@@ -112,7 +112,8 @@ import { writeLocalJson, type LocalWriteResult } from '../data/localWrite';
  * （styles.css の body.ds-printing ルール）。
  */
 
-type Collection = 'studio' | 'teikan' | 'shugyo' | 'kessan';
+/** 書類の群れ。union は保存の検査と共有する (`data/docstudioStore.ts`)。 */
+type Collection = DocstudioCollection;
 const LS_KEY = 'servicehub.docstudio.v1';
 
 function loadStore(): StoreShape {
@@ -1166,11 +1167,50 @@ function GuideBox({ title, steps, notes }: { title: string; steps?: readonly (re
   );
 }
 
-const COLLECTIONS: { id: Collection; label: string }[] = [
-  { id: 'studio', label: `🗂 経営書類（${STUDIO_TEMPLATES.length}種）` },
-  { id: 'teikan', label: '📜 電子定款' },
-  { id: 'shugyo', label: '📖 就業規則' },
-  { id: 'kessan', label: '📊 計算書類（4点）' },
+/**
+ * 書類一覧のボタン 1 つ。
+ *
+ * 計算書類は**4 点それぞれを独立した書類として並べる** (利用者の依頼・2026-09-06)。
+ * それまでは一覧に「📊 計算書類（4点）」の 1 つだけが在り、4 点は開いた先の
+ * タブで切り替える形だった —— 一覧を見ただけでは**4 点が 1 つの書類に
+ * まとめられている**ように見えていた。会社法435条2項の計算書類は 4 点それぞれが
+ * 別の書類なので、一覧もそう見えるべきである。
+ *
+ * **値の入れ物は 1 つのまま。** 一覧を分けたのは「どの書面を見せるか」だけで、
+ * 損益計算書の当期純利益 → 貸借対照表の繰越利益剰余金 → 株主資本等変動計算書の
+ * 当期変動額、という連結は切っていない (`kessanSheets.ts` の冒頭参照)。
+ */
+interface CollectionTab {
+  /** ボタンの識別子 (`data-collection`)。計算書類は書面ごとに別の id を持つ。 */
+  readonly id: string;
+  /** 実際に切り替えるコレクション。計算書類の 5 つはすべて `kessan`。 */
+  readonly collection: Collection;
+  /** 計算書類のときだけ。押すとこの書面に切り替わる。 */
+  readonly sheet?: KessanSheet;
+  readonly label: string;
+}
+
+const KESSAN_ICON: Record<KessanSheet, string> = {
+  all: '📚',
+  pl: '📈',
+  bs: '⚖',
+  equity: '📊',
+  notes: '📝',
+};
+
+const COLLECTIONS: readonly CollectionTab[] = [
+  { id: 'studio', collection: 'studio', label: `🗂 経営書類（${STUDIO_TEMPLATES.length}種）` },
+  { id: 'teikan', collection: 'teikan', label: '📜 電子定款' },
+  { id: 'shugyo', collection: 'shugyo', label: '📖 就業規則' },
+  // 並び順は `KESSAN_SHEETS` から導く (順序を 2 か所に書かない)。
+  ...KESSAN_SHEETS.filter((sh) => sh.id !== 'all').map((sh) => ({
+    id: sh.docId,
+    collection: 'kessan' as const,
+    sheet: sh.id,
+    label: `${KESSAN_ICON[sh.id]} ${sh.title}`,
+  })),
+  // 「まとめて」は決算公告の要旨つきで 4 点を 1 枚に出す従来の出力。最後に置く。
+  { id: 'kessan', collection: 'kessan', sheet: 'all', label: '📚 計算書類（4点まとめて）' },
 ];
 
 /**
@@ -1203,12 +1243,12 @@ const KESSAN_STEPS: readonly (readonly [string, string])[] = [
   ['① 残高を入れる', '試算表（決算整理後）の科目残高を、区分ごとに正の値で入力します。期末商品棚卸高・減価償却累計額・貸倒引当金は控除項目なので、そのまま正の値で入れれば自動で差し引きます。'],
   ['② 当期の変動を入れる', '繰越利益剰余金の期首残高、剰余金の配当、利益準備金への積立、新株発行による増加額を入れます。期首残高は入力しません。期末残高から当期変動額を引いて逆算するので、内訳と食い違う期首を書けないようになっています。'],
   ['③ 貸借の一致を確認', '資産合計と負債・純資産合計が一致しているかを自動で検算します。差額が当期純利益と一致した場合は、繰越利益剰余金の期首残高に当期純利益を二重に足している可能性が高いです。'],
-  ['④ 書面を選んで印刷 / PDF 保存', '「書面」で 4 点まとめてか 1 点ずつ（損益計算書・貸借対照表・株主資本等変動計算書・個別注記表）かを選び、「印刷 / PDF 保存」で選んだ書面だけを出力します。1 点ずつ扱っても値の入れ物は 1 つなので、当期純利益と純資産の連結は切れません。'],
+  ['④ 書類を選んで印刷 / PDF 保存', '上の書類一覧で損益計算書・貸借対照表・株主資本等変動計算書・個別注記表のどれか（または「計算書類（4点まとめて）」）を選び、「印刷 / PDF 保存」でその書類だけを出力します。1 点ずつ扱っても値の入れ物は 1 つなので、当期純利益と純資産の連結は切れません。'],
   ['⑤ 承認と公告', '定時株主総会の承認を受けたうえで、貸借対照表（大会社は損益計算書も）を公告してください。作成した計算書類は10年間の保存義務があります。'],
 ];
 
 const KESSAN_NOTES: readonly string[] = [
-  '計算書類は貸借対照表・損益計算書・株主資本等変動計算書・個別注記表の4点で、作成した時から10年間の保存義務があります（会社法435条2項・4項）。この画面は4点すべてを同じ科目残高から組み立て、「書面」のタブで 1 点ずつ入力・出力することもできます（値の入れ物は 1 つのまま）。',
+  '計算書類は貸借対照表・損益計算書・株主資本等変動計算書・個別注記表の4点で、作成した時から10年間の保存義務があります（会社法435条2項・4項）。4点は書類一覧でそれぞれ独立した書類として並び、1 点ずつ記載・出力できます。4点すべては同じ科目残高から組み立てるので（値の入れ物は 1 つのまま）、当期純利益と純資産の連結は切れません。',
   '株主資本等変動計算書の当期末残高は、貸借対照表の純資産の部と一致します。期首残高は入力させず期末から逆算するので、二表がずれることはありません。',
   '剰余金の配当をするときは、配当により減少する剰余金の10分の1を資本準備金または利益準備金として計上する必要があります（会社法445条4項）。ただし準備金の合計が資本金の4分の1に達している場合を除きます。',
   '定時株主総会の終結後は遅滞なく貸借対照表（大会社は損益計算書も）の公告が必要です（会社法440条1項）。'
@@ -1300,7 +1340,18 @@ function OverviewImportPanel({
 export function DocstudioPage() {
   const { source, status, errorMessage, refresh } = useServiceData('docstudio', SNAPSHOT.docstudio);
   const [store, setStore] = useState<StoreShape>(() => loadStore());
-  const [collection, setCollection] = useState<Collection>('studio');
+  /**
+   * 開いている書類の群れ。**保存値から復元する** —— 計算書類 4 点が一覧の独立した
+   * エントリになったので、群れを覚えないと「開き直しても同じ書面から続く」が
+   * 成り立たない (`docstudioStore.ts` の `collection` の注記)。
+   */
+  const [collection, setCollectionState] = useState<Collection>(
+    () => loadStore().collection ?? 'studio',
+  );
+  const setCollection = useCallback((next: Collection) => {
+    setCollectionState(next);
+    setStore((prev) => ({ ...prev, collection: next }));
+  }, []);
   const [docId, setDocId] = useState<string>(STUDIO_TEMPLATES[0]!.id);
   const [teikanType, setTeikanType] = useState<'kk' | 'gk'>('kk');
   const [query, setQuery] = useState('');
@@ -1550,13 +1601,29 @@ export function DocstudioPage() {
         />
 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
+          {/*
+            **一覧のボタンに `data-doc-id` は付けない。** あれは「法的地位のバッジを
+            必ず持つ書式の行」の目印で、実機 e2e が `[data-doc-id]` の数とバッジの数の
+            一致を見ている (`scripts/e2e/core.cjs` の legal 節)。一覧のボタンは常に
+            画面に在るので、書式として数えられると invariant が崩れる —— 2026-09-06 に
+            実際に崩して e2e が止めた。書類 id が要るときは `docIdOfSheet(c.sheet)`。
+          */}
           {COLLECTIONS.map((c) => (
             <button
               key={c.id}
               type="button"
               data-collection={c.id}
-              onClick={() => setCollection(c.id)}
-              className={collection === c.id ? 'primary' : ''}
+              data-kessan-sheet={c.sheet}
+              onClick={() => {
+                setCollection(c.collection);
+                // 書面を持つエントリは、開くと同時にその書面へ合わせる。
+                if (c.sheet !== undefined) setKessanSheet(c.sheet);
+              }}
+              className={
+                collection === c.collection && (c.sheet === undefined || kessanSheet === c.sheet)
+                  ? 'primary'
+                  : ''
+              }
               style={{ fontSize: 13, padding: '9px 14px' }}
             >
               {c.label}
@@ -1707,24 +1774,14 @@ export function DocstudioPage() {
             </Section>
           )}
 
+          {/*
+            書面の切り替えは**上の書類一覧**に移した (4 点がそれぞれ独立した書類として
+            並ぶ)。同じ状態を動かすボタンを 2 か所に置くと、どちらが効いているのか
+            分からなくなるので、ここに残すのは「いま見ている書面が何か」の説明だけ。
+          */}
           {collection === 'kessan' && (
-            <Section title="書面（4点まとめて / 1点ずつ）" count={KESSAN_SHEETS.length}>
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }} data-kessan-sheet-tabs={kessanSheet}>
-                {KESSAN_SHEETS.map((sh) => (
-                  <button
-                    key={sh.id}
-                    type="button"
-                    data-kessan-sheet={sh.id}
-                    data-doc-id={sh.docId}
-                    className={kessanSheet === sh.id ? 'primary' : ''}
-                    onClick={() => setKessanSheet(sh.id)}
-                    style={{ padding: '8px 10px', fontSize: 12 }}
-                  >
-                    {sh.label}
-                  </button>
-                ))}
-              </div>
-              <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+            <Section title={`この書面について — ${sheetDef(kessanSheet).title}`}>
+              <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
                 {sheetDef(kessanSheet).note}
                 {inheritedNote(kessanSheet) !== null && (
                   <div data-kessan-inherited style={{ marginTop: 4 }}>※ {inheritedNote(kessanSheet)}</div>
