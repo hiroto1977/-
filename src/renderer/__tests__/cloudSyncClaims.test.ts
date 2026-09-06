@@ -187,8 +187,8 @@ describe('クラウド同期: 送信路の有無と、画面の言い分が噛�
     { label: 'EventSource', re: /\bEventSource\b/, sample: 'const es = new EventSource(url);' },
     { label: 'serviceHub (main へ渡す = main が通信する)', re: /\bserviceHub\b/, sample: 'await window.serviceHub.invoke(id, action, payload);' },
     { label: 'プロキシ経由の送信 (ブラウザ版)', re: /fetchViaProxy/, sample: 'const r = await fetchViaProxy(url, init);' },
-    { label: '画像ビーコン', re: /new\s+Image\s*\(|createElement\(\s*['\"`]img/, sample: "new Image().src = url + '?d=' + data;" },
-    { label: 'リモートの動的 import', re: /import\s*\(\s*['\"`]https?:/, sample: "await import('https://cdn.example/x.js');" },
+    { label: '画像ビーコン', re: /new\s+Image\s*\(|createElement\(\s*['"`]img/, sample: "new Image().src = url + '?d=' + data;" },
+    { label: 'リモートの動的 import', re: /import\s*\(\s*['"`]https?:/, sample: "await import('https://cdn.example/x.js');" },
     { label: 'URL へ載せる画面遷移', re: /location\.(href|assign|replace)\s*[=(]|window\.open\s*\(/, sample: 'location.href = url + data;' },
   ];
 
