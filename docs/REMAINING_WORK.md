@@ -4585,6 +4585,30 @@ main は `safeStorage.isEncryptionAvailable()` から、web-shim は
   `isEncryptionEnabled()` を見るので、**現状は描画されない**。
   配線されたら出る。
 
+### 2割特例の期限は判定に繋いだ (2026-09-06・上の項の前提が 1 つ変わった)
+
+上の項が「同日に台帳を足した」と書いている 2割特例は、**期限を判定に使うところまで
+進んだ** (`twentyPercentMeasureStatus()`・`docs/ARCHITECTURE.md` に節がある)。
+不動産取得税の側は**出典が無い**という理由で止まっているので、上の手順はそのまま有効。
+違いは 1 点だけ: 日付を記録したあと、**その日付で何をするか**まで決めること
+(2割特例では「言い切れる `ended` でだけ最有利の候補から外し、言い切れない帯は
+条件を画面に書く」にした。3 値になる理由は課税期間の規則で、税目ごとに違いうる)。
+
+### 変異検査の subset 実行に残る static の見かけ (2026-09-06 実測・**直していない**)
+
+`npx stryker run --mutate src/shared/bankFormat.ts` は **49 件の生存**を報告するが、
+**すべて module 直下の定数表** (`AMOUNT_UNITS` / `NEGATIVE_STYLES` / `ERAS` ほか) で、
+`stryker.config.json` の `_commentIgnoreStatic` が説明している「覆われた static は
+module が変異体の有効化より前に読み込まれているため生存と報告される」形。
+週次の全実行 (run 168・main `8a15960a`) は **success** で、`docs/QUALITY.md` にも
+bankFormat の行は無い —— **subset 実行だけの見かけ**である。
+
+直すなら `oauth.test.ts` の freshConfigs と同じ形 (`vi.resetModules()` +
+動的 `await import()`)。同じ手で `taxConsumption.ts` は 2026-09-06 に
+0.00% (2 件 未到達) → **100% (39 件)** になったので、効くことは確かめてある。
+やっていないのは**触っていないモジュールの既存債務**だから (今回の変更は
+`formatDate` の引数の型を狭めただけで、実行時の差は無い)。
+
 ### 不動産取得税の軽減税率に、期限が記録されていない (2026-08-23 実測・**出典が要る**)
 
 `src/shared/taxRealEstateAcquisition.ts` の `REDUCED_RATE = 0.03` には、注記に

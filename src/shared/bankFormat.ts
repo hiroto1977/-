@@ -206,8 +206,12 @@ const eraYearLabel = (n: number): string => (n === 1 ? '元' : String(n));
  * 年月日。和暦なら「令和8年9月4日」、西暦なら「2026年9月4日」。`YYYY-MM` は年月まで。
  * 読めない入力は「―」。和暦で昭和より前は西暦へ倒す。
  * 年月だけの入力の元号は月初の日で決める (令和元年 5 月 / 平成 31 年 4 月)。
+ *
+ * 受けるのは `era` だけ (金額の書式は日付に関わらない)。書面の外から
+ * 和暦のラベルが要るとき —— 税制の適用期限を画面に出すときなど —— に
+ * `BankFormat` を丸ごと組ませないため。和暦の組み立てはここ 1 か所に置く。
  */
-export function formatDate(iso: string | null | undefined, f: BankFormat): string {
+export function formatDate(iso: string | null | undefined, f: Pick<BankFormat, 'era'>): string {
   const d = parseIsoDate(iso);
   if (!d) return BLANK;
   const tail = d.day === null ? `${d.month}月` : `${d.month}月${d.day}日`;

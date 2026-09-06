@@ -17,7 +17,14 @@ import {
   EXEMPTION_THRESHOLD,
   SIMPLIFIED_ELIGIBILITY_THRESHOLD,
 } from '../../shared/taxConsumptionBusiness';
-import { TWENTY_PERCENT_RATE, type SimplifiedBusinessType, type ConsumptionTaxMethod } from '../../shared/taxConsumption';
+import {
+  TWENTY_PERCENT_MEASURE_END,
+  TWENTY_PERCENT_RATE,
+  twentyPercentMeasureStatus,
+  type SimplifiedBusinessType,
+  type ConsumptionTaxMethod,
+} from '../../shared/taxConsumption';
+import { formatDate } from '../../shared/bankFormat';
 import { deriveBusinessFinancials, type MonthlyBusinessKpi } from '../data/businessFinancials';
 import { AxonometricCharts } from './AxonometricCharts';
 import { computeFinancialRatios, radarAxes, type FinancialRatios } from '../data/financialRatios';
@@ -321,8 +328,19 @@ function CorporateTaxCard({
    * ない**ので対象になりえない。免税判定と同じ代理指標 (この画面が入力した課税
    * 売上高) で外す —— 画面の注記も同じ代理で「基準期間（前々事業年度）も同水準なら」
    * と書いている。
+   *
+   * **期限つきの措置でもある。** `twentyPercentMeasureStatus()` は課税期間の規則で
+   * 3 値に落とす。この card は課税期間を入力に持たないので、**言い切れる `ended`
+   * でだけ**候補から外し、言い切れない帯は条件を欄に書いて選ばせる (下の caption)。
    */
-  const ctTwentyPercentOk = ctExempt;
+  const ctMeasure = twentyPercentMeasureStatus();
+  const ctTwentyPercentOk = ctExempt && ctMeasure !== 'ended';
+  /** 期限の文面は定数から作る (書き写すと 2 か所になる)。「令和8年9月30日」。 */
+  const measureEndLabel = formatDate(TWENTY_PERCENT_MEASURE_END, { era: 'wareki' });
+  const measureNote =
+    ctMeasure === 'ended'
+      ? ` · 適用期限（${measureEndLabel}）が過ぎています`
+      : ` · ${measureEndLabel}を含む課税期間まで`;
   // 選べないと宣言した方式で「最有利」を決めない (それが 2026-09-06 の実測の穴)。
   const ct = compareBusinessTaxMethods(
     [{ type: ctBizType, sales: { standard: ctSales, reduced: 0 } }],
@@ -501,7 +519,7 @@ function CorporateTaxCard({
 
         {ctExempt && (
           <div style={{ fontSize: 12, color: '#43c3b8', marginBottom: 10 }}>
-            課税売上高が {yen.format(EXEMPTION_THRESHOLD)} 以下 — 基準期間（前々事業年度）も同水準なら<strong>免税事業者（納付不要）の見込み</strong>です。
+            課税売上高が {yen.format(exemptionLimit)} 以下 — 基準期間（前々事業年度）も同水準なら<strong>免税事業者（納付不要）の見込み</strong>です。
             インボイス（適格請求書発行事業者）登録済みの場合は課税事業者として納付が必要で、2割特例の対象になりえます。
           </div>
         )}
@@ -510,7 +528,12 @@ function CorporateTaxCard({
           {([
             ['standard', ct.standard, ct.standard < 0 ? '仕入超過 → 還付見込み' : '売上税額 − 仕入税額'],
             ['simplified', ct.simplified, `みなし仕入率 ${(ct.appliedDeemedRate * 100).toFixed(0)}%${ctSimplifiedOk ? '' : ` · 基準期間${yen.format(simplifiedLimit)}超は選択不可`}`],
-            ['twenty-percent', ct.twentyPercent, `売上税額 × ${Number(twentyPct.toPrecision(12))}%（インボイス登録の小規模事業者）${ctTwentyPercentOk ? '' : ` · 課税売上高${yen.format(exemptionLimit)}超は対象外`}`],
+            [
+              'twenty-percent',
+              ct.twentyPercent,
+              `売上税額 × ${Number(twentyPct.toPrecision(12))}%（インボイス登録の小規模事業者）` +
+                `${ctExempt ? '' : ` · 課税売上高${yen.format(exemptionLimit)}超は対象外`}${measureNote}`,
+            ],
           ] as const).map(([method, amount, sub]) => (
             <div
               key={method}
@@ -540,8 +563,8 @@ function CorporateTaxCard({
 
         <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
           ※ 消費税は「預かった税 − 支払った税」を納付する仕組みのため、税引後利益の計算には含めていません（税抜経理を前提）。
-          簡易課税は基準期間の課税売上高 {yen.format(SIMPLIFIED_ELIGIBILITY_THRESHOLD)} 以下＋事前届出で選択可。
-          2割特例はインボイス登録で免税から課税になった事業者の経過措置（令和8年9月30日を含む課税期間まで）。
+          簡易課税は基準期間の課税売上高 {yen.format(simplifiedLimit)} 以下＋事前届出で選択可。
+          2割特例はインボイス登録で免税から課税になった事業者の経過措置（{measureEndLabel}を含む課税期間まで）。
           軽減税率 8% の売上・仕入は未考慮。
           <strong>本則課税は課税仕入れの消費税を全額引ける前提</strong>です（課税売上割合 95% 以上かつ課税売上高 5億円以下のとき）。
           住宅家賃・利子などの非課税売上があると全額は引けず、実際の納付はこれより多くなります。按分（個別対応方式・一括比例配分方式）は
