@@ -105,6 +105,27 @@ blob ストア (`library/library.ts`)** を当たったら同じ形だった。�
 
 ### 同じ面を当たって白だったもの (再訪不要)
 
+- **暗号 (AES-GCM の nonce / KDF / 乱数源) — 全面白** (2026-09-06 実測)。
+  今日の他のパスと同じ問いを当てたが、**どれも既に守られていた**:
+  (1) `crypto.subtle.encrypt` の 4 か所すべてが**同じ関数の中で**
+  `getRandomValues` から IV を採る —— しかも
+  `src/renderer/security/__tests__/aesGcmNonce.test.ts` が
+  **`src/renderer` 全域を走査**して「IV を同じ関数内で作っていない箇所」を
+  0 件に固定し、**箇所数 4 とその内訳まで留める** (増えたら読み直させる)。
+  同じ鍵・同じ平文を 32 回封緘して IV が 32 通りあることも見ている。
+  (2) 復号は保存側から来た値を信じない ——
+  `assertKdfIterations` (10 万〜400 万) と `assertSaltBytes` を
+  `decryptString` が**派生の前に**通す (注記に「この検査は当初 dataCrypto に
+  しか無く Vault 側が素通しだった」という履歴つき)。
+  (3) `deriveAesKey` の実呼び出し 4 か所はすべて既定 (600k) を使い、
+  低い反復回数を渡す経路が無い。
+  (4) 復元用ニーモニックのエントロピーは `crypto.getRandomValues`。
+  (5) **第 2 の暗号面は存在しない** —— main / preload / shared に
+  `createCipheriv` も `subtle.encrypt` も無く、main は Electron の
+  `safeStorage` (OS キーチェーン) だけを使う。renderer 全域の走査で全面を覆えている。
+  **次に当たるなら「鍵の寿命」側** (再施錠・鍵の入れ替え中の窓) —— そこは
+  `vaultRekeyWindow.test.ts` / `vaultLockRace.test.ts` が既にある。
+
 - **`not.toMatch` の棚卸し — 73 件のうち、安全・法務に関わる 6 件だけを当たった**
   (2026-09-06)。直したのは 2 件 (退避機能の「送っていない」の根拠・仕分けの言い切り禁止語)。
   残る 4 件 (`inlineHtml` の unsafe-inline / `shippedCsp` の localhost / `storageClaims` の
