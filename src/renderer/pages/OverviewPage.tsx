@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { navigateTo, takeNavigationIntent } from '../navigate';
 import { Section } from '../components/StatusBar';
 import { useCollection } from '../data/useCollection';
-import { fireReported } from '../data/recordStoreFailure';
+import { fireReported } from '../data/deviceStoreFailure';
 import {
   BUSINESS_UNITS_COLLECTION,
   financialUnitsFromBusinessUnits,

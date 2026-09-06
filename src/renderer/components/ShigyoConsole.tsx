@@ -5,7 +5,7 @@ import { Stat } from './Stat';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from './tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { useCollection } from '../data/useCollection';
-import { fireReported } from '../data/recordStoreFailure';
+import { fireReported } from '../data/deviceStoreFailure';
 import type { ServiceId } from '../../shared/serviceId';
 import type { ShigyoSnapshot, ShigyoConsultationStatus } from '../../shared/shigyoTypes';
 import { jpy } from '../../shared/formatters';

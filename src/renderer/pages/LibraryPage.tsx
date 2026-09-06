@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Section, StatusBar } from '../components/StatusBar';
-import { getLibrary, type LibraryItemMeta } from '../library/library';
+import { getLibrary, type LibraryItem, type LibraryItemMeta } from '../library/library';
+import { reportDeviceStoreFailure } from '../data/deviceStoreFailure';
 import {
   MAX_TEXT_PREVIEW_CHARS,
   previewBlocker,
@@ -32,9 +33,23 @@ export function LibraryPage() {
   const [filter, setFilter] = useState<string>('all');
   const [shown, setShown] = useState<ShownPreview | null>(null);
 
+  /**
+   * 一覧を読み直す。**読めなかったら報せて、前回読めた一覧を残す。**
+   *
+   * ここは投げっぱなしだった (`useEffect(() => { refresh(); }, [])`)。
+   * `indexedDB` が開けない端末では `items` が `[]` のままになり、
+   * 見出しは「ライブラリ · 0 件 / 0 B」と出る —— **書き出した書類が
+   * 1 つも無いのと区別が付かない**。空に見える理由を画面が言えるようにする
+   * (業務レコード側と同じ判断。`data/deviceStoreFailure.ts`)。
+   */
   async function refresh() {
-    const lib = getLibrary();
-    const list = await lib.list();
+    let list: readonly LibraryItemMeta[];
+    try {
+      list = await getLibrary().list();
+    } catch (err) {
+      reportDeviceStoreFailure('files', 'read', 'library', err);
+      return;
+    }
     setItems(list);
     setTotalBytes(list.reduce((acc, it) => acc + it.size, 0));
   }
@@ -43,11 +58,26 @@ export function LibraryPage() {
     refresh();
   }, []);
 
+  /**
+   * 1 件を読む。**「消えている」と「読めない」を混ぜない** —— 打ち手が違う
+   * (前者は諦める / 後者は容量を空けるか通常のウィンドウで開き直す)。
+   * 読めなかったときは経路へ報せて `'unreadable'` を返し、呼び出し側は黙って戻る。
+   */
+  async function readItem(id: string): Promise<LibraryItem | null | 'unreadable'> {
+    try {
+      return await getLibrary().get(id);
+    } catch (err) {
+      reportDeviceStoreFailure('files', 'read', 'library', err);
+      return 'unreadable';
+    }
+  }
+
   const visible = filter === 'all' ? items : items.filter((i) => i.serviceId === filter);
   const services = Array.from(new Set(items.map((i) => i.serviceId)));
 
   async function download(id: string) {
-    const item = await getLibrary().get(id);
+    const item = await readItem(id);
+    if (item === 'unreadable') return; // 報せは画面上端に出ている
     if (!item) {
       setMsg('ファイルが見つかりません (削除済みの可能性)');
       return;
@@ -72,7 +102,8 @@ export function LibraryPage() {
    * いたため、この経路は元から無反応だった。詳細は `library/preview.ts`。
    */
   async function preview(id: string) {
-    const item = await getLibrary().get(id);
+    const item = await readItem(id);
+    if (item === 'unreadable') return; // 報せは画面上端に出ている
     if (!item) {
       setMsg('ファイルが見つかりません (削除済みの可能性)');
       return;
@@ -108,7 +139,13 @@ export function LibraryPage() {
 
   async function remove(id: string) {
     if (!confirm('このファイルを削除しますか?')) return;
-    await getLibrary().remove(id);
+    try {
+      await getLibrary().remove(id);
+    } catch (err) {
+      // 消せていないので「削除しました」とは言わない。行はそのまま残る。
+      reportDeviceStoreFailure('files', 'delete', 'library', err);
+      return;
+    }
     setShown(null);
     await refresh();
     setMsg('削除しました');
@@ -116,7 +153,12 @@ export function LibraryPage() {
 
   async function removeAll() {
     if (!confirm('ライブラリの全ファイルを削除しますか? この操作は元に戻せません。')) return;
-    await getLibrary().clear();
+    try {
+      await getLibrary().clear();
+    } catch (err) {
+      reportDeviceStoreFailure('files', 'delete', 'library', err);
+      return;
+    }
     setShown(null);
     await refresh();
     setMsg('全て削除しました');

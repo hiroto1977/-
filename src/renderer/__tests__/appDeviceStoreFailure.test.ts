@@ -94,7 +94,7 @@ vi.mock('../data/store', () => {
 import { App } from '../App';
 import { _resetRecordStoreForTests } from '../data/store';
 import { _resetCollectionSubscribersForTests } from '../data/useCollection';
-import { _resetRecordStoreFailureForTests } from '../data/recordStoreFailure';
+import { _resetDeviceStoreFailureForTests } from '../data/deviceStoreFailure';
 import { _resetNavigationIntentForTests } from '../navigate';
 
 beforeAll(() => {
@@ -151,7 +151,7 @@ function type(el: HTMLInputElement, value: string): void {
 const byLabel = (label: string) => container.querySelector<HTMLInputElement>(`input[aria-label="${label}"]`);
 const buttonWith = (text: string) =>
   [...container.querySelectorAll('button')].find((b) => b.textContent === text);
-const banner = () => container.querySelector('[data-record-store-failure]');
+const banner = () => container.querySelector('[data-device-store-failure]');
 
 /** 手入力欄を開いて「事業名」を打ち、「事業を追加」を押す。 */
 async function addBusinessUnit(name: string): Promise<void> {
@@ -170,7 +170,7 @@ beforeEach(async () => {
   h.refuseWrites = false;
   _resetRecordStoreForTests();
   _resetCollectionSubscribersForTests();
-  _resetRecordStoreFailureForTests();
+  _resetDeviceStoreFailureForTests();
   _resetNavigationIntentForTests();
   localStorage.clear();
   location.hash = '';
@@ -191,7 +191,7 @@ afterEach(async () => {
     root = null;
   }
   document.body.removeChild(container);
-  _resetRecordStoreFailureForTests();
+  _resetDeviceStoreFailureForTests();
 });
 
 describe('端末が保存を断ったとき、App が報せる', () => {
@@ -200,7 +200,7 @@ describe('端末が保存を断ったとき、App が報せる', () => {
     await addBusinessUnit('断られる事業');
     const el = banner();
     expect(el, '報せが出ていない').toBeTruthy();
-    expect(el?.getAttribute('data-record-store-failure')).toBe('save');
+    expect(el?.getAttribute('data-device-store-failure')).toBe('save');
     expect(el?.textContent).toContain('この端末に保存できませんでした');
     expect(el?.textContent).toContain('この端末の保存領域が一杯です');
   });

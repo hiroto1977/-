@@ -10,28 +10,30 @@
 
 ---
 
-## 次に測る所 — 同じ形が**ライブラリ (blob ストア)** に残っている (2026-09-06)
+## 見つけた欠陥 — ライブラリが読めないとき「0 件」と言い切っていた (2026-09-06・直した)
 
-業務レコード (IndexedDB) の読み書きは入口 1 か所で報せるようにした
-(`data/recordStoreFailure.ts` + `components/RecordStoreFailureBanner.tsx`)。
-**同じ端末の同じ容量を共有している `library/library.ts` (書き出した書類・SVG の実体) は
-まだ同じ形のまま**である。実測 (2026-09-06) で書き込み・削除は 3 か所:
+業務レコード側を入口 1 か所で報せる形にした直後に、**同じ端末の同じ容量を分け合う
+blob ストア (`library/library.ts`)** を当たったら同じ形だった。実測 4 か所:
 
 ```
-  data/connectorSinks.ts:18   getLibrary().put(...)     コネクタ実行の保存 (段の結果には出る)
-  pages/LibraryPage.tsx:111   getLibrary().remove(id)   onClick={() => remove(it.id)} —— 拒否は宙に浮く
-  pages/LibraryPage.tsx:119   getLibrary().clear()      onClick={removeAll} —— 同じ
-  renderer/web-shim.ts:286    library.put(...)          action の結果に出る
+  LibraryPage.refresh()        useEffect(() => { refresh(); }, []) —— 投げっぱなし
+                               → 読めなければ items は [] のまま。見出しは
+                                 「ライブラリ · 0 件 / 0 B」= 書き出した書類が
+                                 1 つも無いのと区別が付かない
+  LibraryPage.remove/clear()   断られても文言が出ない (「削除しました」は出ないが理由も出ない)
+  LibraryPage.get()  ×2        拒否が宙に浮く。押しても何も起きない
 ```
 
-`LibraryPage` の 2 か所は「削除しました」を await の**後**に置いてあるので
-**嘘は言わない** (失敗すれば文言も出ない) が、**理由も出ない**。容量が一杯なのは
-まさにライブラリが太ったときなので、断られる可能性はレコード側より高い。
+`deviceStoreFailure` に主語 (`records` / `files`) を足し、4 か所を `files` として
+報せるようにした。**「消えている」と「読めない」は混ぜない** —— 打ち手が違うので
+(前者は諦める / 後者は容量を空けるか通常のウィンドウで開き直す)、`readItem` が
+`'unreadable'` を返して呼び出し側は「ファイルが見つかりません」を出さない。
+台帳検査 (`__tests__/deviceStoreWritePolicy.test.ts`) の走査を `getLibrary()` まで
+広げ、**2 つの保管庫の両方に当たっていること**を標本で固定した。
 
-手順は今回と同じでよい: `recordStoreFailure` の経路を blob 側からも使う
-(操作は `save` / `delete` と同じ 3 通りで足りる) → `LibraryPage` の 2 か所を
-`fireReported()` へ → `recordWritePolicy.test.ts` の走査に `getLibrary()` を足す
-(台帳の形はそのまま)。**やっていないのは、1 回のパスで 2 つの保存層を混ぜないため。**
+残っているのは `library.put` の 2 か所 (`data/connectorSinks.ts` /
+`renderer/web-shim.ts`) だが、どちらも**投げた失敗が action / 実行段の結果に
+写って画面へ出る**ので、台帳では `surfaced` として登録済みである。
 
 ---
 

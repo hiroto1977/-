@@ -126,7 +126,7 @@
     "src/renderer/data/recordCipher.ts",
     "src/renderer/data/recordEncryption.ts",
     "src/renderer/data/recordShapeAudit.ts",
-    "src/renderer/data/recordStoreFailure.ts",
+    "src/renderer/data/deviceStoreFailure.ts",
     "src/renderer/data/revenueConcentration.ts",
     "src/renderer/data/saasWriteWeb.ts",
     "src/renderer/data/sales.ts",

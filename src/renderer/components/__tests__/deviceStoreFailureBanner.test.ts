@@ -2,7 +2,7 @@
 /**
  * **報せが画面に出る所を、実際に描いて留める。**
  *
- * 経路 (`recordStoreFailure.ts`) と入口 (`useCollection`) は別の検査で留めた。
+ * 経路 (`deviceStoreFailure.ts`) と入口 (`useCollection`) は別の検査で留めた。
  * 残るのは**画面に出るか**で、ここが抜けると「経路は動いているが誰も出さない」
  * ——2026-08-25 の「鍵を保存できるのにボタンは永久に押せない」と同じ、
  * 配線されていない部品になる。
@@ -13,13 +13,13 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { RecordStoreFailureBanner } from '../RecordStoreFailureBanner';
+import { DeviceStoreFailureBanner } from '../DeviceStoreFailureBanner';
 import {
-  _resetRecordStoreFailureForTests,
-  clearRecordStoreFailure,
-  currentRecordStoreFailure,
-  reportRecordStoreFailure,
-} from '../../data/recordStoreFailure';
+  _resetDeviceStoreFailureForTests,
+  clearDeviceStoreFailure,
+  currentDeviceStoreFailure,
+  reportDeviceStoreFailure,
+} from '../../data/deviceStoreFailure';
 
 let container: HTMLDivElement;
 let root: Root | null = null;
@@ -31,7 +31,7 @@ function quota(): Error {
 }
 
 beforeEach(() => {
-  _resetRecordStoreFailureForTests();
+  _resetDeviceStoreFailureForTests();
   container = document.createElement('div');
   document.body.appendChild(container);
 });
@@ -44,25 +44,25 @@ afterEach(async () => {
     root = null;
   }
   document.body.removeChild(container);
-  _resetRecordStoreFailureForTests();
+  _resetDeviceStoreFailureForTests();
 });
 
 async function mount(): Promise<void> {
   root = createRoot(container);
   await act(async () => {
-    root!.render(createElement(RecordStoreFailureBanner));
+    root!.render(createElement(DeviceStoreFailureBanner));
   });
 }
 
-async function report(op: 'read' | 'save' | 'delete'): Promise<void> {
+async function report(op: 'read' | 'save' | 'delete', store: 'records' | 'files' = 'records'): Promise<void> {
   await act(async () => {
-    reportRecordStoreFailure(op, 'sales-entries', quota());
+    reportDeviceStoreFailure(store, op, 'sales-entries', quota());
   });
 }
 
-const banner = (): HTMLElement | null => container.querySelector('[data-record-store-failure]');
+const banner = (): HTMLElement | null => container.querySelector('[data-device-store-failure]');
 
-describe('RecordStoreFailureBanner', () => {
+describe('DeviceStoreFailureBanner', () => {
   it('★ 何も断られていなければ何も描かない', async () => {
     await mount();
     expect(banner()).toBeNull();
@@ -75,7 +75,7 @@ describe('RecordStoreFailureBanner', () => {
     const el = banner();
     expect(el).not.toBeNull();
     expect(el?.getAttribute('role')).toBe('alert');
-    expect(el?.getAttribute('data-record-store-failure')).toBe('save');
+    expect(el?.getAttribute('data-device-store-failure')).toBe('save');
     expect(el?.textContent).toContain('この端末に保存できませんでした');
     expect(el?.textContent).toContain('ライブラリの不要なファイルを削除');
   });
@@ -83,7 +83,7 @@ describe('RecordStoreFailureBanner', () => {
   it('★ 読めなかった報せも同じ枠で出る (空の理由を画面が言える)', async () => {
     await mount();
     await report('read');
-    expect(banner()?.getAttribute('data-record-store-failure')).toBe('read');
+    expect(banner()?.getAttribute('data-device-store-failure')).toBe('read');
     expect(banner()?.textContent).toContain('記録が消えたとは限りません');
   });
 
@@ -96,14 +96,14 @@ describe('RecordStoreFailureBanner', () => {
       close!.click();
     });
     expect(banner()).toBeNull();
-    expect(currentRecordStoreFailure()).toBeNull();
+    expect(currentDeviceStoreFailure()).toBeNull();
 
     await report('delete');
-    expect(banner()?.getAttribute('data-record-store-failure')).toBe('delete');
+    expect(banner()?.getAttribute('data-device-store-failure')).toBe('delete');
   });
 
   it('★ 描く前に届いた 1 件も出す (最初の読み込みで断られる場合)', async () => {
-    reportRecordStoreFailure('read', 'sales-entries', quota());
+    reportDeviceStoreFailure('records', 'read', 'sales-entries', quota());
     await mount();
     expect(banner()?.textContent).toContain('読めませんでした');
   });
@@ -114,11 +114,11 @@ describe('RecordStoreFailureBanner', () => {
       root!.unmount();
     });
     root = null;
-    expect(() => reportRecordStoreFailure('save', 'a', quota())).not.toThrow();
+    expect(() => reportDeviceStoreFailure('records', 'save', 'a', quota())).not.toThrow();
   });
 
   it('対照: 経路を閉じたまま描いても枠は出ない (data 属性で拾っている)', async () => {
-    clearRecordStoreFailure();
+    clearDeviceStoreFailure();
     await mount();
     expect(banner()).toBeNull();
   });

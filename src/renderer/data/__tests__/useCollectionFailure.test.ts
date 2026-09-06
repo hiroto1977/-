@@ -69,7 +69,7 @@ vi.mock('../store', () => {
 });
 
 import { useCollection, _resetCollectionSubscribersForTests, type UseCollection } from '../useCollection';
-import { _resetRecordStoreFailureForTests, currentRecordStoreFailure } from '../recordStoreFailure';
+import { _resetDeviceStoreFailureForTests, currentDeviceStoreFailure } from '../deviceStoreFailure';
 
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -114,11 +114,11 @@ function setup(collection: string) {
 beforeEach(() => {
   h.failOn.clear();
   h.rows = [];
-  _resetRecordStoreFailureForTests();
+  _resetDeviceStoreFailureForTests();
   _resetCollectionSubscribersForTests();
 });
 afterEach(() => {
-  _resetRecordStoreFailureForTests();
+  _resetDeviceStoreFailureForTests();
 });
 
 describe('書き込みが断られたとき', () => {
@@ -128,9 +128,9 @@ describe('書き込みが断られたとき', () => {
     h.failOn.add('insert');
     const thrown = await t.run(() => t.ref.current.add({ name: 'a' }));
     expect(thrown).toBeInstanceOf(Error);
-    const f = currentRecordStoreFailure();
+    const f = currentDeviceStoreFailure();
     expect(f?.op).toBe('save');
-    expect(f?.collection).toBe('sales-entries');
+    expect(f?.where).toBe('sales-entries');
     expect(f?.message).toContain('打ち込んだ内容は画面に残っています');
     t.unmount();
   });
@@ -141,7 +141,7 @@ describe('書き込みが断られたとき', () => {
     h.failOn.add('insertMany');
     const thrown = await t.run(() => t.ref.current.addMany([{ name: 'a' }, { name: 'b' }]));
     expect(thrown).toBeInstanceOf(Error);
-    expect(currentRecordStoreFailure()?.op).toBe('save');
+    expect(currentDeviceStoreFailure()?.op).toBe('save');
     t.unmount();
   });
 
@@ -152,7 +152,7 @@ describe('書き込みが断られたとき', () => {
     h.failOn.add('update');
     const thrown = await t.run(() => t.ref.current.edit('r1', { name: 'b' }));
     expect(thrown).toBeInstanceOf(Error);
-    expect(currentRecordStoreFailure()?.op).toBe('save');
+    expect(currentDeviceStoreFailure()?.op).toBe('save');
     t.unmount();
   });
 
@@ -163,7 +163,7 @@ describe('書き込みが断られたとき', () => {
     h.failOn.add('remove');
     const thrown = await t.run(() => t.ref.current.remove('r1'));
     expect(thrown).toBeInstanceOf(Error);
-    const f = currentRecordStoreFailure();
+    const f = currentDeviceStoreFailure();
     expect(f?.op).toBe('delete');
     expect(f?.message).toContain('一覧はそのままです');
     t.unmount();
@@ -177,7 +177,7 @@ describe('書き込みが断られたとき', () => {
     // 書き込みは通っているので、呼び出し側へは成功として返る。
     expect(thrown).toBeUndefined();
     expect(h.rows).toHaveLength(1);
-    const f = currentRecordStoreFailure();
+    const f = currentDeviceStoreFailure();
     expect(f?.op).toBe('read');
     expect(f?.message).not.toContain('保存できませんでした');
     t.unmount();
@@ -189,7 +189,7 @@ describe('書き込みが断られたとき', () => {
     await t.run(() => t.ref.current.add({ name: 'a' }));
     await t.run(() => t.ref.current.edit('r1', { name: 'b' }));
     await t.run(() => t.ref.current.remove('r1'));
-    expect(currentRecordStoreFailure()).toBeNull();
+    expect(currentDeviceStoreFailure()).toBeNull();
     t.unmount();
   });
 });
@@ -199,7 +199,7 @@ describe('読めなかったとき', () => {
     h.failOn.add('list');
     const t = setup('sales-entries');
     await t.mount(); // 投げたらここで落ちる
-    const f = currentRecordStoreFailure();
+    const f = currentDeviceStoreFailure();
     expect(f?.op).toBe('read');
     expect(f?.message).toContain('記録が消えたとは限りません');
     t.unmount();
@@ -223,7 +223,7 @@ describe('読めなかったとき', () => {
     await t.run(() => t.ref.current.reload());
     // 「消えた」画面にしない —— 出ているのは前回読めた一覧。
     expect(t.ref.current.records).toHaveLength(1);
-    expect(currentRecordStoreFailure()?.op).toBe('read');
+    expect(currentDeviceStoreFailure()?.op).toBe('read');
     t.unmount();
   });
 });

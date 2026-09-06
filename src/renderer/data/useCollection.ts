@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getRecordStore, type StoredRecord } from './store';
-import { reportRecordStoreFailure, type RecordStoreOp } from './recordStoreFailure';
+import { reportDeviceStoreFailure, type DeviceStoreOp } from './deviceStoreFailure';
 
 /**
  * 同じ collection を見ている**別の** hook へ変更を知らせる仕組み。
@@ -70,11 +70,11 @@ export function _collectionSubscriberCountForTests(collection: string): number {
  * 変えないため —— 二重に見えるが、片方は「この欄の保存」、もう片方は
  * 「この端末の保存領域」で、利用者の打ち手が違う。
  */
-async function reporting<R>(op: RecordStoreOp, collection: string, run: () => Promise<R>): Promise<R> {
+async function reporting<R>(op: DeviceStoreOp, collection: string, run: () => Promise<R>): Promise<R> {
   try {
     return await run();
   } catch (err) {
-    reportRecordStoreFailure(op, collection, err);
+    reportDeviceStoreFailure('records', op, collection, err);
     throw err;
   }
 }
@@ -131,7 +131,7 @@ export function useCollection<T extends Record<string, unknown>>(collection: str
     try {
       list = await getRecordStore().list<T>(collection);
     } catch (err) {
-      reportRecordStoreFailure('read', collection, err);
+      reportDeviceStoreFailure('records', 'read', collection, err);
     }
     // Stryker disable next-line ConditionalExpression: 上記のとおり alive ガードは React 18 では equivalent。
     if (alive.current) {

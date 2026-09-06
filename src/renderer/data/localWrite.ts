@@ -91,7 +91,7 @@ export function writeLocalString(key: string, json: string): LocalWriteResult {
  * 文面が画面を埋めないよう 60 字で切る。`name` が空の Error もあるので既定を置く
  * (`message` は秘密を含みうるので出さない —— 出すのは種別だけ)。
  *
- * レコードストア側 (`recordStoreFailure.ts`) も同じ名乗り方を使う ——
+ * レコードストア側 (`deviceStoreFailure.ts`) も同じ名乗り方を使う ——
  * 保存先が違っても「どの種別で断られたか」の書き方を 2 つ持つ理由が無い。
  */
 export function describeStorageError(err: unknown): string {

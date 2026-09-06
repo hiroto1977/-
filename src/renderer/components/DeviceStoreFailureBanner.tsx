@@ -13,22 +13,23 @@
  */
 import { useEffect, useState } from 'react';
 import {
-  clearRecordStoreFailure,
-  currentRecordStoreFailure,
-  subscribeRecordStoreFailure,
-  type RecordStoreFailure,
-} from '../data/recordStoreFailure';
+  clearDeviceStoreFailure,
+  currentDeviceStoreFailure,
+  subscribeDeviceStoreFailure,
+  type DeviceStoreFailure,
+} from '../data/deviceStoreFailure';
 
-export function RecordStoreFailureBanner() {
+export function DeviceStoreFailureBanner() {
   // マウント前に届いた 1 件も出す (最初の読み込みで断られる場合がいちばん多い)。
-  const [failure, setFailure] = useState<RecordStoreFailure | null>(currentRecordStoreFailure);
-  useEffect(() => subscribeRecordStoreFailure(setFailure), []);
+  const [failure, setFailure] = useState<DeviceStoreFailure | null>(currentDeviceStoreFailure);
+  useEffect(() => subscribeDeviceStoreFailure(setFailure), []);
 
   if (failure === null) return null;
   return (
     <div
       role="alert"
-      data-record-store-failure={failure.op}
+      data-device-store-failure={failure.op}
+      data-device-store={failure.store}
       style={{
         display: 'flex',
         gap: 10,
@@ -46,7 +47,7 @@ export function RecordStoreFailureBanner() {
       <span style={{ flex: 1 }}>{failure.message}</span>
       <button
         type="button"
-        onClick={() => clearRecordStoreFailure()}
+        onClick={() => clearDeviceStoreFailure()}
         style={{ fontSize: 11, flexShrink: 0 }}
       >
         閉じる

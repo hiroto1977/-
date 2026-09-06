@@ -24,7 +24,7 @@ import {
   type SheetMeta,
 } from '../data/bankSubmission';
 import { printDocument } from '../data/printDocument';
-import { fireReported } from '../data/recordStoreFailure';
+import { fireReported } from '../data/deviceStoreFailure';
 
 /** 提出者情報の表 (2 組 × 4 行)。 */
 function metaPairs(meta: readonly SheetMeta[]): SheetMeta[][] {

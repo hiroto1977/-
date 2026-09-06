@@ -14,7 +14,7 @@ import { usePlan } from './plan/usePlan';
 import { VoiceCommandBar } from './components/VoiceCommandBar';
 import { ChatbotWidget } from './components/ChatbotWidget';
 import { PageErrorBoundary } from './components/PageErrorBoundary';
-import { RecordStoreFailureBanner } from './components/RecordStoreFailureBanner';
+import { DeviceStoreFailureBanner } from './components/DeviceStoreFailureBanner';
 import {
   PLAN_ORDER,
   PLANS,
@@ -466,7 +466,7 @@ export function App() {
             なるので 1 か所で出す。画面の境界の外に置く —— 中だと画面が落ちたときに
             報せも消える。
           */}
-          <RecordStoreFailureBanner />
+          <DeviceStoreFailureBanner />
           {activeUnlocked ? (
             // 画面の描画エラーはこの枠に閉じる (境界が無いと React はツリー全体を外し、サイドバーごと白くなる)。
             // key で画面ごとに張り直す —— 別の画面へ移れば新しい境界。

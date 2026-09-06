@@ -1,5 +1,9 @@
 /**
- * **業務レコード (IndexedDB) の読み書きは、報せる入口からしか行わない。**
+ * **端末の保管庫 (IndexedDB) の書き込みは、報せる入口からしか行わない。**
+ *
+ * 対象は 2 つ —— 業務レコード (`data/store.ts`) と、書き出したファイル
+ * (`library/library.ts`)。同じ端末の同じ容量を分け合っているので、規則も台帳も
+ * 1 つで見る。
  *
  * `storageWritePolicy.test.ts` が localStorage について同じことを見ている。
  * その 1 つ下の層 —— レコードストアには、2026-09-06 まで規則が無かった。
@@ -10,13 +14,13 @@
  * 規則は 2 つ。
  *
  * 1. レコードストアを**書き換える**のは `data/useCollection.ts` (失敗を
- *    `recordStoreFailure` へ写す唯一の入口) か、この台帳に理由つきで載っている場所。
+ *    `deviceStoreFailure` へ写す唯一の入口) か、この台帳に理由つきで載っている場所。
  * 2. 書き込みの Promise を `void` で捨てない。捨てるなら `fireReported()` を通す
  *    —— **既に報せてあるから捨ててよい**ことが、読む人に分かる形で書かれる。
  *
  * 台帳は**双方向**に検査する (腐った台帳は「守っているつもり」を生む)。
  * 走査が死んだら落ちるように件数の床も置き、規則が実際に当たることを
- * 標本 (fixtures/undeclaredRecordWrite.txt) で確かめる。
+ * 標本 (fixtures/undeclaredDeviceWrite.txt) で確かめる。
  */
 import { readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
@@ -25,8 +29,12 @@ import { globSync } from 'tinyglobby';
 
 const REPO = join(__dirname, '..', '..', '..');
 
-/** レコードを書き換える呼び出し (`getRecordStore().insert(...)` / `store.remove(...)`)。 */
-const WRITE = /(?:getRecordStore\(\)|\bstore)\.(insert|insertMany|update|remove|clearCollection|importAll|reencryptAll)\s*\(/;
+/**
+ * 保管庫を書き換える呼び出し。`getRecordStore().insert<T>(...)` のように
+ * **型引数が挟まる形**も拾う (拾えないと入口の 3 行が台帳の外に落ちる)。
+ */
+const WRITE =
+  /(?:getRecordStore\(\)|getLibrary\(\)|\bstore|\blib|\blibrary)\.(insert|insertMany|update|remove|clear|clearCollection|importAll|reencryptAll|put)\s*(?:<[^>()]*>)?\s*\(/;
 
 /** 報せずに捨てている呼び出し (`void add()` など)。`fireReported(...)` は当たらない。 */
 const DROPPED = /\bvoid\s+(?:[A-Za-z_$][\w$]*\.)*(add|addMany|edit|remove|save|onSave|onRemove|onClear|onCropsChange)\s*\(/;
@@ -42,7 +50,7 @@ interface LedgerEntry {
 const LEDGER: Record<string, LedgerEntry> = {
   'src/renderer/data/useCollection.ts': {
     policy: 'entrance',
-    why: '失敗を recordStoreFailure へ写してから投げ直す唯一の入口。読み (list) も同じ経路で read として報せる。',
+    why: '失敗を deviceStoreFailure へ写してから投げ直す唯一の入口。読み (list) も同じ経路で read として報せる。',
   },
   'src/renderer/components/BackupPanel.tsx': {
     policy: 'surfaced',
@@ -50,7 +58,15 @@ const LEDGER: Record<string, LedgerEntry> = {
   },
   'src/renderer/data/connectorSinks.ts': {
     policy: 'surfaced',
-    why: 'コネクタ実行の保存シンク。投げた失敗は connectorExecution が段ごとの結果に写し、実行ログに出る。',
+    why: 'コネクタ実行の保存シンク (レコードとファイルの両方)。投げた失敗は connectorExecution が段ごとの結果に写し、実行ログに出る。',
+  },
+  'src/renderer/pages/LibraryPage.tsx': {
+    policy: 'surfaced',
+    why: '書き出したファイルの削除と読み出し。断られたら deviceStoreFailure へ files として報せ、画面上端の枠が理由と打ち手を出す (「削除しました」は言わない)。',
+  },
+  'src/renderer/web-shim.ts': {
+    policy: 'surfaced',
+    why: 'ブラウザ版の書き出し action がライブラリへ入れる所。投げた失敗は action の結果 (action_failed) になり、画面がその文面を出す。',
   },
   'src/renderer/data/recordShapeAudit.ts': {
     policy: 'surfaced',
@@ -102,7 +118,8 @@ function rendererSources(): string[] {
     cwd: REPO,
     absolute: true,
     // 保存層そのもの (store.ts) は自分の中で this.* を呼ぶので対象外。
-    ignore: ['**/__tests__/**', 'src/renderer/data/store.ts'],
+    // 保管庫そのもの (store.ts / library.ts) は自分の中で this.* を呼ぶので対象外。
+    ignore: ['**/__tests__/**', 'src/renderer/data/store.ts', 'src/renderer/library/library.ts'],
   });
 }
 
@@ -111,9 +128,9 @@ const WRITES = findSites(SOURCES, WRITE);
 const DROPS = findSites(SOURCES, DROPPED);
 
 describe('レコードストアの書き込みの台帳', () => {
-  it('走査が生きている (床: 5 か所以上)', () => {
-    // 走査が死んだら「違反 0 件」で通ってしまうので、実測 (9) に床を置く。
-    expect(WRITES.length).toBeGreaterThanOrEqual(5);
+  it('走査が生きている (床: 10 か所以上)', () => {
+    // 走査が死んだら「違反 0 件」で通ってしまうので、実測 (13) に床を置く。
+    expect(WRITES.length).toBeGreaterThanOrEqual(10);
   });
 
   it('★ 台帳に無い書き込みは無い', () => {
@@ -165,8 +182,16 @@ describe('レコードストアの書き込みの台帳', () => {
     expect(WRITES.some((s) => s.file.endsWith('.tsx'))).toBe(true);
   });
 
+  it('標本: 2 つの保管庫の**両方**を見ている (片方だけの走査で通らない)', () => {
+    const text = (f: string) => readFileSync(join(REPO, f), 'utf8');
+    const hit = (needle: string) =>
+      WRITES.some((s) => text(s.file).split('\n')[s.line - 1]?.includes(needle) === true);
+    expect(hit('getRecordStore()'), '業務レコードの書き込みを 1 件も拾っていない').toBe(true);
+    expect(hit('getLibrary()'), 'ライブラリの書き込みを 1 件も拾っていない').toBe(true);
+  });
+
   it('対照: 台帳に無いファイルを混ぜると、両方の規則が鳴る', () => {
-    const fixture = [join(__dirname, 'fixtures', 'undeclaredRecordWrite.txt')];
+    const fixture = [join(__dirname, 'fixtures', 'undeclaredDeviceWrite.txt')];
     const writes = findSites(fixture, WRITE);
     expect(writes).toHaveLength(1);
     expect(writes.filter((s) => !(s.file in LEDGER))).toHaveLength(1);

@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **11087** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11099** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 432 | 自己検証 |
+| `file:line` 参照数 | 434 | 自己検証 |
 
 ### 統合フロー図
 
@@ -2417,11 +2417,14 @@ allowlist のパスだけを受ける — 任意のパスを書けると `__prot
 入力欄には「手入力」と印が付くのに画面の数字が変わらないという、いちばん
 分かりにくい壊れ方をする (2026-08 に実測)。
 
-**断られた読み書きは、入口が 1 本の経路へ写す** (`data/recordStoreFailure.ts`)。
+**断られた読み書きは、入口が 1 本の経路へ写す** (`data/deviceStoreFailure.ts`)。
+対象は**同じ端末の同じ容量を分け合う 2 つの保管庫**で、文面の主語だけが変わる ——
+`records` (業務レコード) と `files` (書き出した書類の実体 = `library/library.ts`)。
 `useCollection` の `add` / `addMany` / `edit` / `remove` は失敗を `save` / `delete` として
 報せてから投げ直し、`reload` は `read` として報せる (こちらは**投げない** —— マウント
 effect と他 instance からの通知は戻り値を受け取らないので、投げても誰も気付けない)。
-画面側は `components/RecordStoreFailureBanner.tsx` が内容領域の先頭で最後の 1 件を出す。
+`pages/LibraryPage.tsx` は一覧・1 件・削除・全件削除の 4 か所を `files` として報せる。
+画面側は `components/DeviceStoreFailureBanner.tsx` が内容領域の先頭で最後の 1 件を出す。
 
 実測 (2026-09-06): 書き込みを呼ぶ 15 か所のうち 12 か所が拒否された Promise を捨てて
 いた (`void add()` / `onClick={async () => { await onSave(...) }}`)。容量超過・プライベート
@@ -2431,12 +2434,20 @@ effect と他 instance からの通知は戻り値を受け取らないので、
 付かなかった (利用者から見れば業務データが消えたのと同じ)。読めなかった回は
 **今持っている records を残す** —— 空へ置き換えると、報せより先に「消えた」が目に入る。
 
+ライブラリ側も同じ形だった (2026-09-06 実測): `LibraryPage.refresh()` は
+`useEffect(() => { refresh(); }, [])` で投げっぱなしなので、`indexedDB` が開けない端末では
+見出しが「ライブラリ · 0 件 / 0 B」となり**書き出した書類が 1 つも無いのと区別が付かない**。
+1 件を読む側では「消えている」(＝諦める) と「読めない」(＝容量を空ける / 通常の
+ウィンドウで開く) を**混ぜない** —— 打ち手が違うので、`readItem` が `'unreadable'` を
+返して呼び出し側は「見つかりません」を出さない。
+
 15 か所へ同じ try/catch を配らないのは `ManualDataSection` を 1 か所に置いたのと同じ
 理由 (配ると必ずどれか 1 つが漏れる)。押しただけの場所は `fireReported()` を通す ——
 `void p` だと拒否が宙に浮き、画面には何も出ないまま `unhandledrejection` になる。
-`__tests__/recordWritePolicy.test.ts` が「書き込みは台帳の場所からしか行わない」と
+`__tests__/deviceStoreWritePolicy.test.ts` が「書き込みは台帳の場所からしか行わない」と
 「`void` で捨てていない」を双方向に検査し、認めた例外には理由を要求する
-(localStorage 側の `__tests__/storageWritePolicy.test.ts` と同じ形)。
+(localStorage 側の `__tests__/storageWritePolicy.test.ts` と同じ形)。走査は
+**2 つの保管庫の両方**に当たっていることを標本で確かめる (片方だけ拾う走査では通らない)。
 
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 
