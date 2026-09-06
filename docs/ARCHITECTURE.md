@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **11142** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11173** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 441 | 自己検証 |
+| `file:line` 参照数 | 448 | 自己検証 |
 
 ### 統合フロー図
 
@@ -2467,6 +2467,41 @@ effect と他 instance からの通知は戻り値を受け取らないので、
 削っても通る同語反復になっており、変異検査が 5 本の生存として鳴らした。約束は 5 つ
 (確認できなかったこと・「はじめて」に見えることの訂正・原因 2 つ・押すボタンの名前) なので
 5 つに分けて `src/renderer/security/__tests__/vault.test.ts` で個別に留め、順序の対照を 1 本置いた。
+
+**媒体そのものを断られる場合は、また別だった** (2026-09-06)。ここまでの直しは
+「開いたが読めない」を扱ってきたが、`localStorage` / `sessionStorage` は
+**触れることが投げる** —— サイトデータをブロックしたオリジンで Chrome は
+`SecurityError: Access is denied for this document.` を返し、プライベートモードでも
+同じ形になる。`data/localWrite.ts` の冒頭は「書き込み禁止」を 3 つの現実の理由の
+1 つとして数えているのに、**読みと消しの側は誰も見ていなかった** (実測: 読み 21 か所の
+うち 3 か所が `try` の外)。踏んだ形は 3 つとも別である:
+
+- `oauth/pkceSession.ts` の `clearPkceSession()` は 4 連の生の `removeItem`。2 つ目で
+  投げると残りが残る —— **このファイルの不変条件が「作れなくする」と宣言している
+  「3 つ消して 1 つ残る」形**で、残るのは `code_verifier` (RFC 7636 の秘密)。しかも
+  呼び出しは `SettingsPage` の `finally` に在るので、投げると本当の失敗 (state 不一致
+  = CSRF の疑い) を投げ替え、後続の `setBusy(false)` も飛ばして「交換中…」で固まる。
+  今は**鍵ごとに受けて投げず**、消せなかった鍵名を返す。画面は `sweep()` の 1 か所で
+  受けて `data-pkce-leftover` の札を出す (`sessionStorage` はタブ単位なので、打ち手は
+  「このタブを閉じる」)。`savePkceSession` は置けた分を消してから投げ、`start()` が
+  文面を出す —— `onClick={start}` は async なので、投げたままだと拒否が宙に浮き
+  **画面には何も出ない** (押しても認可 URL が現れないだけ) だった。
+- `data/recordEncryption.ts` の `loadMeta()` は `getItem` が `try` の上に在り、
+  `isEncryptionEnabled()` が投げていた。それは `components/BackupPanel.tsx` の
+  **描画中**に呼ばれるので、保存領域が怪しい端末に限って**控えを取り出す画面が
+  消える** —— いちばん要るときに使えない。今は degraded に数えて `null` を返すので
+  画面は生き、`assertMetaWritable()` が上書きを断って salt を守る。`clearMeta()` も
+  素だった —— そこは**全レコードを平文に戻した後**なので、消せないまま黙って成功を
+  返すと「暗号化が有効」と表示しながら平文を保存する。両方の事実を文面にして投げる。
+- `data/emotionsWeb.ts` の `loadStore()` も同じ形で、拒否が degraded にならず生で
+  抜けていた —— つまりこの端末では上書きを断る `loadStoreForWrite()` も、送信前の門
+  `assertStoreWritable()` も働かなかった。
+
+`src/renderer/__tests__/storageReadPolicy.test.ts` が「`getItem` / `removeItem` は
+同じ関数の中で失敗を受ける」を走査で留める (書き込み側の
+`src/renderer/__tests__/storageWritePolicy.test.ts` と対になる)。
+判定は波括弧の入れ子で `try` の内側かを見るので、**素の呼び出し・`try` の中・
+`catch` の中**の 3 標本で判定そのものを確かめてから使う。
 
 実測 (2026-09-06): 書き込みを呼ぶ 15 か所のうち 12 か所が拒否された Promise を捨てて
 いた (`void add()` / `onClick={async () => { await onSave(...) }}`)。容量超過・プライベート

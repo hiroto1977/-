@@ -209,19 +209,42 @@ describe('本物の SettingsPage.complete() が finally で掃除している', 
     expect(bodyOf(source(), 'complete')).toContain('exchangeGoogleCode');
   });
 
-  it('complete() の finally に clearPkceSession() が在る', () => {
+  /*
+   * 2026-09-06 に**掃除の呼び名が 1 つ増えた**。`clearPkceSession()` は消せなかった
+   * 鍵を返すようになり、画面はそれを出す必要があるので、画面側は `sweep()` を
+   * 通すようになった (`setLeftover(clearPkceSession())` の 1 行)。
+   * 検査もその形で書く —— **元の懸念 (成功時しか走らない形へ戻らないこと・
+   * 別の関数へ流れ込まないこと) はそのまま残す。**
+   *
+   * 文字列で見る検査は**散文にも当たる**ので、呼び名 (`sweep()`) で見て、
+   * `clearPkceSession()` の側は「呼ぶ場所が 1 つだけ」を数で留める
+   * (実際にこのパスで、`finally` の中に書いた注記の中の
+   * `clearPkceSession()` が下 2 本の検査を通してしまった)。
+   */
+  it('complete() の finally に後片付けが在る', () => {
     const body = bodyOf(source(), 'complete');
     const fin = body.slice(body.lastIndexOf('} finally {'));
     expect(fin, 'finally 節が見つからない').toContain('finally');
-    expect(fin, '掃除が finally に無い —— 失敗時に一時秘密が残る').toContain('clearPkceSession()');
+    expect(fin, '掃除が finally に無い —— 失敗時に一時秘密が残る').toContain('sweep()');
   });
 
   it('掃除は try の中だけに置かれていない (成功時しか走らない形に戻っていない)', () => {
     const body = bodyOf(source(), 'complete');
     const finallyAt = body.lastIndexOf('} finally {');
-    const firstClear = body.indexOf('clearPkceSession()');
+    const firstClear = body.indexOf('sweep()');
     expect(firstClear, '掃除が 1 つも無い').toBeGreaterThan(-1);
     expect(firstClear, '掃除が finally より前 = try の中にしか無い').toBeGreaterThan(finallyAt);
+  });
+
+  it('★ 消し残りが画面へ回っている (捨てていない)', () => {
+    // `sweep()` が結果を状態へ入れ、その状態が札の条件になっていること。
+    expect(source()).toContain('setLeftover(clearPkceSession())');
+    expect(source()).toContain('leftover.length > 0');
+  });
+
+  it('★ clearPkceSession() を呼ぶ場所は 1 か所だけ (入口を増やさない)', () => {
+    const calls = [...source().matchAll(/clearPkceSession\(\)/g)];
+    expect(calls, '呼び出しは sweep() の中の 1 か所だけ').toHaveLength(1);
   });
 
   /*
@@ -229,14 +252,19 @@ describe('本物の SettingsPage.complete() が finally で掃除している', 
    * 資格情報の保存関数の `finally` へ入り、資格情報を 1 つ保存するたびに
    * 進行中の PKCE を壊す形になっていた。
    */
-  it('PKCE と無関係な関数が clearPkceSession() を呼んでいない', () => {
+  it('PKCE と無関係な関数が掃除を呼んでいない', () => {
     const text = source();
-    const completeStart = text.indexOf('  async function complete() {');
-    for (const m of text.matchAll(/clearPkceSession\(\)/g)) {
+    const sectionStart = text.indexOf('function GoogleOAuthSection() {');
+    expect(sectionStart, 'GoogleOAuthSection() が見つからない').toBeGreaterThan(-1);
+    // 節の終わりは次のトップレベル関数の宣言。
+    const sectionEnd = text.indexOf('\nfunction btn(', sectionStart);
+    expect(sectionEnd, '節の終わりが見つからない').toBeGreaterThan(sectionStart);
+    for (const m of text.matchAll(/\bsweep\(\)/g)) {
       expect(
         m.index,
-        `clearPkceSession() が complete() の外 (位置 ${m.index}) に在る`,
-      ).toBeGreaterThan(completeStart);
+        `掃除が GoogleOAuthSection() の外 (位置 ${m.index}) に在る`,
+      ).toBeGreaterThan(sectionStart);
+      expect(m.index).toBeLessThan(sectionEnd);
     }
   });
 });
@@ -297,5 +325,158 @@ describe('pkce.* を直に触る場所は pkceSession.ts だけ', () => {
     walk('src/renderer');
     expect(hits, '走査が 1 ファイルも読めていない').not.toEqual([]);
     expect(hits.some((h) => h.endsWith('SettingsPage.tsx'))).toBe(true);
+  });
+});
+
+
+/*
+ * ## 保存領域そのものを断られる端末 (2026-09-06)
+ *
+ * `sessionStorage` は**触れることが投げる** —— サイトデータをブロックした
+ * オリジンで Chrome は `SecurityError: Access is denied for this document.`
+ * を返し、プライベートモードでも同じ形になる。3 つの関数はどれも素で
+ * 呼んでいたので、この端末では:
+ *
+ *   `clearPkceSession` … 4 連の 2 つ目で投げると**残り 2 つが残る**。
+ *                        このファイルの冒頭が「作れなくする」と書いている
+ *                        「3 つ消して 1 つ残る」形そのもので、残るのは verifier。
+ *   `savePkceSession`  … `onClick={start}` の中で投げ、拒否が宙に浮いて
+ *                        **画面には何も出ない** (押しても認可 URL が出ないだけ)。
+ *   `readPkceSession`  … 「切れました」ではなく生の例外。
+ */
+
+/** 特定の操作だけを断る `sessionStorage`。`failOn` は鍵の**接尾辞**で指定する。 */
+function installRefusingStorage(opts: {
+  readonly op: 'getItem' | 'setItem' | 'removeItem';
+  readonly failOn: readonly string[];
+  readonly name?: string;
+}): Map<string, string> {
+  const map = new Map<string, string>();
+  const boom = (k: string): never => {
+    const e = new Error(`Access is denied for this document. (${k})`);
+    e.name = opts.name ?? 'SecurityError';
+    throw e;
+  };
+  const hit = (k: string): boolean => opts.failOn.some((suffix) => k.endsWith(suffix));
+  vi.stubGlobal('sessionStorage', {
+    getItem: (k: string) => (opts.op === 'getItem' && hit(k) ? boom(k) : map.get(k) ?? null),
+    setItem: (k: string, v: string) => (opts.op === 'setItem' && hit(k) ? boom(k) : void map.set(k, String(v))),
+    removeItem: (k: string) => (opts.op === 'removeItem' && hit(k) ? boom(k) : void map.delete(k)),
+    clear: () => map.clear(),
+    key: (i: number) => [...map.keys()][i] ?? null,
+    get length() {
+      return map.size;
+    },
+  });
+  return map;
+}
+
+/*
+ * **鍵の名前そのものを留める。**
+ *
+ * `remaining()` も `it.each` も `pkceSessionKeys()` を通して比べていたので、
+ * 接頭辞や組み立て方を変えても**全部が一緒に変わって通っていた** (変異検査が
+ * `KEY_PREFIX` と `storageKey` の生存として鳴らした。2026-09-06)。名前は
+ * `SettingsPage` が触らない約束の対象でもあるので、字面で書いておく。
+ */
+describe('鍵の名前', () => {
+  /*
+   * `KEY_PREFIX` と `storageKey` は**読み込み時に決まる** (モジュール直下)。静的な
+   * ままだと、変異体が有効になる前にモジュールが読まれてしまうので、字面を突き
+   * 合わせる検査を書いても届かない —— 実測で `static: true` の生存 2 件として残り、
+   * しかも**この検査ファイルではなく無関係な検査**が覆っている扱いになっていた。
+   * `stryker.config.json` の注記どおり `vi.resetModules()` + 動的 `import()` で
+   * **検査の中で**評価させる (`main/oauth.ts` の定数表と同じ形)。
+   */
+  async function fresh(): Promise<typeof import('../pkceSession')> {
+    vi.resetModules();
+    return import('../pkceSession');
+  }
+
+  it('★ 4 つの鍵は pkce. 接頭辞つきの決まった名前である', async () => {
+    const m = await fresh();
+    expect(m.pkceSessionKeys()).toEqual([
+      'pkce.verifier',
+      'pkce.state',
+      'pkce.clientId',
+      'pkce.redirectUri',
+    ]);
+  });
+
+  it('★ 置いた値はその名前で読み出せる (組み立てが読みと書きで一致している)', async () => {
+    const m = await fresh();
+    m.savePkceSession(SESSION);
+    expect(sessionStorage.getItem('pkce.verifier')).toBe(SESSION.verifier);
+    expect(sessionStorage.getItem('pkce.redirectUri')).toBe(SESSION.redirectUri);
+  });
+});
+
+describe('保存領域を断られる端末', () => {
+  it('★ 消す側は 1 つ投げても残りを消す (「3 つ消して 1 つ残る」を作らない)', () => {
+    const map = installRefusingStorage({ op: 'removeItem', failOn: ['state'] });
+    for (const k of pkceSessionKeys()) map.set(k, 'x');
+    clearPkceSession();
+    // 断られた 1 つだけが残る。**verifier は消えている**のが肝。
+    expect([...map.keys()]).toEqual(['pkce.state']);
+  });
+
+  it('★ 消す側は投げない (`finally` から呼ばれるので、本当の失敗を投げ替えない)', () => {
+    const map = installRefusingStorage({ op: 'removeItem', failOn: ['verifier', 'state'] });
+    for (const k of pkceSessionKeys()) map.set(k, 'x');
+    expect(() => clearPkceSession()).not.toThrow();
+  });
+
+  it('★ 消せなかった鍵の名前を返す (画面が「タブを閉じて」と言える)', () => {
+    const map = installRefusingStorage({ op: 'removeItem', failOn: ['verifier', 'clientId'] });
+    for (const k of pkceSessionKeys()) map.set(k, 'x');
+    expect(clearPkceSession()).toEqual(['verifier', 'clientId']);
+  });
+
+  it('対照: 触れる端末では消せなかった鍵は 0 件', () => {
+    savePkceSession(SESSION);
+    expect(clearPkceSession()).toEqual([]);
+    expect(remaining()).toEqual([]);
+  });
+
+  it('★ `finally` の後片付けが、本当の失敗 (CSRF の疑い) を投げ替えない', async () => {
+    const map = installRefusingStorage({ op: 'removeItem', failOn: ['state'] });
+    for (const k of pkceSessionKeys()) map.set(k, 'x');
+    let cleanedUp = false;
+    // `SettingsPage.complete()` と同じ形 —— catch で理由を掴み、finally で掃除。
+    const outcome = await (async (): Promise<string> => {
+      try {
+        throw new Error('state が一致しません — CSRF 攻撃の可能性があります');
+      } catch (e) {
+        return e instanceof Error ? e.message : String(e);
+      } finally {
+        clearPkceSession();
+        cleanedUp = true; // 投げていた頃はここへ到達しなかった (= setBusy(false) も飛んだ)
+      }
+    })();
+    expect(outcome).toContain('CSRF');
+    expect(cleanedUp).toBe(true);
+  });
+
+  it('★ 保存が断られたら、置けた分を消してから投げる (半端に残さない)', () => {
+    // 3 つ目 (clientId) で断られる端末。
+    const map = installRefusingStorage({ op: 'setItem', failOn: ['clientId'] });
+    expect(() => savePkceSession(SESSION)).toThrow(/保存できませんでした/);
+    expect([...map.keys()]).toEqual([]);
+  });
+
+  it('★ 保存の文面は直せる原因を名指しする (押しても何も出ない状態にしない)', () => {
+    installRefusingStorage({ op: 'setItem', failOn: ['verifier'] });
+    expect(() => savePkceSession(SESSION)).toThrow(/プライベートウィンドウ/);
+  });
+
+  it('★ 読みが断られたら null (生の例外を呼び出し側へ出さない)', () => {
+    const map = installRefusingStorage({ op: 'getItem', failOn: ['clientId'] });
+    for (const k of pkceSessionKeys()) map.set(k, 'x');
+    expect(readPkceSession()).toBeNull();
+  });
+
+  it('対照: 触れる端末では 4 つ揃って読める', () => {
+    savePkceSession(SESSION);
+    expect(readPkceSession()).toEqual(SESSION);
   });
 });

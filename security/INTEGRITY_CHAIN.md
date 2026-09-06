@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 152
+- ブロック数: 155
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `89246daa726d738bc71225c6e995e1e64cb3c884b982b4d4e878a835113cf2c8`
-- 保護対象: 65 ファイル
+- 末尾(tip)ハッシュ: `372531b5494570e1097b5d1c1cbac993556b1086c4c2670f0d1b19f684223ae2`
+- 保護対象: 66 ファイル
 
 ## ブロック
 
@@ -165,6 +165,9 @@
 | 149 | `be167b4609dfb65c` | `ad0ff862e661ea85` | `6eb22f58157533eb` | update proxy.ts |
 | 150 | `f332d6a8a37247dc` | `6eb22f58157533eb` | `98bae01596737bac` | update main.ts,secrets.ts |
 | 151 | `fdd11550ff27c3e4` | `98bae01596737bac` | `89246daa726d738b` | update LockScreen.tsx,vault.ts |
+| 152 | `f606793c30cff64a` | `89246daa726d738b` | `efc501487f020d47` | update pkceSession.ts |
+| 153 | `f22f939447993c7a` | `efc501487f020d47` | `93584bb44ebbd8bd` | update pkceSession.ts |
+| 154 | `e9cecef70974c4fc` | `93584bb44ebbd8bd` | `372531b5494570e1` | update integrity-chain.cjs,localWrite.ts |
 
 ## 保護対象ファイル
 
@@ -200,6 +203,7 @@
 - `src/main/shellOpenGate.ts`
 - `src/preload/preload.ts`
 - `src/renderer/data/assistantMarkdown.ts`
+- `src/renderer/data/localWrite.ts`
 - `src/renderer/data/recordCipher.ts`
 - `src/renderer/fs/fsa.ts`
 - `src/renderer/network/liveRead.ts`

@@ -1514,6 +1514,13 @@ function GoogleOAuthSection() {
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  /** 消し切れなかった一時秘密の鍵名。空なら全部消えた。 */
+  const [leftover, setLeftover] = useState<readonly string[]>([]);
+
+  /** 後片付けの結果を画面へ (残ったら「タブを閉じて」まで言う)。 */
+  function sweep(): void {
+    setLeftover(clearPkceSession());
+  }
 
   async function start() {
     setErr(null);
@@ -1525,12 +1532,21 @@ function GoogleOAuthSection() {
     const secrets = await generatePkce();
     // 必須: token exchange まで verifier を保持。置き場所と消し方は
     // `oauth/pkceSession.ts` に 1 つだけ持つ (2026-08-23)。
-    savePkceSession({
-      verifier: secrets.verifier,
-      state: secrets.state,
-      clientId,
-      redirectUri,
-    });
+    //
+    // **保存に失敗したら、ここで止めて理由を出す。** `onClick={start}` は
+    // async なので、投げたまま抜けると拒否が宙に浮き**画面には何も出ない**
+    // (押しても認可 URL が現れないだけ)。2026-09-06 実測。
+    try {
+      savePkceSession({
+        verifier: secrets.verifier,
+        state: secrets.state,
+        clientId,
+        redirectUri,
+      });
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+      return;
+    }
     const url = buildGoogleAuthUrl(
       { clientId, scopes: [...GOOGLE_SCOPES.drive, ...GOOGLE_SCOPES.calendar, ...GOOGLE_SCOPES.gmail], redirectUri },
       secrets,
@@ -1589,7 +1605,12 @@ function GoogleOAuthSection() {
       // 掃除が無く、`state` 不一致 (= CSRF の疑い) や通信断で落ちたときに
       // **いちばん消したい verifier が残った**。verifier は単回使用なので、
       // ここで消しても正常系は失われない (やり直しは認可からになる)。
-      clearPkceSession();
+      //
+      // **後片付けは投げない。** 投げていた頃 (2026-09-06 に直す前) は保存領域を
+      // 断られた端末で `finally` から例外が出て、上の catch が立てた本当の理由を
+      // 投げ替え、この 1 行下の `setBusy(false)` も飛ばしてボタンが
+      // 「交換中…」で固まった。消し残りは `sweep()` が画面へ回す。
+      sweep();
       setBusy(false);
     }
   }
@@ -1655,13 +1676,29 @@ function GoogleOAuthSection() {
                 setAuthUrl(null);
                 setCode('');
                 // 4 つまとめて消す。以前は verifier だけ消して 3 つ残していた。
-                clearPkceSession();
+                sweep();
               }}
               style={btn()}
             >
               キャンセル
             </button>
           </div>
+        </div>
+      )}
+
+      {/*
+        消し残しは**必ず出す**。`code_verifier` は RFC 7636 の秘密で、消せていない
+        なら「消えたつもり」でいてはいけない。`sessionStorage` はタブ単位なので、
+        利用者の打ち手は「このタブを閉じる」で確実に効く。
+      */}
+      {leftover.length > 0 && (
+        <div
+          role="alert"
+          data-pkce-leftover
+          style={{ fontSize: 11, color: '#fbbf24', marginTop: 6, lineHeight: 1.6 }}
+        >
+          ⚠ 認可に使った一時情報をこのブラウザから消せませんでした ({leftover.join(' / ')})。
+          このタブを閉じると消えます。閉じるまでは開いたままにしないでください。
         </div>
       )}
 

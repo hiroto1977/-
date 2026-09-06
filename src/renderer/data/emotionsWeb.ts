@@ -71,7 +71,18 @@ export { isAnalysisEntry, isMoodEntry };
 
 export function loadStore(): EmotionsStore {
   lastLoadDegraded = false;
-  const raw = localStorage.getItem(EMOTIONS_STORE_KEY);
+  let raw: string | null;
+  try {
+    raw = localStorage.getItem(EMOTIONS_STORE_KEY);
+  } catch {
+    // **保存領域そのものへ触れられない** (サイトデータのブロック /
+    // プライベートモード)。素で呼んでいた頃は生の `SecurityError` が
+    // 呼び出し側へ抜けており、**degraded に数えられていなかった** ——
+    // つまり `loadStoreForWrite()` の「読めないなら上書きしない」も
+    // `assertStoreWritable()` の送信前の門も、この端末では働かなかった。
+    lastLoadDegraded = true;
+    return { moods: [], analyses: [] };
+  }
   // 「無い」は degraded ではない —— 消える物が無い。
   if (!raw) return { moods: [], analyses: [] };
   try {

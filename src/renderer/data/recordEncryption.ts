@@ -16,6 +16,7 @@
 import { getRecordStore } from './store';
 import { IDENTITY_CIPHER, createPassphraseRecordCipher } from './recordCipher';
 import { deriveAesKey, sealWithKey, openWithKey, randomSaltB64, isSealed, type Sealed } from '../security/dataCrypto';
+import { describeStorageError } from './localWrite';
 
 // 内部キー/既知平文。save↔load・seal↔compare で同じ定数を使い round-trip するため、
 // 値そのものを変える StringLiteral mutation は外部から観測できず equivalent。
@@ -47,11 +48,34 @@ interface EncryptionMeta {
  * 壊れた JSON の中にも salt の文字列は読める形で残っていることが多い。
  * 消さなければ人手で拾える。消したら拾えない (`data/emotionsWeb.ts` と同じ判断)。
  */
+// Stryker disable next-line BooleanLiteral: 初期値は**一度も観測されない** ——
+// 読み手 `assertMetaWritable` は必ず `loadMeta()` を先に呼び、その冒頭がこの変数を
+// 毎回 false へ戻す。true にしても差が出ない (等価変異。`emotionsWeb.ts` の
+// `lastLoadDegraded` と同じ形・同じ理由)。
 let lastMetaDegraded = false;
 
 function loadMeta(): EncryptionMeta | null {
   lastMetaDegraded = false;
-  const raw = localStorage.getItem(LS_KEY);
+  let raw: string | null;
+  try {
+    raw = localStorage.getItem(LS_KEY);
+  } catch {
+    /*
+     * **保存領域そのものへ触れられない** (サイトデータのブロック /
+     * プライベートモード。Chrome は `SecurityError` を投げる)。
+     *
+     * ここで投げると `isEncryptionEnabled()` が投げる。それは
+     * `components/BackupPanel.tsx` の**描画中**に呼ばれているので、
+     * 保存領域が怪しい端末に限って**控えを取り出す画面が消える**
+     * (画面ごと `PageErrorBoundary` の文面に置き換わる) —— いちばん要る
+     * ときに使えなくなる。だから投げずに degraded へ数える。
+     *
+     * `null` を返すが「まだ有効化されていない」ではない。degraded なので
+     * `assertMetaWritable()` が上書きを断り、salt を失わせない。
+     */
+    lastMetaDegraded = true;
+    return null;
+  }
   // 「無い」は degraded ではない —— 消える物が無い。
   if (!raw) return null;
   try {
@@ -94,7 +118,26 @@ function saveMeta(meta: EncryptionMeta): void {
 }
 
 function clearMeta(): void {
-  localStorage.removeItem(LS_KEY);
+  try {
+    localStorage.removeItem(LS_KEY);
+  } catch (err) {
+    /*
+     * **ここへ来た時点で全レコードは平文に戻っている** (`disableEncryption` は
+     * 復号を終えてからこれを呼ぶ)。メタだけが残ると `isEncryptionEnabled()` は
+     * 真を答え続けるので、画面は「暗号化が有効」と言いながら平文を保存する ——
+     * 2026-08 の監査で見つけた「持っていない暗号化を騙る」形と同じ。
+     *
+     * 黙って `true` を返さず、**両方の事実**を文面にして投げる。やり直しは安全で
+     * ある (メタが残っているので `loadMeta` は読め、平文は passCipher の
+     * `decrypt` が素通しするので、もう一度実行すれば消すところまで進む)。
+     */
+    throw new Error(
+      'レコードは平文に戻しましたが、暗号化設定をこの端末から消せませんでした'
+        + ` (${describeStorageError(err)})。`
+        + '画面はまだ「暗号化が有効」と表示します。ブラウザの設定で端末への保存を'
+        + '許可してから、もう一度「暗号化を解除」を実行してください。',
+    );
+  }
 }
 
 /** 暗号化が有効化されているか (localStorage メタの有無)。 */
