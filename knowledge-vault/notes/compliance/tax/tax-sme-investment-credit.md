@@ -33,9 +33,9 @@ aliases:
 ## 関連概念
 - [[tax-small-amount-depreciation|中小企業者等の少額減価償却資産の特例]] — 語彙が近い
 - [[tax-special-depreciation|特別償却（租税特別措置法）]] — 語彙が近い
+- [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]] — 語彙が近い
 - [[tax-angel-tax|エンジェル税制（ベンチャー企業投資促進税制）]] — 語彙が近い
 - [[tax-wage-increase-credit|賃上げ促進税制]] — 語彙が近い
-- [[tax-rd-credit|研究開発税制（試験研究費の税額控除）]] — 語彙が近い
 - [[tax-blue-return-application|所得税の青色申告承認申請]] — 出典を共有
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 出典を共有
 - [[tax-disability-deduction|所得税の障害者控除]] — 出典を共有

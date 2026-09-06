@@ -33,7 +33,6 @@ aliases:
 
 ## 関連概念
 - [[human-planning-fallacy|計画錯誤（計画の誤謬）]] — 同じ思想家
-- [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]] — 同じ思想家
 - [[human-bias-blind-spot|バイアスの盲点]] — 同じ思想家
 - [[human-reactive-devaluation|反応的価値低減（リアクティブ・デバリュエーション／Reactive devaluation）——相手が出した案というだけで価値が下がる認知バイアス]] — 同じ思想家
 - [[human-zone-of-proximal-development|発達の最近接領域（ZPD）]] — 同じ思想家
@@ -42,6 +41,7 @@ aliases:
 - [[econ-economies-of-scale-scope|規模の経済と範囲の経済]] — 出典を共有
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — 出典を共有
 - [[human-attachment-theory-bowlby|アタッチメント理論]] — 出典を共有
+- [[human-attribution-theory|帰属理論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

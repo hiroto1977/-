@@ -38,7 +38,6 @@ aliases:
 - [[human-object-permanence|対象の永続性（Object Permanence）]] — 同じ思想家
 - [[human-reconstructive-memory-bartlett|再構成的記憶——スキーマに基づき能動的に再構成される記憶]] — 同じ思想家
 - [[human-bystander-effect|傍観者効果（bystander effect, 責任の分散）]] — 出典を共有
-- [[human-construal-level-trope|解釈レベル理論——心理的距離が対象の抽象的・具体的表象を規定する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,7 +34,7 @@ Ronald H. Coase／Oliver E. Williamson／Douglass C. North／Elinor Ostrom／Dar
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 同じ思想家
 - [[infosoc-information-commons-theory|情報コモンズ理論]] — 同じ思想家
 - [[infosoc-knowledge-commons-theory|知識コモンズ理論]] — 同じ思想家
-- [[econ-north-institutions-economic-history|ノースの制度論と経済史——取引費用・財産権・路径依存性による長期経済変化の解明]] — 同分野の近傍
+- [[econ-new-institutional-economics-north|新制度経済学と制度変化（ノース）——制度は人間が考案した「ゲームのルール」であり、取引費用と経路依存性を通じて経済パフォーマンスの長期的な差を生む]] — 同分野の近傍
 - [[econ-neo-fisherian-effect|ネオ・フィッシャー効果（Neo-Fisherian effect／ネオ・フィッシャー命題）——名目金利の恒久的引き上げが長期的にインフレを押し上げるという反直観的命題]] — 同分野の近傍
 
 ## 関連

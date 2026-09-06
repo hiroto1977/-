@@ -32,16 +32,16 @@ J. Dennis Hynes ／ Frances E. Freund ／ Patricia A. McCoy
 - [The Doctrine of Lender Liability, 40 Fla. L. Rev. (1988)](https://scholarship.law.ufl.edu/cgi/viewcontent.cgi?article=2487&context=flr) `学術`
 
 ## 関連概念
-- [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 出典を共有
-- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
-- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
-- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
 - [[bizlaw-cy-pres-doctrine|サイプレ法理（Cy Pres Doctrine）]] — 出典を共有
 - [[bizlaw-deep-rock-doctrine|ディープ・ロック法理]] — 出典を共有
-- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
-- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 出典を共有
-- [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 出典を共有
-- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 出典を共有
+- [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]] — 出典を共有
+- [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]] — 出典を共有
+- [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 出典を共有
+- [[bizlaw-inevitable-disclosure-doctrine|不可避的開示の法理——転職者の知識のみで差止めを認めるか州で分裂した米国営業秘密理論]] — 出典を共有
+- [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]] — 出典を共有
+- [[bizlaw-substantive-consolidation|実体的併合（substantive consolidation）——関連会社の資産・負債を一つの破産財団にプールし単一の債務者として扱う衡平法上の救済]] — 出典を共有
+- [[bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff|パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争]] — 出典を共有
+- [[bizlaw-battle-of-the-forms|書式の戦い]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

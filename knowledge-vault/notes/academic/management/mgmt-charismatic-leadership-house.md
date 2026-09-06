@@ -26,7 +26,7 @@ aliases:
 ロバート・ハウス ／ マックス・ウェーバー ／ バーナード・バス ／ ボアス・シャミル
 
 ## 出典
-- [House, R.J. (1977) A 1976 Theory of Charismatic Leadership — in Leadership: The Cutting Edge (WorldCat)](https://www.worldcat.org/oclc/2729158) `学術`
+- [House, R.J. (1977) A 1976 Theory of Charismatic Leadership — in Leadership: The Cutting Edge (WorldCat)](https://www.worldcat.org/oclc/2729158) `リファレンス`
 - [Wikipedia: Charismatic leadership — House, Weber, vision, follower attribution, transformational leadership](https://en.wikipedia.org/wiki/Charismatic_authority) `リファレンス`
 
 ## 関連概念

@@ -2,7 +2,7 @@
 title: "laws.e-gov.go.jp"
 type: source-domain
 host: "laws.e-gov.go.jp"
-cite_count: 209
+cite_count: 212
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # laws.e-gov.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **209 件**（公的 208 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **212 件**（公的 212）
 
 ## このドメインを出典とする項目
 
@@ -70,6 +70,7 @@ tags:
 - [[bizlaw-duty-of-loyalty|取締役の忠実義務（会社法355条）]] — e-Gov法令検索：会社法（355条忠実義務・356条競業及び利益相反取引の制限）
 - [[bizlaw-e-signature|電子署名法]] — e-Gov法令検索電子署名及び認証業務に関する法律（平成12年法律第102号）条文
 - [[bizlaw-earnest-money|手付（民法557条）]] — e-Gov法令検索民法（明治29年法律第89号）第557条手付
+- [[bizlaw-employee-invention-japan-patent-act-35|職務発明制度（特許法第35条）——従業者の発明の帰属と「相当の利益」]] — 特許法（昭和34年法律第121号）第35条|e-Gov法令検索—職務発明の定義および特許を受ける権利の原始的帰属・使用者の通常実施権という…
 - [[bizlaw-employer-liability|使用者責任（民法715条）]] — e-Gov法令検索民法（明治29年法律第89号、lawid129AC0000000089）第715条
 - [[bizlaw-employment-insurance|雇用保険法]] — e-Gov法令検索雇用保険法（昭和49年法律第116号）
 - [[bizlaw-fault-liability|過失責任の原則と無過失責任]] — e-Gov法令検索「民法」（明治29年法律第89号、709条ほか）
@@ -96,6 +97,7 @@ tags:
 - [[bizlaw-joint-tort|共同不法行為（民法719条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号）第719条
 - [[bizlaw-judicial-scrivener-act|司法書士法]] — e-Gov法令検索—司法書士法（昭和25年法律第197号）
 - [[bizlaw-juvenile-act|少年法]] — e-Gov法令検索—少年法（昭和23年法律第168号）
+- [[bizlaw-katko-v-briney-spring-gun-defense-of-property|カトコ対ブライニー事件——仕掛け銃による財産防衛と生命尊重の限界]] — 刑法（明治40年法律第45号）第36条（正当防衛）—e-Gov法令検索—「やむを得ずにした行為」に限る日本法の均衡要件との一句の比較を支持
 - [[bizlaw-kyodou-shinken|共同親権（2024年民法改正）]] — e-Gov法令検索—民法（第819条離婚後の親権、改正後条文）
 - [[bizlaw-labor-contract-act|労働契約法]] — e-Gov法令検索労働契約法（平成19年法律第128号）
 - [[bizlaw-labor-union-act|労働組合法]] — e-Gov法令検索「労働組合法」（昭和24年法律第174号）
@@ -105,6 +107,7 @@ tags:
 - [[bizlaw-limited-liability|株主有限責任の原則]] — e-Gov法令検索—会社法第104条（株主の責任）
 - [[bizlaw-local-autonomy|地方自治法]] — e-Gov法令検索地方自治法（昭和二十二年法律第六十七号）
 - [[bizlaw-local-tax-act|地方税法]] — e-Gov法令検索「地方税法（昭和25年法律第226号）」
+- [[bizlaw-macpherson-v-buick-privity|マクファーソン対ビュイック事件——過失責任における契約当事者関係（プリヴィティ）要件の崩壊と製造物責任の出発点]] — 製造物責任法（平成六年法律第八十五号）e-Gov法令検索—日本の製造物責任法の公布年・法律番号・欠陥要件への転換を裏付け
 - [[bizlaw-maritime-law|海商法・海事法：海上運送と船舶に関する国際的法秩序の体系]] — 商法（明治32年法律第48号）海商編—e-Gov法令検索
 - [[bizlaw-market-manipulation|相場操縦の禁止]] — e-Gov法令検索「金融商品取引法」（158条風説の流布等・159条相場操縦行為等の禁止）
 - [[bizlaw-mental-reservation|心裡留保（民法93条）]] — e-Gov法令検索民法（明治二十九年法律第八十九号）第93条

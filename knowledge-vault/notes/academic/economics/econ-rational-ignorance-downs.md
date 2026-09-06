@@ -26,7 +26,7 @@ aliases:
 アンソニー・ダウンズ ／ ゴードン・タロック ／ ブライアン・カプラン ／ イリヤ・ソミン
 
 ## 出典
-- [Downs, A. (1957) An Economic Theory of Democracy — Harper & Row (WorldCat)](https://www.worldcat.org/oclc/254163) `学術`
+- [Downs, A. (1957) An Economic Theory of Democracy — Harper & Row (WorldCat)](https://www.worldcat.org/oclc/254163) `リファレンス`
 - [Wikipedia: Rational ignorance — Downs, cost-benefit of information, voting, special interests](https://en.wikipedia.org/wiki/Rational_ignorance) `リファレンス`
 
 ## 関連概念

@@ -31,6 +31,7 @@ aliases:
 - [国税庁 更正の請求はいつまで行えるか](https://www.keisan.nta.go.jp/r6yokuaru/koseiseikyusho/shohizeishusei/koseiseikyushotoha/h23iko.html) `公的`
 
 ## 関連概念
+- [[tax-amended-return|修正申告・期限後申告と加算税]] — 語彙が近い
 - [[tax-loss-carryback|法人税の欠損金の繰戻しによる還付]] — 語彙が近い
 - [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 出典を共有
 - [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[tax-small-residential-land|小規模宅地等についての相続税の課税価格の計算の特例]] — 出典を共有
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 出典を共有
 - [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]] — 出典を共有
-- [[tax-securities-account|上場株式等の特定口座制度]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

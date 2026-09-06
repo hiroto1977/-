@@ -26,7 +26,7 @@ aliases:
 ジャック・スティルゲイ ／ ルネ・フォン・シュームベルク ／ エイドリアン・スミス ／ アレックス・ヴォス
 
 ## 出典
-- [Stilgoe, J. et al. (2013). Developing a framework for responsible innovation — Research Policy](https://doi.org/10.1093/acprof:oso/9780199608546.001.0001) `学術`
+- [Stilgoe, J., Owen, R. & Macnaghten, P. (2013). Developing a framework for responsible innovation — Research Policy 42(9), 1568–1580（旧 DOI は OUP 書籍のものだったため Elsevier 論文ページへ差し替え）](https://www.sciencedirect.com/science/article/pii/S0048733313000930) `学術`
 - [Wikipedia: Responsible Research and Innovation — EU science policy](https://en.wikipedia.org/wiki/Responsible_Research_and_Innovation) `リファレンス`
 
 ## 関連概念

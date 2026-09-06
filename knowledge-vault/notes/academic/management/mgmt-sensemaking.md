@@ -31,7 +31,8 @@ aliases:
 - [The Social Processes of Organizational Sensemaking — Academy of Management Journal（査読論文）](https://journals.aom.org/doi/10.5465/amj.2005.15993111) `学術`
 
 ## 関連概念
-- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — 語彙が近い
+- [[mgmt-sensemaking-weick|センスメイキングとイナクトメント（ワイク）——曖昧な出来事から手がかりを抽出し、行為によって環境を構成しながら事後的にもっともらしい意味を集合的に作り上げる組織化の過程]] — 同じ思想家
+- [[mgmt-knowledge-transfer|知識移転（シュランスキー／アーゴット＝イングラム）——ノウハウやベストプラクティスを送り手から受け手へ伝え、受け手が吸収して使えるようにする過程と、それを妨げる知識の粘着性]] — 同分野の近傍
 - [[mgmt-managerial-entrenchment|経営者の塹壕化（マネジリアル・エントレンチメント／managerial entrenchment）——経営者が自らを交代困難にして規律を逃れる現象]] — 同分野の近傍
 
 ## 関連

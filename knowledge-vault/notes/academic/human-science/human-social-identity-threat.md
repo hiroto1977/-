@@ -26,9 +26,9 @@ aliases:
 Claude M. Steele／Joshua Aronson／Naomi Ellemers／Nyla R. Branscombe／Russell Spears
 
 ## 出典
-- [Steele & Aronson (1995) Stereotype threat and intellectual test performance of African Americans, JPSP 69(5):797-811](https://doi.org/10.1037/0022-3514.69.5.797) `学術`
 - [Branscombe et al. (1999) The context and content of social identity threat, PSPB 25(6):723-739](https://doi.org/10.1177/0146167299025006006) `学術`
 - [Ellemers, Spears & Doosje (2002) Self and social identity, Annual Review of Psychology 53:161-186](https://doi.org/10.1146/annurev.psych.53.100901.135228) `学術`
+- [Steele & Aronson (1995) Stereotype threat and intellectual test performance of African Americans, JPSP 69(5):797-811](https://doi.org/10.1037/0022-3514.69.5.797) `学術`
 
 ## 関連概念
 - [[human-stereotype-threat|ステレオタイプ脅威]] — 同じ思想家

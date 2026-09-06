@@ -26,14 +26,14 @@ aliases:
 リタ・マグレイス／イアン・マクミラン（McGrath & MacMillan, 1995）
 
 ## 出典
-- [McGrath & MacMillan, "Discovery-Driven Planning," Harvard Business Review (1995)](https://hbr.org/1995/07/discovery-driven-planning) `学術`
-- [Harvard Business Review, "A Refresher on Discovery-Driven Planning" (2017)](https://hbr.org/2017/02/a-refresher-on-discovery-driven-planning) `学術`
+- [McGrath & MacMillan, "Discovery-Driven Planning," Harvard Business Review (1995)](https://hbr.org/1995/07/discovery-driven-planning) `メディア`
+- [Harvard Business Review, "A Refresher on Discovery-Driven Planning" (2017)](https://hbr.org/2017/02/a-refresher-on-discovery-driven-planning) `メディア`
 - [Small Business Economics (Springer): comparing effectuation, DDP, lean startup, design thinking (2019)](https://link.springer.com/article/10.1007/s11187-019-00153-w) `学術`
 
 ## 関連概念
 - [[mgmt-real-options-reasoning-mcgrath|リアル・オプション推論——マクグラスの不確実性下の段階的投資と戦略的柔軟性]] — 語彙が近い
 - [[mgmt-transient-advantage|一時的競争優位（トランジェント・アドバンテージ）]] — 同じ思想家
-- [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 同分野の近傍
+- [[mgmt-team-effectiveness-hackman|チーム有効性モデル（ハックマン）——IPO／IMOI 枠組みの上に、真のチーム・魅力的な方向性・イネーブリング構造・支援的文脈・専門的コーチングの五条件を置く]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

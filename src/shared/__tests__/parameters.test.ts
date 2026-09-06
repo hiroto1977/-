@@ -169,6 +169,7 @@ import {
   PENSION_RATE,
 } from '../taxSocialInsurance';
 import { DEFAULT_EFFECTIVE_TAX_RATE } from '../funding';
+import { EMERGENCY_FUND_MONTHS_DEFAULT } from '../savingsPlanning';
 import {
   CORNER_LOT_COVERAGE_BONUS_PCT,
   DEFAULT_ZONING_RULES,
@@ -308,6 +309,7 @@ const DEFAULT_SOURCE: Readonly<Record<ParameterId, number>> = {
   'socialInsurance.pensionBonusCapPerPayment': PENSION_BONUS_CAP_PER_PAYMENT,
   'socialInsurance.healthBonusCapAnnual': HEALTH_BONUS_CAP_ANNUAL,
   'finance.effectiveTaxRate': DEFAULT_EFFECTIVE_TAX_RATE,
+  'savings.emergencyFundMonths': EMERGENCY_FUND_MONTHS_DEFAULT,
   'zoning.roadFarWidthThresholdM': ROAD_FAR_WIDTH_THRESHOLD_M,
   'zoning.roadFarMultiplierResidential': ROAD_FAR_MULTIPLIER_RESIDENTIAL,
   'zoning.roadFarMultiplierOther': ROAD_FAR_MULTIPLIER_OTHER,
@@ -403,6 +405,7 @@ describe('台帳の形', () => {
       '水耕栽培', '給与', '不動産', '税', '所得税・住民税', '所得控除・税額控除', '不動産・登記・印紙の税', '譲渡所得',
       '法人税', '消費税 (事業者)', '年金・一時所得・ふるさと納税', '貿易', '社会保険', '財務',
       '敷地計画 (建築基準法)', '水循環 (排水基準)', '財務診断', '消費税 (申告・納付)', '配当所得', '感情ログ',
+      '貯蓄・資産形成',
     ]);
   });
 
@@ -1031,6 +1034,7 @@ describe('台帳の表 (静的な値の固定)', () => {
       ['emotion.trendHysteresis', '点', 1, 0, 4, false, 'threshold'],
       ['emotion.lowScore', '点', 1, 1, 5, true, 'threshold'],
       ['emotion.triggerMinCount', '回', 1, 1, 100, true, 'threshold'],
+      ['savings.emergencyFundMonths', 'か月', 1, 0, 24, true, 'reference'],
     ]);
     expect(m.PARAMETER_KIND_LABEL).toEqual({ law: '法定値', reference: '参考値', threshold: 'しきい値', assumption: '前提' });
     // 出典と注記は空でない (法定値には出典が要る)。

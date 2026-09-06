@@ -26,7 +26,7 @@ aliases:
 レイモンド・ウィリアムズ ／ マーシャル・マクルーハン ／ ロジャー・シルバーストーン ／ リン・スピーゲル
 
 ## 出典
-- [Williams, R. (1974) Television: Technology and Cultural Form — Fontana (WorldCat)](https://www.worldcat.org/oclc/1085898) `学術`
+- [Williams, R. (1974) Television: Technology and Cultural Form — Fontana (WorldCat)](https://www.worldcat.org/oclc/1085898) `リファレンス`
 - [Wikipedia: Mobile privatization — Williams, mobility and privatization, broadcasting, critique of technological determinism](https://en.wikipedia.org/wiki/Mobile_privatization) `リファレンス`
 
 ## 関連概念

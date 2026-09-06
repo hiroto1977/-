@@ -38,8 +38,8 @@ aliases:
 - [[econ-rotten-kid-theorem|腐った子定理]] — 同じ思想家
 - [[bizlaw-competition-law|競争法・独占禁止法：市場支配力の規制と反トラスト法の経済学的分析]] — 同じ思想家
 - [[bizlaw-tort-law|不法行為法：過失・厳格責任・経済分析による民事損害賠償の理論体系]] — 同じ思想家
+- [[bizlaw-vincent-v-lake-erie-private-necessity|ヴィンセント対レイク・エリー運送事件——緊急時に他人の財産を使うことは許されるが、生じた損害は賠償しなければならないという「不完全な特権」の法理]] — 同じ思想家
 - [[econ-human-capital|人的資本論]] — 同じ思想家
-- [[econ-rational-addiction|合理的依存]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,9 +34,8 @@ Ron Sanchez ／ Henk W. Volberda ／ Katsuhiko Shimizu ／ Michael A. Hitt ／ R
 
 ## 関連概念
 - [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — 同じ思想家
-- [[mgmt-absorptive-capacity-realization|吸収能力の実現化モデル：潜在的能力と実現的能力]] — 同じ思想家
-- [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
 - [[mgmt-strategic-flexibility-volberda|戦略的柔軟性（フォルベルダ）]] — 同分野の近傍
+- [[mgmt-strategic-renewal|戦略的刷新（Strategic Renewal）]] — 同分野の近傍
 - [[mgmt-toxic-triangle-padilla|有害な三角形——破壊的リーダー・脆弱なフォロワー・助長する環境]] — 同分野の近傍
 
 ## 関連

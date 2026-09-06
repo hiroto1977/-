@@ -17,7 +17,7 @@ tags:
 - [[bizlaw-sovereign-immunity-waiver|主権免除と放棄（ソブリン・イミュニティ）]] — JackTate(1952)LettertoActingAttorneyGeneral—StateDepartment（制限的免除への転換…
 - [[eh-1950|1950年（昭和25年）]] — ForeignAffairs—再軍備が自由世界経済に与えた影響（再軍備ブーム）
 - [[eh-1951|1951年（昭和26年）]] — ForeignAffairs—TheImpactofRearmamentontheFreeWorldEconomy
-- [[infosoc-datafication|データ化（データ化現象）]] — Mayer-Schönberger&Cukier(2013)TheRiseofBigData—ForeignAffairs
+- [[infosoc-datafication-mayer-schoenberger|データ化（データフィケーション）——計量されてこなかった生活や行動を機械可読データへ変換し、分析・予測・資本化の対象にする過程]] — Mayer-Schönberger,V.&Cukier,K.(2013)TheRiseofBigData—ForeignAffairs（『…
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

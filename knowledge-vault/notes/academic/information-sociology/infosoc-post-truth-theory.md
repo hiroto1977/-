@@ -34,7 +34,7 @@ Stojan Steve Tesich ／ Ralph Keyes ／ Lee C. McIntyre ／ Michael Ignatieff
 ## 関連概念
 - [[infosoc-post-truth|ポスト・トゥルース（脱真実）]] — 出典を共有
 - [[infosoc-post-truth-society|ポスト真実社会——感情と信念が事実を凌駕する情報環境の社会学]] — 同分野の近傍
-- [[infosoc-preference-falsification-kuran|選好偽装理論（preference falsification）——本音と建前の乖離が生む予測不能な体制転換]] — 同分野の近傍
+- [[infosoc-strong-programme|ストロング・プログラム（Strong Programme／Bloor 1976）——科学的知識の社会学（SSK）の綱領、真偽を問わず信念の原因を対称的に説明する]] — 同分野の近傍
 - [[infosoc-techno-orientalism-morley|テクノ・オリエンタリズム——東アジアの技術的他者化と西洋の想像力]] — 同分野の近傍
 
 ## 関連

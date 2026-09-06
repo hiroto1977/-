@@ -32,12 +32,12 @@ aliases:
 ## 関連概念
 - [[econ-green-golden-rule-phelps-sustainability|黄金律と修正黄金律——フェルプスの最適貯蓄率と世代間公平性]] — 語彙が近い
 - [[econ-harberger-excess-burden-taxation|ハーバーガーの超過負担——課税の厚生損失と最適税制設計]] — 同じ思想家
-- [[econ-optimal-tax-theory-diamond-mirrlees|最適税制論（ダイアモンド＆マーリース）]] — 同じ思想家
-- [[econ-optimal-taxation-mirrlees|最適課税理論——ミルリーズの情報の非対称性と効率性・公平性のトレードオフ]] — 同じ思想家
 - [[econ-sunspot-equilibrium|サンスポット均衡]] — 同じ思想家
 - [[econ-allingham-sandmo-tax-evasion|アリンガム＝サンドモ・モデル（脱税の経済分析）——過少申告という賭けと税務コンプライアンス]] — 出典を共有
 - [[econ-median-voter|中位投票者定理]] — 出典を共有
 - [[econ-samuelson-condition|公共財供給のサミュエルソン条件]] — 出典を共有
+- [[econ-golden-rule-saving-phelps|貯蓄の黄金律——定常状態における消費最大化の最適貯蓄率]] — 同分野の近傍
+- [[econ-rational-bubble|合理的バブル]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

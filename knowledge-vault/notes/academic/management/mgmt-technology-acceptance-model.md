@@ -32,8 +32,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-tam-healthcare|医療情報技術の受容モデル：TAM・UTAUTのヘルスケア領域への適用と拡張]] — 分野横断
-- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 同じ思想家
-- [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 同分野の近傍
+- [[mgmt-sensegiving|センスギビング（ジョイア＆チッティペディ）——リーダーが他者の意味形成に働きかけ、変革の望ましい解釈を組織に広めるコミュニケーション過程]] — 同分野の近傍
 - [[mgmt-perceived-organizational-support-eisenberger|組織的支援知覚——組織が自分を尊重し配慮していると従業員が感じる程度]] — 同分野の近傍
 
 ## 関連

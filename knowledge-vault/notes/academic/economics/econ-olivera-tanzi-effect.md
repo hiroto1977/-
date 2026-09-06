@@ -31,6 +31,7 @@ aliases:
 - [IMF Working Paper 1990/048, "Fiscal Revenue and Inflationary Finance"（赤字＝インフレの悪循環）](https://www.elibrary.imf.org/view/journals/001/1990/048/article-A001-en.xml) `学術`
 
 ## 関連概念
+- [[econ-armington-elasticity-national-product-differentiation|アーミントンの仮定とアーミントン弾力性——同じ財でも生産国が違えば不完全代替とみなし、その代替の弾力性で貿易モデルを閉じる考え方]] — 出典を共有
 - [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — 出典を共有
 - [[econ-triffin-dilemma|トリフィンのジレンマ]] — 出典を共有
 - [[eh-1978|1978年（昭和53年）]] — 出典を共有

@@ -13,6 +13,7 @@ import { useServiceData } from '../hooks/useServiceData';
 import { useCollection } from '../data/useCollection';
 import {
   PROPERTIES_COLLECTION,
+  normalizeProperty,
   PROPERTY_TYPES,
   parsePropertyEntry,
   propertyToForm,
@@ -111,7 +112,8 @@ export function RealEstatePage() {
   const properties = useMemo(
     () => [
       ...data.properties.map((p) => ({ ...p, rowId: p.id, user: false as const })),
-      ...userProps.map((r) => ({ ...r.data, rowId: r.id, user: true as const })),
+      // 欄の無い控えも 0 と読んでから使う (`normalizeProperty` の 1 か所だけで補う)。
+      ...userProps.map((r) => ({ ...normalizeProperty(r.data), rowId: r.id, user: true as const })),
     ],
     [data.properties, userProps],
   );

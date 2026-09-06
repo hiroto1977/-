@@ -34,6 +34,7 @@
  */
 
 import { PROFESSIONAL_MAP, type ProfessionalId, type ProfessionalProfile } from './professionalMap';
+import { sheetOfDoc } from './kessanSheets';
 import { STUDIO_TEMPLATES } from './docStudioData';
 
 /** 自社分として作る場合の扱い。 */
@@ -58,16 +59,23 @@ export interface DocTriage {
   readonly consult: readonly ProfessionalId[];
 }
 
-/** 定款・就業規則は STUDIO_TEMPLATES の外にあるので擬似 id を振る。 */
-export const EXTRA_DOC_IDS = ['teikan-kk', 'teikan-gk', 'shugyo', 'kessan'] as const;
+/**
+ * 定款・就業規則・計算書類は STUDIO_TEMPLATES の外にあるので擬似 id を振る。
+ * 計算書類は 4 点まとめて (`kessan`) と 1 点ずつ (`kessan-pl` …) の両方を持つ (2026-09-05)。
+ */
+export const EXTRA_DOC_IDS = ['teikan-kk', 'teikan-gk', 'shugyo', 'kessan', 'kessan-pl', 'kessan-bs', 'kessan-equity', 'kessan-notes'] as const;
 export type ExtraDocId = (typeof EXTRA_DOC_IDS)[number];
 
-/** 書式一覧に無い 4 つの表示名 (書類スタジオの各タブの名前と揃える)。 */
+/** 書式一覧に無い特別枠の表示名 (書類スタジオの各タブ・書面の名前と揃える)。 */
 export const EXTRA_DOC_LABEL: Readonly<Record<ExtraDocId, string>> = {
   'teikan-kk': '電子定款（株式会社）',
   'teikan-gk': '電子定款（合同会社）',
   shugyo: '就業規則',
   kessan: '計算書類（4点）',
+  'kessan-pl': '損益計算書',
+  'kessan-bs': '貸借対照表',
+  'kessan-equity': '株主資本等変動計算書',
+  'kessan-notes': '個別注記表',
 };
 
 /** doc id → 表示名。書式一覧 → 4 つの特別枠 → 見つからなければ id をそのまま。 */
@@ -456,7 +464,10 @@ export const TRIAGE_ROWS: readonly DocTriage[] = ROWS;
  * 「テストが 0 件」として静かに素通りしてしまう。
  */
 export function triageFor(doc: string): DocTriage | null {
-  return ROWS.find((r) => r.doc === doc) ?? null;
+  // 計算書類を 1 点ずつ開いても仕分けは 4 点と同じ (自社で作れる・税理士/公認会計士に相談)。
+  // 行を 4 つ複製すると内容がずれていくので、1 点ずつの id は `kessan` の行へ寄せる。
+  const target = sheetOfDoc(doc) !== null ? 'kessan' : doc;
+  return ROWS.find((r) => r.doc === target) ?? null;
 }
 
 /**

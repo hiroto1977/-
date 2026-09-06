@@ -31,10 +31,10 @@ aliases:
 - [Wikipedia: Consumption smoothing — 恒常所得仮説とライフサイクル仮説の概説](https://en.wikipedia.org/wiki/Consumption_smoothing) `リファレンス`
 
 ## 関連概念
-- [[econ-deaton-paradox|ディートンのパラドックス（消費の過剰平滑性）]] — 語彙が近い
 - [[econ-precautionary-saving|予備的貯蓄]] — 語彙が近い
+- [[econ-deaton-paradox|ディートンのパラドックス（消費の過剰平滑性）]] — 語彙が近い
+- [[econ-permanent-income-hypothesis-friedman|恒常所得仮説——フリードマンの消費理論と生涯所得に基づく消費決定メカニズム]] — 語彙が近い
 - [[mgmt-csr|企業の社会的責任（CSR）]] — 同じ思想家
-- [[econ-permanent-income-hypothesis-friedman|恒常所得仮説——フリードマンの消費理論と生涯所得に基づく消費決定メカニズム]] — 同じ思想家
 - [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同じ思想家
 - [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
 - [[econ-life-cycle-hypothesis-modigliani|ライフサイクル仮説——生涯を通じた消費平準化と貯蓄の動学]] — 同じ思想家

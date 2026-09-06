@@ -13,6 +13,8 @@ import { lockWorkspace } from './security/lockWorkspace';
 import { usePlan } from './plan/usePlan';
 import { VoiceCommandBar } from './components/VoiceCommandBar';
 import { ChatbotWidget } from './components/ChatbotWidget';
+import { PageErrorBoundary } from './components/PageErrorBoundary';
+import { DeviceStoreFailureBanner } from './components/DeviceStoreFailureBanner';
 import {
   PLAN_ORDER,
   PLANS,
@@ -254,7 +256,13 @@ export function App() {
     return <div style={{ padding: 24, color: 'var(--text-mute)' }}>読み込み中…</div>;
   }
   if (browserMode && !vaultUnlocked) {
-    return <LockScreen onUnlocked={() => setVaultUnlocked(true)} />;
+    // ロック画面はアプリへの唯一の入口 —— ここが描画で投げると真っ白のまま何もできない。
+    // 画面の境界と同じ物で包む (「ホームへ戻る」は無い: 解錠前に戻る先が無い)。
+    return (
+      <PageErrorBoundary label="ロック画面">
+        <LockScreen onUnlocked={() => setVaultUnlocked(true)} />
+      </PageErrorBoundary>
+    );
   }
 
   const active = SERVICES.find((s) => s.id === activeId)!;
@@ -453,8 +461,16 @@ export function App() {
           </span>
         </header>
         <section className="content">
+          {/*
+            端末が業務レコードの読み書きを断ったことは、**どの画面でも同じ打ち手**に
+            なるので 1 か所で出す。画面の境界の外に置く —— 中だと画面が落ちたときに
+            報せも消える。
+          */}
+          <DeviceStoreFailureBanner />
           {activeUnlocked ? (
-            <>
+            // 画面の描画エラーはこの枠に閉じる (境界が無いと React はツリー全体を外し、サイドバーごと白くなる)。
+            // key で画面ごとに張り直す —— 別の画面へ移れば新しい境界。
+            <PageErrorBoundary key={active.id} label={active.label} onGoHome={() => selectService('home')}>
               <PageComponent />
               {/*
                 手入力欄は**ここ 1 か所**に置く。画面ごとに貼って回ると必ず
@@ -462,7 +478,7 @@ export function App() {
                 置き換えの一覧を持たない画面では「足す」側だけが出る。
               */}
               <ManualDataSection scope={active.id} />
-            </>
+            </PageErrorBoundary>
           ) : (
             <UpgradeNotice
               requiredPlan={requiredPlan}

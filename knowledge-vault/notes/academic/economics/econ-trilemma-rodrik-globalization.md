@@ -40,7 +40,7 @@ aliases:
 - [[econ-growth-diagnostics-hausmann-rodrik|成長診断——成長を最も縛る制約を見つけて改革を絞り込む]] — 同じ思想家
 - [[econ-hot-money-flows-calvo|ホットマネー・フローと急停止——新興国資本移動の不安定性]] — 同じ思想家
 - [[econ-original-sin-eichengreen|原罪仮説——新興国の自国通貨建て対外借入の構造的不能]] — 同じ思想家
-- [[econ-fiscal-decentralization-tiebout|財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争]] — 同分野の近傍
+- [[econ-monetary-policy-trilemma|金融政策のトリレンマ（不可能の三位一体）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

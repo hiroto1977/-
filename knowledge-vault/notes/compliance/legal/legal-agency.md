@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[bizlaw-apparent-agency|表見代理]] — 分野横断
 - [[legal-coolingoff-electronic|電磁的記録によるクーリング・オフ通知（2022年6月施行）]] — 同分野の近傍
-- [[legal-abuse-superior-bargaining-position|優越的地位の濫用（独占禁止法上の不公正な取引方法）]] — 同分野の近傍
+- [[legal-inheritance-registration-mandatory|相続登記の申請義務化（2024年4月1日施行）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

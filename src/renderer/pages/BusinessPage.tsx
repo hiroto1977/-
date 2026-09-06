@@ -7,6 +7,7 @@ import { useServiceData } from '../hooks/useServiceData';
 import { sumShigyoMonthlyFees } from '../../shared/shigyoTypes';
 import { jpy } from '../../shared/formatters';
 import { summarizeFoodDelivery } from '../data/foodDelivery';
+import { exportWarning } from '../data/exportOutcome';
 
 interface BusinessAdvisorRecommendation {
   categoryId: string;
@@ -688,7 +689,7 @@ export function BusinessPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | 'all'>('all');
   const [exportBusy, setExportBusy] = useState(false);
   const [exportMsg, setExportMsg] = useState<string | null>(null);
-  const [lastExport, setLastExport] = useState<{ path: string; bytes: number } | null>(null);
+  const [lastExport, setLastExport] = useState<{ path: string; bytes: number; warning?: string } | null>(null);
   const [advisorQuestion, setAdvisorQuestion] = useState('');
   const [advisorBusy, setAdvisorBusy] = useState(false);
   const [advisorError, setAdvisorError] = useState<string | null>(null);
@@ -714,7 +715,7 @@ export function BusinessPage() {
         generatedAt: string;
       }>('business', action, payload);
       if (r.ok) {
-        setLastExport({ path: r.data.path, bytes: r.data.bytes });
+        setLastExport({ path: r.data.path, bytes: r.data.bytes, warning: exportWarning(r.data) });
       } else {
         setExportMsg('エクスポート失敗: ' + r.message);
       }
@@ -970,7 +971,7 @@ export function BusinessPage() {
               borderRadius: 6,
             }}
           >
-            <ExportActions path={lastExport.path} bytes={lastExport.bytes} />
+            <ExportActions path={lastExport.path} bytes={lastExport.bytes} warning={lastExport.warning} />
           </div>
         )}
         {exportMsg && (

@@ -40,6 +40,7 @@ GATT（1947 第3条での原則確立）／WTO上級委員会（Japan–Alcoholi
 - [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — 出典を共有
 - [[bizlaw-calvo-clause|カルヴォ条項（Calvo Clause）]] — 出典を共有
 - [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]] — 出典を共有
+- [[bizlaw-carbon-border-adjustment|炭素国境調整メカニズム（CBAM）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -39,7 +39,7 @@ aliases:
 - [[bizlaw-collateral-contract|付随的契約——主契約に併存する補助的な合意]] — 同じ思想家
 - [[bizlaw-consideration-doctrine|約因の法理——約束が拘束力を持つために要する交換的対価]] — 同じ思想家
 - [[bizlaw-liquidated-damages-clause|損害賠償額の予定条項（清算損害賠償条項）]] — 同じ思想家
-- [[bizlaw-negligence-per-se|法定過失（Negligence Per Se）]] — 同じ思想家
+- [[bizlaw-lucy-v-zehmer-objective-theory-of-contract|ルーシー対ゼーマー事件と契約成立の客観説——内心でなく言葉と行為の外形で合意を判断する原則]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

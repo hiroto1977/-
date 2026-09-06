@@ -15,6 +15,7 @@ import { useServiceData } from '../hooks/useServiceData';
 import { useCollection } from '../data/useCollection';
 import {
   HOLDINGS_COLLECTION,
+  normalizeHolding,
   parseHoldingEntry,
   holdingToForm,
   computeFundPortfolio,
@@ -38,6 +39,7 @@ import {
   goalProjection,
 } from '../../shared/savingsPlanning';
 import { convertToJpy, fxGainLoss, ttRates, roundTripCost } from '../../shared/fxCurrency';
+import { useParameters } from '../data/parameterOverrides';
 
 const simInputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -68,11 +70,18 @@ export function MutualFundsPage() {
   /** デモ (snapshot) 行 + ユーザー行の結合リスト (追加行は「追加」チップ)。 */
   const holdings = useMemo(
     () => [
-      ...data.holdings.map((h) => ({ ...h, rowId: h.code, user: false as const, valuationMode: undefined })),
+      ...data.holdings.map((h) => ({
+        ...normalizeHolding(h),
+        rowId: h.code,
+        user: false as const,
+        valuationMode: undefined,
+        userTag: undefined,
+      })),
+      // 欄の無い控え (古い版・手で直した JSON) も読める形に整えてから使う。
+      // 補いは `normalizeHolding` の 1 か所だけ —— 画面側に `??` を散らすと、
+      // 実際に起きたように 1 つ (valuationMode) だけ補われて残りが漏れる。
       ...userHoldings.map((r) => ({
-        ...r.data,
-        // 旧データ (valuationMode なし) は auto 扱い。
-        valuationMode: r.data.valuationMode ?? ('auto' as const),
+        ...normalizeHolding(r.data),
         userTag: '追加',
         rowId: r.id,
         user: true as const,
@@ -87,7 +96,7 @@ export function MutualFundsPage() {
       computeFundPortfolio(
         holdings,
         data.portfolio.totalCostBasis,
-        userHoldings.map((r) => r.data.acquisitionCost),
+        userHoldings.map((r) => normalizeHolding(r.data).acquisitionCost),
       ),
     [holdings, data.portfolio.totalCostBasis, userHoldings],
   );
@@ -140,6 +149,10 @@ export function MutualFundsPage() {
   );
 
   // 貯蓄計画: 目標達成積立額・72の法則・緊急予備資金。
+  // 予備資金の月数は判断の要る参考値 (会社員 3〜6 / 自営 6〜12 か月) なので、
+  // 台帳 `savings.emergencyFundMonths` から読んで引数で渡す (画面に写さない)。
+  const { values: params } = useParameters();
+  const efMonths = params['savings.emergencyFundMonths'];
   const [goalTarget, setGoalTarget] = useState('10000000');
   const [goalRate, setGoalRate] = useState('3');
   const [goalYears, setGoalYears] = useState('10');
@@ -149,7 +162,10 @@ export function MutualFundsPage() {
     [goalTarget, goalRate, goalYears],
   );
   const doubleYears = useMemo(() => yearsToDouble(readNumberOr0(goalRate)), [goalRate]);
-  const emergency = useMemo(() => emergencyFund(readNumberOr0(monthlyExpense), 6), [monthlyExpense]);
+  const emergency = useMemo(
+    () => emergencyFund(readNumberOr0(monthlyExpense), efMonths),
+    [monthlyExpense, efMonths],
+  );
 
   // 追加: 現行積立での目標達成見込み・インフレ調整後の実質価値・実質利回り・予備資金充足率。
   const [currentMonthly, setCurrentMonthly] = useState('30000');
@@ -168,8 +184,8 @@ export function MutualFundsPage() {
     [goalRate, inflationRate],
   );
   const efCoverage = useMemo(
-    () => emergencyFundCoverage(readNumberOr0(cashOnHand), readNumberOr0(monthlyExpense), 6),
-    [cashOnHand, monthlyExpense],
+    () => emergencyFundCoverage(readNumberOr0(cashOnHand), readNumberOr0(monthlyExpense), efMonths),
+    [cashOnHand, monthlyExpense, efMonths],
   );
 
   // トータルリターン (分配金再投資ベース) と保有銘柄リターンのリスク (標準偏差)。
@@ -475,7 +491,7 @@ export function MutualFundsPage() {
         <div className="stat-grid">
           <Stat label="目標達成に必要な毎月積立額" value={jpy(requiredMonthly)} />
           <Stat label="72の法則 (資産倍増)" value={doubleYears === null ? '—' : `約 ${doubleYears} 年`} />
-          <Stat label="緊急予備資金 (生活費6か月)" value={jpy(emergency)} />
+          <Stat label={`緊急予備資金 (生活費${efMonths}か月)`} value={jpy(emergency)} />
         </div>
         <div className="stat-grid" style={{ marginTop: 12 }}>
           <Stat
@@ -492,7 +508,7 @@ export function MutualFundsPage() {
           />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
-          ※ 毎月末積立・年率一定を仮定した概算です。実質価値は (1+インフレ率)^年数 で割り引いた購買力、実質利回りはフィッシャー式 (1+名目)/(1+インフレ)−1。緊急予備資金は生活費の6か月分（会社員3〜6・自営6〜12か月が目安）。投資助言ではありません。
+          ※ 毎月末積立・年率一定を仮定した概算です。実質価値は (1+インフレ率)^年数 で割り引いた購買力、実質利回りはフィッシャー式 (1+名目)/(1+インフレ)−1。緊急予備資金は生活費の{efMonths}か月分（会社員3〜6・自営6〜12か月が目安。設定の「数値パラメータ」で変えられます）。投資助言ではありません。
         </div>
       </Section>
 

@@ -34,7 +34,7 @@ aliases:
 ## 関連概念
 - [[labor-safety-management|安全衛生管理体制（50人以上）]] — 同分野の近傍
 - [[labor-health-checkup|定期健康診断の実施義務]] — 同分野の近傍
-- [[labor-childbirth-lumpsum|健康保険の出産育児一時金（原則50万円）]] — 同分野の近傍
+- [[labor-standard-remuneration|標準報酬月額]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

@@ -2,7 +2,7 @@
 title: "ランス・ベネット"
 type: thinker
 person_key: "ベネット|ラ"
-concept_count: 2
+concept_count: 3
 tags:
   - person
   - index
@@ -10,11 +10,12 @@ tags:
 
 # ランス・ベネット
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（2件）
+## 学術概念（3件）
 - [[infosoc-connective-action|つながりの行為論理（コネクティブ・アクション）]] — W・ランス・ベネットとアレクサンドラ・セガーバーグが2012年の論文（Information,Communicatio…
 - [[infosoc-indexing-hypothesis-bennett|インデックス仮説——報道は公的エリートの論争の幅に従う]] — インデックス仮説（indexinghypothesis、指標化仮説）は、政治コミュニケーション研究者W・ランス・ベネッ…
+- [[infosoc-networked-protest-tufekci|トゥフェックチのネットワーク化された抗議——能力を伴わないシグナルの拡大と戦術的凍結]] — ネットワーク化された抗議とは、社会学者ゼイナップ・トゥフェックチが『TwitterandTearGas』（2017年、…
 
 ## 関連
 - 索引: [[人物索引]]

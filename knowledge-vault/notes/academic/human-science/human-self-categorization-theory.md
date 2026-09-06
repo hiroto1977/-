@@ -33,7 +33,7 @@ John C. Turner ／ Penelope J. Oakes ／ Michael A. Hogg ／ Stephen D. Reicher 
 - [Wikipedia — Self-categorization theory](https://en.wikipedia.org/wiki/Self-categorization_theory) `リファレンス`
 
 ## 関連概念
-- [[mgmt-social-identity-theory-of-leadership|リーダーシップの社会的アイデンティティ理論]] — 同じ思想家
+- [[mgmt-social-identity-theory-of-leadership|リーダーシップの社会的アイデンティティ理論]] — 語彙が近い
 - [[human-minimal-group-paradigm|最小条件集団パラダイム]] — 同じ思想家
 - [[human-obedience|権威への服従（オベディエンス）]] — 同分野の近傍
 - [[human-social-identity-tajfel-turner|社会的アイデンティティ理論と内集団・外集団の社会心理学（タジフェル・ターナー）]] — 同分野の近傍

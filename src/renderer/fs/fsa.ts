@@ -77,22 +77,25 @@ export async function pickFolder(): Promise<FileSystemDirectoryHandle | null> {
   return handle;
 }
 
-/** 保管済み handle を取得 (再起動後)。permission の状態を併せて返す。 */
+/**
+ * 保管済み handle を取得 (再起動後)。permission の状態を併せて返す。
+ *
+ * **開けなければ投げる。**`null` は「フォルダを選んでいない」だけを意味する。
+ *
+ * 2026-09-06 まではここで `catch { return null; }` していた (「保存無しとして
+ * 扱う」)。その `null` は上まで通り、`fs/folderMirror.ts` が
+ * **「『設定していない』ではなく失敗として扱う」と決めて書いた分岐を素通り**して
+ * `off` になっていた —— `off` は警告を出さない側なので、フォルダ連携をしている
+ * 端末で書き込みが 1 バイトも行われないまま「書き出しました」と出る。
+ * 区別を消したのは 1 つ下の層で、上の層はその差を見ることができなかった。
+ * 設定画面も同じ `null` を見て「フォルダ未設定」の札を出していた。
+ */
 export async function loadFolderHandle(): Promise<{
   handle: FileSystemDirectoryHandle;
   permission: 'granted' | 'prompt' | 'denied' | 'unknown';
 } | null> {
   if (!isFsaSupported()) return null;
-  let db: IDBDatabase;
-  // DB を開けない環境 (プライベートモード等) では「保存無し」として扱う。
-  // fake-indexeddb では失敗させられず到達しない。
-  /* Stryker disable BlockStatement */
-  try {
-    db = await openDb();
-  } catch {
-    return null;
-  }
-  /* Stryker restore BlockStatement */
+  const db = await openDb();
   const handle = await new Promise<FileSystemDirectoryHandle | undefined>((resolve, reject) => {
     const tx = db.transaction(STORE, 'readonly');
     const req = tx.objectStore(STORE).get(HANDLE_KEY);

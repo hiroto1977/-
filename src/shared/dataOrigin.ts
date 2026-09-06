@@ -147,12 +147,61 @@ export interface OriginLabel {
  * メールの形をしている分、実在の同僚と受け取られる余地があった
  * (実際にそう問われて気付いた)。連携していないことを言葉に出す。
  */
-export function describeOrigin(origin: DataOrigin, source: 'snapshot' | 'live'): OriginLabel {
+export function describeOrigin(
+  origin: DataOrigin,
+  source: 'snapshot' | 'live',
+  payloadIsMock = false,
+): OriginLabel {
   if (origin === 'sample') return { text: '内蔵サンプル', tone: 'neutral' };
+  /*
+   * **取ってきた中身が「同梱データ」を名乗っているなら、緑にしない** (2026-09-06)。
+   *
+   * `tone: 'ok'` は上の注記どおり「実際に取ってきた」時だけの色である。ところが
+   * `main/clients/funding.ts` の `fetchFundingSnapshot` は `MOCK_ITEMS` と
+   * `MOCK_ACCOUNTING` から組み立てた値 (期首残高 300 万円も固定) を返し、
+   * 自ら `isMock: true` を立てている —— それでも「更新」を押すと `source` が
+   * `live` になるので、バッジは**緑の「ローカル」**になっていた。資金調達の画面が
+   * 出すのは補助金・融資の一覧、キャッシュランウェイ、債務償還年数、そして
+   * 特定収入割合 (消費税の計算に関わる) で、どれも「取ってきた実績」に見える。
+   *
+   * 中身が自分を同梱データだと言っているなら、画面もそう言う。
+   */
+  if (source === 'live' && payloadIsMock) return { text: '同梱データ', tone: 'neutral' };
   if (origin === 'remote' && source === 'snapshot') {
     return { text: 'サンプル（未連携）', tone: 'neutral' };
   }
   if (source === 'snapshot') return { text: 'スナップショット', tone: 'neutral' };
   if (origin === 'local') return { text: 'ローカル', tone: 'ok' };
   return { text: 'ライブ', tone: 'ok' };
+}
+
+/**
+ * **取得に失敗したときに、画面の数字が何なのかを言う 1 行。**
+ *
+ * 上の `describeOrigin` は言葉を慎重に選んだが (「スナップショット」を
+ * 「サンプル（未連携）」へ改めた経緯が直前に書いてある)、**その札は
+ * 1 枠しか無いバッジに出る**。`StatusBar` は `status === 'error'` のとき
+ * バッジを「認証エラー」等に差し替えるので、**取得が失敗したまさにその時に
+ * 取得元の宣言が消えていた** (2026-09-06 実測)。画面の下には
+ * `SNAPSHOT[id]` の同梱データ —— つまり架空の数字 —— がそのまま並んでおり、
+ * 残る手掛かりは `401 Bad credentials` のような機械の文だけだった。
+ *
+ * 言葉はここに置く (取得元の言い回しを 2 か所に散らさない)。返すのは
+ * バッジではなく**別枠の 1 行**で、バッジは従来どおり状態を出す。
+ *
+ * `loading` では出さない —— すぐ決まるので、点滅する警告は邪魔になる。
+ * だから引数は `failed` (= `status === 'error'`) だけを受け取る。
+ * 取得しない画面 (`isRefreshable` が false) も `null` を返す ——
+ * あちらは常設の注記が同梱データだと書いており、二重に言う必要が無い。
+ */
+export function staleDataNote(
+  origin: DataOrigin,
+  source: 'snapshot' | 'live',
+  failed: boolean,
+): string | null {
+  if (!failed) return null;
+  if (!isRefreshable(origin)) return null;
+  return source === 'snapshot'
+    ? '表示中の数字は同梱のサンプルです（まだあなたのデータではありません）'
+    : '表示中の数字は前回取得できた内容です（今回の更新は反映されていません）';
 }

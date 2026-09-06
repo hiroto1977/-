@@ -30,8 +30,8 @@ Berthold Goldman（Archives de Philosophie du Droit 9, 1964, 現代的定式化�
 - [Lando (1985) The Lex Mercatoria in International Commercial Arbitration — ICLQ 34(4), pp.747-768](https://doi.org/10.1093/iclqaj/34.4.747) `学術`
 
 ## 関連概念
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

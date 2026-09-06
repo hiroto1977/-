@@ -34,8 +34,9 @@ aliases:
 - [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]] — 出典を共有
 - [[econ-financialization|金融化——経済の金融部門支配]] — 出典を共有
 - [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 出典を共有
-- [[econ-greenspan-put-moral-hazard|グリーンスパン・プットとモラルハザード]] — 同分野の近傍
+- [[econ-identity-economics|アイデンティティ経済学]] — 同分野の近傍
 - [[econ-credit-cycle-minsky-financial-fragility|ミンスキーの金融不安定性仮説——信用サイクルと「ミンスキー・モーメント」の経済学]] — 同分野の近傍
+- [[econ-too-big-to-fail|大きすぎて潰せない]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

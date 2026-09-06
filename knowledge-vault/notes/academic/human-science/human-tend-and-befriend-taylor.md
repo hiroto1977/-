@@ -34,7 +34,7 @@ aliases:
 - [[human-depressive-realism-alloy|抑うつリアリズム——軽度抑うつ者における判断の正確性仮説]] — 同じ思想家
 - [[human-positive-illusions-taylor|積極的錯覚（テイラー＆ブラウン）]] — 同じ思想家
 - [[human-self-verification-swann|自己確証理論（スワン）——自己像を裏づける評価を求める動機]] — 同じ思想家
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-polyvagal-porges|ポリヴェーガル理論（ポージェス）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

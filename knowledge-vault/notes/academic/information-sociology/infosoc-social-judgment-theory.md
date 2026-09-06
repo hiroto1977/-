@@ -27,7 +27,7 @@ Muzafer Sherif（ムザファー・シェリフ） ／ Carl Hovland（カール�
 
 ## 出典
 - [Wikipedia「Social judgment theory」(三つの幅・同化/対比効果・自我関与・Sherif & Hovland 1961 と Sherif, Sherif & Nebergall 1965 の解説)](https://en.wikipedia.org/wiki/Social_judgment_theory) `リファレンス`
-- [Sherif, M. & Hovland, C. I. (1961) Social Judgment: Assimilation and Contrast Effects in Communication and Attitude Change. New Haven: Yale University Press (Yale Studies in Attitude and Communication) — WorldCat OCLC 255508](https://search.worldcat.org/oclc/255508) `学術`
+- [Sherif, M. & Hovland, C. I. (1961) Social Judgment: Assimilation and Contrast Effects in Communication and Attitude Change. New Haven: Yale University Press (Yale Studies in Attitude and Communication) — WorldCat OCLC 255508](https://search.worldcat.org/oclc/255508) `リファレンス`
 - [Sherif, C. W., Sherif, M. & Nebergall, R. E. (1965) Attitude and Attitude Change: The Social Judgment-Involvement Approach. Philadelphia & London: W. B. Saunders, pp. 264 — book review, The British Journal of Psychiatry (Cambridge Core)](https://www.cambridge.org/core/journals/the-british-journal-of-psychiatry/article/abs/attitude-and-attitude-changes-the-social-judgmentinvolvement-approach-by-caro-lyn-w-sherif-muzafer-sherif-and-roger-e-nebergalk-philadelphia-and-london-w-b-saunders-company-1965-pp-264-price-2-18s-od/5AC604AB150601BC120EC0558C8F0406) `学術`
 
 ## 関連概念
@@ -35,8 +35,8 @@ Muzafer Sherif（ムザファー・シェリフ） ／ Carl Hovland（カール�
 - [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 出典を共有
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 出典を共有
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 出典を共有
+- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——勝者が敗者を補償してなお余剰が残るなら改善とみなす潜在的パレート改善で、費用便益分析の理論的基礎]] — 出典を共有
 - [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — 出典を共有
-- [[econ-welfare-economics-pigou-kaldor-hicks|厚生経済学——ピグーの外部性補正とカルドア＝ヒックス補償原理]] — 出典を共有
 - [[human-allostasis|アロスタシス（Allostasis）]] — 出典を共有
 - [[human-salutogenesis-theory|サルトジェネシス理論]] — 出典を共有
 - [[infosoc-gig-economy-platform-labor|ギグエコノミーとプラットフォーム労働の法的・社会学的課題]] — 出典を共有

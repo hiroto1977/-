@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Solow–Swan model — ソロー成長モデルの理論と実証](https://en.wikipedia.org/wiki/Solow%E2%80%93Swan_model) `リファレンス`
 
 ## 関連概念
-- [[econ-solow-growth-model|ソロー成長モデル]] — 語彙が近い
 - [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 同じ思想家
+- [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
 - [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 同じ思想家
 - [[econ-barro-growth|バロー成長回帰（Barro Growth Regression）]] — 同じ思想家
 - [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 同じ思想家
@@ -40,7 +40,7 @@ aliases:
 - [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — 同じ思想家
 - [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 同じ思想家
 - [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 同じ思想家
-- [[econ-conditional-convergence|条件付き収束]] — 同分野の近傍
+- [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

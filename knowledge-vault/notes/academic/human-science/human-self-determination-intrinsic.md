@@ -32,6 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-self-determination|自己決定理論（SDT）]] — 語彙が近い
+- [[econ-fine-is-a-price-gneezy-rustichini|「罰金は価格である」——金銭的インセンティブが内発的・社会的動機を締め出し関係を取引に変える現象]] — 同じ思想家
 - [[human-basic-psychological-needs-ryan|基本的心理欲求理論（ライアン＆デシ）]] — 同じ思想家
 - [[human-flow-theory-csikszentmihalyi|フロー理論——チクセントミハイの最適経験と内発的動機づけ]] — 同じ思想家
 - [[human-undermining-effect|アンダーマイニング効果（過正当化効果）]] — 同じ思想家
@@ -40,7 +41,6 @@ aliases:
 - [[human-choice-overload|選択過多（選択のオーバーロード）]] — 同じ思想家
 - [[human-choice-overload-iyengar|選択過負荷——過剰な選択肢が意思決定を麻痺させるパラドックス]] — 同じ思想家
 - [[infosoc-hostile-media-effect|敵対的メディア認知]] — 同じ思想家
-- [[mgmt-job-characteristics-model-hackman-oldham|職務特性モデル——ハックマン＆オールダムによる動機づけ・満足・パフォーマンスを規定する五つの職務次元]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

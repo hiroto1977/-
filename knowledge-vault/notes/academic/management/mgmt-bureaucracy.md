@@ -40,7 +40,7 @@ aliases:
 - [[infosoc-actor-network-theory|アクターネットワーク理論]] — 出典を共有
 - [[infosoc-communication-privacy-management|コミュニケーション・プライバシー管理理論（CPM）]] — 出典を共有
 - [[mgmt-coopetition|コーペティション（協調的競争）]] — 出典を共有
-- [[mgmt-dynamic-capabilities-sensing-seizing|動的ケイパビリティ：感知・捕捉・変容]] — 出典を共有
+- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -556,3 +556,69 @@ describe('台帳から渡す率と境目 (BusinessConsumptionParams)', () => {
     expect(calcStandardTaxDetailed(detailedInput).fullyDeductible).toBe(false);
   });
 });
+
+// --- 選べない方式で「最有利」を決めない ------------------------------------
+//
+// 3 方式のうち 2 つは条件付き (簡易課税は基準期間 5,000 万円以下 + 事前届出、
+// 2 割特例はインボイス登録で免税から課税になった事業者の経過措置)。
+// 2026-09-06 の実測では、画面が簡易課税の欄に「選択不可」と自分で書きながら
+// その欄に「· 最有利」を付け、税負担合計まで「最有利方式（簡易課税）で合算」と
+// 言っていた —— **選べないと宣言した方式で合計を出していた**。
+describe('compareBusinessTaxMethods — 方式の選択可否', () => {
+  /** 第5種 (サービス業・みなし仕入率 50%)、仕入が少ないので簡易 < 本則。 */
+  const segments = [{ type: 'service' as const, sales: { standard: 60_000_000, reduced: 0 } }];
+  const purchases = { standard: 6_000_000, reduced: 0 };
+
+  it('対照: 何も外さなければ従来どおり 3 方式から選ぶ', () => {
+    const c = compareBusinessTaxMethods(segments, purchases);
+    // 2 割特例 (売上税額 × 20%) がいちばん安い。
+    expect(c.best).toBe('twenty-percent');
+    expect(c.bestAmount).toBe(c.twentyPercent);
+  });
+
+  it('★ 2 割特例を外すと、残りから選ぶ (簡易 < 本則)', () => {
+    const c = compareBusinessTaxMethods(segments, purchases, undefined, { twentyPercent: false });
+    expect(c.best).toBe('simplified');
+    expect(c.bestAmount).toBe(c.simplified);
+  });
+
+  it('★ 両方外すと本則課税になる (いつでも選べるのは本則だけ)', () => {
+    const c = compareBusinessTaxMethods(segments, purchases, undefined, {
+      simplified: false,
+      twentyPercent: false,
+    });
+    expect(c.best).toBe('standard');
+    expect(c.bestAmount).toBe(c.standard);
+  });
+
+  it('★ 外しても 3 方式の金額そのものは出す (画面は 3 つ並べて見せる)', () => {
+    const all = compareBusinessTaxMethods(segments, purchases);
+    const limited = compareBusinessTaxMethods(segments, purchases, undefined, {
+      simplified: false,
+      twentyPercent: false,
+    });
+    expect(limited.standard).toBe(all.standard);
+    expect(limited.simplified).toBe(all.simplified);
+    expect(limited.twentyPercent).toBe(all.twentyPercent);
+    expect(limited.appliedDeemedRate).toBe(all.appliedDeemedRate);
+  });
+
+  it('簡易課税だけ外した場合は本則と 2 割特例から選ぶ', () => {
+    const c = compareBusinessTaxMethods(segments, purchases, undefined, { simplified: false });
+    expect(c.best).toBe('twenty-percent');
+  });
+
+  it('true を明示しても既定と同じ (省略と同義)', () => {
+    const explicit = compareBusinessTaxMethods(segments, purchases, undefined, {
+      simplified: true,
+      twentyPercent: true,
+    });
+    expect(explicit.best).toBe(compareBusinessTaxMethods(segments, purchases).best);
+  });
+
+  it('選べる方式が本則より高いときは本則のまま (安い方だけを採る)', () => {
+    // 仕入が多く本則が最安。簡易・2 割特例を許しても本則が勝つ。
+    const c = compareBusinessTaxMethods(segments, { standard: 55_000_000, reduced: 0 });
+    expect(c.best).toBe('standard');
+  });
+});

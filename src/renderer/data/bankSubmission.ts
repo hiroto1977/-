@@ -18,6 +18,8 @@ import {
   NEGATIVE_MARK,
   UNIT_LABEL,
   formatAmount,
+  formatScaled,
+  scaleAmount,
   formatCount,
   formatDate,
   formatFiscalPeriod,
@@ -263,7 +265,14 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
     rows: [
       row('総資産', fp === null ? BLANK : amt(fp.totalAssets)),
       row('負債合計', fp === null ? BLANK : amt(fp.totalLiabilities)),
-      row('純資産', fp === null ? BLANK : amt(fp.netAssets), fp !== null && fp.insolvent ? '債務超過' : '総資産 − 負債合計'),
+      // **印刷した 2 行の引き算で出す。** 円から別々に丸めると
+      // 「純資産 = 総資産 − 負債合計」が印刷した数字では成り立たない
+      // (実測 2026-09-06: 40 通りのうち 21 通りで 1 単位ずれた。`formatScaled` の注記)。
+      row(
+        '純資産',
+        fp === null ? BLANK : formatScaled(scaleAmount(fp.totalAssets, f) - scaleAmount(fp.totalLiabilities, f), f),
+        fp !== null && fp.insolvent ? '債務超過' : '総資産 − 負債合計',
+      ),
       row('自己資本比率', fp === null ? BLANK : pct(fp.equityRatioPct), '純資産 ÷ 総資産'),
       row('流動比率', fp === null ? BLANK : pct(fp.currentRatioPct), '流動資産 ÷ 流動負債'),
       row('当座比率', fp === null ? BLANK : pct(fp.quickRatioPct), '(流動資産 − 棚卸資産) ÷ 流動負債'),

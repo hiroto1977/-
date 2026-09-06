@@ -31,16 +31,16 @@ aliases:
 - [Post Keynesian Endogeneity of Money Supply — Procedia Economics and Finance (ScienceDirect)](https://www.sciencedirect.com/science/article/pii/S2212567113002177/pdf) `学術`
 
 ## 関連概念
-- [[econ-endogenous-money-post-keynesian-moore|内生的貨幣論——ムーアの信用貨幣観と中央銀行の利子率コントロール]] — 語彙が近い
 - [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 語彙が近い
+- [[econ-endogenous-money-post-keynesian-moore|内生的貨幣論——ムーアの信用貨幣観と中央銀行の利子率コントロール]] — 語彙が近い
 - [[econ-verdoorn-law|フェルドーンの法則（カルドア＝フェルドーンの法則）]] — 同じ思想家
 - [[econ-backwash-spread-myrdal|逆流効果と波及効果——ミュルダールの循環的累積的因果関係論]] — 同じ思想家
 - [[econ-balance-of-payments-constraint-thirlwall|サールウォールの法則——国際収支制約のもとでの長期成長率]] — 同じ思想家
 - [[econ-bowleys-law|ボーリーの法則——労働分配率はなぜか一定に保たれる]] — 同じ思想家
-- [[econ-cobweb|クモの巣理論]] — 同じ思想家
-- [[econ-cobweb-model-agricultural-cycles|くもの巣モデル——農産物市場の価格循環と動学的不安定性の分析]] — 同じ思想家
-- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]] — 同じ思想家
+- [[econ-cobweb-model-ezekiel-nerlove|くもの巣モデル（コブウェブ定理）——生産の遅れと素朴な期待が農産物価格の収束・発散・循環を生む動学モデル]] — 同じ思想家
+- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——勝者が敗者を補償してなお余剰が残るなら改善とみなす潜在的パレート改善で、費用便益分析の理論的基礎]] — 同じ思想家
 - [[econ-kaldor-nonlinear-cycle|カルドアの非線形景気循環モデル——投資と貯蓄の非線形性が生む内生的循環]] — 同じ思想家
+- [[econ-kaldor-stylized-facts-growth|カルドアの定型化された事実——長期成長に見られる6つの経験的規則性]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

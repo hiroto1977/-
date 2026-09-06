@@ -26,7 +26,7 @@ aliases:
 ロジャー・フィドラー ／ マーシャル・マクルーハン ／ ニコラス・ネグロポンテ ／ ジェイ・ボルター
 
 ## 出典
-- [Fidler, R. (1997) Mediamorphosis: Understanding New Media — Pine Forge Press](https://www.worldcat.org/oclc/36126237) `学術`
+- [Fidler, R. (1997) Mediamorphosis: Understanding New Media — Pine Forge Press](https://www.worldcat.org/oclc/36126237) `リファレンス`
 - [Wikipedia: Mediamorphosis — coevolution, metamorphosis, propagation, new media](https://en.wikipedia.org/wiki/Mediamorphosis) `リファレンス`
 
 ## 関連概念

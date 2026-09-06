@@ -4,6 +4,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { SERVICES, CATEGORY_LABEL, type ServiceCategory } from '../services';
 import { summarizeConnections } from '../data/connectionStatus';
 import { BackupPanel } from '../components/BackupPanel';
+import { RecordShapeAuditPanel } from '../components/RecordShapeAuditPanel';
 import { CloudSyncPanel } from '../components/CloudSyncPanel';
 import { ParametersPanel } from '../components/ParametersPanel';
 import { PARAMETERS } from '../../shared/parameters';
@@ -15,6 +16,7 @@ import { credentialUseOf, unusedStoredCredentials } from '../../shared/credentia
 import { EVICTION_RECOVERY, isEvictableStorage } from '../../shared/storageDurability';
 import type { ServiceId } from '../../shared/serviceId';
 import { inspectStoredProxyConfig, setProxyConfig, type ProxyConfig } from '../network/proxy';
+import { deviceStoreFailureMessage, reportDeviceStoreFailure } from '../data/deviceStoreFailure';
 import {
   MAX_PROXY_SECRET_LENGTH,
   MAX_PROXY_URL_LENGTH,
@@ -133,7 +135,8 @@ const SLOTS: readonly CredentialSlot[] = [
   },
 ];
 
-function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChange: () => void }) {
+/** 保管庫スロット 1 行。**jsdom の検査から直接 mount するため export している。** */
+export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChange: () => void }) {
   const [configured, setConfigured] = useState<boolean | null>(null);
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState('');
@@ -175,10 +178,17 @@ function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChange: () 
   async function clear() {
     if (!confirm(`${slot.label} を削除しますか?`)) return;
     setBusy(true);
+    setErr(null);
     try {
+      // **削除の失敗を黙らない。** 保管庫は施錠中なら投げ (`vault.clearToken`)、
+      // IndexedDB も容量やプライベートモードで失敗しうる。捨てると
+      // 「消したつもりの資格情報が残っている」状態になる (main の
+      // `secrets:clear` は同じ理由で `{ ok: false }` を返している)。
       await getVault().clearToken(slot.vaultKey);
       await refresh();
       onChange();
+    } catch (e) {
+      setErr(`削除できませんでした: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
       setBusy(false);
     }
@@ -594,7 +604,10 @@ function ConnectionHub({ refreshKey }: { refreshKey: number }) {
       .then((ids) => {
         if (!cancelled) setConfigured(new Set(ids));
       })
-      .catch(() => {
+      .catch((err: unknown) => {
+        // 読めなかっただけで「1 件も設定していない」と見せない —— 一覧の札は
+        // 画面上端の報せが訂正する (`data/deviceStoreFailure.ts` の settings)。
+        reportDeviceStoreFailure('settings', 'read', 'credentials', err);
         if (!cancelled) setConfigured(new Set());
       });
     return () => {
@@ -687,9 +700,13 @@ function ConnectionHub({ refreshKey }: { refreshKey: number }) {
  * 該当が無ければ何も描かない。「0 件です」を常時出すと、他の警告と混ざって
  * 読み飛ばされる。
  */
-function UnusedCredentialSection({ refreshKey }: { refreshKey: number }) {
+/** 使われていない資格情報の一覧。**jsdom の検査から直接 mount するため export している。** */
+export function UnusedCredentialSection({ refreshKey }: { refreshKey: number }) {
   const [ids, setIds] = useState<readonly ServiceId[] | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
+  const [forgetError, setForgetError] = useState<string | null>(null);
+  /** 一覧が読めなかった理由。**0 件と混ぜない** (この節は 0 件に意味がある)。 */
+  const [unreadable, setUnreadable] = useState<string | null>(null);
 
   const reload = useCallback(async () => {
     const hub = window.serviceHub;
@@ -699,7 +716,16 @@ function UnusedCredentialSection({ refreshKey }: { refreshKey: number }) {
     }
     try {
       setIds(unusedStoredCredentials(await hub.listConfigured()));
-    } catch {
+      setUnreadable(null);
+    } catch (err) {
+      /*
+       * **この節は「0 件」に意味がある。** 預かりを減らすための節なので、
+       * 読めなかっただけで空にすると「減らす物は無い」と読めてしまう。
+       * 理由をこの場に出し (節が消えるので上端の報せだけでは足りない)、
+       * 経路にも写す。
+       */
+      setUnreadable(deviceStoreFailureMessage('settings', 'read', err));
+      reportDeviceStoreFailure('settings', 'read', 'credentials', err);
       setIds([]);
     }
   }, []);
@@ -708,21 +734,49 @@ function UnusedCredentialSection({ refreshKey }: { refreshKey: number }) {
     void reload();
   }, [reload, refreshKey]);
 
+  // `forget` から呼ぶので、宣言はその前に置く (早期 return の後ろだと TDZ を踏みうる)。
+  const labelOf = (id: ServiceId) => SERVICES.find((s) => s.id === id)?.label ?? id;
+
   const forget = async (id: ServiceId) => {
     const hub = window.serviceHub;
     if (!hub) return;
     setBusy(id);
+    setForgetError(null);
     try {
-      await hub.clearToken(id);
+      // **戻り値を見る。** main の `secrets:clear` は「削除の失敗を黙ると
+      // 『消したつもりの資格情報が残っている』状態になる」から `{ ok: false }` を
+      // 返す設計で、ここがそれを捨てていた (2026-09-06)。預かりを減らす画面が
+      // 減らせていないことを黙るのは、この節の目的そのものに反する。
+      const res = await hub.clearToken(id);
+      if (!res.ok) {
+        setForgetError(`${labelOf(id)} を削除できませんでした: ${res.message}`);
+        return;
+      }
       await reload();
+    } catch (e) {
+      setForgetError(`${labelOf(id)} を削除できませんでした: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
       setBusy(null);
     }
   };
 
+  /*
+   * **読めなかったときは、節を消さずに理由を出す。** 0 件で消すと
+   * 「減らす物は無い」と読めるが、そもそも数えられていない。
+   */
+  if (unreadable !== null) {
+    return (
+      <section data-unused-credentials>
+        <h3 style={{ margin: '0 0 8px', fontSize: 14 }}>使われていない資格情報</h3>
+        <div role="alert" data-unused-unreadable style={{ fontSize: 12, color: '#fbbf24', lineHeight: 1.7 }}>
+          ⚠ {unreadable}
+        </div>
+      </section>
+    );
+  }
+
   if (ids === null || ids.length === 0) return null;
 
-  const labelOf = (id: ServiceId) => SERVICES.find((s) => s.id === id)?.label ?? id;
 
   return (
     <section data-unused-credentials>
@@ -732,6 +786,15 @@ function UnusedCredentialSection({ refreshKey }: { refreshKey: number }) {
         保存したままにしても接続はされず、預かっているぶんだけ漏えいの面が広がります。
         削除しても表示中のデータは変わりません。
       </div>
+      {forgetError !== null && (
+        <div
+          role="alert"
+          data-forget-error
+          style={{ fontSize: 12, color: '#e5484d', marginBottom: 8, lineHeight: 1.6 }}
+        >
+          ⛔ {forgetError}（預かりは減っていません）
+        </div>
+      )}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         {ids.map((id) => (
           <div key={id} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
@@ -801,6 +864,8 @@ export function SettingsPage() {
       </Section>
 
       <BackupPanel />
+
+      <RecordShapeAuditPanel />
 
       <CloudSyncPanel />
 
@@ -1096,7 +1161,8 @@ function UpdateSection() {
   );
 }
 
-function ProxySection() {
+/** 検査のために公開 (実物の札と文面を jsdom で確かめる)。 */
+export function ProxySection() {
   const [cfg, setCfg] = useState<ProxyConfig | null>(null);
   const [url, setUrl] = useState('');
   const [secret, setSecret] = useState('');
@@ -1106,9 +1172,18 @@ function ProxySection() {
   // 「保存はされているが、今の規則では使えない」状態。黙って未設定に見せると
   // 利用者はプロキシが効かない理由に辿り着けない。
   const [rejected, setRejected] = useState<ProxyEndpointFailure | null>(null);
+  /**
+   * **「未設定」と「確認できない」を分ける。**
+   *
+   * 保管先 (IndexedDB) が開けないと `config` は `null` になる。それを「未設定」の
+   * 札で見せると、**設定した本人に「登録してください」と言う**ことになり、
+   * URL と共有シークレットを打ち直した末に同じ所で失敗する。
+   */
+  const [unreadable, setUnreadable] = useState<string | null>(null);
 
   async function refresh() {
-    const { config, rejected: why } = await inspectStoredProxyConfig();
+    const { config, rejected: why, unreadable: cause } = await inspectStoredProxyConfig();
+    setUnreadable(cause === null ? null : deviceStoreFailureMessage('settings', 'read', cause));
     setCfg(config);
     setRejected(why);
     setUrl(config?.url ?? '');
@@ -1136,7 +1211,15 @@ function ProxySection() {
 
   async function disconnect() {
     if (!confirm('プロキシ設定を削除しますか?')) return;
-    await setProxyConfig(null);
+    setErr(null);
+    setMsg(null);
+    try {
+      await setProxyConfig(null);
+    } catch (e) {
+      // 消せていないので「削除しました」とは言わない。設定はそのまま残る。
+      setErr(deviceStoreFailureMessage('settings', 'delete', e));
+      return;
+    }
     await refresh();
     setMsg('プロキシ設定を削除しました');
   }
@@ -1148,7 +1231,9 @@ function ProxySection() {
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>BYO プロキシ</div>
-            {cfg ? (
+            {unreadable !== null ? (
+              <span data-proxy-unreadable style={{ fontSize: 10, padding: '2px 6px', background: '#fbbf24', color: '#000', borderRadius: 4 }}>確認できません</span>
+            ) : cfg ? (
               <span style={{ fontSize: 10, padding: '2px 6px', background: '#22c55e', color: '#fff', borderRadius: 4 }}>設定済み</span>
             ) : (
               <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--bg)', color: 'var(--text-mute)', border: '1px solid var(--border)', borderRadius: 4 }}>未設定</span>
@@ -1249,6 +1334,15 @@ function ProxySection() {
         </div>
       )}
 
+      {unreadable !== null && (
+        <div
+          role="alert"
+          data-proxy-unreadable-reason
+          style={{ fontSize: 11, color: '#fbbf24', marginTop: 6, lineHeight: 1.6 }}
+        >
+          ⚠ {unreadable}
+        </div>
+      )}
       {rejected !== null && (
         <div
           data-proxy-rejected
@@ -1266,16 +1360,31 @@ function ProxySection() {
 
 // --- Phase D2: File System Access -------------------------------------
 
-function FsaSection() {
+/** 検査のために公開 (同上)。 */
+export function FsaSection() {
   const supported = isFsaSupported();
   const [hasHandle, setHasHandle] = useState<boolean | null>(null);
   const [permission, setPermission] = useState<string>('unknown');
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  /**
+   * **「フォルダ未設定」と「確認できない」を分ける。** handle の保管先が開けない
+   * だけで「未設定」の札を出すと、**設定した本人に選び直させる**ことになる
+   * (しかも選び直しても同じ所で失敗する)。書き出し側 (`fs/folderMirror.ts`) は
+   * この区別を持っていたのに、1 つ下の層が `null` に丸めていた。
+   */
+  const [unreadable, setUnreadable] = useState<string | null>(null);
 
   async function refresh() {
     if (!supported) return;
-    const loaded = await loadFolderHandle();
+    let loaded: Awaited<ReturnType<typeof loadFolderHandle>>;
+    try {
+      loaded = await loadFolderHandle();
+    } catch (e) {
+      setUnreadable(deviceStoreFailureMessage('settings', 'read', e));
+      return;
+    }
+    setUnreadable(null);
     setHasHandle(loaded !== null);
     setPermission(loaded?.permission ?? 'unknown');
   }
@@ -1300,7 +1409,15 @@ function FsaSection() {
   }
 
   async function regrant() {
-    const loaded = await loadFolderHandle();
+    setErr(null);
+    setMsg(null);
+    let loaded: Awaited<ReturnType<typeof loadFolderHandle>>;
+    try {
+      loaded = await loadFolderHandle();
+    } catch (e) {
+      setErr(deviceStoreFailureMessage('settings', 'read', e));
+      return;
+    }
     if (!loaded) return;
     const r = await ensurePermission(loaded.handle);
     if (r === 'granted') setMsg('権限を再取得しました');
@@ -1310,7 +1427,15 @@ function FsaSection() {
 
   async function disconnect() {
     if (!confirm('フォルダ連携を解除しますか?')) return;
-    await clearFolderHandle();
+    setErr(null);
+    setMsg(null);
+    try {
+      await clearFolderHandle();
+    } catch (e) {
+      // 解除できていないので「解除しました」とは言わない (連携はそのまま)。
+      setErr(deviceStoreFailureMessage('settings', 'delete', e));
+      return;
+    }
     setMsg('連携を解除しました');
     await refresh();
   }
@@ -1325,19 +1450,25 @@ function FsaSection() {
             {!supported && (
               <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--bg)', color: 'var(--text-mute)', border: '1px solid var(--border)', borderRadius: 4 }}>非対応ブラウザ</span>
             )}
-            {supported && hasHandle && permission === 'granted' && (
+            {supported && unreadable === null && hasHandle && permission === 'granted' && (
               <span style={{ fontSize: 10, padding: '2px 6px', background: '#22c55e', color: '#fff', borderRadius: 4 }}>有効</span>
             )}
-            {supported && hasHandle && permission !== 'granted' && (
+            {supported && unreadable === null && hasHandle && permission !== 'granted' && (
               <span style={{ fontSize: 10, padding: '2px 6px', background: '#fbbf24', color: '#000', borderRadius: 4 }}>権限再要求</span>
             )}
-            {supported && !hasHandle && (
+            {supported && unreadable === null && !hasHandle && (
               <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--bg)', color: 'var(--text-mute)', border: '1px solid var(--border)', borderRadius: 4 }}>未設定</span>
+            )}
+            {supported && unreadable !== null && (
+              <span data-fsa-unreadable style={{ fontSize: 10, padding: '2px 6px', background: '#fbbf24', color: '#000', borderRadius: 4 }}>確認できません</span>
             )}
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.5 }}>
             設定すると、「ライブラリ」に加えて PC の指定フォルダにも自動保存します。
             Chrome / Edge / Opera のみ対応。Safari / Firefox は非対応のため Library のみ。
+            <strong>フォルダの許可はブラウザを再起動すると切れることがあります</strong>
+            （そのときは上の「権限を再取得」で取り直してください）。書き込めなかった場合は、
+            書き出した画面に理由が出ます。
           </div>
         </div>
       </div>
@@ -1362,6 +1493,11 @@ function FsaSection() {
         </div>
       )}
 
+      {unreadable !== null && (
+        <div role="alert" data-fsa-unreadable-reason style={{ fontSize: 11, color: '#fbbf24', marginTop: 6, lineHeight: 1.6 }}>
+          ⚠ {unreadable}
+        </div>
+      )}
       {msg && <div style={{ fontSize: 11, color: '#22c55e', marginTop: 6 }}>{msg}</div>}
       {err && <div style={{ fontSize: 11, color: '#ef4444', marginTop: 6 }}>{err}</div>}
     </div>
@@ -1378,6 +1514,13 @@ function GoogleOAuthSection() {
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  /** 消し切れなかった一時秘密の鍵名。空なら全部消えた。 */
+  const [leftover, setLeftover] = useState<readonly string[]>([]);
+
+  /** 後片付けの結果を画面へ (残ったら「タブを閉じて」まで言う)。 */
+  function sweep(): void {
+    setLeftover(clearPkceSession());
+  }
 
   async function start() {
     setErr(null);
@@ -1389,12 +1532,21 @@ function GoogleOAuthSection() {
     const secrets = await generatePkce();
     // 必須: token exchange まで verifier を保持。置き場所と消し方は
     // `oauth/pkceSession.ts` に 1 つだけ持つ (2026-08-23)。
-    savePkceSession({
-      verifier: secrets.verifier,
-      state: secrets.state,
-      clientId,
-      redirectUri,
-    });
+    //
+    // **保存に失敗したら、ここで止めて理由を出す。** `onClick={start}` は
+    // async なので、投げたまま抜けると拒否が宙に浮き**画面には何も出ない**
+    // (押しても認可 URL が現れないだけ)。2026-09-06 実測。
+    try {
+      savePkceSession({
+        verifier: secrets.verifier,
+        state: secrets.state,
+        clientId,
+        redirectUri,
+      });
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+      return;
+    }
     const url = buildGoogleAuthUrl(
       { clientId, scopes: [...GOOGLE_SCOPES.drive, ...GOOGLE_SCOPES.calendar, ...GOOGLE_SCOPES.gmail], redirectUri },
       secrets,
@@ -1453,7 +1605,12 @@ function GoogleOAuthSection() {
       // 掃除が無く、`state` 不一致 (= CSRF の疑い) や通信断で落ちたときに
       // **いちばん消したい verifier が残った**。verifier は単回使用なので、
       // ここで消しても正常系は失われない (やり直しは認可からになる)。
-      clearPkceSession();
+      //
+      // **後片付けは投げない。** 投げていた頃 (2026-09-06 に直す前) は保存領域を
+      // 断られた端末で `finally` から例外が出て、上の catch が立てた本当の理由を
+      // 投げ替え、この 1 行下の `setBusy(false)` も飛ばしてボタンが
+      // 「交換中…」で固まった。消し残りは `sweep()` が画面へ回す。
+      sweep();
       setBusy(false);
     }
   }
@@ -1519,13 +1676,29 @@ function GoogleOAuthSection() {
                 setAuthUrl(null);
                 setCode('');
                 // 4 つまとめて消す。以前は verifier だけ消して 3 つ残していた。
-                clearPkceSession();
+                sweep();
               }}
               style={btn()}
             >
               キャンセル
             </button>
           </div>
+        </div>
+      )}
+
+      {/*
+        消し残しは**必ず出す**。`code_verifier` は RFC 7636 の秘密で、消せていない
+        なら「消えたつもり」でいてはいけない。`sessionStorage` はタブ単位なので、
+        利用者の打ち手は「このタブを閉じる」で確実に効く。
+      */}
+      {leftover.length > 0 && (
+        <div
+          role="alert"
+          data-pkce-leftover
+          style={{ fontSize: 11, color: '#fbbf24', marginTop: 6, lineHeight: 1.6 }}
+        >
+          ⚠ 認可に使った一時情報をこのブラウザから消せませんでした ({leftover.join(' / ')})。
+          このタブを閉じると消えます。閉じるまでは開いたままにしないでください。
         </div>
       )}
 

@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-bounded-rationality|限定合理性]] — 同分野の近傍
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-yerkes-dodson-law|ヤーキーズ＝ドッドソンの法則——覚醒水準とパフォーマンスの逆U字関係]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

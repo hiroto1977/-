@@ -26,14 +26,14 @@ aliases:
 導入期・成長期・成熟期・衰退期の4段階／各段階で異なるマーケティング戦略／T.レビット1965 HBRが普及（起源は諸説、ディーン1950が先行）／全製品が同曲線ではないとの批判
 
 ## 出典
-- [Theodore Levitt, "Exploit the Product Life Cycle", Harvard Business Review, 1965（概念を実務に普及させた一次文献）](https://hbr.org/1965/11/exploit-the-product-life-cycle) `学術`
+- [Theodore Levitt, "Exploit the Product Life Cycle", Harvard Business Review, 1965（概念を実務に普及させた一次文献）](https://hbr.org/1965/11/exploit-the-product-life-cycle) `メディア`
 - [SpringerLink（The Palgrave Encyclopedia of Strategic Management）"Product Life Cycle"（定義・4段階）](https://link.springer.com/rwe/10.1007/978-1-349-58802-2_1344) `学術`
 - [学術論文 "Origins and Development of the Product Life Cycle Concept"（起源と発展・批判の整理）](https://core.ac.uk/download/pdf/62433731.pdf) `学術`
 - [オープン教科書 "A Great Marketing Textbook"（4段階と全製品同曲線ではない点）](https://pressbooks.pub/agreatmarketingtextbook/chapter/introduction-to-product-life-cycle/) `学術`
 
 ## 関連概念
-- [[mgmt-innovation-s-curve-foster|イノベーションのSカーブとテクノロジーサイクル——技術的限界と不連続的イノベーションの経営戦略]] — 同分野の近傍
 - [[mgmt-pest-analysis|PEST分析（PESTLE分析）]] — 同分野の近傍
+- [[mgmt-innovation-s-curve-foster|イノベーションのSカーブとテクノロジーサイクル——技術的限界と不連続的イノベーションの経営戦略]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -35,9 +35,9 @@ aliases:
 - [[bizlaw-agency-of-necessity|緊急代理——緊急時に権限なくして本人を拘束しうる法理]] — 同じ思想家
 - [[bizlaw-del-credere-agent|デル・クレデレ代理商——買主の支払を保証する代理人]] — 同じ思想家
 - [[bizlaw-privity-of-contract|契約の相対効の原則（プリビティ・オブ・コントラクト）]] — 同分野の近傍
+- [[bizlaw-act-on-electronic-contract|電子契約法（電子消費者契約に関する民法の特例法）]] — 同分野の近傍
 - [[bizlaw-nachfrist|ナッハフリスト制度（付加期間催告による解除）]] — 同分野の近傍
 - [[bizlaw-standard-terms|定型約款（民法548条の2）]] — 同分野の近傍
-- [[bizlaw-act-on-electronic-contract|電子契約法（電子消費者契約に関する民法の特例法）]] — 同分野の近傍
 - [[bizlaw-labor-collective-bargaining-law|集団的労使関係法と団体交渉——労働組合の法的地位・不当労働行為・労働協約の国際比較]] — 同分野の近傍
 
 ## 関連

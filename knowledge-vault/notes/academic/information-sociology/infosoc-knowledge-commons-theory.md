@@ -33,6 +33,7 @@ Charlotte Hess ／ Elinor Ostrom ／ Brett M. Frischmann ／ Michael J. Madison 
 
 ## 関連概念
 - [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — 語彙が近い
+- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 語彙が近い
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 同じ思想家
 - [[infosoc-information-commons-theory|情報コモンズ理論]] — 同じ思想家
 - [[econ-new-institutional-economics|新制度派経済学]] — 同じ思想家

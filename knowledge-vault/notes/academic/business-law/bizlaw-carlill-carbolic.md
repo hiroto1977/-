@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Offer and acceptance — unilateral contract, offer to the world (Carlill), acceptance by performance](https://en.wikipedia.org/wiki/Offer_and_acceptance) `リファレンス`
 
 ## 関連概念
+- [[bizlaw-letter-of-comfort|念書（レター・オブ・コンフォート）——保証に至らない安心の供与]] — 同分野の近傍
 - [[bizlaw-nuisance|ニューサンス（生活妨害）——土地の使用収益に対する不当な干渉の不法行為]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

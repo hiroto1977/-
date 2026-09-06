@@ -33,8 +33,16 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
+      # 単体テストとブラウザ版ビルドに Electron 本体 (バイナリ、~100 MB) は要らない。
+      # 2026-09-05 の run 33948541144 は、この取得がランナー側で失敗して
+      # property.test.ts (実物の electron を読む唯一のテストだった) だけが落ちた —
+      # コードは何も変わっていないのに赤くなる、網羅性ゼロの失敗。取得を止めれば
+      # その芽が消えて速くもなる。実物が要る e2e.yml / release.yml は従来どおり取得する。
+      # 実物を読むテストが増えたら「Electron failed to install correctly」で**決定的に**
+      # 落ちる (偶発ではなく) — main のテストは electron を vi.mock する。
       - run: npm ci
-
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
 
       # 依存の既知脆弱性。**出荷される依存 (prod) の high / critical だけ**を落とす。
       #
@@ -78,6 +86,7 @@ jobs:
       - run: npm run lint:ipc-handlers
       - run: npm run lint:mutation-scope
       - run: npm run lint:collection-time
+      - run: npm run lint:parameter-prose
       - run: npm run lint:rate-freshness
       - run: npm run verify:orchestration
       - run: npm run vault:check

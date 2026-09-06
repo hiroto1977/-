@@ -37,8 +37,8 @@ aliases:
 - [[human-purkinje-effect|プルキニェ現象——明るさが変わると色の見え方の明暗が逆転する]] — 同じ思想家
 - [[human-trichromatic-young-helmholtz|ヤング＝ヘルムホルツの三色説——色覚の三種類の受容体]] — 同じ思想家
 - [[human-troxler-fading|トロクスラー効果——固視によって周辺視野の刺激が消失する現象]] — 同じ思想家
-- [[human-identifiable-victim|特定可能な被害者効果（Identifiable Victim Effect）]] — 同分野の近傍
 - [[human-fresh-start-effect|フレッシュスタート効果]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

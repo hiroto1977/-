@@ -31,10 +31,9 @@ aliases:
 
 ## 関連概念
 - [[human-moral-disengagement|道徳的離脱（モラル・ディスエンゲージメント）]] — 同じ思想家
-- [[human-self-efficacy-bandura-social-learning|自己効力感と社会的学習理論——バンデューラによる行動・認知・環境の三者相互決定論]] — 同じ思想家
-- [[human-self-efficacy-performance-bandura|自己効力感と目標設定・パフォーマンスの社会認知理論（バンデューラ）]] — 同じ思想家
+- [[human-self-efficacy-theory|自己効力感（バンデューラ）——課題を遂行できるという自分への信念が行動の開始・持続・努力量を規定し、四つの源泉から形成される]] — 同じ思想家
 - [[human-bias-blind-spot|バイアスの盲点]] — 同分野の近傍
-- [[human-attachment-adult-hazan-shaver|成人愛着スタイル（ハザン＆シェイバー）と親密関係の研究]] — 同分野の近傍
+- [[human-developmental-psychology-vygotsky|文化歴史的発達理論——ヴィゴツキーの最近接発達領域と社会的学習の認知科学]] — 同分野の近傍
 - [[human-metacognition|メタ認知（Metacognition）]] — 同分野の近傍
 
 ## 関連

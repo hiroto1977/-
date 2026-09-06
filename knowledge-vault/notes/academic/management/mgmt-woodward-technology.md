@@ -35,7 +35,6 @@ aliases:
 - [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同じ思想家
 - [[mgmt-open-innovation|オープン・イノベーション]] — 同分野の近傍
 - [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]] — 同分野の近傍
-- [[mgmt-thompson-technology-typology|トンプソンの技術類型——技術が規定する相互依存と調整の様式]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

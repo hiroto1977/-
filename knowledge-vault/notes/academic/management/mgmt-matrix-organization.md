@@ -27,12 +27,12 @@ aliases:
 
 ## 出典
 - [Encyclopaedia Britannica (Money) — “Matrix organization: Advantages & Disadvantages”（定義・二重報告・利点欠点）](https://www.britannica.com/money/matrix-organization) `リファレンス`
-- [Davis, S. M. & Lawrence, P. R. (1978) “Problems of Matrix Organizations,” Harvard Business Review（古典論文）](https://hbr.org/1978/05/problems-of-matrix-organizations) `学術`
+- [Davis, S. M. & Lawrence, P. R. (1978) “Problems of Matrix Organizations,” Harvard Business Review（古典論文）](https://hbr.org/1978/05/problems-of-matrix-organizations) `メディア`
 - [Project Management Institute (PMI) — “The Matrix Organization”（航空宇宙起源・構造の進化）](https://www.pmi.org/learning/library/matrix-organization-structure-reason-evolution-1837) `学術`
 
 ## 関連概念
 - [[bizlaw-de-facto-merger-doctrine|事実上の合併の法理（デ・ファクト・マージャー法理）]] — 同じ思想家
-- [[mgmt-organizational-ambidexterity-raisch|組織的アンビデクストリティの実現メカニズム——ライシュの構造的・文脈的アプローチ統合]] — 同分野の近傍
+- [[mgmt-information-processing-galbraith|組織の情報処理理論——不確実性に応じた情報処理能力の設計]] — 同分野の近傍
 - [[mgmt-administrative-theory-fayol|ファヨールの管理過程論——管理の五機能と十四の管理原則]] — 同分野の近傍
 - [[mgmt-dynamic-pricing|ダイナミック・プライシング]] — 同分野の近傍
 

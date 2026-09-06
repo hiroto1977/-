@@ -32,8 +32,8 @@ Edward T. Hall ／ Allen C. Bluedorn ／ Carol Kaufman-Scarborough
 - [Kaufman-Scarborough — Polychronicity Research Overview, Rutgers University](https://crab.rutgers.edu/users/ckaufman/polychronicity.html) `学術`
 
 ## 関連概念
-- [[mgmt-organizational-ambivalence-theory|組織的アンビバレンス理論]] — 同分野の近傍
 - [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -30,9 +30,8 @@ aliases:
 - [The Slow Journalism Company / Delayed Gratification — スロー・ジャーナリズムを標榜する英国の長文ジャーナリズム誌（実践例）](https://www.slow-journalism.com/) `メディア`
 
 ## 関連概念
-- [[infosoc-clickbait-attention-economy|クリックベイト・ジャーナリズムとアテンション・エコノミー]] — 同分野の近傍
 - [[infosoc-citizen-journalism|市民ジャーナリズム]] — 同分野の近傍
-- [[infosoc-attention-economy-goldhaber|注意経済（ゴールドハーバー）]] — 同分野の近傍
+- [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

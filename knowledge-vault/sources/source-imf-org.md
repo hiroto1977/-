@@ -10,7 +10,7 @@ tags:
 
 # imf.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **49 件**（公的 44 ・ 学術 3 ・ リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **49 件**（公的 45 ・ 学術 3 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -25,7 +25,7 @@ tags:
 - [[econ-currency-crisis-first-generation|通貨危機の第一世代・第二世代・第三世代モデル——国際資本移動と新興国脆弱性]] — IMF(2012)TheLiberalizationandManagementofCapitalFlows—IMFPolicyPaper
 - [[econ-debt-deflation-theory|債務デフレ理論]] — IMFWorldEconomicOutlook(April2012).DealingwithHouseholdDebt.Chapter3.
 - [[econ-double-coincidence-of-wants|欲望の二重の一致]] — IMFFinance&Development"BacktoBasics:WhatIsMoney?"（欲望の二重の一致と貨幣の起源）
-- [[econ-dutch-disease-theory|オランダ病理論]] — IMFWorkingPaperWP/12/28—"TheDutchDisease:TooMuchWealthManagedUnwisely…
+- [[econ-dutch-disease-corden|オランダ病（コーデン＝ニアリー）——資源ブームが支出効果と資源移動効果で交易財部門を萎縮させる脱工業化のメカニズム]] — IMFWorkingPaperWP/12/28(2012)TheDutchDisease:TooMuchWealthManagedUnwi…
 - [[econ-expenditure-switching|支出転換政策と支出削減政策：内外均衡の同時達成]] — IMFStaffPapers—HistoryofBalanceofPaymentsTheory
 - [[econ-fear-of-floating|変動相場回避（フィア・オブ・フローティング）]] — IMFFinance&Development—ChoosinganExchangeRateRegime(dejurevsdefacto)
 - [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — IMFFinance&Development(1999)—FiscalFederalism（定義・分権化定理・各国政策応用の概説）

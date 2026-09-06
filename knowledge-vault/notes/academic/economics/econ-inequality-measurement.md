@@ -26,22 +26,22 @@ aliases:
 アンソニー・アトキンソン ／ トマ・ピケティ ／ コッラード・ジーニ
 
 ## 出典
-- [Atkinson 1970 — On the Measurement of Inequality, Journal of Economic Theory 2(3):244-263](https://doi.org/10.1016/0022-0531(70)90039-6) `学術`
 - [Lorenz 1905 — Methods of Measuring the Concentration of Wealth, Publications of the American Statistical Association 9(70):209-219](https://www.jstor.org/stable/2276207) `学術`
+- [Atkinson 1970 — On the Measurement of Inequality, Journal of Economic Theory 2(3):244-263](https://doi.org/10.1016/0022-0531(70)90039-6) `学術`
 - [Piketty 2014 — Capital in the Twenty-First Century, Harvard University Press](https://www.hup.harvard.edu/books/9780674430006) `リファレンス`
 - [World Inequality Database (WID.world) — 所得・富の長期不平等統計データベース](https://wid.world/) `リファレンス`
 
 ## 関連概念
 - [[econ-gini-coefficient|ジニ係数とローレンツ曲線]] — 同じ思想家
-- [[econ-income-inequality-piketty|所得格差と資本収益率の長期分析——ピケティの資本論]] — 同じ思想家
-- [[econ-inequality-piketty-capital21|不平等と資本——ピケティの「r>g」命題と21世紀の富の集中]] — 同じ思想家
-- [[econ-optimal-taxation-mirrlees-diamond|最適課税論——効率性と公平性のトレードオフにおける税制設計]] — 同じ思想家
+- [[econ-inequality-piketty-capital21|ピケティの r＞g（『21世紀の資本』）——資本収益率が成長率を上回り続ける限り富は労働所得より速く蓄積し、格差は構造的に拡大する]] — 同じ思想家
 - [[econ-fiscal-sustainability-domar|財政の持続可能性とドーマー条件]] — 同じ思想家
 - [[econ-atkinson-stiglitz-theorem|アトキンソン＝スティグリッツの定理——最適な所得税があれば物品税はいらない]] — 同じ思想家
-- [[econ-elasticity-substitution-ces-arrow|CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化]] — 同じ思想家
 - [[econ-income-distribution-gini-lorenz|所得分配とジニ係数・ローレンツ曲線——不平等計測の理論と政策含意]] — 同じ思想家
+- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（マーリーズ）——政府が個人の能力を観察できない情報制約の下で、再分配と効率の二律背反を最小化する税率構造を導く]] — 同じ思想家
 - [[econ-theil-index-inequality|タイル指数——情報理論にもとづく分解可能な不平等尺度]] — 同じ思想家
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 出典を共有
+- [[econ-economic-sociology-granovetter|経済行動の埋め込み（グラノヴェッター）]] — 出典を共有
+- [[econ-evolutionary-economics-nelson-winter|進化経済学（Evolutionary Economics）：ネルソン＆ウィンターのルーティンと組織能力論]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

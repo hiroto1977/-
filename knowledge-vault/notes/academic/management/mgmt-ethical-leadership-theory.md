@@ -32,8 +32,9 @@ Michael E. Brown ／ Linda K. Treviño ／ David A. Harrison
 - [Treviño, Hartman & Brown (2000) Moral Person — CMR](https://journals.sagepub.com/doi/10.2307/41166057) `学術`
 
 ## 関連概念
-- [[mgmt-institutional-isomorphism|制度的同型化]] — 同分野の近傍
+- [[mgmt-burke-litwin-causal-model-organizational-change|バーク＝リトウィン・モデル——外部環境から個人業績までを12要因の因果連鎖で結ぶ組織診断モデル]] — 同分野の近傍
 - [[mgmt-creative-self-efficacy|創造的自己効力感]] — 同分野の近傍
+- [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

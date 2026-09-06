@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[human-appraisal-theory-of-emotion|感情の評価理論]] — 語彙が近い
 - [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]] — 同じ思想家
+- [[human-general-adaptation-syndrome-selye|汎適応症候群——警告反応期・抵抗期・疲憊期を経る非特異的ストレス反応]] — 同じ思想家
 - [[human-schachter-singer-two-factor|シャクター＝シンガー二要因説——生理的喚起の認知的解釈が情動を決める]] — 同じ思想家
 - [[human-stress-coping|ストレスとコーピング（ラザルス）]] — 同じ思想家
 - [[human-developmental-niche-theory|発達的ニッチ理論（Super & Harkness）]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[infosoc-cultivation-theory|培養理論（カルティベーション理論, cultivation theory）]] — 出典を共有
 - [[infosoc-hyperpersonal|ハイパーパーソナル・モデル]] — 出典を共有
 - [[infosoc-media-framing|フレーミング（メディアのフレーム分析, framing）]] — 出典を共有
-- [[mgmt-barley-technology-occasion-structuring|構造化の契機としての技術（バーレイのCTスキャナー研究）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,11 +32,30 @@ export const NATIONAL_SHARE = 0.78;
 export const LOCAL_RATIO = 22 / 78;
 
 /**
+ * 国税分の割合の下限。**この値で割るので 0 は許せない。**
+ *
+ * `localRatioOf` は地方消費税の比を `(1 − 割合) ÷ 割合` で作る。割合が 0 なら
+ * 商は Infinity になり、`calcAnnualTax` の `local` / `total` を通って
+ * 税ページに「¥Infinity」が出る (`jpy()` は非有限値を弾かない)。
+ * 台帳 `consumptionSchedule.nationalShare` の下限はこの定数を参照する ——
+ * 下限が 0 になった日に画面が壊れる、という関係をコードに残すため。
+ * 割合そのものは法律の区分 (7.8 / 10) で、下限は算術上の制約である。
+ */
+export const MIN_NATIONAL_SHARE = 0.01;
+
+/**
  * 国税分の割合から地方消費税の比 (既定 22/78) を作る。百万分率の整数比で割るので、
  * 既定の 0.78 では `22 / 78` と同じ double になる (1 − 0.78 の丸め誤差を持ち込まない)。
+ *
+ * 割合は `[MIN_NATIONAL_SHARE, 1]` に丸める (非有限値は下限扱い)。台帳の検査が
+ * 範囲外を落とすので通常は素通りするが、**割る値の守りを呼ばれる側にも置く** ——
+ * 台帳の下限を 1 行下げるだけで画面に ∞ が出る形にはしない。
  */
 export function localRatioOf(nationalShare: number): number {
-  const ppm = Math.round(nationalShare * 1_000_000);
+  const share = Number.isFinite(nationalShare)
+    ? Math.min(1, Math.max(MIN_NATIONAL_SHARE, nationalShare))
+    : MIN_NATIONAL_SHARE;
+  const ppm = Math.round(share * 1_000_000);
   return (1_000_000 - ppm) / ppm;
 }
 

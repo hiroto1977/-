@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { getVault, type VaultStatus, MIN_PASSWORD_LENGTH } from './vault';
+import { getVault, type VaultStatus, MIN_PASSWORD_LENGTH, VAULT_UNREADABLE_TEXT } from './vault';
 import { looksLikeValidMnemonic } from './mnemonic';
 
 /**
@@ -60,12 +60,24 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
         if (!cancelled) setStatus(s);
       })
       .catch(() => {
-        if (!cancelled) setStatus('uninitialized');
+        // **`uninitialized` へ倒さない。** 確かめられなかっただけで初回起動の
+        // 画面を出すと、トークンを預けている本人に「はじめての利用」と告げる。
+        if (!cancelled) setStatus('unreadable');
       });
     return () => {
       cancelled = true;
     };
   }, []);
+
+  /** 「もう一度確認」— 原因 (私用ウィンドウ・容量) は直せることが多い。 */
+  async function recheckStatus(): Promise<void> {
+    setStatus('loading');
+    try {
+      setStatus(await getVault().status());
+    } catch {
+      setStatus('unreadable');
+    }
+  }
 
   // **ここで予約を取り消さない。**
   //
@@ -231,6 +243,34 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
     return (
       <div style={overlayStyle}>
         <div style={{ color: 'var(--text-mute)' }}>読み込み中…</div>
+      </div>
+    );
+  }
+
+  /*
+   * --- View: unreadable (保管庫を確認できない) -----------------------
+   *
+   * **パスワード欄を出さない。** 出しても「作る」側は
+   * `initialize()` が「既に初期化されています」で断り、「開ける」側は
+   * meta が読めないので開けない —— どちらも利用者を行き止まりへ連れて行く。
+   * ここでは何が起きたかと、直せる 2 つの原因だけを出す。
+   */
+  if (status === 'unreadable') {
+    return (
+      <div style={overlayStyle}>
+        <div style={cardStyle}>
+          <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 6 }}>保管庫を確認できません</div>
+          <div
+            role="alert"
+            data-vault-unreadable
+            style={{ fontSize: 13, lineHeight: 1.8, marginBottom: 16 }}
+          >
+            {VAULT_UNREADABLE_TEXT}
+          </div>
+          <button type="button" onClick={() => void recheckStatus()} style={buttonStyle}>
+            もう一度確認
+          </button>
+        </div>
       </div>
     );
   }

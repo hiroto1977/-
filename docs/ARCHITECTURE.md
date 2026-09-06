@@ -23,15 +23,15 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **10634** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11359** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below。生存 0 / 未到達 0 で到達済み。対象ファイル数と閾値の実数は §5.5) | `stryker.config.json` |
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
-| 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
+| 陰性対照つきゲート | 30 / 35 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 422 | 自己検証 |
+| `file:line` 参照数 | 487 | 自己検証 |
 
 ### 統合フロー図
 
@@ -278,9 +278,9 @@ stateDiagram-v2
   Auth --> [*]: StatusBar が再認証 UI 表示
 ```
 
-`classifyError()` (`useServiceData.ts:21-27`) が message の HTTP code / phrase からエラー種別を
+`classifyError()` (`useServiceData.ts:45-51`) が message の HTTP code / phrase からエラー種別を
 4 値 (`auth / rate_limit / network / unknown`) に分類し、UI が auth 時に再認証 CTA を出す。
-`autoRefreshFired` ref (`useServiceData.ts:46`) が React.StrictMode の二重 effect から
+`autoRefreshFired` ref (`useServiceData.ts:68`) が React.StrictMode の二重 effect から
 保護する。
 
 #### 取得元の宣言 (`src/shared/dataOrigin.ts`) — 2026-08 監査で入れた 5 軸目
@@ -1681,7 +1681,7 @@ union を参照する。
 | `talent` | 人材育成 (組織病の診断 / 登用判定 / 達成確率100%キープ / 育成ロードマップ) | none | ✅ | | `save-state`, `judge-leader` (判定は `src/shared/talent.ts` — main とブラウザ版が同じ関数を読む) |
 | `templates` | Canva 連動テンプレートギャラリー (8 種) | none | ✅ | | `export-template` (プレゼン / 名刺 / SNS / チラシ / 証明書 / 請求書 / 履歴書、SVG 出力) |
 | `library` | アプリ内ライブラリ (IndexedDB) | none | ✅ | | (read-only — ブラウザ版で全エクスポート結果を保管) |
-| `settings` | 設定 (API キー管理 + Vault + **数値パラメータ**) | none | ✅ | | (read-only — Vault で全 token を AES-GCM-256 で暗号化。数値パラメータは `components/ParametersPanel.tsx` — 台帳 `src/shared/parameters.ts` の 145 件〔法定値 / 参考値 / しきい値 / 前提〕を機能ごとに並べ、上書きは `parameter-overrides` collection の **1 レコード**を書き換える〔`data/parameterOverrides.ts`〕。下の「数値パラメータ」節) |
+| `settings` | 設定 (API キー管理 + Vault + **数値パラメータ**) | none | ✅ | | (read-only — Vault で全 token を AES-GCM-256 で暗号化。数値パラメータは `components/ParametersPanel.tsx` — 台帳 `src/shared/parameters.ts` の 146 件〔法定値 / 参考値 / しきい値 / 前提〕を機能ごとに並べ、上書きは `parameter-overrides` collection の **1 レコード**を書き換える〔`data/parameterOverrides.ts`〕。下の「数値パラメータ」節) |
 | `uber-eats` | Uber Eats (フードデリバリー、snapshot のみ) | Bearer (Eats Merchants API、未配線) | ✅ | | (read-only — 店舗別売上 / 注文数 / 評価 / 人気メニュー) |
 | `demae-can` | 出前館 (フードデリバリー、snapshot のみ) | Bearer (公開 API 無し、scrape 想定) | ✅ | | (read-only — 進行中注文 / 月次サマリ / 人気エリア) |
 | `real-estate` | 不動産投資 (snapshot + 物件の任意追加 = record store) | Bearer (将来 REIT/楽待) | ✅ | | (ローカル編集 — 保有物件の追加/削除 / 月次キャッシュフロー / 利回り / 入居率。数値入力は `data/inputGuards.ts` + `components/GuardedNumber.tsx` で検査し、読み取れない入力が黙って 0 になるのを防ぐ) |
@@ -1720,7 +1720,7 @@ union を参照する。
 | `sales` | 売上集計 — EC チャネル横断 (実データ・ローカル保存) | 認証不要 (record store) | ✅ | | (read/write — record store collection `sales-entries`) |
 | `team` | チーム管理 — メンバー/権限 (実データ・ローカル保存) + 給与計算 (通勤手当の非課税限度・賞与の源泉徴収) | 認証不要 (record store) | ✅ | | (read/write — collection `team-members`; RBAC は `src/shared/team.ts`。給与計算は `src/shared/payroll.ts`、入力欄は `components/GuardedNumber.tsx` を通す〔以前は `Number(x) \|\| 0` で全角や「50万」を黙って 0 にし、「源泉徴収税額 ¥0」と出していた。距離は `NumKind` の `km`〕) |
 | `youtube` | YouTube Data API v3 実連携 | API キー (`{apiKey,channelId}`) | | | (read-only — チャンネル統計 / 最近の動画) |
-| `overview` | 経営サマリー — 売上/KPI/チーム/プラン横断集約 (実データ) + 45 項目の手入力上書き (`data/overviewOverrides.ts`) + 水耕栽培の試算 | 認証不要 (record store) | ✅ | | (read — `data/overview.ts` で純粋集約。水耕栽培は `src/shared/hydroponics.ts` — 栽培条件〔品目別の育苗/定植後日数・養液 EC/pH・1株重量・パネル穴数〕→ 生産量〔床面積×段数×有効率 → 株密度 → 年回転数 → 出荷株数〕→ 月次損益 の 3 段。**電力は歩留まり前の生産量で計算する** — 照明も空調もその株が売り物になるかと無関係に動くので、歩留まりが落ちると売上だけ減って電気代は減らない。電気代は販管費に入れる〔変動費に入れると限界利益が実態より大きく出て損益分岐点を低く見せる〕。入力は `data/hydroponicsSetup.ts` の利用者レコードのみで、参考値は入力欄の初期値としてだけ使う〔サンプルを経営数値に混ぜない〕)。**品目は固定の一覧ではない** — `src/shared/hydroponicCrops.ts` が追加 / 削除 / 参考値へ戻す を純粋関数で持ち、画面は一覧を `hydroponics-crops` collection に 1 レコードで保存する〔設定レコードとは別 — 品目を足すたびに設定の履歴が増えないように〕。守る不変条件は 3 つ: 一覧は空にならない〔最後の 1 件は消せず、壊れた保存は参考値の 5 品目へ戻る〕・id は機械が振る `custom-<n>`〔空き番号の最小〕・数値は**桁誤りを止める幅**で断る〔定植後日数 0 は 0 除算、pH 99〕— 値の正しさは見ない〔利用者の実測が最も正しい〕。断るときは投げずに理由コードと文言を返す (`CropListChange`)。設備・費用・実測値の入力欄は `components/GuardedNumber.tsx` を通す〔読み取り `readNumberOr0` と警告 `guardNumber` が同じ関数 — 以前は `Number()` で読めない値を黙って 0 にし、全角の「１００」で床面積 0 の試算が自信ありげに出ていた。0 を断るのは試算が意味を失う欄だけ〔床面積・段数・割合・単価〕、実測値は 0 = 未測定 が仕様なので通す。単位語を正しく言うため `NumKind` に `days` / `energy` / `mgPer100g` を足した〕。「最新の 1 件を採用する」collection は `data/latestRecord.ts` が createdAt で選ぶ — `RecordStore.list` は**新しい順**なので `records[records.length - 1]` は**最古**であり、経営サマリーの水耕栽培・貸借対照表・ハイライトしきい値と KPI ページの BS の 4 か所がそれを「最新」と読んでいた〔2 回目の保存から画面が動かなかった。2026-09-02 に品目一覧を同じ書き方で足そうとして発見〕。**低カリウム栽培**〔腎臓病の方向け〕は同モジュールの第 4 節 — 収穫前 7〜10 日に培養液の硝酸カリウムを同濃度の硝酸ナトリウムへ置換し、カリウムを抜いた分をナトリウムで補って浸透圧と EC を保つ〔ALIC 野菜情報〕。**成分は実測値でしか受け取らない** — `assessLowPotassium` は実測カリウムが正の有限値のときだけ `measured: true` を返し、0 や未測定を「カリウムが無い」と読み替えない。`servingGramsWithinLimit` は CKD 病期別の 1 日上限〔G3b 2,000mg / G4〜G5 1,500mg・日本腎臓学会〕から食べられる g 数を出すが、制限のない病期と未測定では null を返す〔上限が無いことを数字で塗り潰さない〕。**金融機関等提出用の書面** (2026-09-04) — 「金融機関等提出用の書式で表示」で経営サマリーの各項目を決算書と同じ読み方に揃えて A4 縦の紙にする。`src/shared/bankFormat.ts` が書式の純粋関数〔千円 / 円 / 百万円・単位未満切捨て / 四捨五入・負数は △ / ▲ / -・比率は小数第 1 位・和暦 / 西暦・算定不能は「―」〕、`src/renderer/data/bankSubmission.ts` が経営サマリーの値を「項目 / 数値 / 算式・備考」の表へ組む〔**計算はしない** — `src/renderer/data/overview.ts` / `src/shared/managementScorecard.ts` / `src/renderer/data/cashflowDebtService.ts` の値をそのまま書式に通すので画面と書面で数字が食い違わない。出せない値は「―」で**行を残す** — 項目ごと消えると未入力か未算定かが読めない〕、`src/renderer/components/BankSubmissionSheet.tsx` が紙と操作〔書式の選択・提出者情報・印刷〕。印刷は `src/renderer/data/printDocument.ts` — `body.ds-printing` で UI を隠す入口を書類スタジオと共有する。書式と提出者情報〔商号・代表者・所在地・決算期〕は `bank-submission-settings` collection に 1 レコードで保存し最新を採用〔`latestRecord`〕。壊れた保存は既定の書式と空の提出者情報へ倒れ、書面は必ず出る。**書類スタジオ・士業との連携** (2026-09-04) — 先頭の「書類スタジオで計算書類を作る」は `src/renderer/navigate.ts` の intent〔`doc: kessan` + `action: import-overview`〕付きで書類スタジオへ遷移し、取り込みパネルを開く。「税理士に相談」「公認会計士に相談」は士業のページへ。士業のページから `action: bank-sheet` で来ると mount 直後に提出用の書面を開く |
+| `overview` | 経営サマリー — 売上/KPI/チーム/プラン横断集約 (実データ) + 45 項目の手入力上書き (`data/overviewOverrides.ts`) + 水耕栽培の試算 | 認証不要 (record store) | ✅ | | (read — `data/overview.ts` で純粋集約。水耕栽培は `src/shared/hydroponics.ts` — 栽培条件〔品目別の育苗/定植後日数・養液 EC/pH・1株重量・パネル穴数〕→ 生産量〔床面積×段数×有効率 → 株密度 → 年回転数 → 出荷株数〕→ 月次損益 の 3 段。**電力は歩留まり前の生産量で計算する** — 照明も空調もその株が売り物になるかと無関係に動くので、歩留まりが落ちると売上だけ減って電気代は減らない。電気代は販管費に入れる〔変動費に入れると限界利益が実態より大きく出て損益分岐点を低く見せる〕。入力は `data/hydroponicsSetup.ts` の利用者レコードのみで、参考値は入力欄の初期値としてだけ使う〔サンプルを経営数値に混ぜない〕)。**品目は固定の一覧ではない** — `src/shared/hydroponicCrops.ts` が追加 / 削除 / 参考値へ戻す を純粋関数で持ち、画面は一覧を `hydroponics-crops` collection に 1 レコードで保存する〔設定レコードとは別 — 品目を足すたびに設定の履歴が増えないように〕。守る不変条件は 3 つ: 一覧は空にならない〔最後の 1 件は消せず、壊れた保存は参考値の 5 品目へ戻る〕・id は機械が振る `custom-<n>`〔空き番号の最小〕・数値は**桁誤りを止める幅**で断る〔定植後日数 0 は 0 除算、pH 99〕— 値の正しさは見ない〔利用者の実測が最も正しい〕。断るときは投げずに理由コードと文言を返す (`CropListChange`)。設備・費用・実測値の入力欄は `components/GuardedNumber.tsx` を通す〔読み取り `readNumberOr0` と警告 `guardNumber` が同じ関数 — 以前は `Number()` で読めない値を黙って 0 にし、全角の「１００」で床面積 0 の試算が自信ありげに出ていた。0 を断るのは試算が意味を失う欄だけ〔床面積・段数・割合・単価〕、実測値は 0 = 未測定 が仕様なので通す。単位語を正しく言うため `NumKind` に `days` / `energy` / `mgPer100g` を足した〕。「最新の 1 件を採用する」collection は `data/latestRecord.ts` が createdAt で選ぶ — `RecordStore.list` は**新しい順**なので `records[records.length - 1]` は**最古**であり、経営サマリーの水耕栽培・貸借対照表・ハイライトしきい値と KPI ページの BS の 4 か所がそれを「最新」と読んでいた〔2 回目の保存から画面が動かなかった。2026-09-02 に品目一覧を同じ書き方で足そうとして発見〕。**低カリウム栽培**〔腎臓病の方向け〕は同モジュールの第 4 節 — 収穫前 7〜10 日に培養液の硝酸カリウムを同濃度の硝酸ナトリウムへ置換し、カリウムを抜いた分をナトリウムで補って浸透圧と EC を保つ〔ALIC 野菜情報〕。**成分は実測値でしか受け取らない** — `assessLowPotassium` は実測カリウムが正の有限値のときだけ `measured: true` を返し、0 や未測定を「カリウムが無い」と読み替えない。`servingGramsWithinLimit` は CKD 病期別の 1 日上限〔G3b 2,000mg / G4〜G5 1,500mg・日本腎臓学会〕から食べられる g 数を出すが、制限のない病期と未測定では null を返す〔上限が無いことを数字で塗り潰さない〕。**金融機関等提出用の書面** (2026-09-04) — 「金融機関等提出用の書式で表示」で経営サマリーの各項目を決算書と同じ読み方に揃えて A4 縦の紙にする。`src/shared/bankFormat.ts` が書式の純粋関数〔千円 / 円 / 百万円・単位未満切捨て / 四捨五入・負数は △ / ▲ / -・比率は小数第 1 位・和暦 / 西暦・算定不能は「―」〕、`src/renderer/data/bankSubmission.ts` が経営サマリーの値を「項目 / 数値 / 算式・備考」の表へ組む〔**計算はしない** — `src/renderer/data/overview.ts` / `src/shared/managementScorecard.ts` / `src/renderer/data/cashflowDebtService.ts` の値をそのまま書式に通すので画面と書面で数字が食い違わない。出せない値は「―」で**行を残す** — 項目ごと消えると未入力か未算定かが読めない〕。ただし**印刷した行同士の式は、印刷した数字で成り立たせる** — 「純資産」は円から丸めるのではなく**表示単位へ丸めた総資産 − 負債合計**で出す〔各行を円から別々に丸めていた 2026-09-06 まで、貸借対照表の値を 40 通り振ると **21 通り**で「純資産 = 総資産 − 負債合計」が印刷した数字ではずれた。式を備考に書いておきながら数字が合わない書面は金融機関に出せない。`src/shared/bankFormat.ts` の `formatScaled` が表示単位の整数を書式化する口で、`formatAmount` は「円 → 丸め → formatScaled」で通る。現金化サイクル (CCC) は `src/renderer/data/workingCapital.ts` が回転日数を先に小数 1 桁へ丸め、その**丸めた値の和**で作るので元から合っている (実測 3,000 通りで食い違い 0)〕、`src/renderer/components/BankSubmissionSheet.tsx` が紙と操作〔書式の選択・提出者情報・印刷〕。印刷は `src/renderer/data/printDocument.ts` — `body.ds-printing` で UI を隠す入口を書類スタジオと共有する。書式と提出者情報〔商号・代表者・所在地・決算期〕は `bank-submission-settings` collection に 1 レコードで保存し最新を採用〔`latestRecord`〕。壊れた保存は既定の書式と空の提出者情報へ倒れ、書面は必ず出る。**書類スタジオ・士業との連携** (2026-09-04) — 先頭の「書類スタジオで計算書類を作る」は `src/renderer/navigate.ts` の intent〔`doc: kessan` + `action: import-overview`〕付きで書類スタジオへ遷移し、取り込みパネルを開く。「税理士に相談」「公認会計士に相談」は士業のページへ。士業のページから `action: bank-sheet` で来ると mount 直後に提出用の書面を開く |
 | `coconala` | ココナラ スキルマーケット (snapshot のみ) | 公開 API なし | ✅ | | (read-only — 出品/受注/評価) |
 | `tiktok` | TikTok — SNS / 動画運用サマリー (snapshot のみ) | 公開 API なし (将来 OAuth) | ✅ | | (read-only — 投稿/広告/フォロワー) |
 | `tax` | 税務試算 — 所得税/住民税/消費税/手取りの概算 + 節税案内 + 公式ツール導線 | 認証不要 (ローカル計算) | ✅ | | (read-only — 納付/申告は公式ツールで手動。42 の数値入力を `data/inputGuards.ts` の `guardAll` でまとめて検査し、読み取れない欄を `GuardSummary` で試算値の手前に表示。⑩-3 本則課税の仕入控除税額は `src/shared/taxConsumptionBusiness.ts` — `calcStandardTax` は課税仕入れの税額を**全額控除できる**前提の式で、成り立つのは課税売上割合 95% 以上かつ課税売上高 5億円以下のときだけ。住宅家賃・利子等の非課税売上があると按分が要り、按分せずに全額を引くと**納付が過少に出る**。`taxableSalesRatio`〔免税売上は分子・分母の両方に入る〕・`canDeductFully`・`itemizedInputCredit`〔個別対応方式 = 課税売上対応分 + 共通対応分 × 割合〕・`proportionalInputCredit`〔一括比例配分方式 = 仕入税額 × 割合・2 年継続適用〕・`calcStandardTaxDetailed`・`compareInputCreditMethods`〔控除が多い方が有利・同額なら縛りの無い個別対応〕。⑩-2 消費税の納付/還付スケジュールは `src/shared/taxConsumptionSchedule.ts` — 税率 0〜50% の掃引・国税/地方の区分と端数処理・中間申告の回数と期限・確定申告額と還付の入金目安。⑫ 貿易の税は `src/shared/tradeTax.ts` — 輸入は CIF 1,000円未満切捨て→関税100円未満切捨て→消費税の課税標準に関税を含める法定順序、少額免税〔1万円以下・革製品等の除外・2028年4月廃止予定〕と個人使用60%特例、輸出は日本に輸出関税なし〔消費税法7条の免税〕＋仕向国の関税と付加価値税〔CIF/FOB 基準の切替・DDP/DAP の負担者〕) |
@@ -1731,7 +1731,7 @@ union を参照する。
 | `docker` | Docker — コンテナ/イメージ・脆弱性スキャン・GHCR 連携で開発基盤を可視化 | none | ✅ | | (read-only — 実データは renderer の SNAPSHOT.docker。実 Engine は socket で読む Phase 6) |
 | `assistant` | AI アシスタント — マルチエージェント AI ハブ。Claude / ChatGPT / Gemini / Ollama / OpenAI 互換 API を `src/shared/ai/providers.ts` のプロバイダレジストリで呼び分け | JSON マルチプロバイダ資格情報 (`src/shared/ai/credentials.ts`。生キーは Anthropic 後方互換) | ✅ | | `chat` + `providers` (RAG 文脈は renderer の `data/assistantContext.ts` で構築 — IDF 重み + 膠着語降格 + フレーズボーナス + 近似タイトル代表化。表/成果物は `data/assistantMarkdown.ts` で描画。未設定時は `data/chatbot.ts` の決定論エンジンへフォールバックし、解釈不能時のみ確証済みナレッジ直答 `buildOfflineKnowledgeAnswer` を先に試す) |
 | `village` | AIの村 — AI オーケストレーション組織 143 体をどうぶつの森風の全画面シーンに村人として可視化。タスク実行を常時アニメーションで表示し、画面に話しかけて対話 (音声) | none | ✅ | | (read-only — `orchestration/registry.json` から `data/villageData` が純導出。ルーティングは `data/chatOrg.routeTopicScored`、返答は `data/chatbot.replyTo`＋AI 設定時は `assistant/chat`。音声は `voice/speechAdapter`＋`voice/ttsAdapter`) |
-| `docstudio` | 書類スタジオ — 経営書類 52 書式 (契約9/経理8/人事10/組織7/規程4/社内5/通知4/事業計画5)＋電子定款 (株式/合同)＋就業規則 (10章47条)＋計算書類4点 (PL/BS/株主資本等変動計算書/個別注記表)＋決算公告 を入力→交付前チェック→事業仕分け→印刷/PDF。検証済みコンプラ知識を注記に反映 | none | ✅ | | `list-collections` (read-only — テンプレートは renderer の `data/docStudioData.ts` 単一ソース。交付前チェックは `data/docStudioChecks.ts` の純関数 `checkDoc`〔fatal/warn/info〕。適格請求書/仕入明細書の明細は `src/shared/invoiceTax.ts` — 品目ごとに税率区分（標準/軽減/任意A・B 0〜50%/免税/非課税/不課税）を割り当てて自動仕分けし、**端数処理は区分ごとに1回**〔消費税法57条の4〕。計算書類は `data/statementAccounts.ts`（標準科目 56 件の残高から段階利益・貸借対照表・決算公告の要旨を積み上げ、貸借差額と当期純利益→繰越利益剰余金の連結を検算）と `data/statementEquity.ts`（株主資本等変動計算書と個別注記表。期首残高は入力させず期末から逆算するので二表がずれない。会社法445条2項・3項の資本準備金上限、同4項の準備金積立不足を検算）の 2 本。資金繰り表は `data/cashPlan.ts` — 前月繰越を入力させず連鎖させ、資金ショート月を名指し。「自社でやるか士業に頼むか」は `data/businessTriage.ts` の 56 件。入力は localStorage 保存・印刷は `src/renderer/data/printDocument.ts`〔`body.ds-printing`〕。**経営サマリーからの取り込み** (2026-09-04) — 計算書類のタブに「経営サマリーから取り込む」パネル。`src/renderer/data/kessanImport.ts` が KPI 実績・貸借対照表・提出者情報を 56 科目の入力欄へ写す〔事業年度は提出者情報の決算期で 12 か月を切り出し、無ければ全期間を合算して注記。内訳の無い額は「その他」の科目に置いて理由を注記し〔売上原価 → 当期商品仕入高、人件費以外の販管費 → 雑費、固定資産 → その他の固定資産、有利子負債は固定負債に収まる分を長期借入金〕、資本金・役員報酬など出所の無い科目は触らない。唯一の逆算は繰越利益剰余金 (期首) で、資産合計 − 負債 − 資本金等 − 当期純利益 + 配当 + 積立 を置いて貸借を合わせる。法人税等は KPI の営業利益と貸借対照表の当期純利益の差が正のときだけ〕。取り込む前に「入力欄 / 値 / 出所」と注記・取り込めない物を全部見せ、押すまで localStorage には書かない。**他の画面からの遷移の指示** は `src/renderer/navigate.ts` の intent〔`doc` / `action`〕を mount 時に 1 度だけ受け取る〔書式 id・`kessan`・`teikan-kk` / `teikan-gk`・`shugyo` を開く、`import-overview` で計算書類のタブへ〕。事業仕分けパネルの各士業名は、その士業のページへのボタンになった。**資金繰り表・事業計画書にも同じパネル** (2026-09-04, `src/renderer/data/docImports.ts`): 資金繰り表は会計連携 (freee) の直近 12 か月の収入を売上入金・支出をその他経費に置き、貸借対照表の現預金を期首残高に〔借入の行は出所が無いので触らない〕。事業計画書は会社名・代表者・作成日と、直近の事業年度の実績を 1 年目の売上高・経常利益に置く〔2・3 年目は数字を作らない〕。指示の `query` は経営書類のタブで書式検索に入る〔士業のページの「やり取り中の書類」から〕) |
+| `docstudio` | 書類スタジオ — 経営書類 52 書式 (契約9/経理8/人事10/組織7/規程4/社内5/通知4/事業計画5)＋電子定款 (株式/合同)＋就業規則 (10章47条)＋計算書類4点 (PL/BS/株主資本等変動計算書/個別注記表。**書類一覧でそれぞれ独立した書類**＋「4点まとめて」、値は1つ)＋決算公告 を入力→交付前チェック→事業仕分け→印刷/PDF。検証済みコンプラ知識を注記に反映 | none | ✅ | | `list-collections` (read-only — テンプレートは renderer の `data/docStudioData.ts` 単一ソース。交付前チェックは `data/docStudioChecks.ts` の純関数 `checkDoc`〔fatal/warn/info〕。適格請求書/仕入明細書の明細は `src/shared/invoiceTax.ts` — 品目ごとに税率区分（標準/軽減/任意A・B 0〜50%/免税/非課税/不課税）を割り当てて自動仕分けし、**端数処理は区分ごとに1回**〔消費税法57条の4〕。計算書類は `data/statementAccounts.ts`（標準科目 56 件の残高から段階利益・貸借対照表・決算公告の要旨を積み上げ、貸借差額と当期純利益→繰越利益剰余金の連結を検算）と `data/statementEquity.ts`（株主資本等変動計算書と個別注記表。期首残高は入力させず期末から逆算するので二表がずれない。会社法445条2項・3項の資本準備金上限、同4項の準備金積立不足を検算）の 2 本。資金繰り表は `data/cashPlan.ts` — 前月繰越を入力させず連鎖させ、資金ショート月を名指し。「自社でやるか士業に頼むか」は `data/businessTriage.ts` の 56 件。入力は localStorage 保存・印刷は `src/renderer/data/printDocument.ts`〔`body.ds-printing`〕。**経営サマリーからの取り込み** (2026-09-04) — 計算書類のタブに「経営サマリーから取り込む」パネル。`src/renderer/data/kessanImport.ts` が KPI 実績・貸借対照表・提出者情報を 56 科目の入力欄へ写す〔事業年度は提出者情報の決算期で 12 か月を切り出し、無ければ全期間を合算して注記。内訳の無い額は「その他」の科目に置いて理由を注記し〔売上原価 → 当期商品仕入高、人件費以外の販管費 → 雑費、固定資産 → その他の固定資産、有利子負債は固定負債に収まる分を長期借入金〕、資本金・役員報酬など出所の無い科目は触らない。唯一の逆算は繰越利益剰余金 (期首) で、資産合計 − 負債 − 資本金等 − 当期純利益 + 配当 + 積立 を置いて貸借を合わせる。法人税等は KPI の営業利益と貸借対照表の当期純利益の差が正のときだけ〕。取り込む前に「入力欄 / 値 / 出所」と注記・取り込めない物を全部見せ、押すまで localStorage には書かない。**他の画面からの遷移の指示** は `src/renderer/navigate.ts` の intent〔`doc` / `action`〕を mount 時に 1 度だけ受け取る〔書式 id・`kessan`・`teikan-kk` / `teikan-gk`・`shugyo` を開く、`import-overview` で計算書類のタブへ〕。事業仕分けパネルの各士業名は、その士業のページへのボタンになった。**資金繰り表・事業計画書にも同じパネル** (2026-09-04, `src/renderer/data/docImports.ts`): 資金繰り表は会計連携 (freee) の直近 12 か月の収入を売上入金・支出をその他経費に置き、貸借対照表の現預金を期首残高に〔借入の行は出所が無いので触らない〕。事業計画書は会社名・代表者・作成日と、直近の事業年度の実績を 1 年目の売上高・経常利益に置く〔2・3 年目は数字を作らない〕。指示の `query` は経営書類のタブで書式検索に入る〔士業のページの「やり取り中の書類」から〕。**計算書類 4 点は書類一覧の独立したエントリ** (2026-09-06・依頼「4点をそれぞれ別々の書類に分けて表示される仕様にして」) — それまでは一覧に「計算書類（4点）」の 1 つだけが在り 4 点は開いた先のタブだったので、**一覧を見た限りでは 1 つにまとめられて見えていた**。会社法435条2項の 4 点はそれぞれ別の書類なので一覧もそう並べる〔並び順は `KESSAN_SHEETS` から導き、順序を 2 か所に書かない。「まとめて」は決算公告の要旨つきで 1 枚に出す従来の出力として最後に残す〕。押した書類がそのまま開く〔札の通りに動かす〕ので、**書類の群れも `collection` として保存する** — `kessanSheet` だけを保存していると開き直しに戻れず、`data/docstudioStore.ts` 自身が書いている「開き直しても同じ書面から続けられる」が嘘になる〔保存値は `isDocstudioCollection` で読むたびに検査。会社法形態 `teikanType` は保存対象外で、その範囲は `docs/REMAINING_WORK.md` に記録〕。書類の中に在った重複するタブ行は削除し、残したのは「いま見ている書面の説明」だけ〔同じ状態を動かすボタンを 2 か所に置かない〕) |
 
 - **LOCAL** = `LOCAL_SERVICES` set (`src/main/clients/index.ts:201-272`)。トークン未設定でも snapshot OK。
 - **OAuth** = `OAUTH_CONFIGS` 登録あり (`src/main/oauth.ts:103-255`)。各プロバイダの `*_OAUTH_CLIENT_ID` 環境変数で有効化。Notion / Canva / WordPress.com / Atlassian は**機密クライアント**なので `*_OAUTH_CLIENT_SECRET` も必須 (未設定なら `isOAuthSupported()` が false を返し、押しても 401 にしかならない ボタンを出さない)。Slack だけは PKCE 対応の公開クライアントで secret 不要。
@@ -1775,8 +1775,8 @@ union を参照する。
 | templates | `export-template` | `{ templateId, params, path }` | templateId は目録の id のみ、params は既定値へ clamp、path は書き出し関門 | `templates.ts:506-508` |
 | teamradar | `save-state` | `{ department, evaluatedAt, members }` | members は形と件数を検証してから 0600 で保存 | `teamradar.ts:594-597` |
 | teamradar | `export-svg` | `{ path, title }` | path は書き出し関門。図の文字列は escapeXml を通してから書く | `teamradar.ts:594-597` |
-| talent | `save-state` | (payload 全体を sanitize) | src/shared/talent.ts の入力検査 (sanitize) が申告・施策・ロードマップを型と上限で選り分ける。main とブラウザ版で同じ関数を通す | `talent.ts:158-161` |
-| talent | `judge-leader` | `{ flagged, candidate }` | flagged は失格条項の id 以外を落とし、candidate は 64 字で切る | `talent.ts:158-161` |
+| talent | `save-state` | (payload 全体を sanitize) | src/shared/talent.ts の入力検査 (sanitize) が申告・施策・ロードマップを型と上限で選り分ける。main とブラウザ版で同じ関数を通す | `talent.ts:178-181` |
+| talent | `judge-leader` | `{ flagged, candidate }` | flagged は失格条項の id 以外を落とし、candidate は 64 字で切る | `talent.ts:178-181` |
 | emotions | `clear-history` | `{ kind }` | kind は moods / analyses / all / 未指定 のみ意味を持つ (未指定は気分だけ) | `emotions.ts:325-329` |
 | docstudio | `list-collections` | (payload なし) | ctx.payload を読まない (同梱の書式目録を返すだけ) | `docstudio.ts:34-36` |
 | real-estate | `record-entry` | `{ note, amount }` | note は文字列必須・amount は任意の数値。**保存はしない** (persisted: false) | `real-estate.ts:103-106` |
@@ -2138,7 +2138,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **260 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **270 ファイル**。
 
 #### 点数の定義 (分母に何を入れないか)
 
@@ -2417,6 +2417,561 @@ allowlist のパスだけを受ける — 任意のパスを書けると `__prot
 入力欄には「手入力」と印が付くのに画面の数字が変わらないという、いちばん
 分かりにくい壊れ方をする (2026-08 に実測)。
 
+**断られた読み書きは、入口が 1 本の経路へ写す** (`data/deviceStoreFailure.ts`)。
+対象は**同じ端末の同じ容量を分け合う 3 つの保管庫**で、文面の主語だけが変わる ——
+`records` (業務レコード) / `files` (書き出した書類の実体 = `library/library.ts`) /
+`settings` (端末ごとの設定 = `network/proxy.ts` のプロキシ設定と `fs/fsa.ts` のフォルダ handle)。
+`useCollection` の `add` / `addMany` / `edit` / `remove` は失敗を `save` / `delete` として
+報せてから投げ直し、`reload` は `read` として報せる (こちらは**投げない** —— マウント
+effect と他 instance からの通知は戻り値を受け取らないので、投げても誰も気付けない)。
+`pages/LibraryPage.tsx` は一覧・1 件・削除・全件削除の 4 か所を `files` として報せる。
+画面側は `components/DeviceStoreFailureBanner.tsx` が内容領域の先頭で最後の 1 件を出す。
+
+**資格情報の一覧も同じだった** (2026-09-06)。main の `listConfiguredServices` は
+`readStore()` が返す `{}` の鍵を数えており、ブラウザ版の `listConfigured` は
+`catch { return []; }` だった —— どちらも**読めなかったことを「1 件も登録されていない」と
+名乗る**。画面は 75 サービスすべてに「トークン未設定」を出すので、利用者の自然な次の手は
+**API キーの再入力**で、それは `setToken` が (正しく) 断るので徒労に終わる。
+`readStoredToken` は既に `absent` / `undecryptable` を分けていたが、**保管ファイルが
+読めない場合は `absent` に化けていた** —— `readStore` の `{}` に鍵が無いためである。
+今は `store-unreadable` を名乗り、`fetch:snapshot` / `action:invoke` はその理由を出す
+(「トークン未設定」は `absent` のときだけ)。一覧は両ビルドとも投げ、`useServiceData` が
+`settings` として経路へ写す (橋がまだ無いだけのときは `?.` が短絡するのでここへ来ない)。
+
+**設定の 2 つは「未設定」と「確認できない」を分ける** (2026-09-06)。`network/proxy.ts` の
+`readStoredProxyConfig` と `fs/fsa.ts` の `loadFolderHandle` はどちらも
+`catch { return null; }` で開けないことを飲み込んでおり、その `null` が
+(a) 設定画面の**「未設定」の札**、(b) ブラウザ版の**「設定で URL を登録してください」**、
+(c) `fs/folderMirror.ts` の `off` (警告を出さない側) になっていた ——
+**登録した本人に登録し直させ、共有シークレットを打ち直させた末に同じ所で失敗する**。
+`folderMirror` は「読めないのは `off` ではなく `failed`」と決めて書いてあったが、
+**差を消していたのは 1 つ下の層**なので、その分岐には決して入らなかった。
+今は両方が投げ、`inspectStoredProxyConfig` が `unreadable` を返し、
+設定画面は `確認できません` の札と理由を出す (`data-proxy-unreadable` /
+`data-fsa-unreadable`)。`getProxyConfig` も飲み込まない ——
+「未設定でも構わない」呼び出し側がその場で `.catch()` を書く。
+
+**保管庫そのものが最後の 1 つだった** (2026-09-06)。ブラウザ版 `security/vault.ts` の
+`status()` は `openDb()` の失敗と meta の読取失敗を**どちらも飲み込んで `uninitialized`**
+を返しており、`LockScreen` はそれを見て「ようこそ — はじめての利用です」の画面
+(新しいマスターパスワードを作る画面) を出していた。**トークンを預けている本人に
+「はじめての利用」と告げる**ので、まず「消えた」と読める。しかもその画面は行き止まりで、
+「作る」を押しても `initialize()` は同じ `openDb()` で転ぶか、meta が読めれば
+「既に初期化されています」で断る (上書きはしない —— `initialize()` が自分で meta を
+読み直すため)。今は `VaultStatus` に `unreadable` を足し、`status()` は開けない場合と
+読めない場合の両方でそれを返す。`LockScreen` は**パスワード欄を出さない**専用の画面
+(`data-vault-unreadable`) で、直せる 2 つの原因 (プライベートウィンドウ・保存領域が一杯) と
+「もう一度確認」だけを出す。文面は `VAULT_UNREADABLE_TEXT` に置き、画面側の試験は
+`importOriginal` で**本物を読み直す** (綴りを写すと、変えたときに鳴らない検査になる) ——
+**ただしそれだけでは文面の中身を誰も見ていない**。定数と表示が同時に変わるので、どの断片を
+削っても通る同語反復になっており、変異検査が 5 本の生存として鳴らした。約束は 5 つ
+(確認できなかったこと・「はじめて」に見えることの訂正・原因 2 つ・押すボタンの名前) なので
+5 つに分けて `src/renderer/security/__tests__/vault.test.ts` で個別に留め、順序の対照を 1 本置いた。
+
+**媒体そのものを断られる場合は、また別だった** (2026-09-06)。ここまでの直しは
+「開いたが読めない」を扱ってきたが、`localStorage` / `sessionStorage` は
+**触れることが投げる** —— サイトデータをブロックしたオリジンで Chrome は
+`SecurityError: Access is denied for this document.` を返し、プライベートモードでも
+同じ形になる。`data/localWrite.ts` の冒頭は「書き込み禁止」を 3 つの現実の理由の
+1 つとして数えているのに、**読みと消しの側は誰も見ていなかった** (実測: 読み 21 か所の
+うち 3 か所が `try` の外)。踏んだ形は 3 つとも別である:
+
+- `oauth/pkceSession.ts` の `clearPkceSession()` は 4 連の生の `removeItem`。2 つ目で
+  投げると残りが残る —— **このファイルの不変条件が「作れなくする」と宣言している
+  「3 つ消して 1 つ残る」形**で、残るのは `code_verifier` (RFC 7636 の秘密)。しかも
+  呼び出しは `SettingsPage` の `finally` に在るので、投げると本当の失敗 (state 不一致
+  = CSRF の疑い) を投げ替え、後続の `setBusy(false)` も飛ばして「交換中…」で固まる。
+  今は**鍵ごとに受けて投げず**、消せなかった鍵名を返す。画面は `sweep()` の 1 か所で
+  受けて `data-pkce-leftover` の札を出す (`sessionStorage` はタブ単位なので、打ち手は
+  「このタブを閉じる」)。`savePkceSession` は置けた分を消してから投げ、`start()` が
+  文面を出す —— `onClick={start}` は async なので、投げたままだと拒否が宙に浮き
+  **画面には何も出ない** (押しても認可 URL が現れないだけ) だった。
+- `data/recordEncryption.ts` の `loadMeta()` は `getItem` が `try` の上に在り、
+  `isEncryptionEnabled()` が投げていた。それは `components/BackupPanel.tsx` の
+  **描画中**に呼ばれるので、保存領域が怪しい端末に限って**控えを取り出す画面が
+  消える** —— いちばん要るときに使えない。今は degraded に数えて `null` を返すので
+  画面は生き、`assertMetaWritable()` が上書きを断って salt を守る。`clearMeta()` も
+  素だった —— そこは**全レコードを平文に戻した後**なので、消せないまま黙って成功を
+  返すと「暗号化が有効」と表示しながら平文を保存する。両方の事実を文面にして投げる。
+- `data/emotionsWeb.ts` の `loadStore()` も同じ形で、拒否が degraded にならず生で
+  抜けていた —— つまりこの端末では上書きを断る `loadStoreForWrite()` も、送信前の門
+  `assertStoreWritable()` も働かなかった。
+
+`src/renderer/__tests__/storageReadPolicy.test.ts` が「`getItem` / `removeItem` は
+同じ関数の中で失敗を受ける」を走査で留める (書き込み側の
+`src/renderer/__tests__/storageWritePolicy.test.ts` と対になる)。
+判定は波括弧の入れ子で `try` の内側かを見るので、**素の呼び出し・`try` の中・
+`catch` の中**の 3 標本で判定そのものを確かめてから使う。
+
+**取得元の札は、失敗した瞬間に消えていた** (2026-09-06)。`components/StatusBar.tsx` の
+バッジは**枠が 1 つ**で、`status === 'error'` のときは「認証エラー」/「レート制限」/
+「エラー」に差し替わる。つまり `src/shared/dataOrigin.ts` の `describeOrigin` が返す
+取得元の宣言 —— 未取得の remote なら「サンプル（未連携）」—— が**押し出される**。
+ところが画面の下では `SNAPSHOT[id]` の同梱データがそのまま並んでいるので、
+トークンを保存して「更新」を押し 401 が返った人に見えるのは**数字の入った
+ダッシュボードと `401 Bad credentials` の 1 行だけ**になる。`describeOrigin` の注記が
+「『スナップショット』は実データを写したものと読める」「同梱の作り物 (架空の 3 人) が
+実在の同僚と受け取られた」と書いているその危険が、**エラーのときだけ札の無い状態で
+再現していた**。今は `staleDataNote(origin, source, failed)` が別枠の 1 行を返す
+(`data-stale-note`) —— 未取得なら「同梱のサンプルです（まだあなたのデータでは
+ありません）」、取得済みなら「前回取得できた内容です（今回の更新は反映されて
+いません）」。文面は `dataOrigin.ts` に置く (取得元の言い回しを 2 か所へ散らさない)。
+`loading` では出さない (すぐ決まる) し、取得しない画面にも出さない
+(`data-sample-note` が常設で同梱データだと書いている)。
+
+**取ってきた中身が作り物のときも、同じ嘘が付いていた** (2026-09-06)。
+`main/clients/` の 11 モジュールは、実 API を差し込む前の値を返すときに
+`isMock: true` を立てる。ところが**画面がそれを読まないと緑のバッジが付く** ——
+`describeOrigin` の `tone: 'ok'` は「実際に取ってきた」時の色だと決めているのに、
+`live` になっているだけで中身は同梱値である。いちばん重かったのが `funding`:
+`fetchFundingSnapshot` は `MOCK_ITEMS` / `MOCK_ACCOUNTING` と固定の期首残高
+300 万円から、補助金・融資の一覧・キャッシュランウェイ・債務償還年数・
+**特定収入割合 (消費税の計算に関わる)** を組み立てて返し、「更新」を押すと
+緑の「ローカル」が付いた。画面の既存の注記は「概算であり保証しない」で、
+*その数字が自分のものではない*ことは言っていない。
+実測で名乗る 11 件のうち画面が何か言っていたのは 3 件 (stocks / business / kpi) だけ。
+今は `useServiceData` が取得した中身の名乗りを `payloadIsMock` として持ち、
+`describeOrigin(origin, source, payloadIsMock)` が緑をやめて「同梱データ」を返す
+(図表を持つ残り 2 画面 funding / teamradar が渡す)。未取得のときは名乗りを見ない ——
+そちらは既に「サンプル（未連携）」と言い切っており、差し替えると弱くなる。
+`src/renderer/__tests__/mockPayloadPolicy.test.ts` が台帳を双方向に検査し、
+`badge` / `notice` と登録した画面に実際の配線が在ることまで見る
+(数字を出すのに `no-figures` と登録する腐り方を別途 1 本で塞ぐ)。
+
+実測 (2026-09-06): 書き込みを呼ぶ 15 か所のうち 12 か所が拒否された Promise を捨てて
+いた (`void add()` / `onClick={async () => { await onSave(...) }}`)。容量超過・プライベート
+モード・別タブの versionchange で断られると**行は増えず、文言も出ない** —— 打ち込んだ値
+だけが残るので「押せていない」ように見える。読みの側はさらに静かで、`indexedDB` が
+開けない端末では**全コレクションが空**になり、「まだ何も入力していない」画面と区別が
+付かなかった (利用者から見れば業務データが消えたのと同じ)。読めなかった回は
+**今持っている records を残す** —— 空へ置き換えると、報せより先に「消えた」が目に入る。
+
+ライブラリ側も同じ形だった (2026-09-06 実測): `LibraryPage.refresh()` は
+`useEffect(() => { refresh(); }, [])` で投げっぱなしなので、`indexedDB` が開けない端末では
+見出しが「ライブラリ · 0 件 / 0 B」となり**書き出した書類が 1 つも無いのと区別が付かない**。
+1 件を読む側では「消えている」(＝諦める) と「読めない」(＝容量を空ける / 通常の
+ウィンドウで開く) を**混ぜない** —— 打ち手が違うので、`readItem` が `'unreadable'` を
+返して呼び出し側は「見つかりません」を出さない。
+
+15 か所へ同じ try/catch を配らないのは `ManualDataSection` を 1 か所に置いたのと同じ
+理由 (配ると必ずどれか 1 つが漏れる)。押しただけの場所は `fireReported()` を通す ——
+`void p` だと拒否が宙に浮き、画面には何も出ないまま `unhandledrejection` になる。
+`__tests__/deviceStoreWritePolicy.test.ts` が「書き込みは台帳の場所からしか行わない」と
+「`void` で捨てていない」を双方向に検査し、認めた例外には理由を要求する
+(localStorage 側の `__tests__/storageWritePolicy.test.ts` と同じ形)。走査は
+**2 つの保管庫の両方**に当たっていることを標本で確かめる (片方だけ拾う走査では通らない)。
+
+#### 一つの数字に、出所は一つ (`src/shared/__tests__/rateDefaultPolicy.test.ts`)
+
+CLAUDE.md の作法の後半 ——「**既定値はモジュールの定数をそのまま参照する
+(数字を写さない)**」—— が破れている場所を 2 件見つけた (2026-09-06)。
+
+1 件目は**法定値の写し**。`src/shared/funding.ts` の `summarize()` が
+`consumptionTaxRate = 0.1` を持っていた。この `0.1` は消費税法の標準税率で、
+出所は `src/shared/taxCalc.ts` の `CONSUMPTION_TAX_STANDARD` 1 つだけであり、
+台帳 `tax.consumptionStandardRate` (`kind: 'law'`) の既定値もその定数を参照して
+いる。ところが funding 側はリテラルで持ち、しかも**唯一の呼び出し元
+(`src/main/clients/funding.ts` の `summarize(items)`) は率を渡していない**ので、
+実際に使われるのは台帳と繋がっていない側だった。法が変わった日に、税ページと
+資金調達ページが同じ法定値について違うことを言う。既定値を定数参照に変え、
+`src/main/clients/__tests__/funding.test.ts` が `vi.doMock` で `taxCalc` の定数を
+0.2 に差し替えて**消費税相当が追随する**ことを見る (字面走査ではなく値の比較なので、
+リテラルへ戻すと落ちる)。
+
+2 件目は**参考値の 4 重の写し**。緊急予備資金の月数 6 が
+`src/shared/savingsPlanning.ts` の既定値 2 か所と
+`src/renderer/pages/MutualFundsPage.tsx` の呼び出し 2 か所に散っていた。
+6 は暦の定義ではなく**判断の要る目安** (会社員 3〜6 / 自営 6〜12 か月) で、
+この画面は自営業者が見るのに長い側へ寄せる手段が無かった。
+`EMERGENCY_FUND_MONTHS_DEFAULT` を唯一の出所にし、台帳へ
+`savings.emergencyFundMonths` (`kind: 'reference'`) として登録して画面は
+`useParameters()` で読む。配線は
+`src/renderer/pages/__tests__/parameterWiring.test.ts` が対照つきで留める
+(12 か月に上書きすると目標額 1,800,000 → 3,600,000・充足率 50% → 25%・
+文言が動く。読まない形へ戻すと落ちる)。
+
+再発を止めるゲートは「**引数の既定値の位置に居る素の数値リテラル**」を数える。
+`src/shared` と `src/renderer/data` を走査し、名前が率・割合・しきい値・期間を
+思わせる引数の既定値が素の数字なら、台帳 (ファイル + 引数名 + 値 + 個数) に
+理由つきで載っていなければ落ちる。実測 23 か所を登録済み。
+「台帳の定数と同じ値のリテラルを禁じる」形は**採れなかった** —— `kind: 'law'` の
+既定値 91 件を実測すると 0.5 / 10 / 12 / 80 は容積率のボーナス率や地下水の
+硝酸性窒素 (mg/L)、道路幅員 (m) と偶然一致し、偽陽性だらけになる。値の一致では
+なく「素の数字が既定値の位置に増えたら人が理由を書く」に振った。
+
+注記の中の字面 (`funding.ts` の JSDoc「無利息 (rate=0) は単純に P/n」) を拾って
+しまったので、行頭が `*` / `//` の行は除いている。この除外が走査を殺していない
+ことは標本 4 本 (拾う形 / 定数参照 / 代入文 / 注記) で確かめる。
+
+なお資金調達ページの図表 (税引後の折れ線・純資金繰り・ランウェイ・シナリオ) は
+主プロセス側で既定の実効税率 30% で算出されており、**設定の実効税率には追随しない**。
+これは `fetchSnapshot` にパラメータを流す口が無いためで、同ページのデータは
+`isMock: true` の同梱データなので実害は「見本の数字」に留まる。手当ては
+docs/REMAINING_WORK.md に残した。
+
+#### 割る値の下限は、割る側にも置く (`src/shared/taxConsumptionSchedule.ts`)
+
+同じ日の続きで「画面に `¥NaN` / `¥Infinity` が出る道」を探した。`jpy()`
+(`src/shared/formatters.ts`) は `toLocaleString` に素で渡すので**非有限値を弾かない**
+—— 画面の 201 か所がこれを呼び、`Number.isFinite` を持つページは 3 つだけ。
+
+走査は総当たりで行った: `src/shared` と `src/renderer/data` の 216 モジュールの
+export 関数を 0・`[]`・`{}` で呼び (成功した呼び出し 2,621 件)、返り値の中の
+非有限値を数える。ヒット 259 件のうち引数がすべて `number` 宣言の物は
+**1 つだけ**だった —— `localRatioOf(0)` が `Infinity` を返す。ほかの 258 件は
+型の外の呼び出し (オブジェクトを取る関数に 0 を渡した) で、TypeScript が止める。
+
+`localRatioOf` は地方消費税の比を `(1 − 割合) ÷ 割合` で作る。割合 0 なら
+`calcAnnualTax` の `local` / `total` を通って税ページに `¥Infinity` が出る。
+守っていたのは台帳 `consumptionSchedule.nationalShare` の `min: 0.01` という
+**リテラル 1 個**で、なぜ 0.01 なのかはどこにも書かれていなかった (下限を 1 行
+下げれば画面が壊れる)。`MIN_NATIONAL_SHARE` を定数にして台帳の `min` がそれを
+参照し、割る側でも `[MIN_NATIONAL_SHARE, 1]` に丸める (非有限値は下限扱い)。
+守りが 2 つ独立に在ることは対照で確かめた —— 丸めを外すと「0・負値・非有限値でも
+有限」が落ち、台帳の下限を 0 にすると「下限がこの定数」だけが落ちて**年税額の
+非有限値の走査は通ったまま** (丸めが効いている)。
+
+その走査は台帳の値を端 (min / max / 既定) に振って `calcAnnualTax` と
+`planInterim` の全欄を見る形で残した。`jpy()` 側に「非有限なら ―」を入れるのは
+**やめた** —— 実際に届く道が 1 つも無い今それを入れると、次に生まれた NaN が
+画面から消えて開発時に見えなくなる (この方針は docs/REMAINING_WORK.md に記録)。
+
+#### 形の検査が「任意」と言う欄を、型は「必須」と言っていた (読み取りの境界に補いを 1 つ)
+
+復元の形の検査 (`src/renderer/data/collectionShapes.ts`) は意図して**緩い** ——
+「必須は中核の欄だけ・任意は在るなら型を見る (前方互換。落とし過ぎは復元の欠落 =
+別の事故)」と自分で書いてある。ところが**レコードの型はその欄を必須と宣言していた**
+ので、欄の無い控え (古い版・手で直した JSON・別の道具が書いた控え) が復元を通ると
+型が嘘になる。TypeScript は実行時には居ないので、行き着くのは画面である
+(2026-09-06 実測・3 か所):
+
+| 収集 | 形は任意 / 型は必須 | 起きること |
+|---|---|---|
+| `mutualfund-holdings` | `ytdReturnPct` | 一覧の `h.ytdReturnPct.toFixed(1)` が **TypeError**。投資信託の画面が `PageErrorBoundary` の枠になり、**その画面が保有銘柄の一覧なので利用者は消せない**。形は正しいので設定の「形式の合わないレコード」点検にも出ない |
+| `mutualfund-holdings` | `acquisitionCost` / `code` / `valuationMode` | 取得原価の合計が NaN → 「¥NaN」。`valuationMode` だけは画面側に `?? 'auto'` が在った (**1 つだけ補われていて残りが漏れていた**) |
+| `balance-sheet` | `inventory` / `accountsReceivable` / `accountsPayable` | `computeBalanceSheetMetrics` の足し算が NaN → 経営サマリーのタイルと**金融機関等へ出す書面に NaN が印刷される**。書面は「上記のとおり相違ありません。」と代表者印を添えて出す物なので、いちばん出てはいけない場所 |
+| `realestate-properties` | `monthlyExpenses` / `monthlyLoan` | 年間キャッシュフローの引き算が NaN → 不動産ページの「¥NaN」 |
+
+直し方は**読む所を 1 つにする** —— 使う場所ごとに `??` を置くと必ずどれか 1 つが
+漏れる (`valuationMode` だけ補われていたのがまさにそれ)。既定値は型の注記と入力側の
+約束をそのまま使う: `normalizeHolding` (取得額が無ければ評価額 = 損益 0、評価モードは
+auto、年初来は 0)、`normalizeBalanceSheet` + `balanceSheetOrNull` (内数は 0。
+**未入力 `null` は `null` のまま** —— ゼロの貸借対照表に化けさせると画面が「―」ではなく
+0 円を断言する)、`normalizeProperty` (経費・返済は 0)。数でない値・非有限値も既定へ倒す。
+
+**形の検査は緩いままにした。** 厳しくすると古い控えの復元でレコードが黙って消える
+(それは別の事故)。緩い入口 + 読む所の補い、が今の形である。
+
+対照は 3 本とも実物で取った: 旧の読み方に戻すと、投資信託は
+`Cannot read properties of undefined (reading 'toFixed')` で画面が枠になり、
+**金融機関等提出用の書面には NaN が印刷される** (`src/renderer/pages/__tests__/overviewBankSheet.test.ts` の
+★ が落ち、揃った控えの対照は通ったまま)。変異検査で 1 か所**自分の検査の穴**も出た
+—— 任意の欄の `typeof v === 'number' && Number.isFinite(v)` は、文字列だけを
+標本にすると `&&`→`||` の差が出ない (NaN は typeof が number)。NaN と ±∞ の標本を足した。
+
+まだ残っているのは `hydroponics-setup` の経済の欄 (歩留まり・単価・電力原単位ほか)。
+ここは既定値が**参考値であって実績ではない**と自分で書いてあるので、欠けた欄を
+既定で埋めると「その人の数字」として参考値が印刷されうる。0 で埋めるのも過小に
+断言する。扱いは docs/REMAINING_WORK.md に選択肢を残した (低カリウムの**実測**欄は
+型でも任意なので、この穴には入っていない)。
+
+#### 同梱の形と取ってきた形 (`src/main/clients/__tests__/snapshotShapeParity.test.ts`)
+
+CLAUDE.md は「fetcher は `SNAPSHOT[id]` と**同じ形**を返す」と約束しているが、
+**文章だけで誰も測っていなかった** (2026-09-06)。画面は
+`useServiceData(id, SNAPSHOT[id])` でまず同梱を描き、取得できたら差し替えるので、
+欄が食い違うと**片方の道でだけ** `undefined` を読む —— 同梱にしか無い欄は
+**取得できた瞬間に**空欄や `¥NaN` になり (最も気づきにくい壊れ方)、取得にしか無い欄は
+未連携のあいだずっと出ない。
+
+資格情報の要らない `LOCAL_SERVICES` は fetcher をその場で呼べるので、**50 件すべて**
+同梱と突き合わせた。実測は**全件一致** —— これは直す検査ではなく「崩れたら気づく」検査。
+`village` だけ同梱を持たない (registry.json から renderer 側で組む画面で
+`useServiceData` を通らない) ので、理由つきの台帳に 1 件だけ載せて双方向に検査する。
+
+**最初に書いた版は上端の鍵だけを比べていて、対照が鳴らなかった** ——
+同梱から `summary.consumptionTaxEstimate` を消しても `summary` という鍵は残るので
+差にならない。入れ子を歩く形に直したら、その場で 2 件を報告した。どちらも
+**偽陽性**だったが、境界の決め方を教えてくれた: (1) `funding.diversification` は
+同梱が `null as {…}` (「まだ無い」を表す普通の値・画面が真偽で守っている)、
+(2) `talent.ladder.byStep` は**中身で鍵が決まる表**で同梱は空。よって
+`null` / `undefined` の欄と、片方が空の配列・空の物は**比べない** ——
+分からないことを鳴らすと、台帳が「鳴って当たり前」になって守らなくなる。
+
+対照は 2 本とも入れ子で取った: 同梱から 1 欄消すと `取得だけ=[summary.consumptionTaxEstimate]`、
+fetcher に 1 欄足すと `取得だけ=[extraFieldForControl]` で落ちる。標本は 6 本
+(欄の増減・入れ子・空配列・空の物・null・物と非物)。
+
+**ブラウザ版にも同じ物差しを当てた** (`src/renderer/__tests__/webShimSnapshotParity.test.ts`)。
+`web-shim.ts` は別実装で **4 サービスだけ**自前に合成する
+(stocks / emotions / talent / security) ので、ここがずれると
+公開しているブラウザ版 (github.io の app.html) **でだけ**画面が壊れる。実測は 4 件とも一致。
+残りは `not_implemented` で画面が同梱を見続けるか、`liveRead` 経由で **shared の
+実装**を通る (`LIVE_READERS` は今 cursor 1 件・main と同じ
+`fetchCursorSnapshotWith` を呼ぶので形はずれようがない)。物差しは
+`src/shared/__tests__/shapeDiff.ts` に 1 つだけ置く —— 2 つ持つと片方だけ緩くなる。
+対照はブラウザ版の合成に 1 欄足すと `合成だけ=[controlOnlyField]` で落ちる。
+
+**この物差しが拾えない形も標本にしてある**: 片方の物の中身が**全部**消えた場合は
+空の物 (Map 相当) と区別できないので鳴らない。最初に書いた標本がまさにその形で、
+**自分の標本が落ちて**気づいた —— 「全部見ている」と思い込まないよう、
+拾える形と拾えない形の両方を検査に残した。
+
+#### 重なった取得 —— 後から返った古い応答が新しい内容を消していた
+
+`useServiceData` の `refresh()` には**順序の番人が無かった** (2026-09-06)。更新ボタンは
+`status === 'loading'` で無効になるが、**書き込みの操作は無効にならない** ——
+気分の記録・銘柄の登録・人材の保存・Team Radar の保存・Microsoft 365 は成功後に
+`refresh()` を呼ぶ (実測 5 画面 7 か所)。だから
+
+1. 「更新」を押す → 取得 A が始まる (遅い)
+2. その間に記録する → 書き込みは成功し、その直後の取得 B が**先に**返る (画面に反映)
+3. A が後から返り、`setData(A)` で**さっき記録した物が消える**
+
+しかも `source='live'` / `status='idle'` のままなので、画面は**取得できた顔で古い数字**を
+出す (「記録しました」の文言だけが残り、一覧にその記録が無い)。
+
+直しは**札 (identity)** で行う: 取得のたびに新しい物を `useRef` に置き、返ってきた
+ときに自分の札がまだ最新かを見て、古ければ**何も書かずに返る**。数の増減で書くと
+「+1 でも −1 でも同じに動く」等価な変異が残るだけで、守っている物 (最新だけが
+書き換える) は札のほうが素直に表せる。失敗の側にも同じ番人を置く ——
+遅れて返った古い失敗を拾うと、**成功した新しい取得の上に赤いバッジ**が乗る
+(橋が reject する道にも同じ番人が要る。約束の外で throw する main を踏んだ実例がある)。
+
+対照 3 本: 番人を外すと「古い応答が画面を戻さない」「古い失敗が赤くしない」
+「古い例外が赤くしない」が落ち、重ならない場合の対照は通ったまま。
+
+**同じ番人を `useCollection.reload()` にも置いた。** こちらの読みが重なる理由は 3 つ
+(書いた本人が await する分・`notifyCollection` で他 instance に飛ぶ分・マウント
+effect の分) で、`list()` は IndexedDB の読みだけでは終わらず**1 件ずつ復号してから**
+返る (`recordEncryption` を有効にした端末)。読みの要求順は IndexedDB が守っても、
+**復号にかかる時間は件数で変わる**ので返る順は要求順とは限らない —— 先に始まった
+大きい読みが後から返ると、書いた直後の一覧が**書く前の姿に戻る** (記録は残っている
+のに画面から消える)。対照は `list()` を手で解決できる store に差し替えて返る順を
+逆にし、番人を外すと `expected [ '記録するまえ' ] to deeply equal [ '記録したあと' ]`
+で落ちることを見た。`src/renderer/data/useCollection.ts` は変異検査 100% (54)。
+
+一方で**書き込み側の順序は既に守られていた**: `store.update` / `remove` は id ごとの
+鎖 (`serialize`) に載り、書く直前に存在を再確認する (2026-08 の
+`importAll({replace:true})` との競合の直しがそのまま効いている)。
+`SettingsPage` の資格情報スロットの `refresh()` は `busy` でボタンを止めた上で
+`await` するので、残る隙はマウント直後の 1 回だけ —— 影響は「登録済み」の札が
+1 描画分古いことなので、据え置いた (docs/REMAINING_WORK.md に記録)。
+併せて `declaresMock` を簡素化した —— `typeof value === 'object'` は数・文字列に
+`.isMock` が無いので要らず、置くと「関数が isMock を持つ場合」でしか差が出ない
+等価な分岐だった。変異検査は `src/renderer/hooks/useServiceData.ts` が
+**81.32% (生存 17) → 100% (82 変異体)**。
+
+#### 同じ不変条件を、片方の入口だけが守っていた (最後のオーナー)
+
+`src/shared/team.ts` の `canRemoveMember` は「組織にはオーナーが 1 人以上必要」を
+守り、`TeamPage` の × ボタンも無効になって「最後のオーナーは削除できません。」と
+言う。ところが**役割の `<select>` には守りが無かった** (2026-09-06 実測) ——
+全員に 3 つの選択肢が出て、`onChangeRole` は素で `edit(id, { role })` を呼ぶだけ。
+オーナーが 1 人の組織でその 1 人を「メンバー」にすると**オーナーが 0 人**になる。
+
+0 人になると何が起きるかが厄介で、**削除の守り自体が外れる** ——
+`canRemoveMember(*, 0)` は「誰でも削除できる」と答えるので、最後の 1 人まで
+消せるようになる。さらに `canAssignRole` は「自分より下の役割しか与えられない」
+規則なので (owner より上は無い)、その規則を UI に配線した将来の版では
+**オーナーを作り直す道が無い**。
+
+直しは同じ強さの述語を 1 つ増やして両方の入口で使う:
+`canChangeRole(currentRole, nextRole, ownerCount)` は、オーナーが 1 人のときの
+降格だけを断る (昇格・オーナーのまま・オーナー以外の変更は通す。既に 0 人に
+なっている端末から立て直す道も閉じない)。`TeamPage` は断りの文言を出し、
+**選べない選択肢は `<option disabled>` にする** (押してから断られるより早い)。
+
+対照は実物の record store に 1 人だけオーナーを入れて `<select>` を動かす形で
+取った: 守りを外すと「断りの文言が出る」と「選択肢が無効になっている」が落ち、
+オーナー 2 人の対照と「メンバーをオーナーへ上げられる」対照は通ったまま。
+
+#### 選べないと宣言した方式で「最有利」を決めていた (消費税の 3 方式)
+
+税の概算 card は消費税を 3 方式 (本則 / 簡易 / 2 割特例) で並べ、いちばん安い物に
+「· 最有利」の札を付け、税負担合計もその方式で合算する。ところが 3 方式のうち
+**2 つは条件付き**である —— 簡易課税は基準期間の課税売上高 5,000 万円以下 + 事前届出、
+2 割特例はインボイス登録で免税から課税になった事業者の経過措置。
+
+2026-09-06 の実測では、card は簡易課税の欄に
+「基準期間 5,000 万円超は選択不可」と**自分で書きながら**その欄に「· 最有利」を付け、
+合計まで「消費税は最有利方式（簡易課税）で合算」と言っていた ——
+**同じ枠の中で矛盾**していた。`canUseSimplified` は注記のためだけに呼ばれ、
+**金額を選ぶ側には渡っていなかった** (今日の「同じ不変条件を片方の入口だけが守る」
+と同じ形)。しかも 2 割特例には可否の判定すら無く、課税売上高 6,000 万円の事業者に
+「最有利: 2 割特例」と出せた (元から免税ではないので対象になりえない)。
+
+直しは `compareBusinessTaxMethods` に `MethodAvailability` を渡せるようにして、
+**選べる方式の中からだけ**最安を採る (3 方式の金額そのものは今までどおり全部返す ——
+画面は 3 つ並べて見せるので)。本則課税は届出も期限も無いので常に土台。画面側は
+自分の注記と同じ判定を渡す: 簡易は `canUseSimplified(課税売上高)`、2 割特例は
+`isTaxExempt(課税売上高)` —— 登録の有無は見えないが、**免税の水準を超える売上なら
+元から免税ではない**ので、免税判定と同じ代理指標で外せる (画面の注記も
+「基準期間（前々事業年度）も同水準なら」と同じ代理で書いている)。
+
+検査は card の**入力欄を実際に打って**場面を作る。最初は props からの導出で
+書いたが、仕入が売上と同額になって本則が常に最安になり、**どの場面でも通る空の
+検査**だった (対照が 1 本も落ちなかったので気づいた)。対照は 3 本落ちる:
+6,000 万円で「2 割特例」が最有利に戻り、3,000 万円でも「簡易課税」ではなく
+2 割特例が選ばれる。免税水準 (800 万円) と「仕入が多く本則が最安」の 2 本は
+どちらの版でも通る (場面が可否に依らないので)。
+
+#### 期限つきの税制特例に、期限を見る仕組みが無かった (2026-09-06・残り 24 日)
+
+上の直しは**売上高**の軸だけを塞いだ。2 割特例にはもう 1 つ軸がある ——
+**ある日を境に使えなくなる**。`TWENTY_PERCENT_MEASURE_END = '2026-09-30'`
+(src/shared/taxConsumption.ts) は 2026-08-23 に「機械が読める形に置くだけ」で入り、
+注記も「この定数は計算を変えない。期限を過ぎたときに何をするかは税務上の判断」と
+書いていた。`lint:rate-freshness` が 180 日前から警告する仕組みだけがあり、
+**判定に使っている場所は 1 つも無かった**。実測で残り 24 日。
+
+`twentyPercentMeasureStatus(today)` (src/shared/taxConsumption.ts) を足した。
+**3 値である** —— 適用対象は「期限までの日の属する**課税期間**」なので、
+今日の日付だけでは決まらない。3 月決算法人の課税期間 2026-04-01〜2027-03-31 は
+2026-09-30 を含むので、期限を過ぎた 2026-10-01 でも**対象である**。
+
+- `active` … 今日が期限内。今日を含む課税期間は必ず期限内の日を含む
+- `period-dependent` … 期限は過ぎたが、含む**かもしれない**
+- `ended` … 今日を含むどの課税期間も含み**えない**
+
+`ended` の境目は「期限 + 1年 - 1日」。課税期間は 1 年を超えないので
+(法人税法 13 条: 会計期間が 1 年を超えるときは 1 年ごとに区分／個人は暦年。
+課税期間の特例は短くするだけ)、今日 T を含む課税期間の開始日は必ず
+`T - 1年 + 1日` 以降にある。実測 2026-09-30 の期限なら **2027-09-30 から `ended`**。
+
+**言い切れる `ended` でだけ**候補から外す (`data/eligibility.ts` の 3 値判定と
+同じ理由 —— 分からないものを言い切ると、使える人の見積りから選択肢が消える)。
+`period-dependent` の帯は選ばせたまま、欄に「令和8年9月30日を含む課税期間まで」と
+条件を書く。日付の比較は `localIsoDate` の**利用者の暦日**で行う (`toISOString()` の
+UTC 日付だと日本の 0〜9 時に前日として判定する)。文字列は `YYYY-MM-DD` の辞書順で
+比べ、0 詰めするので桁が揃う。
+
+**同じ穴が 2 か所にあった。** 上の直しでは経営分析の card しか見ておらず、
+税務ページ ⑩ (src/renderer/pages/TaxPage.tsx) は**可否をどこでも見ていなかった** ——
+すぐ上の説明文が「簡易課税は基準期間の課税売上5,000万円以下」と書いているのに、
+その水準を超えても簡易課税を「✅ 最も納付が少ない方式」と出す。両方に
+`MethodAvailability` を渡し、⑩ には**外した方式とその理由**を出す
+(理由の文面は判定と同じ値から作るので、片方だけ直ることがない)。
+
+画面に書き写されていた日付も定数から作るようにした ——
+経営分析の「令和8年9月30日を含む課税期間まで」と、税務ページの「令和8年分まで」
+(こちらは**法人には不正確**でもあった)。和暦の組み立ては `bankFormat.ts` の
+`formatDate` 1 か所に置き、`era` だけを受けるよう引数の型を狭めた
+(`Pick<BankFormat, 'era'>`) —— 書面の外から和暦ラベルが要るときに
+`BankFormat` を丸ごと組ませないため。同じ節で見つけた**別の書き写し** 2 件も
+直した: 免税・簡易課税の境目を注記が固定値で出しており、設定で上書きすると
+**注記と計算が別の数字を言う**状態だった (`exemptionLimit` / `simplifiedLimit` へ)。
+
+対照は 2 本とも狙った所だけ落ちる: 期限の判定を外すと「期限のあとは選ばない」が、
+⑩ の可否を渡さないのを戻すと「期限を過ぎた時計」と「境目を超える売上」が落ちる。
+変異検査は `taxConsumption.ts` が **0.00% (2 件 未到達) → 100% (39 件)**。
+自分の標本が 2 度先に落ちて助かった: (1) 期限の文字列を読めるか確かめる前に
+`t <= end` の比較を置いていたので、'いつか' のような値が期限として通っていた
+('い' は '2' より大きい)、(2) 0 詰めを外す変異体は境目のすぐ隣の日
+(2027-09-10) でしか見えない。自作の ISO 日付の読み取りは
+`bankFormat.parseIsoDate` へ寄せた —— 日の検査が月の検査に包含されて**殺せない
+変異体**になっていたため (2 桁の日がどう外れても繰り上がりで月が変わる)。
+
+#### 同じ id への書き換えの鎖は、タブをまたいでいなかった (2026-09-06)
+
+`store.update` は「読む → 復号 → 混ぜる → 暗号化 → 書く」で、暗号化が非同期なので
+読みと書きが**別のトランザクション**になる。2026-08-23 の実測では、その隙に別の
+書き換えが挟まると **lost update** (`{a:2}` と `{b:3}` を同時に投げると `a` が消える) と
+**消したはずの record の復活** が起き、しかも**どちらも呼んだ側には成功として返る**。
+これは id ごとの鎖 (`perId`) で直してある。
+
+**ただし鎖はメモリの Map で、この JS 文脈の中だけの物である。** ブラウザ版は
+単一の HTML を開くだけなので**2 枚目のタブは普通に開かれ**、別タブは別の鎖を持つ。
+つまり上の 2 つの失敗が、同じ形でそのまま戻る (デスクトップ版は窓が 1 つなので
+実質はブラウザ版の話)。
+
+`serialize` の中身を **Web Locks (`navigator.locks`)** で囲んだ ——
+錠の名前は `servicehub.record.<id>` で、オリジン単位なのでタブをまたぐ。
+無い環境 (jsdom の検査・拒まれる場合) では鎖だけで進む: 単一タブの保証は
+変わらないので**壊れるより遅れるほうを選ぶ**。
+
+**失敗の切り分けが要る。** `locks.request(name, cb)` は **cb の失敗もそのまま
+reject する**ので、素朴に catch して `run()` を呼び直すと**書き換えが 2 回走る**
+(1 回目は錠の中で実際に書いている)。`entered` の旗で「錠が取れたか」と
+「操作が失敗したか」を分け、後者は再実行しない。**この取り違えは、データ損失を
+直す変更がデータ破損を作る**形なので、対照で確かめてある (旗を外すと
+「2 回書かない」の検査だけが落ちる)。
+
+実機のタブ 2 枚は**ここでは試していない** (jsdom に錠も窓も無い)。確かめたのは
+錠の名前・二重実行しないこと・錠が無い/壊れている環境での退避の 3 点で、
+`src/renderer/data/store.ts` は変異検査 **99.65%** (残る 1 件は module 直下の
+`DB_NAME`。週次の全実行では未到達として扱われる既知の形)。
+
+#### 危機時に見せる窓口の照合が、片方向だった (2026-09-06)
+
+`src/renderer/data/counselorKnowledge.ts` は「テストで**全窓口が確証済み**を不変条件化する」と
+書いていた。実際の検査 (`src/renderer/data/__tests__/sourceVerification.test.ts`) が
+見ていたのは
+
+> 確証済みの各件が、出荷する一覧に**在る**か
+
+だけである。**危ないのは逆向き**で、危機応答で人に見せる `SUPPORT_RESOURCES`
+(`src/renderer/data/counseling.ts`) に手打ちの窓口を 1 行足すと、**出典が 1 件も
+無くても検査は全部緑のまま**通った。番号が古ければ、いま最も助けが要る人が
+誰にも繋がらない電話を掛ける。自殺予防のダイヤルなので、影響は「表示の誤り」で
+済まない。
+
+`SupportResource` に `kind` を足し (`hotline` / `emergency`)、
+`unverifiedSupportResources()` (`src/renderer/data/sourceVerification.ts`) が
+**出荷する側から**照合する:
+
+- `kind: 'hotline'` … `VERIFIED_SUPPORT_RESOURCES` に同じ `label|detail` が在り、
+  `verifyClaim` が `confirmed` (独立 2 出典・うち公的 1) を返すこと。
+  `detail` まで鍵にするので、**受付時間だけ書き換えた再確証なしの変更も鳴る**
+- `kind: 'emergency'` … 119 / 110 を必ず含み、**自前のダイヤルイン番号を持てない**
+  (未確証の窓口を `emergency` に隠せないようにする)
+
+種別を欄にしたのは、**足す人の手元で規則が見える**ようにするため —— 窓口を
+足す = `kind: 'hotline'` を書く = 出典が要る、が型から辿れる。
+
+対照が決定的だった: 出典の無い窓口を 1 行足すと、**新しい検査だけが落ち、
+以前からある片方向の検査は通り続ける** (24 passed / 1 failed)。守っていたつもりの
+向きでは何も守れていなかったことが、そのまま見える。
+
+番号の判定の境目も標本で留めた —— 先頭・末尾に置いた番号、区切りを除いた桁数
+(8 桁は番号扱いしない・9 桁から番号扱い)。最初は緩い標本しか無く、変異検査で
+5 件生き残って気づいた。`src/renderer/data/sourceVerification.ts` は **100% (80 変異体・無視 0)**
+—— 以前は 28 殺・**5 件が未到達の static** だったので、方針の定数
+(`DEFAULT_POLICY` / 公的種別) も読み直しで殺した。
+
+#### lint:parameter-prose (`scripts/lint-parameter-prose.cjs`) —— 画面が刷る数字の出所
+
+`src/shared/parameters.ts` の台帳に載せた値は利用者が上書きできる。計算は
+`useParameters()` の有効値を受け取るが、**説明文や警告文がモジュールの既定定数を
+直接刷っている**と、上書きした瞬間に**画面が自分の計算と違う数字を名乗る**。
+台帳の設計注記が禁じている「設定できるのに効かない」の**裏返し**で、
+こちらは効いているのに画面が古い数字で説明する。
+
+2026-09-06 の 1 日で 5 件出た。最悪だったのは税務ページ ⑩-3 で、全額控除の要件
+(課税売上割合 95% 以上・課税売上高 5 億円以下) を 3 か所で固定値から刷りながら、
+判定 `canDeductFully` は上書きされた値で行っていた —— 割合の境目を 90% にした
+利用者には、**90% で発火した ⚠ 警告が「割合 95% 未満」と嘘を言う**。
+残る 2 件は経営分析の消費税 card の免税・簡易課税の境目 (同じ段落の中)。
+
+**文言を直すだけでは次に足す人が同じ穴に落ちる**ので、使用そのものを台帳にした。
+`parameters.ts` が import している定数 (実測 **111 個**) を renderer の
+**251 ファイル**で走査し、直接使用を数える。既定への倒し込み —— `?? 定数`・
+`|| 定数`・既定引数 `x: T = 定数`・「上書きされているか」を見る `=== 定数` ——
+は規則の外 (いずれも**既定そのものについての式**なので嘘をつく形にならない)。
+それ以外の直接使用は `ALLOWED` に理由つきで登録する (現在 1 件: 退化した帯の
+三項による倒し込み)。走査が死んだら落ちる床を定数 90・ファイル 200 に置いた。
+
+**三項は許さない。** `cond ? 定数 : x` は倒し込みだが、JSX の
+`{cond ? 定数 : other}` と字面が同じで**刷るのと見分けが付かない**。同じ理由で
+**1 行に定数が 2 回出たら許さない** —— `effective === 定数 ? '既定' : 定数` のように
+許される形の隣で刷る抜け道を塞ぐ (行単位の検査なので、ここを見ないと 1 つ目の
+形だけで行全体が通る)。self-test は 16 例 (★ 標本 6・対照 10)。
+
+台帳に載っているのに**配線が留められていなかった**項目も同時に埋めた ——
+`fullCreditRatioThreshold` / `fullCreditSalesThreshold` は
+`src/renderer/pages/__tests__/parameterWiring.test.ts` に場面が無かった。60% に緩めると文言も判定も動く
+(既定の入力は割合 80% なので、95% では満たさず 60% では満たす) ことを留めた。
+
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 
 ランタイムソース **≥ 400 ファイル**を **36 個の禁止パターン** で scan し、
@@ -2492,6 +3047,21 @@ Claude のモデル ID の直書き / 表への所属判定に `in` を使う形
 1 つにすると片方の意図が壊れる。ゲートは等値比較 (`=== 0x7f`) だけを見て
 範囲比較は通すことで、この 2 つを区別している（**ゲートを足した直後に
 これを誤検出し、畳まない判断をした**）。
+
+**数字の読み取り**も 1 本ではなかった。画面の入力欄は
+`src/renderer/data/inputGuards.ts` の `readNumber` を通すのに、
+`src/shared/hydroponicCrops.ts` の `parseCropNumber` は `Number(カンマを外した文字列)`、
+`src/renderer/data/investments.ts` の `toAmount` は `Number(カンマと空白を外した文字列)`、
+`src/renderer/data/businessUnits.ts` はまた別の写しで、**同じ文字列が場所によって
+別の数**になっていた。`1,2` は画面では読めず品目では 12 (pH 1.2 と打った値が pH 12 として
+範囲 0〜14 を通る)、家賃は**画面が ⛔ を出しながら 15 円が保存され**、全角の「１２００」は
+逆に画面が読めて保存が断っていた。読み取りを `src/shared/readNumeric.ts` に寄せ、
+4 つの口をそこへ通した (69 mutants / 100%)。同時に飾り (通貨記号・単位・桁区切り) を
+落とす**位置**を決めた —— 位置を見ずに落としていた 2026-09-06 までは `100m2` が 1002、
+`0.5m3` が 0.53、`2024年12月31日` が 20241231 と読め、**値が返るので指摘も出なかった**
+(このモジュールが潰したはずの「黙って間違った数で計算する」が、0 ではなく別の数の形で
+残っていた)。`src/renderer/__tests__/numberReadingParity.test.ts` が口ごとに読みの一致を
+見るので、また 2 本目が生えたときに鳴る。
 
 `body.slice(` の検査は、連携先の**エラー応答本文をそのままエラー文字列へ**
 入れている箇所を捕まえる。この文字列は画面に出て不具合報告にも貼られるため、

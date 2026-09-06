@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 143
+- ブロック数: 156
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `69589af155d3ae5d4aecabb3480e3076e00df8077d77e4063a7614d32668405c`
-- 保護対象: 65 ファイル
+- 末尾(tip)ハッシュ: `e7983061ca3ecf071614949365aba2c060ba07720bca4565fa6f9a26f6d8bb85`
+- 保護対象: 66 ファイル
 
 ## ブロック
 
@@ -156,6 +156,19 @@
 | 140 | `c776e99e54a7f9bc` | `fafa5a0c3110cea9` | `2601e7c68364cc6b` | update integrity-chain.cjs,assistant.ts |
 | 141 | `db33e6606dcb0ff7` | `2601e7c68364cc6b` | `a608dedaf93d15f6` | update integrity-chain.cjs,chat.ts,credentials.ts,providers.ts |
 | 142 | `4809c27beb714f99` | `a608dedaf93d15f6` | `69589af155d3ae5d` | update ci.yml |
+| 143 | `8aea0c2f52f8138b` | `69589af155d3ae5d` | `400e4edecfbd6f11` | update ci.yml |
+| 144 | `81a3ce85f9924fbe` | `400e4edecfbd6f11` | `038f7e0885f100bb` | update proxy.ts |
+| 145 | `f57c861f3614642e` | `038f7e0885f100bb` | `d164f7802730003f` | update fsa.ts,proxy.ts |
+| 146 | `91f3f1436e940d03` | `d164f7802730003f` | `df69a8f51b94e6db` | update proxy.ts |
+| 147 | `06327687108ab3e1` | `df69a8f51b94e6db` | `fd31b6ddfc92568a` | update proxy.ts |
+| 148 | `92e0b65f731bfab2` | `fd31b6ddfc92568a` | `ad0ff862e661ea85` | update proxy.ts |
+| 149 | `be167b4609dfb65c` | `ad0ff862e661ea85` | `6eb22f58157533eb` | update proxy.ts |
+| 150 | `f332d6a8a37247dc` | `6eb22f58157533eb` | `98bae01596737bac` | update main.ts,secrets.ts |
+| 151 | `fdd11550ff27c3e4` | `98bae01596737bac` | `89246daa726d738b` | update LockScreen.tsx,vault.ts |
+| 152 | `f606793c30cff64a` | `89246daa726d738b` | `efc501487f020d47` | update pkceSession.ts |
+| 153 | `f22f939447993c7a` | `efc501487f020d47` | `93584bb44ebbd8bd` | update pkceSession.ts |
+| 154 | `e9cecef70974c4fc` | `93584bb44ebbd8bd` | `372531b5494570e1` | update integrity-chain.cjs,localWrite.ts |
+| 155 | `6cefc543f6675d95` | `372531b5494570e1` | `e7983061ca3ecf07` | update ci.yml |
 
 ## 保護対象ファイル
 
@@ -191,6 +204,7 @@
 - `src/main/shellOpenGate.ts`
 - `src/preload/preload.ts`
 - `src/renderer/data/assistantMarkdown.ts`
+- `src/renderer/data/localWrite.ts`
 - `src/renderer/data/recordCipher.ts`
 - `src/renderer/fs/fsa.ts`
 - `src/renderer/network/liveRead.ts`

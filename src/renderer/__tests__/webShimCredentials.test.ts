@@ -55,6 +55,8 @@ vi.mock('../library/library', () => ({
 }));
 vi.mock('../network/proxy', () => ({
   getProxyConfig: async () => proxyConfig,
+  // 読み出しの新しい入口 (「未設定」と「読めない」を分ける)。ここでは常に「読めた」。
+  inspectStoredProxyConfig: async () => ({ config: proxyConfig, rejected: null, unreadable: null }),
   fetchViaProxy: async (url: string, init: RequestInit) => {
     transportCalls.push({ url, init });
     return new Response('{}', { status: 200 });

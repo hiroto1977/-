@@ -5,13 +5,10 @@ import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
 import { buildTeamEmotionRadar, teamEmotionSummary, type MemberEmotion } from '../data/teamEmotionRadar';
 import { buildTeamCare, type CarePriority } from '../data/memberCare';
+import { sanitizeRadarDraft, type RadarDraft, type TeamMember } from '../data/teamRadarDraft';
+import { writeLocalJson, type LocalWriteResult } from '../data/localWrite';
+import { exportWarning } from '../data/exportOutcome';
 
-interface TeamMember {
-  id: string;
-  name: string;
-  scores: number[];
-  notes?: Record<number, string>;
-}
 
 /** snapshot 由来の読み取り専用メンバー (state に入る前の初期値の型)。
  *  state 側は structuredClone で mutable な TeamMember[] にコピーする。 */
@@ -40,30 +37,23 @@ const SCORE_MAX = 5;
  *  リロードしても編集した名前が消えないようにするのが目的。 */
 const DRAFT_KEY = 'servicehub.teamradar.draft.v1';
 
-interface RadarDraft {
-  title?: string;
-  axes?: string[];
-  department?: string;
-  evaluatedAt?: string;
-  members?: TeamMember[];
-}
-
 function loadDraft(): RadarDraft {
   try {
     const raw = localStorage.getItem(DRAFT_KEY);
-    const parsed: unknown = raw ? JSON.parse(raw) : null;
-    return parsed && typeof parsed === 'object' ? (parsed as RadarDraft) : {};
+    // 保存値は型が守らない —— 形の合う欄だけを受ける (members が配列でなければ .map で落ちていた)。
+    return sanitizeRadarDraft(raw ? JSON.parse(raw) : null);
   } catch {
     return {};
   }
 }
 
-function saveDraft(draft: RadarDraft): void {
-  try {
-    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
-  } catch {
-    /* private mode / quota — 永続化は best-effort */
-  }
+/**
+ * 下書きを保存する。**失敗を黙って捨てない** —— 「リロードしても消えない」前提で
+ * 打ち込ませておいて消えるのが最悪なので、書けなかったら画面に出す
+ * (2026-09-06。理由の分類は `data/localWrite.ts`)。
+ */
+function saveDraft(draft: RadarDraft): LocalWriteResult {
+  return writeLocalJson(DRAFT_KEY, draft);
 }
 const PALETTE = [
   { stroke: '#5b8def', fill: 'rgba(91, 141, 239, 0.18)' },
@@ -187,7 +177,7 @@ function uniqueId(name: string, existing: string[]): string {
 }
 
 export function TeamRadarPage() {
-  const { data, source, status, errorMessage, refresh } = useServiceData<TeamRadarSnapshot>(
+  const { data, source, payloadIsMock, status, errorMessage, refresh } = useServiceData<TeamRadarSnapshot>(
     'teamradar',
     SNAPSHOT.teamradar,
   );
@@ -207,7 +197,7 @@ export function TeamRadarPage() {
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
   const [exportBusy, setExportBusy] = useState(false);
   const [exportMsg, setExportMsg] = useState<string | null>(null);
-  const [lastExport, setLastExport] = useState<{ path: string; bytes: number } | null>(null);
+  const [lastExport, setLastExport] = useState<{ path: string; bytes: number; warning?: string } | null>(null);
   // 感情ウェルビーイング連携: メンバーごとの「今日の気分」(1-5)。
   const [moods, setMoods] = useState<Record<string, number>>({});
 
@@ -256,8 +246,11 @@ export function TeamRadarPage() {
   }
 
   // 名前まわりの編集は自動で localStorage に保存 (リロードしても消えない)。
+  /** 保存できなかった理由 (undefined なら保存できている)。 */
+  const [saveError, setSaveError] = useState<string>();
   useEffect(() => {
-    saveDraft({ title, axes, department, evaluatedAt, members });
+    const r = saveDraft({ title, axes, department, evaluatedAt, members });
+    setSaveError(r.ok ? undefined : r.message);
   }, [title, axes, department, evaluatedAt, members]);
 
   // 評価 × ケア支援: スキルスコア + 気分から 1on1 支援レポートを組み立てる。
@@ -352,7 +345,7 @@ export function TeamRadarPage() {
         { title: `${title}｜${department} (${evaluatedAt})` },
       );
       if (r.ok) {
-        setLastExport({ path: r.data.path, bytes: r.data.bytes });
+        setLastExport({ path: r.data.path, bytes: r.data.bytes, warning: exportWarning(r.data) });
       } else {
         setExportMsg('エクスポート失敗: ' + r.message);
       }
@@ -369,6 +362,7 @@ export function TeamRadarPage() {
         who={`チームレーダーチャート · ${title}`}
         serviceId="teamradar"
         source={source}
+        payloadIsMock={payloadIsMock}
         status={status}
         errorMessage={errorMessage}
         isConfigured
@@ -392,6 +386,15 @@ export function TeamRadarPage() {
       </div>
 
       <Section title="メタ情報 / 名前の変更" count={3 + axes.length}>
+        {saveError && (
+          <div
+        role="alert"
+        data-save-error
+        style={{ fontSize: 12, color: '#f87171', border: '1px solid #f87171', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
+          >
+        ⚠ {saveError}
+          </div>
+        )}
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: 'var(--text-mute)' }}>
             チャート名
@@ -787,6 +790,7 @@ export function TeamRadarPage() {
               bytes={lastExport.bytes}
               openLabel="Canva を開く"
               openUrl="https://www.canva.com/"
+              warning={lastExport.warning}
             />
           </div>
         )}

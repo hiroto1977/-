@@ -33,7 +33,6 @@ Gregory S. Crespi ／ David Cabrelli
 
 ## 関連概念
 - [[bizlaw-companies-act|会社法]] — 同分野の近傍
-- [[bizlaw-liquidated-damages|損害賠償額の予定——違約金条項の有効性と違約罰との区別]] — 同分野の近傍
 - [[bizlaw-bankruptcy|破産法]] — 同分野の近傍
 
 ## 関連

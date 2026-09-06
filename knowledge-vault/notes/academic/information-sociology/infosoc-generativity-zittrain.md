@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: Generative systems — Zittrain, generativity (leverage, adaptability, ease of mastery, accessibility), generative vs. tethered appliances](https://en.wikipedia.org/wiki/Generative_systems) `リファレンス`
 
 ## 関連概念
-- [[infosoc-remix-copyright-digital-culture|リミックス文化とデジタル著作権のジレンマ——クリエイティブ・コモンズの思想と実践]] — 同じ思想家
+- [[infosoc-remix-culture-lessig-jenkins|リミックス文化（レシッグ／ジェンキンス）——既存の文化的素材を再構成して創作するデジタル時代の実践と、それを抑圧しうる著作権制度との緊張]] — 同じ思想家
 - [[infosoc-remix-culture-lessig|リミックス文化とクリエイティブ・コモンズ（レシッグ）]] — 同じ思想家
 - [[bizlaw-antitrust-digital-platforms|デジタルプラットフォームと独占禁止法——市場支配力の現代的定義と規制]] — 同じ思想家
 - [[infosoc-information-fiduciary|情報受託義務者（インフォメーション・フィデューシャリー）]] — 同じ思想家

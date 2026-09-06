@@ -27,11 +27,10 @@ John Bowlby ／ Mary Dinsmore Salter Ainsworth ／ Mary Main
 
 ## 出典
 - [Attachment Theory | Britannica](https://www.britannica.com/science/attachment-theory) `リファレンス`
-- [John Bowlby's Attachment Theory — Simply Psychology](https://www.simplypsychology.org/bowlby.html) `学術`
-- [Mary Ainsworth Strange Situation Experiment — Simply Psychology](https://www.simplypsychology.org/mary-ainsworth.html) `学術`
+- [John Bowlby's Attachment Theory — Simply Psychology](https://www.simplypsychology.org/bowlby.html) `リファレンス`
+- [Mary Ainsworth Strange Situation Experiment — Simply Psychology](https://www.simplypsychology.org/mary-ainsworth.html) `リファレンス`
 
 ## 関連概念
-- [[human-attachment-style-theory|愛着スタイル理論]] — 同じ思想家
 - [[human-attachment|愛着理論（ボウルビィ／エインズワース）]] — 出典を共有
 - [[human-attribution-theory|帰属理論]] — 出典を共有
 - [[human-big-five|ビッグファイブ（5因子性格モデル）]] — 出典を共有
@@ -39,6 +38,7 @@ John Bowlby ／ Mary Dinsmore Salter Ainsworth ／ Mary Main
 - [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 出典を共有
 - [[human-hawthorne-effect|ホーソン効果]] — 出典を共有
 - [[human-herzberg-two-factor|ハーズバーグの二要因理論（動機づけ・衛生理論）]] — 出典を共有
+- [[human-maslow-hierarchy-of-needs|マズローの欲求階層説]] — 出典を共有
 - [[human-object-permanence|対象の永続性（Object Permanence）]] — 出典を共有
 - [[human-opponent-process|対抗過程理論（Opponent-Process Theory of Acquired Motivation）]] — 出典を共有
 

@@ -35,11 +35,11 @@ aliases:
 - [[econ-bilateral-monopoly|双方独占]] — 同じ思想家
 - [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]] — 同じ思想家
 - [[econ-kaldor-nonlinear-cycle|カルドアの非線形景気循環モデル——投資と貯蓄の非線形性が生む内生的循環]] — 同じ思想家
+- [[econ-kaldor-stylized-facts-growth|カルドアの定型化された事実——長期成長に見られる6つの経験的規則性]] — 同じ思想家
 - [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同じ思想家
 - [[econ-knightian-uncertainty|ナイトの不確実性（リスクと不確実性）]] — 同じ思想家
 - [[econ-paradox-of-thrift|倹約のパラドックス]] — 同じ思想家
 - [[econ-scitovsky-paradox|シトフスキー・パラドックス]] — 同じ思想家
-- [[econ-gibson-paradox|ギブソンのパラドックス]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

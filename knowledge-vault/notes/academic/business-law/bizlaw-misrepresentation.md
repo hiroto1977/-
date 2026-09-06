@@ -34,7 +34,6 @@ aliases:
 - [[bizlaw-fraudulent-conveyance-doctrine|詐害行為取消法理]] — 同分野の近傍
 - [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 同分野の近傍
 - [[bizlaw-shelter-rule-negotiable-instruments|シェルター・ルール（Shelter Rule／遮蔽の法理）]] — 同分野の近傍
-- [[bizlaw-tob|公開買付け（TOB）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

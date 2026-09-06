@@ -39,6 +39,7 @@ Robert L. Birmingham ／ Richard A. Posner ／ Charles J. Goetz ／ Robert E. Sc
 - [[human-intersectionality-theory|インターセクショナリティ理論（交差性理論）]] — 出典を共有
 - [[bizlaw-cram-down-mechanism|クラムダウン（強制認可）メカニズム]] — 出典を共有
 - [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 出典を共有
+- [[infosoc-taxonomy-of-privacy-solove|ソロブのプライバシー類型論——プライバシー侵害を情報収集・情報処理・情報拡散・侵入の四群十六類型に分ける枠組み]] — 出典を共有
 - [[bizlaw-discharge-for-breach|契約違反による債務免除]] — 同分野の近傍
 
 ## 関連

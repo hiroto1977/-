@@ -26,15 +26,15 @@ aliases:
 ウィッカム・スキナー ／ ロバート・ヘイズ ／ スティーブン・ホイールライト ／ テリー・ヒル
 
 ## 出典
-- [Skinner, W. (1974) The Focused Factory — Harvard Business Review, 52(3), 113–121](https://hbr.org/1974/05/the-focused-factory) `学術`
+- [Skinner, W. (1974) The Focused Factory — Harvard Business Review, 52(3), 113–121](https://hbr.org/1974/05/the-focused-factory) `メディア`
 - [Reference for Business: Focused Factory — Skinner, manufacturing strategy, plant-within-a-plant, focus on one task](https://www.referenceforbusiness.com/management/Ex-Gov/Focused-Factory.html) `リファレンス`
 
 ## 関連概念
 - [[mgmt-order-winners-hill|受注獲得基準と受注資格基準（ヒル）——製造を市場に結びつける]] — 同じ思想家
 - [[mgmt-sandcone-ferdows|サンドコーン・モデル（ファードウズ＝デ・メイヤー）——能力は積み上げる順序がある]] — 同じ思想家
 - [[mgmt-time-based-competition|時間ベース競争——リードタイムの短縮そのものをコスト・品質と並ぶ競争優位の源泉とする戦略パラダイム]] — 出典を共有
+- [[mgmt-attention-based-view|注意ベース理論（オカシオ）——企業の行動は、意思決定者の希少な注意をどの争点と答えに向けるかを組織の構造が配分した結果である]] — 同分野の近傍
 - [[mgmt-value-disciplines-treacy-wiersema|価値基準（バリュー・ディシプリン）——市場リーダーが選ぶ三つの卓越]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

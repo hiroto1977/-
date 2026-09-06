@@ -34,7 +34,6 @@ Lon L. Fuller ／ William R. Perdue ／ Charles Fried
 ## 関連概念
 - [[bizlaw-statute-of-frauds|詐欺防止法]] — 同じ思想家
 - [[bizlaw-consideration-doctrine|約因の法理——約束が拘束力を持つために要する交換的対価]] — 同分野の近傍
-- [[bizlaw-drag-along-rights|ドラッグ・アロング権]] — 同分野の近傍
 - [[bizlaw-patent-pool|パテント・プール（特許プール）]] — 同分野の近傍
 
 ## 関連

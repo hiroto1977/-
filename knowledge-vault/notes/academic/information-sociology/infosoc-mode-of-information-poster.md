@@ -26,7 +26,7 @@ aliases:
 マーク・ポスター ／ ジャン・ボードリヤール ／ ミシェル・フーコー ／ マニュエル・カステル
 
 ## 出典
-- [Poster, M. (1990) The Mode of Information: Poststructuralism and Social Context — Chicago UP (WorldCat)](https://www.worldcat.org/oclc/21227851) `学術`
+- [Poster, M. (1990) The Mode of Information: Poststructuralism and Social Context — Chicago UP (WorldCat)](https://www.worldcat.org/oclc/21227851) `リファレンス`
 - [Wikipedia: Mark Poster — mode of information, second media age, decentered subject, poststructuralism](https://en.wikipedia.org/wiki/Mark_Poster) `リファレンス`
 
 ## 関連概念
@@ -39,7 +39,7 @@ aliases:
 - [[infosoc-algorithmic-identity|アルゴリズム的アイデンティティ——データから統計的に推論・付与される、本人の自認から切り離された可変的な「私」]] — 同じ思想家
 - [[infosoc-banopticon-bigo|バノプティコン——危険視された少数を選別し排除する監視]] — 同じ思想家
 - [[infosoc-control-revolution-beniger|制御革命（ベニガー）——情報社会の技術的・経済的起源]] — 同じ思想家
-- [[infosoc-disneyization-bryman|ディズニー化——テーマパークの原理が社会を覆う過程]] — 同じ思想家
+- [[infosoc-data-double|データ・ダブルと監視アサンブラージュ（ハガティ＆エリクソン）——別々の監視システムが収束し、身体から切り離されたデータの流れから再構成された「情報上の分身」が判断と介入の対象になる]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

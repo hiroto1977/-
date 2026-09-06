@@ -34,10 +34,10 @@ aliases:
 ## 関連概念
 - [[mgmt-ansoff-matrix|アンゾフの成長マトリクス]] — 語彙が近い
 - [[mgmt-causal-ambiguity-lippman-rumelt|因果的曖昧性——成功の原因が分からないことが模倣を防ぐ]] — 同じ思想家
-- [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 同じ思想家
-- [[mgmt-dominant-logic-prahalad-bettis|支配的論理——経営者の事業の捉え方が資源配分と適応を方向づける認知枠組み]] — 同じ思想家
+- [[mgmt-good-strategy-kernel-rumelt|ルメルトの「良い戦略」のカーネル——診断・基本方針・一貫した行動の三要素で戦略を判定する]] — 同じ思想家
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]] — 同じ思想家
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 同じ思想家
+- [[mgmt-vrio-framework-barney|資源ベース理論と VRIO フレームワーク（バーニー）——競争優位の源泉を企業内部の資源に求め、価値・希少性・模倣困難性・組織の四条件を満たす資源だけが持続的優位をもたらすとする]] — 同じ思想家
 - [[eh-1970|1970年（昭和45年）]] — 出典を共有
 - [[mgmt-emergent-strategy|創発戦略]] — 出典を共有
 - [[mgmt-aaker-brand-identity|アーカーのブランド・アイデンティティ]] — 同分野の近傍

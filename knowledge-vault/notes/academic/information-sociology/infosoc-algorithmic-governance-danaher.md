@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: Algorithmic governance — アルゴリズム的統治の概要](https://en.wikipedia.org/wiki/Algorithmic_governance) `リファレンス`
 
 ## 関連概念
-- [[infosoc-digital-constitutionalism|デジタル立憲主義]] — 語彙が近い
-- [[infosoc-algorithmic-governance|アルゴリズムによる統治（アルゴクラシー）]] — 語彙が近い
+- [[infosoc-algorithmic-governance|アルゴリズムによる統治（アルゴクラシー）]] — 同じ思想家
+- [[infosoc-digital-constitutionalism|デジタル立憲主義]] — 同分野の近傍
 - [[infosoc-solutionism|テクノロジカル・ソリューショニズム（技術的解決主義）]] — 同分野の近傍
 - [[infosoc-technological-somnambulism-winner|技術的夢遊病——社会が技術変化を無意識に受容する問題構造]] — 同分野の近傍
 

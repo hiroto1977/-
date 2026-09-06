@@ -30,8 +30,8 @@ aliases:
 - [Group Decision and Negotiation: Cracks in Diversity Research — The Effects of Diversity Faultlines on Conflict and Performance (faultline strength, subgroup conflict)](https://link.springer.com/article/10.1023/A:1023325406946) `学術`
 
 ## 関連概念
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

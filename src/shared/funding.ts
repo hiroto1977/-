@@ -14,6 +14,11 @@
  * UI から切り離して単体テスト可能にするため、集計はすべてここに集約する。
  */
 
+// 消費税の標準税率は税計算モジュールの定数が唯一の出所 (台帳
+// `tax.consumptionStandardRate` の既定値もこれを参照している)。ここで
+// リテラルを書き写すと、法定値が 2 か所に分かれて片方だけ古くなる。
+import { CONSUMPTION_TAX_STANDARD } from './taxCalc';
+
 // --- 資金調達の種別 ----------------------------------------------------
 
 /** 資金調達手段の種別。レーダーチャートの 6 軸に対応する。 */
@@ -892,13 +897,14 @@ export function scenarioRunways(
  *   補助金・助成金・給付金・購入型CF は益金算入で課税対象、融資・公庫は
  *   借入金で非課税。圧縮記帳 (`compressedEntry`) 適用分は当年度課税を繰延。
  *   手残り = 確定総額 − 当年度課税対象確定額 × 実効税率。
- * @param consumptionTaxRate 消費税率 (0..1)。既定 0.1。購入型CF は課税売上の
+ * @param consumptionTaxRate 消費税率 (0..1)。既定 `CONSUMPTION_TAX_STANDARD`
+ *   (消費税法の標準税率)。購入型CF は課税売上の
  *   ため、内税ベースの消費税相当額を概算する。
  */
 export function summarize(
   items: readonly FundingItem[],
   effectiveTaxRate: number = DEFAULT_EFFECTIVE_TAX_RATE,
-  consumptionTaxRate = 0.1,
+  consumptionTaxRate: number = CONSUMPTION_TAX_STANDARD,
 ): FundingSummary {
   const rate = clampRate(effectiveTaxRate);
   const consRate = clampRate(consumptionTaxRate);

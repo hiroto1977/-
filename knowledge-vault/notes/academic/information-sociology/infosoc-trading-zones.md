@@ -30,7 +30,6 @@ Peter Galison（1997, Image and Logic — トレーディング・ゾーン概�
 - [Bowker & Star (1999) Sorting Things Out: Classification and Its Consequences — MIT Press](https://mitpress.mit.edu/9780262522953/sorting-things-out/) `学術`
 
 ## 関連概念
-- [[infosoc-infrastructural-inversion|インフラストラクチャル・インヴァージョン（基盤構造の可視化）]] — 同じ思想家
 - [[infosoc-boundary-objects|境界オブジェクト（Boundary Objects）]] — 同じ思想家
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 出典を共有
 - [[econ-monetary-history-friedman-schwartz|米国貨幣史（フリードマン＆シュワルツ）]] — 出典を共有
@@ -40,6 +39,7 @@ Peter Galison（1997, Image and Logic — トレーディング・ゾーン概�
 - [[infosoc-posthumanism-hayles|ポストヒューマニズム（ヘイルズ）]] — 出典を共有
 - [[infosoc-sociotechnical-imaginaries|社会技術的想像論（ソシオテクニカル・イマジナリーズ）]] — 出典を共有
 - [[infosoc-techno-moral-change|テクノモラル・チェンジ]] — 出典を共有
+- [[infosoc-techno-utopianism-critique|テクノ・ユートピアニズム批判]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

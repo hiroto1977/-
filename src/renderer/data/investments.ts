@@ -15,6 +15,8 @@
  * **概算であり投資助言ではありません。**
  */
 
+import { readNumeric } from '../../shared/readNumeric';
+
 export const PROPERTIES_COLLECTION = 'realestate-properties';
 export const HOLDINGS_COLLECTION = 'mutualfund-holdings';
 
@@ -39,12 +41,69 @@ export interface PropertyEntry extends Record<string, unknown> {
   readonly monthlyLoan: number;
 }
 
-/** 数値入力 (文字列可) を非負の有限数に。不正は null。 */
+/**
+ * 保存された 1 件を `PropertyEntry` の形に整える (**読み取りの境界**)。
+ *
+ * `normalizeHolding` と同じ穴 (2026-09-06): 復元の形の検査は
+ * `realestate-properties` の `monthlyExpenses` / `monthlyLoan` を**任意**に
+ * しているのに、型は必須と言う。欄の無い控えが復元を通ると年間キャッシュフローの
+ * 引き算が NaN になり、不動産ページの「¥NaN」になる。既定 0 は型の注記
+ * (「任意、既定 0」) と入力側 `parsePropertyEntry` の「空欄は 0」と同じ約束。
+ */
+export function normalizeProperty(raw: unknown): PropertyEntry {
+  const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
+  const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
+  return {
+    name: typeof r.name === 'string' ? r.name : '',
+    type: typeof r.type === 'string' ? r.type : '',
+    monthlyRent: num(r.monthlyRent),
+    purchasePrice: num(r.purchasePrice),
+    occupied: r.occupied === true,
+    monthlyExpenses: num(r.monthlyExpenses),
+    monthlyLoan: num(r.monthlyLoan),
+  };
+}
+
+/**
+ * 数値入力 (文字列可) を非負の有限数に。不正は null。空欄は 0
+ * (入力欄の番人も「未入力です。0 円 として計算されています」と言う)。
+ *
+ * 文字列は**画面と同じ** `readNumeric` で読む。2026-09-06 まではここだけ
+ * `Number(カンマと空白を外した文字列)` で、同じ欄について
+ * **画面の指摘と保存される数が食い違っていた**:
+ *
+ * ```
+ *   '1,5'     画面: ⛔ 読み取れません  保存: 15    ← 桁区切りの位置を見ていない
+ *   '1 5'     画面: ⛔                保存: 15
+ *   '0x10'    画面: ⛔                保存: 16
+ *   '１２００'  画面: 1200 (読める)     保存: ⛔ エラー ← 逆向きの食い違い
+ * ```
+ */
 function toAmount(v: unknown): number | null {
-  // Stryker disable next-line ConditionalExpression: typeof v === 'number' を true 固定にしても
-  // 直後の Number.isFinite が非数値をすべて弾くため返り値は同一 (等価変異)。
-  const n = typeof v === 'string' ? Number(v.replace(/[,，\s]/g, '')) : typeof v === 'number' ? v : NaN;
+  const n = numberFrom(v);
   return Number.isFinite(n) && n >= 0 ? n : null;
+}
+
+/**
+ * 数として扱える形 (数値そのもの / 入力欄の文字列) を数にし、他は NaN。
+ *
+ * 三項の**途中**に `Stryker disable next-line` を置くと効かない
+ * (2026-09-06 実測・生存 1 件)。等価変異の 1 行を独立した文にして、
+ * 直上の pragma がその行だけに掛かるようにしている。
+ */
+function numberFrom(v: unknown): number {
+  if (typeof v === 'string') return readTypedAmount(v);
+  // Stryker disable next-line ConditionalExpression: typeof v === 'number' を true 固定にしても、呼び出し側の Number.isFinite が非数値をすべて弾くため返り値は同一 (等価変異)
+  return typeof v === 'number' ? v : Number.NaN;
+}
+
+/**
+ * 入力欄の文字列を数へ。**空欄は 0** —— 入力欄の番人も「未入力です。
+ * 0 円 として計算されています」と言うので、保存も同じ読み方をする。
+ * 読めなければ NaN (呼び出し側の `Number.isFinite` が 1 か所で断る)。
+ */
+function readTypedAmount(text: string): number {
+  return text.trim() === '' ? 0 : (readNumeric(text) ?? Number.NaN);
 }
 
 export function parsePropertyEntry(input: {
@@ -76,14 +135,14 @@ export function parsePropertyEntry(input: {
   // 任意項目: 空欄・未指定は 0 (不正な文字列だけエラーにする)。
   const expensesRaw = input.monthlyExpenses;
   // Stryker disable next-line ConditionalExpression,StringLiteral: `=== ''` は冗長で、
-  // toAmount('') も Number('') 経由で 0 を返すため既定値と一致する (等価変異)。空文字の
+  // toAmount('') も 0 を返すため既定値と一致する (等価変異)。空文字の
   // 意図を明示するために式は残す。
   const monthlyExpenses = expensesRaw === undefined || expensesRaw === '' ? 0 : toAmount(expensesRaw);
   if (monthlyExpenses === null) throw new Error('月次経費は 0 以上の数値で入力してください');
 
   const loanRaw = input.monthlyLoan;
   // Stryker disable next-line ConditionalExpression,StringLiteral: `=== ''` は冗長で、
-  // toAmount('') も Number('') 経由で 0 を返すため既定値と一致する (等価変異)。空文字の
+  // toAmount('') も 0 を返すため既定値と一致する (等価変異)。空文字の
   // 意図を明示するために式は残す。
   const monthlyLoan = loanRaw === undefined || loanRaw === '' ? 0 : toAmount(loanRaw);
   if (monthlyLoan === null) throw new Error('月次返済額は 0 以上の数値で入力してください');
@@ -194,6 +253,52 @@ export function fundValuation(units: number, navPerUnit: number): number {
 }
 
 /**
+ * 保存された 1 件を `HoldingEntry` の形に整える (**読み取りの境界**)。
+ *
+ * なぜ要るか (2026-09-06): 復元の形の検査 (`data/collectionShapes.ts`) は
+ * `mutualfund-holdings` の `code` / `valuationMode` / `acquisitionCost` /
+ * `ytdReturnPct` を**任意**にしている —— 前方互換のため意図してそうしてあり、
+ * `valuationMode` の説明も「過去データに無い場合は auto 扱い」と書いている。
+ * ところが `HoldingEntry` の型はこの 4 つを**必須**と言うので、欄の無いレコード
+ * (古い版・手で直した控え・別の道具が書いた控え) が復元を通ると型が嘘になる:
+ *
+ *   `ytdReturnPct` が無い … 一覧の `h.ytdReturnPct.toFixed(1)` が TypeError で、
+ *     **投資信託の画面が枠になる**。しかもその画面が保有銘柄の一覧なので、
+ *     利用者はそのレコードを消せない (形は正しいので設定の点検にも出ない)。
+ *   `acquisitionCost` が無い … 取得原価の合計が NaN になり「¥NaN」が出る。
+ *
+ * 直し方は「使う場所ごとに `??` を置く」ではなく**読む所を 1 つにする** ——
+ * 散らすと必ずどれか 1 つが漏れる (`valuationMode` だけ画面側で補われていて、
+ * 残り 3 つが漏れていたのがまさにそれ)。既定値は型の注記どおり:
+ * 銘柄コードは空文字、評価モードは auto、取得額は評価額と同額 (損益 0)、
+ * 年初来リターンは 0。数でない値・非有限値も既定に倒す。
+ */
+export function normalizeHolding(raw: unknown): HoldingEntry {
+  const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
+  const str = (v: unknown): string => (typeof v === 'string' ? v : '');
+  const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
+  const units = num(r.units);
+  const navPerUnit = num(r.navPerUnit);
+  // 評価額が無い控えは口数 × 基準価額 から導く (auto と同じ式)。
+  const valuation = typeof r.valuation === 'number' && Number.isFinite(r.valuation)
+    ? r.valuation
+    : fundValuation(units, navPerUnit);
+  return {
+    code: str(r.code),
+    name: str(r.name),
+    units,
+    navPerUnit,
+    valuation,
+    valuationMode: r.valuationMode === 'manual' ? 'manual' : 'auto',
+    // 取得額が無い / 読めない控えは評価額と同額 = 損益 0 (型の注記どおり)。
+    acquisitionCost: typeof r.acquisitionCost === 'number' && Number.isFinite(r.acquisitionCost)
+      ? r.acquisitionCost
+      : valuation,
+    ytdReturnPct: num(r.ytdReturnPct),
+  };
+}
+
+/**
  * 追加/編集フォームの入力を検証して HoldingEntry にする。
  *
  * 評価額 (`valuation`) の扱いが「任意入力⇄自動反映」の切替点:
@@ -229,12 +334,12 @@ export function parseHoldingEntry(input: {
     // `null <= 0` が true のため同じエラーが投げられる (等価変異)。null 判定は可読性のため残す。
     if (v === null || v <= 0) throw new Error('評価額は 1 円以上の数値で入力してください (空欄にすると自動計算)');
     // Stryker disable next-line ConditionalExpression,StringLiteral: `=== ''` は冗長で、
-    // toAmount('') も Number('') 経由で 0 を返すため既定値と一致する (等価変異)。空文字の
+    // toAmount('') も 0 を返すため既定値と一致する (等価変異)。空文字の
     // 意図を明示するために式は残す。
     const u = input.units === undefined || input.units === '' ? 0 : toAmount(input.units);
     if (u === null) throw new Error('口数は 0 以上の数値で入力してください');
     // Stryker disable next-line ConditionalExpression,StringLiteral: `=== ''` は冗長で、
-    // toAmount('') も Number('') 経由で 0 を返すため既定値と一致する (等価変異)。空文字の
+    // toAmount('') も 0 を返すため既定値と一致する (等価変異)。空文字の
     // 意図を明示するために式は残す。
     const nav = input.navPerUnit === undefined || input.navPerUnit === '' ? 0 : toAmount(input.navPerUnit);
     if (nav === null) throw new Error('基準価額は 0 以上の数値で入力してください');
@@ -266,14 +371,14 @@ export function parseHoldingEntry(input: {
 
   const ytdRaw = input.ytdReturnPct;
   let ytdReturnPct = 0;
-  // Stryker disable next-line StringLiteral,ConditionalExpression: `!== ''` は冗長 —
-  // 空文字で入ってきても Number('') は 0 で、スキップしたときの既定値 0 と一致するため
-  // 観測できる差がない (等価変異)。'' を別文字列にした場合はその値が Number() で NaN に
-  // なり同じ YTD エラーへ落ちる。空欄の意図を明示するため式自体は残す。
+  // `!== ''` は**冗長ではない**: 読み取りが `readNumeric` になった 2026-09-06 から、
+  // 空文字は 0 ではなく「読めない」なので、この門を外すと空欄が YTD エラーになる
+  // (保存 → 入力欄 → 再保存 の往復の検査が落ちる)。
   if (ytdRaw !== undefined && ytdRaw !== '') {
     // Stryker disable next-line ConditionalExpression: typeof ytdRaw === 'number' を true 固定に
     // しても直後の Number.isFinite が非数値を弾くため同じエラーになる (等価変異)。
-    const n = typeof ytdRaw === 'string' ? Number(ytdRaw.replace(/[,，\s]/g, '')) : typeof ytdRaw === 'number' ? ytdRaw : NaN;
+    // 文字列は画面と同じ読み取り (`readNumeric`) —— `1,5` を 15% にしない。
+    const n = typeof ytdRaw === 'string' ? (readNumeric(ytdRaw) ?? Number.NaN) : typeof ytdRaw === 'number' ? ytdRaw : NaN;
     if (!Number.isFinite(n) || n < -100 || n > 1000) throw new Error('YTD リターン (%) は −100〜1000 の数値で入力してください');
     ytdReturnPct = n;
   }

@@ -35,14 +35,12 @@ Karl E. Weick ／ Kathleen M. Sutcliffe ／ Todd R. La Porte ／ Karlene H. Robe
 ## 関連概念
 - [[mgmt-high-reliability-organizations|高信頼性組織（High Reliability Organizations / HRO）]] — 語彙が近い
 - [[mgmt-paradox-of-organizing|組織化のパラドックス（Paradox of Organizing）]] — 同じ思想家
-- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 同じ思想家
 - [[mgmt-organizational-resilience-theory|組織レジリエンス理論]] — 同じ思想家
-- [[mgmt-enacted-sensemaking-theory|制定的センスメイキング理論]] — 同じ思想家
 - [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 同じ思想家
 - [[mgmt-organizational-improvisation-theory|組織即興理論]] — 同じ思想家
 - [[mgmt-cognitive-mapping-theory|組織における認知マッピング理論]] — 同じ思想家
-- [[mgmt-managerial-cognition|経営者認知理論]] — 同じ思想家
 - [[mgmt-organizational-entropy|組織エントロピー]] — 同じ思想家
+- [[mgmt-organizational-resilience-sutcliffe|組織的レジリエンスと高信頼組織の理論（サトクリフ＆ワイク）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

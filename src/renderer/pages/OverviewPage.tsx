@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { navigateTo, takeNavigationIntent } from '../navigate';
 import { Section } from '../components/StatusBar';
 import { useCollection } from '../data/useCollection';
+import { fireReported } from '../data/deviceStoreFailure';
 import {
   BUSINESS_UNITS_COLLECTION,
   financialUnitsFromBusinessUnits,
@@ -19,7 +20,7 @@ import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import { KPI_ACTUALS_COLLECTION, monthlyTrendSeries, summarizeFundamentals, type KpiActual } from '../data/kpiActuals';
 import { profitSensitivity, breakEvenDeltaPct, requiredRevenueForTarget, fixedCostReductionImpact, operatingLeverage } from '../data/profitSensitivity';
 import { KPI_BUDGETS_COLLECTION } from '../data/budgetVariance';
-import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceSheet';
+import { BALANCE_SHEET_COLLECTION, balanceSheetOrNull, type BalanceSheet } from '../data/balanceSheet';
 import { MEMBERS_COLLECTION, type Member } from '../data/members';
 import {
   HYDROPONICS_COLLECTION,
@@ -332,6 +333,36 @@ function HydroponicsPanel({
     setCropNotice('参考値の品目を戻しました。');
   };
 
+  /**
+   * 設備と費用を保存する。**「保存しました」は保存できてから出す** ——
+   * 断られたときは印を立てず (画面上端の報せがその理由を出す)、
+   * 経営サマリーは前回保存した設定のまま計算し続ける。
+   */
+  const saveSetup = async (): Promise<void> => {
+    await onSave({
+      cropId: crop.id,
+      floorAreaSqm: n(form.floorAreaSqm),
+      tiers: n(form.tiers),
+      usableRatioPct: n(form.usableRatioPct),
+      yieldRatePct: n(form.yieldRatePct),
+      unitPriceYen: n(form.unitPriceYen),
+      electricityYenPerKwh: n(form.electricityYenPerKwh),
+      energyIntensityKwhPerKg: n(form.energyIntensityKwhPerKg),
+      seedYenPerPlant: n(form.seedYenPerPlant),
+      nutrientYenPerPlant: n(form.nutrientYenPerPlant),
+      packagingYenPerPlant: n(form.packagingYenPerPlant),
+      laborYenPerMonth: n(form.laborYenPerMonth),
+      depreciationYenPerMonth: n(form.depreciationYenPerMonth),
+      rentYenPerMonth: n(form.rentYenPerMonth),
+      otherFixedYenPerMonth: n(form.otherFixedYenPerMonth),
+      lowPotassium: lowK,
+      switchDaysBeforeHarvest: n(form.switchDaysBeforeHarvest),
+      measuredPotassiumMgPer100g: n(form.measuredPotassiumMgPer100g),
+      measuredSodiumMgPer100g: n(form.measuredSodiumMgPer100g),
+    });
+    setSaved(true);
+  };
+
   // 読めない値は 0 になるが、同じ欄の `GuardedNumber` がその旨を出す (黙って 0 にしない)。
   const n = readNumberOr0;
 
@@ -403,7 +434,7 @@ function HydroponicsPanel({
                   type="button"
                   disabled={crops.length <= 1}
                   aria-label={`${c.label} を消す`}
-                  onClick={async () => { await onRemoveCrop(c); }}
+                  onClick={() => fireReported(onRemoveCrop(c))}
                   style={{ fontSize: 11 }}
                 >
                   消す
@@ -413,7 +444,7 @@ function HydroponicsPanel({
           </ul>
           {missingBuiltins.length > 0 && (
             <div>
-              <button type="button" onClick={async () => { await onRestoreCrops(); }} style={{ fontSize: 11 }}>
+              <button type="button" onClick={() => fireReported(onRestoreCrops())} style={{ fontSize: 11 }}>
                 参考値の品目を戻す（{missingBuiltins.map((c) => c.label).join('・')}）
               </button>
             </div>
@@ -442,7 +473,7 @@ function HydroponicsPanel({
                 />
               </label>
             ))}
-            <button type="button" onClick={async () => { await onAddCrop(); }}>
+            <button type="button" onClick={() => fireReported(onAddCrop())}>
               この品目を足す
             </button>
           </div>
@@ -471,30 +502,7 @@ function HydroponicsPanel({
         {field('otherFixedYenPerMonth')}
         <button
           type="button"
-          onClick={async () => {
-            await onSave({
-              cropId: crop.id,
-              floorAreaSqm: n(form.floorAreaSqm),
-              tiers: n(form.tiers),
-              usableRatioPct: n(form.usableRatioPct),
-              yieldRatePct: n(form.yieldRatePct),
-              unitPriceYen: n(form.unitPriceYen),
-              electricityYenPerKwh: n(form.electricityYenPerKwh),
-              energyIntensityKwhPerKg: n(form.energyIntensityKwhPerKg),
-              seedYenPerPlant: n(form.seedYenPerPlant),
-              nutrientYenPerPlant: n(form.nutrientYenPerPlant),
-              packagingYenPerPlant: n(form.packagingYenPerPlant),
-              laborYenPerMonth: n(form.laborYenPerMonth),
-              depreciationYenPerMonth: n(form.depreciationYenPerMonth),
-              rentYenPerMonth: n(form.rentYenPerMonth),
-              otherFixedYenPerMonth: n(form.otherFixedYenPerMonth),
-              lowPotassium: lowK,
-              switchDaysBeforeHarvest: n(form.switchDaysBeforeHarvest),
-              measuredPotassiumMgPer100g: n(form.measuredPotassiumMgPer100g),
-              measuredSodiumMgPer100g: n(form.measuredSodiumMgPer100g),
-            });
-            setSaved(true);
-          }}
+          onClick={() => fireReported(saveSetup())}
         >
           保存して経営サマリーへ反映
         </button>
@@ -677,7 +685,7 @@ export function OverviewPage() {
         kpiActuals: kpiRecords.map((r) => r.data),
         kpiBudgets: budgetRecords.map((r) => r.data),
         // BS は最新の 1 レコードを採用。
-        balanceSheet: latestRecord(bsRecords)?.data ?? null,
+        balanceSheet: balanceSheetOrNull(latestRecord(bsRecords)?.data),
         accounting: accountingMonthly,
         members: memberRecords.map((r) => ({ role: r.data.role })),
         hydroponics,
@@ -791,7 +799,7 @@ export function OverviewPage() {
     if (takeNavigationIntent('overview')?.action === 'bank-sheet') setSheetOpen(true);
   }, []);
   const kpiPeriods = useMemo(() => kpiRecords.map((r) => r.data.period), [kpiRecords]);
-  const balanceSheetAsOf = latestRecord(bsRecords)?.data.asOf ?? null;
+  const balanceSheetAsOf = balanceSheetOrNull(latestRecord(bsRecords)?.data)?.asOf ?? null;
   const sheetModel = useMemo(
     () =>
       buildBankSubmissionSheet({

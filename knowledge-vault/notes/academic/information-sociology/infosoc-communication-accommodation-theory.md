@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Wikipedia — Communication accommodation theory（収束・分岐・過剰適応の概説）](https://en.wikipedia.org/wiki/Communication_accommodation_theory) `リファレンス`
-- [EBSCO Research Starters — Communication accommodation theory (CAT)](https://www.ebsco.com/research-starters/communication-and-mass-media/communication-accommodation-theory-cat) `学術`
+- [EBSCO Research Starters — Communication accommodation theory (CAT)](https://www.ebsco.com/research-starters/communication-and-mass-media/communication-accommodation-theory-cat) `リファレンス`
 - [Giles, H. (1973) "Accent Mobility: A Model and Some Data", Anthropological Linguistics 15(2), 87–105（原著論文が収録された巻号・JSTOR）](https://www.jstor.org/stable/i30029505) `学術`
 
 ## 関連概念

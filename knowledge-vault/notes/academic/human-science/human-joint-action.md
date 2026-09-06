@@ -31,8 +31,8 @@ aliases:
 - [Psychological Research on Joint Action: Theory and Data — Butterfill](https://www.butterfill.com/writing/psychological_research_on_joint_action/) `学術`
 
 ## 関連概念
-- [[human-developmental-regulation-brandtstadter|発達的行為調整理論（ブランツテッター）]] — 同分野の近傍
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

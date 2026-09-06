@@ -33,15 +33,15 @@ aliases:
 
 ## 関連概念
 - [[human-impact-bias|インパクト・バイアス（感情予測の偏り）]] — 同じ思想家
-- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 同じ思想家
-- [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — 同じ思想家
+- [[human-affective-forecasting-wilson-gilbert|感情予測（ウィルソン＝ギルバート）——将来の出来事が自分の感情に与える影響の予測は、強さと持続を過大評価する方向に体系的に歪む]] — 同じ思想家
 - [[human-end-of-history-illusion|歴史の終わり錯覚]] — 同じ思想家
 - [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 同じ思想家
-- [[human-anchoring|アンカリング効果（係留と調整）]] — 出典を共有
 - [[human-belief-perseverance|信念の保続（信念固執）]] — 出典を共有
 - [[human-cognitive-miser|認知的倹約家（cognitive miser）]] — 出典を共有
 - [[human-diathesis-stress-model|素因ストレスモデル]] — 出典を共有
 - [[human-emotional-regulation|感情制御・感情調整：グロスのプロセスモデルによる先行焦点型・反応焦点型方略と神経認知基盤の統合的理解]] — 出典を共有
+- [[human-false-consensus|偽の合意効果（フォールス・コンセンサス）]] — 出典を共有
+- [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -122,6 +122,46 @@ const pct = (numer: number, denom: number): number | null =>
   denom > 0 ? Math.round((numer / denom) * 1000) / 10 : null;
 
 /** BS から財政状態指標を計算する。 */
+/**
+ * 保存された 1 件を `BalanceSheet` の形に整える (**読み取りの境界**)。
+ *
+ * なぜ要るか (2026-09-06): 復元の形の検査 (`data/collectionShapes.ts`) は
+ * `balance-sheet` の `inventory` / `accountsReceivable` / `accountsPayable` /
+ * `cash` / `interestBearingDebt` を**任意**にしている (前方互換)。型はこのうち
+ * 前 3 つを**必須**と言うので、欄の無い控え (古い版・手で直した JSON・別の道具が
+ * 書いた控え) が復元を通ると型が嘘になり、`computeBalanceSheetMetrics` の
+ * 足し算が **NaN** になる。行き先は経営サマリーのタイルと**金融機関等へ出す書面**で、
+ * 「¥NaN」や NaN の純資産が印刷される。未入力を 0 と読むのは入力側
+ * (`parseBalanceSheet`) と同じ約束 (空欄 = 0 円)。
+ *
+ * **null は null のまま返す** (`balanceSheetOrNull`) —— 「まだ 1 件も入れていない」を
+ * ゼロの貸借対照表に化けさせると、画面が「―」ではなく 0 円を断言してしまう。
+ */
+export function normalizeBalanceSheet(raw: unknown): BalanceSheet {
+  const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
+  const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
+  const opt = (v: unknown): number | undefined =>
+    typeof v === 'number' && Number.isFinite(v) ? v : undefined;
+  return {
+    asOf: typeof r.asOf === 'string' ? r.asOf : '',
+    currentAssets: num(r.currentAssets),
+    cash: opt(r.cash),
+    inventory: num(r.inventory),
+    accountsReceivable: num(r.accountsReceivable),
+    fixedAssets: num(r.fixedAssets),
+    currentLiabilities: num(r.currentLiabilities),
+    accountsPayable: num(r.accountsPayable),
+    fixedLiabilities: num(r.fixedLiabilities),
+    interestBearingDebt: opt(r.interestBearingDebt),
+    netIncome: num(r.netIncome),
+  };
+}
+
+/** 控えが無ければ null、在れば整えて返す (未入力とゼロを混ぜない)。 */
+export function balanceSheetOrNull(raw: unknown): BalanceSheet | null {
+  return raw === null || raw === undefined ? null : normalizeBalanceSheet(raw);
+}
+
 export function computeBalanceSheetMetrics(bs: BalanceSheet): BalanceSheetMetrics {
   const totalAssets = bs.currentAssets + bs.fixedAssets;
   const totalLiabilities = bs.currentLiabilities + bs.fixedLiabilities;

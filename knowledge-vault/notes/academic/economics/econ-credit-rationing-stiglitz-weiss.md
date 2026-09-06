@@ -31,16 +31,12 @@ Joseph E. Stiglitz／Andrew Weiss
 - [NobelPrize.org — 2001年経済学賞（非対称情報下の市場分析）](https://www.nobelprize.org/prizes/economic-sciences/2001/popular-information/) `リファレンス`
 
 ## 関連概念
-- [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — 同じ思想家
 - [[econ-henry-george-theorem|ヘンリー・ジョージ定理（Henry George Theorem）]] — 同じ思想家
 - [[econ-joint-liability-group-lending|連帯責任型グループ貸付理論（Joint Liability Group Lending）]] — 同じ思想家
-- [[econ-lemons-problem-akerlof|レモン市場]] — 同じ思想家
 - [[econ-nutrition-efficiency-wage|栄養効率賃金理論（nutrition-based efficiency wage theory／ダスグプタ＝レイ）——貧困農村では高賃金が栄養を通じて生産性を高め、市場清算を上回る賃金と非自発的失業を均衡として生む]] — 同じ思想家
-- [[econ-optimal-taxation-theory|最適課税理論]] — 同じ思想家
-- [[econ-signaling-screening-spence|シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）]] — 同じ思想家
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家
+- [[econ-monetary-policy-transmission|金融政策の波及経路——政策金利の変更が金利・為替・資産価格・信用・期待の各チャネルを通じて物価と実体経済に届くまで]] — 同分野の近傍
 - [[econ-double-coincidence-of-wants|欲望の二重の一致]] — 同分野の近傍
-- [[econ-contestable-markets|コンテスタブル市場]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

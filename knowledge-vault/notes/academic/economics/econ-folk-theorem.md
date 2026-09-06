@@ -32,15 +32,15 @@ James W. Friedman（1971・部分ゲーム完全版）／Drew Fudenberg & Eric M
 
 ## 関連概念
 - [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 出典を共有
+- [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]] — 出典を共有
+- [[econ-generalized-method-of-moments-hansen|一般化モーメント法（GMM）——モーメント条件のみから分布を仮定せず母数を推定するハンセンの一般理論]] — 出典を共有
+- [[econ-reputation-effects-kreps-wilson-milgrom-roberts|不完備情報下の評判効果——わずかなタイプの不確実性が参入阻止と協調を合理化する]] — 出典を共有
 - [[econ-rubinstein-bargaining|ルービンシュタイン交渉モデル]] — 出典を共有
 - [[human-hot-hand-fallacy|ホットハンドの誤謬]] — 出典を共有
 - [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 出典を共有
 - [[econ-all-pay-auction|オールペイ・オークション]] — 出典を共有
 - [[econ-balanced-budget-multiplier|均衡予算乗数]] — 出典を共有
-- [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]] — 出典を共有
-- [[econ-nash-bargaining|ナッシュ交渉解]] — 出典を共有
-- [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 出典を共有
-- [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 出典を共有
+- [[econ-blp-demand-estimation-berry-levinsohn-pakes|BLP法（ランダム係数ロジット需要推定）——IIA制約と価格の内生性を解消し差別化財市場の需要を推定する構造推定法]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -40,7 +40,6 @@ aliases:
 - [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]] — 同じ思想家
 - [[econ-second-welfare-theorem|厚生経済学第二基本定理——効率と公平の分離と再分配の可能性]] — 同じ思想家
 - [[econ-kalecki-profit|カレツキの利潤理論]] — 同分野の近傍
-- [[econ-samuelson-condition|公共財供給のサミュエルソン条件]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

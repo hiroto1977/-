@@ -2,7 +2,7 @@
 title: "plato.stanford.edu"
 type: source-domain
 host: "plato.stanford.edu"
-cite_count: 65
+cite_count: 66
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # plato.stanford.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **65 件**（リファレンス 40 ・ 学術 25）
+> [!info] 出典ドメイン索引 ・ 引用 **66 件**（リファレンス 47 ・ 学術 19）
 
 ## このドメインを出典とする項目
 
@@ -44,6 +44,7 @@ tags:
 - [[human-blindsight|ブラインドサイト（Blindsight）]] — StanfordEncyclopediaofPhilosophy:TheNeuroscienceofConsciousness
 - [[human-bounded-rationality|限定合理性]] — BoundedRationality—StanfordEncyclopediaofPhilosophy（査読済み哲学百科事典）
 - [[human-embodied-cognition-theory|身体化された認知]] — EmbodiedCognition—StanfordEncyclopediaofPhilosophy(Shapiro&Spaulding,…
+- [[human-maslow-hierarchy-of-needs|マズローの欲求階層説]] — StanfordEncyclopediaofPhilosophy—AbrahamMaslow
 - [[human-merton-strain|マートンの緊張理論（社会構造とアノミー）]] — StanfordEncyclopediaofPhilosophy—SocialNorms（規範・アノミー・逸脱の学術的位置づけ）
 - [[human-phenomenological-psychology|現象学的心理学]] — StanfordEncyclopediaofPhilosophy:Phenomenology(WoodruffSmith,2018)
 - [[human-phenomenological-reduction|現象学的還元（エポケー）と意識の本質構造]] — StanfordEncyclopediaofPhilosophy—EdmundHusserl
@@ -57,6 +58,7 @@ tags:
 - [[infosoc-algorithmic-bias|アルゴリズムバイアス]] — StanfordEncyclopediaofPhilosophy—AlgorithmicFairness
 - [[infosoc-algorithmic-fairness|アルゴリズム公正性（機械学習の公平性理論）]] — StanfordEncyclopediaofPhilosophy—AlgorithmicFairness
 - [[infosoc-bricolage|ブリコラージュ（文化人類学・メディア文化論）]] — StanfordEncyclopediaofPhilosophy—ClaudeLévi-Strauss（ブリコラージュ・『野生の思考』・神…
+- [[infosoc-chinese-room-argument-searle|サールの中国語の部屋（Chinese Room Argument）——構文操作は意味理解を保証しないとする「強いAI」批判]] — Cole,D.TheChineseRoomArgument.TheStanfordEncyclopediaofPhilosophy—sys…
 - [[infosoc-colonization-lifeworld|生活世界の植民地化]] — StanfordEncyclopediaofPhilosophy—JürgenHabermas（生活世界の植民地化・制御媒体・病理）
 - [[infosoc-communicative-action|コミュニケーション的行為（ハーバーマス）]] — JürgenHabermas—StanfordEncyclopediaofPhilosophy（妥当性請求・生活世界・コミュニケーション的…
 - [[infosoc-culture-industry|文化産業（フランクフルト学派）]] — StanfordEncyclopediaofPhilosophy—"TheodorW.Adorno"（大衆文化と文化産業への批判）
@@ -77,7 +79,6 @@ tags:
 - [[infosoc-strong-programme|ストロング・プログラム（Strong Programme／Bloor 1976）——科学的知識の社会学（SSK）の綱領、真偽を問わず信念の原因を対称的に説明する]] — StanfordEncyclopediaofPhilosophy,“TheSocialDimensionsofScientificKnow…
 - [[infosoc-technological-mediation-theory|技術的媒介理論（ポスト現象学）]] — StanfordEncyclopediaofPhilosophy—PhilosophyofTechnology
 - [[infosoc-technological-singularity|技術的特異点（シンギュラリティ）]] — StanfordEncyclopediaofPhilosophy—ArtificialIntelligence（超知性・シンギュラリティの…
-- [[maslow-hierarchy|マズローの欲求階層説]] — StanfordEncyclopediaofPhilosophy—AbrahamMaslow
 - [[mgmt-ba-knowledge-creation-nonaka|場（Ba）と知識創造（野中・紺野）]] — StanfordEncyclopediaofPhilosophy:NishidaKitaro—philosophicalfoundatio…
 
 ## 関連

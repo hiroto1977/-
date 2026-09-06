@@ -38,7 +38,7 @@ G.H. Treitel ／ Arthur L. Corbin ／ Samuel Williston
 - [[bizlaw-election-of-remedies|救済手段の選択法理（エレクション・オブ・レメディーズ）]] — 同じ思想家
 - [[bizlaw-force-majeure-doctrine|不可抗力の法理]] — 同じ思想家
 - [[bizlaw-marshalling-doctrine|マーシャリングの法理]] — 同じ思想家
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

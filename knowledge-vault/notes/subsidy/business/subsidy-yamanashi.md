@@ -41,6 +41,7 @@ prefecture
 - [[subsidy-fukushima|福島県中小企業等生産性向上推進事業補助金（福島県）]] — 同分野の近傍
 - [[subsidy-miyagi|ものづくり中小企業生産性向上設備導入補助金（宮城県）]] — 同分野の近傍
 - [[subsidy-decarbonization-region|地域脱炭素移行・再エネ推進交付金（地域脱炭素推進交付金）]] — 同分野の近傍
+- [[subsidy-miyazaki|事業承継・引継ぎ応援事業補助金（宮崎県）]] — 同分野の近傍
 - [[subsidy-regional-public-transport|地域公共交通確保維持改善事業]] — 同分野の近傍
 
 ## 関連

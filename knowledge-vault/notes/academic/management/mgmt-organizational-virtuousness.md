@@ -31,7 +31,6 @@ Cameron, Kim S. （2004 Exploring the Relationships between Organizational Virtu
 - [University of Michigan, Center for Positive Organizations — "Exploring the relationships between organizational virtuousness and performance" (research summary)](https://positiveorgs.bus.umich.edu/articles/exploring-the-relationships-between-organizational-virtuousness-and-performance/) `リファレンス`
 
 ## 関連概念
-- [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
 - [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — 同じ思想家
 - [[mgmt-thriving-at-work-spreitzer|職場スライビング理論（活力ある成長モデル）]] — 出典を共有
 - [[mgmt-mintzberg-roles|ミンツバーグの10の経営者役割]] — 同分野の近傍

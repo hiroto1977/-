@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[human-double-flash-illusion|音誘発フラッシュ錯覚——音の数が見える閃光の数を変える]] — 同じ思想家
+- [[human-cocktail-party-effect|カクテルパーティー効果]] — 同分野の近傍
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
-- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

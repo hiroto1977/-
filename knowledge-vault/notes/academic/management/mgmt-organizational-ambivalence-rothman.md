@@ -31,8 +31,9 @@ aliases:
 - [Wikipedia: Ambivalence — coexistence of conflicting attitudes and emotions overview](https://en.wikipedia.org/wiki/Ambivalence) `リファレンス`
 
 ## 関連概念
+- [[human-componential-theory-creativity-amabile|創造性の構成要素理論（アマビル）——領域スキル・創造的思考・内発的動機づけと社会環境が交わって生まれる創造性]] — 同じ思想家
 - [[mgmt-identity-work-pratt|アイデンティティ・ワーク（プラット＆フォアマン）]] — 同じ思想家
-- [[mgmt-tempered-radical|穏健な急進主義者（Tempered Radicals）]] — 同分野の近傍
+- [[mgmt-tempered-radical|穏健な急進主義者（マイヤーソン＆スカリー）——組織への帰属を保ちながら、支配的文化と相容れない価値を小さな勝利の積み重ねで内側から推し進める個人]] — 同分野の近傍
 - [[mgmt-impression-management-goffman|印象管理——ゴフマンの演劇的アプローチと組織における自己呈示]] — 同分野の近傍
 
 ## 関連

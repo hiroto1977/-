@@ -2,7 +2,7 @@
 title: "econlib.org"
 type: source-domain
 host: "econlib.org"
-cite_count: 46
+cite_count: 45
 tags:
   - source-domain
   - index
@@ -10,14 +10,14 @@ tags:
 
 # econlib.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **46 件**（リファレンス 41 ・ 学術 5）
+> [!info] 出典ドメイン索引 ・ 引用 **45 件**（リファレンス 41 ・ 学術 4）
 
 ## このドメインを出典とする項目
 
 - [[econ-auction-theory|オークション理論]] — Econlib（ConciseEncyclopediaofEconomics）“Auctions”—4形式・私的/共通価値・収益同値
 - [[econ-cantillon-effect|カンティロン効果]] — Econlib—EssaisurlaNatureduCommerceenGénéral（原典・出典1755）
 - [[econ-cobra-effect|コブラ効果（意図せざる結果の法則）]] — LibraryofEconomicsandLiberty—意図せざる結果とインセンティブの逆効果に関する経済学的解説
-- [[econ-cobweb-theorem-agricultural-cycles|蜘蛛の巣理論（農業価格循環）]] — EconLibEncyclopediaentryonCobwebTheorem
+- [[econ-cobweb-model-ezekiel-nerlove|くもの巣モデル（コブウェブ定理）——生産の遅れと素朴な期待が農産物価格の収束・発散・循環を生む動学モデル]] — EconLib,ConciseEncyclopediaofEconomics:CobwebTheorem（収束・発散条件と豚サイクルの解説）
 - [[econ-comparative-advantage-ricardian|比較優位論と国際分業の理論的基礎——リカードからヘクシャー＝オリーンまで]] — Ricardo(1817)OnthePrinciplesofPoliticalEconomyandTaxation—EconLib
 - [[econ-conditional-convergence|条件付き収束]] — Econlib(ConciseEncyclopediaofEconomics):EmpiricsofEconomicGrowth—MRW1…
 - [[econ-creative-destruction|創造的破壊]] — Econlib(LibraryofEconomicsandLiberty)—CreativeDestruction
@@ -30,8 +30,7 @@ tags:
 - [[econ-externality-market-failure|外部性と市場の失敗]] — Econlib(ConciseEncyclopediaofEconomics)—Externalities
 - [[econ-free-rider|フリーライダー問題]] — TheConciseEncyclopediaofEconomics(Econlib)—“PublicGoods”（非競合性・非排除性、フリ…
 - [[econ-general-equilibrium|一般均衡理論]] — Econlib「LéonWalras」（連立方程式・タトヌマン・パレート最適性）
-- [[econ-giffen-good-theory|ギッフェン財理論]] — Battalio,Kagel&Kogut—"GiffenGoods",LibraryofEconomicsandLiberty(EconL…
-- [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]] — Econlib—GiffenGoods（経済学百科事典）
+- [[econ-giffen-goods-inferior-demand|ギッフェン財——価格が上がると需要が増える需要法則の例外は、負の所得効果が代替効果を上回る下級財で生じる]] — EconLib,ConciseEncyclopediaofEconomics:GiffenGoods（定義・歴史・実証をめぐる論争）
 - [[econ-greshams-law|グレシャムの法則]] — Econlib（LibraryofEconomicsandLiberty）—法定平価が前提で為替自由変動では不成立、悪貨流通・良貨退蔵の仕…
 - [[econ-hayek-knowledge|ハイエクの知識の分散と価格メカニズム]] — Econlib—原文「TheUseofKnowledgeinSociety」(1945)全文
 - [[econ-heckscher-ohlin|ヘクシャー＝オリーン理論]] — Econlib（TheConciseEncyclopediaofEconomics）—BertilOhlin略伝と理論

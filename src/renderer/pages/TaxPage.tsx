@@ -79,14 +79,20 @@ import { calcRetirementTax } from '../../shared/taxRetirement';
 import { calcCasualIncome } from '../../shared/taxCasual';
 import { calcCapitalGainsTax, resolveAcquisitionCost, type CapitalAssetKind } from '../../shared/taxCapitalGains';
 import { calcPublicPensionIncome } from '../../shared/taxPublicPension';
-import { DEEMED_PURCHASE_RATES, type SimplifiedBusinessType, type ConsumptionTaxMethod } from '../../shared/taxConsumption';
 import {
+  DEEMED_PURCHASE_RATES,
+  TWENTY_PERCENT_MEASURE_END,
+  twentyPercentMeasureStatus,
+  type SimplifiedBusinessType,
+  type ConsumptionTaxMethod,
+} from '../../shared/taxConsumption';
+import { formatDate } from '../../shared/bankFormat';
+import {
+  canUseSimplified,
   compareBusinessTaxMethods,
   isTaxExempt,
   calcStandardTaxDetailed,
   compareInputCreditMethods,
-  FULL_CREDIT_RATIO_THRESHOLD,
-  FULL_CREDIT_SALES_THRESHOLD,
 } from '../../shared/taxConsumptionBusiness';
 import { calcSocialInsurance, calcSocialInsuranceWithBonus } from '../../shared/taxSocialInsurance';
 import { calcFurusatoBreakdown, furusatoOneStopEligibility } from '../../shared/taxFurusato';
@@ -435,14 +441,42 @@ export function TaxPage() {
   const [icTaxableOnlyStr, setIcTaxableOnlyStr] = useState('2000000');
   const [icExemptOnlyStr, setIcExemptOnlyStr] = useState('600000');
   const [icCommonStr, setIcCommonStr] = useState('400000');
+  const ctExempt = useMemo(
+    () => isTaxExempt(num(ctSalesStr) + num(ctReducedSalesStr), bizParams.exemptionThreshold),
+    [ctSalesStr, ctReducedSalesStr, bizParams],
+  );
+  /**
+   * ⑩ で**選べる**方式。3 方式のうち 2 つは条件つきなので、「最も納付が少ない方式」を
+   * 決める前に外す —— 2026-09-06 の実測では、この節は 3 方式の最小値をそのまま
+   * 「✅ 最も納付が少ない方式」と出しており、**すぐ上の説明文が「簡易課税は基準期間の
+   * 課税売上5,000万円以下」と書いているのに、6,000 万円でも簡易課税を勧めていた**。
+   *
+   * - 簡易課税: 基準期間の課税売上高 (ここでは入力した課税売上高で代理)
+   * - 2 割特例: 免税の水準を超える売上なら元から免税ではないので対象外。加えて
+   *   **期限つきの経過措置**なので、`twentyPercentMeasureStatus()` が言い切れる
+   *   `ended` のときも外す (課税期間を入力に持たないため、言い切れない帯は残す)
+   */
+  const ctSimplifiedOk = useMemo(
+    () => canUseSimplified(num(ctSalesStr) + num(ctReducedSalesStr), bizParams.simplifiedEligibilityThreshold),
+    [ctSalesStr, ctReducedSalesStr, bizParams],
+  );
+  const ctMeasure = twentyPercentMeasureStatus();
+  const ctTwentyPercentOk = ctExempt && ctMeasure !== 'ended';
+  /** 外した方式とその理由。**判定と同じ値から作る**ので、片方だけ直ることがない。 */
+  const ctUnavailable: string[] = [];
+  if (!ctSimplifiedOk) ctUnavailable.push(`簡易課税（基準期間の課税売上${jpy(bizParams.simplifiedEligibilityThreshold)}超）`);
+  if (!ctExempt) ctUnavailable.push(`2割特例（課税売上${jpy(bizParams.exemptionThreshold)}超は元から免税ではない）`);
+  else if (ctMeasure === 'ended') ctUnavailable.push(`2割特例（適用期限 ${formatDate(TWENTY_PERCENT_MEASURE_END, { era: 'wareki' })} 経過）`);
+
   const consumptionMethods = useMemo(
     () =>
       compareBusinessTaxMethods(
         [{ type: ctBizType, sales: { standard: num(ctSalesStr), reduced: num(ctReducedSalesStr) } }],
         { standard: num(ctPurchaseStr), reduced: 0 },
         bizParams,
+        { simplified: ctSimplifiedOk, twentyPercent: ctTwentyPercentOk },
       ),
-    [ctSalesStr, ctReducedSalesStr, ctPurchaseStr, ctBizType, bizParams],
+    [ctSalesStr, ctReducedSalesStr, ctPurchaseStr, ctBizType, bizParams, ctSimplifiedOk, ctTwentyPercentOk],
   );
   // ⑩-2 納付/還付スケジュール — 税率 0%〜50% を範囲に、金額と時期を出す。
   const [csRateStr, setCsRateStr] = useState('10');
@@ -533,11 +567,6 @@ export function TaxPage() {
     if (code === 'US') { setExVatStr('0'); setExBasis('FOB'); }
     else setExBasis('CIF');
   }
-
-  const ctExempt = useMemo(
-    () => isTaxExempt(num(ctSalesStr) + num(ctReducedSalesStr), bizParams.exemptionThreshold),
-    [ctSalesStr, ctReducedSalesStr, bizParams],
-  );
 
   // ⑩-3 本則課税の仕入控除税額。売上は ⑩ の入力を使い、非課税・免税売上と
   // 用途区分をここで足す。用途区分はすべて標準税率とみなす (概算)。
@@ -1279,7 +1308,8 @@ export function TaxPage() {
       <Section title="⑩ 消費税の納付方式の比較 (本則 / 簡易 / 2割特例)" count={3}>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
           消費税の課税事業者は<strong>本則課税・簡易課税・2割特例</strong>から納付方式を選べます。
-          簡易課税は基準期間の課税売上{jpy(bizParams.simplifiedEligibilityThreshold)}以下、2割特例はインボイス登録した免税事業者向けの経過措置 (令和8年分まで) です。
+          簡易課税は基準期間の課税売上{jpy(bizParams.simplifiedEligibilityThreshold)}以下、2割特例はインボイス登録した免税事業者向けの経過措置
+          ({formatDate(TWENTY_PERCENT_MEASURE_END, { era: 'wareki' })}を含む課税期間まで) です。
           ※ 概算試算であり、適用要件・端数処理の細部は反映しません。確定申告は税理士・国税庁でご確認ください。
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
@@ -1320,6 +1350,11 @@ export function TaxPage() {
         >
           ✅ 最も納付が少ない方式: <strong>{ctMethodLabel[consumptionMethods.best]}</strong>
           （納付 {jpy(consumptionMethods.bestAmount)}）
+          {ctUnavailable.length > 0 && (
+            <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4 }}>
+              ※ 選べない方式は比較から外しています: {ctUnavailable.join(' / ')}
+            </div>
+          )}
           {ctExempt && (
             <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4 }}>
               ※ 課税売上が{jpy(bizParams.exemptionThreshold)}以下です。基準期間で同水準なら原則<strong>免税事業者</strong>（インボイス登録時を除く）。
@@ -1341,8 +1376,8 @@ export function TaxPage() {
       <Section title="⑩-3 本則課税の仕入控除税額 (全額控除 / 個別対応 / 一括比例配分)" count={3}>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
           上の ⑩ の「本則課税」は<strong>課税仕入れの消費税を全額引ける</strong>前提の概算です。全額引けるのは
-          <strong>課税売上割合 {Math.round(FULL_CREDIT_RATIO_THRESHOLD * 100)}% 以上</strong>かつ
-          <strong>課税売上高 {jpy(FULL_CREDIT_SALES_THRESHOLD)} 以下</strong>のときだけで、住宅家賃・利子・保険料・医療・教育のような
+          <strong>課税売上割合 {Math.round(bizParams.fullCreditRatioThreshold * 100)}% 以上</strong>かつ
+          <strong>課税売上高 {jpy(bizParams.fullCreditSalesThreshold)} 以下</strong>のときだけで、住宅家賃・利子・保険料・医療・教育のような
           <strong>非課税売上</strong>があると按分が必要です。按分せずに全額を引くと<strong>納付が過少に出ます</strong>。
           ここでは実際の 2 方式（個別対応方式・一括比例配分方式）で計算します。売上 (標準/軽減) は ⑩ の入力を使います。
           ※ 概算試算です。課税売上割合に準ずる割合の承認・調整対象固定資産の調整等は反映しません。
@@ -1388,7 +1423,7 @@ export function TaxPage() {
             </div>
           ) : (
             <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4 }}>
-              ⚠️ 全額控除の要件を満たしません（割合 {Math.round(FULL_CREDIT_RATIO_THRESHOLD * 100)}% 未満、または課税売上高 {jpy(FULL_CREDIT_SALES_THRESHOLD)} 超）。
+              ⚠️ 全額控除の要件を満たしません（割合 {Math.round(bizParams.fullCreditRatioThreshold * 100)}% 未満、または課税売上高 {jpy(bizParams.fullCreditSalesThreshold)} 超）。
               下の 2 方式のいずれかで按分します。控除が多い方が有利です:{' '}
               <strong>{inputCredit.compare.better === 'itemized' ? '個別対応方式' : '一括比例配分方式'}</strong>
             </div>

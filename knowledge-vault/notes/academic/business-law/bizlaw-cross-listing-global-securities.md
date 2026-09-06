@@ -39,7 +39,7 @@ aliases:
 - [[bizlaw-class-action-mechanism|クラスアクション（集団訴訟）——多数被害者の効率的救済制度]] — 同じ思想家
 - [[bizlaw-crowdfunding-securities-regulation|クラウドファンディングと証券規制の再編（JOBSact）]] — 同じ思想家
 - [[bizlaw-shareholder-activism-hedge-fund|ヘッジファンド型株主アクティビズムと企業統治]] — 同じ思想家
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

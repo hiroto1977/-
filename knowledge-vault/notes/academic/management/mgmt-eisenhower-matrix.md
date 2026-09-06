@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-mass-customization|マス・カスタマイゼーション]] — 同分野の近傍
-- [[mgmt-stakeholder-salience-mitchell|ステークホルダー・サリエンス（ミッチェル）]] — 同分野の近傍
+- [[mgmt-competitive-dynamics-chen|競争動態論（チェン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

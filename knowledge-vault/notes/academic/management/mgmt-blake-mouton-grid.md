@@ -26,7 +26,7 @@ aliases:
 ロバート・ブレイク ／ ジェーン・ムートン ／ ラルフ・ストッグディル ／ レンシス・リッカート
 
 ## 出典
-- [Blake, R.R. & Mouton, J.S. (1964) The Managerial Grid — Gulf Publishing (WorldCat)](https://www.worldcat.org/oclc/345922) `学術`
+- [Blake, R.R. & Mouton, J.S. (1964) The Managerial Grid — Gulf Publishing (WorldCat)](https://www.worldcat.org/oclc/345922) `リファレンス`
 - [Wikipedia: Managerial grid model — Blake & Mouton, concern for production/people, team management 9,9](https://en.wikipedia.org/wiki/Managerial_grid_model) `リファレンス`
 
 ## 関連概念

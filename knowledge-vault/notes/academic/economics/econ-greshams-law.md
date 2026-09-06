@@ -34,7 +34,7 @@ aliases:
 - [[econ-okuns-law|オーカンの法則]] — 出典を共有
 - [[econ-menu-costs|メニューコスト]] — 出典を共有
 - [[econ-ppp|購買力平価（PPP）]] — 同分野の近傍
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-alchian-allen-theorem|アルチャン＝アレンの定理——「良いリンゴは外へ送られる」]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

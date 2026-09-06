@@ -31,7 +31,6 @@ aliases:
 
 ## 関連概念
 - [[econ-diminishing-marginal-utility|限界効用逓減の法則]] — 語彙が近い
-- [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]] — 語彙が近い
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
 - [[econ-bootleggers-baptists|密造者と聖職者（ブートレガーとバプテスト）]] — 同じ思想家
 - [[econ-broken-window-fallacy-bastiat|割れ窓の誤謬（バスティア）——「見えるもの」と「見えざるもの」]] — 同じ思想家
@@ -40,6 +39,7 @@ aliases:
 - [[econ-division-of-labour|分業]] — 同じ思想家
 - [[econ-invisible-hand|見えざる手]] — 同じ思想家
 - [[econ-real-bills-doctrine|真正手形主義（リアルビルズ・ドクトリン）]] — 同じ思想家
+- [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

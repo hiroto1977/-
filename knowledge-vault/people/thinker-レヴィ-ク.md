@@ -2,7 +2,7 @@
 title: "クロード・レヴィ"
 type: thinker
 person_key: "レヴィ|ク"
-concept_count: 5
+concept_count: 3
 tags:
   - person
   - index
@@ -10,14 +10,12 @@ tags:
 
 # クロード・レヴィ
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **5 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（5件）
+## 学術概念（3件）
 - [[infosoc-bricolage|ブリコラージュ（文化人類学・メディア文化論）]] — ブリコラージュ（bricolage）とは、フランスの文化人類学者クロード・レヴィ＝ストロースが著書『野生の思考』（La…
 - [[infosoc-gift-economy-mauss|贈与論——贈与交換を律する与え・受け・返す三つの義務と全体的社会的事実]] — 贈与論（thegift/essaisurledon）は、フランスの社会学者・人類学者マルセル・モースが1925年の論考…
-- [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — アントレプレナーシップ・ブリコラージュは、Baker&Nelson（2005）がAcademyofManagement…
-- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — アントレプレナーシップのブリコラージュ（entrepreneurialbricolage）は、ベーカーとネルソンが20…
-- [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — 組織的ブリコラージュ（organizationalbricolage）は、ベイカー＆ネルソン（2005）がレヴィ＝スト…
+- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナー的ブリコラージュ（ベイカー＝ネルソン）——手元にある資源の組み合わせを新しい問題や機会に当てはめて「無から有」を生む資源構築]] — アントレプレナー的ブリコラージュ（entrepreneurialbricolage）は、テッド・ベイカーとリード・ネル…
 
 ## 関連
 - 索引: [[人物索引]]

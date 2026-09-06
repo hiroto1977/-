@@ -2,34 +2,35 @@
 title: "学習パス: 学術概念／ビジネス法務"
 type: learning-path
 path_key: "academic-business-law"
-entry_count: 681
+entry_count: 695
 tags:
   - MOC
   - learning-path
 ---
 
-# 学習パス — 学術概念／ビジネス法務（681件）
+# 学習パス — 学術概念／ビジネス法務（695件）
 
 > [!info] 決定論カリキュラム: ①グラフ次数の高い中心概念で土台を作り ②年代順に発展を追い ③年代情報のない項目で仕上げる。
 
 ## 第 1 部 — 中心概念（グラフ接続数 上位 15）
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]]（接続 80）
-- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 58）
-- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 38）
-- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 36）
-- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 29）
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]]（接続 82）
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]（接続 57）
+- [[bizlaw-cooling-off|クーリング・オフ（特定商取引法）]]（接続 37）
+- [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]]（接続 37）
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]]（接続 34）
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]]（接続 31）
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]]（接続 29）
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]]（接続 29）
-- [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 28）
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 28）
-- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]]（接続 26）
+- [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 27）
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
 - [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]]（接続 26）
+- [[bizlaw-toushiho|出資法]]（接続 26）
 - [[bizlaw-earnest-money|手付（民法557条）]]（接続 25）
-- [[bizlaw-retention-lien|留置権（民法295条）]]（接続 25）
-- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]]（接続 25）
+- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]]（接続 25）
 
 ## 第 2 部 — 年代順の展開
+- 1511年: [[bizlaw-lucy-v-zehmer-objective-theory-of-contract|ルーシー対ゼーマー事件と契約成立の客観説——内心でなく言葉と行為の外形で合意を判断する原則]]
 - 1540年: [[bizlaw-champerty|シャンパティとメインテナンス（訴訟売買と訴訟援助の禁止）]]
 - 1602年: [[bizlaw-part-payment-foakes|債務の一部弁済と約因——フォークス対ビア事件（Foakes v Beer 1884）とピンネル事件の準則]]
 - 1625年: [[bizlaw-pacta-sunt-servanda|合意は拘束する（Pacta Sunt Servanda）]]
@@ -67,7 +68,11 @@ tags:
 - 1897年: [[bizlaw-act-of-state-doctrine|国家行為の法理（Act of State Doctrine）]]
 - 1899年: [[bizlaw-commercial-code|商法]]
 - 1900年: [[bizlaw-nachfrist|ナッハフリスト制度（付加期間催告による解除）]]
+- 1910年: [[bizlaw-vincent-v-lake-erie-private-necessity|ヴィンセント対レイク・エリー運送事件——緊急時に他人の財産を使うことは許されるが、生じた損害は賠償しなければならないという「不完全な特権」の法理]]
+- 1916年: [[bizlaw-macpherson-v-buick-privity|マクファーソン対ビュイック事件——過失責任における契約当事者関係（プリヴィティ）要件の崩壊と製造物責任の出発点]]
+- 1921年: [[bizlaw-peevyhouse-v-garland-coal-cost-of-completion|ピーヴィーハウス対ガーランド石炭事件——完成費用か価値減少分か、契約損害賠償の測り方]]
 - 1922年: [[bizlaw-health-insurance|健康保険法]]
+- 1928年: [[bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff|パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争]]
 - 1929年: [[bizlaw-assumption-of-risk|危険の引受——原告が任意に引き受けた既知の危険につき被告の不法行為責任を否定するコモンロー上の抗弁]]
 - 1932年: [[bizlaw-berle-means-thesis|バーリ＝ミーンズ命題（The Berle-Means thesis／所有と経営の分離）——大規模公開会社では株式が分散し、支配が株主から専門経営者へ移る]]
 - 1932年: [[bizlaw-bills-act|手形法]]
@@ -103,9 +108,9 @@ tags:
 - 1950年: [[bizlaw-radio-act|電波法]]
 - 1952年: [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]]
 - 1952年: [[bizlaw-real-estate-transactions-act|宅地建物取引業法（宅建業法）]]
+- 1953年: [[bizlaw-regulation-d-private-placement|レギュレーションD——「自ら身を守れる」投資家を前提に登録義務を免除する私募のセーフハーバー]]
 - 1954年: [[bizlaw-employees-pension|厚生年金保険法]]
 - 1954年: [[bizlaw-interest-rate-restriction|利息制限法]]
-- 1954年: [[bizlaw-toushiho|出資法]]
 - 1955年: [[bizlaw-auto-liability-act|自動車損害賠償保障法（自賠法）]]
 - 1958年: [[bizlaw-national-health-insurance|国民健康保険法]]
 - 1959年: [[bizlaw-bilateral-investment-treaty|二国間投資条約（Bilateral Investment Treaty / BIT）]]
@@ -121,7 +126,6 @@ tags:
 - 1962年: [[bizlaw-administrative-litigation|行政事件訴訟法]]
 - 1964年: [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]]
 - 1964年: [[bizlaw-hickenlooper-amendment|ヒッケンルーパー修正条項（Hickenlooper Amendment）]]
-- 1965年: [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]]
 - 1965年: [[bizlaw-corporation-tax|法人税法]]
 - 1965年: [[bizlaw-exhaustion-of-local-remedies|国内救済手段の尽尽原則（Exhaustion of Local Remedies）]]
 - 1965年: [[bizlaw-income-tax-act|所得税法]]
@@ -133,13 +137,17 @@ tags:
 - 1970年: [[bizlaw-sec-rule-14a8-shareholder-proposals|SEC規則14a-8（株主提案の委任状記載制度）]]
 - 1971年: [[bizlaw-deposit-insurance-act|預金保険法]]
 - 1971年: [[bizlaw-elderly-employment|高年齢者雇用安定法]]
+- 1971年: [[bizlaw-katko-v-briney-spring-gun-defense-of-property|カトコ対ブライニー事件——仕掛け銃による財産防衛と生命尊重の限界]]
 - 1972年: [[bizlaw-forum-selection|裁判管轄合意条項（Forum Selection Clause）]]
 - 1972年: [[bizlaw-industrial-safety|労働安全衛生法]]
+- 1972年: [[bizlaw-lost-volume-seller|逸失販売量売主の法理——転売しても消えない一件分の利益を売主に補填する理論]]
 - 1973年: [[bizlaw-franchise-contract|フランチャイズ契約]]
 - 1974年: [[bizlaw-employment-insurance|雇用保険法]]
 - 1974年: [[bizlaw-proper-purpose-howard-smith|取締役の権限濫用と適正目的の法理——ハワード・スミス対アンポル事件（Howard Smith v Ampol 1974）]]
 - 1976年: [[bizlaw-margin-of-appreciation|評価の余地の法理（Margin of Appreciation）]]
 - 1976年: [[bizlaw-specified-commercial-transactions|特定商取引法]]
+- 1976年: [[bizlaw-tarasoff-v-regents-duty-to-protect|タラソフ対カリフォルニア大学理事会事件——心理療法士に第三者保護義務を認めた判例]]
+- 1977年: [[bizlaw-antimonopoly-surcharge|課徴金制度（独占禁止法）]]
 - 1979年: [[bizlaw-civil-execution|民事執行法]]
 - 1980年: [[bizlaw-greenmail|グリーンメール（敵対的買収防衛の株式買戻し）]]
 - 1981年: [[bizlaw-banking-act|銀行法]]
@@ -153,6 +161,7 @@ tags:
 - 1985年: [[bizlaw-worker-dispatch|労働者派遣法]]
 - 1986年: [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]]
 - 1986年: [[bizlaw-greenwashing|グリーンウォッシング（虚偽・誇大な環境訴求）]]
+- 1986年: [[bizlaw-kenford-v-erie-lost-profits-reasonable-certainty|ケンフォード対エリー郡事件——新規事業の逸失利益は合理的確実性なき限り投機的として退けられる]]
 - 1988年: [[bizlaw-consumption-tax|消費税法]]
 - 1989年: [[bizlaw-civil-preservation|民事保全法]]
 - 1989年: [[bizlaw-denial-of-justice|裁判拒否（Denial of Justice）]]
@@ -165,8 +174,10 @@ tags:
 - 1993年: [[bizlaw-administrative-procedure-act|行政手続法]]
 - 1993年: [[bizlaw-part-time-labor|パートタイム・有期雇用労働法]]
 - 1994年: [[bizlaw-ratchet-clause|ラチェット条項（Ratchet Clause / Standstill-and-Ratchet）]]
+- 1995年: [[bizlaw-inevitable-disclosure-doctrine|不可避的開示の法理——転職者の知識のみで差止めを認めるか州で分裂した米国営業秘密理論]]
 - 1995年: [[bizlaw-insurance-business-act|保険業法]]
 - 1996年: [[bizlaw-civil-procedure|民事訴訟法]]
+- 1996年: [[bizlaw-procd-v-zeidenberg-shrinkwrap-clickwrap|プロCD対ザイデンバーグ事件——包装を開けた・クリックしたことで成立するライセンス契約の拘束力を認めた米連邦控訴審判例]]
 - 1996年: [[bizlaw-slapp|SLAPP訴訟（戦略的言論封殺訴訟）]]
 - 1997年: [[bizlaw-long-term-care-insurance|介護保険法]]
 - 1998年: [[bizlaw-e-bookkeeping|電子帳簿保存法]]
@@ -189,7 +200,9 @@ tags:
 - 2002年: [[bizlaw-anti-spam-act|特定電子メール法]]
 - 2002年: [[bizlaw-internal-control|内部統制システム（J-SOX・内部統制報告制度）]]
 - 2002年: [[bizlaw-say-on-pay|セイ・オン・ペイ（Say on Pay）— 役員報酬に関する株主諮問的投票制度]]
+- 2002年: [[bizlaw-staggered-board-classified-board|期差任期取締役会（クラシファイド・ボード）——買収防衛策としての効果と機関投資家による解体]]
 - 2003年: [[bizlaw-arbitration-act|仲裁法]]
+- 2003年: [[bizlaw-employee-invention-japan-patent-act-35|職務発明制度（特許法第35条）——従業者の発明の帰属と「相当の利益」]]
 - 2003年: [[bizlaw-umbrella-clause|アンブレラ条項（Umbrella Clause）]]
 - 2004年: [[bizlaw-adr|裁判外紛争解決手続（ADR）]]
 - 2004年: [[bizlaw-bankruptcy|破産法]]
@@ -293,6 +306,7 @@ tags:
 - [[bizlaw-adequate-consideration|契約法における約因の法理と比較法的考察]]
 - [[bizlaw-administrative-execution|行政代執行（行政代執行法）]]
 - [[bizlaw-administrative-guidance|行政指導（行政手続法）]]
+- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]]
 - [[bizlaw-administrative-law-proportionality|行政法における比例原則と権利制限の正当化理論]]
 - [[bizlaw-adverse-possession|時効取得——長期の占有により非所有者が土地の権原を取得する法理]]
 - [[bizlaw-agency|代理（民法99条）]]
@@ -301,7 +315,6 @@ tags:
 - [[bizlaw-agency-relationship|代理人関係（エージェンシー関係）]]
 - [[bizlaw-alter-ego-doctrine|法人格否認の法理（分身理論）]]
 - [[bizlaw-alter-ego-doctrine-reverse|逆法人格否認（リバース・ピアシング）]]
-- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]]
 - [[bizlaw-anti-bribery-fcpa-ukba|贈収賄禁止法とコンプライアンス——米国FCPA・英国贈収賄防止法と国際腐敗防止規制]]
 - [[bizlaw-anti-dilution-venture|アンチダイリューション条項（ベンチャー投資）]]
 - [[bizlaw-anti-money-laundering-directive-eu|EUマネーロンダリング防止指令——金融システムの健全性保護]]
@@ -467,7 +480,6 @@ tags:
 - [[bizlaw-fault-liability|過失責任の原則と無過失責任]]
 - [[bizlaw-fictitious-manifestation|通謀虚偽表示（民法94条）]]
 - [[bizlaw-fiduciary-duty|信認義務（受託者責任）]]
-- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]]
 - [[bizlaw-fiduciary-duty-of-oversight|監視義務法理（ケアマーク法理）]]
 - [[bizlaw-fiduciary-duty-standard|信認義務基準（取締役の善管注意義務と忠実義務）]]
 - [[bizlaw-fisher-v-bell|フィッシャー対ベル——「陳列」は申込みか、申込みの誘引か]]
@@ -612,6 +624,7 @@ tags:
 - [[bizlaw-rescission|契約の取消（リシジョン）——契約を解消し当事者を原状に復させる救済]]
 - [[bizlaw-respondeat-superior-scope|使用者責任の範囲——代理責任法理と雇用関係における帰責原理]]
 - [[bizlaw-restraint-of-trade|取引制限の法理——営業の自由を制約する条項の合理性審査]]
+- [[bizlaw-retention-lien|留置権（民法295条）]]
 - [[bizlaw-revlon-duties|レブロン義務（会社売却時の取締役義務）]]
 - [[bizlaw-revocation-litigation|取消訴訟（行政事件訴訟法）]]
 - [[bizlaw-revolving-mortgage|根抵当権（民法398条の2）]]
@@ -633,6 +646,7 @@ tags:
 - [[bizlaw-shareholder-activism-proxy-fight|株主アクティビズムと委任状争奪戦——コーポレートガバナンスにおける物言う株主の法的地位]]
 - [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]]
 - [[bizlaw-shareholder-primacy-doctrine|株主優先主義（シェアホルダー・プライマシー）]]
+- [[bizlaw-shareholders-derivative-suit|株主代表訴訟——会社に代わる取締役責任追及の法的仕組み]]
 - [[bizlaw-shozoken-publicity|肖像権・パブリシティ権]]
 - [[bizlaw-silent-partnership-tokumei-kumiai|匿名組合（商法535条）——名を出さず出資し、利益の分配を受ける]]
 - [[bizlaw-sovereign-immunity-waiver|主権免除と放棄（ソブリン・イミュニティ）]]

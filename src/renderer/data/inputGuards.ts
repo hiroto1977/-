@@ -16,9 +16,20 @@
  * 単位（万・億）は**解釈しない**。`4200万` を 42,000,000 と読み替えるのは
  * 親切に見えて、読み替えを誤ったときに気づけない。読み取れないものは
  * 読み取れないと言い、円単位での入力を促す方が安全と判断した。
+ *
+ * 同じ理由で、飾り（通貨記号・単位・桁区切り）は**位置**まで見る。
+ * 位置を見ずに落としていた 2026-09-06 までは `100m2` が 1002、
+ * `2024年12月31日` が 20241231 と読めてしまい、**読めている以上
+ * 指摘も出なかった** —— 詳細は `shared/readNumeric.ts` の `NUMBER_SHAPE` の注記。
  */
 
 import { byIssueLevel, type IssueLevel } from '../../shared/issueLevel';
+import { hasInteriorNoise, hasUnitWord, readNumeric } from '../../shared/readNumeric';
+
+// 読み取り自体は `shared/readNumeric.ts` が 1 つだけ持つ (画面と共有検査で
+// 同じ文字列が別の数にならないように)。ここは「読めなかったときに何と言うか」。
+export { hasInteriorNoise, hasUnitWord };
+export { readNumeric as readNumber };
 
 /** 重大度はアプリ全体で 1 つ（`shared/issueLevel.ts`）。 */
 export type GuardLevel = IssueLevel;
@@ -58,45 +69,9 @@ export interface NumSpec {
   readonly sane?: number;
 }
 
-const FULLWIDTH = /[！-～]/g;
-const toHalfWidth = (s: string) => s.replace(FULLWIDTH, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
-
-/** 単位語を含むか（含む場合は数値として読み替えず、指摘に回す）。 */
-const UNIT_WORD = /[万億兆千]|[０-９0-9]\s*[kKmMbB]\b/;
-
-/** 読み取りで無視してよい飾り（通貨記号・単位・区切り）。 */
-const DECORATION = /[¥￥$,\s円％%人年月日個株㎡ｍm]/g;
-
-/**
- * 入力文字列を数値として読む。読めなければ null。
- *
- * - 全角英数記号を半角化
- * - 通貨記号・単位・桁区切り・空白を除去
- * - 空文字は null（「未入力」は呼び出し側で 0 に倒す）
- * - `1e3` `0x10` `Infinity` `NaN` `1..2` `++5` は読まない
- * - `万` `億` などの単位語を含むものは読まない（誤解釈より未読を選ぶ）
- */
-export function readNumber(raw: string | undefined | null): number | null {
-  // null / undefined / 空文字を早期 return しないのは、下の厳格な正規表現が
-  // 'undefined' 'null' '' をいずれも弾くため。分岐を足しても結果は変わらない。
-  const half = toHalfWidth(String(raw));
-  if (UNIT_WORD.test(half)) return null;
-  const bare = half.replace(DECORATION, '');
-  if (!/^[+-]?\d+(\.\d+)?$/.test(bare)) return null;
-  const n = Number(bare);
-  return Number.isFinite(n) ? n : null;
-}
-
 /** 読めなければ 0。計算側はこれを使い、警告側は guardNumber を使う。 */
 export function readNumberOr0(raw: string | undefined | null): number {
-  return readNumber(raw) ?? 0;
-}
-
-/** 単位語（万・億）が含まれているか。指摘の文面を変えるために使う。 */
-export function hasUnitWord(raw: string | undefined | null): boolean {
-  // 空・null・undefined を早期 return しないのは、'undefined' 'null' '' の
-  // いずれも UNIT_WORD に当たらず false になるため（分岐を足しても同じ）。
-  return UNIT_WORD.test(toHalfWidth(String(raw)));
+  return readNumeric(raw) ?? 0;
 }
 
 interface KindRule {
@@ -140,13 +115,20 @@ export function guardNumber(raw: string | undefined | null, spec: NumSpec): Guar
     return { level: 'warn', label: spec.label, message: `未入力です。0 ${rule.unit} として計算されています。` };
   }
 
-  const value = readNumber(text);
+  const value = readNumeric(text);
   if (value === null) {
     if (hasUnitWord(text)) {
       return {
         level: 'fatal',
         label: spec.label,
         message: `「${text}」は単位付きのため読み取れません。0 ${rule.unit} として計算されています。単位を付けず ${rule.unit} の数値だけを入力してください。`,
+      };
+    }
+    if (hasInteriorNoise(text)) {
+      return {
+        level: 'fatal',
+        label: spec.label,
+        message: `「${text}」は数字の間に単位や区切りが入っているため読み取れません。0 ${rule.unit} として計算されています。3 桁区切り以外の記号を外し、${rule.unit} の数値だけを入力してください。`,
       };
     }
     return {

@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[econ-greenfield-investment|グリーンフィールド投資とブラウンフィールド投資]] — 語彙が近い
 - [[econ-product-cycle-trade|プロダクト・サイクル理論（貿易）]] — 同分野の近傍
+- [[econ-tariff-jumping-fdi|関税回避型直接投資——貿易障壁が誘発する海外直接投資の理論]] — 同分野の近傍
 - [[econ-wage-led-growth-bhaduri|賃金主導型成長——労働分配率の上昇が総需要を牽引する成長レジーム]] — 同分野の近傍
 
 ## 関連

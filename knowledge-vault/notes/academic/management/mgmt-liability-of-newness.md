@@ -31,8 +31,8 @@ aliases:
 - [Liability of Newness — Wikipedia](https://en.wikipedia.org/wiki/Liability_of_newness) `リファレンス`
 
 ## 関連概念
+- [[mgmt-organizational-imprinting-stinchcombe|組織インプリンティング——創設時条件の持続的影響]] — 同分野の近傍
 - [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同分野の近傍
-- [[mgmt-red-queen-competition|赤の女王競争理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

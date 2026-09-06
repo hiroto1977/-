@@ -7,6 +7,7 @@ import {
   ROLE_ORDER,
   ROLE_LABEL,
   canAddMember,
+  canChangeRole,
   canRemoveMember,
   seatsRemaining,
   type Role,
@@ -124,7 +125,14 @@ export function TeamPage() {
     }
   }
 
-  async function onChangeRole(id: string, role: Role) {
+  async function onChangeRole(id: string, current: Role, role: Role) {
+    // 最後のオーナーを降格させると、オーナーが 0 人になって削除の守りごと外れる
+    // (`canRemoveMember(*, 0)` は誰でも削除できると答える)。削除と同じ強さで断る。
+    if (!canChangeRole(current, role, owners)) {
+      setError('最後のオーナーは降格できません（オーナーが 0 人になります）。');
+      return;
+    }
+    setError(undefined);
     await edit(id, { role });
   }
 
@@ -220,11 +228,18 @@ export function TeamPage() {
                   <td style={{ padding: '4px 8px' }}>
                     <select
                       value={r.data.role}
-                      onChange={(e) => onChangeRole(r.id, e.target.value as Role)}
+                      onChange={(e) => onChangeRole(r.id, r.data.role, e.target.value as Role)}
                       style={{ ...inputStyle, width: 110 }}
                     >
                       {ROLE_ORDER.map((role) => (
-                        <option key={role} value={role}>{ROLE_LABEL[role]}</option>
+                        <option
+                          key={role}
+                          value={role}
+                          // 選べない理由を選択肢の側で見せる (押してから断られるより早い)。
+                          disabled={!canChangeRole(r.data.role, role, owners)}
+                        >
+                          {ROLE_LABEL[role]}
+                        </option>
                       ))}
                     </select>
                   </td>

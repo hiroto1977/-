@@ -2,7 +2,7 @@
 title: "semanticscholar.org"
 type: source-domain
 host: "semanticscholar.org"
-cite_count: 87
+cite_count: 85
 tags:
   - source-domain
   - index
@@ -10,12 +10,13 @@ tags:
 
 # semanticscholar.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **87 件**（学術 78 ・ リファレンス 9）
+> [!info] 出典ドメイン索引 ・ 引用 **85 件**（学術 77 ・ リファレンス 8）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-corporate-manslaughter|法人の業務上過失致死（コーポレート・マンスローター）]] — Slapper,G.&Tombs,S.(1999)CorporateCrime—PearsonLongman（コーポレート・クライム論の体…
 - [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — Schreuer(2010)FullProtectionandSecurity—JournalofInternationalDispute…
+- [[bizlaw-peevyhouse-v-garland-coal-cost-of-completion|ピーヴィーハウス対ガーランド石炭事件——完成費用か価値減少分か、契約損害賠償の測り方]] — Maute,J.L.(1995)'Peevyhousev.GarlandCoal&MiningCo.Revisited:TheBallad…
 - [[econ-export-led-growth-model|輸出主導型成長モデル]] — Balaguer,J.&Cantavella-Jorda,M.(2004)ExportCompositionandSpanishEcono…
 - [[econ-greenwald-stiglitz-theorem|グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）]] — Greenwald&Stiglitz(1986)—SemanticScholar
 - [[econ-hirshleifer-private-social-value-information|情報の私的価値と社会的価値の乖離（ハーシュライファー）——予見的情報は私的に有利でも社会的には過剰・無価値になりうる]] — SemanticScholar—Hirshleifer(1971)論文記録（被引用・関連文献一覧）
@@ -50,7 +51,6 @@ tags:
 - [[human-teleological-reasoning|目的論的推論（Teleological Reasoning in Infancy）]] — Gergely&Csibra(2003)—SemanticScholar
 - [[human-temporal-discounting|時間割引（Temporal Discounting / 遅延割引）]] — Ainslie(1975)SpeciousReward—PsychologicalBulletin82(4)
 - [[human-two-factor-emotion|情動二要因理論]] — Schachter&Singer(1962)"Cognitive,social,andphysiologicaldeterminantso…
-- [[infosoc-data-double|データ・ダブル／監視的アサンブラージュ（Data Double / Surveillant Assemblage）]] — Haggerty&Ericson(2000)—SemanticScholar
 - [[infosoc-data-doubles|データ・ダブル]] — Haggerty&Ericson(2000)—SemanticScholar
 - [[infosoc-digital-disconnect|デジタル・ディスコネクト（Digital Disconnect）]] — McChesney(2013)DigitalDisconnect—SemanticScholar
 - [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]] — Silverstone,Hirsch&Morley(1992)ICTsandtheMoralEconomyoftheHousehold
@@ -86,7 +86,6 @@ tags:
 - [[mgmt-paradox-mindset|パラドックス・マインドセット（Paradox Mindset）]] — Miron-Spektoretal.(2018)—SemanticScholar
 - [[mgmt-paradox-of-organizing|組織化のパラドックス（Paradox of Organizing）]] — Weick(1979)TheSocialPsychologyofOrganizing,2nded.—SemanticScholar
 - [[mgmt-polychronicity|ポリクロニシティ（多時間並行志向）]] — Bluedornetal.(1999)—PolychronicityandtheInventoryofPolychronicValues(…
-- [[mgmt-population-ecology-organization|組織の個体群生態学]] — Hannan&Freeman(1984).StructuralInertiaandOrganizationalChange.America…
 - [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — Tushman&Romanelli(1985)OrganizationalEvolution:AMetamorphosisModel—Re…
 - [[mgmt-real-options-strategy|リアル・オプション戦略論]] — Bowman&Hurry(1993)StrategythroughtheOptionLens—AcademyofManagementRev…
 - [[mgmt-real-options-strategy|リアル・オプション戦略論]] — McGrath(1997)ARealOptionsLogicforInitiatingTechnologyPositioningInves…
@@ -94,7 +93,6 @@ tags:
 - [[mgmt-role-exit-theory|役割退出理論]] — Ashforth,B.E."RoleTransitionsinOrganizationalLife:AnIdentity-basedPer…
 - [[mgmt-servqual|SERVQUAL（サービス品質モデル）]] — Parasuraman,Zeithaml&Berry(1988)"SERVQUAL:AMultiple-ItemScale...",Jou…
 - [[mgmt-shared-mental-models|共有メンタルモデル（チーム認知理論）]] — Cannon-Bowers,Salas&Converse(1993)—Sharedmentalmodelsinexpertteamdeci…
-- [[mgmt-strategic-choice-theory|戦略的選択理論]] — SemanticScholar—Child(1972)paperrecordwithcitationdata
 - [[mgmt-strategic-cognition|戦略的認知（Strategic Cognition）]] — Poracetal.(1989)—SemanticScholar
 - [[mgmt-strategic-issue-diagnosis|戦略的争点の診断（Strategic Issue Diagnosis）]] — Dutton&Jackson(1987)—SemanticScholar
 - [[mgmt-strategic-narratives-humphreys|戦略的ナラティブ（ハンフリーズ＆ブラウン）]] — Boje,D.M.(1991)TheStorytellingOrganization:AStudyofStoryPerformancein…

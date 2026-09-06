@@ -131,7 +131,7 @@
 
 - 1 バッチ＝6 概念・最低 4 分野（経済学・経営学・人間科学・ビジネス法務・情報社会学）。手順の
   詳細は `docs/ACADEMIC_KNOWLEDGE_LOOP.md` / `docs/BATCH_APPEND_SPECIFICATION.md`。
-- 各バッチで：デデュプ → 確証 → 追記 → 概念表更新（`docs/ACADEMIC_KNOWLEDGE.md`）→ 品質ゲート
+- 各バッチで：デデュプ → 確証 → 追記 → 概念表再生成（`npm run knowledge:md` → `docs/ACADEMIC_KNOWLEDGE.md`）→ 品質ゲート
   （§8）→ コミット → プッシュ。
 - **終了条件:** ユーザーが明示的に停止を指示するまで継続する。中断時は現バッチを安全な状態
   （コミット済 or 破棄）にし、`docs/SESSION_HANDOFF.md` に進捗を記録する。
@@ -167,7 +167,7 @@
 | `docs/KNOWLEDGE_PIPELINE_SPEC.md` | 本書（パイプライン全体仕様・確証ゲート） |
 | `docs/ACADEMIC_KNOWLEDGE_LOOP.md` | 1 バッチの運用手順 |
 | `docs/BATCH_APPEND_SPECIFICATION.md` | エージェント向け機械可読仕様 |
-| `docs/ACADEMIC_KNOWLEDGE.md` | 概念の要約表（毎バッチ追記） |
+| `docs/ACADEMIC_KNOWLEDGE.md` | 概念の要約表（`npm run knowledge:md` で生成・`vault:check` が同期を検証） |
 | `docs/KNOWLEDGE_VAULT.md` | Obsidian Vault の仕組み |
 | `src/renderer/data/knowledgeProvenance.ts` | 発見モダリティ・証拠ティア・確証ゲート（コード） |
 | `scripts/verify-knowledge-provenance.cjs` | 確証ゲートの機械検証 |

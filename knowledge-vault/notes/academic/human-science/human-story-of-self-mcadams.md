@@ -34,7 +34,7 @@ aliases:
 ## 関連概念
 - [[human-narrative-identity-ricoeur|物語的アイデンティティ（リクール）]] — 同じ思想家
 - [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 同じ思想家
-- [[human-fundamental-attribution-error|根本的な帰属の誤り]] — 同分野の近傍
+- [[human-reciprocal-altruism|互恵的利他主義]] — 同分野の近傍
 - [[human-narrative-identity|ナラティブ・アイデンティティ（Narrative Identity）]] — 同分野の近傍
 
 ## 関連

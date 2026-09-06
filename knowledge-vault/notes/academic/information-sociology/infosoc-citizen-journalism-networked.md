@@ -36,8 +36,9 @@ aliases:
 - [[infosoc-open-government-data|オープンガバメントデータ：行政保有データの公開・再利用と透明性・説明責任・市民参加を促進する政策パラダイム]] — 同じ思想家
 - [[infosoc-semantic-web|セマンティック・ウェブ]] — 同じ思想家
 - [[infosoc-participatory-culture|参加型文化]] — 同分野の近傍
-- [[infosoc-digital-markets-act|デジタル市場法（DMA）]] — 同分野の近傍
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（アイゼンマン＝パーカー＝ヴァン・アルスタイン）——隣接するプラットフォーム市場へ自社機能とのバンドルで参入し、既存のネットワーク効果を武器に転用して相手の利用者基盤を奪う競争戦略]] — 同分野の近傍
 - [[infosoc-political-polarization|政治的分極化]] — 同分野の近傍
+- [[infosoc-distributed-cognition|分散認知（Distributed Cognition／Hutchins 1995）——認知は個人の頭の中でなく、人・道具・環境からなるシステムに分散する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

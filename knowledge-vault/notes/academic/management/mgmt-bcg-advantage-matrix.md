@@ -34,7 +34,7 @@ BCGアドバンテージ・マトリクスは、ボストン・コンサルテ�
 - [[mgmt-time-based-competition|時間ベース競争——リードタイムの短縮そのものをコスト・品質と並ぶ競争優位の源泉とする戦略パラダイム]] — 同じ思想家
 - [[mgmt-experience-curve|経験曲線効果・学習曲線（experience/learning curve）]] — 出典を共有
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]] — 出典を共有
-- [[mgmt-managerial-cognition-walsh|経営者認知論（ウォルシュ）]] — 同分野の近傍
+- [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

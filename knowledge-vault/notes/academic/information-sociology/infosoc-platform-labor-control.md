@@ -37,7 +37,8 @@ UberやAmazon Mechanical Turk等のデジタルプラットフォームは、従
 - [[infosoc-sharing-economy-platform-trust|シェアリングエコノミーとプラットフォーム信頼の社会学]] — 同じ思想家
 - [[infosoc-platform-cooperativism-scholz-schneider|プラットフォーム協同組合主義——デジタル経済における労働者所有の代替モデル]] — 同じ思想家
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — 同分野の近傍
-- [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同分野の近傍
+- [[infosoc-ghost-work|ゴーストワーク（AI背後の不可視労働）]] — 同分野の近傍
+- [[infosoc-platform-labor-politics|プラットフォーム労働の政治学]] — 同分野の近傍
 - [[infosoc-digital-memory-collective|デジタル集合記憶とオンライン追悼実践の情報社会学]] — 同分野の近傍
 
 ## 関連

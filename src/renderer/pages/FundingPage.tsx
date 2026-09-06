@@ -327,7 +327,7 @@ function ScenarioRunwayChart({ data }: { data: FundingSnapshot }) {
 // --- Page -------------------------------------------------------------
 
 export function FundingPage() {
-  const { data, source, status, errorMessage, refresh } = useServiceData('funding', SNAPSHOT.funding);
+  const { data, source, payloadIsMock, status, errorMessage, refresh } = useServiceData('funding', SNAPSHOT.funding);
 
   const live = data as FundingSnapshot;
   const hasData = live.items.length > 0;
@@ -376,6 +376,7 @@ export function FundingPage() {
         who="資金調達レーダー"
         serviceId="funding"
         source={source}
+        payloadIsMock={payloadIsMock}
         status={status}
         errorMessage={errorMessage}
         onRefresh={refresh}

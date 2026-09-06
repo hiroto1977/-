@@ -26,7 +26,7 @@ aliases:
 クリス・アンダーソン ／ エリック・ブリニョルフソン ／ アニタ・エルバース ／ クレイ・シャーキー
 
 ## 出典
-- [Anderson, C. (2006) The Long Tail: Why the Future of Business Is Selling Less of More — Hyperion (WorldCat)](https://www.worldcat.org/oclc/64453479) `学術`
+- [Anderson, C. (2006) The Long Tail: Why the Future of Business Is Selling Less of More — Hyperion (WorldCat)](https://www.worldcat.org/oclc/64453479) `リファレンス`
 - [Wikipedia: Long tail — Anderson, niche aggregation, low distribution costs, Amazon/Netflix, Elberse critique](https://en.wikipedia.org/wiki/Long_tail) `リファレンス`
 
 ## 関連概念
@@ -36,10 +36,10 @@ aliases:
 - [[econ-technological-unemployment|技術的失業]] — 同じ思想家
 - [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]] — 同じ思想家
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 同じ思想家
-- [[infosoc-information-overload-eppler-mengis|情報過負荷——デジタル時代における認知的過剰と意思決定劣化]] — 同じ思想家
-- [[infosoc-information-overload-toffler|情報過負荷（トフラー）と認知的過飽和]] — 同じ思想家
+- [[infosoc-information-overload-eppler-mengis|情報過負荷（トフラー／エプラー＝メンギス）——処理能力を超える情報が意思決定の質を下げる現象と、その原因を個人・情報・課題・組織・技術の五要因に整理する枠組み]] — 同じ思想家
 - [[infosoc-maker-movement-fab-lab|メイカームーブメントとFabLab——分散型製造・オープンハードウェアと民主的製作文化]] — 同じ思想家
 - [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同じ思想家
+- [[infosoc-spreadability-jenkins|スプレッダビリティ——参加型文化におけるメディアコンテンツの拡散メカニズム]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

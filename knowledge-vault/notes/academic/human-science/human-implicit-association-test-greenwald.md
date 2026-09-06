@@ -35,6 +35,7 @@ aliases:
 ## 関連概念
 - [[human-implicit-bias|潜在的バイアス（潜在連合テスト・IAT）]] — 語彙が近い
 - [[human-sleeper-effect|スリーパー効果（眠り効果）]] — 同じ思想家
+- [[human-emotional-intelligence|情動知能（EQ）]] — 同分野の近傍
 - [[human-spontaneous-trait-inference|自発的特性推論]] — 同分野の近傍
 
 ## 関連

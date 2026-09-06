@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   addMonths,
   aggregateByKind,
@@ -863,6 +863,45 @@ describe('summarize', () => {
     ];
     // rate 0.08 (軽減税率) → 1,080,000 × 0.08 / 1.08 = 80,000
     expect(summarize(cf, 0.3, 0.08).consumptionTaxEstimate).toBe(80_000);
+  });
+
+  // --- 消費税の標準税率は 1 か所から来る ------------------------------
+  //
+  // `summarize` の既定の消費税率は**法定値** (消費税法の標準税率) であり、
+  // 出所は `shared/taxCalc.ts` の `CONSUMPTION_TAX_STANDARD` 1 つだけ。
+  // 台帳 `tax.consumptionStandardRate` の既定値も同じ定数を参照している。
+  // ここでリテラル `0.1` を書き写すと、法定値が 2 か所に分かれて片方だけ
+  // 古くなる (実際に 2026-09-06 まで funding.ts 側がリテラルだった)。
+  //
+  // **対照**: 既定値をリテラルへ戻すと、定数を差し替えても消費税相当が
+  // 動かなくなるので下の 1 本目が落ちる (値の比較で落ちるので、字面走査と
+  // 違って綴り違いで黙ることがない)。
+  describe('既定の消費税率', () => {
+    const cf: readonly FundingItem[] = [
+      { id: 'cf', kind: 'crowdfunding', name: '購入型CF', amount: 1_200_000, status: 'received', month: '2026-06', repayable: false },
+    ];
+
+    afterEach(() => {
+      vi.doUnmock('../../../shared/taxCalc');
+      vi.resetModules();
+    });
+
+    it('taxCalc の定数を差し替えると消費税相当が追随する', async () => {
+      vi.resetModules();
+      vi.doMock('../../../shared/taxCalc', async (importOriginal) => ({
+        ...(await importOriginal<typeof import('../../../shared/taxCalc')>()),
+        CONSUMPTION_TAX_STANDARD: 0.2,
+      }));
+      const { summarize: fresh } = await import('../../../shared/funding');
+      // 内税ベース: 1,200,000 × 0.2 / 1.2 = 200,000
+      expect(fresh(cf).consumptionTaxEstimate).toBe(200_000);
+    });
+
+    it('素の既定値は台帳 tax.consumptionStandardRate と同じ率になる', async () => {
+      const { DEFAULT_PARAMETER_VALUES } = await import('../../../shared/parameters');
+      const r = DEFAULT_PARAMETER_VALUES['tax.consumptionStandardRate'];
+      expect(summarize(cf).consumptionTaxEstimate).toBe(Math.round((1_200_000 * r) / (1 + r)));
+    });
   });
 });
 

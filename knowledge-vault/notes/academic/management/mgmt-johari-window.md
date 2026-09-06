@@ -30,16 +30,9 @@ aliases:
 - [Luft, J. (1969) Of Human Interaction, National Press Books — Internet Archive](https://archive.org/details/ofhumaninteracti00jose) `学術`
 
 ## 関連概念
-- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
-- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
-- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 出典を共有
-- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 出典を共有
-- [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 出典を共有
-- [[econ-giffen-good-theory|ギッフェン財理論]] — 出典を共有
-- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 出典を共有
-- [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — 出典を共有
-- [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 出典を共有
-- [[human-minority-stress-theory|マイノリティ・ストレス理論]] — 出典を共有
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+- [[mgmt-blake-mouton-grid|マネジリアル・グリッド——業績への関心と人への関心の二軸でリーダーを類型化]] — 同分野の近傍
+- [[mgmt-good-strategy-kernel-rumelt|ルメルトの「良い戦略」のカーネル——診断・基本方針・一貫した行動の三要素で戦略を判定する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

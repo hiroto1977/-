@@ -32,11 +32,14 @@ live REST fetch. The `useServiceData(serviceId, snapshot)` hook returns `data`, 
 All verified (sourced) knowledge datasets — academic concepts (`academicKnowledge.ts`), tax/labor/legal
 compliance (`complianceKnowledge.ts`), subsidies (`subsidyKnowledge.ts`), support hotlines
 (`counselorKnowledge.ts`), and economic history (`economicHistoryKnowledge.ts`) — are the single source
-of truth for an **Obsidian knowledge vault** (`knowledge-vault/`, 7,500+ notes, `npm run vault:build`)
+of truth for an **Obsidian knowledge vault** (`knowledge-vault/`, 7,000+ notes, `npm run vault:build`)
 and are injected as context into the AI-orchestration runtime per executive role
 (`orchestration/knowledge-map.json`, `orchestration/knowledge-context.cjs`, `npm run orchestrate:context`
-/ dispatch). `vault:check` (in `verify:all`/CI) enforces vault sync and forbids duplicate ids
-(`node scripts/dedupe-knowledge.cjs` consolidates). See `docs/KNOWLEDGE_VAULT.md`.
+/ dispatch). `vault:check` (in `verify:all`/CI) enforces vault sync, forbids duplicate ids
+(`node scripts/dedupe-knowledge.cjs` consolidates), and fails when the concept table in
+`docs/ACADEMIC_KNOWLEDGE.md` is stale — that table is **generated** from the corpus by
+`npm run knowledge:md` (never hand-edit rows; 2026-09-05 実測で手書き表は本体と 942 行／909 項目ずれていた).
+See `docs/KNOWLEDGE_VAULT.md`.
 
 ## Commands
 
@@ -82,8 +85,13 @@ npm run lint:workflow-security # .github/workflows/: permissions の明示・第
                            #   pull_request_target 禁止・run: への信用できない値の埋め込み
 npm run lint:network-targets # 送り先ホストが変数で決まる通信の台帳 (資格情報の流出経路)
 npm run lint:docs          # cross-document consistency
-npm run lint:citations     # 出典の内部矛盾 (同一 DOI が別々の出版年で引かれていないか)
-npm run lint:doi-prefix    # DOI プレフィックス(=登録機関=出版社) とラベルの出版社の矛盾
+npm run lint:citations     # 出典の内部矛盾 (同一 DOI が別々の出版年・別々の著作で引かれていないか)、
+                           #   種別の偽装 (雑誌・ブログ・百科事典の URL に 'academic' が付いていないか)、
+                           #   同じ URL は同じ種別 (項目ごとに 'academic' / 'media' が揺れていないか)
+npm run lint:doi-prefix    # DOI プレフィックス(=登録機関=出版社) とラベルの出版社の矛盾。
+                           #   ISSN を埋め込む DOI (APA / Elsevier PII / Wiley j. / SAGE) は台帳 164 誌で、誌の略号を
+                           #   持つ DOI (INFORMS / Oxford / Wiley / Springer / Annual Reviews / MIT / Emerald) は
+                           #   台帳 153 誌で誌名も照合し、ISSN の検査数字も検算する (1 回しか引かれない誤 DOI を拾う)
 npm run lint:charset       # 他文字種・簡体字の混入 (CJK は共有ブロックなので字を列挙するしかない)
 npm run lint:knowledge-refs # 裁定台帳が実在しない知識 id を参照していないか
 npm run lint:test-coverage # every service must have a test + an action registered
@@ -103,19 +111,27 @@ npm run lint:shell         # scripts/*.sh: bash -n syntax + strict mode (set -eu
 npm run lint:mutation-scope # 変異検査の「測っていない範囲」の台帳 (広い Stryker disable)
 npm run lint:regex         # 正規表現の破滅的バックトラック (ReDoS) を実測。worker + 番犬つき
                            #   (モデル応答を解析する assistantMarkdown.ts が主眼。指数のみ)
-npm run verify:all         # typecheck + all of the above + eslint (34 ゲート)
+npm run lint:parameter-prose # 画面が刷る数字と、計算に使う数字の出所が同じか
+                           #   (`parameters.ts` の台帳で上書きできる 111 の定数について、
+                           #   renderer が既定定数を**直接**刷っていないか。上書きすると
+                           #   「効いているのに画面が古い数字で説明する」形になる。
+                           #   倒し込み (`??` / 既定引数 / `=== 既定`) は規則の外・
+                           #   それ以外の直接使用は台帳に理由つきで登録する)
+npm run verify:all         # typecheck + all of the above + eslint (35 ゲート)
                            #   **`npm test` は含まない。** CI は両方走らせるので、
                            #   push 前は `npm test && npm run verify:all` の両方を回すこと
                            #   (verify:all だけを見て「全 green」と言うと CI で落ちる)
 npm run mutate             # Stryker mutation testing (target: 100%); mutate:triage / mutate:next help
 npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+NotebookLM) → verify → work queue
+npm run knowledge:md       # docs/ACADEMIC_KNOWLEDGE.md の概念表を academicKnowledge.ts から再生成
+                           #   (表は生成物 — 手で行を書かない。vault:check が「再生成 == committed」を検証)
                            #   (weekly CI: knowledge-auto.yml; consume queue per docs/KNOWLEDGE_AUTOPILOT.md)
 ```
 
 These are plain Node scripts in `scripts/` — there is no AST parser dependency; they grep marker
 comments and source. `verify:arch` will fail if you change architecture without updating
 `docs/ARCHITECTURE.md`. CI (`.github/workflows/ci.yml`) runs a single consolidated job on push to
-`main` and PRs to `main` (one `npm ci`, then typecheck + **all 34 `verify:all` gates**, vitest +
+`main` and PRs to `main` (one `npm ci`, then typecheck + **all 35 `verify:all` gates**, vitest +
 coverage, and `build:web` asserting `dist/standalone.html` is generated and non-trivial) — collapsed
 from 3 jobs
 to 1 to minimize GitHub Actions minutes on the free tier. **`lint:docs` enforces that every gate in
@@ -147,7 +163,8 @@ Three TypeScript build contexts, kept separate via `tsconfig` project references
   `contextBridge.exposeInMainWorld`. The bridge type is re-declared globally in
   `src/shared/bridge.d.ts` so the renderer calls it without imports.
 - **`src/renderer/`** — React app. `App.tsx` renders the category-grouped sidebar from `SERVICES`
-  (`services.ts`). The renderer never sees raw tokens — it only calls
+  (`services.ts`) and mounts the active page inside `components/PageErrorBoundary.tsx` (a render
+  error stays inside that page's frame; the sidebar keeps working). The renderer never sees raw tokens — it only calls
   `serviceHub.setToken / clearToken / listConfigured / fetchSnapshot / invoke / openExternal`.
 
 ### The single source of truth for services

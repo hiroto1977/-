@@ -289,6 +289,14 @@ const PROTECTED = [
   'src/shared/escape.ts',                   // 出口のエスケープ
   'src/renderer/oauth/pkce.ts',             // ブラウザ版 PKCE
   'src/renderer/oauth/pkceSession.ts',      // PKCE の一時秘密の置き場と消し方
+  // 2026-09-06 に足した。**保護の閉包が教えてくれた。** `pkceSession.ts` が
+  // 保存の失敗の種別を文面へ写すため `localWrite.ts` を読むようにしたところ、
+  // `chain:verify` が「保護対象が保護されていない物を読んでいる」と鳴らした。
+  // ここは localStorage 書き込みの**唯一の入口**で、容量超過 / 保存禁止 /
+  // その他の切り分けと利用者へ出す文面を持つ —— 黙って書き換えられると、
+  // 端末が保存を断っていることが**画面から消える** (2026-09-06 のパスで直した
+  // 「押しても何も出ない」がそのまま戻る)。import は 0 件なので閉包は閉じる。
+  'src/renderer/data/localWrite.ts',        // localStorage 書き込みの唯一の入口と失敗の文面
   'src/renderer/fs/fsa.ts',                 // File System Access の書き出し口
   'src/renderer/network/liveRead.ts',       // ライブ取得の経路選択
   'src/renderer/data/assistantMarkdown.ts', // モデル応答を解析して画面へ出す唯一の場所

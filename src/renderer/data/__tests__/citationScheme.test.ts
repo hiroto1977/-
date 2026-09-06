@@ -42,7 +42,6 @@ const KNOWN_CLEARTEXT: readonly string[] = [
   'http://bastiat.org/en/twisatwins.html',
   'http://coin.wne.uw.edu.pl/wincenciak/docs/makro_zaawansowana/lecture_3.pdf',
   'http://exploresel.gse.harvard.edu/frameworks/4/',
-  'http://faculty.washington.edu/jdb/345/345%20Articles/Baumeister%20et%20al.%20(1998).pdf',
   'http://henryjenkins.org/blog/2009/02/if_it_doesnt_spread_its_dead_p_1.html',
   'http://piketty.pse.ens.fr/files/Barro91.pdf',
   'http://piketty.pse.ens.fr/files/BarroSalaIMartin2004Chap1-2.pdf',

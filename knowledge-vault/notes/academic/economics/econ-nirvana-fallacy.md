@@ -31,7 +31,7 @@ aliases:
 
 ## 関連概念
 - [[econ-alchian-demsetz-team-production|チーム生産と残余請求権（アルチャン＆デムセッツ）]] — 同じ思想家
-- [[econ-market-microstructure|市場ミクロ構造（マーケット・マイクロストラクチャー）]] — 同じ思想家
+- [[econ-market-microstructure|市場ミクロ構造（デムセッツ／カイル／グロステン＝ミルグロム）——注文フロー・スプレッド・情報の非対称性が流動性と価格発見を規定する過程を分析する金融経済学の分野]] — 同じ思想家
 - [[mgmt-coordination-costs-arrow|調整コスト理論と情報経済学（アロー）]] — 同じ思想家
 - [[econ-efficient-market-hypothesis|効率的市場仮説（efficient market hypothesis, EMH）]] — 同分野の近傍
 

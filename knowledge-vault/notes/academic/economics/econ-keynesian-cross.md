@@ -26,7 +26,7 @@ aliases:
 ポール・サミュエルソン ／ ジョン・メイナード・ケインズ ／ アルヴィン・ハンセン ／ ジョン・ヒックス
 
 ## 出典
-- [Samuelson, P.A. (1948) Economics: An Introductory Analysis — McGraw-Hill; 45-degree diagram (WorldCat)](https://www.worldcat.org/oclc/166603) `学術`
+- [Samuelson, P.A. (1948) Economics: An Introductory Analysis — McGraw-Hill; 45-degree diagram (WorldCat)](https://www.worldcat.org/oclc/166603) `リファレンス`
 - [Wikipedia: Keynesian cross — Samuelson, aggregate expenditure, 45-degree line, multiplier, paradox of thrift](https://en.wikipedia.org/wiki/Keynesian_cross) `リファレンス`
 
 ## 関連概念

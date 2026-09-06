@@ -32,9 +32,9 @@ aliases:
 - [Wikipedia — "Law of one price"](https://en.wikipedia.org/wiki/Law_of_one_price) `リファレンス`
 
 ## 関連概念
-- [[econ-shadow-banking-pozsar|シャドーバンキング・システム——規制外金融仲介の構造とシステミック・リスク]] — 出典を共有
 - [[econ-leverage-cycle|レバレッジ・サイクル]] — 出典を共有
 - [[econ-path-dependence|経路依存]] — 出典を共有
+- [[econ-shadow-banking-fsb|シャドーバンキング（ポズサー／FSB）——銀行規制の外で満期・流動性・信用の変換を行う金融仲介の連鎖が、預金保険と最後の貸し手を欠くために取り付けに脆弱であること]] — 出典を共有
 - [[econ-switching-cost|スイッチングコストとロックイン]] — 出典を共有
 - [[econ-zero-lower-bound|ゼロ金利下限（実効下限制約）]] — 出典を共有
 - [[eh-1940|1940年（昭和15年）]] — 出典を共有

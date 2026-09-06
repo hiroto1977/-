@@ -35,11 +35,11 @@ aliases:
 - [[human-temporal-motivation-steel|時間的動機付け理論（スティール＆クーニング）]] — 同じ思想家
 - [[econ-bundling|バンドリング（束ね売り）]] — 出典を共有
 - [[human-bias-blind-spot|バイアスの盲点]] — 出典を共有
-- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 出典を共有
+- [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]] — 出典を共有
+- [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる]] — 出典を共有
 - [[mgmt-economic-order-quantity|経済的発注量モデル（Economic Order Quantity / EOQ）]] — 出典を共有
-- [[mgmt-knowledge-creation-theory|組織的知識創造理論]] — 出典を共有
-- [[mgmt-managerial-cognition|経営者認知理論]] — 出典を共有
-- [[mgmt-organizational-ambidexterity-paradox|組織両利き性のパラドクス]] — 出典を共有
+- [[mgmt-knowledge-based-view|知識ベース企業観（グラント）——企業を個人に分散した専門知識を統合する制度と捉え、統合能力に持続的競争優位の源泉を見る]] — 出典を共有
+- [[mgmt-managerial-cognition|経営者認知（ウォルシュ／ダフト＝ワイク）——経営者は環境そのものではなく知識構造を通した解釈に反応し、その認知地図が注意・判断・競争行動を規定する]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

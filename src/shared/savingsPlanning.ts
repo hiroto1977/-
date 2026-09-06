@@ -16,6 +16,16 @@ function monthlyRate(annualRatePct: number): number {
 const yen = (n: number): number => Math.round(n);
 
 /**
+ * 緊急予備資金の月数の目安 (既定 6 か月)。
+ *
+ * 一般的な目安は雇用形態で変わる —— 会社員 3〜6 か月 / 自営 6〜12 か月。
+ * つまりこれは**判断の要る参考値**なので、台帳 `savings.emergencyFundMonths`
+ * に登録してあり、画面は `useParameters()` で読んだ値を引数で渡す。
+ * ここはその既定値の**唯一の出所**である (2 か所に書き写さない)。
+ */
+export const EMERGENCY_FUND_MONTHS_DEFAULT = 6;
+
+/**
  * 目標額に到達するために必要な毎月積立額 (年金終価の逆算)。
  *
  * FV = PMT × ((1 + r)^n − 1) / r  を PMT について解く。r≈0 のときは PMT = FV / n。
@@ -60,9 +70,12 @@ export function yearsToDouble(annualRatePct: number): number | null {
 
 /**
  * 緊急予備資金 = 毎月の生活費 (支出) × 月数。
- * 月数の既定は 6 (一般的な目安: 会社員 3〜6 / 自営 6〜12 か月)。
+ * 月数の既定は `EMERGENCY_FUND_MONTHS_DEFAULT` (一般的な目安: 会社員 3〜6 / 自営 6〜12 か月)。
  */
-export function emergencyFund(monthlyExpense: number, months = 6): number {
+export function emergencyFund(
+  monthlyExpense: number,
+  months: number = EMERGENCY_FUND_MONTHS_DEFAULT,
+): number {
   const e = Math.max(0, monthlyExpense);
   const m = Math.max(0, months);
   return yen(e * m);
@@ -197,12 +210,12 @@ export interface EmergencyFundCoverage {
  *
  * @param cashOnHand 現預金 (円)
  * @param monthlyExpense 毎月の生活費 (円)
- * @param months 目標月数 (既定 6)
+ * @param months 目標月数 (既定 `EMERGENCY_FUND_MONTHS_DEFAULT`)
  */
 export function emergencyFundCoverage(
   cashOnHand: number,
   monthlyExpense: number,
-  months = 6,
+  months: number = EMERGENCY_FUND_MONTHS_DEFAULT,
 ): EmergencyFundCoverage {
   const cash = Number.isFinite(cashOnHand) ? Math.max(0, cashOnHand) : 0;
   const expense = Number.isFinite(monthlyExpense) ? Math.max(0, monthlyExpense) : 0;

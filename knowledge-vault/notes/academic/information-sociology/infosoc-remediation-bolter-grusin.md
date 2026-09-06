@@ -26,7 +26,7 @@ aliases:
 ジェイ・デヴィッド・ボルター ／ リチャード・グルーシン ／ マーシャル・マクルーハン ／ レフ・マノヴィッチ
 
 ## 出典
-- [Bolter, J.D. & Grusin, R. (1999) Remediation: Understanding New Media — MIT Press (WorldCat)](https://www.worldcat.org/oclc/39605388) `学術`
+- [Bolter, J.D. & Grusin, R. (1999) Remediation: Understanding New Media — MIT Press (WorldCat)](https://www.worldcat.org/oclc/39605388) `リファレンス`
 - [Wikipedia: Remediation (media) — Bolter & Grusin, immediacy, hypermediacy, double logic](https://en.wikipedia.org/wiki/Remediation_(media)) `リファレンス`
 
 ## 関連概念

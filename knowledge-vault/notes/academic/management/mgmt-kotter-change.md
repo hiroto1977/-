@@ -26,11 +26,12 @@ aliases:
 ジョン・コッター（John P. Kotter, 1995/1996）
 
 ## 出典
-- [Harvard Business Review (1995) — Leading Change: Why Transformation Efforts Fail](https://hbr.org/1995/05/leading-change-why-transformation-efforts-fail-2) `学術`
+- [Harvard Business Review (1995) — Leading Change: Why Transformation Efforts Fail](https://hbr.org/1995/05/leading-change-why-transformation-efforts-fail-2) `メディア`
 - [Kotter Inc. — The 8-Step Process for Leading Change](https://www.kotterinc.com/methodology/8-steps/) `リファレンス`
 - [MindTools — Kotter’s 8-Step Change Model](https://www.mindtools.com/a8nu5v5/kotters-8-step-change-model/) `リファレンス`
 
 ## 関連概念
+- [[mgmt-bridges-transition-model-ending-neutral-zone-beginning|ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み]] — 同じ思想家
 - [[mgmt-change-management-kotter-8-step|コッターの8段階変革モデル——組織変革の失敗要因分析と変革リーダーシップの実践フレームワーク]] — 同じ思想家
 - [[mgmt-mintzberg-managerial-roles|ミンツバーグの管理者の役割——観察に基づく管理職の実際の仕事の十類型]] — 同じ思想家
 - [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — 同じ思想家
@@ -40,7 +41,6 @@ aliases:
 - [[mgmt-level-5-leadership|レベル5リーダーシップ]] — 出典を共有
 - [[mgmt-leavitt-diamond|リービットのダイヤモンド]] — 出典を共有
 - [[mgmt-three-horizons|3つの地平（スリー・ホライズン）]] — 出典を共有
-- [[mgmt-flywheel|フライホイール効果（弾み車の法則）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

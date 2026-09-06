@@ -821,6 +821,11 @@ const KNOWN_SUPPRESSIONS = [
   'hand-rolled RFC 2822 header line :: src/main/clients/gmail.ts :: 2',
   'hand-rolled RFC 2822 header line :: src/renderer/data/saasWriteWeb.ts :: 2',
   'hardcoded Claude model id :: src/shared/ai/providers.ts :: 2',
+  // `build-academic-md.cjs` は docs/ACADEMIC_KNOWLEDGE.md の概念表を生成する素の CJS で、
+  // TS の `escapeMarkdownInline` を読めないため同じ 4 置換の写しを持つ。写しが共有実装と
+  // ずれていないことは `src/shared/__tests__/academicMdTable.test.ts` が同じ標本を
+  // 両方に通して留める (規則に掛かるのは `|` と `<` の 2 行)。
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/build-academic-md.cjs :: 2',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/build-landing.cjs :: 5',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-asset-chart.cjs :: 5',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-history-chart.cjs :: 5',

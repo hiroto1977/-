@@ -29,7 +29,7 @@ aliases:
 - [GNU Project (1996) What is Free Software? — Free Software Foundation](https://www.gnu.org/philosophy/free-sw.html) `リファレンス`
 - [Raymond, E.S. (1999) The Cathedral and the Bazaar — O'Reilly Media](https://www.catb.org/~esr/writings/cathedral-bazaar/) `学術`
 - [Wikipedia: オープンソース — フリーソフトウェア運動とバザール開発の解説](https://ja.wikipedia.org/wiki/%E3%82%AA%E3%83%BC%E3%83%97%E3%83%B3%E3%82%BD%E3%83%BC%E3%82%B9) `リファレンス`
-- [Lerner & Tirole (2002) Some Simple Economics of Open Source — Journal of Industrial Economics](https://doi.org/10.1162/rest.89.2.209) `学術`
+- [Lerner, J. & Tirole, J. (2002) Some Simple Economics of Open Source — Journal of Industrial Economics 50(2), 197–234（旧 DOI 10.1162/rest.89.2.209 は REStat 2007 の別論文を指していたため差し替え）](https://onlinelibrary.wiley.com/doi/10.1111/1467-6451.00174) `学術`
 - [Benkler (2006) The Wealth of Networks: How Social Production Transforms Markets and Freedom — Yale University Press](https://doi.org/10.2307/j.ctt1njknw) `学術`
 - [Wikipedia: Open-source-software movement — OSS運動の歴史と思想の概説](https://en.wikipedia.org/wiki/Open-source-software_movement) `リファレンス`
 
@@ -39,11 +39,11 @@ aliases:
 - [[infosoc-commons-based-peer-production-benkler|コモンズ型ピア生産（ベンクラー）]] — 同じ思想家
 - [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 同じ思想家
 - [[infosoc-produser-bruns|プロデューサー（ブランズ）]] — 同じ思想家
+- [[infosoc-remix-culture-lessig-jenkins|リミックス文化（レシッグ／ジェンキンス）——既存の文化的素材を再構成して創作するデジタル時代の実践と、それを抑圧しうる著作権制度との緊張]] — 同じ思想家
 - [[infosoc-wikinomics-tapscott|ウィキノミクス——マス・コラボレーションが変える生産と経済]] — 同じ思想家
 - [[infosoc-code-is-law-lessig|コードは法である——サイバー空間の規制を担う四つの様式とアーキテクチャ]] — 同じ思想家
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 同じ思想家
 - [[infosoc-generativity-zittrain|生成力（ジットレイン）——インターネットの革新力とその脆さ]] — 同じ思想家
-- [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

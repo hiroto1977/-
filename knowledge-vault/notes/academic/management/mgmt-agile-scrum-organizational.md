@@ -30,9 +30,11 @@ aliases:
 - [Wikipedia: Agile software development — Scrum, XP, Kanban, organizational agility, SAFe](https://en.wikipedia.org/wiki/Agile_software_development) `リファレンス`
 
 ## 関連概念
-- [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ]] — 語彙が近い
-- [[agile-development|アジャイルソフトウェア開発]] — 語彙が近い
+- [[mgmt-agile-development|アジャイルソフトウェア開発]] — 語彙が近い
+- [[mgmt-complexity-theory-stacey|複雑性理論と組織管理（ステーシー）]] — 同分野の近傍
+- [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ（ティース）——急速に変化する環境で内外のコンピタンスを統合・構築・再配置する企業の能力を、感知・捕捉・変容の三つの活動とその微視的基盤で捉える]] — 同分野の近傍
 - [[mgmt-organizational-tempo-entrainment|組織テンポとエントレインメント：時間的同期と戦略的ペーシング]] — 同分野の近傍
+- [[mgmt-collective-genius|集合的天才（Collective Genius）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

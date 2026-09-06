@@ -31,11 +31,12 @@ aliases:
 - [Wikipedia: Iceberg transport costs — サミュエルソンの貿易費用モデル](https://en.wikipedia.org/wiki/Iceberg_transport_costs) `リファレンス`
 
 ## 関連概念
-- [[econ-gravity-equation-structural-estimation|構造的重力モデル——貿易フローの理論的基盤と推定]] — 語彙が近い
+- [[econ-trade-gravity-model|貿易の重力モデル（ティンバーゲン／アンダーソン＝ヴァン・ウィンクープ）——二国間貿易量は経済規模に比例し距離に反比例するという規則性と、多角的抵抗項を含む構造的導出・推定]] — 同じ思想家
 - [[human-dual-coding-paivio|二重符号化理論——言語と心像の二つの系統による情報処理]] — 同じ思想家
 - [[econ-prebisch-singer-thesis|プレビッシュ＝シンガー命題]] — 同分野の近傍
+- [[econ-tariff-jumping-fdi|関税回避型直接投資——貿易障壁が誘発する海外直接投資の理論]] — 同分野の近傍
+- [[econ-eaton-kortum-trade|イートン＝コータム・モデル——確率的リカード・モデルと貿易の定量分析]] — 同分野の近傍
 - [[econ-ellsberg-paradox|エルズバーグのパラドックス（曖昧性回避）]] — 同分野の近傍
-- [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

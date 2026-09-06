@@ -36,10 +36,11 @@ aliases:
 - [[bizlaw-negligence-duty-of-care|過失と注意義務——隣人原則に基づく合理的注意の懈怠による不法行為責任]] — 同じ思想家
 - [[bizlaw-assumption-of-risk|危険の引受——原告が任意に引き受けた既知の危険につき被告の不法行為責任を否定するコモンロー上の抗弁]] — 同じ思想家
 - [[bizlaw-in-pari-delicto-doctrine|均等違法原則（インパリ・デリクト）]] — 同じ思想家
+- [[bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff|パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争]] — 同じ思想家
+- [[bizlaw-peevyhouse-v-garland-coal-cost-of-completion|ピーヴィーハウス対ガーランド石炭事件——完成費用か価値減少分か、契約損害賠償の測り方]] — 同じ思想家
 - [[bizlaw-substantial-performance-jacob|実質的履行の法理——軽微な不履行による契約解除の制限]] — 同じ思想家
 - [[bizlaw-short-swing-profit-rule|短期売買差益返還義務（ショートスイング利益・米国証券取引所法16条(b)）——内部情報の利用を問わず、6か月以内の内部者の売買差益を会社に返還させる予防的な厳格責任ルール]] — 出典を共有
 - [[bizlaw-shareholder-oppression-remedy|少数株主抑圧救済（非公開会社における不公正な侵害行為の救済）]] — 出典を共有
-- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

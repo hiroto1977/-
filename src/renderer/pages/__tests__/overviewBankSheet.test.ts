@@ -257,3 +257,35 @@ describe('経営サマリー — 書類スタジオ・士業との連携', () =>
     expect(takeNavigationIntent('tax-accountant')).toBeNull();
   });
 });
+
+// --- 欄の無い控えでも書面に NaN を出さない ---------------------------------
+//
+// 復元の形の検査は貸借対照表の内数 (棚卸資産・売上債権・仕入債務) を**任意**に
+// している (前方互換) のに、型は必須と言う。欄の無い控えが復元を通ると
+// `computeBalanceSheetMetrics` の足し算が NaN になり、**金融機関等へ出す書面に
+// NaN が印刷される** —— しかも書面は「上記のとおり相違ありません。」と代表者印を
+// 添えて出す物なので、いちばん出てはいけない場所である (2026-09-06)。
+describe('経営サマリー — 内数の欄が無い貸借対照表', () => {
+  /** beforeEach の完全な BS より後に入れるので、こちらが最新として採用される。 */
+  const GAPPED = {
+    asOf: '2026-03-31', currentAssets: 8_000_000, fixedAssets: 4_000_000,
+    currentLiabilities: 5_000_000, fixedLiabilities: 3_000_000, netIncome: 600_000,
+  };
+
+  it('★ 書面に NaN / Infinity が 1 つも出ない', async () => {
+    await getRecordStore().insert(BALANCE_SHEET_COLLECTION, GAPPED);
+    await mountOverview();
+    await openSheet();
+    const printed = q.sheet()?.textContent ?? '';
+    expect(printed).not.toBe('');
+    expect(printed).toMatch(/相違ありません/); // 書面そのものが出ている
+    expect(printed).not.toMatch(/NaN|Infinity|∞/);
+  });
+
+  it('対照: 内数のある控え (beforeEach の BS) でも当然 NaN は無い', async () => {
+    await mountOverview();
+    await openSheet();
+    const printed = q.sheet()?.textContent ?? '';
+    expect(printed).not.toMatch(/NaN|Infinity|∞/);
+  });
+});

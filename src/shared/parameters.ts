@@ -137,6 +137,7 @@ import {
   type SocialInsuranceRates,
 } from './taxSocialInsurance';
 import { DEFAULT_EFFECTIVE_TAX_RATE } from './funding';
+import { EMERGENCY_FUND_MONTHS_DEFAULT } from './savingsPlanning';
 import {
   CORNER_LOT_COVERAGE_BONUS_PCT,
   FIREPROOF_COVERAGE_BONUS_PCT,
@@ -170,6 +171,7 @@ import {
   INTERIM_TIER1,
   INTERIM_TIER2,
   INTERIM_TIER3,
+  MIN_NATIONAL_SHARE,
   NATIONAL_SHARE,
   type ScheduleParams,
 } from './taxConsumptionSchedule';
@@ -839,7 +841,7 @@ export function parameterDefinitions() {
   // --- 消費税 (申告・納付) --------------------------------------------------
   {
     id: 'consumptionSchedule.nationalShare', feature: '消費税 (申告・納付)', label: '消費税のうち国税分の割合', unit: '%', scale: 100,
-    defaultValue: NATIONAL_SHARE, min: 0.01, max: 1, kind: 'law', source: '消費税法 29 条・地方税法 72 条の83 (7.8 / 10 = 78%)',
+    defaultValue: NATIONAL_SHARE, min: MIN_NATIONAL_SHARE, max: 1, kind: 'law', source: '消費税法 29 条・地方税法 72 条の83 (7.8 / 10 = 78%)',
     note: '地方消費税は (100% − 割合) ÷ 割合 (既定 22/78) で組む。2 割特例の割合は「消費税 (事業者)」の項を共有',
   },
   {
@@ -876,6 +878,13 @@ export function parameterDefinitions() {
   {
     id: 'emotion.triggerMinCount', feature: '感情ログ', label: '「よく出る言葉」に拾う最小の出現回数', unit: '回',
     defaultValue: TRIGGER_MIN_COUNT, min: 1, max: 100, integer: true, kind: 'threshold',
+  },
+  // --- 貯蓄・資産形成 -----------------------------------------------------
+  {
+    id: 'savings.emergencyFundMonths', feature: '貯蓄・資産形成', label: '緊急予備資金の月数', unit: 'か月',
+    defaultValue: EMERGENCY_FUND_MONTHS_DEFAULT, min: 0, max: 24, integer: true, kind: 'reference',
+    source: '一般的な目安 (会社員 3〜6 か月 / 自営 6〜12 か月)',
+    note: '生活費の何か月分を現金で持つか。自営業・フリーランスは長めに取る',
   },
   ] as const satisfies readonly ParameterDef[];
 }

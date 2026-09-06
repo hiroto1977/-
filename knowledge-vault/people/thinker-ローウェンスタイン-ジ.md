@@ -2,7 +2,7 @@
 title: "ジョージ・ローウェンスタイン"
 type: thinker
 person_key: "ローウェンスタイン|ジ"
-concept_count: 7
+concept_count: 6
 tags:
   - person
   - index
@@ -10,11 +10,10 @@ tags:
 
 # ジョージ・ローウェンスタイン
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **7 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **6 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（7件）
+## 学術概念（6件）
 - [[econ-magnitude-effect-discounting|大きさ効果——金額が大きいほど将来を割り引く率が下がる]] — 大きさ効果（magnitudeeffect）は、リチャード・セイラー（1981年）らが記録した、「異時点間の選択（将来…
-- [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — ティモシー・ウィルソンとダニエル・ギルバートが2003年に体系化した感情予測（affectiveforecasting…
 - [[human-curse-of-knowledge|知識の呪縛]] — 知識の呪縛（知識の呪い）は、よく知っている者が、知らない者の視点に立って物事を考えることが極めて難しくなる認知バイアス…
 - [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — 共感ギャップ（empathygap）またはホット＝コールド共感ギャップ（hot-coldempathygap）は、ロー…
 - [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — 認識論的好奇心は新たな知識獲得への内発的動機づけである。

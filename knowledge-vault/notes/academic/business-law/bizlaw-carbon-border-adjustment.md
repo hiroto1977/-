@@ -31,14 +31,8 @@ EU規則（Regulation (EU) 2023/956, 2023年発効）／欧州委員会提案（
 
 ## 関連概念
 - [[econ-carbon-border-adjustment-mechanism|炭素国境調整メカニズム（CBAM）——カーボンリーケージ防止と気候変動政策の貿易接続]] — 分野横断
-- [[bizlaw-employment-at-will-doctrine|随意雇用法理——米国の雇用自由原則と日本の解雇権濫用法理の比較]] — 出典を共有
-- [[bizlaw-employment-law-dismissal|雇用法と解雇規制の法律体系——正当事由と解雇権濫用法理]] — 出典を共有
-- [[bizlaw-tax-avoidance-beps-regulation|タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革]] — 出典を共有
-- [[bizlaw-transfer-pricing-arms-length-principle|移転価格税制と独立企業間原則——多国籍企業の利益移転と国際課税の攻防]] — 出典を共有
-- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 出典を共有
-- [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 出典を共有
-- [[econ-petty-clark-law|ペティ＝クラークの法則]] — 出典を共有
-- [[econ-transfer-pricing|移転価格税制]] — 出典を共有
+- [[bizlaw-national-treatment|内国民待遇原則（National Treatment）]] — 同分野の近傍
+- [[bizlaw-most-favoured-nation|最恵国待遇条項（Most-Favoured-Nation Clause）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

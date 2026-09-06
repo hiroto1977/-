@@ -32,8 +32,9 @@ aliases:
 ## 関連概念
 - [[bizlaw-whistleblower-protection-sarbanes|内部告発者保護制度——サーベンス・オクスリー法・公益通報者保護法とコーポレートガバナンス]] — 語彙が近い
 - [[bizlaw-whistleblower-protection-dodd-frank|内部告発者保護とドッド・フランク法（米国）]] — 語彙が近い
+- [[bizlaw-whistleblower-protection-eu-directive|内部通報者保護法——EU通報者保護指令と企業コンプライアンス]] — 語彙が近い
 - [[bizlaw-whistleblower-protection-directive-eu|EU公益通報者保護指令——内部告発者の法的保護と通報チャネルの制度設計]] — 語彙が近い
-- [[bizlaw-whistleblower-protection-eu-directive|内部通報者保護法——EU通報者保護指令と企業コンプライアンス]] — 同分野の近傍
+- [[bizlaw-novation|更改（民法513条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

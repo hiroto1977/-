@@ -36,6 +36,7 @@ aliases:
 - [[econ-gibrat-law|ジブラの法則]] — 出典を共有
 - [[econ-internal-labor-market|内部労働市場（ドリンジャー＆ピオレ）]] — 出典を共有
 - [[econ-ben-porath-human-capital-lifecycle|ベン=ポラト・モデル（人的資本生産の生涯サイクル理論）]] — 同分野の近傍
+- [[econ-okishio-theorem|置塩定理——資本家的な技術選択と利潤率の動態]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [e-Gov法令検索 民法（明治二十九年法律第八十九号、第519条 免除）](https://laws.e-gov.go.jp/law/129AC0000000089) `公的`
 - [Wikibooks 民法第519条（条文・解説）](https://ja.wikibooks.org/wiki/民法第519条) `リファレンス`
-- [BUSINESS LAWYERS 連帯債務と免除の相対的効力（民法441条／2017年改正）](https://www.businesslawyers.jp/practices/1196) `リファレンス`
+- [BUSINESS LAWYERS 連帯債務と免除の相対的効力（民法441条／2017年改正）](https://www.businesslawyers.jp/practices/1196) `メディア`
 
 ## 関連概念
 - [[bizlaw-merger-of-obligations|混同（民法520条）]] — 語彙が近い

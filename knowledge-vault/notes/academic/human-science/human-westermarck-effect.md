@@ -31,6 +31,7 @@ Edvard Westermarck（1862–1939, 1891 提唱） ／ Joseph Shepher（1971 キ�
 - [Wolf, A. P. (1968) Adopt a Daughter-in-Law, Marry a Sister: A Chinese Solution to the Problem of the Incest Taboo. American Anthropologist 70(5): 864–874（台湾シンプア婚によるウェスタマーク仮説の検証）](https://anthrosource.onlinelibrary.wiley.com/doi/abs/10.1525/aa.1968.70.5.02a00040) `学術`
 
 ## 関連概念
+- [[infosoc-recursive-publics-kelty|再帰的公共——自らの存在基盤である技術・法的インフラそのものを作り変える公共]] — 出典を共有
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 - [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 

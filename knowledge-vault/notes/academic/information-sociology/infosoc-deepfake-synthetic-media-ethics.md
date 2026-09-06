@@ -31,8 +31,8 @@ aliases:
 - [Wikipedia: ディープフェイク — 生成AI・合成メディアと真正性危機の解説](https://ja.wikipedia.org/wiki/%E3%83%87%E3%82%A3%E3%83%BC%E3%83%97%E3%83%95%E3%82%A7%E3%82%A4%E3%82%AF) `リファレンス`
 
 ## 関連概念
+- [[infosoc-post-truth-politics-mcintyre|ポスト真実政治と認識論的民主主義の危機（マッキンタイア）]] — 同分野の近傍
 - [[infosoc-deepfake|ディープフェイク]] — 同分野の近傍
-- [[infosoc-open-source-software-movement|オープンソースソフトウェア運動——フリーソフトウェア倫理・バザール開発モデルと情報コモンズ]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

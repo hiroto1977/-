@@ -2,7 +2,7 @@
 title: "pmc.ncbi.nlm.nih.gov"
 type: source-domain
 host: "pmc.ncbi.nlm.nih.gov"
-cite_count: 67
+cite_count: 65
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # pmc.ncbi.nlm.nih.gov
 
-> [!info] 出典ドメイン索引 ・ 引用 **67 件**（学術 64 ・ 公的 2 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **65 件**（学術 62 ・ 公的 2 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
@@ -25,7 +25,7 @@ tags:
 - [[human-epigenetic-clock-theory|エピジェネティック・クロック理論]] — Levineetal.2018PhenoAgeepigeneticbiomarker
 - [[human-epigenetic-inheritance|世代間エピジェネティック継承]] — EpigeneticTransgenerationalActionsofEndocrineDisruptors—PMC
 - [[human-epigenetics|エピジェネティクス（Epigenetics）]] — Epigenetics:Definition,MechanismsandClinicalPerspective—PMC/Genes&Dev…
-- [[human-executive-function|実行機能（遂行機能）]] — Friedman,N.P.&Miyake,A.(2017).UnityandDiversityofExecutiveFunctions:A…
+- [[human-executive-function|実行機能（エグゼクティブ・ファンクション）——抑制制御・ワーキングメモリ・認知的柔軟性を中核に、目標に向けて思考と行動を制御する前頭前野の高次過程]] — Friedman,N.P.&Miyake,A.(2017)UnityandDiversityofExecutiveFunctions:In…
 - [[human-false-belief-task|誤信念課題（False Belief Task）]] — AssessingFalse-BeliefUnderstandinginChildrenwithAutismUsingaComputerA…
 - [[human-flynn-effect|フリン効果]] — Trahanetal.,“TheFlynnEffect:AMeta-analysis,”PsychologicalBulletin（PMC…
 - [[human-gate-control-theory|ゲートコントロール理論]] — Mendell(2014)ConstructingandDeconstructingtheGateTheoryofPain.Pain,15…
@@ -49,7 +49,7 @@ tags:
 - [[human-magical-number-seven|マジカルナンバー7±2]] — ModellingWorkingMemoryCapacity（Cowan2001約4チャンクへの再評価,PMC）
 - [[human-minimal-group-paradigm|最小条件集団パラダイム]] — PMC—InvestigatingtheEvolutionofIngroupFavoritismUsingaMinimalGroupInt…
 - [[human-mirror-neuron-controversy|ミラーニューロン論争（Mirror Neuron Controversy）]] — Hickok,G.2009.EightProblemsfortheMirrorNeuronTheoryofActionUnderstand…
-- [[human-mirror-neuron-system|ミラーニューロンシステム（Mirror Neuron System）]] — Hickok(2009)EightProblemsfortheMirrorNeuronTheory—PMC/JCognitiveNeuro…
+- [[human-mirror-neuron-system|ミラーニューロン・システム（リゾラッティ／ガレーゼ）——行為の実行時と観察時の双方で発火するニューロン群が行為理解・模倣・共感の神経基盤とされる仮説と、その証拠をめぐる論争]] — Hickok,G.(2009)EightProblemsfortheMirrorNeuronTheoryofActionUnderstan…
 - [[human-mirror-self-recognition|鏡像自己認知（Mirror Self-Recognition）]] — Corkum&Moore—JustBeforeIRecognizeMyself—PMC
 - [[human-naive-realism|素朴実在論（ナイーブ・リアリズム）]] — ProfileofLeeD.Ross,PNAS(PMC)
 - [[human-neonatal-imitation|新生児模倣（Neonatal Imitation）]] — Meltzoff&Marshall(2018)EarlyImitationWithinaFunctionalFramework—PMC
@@ -66,7 +66,6 @@ tags:
 - [[human-undermining-effect|アンダーマイニング効果（過正当化効果）]] — PMC収載のレビュー論文（過正当化効果の定量的レビュー、Deci1971・Lepperetal.1973を引用）
 - [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — Frost—TheImpoverishedPublicnessofAlgorithmicDecisionMaking,OxfordJour…
 - [[infosoc-data-sovereignty|データ主権]] — PMC(NIH)—Data,BigTech,andtheNewConceptofSovereignty（査読付き）
-- [[infosoc-digital-labor-platform|デジタル労働プラットフォーム論（Digital Labor Platform Theory）]] — Grahametal.(2017)DigitalLabourandDevelopment:ImpactsofGlobalDigitalLa…
 - [[infosoc-doomscrolling|ドゥームスクローリング]] — Sharmaetal.,DoomscrollingScale(PMC)
 - [[infosoc-platform-affordance|プラットフォーム・アフォーダンス（Platform Affordances）]] — SocialMediaInterventionDesign:ApplyinganAffordancesFramework—PMC
 - [[infosoc-quantified-self|定量化された自己（クオンティファイド・セルフ）]] — Ajana—DigitalhealthandthebiopoliticsoftheQuantifiedSelf（PMC）
@@ -78,7 +77,6 @@ tags:
 - [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]] — PMC—CraftingTaskandCognitiveJobBoundariestoEnhanceSelf-Determination
 - [[mgmt-knowledge-hiding-behavior|知識隠蔽行動理論]] — 2024meta-analysis,socialexchangetheory
 - [[mgmt-learning-agility|学習敏捷性（ラーニング・アジリティ）]] — Developmentandvalidationoftheleadershiplearningagilityscale—PMC/NCBI
-- [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（主体的性格特性）]] — PMC(2022)—Meta-analysisofproactivepersonalityandcareersuccess
 - [[mgmt-relational-leadership|関係性リーダーシップ理論]] — PMC(2022)—LeadershipDevelopment:RelationalLeadershipinHealthcareOrgan…
 - [[mgmt-team-member-exchange|チーム・メンバー交換理論（Team-Member Exchange, TMX）]] — ACross-LevelInvestigationofTeam-MemberExchangeonTeamandIndividualJobC…
 

@@ -30,7 +30,7 @@ aliases:
 - [Heidegger M: The Question Concerning Technology (primary work on Gestell and technological revealing)](https://bpb-us-e2.wpmucdn.com/sites.uci.edu/dist/a/3282/files/2018/01/Heidegger_TheQuestionConcerningTechnology.pdf) `学術`
 - [1000-Word Philosophy: Martin Heidegger on Technology - Analysis of questioning technology & Being](https://1000wordphilosophy.com/2025/04/23/heidegger-on-technology/) `学術`
 - [Human-Data Relations and the Lifeworld - Don Ihde phenomenological framework](https://www.researchgate.net/publication/287994986_Human-Data_Relations_and_the_Lifeworld) `学術`
-- [How Don Ihde's Human-Technology Relations Contribute to User Experience Design](https://medium.com/@JunyuLiu/how-don-ihdes-human-technology-relations-contribute-to-user-experience-design-1cacdef3c042) `学術`
+- [How Don Ihde's Human-Technology Relations Contribute to User Experience Design](https://medium.com/@JunyuLiu/how-don-ihdes-human-technology-relations-contribute-to-user-experience-design-1cacdef3c042) `メディア`
 - [PhilPapers: Hubert L. Dreyfus - A phenomenology of skill acquisition as the basis for Merleau-Pontian cognitive science](https://philpapers.org/rec/DREAPO) `リファレンス`
 
 ## 関連概念

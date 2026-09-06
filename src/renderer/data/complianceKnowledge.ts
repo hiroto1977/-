@@ -2471,7 +2471,7 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
     sources: [
       { url: 'https://www.no-trouble.caa.go.jp/what/telemarketing/', type: 'government', label: '消費者庁 特定商取引法ガイド 電話勧誘販売' },
       { url: 'https://www.no-trouble.caa.go.jp/pdf/20180625ac05.pdf', type: 'government', label: '消費者庁 特商法逐条解説 電話勧誘販売（16条・17条）' },
-      { url: 'https://www.kokusen.go.jp/soudan_now/data/coolingoff.html', type: 'media', label: '国民生活センター クーリング・オフ（電話勧誘8日間）' },
+      { url: 'https://www.kokusen.go.jp/soudan_now/data/coolingoff.html', type: 'government', label: '国民生活センター クーリング・オフ（電話勧誘8日間）' },
     ],
   },
   {

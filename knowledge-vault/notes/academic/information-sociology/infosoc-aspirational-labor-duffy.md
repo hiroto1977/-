@@ -31,14 +31,14 @@ Brooke Erin Duffy（アスピレーショナル労働の提唱者、コーネル
 - [Yale University Press 書誌ページ：Brooke Erin Duffy, (Not) Getting Paid to Do What You Love: Gender, Social Media, and Aspirational Work（2017年）](https://yalebooks.yale.edu/book/9780300227666/not-getting-paid-to-do-what-you-love/) `リファレンス`
 
 ## 関連概念
-- [[infosoc-digital-labor-theory|デジタル労働理論]] — 同じ思想家
 - [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 出典を共有
 - [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 出典を共有
 - [[infosoc-social-media-affordances-boyd|ネットワーク化された公衆とソーシャルメディアのアフォーダンス（ボイド）]] — 出典を共有
 - [[bizlaw-tort-law|不法行為法：過失・厳格責任・経済分析による民事損害賠償の理論体系]] — 出典を共有
 - [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 出典を共有
+- [[infosoc-fifth-estate|第五の権力（フィフス・エステート）]] — 同分野の近傍
+- [[infosoc-microcelebrity|マイクロセレブリティ]] — 同分野の近傍
 - [[infosoc-prosumption-theory|プロシューマー理論]] — 同分野の近傍
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

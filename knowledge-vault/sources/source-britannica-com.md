@@ -2,7 +2,7 @@
 title: "britannica.com"
 type: source-domain
 host: "britannica.com"
-cite_count: 278
+cite_count: 274
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # britannica.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **278 件**（リファレンス 278）
+> [!info] 出典ドメイン索引 ・ 引用 **274 件**（リファレンス 274）
 
 ## このドメインを出典とする項目
 
@@ -22,8 +22,7 @@ tags:
 - [[bizlaw-parens-patriae|パレンス・パトリエ法理（Parens Patriae Doctrine）]] — EncyclopaediaBritannica—Parenspatriae（定義・英国法起源・米国法における展開）
 - [[bizlaw-promissory-estoppel|約束的禁反言（プロミッサリー・エストッペル）]] — EncyclopaediaBritannica—Contractlaw（約因・禁反言・信頼利益保護を含む契約法の概観）
 - [[econ-accelerator-principle|加速度原理（投資の加速度原理）]] — EncyclopaediaBritannica—Acceleratorprinciple(economics)
-- [[econ-adverse-selection|逆選択（レモン市場）]] — EncyclopaediaBritannica（Money）—GeorgeAkerlof：中古車市場での逆選択と1970年論文
-- [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — BritannicaMoney—Adverseselection
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する]] — BritannicaMoney—Adverseselection（定義と保険・信用市場の例）
 - [[econ-allison-models|アリソンの意思決定モデル（合理的行為者・組織過程・政府政治）]] — EncyclopaediaBritannica—EssenceofDecision（3モデルの解説・政策科学への影響）
 - [[econ-arbitrage|裁定取引（アービトラージ）と一物一価の法則]] — BritannicaMoney—"WhatIsArbitrage?"（裁定の定義・リスクフリー利益・市場間価格差の解消）
 - [[econ-arrow-impossibility|アローの不可能性定理]] — EncyclopaediaBritannica—Impossibilitytheorem(Arrow'sParadox,VotingThe…
@@ -33,7 +32,6 @@ tags:
 - [[econ-business-cycles|景気循環とその諸波動]] — BritannicaMoney—Businesscycle（四循環の定義・周期）
 - [[econ-coase-theorem|コースの定理（Coase theorem）]] — EncyclopædiaBritannica(Money)—TheCoasetheorem
 - [[econ-cobb-douglas|コブ＝ダグラス生産関数]] — EncyclopædiaBritannica—"Cobb-Douglasfunction"(economics)
-- [[econ-cobweb-theorem-agricultural-cycles|蜘蛛の巣理論（農業価格循環）]] — Britannica:CobwebTheoremoverview
 - [[econ-comparative-advantage|比較優位（リカードの比較生産費説）]] — EncyclopaediaBritannicaMoney—Simplifiedtheoryofcomparativeadvantage
 - [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — EncyclopaediaBritannicaMoney—Consumersurplus（消費者余剰とヒックスの補償変分・等価変分の関係）
 - [[econ-creative-destruction|創造的破壊]] — BritannicaMoney—CreativeDestruction:Innovation,Growth,&Examples
@@ -54,7 +52,6 @@ tags:
 - [[econ-engels-law|エンゲルの法則]] — EncyclopaediaBritannica—ErnstEngel（人物・1857年/ベルギー家計調査）
 - [[econ-expected-utility|期待効用理論]] — Britannica「VonNeumann–Morgensternutilityfunction」（VNM公理・期待効用最大化）
 - [[econ-externality-market-failure|外部性と市場の失敗]] — EncyclopaediaBritannicaMoney—Externality
-- [[econ-fiscal-federalism-tiebout|財政連邦主義とティブー・モデル（足による投票と分権定理）]] — EncyclopaediaBritannica—FiscalFederalism
 - [[econ-fisher-equation|フィッシャー方程式（フィッシャー効果）]] — BritannicaMoney—IrvingFisher
 - [[econ-free-rider|フリーライダー問題]] — EncyclopædiaBritannica—“Freeriding”（集合財の便益にコストを負担せず与ること、Olson1965に由来）
 - [[econ-gdp-triple-equivalence|GDPと三面等価の原則]] — EncyclopædiaBritannicaMoney—Grossdomesticproduct（定義・支出法）
@@ -71,6 +68,7 @@ tags:
 - [[econ-hyperinflation|ハイパーインフレーション（超インフレ）]] — EncyclopaediaBritannicaMoney—Hyperinflation（定義・原因・歴史的事例の概説）
 - [[econ-income-substitution-effect|所得効果と代替効果]] — EncyclopaediaBritannica—Incomeeffect
 - [[econ-income-substitution-effect|所得効果と代替効果]] — EncyclopaediaBritannica—Substitutioneffect
+- [[econ-inequality-piketty-capital21|ピケティの r＞g（『21世紀の資本』）——資本収益率が成長率を上回り続ける限り富は労働所得より速く蓄積し、格差は構造的に拡大する]] — EncyclopaediaBritannica—ThomasPiketty（r＞gを資本主義の中心的矛盾とする主張と累進的富裕税の提案）
 - [[econ-input-output-analysis|産業連関分析（投入産出分析）]] — EncyclopaediaBritannica—WassilyLeontief:Input-OutputAnalysis
 - [[econ-invisible-hand|見えざる手]] — EncyclopædiaBritannica「invisiblehand」（自己利益と意図せぬ公益・スミス帰属・留保）
 - [[econ-jevons-paradox|ジェヴォンズのパラドックス]] — EncyclopaediaBritannica—TheCoalQuestion(workbyJevons)
@@ -100,7 +98,6 @@ tags:
 - [[econ-petty-clark-law|ペティ＝クラークの法則]] — EncyclopaediaBritannica—ColinClark（ペティの観察とクラークによる三部門分類の体系化）
 - [[econ-pigou-effect|ピグー効果（実質残高効果）]] — EncyclopaediaBritannicaMoney—ArthurCecilPigou（厚生経済学・Pigoueffectの名祖）
 - [[econ-pigouvian-tax|ピグー税]] — EncyclopaediaBritannica—Pigouviantax
-- [[econ-piketty|ピケティの r>g（資本収益率と格差）]] — EncyclopaediaBritannica—ThomasPiketty（r>gを資本主義の中心的矛盾とする主張、累進的富裕税の提案）
 - [[econ-price-discrimination|価格差別（price discrimination）]] — BritannicaMoney—Pricediscrimination
 - [[econ-price-elasticity-demand|需要の価格弾力性]] — EncyclopaediaBritannicaMoney—Elasticity
 - [[econ-principal-agent|プリンシパル・エージェント理論（agency theory）]] — BritannicaMoney—Financialagencytheory
@@ -118,7 +115,6 @@ tags:
 - [[econ-sunk-cost|サンクコスト（埋没費用）とサンクコストの誤謬]] — EncyclopaediaBritannicaMoney—Sunkcost
 - [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — EncyclopædiaBritannicaMoney—AlfredMarshall（はさみの両刃・1890）
 - [[econ-supply-demand-equilibrium|需要と供給の均衡（価格メカニズム）]] — EncyclopædiaBritannicaMoney—Supplyanddemand:Marketequilibrium
-- [[econ-time-inconsistency|動学的不整合（時間的非整合性）]] — EncyclopaediaBritannica—FinnE.Kydland（1977年論文と動学的不整合の定義）
 - [[econ-tobins-q|トービンのq]] — EncyclopaediaBritannica—Tobin'sq（資産の市場価値の再取得費用に対する比、q>1で新規投資が有利）
 - [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — EncyclopaediaBritannica—GarrettHardin
 - [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — EncyclopaediaBritannica—Tragedyofthecommons
@@ -140,7 +136,7 @@ tags:
 - [[eh-2009|2009年（平成21年）]] — BritannicaMoney—GreatRecession
 - [[eh-2021|2021年（令和3年）]] — Britannica—FumioKishida（2021/10/4首相就任）
 - [[human-acquired-needs-theory|獲得欲求理論]] — EncyclopaediaBritannica—McClelland'sTheoryofNeeds
-- [[human-anchoring|アンカリング効果（係留と調整）]] — EncyclopaediaBritannica—Heuristic（係留と調整ヒューリスティックの帰属）
+- [[human-anchoring-adjustment-tversky|アンカリングと調整（係留と調整）——最初に示された数値が基準点となり、そこからの修正が不十分なまま判断が偏るヒューリスティック]] — EncyclopaediaBritannica—Heuristic（係留と調整ヒューリスティックの帰属）
 - [[human-apperceptive-mass|統覚塊（アペルツェプツィオンスマッセ）]] — Herbartianism—EncyclopaediaBritannica.
 - [[human-asch-conformity|アッシュの同調実験（同調圧力）]] — EncyclopaediaBritannica—Conformity（同調と実験設計）
 - [[human-asch-conformity|アッシュの同調実験（同調圧力）]] — EncyclopaediaBritannica—SolomonAsch

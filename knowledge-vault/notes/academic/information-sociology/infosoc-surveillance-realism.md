@@ -36,6 +36,7 @@ aliases:
 - [[infosoc-mass-self-communication|マス・セルフ・コミュニケーション]] — 出典を共有
 - [[infosoc-data-justice|データ正義（Data Justice）]] — 同分野の近傍
 - [[infosoc-cultural-capital|文化資本（ブルデュー）]] — 同分野の近傍
+- [[infosoc-new-governors-online-speech-klonick|新しい統治者論——プラットフォームを独自の規則・手続・文化でオンライン言論を統治する私的統治システムとみなす議論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

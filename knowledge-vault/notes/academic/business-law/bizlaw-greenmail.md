@@ -31,8 +31,8 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-commercial-impracticability|商業的実行不能の法理]] — 同分野の近傍
-- [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同分野の近傍
 - [[bizlaw-corporate-opportunity-doctrine|会社機会の流用禁止原則]] — 同分野の近傍
+- [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

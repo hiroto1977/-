@@ -35,8 +35,8 @@ aliases:
 - [[econ-theil-index-inequality|タイル指数——情報理論にもとづく分解可能な不平等尺度]] — 同じ思想家
 - [[human-fitts-law|フィッツの法則——速さと正確さのトレードオフ]] — 同じ思想家
 - [[human-hick-law|ヒックの法則——選択肢が増えるほど決定に時間がかかる]] — 同じ思想家
-- [[infosoc-communicative-capitalism|コミュニカティブ・キャピタリズム（Communicative Capitalism）]] — 同分野の近傍
 - [[infosoc-information-society-machlup|知識産業論——知識の生産と分配を経済の主要部門として計量する]] — 同分野の近傍
+- [[infosoc-communicative-capitalism|コミュニカティブ・キャピタリズム（Communicative Capitalism）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[infosoc-space-of-flows|フローの空間（スペース・オブ・フローズ）]] — 同分野の近傍
 - [[infosoc-networked-public-sphere-fraser|ネットワーク化された公共圏とデジタル・デモクラシー論]] — 同分野の近傍
+- [[infosoc-infrastructural-inversion|インフラストラクチャの逆転（ボウカー＆スター）——背景に退いて不可視になった分類・標準・データ基盤を前景化し、その政治性を可視化する方法論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

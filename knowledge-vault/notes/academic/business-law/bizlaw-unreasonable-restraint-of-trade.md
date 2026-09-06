@@ -31,7 +31,7 @@ aliases:
 - [政府広報オンライン 独占禁止法 不当な取引制限](https://www.gov-online.go.jp/article/202511/entry-10038.html) `公的`
 
 ## 関連概念
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 語彙が近い
+- [[bizlaw-antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 語彙が近い
 - [[legal-leniency|課徴金減免制度（リーニエンシー制度）]] — 分野横断
 - [[bizlaw-adr|裁判外紛争解決手続（ADR）]] — 出典を共有
 - [[legal-freelance-protection-act|フリーランス・事業者間取引適正化等法（フリーランス新法、2024年11月1日施行）]] — 出典を共有

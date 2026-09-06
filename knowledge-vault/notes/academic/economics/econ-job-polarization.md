@@ -32,6 +32,7 @@ David Autor・Frank Levy・Richard Murnane（2003年論文・タスク・アプ�
 ## 関連概念
 - [[econ-skill-biased-tech|スキルバイアス型技術変化（SBTC）]] — 同分野の近傍
 - [[econ-technological-unemployment|技術的失業]] — 同分野の近傍
+- [[econ-baumol-cost-disease|ボーモルのコスト病]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

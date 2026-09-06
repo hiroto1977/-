@@ -2,7 +2,7 @@
 title: "glossary.mizuho-sc.com"
 type: source-domain
 host: "glossary.mizuho-sc.com"
-cite_count: 2
+cite_count: 1
 tags:
   - source-domain
   - index
@@ -10,11 +10,10 @@ tags:
 
 # glossary.mizuho-sc.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **2 件**（リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **1 件**（リファレンス 1）
 
 ## このドメインを出典とする項目
 
-- [[econ-credit-channel-theory|信用チャネル理論]] — 信用経路—みずほ証券ファイナンス用語集
 - [[econ-seigniorage|シニョリッジ（通貨発行益）]] — みずほ証券ファイナンス用語集「通貨発行益」
 
 ## 関連

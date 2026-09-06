@@ -5,6 +5,7 @@ import { Stat } from './Stat';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from './tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { useCollection } from '../data/useCollection';
+import { fireReported } from '../data/deviceStoreFailure';
 import type { ServiceId } from '../../shared/serviceId';
 import type { ShigyoSnapshot, ShigyoConsultationStatus } from '../../shared/shigyoTypes';
 import { jpy } from '../../shared/formatters';
@@ -413,7 +414,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                         <button type="button" onClick={() => onStartEditContact(c.rowId, c)} style={{ fontSize: 11 }}>
                           編集
                         </button>
-                        <button type="button" onClick={() => contactsCol.remove(c.rowId)} style={{ fontSize: 11, color: '#f87171' }}>
+                        <button type="button" onClick={() => fireReported(contactsCol.remove(c.rowId))} style={{ fontSize: 11, color: '#f87171' }}>
                           削除
                         </button>
                       </span>
@@ -489,7 +490,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                       <select
                         value={c.status}
                         aria-label="相談ステータスを変更"
-                        onChange={(e) => consultationsCol.edit(c.rowId, { status: e.target.value as ShigyoConsultationStatus })}
+                        onChange={(e) => fireReported(consultationsCol.edit(c.rowId, { status: e.target.value as ShigyoConsultationStatus }))}
                         style={{ ...inputStyle, width: 110, color: STATUS_COLOR[c.status] ?? 'var(--text)', fontWeight: 600 }}
                       >
                         {CONSULTATION_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
@@ -505,7 +506,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                   </td>
                   <td style={tdStyle}>
                     {c.user && (
-                      <button type="button" onClick={() => consultationsCol.remove(c.rowId)} style={{ fontSize: 11, color: '#f87171' }}>
+                      <button type="button" onClick={() => fireReported(consultationsCol.remove(c.rowId))} style={{ fontSize: 11, color: '#f87171' }}>
                         削除
                       </button>
                     )}

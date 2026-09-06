@@ -37,9 +37,9 @@ aliases:
 - [[human-empathy-gap-loewenstein|共感ギャップ（ローウェンスタイン）]] — 同じ思想家
 - [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — 同じ思想家
 - [[econ-magnitude-effect-discounting|大きさ効果——金額が大きいほど将来を割り引く率が下がる]] — 同じ思想家
-- [[human-affective-forecasting-wilson-gilbert|感情予測——将来の感情状態の体系的予測バイアス]] — 同じ思想家
 - [[econ-sunk-cost|サンクコスト（埋没費用）とサンクコストの誤謬]] — 出典を共有
 - [[human-action-bias|行動バイアス（アクション・バイアス）]] — 出典を共有
+- [[human-construal-level-trope|解釈レベル理論——心理的距離が対象の抽象的・具体的表象を規定する]] — 同分野の近傍
 - [[human-normalcy-bias|正常性バイアス]] — 同分野の近傍
 
 ## 関連

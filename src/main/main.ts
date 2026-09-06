@@ -378,8 +378,10 @@ ipcMain.handle('fetch:snapshot', async (_e, serviceId: unknown) => {
     const read = await getValidToken(serviceId);
     if (!read.ok) {
       // LOCAL_SERVICES は資格情報なしでも動くので、読めないことは異常ではない。
-      // ただし「保存済みだが復号できない」場合はローカルでも黙らない。
-      if (read.reason === 'undecryptable') {
+      // ただし「保存済みだが復号できない」「保管ファイルが読めない」場合は
+      // ローカルでも黙らない —— どちらも**未設定ではない**ので、
+      // 「トークン未設定」と案内すると利用者は鍵を貼り直そうとする。
+      if (read.reason !== 'absent') {
         return { ok: false, code: 'not_configured', message: read.message };
       }
       if (!LOCAL_SERVICES.has(serviceId)) {
@@ -427,7 +429,8 @@ ipcMain.handle(
         return {
           ok: false,
           code: 'not_configured',
-          message: read.reason === 'undecryptable' ? read.message : 'トークン未設定',
+          // 未設定だけが「トークン未設定」。復号できない・保管ファイルが読めないは理由を出す。
+          message: read.reason === 'absent' ? 'トークン未設定' : read.message,
         };
       }
       token = read.token;

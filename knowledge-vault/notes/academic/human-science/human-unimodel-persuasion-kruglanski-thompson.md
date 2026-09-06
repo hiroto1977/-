@@ -33,11 +33,9 @@ aliases:
 ## 関連概念
 - [[human-embodied-cognition-barsalou|身体化認知——知覚シミュレーションと概念的知識の身体的基盤]] — 同じ思想家
 - [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 同じ思想家
-- [[human-embodied-cognition-varela|身体化認知とエナクティヴィズム（ヴァレラ）]] — 同じ思想家
 - [[human-enactivism|エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論]] — 同じ思想家
 - [[human-health-belief-model|ヘルス・ビリーフ・モデル：予防的健康行動の心理的予測理論]] — 同分野の近傍
 - [[human-dunbars-number|ダンバー数（社会脳仮説）]] — 同分野の近傍
-- [[human-weber-fechner-law|ウェーバー・フェヒナーの法則]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

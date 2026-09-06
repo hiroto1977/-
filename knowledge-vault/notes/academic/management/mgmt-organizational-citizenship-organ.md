@@ -26,15 +26,15 @@ aliases:
 デニス・オーガン ／ トーマス・ベイトマン ／ フィリップ・ポドサコフ ／ スコット・マッケンジー
 
 ## 出典
-- [Organ, D.W. (1988) Organizational Citizenship Behavior: The Good Soldier Syndrome — Lexington (WorldCat)](https://www.worldcat.org/oclc/16755938) `学術`
+- [Organ, D.W. (1988) Organizational Citizenship Behavior: The Good Soldier Syndrome — Lexington (WorldCat)](https://www.worldcat.org/oclc/16755938) `リファレンス`
 - [Wikipedia: Organizational citizenship behavior — Organ, extra-role, altruism/conscientiousness/civic virtue](https://en.wikipedia.org/wiki/Organizational_citizenship_behavior) `リファレンス`
 
 ## 関連概念
 - [[human-fitts-law|フィッツの法則——速さと正確さのトレードオフ]] — 同じ思想家
 - [[mgmt-leadership-substitutes-kerr-jermier|リーダーシップ代替論——リーダー行動を不要化・無効化する状況要因]] — 同じ思想家
-- [[mgmt-proactive-personality-bateman|プロアクティブ・パーソナリティと主体的行動（ベイトマン＆クラント）]] — 同じ思想家
-- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-proactive-personality|プロアクティブ・パーソナリティ（ベイトマン＆クラント）——環境に順応するのではなく自ら機会を探し状況を変えようとする安定した性格傾向]] — 同じ思想家
+- [[mgmt-organizational-identification|組織アイデンティフィケーション理論]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

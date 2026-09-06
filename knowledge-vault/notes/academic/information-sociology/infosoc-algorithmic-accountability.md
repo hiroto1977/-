@@ -32,9 +32,10 @@ aliases:
 - [“Algorithmic Accountability in the Making,” Social Philosophy and Policy (Cambridge Core, 査読誌)](https://www.cambridge.org/core/journals/social-philosophy-and-policy/article/algorithmic-accountability-in-the-making/6F3CE994EC96C65392C5374B3CDE3C51) `学術`
 
 ## 関連概念
+- [[infosoc-algorithmic-bias-fairness|アルゴリズムの偏りと公平性（アルゴリズム的公正性）]] — 語彙が近い
 - [[infosoc-automated-journalism|自動ジャーナリズム（ロボットジャーナリズム）]] — 出典を共有
-- [[infosoc-algorithmic-bias-fairness|アルゴリズムの偏りと公平性（アルゴリズム的公正性）]] — 同分野の近傍
 - [[infosoc-disinformation|誤情報・偽情報（情報の無秩序）]] — 同分野の近傍
+- [[infosoc-algorithmic-opacity-burrell|アルゴリズム不透明性の三類型——企業秘密・技術的リテラシー・機械学習の規模に起因する不透明性]] — 同分野の近傍
 - [[infosoc-explainable-ai|説明可能なAI（XAI）]] — 同分野の近傍
 
 ## 関連

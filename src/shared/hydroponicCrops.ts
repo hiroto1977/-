@@ -22,6 +22,7 @@
  * 利用者の実測が最も正しい。見るのは**桁と形**だけ。
  */
 import { hasControlChar } from './controlChars';
+import { readNumeric } from './readNumeric';
 import { HYDROPONIC_CROPS, type HydroponicCrop } from './hydroponics';
 
 /** 品目名の上限 (文字数)。select の 1 行に収まる長さ。 */
@@ -222,11 +223,25 @@ export type CropDraft = Readonly<Record<'label' | CropNumericField, unknown>>;
 
 /**
  * 入力欄の文字列を数へ。空欄は NaN —— 0 に落とすと EC 0 や pH 0 が
- * 「入力した値」として通ってしまう。桁区切りのカンマは外す。
+ * 「入力した値」として通ってしまう。
+ *
+ * 読み取りは画面と同じ `readNumeric` に任せる (2026-09-06)。それまでは
+ * ここだけ `Number(カンマを外した文字列)` で読んでいて、**同じ入力が
+ * 画面と別の数になった**:
+ *
+ * ```
+ *   '1,2'   → 12      (画面は「区切りの位置が違う」と断る)
+ *              pH 1.2 と打ったつもりの値が pH 12 として範囲を通る
+ *   '2,4'   → 24      整数の欄 (株数) では 2.4 の指摘が出ずに 24 になる
+ *   '0x10'  → 16
+ *   '1e3'   → 1000
+ * ```
+ *
+ * `readNumeric` は読めなければ null を返すので、ここは NaN に直して
+ * `cropIssues` の範囲検査に落とす (契約は変えない)。
  */
 export function parseCropNumber(raw: string): number {
-  const s = raw.replace(/,/g, '').trim();
-  return s === '' ? NaN : Number(s);
+  return readNumeric(raw) ?? NaN;
 }
 
 /** 品目を足す。id は機械が振り、入力の id は使わない。 */

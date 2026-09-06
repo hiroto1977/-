@@ -32,10 +32,9 @@ Barry M. Staw, Lance E. Sandelands & Jane E. Dutton（Administrative Science Qua
 ## 関連概念
 - [[mgmt-cognitive-crafting|認知的クラフティング（仕事の意味の再解釈）]] — 同じ思想家
 - [[mgmt-organizational-compassion|組織的コンパッション（集合的苦痛応答理論）]] — 同じ思想家
-- [[mgmt-organizational-decline-theory|組織衰退理論]] — 同じ思想家
 - [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — 同じ思想家
-- [[mgmt-strategic-entrepreneurship-hitt-ireland|戦略的アントレプレナーシップ——機会探索と優位性構築の統合]] — 同分野の近傍
 - [[mgmt-escalation-of-commitment-theory|コミットメント・エスカレーション理論]] — 同分野の近傍
+- [[mgmt-threat-rigidity-staw|脅威硬直効果——危機的状況が組織の情報処理と行動を制約するメカニズム]] — 同分野の近傍
 - [[mgmt-punctuated-equilibrium|パンクチュエイテッド・エクイリブリアム（組織の断続平衡）]] — 同分野の近傍
 
 ## 関連

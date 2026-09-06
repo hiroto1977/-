@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-act-on-prevention-of-criminal-proceeds|犯罪収益移転防止法]] — 語彙が近い
+- [[bizlaw-insider-trading-regulation|インサイダー取引規制と情報開示義務——金融商品取引法の内部者取引禁止と市場の公正性]] — 同分野の近傍
 - [[bizlaw-anti-money-laundering-directive-eu|EUマネーロンダリング防止指令——金融システムの健全性保護]] — 同分野の近傍
 
 ## 関連

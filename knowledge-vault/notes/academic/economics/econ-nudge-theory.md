@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Encyclopaedia Britannica — Richard Thaler（Nudge・libertarian paternalism）](https://www.britannica.com/money/Richard-Thaler) `リファレンス`
-- [NobelPrize.org — Richard H. Thaler 2017（行動経済学への貢献）](https://www.nobelprize.org/prizes/economic-sciences/2017/thaler/facts/) `公的`
+- [NobelPrize.org — Richard H. Thaler 2017（行動経済学への貢献）](https://www.nobelprize.org/prizes/economic-sciences/2017/thaler/facts/) `リファレンス`
 - [Institute for Government — Nudge Unit（BIT 2010設立・応用例）](https://www.instituteforgovernment.org.uk/article/explainer/nudge-unit) `リファレンス`
 - [Thaler, R.H. & Sunstein, C.R. (2008) Nudge: Improving Decisions About Health, Wealth, and Happiness — Yale University Press](https://yalebooks.yale.edu/book/9780300122237/nudge/) `学術`
 - [Behavioural Insights Team (BIT) — UK Government Nudge Unit](https://www.bi.team/) `公的`
@@ -42,7 +42,7 @@ aliases:
 - [[econ-endowment-effect-kahneman-thaler|授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意]] — 同じ思想家
 - [[econ-mental-accounting|メンタル・アカウンティング（心の会計）]] — 同じ思想家
 - [[econ-myopic-loss-aversion-benartzi-thaler|近視眼的損失回避——頻繁な評価と損失回避が株式プレミアムを生む]] — 同じ思想家
-- [[human-default-effect|デフォルト効果（初期設定効果）]] — 同じ思想家
+- [[human-affective-forecasting-wilson-gilbert|感情予測（ウィルソン＝ギルバート）——将来の出来事が自分の感情に与える影響の予測は、強さと持続を過大評価する方向に体系的に歪む]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

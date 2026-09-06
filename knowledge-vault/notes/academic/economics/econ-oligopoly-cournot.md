@@ -36,8 +36,10 @@ aliases:
 - [[econ-price-discrimination|価格差別（price discrimination）]] — 出典を共有
 - [[econ-risk-aversion|リスク回避（アロー＝プラット測度）]] — 出典を共有
 - [[econ-monopolistic-competition|独占的競争]] — 同分野の近傍
+- [[econ-kreps-scheinkman-capacity-precommitment-cournot|クレプス＝シャインクマンの生産能力事前コミットメント・モデル——価格競争でもクールノー的寡占均衡へ至る二段階ゲーム]] — 同分野の近傍
 - [[econ-herfindahl-hirschman-index|ハーフィンダール・ハーシュマン指数（HHI）]] — 同分野の近傍
 - [[econ-averch-johnson-effect|アバーチ＝ジョンソン効果——収益率規制が過剰な資本投資を誘発する歪み]] — 同分野の近傍
+- [[econ-yardstick-competition-shleifer|ヤードスティック競争——他社の費用を基準とする規制が費用削減を誘発する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

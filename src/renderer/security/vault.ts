@@ -60,7 +60,32 @@ export function meetsPasswordPolicy(password: string): boolean {
   return password.length >= MIN_PASSWORD_LENGTH;
 }
 
-export type VaultStatus = 'uninitialized' | 'locked' | 'unlocked';
+/**
+ * 保管庫の状態。**`unreadable` は 2026-09-06 に足した。**
+ *
+ * それまで `status()` は「保管庫が無い」と「保管庫を読めない」の両方に
+ * `uninitialized` を返しており、ロック画面は読めないだけの端末へ
+ * **「ようこそ — はじめてのご利用」「マスターパスワードを 1 つだけ設定してください」**
+ * を出していた。トークンを預けている本人に対して**初回起動の画面**を見せることになる。
+ *
+ * `initialize()` は書く前にもう一度読んで「既に初期化されています」と断るので、
+ * **アプリが上書きすることはない** (読み出しの安全側と書き込みの安全側は逆向き ——
+ * `main/secrets.ts` の注記と同じ)。危ないのは画面の主張のほうで、
+ * 「消えた」と読んだ利用者はサイトデータの削除や再インストールへ進みうる ——
+ * そちらは**本当に消える**。
+ */
+export type VaultStatus = 'uninitialized' | 'locked' | 'unlocked' | 'unreadable';
+
+/**
+ * 読めなかったときにロック画面が出す 1 行。**現実に起こる 2 つの原因と、
+ * それぞれの打ち手を両方載せる** (どちらかを断定できないため)。
+ */
+export const VAULT_UNREADABLE_TEXT =
+  'この端末の保管庫を確認できませんでした。'
+  + 'はじめての利用のように見えても、預けたトークンが消えたとは限りません。'
+  + 'プライベートウィンドウで開いている場合は通常のウィンドウで開き直し、'
+  + '保存領域が一杯の場合はライブラリの不要なファイルを削除してから、'
+  + 'この画面の「もう一度確認」を押してください。';
 
 export interface InitResult {
   /** 24-word BIP-39 mnemonic. Caller MUST display once + discard. */
@@ -506,28 +531,31 @@ class BrowserVault implements Vault {
   /** 解錠に使われたパスワードが下限を満たしたか (メモリのみ・保存しない)。 */
   private policyOk: boolean | null = null;
 
+  /**
+   * 状態を見る。**投げない** —— 投げると呼び出し側 (App) がハングして
+   * ログイン画面に到達できなくなる。ただし**読めなかったことは
+   * `uninitialized` と混ぜない** (2026-09-06)。混ぜていた頃は、
+   * 読めないだけの端末に初回起動の画面が出ていた。
+   */
   async status(): Promise<VaultStatus> {
     let db: IDBDatabase;
-    // DB を開けない環境 (プライベートモード等) では「未初期化」として扱う。
-    // fake-indexeddb では失敗させられず、この catch には到達しない。
-    /* Stryker disable BlockStatement,StringLiteral */
+    // DB を開けない環境 (プライベートウィンドウ・保存領域が一杯) は
+    // 「保管庫が無い」ではなく「確認できない」。
     try {
       db = await openDb();
     } catch {
-      return 'uninitialized';
+      return 'unreadable';
     }
-    /* Stryker restore BlockStatement,StringLiteral */
-    // idbGet が reject すると status() が reject し、呼び出し側 (App) が
-    // ハングしてログイン画面が出なくなる。読み取り失敗時は meta 未取得のまま
-    // 下の `!meta` 分岐に落とし、uninitialized を返してロック画面に到達させる。
     let meta: VaultMeta | undefined;
+    let readFailed = false;
     try {
       meta = await idbGet<VaultMeta>(db, META_STORE, 'vault');
     } catch {
-      // 読取失敗 → meta は undefined のまま (下で uninitialized を返す)
+      readFailed = true;
     } finally {
       db.close();
     }
+    if (readFailed) return 'unreadable';
     if (!meta) return 'uninitialized';
     return this.currentKey ? 'unlocked' : 'locked';
   }

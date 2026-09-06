@@ -26,7 +26,7 @@ aliases:
 フィリップ・カガン ／ ミルトン・フリードマン ／ トーマス・サージェント ／ ルディガー・ドーンブッシュ
 
 ## 出典
-- [Cagan, P. (1956) The Monetary Dynamics of Hyperinflation — in Friedman (ed.) Studies in the Quantity Theory of Money (WorldCat)](https://www.worldcat.org/oclc/123825) `学術`
+- [Cagan, P. (1956) The Monetary Dynamics of Hyperinflation — in Friedman (ed.) Studies in the Quantity Theory of Money (WorldCat)](https://www.worldcat.org/oclc/123825) `リファレンス`
 - [Wikipedia: Hyperinflation — Cagan model, money demand, seigniorage, adaptive expectations](https://en.wikipedia.org/wiki/Hyperinflation) `リファレンス`
 
 ## 関連概念

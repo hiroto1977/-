@@ -33,7 +33,6 @@ Nils Brunsson ／ John W. Meyer ／ Brian Rowan ／ Kerstin Sahlin-Andersson ／
 ## 関連概念
 - [[mgmt-garbage-can-model|ゴミ箱モデル（Garbage Can Model of Organizational Choice）]] — 語彙が近い
 - [[mgmt-affective-commitment|感情的コミットメント（情緒的組織コミットメント）]] — 同じ思想家
-- [[mgmt-decoupling-meyer-rowan|デカップリング——正統性のための公式構造と実際の業務活動の分離]] — 同分野の近傍
 - [[mgmt-swot-analysis|SWOT分析]] — 同分野の近傍
 
 ## 関連

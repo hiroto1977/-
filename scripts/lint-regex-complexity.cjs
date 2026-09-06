@@ -511,6 +511,12 @@ async function main(argv) {
   const stale = REVIEWED.filter((r) => !seen.has(`${r.file}::${r.body}`));
 
   console.log(`Scanned ${files} file(s): 正規表現 ${distinct} 種を実測 (台帳 ${REVIEWED.length} 件)`);
+  // 走査が死んで 0 件になったのを「ReDoS なし」と読まない (実測 976 ファイル / 2,456 種、2026-09-05)。
+  const MIN_FILES = 500;
+  if (files < MIN_FILES) {
+    console.error(`❌ ${files} ファイルしか走査できませんでした (${MIN_FILES} 件以上を期待)。走査が壊れています。`);
+    process.exit(1);
+  }
   // 取り下げた指摘は黙って捨てない —— 実行機が遅いことに気づける唯一の手掛かり。
   for (const r of retracted) {
     console.log(`  (再測で再現せず取り下げ: /${r.item.body}/ — 1 度目は ${r.was.probe})`);

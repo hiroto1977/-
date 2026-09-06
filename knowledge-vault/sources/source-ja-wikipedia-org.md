@@ -2,7 +2,7 @@
 title: "ja.wikipedia.org"
 type: source-domain
 host: "ja.wikipedia.org"
-cite_count: 139
+cite_count: 135
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # ja.wikipedia.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **139 件**（リファレンス 137 ・ メディア 2）
+> [!info] 出典ドメイン索引 ・ 引用 **135 件**（リファレンス 133 ・ メディア 2）
 
 ## このドメインを出典とする項目
 
@@ -78,7 +78,7 @@ tags:
 - [[econ-demography-ageing-dependency-ratio|人口高齢化と従属人口比率——少子高齢化の経済的影響と社会保障持続可能性]] — Wikipedia:従属人口指数—少子高齢化と経済的依存比率の解説
 - [[econ-difference-in-differences|差の差分析（DID）]] — ウィキペディア日本語版「差分の差分法」
 - [[econ-fei-ranis|フェイ＝ラニス・モデル]] — ウィキペディア日本語版:フェイ＝ラニス・モデル（商業化点・ルイスの転換点・農業余剰）
-- [[econ-fiscal-decentralization-tiebout|財政分権化とティブー仮説——地方公共財の足による投票と市町村間競争]] — Wikipedia:財政分権—ティブー仮説と地方財政連邦主義の解説
+- [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — Wikipedia:財政分権—ティブー仮説と地方財政連邦主義の解説
 - [[econ-growth-accounting-solow-residual|成長会計とソロー残差——全要素生産性（TFP）と技術進歩の計測]] — Wikipedia:全要素生産性—ソロー残差と技術進歩の計測の解説
 - [[econ-helicopter-money-overt-monetary-financing|ヘリコプターマネーと財政・金融政策の統合——ミルトン・フリードマンからバーナンキまでの政策論争]] — Wikipedia:ヘリコプターマネー—財政金融統合政策と中央銀行論の解説
 - [[econ-housing-market-bubble-case-shiller|住宅市場バブルとケース＝シラー指数——行動的資産価格と不動産市場の周期的変動]] — Wikipedia:ケース＝シラー指数—住宅市場バブルと行動経済学の解説
@@ -86,8 +86,8 @@ tags:
 - [[econ-international-trade-comparative-advantage|比較優位と国際貿易——リカードからヘクシャー＝オリーンまでの貿易理論の発展]] — Wikipedia:比較優位—リカードとH-O定理の解説
 - [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — Wikipedia:乗数効果—ケインズ乗数の解説
 - [[econ-network-externalities-katz-shapiro|ネットワーク外部性と互換性戦略——カッツ＆シャピロの標準化競争理論]] — Wikipedia:ネットワーク外部性—標準化競争と互換性の解説
-- [[econ-optimal-taxation-mirrlees|最適課税理論——ミルリーズの情報の非対称性と効率性・公平性のトレードオフ]] — Wikipedia:最適課税—ミルリーズ理論と効率性・公平性の解説
-- [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — Wikipedia:公共財—非競合性・非排除性と市場の失敗の解説
+- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（マーリーズ）——政府が個人の能力を観察できない情報制約の下で、再分配と効率の二律背反を最小化する税率構造を導く]] — Wikipedia（日本語）:最適課税—理論と効率性・公平性の解説
+- [[econ-public-goods-samuelson|公共財（サミュエルソン）——非競合性と非排除性を持つ財はフリーライダー問題により市場で過少供給され、政府供給や集合的解決の根拠になる]] — Wikipedia:公共財—非競合性・非排除性と市場の失敗の解説
 - [[econ-real-business-cycle-kydland-prescott|リアル・ビジネス・サイクル理論——キドランド＆プレスコットの技術ショックと景気循環]] — Wikipedia:実期的景気循環理論—RBCモデルとDSGE分析の解説
 - [[econ-sovereign-debt-restructuring|ソブリン債務危機と債務再編——IMFプログラムと国際倒産制度の欠如]] — Wikipedia:国家債務—ソブリン債務危機と再編の解説
 - [[econ-time-preference|時間選好]] — ウィキペディア日本語版「時間選好」—時間選好率の定義・異時点間選択・割引
@@ -117,7 +117,6 @@ tags:
 - [[eh-2010|2010年（平成22年）]] — Wikipedia（日本語）—尖閣諸島中国漁船衝突事件
 - [[human-cognitive-aging-fluid-crystallized|流動性知能と結晶性知能——キャッテルの知能二元モデルと認知的老化の軌跡]] — Wikipedia:流動性知能—キャッテルのGf-Gcモデルと老化の解説
 - [[human-developmental-psychology-vygotsky|文化歴史的発達理論——ヴィゴツキーの最近接発達領域と社会的学習の認知科学]] — Wikipedia:ヴィゴツキー—最近接発達領域と文化歴史的発達理論の解説
-- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — Wikipedia:実行機能—作動記憶と認知制御の解説
 - [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — Wikipedia:メルロ＝ポンティ—知覚の現象学と身体論の解説
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — Wikipedia:ポジティブ心理学—PERMAモデルと幸福科学の解説
 - [[human-resilience-bonanno-adversity|レジリエンスと逆境後の軌跡——ボナンノの回復力類型と精神的健康の動態モデル]] — Wikipedia:レジリエンス—逆境後の心理的回復力の解説
@@ -146,10 +145,7 @@ tags:
 - [[mgmt-integrative-social-contracts-theory|統合的社会契約理論（ISCT）——ビジネス倫理の普遍的規範と地域的規範の二層構造]] — Wikipedia:ビジネス倫理—社会契約理論と企業倫理の解説
 - [[mgmt-kanban|かんばん方式]] — ウィキペディア「大野耐一」—TPS体系化・後工程引取り・かんばん
 - [[mgmt-kano-model|狩野モデル（魅力的品質と当たり前品質）]] — 狩野モデル—ウィキペディア日本語版
-- [[mgmt-knowledge-transfer-multinational|多国籍企業における知識移転——粘着性・吸収能力・本社—子会社ネットワーク]] — Wikipedia:知識移転—多国籍企業における知識管理の解説
 - [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — Wikipedia:組織変革—コッターの8ステップと変革管理の解説
-- [[mgmt-psychological-contract-rousseau|心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態]] — Wikipedia:心理的契約—雇用関係における暗黙の期待の解説
-- [[mgmt-stakeholder-mapping-power-interest|ステークホルダー・マッピングと利害権力分析——戦略的ステークホルダー管理の実践論]] — Wikipedia:ステークホルダー—ステークホルダー理論と管理の解説
 - [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — Wikipedia:戦略的提携—アライアンスと協調戦略の解説
 - [[mgmt-supply-chain-resilience-disruption|サプライチェーン・レジリエンス——中断リスク管理とコロナ禍・地政学的断絶への対応]] — Wikipedia:サプライチェーン—レジリエンスと断絶リスク管理の解説
 - [[mgmt-team-diversity-performance|チーム多様性とパフォーマンスの関係論——情報精緻化理論と価値・情報的多様性]] — Wikipedia:ダイバーシティ—多様性と組織パフォーマンスの解説

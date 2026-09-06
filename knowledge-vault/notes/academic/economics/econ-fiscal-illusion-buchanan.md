@@ -26,20 +26,20 @@ aliases:
 ジェームズ・ブキャナン ／ アミルカレ・プヴィアーニ ／ リチャード・ワーグナー ／ ウェルナー・ポマレーネ
 
 ## 出典
-- [Buchanan, J.M. (1967) Public Finance in Democratic Process — University of North Carolina Press (WorldCat)](https://www.worldcat.org/oclc/394102) `学術`
+- [Buchanan, J.M. (1967) Public Finance in Democratic Process — University of North Carolina Press (WorldCat)](https://www.worldcat.org/oclc/394102) `リファレンス`
 - [Wikipedia: Fiscal illusion — Buchanan, Puviani, hidden taxes, deficit financing, flypaper effect](https://en.wikipedia.org/wiki/Fiscal_illusion) `リファレンス`
 
 ## 関連概念
 - [[econ-logrolling|ログローリング（票の取引）]] — 同じ思想家
-- [[econ-club-goods-buchanan|クラブ財——排除可能だが混雑するまで非競合的な財の最適規模]] — 同じ思想家
-- [[econ-club-goods-buchanan-tiebout|クラブ財理論——ブキャナンの共同消費と最適メンバーシップ]] — 同じ思想家
+- [[econ-club-goods-buchanan|クラブ財（ブキャナン）——排除できるが混雑するまでは非競合的な財の最適な供給規模と会員数]] — 同じ思想家
 - [[econ-leviathan-hypothesis-brennan-buchanan|リヴァイアサン仮説——歳入最大化を図る政府と憲法的・分権的な制約]] — 同じ思想家
-- [[econ-public-choice-buchanan-tullock|公共選択論——ブキャナンとタロックの政治的意思決定の経済分析]] — 同じ思想家
-- [[econ-public-choice-theory-buchanan|公共選択論と政治的市場の経済学——ブキャナンの自己利益政府モデル]] — 同じ思想家
+- [[econ-public-choice-buchanan-tullock|公共選択論（ブキャナン＝タロック）——政治家・官僚・有権者も自己利益を追う合理的個人として政治的意思決定を経済学の方法で分析する]] — 同じ思想家
+- [[econ-public-goods-samuelson|公共財（サミュエルソン）——非競合性と非排除性を持つ財はフリーライダー問題により市場で過少供給され、政府供給や集合的解決の根拠になる]] — 同じ思想家
 - [[econ-rent-seeking-tullock|レント・シーキング理論と政治経済学的非効率性（タロック・クルーガー）]] — 同じ思想家
 - [[econ-samaritan-dilemma-buchanan|サマリア人のジレンマ（ブキャナン）——利他の時間非整合性と「戦略的勇気」]] — 同じ思想家
 - [[econ-tullock-paradox|タロックのパラドックス——レントシーキング支出はなぜ過少なのか]] — 同じ思想家
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
+- [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — 同分野の近傍
+- [[econ-flypaper-effect|フライペーパー効果（flypaper effect／ハエ取り紙効果）——一括補助金が私的所得より地方公共支出を強く押し上げる現象]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

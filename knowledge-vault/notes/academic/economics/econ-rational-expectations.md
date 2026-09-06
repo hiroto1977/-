@@ -27,13 +27,13 @@ aliases:
 
 ## 出典
 - [Encyclopaedia Britannica — Theory of rational expectations](https://www.britannica.com/topic/theory-of-rational-expectations) `リファレンス`
-- [NobelPrize.org — 1995年経済学賞（ロバート・ルーカス）](https://www.nobelprize.org/prizes/economic-sciences/1995/summary/) `公的`
+- [NobelPrize.org — 1995年経済学賞（ロバート・ルーカス）](https://www.nobelprize.org/prizes/economic-sciences/1995/summary/) `リファレンス`
 - [Econlib, Concise Encyclopedia of Economics — Rational Expectations](https://www.econlib.org/library/Enc/RationalExpectations.html) `学術`
 
 ## 関連概念
 - [[econ-rational-expectations-muth|合理的期待——主観的予想が利用可能情報のもとでの客観的期待値に一致する仮説]] — 語彙が近い
 - [[econ-policy-ineffectiveness|政策無効命題]] — 語彙が近い
-- [[econ-lucas-critique|ルーカス批判]] — 同分野の近傍
+- [[econ-lucas-critique|ルーカス批判]] — 語彙が近い
 - [[econ-global-games-carlsson-vandamme|グローバルゲーム——わずかな情報の不完全さが均衡を一つに絞る]] — 同分野の近傍
 
 ## 関連

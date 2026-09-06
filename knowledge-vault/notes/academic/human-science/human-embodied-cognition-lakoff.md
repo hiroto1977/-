@@ -33,7 +33,6 @@ aliases:
 
 ## 関連概念
 - [[human-embodied-cognition-barsalou|身体化認知——知覚シミュレーションと概念的知識の身体的基盤]] — 同じ思想家
-- [[human-embodied-cognition-varela|身体化認知とエナクティヴィズム（ヴァレラ）]] — 同じ思想家
 - [[human-enactivism|エナクティビズム（Enactivism）：ヴァレラ＆マトゥラーナの身体化認知理論]] — 同じ思想家
 - [[human-cryptomnesia-unconscious-plagiarism|クリプトムネジア——無意識的剽窃と記憶帰属エラーのメカニズム]] — 同じ思想家
 - [[human-phenomenology-lived-body-merleau|生きられた身体の現象学——メルロ＝ポンティと身体的主体性の哲学]] — 同じ思想家
@@ -42,6 +41,7 @@ aliases:
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 出典を共有
 - [[econ-monetary-history-friedman-schwartz|米国貨幣史（フリードマン＆シュワルツ）]] — 出典を共有
 - [[human-durkheim-suicide|デュルケームの自殺論（社会的統合と自殺）]] — 出典を共有
+- [[infosoc-collective-memory|集合的記憶]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

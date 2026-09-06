@@ -26,7 +26,7 @@ aliases:
 ムザファー・シェリフ ／ ヘルマン・フォン・ヘルムホルツ ／ ソロモン・アッシュ ／ レオン・フェスティンガー
 
 ## 出典
-- [Sherif, M. (1936) The Psychology of Social Norms — Harper（自動運動効果と社会規範の形成）](https://www.worldcat.org/oclc/2557530) `学術`
+- [Sherif, M. (1936) The Psychology of Social Norms — Harper（自動運動効果と社会規範の形成）](https://www.worldcat.org/oclc/2557530) `リファレンス`
 - [Wikipedia: Autokinetic effect — illusory motion, Sherif, social norm formation](https://en.wikipedia.org/wiki/Autokinetic_effect) `リファレンス`
 
 ## 関連概念

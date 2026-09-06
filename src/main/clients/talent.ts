@@ -11,6 +11,7 @@ import {
   type TalentState,
 } from '../../shared/talent';
 import type { ActionContext, ActionMap, FetchContext } from './types';
+import { atomicWriteFile } from '../atomicWrite';
 
 // 判定と定義表は shared にある。ここは I/O (状態の保存・取得) と
 // action の口だけを持つ。**同じ判定を二度書かない。**
@@ -73,18 +74,36 @@ export async function loadTalentState(deps: StateDeps = {}): Promise<TalentState
 }
 
 /**
- * 0600 で書いて、**書いた後に締める**。
+ * 状態を保存する。**`atomicWriteFile` を通す** (`secrets.ts` / 感情ログと同じ)。
  *
- * `mode` は新規作成のときしか効かないので、固定名が既に 644 で残っていると
- * 644 のまま被さる (teamradar 側で 2026-08-25 に実測されている)。
+ * 2026-09-06 まで、ここは**本体を直接**書いていた:
+ *
+ * ```ts
+ *   await fs.writeFile(q, c, { mode: 0o600 });
+ *   await fs.chmod(q, 0o600);       // mode は新規作成のときしか効かないので締め直す
+ * ```
+ *
+ * 権限の側は `chmod` で閉じていたが、**書き込みの途中で落ちる**side は開いていた。
+ * `fs.writeFile` は本体を切り詰めてから書くので、その間に電源が落ちる・
+ * `SIGKILL` される・容量が尽きると、**中途半端な JSON が本体として残る**。
+ * 読み側 `loadTalentState` は壊れた JSON を catch して `EMPTY_TALENT_STATE` を
+ * 返す設計なので、そのとき利用者に起きることは「**組織病の申告・施策・
+ * メンバーの STEP が全部消えている**」であり、しかも**何も表示されない**
+ * (初回起動と区別しない、という読み側の判断と組み合わさる)。
+ * 実際に全部消えた事例が `TalentPage.tsx` の注記に残っている。
+ *
+ * `atomicWriteFile` は一意な tmp に書いて fsync し、`rename` で被せて
+ * ディレクトリも fsync する。落ちても本体は**前の内容のまま**で、
+ * 0600 は tmp を作る時点で決まるので `chmod` の追い打ちも要らない。
+ *
+ * 同じ userData に置く 4 つの状態ファイルのうち、ここだけが原子的でなかった
+ * (`secrets.json` と感情ログは `atomicWriteFile`、`team-radar.json` と
+ * `state.json` は tmp+rename)。検査は `main/__tests__/stateWritePolicy.test.ts`。
  */
 export async function saveTalentState(state: TalentState, deps: StateDeps = {}): Promise<TalentState> {
   const p = (deps.statePath ?? defaultStatePath)();
   const mkdir = deps.mkdir ?? ((q: string) => fs.mkdir(q, { recursive: true }).then(() => undefined));
-  const write = deps.writeFile ?? (async (q: string, c: string) => {
-    await fs.writeFile(q, c, { mode: 0o600 });
-    await fs.chmod(q, 0o600);
-  });
+  const write = deps.writeFile ?? ((q: string, c: string) => atomicWriteFile(q, c, { mode: 0o600 }));
   const clean = sanitizeTalentState(state);
   await mkdir(path.dirname(p));
   await write(p, JSON.stringify(clean, null, 2));

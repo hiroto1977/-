@@ -31,8 +31,8 @@ aliases:
 - [国税庁 課税売上高5億円超の場合の仕入税額控除](https://www.nta.go.jp/law/shitsugi/shohi/19/19.htm) `公的`
 
 ## 関連概念
-- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 語彙が近い
 - [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 語彙が近い
+- [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 語彙が近い
 - [[tax-blue-return-deduction|青色申告特別控除（所得税）]] — 出典を共有
 - [[tax-claim-for-correction|更正の請求（払い過ぎた税金の是正）]] — 出典を共有
 - [[tax-furusato-onestop|ふるさと納税のワンストップ特例]] — 出典を共有

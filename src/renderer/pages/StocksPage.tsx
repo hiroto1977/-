@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { exportWarning } from '../data/exportOutcome';
 
 interface AdvisorRecommendation {
   symbol: string;
@@ -258,10 +259,13 @@ export function StocksPage() {
   const [exportError, setExportError] = useState<string | null>(null);
   const [exportPath, setExportPath] = useState<string | null>(null);
   const [exportBytes, setExportBytes] = useState<number | null>(null);
+  /** 収まらなかった先 (ライブラリ / PC の指定フォルダ / ダウンロード) の説明。 */
+  const [exportWarn, setExportWarn] = useState<string>();
 
   async function exportDashboard() {
     setExportBusy(true);
     setExportError(null);
+    setExportWarn(undefined);
     try {
       // Forward the latest advisor result + strategy comparison so the
       // dashboard captures them.
@@ -276,6 +280,7 @@ export function StocksPage() {
       if (r.ok) {
         setExportPath(r.data.path);
         setExportBytes(r.data.bytes);
+        setExportWarn(exportWarning(r.data));
       } else {
         setExportError(r.message);
       }
@@ -888,6 +893,23 @@ export function StocksPage() {
             }}
           >
             {exportError}
+          </div>
+        )}
+        {exportWarn && (
+          <div
+            data-export-warning
+            role="alert"
+            style={{
+              border: '1px solid #f59e0b',
+              color: '#f59e0b',
+              padding: '8px 12px',
+              borderRadius: 6,
+              fontSize: 12,
+              marginBottom: 8,
+              lineHeight: 1.6,
+            }}
+          >
+            ⚠ {exportWarn}
           </div>
         )}
         {exportPath && (

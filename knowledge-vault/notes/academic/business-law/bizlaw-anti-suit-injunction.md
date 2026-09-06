@@ -33,8 +33,8 @@ Lord Goff of Chieveley（Aerospatiale [1987] / Airbus [1999] — ASI の現代�
 - [[bizlaw-hadley-v-baxendale|ハドリー対バクセンデール事件（The rule in Hadley v Baxendale, 1854）——契約上の損害の遠隔性を画する二段ルール]] — 出典を共有
 - [[bizlaw-unfair-prejudice-remedy|不公正な侵害の救済（アンフェア・プレジュディス法理）]] — 出典を共有
 - [[bizlaw-commercial-frustration|契約の挫折法理（履行不能による契約解消）]] — 出典を共有
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

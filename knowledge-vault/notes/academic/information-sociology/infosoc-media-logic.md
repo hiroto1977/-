@@ -35,7 +35,6 @@ aliases:
 - [[infosoc-cultural-imperialism|文化帝国主義（メディア帝国主義）]] — 出典を共有
 - [[infosoc-bandwagon-underdog-effect|バンドワゴン効果・アンダードッグ効果（bandwagon / underdog effect）——公表された世論調査が投票行動そのものを動かすフィードバック現象]] — 出典を共有
 - [[infosoc-hostile-media-effect|敵対的メディア認知]] — 出典を共有
-- [[mgmt-sensemaking-enactment-weick|センスメイキングとイナクトメント]] — 出典を共有
 - [[infosoc-domestication|ドメスティケーション理論（技術の家庭化）]] — 出典を共有
 - [[infosoc-transmedia-storytelling|トランスメディア・ストーリーテリング]] — 出典を共有
 - [[infosoc-media-events|メディア・イベント]] — 出典を共有

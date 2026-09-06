@@ -34,7 +34,7 @@ J.M.バーンズ1978(著書Leadership)が変革型/取引型を区別／B.バス
 
 ## 関連概念
 - [[mgmt-full-range-leadership-bass|フルレンジ・リーダーシップ・モデル——変革・交換・放任の連続体]] — 語彙が近い
-- [[mgmt-psychological-contract|心理的契約]] — 同分野の近傍
+- [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 同分野の近傍
 - [[mgmt-charismatic-leadership-house|カリスマ的リーダーシップ——非凡な影響を生む行動と帰属の理論]] — 同分野の近傍
 
 ## 関連

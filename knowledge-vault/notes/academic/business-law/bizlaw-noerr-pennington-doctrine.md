@@ -41,7 +41,7 @@ Eastern Railroad Presidents Conference v. Noerr Motor Freight（365 U.S. 127・1
 - [[bizlaw-non-compete-agreements|競業避止義務契約（ノン・コンピート条項）]] — 出典を共有
 - [[econ-predatory-pricing|略奪的価格設定]] — 出典を共有
 - [[bizlaw-implied-warranty-of-merchantability|商品性の黙示保証]] — 出典を共有
-- [[infosoc-dark-patterns|ダークパターン（欺瞞的デザイン）]] — 出典を共有
+- [[infosoc-dark-patterns|ダークパターン（ブリグナル）——利用者を欺き・操作して本来しない行動へ誘導する UI 設計の類型と、その規制]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

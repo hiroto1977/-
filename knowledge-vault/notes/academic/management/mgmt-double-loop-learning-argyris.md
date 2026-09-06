@@ -26,7 +26,7 @@ aliases:
 クリス・アージリス ／ ドナルド・ショーン ／ ピーター・センゲ ／ カール・ワイク
 
 ## 出典
-- [Argyris, C. & Schön, D.A. (1978) Organizational Learning: A Theory of Action Perspective — Addison-Wesley (WorldCat)](https://www.worldcat.org/oclc/3415944) `学術`
+- [Argyris, C. & Schön, D.A. (1978) Organizational Learning: A Theory of Action Perspective — Addison-Wesley (WorldCat)](https://www.worldcat.org/oclc/3415944) `リファレンス`
 - [Wikipedia: Double-loop learning — Argyris & Schön, governing variables, theory-in-use, Model I defensiveness](https://en.wikipedia.org/wiki/Double-loop_learning) `リファレンス`
 
 ## 関連概念
@@ -36,8 +36,8 @@ aliases:
 - [[mgmt-learning-organization-senge|学習する組織（センゲ）]] — 同じ思想家
 - [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
 - [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同じ思想家
-- [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 同じ思想家
 - [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 同じ思想家
+- [[mgmt-tempered-radical|穏健な急進主義者（マイヤーソン＆スカリー）——組織への帰属を保ちながら、支配的文化と相容れない価値を小さな勝利の積み重ねで内側から推し進める個人]] — 同じ思想家
 - [[human-error-management-theory-frese|エラー管理理論（フレゼ）]] — 同じ思想家
 - [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]] — 同じ思想家
 

@@ -26,9 +26,9 @@ aliases:
 マイケル・ポーター ／ ポール・クルーグマン ／ アルフレッド・マーシャル ／ オリャン・ソルベル
 
 ## 出典
-- [Porter, M.E. (1990) The Competitive Advantage of Nations — Free Press (WorldCat)](https://www.worldcat.org/oclc/21227966) `学術`
+- [Porter, M.E. (1990) The Competitive Advantage of Nations — Free Press (WorldCat)](https://www.worldcat.org/oclc/21227966) `リファレンス`
 - [Wikipedia: Diamond model — Porter, factor/demand conditions, related industries, firm strategy/rivalry, clusters](https://en.wikipedia.org/wiki/Diamond_model) `リファレンス`
-- [Michael E. Porter, "The Competitive Advantage of Nations," Harvard Business Review (1990) — 原典論文](https://hbr.org/1990/03/the-competitive-advantage-of-nations) `学術`
+- [Michael E. Porter, "The Competitive Advantage of Nations," Harvard Business Review (1990) — 原典論文](https://hbr.org/1990/03/the-competitive-advantage-of-nations) `メディア`
 - [Saylor Academy open textbook — "Clustering: Porter's National Diamond"](https://saylordotorg.github.io/text_fundamentals-of-global-strategy/s04-03-clustering-porter-s-national-d.html) `学術`
 - [EBSCO Research Starters (Economics) — "Diamond Model"](https://www.ebsco.com/research-starters/economics/diamond-model) `リファレンス`
 

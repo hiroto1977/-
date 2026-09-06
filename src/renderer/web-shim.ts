@@ -79,7 +79,8 @@ import {
 import { AI_CHAT_TIMEOUT_MS } from '../shared/ai/chat';
 import { bearerFromStoredToken } from '../shared/vaultToken';
 import { getLibrary } from './library/library';
-import { loadFolderHandle, writeBlobToFolder } from './fs/fsa';
+import { REAL_MIRROR, mirrorToFolder } from './fs/folderMirror';
+import type { ExportSinks, SinkOutcome } from './data/exportOutcome';
 import { filenameFromTitle } from '../shared/safeFilename';
 import { chatOllama, loadEndpointSetting, probeOllama } from './network/ollamaWeb';
 import {
@@ -107,6 +108,7 @@ import {
   logMood as emotionsLogMood,
   clearHistory as emotionsClearHistory,
   recordAnalysis as emotionsRecordAnalysis,
+  assertStoreWritable as emotionsAssertStoreWritable,
   normalizeAnalysis as emotionsNormalize,
   extractJson as emotionsExtractJson,
   buildEmotionsSnapshot,
@@ -129,7 +131,8 @@ import {
   parseSecurityKeys,
   type Transport,
 } from './data/saasWriteWeb';
-import { getProxyConfig, fetchViaProxy } from './network/proxy';
+import { inspectStoredProxyConfig, fetchViaProxy } from './network/proxy';
+import { deviceStoreFailureMessage } from './data/deviceStoreFailure';
 import { liveRead, canLiveRead } from './network/liveRead';
 import { AI_PROVIDERS, ANTHROPIC_FAST_MODEL } from '../shared/ai/providers';
 import {
@@ -165,9 +168,18 @@ async function requestAndReadDurability(): Promise<'persistent' | 'best-effort'>
 const RECORD_ENTRY_SERVICES = new Set(['uber-eats', 'demae-can', 'real-estate', 'mutual-funds']);
 
 /** CORS をブロックする SaaS 用のトランスポート。ユーザー設定のプロキシ
- *  (Cloudflare Worker) 経由で呼ぶ。未設定なら案内付きで throw する。 */
+ *  (Cloudflare Worker) 経由で呼ぶ。未設定なら案内付きで throw する。
+ *
+ *  **「未設定」と「読めなかった」を分ける。** 分けずに一方の案内を出していた頃は、
+ *  設定を保管している IndexedDB が開けないだけで
+ *  「設定で…URL を登録してください」と言っていた —— **登録した本人に、
+ *  登録し直せと言う**ことになり、URL と共有シークレットを打ち直した末に
+ *  同じ所で失敗する。 */
 async function getProxyTransport(): Promise<Transport> {
-  const cfg = await getProxyConfig();
+  const { config: cfg, unreadable } = await inspectStoredProxyConfig();
+  if (unreadable !== null) {
+    throw new Error(deviceStoreFailureMessage('settings', 'read', unreadable));
+  }
   if (!cfg) {
     throw new Error(
       'この連携はブラウザの制約 (CORS) でプロキシが必要です。設定でプロキシ (Cloudflare Worker) のURLを登録してください',
@@ -264,25 +276,29 @@ function downloadBlob(filename: string, content: string, mime: string): boolean 
   }
 }
 
-/** Save an artifact to the in-app Library and optionally to the user's
- *  picked OS folder (File System Access API). Failures are non-fatal so
- *  the user still gets the browser download. */
-async function saveToLibrary(serviceId: string, filename: string, mime: string, content: string): Promise<void> {
+/**
+ * 成果物をライブラリと (設定されていれば) PC のフォルダへ置き、**どこに収まったかを返す**。
+ *
+ * どちらの失敗も書き出し自体を止めない (端末へのダウンロードは別に走る) —— そこは
+ * 元のままだが、2026-09-06 まで**失敗が利用者に届く経路が 1 つも無かった**。
+ * 呼び出し側は戻り値を action の結果に載せ、画面が `exportWarning()` で 1 行にする。
+ * 飛ばす条件の判断は `fs/folderMirror.ts` に 1 つだけ置く。
+ */
+async function saveToLibrary(
+  serviceId: string,
+  filename: string,
+  mime: string,
+  content: string,
+): Promise<ExportSinks> {
   const blob = new Blob([content], { type: mime + ';charset=utf-8' });
+  let libraryCopy: SinkOutcome = 'saved';
   try {
     await library.put(serviceId, filename, mime, blob);
   } catch {
-    // ignore — library is best-effort
+    libraryCopy = 'failed';
   }
-  // FSA mirror: only attempt if the user has granted a folder.
-  try {
-    const loaded = await loadFolderHandle();
-    if (loaded && loaded.permission === 'granted') {
-      await writeBlobToFolder(loaded.handle, filename, blob);
-    }
-  } catch {
-    // ignore — folder write is best-effort
-  }
+  const folderCopy = await mirrorToFolder(REAL_MIRROR, filename, blob);
+  return { libraryCopy, folderCopy };
 }
 
 function notSupportedAlert(): Promise<OsOpResult> {
@@ -439,8 +455,15 @@ export function validateAdvisorJson(raw: unknown, allowed: ReadonlySet<string>):
   for (const item of o.recommendations) {
     if (item === null || typeof item !== 'object') throw new Error('entry is not an object');
     const r = item as Record<string, unknown>;
-    if (typeof r.categoryId !== 'string' || !allowed.has(r.categoryId)) throw new Error('invalid categoryId: ' + String(r.categoryId));
-    if (typeof r.rank !== 'number' || !Number.isFinite(r.rank) || r.rank < 1) throw new Error('invalid rank');
+    // **型の門と値の門を分ける。** 束ねると `typeof` の句が観測できない ——
+    // 型違いは後ろの判定 (`allowed.has` / `Number.isFinite`) が同じ文面で落とすので、
+    // 句を消しても振る舞いが変わらず、変異体が生き残る (2026-09-06 実測。main 側は
+    // 同じ形に帯で `Stryker disable ConditionalExpression` を当てている)。
+    // 分ければ「型が違う」と「値が許されない」を別の文面で区別でき、どちらの門も測れる。
+    if (typeof r.categoryId !== 'string') throw new Error('categoryId is not a string');
+    if (!allowed.has(r.categoryId)) throw new Error('invalid categoryId: ' + r.categoryId);
+    if (typeof r.rank !== 'number') throw new Error('rank is not a number');
+    if (!Number.isFinite(r.rank) || r.rank < 1) throw new Error('invalid rank');
     if (typeof r.rationale !== 'string' || r.rationale.length === 0 || r.rationale.length > MAX_ADVISOR_RATIONALE_CHARS) throw new Error('invalid rationale');
     if (!Array.isArray(r.actionItems) || r.actionItems.length === 0 || r.actionItems.length > MAX_ADVISOR_ACTION_ITEMS) throw new Error('invalid actionItems');
     const actionItems: string[] = [];
@@ -670,6 +693,13 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
     return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
   }
   if (!apiKey) return err('not_configured', 'Anthropic API キーが未設定です。上の「Anthropic API キー」から設定してください');
+  // 保存できない保管値なら**送る前に**断る (本文と API 呼び出しを無駄にしない。main 側と同じ順)。
+  // 送っている間に壊れた分は `recordAnalysis` が保存の直前にもう一度見る。
+  try {
+    emotionsAssertStoreWritable();
+  } catch (e) {
+    return err('action_failed', e instanceof Error ? e.message : String(e));
+  }
 
   let res: Response;
   try {
@@ -803,11 +833,15 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
   const spec = AI_PROVIDERS[resolved.id];
   let fetchFn: typeof fetch | undefined;
   if (!spec.browserDirect) {
-    const proxyCfg = await getProxyConfig().catch(() => null);
+    // **読めなかったことを「未設定」と混ぜない** (`network/proxy.ts` の注記と同じ理由)。
+    const proxy = await inspectStoredProxyConfig();
+    const proxyCfg = proxy.config;
     if (!proxyCfg) {
       return err(
         'not_configured',
-        `${spec.label} はブラウザから直接呼び出せません。「設定」ページでプロキシ (Cloudflare Worker) を構成するか、Claude / Gemini / Ollama を利用してください`,
+        proxy.unreadable !== null
+          ? deviceStoreFailureMessage('settings', 'read', proxy.unreadable)
+          : `${spec.label} はブラウザから直接呼び出せません。「設定」ページでプロキシ (Cloudflare Worker) を構成するか、Claude / Gemini / Ollama を利用してください`,
       );
     }
     fetchFn = (input, init) => fetchViaProxy(String(input), init ?? {}, proxyCfg);
@@ -859,7 +893,8 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
   if (ids.length === 0) {
     return err('not_configured', '設定済みの AI プロバイダがありません (⚙ エージェント設定で API キーを保存してください)');
   }
-  const proxyCfg = await getProxyConfig().catch(() => null);
+  const proxy = await inspectStoredProxyConfig();
+  const proxyCfg = proxy.config;
   const answers = await Promise.all(
     ids.map(async (id) => {
       const spec = AI_PROVIDERS[id];
@@ -871,7 +906,10 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
             model: '',
             text: '',
             ok: false,
-            error: `${spec.label} はブラウザから直接呼び出せません (プロキシ未設定)`,
+            error:
+              proxy.unreadable !== null
+                ? deviceStoreFailureMessage('settings', 'read', proxy.unreadable)
+                : `${spec.label} はブラウザから直接呼び出せません (プロキシ未設定)`,
           };
         }
         fetchFn = (input: Parameters<typeof fetch>[0], init?: Parameters<typeof fetch>[1]) =>
@@ -1073,13 +1111,14 @@ const shim = {
     }
     return { ok: true };
   },
-  listConfigured: async (): Promise<string[]> => {
-    try {
-      return await vault.listConfigured();
-    } catch {
-      return [];
-    }
-  },
+  /**
+   * 登録済みサービスの一覧。**読めなかったときは投げる** (main 側と同じ規則)。
+   *
+   * `catch { return []; }` にしていた頃は、保管庫が読めないだけで
+   * **「1 件も登録されていない」**と名乗り、画面は全サービスに「トークン未設定」を
+   * 出していた —— 利用者の次の手は API キーの再入力になる。
+   */
+  listConfigured: async (): Promise<string[]> => vault.listConfigured(),
   // ブラウザ版は常に WebCrypto Vault (AES-GCM-256 + PBKDF2 600k) を通るため、
   // Electron 版のような「OS キーチェーン不在で平文」状態は原理的に起きない。
   storageProtection: async (): Promise<{
@@ -1240,9 +1279,9 @@ const shim = {
         return err('action_failed', e instanceof Error ? e.message : String(e));
       }
       const filename = `${def.id}-${Date.now()}.svg`;
-      await saveToLibrary('templates', filename, 'image/svg+xml', svg);
+      const sinks = await saveToLibrary('templates', filename, 'image/svg+xml', svg);
       const downloaded = downloadBlob(filename, svg, 'image/svg+xml');
-      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded }) as ActionResult<T>;
+      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded, ...sinks }) as ActionResult<T>;
     }
 
     // TeamRadar export: grab the inline svg already rendered on the page.
@@ -1254,9 +1293,9 @@ const shim = {
       const p = payload as ExportSvgPayload;
       const title = typeof p.title === 'string' && p.title.length > 0 ? p.title : 'team-radar';
       const filename = filenameFromTitle(title, Date.now(), '.svg');
-      await saveToLibrary('teamradar', filename, 'image/svg+xml', svg);
+      const sinks = await saveToLibrary('teamradar', filename, 'image/svg+xml', svg);
       const downloaded = downloadBlob(filename, svg, 'image/svg+xml');
-      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded }) as ActionResult<T>;
+      return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded, ...sinks }) as ActionResult<T>;
     }
 
     /*
@@ -1421,9 +1460,9 @@ const shim = {
       const content = isMd ? renderStockDashboardMarkdown(input) : renderStockDashboardHtml(input);
       const ext = isMd ? '.md' : '.html';
       const filename = 'stocks-dashboard-' + Date.now() + ext;
-      await saveToLibrary('stocks', filename, isMd ? 'text/markdown' : 'text/html', content);
+      const sinks = await saveToLibrary('stocks', filename, isMd ? 'text/markdown' : 'text/html', content);
       const downloaded = downloadBlob(filename, content, isMd ? 'text/markdown' : 'text/html');
-      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: input.generatedAt, downloaded }) as ActionResult<T>;
+      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: input.generatedAt, downloaded, ...sinks }) as ActionResult<T>;
     }
 
     // Emotions: 気分ログ / 履歴クリアは localStorage で完結。
@@ -1622,9 +1661,9 @@ const shim = {
         ? '# 事業ダッシュボード (ブラウザ版)\n\nブラウザ版では完全な事業データのエクスポートに対応していません。\nElectron 版または `npm run dev` で完全な機能をお試しください。\n'
         : '<!doctype html><html><head><meta charset="utf-8"><title>事業ダッシュボード</title></head><body style="font-family:sans-serif;padding:24px;background:#0f1117;color:#e6e8ec"><h1>事業ダッシュボード (ブラウザ版)</h1><p>ブラウザ版では完全な事業データのエクスポートに対応していません。</p><p>Electron 版または <code>npm run dev</code> で完全な機能をお試しください。</p></body></html>';
       const filename = 'business-dashboard-' + Date.now() + ext;
-      await saveToLibrary('business', filename, isMd ? 'text/markdown' : 'text/html', content);
+      const sinks = await saveToLibrary('business', filename, isMd ? 'text/markdown' : 'text/html', content);
       const downloaded = downloadBlob(filename, content, isMd ? 'text/markdown' : 'text/html');
-      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: new Date().toISOString(), downloaded }) as ActionResult<T>;
+      return ok({ path: filename, bytes: new Blob([content]).size, generatedAt: new Date().toISOString(), downloaded, ...sinks }) as ActionResult<T>;
     }
 
     return err(

@@ -26,7 +26,7 @@ aliases:
 ワシリー・レオンチェフ ／ フランソワ・ケネー ／ ジョン・フォン・ノイマン ／ ピエロ・スラッファ
 
 ## 出典
-- [Leontief, W. (1941) The Structure of American Economy, 1919–1929 — Harvard University Press](https://www.worldcat.org/oclc/542840) `学術`
+- [Leontief, W. (1941) The Structure of American Economy, 1919–1929 — Harvard University Press](https://www.worldcat.org/oclc/542840) `リファレンス`
 - [Wikipedia: Input–output model — Leontief inverse, technical coefficients, dynamic model](https://en.wikipedia.org/wiki/Input%E2%80%93output_model) `リファレンス`
 
 ## 関連概念
@@ -37,9 +37,9 @@ aliases:
 - [[econ-zero-sum-game|ゼロサムゲーム（ミニマックス定理）]] — 同じ思想家
 - [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 同じ思想家
 - [[econ-leontief-paradox|レオンチェフの逆説]] — 同じ思想家
-- [[econ-sraffa-commodities|スラッファの商品による商品の生産（ケンブリッジ資本論争）]] — 同じ思想家
 - [[econ-aumann-correlated-equilibrium|相関均衡——共有された信号による協調とナッシュ均衡の一般化]] — 同じ思想家
-- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 同じ思想家
+- [[econ-capital-controversy|ケンブリッジ資本論争（ロビンソン／スラッファ対サミュエルソン）——異質な資本財を一つの量に集計できるかをめぐり、再スイッチングと資本逆行が新古典派の限界生産力理論に根本的な疑義を投じた]] — 同じ思想家
+- [[econ-colonel-blotto-game|ブロット大佐ゲーム——限られた資源を複数の戦線に配分する競争]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

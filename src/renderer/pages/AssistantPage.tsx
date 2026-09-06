@@ -14,6 +14,8 @@
  * 画面遷移は `servicehub:navigate` CustomEvent (App.tsx が listen)。
  */
 import { navigateTo } from '../navigate';
+import { readMechanism, savedCredentialMessage, type StorageMechanism } from '../data/credentialSaveMessage';
+import { chatMessages } from '../data/persistedShape';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES } from '../services';
 import type { ServiceId } from '../../shared/serviceId';
@@ -111,8 +113,8 @@ function loadHistory(): ChatMessage[] {
   try {
     const raw = localStorage.getItem(HISTORY_KEY);
     if (!raw) return [];
-    const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as ChatMessage[]).slice(-HISTORY_MAX) : [];
+    // 保存値は型が守らない —— role / text の形が合う要素だけ (null が 1 つ混じると描画で落ちる)。
+    return chatMessages<ChatMessage>(JSON.parse(raw), ['user', 'assistant'], HISTORY_MAX);
   } catch {
     return [];
   }
@@ -247,6 +249,18 @@ function MarkdownView({ blocks, fg }: { blocks: Block[]; fg: string }) {
   );
 }
 
+/**
+ * 保管の守り方を橋へ問い合わせる。取れなければ null —— **分からないことを
+ * 「暗号化しました」と言い換えない** (古い橋・問い合わせの失敗の両方でここへ来る)。
+ */
+async function storageMechanismOrNull(hub: Window['serviceHub']): Promise<StorageMechanism | null> {
+  try {
+    return readMechanism(await hub.storageProtection());
+  } catch {
+    return null;
+  }
+}
+
 export function AssistantPage() {
   const [messages, setMessages] = useState<ChatMessage[]>(() => loadHistory());
   const [input, setInput] = useState('');
@@ -307,8 +321,19 @@ export function AssistantPage() {
       return;
     }
     try {
-      await hub.setToken('assistant', JSON.stringify(creds));
-      setCredsMessage('保存しました (キーは暗号化ストレージに格納され、再表示はされません)');
+      // **戻り値で判断する。** `setToken` は上限超え・保管庫の施錠などを
+      // `{ ok: false }` で返すので、await が解けたことを成功と読んではいけない
+      // (`components/StatusBar.tsx` は同じ理由で res を見ている)。ここは
+      // 2026-09-06 まで結果を捨てており、**保存できていないのに「保存しました」と
+      // 言い、入力欄まで空にしていた** (打ち直しになる)。
+      const res = await hub.setToken('assistant', JSON.stringify(creds));
+      if (!res.ok) {
+        setCredsMessage(`保存できませんでした: ${res.message}`);
+        return; // 入力は残す
+      }
+      // 何が鍵を握っているかで文面を選ぶ (`data/credentialSaveMessage.ts`)。
+      // 分からないときは暗号化を名乗らない。
+      setCredsMessage(savedCredentialMessage(await storageMechanismOrNull(hub)));
       setCredsForm(EMPTY_CREDS_FORM);
       await refreshProviders();
     } catch (e) {

@@ -306,11 +306,12 @@ export type CustomMetricEntry = CustomMetricInput & Record<string, unknown>;
 
 export type CustomMetricResult = { ok: true; entry: CustomMetricInput } | { ok: false; reason: string };
 
-const UNITS: readonly MetricUnit[] = ['yen', 'pct', 'count', 'days', 'months'];
+/** 任意項目の単位。復元時の形の検査 (`collectionShapes.ts`) も同じ一覧を見る。 */
+export const METRIC_UNITS: readonly MetricUnit[] = ['yen', 'pct', 'count', 'days', 'months'];
 
 export function isMetricUnit(v: unknown): v is MetricUnit {
   // typeof の判定を足しても、非文字列は includes が false にするので差が出ない。
-  return (UNITS as readonly unknown[]).includes(v);
+  return (METRIC_UNITS as readonly unknown[]).includes(v);
 }
 
 /** 任意項目の入力を検証する。ラベルは必須・単位は既知のもののみ。 */

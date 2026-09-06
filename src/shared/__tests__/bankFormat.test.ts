@@ -23,6 +23,7 @@ import {
   formatPercent,
   formatPeriodRange,
   formatRatio,
+  formatScaled,
   parseBankFormat,
   parseIsoDate,
   roundingCaption,
@@ -231,5 +232,54 @@ describe('parseBankFormat — 保存した書式を読む', () => {
     expect(parseBankFormat('yen')).toEqual(D);
     expect(parseBankFormat({ unit: 'dollar', negative: 1, rounding: null, era: ['seireki'] })).toEqual(D);
     expect(parseBankFormat({ unit: 'yen', era: 'nope' })).toEqual({ ...D, unit: 'yen' });
+  });
+});
+
+/**
+ * `formatScaled` —— **表示単位の整数**をそのまま書式化する。
+ *
+ * 円から行ごとに丸めると、書面の中で「純資産 = 総資産 − 負債合計」が
+ * 印刷した数字では成り立たない (実測 2026-09-06: 40 通りのうち 21 通り)。
+ * 丸めた後の値で計算した結果を書くための口で、`formatAmount` は
+ * 「円を丸めてから」これを呼ぶ (書式は 1 か所)。
+ */
+describe('formatScaled — 表示単位の整数を書式化する', () => {
+  const f = BANK_FORMAT_DEFAULT;
+
+  it('★ 単位変換をしない (6,001 は 6,001 千円として出る)', () => {
+    expect(formatScaled(6001, f)).toBe('6,001');
+    // 同じ数を円として渡すと 6 千円に潰れる = 単位変換の有無が観測できる
+    expect(formatAmount(6001, f)).toBe('6');
+  });
+
+  it('★ 3 桁区切りと負数の記号は formatAmount と同じ', () => {
+    expect(formatScaled(1_234_567, f)).toBe('1,234,567');
+    expect(formatScaled(-6001, f)).toBe('△6,001');
+    expect(formatScaled(-6001, { ...f, negative: 'solid' })).toBe('▲6,001');
+    expect(formatScaled(-6001, { ...f, negative: 'minus' })).toBe('-6,001');
+  });
+
+  it('★ 0 と -0 はどちらも「0」(Intl の「-0」を出さない)', () => {
+    expect(formatScaled(0, f)).toBe('0');
+    expect(formatScaled(-0, f)).toBe('0');
+  });
+
+  it('★ null / undefined / NaN / ±∞ は「―」', () => {
+    expect(formatScaled(null, f)).toBe(BLANK);
+    expect(formatScaled(undefined, f)).toBe(BLANK);
+    expect(formatScaled(Number.NaN, f)).toBe(BLANK);
+    expect(formatScaled(Number.POSITIVE_INFINITY, f)).toBe(BLANK);
+    expect(formatScaled(Number.NEGATIVE_INFINITY, f)).toBe(BLANK);
+  });
+
+  it('対照: 端数を持つ値はそのまま書く (ここでは丸めない — 丸めるのは scaleAmount)', () => {
+    // 呼び出し側が丸めた整数を渡す約束。小数が来たら Intl の既定 (整数へ丸め) に従う。
+    expect(formatScaled(6000.4, f)).toBe('6,000');
+  });
+
+  it('対照: formatAmount は「円 → 丸め → formatScaled」で通っている', () => {
+    for (const yen of [0, 1, 999, 1000, 1_499_999, -1_499_999, 12_345_678]) {
+      expect(formatAmount(yen, f), String(yen)).toBe(formatScaled(scaleAmount(yen, f), f));
+    }
   });
 });

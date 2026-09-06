@@ -158,10 +158,6 @@
    "econ-auction-theory-vickrey-milgrom"
   ],
   [
-   "econ-cobweb-model-agricultural-cycles",
-   "econ-cobweb-model-ezekiel-nerlove"
-  ],
-  [
    "econ-dual-economy-lewis",
    "econ-lewis-turning-point"
   ],
@@ -184,10 +180,6 @@
   [
    "econ-kaldor-verdoorn",
    "econ-kaldor-verdoorn-law"
-  ],
-  [
-   "econ-optimal-taxation-mirrlees",
-   "econ-optimal-taxation-theory"
   ],
   [
    "econ-prebisch-singer-hypothesis",
@@ -214,24 +206,12 @@
    "econ-solow-residual-total-factor-productivity"
   ],
   [
-   "econ-welfare-economics",
-   "econ-welfare-economics-pigou-kaldor-hicks"
-  ],
-  [
    "econ-welfare-economics-bergson-samuelson",
    "econ-welfare-theorems"
   ],
   [
    "human-affordance-theory",
    "infosoc-affordance-theory-gibson"
-  ],
-  [
-   "human-attachment-style-theory",
-   "human-attachment-theory-adult"
-  ],
-  [
-   "human-broaden-and-build-theory-fredrickson",
-   "mgmt-broaden-and-build-theory"
   ],
   [
    "human-cognitive-aging-fluid-crystallized",
@@ -290,16 +270,8 @@
    "mgmt-self-determination-theory-work"
   ],
   [
-   "human-self-efficacy-performance-bandura",
-   "human-self-efficacy-theory"
-  ],
-  [
    "human-stereotype-threat",
    "human-stereotype-threat-steele"
-  ],
-  [
-   "infosoc-agenda-setting",
-   "infosoc-agenda-setting-theory-digital"
   ],
   [
    "infosoc-algorithmic-accountability",
@@ -311,7 +283,7 @@
   ],
   [
    "infosoc-bricolage",
-   "mgmt-bricolage"
+   "mgmt-bricolage-entrepreneurship-baker"
   ],
   [
    "infosoc-cultivation-theory",
@@ -322,20 +294,12 @@
    "infosoc-digital-detox-syvertsen"
   ],
   [
-   "infosoc-digital-labor-fuchs",
-   "infosoc-digital-labor-scholz-casilli"
-  ],
-  [
    "infosoc-disinformation",
    "infosoc-misinformation-disinformation"
   ],
   [
    "infosoc-gig-economy-platform-labor",
    "infosoc-platform-labor-gig-economy"
-  ],
-  [
-   "infosoc-infrastructural-inversion-bowker",
-   "infosoc-infrastructural-inversion-bowker-star"
   ],
   [
    "infosoc-network-effects",
@@ -410,22 +374,6 @@
    "legal-trademark"
   ],
   [
-   "mgmt-absorptive-capacity-realization",
-   "mgmt-absorptive-capacity-theory"
-  ],
-  [
-   "mgmt-absorptive-capacity-realization",
-   "mgmt-absorptive-capacity-zahra"
-  ],
-  [
-   "mgmt-absorptive-capacity-reconceptualization",
-   "mgmt-absorptive-capacity-zahra"
-  ],
-  [
-   "mgmt-absorptive-capacity-theory",
-   "mgmt-absorptive-capacity-zahra"
-  ],
-  [
    "mgmt-escalation-of-commitment",
    "mgmt-escalation-of-commitment-theory"
   ],
@@ -460,10 +408,6 @@
   [
    "mgmt-regulatory-focus-theory-higgins",
    "mgmt-regulatory-focus-theory-work"
-  ],
-  [
-   "mgmt-stakeholder-salience-mitchell-agle",
-   "mgmt-stakeholder-salience-theory"
   ],
   [
    "mgmt-strategic-human-capital",
@@ -512,6 +456,54 @@
   [
    "bizlaw-liquidated-damages",
    "bizlaw-penalty-clause"
+  ],
+  [
+   "bizlaw-anchoring-litigation",
+   "human-anchoring-adjustment-tversky"
+  ],
+  [
+   "econ-capital-deepening",
+   "econ-long-run-aggregate-supply-solow-growth"
+  ],
+  [
+   "econ-commons-tragedy-hardin-ostrom",
+   "infosoc-open-source-governance-ostrom"
+  ],
+  [
+   "econ-microeconomic-foundations-general-equilibrium",
+   "econ-second-welfare-theorem"
+  ],
+  [
+   "econ-principal-agent-problem",
+   "mgmt-corporate-governance"
+  ],
+  [
+   "econ-ramsey-boiteux-pricing",
+   "econ-ramsey-optimal-taxation"
+  ],
+  [
+   "infosoc-media-multitasking",
+   "infosoc-the-shallows-carr"
+  ],
+  [
+   "mgmt-ambidexterity-tushman",
+   "mgmt-exploration-exploitation"
+  ],
+  [
+   "mgmt-asset-stock-accumulation-dierickx-cool",
+   "mgmt-strategic-factor-markets-barney"
+  ],
+  [
+   "econ-fiscal-federalism-oates",
+   "econ-tiebout-hypothesis-local-public-goods"
+  ],
+  [
+   "infosoc-data-justice",
+   "infosoc-datafication-mayer-schoenberger"
+  ],
+  [
+   "mgmt-strategic-factor-markets-barney",
+   "mgmt-vrio-framework-barney"
   ]
  ]
 }

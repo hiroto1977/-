@@ -3,37 +3,39 @@ collection: academic
 id: infosoc-sociomateriality
 category: "information-sociology"
 category_ja: "情報社会学"
-title: "ソシオマテリアリティ（Sociomateriality）"
-as_of: "2026-06"
-source_count: 2
+title: "ソシオマテリアリティ（オーリコウスキー）——社会的なものと物質的・技術的なものは実践のなかで構成的に絡み合い、独立の実体としては存在しないとする存在論的立場"
+as_of: "2026-09"
+source_count: 4
 authoritative: true
 tags:
   - collection/academic
   - academic/information-sociology
   - knowledge/verified
 aliases:
-  - "ソシオマテリアリティ（Sociomateriality）"
+  - "ソシオマテリアリティ（オーリコウスキー）——社会的なものと物質的・技術的なものは実践のなかで構成的に絡み合い、独立の実体としては存在しないとする存在論的立場"
 ---
 
-# ソシオマテリアリティ（Sociomateriality）
+# ソシオマテリアリティ（オーリコウスキー）——社会的なものと物質的・技術的なものは実践のなかで構成的に絡み合い、独立の実体としては存在しないとする存在論的立場
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-06 ・ 出典: 2件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-09 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-ソシオマテリアリティ（sociomateriality）とは、社会的なもの（the social）と物質的・技術的なもの（the material）が本質的に絡み合い（entangled）、相互に構成し合う（mutually constitutive）不可分の関係にあるとする存在論的立場であり、情報システム研究および組織研究における技術と組織の関係の理論化に根本的な転換をもたらした概念である。この概念を情報システム研究において体系的に定式化したのはワンダ・J・オーリコウスキー（Wanda J. Orlikowski）の2007年の論文「Sociomaterial Practices: Exploring Technology at Work」（Organization Studies, Vol.28, No.9, pp.1435-1448, DOI: 10.1177/0170840607081138）である。オーリコウスキーはカレン・バラド（Karen Barad）の行為的実在論（agential realism）およびアンドリュー・ピカリング（Andrew Pickering）の実践の交錯（mangle of practice）を理論的基盤として援用し、技術と人間の組織実践が事前に独立した実体として存在するのではなく、実践の遂行（performativity）を通じて相互に構成されることを主張した。Orlikowski and Scott (2008)「Sociomateriality: Challenging the Separation of Technology, Work and Organization」（Academy of Management Annals, Vol.2, No.1, pp.433-474, DOI: 10.1080/19416520802211644）は、情報システム研究における技術決定論（technological determinism）と社会構成主義（social constructivism）の二項対立を批判的に検討し、ソシオマテリアリティの存在論的基盤を精緻化した包括的レビュー論文である。彼女らは従来の研究が技術と社会を分析的に分離可能な独立実体として扱ってきた「分離の存在論」（ontology of separateness）を批判し、技術と社会が実践において不可分に絡み合う「構成的絡み合い」（constitutive entanglement）の存在論を提唱した。これに対し、Paul M. Leonardi (2013)「Theoretical foundations for the study of sociomateriality」（Information and Organization, Vol.23, No.2, pp.59-76, DOI: 10.1016/j.infoandorg.2013.02.002）は、オーリコウスキーの強い絡み合い（strong entanglement）の立場に対して、技術の物質性（materiality）と人間の行為主体性（human agency）を分析的に区別可能な独立した実体として維持しつつ、両者の相互作用の経験的分析を可能にする「弱いソシオマテリアリティ」（weak/critical realist sociomateriality）を対置し、imbrication（重ね合わせ）メタファーによる代替的理論化を提示した。
+ソシオマテリアリティ（sociomateriality）とは、社会的なものと物質的・技術的なものが本質的に絡み合い相互に構成し合う不可分の関係にあるとする存在論的立場で、ワンダ・オーリコウスキーが2007年の論文で情報システム研究と組織研究に体系的に定式化した。組織研究が物質性を無視するか自明視してきたと批判し、カレン・バラドの行為的実在論とアンドリュー・ピカリングの実践の交錯を援用して、人間も技術も関係のなかで遂行される以前に固有の性質を持つ実体としては存在しないという関係的存在論を採る。例に挙げる検索エンジンは、コードであると同時に無数の人々がページを作り検索語を入力して初めて機能する配置で、社会と技術のどちらにも還元できない。オーリコウスキーとスーザン・スコット（2008）は主要経営学誌の論文の九割以上が技術の役割を扱っていないと示し、技術と社会を分離可能な独立実体として扱う「分離の存在論」を批判し、「構成的な絡み合い」の存在論を精緻化した。ポール・レオナルディ（2013）は物質性と人間の行為主体性を区別したまま相互作用を分析する「弱い」ソシオマテリアリティ（重ね合わせ）を対置し、アクターネットワーク理論やアセンブラージュ論と接続する議論が続く。批判として、存在論的主張が経験的研究の方法へ翻訳しにくいこと、「すべては絡み合っている」では因果や責任の分析ができないこと、用語の乱立がある。中小企業には、業務システムの導入は道具の追加ではなく仕事のやり方と役割そのものの組み替えであり、システムと人の運用を切り分けて評価すると失敗の原因を見誤ることが含意となる。
 
 ## 提唱者・初出
-Wanda J. Orlikowski（Organization Studies 28(9), 2007, 概念定式化）／Orlikowski & Susan V. Scott（AMA Annals 2(1), 2008, 包括的レビュー）／Paul M. Leonardi（I&O 23(2), 2013, 弱いソシオマテリアリティ）
+ワンダ・オーリコウスキー（2007 定式化）／ワンダ・オーリコウスキー＆スーザン・スコット（2008 レビュー）／ポール・レオナルディ（2013 弱いソシオマテリアリティ）／カレン・バラド（行為的実在論）／アンドリュー・ピカリング（実践の交錯）
 
 ## 出典
-- [Orlikowski (2007) Sociomaterial Practices: Exploring Technology at Work — Organization Studies 28(9), pp.1435-1448](https://doi.org/10.1177/0170840607081138) `学術`
-- [Orlikowski & Scott (2008) Sociomateriality: Challenging the Separation of Technology, Work and Organization — AMA Annals 2(1), pp.433-474](https://doi.org/10.1080/19416520802211644) `学術`
+- [Orlikowski, W. J. (2007) Sociomaterial Practices: Exploring Technology at Work — Organization Studies 28(9), 1435–1448（原典）](https://doi.org/10.1177/0170840607081138) `学術`
+- [Orlikowski, W. J. & Scott, S. V. (2008) Sociomateriality: Challenging the Separation of Technology, Work and Organization — Academy of Management Annals 2(1), 433–474](https://doi.org/10.1080/19416520802211644) `学術`
+- [Leonardi, P. M. (2013) Theoretical Foundations for the Study of Sociomateriality — Information and Organization 23(2), 59–76](https://doi.org/10.1016/j.infoandorg.2013.02.002) `学術`
+- [Wikipedia: Sociomateriality — Orlikowski、構成的絡み合い、Leonardi の批判](https://en.wikipedia.org/wiki/Sociomateriality) `リファレンス`
 
 ## 関連概念
-- [[mgmt-sociomaterial-assemblage|社会物質的アセンブラージュ論]] — 同じ思想家
-- [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 同じ思想家
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
-- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
+- [[infosoc-technological-frames-orlikowski|技術フレーム——オーリコウスキーとガッシュの情報技術に関する認知的枠組み分析]] — 同じ思想家
+- [[infosoc-technological-mediation-theory|技術的媒介理論（ポスト現象学）]] — 同分野の近傍
+- [[infosoc-prosumption-theory|プロシューマー理論]] — 同分野の近傍
+- [[infosoc-affective-computing-picard|アフェクティブコンピューティング——ピカードの感情認識AI論と機械が感情を扱う倫理的課題]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

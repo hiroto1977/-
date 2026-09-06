@@ -26,7 +26,7 @@ aliases:
 アーサー・ピグー ／ アルフレッド・マーシャル ／ ロナルド・コース ／ ウィリアム・ボーモル
 
 ## 出典
-- [Pigou, A.C. (1920) The Economics of Welfare — Macmillan (WorldCat)](https://www.worldcat.org/oclc/156968) `学術`
+- [Pigou, A.C. (1920) The Economics of Welfare — Macmillan (WorldCat)](https://www.worldcat.org/oclc/156968) `リファレンス`
 - [Wikipedia: Pigouvian tax — externality, private vs social cost, internalization, carbon tax, vs Coase](https://en.wikipedia.org/wiki/Pigouvian_tax) `リファレンス`
 
 ## 関連概念

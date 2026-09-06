@@ -8,6 +8,7 @@ import {
   INTERIM_TIER3,
   LOCAL_RATIO,
   MAX_RATE,
+  MIN_NATIONAL_SHARE,
   NATIONAL_SHARE,
   breakEvenRate,
   interimBandLabel,
@@ -621,5 +622,74 @@ describe('台帳から渡す法定値 (ScheduleParams)', () => {
     expect(s.settlement.amount).toBe(s.annual.total);
     expect(s.breakEven).toBeNull();
     expect(s.sweep.every((row) => row.settlement.interimTotal === 0)).toBe(true);
+  });
+});
+
+// --- 割る値の下限 -------------------------------------------------------
+//
+// `localRatioOf` は地方消費税の比を `(1 − 割合) ÷ 割合` で作る。**割合が 0 なら
+// Infinity** で、`calcAnnualTax` の local / total を通って税ページに「¥Infinity」が
+// 出る (`jpy()` は非有限値を弾かない)。2026-09-06 の走査では、台帳の 145 件を
+// 端 (min / max) に振って計算の入口へ流したときに非有限値になりうる引数は
+// **これ 1 つだけ**だった。守っていたのは台帳の `min: 0.01` という**リテラル 1 個**で、
+// なぜ 0.01 なのかはどこにも書かれていなかった (下限を 1 行下げれば画面が壊れる)。
+// 下限を定数にして台帳が参照し、割る側にも丸めを置いた。
+describe('MIN_NATIONAL_SHARE — 割る値の下限', () => {
+  it('台帳の下限がこの定数で、0 より大きい', async () => {
+    const { PARAMETER_BY_ID } = await import('../parameters');
+    const def = PARAMETER_BY_ID.get('consumptionSchedule.nationalShare')!;
+    expect(def.min).toBe(MIN_NATIONAL_SHARE);
+    expect(def.min).toBeGreaterThan(0);
+  });
+
+  it('0・負値・非有限値でも比は有限 (下限として扱う)', () => {
+    const atFloor = localRatioOf(MIN_NATIONAL_SHARE);
+    expect(Number.isFinite(atFloor)).toBe(true);
+    // 非有限値 (NaN・±∞) も下限扱い —— 「割合が読めない」ときに 0 で割らせない。
+    for (const bad of [0, -1, -0.5, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+      expect(localRatioOf(bad)).toBe(atFloor);
+    }
+    // 上側は 1 に丸めるので地方分なし (100% が国税)。
+    expect(localRatioOf(2)).toBe(0);
+  });
+
+  it('法律の値は素通りする (丸めが結果を動かさない)', () => {
+    expect(localRatioOf(NATIONAL_SHARE)).toBe(LOCAL_RATIO);
+    expect(localRatioOf(0.8)).toBe(0.25);
+    expect(localRatioOf(1)).toBe(0);
+  });
+
+  it('台帳の値を端に振っても年税額に非有限値が出ない', async () => {
+    const { PARAMETER_BY_ID, DEFAULT_PARAMETER_VALUES, scheduleParams } = await import('../parameters');
+    const ids = [
+      'consumptionSchedule.nationalShare',
+      'consumptionSchedule.interimTier1',
+      'consumptionSchedule.interimTier2',
+      'consumptionSchedule.interimTier3',
+      'consumptionBusiness.twentyPercentRate',
+    ] as const;
+    const nonFinite: string[] = [];
+    for (const id of ids) {
+      const def = PARAMETER_BY_ID.get(id)!;
+      for (const at of [def.min, def.max, def.defaultValue]) {
+        const p = scheduleParams({ ...DEFAULT_PARAMETER_VALUES, [id]: at });
+        for (const rate of [0, 0.08, 0.1, MAX_RATE]) {
+          const tax = calcAnnualTax(individual(), rate, p);
+          for (const [k, v] of Object.entries(tax)) {
+            if (typeof v === 'number' && !Number.isFinite(v)) nonFinite.push(`${id}=${at} rate=${rate} ${k}=${v}`);
+          }
+          const plan = planInterim(individual({ priorNationalTax: 6_000_000 }), p);
+          for (const [k, v] of Object.entries(plan)) {
+            if (typeof v === 'number' && !Number.isFinite(v)) nonFinite.push(`${id}=${at} 中間 ${k}=${v}`);
+          }
+          for (const pay of plan.payments) {
+            for (const [k, v] of Object.entries(pay)) {
+              if (typeof v === 'number' && !Number.isFinite(v)) nonFinite.push(`${id}=${at} 中間の各回 ${k}=${v}`);
+            }
+          }
+        }
+      }
+    }
+    expect(nonFinite, '端の値で非有限になる欄は無いこと (画面に ¥NaN / ¥Infinity が出る)').toEqual([]);
   });
 });

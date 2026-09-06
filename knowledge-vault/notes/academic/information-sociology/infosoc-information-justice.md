@@ -27,7 +27,7 @@ Alistair S. Duff／Safiya Umoja Noble／Virginia Eubanks／Tressie McMillan Cott
 
 ## 出典
 - [Duff (2011) The Rawls-Tawney theorem and the digital divide in postindustrial society, JASIST 62(3):604-612](https://doi.org/10.1002/asi.21470) `学術`
-- [Noble (2018) Algorithms of Oppression: How Search Engines Reinforce Racism, NYU Press](https://nyupress.org/9781479837243/algorithms-of-oppression/) `リファレンス`
+- [Noble (2018) Algorithms of Oppression: How Search Engines Reinforce Racism, NYU Press](https://nyupress.org/9781479837243/algorithms-of-oppression/) `学術`
 - [Gordon (2019) Review of Eubanks (2018) Automating Inequality, Law Technology and Humans 1(1):162-164](https://lthj.qut.edu.au/article/view/1386) `学術`
 
 ## 関連概念

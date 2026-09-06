@@ -30,8 +30,8 @@ Feist Publications v. Rural Telephone Service Co.（499 U.S. 340 (1991)・米連
 - [Wikipedia, “Feist Publications, Inc. v. Rural Telephone Service Co.”（事実関係・9-0 O'Connor 意見・creativity/modicum・額に汗理論の排斥の概説）](https://en.wikipedia.org/wiki/Feist_Publications,_Inc._v._Rural_Telephone_Service_Co.) `リファレンス`
 
 ## 関連概念
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]
