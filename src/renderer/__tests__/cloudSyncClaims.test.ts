@@ -157,14 +157,109 @@ describe('クラウド同期: 送信路の有無と、画面の言い分が噛�
   /*
    * 通信の基本語がクラウド関連モジュールに 1 つも無いこと —— 「送っていない」
    * の根拠そのもの。ここが変わったら、上の台帳が働く。
+   *
+   * ## 2026-09-06: 語の一覧が、主張より狭かった
+   *
+   * 以前は `fetch( / XMLHttpRequest / sendBeacon / new WebSocket` の 4 語だけを
+   * 見ていた。**このアプリの renderer は `fetch` を使わずに送れる** ——
+   * `window.serviceHub` の呼び出しは main へ渡り、main が通信する
+   * (`CLAUDE.md`: 「`window.serviceHub` は main を呼ぶ唯一の手段」)。
+   * つまり**この repo で送信路が生えるとき最もありそうな形が見えていなかった**。
+   * ブラウザ版の `fetchViaProxy`、`EventSource`、`Image().src` のビーコン、
+   * リモートの動的 import、URL へ載せる画面遷移も同様。
+   *
+   * ## 走査する範囲も導出する
+   *
+   * 対象を 3 ファイル手書きしていたので、4 つ目のクラウド用モジュールを足した人は
+   * 何も鳴らないまま出荷できた (「何が全件かを表が自分で決めている」形)。
+   * `src/renderer` からパスに cloud を含む本番ファイルを集め、**床**を置く。
+   *
+   * ## どの語も、実際に当たることを標本で示す
+   *
+   * `not.toMatch` は綴りが 1 つ違えば黙る (`CLAUDE.md` の規則)。
+   * 下の「標本」で 1 語ずつ、当たるべき字面に当たることを確かめる。
    */
-  it.each([
-    'src/renderer/data/cloudSync.ts',
-    'src/renderer/data/cloudBackup.ts',
-    'src/renderer/components/CloudSyncPanel.tsx',
-  ])('%s に通信の基本語が無い', (rel) => {
-    const text = readFileSync(path.join(REPO_ROOT, rel), 'utf8');
-    const code = text.replace(/\/\*[\s\S]*?\*\//g, '');
-    expect(code).not.toMatch(/\bfetch\s*\(|XMLHttpRequest|sendBeacon|new WebSocket/);
+  const EGRESS_PRIMITIVES: { label: string; re: RegExp; sample: string }[] = [
+    { label: 'fetch', re: /\bfetch\s*\(/, sample: 'const r = await fetch(url);' },
+    { label: 'XMLHttpRequest', re: /XMLHttpRequest/, sample: 'const x = new XMLHttpRequest();' },
+    { label: 'sendBeacon', re: /sendBeacon/, sample: 'navigator.sendBeacon(url, body);' },
+    { label: 'WebSocket', re: /\bWebSocket\b/, sample: 'const w = new WebSocket(url);' },
+    { label: 'EventSource', re: /\bEventSource\b/, sample: 'const es = new EventSource(url);' },
+    { label: 'serviceHub (main へ渡す = main が通信する)', re: /\bserviceHub\b/, sample: 'await window.serviceHub.invoke(id, action, payload);' },
+    { label: 'プロキシ経由の送信 (ブラウザ版)', re: /fetchViaProxy/, sample: 'const r = await fetchViaProxy(url, init);' },
+    { label: '画像ビーコン', re: /new\s+Image\s*\(|createElement\(\s*['\"`]img/, sample: "new Image().src = url + '?d=' + data;" },
+    { label: 'リモートの動的 import', re: /import\s*\(\s*['\"`]https?:/, sample: "await import('https://cdn.example/x.js');" },
+    { label: 'URL へ載せる画面遷移', re: /location\.(href|assign|replace)\s*[=(]|window\.open\s*\(/, sample: 'location.href = url + data;' },
+  ];
+
+  /**
+   * 走査から外すファイルと理由 (**外すには理由が要る**)。
+   *
+   * 「パスに cloud を含む」で集めると、退避機能とは無関係な物が入る。
+   * 最初にこれを書いたとき `CloudflarePage.tsx` が引っかかって落ちた ——
+   * Cloudflare は連携先の SaaS で、その画面が `serviceHub` を呼ぶのは**正しい**。
+   * 除外は台帳にして、新しい cloud-something を足した人に**判断させる**
+   * (黙って広い正規表現で外すと、退避機能のモジュールも一緒に外れる)。
+   */
+  const NOT_THE_BACKUP_FEATURE: { file: string; why: string }[] = [
+    {
+      file: 'src/renderer/pages/CloudflarePage.tsx',
+      why: 'Cloudflare は連携先の SaaS。退避機能ではないので serviceHub を呼ぶのが正しい',
+    },
+    {
+      file: 'src/renderer/cloud/cloudProviderAdapter.ts',
+      why: '送信路が入るときの受け皿そのもの。ここは上の transportIsWired が双方向で見る',
+    },
+  ];
+
+  /** 退避機能のモジュール (対象を手書きせず、除外だけを台帳にする)。 */
+  function cloudModules(): { file: string; text: string }[] {
+    const excluded = new Set(NOT_THE_BACKUP_FEATURE.map((e) => e.file));
+    return productionFiles().filter((f) => /cloud/i.test(f.file) && !excluded.has(f.file));
+  }
+
+  it('除外の台帳は実在し、理由が書かれている (直したあとの置き忘れを残さない)', () => {
+    const all = new Set(productionFiles().map((f) => f.file));
+    for (const e of NOT_THE_BACKUP_FEATURE) {
+      expect(all.has(e.file), e.file).toBe(true);
+      expect(/cloud/i.test(e.file), e.file).toBe(true); // 走査対象になりうる物だけを外す
+      expect(e.why.trim().length, e.file).toBeGreaterThan(15);
+    }
+  });
+
+  it('走査するクラウド関連モジュールが床以上ある (走査の死を「違反なし」と読まない)', () => {
+    const files = cloudModules().map((f) => f.file);
+    expect(files.length, files.join(', ')).toBeGreaterThanOrEqual(3);
+    // 以前手書きしていた 3 本が確かに含まれている。
+    expect(files).toContain('src/renderer/data/cloudSync.ts');
+    expect(files).toContain('src/renderer/data/cloudBackup.ts');
+    expect(files).toContain('src/renderer/components/CloudSyncPanel.tsx');
+  });
+
+  it('★ クラウド関連モジュールに通信の基本語が 1 つも無い', () => {
+    const hits: string[] = [];
+    for (const { file, text } of cloudModules()) {
+      const code = text
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .split('\n')
+        .filter((l) => !l.trim().startsWith('//'))
+        .join('\n');
+      for (const p of EGRESS_PRIMITIVES) {
+        if (p.re.test(code)) hits.push(`${file}: ${p.label}`);
+      }
+    }
+    expect(hits).toEqual([]);
+  });
+
+  it('★ 標本: 通信の語はどれも、当たるべき字面に当たる (空の検査になっていない)', () => {
+    const blind = EGRESS_PRIMITIVES.filter((p) => !p.re.test(p.sample));
+    expect(blind.map((p) => p.label)).toEqual([]);
+    // 語の数そのものも留める (減らしたら鳴る)。
+    expect(EGRESS_PRIMITIVES).toHaveLength(10);
+  });
+
+  it('対照: 普通の文には当たらない (どれか 1 つでも当たると空振りの逆になる)', () => {
+    const innocuous = 'const total = items.reduce((a, b) => a + b.amount, 0); // 合計を出すだけ';
+    expect(EGRESS_PRIMITIVES.filter((p) => p.re.test(innocuous)).map((p) => p.label)).toEqual([]);
   });
 });

@@ -78,13 +78,35 @@ describe('仕分けの中身', () => {
     }
   });
 
+  /**
+   * 言い切りの禁止語。**綴りが 1 つ違えば黙る規則**なので、下の標本で
+   * 「実際にその文面へ当たる」ことを確かめる (`CLAUDE.md`: 不在を主張する
+   * 検査には標本を添える)。ここで止めたいのは、事案で変わることを
+   * 断定して読む人の判断を奪う書き方である。
+   */
+  const ASSERTIVE_WORDS = /必ず違法|絶対に/;
+
   it('caseByCase は断定せず、事案で変わる事実だけを書く', () => {
     for (const r of TRIAGE_ROWS) {
       if (!r.caseByCase) continue;
       expect(r.caseByCase.length, r.doc).toBeGreaterThan(30);
-      // 「必ず違法」「絶対に不可」のような言い切りを caseByCase に置かない
-      expect(r.caseByCase, r.doc).not.toMatch(/必ず違法|絶対に/);
+      expect(r.caseByCase, r.doc).not.toMatch(ASSERTIVE_WORDS);
     }
+  });
+
+  it('★ 標本: 言い切りの禁止語は、当たるべき文面に当たる (空の検査になっていない)', () => {
+    expect('他人のために業として作ると必ず違法になります').toMatch(ASSERTIVE_WORDS);
+    expect('絶対に自社では作れません').toMatch(ASSERTIVE_WORDS);
+    // 対照: 事案で変わると書いてある文には当たらない。
+    expect('報酬を得て業として行う場合は独占に触れうるため、事前に確認してください').not.toMatch(ASSERTIVE_WORDS);
+  });
+
+  it('この規則が拾えない言い回しを明記しておく (過信しないため)', () => {
+    // 「必ず不可」「一切認められない」などは同義だが**この規則では拾えない**。
+    // 語を増やすより、caseByCase を書くときに人が読むほうが確実なので、
+    // 拾えない例を検査に残して読み手に伝える (2026-09-06)。
+    expect('必ず不可です').not.toMatch(ASSERTIVE_WORDS);
+    expect('一切認められません').not.toMatch(ASSERTIVE_WORDS);
   });
 
   it('ownUse は 2 値のいずれか', () => {
