@@ -435,17 +435,38 @@ export interface BusinessTaxComparison {
 }
 
 /**
+ * どの方式が**選べるか**。3 方式のうち 2 つは条件付きなので、
+ * 「いちばん安い方式」を選ぶ前にここで外す。
+ *
+ * なぜ要るか (2026-09-06 実測): 画面は簡易課税の欄に
+ * 「基準期間 5,000 万円超は選択不可」と**自分で書いておきながら**、
+ * その欄に「· 最有利」の札を付け、税負担合計まで
+ * 「消費税は最有利方式（簡易課税）で合算」と言っていた ——
+ * **選べないと宣言した方式で合計を出していた**。同じ card の中で矛盾する。
+ *
+ * 省略時は両方 true (従来どおり全方式から選ぶ)。
+ */
+export interface MethodAvailability {
+  /** 簡易課税 (基準期間の課税売上高 5,000 万円以下 + 事前届出)。 */
+  readonly simplified?: boolean;
+  /** 2 割特例 (インボイス登録で免税から課税になった事業者の経過措置)。 */
+  readonly twentyPercent?: boolean;
+}
+
+/**
  * 本則・簡易・2割特例の納付税額を比較し、最も納付が少ない方式を返す。
  * 同値の場合は本則 → 簡易 → 2割特例 の順 (本則を優先) で確定する
  * (`<` は厳密比較; `<=` ではない)。
  *
  * @param segments 事業区分ごとの課税売上 (税率別・税抜)
  * @param purchases 本則課税で控除する課税仕入 (税率別・税抜) の合計
+ * @param available 選べる方式 (条件を満たさない方式は最有利の候補から外す)
  */
 export function compareBusinessTaxMethods(
   segments: readonly BusinessSegment[],
   purchases: AmountByRate,
   p: BusinessConsumptionParams = DEFAULT_BUSINESS_CONSUMPTION_PARAMS,
+  available: MethodAvailability = {},
 ): BusinessTaxComparison {
   const totalSales: AmountByRate = segments.reduce<AmountByRate>(
     (acc, seg) => ({
@@ -460,13 +481,14 @@ export function compareBusinessTaxMethods(
   const twentyPercent = calcTwentyPercentTax(totalSales, p);
   const appliedDeemedRate = weightedDeemedRate(segments, p.rates);
 
+  // 本則課税はいつでも選べる (届出も期限も無い) ので、比較の土台に置く。
   let best: ConsumptionTaxMethod = 'standard';
   let bestAmount = standard;
-  if (simplified < bestAmount) {
+  if (available.simplified !== false && simplified < bestAmount) {
     best = 'simplified';
     bestAmount = simplified;
   }
-  if (twentyPercent < bestAmount) {
+  if (available.twentyPercent !== false && twentyPercent < bestAmount) {
     best = 'twenty-percent';
     bestAmount = twentyPercent;
   }

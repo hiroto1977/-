@@ -313,14 +313,25 @@ function CorporateTaxCard({
   const ctSales = ctSalesParsed !== undefined && isFinite(ctSalesParsed) ? Math.max(0, ctSalesParsed) : Math.max(0, revenue);
   const ctPurchases = ctPurchasesParsed !== undefined && isFinite(ctPurchasesParsed) ? Math.max(0, ctPurchasesParsed) : Math.max(0, taxablePurchases);
 
+  const ctExempt = isTaxExempt(ctSales, businessConsumption?.exemptionThreshold);
+  const ctSimplifiedOk = canUseSimplified(ctSales, businessConsumption?.simplifiedEligibilityThreshold);
+  /*
+   * 2 割特例は「免税だった事業者がインボイス登録で課税になった」場合の経過措置。
+   * 登録の有無はアプリから見えないが、**免税の水準を超える売上なら元から免税では
+   * ない**ので対象になりえない。免税判定と同じ代理指標 (この画面が入力した課税
+   * 売上高) で外す —— 画面の注記も同じ代理で「基準期間（前々事業年度）も同水準なら」
+   * と書いている。
+   */
+  const ctTwentyPercentOk = ctExempt;
+  // 選べないと宣言した方式で「最有利」を決めない (それが 2026-09-06 の実測の穴)。
   const ct = compareBusinessTaxMethods(
     [{ type: ctBizType, sales: { standard: ctSales, reduced: 0 } }],
     { standard: ctPurchases, reduced: 0 },
     businessConsumption,
+    { simplified: ctSimplifiedOk, twentyPercent: ctTwentyPercentOk },
   );
-  const ctExempt = isTaxExempt(ctSales, businessConsumption?.exemptionThreshold);
-  const ctSimplifiedOk = canUseSimplified(ctSales, businessConsumption?.simplifiedEligibilityThreshold);
   const simplifiedLimit = businessConsumption?.simplifiedEligibilityThreshold ?? SIMPLIFIED_ELIGIBILITY_THRESHOLD;
+  const exemptionLimit = businessConsumption?.exemptionThreshold ?? EXEMPTION_THRESHOLD;
   const twentyPct = (businessConsumption?.twentyPercentRate ?? TWENTY_PERCENT_RATE) * 100;
   // 本則が還付見込み (負値) のときは合計に 0 として算入し、還付は注記で伝える。
   const ctBestPayable = Math.max(0, ct.bestAmount);
@@ -499,7 +510,7 @@ function CorporateTaxCard({
           {([
             ['standard', ct.standard, ct.standard < 0 ? '仕入超過 → 還付見込み' : '売上税額 − 仕入税額'],
             ['simplified', ct.simplified, `みなし仕入率 ${(ct.appliedDeemedRate * 100).toFixed(0)}%${ctSimplifiedOk ? '' : ` · 基準期間${yen.format(simplifiedLimit)}超は選択不可`}`],
-            ['twenty-percent', ct.twentyPercent, `売上税額 × ${Number(twentyPct.toPrecision(12))}%（インボイス登録の小規模事業者）`],
+            ['twenty-percent', ct.twentyPercent, `売上税額 × ${Number(twentyPct.toPrecision(12))}%（インボイス登録の小規模事業者）${ctTwentyPercentOk ? '' : ` · 課税売上高${yen.format(exemptionLimit)}超は対象外`}`],
           ] as const).map(([method, amount, sub]) => (
             <div
               key={method}
