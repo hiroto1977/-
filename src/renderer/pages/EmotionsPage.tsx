@@ -3,10 +3,9 @@ import { localIsoDate } from '../../shared/localDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
-import { analyzeProfile } from '../data/emotionInsights';
+import { analyzeProfile, type EmotionProfile } from '../data/emotionInsights';
 import { useParameters } from '../data/parameterOverrides';
 import { emotionThresholds } from '../../shared/parameters';
-import type { EmotionThresholds } from '../../shared/emotionThresholds';
 import { counsel } from '../data/counseling';
 import { SELF_CARE_LIBRARY } from '../data/selfCareLibrary';
 
@@ -128,15 +127,17 @@ function ScoreBar({ name, score }: { name: string; score: number }) {
 }
 
 /** 寄り添いカウンセリング — 縦断プロファイル + 危機検知つきの共感応答。 */
-function CounselingCard({ moods, analyses, draftNote, draftScore, thresholds }: {
+function CounselingCard({ moods, analyses, draftNote, draftScore, profile }: {
   moods: readonly MoodLog[];
   analyses: readonly Analysis[];
   draftNote: string;
   draftScore: number;
-  /** 見立てのしきい値 (台帳の値)。 */
-  thresholds: EmotionThresholds;
+  /**
+   * 縦断的な見立て。**画面で 1 度だけ作って配る** (平均を 2 か所で別々に出さない)。
+   * しきい値は作る側 (`EmotionsPage`) が渡すので、ここでは受け取らない。
+   */
+  profile: EmotionProfile;
 }) {
-  const profile = useMemo(() => analyzeProfile(moods, analyses, thresholds), [moods, analyses, thresholds]);
   // 応答の対象: 入力中のメモがあればそれ、なければ最新の気分メモ。
   const latestMood = moods[moods.length - 1];
   const note = draftNote.trim() || latestMood?.note || '';
@@ -219,6 +220,10 @@ export function EmotionsPage() {
   const { moods, analyses, keyConfigured } = data;
   const { values: params } = useParameters();
   const thresholds = useMemo(() => emotionThresholds(params), [params]);
+  // 縦断的な見立て (件数・平均・傾向) は 1 か所で作る。以前は StatusBar の
+  // 「平均 x.x/5」だけが画面の中で別に平均を出しており、同じ量に 2 つの出所が
+  // 在った (`analyzeProfile` は変異検査の対象、画面の中の算術は対象外)。
+  const profile = useMemo(() => analyzeProfile(moods, analyses, thresholds), [moods, analyses, thresholds]);
 
   // --- mood log
   const [moodScore, setMoodScore] = useState<number>(3);
@@ -266,11 +271,6 @@ export function EmotionsPage() {
     }
   };
 
-  const avgMood = useMemo(() => {
-    if (moods.length === 0) return null;
-    return moods.reduce((s, m) => s + m.score, 0) / moods.length;
-  }, [moods]);
-
   return (
     <div>
       <StatusBar
@@ -284,7 +284,9 @@ export function EmotionsPage() {
         who={
           <>
             気分ログ {moods.length} 件
-            {avgMood !== null ? ` · 平均 ${avgMood.toFixed(1)}/5` : ''} ·
+            {/* 平均は `analyzeProfile` の 1 か所から読む (同じ画面の縦断的な見立てと
+                同じ数字)。以前はここだけ画面の中で別に平均を出していた。 */}
+            {profile.count > 0 ? ` · 平均 ${profile.averageScore.toFixed(1)}/5` : ''} ·
             分析履歴 {analyses.length} 件
             {!keyConfigured ? (
               <span style={{ color: 'var(--warning)', marginLeft: 8, fontSize: 12 }}>
@@ -337,7 +339,13 @@ export function EmotionsPage() {
         </div>
       </Section>
 
-      <CounselingCard moods={moods} analyses={analyses} draftNote={moodNote} draftScore={moodScore} thresholds={thresholds} />
+      <CounselingCard
+        moods={moods}
+        analyses={analyses}
+        draftNote={moodNote}
+        draftScore={moodScore}
+        profile={profile}
+      />
 
       {moods.length > 0 ? (
         <Section title="過去 30 日のトレンド">

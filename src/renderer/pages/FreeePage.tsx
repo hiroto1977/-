@@ -1,4 +1,5 @@
 import { SNAPSHOT } from '../data/snapshot';
+import { summarizeAccounting } from '../data/accounting';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 
@@ -62,7 +63,9 @@ export function FreeePage() {
   );
   const live = data as FreeeSnapshot;
   const hasData = live.monthly.length > 0;
-  const totalNet = live.monthly.reduce((s, m) => s + m.net, 0);
+  // 営業CF の合計は `summarizeAccounting` の 1 か所から読む (経営サマリーの
+  // ランウェイ・キャッシュ予測が見ているのと同じ数字)。以前はここで別に数えていた。
+  const totalNet = summarizeAccounting(live.monthly)?.totalNet ?? 0;
 
   return (
     <div>

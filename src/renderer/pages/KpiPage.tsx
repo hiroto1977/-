@@ -296,10 +296,10 @@ function ActualsPanel() {
   const [error, setError] = useState<string>();
   const [importMonth, setImportMonth] = useState('');
 
-  const computedSummary = useMemo(() => {
-    const rows = records.map((r) => r.data);
-    return computeKpiMetrics(summarizeFundamentals(rows));
-  }, [records]);
+  // 実績の素の合計。**画面で数え直さない** —— 以前は「実績合計 売上高」の札だけが
+  // 別の `reduce` を持っており、同じ量に 2 つの出所が在った (2026-09-07)。
+  const fundamentals = useMemo(() => summarizeFundamentals(records.map((r) => r.data)), [records]);
+  const computedSummary = useMemo(() => computeKpiMetrics(fundamentals), [fundamentals]);
 
   // 手入力の上書きを重ねる。入力欄は App が全画面共通で描くので、ここは
   // 読んで適用するだけ。上書きが無ければ計算値がそのまま出る。
@@ -434,7 +434,7 @@ function ActualsPanel() {
       {records.length > 0 ? (
         <>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
-            <Tile label="実績合計 売上高" value={safeYen(summarizeRevenue(records))} />
+            <Tile label="実績合計 売上高" value={safeYen(fundamentals.revenue)} />
             <Tile label="損益分岐点 (BEP)" value={safeYen(summary.bep)} sub={`比率 ${pct(summary.bepRatio)}`} />
             <Tile label="安全余裕率" value={pct(summary.safetyMargin)} sub="高いほど安全" />
             <Tile label="限界利益率" value={pct(summary.contributionRatio)} />
@@ -475,10 +475,6 @@ function ActualsPanel() {
       )}
     </div>
   );
-}
-
-function summarizeRevenue(records: readonly { data: KpiActual }[]): number {
-  return records.reduce((acc, r) => acc + r.data.revenue, 0);
 }
 
 // --- Budget (予算) panel — drives 予算実績差異 (BVA) ----------------------

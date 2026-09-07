@@ -21,6 +21,41 @@
 `teikanType` も保存し、`pages/__tests__/docstudioImport.test.ts` が「合同会社で開き直せる」を
 留めた。対照: 保存を外すとその検査が落ちる。**残作業なし。**
 
+## 棚卸しを閉じた — `.tsx` の中の算術 22 件 (2026-09-07)
+
+「画面の中の算術は変異検査の外」を入口にした棚卸し (パス 28 の残作業) を最後まで
+やった。`.tsx` 101 件のうち `reduce()` か丸めを持つのは 22 件。判定は 4 つ:
+
+| 判定 | 件数 | 中身 |
+| --- | --- | --- |
+| **共有側が同じ量を持っていた (数え直し)** | 3 | `KpiPage` 実績合計 売上高 / `EmotionsPage` 平均 x.x/5 / `FreeePage` 営業CF合計 |
+| **共有側へ寄せた欠陥** (パス 28・30 で処置済) | 2 | `OverviewPage` の総資産回転率 / `DocstudioPage` の消費税 |
+| 表示の丸め・入力の丸め込み | 12 | `jpy()` / `Math.round` の整形、`GuardedNumber` の上限 (例: 不動産の保有年数は 1〜50 に丸め、**丸めた値を「NPV (10年)」と刷る**ので画面と計算が一致) |
+| その画面だけの合成 (共有側に対応が無い) | 5 | `FundingPage` の利息・節税額の合計、`BusinessPage` の不動産取得価格合計、`MutualFundsPage` の分配金合計、`StoragePage` / `LibraryPage` の容量合計、`ConnectorsPage` の手順数、`FinancialAnalysis` / `Charts` 系の描画座標 |
+
+**数え直しの 3 件を共有側へ寄せた。** どれも今日は同じ値を出すので、画面の数字は
+変わらない —— 直したのは**出所が 2 つ在ること**である。測られている側
+(`summarizeFundamentals` / `analyzeProfile` / `summarizeAccounting` はいずれも
+`mutate` に載っている) と、測られていない画面の中の写しが並んでいると、
+片方だけが変わった日に誰も気付けない。
+
+留め方は字面の名簿 (`pages/__tests__/oneNumberOneSource.test.ts`) —— 値で留めても
+**今日は同じ値なので対照が取れない**。名簿なら「数え直しを書き戻す」が対照になる
+(実際に `KpiPage` へ戻して 1 件鳴ることを確認した)。規則の正規表現が直す前の
+書き方に当たることも、同じ検査の中で標本として確かめている。
+
+### 疑って外れた — KPI の「実績合計 売上高」は上書きを無視していない
+
+`KpiPage` の札は生の合計、隣の BEP・安全余裕率は `applyManualOverrides` を通した
+`summary` から来る。**上書きした売上高がこの札にだけ効かない**形かと疑ったが、
+外れ。`KpiMetrics` に `revenue` は無く、`manualData.ts` の `kpi` カタログ にも
+売上高の項目は無い (置けるのは変動費・固定費・限界利益・営業利益・BEP 系)。
+つまり上書きできない量なので、食い違いようが無い。
+
+**気付けたのは型検査** —— `summary.revenue` と書いた瞬間に
+「Property 'revenue' does not exist on type 'KpiMetrics'」で止まった。
+思い込みを止めたのが対照ではなく型だった、という記録として残す。
+
 ## 見つけた欠陥 — 相手に渡す書面だけが、古い税率で刷られていた (2026-09-07・直した)
 
 `.tsx` の中の算術の棚卸し (前の項の残作業) を続けたところ、**書類スタジオで見つかった。**
@@ -164,10 +199,7 @@ assetTurnover: financialPosition && financialPosition.totalAssets > 0 && kpi.rev
 期を選別するようになったら不変条件の検査が先に鳴る。変異検査 100% (24)、
 理由つき pragma 1 個 (`?.` の到達不能な防御)。
 
-**残作業**: `.tsx` の中に算術を持つ残り 21 件は棚卸しをしていない。今回のような
-「1 つの数字に 2 つの出所」が他にもあるかは未確認 (`Charts` / `AxonometricCharts` /
-`RealtimeTicker` は描画座標なので優先度は低い。`KpiPage` の売上合計、`FreeePage` の
-純額合計、`SalesPage` / `MutualFundsPage` / `RealEstatePage` の表示丸めが次の候補)。
+**残作業 → 済 (2026-09-07)**: 22 件すべてを棚卸しした。内訳は下の節。
 
 ## 疑って外れた調査 — 「sw.js のように見えていない物」は他に無い (2026-09-07・実測で閉じた)
 
