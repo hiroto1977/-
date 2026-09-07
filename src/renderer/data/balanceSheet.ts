@@ -283,6 +283,35 @@ function classifyNetAssetQuality(netAssets: number): NetAssetQuality {
  * BS から round 74 の精緻化指標を計算する。既存の computeBalanceSheetMetrics は
  * 変更せず、本関数で追加の深掘り分析を返す (加算的)。
  */
+/**
+ * **⚠ 2026-09-07 時点で production の呼び出しは 0 件。配線する前に下を読むこと。**
+ *
+ * この関数と `BalanceSheetInsights` の 10 欄は、**検査からしか呼ばれていない**
+ * (実測: production 0 件 / `__tests__/balanceSheet.test.ts` から 39 か所)。
+ * `balanceSheet.ts` は `stryker.config.json` の `mutate` に載っているので、
+ * ここの変異体は 100% の変異検査スコアに算入される —— **利用者が届かない範囲を
+ * 測って「守られている」ように見せている**状態で、無言の pragma と同じ形である。
+ * 消すか配線するかは仕様の判断なので、ここでは触っていない。
+ *
+ * ## 配線する人への申し送り —— 今のまま画面に出すと嘘になる欄がある
+ *
+ * `interestBearingDebt` は `BalanceSheet` の**任意**欄で、**入力欄がどの画面にも
+ * 無い** (実測: `src/renderer` に「有利子負債」の入力は 0 件。`kessanImport` が
+ * 読む口だけが在る)。下の `?? 0` は「未入力」を「借入なし」に畳むので、
+ * 現状のまま次の 3 欄を表示すると**どの利用者にも同じ、都合の良い答え**が出る:
+ *
+ * | 欄 | 入力が無いとき必ずこうなる | 読まれ方 |
+ * | --- | --- | --- |
+ * | `netDebt` | `0 − 現預金` = 負 | 実質無借金 |
+ * | `netCashPositive` | 常に `true` | 「借入より現預金が多い」 |
+ * | `substantiveInsolvencyRisk` | 常に `false` | 「実質債務超過の懸念なし」 |
+ * | `interestBearingDebtRatioPct` | 常に 0% | 「借入依存ゼロ」 |
+ *
+ * **未入力を 0 に倒さないこと。** 入力欄を足すか、`interestBearingDebt` が無いなら
+ * これらを `null` = 算定不能にしてから配線する (同じ規則の実例は
+ * `src/shared/balanceSheetFreshness.ts`「測れないときに『新しい』と言わない」と、
+ * `kpiActuals.ts` の安全余裕率)。
+ */
 export function computeBalanceSheetInsights(bs: BalanceSheet): BalanceSheetInsights {
   const base = computeBalanceSheetMetrics(bs);
   const interestBearingDebt = bs.interestBearingDebt ?? 0;
