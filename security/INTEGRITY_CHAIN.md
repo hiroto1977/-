@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 156
+- ブロック数: 157
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `e7983061ca3ecf071614949365aba2c060ba07720bca4565fa6f9a26f6d8bb85`
+- 末尾(tip)ハッシュ: `e84bab6459b71da0bf436111d1ab869919a7657aeeb5f4ee89bb45e6ed3ed419`
 - 保護対象: 66 ファイル
 
 ## ブロック
@@ -169,6 +169,7 @@
 | 153 | `f22f939447993c7a` | `efc501487f020d47` | `93584bb44ebbd8bd` | update pkceSession.ts |
 | 154 | `e9cecef70974c4fc` | `93584bb44ebbd8bd` | `372531b5494570e1` | update integrity-chain.cjs,localWrite.ts |
 | 155 | `6cefc543f6675d95` | `372531b5494570e1` | `e7983061ca3ecf07` | update ci.yml |
+| 156 | `50ac0c3c641e6c0a` | `e7983061ca3ecf07` | `e84bab6459b71da0` | update lockWorkspace.ts |
 
 ## 保護対象ファイル
 

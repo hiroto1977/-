@@ -12,6 +12,7 @@ import { usePlan } from '../plan/usePlan';
 import { getPlan } from '../../shared/plan';
 import { issueInviteCode } from '../plan/internalLicense';
 import { getVault, MIN_PASSWORD_LENGTH } from '../security/vault';
+import { lockEverywhere } from '../security/lockWorkspace';
 import { credentialUseOf, unusedStoredCredentials } from '../../shared/credentialUse';
 import { EVICTION_RECOVERY, isEvictableStorage } from '../../shared/storageDurability';
 import type { ServiceId } from '../../shared/serviceId';
@@ -297,7 +298,7 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
  *  spots out of sync). */
 const WIPE_CONFIRM_PHRASE = 'DELETE';
 
-function VaultControls({ onLocked }: { onLocked: () => void }) {
+function VaultControls() {
   const [oldPw, setOldPw] = useState('');
   const [newPw, setNewPw] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -361,9 +362,25 @@ function VaultControls({ onLocked }: { onLocked: () => void }) {
     }
   }
 
+  /*
+   * 施錠は `lockEverywhere` の仕事 —— **鍵を落とす行をここに書かない**。
+   *
+   * 直す前はこの中で `getVault().lock()` と `onLocked()` を並べており、
+   * `onLocked` は設定ページの局所状態を立てるだけだった。つまり
+   * **ロック画面は出ず**、他のページへ移れば見た目は解錠のまま。文面は
+   * 「席を離れる前に押すと…即座に遮断します」なのに、他のタブは生きた鍵を
+   * 持ったまま残った (2026-09-06 実測)。今は鍵を落とすのも画面を施錠表示に
+   * するのも他のタブへ伝えるのも `lockEverywhere` の中で 1 つ。
+   *
+   * 出す言葉は**保管庫に聞いてから**決める。押した事実ではなく
+   * 「施錠する鍵が有ったか」を報せる —— この行が施錠の代わりを務められない
+   * ようにするため。ブラウザ版では直後にロック画面へ差し替わるので、
+   * この文言が見えるのは保管庫を使わない版だけ。
+   */
   function lockNow() {
-    getVault().lock();
-    onLocked();
+    const hadKey = getVault().isUnlocked();
+    lockEverywhere();
+    setMsg(hadKey ? '施錠しました' : '保管庫は使用中ではありません (落とす鍵がありません)');
   }
 
   async function wipeEverything() {
@@ -417,6 +434,7 @@ function VaultControls({ onLocked }: { onLocked: () => void }) {
         <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 6 }}>Vault を今すぐロック</div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 10 }}>
           席を離れる前に押すと、保管している API キーへのアクセスを即座に遮断します。
+          同じ保管庫を開いている<strong>他のタブも施錠します</strong>。
           再度使うにはマスターパスワード入力が必要です。
         </div>
         <button type="button" onClick={lockNow} style={btn()}>
@@ -816,18 +834,15 @@ export function UnusedCredentialSection({ refreshKey }: { refreshKey: number }) 
 
 export function SettingsPage() {
   const [refreshKey, setRefreshKey] = useState(0);
-  const [locked, setLocked] = useState(false);
 
-  if (locked) {
-    return (
-      <div style={{ padding: 24 }}>
-        <div style={{ fontSize: 14, color: 'var(--text-mute)' }}>
-          Vault をロックしました。再開するにはページを再読み込みしてください。
-        </div>
-      </div>
-    );
-  }
-
+  /*
+   * 施錠したときの画面は**このページの持ち物ではない** ——
+   * `App` が購読して本物のロック画面へ差し替える。ここに局所の
+   * 「ロックしました」を持っていた頃は、それが**唯一の見た目の変化**で、
+   * サイドバーで他のページへ移れば解錠の見た目に戻っていた (2026-09-06 実測)。
+   * 「再開するにはページを再読み込みしてください」も要らなくなった ——
+   * ロック画面がそのまま解錠の入口になる。
+   */
   return (
     <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 20 }}>
       <StatusBar
@@ -896,7 +911,7 @@ export function SettingsPage() {
       </Section>
 
       <Section title="Vault 管理" count={3}>
-        <VaultControls onLocked={() => setLocked(true)} />
+        <VaultControls />
       </Section>
 
       <Section title="保存時の保護状態" count={1}>

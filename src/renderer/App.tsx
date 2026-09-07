@@ -9,7 +9,7 @@ import { pushRecent, toggleFavorite, keepKnown, RECENTS_MAX } from './recents';
 import { LockScreen } from './security/LockScreen';
 import { getVault } from './security/vault';
 import { startAutoLock } from './security/autoLock';
-import { lockWorkspace } from './security/lockWorkspace';
+import { lockWorkspace, startLockRelay, subscribeWorkspaceLocked } from './security/lockWorkspace';
 import { usePlan } from './plan/usePlan';
 import { VoiceCommandBar } from './components/VoiceCommandBar';
 import { ChatbotWidget } from './components/ChatbotWidget';
@@ -138,14 +138,37 @@ export function App() {
     };
   }, []);
 
+  /*
+   * 施錠されたら**必ず**ロック画面へ戻す。
+   *
+   * `vaultUnlocked` はマウント時に 1 度だけ読むので、購読が無いと
+   * 「鍵は落ちたのに画面は解錠のまま」が残る —— 2026-09-06 実測で、
+   * 設定ページの「Vault を今すぐロック」がまさにそれだった (ページ局所の
+   * 状態を立てるだけで、ロック画面は出ず、他のページへ移れば見た目は解錠)。
+   *
+   * 解錠状態に**依らず**登録する (`vaultUnlocked` を依存に入れない) ——
+   * 施錠済みのタブが他のタブからの要求を受け取っても害はなく、
+   * 逆に「登録される前に施錠が来る」窓を作らない。
+   * Electron ではロック画面を使わないので購読も中継もしない。
+   */
+  useEffect(() => {
+    if (!browserMode) return undefined;
+    const unsubscribe = subscribeWorkspaceLocked(() => setVaultUnlocked(false));
+    const stopRelay = startLockRelay();
+    return () => {
+      unsubscribe();
+      stopRelay();
+    };
+  }, [browserMode]);
+
   // Start auto-lock when entering unlocked state (browser mode only).
   useEffect(() => {
     if (!browserMode || !vaultUnlocked) return undefined;
-    const handle = startAutoLock({
-      // 鍵を落とすのと画面を施錠表示にするのは `lockWorkspace` の中で 1 つ。
-      // 並べて書くと鍵を落とす側だけ消えても全検査が緑のまま通る (実測)。
-      onLock: () => lockWorkspace(() => setVaultUnlocked(false)),
-    });
+    // 鍵を落とすのと画面を施錠表示にするのは `lockWorkspace` の中で 1 つ。
+    // 並べて書くと鍵を落とす側だけ消えても全検査が緑のまま通る (実測)。
+    // 自動施錠は**この文脈だけ**を施錠する —— hidden は「同じアプリの別の
+    // タブへ移った」時でもあるので、配ると使用中のタブを施錠してしまう。
+    const handle = startAutoLock({ onLock: lockWorkspace });
     return () => handle.dispose();
   }, [browserMode, vaultUnlocked]);
 

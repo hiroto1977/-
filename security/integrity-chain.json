@@ -1317,6 +1317,14 @@
       "leafCount": 66,
       "note": "update ci.yml",
       "hash": "e7983061ca3ecf071614949365aba2c060ba07720bca4565fa6f9a26f6d8bb85"
+    },
+    {
+      "index": 156,
+      "prevHash": "e7983061ca3ecf071614949365aba2c060ba07720bca4565fa6f9a26f6d8bb85",
+      "merkleRoot": "50ac0c3c641e6c0a3bf04ebadb09e87efa79ea29fbdd3cc20ffb563d3725841c",
+      "leafCount": 66,
+      "note": "update lockWorkspace.ts",
+      "hash": "e84bab6459b71da0bf436111d1ab869919a7657aeeb5f4ee89bb45e6ed3ed419"
     }
   ],
   "tipManifest": {
@@ -1364,7 +1372,7 @@
     "src/renderer/security/bip39-wordlist.ts": "158d4c3eed64474223aefe917c6497f4afd0200054efd089d9d0f323332d6761",
     "src/renderer/security/dataCrypto.ts": "33afebf4774cb7ace5a2e10a74778a44a0c7e8b070fde34ad5e62135b0ca7cd2",
     "src/renderer/security/frameGuard.ts": "66ad10cf7e5a48fcc4a406aa66b9de544609877944fd073c7bf3af8190991559",
-    "src/renderer/security/lockWorkspace.ts": "a6ebfe22324acc0a4cfd02a12262001d49c23963c02f03460bb9aefcd0e701c2",
+    "src/renderer/security/lockWorkspace.ts": "cedd033b97862b77da0c192b046be682a4f8dcd379ba7a5cd5be6ab48098ef28",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
     "src/renderer/security/vault.ts": "3f459397736801bbadd955a78ac6aa805bdef3ea7df9a817af98a481d33938ff",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",

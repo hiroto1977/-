@@ -1144,6 +1144,91 @@ async function vaultPasswordSuite(browser) {
 }
 
 /*
+ * **施錠は同じ保管庫を開いた他のタブへ届くか** —— 2 枚のタブを実機で開いて測る。
+ *
+ * 2026-09-06 の実測。設定ページの「Vault を今すぐロック」は
+ *
+ *   1. 施錠の門 (`src/renderer/security/lockWorkspace.ts`) を迂回して
+ *      鍵を直に落としており、
+ *   2. 見た目は**そのページの局所状態**を立てるだけで **ロック画面は出ず**、
+ *   3. 鍵は JS 文脈ごとなので **他のタブは生きた鍵を持ったまま**残った。
+ *
+ * 画面の文面は「**席を離れる前に**押すと…即座に遮断します」。つまり
+ * 席を離れた直後こそが空白で、隣のタブへ切り替えれば資格情報は全部読める
+ * (他のタブの自動施錠が落ちるのは hidden 5 分 / 放置 15 分の後)。
+ *
+ * 単体検査は BroadcastChannel を線の上で見ているが、**2 つの文書の間で
+ * 本当に届くかは実物でしか分からない** (`file://` は不透明オリジンなので、
+ * 届かない可能性が有った —— 実測では届く)。ここで見るのは 3 点:
+ *
+ *   - タブ A で押すと **A 自身がロック画面へ**差し替わる (局所の文言で済まさない)
+ *   - **タブ B もロック画面へ**差し替わる (押していないタブ)
+ *   - 対照: 施錠する前は **両方とも解錠**の見た目である
+ */
+async function crossTabLockSuite(browser) {
+  console.log('--- 施錠は他のタブにも届く (2 枚のタブ) ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const errs = [];
+
+  // ── タブ A: 初回セットアップまで ──
+  const a = await ctx.newPage();
+  collectErrors(a, errs);
+  await a.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await a.waitForSelector('text=はじめてのご利用', { timeout: 30000 });
+  const pwA = a.locator('input[type="password"]');
+  await pwA.nth(0).fill(PASS);
+  await pwA.nth(1).fill(PASS);
+  await a.getByRole('button', { name: 'パスワードを設定して開始' }).click();
+  await a.waitForSelector('input[type="checkbox"]', { timeout: 30000 });
+  await a.locator('input[type="checkbox"]').check();
+  await a.getByRole('button', { name: /記録完了/ }).click();
+  await a.waitForSelector('.sidebar', { timeout: 30000 });
+
+  // ── タブ B: 同じ保管庫を、同じパスワードで別に解錠する ──
+  const b = await ctx.newPage();
+  collectErrors(b, errs);
+  await b.goto(FILE, { waitUntil: 'domcontentloaded' });
+  await b.waitForSelector('text=ロック解除', { timeout: 30000 });
+  await b.locator('input[type="password"]').first().fill(PASS);
+  await b.getByRole('button', { name: 'ロック解除' }).click();
+  await b.waitForSelector('.sidebar', { timeout: 30000 });
+
+  const locked = async (page) => {
+    const t = await page.locator('body').innerText();
+    return /ロック解除/.test(t);
+  };
+
+  // ── 対照: 施錠する前は両方とも解錠の見た目 ──
+  ok((await locked(a)) === false, '対照: 施錠前のタブ A は解錠の見た目');
+  ok((await locked(b)) === false, '対照: 施錠前のタブ B は解錠の見た目');
+
+  // ── タブ A で「🔒 ロックする」を押す ──
+  await a.goto(FILE + '#settings', { waitUntil: 'domcontentloaded' });
+  await a.waitForSelector('text=Vault を今すぐロック', { timeout: 30000 });
+  await a.getByRole('button', { name: /ロックする/ }).click();
+
+  const aLocked = await a
+    .waitForFunction(() => /ロック解除/.test(document.body.textContent ?? ''), undefined, {
+      timeout: 15000,
+    })
+    .then(() => true)
+    .catch(() => false);
+  ok(aLocked, '★ 施錠: 押したタブ A がロック画面へ差し替わる (局所の文言で済ませない)');
+
+  const bLocked = await b
+    .waitForFunction(() => /ロック解除/.test(document.body.textContent ?? ''), undefined, {
+      timeout: 15000,
+    })
+    .then(() => true)
+    .catch(() => false);
+  ok(bLocked, '★ 施錠: 押していないタブ B もロック画面へ差し替わる (他のタブへ届く)');
+
+  ok(errs.length === 0, 'crossTabLock: ページエラー 0 (実際 ' + errs.length + ')');
+  if (errs.length > 0) errs.slice(0, 3).forEach((e) => console.log('     ' + e.slice(0, 160)));
+  await ctx.close();
+}
+
+/*
  * 保管領域が「消えうる」ことを、実機の画面が正しく名乗るか。
  *
  * ブラウザ版の保管庫は IndexedDB に在り、既定では best-effort の領域になる
@@ -2411,7 +2496,7 @@ async function parameterSuite(browser) {
   // 1 つも走らないまま「ALL E2E CHECKS PASSED」が出た —— 空振りを合格と読む穴。
   const SUITES = [
     'desktop', 'manualData', 'dataOrigin', 'credential', 'businessComparison', 'kessanTax', 'frameGuard', 'noBeacon',
-    'vaultPassword', 'credentialEgress', 'proxyEnvelope', 'cspEnforced', 'vaultOpacity', 'storageDurability',
+    'vaultPassword', 'credentialEgress', 'proxyEnvelope', 'cspEnforced', 'vaultOpacity', 'crossTabLock', 'storageDurability',
     'securityPosture', 'thirdPartyDisclosure', 'realtime', 'phone', 'talent', 'parameters', 'tablet',
   ];
   const unknown = only.filter((n) => !SUITES.includes(n));
@@ -2438,6 +2523,7 @@ async function parameterSuite(browser) {
   if (run('proxyEnvelope')) await proxyEnvelopeSuite(browser);
   if (run('cspEnforced')) await cspEnforcedSuite(browser);
   if (run('vaultOpacity')) await vaultOpacitySuite(browser);
+  if (run('crossTabLock')) await crossTabLockSuite(browser);
   if (run('storageDurability')) await storageDurabilitySuite(browser);
   if (run('securityPosture')) await securityPostureSuite(browser);
   if (run('thirdPartyDisclosure')) await thirdPartyDisclosureSuite(browser);
