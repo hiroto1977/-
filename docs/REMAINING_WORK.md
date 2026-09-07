@@ -12397,3 +12397,20 @@ stale: monthsBehind > staleAfterMonths      // 古い側だけ
 **しきい値を片側の比較で書いたら、反対側も同じ害を持たないか必ず当たること。**
 パス 40 (「4 欄は直して 1 欄は残す」) と同じ形が、欄ではなく**符号**で起きた。
 `> しきい値` と書いた時点で `< -しきい値` が空いている。
+
+### パス 43 の後で回した横断走査 (**当たって問題なし** — 再訪不要)
+
+「符号つきの差を片側の比較だけで裁いている所」を `src/renderer/data` と `src/shared` に
+総当たりした。**他に 1 件も無い** —— 見つかった符号つきの差は全部が両側を持っていた:
+
+| 所 | 形 |
+| --- | --- |
+| `emotionInsights.ts` の気分の傾き | `> hysteresis` / `< -hysteresis` |
+| `financialTrend.ts` の営業利益率トレンド | `> 0.2` / `< -0.2` |
+| `kpiActuals.ts` の前月比 | `> 0.01` / `< -0.01` |
+| `stocksWatchlistWeb.ts` の売買シグナル | `> 1` / `< -1` |
+| `budgetVariance.ts` の good 判定 | 収益は `> 0`・費用は `< 0` (種別で向きを変える) |
+| `managementScorecard.ts` の偏差 | `higherIsBetter` で向きを変える |
+| `bankSubmission.ts` の `periodScopeNote` | 一致 / 期中 / 不一致 の 3 枝で全域 |
+
+`balanceSheetFreshness` だけが片側だった。
