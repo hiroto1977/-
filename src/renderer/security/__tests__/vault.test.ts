@@ -523,6 +523,96 @@ describe('Vault — recovery key derivation versioning (v1 domain separation)', 
     });
   }
 
+  /**
+   * **接頭辞は module レベルの `const` なので、読み直さないと変異体が届かない。**
+   *
+   * `RECOVERY_DERIVATION_PREFIX_V1` を `""` にする StringLiteral 変異体は、
+   * ファイル冒頭で import した `getVault` を使う検査では**素通りする**
+   * (Stryker の切替は実行時、定数はもう評価済み)。上の `downgradeToLegacyV0` は
+   * 接頭辞を字面で書いているので規則としては正しいが、静的変異体には鳴らない。
+   * 実測 (2026-09-07): この 1 個が生存していた。
+   *
+   * 接頭辞が落ちると **v0 と v1 の PBKDF2 入力が同一になり、版の分離が消える**。
+   * 加えて、既にある利用者の recovery blob は接頭辞つきで包まれているので、
+   * 落とした版では**復元合言葉が通らなくなる** (取り出せないデータになる)。
+   * `stryker.config.json` の方針どおり、pragma で黙らせずに読み直して留める。
+   */
+  it('★ 読み直した実装でも v1 の PBKDF2 入力は接頭辞つき (接頭辞を落とすと復号できない)', async () => {
+    vi.resetModules();
+    const mod = (await import('../vault')) as unknown as {
+      getVault: typeof getVault;
+      _resetVaultForTests: typeof _resetVaultForTests;
+    };
+    mod._resetVaultForTests();
+    const { normalizeMnemonic } = await import('../mnemonic');
+
+    const v = mod.getVault();
+    const { mnemonic } = await v.initialize('original-password-12345');
+    const meta = await readPersistedMeta();
+    expect(meta.recoveryVersion).toBe(1);
+
+    // 接頭辞は**この検査が字面で持つ**。実装が落とせば復号が失敗する。
+    const baseKey = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode('service-hub-bip39-recovery-v1:' + normalizeMnemonic(mnemonic)),
+      { name: 'PBKDF2' },
+      false,
+      ['deriveKey'],
+    );
+    const key = await crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: meta.recoverySalt as BufferSource, iterations: 600_000, hash: 'SHA-256' },
+      baseKey,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['decrypt'],
+    );
+    const masterRaw = new Uint8Array(
+      await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: meta.recoveryWrapIv as BufferSource },
+        key,
+        meta.recoveryWrappedKey as BufferSource,
+      ),
+    );
+    expect(masterRaw.byteLength).toBe(32);
+  });
+
+  it('対照: 接頭辞**なし** (v0 の入力) では同じ blob を復号できない — 版の分離が効いている', async () => {
+    vi.resetModules();
+    const mod = (await import('../vault')) as unknown as {
+      getVault: typeof getVault;
+      _resetVaultForTests: typeof _resetVaultForTests;
+    };
+    mod._resetVaultForTests();
+    const { normalizeMnemonic } = await import('../mnemonic');
+
+    const v = mod.getVault();
+    const { mnemonic } = await v.initialize('original-password-12345');
+    const meta = await readPersistedMeta();
+
+    const v0BaseKey = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(normalizeMnemonic(mnemonic)),
+      { name: 'PBKDF2' },
+      false,
+      ['deriveKey'],
+    );
+    const v0Key = await crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: meta.recoverySalt as BufferSource, iterations: 600_000, hash: 'SHA-256' },
+      v0BaseKey,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['decrypt'],
+    );
+    await expect(
+      crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: meta.recoveryWrapIv as BufferSource },
+        v0Key,
+        meta.recoveryWrappedKey as BufferSource,
+      ),
+    ).rejects.toThrow();
+  });
+
+
   it('legacy vault (recoveryVersion = undefined) still recovers via v0 derivation', async () => {
     // Initialize normally, then downgrade to the v0 (legacy) layout. This
     // simulates a vault created before PR#2 landed.

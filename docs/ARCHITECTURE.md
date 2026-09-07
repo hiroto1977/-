@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 29 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **11446** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11451** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 30 / 35 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 507 | 自己検証 |
+| `file:line` 参照数 | 515 | 自己検証 |
 
 ### 統合フロー図
 
@@ -516,6 +516,25 @@ error に倒すとファイル名と「開く」ボタンごと消え、出来�
 残る 93 個は `PRAGMA_BARE` に実測値で置き、双方向にした (増えても減っても落ちる)。
 総数には床 (400) を置いてある —— 形を取り違えて 0 件になると
 「理由の無い pragma は無い」で緑になるため。
+
+**消化を始めて分かったこと (2026-09-07・93 → 86)**: この 93 個の多くは module
+レベルの定数・表の上に載っていて、「静的だから構造的に殺せない」ように見える。
+**それは違う。** 壁の 2 か所で外して実測すると 6 個が生存したが、値そのものは
+**既に検査が字面で持っていた** —— `src/renderer/security/__tests__/autoLock.test.ts` は操作イベント 4 種を
+literal で並べており、`src/renderer/security/__tests__/vault.test.ts` は派生接頭辞を手で書いている。生きていた
+理由は「テストが無い」ではなく「**変異体が届いていない**」で、module レベルの
+`const` は import の時点で評価済みなので Stryker の実行時の切替が効かない。
+`stryker.config.json` の `_commentIgnoreStatic` に手順が書いてある通り
+`vi.resetModules()` + 動的 `import()` で読み直す検査を足したら 6 個とも落ち、
+pragma は 2 つ消えた (`src/renderer/security/vault.ts` 3 → 2 / `src/renderer/security/autoLock.ts` 1 → 0)。
+**静的な定数の上の無言 pragma を見たら、理由を書きに行く前にまず読み直して測る。**
+なお 5 個は規則側の見落としだった —— `src/renderer/network/proxy.ts` などは pragma の**直後**に
+段落で理由を書く形で、`barePragmasOf` が直前しか見ていなかった (直後 1 行も
+理由と認める規則を足した)。残りは **86 個 / 33 ファイル**。
+
+内訳で多いのは静的なスナップショット表を持つ main のクライアント
+(`src/main/clients/stocks.ts` 8 / `src/main/clients/business.ts` 6 / 出前館・投資信託・不動産・Uber Eats 各 5) で、
+上と同じ形の可能性が高い。
 
 残債は **36 ファイル / 46 箇所 / 5,189 行** で、`security/`・`network/`・`oauth/` に
 集中している (`src/renderer/security/vault.ts` 610 行 /

@@ -364,7 +364,6 @@ interface VaultMeta {
   recoveryVersion?: number;
 }
 
-// Stryker disable next-line StringLiteral
 const RECOVERY_DERIVATION_PREFIX_V1 = 'service-hub-bip39-recovery-v1:';
 
 interface EncryptedToken {

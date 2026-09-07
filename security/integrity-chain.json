@@ -1349,6 +1349,14 @@
       "leafCount": 66,
       "note": "update lockWorkspace.ts",
       "hash": "4fe9956bf0ba2aa0c5ce6289513a7f6328bc2b273b378e5e1370100b031e3c49"
+    },
+    {
+      "index": 160,
+      "prevHash": "4fe9956bf0ba2aa0c5ce6289513a7f6328bc2b273b378e5e1370100b031e3c49",
+      "merkleRoot": "0a37c64b7de8a45a14c1f9a3e35965d13d4a5822c0b5b3d1672a96dc794d5b9b",
+      "leafCount": 66,
+      "note": "update autoLock.ts,vault.ts",
+      "hash": "ae1c8f4d8e2dc52675c682a2f94579d6472f74afe6d8ccf24d22ca5b8c619520"
     }
   ],
   "tipManifest": {
@@ -1392,13 +1400,13 @@
     "src/renderer/oauth/pkce.ts": "ce9841741983b525c65f1ae7debd45c6ebd5cf516c9b7f5eea5218c4bc5d0681",
     "src/renderer/oauth/pkceSession.ts": "4d47589621512b9ec321e0a7db3553a9c87d32e9016d015ea51b9555bd5273a9",
     "src/renderer/security/LockScreen.tsx": "a05a31d56248d1c9b9cebad5d9bde1c0628f635b59d1787f8b843a5f993526f9",
-    "src/renderer/security/autoLock.ts": "ed7ffa56ef1c6068c4f66e5db06f91fc02b58a4fb348e8422ff9f28584769fff",
+    "src/renderer/security/autoLock.ts": "a868fe64d85384a698dfd2ba1c210e2b3bdf663edf2efa90c79d0c14be036156",
     "src/renderer/security/bip39-wordlist.ts": "158d4c3eed64474223aefe917c6497f4afd0200054efd089d9d0f323332d6761",
     "src/renderer/security/dataCrypto.ts": "33afebf4774cb7ace5a2e10a74778a44a0c7e8b070fde34ad5e62135b0ca7cd2",
     "src/renderer/security/frameGuard.ts": "66ad10cf7e5a48fcc4a406aa66b9de544609877944fd073c7bf3af8190991559",
     "src/renderer/security/lockWorkspace.ts": "b1e7210a61ed100c2bae43359482eaa696ad367f63a25ec463ab0ed44477aca7",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
-    "src/renderer/security/vault.ts": "459cff0d6830190d43d17fab268eb6b7278b27d78bbb6b5c24e057bc99bc73ac",
+    "src/renderer/security/vault.ts": "253867da8f9c5d984398756cd16bab02ac9b27caa555f3569e2c745b738e2c9a",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
     "src/shared/ai/chat.ts": "a90292c80854c9feb016141107710d8929179371119dcee830556191a274b80a",
     "src/shared/ai/credentials.ts": "69603ba457c124794e3e2c38f75eb35bc487e9766eab2d03bd53d035c885d85a",

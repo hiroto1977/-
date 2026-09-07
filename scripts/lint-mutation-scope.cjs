@@ -122,18 +122,35 @@ const MIN_PRAGMAS_SEEN = 400;
  * 行ごとに理由を書かせていないのは、ここに要るのが**判断ではなく実測**だから。
  * 個々の pragma になぜ理由が無いかは、その行を直す人が書く。台帳の役目は
  * 「今日いくつ在るか」を固定して、**黙って増えないようにする**ことだけである。
+ *
+ * ## 消化するときに最初に試すこと —— 「静的だから殺せない」を疑う
+ *
+ * この台帳の pragma は module レベルの定数・表・レジストリの上に多い。そこでは
+ * 変異体が**届かない**ので、検査を足しても生存し続ける —— 「構造的に殺せない」と
+ * 読みたくなる形である。**それは違う。**`stryker.config.json` の
+ * `_commentIgnoreStatic` に測った結論が置いてある: Stryker の切替は実行時に効くが
+ * 定数は import の時点で評価済みなので、**テスト側でモジュールを読み直せば
+ * (`vi.resetModules()` + 動的 `await import()`) 変異体は届き、字面の検査で落ちる**。
+ * `oauth.test.ts` の `freshConfigs` / `freshListen` が実例で、70.05% → 92.13% に
+ * 上がった。
+ *
+ * 2026-09-07 に vault の派生接頭辞と autoLock の操作イベント表で同じことをした。
+ * どちらも**値は既に字面の検査が持っていた**のに、静的なので鳴らなかった。
+ * 読み直す検査を足したら 6 個とも落ち、pragma は 2 つ消えた (3→2 / 1→0)。
+ * つまり**「テストが無いから」ではなく「届いていないから」生きていた** ——
+ * 理由を書きに行く前に、まず読み直して測ること。
  */
 const PRAGMA_BARE = {
   'src/main/clients/business.ts':                6,
-  'src/main/clients/demae-can.ts':               6,
+  'src/main/clients/demae-can.ts':               5,
   'src/main/clients/github.ts':                  2,
   'src/main/clients/home.ts':                    2,
   'src/main/clients/library.ts':                 2,
   'src/main/clients/linux.ts':                   1,
-  'src/main/clients/mutual-funds.ts':            6,
+  'src/main/clients/mutual-funds.ts':            5,
   'src/main/clients/ollama.ts':                  1,
   'src/main/clients/quality.ts':                 2,
-  'src/main/clients/real-estate.ts':             6,
+  'src/main/clients/real-estate.ts':             5,
   'src/main/clients/settings.ts':                2,
   'src/main/clients/shigyo.ts':                  2,
   'src/main/clients/shopify.ts':                 2,
@@ -141,7 +158,7 @@ const PRAGMA_BARE = {
   'src/main/clients/snapshotStub.ts':            1,
   'src/main/clients/stocks.ts':                  8,
   'src/main/clients/storage.ts':                 2,
-  'src/main/clients/uber-eats.ts':               6,
+  'src/main/clients/uber-eats.ts':               5,
   'src/main/oauth.ts':                           5,
   'src/renderer/data/cloudBackup.ts':            1,
   'src/renderer/data/emotionsWeb.ts':            1,
@@ -150,15 +167,17 @@ const PRAGMA_BARE = {
   'src/renderer/data/store.ts':                  2,
   'src/renderer/hooks/useServiceData.ts':        2,
   'src/renderer/library/library.ts':             1,
-  'src/renderer/network/proxy.ts':               4,
+  'src/renderer/network/proxy.ts':               3,
   'src/renderer/plan/internalLicense.ts':        1,
-  'src/renderer/security/autoLock.ts':           1,
   'src/renderer/security/mnemonic.ts':           1,
-  'src/renderer/security/vault.ts':              3,
+  'src/renderer/security/vault.ts':              2,
   'src/shared/funding.ts':                       2,
   'src/shared/httpLimits.ts':                    1,
   'src/shared/ollama.ts':                        3,
 };
+
+/** 台帳の合計。self-test の期待値をここから計算し、数字を 2 か所に置かない。 */
+const ledgerTotal = () => Object.values(PRAGMA_BARE).reduce((a, b) => a + b, 0);
 
 /**
  * **必ず変異検査に載せるファイル。**
@@ -418,14 +437,18 @@ const PRAGMA_RE = /^\s*(?:\/\/|\/\*)\s*Stryker\s+disable\s+(next-line\s+)?([A-Za
 /**
  * **理由がどこにも書かれていない pragma を返す。**
  *
- * 「理由がある」と見なすのは 3 つだけ:
+ * 「理由がある」と見なすのは 4 つだけ:
  *
  *  1. 同じ行に `: <理由>` が並記されている (契約どおりの形)
  *  2. 直前の非空行が説明文のコメントである (段落で説明してある既存の形)
- *  3. 同じ mutator の pragma が直前 `REASON_INHERIT_SPAN` 行以内に在り、
+ *  3. **直後の行が説明文のコメントである** —— 長い理由は pragma の下に段落で
+ *     書く形が実在し (`network/proxy.ts` の正規表現の等価性は 5 行かけて説明して
+ *     いる)、同じ行に押し込むより読みやすい。2026-09-07 の実測では 93 件のうち
+ *     5 件がこの形で、**規則の側が見落としていた**
+ *  4. 同じ mutator の pragma が直前 `REASON_INHERIT_SPAN` 行以内に在り、
  *     そちらに理由が有る (同じ理由を 2 度書かせない)
  *
- * 2 で「直前が Stryker 行なら理由にならない」ことに意味がある —— `restore` や
+ * 2 と 3 で「隣が Stryker 行なら理由にならない」ことに意味がある —— `restore` や
  * 別の `disable` を理由と読んでしまうと、**規則が自分自身で満たされる**。
  *
  * @returns {{line:number, ops:string}[]} 理由の無い pragma
@@ -434,6 +457,12 @@ function barePragmasOf(text) {
   const lines = text.split('\n');
   const bare = [];
   let lastReasoned = null;
+  /** その行が「説明文のコメント」か (Stryker の指示文は理由にならない)。 */
+  const prose = (line) => {
+    const t = (line ?? '').trim();
+    if (t === '' || /Stryker\s+(?:disable|restore)/.test(t)) return false;
+    return /^(?:\/\/|\*|\/\*)/.test(t) && t.replace(/^(?:\/\/|\*|\/\*)+\s*/, '').length >= 8;
+  };
   for (let i = 0; i < lines.length; i++) {
     const m = PRAGMA_RE.exec(lines[i]);
     if (m === null) continue;
@@ -445,12 +474,12 @@ function barePragmasOf(text) {
         const t = lines[j].trim();
         if (t === '') continue;
         if (/Stryker\s+(?:disable|restore)/.test(t)) break;
-        if (/^(?:\/\/|\*|\/\*)/.test(t) && t.replace(/^(?:\/\/|\*|\/\*)+\s*/, '').length >= 8) {
-          reasoned = true;
-        }
+        if (prose(lines[j])) reasoned = true;
         break;
       }
     }
+    // 直後に段落で書く形。長い理由はこちらのほうが読みやすい (冒頭の 3)。
+    if (!reasoned && prose(lines[i + 1])) reasoned = true;
     if (
       !reasoned &&
       lastReasoned !== null &&
@@ -717,7 +746,12 @@ function selfTest() {
       ['★ 直前が Stryker 行なら理由にならない', '// Stryker restore all\n// Stryker disable next-line all\nconst a = 1;', 1],
       ['pragma でないコメントは拾わない', '// Stryker の話をしている普通のコメント\nconst a = 1;', 0],
       ['空行は飛ばして説明文を探す', '// 到達しない防御。\n\n// Stryker disable next-line all\nconst a = 1;', 0],
-      ['★ 実物にも在る (標本 — 0 件になったら判定が壊れている)', null, 93],
+      // 標本 (判定が実物に当たること)。**期待値は台帳から計算する** ——
+      // ここに数字を書くと `PRAGMA_BARE` と同じ数が 2 か所に在ることになり、
+      // 直すたびに片方が腐る (2026-09-07 に実際に腐らせた: 台帳を 86 にしたら
+      // ここだけ 93 のままで self-test が落ちた)。走査そのものの生存は
+      // `MIN_PRAGMAS_SEEN` が別に見ているので、ここは一致だけを見ればよい。
+      ['★ 実物と台帳が一致する (判定が実物に当たっている)', null, ledgerTotal()],
     ];
     for (const [label, text, expected] of cases) {
       const n =

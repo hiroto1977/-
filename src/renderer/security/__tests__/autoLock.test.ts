@@ -458,3 +458,74 @@ describe('依存を注入しない既定経路', () => {
     handle.dispose();
   });
 });
+
+/**
+ * **モジュール読込時に決まる定数は、読み直さないと変異体が届かない。**
+ *
+ * `ACTIVITY_EVENTS` は module レベルの `const` なので、ファイル冒頭で import した
+ * `startAutoLock` を使う検査では、表を書き換える変異体 (`[]` / 要素を `""` に)
+ * が**素通りする** —— Stryker の切替は実行時に効くのに、定数はもう評価済みだから。
+ * 上の「操作イベント 4 種を登録する」は名前を字面で書いているので**規則としては
+ * 正しい**が、静的変異体に対しては鳴らない。実測 (2026-09-07): この 5 個
+ * (ArrayDeclaration 1 + StringLiteral 4) が生存していた。
+ *
+ * `stryker.config.json` の `_commentIgnoreStatic` が同じことを書いており、
+ * 結論も置いてある —— 「定数表・レジストリの類は『構造的に殺せない』のではなく、
+ * **読み直せば殺せる**。ignoreStatic はテストを書かない口実にはしない」。
+ * `oauth.test.ts` の `freshListen` と同じ形にする。
+ *
+ * だからここは pragma で黙らせるのではなく、読み直して字面で留める。
+ */
+describe('操作イベントの一覧 (読み直してから確かめる — 静的変異体)', () => {
+  async function freshAutoLock(): Promise<{
+    startAutoLock: typeof startAutoLock;
+    _resetAutoLockActiveForTests: typeof _resetAutoLockActiveForTests;
+  }> {
+    vi.resetModules();
+    const mod = (await import('../autoLock')) as unknown as {
+      startAutoLock: typeof startAutoLock;
+      _resetAutoLockActiveForTests: typeof _resetAutoLockActiveForTests;
+    };
+    mod._resetAutoLockActiveForTests();
+    return mod;
+  }
+
+  /** 読み直した実装が実際に付けたリスナーの (target, type) を集める。 */
+  async function registeredTypes(target: EventTarget): Promise<string[]> {
+    const mod = await freshAutoLock();
+    const seen: { target: EventTarget; type: string }[] = [];
+    const handle = mod.startAutoLock(
+      { onLock: vi.fn(), hiddenTimeoutMs: 300_000, idleTimeoutMs: 900_000 },
+      { ...stubDeps(), addListener: (t, type) => seen.push({ target: t, type }) },
+    );
+    handle.dispose();
+    return seen
+      .filter((l) => l.target === target)
+      .map((l) => l.type)
+      .sort();
+  }
+
+  it('★ window に付ける操作イベントは 4 種で、名前も字面で一致する', async () => {
+    expect(await registeredTypes(window)).toEqual([
+      'keydown',
+      'mousemove',
+      'pointerdown',
+      'touchstart',
+    ]);
+  });
+
+  it('★ document に付けるのは visibilitychange だけ (操作イベントを document へ移していない)', async () => {
+    expect(await registeredTypes(document)).toEqual(['visibilitychange']);
+  });
+
+  it('対照: 読み直した実装でも既定の待ち時間は元のまま (読み直し自体が壊していない)', async () => {
+    const mod = await freshAutoLock();
+    const calls: number[] = [];
+    const handle = mod.startAutoLock(
+      { onLock: vi.fn() },
+      { ...stubDeps(), setTimeoutFn: (_cb, ms) => (calls.push(ms), 0) },
+    );
+    expect(calls).toContain(15 * 60 * 1000);
+    handle.dispose();
+  });
+});

@@ -347,10 +347,47 @@ assetTurnover: financialPosition && financialPosition.totalAssets > 0 && kpi.rev
 (B) `httpLimits.ts` の無言 pragma に理由を足す → 台帳が古いと鳴る、
 (C) 理由つきの pragma を足す → 鳴らない (誤爆しない)。
 
-**残作業**: 93 個に理由を書いて減らすこと。危ない順は `src/renderer/security/vault.ts` 3 /
-`src/renderer/network/proxy.ts` 4 / `src/main/oauth.ts` 5 / `src/renderer/security/autoLock.ts` 1 /
-`src/renderer/security/mnemonic.ts` 1 (いずれも壁)。残りは主にスナップショット系の
-クライアント (`stocks.ts` 8 / `business.ts` 6 / 出前館・Uber Eats・投資信託・不動産 各 6)。
+**残作業**: 理由を書いて減らすこと。危ない順は `src/renderer/security/vault.ts` /
+`src/renderer/network/proxy.ts` / `src/main/oauth.ts` / `src/renderer/security/autoLock.ts` /
+`src/renderer/security/mnemonic.ts` (いずれも壁)。残りは主にスナップショット系の
+クライアント。
+
+### 消化を始めた (2026-09-07・93 → 86) — 「静的だから殺せない」は誤りだった
+
+壁の 2 つを先に当てた。`vault.ts` の派生接頭辞 `RECOVERY_DERIVATION_PREFIX_V1` と
+`autoLock.ts` の操作イベント表 `ACTIVITY_EVENTS`。pragma を外して実測すると **6 個が生存**
+(vault 1・autoLock 5)。ここで「やはり殺せない、理由を書いて閉じよう」と読みかけたが、
+**値そのものは既に検査が字面で持っていた** —— `autoLock.test.ts` は 4 つのイベント名を
+literal で並べており、`vault.test.ts` は接頭辞を手で書いている。つまり生きていた理由は
+**「テストが無い」ではなく「変異体が届いていない」**。module レベルの `const` は import の
+時点で評価済みなので、Stryker の実行時の切替が効かない。
+
+**答えはリポジトリが既に持っていた。** `stryker.config.json` の `_commentIgnoreStatic` に
+測った結論が書いてある: 「覆われた static 変異体を殺す方法は、テスト側でモジュールを
+読み直すこと (`vi.resetModules()` + 動的 `await import()`)。定数表・レジストリの類は
+『構造的に殺せない』のではなく**読み直せば殺せる**。ignoreStatic はテストを書かない
+口実にはしない」。実例も在った (`src/main/__tests__/oauth.test.ts` の `freshConfigs` /
+`freshListen`、70.05% → 92.13%)。**規則は書かれていたが、この 2 か所には適用されて
+いなかった。**
+
+読み直す検査を 5 本足した (autoLock 3・vault 2)。6 個とも落ち、pragma は**両方とも削除**
+した (`vault.ts` 3 → 2 / `autoLock.ts` 1 → 0)。接頭辞のほうは対照も置いた ——
+**接頭辞なし (v0 の入力) では同じ blob を復号できない**、つまり版の分離が実際に効いている
+ことを、成立側と不成立側の両方で留めてある。落ちると何が起きるかも記した:
+既存利用者の recovery blob は接頭辞つきで包まれているので、接頭辞が消えた版では
+**復元合言葉が通らなくなる**。
+
+**規則側の見落としも 1 つ直した**: `proxy.ts` などは pragma の**直後**に段落で理由を書く
+形で、`barePragmasOf` は直前 3 行しか見ていなかった。直後 1 行も理由と認めるようにして
+5 個を回収 (出前館・投資信託・不動産・Uber Eats 各 6→5、proxy 4→3)。
+
+**自分の誤り**: 自己検査の標本の期待値に `93` を直書きしており、台帳を 86 にした瞬間に
+落ちた —— 同じ数字を 2 か所に置いていた。台帳から計算する形に直し、対照 (検出器の
+正規表現を殺すと 0 件 vs 台帳 86 で鳴る) を回して確かめた。
+
+**残り 86 個 / 33 ファイル。** 次に当たる人へ: 静的な定数・表の上の無言 pragma は、
+**理由を書きに行く前にまず読み直して測る**。多いのは main のスナップショット表
+(`stocks.ts` 8 / `business.ts` 6 / 出前館・投資信託・不動産・Uber Eats 各 5)。
 
 ### 併せて直した — 設定ファイルの注記が、消した pragma を名指ししたまま残っていた
 
