@@ -64,6 +64,21 @@ export function fiscalYearWindow(fiscalYearEnd: string): { from: string; to: str
   return { from: `${fromYear}-${String(fromMonth).padStart(2, '0')}`, to: fiscalYearEnd };
 }
 
+/**
+ * 事業年度の月数。**「1 年分か」を判定する所が同じ数を読む。**
+ *
+ * 2026-09-07 まで `bankSubmission.ts` の `periodScopeNote` が `months === 12` と
+ * 直接書いており、`docImports.ts` の事業計画書は**月数を数えてすらいなかった**
+ * (下の `buildBusinessPlanImport` の経緯)。判定する所が増えるたびに数字を写すと、
+ * 片方だけ動いたときに 2 つの書類が「1 年分」の意味で食い違う。
+ *
+ * 関数にしてあるのは、module 直下の `const` が読み込み時に評価される静的な値になり、
+ * 変異検査の届かない場所へ出るため (`stryker.config.json` の `_commentIgnoreStatic`)。
+ */
+export function fiscalYearMonths(): number {
+  return 12;
+}
+
 /** `YYYY-MM` → 「2026年3月」。呼ぶ側が正規表現で確かめた期だけを渡す。 */
 export function monthLabel(period: string): string {
   const m = PERIOD_RE.exec(period)!;

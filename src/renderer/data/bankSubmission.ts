@@ -15,7 +15,7 @@ import { hasControlChar } from '../../shared/controlChars';
 // `fiscalYearWindow` は決算期から事業年度の 12 か月を出す唯一の実装 (計算書類の
 // 取り込みと書類の差込も同じ物を使う)。**写さずに読む。** kessanImport から
 // こちらへの辺は `import type` だけなので実行時の循環にはならない。
-import { fiscalYearWindow } from './kessanImport';
+import { fiscalYearMonths, fiscalYearWindow } from './kessanImport';
 import {
   BANK_FORMAT_DEFAULT,
   BLANK,
@@ -230,7 +230,7 @@ export function periodScopeNote(
   }
   const fyLabel = formatFiscalPeriod(fy.to, f);
   const fyRange = formatPeriodRange(fy.from, fy.to, f);
-  if (range.from === fy.from && range.to === fy.to && months === 12) return null;
+  if (range.from === fy.from && range.to === fy.to && months === fiscalYearMonths()) return null;
   if (range.from >= fy.from && range.to <= fy.to) {
     return `上の金額は${summed}の累計で、${fyLabel}（${fyRange}）の期中です。通年の金額ではありません。`;
   }

@@ -15,7 +15,7 @@ import type { BalanceSheet } from './balanceSheet';
 import type { KpiActual } from './kpiActuals';
 import type { SubmissionProfile } from './bankSubmission';
 import { PLAN_ITEMS, PLAN_MONTHS, planKey } from './cashPlan';
-import { PERIOD_RE, fiscalYearWindow, monthLabel } from './kessanImport';
+import { PERIOD_RE, fiscalYearMonths, fiscalYearWindow, monthLabel } from './kessanImport';
 
 export interface ImportRow {
   /** 書式の入力欄のキー。 */
@@ -132,7 +132,18 @@ export function buildBusinessPlanImport(input: BusinessPlanImportInput): ImportP
   const periods = selected.map((r) => r.period).sort();
   const range = `${monthLabel(periods[0]!)}〜${monthLabel(periods[periods.length - 1]!)}`;
   if (inFy.length === 0) {
-    notes.push(`決算期の 12 か月に KPI 実績が無い (または決算期が未設定) ため、入力済みの全期間 (${range}) を合算した。`);
+    notes.push(`決算期の ${fiscalYearMonths()} か月に KPI 実績が無い (または決算期が未設定) ため、入力済みの全期間 (${range}) を合算した。`);
+  }
+  // **月数を数える。** 「1年目 売上高」の欄に**通年でない合計**を置いていながら、
+  // 2026-09-07 まで注記は月数に一言も触れていなかった —— 事業年度のうち 3 か月しか
+  // 入力していない控えでは、1 年分 4,800 万円の会社が「1年目 売上高 1,200 万円」の
+  // 事業計画書を出す (75% 過少)。同じファイルの資金繰り表の取り込みは既に
+  // 「会計連携は N か月分」と数えており、金融機関へ渡す書面 (`bankSubmission.ts` の
+  // `periodScopeNote`) も月数を数える —— **数えていなかったのはここだけ**。
+  // 期ごとに事業が複数あるので、行数ではなく**期の異なり数**で数える。
+  const monthCount = new Set(selected.map((r) => r.period)).size;
+  if (monthCount !== fiscalYearMonths()) {
+    notes.push(`合算したのは ${monthCount} か月分 (${range}) で、${fiscalYearMonths()} か月の 1 年分ではない。1 年目の欄には通年の見込みを入れること。`);
   }
   const sum = (pick: (r: KpiActual) => number): number => selected.reduce((acc, r) => acc + pick(r), 0);
   const revenue = sum((r) => r.revenue);

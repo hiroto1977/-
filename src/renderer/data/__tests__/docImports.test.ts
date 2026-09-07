@@ -78,7 +78,7 @@ describe('buildCashPlanImport — 資金繰り表', () => {
 
 describe('buildBusinessPlanImport — 事業計画書', () => {
   const kpi = (period: string, revenue: number): KpiActual => ({ period, unit: '全社', revenue, cogs: revenue * 0.4, advertising: 10_000, sga: 100_000, depreciation: 5_000 });
-  it('会社名・代表者・作成日と、決算期の 12 か月の実績を 1 年目に置く', () => {
+  it('会社名・代表者・作成日と、決算期に入る実績を 1 年目に置く (この見本は端の 2 か月)', () => {
     const r = buildBusinessPlanImport({ kpiActuals: [kpi('2025-03', 9_999_999), kpi('2025-04', 1_000_000), kpi('2026-03', 2_000_000), kpi('2026-04', 5_555_555)], profile: PROFILE, today: '2026-09-04', existing: { y2sales: '30000000' } });
     expect(r.rows.map((x) => x.k)).toEqual(['company', 'rep', 'date', 'y1sales', 'y1profit']);
     expect(r.rows.slice(0, 3)).toEqual([
@@ -95,9 +95,66 @@ describe('buildBusinessPlanImport — 事業計画書', () => {
     expect(r.values.y1profit).toBe('1570000');
     expect(r.rows.find((x) => x.k === 'y1sales')?.source).toBe('KPI 実績 (2025年4月〜2026年3月)');
     expect(r.values.y2sales).toBe('30000000');
-    expect(r.notes).toEqual(['1 年目の売上高・経常利益は KPI 実績の実績値 (営業外損益は含まない)。計画の出発点として置いたので、計画値へ直すこと。2・3 年目は数字を作らない。']);
+    // ★ この見本は事業年度の**端の 2 か月** (2025-04 と 2026-03) しか入っていない。
+    // 最初と最後の月だけ見ると「2025年4月〜2026年3月」でちょうど 1 年に読めるので、
+    // 月数を数えた注記が出る (`periodScopeNote` が書き留めた罠と同じ形)。
+    expect(r.notes).toEqual([
+      '合算したのは 2 か月分 (2025年4月〜2026年3月) で、12 か月の 1 年分ではない。1 年目の欄には通年の見込みを入れること。',
+      '1 年目の売上高・経常利益は KPI 実績の実績値 (営業外損益は含まない)。計画の出発点として置いたので、計画値へ直すこと。2・3 年目は数字を作らない。',
+    ]);
     expect(r.skipped).toEqual([]);
     for (const row of r.rows) expect(fieldKeys('jigyo-keikaku')).toContain(row.k);
+  });
+
+  /**
+   * **「1年目 売上高」の欄に通年でない合計を置いていながら、月数に一言も触れていなかった。**
+   * 同じファイルの資金繰り表の取り込みは「会計連携は N か月分」と数え、金融機関へ渡す
+   * 書面 (`bankSubmission.ts` の `periodScopeNote`) も数える —— ここだけ数えていなかった。
+   */
+  it('★ 事業年度の 12 か月がそろっていれば、月数の注記は出ない', () => {
+    const months = ['2025-04', '2025-05', '2025-06', '2025-07', '2025-08', '2025-09',
+      '2025-10', '2025-11', '2025-12', '2026-01', '2026-02', '2026-03'];
+    const r = buildBusinessPlanImport({
+      kpiActuals: months.map((m) => kpi(m, 1_000_000)), profile: PROFILE, today: '2026-09-04', existing: {},
+    });
+    expect(r.values.y1sales).toBe('12000000');
+    expect(r.notes.some((n) => n.includes('1 年分ではない'))).toBe(false);
+    expect(r.notes).toHaveLength(1);
+  });
+
+  it('★ 事業年度のうち 3 か月しか無ければ、月数と「1 年分ではない」を述べる', () => {
+    const r = buildBusinessPlanImport({
+      kpiActuals: ['2025-04', '2025-05', '2025-06'].map((m) => kpi(m, 4_000_000)),
+      profile: PROFILE, today: '2026-09-04', existing: {},
+    });
+    // 通年なら 4,800 万円になる会社が、注記なしなら 1,200 万円の「1 年目」を出していた。
+    expect(r.values.y1sales).toBe('12000000');
+    const note = r.notes.find((n) => n.includes('1 年分ではない'));
+    expect(note).toContain('3 か月分');
+    expect(note).toContain('2025年4月〜2025年6月');
+    expect(note).toContain('12 か月');
+  });
+
+  it('★ 期ごとに事業が複数あっても、月数は期の異なり数で数える (行数ではない)', () => {
+    // 3 か月 × 2 事業 = 6 行。行数で数えると「6 か月分」と誤って述べる。
+    const rows = ['2025-04', '2025-05', '2025-06'].flatMap((m) => [
+      { ...kpi(m, 1_000_000), unit: 'A' },
+      { ...kpi(m, 1_000_000), unit: 'B' },
+    ]);
+    const r = buildBusinessPlanImport({ kpiActuals: rows, profile: PROFILE, today: '2026-09-04', existing: {} });
+    expect(r.notes.find((n) => n.includes('1 年分ではない'))).toContain('3 か月分');
+    // 金額のほうは全行の合算 (事業をまたいで足す) —— 数え方を取り違えていない対照。
+    expect(r.values.y1sales).toBe('6000000');
+  });
+
+  it('★ 決算期の外へ落ちたときも月数を述べる (2 つの注記が並ぶ)', () => {
+    const r = buildBusinessPlanImport({
+      kpiActuals: ['2024-01', '2024-02'].map((m) => kpi(m, 1_000_000)),
+      profile: PROFILE, today: '2026-09-04', existing: {},
+    });
+    expect(r.notes[0]).toContain('決算期の 12 か月に KPI 実績が無い');
+    expect(r.notes[1]).toContain('2 か月分');
+    expect(r.notes[1]).toContain('1 年分ではない');
   });
   it('決算期に実績が無ければ全期間を合算して注記。決算期が無くても同じ', () => {
     const r = buildBusinessPlanImport({ kpiActuals: [kpi('2024-01', 100), kpi('2024-02', 200)], profile: PROFILE, today: '2026-09-04', existing: {} });
