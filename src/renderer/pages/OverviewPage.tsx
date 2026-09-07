@@ -77,6 +77,7 @@ import {
   type ManualOverrideEntry,
 } from '../data/manualData';
 import { VERDICT_LABEL, buildManagementScorecard } from '../../shared/managementScorecard';
+import { scorecardMetrics } from '../data/overviewScorecard';
 import { buildManagementHighlights, summarizeHighlights, RISK_BAND_LABEL, type RiskBand } from '../data/managementHighlights';
 import { buildManagementReport } from '../data/managementReport';
 import { sparklinePoints } from '../data/sparkline';
@@ -702,29 +703,13 @@ export function OverviewPage() {
   );
   const overview = applied.overview;
 
-  // 経営スコアカード — KPI実績から収益性・安全性・成長性を集約 (データがある時のみ意味を持つ)。
-  const scorecard = useMemo(() => {
-    if (!overview.kpi.hasData) return buildManagementScorecard({});
-    const hasRevenue = overview.kpi.revenue > 0;
-    return buildManagementScorecard({
-      operatingMarginPct: hasRevenue ? overview.kpi.operatingMarginPct : undefined,
-      grossMarginPct: hasRevenue ? overview.kpi.grossMarginPct : undefined,
-      contributionRatioPct: hasRevenue ? overview.kpi.contributionRatio : undefined,
-      safetyMarginPct: overview.kpi.safetyMargin,
-      // 資金繰り: 会計連携CF + 現預金からランウェイを、会計CF×返済から DSCR を加点。
-      runwayMonths: overview.runwayMonths ?? undefined,
-      dscr: debtService?.overallDscr ?? undefined,
-      // 安全性: 貸借対照表を入力すると自己資本比率が加点される。
-      equityRatioPct: overview.financialPosition?.equityRatioPct ?? undefined,
-      // 成長性: 期 (YYYY-MM) が 2 つ以上揃うと前期比成長率が自動で加点される。
-      revenueGrowthPct: overview.kpi.revenueGrowthPct ?? undefined,
-      // 効率性: CCC と総資産回転率 (BS + 運転資金が揃うと加点)。
-      cashConversionDays: overview.workingCapital?.ccc ?? undefined,
-      assetTurnover: overview.financialPosition && overview.financialPosition.totalAssets > 0 && overview.kpi.revenue > 0
-        ? Math.round((overview.kpi.revenue / overview.financialPosition.totalAssets) * 100) / 100
-        : undefined,
-    });
-  }, [overview, debtService]);
+  // 経営スコアカード — 組み替えは `data/overviewScorecard.ts` が持つ。
+  // **画面の中に算術と条件を書かない** —— `.tsx` は変異検査の対象外なので、
+  // ここに書いた判断はずれても誰も気付けない (実際 1 件ずれていた。経緯は同モジュール)。
+  const scorecard = useMemo(
+    () => buildManagementScorecard(scorecardMetrics(overview, { overallDscr: debtService?.overallDscr })),
+    [overview, debtService],
+  );
 
   const highlights = useMemo(
     () => buildManagementHighlights(overview, { overallDscr: debtService?.overallDscr, thresholds }),

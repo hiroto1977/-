@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { axisBand, computeFinancialRatios, radarAxes, type FinancialInputs } from '../financialRatios';
+import { assetTurnoverRatio, axisBand, computeFinancialRatios, radarAxes, type FinancialInputs } from '../financialRatios';
 import { RADAR_AXIS_BANDS } from '../../../shared/financialHealthBands';
 
 const SAMPLE: FinancialInputs = {
@@ -307,5 +307,41 @@ describe('radarAxes — 台帳から渡す帯 (RadarBands)', () => {
       expect(moved.find((x) => x.key === a.key)!.score, a.key).toBe(100);
       expect(moved.filter((x) => x.key !== a.key), a.key).toEqual(base.filter((x) => x.key !== a.key));
     }
+  });
+});
+
+/*
+ * **総資産回転率は 1 か所だけが持つ。** (2026-09-07)
+ *
+ * デュポン分解の `dupontAssetTurnover` と経営スコアカードの効率性軸が同じ数字を
+ * 使う。2026-09-07 まで別々に書かれており、`OverviewPage.tsx` の中の写しは
+ * 「売上 0 なら算定不能」という**違う定義**を持っていた (実際は 0 倍で、最悪の値)。
+ * ここでは境目そのものを留める —— 算定不能は**総資産 0 のときだけ**。
+ */
+describe('assetTurnoverRatio — 算定不能は総資産 0 のときだけ', () => {
+  it('売上 0 は算定不能ではなく 0 倍', () => {
+    expect(assetTurnoverRatio(0, 5_000_000)).toBe(0);
+  });
+
+  it('総資産 0 は算定不能 (null)', () => {
+    expect(assetTurnoverRatio(5_000_000, 0)).toBeNull();
+  });
+
+  it('小数第 2 位まで丸める', () => {
+    expect(assetTurnoverRatio(7_500_000, 5_000_000)).toBe(1.5);
+    expect(assetTurnoverRatio(1_000_000, 3_000_000)).toBe(0.33);
+  });
+
+  it('売上マイナス (返品超過) も算定する — 隠さない', () => {
+    expect(assetTurnoverRatio(-1_000_000, 5_000_000)).toBe(-0.2);
+  });
+
+  it('★ デュポン分解が同じ算術を使っている (写しではない)', () => {
+    const ratios = computeFinancialRatios({
+      ...SAMPLE,
+      revenue: 7_500_000,
+      totalAssets: 5_000_000,
+    });
+    expect(ratios.dupontAssetTurnover).toBe(assetTurnoverRatio(7_500_000, 5_000_000));
   });
 });

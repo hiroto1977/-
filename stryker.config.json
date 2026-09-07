@@ -120,6 +120,7 @@
     "src/renderer/data/members.ts",
     "src/renderer/data/overview.ts",
     "src/renderer/data/overviewOverrides.ts",
+    "src/renderer/data/overviewScorecard.ts",
     "src/renderer/data/parameterOverrides.ts",
     "src/renderer/data/printDocument.ts",
     "src/renderer/data/profitSensitivity.ts",

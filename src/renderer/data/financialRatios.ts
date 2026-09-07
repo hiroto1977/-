@@ -90,6 +90,23 @@ function roundNullable(v: number | null, r: (n: number) => number): number | nul
   return v == null ? null : r(v);
 }
 
+/**
+ * **総資産回転率 (倍) —— この 1 か所だけが持つ。**
+ *
+ * `computeFinancialRatios` のデュポン分解と、経営スコアカードの効率性軸が
+ * 同じ数字を使う。2026-09-07 まで**別々に書かれていて**、`OverviewPage.tsx` の
+ * 中に `Math.round((revenue / totalAssets) * 100) / 100` が直に在った。
+ * 画面の中の算術は変異検査の対象外 (`mutate` に `.tsx` は 1 件も無い) なので、
+ * ずれても誰も気付けない位置だった。
+ *
+ * **算定不能は「総資産 0」のときだけ。** 売上 0 は算定不能ではなく **0 倍**で、
+ * それが最も悪い値である。ここを `revenue > 0` で切ると、スコアカードは
+ * 「最悪の場合だけ採点しない」形になる (実際そうなっていた)。
+ */
+export function assetTurnoverRatio(revenue: number, totalAssets: number): number | null {
+  return roundNullable(ratio(revenue, totalAssets), round2);
+}
+
 /** すべての指標を算出する。純粋。 */
 export function computeFinancialRatios(f: FinancialInputs): FinancialRatios {
   const ebitda = f.operatingProfit + f.depreciation;
@@ -156,7 +173,7 @@ export function computeFinancialRatios(f: FinancialInputs): FinancialRatios {
       round2,
     ),
     dupontNetMarginPct: roundNullable(pct(f.netProfit, f.revenue), round1),
-    dupontAssetTurnover: roundNullable(ratio(f.revenue, f.totalAssets), round2),
+    dupontAssetTurnover: assetTurnoverRatio(f.revenue, f.totalAssets),
     dupontEquityMultiplier: roundNullable(ratio(f.totalAssets, f.equity), round2),
   } as FinancialRatios;
 }
