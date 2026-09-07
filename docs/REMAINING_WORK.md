@@ -144,6 +144,22 @@ blob ストア (`library/library.ts`)** を当たったら同じ形だった。�
   Playwright で削除中に別タブの書き込みを重ねる必要があり、競合の再現が
   時間依存になる。単体では `deleteDatabase` を差し替えて枝を通している。
 
+- **「片方向しか見ていない台帳」を語で探すのは当たらない** (2026-09-07 実測・
+  **手法についての負の結果**)。パス 12 で見つけた形 (「守っている向きが逆」) を
+  機械的に探そうとして、`scripts/lint-*.cjs` / `verify-*.cjs` を
+  **「双方向」という語を含むか**で仕分けた。0 件だった門のうち候補 2 つを
+  実際に読むと、**どちらも逆向きを実装していた** ——
+  `lint-sample-data.cjs` の `BUNDLED_JSON` は注記に
+  「足し忘れ・消し忘れのどちらでも鳴る」、`EMAIL_ALLOW` は
+  「台帳 N 件はすべて**実物に在り**、理由がある」を出力する。
+  つまり語彙が違うだけで、振る舞いは在った。**語で数えたのは振る舞いではなく
+  語彙である** —— 前の項と同じ誤り。次に同じ形を探すなら、
+  **各門の出力行 (何を報告しているか) を読む**か、台帳の行を 1 つ消して
+  鳴るかを見る (対照) こと。残る候補 (`lint-mcp-servers` /
+  `lint-ipc-handlers` / `lint-rate-freshness` / `verify-graph` /
+  `verify-release-artifacts` / `lint-repo-size` / `lint-workflow-security` /
+  `lint-parameter-prose`) は**未確認**で、上の 2 件から一般化していない。
+
 - **バックアップの範囲 — 全面白。しかも既存の検査は私の考えた案より強かった**
   (2026-09-07 実測)。狙いは「`lint-storage-ledger.cjs` は保存先ごとに
   `backedUp` を持ち、`sensitive` かつ `backedUp: false` が **12 件**あるのに、
