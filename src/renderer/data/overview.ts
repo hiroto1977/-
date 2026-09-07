@@ -35,7 +35,7 @@ import { computeCashConversionCycle, type CashConversionCycle } from './workingC
 import { forecastCashBalance, type CashForecast } from './cashForecast';
 import { computeRevenueConcentration, type RevenueConcentration } from './revenueConcentration';
 import { computeTrendAlerts, type TrendAlerts } from './trendAlerts';
-import { summarizeAccounting, computeRunwayMonths, type AccountingMonthly, type AccountingSummary } from './accounting';
+import { summarizeAccounting, accountingRecency, computeRunwayMonths, type AccountingMonthly, type AccountingRecency, type AccountingSummary } from './accounting';
 import type { HydroponicsEconomics, LowPotassiumAssessment } from '../../shared/hydroponics';
 
 export interface OverviewInput {
@@ -179,6 +179,12 @@ export interface BusinessOverview {
    * 見ていないかを、所見と書面がここから述べる。** 詳細は `balanceSheet.ts`。
    */
   readonly balanceSheetFreshness: BalanceSheetFreshness | null;
+  /**
+   * 現預金の基準日と会計連携の最新月の隔たり。資金ランウェイと 12 か月の予測は
+   * この 2 つを割る (**別の出所・別の窓**) ので、隔たりを測って所見と書面が述べる。
+   * どちらかが無ければ null。
+   */
+  readonly accountingRecency: AccountingRecency | null;
   /** 運転資金 (CCC)。BS 未入力 or 売上が無いなら null。 */
   readonly workingCapital: CashConversionCycle | null;
   /** 会計連携の月次キャッシュフロー要約。未連携なら null。 */
@@ -277,6 +283,14 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
     },
     budget: computeBudgetVariance(input.kpiBudgets ?? [], input.kpiActuals),
     financialPosition: input.balanceSheet ? computeBalanceSheetMetrics(input.balanceSheet) : null,
+    // 会計連携と貸借対照表の**両方**が在るときだけ測れる (片方だけでは隔たりが無い)。
+    accountingRecency: accountingSummary && input.balanceSheet
+      ? accountingRecency(
+          input.balanceSheet.asOf,
+          accountingSummary.latestMonth,
+          input.balanceSheetStaleAfterMonths ?? BALANCE_SHEET_STALE_AFTER_MONTHS,
+        )
+      : null,
     balanceSheetFreshness: input.balanceSheet
       ? balanceSheetFreshness(
           input.balanceSheet.asOf,

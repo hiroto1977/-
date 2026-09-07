@@ -418,7 +418,14 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
     title: '6. 資金繰り・返済余力',
     caption: acc === null ? '会計ソフト連携（freee）の月次キャッシュフローが無いため算定していません。' : null,
     rows: [
-      row('営業キャッシュフロー（累計）', acc === null ? BLANK : amt(acc.totalNet), acc === null ? '' : `${acc.months}か月分`),
+      // **月数だけでなく、どの月かを書く。** §1 は対象期間、§4/§5 は基準日と隔たりを
+      // 書いているのに、§6 だけ「12 か月分」としか言わず、読む人はそれが今年の
+      // 12 か月なのか 3 年前の 12 か月なのか判らなかった (2026-09-07)。
+      row(
+        '営業キャッシュフロー（累計）',
+        acc === null ? BLANK : amt(acc.totalNet),
+        acc === null ? '' : `${formatPeriodRange(acc.firstMonth, acc.latestMonth, f)}・${acc.months}か月分`,
+      ),
       row('営業キャッシュフロー（月次平均）', acc === null ? BLANK : amt(acc.avgMonthlyNet)),
       row('資金ランウェイ', months(o.runwayMonths), '現預金 ÷ 月次の資金流出'),
       row('12か月後の予測残高', amt(lastForecast), '現預金に月次キャッシュフローを外挿'),

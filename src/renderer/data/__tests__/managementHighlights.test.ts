@@ -29,6 +29,7 @@ const mkOv = (p: any = {}): BusinessOverview => ({
   // `missingStocks` を明示する。
   workingCapital: 'wc' in p ? { missingStocks: [], ...p.wc } : null,
   accounting: 'accounting' in p ? p.accounting : null,
+  accountingRecency: 'recency' in p ? p.recency : null,
   runwayMonths: 'runwayMonths' in p ? p.runwayMonths : null,
   sales: { concentration: 'concentration' in p ? p.concentration : null },
   flags: { seatsFull: p.seatsFull ?? false },
@@ -611,5 +612,41 @@ describe('読み直して測る — リスク帯のラベルと既定しきい�
     for (let i = 1; i < order.length; i += 1) {
       expect(rank[order[i]!] >= rank[order[i - 1]!], order.join(',')).toBe(true);
     }
+  });
+});
+
+/**
+ * **ランウェイの両辺は別の出所・別の窓である。**
+ * 現預金は貸借対照表の基準日時点、月次平均営業CF は会計連携の窓。パス 35 の
+ * 基準日の検査は KPI 実績としか突き合わせないので、KPI を最新に保ったまま
+ * 会計連携が止まっていると何も鳴らず、「今年の現預金 ÷ 何年も前の資金流出」を
+ * critical の所見が断言していた (2026-09-07)。
+ */
+describe('会計連携の古さ (accountingRecency)', () => {
+  const stale = { latestAccountingMonth: '2024-06', cashAsOfMonth: '2026-08', monthsBehind: 26, stale: true, ahead: false };
+
+  it('★ 会計連携が基準日より古ければ、どの数字が別の時期かまで述べる', () => {
+    const h = buildManagementHighlights(mkOv({ recency: stale })).find((x) => x.message.includes('会計連携を同期'));
+    expect(h).toMatchObject({ severity: 'warning' });
+    expect(h?.message).toContain('2024年6月');
+    expect(h?.message).toContain('2026年8月');
+    expect(h?.message).toContain('26 か月古く');
+    expect(h?.message).toContain('資金ランウェイ');
+    expect(h?.message).toContain('会計連携を同期');
+  });
+
+  it('★ 対照: 古くなければ (stale=false) この所見は出ない', () => {
+    const fresh = { ...stale, monthsBehind: 0, stale: false };
+    const hs = buildManagementHighlights(mkOv({ recency: fresh }));
+    expect(hs.some((h) => h.message.includes('会計連携を同期'))).toBe(false);
+  });
+
+  it('★ 隔たりが測れなければ言わない (数字の無い文面を出さない)', () => {
+    const unknown = { latestAccountingMonth: null, cashAsOfMonth: '2026-08', monthsBehind: null, stale: true, ahead: false };
+    expect(buildManagementHighlights(mkOv({ recency: unknown })).some((h) => h.message.includes('会計連携を同期'))).toBe(false);
+  });
+
+  it('対照: 会計連携か貸借対照表が無ければ (recency=null) 何も言わない', () => {
+    expect(buildManagementHighlights(mkOv({ recency: null })).some((h) => h.message.includes('会計連携を同期'))).toBe(false);
   });
 });

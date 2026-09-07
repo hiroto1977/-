@@ -244,7 +244,7 @@ describe('buildBankSubmissionSheet — 各節の数値', () => {
     const m = buildBankSubmissionSheet(inputWith(overviewWith()));
     const s = section(m.sections, '6.');
     expect(value(s, '営業キャッシュフロー（累計）')).toBe('600');
-    expect(note(s, '営業キャッシュフロー（累計）')).toBe('2か月分');
+    expect(note(s, '営業キャッシュフロー（累計）')).toBe('令和8年3月〜令和8年4月・2か月分');
     expect(value(s, '営業キャッシュフロー（月次平均）')).toBe('300');
     expect(value(s, '返済余力（DSCR）')).toBe('3.00倍');
     expect(value(s, '最悪月の返済余力')).toBe('3.00倍');

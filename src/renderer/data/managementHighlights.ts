@@ -268,6 +268,19 @@ export function buildManagementHighlights(
       out.push({ severity: 'good', category: '資金繰り', message: '営業キャッシュフローは黒字基調です。' });
     }
   }
+  // **ランウェイの両辺は別の出所・別の窓である。** 現預金は貸借対照表の基準日時点、
+  // 月次平均営業CF は会計連携の窓。パス 35 の基準日の検査は KPI 実績としか
+  // 突き合わせないので、KPI を最新に保ったまま会計連携が止まっていると何も鳴らず、
+  // 「今年の現預金 ÷ 何年も前の資金流出」を下の critical が断言していた。
+  const ar = overview.accountingRecency;
+  // Stryker disable next-line ConditionalExpression: 月の非 null は型を狭めるためだけ (不変条件により到達不能)
+  if (ar?.stale === true && ar.monthsBehind !== null && ar.latestAccountingMonth !== null && ar.cashAsOfMonth !== null) {
+    out.push({
+      severity: 'warning',
+      category: '資金繰り',
+      message: `会計連携の最新月 (${monthText(ar.latestAccountingMonth)}) が貸借対照表の基準日 (${monthText(ar.cashAsOfMonth)}) より ${ar.monthsBehind} か月古く、資金ランウェイと 12 か月予測は別の時期の数字を割っています。会計連携を同期してください。`,
+    });
+  }
   if (overview.runwayMonths !== null) {
     if (overview.runwayMonths < 6) {
       out.push({ severity: 'critical', category: '資金繰り', message: `資金ランウェイが ${overview.runwayMonths} か月と短く、追加調達か支出抑制が急務です。` });
