@@ -311,6 +311,30 @@ assetTurnover: financialPosition && financialPosition.totalAssets > 0 && kpi.rev
 以後は退避 (`cp <gate> <backup>`) を取り、復元は退避から行う。
 **未コミットの物に `git checkout` を当ててはいけない。**
 
+### 続けて総当たりした結果 —— 他に「保存も表示もするが計算に入らない欄」は無い (2026-09-07・当たって問題なし)
+
+基準日の件は「保存し・画面に出し・書面に刷るのに、どの計算も読まない欄」という**類**なので、
+`collectionShapes.ts` の 20 collection が宣言する欄を総当たりして同じ形を探した。
+
+**まず道具を直した。** 最初の走査は `shape({ a: str, b: num })` のような**1 行の宣言しか
+拾えず**、複数行で書かれた collection (`balance-sheet` を含む) の欄を 1 つも見ていなかった
+—— 24 欄しか数えず「候補なし」と出た。行頭の空白を許すよう直すと **81 欄**になった。
+**走査が黙って飛ばした対象は「問題なし」ではない。** 基準日の件はこの走査では見つけられ
+なかったはずで、道具を疑わずに済ませていたら取り逃していた。
+
+81 欄を参照の少ない順に当たった結果、**残りはすべて正当**だった:
+
+| 欄 | なぜ参照が少ないか |
+| --- | --- |
+| `phone` / `firm` / `email` (士業の連絡先) | 連絡先そのもの。計算に入れる物ではない |
+| `monthlyRent` / `monthlyExpenses` / `monthlyLoan` / `occupied` (不動産) | 画面では `GuardedNumber` の入力欄で、算術は `investments.ts` → `src/shared/realEstateMetrics.ts` が持つ (画面の中に算術は無い) |
+| `navPerUnit` / `valuation` / `acquisitionCost` / `ytdReturnPct` (投資信託) | 同じく `investments.ts` が読む |
+| `valuationMode` (投資信託) | **配線済み** —— `investments.ts` が `h.valuationMode ?? 'auto'` で読み、評価額の出し方を分ける。過去に「画面側だけで補われていた」経緯もモジュールに記録済み |
+| `usableRatioPct` / `yieldRatePct` / `cropId` (水耕栽培) | `shared/hydroponics.ts` が設定ごと受け取って分解するので、欄名での参照が少なく見えるだけ |
+
+**再訪不要。** 次に同じ形を探すなら、走査の対象数を先に実測して「宣言されている欄の数と
+一致するか」を確かめること (24 と 81 の差がまさにそれだった)。
+
 ## 見つけた欠陥 — 貸借対照表の基準日がどの計算にも入っておらず、7 年古い BS が当月と同じ評価になった (2026-09-07・直した)
 
 `asOf` は保存も表示も印刷もされていた (画面の札・金融機関等提出用の書面のヘッダ
