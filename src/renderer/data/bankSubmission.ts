@@ -12,6 +12,10 @@
  * 分からなくなる。
  */
 import { hasControlChar } from '../../shared/controlChars';
+// `fiscalYearWindow` は決算期から事業年度の 12 か月を出す唯一の実装 (計算書類の
+// 取り込みと書類の差込も同じ物を使う)。**写さずに読む。** kessanImport から
+// こちらへの辺は `import type` だけなので実行時の循環にはならない。
+import { fiscalYearWindow } from './kessanImport';
 import {
   BANK_FORMAT_DEFAULT,
   BLANK,
@@ -157,11 +161,80 @@ export interface BankSubmissionInput {
 
 const TREND_LABEL: Readonly<Record<'up' | 'down' | 'flat', string>> = { up: '上昇', down: '下降', flat: '横ばい' };
 
+/**
+ * 読める期 (`YYYY-MM`) だけを昇順で返す。
+ *
+ * **綴りは 1 か所に置く。** 期の書式を 2 か所に書くと、片方を直したときに
+ * もう片方が黙って別の物を通す (対象期間と月数で判定が食い違う)。
+ */
+function validPeriods(periods: readonly string[]): string[] {
+  // 正規表現は**関数の中**に置く。module 直下の const にすると読み込み時に
+  // 1 度だけ評価される「静的な変異体」になり、変異検査が届かなくなる
+  // (実測 2026-09-07: 外へ出した途端に静的な生存が 17 → 24 に増えた)。
+  // 綴りを 1 か所に保ちつつ、測れる場所に置く。
+  return periods.filter((p) => /^\d{4}-(0[1-9]|1[0-2])$/.test(p)).sort();
+}
+
 /** KPI の期から対象期間 (最初と最後の月) を取る。読めない期は無視。 */
 export function periodRange(periods: readonly string[]): { from: string; to: string } | null {
-  const valid = periods.filter((p) => /^\d{4}-(0[1-9]|1[0-2])$/.test(p)).sort();
+  const valid = validPeriods(periods);
   if (valid.length === 0) return null;
   return { from: valid[0]!, to: valid[valid.length - 1]! };
+}
+
+/**
+ * **決算期と、実際に合算した対象期間の関係を 1 文で述べる。** 述べることが無ければ `null`。
+ *
+ * ## なぜ要るのか (2026-09-07 実測)
+ *
+ * 書面のヘッダは 決算期 (提出者情報で**利用者が打つ**) と 対象期間 (KPI 実績の期から
+ * 機械が出す) を並べて刷り、§1 は「対象期間の累計」を刷る。ところが両者を突き合わせる
+ * ものが無く、`OverviewPage` は `kpiRecords` の**全期**を `kpiPeriods` として渡していた。
+ *
+ * 実測 (決算期 2026-03・KPI 実績 2025-01〜2026-08 の 20 か月):
+ *
+ * | ヘッダ | 値 |
+ * | --- | --- |
+ * | 決算期 | 令和8年3月期 |
+ * | 対象期間 | 令和7年1月〜令和8年8月 |
+ * | §1 売上高 | **20,000 千円** (20 か月の累計) |
+ * | §1 の断り書き | **無し** |
+ *
+ * 事業年度 (2025-04〜2026-03) の売上高は 12,000 千円なので、**決算期の名前の下に
+ * 67% 過大な金額**が断り書き無しで並んでいた。同じ入力から `kessanImport` が作る
+ * 計算書類は事業年度で切り出して 12,000 千円にし、切り出せないときは理由を注記する ——
+ * **同じ資料から作った 2 つの書面が食い違い、注記が在るのは金融機関へ出さない方だけ**
+ * だった。
+ *
+ * ## 切り出さずに述べる理由
+ *
+ * 期中の試算表 (決算期は来年 3 月・対象期間は 4〜8 月) は**正当な使い方**なので、
+ * 事業年度で切り落とすと今度はそれが壊れる。書面が果たすべき責任は「どちらであるか」を
+ * 読む人に分からせることなので、金額は動かさず**関係を述べる**。
+ *
+ * 月数も数える —— 最初と最後の月だけで判定すると、事業年度の端の 2 か月しか入力が
+ * 無い場合に「ちょうど 1 年」と読めてしまう。
+ */
+export function periodScopeNote(
+  fiscalYearEnd: string,
+  periods: readonly string[],
+  f: BankFormat,
+): string | null {
+  const range = periodRange(periods);
+  if (range === null) return null;
+  const months = new Set(validPeriods(periods)).size;
+  const summed = `${formatPeriodRange(range.from, range.to, f)}・${months} か月`;
+  const fy = fiscalYearWindow(fiscalYearEnd);
+  if (fy === null) {
+    return `決算期が未設定のため、上の金額は入力済みの全期間（${summed}）の累計です。提出者情報で決算期を入れると事業年度との関係を示せます。`;
+  }
+  const fyLabel = formatFiscalPeriod(fy.to, f);
+  const fyRange = formatPeriodRange(fy.from, fy.to, f);
+  if (range.from === fy.from && range.to === fy.to && months === 12) return null;
+  if (range.from >= fy.from && range.to <= fy.to) {
+    return `上の金額は${summed}の累計で、${fyLabel}（${fyRange}）の期中です。通年の金額ではありません。`;
+  }
+  return `上の金額は${summed}の累計で、${fyLabel}（${fyRange}）の 12 か月とは一致しません。`;
 }
 
 const row = (label: string, value: string, note = ''): SheetRow => ({ label, value, note });
@@ -206,7 +279,7 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
 
   sections.push({
     title: '1. 損益の状況（対象期間の累計）',
-    caption: has ? null : 'KPI 実績が未入力のため算定していません。',
+    caption: has ? periodScopeNote(p.fiscalYearEnd, input.kpiPeriods, f) : 'KPI 実績が未入力のため算定していません。',
     rows: [
       row('売上高', kv(k.revenue), 'KPI 実績の合計'),
       row('売上総利益', kv(k.grossProfit), '売上高 − 売上原価'),

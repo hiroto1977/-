@@ -9,6 +9,7 @@ import {
   EMPTY_PROFILE,
   PROFILE_MAX_LENGTH,
   buildBankSubmissionSheet,
+  periodScopeNote,
   parseSubmissionProfile,
   periodRange,
   settingsFromRecord,
@@ -144,7 +145,9 @@ describe('buildBankSubmissionSheet — 各節の数値', () => {
     const o = overviewWith();
     const m = buildBankSubmissionSheet(inputWith(o));
     const s = section(m.sections, '1.');
-    expect(s.caption).toBeNull();
+    // この見本は決算期 2026-03 を宣言しつつ KPI 実績が 2026-04 の 1 か月だけなので、
+    // 2026-09-07 から**関係を述べる断り書き**が付く (それまでは無言だった)。
+    expect(s.caption).toBe('上の金額は令和8年4月・1 か月の累計で、令和8年3月期（令和7年4月〜令和8年3月）の 12 か月とは一致しません。');
     expect(value(s, '売上高')).toBe('12,345');
     expect(value(s, '売上総利益')).toBe('7,345');
     expect(value(s, '売上総利益率')).toBe('59.5%');
@@ -585,5 +588,124 @@ describe('書面の中で式が成り立つ (安全余裕率と損益分岐点�
     const s1 = sheetWithFixed(3_000_000); // BEP 5,000 千 < 売上 10,000 千
     expect(value(s1, '損益分岐点売上高')).toBe('5,000');
     expect(printedNum(value(s1, '安全余裕率'))).toBeGreaterThan(0);
+  });
+});
+
+/**
+ * **書面は、宣言した決算期と実際に合算した期間の関係を述べる。** (2026-09-07)
+ *
+ * ヘッダは 決算期 (利用者が打つ) と 対象期間 (KPI 実績から機械が出す) を並べて刷り、
+ * §1 は「対象期間の累計」を刷る。両者を突き合わせるものが無く、`OverviewPage` は
+ * `kpiRecords` の**全期**を渡していたので、決算期 2026-03 の名前の下に 20 か月分の
+ * 累計 (実測: 売上高 20,000 千円 / 事業年度は 12,000 千円 = **67% 過大**) が
+ * 断り書き無しで並んでいた。同じ入力から `kessanImport` が作る計算書類は事業年度で
+ * 切り出し、切り出せないときは注記する —— **注記が在るのは金融機関へ出さない方だけ**
+ * だった。
+ *
+ * 期中の試算表は正当な使い方なので**金額は切り落とさず、関係を述べる**。
+ */
+describe('決算期と対象期間の関係を述べる (periodScopeNote)', () => {
+  const F = BANK_FORMAT_DEFAULT;
+  const monthsFrom = (from: string, count: number): string[] => {
+    const out: string[] = [];
+    let [y, m] = from.split('-').map(Number) as [number, number];
+    for (let i = 0; i < count; i += 1) {
+      out.push(`${y}-${String(m).padStart(2, '0')}`);
+      m += 1;
+      if (m > 12) { m = 1; y += 1; }
+    }
+    return out;
+  };
+
+  it('★ 決算期どおりの 12 か月がちょうど揃っていれば述べることは無い', () => {
+    expect(periodScopeNote('2026-03', monthsFrom('2025-04', 12), F)).toBeNull();
+  });
+
+  it('★ 事業年度の外へはみ出していれば「一致しません」と述べる', () => {
+    const note = periodScopeNote('2026-03', monthsFrom('2025-01', 20), F);
+    expect(note).toContain('20 か月');
+    expect(note).toContain('令和8年3月期');
+    expect(note).toContain('12 か月とは一致しません');
+  });
+
+  it('★ 事業年度の中に収まっていれば「期中です」と述べる (試算表は正当な使い方)', () => {
+    const note = periodScopeNote('2026-03', monthsFrom('2025-04', 5), F);
+    expect(note).toContain('期中です');
+    expect(note).toContain('通年の金額ではありません');
+    expect(note).not.toContain('一致しません');
+  });
+
+  it('★ 端の 2 か月だけでも「ちょうど 1 年」に読めない (月数を数えている)', () => {
+    // 最初と最後は事業年度の端と同じなので、範囲だけを見ると 12 か月に見える。
+    const note = periodScopeNote('2026-03', ['2025-04', '2026-03'], F);
+    expect(note).not.toBeNull();
+    expect(note).toContain('2 か月');
+  });
+
+  it('★ 決算期が未設定なら、全期間の累計であることと入れ方を述べる', () => {
+    const note = periodScopeNote('', monthsFrom('2025-01', 20), F);
+    expect(note).toContain('決算期が未設定');
+    expect(note).toContain('20 か月');
+    expect(note).toContain('提出者情報で決算期を入れる');
+  });
+
+  it('KPI 実績が 1 件も無ければ述べない (§1 は別の断り書きを持つ)', () => {
+    expect(periodScopeNote('2026-03', [], F)).toBeNull();
+    expect(periodScopeNote('2026-03', ['not-a-period'], F)).toBeNull();
+  });
+
+  // 期の綴りは `periodRange` と月数の両方が使う 1 つの正規表現で決まる。
+  // 前後の錨 (^ と $) が外れると、対象期間と月数が別々の物を数え始める。
+  it('★ 期の綴りは前後とも錨で留まっている (前に付いた字 / 後ろに付いた字を通さない)', () => {
+    expect(periodScopeNote('2026-03', ['x2025-04'], F)).toBeNull(); // ^ が効いている
+    expect(periodScopeNote('2026-03', ['2025-045'], F)).toBeNull(); // $ が効いている
+    // 対照: 綴りが正しければ数える。
+    expect(periodScopeNote('2026-03', ['2025-04'], F)).not.toBeNull();
+  });
+
+  // 「ちょうど事業年度」の判定は 3 つの条件すべてが要る。1 つでも真に固定すると
+  // 事業年度でない入力を「述べることが無い」と読み違える。
+  it('★ 期首が違えば、期末と月数が揃っていても述べる', () => {
+    // 2024-12 + 2025-05〜2026-03 (11 か月) = 12 か月。期末は一致、期首は不一致。
+    const periods = ['2024-12', ...monthsFrom('2025-05', 11)];
+    expect(new Set(periods).size).toBe(12);
+    const note = periodScopeNote('2026-03', periods, F);
+    expect(note).toContain('12 か月とは一致しません');
+  });
+
+  it('★ 期末が違えば、期首と月数が揃っていても述べる', () => {
+    // 2025-04〜2026-02 (11 か月) + 2026-05 = 12 か月。期首は一致、期末は不一致。
+    const periods = [...monthsFrom('2025-04', 11), '2026-05'];
+    expect(new Set(periods).size).toBe(12);
+    const note = periodScopeNote('2026-03', periods, F);
+    expect(note).toContain('12 か月とは一致しません');
+  });
+
+  it('★ 境界: 期末ちょうどまでの入力は「期中」であって「一致しません」ではない', () => {
+    // 2025-06〜2026-03 (10 か月)。期末は事業年度の末日と同じ月。
+    const note = periodScopeNote('2026-03', monthsFrom('2025-06', 10), F);
+    expect(note).toContain('期中です');
+    expect(note).not.toContain('一致しません');
+  });
+
+  it('★ 実測の再現: 決算期 2026-03 に 20 か月を渡すと、書面の §1 に断り書きが付く', () => {
+    const kpi: KpiActual[] = monthsFrom('2025-01', 20).map((period) => ({
+      period, unit: '全社', revenue: 1_000_000, cogs: 400_000, advertising: 0, sga: 300_000, depreciation: 0,
+    }));
+    const m = buildBankSubmissionSheet(
+      inputWith(overviewWith({ kpiActuals: kpi }), SETTINGS, { kpiPeriods: monthsFrom('2025-01', 20) }),
+    );
+    const s1 = section(m.sections, '1.');
+    expect(value(s1, '売上高')).toBe('20,000'); // 20 か月の累計 (事業年度は 12,000)
+    expect(s1.caption).toContain('12 か月とは一致しません');
+    // 対照: 事業年度どおりの 12 か月なら断り書きは付かず、金額も年商になる。
+    const fy = monthsFrom('2025-04', 12);
+    const kpiFy: KpiActual[] = fy.map((period) => ({
+      period, unit: '全社', revenue: 1_000_000, cogs: 400_000, advertising: 0, sga: 300_000, depreciation: 0,
+    }));
+    const m2 = buildBankSubmissionSheet(inputWith(overviewWith({ kpiActuals: kpiFy }), SETTINGS, { kpiPeriods: fy }));
+    const s1b = section(m2.sections, '1.');
+    expect(value(s1b, '売上高')).toBe('12,000');
+    expect(s1b.caption).toBeNull();
   });
 });
