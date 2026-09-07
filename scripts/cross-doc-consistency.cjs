@@ -594,6 +594,134 @@ function checkMutationScoreFresh(failures, qualityOverride, configOverride) {
 }
 
 /**
+ * **行ごとの点数も見る。総合だけでは、死んだ 1 ファイルが見えない。**
+ *
+ * ## 見つけた形 (2026-09-07 実測)
+ *
+ * `checkMutationScoreFresh` が読むのは「Mutation score (total / covered)」の
+ * **総合 1 行だけ**で、`thresholds.break` と比べている。ところが
+ * `docs/QUALITY.md` は**ファイルごとの表**も持ち、そこは誰も見ていなかった。
+ *
+ * 246 行のうち **1 行が 0.00%** だった (`src/shared/taxConsumption.ts`)。
+ * 246 ファイルの総合はこの 1 件では動かないので、**総合は緑のまま**である。
+ * 気付いたのは表を数値で並べ替えたからで、見た目 (245 行が 100.00) では隠れる。
+ *
+ * **危ないのは、この 0.00 が 2 つの別物を区別できないこと**:
+ *
+ *   - `mutate` に載せたが**どの検査も覆っていない**モジュール
+ *     (変異検査が存在する理由そのもの)
+ *   - モジュール直下の定数しか持たず、full run では静的変異体が「未到達」に
+ *     落ちるだけのファイル (`stryker.config.json` の注記にある既知の形)
+ *
+ * どちらも `0.00 | 0 殺 | 0 生存 | N 未到達` と出る。**前者を後者に見せかけて
+ * 出荷できる。** 実測した今日の 1 件は後者 (かつ既に古い) だったが、
+ * 「今日はたまたま無害」は仕組みではない。
+ *
+ * ## 規則
+ *
+ * 閾値を下回る行は**台帳に理由つきで載っていなければ落とす**。台帳は
+ * 逆向きにも照合する —— 載っているのに実際は閾値以上 (= 直った) 行、
+ * および表から消えた行も落とす。「直ったのに台帳に残る」は、次に本当に
+ * 死んだファイルが来たときの目隠しになる。
+ */
+const PER_FILE_BELOW_THRESHOLD = {
+  'src/shared/taxConsumption.ts':
+    '週次スナップショットの時点ではモジュール直下の定数だけを持つファイルで、full run では ' +
+    '静的変異体が未到達へ落ちるため 0.00 と記録された (変異体 2・殺 0・生存 0)。' +
+    '2026-09-07 に判定関数 twentyPercentMeasureStatus とその検査が入っており、' +
+    'subset 実行の実測は 100.00% (39 殺・生存 0・未到達 0)。次の週次実行で行が更新される。',
+};
+
+/** 表が生きていることの下限 (実測 246 行)。 */
+const MIN_QUALITY_ROWS = 200;
+
+/** 理由はこの字数以上 (「静的」だけでは次の人が判断できない)。 */
+const MIN_REASON_CHARS = 40;
+
+function checkPerFileMutationScores(failures, qualityOverride, configOverride, ledgerOverride) {
+  const quality =
+    qualityOverride === undefined ? read(path.join(DOCS, 'QUALITY.md')) : qualityOverride;
+  const rawCfg =
+    configOverride === undefined
+      ? read(path.join(REPO_ROOT, 'stryker.config.json'))
+      : configOverride;
+  const ledger = ledgerOverride === undefined ? PER_FILE_BELOW_THRESHOLD : ledgerOverride;
+  if (quality === null || rawCfg === null) {
+    failures.push({
+      fact: 'per-file mutation score',
+      reason: 'docs/QUALITY.md か stryker.config.json を読めない',
+    });
+    return 0;
+  }
+  let breakAt = null;
+  try {
+    breakAt = JSON.parse(rawCfg).thresholds?.break ?? null;
+  } catch {
+    breakAt = null;
+  }
+  if (breakAt === null) {
+    failures.push({
+      fact: 'per-file mutation score',
+      reason: 'stryker.config.json に thresholds.break が無い — 行ごとの点数を判定できない',
+    });
+    return 0;
+  }
+
+  // `| src/x.ts | 100.00 | 100.00 | 261 | 0 | 0 | 42 | 0 |`
+  const ROW = /^\|\s*(src\/[^|\s]+)\s*\|\s*([\d.]+)\s*\|/gm;
+  const rows = new Map();
+  for (const m of quality.matchAll(ROW)) rows.set(m[1], Number(m[2]));
+
+  if (rows.size < MIN_QUALITY_ROWS) {
+    failures.push({
+      fact: 'per-file mutation score',
+      reason:
+        `docs/QUALITY.md のファイル別の行が ${rows.size} 件しか読めない (下限 ${MIN_QUALITY_ROWS}) — ` +
+        '表の形が変わったか生成が壊れている。0 件を「問題なし」と読ませない',
+    });
+    return 1;
+  }
+
+  for (const [file, total] of rows) {
+    if (total >= breakAt) continue;
+    const reason = ledger[file];
+    if (typeof reason !== 'string' || reason.trim().length < MIN_REASON_CHARS) {
+      failures.push({
+        fact: 'per-file mutation score',
+        reason:
+          `docs/QUALITY.md の ${file} が ${total}% (閾値 ${breakAt}%) — ` +
+          'PER_FILE_BELOW_THRESHOLD に理由を書くこと。0.00 は「覆っていない」と ' +
+          '「モジュール直下の定数だけ」の両方に見えるので、どちらなのかを実測して残す',
+      });
+    }
+  }
+
+  // 逆向き: 台帳が古くなっていないか。
+  for (const [file, reason] of Object.entries(ledger)) {
+    if (!rows.has(file)) {
+      failures.push({
+        fact: 'per-file mutation score',
+        reason: `PER_FILE_BELOW_THRESHOLD の ${file} が docs/QUALITY.md の表に無い — 台帳から消すこと`,
+      });
+      continue;
+    }
+    if (rows.get(file) >= breakAt) {
+      failures.push({
+        fact: 'per-file mutation score',
+        reason:
+          `PER_FILE_BELOW_THRESHOLD の ${file} は ${rows.get(file)}% で閾値を満たしている — ` +
+          '直ったなら台帳から消すこと (残すと、次に本当に死んだファイルが来たときの目隠しになる)',
+      });
+    }
+    // 理由の字数は**前向きの側だけ**で見る。両方で見ると同じ問題を 2 件報告して
+    // しまう (self-test がそれを教えてくれた)。閾値以上の行は上で「直った」として
+    // 鳴るので、そちらの理由の長さは問わない。
+    void reason;
+  }
+  return 1;
+}
+
+/**
  * 逆向きの照合 — **「CI に無い」と書いてあるものが、本当に無いか。**
  *
  * `checkCiGateCoverage` は「ゲートを足したのに CI へ繋ぎ忘れた」を見る。
@@ -1117,6 +1245,46 @@ function selfTest() {
       console.log(`  ${ok ? '✓' : '✗'} 変異スコア鮮度: ${label}: ${f.length} 件 (期待 ${expected})`);
     }
   }
+
+  /*
+   * 行ごとの点数。**総合が緑でも 1 ファイルが死んでいることは在る** ——
+   * 2026-09-07 の実測で `src/shared/taxConsumption.ts` が 0.00% のまま
+   * 246 行の総合に埋もれていた。台帳は両向きで照合する。
+   */
+  {
+    const cfg = (b) => JSON.stringify({ thresholds: { break: b } });
+    const REASON = 'x'.repeat(50);
+    /** 下限を満たす健全な表 + 追加の行。 */
+    const table = (extra) => {
+      const filler = Array.from(
+        { length: 210 },
+        (_, i) => `| src/filler/f${i}.ts | 100.00 | 100.00 | 5 | 0 | 0 | 0 | 0 |`,
+      ).join('\n');
+      return `${filler}\n${extra}\n`;
+    };
+    const dead = '| src/shared/taxConsumption.ts | 0.00 | 0.00 | 0 | 0 | 0 | 2 | 0 |';
+    const healed = '| src/shared/taxConsumption.ts | 100.00 | 100.00 | 39 | 0 | 0 | 0 | 0 |';
+    const OK = cfg(99.8);
+    for (const [label, quality, ledger, expected, config = OK] of [
+      ['★ 実在した形 (1 行だけ 0.00%・台帳なし) で鳴る', table(dead), {}, 1],
+      ['台帳に理由があれば鳴らない', table(dead), { 'src/shared/taxConsumption.ts': REASON }, 0],
+      ['理由が短ければ鳴る', table(dead), { 'src/shared/taxConsumption.ts': 'みじかい' }, 1],
+      ['★ 直ったのに台帳に残っていれば鳴る (次の死を隠す)', table(healed), { 'src/shared/taxConsumption.ts': REASON }, 1],
+      ['★ 台帳の行が表から消えていれば鳴る', table(healed), { 'src/gone/x.ts': REASON }, 1],
+      ['全部 100 なら鳴らない', table('| src/a/b.ts | 100.00 | 100.00 | 3 | 0 | 0 | 0 | 0 |'), {}, 0],
+      ['★ 表が読めない (行が少ない) なら鳴る — 0 件を合格にしない', `${dead}\n`, {}, 1],
+      ['閾値が無ければ鳴る', table(dead), {}, 1, '{}'],
+      ['設定が壊れていれば鳴る', table(dead), {}, 1, '{ not json'],
+      ['doc が読めなければ鳴る', null, {}, 1],
+      ['設定が読めなければ鳴る', table(dead), {}, 1, null],
+    ]) {
+      const f = [];
+      checkPerFileMutationScores(f, quality, config, ledger);
+      const ok = f.length === expected;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} 行ごとの点数: ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+  }
   /*
    * `selfTestFailed` は `checkNotInCiClaims` 側のケースが立てる旗である。
    * **2026-08-25 まで、この旗はどこからも読まれていなかった** ——
@@ -1179,7 +1347,7 @@ function main() {
   const catCount = checkReadmeCategories(failures);
   const pubCount = checkPublishScanCoverage(failures);
   const orderCount = checkE2eBuildOrder(failures);
-  const freshCount = checkMutationScoreFresh(failures);
+  const freshCount = checkMutationScoreFresh(failures) + checkPerFileMutationScores(failures);
 
   console.log(
     `Checked ${factCount} cross-doc facts against canonical source + ${gateCount} verify:all gate(s) against ci.yml` +
