@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { readdirSync } from 'node:fs';
+import { readOriginalDirEntries, readOriginalSource } from '../../shared/__tests__/originalSource';
 
 /*
  * **UI を閉じる旗は、ブラウザ版でも開けなければならない。**
@@ -32,9 +31,9 @@ import { readdirSync } from 'node:fs';
  */
 
 const RENDERER = join(__dirname, '..');
-const SNAPSHOT_SRC = readFileSync(join(RENDERER, 'data/snapshot.ts'), 'utf8');
-const WEB_SHIM_SRC = readFileSync(join(RENDERER, 'web-shim.ts'), 'utf8');
-const LIVE_READ_SRC = readFileSync(join(RENDERER, 'network/liveRead.ts'), 'utf8');
+const SNAPSHOT_SRC = readOriginalSource(join(RENDERER, 'data/snapshot.ts'));
+const WEB_SHIM_SRC = readOriginalSource(join(RENDERER, 'web-shim.ts'));
+const LIVE_READ_SRC = readOriginalSource(join(RENDERER, 'network/liveRead.ts'));
 
 /**
  * どの画面も読んでいない旗。**読まれない旗は門にならない**ので、
@@ -108,11 +107,11 @@ describe('UI を閉じる旗は、ブラウザ版でも開けること', () => {
   it('★ 「どの画面も読んでいない」が本当である', () => {
     const files: string[] = [];
     const walk = (dir: string) => {
-      for (const ent of readdirSync(dir, { withFileTypes: true })) {
+      for (const ent of readOriginalDirEntries(dir)) {
         if (ent.name === '__tests__') continue;
         const full = join(dir, ent.name);
         if (ent.isDirectory()) walk(full);
-        else if (/\.tsx?$/.test(ent.name)) files.push(readFileSync(full, 'utf8'));
+        else if (/\.tsx?$/.test(ent.name)) files.push(readOriginalSource(full));
       }
     };
     walk(RENDERER);

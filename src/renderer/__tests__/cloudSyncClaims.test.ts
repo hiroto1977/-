@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
-import { readdirSync, statSync } from 'node:fs';
+import { statSync } from 'node:fs';
 import path from 'node:path';
+import { readOriginalDir, readOriginalSource } from '../../shared/__tests__/originalSource';
 
 const REPO_ROOT = path.resolve(__dirname, '../../..');
 const SRC = path.join(REPO_ROOT, 'src');
 const PANEL_PATH = path.join(REPO_ROOT, 'src/renderer/components/CloudSyncPanel.tsx');
-const PANEL = readFileSync(PANEL_PATH, 'utf8');
+const PANEL = readOriginalSource(PANEL_PATH);
 
 /*
  * **「クラウドへ退避します」と書いてある画面が、1 バイトも送っていなかった。**
@@ -32,7 +32,7 @@ const PANEL = readFileSync(PANEL_PATH, 'utf8');
 function productionFiles(): { file: string; text: string }[] {
   const out: { file: string; text: string }[] = [];
   const walk = (dir: string): void => {
-    for (const name of readdirSync(dir)) {
+    for (const name of readOriginalDir(dir)) {
       const p = path.join(dir, name);
       if (statSync(p).isDirectory()) {
         if (name !== '__tests__' && name !== 'node_modules') walk(p);
@@ -40,7 +40,7 @@ function productionFiles(): { file: string; text: string }[] {
       }
       if (!/\.tsx?$/.test(name)) continue;
       if (/\.test\.tsx?$/.test(name)) continue;
-      out.push({ file: path.relative(REPO_ROOT, p), text: readFileSync(p, 'utf8') });
+      out.push({ file: path.relative(REPO_ROOT, p), text: readOriginalSource(p) });
     }
   };
   walk(SRC);

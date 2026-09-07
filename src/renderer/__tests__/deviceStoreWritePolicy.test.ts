@@ -22,10 +22,10 @@
  * 走査が死んだら落ちるように件数の床も置き、規則が実際に当たることを
  * 標本 (fixtures/undeclaredDeviceWrite.txt) で確かめる。
  */
-import { readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { globSync } from 'tinyglobby';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
 
 const REPO = join(__dirname, '..', '..', '..');
 
@@ -102,7 +102,7 @@ function isComment(line: string): boolean {
 function findSites(files: readonly string[], pattern: RegExp): Site[] {
   const found: Site[] = [];
   for (const abs of files) {
-    readFileSync(abs, 'utf8')
+    readOriginalSource(abs)
       .split('\n')
       .forEach((line, i) => {
         if (!isComment(line) && pattern.test(line)) {
@@ -153,7 +153,7 @@ describe('レコードストアの書き込みの台帳', () => {
     // 認めた理由 (「action 経由なので自分で出している」) が本当かを機械的に確かめる。
     // useCollection を使い始めたら、この検査が先に鳴る。
     const touching = Object.keys(DROP_ALLOWED).filter((f) =>
-      readFileSync(join(REPO, f), 'utf8').includes('useCollection'),
+      readOriginalSource(join(REPO, f)).includes('useCollection'),
     );
     expect(touching, 'レコードストアを触るなら fireReported を通すこと').toEqual([]);
   });
@@ -183,7 +183,7 @@ describe('レコードストアの書き込みの台帳', () => {
   });
 
   it('標本: 2 つの保管庫の**両方**を見ている (片方だけの走査で通らない)', () => {
-    const text = (f: string) => readFileSync(join(REPO, f), 'utf8');
+    const text = (f: string) => readOriginalSource(join(REPO, f));
     const hit = (needle: string) =>
       WRITES.some((s) => text(s.file).split('\n')[s.line - 1]?.includes(needle) === true);
     expect(hit('getRecordStore()'), '業務レコードの書き込みを 1 件も拾っていない').toBe(true);

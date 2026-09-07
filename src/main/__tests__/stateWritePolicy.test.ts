@@ -20,10 +20,10 @@
 import { chmod, mkdtemp, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { globSync } from 'tinyglobby';
 import { saveTalentState, type TalentState } from '../clients/talent';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
 
 const REPO = join(__dirname, '..', '..', '..');
 
@@ -46,7 +46,7 @@ interface Site {
 function findDirectWrites(files: readonly string[]): Site[] {
   const found: Site[] = [];
   for (const abs of files) {
-    readFileSync(abs, 'utf8')
+    readOriginalSource(abs)
       .split('\n')
       .forEach((line, i) => {
         // コメント行は数えない (説明の中で名前を挙げている箇所がある)。
@@ -97,7 +97,7 @@ describe('main: 状態ファイルの書き込み方の台帳', () => {
   });
 
   it('★ talent.json は本体を直接書かない (この行が戻ったら台帳の検査が鳴る)', () => {
-    const src = readFileSync(join(REPO, 'src/main/clients/talent.ts'), 'utf8');
+    const src = readOriginalSource(join(REPO, 'src/main/clients/talent.ts'));
     expect(src).toContain('atomicWriteFile(q, c, { mode: 0o600 })');
     // 「無い」の主張には標本を添える —— この綴りが本当にこのファイルの書き込み経路に
     // 当たっていることを、上の toContain と対で確かめる。

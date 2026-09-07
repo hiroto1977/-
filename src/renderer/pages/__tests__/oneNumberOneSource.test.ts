@@ -21,12 +21,12 @@
  * 実際に当たることを、同じ検査の中で確かめる。当たらない正規表現は、
  * どの入力でも通る空の検査になる。
  */
-import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 
 const PAGES = path.resolve(__dirname, '..');
-const read = (file: string): string => readFileSync(path.join(PAGES, file), 'utf8');
+const read = (file: string): string => readOriginalSource(path.join(PAGES, file));
 
 /** コメントを落とす (経緯の説明文の中の例を数えないため)。 */
 function stripComments(text: string): string {

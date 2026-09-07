@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { statSync } from 'node:fs';
 import { join } from 'node:path';
+import { readOriginalDir, readOriginalSource } from '../../shared/__tests__/originalSource';
 
 /*
  * **主プロセスがディスクへ書くものは、すべて 0600 で閉じる。**
@@ -40,13 +41,13 @@ interface Source {
 }
 
 function sources(dir: string, prefix = '', out: Source[] = []): Source[] {
-  for (const name of readdirSync(dir)) {
+  for (const name of readOriginalDir(dir)) {
     const full = join(dir, name);
     if (statSync(full).isDirectory()) {
       if (name !== '__tests__') sources(full, `${prefix}${name}/`, out);
       continue;
     }
-    if (/\.tsx?$/.test(name)) out.push({ rel: prefix + name, text: readFileSync(full, 'utf8') });
+    if (/\.tsx?$/.test(name)) out.push({ rel: prefix + name, text: readOriginalSource(full) });
   }
   return out;
 }

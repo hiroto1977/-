@@ -15,10 +15,10 @@
  * この検査は**台帳を双方向に**見る: 名乗る側が増えたら登録を要求し、登録が腐っても
  * 落とす。走査が死んだら気付けるように件数の床も置く。
  */
-import { readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { globSync } from 'tinyglobby';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
 
 const REPO = join(__dirname, '..', '..', '..');
 
@@ -96,13 +96,13 @@ function mockClients(): string[] {
     absolute: true,
     ignore: ['**/__tests__/**'],
   })
-    .filter((abs) => /isMock:\s*true/.test(readFileSync(abs, 'utf8')))
+    .filter((abs) => /isMock:\s*true/.test(readOriginalSource(abs)))
     .map((abs) => relative(REPO, abs).split('\\').join('/'))
     .sort();
 }
 
 const CLIENTS = mockClients();
-const src = (rel: string): string => readFileSync(join(REPO, rel), 'utf8');
+const src = (rel: string): string => readOriginalSource(join(REPO, rel));
 
 describe('同梱データを名乗る中身の台帳', () => {
   it('走査が生きている (床: 8 モジュール以上)', () => {

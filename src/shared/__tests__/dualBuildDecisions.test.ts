@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { statSync } from 'node:fs';
 import { join } from 'node:path';
+import { readOriginalDir, readOriginalSource } from './originalSource';
 
 /*
  * **デスクトップ版とブラウザ版で「同じ名前の関数」を 2 度書いている所の台帳。**
@@ -71,14 +72,14 @@ const LEDGER: Readonly<Record<string, { kind: Kind; why: string }>> = {
 function exportedFunctions(root: string): Map<string, string[]> {
   const out = new Map<string, string[]>();
   const walk = (dir: string): void => {
-    for (const name of readdirSync(dir)) {
+    for (const name of readOriginalDir(dir)) {
       const full = join(dir, name);
       if (statSync(full).isDirectory()) {
         if (name !== '__tests__' && name !== 'node_modules') walk(full);
         continue;
       }
       if (!/\.tsx?$/.test(name)) continue;
-      for (const m of readFileSync(full, 'utf8').matchAll(/^export function (\w+)/gm)) {
+      for (const m of readOriginalSource(full).matchAll(/^export function (\w+)/gm)) {
         const k = m[1]!;
         out.set(k, [...(out.get(k) ?? []), full]);
       }
@@ -114,7 +115,7 @@ describe('2 実装ある関数は、すべて台帳で分類されている', ()
   it("'decision' はすべてパリティ検査から参照されている", () => {
     const parityFiles: string[] = [];
     const walk = (dir: string): void => {
-      for (const name of readdirSync(dir)) {
+      for (const name of readOriginalDir(dir)) {
         const full = join(dir, name);
         if (statSync(full).isDirectory()) {
           if (name !== 'node_modules') walk(full);
@@ -138,7 +139,7 @@ describe('2 実装ある関数は、すべて台帳で分類されている', ()
      */
     const imports = new Set<string>();
     for (const f of parityFiles) {
-      const src = readFileSync(f, 'utf8')
+      const src = readOriginalSource(f)
         .replace(/\/\*[\s\S]*?\*\//g, '')
         .replace(/^\s*\/\/.*$/gm, '');
       /*
@@ -216,7 +217,7 @@ describe('2 実装ある関数は、すべて台帳で分類されている', ()
     // **コメントを落としてから見る。** 最初はそのまま `toContain` していて、
     // 突き合わせを外す対照実験が鳴らなかった —— 検査ファイルの説明文に
     // 名前が書いてあるので、本文が読まなくなっても字面は残る (0-a-17)。
-    const parity = readFileSync(pair.parity, 'utf8')
+    const parity = readOriginalSource(pair.parity)
       .replace(/\/\*[\s\S]*?\*\//g, '')
       .split('\n')
       .filter((l) => !l.trim().startsWith('//'))

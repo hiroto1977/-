@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 
 /**
  * セキュリティ回帰テスト — レンダラ向けブリッジの表面 (attack surface) を固定する。
@@ -16,7 +16,7 @@ import { resolve } from 'node:path';
  */
 
 const ROOT = resolve(__dirname, '..', '..', '..', '..');
-const read = (p: string) => readFileSync(resolve(ROOT, p), 'utf8');
+const read = (p: string) => readOriginalSource(resolve(ROOT, p));
 
 describe('security: renderer bridge surface', () => {
   it('the browser shim exposes setToken / clearToken / listConfigured', () => {

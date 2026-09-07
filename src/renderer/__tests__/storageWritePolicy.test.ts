@@ -20,10 +20,10 @@
  * 台帳は**双方向**に検査する —— 載っているのに現物が無い項目も落とす (腐った台帳は
  * 「守っているつもり」を生む)。走査が死んだら落ちるように件数の床も置く。
  */
-import { readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { globSync } from 'tinyglobby';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
 
 type Policy = 'entrance' | 'surfaced' | 'deliberate-swallow';
 
@@ -124,7 +124,7 @@ interface Site {
 function findSites(files: readonly string[]): Site[] {
   const found: Site[] = [];
   for (const abs of files) {
-    const text = readFileSync(abs, 'utf8');
+    const text = readOriginalSource(abs);
     text.split('\n').forEach((line, i) => {
       if (/(?:localStorage|sessionStorage)\.setItem\(/.test(line)) {
         found.push({ file: relative(REPO, abs).split('\\').join('/'), line: i + 1 });

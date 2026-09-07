@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readOriginalDir, readOriginalSource } from '../../../shared/__tests__/originalSource';
 import {
   clearPkceSession,
   pkceSessionKeys,
@@ -194,7 +194,7 @@ describe('交換が失敗しても一時秘密が残らない (実測)', () => {
  */
 describe('本物の SettingsPage.complete() が finally で掃除している', () => {
   const source = (): string =>
-    readFileSync('src/renderer/pages/SettingsPage.tsx', 'utf8');
+    readOriginalSource('src/renderer/pages/SettingsPage.tsx');
 
   /** 名前で関数の本文を切り出す (次の同インデントの `}` まで)。 */
   const bodyOf = (text: string, name: string): string => {
@@ -278,11 +278,11 @@ describe('本物の SettingsPage.complete() が finally で掃除している', 
  */
 describe('pkce.* を直に触る場所は pkceSession.ts だけ', () => {
   it('renderer の他のファイルに pkce. の直書きが無い', async () => {
-    const { readdirSync, readFileSync, statSync } = await import('node:fs');
+    const { statSync } = await import('node:fs');
     const { join } = await import('node:path');
     const hits: string[] = [];
     const walk = (dir: string): void => {
-      for (const name of readdirSync(dir)) {
+      for (const name of readOriginalDir(dir)) {
         const full = join(dir, name);
         if (statSync(full).isDirectory()) {
           if (name === '__tests__' || name === 'node_modules') continue;
@@ -291,7 +291,7 @@ describe('pkce.* を直に触る場所は pkceSession.ts だけ', () => {
         }
         if (!/\.tsx?$/.test(name)) continue;
         if (full.endsWith('oauth/pkceSession.ts')) continue;
-        const text = readFileSync(full, 'utf8');
+        const text = readOriginalSource(full);
         const code = text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
         if (/['"`]pkce\./.test(code)) hits.push(full);
       }
@@ -306,11 +306,11 @@ describe('pkce.* を直に触る場所は pkceSession.ts だけ', () => {
    * 必ず在る字面 (`savePkceSession`) を同じ走査で探し、見つかることを見る。
    */
   it('負の対照: 必ず在る字面なら同じ走査で見つかる', async () => {
-    const { readdirSync, readFileSync, statSync } = await import('node:fs');
+    const { statSync } = await import('node:fs');
     const { join } = await import('node:path');
     const hits: string[] = [];
     const walk = (dir: string): void => {
-      for (const name of readdirSync(dir)) {
+      for (const name of readOriginalDir(dir)) {
         const full = join(dir, name);
         if (statSync(full).isDirectory()) {
           if (name === '__tests__' || name === 'node_modules') continue;
@@ -319,7 +319,7 @@ describe('pkce.* を直に触る場所は pkceSession.ts だけ', () => {
         }
         if (!/\.tsx?$/.test(name)) continue;
         if (full.endsWith('oauth/pkceSession.ts')) continue;
-        if (/savePkceSession/.test(readFileSync(full, 'utf8'))) hits.push(full);
+        if (/savePkceSession/.test(readOriginalSource(full))) hits.push(full);
       }
     };
     walk('src/renderer');

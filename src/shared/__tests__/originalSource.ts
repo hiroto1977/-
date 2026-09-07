@@ -33,7 +33,8 @@
  * **投げる** —— 空の検査として通すよりも、鳴らないことを鳴らすほうが良い。
  * 戻れたときは印を探さない (印について書いた文書を誤って掴むため。下の `isInstrumented`)。
  */
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, type Dirent } from 'node:fs';
+import { isAbsolute, resolve } from 'node:path';
 
 /**
  * 計器が書き換えた印。Stryker が差し込むのは**呼び出しの形** (`stryMutAct_9fa48(`)
@@ -58,6 +59,16 @@ export function originalSourcePath(absPath: string): string {
   return absPath.replace(/[\\/]\.stryker-tmp[\\/]sandbox-[^\\/]+(?=[\\/])/, '');
 }
 
+/**
+ * 読む前に道を整える。**相対の道は cwd から解いてから**戻す ——
+ * sandbox の中では cwd が sandbox なので、`'src/renderer'` のような相対の道は
+ * それだけでは sandbox の中を指す (実測 2026-09-07: `pkceSession.test.ts` の走査が
+ * まさにこの形で、絶対の道しか見ていなかった最初の版では直っていなかった)。
+ */
+function toOriginal(p: string): string {
+  return originalSourcePath(isAbsolute(p) ? p : resolve(process.cwd(), p));
+}
+
 /** sandbox の中に居るか (道に sandbox の 2 段が在るか)。 */
 export function insideInstrumentedSandbox(absPath: string): boolean {
   return originalSourcePath(absPath) !== absPath;
@@ -72,7 +83,7 @@ export function insideInstrumentedSandbox(absPath: string): boolean {
  * 戻れずに sandbox の写しを読んだときは、黙って空の検査になるより投げる。
  */
 export function readOriginalSource(absPath: string): string {
-  const mapped = originalSourcePath(absPath);
+  const mapped = toOriginal(absPath);
   if (existsSync(mapped)) return readFileSync(mapped, 'utf8');
   const text = readFileSync(absPath, 'utf8');
   if (isInstrumented(text)) {
@@ -86,6 +97,15 @@ export function readOriginalSource(absPath: string): string {
 
 /** ディレクトリの一覧を、repo の本物から取る。 */
 export function readOriginalDir(absDir: string): string[] {
-  const mapped = originalSourcePath(absDir);
+  const mapped = toOriginal(absDir);
   return readdirSync(existsSync(mapped) ? mapped : absDir);
+}
+
+/**
+ * ディレクトリの一覧を種別つきで、repo の本物から取る
+ * (`readdirSync(dir, { withFileTypes: true })` の差し替え)。
+ */
+export function readOriginalDirEntries(absDir: string): Dirent[] {
+  const mapped = toOriginal(absDir);
+  return readdirSync(existsSync(mapped) ? mapped : absDir, { withFileTypes: true });
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { readOriginalSource } from './originalSource';
 import {
   LEADER_DISQUALIFIERS,
   ORGAN_DISEASES,
@@ -28,7 +28,7 @@ import {
  */
 
 const repoRoot = join(__dirname, '..', '..', '..');
-const read = (rel: string): string => readFileSync(join(repoRoot, rel), 'utf8');
+const read = (rel: string): string => readOriginalSource(join(repoRoot, rel));
 
 describe('talent — 2 つの実行環境で判定が割れていないこと', () => {
   it('★ web-shim は shared の判定を import している', () => {

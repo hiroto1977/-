@@ -24,10 +24,10 @@
  * 走査対象は計算が集まる `src/shared` と `src/renderer/data`。名前が率・割合・
  * しきい値・期間を思わせる引数だけを見る (色や添字ではなく「量」の既定値が対象)。
  */
-import { readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { globSync } from 'tinyglobby';
+import { readOriginalSource } from './originalSource';
 
 const REPO = join(__dirname, '..', '..', '..');
 
@@ -72,7 +72,7 @@ function calcSources(): { file: string; text: string }[] {
     ignore: ['**/__tests__/**'],
   }).map((abs) => ({
     file: relative(REPO, abs).split('\\').join('/'),
-    text: readFileSync(abs, 'utf8'),
+    text: readOriginalSource(abs),
   }));
 }
 

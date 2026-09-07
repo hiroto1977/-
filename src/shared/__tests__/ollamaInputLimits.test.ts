@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
 import { MAX_OLLAMA_PROMPT_CHARS, MAX_OLLAMA_SYSTEM_CHARS } from '../ollama';
+import { readOriginalSource } from './originalSource';
 
 /*
  * **チャット入力の上限を、2 つの版が同じ 1 つから読む。**
@@ -14,8 +14,8 @@ import { MAX_OLLAMA_PROMPT_CHARS, MAX_OLLAMA_SYSTEM_CHARS } from '../ollama';
  * 字面が戻ってきたら鳴らす —— 「同じ値を 2 度書く」に戻る道を塞ぐ。
  */
 
-const MAIN = readFileSync('src/main/clients/ollama.ts', 'utf8');
-const WEB = readFileSync('src/renderer/network/ollamaWeb.ts', 'utf8');
+const MAIN = readOriginalSource('src/main/clients/ollama.ts');
+const WEB = readOriginalSource('src/renderer/network/ollamaWeb.ts');
 
 /** コメントを落とす (説明文の中の数字を数えないため)。 */
 function code(text: string): string {

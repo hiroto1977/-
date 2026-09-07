@@ -20,10 +20,10 @@
  * 規則: `src/renderer` の `getItem` / `removeItem` は、**同じ関数の中で失敗を受ける**
  * 形でなければならない (`try` の内側に在ること)。走査が死んだら落ちるよう床を置く。
  */
-import { readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { globSync } from 'tinyglobby';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
 
 const REPO = join(__dirname, '..', '..', '..');
 const ACCESS_RE = /\b(?:localStorage|sessionStorage)\.(?:getItem|removeItem|clear)\(/g;
@@ -75,7 +75,7 @@ function rendererSources(): { file: string; text: string }[] {
     ignore: ['**/__tests__/**'],
   }).map((abs) => ({
     file: relative(REPO, abs).split('\\').join('/'),
-    text: readFileSync(abs, 'utf8'),
+    text: readOriginalSource(abs),
   }));
 }
 

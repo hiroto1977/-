@@ -11981,10 +11981,35 @@ export const BALANCE_SHEET_COLLECTION = stryMutAct_9fa48("7644") ? "" : (stryCov
    ではなく「設備の赤」に見える**ので原因が読めない。`stryker.config.json` に
    20 分を理由つきで明示した。
 
+### 通し替え —— 37 件のうち 28 件を `readOriginalSource` へ通した
+
+**対照は変異検査そのもの。** `readOriginalSource` は原文へ戻れなければ**投げる**ので、
+書き換わった写しを黙って読むことがあり得ない。全件の dry run で **12,491 件が走り、
+1 件もその例外を出さなかった** —— つまり通した 28 件はすべて本物の原文に届いている
+(1 件でも届いていなければ投げて落ちる)。これは「通ったから良い」ではなく
+**「届いていなければ必ず鳴る」形の対照**である。
+
+**機械で一気に置き換えようとして型検査に 25 件叱られた** (2026-09-07)。当たってしまった
+形は 4 つ: `readdirSync(dir, { withFileTypes: true })` / `vi.mock('node:fs')` の中の名前 /
+`readFileSync(new URL(…))` / 多行の呼び出し。**revert して、触ってよい形だけを選ぶ**
+書き方に替えた (`readOriginalDirEntries` を足し、曖昧な形は残す)。
+
+さらに 2 つ、検査が教えてくれた:
+
+1. **相対の道は直っていなかった。** `pkceSession.test.ts` は `walk('src/renderer')` と
+   相対で渡す。sandbox では cwd が sandbox なので、絶対の道しか見ていなかった最初の
+   版では sandbox を読んでいた。読む口で cwd から解いてから戻すようにした。
+2. **一時ファイルの読みまで置き換えていた。** `exportSymlinkContainment.test.ts` は
+   その場で作った symlink の指す先を読む。原文の道具を当てる場所ではないので戻した
+   (`npm test` が `require(...).readOriginalSource is not a function` で教えてくれた)。
+
 ### 残作業 (次のパス)
 
-- **床の無い 36 件を `readOriginalSource` へ通す。** 変異検査の中で空の検査に
-  なっているだけなので画面の嘘には繋がらないが、その分だけ生存が増えて見える。
+- **残り 9 件。** `bridgeContract` / `storageClaims` / `backup` / `externalUrlGate` /
+  `fxCurrency` / `importBoundaryWitness` / `integrityChainWitness` /
+  `knowledgeContextContainment` と、`exportSymlinkContainment` (これは**触らないのが
+  正しい** —— fs の読みは一時ファイルで、台帳のファイル名は別の場所に出てくるだけ。
+  走査の側の偽陽性なので、門を作るときは除外の理由を台帳に書く)。
 - **門にする。** 「`mutate` 台帳のファイルを原文で読む検査は `readOriginalSource` を
   通す」は静的に検査できる (Stryker を回さずに済む)。台帳つきで足せば新しい取り
   こぼしが増えない。走査の雛形は作ってある。

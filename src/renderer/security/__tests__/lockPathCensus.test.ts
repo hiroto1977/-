@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync, readdirSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { readOriginalDirEntries, readOriginalSource } from '../../../shared/__tests__/originalSource';
 
 /*
  * **施錠の門を作っても、名簿を測らなければ迂回される。** (2026-09-06 実測)
@@ -37,7 +37,7 @@ const DROP_KEY = /\.lock\(\s*\)/;
 const ALLOWED = new Set(['src/renderer/security/lockWorkspace.ts']);
 
 function sourceFiles(dir: string, acc: string[] = []): string[] {
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+  for (const entry of readOriginalDirEntries(dir)) {
     const p = join(dir, entry.name);
     if (entry.isDirectory()) {
       // 検査は施錠を自由に呼ぶ (鍵が落ちたことを見るため)。
@@ -70,7 +70,7 @@ describe('施錠経路の名簿 — 鍵を落とすのは lockWorkspace だけ',
     for (const file of files) {
       const rel = relative(ROOT, file);
       if (ALLOWED.has(rel)) continue;
-      const body = readFileSync(file, 'utf8');
+      const body = readOriginalSource(file);
       for (const [i, line] of body.split('\n').entries()) {
         // 注記の中で経緯を説明している行は本体ではない。
         const code = line.replace(/^\s*(\*|\/\/).*$/, '');
@@ -82,13 +82,13 @@ describe('施錠経路の名簿 — 鍵を落とすのは lockWorkspace だけ',
 
   it('許可した場所は実在し、実際に鍵を落としている (台帳が古くなったら鳴る)', () => {
     for (const rel of ALLOWED) {
-      const body = readFileSync(join(ROOT, rel), 'utf8');
+      const body = readOriginalSource(join(ROOT, rel));
       expect(DROP_KEY.test(body), rel).toBe(true);
     }
   });
 
   it('★ 明示的な施錠は門を通る — 設定ページに鍵を落とす行が無く、門を呼んでいる', () => {
-    const settings = readFileSync(join(SRC, 'renderer/pages/SettingsPage.tsx'), 'utf8');
+    const settings = readOriginalSource(join(SRC, 'renderer/pages/SettingsPage.tsx'));
     const code = settings
       .split('\n')
       .filter((l) => !/^\s*(\*|\/\/|\/\*)/.test(l))

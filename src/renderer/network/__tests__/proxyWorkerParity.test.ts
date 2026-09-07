@@ -1,10 +1,11 @@
 import { afterAll, describe, expect, it } from 'vitest';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { isPrivateOrReservedTarget } from '../proxy';
+import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 
 const req = createRequire(import.meta.url);
 const { isPrivateOrReservedHost } = req('../../../../scripts/public-host-guard.cjs') as {
@@ -65,7 +66,7 @@ function extractFunction(source: string, name: string): string {
   throw new Error(`function ${name} の波括弧が閉じていません`);
 }
 
-const md = readFileSync(MD, 'utf8');
+const md = readOriginalSource(MD);
 const dir = mkdtempSync(join(tmpdir(), 'proxy-worker-parity-'));
 const modulePath = join(dir, 'workerIp.mjs');
 writeFileSync(

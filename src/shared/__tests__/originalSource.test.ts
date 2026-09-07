@@ -11,6 +11,7 @@ import {
   isInstrumented,
   originalSourcePath,
   readOriginalDir,
+  readOriginalDirEntries,
   readOriginalSource,
 } from './originalSource';
 
@@ -88,6 +89,20 @@ describe('readOriginalSource / readOriginalDir', () => {
     // 2026-09-07 にここで落ちた: 接頭辞だけを見ていたので自分の説明文に当たっていた。
     expect(readOriginalSource(path.join(__dirname, 'originalSource.ts')))
       .toContain('export function originalSourcePath');
+  });
+
+  it('★ 相対の道も repo の本物へ解く (sandbox では cwd が sandbox になる)', () => {
+    // `readOriginalDir('src/shared/__tests__')` は cwd 由来で解けるので、
+    // 絶対で渡したときと同じ一覧になる。最初の版は絶対の道しか見ていなかった。
+    expect(readOriginalDir('src/shared/__tests__')).toEqual(readOriginalDir(__dirname));
+  });
+
+  it('種別つきの一覧も repo の本物から取る', () => {
+    const real = __dirname;
+    const faked = real.replace('/src/', '/.stryker-tmp/sandbox-XYZ/src/');
+    const names = (es: readonly { name: string }[]) => es.map((e) => e.name).sort();
+    expect(names(readOriginalDirEntries(faked))).toEqual(names(readOriginalDirEntries(real)));
+    expect(readOriginalDirEntries(real).some((e) => e.isFile() && e.name === 'originalSource.ts')).toBe(true);
   });
 
   it('ディレクトリの一覧も repo の本物から取る', () => {
