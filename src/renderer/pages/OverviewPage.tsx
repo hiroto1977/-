@@ -691,8 +691,21 @@ export function OverviewPage() {
         members: memberRecords.map((r) => ({ role: r.data.role })),
         hydroponics,
         lowPotassium,
+        // 台帳の値を渡す。**画面は数字を持たない** (既定はモジュールの定数)。
+        balanceSheetStaleAfterMonths: paramValues['overview.balanceSheetStaleAfterMonths'],
       }),
-    [plan, salesRecords, kpiRecords, budgetRecords, bsRecords, accountingMonthly, memberRecords, hydroponics, lowPotassium],
+    [
+      plan,
+      salesRecords,
+      kpiRecords,
+      budgetRecords,
+      bsRecords,
+      accountingMonthly,
+      memberRecords,
+      hydroponics,
+      lowPotassium,
+      paramValues,
+    ],
   );
 
   // 手入力の上書きを自動計算の上に重ねる。**ここ 1 か所**で、以降の表示・

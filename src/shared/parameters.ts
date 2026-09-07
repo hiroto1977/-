@@ -33,6 +33,7 @@ import {
   type ProductionParams,
   type LowPotassiumParams,
 } from './hydroponics';
+import { BALANCE_SHEET_STALE_AFTER_MONTHS } from './balanceSheetFreshness';
 import { COMMUTE_PUBLIC_TRANSPORT_CAP } from './payroll';
 import { DSCR_DANGER_THRESHOLD, DSCR_CAUTION_THRESHOLD, type DscrThresholds } from './realEstateMetrics';
 import {
@@ -885,6 +886,12 @@ export function parameterDefinitions() {
     defaultValue: EMERGENCY_FUND_MONTHS_DEFAULT, min: 0, max: 24, integer: true, kind: 'reference',
     source: '一般的な目安 (会社員 3〜6 か月 / 自営 6〜12 か月)',
     note: '生活費の何か月分を現金で持つか。自営業・フリーランスは長めに取る',
+  },
+  // --- 経営サマリー -------------------------------------------------------
+  {
+    id: 'overview.balanceSheetStaleAfterMonths', feature: '経営サマリー', label: '貸借対照表を「別の期」と見なす古さ', unit: 'か月',
+    defaultValue: BALANCE_SHEET_STALE_AFTER_MONTHS, min: 1, max: 120, integer: true, kind: 'assumption',
+    note: '基準日が実績の最新期よりこれだけ古いと、総資産回転率・現金化サイクル・資金ランウェイが別の期の数字を割っている旨を所見と書面が述べる。既定 12 か月 = 1 事業年度',
   },
   ] as const satisfies readonly ParameterDef[];
 }

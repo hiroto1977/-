@@ -254,6 +254,17 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
   const times = (n: number | null | undefined): string => formatRatio(n, f, '倍', 2);
   const months = (n: number | null | undefined): string => formatCount(n, f, 'か月');
 
+  /**
+   * 貸借対照表の基準日が実績より古ければ、**溜まり ÷ 流れ の比率がどの期の数字でも
+   * なくなる**ことを述べる (総資産回転率・現金化サイクル・資金ランウェイ)。
+   * 経緯は `src/renderer/data/balanceSheet.ts` の `BalanceSheetFreshness`。
+   */
+  const staleBsNote = (): string | null => {
+    const fr = o.balanceSheetFreshness;
+    if (fr?.stale !== true || fr.monthsBehind === null) return null;
+    return `貸借対照表の基準日は対象期間の最終月より ${fr.monthsBehind} か月古く、売上高や原価と組み合わせる比率 (回転率・回転日数) は同じ期の数字ではありません。`;
+  };
+
   const range = periodRange(input.kpiPeriods);
   const rangeLabel = range ? formatPeriodRange(range.from, range.to, f) : BLANK;
   const bsLabel = formatDate(input.balanceSheetAsOf, f);
@@ -334,7 +345,7 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
   const fp = o.financialPosition;
   sections.push({
     title: '4. 財政状態（貸借対照表 基準日現在）',
-    caption: fp === null ? '貸借対照表が未入力のため算定していません。' : null,
+    caption: fp === null ? '貸借対照表が未入力のため算定していません。' : staleBsNote(),
     rows: [
       row('総資産', fp === null ? BLANK : amt(fp.totalAssets)),
       row('負債合計', fp === null ? BLANK : amt(fp.totalLiabilities)),
@@ -358,7 +369,7 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
   const wc = o.workingCapital;
   sections.push({
     title: '5. 運転資本',
-    caption: wc === null ? '貸借対照表と売上高が揃っていないため算定していません。' : null,
+    caption: wc === null ? '貸借対照表と売上高が揃っていないため算定していません。' : staleBsNote(),
     rows: [
       row('売上債権回転日数（DSO）', wc === null ? BLANK : days(wc.dso), '売上債権 ÷ 売上高 × 365'),
       row('棚卸資産回転日数（DIO）', wc === null ? BLANK : days(wc.dio), '棚卸資産 ÷ 売上原価 × 365'),

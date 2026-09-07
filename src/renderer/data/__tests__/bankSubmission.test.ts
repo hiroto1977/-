@@ -709,3 +709,55 @@ describe('決算期と対象期間の関係を述べる (periodScopeNote)', () =
     expect(s1b.caption).toBeNull();
   });
 });
+
+/**
+ * **古い貸借対照表と当期の売上を割った比率であることを、書面が述べる。** (2026-09-07)
+ *
+ * 基準日はヘッダに刷られていたが、2026-09-07 まで**どの計算にも入っていなかった** ——
+ * 7 年古い貸借対照表でも出力が 1 バイトも変わらなかった。§4 (財政状態) と
+ * §5 (運転資本) は溜まりと流れを組み合わせるので、そこに断り書きを出す。
+ * 経緯は `src/shared/balanceSheetFreshness.ts`。
+ */
+describe('基準日が古い書面は、比率が同じ期の数字でないことを述べる', () => {
+  const kpi2026: KpiActual[] = ['2026-06', '2026-07', '2026-08'].map((period) => ({
+    period, unit: '全社', revenue: 4_000_000, cogs: 1_600_000, advertising: 0, sga: 1_200_000, depreciation: 0, laborCost: 0,
+  }));
+  const sheetWithBsAsOf = (asOf: string) =>
+    buildBankSubmissionSheet(
+      inputWith(
+        overviewWith({ kpiActuals: kpi2026, balanceSheet: { ...BS, asOf } }),
+        SETTINGS,
+        { kpiPeriods: kpi2026.map((r) => r.period), balanceSheetAsOf: asOf },
+      ),
+    );
+
+  it('★ 7 年古い基準日: §4 と §5 に断り書きが付き、隔たりの月数を言う', () => {
+    const m = sheetWithBsAsOf('2019-03-31');
+    for (const prefix of ['4.', '5.']) {
+      const s = section(m.sections, prefix);
+      expect(s.caption).toContain('か月古く');
+      expect(s.caption).toContain('同じ期の数字ではありません');
+    }
+  });
+
+  it('★ 対照: 基準日が対象期間の中なら断り書きは付かない', () => {
+    const m = sheetWithBsAsOf('2026-08-31');
+    expect(section(m.sections, '4.').caption).toBeNull();
+    expect(section(m.sections, '5.').caption).toBeNull();
+  });
+
+  it('★ 境界: 12 か月ちょうどは古くない、13 か月は古い', () => {
+    // 対象期間の最終月は 2026-08。
+    expect(section(sheetWithBsAsOf('2025-08-31').sections, '4.').caption).toBeNull();
+    expect(section(sheetWithBsAsOf('2025-07-31').sections, '4.').caption).toContain('13 か月古く');
+  });
+
+  it('貸借対照表そのものが無ければ、従来の「未入力」の断り書きが優先する', () => {
+    const m = buildBankSubmissionSheet(
+      inputWith(overviewWith({ kpiActuals: kpi2026, balanceSheet: null }), SETTINGS, {
+        kpiPeriods: kpi2026.map((r) => r.period), balanceSheetAsOf: null,
+      }),
+    );
+    expect(section(m.sections, '4.').caption).toBe('貸借対照表が未入力のため算定していません。');
+  });
+});

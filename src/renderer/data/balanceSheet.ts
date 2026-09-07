@@ -307,3 +307,15 @@ export function computeBalanceSheetInsights(bs: BalanceSheet): BalanceSheetInsig
     substantiveInsolvencyRisk: base.netAssets > 0 && netDebt > base.netAssets,
   };
 }
+
+/**
+ * 基準日の新しさ (`balanceSheetFreshness`) は `src/shared/balanceSheetFreshness.ts`
+ * に置いてある —— `src/shared/parameters.ts` の台帳が既定値を**写さずに参照**する
+ * ために shared 側でなければならない (`shared` は `shared` しか import できない)。
+ * 純粋な日付の算術なので両ビルドで同じ物を読む。
+ */
+export {
+  BALANCE_SHEET_STALE_AFTER_MONTHS,
+  balanceSheetFreshness,
+  type BalanceSheetFreshness,
+} from '../../shared/balanceSheetFreshness';

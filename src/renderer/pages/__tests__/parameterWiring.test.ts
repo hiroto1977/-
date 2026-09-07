@@ -21,6 +21,8 @@ import { MutualFundsPage } from '../MutualFundsPage';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { PARAMETER_OVERRIDES_COLLECTION } from '../../data/parameterOverrides';
+import { KPI_ACTUALS_COLLECTION } from '../../data/kpiActuals';
+import { BALANCE_SHEET_COLLECTION } from '../../data/balanceSheet';
 import {
   HYDROPONICS_COLLECTION,
   HYDROPONICS_DEFAULTS,
@@ -730,5 +732,55 @@ describe('書類スタジオの書面 — 台帳の消費税率が紙に効く',
     expect(text()).toContain('12%');
     expect(text()).toContain('60,000');
     await unmount();
+  });
+});
+
+// --- 経営サマリー (貸借対照表の古さ) ------------------------------------------
+
+/**
+ * 基準日が実績よりどれだけ古ければ「別の期」と見なすか。台帳の値が**所見に効く**。
+ * 経緯は `src/shared/balanceSheetFreshness.ts` (7 年古い貸借対照表でも
+ * 2026-09-07 まで所見が 1 件も出なかった)。
+ */
+async function seedOverviewWithBs(asOf: string): Promise<void> {
+  const store = getRecordStore();
+  for (const period of ['2026-06', '2026-07', '2026-08']) {
+    await store.insert(KPI_ACTUALS_COLLECTION, {
+      period, unit: '全社', revenue: 4_000_000, cogs: 1_600_000, advertising: 0, sga: 1_200_000, depreciation: 0,
+    });
+  }
+  await store.insert(BALANCE_SHEET_COLLECTION, {
+    asOf, currentAssets: 6_000_000, cash: 3_000_000, inventory: 1_000_000, accountsReceivable: 2_000_000,
+    fixedAssets: 4_000_000, currentLiabilities: 2_000_000, accountsPayable: 1_500_000,
+    fixedLiabilities: 3_000_000, netIncome: 600_000,
+  });
+}
+
+describe('経営サマリー — 貸借対照表を「別の期」と見なす古さ', () => {
+  it('対照: 既定 (12 か月) では 13 か月古い基準日が所見に出る', async () => {
+    await seedOverviewWithBs('2025-07-31'); // 対象期間の最終月 2026-08 より 13 か月古い
+    await mount(OverviewPage);
+    expect(text()).toContain('13 か月古く');
+    expect(text()).toContain('総資産回転率');
+  });
+
+  it('対照: 既定では 12 か月ちょうどは所見に出ない', async () => {
+    await seedOverviewWithBs('2025-08-31'); // ちょうど 12 か月
+    await mount(OverviewPage);
+    expect(text()).not.toContain('か月古く');
+  });
+
+  it('★ しきい値を 6 か月へ下げると、同じ 12 か月が所見に出る (上書きが効く)', async () => {
+    await seed({ 'overview.balanceSheetStaleAfterMonths': 6 });
+    await seedOverviewWithBs('2025-08-31');
+    await mount(OverviewPage);
+    expect(text()).toContain('12 か月古く');
+  });
+
+  it('★ しきい値を 24 か月へ上げると、13 か月古い基準日は所見に出ない', async () => {
+    await seed({ 'overview.balanceSheetStaleAfterMonths': 24 });
+    await seedOverviewWithBs('2025-07-31');
+    await mount(OverviewPage);
+    expect(text()).not.toContain('か月古く');
   });
 });

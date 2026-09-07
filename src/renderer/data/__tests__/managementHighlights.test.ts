@@ -24,6 +24,7 @@ const mkOv = (p: any = {}): BusinessOverview => ({
   productivity: { labor: { laborSharePct: null, ...p.labor } },
   budget: 'budget' in p ? p.budget : null,
   financialPosition: 'fp' in p ? p.fp : null,
+  balanceSheetFreshness: 'fresh' in p ? p.fresh : null,
   workingCapital: 'wc' in p ? p.wc : null,
   accounting: 'accounting' in p ? p.accounting : null,
   runwayMonths: 'runwayMonths' in p ? p.runwayMonths : null,
@@ -277,6 +278,52 @@ describe('buildManagementHighlights — exact boundaries & null guards (direct o
    * 「安全余裕率が 0.0% と低く、**売上減少に弱い**状態です」(warning) が出ていた。
    * 弱いのではなく既に割っている。所見の強さも文面も、状態に合っていなかった。
    */
+  /**
+   * 貸借対照表の基準日は 2026-09-07 まで**どの計算にも入っていなかった** ——
+   * 7 年古い貸借対照表でも所見が 1 件も出なかった (経緯は `balanceSheetFreshness.ts`)。
+   */
+  it('★ 基準日が古ければ、どの比率が別の期を見ているかまで述べる', () => {
+    const f = c(
+      buildManagementHighlights(
+        mkOv({ fresh: { asOfMonth: '2019-03', latestPeriod: '2026-08', monthsBehind: 89, stale: true } }),
+      ),
+      '財政状態',
+    );
+    expect(f).toMatchObject({ severity: 'warning' });
+    expect(f?.message).toContain('2019年3月');
+    expect(f?.message).toContain('2026年8月');
+    expect(f?.message).toContain('89 か月');
+    expect(f?.message).toContain('総資産回転率');
+    expect(f?.message).toContain('現金化サイクル');
+    expect(f?.message).toContain('資金ランウェイ');
+  });
+
+  it('★ 対照: 古くなければ (stale=false) 何も言わない', () => {
+    expect(
+      c(
+        buildManagementHighlights(
+          mkOv({ fresh: { asOfMonth: '2026-08', latestPeriod: '2026-08', monthsBehind: 0, stale: false } }),
+        ),
+        '財政状態',
+      ),
+    ).toBeUndefined();
+  });
+
+  it('★ 隔たりが測れない (monthsBehind=null) なら言わない —— 数字の無い文面を出さない', () => {
+    expect(
+      c(
+        buildManagementHighlights(
+          mkOv({ fresh: { asOfMonth: null, latestPeriod: '2026-08', monthsBehind: null, stale: true } }),
+        ),
+        '財政状態',
+      ),
+    ).toBeUndefined();
+  });
+
+  it('対照: 貸借対照表が無ければ (fresh=null) 何も言わない', () => {
+    expect(c(buildManagementHighlights(mkOv({ fresh: null })), '財政状態')).toBeUndefined();
+  });
+
   it('★ 安全余裕率が負 = 損益分岐点を下回っている → warning ではなく critical、文面も変わる', () => {
     const f = c(buildManagementHighlights(mkOv({ kpi: { revenue: 1000, safetyMargin: -50 } })), '安全性');
     expect(f).toMatchObject({ severity: 'critical' });

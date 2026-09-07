@@ -13,6 +13,7 @@ import {
   computeRevenueLandingForecast,
   computeYoYGrowth,
   computeLaborMetrics,
+  isValidPeriod,
   type KpiActual,
   type RevenueTrend,
   type RevenueLandingForecast,
@@ -22,7 +23,14 @@ import {
 import { seatsRemaining, type Role } from '../../shared/team';
 import { getPlan, type PlanTier } from '../../shared/plan';
 import { computeBudgetVariance, type BudgetVariance } from './budgetVariance';
-import { computeBalanceSheetMetrics, type BalanceSheet, type BalanceSheetMetrics } from './balanceSheet';
+import {
+  BALANCE_SHEET_STALE_AFTER_MONTHS,
+  balanceSheetFreshness,
+  computeBalanceSheetMetrics,
+  type BalanceSheet,
+  type BalanceSheetFreshness,
+  type BalanceSheetMetrics,
+} from './balanceSheet';
 import { computeCashConversionCycle, type CashConversionCycle } from './workingCapital';
 import { forecastCashBalance, type CashForecast } from './cashForecast';
 import { computeRevenueConcentration, type RevenueConcentration } from './revenueConcentration';
@@ -38,6 +46,11 @@ export interface OverviewInput {
   readonly kpiBudgets?: readonly KpiActual[];
   /** 貸借対照表 (最新の1時点)。未入力なら財政状態指標は出さない。 */
   readonly balanceSheet?: BalanceSheet | null;
+  /**
+   * 貸借対照表の基準日が実績よりこれだけ古ければ「別の期の数字」として扱う (か月)。
+   * 台帳 (`src/shared/parameters.ts`) の値を画面が渡す。既定はモジュールの定数。
+   */
+  readonly balanceSheetStaleAfterMonths?: number;
   /** 会計連携 (freee 等) の月次キャッシュフロー。未連携なら空。 */
   readonly accounting?: readonly AccountingMonthly[];
   /** Team members (only the count + roles matter here). */
@@ -160,6 +173,12 @@ export interface BusinessOverview {
   readonly budget: BudgetVariance | null;
   /** 財政状態指標 (ROA/ROE/自己資本比率/流動比率)。BS 未入力なら null。 */
   readonly financialPosition: BalanceSheetMetrics | null;
+  /**
+   * 貸借対照表の基準日と実績の期の隔たり。貸借対照表が無ければ null。
+   * **溜まり ÷ 流れ の指標 (総資産回転率・CCC・ランウェイ) が両辺で別の期を
+   * 見ていないかを、所見と書面がここから述べる。** 詳細は `balanceSheet.ts`。
+   */
+  readonly balanceSheetFreshness: BalanceSheetFreshness | null;
   /** 運転資金 (CCC)。BS 未入力 or 売上が無いなら null。 */
   readonly workingCapital: CashConversionCycle | null;
   /** 会計連携の月次キャッシュフロー要約。未連携なら null。 */
@@ -191,6 +210,9 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
   const topChannel = salesSummary.byChannel[0]?.label ?? null;
 
   const hasKpi = input.kpiActuals.length > 0;
+  // 実績の最新の期。**期の綴りは `isValidPeriod` が 1 か所で持つ** (写さない)。
+  const validKpiPeriods = input.kpiActuals.map((r) => r.period).filter(isValidPeriod).sort();
+  const latestKpiPeriod = validKpiPeriods.length === 0 ? null : validKpiPeriods[validKpiPeriods.length - 1]!;
   const fundamentals = summarizeFundamentals(input.kpiActuals);
   const kpi = computeKpiMetrics(fundamentals);
 
@@ -251,6 +273,13 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
     },
     budget: computeBudgetVariance(input.kpiBudgets ?? [], input.kpiActuals),
     financialPosition: input.balanceSheet ? computeBalanceSheetMetrics(input.balanceSheet) : null,
+    balanceSheetFreshness: input.balanceSheet
+      ? balanceSheetFreshness(
+          input.balanceSheet.asOf,
+          latestKpiPeriod,
+          input.balanceSheetStaleAfterMonths ?? BALANCE_SHEET_STALE_AFTER_MONTHS,
+        )
+      : null,
     workingCapital: input.balanceSheet && hasKpi
       ? computeCashConversionCycle({
           accountsReceivable: input.balanceSheet.accountsReceivable,

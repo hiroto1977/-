@@ -66,6 +66,7 @@ import {
   REFERENCE_LETTUCE_POTASSIUM_MG,
   SALT_EQUIVALENT_FACTOR,
 } from '../hydroponics';
+import { BALANCE_SHEET_STALE_AFTER_MONTHS } from '../balanceSheetFreshness';
 import { COMMUTE_PUBLIC_TRANSPORT_CAP } from '../payroll';
 import { DEFAULT_DSCR_THRESHOLDS, DSCR_CAUTION_THRESHOLD, DSCR_DANGER_THRESHOLD } from '../realEstateMetrics';
 import {
@@ -221,6 +222,7 @@ const DEFS: readonly ParameterDef[] = PARAMETERS;
 
 /** 既定値がモジュールの定数そのものであること (id → 定数)。 */
 const DEFAULT_SOURCE: Readonly<Record<ParameterId, number>> = {
+  'overview.balanceSheetStaleAfterMonths': BALANCE_SHEET_STALE_AFTER_MONTHS,
   'hydroponics.panelAreaSqm': PANEL_AREA_SQM,
   'hydroponics.daysPerYear': DAYS_PER_YEAR,
   'hydroponics.referenceLettucePotassiumMg': REFERENCE_LETTUCE_POTASSIUM_MG,
@@ -405,7 +407,7 @@ describe('台帳の形', () => {
       '水耕栽培', '給与', '不動産', '税', '所得税・住民税', '所得控除・税額控除', '不動産・登記・印紙の税', '譲渡所得',
       '法人税', '消費税 (事業者)', '年金・一時所得・ふるさと納税', '貿易', '社会保険', '財務',
       '敷地計画 (建築基準法)', '水循環 (排水基準)', '財務診断', '消費税 (申告・納付)', '配当所得', '感情ログ',
-      '貯蓄・資産形成',
+      '貯蓄・資産形成', '経営サマリー',
     ]);
   });
 
@@ -1035,6 +1037,7 @@ describe('台帳の表 (静的な値の固定)', () => {
       ['emotion.lowScore', '点', 1, 1, 5, true, 'threshold'],
       ['emotion.triggerMinCount', '回', 1, 1, 100, true, 'threshold'],
       ['savings.emergencyFundMonths', 'か月', 1, 0, 24, true, 'reference'],
+      ['overview.balanceSheetStaleAfterMonths', 'か月', 1, 1, 120, true, 'assumption'],
     ]);
     expect(m.PARAMETER_KIND_LABEL).toEqual({ law: '法定値', reference: '参考値', threshold: 'しきい値', assumption: '前提' });
     // 出典と注記は空でない (法定値には出典が要る)。

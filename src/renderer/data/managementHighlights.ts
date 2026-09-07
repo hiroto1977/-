@@ -94,6 +94,19 @@ export interface HighlightOptions {
  * @param overview 経営概況
  * @param options DSCR・しきい値。後方互換のため `number|null` (= overallDscr) も受ける。
  */
+/**
+ * `YYYY-MM` → 「2026年8月」。
+ *
+ * **期の綴りをここで検査しない** —— 呼ぶ側は `monthsBehind !== null` を確かめており、
+ * そのとき両方の月は必ず読めている (`src/shared/balanceSheetFreshness.ts` の不変条件・
+ * 同モジュールの検査が留めてある)。ここで 3 つ目の正規表現を持つと、綴りの規則が
+ * 3 か所に散る。
+ */
+function monthText(yearMonth: string): string {
+  const [year, month] = yearMonth.split('-');
+  return `${Number(year)}年${Number(month)}月`;
+}
+
 export function buildManagementHighlights(
   overview: BusinessOverview,
   options?: HighlightOptions | number | null,
@@ -179,6 +192,25 @@ export function buildManagementHighlights(
         out.push({ severity: 'good', category: '予実', message: `売上予算を達成しています (達成率 ${a}%)。` });
       }
     }
+  }
+
+  // 貸借対照表の基準日が古いと、溜まり ÷ 流れ の指標 (総資産回転率・CCC・
+  // 資金ランウェイ) が**両辺で別の期を見る**。基準日は表示も印刷もされていたが
+  // どの計算にも入っておらず、7 年古い貸借対照表でも出力が 1 バイトも変わらなかった
+  // (2026-09-07 実測。経緯は `balanceSheet.ts` の `BalanceSheetFreshness`)。
+  const fresh = overview.balanceSheetFreshness;
+  // `?.` は型の外から来る詰め物 (欄そのものが無い) にも耐えるため。
+  // 月の非 null 判定 2 つは**型を狭めるためだけ**に在る (等価変異)。
+  // `monthsBehind` が非 null なら両方の月は必ず非 null という不変条件が在り、
+  // `src/shared/__tests__/balanceSheetFreshness.test.ts` の「不変条件」が留めている ——
+  // 崩れたらそちらが先に鳴る。
+  // Stryker disable next-line ConditionalExpression: 上の不変条件により常に真 (到達不能)
+  if (fresh?.stale === true && fresh.monthsBehind !== null && fresh.asOfMonth !== null && fresh.latestPeriod !== null) {
+    out.push({
+      severity: 'warning',
+      category: '財政状態',
+      message: `貸借対照表の基準日 (${monthText(fresh.asOfMonth)}) が実績の最新期 (${monthText(fresh.latestPeriod)}) より ${fresh.monthsBehind} か月古く、総資産回転率・現金化サイクル・資金ランウェイは別の期の数字を割っています。新しい貸借対照表を入力してください。`,
+    });
   }
 
   // 財政状態 (BS)
