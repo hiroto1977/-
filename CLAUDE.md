@@ -23,7 +23,7 @@ with a verified 事業仕分け duty map (`professionalMap.ts`) and a local-firs
 **Two runtime targets ship from the same codebase:**
 1. **Electron desktop app** (`npm run dev` / `npm run build`) — full OS integration, 3-process model.
 2. **Browser standalone** (`npm run build:web` → `dist/standalone.html`) — a single self-contained HTML
-   file (実測 10.9 MiB full / 2.8 MiB `build:web:lite` mobile variant — 2026-09-02 計測: 11,418,740 B / 2,913,792 B) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
+   file (実測 11.10 MiB full / 2.91 MiB `build:web:lite` mobile variant — 2026-09-07 計測: 11,635,770 B / 3,048,518 B。天井は CI が両方に掛けている: 16 MB / 4 MB、85% で警告) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
 
 Each service page starts from a static snapshot in `src/renderer/data/snapshot.ts` and can swap to a
 live REST fetch. The `useServiceData(serviceId, snapshot)` hook returns `data`, `source`
@@ -108,7 +108,9 @@ npm run lint:storage       # ブラウザに残す物の台帳 (IndexedDB 4 / Ca
                            #   新しい保存先が黙って増えないこと・バックアップが覆うのは 1 つだけ・
                            #   **媒体そのものが `docs/DATA_PROTECTION.md` の在庫に載っていること**
 npm run lint:shell         # scripts/*.sh: bash -n syntax + strict mode (set -euo pipefail)
-npm run lint:mutation-scope # 変異検査の「測っていない範囲」の台帳 (広い Stryker disable)
+npm run lint:mutation-scope # 変異検査の「測っていない範囲」の台帳 (広い Stryker disable と、
+                           #   **理由が書かれていない pragma** —— 無言の pragma はその行の変異体を
+                           #   消すので、測っていない範囲が「100%」として報告される)
 npm run lint:regex         # 正規表現の破滅的バックトラック (ReDoS) を実測。worker + 番犬つき
                            #   (モデル応答を解析する assistantMarkdown.ts が主眼。指数のみ)
 npm run lint:parameter-prose # 画面が刷る数字と、計算に使う数字の出所が同じか
