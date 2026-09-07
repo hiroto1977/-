@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 29 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **11396** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **11401** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 30 / 35 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 502 | 自己検証 |
+| `file:line` 参照数 | 503 | 自己検証 |
 
 ### 統合フロー図
 
@@ -3194,6 +3194,28 @@ reject する**ので、素朴に catch して `run()` を呼び直すと**書�
 
 ランタイムソース **≥ 400 ファイル**を **36 個の禁止パターン** で scan し、
 1 件でも検出すれば fail。
+
+**走査の生存 (2026-09-07)。** 「1 件でも検出すれば fail」は、走査が的に当たって
+いる限りの話である。この検査の錨は `KNOWN_SUPPRESSIONS` の双方向照合で、走査が
+死んで例外の一致が消えれば鳴る —— 実測で `src` / `scripts` / `orchestration` の
+どれを落としても鳴った。**ところが錨は「例外が在る場所」にしか無い。** `assets`
+の根を落とすと **exit 0 のまま**で、そこに在る 1 本は `assets/sw.js`、つまり
+**出荷される Service Worker** (単一 HTML の外で全タブに常駐する唯一のスクリプト)。
+この根は 2026-08-22 に「丸ごと見えていなかった」から足したもので、その直しには
+錨が無く、同じ形で黙って元へ戻れた。
+
+区別が要る 3 つ: ファイルの**改竄**と**消失/改名**は `chain:verify` が鳴らす
+(`assets/sw.js` は保護対象・どちらも実測で確認)。鳴らなかったのは
+**ゲートが見るのをやめた**場合 —— 根を消す / 除外規則を広げる ——
+だけである。そこに `SCAN_ROOTS` (根ごとの本数の床) と `MUST_SCAN`
+(名前で在ることを確かめる出荷物) を置いた。実測 src 452 / scripts 76 /
+build 0 / orchestration 3 / assets 1 = 532。`build` の床は 0 で、理由を
+添えてある (アイコンだけ。ビルドフックが置かれた日に見るための根) ——
+**「床が無い」と「床が 0」を区別する。** 床と名指しはゲート自身の中に在るので、
+外側の証人 `src/shared/__tests__/forbiddenPatternWitness.test.ts` が
+「出荷物が名指しに入っている / 実物の走査がそこへ届いている / 実物の根が床を
+満たす」を別の紙から見る (対照 2 本: 名指しを空にすると 2 件・`assets` の床を
+0 にすると 1 件落ちる)。
 
 規則の一覧はここに写さず `FORBIDDEN_PATTERNS` (scripts/lint-forbidden-patterns.cjs)
 を唯一の出典とする —— **以前はここに 13 個を書き写していて、実体が 26 個に

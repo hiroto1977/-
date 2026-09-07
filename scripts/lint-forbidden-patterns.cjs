@@ -852,6 +852,104 @@ const KNOWN_SUPPRESSIONS = [
   '食事補助の非課税限度額を地の文に書いている (3,500 円は改正前の値) :: src/shared/welfareScheme.ts :: 2',
 ];
 
+/**
+ * **走査する場所と、そこに必ず在るはずの本数。**
+ *
+ * ## なぜ本数を書くのか (2026-09-07 実測)
+ *
+ * この検査には錨が 1 つあった —— `KNOWN_SUPPRESSIONS` の双方向照合である。
+ * 走査が死んで例外の一致が消えれば「台帳にあるのに効いていない」で鳴る。
+ * 実測で確かめた: `src` の走査を落とすと 20 件、`scripts` でも、
+ * `orchestration` でも鳴る。
+ *
+ * **ところが錨は「例外が在る場所」にしか無い。** 同じ実測で、
+ * `assets` の走査を落とすと **exit 0 のまま**だった (532 → 531 と 1 本減るだけ)。
+ * その 1 本は `assets/sw.js` —— **出荷される Service Worker**、つまり
+ * 単一 HTML の外側で全てのタブに常駐する唯一のスクリプトである。
+ * この根を足したのは 2026-08-22 で、理由は下のコメントに書いてある通り
+ * 「丸ごと見えていなかった」から。その直しに錨が無く、**同じ形で黙って
+ * 元に戻れる**状態だった。
+ *
+ * 実測の内訳 (2026-09-07): src 452 / scripts 76 / build 0 /
+ * orchestration 3 / assets 1 = 532。
+ */
+const SCAN_ROOTS = [
+  { dir: 'src', min: 350 },
+  { dir: 'scripts', min: 50 },
+  {
+    dir: 'build',
+    min: 0,
+    // 走査対象の拡張子は **今日 0 件** (electron-builder のアイコン png/svg だけ)。
+    // 根を消さないのは、ここに置かれるのが `afterSign` などの**ビルドフック**で、
+    // 置かれた日に見られていないと困る側だから。0 を明記して「床が無い」と
+    // 「床が 0」を区別する。
+    why: 'アイコンだけ。ビルドフックが置かれた日に見るための根',
+  },
+  { dir: 'orchestration', min: 2 },
+  { dir: 'assets', min: 1 },
+];
+
+/**
+ * **名前で在ることを確かめるファイル。**
+ *
+ * 本数の床だけでは「1 本」が別の 1 本に置き換わっても気付けない。出荷される
+ * Service Worker は `assets/` にただ 1 つなので、名前で留める。
+ */
+const MUST_SCAN = ['assets/sw.js'];
+
+/**
+ * 実物の木を走査して根ごとの本数を返す (自己検査の標本用)。
+ * 本体と同じ `walk` を通すので、除外規則を変えたらこちらも一緒に動く。
+ */
+function realRootCounts() {
+  const counts = {};
+  for (const root of SCAN_ROOTS) {
+    let n = 0;
+    walk(path.join(REPO_ROOT, root.dir), () => {
+      n += 1;
+    });
+    counts[root.dir] = n;
+  }
+  return counts;
+}
+
+/** 実物の木で走査される相対パスの集合 (自己検査の標本用)。 */
+function realVisited() {
+  const seen = new Set();
+  for (const root of SCAN_ROOTS) {
+    walk(path.join(REPO_ROOT, root.dir), (_full, rel) => {
+      seen.add(rel);
+    });
+  }
+  return seen;
+}
+
+/** 床を割った根を返す。`counts` は根の名前 → 走査した本数。 */
+function rootShortfalls(counts, roots = SCAN_ROOTS) {
+  const out = [];
+  for (const root of roots) {
+    const got = counts[root.dir] ?? 0;
+    if (got < root.min) {
+      out.push(
+        `${root.dir}/ の走査が ${got} 件でした (下限 ${root.min})。` +
+          ' 走査が的を外すと違反 0 件で緑になります — 除外規則か根の綴りを確かめてください',
+      );
+    }
+  }
+  return out;
+}
+
+/** 走査されなかった `MUST_SCAN` を返す。`visited` は走査した相対パスの集合。 */
+function missingMustScan(visited, must = MUST_SCAN) {
+  return must
+    .filter((rel) => !visited.has(rel))
+    .map(
+      (rel) =>
+        `${rel} が走査されていません。出荷する物が検査の外に出ると、` +
+        '違反はそのまま出荷されます (名前が変わったなら MUST_SCAN も直してください)',
+    );
+}
+
 function walk(dir, hit) {
   let entries;
   try {
@@ -1058,6 +1156,44 @@ function selfTest() {
     ['件数を無視する鍵なら見逃していた (対照)', [`${K}`], [`${K}`], 0, 0],
   ];
   let bad = 0;
+
+  // ── 走査の生存: 根ごとの床と、名前で留めるファイル ──
+  {
+    const ROOTS = [
+      { dir: 'a', min: 2 },
+      { dir: 'b', min: 0, why: '今日は 0 件' },
+    ];
+    const rootCases = [
+      ['床どおりなら鳴らない', { a: 2, b: 0 }, ROOTS, 0],
+      ['多くても鳴らない', { a: 99, b: 5 }, ROOTS, 0],
+      ['★ 床を割ると鳴る', { a: 1, b: 0 }, ROOTS, 1],
+      ['★ 根が消えて 0 件でも鳴る (走査の死)', {}, ROOTS, 1],
+      ['床 0 の根は 0 でも鳴らない (「床が無い」と区別する)', { a: 2 }, ROOTS, 0],
+      ['★ 実物の根はすべて床を満たす (標本)', null, undefined, 0],
+    ];
+    for (const [label, counts, roots, expected] of rootCases) {
+      const got =
+        counts === null ? rootShortfalls(realRootCounts()).length : rootShortfalls(counts, roots).length;
+      const ok = got === expected;
+      if (!ok) bad += 1;
+      console.log(`  ${ok ? '✓' : '✗'} 走査の床: ${label}: ${got} 件 (期待 ${expected})`);
+    }
+    const mustCases = [
+      ['走査されていれば鳴らない', new Set(['x/y.js']), ['x/y.js'], 0],
+      ['★ 走査されていなければ鳴る', new Set(['x/other.js']), ['x/y.js'], 1],
+      ['★ 何も走査していなければ鳴る', new Set(), ['x/y.js'], 1],
+      ['複数ならその数だけ鳴る', new Set(), ['x/y.js', 'x/z.js'], 2],
+      ['★ 実物の sw.js は走査されている (標本)', null, undefined, 0],
+    ];
+    for (const [label, visitedSet, must, expected] of mustCases) {
+      const got =
+        visitedSet === null ? missingMustScan(realVisited()).length : missingMustScan(visitedSet, must).length;
+      const ok = got === expected;
+      if (!ok) bad += 1;
+      console.log(`  ${ok ? '✓' : '✗'} 名指しの走査: ${label}: ${got} 件 (期待 ${expected})`);
+    }
+  }
+
   for (const [label, actual, known, wantAdded, wantGone] of ledgerCases) {
     const r = diffSuppressions(new Set(actual), known);
     const ok = r.added.length === wantAdded && r.gone.length === wantGone;
@@ -1172,18 +1308,22 @@ function main() {
   const suppressions = new Set();
   let filesScanned = 0;
 
-  walk(path.join(REPO_ROOT, 'src'), scan);
-  walk(path.join(REPO_ROOT, 'scripts'), scan);
-  walk(path.join(REPO_ROOT, 'build'), scan);
-  // 2026-08-22 に足した。`src` / `scripts` / `build` だけを見ていたので、
+  // 根は `SCAN_ROOTS` が持つ (本数の床つき)。`orchestration` と `assets` は
+  // 2026-08-22 に足した —— `src` / `scripts` / `build` だけを見ていたので、
   // **出荷される Service Worker (assets/sw.js) と orchestration/*.cjs が
   // 丸ごと見えていなかった**。実際 orchestration に不変条件 #9 違反
   // (new Function) が 1 件あり、誰にも見られないまま残っていた。
-  walk(path.join(REPO_ROOT, 'orchestration'), scan);
-  walk(path.join(REPO_ROOT, 'assets'), scan);
+  const perRoot = {};
+  const visited = new Set();
+  for (const root of SCAN_ROOTS) {
+    const before = filesScanned;
+    walk(path.join(REPO_ROOT, root.dir), scan);
+    perRoot[root.dir] = filesScanned - before;
+  }
 
   function scan(full, rel) {
     filesScanned++;
+    visited.add(rel);
     let text;
     try {
       text = fs.readFileSync(full, 'utf8');
@@ -1194,8 +1334,14 @@ function main() {
   }
 
   console.log(
-    `Scanned ${filesScanned} runtime source files against ${FORBIDDEN_PATTERNS.length} forbidden patterns`,
+    `Scanned ${filesScanned} runtime source files against ${FORBIDDEN_PATTERNS.length} forbidden patterns` +
+      ` (${SCAN_ROOTS.map((r) => `${r.dir} ${perRoot[r.dir] ?? 0}`).join(' / ')})`,
   );
+  const dead = [...rootShortfalls(perRoot), ...missingMustScan(visited)];
+  if (dead.length > 0) {
+    console.error(`\n❌ 走査が的を外しています (${dead.length} 件):\n`);
+    for (const x of dead) console.error(`  ${x}`);
+  }
   const { added, gone } = diffSuppressions(suppressions, KNOWN_SUPPRESSIONS);
   if (added.length > 0) {
     console.error(`\n❌ 台帳に無い例外が ${added.length} 件効いています (新しい穴):\n`);
@@ -1207,7 +1353,7 @@ function main() {
     for (const x of gone) console.error(`  ${x}`);
     console.error('\n  規則が当たらなくなっています。KNOWN_SUPPRESSIONS から削除してください。');
   }
-  if (violations.length === 0 && added.length === 0 && gone.length === 0) {
+  if (violations.length === 0 && added.length === 0 && gone.length === 0 && dead.length === 0) {
     console.log(`✅ no forbidden patterns found (例外 ${suppressions.size} 件はすべて台帳どおり)`);
     return 0;
   }
@@ -1240,6 +1386,19 @@ function main() {
  * **別のファイルに在り、`npm test` で走り、変異検査の対象でもある。**
  * 規則表を空にすれば、そちらが鳴る。
  */
-module.exports = { FORBIDDEN_PATTERNS, KNOWN_SUPPRESSIONS, isCommentLine, EXCLUDE_PATTERNS, scanText };
+module.exports = {
+  FORBIDDEN_PATTERNS,
+  KNOWN_SUPPRESSIONS,
+  isCommentLine,
+  EXCLUDE_PATTERNS,
+  scanText,
+  // 走査の生存 —— 外側の証人 (`forbiddenPatternWitness.test.ts`) が読む。
+  SCAN_ROOTS,
+  MUST_SCAN,
+  rootShortfalls,
+  missingMustScan,
+  realRootCounts,
+  realVisited,
+};
 
 if (require.main === module) process.exit(main());
