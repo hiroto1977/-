@@ -11,10 +11,12 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement, type ComponentType } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
+import { navigateTo } from '../../navigate';
 import { TeamPage } from '../TeamPage';
 import { RealEstatePage } from '../RealEstatePage';
 import { TaxPage } from '../TaxPage';
 import { EmotionsPage } from '../EmotionsPage';
+import { DocstudioPage } from '../DocstudioPage';
 import { MutualFundsPage } from '../MutualFundsPage';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
@@ -677,5 +679,56 @@ describe('savings.emergencyFundMonths — 緊急予備資金の月数', () => {
     expect(statValue('緊急予備資金 (生活費12か月)')).toBe(jpy(3_600_000));
     expect(statValue('予備資金 充足率')).toBe('25%');
     expect(text()).toContain('生活費の12か月分');
+  });
+});
+
+// --- 相手に渡す書面の消費税率 (書類スタジオ) ------------------------------------
+
+/*
+ * **台帳で税率を変えたら、相手に渡す書面の税率も変わること。** (2026-09-07)
+ *
+ * `tax.consumptionStandardRate` は `kind: 'law'` の上書きできる項目 —— 法改正の日に
+ * 変えるための欄である。ところが 2026-09-07 まで、上書きに従うのは税ページだけで、
+ * 書類スタジオの書面は**別の 2 通り**で税を出していた:
+ *
+ *   - 見積書 / 発注書 / 注文請書 / 納品書 … 画面の中の `subtotal * 0.1` と
+ *     「消費税（10%）」の直書き (同じページの請求書とは別の計算・別の端数処理)
+ *   - 請求書 / 支払通知書 … `invoiceTax.ts` の既定率 (台帳の受け口が無かった)
+ *
+ * つまり率を 12% にしても、**相手に渡す紙だけが 10% のまま**だった。
+ */
+describe('書類スタジオの書面 — 台帳の消費税率が紙に効く', () => {
+  /** 書式を開いて金額 1 を入れる。 */
+  async function openMitsumori(amount: string): Promise<void> {
+    navigateTo('docstudio', { doc: 'mitsumori' });
+    await mount(DocstudioPage);
+    await typeIntoLabeled('金額1（税抜）', amount);
+  }
+
+  it('対照: 既定では 10% で刷り、50 万円に 5 万円', async () => {
+    await openMitsumori('500000');
+    expect(text()).toContain('消費税（10%）');
+    expect(text()).toContain('50,000 円');
+    await unmount();
+  });
+
+  it('★ 上書きすると書面の率も税額も動く', async () => {
+    await seed({ 'tax.consumptionStandardRate': 0.12 });
+    await openMitsumori('500000');
+    expect(text()).toContain('消費税（12%）');
+    expect(text()).toContain('60,000 円');
+    expect(text()).not.toContain('消費税（10%）');
+    await unmount();
+  });
+
+  it('★ 適格請求書 (別の表) も同じ台帳に従う', async () => {
+    await seed({ 'tax.consumptionStandardRate': 0.12 });
+    navigateTo('docstudio', { doc: 'invoice' });
+    await mount(DocstudioPage);
+    await typeIntoLabeled('品目1 品名', 'Web サイト保守');
+    await typeIntoLabeled('品目1 単価（税抜・円）', '500000');
+    expect(text()).toContain('12%');
+    expect(text()).toContain('60,000');
+    await unmount();
   });
 });

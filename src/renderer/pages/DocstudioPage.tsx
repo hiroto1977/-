@@ -90,6 +90,7 @@ import {
 } from '../data/statementEquity';
 import type { ProfessionalId } from '../data/professionalMap';
 import { readNumber } from '../data/inputGuards';
+import { useParameters } from '../data/parameterOverrides';
 import {
   MAX_ITEM_RATE,
   ROUNDING_LABEL,
@@ -159,13 +160,46 @@ function Fill({ text, fields, values }: { text: string; fields: readonly DocFiel
   return <>{parts}</>;
 }
 
-/** 経営書類の明細表（品目1..3・税10%集計）。 */
+/**
+ * 台帳 (`parameters.ts`) の消費税率を読む。**書面の税額はここだけから来る。**
+ *
+ * 2026-09-07 まで、書面の税率は 3 通りに分かれていた ——
+ * 見積書・発注書・注文請書・納品書は画面の中の `subtotal * 0.1` と
+ * 「消費税（10%）」の直書き、請求書・支払通知書は `invoiceTax.ts` の既定率、
+ * そして税ページだけが台帳の上書きに従っていた。法定値は `kind: 'law'` の
+ * 上書き可能な項目 (法改正の日に変えるための欄) なので、**上書きしても
+ * 相手に渡す書面だけが古い率で刷られる**状態だった。
+ */
+function useTaxRates(): { readonly standardRate: number; readonly reducedRate: number } {
+  const { values: params } = useParameters();
+  return {
+    standardRate: params['tax.consumptionStandardRate'],
+    reducedRate: params['tax.consumptionReducedRate'],
+  };
+}
+
+/**
+ * 経営書類の明細表（品目1..3）。
+ *
+ * 税額は請求書と**同じ計算器** (`groupByTaxKind`) を通す。以前はここだけ
+ * `Math.floor(subtotal * 0.1)` を持っており、同じページの適格請求書とは
+ * 別の計算・別の端数処理・別の税率だった (同じ取引の見積書と請求書で
+ * 税額が食い違いうる形)。この書面には品目ごとの税率区分の欄が無いので、
+ * 全行を標準税率として扱う —— **軽減税率の品目を見積れないことは残る**
+ * (欄を足すのは書式の変更なので、`docs/REMAINING_WORK.md` に残した)。
+ */
 function ItemsTable({ values }: { values: Values }) {
+  const { standardRate } = useTaxRates();
   const rows = [1, 2, 3]
     .map((i) => ({ item: values[`item${i}`] ?? '', amount: readNumber(values[`amount${i}`]) }))
     .filter((r) => r.item || r.amount !== null);
-  const subtotal = rows.reduce((s, r) => s + (r.amount ?? 0), 0);
-  const tax = Math.floor(subtotal * 0.1);
+  const totals = groupByTaxKind(
+    rows.map((r) => ({ name: r.item, qty: 1, unitPrice: r.amount ?? 0, kind: 'standard' as const })),
+    { standardRate, rounding: 'floor' },
+  );
+  const subtotal = totals.groups[0]?.subtotal ?? 0;
+  const tax = totals.totalTax;
+  const label = totals.groups[0] === undefined ? `${Number((standardRate * 100).toFixed(2))}%` : rateLabel(totals.groups[0]);
   return (
     <table className="ds-table">
       <thead>
@@ -182,7 +216,7 @@ function ItemsTable({ values }: { values: Values }) {
       </tbody>
       <tfoot>
         <tr><td>小計（税抜）</td><td className="ds-num">{fmt(subtotal)} 円</td></tr>
-        <tr><td>消費税（10%）</td><td className="ds-num">{fmt(tax)} 円</td></tr>
+        <tr><td>消費税（{label}）</td><td className="ds-num">{fmt(tax)} 円</td></tr>
         <tr className="ds-total"><td>合計（税込）</td><td className="ds-num">{fmt(subtotal + tax)} 円</td></tr>
       </tfoot>
     </table>
@@ -248,6 +282,7 @@ function readTaxLines(values: Values, max = 6): TaxLine[] {
  * （行ごとに端数処理して積み上げる方式は認められない・消費税法57条の4）。
  */
 function TaxItemsTable({ values }: { values: Values }) {
+  const { standardRate, reducedRate } = useTaxRates();
   const lines = readTaxLines(values);
   const pct = (k: string) => {
     const v = readNumber(values[k] ?? '');
@@ -256,6 +291,9 @@ function TaxItemsTable({ values }: { values: Values }) {
   const totals = groupByTaxKind(lines, {
     customRateA: pct('rateA'),
     customRateB: pct('rateB'),
+    // 標準・軽減は台帳から (書面が古い率で刷られないように)。
+    standardRate,
+    reducedRate,
     rounding: ROUNDING_BY_LABEL[values['rounding'] ?? ''] ?? 'floor',
   });
   const delta = perLineRoundingDelta(totals);
@@ -301,7 +339,12 @@ function TaxItemsTable({ values }: { values: Values }) {
           </tr>
         </tfoot>
       </table>
-      {totals.hasReduced && <p className="ds-p">※ は軽減税率（8%）の対象品目です。</p>}
+      {totals.hasReduced && (
+        <p className="ds-p">
+          ※ は軽減税率（
+          {rateLabel(totals.groups.find((g) => g.isReduced) ?? totals.groups[0]!)}）の対象品目です。
+        </p>
+      )}
       <p className="ds-p" style={{ fontSize: 11 }}>
         消費税額は税率ごとに1回だけ{ROUNDING_LABEL[totals.rounding]}で計算しています
         {delta !== 0 && `（行ごとに${ROUNDING_LABEL[totals.rounding]}して積み上げる方法は認められません。その方法との差は ${fmt(Math.abs(delta))} 円です）`}。
