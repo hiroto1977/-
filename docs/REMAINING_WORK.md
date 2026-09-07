@@ -344,11 +344,48 @@ assetTurnover: financialPosition && financialPosition.totalAssets > 0 && kpi.rev
 **未入力を 0 に倒さないこと。** 入力欄を足すか、無いなら `null` = 算定不能にしてから
 配線する (同じ規則の実例は `src/shared/balanceSheetFreshness.ts` と 安全余裕率)。
 
-### 提案 (未着手) — 「出口の無い輸出」を機械で見る
+### 数えた —— **106 件**在った (2026-09-07 実測)
 
-同じ形が他にもあるなら、`lint:mutation-scope` の隣に
-「`mutate` に載っているのに production の呼び出しが 0 件の輸出」を数える規則を置ける。
-今日は 1 件見つけただけで台帳を作る材料が足りないので、提案として置く。
+提案のつもりで書いた「`mutate` に載っているのに production の呼び出しが 0 件の輸出」を
+実際に数えたら、`computeBalanceSheetInsights` は**1 件目ではなく 106 件目のうちの 1 つ**
+だった。
+
+**道具を 2 回直してからの数字である。**
+
+| 走査 | 件数 | 何を数えていたか |
+| --- | --- | --- |
+| 1 回目 | 684 | 「自分のファイルの外に参照が無い輸出」—— **検査に見せるための内部ヘルパを全部拾っていた** (`resolveRate` / `isLoopbackHost` / `parseJpDate` など。どれも同じモジュールの中で使われており正当) |
+| 2 回目 | **106** | 「自分のファイルの**中でも外でも**使われていない輸出」= 宣言行しか無い |
+
+**標本で確かめた**: `calcMonthlyNetSalary` / `seatUtilization` / `weightedOverallScore` /
+`seasonalForecast` / `TRIAGE_ROWS` / `DEFAULT_PARAMETER_VALUES` の 6 件を当たると、
+production 側は**どれも宣言行だけ**だった (0 件の呼び出し)。106 という桁は動かない。
+
+内訳の大きい所 (検査からの参照数):
+
+| 輸出 | ファイル | 検査参照 |
+| --- | --- | --- |
+| `buildManifest` | `renderer/data/cloudBackup.ts` | 78 |
+| `DEFAULT_PARAMETER_VALUES` | `shared/parameters.ts` | 43 |
+| `computeBalanceSheetInsights` | `renderer/data/balanceSheet.ts` | 39 |
+| 減価償却の 6 関数 | `shared/depreciation.ts` | 14〜25 |
+| `seasonalForecast` / `cashflowSensitivity` | `renderer/data/cashForecast.ts` | 19 |
+| `seatUtilization` / `computeWorkforceMetrics` / `revenueNeededForHire` | `renderer/data/members.ts` | 14〜18 |
+| `weightedOverallScore` / `compareToIndustry` / `scoreTrend` | `shared/managementScorecard.ts` | 16 |
+| 予実の 3 関数 | `renderer/data/budgetVariance.ts` | 13〜17 |
+
+**これは「壊れている」話ではない。** 画面より先に作った計算の層で、意図的な先行実装で
+ある可能性が高い。記録する理由は 1 つだけ —— **100% という変異検査のスコアの一部が、
+利用者が到達できない道を測っている**ことが、数字を見る人に分からないからである
+(無言の pragma・パス 25 / 32 と同じ形)。
+
+### まだ決めていないこと (利用者の判断)
+
+106 件を「消す / 配線する / 先行実装として明示する」のどれにするかは仕様の判断なので
+触っていない。**明示する**を選ぶなら、`lint:mutation-scope` の隣に台帳つきの規則
+(実測 106 を固定し、増えたら鳴る) を置くのが今日の他のゲートと同じ形になる。
+その場合も**先に走査の対象数を確かめること** —— 上の 684 → 106 が、道具を疑わずに
+数字を出すとどうなるかの実例である。
 
 ### 続けて総当たりした結果 —— 他に「保存も表示もするが計算に入らない欄」は無い (2026-09-07・当たって問題なし)
 
