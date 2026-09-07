@@ -510,3 +510,80 @@ describe('境目の追加検査 (変異検査で残った分岐)', () => {
     expect(section(m.sections, '3.').caption).toBeNull();
   });
 });
+
+/**
+ * **刷った算式が、刷った数字を出すこと — 安全余裕率** (2026-09-07)
+ *
+ * §3 は「安全余裕率」の備考に **(売上高 − 損益分岐点売上高) ÷ 売上高** と刷る。
+ * 2026-09-07 まで元の値が `Math.max(0, 100 - bepRatio)` で下から止まっていたので、
+ * 損益分岐点を下回っている会社の書面は
+ *
+ *   売上高 10,000 千円 / 損益分岐点売上高 15,000 千円 / **安全余裕率 0.0%**
+ *
+ * と刷っていた。式の通りに計算すると −50.0% で、**同じ紙の上の 3 つの数字が
+ * 両立しない**。金融機関へ出す書面としては通らない (パス 81 の「純資産」と同じ形で、
+ * こちらは 2 つ目の行)。
+ *
+ * 丸めの都合で「刷った千円から出した % 」と「刷った %」は最終桁まで一致しないので、
+ * ここで留めるのは**丸めに依らない 2 つの性質**にする:
+ *   (1) 売上高 < 損益分岐点売上高 なら安全余裕率は必ず**負**で刷られる、
+ *   (2) 損益分岐点売上高が刷れない (算定不能) なら安全余裕率も刷らない。
+ */
+describe('書面の中で式が成り立つ (安全余裕率と損益分岐点売上高)', () => {
+  /** 刷られた数を戻す (△ / ▲ / - と 3 桁区切りと % を外す)。 */
+  const printedNum = (v: string): number => {
+    const neg = /^[△▲-]/.test(v);
+    const body = Number(v.replace(/^[△▲-]/, '').replace(/,/g, '').replace(/%$/, ''));
+    return neg ? -body : body;
+  };
+
+  /** 固定費だけを振って、損益分岐点の上と下を跨がせる。 */
+  const kpiWithFixed = (sga: number): KpiActual[] => [
+    { period: '2026-04', unit: '全社', revenue: 10_000_000, cogs: 4_000_000, advertising: 0, sga, depreciation: 0, laborCost: 0 },
+  ];
+  const sheetWithFixed = (sga: number): SheetSection =>
+    section(buildBankSubmissionSheet(inputWith(overviewWith({ kpiActuals: kpiWithFixed(sga) }))).sections, '1.');
+
+  it('★ 売上高が損益分岐点売上高を下回る書面では、安全余裕率が負で刷られる (30 通り)', () => {
+    const broken: string[] = [];
+    let below = 0;
+    for (let i = 0; i < 30; i += 1) {
+      const s1 = sheetWithFixed(2_000_000 + i * 200_000); // BEP は 3,333 千円 → 10,000 千円 を跨ぐ
+      const bep = value(s1, '損益分岐点売上高');
+      const margin = value(s1, '安全余裕率');
+      if (bep === BLANK) continue;
+      const under = printedNum(bep) > 10_000; // 売上高 10,000 千円
+      if (!under) continue;
+      below += 1;
+      if (!(printedNum(margin) < 0)) broken.push(`i=${i}: BEP=${bep} なのに安全余裕率=${margin}`);
+    }
+    // 走査が実際に「下回る」側へ入っていること (空回りの検査ではない)。
+    expect(below).toBeGreaterThan(0);
+    expect(broken).toEqual([]);
+  });
+
+  it('★ 記録に残す 1 例 (2026-09-07 まで 0.0% と刷っていた)', () => {
+    const s1 = sheetWithFixed(9_000_000); // 限界利益 6,000 千 / 固定費 9,000 千 → BEP 15,000 千
+    expect(value(s1, '売上高')).toBe('10,000');
+    expect(value(s1, '損益分岐点売上高')).toBe('15,000');
+    expect(value(s1, '安全余裕率')).toBe('△50.0%');
+    expect(note(s1, '安全余裕率')).toBe('(売上高 − 損益分岐点売上高) ÷ 売上高');
+  });
+
+  it('★ 損益分岐点が算定不能なら安全余裕率も刷らない (行は残る)', () => {
+    // 限界利益 ≤ 0 — どれだけ売っても固定費を回収できない。
+    const kpi: KpiActual[] = [
+      { period: '2026-04', unit: '全社', revenue: 10_000_000, cogs: 12_000_000, advertising: 0, sga: 1_000_000, depreciation: 0, laborCost: 0 },
+    ];
+    const s1 = section(buildBankSubmissionSheet(inputWith(overviewWith({ kpiActuals: kpi }))).sections, '1.');
+    expect(value(s1, '損益分岐点売上高')).toBe(BLANK);
+    expect(value(s1, '安全余裕率')).toBe(BLANK);
+    expect(note(s1, '安全余裕率')).toBe('(売上高 − 損益分岐点売上高) ÷ 売上高');
+  });
+
+  it('対照: 損益分岐点を上回る書面では正のまま (直しが良い側を壊していない)', () => {
+    const s1 = sheetWithFixed(3_000_000); // BEP 5,000 千 < 売上 10,000 千
+    expect(value(s1, '損益分岐点売上高')).toBe('5,000');
+    expect(printedNum(value(s1, '安全余裕率'))).toBeGreaterThan(0);
+  });
+});

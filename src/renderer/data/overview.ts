@@ -106,7 +106,12 @@ export interface BusinessOverview {
     revenue: number;
     operatingProfit: number;
     bep: number;
-    safetyMargin: number;
+    /**
+     * 安全余裕率 (%)。損益分岐点を下回れば**負**、損益分岐点が存在しない
+     * (限界利益 ≤ 0) なら `null` = 算定不能。0 に倒さない理由は
+     * `src/renderer/data/kpiActuals.ts` の同名の欄。
+     */
+    safetyMargin: number | null;
     /** 売上総利益 (粗利) = 売上 − 売上原価。 */
     grossProfit: number;
     /** 売上総利益率 (粗利率, %)。 */

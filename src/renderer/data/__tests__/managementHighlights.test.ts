@@ -269,6 +269,40 @@ describe('buildManagementHighlights — exact boundaries & null guards (direct o
     expect(c(buildManagementHighlights(mkOv({ kpi: { revenue: 1000, safetyMargin: 10 } })), '安全性')).toBeUndefined();
     expect(c(buildManagementHighlights(mkOv({ kpi: { revenue: 1000, safetyMargin: 9.9 } })), '安全性')).toMatchObject({ severity: 'warning' });
   });
+
+  /**
+   * **損益分岐点を割っている会社に「売上減少に弱い」とは言わない。** (2026-09-07)
+   *
+   * 安全余裕率が 0 で止められていた頃は、損益分岐点を 200% 下回る会社にも
+   * 「安全余裕率が 0.0% と低く、**売上減少に弱い**状態です」(warning) が出ていた。
+   * 弱いのではなく既に割っている。所見の強さも文面も、状態に合っていなかった。
+   */
+  it('★ 安全余裕率が負 = 損益分岐点を下回っている → warning ではなく critical、文面も変わる', () => {
+    const f = c(buildManagementHighlights(mkOv({ kpi: { revenue: 1000, safetyMargin: -50 } })), '安全性');
+    expect(f).toMatchObject({ severity: 'critical' });
+    expect(f?.message).toContain('下回っています');
+    expect(f?.message).toContain('-50.0%');
+    // 直す前の文面 (「売上減少に弱い」) は出ない。
+    expect(f?.message).not.toContain('売上減少に弱い');
+  });
+
+  it('★ 安全余裕率が算定不能 (null) = 損益分岐点が存在しない → critical で理由を言う', () => {
+    const f = c(buildManagementHighlights(mkOv({ kpi: { revenue: 1000, safetyMargin: null } })), '安全性');
+    expect(f).toMatchObject({ severity: 'critical' });
+    expect(f?.message).toContain('限界利益が 0 以下');
+    expect(f?.message).toContain('損益分岐点が存在しません');
+  });
+
+  it('★ 境界: 0 ちょうどは「割っている」ではなく従来どおり warning', () => {
+    const f = c(buildManagementHighlights(mkOv({ kpi: { revenue: 1000, safetyMargin: 0 } })), '安全性');
+    expect(f).toMatchObject({ severity: 'warning' });
+    expect(f?.message).toContain('売上減少に弱い');
+  });
+
+  it('対照: 売上が無ければ負でも算定不能でも所見は出ない (revenue > 0 の関門は残っている)', () => {
+    expect(c(buildManagementHighlights(mkOv({ kpi: { revenue: 0, safetyMargin: -50 } })), '安全性')).toBeUndefined();
+    expect(c(buildManagementHighlights(mkOv({ kpi: { revenue: 0, safetyMargin: null } })), '安全性')).toBeUndefined();
+  });
   it('growth boundaries: 0 is neither, exactly 10 is good (< 0 / >= 10 strict)', () => {
     expect(c(buildManagementHighlights(mkOv({ kpi: { revenueGrowthPct: 0 } })), '成長性')).toBeUndefined();
     expect(c(buildManagementHighlights(mkOv({ kpi: { revenueGrowthPct: 10 } })), '成長性')).toMatchObject({ severity: 'good' });

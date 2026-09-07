@@ -304,4 +304,50 @@ describe('turnoverAxis — 算定不能の 3 条件', () => {
     expect(none.kpi.hasData).toBe(false);
     expect(none.kpi.revenueLanding).toBeNull();
   });
+
+  it('★ KPI 実績が 1 件も無ければ、どの軸も採点しない (空を返す)', () => {
+    const empty = { plan: 'free', sales: [], kpiActuals: [], members: [] } as unknown as OverviewInput;
+    // 上の検査は `hasData === false` までしか見ていなかったので、`scorecardMetrics` の
+    // 早期 return を消す変異体が生き残っていた (2026-09-07 実測)。**返り値まで見る。**
+    //
+    // **`toEqual({})` では足りない** —— vitest の `toEqual` は値が `undefined` の欄を
+    // 無い欄として扱うので、早期 return を消しても「全部 undefined の物」が {} と等しく
+    // 通ってしまう (これも実測で残った)。欄が**在るかどうか**を数える。
+    expect(Object.keys(scorecardMetrics(buildBusinessOverview(empty)))).toEqual([]);
+    // 対照: 実績が在れば空ではない。
+    expect(Object.keys(scorecardMetrics(overviewOf(1_000_000, BS)))).not.toHaveLength(0);
+  });
+});
+
+/**
+ * **安全余裕率の軸 —— 算定不能 (`null`) は採点しない。** (2026-09-07)
+ *
+ * 安全余裕率は損益分岐点が存在しない (限界利益 ≤ 0) とき `null` になる。
+ * `?? undefined` で軸を落とすのは、**0 に倒すと「損益分岐点上に居る」= 最も安全な
+ * 読みで採点してしまう**ため (パス 28 の総資産回転率と逆向きの、同じ誤り)。
+ * 畳み込みは両方向で留める —— 片側だけだと `??` の変異体が生き残る。
+ */
+describe('安全余裕率の軸', () => {
+  const withSafetyMargin = (sm: number | null) => {
+    const ov = overviewOf(1_000_000, BS);
+    return scorecardMetrics({ ...ov, kpi: { ...ov.kpi, safetyMargin: sm } });
+  };
+
+  it('★ 算定不能 (null) は軸を落とす (0 として採点しない)', () => {
+    expect(withSafetyMargin(null).safetyMarginPct).toBeUndefined();
+  });
+
+  it('★ 対照: 値が在ればそのまま渡す —— 負も 0 も落とさない', () => {
+    expect(withSafetyMargin(-50).safetyMarginPct).toBe(-50);
+    expect(withSafetyMargin(0).safetyMarginPct).toBe(0);
+    expect(withSafetyMargin(35).safetyMarginPct).toBe(35);
+  });
+
+  it('負の安全余裕率は最低点として採点される (軸が消えない)', () => {
+    const card = buildManagementScorecard(withSafetyMargin(-50));
+    const safety = card.categories.find((c) => c.category === 'safety');
+    const axis = (safety?.components ?? []).find((c) => c.label === '安全余裕率');
+    expect(axis).toBeDefined();
+    expect(axis?.score).toBe(0);
+  });
 });

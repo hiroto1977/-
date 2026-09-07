@@ -1079,7 +1079,11 @@ export function OverviewPage() {
               />
               <Tile label="限界利益率" value={`${overview.kpi.contributionRatio.toFixed(1)}%`} sub="高いほど固定費を回収しやすい" />
               <Tile label="損益分岐点 (BEP)" value={safeYen(overview.kpi.bep)} />
-              <Tile label="安全余裕率" value={`${overview.kpi.safetyMargin.toFixed(1)}%`} sub="高いほど安全" />
+              <Tile
+                label="安全余裕率"
+                value={overview.kpi.safetyMargin === null ? '—' : `${overview.kpi.safetyMargin.toFixed(1)}%`}
+                sub="高いほど安全"
+              />
             </>
           ) : (
             <Tile label="KPI" value="未入力" sub="KPI 実績を入力すると表示" />

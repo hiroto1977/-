@@ -42,7 +42,12 @@ export interface KpiMetrics {
   contributionRatio: number;
   bep: number;
   bepRatio: number;
-  safetyMargin: number;
+  /**
+   * 安全余裕率 (%)。**負になりうる** (損益分岐点を下回っている)。
+   * `null` は算定不能 —— 限界利益が 0 以下で損益分岐点が存在しない。
+   * 経緯と理由は `src/main/clients/kpi.ts` の同名の欄 (両ビルドで同じ規則)。
+   */
+  safetyMargin: number | null;
   operatingProfit: number;
 }
 
@@ -425,7 +430,7 @@ export function computeKpiMetrics(f: KpiFundamentals): KpiMetrics {
   // Infinity になるため三項の両枝が同値 → revenue>0 判定の変異は equivalent。
   // Stryker disable next-line ConditionalExpression,EqualityOperator
   const bepRatio = f.revenue > 0 ? (bep / f.revenue) * 100 : Infinity;
-  const safetyMargin = Number.isFinite(bepRatio) ? Math.max(0, 100 - bepRatio) : 0;
+  const safetyMargin = Number.isFinite(bepRatio) ? 100 - bepRatio : null;
   const operatingProfit = contribution - fixedCost;
   return {
     variableCost,

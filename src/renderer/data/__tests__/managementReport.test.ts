@@ -9,7 +9,7 @@ const kpi: KpiActual = { period: '2026-05', unit: '全社', revenue: 1_000_000, 
 
 function report(extra: Partial<Parameters<typeof buildBusinessOverview>[0]> = {}) {
   const overview = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi], members: [], ...extra });
-  const sc = buildManagementScorecard({ operatingMarginPct: overview.kpi.operatingMarginPct, safetyMarginPct: overview.kpi.safetyMargin });
+  const sc = buildManagementScorecard({ operatingMarginPct: overview.kpi.operatingMarginPct, safetyMarginPct: overview.kpi.safetyMargin ?? undefined });
   const hl = buildManagementHighlights(overview);
   return buildManagementReport(overview, sc, hl, '2026-05-31');
 }
@@ -273,6 +273,18 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
   it('shows — for a non-finite break-even point', () => {
     const md = buildManagementReport(ov({ kpi: { bep: Infinity } }), sc, [], '2026-05-31');
     expect(md).toContain('損益分岐点: — / 安全余裕率');
+  });
+
+  // 安全余裕率は 2026-09-07 から `number | null` (算定不能を 0 に倒さない)。
+  // 出す側の畳み込みを両方向で留める —— 片側だけだと三項の変異体が生き残る。
+  it('★ 安全余裕率が算定不能 (null) なら — で出す', () => {
+    const md = buildManagementReport(ov({ kpi: { bep: Infinity, safetyMargin: null } }), sc, [], '2026-05-31');
+    expect(md).toContain('安全余裕率 —');
+  });
+
+  it('★ 対照: 値が在れば数字で出す (負でも)', () => {
+    const md = buildManagementReport(ov({ kpi: { safetyMargin: -50 } }), sc, [], '2026-05-31');
+    expect(md).toContain('安全余裕率 -50.0%');
   });
 
   it('omits the P&L section when kpi has no data (hasData guard)', () => {

@@ -1275,7 +1275,7 @@ export const SNAPSHOT = {
         fixedRatio: number;
         bep: number;
         bepRatio: number;
-        safetyMargin: number;
+        safetyMargin: number | null;
         operatingProfit: number;
         operatingLeverage: number;
       };
@@ -1300,7 +1300,7 @@ export const SNAPSHOT = {
         fixedRatio: 0,
         bep: 0,
         bepRatio: 0,
-        safetyMargin: 0,
+        safetyMargin: null,
         operatingProfit: 0,
         operatingLeverage: 0,
       },

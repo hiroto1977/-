@@ -114,9 +114,19 @@ export function buildManagementHighlights(
     } else if (k.operatingMarginPct >= 10) {
       out.push({ severity: 'good', category: '収益性', message: `営業利益率 ${k.operatingMarginPct.toFixed(1)}% と良好です。` });
     }
-    // 安全性 (損益分岐点)
-    if (k.revenue > 0 && k.safetyMargin < 10) {
-      out.push({ severity: 'warning', category: '安全性', message: `安全余裕率が ${k.safetyMargin.toFixed(1)}% と低く、売上減少に弱い状態です。` });
+    // 安全性 (損益分岐点)。**負の安全余裕率を 0 に丸めない** ——
+    // 「損益分岐点ちょうど」と「損益分岐点を大きく下回る」を同じ所見にしない。
+    // 損益分岐点を下回っているのは「売上減少に弱い」ではなく、既に割っている状態。
+    if (k.revenue > 0) {
+      const sm = k.safetyMargin;
+      if (sm === null) {
+        // 限界利益 ≤ 0。売れば売るほど損が増えるので、売上目標では解けない。
+        out.push({ severity: 'critical', category: '安全性', message: '限界利益が 0 以下で、売上をいくら伸ばしても固定費を回収できません (損益分岐点が存在しません)。変動費か単価の見直しが要ります。' });
+      } else if (sm < 0) {
+        out.push({ severity: 'critical', category: '安全性', message: `売上高が損益分岐点売上高を下回っています (安全余裕率 ${sm.toFixed(1)}%)。` });
+      } else if (sm < 10) {
+        out.push({ severity: 'warning', category: '安全性', message: `安全余裕率が ${sm.toFixed(1)}% と低く、売上減少に弱い状態です。` });
+      }
     }
     // 成長性 — revenueGrowthPct が null のとき下流比較 (<0 / >=10) は 0 換算でいずれも false と
     // なり所見は出ない。よって `!== null` を true 固定する ConditionalExpression は観測差が無く

@@ -47,7 +47,7 @@ interface Kpi {
   fixedRatio: number;
   bep: number;
   bepRatio: number;
-  safetyMargin: number;
+  safetyMargin: number | null;
   operatingProfit: number;
   operatingLeverage: number;
 }
@@ -63,6 +63,12 @@ interface Unit {
 const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 0 });
 const pct = (n: number) => (Number.isFinite(n) ? n.toFixed(1) + '%' : '∞');
 const safeYen = (n: number) => (Number.isFinite(n) ? yen.format(n) : '∞');
+/**
+ * 算定不能 (`null`) は「—」。**`pct` の '∞' に倒さない** —— 安全余裕率に ∞ を
+ * 出すと「無限に安全」と読めるが、`null` になるのは限界利益が 0 以下で
+ * 損益分岐点が存在しないとき、つまり最も危ない側である。
+ */
+const pctOrDash = (n: number | null) => (n === null ? '—' : pct(n));
 
 const COLORS = {
   revenue: '#4ade80',
@@ -436,7 +442,7 @@ function ActualsPanel() {
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
             <Tile label="実績合計 売上高" value={safeYen(fundamentals.revenue)} />
             <Tile label="損益分岐点 (BEP)" value={safeYen(summary.bep)} sub={`比率 ${pct(summary.bepRatio)}`} />
-            <Tile label="安全余裕率" value={pct(summary.safetyMargin)} sub="高いほど安全" />
+            <Tile label="安全余裕率" value={pctOrDash(summary.safetyMargin)} sub="高いほど安全" />
             <Tile label="限界利益率" value={pct(summary.contributionRatio)} />
             <Tile label="営業利益" value={safeYen(summary.operatingProfit)} />
           </div>
@@ -728,7 +734,7 @@ export function KpiPage() {
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
         <Tile label="売上高" value={yen.format(selected.fundamentals.revenue)} />
         <Tile label="損益分岐点 (BEP)" value={safeYen(selected.kpi.bep)} sub={`比率 ${pct(selected.kpi.bepRatio)}`} />
-        <Tile label="安全余裕率" value={pct(selected.kpi.safetyMargin)} sub="高いほど安全" />
+        <Tile label="安全余裕率" value={pctOrDash(selected.kpi.safetyMargin)} sub="高いほど安全" />
         <Tile label="限界利益率" value={pct(selected.kpi.contributionRatio)} />
         <Tile label="営業利益" value={yen.format(selected.kpi.operatingProfit)} sub={`営業レバレッジ ${selected.kpi.operatingLeverage.toFixed(2)}x`} />
       </div>

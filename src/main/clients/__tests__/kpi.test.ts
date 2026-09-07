@@ -37,7 +37,7 @@ describe('computeKpi', () => {
     expect(k.operatingLeverage).toBeCloseTo(1.75, 2); // 7M / 4M
   });
 
-  it('returns BEP=Infinity and safetyMargin=0 when contribution is non-positive', () => {
+  it('returns BEP=Infinity and safetyMargin=null when contribution is non-positive', () => {
     // Loss-making unit: variable + fixed > revenue
     const loss: Fundamentals = {
       revenue: 1_000_000,
@@ -50,7 +50,8 @@ describe('computeKpi', () => {
     expect(k.contribution).toBe(-200_000);
     expect(k.bep).toBe(Infinity);
     expect(k.bepRatio).toBe(Infinity);
-    expect(k.safetyMargin).toBe(0); // clamped — never below zero
+    // **算定不能。** 0 に倒すと「損益分岐点上に居る」= 最も安全な読みになる。
+    expect(k.safetyMargin).toBeNull();
     expect(k.operatingProfit).toBe(-350_000);
   });
 
@@ -68,7 +69,7 @@ describe('computeKpi', () => {
     expect(k.fixedRatio).toBe(0);
     // Contribution is 0, which is NOT > 0 → BEP = Infinity
     expect(k.bep).toBe(Infinity);
-    expect(k.safetyMargin).toBe(0);
+    expect(k.safetyMargin).toBeNull();
   });
 
   it('caps operatingLeverage at 999 when OP is near zero (avoids Infinity)', () => {

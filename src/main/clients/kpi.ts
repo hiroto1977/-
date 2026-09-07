@@ -60,9 +60,21 @@ export interface Kpi {
   bep: number;
   /** 損益分岐点比率 (%) — bep / revenue × 100. Lower = safer. */
   bepRatio: number;
-  /** 安全余裕率 (%) — 100 − bepRatio. Higher = safer.
-   *  Clamped to >= 0 so a loss-making unit reads 0 rather than negative. */
-  safetyMargin: number;
+  /**
+   * 安全余裕率 (%) — 100 − bepRatio. Higher = safer. **負の値も返す。**
+   *
+   * 損益分岐点を下回っている会社では真値が負になる。以前はここを
+   * `Math.max(0, …)` で 0 に丸めていたが、それだと「損益分岐点ちょうど」と
+   * 「損益分岐点を 200% 下回る」が**同じ 0.0%** になり、同じ画面に出る
+   * 損益分岐点比率 (150% / 300%) と足して 100 にならなかった。
+   * 金融機関等提出用の書面は算式「(売上高 − 損益分岐点売上高) ÷ 売上高」を
+   * 数字の隣に刷るので、**刷った算式が刷った数字を出さない**状態だった。
+   *
+   * `null` は**算定不能** —— 限界利益が 0 以下で、どれだけ売っても固定費を
+   * 回収できない (損益分岐点が存在しない) 場合。0 に倒すと「損益分岐点上に居る」
+   * という最も安全な読みになってしまうので、倒さない。
+   */
+  safetyMargin: number | null;
   /** 営業利益 — revenue − variableCost − fixedCost. */
   operatingProfit: number;
   /** 営業レバレッジ — contribution / operatingProfit.
@@ -93,7 +105,7 @@ export function computeKpi(f: Fundamentals): Kpi {
   // fundamentals that don't occur in practice.
   // Stryker disable next-line ConditionalExpression,LogicalOperator,EqualityOperator
   const bepRatio = f.revenue > 0 && Number.isFinite(bep) ? (bep / f.revenue) * 100 : Infinity;
-  const safetyMargin = Number.isFinite(bepRatio) ? Math.max(0, 100 - bepRatio) : 0;
+  const safetyMargin = Number.isFinite(bepRatio) ? 100 - bepRatio : null;
   const operatingProfit = contribution - fixedCost;
   // Cap operating leverage to a finite number to avoid Infinity in the
   // UI when OP is near zero. The cap value is documented as a

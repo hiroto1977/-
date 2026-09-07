@@ -153,12 +153,13 @@ describe('computeKpiMetrics', () => {
     expect(m.operatingProfit).toBe(250);
   });
 
-  it('marks BEP as Infinity when contribution is non-positive', () => {
+  it('marks BEP as Infinity and 安全余裕率 as 算定不能 when contribution is non-positive', () => {
     const m = computeKpiMetrics({ revenue: 100, cogs: 100, advertising: 50, sga: 10, depreciation: 0 });
     expect(m.contribution).toBeLessThanOrEqual(0);
     expect(m.bep).toBe(Infinity);
     expect(m.bepRatio).toBe(Infinity);
-    expect(m.safetyMargin).toBe(0);
+    // 損益分岐点が存在しないので比率も存在しない。**0 に倒さない。**
+    expect(m.safetyMargin).toBeNull();
   });
 
   it('returns zeroed ratios for a zero-revenue unit', () => {
@@ -512,5 +513,99 @@ describe('summarizeLaborCost / computeLaborMetrics', () => {
     const m = computeLaborMetrics([withLabor(400, 400, 300, 200)], 1);
     expect(m.laborSharePct).toBeNull(); // gross profit 0
     expect(m.laborToRevenuePct).toBe(50); // 200/400
+  });
+});
+
+/**
+ * **安全余裕率は 100 − 損益分岐点比率である。0 で止めない。** (2026-09-07)
+ *
+ * 2026-09-07 まで `Math.max(0, 100 - bepRatio)` で下から止めていた。分母は売上なので
+ * 損益分岐点を下回れば真値は負になるのに、**0.0% と表示していた** —— つまり
+ * 「損益分岐点ちょうど」と「損益分岐点を 200% 下回る」が同じ数字になっていた。
+ *
+ * 実測 (直す前・同じ画面に出る損益分岐点比率と並べる):
+ *
+ * | 状況 | 損益分岐点比率 | 表示された安全余裕率 | 真値 (100 − 比率) | 営業利益 |
+ * | --- | --- | --- | --- | --- |
+ * | 損益分岐点ちょうど | 100.0% | 0.0% | 0.0% | 0 |
+ * | 33% 下回る | 150.0% | **0.0%** | **−50.0%** | −300 |
+ * | 大きく下回る | 300.0% | **0.0%** | **−200.0%** | −1,200 |
+ * | 限界利益 ≤ 0 (BEP なし) | ∞ | **0.0%** | 算定不能 | −300 |
+ *
+ * `KpiPage` は「損益分岐点 (BEP) ¥X / 比率 150.0%」の札の**隣**に「安全余裕率 0.0%」を
+ * 出しており、100 − 150 = 0 ではないので**同じ画面の 2 つの数字が両立しなかった**。
+ * 金融機関等提出用の書面はさらに算式「(売上高 − 損益分岐点売上高) ÷ 売上高」を
+ * 数字の隣に刷るので、**刷った算式が刷った数字を出さない**状態だった
+ * (`bankSubmission.test.ts` の「印刷した式が、印刷した数字で成り立つこと」と同じ欠陥)。
+ *
+ * 直し方: 負の値をそのまま返す。損益分岐点が**存在しない** (限界利益 ≤ 0) ときだけ
+ * `null` = 算定不能とする —— 0 に倒すと「損益分岐点上に居る」という最も安全な読みで
+ * 出てしまうので、最悪の場合を最良の顔で見せることになる (パス 28 と同じ形)。
+ */
+describe('安全余裕率 = 100 − 損益分岐点比率 (0 で止めない)', () => {
+  const f = (revenue: number, variable: number, fixed: number) => ({
+    revenue,
+    cogs: variable,
+    advertising: 0,
+    sga: fixed,
+    depreciation: 0,
+  });
+
+  it('★ 損益分岐点を下回ると負の値を返す (0 に丸めない)', () => {
+    const m = computeKpiMetrics(f(1000, 400, 900));
+    expect(m.bepRatio).toBeCloseTo(150);
+    expect(m.safetyMargin).toBeCloseTo(-50);
+    expect(m.operatingProfit).toBe(-300); // 実際に赤字である
+  });
+
+  it('★ 下回り方の大きさが数字に出る (0.0% で潰れない)', () => {
+    const near = computeKpiMetrics(f(1000, 400, 900)); // BEP 1,500
+    const far = computeKpiMetrics(f(1000, 400, 1800)); // BEP 3,000
+    expect(near.safetyMargin).toBeCloseTo(-50);
+    expect(far.safetyMargin).toBeCloseTo(-200);
+    // 直す前はこの 2 つがどちらも 0 で、区別が付かなかった。
+    expect(near.safetyMargin).not.toBe(far.safetyMargin);
+  });
+
+  it('★ 不変条件: 損益分岐点が有限なら 安全余裕率 === 100 − 損益分岐点比率 (60 通り)', () => {
+    const broken: string[] = [];
+    for (let i = 0; i < 60; i += 1) {
+      const m = computeKpiMetrics(f(1000 + i * 7, 300 + i * 3, 200 + i * 37));
+      if (!Number.isFinite(m.bepRatio)) continue;
+      if (m.safetyMargin === null || Math.abs(m.safetyMargin - (100 - m.bepRatio)) > 1e-9) {
+        broken.push(`i=${i}: bepRatio=${m.bepRatio} safetyMargin=${String(m.safetyMargin)}`);
+      }
+    }
+    expect(broken).toEqual([]);
+  });
+
+  it('★ 対照: 走査は負の側にも実際に入っている (空回りの検査ではない)', () => {
+    let negatives = 0;
+    for (let i = 0; i < 60; i += 1) {
+      const m = computeKpiMetrics(f(1000 + i * 7, 300 + i * 3, 200 + i * 37));
+      if (m.safetyMargin !== null && m.safetyMargin < 0) negatives += 1;
+    }
+    // 直す前の実装ならここは 0 になる (`Math.max(0, …)` なので負は出ない)。
+    expect(negatives).toBeGreaterThan(0);
+  });
+
+  it('損益分岐点ちょうどは 0 —— 負とは別の状態である', () => {
+    const m = computeKpiMetrics(f(1000, 400, 600));
+    expect(m.bepRatio).toBeCloseTo(100);
+    expect(m.safetyMargin).toBeCloseTo(0);
+    expect(m.operatingProfit).toBe(0);
+  });
+
+  it('限界利益 ≤ 0 は算定不能 (null) —— 0 でも −∞ でもない', () => {
+    const m = computeKpiMetrics(f(1000, 1200, 100));
+    expect(m.contribution).toBeLessThan(0);
+    expect(m.bep).toBe(Infinity);
+    expect(m.safetyMargin).toBeNull();
+  });
+
+  it('健全な会社は従来どおり正の値 (直しが良い側を壊していない)', () => {
+    const m = computeKpiMetrics(f(2000, 800, 600));
+    expect(m.bepRatio).toBeCloseTo(50);
+    expect(m.safetyMargin).toBeCloseTo(50);
   });
 });

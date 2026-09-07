@@ -140,7 +140,9 @@ export function scorecardMetrics(
     operatingMarginPct: hasRevenue ? overview.kpi.operatingMarginPct : undefined,
     grossMarginPct: hasRevenue ? overview.kpi.grossMarginPct : undefined,
     contributionRatioPct: hasRevenue ? overview.kpi.contributionRatio : undefined,
-    safetyMarginPct: overview.kpi.safetyMargin,
+    // `null` = 算定不能 (損益分岐点が存在しない) は軸を落とす。0 に倒すと
+    // 「損益分岐点上に居る」という最も安全な読みで採点してしまう。
+    safetyMarginPct: overview.kpi.safetyMargin ?? undefined,
     // 資金繰り: 会計連携CF + 現預金からランウェイを、会計CF×返済から DSCR を加点。
     runwayMonths: overview.runwayMonths ?? undefined,
     dscr: extras.overallDscr ?? undefined,

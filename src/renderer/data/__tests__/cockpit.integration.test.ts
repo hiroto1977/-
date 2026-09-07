@@ -54,7 +54,7 @@ function cockpit() {
   const scorecard = buildManagementScorecard({
     operatingMarginPct: overview.kpi.operatingMarginPct,
     grossMarginPct: overview.kpi.grossMarginPct,
-    safetyMarginPct: overview.kpi.safetyMargin,
+    safetyMarginPct: overview.kpi.safetyMargin ?? undefined,
     equityRatioPct: overview.financialPosition?.equityRatioPct ?? undefined,
     revenueGrowthPct: overview.kpi.revenueGrowthPct ?? undefined,
     cashConversionDays: overview.workingCapital?.ccc ?? undefined,
