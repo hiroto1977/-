@@ -21,6 +21,59 @@
 `teikanType` も保存し、`pages/__tests__/docstudioImport.test.ts` が「合同会社で開き直せる」を
 留めた。対照: 保存を外すとその検査が落ちる。**残作業なし。**
 
+## 疑って外れた調査 — 「sw.js のように見えていない物」は他に無い (2026-09-07・実測で閉じた)
+
+前の項で `assets/sw.js` が錨を持っていなかったことが分かったので、**同じ形が他に
+何件あるか**を実測で数えた。結論: **他に無い。** 以下は推測ではなく、実際に
+ファイルを退避してゲートを回した結果である。
+
+**(1) 走査そのものの死** —— `src/` をまるごと退避して 16 の門を回すと、
+**16 件すべてが exit 1**。`lint:forbidden` / `lint:imports` /
+`lint:network-targets` / `lint:data-origin` / `lint:credential-use` /
+`lint:ipc-handlers` / `lint:storage` / `lint:parameter-prose` /
+`lint:collection-time` / `lint:test-coverage` / `lint:regex` /
+`lint:citations` / `lint:knowledge-refs` / `lint:mutation-scope` /
+`verify:arch` / `lint:docs`。走査が全部死ぬ形は、どの門から見ても鳴る。
+
+**(2) 部分木の消失** —— 資格情報と通信に関わる 7 つの部分木を 1 つずつ退避した。
+どれも最低 3 つの門が鳴り、**`lint:mutation-scope` と `verify:arch` は 7 件すべてで鳴った**。
+
+| 退避した部分木 | 鳴った門 |
+| --- | --- |
+| `src/renderer/network` | forbidden / network-targets / storage / mutation-scope / arch |
+| `src/renderer/security` | forbidden / mutation-scope / arch |
+| `src/renderer/oauth` | storage / mutation-scope / arch |
+| `src/preload` | ipc-handlers / mutation-scope / arch |
+| `src/shared/api` | network-targets / mutation-scope / arch |
+| `src/renderer/fs` | forbidden / mutation-scope / arch |
+| `src/renderer/library` | forbidden / mutation-scope / arch |
+
+**錨の正体が分かった** —— `stryker.config.json` の `mutate` (270 ファイル) と
+`docs/ARCHITECTURE.md` の `file:line` 参照は、どちらも**ファイルを 1 件ずつ
+名指しする名簿**である。だから `src/` の中の物が消えれば必ず鳴る。
+`assets/sw.js` が例外だったのは **`src/` の外に在るから**で、
+どちらの名簿にも載っていなかった。
+
+**(3) `src/` の外の棚卸し** —— `scripts/` を除くと**7 ファイルしか無い**
+(`.html` / `.js` / `.cjs` / `.mjs` / `.ts` / `.tsx`)。
+
+| ファイル | 錨 |
+| --- | --- |
+| `assets/sw.js` | 整合鎖 + `MUST_SCAN` + ARCHITECTURE (2026-09-07 に足した) |
+| `eslint.config.js` | 無いと `npm run lint` が exit 2 (実測) |
+| `vitest.config.ts` | 無いと検査が壊れる (実測: 単体走行は「No test files found」で exit 1、`npm test` は `electron` の alias が外れて 39 件落ちる) |
+| `vite.config.ts` | 無いと `build:web` が成り立たない (CI の既定ジョブが走らせる) |
+| `orchestration/*.cjs` ×3 | `lint:forbidden` の根 (2026-09-07 に床 2 を置いた) + `verify:orchestration` |
+
+つまり**受け身で出荷される物**は `assets/sw.js` だけで、残りは
+「無いとパイプラインの段が落ちる」形で錨を持っている。
+
+**一般則として書き残す**: あるファイルが錨を持つのは、
+**(a) ファイルを 1 件ずつ名指しする名簿に載っている**か、
+**(b) 無いと CI が走らせる段が落ちる**かのどちらかである。
+`assets/sw.js` はどちらでもなかった —— 出荷されるが、名簿に無く、無くても何も
+落ちない。新しくその位置に物を置くときは、名簿へ足すこと。
+
 ## 見つけた欠陥 — 出荷する Service Worker は、ゲートが見るのをやめても誰も鳴らなかった (2026-09-07・直した)
 
 前の項の反省 (「読むより先に壊す」) を門の一覧に当てた。5 つの門を**実物の木で**壊して
