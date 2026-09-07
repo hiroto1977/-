@@ -5,11 +5,16 @@
  * 消すと通り・型違いと null は落ちる、を機械的に回す。列挙値は書く側の一覧を参照するので
  * 一覧の外の値を 1 つずつ当てる。既知の collection が台帳から漏れていないことは
  * `*_COLLECTION` 定数の走査で留める (走査が 0 件なら空振りとして落とす)。
+ *
+ * **走査は原文を読むので `readOriginalSource` を通す。** 変異検査は台帳のファイルを
+ * 書き換えてから走らせるので、sandbox の中の文字に当てると 0 件になる —— 実際に
+ * 2026-09-07 の全件走査で、この床が変異検査の初回実行を落として教えてくれた
+ * (経緯は `src/shared/__tests__/originalSource.ts`)。
  */
-import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { COLLECTION_SHAPES, hasCollectionShape } from '../collectionShapes';
+import { readOriginalDir, readOriginalSource } from '../../../shared/__tests__/originalSource';
 
 interface Sample {
   readonly good: Record<string, unknown>;
@@ -212,9 +217,9 @@ describe('台帳の網羅 — `*_COLLECTION` 定数はすべて登録されて�
   it('src/renderer/data/*.ts の定数を走査する (0 件なら走査の死)', () => {
     const dir = path.resolve(__dirname, '..');
     const names = new Set<string>();
-    for (const file of readdirSync(dir)) {
+    for (const file of readOriginalDir(dir)) {
       if (!file.endsWith('.ts')) continue;
-      const src = readFileSync(path.join(dir, file), 'utf8');
+      const src = readOriginalSource(path.join(dir, file));
       for (const m of src.matchAll(/^export const [A-Z_]*COLLECTION[A-Z_]* = '([a-z0-9-]+)'/gm)) names.add(m[1]!);
     }
     expect(names.size).toBeGreaterThanOrEqual(20);
