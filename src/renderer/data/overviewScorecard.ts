@@ -37,6 +37,40 @@
  * 直し方は 2 つとも: 算術は `assetTurnoverRatio` の 1 か所に寄せ、
  * 算定不能は「総資産 0 / 貸借対照表なし」だけにした。
  *
+ * ## 見つけた欠陥 その 2 —— 何か月分を入力したかで点数が動いた (2026-09-07)
+ *
+ * 総資産回転率は **流れ (売上) ÷ 溜まり (総資産)** である。分子は期間の長さに比例し、
+ * 分母は時点の値なので、**分子を 1 年に揃えないと比率の意味が定まらない**。
+ * ところが分子には `overview.kpi.revenue` を渡していた —— これは
+ * `summarizeFundamentals` が**入力済みの全期を合計**した値で、利用者が何か月分を
+ * 打ち込んだかに比例する。
+ *
+ * 実測 (月商 100 万・総資産 500 万・毎月同じ実績):
+ *
+ * | 入力した月数 | 売上合計 | 回転率 | 効率性 | 総合 |
+ * | --- | --- | --- | --- | --- |
+ * | 1 か月 | 100 万 | 0.2 倍 | 7 | 69 |
+ * | 3 か月 | 300 万 | 0.6 倍 | 20 | 63 |
+ * | 6 か月 | 600 万 | 1.2 倍 | 65 | 75 |
+ * | 12 か月 | 1,200 万 | 2.4 倍 | 88 | 80 |
+ *
+ * **同じ経営で効率性が 7 → 88**、総合の格付けも「good」から「excellent」へ動く。
+ * 軸の帯 (0 → 1.5 倍で 0 → 100 点) は年商を前提にしているので、月数が揃うまで
+ * 点数は意味を持たない。
+ *
+ * 年換算は**既にこのアプリが持っている** ——
+ * `computeRevenueLandingForecast` の `runRateForecast`
+ * (実績 ÷ 経過月 × 12・対象は最新年) で、上の実測ではどの行でも 1,200 万だった。
+ * つまり正しい数字が同じ `overview` の中に在るのに、回転率だけが素の合計を見ていた。
+ *
+ * 分子をこれに替えた。年換算の基礎 (期) が無ければ**算定不能**として軸を落とす ——
+ * 素の合計へ倒すと、同じ欠陥を黙って戻すことになる。
+ *
+ * なお `financialPosition` の ROA / ROE は同じ形に見えて健全である:
+ * 分子の当期純利益を**貸借対照表のレコード自身**から取るので、分子と分母が
+ * 同じ期に属する (`balanceSheet.ts` の `netIncome`)。**流れ ÷ 溜まりの比率は、
+ * 両辺の期を揃えてから作る。**
+ *
  * ## 売上 0 で本当に算定不能な軸は、そのまま残す
  *
  * 利益率 3 つ (営業利益率・粗利率・限界利益率) は分母が**売上**なので、
@@ -46,6 +80,24 @@
 import type { BusinessOverview } from './overview';
 import type { ManagementMetricsInput } from '../../shared/managementScorecard';
 import { assetTurnoverRatio } from './financialRatios';
+
+/**
+ * 総資産回転率の軸に渡す値。算定不能なら `undefined`。
+ *
+ * 関門を関数に出しているのは、**「算定不能」の 3 条件を 1 か所で読めるようにする**
+ * ためと、`annualRevenue` が無い枝を検査から直接叩けるようにするため
+ * (production では到達しない —— `hasData` が真なら `revenueLanding` は必ず在る。
+ * 詳細はモジュール冒頭)。到達しないからといって**素の売上合計へ倒してはいけない** ——
+ * 倒すと「月数で点数が動く」欠陥が黙って戻る。
+ */
+export function turnoverAxis(
+  position: { readonly totalAssets: number } | null,
+  annualRevenue: number | undefined,
+): number | undefined {
+  if (position === null) return undefined;
+  if (annualRevenue === undefined) return undefined;
+  return assetTurnoverRatio(annualRevenue, position.totalAssets) ?? undefined;
+}
 
 /** スコアカードに足す、経営サマリーの外から来る数値。 */
 export interface ScorecardExtras {
@@ -73,6 +125,16 @@ export function scorecardMetrics(
   // 分母が売上の指標は、売上 0 では定まらない (0 除算)。
   const hasRevenue = overview.kpi.revenue > 0;
   const position = overview.financialPosition;
+  // 流れ ÷ 溜まりの比率に渡す分子は**年換算した売上**。素の合計を渡すと
+  // 「何か月分を入力したか」で点数が動く (上の実測: 効率性 7 → 88)。
+  //
+  // `hasData` が真なら `revenueLanding` は必ず在る —— どちらも同じ `kpiActuals` から
+  // 作られ、`hasData = actuals.length > 0` で、`groupRevenueByPeriod` は期の文字列を
+  // 検証しないので系列が空にならない。`?.` はその不変条件に対する防御であって、
+  // 今日は到達しない (等価変異)。不変条件そのものは検査が留めてある
+  // (`groupRevenueByPeriod` が期を選別するようになったら、その検査が先に鳴る)。
+  // Stryker disable next-line OptionalChaining: 上の不変条件により null にならない (到達不能)
+  const annualRevenue = overview.kpi.revenueLanding?.runRateForecast;
 
   return {
     operatingMarginPct: hasRevenue ? overview.kpi.operatingMarginPct : undefined,
@@ -89,8 +151,7 @@ export function scorecardMetrics(
     // 効率性: CCC と総資産回転率。
     cashConversionDays: overview.workingCapital?.ccc ?? undefined,
     // **分母は総資産**なので、売上 0 でも 0 倍として採点する (最悪の値を隠さない)。
-    // 算定不能は「貸借対照表なし」か「総資産 0」だけ。
-    assetTurnover:
-      position === null ? undefined : (assetTurnoverRatio(overview.kpi.revenue, position.totalAssets) ?? undefined),
+    // 算定不能の 3 条件は `turnoverAxis` が持つ。
+    assetTurnover: turnoverAxis(position, annualRevenue),
   };
 }
