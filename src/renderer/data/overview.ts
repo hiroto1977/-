@@ -3,7 +3,7 @@
  * プラン) を 1 つの経営概況に束ねる純粋な集約ロジック。各機能の純粋関数を
  * 合成するだけで、IO は持たない (呼び出し側が record store から渡す)。
  */
-import { summarizeSales, type SalesEntry } from './sales';
+import { summarizeSales, type SalesEntry, type SalesPeriod } from './sales';
 import {
   summarizeFundamentals,
   computeKpiMetrics,
@@ -118,6 +118,12 @@ export interface BusinessOverview {
     topChannel: string | null;
     /** 売上集中度 (チャネル依存リスク)。売上が無ければ null。 */
     concentration: RevenueConcentration | null;
+    /**
+     * 販売記録の合計が覆っている期間。**KPI 実績の対象期間とは別物** ——
+     * 書面は 2 つの売上高を並べて刷るので、それぞれが何か月分かを述べる口が要る
+     * (読める日付が無ければ null)。
+     */
+    period: SalesPeriod | null;
   };
   readonly kpi: {
     hasData: boolean;
@@ -265,6 +271,7 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       channelCount: salesSummary.byChannel.length,
       topChannel,
       concentration: computeRevenueConcentration(salesSummary.byChannel),
+      period: salesSummary.period,
     },
     kpi: {
       hasData: hasKpi,

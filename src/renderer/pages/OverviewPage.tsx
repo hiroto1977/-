@@ -1058,6 +1058,14 @@ export function OverviewPage() {
         )}
 
         <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>売上</div>
+        {/* 総売上は**販売記録の全件の合計**で、上の KPI 実績とは別の入力・別の期間。
+            期間を書かないと同じ期間の 2 つの売上高として読まれる
+            (金融機関等提出用の書面 §1 / §2 で実測した食い違い)。 */}
+        {overview.sales.period !== null && (
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', margin: '0 0 6px' }}>
+            {`販売記録 ${overview.sales.period.from}〜${overview.sales.period.to}・${overview.sales.period.months} か月分の累計です（KPI 実績とは別の入力です）。`}
+          </div>
+        )}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
           <Tile label="総売上" value={yen.format(overview.sales.totalAmount)} sub={overview.sales.topChannel ? `主力: ${overview.sales.topChannel}` : undefined} />
           <Tile label="総注文件数" value={num.format(overview.sales.totalOrders)} />

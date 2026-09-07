@@ -4,11 +4,51 @@ import {
   isValidDate,
   parseSalesEntry,
   summarizeSales,
+  salesPeriod,
   monthlyTotals,
   SALES_COLLECTION,
   CHANNEL_LABEL,
   type SalesEntry,
 } from '../sales';
+
+/**
+ * **合計額が何か月分か。** (2026-09-07)
+ *
+ * `summarizeSales` は入力された記録を全部足すだけで、期間を誰も測っていなかった。
+ * 金融機関等提出用の書面は §1「売上高 (KPI 実績)」と §2「売上高（販売記録）」を
+ * 並べて刷るので、KPI 3 か月・販売記録 3 年分の控えでは 12,000 千円 と 36,000 千円 が
+ * 並び、どちらも何か月分かを述べなかった (実測)。
+ */
+describe('salesPeriod', () => {
+  const e = (date: string): SalesEntry => ({ date, channel: 'base', amount: 1, orders: 1 });
+
+  it('★ 最初と最後の取引日と、月の異なり数を返す', () => {
+    expect(salesPeriod([e('2026-06-20'), e('2026-04-01'), e('2026-04-30')])).toEqual({
+      from: '2026-04-01', to: '2026-06-20', months: 2,
+    });
+  });
+
+  it('★ 同じ月の複数件は 1 か月 (件数ではなく月数)', () => {
+    expect(salesPeriod([e('2026-04-01'), e('2026-04-15'), e('2026-04-30')])?.months).toBe(1);
+  });
+
+  it('★ 読める日付が 1 件も無ければ null (0 か月に倒さない)', () => {
+    expect(salesPeriod([])).toBeNull();
+    expect(salesPeriod([e('2026-13-01'), e('2026-04-32'), e('not-a-date')])).toBeNull();
+  });
+
+  it('★ 綴り違いは無視し、読める分だけで測る', () => {
+    expect(salesPeriod([e('2026-13-01'), e('2026-05-10')])).toEqual({
+      from: '2026-05-10', to: '2026-05-10', months: 1,
+    });
+  });
+
+  it('★ summarizeSales が期間を載せる (呼び手が数え直さない)', () => {
+    const sum = summarizeSales([e('2026-04-01'), e('2027-03-31')]);
+    expect(sum.period).toEqual({ from: '2026-04-01', to: '2027-03-31', months: 2 });
+    expect(summarizeSales([]).period).toBeNull();
+  });
+});
 
 describe('sales constants', () => {
   it('exposes the collection key and every channel label', () => {

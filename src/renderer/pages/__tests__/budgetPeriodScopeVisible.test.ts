@@ -22,6 +22,7 @@ import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../../data/kpiActuals';
 import { KPI_BUDGETS_COLLECTION } from '../../data/budgetVariance';
 import { BALANCE_SHEET_COLLECTION } from '../../data/balanceSheet';
+import { SALES_COLLECTION } from '../../data/sales';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -158,6 +159,23 @@ describe('経営サマリー — 回転日数の期間', () => {
     await seed([], year.map((m) => at(m, 4_000_000)));
     await mount('overview');
     expect(text()).toContain('回転日数は実績 12 か月分（365 日）で算定しています。');
+  });
+});
+
+describe('経営サマリー — 販売記録の期間', () => {
+  it('★ 総売上が何か月分の販売記録かを画面が述べる', async () => {
+    const store = getRecordStore();
+    await store.insert(SALES_COLLECTION, { date: '2024-01-15', channel: 'base', amount: 1_000_000, orders: 10 });
+    await store.insert(SALES_COLLECTION, { date: '2026-06-20', channel: 'base', amount: 2_000_000, orders: 20 });
+    await seed([], [at('2026-06', 4_000_000)]);
+    await mount('overview');
+    expect(text()).toContain('販売記録 2024-01-15〜2026-06-20・2 か月分の累計です（KPI 実績とは別の入力です）。');
+  });
+
+  it('★ 対照: 販売記録が無ければ期間の行は出ない', async () => {
+    await seed([], [at('2026-06', 4_000_000)]);
+    await mount('overview');
+    expect(text()).not.toContain('販売記録 ');
   });
 });
 

@@ -103,6 +103,24 @@ export interface ChannelTotal {
   readonly aov: number;
 }
 
+/**
+ * 販売記録が覆っている期間。**合計額が何か月分か**を持ち回るために在る。
+ *
+ * 2026-09-07 まで `summarizeSales` は入力された記録を**全部**足すだけで、期間を
+ * 誰も測っていなかった。金融機関等提出用の書面は §1 に「売上高 (KPI 実績・対象期間の
+ * 累計)」、§2 に「売上高（販売記録）」を**並べて刷る**ので、KPI が 3 か月・販売記録が
+ * 3 年分の控えでは 12,000 千円 と 36,000 千円 が並び、**どちらも何か月分かを述べない**
+ * まま 3 倍違う数字が同じ書面に載っていた (実測 2026-09-07)。
+ */
+export interface SalesPeriod {
+  /** 最初の取引日 (`YYYY-MM-DD`)。 */
+  readonly from: string;
+  /** 最後の取引日 (`YYYY-MM-DD`)。 */
+  readonly to: string;
+  /** 記録が在る月 (`YYYY-MM`) の**異なり数**。日数ではなく月数で数える。 */
+  readonly months: number;
+}
+
 export interface SalesSummary {
   readonly totalAmount: number;
   readonly totalOrders: number;
@@ -110,6 +128,31 @@ export interface SalesSummary {
   /** Per-channel breakdown, sorted by amount descending. Only channels with
    *  at least one entry appear. */
   readonly byChannel: readonly ChannelTotal[];
+  /**
+   * 合計額が覆っている期間。**読める日付が 1 件も無ければ `null`** ——
+   * 期間を測れないことと「期間が 0」は別なので 0 に倒さない。
+   */
+  readonly period: SalesPeriod | null;
+}
+
+/**
+ * 販売記録の期間を測る。日付は `YYYY-MM-DD` の綴りだけを読み (綴り違いは無視)、
+ * 月数は `YYYY-MM` の異なり数で数える —— 同じ月に何件在っても 1 か月。
+ * 読める日付が 1 件も無ければ `null`。
+ */
+export function salesPeriod(entries: readonly SalesEntry[]): SalesPeriod | null {
+  // 正規表現は**関数の中**に置く (module 直下の const は読み込み時に 1 度だけ
+  // 評価される「静的な変異体」になり、変異検査が届かない)。
+  const valid = entries
+    .map((e) => e.date)
+    .filter((d) => /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/.test(d))
+    .sort();
+  if (valid.length === 0) return null;
+  return {
+    from: valid[0]!,
+    to: valid[valid.length - 1]!,
+    months: new Set(valid.map((d) => d.slice(0, 7))).size,
+  };
 }
 
 /** Roll up entries into totals + per-channel breakdown. */
@@ -144,6 +187,7 @@ export function summarizeSales(entries: readonly SalesEntry[]): SalesSummary {
     totalOrders,
     aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
     byChannel,
+    period: salesPeriod(entries),
   };
 }
 

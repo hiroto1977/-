@@ -337,10 +337,32 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
     ],
   });
 
+  /**
+   * §2 の但し書き。**販売記録が覆う期間**を述べ、KPI 実績の対象期間と食い違うなら
+   * それも述べる (同じ書面に 2 つの売上高が並ぶので、読み手が突き合わせられるように)。
+   */
+  const salesScopeCaption = (): string | null => {
+    const sp = o.sales.period;
+    if (sp === null) return null;
+    const salesSpan = `${formatPeriodRange(sp.from.slice(0, 7), sp.to.slice(0, 7), f)}・${sp.months} か月`;
+    const head = `上の金額は販売記録の${salesSpan}分の累計です。`;
+    const kpi = periodRange(input.kpiPeriods);
+    // KPI 実績が無ければ比べる相手が居ない。月まで一致していれば述べることは無い。
+    if (kpi === null) return head;
+    const sameWindow = kpi.from === sp.from.slice(0, 7) && kpi.to === sp.to.slice(0, 7);
+    return sameWindow
+      ? head
+      : `${head}§1 の売上高（KPI 実績）は${periodSpan(input.kpiPeriods, f)}分の累計で、期間が異なります。`;
+  };
+
   const conc = o.sales.concentration;
   sections.push({
     title: '2. 販売の状況',
-    caption: null,
+    // **§1 と §2 は別の入力から来た別の期間の売上高である。** §1 は KPI 実績の
+    // 対象期間の累計 (`periodScopeNote` が述べる)、§2 は販売記録の全件の累計。
+    // 2026-09-07 まで §2 は期間を述べておらず、KPI 3 か月・販売記録 3 年分の控えで
+    // 12,000 千円 と 36,000 千円 が並んだまま理由が読めなかった (実測)。
+    caption: salesScopeCaption(),
     rows: [
       row('売上高（販売記録）', amt(o.sales.totalAmount), '販売記録の合計'),
       row('受注件数', formatCount(o.sales.totalOrders, f, '件')),
@@ -357,9 +379,21 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
 
   const pr = o.productivity;
   const labor = pr.labor;
+  /**
+   * §3 の但し書き。一人当たりの金額は**対象期間の累計 ÷ 従業員数**で、年額ではない。
+   * 1 年分そろっていれば述べることは無い (`periodScopeNote` と同じ規則)。
+   */
+  const perCapitaCaption = (): string | null => {
+    const months = new Set(validPeriods(input.kpiPeriods)).size;
+    if (months === 0) return 'KPI 実績が未入力のため、一人当たりの金額は算定していません。';
+    if (months === fiscalYearMonths()) return null;
+    return `一人当たりの金額と人件費は、実績の${periodSpan(input.kpiPeriods, f)}分の累計を従業員数で割ったものです（年額ではありません）。`;
+  };
   sections.push({
     title: '3. 人員・生産性',
-    caption: null,
+    // 一人当たりの 3 行は**対象期間の累計 ÷ 従業員数**である。年額ではないので、
+    // 1 年分でないなら必ず述べる (§1・§5・§8 と同じ規則)。
+    caption: perCapitaCaption(),
     rows: [
       row('従業員数', formatCount(pr.members, f, '名'), '登録メンバー数'),
       row('一人当たり売上高', amt(pr.revenuePerCapita), '売上高 ÷ 従業員数'),

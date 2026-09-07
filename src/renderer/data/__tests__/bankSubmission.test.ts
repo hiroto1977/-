@@ -574,7 +574,49 @@ describe('境目の追加検査 (変異検査で残った分岐)', () => {
     );
     expect(section(m.sections, '6.').caption).toBeNull();
     expect(section(m.sections, '7.').caption).toBeNull();
+    // §2 / §3 は**期間**を述べる (見本は KPI 1 か月・販売記録なし)。
+    // 販売記録が 1 件も無い控えでは §2 に述べることが無い。
     expect(section(m.sections, '2.').caption).toBeNull();
+    expect(section(m.sections, '3.').caption).toBe(
+      '一人当たりの金額と人件費は、実績の令和8年4月・1 か月分の累計を従業員数で割ったものです（年額ではありません）。',
+    );
+  });
+
+  /**
+   * **同じ書面に売上高が 2 つ在り、期間が別だった。** (2026-09-07)
+   *
+   * §1 は KPI 実績の対象期間の累計 (`periodScopeNote` が述べる)、§2 は販売記録の
+   * 全件の累計。2026-09-07 まで §2 は期間を述べていなかったので、KPI 3 か月・
+   * 販売記録 3 年分の控えでは 12,000 千円 と 36,000 千円 が並び、読み手には
+   * どちらが何か月分かも、なぜ 3 倍違うのかも読めなかった (実測)。
+   */
+  it('★ §2 が販売記録の期間を述べ、KPI と食い違えばそれも述べる', () => {
+    const sales = [
+      { date: '2024-01-15', channel: 'base' as const, amount: 1_000_000, orders: 10 },
+      { date: '2026-06-20', channel: 'base' as const, amount: 2_000_000, orders: 20 },
+    ];
+    const m = buildBankSubmissionSheet(inputWith(overviewWith({ sales })));
+    expect(section(m.sections, '2.').caption).toBe(
+      '上の金額は販売記録の令和6年1月〜令和8年6月・2 か月分の累計です。'
+      + '§1 の売上高（KPI 実績）は令和8年4月・1 か月分の累計で、期間が異なります。',
+    );
+  });
+
+  it('★ 対照: 販売記録と KPI が同じ月なら「期間が異なります」は付かない', () => {
+    const sales = [{ date: '2026-04-15', channel: 'base' as const, amount: 1_000_000, orders: 10 }];
+    const m = buildBankSubmissionSheet(inputWith(overviewWith({ sales })));
+    const caption = section(m.sections, '2.').caption!;
+    expect(caption).toBe('上の金額は販売記録の令和8年4月・1 か月分の累計です。');
+    expect(caption).not.toContain('期間が異なります');
+  });
+
+  it('★ 対照: 1 年分そろえば §3 の但し書きは付かない (年額として読める)', () => {
+    const year = ['2026-04', '2026-05', '2026-06', '2026-07', '2026-08', '2026-09',
+      '2026-10', '2026-11', '2026-12', '2027-01', '2027-02', '2027-03']
+      .map((period) => ({ ...KPI[0]!, period }));
+    const m = buildBankSubmissionSheet(
+      inputWith(overviewWith({ kpiActuals: year }), DEFAULT_SUBMISSION_SETTINGS, { kpiPeriods: year.map((k) => k.period) }),
+    );
     expect(section(m.sections, '3.').caption).toBeNull();
   });
 });
