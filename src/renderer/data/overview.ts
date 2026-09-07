@@ -22,7 +22,12 @@ import {
 } from './kpiActuals';
 import { seatsRemaining, type Role } from '../../shared/team';
 import { getPlan, type PlanTier } from '../../shared/plan';
-import { computeBudgetVariance, type BudgetVariance } from './budgetVariance';
+import {
+  budgetPeriodAlignment,
+  computeBudgetVariance,
+  type BudgetPeriodAlignment,
+  type BudgetVariance,
+} from './budgetVariance';
 import {
   BALANCE_SHEET_STALE_AFTER_MONTHS,
   balanceSheetFreshness,
@@ -169,8 +174,16 @@ export interface BusinessOverview {
     /** 人件費の効率指標 (労働分配率・人件費率・一人当たり人件費)。 */
     labor: LaborMetrics;
   };
-  /** 予算実績差異 (BVA)。予算が未入力なら null。 */
+  /**
+   * 予算実績差異 (BVA)。**予算と実績の両方が在る期だけ**を合算した比較で、
+   * 突合できる期が 1 つも無ければ null (予算が未入力のときも同じ)。
+   */
   readonly budget: BudgetVariance | null;
+  /**
+   * 予算と実績の期の突合状況。**予算も実績も 1 行以上在れば必ず非 null** ——
+   * `budget` が null (期が重ならない) のときに「なぜ達成率が出ないか」を述べる口。
+   */
+  readonly budgetAlignment: BudgetPeriodAlignment | null;
   /** 財政状態指標 (ROA/ROE/自己資本比率/流動比率)。BS 未入力なら null。 */
   readonly financialPosition: BalanceSheetMetrics | null;
   /**
@@ -216,6 +229,7 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
   const topChannel = salesSummary.byChannel[0]?.label ?? null;
 
   const hasKpi = input.kpiActuals.length > 0;
+  const kpiBudgets = input.kpiBudgets ?? [];
   // 実績の最新の期。**期の綴りは `isValidPeriod` が 1 か所で持つ** (写さない)。
   const validKpiPeriods = input.kpiActuals.map((r) => r.period).filter(isValidPeriod).sort();
   // 期が 1 つも無ければ `undefined`。**`length === 0` の分岐は書かない** ——
@@ -281,7 +295,12 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       operatingProfitPerCapita: perCapita(kpi.operatingProfit),
       labor: computeLaborMetrics(input.kpiActuals, memberCount),
     },
-    budget: computeBudgetVariance(input.kpiBudgets ?? [], input.kpiActuals),
+    budget: computeBudgetVariance(kpiBudgets, input.kpiActuals),
+    // 突合状況は「両方に行が在る」だけで測れる (期が重なるかは測った結果)。
+    budgetAlignment:
+      kpiBudgets.length > 0 && input.kpiActuals.length > 0
+        ? budgetPeriodAlignment(kpiBudgets, input.kpiActuals)
+        : null,
     financialPosition: input.balanceSheet ? computeBalanceSheetMetrics(input.balanceSheet) : null,
     // 会計連携と貸借対照表の**両方**が在るときだけ測れる (片方だけでは隔たりが無い)。
     accountingRecency: accountingSummary && input.balanceSheet

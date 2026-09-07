@@ -190,6 +190,32 @@ describe('buildBusinessOverview', () => {
     expect(o.budget!.revenue.budget).toBe(80000);
     expect(o.budget!.revenue.actual).toBe(100000);
     expect(o.budget!.revenue.achievementPct).toBe(125);
+    expect(o.budget!.alignment.comparedPeriods).toEqual(['2026-05']);
+  });
+
+  // 2026-09-07: 期が重ならない控えでも達成率 (125%) を出していたので、突合状況を
+  // 別欄で持ち、`budget` が null の理由を画面と書面が述べられるようにした。
+  it('★ 予算も実績も在れば budgetAlignment は非 null (期が重ならなくても)', () => {
+    const budget: KpiActual[] = [
+      { period: '2025-04', unit: '全社', revenue: 80000, cogs: 0, advertising: 0, sga: 0, depreciation: 0 },
+    ];
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, kpiBudgets: budget, members: [] });
+    expect(o.budget).toBeNull(); // 突合できる期が無いので比較しない
+    expect(o.budgetAlignment).toEqual({
+      comparedPeriods: [],
+      budgetOnlyPeriods: ['2025-04'],
+      actualOnlyPeriods: ['2026-05'],
+    });
+  });
+
+  it('★ 対照: 片側が空なら budgetAlignment も null (隔たりが無い)', () => {
+    const noBudget = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, members: [] });
+    expect(noBudget.budgetAlignment).toBeNull();
+    const noActual = buildBusinessOverview({
+      plan: 'pro', sales: [], kpiActuals: [], members: [],
+      kpiBudgets: [{ period: '2026-05', unit: '全社', revenue: 1, cogs: 0, advertising: 0, sga: 0, depreciation: 0 }],
+    });
+    expect(noActual.budgetAlignment).toBeNull();
   });
 
   it('leaves the financial position null when no balance sheet is supplied', () => {

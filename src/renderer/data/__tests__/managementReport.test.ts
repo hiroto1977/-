@@ -64,6 +64,21 @@ describe('buildManagementReport', () => {
     expect(md).toContain('売上 達成率: 125%');
   });
 
+  it('★ 予実の節が突合した期を書く (通年の比較に読ませない)', () => {
+    const md = report({
+      kpiBudgets: ['2026-04', '2026-05', '2026-06'].map((period) => ({ ...kpi, period, revenue: 800_000 })),
+    });
+    expect(md).toContain('- 対象期間: 2026-05〜2026-05・1 か月 (予算と実績の両方が在る期)');
+    expect(md).toContain('- 予算と実績の両方が在る 1 か月分の比較です (予算のみ 2 か月は対象外)。');
+  });
+
+  it('★ 期が重ならなければ算定していないと書く (節を黙って消さない)', () => {
+    const md = report({ kpiBudgets: [{ ...kpi, period: '2025-04', revenue: 800_000 }] });
+    expect(md).toContain('## 予算実績差異 (BVA)');
+    expect(md).toContain('- 予算と実績で期が重なっていないため算定していません (予算 1 か月・実績 1 か月)');
+    expect(md).not.toContain('売上 達成率');
+  });
+
   it('omits highlights section entirely when there are none', () => {
     // a healthy single-period business yields a "good" highlight, so assert presence instead
     const md = report();
@@ -147,7 +162,11 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
     accounting: 'accounting' in p ? p.accounting : null,
     runwayMonths: 'runwayMonths' in p ? p.runwayMonths : null,
     cashForecast: 'cashForecast' in p ? p.cashForecast : null,
-    budget: 'budget' in p ? p.budget : null,
+    // 予実の詰め物は突合結果も持つ (実物の `budget` は必ず `alignment` を持つ)。
+    budget: 'budget' in p && p.budget !== null
+      ? { alignment: { comparedPeriods: ['2026-04', '2026-05'], budgetOnlyPeriods: [], actualOnlyPeriods: [], ...p.budget.alignment }, ...p.budget }
+      : null,
+    budgetAlignment: 'budgetAlignment' in p ? p.budgetAlignment : null,
   }) as any as Ov;
 
   const sc: Sc = {
@@ -250,6 +269,7 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
         '',
         '## 予算実績差異 (BVA)',
         '',
+        '- 対象期間: 2026-04〜2026-05・2 か月 (予算と実績の両方が在る期)',
         '- 売上 達成率: 125% (予算 ¥800,000 / 実績 ¥1,000,000)',
         '- 営業利益 達成率: 110%',
         '',

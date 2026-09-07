@@ -36,6 +36,7 @@ import {
   type BankFormat,
 } from '../../shared/bankFormat';
 import { VERDICT_LABEL, type ManagementScorecard } from '../../shared/managementScorecard';
+import { budgetUnmatchedNote, type BudgetPeriodAlignment } from './budgetVariance';
 import type { BusinessOverview } from './overview';
 import type { CashflowDebtService } from './cashflowDebtService';
 
@@ -183,6 +184,18 @@ export function periodRange(periods: readonly string[]): { from: string; to: str
 }
 
 /**
+ * 期の一覧を「範囲・月数」の 1 語にする (`令和8年4月〜令和9年3月・12 か月`)。
+ * 読める期が無ければ `BLANK`。範囲だけでは端の 2 か月しか無い控えを「1 年分」と
+ * 読めてしまうので、**月数も必ず添える** (`periodScopeNote` と同じ規則)。
+ */
+function periodSpan(periods: readonly string[], f: BankFormat): string {
+  const range = periodRange(periods);
+  if (range === null) return BLANK;
+  const months = new Set(validPeriods(periods)).size;
+  return `${formatPeriodRange(range.from, range.to, f)}・${months} か月`;
+}
+
+/**
  * **決算期と、実際に合算した対象期間の関係を 1 文で述べる。** 述べることが無ければ `null`。
  *
  * ## なぜ要るのか (2026-09-07 実測)
@@ -223,7 +236,7 @@ export function periodScopeNote(
   const range = periodRange(periods);
   if (range === null) return null;
   const months = new Set(validPeriods(periods)).size;
-  const summed = `${formatPeriodRange(range.from, range.to, f)}・${months} か月`;
+  const summed = periodSpan(periods, f);
   const fy = fiscalYearWindow(fiscalYearEnd);
   if (fy === null) {
     return `決算期が未設定のため、上の金額は入力済みの全期間（${summed}）の累計です。提出者情報で決算期を入れると事業年度との関係を示せます。`;
@@ -477,27 +490,62 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
     ],
   });
 
+  /**
+   * 予算実績差異の**対象期間**。§1 の `periodScopeNote` と同じ考えで、
+   * 「何を足した数字か」を書面に残す —— 予算と実績は別々に入力するので、
+   * 突合できた期の範囲と月数を書かないと通年の比較に読める。
+   */
+  const budgetScope = (al: BudgetPeriodAlignment): string => {
+    const head = `対象: ${periodSpan(al.comparedPeriods, f)}（予算と実績の両方が在る期）。`;
+    const un = budgetUnmatchedNote(al);
+    return un === null ? head : `${head}${un}です。`;
+  };
+
   const b = o.budget;
-  if (b !== null) {
-    sections.push({
-      title: '8. 予算実績差異',
-      caption: null,
-      rows: [
-        row('売上高（予算）', amt(b.revenue.budget)),
-        row('売上高（実績）', amt(b.revenue.actual)),
-        row('売上高（差異）', amt(b.revenue.variance), '実績 − 予算'),
-        row('売上高 達成率', pct(b.revenue.achievementPct), '実績 ÷ 予算'),
-        row('営業利益（予算）', amt(b.operatingProfit.budget)),
-        row('営業利益（実績）', amt(b.operatingProfit.actual)),
-        row('営業利益（差異）', amt(b.operatingProfit.variance), '実績 − 予算'),
-        row('営業利益 達成率', pct(b.operatingProfit.achievementPct), '実績 ÷ 予算'),
-      ],
-    });
+  const bAlign = o.budgetAlignment;
+  if (bAlign !== null) {
+    sections.push(
+      b === null
+        ? {
+            // 予算も実績も在るのに期が 1 つも重ならない。§1 が「KPI 実績が未入力の
+            // ため算定していません」と述べるのと同じで、**算定しなかった理由**を書く
+            // (節を黙って消すと、読み手には予算が無いのと区別できない)。
+            title: '8. 予算実績差異',
+            caption: '予算と実績で期（年月）が重なっていないため、達成率を算定していません。',
+            rows: [
+              row(
+                '予算の対象期間',
+                periodSpan(bAlign.budgetOnlyPeriods, f),
+                '実績と重なる期がありません',
+              ),
+              row(
+                '実績の対象期間',
+                periodSpan(bAlign.actualOnlyPeriods, f),
+                '予算と重なる期がありません',
+              ),
+              row('売上高 達成率', BLANK, '突合できる期がないため算定不能'),
+            ],
+          }
+        : {
+            title: '8. 予算実績差異',
+            caption: budgetScope(b.alignment),
+            rows: [
+              row('売上高（予算）', amt(b.revenue.budget)),
+              row('売上高（実績）', amt(b.revenue.actual)),
+              row('売上高（差異）', amt(b.revenue.variance), '実績 − 予算'),
+              row('売上高 達成率', pct(b.revenue.achievementPct), '実績 ÷ 予算'),
+              row('営業利益（予算）', amt(b.operatingProfit.budget)),
+              row('営業利益（実績）', amt(b.operatingProfit.actual)),
+              row('営業利益（差異）', amt(b.operatingProfit.variance), '実績 − 予算'),
+              row('営業利益 達成率', pct(b.operatingProfit.achievementPct), '実績 ÷ 予算'),
+            ],
+          },
+    );
   }
 
   if (has) {
     sections.push({
-      title: `${b === null ? 8 : 9}. 参考：経営スコア（当社内部の評価）`,
+      title: `${bAlign === null ? 8 : 9}. 参考：経営スコア（当社内部の評価）`,
       caption: '本アプリの採点であり、金融機関等の信用格付けとは関係がありません。',
       rows: [
         row('総合スコア', `${scorecard.overallScore}／100`),

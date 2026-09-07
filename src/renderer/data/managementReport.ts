@@ -7,6 +7,7 @@
  *
  * **重要 — 概算の経営診断であり財務・税務助言ではありません。**
  */
+import { budgetScopeSentence } from './budgetVariance';
 import type { BusinessOverview } from './overview';
 import { VERDICT_LABEL, type ManagementScorecard } from '../../shared/managementScorecard';
 import { summarizeHighlights, RISK_BAND_LABEL, type Highlight } from './managementHighlights';
@@ -115,13 +116,25 @@ export function buildManagementReport(
     lines.push('');
   }
 
-  // 予実
+  // 予実。合算したのは**予算と実績の両方が在る期**だけなので、その範囲も書く
+  // (書かないと通年の比較に読める)。
   if (overview.budget) {
     const b = overview.budget;
+    const al = b.alignment;
     lines.push('## 予算実績差異 (BVA)');
     lines.push('');
+    lines.push(`- 対象期間: ${al.comparedPeriods[0]}〜${al.comparedPeriods[al.comparedPeriods.length - 1]}・${al.comparedPeriods.length} か月 (予算と実績の両方が在る期)`);
+    const scope = budgetScopeSentence(al);
+    if (scope !== null) lines.push(`- ${scope}`);
     lines.push(`- 売上 達成率: ${pctOrDash(b.revenue.achievementPct)} (予算 ${yen(b.revenue.budget)} / 実績 ${yen(b.revenue.actual)})`);
     lines.push(`- 営業利益 達成率: ${pctOrDash(b.operatingProfit.achievementPct)}`);
+    lines.push('');
+  } else if (overview.budgetAlignment != null) {
+    // `!= null` は**型の外から来る詰め物** (欄そのものが無い控え) にも耐えるため。
+    const al = overview.budgetAlignment;
+    lines.push('## 予算実績差異 (BVA)');
+    lines.push('');
+    lines.push(`- 予算と実績で期が重なっていないため算定していません (予算 ${al.budgetOnlyPeriods.length} か月・実績 ${al.actualOnlyPeriods.length} か月)`);
     lines.push('');
   }
 

@@ -16,7 +16,7 @@ import {
 import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import { salesMonths, revenueForMonth } from '../data/salesKpiBridge';
 import { kpiActualsToCsv, kpiActualsFromCsv } from '../data/kpiActualsCsv';
-import { KPI_BUDGETS_COLLECTION, computeBudgetVariance } from '../data/budgetVariance';
+import { budgetComparedRangeLabel, budgetUnmatchedNote, KPI_BUDGETS_COLLECTION, computeBudgetVariance } from '../data/budgetVariance';
 import {
   MANUAL_OVERRIDES_COLLECTION,
   applyManualOverrides,
@@ -523,7 +523,8 @@ function BudgetPanel() {
   return (
     <div>
       <p style={{ color: 'var(--text-mute)', fontSize: 12, marginBottom: 8, lineHeight: 1.6 }}>
-        予算 (計画) を実績と<strong>同じ期間粒度</strong>で入力すると、経営サマリーに予算実績差異 (BVA)・達成率が表示されます。
+        予算 (計画) を実績と<strong>同じ期 (YYYY-MM)</strong> で入力すると、経営サマリーに予算実績差異 (BVA)・達成率が
+        表示されます。達成率は<strong>予算と実績の両方が在る期だけ</strong>で算定します（片側しか無い月は対象外）。
       </p>
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
         {field('period', 'YYYY-MM')}
@@ -537,11 +538,25 @@ function BudgetPanel() {
       </div>
       {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
 
+      {variance === null && budgets.length > 0 && actuals.length > 0 && (
+        <p role="alert" style={{ color: '#f59e0b', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+          予算と実績で期 (YYYY-MM) が 1 つも重なっていないため、達成率を算定できません。実績と同じ月の予算を入力してください。
+        </p>
+      )}
+
       {variance && (
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
-          <Tile label="売上 達成率" value={variance.revenue.achievementPct === null ? '—' : `${variance.revenue.achievementPct}%`} sub={`予算 ${safeYen(variance.revenue.budget)} / 実績 ${safeYen(variance.revenue.actual)}`} />
-          <Tile label="営業利益 達成率" value={variance.operatingProfit.achievementPct === null ? '—' : `${variance.operatingProfit.achievementPct}%`} sub={`差異 ${variance.operatingProfit.variance >= 0 ? '+' : ''}${safeYen(variance.operatingProfit.variance)}`} />
-        </div>
+        <>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
+            <Tile label="売上 達成率" value={variance.revenue.achievementPct === null ? '—' : `${variance.revenue.achievementPct}%`} sub={`予算 ${safeYen(variance.revenue.budget)} / 実績 ${safeYen(variance.revenue.actual)}`} />
+            <Tile label="営業利益 達成率" value={variance.operatingProfit.achievementPct === null ? '—' : `${variance.operatingProfit.achievementPct}%`} sub={`差異 ${variance.operatingProfit.variance >= 0 ? '+' : ''}${safeYen(variance.operatingProfit.variance)}`} />
+          </div>
+          <p style={{ color: 'var(--text-mute)', fontSize: 11, lineHeight: 1.6 }}>
+            {`対象: ${budgetComparedRangeLabel(variance.alignment)}（予算と実績の両方が在る期）`}
+            {budgetUnmatchedNote(variance.alignment) !== null && (
+              <span style={{ color: '#f59e0b' }}>{`。${budgetUnmatchedNote(variance.alignment)}です`}</span>
+            )}
+          </p>
+        </>
       )}
 
       {budgets.length > 0 ? (

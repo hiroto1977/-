@@ -328,6 +328,41 @@ describe('buildBankSubmissionSheet — 各節の数値', () => {
     expect(noBudget.sections.some((x) => x.title.startsWith('8. 予算'))).toBe(false);
     expect(noBudget.sections.some((x) => x.title.startsWith('8. 参考：経営スコア'))).toBe(true);
   });
+
+  // 2026-09-07: §8 は突合した期を書いていなかった (§1 は対象期間・§4/§5 は基準日と
+  // 隔たり・§6 は会計の窓を書くのに、§8 だけ `caption: null`)。予算と実績は別々に
+  // 入力するので、月数を書かないと通年の比較に読める。
+  it('★ §8 が突合した期の範囲と月数を書く', () => {
+    const m = buildBankSubmissionSheet(inputWith(overviewWith()));
+    const b = section(m.sections, '8. 予算');
+    expect(b.caption).toBe('対象: 令和8年4月・1 か月（予算と実績の両方が在る期）。');
+  });
+
+  it('★ §8 が対象外の期も書く (通期予算に対して実績が 1 か月の控え)', () => {
+    const budgets: KpiActual[] = ['2026-04', '2026-05', '2026-06'].map((period) => ({
+      period, unit: '全社', revenue: 10_000_000, cogs: 4_000_000, advertising: 1_000_000, sga: 4_000_000, depreciation: 0,
+    }));
+    const m = buildBankSubmissionSheet(inputWith(overviewWith({ kpiBudgets: budgets })));
+    const b = section(m.sections, '8. 予算');
+    expect(b.caption).toBe('対象: 令和8年4月・1 か月（予算と実績の両方が在る期）。予算のみ 2 か月は対象外です。');
+    // 突合できた 1 か月だけで割る (3 か月ぶんの予算では割らない)
+    expect(value(b, '売上高（予算）')).toBe('10,000');
+    expect(value(b, '売上高 達成率')).toBe('123.5%');
+  });
+
+  it('★ 期が 1 つも重ならなければ §8 は理由と両側の期間を書き、達成率は「―」', () => {
+    const budgets: KpiActual[] = ['2025-04', '2025-05'].map((period) => ({
+      period, unit: '全社', revenue: 10_000_000, cogs: 4_000_000, advertising: 1_000_000, sga: 4_000_000, depreciation: 0,
+    }));
+    const m = buildBankSubmissionSheet(inputWith(overviewWith({ kpiBudgets: budgets })));
+    const b = section(m.sections, '8. 予算');
+    expect(b.caption).toBe('予算と実績で期（年月）が重なっていないため、達成率を算定していません。');
+    expect(value(b, '予算の対象期間')).toBe('令和7年4月〜令和7年5月・2 か月');
+    expect(value(b, '実績の対象期間')).toBe('令和8年4月・1 か月');
+    expect(value(b, '売上高 達成率')).toBe(BLANK);
+    // 節は在るので経営スコアは 9 のまま (番号がずれない)
+    expect(m.sections.some((x) => x.title.startsWith('9. 参考：経営スコア'))).toBe(true);
+  });
   it('経営スコアは総合と分野ごと、内部評価の断り書きつき', () => {
     const input = inputWith(overviewWith());
     const m = buildBankSubmissionSheet(input);

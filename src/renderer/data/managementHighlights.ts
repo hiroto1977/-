@@ -5,6 +5,7 @@
  *
  * **重要 — 概算の経営診断であり財務・税務助言ではありません。**
  */
+import { budgetScopeSentence } from './budgetVariance';
 import type { BusinessOverview } from './overview';
 
 export type HighlightSeverity = 'critical' | 'warning' | 'good';
@@ -180,18 +181,34 @@ export function buildManagementHighlights(
     out.push({ severity: 'warning', category: '生産性', message: `労働分配率が ${labor.laborSharePct}% と高めです (人件費が粗利を圧迫)。` });
   }
 
-  // 予実
+  // 予実。達成率は**予算と実績の両方が在る期**だけで出しているので、対象外の月が
+  // 在れば「何か月分の比較か」まで述べる —— 通期予算に対して 3 か月しか実績が無い
+  // 控えで「予算未達」とだけ言うと、通年の未達に読める (2026-09-07 実測: 直す前は
+  // 12 か月の予算と 3 か月の実績を割って達成率 25%、期が重ならない控えでも 125%)。
   if (overview.budget) {
     const a = overview.budget.revenue.achievementPct;
+    const scope = budgetScopeSentence(overview.budget.alignment);
+    const tail = scope === null ? '' : ` ${scope}`;
     // null ガードを巻き上げて単一化。a が null のとき内側 `a < 90` が 0<90=true となり
     // 達成率0%扱いで未達警告が出てしまうため、外側 `!== null` を true 固定する変異は撃墜可能。
     if (a !== null) {
       if (a < 90) {
-        out.push({ severity: 'warning', category: '予実', message: `売上が予算未達です (達成率 ${a}%)。` });
+        out.push({ severity: 'warning', category: '予実', message: `売上が予算未達です (達成率 ${a}%)。${tail}` });
       } else if (a >= 100) {
-        out.push({ severity: 'good', category: '予実', message: `売上予算を達成しています (達成率 ${a}%)。` });
+        out.push({ severity: 'good', category: '予実', message: `売上予算を達成しています (達成率 ${a}%)。${tail}` });
       }
     }
+  } else if (overview.budgetAlignment != null) {
+    // 予算も実績も入っているのに期が 1 つも重ならない = 達成率を出せない。
+    // 黙って節を消すと「予算を入れ忘れた」と読めるので、理由と月数を述べる。
+    // `!= null` は**型の外から来る詰め物** (欄そのものが無い控え) にも耐えるため
+    // (同じ関数の `balanceSheetFreshness` が `?.` を使っているのと同じ理由)。
+    const al = overview.budgetAlignment;
+    out.push({
+      severity: 'warning',
+      category: '予実',
+      message: `予算と実績で期が重なっていないため達成率を算定できません (予算 ${al.budgetOnlyPeriods.length} か月・実績 ${al.actualOnlyPeriods.length} か月)。同じ月 (YYYY-MM) で予算と実績を入れてください。`,
+    });
   }
 
   // 貸借対照表の基準日が古いと、溜まり ÷ 流れ の指標 (総資産回転率・CCC・

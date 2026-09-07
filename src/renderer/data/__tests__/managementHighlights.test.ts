@@ -14,6 +14,9 @@ import type { KpiActual } from '../kpiActuals';
  * defaulted so that NO highlight fires; each test overrides to trigger exactly one branch at
  * its boundary. Cast through unknown since the unrelated overview fields are irrelevant here.
  */
+/** 期がすべて突合できている突合結果 (断り書きが出ない既定)。 */
+const ALIGNED = { comparedPeriods: ['2026-04'], budgetOnlyPeriods: [], actualOnlyPeriods: [] } as const;
+
 const mkOv = (p: any = {}): BusinessOverview => ({
   plan: { tier: 'pro', label: 'Pro', audience: '' },
   kpi: { hasData: true, operatingProfit: 100, operatingMarginPct: 5, revenue: 1000, safetyMargin: 50, revenueGrowthPct: null, ...p.kpi },
@@ -22,7 +25,15 @@ const mkOv = (p: any = {}): BusinessOverview => ({
     operatingProfit: { streak: 0, dropFromPeakPct: null, ...p.opStreak },
   },
   productivity: { labor: { laborSharePct: null, ...p.labor } },
-  budget: 'budget' in p ? p.budget : null,
+  // 予実の詰め物の既定は「期がすべて突合できている」= 断り書きの出ない状態。
+  // `budget` が非 null なら `budgetAlignment` も必ず非 null (実物の不変条件)。
+  budget: 'budget' in p && p.budget !== null ? { alignment: ALIGNED, ...p.budget } : null,
+  budgetAlignment:
+    'budgetAlignment' in p
+      ? p.budgetAlignment
+      : 'budget' in p && p.budget !== null
+        ? ALIGNED
+        : null,
   financialPosition: 'fp' in p ? p.fp : null,
   balanceSheetFreshness: 'fresh' in p ? p.fresh : null,
   // 未入力の内数は既定で無し (この検査では CCC の帯だけを動かす)。名前を渡す検査は
@@ -144,6 +155,47 @@ describe('buildManagementHighlights — 予実 (budget variance)', () => {
     expect(cat(buildManagementHighlights(under), '予実')).toMatchObject({ severity: 'warning', message: expect.stringContaining('予算未達') });
     const hit = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi()], kpiBudgets: [kpi({ revenue: 800_000 })], members: [] });
     expect(cat(buildManagementHighlights(hit), '予実')).toMatchObject({ severity: 'good', message: expect.stringContaining('達成') });
+  });
+
+  // 2026-09-07: 達成率は**突合できた期だけ**で出す。対象外の月が在れば、それが
+  // 何か月分の比較なのかを所見自身が述べる (通年の未達に読まれないように)。
+  it('★ 対象外の期が在れば、何か月分の比較かを所見が述べる', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro', sales: [], members: [],
+      // 予算は 12 か月・実績は 3 か月 (直す前は 12 か月の予算を 3 か月の実績で割っていた)
+      kpiBudgets: ['2026-04', '2026-05', '2026-06', '2026-07', '2026-08', '2026-09'].map((period) => kpi({ period, revenue: 1_000_000 })),
+      kpiActuals: ['2026-04', '2026-05'].map((period) => kpi({ period, revenue: 1_000_000 })),
+    });
+    const h = cat(buildManagementHighlights(o), '予実')!;
+    expect(h.message).toContain('予算と実績の両方が在る 2 か月分の比較です (予算のみ 4 か月は対象外)。');
+  });
+
+  it('★ 対照: 全期が突合できていれば月数の断り書きは付かない', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro', sales: [], members: [],
+      kpiBudgets: [kpi({ period: '2026-04', revenue: 2_000_000 })],
+      kpiActuals: [kpi({ period: '2026-04', revenue: 1_000_000 })],
+    });
+    const h = cat(buildManagementHighlights(o), '予実')!;
+    expect(h.message).toBe('売上が予算未達です (達成率 50%)。');
+  });
+
+  it('★ 期が 1 つも重ならなければ「算定できない」と月数を述べる (黙って消さない)', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro', sales: [], members: [],
+      kpiBudgets: [kpi({ period: '2025-04' }), kpi({ period: '2025-05' })],
+      kpiActuals: [kpi({ period: '2026-04' })],
+    });
+    const h = cat(buildManagementHighlights(o), '予実')!;
+    expect(h.severity).toBe('warning');
+    expect(h.message).toBe(
+      '予算と実績で期が重なっていないため達成率を算定できません (予算 2 か月・実績 1 か月)。同じ月 (YYYY-MM) で予算と実績を入れてください。',
+    );
+  });
+
+  it('対照: 予算が未入力なら予実の所見は出ない', () => {
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi()], members: [] });
+    expect(cat(buildManagementHighlights(o), '予実')).toBeUndefined();
   });
 });
 

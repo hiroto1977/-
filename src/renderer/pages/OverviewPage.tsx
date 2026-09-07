@@ -19,7 +19,7 @@ import { INDUSTRY_PRESETS } from '../data/industryPresets';
 import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import { KPI_ACTUALS_COLLECTION, monthlyTrendSeries, summarizeFundamentals, type KpiActual } from '../data/kpiActuals';
 import { profitSensitivity, breakEvenDeltaPct, requiredRevenueForTarget, fixedCostReductionImpact, operatingLeverage } from '../data/profitSensitivity';
-import { KPI_BUDGETS_COLLECTION } from '../data/budgetVariance';
+import { budgetComparedRangeLabel, budgetScopeSentence, KPI_BUDGETS_COLLECTION } from '../data/budgetVariance';
 import { BALANCE_SHEET_COLLECTION, balanceSheetOrNull, type BalanceSheet } from '../data/balanceSheet';
 import { MEMBERS_COLLECTION, type Member } from '../data/members';
 import {
@@ -1220,12 +1220,27 @@ export function OverviewPage() {
         </Section>
       )}
 
+      {overview.budget === null && overview.budgetAlignment !== null && (
+        <Section title="予算実績差異 (BVA)">
+          <p role="alert" style={{ color: '#f59e0b', fontSize: 13, lineHeight: 1.6 }}>
+            予算と実績で<strong>期 (YYYY-MM) が 1 つも重なっていない</strong>ため、達成率を算定できません
+            （予算 {overview.budgetAlignment.budgetOnlyPeriods.length} か月・実績{' '}
+            {overview.budgetAlignment.actualOnlyPeriods.length} か月）。KPI ページで、実績と同じ月の予算を入力してください。
+          </p>
+        </Section>
+      )}
+
       {overview.budget && (
         <Section title="予算実績差異 (BVA)">
           <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginBottom: 12 }}>
-            予算 (計画) と実績の差異・達成率です。<strong>※ 予算と実績は同じ期間粒度で入力してください</strong>
-            （年間 vs 年間、または月次 vs 月次）。予算は KPI ページで入力できます。
+            予算 (計画) と実績の差異・達成率です。突き合わせたのは<strong>予算と実績の両方が在る期</strong>だけで、
+            {`${budgetComparedRangeLabel(overview.budget.alignment)}分です。`}予算は KPI ページで入力できます。
           </p>
+          {budgetScopeSentence(overview.budget.alignment) !== null && (
+            <p role="alert" style={{ color: '#f59e0b', fontSize: 12, lineHeight: 1.6, marginBottom: 12 }}>
+              {budgetScopeSentence(overview.budget.alignment)}通年の比較ではありません。
+            </p>
+          )}
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {([
               { label: '売上高', v: overview.budget.revenue },
