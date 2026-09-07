@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   parseBalanceSheet,
   computeBalanceSheetMetrics,
@@ -89,12 +89,37 @@ describe('parseBalanceSheet', () => {
     expect(() => parseBalanceSheet({ ...REQUIRED, currentLiabilities: 100, accountsPayable: 200 })).toThrow(/仕入債務/);
   });
 
-  it('treats a blank net income and blank optional items as zero', () => {
+  it('treats a blank net income as zero but leaves blank optional items undefined', () => {
+    // 当期純利益は**必須**の欄なので空欄 = 0 のまま (損失も 0 も意味が定まる)。
+    // 内数の任意欄は「入れていない」を保つ —— 0 に倒すと CCC 0 日が出る (下の対照)。
     const bs = parseBalanceSheet({ ...REQUIRED, netIncome: '' });
     expect(bs.netIncome).toBe(0);
+    expect(bs.inventory).toBeUndefined();
+    expect(bs.accountsReceivable).toBeUndefined();
+    expect(bs.accountsPayable).toBeUndefined();
+    expect(bs.cash).toBeUndefined();
+  });
+
+  it('★ 対照: 0 と入力すれば 0 が残る (未入力と実測の 0 を取り違えない)', () => {
+    const bs = parseBalanceSheet({ ...REQUIRED, inventory: 0, accountsReceivable: '0', accountsPayable: 0, cash: 0 });
     expect(bs.inventory).toBe(0);
     expect(bs.accountsReceivable).toBe(0);
     expect(bs.accountsPayable).toBe(0);
+    expect(bs.cash).toBe(0);
+  });
+
+  it('空白だけの入力も未入力として扱う (Number("  ")===0 に任せない)', () => {
+    const bs = parseBalanceSheet({ ...REQUIRED, inventory: '  ', accountsReceivable: '\t', cash: '' });
+    expect(bs.inventory).toBeUndefined();
+    expect(bs.accountsReceivable).toBeUndefined();
+    expect(bs.cash).toBeUndefined();
+  });
+
+  it('内数の上限照合は未入力を飛ばす (空欄で「流動資産を超える」と言わない)', () => {
+    // 流動資産 0 の控えでも、内数が未入力なら通る。実測の 0 も通る。1 は落ちる。
+    expect(() => parseBalanceSheet({ ...REQUIRED, currentAssets: 0, currentLiabilities: 0 })).not.toThrow();
+    expect(() => parseBalanceSheet({ ...REQUIRED, currentAssets: 0, currentLiabilities: 0, inventory: 0, accountsPayable: 0 })).not.toThrow();
+    expect(() => parseBalanceSheet({ ...REQUIRED, currentAssets: 0, inventory: 1 })).toThrow('棚卸資産は流動資産以下で入力してください');
   });
 });
 
@@ -187,9 +212,11 @@ function mkBS(over: Partial<BalanceSheet>): BalanceSheet {
 describe('parseBalanceSheet — interest-bearing debt (round 74)', () => {
   const BASE = { currentAssets: 100, fixedAssets: 0, currentLiabilities: 60, fixedLiabilities: 40, netIncome: 0 };
 
-  it('defaults interest-bearing debt to 0 when omitted or blank', () => {
-    expect(parseBalanceSheet(BASE).interestBearingDebt).toBe(0);
-    expect(parseBalanceSheet({ ...BASE, interestBearingDebt: '' }).interestBearingDebt).toBe(0);
+  it('leaves interest-bearing debt undefined when omitted or blank (0 = 無借金と実測した控えと分ける)', () => {
+    expect(parseBalanceSheet(BASE).interestBearingDebt).toBeUndefined();
+    expect(parseBalanceSheet({ ...BASE, interestBearingDebt: '' }).interestBearingDebt).toBeUndefined();
+    // ★ 対照: 0 と入力すれば 0 が残る。
+    expect(parseBalanceSheet({ ...BASE, interestBearingDebt: 0 }).interestBearingDebt).toBe(0);
   });
 
   it('rejects a negative interest-bearing debt with the exact label', () => {
@@ -470,19 +497,22 @@ describe('computeBalanceSheetInsights — substantive insolvency risk', () => {
 // --- 保存された 1 件を読む境界 -------------------------------------------
 //
 // 復元の形の検査は `inventory` / `accountsReceivable` / `accountsPayable` も
-// **任意**にしている (前方互換) のに、型は必須と言う。欄の無い控えが復元を
-// 通ると足し算が NaN になり、行き先は経営サマリーのタイルと**金融機関等へ出す
-// 書面** —— NaN の純資産が印刷される。0 と読むのは入力側 (`parseBalanceSheet`)
-// の「空欄 = 0 円」と同じ約束。
+// **任意**にしている (前方互換)。以前は型が必須と言っていたので、欄の無い控えが
+// 復元を通ると足し算が NaN になり、行き先は経営サマリーのタイルと**金融機関等へ
+// 出す書面** —— NaN の純資産が印刷された。
+//
+// 2026-09-07 に型を復元の形へ合わせ、**未入力は `undefined` のまま残す**ように
+// した (0 に倒すと「入れていない」と「0 と実測した」が混ざる)。NaN は各指標が
+// `undefined` を算定不能として扱うことで防ぐ —— 合計に混ぜない、が下の検査。
 describe('normalizeBalanceSheet / balanceSheetOrNull', () => {
   const core = { asOf: '2026-03-31', currentAssets: 5_000_000, fixedAssets: 3_000_000,
     currentLiabilities: 2_000_000, fixedLiabilities: 1_000_000, netIncome: 500_000 };
 
-  it('内数の欄が無い控えでも合計が有限で、指標が NaN にならない', () => {
+  it('内数の欄が無い控えは「無い」まま残り、合計は有限のまま (NaN にしない)', () => {
     const bs = normalizeBalanceSheet(core);
-    expect(bs.inventory).toBe(0);
-    expect(bs.accountsReceivable).toBe(0);
-    expect(bs.accountsPayable).toBe(0);
+    expect(bs.inventory).toBeUndefined();
+    expect(bs.accountsReceivable).toBeUndefined();
+    expect(bs.accountsPayable).toBeUndefined();
     const m = computeBalanceSheetMetrics(bs);
     for (const [k, v] of Object.entries(m)) {
       if (typeof v === 'number') expect(Number.isFinite(v), k).toBe(true);
@@ -502,10 +532,11 @@ describe('normalizeBalanceSheet / balanceSheetOrNull', () => {
     expect(bs.interestBearingDebt).toBeUndefined();
   });
 
-  it('数でない値・非有限値も 0 に倒す', () => {
+  it('必須の欄は数でない値・非有限値を 0 に倒し、任意の欄は「無い」に倒す', () => {
     const bs = normalizeBalanceSheet({ ...core, inventory: '400000', currentAssets: Number.NaN,
       netIncome: Number.POSITIVE_INFINITY, cash: 'たくさん', asOf: 42 });
-    expect(bs.inventory).toBe(0);
+    // 内数は任意なので、文字列で入っていた控えは「無い」として読む (0 を作らない)。
+    expect(bs.inventory).toBeUndefined();
     expect(bs.currentAssets).toBe(0);
     expect(bs.netIncome).toBe(0);
     expect(bs.cash).toBeUndefined();
@@ -535,5 +566,79 @@ describe('normalizeBalanceSheet / balanceSheetOrNull', () => {
       expect(bs.currentAssets).toBe(0);
       expect(Number.isFinite(computeBalanceSheetMetrics(bs).netAssets)).toBe(true);
     }
+  });
+});
+
+/**
+ * **未入力の棚卸資産は、当座比率と流動性段階を緩めない。** (2026-09-07)
+ *
+ * 当座比率 = (流動資産 − 棚卸資産) ÷ 流動負債 は、流動比率より**厳しい**指標である。
+ * 棚卸資産を 0 に倒すと分子が流動資産そのものになり、当座比率が流動比率と同じ値を
+ * 名乗る —— 厳しいはずの指標が緩い側の数字になる。流動性段階も同じ形で最良の
+ * `strong` に寄る。どちらも空欄で保存した控えでは**必ず**そうなっていた。
+ */
+describe('未入力の棚卸資産 — 当座比率と流動性段階', () => {
+  const CORE = { asOf: '', currentAssets: 200, fixedAssets: 0, currentLiabilities: 100,
+    fixedLiabilities: 0, netIncome: 0 } as const;
+
+  it('棚卸資産が未入力なら当座比率は null (流動比率は出る)', () => {
+    const m = computeBalanceSheetMetrics(CORE);
+    expect(m.currentRatioPct).toBe(200);
+    expect(m.quickRatioPct).toBeNull();
+  });
+
+  it('★ 対照: 棚卸資産 0 と実測した控えでは当座比率 = 流動比率 200% になる', () => {
+    // 0 に倒す実装だと上の検査もこの値を返す —— 見分けが付かないことがまさに欠陥だった。
+    const m = computeBalanceSheetMetrics({ ...CORE, inventory: 0 });
+    expect(m.quickRatioPct).toBe(200);
+  });
+
+  it('棚卸資産が未入力なら strong は主張せず sound に留める', () => {
+    expect(computeBalanceSheetInsights(CORE).liquidityStage).toBe('sound');
+    // ★ 対照: 0 と実測すれば当座資産 = 流動資産なので strong。
+    expect(computeBalanceSheetInsights({ ...CORE, inventory: 0 }).liquidityStage).toBe('strong');
+  });
+
+  it('都合の悪い判定 (tight) は棚卸資産が未入力でも落とさない', () => {
+    // 流動比率 99% は棚卸資産に依らず判る。判るものは黙らせない。
+    const i = computeBalanceSheetInsights({ ...CORE, currentAssets: 99 });
+    expect(i.liquidityStage).toBe('tight');
+  });
+});
+
+/**
+ * **定数表そのものを変異検査の射程に入れる (読み直して測る)。** (2026-09-07)
+ *
+ * module 直下の `const` は**読み込みのときに 1 度だけ**評価されるので、Stryker が
+ * 実行時に切り替える仕組みは届かない —— 覆われていても「生存」と報告される
+ * (`stryker.config.json` の `_commentIgnoreStatic`)。殺し方は**テスト側で読み直す**
+ * こと: `vi.resetModules()` + 動的 `import()` なら変異体が有効な状態で評価される。
+ *
+ * ここで留めるのは、画面と**金融機関等へ出す書面**が刷る文字そのものである。
+ */
+describe('読み直して測る — collection 名と比率ヘルパー', () => {
+  it('collection 名は読み直しても "balance-sheet"', async () => {
+    vi.resetModules();
+    const m = await import('../balanceSheet');
+    expect(m.BALANCE_SHEET_COLLECTION).toBe('balance-sheet');
+  });
+
+  it('読み直しても比率が数で出る (module 直下の pct が空にすり替わっていない)', async () => {
+    vi.resetModules();
+    const m = await import('../balanceSheet');
+    const metrics = m.computeBalanceSheetMetrics({
+      asOf: '2026-03-31', currentAssets: 6000, inventory: 2000, accountsReceivable: 1500,
+      fixedAssets: 4000, currentLiabilities: 3000, accountsPayable: 1000,
+      fixedLiabilities: 2000, netIncome: 1000,
+    });
+    expect(metrics.equityRatioPct).toBe(50);
+    expect(metrics.currentRatioPct).toBe(200);
+    expect(metrics.quickRatioPct).toBe(133.3);
+    expect(metrics.roaPct).toBe(10);
+    // 分母 0 は null (三項の両側を読み直しでも通す)。
+    expect(m.computeBalanceSheetMetrics({
+      asOf: '', currentAssets: 0, inventory: 0, accountsReceivable: 0, fixedAssets: 0,
+      currentLiabilities: 0, accountsPayable: 0, fixedLiabilities: 0, netIncome: 0,
+    }).currentRatioPct).toBeNull();
   });
 });

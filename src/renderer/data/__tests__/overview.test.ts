@@ -534,3 +534,107 @@ describe('経営サマリーの低カリウム栽培', () => {
     expect(withLp.hydroponics!.operatingProfit).toBe(without.hydroponics!.operatingProfit);
   });
 });
+
+/**
+ * **空欄のまま保存した貸借対照表が「最良の運転資金」を報告しないこと。** (2026-09-07)
+ *
+ * 実測した 4 通り。以前は上の 3 行がすべて 4 行目と同じ「CCC 0 日」だった ——
+ * 即日回収・即日支払で資金が 1 日も寝ていない、という最良の状態である。
+ * 経緯は `data/balanceSheet.ts` の `BalanceSheet`。
+ */
+describe('貸借対照表の内数が空欄のとき、運転資金は算定不能 (0 日と言わない)', () => {
+  const FLOW: KpiActual[] = [
+    { period: '2026-06', unit: '全社', revenue: 4_000_000, cogs: 2_000_000, advertising: 0, sga: 0, depreciation: 0 },
+    { period: '2026-07', unit: '全社', revenue: 4_000_000, cogs: 2_000_000, advertising: 0, sga: 0, depreciation: 0 },
+    { period: '2026-08', unit: '全社', revenue: 4_000_000, cogs: 2_000_000, advertising: 0, sga: 0, depreciation: 0 },
+  ];
+  const CORE = { asOf: '2026-08-31', currentAssets: 5_000_000, fixedAssets: 0,
+    currentLiabilities: 2_000_000, fixedLiabilities: 0, netIncome: 0 } as const;
+  const build = (bs: Record<string, unknown>) =>
+    buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: FLOW, members: [], balanceSheet: bs as never });
+
+  it('4 欄を空欄で保存した控え → 回転日数・CCC・運転資本すべて算定不能', () => {
+    const wc = build(CORE).workingCapital!;
+    expect(wc.dso).toBeNull();
+    expect(wc.dio).toBeNull();
+    expect(wc.dpo).toBeNull();
+    expect(wc.ccc).toBeNull();
+    expect(wc.workingCapital).toBeNull();
+    expect(wc.missingStocks).toEqual(['売上債権', '棚卸資産', '仕入債務']);
+  });
+
+  it('★ 対照: 本当に 0 の現金商売なら CCC 0 日を出す (0 を算定不能にしない)', () => {
+    const wc = build({ ...CORE, accountsReceivable: 0, inventory: 0, accountsPayable: 0 }).workingCapital!;
+    expect(wc.dso).toBe(0);
+    expect(wc.ccc).toBe(0);
+    expect(wc.workingCapital).toBe(0);
+    expect(wc.missingStocks).toEqual([]);
+  });
+
+  it('★ 対照: 埋めてあれば実測どおりの日数が出る', () => {
+    // 売上 1,200 万 / 原価 600 万。AR 200 万 → DSO 60.8 日、棚卸 100 万 → DIO 60.8 日、
+    // 仕入債務 112.5 万 → DPO 68.4 日 → CCC 53.2 日。
+    const wc = build({ ...CORE, accountsReceivable: 2_000_000, inventory: 1_000_000, accountsPayable: 1_125_000 }).workingCapital!;
+    expect(wc.dso).toBe(60.8);
+    expect(wc.dio).toBe(60.8);
+    expect(wc.dpo).toBe(68.4);
+    expect(wc.ccc).toBe(53.2);
+    expect(wc.workingCapital).toBe(1_875_000);
+    expect(wc.missingStocks).toEqual([]);
+  });
+
+  it('当座比率も空欄では算定不能 (流動比率 250% と同じ値を名乗らない)', () => {
+    const fp = build(CORE).financialPosition!;
+    expect(fp.currentRatioPct).toBe(250);
+    expect(fp.quickRatioPct).toBeNull();
+    // ★ 対照: 棚卸資産 0 と実測すれば当座比率も 250%。
+    expect(build({ ...CORE, inventory: 0 }).financialPosition!.quickRatioPct).toBe(250);
+  });
+});
+
+/**
+ * **綴りの読めない期は、基準日の古さの判定を黙らせない。** (2026-09-07)
+ *
+ * 実績の最新期は `isValidPeriod` で選別してから最大を取る。選別を外すと
+ * 辞書順で 'garbage' のような文字列が「最新の期」になり、`balanceSheetFreshness`
+ * は月として読めないので **`monthsBehind` を null にして所見も但し書きも出さない**
+ * —— 1 件の壊れた期で、7 年古い貸借対照表の警告が消える。
+ */
+describe('実績の期の選別は、基準日の古さの判定を守る', () => {
+  const OLD_BS = {
+    asOf: '2019-03-31', currentAssets: 1_000_000, fixedAssets: 0,
+    currentLiabilities: 500_000, fixedLiabilities: 0, netIncome: 0,
+  } as const;
+  const kpiAt = (period: string): KpiActual =>
+    ({ period, unit: '全社', revenue: 1_000_000, cogs: 400_000, advertising: 0, sga: 0, depreciation: 0 });
+
+  it('★ 読めない期が混じっても、正しい期の最大で古さを測る', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro', sales: [], members: [],
+      // 辞書順では 'garbage' が '2026-08' より後ろに来る。
+      kpiActuals: [kpiAt('2026-08'), kpiAt('garbage')],
+      balanceSheet: OLD_BS as never,
+    });
+    expect(o.balanceSheetFreshness).not.toBeNull();
+    expect(o.balanceSheetFreshness!.latestPeriod).toBe('2026-08');
+    expect(o.balanceSheetFreshness!.monthsBehind).toBe(89);
+    expect(o.balanceSheetFreshness!.stale).toBe(true);
+  });
+
+  it('対照: 正しい期だけでも同じ答え (選別が正しい期を落としていない)', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro', sales: [], members: [], kpiActuals: [kpiAt('2026-08')],
+      balanceSheet: OLD_BS as never,
+    });
+    expect(o.balanceSheetFreshness!.monthsBehind).toBe(89);
+  });
+
+  it('期が 1 つも無ければ古さは測らない (条件を書かずに算定不能へ倒る)', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro', sales: [], members: [], kpiActuals: [], balanceSheet: OLD_BS as never,
+    });
+    expect(o.balanceSheetFreshness).not.toBeNull();
+    expect(o.balanceSheetFreshness!.monthsBehind).toBeNull();
+    expect(o.balanceSheetFreshness!.stale).toBe(false);
+  });
+});

@@ -163,12 +163,26 @@ export function buildKessanImport(input: KessanImportInput): KessanImportResult 
   const bs = input.balanceSheet;
   if (bs !== null) {
     const bsSource = `貸借対照表 (${bs.asOf} 時点)`;
-    const cash = bs.cash ?? 0;
-    if (bs.cash === undefined) notes.push('貸借対照表に現預金が無いので現金及び預金は 0 とした。');
+    /**
+     * 貸借対照表の**内数の任意欄**を科目残高へ。未入力 (`undefined`) は 0 として
+     * 積む —— 計算書類は貸借が一致しないと出せないので、欄を空けたままにはできない。
+     * ただし**必ず注記に残す**: そうしないと「0 と実測した」と「入れていない」が
+     * 出来上がった書類の上で見分けられなくなる (同じ判断の別の形は
+     * `workingCapital.ts` —— あちらは印刷ではなく比率なので算定不能にできる)。
+     */
+    const inner = (v: number | undefined, label: string, account: string): number => {
+      if (v !== undefined) return v;
+      notes.push(`貸借対照表に${label}が無いので${account}は 0 とした。`);
+      return 0;
+    };
+    const cash = inner(bs.cash, '現預金', '現金及び預金');
+    const receivable = inner(bs.accountsReceivable, '売上債権', '売掛金');
+    const inventory = inner(bs.inventory, '棚卸資産', '棚卸資産');
+    const payable = inner(bs.accountsPayable, '仕入債務', '買掛金');
     amount('cash', cash, bsSource);
-    amount('accountsReceivable', bs.accountsReceivable, bsSource);
-    amount('inventory', bs.inventory, bsSource);
-    const otherCurrent = bs.currentAssets - cash - bs.accountsReceivable - bs.inventory;
+    amount('accountsReceivable', receivable, bsSource);
+    amount('inventory', inventory, bsSource);
+    const otherCurrent = bs.currentAssets - cash - receivable - inventory;
     if (otherCurrent < 0) {
       notes.push('現預金・売掛金・棚卸資産の合計が流動資産を超えているため、その他の流動資産は 0 とした。貸借対照表の内訳を確かめること。');
       amount('otherCurrentAsset', 0, bsSource);
@@ -177,14 +191,14 @@ export function buildKessanImport(input: KessanImportInput): KessanImportResult 
     }
     amount('otherFixedAsset', bs.fixedAssets, bsSource);
     notes.push('固定資産は内訳が無いのでその他の固定資産に置いた。建物・機械装置・土地などへ振り分け、減価償却累計額を入れること。');
-    amount('accountsPayable', bs.accountsPayable, bsSource);
+    amount('accountsPayable', payable, bsSource);
     const debt = bs.interestBearingDebt ?? 0;
     const longTerm = Math.min(debt, bs.fixedLiabilities);
     const shortTerm = debt - longTerm;
     amount('longTermDebt', longTerm, bsSource);
     amount('shortTermDebt', shortTerm, bsSource);
     if (debt > 0) notes.push('有利子負債は固定負債に収まる分を長期借入金、残りを短期借入金に置いた。返済期限で分け直すこと。');
-    const otherCurrentLiability = bs.currentLiabilities - bs.accountsPayable - shortTerm;
+    const otherCurrentLiability = bs.currentLiabilities - payable - shortTerm;
     if (otherCurrentLiability < 0) {
       notes.push('買掛金と短期借入金の合計が流動負債を超えているため、その他の流動負債は 0 とした。');
       amount('otherCurrentLiability', 0, bsSource);

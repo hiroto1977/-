@@ -261,6 +261,12 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
    */
   const staleBsNote = (): string | null => {
     const fr = o.balanceSheetFreshness;
+    // `fr?.` と `fr.monthsBehind === null` はどちらも**到達しない防御**である ——
+    // この関数を呼ぶのは §4 / §5 で、どちらも貸借対照表が在るときだけなので
+    // `balanceSheetFreshness` は null にならず、`stale === true` なら
+    // `monthsBehind` は必ず数である (不変条件は `shared/balanceSheetFreshness.ts`
+    // 側の検査が留めている)。倒し込みを外すと型が通らないので残す (等価変異)。
+    // Stryker disable next-line ConditionalExpression,OptionalChaining: 上の不変条件により到達しない (等価変異)
     if (fr?.stale !== true || fr.monthsBehind === null) return null;
     return `貸借対照表の基準日は対象期間の最終月より ${fr.monthsBehind} か月古く、売上高や原価と組み合わせる比率 (回転率・回転日数) は同じ期の数字ではありません。`;
   };
@@ -367,9 +373,25 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
   });
 
   const wc = o.workingCapital;
+  /**
+   * §5 の但し書き。**空欄の理由を名前で述べる** —— 「—」だけを刷ると、読む側は
+   * 「この会社には運転資金の負担が無い」と読める。未入力を 0 として積んでいない
+   * ことも明記する (以前は 0 に倒していたので CCC 0 日が印刷されていた。経緯は
+   * `data/balanceSheet.ts` の `BalanceSheet`)。基準日のずれの但し書きと併記する。
+   */
+  const workingCapitalCaption = (): string | null => {
+    if (wc === null) return '貸借対照表と売上高が揃っていないため算定していません。';
+    const notes = [
+      wc.missingStocks.length === 0
+        ? null
+        : `貸借対照表の${wc.missingStocks.join('・')}が未入力のため、該当する回転日数と運転資本は算定していません（0 円としては扱っていません）。`,
+      staleBsNote(),
+    ].filter((n): n is string => n !== null);
+    return notes.length === 0 ? null : notes.join(' ');
+  };
   sections.push({
     title: '5. 運転資本',
-    caption: wc === null ? '貸借対照表と売上高が揃っていないため算定していません。' : staleBsNote(),
+    caption: workingCapitalCaption(),
     rows: [
       row('売上債権回転日数（DSO）', wc === null ? BLANK : days(wc.dso), '売上債権 ÷ 売上高 × 365'),
       row('棚卸資産回転日数（DIO）', wc === null ? BLANK : days(wc.dio), '棚卸資産 ÷ 売上原価 × 365'),

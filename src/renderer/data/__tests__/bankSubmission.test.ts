@@ -2,7 +2,7 @@
  * 金融機関等提出用の書面 — 経営サマリーの値が書式を通って表に並ぶこと、
  * 出せない値は「―」で埋まり行は消えないこと、書式を変えると数字が変わること (対照)。
  */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   BANK_SUBMISSION_COLLECTION,
   DEFAULT_SUBMISSION_SETTINGS,
@@ -759,5 +759,155 @@ describe('基準日が古い書面は、比率が同じ期の数字でないこ�
       }),
     );
     expect(section(m.sections, '4.').caption).toBe('貸借対照表が未入力のため算定していません。');
+  });
+});
+
+/**
+ * **書面は、空欄の理由を欄の名前で述べる。** (2026-09-07)
+ *
+ * §5 運転資本の内数 (売上債権・棚卸資産・仕入債務) は貸借対照表の任意欄である。
+ * 以前は未入力を 0 に潰していたので、この節に **CCC 0 日**、運転資本 0 円が
+ * 印刷されていた —— 即日回収・即日支払という最良の運転資金である。
+ * いまは「—」で出し、**なぜ出せないか**を但し書きに書く。
+ */
+describe('§5 運転資本 — 未入力の欄を名前で述べる', () => {
+  const blankInner: BalanceSheet = {
+    asOf: '2026-03-31', currentAssets: 8_000_000, cash: 3_000_000, fixedAssets: 4_000_000,
+    currentLiabilities: 5_000_000, fixedLiabilities: 3_000_000, netIncome: 600_000,
+  };
+
+  it('3 欄が未入力なら日数と運転資本は「―」で、但し書きが欄の名前を並べる', () => {
+    const m = buildBankSubmissionSheet(inputWith(overviewWith({ balanceSheet: blankInner })));
+    const s = section(m.sections, '5.');
+    expect(value(s, '売上債権回転日数（DSO）')).toBe(BLANK);
+    expect(value(s, '棚卸資産回転日数（DIO）')).toBe(BLANK);
+    expect(value(s, '仕入債務回転日数（DPO）')).toBe(BLANK);
+    expect(value(s, '現金化サイクル（CCC）')).toBe(BLANK);
+    expect(value(s, '運転資本')).toBe(BLANK);
+    expect(s.caption).toContain('売上債権・棚卸資産・仕入債務');
+    expect(s.caption).toContain('0 円としては扱っていません');
+    // 行は消さない (欄が在ることは見せる)。
+    expect(s.rows).toHaveLength(5);
+  });
+
+  it('当座比率も §4 で「―」になる (流動比率と同じ値を刷らない)', () => {
+    const m = buildBankSubmissionSheet(inputWith(overviewWith({ balanceSheet: blankInner })));
+    const s = section(m.sections, '4.');
+    expect(value(s, '流動比率')).toBe('160.0%');
+    expect(value(s, '当座比率')).toBe(BLANK);
+  });
+
+  it('1 欄だけ未入力なら、その欄だけを名前で挙げる', () => {
+    const m = buildBankSubmissionSheet(
+      inputWith(overviewWith({ balanceSheet: { ...BS, inventory: undefined } })),
+    );
+    const s = section(m.sections, '5.');
+    expect(s.caption).toContain('棚卸資産');
+    expect(s.caption).not.toContain('売上債権');
+    expect(value(s, '売上債権回転日数（DSO）')).not.toBe(BLANK);
+    expect(value(s, '棚卸資産回転日数（DIO）')).toBe(BLANK);
+    expect(value(s, '現金化サイクル（CCC）')).toBe(BLANK);
+  });
+
+  it('★ 対照: 埋まった控え (BS) では但し書きが付かず CCC が出る', () => {
+    // `BS` は 3 欄すべて埋まっている。上の 508 行の検査と同じ形をここでも押さえる。
+    const s = section(buildBankSubmissionSheet(inputWith(overviewWith())).sections, '5.');
+    expect(s.caption).toBeNull();
+    expect(value(s, '現金化サイクル（CCC）')).not.toBe(BLANK);
+    expect(value(s, '運転資本')).not.toBe(BLANK);
+  });
+});
+
+/**
+ * **書面が刷る「定数」を、読み直して測る。** (2026-09-07)
+ *
+ * `EMPTY_PROFILE` / `PROFILE_LABEL` / `BANK_SUBMISSION_COLLECTION` /
+ * `DEFAULT_SUBMISSION_SETTINGS` は module 直下の `const` なので**読み込みのときに
+ * 1 度だけ**評価され、Stryker の実行時の切り替えが届かない (覆われていても
+ * 「生存」と報告される。`stryker.config.json` の `_commentIgnoreStatic`)。
+ * ここで刷る文字は**金融機関等へ出す紙の見出し**なので、空にすり替わったことに
+ * 気付けない状態のまま置いておけない。読み直せば測れる。
+ */
+describe('読み直して測る — 書面の定数表', () => {
+  it('保存先の collection 名', async () => {
+    vi.resetModules();
+    const m = await import('../bankSubmission');
+    expect(m.BANK_SUBMISSION_COLLECTION).toBe('bank-submission-settings');
+  });
+
+  it('空の提出者情報は 4 欄そろって空文字 (欄が消えない)', async () => {
+    vi.resetModules();
+    const m = await import('../bankSubmission');
+    expect(m.EMPTY_PROFILE).toEqual({
+      companyName: '', representative: '', address: '', fiscalYearEnd: '',
+    });
+  });
+
+  it('既定の設定は「空の提出者情報 + 既定の書式」', async () => {
+    vi.resetModules();
+    const m = await import('../bankSubmission');
+    const b = await import('../../../shared/bankFormat');
+    expect(m.DEFAULT_SUBMISSION_SETTINGS).toEqual({ profile: m.EMPTY_PROFILE, format: b.BANK_FORMAT_DEFAULT });
+  });
+
+  it('読み直しても表の行が組め、売上トレンドの日本語が出る', async () => {
+    // `row()` (module 直下の行の組み立て) と `TREND_LABEL` を同時に測る。
+    vi.resetModules();
+    const m = await import('../bankSubmission');
+    const model = m.buildBankSubmissionSheet(inputWith(overviewWith()));
+    const growth = model.sections.find((x) => x.title.startsWith('7.'));
+    expect(growth).toBeDefined();
+    // 行そのものが組めている (row が空にすり替わると undefined の配列になる)。
+    expect(growth!.rows.every((r) => typeof r.label === 'string' && r.label.length > 0)).toBe(true);
+    const trend = growth!.rows.find((r) => r.label === '売上トレンド');
+    expect(trend).toBeDefined();
+    expect(['上昇', '下降', '横ばい', BLANK]).toContain(trend!.value);
+    expect(trend!.value).not.toBe('');
+  });
+
+  it('トレンドのラベルは 3 つとも日本語のまま (どの向きでも空にならない)', async () => {
+    vi.resetModules();
+    const m = await import('../bankSubmission');
+    const base = overviewWith();
+    for (const [trend, label] of [['up', '上昇'], ['down', '下降'], ['flat', '横ばい']] as const) {
+      const o: BusinessOverview = { ...base, kpi: { ...base.kpi, revenueTrend: trend } };
+      const model = m.buildBankSubmissionSheet(inputWith(o));
+      const growth = model.sections.find((x) => x.title.startsWith('7.'))!;
+      expect(growth.rows.find((r) => r.label === '売上トレンド')!.value, trend).toBe(label);
+    }
+  });
+
+  it('提出者情報のラベルは 4 欄そろって日本語のまま (入力欄と検証の文面に出る)', async () => {
+    vi.resetModules();
+    const m = await import('../bankSubmission');
+    // ラベルは非公開なので、断る文面で測る (欄ごとに名前が出る)。文字でない値は
+    // 4 欄すべてで同じ経路を通るので、ラベルが空になったらここで落ちる。
+    for (const [key, label] of [
+      ['companyName', '商号'], ['representative', '代表者'],
+      ['address', '所在地'], ['fiscalYearEnd', '決算期'],
+    ] as const) {
+      const r = m.parseSubmissionProfile({ ...m.EMPTY_PROFILE, [key]: 42 as never });
+      expect(r.ok, key).toBe(false);
+      expect(r.ok === false ? r.reason : '', key).toContain(label);
+    }
+  });
+});
+
+/**
+ * §5 の但し書きは 2 つ並ぶことがある (未入力の欄 + 基準日のずれ)。
+ * **区切りの空白まで留める** —— `join('')` にすり替わると 2 つの文が地続きになる。
+ */
+describe('§5 運転資本 — 但し書きが 2 つ並ぶとき', () => {
+  it('未入力の欄と基準日のずれを、空白で区切って両方出す', () => {
+    // 基準日 2024-03-31 に対し KPI は 2026-04 → 25 か月古い。棚卸資産は未入力。
+    const bs: BalanceSheet = { ...BS, asOf: '2024-03-31', inventory: undefined };
+    const m = buildBankSubmissionSheet(
+      inputWith(overviewWith({ balanceSheet: bs }), SETTINGS, { balanceSheetAsOf: '2024-03-31' }),
+    );
+    const caption = section(m.sections, '5.').caption ?? '';
+    expect(caption).toContain('棚卸資産が未入力');
+    expect(caption).toContain('貸借対照表の基準日は対象期間の最終月より');
+    // 2 文が地続きにならない (句点の直後に空白が在る)。
+    expect(caption).toContain('。 貸借対照表の基準日は');
   });
 });

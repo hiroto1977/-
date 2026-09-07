@@ -3,7 +3,7 @@
  * 事業年度で切り出すこと、内訳の無い額を「その他」に置いて注記すること、
  * 取り込んだ後の貸借対照表が**実際の集計関数で**貸借一致すること (差額 0) を固定する。
  */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { buildKessanImport, fiscalYearWindow, type KessanImportInput } from '../kessanImport';
 import { amountOf, balanceTotals, incomeTotals } from '../statementAccounts';
 import { EMPTY_PROFILE, type SubmissionProfile } from '../bankSubmission';
@@ -250,5 +250,101 @@ describe('buildKessanImport — 内訳の矛盾は 0 にして注記する', () 
     const r = build({ kpiActuals: [kpi('bad', 5), kpi('2025-06', 1_000_000)], profile: { ...PROFILE, fiscalYearEnd: '' } });
     expect(r.window).toEqual({ from: '2025-06', to: '2025-06' });
     expect(valueOf(r, 'sales')).toBe('1000000');
+  });
+});
+
+/**
+ * **計算書類は貸借を合わせないと出せないので内数の未入力は 0 で積む —— ただし注記に残す。**
+ * (2026-09-07)
+ *
+ * `workingCapital.ts` は比率なので算定不能にできるが、ここは科目残高なので欄を
+ * 空けたままにできない。そこで 0 で積み、**なぜ 0 なのかを注記へ書く** ——
+ * 書かないと「0 と実測した」と「入れていない」が出来上がった書類の上で
+ * 見分けられなくなる。
+ */
+describe('貸借対照表の内数が未入力のとき、0 で積んで注記に残す', () => {
+  const blankInner = {
+    asOf: '2026-03-31', currentAssets: 8_000_000, fixedAssets: 4_000_000,
+    currentLiabilities: 5_000_000, fixedLiabilities: 3_000_000,
+    interestBearingDebt: 2_000_000, netIncome: 600_000,
+  } as const;
+
+  it('4 欄それぞれの注記が出て、科目残高は 0 で積まれ、貸借は一致する', () => {
+    const r = build({ balanceSheet: blankInner as never });
+    expect(r.notes).toContain('貸借対照表に現預金が無いので現金及び預金は 0 とした。');
+    expect(r.notes).toContain('貸借対照表に売上債権が無いので売掛金は 0 とした。');
+    expect(r.notes).toContain('貸借対照表に棚卸資産が無いので棚卸資産は 0 とした。');
+    expect(r.notes).toContain('貸借対照表に仕入債務が無いので買掛金は 0 とした。');
+    expect(valueOf(r, 'cash')).toBe('0');
+    expect(valueOf(r, 'accountsReceivable')).toBe('0');
+    expect(valueOf(r, 'inventory')).toBe('0');
+    expect(valueOf(r, 'accountsPayable')).toBe('0');
+    // 内数が 0 なので流動資産・流動負債はすべて「その他」へ回る。貸借は一致する。
+    expect(valueOf(r, 'otherCurrentAsset')).toBe('8000000');
+    expect(difference(r.values)).toBe(0);
+  });
+
+  it('★ 対照: 実測の 0 を入力した控えでは注記が出ない (同じ 0 でも由来が違う)', () => {
+    const r = build({
+      balanceSheet: { ...blankInner, cash: 0, accountsReceivable: 0, inventory: 0, accountsPayable: 0 } as never,
+    });
+    // 「が無いので」で括ると別の注記 (「固定資産は内訳が無いので…」) に当たる ——
+    // 実際に当たって落ちた。**不在の主張は当てる文面を絞る。**
+    for (const label of ['現預金', '売上債権', '棚卸資産', '仕入債務']) {
+      expect(r.notes.some((n) => n.startsWith(`貸借対照表に${label}が無いので`))).toBe(false);
+    }
+    expect(valueOf(r, 'otherCurrentAsset')).toBe('8000000');
+    expect(difference(r.values)).toBe(0);
+  });
+
+  it('埋まっている欄の注記は出さない (欠けた欄だけを挙げる)', () => {
+    const r = build({ balanceSheet: { ...BS, inventory: undefined } });
+    expect(r.notes.some((n) => n.includes('棚卸資産が無いので'))).toBe(true);
+    expect(r.notes.some((n) => n.includes('現預金が無いので'))).toBe(false);
+    expect(r.notes.some((n) => n.includes('売上債権が無いので'))).toBe(false);
+  });
+});
+
+/**
+ * **定数表そのものを変異検査の射程に入れる (読み直して測る)。** (2026-09-07)
+ *
+ * module 直下の `const` は**読み込みのときに 1 度だけ**評価されるので、Stryker が
+ * 実行時に切り替える仕組みは届かない —— 覆われていても「生存」と報告される
+ * (`stryker.config.json` の `_commentIgnoreStatic`)。殺し方は**テスト側で読み直す**
+ * こと: `vi.resetModules()` + 動的 `import()` なら変異体が有効な状態で評価される。
+ *
+ * ここで留めるのは、画面と**金融機関等へ出す書面**が刷る文字そのものである。
+ */
+describe('読み直して測る — 期の綴りと科目名', () => {
+  it('期の綴りは読み直しても前後を固定した YYYY-MM だけを通す', async () => {
+    vi.resetModules();
+    const { PERIOD_RE } = await import('../kessanImport');
+    // 通る形
+    for (const ok of ['2026-01', '2026-09', '2026-10', '2026-12', '0000-01']) {
+      expect(PERIOD_RE.test(ok), ok).toBe(true);
+    }
+    // 落ちる形 —— 前後の固定 (^ と $)・4 桁・月の範囲をそれぞれ 1 つずつ崩す
+    for (const bad of [
+      'x2026-01', // ^ が無いと通ってしまう
+      '2026-01x', // $ が無いと通ってしまう
+      '226-01', // \d{4} が \d だと通ってしまう
+      'abcd-01', // \d が \D だと通ってしまう
+      '2026-00', // 0[1-9] が 0[^1-9] だと通ってしまう
+      '2026-13', // 1[0-2] が 1[^0-2] だと通ってしまう
+      '2026-1',
+      '2026/01',
+    ]) {
+      expect(PERIOD_RE.test(bad), bad).toBe(false);
+    }
+  });
+
+  it('科目名は読み直しても表から引ける (取り込んだ行のラベルに乗る)', async () => {
+    vi.resetModules();
+    const m = await import('../kessanImport');
+    const r = m.buildKessanImport({ kpiActuals: KPI, balanceSheet: BS, profile: PROFILE, existing: {} });
+    // ラベルは `nameOf` が科目表から引いた名前を含む。空にすり替わると落ちる。
+    const cash = r.rows.find((x) => x.k === 'cash');
+    expect(cash?.label).toContain('現金及び預金');
+    expect(r.rows.every((x) => typeof x.label === 'string' && x.label.length > 0)).toBe(true);
   });
 });

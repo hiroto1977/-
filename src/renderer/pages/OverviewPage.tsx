@@ -106,6 +106,8 @@ const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY',
 const num = new Intl.NumberFormat('ja-JP');
 const safeYen = (n: number) => (Number.isFinite(n) ? yen.format(Math.round(n)) : '∞');
 const pctOrDash = (n: number | null) => (n === null ? '—' : `${n}%`);
+/** 金額。算定不能 (null) は 0 円として刷らない —— 未入力の内数が混ざると合計は意味を失う。 */
+const yenOrDash = (n: number | null) => (n === null ? '—' : yen.format(n));
 
 const settingsInput: React.CSSProperties = {
   background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6,
@@ -1480,6 +1482,11 @@ export function OverviewPage() {
           {overview.workingCapital && (
             <>
               <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '12px 0 4px' }}>運転資金 (CCC)</div>
+              {overview.workingCapital.missingStocks.length > 0 && (
+                <div style={{ fontSize: 12, color: '#f59e0b', margin: '0 0 6px' }}>
+                  貸借対照表の{overview.workingCapital.missingStocks.join('・')}が未入力のため、該当する回転日数と運転資本は「—」です (0 円として扱っていません)。
+                </div>
+              )}
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 <Tile
                   label="CCC (現金回収日数)"
@@ -1490,7 +1497,7 @@ export function OverviewPage() {
                 <Tile label="売上債権回転 (DSO)" value={overview.workingCapital.dso === null ? '—' : `${overview.workingCapital.dso} 日`} />
                 <Tile label="棚卸回転 (DIO)" value={overview.workingCapital.dio === null ? '—' : `${overview.workingCapital.dio} 日`} />
                 <Tile label="仕入債務回転 (DPO)" value={overview.workingCapital.dpo === null ? '—' : `${overview.workingCapital.dpo} 日`} />
-                <Tile label="運転資本" value={yen.format(overview.workingCapital.workingCapital)} sub="売上債権+棚卸−仕入債務" />
+                <Tile label="運転資本" value={yenOrDash(overview.workingCapital.workingCapital)} sub="売上債権+棚卸−仕入債務" />
               </div>
             </>
           )}

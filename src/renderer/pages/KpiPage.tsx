@@ -623,6 +623,10 @@ function BalanceSheetPanel() {
       <p style={{ color: 'var(--text-mute)', fontSize: 12, marginBottom: 8, lineHeight: 1.6 }}>
         貸借対照表 (最新時点) を入力すると、自己資本比率・流動比率・ROA・ROE などが経営サマリーに表示され、
         スコアカードの安全性に自己資本比率が加点されます。
+        <br />
+        現預金・棚卸資産・売上債権・仕入債務は内数で、<strong>空欄にすると 0 円ではなく「未入力」として扱い、
+        当座比率・現金化サイクル (CCC)・運転資本は算定しません</strong>。
+        本当に 0 円のとき (現金商売で売上債権が無い等) は 0 と入力してください。
       </p>
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
         {field('asOf', '基準日')}

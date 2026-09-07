@@ -212,7 +212,11 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
   const hasKpi = input.kpiActuals.length > 0;
   // 実績の最新の期。**期の綴りは `isValidPeriod` が 1 か所で持つ** (写さない)。
   const validKpiPeriods = input.kpiActuals.map((r) => r.period).filter(isValidPeriod).sort();
-  const latestKpiPeriod = validKpiPeriods.length === 0 ? null : validKpiPeriods[validKpiPeriods.length - 1]!;
+  // 期が 1 つも無ければ `undefined`。**`length === 0` の分岐は書かない** ——
+  // `balanceSheetFreshness` は読めない値 (null / undefined / 綴り違い) を同じく
+  // 「測れない」として扱うので、ここで null に畳んでも観測できる差が無く、
+  // 条件だけが変異検査に「測っていない分岐」として残る (実測 2026-09-07)。
+  const latestKpiPeriod = validKpiPeriods[validKpiPeriods.length - 1];
   const fundamentals = summarizeFundamentals(input.kpiActuals);
   const kpi = computeKpiMetrics(fundamentals);
 

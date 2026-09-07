@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   buildManagementHighlights,
   summarizeHighlights,
@@ -25,7 +25,9 @@ const mkOv = (p: any = {}): BusinessOverview => ({
   budget: 'budget' in p ? p.budget : null,
   financialPosition: 'fp' in p ? p.fp : null,
   balanceSheetFreshness: 'fresh' in p ? p.fresh : null,
-  workingCapital: 'wc' in p ? p.wc : null,
+  // 未入力の内数は既定で無し (この検査では CCC の帯だけを動かす)。名前を渡す検査は
+  // `missingStocks` を明示する。
+  workingCapital: 'wc' in p ? { missingStocks: [], ...p.wc } : null,
   accounting: 'accounting' in p ? p.accounting : null,
   runwayMonths: 'runwayMonths' in p ? p.runwayMonths : null,
   sales: { concentration: 'concentration' in p ? p.concentration : null },
@@ -482,5 +484,87 @@ describe('summarizeHighlights — 件数 + 総合リスク帯', () => {
 
   it('exposes a Japanese label for every risk band', () => {
     expect(RISK_BAND_LABEL).toEqual({ high: '要対応', medium: '注意', low: '良好', none: '所見なし' });
+  });
+});
+
+/**
+ * **算定しなかった理由を、欄の名前で述べること。** (2026-09-07)
+ *
+ * 未入力の内数は 0 として積まないので運転資金の欄は「—」になる。黙って落とすと
+ * 利用者は「自社に運転資金の負担が無い」と読む —— それは以前の 0 に倒す実装が
+ * 実際に出していた答えである。
+ */
+describe('運転資金: 未入力の欄を名前で述べる', () => {
+  it('未入力の欄があれば warning を出し、欄の名前を並べる', () => {
+    const h = buildManagementHighlights(
+      mkOv({ wc: { ccc: null, missingStocks: ['売上債権', '仕入債務'] } }),
+    ).find((x) => x.message.includes('未入力'));
+    expect(h).toMatchObject({ severity: 'warning', category: '運転資金' });
+    expect(h!.message).toContain('売上債権・仕入債務');
+    expect(h!.message).toContain('現金化サイクル');
+  });
+
+  it('★ 対照: 埋まっていれば所見を出さない (毎回出る雑音にしない)', () => {
+    const hs = buildManagementHighlights(mkOv({ wc: { ccc: 30, missingStocks: [] } }));
+    expect(hs.some((x) => x.message.includes('未入力'))).toBe(false);
+  });
+
+  it('未入力の所見は CCC の帯の所見と併存する (どちらかが消えない)', () => {
+    // CCC が算定できていて、なお運転資本の 1 欄が欠けている形 (仕入債務だけ空欄では
+    // CCC は出ないので、ここは「名前を述べる」側だけが増えることを見る)。
+    const hs = buildManagementHighlights(mkOv({ wc: { ccc: 61, missingStocks: ['棚卸資産'] } }));
+    expect(hs.filter((x) => x.category === '運転資金')).toHaveLength(2);
+  });
+});
+
+/**
+ * **定数表そのものを変異検査の射程に入れる (読み直して測る)。** (2026-09-07)
+ *
+ * module 直下の `const` は**読み込みのときに 1 度だけ**評価されるので、Stryker が
+ * 実行時に切り替える仕組みは届かない —— 覆われていても「生存」と報告される
+ * (`stryker.config.json` の `_commentIgnoreStatic`)。殺し方は**テスト側で読み直す**
+ * こと: `vi.resetModules()` + 動的 `import()` なら変異体が有効な状態で評価される。
+ *
+ * ここで留めるのは、画面と**金融機関等へ出す書面**が刷る文字そのものである。
+ */
+describe('読み直して測る — リスク帯のラベルと既定しきい値', () => {
+  it('リスク帯のラベルは読み直しても 4 つとも同じ文字', async () => {
+    vi.resetModules();
+    const m = await import('../managementHighlights');
+    expect(m.RISK_BAND_LABEL).toEqual({
+      high: '要対応', medium: '注意', low: '良好', none: '所見なし',
+    });
+  });
+
+  it('既定のしきい値は読み直しても 4 欄そろって同じ数', async () => {
+    vi.resetModules();
+    const m = await import('../managementHighlights');
+    expect(m.DEFAULT_HIGHLIGHT_THRESHOLDS).toEqual({
+      declineWarnStreak: 2, declineCriticalStreak: 3, laborShareWarnPct: 60, singleChannelWarnPct: 60,
+    });
+  });
+
+  it('深刻さの並び順は読み直しても critical → warning → good', async () => {
+    vi.resetModules();
+    const m = await import('../managementHighlights');
+    // 並べ替えの表は非公開なので、`buildManagementHighlights` の並びで測る。
+    // 3 種すべてが出る形を 1 つ作る: 債務超過 (critical) / 流動比率 99% (warning) /
+    // 営業利益率 12% (good)。
+    const hs = m.buildManagementHighlights(
+      mkOv({
+        kpi: { operatingMarginPct: 12 },
+        fp: { insolvent: true, equityRatioPct: -10, currentRatioPct: 99 },
+      }),
+    );
+    const order = hs.map((h) => h.severity);
+    expect(order).toContain('critical');
+    expect(order).toContain('warning');
+    expect(order).toContain('good');
+    // 昇順であること (critical 0 → warning 1 → good 2)。表を空にすると NaN 比較で
+    // 並びが入力順のままになる。
+    const rank = { critical: 0, warning: 1, good: 2 } as const;
+    for (let i = 1; i < order.length; i += 1) {
+      expect(rank[order[i]!] >= rank[order[i - 1]!], order.join(',')).toBe(true);
+    }
   });
 });

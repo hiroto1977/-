@@ -12,25 +12,51 @@
 
 export const BALANCE_SHEET_COLLECTION = 'balance-sheet';
 
-/** 貸借対照表の入力 (円)。純資産は資産−負債で導出するため入力しない。 */
+/**
+ * 貸借対照表の入力 (円)。純資産は資産−負債で導出するため入力しない。
+ *
+ * ## 内数 5 欄は任意で、未入力は `undefined` —— 0 に倒さない (2026-09-07)
+ *
+ * 現預金・棚卸資産・売上債権・仕入債務・有利子負債は流動資産/流動負債の**内数**で、
+ * 入力欄を空にしたまま保存できる。**`0` と `undefined` は別の意味である** ——
+ * `0` は「現金商売なので売上債権は無い」という実測、`undefined` は「まだ入れて
+ * いない」。以前はこの 2 つを入力の境界 (`parseBalanceSheet`) で 0 に潰していて、
+ * 空欄のまま保存した控えが**最良の運転資金**を報告していた (実測 2026-09-07・
+ * KPI 月商 400 万 × 3 か月):
+ *
+ * | 控えの状態 | 売上債権 | DSO | DIO | DPO | CCC |
+ * | --- | --- | --- | --- | --- | --- |
+ * | 4 欄を空欄で保存 (画面の既定) | 0 | 0 日 | 0 日 | 0 日 | **0 日** |
+ * | 欄そのものが無い (古い版の控え) | 0 | 0 日 | 0 日 | 0 日 | **0 日** |
+ * | 本当に 0 (現金商売) | 0 | 0 日 | 0 日 | 0 日 | **0 日** |
+ * | 埋めてある | 200 万 | 60.8 日 | 60.8 日 | 68.4 日 | 53.2 日 |
+ *
+ * CCC 0 日は「即日回収・即日支払」で、`managementHighlights` は
+ * 「仕入の支払より先に回収できています」と**良い所見**を出し、スコアカードの
+ * 効率性にも満点近くで加点され、金融機関等へ出す書面の §5 にも印刷されていた。
+ * 当座比率も同じ形で緩む (棚卸資産 0 → 当座比率 = 流動比率)。
+ *
+ * いまは未入力を `undefined` のまま通し、**読む側がそれぞれ「算定不能」を選ぶ**。
+ * 0 を算定不能にしてはいけない —— 現金商売の DSO 0 日は正しく有用な数字である。
+ */
 export interface BalanceSheet extends Record<string, unknown> {
   /** 基準日ラベル (任意, 例 "2026-03-31")。 */
   readonly asOf: string;
   readonly currentAssets: number;
-  /** 現預金 (流動資産の内数。資金ランウェイに使う)。任意。 */
+  /** 現預金 (流動資産の内数。資金ランウェイに使う)。任意 — 未入力は undefined。 */
   readonly cash?: number;
-  /** 棚卸資産 (流動資産の内数。当座比率・CCC に使う)。 */
-  readonly inventory: number;
-  /** 売上債権 (流動資産の内数。CCC の DSO に使う)。任意。 */
-  readonly accountsReceivable: number;
+  /** 棚卸資産 (流動資産の内数。当座比率・CCC に使う)。任意 — 未入力は undefined。 */
+  readonly inventory?: number;
+  /** 売上債権 (流動資産の内数。CCC の DSO に使う)。任意 — 未入力は undefined。 */
+  readonly accountsReceivable?: number;
   readonly fixedAssets: number;
   readonly currentLiabilities: number;
-  /** 仕入債務 (流動負債の内数。CCC の DPO に使う)。任意。 */
-  readonly accountsPayable: number;
+  /** 仕入債務 (流動負債の内数。CCC の DPO に使う)。任意 — 未入力は undefined。 */
+  readonly accountsPayable?: number;
   readonly fixedLiabilities: number;
   /**
-   * 有利子負債 (借入金・社債等。流動・固定負債の内数)。任意。
-   * 有利子負債比率・ネットデットに使う。未入力は 0 (無借金とみなす概算)。
+   * 有利子負債 (借入金・社債等。流動・固定負債の内数)。任意 — 未入力は undefined。
+   * 有利子負債比率・ネットデットに使う。
    */
   readonly interestBearingDebt?: number;
   /** 当期純利益 (損失はマイナス可)。ROA・ROE に使う。 */
@@ -47,7 +73,10 @@ export interface BalanceSheetMetrics {
   readonly equityRatioPct: number | null;
   /** 流動比率 (%) = 流動資産 ÷ 流動負債。200% 以上が目安。 */
   readonly currentRatioPct: number | null;
-  /** 当座比率 (%) = (流動資産 − 棚卸資産) ÷ 流動負債。100% 以上が目安。 */
+  /**
+   * 当座比率 (%) = (流動資産 − 棚卸資産) ÷ 流動負債。100% 以上が目安。
+   * **棚卸資産が未入力なら null** (0 と読むと流動比率と同じ値になってしまう)。
+   */
   readonly quickRatioPct: number | null;
   /** 総資産利益率 ROA (%) = 当期純利益 ÷ 総資産。 */
   readonly roaPct: number | null;
@@ -86,23 +115,46 @@ export function parseBalanceSheet(input: {
     return n;
   };
   const asOf = typeof input.asOf === 'string' ? input.asOf.trim() : '';
-  // 任意項目は未入力 (null/undefined) を 0 に。'' は nonNeg の Number('')=0 で吸収される
-  // ため、ここでの '' 判定は不要 (冗長排除)。
-  const opt = (v: unknown): unknown => (v == null ? 0 : v);
+  /**
+   * 内数の任意欄。**空欄は `undefined` のまま返す** (0 に倒さない。理由は型の説明)。
+   *
+   * `''` の判定はここで**要る** —— 画面の入力欄は未入力を `''` で渡してくるので、
+   * `Number('')===0` に任せると空欄が「0 円と実測した」に化ける。空白だけ (`'  '`)
+   * も同じ扱い (`Number('  ')` も 0 になるため trim してから見る)。
+   */
+  const optNonNeg = (v: unknown, label: string): number | undefined => {
+    if (v == null) return undefined;
+    if (typeof v === 'string' && v.trim() === '') return undefined;
+    return nonNeg(v, label);
+  };
+  /**
+   * 内数が親項目を超えていないか。未入力 (undefined) は照合しない。
+   *
+   * `v !== undefined` は**実行時には冗長**である —— `undefined > n` は常に false
+   * なので、外しても振る舞いは変わらない (等価変異)。型検査が
+   * `number | undefined` と `number` の比較を許さないので残している。
+   */
+  const atMost = (v: number | undefined, limit: number, message: string): void => {
+    // Stryker disable next-line ConditionalExpression: undefined > n は常に false なので実行時は等価 (型検査のために残す)
+    if (v !== undefined && v > limit) throw new Error(message);
+  };
   const currentAssets = nonNeg(input.currentAssets, '流動資産');
-  const cash = nonNeg(opt(input.cash), '現預金');
-  const inventory = nonNeg(opt(input.inventory), '棚卸資産');
-  const accountsReceivable = nonNeg(opt(input.accountsReceivable), '売上債権');
+  const cash = optNonNeg(input.cash, '現預金');
+  const inventory = optNonNeg(input.inventory, '棚卸資産');
+  const accountsReceivable = optNonNeg(input.accountsReceivable, '売上債権');
   const currentLiabilities = nonNeg(input.currentLiabilities, '流動負債');
-  const accountsPayable = nonNeg(opt(input.accountsPayable), '仕入債務');
+  const accountsPayable = optNonNeg(input.accountsPayable, '仕入債務');
   const fixedLiabilities = nonNeg(input.fixedLiabilities, '固定負債');
-  const interestBearingDebt = nonNeg(opt(input.interestBearingDebt), '有利子負債');
-  if (cash > currentAssets) throw new Error('現預金は流動資産以下で入力してください');
-  if (inventory > currentAssets) throw new Error('棚卸資産は流動資産以下で入力してください');
-  if (accountsReceivable > currentAssets) throw new Error('売上債権は流動資産以下で入力してください');
-  if (accountsPayable > currentLiabilities) throw new Error('仕入債務は流動負債以下で入力してください');
-  if (interestBearingDebt > currentLiabilities + fixedLiabilities)
-    throw new Error('有利子負債は負債合計以下で入力してください');
+  const interestBearingDebt = optNonNeg(input.interestBearingDebt, '有利子負債');
+  atMost(cash, currentAssets, '現預金は流動資産以下で入力してください');
+  atMost(inventory, currentAssets, '棚卸資産は流動資産以下で入力してください');
+  atMost(accountsReceivable, currentAssets, '売上債権は流動資産以下で入力してください');
+  atMost(accountsPayable, currentLiabilities, '仕入債務は流動負債以下で入力してください');
+  atMost(
+    interestBearingDebt,
+    currentLiabilities + fixedLiabilities,
+    '有利子負債は負債合計以下で入力してください',
+  );
   return {
     asOf,
     currentAssets,
@@ -128,29 +180,42 @@ const pct = (numer: number, denom: number): number | null =>
  * なぜ要るか (2026-09-06): 復元の形の検査 (`data/collectionShapes.ts`) は
  * `balance-sheet` の `inventory` / `accountsReceivable` / `accountsPayable` /
  * `cash` / `interestBearingDebt` を**任意**にしている (前方互換)。型はこのうち
- * 前 3 つを**必須**と言うので、欄の無い控え (古い版・手で直した JSON・別の道具が
- * 書いた控え) が復元を通ると型が嘘になり、`computeBalanceSheetMetrics` の
- * 足し算が **NaN** になる。行き先は経営サマリーのタイルと**金融機関等へ出す書面**で、
- * 「¥NaN」や NaN の純資産が印刷される。未入力を 0 と読むのは入力側
- * (`parseBalanceSheet`) と同じ約束 (空欄 = 0 円)。
+ * 前 3 つを**必須**と言っていたので、欄の無い控え (古い版・手で直した JSON・別の
+ * 道具が書いた控え) が復元を通ると型が嘘になり、`computeBalanceSheetMetrics` の
+ * 足し算が **NaN** になった。行き先は経営サマリーのタイルと**金融機関等へ出す書面**で、
+ * 「¥NaN」や NaN の純資産が印刷される。
+ *
+ * 2026-09-07 に型を復元の形へ合わせ (内数 5 欄はすべて任意)、**未入力は `undefined`
+ * のまま返す**ようにした。0 に倒すのは入力側と揃った約束だったが、その約束自体が
+ * 「空欄」と「実測した 0」を潰していた (経緯は `BalanceSheet` の説明)。NaN は
+ * 各指標が `undefined` を**算定不能**として扱うことで防ぐ —— 合計に混ぜない。
  *
  * **null は null のまま返す** (`balanceSheetOrNull`) —— 「まだ 1 件も入れていない」を
  * ゼロの貸借対照表に化けさせると、画面が「―」ではなく 0 円を断言してしまう。
  */
 export function normalizeBalanceSheet(raw: unknown): BalanceSheet {
   const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
-  const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
-  const opt = (v: unknown): number | undefined =>
-    typeof v === 'number' && Number.isFinite(v) ? v : undefined;
+  /**
+   * 有限の数か。**判定を 1 か所に置く** (必須の欄は 0 へ、任意の欄は「無い」へ倒す)。
+   *
+   * `typeof v === 'number'` は実行時には冗長 —— `Number.isFinite` は数値以外を
+   * 型変換せずに false にするので、外しても振る舞いは変わらない (等価変異)。
+   * `v is number` の絞り込みを型検査に伝えるために残している。
+   * (`&&` を `||` に替える変異は別で、NaN がそのまま残るので検査が留めてある。)
+   */
+  // Stryker disable next-line ConditionalExpression: Number.isFinite が数値以外を false にするので実行時は等価 (型の絞り込みのために残す)
+  const isFiniteNumber = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+  const num = (v: unknown): number => (isFiniteNumber(v) ? v : 0);
+  const opt = (v: unknown): number | undefined => (isFiniteNumber(v) ? v : undefined);
   return {
     asOf: typeof r.asOf === 'string' ? r.asOf : '',
     currentAssets: num(r.currentAssets),
     cash: opt(r.cash),
-    inventory: num(r.inventory),
-    accountsReceivable: num(r.accountsReceivable),
+    inventory: opt(r.inventory),
+    accountsReceivable: opt(r.accountsReceivable),
     fixedAssets: num(r.fixedAssets),
     currentLiabilities: num(r.currentLiabilities),
-    accountsPayable: num(r.accountsPayable),
+    accountsPayable: opt(r.accountsPayable),
     fixedLiabilities: num(r.fixedLiabilities),
     interestBearingDebt: opt(r.interestBearingDebt),
     netIncome: num(r.netIncome),
@@ -172,7 +237,12 @@ export function computeBalanceSheetMetrics(bs: BalanceSheet): BalanceSheetMetric
     netAssets,
     equityRatioPct: pct(netAssets, totalAssets),
     currentRatioPct: pct(bs.currentAssets, bs.currentLiabilities),
-    quickRatioPct: pct(bs.currentAssets - bs.inventory, bs.currentLiabilities),
+    // 棚卸資産が未入力なら**算定不能**。0 に倒すと当座比率が流動比率と同じ値を
+    // 名乗る —— より厳しいはずの指標が緩い側の数字になる (空欄で保存した控えでは必ず)。
+    quickRatioPct:
+      bs.inventory === undefined
+        ? null
+        : pct(bs.currentAssets - bs.inventory, bs.currentLiabilities),
     roaPct: pct(bs.netIncome, totalAssets),
     // pct は denom>0 のときだけ値を返し、それ以外は null。netAssets<=0 は pct 側で
     // null になるため外側の `netAssets > 0 ?` ガードは冗長 (削除して equivalent mutant を排除)。
@@ -201,7 +271,7 @@ export type EquityHealthGrade =
 /** 流動性 3 指標の総合段階。 */
 export type LiquidityStage =
   | 'strong' // 当座比率 100% 以上 (即時の支払余力が十分)
-  | 'sound' // 流動比率 100% 以上だが当座比率 100% 未満
+  | 'sound' // 流動比率 100% 以上 (当座比率 100% 未満、または棚卸資産が未入力で当座比率が算定不能)
   | 'tight' // 流動比率 100% 未満
   | 'unknown'; // 流動負債 0 などで算定不能
 
@@ -260,14 +330,22 @@ function classifyEquityHealth(netAssets: number, totalAssets: number): EquityHea
  * 流動性段階を判定する。流動負債 0 は unknown。当座資産 (流動資産 − 棚卸資産) が
  * 流動負債以上なら strong、流動資産が流動負債以上なら sound、それ未満は tight。
  * (当座比率 100% 以上 → strong / 流動比率 100% 以上 → sound と等価。)
+ *
+ * **棚卸資産が未入力なら `strong` は主張しない。** 0 に倒すと当座資産 = 流動資産
+ * になり、流動比率 100% 以上のすべての会社が最良の段階を名乗る。一方 `tight`
+ * (流動比率 100% 未満) は棚卸資産に依らず判る —— 都合の悪い側の判定は落とさない。
  */
 function classifyLiquidityStage(
   currentAssets: number,
-  inventory: number,
+  inventory: number | undefined,
   currentLiabilities: number,
 ): LiquidityStage {
   if (currentLiabilities <= 0) return 'unknown';
-  if (currentAssets - inventory >= currentLiabilities) return 'strong';
+  // `inventory !== undefined` は**実行時には冗長** —— `currentAssets - undefined` は
+  // NaN で、`NaN >= n` は常に false なので外しても振る舞いは変わらない (等価変異)。
+  // 型検査が `number - undefined` を許さないので残している。意図は下の説明のとおり。
+  // Stryker disable next-line ConditionalExpression: NaN >= n は常に false なので実行時は等価 (型検査のために残す)
+  if (inventory !== undefined && currentAssets - inventory >= currentLiabilities) return 'strong';
   if (currentAssets >= currentLiabilities) return 'sound';
   return 'tight';
 }

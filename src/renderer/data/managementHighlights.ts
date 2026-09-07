@@ -228,6 +228,17 @@ export function buildManagementHighlights(
 
   // 運転資金 (CCC)
   const wc = overview.workingCapital;
+  // 未入力の内数は 0 として積まないので、その分の指標は「—」になる。**なぜ出ていないかを
+  // 名前で述べる** —— 黙って落とすと、利用者は「自社に運転資金の負担が無い」と読む。
+  // (以前は 0 に倒しており、空欄のまま保存した控えが下の good「仕入の支払より先に
+  //  回収できています」を出していた。経緯は `data/balanceSheet.ts` の `BalanceSheet`。)
+  if (wc !== null && wc.missingStocks.length > 0) {
+    out.push({
+      severity: 'warning',
+      category: '運転資金',
+      message: `貸借対照表の${wc.missingStocks.join('・')}が未入力のため、現金化サイクル (CCC) と運転資本を算定していません。KPI ページの貸借対照表に入力してください。`,
+    });
+  }
   if (wc && wc.ccc !== null) {
     if (wc.ccc > 60) {
       out.push({ severity: 'warning', category: '運転資金', message: `CCC が ${wc.ccc} 日と長く、運転資金の負担が大きい状態です。` });
