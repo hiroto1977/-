@@ -760,6 +760,34 @@ describe('基準日が古い書面は、比率が同じ期の数字でないこ�
     );
     expect(section(m.sections, '4.').caption).toBe('貸借対照表が未入力のため算定していません。');
   });
+
+  /**
+   * **隔たりは両側にある。** 2026-09-07 まで `stale` (古い側) しか見ておらず、
+   * 基準日が対象期間より**先**のときは隔たりが何年でも、金融機関へ渡す書面に
+   * 断り書きが 1 行も出なかった。
+   */
+  it('★ 基準日が 10 年先: §4 と §5 に「か月後」の断り書きが付く', () => {
+    const m = sheetWithBsAsOf('2036-03-31');
+    for (const prefix of ['4.', '5.']) {
+      const s = section(m.sections, prefix);
+      expect(s.caption).toContain('115 か月後');
+      expect(s.caption).toContain('同じ期の数字ではありません');
+      // 符号を落として述べる (「-115 か月古く」とは書かない)。
+      expect(s.caption).not.toContain('-115');
+      expect(s.caption).not.toContain('か月古く');
+    }
+  });
+
+  it('★ 境界 (先の側): 12 か月ちょうど先は付かず、13 か月先で付く', () => {
+    // 対象期間の最終月は 2026-08。
+    expect(section(sheetWithBsAsOf('2027-08-31').sections, '4.').caption).toBeNull();
+    expect(section(sheetWithBsAsOf('2027-09-30').sections, '4.').caption).toContain('13 か月後');
+  });
+
+  it('★ 対照: 決算期が実績の 1 か月先 (正常) では付かない', () => {
+    expect(section(sheetWithBsAsOf('2026-09-30').sections, '4.').caption).toBeNull();
+    expect(section(sheetWithBsAsOf('2026-09-30').sections, '5.').caption).toBeNull();
+  });
 });
 
 /**

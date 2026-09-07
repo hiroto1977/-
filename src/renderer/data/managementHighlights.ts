@@ -212,6 +212,18 @@ export function buildManagementHighlights(
       message: `貸借対照表の基準日 (${monthText(fresh.asOfMonth)}) が実績の最新期 (${monthText(fresh.latestPeriod)}) より ${fresh.monthsBehind} か月古く、総資産回転率・現金化サイクル・資金ランウェイは別の期の数字を割っています。新しい貸借対照表を入力してください。`,
     });
   }
+  // **先の側も同じだけ壊れる。** 隔たりの害は符号ではなく大きさで決まるのに、
+  // 上の枝は `stale` (古い側) しか見ていなかった —— 基準日を「2036」と打ち間違えた
+  // 控えでは隔たりが 10 年でも所見が 1 行も出なかった (2026-09-07 実測)。
+  // 次の手が違うので文面は分ける (古い = 新しい控えを入れる / 先 = 打ち間違いを直す)。
+  // Stryker disable next-line ConditionalExpression: 月の非 null は型を狭めるためだけ (上と同じ不変条件・到達不能)
+  if (fresh?.ahead === true && fresh.monthsBehind !== null && fresh.asOfMonth !== null && fresh.latestPeriod !== null) {
+    out.push({
+      severity: 'warning',
+      category: '財政状態',
+      message: `貸借対照表の基準日 (${monthText(fresh.asOfMonth)}) が実績の最新期 (${monthText(fresh.latestPeriod)}) より ${-fresh.monthsBehind} か月**後**です。総資産回転率・現金化サイクル・資金ランウェイは別の期の数字を割っています。基準日か実績の期の入力を確かめてください。`,
+    });
+  }
 
   // 財政状態 (BS)
   const fp = overview.financialPosition;

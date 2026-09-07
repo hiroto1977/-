@@ -41,6 +41,13 @@
  *
  * ここは**測るだけ**。数字を勝手に捨てない (利用者が期中の試算表を見ている場合も
  * ある) —— 隔たりを返し、所見と書面の断り書きがそれを述べる。
+ *
+ * ## 隔たりは**両側**にある (2026-09-07 追記)
+ *
+ * 上の表は基準日が古い側だけを見ていたが、**先の側も同じだけ壊れる**。
+ * 実績を 2026-01〜2026-08 にしたまま基準日を 2036-03-31 と打つと、割っている
+ * 両辺は 10 年離れているのに `stale === false` で、所見も書面の断り書きも
+ * 1 行も出なかった。`ahead` はその対称の欄である。
  */
 export interface BalanceSheetFreshness {
   /** 基準日の月 (`YYYY-MM`)。読めなければ null。 */
@@ -54,6 +61,21 @@ export interface BalanceSheetFreshness {
   readonly monthsBehind: number | null;
   /** しきい値を超えて古いか (`monthsBehind > staleAfterMonths`)。 */
   readonly stale: boolean;
+  /**
+   * しきい値を超えて**先**か (`monthsBehind < -staleAfterMonths`)。
+   *
+   * **害は符号ではなく隔たりの大きさで決まる。** 2026-09-07 まで `stale` しか無く、
+   * 基準日が実績より**先**のときは隔たりが何年でも `stale === false` になり、
+   * 画面にも金融機関等提出用の書面にも断りが 1 行も出なかった —— 「2026」を
+   * 「2036」と打ち間違えた控えでも、総資産回転率・現金化サイクル・資金ランウェイは
+   * 何事も無かったように出る (割っている両辺は 10 年離れている)。
+   * このモジュール自身が「負なら基準日のほうが新しい」と書いていながら、
+   * それを使う側が無かった。
+   *
+   * 小さな先行 (決算期が実績より 1〜2 か月先) は正常なので、**同じしきい値**を
+   * 対称に当てる —— 古い側と同じ物差しで測る。
+   */
+  readonly ahead: boolean;
 }
 
 /**
@@ -94,10 +116,17 @@ export function balanceSheetFreshness(
       latestPeriod: b === null ? null : b.month,
       monthsBehind: null,
       stale: false,
+      ahead: false,
     };
   }
   const monthsBehind = b.idx - a.idx;
   // **`monthsBehind` が非 null なら、両方の月も必ず非 null** —— 文面を作る側が
   // 「読めない月」の枝を持たなくて済むように、この不変条件は検査で留めてある。
-  return { asOfMonth: a.month, latestPeriod: b.month, monthsBehind, stale: monthsBehind > staleAfterMonths };
+  return {
+    asOfMonth: a.month,
+    latestPeriod: b.month,
+    monthsBehind,
+    stale: monthsBehind > staleAfterMonths,
+    ahead: monthsBehind < -staleAfterMonths,
+  };
 }

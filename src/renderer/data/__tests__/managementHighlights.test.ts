@@ -287,7 +287,7 @@ describe('buildManagementHighlights — exact boundaries & null guards (direct o
   it('★ 基準日が古ければ、どの比率が別の期を見ているかまで述べる', () => {
     const f = c(
       buildManagementHighlights(
-        mkOv({ fresh: { asOfMonth: '2019-03', latestPeriod: '2026-08', monthsBehind: 89, stale: true } }),
+        mkOv({ fresh: { asOfMonth: '2019-03', latestPeriod: '2026-08', monthsBehind: 89, stale: true, ahead: false } }),
       ),
       '財政状態',
     );
@@ -304,7 +304,7 @@ describe('buildManagementHighlights — exact boundaries & null guards (direct o
     expect(
       c(
         buildManagementHighlights(
-          mkOv({ fresh: { asOfMonth: '2026-08', latestPeriod: '2026-08', monthsBehind: 0, stale: false } }),
+          mkOv({ fresh: { asOfMonth: '2026-08', latestPeriod: '2026-08', monthsBehind: 0, stale: false, ahead: false } }),
         ),
         '財政状態',
       ),
@@ -315,7 +315,7 @@ describe('buildManagementHighlights — exact boundaries & null guards (direct o
     expect(
       c(
         buildManagementHighlights(
-          mkOv({ fresh: { asOfMonth: null, latestPeriod: '2026-08', monthsBehind: null, stale: true } }),
+          mkOv({ fresh: { asOfMonth: null, latestPeriod: '2026-08', monthsBehind: null, stale: true, ahead: false } }),
         ),
         '財政状態',
       ),
@@ -324,6 +324,51 @@ describe('buildManagementHighlights — exact boundaries & null guards (direct o
 
   it('対照: 貸借対照表が無ければ (fresh=null) 何も言わない', () => {
     expect(c(buildManagementHighlights(mkOv({ fresh: null })), '財政状態')).toBeUndefined();
+  });
+
+  /**
+   * **隔たりは両側にある。** 2026-09-07 まで `stale` (古い側) しか見ておらず、
+   * 基準日が実績より**先**のときは隔たりが何年でも所見が 1 行も出なかった。
+   */
+  it('★ 基準日が実績より先なら「後です」と述べ、確かめる先も言う', () => {
+    const f = c(
+      buildManagementHighlights(
+        mkOv({ fresh: { asOfMonth: '2036-03', latestPeriod: '2026-08', monthsBehind: -115, stale: false, ahead: true } }),
+      ),
+      '財政状態',
+    );
+    expect(f).toMatchObject({ severity: 'warning' });
+    expect(f?.message).toContain('2036年3月');
+    expect(f?.message).toContain('2026年8月');
+    // 月数は符号を落として述べる (「-115 か月古い」とは言わない)。
+    expect(f?.message).toContain('115 か月');
+    expect(f?.message).not.toContain('-115');
+    expect(f?.message).toContain('後');
+    expect(f?.message).toContain('基準日か実績の期の入力を確かめて');
+    // 古い側の文面 (新しい控えを入れる) は出さない —— 次の手が違う。
+    expect(f?.message).not.toContain('新しい貸借対照表を入力してください');
+  });
+
+  it('★ 対照: 先でも古くもなければ (両方 false) 何も言わない', () => {
+    expect(
+      c(
+        buildManagementHighlights(
+          mkOv({ fresh: { asOfMonth: '2026-09', latestPeriod: '2026-08', monthsBehind: -1, stale: false, ahead: false } }),
+        ),
+        '財政状態',
+      ),
+    ).toBeUndefined();
+  });
+
+  it('★ 先でも、隔たりが測れなければ言わない (数字の無い文面を出さない)', () => {
+    expect(
+      c(
+        buildManagementHighlights(
+          mkOv({ fresh: { asOfMonth: null, latestPeriod: '2026-08', monthsBehind: null, stale: false, ahead: true } }),
+        ),
+        '財政状態',
+      ),
+    ).toBeUndefined();
   });
 
   it('★ 安全余裕率が負 = 損益分岐点を下回っている → warning ではなく critical、文面も変わる', () => {

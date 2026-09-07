@@ -266,9 +266,18 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
     // `balanceSheetFreshness` は null にならず、`stale === true` なら
     // `monthsBehind` は必ず数である (不変条件は `shared/balanceSheetFreshness.ts`
     // 側の検査が留めている)。倒し込みを外すと型が通らないので残す (等価変異)。
-    // Stryker disable next-line ConditionalExpression,OptionalChaining: 上の不変条件により到達しない (等価変異)
-    if (fr?.stale !== true || fr.monthsBehind === null) return null;
-    return `貸借対照表の基準日は対象期間の最終月より ${fr.monthsBehind} か月古く、売上高や原価と組み合わせる比率 (回転率・回転日数) は同じ期の数字ではありません。`;
+    // Stryker disable next-line OptionalChaining: 上の不変条件により到達しない (等価変異)
+    if (fr?.monthsBehind === null || fr === null || fr === undefined) return null;
+    // **古い側と先の側の両方**。隔たりの害は符号ではなく大きさで決まるのに、
+    // 2026-09-07 まで `stale` (古い側) しか見ておらず、基準日が実績より何年先でも
+    // 書面には断りが 1 行も出なかった (経緯は `shared/balanceSheetFreshness.ts`)。
+    if (fr.stale) {
+      return `貸借対照表の基準日は対象期間の最終月より ${fr.monthsBehind} か月古く、売上高や原価と組み合わせる比率 (回転率・回転日数) は同じ期の数字ではありません。`;
+    }
+    if (fr.ahead) {
+      return `貸借対照表の基準日は対象期間の最終月より ${-fr.monthsBehind} か月後で、売上高や原価と組み合わせる比率 (回転率・回転日数) は同じ期の数字ではありません。`;
+    }
+    return null;
   };
 
   const range = periodRange(input.kpiPeriods);
