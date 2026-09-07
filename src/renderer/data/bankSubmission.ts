@@ -436,6 +436,16 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
         'カバー率 1.0 倍未満の月 ／ 対象月',
       ),
     ],
+    // **突合できた月の範囲を述べる。** 返済予定は借入期間ぶん先まで伸びるが実績CFは
+    // 過去しか無いので、突合できない月がある。黙って落とすと数か月の突合が借入期間
+    // ぜんぶについての主張に読める (経緯は `data/cashflowDebtService.ts`)。
+    ...(debtService !== null && debtService.unmatchedMonths > 0
+      ? {
+          caption:
+            `上記の返済余力は、会計キャッシュフローが在る ${debtService.coveredMonths} か月について算定したものです。`
+            + `返済予定のある残り ${debtService.unmatchedMonths} か月は実績の営業キャッシュフローがまだ無いため対象外です。`,
+        }
+      : {}),
   });
 
   const landing = k.revenueLanding;

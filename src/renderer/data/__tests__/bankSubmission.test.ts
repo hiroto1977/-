@@ -254,6 +254,32 @@ describe('buildBankSubmissionSheet — 各節の数値', () => {
     expect(n.rows.every((r) => r.value === BLANK)).toBe(true);
     expect(n.caption).toContain('freee');
   });
+
+  /**
+   * **返済余力は「突合できた月について」の数字である。**
+   * 返済予定は借入期間ぶん将来へ伸びるが実績CFは過去しか無いので、突合できない月がある。
+   * 黙って落とすと、数か月の突合が借入期間ぜんぶについての主張に読める
+   * (2026-09-07 まで将来の月を「営業CF 0」として数えており、実測 2.85 倍で
+   *  返せている会社が 0.24 倍・55/60 か月不足と印刷されていた)。
+   */
+  it('★ 突合できない返済月があれば、§6 が対象の月数を述べる', () => {
+    // 会計は 2026-04 の 1 か月、返済予定は 2026-04〜2026-06 の 3 か月。
+    const acc = [{ month: '2026-04', income: 900_000, expense: 600_000, net: 300_000 }];
+    const repay = ['2026-04', '2026-05', '2026-06'].map((month) => ({ month, repayment: 100_000 }));
+    const m = buildBankSubmissionSheet(
+      inputWith(overviewWith({ accounting: acc }), SETTINGS, { debtService: combineCashflowDebtService(acc, repay) }),
+    );
+    const s = section(m.sections, '6.');
+    expect(value(s, '返済余力（DSCR）')).toBe('3.00倍');
+    expect(value(s, '返済不足の月数')).toBe('0／1か月');
+    expect(s.caption).toContain('1 か月について算定');
+    expect(s.caption).toContain('残り 2 か月');
+  });
+
+  it('★ 対照: 全ての返済月が突合できていれば、その断り書きは出ない', () => {
+    const s = section(buildBankSubmissionSheet(inputWith(overviewWith({}), SETTINGS, {})).sections, '6.');
+    expect(s.caption === null || !s.caption.includes('について算定')).toBe(true);
+  });
   it('資金ランウェイと予測残高は現預金 + 資金流出のときだけ', () => {
     const burn = [
       { month: '2026-03', income: 100_000, expense: 700_000, net: -600_000 },

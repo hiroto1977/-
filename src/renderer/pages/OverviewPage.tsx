@@ -1305,8 +1305,25 @@ export function OverviewPage() {
               value={debtService.worstMonthDscr === null ? '—' : `${debtService.worstMonthDscr}`}
               accent={debtService.worstMonthDscr === null ? undefined : debtService.worstMonthDscr >= 1 ? '#22c55e' : '#ef4444'}
             />
-            <Tile label="カバー率1.0未満の月" value={`${debtService.shortfallMonths} / ${debtService.coveredMonths} か月`} accent={debtService.shortfallMonths > 0 ? '#f59e0b' : undefined} />
+            <Tile
+              label="カバー率1.0未満の月"
+              value={`${debtService.shortfallMonths} / ${debtService.coveredMonths} か月`}
+              accent={debtService.shortfallMonths > 0 ? '#f59e0b' : undefined}
+              sub={debtService.unmatchedMonths > 0 ? `会計連携に月次CFが無い ${debtService.unmatchedMonths} か月は対象外` : undefined}
+            />
           </div>
+          {/*
+            突合できなかった月を黙って落とすと、数か月ぶんの突合が借入期間ぜんぶに
+            ついての主張に読める。返済予定は借入期間ぶん将来へ伸びるので、この数は
+            通常大きい (経緯は `data/cashflowDebtService.ts`)。
+          */}
+          {debtService.unmatchedMonths > 0 && (
+            <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginTop: 10 }}>
+              上の 3 つは<strong>会計連携に月次CFが在る {debtService.coveredMonths} か月</strong>についての数字です。
+              返済予定のある残り {debtService.unmatchedMonths} か月は、実績の営業CF がまだ無いので突合していません
+              (借入期間の先の月を「営業CF 0」として数えると、返せている会社でも返済不足に見えます)。
+            </p>
+          )}
         </Section>
       )}
 
