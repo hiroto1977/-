@@ -2,7 +2,7 @@
 import { describe, expect, it, beforeEach, vi } from 'vitest';
 import 'fake-indexeddb/auto';
 // `indexedDB.deleteDatabase` for cleanup between tests
-import { _resetVaultForTests, getVault, NoRecoveryBranchError } from '../vault';
+import { _resetVaultForTests, describeWipeOutcome, getVault, NoRecoveryBranchError } from '../vault';
 import { decodeMnemonic, encodeMnemonic, looksLikeValidMnemonic } from '../mnemonic';
 
 // jsdom doesn't provide crypto.subtle. Pull it in from Node's webcrypto.
@@ -701,6 +701,111 @@ describe('Vault — wipeAndReset', () => {
     expect(await v.status()).toBe('uninitialized');
     await v.wipeAndReset();
     expect(await v.status()).toBe('uninitialized');
+  });
+
+  /*
+   * **消えたかどうかを返す** (2026-09-07)。
+   *
+   * 直す前は `onsuccess` / `onerror` / `onblocked` の**どれでも `resolve()`**
+   * しており、呼ぶ側 2 か所 (設定ページの「ハードリセット」・ロック画面の
+   * 「完全初期化」) は解決だけを見て無条件に `location.reload()` していた。
+   * 他のタブが保管庫を掴んでいれば削除できないので、**データが残ったまま**
+   * 「復旧不可な形で消去されます」と同じ画面になる。唯一の報せは
+   * `console.warn`、しかも 500ms 後の後追い確認は直後の reload で
+   * **タイマーごと消えていた**。
+   *
+   * `onblocked` / `onerror` は fake-indexeddb では起こせないので、
+   * `indexedDB.deleteDatabase` を差し替えて**その枝だけ**を通す。
+   */
+  function withDeleteRequest(fire: (req: IDBOpenDBRequest) => void): () => void {
+    const real = globalThis.indexedDB;
+    const stub = {
+      ...real,
+      deleteDatabase: (): IDBOpenDBRequest => {
+        const req = {} as IDBOpenDBRequest;
+        setTimeout(() => fire(req), 0);
+        return req;
+      },
+    };
+    Object.defineProperty(globalThis, 'indexedDB', { value: stub, configurable: true, writable: true });
+    return () => {
+      Object.defineProperty(globalThis, 'indexedDB', { value: real, configurable: true, writable: true });
+    };
+  }
+
+  it("★ 消えたら 'deleted' (標本 — 実物の削除でこの値が返る)", async () => {
+    const v = getVault();
+    await v.initialize('original-password-12345');
+    expect(await v.wipeAndReset()).toBe('deleted');
+  });
+
+  it("★ 他のタブが掴んでいて消せなければ 'blocked'", async () => {
+    const restore = withDeleteRequest((req) => req.onblocked?.(new Event('blocked') as IDBVersionChangeEvent));
+    try {
+      expect(await getVault().wipeAndReset()).toBe('blocked');
+    } finally {
+      restore();
+    }
+  });
+
+  it("★ ブラウザが拒んだら 'failed'", async () => {
+    const restore = withDeleteRequest((req) => req.onerror?.(new Event('error')));
+    try {
+      expect(await getVault().wipeAndReset()).toBe('failed');
+    } finally {
+      restore();
+    }
+  });
+
+  it('★ 消せなかったら鍵は落とさない — 半分だけ適用しない', async () => {
+    const v = getVault();
+    await v.initialize('original-password-12345');
+    expect(v.isUnlocked()).toBe(true);
+    const restore = withDeleteRequest((req) => req.onblocked?.(new Event('blocked') as IDBVersionChangeEvent));
+    try {
+      expect(await v.wipeAndReset()).toBe('blocked');
+      // 何も消えていないので、状態も変えない。落としてしまうと呼ぶ側の画面は
+      // 「解錠のまま鍵は死んでいる」になり、2026-09-06 に直した食い違いを作る。
+      // 利用者は他のタブを閉じてもう一度押せる。
+      expect(v.isUnlocked()).toBe(true);
+    } finally {
+      restore();
+    }
+  });
+
+  it('対照: 消えたときは鍵を落とす (上の検査が「常に落とさない」ではない)', async () => {
+    const v = getVault();
+    await v.initialize('original-password-12345');
+    expect(v.isUnlocked()).toBe(true);
+    expect(await v.wipeAndReset()).toBe('deleted');
+    expect(v.isUnlocked()).toBe(false);
+  });
+});
+
+describe('describeWipeOutcome — 結果を利用者の 1 行にする', () => {
+  it("'deleted' は何も言わない (成功時に警告を出さない)", () => {
+    expect(describeWipeOutcome('deleted')).toBeNull();
+  });
+
+  it('★ 消えなかった 2 つは、結果・原因・打ち手・「データは残っています」を出す', () => {
+    const blocked = describeWipeOutcome('blocked');
+    const failed = describeWipeOutcome('failed');
+    // **4 つを全部見る。** 文面は 2 つの literal を繋いでいるので、片方だけを
+    // 見ていると**もう片方が消えても鳴らない** (実際、変異検査で前半を `""` に
+    // した変異体が生き残って気づいた —— 打ち手と「残っています」は後半に在り、
+    // 「削除できませんでした」と「使用中」は前半に在る)。
+    expect(blocked).toContain('削除できませんでした'); // 結果
+    expect(blocked).toContain('使用中'); // 原因
+    expect(blocked).toContain('他のタブをすべて閉じて'); // 打ち手
+    expect(blocked).toContain('データは残っています'); // 現状
+
+    expect(failed).toContain('削除できませんでした');
+    expect(failed).toContain('ブラウザに拒否されました');
+    expect(failed).toContain('ページを再読み込みして');
+    expect(failed).toContain('データは残っています');
+
+    // 原因が違えば打ち手も違う —— 同じ文面にしない。
+    expect(blocked).not.toBe(failed);
   });
 });
 

@@ -7,6 +7,7 @@ import {
   LOCK_CHANNEL,
   LOCK_MESSAGE,
   _resetLockSubscribersForTests,
+  announceLockToOtherTabs,
   lockEverywhere,
   lockWorkspace,
   startLockRelay,
@@ -52,9 +53,40 @@ function clearIdb(): Promise<void> {
   });
 }
 
-/** BroadcastChannel の配達はタスクなので、1 度手放して受け取る。 */
+/**
+ * BroadcastChannel の配達はタスクなので、待つ。
+ *
+ * **決まった回数の tick で待たない。** 1 度 `setTimeout(0)` で書いていたら、
+ * Stryker の dry run (全 500 ファイル超を 1 プロセスで回す) で
+ * 「配る」検査が空配列を見て落ちた —— 配達が遅れただけで、実装は正しい。
+ * 検査は**待っている事象そのもの**で待つこと。無ければ上限で諦める。
+ */
 function flush(): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+/** 上限つきで条件が真になるのを待つ。ならなければ諦めて戻る (検査側で assert する)。 */
+function waitUntil(done: () => boolean, ms = 2000): Promise<void> {
+  return new Promise((resolve) => {
+    const started = Date.now();
+    const tick = (): void => {
+      if (done() || Date.now() - started >= ms) return resolve();
+      setTimeout(tick, 5);
+    };
+    tick();
+  });
+}
+
+/** 上限つきで「1 件届く」を待つ。届かなければ諦めて戻る (検査側で assert する)。 */
+function waitFor(seen: string[], ms = 2000): Promise<void> {
+  return new Promise((resolve) => {
+    const started = Date.now();
+    const tick = (): void => {
+      if (seen.length > 0 || Date.now() - started >= ms) return resolve();
+      setTimeout(tick, 5);
+    };
+    tick();
+  });
 }
 
 describe('lockWorkspace', () => {
@@ -109,30 +141,69 @@ describe('lockWorkspace', () => {
     expect(fresh.LOCK_MESSAGE).toBe('lock');
   });
 
-  it('配り終えたら道を閉じる — 施錠のたびに受け口を溜めない', () => {
+  it('★ 道は 1 本だけ作る — 施錠のたびに受け口を溜めない', async () => {
     const real = globalThis.BroadcastChannel;
-    const closed: string[] = [];
     const madeFor: string[] = [];
     class Spy extends real {
       constructor(name: string) {
         super(name);
         madeFor.push(name);
       }
+    }
+    globalThis.BroadcastChannel = Spy as unknown as typeof BroadcastChannel;
+    try {
+      // 送信も受信も同じ 1 本を使う。**閉じない**代わりに増やさない ——
+      // 送信ごとに作ると、このタブの中継が自分の合図を拾って自分を施錠する
+      // (2026-09-07 に実測で踏んだ形)。
+      stops.push(startLockRelay());
+      lockEverywhere();
+      lockEverywhere();
+      announceLockToOtherTabs();
+      await flush();
+      expect(madeFor).toEqual([LOCK_CHANNEL]);
+    } finally {
+      globalThis.BroadcastChannel = real;
+    }
+  });
 
+  it('後片付けは道を閉じてから捨てる — 次の検査へ受け口を持ち越さない', () => {
+    const real = globalThis.BroadcastChannel;
+    let closed = 0;
+    class Spy extends real {
       override close(): void {
-        closed.push('closed');
+        closed += 1;
         super.close();
       }
     }
     globalThis.BroadcastChannel = Spy as unknown as typeof BroadcastChannel;
     try {
-      lockEverywhere();
+      announceLockToOtherTabs(); // 道を 1 本作る
+      expect(closed).toBe(0); // 標本: まだ閉じていない
+      _resetLockSubscribersForTests();
+      expect(closed).toBe(1);
+      // 2 度目は掴んでいる物が無いので閉じない (捨て損ないの検査でもある)。
+      _resetLockSubscribersForTests();
+      expect(closed).toBe(1);
     } finally {
       globalThis.BroadcastChannel = real;
     }
-    // 標本: 配るために 1 本開いている (開いていなければ以下は空の検査)。
-    expect(madeFor).toEqual([LOCK_CHANNEL]);
-    expect(closed).toEqual(['closed']);
+  });
+
+  it('★ 自分が配った合図で自分を施錠しない (中継が居ても)', async () => {
+    const vault = await unlockedVault();
+    stops.push(startLockRelay());
+    announceLockToOtherTabs();
+    await flush();
+    await flush();
+    // 配るだけ。押したタブを施錠すると、結果を報せる画面が消える。
+    expect(vault.isUnlocked()).toBe(true);
+
+    // 標本: 他のタブ (別の channel) からの合図なら施錠される。
+    const other = new BroadcastChannel(LOCK_CHANNEL);
+    opened.push(other);
+    other.postMessage(LOCK_MESSAGE);
+    await waitUntil(() => !vault.isUnlocked());
+    expect(vault.isUnlocked()).toBe(false);
   });
 
   it('鍵を落とす — 施錠後はトークンを読めない', async () => {
@@ -184,7 +255,7 @@ describe('lockWorkspace', () => {
     await unlockedVault();
     const seen = wireTap();
     lockEverywhere();
-    await flush();
+    await waitFor(seen);
     expect(seen).toEqual([LOCK_MESSAGE]);
   });
 
@@ -197,7 +268,7 @@ describe('lockWorkspace', () => {
     // 明示的な施錠を流して**鳴ること**を見る。
     expect(seen).toEqual([]);
     lockEverywhere();
-    await flush();
+    await waitFor(seen);
     expect(seen).toEqual([LOCK_MESSAGE]);
   });
 
@@ -212,7 +283,7 @@ describe('lockWorkspace', () => {
     const sender = new BroadcastChannel(LOCK_CHANNEL);
     opened.push(sender);
     sender.postMessage(LOCK_MESSAGE);
-    await flush();
+    await waitUntil(() => notified > 0);
 
     expect(notified).toBe(1);
     expect(await vault.status()).toBe('locked');
@@ -227,11 +298,12 @@ describe('lockWorkspace', () => {
     opened.push(sender);
     sender.postMessage('こんにちは');
     await flush();
+    await flush();
     expect(vault.isUnlocked()).toBe(true);
 
     // 標本: 正しい合図なら同じ道で施錠される (受け手が生きている証拠)。
     sender.postMessage(LOCK_MESSAGE);
-    await flush();
+    await waitUntil(() => !vault.isUnlocked());
     expect(vault.isUnlocked()).toBe(false);
   });
 
@@ -243,6 +315,8 @@ describe('lockWorkspace', () => {
     const sender = new BroadcastChannel(LOCK_CHANNEL);
     opened.push(sender);
     sender.postMessage(LOCK_MESSAGE);
+    await waitFor(seen);
+    // 配り直しが在れば 2 件目が来る余地を与えてから数える。
     await flush();
     await flush();
 
@@ -259,12 +333,13 @@ describe('lockWorkspace', () => {
     opened.push(sender);
     sender.postMessage(LOCK_MESSAGE);
     await flush();
+    await flush();
     expect(vault.isUnlocked()).toBe(true);
 
     // 標本: 止めていなければ施錠される。
     stops.push(startLockRelay());
     sender.postMessage(LOCK_MESSAGE);
-    await flush();
+    await waitUntil(() => !vault.isUnlocked());
     expect(vault.isUnlocked()).toBe(false);
   });
 

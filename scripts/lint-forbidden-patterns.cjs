@@ -816,7 +816,9 @@ const KNOWN_SUPPRESSIONS = [
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/fs/fsa.ts :: 7',
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/library/library.ts :: 11',
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/network/proxy.ts :: 6',
-  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/security/vault.ts :: 13',
+  // 2026-09-07: 13 → 12。届かない後追い診断 (`indexedDB.databases()` で
+  // 削除を再確認していた) を消したので、直接触る箇所が 1 つ減った。
+  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/security/vault.ts :: 12',
   'CSS の url() へ生の値を差し込んでいる :: src/shared/imageUrlGate.ts :: 1',
   'hand-rolled RFC 2822 header line :: src/main/clients/gmail.ts :: 2',
   'hand-rolled RFC 2822 header line :: src/renderer/data/saasWriteWeb.ts :: 2',

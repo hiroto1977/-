@@ -39,6 +39,7 @@ import {
   _resetLockSubscribersForTests,
   lockEverywhere,
 } from '../security/lockWorkspace';
+import { navigateTo } from '../navigate';
 
 if (!('subtle' in globalThis.crypto)) {
   Object.defineProperty(globalThis, 'crypto', { value: webcrypto, configurable: true });
@@ -56,6 +57,9 @@ beforeAll(() => {
     oauthSupported: () => Promise.resolve(false),
     setToken: () => Promise.resolve(),
     clearToken: () => Promise.resolve(),
+    // 設定画面はこれを呼ぶ。無いと画面が `PageErrorBoundary` の枠になり、
+    // Vault 管理の札まで描かれない (実際それで 1 度落ちた)。
+    storageProtection: () => Promise.resolve({ mechanism: 'os-keychain' }),
   };
   vi.spyOn(console, 'error').mockImplementation(() => undefined);
 });
@@ -73,6 +77,22 @@ async function settle(): Promise<void> {
   for (let i = 0; i < 12; i += 1) {
     await act(async () => {
       await new Promise<void>((resolve) => setTimeout(resolve, 0));
+    });
+  }
+}
+
+/**
+ * ロック画面が出るまで待つ (上限つき)。
+ *
+ * **決まった回数の tick で待たない。** BroadcastChannel の配達は
+ * 「いつか来るタスク」で、1 プロセスに検査を詰めると遅れる —— 実際
+ * Stryker の dry run で同種の検査が空振りした。事象そのもので待つ。
+ */
+async function settleUntilLocked(ms = 2000): Promise<void> {
+  const started = Date.now();
+  while (!showsLockScreen() && Date.now() - started < ms) {
+    await act(async () => {
+      await new Promise<void>((resolve) => setTimeout(resolve, 10));
     });
   }
 }
@@ -140,9 +160,8 @@ describe('App — 施錠はロック画面まで届く', () => {
     opened.push(other);
     await act(async () => {
       other.postMessage(LOCK_MESSAGE);
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
     });
-    await settle();
+    await settleUntilLocked();
     expect(showsLockScreen()).toBe(true);
     expect(getVault().isUnlocked()).toBe(false);
   });
@@ -160,9 +179,86 @@ describe('App — 施錠はロック画面まで届く', () => {
     // 標本: 正しい合図なら同じ道で施錠される。
     await act(async () => {
       other.postMessage(LOCK_MESSAGE);
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
     });
-    await settle();
+    await settleUntilLocked();
     expect(showsLockScreen()).toBe(true);
+  });
+});
+
+/*
+ * **ハードリセットが消せなかった理由は、App が動いていても画面に残るか。**
+ * (2026-09-07)
+ *
+ * ここは**自分の取り違えを留めるための検査**である。最初はハードリセットの
+ * 前に `lockEverywhere()` を流していた —— 他のタブに書き込みを止めさせる意図は
+ * 正しいが、`App` の購読が**このタブを即座にロック画面へ差し替える**ので、
+ * 設定ページが unmount して「消せませんでした」を出す相手が居なくなる。
+ * 消せなかった時の文言が、まさにそれが要る場面で誰にも届かない。
+ *
+ * `VaultControls` だけを描く検査では `App` が居ないので**見えなかった**。
+ * だから App を丸ごと動かして留める (検査の harness が実物より狭いと、
+ * 直したつもりの穴がそのまま残る —— 2026-09-06 に学んだのと同じ形)。
+ */
+describe('App — ハードリセットが消せなかった理由は画面に残る', () => {
+  /** `deleteDatabase` を「他のタブが掴んでいる」状態にする。 */
+  function blockDeletes(): () => void {
+    const real = globalThis.indexedDB;
+    const stub = {
+      ...real,
+      open: real.open.bind(real),
+      deleteDatabase: (): IDBOpenDBRequest => {
+        const req = {} as IDBOpenDBRequest;
+        setTimeout(() => req.onblocked?.(new Event('blocked') as IDBVersionChangeEvent), 0);
+        return req;
+      },
+    };
+    Object.defineProperty(globalThis, 'indexedDB', { value: stub, configurable: true, writable: true });
+    return () => {
+      Object.defineProperty(globalThis, 'indexedDB', { value: real, configurable: true, writable: true });
+    };
+  }
+
+  function buttonSaying(label: string): HTMLButtonElement | undefined {
+    return Array.from(container.querySelectorAll('button')).find((b) =>
+      (b.textContent ?? '').includes(label),
+    );
+  }
+
+  async function click(el: Element | undefined): Promise<void> {
+    await act(async () => {
+      el?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      await new Promise<void>((r) => setTimeout(r, 0));
+    });
+  }
+
+  it('★ 消せなかったら、理由が出てロック画面には行かない', async () => {
+    const restore = blockDeletes();
+    try {
+      await act(async () => {
+        navigateTo('settings');
+      });
+      await settle();
+      await click(buttonSaying('すべてのデータを削除…'));
+      // 設定画面には text 入力が複数あるので、確認欄は placeholder で選ぶ
+      // (`.at(-1)` は別の欄を掴んで「HTMLInputElement ではない」で落ちた)。
+      const box = container.querySelector<HTMLInputElement>('input[placeholder="DELETE"]');
+      expect(box).not.toBeNull();
+      await act(async () => {
+        const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
+        setter?.call(box, 'DELETE');
+        box!.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+      await click(buttonSaying('確定して削除'));
+      await settle();
+
+      // 理由が画面に在る。
+      expect(text()).toContain('他のタブをすべて閉じて');
+      // **ロック画面へ行っていない** (行くと上の文言ごと消える)。
+      expect(showsLockScreen()).toBe(false);
+      // 何も消えていないので鍵も生きている (半分だけ適用しない)。
+      expect(getVault().isUnlocked()).toBe(true);
+    } finally {
+      restore();
+    }
   });
 });

@@ -11,8 +11,8 @@ import { PARAMETERS } from '../../shared/parameters';
 import { usePlan } from '../plan/usePlan';
 import { getPlan } from '../../shared/plan';
 import { issueInviteCode } from '../plan/internalLicense';
-import { getVault, MIN_PASSWORD_LENGTH } from '../security/vault';
-import { lockEverywhere } from '../security/lockWorkspace';
+import { describeWipeOutcome, getVault, MIN_PASSWORD_LENGTH } from '../security/vault';
+import { announceLockToOtherTabs, lockEverywhere } from '../security/lockWorkspace';
 import { credentialUseOf, unusedStoredCredentials } from '../../shared/credentialUse';
 import { EVICTION_RECOVERY, isEvictableStorage } from '../../shared/storageDurability';
 import type { ServiceId } from '../../shared/serviceId';
@@ -298,7 +298,12 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
  *  spots out of sync). */
 const WIPE_CONFIRM_PHRASE = 'DELETE';
 
-function VaultControls() {
+/**
+ * 検査のために公開している (`ProxySection` / `FsaSection` / `CredentialRow` /
+ * `UnusedCredentialSection` と同じ理由 —— 画面全体を組まずに、この札の振る舞いを
+ * 実物で描いて確かめる)。
+ */
+export function VaultControls() {
   const [oldPw, setOldPw] = useState('');
   const [newPw, setNewPw] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -383,11 +388,37 @@ function VaultControls() {
     setMsg(hadKey ? '施錠しました' : '保管庫は使用中ではありません (落とす鍵がありません)');
   }
 
+  /*
+   * **消えた時だけ再読込する。**
+   *
+   * 直す前は `await wipeAndReset()` の後で無条件に `location.reload()` して
+   * いたが、`wipeAndReset` は `onblocked` (他のタブが保管庫を掴んでいる) でも
+   * 解決する。つまり**データが残ったまま**「復旧不可な形で消去されます」と
+   * 同じ画面になり、戻るのは最初のセットアップ画面ではなく**ロック解除の
+   * 画面**で、理由はどこにも出なかった (2026-09-07 実測)。
+   *
+   * 先に他のタブへ施錠を配るのは 2 つの理由から:
+   *   1. 他のタブが**書き込み中でなくなる**ので `onblocked` を踏みにくい。
+   *   2. 消した後に新しい保管庫を作ると、生きた鍵を持ったままの他のタブは
+   *      **新しい保管庫が読めない暗号文**を書ける。鍵を落とさせておく。
+   *
+   * **配るだけで、このタブは施錠しない** (`lockEverywhere` ではない) ——
+   * 施錠すると `App` が即座にロック画面へ差し替え、**この画面が unmount して
+   * 結果を報せられない**。消せなかった時の文言が、まさにそれが要る場面で
+   * 誰にも届かなくなる。このタブの鍵は `wipeAndReset` が成功時に落とす。
+   */
   async function wipeEverything() {
     setWipeErr(null);
     setWipeStage('wiping');
     try {
-      await getVault().wipeAndReset();
+      announceLockToOtherTabs();
+      const outcome = await getVault().wipeAndReset();
+      const problem = describeWipeOutcome(outcome);
+      if (problem !== null) {
+        setWipeErr(problem);
+        setWipeStage('confirm1');
+        return;
+      }
       // Reload to bring up the first-run LockScreen flow from a clean slate.
       window.location.reload();
     } catch (e) {

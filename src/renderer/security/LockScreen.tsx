@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { getVault, type VaultStatus, MIN_PASSWORD_LENGTH, VAULT_UNREADABLE_TEXT } from './vault';
+import { describeWipeOutcome, getVault, type VaultStatus, MIN_PASSWORD_LENGTH, VAULT_UNREADABLE_TEXT } from './vault';
+import { announceLockToOtherTabs } from './lockWorkspace';
 import { looksLikeValidMnemonic } from './mnemonic';
 
 /**
@@ -132,13 +133,31 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
     onUnlocked();
   }
 
-  /** 完全初期化: パスワードもリカバリーキーも失った場合の最終手段。
-   *  保存済みトークン等を全消去して初回設定に戻す (vault.wipeAndReset)。 */
+  /**
+   * 完全初期化: パスワードもリカバリーキーも失った場合の最終手段。
+   * 保存済みトークン等を全消去して初回設定に戻す (vault.wipeAndReset)。
+   *
+   * **消えた時だけ再読込する。** 設定ページ側と同じ直し (2026-09-07 実測) ——
+   * `wipeAndReset` は他のタブが保管庫を掴んでいると削除できず、それでも
+   * 解決していた。ここは**閉じ出された本人**が押す最後の手段なので、
+   * 何も消えずに同じロック画面へ戻ると「ボタンが壊れている」としか見えない。
+   * 理由を出す価値がいちばん高い場所である。
+   *
+   * 他のタブへは施錠を**配るだけ** —— 書き込みを止めさせて `onblocked` を
+   * 踏みにくくするのが目的で、このタブの鍵は `wipeAndReset` が成功時に落とす。
+   */
   async function submitReset() {
     setErr(null);
     setBusy(true);
     try {
-      await getVault().wipeAndReset();
+      announceLockToOtherTabs();
+      const outcome = await getVault().wipeAndReset();
+      const problem = describeWipeOutcome(outcome);
+      if (problem !== null) {
+        setErr(problem);
+        setBusy(false);
+        return;
+      }
       // 状態を確実に作り直すためリロードして初回設定フローへ。
       window.location.reload();
     } catch (e) {

@@ -1325,6 +1325,30 @@
       "leafCount": 66,
       "note": "update lockWorkspace.ts",
       "hash": "e84bab6459b71da0bf436111d1ab869919a7657aeeb5f4ee89bb45e6ed3ed419"
+    },
+    {
+      "index": 157,
+      "prevHash": "e84bab6459b71da0bf436111d1ab869919a7657aeeb5f4ee89bb45e6ed3ed419",
+      "merkleRoot": "28202b616742428d104029571b90c0ea8b21288aa8aa0a7cebeeb1f33bb66569",
+      "leafCount": 66,
+      "note": "update LockScreen.tsx,vault.ts",
+      "hash": "a1917593c3509668ac7b6d401b0a06c04ef9b895d1646c1f9396612e9897147d"
+    },
+    {
+      "index": 158,
+      "prevHash": "a1917593c3509668ac7b6d401b0a06c04ef9b895d1646c1f9396612e9897147d",
+      "merkleRoot": "9e58c4998b7853e9b9a993c2454dcaa1fe544c650790c9023247afd00ba9d1ba",
+      "leafCount": 66,
+      "note": "update LockScreen.tsx,lockWorkspace.ts,vault.ts",
+      "hash": "807afadb0f0a2c8ea118e3c0384a96efd08b8b63b31ce48769a1942e267d2dc2"
+    },
+    {
+      "index": 159,
+      "prevHash": "807afadb0f0a2c8ea118e3c0384a96efd08b8b63b31ce48769a1942e267d2dc2",
+      "merkleRoot": "fe83631956352e68b9e3898df14ec4a053822fd1ebb79d1b1a678512d71921bd",
+      "leafCount": 66,
+      "note": "update lockWorkspace.ts",
+      "hash": "4fe9956bf0ba2aa0c5ce6289513a7f6328bc2b273b378e5e1370100b031e3c49"
     }
   ],
   "tipManifest": {
@@ -1367,14 +1391,14 @@
     "src/renderer/network/proxy.ts": "d1f1e9dab213f299907c43f81a0d636e83be20aec9e30b41d71b9616d9d279cb",
     "src/renderer/oauth/pkce.ts": "ce9841741983b525c65f1ae7debd45c6ebd5cf516c9b7f5eea5218c4bc5d0681",
     "src/renderer/oauth/pkceSession.ts": "4d47589621512b9ec321e0a7db3553a9c87d32e9016d015ea51b9555bd5273a9",
-    "src/renderer/security/LockScreen.tsx": "54d75363de990ceec7c9964d3e82fdb71058d2068e21fdc6e106532443251479",
+    "src/renderer/security/LockScreen.tsx": "a05a31d56248d1c9b9cebad5d9bde1c0628f635b59d1787f8b843a5f993526f9",
     "src/renderer/security/autoLock.ts": "ed7ffa56ef1c6068c4f66e5db06f91fc02b58a4fb348e8422ff9f28584769fff",
     "src/renderer/security/bip39-wordlist.ts": "158d4c3eed64474223aefe917c6497f4afd0200054efd089d9d0f323332d6761",
     "src/renderer/security/dataCrypto.ts": "33afebf4774cb7ace5a2e10a74778a44a0c7e8b070fde34ad5e62135b0ca7cd2",
     "src/renderer/security/frameGuard.ts": "66ad10cf7e5a48fcc4a406aa66b9de544609877944fd073c7bf3af8190991559",
-    "src/renderer/security/lockWorkspace.ts": "cedd033b97862b77da0c192b046be682a4f8dcd379ba7a5cd5be6ab48098ef28",
+    "src/renderer/security/lockWorkspace.ts": "b1e7210a61ed100c2bae43359482eaa696ad367f63a25ec463ab0ed44477aca7",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
-    "src/renderer/security/vault.ts": "3f459397736801bbadd955a78ac6aa805bdef3ea7df9a817af98a481d33938ff",
+    "src/renderer/security/vault.ts": "459cff0d6830190d43d17fab268eb6b7278b27d78bbb6b5c24e057bc99bc73ac",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
     "src/shared/ai/chat.ts": "a90292c80854c9feb016141107710d8929179371119dcee830556191a274b80a",
     "src/shared/ai/credentials.ts": "69603ba457c124794e3e2c38f75eb35bc487e9766eab2d03bd53d035c885d85a",

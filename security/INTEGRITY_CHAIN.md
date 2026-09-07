@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 157
+- ブロック数: 160
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `e84bab6459b71da0bf436111d1ab869919a7657aeeb5f4ee89bb45e6ed3ed419`
+- 末尾(tip)ハッシュ: `4fe9956bf0ba2aa0c5ce6289513a7f6328bc2b273b378e5e1370100b031e3c49`
 - 保護対象: 66 ファイル
 
 ## ブロック
@@ -170,6 +170,9 @@
 | 154 | `e9cecef70974c4fc` | `93584bb44ebbd8bd` | `372531b5494570e1` | update integrity-chain.cjs,localWrite.ts |
 | 155 | `6cefc543f6675d95` | `372531b5494570e1` | `e7983061ca3ecf07` | update ci.yml |
 | 156 | `50ac0c3c641e6c0a` | `e7983061ca3ecf07` | `e84bab6459b71da0` | update lockWorkspace.ts |
+| 157 | `28202b616742428d` | `e84bab6459b71da0` | `a1917593c3509668` | update LockScreen.tsx,vault.ts |
+| 158 | `9e58c4998b7853e9` | `a1917593c3509668` | `807afadb0f0a2c8e` | update LockScreen.tsx,lockWorkspace.ts,vault.ts |
+| 159 | `fe83631956352e68` | `807afadb0f0a2c8e` | `4fe9956bf0ba2aa0` | update lockWorkspace.ts |
 
 ## 保護対象ファイル
 

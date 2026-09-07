@@ -77,6 +77,51 @@ export function meetsPasswordPolicy(password: string): boolean {
 export type VaultStatus = 'uninitialized' | 'locked' | 'unlocked' | 'unreadable';
 
 /**
+ * ハードリセットが**実際に何をしたか**。
+ *
+ * ## なぜ戻り値が要るのか (2026-09-07 実測)
+ *
+ * `wipeAndReset` は `onsuccess` / `onerror` / `onblocked` の**どれでも
+ * `resolve()`** していた (UI をハングさせないため —— その判断は正しい)。
+ * ところが呼ぶ側は 2 か所とも「解決したら消えた」と読み、無条件で
+ * `window.location.reload()` していた。つまり
+ *
+ *  - **他のタブが IndexedDB の接続を掴んでいると削除できない** (`onblocked`)。
+ *    それでも画面は再読込へ進み、**データは残ったまま**「最初のセットアップ画面に
+ *    戻ります」の約束だけが破れる (保管庫はまだ初期化済みなので、戻るのは
+ *    ロック解除の画面)。理由はどこにも出ない。
+ *  - 唯一の報せは `console.warn` で、**利用者には見えない**。しかも 500ms 後の
+ *    後追い確認は、直後の `reload()` で**タイマーごと消える** ——
+ *    原理的に誰にも届かない診断だった (だから消した)。
+ *
+ * 画面の文面は「保管中の全トークン・暗号化メタデータ・現在のリカバリーキーが
+ * **復旧不可**な形で消去されます」で、消えなかった場合と同じ顔をしていた。
+ * ロック画面側の「完全初期化」はもっと悪く、**閉じ出された本人**が押すので、
+ * 何も消えずに同じロック画面へ戻っても「ボタンが壊れている」としか見えない。
+ *
+ * 解決を保ったまま**結果を返す**ことで、呼ぶ側が「消えた時だけ再読込する」と
+ * 書ける。`resolve` を捨てて `throw` にしないのは、ハングさせない元の判断を
+ * 崩さないため。
+ */
+export type WipeOutcome = 'deleted' | 'blocked' | 'failed';
+
+/**
+ * ハードリセットの結果を、利用者への 1 行にする。
+ *
+ * **文言を 1 か所にする**ため。呼ぶ側は設定ページとロック画面の 2 つで、
+ * 同じ結果に違う説明を出す理由が無い (打ち手はどちらも「他のタブを閉じる」)。
+ */
+export function describeWipeOutcome(outcome: WipeOutcome): string | null {
+  if (outcome === 'deleted') return null;
+  if (outcome === 'blocked') {
+    return '削除できませんでした — このアプリを開いている他のタブが保管庫を使用中です。'
+      + '他のタブをすべて閉じてから、もう一度実行してください。データは残っています。';
+  }
+  return '削除できませんでした — 保管庫の削除がブラウザに拒否されました。'
+    + 'ページを再読み込みしてから、もう一度実行してください。データは残っています。';
+}
+
+/**
  * 読めなかったときにロック画面が出す 1 行。**現実に起こる 2 つの原因と、
  * それぞれの打ち手を両方載せる** (どちらかを断定できないため)。
  */
@@ -175,8 +220,10 @@ export interface Vault {
    *  Recovery key rotation is not supported. The mnemonic from initialize()
    *  is permanent unless the user calls wipeAndReset() and re-initializes. */
   rotateRecoveryKey(): Promise<string>;
-  /** Hard reset (for users who lost both password and mnemonic). */
-  wipeAndReset(): Promise<void>;
+  /** Hard reset (for users who lost both password and mnemonic).
+   *  **必ず解決する** (UI をハングさせない) ので、消えたかどうかは
+   *  戻り値で見ること —— `WipeOutcome` の注記に経緯がある。 */
+  wipeAndReset(): Promise<WipeOutcome>;
 }
 
 // --- IndexedDB helpers ------------------------------------------------
@@ -1165,68 +1212,35 @@ class BrowserVault implements Vault {
     );
   }
 
-  async wipeAndReset(): Promise<void> {
-    this.currentKey = null;
-    // wipeAndReset is best-effort idempotent cleanup.
+  async wipeAndReset(): Promise<WipeOutcome> {
+    // **必ず解決し、何が起きたかを返す。**
     //
     // multi-tab edge case (onblocked): if another tab still holds an open
     // connection to the same DB, IndexedDB cannot delete it and fires
-    // onblocked instead of onsuccess. We resolve the Promise either way
-    // (so the UI doesn't hang forever) but emit console.warn so the user
-    // sees that the wipe was incomplete, and schedule a 500ms post-check
-    // via indexedDB.databases() to confirm the DB really went away once
-    // the other tab releases its handle.
+    // onblocked instead of onsuccess. 投げないのは元の判断のまま (UI を
+    // ハングさせない) だが、`'blocked'` を返すので**呼ぶ側が「消えた時だけ
+    // 再読込する」と書ける** —— 直す前は解決だけを見て無条件に再読込しており、
+    // データが残ったまま「消去しました」と同じ画面になっていた。
     //
-    // onerror is similarly best-effort: the typical cause (storage quota
-    // exceeded mid-delete, OS file lock) is recoverable on the next call.
+    // onerror も同じ扱い。典型的な原因 (削除中の容量超過・OS のファイル錠) は
+    // 次回の呼び出しで回復しうるので、利用者に「もう一度」と言えれば足りる。
     //
-    // Unit-testing these branches requires mocking IndexedDB to surface
-    // error/blocked states, which the current test stack (fake-indexeddb)
-    // does not expose cleanly — hence the Stryker-disable on the callbacks.
-    await new Promise<void>((resolve) => {
+    // 以前ここに在った「500ms 後に `indexedDB.databases()` で本当に消えたか
+    // 見る」後追い診断は**消した** —— 報せ先が `console.warn` しか無く、
+    // しかも呼ぶ側が直後に `location.reload()` するので**タイマーごと消えて
+    // いた**。原理的に誰にも届かない診断を残すより、結果を返すほうが良い。
+    const outcome = await new Promise<WipeOutcome>((resolve) => {
       const req = indexedDB.deleteDatabase(DB_NAME);
-      req.onsuccess = () => resolve();
-      // Stryker disable next-line ArrowFunction
-      req.onerror = () => resolve();
-      // 他のタブが接続を掴んでいるときだけ発火する。単一プロセスのテストでは
-      // 作れず到達しない。
-      /* Stryker disable BlockStatement,StringLiteral,ArrowFunction */
-      req.onblocked = () => {
-        console.warn(
-          '[vault] wipeAndReset blocked — another tab is still holding the IndexedDB. ' +
-            'Close all other tabs of this app and try again.',
-        );
-        /* Stryker restore BlockStatement,StringLiteral,ArrowFunction */
-        // Best-effort follow-up: check whether the DB is actually gone
-        // after a short delay (the other tab might close in the meantime).
-        // We don't await this — wipeAndReset() must return promptly so the
-        // UI can re-render even if cleanup is incomplete.
-        // The entire diagnostic block below runs ONLY on the onblocked
-        // branch, which fake-indexeddb cannot simulate cleanly (see comment
-        // above). Every mutant inside is unreachable from the test suite
-        // by construction → disable Stryker for the whole follow-up block.
-        // Stryker disable all
-        setTimeout(() => {
-          // indexedDB.databases() is a relatively new API; older browsers
-          // (Safari < 14) may not implement it. Guard accordingly.
-          if (typeof indexedDB.databases !== 'function') return;
-          indexedDB
-            .databases()
-            .then((dbs) => {
-              if (dbs.some((d) => d.name === DB_NAME)) {
-                console.warn(
-                  '[vault] wipeAndReset: IndexedDB still present after 500ms — ' +
-                    'manual cleanup required (close other tabs / clear site data).',
-                );
-              }
-            })
-            // Swallow — this is purely diagnostic.
-            .catch(() => {});
-        }, 500);
-        // Stryker restore all
-        resolve();
-      };
+      req.onsuccess = () => resolve('deleted');
+      req.onerror = () => resolve('failed');
+      req.onblocked = () => resolve('blocked');
     });
+    // **消えた時だけ鍵を落とす。** 消せなかったなら何も変わっていないので、
+    // 半分だけ適用しない —— 落としてしまうと呼ぶ側の画面は「解錠のまま鍵は
+    // 死んでいる」状態になり、2026-09-06 に直したのと同じ食い違いを作る。
+    // 利用者は他のタブを閉じてもう一度押せる。
+    if (outcome === 'deleted') this.currentKey = null;
+    return outcome;
   }
 }
 

@@ -108,9 +108,16 @@ export function subscribeWorkspaceLocked(cb: () => void): () => void {
   };
 }
 
-/** テスト用: 購読を空にする。 */
+/** テスト用: 購読を空にし、共有の道も閉じる (次の検査が別の `BroadcastChannel` を
+ *  差し替えても掴んだままにならないように)。 */
 export function _resetLockSubscribersForTests(): void {
   listeners.clear();
+  // **閉じてから捨てる。** 閉じずに捨てると、`onmessage` を付けたままの
+  // 受け口が残り、次の検査の合図で前の検査の保管庫を施錠しに来る。
+  // (try/catch と `?.` を使わないのは、どちらも観測できない等価変異を
+  //  作るだけだったから —— 実測 2026-09-07。)
+  if (shared !== null) shared.close();
+  shared = null;
 }
 
 function notifyLocked(): void {
@@ -131,18 +138,48 @@ export function lockWorkspace(): void {
   }
 }
 
-/** 他のタブへ「施錠して」と伝える。届かない環境では黙って諦める。 */
-function announceLock(): void {
+/**
+ * 送受で**共有する 1 本の道**。
+ *
+ * `BroadcastChannel` は**自分が送った物を自分では受け取らない**。一方、
+ * **同じ文脈の別の channel オブジェクトには届く**。実 Chromium (`file://`) で
+ * 両方測った —— 送った channel 自身は `[]`、同じ文書の別の channel は
+ * `["lock"]`。jsdom だけの癖ではない。だから送信ごとに
+ * 新しい channel を作ると、**このタブの中継が自分の合図を拾って自分を施錠する**
+ * —— ハードリセットでそれが起きて、設定ページが unmount し、消せなかった理由を
+ * 報せられなくなった (2026-09-07 実測)。
+ *
+ * 送るのも受けるのも同じ 1 本にすれば、除外は仕様が保証してくれる。
+ */
+let shared: BroadcastChannel | null = null;
+
+function sharedChannel(): BroadcastChannel | null {
+  if (shared !== null) return shared;
   try {
-    const channel = new BroadcastChannel(LOCK_CHANNEL);
-    try {
-      channel.postMessage(LOCK_MESSAGE);
-    } finally {
-      channel.close();
-    }
+    shared = new BroadcastChannel(LOCK_CHANNEL);
   } catch {
     // BroadcastChannel が無い / 使えない環境。他のタブは自分の自動施錠で落ちる。
+    // (`shared` は成功時にしか代入しないので、ここで null へ戻す必要は無い。)
   }
+  return shared;
+}
+
+/**
+ * 他のタブへ「施錠して」と伝える。**この文脈は施錠しない。**
+ *
+ * ハードリセットのために公開している (2026-09-07)。あの場面で
+ * `lockEverywhere()` を使うと、購読している `App` がこのタブを即座に
+ * ロック画面へ差し替えるので、**設定ページが unmount して結果を報せられない**
+ * —— 消せなかった時の文言が、まさにそれが要る場面で誰にも届かなくなる
+ * (実測で踏みかけた。VaultControls だけを描く検査では見えなかった)。
+ *
+ * 消す側のタブの鍵は `wipeAndReset` が (成功した時に) 落とすので、ここで
+ * 落とす必要も無い。他のタブに書き込みを止めさせるのが目的。
+ *
+ * 届かない環境では黙って諦める。
+ */
+export function announceLockToOtherTabs(): void {
+  sharedChannel()?.postMessage(LOCK_MESSAGE);
 }
 
 /**
@@ -155,7 +192,7 @@ export function lockEverywhere(): void {
   try {
     lockWorkspace();
   } finally {
-    announceLock();
+    announceLockToOtherTabs();
   }
 }
 
@@ -167,16 +204,13 @@ export function lockEverywhere(): void {
  * ここで配らなければ**そもそも起こり得ない**。
  */
 export function startLockRelay(): () => void {
-  let channel: BroadcastChannel;
-  try {
-    channel = new BroadcastChannel(LOCK_CHANNEL);
-  } catch {
-    return () => {};
-  }
+  const channel = sharedChannel();
+  if (channel === null) return () => {};
   channel.onmessage = (event: MessageEvent) => {
     if (event.data === LOCK_MESSAGE) lockWorkspace();
   };
+  // **閉じない** —— 送信も同じ 1 本を使うので、閉じると以後配れなくなる。
   return () => {
-    channel.close();
+    channel.onmessage = null;
   };
 }
