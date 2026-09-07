@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { deriveBusinessFinancials } from '../businessFinancials';
-import { computeFinancialRatios } from '../financialRatios';
+import { computeFinancialRatios, radarAxes } from '../financialRatios';
 
 const KPI = { revenue: 1_000_000, variableCost: 400_000, fixedCost: 300_000, profit: 200_000, profitMargin: 20 };
 
@@ -98,5 +98,54 @@ describe('人件費の実額', () => {
     // 0 を「未入力」と読み替えて置き値に落とすと、人を雇っていない事業の
     // 労働分配率が勝手に 50% 相当まで持ち上がる。
     expect(deriveBusinessFinancials({ ...KPI, laborCost: 0 }).laborCost).toBe(0);
+  });
+});
+
+/**
+ * **概算の置き方から決まる「事業に依らない定数」を留める。** (2026-09-07)
+ *
+ * `deriveBusinessFinancials` は事業別の貸借対照表が無いので運転資本を置き値で作る:
+ * 売上債権 = 月商 ×1.5 / 棚卸 = 月次原価 ×1 / 仕入債務 = 月次原価 ×1.2。
+ * すると比は**約分されて事業に依らず一定**になる:
+ *
+ *   売上債権回転率 = 売上 ÷ (売上/12×1.5) = 12/1.5 = 8 倍
+ *   棚卸資産回転率 = 原価 ÷ (原価/12)     = 12 倍
+ *   CCC = (365/12)×(1.5 + 1 − 1.2)        = 39.5 日
+ *
+ * これは**推計器の性質であって事業の性質ではない**。3 つとも `radarAxes` の
+ * 採点対象で、`diagnoseFinancials` の総合スコアは 15 軸の平均なので、
+ * **どの事業でも同じ寄与が 15 分の 3 だけ入る**。画面はその旨を明記している
+ * (`FinancialAnalysis.tsx` の但し書き) —— ここはその前提が崩れたら鳴るように留める。
+ * 置き値を変えるなら、画面の文言と総合スコアへの影響を同時に見直すこと。
+ */
+describe('概算の置き方から決まる定数 — 事業に依らない 3 指標', () => {
+  const CASES = [
+    { name: '高収益SaaS', revenue: 10_000_000, variableCost: 1_000_000, fixedCost: 2_000_000, profit: 7_000_000, profitMargin: 70 },
+    { name: '薄利小売', revenue: 50_000_000, variableCost: 45_000_000, fixedCost: 4_000_000, profit: 1_000_000, profitMargin: 2 },
+    { name: '赤字製造', revenue: 3_000_000, variableCost: 2_500_000, fixedCost: 1_000_000, profit: -500_000, profitMargin: -16.7 },
+    { name: '零細', revenue: 300_000, variableCost: 100_000, fixedCost: 150_000, profit: 50_000, profitMargin: 16.7 },
+  ] as const;
+
+  it('★ どの事業でも 売上債権回転率 8 倍・棚卸資産回転率 12 倍・CCC 39.5 日', () => {
+    for (const c of CASES) {
+      const r = computeFinancialRatios(deriveBusinessFinancials(c));
+      expect(r.receivablesTurnover, c.name).toBe(8);
+      expect(r.inventoryTurnover, c.name).toBe(12);
+      expect(r.cccDays, c.name).toBe(39.5);
+    }
+  });
+
+  it('★ 対照: 収益性で動く軸はちゃんと事業ごとに違う (走査が死んでいない)', () => {
+    const equity = CASES.map((c) => computeFinancialRatios(deriveBusinessFinancials(c)).equityRatioPct);
+    expect(new Set(equity).size, `自己資本比率: ${equity.join(', ')}`).toBe(CASES.length);
+  });
+
+  it('3 指標は採点対象の軸である (総合スコアに定数として入っている)', () => {
+    const axes = radarAxes(computeFinancialRatios(deriveBusinessFinancials(CASES[0])));
+    for (const key of ['receivablesTurnover', 'inventoryTurnover', 'ccc']) {
+      const axis = axes.find((a) => a.key === key);
+      expect(axis, key).toBeDefined();
+      expect(typeof axis!.score, key).toBe('number');
+    }
   });
 });
