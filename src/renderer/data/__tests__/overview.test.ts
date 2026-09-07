@@ -598,15 +598,30 @@ describe('貸借対照表の内数が空欄のとき、運転資金は算定不�
   });
 
   it('★ 対照: 埋めてあれば実測どおりの日数が出る', () => {
-    // 売上 1,200 万 / 原価 600 万。AR 200 万 → DSO 60.8 日、棚卸 100 万 → DIO 60.8 日、
-    // 仕入債務 112.5 万 → DPO 68.4 日 → CCC 53.2 日。
+    // 実績は **3 か月分** (2026-06〜08)。売上 1,200 万 / 原価 600 万は 3 か月の合計なので、
+    // 期間の日数も 3 か月分 (91.25 日) で割る:
+    //   AR 200 万 → DSO 15.2 日 / 棚卸 100 万 → DIO 15.2 日 / 仕入債務 112.5 万 → DPO 17.1 日
+    //   → CCC 13.3 日。
+    // **2026-09-07 まではここが 60.8 / 60.8 / 68.4 / 53.2 日だった** —— 3 か月の合計を
+    // 365 日で割っていたので、ちょうど 4 倍に膨らんでいた (見本が食い違いを固定していた形)。
     const wc = build({ ...CORE, accountsReceivable: 2_000_000, inventory: 1_000_000, accountsPayable: 1_125_000 }).workingCapital!;
-    expect(wc.dso).toBe(60.8);
-    expect(wc.dio).toBe(60.8);
-    expect(wc.dpo).toBe(68.4);
-    expect(wc.ccc).toBe(53.2);
+    expect(wc.periodMonths).toBe(3);
+    expect(wc.dso).toBe(15.2);
+    expect(wc.dio).toBe(15.2);
+    expect(wc.dpo).toBe(17.1);
+    expect(wc.ccc).toBe(13.3);
     expect(wc.workingCapital).toBe(1_875_000);
     expect(wc.missingStocks).toEqual([]);
+  });
+
+  it('★ 期の綴りが読めない控えでは回転日数を出さない (何か月分か測れない)', () => {
+    const o = buildBusinessOverview({
+      plan: 'pro', sales: [],
+      kpiActuals: [{ period: '2026-13', unit: '全社', revenue: 4_000_000, cogs: 2_000_000, advertising: 0, sga: 0, depreciation: 0 }],
+      members: [],
+      balanceSheet: { ...CORE, accountsReceivable: 2_000_000, inventory: 1_000_000, accountsPayable: 1_125_000 } as never,
+    });
+    expect(o.workingCapital).toBeNull();
   });
 
   it('当座比率も空欄では算定不能 (流動比率 250% と同じ値を名乗らない)', () => {

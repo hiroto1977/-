@@ -237,6 +237,9 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
   // 「測れない」として扱うので、ここで null に畳んでも観測できる差が無く、
   // 条件だけが変異検査に「測っていない分岐」として残る (実測 2026-09-07)。
   const latestKpiPeriod = validKpiPeriods[validKpiPeriods.length - 1];
+  // **実績が何か月分か** (期の異なり数。同じ月に複数事業が在るので行数ではない)。
+  // 溜まり ÷ 流れ の回転日数はこの長さで決まる (`workingCapital.ts` 冒頭の実測表)。
+  const kpiMonthCount = new Set(validKpiPeriods).size;
   const fundamentals = summarizeFundamentals(input.kpiActuals);
   const kpi = computeKpiMetrics(fundamentals);
 
@@ -317,13 +320,16 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
           input.balanceSheetStaleAfterMonths ?? BALANCE_SHEET_STALE_AFTER_MONTHS,
         )
       : null,
-    workingCapital: input.balanceSheet && hasKpi
+    // `hasKpi` ではなく**読める期が 1 つ以上**を条件にする —— 期の綴りが読めない控えでは
+    // 流れが何か月分なのか測れないので、回転日数を出してはいけない。
+    workingCapital: input.balanceSheet && kpiMonthCount > 0
       ? computeCashConversionCycle({
           accountsReceivable: input.balanceSheet.accountsReceivable,
           inventory: input.balanceSheet.inventory,
           accountsPayable: input.balanceSheet.accountsPayable,
           revenue: fundamentals.revenue,
           cogs: fundamentals.cogs,
+          periodMonths: kpiMonthCount,
         })
       : null,
     accounting: accountingSummary,

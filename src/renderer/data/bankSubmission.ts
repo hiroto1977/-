@@ -37,6 +37,7 @@ import {
 } from '../../shared/bankFormat';
 import { VERDICT_LABEL, type ManagementScorecard } from '../../shared/managementScorecard';
 import { budgetUnmatchedNote, type BudgetPeriodAlignment } from './budgetVariance';
+import { monthsPerYear, periodDaysForMonths } from './workingCapital';
 import type { BusinessOverview } from './overview';
 import type { CashflowDebtService } from './cashflowDebtService';
 
@@ -401,9 +402,22 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
    * ことも明記する (以前は 0 に倒していたので CCC 0 日が印刷されていた。経緯は
    * `data/balanceSheet.ts` の `BalanceSheet`)。基準日のずれの但し書きと併記する。
    */
+  /**
+   * 回転日数の分母に掛ける**期間の日数**。1 年分の実績なら 365 日、3 か月分なら 91.3 日。
+   * **刷る式の中に実物の日数を入れる** —— 「× 365」と刷ったまま 3 か月分で割ると、
+   * 読み手は式を検算できない (「刷った数字は刷った式を満たす」の規則)。
+   */
+  const periodDayCount = (): number =>
+    wc === null ? 0 : Math.round(periodDaysForMonths(wc.periodMonths) * 10) / 10;
   const workingCapitalCaption = (): string | null => {
     if (wc === null) return '貸借対照表と売上高が揃っていないため算定していません。';
     const notes = [
+      // **何か月分の実績で出した回転日数か。** 溜まり ÷ 流れ の答えは期間の長さで
+      // 決まるので、1 年分でないなら必ず述べる (述べることが無ければ null にするのは
+      // §1 の `periodScopeNote` と同じ規則。1 年分なら式の「× 365 日」が既に語っている)。
+      wc.periodMonths === monthsPerYear()
+        ? null
+        : `回転日数は実績の${periodSpan(input.kpiPeriods, f)}分（${periodDayCount()} 日）で算定しています。1 年分の回転日数ではありません。`,
       wc.missingStocks.length === 0
         ? null
         : `貸借対照表の${wc.missingStocks.join('・')}が未入力のため、該当する回転日数と運転資本は算定していません（0 円としては扱っていません）。`,
@@ -411,13 +425,14 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
     ].filter((n): n is string => n !== null);
     return notes.length === 0 ? null : notes.join(' ');
   };
+  const perDays = `× ${periodDayCount()} 日`;
   sections.push({
     title: '5. 運転資本',
     caption: workingCapitalCaption(),
     rows: [
-      row('売上債権回転日数（DSO）', wc === null ? BLANK : days(wc.dso), '売上債権 ÷ 売上高 × 365'),
-      row('棚卸資産回転日数（DIO）', wc === null ? BLANK : days(wc.dio), '棚卸資産 ÷ 売上原価 × 365'),
-      row('仕入債務回転日数（DPO）', wc === null ? BLANK : days(wc.dpo), '仕入債務 ÷ 売上原価 × 365'),
+      row('売上債権回転日数（DSO）', wc === null ? BLANK : days(wc.dso), `売上債権 ÷ 売上高 ${perDays}`),
+      row('棚卸資産回転日数（DIO）', wc === null ? BLANK : days(wc.dio), `棚卸資産 ÷ 売上原価 ${perDays}`),
+      row('仕入債務回転日数（DPO）', wc === null ? BLANK : days(wc.dpo), `仕入債務 ÷ 売上原価 ${perDays}`),
       row('現金化サイクル（CCC）', wc === null ? BLANK : days(wc.ccc), 'DSO + DIO − DPO'),
       row('運転資本', wc === null ? BLANK : amt(wc.workingCapital), '売上債権 + 棚卸資産 − 仕入債務'),
     ],

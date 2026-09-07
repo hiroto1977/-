@@ -567,7 +567,11 @@ describe('境目の追加検査 (変異検査で残った分岐)', () => {
   });
   it('運転資本・資金繰りの断り書きは入力が揃っていれば付かない', () => {
     const m = buildBankSubmissionSheet(inputWith(overviewWith()));
-    expect(section(m.sections, '5.').caption).toBeNull();
+    // §5 は**実績が 1 か月分**なので、回転日数の基礎を述べる断り書きが付く
+    // (KPI の見本 `KPI` は 2026-04 の 1 件。1 年分の控えでは付かない —— 下の ★)。
+    expect(section(m.sections, '5.').caption).toBe(
+      '回転日数は実績の令和8年4月・1 か月分（30.4 日）で算定しています。1 年分の回転日数ではありません。',
+    );
     expect(section(m.sections, '6.').caption).toBeNull();
     expect(section(m.sections, '7.').caption).toBeNull();
     expect(section(m.sections, '2.').caption).toBeNull();
@@ -804,7 +808,8 @@ describe('基準日が古い書面は、比率が同じ期の数字でないこ�
   it('★ 対照: 基準日が対象期間の中なら断り書きは付かない', () => {
     const m = sheetWithBsAsOf('2026-08-31');
     expect(section(m.sections, '4.').caption).toBeNull();
-    expect(section(m.sections, '5.').caption).toBeNull();
+    // §5 に残るのは回転日数の期間の断りだけ (基準日のずれの文は出ない)。
+    expect(section(m.sections, '5.').caption).not.toContain('基準日');
   });
 
   it('★ 境界: 12 か月ちょうどは古くない、13 か月は古い', () => {
@@ -847,7 +852,7 @@ describe('基準日が古い書面は、比率が同じ期の数字でないこ�
 
   it('★ 対照: 決算期が実績の 1 か月先 (正常) では付かない', () => {
     expect(section(sheetWithBsAsOf('2026-09-30').sections, '4.').caption).toBeNull();
-    expect(section(sheetWithBsAsOf('2026-09-30').sections, '5.').caption).toBeNull();
+    expect(section(sheetWithBsAsOf('2026-09-30').sections, '5.').caption).not.toContain('基準日');
   });
 });
 
@@ -898,10 +903,44 @@ describe('§5 運転資本 — 未入力の欄を名前で述べる', () => {
     expect(value(s, '現金化サイクル（CCC）')).toBe(BLANK);
   });
 
-  it('★ 対照: 埋まった控え (BS) では但し書きが付かず CCC が出る', () => {
+  /**
+   * **回転日数の基礎は「打ち込んだ月数」で決まる。** (2026-09-07)
+   *
+   * §5 は 2026-09-07 まで「× 365」と刷りながら、分母には利用者が打ち込んだ全期の
+   * 合計を入れていた —— 実績 1 か月の控えで DSO 182.5 日 (実は 15.2 日)。
+   * `computeCashConversionCycle` の `days` 引数は最初から在ったのに、
+   * 唯一の呼び手が渡していなかった。
+   */
+  it('★ 1 年分の実績なら期間の断りは付かず、式は「× 365 日」', () => {
+    const year = ['2026-04', '2026-05', '2026-06', '2026-07', '2026-08', '2026-09',
+      '2026-10', '2026-11', '2026-12', '2027-01', '2027-02', '2027-03']
+      .map((period) => ({ ...KPI[0]!, period }));
+    const m = buildBankSubmissionSheet(
+      inputWith(overviewWith({ kpiActuals: year }), DEFAULT_SUBMISSION_SETTINGS, { kpiPeriods: year.map((k) => k.period) }),
+    );
+    const s = section(m.sections, '5.');
+    expect(s.caption).toBeNull();
+    expect(note(s, '売上債権回転日数（DSO）')).toBe('売上債権 ÷ 売上高 × 365 日');
+  });
+
+  it('★ 3 か月分なら月数と日数を述べ、式もその日数で刷る', () => {
+    const q = ['2026-04', '2026-05', '2026-06'].map((period) => ({ ...KPI[0]!, period }));
+    const m = buildBankSubmissionSheet(
+      inputWith(overviewWith({ kpiActuals: q }), DEFAULT_SUBMISSION_SETTINGS, { kpiPeriods: q.map((k) => k.period) }),
+    );
+    const s = section(m.sections, '5.');
+    expect(s.caption).toBe(
+      '回転日数は実績の令和8年4月〜令和8年6月・3 か月分（91.3 日）で算定しています。1 年分の回転日数ではありません。',
+    );
+    // 刷った数字が刷った式を満たす: 3 か月分の売上で割り、91.3 日を掛けている
+    expect(note(s, '棚卸資産回転日数（DIO）')).toBe('棚卸資産 ÷ 売上原価 × 91.3 日');
+    expect(note(s, '仕入債務回転日数（DPO）')).toBe('仕入債務 ÷ 売上原価 × 91.3 日');
+  });
+
+  it('★ 対照: 埋まった控え (BS) では未入力の但し書きが付かず CCC が出る', () => {
     // `BS` は 3 欄すべて埋まっている。上の 508 行の検査と同じ形をここでも押さえる。
     const s = section(buildBankSubmissionSheet(inputWith(overviewWith())).sections, '5.');
-    expect(s.caption).toBeNull();
+    expect(s.caption).not.toContain('未入力');
     expect(value(s, '現金化サイクル（CCC）')).not.toBe(BLANK);
     expect(value(s, '運転資本')).not.toBe(BLANK);
   });

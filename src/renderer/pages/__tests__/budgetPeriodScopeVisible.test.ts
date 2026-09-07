@@ -1,6 +1,7 @@
 /** @vitest-environment jsdom */
 /**
- * 予算実績差異 (BVA) の**突合した期**が画面に出ること。
+ * 期間に依る数字が「どの期間で出したか」を画面に出すこと ——
+ * 予算実績差異 (BVA) の**突合した期**と、運転資金の回転日数の**期間の長さ**。
  *
  * 2026-09-07 まで、達成率は予算の全行と実績の全行を合算して割っていた —— 通期予算
  * (12 か月) と実績 3 か月で 25%、予算 1 か月と実績 12 か月で 1200%、期が 1 つも
@@ -20,6 +21,7 @@ import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../../data/kpiActuals';
 import { KPI_BUDGETS_COLLECTION } from '../../data/budgetVariance';
+import { BALANCE_SHEET_COLLECTION } from '../../data/balanceSheet';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -129,6 +131,33 @@ describe('経営サマリー — 予算実績差異の突合した期', () => {
     expect(alert).toContain('予算 1 か月・実績 1 か月');
     // 直す前は 125% を刷っていた
     expect(text()).not.toContain('125%');
+  });
+});
+
+describe('経営サマリー — 回転日数の期間', () => {
+  const BS = {
+    asOf: '2026-05-31', currentAssets: 5_000_000, cash: 1_000_000,
+    inventory: 1_000_000, accountsReceivable: 2_000_000,
+    fixedAssets: 0, currentLiabilities: 2_000_000, accountsPayable: 1_125_000,
+    fixedLiabilities: 0, netIncome: 0,
+  };
+
+  it('★ 何か月分の実績で回転日数を出したかを画面が述べる', async () => {
+    const store = getRecordStore();
+    await store.insert(BALANCE_SHEET_COLLECTION, BS);
+    await seed([], ['2026-03', '2026-04', '2026-05'].map((m) => at(m, 4_000_000)));
+    await mount('overview');
+    // 3 か月分 → 91.3 日 (直す前は月数に関係なく 365 日で割っていた)
+    expect(text()).toContain('回転日数は実績 3 か月分（91.3 日）で算定しています。');
+  });
+
+  it('★ 対照: 1 年分なら 12 か月分（365 日）と述べる', async () => {
+    const store = getRecordStore();
+    await store.insert(BALANCE_SHEET_COLLECTION, BS);
+    const year = Array.from({ length: 12 }, (_, i) => `2026-${String(i + 1).padStart(2, '0')}`);
+    await seed([], year.map((m) => at(m, 4_000_000)));
+    await mount('overview');
+    expect(text()).toContain('回転日数は実績 12 か月分（365 日）で算定しています。');
   });
 });
 

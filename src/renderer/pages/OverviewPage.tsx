@@ -20,6 +20,7 @@ import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import { KPI_ACTUALS_COLLECTION, monthlyTrendSeries, summarizeFundamentals, type KpiActual } from '../data/kpiActuals';
 import { profitSensitivity, breakEvenDeltaPct, requiredRevenueForTarget, fixedCostReductionImpact, operatingLeverage } from '../data/profitSensitivity';
 import { budgetComparedRangeLabel, budgetScopeSentence, KPI_BUDGETS_COLLECTION } from '../data/budgetVariance';
+import { periodDaysForMonths } from '../data/workingCapital';
 import { BALANCE_SHEET_COLLECTION, balanceSheetOrNull, type BalanceSheet } from '../data/balanceSheet';
 import { MEMBERS_COLLECTION, type Member } from '../data/members';
 import {
@@ -1514,6 +1515,11 @@ export function OverviewPage() {
           {overview.workingCapital && (
             <>
               <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '12px 0 4px' }}>運転資金 (CCC)</div>
+              {/* 回転日数は**期間の長さ**で決まる。何か月分の実績で出したのかを書かないと
+                  1 年分の回転日数として読まれる (`workingCapital.ts` 冒頭の実測表)。 */}
+              <div style={{ fontSize: 11, color: 'var(--text-mute)', margin: '0 0 6px' }}>
+                {`回転日数は実績 ${overview.workingCapital.periodMonths} か月分（${Math.round(periodDaysForMonths(overview.workingCapital.periodMonths) * 10) / 10} 日）で算定しています。`}
+              </div>
               {overview.workingCapital.missingStocks.length > 0 && (
                 <div style={{ fontSize: 12, color: '#f59e0b', margin: '0 0 6px' }}>
                   貸借対照表の{overview.workingCapital.missingStocks.join('・')}が未入力のため、該当する回転日数と運転資本は「—」です (0 円として扱っていません)。

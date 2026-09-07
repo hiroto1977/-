@@ -267,11 +267,16 @@ describe('buildManagementHighlights — 利益トレンド / 生産性 / 運転�
   });
 
   it('warns on a long CCC (> 60 days) and praises a non-positive CCC (運転資金)', () => {
-    // 高い売上債権/棚卸・低い仕入債務 → CCC 長い
+    // 高い売上債権/棚卸・低い仕入債務 → CCC 長い。
+    // **2026-09-07 に見本を作り直した**: 旧見本 (売上債権 40 万・棚卸 30 万) は
+    // 実績 1 か月分を 365 日で割る欠陥のおかげでだけ 60 日を超えていた
+    // (実測の 1 か月では CCC 31.2 日)。期間を正しく数えると鳴らなくなったので、
+    // **本当に長い控え**へ差し替えた: DSO 60.8 + DIO 76 − DPO 3.8 = 133.0 日。
     const long = buildBusinessOverview({
       plan: 'pro', sales: [], kpiActuals: [kpi()], members: [],
-      balanceSheet: { asOf: '2026-05-31', currentAssets: 900_000, inventory: 300_000, accountsReceivable: 400_000, fixedAssets: 0, currentLiabilities: 100_000, accountsPayable: 50_000, fixedLiabilities: 0, netIncome: 0 },
+      balanceSheet: { asOf: '2026-05-31', currentAssets: 3_000_000, inventory: 1_000_000, accountsReceivable: 2_000_000, fixedAssets: 0, currentLiabilities: 100_000, accountsPayable: 50_000, fixedLiabilities: 0, netIncome: 0 },
     });
+    expect(long.workingCapital!.ccc).toBe(133);
     expect(cat(buildManagementHighlights(long), '運転資金')).toMatchObject({ severity: 'warning', message: expect.stringContaining('CCC') });
     // 低い債権/棚卸・高い仕入債務 → CCC <= 0
     const neg = buildBusinessOverview({

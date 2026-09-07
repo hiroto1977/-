@@ -1,5 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
-import { computeCashConversionCycle } from '../workingCapital';
+import {
+  computeCashConversionCycle,
+  monthsPerYear,
+  periodDaysForMonths,
+  yearDays,
+} from '../workingCapital';
 
 describe('computeCashConversionCycle', () => {
   it('computes DSO, DIO, DPO and CCC over a 365-day basis', () => {
@@ -13,6 +18,7 @@ describe('computeCashConversionCycle', () => {
       accountsPayable: 730_000,
       revenue: 7_300_000,
       cogs: 3_650_000,
+      periodMonths: 12,
     });
     expect(c.dso).toBe(50);
     expect(c.dio).toBe(120);
@@ -21,19 +27,20 @@ describe('computeCashConversionCycle', () => {
     expect(c.workingCapital).toBe(1_470_000); // 1,000,000 + 1,200,000 - 730,000
   });
 
-  it('honours a custom period length', () => {
-    // 30-day month: AR 100 / revenue 100 × 30 = 30 日
+  it('★ 期間の月数で日数が決まる (1 か月分の流れは 1 か月分の日数で割る)', () => {
+    // AR 100 / revenue 100 × (1 か月 = 30.4 日) = 30.4 日
     const c = computeCashConversionCycle({
       accountsReceivable: 100, inventory: 0, accountsPayable: 0,
-      revenue: 100, cogs: 100, days: 30,
+      revenue: 100, cogs: 100, periodMonths: 1,
     });
-    expect(c.dso).toBe(30);
+    expect(c.dso).toBe(30.4);
+    expect(c.periodMonths).toBe(1);
   });
 
   it('nulls DSO when revenue is zero and CCC when any component is missing', () => {
     const c = computeCashConversionCycle({
       accountsReceivable: 500, inventory: 0, accountsPayable: 0,
-      revenue: 0, cogs: 1000,
+      revenue: 0, cogs: 1000, periodMonths: 12,
     });
     expect(c.dso).toBeNull();
     expect(c.ccc).toBeNull(); // DSO null → CCC not computable
@@ -43,7 +50,7 @@ describe('computeCashConversionCycle', () => {
   it('nulls DIO/DPO when COGS is zero (service business)', () => {
     const c = computeCashConversionCycle({
       accountsReceivable: 1000, inventory: 0, accountsPayable: 0,
-      revenue: 12000, cogs: 0,
+      revenue: 12000, cogs: 0, periodMonths: 12,
     });
     expect(c.dio).toBeNull();
     expect(c.dpo).toBeNull();
@@ -55,10 +62,74 @@ describe('computeCashConversionCycle', () => {
     // DSO 10, DIO 0, DPO 36.5 → CCC = -26.5
     const c = computeCashConversionCycle({
       accountsReceivable: 100, inventory: 0, accountsPayable: 365,
-      revenue: 3650, cogs: 3650,
+      revenue: 3650, cogs: 3650, periodMonths: 12,
     });
     expect(c.ccc).toBe(-26.5);
     expect(c.workingCapital).toBe(-265);
+  });
+});
+
+/**
+ * **期間の長さは渡してもらう。** (2026-09-07)
+ *
+ * 回転日数 = 溜まり ÷ 流れ × 期間の日数。2026-09-07 まで期間は既定の 365 日で、
+ * 唯一の呼び手は渡していなかった —— 分母には「打ち込んだ全期の合計」が入るのに、
+ * 期間は常に 1 年として割っていた。同じ会社が 1 か月だけ入力すると CCC 273.7 日、
+ * 12 か月入力すると 22.8 日。**直す道具 (`days` 引数) は既に在った。**
+ */
+describe('期間の月数が答えを決める', () => {
+  /** 溜まりは固定・流れは月数に比例させる (同じ経営を、入力した月数だけ変える)。 */
+  const sameBusiness = (months: number) =>
+    computeCashConversionCycle({
+      accountsReceivable: 2_000_000,
+      inventory: 2_000_000,
+      accountsPayable: 1_500_000,
+      revenue: 4_000_000 * months,
+      cogs: 2_000_000 * months,
+      periodMonths: months,
+    });
+
+  it('★ 同じ経営なら、入力した月数が 1 でも 12 でも回転日数は同じ', () => {
+    // 直す前: 1 か月 → CCC 273.7 日 / 12 か月 → 22.8 日 (12 倍)
+    const one = sameBusiness(1);
+    const twelve = sameBusiness(12);
+    expect(twelve.ccc).toBe(22.8);
+    expect(one.ccc).toBe(22.8);
+    expect(one.dso).toBe(twelve.dso);
+    expect(one.dio).toBe(twelve.dio);
+    expect(one.dpo).toBe(twelve.dpo);
+  });
+
+  it('★ 3 か月・6 か月でも同じ (直す前は 91.2 日 / 45.6 日)', () => {
+    expect(sameBusiness(3).ccc).toBe(22.8);
+    expect(sameBusiness(6).ccc).toBe(22.8);
+  });
+
+  it('★ 使った月数を返す (呼び手が数え直さない)', () => {
+    expect(sameBusiness(7).periodMonths).toBe(7);
+  });
+
+  it('★ 期間が測れなければ (0・負・非有限) 回転日数は算定不能', () => {
+    for (const months of [0, -1, Number.NaN, Number.POSITIVE_INFINITY]) {
+      const c = computeCashConversionCycle({
+        accountsReceivable: 100, inventory: 100, accountsPayable: 100,
+        revenue: 1_000, cogs: 1_000, periodMonths: months,
+      });
+      expect(c.dso).toBeNull();
+      expect(c.dio).toBeNull();
+      expect(c.dpo).toBeNull();
+      expect(c.ccc).toBeNull();
+      // 運転資本は期間に依らない額なので、こちらは出す
+      expect(c.workingCapital).toBe(100);
+    }
+  });
+
+  it('★ 月数から日数への換算は 12 か月 = 1 年 (365 日)', () => {
+    expect(yearDays()).toBe(365);
+    expect(monthsPerYear()).toBe(12);
+    expect(periodDaysForMonths(12)).toBe(365);
+    expect(periodDaysForMonths(1)).toBeCloseTo(30.4167, 3);
+    expect(periodDaysForMonths(6)).toBe(182.5);
   });
 });
 
@@ -71,7 +142,7 @@ describe('computeCashConversionCycle', () => {
  * 経緯と実測表は `data/balanceSheet.ts` の `BalanceSheet` に在る。
  */
 describe('computeCashConversionCycle — 未入力の溜まりは算定不能 (0 と混ぜない)', () => {
-  const FLOW = { revenue: 3_650_000, cogs: 3_650_000 } as const;
+  const FLOW = { revenue: 3_650_000, cogs: 3_650_000, periodMonths: 12 } as const;
 
   it('売上債権が未入力なら DSO と CCC は null・欄の名前を返す', () => {
     const c = computeCashConversionCycle({ ...FLOW, inventory: 0, accountsPayable: 0 });
@@ -149,7 +220,7 @@ describe('読み直して測る — module 直下の回転日数ヘルパー', (
     const { computeCashConversionCycle: fresh } = await import('../workingCapital');
     const c = fresh({
       accountsReceivable: 1_000_000, inventory: 1_200_000, accountsPayable: 730_000,
-      revenue: 7_300_000, cogs: 3_650_000,
+      revenue: 7_300_000, cogs: 3_650_000, periodMonths: 12,
     });
     expect(c.dso).toBe(50);
     expect(c.dio).toBe(120);
