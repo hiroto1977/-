@@ -12267,8 +12267,8 @@ repo の作法 (「算定不能な軸は採点しない」パス 28 / 37) は落
 | 生存として出た物 | 手で当てた結果 |
 | --- | --- |
 | `statementEstimateNotes()` の 1 文目 3 断片 (StringLiteral) | **本物** —— 検査が `expect(出力).toContain(statementEstimateNotes()[i])` と**同じ出所を両辺に置いていた**ので、文が空文字でも `toContain('')` が真になり通っていた |
-| `financialStatements.ts` の `r0` / `businessFinancials.ts` の `clamp`・`r0` | 偽 (手で当てると golden が落ちる) |
-| `financialCsv.ts` の `COLUMNS` 53 件 | 偽 (手で当てると見出しの golden が落ちる) |
+| `financialStatements.ts` の `r0` / `businessFinancials.ts` の `clamp`・`r0` | **絞った実行の産物** (下の訂正) |
+| `financialCsv.ts` の `COLUMNS` 53 件 | **絞った実行の産物** (下の訂正) |
 
 **直し**: 断り書きの中身を**綴りで**別に留めた
 (`statementEstimateNotes — 断り書きの中身` 4 件。1 文目・2 文目のそれぞれの断片と、
@@ -12278,6 +12278,31 @@ repo の作法 (「算定不能な軸は採点しない」パス 28 / 37) は落
 
 **教訓**: 「画面と書き出しが同じ出所を読む」ことを検査すると、**その出所が空でも
 両辺が一致してしまう**。一致の検査と、中身が在ることの検査は別に要る。
+
+#### 訂正 —— 「偽の生存」の**理由**が間違っていた (同日中に自分で見つけた)
+
+上の表に最初「手で当てると golden が落ちるので偽」と書いたが、**その論法は成り立たない**。
+静的変異体は module の読み込み時に評価済みなので、Stryker の切替が**そもそも届かない** ——
+だから「手で書き換えれば検査が落ちる」ことと「Stryker では生存する」ことは**両立する**
+(`stryker.config.json` の `_commentIgnoreStatic` が oauth.ts の 103 件で書いている形)。
+
+正しい理由は、**全実行の記録が残っていた**: `docs/QUALITY.md` (2026-09-01 の
+`npm run quality:report`・全 27,447 変異体) では
+
+| file | killed | survived | no-cov | **ignored** |
+| --- | ---: | ---: | ---: | ---: |
+| `financialCsv.ts` | 27 | **0** | 0 | **52** |
+| `financialStatements.ts` | 378 | **0** | 0 | 2 |
+| `businessFinancials.ts` | 40 | **0** | 0 | 2 |
+
+`financialCsv.ts` には `Stryker disable` が **1 つも無い**ので、この 52 は全部
+`ignoreStatic: true` が落とした静的変異体である。**全実行では生存 0 で 100%**。
+絞った実行 (`--mutate`) が「生存」と報告したのは、incremental の記録から
+それらを「覆われている」と読んだためで、これは絞った実行の既知の産物である。
+
+**結論 (借金ではない) は変わらないが、根拠は「手で当てた」ではなく「全実行の記録」である。**
+守っている物を手で壊す対照は**検査の生死**を測る道具であって、**変異検査の裁定**の
+反証にはならない —— 2 つは別のことを測っている。
 
 ---
 
@@ -12414,3 +12439,66 @@ stale: monthsBehind > staleAfterMonths      // 古い側だけ
 | `bankSubmission.ts` の `periodScopeNote` | 一致 / 期中 / 不一致 の 3 枝で全域 |
 
 `balanceSheetFreshness` だけが片側だった。
+
+---
+
+## パス 38 の続き (2026-09-07) — 「測っていない範囲」の census が、全実行を回さずに取れた
+
+パス 38 は「`mutate` 台帳全体で、覆われた静的変異体を数える」を残していた
+(全実行は約 5 時間)。**回さずに数える道が在った** —— `docs/QUALITY.md` は
+`npm run quality:report` が全実行の JSON から生成する表で、ファイルごとに
+`killed / survived / no-cov / **ignored** / invalid` を持っている
+(2026-09-01 の記録・全 27,447 変異体・生存 0・スコア 100.00%)。
+
+`ignored` は **2 種類の混合**である:
+
+1. `Stryker disable` で「測らない」と宣言した分 —— `npm run lint:mutation-scope` が
+   台帳で押さえている (広い disable と、理由の書かれていない pragma を落とす)。
+2. `ignoreStatic: true` が落とした**静的変異体** —— **どのゲートも見ていない**。
+
+分けるのは簡単で、**`Stryker disable` を 1 つも持たないファイルの `ignored` は
+全部が 2 の静的変異体**である。実測:
+
+| | ファイル数 | ignored 合計 |
+| --- | ---: | ---: |
+| `Stryker disable` **0 個** (= 全部が静的) | 119 | **2,725** |
+| pragma 有り (pragma と静的の混在) | 127 | 5,356 |
+| 合計 | 246 | **8,081** |
+
+pragma 0 個で `ignored` の多い上位:
+
+| ignored | file |
+| ---: | --- |
+| 353 | `src/renderer/data/businessTriage.ts` |
+| 316 | `src/renderer/data/overviewOverrides.ts` |
+| 278 | `src/renderer/data/statementAccounts.ts` |
+| 198 | `src/renderer/data/docLegalStatus.ts` |
+| 176 | `src/shared/connectors/connectorCatalog.ts` |
+| 166 | `src/shared/securityRange.ts` |
+| 135 | `src/renderer/data/manualData.ts` |
+| 125 | `src/renderer/data/businessAxonometric.ts` |
+| 110 | `src/main/clients/funding.ts` |
+| 97 | `src/renderer/data/counselingResearch.ts` |
+| 92 | `src/renderer/data/eligibility.ts` |
+| 89 | `src/renderer/data/selfCareLibrary.ts` |
+| 76 | `src/shared/credentialUse.ts` |
+| 76 | `src/shared/dataOrigin.ts` |
+| 52 | `src/renderer/data/financialCsv.ts` |
+
+**どれも定数表である** (仕分けの表・上書きの定義・科目の一覧・書類の法的地位・
+コネクタの目録・権限の範囲・資格情報の用途)。`stryker.config.json` の
+`_commentIgnoreStatic` が書いているとおり、これらは「構造的に殺せない」のではなく
+**読み直せば殺せる** (`vi.resetModules()` + 動的 `await import()`。oauth.ts の
+`OAUTH_CONFIGS` は 103 件がこの形で 70.05% → 92.13% に上がった)。
+
+### まだ空いていること
+
+- **ゲートの死角**: `lint:mutation-scope` は 1 の pragma しか見ない。
+  2 の静的 2,725 件は**どのゲートにも載っていない** —— 「100%」という報告の外側に
+  定数表 119 ファイル分が在ることが、数字からは見えない。台帳にする価値がある
+  (`docs/QUALITY.md` の表から機械で出せるので、走査は安い)。
+- **pragma 有り 127 ファイルの内訳**は、この方法では分けられない。全実行の JSON の
+  `statusReason` (`Static mutant (and 'ignoreStatic' is enabled)`) を読めば正確に
+  分かるので、次に全実行を回すときに `scripts/quality-report.cjs` へ列を 1 本足すのが安い。
+- 定数表を読み直しで殺すかどうかは**分量の判断** (2,725 件)。まず上位 5 ファイルだけ
+  やって効き目を測るのが現実的。
