@@ -34,7 +34,7 @@ import { ratiosToCsv, statementToCsv } from '../data/financialCsv';
 import { analyzeMarginTrend, type MarginTrend } from '../data/financialTrend';
 import { buildFinancialReportMarkdown } from '../data/financialReport';
 import { consolidationScope, consolidationLabel } from '../data/consolidation';
-import { buildIncomeStatement, buildBalanceSheet, buildCashflowStatement, buildVariableCostingStatement, buildComprehensiveIncome, buildEquityChangeStatement, buildQuarterlyStatement, buildNotesStatement, buildSupplementarySchedule, buildAccountBreakdown, sumFinancialInputs, type StatementLine } from '../data/financialStatements';
+import { buildIncomeStatement, buildBalanceSheet, buildCashflowStatement, buildVariableCostingStatement, buildComprehensiveIncome, buildEquityChangeStatement, buildQuarterlyStatement, buildNotesStatement, buildSupplementarySchedule, buildAccountBreakdown, statementEstimateNotes, sumFinancialInputs, type StatementLine } from '../data/financialStatements';
 import { localIsoDate } from '../../shared/localDate';
 
 export interface FinancialUnit {
@@ -214,6 +214,32 @@ const cardStyle: CSSProperties = {
 };
 
 // --- 財務三表 (PL/BS/CF) ------------------------------------------------
+
+/** 諸表タブの識別子。 */
+type StatementTab = 'pl' | 'bs' | 'cf' | 'var' | 'ci' | 'soce' | 'quarter' | 'notes' | 'suppl' | 'breakdown';
+
+/**
+ * 諸表タブの見出し。**画面のボタンと書き出す CSV の「対象」が同じ物を読む** ——
+ * 2 か所に書くと、書き出したファイルが画面と違う書類名を名乗る形になる。
+ * 関数にしてあるのは module 直下の const が変異検査の届かない静的な値になるため。
+ */
+function statementTabs(): readonly (readonly [StatementTab, string])[] {
+  return [
+    ['pl', '損益計算書'], ['bs', '貸借対照表'], ['cf', 'キャッシュフロー計算書'],
+    ['var', '変動損益計算書'], ['ci', '包括利益計算書'], ['soce', '株主資本等変動計算書'],
+    ['quarter', '四半期財務諸表'], ['notes', '個別注記表'], ['suppl', '附属明細書'],
+    ['breakdown', '勘定科目内訳明細書'],
+  ];
+}
+
+/** タブ 1 つの見出し。`statementTabs()` は全域なので必ず見つかる。 */
+function statementTabLabel(tab: StatementTab): string {
+  const hit = statementTabs().find(([k]) => k === tab);
+  // 見つからない道は型で塞がれているが、`find` の型は undefined を含む。
+  // Stryker disable next-line ConditionalExpression: StatementTab は statementTabs() の全域なので実行時は常に真 (型検査のために残す)
+  return hit ? hit[1] : tab;
+}
+
 function StatementTable({ lines }: { lines: readonly StatementLine[] }) {
   return (
     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
@@ -671,7 +697,7 @@ export function FinancialAnalysis({
 }) {
   const [selectedId, setSelectedId] = useState(units[0]?.id ?? '');
   const [barKey, setBarKey] = useState<keyof FinancialRatios>('operatingMarginPct');
-  const [stmtTab, setStmtTab] = useState<'pl' | 'bs' | 'cf' | 'var' | 'ci' | 'soce' | 'quarter' | 'notes' | 'suppl' | 'breakdown'>('pl');
+  const [stmtTab, setStmtTab] = useState<StatementTab>('pl');
   const [consolidated, setConsolidated] = useState(false);
 
   const perUnit = useMemo(
@@ -735,7 +761,15 @@ export function FinancialAnalysis({
   }
   const downloadCsv = (csv: string, name: string) => downloadBlob('﻿' + csv, 'text/csv;charset=utf-8', name);
   function onExportCsv() {
-    downloadCsv(ratiosToCsv(perUnit.map((p) => ({ label: p.unit.label, ratios: p.ratios }))), `financial-ratios-${localIsoDate()}.csv`);
+    // 出所は**中に**書く。ファイル名は改名や転送で消えるが、行は残る。
+    const samples = perUnit.filter((p) => p.unit.sample === true).length;
+    downloadCsv(
+      ratiosToCsv(perUnit.map((p) => ({ label: p.unit.label, ratios: p.ratios })), {
+        scope: `全事業 ${perUnit.length} 件（うちサンプル ${samples} 件）`,
+        notes: statementEstimateNotes(),
+      }),
+      `financial-ratios-${localIsoDate()}.csv`,
+    );
   }
   function onExportReport() {
     const md = buildFinancialReportMarkdown({ label: selected!.unit.label, ratios: selected!.ratios, diagnosis, trend, ordinaryProfit: selected!.fin.ordinaryProfit, corporateTaxRates });
@@ -759,7 +793,10 @@ export function FinancialAnalysis({
   function onExportStatement() {
     // 中身がサンプルの合算なら、ファイル名にもそう書く。手元に残った CSV は文脈を失う。
     const name = consolidated ? (scope.isSample ? 'consolidated-sample' : 'consolidated-own') : selected!.unit.id;
-    downloadCsv(statementToCsv(currentStatementLines()), `statement-${stmtTab}-${name}-${localIsoDate()}.csv`);
+    downloadCsv(
+      statementToCsv(currentStatementLines(), { scope: `${stmtLabel}・${statementTabLabel(stmtTab)}`, notes: statementEstimateNotes() }),
+      `statement-${stmtTab}-${name}-${localIsoDate()}.csv`,
+    );
   }
 
   return (
@@ -831,7 +868,7 @@ export function FinancialAnalysis({
       <div style={cardStyle}>
         <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 10, flexWrap: 'wrap' }}>
           <div style={{ fontSize: 13, fontWeight: 700, marginRight: 6 }}>📑 財務諸表（{stmtLabel}・年次概算）</div>
-          {([['pl', '損益計算書'], ['bs', '貸借対照表'], ['cf', 'キャッシュフロー計算書'], ['var', '変動損益計算書'], ['ci', '包括利益計算書'], ['soce', '株主資本等変動計算書'], ['quarter', '四半期財務諸表'], ['notes', '個別注記表'], ['suppl', '附属明細書'], ['breakdown', '勘定科目内訳明細書']] as const).map(([k, label]) => (
+          {statementTabs().map(([k, label]) => (
             <button
               key={k}
               onClick={() => setStmtTab(k)}
@@ -869,13 +906,14 @@ export function FinancialAnalysis({
         {stmtTab === 'notes' && <StatementTable lines={buildNotesStatement(stmtFin)} />}
         {stmtTab === 'suppl' && <StatementTable lines={buildSupplementarySchedule(stmtFin)} />}
         {stmtTab === 'breakdown' && <StatementTable lines={buildAccountBreakdown(stmtFin)} />}
+        {/* 断り書きは書き出す CSV と**同じ出所**から刷る (別々に持つと片方が腐る)。 */}
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8 }}>
-          ※ 諸表・指標・チャートは同じ概算財務データに連動。CFは簡易間接法（営業=純利益+減価償却・投資/財務は概算）。包括利益のOCI・株主資本変動の配当はデータ無しのため0/概算。四半期は月次履歴を3ヶ月集計、注記/附属明細/勘定科目内訳はテンプレート+概算値。連結は内部取引消去なしの単純合算。
+          {statementEstimateNotes()[0]}
         </div>
       </div>
 
       <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>
-        ※ 事業別の貸借対照表データが無いため、各事業の BS / CF は売上・収益性から概算生成しています（自己資本比率は収益性で変動）。概算であり財務助言ではありません。
+        {statementEstimateNotes()[1]}
       </div>
       {/*
         運転資本の 3 軸は**置き方の性質**であって事業の性質ではない。

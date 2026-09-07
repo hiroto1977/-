@@ -9,6 +9,7 @@
  */
 
 import type { FinancialInputs } from './financialRatios';
+import { shortTermDebtPortion, shortTermDebtShare } from './businessFinancials';
 
 export interface StatementLine {
   readonly label: string;
@@ -23,6 +24,76 @@ export interface StatementLine {
 }
 
 const r0 = (n: number) => Math.round(n);
+
+/**
+ * 諸表に添える断り書き。**画面と書き出しが同じ物を読む。**
+ *
+ * ## なぜ関数で公開するか (2026-09-07)
+ *
+ * 実測: 財務分析の書き出しは 3 本ある —— Markdown レポート・指標 CSV・諸表 CSV。
+ * Markdown は「※ 本レポートは概算データに基づく一般情報であり、財務助言では
+ * ありません。」を**中に**持ち、`managementReport.ts` の md も同様に持っていた。
+ * ところが **CSV 2 本はどちらも 1 行も持っていなかった**。
+ *
+ * 諸表 CSV の中身は `businessFinancials.ts` が月次 KPI から**丸ごと組み立てた**
+ * 概算で、貸借対照表の現預金・売上債権・棚卸資産・仕入債務・短期借入金・
+ * 長期借入金は**どの画面でも入力されていない**。画面には「概算 BS/CF」「年次概算」
+ * 「事業別の貸借対照表データが無いため…概算生成しています」と 3 か所に出ているが、
+ * `statement-bs-<事業>-2026-09-07.csv` を開いた人 (会計事務所・金融機関) には
+ * 「項目, 金額」の 16 行しか見えない —— **会社の貸借対照表として読める。**
+ *
+ * 同じ書き出し関数のコメントが既に「手元に残った CSV は文脈を失う」と書いて
+ * サンプルか実績かをファイル名に入れているのに、概算そのものの断りは
+ * 落ちていた (しかもファイル名は改名で消える)。
+ */
+export function statementEstimateNotes(): readonly string[] {
+  return [
+    '※ 諸表・指標・チャートは同じ概算財務データに連動。CFは簡易間接法（営業=純利益+減価償却・投資/財務は概算）。'
+      + '包括利益のOCI・株主資本変動の配当はデータ無しのため0/概算。四半期は月次履歴を3ヶ月集計、'
+      + '注記/附属明細/勘定科目内訳はテンプレート+概算値。連結は内部取引消去なしの単純合算。',
+    '※ 事業別の貸借対照表データが無いため、各事業の BS / CF は売上・収益性から概算生成しています'
+      + '（自己資本比率は収益性で変動）。概算であり財務助言ではありません。',
+  ];
+}
+
+/**
+ * 短期借入金の行ラベル。**割合の数字は計算と同じ出所から作る** ——
+ * 「30%」を文字列に写すと、`shortTermDebtShare()` を動かしたときに
+ * 画面が古い割合で説明する形になる (`docs/ARCHITECTURE.md` の
+ * 「画面が刷る数字と計算に使う数字の出所」)。
+ */
+function shortTermDebtLabel(): string {
+  return `短期借入金（流動負債の${shortTermDebtShare() * 100}%と仮定）`;
+}
+
+/** 長期借入金の行ラベル。有利子負債から短期借入相当を差し引いた残り。 */
+function longTermDebtLabel(): string {
+  return '長期借入金（有利子負債 − 短期借入金）';
+}
+
+/**
+ * 有利子負債を短期借入金と長期借入金に**分ける** (合計は必ず有利子負債と一致)。
+ *
+ * 3 つの書類 (貸借対照表・附属明細書・勘定科目内訳明細書) が同じ数を出すために
+ * 1 か所に置く。2026-09-07 まで 3 か所に同じ 2 行が書かれていた。
+ *
+ * ## なぜ短期側に上限を掛けるか
+ *
+ * 短期借入相当は流動負債の割合 (`shortTermDebtShare()`) から置くので、
+ * **有利子負債より大きくなりうる** (買掛金が厚く借入が薄い会社の形)。
+ * その場合に素直に `短期 + max(0, 有利子 − 短期)` とすると、
+ * 附属明細書の「有利子負債 合計」が 個別注記表の「有利子負債の額」を上回る ——
+ * **同じ画面から続けて書き出せる 2 つの書類が、同じ会社の借入額を別々に主張する。**
+ * 上限を掛けると和は常に有利子負債になり、二書類は一致する。
+ *
+ * 今の概算 (`businessFinancials.ts`) では有利子負債 = 固定負債×0.7 + この短期分
+ * なので上限に当たらない。当たらないからといって置かないと、入力の出所が
+ * 増えた日に黙って食い違う (`financialStatements.test.ts` が両方の枝を留めている)。
+ */
+function splitInterestBearingDebt(f: FinancialInputs): { shortTermDebt: number; longTermDebt: number } {
+  const shortTermDebt = Math.min(r0(shortTermDebtPortion(f.currentLiabilities)), f.interestBearingDebt);
+  return { shortTermDebt, longTermDebt: Math.max(0, f.interestBearingDebt - shortTermDebt) };
+}
 
 /** 損益計算書 (PL)。 */
 export function buildIncomeStatement(f: FinancialInputs): StatementLine[] {
@@ -52,9 +123,8 @@ export function buildBalanceSheet(f: FinancialInputs): {
   readonly liabilitiesEquity: StatementLine[];
 } {
   const cash = Math.max(0, f.currentAssets - f.accountsReceivable - f.inventory);
-  const shortTermDebt = r0(f.currentLiabilities * 0.3);
+  const { shortTermDebt, longTermDebt } = splitInterestBearingDebt(f);
   const otherCurrentLiab = Math.max(0, f.currentLiabilities - f.accountsPayable - shortTermDebt);
-  const longTermDebt = Math.max(0, f.interestBearingDebt - shortTermDebt);
   const otherFixedLiab = Math.max(0, f.fixedLiabilities - longTermDebt);
   const totalLiabilities = f.currentLiabilities + f.fixedLiabilities;
   return {
@@ -69,10 +139,10 @@ export function buildBalanceSheet(f: FinancialInputs): {
     liabilitiesEquity: [
       { label: '流動負債', amount: f.currentLiabilities, emphasis: true },
       { label: '仕入債務', amount: f.accountsPayable, indent: 1 },
-      { label: '短期借入金', amount: shortTermDebt, indent: 1 },
+      { label: shortTermDebtLabel(), amount: shortTermDebt, indent: 1 },
       { label: '（その他流動負債）', amount: otherCurrentLiab, indent: 1 },
       { label: '固定負債', amount: f.fixedLiabilities, emphasis: true },
-      { label: '長期借入金', amount: longTermDebt, indent: 1 },
+      { label: longTermDebtLabel(), amount: longTermDebt, indent: 1 },
       { label: '（その他固定負債）', amount: otherFixedLiab, indent: 1 },
       { label: '負債合計', amount: totalLiabilities, emphasis: true },
       { label: '純資産（自己資本）', amount: f.equity, emphasis: true },
@@ -199,16 +269,15 @@ export function buildNotesStatement(f: FinancialInputs): StatementLine[] {
 // --- 附属明細書 (固定資産・借入金等の明細) ------------------------------
 /** 附属明細書。有形固定資産及び減価償却の明細 + 借入金等明細。 */
 export function buildSupplementarySchedule(f: FinancialInputs): StatementLine[] {
-  const shortTermDebt = r0(f.currentLiabilities * 0.3);
-  const longTermDebt = Math.max(0, f.interestBearingDebt - shortTermDebt);
+  const { shortTermDebt, longTermDebt } = splitInterestBearingDebt(f);
   return [
     { label: '① 有形固定資産及び減価償却累計額の明細', amount: null, emphasis: true },
     { label: '有形固定資産（期末残高）', amount: f.fixedAssets, indent: 1 },
     { label: '当期減価償却費', amount: f.depreciation, indent: 1 },
     { label: '減価償却累計額（概算）', amount: r0(f.depreciation * 3), indent: 1 },
     { label: '② 借入金等明細', amount: null, emphasis: true },
-    { label: '短期借入金', amount: shortTermDebt, indent: 1 },
-    { label: '長期借入金', amount: longTermDebt, indent: 1 },
+    { label: shortTermDebtLabel(), amount: shortTermDebt, indent: 1 },
+    { label: longTermDebtLabel(), amount: longTermDebt, indent: 1 },
     { label: '有利子負債 合計', amount: shortTermDebt + longTermDebt, indent: 1 },
     { label: '③ 引当金の明細', amount: null, emphasis: true },
     { label: '引当金（データ無しのため 0 と仮定）', amount: 0, indent: 1 },
@@ -219,8 +288,7 @@ export function buildSupplementarySchedule(f: FinancialInputs): StatementLine[] 
 /** 勘定科目内訳明細書。現預金・売掛金・買掛金・借入金など主要勘定の内訳。 */
 export function buildAccountBreakdown(f: FinancialInputs): StatementLine[] {
   const cash = Math.max(0, f.currentAssets - f.accountsReceivable - f.inventory);
-  const shortTermDebt = r0(f.currentLiabilities * 0.3);
-  const longTermDebt = Math.max(0, f.interestBearingDebt - shortTermDebt);
+  const { shortTermDebt, longTermDebt } = splitInterestBearingDebt(f);
   return [
     { label: '現預金及び預貯金の内訳', amount: null, emphasis: true },
     { label: '現預金（概算）', amount: cash, indent: 1 },
@@ -231,8 +299,8 @@ export function buildAccountBreakdown(f: FinancialInputs): StatementLine[] {
     { label: '買掛金（仕入債務）の内訳', amount: null, emphasis: true },
     { label: '買掛金 期末残高', amount: f.accountsPayable, indent: 1 },
     { label: '借入金の内訳', amount: null, emphasis: true },
-    { label: '短期借入金', amount: shortTermDebt, indent: 1 },
-    { label: '長期借入金', amount: longTermDebt, indent: 1 },
+    { label: shortTermDebtLabel(), amount: shortTermDebt, indent: 1 },
+    { label: longTermDebtLabel(), amount: longTermDebt, indent: 1 },
   ];
 }
 

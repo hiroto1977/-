@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { deriveBusinessFinancials } from '../businessFinancials';
+import { deriveBusinessFinancials, shortTermDebtPortion, shortTermDebtShare } from '../businessFinancials';
 import { computeFinancialRatios, radarAxes } from '../financialRatios';
 
 const KPI = { revenue: 1_000_000, variableCost: 400_000, fixedCost: 300_000, profit: 200_000, profitMargin: 20 };
@@ -146,6 +146,44 @@ describe('概算の置き方から決まる定数 — 事業に依らない 3 �
       const axis = axes.find((a) => a.key === key);
       expect(axis, key).toBeDefined();
       expect(typeof axis!.score, key).toBe('number');
+    }
+  });
+});
+
+/**
+ * 短期借入相当の割合 —— **概算 BS と諸表が同じ 1 つを読む。**
+ *
+ * 2026-09-07 まで `0.3` は `businessFinancials.ts` (有利子負債の内訳) と
+ * `financialStatements.ts` (短期/長期の切り分け ×3) に別々のリテラルで
+ * 4 回書かれていた。片方を動かすと 附属明細書の「有利子負債 合計」と
+ * 個別注記表の「有利子負債の額」が黙って食い違う。
+ */
+describe('shortTermDebtShare / shortTermDebtPortion', () => {
+  it('割合は 0 と 1 の間の実数 (出荷値 0.3)', () => {
+    expect(shortTermDebtShare()).toBe(0.3);
+    expect(shortTermDebtShare()).toBeGreaterThan(0);
+    expect(shortTermDebtShare()).toBeLessThan(1);
+  });
+
+  it('額は割合を掛けただけ (丸めない — 呼び手が丸める)', () => {
+    expect(shortTermDebtPortion(1000)).toBe(300);
+    expect(shortTermDebtPortion(0)).toBe(0);
+    // 丸めていないことの標本: 1 円未満が残る。
+    expect(shortTermDebtPortion(1)).toBe(shortTermDebtShare());
+    expect(Number.isInteger(shortTermDebtPortion(1))).toBe(false);
+  });
+
+  it('★ 概算 BS の有利子負債は「固定負債×0.7 + この短期分」で組まれている', () => {
+    for (const revenue of [250_000, 1_000_000, 9_999_999]) {
+      const f = deriveBusinessFinancials({
+        revenue, variableCost: Math.round(revenue * 0.6), fixedCost: Math.round(revenue * 0.25),
+        profit: Math.round(revenue * 0.07), profitMargin: 7,
+      });
+      expect(f.interestBearingDebt).toBe(
+        Math.round(f.fixedLiabilities * 0.7 + shortTermDebtPortion(f.currentLiabilities)),
+      );
+      // 諸表側が切り出す短期分は、必ず有利子負債の内数に収まっている。
+      expect(shortTermDebtPortion(f.currentLiabilities)).toBeLessThanOrEqual(f.interestBearingDebt);
     }
   });
 });
