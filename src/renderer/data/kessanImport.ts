@@ -192,7 +192,12 @@ export function buildKessanImport(input: KessanImportInput): KessanImportResult 
     amount('otherFixedAsset', bs.fixedAssets, bsSource);
     notes.push('固定資産は内訳が無いのでその他の固定資産に置いた。建物・機械装置・土地などへ振り分け、減価償却累計額を入れること。');
     amount('accountsPayable', payable, bsSource);
-    const debt = bs.interestBearingDebt ?? 0;
+    // **有利子負債も同じ扱い。** 未入力を黙って 0 にすると、出来上がった貸借対照表は
+    // 「借入金ゼロ」を断言する —— しかも `interestBearingDebt` の入力欄はどの画面にも
+    // 無い (実測 2026-09-07・`data/balanceSheet.ts` の申し送り) ので、画面から入れた
+    // 利用者の控えでは**常に**未入力である。下の分け方の注記は `debt > 0` のときだけで
+    // よい (分け方の説明なので) が、**0 に倒したこと自体は必ず残す**。
+    const debt = inner(bs.interestBearingDebt, '有利子負債', '借入金');
     const longTerm = Math.min(debt, bs.fixedLiabilities);
     const shortTerm = debt - longTerm;
     amount('longTermDebt', longTerm, bsSource);

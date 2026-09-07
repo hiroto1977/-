@@ -348,3 +348,37 @@ describe('読み直して測る — 期の綴りと科目名', () => {
     expect(r.rows.every((x) => typeof x.label === 'string' && x.label.length > 0)).toBe(true);
   });
 });
+
+/**
+ * **未入力の有利子負債は「借入金ゼロ」を黙って断言しない。** (2026-09-07)
+ *
+ * `interestBearingDebt` の入力欄は**どの画面にも無い** (実測 2026-09-07) ので、
+ * 画面から入れた控えでは常に未入力になる。0 に倒したことを注記に残さないと、
+ * 出来上がった貸借対照表は**どの会社でも「借入金ゼロ」**を断言する。
+ * パス 37 で内数 4 欄を直したときに**ここだけ `?? 0` のままにしていた**。
+ */
+describe('未入力の有利子負債 — 0 に倒したことを注記に残す', () => {
+  it('★ 未入力なら注記が出て、借入金は 0 で積まれる', () => {
+    const r = build({ balanceSheet: { ...BS, interestBearingDebt: undefined } });
+    expect(r.notes).toContain('貸借対照表に有利子負債が無いので借入金は 0 とした。');
+    expect(valueOf(r, 'longTermDebt')).toBe('0');
+    expect(valueOf(r, 'shortTermDebt')).toBe('0');
+    // 分け方の注記は「分ける物が在る」ときだけ。
+    expect(r.notes.some((n) => n.startsWith('有利子負債は固定負債に収まる分を'))).toBe(false);
+    expect(difference(r.values)).toBe(0);
+  });
+
+  it('★ 対照: 実測の 0 なら注記は出ない (未入力と実測ゼロを取り違えない)', () => {
+    const r = build({ balanceSheet: { ...BS, interestBearingDebt: 0 } });
+    expect(r.notes.some((n) => n.startsWith('貸借対照表に有利子負債が無いので'))).toBe(false);
+    expect(valueOf(r, 'longTermDebt')).toBe('0');
+    expect(difference(r.values)).toBe(0);
+  });
+
+  it('対照: 入力が在れば従来どおり分け方の注記が出る', () => {
+    const r = build({ balanceSheet: { ...BS, interestBearingDebt: 2_000_000 } });
+    expect(r.notes.some((n) => n.startsWith('貸借対照表に有利子負債が無いので'))).toBe(false);
+    expect(r.notes.some((n) => n.startsWith('有利子負債は固定負債に収まる分を'))).toBe(true);
+    expect(difference(r.values)).toBe(0);
+  });
+});
