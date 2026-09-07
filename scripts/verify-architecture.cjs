@@ -383,6 +383,62 @@ const METRICS = [
     },
   },
   {
+    /*
+     * **§3.3 の見出しの「N ホスト」。**
+     *
+     * 2026-09-07 実測: 同じ事実に 4 つの数字が並んでいた ——
+     * 指標表が「14 + ローカル 1」(出典は §4.3 と書いてあったが、あちらは
+     * Ollama の CVE 対応表で、egress マトリクスは §3.3)、§3.3 の見出しが 26、
+     * ゲートの実測が 29。ゲートが見ていたのは「src/main の字面 ⊆ 表」の
+     * **包含だけ**で、要約の数は誰も見ていない。
+     *
+     * 表に 1 行足しても見出しは動かないので、**「下記以外への接続は存在しない」
+     * という絶対の否定を支える数が、静かにずれる**。
+     */
+    name: 'egress host count (§3.3 heading)',
+    docPattern: /### 3\.3 ネットワーク egress マトリクス \((\d+) ホスト/,
+    compute: () => {
+      const doc = readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md'));
+      if (doc === null) return null;
+      const n = documentedEgressHosts(doc).size;
+      return n === 0 ? null : n;
+    },
+  },
+  {
+    /** 指標表の側。見出しと同じ解析から出すので、2 つが揃っていないと落ちる。 */
+    name: 'egress host count (metrics table)',
+    docPattern: /外部接続先ホスト \| (\d+) /,
+    compute: () => {
+      const doc = readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md'));
+      if (doc === null) return null;
+      const n = documentedEgressHosts(doc).size;
+      return n === 0 ? null : n;
+    },
+  },
+  {
+    /*
+     * **不変条件の数。** 見出しの「N 個」・指標表の数・実際の行数の 3 つが
+     * 揃っているか。2026-09-07 実測では表が 1〜16 まで番号を振っているのに、
+     * 見出しと指標表はどちらも 15 のままだった (#16 を足した人が数を直していない)。
+     * 数そのものが「CI が何件を強制しているか」の主張なので、ずれたままにしない。
+     */
+    name: 'invariant count (§8.1 heading)',
+    docPattern: /### 8\.1 不変条件 (\d+) 個/,
+    compute: () => {
+      const doc = readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md'));
+      return doc === null ? null : invariantRowCount(doc);
+    },
+  },
+  {
+    /** 指標表の側。§8.1 の行数から出す。 */
+    name: 'invariant count (metrics table)',
+    docPattern: /不変条件 \(CI で fail-on-violation\) \| (\d+) /,
+    compute: () => {
+      const doc = readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md'));
+      return doc === null ? null : invariantRowCount(doc);
+    },
+  },
+  {
     name: 'service count',
     docPattern: /サービス数 \| (\d+) /,
     compute: () => {
@@ -1187,10 +1243,18 @@ const EGRESS_NOT_FETCHED = {
   'attacker.example': '検査の標本 (送り先を絞っていることを確かめるための偽ホスト)',
 };
 
-function verifyEgressHosts(archText) {
-  const failures = [];
+/**
+ * §3.3 の Host 欄に載っている宛先の集合。
+ *
+ * **egress の照合と「何件あるか」の指標が同じ 1 つの解析を使う。** 2026-09-07 に
+ * 数え方を 2 つ持っていたせいで、同じ事実に 4 つの数字が並んでいた:
+ * 指標表が 14 + ローカル 1、§3.3 の見出しが 26、ゲートの実測が 29。
+ * 数を出す場所を分けると、必ずどれかが古くなる。
+ */
+function documentedEgressHosts(archText) {
   const lines = archText.split('\n');
   const start = lines.findIndex((l) => l.startsWith('### 3.3 ネットワーク egress'));
+  if (start < 0) return new Set();
   let end = start + 1;
   while (end < lines.length && !lines[end].startsWith('### ')) end += 1;
   const documented = new Set();
@@ -1201,6 +1265,34 @@ function verifyEgressHosts(archText) {
     for (const m of host.matchAll(/`\*?\.?([A-Za-z0-9.-]+)(?::\d+)?`/g)) documented.add(m[1]);
     for (const m of host.matchAll(/\*\.([A-Za-z0-9.-]+)/g)) documented.add(m[1]);
   }
+  return documented;
+}
+
+/**
+ * §8.1 の不変条件の行数 (行頭の番号で数える)。
+ *
+ * 見出しの「N 個」と指標表の数と**実際の行数**の 3 つが揃っているかを見るため。
+ * 2026-09-07 実測では 16 行あるのに両方 15 と書いてあった (#16 を足した人が
+ * どちらの数も直していない)。
+ */
+function invariantRowCount(archText) {
+  const lines = archText.split('\n');
+  const start = lines.findIndex((l) => l.startsWith('### 8.1 '));
+  if (start < 0) return null;
+  let end = start + 1;
+  while (end < lines.length && !/^(### |## )/.test(lines[end])) end += 1;
+  let max = 0;
+  for (const row of lines.slice(start, end)) {
+    const m = /^\| (\d+) \|/.exec(row);
+    if (m) max = Math.max(max, Number(m[1]));
+  }
+  return max === 0 ? null : max;
+}
+
+function verifyEgressHosts(archText) {
+  const failures = [];
+  const lines = archText.split('\n');
+  const documented = documentedEgressHosts(archText);
 
   const found = new Map();
   const walk = (dir) => {
