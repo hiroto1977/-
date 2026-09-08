@@ -28,12 +28,26 @@ describe('profitSensitivity', () => {
     expect(rows[1]!.operatingProfit).toBe(350); // rev 1200, var 600, fixed 250
   });
 
-  it('keeps every scenario at the baseline revenue when base revenue is zero', () => {
+  /**
+   * **★ 売上 0 の期に「営業利益率 0.0%」を刷らない (2026-09-08)。**
+   *
+   * この検査は 2026-09-08 まで `operatingMarginPct === 0` を主張していた。
+   * コメントに理由まで書いてあった —— 「NaN/Inf にしない mutant を kill」。
+   * **変異体を殺すために書いた等式が、欠陥を仕様として固定していた** ——
+   * 同じ行が「営業利益 −100 ／ 営業利益率 0.0%」を並べる形である。
+   *
+   * `toBeNull()` は**同じ変異体を同じように殺す** (`revenue > 0` の関門を
+   * 外すと −Infinity になり、`null` ではないので落ちる)。
+   * **「NaN にしない」を主張するのに、間違った値を固定する必要はなかった。**
+   */
+  it('★ 売上 0 の期は営業利益率を算定不能 (null) として返す', () => {
     const rows = profitSensitivity({ revenue: 0, cogs: 0, advertising: 0, sga: 100, depreciation: 0 });
     expect(rows.every((r) => r.revenue === 0)).toBe(true);
     expect(rows.every((r) => r.operatingProfit === -100)).toBe(true); // 0 - 0 - 100
-    // revenue===0 では operatingMarginPct=0 (revenue>0 ガード)。NaN/Inf にしない mutant を kill。
-    expect(rows.every((r) => r.operatingMarginPct === 0)).toBe(true);
+    // 直す前は 0 だった。**営業利益が赤字なのに利益率 0% は同時に真であり得ない。**
+    expect(rows.every((r) => r.operatingMarginPct === null)).toBe(true);
+    // 関門を外した変異体 (−Infinity) も、この主張で落ちる。
+    expect(rows.every((r) => r.operatingMarginPct !== 0)).toBe(true);
   });
 
   it('computes the operating margin per scenario', () => {
@@ -91,6 +105,39 @@ describe('requiredRevenueForTarget', () => {
     expect(requiredRevenueForTarget({ revenue: 100, cogs: 100, advertising: 20, sga: 10, depreciation: 0 }, 100).upliftPct).toBeNull();
     // contributionRate === 0 ちょうど。<= を < にする mutant はゼロ除算へ進む。
     expect(requiredRevenueForTarget({ revenue: 100, cogs: 100, advertising: 0, sga: 10, depreciation: 0 }, 100).upliftPct).toBeNull();
+  });
+
+  /**
+   * **★ 必要売上も同じ return の中で `null` に揃える (2026-09-08)。**
+   *
+   * `upliftPct` は最初から `null` だったのに `requiredRevenue` だけが `0` に
+   * 倒れていた —— **「目標利益 100 を得るのに必要な売上は 0」**は、
+   * 算定不能に対して最も安心させる嘘である
+   * (パス 67 の `switchWindowOk` / パス 69 の `accumulationRisk` と同じ位置関係)。
+   *
+   * **画面には出ていなかった** —— `OverviewPage` は `upliftPct === null` で
+   * 節ごと差し替えていたので、この 0 は表に現れない (パス 52 の
+   * 「規則が関門にしか無い」形)。契約の側を揃えるのがここの目的で、
+   * 併せて画面の関門も**刷る値そのもの**を見るようにした。
+   */
+  it('★ 算定不能なら必要売上も null (同じ return の 2 欄が揃っている)', () => {
+    const zero = requiredRevenueForTarget({ revenue: 0, cogs: 0, advertising: 0, sga: 100, depreciation: 0 }, 100);
+    // 直す前は 0 だった
+    expect(zero.requiredRevenue).toBeNull();
+    expect(zero.upliftPct).toBeNull();
+    // 打ち込んだ目標は控えとして残る (オブジェクト全体を null にしない理由)。
+    expect(zero.targetOperatingProfit).toBe(100);
+
+    const noContribution = requiredRevenueForTarget({ revenue: 100, cogs: 100, advertising: 20, sga: 10, depreciation: 0 }, 100);
+    expect(noContribution.requiredRevenue).toBeNull();
+    expect(noContribution.upliftPct).toBeNull();
+    expect(noContribution.targetOperatingProfit).toBe(100);
+  });
+
+  it('★ 対照: 算定できるときは 2 欄とも数で出る (床が邪魔をしない)', () => {
+    const r = requiredRevenueForTarget(base, 500);
+    expect(r.requiredRevenue).toBe(1500);
+    expect(r.upliftPct).toBe(50);
   });
 });
 

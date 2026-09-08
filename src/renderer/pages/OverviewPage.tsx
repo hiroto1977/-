@@ -998,7 +998,11 @@ export function OverviewPage() {
                 style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', padding: '6px 8px', fontSize: 13, width: 160 }}
               />
               {targetRevenue && (
-                targetRevenue.upliftPct === null ? (
+                // **刷る値そのもので関門を張る。** 以前は `upliftPct` だけを見て
+                // `requiredRevenue` を刷っていた —— 別の量で規則を再導出する形
+                // (パス 57 で直したのと同じ) で、算定不能な必要売上が
+                // 「0 円」として出る経路が型の上で開いていた。
+                targetRevenue.requiredRevenue === null || targetRevenue.upliftPct === null ? (
                   <span style={{ fontSize: 13, color: 'var(--text-mute)' }}>限界利益が非正のため算定できません。</span>
                 ) : (
                   <span style={{ fontSize: 13 }}>
