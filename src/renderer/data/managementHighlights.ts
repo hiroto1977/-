@@ -125,7 +125,9 @@ export function buildManagementHighlights(
     // 収益性
     if (k.operatingProfit < 0) {
       out.push({ severity: 'critical', category: '収益性', message: `営業赤字です (営業利益 ${k.operatingProfit.toLocaleString()}円)。` });
-    } else if (k.operatingMarginPct >= 10) {
+    // 営業利益率は**売上 0 では定まらない** (`null`)。そのときは所見を出さない
+    // —— 「良好です」も「不振です」も、比率が無ければ言えない。
+    } else if (k.operatingMarginPct !== null && k.operatingMarginPct >= 10) {
       out.push({ severity: 'good', category: '収益性', message: `営業利益率 ${k.operatingMarginPct.toFixed(1)}% と良好です。` });
     }
     // 安全性 (損益分岐点)。**負の安全余裕率を 0 に丸めない** ——

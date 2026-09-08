@@ -443,7 +443,7 @@ function ActualsPanel() {
             <Tile label="実績合計 売上高" value={safeYen(fundamentals.revenue)} />
             <Tile label="損益分岐点 (BEP)" value={safeYen(summary.bep)} sub={`比率 ${pct(summary.bepRatio)}`} />
             <Tile label="安全余裕率" value={pctOrDash(summary.safetyMargin)} sub="高いほど安全" />
-            <Tile label="限界利益率" value={pct(summary.contributionRatio)} />
+            <Tile label="限界利益率" value={pctOrDash(summary.contributionRatio)} />
             <Tile label="営業利益" value={safeYen(summary.operatingProfit)} />
           </div>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>

@@ -13104,3 +13104,153 @@ reductionPct = (基準 200 − 0) / 200 × 100 = 100
   パス 41 の「画面の断りが書き出しに travel しない」形はここには無い。
 - 出荷判断に使う `servingGramsWithinLimit` は最初から実測を要求していた。
 - 画面の下部に日本腎臓学会の目安と「食事指導に代わるものではない」の断りが在る。
+
+---
+
+## パス 52 (2026-09-08) — 割れない比率を 0 として刷る 11 欄。**規準は既にコードの 7 か所に在った**
+
+### 見つけた形
+
+`overview.ts` の 2 つの倒し込みが「割れない」を **0** にしていた。
+
+```ts
+const pctOfRevenue = (n: number): number => (fundamentals.revenue > 0 ? (n / fundamentals.revenue) * 100 : 0);
+const perCapita    = (n: number): number => (memberCount > 0 ? Math.round(n / memberCount) : 0);
+```
+
+### 実測 1 — 売上 0・販売費及び一般管理費 300 万円 (創業直後の控え)。書面 §1
+
+| 行 | 直す前 | 直した後 |
+| --- | ---: | ---: |
+| 売上高 | 0 | 0 |
+| 売上総利益率 | **0.0%** | ― |
+| 営業利益 | △3,000 | △3,000 |
+| **営業利益率** | **0.0%** | ― |
+| EBITDA マージン | **0.0%** | ― |
+| 売上原価率 | **0.0%** | ― |
+| 広告宣伝費率 | **0.0%** | ― |
+| **販売費及び一般管理費率** | **0.0%** | ― |
+| 限界利益率 | **0.0%** | ― |
+| 損益分岐点売上高 | ― | ― |
+| 安全余裕率 | ― | ― |
+
+**同じ表の中で「割れない」の答え方が 2 通りあり、下 2 行だけが ― だった。**
+そして「営業利益 △3,000 千円 / 営業利益率 0.0%」は**両立しない 2 行**である
+(パス 33 が安全余裕率で直したのと同じ形が、同じ節の 7 行に残っていた)。
+販売費及び一般管理費 300 万円が「売上高の 0.0%」と書いてある書面が銀行に渡る。
+
+### 実測 2 — 従業員 0 名 (メンバー未登録)。書面 §3
+
+| 行 | 直す前 | 直した後 |
+| --- | ---: | ---: |
+| 従業員数 | 0名 | 0名 |
+| **一人当たり売上高** | **0** | ― |
+| **一人当たり営業利益** | **0** | ― |
+| 人件費 | ― | ― |
+| 一人当たり人件費 | ― | ― |
+
+**同じ分母 (従業員数) で割る 3 行のうち 2 行が 0、1 行が ―。**
+`LaborMetrics.laborPerCapita` は最初から「メンバーが 0 なら null」だった。
+しかも一人当たりの 2 行は `kv()` (KPI の関門) を通っておらず、
+**何も入力していない書面でも `0` を刷っていた** (全文の見本がそれを固定していた)。
+
+### 規準は既にコードの 7 か所に在った
+
+| 場所 | 何をしていたか |
+| --- | --- |
+| `computeKpiMetrics` | `safetyMargin: number \| null` (パス 33) |
+| `financialRatios.ts` | `pct(num, den) => den === 0 ? null : …` — 同じ比率を null で返す |
+| `financialStatements.ts:177` | 限界利益率を `null` にし、計算書類に `—` と刷る |
+| `overviewScorecard.ts` | `const hasRevenue = revenue > 0` で**利益率 3 軸を落としていた** |
+| `managementHighlights.ts` | 安全性の所見を `if (k.revenue > 0)` で囲っていた |
+| `OverviewPage.tsx` (コスト構造の枠) | `revenue > 0 &&` で 3 タイルを隠していた |
+| `OverviewPage.tsx` (生産性の枠) | `members > 0 &&` で 4 タイルを隠していた |
+| **`overview.ts` の値そのもの** | **0 に倒していた** ← ここだけ |
+
+**採点は軸を落とし、画面は枠を隠し、値だけが 0 を返していた** ——
+そして値を読むのは**書面と経営レポート**、つまり相手に渡る 2 つの面である。
+
+### 直した所
+
+- `pctOfRevenue` / `perCapita` が `number | null` を返す。`BusinessOverview.kpi` の
+  6 欄 + `contributionRatio`、`productivity` の 2 欄が `number | null`。
+- `KpiMetrics.contributionRatio` と `MonthlyTrendRow.operatingMarginPct` も null
+  (`financialStatements.ts` と同じ答え方に揃える)。
+- 水耕栽培の `operatingMarginPct` / `contributionRatio` / `electricityCostRatioPct` も
+  (書面の参考節と画面が刷る)。
+- **規則を値へ寄せた** — `overviewScorecard.ts` の `hasRevenue` を削り
+  `?? undefined` に、画面の 2 つの枠を `cogsRatioPct !== null` /
+  `revenuePerCapita !== null` に (同じ規則を 2 か所に持たない)。
+- **空欄の理由を述べる 2 つの文**を `kpiActuals.ts` が 1 か所で持ち、
+  **書面 §1・§3 と経営レポートの損益節**が同じ文を出す (パス 50 の教訓)。
+  §3 は**広い理由を先に** — KPI 未入力ならそちらを言う (従業員 0 名は
+  一人当たりの 3 行だけを空欄にする)。
+- 画面: `pct1OrDash` / `yenOrDash` で「—」を刷り、一人当たり営業利益の
+  **緑の色付けを外した** (`0 >= 0` で緑 = 黒字の主張になっていた)。
+
+### 見本が欠陥を仕様として固定していた —— **7 例目、そして最大 (8 件)**
+
+**検査の名前そのものが 0 を仕様と呼んでいた。**
+
+| 見本 | 名前 |
+| --- | --- |
+| `kpiActuals.test.ts` | `returns **zeroed ratios** for a zero-revenue unit` |
+| `kpiActuals.test.ts` | `reports a **zero** operating margin for a zero-revenue period` |
+| `monthlyTrend.test.ts` | `reports a **zero margin and null growth** when revenue is zero` |
+| `overview.test.ts` | `**zeroes** EBITDA margin and cost ratios when revenue is zero` |
+| `overview.test.ts` | `reports **zero** per-capita figures when there are no members` |
+| `overview.test.ts` | `費用が丸ごと 0 でも電気代の割合は **0** (0 ÷ 0 を NaN にしない)` |
+| `overview.test.ts` | `出荷が 0 でも 0 除算にならない` (`operatingMarginPct).toBe(0)`) |
+| `bankSubmissionText.test.ts` | 全文の見本が「何も入力していない書面」の一人当たりを **`'0'`** で固定 |
+
+3 番目がいちばん鋭い —— **1 つの検査が、1 つの条件 (売上 0) に対して
+片方の欄に `null` を、隣の欄に `0` を求めていた。**
+6 番目・7 番目は「NaN を避ける」という**正しい懸念**に対して
+**0 という誤った答え**を固定していた (null も NaN を避ける)。
+
+(安全余裕率・決算期・事業計画書の月数・返済余力・予実の月次達成・CCC の回転日数に次ぐ)
+
+### 検査 (+16) と対照 (4 本とも実際に壊して確認)
+
+| 壊した物 | 落ちた検査 |
+| --- | --- |
+| `pctOfRevenue` を 0 に倒す (直す前) | **6 件** (書面 1・レポート 1・overview 1・採点 1・**画面 2**) |
+| `perCapita` を 0 に倒す (直す前) | **4 件** (書面 1・全文の見本 1・overview 1・**画面 1**) |
+| 限界利益率と月次利益率を 0 に倒す | **8 件** (書面 1・単体 3・レポート 1・overview 2・採点 1) |
+| 書面 §1/§3 とレポートから理由の文を外す | 3 件 |
+
+対照 1・2 で `overviewScorecard.test.ts` の既存の検査
+「売上 0 では利益率 3 つが undefined」が落ちる —— **採点の振る舞いが
+値へ寄せた後も変わっていないことの証**である。
+
+`npm test` 13,647 件 / `verify:all` 35 ゲート / 実機 (smoke:app・e2e・e2e:lite・perf)。
+
+### 当たって問題なかった物 (再訪不要)
+
+- `financialRatios.ts` 経由の面 (財務分析画面・財務 CSV・レーダー・
+  `businessAxonometric`) は**最初から null**。触っていない。
+- 労働分配率・人件費率は**同じ期間の 2 つの流れの比**なので従業員数に依らない。
+- 額 (売上高・営業利益・EBITDA) は期間の合計として測れているのでそのまま出す。
+  **出せない物と出せる物を分ける。**
+
+### 残っている同じ形 (この節が台帳。画面だけの面なので今回は触っていない)
+
+| 場所 | 分母 | 届く先 |
+| --- | --- | --- |
+| `main/clients/kpi.ts:93-95` | 売上 | KPI サービスの要約 (`snapshot.ts` の既定も 0) |
+| `KpiPage.tsx:154` | 売上 | KPI 画面の変動費率 |
+| `profitSensitivity.ts:42,50` | シナリオ売上 | 感度分析の表 |
+| `businessUnits.ts:244` / `main/clients/business.ts:270,355` | 売上 | 事業別の利益率 |
+| `hydroponicsSetup.ts:265` | 月商 | 水耕栽培の設定画面 |
+| `FinancialAnalysis.tsx:742` | 各期の売上 | 利益率の履歴グラフ |
+
+**判断が要る**: これらは相手に渡る書面には出ていない。値を null にすると
+画面の分岐が増えるだけの所もある。**面の表を作った上で、書面に出る物から
+直す**という順序自体は今回で確立した。
+
+### 教訓
+
+**規則が「関門」にしか無いなら、その規則は 1 つの面しか守らない。**
+採点は軸を落とし、画面は枠を隠していた —— どちらも正しい。だが
+**値そのものが 0 を返すので、値を直に読む書面とレポートには規則が届かなかった。**
+関門を 7 か所に増やすのではなく、**値に持たせて関門は値を見る。**

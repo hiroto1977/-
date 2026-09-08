@@ -76,7 +76,10 @@ function inputWith(
 ): BankSubmissionInput {
   return {
     overview,
-    scorecard: buildManagementScorecard({ operatingMarginPct: overview.kpi.operatingMarginPct, grossMarginPct: overview.kpi.grossMarginPct }),
+    scorecard: buildManagementScorecard({
+      operatingMarginPct: overview.kpi.operatingMarginPct ?? undefined,
+      grossMarginPct: overview.kpi.grossMarginPct ?? undefined,
+    }),
     debtService: combineCashflowDebtService(ACCOUNTING, REPAYMENTS),
     balanceSheetAsOf: '2026-03-31',
     today: '2026-09-04',
@@ -1090,5 +1093,76 @@ describe('§5 運転資本 — 但し書きが 2 つ並ぶとき', () => {
     expect(caption).toContain('貸借対照表の基準日は対象期間の最終月より');
     // 2 文が地続きにならない (句点の直後に空白が在る)。
     expect(caption).toContain('。 貸借対照表の基準日は');
+  });
+});
+
+/**
+ * **算定不能を 0 として刷らない** —— 売上 0 なら売上高を分母とする 8 行、
+ * 従業員 0 名なら一人当たりの 3 行が「―」になり、**なぜ空欄かを但し書きが述べる**。
+ *
+ * 2026-09-08 まで §1 は「営業利益 △3,000 / 営業利益率 0.0%」という**両立しない
+ * 2 行**を並べ、§3 は「一人当たり売上高 0」と「一人当たり人件費 ―」を並べていた。
+ */
+describe('§1 §3 — 割れないものを 0 として刷らない', () => {
+  const PRE_REVENUE: KpiActual[] = [
+    { period: '2026-04', unit: '全社', revenue: 0, cogs: 0, advertising: 0, sga: 1_500_000, depreciation: 0 },
+    { period: '2026-05', unit: '全社', revenue: 0, cogs: 0, advertising: 0, sga: 1_500_000, depreciation: 0 },
+  ];
+  const RATIO_ROWS = [
+    '売上総利益率', '営業利益率', 'EBITDA マージン', '売上原価率',
+    '広告宣伝費率', '販売費及び一般管理費率', '限界利益率', '安全余裕率',
+  ] as const;
+
+  it('★ 売上 0 でも費用が在る控え — 比率 8 行はすべて ―、額は出る', () => {
+    const o = overviewWith({ kpiActuals: PRE_REVENUE, balanceSheet: undefined, accounting: [] });
+    const s1 = section(buildBankSubmissionSheet(inputWith(o)).sections, '1.');
+    for (const label of RATIO_ROWS) expect(value(s1, label)).toBe(BLANK);
+    // 額は期間の合計なのでそのまま出す (出せない物と出せる物を分ける)
+    expect(value(s1, '売上高')).toBe('0');
+    expect(value(s1, '営業利益')).toBe('△3,000');
+    expect(value(s1, 'EBITDA')).toBe('△3,000');
+  });
+
+  it('★ 空欄の理由を §1 の但し書きが述べる (期間の断りに続けて)', () => {
+    const o = overviewWith({ kpiActuals: PRE_REVENUE, balanceSheet: undefined, accounting: [] });
+    const s1 = section(buildBankSubmissionSheet(inputWith(o)).sections, '1.');
+    expect(s1.caption).toContain('対象期間の売上高が 0 のため');
+    expect(s1.caption).toContain('算定していません');
+    // 決算期 (2026-03) の期中ではないので期間の断りも並ぶ
+    expect(s1.caption).toContain('令和8年3月期');
+  });
+
+  it('★ 対照: 売上が在れば同じ 8 行は数で出る', () => {
+    const s1 = section(buildBankSubmissionSheet(inputWith(overviewWith())).sections, '1.');
+    for (const label of RATIO_ROWS) expect(value(s1, label)).not.toBe(BLANK);
+    expect(s1.caption ?? '').not.toContain('売上高が 0 のため');
+  });
+
+  it('★ 従業員 0 名 — 一人当たりの 3 行が ―、人件費の 3 行は出る', () => {
+    const o = overviewWith({ members: [] });
+    const s3 = section(buildBankSubmissionSheet(inputWith(o)).sections, '3.');
+    expect(value(s3, '従業員数')).toBe('0名');
+    expect(value(s3, '一人当たり売上高')).toBe(BLANK);
+    expect(value(s3, '一人当たり営業利益')).toBe(BLANK);
+    expect(value(s3, '一人当たり人件費')).toBe(BLANK);
+    // 分母が売上・粗利の 2 行は従業員数に依らないので出る
+    expect(value(s3, '人件費')).not.toBe(BLANK);
+    expect(value(s3, '労働分配率')).not.toBe(BLANK);
+    expect(value(s3, '人件費率')).not.toBe(BLANK);
+    expect(s3.caption).toContain('従業員が 1 名も登録されていない');
+  });
+
+  it('★ 対照: 従業員が居れば一人当たりの 3 行は数で出る', () => {
+    const s3 = section(buildBankSubmissionSheet(inputWith(overviewWith())).sections, '3.');
+    for (const label of ['一人当たり売上高', '一人当たり営業利益', '一人当たり人件費']) {
+      expect(value(s3, label)).not.toBe(BLANK);
+    }
+    expect(s3.caption ?? '').not.toContain('従業員が 1 名も登録されていない');
+  });
+
+  it('KPI 実績が未入力なら §3 は分母より先に「KPI 未入力」を述べる (広い理由が先)', () => {
+    const o = overviewWith({ kpiActuals: [], members: [] });
+    const s3 = section(buildBankSubmissionSheet(inputWith(o)).sections, '3.');
+    expect(s3.caption).toBe('KPI 実績が未入力のため、一人当たりの金額は算定していません。');
   });
 });

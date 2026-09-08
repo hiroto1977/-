@@ -52,8 +52,8 @@ function cockpit() {
   });
   const f = summarizeFundamentals(KPI);
   const scorecard = buildManagementScorecard({
-    operatingMarginPct: overview.kpi.operatingMarginPct,
-    grossMarginPct: overview.kpi.grossMarginPct,
+    operatingMarginPct: overview.kpi.operatingMarginPct ?? undefined,
+    grossMarginPct: overview.kpi.grossMarginPct ?? undefined,
     safetyMarginPct: overview.kpi.safetyMargin ?? undefined,
     equityRatioPct: overview.financialPosition?.equityRatioPct ?? undefined,
     revenueGrowthPct: overview.kpi.revenueGrowthPct ?? undefined,

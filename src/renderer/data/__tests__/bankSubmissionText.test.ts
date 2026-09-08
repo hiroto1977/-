@@ -47,7 +47,10 @@ describe('金融機関等提出用の書面 — 全文', () => {
     });
     const m = buildBankSubmissionSheet({
       overview,
-      scorecard: buildManagementScorecard({ operatingMarginPct: overview.kpi.operatingMarginPct, grossMarginPct: overview.kpi.grossMarginPct }),
+      scorecard: buildManagementScorecard({
+        operatingMarginPct: overview.kpi.operatingMarginPct ?? undefined,
+        grossMarginPct: overview.kpi.grossMarginPct ?? undefined,
+      }),
       debtService: combineCashflowDebtService(ACCOUNTING, REPAYMENTS),
       balanceSheetAsOf: BS.asOf, today: '2026-09-04', settings: SETTINGS,
     });
@@ -217,8 +220,10 @@ describe('金融機関等提出用の書面 — 全文', () => {
         ] },
       { title: '3. 人員・生産性', caption: 'KPI 実績が未入力のため、一人当たりの金額は算定していません。', rows: [
           { label: '従業員数', value: '0名', note: '登録メンバー数' },
-          { label: '一人当たり売上高', value: '0', note: '売上高 ÷ 従業員数' },
-          { label: '一人当たり営業利益', value: '0', note: '営業利益 ÷ 従業員数' },
+          // 従業員 0 名・KPI 未入力 → **一人当たりは算定不能で ―** (2026-09-08 まで
+          // この見本が `0` を「何も入力していない書面」の仕様として固定していた)。
+          { label: '一人当たり売上高', value: '―', note: '売上高 ÷ 従業員数' },
+          { label: '一人当たり営業利益', value: '―', note: '営業利益 ÷ 従業員数' },
           { label: '人件費', value: '―', note: 'KPI 実績の人件費の合計' },
           { label: '労働分配率', value: '―', note: '人件費 ÷ 売上総利益' },
           { label: '人件費率', value: '―', note: '人件費 ÷ 売上高' },

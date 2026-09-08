@@ -201,11 +201,20 @@ describe('computeKpiMetrics', () => {
     expect(m.safetyMargin).toBeNull();
   });
 
-  it('returns zeroed ratios for a zero-revenue unit', () => {
+  // **売上 0 なら限界利益率は「算定不能」で、0 ではない。** 0 は「変動費が売上を
+  // すべて食っている」という主張であり、姉妹欄 `safetyMargin` と同じ答え方に
+  // 揃える (2026-09-08 まで、この見本の名前が `zeroed ratios` として 0 を固定していた)。
+  it('cannot compute the contribution ratio for a zero-revenue unit (null, not 0)', () => {
     const m = computeKpiMetrics({ revenue: 0, cogs: 0, advertising: 0, sga: 100, depreciation: 0 });
-    expect(m.contributionRatio).toBe(0);
+    expect(m.contributionRatio).toBeNull();
     expect(m.bep).toBe(Infinity);
     expect(m.operatingProfit).toBe(-100);
+  });
+
+  // ★ 対照: 売上が在れば率は出る (上の null が「常に null」ではないこと)。
+  it('computes the contribution ratio when revenue is positive', () => {
+    const m = computeKpiMetrics({ revenue: 1000, cogs: 400, advertising: 0, sga: 100, depreciation: 0 });
+    expect(m.contributionRatio).toBe(60);
   });
 });
 
@@ -448,9 +457,11 @@ describe('monthlyTrendSeries', () => {
     expect(rows[1]!.revenueGrowthPct).toBeNull();
   });
 
-  it('reports a zero operating margin for a zero-revenue period', () => {
+  // 月次推移の営業利益率も**その月の売上が 0 なら算定不能**。経営レポートの
+  // 推移テーブルと画面の表がこの値を刷るので、0.0% は「利益率が 0」の主張になる。
+  it('cannot compute the operating margin for a zero-revenue period (null, not 0)', () => {
     const rows = monthlyTrendSeries([actual('2026-04', 0)]);
-    expect(rows[0]!.operatingMarginPct).toBe(0);
+    expect(rows[0]!.operatingMarginPct).toBeNull();
   });
 });
 

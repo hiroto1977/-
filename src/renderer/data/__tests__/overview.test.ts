@@ -145,15 +145,36 @@ describe('buildBusinessOverview', () => {
     expect(o.kpi.sgaRatioPct).toBeCloseTo(20);
   });
 
-  it('zeroes EBITDA margin and cost ratios when revenue is zero', () => {
+  // **売上を分母にする 7 つの比率は、売上 0 では 1 つも定まらない。**
+  // 0.0% に倒すと「営業利益 △1,000 / 営業利益率 0.0%」という**両立しない 2 行**が
+  // 書面と画面に並ぶ (経緯は `overview.ts` の `pctOfRevenue`)。額は期間の合計なので
+  // そのまま出す —— 出せない物と出せる物を分ける。
+  it('nulls every revenue-denominated ratio when revenue is zero (not 0.0%)', () => {
     const noRev: KpiActual[] = [
       { period: '2026-05', unit: '全社', revenue: 0, cogs: 0, advertising: 0, sga: 1000, depreciation: 500 },
     ];
     const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: noRev, members: [] });
-    expect(o.kpi.ebitdaMarginPct).toBe(0);
-    expect(o.kpi.cogsRatioPct).toBe(0);
-    // EBITDA itself is still operating + depreciation = -1500 + 500 = -1000 (a figure, not a ratio)
+    expect(o.kpi.grossMarginPct).toBeNull();
+    expect(o.kpi.operatingMarginPct).toBeNull();
+    expect(o.kpi.ebitdaMarginPct).toBeNull();
+    expect(o.kpi.cogsRatioPct).toBeNull();
+    expect(o.kpi.advertisingRatioPct).toBeNull();
+    expect(o.kpi.sgaRatioPct).toBeNull();
+    expect(o.kpi.contributionRatio).toBeNull();
+    // 安全余裕率は前から null (パス 33)。**同じ節の中で答え方が揃っていること。**
+    expect(o.kpi.safetyMargin).toBeNull();
+    // 額は出る: EBITDA = 営業利益 + 減価償却費 = -1500 + 500 = -1000 (比率ではない)
     expect(o.kpi.ebitda).toBe(-1000);
+    expect(o.kpi.operatingProfit).toBe(-1500);
+  });
+
+  // ★ 対照: 売上が在れば 7 つとも数で出る (上の null が「常に null」ではないこと)。
+  it('computes every revenue-denominated ratio when revenue is positive', () => {
+    const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, members: [] });
+    for (const v of [
+      o.kpi.grossMarginPct, o.kpi.operatingMarginPct, o.kpi.ebitdaMarginPct,
+      o.kpi.cogsRatioPct, o.kpi.advertisingRatioPct, o.kpi.sgaRatioPct, o.kpi.contributionRatio,
+    ]) expect(typeof v).toBe('number');
   });
 
   it('computes per-capita productivity from the member count', () => {
@@ -168,11 +189,16 @@ describe('buildBusinessOverview', () => {
     expect(o.productivity.operatingProfitPerCapita).toBe(6250); // 25000 / 4
   });
 
-  it('reports zero per-capita figures when there are no members (no division by zero)', () => {
+  // **従業員 0 名なら一人当たりは算定不能。** 同じ分母で割る
+  // `labor.laborPerCapita` は最初から null を返していたのに、こちらは 0 に倒しており、
+  // 書面 §3 に「一人当たり売上高 0」と「一人当たり人件費 ―」が並んでいた。
+  it('nulls the per-capita figures when there are no members (null, not 0)', () => {
     const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: KPI, members: [] });
     expect(o.productivity.members).toBe(0);
-    expect(o.productivity.revenuePerCapita).toBe(0);
-    expect(o.productivity.operatingProfitPerCapita).toBe(0);
+    expect(o.productivity.revenuePerCapita).toBeNull();
+    expect(o.productivity.operatingProfitPerCapita).toBeNull();
+    // **不変条件**: 同じ分母で割る 3 欄は必ず同じ答え方をする。
+    expect(o.productivity.labor.laborPerCapita).toBeNull();
   });
 
   it('leaves the budget variance null when no budget is supplied', () => {
@@ -482,8 +508,10 @@ describe('経営サマリーの水耕栽培の節', () => {
     });
     const h = o.hydroponics!;
     expect(h.electricityYenPerYear).toBe(0);
-    expect(h.electricityCostRatioPct).toBe(0);
-    expect(Number.isNaN(h.electricityCostRatioPct)).toBe(false);
+    // 分母 (月次費用) が 0 なら割れない → null。**NaN を避ける手段は 0 だけではない**
+    // (この見本は 2026-09-08 まで名前ごと `割合は 0` を仕様として固定していた)。
+    expect(h.electricityCostRatioPct).toBeNull();
+    expect(Number.isNaN(h.electricityCostRatioPct as unknown as number)).toBe(false);
   });
 
   it('出荷が 0 でも 0 除算にならない', () => {
@@ -496,9 +524,12 @@ describe('経営サマリーの水耕栽培の節', () => {
     });
     const h = o.hydroponics!;
     expect(h.revenue).toBe(0);
-    expect(h.operatingMarginPct).toBe(0);
+    // 月商 0 なら営業利益率は算定不能。**営業損失が出ているのに 0.0% と刷らない。**
+    expect(h.operatingMarginPct).toBeNull();
+    expect(h.contributionRatio).toBeNull();
     expect(h.costPerShippedPlantYen).toBe(0);
-    expect(Number.isFinite(h.electricityCostRatioPct)).toBe(true);
+    // 費用は出ているので電気代の割合は数で出る (分母が 0 でないことの対照)。
+    expect(typeof h.electricityCostRatioPct).toBe('number');
     // 棚を動かしている限り電気代は出ていく = 営業損失になる。
     expect(h.operatingProfit).toBeLessThan(0);
   });

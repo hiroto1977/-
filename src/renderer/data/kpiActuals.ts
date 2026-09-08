@@ -39,7 +39,13 @@ export interface KpiMetrics {
   variableCost: number;
   fixedCost: number;
   contribution: number;
-  contributionRatio: number;
+  /**
+   * 限界利益率 (%) = (売上 − 変動費) ÷ 売上。**売上 0 なら null = 算定不能。**
+   * 0 に倒すと「変動費が売上をすべて食っている」という主張になり、
+   * 同じ入力から同じ比率を出す `financialStatements.ts` (null → 「—」) と
+   * 食い違う。姉妹欄 `safetyMargin` と同じ答え方。
+   */
+  contributionRatio: number | null;
   bep: number;
   bepRatio: number;
   /**
@@ -201,7 +207,8 @@ export interface MonthlyTrendRow {
   readonly revenue: number;
   readonly operatingProfit: number;
   /** 営業利益率 (%)。売上 0 なら 0。 */
-  readonly operatingMarginPct: number;
+  /** 営業利益率 (%)。**その月の売上が 0 なら null = 算定不能** (0 に倒さない)。 */
+  readonly operatingMarginPct: number | null;
   /** 前期比の売上成長率 (%)。先頭期や前期売上 0 なら null。 */
   readonly revenueGrowthPct: number | null;
 }
@@ -234,7 +241,7 @@ export function monthlyTrendSeries(actuals: readonly KpiActual[]): MonthlyTrendR
       period,
       revenue: f.revenue,
       operatingProfit: m.operatingProfit,
-      operatingMarginPct: f.revenue > 0 ? Math.round((m.operatingProfit / f.revenue) * 1000) / 10 : 0,
+      operatingMarginPct: f.revenue > 0 ? Math.round((m.operatingProfit / f.revenue) * 1000) / 10 : null,
       revenueGrowthPct,
     });
     prevRevenue = f.revenue;
@@ -337,6 +344,27 @@ export function computeLaborMetrics(
     laborToRevenuePct: pct(laborCost, f.revenue),
     laborPerCapita: members > 0 ? Math.round(laborCost / members) : null,
   };
+}
+
+/**
+ * 売上高を分母にする比率がまとめて空欄になる理由の一文。
+ *
+ * 売上 0 のとき `pctOfRevenue` 由来の 6 欄と `contributionRatio` / `safetyMargin`
+ * はすべて `null` (算定不能) になる。**空欄の理由を書かないと入力漏れと区別できない**
+ * ので、金融機関等提出用の書面 §1 と経営レポートの損益節が**同じ文**を出す
+ * (同じ数字を刷る面が 2 つあるなら断り書きも 2 つ要る — パス 50 の教訓)。
+ */
+export function zeroRevenueRatioNote(): string {
+  return '対象期間の売上高が 0 のため、売上高を分母とする比率（売上総利益率・営業利益率・EBITDA マージン・売上原価率・広告宣伝費率・販売費及び一般管理費率・限界利益率・安全余裕率）は算定していません。';
+}
+
+/**
+ * 一人当たりの金額がまとめて空欄になる理由の一文 (従業員が 1 名も登録されていない)。
+ * 分母が 0 なので `revenuePerCapita` / `operatingProfitPerCapita` /
+ * `labor.laborPerCapita` はすべて `null`。
+ */
+export function zeroMembersPerCapitaNote(): string {
+  return '従業員が 1 名も登録されていないため、一人当たりの金額は算定していません。メンバーを登録すると算定します。';
 }
 
 /**
@@ -452,7 +480,7 @@ export function computeKpiMetrics(f: KpiFundamentals): KpiMetrics {
   const variableCost = f.cogs + f.advertising;
   const fixedCost = f.sga + f.depreciation;
   const contribution = f.revenue - variableCost;
-  const contributionRatio = f.revenue > 0 ? (contribution / f.revenue) * 100 : 0;
+  const contributionRatio = f.revenue > 0 ? (contribution / f.revenue) * 100 : null;
   const bep = contribution > 0 ? (fixedCost / contribution) * f.revenue : Infinity;
   // revenue===0 のとき bep は必ず Infinity (contribution<=0) で、Infinity/0*100 も
   // Infinity になるため三項の両枝が同値 → revenue>0 判定の変異は equivalent。

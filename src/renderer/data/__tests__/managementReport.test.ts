@@ -9,7 +9,7 @@ const kpi: KpiActual = { period: '2026-05', unit: '全社', revenue: 1_000_000, 
 
 function report(extra: Partial<Parameters<typeof buildBusinessOverview>[0]> = {}) {
   const overview = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi], members: [], ...extra });
-  const sc = buildManagementScorecard({ operatingMarginPct: overview.kpi.operatingMarginPct, safetyMarginPct: overview.kpi.safetyMargin ?? undefined });
+  const sc = buildManagementScorecard({ operatingMarginPct: overview.kpi.operatingMarginPct ?? undefined, safetyMarginPct: overview.kpi.safetyMargin ?? undefined });
   const hl = buildManagementHighlights(overview);
   return buildManagementReport(overview, sc, hl, '2026-05-31');
 }
@@ -443,6 +443,41 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
     expect(md).not.toContain('## 資金繰り (CF)');
     expect(md).not.toContain('## 予算実績差異 (BVA)');
     expect(md).not.toContain('## 月次推移'); // 1 期のみ → テーブルなし (>= 2 strict)
+  });
+
+  /**
+   * **書面と同じ相手に渡るレポートも、算定不能を 0.0% と刷らない。**
+   * 2026-09-08 まで「営業利益: ¥-3,000,000 (営業利益率 0.0%)」と書いていた。
+   */
+  describe('売上 0 — 比率は「—」で、理由を述べる', () => {
+    const noRev: KpiActual[] = [
+      { period: '2026-04', unit: '全社', revenue: 0, cogs: 0, advertising: 0, sga: 1_500_000, depreciation: 0 },
+      { period: '2026-05', unit: '全社', revenue: 0, cogs: 0, advertising: 0, sga: 1_500_000, depreciation: 0 },
+    ];
+
+    it('★ 損益節の比率が「—」になり、空欄の理由を述べる', () => {
+      const md = report({ kpiActuals: noRev });
+      expect(md).toContain('- 営業利益: ¥-3,000,000 (営業利益率 —)');
+      expect(md).toContain('- 売上総利益: ¥0 (粗利率 —)');
+      expect(md).toContain('- EBITDA: ¥-3,000,000 (マージン —)');
+      expect(md).toContain('- 損益分岐点: — / 安全余裕率 —');
+      expect(md).toContain('対象期間の売上高が 0 のため');
+      // **0.0% を刷らない** (書面 §1 と同じ規則)
+      expect(md).not.toContain('0.0%');
+    });
+
+    it('★ 月次推移テーブルの営業利益率も「—」', () => {
+      const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: noRev, members: [] });
+      const md = buildManagementReport(o, sc, [], '2026-05-31', monthlyTrendSeries(noRev));
+      expect(md).toContain('| 2026-04 | ¥0 | ¥-1,500,000 | — | — |');
+      expect(md).toContain('| 2026-05 | ¥0 | ¥-1,500,000 | — | — |');
+    });
+
+    it('★ 対照: 売上が在れば率が出て、理由の行は付かない', () => {
+      const md = report();
+      expect(md).toContain('(営業利益率 25.0%)');
+      expect(md).not.toContain('売上高が 0 のため');
+    });
   });
 
   it('signs a negative growth row in the monthly-trend table and dashes a null one', () => {

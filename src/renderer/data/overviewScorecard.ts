@@ -122,8 +122,6 @@ export function scorecardMetrics(
 ): ManagementMetricsInput {
   if (!overview.kpi.hasData) return {};
 
-  // 分母が売上の指標は、売上 0 では定まらない (0 除算)。
-  const hasRevenue = overview.kpi.revenue > 0;
   const position = overview.financialPosition;
   // 流れ ÷ 溜まりの比率に渡す分子は**年換算した売上**。素の合計を渡すと
   // 「何か月分を入力したか」で点数が動く (上の実測: 効率性 7 → 88)。
@@ -137,9 +135,13 @@ export function scorecardMetrics(
   const annualRevenue = overview.kpi.revenueLanding?.runRateForecast;
 
   return {
-    operatingMarginPct: hasRevenue ? overview.kpi.operatingMarginPct : undefined,
-    grossMarginPct: hasRevenue ? overview.kpi.grossMarginPct : undefined,
-    contributionRatioPct: hasRevenue ? overview.kpi.contributionRatio : undefined,
+    // 分母が売上の指標は、売上 0 では定まらない (0 除算)。**その判定は値の側が
+    // 持つ** —— `overview.kpi.*` は算定不能なら `null` を返すので、ここで
+    // `revenue > 0` を書き写すと同じ規則が 2 か所に分かれる (2026-09-08 まで
+    // そうなっていた。画面と書面は 0 を刷り、採点だけが軸を落としていた)。
+    operatingMarginPct: overview.kpi.operatingMarginPct ?? undefined,
+    grossMarginPct: overview.kpi.grossMarginPct ?? undefined,
+    contributionRatioPct: overview.kpi.contributionRatio ?? undefined,
     // `null` = 算定不能 (損益分岐点が存在しない) は軸を落とす。0 に倒すと
     // 「損益分岐点上に居る」という最も安全な読みで採点してしまう。
     safetyMarginPct: overview.kpi.safetyMargin ?? undefined,

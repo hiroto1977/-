@@ -16,7 +16,7 @@ import { hasControlChar } from '../../shared/controlChars';
 // 取り込みと書類の差込も同じ物を使う)。**写さずに読む。** kessanImport から
 // こちらへの辺は `import type` だけなので実行時の循環にはならない。
 import { fiscalYearMonths, fiscalYearWindow } from './kessanImport';
-import { isValidPeriod } from './kpiActuals';
+import { isValidPeriod, zeroMembersPerCapitaNote, zeroRevenueRatioNote } from './kpiActuals';
 import {
   BANK_FORMAT_DEFAULT,
   BLANK,
@@ -313,11 +313,22 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
   const has = k.hasData;
   const kv = (n: number): string => (has ? amt(n) : BLANK);
   const kp = (n: number | null): string => (has ? pct(n) : BLANK);
+  /**
+   * §1 の但し書き。対象期間 (パス 34) に加え、**売上高が 0 なら比率が 8 行まとめて
+   * 空欄になる理由**を述べる —— 「営業利益 △3,000 / 営業利益率 ―」を見た読み手が
+   * 入力漏れと区別できるように (文は `zeroRevenueRatioNote` が 1 か所で持つ)。
+   */
+  const sectionOneCaption = (): string | null => {
+    if (!has) return 'KPI 実績が未入力のため算定していません。';
+    const scope = periodScopeNote(p.fiscalYearEnd, o.kpi.periods, f);
+    if (k.revenue > 0) return scope;
+    return scope === null ? zeroRevenueRatioNote() : `${scope}${zeroRevenueRatioNote()}`;
+  };
   const sections: SheetSection[] = [];
 
   sections.push({
     title: '1. 損益の状況（対象期間の累計）',
-    caption: has ? periodScopeNote(p.fiscalYearEnd, o.kpi.periods, f) : 'KPI 実績が未入力のため算定していません。',
+    caption: sectionOneCaption(),
     rows: [
       row('売上高', kv(k.revenue), 'KPI 実績の合計'),
       row('売上総利益', kv(k.grossProfit), '売上高 − 売上原価'),
@@ -382,8 +393,15 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
    * 1 年分そろっていれば述べることは無い (`periodScopeNote` と同じ規則)。
    */
   const perCapitaCaption = (): string | null => {
+    // **狭い理由より広い理由を先に述べる** —— KPI 実績が無ければこの節は
+    // 丸ごと空欄なので、そちらを言う。KPI は在って従業員が 0 名なら、
+    // 空欄になるのは一人当たりの 3 行だけ (人件費・労働分配率・人件費率は出る)。
     const months = new Set(validPeriods(o.kpi.periods)).size;
     if (months === 0) return 'KPI 実績が未入力のため、一人当たりの金額は算定していません。';
+    // **分母が 0 なら述べるのは期間ではなく分母のこと** —— 従業員が 1 名も
+    // 登録されていなければ一人当たりの 3 行はすべて空欄になる (2026-09-08 まで
+    // 一人当たり売上高だけが `0` を刷り、隣の一人当たり人件費は ― だった)。
+    if (pr.members <= 0) return zeroMembersPerCapitaNote();
     if (months === fiscalYearMonths()) return null;
     return `一人当たりの金額と人件費は、実績の${periodSpan(o.kpi.periods, f)}分の累計を従業員数で割ったものです（年額ではありません）。`;
   };

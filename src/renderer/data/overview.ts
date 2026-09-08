@@ -83,10 +83,10 @@ export interface HydroponicsOverview {
   readonly revenue: number;
   /** 月次の営業利益 (円)。 */
   readonly operatingProfit: number;
-  /** 営業利益率 (%)。売上 0 なら 0。 */
-  readonly operatingMarginPct: number;
-  /** 限界利益率 (%)。他の節と同じ定義で出す。 */
-  readonly contributionRatio: number;
+  /** 営業利益率 (%)。**月商 0 なら null = 算定不能** (0 に倒さない)。 */
+  readonly operatingMarginPct: number | null;
+  /** 限界利益率 (%)。他の節と同じ定義で出す (月商 0 なら null)。 */
+  readonly contributionRatio: number | null;
   /** 損益分岐点売上高 (円)。 */
   readonly bep: number;
   /** 損益分岐の月間出荷株数。限界利益が 0 以下なら null。 */
@@ -99,8 +99,8 @@ export interface HydroponicsOverview {
   readonly energyKwhPerYear: number;
   /** 年間電気代 (円)。 */
   readonly electricityYenPerYear: number;
-  /** 電気代が月次費用に占める割合 (%)。費用 0 なら 0。 */
-  readonly electricityCostRatioPct: number;
+  /** 電気代が月次費用に占める割合 (%)。**費用 0 なら null = 算定不能** (0 に倒さない)。 */
+  readonly electricityCostRatioPct: number | null;
   /**
    * 低カリウム栽培の評価。低カリウムとして扱っていなければ null。
    *
@@ -148,22 +148,30 @@ export interface BusinessOverview {
     safetyMargin: number | null;
     /** 売上総利益 (粗利) = 売上 − 売上原価。 */
     grossProfit: number;
-    /** 売上総利益率 (粗利率, %)。 */
-    grossMarginPct: number;
-    /** 営業利益率 (%)。 */
-    operatingMarginPct: number;
+    /**
+     * 売上総利益率 (粗利率, %)。**売上 0 なら null = 算定不能。**
+     *
+     * 売上高を分母にする比率はこの節に 7 つ在り、**どれも売上 0 では定まらない**。
+     * 0 に倒すと「営業利益 △3,000 千円 / 営業利益率 0.0%」のように
+     * **同じ表の 2 行が両立しない**書面ができる (実測は `pctOfRevenue` の脇)。
+     * 姉妹欄 `safetyMargin` と、同じ比率を出す `financialRatios.ts` /
+     * `financialStatements.ts` と同じ答え方に揃えてある。
+     */
+    grossMarginPct: number | null;
+    /** 営業利益率 (%)。売上 0 なら null (上と同じ理由)。 */
+    operatingMarginPct: number | null;
     /** EBITDA = 営業利益 + 減価償却費 (償却前営業利益)。 */
     ebitda: number;
-    /** EBITDA マージン (%)。 */
-    ebitdaMarginPct: number;
-    /** 原価率 (%) = 売上原価 ÷ 売上。 */
-    cogsRatioPct: number;
-    /** 広告費比率 (%)。 */
-    advertisingRatioPct: number;
-    /** 販管費率 (%)。 */
-    sgaRatioPct: number;
-    /** 限界利益率 (%)。 */
-    contributionRatio: number;
+    /** EBITDA マージン (%)。売上 0 なら null。 */
+    ebitdaMarginPct: number | null;
+    /** 原価率 (%) = 売上原価 ÷ 売上。売上 0 なら null。 */
+    cogsRatioPct: number | null;
+    /** 広告費比率 (%)。売上 0 なら null。 */
+    advertisingRatioPct: number | null;
+    /** 販管費率 (%)。売上 0 なら null。 */
+    sgaRatioPct: number | null;
+    /** 限界利益率 (%)。売上 0 なら null。 */
+    contributionRatio: number | null;
     /** 売上高成長率 (%, 直近期 vs 前期)。期が 2 つ未満なら null。 */
     revenueGrowthPct: number | null;
     /** 期間平均成長率 (CAGR 相当, 1 期あたり %)。期が 2 つ未満なら null。 */
@@ -180,13 +188,18 @@ export interface BusinessOverview {
     seatLimit: number;
     seatsRemaining: number;
   };
-  /** 生産性 (一人当たり) 指標。メンバーが 0 人なら per-capita は 0。 */
+  /**
+   * 生産性 (一人当たり) 指標。**メンバーが 0 人なら per-capita は null = 算定不能。**
+   * 同じ分母 (従業員数) で割る `labor.laborPerCapita` が最初から null を返していた
+   * のに、こちらは 0 に倒していた —— **1 つの節が「割れない」を 2 通りに答え**、
+   * 書面 §3 に「一人当たり売上高 0」と「一人当たり人件費 ―」が並んでいた。
+   */
   readonly productivity: {
     members: number;
-    /** 一人当たり売上。 */
-    revenuePerCapita: number;
-    /** 一人当たり営業利益。 */
-    operatingProfitPerCapita: number;
+    /** 一人当たり売上。従業員 0 名なら null。 */
+    revenuePerCapita: number | null;
+    /** 一人当たり営業利益。従業員 0 名なら null。 */
+    operatingProfitPerCapita: number | null;
     /** 人件費の効率指標 (労働分配率・人件費率・一人当たり人件費)。 */
     labor: LaborMetrics;
   };
@@ -263,13 +276,35 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
   const remaining = seatsRemaining({ used: input.members.length, limit: seatLimit });
 
   const grossProfit = fundamentals.revenue - fundamentals.cogs;
-  const pctOfRevenue = (n: number): number => (fundamentals.revenue > 0 ? (n / fundamentals.revenue) * 100 : 0);
+  /**
+   * 売上高を分母にする比率。**売上 0 なら null (算定不能)** —— 0 に倒さない。
+   *
+   * 実測 (売上 0・販売費及び一般管理費 300 万円の控え。直す前の書面 §1):
+   *
+   * | 行 | 直す前 | 直した後 |
+   * | --- | ---: | ---: |
+   * | 営業利益 | △3,000 | △3,000 |
+   * | **営業利益率** | **0.0%** | ― |
+   * | **販売費及び一般管理費率** | **0.0%** | ― |
+   * | 損益分岐点売上高 | ― | ― |
+   * | 安全余裕率 | ― | ― |
+   *
+   * **同じ表の中で「割れない」の答え方が 2 通りあり**、下 2 行だけが ― だった。
+   * 規準はすでにコードの 5 か所に在った: `computeKpiMetrics` の `safetyMargin`、
+   * `financialRatios.ts` の `pct()`、`financialStatements.ts` の限界利益率、
+   * `overviewScorecard.ts` の `hasRevenue` (軸を落とす)、`managementHighlights.ts`
+   * の `if (k.revenue > 0)`。**この 1 か所だけが 0 に倒していた。**
+   */
+  const pctOfRevenue = (n: number): number | null =>
+    fundamentals.revenue > 0 ? (n / fundamentals.revenue) * 100 : null;
   const grossMarginPct = pctOfRevenue(grossProfit);
   const operatingMarginPct = pctOfRevenue(kpi.operatingProfit);
   const ebitda = kpi.operatingProfit + fundamentals.depreciation;
   const ebitdaMarginPct = pctOfRevenue(ebitda);
   const memberCount = input.members.length;
-  const perCapita = (n: number): number => (memberCount > 0 ? Math.round(n / memberCount) : 0);
+  // 一人当たりの額。**従業員 0 名なら null** —— 同じ分母で割る
+  // `LaborMetrics.laborPerCapita` と同じ答え方 (`productivity` の脇に経緯)。
+  const perCapita = (n: number): number | null => (memberCount > 0 ? Math.round(n / memberCount) : null);
   const accountingSummary = summarizeAccounting(input.accounting ?? []);
 
   return {
@@ -397,7 +432,7 @@ function summarizeHydroponics(
     shippedKgPerYear: e.production.shippedKgPerYear,
     revenue: m.revenue,
     operatingProfit: metrics.operatingProfit,
-    operatingMarginPct: m.revenue > 0 ? (metrics.operatingProfit / m.revenue) * 100 : 0,
+    operatingMarginPct: m.revenue > 0 ? (metrics.operatingProfit / m.revenue) * 100 : null,
     contributionRatio: metrics.contributionRatio,
     bep: metrics.bep,
     breakEvenPlantsPerMonth: e.breakEvenPlantsPerMonth,
@@ -405,7 +440,7 @@ function summarizeHydroponics(
     costPerShippedPlantYen: e.costPerShippedPlantYen,
     energyKwhPerYear: e.energyKwhPerYear,
     electricityYenPerYear: e.electricityYenPerYear,
-    electricityCostRatioPct: monthlyCost > 0 ? (monthlyElectricity / monthlyCost) * 100 : 0,
+    electricityCostRatioPct: monthlyCost > 0 ? (monthlyElectricity / monthlyCost) * 100 : null,
     lowPotassium,
   };
 }

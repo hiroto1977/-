@@ -107,6 +107,12 @@ const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY',
 const num = new Intl.NumberFormat('ja-JP');
 const safeYen = (n: number) => (Number.isFinite(n) ? yen.format(Math.round(n)) : '∞');
 const pctOrDash = (n: number | null) => (n === null ? '—' : `${n}%`);
+/**
+ * 小数第 1 位の比率。算定不能 (null) は「—」 —— **`0.0%` は「その比率が 0 である」
+ * という主張**であり、「割れない」とは別のこと (経緯は `data/overview.ts` の
+ * `pctOfRevenue`)。
+ */
+const pct1OrDash = (n: number | null) => (n === null ? '—' : `${n.toFixed(1)}%`);
 /** 金額。算定不能 (null) は 0 円として刷らない —— 未入力の内数が混ざると合計は意味を失う。 */
 const yenOrDash = (n: number | null) => (n === null ? '—' : yen.format(n));
 
@@ -930,7 +936,7 @@ export function OverviewPage() {
                     <td style={{ padding: '4px 8px' }}>{r.period}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.revenue)}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right', color: r.operatingProfit >= 0 ? 'var(--text)' : '#ef4444' }}>{yen.format(r.operatingProfit)}</td>
-                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{r.operatingMarginPct.toFixed(1)}%</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{pct1OrDash(r.operatingMarginPct)}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right', color: r.revenueGrowthPct === null ? 'var(--text-mute)' : r.revenueGrowthPct >= 0 ? '#22c55e' : '#ef4444' }}>
                       {r.revenueGrowthPct === null ? '—' : `${r.revenueGrowthPct > 0 ? '+' : ''}${r.revenueGrowthPct}%`}
                     </td>
@@ -970,7 +976,7 @@ export function OverviewPage() {
                     <td style={{ padding: '4px 8px' }}>{r.deltaPct > 0 ? '+' : ''}{r.deltaPct}%{r.deltaPct === 0 ? ' (現状)' : ''}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.revenue)}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right', color: r.operatingProfit >= 0 ? '#22c55e' : '#ef4444' }}>{yen.format(r.operatingProfit)}</td>
-                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{r.operatingMarginPct.toFixed(1)}%</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{pct1OrDash(r.operatingMarginPct)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -1088,23 +1094,23 @@ export function OverviewPage() {
                 label="営業利益"
                 value={yen.format(overview.kpi.operatingProfit)}
                 accent={overview.flags.profitable ? '#22c55e' : '#ef4444'}
-                sub={`営業利益率 ${overview.kpi.operatingMarginPct.toFixed(1)}%`}
+                sub={`営業利益率 ${pct1OrDash(overview.kpi.operatingMarginPct)}`}
               />
               <Tile
                 label="売上総利益 (粗利)"
                 value={yen.format(overview.kpi.grossProfit)}
-                sub={`粗利率 ${overview.kpi.grossMarginPct.toFixed(1)}%`}
+                sub={`粗利率 ${pct1OrDash(overview.kpi.grossMarginPct)}`}
               />
               <Tile
                 label="EBITDA"
                 value={yen.format(overview.kpi.ebitda)}
-                sub={`償却前営業利益・マージン ${overview.kpi.ebitdaMarginPct.toFixed(1)}%`}
+                sub={`償却前営業利益・マージン ${pct1OrDash(overview.kpi.ebitdaMarginPct)}`}
               />
-              <Tile label="限界利益率" value={`${overview.kpi.contributionRatio.toFixed(1)}%`} sub="高いほど固定費を回収しやすい" />
+              <Tile label="限界利益率" value={pct1OrDash(overview.kpi.contributionRatio)} sub="高いほど固定費を回収しやすい" />
               <Tile label="損益分岐点 (BEP)" value={safeYen(overview.kpi.bep)} />
               <Tile
                 label="安全余裕率"
-                value={overview.kpi.safetyMargin === null ? '—' : `${overview.kpi.safetyMargin.toFixed(1)}%`}
+                value={pct1OrDash(overview.kpi.safetyMargin)}
                 sub="高いほど安全"
               />
             </>
@@ -1113,26 +1119,35 @@ export function OverviewPage() {
           )}
         </div>
 
-        {overview.kpi.hasData && overview.kpi.revenue > 0 && (
+        {/* 枠の条件は**値そのもの**で書く —— `revenue > 0` を写すと同じ規則が 2 か所に
+            分かれる (2026-09-08 まで、この枠だけが規則を持ち、上の損益タイルと書面は
+            0.0% を刷っていた)。手入力で上書きすれば売上 0 でも表示される。 */}
+        {overview.kpi.hasData && overview.kpi.cogsRatioPct !== null && (
           <>
             <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>コスト構造 (対売上)</div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
-              <Tile label="原価率" value={`${overview.kpi.cogsRatioPct.toFixed(1)}%`} />
-              <Tile label="広告費比率" value={`${overview.kpi.advertisingRatioPct.toFixed(1)}%`} />
-              <Tile label="販管費率" value={`${overview.kpi.sgaRatioPct.toFixed(1)}%`} />
+              <Tile label="原価率" value={pct1OrDash(overview.kpi.cogsRatioPct)} />
+              <Tile label="広告費比率" value={pct1OrDash(overview.kpi.advertisingRatioPct)} />
+              <Tile label="販管費率" value={pct1OrDash(overview.kpi.sgaRatioPct)} />
             </div>
           </>
         )}
 
-        {overview.kpi.hasData && overview.productivity.members > 0 && (
+        {/* 同じく値そのもので。`members > 0` ⟺ 一人当たりが非 null (`perCapita` の定義)。 */}
+        {overview.kpi.hasData && overview.productivity.revenuePerCapita !== null && (
           <>
             <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>生産性 (一人当たり)</div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
-              <Tile label="一人当たり売上" value={yen.format(overview.productivity.revenuePerCapita)} sub={`${overview.productivity.members} 名`} />
+              <Tile label="一人当たり売上" value={yenOrDash(overview.productivity.revenuePerCapita)} sub={`${overview.productivity.members} 名`} />
               <Tile
                 label="一人当たり営業利益"
-                value={yen.format(overview.productivity.operatingProfitPerCapita)}
-                accent={overview.productivity.operatingProfitPerCapita >= 0 ? '#22c55e' : '#ef4444'}
+                value={yenOrDash(overview.productivity.operatingProfitPerCapita)}
+                accent={
+                  // 算定不能なら色を付けない —— 緑 (黒字) は「0 以上」の主張である。
+                  overview.productivity.operatingProfitPerCapita === null
+                    ? undefined
+                    : overview.productivity.operatingProfitPerCapita >= 0 ? '#22c55e' : '#ef4444'
+                }
               />
               {overview.productivity.labor.laborCost > 0 && (
                 <>
@@ -1381,7 +1396,7 @@ export function OverviewPage() {
                 label="営業利益"
                 value={yen.format(overview.hydroponics.operatingProfit)}
                 accent={overview.hydroponics.operatingProfit >= 0 ? '#22c55e' : '#ef4444'}
-                sub={`営業利益率 ${overview.hydroponics.operatingMarginPct.toFixed(1)}%`}
+                sub={`営業利益率 ${pct1OrDash(overview.hydroponics.operatingMarginPct)}`}
               />
               <Tile
                 label="出荷 1 株あたり原価"
@@ -1390,7 +1405,7 @@ export function OverviewPage() {
               />
               <Tile
                 label="電気代が費用に占める割合"
-                value={`${overview.hydroponics.electricityCostRatioPct.toFixed(1)}%`}
+                value={pct1OrDash(overview.hydroponics.electricityCostRatioPct)}
                 sub={`年間 ${yen.format(overview.hydroponics.electricityYenPerYear)}`}
               />
             </div>
@@ -1414,7 +1429,7 @@ export function OverviewPage() {
                 }
               />
               <Tile label="損益分岐点売上高 (月)" value={yen.format(overview.hydroponics.bep)} />
-              <Tile label="限界利益率" value={`${overview.hydroponics.contributionRatio.toFixed(1)}%`} />
+              <Tile label="限界利益率" value={pct1OrDash(overview.hydroponics.contributionRatio)} />
             </div>
 
             {overview.hydroponics.lowPotassium && (

@@ -11,14 +11,19 @@ import { budgetScopeSentence } from './budgetVariance';
 import type { BusinessOverview } from './overview';
 import { VERDICT_LABEL, type ManagementScorecard } from '../../shared/managementScorecard';
 import { summarizeHighlights, RISK_BAND_LABEL, type Highlight } from './managementHighlights';
-import { formatPeriodWindow, type MonthlyTrendRow } from './kpiActuals';
+import { formatPeriodWindow, zeroRevenueRatioNote, type MonthlyTrendRow } from './kpiActuals';
 
 const SEVERITY_MARK: Record<Highlight['severity'], string> = {
   critical: '🔴', warning: '🟡', good: '🟢',
 };
 
 const yen = (n: number): string => `¥${Math.round(n).toLocaleString('ja-JP')}`;
-const pct = (n: number): string => `${n.toFixed(1)}%`;
+/**
+ * 小数第 1 位の比率。**算定不能 (`null`) は「—」** —— 0.0% と書かない。
+ * 0.0% は「その比率が 0 である」という主張であり、「割れない」とは別のこと
+ * (経緯は `overview.ts` の `pctOfRevenue`)。
+ */
+const pct = (n: number | null): string => (n === null ? '—' : `${n.toFixed(1)}%`);
 const pctOrDash = (n: number | null): string => (n === null ? '—' : `${n}%`);
 
 /**
@@ -91,7 +96,7 @@ export function buildManagementReport(
     lines.push(`- 営業利益: ${yen(k.operatingProfit)} (営業利益率 ${pct(k.operatingMarginPct)})`);
     lines.push(`- 売上総利益: ${yen(k.grossProfit)} (粗利率 ${pct(k.grossMarginPct)})`);
     lines.push(`- EBITDA: ${yen(k.ebitda)} (マージン ${pct(k.ebitdaMarginPct)})`);
-    lines.push(`- 損益分岐点: ${Number.isFinite(k.bep) ? yen(k.bep) : '—'} / 安全余裕率 ${k.safetyMargin === null ? '—' : pct(k.safetyMargin)}`);
+    lines.push(`- 損益分岐点: ${Number.isFinite(k.bep) ? yen(k.bep) : '—'} / 安全余裕率 ${pct(k.safetyMargin)}`);
     if (k.revenueGrowthPct !== null) lines.push(`- 前期比成長率: ${k.revenueGrowthPct}%`);
     if (k.yoy !== null && k.yoy.revenueYoYPct !== null) {
       lines.push(`- 前年同月比 (YoY): ${k.yoy.revenueYoYPct > 0 ? '+' : ''}${k.yoy.revenueYoYPct}% (${k.yoy.period} vs ${k.yoy.priorPeriod})`);
@@ -99,6 +104,9 @@ export function buildManagementReport(
     if (breakEvenDeltaPct !== null) {
       lines.push(`- 損益分岐点までの売上余地: ${breakEvenDeltaPct > 0 ? '+' : ''}${breakEvenDeltaPct}%`);
     }
+    // 売上 0 のときは売上高を分母にする比率がすべて「—」になる。**なぜ空欄なのかを
+    // 述べる** (書面 §1 と同じ文。理由が無いと入力漏れと区別できない)。
+    if (k.revenue <= 0) lines.push(`- ${zeroRevenueRatioNote()}`);
     lines.push('');
   }
 
@@ -178,7 +186,7 @@ export function buildManagementReport(
     lines.push('| --- | ---: | ---: | ---: | ---: |');
     for (const r of monthlyTrend) {
       const growth = r.revenueGrowthPct === null ? '—' : `${r.revenueGrowthPct > 0 ? '+' : ''}${r.revenueGrowthPct}%`;
-      lines.push(`| ${r.period} | ${yen(r.revenue)} | ${yen(r.operatingProfit)} | ${r.operatingMarginPct.toFixed(1)}% | ${growth} |`);
+      lines.push(`| ${r.period} | ${yen(r.revenue)} | ${yen(r.operatingProfit)} | ${pct(r.operatingMarginPct)} | ${growth} |`);
     }
     lines.push('');
   }
