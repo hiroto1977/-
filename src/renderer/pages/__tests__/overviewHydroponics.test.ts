@@ -23,6 +23,7 @@ import {
   type HydroponicCropListRecord,
   type HydroponicsSetup,
 } from '../../data/hydroponicsSetup';
+import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../../data/kpiActuals';
 import { latestRecord } from '../../data/latestRecord';
 
 beforeAll(() => {
@@ -423,5 +424,129 @@ describe('経営サマリー 低カリウム — 切替日が未入力', () => {
     expect(t!.value).toBe('20 日');
     expect(t!.sub).toContain('目安は');
     expect(t!.sub).not.toContain('入力してください');
+  });
+});
+
+
+/**
+ * **損益分岐点が「存在しない」ことを、金額の形で刷らない。** (2026-09-08 · パス 84)
+ *
+ * `computeKpiMetrics` は限界利益が 0 以下のとき `bep = Infinity` を返す ——
+ * *どれだけ売っても固定費を回収できない*、事業として最も重い状態の印である
+ * (`data/kpiActuals.ts` の `finiteBep` に経緯)。パス 59 は KPI 画面の**グラフ**が
+ * これを 0 に倒していたのを直したが、**経営サマリーのタイルは見ていなかった**:
+ *
+ * | タイル | 直す前 | 理由の説明 |
+ * | --- | --- | --- |
+ * | 損益分岐点 (BEP) | `∞` | 無し |
+ * | **損益分岐点売上高 (月)** | **`￥∞`** | 無し |
+ * | 損益分岐の出荷株数 (月) | `—` | **有り** |
+ *
+ * **規準は同じ行の 1 つ左のタイルに在った。** 同じ限界利益 ≤ 0 を
+ * 「—」+「単価が株あたり変動費以下です。何株売っても固定費を回収できません。」と
+ * 答えている。`￥∞` は金額として読める形で、しかも ∞ は「無限に安全」と
+ * 読み違えられる —— 実際は正反対である。
+ *
+ * 実測 (`estimateEconomics` を通した値): 単価 10 円・変動費 17 円/株 で
+ * **月商 ￥884,781** と **`￥∞`** が同じ行に並んでいた。
+ */
+describe('経営サマリー — 損益分岐点が存在しない事業 (∞ を金額として刷らない)', () => {
+  /** 単価 10 円 < 株あたり変動費 17 円 (種 3 + 液肥 2 + 包材 12)。限界利益は負。 */
+  const belowVariableCost: HydroponicsSetup = { ...HYDROPONICS_DEFAULTS, unitPriceYen: 10 };
+  /** 変動費が売上を超える期。BEP は存在しない (パス 59 の LOSS と同じ形)。 */
+  const lossPeriod: KpiActual = {
+    period: '2026-08', unit: '全社',
+    revenue: 1_000_000, cogs: 1_200_000, advertising: 0, sga: 300_000, depreciation: 0,
+  };
+  /** 限界利益が在る期 (対照)。BEP = 固定費 30 万 ÷ 限界利益率 60% = 50 万。 */
+  const okPeriod: KpiActual = {
+    period: '2026-08', unit: '全社',
+    revenue: 1_000_000, cogs: 400_000, advertising: 0, sga: 300_000, depreciation: 0,
+  };
+
+  const REASON = '限界利益が 0 以下です。どれだけ売っても固定費を回収できません。';
+
+  /**
+   * タイル 1 枚の文字列 (見出し + 値 + 補足)。
+   * **見つからなければ投げる** —— 枠が消えたときに「∞ が無い」で受かる形を作らない。
+   */
+  const tileText = (label: string): string => {
+    const head = Array.from(container.querySelectorAll('div'))
+      .find((el) => el.children.length === 0 && el.textContent === label);
+    const box = head?.parentElement;
+    if (!box) throw new Error(`tile "${label}" not found`);
+    return (box.textContent ?? '').replace(/\s+/g, ' ');
+  };
+
+  it('★ 水耕栽培: 損益分岐点売上高は「—」と理由 (￥∞ と刷らない)', async () => {
+    await getRecordStore().insert(HYDROPONICS_COLLECTION, belowVariableCost);
+    await mountOverview();
+    const t = tileText('損益分岐点売上高 (月)');
+    expect(t).toContain('—');
+    expect(t).toContain(REASON);
+    // 直す前の形。∞ は「無限に安全」と読めるが、これは最も危ない側である。
+    expect(t).not.toContain('∞');
+    // **隣のタイルと同じ答え方であること** —— 規準はそこに在った。
+    expect(tileText('損益分岐の出荷株数 (月)')).toContain('何株売っても固定費を回収できません');
+  });
+
+  it('★ 対照: 単価が変動費を上回れば損益分岐点売上高は金額で出る (理由は出ない)', async () => {
+    await getRecordStore().insert(HYDROPONICS_COLLECTION, HYDROPONICS_DEFAULTS);
+    await mountOverview();
+    const t = tileText('損益分岐点売上高 (月)');
+    expect(t).toMatch(/￥[\d,]+/);
+    expect(t).not.toContain('—');
+    expect(t).not.toContain(REASON);
+  });
+
+  it('★ KPI 実績: 損益分岐点 (BEP) も「—」と理由 (∞ と刷らない)', async () => {
+    await getRecordStore().insert(KPI_ACTUALS_COLLECTION, lossPeriod);
+    await mountOverview();
+    const t = tileText('損益分岐点 (BEP)');
+    expect(t).toContain('—');
+    expect(t).toContain(REASON);
+    expect(t).not.toContain('∞');
+    // 同じ節の安全余裕率は元から「—」。**2 つのタイルが同じ状態を同じ形で言う。**
+    expect(tileText('安全余裕率')).toContain('—');
+  });
+
+  /**
+   * **同じ規則が書面には検査として在り、画面には無かった。**
+   * `overviewBankSheet.test.ts` の「★ 書面に NaN / Infinity が 1 つも出ない」は
+   * `q.sheet()` の中だけを見ている —— 書面を組み立てている**画面そのもの**は
+   * 誰も見ておらず、そこに `￥∞` が出ていた。画面側にも床を置く。
+   *
+   * ただし床は**同じ厳しさでは張れない**: `NaN` と `Infinity` (綴り) は
+   * このページでつねに誤りだが、**`∞` には正しい用途が 1 つ在る** ——
+   * 席数の上限が無い契約の「メンバー / シート 0 / ∞（残り 無制限）」で、
+   * ここでの ∞ は「無制限」という**正しい**意味である
+   * (最初にページ全体で `∞` を禁じたら、この 1 件が鳴った)。
+   *
+   * そこで `∞` は**台帳として数える**: 正しい 1 件を名指しで留め、
+   * 2 件目が黙って増えないことを見る。数を動かすには理由を書く必要がある。
+   */
+  it('★ 画面に NaN / Infinity は 1 つも無く、∞ は「無制限」の 1 件だけ', async () => {
+    await getRecordStore().insert(HYDROPONICS_COLLECTION, belowVariableCost);
+    await getRecordStore().insert(KPI_ACTUALS_COLLECTION, lossPeriod);
+    await mountOverview();
+    const t = (container.textContent ?? '').replace(/\s+/g, ' ');
+    // 節そのものが出ている (枠が消えたときに「無い」で受からないように)
+    expect(t).toContain('損益分岐点売上高 (月)');
+    expect(t).toContain('損益分岐点 (BEP)');
+    // 綴りの Infinity / NaN は用途が無い。
+    expect(t).not.toMatch(/NaN|Infinity/);
+    // 正しい ∞ は席数の上限だけ。**その 1 件を名指しで留める。**
+    expect(t).toContain('メンバー / シート');
+    expect(t).toContain('残り 無制限');
+    expect((t.match(/∞/g) ?? []).length).toBe(1);
+  });
+
+  it('★ 対照: 限界利益が在れば BEP は金額で出る (理由は出ない)', async () => {
+    await getRecordStore().insert(KPI_ACTUALS_COLLECTION, okPeriod);
+    await mountOverview();
+    const t = tileText('損益分岐点 (BEP)');
+    expect(t).toMatch(/￥[\d,]+/);
+    expect(t).not.toContain(REASON);
+    expect(tileText('安全余裕率')).toMatch(/\d/);
   });
 });

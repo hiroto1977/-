@@ -106,6 +106,31 @@ const RISK_BAND_COLOR: Record<RiskBand, string> = { high: '#ef4444', medium: '#f
 const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 0 });
 const num = new Intl.NumberFormat('ja-JP');
 const safeYen = (n: number) => (Number.isFinite(n) ? yen.format(Math.round(n)) : '∞');
+/**
+ * **損益分岐点売上高の「無い」の印は `Infinity`** ——
+ * 限界利益が 0 以下 = *どれだけ売っても固定費を回収できない*、という最も重い状態を
+ * `computeKpiMetrics` はこう表す (経緯は `data/kpiActuals.ts` の `finiteBep`)。
+ *
+ * 2026-09-08 まで、このページはそれを 2 通りで刷っていた:
+ *
+ * | タイル | 刷っていた物 | 理由の説明 |
+ * | --- | --- | --- |
+ * | 損益分岐点 (BEP) | `∞` (`safeYen`) | 無し |
+ * | **損益分岐点売上高 (月)** | **`￥∞`** (生の `yen.format`) | 無し |
+ * | 損益分岐の出荷株数 (月) | `—` | **有り** (同じ行の 1 つ左) |
+ *
+ * `￥∞` は**金額として読める形**で、しかも ∞ は「無限に安全」と読み違えられる ——
+ * 実際は正反対である。**規準は隣のタイルに在った**: 同じ限界利益 ≤ 0 を
+ * 「—」+「何株売っても固定費を回収できません」と答えている。このページの
+ * 算定不能はすべて「—」(`pct1OrDash` / `yenOrDash` / `scoreHeading`) なので、
+ * 損益分岐点売上高もそこへ揃える。
+ *
+ * **値と理由は 1 つの判定から返す。** 別々に書くと「— なのに理由が出ない」
+ * 「数が出ているのに理由が付く」形が型の上で開く (パス 57 と同じ轍)。
+ */
+const NO_BEP_REASON = '限界利益が 0 以下です。どれだけ売っても固定費を回収できません。';
+const bepDisplay = (bep: number): { value: string; sub?: string } =>
+  Number.isFinite(bep) ? { value: yen.format(Math.round(bep)) } : { value: '—', sub: NO_BEP_REASON };
 const pctOrDash = (n: number | null) => (n === null ? '—' : `${n}%`);
 /**
  * 小数第 1 位の比率。算定不能 (null) は「—」 —— **`0.0%` は「その比率が 0 である」
@@ -1126,7 +1151,7 @@ export function OverviewPage() {
                 sub={`償却前営業利益・マージン ${pct1OrDash(overview.kpi.ebitdaMarginPct)}`}
               />
               <Tile label="限界利益率" value={pct1OrDash(overview.kpi.contributionRatio)} sub="高いほど固定費を回収しやすい" />
-              <Tile label="損益分岐点 (BEP)" value={safeYen(overview.kpi.bep)} />
+              <Tile label="損益分岐点 (BEP)" {...bepDisplay(overview.kpi.bep)} />
               <Tile
                 label="安全余裕率"
                 value={pct1OrDash(overview.kpi.safetyMargin)}
@@ -1457,7 +1482,7 @@ export function OverviewPage() {
                       : `現在の出荷は ${num.format(overview.hydroponics.shippedPlantsPerMonth)} 株。単価か歩留まりを上げるか、固定費を下げる必要があります。`
                 }
               />
-              <Tile label="損益分岐点売上高 (月)" value={yen.format(overview.hydroponics.bep)} />
+              <Tile label="損益分岐点売上高 (月)" {...bepDisplay(overview.hydroponics.bep)} />
               <Tile label="限界利益率" value={pct1OrDash(overview.hydroponics.contributionRatio)} />
             </div>
 
