@@ -133,12 +133,29 @@ export function buildFinancialReportMarkdown(input: FinancialReportInput): strin
   lines.push('');
   lines.push(`作成日: ${date}`);
   lines.push('');
-  lines.push(`## 総合評価: ${diagnosis.grade} （総合スコア ${diagnosis.overallScore} / 100）`);
+  // **`${null}` は型検査を素通りして文字列 "null" を刷る。**
+  // `grade` / `overallScore` / `c.score` は算定できた軸が 0 件のとき `null` になるので、
+  // ここで明示的に分ける (2026-09-08 に実際にこの経路で "null" を刷りかけた)。
+  lines.push(
+    diagnosis.overallScore === null || diagnosis.grade === null
+      ? '## 総合評価: 未評価 （算定できた指標がありません）'
+      : `## 総合評価: ${diagnosis.grade} （総合スコア ${diagnosis.overallScore} / 100）`,
+  );
   lines.push('');
   lines.push('| カテゴリ | スコア |');
   lines.push('| --- | ---: |');
-  for (const c of diagnosis.categories) lines.push(`| ${c.category} | ${c.score} |`);
+  for (const c of diagnosis.categories) {
+    lines.push(`| ${c.category} | ${c.score === null ? '未評価' : c.score} |`);
+  }
   lines.push('');
+  // 除いた軸を書面の中で述べる (画面の帯と同じ趣旨 —— 数字が変わった理由が読めるように)。
+  if (diagnosis.unscored.length > 0) {
+    lines.push(
+      `**未評価の ${diagnosis.unscored.length} 軸:** ${diagnosis.unscored.map((u) => u.label).join('・')}` +
+        '（分母となる科目が 0 のため算定できず、総合スコア・カテゴリ平均・強み／要改善から除いています）',
+    );
+    lines.push('');
+  }
   const delta = trend.deltaPct == null ? '—' : `${trend.deltaPct > 0 ? '+' : ''}${trend.deltaPct}pt`;
   lines.push(`**営業利益率トレンド:** ${TREND_TEXT[trend.direction]}（履歴 ${delta}）`);
   lines.push('');

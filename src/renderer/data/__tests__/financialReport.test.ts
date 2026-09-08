@@ -258,3 +258,66 @@ describe('buildFinancialReportMarkdown', () => {
     expect(flat).toContain('- 大きな弱みは検出されませんでした。');
   });
 });
+
+/**
+ * **レポートに文字列 "null" を刷らない (2026-09-08)。**
+ *
+ * パス 74 で `overallScore` / `grade` / `CategoryScore.score` を
+ * `number | null` にしたとき、この 3 つは**テンプレートリテラルへ直に
+ * 埋め込まれていた** (`## 総合評価: ${diagnosis.grade} （総合スコア
+ * ${diagnosis.overallScore} / 100）`)。
+ *
+ * **`${null}` は型検査を素通りして "null" を刷る** —— `tsc` は 1 つも
+ * 文句を言わなかった。実測すると:
+ *
+ * ```
+ * ## 総合評価: null （総合スコア null / 100）
+ * | 安全性 | null |
+ * ```
+ *
+ * 利用者がダウンロードする診断レポートに "null" が並ぶ状態を、
+ * **自分の直しが作りかけた。** 型では見えないので検査で留める。
+ */
+describe('buildFinancialReportMarkdown — 未評価 (null) の刷り方', () => {
+  const { ratios, trend } = fixture();
+  /** 1 軸も算定できない診断 (全軸 raw=null)。 */
+  const allUnscored = diagnoseFinancials([
+    { key: 'ccc', label: 'CCC', unit: '日', raw: null, score: null },
+    { key: 'roe', label: 'ROE', unit: '%', raw: null, score: null },
+  ]);
+  const md = () =>
+    buildFinancialReportMarkdown({ label: 'Z事業', ratios, diagnosis: allUnscored, trend, generatedAt: new Date(2026, 5, 2, 12) });
+
+  it('★ 文字列 "null" を 1 つも含まない', () => {
+    const out = md();
+    // **不在の主張には標本を添える** —— 下の対照で「この綴りが実際に出る形」を示す。
+    expect(out).not.toContain('null');
+  });
+
+  it('★ 対照: 直す前の書き方なら "null" が出る (上の検査が空でない証拠)', () => {
+    // 旧い実装と同じ埋め込みを手で作り、`${null}` が "null" を刷ることを見せる。
+    const asOldCode = `## 総合評価: ${allUnscored.grade} （総合スコア ${allUnscored.overallScore} / 100）`;
+    expect(asOldCode).toBe('## 総合評価: null （総合スコア null / 100）');
+    expect(asOldCode).toContain('null');
+  });
+
+  it('★ 総合評価とカテゴリ行を「未評価」と書く', () => {
+    const out = md();
+    expect(out).toContain('## 総合評価: 未評価 （算定できた指標がありません）');
+    expect(out).toContain('| 安全性 | 未評価 |');
+  });
+
+  it('★ 除いた軸を書面の中で述べる (数字が変わった理由が読める)', () => {
+    const out = md();
+    expect(out).toContain('**未評価の 2 軸:** CCC・ROE');
+    expect(out).toContain('総合スコア・カテゴリ平均・強み／要改善から除いています');
+  });
+
+  it('★ 対照: 算定できる診断では従来どおり数と格付けを書く', () => {
+    const { diagnosis } = fixture();
+    const out = buildFinancialReportMarkdown({ label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date(2026, 5, 2, 12) });
+    expect(out).toMatch(/## 総合評価: [SABCD] （総合スコア \d+ \/ 100）/);
+    expect(out).not.toContain('未評価');
+    expect(out).not.toContain('null');
+  });
+});

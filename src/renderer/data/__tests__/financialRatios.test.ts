@@ -234,20 +234,50 @@ describe('radarAxes', () => {
       ccc: 66, roa: 80, roe: 100,
     });
   });
-  it('treats null raw as score 0', () => {
+  /**
+   * **★ 算定不能な軸に 0 点という評価を与えない (2026-09-08)。**
+   *
+   * この 2 本は 2026-09-08 まで **`score` が 0 であること**を主張していた
+   * (1 本目は名前が `treats null raw as score 0`、2 本目は
+   * `null raw は反転軸 (bad>good) でも score 0`) ——
+   * **どちらも名前で欠陥を仕様として固定していた。**
+   *
+   * 0 点はレーダーの頂点を中心へ落とし、`diagnoseFinancials` の平均・
+   * カテゴリ・**要改善の名指し**へ混ざる。仕入が無い事業 (士業・コンサル) は
+   * 棚卸資産回転率と CCC が算定不能なので、
+   * **「棚卸資産回転率が低め。在庫の滞留に注意。」を在庫の無い事業に言っていた。**
+   *
+   * `toBeNull()` は**同じ変異体を同じように殺す** —— しかも 2 本目は
+   * その理屈が特に見やすい: `debtToMonthlySales` は bad=6 > good=1 の反転軸で、
+   * null ガードを外す変異体は `(0-6)/(1-6)=1.2` → クランプ後 **100 点**になる。
+   * つまり旧い検査は「**満点**にしない」ために「**0 点**である」と書いていた。
+   * **殺す最小の主張を選べば、間違った値を固定する必要はない** (パス 71 と同じ)。
+   */
+  it('★ null raw の軸は score も null (0 点という評価を作らない)', () => {
     const zeroAxes = radarAxes(
       computeFinancialRatios({ ...SAMPLE, totalAssets: 0, equity: 0 }),
     );
-    expect(zeroAxes.find((a) => a.key === 'roe')!.score).toBe(0);
+    const roe = zeroAxes.find((a) => a.key === 'roe')!;
+    expect(roe.raw).toBeNull();
+    // 直す前は 0 だった
+    expect(roe.score).toBeNull();
   });
 
-  it('null raw は反転軸 (bad>good) でも score 0 — linScore の null ガード', () => {
-    // roe は bad=0 のため null→ガード除去でも (0-0)/15=0 で区別できない。
-    // debtToMonthlySales は bad=6>good=1 で、null ガードを外す mutant は
-    // (0-6)/(1-6)=1.2 → クランプ後 100 になる。score===0 でこれを殺す。
+  it('★ 反転軸 (bad>good) でも null (ガードを外す変異体は 100 点になる)', () => {
     const axes0 = radarAxes(computeFinancialRatios({ ...SAMPLE, revenue: 0 }));
-    expect(axes0.find((a) => a.key === 'debtToMonthlySales')!.raw).toBeNull();
-    expect(axes0.find((a) => a.key === 'debtToMonthlySales')!.score).toBe(0);
+    const d = axes0.find((a) => a.key === 'debtToMonthlySales')!;
+    expect(d.raw).toBeNull();
+    // 直す前は 0 だった。ガードを外す変異体は 100 になるので、
+    // `null` を主張すれば 0 も 100 もどちらも落ちる。
+    expect(d.score).toBeNull();
+    expect(d.score).not.toBe(0);
+    expect(d.score).not.toBe(100);
+  });
+
+  it('★ 対照: 算定できる軸は今も数で出る (床が邪魔をしない)', () => {
+    const ok = radarAxes(computeFinancialRatios(SAMPLE));
+    expect(ok.every((a) => a.score !== null)).toBe(true);
+    expect(ok.find((a) => a.key === 'roe')!.score).toBe(100);
   });
 
   it('golden: exact 15-axis structure (key/label/unit/raw/score)', () => {

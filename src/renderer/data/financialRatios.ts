@@ -187,13 +187,35 @@ export interface RadarAxis {
   readonly label: string;
   readonly unit: string;
   readonly raw: number | null;
-  /** 0-100。null (算定不能) は 0 とみなす。 */
-  readonly score: number;
+  /**
+   * 0-100。**算定不能 (`raw === null`) なら `score` も `null` (未評価)。**
+   *
+   * 2026-09-08 まで「null は 0 とみなす」と書いて 0 を返していた。0 点は
+   * レーダーの**中心に頂点を落とし**、`diagnoseFinancials` の平均・カテゴリ・
+   * 要改善のすべてに混ざる。実測 (production 経路 `deriveBusinessFinancials`):
+   *
+   * | 入力 | null 軸 | 総合 | 要改善に名指しされた軸 |
+   * | --- | --- | --- | --- |
+   * | 物販 (変動費あり) | 0/15 | 86 S | 実測された 3 軸 (正しい) |
+   * | **サービス業 (変動費 0)** | 2/15 | 78 A | **棚卸資産回転率(0) · CCC(0)** |
+   * | **創業前 (売上 0)** | **12/15** | **7 D** | 全部が未入力の軸 |
+   *
+   * 仕入が無い事業 (士業・コンサル・サービス業) に
+   * **「棚卸資産回転率が低め。在庫の滞留に注意。」**と言っていた ——
+   * **在庫を持たない事業に、在庫の滞留を警告していた。**
+   *
+   * パス 55 が team radar で直したのと同じ形。パス 39 は**この同じ
+   * 財務健全度 grade** の「定数軸による希釈」を直したが、null 軸は残っていた。
+   */
+  readonly score: number | null;
 }
 
-/** 線形スコア: raw が good で 100、bad で 0。範囲外はクランプ。 */
-function linScore(raw: number | null, bad: number, good: number): number {
-  if (raw == null) return 0;
+/**
+ * 線形スコア: raw が good で 100、bad で 0。範囲外はクランプ。
+ * **算定不能は `null`** —— 0 点という評価を作らない。
+ */
+function linScore(raw: number | null, bad: number, good: number): number | null {
+  if (raw == null) return null;
   const t = (raw - bad) / (good - bad);
   return Math.max(0, Math.min(100, Math.round(t * 100)));
 }
@@ -207,7 +229,7 @@ export function axisBand(key: RadarAxisKey, bands: RadarBands): AxisBand {
   return b.good === b.bad ? RADAR_AXIS_BANDS[key] : b;
 }
 
-function axisScore(raw: number | null, key: RadarAxisKey, bands: RadarBands): number {
+function axisScore(raw: number | null, key: RadarAxisKey, bands: RadarBands): number | null {
   const b = axisBand(key, bands);
   return linScore(raw, b.bad, b.good);
 }

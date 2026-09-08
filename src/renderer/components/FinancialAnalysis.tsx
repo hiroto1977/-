@@ -73,7 +73,21 @@ function RadarChart({ axes }: { axes: ReturnType<typeof radarAxes> }) {
     const rr = (score / 100) * radius;
     return { x: cx + Math.cos(theta) * rr, y: cy + Math.sin(theta) * rr };
   };
-  const poly = axes.map((a, i) => point(i, a.score)).map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  /**
+   * **算定できた軸だけで多角形を描く。**
+   *
+   * `score` が `null` の軸を 0 として置くと、頂点が**中心に落ちて**
+   * 「最悪の水準」として読める幾何になる (パス 59 の「0 が座標に入ると
+   * 主張ではなく幾何になる」/ パス 65 の「欠けた頂点を通る多角形を描かない」)。
+   * 仕入が無い事業では棚卸資産回転率と CCC が算定不能なので、
+   * 2026-09-08 まで**その 2 頂点が必ず中心に落ちていた。**
+   */
+  const measured = axes.map((a, i) => ({ a, i })).filter((x) => x.a.score !== null);
+  const poly = measured
+    .map((x) => point(x.i, x.a.score as number))
+    .map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`)
+    .join(' ');
+  const unscoredKeys = new Set(axes.filter((a) => a.score === null).map((a) => a.key));
   // 軸ラベルは半径の 113% 位置に置き、左右上下に十分な余白 (PAD) を取った viewBox に
   // 収めることで、長いラベル (固定長期適合率 / 売上債権回転率 等) が端で見切れないようにする。
   const PAD_X = 96;
@@ -90,12 +104,15 @@ function RadarChart({ axes }: { axes: ReturnType<typeof radarAxes> }) {
         return (
           <g key={a.key}>
             <line x1={cx} y1={cy} x2={outer.x} y2={outer.y} stroke="#2a2f3a" />
-            <text x={lp.x} y={lp.y} fontSize={9} fill="#94a3b8" textAnchor={anchor} dominantBaseline="middle">{a.label}</text>
+            {/* 未評価の軸はラベルを暗くし、末尾に印を付ける (頂点が無い理由を図の中で示す)。 */}
+            <text x={lp.x} y={lp.y} fontSize={9} fill={unscoredKeys.has(a.key) ? '#64748b' : '#94a3b8'} textAnchor={anchor} dominantBaseline="middle">
+              {unscoredKeys.has(a.key) ? `${a.label}（未評価）` : a.label}
+            </text>
           </g>
         );
       })}
       <polygon points={poly} fill="rgba(91,141,239,0.20)" stroke="#5b8def" strokeWidth={2} />
-      {axes.map((a, i) => { const p = point(i, a.score); return <circle key={a.key} cx={p.x} cy={p.y} r={2.5} fill="#5b8def" />; })}
+      {measured.map((x) => { const p = point(x.i, x.a.score as number); return <circle key={x.a.key} cx={p.x} cy={p.y} r={2.5} fill="#5b8def" />; })}
     </svg>
   );
 }
@@ -628,7 +645,7 @@ function TrendBadge({ trend }: { trend: MarginTrend }) {
 }
 
 function DiagnosisCard({ diagnosis, label, trend, onExportReport, healthBands }: { diagnosis: ReturnType<typeof diagnoseFinancials>; label: string; trend: MarginTrend; onExportReport: () => void; healthBands?: HealthBands }) {
-  const { overallScore, grade, categories, strengths, weaknesses } = diagnosis;
+  const { overallScore, grade, categories, strengths, weaknesses, unscored } = diagnosis;
   return (
     <div style={cardStyle}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
@@ -642,15 +659,25 @@ function DiagnosisCard({ diagnosis, label, trend, onExportReport, healthBands }:
       </div>
       <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-          <span style={{ fontSize: 40, fontWeight: 800, color: GRADE_COLOR[grade], lineHeight: 1 }}>{grade}</span>
-          <span style={{ fontSize: 13, color: 'var(--text-mute)' }}>総合 {overallScore}<span style={{ fontSize: 11 }}>/100</span></span>
+          {/* **1 軸も算定できなければ格付けしない。** 未入力から D を作らない。 */}
+          <span style={{ fontSize: 40, fontWeight: 800, color: grade === null ? 'var(--text-mute)' : GRADE_COLOR[grade], lineHeight: 1 }}>
+            {grade ?? '—'}
+          </span>
+          <span style={{ fontSize: 13, color: 'var(--text-mute)' }}>
+            {overallScore === null ? '総合 未評価' : <>総合 {overallScore}<span style={{ fontSize: 11 }}>/100</span></>}
+          </span>
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           {categories.map((c) => (
             <div key={c.category} style={{ minWidth: 96 }}>
-              <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 2 }}>{c.category} {c.score}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 2 }}>
+                {c.category} {c.score === null ? '未評価' : c.score}
+              </div>
               <div style={{ background: 'var(--bg)', borderRadius: 3, height: 8 }}>
-                <div style={{ width: `${c.score}%`, height: '100%', background: LEVEL_COLOR[levelOf(c.score, healthBands)], borderRadius: 3 }} />
+                {/* 算定できた軸が 0 件のカテゴリは帯を引かない (幅 0% の帯は「最悪」に見える)。 */}
+                {c.score !== null && (
+                  <div style={{ width: `${c.score}%`, height: '100%', background: LEVEL_COLOR[levelOf(c.score, healthBands)], borderRadius: 3 }} />
+                )}
               </div>
             </div>
           ))}
@@ -672,8 +699,28 @@ function DiagnosisCard({ diagnosis, label, trend, onExportReport, healthBands }:
           ))}
         </div>
       </div>
+      {/*
+        **算定できなかった軸を、弱みとは別に名前で出す。**
+
+        2026-09-08 まで未評価の軸は 0 点として `weaknesses` に混ざり、
+        仕入が無い事業に「棚卸資産回転率が低め。在庫の滞留に注意。」と
+        名指ししていた。**算定不能は弱みではない** —— 分けて示し、
+        平均から外したことも述べる (数字が変わった理由が読めるように)。
+      */}
+      {unscored.length > 0 && (
+        <div
+          data-unscored-axes
+          role="note"
+          style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.7, border: '1px solid var(--border)', borderRadius: 6, padding: '6px 8px' }}
+        >
+          ◻️ <strong>未評価の {unscored.length} 軸</strong>（{unscored.map((u) => u.label).join('・')}）は
+          分母となる科目が 0 のため算定できていません。
+          <strong>総合スコア・カテゴリ平均・強み／要改善のいずれからも除いています</strong>
+          （0 点として数えると、入力していない軸が格付けを決めてしまいます）。
+        </div>
+      )}
       <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8 }}>
-        ※ スコアはレーダー（15指標の健全度0-100）の平均・カテゴリ平均。コメントは一般情報であり財務助言ではありません。
+        ※ スコアはレーダー（15指標の健全度0-100）の平均・カテゴリ平均（<strong>算定できた軸のみ</strong>）。コメントは一般情報であり財務助言ではありません。
       </div>
     </div>
   );
