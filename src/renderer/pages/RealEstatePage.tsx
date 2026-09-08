@@ -6,7 +6,7 @@ import {
 } from '../data/manualData';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
-import { Stat } from '../components/Stat';
+import { Stat, positiveIfKnown } from '../components/Stat';
 import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
@@ -592,7 +592,7 @@ export function RealEstatePage() {
           <Stat
             label="イールドギャップ"
             value={pct1OrDash(leverage.lev.yieldGapPct, 2)}
-            positive={leverage.lev.yieldGapPct === null ? undefined : leverage.lev.yieldGapPct >= 0}
+            positive={positiveIfKnown(leverage.lev.yieldGapPct)}
           />
         </div>
         {(leverageNote !== null || priceNote !== null) && (
@@ -646,8 +646,8 @@ export function RealEstatePage() {
           ))}
         </div>
         <div className="stat-grid">
-          <Stat label={`NPV (${dcf.years}年・割引後)`} value={dcf.npv === null ? '—' : jpy(dcf.npv)} positive={(dcf.npv ?? 0) >= 0} />
-          <Stat label="IRR (年率概算)" value={dcf.irr === null ? '—' : `${(dcf.irr * 100).toFixed(2)}%`} positive={(dcf.irr ?? 0) >= 0} />
+          <Stat label={`NPV (${dcf.years}年・割引後)`} value={dcf.npv === null ? '—' : jpy(dcf.npv)} positive={positiveIfKnown(dcf.npv)} />
+          <Stat label="IRR (年率概算)" value={dcf.irr === null ? '—' : `${(dcf.irr * 100).toFixed(2)}%`} positive={positiveIfKnown(dcf.irr)} />
           <Stat label="返済後CF (年・前提)" value={jpy(leverage.lev.annualCashflow)} positive={leverage.lev.annualCashflow >= 0} />
         </div>
       </Section>

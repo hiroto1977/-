@@ -8,7 +8,7 @@ import { GuardedNumber } from '../components/GuardedNumber';
 import { readNumberOr0 } from '../data/inputGuards';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
-import { Stat } from '../components/Stat';
+import { Stat, positiveIfKnown } from '../components/Stat';
 import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
@@ -267,12 +267,12 @@ export function MutualFundsPage() {
           <Stat
             label="トータルリターン"
             value={totalReturn.totalReturnPct === null ? '—' : `${totalReturn.totalReturnPct}%`}
-            positive={(totalReturn.totalReturnPct ?? 0) >= 0}
+            positive={positiveIfKnown(totalReturn.totalReturnPct)}
           />
           <Stat
             label="年率換算 (CAGR)"
             value={totalReturn.cagrPct === null ? '—' : `${totalReturn.cagrPct}%`}
-            positive={(totalReturn.cagrPct ?? 0) >= 0}
+            positive={positiveIfKnown(totalReturn.cagrPct)}
           />
           <Stat label="累計分配金" value={jpy(totalDividends)} />
           <Stat label="リスク (銘柄YTDの標準偏差)" value={risk === null ? '—' : `${risk}%`} />
@@ -538,7 +538,7 @@ export function MutualFundsPage() {
         <div className="stat-grid">
           <Stat label="現在の円換算額" value={jpy(fxJpy)} />
           <Stat label="為替損益" value={jpy(fxPnl.gain)} positive={fxPnl.gain >= 0} />
-          <Stat label="損益率" value={fxPnl.gainPct === null ? '—' : `${fxPnl.gainPct}%`} positive={(fxPnl.gainPct ?? 0) >= 0} />
+          <Stat label="損益率" value={fxPnl.gainPct === null ? '—' : `${fxPnl.gainPct}%`} positive={positiveIfKnown(fxPnl.gainPct)} />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
           ※ 為替変動による円ベースの損益のみの概算で、手数料・スプレッド・税は含みません。投資助言ではありません。

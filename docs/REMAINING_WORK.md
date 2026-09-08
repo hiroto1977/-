@@ -16554,7 +16554,7 @@ expect(h.costPerShippedPlantYen).toBe(0);   // ← 同じ理屈が当たって�
 理由が出ていなかった面の都合で動かさない。
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **105 ファイル / 288 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **104 ファイル / 283 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -16564,13 +16564,13 @@ expect(h.costPerShippedPlantYen).toBe(0);   // ← 同じ理屈が当たって�
 | `src/renderer/data/stocksAnalysisWeb.ts` | 9 |
 | `src/renderer/pages/DocstudioPage.tsx` | 9 |
 | `src/shared/taxDeductions.ts` | 9 |
-| `src/renderer/pages/RealEstatePage.tsx` | 7 |
 | `src/shared/mutualFundsMetrics.ts` | 7 |
 | `src/renderer/components/FinancialAnalysis.tsx` | 6 |
 | `src/shared/taxCredits.ts` | 6 |
 | `src/main/clients/business.ts` | 5 |
 | `src/main/clients/linux.ts` | 5 |
 | `src/renderer/data/cashflowDebtService.ts` | 5 |
+| `src/renderer/pages/RealEstatePage.tsx` | 5 |
 | `src/renderer/pages/TaxPage.tsx` | 5 |
 | `src/shared/savingsPlanning.ts` | 5 |
 | `src/shared/tradeTax.ts` | 5 |
@@ -16592,7 +16592,6 @@ expect(h.costPerShippedPlantYen).toBe(0);   // ← 同じ理屈が当たって�
 | `src/renderer/data/balanceSheet.ts` | 3 |
 | `src/renderer/data/charts.ts` | 3 |
 | `src/renderer/data/financialStatements.ts` | 3 |
-| `src/renderer/pages/MutualFundsPage.tsx` | 3 |
 | `src/renderer/pages/OverviewPage.tsx` | 3 |
 | `src/shared/invoiceTax.ts` | 3 |
 | `src/shared/payroll.ts` | 3 |
@@ -17178,3 +17177,89 @@ it('returns null monthsCovered when monthly expense is zero', () => {
 残ったレコードが件数を動かしうる。`overviewHydroponics.test.ts` と同じ
 `indexedDB.deleteDatabase('business-hub-data')` を `beforeEach` に足した。
 **「直った」とは書かない** —— 再現していないので、後始末を揃えただけである。
+
+## パス 91 (2026-09-08) — 算定不能な NPV / IRR / CAGR の「—」を**緑 (良好) で刷っていた**
+
+### 何が起きていたか
+
+`Stat` の色は**値についての主張**である (緑 `#22c55e` = 良好 / 赤 `#ef4444` = 不良)。
+ところが呼び出し側 5 箇所が
+
+```tsx
+positive={(dcf.irr ?? 0) >= 0}
+```
+
+と書いていた。**`(null ?? 0) >= 0` は `true`** なので、
+**算定できなかった値が緑になる**。値の側は正しく `'—'` を刷っているので、
+画面には**「—」が緑で**並んでいた。
+
+### 実測した最悪の形 (既定から入力 1 か所だけ変えて作れる)
+
+売却ネット手取りを **0** にする (残債で消える・値が付かない)。既定の返済後CF は
+**−¥84,000/年**なので、CF が全期間マイナスで揃い、符号変化が無くなって
+`calcIrr` は **null** を返す。そのとき 3 枚のタイルはこう並んでいた:
+
+| タイル | 値 | 色 |
+| --- | --- | --- |
+| 返済後CF (年) | −¥84,000 | **赤** |
+| NPV (10年・割引後) | −¥10,681,315 | **赤** |
+| IRR (年率概算) | **—** | **緑** ← |
+
+**毎年出ていくだけで売っても何も戻らない物件**について、2 枚が赤で損失を言っている
+隣で、IRR だけが緑だった。パス 61 (同じページに「限界利益率」が 2 つ在り、
+片方が「—」・片方が「0.0%」) と同じ形である。
+
+投資信託側も同じ: 保有年数の欄は `allowZero: true` = **0 は正規の入力**で、
+`calcTotalReturn` は `years <= 0` で `cagrPct` を null にする。
+**保有年数 0 年の人に「年率換算 (CAGR) —」を緑で**出していた。
+
+### 規準は**同じファイルの 54 行上**に在った
+
+| 場所 | 書き方 | 判定 |
+| --- | --- | --- |
+| `RealEstatePage.tsx:595` イールドギャップ | `=== null ? undefined : … >= 0` | **正しい** |
+| `LinuxPage.tsx:53` コアあたり負荷 | `=== null ? undefined : … < 100` | **正しい** |
+| `MutualFundsPage.tsx` リスク | `positive` を渡さない | **正しい** |
+| `RealEstatePage.tsx:649,650` NPV / IRR | `(x ?? 0) >= 0` | 緑に倒れる |
+| `MutualFundsPage.tsx:270,275,541` 総リターン / CAGR / 為替損益率 | `(x ?? 0) >= 0` | 緑に倒れる |
+
+`Stat` は**最初から中立の状態を持っていた** (`positive == null` → 色なし) ——
+引数 1 つ分の距離である。パス 84 (隣のタイル) / 86 (真上の関数) /
+87 (`shared/num.ts` の `nonNeg`) / 90 (同じ grid の隣) と同じ motif で、**5 回目**。
+
+### 直し (2 段)
+
+1. **部品側が「—」に色を付けない。** `Stat` は `value === UNDETERMINED` なら
+   `positive` を捨てる。呼び出し側が何を渡しても最後に止まる ——
+   `positive={false}` を固定で渡していた為替の費用 2 欄
+   (「往復両替コスト —」が**赤**だった) も、呼び出し側を触らずに直る。
+2. **呼び出し側が本当のことを言う。** `positiveIfKnown(n)` に寄せた
+   (`n == null ? undefined : n >= 0`)。既に正しかった `:595` も同じ helper に
+   寄せて、**規準を 1 か所**にした。読んだときに意図が読めることと、
+   `Stat` 以外の消費者へ `?? 0` が写されないことの両方が要る。
+
+### 対照 (4 本すべて実際に壊して確かめた)
+
+| 壊した所 | 鳴った物 |
+| --- | --- |
+| A: 部品側の関門を外す | ★ 単体 **2 本** (「—」+ positive=true/false) |
+| A′: 関門を外し**呼び出し側も `?? 0` に戻す** (= 直す前の実物) | ★ 画面 **2 本** —— `expected 'rgb(34, 197, 94)' to be ''` |
+| B: 呼び出し側だけ `?? 0` に戻す (関門は残す) | ★ 静的走査 **1 本** —— `RealEstatePage.tsx: positive={(dcf.irr ?? 0) >= 0}` |
+| C: `positiveIfKnown` が null を `true` に倒す | ★ 単体 **2 本** |
+
+**対照 A′ が本題である** —— 画面の検査が「直す前の緑」を実際に見ることを
+確かめた。A と B が別々に鳴ることは、2 段の関門が**独立に効いている**ことの
+証拠でもある (関門だけ・呼び出し側だけ、どちらの後退も捕まる)。
+
+### 私の検査の誤りを 1 件、その場で直した
+
+不動産ページの「『—』のタイルは全部無色」を**既定の入力**で書いたら通ったが、
+実測すると **既定では「—」のタイルが 0 枚**だった —— つまり
+**どのページでも通る空の検査**である (`dashed=[] coloured=9`)。
+`docs`/CLAUDE.md の「不在を主張する検査には、標本を添える」に自分で違反していた。
+売却手取りを 0 にして「—」を**作ってから**当て、
+`expect(dashed.length).toBeGreaterThan(0)` を同じテストに置いた。
+
+### 0 倒しの母集団
+
+`?? 0` を 5 件外したので census は **105 ファイル / 288 件 → 104 / 283**。
