@@ -13633,7 +13633,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 
 | ファイル | 件数 | 分類 (読んだ範囲で) |
 | --- | ---: | --- |
-| `shared/funding.ts` | 13 | 未読。特定収入割合・DSCR・加重コスト率など**判断に使う比率**が混ざる |
+| `shared/funding.ts` | 16 | **2026-09-08 に全件読んだ → 直す所なし** (下の「パス 82」に 1 件ずつの根拠)。パス 60 で DSCR を直した後の残り |
 | `shared/hydroponics.ts` | 11 | 一部はパス 51 で当てた。栽培の物理量 (株/m²・年間サイクル) は 0 が自然な物も在る |
 | `main/clients/business.ts` | 10 | **デモ生成器** (snapshot 相当)。実データではない |
 | `main/clients/stocks.ts` | 8 | **2026-09-08 に読んだ → 直さない判断** (下に根拠)。「画面だけ」という分類はパス 61 の教訓どおり**危険な言い方**だったので、実際に画面と実測で当てた |
@@ -16286,3 +16286,63 @@ renderer も起動経路も触らないので**実機パイプラインは回し
 `renderer/data/` の production コードを変えたので (純粋関数だが renderer である)
 **実機パイプラインを回した** —— e2e 268 + lite 268 + perf + `smoke:app` 全て green。
 パス 80 は検査だけだったので回していない。**その線引きを毎回述べる。**
+
+---
+
+## パス 82 (2026-09-08) — `shared/funding.ts` の 0 倒し 16 件を全件読んだ → **直す所なし**
+
+`lint:zero-fold` ゲートの**保留条件を確かめた**。保留の理由は
+「台帳が 26 ファイル全部を覆ってから」であり、覆う前にゲートを入れると
+**読まずに「正しい 0」と書いた台帳** = `lint:mutation-scope` が一度直した
+**無言の pragma** と同じものになる。**だから今回もゲートは作らない。**
+代わりに、未読で最大の `shared/funding.ts` (台帳では 13 件、実測 **16 件**) を消化した。
+
+### 1 件ずつの判定
+
+| 箇所 | 判定 | 根拠 |
+| --- | --- | --- |
+| `193` `otherIncome ?? 0` / `194` `taxableInputTax ?? 0` | **正しい 0** | 任意入力の既定。特定収入割合で「その他収入を申告していない」は 0 で正しい |
+| `202` `specifiedIncomeRatio` | **既に台帳済み** | **パス 60 が空振りと記録** —— 偽枝は `specifiedIncome === 0` のときだけで、そのとき「割合 0%」は真。**再審しない** |
+| `207` `nonDeductibleInputTax: 0` | **正しい 0** | 調整不要なら控除できない仕入税額は 0 |
+| `641` / `644` 据置期間の行 (`payment: 0, principal: 0, interest: 0`) | **正しい 0** | 元金据置の月は支払が**実際に無い** |
+| `702` `719` `765` `766` `769` `779` `map.get(month) ?? 0` | **正しい 0** | 月次系列の合算で「その月に項目が無い」= 0。**判断に使う分はパス 45 で既に直してある** (DSCR が将来の返済月を営業CF 0 と数えていた件) |
+| `869` `?? 0.5` / `883` `openingBalance ?? 0` | **0 倒しではない** | 割引率の既定値・期首残高の既定値 |
+| `1165` `weightedCostRate` | **画面に届かない** | 表示は `FundingPage.tsx:571` が **`totalLoanPrincipal > 0` で門を張る** —— 値自身の条件と**同じ量**なので偽枝は画面に出ない (パス 57 の教訓が正しく当たっている例) |
+| `1168` `selfFundingRatio` | **踏んだ仮説が外れた → 到達しない** | 下記 |
+
+### 踏んだ仮説と、外れた理由 (記録する)
+
+`selfFundingRatio` の条件は `summary.totalSecured > 0` で、表示の門は
+`totalLoanPrincipal > 0` —— **別の量**である。パス 57 の
+「関門を値と別の量で再導出すると境目で食い違う」がそのまま当たると踏んだ:
+申請中の融資なら `totalLoanPrincipal > 0` かつ `totalSecured === 0` になり、
+画面は**「自己負担比率（返済必要 ÷ 確定総額）0%」**= 確定が 1 円も無いのに
+「返済の要る分は 0%」と刷る、という筋書きである。
+
+**外れた。** 両方を読むと同じ絞りを通っている:
+
+- `totalLoanPrincipal` は `it.repayable && it.repayment && isSecured(it.status)` の
+  項目の `nonNeg(it.amount)` だけを足す (`1156`)。
+- `repayableSecured` は `isSecured(it.status) && it.repayable` の項目の
+  **同じ `nonNeg(it.amount)`** を足す (`921`)、そして
+  `totalSecured = nonRepayableSecured + repayableSecured` (`934`)。
+
+したがって **`totalLoanPrincipal > 0` ⟹ `repayableSecured > 0` ⟹ `totalSecured > 0`**。
+門は別の量で書かれているが、**その量が値の条件を含意している**ので境目は無い。
+`isSecured` を共有していることが効いている。
+
+**教訓**: 「門と値が別の量」は**危険の兆候であって危険そのものではない**。
+含意が成り立つかを両方読んで確かめるまでは欠陥と呼べない
+(パス 74 の「BS が全部空」も同じ理由で到達しなかった)。
+
+### 台帳の進み
+
+`shared/funding.ts` は **26 ファイルのうち最大の未読**だった。これで
+未読は `main/clients/business.ts` (10・デモ生成器)・`shared/hydroponics.ts` (11・一部済)・
+`renderer/data/stocksAnalysisWeb.ts` (7)・`main/clients/linux.ts` (4)・
+`renderer/data/teamEmotionRadar.ts` (3)・`renderer/data/investments.ts` (3・一部済)・
+`renderer/pages/KpiPage.tsx` (6・一部済) —— **7 ファイル**に減った。
+**覆いきるまでゲートは作らない**という判断は維持する。
+
+**このパスはコードを 1 行も変えていない** (台帳の更新だけ) ので、
+`npm test` も実機パイプラインも回していない —— 変えていない物を「検証した」と書かない。
