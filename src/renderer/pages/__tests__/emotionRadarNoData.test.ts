@@ -26,6 +26,8 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { buildTeamEmotionRadar, teamEmotionSummary, type MemberEmotion } from '../../data/teamEmotionRadar';
+import { buildTeamCare, carePriority } from '../../data/memberCare';
+import { analyzeProfile } from '../../data/emotionInsights';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -179,5 +181,112 @@ describe('感情ウェルビーイング — 画面', () => {
       (p) => (p.getAttribute('fill') ?? 'none') !== 'none',
     );
     expect(filled).toHaveLength(0);
+  });
+});
+
+/**
+ * **パス 66: パス 65 は 3 か所のうち 1 か所しか直していなかった。**
+ *
+ * 「入口で既定の数を当てている所」を走査したら、`TeamRadarPage.tsx` に
+ * 同じ `?? 3` が **3 か所**在り、パス 65 が直したのは感情レーダーの 1 件だけ
+ * だった。残っていた 2 件は:
+ *
+ * | 場所 | 何をしていたか |
+ * | --- | --- |
+ * | `:301` 1on1 ケアレポート | **誰に声をかけるかを決める面**で記録の無い人に 3 を代入 |
+ * | `:609-611` 気分の選択ボタン | **選んでいないのに「3」が光る** —— 記録が無いことを画面から消していた |
+ *
+ * そして `memberCare.ts` 自体も区別していなかった —— `carePriority` は
+ * `count === 0` を **`'none'` (懸念なし)** に倒しており、
+ * **記録が 1 件も無い人を「安定している」と断言**していた。
+ * 同じモジュールの `emotionNoteOf` は正しく「気分データなし」と言っていたので、
+ * **人ごとの文面と優先度が食い違っていた。**
+ */
+describe('1on1 ケアレポート — 記録が無いことを「安定」と言わない', () => {
+  const AXES = ['x', 'y', 'z'];
+  const member = (id: string, name: string, mood: number | null) => ({
+    id, name, scores: [3, 3, 3],
+    moods: mood === null ? [] : [{ score: mood, note: '' }],
+    analyses: [],
+  });
+
+  it('★ carePriority は記録ゼロを none ではなく unknown にする', () => {
+    // 直す前: `if (profile.count === 0) return 'none';` —— 懸念なしと同じ扱い
+    expect(carePriority(analyzeProfile([], []))).toBe('unknown');
+    // 対照: 記録が在って安定していれば none
+    expect(carePriority(analyzeProfile([{ score: 4, note: '' }], []))).toBe('none');
+  });
+
+  it('★ 全員未記録で「全員が安定しています」と言わない', () => {
+    const r = buildTeamCare([member('a', 'A', null), member('b', 'B', null)], AXES);
+    expect(r.summary).not.toContain('全員が安定しています');
+    expect(r.summary).toContain('気分の記録がまだありません');
+    expect(r.unknownCount).toBe(2);
+  });
+
+  it('★ 一部未記録のときは「安定」を記録の在る人についてだけ言う', () => {
+    const r = buildTeamCare([member('a', 'A', 4), member('b', 'B', null)], AXES);
+    expect(r.summary).toContain('記録のある 1 名は安定しています');
+    expect(r.summary).toContain('残り 1 名');
+    expect(r.unknownCount).toBe(1);
+  });
+
+  it('★ 対照: 全員が記録済みで安定なら元の文面のまま', () => {
+    const r = buildTeamCare([member('a', 'A', 4), member('b', 'B', 4)], AXES);
+    expect(r.summary).toBe('全員が安定しています。強みを伸ばす 1on1 を進めましょう。');
+    expect(r.unknownCount).toBe(0);
+  });
+
+  it('★ 記録待ちの人は「安定」の人より前に並ぶ (声をかければ分かる)', () => {
+    const r = buildTeamCare([member('a', '安定', 4), member('b', '未記録', null)], AXES);
+    expect(r.reports.map((x) => x.name)).toEqual(['未記録', '安定']);
+  });
+
+  it('★ 記録待ちの人に「強みを伸ばそう」と言わない', () => {
+    const r = buildTeamCare([member('b', '未記録', null)], AXES);
+    expect(r.reports[0]!.oneOnOneFocus).toContain('気分の記録がまだありません');
+    expect(r.reports[0]!.emotionNote).toBe('気分データなし');
+  });
+});
+
+describe('気分の選択 UI — 選んでいない物を選択済みに見せない', () => {
+  it('★ 未選択のとき、どのボタンも選択色になっていない', async () => {
+    await mountPage();
+    // 直す前は `(moods[m.id] ?? 3) === s` で「3」が accent 色で光っていた。
+    const buttons = Array.from(container.querySelectorAll('button')).filter((b) =>
+      (b.getAttribute('aria-label') ?? '').includes('の気分 '),
+    );
+    expect(buttons.length).toBeGreaterThan(0);
+    const selected = buttons.filter((b) => (b as HTMLElement).style.background.includes('accent'));
+    expect(selected).toHaveLength(0);
+  });
+
+  it('★ 画面のケアレポートが「安定」と言わない (入口の捏造をやめた効き)', async () => {
+    // ★ 対照 B は当初、値の層の検査しか持っておらず**鳴らなかった** ——
+    //   `buildTeamCare` を直接呼ぶ検査は、画面が `?? 3` を渡していても通る。
+    //   **入口を直したことは、入口を通る検査でしか留められない。**
+    await mountPage();
+    const t = text();
+    expect(t).toContain('気分の記録がまだありません');
+    expect(t).not.toContain('全員が安定しています');
+  });
+
+  it('★ 対照: 押せばその 1 つだけが選択色になる', async () => {
+    await mountPage();
+    const buttons = Array.from(container.querySelectorAll('button')).filter((b) =>
+      (b.getAttribute('aria-label') ?? '').includes('の気分 '),
+    );
+    const target = buttons.find((b) => (b.getAttribute('aria-label') ?? '').endsWith('の気分 4'));
+    expect(target).toBeTruthy();
+    await act(async () => {
+      target!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    await settle();
+    const after = Array.from(container.querySelectorAll('button')).filter((b) =>
+      (b.getAttribute('aria-label') ?? '').includes('の気分 '),
+    );
+    const selected = after.filter((b) => (b as HTMLElement).style.background.includes('accent'));
+    expect(selected).toHaveLength(1);
+    expect(selected[0]!.getAttribute('aria-label')).toContain('の気分 4');
   });
 });

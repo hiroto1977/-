@@ -17,7 +17,16 @@ import { analyzeProfile, type EmotionProfile, type ScoredNote, type DominantLike
 export type SkillLevel = '要支援' | '標準' | '良好' | '優秀';
 
 /** ケア優先度。 */
-export type CarePriority = 'high' | 'medium' | 'none';
+/**
+ * ケア優先度。
+ *
+ * **`'unknown'` は「気分の記録がまだ無い」。** `'none'` (懸念なし) と混ぜてはいけない
+ * —— 2026-09-09 まで `carePriority` は `count === 0` を `'none'` に倒しており、
+ * **記録が 1 件も無い人を「安定している」と断言**していた
+ * (同じモジュールの `emotionNoteOf` は正しく「気分データなし」と言っていたので、
+ * 人ごとの文面と優先度が食い違っていた)。
+ */
+export type CarePriority = 'high' | 'medium' | 'unknown' | 'none';
 
 /** 軸とスコアのペア。 */
 export interface AxisScore {
@@ -147,7 +156,8 @@ export function unevaluatedAxesNote(skill: SkillEvaluation): string | null {
 
 /** 感情プロファイルからケア優先度を判定する。 */
 export function carePriority(profile: EmotionProfile): CarePriority {
-  if (profile.count === 0) return 'none';
+  // **記録が無いのは「懸念なし」ではない。** 分からないだけである。
+  if (profile.count === 0) return 'unknown';
   if (profile.lowStreak >= 3) return 'high';
   if (profile.averageScore <= 2.5 || profile.sentimentBalance < 0) return 'medium';
   return 'none';
@@ -177,6 +187,10 @@ export function oneOnOneFocus(priority: CarePriority, skill: SkillEvaluation): s
   if (skill.strength === null || skill.growth === null) {
     return 'まだ評価が入っていません。5 軸の評価をそろえてから、強みと伸びしろの話をしましょう。';
   }
+  // 気分の記録が無い人には「安定しているから強みを伸ばそう」と言わない。
+  if (priority === 'unknown') {
+    return `気分の記録がまだありません。まずは近況を尋ねてから、「${skill.strength.axis}」の活かし方を話しましょう。`;
+  }
   if (priority === 'medium') {
     return `「${skill.strength.axis}」の強みを認めつつ、最近の様子にも触れながら「${skill.growth.axis}」の育成を一緒に。`;
   }
@@ -198,17 +212,21 @@ export function buildMemberCareReport(member: CareMemberInput, axes: readonly st
   };
 }
 
-/** 優先度の並び順 (high→medium→none)。 */
-const PRIORITY_RANK: Record<CarePriority, number> = { high: 0, medium: 1, none: 2 };
+/** 優先度の並び順 (high→medium→unknown→none)。 */
+// **`unknown` は `none` より前。** 「分からない人」は「大丈夫な人」より先に
+// 目に入るべきである (声をかければ分かる、という行動につながる)。
+const PRIORITY_RANK: Record<CarePriority, number> = { high: 0, medium: 1, unknown: 2, none: 3 };
 
 /** チームのケア概況。 */
 export interface TeamCare {
-  /** ケア優先度順 (high→medium→none) に並べたレポート (同順位は入力順)。 */
+  /** ケア優先度順 (high→medium→unknown→none) に並べたレポート (同順位は入力順)。 */
   readonly reports: readonly CareReport[];
   /** high の人数。 */
   readonly highCount: number;
   /** medium の人数。 */
   readonly mediumCount: number;
+  /** 気分の記録がまだ無い人数 (「安定」に数えない)。 */
+  readonly unknownCount: number;
   /** 推奨 1on1 サマリ。 */
   readonly summary: string;
 }
@@ -222,6 +240,7 @@ export function buildTeamCare(members: readonly CareMemberInput[], axes: readonl
   );
   const highCount = reports.filter((r) => r.priority === 'high').length;
   const mediumCount = reports.filter((r) => r.priority === 'medium').length;
+  const unknownCount = reports.filter((r) => r.priority === 'unknown').length;
 
   let summary: string;
   if (members.length === 0) {
@@ -230,9 +249,16 @@ export function buildTeamCare(members: readonly CareMemberInput[], axes: readonl
     summary = `${highCount} 名は気持ちのケアを優先してください（評価より先に傾聴を）。`;
   } else if (mediumCount > 0) {
     summary = `${mediumCount} 名は最近の様子に気を配りつつ 1on1 を。`;
+  } else if (unknownCount === members.length) {
+    // **全員が未記録。** 旧実装はここで「全員が安定しています」と言っていた ——
+    // 1 件も記録が無い状態に対する断言だった。
+    summary = `気分の記録がまだありません（${unknownCount} 名）。まずは近況を聞くところから始めましょう。`;
+  } else if (unknownCount > 0) {
+    // **「安定」は記録が在る人についてだけ言う。**
+    summary = `記録のある ${members.length - unknownCount} 名は安定しています。残り ${unknownCount} 名は気分の記録がまだありません。`;
   } else {
     summary = '全員が安定しています。強みを伸ばす 1on1 を進めましょう。';
   }
 
-  return { reports: ordered, highCount, mediumCount, summary };
+  return { reports: ordered, highCount, mediumCount, unknownCount, summary };
 }

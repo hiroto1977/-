@@ -197,12 +197,18 @@ export function teamEmotionSummary(radar: TeamEmotionRadar): string {
   // **算定できていなければ数を出さない。** `?? 0` を当てると
   // 「活力 0/5」= 最低評価になり、記録が無いことが最悪の評価として出る。
   const vitality = radar.teamAverage[0];
-  const head =
-    vitality === null || vitality === undefined
-      ? `チーム ${n} 名の感情ウェルビーイング: 活力は気分の記録がまだ無いため算定していません`
-      : `チーム ${n} 名の感情ウェルビーイング: 活力 ${vitality}/5`;
-  if (support === 0) {
-    return `${head}。いまのところ全員が安定しています。`;
+  const vitalityKnown = vitality !== null && vitality !== undefined;
+  const head = vitalityKnown
+    ? `チーム ${n} 名の感情ウェルビーイング: 活力 ${vitality}/5`
+    : `チーム ${n} 名の感情ウェルビーイング: 活力は気分の記録がまだ無いため算定していません`;
+  if (support > 0) {
+    return `${head}。${support} 名に声かけをおすすめします。`;
   }
-  return `${head}。${support} 名に声かけをおすすめします。`;
+  // **「全員が安定している」は、記録が在って初めて言える。**
+  // 声かけ対象が 0 名なのは「誰も低調でない」ではなく「誰も記録していない」
+  // 場合もある —— `needsSupport` は記録から作るので、記録ゼロでも空になる。
+  if (!vitalityKnown) {
+    return `${head}。まずは気分の記録から始めてください。`;
+  }
+  return `${head}。いまのところ全員が安定しています。`;
 }

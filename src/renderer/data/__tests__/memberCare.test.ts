@@ -168,8 +168,14 @@ describe('skillEvaluation', () => {
 });
 
 describe('carePriority', () => {
-  it('is none for an empty (no-data) profile', () => {
-    expect(carePriority(profile({ count: 0, averageScore: 0 }))).toBe('none');
+  it('★ 記録ゼロは none ではなく unknown (「懸念なし」と混ぜない)', () => {
+    // **この検査は 2026-09-09 まで `'none'` を留めていた** ——
+    // `'none'` は「懸念なし = 安定」の意味なので、**記録が 1 件も無い人を
+    // 「安定している」と断言**していた。同じモジュールの `emotionNoteOf` は
+    // 正しく「気分データなし」と言っており、文面と優先度が食い違っていた。
+    expect(carePriority(profile({ count: 0, averageScore: 0 }))).toBe('unknown');
+    // 対照: 記録が在って安定していれば none
+    expect(carePriority(profile({ count: 3, averageScore: 4 }))).toBe('none');
   });
   it('is high for a low streak >= 3', () => {
     expect(carePriority(profile({ lowStreak: 3 }))).toBe('high');

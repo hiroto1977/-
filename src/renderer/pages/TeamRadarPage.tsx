@@ -298,7 +298,10 @@ export function TeamRadarPage() {
           id: m.id,
           name: m.name,
           scores: m.scores,
-          moods: [{ score: moods[m.id] ?? 3, note: '' }],
+          // **記録が無い人の気分を発明しない。** パス 65 は感情レーダー側の
+          // 同じ `?? 3` を直したが**ここを取りこぼした** —— しかもこちらは
+          // 「誰に声をかけるか」を決める面で、より重い。
+          moods: moods[m.id] === undefined ? [] : [{ score: moods[m.id]!, note: '' }],
           analyses: [],
         })),
         axes,
@@ -606,9 +609,13 @@ export function TeamRadarPage() {
                       aria-label={`${m.name} の気分 ${s}`}
                       style={{
                         minWidth: 30,
-                        background: (moods[m.id] ?? 3) === s ? 'var(--accent)' : 'transparent',
-                        color: (moods[m.id] ?? 3) === s ? '#fff' : 'var(--text)',
-                        borderColor: (moods[m.id] ?? 3) === s ? 'var(--accent)' : 'var(--border)',
+                        // **選んでいない物を選択済みに見せない。** 2026-09-09 まで
+                        // `(moods[m.id] ?? 3) === s` で、未選択のときボタン「3」が
+                        // 光っていた —— 読み手は「3 が選ばれている」と思って通り過ぎ、
+                        // **記録が無いこと自体が画面から消えていた**。
+                        background: moods[m.id] === s ? 'var(--accent)' : 'transparent',
+                        color: moods[m.id] === s ? '#fff' : 'var(--text)',
+                        borderColor: moods[m.id] === s ? 'var(--accent)' : 'var(--border)',
                       }}
                     >
                       {s}
@@ -644,6 +651,8 @@ export function TeamRadarPage() {
                 const badge: Record<CarePriority, { label: string; color: string }> = {
                   high: { label: 'ケア優先', color: '#ef4444' },
                   medium: { label: '見守り', color: '#d97706' },
+                  // **記録が無い人を緑の「安定」に混ぜない。** 灰色で「記録待ち」。
+                  unknown: { label: '記録待ち', color: '#94a3b8' },
                   none: { label: '安定', color: '#22c55e' },
                 };
                 const b = badge[r.priority];
