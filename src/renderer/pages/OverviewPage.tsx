@@ -1422,14 +1422,27 @@ export function OverviewPage() {
                 <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>
                   低カリウム栽培（腎臓病の方向け）
                 </div>
-                {overview.hydroponics.lowPotassium.measured ? (
+                {/* **枠を開ける条件そのものを実測値で書く。** `measured` と
+                    「実測値が非 null」は構成上つねに同値 (`hydroponics.test.ts` の
+                    不変条件が留めている) なので、値で書けば型も絞れて `!` が要らない。
+                    削減率だけは実測が在っても null になりうる (比較の基準値を台帳で
+                    0 にした場合) ので、そちらは別に見る。 */}
+                {overview.hydroponics.lowPotassium.potassiumMgPer100g !== null ? (
                   <>
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
                       <Tile
                         label="実測カリウム"
                         value={`${overview.hydroponics.lowPotassium.potassiumMgPer100g} mg/100g`}
-                        sub={`通常品 ${overview.hydroponics.lowPotassium.referenceMgPer100g} mg/100g 比 ${overview.hydroponics.lowPotassium.reductionPct >= 0 ? '−' : '+'}${Math.abs(overview.hydroponics.lowPotassium.reductionPct).toFixed(1)}%`}
-                        accent={overview.hydroponics.lowPotassium.reductionPct > 0 ? '#22c55e' : '#ef4444'}
+                        sub={
+                          overview.hydroponics.lowPotassium.reductionPct === null
+                            ? `通常品の比較値が ${overview.hydroponics.lowPotassium.referenceMgPer100g} mg/100g なので削減率は出せません`
+                            : `通常品 ${overview.hydroponics.lowPotassium.referenceMgPer100g} mg/100g 比 ${overview.hydroponics.lowPotassium.reductionPct >= 0 ? '−' : '+'}${Math.abs(overview.hydroponics.lowPotassium.reductionPct).toFixed(1)}%`
+                        }
+                        accent={
+                          overview.hydroponics.lowPotassium.reductionPct === null
+                            ? '#f59e0b'
+                            : overview.hydroponics.lowPotassium.reductionPct > 0 ? '#22c55e' : '#ef4444'
+                        }
                       />
                       <Tile
                         label="切替 (収穫前)"

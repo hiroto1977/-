@@ -19,6 +19,7 @@ import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import {
   HYDROPONICS_COLLECTION,
   HYDROPONIC_CROPS_COLLECTION,
+  HYDROPONICS_DEFAULTS,
   type HydroponicCropListRecord,
   type HydroponicsSetup,
 } from '../../data/hydroponicsSetup';
@@ -226,6 +227,53 @@ describe('経営サマリー — 水耕栽培の品目の増減', () => {
     await click(q.button('保存して経営サマリーへ反映'));
     await click(q.removeButton('ミズナ'));
     expect(container.textContent).toContain('保存した設定の品目「custom-1」は一覧にありません。先頭の品目（リーフレタス）で試算しています。');
+  });
+});
+
+/**
+ * **低カリウム栽培は健康に直結する。測っていない値で「低カリウム」と名乗らせない。**
+ * (2026-09-08)
+ *
+ * `assessLowPotassium` は未測定を `null` で返すが、**画面が本当に数字を出さないことは
+ * 誰も測っていなかった** (パス 51 の対照で判明: 枠の条件を常に真にしても検査は 1 つも
+ * 落ちなかった)。腎機能が落ちた方はこの数字で食べる量を決めるので、
+ * 「未測定なのに削減率が出る」状態が画面に届かないことを実物の画面で留める。
+ */
+describe('経営サマリー — 低カリウム栽培 (未測定で数字を出さない)', () => {
+  /**
+   * 低カリウムとして扱うが、カリウムは測っていない控え。
+   * **出荷値 (`HYDROPONICS_DEFAULTS`) から作る** —— 欄名を手で写すと、
+   * 存在しない欄を埋めた見本ができる (このセッションで実際にやらかした)。
+   */
+  const unmeasured: HydroponicsSetup = {
+    ...HYDROPONICS_DEFAULTS,
+    lowPotassium: true,
+    switchDaysBeforeHarvest: 8,
+    measuredPotassiumMgPer100g: 0,
+  };
+
+  const text = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
+
+  it('★ 未測定なら削減率も食べられる量も出さず、実測を促す', async () => {
+    await getRecordStore().insert(HYDROPONICS_COLLECTION, unmeasured);
+    await mountOverview();
+    const t = text();
+    expect(t).toContain('低カリウム栽培（腎臓病の方向け）');
+    // 直す前の実装なら「通常品 200 mg/100g 比 −100.0%」が出ていた形
+    expect(t).not.toContain('比 −100.0%');
+    expect(t).not.toContain('実測カリウム 0 mg/100g');
+    expect(t).not.toContain('の方が食べられる量');
+  });
+
+  it('★ 対照: 実測を入れれば削減率と食べられる量が出る', async () => {
+    await getRecordStore().insert(HYDROPONICS_COLLECTION, {
+      ...unmeasured, measuredPotassiumMgPer100g: 100,
+    });
+    await mountOverview();
+    const t = text();
+    expect(t).toContain('100 mg/100g');
+    expect(t).toContain('の方が食べられる量');
+    expect(t).toContain('比 −50.0%');
   });
 });
 

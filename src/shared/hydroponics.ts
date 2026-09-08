@@ -521,14 +521,30 @@ export interface LowPotassiumInput {
   readonly referencePotassiumMgPer100g?: number;
 }
 
-/** 低カリウム栽培の評価。 */
+/**
+ * 低カリウム栽培の評価。
+ *
+ * **未測定の欄は `null` で返す。数値に倒さない。** (2026-09-08)
+ *
+ * 2026-09-08 まで、未測定のカリウムは `potassiumMgPer100g: 0` に倒され、
+ * そこから `reductionPct` が **100** (「通常品比 100% 減」) として出ていた ——
+ * 腎臓病の方に向けた欄で、**もっとも都合の良い主張**である。
+ * 同じ値の `saltEquivalentGPer100g` は同じ「未測定」に対して `null` を返しており、
+ * **1 つの値が「測っていない」を 2 通りに答えていた**。
+ * 画面はこの節を丸ごと `measured` で囲っているので実害は出ていなかったが、
+ * この節の数値は健康に直結するので、**間違った読み方が型として作れない**形にする
+ * (`servingGramsWithinLimit` のように、後から欄を 1 つ読む呼び手が現れる)。
+ */
 export interface LowPotassiumAssessment {
-  /** 実測カリウム (mg/100g)。 */
-  readonly potassiumMgPer100g: number;
+  /** 実測カリウム (mg/100g)。**未測定なら null** (0 mg の野菜は無い)。 */
+  readonly potassiumMgPer100g: number | null;
   /** 比較した通常品の値 (mg/100g)。 */
   readonly referenceMgPer100g: number;
-  /** 通常品比の削減率 (%)。増えていれば負になる。 */
-  readonly reductionPct: number;
+  /**
+   * 通常品比の削減率 (%)。増えていれば負になる。
+   * **未測定なら null** —— 0 と比べた「100% 減」を作らない。
+   */
+  readonly reductionPct: number | null;
   /** 実測ナトリウムから出した食塩相当量 (g/100g)。未測定なら null。 */
   readonly saltEquivalentGPer100g: number | null;
   /** 切替期間が目安の範囲 (既定 7〜10 日) に収まっているか。 */
@@ -552,15 +568,20 @@ export function assessLowPotassium(
 ): LowPotassiumAssessment {
   const k = input.measuredPotassiumMgPer100g;
   const measured = Number.isFinite(k) && k > 0;
-  const potassiumMgPer100g = measured ? k : 0;
+  // **未測定は null。** 0 に倒すと下の削減率が 100% (「カリウムが無い」) になる。
+  const potassiumMgPer100g = measured ? k : null;
   const reference = nonNeg(input.referencePotassiumMgPer100g ?? p.referencePotassiumMgPer100g);
   const na = input.measuredSodiumMgPer100g;
   const days = input.switchDaysBeforeHarvest;
   return {
     potassiumMgPer100g,
     referenceMgPer100g: reference,
+    // 比べる相手が無い (基準値 0 以下) ときも算定不能 —— 以前は 0 を返していたが、
+    // 「削減なし」と「比べられない」は別のことなので数値に倒さない。
     reductionPct:
-      reference > 0 ? round1(((reference - potassiumMgPer100g) / reference) * 100) : 0,
+      potassiumMgPer100g !== null && reference > 0
+        ? round1(((reference - potassiumMgPer100g) / reference) * 100)
+        : null,
     // `na !== undefined` の前置きは要らない — Number.isFinite は値を変換せず
     // 照合するので undefined も NaN も false になる。
     saltEquivalentGPer100g: Number.isFinite(na)
@@ -591,9 +612,14 @@ export function servingGramsWithinLimit(
 ): number | null {
   const limit = limits[stage];
   if (limit === null) return null;
-  if (!assessment.measured) return null;
+  // **実測値そのもので判定する。** `measured` と
+  // `potassiumMgPer100g !== null` は構成上つねに同値 (`assessLowPotassium` が
+  // 同じ条件で両方を決める。不変条件は `hydroponics.test.ts` が留めている) だが、
+  // 型が narrowing できるのは値の側なので、値を見る。
+  const k = assessment.potassiumMgPer100g;
+  if (k === null) return null;
   const share = Math.min(100, Math.max(0, Number.isFinite(sharePct) ? sharePct : 0));
   const allowedMg = (limit * share) / 100;
   // mg/100g なので 100 を掛けて g に直す。
-  return Math.floor((allowedMg / assessment.potassiumMgPer100g) * 100);
+  return Math.floor((allowedMg / k) * 100);
 }

@@ -391,12 +391,37 @@ describe('assessLowPotassium — 実測でしか評価しない', () => {
     expect(assessLowPotassium(base).reductionPct).toBe(55.5);
   });
 
-  it('未測定・0・負・非有限は measured にしない (0 を「カリウム無し」と読まない)', () => {
+  /**
+   * **2026-09-08 まで、この検査が「未測定 = 0 mg」を仕様として固定していた。**
+   * `potassiumMgPer100g: 0` から `reductionPct` が **100**「通常品比 100% 減」
+   * として出ており、腎臓病の方に向けた欄でもっとも都合の良い主張になっていた
+   * (同じ値の `saltEquivalentGPer100g` は同じ未測定に `null` を返していた ——
+   * 1 つの値が「測っていない」を 2 通りに答えていた)。
+   */
+  it('★ 未測定・0・負・非有限は measured にせず、実測値と削減率を null にする', () => {
     for (const k of [0, -1, Number.NaN, Number.POSITIVE_INFINITY]) {
       const a = assessLowPotassium({ ...base, measuredPotassiumMgPer100g: k });
       expect(a.measured, `${k}`).toBe(false);
-      expect(a.potassiumMgPer100g, `${k}`).toBe(0);
+      expect(a.potassiumMgPer100g, `${k}`).toBeNull();
+      // 直す前はここが 100 だった (「カリウムが無い」)。
+      expect(a.reductionPct, `${k}`).toBeNull();
     }
+  });
+
+  it('★ 不変条件: measured と「実測値が非 null」は必ず一致する', () => {
+    for (const k of [0, -1, 1, 120, 999, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+      const a = assessLowPotassium({ ...base, measuredPotassiumMgPer100g: k });
+      expect(a.measured, `${k}`).toBe(a.potassiumMgPer100g !== null);
+      // 削減率も同じ条件で決まる (基準値が正のとき)。
+      expect(a.reductionPct !== null, `${k}`).toBe(a.measured);
+    }
+  });
+
+  it('★ 食べられる量は実測が無ければ出さない (measured ではなく値で判定しても同じ)', () => {
+    const unmeasured = assessLowPotassium({ ...base, measuredPotassiumMgPer100g: 0 });
+    expect(servingGramsWithinLimit(unmeasured, 'G4', 20)).toBeNull();
+    const measured = assessLowPotassium({ ...base, measuredPotassiumMgPer100g: 100 });
+    expect(servingGramsWithinLimit(measured, 'G4', 20)).not.toBeNull();
   });
 
   it('通常品より増えていれば削減率は負になる (減ったことにしない)', () => {
@@ -404,9 +429,13 @@ describe('assessLowPotassium — 実測でしか評価しない', () => {
     expect(a.reductionPct).toBe(-25);
   });
 
-  it('基準が 0 以下なら率は 0 (無限に減ったとは言わない)', () => {
-    expect(assessLowPotassium({ ...base, referencePotassiumMgPer100g: 0 }).reductionPct).toBe(0);
-    expect(assessLowPotassium({ ...base, referencePotassiumMgPer100g: -5 }).reductionPct).toBe(0);
+  it('★ 基準が 0 以下なら率は null (「削減なし」と「比べられない」を混ぜない)', () => {
+    // 直す前は 0 を返していた —— 0% は「まったく減っていない」という**主張**であり、
+    // 「比べる相手が無い」とは別のことである。
+    expect(assessLowPotassium({ ...base, referencePotassiumMgPer100g: 0 }).reductionPct).toBeNull();
+    expect(assessLowPotassium({ ...base, referencePotassiumMgPer100g: -5 }).reductionPct).toBeNull();
+    // 対照: 基準が正なら率が出る
+    expect(assessLowPotassium({ ...base, referencePotassiumMgPer100g: 200 }).reductionPct).not.toBeNull();
   });
 
   it('ナトリウムを測っていれば食塩相当量を出す', () => {
