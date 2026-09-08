@@ -17,6 +17,8 @@
 import type { StudioDoc } from './docStudioData';
 import { byIssueLevel, type IssueLevel } from '../../shared/issueLevel';
 import { namedShareholderCount, totalHeldShares } from './shareholders';
+// 明細の金額はこの厳しい読み取りで計算される。橋を掛けるために読む (パス 94)。
+import { readNumber } from './inputGuards';
 
 /** 重大度はアプリ全体で 1 つ（`shared/issueLevel.ts`）。旧名は呼び出し側のために残す。 */
 export type CheckLevel = IssueLevel;
@@ -32,10 +34,30 @@ export interface DocIssue {
 
 type Values = Record<string, string>;
 
-/** 全角数字・カンマ・単位つきの入力から数値を取り出す。取れなければ null。 */
+/**
+ * 全角数字・カンマ・単位つきの入力から数値を取り出す。取れなければ null。
+ *
+ * **この読み取りは意図して緩い。** 差込欄には「40時間」「第5条」「100個」のような
+ * 散文が入るので、そこから数を拾えないと 36協定の上限や議事録の定足数を
+ * 判定できない。金額の計算に使う `readNumber` (`shared/readNumeric.ts`) は
+ * 逆に厳しく読む —— **役割が違う 2 つの読み取りである**。
+ * 2 つの間で答えが分かれる欄については、下の `RULES.invoice` が橋を掛ける
+ * (2026-09-08 · パス 94)。
+ *
+ * **符号の取り違え (2026-09-08 に直した)**: 全角 `－` (U+FF0D) は畳んでいたが
+ * **U+2212 `−` を畳んでいなかった**ので、`'−500'` が **+500** と読まれていた。
+ * `num()` 経由で金額の規則に入るため、−500 と書いた数字が +500 として突合を
+ * 通り得た。U+2212 は数学の負符号そのものなので、ここで半角 `-` に畳む。
+ *
+ * **日本語会計の `△` / `▲` (負数) は、まだ負として読まない。**
+ * `'△500'` は今も **+500** になる。会計の慣行では負数だが、書面の数字の意味を
+ * 変える判断なので `docs/REMAINING_WORK.md` に残した。
+ */
 export function toNum(raw: string | undefined): number | null {
   if (!raw) return null;
-  const half = raw.replace(/[０-９．－]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
+  const half = raw
+    .replace(/\u2212/g, '-') // U+2212 MINUS SIGN → 半角ハイフンマイナス
+    .replace(/[０-９．－]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
   // 桁区切りは半角 , だけとは限らない。日本語 IME は全角 ，や読点 、を平気で挟むので
   // ここで一緒に落とす（\s は U+3000 全角スペースも含む）。落とし損ねると
   // 「１，２３４」が 1 と読まれ、金額チェックが静かに的外れになる。
@@ -144,6 +166,30 @@ function taxItemIssues(v: Values, max: number): DocIssue[] {
     }
     if (filled && price === '') {
       out.push({ level: 'warn', field: `i${n}price`, message: `品目${n} の単価が未入力です。金額 0 円として計算されます。` });
+    }
+    // **空欄は上で言っている。「読めない」は 2026-09-08 まで黙っていた** (パス 94)。
+    //
+    // 明細の金額は `DocstudioPage` が `readNumber(priceRaw) ?? 0` で計算する ——
+    // この本の `toNum` より**厳しい**読み取りである。だから
+    // 「`toNum` は読めるが `readNumber` は読めない」帯が存在し、そこに入る入力は
+    // **明細が ¥0 で計上されるのに交付前チェックが「無効リスクは見つかりません
+    // でした」と言っていた**。実測でその帯に入るもの:
+    //   `30 000` (空白区切り) / `1,23` (桁が 3 でない) / `1、234` (読点) / `100m2`
+    // 空欄だけを見ていたのが非対称の正体で、**読めない側にも同じ断りを出す**。
+    const qty = text(v, `i${n}qty`);
+    if (filled && price !== '' && readNumber(price) === null) {
+      out.push({
+        level: 'warn',
+        field: `i${n}price`,
+        message: `品目${n} の単価「${price}」を金額として読み取れません。金額 0 円として計算されます。`,
+      });
+    }
+    if (filled && qty !== '' && readNumber(qty) === null) {
+      out.push({
+        level: 'warn',
+        field: `i${n}qty`,
+        message: `品目${n} の数量「${qty}」を数として読み取れません。数量 0 として計算されます。`,
+      });
     }
   }
   for (const tag of usedCustom) {
