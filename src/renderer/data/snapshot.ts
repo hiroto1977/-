@@ -956,7 +956,16 @@ export const SNAPSHOT = {
     uptimeSec: 277_320,
     uptimeLabel: '3日 5時間 2分',
     cpu: { model: 'Intel Core i7', cores: 8, speedMhz: 2600 },
-    load: { avg1: 0.42, avg5: 0.55, avg15: 0.61, perCorePct: 5 },
+    // 同梱は Linux ホストの標本なので数で持つ。**型は `number | null` に広げる** ——
+    // live 側 (`clients/linux.ts`) はロードアベレージを提供しない OS で `null` を
+    // 返すため、狭いままだと写しがずれる (payloadShapeAgreement.test.ts が留める)。
+    load: {
+      avg1: 0.42 as number | null,
+      avg5: 0.55 as number | null,
+      avg15: 0.61 as number | null,
+      perCorePct: 5 as number | null,
+      unavailableNote: null as string | null,
+    },
     memory: { totalMb: 16384, freeMb: 7168, usedMb: 9216, usagePct: 56.3 },
     notes: [] as string[],
     devEnv: {

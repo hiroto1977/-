@@ -45,6 +45,8 @@ import { describe, expect, it } from 'vitest';
 import { SNAPSHOT } from '../snapshot';
 import type { KpiSnapshotUnit } from '../../../main/clients/kpi';
 import type { DebtServiceMetrics } from '../../../shared/funding';
+// `import type` は実行時に消えるので、`node:os` を持つ main のモジュールでも安全。
+import type { SystemSnapshot } from '../../../main/clients/linux';
 
 /**
  * `Actual` が `Expected` に代入できることを**型の位置**で主張する。
@@ -75,6 +77,8 @@ type AssertTrue<T extends true> = T;
 type SnapshotKpiUnit = (typeof SNAPSHOT.kpi.units)[number];
 /** 同梱データの返済余力 (`debtService` は素の literal)。 */
 type SnapshotDebtService = typeof SNAPSHOT.funding.debtService;
+/** 同梱データの Linux ロードアベレージ。 */
+type SnapshotLinuxLoad = typeof SNAPSHOT.linux.load;
 
 /**
  * **★ ここが本体の主張** —— 同梱データの形が main の payload 型を満たす。
@@ -92,12 +96,23 @@ type _DebtServiceAgrees = AssertExtends<DebtServiceMetrics, SnapshotDebtService>
  * **「算定不能」を表す 2 欄**だけを当てる —— 狭まりの危険はそこに在る。
  */
 type _KpiExact = AssertTrue<Exact<KpiSnapshotUnit['kpi'], SnapshotKpiUnit['kpi']>>;
+/**
+ * **パス 63 が足した 3 本目** —— このファイルの doc が言う「1 行足せば増える」を
+ * 実際にやった所。`load` は 4 欄すべてが `number | null` で、狭めると画面が
+ * 「ロード 0.00 / コアあたり 0%」を緑で刷る側へ戻る (Windows で必ず起きる)。
+ */
+type _LinuxLoadExact = AssertTrue<Exact<SystemSnapshot['load'], SnapshotLinuxLoad>>;
 type _DscrExact = AssertTrue<Exact<DebtServiceMetrics['overallDscr'], SnapshotDebtService['overallDscr']>>;
 type _WorstDscrExact = AssertTrue<
   Exact<DebtServiceMetrics['worstMonthDscr'], SnapshotDebtService['worstMonthDscr']>
 >;
 /** 型だけの主張が「使われていない」と見られないように値へ落とす。 */
-const EXACTNESS_PINNED: readonly [_KpiExact, _DscrExact, _WorstDscrExact] = [true, true, true];
+const EXACTNESS_PINNED: readonly [_KpiExact, _DscrExact, _WorstDscrExact, _LinuxLoadExact] = [
+  true,
+  true,
+  true,
+  true,
+];
 
 /** 型だけの主張が「使われていない」と見られないように 1 つ値に落とす。 */
 const KPI_UNIT_PINNED: readonly (keyof _KpiUnitAgrees)[] = ['id', 'label', 'fundamentals', 'kpi', 'history'];
@@ -117,10 +132,10 @@ describe('同梱データ ⇄ live payload の形が一致する', () => {
     expect(KPI_UNIT_PINNED).toContain('kpi');
   });
 
-  it('★ 狭まりも捕まえる (双方向の Exact が 3 本立っている)', () => {
+  it('★ 狭まりも捕まえる (双方向の Exact が 4 本立っている)', () => {
     // 片方向の `AssertExtends` だけでは、同梱が `number | null` を `number` に
     // **狭めた**ときに鳴らない (対照 1 で実測)。`Exact` はどちらの向きでも鳴る。
-    expect(EXACTNESS_PINNED).toEqual([true, true, true]);
+    expect(EXACTNESS_PINNED).toEqual([true, true, true, true]);
   });
 
   it('★ kpi: 率 3 つの「算定不能」の表し方が main と同梱で揃っている', () => {
@@ -137,6 +152,14 @@ describe('同梱データ ⇄ live payload の形が一致する', () => {
     expect(SNAPSHOT.funding.debtService.totalRepayment).toBe(0);
     expect(SNAPSHOT.funding.debtService.overallDscr).toBeNull();
     expect(SNAPSHOT.funding.debtService.worstMonthDscr).toBeNull();
+  });
+
+  it('★ linux: ロードアベレージの「算定不能」の表し方が main と同梱で揃っている', () => {
+    // パス 63 の実測: Windows は `os.loadavg()` が常に [0,0,0] を返すため、
+    // 提供されない旨を `null` で表す。同梱は Linux 標本なので数で持つが、
+    // **型は `number | null`** でなければならない (上の `_LinuxLoadExact`)。
+    expect(SNAPSHOT.linux.load.avg1).not.toBeNull();
+    expect(SNAPSHOT.linux.load.unavailableNote).toBeNull();
   });
 
   it('★ 画面は payload の形を写さずに導出している (写しを増やさない)', async () => {

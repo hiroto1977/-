@@ -14373,3 +14373,115 @@ service id と型名の対応は機械的でなく、64 本を一度に留める
 写しを消せる所は消し、消せない境界 (IPC を跨ぐ snapshot ⇄ main) は
 **型の位置で留める**。そして**留める向きを間違えない** ——
 代入可能性は片方向で、危険なのは狭まる向きだった。
+
+---
+
+## パス 63 (2026-09-09) — Windows は**必ず**「ロード 0.00 / コアあたり 0% (緑)」を刷る (Node は OS に訊いていない)
+
+census の次の的は `main/clients/linux.ts` の 4 件だった。1 行読んで、
+これが今までのパスと**到達可能性の質が違う**ことが分かった。
+
+### 実測した事実 (推測ではない)
+
+Node の `os.loadavg()` は **Windows では OS に問い合わせず、常に `[0, 0, 0]` を返す。**
+出典は同梱の型定義そのもの:
+
+```
+node_modules/@types/node/os.d.ts:63
+ * always `[0, 0, 0]`.
+```
+
+(「This function is only available on POSIX; on Windows it always returns `[0, 0, 0]`」)
+
+そして本アプリは `.github/workflows/release.yml` で **Windows インストーラを出荷している。**
+つまりこれは「起こりうる」欠陥ではなく、**Windows 利用者の全員に必ず起きている。**
+これまでの 3 件 (`stocks.ts` の `changePct` / `pnlPct` / `winRate`) が
+「到達不能」で空振りだったのに対し、ここは到達率 100% である。
+
+### 画面の出方 (直す前)
+
+| 面 | 出方 |
+| --- | --- |
+| 「ロード (1分)」タイル | `0.00` を **緑** —— `positive={load.perCorePct < 100}` が `0 < 100` で真 |
+| ロードアベレージ表「コアあたり」 | `0%` を **緑・太字** (`>= 100` 赤 / `>= 70` 橙 / それ以外 緑) |
+| 表 直近 5 分 / 15 分 | `0.00` |
+| 「状況メモ」 | 「表示中の live 値は本アプリを実行している OS の値です」 |
+
+**最後の行がこの欠陥の芯である。** アプリは自分が埋めた既定値を
+**「あなたの OS の実測値だ」と保証していた。** 0 は主張であり (パス 58)、
+緑はその主張への同意である。「負荷ゼロ」は Windows で最も出やすい嘘になる。
+
+### 直し
+
+1. **値の側** —— `SystemSnapshot.load` の 4 欄を `number | null` に。
+   判定は `loadAvgSupported(platform)` として **純関数 `buildLinuxSnapshot` の中**に置いた
+   (`readSystem` は Stryker 対象外なので、そこに置くと測れない)。
+   未知のプラットフォームは「提供する」側に倒す —— 0 を刷るより実測が通る方が安全。
+   `cores === 0` も同じ理由で `null` (割れないものは割れない)。
+2. **警告に化けさせない** —— `perCorePct !== null && perCorePct >= LOAD_WARN_PCT`。
+   `?? 0` で書くと算定不能が閾値比較に入る (パス 60 と同じ罠)。
+3. **理由は 1 本だけ作る** —— `load.unavailableNote` を作り、
+   **表の直下と「状況メモ」がその同じ 1 本を読む**。文面を 2 か所に書けば
+   片方が必ず古くなる (パス 62)。検査もそれを留めている
+   (`notes` に**同じ文が 1 回**在ること)。
+4. **画面** —— 「—」を刷り、**算定不能には色を付けない** (`undefined`)。
+
+### パス 62 の仕掛けが、次のパスで実際に効いた
+
+`payloadShapeAgreement.test.ts` の doc は「`Exact` を 1 行足せば増える」と書いていた。
+今回それを実行し (`_LinuxLoadExact`)、対照 6 で**同梱の `avg1` を `number` に狭める**と
+`tsc` が 2 件で落ちることを確認した。片方向の `AssertExtends` では鳴らなかった向きである。
+留めた型は **2 本 → 3 本**。
+
+### 回した対照 (6 本すべて鳴った)
+
+| # | 壊した所 | 鳴った検査 |
+| --- | --- | --- |
+| 1 | `loadAvgSupported` を `return true` に | main 5 件 + 画面 4 件 |
+| 2 | 色の規則を `(n ?? 0) >= …` に戻す | 「算定不能に色を付けない」 |
+| 3 | 表の直下の帯を消す | 「表の直下で理由を述べる」+「同じ 1 本」 |
+| 4 | `notes` に別の文面を書く (写しを作る) | 「理由は 1 本しか無い」+ 画面 1 件 |
+| 5 | `perCorePct` から `loadAvail` を外す | main 2 件 + 画面 2 件 |
+| 6 | 同梱の `avg1` を `number` に狭める | `tsc` 2 件 (`Exact` が双方向) |
+
+### 見本が欠陥を仕様として固定していた — 15 件目
+
+`linux.test.ts` の
+**`it('handles a host with no cpus and zero memory safely')`** が
+`expect(s.load.perCorePct).toBe(0)` を留めていた。
+**名前に「safely」と書いたうえで、割れないものを 0 として仕様に固定していた。**
+これで 15 件のうち **6 件**が「NaN/Infinity を避ける」を 0 で答えた形になる。
+
+### この機会に読んで「直さない」と判断した物 (根拠つき)
+
+| 場所 | 形 | 判断 |
+| --- | --- | --- |
+| `linux.ts:114` `usagePct` | `totalMb > 0 ? … : 0` | **直さない。** `os.totalmem()` が 0 を返すのは**どのプラットフォームの契約でもない** (loadavg と違い文書化された既定値が無い)。かつ同時に「使用 / 合計」が `0 MB / 0 MB` と出るので、画面が自ら露呈する |
+| `linux.ts:136` `speedMhz ?? 0` | 欄の既定 | **直さない。** 表示は `(speedMhz / 1000).toFixed(2)` で `0.00 GHz` になるが、隣に `cpu.model = 'unknown'` が出る。CPU 速度を 0 と読んで意思決定する面が無い |
+| `stocks.ts:1059` `changePct` | `last && prev && prev.close > 0 ? … : 0` | **到達不能。** 呼び口は 1 つ (`:1283`) で `HISTORY_LENGTH = 120` 固定・`createMockStocksDataSource` は差し替え不可 (`const src = …`)。`mockCandle` の close は `prevClose * (1 + drift)` の乗算なので符号を跨がない |
+| `stocks.ts:1428` / `:1762` `pnlPct` | `initialCash > 0 ? … : 0` | **到達不能。** 書面が読む portfolio は `createPaperPortfolio(SNAPSHOT_INITIAL_CASH = 1_000_000)` 固定。`createPaperPortfolio` は `< 0` を throw する |
+| `stocksWatchlistWeb.ts:240` | `prev.close === 0 ? 0 : …` | **到達不能。** `mockCandles` の close は `Math.max(1, …)`。既存のコメントが既にそう書いており、実測でも正しかった |
+
+### 記録した観察 (直していない)
+
+`fetchStocksSnapshotImpl:788-789` は `candles[length-1]!` / `candles[length-2]!` と
+**非 null 断定で書いており、ガードが 1 つも無い。** 同じファイルの 270 行下
+(`buildTickerAnalysis`) は同じ量を `last && prev && prev.close > 0` で三重に守っている
+—— **1 ファイルの中で同じ量の双子が、守りの有無で分かれている**形 (パス 60)。
+今日は直していない。理由: `HISTORY_LENGTH = 120` が module 定数なので現時点で到達不能で、
+かつ**壊れ方が「0 を主張する」ではなく `TypeError` で落ちる**ため、
+これまでのパスの基準 (「人が読む面に嘘が出る」) に当たらない。
+ただし `deps.dataSource` は**差し替えるために在る継ぎ目**で、コメントも
+「Phase 7 will swap to a real data source」と書いている。実データ源を入れる時、
+**1 銘柄の履歴が 2 本未満だと stocks 画面全体が落ちる** —— その時に直す。
+
+### 教訓
+
+**「算定不能」には 2 種類ある —— 入力が足りない場合と、*聞ける相手がいない* 場合。**
+これまでの 11 パスは前者だった (売上 0・価格未入力・返済 0)。
+今回は後者で、**プラットフォームが答えを持っていない。**
+後者のほうが危ない: 入力不足は利用者が「入れていない」と知っているが、
+OS が答えないことは利用者に見えず、しかも**必ず**起きる。
+ライブラリが「取れなければ 0 を返す」と文書に書いているとき、
+その 0 は**測定値ではなく既定値**である。それを画面へそのまま流したら、
+アプリが**自分の既定値を相手の実測値として保証する**ことになる。
