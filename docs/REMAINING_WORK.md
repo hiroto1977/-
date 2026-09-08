@@ -14245,3 +14245,91 @@ const contributionRatio = f.revenue > 0 ? (contribution / f.revenue) * 100 : 0;
 パス 60 で「同じ量を計算する**関数**を数える」を学んだ。
 本パスはその 2 つが同じ画面で交差した形 ——
 **ラベルを数えれば、値の数が分かる。**
+
+## パス 62 (2026-09-08) — 画面が payload の型を**手で写して**おり、写しがずれても `tsc` が黙る (刷るのは「∞」)
+
+パス 61 は 3 か所 (main・snapshot・画面) を直した。**3 か所要ること自体**が形である。
+
+### 実測した危険
+
+写しの型**だけ**を `number` に戻す (main と snapshot は `number | null` のまま):
+
+| 何が起きるか | 結果 |
+| --- | --- |
+| `tsc` | **何も言わない** (`as` は重なりが在れば通る) |
+| 画面 | 限界利益率 に **「∞」** —— `pct` が `Number.isFinite(null) === false` で '∞' に倒す |
+
+**算定不能が「無限に高い限界利益率」として出る** —— パス 58/60 と同じ反転が、
+今度は**型の写しのずれ**から生まれる。
+
+### 規準は同じ層に在った
+
+写しているのは **2 ページだけ**で、他は**導出**していた:
+
+| ページ | 形 |
+| --- | --- |
+| `FundingPage.tsx:29` | `type FundingSnapshot = typeof SNAPSHOT.funding` ← **導出** |
+| `FreeePage.tsx:10` | `type FreeeSnapshot = typeof SNAPSHOT.freee` ← **導出** |
+| `KpiPage.tsx:35,43,57` | `interface Fund / Kpi / Unit` ← **手書きの写し** |
+| `TalentPage.tsx:59` | `interface TalentSnapshot` ← **手書きの写し** |
+
+### 空振りも記録する
+
+`TalentPage` の `as unknown as` (二重キャスト) を**ずれの証拠だと踏んだ** ——
+単一キャストに変えて `tsc` を回したら**エラー 0** で、二重キャストは
+**冗長だっただけ**だった。**踏んだ仮説が外れたことを書き残す**
+(パス 60 の `specifiedIncomeRatio` と同じ)。
+ただし二重キャストは将来のずれを**恒久的に**黙らせるので、単一に直す価値は在る。
+
+### 直した所
+
+| ファイル | 直し |
+| --- | --- |
+| `pages/KpiPage.tsx` | 3 つの写しを削除し `export type Unit = (typeof SNAPSHOT.kpi.units)[number]` / `Kpi = Unit['kpi']` / `Fund = Unit['fundamentals']` で**導出** |
+| `pages/TalentPage.tsx` | 二重キャスト → 単一キャスト (2 か所) |
+| `data/__tests__/payloadShapeAgreement.test.ts` (新設) | 残る 1 本の写し (**snapshot ⇄ main**) を**型の位置**で留める |
+
+### 自分の下書きが空の検査だった
+
+最初の版は `structuredClone(SNAPSHOT.kpi) as KpiSnapshot` と書いていた ——
+**`as` は重なりが在れば通るので、どんな形でも通る空の検査**だった。
+`as` を使わない `AssertExtends<Expected, Actual extends Expected>` に書き直した。
+
+### そして対照 1 が鳴らなかった —— それが検査についての報せだった
+
+| 対照 | 片方向 `AssertExtends` だけのとき | `Exact` を足した後 |
+| --- | --- | --- |
+| 1. 同梱の `contributionRatio` を `number` に**狭める** | **鳴らない** | 鳴る |
+| 2. main の `Kpi` に欄を 1 つ足す | 鳴る (2 か所) | 鳴る |
+| 3. `DebtServiceMetrics.overallDscr` を `number` に戻す | 鳴る | 鳴る |
+| 4. 同梱の `overallDscr` を `number` に**狭める** | (未測定) | 鳴る |
+
+`Actual extends Expected` は**片方向**である ——
+同梱が `number | null` を `number` に狭めても、`number` は `number | null` に
+代入できるので**通ってしまう**。そして**狭める向きこそが、画面に
+「null は来ない」と信じ込ませる危険な向き**である。
+
+双方向の `Exact<A, B> = [A] extends [B] ? ([B] extends [A] ? true : false) : false`
+を 3 本足して、狭まりでも鳴るようにした
+(タプル包みは union の分配を止めるため)。
+
+**鳴らない対照は「合格」ではなく、その検査についての報せ** ——
+この教義が、今回は**検査の向きが足りない**ことを教えた。
+
+### 覆っている範囲 (正直に)
+
+`main/clients/*.ts` が export する `*Snapshot` 型は **64 本**在るが、
+留めたのは **2 本 (kpi・funding)** だけである。
+service id と型名の対応は機械的でなく、64 本を一度に留めると
+「既に食い違っている物」を大量に抱え、**理由を書けないまま除外台帳を作る**
+ことになる (`lint:zero-fold` を保留したのと同じ理由)。
+**読んで確かめた分だけを足す** —— `AssertExtends` / `Exact` を 1 行足せば増える。
+
+### 教訓
+
+**同じ形を 2 か所に書いたら、片方は必ず古くなる。**
+このリポジトリは既に答えを持っていた —— `FundingPage` と `FreeePage` は
+`typeof SNAPSHOT.x` で**導出**しており、写していなかった。
+写しを消せる所は消し、消せない境界 (IPC を跨ぐ snapshot ⇄ main) は
+**型の位置で留める**。そして**留める向きを間違えない** ——
+代入可能性は片方向で、危険なのは狭まる向きだった。

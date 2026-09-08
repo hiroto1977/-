@@ -125,10 +125,13 @@ export function TalentPage(): React.JSX.Element {
   // 診断票も 10ヶ条も STEP も全部消えた (2026-08-28 実測)。
   const { data, source, status, errorMessage, refresh } = useServiceData(
     'talent',
-    SNAPSHOT.talent as unknown as TalentSnapshot,
+    // **二重キャストにしない。** `as unknown as` は型検査を恒久的に黙らせるので、
+    // `TalentSnapshot` と同梱データがずれても気づけない。単一キャストなら
+    // 重なりが無くなった時点で `tsc` が落ちる (2026-09-08 に単一で通ることを実測)。
+    SNAPSHOT.talent as TalentSnapshot,
     { autoFetch: true },
   );
-  const snap = data as unknown as TalentSnapshot;
+  const snap = data as TalentSnapshot;
 
   const { diseases, steps, disqualifiers } = snap;
 

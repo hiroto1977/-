@@ -32,35 +32,22 @@ import {
   type BalanceSheet,
 } from '../data/balanceSheet';
 
-interface Fund {
-  revenue: number;
-  cogs: number;
-  advertising: number;
-  sga: number;
-  depreciation: number;
-}
-
-interface Kpi {
-  variableCost: number;
-  fixedCost: number;
-  contribution: number;
-  contributionRatio: number | null;
-  variableRatio: number | null;
-  fixedRatio: number | null;
-  bep: number;
-  bepRatio: number;
-  safetyMargin: number | null;
-  operatingProfit: number;
-  operatingLeverage: number;
-}
-
-interface Unit {
-  id: string;
-  label: string;
-  fundamentals: Fund;
-  kpi: Kpi;
-  history: Fund[];
-}
+/**
+ * **payload の形は写さずに導出する。**
+ *
+ * `SNAPSHOT.kpi.units` は `[] as {...}[]` と注釈されており、その要素型が
+ * **live 取得の payload が満たすべき形**である (`main/clients/kpi.ts` の
+ * `Unit` / `Kpi` と同じもの)。手で写すと 3 か所 (main・snapshot・この画面) に
+ * なり、**写しがずれても `as` キャストが通るので `tsc` は黙る** ——
+ * 実測では 限界利益率 の型だけを `number` に戻すと、値が `null` のまま
+ * `pct()` に入り **「∞」**(= 無限に高い限界利益率) を刷った (2026-09-08)。
+ *
+ * 規準は同じ層に在った —— `FundingPage.tsx` と `FreeePage.tsx` は最初から
+ * `type X = typeof SNAPSHOT.x` で導出している。
+ */
+export type Unit = (typeof SNAPSHOT.kpi.units)[number];
+export type Kpi = Unit['kpi'];
+export type Fund = Unit['fundamentals'];
 
 const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 0 });
 const pct = (n: number) => (Number.isFinite(n) ? n.toFixed(1) + '%' : '∞');
