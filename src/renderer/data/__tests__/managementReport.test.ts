@@ -64,6 +64,61 @@ describe('buildManagementReport', () => {
     expect(md).toContain('売上 達成率: 125%');
   });
 
+  /**
+   * **このレポートは書面と同じ相手に渡る。** (2026-09-08)
+   *
+   * 前文に「役員会・銀行・税理士への共有にご利用ください」と書いてある。ところが
+   * 金融機関等提出用の書面がパス 34/35/43/46 で足してきた「期間・基準日・会計の窓」の
+   * 断り書きは、**このレポートには 1 つも無かった** (パス 47 で予実に足した 1 つを除く)。
+   * 「どの節が期間を述べるか」の表を作って数えたら、面ごと空だった。
+   */
+  it('★ 損益の節が対象期間を書く (期間に比例する金額なので)', () => {
+    const md = report();
+    expect(md).toContain('- 対象期間: 2026-05〜2026-05・1 か月 (以下の金額はこの期間の累計)');
+  });
+
+  it('★ 対象期間は事業の行数ではなく期の異なり数 (2 事業 × 2 か月 = 2 か月)', () => {
+    const md = report({
+      kpiActuals: ['2026-04', '2026-05'].flatMap((period) => [
+        { ...kpi, period, unit: 'A' },
+        { ...kpi, period, unit: 'B' },
+      ]),
+    });
+    expect(md).toContain('- 対象期間: 2026-04〜2026-05・2 か月 (以下の金額はこの期間の累計)');
+  });
+
+  it('★ 財政状態の節が基準日を書き、実績と隔たれば警告する', () => {
+    const stale = report({
+      balanceSheet: {
+        asOf: '2019-03-31', currentAssets: 1000, inventory: 0, accountsReceivable: 0,
+        fixedAssets: 1000, currentLiabilities: 500, accountsPayable: 0, fixedLiabilities: 200, netIncome: 100,
+      },
+    });
+    expect(stale).toContain('- 基準日: 2019-03 時点の貸借対照表');
+    expect(stale).toContain('⚠ 基準日が実績の最新期 (2026-05) より 86 か月古く');
+  });
+
+  it('★ 対照: 基準日が実績と同じ期なら警告は出ない (基準日の行だけ)', () => {
+    const fresh = report({
+      balanceSheet: {
+        asOf: '2026-04-30', currentAssets: 1000, inventory: 0, accountsReceivable: 0,
+        fixedAssets: 1000, currentLiabilities: 500, accountsPayable: 0, fixedLiabilities: 200, netIncome: 100,
+      },
+    });
+    expect(fresh).toContain('- 基準日: 2026-04 時点の貸借対照表');
+    expect(fresh).not.toContain('⚠ 基準日が');
+  });
+
+  it('★ 資金繰りの節が会計連携の窓を書く', () => {
+    const md = report({
+      accounting: [
+        { month: '2026-03', income: 1_000_000, expense: 700_000, net: 300_000 },
+        { month: '2026-04', income: 1_000_000, expense: 700_000, net: 300_000 },
+      ],
+    });
+    expect(md).toContain('- 会計連携の対象期間: 2026-03〜2026-04・2 か月分');
+  });
+
   it('★ 予実の節が突合した期を書く (通年の比較に読ませない)', () => {
     const md = report({
       kpiBudgets: ['2026-04', '2026-05', '2026-06'].map((period) => ({ ...kpi, period, revenue: 800_000 })),
@@ -156,10 +211,16 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
       grossProfit: 600_000, grossMarginPct: 60, ebitda: 300_000, ebitdaMarginPct: 30,
       bep: 800_000, safetyMargin: 20, revenueGrowthPct: 15,
       yoy: { revenueYoYPct: 10, period: '2026-05', priorPeriod: '2025-05' },
+      // 実績の窓 (対象期間) —— 実物の `kpi` は必ず持つ。
+      periods: ['2026-04', '2026-05'],
+      periodWindow: { from: '2026-04', to: '2026-05', months: 2 },
       ...p.kpi,
     },
     financialPosition: 'fp' in p ? p.fp : null,
-    accounting: 'accounting' in p ? p.accounting : null,
+    // 会計連携の詰め物は窓 (最初と最後の月・月数) も持つ (実物は必ず持つ)。
+    accounting: 'accounting' in p && p.accounting !== null
+      ? { firstMonth: '2026-04', latestMonth: '2026-05', months: 2, ...p.accounting }
+      : null,
     runwayMonths: 'runwayMonths' in p ? p.runwayMonths : null,
     cashForecast: 'cashForecast' in p ? p.cashForecast : null,
     // 予実の詰め物は突合結果も持つ (実物の `budget` は必ず `alignment` を持つ)。
@@ -247,6 +308,10 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
         '',
         '## 損益 (P&L)',
         '',
+        // **2026-09-08 まで、この全文の見本自身が期間を書かない P&L を固定していた。**
+        // このレポートの前文は「役員会・銀行・税理士への共有に」と書いてあり、
+        // 渡る先は金融機関等提出用の書面と同じである。
+        '- 対象期間: 2026-04〜2026-05・2 か月 (以下の金額はこの期間の累計)',
         '- 売上高: ¥1,000,000',
         '- 営業利益: ¥250,000 (営業利益率 25.0%)',
         '- 売上総利益: ¥600,000 (粗利率 60.0%)',
@@ -263,6 +328,7 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
         '',
         '## 資金繰り (CF)',
         '',
+        '- 会計連携の対象期間: 2026-04〜2026-05・2 か月分',
         '- 営業CF合計: ¥500,000 (月次平均 ¥50,000)',
         '- 資金ランウェイ: 12 か月',
         '- 資金ショート予測: 6 か月後',

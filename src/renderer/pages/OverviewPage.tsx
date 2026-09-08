@@ -807,7 +807,6 @@ export function OverviewPage() {
         overview,
         scorecard,
         debtService,
-        kpiPeriods,
         balanceSheetAsOf,
         today: localIsoDate(),
         settings: submissionSettings,

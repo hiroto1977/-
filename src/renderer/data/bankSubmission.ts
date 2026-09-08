@@ -16,6 +16,7 @@ import { hasControlChar } from '../../shared/controlChars';
 // 取り込みと書類の差込も同じ物を使う)。**写さずに読む。** kessanImport から
 // こちらへの辺は `import type` だけなので実行時の循環にはならない。
 import { fiscalYearMonths, fiscalYearWindow } from './kessanImport';
+import { isValidPeriod } from './kpiActuals';
 import {
   BANK_FORMAT_DEFAULT,
   BLANK,
@@ -152,8 +153,6 @@ export interface BankSubmissionInput {
   readonly overview: BusinessOverview;
   readonly scorecard: ManagementScorecard;
   readonly debtService: CashflowDebtService | null;
-  /** KPI 実績の期 (`YYYY-MM`)。対象期間の表示に使う。 */
-  readonly kpiPeriods: readonly string[];
   /** 貸借対照表の基準日 (`YYYY-MM-DD`)。未入力は null。 */
   readonly balanceSheetAsOf: string | null;
   /** 作成日 (現地の `YYYY-MM-DD`)。 */
@@ -170,11 +169,10 @@ const TREND_LABEL: Readonly<Record<'up' | 'down' | 'flat', string>> = { up: '上
  * もう片方が黙って別の物を通す (対象期間と月数で判定が食い違う)。
  */
 function validPeriods(periods: readonly string[]): string[] {
-  // 正規表現は**関数の中**に置く。module 直下の const にすると読み込み時に
-  // 1 度だけ評価される「静的な変異体」になり、変異検査が届かなくなる
-  // (実測 2026-09-07: 外へ出した途端に静的な生存が 17 → 24 に増えた)。
-  // 綴りを 1 か所に保ちつつ、測れる場所に置く。
-  return periods.filter((p) => /^\d{4}-(0[1-9]|1[0-2])$/.test(p)).sort();
+  // **期の綴りの規則は `kpiActuals.ts` の `isValidPeriod` 1 か所。**
+  // ここに 2 つ目の正規表現を書いていた (2026-09-07 に畳んだ) —— 同じ規則の
+  // 2 つ目の綴りは、片方だけ直したときに書面と入力検査が食い違う。
+  return periods.filter(isValidPeriod).sort();
 }
 
 /** KPI の期から対象期間 (最初と最後の月) を取る。読めない期は無視。 */
@@ -294,7 +292,7 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
     return null;
   };
 
-  const range = periodRange(input.kpiPeriods);
+  const range = periodRange(o.kpi.periods);
   const rangeLabel = range ? formatPeriodRange(range.from, range.to, f) : BLANK;
   const bsLabel = formatDate(input.balanceSheetAsOf, f);
   const p = settings.profile;
@@ -319,7 +317,7 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
 
   sections.push({
     title: '1. 損益の状況（対象期間の累計）',
-    caption: has ? periodScopeNote(p.fiscalYearEnd, input.kpiPeriods, f) : 'KPI 実績が未入力のため算定していません。',
+    caption: has ? periodScopeNote(p.fiscalYearEnd, o.kpi.periods, f) : 'KPI 実績が未入力のため算定していません。',
     rows: [
       row('売上高', kv(k.revenue), 'KPI 実績の合計'),
       row('売上総利益', kv(k.grossProfit), '売上高 − 売上原価'),
@@ -346,13 +344,13 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
     if (sp === null) return null;
     const salesSpan = `${formatPeriodRange(sp.from.slice(0, 7), sp.to.slice(0, 7), f)}・${sp.months} か月`;
     const head = `上の金額は販売記録の${salesSpan}分の累計です。`;
-    const kpi = periodRange(input.kpiPeriods);
+    const kpi = periodRange(o.kpi.periods);
     // KPI 実績が無ければ比べる相手が居ない。月まで一致していれば述べることは無い。
     if (kpi === null) return head;
     const sameWindow = kpi.from === sp.from.slice(0, 7) && kpi.to === sp.to.slice(0, 7);
     return sameWindow
       ? head
-      : `${head}§1 の売上高（KPI 実績）は${periodSpan(input.kpiPeriods, f)}分の累計で、期間が異なります。`;
+      : `${head}§1 の売上高（KPI 実績）は${periodSpan(o.kpi.periods, f)}分の累計で、期間が異なります。`;
   };
 
   const conc = o.sales.concentration;
@@ -384,10 +382,10 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
    * 1 年分そろっていれば述べることは無い (`periodScopeNote` と同じ規則)。
    */
   const perCapitaCaption = (): string | null => {
-    const months = new Set(validPeriods(input.kpiPeriods)).size;
+    const months = new Set(validPeriods(o.kpi.periods)).size;
     if (months === 0) return 'KPI 実績が未入力のため、一人当たりの金額は算定していません。';
     if (months === fiscalYearMonths()) return null;
-    return `一人当たりの金額と人件費は、実績の${periodSpan(input.kpiPeriods, f)}分の累計を従業員数で割ったものです（年額ではありません）。`;
+    return `一人当たりの金額と人件費は、実績の${periodSpan(o.kpi.periods, f)}分の累計を従業員数で割ったものです（年額ではありません）。`;
   };
   sections.push({
     title: '3. 人員・生産性',
@@ -451,7 +449,7 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
       // §1 の `periodScopeNote` と同じ規則。1 年分なら式の「× 365 日」が既に語っている)。
       wc.periodMonths === monthsPerYear()
         ? null
-        : `回転日数は実績の${periodSpan(input.kpiPeriods, f)}分（${periodDayCount()} 日）で算定しています。1 年分の回転日数ではありません。`,
+        : `回転日数は実績の${periodSpan(o.kpi.periods, f)}分（${periodDayCount()} 日）で算定しています。1 年分の回転日数ではありません。`,
       wc.missingStocks.length === 0
         ? null
         : `貸借対照表の${wc.missingStocks.join('・')}が未入力のため、該当する回転日数と運転資本は算定していません（0 円としては扱っていません）。`,

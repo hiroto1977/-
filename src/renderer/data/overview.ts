@@ -14,7 +14,9 @@ import {
   computeYoYGrowth,
   computeLaborMetrics,
   isValidPeriod,
+  periodWindow,
   type KpiActual,
+  type PeriodWindow,
   type RevenueTrend,
   type RevenueLandingForecast,
   type LaborMetrics,
@@ -127,6 +129,14 @@ export interface BusinessOverview {
   };
   readonly kpi: {
     hasData: boolean;
+    /**
+     * 実績の**読める期**の昇順一覧。**「この数字は何か月分か」を述べる所すべての 1 つの出所。**
+     * 以前は書面が `kpiPeriods` を別の引数で受けていたので、型としては
+     * 「図の数字と断り書きが別の期を語る」控えが作れた (実害は無かったが出所は 1 つにした)。
+     */
+    periods: readonly string[];
+    /** 実績が覆う窓 (最初と最後の期・月数)。読める期が無ければ null。 */
+    periodWindow: PeriodWindow | null;
     revenue: number;
     operatingProfit: number;
     bep: number;
@@ -275,6 +285,8 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
     },
     kpi: {
       hasData: hasKpi,
+      periods: validKpiPeriods,
+      periodWindow: periodWindow(validKpiPeriods),
       revenue: fundamentals.revenue,
       operatingProfit: kpi.operatingProfit,
       bep: kpi.bep,

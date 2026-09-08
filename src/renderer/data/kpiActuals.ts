@@ -63,6 +63,34 @@ export function isValidPeriod(s: unknown): s is string {
   return month >= 1 && month <= 12;
 }
 
+/**
+ * 期の一覧が覆う**窓** —— 最初の期・最後の期・**月の異なり数**。
+ *
+ * 「この数字は何か月分か」を述べる所すべてが同じ答えを使うための 1 か所。
+ * 読める期 (`isValidPeriod`) が 1 件も無ければ `null` —— 期間を測れないことと
+ * 「0 か月」は別なので 0 に倒さない。
+ *
+ * **月数は必ず添える**: 範囲だけでは事業年度の端の 2 か月しか無い控えを
+ * 「ちょうど 1 年」と読めてしまう (`bankSubmission.ts` の `periodScopeNote` の経緯)。
+ */
+export interface PeriodWindow {
+  readonly from: string;
+  readonly to: string;
+  readonly months: number;
+}
+
+/** 期の一覧から窓を取る。読めない期は無視。同じ月の複数行は 1 か月。 */
+export function periodWindow(periods: readonly string[]): PeriodWindow | null {
+  const valid = periods.filter(isValidPeriod).sort();
+  if (valid.length === 0) return null;
+  return { from: valid[0]!, to: valid[valid.length - 1]!, months: new Set(valid).size };
+}
+
+/** 窓を画面・レポート向けの 1 語にする (`2026-04〜2026-06・3 か月`)。 */
+export function formatPeriodWindow(w: PeriodWindow): string {
+  return `${w.from}〜${w.to}・${w.months} か月`;
+}
+
 /** Validate + coerce a partial input into a clean KpiActual, or throw with a
  *  user-facing message. Numbers must be finite and non-negative. */
 export function parseKpiActual(input: {

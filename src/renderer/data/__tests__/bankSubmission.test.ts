@@ -78,7 +78,6 @@ function inputWith(
     overview,
     scorecard: buildManagementScorecard({ operatingMarginPct: overview.kpi.operatingMarginPct, grossMarginPct: overview.kpi.grossMarginPct }),
     debtService: combineCashflowDebtService(ACCOUNTING, REPAYMENTS),
-    kpiPeriods: ['2026-04'],
     balanceSheetAsOf: '2026-03-31',
     today: '2026-09-04',
     settings,
@@ -131,12 +130,26 @@ describe('buildBankSubmissionSheet — 表題と提出者情報', () => {
     expect(m.attestation.companyName).toBe(BLANK);
     expect(m.attestation.representative).toBe(BLANK);
   });
-  it('対象期間は期の最初と最後、貸借対照表が無ければ基準日は「―」', () => {
+  /**
+   * **この検査は、ヘッダが図と別の期を語る書面を作っていた。** (2026-09-08)
+   *
+   * 旧: `kpiPeriods: ['2026-01' … '2026-06']` を**別の引数で**渡し、overview は
+   * `KPI` (2026-04 の 1 件) から作っていたので、対象期間は「令和8年1月〜令和8年6月」・
+   * §1 の売上高は 1 か月の累計、という書面が組めていた。期は overview の
+   * `kpi.periods` **1 か所**から来るようにしたので、この食い違いは型として作れない。
+   */
+  it('対象期間は期の最初と最後 (overview と同じ出所)、貸借対照表が無ければ基準日は「―」', () => {
     const m = buildBankSubmissionSheet(
-      inputWith(overviewWith({ balanceSheet: null }), SETTINGS, { kpiPeriods: ['2026-06', '2026-01', 'bad', '2026-03'], balanceSheetAsOf: null }),
+      inputWith(overviewWith({ balanceSheet: null }), SETTINGS, { balanceSheetAsOf: null }),
     );
-    expect(m.meta.find((x) => x.label === '対象期間')?.value).toBe('令和8年1月〜令和8年6月');
+    expect(m.meta.find((x) => x.label === '対象期間')?.value).toBe('令和8年4月');
     expect(m.meta.find((x) => x.label === '貸借対照表 基準日')?.value).toBe(BLANK);
+  });
+
+  it('★ 期が複数あれば対象期間は最初〜最後 (overview の期から出す)', () => {
+    const many = ['2026-01', '2026-03', '2026-06'].map((period) => ({ ...KPI[0]!, period }));
+    const m = buildBankSubmissionSheet(inputWith(overviewWith({ kpiActuals: many }), SETTINGS));
+    expect(m.meta.find((x) => x.label === '対象期間')?.value).toBe('令和8年1月〜令和8年6月');
   });
 });
 
@@ -177,7 +190,7 @@ describe('buildBankSubmissionSheet — 各節の数値', () => {
   });
   it('KPI 未入力なら損益・成長性は「―」で行は残り、断り書きが付く。経営スコアの節は出ない', () => {
     const o = overviewWith({ kpiActuals: [], kpiBudgets: [] });
-    const m = buildBankSubmissionSheet(inputWith(o, SETTINGS, { kpiPeriods: [] }));
+    const m = buildBankSubmissionSheet(inputWith(o, SETTINGS));
     const s = section(m.sections, '1.');
     expect(s.rows).toHaveLength(13);
     expect(s.rows.every((r) => r.value === BLANK)).toBe(true);
@@ -307,7 +320,7 @@ describe('buildBankSubmissionSheet — 各節の数値', () => {
     const many: KpiActual[] = ['2025-04', '2026-01', '2026-02', '2026-03', '2026-04'].map((period, i) => ({
       period, unit: '全社', revenue: 1_000_000 * (i + 1), cogs: 100_000, advertising: 0, sga: 100_000, depreciation: 0,
     }));
-    const m = buildBankSubmissionSheet(inputWith(overviewWith({ kpiActuals: many }), SETTINGS, { kpiPeriods: many.map((k) => k.period) }));
+    const m = buildBankSubmissionSheet(inputWith(overviewWith({ kpiActuals: many }), SETTINGS));
     const g = section(m.sections, '7.');
     expect(value(g, '前期比売上高成長率')).toBe('25.0%');
     expect(value(g, '売上トレンド')).toBe('上昇');
@@ -615,7 +628,7 @@ describe('境目の追加検査 (変異検査で残った分岐)', () => {
       '2026-10', '2026-11', '2026-12', '2027-01', '2027-02', '2027-03']
       .map((period) => ({ ...KPI[0]!, period }));
     const m = buildBankSubmissionSheet(
-      inputWith(overviewWith({ kpiActuals: year }), DEFAULT_SUBMISSION_SETTINGS, { kpiPeriods: year.map((k) => k.period) }),
+      inputWith(overviewWith({ kpiActuals: year }), DEFAULT_SUBMISSION_SETTINGS),
     );
     expect(section(m.sections, '3.').caption).toBeNull();
   });
@@ -800,7 +813,7 @@ describe('決算期と対象期間の関係を述べる (periodScopeNote)', () =
       period, unit: '全社', revenue: 1_000_000, cogs: 400_000, advertising: 0, sga: 300_000, depreciation: 0,
     }));
     const m = buildBankSubmissionSheet(
-      inputWith(overviewWith({ kpiActuals: kpi }), SETTINGS, { kpiPeriods: monthsFrom('2025-01', 20) }),
+      inputWith(overviewWith({ kpiActuals: kpi }), SETTINGS),
     );
     const s1 = section(m.sections, '1.');
     expect(value(s1, '売上高')).toBe('20,000'); // 20 か月の累計 (事業年度は 12,000)
@@ -810,7 +823,7 @@ describe('決算期と対象期間の関係を述べる (periodScopeNote)', () =
     const kpiFy: KpiActual[] = fy.map((period) => ({
       period, unit: '全社', revenue: 1_000_000, cogs: 400_000, advertising: 0, sga: 300_000, depreciation: 0,
     }));
-    const m2 = buildBankSubmissionSheet(inputWith(overviewWith({ kpiActuals: kpiFy }), SETTINGS, { kpiPeriods: fy }));
+    const m2 = buildBankSubmissionSheet(inputWith(overviewWith({ kpiActuals: kpiFy }), SETTINGS));
     const s1b = section(m2.sections, '1.');
     expect(value(s1b, '売上高')).toBe('12,000');
     expect(s1b.caption).toBeNull();
@@ -834,7 +847,7 @@ describe('基準日が古い書面は、比率が同じ期の数字でないこ�
       inputWith(
         overviewWith({ kpiActuals: kpi2026, balanceSheet: { ...BS, asOf } }),
         SETTINGS,
-        { kpiPeriods: kpi2026.map((r) => r.period), balanceSheetAsOf: asOf },
+        { balanceSheetAsOf: asOf },
       ),
     );
 
@@ -862,9 +875,7 @@ describe('基準日が古い書面は、比率が同じ期の数字でないこ�
 
   it('貸借対照表そのものが無ければ、従来の「未入力」の断り書きが優先する', () => {
     const m = buildBankSubmissionSheet(
-      inputWith(overviewWith({ kpiActuals: kpi2026, balanceSheet: null }), SETTINGS, {
-        kpiPeriods: kpi2026.map((r) => r.period), balanceSheetAsOf: null,
-      }),
+      inputWith(overviewWith({ kpiActuals: kpi2026, balanceSheet: null }), SETTINGS, { balanceSheetAsOf: null }),
     );
     expect(section(m.sections, '4.').caption).toBe('貸借対照表が未入力のため算定していません。');
   });
@@ -958,7 +969,7 @@ describe('§5 運転資本 — 未入力の欄を名前で述べる', () => {
       '2026-10', '2026-11', '2026-12', '2027-01', '2027-02', '2027-03']
       .map((period) => ({ ...KPI[0]!, period }));
     const m = buildBankSubmissionSheet(
-      inputWith(overviewWith({ kpiActuals: year }), DEFAULT_SUBMISSION_SETTINGS, { kpiPeriods: year.map((k) => k.period) }),
+      inputWith(overviewWith({ kpiActuals: year }), DEFAULT_SUBMISSION_SETTINGS),
     );
     const s = section(m.sections, '5.');
     expect(s.caption).toBeNull();
@@ -968,7 +979,7 @@ describe('§5 運転資本 — 未入力の欄を名前で述べる', () => {
   it('★ 3 か月分なら月数と日数を述べ、式もその日数で刷る', () => {
     const q = ['2026-04', '2026-05', '2026-06'].map((period) => ({ ...KPI[0]!, period }));
     const m = buildBankSubmissionSheet(
-      inputWith(overviewWith({ kpiActuals: q }), DEFAULT_SUBMISSION_SETTINGS, { kpiPeriods: q.map((k) => k.period) }),
+      inputWith(overviewWith({ kpiActuals: q }), DEFAULT_SUBMISSION_SETTINGS),
     );
     const s = section(m.sections, '5.');
     expect(s.caption).toBe(

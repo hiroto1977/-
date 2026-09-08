@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  formatPeriodWindow,
+  periodWindow,
   KPI_ACTUALS_COLLECTION,
   isValidPeriod,
   parseKpiActual,
@@ -40,6 +42,43 @@ const BASE = {
 describe('KPI_ACTUALS_COLLECTION', () => {
   it('is the stable record-store collection key', () => {
     expect(KPI_ACTUALS_COLLECTION).toBe('kpi-actuals');
+  });
+});
+
+/**
+ * **窓の月数は「期の異なり数」。** (2026-09-08)
+ *
+ * `KpiActual` は期ごとに事業 (`unit`) の行を持つので、**行数で数えると
+ * 3 事業 × 4 か月が「12 か月」になる。** この規則を留めていなかったことは
+ * パス 50 の対照 (月数を `valid.length` に替える) が 1 件も落とさなかったことで
+ * 分かった —— 見本がどれも「1 期 1 行」だったため、規則が測られていなかった。
+ */
+describe('periodWindow / formatPeriodWindow', () => {
+  it('★ 同じ期の複数事業は 1 か月として数える (行数ではない)', () => {
+    const w = periodWindow(['2026-04', '2026-04', '2026-04', '2026-05', '2026-05'])!;
+    expect(w).toEqual({ from: '2026-04', to: '2026-05', months: 2 });
+    expect(formatPeriodWindow(w)).toBe('2026-04〜2026-05・2 か月');
+  });
+
+  it('★ 並び順に依らず最初と最後を取る', () => {
+    expect(periodWindow(['2026-06', '2026-01', '2026-03'])).toEqual({
+      from: '2026-01', to: '2026-06', months: 3,
+    });
+  });
+
+  it('★ 読めない期は無視し、読める分だけで測る', () => {
+    expect(periodWindow(['2026-13', 'bad', '2026-05'])).toEqual({
+      from: '2026-05', to: '2026-05', months: 1,
+    });
+  });
+
+  it('★ 読める期が 1 件も無ければ null (0 か月に倒さない)', () => {
+    expect(periodWindow([])).toBeNull();
+    expect(periodWindow(['2026-13', '2026-00', 'nope'])).toBeNull();
+  });
+
+  it('★ 1 期だけなら from と to が同じ (範囲を偽装しない)', () => {
+    expect(formatPeriodWindow(periodWindow(['2026-04'])!)).toBe('2026-04〜2026-04・1 か月');
   });
 });
 
