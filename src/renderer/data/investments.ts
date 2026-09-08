@@ -173,10 +173,50 @@ export interface RealEstatePortfolio {
   readonly operatingExpenses: number;
   readonly mortgagePayment: number;
   readonly netCashflow: number;
-  /** 各物件の表面利回り (%) の単純平均 (小数第 2 位まで)。物件 0 件は 0。 */
-  readonly portfolioYield: number;
-  /** 入居率 (0..1、物件数ベース・小数第 4 位まで)。物件 0 件は 0。 */
-  readonly occupancyRate: number;
+  /**
+   * 各物件の表面利回り (%) の単純平均 (小数第 2 位まで)。
+   *
+   * **取得価格が読めない物件は分母から外す。** 2026-09-08 まで 0% として
+   * 足しつつ分母は全件だったので、**1 件で全体が下がった**:
+   *
+   * | 控え | 表示 | 測れた物件だけの平均 |
+   * | --- | ---: | ---: |
+   * | 3 件そろい | 5.50% | 5.50% |
+   * | **+ 取得価格の欄が無い 1 件** | **4.13%** | 5.50% |
+   *
+   * 取得価格 0 は「利回り 0%」ではなく「割れない」である
+   * (`normalizeProperty` は欄の無い控えを 0 に倒す —— 復元・古い版・手で
+   * 直した JSON の経路。入力欄の `parseProperty` は 1 円以上を要求する)。
+   * 測れた物件が 1 件も無ければ `null`。
+   */
+  readonly portfolioYield: number | null;
+  /** 入居率 (0..1、物件数ベース・小数第 4 位まで)。物件 0 件は null (算定不能)。 */
+  readonly occupancyRate: number | null;
+  /** 表面利回りを測れた物件数 (取得価格 > 0)。 */
+  readonly yieldMeasured: number;
+  /** 取得価格が読めず、利回りの平均から外した物件数。 */
+  readonly yieldUnmeasured: number;
+  /**
+   * 入居中と記録されているのに家賃が読めない (0 の) 物件数。
+   * **入居率と家賃収入が食い違う元**なので数えて画面に出す ——
+   * 「稼働率 100% / 月次家賃収入 ¥0」は両立しない。
+   */
+  readonly occupiedWithoutRent: number;
+}
+
+/**
+ * 利回りの平均から外した物件が在ることの断り。1 件も無ければ `null`。
+ * **画面がこの 1 文を出す** (数字だけ直しても、なぜ件数が合わないかは読めない)。
+ */
+export function yieldScopeNote(p: RealEstatePortfolio): string | null {
+  if (p.yieldUnmeasured === 0) return null;
+  return `取得価格が読めない ${p.yieldUnmeasured} 件は表面利回りの平均から外しています（測れた ${p.yieldMeasured} 件の平均です）。0% として平均すると全体が下がります。`;
+}
+
+/** 入居中なのに家賃が読めない物件が在ることの断り。1 件も無ければ `null`。 */
+export function occupiedWithoutRentNote(p: RealEstatePortfolio): string | null {
+  if (p.occupiedWithoutRent === 0) return null;
+  return `入居中と記録されている ${p.occupiedWithoutRent} 件は家賃が読めないため、月次家賃収入に含まれていません（入居率にはこの物件も数えています）。`;
 }
 
 /**
@@ -193,17 +233,25 @@ export function computeRealEstatePortfolio(
   let expenses = Number.isFinite(baseExpenses) && baseExpenses > 0 ? baseExpenses : 0;
   let loan = Number.isFinite(baseLoan) && baseLoan > 0 ? baseLoan : 0;
   let yieldSum = 0;
+  let yieldMeasured = 0;
   let occupiedCount = 0;
+  let occupiedWithoutRent = 0;
   for (const p of properties) {
     if (p.occupied) {
       grossRent += p.monthlyRent;
       occupiedCount += 1;
+      // 入居中なのに家賃が 0 = 読めない。数えて画面が述べる (上の欄の脇)。
+      if (!(p.monthlyRent > 0)) occupiedWithoutRent += 1;
     }
     expenses += p.monthlyExpenses ?? 0;
     loan += p.monthlyLoan ?? 0;
     // 表面利回りは表示と同じく物件ごとに小数第 1 位へ丸めてから平均する
     // (snapshot の portfolioYield 6.15 = (4.8+6.2+5.5+8.1)/4 と一致させる)。
-    yieldSum += p.purchasePrice > 0 ? Math.round(((p.monthlyRent * 12) / p.purchasePrice) * 1000) / 10 : 0;
+    // **取得価格が読めない物件は分子にも分母にも入れない** (0% は主張である)。
+    if (p.purchasePrice > 0) {
+      yieldSum += Math.round(((p.monthlyRent * 12) / p.purchasePrice) * 1000) / 10;
+      yieldMeasured += 1;
+    }
   }
   const count = properties.length;
   return {
@@ -211,8 +259,11 @@ export function computeRealEstatePortfolio(
     operatingExpenses: expenses,
     mortgagePayment: loan,
     netCashflow: grossRent - expenses - loan,
-    portfolioYield: count > 0 ? Math.round((yieldSum / count) * 100) / 100 : 0,
-    occupancyRate: count > 0 ? Math.round((occupiedCount / count) * 10000) / 10000 : 0,
+    portfolioYield: yieldMeasured > 0 ? Math.round((yieldSum / yieldMeasured) * 100) / 100 : null,
+    occupancyRate: count > 0 ? Math.round((occupiedCount / count) * 10000) / 10000 : null,
+    yieldMeasured,
+    yieldUnmeasured: count - yieldMeasured,
+    occupiedWithoutRent,
   };
 }
 

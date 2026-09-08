@@ -12,6 +12,8 @@ import {
   PROPERTY_TYPES,
   normalizeHolding,
   normalizeProperty,
+  occupiedWithoutRentNote,
+  yieldScopeNote,
 } from '../investments';
 import { SNAPSHOT } from '../snapshot';
 
@@ -153,9 +155,15 @@ describe('computeRealEstatePortfolio', () => {
     expect(p.occupancyRate).toBe(0.6);
   });
 
-  it('物件 0 件は全て 0 (ゼロ除算なし)', () => {
+  // **物件が 0 件なら比率は算定不能。** 額は 0 (足す物が無い) だが、
+  // 利回り 0% / 入居率 0% は「そういう値である」という主張になる。
+  it('物件 0 件 — 額は 0・比率は null (ゼロ除算なし)', () => {
     const p = computeRealEstatePortfolio([], 0, 0);
-    expect(p).toEqual({ grossRent: 0, operatingExpenses: 0, mortgagePayment: 0, netCashflow: 0, portfolioYield: 0, occupancyRate: 0 });
+    expect(p).toEqual({
+      grossRent: 0, operatingExpenses: 0, mortgagePayment: 0, netCashflow: 0,
+      portfolioYield: null, occupancyRate: null,
+      yieldMeasured: 0, yieldUnmeasured: 0, occupiedWithoutRent: 0,
+    });
   });
 
   it('snapshot 側の経費・返済が負や NaN なら 0 として扱う (負のキャッシュアウトを作らない)', () => {
@@ -178,11 +186,78 @@ describe('computeRealEstatePortfolio', () => {
     expect(Object.is(p.mortgagePayment, 0)).toBe(true);
   });
 
-  it('取得価格 0 の行は利回りに加算しない (Infinity を出さない)', () => {
+  // **取得価格が読めない物件は分子にも分母にも入れない。**
+  // 2026-09-08 まで 0% として足しつつ分母は全件だったので、この見本は名前ごと
+  // 「利回り 0」を仕様として固定していた —— `Infinity` を避ける手段は 0 だけではない。
+  it('取得価格 0 の行は分母から外す (Infinity も 0% も出さない)', () => {
     const p = computeRealEstatePortfolio([{ monthlyRent: 50_000, purchasePrice: 0, occupied: true }], 0, 0);
-    expect(p.portfolioYield).toBe(0);
-    expect(Number.isFinite(p.portfolioYield)).toBe(true);
+    expect(p.portfolioYield).toBeNull();
+    expect(p.yieldMeasured).toBe(0);
+    expect(p.yieldUnmeasured).toBe(1);
     expect(p.grossRent).toBe(50_000);
+  });
+
+  /**
+   * **1 件で全体が下がる形。** 実測 (取得価格 2,000 万・家賃 8.0 / 10.3333 / 9.1667 万):
+   *
+   * | 控え | 直す前 | 直した後 |
+   * | --- | ---: | ---: |
+   * | 3 件そろい | 5.50% | 5.50% |
+   * | + 取得価格の欄が無い 1 件 | **4.13%** | 5.50% |
+   */
+  describe('測れない物件を平均の分母に入れない', () => {
+    const three = [
+      { monthlyRent: 80_000, purchasePrice: 20_000_000, occupied: true },
+      { monthlyRent: 103_333, purchasePrice: 20_000_000, occupied: true },
+      { monthlyRent: 91_667, purchasePrice: 20_000_000, occupied: true },
+    ];
+
+    it('★ 取得価格の欄が読めない 1 件を足しても平均は動かない', () => {
+      const clean = computeRealEstatePortfolio(three, 0, 0);
+      expect(clean.portfolioYield).toBe(5.5);
+      const broken = normalizeProperty({ monthlyRent: 90_000, occupied: true });
+      expect(broken.purchasePrice).toBe(0); // 欄の無い控えは 0 に倒る
+      const mixed = computeRealEstatePortfolio([...three, broken], 0, 0);
+      expect(mixed.portfolioYield).toBe(5.5); // 直す前は 4.13
+      expect(mixed.yieldMeasured).toBe(3);
+      expect(mixed.yieldUnmeasured).toBe(1);
+      // 額と入居率は全件で数える (物件は在るので)
+      expect(mixed.grossRent).toBe(365_000);
+      expect(mixed.occupancyRate).toBe(1);
+    });
+
+    it('★ 外した件数を断り書きが述べる', () => {
+      const mixed = computeRealEstatePortfolio([...three, { monthlyRent: 90_000, purchasePrice: 0, occupied: true }], 0, 0);
+      const note = yieldScopeNote(mixed);
+      expect(note).toContain('取得価格が読めない 1 件');
+      expect(note).toContain('測れた 3 件の平均');
+    });
+
+    it('★ 対照: 全件そろっていれば断り書きは出ない', () => {
+      expect(yieldScopeNote(computeRealEstatePortfolio(three, 0, 0))).toBeNull();
+    });
+
+    it('★ 入居中なのに家賃が読めない物件を数え、述べる (稼働率 100% と家賃 0 円は両立しない)', () => {
+      const noRent = normalizeProperty({ purchasePrice: 20_000_000, occupied: true });
+      const p = computeRealEstatePortfolio([...three, noRent], 0, 0);
+      expect(p.occupiedWithoutRent).toBe(1);
+      expect(p.occupancyRate).toBe(1); // 入居率は 100% のまま
+      expect(p.grossRent).toBe(275_000); // 家賃には入っていない
+      const note = occupiedWithoutRentNote(p);
+      expect(note).toContain('入居中と記録されている 1 件');
+      expect(note).toContain('月次家賃収入に含まれていません');
+    });
+
+    it('★ 対照: 空室の家賃 0 は数えない (空室に家賃が無いのは正しい)', () => {
+      const vacant = { monthlyRent: 0, purchasePrice: 20_000_000, occupied: false };
+      const p = computeRealEstatePortfolio([...three, vacant], 0, 0);
+      expect(p.occupiedWithoutRent).toBe(0);
+      expect(occupiedWithoutRentNote(p)).toBeNull();
+      // 空室は利回りの分母に入る (取得価格は読めている。表面利回りは 0%)
+      expect(p.yieldMeasured).toBe(4);
+      expect(p.portfolioYield).toBe(4.13);
+      expect(p.occupancyRate).toBe(0.75);
+    });
   });
 });
 

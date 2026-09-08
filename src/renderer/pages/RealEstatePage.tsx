@@ -18,6 +18,8 @@ import {
   parsePropertyEntry,
   propertyToForm,
   computeRealEstatePortfolio,
+  occupiedWithoutRentNote,
+  yieldScopeNote,
   type PropertyEntry,
 } from '../data/investments';
 import { jpy } from '../../shared/formatters';
@@ -76,6 +78,12 @@ const reInputStyle: React.CSSProperties = {
 const reNum = readNumberOr0;
 
 const jpyM = (n: number) => `¥${(n / 1_000_000).toFixed(1)}M`;
+/**
+ * 比率。**算定不能 (null) は「—」** —— `0.0%` は「その比率が 0 である」という
+ * 主張であり、「割れない」とは別のこと (経緯は `data/investments.ts` の
+ * `portfolioYield`)。
+ */
+const pct1OrDash = (n: number | null, digits = 1) => (n === null ? '—' : `${n.toFixed(digits)}%`);
 
 /** 敷地プランナーの用途地域プリセット (指定値は土地ごとに異なるため編集可)。 */
 const ZONE_PRESETS = [
@@ -126,6 +134,7 @@ export function RealEstatePage() {
   // 手入力の上書きを重ねる。入力欄は App が全画面共通で描くので、ここは
   // 読んで適用するだけ。
   const manualOverrides = useCollection<ManualOverrideEntry>(MANUAL_OVERRIDES_COLLECTION);
+
   const manualRecords = manualOverrides.records;
   const portfolio = useMemo(
     () =>
@@ -133,6 +142,10 @@ export function RealEstatePage() {
         .overview,
     [computedPortfolio, manualRecords],
   );
+  // 平均の分母から外した物件・家賃が読めない入居中の物件を述べる 2 文
+  // (文面は `data/investments.ts` が 1 か所で持つ)。
+  const yieldNote = useMemo(() => yieldScopeNote(portfolio), [portfolio]);
+  const rentNote = useMemo(() => occupiedWithoutRentNote(portfolio), [portfolio]);
 
   async function onSaveProperty() {
     try {
@@ -382,10 +395,22 @@ export function RealEstatePage() {
       <Section title="ポートフォリオ KPI" count={4}>
         <div className="stat-grid" style={{ marginBottom: 16 }}>
           <Stat label="月次キャッシュフロー" value={jpy(portfolio.netCashflow)} positive={portfolio.netCashflow >= 0} />
-          <Stat label="ポートフォリオ利回り" value={`${portfolio.portfolioYield.toFixed(1)}%`} />
-          <Stat label="入居率" value={`${(portfolio.occupancyRate * 100).toFixed(0)}%`} />
+          <Stat label="ポートフォリオ利回り" value={pct1OrDash(portfolio.portfolioYield)} />
+          <Stat label="入居率" value={pct1OrDash(portfolio.occupancyRate === null ? null : portfolio.occupancyRate * 100, 0)} />
           <Stat label="月次家賃収入 (実績)" value={jpy(portfolio.grossRent)} />
         </div>
+        {/* **なぜ件数が合わないか**を述べる。文面は `data/investments.ts` が 1 か所で持つ
+            (数字だけ直しても、読み手には物件数と平均の分母の違いが読めない)。 */}
+        {(yieldNote !== null || rentNote !== null) && (
+          <div
+            data-portfolio-scope
+            role="alert"
+            style={{ fontSize: 12, lineHeight: 1.7, color: 'var(--text-mute)', marginBottom: 12 }}
+          >
+            {yieldNote !== null && <div>⚠ {yieldNote}</div>}
+            {rentNote !== null && <div>⚠ {rentNote}</div>}
+          </div>
+        )}
       </Section>
 
       <Section title={editingPropId !== null ? `物件を編集中 — ${propForm.name || '(無題)'}` : '物件を追加 (任意・この端末に保存)'}>
