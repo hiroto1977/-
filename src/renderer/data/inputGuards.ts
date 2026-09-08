@@ -74,6 +74,18 @@ export function readNumberOr0(raw: string | undefined | null): number {
   return readNumeric(raw) ?? 0;
 }
 
+/**
+ * 読めなければ `null`。**「未入力」と「0 と入力された」を区別したい欄**で使う。
+ *
+ * `readNumberOr0` は空欄を 0 に倒すので、`allowZero` を持たない欄
+ * (`area` / `length` / `count` — 0 は fatal) では**画面が受け付けない値**が
+ * 計算に入り、算定できていない結果が「0 という測定値」として出る。
+ * 0 が意味を持つ欄 (`allowZero: true`) は従来どおり `readNumberOr0` でよい。
+ */
+export function readNumberOrNull(raw: string | undefined | null): number | null {
+  return readNumeric(raw);
+}
+
 interface KindRule {
   readonly unit: string;
   readonly zeroIsFatal?: boolean;

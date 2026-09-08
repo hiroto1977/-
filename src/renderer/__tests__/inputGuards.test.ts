@@ -7,6 +7,7 @@ import {
   hasInteriorNoise,
   readNumber,
   readNumberOr0,
+  readNumberOrNull,
   type NumSpec,
 } from '../data/inputGuards';
 
@@ -55,6 +56,37 @@ describe('readNumber — 計算と警告が同じ関数を使うための読み�
     expect(readNumberOr0('30,000')).toBe(30_000);
     expect(readNumberOr0('4200万')).toBe(0);
     expect(readNumberOr0('')).toBe(0);
+  });
+
+  /**
+   * **未入力に対する答えは 2 つではなく 3 つ — 値 / 0 / 「分からない」。**
+   * `allowZero` を持たない欄 (`area` / `length` / `count` は 0 が fatal) では
+   * 空欄を 0 に倒すと**画面が受け付けない値**が計算に入り、算定できていない結果が
+   * 「0 という測定値」として出る (パス 77 で用途地域プランナーがそうなっていた)。
+   */
+  it('readNumberOrNull は読めないものを null にする（0 が意味を持つ欄と分ける）', () => {
+    expect(readNumberOrNull('30,000')).toBe(30_000);
+    // 0 と入力されたら 0 —— 「0 を打った」と「打っていない」は別。
+    expect(readNumberOrNull('0')).toBe(0);
+    expect(readNumberOrNull('')).toBeNull();
+    expect(readNumberOrNull('   ')).toBeNull();
+    expect(readNumberOrNull(undefined)).toBeNull();
+    expect(readNumberOrNull(null)).toBeNull();
+    expect(readNumberOrNull('abc')).toBeNull();
+    expect(readNumberOrNull('4200万')).toBeNull(); // 単位語は解釈しない (readNumberOr0 は 0)
+  });
+
+  it('★ 同じ入力で 2 つの読み取りが分かれる (どちらを使うかが設計判断である)', () => {
+    // 空欄: `Or0` は「0 という値」、`OrNull` は「値が無い」。
+    expect(readNumberOr0('')).toBe(0);
+    expect(readNumberOrNull('')).toBeNull();
+    // 読めない入力でも同じ分岐。
+    expect(readNumberOr0('4200万')).toBe(0);
+    expect(readNumberOrNull('4200万')).toBeNull();
+    // 読める入力では一致する (床が読みを歪めていない)。
+    for (const raw of ['0', '1', '30,000', '¥1,200,000', '5%']) {
+      expect(readNumberOrNull(raw), raw).toBe(readNumberOr0(raw));
+    }
   });
 
   it('従来 Number() で壊れていた入力が読めるようになっている', () => {

@@ -24,7 +24,7 @@ import {
 } from '../data/investments';
 import { jpy } from '../../shared/formatters';
 import { GuardedNumber } from '../components/GuardedNumber';
-import { readNumberOr0, type NumSpec } from '../data/inputGuards';
+import { readNumberOr0, readNumberOrNull, type NumSpec } from '../data/inputGuards';
 import { useParameters } from '../data/parameterOverrides';
 import { dscrThresholds, effluentStandards, zoningRules } from '../../shared/parameters';
 import {
@@ -78,6 +78,8 @@ const reInputStyle: React.CSSProperties = {
 // 読み取りは inputGuards に統一。警告 (GuardedNumber) と計算が同じ関数を使うので、
 // 「警告は出ないのに 0 で計算されていた」が起きない。
 const reNum = readNumberOr0;
+/** `allowZero` を持たない欄 (0 は fatal) はこちらで読む —— 空欄と 0 は別。 */
+const reNumOrNull = readNumberOrNull;
 
 const jpyM = (n: number) => `¥${(n / 1_000_000).toFixed(1)}M`;
 /**
@@ -91,6 +93,10 @@ const pct1OrDash = (n: number | null, digits = 1) => (n === null ? '—' : `${n.
  * (RO 回収率を空にすると「年間節水量 0 L」= 循環設備が何も回収していない、に見えた。)
  */
 const litersOrDash = (n: number | null) => (n === null ? '—' : `${Math.round(n).toLocaleString()} L`);
+/** 長さ・面積。**算定不能 (null) は「—」** —— `0 m` / `0 ㎡` は「そこには何も建てられない」
+ *  という都市計画上の主張で、寸法を知らないまま述べられない。 */
+const metresOrDash = (n: number | null) => (n === null ? '—' : `${n.toLocaleString()} m`);
+const sqmOrDash = (n: number | null) => (n === null ? '—' : `${n.toLocaleString()} ㎡`);
 
 /** 敷地プランナーの用途地域プリセット (指定値は土地ごとに異なるため編集可)。 */
 const ZONE_PRESETS = [
@@ -298,8 +304,10 @@ export function RealEstatePage() {
       ...(zpShadowArea === 'unknown' ? {} : { designatedArea: zpShadowArea === 'yes' }),
     });
     const tradeoff = planSetbackTradeoff({
-      siteDepthM: reNum(zpSiteDepthStr),
-      siteWidthM: reNum(zpSiteWidthStr),
+      // 欄は `kind: 'length'` (= `allowZero` 無し) なので 0 は受け付けない値。
+      // `reNum` で 0 に倒すと、空欄が「建てられる面積 0 ㎡」という判定になる。
+      siteDepthM: reNumOrNull(zpSiteDepthStr),
+      siteWidthM: reNumOrNull(zpSiteWidthStr),
       rearSetbackM: reNum(zpRearStr),
       sideSetbackTotalM: reNum(zpSideStr),
       maxFootprint: site.maxFootprint,
@@ -309,12 +317,20 @@ export function RealEstatePage() {
     }, zRules);
     // 立体プレビューは「実際に建てられる寸法」で組む。トレードオフが建蔽率で
     // 頭打ちなら、幅はそのままで奥行を建蔽率上限に合わせて詰める。
+    // 寸法が未入力 (null) なら**描かない** —— 0×0 の箱を描いて
+    // 「間口 0 m × 奥行 0 m で…の概形」と説明するのは、未入力から作った図である。
     const isoWidth = tradeoff.buildableWidthM;
     const isoDepth =
-      isoWidth > 0 ? Math.min(tradeoff.buildableDepthM, tradeoff.footprint / isoWidth) : 0;
+      isoWidth === null || tradeoff.buildableDepthM === null || tradeoff.footprint === null
+        ? null
+        : isoWidth > 0
+          ? Math.min(tradeoff.buildableDepthM, tradeoff.footprint / isoWidth)
+          : 0;
     const schematic = buildSchematicFloors({
-      widthM: isoWidth,
-      depthM: isoDepth,
+      // 未入力は 0 として渡す (`buildSchematicFloors` は 0 以下で [] を返す)。
+      // 描画そのものは下の関門で止めるので、この 0 は画面に出ない。
+      widthM: isoWidth ?? 0,
+      depthM: isoDepth ?? 0,
       workshopSqm: factory.workshopArea,
       groundOtherSqm: factory.groundFloorOther,
       upperFloorsSqm: factory.upperFloorsArea,
@@ -756,24 +772,52 @@ export function RealEstatePage() {
         </div>
         <div className="stat-grid" style={{ marginBottom: 10 }}>
           <Stat label="斜線を通す最小後退" value={`${zoning.tradeoff.requiredSetbackM.toLocaleString()} m`} />
-          <Stat label="建てられる奥行" value={`${zoning.tradeoff.buildableDepthM.toLocaleString()} m`} />
-          <Stat label="建てられる間口" value={`${zoning.tradeoff.buildableWidthM.toLocaleString()} m`} />
+          <Stat label="建てられる奥行" value={metresOrDash(zoning.tradeoff.buildableDepthM)} />
+          <Stat label="建てられる間口" value={metresOrDash(zoning.tradeoff.buildableWidthM)} />
+          {/* **ラベルも主張である。** 「寸法で決まる」は寸法が拘束条件だと述べる文なので、
+              寸法が未入力のときは何が縛っているかを名指ししない。 */}
           <Stat
-            label={zoning.tradeoff.limitedBy === 'coverage' ? '建築面積 (建ぺい率で頭打ち)' : '建築面積 (寸法で決まる)'}
-            value={`${zoning.tradeoff.footprint.toLocaleString()} ㎡`}
+            label={
+              zoning.tradeoff.limitedBy === null
+                ? '建築面積'
+                : zoning.tradeoff.limitedBy === 'coverage'
+                  ? '建築面積 (建ぺい率で頭打ち)'
+                  : '建築面積 (寸法で決まる)'
+            }
+            value={sqmOrDash(zoning.tradeoff.footprint)}
           />
         </div>
+        {/* **未入力から「建てられない敷地」を作らない。** 欄は `kind: 'length'` なので
+            0 は受け付けない値であり、空欄は「まだ分からない」である。 */}
+        {zoning.tradeoff.footprint === null && (
+          <div data-site-dimensions-unset style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 10 }}>
+            敷地の{zoning.tradeoff.buildableDepthM === null && zoning.tradeoff.buildableWidthM === null
+              ? '奥行と間口'
+              : zoning.tradeoff.buildableDepthM === null
+                ? '奥行'
+                : '間口'}が未入力のため、建てられる寸法と建築面積は算定していません（測量図の値を入力してください）。
+            斜線を通す最小後退 {zoning.tradeoff.requiredSetbackM} m は道路幅員・用途区分・計画高さだけで決まるので、寸法に依らず有効です。
+          </div>
+        )}
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 14 }}>
           高さを下げると必要な後退が減り、その分だけ奥行を使えます。建ぺい率の上限に当たるまでは、高さを削るほど建築面積が増えます。
         </div>
 
         <div style={{ fontSize: 12, fontWeight: 700, margin: '10px 0 8px' }}>🧊 立体プレビュー (分解アイソメ)</div>
-        <BuildingIso
-          widthM={zoning.isoWidth}
-          depthM={zoning.isoDepth}
-          floors={zoning.schematic}
-          caption={`模式図です。間口 ${zoning.isoWidth.toLocaleString()} m × 奥行 ${zoning.isoDepth.toLocaleString()} m で、作業場を 1 階に敷き、残る延べ床を上階へ積んだ場合の概形。作業場を上階に置くと 150 ㎡ の合計制限を超えるため、緑は 1 階にしか出ません。`}
-        />
+        {/* 寸法が未入力なら**描かない**。0×0 の箱と「間口 0 m × 奥行 0 m で…の概形」は、
+            未入力から作った図であって「建てられない」の図ではない。 */}
+        {zoning.isoWidth === null || zoning.isoDepth === null ? (
+          <div data-iso-unset style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 14 }}>
+            敷地の奥行と間口が未入力のため、立体プレビューは描いていません（寸法を入力すると概形が出ます）。
+          </div>
+        ) : (
+          <BuildingIso
+            widthM={zoning.isoWidth}
+            depthM={zoning.isoDepth}
+            floors={zoning.schematic}
+            caption={`模式図です。間口 ${zoning.isoWidth.toLocaleString()} m × 奥行 ${zoning.isoDepth.toLocaleString()} m で、作業場を 1 階に敷き、残る延べ床を上階へ積んだ場合の概形。作業場を上階に置くと 150 ㎡ の合計制限を超えるため、緑は 1 階にしか出ません。`}
+          />
+        )}
 
         <div style={{ fontSize: 12, fontWeight: 700, margin: '4px 0 8px' }}>🌱 工場プラン (作業場 + 直売・カフェ併設)</div>
         <div className="field-grid" style={{ marginBottom: 12 }}>
