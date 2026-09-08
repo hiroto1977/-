@@ -27,13 +27,31 @@ export interface AxisScore {
 
 /** スキル評価の要約。 */
 export interface SkillEvaluation {
-  /** 平均スコア (小数第1位)。 */
-  readonly average: number;
-  readonly level: SkillLevel;
-  /** 最も高い軸 (同点は先頭)。 */
-  readonly strength: AxisScore;
-  /** 最も低い軸 = 伸びしろ (同点は先頭)。 */
-  readonly growth: AxisScore;
+  /**
+   * 評価済みの軸だけの平均スコア (小数第1位)。**1 軸も評価されていなければ null。**
+   *
+   * 2026-09-08 まで未評価の軸を **0 点**として平均していた。実測 (5 軸・
+   * 4 軸だけ入った控え):
+   *
+   * | 控え | average | level | 伸びしろ |
+   * | --- | ---: | --- | --- |
+   * | 4,4,4,4,4 | 4.0 | 良好 | 技術 (4) |
+   * | **4,4,4,4 (5 軸目が無い)** | **3.2** | **標準** | **品質 (0)** |
+   * | **3,3 (2 軸だけ)** | **1.2** | **要支援** | 推進 (0) |
+   *
+   * 評点は 1〜5 なので 0 は「その軸が評価されていない」であって「0 点」ではない。
+   */
+  readonly average: number | null;
+  /** 熟達レベル。平均が出せなければ null。 */
+  readonly level: SkillLevel | null;
+  /** 最も高い**評価済みの**軸 (同点は先頭)。1 軸も評価されていなければ null。 */
+  readonly strength: AxisScore | null;
+  /** 最も低い**評価済みの**軸 = 伸びしろ (同点は先頭)。同上。 */
+  readonly growth: AxisScore | null;
+  /** 評価済みの軸数 (平均の分母)。 */
+  readonly evaluatedCount: number;
+  /** 評価が入っていない軸の名前。**画面がこれを述べる。** */
+  readonly unevaluatedAxes: readonly string[];
 }
 
 /** メンバー1人分のケアレポート。 */
@@ -60,6 +78,24 @@ export interface CareMemberInput {
 
 const round1 = (n: number): number => Math.round(n * 10) / 10;
 
+/**
+ * 評点の範囲。**この 1 か所が持つ** —— 画面 (`TeamRadarPage`) はここを読む
+ * (同じ数を 2 か所に書くと、片方を広げたときに平均の判定だけが古いままになる)。
+ */
+export const SCORE_MIN = 1;
+export const SCORE_MAX = 5;
+
+/**
+ * その位置の評点が**評価済み**か。範囲外 (0 を含む) と欠測は「未評価」。
+ *
+ * 控えの `scores` は軸数より短いことがある (軸が増えた後の下書き・手で直した
+ * localStorage・古い版)。`teamRadarDraft.ts` の受け口は並びを崩さないために
+ * 長さを揃えないので、**読む側が「無い」を扱う**。
+ */
+export function isEvaluatedScore(v: unknown): v is number {
+  return typeof v === 'number' && Number.isFinite(v) && v >= SCORE_MIN && v <= SCORE_MAX;
+}
+
 /** 平均スコアから熟達レベルを判定する。 */
 export function skillLevel(average: number): SkillLevel {
   if (average < 2.5) return '要支援';
@@ -70,22 +106,43 @@ export function skillLevel(average: number): SkillLevel {
 
 /** 軸とスコアからスキル評価を組み立てる (純粋)。strength/growth は同点先頭。 */
 export function skillEvaluation(axes: readonly string[], scores: readonly number[]): SkillEvaluation {
-  if (axes.length === 0) {
-    const empty: AxisScore = { axis: '', score: 0 };
-    return { average: 0, level: skillLevel(0), strength: empty, growth: empty };
+  // **評価済みの軸だけを走査する。** シードを置かず、最初の評価済みで初期化する
+  // (先頭の軸が未評価でも強み・伸びしろがそこに固定されない)。
+  let sum = 0;
+  let evaluatedCount = 0;
+  let strength: AxisScore | null = null;
+  let growth: AxisScore | null = null;
+  const unevaluatedAxes: string[] = [];
+  for (let i = 0; i < axes.length; i += 1) {
+    const axis = axes[i]!;
+    const raw = scores[i];
+    if (!isEvaluatedScore(raw)) {
+      unevaluatedAxes.push(axis);
+      continue;
+    }
+    sum += raw;
+    evaluatedCount += 1;
+    if (strength === null || raw > strength.score) strength = { axis, score: raw };
+    if (growth === null || raw < growth.score) growth = { axis, score: raw };
   }
-  // 先頭をシード (空チェック後なので axes[0] は必ず在る) し、1 件目以降を走査する。
-  let sum = scores[0] ?? 0;
-  let strength: AxisScore = { axis: axes[0]!, score: scores[0] ?? 0 };
-  let growth: AxisScore = { axis: axes[0]!, score: scores[0] ?? 0 };
-  for (let i = 1; i < axes.length; i += 1) {
-    const score = scores[i] ?? 0;
-    sum += score;
-    if (score > strength.score) strength = { axis: axes[i]!, score };
-    if (score < growth.score) growth = { axis: axes[i]!, score };
+  if (evaluatedCount === 0) {
+    return { average: null, level: null, strength: null, growth: null, evaluatedCount: 0, unevaluatedAxes };
   }
-  const average = round1(sum / axes.length);
-  return { average, level: skillLevel(average), strength, growth };
+  const average = round1(sum / evaluatedCount);
+  return { average, level: skillLevel(average), strength, growth, evaluatedCount, unevaluatedAxes };
+}
+
+/**
+ * 評価が入っていない軸が在ることの断り。1 つも無ければ `null`。
+ * **画面がこの 1 文を出す** —— 平均の分母が軸数と違う理由は数字からは読めない。
+ */
+export function unevaluatedAxesNote(skill: SkillEvaluation): string | null {
+  if (skill.unevaluatedAxes.length === 0) return null;
+  const names = skill.unevaluatedAxes.join('・');
+  if (skill.evaluatedCount === 0) {
+    return `評価が 1 軸も入っていません（${names}）。平均・強み・伸びしろは算定していません。`;
+  }
+  return `${names} は評価が入っていないため、平均は評価済み ${skill.evaluatedCount} 軸で出しています（0 点として平均すると全体が下がります）。`;
 }
 
 /** 感情プロファイルからケア優先度を判定する。 */
@@ -113,6 +170,12 @@ export function emotionNoteOf(profile: EmotionProfile): string {
 export function oneOnOneFocus(priority: CarePriority, skill: SkillEvaluation): string {
   if (priority === 'high') {
     return 'まず気持ちに耳を傾けてください。評価や目標設定は、落ち着いてからで大丈夫です。';
+  }
+  // **評価が 1 軸も無ければ軸を名指ししない。** 2026-09-08 まで未評価の軸が
+  // 0 点として「最も低い軸」になり、**誰も評価していない軸を育成テーマとして
+  // 名指ししていた** (実測: 4 軸だけ入った控えで「『品質』の伸ばし方を一緒に」)。
+  if (skill.strength === null || skill.growth === null) {
+    return 'まだ評価が入っていません。5 軸の評価をそろえてから、強みと伸びしろの話をしましょう。';
   }
   if (priority === 'medium') {
     return `「${skill.strength.axis}」の強みを認めつつ、最近の様子にも触れながら「${skill.growth.axis}」の育成を一緒に。`;

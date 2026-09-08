@@ -4,7 +4,14 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
 import { buildTeamEmotionRadar, teamEmotionSummary, type MemberEmotion } from '../data/teamEmotionRadar';
-import { buildTeamCare, type CarePriority } from '../data/memberCare';
+import {
+  SCORE_MAX as MEMBER_SCORE_MAX,
+  SCORE_MIN as MEMBER_SCORE_MIN,
+  buildTeamCare,
+  isEvaluatedScore,
+  unevaluatedAxesNote,
+  type CarePriority,
+} from '../data/memberCare';
 import { sanitizeRadarDraft, type RadarDraft, type TeamMember } from '../data/teamRadarDraft';
 import { writeLocalJson, type LocalWriteResult } from '../data/localWrite';
 import { exportWarning } from '../data/exportOutcome';
@@ -30,7 +37,9 @@ interface TeamRadarSnapshot {
 
 const AXES_FALLBACK = ['営業力', '顧客対応力', 'プレゼン力', '交渉力', '顧客管理力'];
 const TITLE_FALLBACK = '営業チーム強み・弱みシート';
-const SCORE_MAX = 5;
+// 評点の上限は `data/memberCare.ts` の 1 か所が持つ (同じ数を写さない —— 写すと
+// 「平均が評価済みと見なす範囲」と「入力の上限」が別々に動く)。
+const SCORE_MAX = MEMBER_SCORE_MAX;
 
 /** 名前編集の下書き (タイトル・軸名・メンバー等) を localStorage に保持する。
  *  ブラウザ standalone では保存アクションが使えない環境もあるため、
@@ -602,12 +611,21 @@ export function TeamRadarPage() {
                         {b.label}
                       </span>
                       <span style={{ fontSize: 12, color: 'var(--text-mute)' }}>
-                        スキル {r.skill.average}/5 ({r.skill.level}) · {r.emotionNote}
+                        スキル {r.skill.average === null ? '—' : `${r.skill.average}/5 (${r.skill.level})`} · {r.emotionNote}
                       </span>
                     </div>
                     <div style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 4 }}>
-                      強み: {r.skill.strength.axis} ({r.skill.strength.score}) ／ 伸びしろ: {r.skill.growth.axis} ({r.skill.growth.score})
+                      {r.skill.strength === null || r.skill.growth === null
+                        ? '強み・伸びしろ: —（評価が入っていません）'
+                        : `強み: ${r.skill.strength.axis} (${r.skill.strength.score}) ／ 伸びしろ: ${r.skill.growth.axis} (${r.skill.growth.score})`}
                     </div>
+                    {/* **未評価の軸が在るなら述べる** —— 平均の分母が軸数と違う理由は
+                        数字からは読めない (文面は `data/memberCare.ts` が 1 か所で持つ)。 */}
+                    {unevaluatedAxesNote(r.skill) !== null && (
+                      <div data-unevaluated-axes role="alert" style={{ fontSize: 11, color: '#f59e0b', marginTop: 4, lineHeight: 1.6 }}>
+                        ⚠ {unevaluatedAxesNote(r.skill)}
+                      </div>
+                    )}
                     <div style={{ fontSize: 13, marginTop: 6 }}>🗣 {r.oneOnOneFocus}</div>
                   </div>
                 );
@@ -675,15 +693,18 @@ export function TeamRadarPage() {
                         <input
                           key={`s-${ai}`}
                           type="range"
-                          min={1}
-                          max={5}
+                          min={MEMBER_SCORE_MIN}
+                          max={SCORE_MAX}
                           step={1}
-                          value={m.scores[ai] ?? 3}
+                          // 未評価は range の中間を掴ませる (input は値を持たないと動かない)。
+                          // **表示は下の欄で「—」と出す** —— 同じ欠測を「3」と刷ると
+                          // 平均が数える値 (未評価) と画面が見せる値が食い違う。
+                          value={isEvaluatedScore(m.scores[ai]) ? m.scores[ai] : 3}
                           onChange={(e) => updateScore(idx, ai, Number.parseInt(e.target.value, 10))}
                           style={{ width: '100%' }}
                         />
                         <div key={`v-${ai}`} style={{ textAlign: 'right', color: 'var(--text)', fontVariantNumeric: 'tabular-nums' }}>
-                          {m.scores[ai] ?? 3}
+                          {isEvaluatedScore(m.scores[ai]) ? m.scores[ai] : '—'}
                         </div>
                       </>
                     ))}
