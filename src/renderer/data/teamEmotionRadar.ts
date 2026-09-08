@@ -24,11 +24,23 @@ export interface MemberEmotion {
   readonly analyses: readonly (DominantLike & SentimentLike)[];
 }
 
-/** レーダー描画用のメンバー (scores は EMOTION_AXES と同順, 1-5)。 */
+/**
+ * レーダー描画用のメンバー (scores は EMOTION_AXES と同順, 1-5)。
+ *
+ * **記録が無い軸は `null`。** 0 を置くと描画で中心に落ち、
+ * 「その軸が最低」という幾何になる (パス 59)。
+ */
 export interface RadarMember {
   readonly id: string;
   readonly name: string;
-  readonly scores: readonly number[];
+  readonly scores: readonly (number | null)[];
+}
+
+/** 記録が足りずに点数を出せなかったメンバーと、その軸名。 */
+export interface MissingData {
+  readonly id: string;
+  readonly name: string;
+  readonly axes: readonly string[];
 }
 
 /** 声かけが推奨されるメンバー。 */
@@ -42,10 +54,19 @@ export interface SupportFlag {
 export interface TeamEmotionRadar {
   readonly axes: readonly string[];
   readonly members: readonly RadarMember[];
-  /** 軸ごとのチーム平均 (メンバー0人なら全軸 0)。 */
-  readonly teamAverage: readonly number[];
+  /**
+   * 軸ごとのチーム平均。**その軸の点数を持つメンバーだけで平均する。**
+   * 誰も持たない軸 (メンバー 0 人を含む) は `null`。
+   *
+   * 2026-09-09 まで「メンバー0人なら全軸 0」だった。記録していない人を
+   * 0 点として頭数に入れると、平均は**参加率の関数**になり、
+   * 感情の測定値ではなくなる (パス 55 と同じ形)。
+   */
+  readonly teamAverage: readonly (number | null)[];
   /** 声かけ推奨メンバー。 */
   readonly needsSupport: readonly SupportFlag[];
+  /** 記録が足りず点数を出せなかったメンバー (画面が名指しで断るために読む)。 */
+  readonly missingData: readonly MissingData[];
 }
 
 /** 1..5 にクランプする。 */
@@ -70,15 +91,27 @@ export function trendScore(trend: EmotionProfile['trend']): number {
  *  - 余裕   = 直近平均スコア
  *  - 回復力 = 3 + 傾向加点 − min(連続低調日数, 2)
  */
-export function emotionRadarScores(profile: EmotionProfile): number[] {
+export function emotionRadarScores(profile: EmotionProfile): (number | null)[] {
+  // **軸ごとに分母が違う。** 4 軸は気分の記録 (`count`) から、前向きだけは
+  // 本文解析 (`analysisCount`) から来る。記録が無い軸は**点数を出さない**。
+  //
+  // 2026-09-09 まで、記録ゼロの人は `[1, 3, 5, 1, 3]` になっていた ——
+  // `clamp1to5(0)` が 1 に、`5 - 0*2` が 5 になるため、**同じ「データが無い」
+  // から最低点 (活力・余裕) と最高点 (安定) が同時に出ていた**。
+  // 一貫した偏りですらなく、雑音が信号として出ていた。
+  const hasMoods = profile.count > 0;
+  const hasAnalyses = profile.analysisCount > 0;
   return [
-    round1(clamp1to5(profile.averageScore)),
-    round1(clamp1to5(3 + profile.sentimentBalance * 2)),
-    round1(clamp1to5(5 - profile.volatility * 2)),
-    round1(clamp1to5(profile.recentAverage)),
-    round1(clamp1to5(3 + trendScore(profile.trend) - Math.min(profile.lowStreak, 2))),
+    hasMoods ? round1(clamp1to5(profile.averageScore)) : null,
+    hasAnalyses ? round1(clamp1to5(3 + profile.sentimentBalance * 2)) : null,
+    hasMoods ? round1(clamp1to5(5 - profile.volatility * 2)) : null,
+    hasMoods ? round1(clamp1to5(profile.recentAverage)) : null,
+    hasMoods ? round1(clamp1to5(3 + trendScore(profile.trend) - Math.min(profile.lowStreak, 2))) : null,
   ];
 }
+
+/** 軸ごとの分母 (どの記録から来るか)。画面の断り書きが読む。 */
+export const AXIS_SOURCE = ['moods', 'analyses', 'moods', 'moods', 'moods'] as const;
 
 /** プロファイルから声かけ理由を判定する (該当なしは null)。 */
 export function supportReason(profile: EmotionProfile): string | null {
@@ -94,14 +127,28 @@ export function supportReason(profile: EmotionProfile): string | null {
 export function buildTeamEmotionRadar(members: readonly MemberEmotion[]): TeamEmotionRadar {
   const radarMembers: RadarMember[] = [];
   const needsSupport: SupportFlag[] = [];
+  const missingData: MissingData[] = [];
   const sums = EMOTION_AXES.map(() => 0);
+  // **軸ごとに「点数を持っていた人数」を数える。** 記録の無い人を 0 点で
+  // 頭数に入れると、平均が参加率の関数になる (パス 55)。
+  const counts = EMOTION_AXES.map(() => 0);
 
   for (const m of members) {
     const profile = analyzeProfile(m.moods, m.analyses);
     const scores = emotionRadarScores(profile);
     radarMembers.push({ id: m.id, name: m.name, scores });
+    const missingAxes: string[] = [];
     for (let i = 0; i < sums.length; i += 1) {
-      sums[i]! += scores[i]!;
+      const v = scores[i];
+      if (v === null || v === undefined) {
+        missingAxes.push(EMOTION_AXES[i]!);
+        continue;
+      }
+      sums[i]! += v;
+      counts[i]! += 1;
+    }
+    if (missingAxes.length > 0) {
+      missingData.push({ id: m.id, name: m.name, axes: missingAxes });
     }
     const reason = supportReason(profile);
     if (reason !== null) {
@@ -109,14 +156,36 @@ export function buildTeamEmotionRadar(members: readonly MemberEmotion[]): TeamEm
     }
   }
 
-  const n = members.length;
-  const teamAverage = sums.map((s) => (n > 0 ? round1(s / n) : 0));
+  // **どのメンバーも値を持たない軸は、結果から落とす。**
+  // 入力が 1 件も無い軸を描くと、全員がその軸で「欠測」になり図が空になる
+  // (画面は本文解析を渡していないので、前向きが常にこれに当たる)。
+  // 落とすことで「入力の在る軸だけを描く」自己調整になり、解析が配線されたら
+  // 5 軸目が自動で現れる。**軸を隠すのではなく、無い物を主張しないだけ。**
+  const keep = EMOTION_AXES.map((_, i) => counts[i]! > 0);
+  // 全軸が生きているなら**元の配列をそのまま返す** (同一性を保つ ——
+  // 呼び出し側が `toBe(EMOTION_AXES)` で見ている)。
+  const anyKept = keep.some(Boolean) && !keep.every(Boolean);
+  const pick = <T,>(arr: readonly T[]): T[] => arr.filter((_, i) => keep[i]!);
+
+  // メンバーが 0 人のときは軸を落とさない (「軸が無い」ではなく「人が居ない」)。
+  const axes = anyKept ? pick(EMOTION_AXES) : EMOTION_AXES;
+  const teamAverage = (anyKept ? pick(sums.map((s, i) => [s, i] as const)) : sums.map((s, i) => [s, i] as const)).map(
+    ([sum, i]) => (counts[i]! > 0 ? round1(sum / counts[i]!) : null),
+  );
 
   return {
-    axes: EMOTION_AXES,
-    members: radarMembers,
+    axes,
+    members: anyKept
+      ? radarMembers.map((m) => ({ ...m, scores: pick(m.scores) }))
+      : radarMembers,
     teamAverage,
     needsSupport,
+    // 落とした軸について「欠測」と名指ししない (誰も持っていない軸なので)。
+    missingData: anyKept
+      ? missingData
+          .map((m) => ({ ...m, axes: m.axes.filter((a) => (axes as readonly string[]).includes(a)) }))
+          .filter((m) => m.axes.length > 0)
+      : missingData,
   };
 }
 
@@ -125,8 +194,13 @@ export function teamEmotionSummary(radar: TeamEmotionRadar): string {
   const n = radar.members.length;
   if (n === 0) return 'メンバーの感情データがありません。';
   const support = radar.needsSupport.length;
-  const vitality = radar.teamAverage[0] ?? 0;
-  const head = `チーム ${n} 名の感情ウェルビーイング: 活力 ${vitality}/5`;
+  // **算定できていなければ数を出さない。** `?? 0` を当てると
+  // 「活力 0/5」= 最低評価になり、記録が無いことが最悪の評価として出る。
+  const vitality = radar.teamAverage[0];
+  const head =
+    vitality === null || vitality === undefined
+      ? `チーム ${n} 名の感情ウェルビーイング: 活力は気分の記録がまだ無いため算定していません`
+      : `チーム ${n} 名の感情ウェルビーイング: 活力 ${vitality}/5`;
   if (support === 0) {
     return `${head}。いまのところ全員が安定しています。`;
   }

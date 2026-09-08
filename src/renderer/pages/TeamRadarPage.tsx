@@ -88,13 +88,24 @@ function axisPoint(
   return { x: cx + Math.cos(theta) * r, y: cy + Math.sin(theta) * r };
 }
 
+/**
+ * レーダーに描けるメンバー。**軸の値は `null` を取りうる** (感情レーダーは
+ * 記録が無い軸を `null` で返す)。才能レーダー側は常に数なので、
+ * `TeamMember` はそのまま代入できる (`number[]` は `(number | null)[]` に入る)。
+ */
+interface PlottableMember {
+  readonly id: string;
+  readonly name: string;
+  readonly scores: readonly (number | null)[];
+}
+
 function RadarChart({
   axes,
   members,
   size = 520,
 }: {
   axes: readonly string[];
-  members: TeamMember[];
+  members: readonly PlottableMember[];
   size?: number;
 }) {
   const cx = size / 2;
@@ -150,16 +161,26 @@ function RadarChart({
       })}
       {members.map((m, idx) => {
         const c = PALETTE[idx % PALETTE.length]!;
-        const pts: string[] = [];
+        // **値の無い軸が 1 つでもあれば、その人の多角形は描かない。**
+        // `?? 0` を当てると欠けた頂点が中心に落ち、「その軸が最低」という
+        // 幾何になる (パス 59: 0 は座標に入ると主張ではなく幾何になる)。
+        // 閉じた多角形は全軸に頂点を要求するので、部分的に描くこともできない
+        // —— 描かずに、誰の何が欠けているかを図の外で名指しする。
+        const vals: number[] = [];
         for (let i = 0; i < axes.length; i++) {
-          const p = axisPoint(cx, cy, radius, i, axes.length, m.scores[i] ?? 0);
-          pts.push(p.x.toFixed(1) + ',' + p.y.toFixed(1));
+          const v = m.scores[i];
+          if (v === null || v === undefined) return null;
+          vals.push(v);
         }
+        const pts = vals.map((v, i) => {
+          const p = axisPoint(cx, cy, radius, i, axes.length, v);
+          return p.x.toFixed(1) + ',' + p.y.toFixed(1);
+        });
         return (
           <g key={m.id}>
             <polygon points={pts.join(' ')} fill={c.fill} stroke={c.stroke} strokeWidth={2} />
-            {axes.map((_, i) => {
-              const p = axisPoint(cx, cy, radius, i, axes.length, m.scores[i] ?? 0);
+            {vals.map((v, i) => {
+              const p = axisPoint(cx, cy, radius, i, axes.length, v);
               return <circle key={i} cx={p.x} cy={p.y} r={3} fill={c.stroke} />;
             })}
           </g>
@@ -214,7 +235,14 @@ export function TeamRadarPage() {
     const memberEmotions: MemberEmotion[] = members.map((m) => ({
       id: m.id,
       name: m.name,
-      moods: [{ score: moods[m.id] ?? 3, note: '' }],
+      // **記録していない人に中立の 3 を代入しない。** 2026-09-09 まで
+      // `moods[m.id] ?? 3` で、気分を入れていないメンバーが「3 と記録した人」と
+      // 区別できない形で平均に入っていた —— 中立を測定値として出す形
+      // (パス 64 と同型)。記録が無ければ**空で渡す**と、値の層が軸ごとに
+      // `null` を返し、図から外して名指しで断る。
+      moods: moods[m.id] === undefined ? [] : [{ score: moods[m.id]!, note: '' }],
+      // 本文解析はこの画面からは渡していない (前向きの軸は入力が無いので
+      // `buildTeamEmotionRadar` が軸ごと落とす)。
       analyses: [],
     }));
     return buildTeamEmotionRadar(memberEmotions);
@@ -539,6 +567,30 @@ export function TeamRadarPage() {
               （<code>emotionInsights</code>）由来で、声かけが必要そうなメンバーを抽出します。
             </p>
             <RadarChart axes={emotionRadar.axes} members={emotionRadarMembers} size={520} />
+            {/* **図から消えた人を名指しする。** 描かないだけだと「その人は
+                いない」か「調子が悪い」かを読み分けられない。理由の出どころは
+                `buildTeamEmotionRadar` の `missingData` 1 本 (画面で再導出しない)。 */}
+            {emotionRadar.missingData.length > 0 && (
+              <div
+                data-emotion-missing
+                role="alert"
+                style={{
+                  fontSize: 11,
+                  color: 'var(--text-mute)',
+                  lineHeight: 1.6,
+                  border: '1px solid var(--border)',
+                  borderRadius: 6,
+                  padding: '6px 10px',
+                  marginTop: 8,
+                }}
+              >
+                記録がまだ無いため、次のメンバーはレーダーに描いていません（低い評価ではありません）:{' '}
+                {emotionRadar.missingData
+                  .map((m) => `${m.name}（${m.axes.join('・')}）`)
+                  .join('、')}
+                。気分の記録が増えると自動で描かれます。
+              </div>
+            )}
             <p style={{ fontSize: 13, marginTop: 10 }}>{teamEmotionSummary(emotionRadar)}</p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
