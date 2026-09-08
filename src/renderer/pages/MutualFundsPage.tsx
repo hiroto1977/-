@@ -507,13 +507,24 @@ export function MutualFundsPage() {
           <Stat label="必要な追加積立 (毎月)" value={jpy(projection.additionalMonthly)} />
           <Stat label="目標額のインフレ調整後 実質価値" value={jpy(realTarget)} />
           <Stat label="実質利回り (インフレ調整後)" value={realRate === null ? '—' : `${realRate}%`} />
-          <Stat label="予備資金 充足率" value={`${efCoverage.coveragePct}%`} />
+          {/* **目標が定まらなければ「—」。** 隣の「まかなえる月数」は同じ条件で
+              既に「—」を出しており、片方だけが 100% と断定していた (パス 90)。 */}
+          <Stat
+            label="予備資金 充足率"
+            value={efCoverage.coveragePct === null ? '—' : `${efCoverage.coveragePct}%`}
+          />
           <Stat
             label="現預金でまかなえる月数"
             value={efCoverage.monthsCovered === null ? '—' : `約 ${efCoverage.monthsCovered} か月`}
           />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          {efCoverage.coveragePct === null && (
+            <>
+              毎月の生活費を入力すると予備資金の充足率を算定します（未入力のため「—」）。
+              <br />
+            </>
+          )}
           ※ 毎月末積立・年率一定を仮定した概算です。実質価値は (1+インフレ率)^年数 で割り引いた購買力、実質利回りはフィッシャー式 (1+名目)/(1+インフレ)−1。緊急予備資金は生活費の{efMonths}か月分（会社員3〜6・自営6〜12か月が目安。設定の「数値パラメータ」で変えられます）。投資助言ではありません。
         </div>
       </Section>

@@ -197,8 +197,21 @@ export function realRateOfReturn(
 export interface EmergencyFundCoverage {
   /** 目標とする緊急予備資金 (円)。 */
   readonly target: number;
-  /** 充足率 (%)。target が 0 のときは現預金があれば 100、なければ 0。 */
-  readonly coveragePct: number;
+  /**
+   * 充足率 (%)。**目標が定まらなければ `null`** (2026-09-08 · パス 90)。
+   *
+   * 目標は `月支出 × 月数` で、`MutualFundsPage` は月支出を
+   * `readNumberOr0` で読む —— **空欄なら 0** になる。2026-09-08 まで
+   * `target <= 0` のとき `cash > 0 ? 100 : 0` を返していたので、
+   * **生活費を 1 円も入力していない人に「予備資金 充足率 100%」**と出していた。
+   *
+   * **規準は同じ戻り値の中に在った**: すぐ下の `monthsCovered` は
+   * `expense > 0` でなければ `null` を返し、画面も「—」を出している。
+   * 1 つのオブジェクトの中で、片方が「算定不能」と言い、片方が
+   * **最も安心させる向きの断定**をしていた (パス 61 と同じ形で、
+   * 今回は**財務の安全性**についての主張)。
+   */
+  readonly coveragePct: number | null;
   /** 目標に対する不足額 (円)。充足済みなら 0。 */
   readonly shortfall: number;
   /** 現預金でまかなえる月数 (小数第 1 位)。月支出が 0 以下なら null。 */
@@ -222,12 +235,10 @@ export function emergencyFundCoverage(
   const m = Number.isFinite(months) ? Math.max(0, months) : 0;
   const target = yen(expense * m);
 
-  let coveragePct: number;
-  if (target <= 0) {
-    coveragePct = cash > 0 ? 100 : 0;
-  } else {
-    coveragePct = Math.round((cash / target) * 100 * 10) / 10;
-  }
+  // **目標が定まらなければ充足率は出さない。** 目標 0 は「予備資金は要らない」
+  // ではなく、たいていは**月支出を入力していない**という意味である
+  // (画面は `readNumberOr0` で読むので空欄が 0 になる)。
+  const coveragePct = target > 0 ? Math.round((cash / target) * 100 * 10) / 10 : null;
 
   const shortfall = Math.max(0, target - cash);
   const monthsCovered = expense > 0 ? Math.round((cash / expense) * 10) / 10 : null;

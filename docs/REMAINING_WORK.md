@@ -16554,7 +16554,7 @@ expect(h.costPerShippedPlantYen).toBe(0);   // ← 同じ理屈が当たって�
 理由が出ていなかった面の都合で動かさない。
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **105 ファイル / 289 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **105 ファイル / 288 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -16567,12 +16567,12 @@ expect(h.costPerShippedPlantYen).toBe(0);   // ← 同じ理屈が当たって�
 | `src/renderer/pages/RealEstatePage.tsx` | 7 |
 | `src/shared/mutualFundsMetrics.ts` | 7 |
 | `src/renderer/components/FinancialAnalysis.tsx` | 6 |
-| `src/shared/savingsPlanning.ts` | 6 |
 | `src/shared/taxCredits.ts` | 6 |
 | `src/main/clients/business.ts` | 5 |
 | `src/main/clients/linux.ts` | 5 |
 | `src/renderer/data/cashflowDebtService.ts` | 5 |
 | `src/renderer/pages/TaxPage.tsx` | 5 |
+| `src/shared/savingsPlanning.ts` | 5 |
 | `src/shared/tradeTax.ts` | 5 |
 | `src/main/clients/funding.ts` | 4 |
 | `src/renderer/data/connectionStatus.ts` | 4 |
@@ -17091,3 +17091,90 @@ jsdom の hub は `save-state` で**本物の `sanitizeTalentState` を通し**�
   「挙がるべき人が黙って消える」と書いた向きは、**落下ではなく 0 化**だった。
   0 は `stalled` の条件から外れるので結果は似るが、機構は別である。
   入力を共有の読み取り (`inputGuards`) へ寄せるかは**別の判断**として残す。
+
+---
+
+## パス 90 (2026-09-08) — 生活費を入力していない人に**「予備資金 充足率 100%」**と出していた
+
+census の残りを stakes 順に読んだ。2 つは**当たって問題なし**、3 つ目が本物だった。
+
+### 当たって問題なし (再訪不要)
+
+| ファイル | 判定 |
+| --- | --- |
+| `renderer/data/cashflowDebtService.ts` (5) | **すべて正しい。** `?? 0` は合計の初期化と、鍵が在ることが分かっている `Map.get` の防御。しかも「`has` で見るので、実測して 0 だった月は対象に残る —— **未取得と実測ゼロを混ぜない**」と明記し、突合できなかった月数 `unmatchedMonths` を**画面と書面の両方**に出している (`OverviewPage:1394/1402`・`bankSubmission.ts:534`) |
+| `shared/taxCredits.ts` (6) | 4 件は `x ? x.field : 0` (控除が無い = 0 は宣言)。2 件は任意の控除額の既定 |
+
+### 本物 — `shared/savingsPlanning.ts` の `emergencyFundCoverage`
+
+```ts
+if (target <= 0) {
+  coveragePct = cash > 0 ? 100 : 0;   // ← 目標は 月支出 × 月数
+}
+```
+
+`MutualFundsPage:187` は月支出を `readNumberOr0` で読む ——**空欄は 0**。
+つまり**生活費を 1 円も入力していない人**の目標が 0 になり、
+画面 (`:510`) は 「**予備資金 充足率 100%**」と出していた。
+財務の安全性について、最も安心させる向きの断定である。
+
+### 規準は同じ grid の隣のタイルに在った
+
+`monthsCovered` は `expense > 0 ? … : null` で、**同じ条件**で `—` を出す。
+2 つの `<Stat>` が並んで:
+
+```
+予備資金 充足率            100%
+現預金でまかなえる月数       —
+```
+
+**1 つの戻り値の中で、片方が「算定不能」と言い、片方が断定していた。**
+パス 61 (同じページに「限界利益率」が 2 つ在り片方が「—」・片方が「0.0%」) と
+同じ形で、今回は**財務の安全性**についての主張。
+
+### 見本が欠陥を仕様として固定していた (27 件目・うち **10 件は名前の中**)
+
+```ts
+it('handles a zero target: 100% if cash exists, else 0%', () => {
+  expect(emergencyFundCoverage(50_000, 0, 6).coveragePct).toBe(100);
+```
+
+**名前がそのまま欠陥である。** しかも**すぐ下の検査**が
+
+```ts
+it('returns null monthsCovered when monthly expense is zero', () => {
+  expect(emergencyFundCoverage(500_000, 0, 6).monthsCovered).toBeNull();
+```
+
+と、**同じ入力 (`expense = 0`) に対して正しい規準**を留めていた。
+隣り合う 2 本が逆の判定を固定していた形。
+
+### 直し
+
+`coveragePct: number | null` —— `target > 0` のときだけ数を返す。
+画面は `—` を出し、断り書き「毎月の生活費を入力すると予備資金の充足率を算定します
+（未入力のため「—」）」を注記の先頭に出す (`Stat` に `sub` が無いため)。
+
+### 対照 (2 本とも実際に壊して確かめた)
+
+| 壊した所 | 鳴った物 |
+| --- | --- |
+| A: 値を元に戻す (`target<=0 → cash>0?100:0`) | ★ **4 本** (単体 3 + jsdom 1) |
+| B: **画面だけ**元に戻す (値は `null` のまま) | ★ **1 本** —— `expected '予備資金 充足率null%' to contain '—'` |
+
+**対照 B が示したこと**: 裸の `${null}` は画面に**そのまま "null%" と刷る**。
+パス 78 が記録した危険 (「`${x}` は `tsc` を素通りして "null" を刷る」) の実例で、
+**値を nullable にしただけでは画面は直らない**ことの証拠でもある。
+
+対照の 1 本 (月支出を入れれば % で出る) は両方の対照で通り続けた。
+
+### 私の後始末の誤り (直した)
+
+全件実行で `recordShapeAuditPanel.test.ts` が **1 度だけ**落ちた。
+単体でも 2 ファイルの組でも 2 度目の全件実行でも**再現しなかった**ので、
+原因は特定できていない。ただし私の新しい jsdom 検査は
+`_resetRecordStoreForTests()` だけで **fake-indexeddb を消していなかった** ——
+`recordShapeAuditPanel` は全 collection を `list()` で数えるので、
+残ったレコードが件数を動かしうる。`overviewHydroponics.test.ts` と同じ
+`indexedDB.deleteDatabase('business-hub-data')` を `beforeEach` に足した。
+**「直った」とは書かない** —— 再現していないので、後始末を揃えただけである。
