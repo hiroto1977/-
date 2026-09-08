@@ -196,6 +196,28 @@ const FACTS = [
         pattern: /知識ベース（学術 ([\d,]+) \//,
         parse: (m) => Number(m[1].replace(/,/g, '')),
       },
+      /*
+       * **新しいセッションが最初に読む文書も突き合わせる** (2026-09-08 · パス 97)。
+       *
+       * `docs/SESSION_HANDOFF.md` の進捗ダッシュボードは同じ概念総数を持ち、
+       * 見出しに「毎バッチ完了時に更新」と書いてある = **手で保つ数**である。
+       * ところがこのゲートは、ドリフトが見つかった 2 つの文書
+       * (KNOWLEDGE_AUTOPILOT / REMAINING_WORK) にしか向いていなかった。
+       *
+       * CLAUDE.md と SessionStart hook (`scripts/session-context.cjs`) は
+       * **この文書を最初に読め**と案内する。つまり**いちばん読まれる台帳が、
+       * 何も検査していない唯一の台帳**だった (実測: `scripts/` のうち
+       * SESSION_HANDOFF を読むのは hook・URL 符号化・整合性チェーンの 3 本だけで、
+       * どれも数を見ていない)。
+       *
+       * 2026-09-08 時点の値は**正しかった** (3,417 で本体と一致)。
+       * 欠陥ではなく**番人の不在**なので、番人だけを足す。
+       */
+      {
+        file: 'docs/SESSION_HANDOFF.md',
+        pattern: /\| \*\*現在の概念総数\*\* \| \*\*([\d,]+)\*\*/,
+        parse: (m) => Number(m[1].replace(/,/g, '')),
+      },
     ],
   },
   {
