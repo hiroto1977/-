@@ -8,6 +8,7 @@ import {
   computeMonthlyAchievement,
   decomposePriceVolumeVariance,
   budgetPeriodAlignment,
+  budgetComparedRangeLabel,
   budgetScopeSentence,
   budgetUnmatchedNote,
   KPI_BUDGETS_COLLECTION,
@@ -184,6 +185,48 @@ describe('budgetUnmatchedNote / budgetScopeSentence', () => {
 
   it('★ 予算を入れていない月だけがあるとき', () => {
     expect(budgetUnmatchedNote(al(1, 0, 11))).toBe('実績のみ 11 か月は対象外');
+  });
+
+  /**
+   * **突合できた期が 0 のときに、範囲も「比較」も作らない。**
+   *
+   * どちらも export されていて、`budgetPeriodAlignment` も export されている ——
+   * つまり**直に組んだ突合を渡せる** (`overview.ts` の `budgetAlignment` がそれ)。
+   * 今の呼び手は 2 つとも `computeBudgetVariance` (空なら null) 経由なので届かないが、
+   * **関門は呼び手の並びではなく関数の側に置く**。直す前の実測:
+   *
+   * | 関数 | 突合 0 のときの返り |
+   * | --- | --- |
+   * | `budgetComparedRangeLabel` | `undefined〜undefined・0 か月` (添字が `undefined`・裸の補間) |
+   * | `budgetScopeSentence` | 「予算と実績の両方が在る **0 か月分の比較**です」= 比較していない |
+   */
+  it('★ 突合 0 のとき範囲ラベルは undefined を刷らない', () => {
+    expect(budgetComparedRangeLabel(al(0, 9, 3))).toBe('突合できた期なし');
+    expect(budgetComparedRangeLabel(al(0, 9, 3))).not.toContain('undefined');
+    // 全部が空でも同じ (添字の枝は突合の数だけで決まる)。
+    expect(budgetComparedRangeLabel(al(0, 0, 0))).toBe('突合できた期なし');
+  });
+
+  it('★ 対照: 突合が在れば範囲と月数を出す (床が邪魔をしない)', () => {
+    expect(budgetComparedRangeLabel(al(1, 0, 0))).toMatch(/^\d{4}-\d{2}〜\d{4}-\d{2}・1 か月$/);
+    expect(budgetComparedRangeLabel(al(3, 0, 0))).toContain('・3 か月');
+  });
+
+  it('★ 突合 0 のときは「0 か月分の比較」と述べず、算定していない旨を述べる', () => {
+    const s = budgetScopeSentence(al(0, 9, 3));
+    expect(s).toBe('予算と実績で期が重なっていないため、予実差異は算定していません (予算のみ 9 か月・実績のみ 3 か月は対象外)。');
+    expect(s).not.toContain('0 か月分の比較');
+    // 文面は managementReport の突合ゼロの枝と同じ事実を述べる。
+    expect(s).toContain('期が重なっていない');
+  });
+
+  it('★ 対照: 突合が在れば従来どおり「N か月分の比較です」', () => {
+    expect(budgetScopeSentence(al(2, 4, 5))).toContain('予算と実績の両方が在る 2 か月分の比較です');
+  });
+
+  it('★ 突合も対象外も無ければ述べることが無い (null のまま)', () => {
+    // 断り書きが要らない場合は突合 0 でも null —— 床を当てすぎない。
+    expect(budgetScopeSentence(al(0, 0, 0))).toBeNull();
   });
 
   it('★ 両側に対象外があるときは中黒で並べる', () => {

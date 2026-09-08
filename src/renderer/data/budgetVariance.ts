@@ -95,8 +95,14 @@ export function budgetUnmatchedNote(a: BudgetPeriodAlignment): string | null {
  * 書面は和暦などの書式を通すので `bankSubmission.ts` の `periodSpan` を使う。
  */
 export function budgetComparedRangeLabel(a: BudgetPeriodAlignment): string {
+  // **突合できた期が 0 のときに範囲を作らない。** 添字は空配列で `undefined` になり、
+  // 裸の補間は文字列 `"undefined"` を刷るので `undefined〜undefined・0 か月` になっていた。
+  // 今の呼び手はどちらも `computeBudgetVariance` (空なら null) 経由なので届かないが、
+  // `budgetPeriodAlignment` も export されており**直に組んだ突合を渡せる**
+  // (`overview.ts` の `budgetAlignment` がまさにそれ)。**関門は関数の側に置く。**
   const from = a.comparedPeriods[0];
   const to = a.comparedPeriods[a.comparedPeriods.length - 1];
+  if (from === undefined || to === undefined) return '突合できた期なし';
   return `${from}〜${to}・${a.comparedPeriods.length} か月`;
 }
 
@@ -107,6 +113,12 @@ export function budgetComparedRangeLabel(a: BudgetPeriodAlignment): string {
 export function budgetScopeSentence(a: BudgetPeriodAlignment): string | null {
   const un = budgetUnmatchedNote(a);
   if (un === null) return null;
+  // **0 か月分の「比較」は成り立たない。** 突合できた期が無いときに
+  // 「予算と実績の両方が在る 0 か月分の比較です」と述べていた —— 比較していない。
+  // 文面は `managementReport.ts` の突合ゼロの枝と揃える (同じ事実を 2 通りに言わない)。
+  if (a.comparedPeriods.length === 0) {
+    return `予算と実績で期が重なっていないため、予実差異は算定していません (${un})。`;
+  }
   return `予算と実績の両方が在る ${a.comparedPeriods.length} か月分の比較です (${un})。`;
 }
 
