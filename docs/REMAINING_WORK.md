@@ -16554,14 +16554,13 @@ expect(h.costPerShippedPlantYen).toBe(0);   // ← 同じ理屈が当たって�
 理由が出ていなかった面の都合で動かさない。
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **106 ファイル / 298 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **105 ファイル / 288 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
 | `src/shared/funding.ts` | 13 |
 | `src/main/clients/stocks.ts` | 10 |
 | `src/renderer/data/investments.ts` | 10 |
-| `src/shared/employerBenefits.ts` | 10 |
 | `src/renderer/data/stocksAnalysisWeb.ts` | 9 |
 | `src/renderer/pages/DocstudioPage.tsx` | 9 |
 | `src/shared/taxDeductions.ts` | 9 |
@@ -16848,3 +16847,96 @@ expect(h.costPerShippedPlantYen).toBe(0);   // ← 同じ理屈が当たって�
 **このパスで census は 302 → 298 件になった** (雑損の 4 件が消えた)。
 `lint:zero-fold` は**入れた当日に自分の変更を捕まえた** —— `npm test` が
 「committed の docs が実物と一致している」で落ち、再生成が要ることを教えた。
+
+---
+
+## パス 87 (2026-09-08) — 福利厚生の適合チェックが、読めない掛金で**「適合」**と答える
+
+パス 85 で母集団に現れたもう 1 本 `shared/employerBenefits.ts` (構文上の 0 倒し 10 件)
+を読んだ。**10 件すべてが同じ誤り**で、しかも**規準は既にリポジトリに在った。**
+
+### 何が起きていたか
+
+10 か所すべてが `Math.max(0, input.X ?? 0)` と手書きされていた。しかし
+
+```js
+Math.max(0, NaN) === NaN     // 0 ではない
+```
+
+なので、**非有限は 1 つも落ちていなかった**。結果は 2 つ:
+
+1. **`checkBenefitPlan` が違反 0 件 = 「適合」を返す。** NaN は `> 0` が false に
+   なるため `if (idecoEmployer > 0)` / `if (dcEmployer > 0)` / `if (conversion > 0)` の
+   ブロックが**丸ごと飛ぶ**。この関数の doc は
+   **「上限を超えたら黙って丸めない。丸めると『その額で通った』と読めてしまい、
+   規程に書き出したあとで否認される」**と書いており、読めない入力で「通った」に
+   見えるのは**まさにその失敗**である。
+2. **`summarizeBenefitPlan` が合計に NaN を出す** (`employerPensionTotal` /
+   `employeeTotalValue` / `companyCostDelta`)。
+3. さらに `salaryConversionCapYen(NaN)` が **NaN の上限**を返す ——
+   `conversion > cap` が必ず false になるので、**上限として機能しない**。
+
+### 規準は既にリポジトリに在った
+
+`shared/num.ts` が
+
+```ts
+export function nonNeg(n: number | undefined): number {
+  return Number.isFinite(n) ? Math.max(0, n as number) : 0;
+}
+```
+
+を export している。**同じ意図の共有ヘルパで、違うのは非有限の扱いだけ。**
+この module は**その 1 点だけが違う手書き版**を 10 か所に持っていた
+(パス 84 は隣のタイル、パス 86 はすぐ上の関数が規準だった —— 3 回続けて
+「規準は手の届く所に在った」)。
+
+### 直し
+
+- 10 か所 + `salaryConversionCapYen` を `nonNeg()` に寄せた (NaN が合計と上限に
+  流れない)。
+- `nonNeg` だけでは**適合チェックの穴は閉じない** (NaN → 0 でも `> 0` は false なので
+  ブロックは飛ぶ)。そこで `checkBenefitPlan` の先頭で
+  **読めない欄それぞれを違反として名指しする**。返り値が問題の一覧なので、
+  型を変えずに「算定できない」を表せる。
+- 欄が無い (`undefined`) のは「該当なし」で、読めないのとは別 (パス 86 と同じ規則)。
+
+### 対照 (3 本とも実際に壊して確かめた)
+
+| 壊した所 | 鳴った物 |
+| --- | --- |
+| A: 読めない欄を違反にするループを外す | ★ **3 本** |
+| B: `nonNeg` を元の `Math.max(0, x ?? 0)` に戻す | ★ **2 本** (上限が NaN・合計が NaN) |
+| C: `census` の件数を +1 ずらす | ★ **2 本** (下記の書き直した検査) |
+
+対照の 4 本 (同じ欄が読める / 欄が無い / 本物の上限超過 / 適合なら空) は
+3 回とも通り続けた —— **床が広過ぎないこと**の確認。
+
+### 私がパス 85 で書き間違えた検査を直した
+
+パス 85 で置いた
+
+```ts
+it('★ 母集団に税・給付の計算が入っている (手書きの表から落ちていた 2 本)', …
+   expect(files).toContain('src/shared/employerBenefits.ts'));
+```
+
+は、**手書きの表から 2 本落ちていたことの証拠としては正しかったが、不変条件としては
+誤り**だった。今回 10 件を `nonNeg()` に寄せたら `employerBenefits.ts` は 0 件になり、
+母集団から**正しく**消えたのに、この検査が落ちた。
+
+**ある時点の実測を不変条件として固定してしまった** ——
+「見本が欠陥を仕様として固定する」の**裏返し**である。名指しをやめ、
+**母集団が source から導かれていること** (各行の件数が、そのファイルを直に数えた数と
+一致する) を留めた。これは直しても壊れない (対照 C で機構を確認)。
+
+**census は 298 → 288 件 / 106 → 105 ファイル。** `lint:zero-fold` は
+**2 パス連続で自分の変更を捕まえた**。
+
+### 到達性は正直に
+
+`checkBenefitPlan` / `summarizeBenefitPlan` は **production から呼ばれていない** ——
+`WelfareSchemeCard` は静的な `employerBenefits()` カタログと `BenefitMechanism` 型だけを
+使う。パス 86 の雑損控除と同じで、**今日の利用者に誤った数字は出ていない**。
+それでも `src/shared/` の export で、doc が避けようとしている「通ったと読める」形を
+していた。

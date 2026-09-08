@@ -71,10 +71,29 @@ describe('0 倒しの母集団を数える (構文上の量)', () => {
     expect(real.files).toBeGreaterThan(26);
   });
 
-  it('★ 母集団に税・給付の計算が入っている (手書きの表から落ちていた 2 本)', () => {
-    const files = census.census().rows.map((r) => r.file);
-    expect(files).toContain('src/shared/taxDeductions.ts');
-    expect(files).toContain('src/shared/employerBenefits.ts');
+  /**
+   * **私がパス 85 で書き間違えた検査を直した形。** (2026-09-08 · パス 87)
+   *
+   * 元は「母集団に `taxDeductions.ts` と `employerBenefits.ts` が入っている」と
+   * ファイル名を名指ししていた。手書きの表から落ちていた 2 本を示す**証拠**としては
+   * 正しかったが、**不変条件としては誤り**だった —— パス 87 で
+   * `employerBenefits.ts` の 10 件を `nonNeg()` に寄せたら 0 件になり、
+   * 母集団から**正しく**消えたのに、この検査が落ちた。
+   *
+   * **ある時点の実測を不変条件として固定してしまった** ——
+   * 「見本が欠陥を仕様として固定する」の裏返しである。
+   * 名指しをやめ、**母集団が source から導かれていること** (行の件数が、その
+   * ファイルを直に数えた数と一致する) を留める。これは直しても壊れない。
+   */
+  it('★ 各行の件数は、そのファイルを直に数えた数と一致する (母集団は source から導く)', () => {
+    const fs = require_('node:fs') as typeof import('node:fs');
+    const rows = census.census().rows;
+    expect(rows.length).toBeGreaterThan(26); // 手書きの表は 26 ファイルだった
+    // 上位 5 件を直に数え直す (全件だと遅いので、多い順の先頭で機構を確かめる)
+    for (const r of rows.slice(0, 5)) {
+      const direct = census.countFolds(fs.readFileSync(path.join(REPO_ROOT, r.file), 'utf8'));
+      expect(direct, `${r.file} の件数が表と一致しない`).toBe(r.count);
+    }
   });
 
   it('件数の多い順に並び、合計を載せる', () => {
