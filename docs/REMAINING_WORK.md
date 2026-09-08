@@ -15369,3 +15369,119 @@ it('scores an empty input as 0 / poor with all categories null', () => {
 所得割 0 は「未入力」ではなく「所得割が課されない」という**実在の状態**で、
 そこから出る判定は本物である (パス 67 / 69 の欄は
 「入っていない」と「0 である」が別だった —— ここは同じだった)。
+
+## パス 73 (2026-09-08) — 希死念慮検知の「安全見逃し 0 件 (must-hold invariant)」が、危機発話を 1 件も評価せずに通る
+
+census の次の 1 本 `crisisDeliberation.ts`。**パス 70 と同じ形が、
+このリポジトリで最も安全に近い場所に在った。**
+
+### 実測した危険
+
+```ts
+it('is currently detected with ZERO safety misses (the must-hold invariant)', () => {
+  const report = deliberate(CRISIS_CORPUS);
+  expect(report.metrics.safetyMisses).toBe(0);
+});
+```
+
+`safety-miss` は `isProtective(label)` (= `crisis` / `harm-other`) のときしか
+発生しない。**保護ラベルが無ければ見逃しは起こりえないので、0 は達成ではなく
+未測定である。**
+
+**実測した** (`label: 'other'` だけ 3 件の一時的な probe を書いて走らせ、消した):
+
+| 主張 | `other` だけのコーパスでの値 |
+| --- | --- |
+| `safetyMisses === 0` (「**the must-hold invariant**」) | **0 → 通る** |
+| `overTriggers === 0` | **0 → 通る** |
+| `accuracy >= 0.9` | **1.0 → 通る** |
+
+**3 つの「must-hold」主張すべてが緑になった。**
+`accuracy >= 0.9` は床にならない —— 保護ラベル 0 件でも正答率は 1.0 になりうる。
+
+### なぜこれが重い
+
+このハーネスは**検知器が弱まったときに落ちるためだけに存在する**。
+`deliberate` / `CRISIS_CORPUS` に production の消費者は無い (grep で確認 ——
+`chatOrg.ts` と `complianceResearch.ts` の言及は**コメントだけ**)。
+つまり**欠陥は検査の主張そのもの**で、画面には何も出ていない。
+
+具体的な失敗の道筋: 誰かが `CRISIS_CORPUS` を整理・再構成する過程で
+`crisis` ラベルの行を落としても、**この「must-hold invariant」は通り続ける。**
+希死念慮検知の回帰ガードが、守るべきものを 1 件も見ずに緑になる。
+
+### 姉妹ハーネスには床が在った (パス 60 の双子)
+
+`counselingResearch.test.ts` の同じ性質の不変条件は:
+
+```ts
+expect(report.crisisSessions).toBeGreaterThan(0);      // ← 床
+expect(report.crisisReferrals).toBe(report.crisisSessions);
+```
+
+**同じ安全性質について 2 つのハーネスが在り、片方だけが守られていた。**
+しかも `counselingResearch.ts` の doc は
+「全ペルソナを回して `crisisReferrals === crisisSessions` を**床つきで**見る」と
+明記しており、**その床が実在することも確かめた** (doc の主張を信じずに読んだ)。
+さらにあちらは「`crisis` ラベルは自己申告なので、そこも検査する」という
+**逃げ道の検査**まで持っている (`counselingResearch.test.ts:61-79`)。
+**規準は隣のファイルに、より進んだ形で在った。**
+
+### 直し
+
+`DeliberationMetrics` に**分母を 2 つ公開する** (パス 70 の
+`benignChecked` / `attacksChecked` と同じ形):
+
+```ts
+readonly protectiveCases: number;      // crisis / harm-other の件数 = safetyMisses の分母
+readonly nonProtectiveCases: number;   // destructive / other の件数 = overTriggers の分母
+```
+
+検査は主張の**1 行前**に床を置く (姉妹ハーネスと同じ並べ方):
+
+- `protectiveCases > 0` → `safetyMisses === 0`
+- `nonProtectiveCases > 0` → `overTriggers === 0` (**逆向きの空振り**も塞ぐ ——
+  危機ラベルだけのコーパスでは過検知が起きえない)
+- コーパスの組成そのものを値で示す検査 (`crisis >= 3` / `harm-other >= 1` /
+  `protectiveCases + nonProtectiveCases === total`) ——
+  **床が満たされる理由を示す**ので、コーパスを編集した人が
+  どちらかの側を空にしたことに気づける。
+- **対照を検査として常設した** ——
+  `CRISIS_CORPUS.filter(u => u.label === 'other')` に対して
+  「旧い 3 つの主張はすべて通る」を明示的に留める。
+  **空振りの形そのものを、検査の中に標本として置いた。**
+
+### 対照 (2 段で、2 段目が決め手)
+
+| 対照 | やったこと | 結果 |
+| --- | --- | --- |
+| A | 出荷コーパスから `crisis` / `harm-other` の行を**全部消す** | 床つきの 2 本が落ちた (`expected 0 to be greater than 0`) |
+| **B** | **A のまま、足した床の 1 行を消す** | **「ZERO safety misses (the must-hold invariant)」が通った** |
+
+**B が 2026-09-08 までのリポジトリの実際の状態である。**
+危機発話を 1 件残らず消したうえで、希死念慮検知の回帰ガードが緑を返した。
+床の 1 行が、それを止めた唯一の物である。
+
+### 教訓 — 「不変条件」という名前は、床の代わりにならない
+
+パス 70 で同じことを書いたが、あれは「誤検知 0」という**目標**についてだった。
+ここでは**`must-hold invariant` と自ら名乗る検査**が空振りしていた。
+**名前の強さと、主張の強さは無関係である。**
+むしろ強い名前は「これは確かめてある」と読ませるので、空振りしていたときの
+害が大きい —— 次に読む人が、そこを確かめ直さない。
+
+**不変条件を書くときは、それが「何件について」成り立つのかを同じ検査で数える。**
+
+### census の追加空振り: `counselingResearch.ts` (読んで確かめた・直す所なし)
+
+| 箇所 | 判定 | 根拠 (実測) |
+| --- | --- | --- |
+| `toneMatchRate: turns.length > 0 ? … : 0` | **安全な向き** | 0% 適合率は「できていない」と読める |
+| `overallMatchRate` 同様 | **安全な向き** | 同じ |
+| `crisisReferred: persona.crisis ? referred : null` | **既に正しい** | 非危機ペルソナは `null` |
+| `crisisReferrals === crisisSessions` の不変条件 | **既に床つき** | `crisisSessions > 0` が 1 行前に在る (`:122`) |
+| `crisis` ラベルの自己申告 | **既に検査済み** | 「危機語を含むなら `crisis: true`」を `:61-79` が留めている |
+
+**このファイルは族の中でいちばん進んだ形**である ——
+床だけでなく「不変条件の対象を表が自分で決めている」という
+**逃げ道そのもの**を検査している。パス 73 はここへ追いついただけ。

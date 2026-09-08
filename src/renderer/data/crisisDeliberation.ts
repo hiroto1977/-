@@ -152,6 +152,30 @@ export interface DeliberationMetrics {
   readonly overTriggers: number;
   /** 軽微な不一致件数。 */
   readonly minorMismatches: number;
+  /**
+   * 保護が必要なラベル (`crisis` / `harm-other`) の件数。
+   * **`safetyMisses: 0` の意味を決める。**
+   *
+   * `safety-miss` は `isProtective(label)` のときしか発生しないので、
+   * **保護ラベルが 1 件も無いコーパスでは `safetyMisses` は必ず 0** になる ——
+   * 「安全見逃しゼロ」は達成ではなく**未測定**である。
+   *
+   * 2026-09-08 に実測した: `label: 'other'` だけ 3 件のコーパスで
+   * `safetyMisses: 0` / `overTriggers: 0` / `accuracy: 1.0` ——
+   * **3 つの「must-hold」主張がすべて通った。**
+   * 希死念慮検知の回帰ガードが、危機発話を 1 件も見ずに緑になる形だった。
+   *
+   * 姉妹ハーネス `counselingResearch.ts` の不変条件には
+   * `crisisSessions > 0` の床が既に在った (パス 60 の双子)。
+   */
+  readonly protectiveCases: number;
+  /**
+   * 保護ラベルでない件数 (`destructive` / `other`)。**`overTriggers: 0` の意味を決める。**
+   *
+   * 逆向きの空振り —— 危機ラベルだけのコーパスでは過検知が起きえないので
+   * `overTriggers: 0` も未測定になる。
+   */
+  readonly nonProtectiveCases: number;
 }
 
 /** 合議の全体結果。 */
@@ -171,7 +195,13 @@ export function deliberate(corpus: readonly LabeledUtterance[]): DeliberationRep
   let safetyMisses = 0;
   let overTriggers = 0;
   let minorMismatches = 0;
+  // **何を測ったかを数える。** `safetyMisses: 0` が達成なのか未測定なのかは、
+  // 0 という数字だけでは区別できない (パス 70 と同じ「空振り合格」)。
+  let protectiveCases = 0;
+  let nonProtectiveCases = 0;
   for (const r of rounds) {
+    if (isProtective(r.label)) protectiveCases += 1;
+    else nonProtectiveCases += 1;
     if (r.verdict === 'correct') correct += 1;
     else if (r.verdict === 'safety-miss') safetyMisses += 1;
     else if (r.verdict === 'over-trigger') overTriggers += 1;
@@ -187,6 +217,8 @@ export function deliberate(corpus: readonly LabeledUtterance[]): DeliberationRep
       safetyMisses,
       overTriggers,
       minorMismatches,
+      protectiveCases,
+      nonProtectiveCases,
     },
     edgeCases: rounds.filter((r) => r.verdict !== 'correct'),
   };
