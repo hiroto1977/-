@@ -59,7 +59,7 @@ describe('planWaterBalance — 水収支と「100%再利用は成立しない」
     expect(r.annualWaterSavedL).toBeCloseTo(3910.7, 0); // 150L × 26.07
     // 節水 = 循環なし − 循環あり
     expect(r.annualWaterSavedL).toBeCloseTo(
-      r.annualFreshNoRecycleL - r.annualFreshWithRecycleL,
+      r.annualFreshNoRecycleL - r.annualFreshWithRecycleL!,
       0,
     );
   });
@@ -530,5 +530,114 @@ describe('台帳から渡す基準 (EffluentStandards)', () => {
     const daily = 20_000_000 / 365 / 1000;
     expect(checkEffluent(input, { ...DEFAULT_EFFLUENT_STANDARDS, npApplicabilityM3PerDay: daily }).wpclNpApplicable).toBe(true);
     expect(checkEffluent(input, { ...DEFAULT_EFFLUENT_STANDARDS, npApplicabilityM3PerDay: daily + 0.001 }).wpclNpApplicable).toBe(false);
+  });
+});
+
+/**
+ * **パス 69 の取り残しと、その隣に在ったもう 1 本の未入力。**
+ *
+ * パス 69 は `rejSet` を導入して `accumulationRisk` を `null` にしたが、
+ * **同じ `rej` を使う `permeateEcCarryoverPct` を直していなかった** ——
+ * 除去率を空にすると `(1 − 0) × 100` = **100%** になり、画面は
+ * **「透過水の EC 持ち越し 100%」**= 膜が塩を 1 つも除去しない、と刷った。
+ *
+ * しかも同じパネルには パス 69 が入れた
+ * 「RO 塩除去率が未入力のため、塩類蓄積の判定はしていません」が並ぶので、
+ * **矛盾する 2 文が同時に出ていた。**
+ *
+ * 読み直すと**別の未入力**も見つかった —— `roRecoveryPct` を空にすると
+ * `r = 0` で 8 欄が倒れ、「実際の水回収率 0% / 濃縮倍率 1倍 /
+ * 年間節水量 0 L / 年間排出量 = 全量」= **循環設備が何も回収していない**
+ * という測定結果に見える。どちらの欄も `min: 1` (回収率は `max: 99`) なので
+ * **0 は画面が受け付けない値**であり、未入力と 0 は別である。
+ */
+describe('planWaterBalance — 未入力の RO 仕様から測定値を作らない', () => {
+  // 画面の既定と同じ (回収率 75% / 除去率 90%)。個々の検査で片方だけを空にする。
+  const base = { systemVolumeL: 200, exchangeCycleDays: 14, roRecoveryPct: 75, roRejectionPct: 90 };
+
+  it('★ 除去率が未入力なら EC 持ち越しを算定しない (100% と刷らない)', () => {
+    const r = planWaterBalance({ ...base, roRejectionPct: 0 });
+    // 直す前は 100 だった —— 膜が塩を 1 つも除去しないという測定値。
+    expect(r.permeateEcCarryoverPct).toBeNull();
+    // パス 69 が直した欄と**同じ関門で守る** (揃っていることを同じ検査で見る)。
+    expect(r.accumulationRisk).toBeNull();
+  });
+
+  it('★ 対照: 除去率が在れば EC 持ち越しは数で出る (床が邪魔をしない)', () => {
+    expect(planWaterBalance({ ...base, roRejectionPct: 90 }).permeateEcCarryoverPct).toBe(10);
+    expect(planWaterBalance({ ...base, roRejectionPct: 99 }).permeateEcCarryoverPct).toBe(1);
+  });
+
+  it('★ 回収率が未入力なら回収率に依る 8 欄を算定しない', () => {
+    const r = planWaterBalance({ ...base, roRecoveryPct: 0 });
+    // 直す前: 0% / 1倍 / 0 L / 全量 —— 何も回収していないという測定値。
+    expect(r.recoveryPct).toBeNull();
+    expect(r.concentrationFactor).toBeNull();
+    expect(r.permeatePerBatchL).toBeNull();
+    expect(r.concentratePerBatchL).toBeNull();
+    expect(r.freshMakeupPerBatchL).toBeNull();
+    expect(r.annualDischargeL).toBeNull();
+    expect(r.annualFreshWithRecycleL).toBeNull();
+    expect(r.annualWaterSavedL).toBeNull();
+  });
+
+  it('★ 回収率に依らない 3 欄は未入力でも数で出る (全部を null にしない)', () => {
+    // **オブジェクト全体を null にしない理由** —— 供給量は利用者の入力の控えで、
+    // 「循環なしの年間新水」は回収率に依らない**比較の基準線**である (パス 71 と同じ判断)。
+    const r = planWaterBalance({ ...base, roRecoveryPct: 0 });
+    expect(r.feedPerBatchL).toBeGreaterThan(0);
+    expect(r.annualThroughputL).toBeGreaterThan(0);
+    expect(r.annualFreshNoRecycleL).toBeGreaterThan(0);
+  });
+
+  it('★ 対照: 回収率が在れば 8 欄すべて数で出る', () => {
+    const r = planWaterBalance({ ...base, roRecoveryPct: 75 });
+    for (const v of [
+      r.recoveryPct, r.concentrationFactor, r.permeatePerBatchL, r.concentratePerBatchL,
+      r.freshMakeupPerBatchL, r.annualDischargeL, r.annualFreshWithRecycleL, r.annualWaterSavedL,
+    ]) expect(v).not.toBeNull();
+    expect(r.recoveryPct).toBe(75);
+  });
+});
+
+/**
+ * **法規制の当てはまりを、未入力から「当てはまらない」に倒さない。**
+ *
+ * `checkEffluent` は `annualDischargeL` を `nonNeg` で受けていたので、
+ * 回収率が未入力で排出量が算定できないとき **0** として扱い、
+ * `wpclNpApplicable = toPublic && 0 >= 50` が必ず **false** になった ——
+ * **「水質汚濁防止法の窒素・りん規制の対象にならない」という判定**が
+ * 未入力から出ていた。しかも画面は `&&` で描くので**黙って消える**ので、
+ * 読み手には「対象外」と区別できない。
+ */
+describe('checkEffluent — 排出量が分からないときは判定しない', () => {
+  const eff = (annualDischargeL: number | null) =>
+    checkEffluent({ concentrateTnMgL: 300, concentrateTpMgL: 40, annualDischargeL, dischargeToPublicWater: true });
+
+  it('★ 排出量が null なら量に依る 4 欄を算定しない', () => {
+    const r = eff(null);
+    expect(r.dailyDischargeM3).toBeNull();
+    expect(r.annualNitrogenKg).toBeNull();
+    expect(r.annualPhosphorusKg).toBeNull();
+    // 直す前は false —— 「規制の対象にならない」という判定が未入力から出ていた。
+    expect(r.wpclNpApplicable).toBeNull();
+    expect(r.wpclNpApplicable).not.toBe(false);
+  });
+
+  it('★ 濃度だけで決まる欄は排出量が分からなくても答える (床を当てすぎない)', () => {
+    const r = eff(null);
+    // 超過の判定と施用の推奨は**濃度**の話なので、量が分からなくても言える。
+    expect(r.exceedsTn).toBe(true);
+    expect(r.exceedsTp).toBe(true);
+    expect(r.recommendReuse).toBe(true);
+    expect(r.nitrateVsGroundwaterFactor).toBeGreaterThan(0);
+  });
+
+  it('★ 対照: 排出量が在れば 4 欄とも数と判定で出る', () => {
+    const r = eff(30_000_000); // 30,000 m³/年 ≒ 82 m³/日 → 50 m³/日 を超える
+    expect(r.dailyDischargeM3).not.toBeNull();
+    expect(r.wpclNpApplicable).toBe(true);
+    const small = eff(1_000_000); // ≒ 2.7 m³/日 → 対象外
+    expect(small.wpclNpApplicable).toBe(false);
   });
 });

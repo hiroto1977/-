@@ -86,6 +86,11 @@ const jpyM = (n: number) => `¥${(n / 1_000_000).toFixed(1)}M`;
  * `portfolioYield`)。
  */
 const pct1OrDash = (n: number | null, digits = 1) => (n === null ? '—' : `${n.toFixed(digits)}%`);
+/**
+ * L 表記。**算定不能 (null) は「—」** —— 未入力から「0 L」という測定値を作らない。
+ * (RO 回収率を空にすると「年間節水量 0 L」= 循環設備が何も回収していない、に見えた。)
+ */
+const litersOrDash = (n: number | null) => (n === null ? '—' : `${Math.round(n).toLocaleString()} L`);
 
 /** 敷地プランナーの用途地域プリセット (指定値は土地ごとに異なるため編集可)。 */
 const ZONE_PRESETS = [
@@ -843,21 +848,30 @@ export function RealEstatePage() {
 
         <div style={{ fontSize: 12, fontWeight: 700, margin: '4px 0 8px' }}>💧 水収支 (1 バッチ)</div>
         <div className="stat-grid" style={{ marginBottom: 8 }}>
-          <Stat label="再利用する透過水" value={`${water.balance.permeatePerBatchL.toLocaleString()} L`} />
-          <Stat label="排出する濃縮廃液" value={`${water.balance.concentratePerBatchL.toLocaleString()} L`} />
-          <Stat label="補給する新水" value={`${water.balance.freshMakeupPerBatchL.toLocaleString()} L`} />
+          <Stat label="再利用する透過水" value={litersOrDash(water.balance.permeatePerBatchL)} />
+          <Stat label="排出する濃縮廃液" value={litersOrDash(water.balance.concentratePerBatchL)} />
+          <Stat label="補給する新水" value={litersOrDash(water.balance.freshMakeupPerBatchL)} />
           <Stat
             label="濃縮倍率"
             value={water.balance.concentrationFactor === null ? '∞ (排出口なし)' : `${water.balance.concentrationFactor}倍`}
           />
         </div>
         <div className="stat-grid" style={{ marginBottom: 8 }}>
-          <Stat label="実際の水回収率" value={`${water.balance.recoveryPct}%`} />
-          <Stat label="年間節水量" value={`${Math.round(water.balance.annualWaterSavedL).toLocaleString()} L`} />
-          <Stat label="年間排出量" value={`${Math.round(water.balance.annualDischargeL).toLocaleString()} L`} />
-          <Stat label="透過水の EC 持ち越し" value={`${water.balance.permeateEcCarryoverPct}%`} />
+          {/* **`${null}` は型検査を素通りして "null%" を刷る。** この 2 つは
+              テンプレートリテラルだったので `tsc` は何も言わなかった —— 明示的に分ける。 */}
+          <Stat label="実際の水回収率" value={pct1OrDash(water.balance.recoveryPct)} />
+          <Stat label="年間節水量" value={litersOrDash(water.balance.annualWaterSavedL)} />
+          <Stat label="年間排出量" value={litersOrDash(water.balance.annualDischargeL)} />
+          <Stat label="透過水の EC 持ち越し" value={pct1OrDash(water.balance.permeateEcCarryoverPct)} />
         </div>
-        {water.balance.recoveryPct >= 100 && (
+        {/* **未入力を「回収率が足りない」ことにしない。** 欄は `min: 1, max: 99` なので
+            0 は画面が受け付けない値であり、空欄は「まだ分からない」である。 */}
+        {water.balance.recoveryPct === null && (
+          <div data-recovery-unset style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 8 }}>
+            RO 回収率が未入力のため、水収支 (透過水・濃縮廃液・節水量・排出量) は算定していません（膜の仕様値を入力してください）。
+          </div>
+        )}
+        {water.balance.recoveryPct !== null && water.balance.recoveryPct >= 100 && (
           <div style={{ fontSize: 12, color: '#f87171', marginBottom: 8 }}>
             回収率 100% は物質収支上成立しません — 排出をゼロにすると塩類が無限に蓄積します。ブリード (濃縮廃液の排出) が塩類の唯一の出口です。
           </div>
@@ -914,18 +928,29 @@ export function RealEstatePage() {
 
         <div style={{ fontSize: 12, fontWeight: 700, margin: '10px 0 8px' }}>⚖️ 濃縮廃液の排出</div>
         <div className="stat-grid" style={{ marginBottom: 8 }}>
-          <Stat label="年間 窒素排出" value={`${water.effluent.annualNitrogenKg} kg`} />
-          <Stat label="年間 りん排出" value={`${water.effluent.annualPhosphorusKg} kg`} />
-          <Stat label="1日あたり排出" value={`${water.effluent.dailyDischargeM3} m³`} />
+          {/* **`${null}` は "null kg" を刷る。** ここも template literal なので
+              `tsc` は最後まで何も言わなかった —— 明示的に分ける。 */}
+          <Stat label="年間 窒素排出" value={water.effluent.annualNitrogenKg === null ? '—' : `${water.effluent.annualNitrogenKg} kg`} />
+          <Stat label="年間 りん排出" value={water.effluent.annualPhosphorusKg === null ? '—' : `${water.effluent.annualPhosphorusKg} kg`} />
+          <Stat label="1日あたり排出" value={water.effluent.dailyDischargeM3 === null ? '—' : `${water.effluent.dailyDischargeM3} m³`} />
+          {/* 地下水基準比は濃度だけで決まるので、排出量が不明でも算定できる。 */}
           <Stat label="地下水基準比 (硝酸性N)" value={`${water.effluent.nitrateVsGroundwaterFactor}倍`} />
         </div>
+        {/* **法規制の当てはまりを「当てはまらない」に倒さない。**
+            `wpclNpApplicable === null` は「排出量が分からないので判定していない」。
+            falsy なので黙って消えるが、黙ると「対象外」と読まれる。 */}
+        {water.effluent.wpclNpApplicable === null && (
+          <div data-wpcl-undetermined style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 8 }}>
+            年間排出量が算定できていないため、水質汚濁防止法の窒素・りん規制の対象かは判定していません（RO 回収率を入力してください）。
+          </div>
+        )}
         {water.effluent.recommendReuse && (
           <div style={{ fontSize: 12, color: 'var(--warning)', marginBottom: 8 }}>
             ⚠ 濃縮廃液の窒素・りんが一律排水基準を超えています。この液は硝酸・カリ・りん酸が濃縮された<strong>液肥そのもの</strong>なので、
             放流せず<strong>露地・土耕へ希釈施用</strong>するのが技術的にも法的にも安全です (捨てれば産業廃棄物・地下水の硝酸汚染の問題になります)。
           </div>
         )}
-        {water.effluent.wpclNpApplicable && (
+        {water.effluent.wpclNpApplicable === true && (
           <div style={{ fontSize: 12, color: '#f87171', marginBottom: 8 }}>
             排出水量が {effStd.npApplicabilityM3PerDay} m³/日以上のため、水質汚濁防止法の窒素・りん規制の対象になりえます。届出と処理設備が必要です。
           </div>

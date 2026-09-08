@@ -15687,3 +15687,130 @@ renderer も起動経路も触っていないので、実機のパイプライ�
 ### census 終了 — 残り 1 本
 
 `RealEstatePage.tsx` (作図座標) だけが未読。
+
+---
+
+## パス 76 (2026-09-08) — パス 69 の取り残し。同じパネルの中で「判定していません」と「持ち越し 100%」が並んでいた
+
+census の最後の 1 本 `RealEstatePage.tsx` を読んで、**自分が 3 パス前に入れた断り書きと
+矛盾する数字が、その真上のタイルに出ている**のを見つけた。連鎖で 3 件。
+
+### 1. 除去率が未入力でも「透過水の EC 持ち越し 100.0%」と刷っていた (パス 69 の取り残し)
+
+パス 69 は `rejSet = Number.isFinite(rejRaw) && rejRaw > 0` を入れて
+`accumulationRisk` を `null` にしたが、**同じ `rej` を読む姉妹欄を直していなかった**:
+
+```ts
+permeateEcCarryoverPct: round1((1 - rej) * 100),   // 未入力 → (1 − 0) × 100 = 100
+```
+
+`RealEstatePage.tsx` の水循環パネルは、そのとき**同時に 2 文を出していた**:
+
+| 同じパネル・上下に隣接して出ていた 2 文 |
+| --- |
+| 「透過水の EC 持ち越し **100.0%**」= 膜が塩を 1 つも除去しない、という**測定値** |
+| 「RO 塩除去率が未入力のため、塩類蓄積の判定はしていません」= **パス 69 が入れた断り書き** |
+
+—— **両立しない。** 断り書きだけを足して数字を残すと、画面は自分の断り書きに反論する。
+**姉妹欄を数えるのは「同じ入力を読む式」の単位で行う**こと (パス 66 と同型だが、
+あのときは 3 か所のうち 1 か所、今回は 2 か所のうち 1 か所だった)。
+
+### 2. もう 1 つの未入力 —— 回収率を空にすると水収支 8 欄が倒れる
+
+読み直して見つけた**別の**未入力。`roRecoveryPct` が空だと `r = 0` になり:
+
+| 欄 | 直す前の表示 | 意味 |
+| --- | ---: | --- |
+| 実際の水回収率 | **0.0%** | 何も回収していない |
+| 濃縮倍率 | **1倍** | 濃縮が起きていない |
+| 再利用する透過水 | **0 L** | 透過水が出ない |
+| 年間節水量 | **0 L** | 節水の効果がない |
+| 年間排出量 | **全量** | 供給の全部を捨てている |
+
+—— **循環設備が何も回収していないという測定結果**になる。
+欄の定義は `RO 回収率 (%) min: 1, max: 99` なので **0 は画面が受け付けない値**であり、
+空欄と 0 は別である (`RO 塩除去率 (%)` も `min: 1`)。
+
+### 3. 未入力から**法規制の当てはまり**を作っていた (これが一番重い)
+
+`balance.annualDischargeL` は `RealEstatePage.tsx:364` で `checkEffluent` へ渡る。
+排出量が算定できないときそれを `nonNeg(...)` で **0** として受けていたので:
+
+```ts
+wpclNpApplicable: toPublic && dailyM3 >= s.npApplicabilityM3PerDay   // 0 >= 50 → 必ず false
+```
+
+**「水質汚濁防止法の窒素・りん規制の対象にならない」という法規制の判定**が、
+空欄から出ていた。しかも画面は `{water.effluent.wpclNpApplicable && …}` で描くので
+`false` は**黙って消える** —— 読み手には「判定していない」と「対象外」の区別がつかない。
+
+### 直し
+
+`shared/waterCyclePlanner.ts`:
+
+- `recSet = Number.isFinite(recRaw) && recRaw > 0` を導入し、**回収率に依る 9 欄**を
+  `number | null` に (`permeate` / `concentrate` / `freshMakeup` / `recoveryPct` /
+  `concentrationFactor` / `annualDischargeL` / `annualFreshWithRecycleL` / `annualWaterSavedL`)。
+- `permeateEcCarryoverPct` を `rejSet` の関門へ入れた (パス 69 の取り残し)。
+- **回収率に依らない 3 欄は `number` のまま** —— `feedPerBatchL` は利用者の入力の控え、
+  `annualThroughputL` と `annualFreshNoRecycleL` は**回収率に依らない比較の基準線**。
+  パス 71・76 で確認した通り、「いちばん綺麗な形」(オブジェクト全体を null) を機械的に
+  当てない。**倒す範囲は「その入力に依る欄」だけ**。
+- `EffluentInput.annualDischargeL: number | null` + `dischargeKnown` で、
+  `dailyDischargeM3` / `annualNitrogenKg` / `annualPhosphorusKg` / `wpclNpApplicable` を null に。
+  **濃度だけで決まる欄** (`exceedsTn` / `exceedsTp` / `recommendReuse` /
+  `nitrateVsGroundwaterFactor`) は**答えたまま** —— 床を当てすぎない。
+
+`renderer/pages/RealEstatePage.tsx`:
+
+- `litersOrDash(n: number | null)` を追加し、水収支 5 欄を通した。
+- `data-recovery-unset` の帯 (水収支を算定していない理由) と
+  `data-wpcl-undetermined` の帯 (**法規制の当てはまりを判定していない**旨) を新設。
+- 「回収率 100% は成立しません」の赤帯を `recoveryPct !== null && >= 100` に、
+  規制の赤帯を `wpclNpApplicable === true` に (`&&` の falsy 消滅をやめる)。
+
+### `${null}` の罠 —— 本日 5 例目、この 1 パスで 5 か所
+
+型を nullable に広げても、**表示側がテンプレートリテラルなら `tsc` は何も言わず、
+文字列 `"null"` を刷る**。このパスでは `recoveryPct` / `permeateEcCarryoverPct` と
+排出 3 欄の**計 5 か所**がテンプレートリテラルで、`tsc` は最後まで黙っていた。
+**対照 D で実測**: 1 か所をテンプレートリテラルに戻すと `npx tsc -b --noEmit --force` は
+**exit 0**、一方で検査は 4 本鳴った。**型を nullable に広げたら、必ず `${` を grep する。**
+
+### 検査 +13 / 対照 4 本 (すべて実際に壊して確認)
+
+`shared/__tests__/waterCyclePlanner.test.ts` +8、
+`renderer/pages/__tests__/waterCycleUnsetOnScreen.test.ts` +5 (**新規**・実物の入力欄を
+native setter + `input` イベントで消し、タイルのラベルで値を引く)。
+
+| 対照 (実際に壊したもの) | 鳴った検査 |
+| --- | ---: |
+| A: `permeateEcCarryoverPct` の `rejSet` を外す | **2 本** (単位 1・画面 1) |
+| B: `recSet = true` にする | **3 本** (単位 1・画面 2 —— 排出の側まで連鎖する) |
+| C: `dischargeKnown = true` にする | **2 本** (単位 1・画面 1) |
+| D: 画面をテンプレートリテラルに戻す | **4 本** (`tsc` は exit 0) |
+
+**画面の検査を別に置く理由** (パス 66 の教訓): 計算を直しても、画面の分岐
+(`&&` で消える／テンプレートリテラルで `"null"` を刷る) は**別の欠陥**であり、
+単位検査では鳴らない。
+
+### ★ 次のパスへ (パス 77 の候補 — 実測で確認済み)
+
+census が名指していた `RealEstatePage.tsx:309` の `isoDepth` を追ったところ、
+**同型の欠陥が `shared/zoningPlanner.ts` の `planSetbackTradeoff` に在る**。
+`敷地の奥行 (m)` / `敷地の間口 (m)` は `kind: 'length'` (= `allowZero` 無し) だが、
+`reNum = readNumberOr0` が空欄を 0 に倒すので:
+
+| 入力 | `buildableWidthM` | `footprint` | `limitedBy` |
+| --- | ---: | ---: | --- |
+| 間口・奥行を**空欄**に | 0 | **0 ㎡** | `geometry` |
+| 間口 3m・側面後退 3m (**実際に建てられない敷地**) | 0 | **0 ㎡** | `geometry` |
+| 間口 15m・奥行 20m | 12 | 234 ㎡ | `geometry` |
+
+**空欄の行と「実際に建てられない敷地」の行が完全に一致する** (実測)。
+画面は `:759-763` で「建てられる奥行 **0 m** / 建てられる間口 **0 m** /
+**建築面積 (寸法で決まる) 0 ㎡**」と刷る —— **「この敷地には 0 ㎡しか建てられない」という
+都市計画上の判定**を空欄から作り、しかもタイルのラベルが
+**「(寸法で決まる)」= 寸法が拘束条件だと明言している**。立体プレビューの説明文も
+「間口 0 m × 奥行 0 m で…概形」と述べる。**床は「測っていない」だけに当てる** ——
+入力が在って結果が 0 なら、それは本物の判定なので 0 のまま刷る。
