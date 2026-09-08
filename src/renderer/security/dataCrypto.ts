@@ -159,7 +159,8 @@ export function isEncryptedBundle(v: unknown): v is EncryptedBundle {
   return (
     b.v === 1 &&
     b.kdf === KDF &&
-    typeof b.iterations === 'number' &&
+    // 反復回数が非有限だと `deriveBits` が投げる。ここで断る (パス 98)。
+    Number.isFinite(b.iterations) &&
     typeof b.salt === 'string' &&
     typeof b.iv === 'string' &&
     typeof b.ct === 'string'

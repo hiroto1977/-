@@ -262,9 +262,12 @@ export function financialUnitsFromBusinessUnits(
   const out: BusinessFinancialUnit[] = [];
   for (const u of units) {
     const revenue = u.data.revenue;
-    if (typeof revenue !== 'number') continue;
-    const variableCost = typeof u.data.variableCost === 'number' ? u.data.variableCost : 0;
-    const fixedCost = typeof u.data.fixedCost === 'number' ? u.data.fixedCost : 0;
+    // 非有限は「入っていない」と同じ扱い。`typeof x === 'number'` は NaN と
+    // ±Infinity を通すので、ここを通ると `deriveBusinessFinancials` から
+    // 財務分析・法人税/消費税カードの全部へ ∞ が広がる (パス 98)。
+    if (typeof revenue !== 'number' || !Number.isFinite(revenue)) continue;
+    const variableCost = typeof u.data.variableCost === 'number' && Number.isFinite(u.data.variableCost) ? u.data.variableCost : 0;
+    const fixedCost = typeof u.data.fixedCost === 'number' && Number.isFinite(u.data.fixedCost) ? u.data.fixedCost : 0;
     const profit = revenue - variableCost - fixedCost;
     out.push({
       id: u.id,

@@ -1422,6 +1422,9 @@ const shim = {
         if (!isSafeSymbol(symbol)) {
           return err('action_failed', 'symbol must be 1-16 chars from [A-Za-z0-9.-^]');
         }
+        // **ここで有限性を見てはいけない。** 次の行が非有限と 0 以下を
+        // 明示的に弾くので、先に既定へ倒すと「断り」が「黙った代入」になる
+        // (2026-09-08 · パス 98 で 1 度そう変えてしまい、既存の検査が捕まえた)。
         const initialCash = typeof p.initialCash === 'number' ? p.initialCash : 1_000_000;
         if (!Number.isFinite(initialCash) || initialCash <= 0) {
           return err('action_failed', 'initialCash must be a positive finite number');

@@ -550,7 +550,7 @@ export async function createCloudflareDnsRecord(
   const name = typeof input.name === 'string' ? input.name.trim() : '';
   const content = typeof input.content === 'string' ? input.content.trim() : '';
   if (!zoneId || !type || !name || !content) throw new Error('zoneId, type, name, content は必須です');
-  const body: Record<string, unknown> = { type, name, content, ttl: typeof input.ttl === 'number' ? input.ttl : 1 };
+  const body: Record<string, unknown> = { type, name, content, ttl: typeof input.ttl === 'number' && Number.isFinite(input.ttl) ? input.ttl : 1 };
   if (type === 'A' || type === 'AAAA' || type === 'CNAME') body.proxied = input.proxied === true;
   const res = await transport(`${CF_API_BASE}/zones/${encodeURIComponent(zoneId)}/dns_records`, {
     method: 'POST',

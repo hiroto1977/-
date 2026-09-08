@@ -209,11 +209,11 @@ function BusinessUnits({
           {typeof u.data.note === 'string' && (
             <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>{u.data.note}</span>
           )}
-          {typeof u.data.revenue === 'number' && (
+          {typeof u.data.revenue === 'number' && Number.isFinite(u.data.revenue) && (
             <span data-business-amounts style={{ fontSize: 11, color: 'var(--text-mute)' }}>
               月次 売上 {u.data.revenue.toLocaleString()} 円
-              {typeof u.data.variableCost === 'number' && ` / 変動費 ${u.data.variableCost.toLocaleString()} 円`}
-              {typeof u.data.fixedCost === 'number' && ` / 固定費 ${u.data.fixedCost.toLocaleString()} 円`}
+              {typeof u.data.variableCost === 'number' && Number.isFinite(u.data.variableCost) && ` / 変動費 ${u.data.variableCost.toLocaleString()} 円`}
+              {typeof u.data.fixedCost === 'number' && Number.isFinite(u.data.fixedCost) && ` / 固定費 ${u.data.fixedCost.toLocaleString()} 円`}
             </span>
           )}
           <button type="button" onClick={() => fireReported(onRemove(u.id))} style={{ fontSize: 12 }}>

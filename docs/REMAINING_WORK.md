@@ -17694,3 +17694,125 @@ SessionStart hook (`scripts/session-context.cjs`) が毎回その存在を案内
 「別のゲートで既に見られていないか」を先に確かめること —— 同じ事実を 2 つの
 ゲートで見ると、片方を直したときにもう片方が鳴って**直しが正しいのか
 台帳が古いのか分からなくなる**。
+
+## パス 98 (2026-09-08) — **形の判定が `NaN` / `±Infinity` を「数値」として通す 14 箇所**
+
+`typeof x === 'number'` は **NaN と ±Infinity に `true`** を返す。そして
+
+    JSON.parse('{"score":1e999}')   →  { score: Infinity }
+
+—— **`1e999` は有効な JSON である** (規格に数値の上限が無い)。`JSON.stringify` は
+逆にこれを `null` へ落とすので、**入るときだけ通る**という非対称になる。
+つまり手で直したバックアップ・別の版が書いた保存先・外部 API の応答は、
+**SHA-256 の検査数字が合ったまま**非有限の数を持ち込める。
+
+### ★ 規準は同じファイルの 8 行上に在った (6 か所目)
+
+`src/shared/emotionsShape.ts` は 1 つのファイルに両方の書き方を持っていた:
+
+| 判定 | 書き方 | `1e999` を |
+| --- | --- | --- |
+| `isMoodEntry` | `Number.isFinite(value.score)` + **理由の注記つき** | **落とす** |
+| `isAnalysisEntry` | `typeof value.timestamp === 'number'` ほか | **通す** |
+
+実測 (直す前・同じ保存先へ同じ欠陥を入れた):
+
+```
+moodAccepted    : false   ← 正しい (dropped 1)
+analysisAccepted: true    ← dropped 0。scores: { joy: Infinity, anger: -Infinity } が
+                            ウェルビーイングのレーダーと気配りレポートの平均へ入る
+```
+
+**同じ保存先の、同じ形の欠陥に、同じファイルが逆の答えを出していた。**
+パス 84 / 86 / 87 / 90 / 91 / 97 と同じ形 —— 正しい規準は書かれており、
+**理由の注記まで付いていて**、隣の関数がそれを使っていなかった。
+
+### 直した 14 箇所 (10 ファイル)
+
+| ファイル | 何が起きていたか |
+| --- | --- |
+| `shared/emotionsShape.ts` (2) | 上の表のとおり。**両ビルドが共有する**形の判定 (パス 62) |
+| `renderer/data/store.ts` (2) | **封筒の `createdAt` / `updatedAt`** —— パス 69 は `data` の中身を `collectionShapes.ts` の `Number.isFinite` で固めたが、封筒の時刻は `typeof` のままだった。**中身を固めて封筒を忘れた** |
+| `renderer/data/businessUnits.ts` (3) | 読む側が入口より弱い。通れば `deriveBusinessFinancials` 経由で財務分析・法人税/消費税カードの全部へ ∞ が広がる |
+| `renderer/data/managementHighlights.ts` (1) | `Infinity >= 1.5` は真なので「**DSCR ∞ と返済余力は十分です**」を **`good` の所見**として出していた (パス 60 で直した DSCR の続き。今度は上側) |
+| `renderer/security/dataCrypto.ts` (1) | PBKDF2 の反復回数。非有限だと `deriveBits` が投げる |
+| `main/secrets.ts` (1) | トークンの期限。`Infinity` は「更新しない」に倒れていたが **`-Infinity` は毎回更新**に倒れていた |
+| `main/clients/stocks.ts` (1) | 保存済みポートフォリオの `initialCash` |
+| `shared/api/cursor.ts` (1) | Cursor API の `hardLimitOverrideDollars` |
+| `renderer/data/saasWriteWeb.ts` (1) | **外へ送る** DNS の TTL |
+| `renderer/components/ManualDataSection.tsx` (2) | 金額の表示 (`Infinity.toLocaleString()` は `"∞"`) |
+
+`Number.isFinite` は TS の型を**絞らない**ので `typeof` は残す
+(`shared/talent.ts:362` の注記どおり —— 「残すのは TS の絞り込みのため」)。
+
+### 当たって問題なし (再訪不要)
+
+- **`collectionShapes.ts` の入口は元から正しい** —— `const num: Check = (v) => Number.isFinite(v);`
+  で、コメントが理由まで書いている。`*_COLLECTION` 定数 21 個に対し形が 20 個で、
+  **未登録の collection は 0 件** (名前を 2 つの定数が共有しているだけ)。
+- **`shared/hydroponicCrops.ts:127`** —— `typeof v === 'number' && v >= bound.min && v <= bound.max`。
+  **境目つきの比較は非有限を落とす** (NaN は `>=` に偽・Infinity は `<=` に偽) ので正しい。
+- **`FinancialAnalysis.tsx` の法人税/消費税カードの 5 欄** —— `parseFloat` の結果を
+  `isFinite` で見てから profile に載せており、`type="number"` の欄なので
+  ブラウザが読めない文字列を空にする。**NaN は計算へ届かない。**
+  ただし**この画面だけが `GuardedNumber` を使っていない** (ほかの試算画面は
+  `RealEstatePage` / `TeamPage` / `OverviewPage` / `MutualFundsPage` / `TaxPage` の
+  全部が使う) ので、欄のすぐ下に断りを出す仕組みが無い。空欄と「範囲外」の
+  区別は既定値の注記に委ねられている —— **開いている**が、`type="number"` の
+  ぶんだけ危険度は低い。
+
+### ★ 15 箇所目は**差し戻した** —— 既存の検査が私の直しを捕まえた
+
+`renderer/web-shim.ts` の `initialCash` も同じ形に見えたので直した。**間違いだった。**
+
+    const initialCash = typeof p.initialCash === 'number' ? p.initialCash : 1_000_000;
+    if (!Number.isFinite(initialCash) || initialCash <= 0) {
+      return err('action_failed', 'initialCash must be a positive finite number');
+    }
+
+**次の行が非有限を明示的に弾いている。** 先に既定値へ倒すと、非有限の入力が
+`1_000_000` になって**その断りを素通りする** —— つまり「断り」を「黙った代入」に
+変えてしまった。これは**このパスで直していた欠陥そのもの**である。
+
+`webShimInputGatesAndSaves.test.ts` の「★ initialCash が正の有限値でないなら弾く」が
+落ちて教えてくれた。差し戻し、理由をコードに書き、番人の散文にも
+「**有限性を見る場所は、断る場所より後ろでよい**」と残した。
+
+**教訓: 「同じ字面」は「同じ欠陥」ではない。** 15 件を一括で当てるときは、
+1 件ずつ**その値が次にどう扱われるか**を見る。既存の検査が網になったのは、
+その検査が**振る舞い**を留めていたからである (字面の走査は捕まえなかった)。
+
+### 検査 +16 · 対照 4 本 (実際に壊して確認)
+
+`src/shared/__tests__/finiteShapeGuards.test.ts`。機構の標本 (`1e999` が
+Infinity になること・`typeof` と `Number.isFinite` の真偽表) から始めて、
+直した判定ごとに「非有限を落とす」と「**対照: 有限なら通る**」を対で置いた。
+
+```
+対照 A: emotionsShape を裸の typeof に戻す → 4 件落ちる
+対照 B: businessUnits を戻す               → 2 件落ちる
+対照 C: dataCrypto を戻す                  → 2 件落ちる
+対照 D: 戻すと 16 件すべて通る
+```
+
+**対照 B は静的走査が捕まえなかった** —— 3 箇所のうち 1 つを残したので、
+4 行の窓に `Number.isFinite` が残り規則を満たしてしまった。**振る舞いの検査が
+捕まえた。** 窓の広さに頼る走査は取りこぼす。網は 2 枚要る。
+
+### 回帰の番人 (同じテストの後半)
+
+規則:「形の判定に `typeof x === 'number'` を使うなら、**同じ文の中で有限性
+(または整数性・上下の境目) も見る**」。満たさない行は**台帳に理由つきで
+登録**する。登録は 3 件 —— 共用体の判別 2 件と、省略可能な描画引数 1 件。
+
+**台帳の鍵は行番号ではなく「そのコードの字面」にした。** 行番号は無関係な
+編集でずれる (このパスの実装中に実際に 1 件ずれ、番人が「死んだ項目」として
+鳴った)。字面で引けば、**その行が変わったときにだけ**登録が外れる ——
+理由を読み直すべき時と一致する。
+
+**私の走査は 1 度間違えた。** 借りてきた `stripCommentsAndStrings` が
+**行数を保つ**と思い込んで、剥がした本文の添字を生の行番号として使った。
+実測すると `proxy.ts` は **712 → 667 行** (ブロックコメントが畳まれる) で、
+**ずれた行を「散文」と見なし、有限性をちゃんと見ている行を欠陥として報告した**。
+借り物の性質を測らずに前提にしたのが原因である —— 散文の落としは行単位の
+規則に置き換え、その規則自体を標本で両側から確かめる検査を足した。

@@ -193,7 +193,7 @@ export function normalizeSpend(body: unknown): CursorSpend[] {
     role: r.role ?? '',
     spendUsd: Math.round(num(r.spendCents)) / 100,
     fastPremiumRequests: num(r.fastPremiumRequests),
-    hardLimitUsd: typeof r.hardLimitOverrideDollars === 'number' ? r.hardLimitOverrideDollars : null,
+    hardLimitUsd: Number.isFinite(r.hardLimitOverrideDollars) ? (r.hardLimitOverrideDollars as number) : null,
   }));
 }
 

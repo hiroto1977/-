@@ -1914,7 +1914,7 @@ function isStrategyComparison(v: unknown): v is StrategyComparisonResult {
   const r = v as Record<string, unknown>;
   return (
     typeof r['symbol'] === 'string' &&
-    typeof r['initialCash'] === 'number' &&
+    Number.isFinite(r['initialCash']) &&
     Array.isArray(r['rows'])
   );
 }

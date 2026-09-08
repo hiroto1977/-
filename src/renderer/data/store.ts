@@ -594,8 +594,12 @@ function isValidStoredRecord(v: unknown): v is StoredRecord {
     typeof r.id === 'string' &&
     r.id.length > 0 &&
     isSafeCollection(r.collection) &&
-    typeof r.createdAt === 'number' &&
-    typeof r.updatedAt === 'number' &&
+    // **封筒の数字も有限でなければならない。** `collectionShapes.ts` は
+    // `data` の中身を `Number.isFinite` で見るが、封筒の時刻は 2026-09-08 まで
+    // `typeof` だけだった —— `1e999` は**有効な JSON** で `Infinity` に読めるので、
+    // 検査数字の合ったバックアップが非有限の時刻を持ち込めた (パス 98)。
+    Number.isFinite(r.createdAt) &&
+    Number.isFinite(r.updatedAt) &&
     isPlainJsonObject(r.data)
   );
 }

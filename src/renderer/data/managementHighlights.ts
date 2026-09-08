@@ -308,8 +308,10 @@ export function buildManagementHighlights(
     }
   }
 
-  // 返済余力 (会計CF × 資金調達の DSCR)。number 型のときだけ判定 (null/undefined は沈黙)。
-  if (typeof overallDscr === 'number') {
+  // 返済余力 (会計CF × 資金調達の DSCR)。**有限の数のときだけ判定** (null /
+  // undefined / 非有限は沈黙)。`typeof` だけだと `Infinity >= 1.5` が真になり、
+  // 「DSCR ∞ と返済余力は十分です」を **good** の所見として出していた (パス 98)。
+  if (typeof overallDscr === 'number' && Number.isFinite(overallDscr)) {
     if (overallDscr < 1) {
       out.push({ severity: 'critical', category: '返済余力', message: `DSCR が ${overallDscr} と1.0未満で、営業CFが借入返済を賄えていません。` });
     } else if (overallDscr >= 1.5) {

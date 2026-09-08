@@ -440,7 +440,11 @@ export async function getValidToken(serviceId: ServiceId): Promise<StoredTokenRe
     // Stryker disable next-line ConditionalExpression: 誤検知。手で `true` に置き換えると
     // 「期限に余裕があれば更新しない」「期限が無ければ更新しない」「境界ちょうど…」の
     // 3 本が落ちる (対照実験で確認、2026-08-22)。perTest の帰属ずれ。
-    typeof tokens.expiresAt === 'number' && tokens.expiresAt - Date.now() < REFRESH_WINDOW_MS;
+    // 非有限の期限は「期限が記録されていない」と同じ扱い (更新しない)。
+    // `Infinity` は元から false 側だったが `-Infinity` は毎回更新に倒れていた (パス 98)。
+    typeof tokens.expiresAt === 'number' &&
+    Number.isFinite(tokens.expiresAt) &&
+    tokens.expiresAt - Date.now() < REFRESH_WINDOW_MS;
 
   if (expiresSoon && tokens.refreshToken && config) {
     const existing = inflightRefresh.get(serviceId);

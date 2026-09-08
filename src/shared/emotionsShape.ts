@@ -48,10 +48,15 @@ export function isAnalysisEntry(value: unknown): value is AnalysisEntryShape {
   return (
     isRecord(value) &&
     typeof value.id === 'string' &&
-    typeof value.timestamp === 'number' &&
+    // **8 行上の `isMoodEntry` と同じ規準を使う。** `typeof n === 'number'` は
+    // NaN と ±Infinity を通すので、`score: 1e999` (有効な JSON) が保存済みの
+    // 分析として読み込まれ、ウェルビーイングのレーダーと気配りレポートの
+    // 平均に ∞ が入っていた (2026-09-08 · パス 98 の実測: 気分は dropped 1、
+    // 分析は dropped 0 —— 同じ保存先で答えが逆だった)。
+    Number.isFinite(value.timestamp) &&
     typeof value.excerpt === 'string' &&
     isRecord(value.scores) &&
-    Object.values(value.scores).every((n) => typeof n === 'number') &&
+    Object.values(value.scores).every((n) => Number.isFinite(n)) &&
     (value.sentiment === 'positive' || value.sentiment === 'neutral' || value.sentiment === 'negative') &&
     typeof value.dominant === 'string'
   );
