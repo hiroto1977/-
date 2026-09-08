@@ -15593,3 +15593,97 @@ null ガードを外す変異体は `(0-6)/(1-6)=1.2` → クランプ後 **100 
 ### census: `FinancialAnalysis.tsx` はこれで読了、残りは 2 本
 
 `RealEstatePage.tsx` (作図座標) と `StoragePage.tsx` が未読。
+
+## パス 75 (2026-09-08) — 「stub を返す fetcher は origin=sample」という一致を、誰も検査していなかった
+
+census の最後から 2 本目 `StoragePage.tsx` を読んだところ**空振り**だったが、
+空振りの理由をたどると**手で保つ 2 つの表の無検査な一致**に行き着いた。
+
+### まず空振りの側 (`StoragePage.tsx` — 直す所なし)
+
+`StoragePage.tsx:41` は `performance.memoryTotalGb > 0 ? … : 0` で、
+`memoryTotalGb === 0` なら使用率 **0%** になり、
+`positive={memoryUsagePct < MEMORY_WARN_PCT}` (= `0 < 80`) で**緑**になる。
+起動時間も `positive={0 <= 25}` で緑。**測っていない値が「良好」として出る形**
+(パス 63 とまったく同じ)。そして `main/clients/storage.ts` は
+**全欄 0 の STUB を常に返す** —— `fetchStorageSnapshotImpl` は測定を 1 つもしない。
+
+**しかし到達しない。** `useServiceData:96` に関門が在る:
+
+```ts
+// 取得先が無いサービス (`sample`) は呼ばない。呼ぶと stub の空データで
+// 画面を上書きし、しかも source='live' になって「取得できた」と嘘をつく。
+if (!isRefreshable(originOf(serviceId))) return;
+```
+
+`storage` の宣言は `'sample'` なので `refresh()` は fetcher を呼ばず、
+画面は常に `SNAPSHOT.storage` (16 GB / 70%) を出す。
+**しかもこの関門は配線ごと検査されていた** ——
+`hooks/__tests__/useServiceData.test.ts` が `expect(calls).toBe(0)` で
+「IPC そのものを呼ばない」を留めている (2026-08 監査の回帰テスト)。
+
+**読んで確かめた結果、直す所は無い。** これで**今日 4 度目**、
+形だけで判断せず読んだことが誤った欠陥の記録を防いだ
+(taxFurusato・counselingResearch・storage・そして下の一致)。
+
+### 見つけた本当の弱点 — 保護が乗っている土台が無検査
+
+その 1 行の保護は、**人が書く 2 つの表の一致**に乗っている:
+
+1. `shared/dataOrigin.ts` の `SERVICE_DATA_ORIGIN` がその id を `'sample'` と宣言する
+2. `main/clients/<id>.ts` がその id に対して定数 stub を返す
+
+**どちらも人が書き、一致を検査する物が無かった。**
+`storage` は概念的には「この PC を見るサービス」なので `'local'` へ書き替えるのは
+**ごく自然な変更**で、そうすると全欄 0 の STUB が画面へ流れて
+メモリ使用率 0% と起動時間 0 秒が**緑で**出る。
+
+さらに既存の回帰テストは仕組みを **`tax-accountant` 1 件**でしか確かめていない ——
+**普遍の主張を 1 つの手選びの標本で検査する形** (パス 13 と同じ)。
+
+### 直し — 表を読まず、振る舞いで分類する外側の証人
+
+一覧を写すと写しがずれる (パス 62) ので、**実際に呼んで**分類した:
+
+- `ctx.fetch` は**必ず投げる**ので、この検査は I/O を行えない (安全)
+- 違う ctx で 2 回呼び、**同じ object が返れば** モジュール定数 = inert stub
+- 毎回新しい値を組むなら local、`fetch` を呼べば投げるので remote
+
+**実測 (2026-09-08・全 75 サービス)**: inert **42** / fresh **18** / network **15**。
+**両方向とも不一致 0。**
+
+`src/main/clients/__tests__/stubOriginAgreement.test.ts` が双方向で留める:
+
+- inert なら `origin === 'sample'` (でなければ空データが画面へ流れる)
+- `origin === 'sample'` なら inert (でなければ**配線済みの取得が永久に呼ばれない** ——
+  「配線したのに更新できない」形)
+- `isRefreshable` が inert な id を 1 つも通さない (関門と分類が同じ側を向く)
+
+**床を 3 つ置いた** —— electron の mock を変えて**全部が network に倒れる**と
+上の 2 本は空配列を比べるだけの空の検査になるので、
+各バケツに `>= 30 / >= 10 / >= 10` と合計 = 75 を要求する
+(今日の「空振り合格」の教訓をそのまま当てた)。
+
+**分類器そのものに標本を添えた** —— 合成の inert / fresh / network を 3 つ流し、
+**分類器が実際に見分ける**ことを同じ検査の中で示す
+(「不在を主張する検査には標本を添える」を分類器に対して当てた形)。
+
+### 対照 (両方向を植えて鳴らした)
+
+| 対照 | 植えたずれ | 鳴った検査 |
+| --- | --- | --- |
+| A | `storage: 'sample'` → `'local'` (全欄 0 の STUB が画面へ流れる側) | **2 本** —— `expected [ 'storage' ] to deeply equal []` と関門の検査 |
+| B | `linux: 'local'` → `'sample'` (配線済みの取得を殺す側) | **1 本** —— `expected [ 'linux' ] to deeply equal []` |
+
+どちらでも床の検査と標本の検査は**通ったまま** = 結合していない。
+
+### 検証の範囲 (正直に)
+
+**production のコードは 1 行も変えていない** (追加したのは検査 1 本だけ)。
+renderer も起動経路も触っていないので、実機のパイプライン
+(e2e / perf / smoke:app) は**回していない** ——
+`npm test` (13,834) と `verify:all` の 35 ゲートで足りる範囲の変更である。
+
+### census 終了 — 残り 1 本
+
+`RealEstatePage.tsx` (作図座標) だけが未読。
