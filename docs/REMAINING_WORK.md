@@ -16554,7 +16554,7 @@ expect(h.costPerShippedPlantYen).toBe(0);   // ← 同じ理屈が当たって�
 理由が出ていなかった面の都合で動かさない。
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **104 ファイル / 281 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **104 ファイル / 279 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -16565,7 +16565,6 @@ expect(h.costPerShippedPlantYen).toBe(0);   // ← 同じ理屈が当たって�
 | `src/shared/taxDeductions.ts` | 9 |
 | `src/renderer/data/stocksAnalysisWeb.ts` | 8 |
 | `src/shared/mutualFundsMetrics.ts` | 7 |
-| `src/renderer/components/FinancialAnalysis.tsx` | 6 |
 | `src/shared/taxCredits.ts` | 6 |
 | `src/main/clients/business.ts` | 5 |
 | `src/main/clients/linux.ts` | 5 |
@@ -16575,6 +16574,7 @@ expect(h.costPerShippedPlantYen).toBe(0);   // ← 同じ理屈が当たって�
 | `src/shared/savingsPlanning.ts` | 5 |
 | `src/shared/tradeTax.ts` | 5 |
 | `src/main/clients/funding.ts` | 4 |
+| `src/renderer/components/FinancialAnalysis.tsx` | 4 |
 | `src/renderer/data/connectionStatus.ts` | 4 |
 | `src/renderer/data/members.ts` | 4 |
 | `src/renderer/data/overview.ts` | 4 |
@@ -17379,3 +17379,73 @@ no-trade case.` —— 分岐の存在を知り、検査を書き、それで固
 ### 0 倒しの母集団
 
 `? … : 0` を 2 件 `null` にしたので census は **104 ファイル / 283 件 → 104 / 281**。
+
+## パス 93 (2026-09-08) — 事業間比較の棒が**符号を長さに畳んでいた** (最も悪い事業が最も長い)
+
+### 何が起きていたか
+
+`FinancialAnalysis.tsx` の `BarChart` (「📊 1指標の事業間比較」) は
+
+```ts
+const max = Math.max(1, ...vals.map((v) => Math.abs(v)));
+const w = (Math.abs(v) / max) * 100;
+```
+
+で棒を引いていた。**`Math.abs` が符号を消す。** しかも色は `PALETTE[i % …]` =
+**並び順**で決まるので符号を伝えない。**右端の数字だけが本当のことを言っていた。**
+
+### 実測 (実物の関数に当てた標本)
+
+| 事業 | 数字 | 棒の長さ |
+| --- | --- | --- |
+| A 社 | +12.5% | 25.0% |
+| **B 社** | **−50%** | **100.0%** ← 最長 |
+| C 社 | — | 0.0% |
+| D 社 | 0% | 0.0% |
+
+**営業利益率 −50% の事業が、+12.5% の事業の 4 倍長い棒を得ていた。**
+「事業間比較」という図で、視覚的な順位が損失について**反転**している。
+`max` も `Math.abs` で決まるので、**最も損している事業が尺度を決めて最長になる**。
+
+到達性: `deriveBusinessFinancials` は `operatingProfit = r0(m.profit * 12)` なので
+赤字の事業は負の営業利益率を持つ —— 苦しい事業では**普通の状態**である。
+`cccDays` は負が**良い**指標 (支払より先に回収) なので、指標ごとに向きが違い、
+「長い = 良い」も「長い = 悪い」も成り立たない形だった。
+
+### 直し
+
+**0 を基準線に置き、正は右・負は左**へ伸ばす。負は `Stat` と同じ危険色
+(`#ef4444`) にして、図だけを見ても向きが分かるようにした。尺度は
+**算定できた値だけ**で決める (`null` を 0 として混ぜない)。
+`null` は棒を描かない。
+
+ただし**実測 0% も長さ 0 なので、図の上でこの 2 つは区別が付かない** ——
+区別は右端の数字 (`fmtRatio` が「—」) と行の `title`（算定不能）が持つ。
+図に無い情報を図が持っているふりはしない、と検査に書いた。
+
+### この部品には検査が 1 本も無かった
+
+`data-bar-row` という目印だけが在り、**幾何を測る検査は 1 件も無かった**
+(`grep BarChart src/**/__tests__` が 0 件)。20 行の描画で、
+誰も「棒の長さが数字と合っているか」を見ていなかった。
+`BarChart` を export して、刷った HTML から `left` / `width` を読む。
+
+### 対照 (3 本すべて実際に壊して確かめた)
+
+| 壊した所 | 鳴った物 |
+| --- | --- |
+| A: 幾何を元に戻す (left 固定・幅 = \|値\| / max) | ★ **3 本** |
+| B: `null` も 0 として棒を描く | ★ 1 本 |
+| C: 色を並び順だけに戻す (符号を伝えない) | ★ 1 本 |
+
+### 私の検査の弱さを 1 件、その場で直した
+
+最初の単調性の検査は**左端だけ**を見ていた。直す前の形は
+「左端はどれも 0・幅が \|値\|」なので、**左端の単調性だけでは元の欠陥を素通りさせる**
+(対照 A を回す前に気づいた)。右端 (`left + width`) も値について単調でなければ
+ならない —— これが「棒の長さが数字の順序と食い違わない」の意味である。
+両端を見る形に直したら、対照 A でその検査も鳴った。
+
+### 0 倒しの母集団
+
+`?? 0` を 2 件外したので census は **104 ファイル / 281 件 → 104 / 279**。

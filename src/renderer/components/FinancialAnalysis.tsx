@@ -170,19 +170,49 @@ function PieChart({ slices }: { slices: { label: string; value: number; color: s
 }
 
 // --- 棒 (1指標の事業間比較) --------------------------------------------
-function BarChart({ rows, unit }: { rows: { label: string; value: number | null }[]; unit: string }) {
-  const vals = rows.map((r) => r.value ?? 0);
-  const max = Math.max(1, ...vals.map((v) => Math.abs(v)));
+/**
+ * 1 指標の事業間比較 (横棒)。**符号を長さに畳まない。**
+ *
+ * 2026-09-08 まで `w = Math.abs(v) / max` で棒を引いていたので、
+ * **営業利益率 −50% の事業が +12.5% の事業より長い棒を得ていた**
+ * (実測: A 社 +12.5% → 25% / **B 社 −50% → 100%**)。比較の図で
+ * 「最も悪い事業が最も長い」形である。しかも色は `PALETTE[i]` = **並び順**なので
+ * 符号を伝えず、右端の数字だけが本当のことを言っていた
+ * (パス 59「0 は座標に入ると主張ではなく幾何になる」の同族・2026-09-08 · パス 93)。
+ *
+ * ここは **0 を基準線に置き、正は右・負は左**へ伸ばす。負は危険色にして、
+ * 図だけを見ても向きが分かるようにする (`Stat` と同じ `#ef4444`)。
+ *
+ * **算定不能 (null) は棒を描かない。** ただし実測 0% も長さ 0 なので、
+ * 図の上でこの 2 つは区別が付かない —— 区別は右端の数字 (`fmtRatio` が「—」) と
+ * 行の `title` が持つ。図に無い情報を図が持っているふりはしない。
+ */
+export function BarChart({ rows, unit }: { rows: { label: string; value: number | null }[]; unit: string }) {
+  // 算定できた値だけで尺度を決める (null を 0 として混ぜない)。
+  const known = rows.map((r) => r.value).filter((v): v is number => v != null);
+  const lo = Math.min(0, ...known);
+  const hi = Math.max(0, ...known);
+  const span = hi - lo || 1; // 全部 0 のときの 0 除算を避ける
+  const zeroPct = ((0 - lo) / span) * 100;
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       {rows.map((r, i) => {
-        const v = r.value ?? 0;
-        const w = (Math.abs(v) / max) * 100;
+        const v = r.value;
+        // 負は基準線から左へ、正は基準線から右へ。null は描かない。
+        const left = v == null ? 0 : ((Math.min(v, 0) - lo) / span) * 100;
+        const width = v == null ? 0 : (Math.abs(v) / span) * 100;
+        const color = v != null && v < 0 ? '#ef4444' : PALETTE[i % PALETTE.length];
         return (
           <div key={r.label} data-bar-row={r.label} style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1.2fr) 2fr 64px', alignItems: 'center', gap: 8, fontSize: 11 }}>
-            <span title={r.label} style={{ color: 'var(--text-mute)', overflowWrap: 'anywhere', lineHeight: 1.25 }}>{r.label}</span>
+            <span title={v == null ? `${r.label}（算定不能）` : r.label} style={{ color: 'var(--text-mute)', overflowWrap: 'anywhere', lineHeight: 1.25 }}>{r.label}</span>
             <div style={{ background: 'var(--bg)', borderRadius: 3, height: 14, position: 'relative' }}>
-              <div style={{ width: `${w}%`, height: '100%', background: PALETTE[i % PALETTE.length], borderRadius: 3 }} />
+              {/* 0 の基準線。負の値が 1 つも無ければ左端に重なるので出さない。 */}
+              {lo < 0 && (
+                <div data-bar-zero="" style={{ position: 'absolute', left: `${zeroPct}%`, top: 0, bottom: 0, width: 1, background: 'var(--border)' }} />
+              )}
+              {v != null && (
+                <div data-bar-fill={r.label} style={{ position: 'absolute', left: `${left}%`, width: `${width}%`, height: '100%', background: color, borderRadius: 3 }} />
+              )}
             </div>
             <span style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{fmtRatio(r.value, unit)}</span>
           </div>
