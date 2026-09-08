@@ -119,7 +119,15 @@ npm run lint:parameter-prose # 画面が刷る数字と、計算に使う数字�
                            #   「効いているのに画面が古い数字で説明する」形になる。
                            #   倒し込み (`??` / 既定引数 / `=== 既定`) は規則の外・
                            #   それ以外の直接使用は台帳に理由つきで登録する)
-npm run verify:all         # typecheck + all of the above + eslint (35 ゲート)
+npm run lint:zero-fold     # 「割れない値を 0 に倒す」箇所の**母集団**を数え、
+                           #   `docs/REMAINING_WORK.md` の生成ブロックと突き合わせる
+                           #   (`? … : 0` / `?? 0` / `|| 0`。コメントと文字列は落とす)。
+                           #   **これは分母であって欠陥の一覧ではない** —— 正しい 0
+                           #   (0 除算の防御・明示的な費用 0・作図の座標) と本物の欠陥の
+                           #   両方を含み、どちらかは読まないと決まらない。数は機械が、
+                           #   判断は散文が持つ。2026-09-08 まで件数は手で書かれ誰も検算せず、
+                           #   母集団が 26 ファイル (実測 106) と 4 倍ずれていた
+npm run verify:all         # typecheck + all of the above + eslint (36 ゲート)
                            #   **`npm test` は含まない。** CI は両方走らせるので、
                            #   push 前は `npm test && npm run verify:all` の両方を回すこと
                            #   (verify:all だけを見て「全 green」と言うと CI で落ちる)
@@ -133,7 +141,7 @@ npm run knowledge:md       # docs/ACADEMIC_KNOWLEDGE.md の概念表を academic
 These are plain Node scripts in `scripts/` — there is no AST parser dependency; they grep marker
 comments and source. `verify:arch` will fail if you change architecture without updating
 `docs/ARCHITECTURE.md`. CI (`.github/workflows/ci.yml`) runs a single consolidated job on push to
-`main` and PRs to `main` (one `npm ci`, then typecheck + **all 35 `verify:all` gates**, vitest +
+`main` and PRs to `main` (one `npm ci`, then typecheck + **all 36 `verify:all` gates**, vitest +
 coverage, and `build:web` asserting `dist/standalone.html` is generated and non-trivial) — collapsed
 from 3 jobs
 to 1 to minimize GitHub Actions minutes on the free tier. **`lint:docs` enforces that every gate in

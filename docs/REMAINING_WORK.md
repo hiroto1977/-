@@ -13631,32 +13631,51 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 全体を数えた。走査の規則は「**番人が見た式が、真枝でその式の除算に使われ、
 偽枝が 0**」(`scripts/` には入れていない —— 下の理由):
 
-| ファイル | 件数 | 分類 (読んだ範囲で) |
-| --- | ---: | --- |
-| `shared/funding.ts` | 16 | **2026-09-08 に全件読んだ → 直す所なし** (下の「パス 82」に 1 件ずつの根拠)。パス 60 で DSCR を直した後の残り |
-| `shared/hydroponics.ts` | 6 | **2026-09-08 に全件読んだ → 1 件直した** (下の「パス 83」)。残り 5 件は 0 除算の防御 (母数が**台帳の定数**) と明示的な費用 0 |
-| `main/clients/business.ts` | 10 | **デモ生成器** (snapshot 相当)。実データではない |
-| `main/clients/stocks.ts` | 8 | **2026-09-08 に読んだ → 直さない判断** (下に根拠)。「画面だけ」という分類はパス 61 の教訓どおり**危険な言い方**だったので、実際に画面と実測で当てた |
-| `main/clients/kpi.ts` | 8 | 限界利益率ほか。**パス 61 で直した** —— パス 52 は「画面だけの面」と分類したが、**画面に出ることを確かめていなかった** (同じページに 2 つ目のタイルが在った) |
-| `renderer/data/stocksAnalysisWeb.ts` | 7 | 同上 (ブラウザ版) |
-| `shared/waterCyclePlanner.ts` | 6 | 物理量。0 が自然な物が多い |
-| `shared/securityRange.ts` | 6 | 演習の検知率。0 件中 0 件は 0% で良いか要判断 |
-| `renderer/pages/RealEstatePage.tsx` | 6 | 作図の座標が多い (0 が正しい) |
-| `renderer/pages/KpiPage.tsx` | 6 | パス 52 の台帳どおり |
-| `renderer/data/profitSensitivity.ts` | 6 | パス 52 の台帳どおり |
-| `renderer/data/counselingResearch.ts` | 6 | 研究用の一致率。0 件中 0 件 |
-| `main/clients/linux.ts` | 4 | 使用率。0 が自然 |
-| `shared/taxCorporate.ts` | 3 | **実効税率** —— **パス 57 で直した** (残 2 件は法定実効税率の内部率で 0 が正しい) |
-| `shared/realEstateMetrics.ts` | 3 | **自己資金利回り (CCR)** —— **パス 58 で直した** (表面/実質利回りとイールドギャップも) |
-| `shared/mutualFundsMetrics.ts` | 3 | **積立の損益率**とシャープレシオ —— **パス 58 で直した** |
-| `renderer/data/teamEmotionRadar.ts` | 3 | **チーム平均** —— メンバー 0 名で 0 点。パス 55 と同じ形。**要判断** |
-| `renderer/data/investments.ts` | 3 | パス 54 で 1 件直した。含み損益率が残る |
-| `renderer/data/sales.ts` | 3 | **パス 56 で 2 件直した**。`share` は理由つきで残す |
-| `renderer/data/crisisDeliberation.ts` | 3 | 演習の正答率 |
-| `components/FinancialAnalysis.tsx` | 3 | 利益率の履歴グラフ (パス 52 の台帳) |
-| `shared/taxFurusato.ts` / `managementScorecard.ts` / `StoragePage.tsx` | 各 1 | 未読 |
+| ファイル | 判定 (読んだ範囲で) |
+| --- | --- |
+| `shared/funding.ts` | **2026-09-08 に全件読んだ → 直す所なし** (下の「パス 82」に 1 件ずつの根拠)。パス 60 で DSCR を直した後の残り |
+| `shared/hydroponics.ts` | **2026-09-08 に全件読んだ → 1 件直した** (下の「パス 83」)。残り 5 件は 0 除算の防御 (母数が**台帳の定数**) と明示的な費用 0 |
+| `main/clients/business.ts` | **デモ生成器** (snapshot 相当)。実データではない |
+| `main/clients/stocks.ts` | **2026-09-08 に読んだ → 直さない判断** (下に根拠)。「画面だけ」という分類はパス 61 の教訓どおり**危険な言い方**だったので、実際に画面と実測で当てた |
+| `main/clients/kpi.ts` | 限界利益率ほか。**パス 61 で直した** —— パス 52 は「画面だけの面」と分類したが、**画面に出ることを確かめていなかった** (同じページに 2 つ目のタイルが在った) |
+| `renderer/data/stocksAnalysisWeb.ts` | 同上 (ブラウザ版) |
+| `shared/waterCyclePlanner.ts` | 物理量。0 が自然な物が多い |
+| `shared/securityRange.ts` | 演習の検知率。0 件中 0 件は 0% で良いか要判断 |
+| `renderer/pages/RealEstatePage.tsx` | 作図の座標が多い (0 が正しい) |
+| `renderer/pages/KpiPage.tsx` | パス 52 の台帳どおり |
+| `renderer/data/profitSensitivity.ts` | パス 52 の台帳どおり |
+| `renderer/data/counselingResearch.ts` | 研究用の一致率。0 件中 0 件 |
+| `main/clients/linux.ts` | 使用率。0 が自然 |
+| `shared/taxCorporate.ts` | **実効税率** —— **パス 57 で直した** (残 2 件は法定実効税率の内部率で 0 が正しい) |
+| `shared/realEstateMetrics.ts` | **自己資金利回り (CCR)** —— **パス 58 で直した** (表面/実質利回りとイールドギャップも) |
+| `shared/mutualFundsMetrics.ts` | **積立の損益率**とシャープレシオ —— **パス 58 で直した** |
+| `renderer/data/teamEmotionRadar.ts` | **チーム平均** —— メンバー 0 名で 0 点。パス 55 と同じ形。**要判断** |
+| `renderer/data/investments.ts` | パス 54 で 1 件直した。含み損益率が残る |
+| `renderer/data/sales.ts` | **パス 56 で 2 件直した**。`share` は理由つきで残す |
+| `renderer/data/crisisDeliberation.ts` | 演習の正答率 |
+| `components/FinancialAnalysis.tsx` | 利益率の履歴グラフ (パス 52 の台帳) |
+| `shared/taxFurusato.ts` / `managementScorecard.ts` / `StoragePage.tsx` | 未読 |
 
-**合計 26 ファイル。**
+**この表は「読んで判定した物」の散文であって、母集団ではない。**
+件数は下の生成ブロックが持つ (2026-09-08 · パス 85 —— それまで件数はこの表の
+2 列目に手で書かれており、**誰も検算していなかった**。実測すると 24 行のうち
+12 行が食い違い、1 行はパスすら実在せず、何より**母集団が 4 倍違った**)。
+
+### 母集団 (生成物 —— 手で書かない)
+
+`scripts/zero-fold-census.cjs` が `src/**/*.ts(x)` (`__tests__` を除く) から
+**構文上の** 0 倒し (`? … : 0` / `?? 0` / `|| 0`。コメントと文字列は落とす) を数える。
+`npm run lint:zero-fold` が再生成し、`--check` が「再生成 == committed」を検証する
+(`verify:all` / CI)。**意図的に過剰に拾う** —— 分母は多い側に外すのが安全で、
+少ない側に外すと「もう無い」と誤読させる。
+
+**旧い数と引き算しないこと。** 旧い数は「番人が見た式が、真枝でその式の除算に使われ、
+偽枝が 0」という意味論的な規則を人が当てた**再現できない**量で、新しい数は script に
+定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
+
+<!-- zero-fold-census:begin -->
+<!-- zero-fold-census:end -->
+
 
 ### なぜ**ゲートにしなかった**か (これも判断として記録する)
 
@@ -16533,3 +16552,201 @@ expect(h.costPerShippedPlantYen).toBe(0);   // ← 同じ理屈が当たって�
 理由つきで留めており、さらに同じ画面に `noBreakEvenNote()` の ⚠ 断り書きが出る
 (経営サマリーには**それが無い**のが今回の差)。理由が出ている面の表記を、
 理由が出ていなかった面の都合で動かさない。
+
+<!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
+合計 **106 ファイル / 302 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+
+| ファイル | 構文上の 0 倒し |
+| --- | ---: |
+| `src/shared/funding.ts` | 13 |
+| `src/shared/taxDeductions.ts` | 13 |
+| `src/main/clients/stocks.ts` | 10 |
+| `src/renderer/data/investments.ts` | 10 |
+| `src/shared/employerBenefits.ts` | 10 |
+| `src/renderer/data/stocksAnalysisWeb.ts` | 9 |
+| `src/renderer/pages/DocstudioPage.tsx` | 9 |
+| `src/renderer/pages/RealEstatePage.tsx` | 7 |
+| `src/shared/mutualFundsMetrics.ts` | 7 |
+| `src/renderer/components/FinancialAnalysis.tsx` | 6 |
+| `src/shared/savingsPlanning.ts` | 6 |
+| `src/shared/taxCredits.ts` | 6 |
+| `src/main/clients/business.ts` | 5 |
+| `src/main/clients/linux.ts` | 5 |
+| `src/renderer/data/cashflowDebtService.ts` | 5 |
+| `src/renderer/pages/TaxPage.tsx` | 5 |
+| `src/shared/tradeTax.ts` | 5 |
+| `src/main/clients/funding.ts` | 4 |
+| `src/renderer/data/connectionStatus.ts` | 4 |
+| `src/renderer/data/members.ts` | 4 |
+| `src/renderer/data/overview.ts` | 4 |
+| `src/renderer/pages/StocksPage.tsx` | 4 |
+| `src/renderer/pages/VillagePage.tsx` | 4 |
+| `src/shared/buildingIso.ts` | 4 |
+| `src/shared/depreciation.ts` | 4 |
+| `src/shared/hydroponics.ts` | 4 |
+| `src/shared/ollama.ts` | 4 |
+| `src/shared/taxConsumptionBusiness.ts` | 4 |
+| `src/shared/taxSocialInsurance.ts` | 4 |
+| `src/shared/waterCyclePlanner.ts` | 4 |
+| `src/main/clients/kpi.ts` | 3 |
+| `src/main/clients/youtube.ts` | 3 |
+| `src/renderer/data/balanceSheet.ts` | 3 |
+| `src/renderer/data/charts.ts` | 3 |
+| `src/renderer/data/financialStatements.ts` | 3 |
+| `src/renderer/pages/MutualFundsPage.tsx` | 3 |
+| `src/renderer/pages/OverviewPage.tsx` | 3 |
+| `src/shared/invoiceTax.ts` | 3 |
+| `src/shared/payroll.ts` | 3 |
+| `src/shared/securityRange.ts` | 3 |
+| `src/main/atomicWrite.ts` | 2 |
+| `src/main/clients/ollama.ts` | 2 |
+| `src/main/clients/teamradar.ts` | 2 |
+| `src/renderer/App.tsx` | 2 |
+| `src/renderer/components/AxonometricCharts.tsx` | 2 |
+| `src/renderer/data/businessUnits.ts` | 2 |
+| `src/renderer/data/cloudSync.ts` | 2 |
+| `src/renderer/data/counselingResearch.ts` | 2 |
+| `src/renderer/data/hydroponicsSetup.ts` | 2 |
+| `src/renderer/data/kpiActuals.ts` | 2 |
+| `src/renderer/data/sales.ts` | 2 |
+| `src/renderer/data/shopifyImport.ts` | 2 |
+| `src/renderer/data/statementAccounts.ts` | 2 |
+| `src/renderer/data/statementEquity.ts` | 2 |
+| `src/renderer/library/library.ts` | 2 |
+| `src/renderer/pages/BusinessPage.tsx` | 2 |
+| `src/renderer/pages/FundingPage.tsx` | 2 |
+| `src/renderer/pages/KpiPage.tsx` | 2 |
+| `src/shared/connectors/connectorRegistry.ts` | 2 |
+| `src/shared/taxCalc.ts` | 2 |
+| `src/shared/taxCorporate.ts` | 2 |
+| `src/shared/taxRetirement.ts` | 2 |
+| `src/shared/zoningPlanner.ts` | 2 |
+| `src/main/clients/canva.ts` | 1 |
+| `src/main/clients/cloudflare.ts` | 1 |
+| `src/main/clients/devEnv.ts` | 1 |
+| `src/main/clients/emotions.ts` | 1 |
+| `src/main/oauth.ts` | 1 |
+| `src/renderer/components/RealtimeTicker.tsx` | 1 |
+| `src/renderer/components/RecordShapeAuditPanel.tsx` | 1 |
+| `src/renderer/components/ShigyoConsole.tsx` | 1 |
+| `src/renderer/data/assistantContext.ts` | 1 |
+| `src/renderer/data/cashPlan.ts` | 1 |
+| `src/renderer/data/chatOrg.ts` | 1 |
+| `src/renderer/data/cloudBackup.ts` | 1 |
+| `src/renderer/data/crisisDeliberation.ts` | 1 |
+| `src/renderer/data/emotionsWeb.ts` | 1 |
+| `src/renderer/data/financialCsv.ts` | 1 |
+| `src/renderer/data/inputGuards.ts` | 1 |
+| `src/renderer/data/kessanImport.ts` | 1 |
+| `src/renderer/data/profitSensitivity.ts` | 1 |
+| `src/renderer/data/recordShapeAudit.ts` | 1 |
+| `src/renderer/data/teamRadarDraft.ts` | 1 |
+| `src/renderer/data/trendAlerts.ts` | 1 |
+| `src/renderer/data/useCollection.ts` | 1 |
+| `src/renderer/data/villageData.ts` | 1 |
+| `src/renderer/data/villageLayout.ts` | 1 |
+| `src/renderer/data/workingCapital.ts` | 1 |
+| `src/renderer/pages/ChartsPage.tsx` | 1 |
+| `src/renderer/pages/FreeePage.tsx` | 1 |
+| `src/renderer/pages/StoragePage.tsx` | 1 |
+| `src/renderer/pages/TalentPage.tsx` | 1 |
+| `src/shared/api/canva.ts` | 1 |
+| `src/shared/api/cursor.ts` | 1 |
+| `src/shared/fxCurrency.ts` | 1 |
+| `src/shared/httpLimits.ts` | 1 |
+| `src/shared/managementScorecard.ts` | 1 |
+| `src/shared/num.ts` | 1 |
+| `src/shared/passwordStrength.ts` | 1 |
+| `src/shared/talent.ts` | 1 |
+| `src/shared/taxCapitalGains.ts` | 1 |
+| `src/shared/taxCasual.ts` | 1 |
+| `src/shared/taxFurusato.ts` | 1 |
+| `src/shared/taxNationalHealthInsurance.ts` | 1 |
+| `src/shared/taxNationalPension.ts` | 1 |
+| `src/shared/welfareScheme.ts` | 1 |
+<!-- zero-fold-census:end -->
+
+---
+
+## パス 85 (2026-09-08) — 保留の根拠になっていた census が、**母集団を数えていなかった**
+
+パス 84 の後、次に読む候補として census 表の `teamEmotionRadar.ts` (3 件・**要判断**)
+を開いた。**0 倒しは 1 件も残っていなかった** —— パス 65/66 が `sums`/`counts` に
+置き換えて消しており、表だけが古かった (ついでに、その module の doc は今も
+「メンバー0人なら空のレーダー (teamAverage は全軸 0)」と**コードと逆のこと**を
+書いている。実際は `counts[i] === 0` で `null` を返す)。
+
+1 行が古いだけなら直せば済む。**表全体を実測に当てたら、話が違った。**
+
+### 実測
+
+| 見た物 | 台帳 | 実測 |
+| --- | ---: | ---: |
+| ファイル数 (母集団) | **26** | **106** |
+| 件数 | (行ごとに手書き) | **302** |
+| 24 行のうち実測と食い違う行 | — | **12** |
+| 実在しないパス | — | **1** (`renderer/data/managementScorecard.ts` → 実際は `shared/`) |
+
+最も確実な 1 件は `realEstateMetrics.ts`: 台帳 3 件に対し、**過剰に拾う規則で 0 件**。
+過剰な規則が 0 を返す以上「1 件も無い」は確実に言える (取りこぼしで 0 にならない) ——
+パス 58 が消化した後、行が更新されていなかった。
+
+**台帳に載っていない最大の 2 つ**は `shared/taxDeductions.ts` (13) と
+`shared/employerBenefits.ts` (10)。どちらも税と給付の計算で、保留メモが
+**「相手に渡る面…この帯は残っていない」**と書いた帯そのものである。
+
+### なぜこれが重いか
+
+この表は `lint:zero-fold` を**保留する判断の根拠**だった。保留の理由は
+「26 ファイルのうち読んだのは 8 ファイル程度なので、残りに理由を捏造しない」で、
+**私はこの分数を 2 度引いて保留した** (パス 82・83)。分母が 4 倍違えば、
+その判断は根拠を失う。しかも保留の理屈そのもの (「読まずに『正しい 0』と書いた台帳は
+`lint:mutation-scope` が直した**無言の pragma** と同じ」) は**正しい**ので、
+規律が誤った数字の上に立っていた形になる。
+
+**リポジトリが 2 度直したのと同じ class である**: パス 24 の「正典の件数が 4 通り在り
+どれも検算されていない」、`docs/ACADEMIC_KNOWLEDGE.md` の概念表が本体と 942 行ずれた件。
+
+### 直し —— 数は機械が、判断は散文が
+
+- `scripts/zero-fold-census.cjs` (新規) が `src/**/*.ts(x)` (`__tests__` 除く) から
+  **構文上の** 0 倒しを数える。コメントと文字列は落とす (落とさないと本が自分の
+  doc を数える —— self-test に対照を置いた)。
+- `npm run lint:zero-fold` が `--check` (再生成 == committed) と `--self-test` を走らせる。
+  `verify:all` (36 ゲートに) と `ci.yml` に配線 (`lint:docs` が CI 配線を強制する)。
+- census 表からは**件数の列を外した** —— 表は「読んで判定した物」の散文になり、
+  数は生成ブロックが 1 か所で持つ (**一つの数に一つの出所**)。
+- **走査の生死の床** (80 ファイル / 240 件)。0 件を「問題なし」と読まない
+  (パス 70 で 4 ゲートに入れたのと同じ床)。
+
+### 数の意味が変わったことを明記する
+
+旧い数は「番人が見た式が、真枝でその式の除算に使われ、偽枝が 0」という
+**意味論的な規則を人が当てた再現できない量**で、新しい数は script に定義が在る
+**構文上の量**である。意図的に過剰に拾う —— 分母は多い側に外すのが安全で、
+少ない側に外すと「もう無い」と誤読させる。**訂正ではなく、別の量への置き換え。**
+だから新旧を引き算しない。
+
+### 対照 (5 本とも実際に壊して確かめた)
+
+| 壊した所 | 鳴った物 |
+| --- | --- |
+| A: source に `?? 0` を 1 件植える | ゲート (106→107 ファイル / 302→303 件) |
+| B: 生成ブロックの 1 行を手で書き換える | ゲート (食い違う行を名指し) |
+| C: 生成ブロックの行を 1 本消す | ゲート |
+| D: `FOLD` から `?? 0` の綴りを外す | vitest **5 本** + **床** (67/161 < 80/240) |
+| E: コメント落としを外す | vitest **3 本** |
+
+**自分の失敗 2 件**: 対照 B は最初 `sed` の綴りが合わず**空振りした** ——
+表の `funding.ts` は 13 件で、私は 16 (旧い手書きの数) を探していた。
+鳴らない対照を「合格」と読まずに調べ直したら、私の綴り違いだった。
+対照 D も 1 度目は stray `sed` が先にファイルを壊し、実験になっていなかった
+(vitest が `no tests` を返したのが手掛かり)。**どちらも作り直した。**
+
+### 残 (次に読む所)
+
+母集団が 106 ファイル / 302 件と分かったので、「全部読んでからゲート」は
+**現実的な計画ではない**。ゲートは**分母を留める物**として先に入れた
+(増えたら鳴る)。読む順は従来どおり「相手に渡る面 → 人・投資の判断」で、
+**次は台帳に載っていなかった `shared/taxDeductions.ts` (13) と
+`shared/employerBenefits.ts` (10)** —— 税と給付の計算が丸ごと未読だった。

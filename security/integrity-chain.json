@@ -1357,10 +1357,18 @@
       "leafCount": 66,
       "note": "update autoLock.ts,vault.ts",
       "hash": "ae1c8f4d8e2dc52675c682a2f94579d6472f74afe6d8ccf24d22ca5b8c619520"
+    },
+    {
+      "index": 161,
+      "prevHash": "ae1c8f4d8e2dc52675c682a2f94579d6472f74afe6d8ccf24d22ca5b8c619520",
+      "merkleRoot": "b353d35eee04621934bea1b3ff3a546835a1b8391cb92cdb9a2f153d9c9a8a9a",
+      "leafCount": 66,
+      "note": "update ci.yml",
+      "hash": "042c87f96d9711cf4d1d4463805e8139acb682794e1a084fc03b147146c77539"
     }
   ],
   "tipManifest": {
-    ".github/workflows/ci.yml": "d4fd5a6a677206867876bc6efa8996a861bfd1b5863d76d1d44cba8626f0c6da",
+    ".github/workflows/ci.yml": "c750cdaa3344323f22ca2e3c397f692048615905e3e449641a3faa852ad4affd",
     ".github/workflows/pages.yml": "3b3202789c03c79a7d55129027327cd52f0ad3189ebf2c2478af09a5c98f2a39",
     ".github/workflows/release.yml": "3201579d407a46e557d38566e288de8e8740d38679eff02e313c8dcfeb12e7d9",
     "assets/manifest.webmanifest": "e23432bb858936404e7661559be8a8f95e5842569f13162c0f7a2e5cc3fd412b",
