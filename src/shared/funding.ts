@@ -951,21 +951,50 @@ export function summarize(
 
 // --- 資金調達の質スコア -----------------------------------------------
 
-/** 資金調達の質スコア。 */
+/**
+ * 資金調達の質スコア。
+ *
+ * **3 欄とも「確定した調達が無ければ `null`」** —— 比率は確定総額で割る量なので、
+ * 分母が 0 なら値が無い。0 でも 1 でもない。
+ *
+ * 2026-09-09 まで、分母 0 のときは比率を **1.0** に倒していた。実装コメントは
+ * それを「中立」と呼んでいたが、**同じファイルの型の doc は「1.0 が最良」と
+ * 書いていた** —— 0..1 を 0..100 点へ写す指標で 1.0 は中立ではなく満点である。
+ * 結果、**1 円も確定していない事業者の画面に「資金調達 質スコア 100 / 100」**が
+ * 出ていた (申請中の案件が在れば「確定総額 ¥0 / パイプライン ¥1,100万 /
+ * 質スコア 100 点」が同じタイル群に並ぶ)。
+ */
 export interface FundingQualityScore {
-  /** 返済不要資金の比率 (返済不要 / 確定総額)。1.0 が最良。 */
-  readonly nonRepayableRatio: number;
-  /** 税引後実質調達額の比率 (税引後手残り / 確定総額)。 */
-  readonly afterTaxRatio: number;
-  /** 総合スコア (0..100)。返済不要比率と税引後比率の加重平均。 */
-  readonly compositeScore: number;
+  /** 返済不要資金の比率 (返済不要 / 確定総額)。1.0 が最良。確定 0 なら `null`。 */
+  readonly nonRepayableRatio: number | null;
+  /** 税引後実質調達額の比率 (税引後手残り / 確定総額)。確定 0 なら `null`。 */
+  readonly afterTaxRatio: number | null;
+  /** 総合スコア (0..100)。返済不要比率と税引後比率の加重平均。確定 0 なら `null`。 */
+  readonly compositeScore: number | null;
+  /**
+   * 算定できなかった理由の文面 (算定できていれば `null`)。
+   *
+   * **画面はこの 1 本を読む** —— 文面を画面側に書くと、規則が 2 か所に分かれる
+   * (パス 62・63)。
+   */
+  readonly unavailableNote: string | null;
 }
+
+/**
+ * 確定した調達が無く、質スコアを算定できないときの断り書き。
+ *
+ * **export しているのは同梱データ (`snapshot.ts`) が同じ 1 本を読むため。**
+ * 見本に文面を写すと、直した側だけが新しくなる (パス 62)。
+ */
+export const NO_SECURED_FUNDING_NOTE =
+  '確定した調達がまだ無いため、資金調達の質スコアは算定していません（返済不要比率・税引後比率はいずれも確定総額で割る指標です）。申請中・予定の案件はパイプライン総額に出ています。';
 
 /**
  * 資金調達の「質」を 0..100 のスコアで評価する。
  *
  * 返済不要資金 (補助金等) の比率と、税負担を考慮した実質調達額の比率を
- * 加重平均する。確定総額が 0 のときは比率を 1.0 (中立) として返す。
+ * 加重平均する。**確定総額が 0 のときは算定せず `null` を返す** ——
+ * 「まだ何も確定していない」は「質が最高」でも「質が最低」でもない。
  *
  * @param summary `summarize` の結果
  * @param weights [返済不要比率の重み, 税引後比率の重み] (既定 [0.4, 0.6])
@@ -975,16 +1004,27 @@ export function fundingQualityScore(
   weights: readonly [number, number] = [0.4, 0.6],
 ): FundingQualityScore {
   const total = summary.totalSecured;
-  // ゼロ除算ガード: 確定額が無いときは中立の 1.0。
-  const nonRepayableRatio = total > 0 ? clampRate(summary.nonRepayableSecured / total) : 1;
-  const afterTaxRatio = total > 0 ? clampRate(summary.afterTaxSecured / total) : 1;
+  // **割れないので算定しない。** 1.0 に倒すと満点になる (この関数の直上の doc)。
+  if (total <= 0) {
+    return {
+      nonRepayableRatio: null,
+      afterTaxRatio: null,
+      compositeScore: null,
+      unavailableNote: NO_SECURED_FUNDING_NOTE,
+    };
+  }
+  const nonRepayableRatio = clampRate(summary.nonRepayableSecured / total);
+  const afterTaxRatio = clampRate(summary.afterTaxSecured / total);
   const [wNon, wTax] = weights;
   const wSum = wNon + wTax;
-  const weighted = wSum > 0 ? (nonRepayableRatio * wNon + afterTaxRatio * wTax) / wSum : 0;
+  // 重みの合計が 0 なのは呼び出し側の指定の誤りで、値の欠落ではない。
+  // ここも「割れない」なので算定しない (0 点という判定を作らない)。
+  const weighted = wSum > 0 ? (nonRepayableRatio * wNon + afterTaxRatio * wTax) / wSum : null;
   return {
     nonRepayableRatio,
     afterTaxRatio,
-    compositeScore: Math.round(Math.min(1, Math.max(0, weighted)) * 100),
+    compositeScore: weighted === null ? null : Math.round(Math.min(1, Math.max(0, weighted)) * 100),
+    unavailableNote: weighted === null ? '重みの合計が 0 のため、総合スコアは算定していません。' : null,
   };
 }
 

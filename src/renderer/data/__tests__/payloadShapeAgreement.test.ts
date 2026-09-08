@@ -44,7 +44,7 @@
 import { describe, expect, it } from 'vitest';
 import { SNAPSHOT } from '../snapshot';
 import type { KpiSnapshotUnit } from '../../../main/clients/kpi';
-import type { DebtServiceMetrics } from '../../../shared/funding';
+import type { DebtServiceMetrics, FundingQualityScore } from '../../../shared/funding';
 // `import type` は実行時に消えるので、`node:os` を持つ main のモジュールでも安全。
 import type { SystemSnapshot } from '../../../main/clients/linux';
 
@@ -79,6 +79,8 @@ type SnapshotKpiUnit = (typeof SNAPSHOT.kpi.units)[number];
 type SnapshotDebtService = typeof SNAPSHOT.funding.debtService;
 /** 同梱データの Linux ロードアベレージ。 */
 type SnapshotLinuxLoad = typeof SNAPSHOT.linux.load;
+/** 同梱データの資金調達 質スコア。 */
+type SnapshotQualityScore = typeof SNAPSHOT.funding.qualityScore;
 
 /**
  * **★ ここが本体の主張** —— 同梱データの形が main の payload 型を満たす。
@@ -102,17 +104,23 @@ type _KpiExact = AssertTrue<Exact<KpiSnapshotUnit['kpi'], SnapshotKpiUnit['kpi']
  * 「ロード 0.00 / コアあたり 0%」を緑で刷る側へ戻る (Windows で必ず起きる)。
  */
 type _LinuxLoadExact = AssertTrue<Exact<SystemSnapshot['load'], SnapshotLinuxLoad>>;
+/**
+ * **パス 64 が足した 4 本目。** 質スコアは 4 欄とも `number | null` / `string | null`
+ * で、狭めると「確定 0 = 満点 100 点」に戻る側へ倒れる。
+ */
+type _QualityExact = AssertTrue<Exact<FundingQualityScore, SnapshotQualityScore>>;
 type _DscrExact = AssertTrue<Exact<DebtServiceMetrics['overallDscr'], SnapshotDebtService['overallDscr']>>;
 type _WorstDscrExact = AssertTrue<
   Exact<DebtServiceMetrics['worstMonthDscr'], SnapshotDebtService['worstMonthDscr']>
 >;
 /** 型だけの主張が「使われていない」と見られないように値へ落とす。 */
-const EXACTNESS_PINNED: readonly [_KpiExact, _DscrExact, _WorstDscrExact, _LinuxLoadExact] = [
-  true,
-  true,
-  true,
-  true,
-];
+const EXACTNESS_PINNED: readonly [
+  _KpiExact,
+  _DscrExact,
+  _WorstDscrExact,
+  _LinuxLoadExact,
+  _QualityExact,
+] = [true, true, true, true, true];
 
 /** 型だけの主張が「使われていない」と見られないように 1 つ値に落とす。 */
 const KPI_UNIT_PINNED: readonly (keyof _KpiUnitAgrees)[] = ['id', 'label', 'fundamentals', 'kpi', 'history'];
@@ -132,10 +140,10 @@ describe('同梱データ ⇄ live payload の形が一致する', () => {
     expect(KPI_UNIT_PINNED).toContain('kpi');
   });
 
-  it('★ 狭まりも捕まえる (双方向の Exact が 4 本立っている)', () => {
+  it('★ 狭まりも捕まえる (双方向の Exact が 5 本立っている)', () => {
     // 片方向の `AssertExtends` だけでは、同梱が `number | null` を `number` に
     // **狭めた**ときに鳴らない (対照 1 で実測)。`Exact` はどちらの向きでも鳴る。
-    expect(EXACTNESS_PINNED).toEqual([true, true, true, true]);
+    expect(EXACTNESS_PINNED).toEqual([true, true, true, true, true]);
   });
 
   it('★ kpi: 率 3 つの「算定不能」の表し方が main と同梱で揃っている', () => {
@@ -160,6 +168,13 @@ describe('同梱データ ⇄ live payload の形が一致する', () => {
     // **型は `number | null`** でなければならない (上の `_LinuxLoadExact`)。
     expect(SNAPSHOT.linux.load.avg1).not.toBeNull();
     expect(SNAPSHOT.linux.load.unavailableNote).toBeNull();
+  });
+
+  it('★ funding: 「確定した調達が無い」の表し方が main と同梱で揃っている', () => {
+    // パス 64 の実測: 確定 0 は 0 点でも 100 点でもなく、算定不能。
+    expect(SNAPSHOT.funding.qualityScore.compositeScore).toBeNull();
+    expect(SNAPSHOT.funding.qualityScore.nonRepayableRatio).toBeNull();
+    expect(SNAPSHOT.funding.qualityScore.unavailableNote).not.toBeNull();
   });
 
   it('★ 画面は payload の形を写さずに導出している (写しを増やさない)', async () => {

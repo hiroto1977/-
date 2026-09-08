@@ -33,6 +33,7 @@ import {
   type FundingItem,
   type FundingMonthly,
   type FundingSummary,
+  NO_SECURED_FUNDING_NOTE,
 } from '../../../shared/funding';
 import { buildFundingSnapshot, fetchFundingSnapshot } from '../funding';
 
@@ -1039,11 +1040,29 @@ describe('fundingQualityScore', () => {
     expect(q.nonRepayableRatio).toBe(0);
   });
 
-  it('guards against zero total secured (neutral 1.0 ratios)', () => {
+  it('★ 確定した調達が無ければ質スコアを算定しない (1.0 は中立ではなく満点)', () => {
+    // **この検査は 2026-09-09 まで `compositeScore` を 100 に留めていた** ——
+    // しかも名前に「neutral 1.0 ratios」と書いていた。0..1 を 0..100 点へ写す
+    // 指標で 1.0 は中立ではなく**満点**である。同じファイルの型の doc も
+    // 「1.0 が最良」と書いており、実装コメントとdocが矛盾していた。
     const q = fundingQualityScore(summarize([]));
-    expect(q.nonRepayableRatio).toBe(1);
-    expect(q.afterTaxRatio).toBe(1);
-    expect(q.compositeScore).toBe(100);
+    expect(q.nonRepayableRatio).toBeNull();
+    expect(q.afterTaxRatio).toBeNull();
+    expect(q.compositeScore).toBeNull();
+    expect(q.unavailableNote).toContain('確定した調達がまだ無いため');
+  });
+
+  it('★ 申請中だけの事業者も算定しない (確定 0 は案件の有無ではなく確定額で決まる)', () => {
+    // 実測した危険な組み合わせ: 案件は在るのに確定が 0 —— 画面の同じタイル群に
+    // 「確定総額 ¥0」「パイプライン総額 ¥1,100 万」が並ぶ。旧実装はここに
+    // 「資金調達 質スコア 100 / 100」を足していた。
+    const s = summarize([
+      { id: 'a', kind: 'subsidy', name: '申請中の補助金', amount: 3_000_000, status: 'applied', month: '2026-03', repayable: false },
+      { id: 'b', kind: 'loan', name: '審査中の融資', amount: 8_000_000, status: 'applied', month: '2026-03', repayable: true },
+    ]);
+    expect(s.totalSecured).toBe(0);
+    expect(s.totalPipeline).toBe(11_000_000);
+    expect(fundingQualityScore(s).compositeScore).toBeNull();
   });
 
   it('honors custom weights', () => {
@@ -1271,10 +1290,26 @@ describe('golden: funding quality / DSCR / cost metrics (branch coverage)', () =
     netCashflow: 0, operatingCashflow: ocf, portfolioValue: 0,
   });
 
-  it('fundingQualityScore: computed, zero-total fallback (1.0), zero-weight fallback (0)', () => {
-    expect(fundingQualityScore(sum)).toEqual({ nonRepayableRatio: 0.6, afterTaxRatio: 0.82, compositeScore: 73 });
-    expect(fundingQualityScore(sumZero)).toEqual({ nonRepayableRatio: 1, afterTaxRatio: 1, compositeScore: 100 });
-    expect(fundingQualityScore(sum, [0, 0]).compositeScore).toBe(0); // wSum=0 → weighted 0
+  it('fundingQualityScore: 算定できる場合は数・確定 0 と重み 0 は算定不能', () => {
+    expect(fundingQualityScore(sum)).toEqual({
+      nonRepayableRatio: 0.6,
+      afterTaxRatio: 0.82,
+      compositeScore: 73,
+      unavailableNote: null,
+    });
+    // 旧: `{ 1, 1, 100 }` —— 「まだ何も確定していない」を満点として答えていた
+    expect(fundingQualityScore(sumZero)).toEqual({
+      nonRepayableRatio: null,
+      afterTaxRatio: null,
+      compositeScore: null,
+      unavailableNote: NO_SECURED_FUNDING_NOTE,
+    });
+    // 旧: `0` —— 重みの指定が誤っているだけなのに「0 点」という判定を作っていた
+    const zeroW = fundingQualityScore(sum, [0, 0]);
+    expect(zeroW.compositeScore).toBeNull();
+    expect(zeroW.unavailableNote).toContain('重みの合計が 0');
+    // 比率そのものは割れているので数で残る (巻き込んでいない)
+    expect(zeroW.nonRepayableRatio).toBe(0.6);
   });
 
   it('debtServiceMetrics: tracks worst-month DSCR + shortfall; 返済ゼロは null', () => {

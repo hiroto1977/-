@@ -10,6 +10,7 @@ import {
   SKILL_STEPS,
   SKILL_STEPS_SOURCE,
 } from '../../shared/talent';
+import { NO_SECURED_FUNDING_NOTE } from '../../shared/funding';
 
 /**
  * 見本の画像は **インライン (`data:`) にする**。
@@ -1216,7 +1217,17 @@ export const SNAPSHOT = {
       };
       return { optimistic: emptyRunway, expected: emptyRunway, pessimistic: emptyRunway };
     })(),
-    qualityScore: { nonRepayableRatio: 0, afterTaxRatio: 0, compositeScore: 0 },
+    // 同梱は案件 0 件なので**確定総額も 0** —— live 計算 (`fundingQualityScore`) と
+    // 同じ答え (算定不能) を持つ。2026-09-09 まで見本は `0` を持ち、live 計算は
+    // 同じ入力に `100` を返していた —— **同じ空状態について見本と実装が正反対**
+    // だった (どちらが正しいかではなく、どちらも数で答えていたのが誤り)。
+    qualityScore: {
+      nonRepayableRatio: null as number | null,
+      afterTaxRatio: null as number | null,
+      compositeScore: null as number | null,
+      // 文面は `shared/funding.ts` の 1 本を読む (見本に写さない)。
+      unavailableNote: NO_SECURED_FUNDING_NOTE as string | null,
+    },
     diversification: null as {
       kindsPresent: number;
       hhi: number;

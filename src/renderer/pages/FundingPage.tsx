@@ -351,7 +351,14 @@ export function FundingPage() {
       { label: '当年度課税対象 (補助金等)', value: jpy(live.summary.taxableSecured) },
       { label: '課税繰延 (圧縮記帳)', value: jpy(live.summary.deferredSecured) },
       { label: '概算手残り (税引後)', value: jpy(live.summary.afterTaxSecured) },
-      { label: '資金調達 質スコア', value: `${live.qualityScore.compositeScore} / 100` },
+      // **算定できていなければ「— / 100」でなく「—」。**
+      // `${null} / 100` は型検査を素通りして「null / 100」を刷る (テンプレート
+      // リテラルは何でも文字列にする) —— 2026-09-09 まで、確定 0 のときの
+      // 中立倒し 1.0 が満点になり「100 / 100」を刷っていた。
+      {
+        label: '資金調達 質スコア',
+        value: live.qualityScore.compositeScore === null ? '—' : `${live.qualityScore.compositeScore} / 100`,
+      },
       ...(live.diversification
         ? [{
             label: '多様化スコア (種別分散)',
@@ -411,6 +418,23 @@ export function FundingPage() {
             </div>
           ))}
         </div>
+        {live.qualityScore.unavailableNote !== null && (
+          <div
+            data-quality-scope
+            role="alert"
+            style={{
+              marginTop: 10,
+              fontSize: 11,
+              color: 'var(--text-mute)',
+              lineHeight: 1.6,
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+              padding: '6px 10px',
+            }}
+          >
+            {live.qualityScore.unavailableNote}
+          </div>
+        )}
         <div style={{ marginTop: 10, fontSize: 11, color: 'var(--text-mute)' }}>
           会計ソフト連携: {live.accountingLinked ? '✅ 連携中' : '— 未連携'} ／
           株式投資連携: {live.stocksLinked ? '✅ 連携中' : '— 未連携 (任意)'}
