@@ -36,7 +36,7 @@ import {
   unitCaption,
   type BankFormat,
 } from '../../shared/bankFormat';
-import { VERDICT_LABEL, type ManagementScorecard } from '../../shared/managementScorecard';
+import { verdictLabel, type ManagementScorecard } from '../../shared/managementScorecard';
 import { budgetUnmatchedNote, type BudgetPeriodAlignment } from './budgetVariance';
 import { manualOverrideNote, staleDerivedNote, type ManualOverrideDisclosure } from './overviewOverrides';
 import { monthsPerYear, periodDaysForMonths } from './workingCapital';
@@ -618,10 +618,15 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
   if (has) {
     sections.push({
       title: `${bAlign === null ? 8 : 9}. 参考：経営スコア（当社内部の評価）`,
-      caption: '本アプリの採点であり、金融機関等の信用格付けとは関係がありません。',
+      caption:
+        scorecard.overallScore === null
+          ? // **採点できる指標が 1 つも無いときに「0／100 · 要改善」を渡さない。**
+            // 相手に渡る書面で、測っていないことを落第点として示すのが最も悪い向き。
+            '本アプリの採点であり、金融機関等の信用格付けとは関係がありません。採点できる指標が入力されていないため、総合スコアは未算定です。'
+          : '本アプリの採点であり、金融機関等の信用格付けとは関係がありません。',
       rows: [
-        row('総合スコア', `${scorecard.overallScore}／100`),
-        row('評価', VERDICT_LABEL[scorecard.verdict]),
+        row('総合スコア', scorecard.overallScore === null ? BLANK : `${scorecard.overallScore}／100`),
+        row('評価', verdictLabel(scorecard.verdict)),
         ...scorecard.categories.map((c) => row(c.label, c.score === null ? BLANK : `${c.score}／100`)),
       ],
     });

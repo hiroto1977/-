@@ -77,7 +77,7 @@ import {
   applyManualOverrides,
   type ManualOverrideEntry,
 } from '../data/manualData';
-import { VERDICT_LABEL, buildManagementScorecard } from '../../shared/managementScorecard';
+import { verdictLabel, buildManagementScorecard, type ManagementScorecard } from '../../shared/managementScorecard';
 import { scorecardMetrics } from '../data/overviewScorecard';
 import { buildManagementHighlights, summarizeHighlights, RISK_BAND_LABEL, type RiskBand } from '../data/managementHighlights';
 import { buildManagementReport } from '../data/managementReport';
@@ -113,6 +113,17 @@ const pctOrDash = (n: number | null) => (n === null ? '—' : `${n}%`);
  * `pctOfRevenue`)。
  */
 const pct1OrDash = (n: number | null) => (n === null ? '—' : `${n.toFixed(1)}%`);
+/**
+ * 節の見出しに載せる総合スコア。
+ *
+ * **採点できたカテゴリが 0 件のときは「総合 0/100（要改善）」と書かない** ——
+ * 何も測っていないことを落第点として見出しに掲げないため
+ * (同じ判定が `bankSubmission` の書面と経営レポートにも載る)。
+ */
+const scoreHeading = (sc: ManagementScorecard): string =>
+  sc.overallScore === null
+    ? `総合 ${verdictLabel(sc.verdict)}（採点できる指標が未入力）`
+    : `総合 ${sc.overallScore}/100（${verdictLabel(sc.verdict)}）`;
 /** 金額。算定不能 (null) は 0 円として刷らない —— 未入力の内数が混ざると合計は意味を失う。 */
 const yenOrDash = (n: number | null) => (n === null ? '—' : yen.format(n));
 
@@ -882,7 +893,7 @@ export function OverviewPage() {
         </button>
       </div>
       {hasData && highlights.length > 0 && (
-        <Section title={`経営ハイライト — 総合 ${scorecard.overallScore}/100（${VERDICT_LABEL[scorecard.verdict]}）`}>
+        <Section title={`経営ハイライト — ${scoreHeading(scorecard)}`}>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 12, fontSize: 13 }}>
             <span
               style={{
@@ -1182,7 +1193,7 @@ export function OverviewPage() {
       </Section>
 
       {overview.kpi.hasData && (
-        <Section title={`経営スコアカード — 総合 ${scorecard.overallScore}/100（${VERDICT_LABEL[scorecard.verdict]}）`}>
+        <Section title={`経営スコアカード — ${scoreHeading(scorecard)}`}>
           <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginBottom: 12 }}>
             収益性・安全性・資金繰り・成長性の経営指標を 0〜100 で集約した健全性スコアです。
             <strong>※ 概算の経営診断であり財務助言ではありません。</strong>業種・規模で適正値は異なります。

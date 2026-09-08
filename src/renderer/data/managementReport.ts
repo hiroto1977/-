@@ -9,7 +9,7 @@
  */
 import { budgetScopeSentence } from './budgetVariance';
 import type { BusinessOverview } from './overview';
-import { VERDICT_LABEL, type ManagementScorecard } from '../../shared/managementScorecard';
+import { verdictLabel, type ManagementScorecard } from '../../shared/managementScorecard';
 import { summarizeHighlights, RISK_BAND_LABEL, type Highlight } from './managementHighlights';
 import { formatPeriodWindow, zeroRevenueRatioNote, type MonthlyTrendRow } from './kpiActuals';
 import { manualOverrideNote, staleDerivedNote, type ManualOverrideDisclosure } from './overviewOverrides';
@@ -81,7 +81,13 @@ export function buildManagementReport(
   // 総合判定
   lines.push('## 総合判定');
   lines.push('');
-  lines.push(`- 経営スコア: **${scorecard.overallScore} / 100** (${VERDICT_LABEL[scorecard.verdict]})`);
+  // 採点できる指標が無ければ「0 / 100 要改善」ではなく未算定と述べる
+  // (このレポートは役員会・銀行・税理士へ渡る)。
+  lines.push(
+    scorecard.overallScore === null
+      ? `- 経営スコア: **${verdictLabel(scorecard.verdict)}** (採点できる指標が入力されていません)`
+      : `- 経営スコア: **${scorecard.overallScore} / 100** (${verdictLabel(scorecard.verdict)})`,
+  );
   for (const c of scorecard.categories) {
     if (c.score !== null) lines.push(`- ${c.label}: ${c.score} / 100`);
   }

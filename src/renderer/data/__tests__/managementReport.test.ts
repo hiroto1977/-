@@ -144,6 +144,38 @@ describe('buildManagementReport', () => {
     expect(md).toContain('## 経営ハイライト');
   });
 
+  /**
+   * **★ レポートの「総合判定」に「0 / 100 (要改善)」を採点せずに書かない (2026-09-08)。**
+   *
+   * このレポートは冒頭で**役員会・銀行・税理士への共有**を明記している
+   * (パス 50 で対象期間・基準日・会計の窓を書かせた面と同じ)。
+   * 採点できた軸が 0 件のときに落第点を書けば、読み手はそれを診断として読む。
+   */
+  it('★ 採点できる指標が無ければ「0 / 100 (要改善)」ではなく未算定と述べる', () => {
+    const overview = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi], members: [] });
+    const md = buildManagementReport(overview, buildManagementScorecard({}), [], '2026-05-31', MANUAL, []);
+    expect(md).toContain('- 経営スコア: **未算定** (採点できる指標が入力されていません)');
+    // 直す前の文面
+    expect(md).not.toContain('0 / 100');
+    expect(md).not.toContain('(要改善)');
+  });
+
+  it('★ 対照: 指標が在れば「N / 100 (判定)」を書く (上の不在の検査が空でない証拠)', () => {
+    const overview = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi], members: [] });
+    const md = buildManagementReport(
+      overview,
+      buildManagementScorecard({ operatingMarginPct: 2 }),
+      [],
+      '2026-05-31',
+      MANUAL,
+      [],
+    );
+    // band(2, 0, 10) = 20 → 'poor' なので、上で禁じた 2 つの文面がここでは**出る**。
+    expect(md).toContain('- 経営スコア: **20 / 100** (要改善)');
+    expect(md).toContain('(要改善)');
+    expect(md).not.toContain('未算定');
+  });
+
   it('omits the monthly-trend table when fewer than two periods are supplied', () => {
     const overview = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi], members: [] });
     const sc = buildManagementScorecard({});

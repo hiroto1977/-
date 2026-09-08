@@ -381,6 +381,39 @@ describe('buildBankSubmissionSheet — 各節の数値', () => {
     // 節は在るので経営スコアは 9 のまま (番号がずれない)
     expect(m.sections.some((x) => x.title.startsWith('9. 参考：経営スコア'))).toBe(true);
   });
+  /**
+   * **★ 相手に渡る書面に「0／100 · 要改善」を採点せずに刷らない (2026-09-08)。**
+   *
+   * `buildManagementScorecard` は 2026-09-08 まで、採点できた軸が 0 件のとき
+   * `overallScore: 0` / `verdict: 'poor'` を返していた。§9 はそれをそのまま
+   * **「総合スコア 0／100 ／ 評価 要改善」**として印字していた ——
+   * **何も測っていないことを、落第点として金融機関へ渡していた。**
+   *
+   * すぐ下の行 (`categories.map`) は最初から `c.score === null ? BLANK` で
+   * 正しく空欄にしていた —— **同じ rows 配列の中で規準が隣に在った。**
+   */
+  it('★ §9: 採点できる指標が無ければ「0／100 · 要改善」ではなく空欄と未算定', () => {
+    const input = inputWith(overviewWith(), SETTINGS, { scorecard: buildManagementScorecard({}) });
+    const m = buildBankSubmissionSheet(input);
+    const s = section(m.sections, '9.');
+    // 直す前は '0／100' と '要改善' だった
+    expect(value(s, '総合スコア')).toBe(BLANK);
+    expect(value(s, '総合スコア')).not.toBe('0／100');
+    expect(value(s, '評価')).toBe('未算定');
+    expect(value(s, '評価')).not.toBe('要改善');
+    // 理由を書面の中で述べる (空欄だけでは「なぜ」が伝わらない)。
+    expect(s.caption).toContain('採点できる指標が入力されていない');
+    expect(s.caption).toContain('信用格付けとは関係がありません');
+  });
+
+  it('★ 対照: 指標が在れば §9 は数と判定を刷り、未算定の断りは出ない', () => {
+    const m = buildBankSubmissionSheet(inputWith(overviewWith()));
+    const s = section(m.sections, '9.');
+    expect(value(s, '総合スコア')).toMatch(/^\d+／100$/);
+    expect(['要改善', '注意', '良好', '優良']).toContain(value(s, '評価'));
+    expect(s.caption).not.toContain('採点できる指標が入力されていない');
+  });
+
   it('経営スコアは総合と分野ごと、内部評価の断り書きつき', () => {
     const input = inputWith(overviewWith());
     const m = buildBankSubmissionSheet(input);
