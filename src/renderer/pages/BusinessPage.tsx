@@ -5,7 +5,6 @@ import { Stat } from '../components/Stat';
 import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
 import { sumShigyoMonthlyFees } from '../../shared/shigyoTypes';
-import { jpy } from '../../shared/formatters';
 import { summarizeFoodDelivery } from '../data/foodDelivery';
 import { exportWarning } from '../data/exportOutcome';
 
@@ -1198,12 +1197,27 @@ function CrossServiceKpis() {
 
   return (
     <Section title="業務操作 横断 KPI (フードデリバリー × 投資 × 士業)" count={5}>
+      {/*
+        金額は**この画面で 1 つの流儀**にする (2026-09-08 · パス 99)。
+
+        ここは `shared/formatters` の `jpy` を使っていたが、同じ画面の他の 11 か所は
+        上の `Intl.NumberFormat` (`yen`) を使っており、**実測で 3 つずれていた** ——
+        円記号の文字 (半角 / 全角)・負の符号の位置・小数を出すか円単位に丸めるか。
+        「月次 CF (不動産)」は赤字になりうるので (パス 58 の逆レバレッジ分析はそこが主題)、
+        **同じ画面で負の額が 2 通りに刷られていた**。
+
+        多数側 (11 対 5) に寄せる —— 見える変化がいちばん小さく、符号を記号の前に置く
+        `Intl` の形は日本語の慣行に沿う。実測の表と、リポジトリ全体に 4 つの綴りが
+        在ること (うち 2 つは相手に渡る書面の書式) は
+        `pages/__tests__/moneyNotationOneScreen.test.ts` の冒頭に置いた。
+        **この画面には円記号を字面で書かない** —— 同じテストがそれを留めている。
+      */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, marginBottom: 12 }}>
-        <Stat label="月次売上推計 (フードデリバリー)" value={jpy(monthlyFoodDelivery)} />
-        <Stat label="月次 CF (不動産)" value={jpy(monthlyCashflow)} positive={monthlyCashflow >= 0} />
-        <Stat label="投資元本 (株式cash + 投信評価額)" value={jpy(investmentValuation)} />
-        <Stat label="総資産 (取得原価ベース)" value={jpy(totalAssets)} />
-        <Stat label="士業 月次顧問料 (7 種合計)" value={jpy(shigyoMonthlyFeeTotal)} />
+        <Stat label="月次売上推計 (フードデリバリー)" value={yen.format(monthlyFoodDelivery)} />
+        <Stat label="月次 CF (不動産)" value={yen.format(monthlyCashflow)} positive={monthlyCashflow >= 0} />
+        <Stat label="投資元本 (株式cash + 投信評価額)" value={yen.format(investmentValuation)} />
+        <Stat label="総資産 (取得原価ベース)" value={yen.format(totalAssets)} />
+        <Stat label="士業 月次顧問料 (7 種合計)" value={yen.format(shigyoMonthlyFeeTotal)} />
       </div>
       <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
         ※ 各値は snapshot データの集計。フードデリバリーは
