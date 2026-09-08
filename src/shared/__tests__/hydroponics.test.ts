@@ -300,14 +300,32 @@ describe('収支の見積り', () => {
     expect(e.costPerShippedPlantYen).toBeGreaterThan(CLEAN_COST.unitPriceYen);
   });
 
-  it('出荷が 0 なら 1 株あたり原価は 0 (0 除算を出さない)', () => {
+  /**
+   * **この検査は 2026-09-08 まで欠陥を仕様として固定していた** ——
+   * 名前が「1 株あたり原価は 0」で、`toBe(0)` を要求していた。
+   * しかも**同じ検査の 2 行下**で電気代 **年 1,825 万円**を主張しており、
+   * 「1 株あたり原価 0 円」と両立しない 2 つの数字を並べていた。
+   * この値は `bankSubmission.ts` の「出荷 1 株当たり原価」として
+   * **金融機関等提出用の書面に載る**。
+   *
+   * 正しい答えは **3 つ目** —— 出荷が 0 なら 1 株あたりは**存在しない** (算定しない)。
+   * 規準は同じモジュールの `breakEvenPlantsPerMonth` (分母が 0 以下なら null) に在った。
+   */
+  it('★ 出荷が 0 なら 1 株あたり原価は算定しない (0 円と刷らない)', () => {
     const e = estimateEconomics({ ...CLEAN_FACILITY, yieldRate: 0 }, CLEAN_COST);
     expect(e.shippedPlantsPerMonth).toBe(0);
     expect(e.monthly.revenue).toBe(0);
-    expect(e.costPerShippedPlantYen).toBe(0);
-    expect(Number.isFinite(e.costPerShippedPlantYen)).toBe(true);
-    // 棚は動いているので電気代は出ていく。
+    // 直す前は 0。**0 円は「原価が掛かっていない」という主張**である。
+    expect(e.costPerShippedPlantYen).toBeNull();
+    // **費用は出ている** —— これが 0 円と両立しないことの対照。
     expect(e.electricityYenPerYear).toBe(18_250_000);
+    expect(e.monthly.sga).toBeGreaterThan(0);
+  });
+
+  it('★ 対照: 出荷が在れば 1 株あたり原価は数で出る (床が邪魔をしない)', () => {
+    const e = estimateEconomics(CLEAN_FACILITY, CLEAN_COST);
+    expect(e.costPerShippedPlantYen).not.toBeNull();
+    expect(e.costPerShippedPlantYen).toBeCloseTo(135.34, 2);
   });
 
   it('負の入力は 0 に落とす (費用を負にして利益を作らない)', () => {

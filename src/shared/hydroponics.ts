@@ -338,8 +338,16 @@ export interface HydroponicsEconomics {
   readonly electricityYenPerYear: number;
   /** 月次の損益（経営サマリーへ載せる形）。 */
   readonly monthly: MonthlyPnl;
-  /** 出荷 1 株あたりの総原価 (円)。売れた株が背負う費用。 */
-  readonly costPerShippedPlantYen: number;
+  /**
+   * 出荷 1 株あたりの総原価 (円)。売れた株が背負う費用。
+   *
+   * **出荷が 0 なら `null`** —— 背負う株が無いのだから 1 株あたりは**存在しない**。
+   * 2026-09-08 まで 0 に倒しており、**費用は出ているのに「1 株あたり原価 0 円」**を
+   * 刷っていた (同じ試算で電気代は年 1,825 万円出ている)。この値は
+   * `bankSubmission.ts` の「出荷 1 株当たり原価」として**金融機関等提出用の書面に載る**。
+   * 規準は**すぐ下の `breakEvenPlantsPerMonth`** に在った (分母が 0 以下なら null)。
+   */
+  readonly costPerShippedPlantYen: number | null;
   /** 1 株あたり限界利益 (円) = 単価 − 株あたり変動費。 */
   readonly contributionPerPlantYen: number;
   /**
@@ -412,8 +420,9 @@ export function estimateEconomics(
       depreciation,
       laborCost,
     },
+    // 出荷 0 は「1 株あたり 0 円」ではなく**算定しない** (背負う株が無い)。
     costPerShippedPlantYen:
-      shippedPlantsPerMonth > 0 ? round2((cogs + fixedPerMonth) / shippedPlantsPerMonth) : 0,
+      shippedPlantsPerMonth > 0 ? round2((cogs + fixedPerMonth) / shippedPlantsPerMonth) : null,
     contributionPerPlantYen: round2(contributionPerPlantYen),
     breakEvenPlantsPerMonth,
     shippedPlantsPerMonth: Math.floor(shippedPlantsPerMonth),

@@ -527,7 +527,9 @@ describe('経営サマリーの水耕栽培の節', () => {
     // 月商 0 なら営業利益率は算定不能。**営業損失が出ているのに 0.0% と刷らない。**
     expect(h.operatingMarginPct).toBeNull();
     expect(h.contributionRatio).toBeNull();
-    expect(h.costPerShippedPlantYen).toBe(0);
+    // **同じ理屈が 1 株あたり原価にも当たる** —— 直す前はここだけ 0 で、
+    // すぐ上の 2 行 (営業利益率・限界利益率) と規準が食い違っていた。
+    expect(h.costPerShippedPlantYen).toBeNull();
     // 費用は出ているので電気代の割合は数で出る (分母が 0 でないことの対照)。
     expect(typeof h.electricityCostRatioPct).toBe('number');
     // 棚を動かしている限り電気代は出ていく = 営業損失になる。

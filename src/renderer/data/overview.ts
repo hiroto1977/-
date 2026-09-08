@@ -94,7 +94,7 @@ export interface HydroponicsOverview {
   /** 出荷が分岐点に届いているか。 */
   readonly meetsBreakEven: boolean;
   /** 出荷 1 株あたりの総原価 (円)。 */
-  readonly costPerShippedPlantYen: number;
+  readonly costPerShippedPlantYen: number | null;
   /** 年間電力量 (kWh)。歩留まりが落ちても減らない。 */
   readonly energyKwhPerYear: number;
   /** 年間電気代 (円)。 */

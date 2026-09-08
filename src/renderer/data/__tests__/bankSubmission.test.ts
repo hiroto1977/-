@@ -453,6 +453,37 @@ describe('buildBankSubmissionSheet — 各節の数値', () => {
     ]);
     expect(s.caption).toBe('設備・品目・費用の入力から算出した計画値です。上の各節の実績とは混ぜていません。');
   });
+
+  /**
+   * **金融機関等提出用の書面に「1 株あたり原価 0 円」を載せない。**
+   *
+   * 出荷が 0 のとき `costPerShippedPlantYen` は 2026-09-08 まで **0** で、
+   * 書面は「出荷 1 株当たり原価 **0円**」と刷った —— 同じ節が費用を挙げているのに
+   * 「原価が掛かっていない」と述べる形である。注記 (`notes[0]`) は
+   * **「該当なし・算定不能は『―』」**と宣言しているので、書面自身の約束にも反していた。
+   */
+  it('★ 出荷 1 株当たり原価が算定不能なら書面は「―」を載せる (0円と刷らない)', () => {
+    const noShipment: BusinessOverview = {
+      // `base` は前の it の中の局所変数なので、ここでは同じ工場から作り直す
+      // (最初はそれで空振りした —— `ReferenceError: base is not defined`)。
+      ...overviewWith(),
+      hydroponics: {
+        shippedPlantsPerMonth: 0, shippedPlantsPerDay: 0, shippedKgPerYear: 0, revenue: 0,
+        operatingProfit: -900_000, operatingMarginPct: null, contributionRatio: null, bep: 0,
+        breakEvenPlantsPerMonth: 9_333, meetsBreakEven: false, costPerShippedPlantYen: null,
+        energyKwhPerYear: 30_000, electricityYenPerYear: 900_000, electricityCostRatioPct: 22.1,
+        lowPotassium: null,
+      },
+    };
+    const m = buildBankSubmissionSheet(inputWith(noShipment));
+    const s = m.sections[m.sections.length - 1]!;
+    const row = s.rows.find((r) => r.label === '出荷 1 株当たり原価');
+    expect(row).toBeDefined();
+    expect(row!.value).toBe('―');
+    expect(row!.value).not.toBe('0円');
+    // 書面の約束と揃っていること (注記が「算定不能は『―』」と述べている)。
+    expect(m.notes[0]).toContain('算定不能は「―」');
+  });
   it('注記は書式と出所を言う', () => {
     const m = buildBankSubmissionSheet(inputWith(overviewWith()));
     expect(m.notes).toHaveLength(5);

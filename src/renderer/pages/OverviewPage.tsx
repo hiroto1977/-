@@ -1417,10 +1417,20 @@ export function OverviewPage() {
                 accent={overview.hydroponics.operatingProfit >= 0 ? '#22c55e' : '#ef4444'}
                 sub={`営業利益率 ${pct1OrDash(overview.hydroponics.operatingMarginPct)}`}
               />
+              {/* 出荷 0 は「1 株あたり 0 円」ではなく**算定しない** ——
+                  費用は出ているので、0 円と刷ると同じ画面の費用の数字と両立しない。 */}
               <Tile
                 label="出荷 1 株あたり原価"
-                value={safeYen(Math.round(overview.hydroponics.costPerShippedPlantYen))}
-                sub="変動費と固定費の両方を売れた株が背負う"
+                value={
+                  overview.hydroponics.costPerShippedPlantYen === null
+                    ? '—'
+                    : safeYen(Math.round(overview.hydroponics.costPerShippedPlantYen))
+                }
+                sub={
+                  overview.hydroponics.costPerShippedPlantYen === null
+                    ? '出荷が 0 のため算定していません (費用は発生しています)'
+                    : '変動費と固定費の両方を売れた株が背負う'
+                }
               />
               <Tile
                 label="電気代が費用に占める割合"
