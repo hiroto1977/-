@@ -536,6 +536,8 @@ function BudgetPanel() {
     () => computeBudgetVariance(budgets.map((r) => r.data), actuals.map((r) => r.data)),
     [budgets, actuals],
   );
+  // 「突合できなかった期」の断り書きは **1 回だけ**呼ぶ (関門と表示で同じ値を見る)。
+  const unmatchedNote = variance === null ? null : budgetUnmatchedNote(variance.alignment);
 
   async function onAdd() {
     try {
@@ -593,8 +595,11 @@ function BudgetPanel() {
           </div>
           <p style={{ color: 'var(--text-mute)', fontSize: 11, lineHeight: 1.6 }}>
             {`対象: ${budgetComparedRangeLabel(variance.alignment)}（予算と実績の両方が在る期）`}
-            {budgetUnmatchedNote(variance.alignment) !== null && (
-              <span style={{ color: '#f59e0b' }}>{`。${budgetUnmatchedNote(variance.alignment)}です`}</span>
+            {/* **1 回だけ呼んで束ねる。** 関門と補間で 2 度呼ぶと、`tsc` は跨いで絞れないので
+                補間側の型は `string | null` のまま —— 裸の `${}` なら文字列 "null" を刷る形である
+                (純粋関数なので今は同じ値が返るが、型で守られてはいない)。 */}
+            {unmatchedNote !== null && (
+              <span style={{ color: '#f59e0b' }}>{`。${unmatchedNote}です`}</span>
             )}
           </p>
         </>

@@ -16033,3 +16033,114 @@ payload を返す `serviceHub` を差し込み、実物の画面で
 `restrict-template-expressions` を今入れると、根本原因の直しで消えるはずの
 15 件の偽陽性に disable を書くことになる。**ゲートは refactor と一緒に入れる。**
 `UpdateVerdict` の判別可能合併化も同じパスで (disable ではなく型で証明する)。
+
+---
+
+## パス 79 (2026-09-08) — 「更新あり」なのに版が分からない状態を、型が作れてしまっていた
+
+パス 78 の仕分けで「型で直すべき構造的な弱み」に分類した 2 件を片づけた。
+併せて**根本原因の一括対応は見送った** —— その判断と理由を下に残す。
+
+### `UpdateVerdict` が平らな interface だった
+
+```ts
+export interface UpdateVerdict {
+  readonly status: UpdateStatus;           // 4 状態
+  readonly latest: string | null;          // ← 全 status に付いていた
+}
+```
+
+`describeUpdate` は `case 'update-available'` の中で
+`` `新しい版 ${verdict.latest} があります` `` と**裸で補間する**。`status` は
+`latest` を絞らないので、`{status:'update-available', latest:null}` を 1 つ作れば
+利用者は**「新しい版 null があります」**を読む
+(**裸の `${}` は `tsc` を素通りする** —— パス 76・78 で 2 度踏んだ罠)。
+
+`evaluateUpdate` は今そういう値を作らない。**しかし守っていたのは型ではなく実装**で、
+「更新あり」なのに版が分からない、は**そもそも成り立たない状態**である。
+
+**直し**: 判別可能合併にした。版の比較ができた 3 状態
+(`update-available` / `up-to-date` / `ahead`) は `latest: string`、
+`unknown` だけが `latest: string | null`。
+`describeUpdate` の枝ごとに `tsc` が証明するので、**文面の側に関門が要らない**
+(パス 57 で学んだ「関門を値と別の量で再導出しない」の型版)。
+
+### 対照 —— `@ts-expect-error` は**自ら鳴る**
+
+守りを型で書いたので、検査も型で書いた:
+
+```ts
+// @ts-expect-error latest: null は 'update-available' では作れない
+const bad1: UpdateVerdict = { status: 'update-available', latest: null, … };
+```
+
+平らな interface に戻すと、その行が**エラーでなくなる**ので
+`tsc` が `TS2578: Unused '@ts-expect-error' directive` を **3 件**出す
+(実測)。**検査を無効化するのではなく、検査自身が守りの有無を報せる形**である。
+`unknown` で `latest: null` が**通る**ことも同じ場所で留めた
+(締めすぎると `evaluateUpdate` が実際に返す形が作れなくなる)。
+
+### `KpiPage.tsx` が純粋関数を 2 度呼んでいた
+
+```tsx
+{budgetUnmatchedNote(variance.alignment) !== null && (
+  <span>{`。${budgetUnmatchedNote(variance.alignment)}です`}</span>   // ← 2 度目
+)}
+```
+
+関門と補間が**別の呼び出し**なので `tsc` は跨いで絞れず、補間側の型は
+`string | null` のまま —— 裸の `${}` なので**文字列 "null" を刷りうる形**である
+(純粋関数だから今は同じ値が返る)。1 回だけ呼んで束ねた。
+
+### ★ 根本原因の一括対応は**見送った** (判断と理由)
+
+パス 78 で `no-unnecessary-condition` が挙げた**「常に偽/常に真」101 件 / 41 ファイル**は、
+`snapshot.ts` の `} as const;` により画面の型が実物の payload より狭いことに由来する。
+標本で中身を確かめると、**boolean のプレースホルダが主犯**だった:
+
+| 欄 | snapshot の値 → 型 | 死んでいる枝 |
+| --- | --- | --- |
+| `accountingLinked` / `stocksLinked` | `false` → `false` | 「✅ 連携中」・営業CF 系列・DSCR 警告 |
+| `keysConfigured.hibp` / `.vt` | `false` → `false` | 「✓」・「API キー更新」・侵害検索/スキャンのパネル |
+| `norton.installed` | `false` → `false` | 「Installed」バッジ |
+
+—— **「連携中 / 設定済み / installed」= 利用者が設定を済ませたときに走る枝**が、
+ことごとく型検査を受けていない。
+
+**それでも今は直さない。理由:**
+
+1. **重さの見積り**: これらの枝は**実行時には正しく動く** (値は本物の boolean で届く)。
+   失われているのは**その枝の型検査**であって、利用者が読む答えは間違っていない ——
+   パス 70〜77 (**利用者に誤った断定を渡していた**) とは階層が違う。
+2. **直し方が機械的に決まらない**: 使用箇所から snapshot の欄へ**遡る対応づけが取れない**。
+   式は多様な局所変数を経由するので、粗い正規表現では 101 件のうち 22 件しか辿れなかった。
+   欄ごとに `as` を足す案は、この対応づけが前提だった。
+3. **一括広げ (`} as const;` → `};`) は設計判断を巻き込む**: tsc エラーは **1 件だけ**
+   (`BusinessPage.tsx:685` の `trafficKind`) と安いが、その 1 件を解くには
+   **`BusinessPage.tsx:50` の手書きの写しを先に解く**必要があり (下記)、
+   renderer は `main` を import できない (`lint:imports`) ので
+   **payload 型をどこに置くか**という設計判断になる。
+   **75 サービス分の型の置き場所を、自律ループの中で独断で決めるべきではない。**
+4. **ゲートを先に入れると逆効果**: `restrict-template-expressions` を今常設すると、
+   根本原因の直しで消えるはずの**偽陽性 15 件に disable を書く**ことになる。
+
+**利用者に決めてほしいこと**: payload 型を (a) `src/shared/` に出して client と画面が
+1 つの宣言を読む (「一つの真実」・パス 62 の規準に沿う・75 サービス分の移動)、
+(b) snapshot の各エントリに型注釈を付ける (局所的だが写しが増える)。
+**(a) が筋だと考えるが、範囲が大きいので指示を待つ。**
+
+### 併せて記録した別件 (直していない)
+
+1. **`BusinessPage.tsx:50` の手書きの写しが既にずれている** (パス 62 の類が現存):
+   client (`main/clients/business.ts:229`) は `id: BusinessCategoryId` (10 値の合併) /
+   `isMock: true` / 型名 `BusinessOpsSnapshot`。画面の写しは
+   `id: string` / `isMock: boolean` / 型名 `BusinessSnapshot`。
+   **写しが広いほうへずれているので代入は通り、`tsc` は黙る。**
+   画面は `BusinessCategoryId` の合併を失っており、カテゴリ id の打ち間違いを型で拾えない。
+   `mockPayloadPolicy.test.ts:155` に client→page の台帳が既に在るので、
+   そこに「型を共有しているか」を足せる。
+2. **`window.serviceHub` の宣言が実態より強い**: `shared/bridge.d.ts` が非 optional で
+   宣言しているため `if (!window.serviceHub) return;` が全部「常に偽」になる
+   (`SecurityPage:114` `:144`、`OllamaPage:49` ほか)。
+   **ガードは正しく、宣言が間違っている** —— ブラウザ版は shim が入るまで無く、
+   テストでは差し替える。optional にするか `declare global` の形を見直すか。
