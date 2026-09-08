@@ -18,6 +18,7 @@ import {
   type SheetSection,
 } from '../bankSubmission';
 import { buildBusinessOverview, type BusinessOverview } from '../overview';
+import { NO_MANUAL_OVERRIDES } from '../overviewOverrides';
 import { buildManagementScorecard } from '../../../shared/managementScorecard';
 import { combineCashflowDebtService } from '../cashflowDebtService';
 import { BANK_FORMAT_DEFAULT, BLANK, formatAmount } from '../../../shared/bankFormat';
@@ -84,6 +85,7 @@ function inputWith(
     balanceSheetAsOf: '2026-03-31',
     today: '2026-09-04',
     settings,
+    manual: NO_MANUAL_OVERRIDES,
     ...extra,
   };
 }
@@ -1164,5 +1166,57 @@ describe('§1 §3 — 割れないものを 0 として刷らない', () => {
     const o = overviewWith({ kpiActuals: [], members: [] });
     const s3 = section(buildBankSubmissionSheet(inputWith(o)).sections, '3.');
     expect(s3.caption).toBe('KPI 実績が未入力のため、一人当たりの金額は算定していません。');
+  });
+});
+
+/**
+ * **手入力の上書きが在るなら、書面の注記がそれを述べる。**
+ *
+ * この書面は「上記のとおり相違ありません。」で代表者名つきで終わり、注記は
+ * 「損益・販売・人員の数値は当社が入力した実績…の累計」と断言する。上書きは
+ * 表示の置き換えで再計算ではないので、**印刷した比率が同じ表の金額どおりに
+ * ならない** (経緯は `overviewOverrides.ts` の `staleDerivedNote`)。
+ * 2026-09-08 まで書面には「手」の字が 1 つも無かった。
+ */
+describe('注記 — 手入力の上書きを述べる', () => {
+  const overridden = { overridden: ['kpi.revenue'], staleDerived: [
+    { path: 'kpi.operatingMarginPct', label: '営業利益率', because: ['kpi.revenue'] },
+    { path: 'kpi.grossMarginPct', label: '売上総利益率', because: ['kpi.revenue'] },
+  ] };
+
+  it('★ 上書きが在れば注記が 2 本増え、「実績の累計」と断言しない', () => {
+    const clean = buildBankSubmissionSheet(inputWith(overviewWith()));
+    const dirty = buildBankSubmissionSheet(inputWith(overviewWith(), SETTINGS, { manual: overridden }));
+    expect(dirty.notes.length).toBe(clean.notes.length + 2);
+    // 上書きなしの注記は「累計。」で言い切る
+    expect(clean.notes[1]).toContain('の累計。');
+    expect(clean.notes[1]).not.toContain('手入力');
+    // 上書きが在れば「累計に、下記の手入力を重ねたもの」
+    expect(dirty.notes[1]).toContain('下記の手入力を重ねたもの');
+    expect(dirty.notes[1]).not.toContain('の累計。');
+  });
+
+  it('★ どの欄を手で置いたか / どの指標が自動値のままかを注記に並べる', () => {
+    const body = buildBankSubmissionSheet(inputWith(overviewWith(), SETTINGS, { manual: overridden })).notes.join('\n');
+    expect(body).toContain('売上高は手で置いた数値です');
+    expect(body).toContain('営業利益率・売上総利益率は自動計算のままで');
+    expect(body).toContain('同じ表に並ぶ金額どおりの値にならないことがあります');
+  });
+
+  it('★ 対照: 上書きが無ければ手入力の断りはどこにも出ない', () => {
+    const all = JSON.stringify(buildBankSubmissionSheet(inputWith(overviewWith())));
+    // **綴りを絞る** —— 「手」は「相手」等にも出るので、断りの文面ごと当てる
+    // (この文面が実際に出ることは上の 2 件が示している)。
+    expect(all).not.toContain('手で置いた数値');
+    expect(all).not.toContain('自動計算のままで');
+    expect(all).not.toContain('手入力を重ねたもの');
+  });
+
+  it('上書きした欄が在っても自動値のままの指標が無ければ 1 本だけ増える', () => {
+    const clean = buildBankSubmissionSheet(inputWith(overviewWith()));
+    const one = buildBankSubmissionSheet(
+      inputWith(overviewWith(), SETTINGS, { manual: { overridden: ['kpi.revenue'], staleDerived: [] } }),
+    );
+    expect(one.notes.length).toBe(clean.notes.length + 1);
   });
 });

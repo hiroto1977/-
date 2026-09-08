@@ -788,8 +788,10 @@ export function OverviewPage() {
 
   const [reportCopied, setReportCopied] = useState(false);
   const report = useMemo(
-    () => buildManagementReport(overview, scorecard, highlights, localIsoDate(), monthlyTrend, sensitivity?.breakEvenDelta ?? null),
-    [overview, scorecard, highlights, monthlyTrend, sensitivity],
+    // **手入力の上書きの状況を渡す** —— 画面が出している「自動値のままの指標」の
+    // 注意は、同じ数字を刷るレポートにも要る (経緯は `overviewOverrides.ts`)。
+    () => buildManagementReport(overview, scorecard, highlights, localIsoDate(), applied, monthlyTrend, sensitivity?.breakEvenDelta ?? null),
+    [overview, scorecard, highlights, applied, monthlyTrend, sensitivity],
   );
 
   // 金融機関等提出用の書面。書式と提出者情報は 1 レコードに保存し、最新を採用する
@@ -816,8 +818,10 @@ export function OverviewPage() {
         balanceSheetAsOf,
         today: localIsoDate(),
         settings: submissionSettings,
+        // 画面の「自動値のままの指標」と同じ断りを、書面の注記にも載せる。
+        manual: applied,
       }),
-    [overview, scorecard, debtService, kpiPeriods, balanceSheetAsOf, submissionSettings],
+    [overview, scorecard, debtService, kpiPeriods, balanceSheetAsOf, submissionSettings, applied],
   );
 
   async function copyReport() {

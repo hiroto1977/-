@@ -5,8 +5,11 @@ import {
   OVERRIDABLE_FIELDS,
   OVERVIEW_CUSTOM_METRICS_COLLECTION,
   OVERVIEW_OVERRIDES_COLLECTION,
+  NO_MANUAL_OVERRIDES,
   applyOverviewOverrides,
   fieldsBySection,
+  manualOverrideNote,
+  staleDerivedNote,
   findOverridableField,
   formatMetric,
   isMetricUnit,
@@ -680,5 +683,66 @@ describe('単位ごとの範囲が実際に効いていること', () => {
     expect(low.ok ? '' : low.reason).toContain('以上');
     const high = parseOverrideValue('9999999999999999999', 'yen');
     expect(high.ok ? '' : high.reason).toContain('以下');
+  });
+});
+
+/**
+ * **断り書きの 2 文。** 書面の注記と経営レポートが同じ文を出すので、
+ * 文はここ 1 か所が持つ (面が 2 つあるなら断り書きも 2 つの面に要る)。
+ */
+describe('手入力の断り書き (manualOverrideNote / staleDerivedNote)', () => {
+  it('上書きが 1 件も無ければ両方 null (述べることが無い)', () => {
+    expect(manualOverrideNote(NO_MANUAL_OVERRIDES)).toBeNull();
+    expect(staleDerivedNote(NO_MANUAL_OVERRIDES)).toBeNull();
+  });
+
+  it('★ 上書きしたパスを台帳の表示名で述べ、「実績の累計ではない」と言う', () => {
+    const note = manualOverrideNote({ overridden: ['kpi.revenue', 'team.members'], staleDerived: [] });
+    expect(note).toContain('売上高');
+    expect(note).toContain('メンバー数');
+    expect(note).toContain('実績の累計ではありません');
+  });
+
+  it('台帳に無いパスはパスのまま出す (黙って消さない)', () => {
+    expect(manualOverrideNote({ overridden: ['kpi.nope'], staleDerived: [] })).toContain('kpi.nope');
+  });
+
+  it('★ 自動値のままの指標を並べ、「同じ表の金額どおりにならない」と言う', () => {
+    const note = staleDerivedNote({
+      overridden: ['kpi.revenue'],
+      staleDerived: [{ path: 'kpi.operatingMarginPct', label: '営業利益率', because: ['kpi.revenue'] }],
+    });
+    expect(note).toContain('営業利益率');
+    expect(note).toContain('自動計算のままで');
+    expect(note).toContain('同じ表に並ぶ金額どおりの値にならないことがあります');
+  });
+
+  it('★ 実物の上書きを通したとき、両方の文が出る (売上高を手で置く)', () => {
+    const base = {
+      kpi: { revenue: 12_000_000, grossProfit: 9_000_000, operatingProfit: 4_500_000, ebitda: 4_500_000, bep: 6_000_000, safetyMargin: 50, grossMarginPct: 75, operatingMarginPct: 37.5, ebitdaMarginPct: 37.5, cogsRatioPct: 25, sgaRatioPct: 37.5, advertisingRatioPct: 0, contributionRatio: 75, revenueGrowthPct: null, revenueCagrPct: null },
+      sales: { totalAmount: 0, totalOrders: 0, aov: 0, channelCount: 0 },
+      team: { members: 1, seatLimit: 5, seatsRemaining: 4 },
+      productivity: { revenuePerCapita: 12_000_000, operatingProfitPerCapita: 4_500_000, labor: { laborCost: 1_500_000, laborSharePct: 16.7, laborToRevenuePct: 12.5, laborPerCapita: 1_500_000 } },
+    };
+    const applied = applyOverviewOverrides(base, [{ path: 'kpi.revenue', value: 50_000_000 }]);
+    expect(applied.overridden).toEqual(['kpi.revenue']);
+    const manual = manualOverrideNote(applied);
+    const stale = staleDerivedNote(applied);
+    expect(manual).not.toBeNull();
+    expect(stale).not.toBeNull();
+    // 売上高を分母にする比率が並ぶ (印刷した式が成り立たなくなる行)
+    expect(stale).toContain('営業利益率');
+    expect(stale).toContain('売上総利益率');
+    expect(stale).toContain('限界利益率');
+    expect(stale).toContain('安全余裕率');
+  });
+
+  it('★ 対照: 上書きした欄そのものは「自動値のまま」に数えない', () => {
+    const applied = applyOverviewOverrides(
+      { kpi: { revenue: 1, operatingMarginPct: 2 } },
+      [{ path: 'kpi.revenue', value: 10 }, { path: 'kpi.operatingMarginPct', value: 20 }],
+    );
+    const stale = staleDerivedNote(applied);
+    expect(stale === null || !stale.includes('営業利益率')).toBe(true);
   });
 });

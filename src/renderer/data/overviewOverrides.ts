@@ -276,6 +276,67 @@ export function applyOverrides<T>(
   return { overview, overridden, ignored, staleDerived };
 }
 
+/**
+ * 断り書きを出すために必要な最小の形。`AppliedOverviewOverrides` はこれを
+ * 構造的に満たすので、画面は `applied` をそのまま渡せる。
+ *
+ * **書面・レポートがこれを受け取るのは必須**にしてある —— 既定値 (空) を
+ * 置くと、渡し忘れた面が黙って断り書きの無い書類を刷る (パス 48 で
+ * `days?: number = 365` が同じ形の欠陥を隠していた)。
+ */
+export interface ManualOverrideDisclosure {
+  readonly overridden: readonly string[];
+  readonly staleDerived: readonly { path: string; label: string; because: readonly string[] }[];
+}
+
+/** 上書きが 1 件も無いことを明示して渡すための値。 */
+export const NO_MANUAL_OVERRIDES: ManualOverrideDisclosure = { overridden: [], staleDerived: [] };
+
+/** パスから台帳の表示名へ。台帳に無ければパスをそのまま出す (黙って消さない)。 */
+function labelOfPath(path: string): string {
+  return OVERRIDABLE_FIELDS.find((f) => f.path === path)?.label ?? path;
+}
+
+/**
+ * **手で置いた数値が在ることの断り**。1 件も無ければ `null`。
+ *
+ * 上書きは「表示の置き換え」であって実績の再集計ではない。書面の注記は
+ * 「損益・販売・人員の数値は当社が入力した実績の累計」と断言するので、
+ * 手入力が混ざっているならそれを打ち消す文が要る。
+ */
+export function manualOverrideNote(d: ManualOverrideDisclosure): string | null {
+  if (d.overridden.length === 0) return null;
+  const names = d.overridden.map(labelOfPath).join('・');
+  return `${names}は手で置いた数値です（入力済みデータからの自動計算を表示上だけ置き換えたもので、実績の累計ではありません）。`;
+}
+
+/**
+ * **上書きを反映していない自動値の断り**。1 件も無ければ `null`。
+ *
+ * `applyOverrides` は派生値を再計算しない (「どの派生値をどう直したいかは
+ * 利用者にしか決められない」— このモジュールの冒頭)。その結果、
+ * **印刷した比率が同じ表の金額どおりにならない**。実測 (売上高を 1,200 万→
+ * 5,000 万に置いた書面 §1):
+ *
+ * | 行 | 刷った値 | 同じ表の金額から計算すると |
+ * | --- | ---: | ---: |
+ * | 売上総利益率 | 75.0% | 9,000 ÷ 50,000 = **18.0%** |
+ * | 営業利益率 | 37.5% | 4,500 ÷ 50,000 = **9.0%** |
+ * | 販売費及び一般管理費率 | 37.5% | **9.0%** |
+ * | 限界利益率 | 75.0% | **94.0%** |
+ * | 安全余裕率 | 50.0% | (50,000 − 6,000) ÷ 50,000 = **88.0%** |
+ *
+ * 画面は 2026-09-08 まで**画面だけ**でこれを警告していた (このモジュールの
+ * 冒頭が「**画面は**それを注意として出せる」と書いている)。書面は
+ * 「上記のとおり相違ありません。」で代表者名つきで終わるのに、
+ * 手入力の文字が 1 つも無かった。
+ */
+export function staleDerivedNote(d: ManualOverrideDisclosure): string | null {
+  if (d.staleDerived.length === 0) return null;
+  const names = d.staleDerived.map((x) => x.label).join('・');
+  return `${names}は自動計算のままで、上の手入力を反映していません。表示している比率は、同じ表に並ぶ金額どおりの値にならないことがあります。`;
+}
+
 /** 経営サマリーの一覧で上書きを適用する。 */
 export function applyOverviewOverrides<T>(
   base: T,

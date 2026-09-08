@@ -3,6 +3,7 @@ import { buildBusinessOverview } from '../overview';
 import { buildManagementScorecard } from '../../../shared/managementScorecard';
 import { buildManagementHighlights } from '../managementHighlights';
 import { buildManagementReport } from '../managementReport';
+import { NO_MANUAL_OVERRIDES } from '../overviewOverrides';
 import { monthlyTrendSeries, summarizeFundamentals, type KpiActual } from '../kpiActuals';
 import { profitSensitivity, breakEvenDeltaPct, operatingLeverage } from '../profitSensitivity';
 import type { SalesEntry } from '../sales';
@@ -61,7 +62,7 @@ function cockpit() {
   });
   const highlights = buildManagementHighlights(overview, { thresholds: { declineWarnStreak: 2, declineCriticalStreak: 3, laborShareWarnPct: 60, singleChannelWarnPct: 60 } });
   const trend = monthlyTrendSeries(KPI);
-  const report = buildManagementReport(overview, scorecard, highlights, '2026-05-31', trend, breakEvenDeltaPct(f));
+  const report = buildManagementReport(overview, scorecard, highlights, '2026-05-31', NO_MANUAL_OVERRIDES, trend, breakEvenDeltaPct(f));
   return { overview, scorecard, highlights, trend, report, f };
 }
 
@@ -148,7 +149,7 @@ describe('management cockpit — virtual-data integration', () => {
     const hl = buildManagementHighlights(empty);
     expect(Array.isArray(hl)).toBe(true);
     // report still builds without throwing
-    const report = buildManagementReport(empty, sc, hl, '2026-05-31', [], null);
+    const report = buildManagementReport(empty, sc, hl, '2026-05-31', NO_MANUAL_OVERRIDES, [], null);
     expect(report).toContain('# 経営レポート');
   });
 });

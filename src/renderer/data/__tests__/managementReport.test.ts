@@ -4,6 +4,10 @@ import { buildBusinessOverview } from '../overview';
 import { buildManagementScorecard } from '../../../shared/managementScorecard';
 import { buildManagementHighlights } from '../managementHighlights';
 import { monthlyTrendSeries, type KpiActual } from '../kpiActuals';
+import { NO_MANUAL_OVERRIDES } from '../overviewOverrides';
+
+/** 手入力の上書きなし。**明示して渡す** (既定値を置かない — 経緯は `overviewOverrides.ts`)。 */
+const MANUAL = NO_MANUAL_OVERRIDES;
 
 const kpi: KpiActual = { period: '2026-05', unit: '全社', revenue: 1_000_000, cogs: 400_000, advertising: 100_000, sga: 200_000, depreciation: 50_000 };
 
@@ -11,7 +15,7 @@ function report(extra: Partial<Parameters<typeof buildBusinessOverview>[0]> = {}
   const overview = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi], members: [], ...extra });
   const sc = buildManagementScorecard({ operatingMarginPct: overview.kpi.operatingMarginPct ?? undefined, safetyMarginPct: overview.kpi.safetyMargin ?? undefined });
   const hl = buildManagementHighlights(overview);
-  return buildManagementReport(overview, sc, hl, '2026-05-31');
+  return buildManagementReport(overview, sc, hl, '2026-05-31', MANUAL);
 }
 
 describe('buildManagementReport', () => {
@@ -143,7 +147,7 @@ describe('buildManagementReport', () => {
   it('omits the monthly-trend table when fewer than two periods are supplied', () => {
     const overview = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi], members: [] });
     const sc = buildManagementScorecard({});
-    const md = buildManagementReport(overview, sc, [], '2026-05-31', monthlyTrendSeries([kpi]));
+    const md = buildManagementReport(overview, sc, [], '2026-05-31', MANUAL, monthlyTrendSeries([kpi]));
     expect(md).not.toContain('## 月次推移');
   });
 
@@ -154,7 +158,7 @@ describe('buildManagementReport', () => {
     ];
     const overview = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: periods, members: [] });
     const sc = buildManagementScorecard({});
-    const md = buildManagementReport(overview, sc, [], '2026-05-31', monthlyTrendSeries(periods));
+    const md = buildManagementReport(overview, sc, [], '2026-05-31', MANUAL, monthlyTrendSeries(periods));
     expect(md).toContain('## 月次推移');
     expect(md).toContain('| 期間 | 売上高 | 営業利益 | 営業利益率 | 前期比 |');
     expect(md).toContain('| 2026-04 |');
@@ -164,14 +168,14 @@ describe('buildManagementReport', () => {
   it('includes the break-even room line when a delta is supplied', () => {
     const overview = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi], members: [] });
     const sc = buildManagementScorecard({});
-    const md = buildManagementReport(overview, sc, [], '2026-05-31', [], -50);
+    const md = buildManagementReport(overview, sc, [], '2026-05-31', MANUAL, [], -50);
     expect(md).toContain('損益分岐点までの売上余地: -50%');
   });
 
   it('omits the break-even room line when null', () => {
     const overview = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi], members: [] });
     const sc = buildManagementScorecard({});
-    const md = buildManagementReport(overview, sc, [], '2026-05-31', [], null);
+    const md = buildManagementReport(overview, sc, [], '2026-05-31', MANUAL, [], null);
     expect(md).not.toContain('損益分岐点までの売上余地');
   });
 
@@ -182,7 +186,7 @@ describe('buildManagementReport', () => {
     ];
     const overview = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: periods, members: [] });
     const sc = buildManagementScorecard({});
-    const md = buildManagementReport(overview, sc, [], '2026-05-31');
+    const md = buildManagementReport(overview, sc, [], '2026-05-31', MANUAL);
     expect(md).toContain('前年同月比 (YoY): +20% (2026-05 vs 2025-05)');
   });
 
@@ -202,7 +206,9 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
   type Ov = Parameters<typeof buildManagementReport>[0];
   type Sc = Parameters<typeof buildManagementReport>[1];
   type Hl = Parameters<typeof buildManagementReport>[2];
-  type Tr = NonNullable<Parameters<typeof buildManagementReport>[4]>;
+  // 位置で型を取るので、引数を挿したら**ここも動く** (2026-09-08 に `manual` を
+  // 4 番目へ入れて実際に動いた)。月次推移は 5 番目。
+  type Tr = NonNullable<Parameters<typeof buildManagementReport>[5]>;
 
   const ov = (p: any = {}): Ov => ({
     plan: { label: 'Pro' },
@@ -247,7 +253,7 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
     const cases = [['poor', '要改善'], ['caution', '注意'], ['good', '良好'], ['excellent', '優良']] as const;
     for (const [verdict, label] of cases) {
       const s = { overallScore: 50, verdict, categories: [] } as any as Sc;
-      expect(buildManagementReport(ov({ kpi: { hasData: false } }), s, [], '2026-05-31')).toContain(`**50 / 100** (${label})`);
+      expect(buildManagementReport(ov({ kpi: { hasData: false } }), s, [], '2026-05-31', MANUAL)).toContain(`**50 / 100** (${label})`);
     }
   });
 
@@ -257,7 +263,7 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
       { severity: 'warning', category: 'B', message: 'b' },
       { severity: 'good', category: 'C', message: 'c' },
     ];
-    const md = buildManagementReport(ov({ kpi: { hasData: false } }), sc, marks, '2026-05-31');
+    const md = buildManagementReport(ov({ kpi: { hasData: false } }), sc, marks, '2026-05-31', MANUAL);
     expect(md).toContain('- 🔴 [A] a');
     expect(md).toContain('- 🟡 [B] b');
     expect(md).toContain('- 🟢 [C] c');
@@ -270,7 +276,7 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
       { severity: 'good', category: 'C', message: 'c' },
       { severity: 'good', category: 'D', message: 'd' },
     ];
-    const md = buildManagementReport(ov({ kpi: { hasData: false } }), sc, marks, '2026-05-31');
+    const md = buildManagementReport(ov({ kpi: { hasData: false } }), sc, marks, '2026-05-31', MANUAL);
     expect(md).toContain('総合リスク: **要対応** — 🔴 1 / 🟡 1 / 🟢 2 (計 4 件)');
   });
 
@@ -285,7 +291,7 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
         operatingProfit: { achievementPct: 110 },
       },
     });
-    const md = buildManagementReport(full, sc, hl, '2026-05-31', trend, 50);
+    const md = buildManagementReport(full, sc, hl, '2026-05-31', MANUAL, trend, 50);
     expect(md).toBe(
       [
         '# 経営レポート (Pro プラン)',
@@ -352,44 +358,44 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
 
   it('rounds yen via Math.round (kills the rounding arithmetic)', () => {
     // 1,000,000.6 → ¥1,000,001 (四捨五入)。Math.round を消す/別演算にする変異を撃墜。
-    const md = buildManagementReport(ov({ kpi: { revenue: 1_000_000.6 } }), sc, [], '2026-05-31');
+    const md = buildManagementReport(ov({ kpi: { revenue: 1_000_000.6 } }), sc, [], '2026-05-31', MANUAL);
     expect(md).toContain('売上高: ¥1,000,001');
   });
 
   it('shows — for a non-finite break-even point', () => {
-    const md = buildManagementReport(ov({ kpi: { bep: Infinity } }), sc, [], '2026-05-31');
+    const md = buildManagementReport(ov({ kpi: { bep: Infinity } }), sc, [], '2026-05-31', MANUAL);
     expect(md).toContain('損益分岐点: — / 安全余裕率');
   });
 
   // 安全余裕率は 2026-09-07 から `number | null` (算定不能を 0 に倒さない)。
   // 出す側の畳み込みを両方向で留める —— 片側だけだと三項の変異体が生き残る。
   it('★ 安全余裕率が算定不能 (null) なら — で出す', () => {
-    const md = buildManagementReport(ov({ kpi: { bep: Infinity, safetyMargin: null } }), sc, [], '2026-05-31');
+    const md = buildManagementReport(ov({ kpi: { bep: Infinity, safetyMargin: null } }), sc, [], '2026-05-31', MANUAL);
     expect(md).toContain('安全余裕率 —');
   });
 
   it('★ 対照: 値が在れば数字で出す (負でも)', () => {
-    const md = buildManagementReport(ov({ kpi: { safetyMargin: -50 } }), sc, [], '2026-05-31');
+    const md = buildManagementReport(ov({ kpi: { safetyMargin: -50 } }), sc, [], '2026-05-31', MANUAL);
     expect(md).toContain('安全余裕率 -50.0%');
   });
 
   it('omits the P&L section when kpi has no data (hasData guard)', () => {
-    expect(buildManagementReport(ov({ kpi: { hasData: false } }), sc, [], '2026-05-31')).not.toContain('## 損益 (P&L)');
+    expect(buildManagementReport(ov({ kpi: { hasData: false } }), sc, [], '2026-05-31', MANUAL)).not.toContain('## 損益 (P&L)');
   });
 
   it('omits the highlights section when there are none (length > 0, strict)', () => {
-    expect(buildManagementReport(ov(), sc, [], '2026-05-31')).not.toContain('## 経営ハイライト');
+    expect(buildManagementReport(ov(), sc, [], '2026-05-31', MANUAL)).not.toContain('## 経営ハイライト');
   });
 
   it('omits an individual category line when its score is null', () => {
     // 安全性 score=null → 行なし。c.score !== null ガードの両方向と StringLiteral を撃墜。
-    const md = buildManagementReport(ov(), sc, [], '2026-05-31');
+    const md = buildManagementReport(ov(), sc, [], '2026-05-31', MANUAL);
     expect(md).toContain('- 収益性: 75 / 100');
     expect(md).not.toContain('安全性:');
   });
 
   it('omits growth / YoY / break-even lines when their values are null', () => {
-    const md = buildManagementReport(ov({ kpi: { revenueGrowthPct: null, yoy: null } }), sc, [], '2026-05-31', [], null);
+    const md = buildManagementReport(ov({ kpi: { revenueGrowthPct: null, yoy: null } }), sc, [], '2026-05-31', MANUAL, [], null);
     expect(md).toContain('## 損益 (P&L)');
     expect(md).not.toContain('前期比成長率');
     expect(md).not.toContain('前年同月比 (YoY)');
@@ -397,32 +403,32 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
   });
 
   it('omits the YoY line when yoy is present but its pct is null (inner guard)', () => {
-    const md = buildManagementReport(ov({ kpi: { yoy: { revenueYoYPct: null, period: '2026-05', priorPeriod: '2025-05' } } }), sc, [], '2026-05-31');
+    const md = buildManagementReport(ov({ kpi: { yoy: { revenueYoYPct: null, period: '2026-05', priorPeriod: '2025-05' } } }), sc, [], '2026-05-31', MANUAL);
     expect(md).not.toContain('前年同月比 (YoY)');
   });
 
   it('signs YoY / break-even at zero and negative (kills the > 0 sign ternaries)', () => {
-    const zero = buildManagementReport(ov({ kpi: { yoy: { revenueYoYPct: 0, period: '2026-05', priorPeriod: '2025-05' } } }), sc, [], '2026-05-31', [], 0);
+    const zero = buildManagementReport(ov({ kpi: { yoy: { revenueYoYPct: 0, period: '2026-05', priorPeriod: '2025-05' } } }), sc, [], '2026-05-31', MANUAL, [], 0);
     expect(zero).toContain('前年同月比 (YoY): 0% (2026-05 vs 2025-05)');
     expect(zero).toContain('損益分岐点までの売上余地: 0%');
-    const neg = buildManagementReport(ov({ kpi: { yoy: { revenueYoYPct: -10, period: '2026-05', priorPeriod: '2025-05' } } }), sc, [], '2026-05-31', [], -50);
+    const neg = buildManagementReport(ov({ kpi: { yoy: { revenueYoYPct: -10, period: '2026-05', priorPeriod: '2025-05' } } }), sc, [], '2026-05-31', MANUAL, [], -50);
     expect(neg).toContain('前年同月比 (YoY): -10%');
     expect(neg).toContain('損益分岐点までの売上余地: -50%');
   });
 
   it('flags insolvency in the BS section and omits the flag when solvent', () => {
     const insolvent = buildManagementReport(
-      ov({ fp: { equityRatioPct: -5, currentRatioPct: 80, roaPct: -2, roePct: -10, insolvent: true } }), sc, [], '2026-05-31');
+      ov({ fp: { equityRatioPct: -5, currentRatioPct: 80, roaPct: -2, roePct: -10, insolvent: true } }), sc, [], '2026-05-31', MANUAL);
     expect(insolvent).toContain('- ⚠ 純資産がマイナス (債務超過) です。');
     const solvent = buildManagementReport(
-      ov({ fp: { equityRatioPct: 50, currentRatioPct: 200, roaPct: 10, roePct: 20, insolvent: false } }), sc, [], '2026-05-31');
+      ov({ fp: { equityRatioPct: 50, currentRatioPct: 200, roaPct: 10, roePct: 20, insolvent: false } }), sc, [], '2026-05-31', MANUAL);
     expect(solvent).toContain('## 財政状態 (BS)');
     expect(solvent).not.toContain('純資産がマイナス');
   });
 
   it('renders — for null BS ratios (pctOrDash null branch)', () => {
     const md = buildManagementReport(
-      ov({ fp: { equityRatioPct: null, currentRatioPct: null, roaPct: null, roePct: null, insolvent: false } }), sc, [], '2026-05-31');
+      ov({ fp: { equityRatioPct: null, currentRatioPct: null, roaPct: null, roePct: null, insolvent: false } }), sc, [], '2026-05-31', MANUAL);
     expect(md).toContain('- 自己資本比率: — / 流動比率: —');
     expect(md).toContain('- ROA: — / ROE: —');
   });
@@ -430,7 +436,7 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
   it('omits runway / shortfall lines when null while keeping the CF section', () => {
     const md = buildManagementReport(
       ov({ accounting: { totalNet: 100, avgMonthlyNet: 50 }, runwayMonths: null, cashForecast: { shortfallMonthIndex: null } }),
-      sc, [], '2026-05-31');
+      sc, [], '2026-05-31', MANUAL);
     expect(md).toContain('## 資金繰り (CF)');
     expect(md).toContain('- 営業CF合計: ¥100 (月次平均 ¥50)');
     expect(md).not.toContain('資金ランウェイ');
@@ -438,7 +444,7 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
   });
 
   it('omits BS / CF / BVA / trend sections entirely when their data is absent', () => {
-    const md = buildManagementReport(ov(), sc, [], '2026-05-31', trend.slice(0, 1));
+    const md = buildManagementReport(ov(), sc, [], '2026-05-31', MANUAL, trend.slice(0, 1));
     expect(md).not.toContain('## 財政状態 (BS)');
     expect(md).not.toContain('## 資金繰り (CF)');
     expect(md).not.toContain('## 予算実績差異 (BVA)');
@@ -468,7 +474,7 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
 
     it('★ 月次推移テーブルの営業利益率も「—」', () => {
       const o = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: noRev, members: [] });
-      const md = buildManagementReport(o, sc, [], '2026-05-31', monthlyTrendSeries(noRev));
+      const md = buildManagementReport(o, sc, [], '2026-05-31', MANUAL, monthlyTrendSeries(noRev));
       expect(md).toContain('| 2026-04 | ¥0 | ¥-1,500,000 | — | — |');
       expect(md).toContain('| 2026-05 | ¥0 | ¥-1,500,000 | — | — |');
     });
@@ -480,13 +486,39 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
     });
   });
 
+  /**
+   * **手入力の上書きの断りは、書面と同じ相手に渡るレポートにも要る。**
+   * 前文の直後に置く —— 下の全部に掛かるので (書面は注記に置く)。
+   */
+  describe('手入力の上書き', () => {
+    const overridden = { overridden: ['kpi.revenue'], staleDerived: [
+      { path: 'kpi.operatingMarginPct', label: '営業利益率', because: ['kpi.revenue'] },
+    ] };
+
+    it('★ 前文の直後に節が出て、手で置いた欄と自動値のままの指標を述べる', () => {
+      const md = buildManagementReport(ov(), sc, [], '2026-05-31', overridden);
+      expect(md).toContain('## 手入力の上書き');
+      expect(md).toContain('- 売上高は手で置いた数値です');
+      expect(md).toContain('- ⚠ 営業利益率は自動計算のままで');
+      // 前文 → 手入力 → 総合判定 の順 (下の全部に掛かる断りなので先に置く)
+      expect(md.indexOf('財務・税務助言ではありません')).toBeLessThan(md.indexOf('## 手入力の上書き'));
+      expect(md.indexOf('## 手入力の上書き')).toBeLessThan(md.indexOf('## 総合判定'));
+    });
+
+    it('★ 対照: 上書きが無ければ節そのものが出ない', () => {
+      const md = buildManagementReport(ov(), sc, [], '2026-05-31', MANUAL);
+      expect(md).not.toContain('## 手入力の上書き');
+      expect(md).not.toContain('手で置いた数値');
+    });
+  });
+
   it('signs a negative growth row in the monthly-trend table and dashes a null one', () => {
     const rows = [
       { period: '2026-03', revenue: 1_000_000, operatingProfit: 100_000, operatingMarginPct: 10, revenueGrowthPct: null },
       { period: '2026-04', revenue: 900_000, operatingProfit: 50_000, operatingMarginPct: 5.5, revenueGrowthPct: -10 },
       { period: '2026-05', revenue: 900_000, operatingProfit: 50_000, operatingMarginPct: 5.5, revenueGrowthPct: 0 },
     ] as any as Tr;
-    const md = buildManagementReport(ov(), sc, [], '2026-05-31', rows);
+    const md = buildManagementReport(ov(), sc, [], '2026-05-31', MANUAL, rows);
     expect(md).toContain('| 2026-03 | ¥1,000,000 | ¥100,000 | 10.0% | — |');
     expect(md).toContain('| 2026-04 | ¥900,000 | ¥50,000 | 5.5% | -10% |');
     expect(md).toContain('| 2026-05 | ¥900,000 | ¥50,000 | 5.5% | 0% |');

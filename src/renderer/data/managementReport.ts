@@ -12,6 +12,7 @@ import type { BusinessOverview } from './overview';
 import { VERDICT_LABEL, type ManagementScorecard } from '../../shared/managementScorecard';
 import { summarizeHighlights, RISK_BAND_LABEL, type Highlight } from './managementHighlights';
 import { formatPeriodWindow, zeroRevenueRatioNote, type MonthlyTrendRow } from './kpiActuals';
+import { manualOverrideNote, staleDerivedNote, type ManualOverrideDisclosure } from './overviewOverrides';
 
 const SEVERITY_MARK: Record<Highlight['severity'], string> = {
   critical: '🔴', warning: '🟡', good: '🟢',
@@ -40,6 +41,14 @@ export function buildManagementReport(
   scorecard: ManagementScorecard,
   highlights: readonly Highlight[],
   asOf: string,
+  /**
+   * 手入力の上書きの状況。**既定値を置かない** —— このレポートは
+   * 「役員会・銀行・税理士への共有に」と自ら書いており、書面と同じ相手に渡る。
+   * 渡し忘れが断り書きの無いレポートになるのを型で止める
+   * (経緯は `overviewOverrides.ts` の `staleDerivedNote`)。**必須の引数は
+   * 任意の引数より前に置く** —— 後ろに置くと呼び手が 7 つ全部を書く。
+   */
+  manual: ManualOverrideDisclosure,
   // 既定 `[]` は `length >= 2` ゲートにより要素数1の配列と出力上区別できない (どちらもテーブル
   // 非出力) ため、ArrayDeclaration 変異は equivalent。
   // Stryker disable next-line ArrayDeclaration
@@ -56,6 +65,18 @@ export function buildManagementReport(
   lines.push('');
   lines.push('> ※ 本レポートは入力済みデータからの概算の経営診断であり、財務・税務助言ではありません。');
   lines.push('');
+
+  // **手入力の上書きは、下の全部に掛かる** ので前文の直後に置く
+  // (書面は注記に置く。同じ 2 文を `overviewOverrides.ts` が 1 か所で持つ)。
+  const manualNote = manualOverrideNote(manual);
+  const staleNote = staleDerivedNote(manual);
+  if (manualNote !== null || staleNote !== null) {
+    lines.push('## 手入力の上書き');
+    lines.push('');
+    if (manualNote !== null) lines.push(`- ${manualNote}`);
+    if (staleNote !== null) lines.push(`- ⚠ ${staleNote}`);
+    lines.push('');
+  }
 
   // 総合判定
   lines.push('## 総合判定');

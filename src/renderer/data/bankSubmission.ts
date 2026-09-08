@@ -38,6 +38,7 @@ import {
 } from '../../shared/bankFormat';
 import { VERDICT_LABEL, type ManagementScorecard } from '../../shared/managementScorecard';
 import { budgetUnmatchedNote, type BudgetPeriodAlignment } from './budgetVariance';
+import { manualOverrideNote, staleDerivedNote, type ManualOverrideDisclosure } from './overviewOverrides';
 import { monthsPerYear, periodDaysForMonths } from './workingCapital';
 import type { BusinessOverview } from './overview';
 import type { CashflowDebtService } from './cashflowDebtService';
@@ -158,6 +159,12 @@ export interface BankSubmissionInput {
   /** 作成日 (現地の `YYYY-MM-DD`)。 */
   readonly today: string;
   readonly settings: BankSubmissionSettings;
+  /**
+   * 手入力の上書きの状況。**必須** —— 既定値を置くと、渡し忘れた呼び手が
+   * 断り書きの無い書面を刷る (経緯は `overviewOverrides.ts` の
+   * `staleDerivedNote`)。上書きが無いなら `NO_MANUAL_OVERRIDES` を明示して渡す。
+   */
+  readonly manual: ManualOverrideDisclosure;
 }
 
 const TREND_LABEL: Readonly<Record<'up' | 'down' | 'flat', string>> = { up: '上昇', down: '下降', flat: '横ばい' };
@@ -637,9 +644,22 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
     });
   }
 
+  /**
+   * 注記。**手入力の上書きが在るなら、それを注記で述べる** ——
+   * この書面は「上記のとおり相違ありません。」で代表者名つきで終わるのに、
+   * 2026-09-08 まで手入力の文字が 1 つも無く、注記は「実績の累計」と
+   * 断言していた (経緯は `overviewOverrides.ts` の `staleDerivedNote`)。
+   */
+  const manualNote = manualOverrideNote(input.manual);
+  const staleNote = staleDerivedNote(input.manual);
   const notes = [
     `金額は${UNIT_LABEL[f.unit]}単位（${roundingCaption(f)}）で表示し、負数は「${NEGATIVE_MARK[f.negative]}」で示す。比率は小数第 1 位未満を四捨五入。該当なし・算定不能は「${BLANK}」。`,
-    `損益・販売・人員の数値は当社が入力した実績（対象期間 ${rangeLabel}）の累計。財政状態・運転資本は基準日 ${bsLabel} の貸借対照表による。`,
+    // 手入力が混ざっているなら「実績の累計」と断言しない (述べ方を変える)。
+    manualNote === null
+      ? `損益・販売・人員の数値は当社が入力した実績（対象期間 ${rangeLabel}）の累計。財政状態・運転資本は基準日 ${bsLabel} の貸借対照表による。`
+      : `損益・販売・人員の数値は当社が入力した実績（対象期間 ${rangeLabel}）の累計に、下記の手入力を重ねたもの。財政状態・運転資本は基準日 ${bsLabel} の貸借対照表による。`,
+    ...(manualNote === null ? [] : [manualNote]),
+    ...(staleNote === null ? [] : [staleNote]),
     '資金繰りは会計ソフト連携（freee）の月次営業キャッシュフロー、返済余力は同キャッシュフローと借入返済予定の突合による。',
     '経営スコアは当社内部の評価指標であり、金融機関等の信用格付けとは関係がない。',
     '本書は決算書・試算表に代わるものではなく、その補足資料として提出する。',

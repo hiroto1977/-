@@ -6,6 +6,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildBankSubmissionSheet, type BankSubmissionSettings } from '../bankSubmission';
 import { buildBusinessOverview } from '../overview';
+import { NO_MANUAL_OVERRIDES } from '../overviewOverrides';
 import { buildManagementScorecard } from '../../../shared/managementScorecard';
 import { combineCashflowDebtService } from '../cashflowDebtService';
 import { BANK_FORMAT_DEFAULT } from '../../../shared/bankFormat';
@@ -52,7 +53,7 @@ describe('金融機関等提出用の書面 — 全文', () => {
         grossMarginPct: overview.kpi.grossMarginPct ?? undefined,
       }),
       debtService: combineCashflowDebtService(ACCOUNTING, REPAYMENTS),
-      balanceSheetAsOf: BS.asOf, today: '2026-09-04', settings: SETTINGS,
+      balanceSheetAsOf: BS.asOf, today: '2026-09-04', settings: SETTINGS, manual: NO_MANUAL_OVERRIDES,
     });
     expect(m.title).toBe('経営サマリー');
     expect(m.subtitle).toBe('経営概況・財務指標一覧');
@@ -182,7 +183,7 @@ describe('金融機関等提出用の書面 — 全文', () => {
     const m = buildBankSubmissionSheet({
       overview,
       scorecard: buildManagementScorecard({}),
-      debtService: null, balanceSheetAsOf: null, today: '2026-09-04', settings: SETTINGS,
+      debtService: null, balanceSheetAsOf: null, today: '2026-09-04', settings: SETTINGS, manual: NO_MANUAL_OVERRIDES,
     });
     expect(m.meta).toEqual([
       { label: '商号', value: '株式会社テスト' },
