@@ -14,6 +14,7 @@
  */
 
 import { escapeXml, escapeMarkdownInline } from '../../shared/escape';
+import { ratioPctOrDash } from '../../shared/num';
 import { mockCandles, type WebCandle, type WebSignal } from './stocksWatchlistWeb';
 
 const HISTORY_LENGTH = 120;
@@ -326,7 +327,8 @@ export interface BacktestResult {
   finalEquity: number;
   totalReturnPct: number;
   maxDrawdownPct: number;
-  winRate: number;
+  /** 勝率 (0..1)。**決済済みが 0 件なら null (算定不能)。** */
+  winRate: number | null;
   tradeCount: number;
 }
 
@@ -399,7 +401,9 @@ export function backtest(
     finalEquity,
     totalReturnPct: ((finalEquity - initialCash) / initialCash) * 100,
     maxDrawdownPct: maxDrawdown * 100,
-    winRate: completed > 0 ? wins / completed : 0,
+    // **決済が 1 件も無いなら勝率は算定できない (null)。** 0 は
+    // 「決済した取引が在り、どれも勝てなかった」の意味 (2026-09-08 · パス 92)。
+    winRate: completed > 0 ? wins / completed : null,
     tradeCount: port.history.length,
   };
 }
@@ -411,7 +415,7 @@ export interface StrategyComparisonRow {
   finalEquity: number;
   totalReturnPct: number;
   maxDrawdownPct: number;
-  winRate: number;
+  winRate: number | null;
   tradeCount: number;
 }
 export interface StrategyComparisonResult {
@@ -607,7 +611,7 @@ export function renderDashboardHtml(input: DashboardInput): string {
     ? `<h2>戦略比較 — ${escapeXml(input.strategyComparison.symbol)}</h2><table border="1" cellpadding="6" style="border-collapse:collapse"><tr><th>戦略</th><th>最終資産</th><th>リターン%</th><th>最大DD%</th><th>勝率</th><th>取引数</th></tr>${input.strategyComparison.rows
         .map(
           (r) =>
-            `<tr><td>${escapeXml(r.strategy)}</td><td style="text-align:right">${r.finalEquity.toFixed(0)}</td><td style="text-align:right">${r.totalReturnPct.toFixed(2)}</td><td style="text-align:right">${r.maxDrawdownPct.toFixed(2)}</td><td style="text-align:right">${(r.winRate * 100).toFixed(0)}%</td><td style="text-align:right">${r.tradeCount}</td></tr>`,
+            `<tr><td>${escapeXml(r.strategy)}</td><td style="text-align:right">${r.finalEquity.toFixed(0)}</td><td style="text-align:right">${r.totalReturnPct.toFixed(2)}</td><td style="text-align:right">${r.maxDrawdownPct.toFixed(2)}</td><td style="text-align:right">${ratioPctOrDash(r.winRate)}</td><td style="text-align:right">${r.tradeCount}</td></tr>`,
         )
         .join('')}</table><p>最良 (リターン基準): ${input.strategyComparison.bestByReturn ? escapeXml(input.strategyComparison.bestByReturn) : '差なし'}</p>`
     : '';
@@ -644,7 +648,7 @@ export function renderDashboardMarkdown(input: DashboardInput): string {
     const c = input.strategyComparison;
     lines.push('', `## 戦略比較 — ${escapeMarkdownInline(c.symbol)}`, '', '| 戦略 | 最終資産 | リターン% | 最大DD% | 勝率 | 取引数 |', '| --- | ---: | ---: | ---: | ---: | ---: |');
     for (const r of c.rows) {
-      lines.push(`| ${escapeMarkdownInline(r.strategy)} | ${r.finalEquity.toFixed(0)} | ${r.totalReturnPct.toFixed(2)} | ${r.maxDrawdownPct.toFixed(2)} | ${(r.winRate * 100).toFixed(0)}% | ${r.tradeCount} |`);
+      lines.push(`| ${escapeMarkdownInline(r.strategy)} | ${r.finalEquity.toFixed(0)} | ${r.totalReturnPct.toFixed(2)} | ${r.maxDrawdownPct.toFixed(2)} | ${ratioPctOrDash(r.winRate)} | ${r.tradeCount} |`);
     }
     lines.push('', `最良 (リターン基準): ${c.bestByReturn === null ? '差なし' : escapeMarkdownInline(c.bestByReturn)}`);
   }

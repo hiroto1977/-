@@ -1,5 +1,6 @@
 import { MAX_ADVISOR_QUESTION_CHARS, checkAdvisorQuestion } from '../../shared/advisorQuestionLimits';
 import { seededNoise } from '../../shared/seededNoise';
+import { ratioPctOrDash } from '../../shared/num';
 import { escapeXml, escapeMarkdownInline, escapeMarkdownText } from '../../shared/escape';
 import type { FetchContext, ActionContext, ActionMap } from './types';
 import { limitedFetch, readCapped, redactForMessage } from './types';
@@ -99,7 +100,7 @@ export interface BacktestResult {
   readonly finalEquity: number;
   readonly totalReturnPct: number;
   readonly maxDrawdownPct: number;
-  readonly winRate: number; // 0..1
+  readonly winRate: number | null; // 0..1。**決済済みが 0 件なら null (算定不能)**
   readonly tradeCount: number;
   readonly trades: readonly PaperTrade[];
   /** Per-bar portfolio equity (cash + held position value). Length =
@@ -652,9 +653,10 @@ export function backtest(
     // catch both directions).
     // Stryker disable next-line ArithmeticOperator
     maxDrawdownPct: maxDrawdown * 100,
-    // completed > 0 ? wins / completed : 0 — the `0` fallback fires
-    // when no trades pair up; tested separately by the no-trade case.
-    winRate: completed > 0 ? wins / completed : 0,
+    // **決済が 1 件も無いなら勝率は算定できない (null)。**
+    // 0 は「決済した取引が在り、どれも勝てなかった」という意味なので、
+    // 1 度も取引していない戦略に付けると最悪値として読める (2026-09-08 · パス 92)。
+    winRate: completed > 0 ? wins / completed : null,
     tradeCount: port.history.length,
     trades: port.history,
     equityCurve,
@@ -921,7 +923,7 @@ export interface StrategyComparisonRow {
   readonly finalEquity: number;
   readonly totalReturnPct: number;
   readonly maxDrawdownPct: number;
-  readonly winRate: number;
+  readonly winRate: number | null;
   readonly tradeCount: number;
 }
 
@@ -1499,7 +1501,7 @@ export function renderDashboardHtml(input: DashboardInput): string {
   <td class="num">${escapeXml(YEN_FMT.format(r.finalEquity))}</td>
   <td class="num" style="color:${r.totalReturnPct >= 0 ? '#22c55e' : '#ef4444'}">${r.totalReturnPct >= 0 ? '+' : ''}${r.totalReturnPct.toFixed(2)}%</td>
   <td class="num">${r.maxDrawdownPct.toFixed(2)}%</td>
-  <td class="num">${(r.winRate * 100).toFixed(0)}%</td>
+  <td class="num">${ratioPctOrDash(r.winRate)}</td>
   <td class="num">${r.tradeCount}</td>
 </tr>`;
       })
@@ -1808,7 +1810,7 @@ export function renderDashboardMarkdown(input: DashboardInput): string {
           // Stryker disable next-line ConditionalExpression
           const isBest = r.strategy === strategyComparison.bestByReturn;
           const label = isBest ? `**${escapeMarkdownInline(r.strategy)} (最良)**` : escapeMarkdownInline(r.strategy);
-          return `| ${label} | ${YEN_FMT.format(r.finalEquity)} | ${sign}${r.totalReturnPct.toFixed(2)}% | ${r.maxDrawdownPct.toFixed(2)}% | ${(r.winRate * 100).toFixed(0)}% | ${r.tradeCount} |`;
+          return `| ${label} | ${YEN_FMT.format(r.finalEquity)} | ${sign}${r.totalReturnPct.toFixed(2)}% | ${r.maxDrawdownPct.toFixed(2)}% | ${ratioPctOrDash(r.winRate)} | ${r.tradeCount} |`;
         }),
       ].join('\n')
     : '';

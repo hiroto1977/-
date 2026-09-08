@@ -3,6 +3,8 @@ import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { exportWarning } from '../data/exportOutcome';
+import { ratioPctOrDash } from '../../shared/num';
+import type { StrategyComparisonResult } from '../data/stocksAnalysisWeb';
 
 interface AdvisorRecommendation {
   symbol: string;
@@ -210,20 +212,10 @@ export function StocksPage() {
   }
 
   // --- Strategy comparison state ----------------------------------------
-  interface StrategyComparisonRow {
-    strategy: string;
-    finalEquity: number;
-    totalReturnPct: number;
-    maxDrawdownPct: number;
-    winRate: number;
-    tradeCount: number;
-  }
-  interface StrategyComparisonResult {
-    symbol: string;
-    initialCash: number;
-    rows: StrategyComparisonRow[];
-    bestByReturn: string | null;
-  }
+  // **型を手で写さない。** `invoke<T>()` は T を検査しないので、写しがずれても
+  // tsc は黙る (パス 62 / 80)。実物 (ブラウザ版の双子) の型をそのまま読む ——
+  // 写しを残していたら `winRate: number` のままで、`(null * 100).toFixed(0)` が
+  // **"0"** を刷り、直したはずの欠陥がそのまま残っていた (2026-09-08 · パス 92)。
   const [compareSymbol, setCompareSymbol] = useState('AAPL');
   const [compareBusy, setCompareBusy] = useState(false);
   const [compareError, setCompareError] = useState<string | null>(null);
@@ -823,7 +815,7 @@ export function StocksPage() {
                       最大DD {r.maxDrawdownPct.toFixed(1)}%
                     </span>
                     <span style={{ color: 'var(--text-mute)' }}>
-                      勝率 {(r.winRate * 100).toFixed(0)}%
+                      勝率 {ratioPctOrDash(r.winRate)}
                     </span>
                     <span style={{ color: 'var(--text-mute)' }}>
                       {r.tradeCount} 取引

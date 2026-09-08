@@ -702,7 +702,10 @@ describe('backtest', () => {
     expect(res.tradeCount).toBe(0);
     expect(res.finalEquity).toBe(10_000);
     expect(res.totalReturnPct).toBe(0);
-    expect(res.winRate).toBe(0);
+    // **決済が 1 件も無いので勝率は算定できない (null)。** 0 は「決済した取引が
+    // 在り、どれも勝てなかった」の意味。上の 2 つの 0 は正しい —— 現金のまま
+    // 持てば本当に 0% で、値下がりもしない (2026-09-08 · パス 92)。
+    expect(res.winRate).toBeNull();
     expect(res.maxDrawdownPct).toBe(0);
     expect(res.trades).toEqual([]);
   });
@@ -2353,8 +2356,15 @@ describe('compareStrategiesImpl', () => {
       expect(row.finalEquity).toBeGreaterThan(0);
       expect(typeof row.totalReturnPct).toBe('number');
       expect(typeof row.maxDrawdownPct).toBe('number');
-      expect(row.winRate).toBeGreaterThanOrEqual(0);
-      expect(row.winRate).toBeLessThanOrEqual(1);
+      // 決済済みが 0 件の戦略は null (算定不能)。数が出ているなら 0..1 に入る。
+      //
+      // **`if` で包むと、全行が null のとき 1 度も走らない空の検査になる**
+      // (この銘柄・この初期資金では実際に 3 戦略とも決済に至らない)。かといって
+      // 「全部 null」を留めると、見本を変えた瞬間に壊れる不変条件になる ——
+      // パス 87 で私がやった失敗である。**どの行にも必ず当たる形**で書く。
+      // 実数側の範囲は take-profit (=== 1) と stop-loss (=== 0) の 2 本が
+      // 別に留めている (2026-09-08 · パス 92)。
+      expect(row.winRate === null || (row.winRate >= 0 && row.winRate <= 1)).toBe(true);
       expect(row.tradeCount).toBeGreaterThanOrEqual(0);
     }
   });

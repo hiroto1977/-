@@ -16554,16 +16554,16 @@ expect(h.costPerShippedPlantYen).toBe(0);   // ← 同じ理屈が当たって�
 理由が出ていなかった面の都合で動かさない。
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **104 ファイル / 283 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **104 ファイル / 281 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
 | `src/shared/funding.ts` | 13 |
-| `src/main/clients/stocks.ts` | 10 |
 | `src/renderer/data/investments.ts` | 10 |
-| `src/renderer/data/stocksAnalysisWeb.ts` | 9 |
+| `src/main/clients/stocks.ts` | 9 |
 | `src/renderer/pages/DocstudioPage.tsx` | 9 |
 | `src/shared/taxDeductions.ts` | 9 |
+| `src/renderer/data/stocksAnalysisWeb.ts` | 8 |
 | `src/shared/mutualFundsMetrics.ts` | 7 |
 | `src/renderer/components/FinancialAnalysis.tsx` | 6 |
 | `src/shared/taxCredits.ts` | 6 |
@@ -17263,3 +17263,119 @@ positive={(dcf.irr ?? 0) >= 0}
 ### 0 倒しの母集団
 
 `?? 0` を 5 件外したので census は **105 ファイル / 288 件 → 104 / 283**。
+
+## パス 92 (2026-09-08) — 1 度も決済していない戦略の勝率を**「0%」**と刷っていた
+
+### 何が起きていたか
+
+```ts
+winRate: completed > 0 ? wins / completed : 0,
+```
+
+`completed = wins + losses` は**決済まで至った往復**の数である。0 件のときに 0 を返すと、
+画面と書き出しは「**決済した取引が在り、どれも勝てなかった**」と読める**最悪値**を刷る。
+
+### 実測 (既定の初期資金 100 万円・戦略比較)
+
+3 戦略のうち **2 つが 1 度も取引していない**のに、表はこう並んでいた:
+
+| 戦略 | 勝率 | 取引 | リターン | 最大DD |
+| --- | --- | --- | --- | --- |
+| sma-crossover | **0%** | **0** | 0.00% | 0.00 |
+| rsi-mean-reversion | **0%** | **0** | 0.00% | 0.00 |
+| macd-signal | 67% | 6 | 0.55% | 0.60 |
+
+**「0 取引」と「勝率 0%」は同時に成り立たない。** 表が自分自身と矛盾している。
+
+さらに悪い形が**買い持ち** (`tradeCount = 1`・建てたまま) で、そこには「0 取引」という
+手掛かりすら無いまま「勝率 0%」だけが出る。既存の検査
+`it('buys and holds to the end, …')` がその形を `winRate).toBe(0)` で固定していた。
+
+### 同じ行の「リターン 0.00%」「最大DD 0.00%」は**正しい** (直していない)
+
+現金のまま持てば本当に 0% で、値下がりもしない。**捏造しているのは勝率だけ**である
+—— 最初は 4 欄すべてを欠陥として書きかけたが、読み直して 1 欄に絞った。
+
+### 面は 8 つ在った
+
+| 面 | 場所 |
+| --- | --- |
+| 値 (デスクトップ) | `main/clients/stocks.ts:657` |
+| 値 (ブラウザ版) | `renderer/data/stocksAnalysisWeb.ts:402` |
+| HTML 書き出し ×2 | `stocks.ts:1502` / `stocksAnalysisWeb.ts:610` |
+| Markdown 書き出し ×2 | `stocks.ts:1811` / `stocksAnalysisWeb.ts:647` |
+| 画面 | `StocksPage.tsx:826` |
+| **手写しの payload 型** | `StocksPage.tsx:213-226` |
+
+書き出し 4 面は**相手に渡る面**で、パス 41 が記録した「断り書きは画面に付いていても
+書き出しには travel しない」と同じ場所である。
+
+### 見本が欠陥を仕様として固定していた —— **両方の実装で** (29・30 件目)
+
+デスクトップ側:
+
+```ts
+// Constant prices → no crossovers → no trades;
+expect(res.tradeCount).toBe(0);
+expect(res.winRate).toBe(0);      // ← 3 行上で「no trades」と書いている
+```
+
+ブラウザ版:
+
+```ts
+it('a never-trading strategy leaves equity untouched', …
+  expect(r.winRate).toBe(0);
+  expect(r.tradeCount).toBe(0);   // ← 名前が「never-trading」
+```
+
+しかも**実装側の注釈がその見本を指していた**:
+`// the \`0\` fallback fires when no trades pair up; tested separately by the
+no-trade case.` —— 分岐の存在を知り、検査を書き、それで固定していた。
+
+同じファイルの 3 本あとには**本物の負け** (stop-loss・`tradeCount 2`) に対する
+`winRate).toBe(0)` が在る。**同じ値 0 が「1 度も取引していない」と「取引して負けた」の
+両方の仕様として固定されていた** —— そのファイル自身が、0 では区別できないことの証拠である。
+
+### 直し
+
+`src/shared/num.ts` に `ratioPctOrDash(n, digits)` を 1 つ置いた (この本の冒頭が
+「1 行の私的ヘルパはコピーの数だけ食い違う」と言っているとおり、2 実装が同じ表を
+刷るので綴りを 1 か所にする)。`winRate: number | null` にし、6 つの刷る場所を helper へ。
+
+**画面の手写しの型は消して実物の型を import した。** `invoke<T>()` は T を検査しないので、
+写しを残すと `winRate: number` のままになる。
+
+### 対照 (6 本すべて実際に壊して確かめた)
+
+| 壊した所 | 鳴った物 |
+| --- | --- |
+| A: デスクトップの値を `: 0` に戻す | ★ **3 本** (新 2 + 既存 1) |
+| B: デスクトップ HTML の刷り方を戻す | ★ 1 本 |
+| C: デスクトップ Markdown を戻す | ★ 1 本 |
+| D: ブラウザ版の値と HTML を戻す | ★ **3 本** (双子の一致検査を含む) |
+| E: `ratioPctOrDash` が null を `0%` に潰す | ★ **5 本** |
+| **G: 手写しの型を戻し、画面も元の書き方に戻す** | **tsc は 1 件も鳴らなかった** |
+
+**対照 G が本題である。** 型を手で写したまま画面を元の書き方に戻すと、
+`npm run typecheck` は**完全に沈黙**し、実行時は `(null * 100).toFixed(0)` で
+**「勝率 0%」**を刷る。**型だけを直す修正では画面に届かなかった** ——
+パス 62 (刷るのは「∞」) と同じ機構で、写しを消す理由の実測である。
+
+### 到達しない経路を 1 つ、直さずに記録する
+
+`totalReturnPct: ((finalEquity - initialCash) / initialCash) * 100` は
+`initialCash = 0` で **NaN** になり、画面は `NaN >= 0 === false` から
+**「NaN%」を赤で**刷る。`main` の `createPaperPortfolio` は
+`initialCash < 0` だけを弾いて **0 は通す**ので、検証器の側は 0 を許している。
+一方ブラウザ版の双子 (`stocksAnalysisWeb.ts:270`) は**検証を 1 つも持たない**
+(パス 60 の「双子の片方だけが守っている」形)。
+
+ただし実際の呼び出しは `createPaperPortfolio(SNAPSHOT_INITIAL_CASH)` の定数だけで、
+`initialCash` を 0 にする操作は画面に無い。**到達しないので直さない** ——
+パス 87 / 88 で決めた方針 (読める経路と読めない経路を混ぜない) に従う。
+`StocksPage.tsx:160` は同じ量に `initialCash > 0 ? … : 0` の番人を置いているので、
+**作者も 0 を想定していた**ことは記録しておく。
+
+### 0 倒しの母集団
+
+`? … : 0` を 2 件 `null` にしたので census は **104 ファイル / 283 件 → 104 / 281**。

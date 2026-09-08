@@ -186,7 +186,11 @@ describe('backtest (paper trading)', () => {
     expect(r.finalEquity).toBe(10_000);
     expect(r.totalReturnPct).toBe(0);
     expect(r.maxDrawdownPct).toBe(0);
-    expect(r.winRate).toBe(0);
+    // **決済が 1 件も無いので勝率は算定できない (null)。**
+    // 0 は「決済した取引が在り、どれも勝てなかった」の意味なので、ここには
+    // 当てはまらない。`totalReturnPct` / `maxDrawdownPct` の 0 は**正しい**
+    // —— 現金のまま持てば本当に 0% で、値下がりもしない (2026-09-08 · パス 92)。
+    expect(r.winRate).toBeNull();
     expect(r.tradeCount).toBe(0);
   });
   it('an always-buy strategy on a rising series trades and stays finite', () => {
@@ -254,8 +258,10 @@ describe('compareStrategies', () => {
     for (const r of res.rows) {
       expect(Number.isFinite(r.finalEquity)).toBe(true);
       expect(Number.isFinite(r.totalReturnPct)).toBe(true);
-      expect(r.winRate).toBeGreaterThanOrEqual(0);
-      expect(r.winRate).toBeLessThanOrEqual(1);
+      // 決済済みが 0 件なら null (算定不能)、数が出ているなら 0..1。
+      // **`if` で包まない** —— 全行 null のとき 1 度も走らない空の検査になる。
+      // どの行にも必ず当たる形で書く (2026-09-08 · パス 92)。
+      expect(r.winRate === null || (r.winRate >= 0 && r.winRate <= 1)).toBe(true);
       expect(r.tradeCount).toBeGreaterThanOrEqual(0);
     }
   });
@@ -270,6 +276,7 @@ describe('compareStrategies', () => {
     expect(cmp.bestByReturn).toBeNull(); // 全戦略 ≤0% → null
     const sma = cmp.rows.find((r) => r.strategy === 'sma-crossover')!;
     expect(sma.tradeCount).toBe(0); // クロス無 → 取引なし
+    expect(sma.winRate).toBeNull(); // 取引が無いので勝率は算定不能 (0% ではない)
     const macd = cmp.rows.find((r) => r.strategy === 'macd-signal')!;
     expect(macd.tradeCount).toBe(6);
     expect(macd.winRate).toBeCloseTo(1 / 3, 4);
@@ -644,7 +651,10 @@ describe('backtest (mutation hardening — averaging, win/loss, valuation)', () 
     const r = backtest(mkc([...Array(51).fill(100), 100, 100, 100]), buyAt(51), 10_000);
     expect(r.finalEquity).toBe(10_000); // cash 9000 + 10 shares * 100
     expect(r.tradeCount).toBe(1);
-    expect(r.winRate).toBe(0);
+    // **建てたまま決済していない = 勝率は算定できない。** ここが最も悪い形だった:
+    // 画面には「1 取引」と出るので、「0 取引」という手掛かりすら無いまま
+    // 「勝率 0%」が並ぶ (2026-09-08 · パス 92)。
+    expect(r.winRate).toBeNull();
     expect(r.maxDrawdownPct).toBe(0);
   });
   it('counts a sell at exactly the buy price as a loss (win check is strict >)', () => {
