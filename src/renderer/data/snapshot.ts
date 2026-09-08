@@ -501,7 +501,12 @@ export const SNAPSHOT = {
   },
 
   microsoft365: {
-    userName: '',
+    // **`as string` を落とすと枝が死ぬ。** `SNAPSHOT` は末尾が `as const` なので、
+    // 素の `''` はリテラル型 `""` になる。画面は `typeof SNAPSHOT.microsoft365` から型を取るので
+    // `userName ? … : ''` の真の枝が `never` = **型の上で死に、tsc が中を検査しなくなる** ——
+    // 一方 live 取得は `userName: string` を返すので**その枝は実際に走る**。
+    // 直下の配列が既に `as T[]` で広げているのと同じ理由 (プレースホルダは実物の型で持つ)。
+    userName: '' as string,
     messages: [] as { id: string; subject: string; from: string; received: string; unread: boolean }[],
     events: [] as { id: string; subject: string; start: string; location: string }[],
     items: [
@@ -1272,7 +1277,8 @@ export const SNAPSHOT = {
   },
 
   freee: {
-    companyName: '',
+    // `as string` の理由は microsoft365.userName と同じ (リテラル `""` だと表示の枝が死ぬ)。
+    companyName: '' as string,
     monthly: [] as { month: string; income: number; expense: number; net: number }[],
     fetchedAt: '',
   },

@@ -15919,3 +15919,117 @@ census が名指していた `RealEstatePage.tsx:309` の `isoDepth` を追っ�
 **裸の補間だけが危ない。** 型を nullable に広げたら、
 `grep -n '\${[a-zA-Z_.]*<欄名>}'` で**裸の補間**を探すのが正しい探し方
 (このパスでは 0 件だったことを実際に確認した)。
+
+---
+
+## パス 78 (2026-09-08) — `as const` で型が狭まり、live 取得だけが通る表示の枝が「型の上で死んで」いた
+
+パス 76・77 で「型を nullable に広げても**裸の** `${x}` は `tsc` を素通りして文字列
+`"null"` を刷る」を 2 度踏んだ。**覚えているうちは直らない**ので機械で探すことにした。
+
+### まず、名前一致の grep は捨てた (871 件)
+
+`readonly foo: X | null` の欄名を集めて renderer の `${…foo}` を当てる走査を書いたら
+**nullable 欄名 807・該当 871 件**。`templates.ts` の `d.width` と別ファイルで nullable な
+`width` を区別できないので、**名前一致ではこの仕分けはできない**。捨てた。
+
+### 型を見る道具を使った (22 件 / 14 ファイル)
+
+typescript-eslint の**型対応**ルール `@typescript-eslint/restrict-template-expressions`
+(`allowNumber: true` / `allowNullish: false` / `allowNever: false`) を probe 設定で走らせた
+(`eslint.config.js` は `tseslint.configs.recommended` = 型非対応なので、
+`parserOptions.projectService` を持つブロックを一時的に作って測った)。
+
+**22 件すべて読んで仕分けた:**
+
+| 種別 | 件数 | 中身 |
+| --- | ---: | --- |
+| **不変条件で守られている偽陽性** | 15 | 正規表現の捕獲群 (成功マッチ後) 4・length 検査後の添字 2・跨ぎの不変条件 8・純粋関数の 2 度呼び 1 |
+| **型で直すべき構造的な弱み** | 2 | `updateCheck.ts` の `UpdateVerdict` が平らな interface で `latest: string \| null` を全 status に持つ (`case 'update-available'` が絞らない) |
+| **生きている欠陥** | 2 | 下記 |
+| probe 設定の副産物 | 1 | `no-control-regex` の未使用 disable (本体の設定では出ない) |
+
+跨ぎの不変条件の例: `balanceSheetFreshness.ts` は
+「`monthsBehind` が非 null なら、両方の月も必ず非 null」と**明記し検査で留めている**。
+`memberCare.ts:138/141` は `average` と `level` を**同時に**組む。
+`computeRevenueConcentration` は `total <= 0` で null を返すので
+`topSharePct > 0 ⟹ topChannel !== null`。**型検査器は跨ぎの不変条件を見られない。**
+
+### 生きていた 2 件と、その根本原因
+
+`FreeePage.tsx:80` / `Microsoft365Page.tsx:137` が `Invalid type "never"`。
+
+`snapshot.ts` は末尾が **`} as const;`** なので、画面が
+`type FreeeSnapshot = typeof SNAPSHOT.freee` と型を取ると**全ての文字列欄がリテラル型**に
+なる。プレースホルダの `companyName: ''` は型 **`""`** ——
+**実測**: `const probe: typeof SNAPSHOT.freee.companyName = 'x'` が
+`Type '"x"' is not assignable to type '""'` で落ちる。したがって
+
+```tsx
+who={<>freee 会計連携{live.companyName ? ` · ${live.companyName}` : ''}</>}
+```
+
+の真の枝は **`never` = 型の上で死んでおり、`tsc` はその中を一切検査しない**。
+一方 client (`main/clients/freee.ts:60`, `microsoft-365.ts:54`) は
+`companyName: string` / `userName: string` を返すので、**live 取得ではその枝が実際に走る**
+—— **本番で動く表示コードだけが型検査の外に置かれていた。**
+パス 62「画面が payload の型を手で写しており、写しがずれても `tsc` が黙る」の類が、
+写しではなく `as const` 経由で再発している。
+
+### 直し — 規準は**同じファイルの直下の行**に在った
+
+```ts
+freee: {
+  companyName: '' as string,                                  // ← 足した
+  monthly: [] as { month: string; … }[],                      // ← 既にこうなっていた
+```
+
+配列のプレースホルダは**最初から `as` で広げてあった**。文字列だけ漏れていた。
+2 欄 (`freee.companyName` / `microsoft365.userName`) に `as string` を足した。
+
+### 対照 —— `tsc` が鳴り、**vitest は鳴らない**。それが診断の裏づけである
+
+`as string` を外すと:
+
+| 対照 | 結果 |
+| --- | --- |
+| `npx tsc -b --noEmit --force` | **2 件鳴る** (`Type '"サンプル商事株式会社"' is not assignable to type '""'`) |
+| `npx vitest run …liveNameOnScreen` | **5 件すべて通る (鳴らない)** |
+
+**鳴らないことが正しい。** 実行時には値は本物の文字列なので**枝は正しく動く** ——
+この欠陥が壊すのは**その枝の型検査**だけである。したがって
+**この欠陥を守っているのは型レベルの断言 1 本で、画面の 4 本ではない。**
+画面の 4 本は表示の振る舞い (名前が出る・空なら区切りを足さない) を留める別の価値がある。
+リポジトリの規準「fix が型レベルなら `tsc` が対照である」がそのまま当たる。
+
+### 検査 +5
+
+`renderer/pages/__tests__/liveNameOnScreen.test.ts` (**新規**) —— live 取得が成功して
+payload を返す `serviceHub` を差し込み、実物の画面で
+「freee 会計連携 · サンプル商事株式会社」「Microsoft 365 · 山田 太郎」が出ることと、
+空なら区切りを足さないことを留める。**最初は空振りした** ——
+`listConfigured` にその id を入れないと画面は「未連携」で snapshot を出したままで、
+**live の枝を通らない**。型レベルの断言 1 本を同じファイルに置いた (対照は `tsc`)。
+
+### ★ 次のパスへ (パス 79 の候補 — 範囲と費用を実測済み)
+
+**この 2 件は氷山の一角である。** 同じ probe に
+`@typescript-eslint/no-unnecessary-condition` を足して測ると
+**「常に偽/常に真」の条件が 103 件 / 41 ファイル**在った (直した 2 件を除いて **101 件**)。
+`Microsoft365Page.tsx` だけでも `:45` `:82` `:102` に別の欄の死んだ条件が残っている。
+**これらは正しい防御的コードで、間違っているのは型のほう** ——
+`!` や disable を足すのは**逆向き**である。
+
+**根本原因を一括で直す費用も実測した**: `} as const;` を `};` にすると
+`tsc` のエラーは **1 件だけ** ——
+`BusinessPage.tsx:685` で `trafficKind` が `string` に広がり
+`'session' | 'view' | 'impression' | 'order' | 'project'`
+(`main/clients/business.ts:57`) に代入できなくなる。つまり **`as const` が支えているのは
+リテラル合併 1 種類だけ**で、他の 100 件超の狭さは**誰も要求していない**。
+
+ただし renderer は `main` を import できない (`lint:imports`) ので、
+「payload 型をどこに置くか」の設計判断が要る (`shared/` に出す / snapshot に注釈を付ける)。
+**ゲートの常設もこのパスに含める** ——
+`restrict-template-expressions` を今入れると、根本原因の直しで消えるはずの
+15 件の偽陽性に disable を書くことになる。**ゲートは refactor と一緒に入れる。**
+`UpdateVerdict` の判別可能合併化も同じパスで (disable ではなく型で証明する)。
