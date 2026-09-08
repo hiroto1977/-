@@ -1463,14 +1463,31 @@ export function OverviewPage() {
                             : overview.hydroponics.lowPotassium.reductionPct > 0 ? '#22c55e' : '#ef4444'
                         }
                       />
+                      {/* **未入力を「0 日」とも「範囲外」とも言わない。** 0 は
+                          「収穫当日に切り替える」という具体的な指示で、しかも
+                          この欄自身が `allowZero: false` で 0 を拒否している。
+                          すぐ下の 食塩相当量 タイルは既に null を「未測定」と
+                          刷っており、規約はこのパネルに在った (パス 67)。 */}
                       <Tile
                         label="切替 (収穫前)"
-                        value={`${hydroSetup?.switchDaysBeforeHarvest ?? 0} 日`}
-                        accent={overview.hydroponics.lowPotassium.switchWindowOk ? undefined : '#f59e0b'}
+                        value={
+                          overview.hydroponics.lowPotassium.switchWindowOk === null
+                            ? '未設定'
+                            : `${hydroSetup?.switchDaysBeforeHarvest ?? 0} 日`
+                        }
+                        accent={
+                          overview.hydroponics.lowPotassium.switchWindowOk === null
+                            ? undefined // 未入力は違反ではない —— 警告色を付けない
+                            : overview.hydroponics.lowPotassium.switchWindowOk
+                              ? undefined
+                              : '#f59e0b'
+                        }
                         sub={
-                          overview.hydroponics.lowPotassium.switchWindowOk
-                            ? `目安 ${lowKParams.switchDaysMin}〜${lowKParams.switchDaysMax} 日の範囲内`
-                            : `目安は ${lowKParams.switchDaysMin}〜${lowKParams.switchDaysMax} 日です`
+                          overview.hydroponics.lowPotassium.switchWindowOk === null
+                            ? `収穫の何日前に K 抜きへ切り替えるかを入力してください (目安 ${lowKParams.switchDaysMin}〜${lowKParams.switchDaysMax} 日)`
+                            : overview.hydroponics.lowPotassium.switchWindowOk
+                              ? `目安 ${lowKParams.switchDaysMin}〜${lowKParams.switchDaysMax} 日の範囲内`
+                              : `目安は ${lowKParams.switchDaysMin}〜${lowKParams.switchDaysMax} 日です`
                         }
                       />
                       <Tile

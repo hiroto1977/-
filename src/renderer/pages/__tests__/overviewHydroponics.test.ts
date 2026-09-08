@@ -342,3 +342,86 @@ describe('経営サマリー — 水耕栽培の設備入力の番人 (黙って
     expect(guardMessage('切替 (収穫前・日)')).toContain('整数で入力してください（現在 7.5）');
   });
 });
+
+/**
+ * **切替日を入力していないだけで「切替時期が範囲外」と警告しない (パス 67)。**
+ *
+ * `assessLowPotassium` は `switchWindowOk: days >= min && days <= max` で、
+ * 未入力は `?? 0` を経て 0 になり `0 >= 7` が偽 —— **入力していないことが
+ * 「範囲外」として琥珀色で警告**されていた。カリウムをきちんと実測している人
+ * (削減率が出ている人) でも出る。
+ *
+ * **同じ関数は既にこの形を 2 回直している** ——
+ * `potassiumMgPer100g` (「未測定は null。0 に倒すと削減率が 100% になる」) と
+ * `reductionPct` (「『削減なし』と『比べられない』は別のこと」)。
+ * `switchWindowOk` だけが倒れていた。
+ *
+ * しかも 0 は**この欄自身が `allowZero: false` で拒否する値**である ——
+ * 画面が、フォームなら受け付けない値を表示していた。
+ */
+describe('経営サマリー 低カリウム — 切替日が未入力', () => {
+  const enableLowK2 = async (): Promise<void> => {
+    const label = Array.from(container.querySelectorAll('label')).find((el) =>
+      el.textContent?.includes('低カリウム栽培として扱う'),
+    );
+    const box = label?.querySelector<HTMLInputElement>('input[type="checkbox"]');
+    if (!box) throw new Error('low-K checkbox not found');
+    await click(box);
+  };
+
+  /** 「切替 (収穫前)」タイルの値と副文を読む。 */
+  function switchTile(): { value: string; sub: string } | null {
+    for (const box of Array.from(container.querySelectorAll('div'))) {
+      const kids = Array.from(box.children);
+      if (kids.length < 2) continue;
+      if ((kids[0]?.textContent ?? '').trim() !== '切替 (収穫前)') continue;
+      return {
+        value: (kids[1]?.textContent ?? '').trim(),
+        sub: (kids[2]?.textContent ?? '').trim(),
+      };
+    }
+    return null;
+  }
+
+  it('★ 未入力を「0 日」と刷らず、「範囲外」とも言わない', async () => {
+    await mountOverview();
+    await enableLowK2();
+    // 切替日を空にする (= 未入力)。実測カリウムは入れておく —— **実測している人
+    // でも警告が出ていた**ことを留めるため。
+    await act(async () => { changeInput(q.numInput('実測カリウム (mg/100g)'), '120'); });
+    await act(async () => { changeInput(q.numInput('切替 (収穫前・日)'), ''); });
+    await click(q.button('保存して経営サマリーへ反映'));
+    await settle();
+    const t = switchTile();
+    expect(t).not.toBeNull();
+    // 直す前は '0 日' + 「目安は 7〜10 日です」(琥珀色) だった
+    expect(t!.value).toBe('未設定');
+    expect(t!.sub).toContain('入力してください');
+    expect(t!.sub).not.toContain('目安は 7〜10 日です');
+  });
+
+  it('★ 対照: 範囲内を入れれば数で出て、警告は出ない', async () => {
+    await mountOverview();
+    await enableLowK2();
+    await act(async () => { changeInput(q.numInput('実測カリウム (mg/100g)'), '120'); });
+    await act(async () => { changeInput(q.numInput('切替 (収穫前・日)'), '8'); });
+    await click(q.button('保存して経営サマリーへ反映'));
+    await settle();
+    const t = switchTile();
+    expect(t!.value).toBe('8 日');
+    expect(t!.sub).toContain('範囲内');
+  });
+
+  it('★ 対照: 本物の範囲外は今も警告する (警告そのものが生きている)', async () => {
+    await mountOverview();
+    await enableLowK2();
+    await act(async () => { changeInput(q.numInput('実測カリウム (mg/100g)'), '120'); });
+    await act(async () => { changeInput(q.numInput('切替 (収穫前・日)'), '20'); });
+    await click(q.button('保存して経営サマリーへ反映'));
+    await settle();
+    const t = switchTile();
+    expect(t!.value).toBe('20 日');
+    expect(t!.sub).toContain('目安は');
+    expect(t!.sub).not.toContain('入力してください');
+  });
+});

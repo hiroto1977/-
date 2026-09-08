@@ -508,8 +508,14 @@ export const DEFAULT_LOW_POTASSIUM_PARAMS: LowPotassiumParams = {
 
 /** 低カリウム栽培の入力。**成分は実測値でしか受け取らない。** */
 export interface LowPotassiumInput {
-  /** 培養液を K 抜きへ切り替えるのは収穫前の何日か。 */
-  readonly switchDaysBeforeHarvest: number;
+  /**
+   * 培養液を K 抜きへ切り替えるのは収穫前の何日か。**未設定は `null`。**
+   *
+   * 0 を「未設定」の代わりに使わない —— 0 は「収穫当日に切り替える」という
+   * 具体的な指示であり、しかもフォーム自身が `allowZero: false` で拒否する値
+   * である (`OverviewPage.tsx` の欄の定義)。
+   */
+  readonly switchDaysBeforeHarvest: number | null;
   /**
    * 出荷ロットの**実測**カリウム (mg/100g)。
    * モデルの推定値を入れてはならない — 腎臓病の方の食事に直結する。
@@ -547,8 +553,17 @@ export interface LowPotassiumAssessment {
   readonly reductionPct: number | null;
   /** 実測ナトリウムから出した食塩相当量 (g/100g)。未測定なら null。 */
   readonly saltEquivalentGPer100g: number | null;
-  /** 切替期間が目安の範囲 (既定 7〜10 日) に収まっているか。 */
-  readonly switchWindowOk: boolean;
+  /**
+   * 切替期間が目安の範囲 (既定 7〜10 日) に収まっているか。
+   * **切替日が未設定なら `null`** —— 「入力していない」を「範囲外」と報告しない。
+   *
+   * 2026-09-09 まで `boolean` で、未設定 (0) は `false` になっていた ——
+   * カリウムをきちんと実測している人でも、この欄を埋めていないだけで
+   * **「切替時期が目安の範囲外」という琥珀色の警告**が出ていた。
+   * 同じ return の `potassiumMgPer100g` と `reductionPct` は既に
+   * 「測っていない」を `null` で表していたので、**この欄だけが倒れていた。**
+   */
+  readonly switchWindowOk: boolean | null;
   /**
    * 出荷判断に使える状態か。**実測カリウムが正の有限値であることが条件**で、
    * 0 や未測定を「カリウムが無い」と読み替えない。
@@ -572,7 +587,10 @@ export function assessLowPotassium(
   const potassiumMgPer100g = measured ? k : null;
   const reference = nonNeg(input.referencePotassiumMgPer100g ?? p.referencePotassiumMgPer100g);
   const na = input.measuredSodiumMgPer100g;
-  const days = input.switchDaysBeforeHarvest;
+  const rawDays = input.switchDaysBeforeHarvest;
+  // 未設定・非有限・0 以下は「入力されていない」。フォームの `allowZero: false`
+  // と同じ判定にする (画面が受け付けない値を、計算だけが受け取らないように)。
+  const days = typeof rawDays === 'number' && Number.isFinite(rawDays) && rawDays > 0 ? rawDays : null;
   return {
     potassiumMgPer100g,
     referenceMgPer100g: reference,
@@ -587,7 +605,8 @@ export function assessLowPotassium(
     saltEquivalentGPer100g: Number.isFinite(na)
       ? round2((nonNeg(na as number) * nonNeg(p.saltEquivalentFactor)) / 1000)
       : null,
-    switchWindowOk: days >= p.switchDaysMin && days <= p.switchDaysMax,
+    // **未設定は「範囲外」ではない。** 偽の警告は、本物の警告を薄める。
+    switchWindowOk: days === null ? null : days >= p.switchDaysMin && days <= p.switchDaysMax,
     measured,
   };
 }
