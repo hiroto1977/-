@@ -44,9 +44,9 @@ interface Kpi {
   variableCost: number;
   fixedCost: number;
   contribution: number;
-  contributionRatio: number;
-  variableRatio: number;
-  fixedRatio: number;
+  contributionRatio: number | null;
+  variableRatio: number | null;
+  fixedRatio: number | null;
   bep: number;
   bepRatio: number;
   safetyMargin: number | null;
@@ -808,7 +808,11 @@ export function KpiPage() {
         <Tile label="売上高" value={yen.format(selected.fundamentals.revenue)} />
         <Tile label="損益分岐点 (BEP)" value={safeYen(selected.kpi.bep)} sub={`比率 ${pct(selected.kpi.bepRatio)}`} />
         <Tile label="安全余裕率" value={pctOrDash(selected.kpi.safetyMargin)} sub="高いほど安全" />
-        <Tile label="限界利益率" value={pct(selected.kpi.contributionRatio)} />
+        {/* **上の実績タイル群と同じ答え方にする。** 2026-09-08 まで、こちらは
+            `pct` で「0.0%」・上は `pctOrDash` で「—」を刷っており、**同じラベルの
+            タイルが 1 ページに 2 つ在って答えが違った** (値の双子のうち
+            main 側だけが 0 に倒れていた)。 */}
+        <Tile label="限界利益率" value={pctOrDash(selected.kpi.contributionRatio)} />
         <Tile label="営業利益" value={yen.format(selected.kpi.operatingProfit)} sub={`営業レバレッジ ${selected.kpi.operatingLeverage.toFixed(2)}x`} />
       </div>
 

@@ -1272,9 +1272,9 @@ export const SNAPSHOT = {
         variableCost: number;
         fixedCost: number;
         contribution: number;
-        contributionRatio: number;
-        variableRatio: number;
-        fixedRatio: number;
+        contributionRatio: number | null;
+        variableRatio: number | null;
+        fixedRatio: number | null;
         bep: number;
         bepRatio: number;
         safetyMargin: number | null;
@@ -1297,9 +1297,10 @@ export const SNAPSHOT = {
         variableCost: 0,
         fixedCost: 0,
         contribution: 0,
-        contributionRatio: 0,
-        variableRatio: 0,
-        fixedRatio: 0,
+        // 売上 0 の合算なので率は算定不能 (safetyMargin: null と同じ扱い)。
+        contributionRatio: null as number | null,
+        variableRatio: null as number | null,
+        fixedRatio: null as number | null,
         bep: 0,
         bepRatio: 0,
         safetyMargin: null,

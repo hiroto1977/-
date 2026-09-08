@@ -13637,7 +13637,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `shared/hydroponics.ts` | 11 | 一部はパス 51 で当てた。栽培の物理量 (株/m²・年間サイクル) は 0 が自然な物も在る |
 | `main/clients/business.ts` | 10 | **デモ生成器** (snapshot 相当)。実データではない |
 | `main/clients/stocks.ts` | 8 | 勝率・ドローダウン・損益率。**画面だけ** |
-| `main/clients/kpi.ts` | 8 | 限界利益率ほか。**パス 52 で台帳に載せた画面だけの面** |
+| `main/clients/kpi.ts` | 8 | 限界利益率ほか。**パス 61 で直した** —— パス 52 は「画面だけの面」と分類したが、**画面に出ることを確かめていなかった** (同じページに 2 つ目のタイルが在った) |
 | `renderer/data/stocksAnalysisWeb.ts` | 7 | 同上 (ブラウザ版) |
 | `shared/waterCyclePlanner.ts` | 6 | 物理量。0 が自然な物が多い |
 | `shared/securityRange.ts` | 6 | 演習の検知率。0 件中 0 件は 0% で良いか要判断 |
@@ -14142,3 +14142,106 @@ census の順位は「重要そうな順」でしかない。
 古い側は `0` だった。**双子は片方を直しても、もう片方が残る。**
 census で「ファイル」を数えるだけでは足りない ——
 **同じ量を計算する関数が何本あるかを数える。**
+
+## パス 61 (2026-09-08) — 同じページに「限界利益率」のタイルが 2 つ在り、片方が「—」・片方が「0.0%」
+
+パス 60 の教訓 (「同じ量を計算する**関数**を数える」) を走査にした。
+規則は「同じ**欄名**が、あるモジュールでは `number | null`、別のモジュールでは
+素の `number` として宣言されている」。**29 件**出た。
+
+### 走査の空振りを先に記録する (29 件のうち大半)
+
+| 種類 | 例 | なぜ空振りか |
+| --- | --- | --- |
+| 総称名 | `amount` / `rate` / `score` / `value` / `base` / `mean` / `pct` | 別々の量が同じ名前を使っているだけ |
+| **意図した規約** | `managementScorecard.ts` に 8 件 (`dscr` / `equityRatioPct` / `grossMarginPct` / `operatingMarginPct` / `revenueGrowthPct` / `runwayMonths` / `actual` / `delta`) | 入力を `X?: number` (**optional**) で受け、呼び出し側が `?? undefined` で橋渡しする —— パス 52 で決めた形。橋が無ければ**型で落ちる**ので TS が守っている |
+| 別の量 | `main/clients/business.ts` の `aov` | `computeCategoryKpi` (**デモ生成器**) の中で、しかも revenue/conversion (ファネル) —— `sales.ts` の amount/orders とは別量 |
+| 定数 | `main/clients/real-estate.ts:38-39` の `portfolioYield: 0` / `occupancyRate: 0` | const の snapshot 既定値で計算ではない。**パス 54 で「無関係」と記録した判断は正しかった (検証済み)** |
+| 別 interface | `stocksAnalysisWeb.ts` の `maxDrawdownPct` | 342 行離れた 2 つの構造体 |
+
+**空振りを書き残すのは、次の走査で同じ 29 件を読み直さないため。**
+
+### 本物は 1 件 —— そしてそれが今までで最も鮮明だった
+
+`contributionRatio` (限界利益率) は KPI 画面に**タイルが 2 つ**在る:
+
+| 場所 | 値の出どころ | 直す前の刷り方 |
+| --- | --- | --- |
+| 実績タイル群 (`KpiPage.tsx:500`) | 利用者の KPI 実績 → `computeKpiMetrics` (パス 52 で `number \| null`) | `pctOrDash` → **「—」** |
+| 事業タイル群 (`KpiPage.tsx:811`) | live / snapshot → `main/clients/kpi.ts:93` (`: 0`) | `pct` → **「0.0%」** |
+
+売上 0 のとき、**同じページの同じラベルのタイルが違う答えを出していた。**
+これまでのパスは「2 つの面」(画面と書面) の食い違いだったが、
+ここは**1 つの画面の中**である。
+
+そして**両タイル群の「安全余裕率」はどちらも `pctOrDash` で「—」**だった ——
+**ページは既に規約を知っていて、揃っていなかったのは main から来る値だけ。**
+
+### 実装コメント自身が答えを書いていた —— 4 例目
+
+```ts
+// Avoid divide-by-zero: a zero-revenue unit has no meaningful ratio.
+const contributionRatio = f.revenue > 0 ? (contribution / f.revenue) * 100 : 0;
+```
+
+**「意味を持つ比率が無い」と述べてから 0 を返す。** 同じ形の 4 例目:
+
+| 場所 | コメント / doc が言っていたこと |
+| --- | --- |
+| `taxCorporate.effectiveRate` (パス 57) | (型の注記が 0 を仕様として書いていた) |
+| `mutualFundsMetrics.calcSharpeRatio` (パス 58) | 「指標として**定義できない**ため 0 を返す」 |
+| `funding.debtServiceMetrics` (パス 60) | 「返済が無いときは 0 (**指標として意味を持たない**)」 |
+| **`main/clients/kpi.ts` (本パス)** | **「a zero-revenue unit has **no meaningful ratio**」** |
+
+**診断は 4 回とも正しく、答えが 4 回とも逆だった。**
+
+### パス 52 の取りこぼし
+
+パス 52 は renderer 側 (`overview.ts` / `kpiActuals.ts`) を直し、
+`main/clients/kpi.ts` を残した。census には
+「`main/clients/kpi.ts` | 8 | 限界利益率ほか。**パス 52 で台帳に載せた画面だけの面**」
+と書いてある —— **「画面だけ」と分類したが、画面に出ることは確かめていなかった。**
+「画面だけの面」は「軽い」ではなく「**画面で見える**」の意である。
+
+### 直した所
+
+| ファイル | 直し |
+| --- | --- |
+| `main/clients/kpi.ts` | `contributionRatio` / `variableRatio` / `fixedRatio` を `number \| null`、`: null` に。コメントを「→ `null` (算定不能)」に直した |
+| `pages/KpiPage.tsx` | 局所型を `number \| null` に、タイルを `pctOrDash` に |
+| `data/snapshot.ts` | 同梱の合算 (売上 0) を `null as number \| null` に (`safetyMargin: null` と同じ扱い) |
+
+`variableRatio` / `fixedRatio` は**画面に出る consumer が無い** ——
+同じ関数の同じ形なので規則を 1 つに揃えただけで、**画面への影響は主張しない**。
+
+### 見本が欠陥を仕様として固定していた —— **14 例目 (2 本)**
+
+| 見本 | 名前が何を言っていたか |
+| --- | --- |
+| `kpi.test.ts` | **`handles zero-revenue gracefully (no NaN / Infinity in ratios)`** → `toBe(0)` |
+| 同 | `uses \`revenue > 0\` strict …` のコメント「ratios should ALL be 0」 |
+
+1 本目はパス 54・56・58 と**同じ形の 5 本目** ——
+「NaN / Infinity を避ける」という**正しい懸念**に **0 という誤った答え**。
+元の懸念はそのまま守るために、`Number.isNaN` と `!== Infinity` の検査を**足した**
+(null は NaN でも Infinity でもない)。
+
+### 検査 (+6) と対照 (2 本とも実際に壊して確認)
+
+| 壊した物 | 落ちた検査 |
+| --- | ---: |
+| 3 つの率を `: 0` に戻す | **5 本** (単体 3・画面 3 のうち重複 1) |
+| 画面のタイルを `pct(… ?? 0)` に戻す | **2 本** |
+
+画面の検査は**ラベルで数え上げる** (`tilesLabelled('限界利益率')`) ——
+1 つだけ読むと、もう 1 つの答えを見落とす。**それが 2026-09-08 までの見落ち**
+だったので、数え上げること自体を検査にした。
+「安全余裕率と答え方が一致する」を 1 本置いて、**ページ内の規約**も留めた。
+
+### 教訓
+
+**同じラベルが 1 つの画面に 2 回出るなら、それは 2 つの値である。**
+パス 56 で「面に出る**値オブジェクト**を数える」を学び、
+パス 60 で「同じ量を計算する**関数**を数える」を学んだ。
+本パスはその 2 つが同じ画面で交差した形 ——
+**ラベルを数えれば、値の数が分かる。**

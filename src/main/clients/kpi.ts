@@ -49,12 +49,34 @@ export interface Kpi {
   fixedCost: number;
   /** 限界利益 — revenue − variableCost. */
   contribution: number;
-  /** 限界利益率 (%) — contribution / revenue. */
-  contributionRatio: number;
-  /** 変動費率 (%) — variableCost / revenue. */
-  variableRatio: number;
-  /** 固定費比率 (%) — fixedCost / revenue. */
-  fixedRatio: number;
+  /**
+   * 限界利益率 (%) — contribution / revenue。**売上が 0 なら `null` = 算定不能。**
+   *
+   * 2026-09-08 まで 0 に倒しており、**すぐ上の実装コメント自身が
+   * 「a zero-revenue unit has **no meaningful ratio**」と書いていた** ——
+   * 意味を持つ比率が無いと述べてから 0 を返していた
+   * (`taxCorporate.effectiveRate`・`mutualFundsMetrics.calcSharpeRatio`・
+   * `funding.debtServiceMetrics` と同じ形の 4 例目)。
+   *
+   * **規準は同じ画面に在った** —— `renderer/data/kpiActuals.ts` の
+   * `computeKpiMetrics` (パス 52 で `number | null` にした双子) が同じ量を
+   * 返し、KPI 画面はそれを `pctOrDash` で「—」と刷る。ところが**同じページの
+   * もう 1 つのタイル群**は live/snapshot の payload (= この値) を `pct` で刷り、
+   * 売上 0 で **「0.0%」**を出していた。
+   * **同じラベル「限界利益率」のタイルが 1 ページに 2 つ在り、答えが違った。**
+   */
+  contributionRatio: number | null;
+  /**
+   * 変動費率 (%) — variableCost / revenue。**売上が 0 なら `null`。**
+   * (画面に出る consumer は無い。`contributionRatio` と同じ関数で同じ形なので
+   * 規則を 1 つに揃える。)
+   */
+  variableRatio: number | null;
+  /**
+   * 固定費比率 (%) — fixedCost / revenue。**売上が 0 なら `null`。**
+   * (画面に出る consumer は無い。上と同じ理由。)
+   */
+  fixedRatio: number | null;
   /** 損益分岐点売上高 — fixedCost / contributionRatio (JPY).
    *  Special-cased to Infinity if contribution ≤ 0 (cannot break even). */
   bep: number;
@@ -89,10 +111,11 @@ export function computeKpi(f: Fundamentals): Kpi {
   const variableCost = f.cogs + f.advertising;
   const fixedCost = f.sga + f.depreciation;
   const contribution = f.revenue - variableCost;
-  // Avoid divide-by-zero: a zero-revenue unit has no meaningful ratio.
-  const contributionRatio = f.revenue > 0 ? (contribution / f.revenue) * 100 : 0;
-  const variableRatio = f.revenue > 0 ? (variableCost / f.revenue) * 100 : 0;
-  const fixedRatio = f.revenue > 0 ? (fixedCost / f.revenue) * 100 : 0;
+  // A zero-revenue unit has no meaningful ratio → `null` (算定不能)。
+  // 0 を返すと「率は 0% である」という主張になる (欄の注記に経緯)。
+  const contributionRatio = f.revenue > 0 ? (contribution / f.revenue) * 100 : null;
+  const variableRatio = f.revenue > 0 ? (variableCost / f.revenue) * 100 : null;
+  const fixedRatio = f.revenue > 0 ? (fixedCost / f.revenue) * 100 : null;
   // BEP only defined when contribution > 0; otherwise the unit can
   // never recover its fixed costs at any volume.
   const bep = contribution > 0 ? (fixedCost / contribution) * f.revenue : Infinity;
