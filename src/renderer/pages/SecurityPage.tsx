@@ -569,8 +569,21 @@ export function SecurityPage() {
           </div>
           <div style={statCardStyle}>
             <div style={statLabelStyle}>誤検知 (無害を脅威と判定)</div>
-            <div style={{ ...statValueStyle, color: range.falsePositives === 0 ? '#22c55e' : '#ef4444' }}>
-              {range.falsePositives} 件
+            {/* **無害ケースを 1 件も評価していないなら緑にしない。**
+                「誤検知 0 件」は目標達成の印だが、測っていなければ達成ではない
+                (パス 68 で自己検査に置いた床と同じ規則)。 */}
+            <div
+              style={{
+                ...statValueStyle,
+                color:
+                  range.benignChecked === 0
+                    ? 'var(--text-mute)'
+                    : range.falsePositives === 0
+                      ? '#22c55e'
+                      : '#ef4444',
+              }}
+            >
+              {range.benignChecked === 0 ? '未測定' : `${range.falsePositives} 件`}
             </div>
           </div>
           <div style={statCardStyle}>
