@@ -68,8 +68,13 @@ export interface FinancialReportInput {
 }
 
 /** パーセント (実効税率) を小数1桁で整形。0.2549 → '25.5%'。 */
-function fmtRate(rate: number): string {
-  return `${(rate * 100).toFixed(1)}%`;
+/**
+ * 税率。**算定不能 (`null`) は「—」** —— `0.0%` は「税率が 0 である」という主張で、
+ * 均等割だけが課される期にそれを刷ると同じ表の「法人税等合計」と両立しない
+ * (経緯は `shared/taxCorporate.ts` の `effectiveRate`)。
+ */
+function fmtRate(rate: number | null): string {
+  return rate === null ? '—' : `${(rate * 100).toFixed(1)}%`;
 }
 
 /**
@@ -97,6 +102,13 @@ function appendCorporateTaxSection(lines: string[], ordinaryProfit: number, rate
   lines.push(`| 法定実効税率(参考) | ${fmtRate(b.statutoryEffectiveRate)} |`);
   lines.push(`| 税引後利益 | ${yen(b.afterTaxProfit)} 円 |`);
   lines.push('');
+  // **なぜ実効税率が空欄なのかを述べる。** 条件は**値そのもの** (`=== null`) で書く ——
+  // `ordinaryProfit <= 0` と書き写すと、この率が割る「控除後の課税所得」とは
+  // 別の量で規則を再導出することになり、境目で食い違う (画面がそうなっていた)。
+  if (b.effectiveRate === null) {
+    lines.push('> 控除後の課税所得が 0 のため、実効税率は算定していません。');
+    lines.push('');
+  }
   if (ordinaryProfit <= 0) {
     lines.push(`> 欠損(税引前利益が0以下)のため、法人住民税の均等割(${yen(b.residentTax)} 円)のみが課されます。税引後利益 = 税引前利益 − 均等割。`);
   } else {

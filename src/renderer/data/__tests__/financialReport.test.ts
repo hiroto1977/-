@@ -189,11 +189,26 @@ describe('buildFinancialReportMarkdown', () => {
     expect(mdLoss).toContain('| 税引前利益(経常利益) | -200,000 円 |');
     expect(mdLoss).toContain('| 法人税 | 0 円 |');
     expect(mdLoss).toContain('| 法人税等合計 | 70,000 円 |');
-    expect(mdLoss).toContain('| 実効税率 | 0.0% |');
+    // **「法人税等合計 70,000 円」と「実効税率 0.0%」は両立しない。**
+    // 2026-09-08 までこの見本が `0.0%` を仕様として固定していた。
+    expect(mdLoss).toContain('| 実効税率 | — |');
+    expect(mdLoss).not.toContain('| 実効税率 | 0.0% |');
     expect(mdLoss).toContain('| 税引後利益 | -270,000 円 |');
     expect(mdLoss).toContain(`> 欠損(税引前利益が0以下)のため、法人住民税の均等割(${b.residentTax.toLocaleString('ja-JP')} 円)のみが課されます。税引後利益 = 税引前利益 − 均等割。`);
+    // **「—」の理由を述べる。** 空欄だけを刷ると、読む側は「税が無い」とも
+    // 「まだ入れていない」とも読める。
+    expect(mdLoss).toContain('> 控除後の課税所得が 0 のため、実効税率は算定していません。');
     // 黒字側の区分注記は出ない (分岐が排他であること)。
     expect(mdLoss).not.toContain('区分:');
+  });
+
+  it('★ 対照: 課税所得が残る期は率を刷り、空欄の理由は述べない', () => {
+    const mdProfit = buildFinancialReportMarkdown({
+      label: 'Z', ratios, diagnosis, trend, generatedAt: new Date(2026, 5, 2, 12), ordinaryProfit: 5_000_000,
+    });
+    expect(mdProfit).toMatch(/\| 実効税率 \| \d+\.\d% \|/);
+    expect(mdProfit).not.toContain('| 実効税率 | — |');
+    expect(mdProfit).not.toContain('実効税率は算定していません');
   });
 
   it('ordinaryProfit=0 も欠損扱い (<=0 の境界: > ではなく >=)', () => {

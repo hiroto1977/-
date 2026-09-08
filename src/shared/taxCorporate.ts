@@ -543,8 +543,25 @@ export interface CorporateTaxBreakdown {
   readonly specialBusinessTax: number;
   /** 法人税等の合計。 */
   readonly totalTax: number;
-  /** 実効税率 (法人税等合計 / 課税所得)。所得0以下は0。単純合算ベース。 */
-  readonly effectiveRate: number;
+  /**
+   * 実効税率 (法人税等合計 ÷ 控除後の課税所得)。単純合算ベース。
+   *
+   * **控除後の課税所得が 0 以下なら `null` = 算定不能。** 0 に倒すと、
+   * 均等割だけが課される期に「法人税等合計 70,000 円 / 実効税率 **0.0%**」という
+   * **両立しない 2 行**が並ぶ (実測 2026-09-08。財務分析レポートと画面の両方)。
+   *
+   * | 控え | 控除後所得 | 法人税等合計 | 直す前の率 |
+   * | --- | ---: | ---: | ---: |
+   * | 欠損 (課税所得 0) | 0 | 70,000 円 | **0.0%** |
+   * | 所得 500 万・繰越欠損 5,000 万で全額控除 | 0 | 70,000 円 | **0.0%** |
+   *
+   * 2 行目が要注意 —— 画面の関門は `ordinaryProfit <= 0` (税引前利益) で
+   * 「―」を出していたが、**この値が割るのは控除後の課税所得**なので、
+   * 繰越欠損で控除しきった期は**関門が開いたまま 0.0% が出た**。
+   * 規準は姉妹モジュール `fxCurrency.ts` の同名 `effectiveRate(): number | null`
+   * (「外貨額の合計が 0 なら null」) に在った。
+   */
+  readonly effectiveRate: number | null;
   /**
    * 法定実効税率 (参考)。事業税 (+特別法人事業税) の損金算入を織り込んだ標準指標
    * (`calcStatutoryEffectiveRate`)。`effectiveRate` (単純合算ベース) とは目的の
@@ -603,7 +620,9 @@ export function calcCorporateTax(
     businessTax +
     specialBusinessTax;
 
-  const effectiveRate = incomeAfterLoss > 0 ? totalTax / incomeAfterLoss : 0;
+  // **割る相手が 0 なら率は無い。** 0 に倒すと均等割だけの期に
+  // 「法人税等合計 70,000 円 / 実効税率 0.0%」が並ぶ (欄の注記に実測表)。
+  const effectiveRate = incomeAfterLoss > 0 ? totalTax / incomeAfterLoss : null;
   // 法定実効税率 (参考) は控除後所得の限界帯で評価する (損金算入を織り込んだ標準指標)。
   const statutoryEffectiveRate = calcStatutoryEffectiveRate(incomeAfterLoss, profile, r);
   const afterTaxProfit = taxableIncome - totalTax;

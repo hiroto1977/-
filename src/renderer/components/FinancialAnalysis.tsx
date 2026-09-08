@@ -461,7 +461,11 @@ function CorporateTaxCard({
         <div style={{ background: 'var(--bg)', borderRadius: 8, padding: '10px 14px' }}>
           <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 4 }}>実効税率（概算）</div>
           <div style={{ fontSize: 17, fontWeight: 700 }}>
-            {isLoss ? '—' : `${(breakdown.effectiveRate * 100).toFixed(1)}%`}
+            {/* **関門は値そのもので書く。** `isLoss` は税引前利益を見るが、
+                この率が割るのは**控除後の課税所得**なので、繰越欠損で控除しきった期は
+                関門が開いたまま 0.0% が出ていた (経緯は `shared/taxCorporate.ts` の
+                `effectiveRate`)。 */}
+            {breakdown.effectiveRate === null ? '—' : `${(breakdown.effectiveRate * 100).toFixed(1)}%`}
           </div>
         </div>
         <div style={{ background: 'var(--bg)', borderRadius: 8, padding: '10px 14px' }}>

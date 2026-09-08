@@ -223,7 +223,9 @@ describe('calcCorporateTax (aggregate)', () => {
     expect(r.specialBusinessTax).toBe(0);
     expect(r.residentTax).toBe(70_000); // 均等割のみ
     expect(r.totalTax).toBe(70_000);
-    expect(r.effectiveRate).toBe(0); // income not > 0
+    // **均等割 70,000 円 が課されているのに「実効税率 0.0%」は両立しない。**
+    // 割る相手 (控除後の課税所得) が 0 なので率は無い。
+    expect(r.effectiveRate).toBeNull();
     expect(r.afterTaxProfit).toBe(-70_000); // 0 − 70,000
   });
 
@@ -232,7 +234,7 @@ describe('calcCorporateTax (aggregate)', () => {
     expect(r.corporateIncomeTax).toBe(0);
     expect(r.businessTax).toBe(0);
     expect(r.totalTax).toBe(70_000); // 均等割のみ
-    expect(r.effectiveRate).toBe(0);
+    expect(r.effectiveRate).toBeNull();
     expect(r.afterTaxProfit).toBe(-5_000_000 - 70_000);
     expect(r.taxableIncome).toBe(-5_000_000);
   });
@@ -573,7 +575,9 @@ describe('calcCorporateTax 繰越欠損金 integration (round 57)', () => {
     expect(r.specialBusinessTax).toBe(0);
     expect(r.residentTax).toBe(70_000); // 均等割のみ
     expect(r.totalTax).toBe(70_000);
-    expect(r.effectiveRate).toBe(0); // after-loss income not > 0
+    // **税引前利益は黒字 (1,000 万) だが控除後の課税所得は 0** —— 画面の関門は
+    // 税引前利益を見ていたので、直す前はここで 0.0% が出ていた (2026-09-08 実測)。
+    expect(r.effectiveRate).toBeNull();
     expect(r.afterTaxProfit).toBe(10_000_000 - 70_000);
   });
 
@@ -778,9 +782,13 @@ describe('calcCorporateTax statutoryEffectiveRate (集計への純粋追加)', (
     );
   });
 
-  it('stays defined (non-zero) even at a loss, unlike effectiveRate (0)', () => {
+  // 2026-09-08 までこの見本の名前が `unlike effectiveRate (**0**)` と書いており、
+  // **非対称そのものを仕様として固定していた**。法定実効税率は限界帯の率なので
+  // 所得 0 でも定義されるが、単純合算の実効税率は**割れないので無い** ——
+  // 「0」と「無い」は別のことである。
+  it('法定実効税率は所得 0 でも定義される (単純合算の実効税率は null)', () => {
     const r = calcCorporateTax(0);
-    expect(r.effectiveRate).toBe(0); // simple sum is 0 at a loss
+    expect(r.effectiveRate).toBeNull(); // 割る相手が 0 → 率は無い
     expect(r.statutoryEffectiveRate).toBeGreaterThan(0); // marginal statutory rate still defined
     expect(r.statutoryEffectiveRate).toBeCloseTo(
       calcStatutoryEffectiveRate(0, {}),
@@ -883,5 +891,58 @@ describe('台帳から渡す率と境目 (CorporateTaxRates)', () => {
     // 法定実効税率も同じ率で組む。
     expect(calcStatutoryEffectiveRate(12_000_000, {}, { ...DEFAULT_CORPORATE_TAX_RATES, localCorpTaxRate: 0, residentCorpTaxRate: 0, specialBusinessTaxRate: 0 }))
       .toBeCloseTo((CORP_TAX_STANDARD_RATE + BUSINESS_TAX_RATE_TIER3) / (1 + BUSINESS_TAX_RATE_TIER3), 12);
+  });
+});
+
+/**
+ * **「法人税等合計 70,000 円」と「実効税率 0.0%」は両立しない。**
+ *
+ * 実効税率は**控除後の課税所得**で割る。割る相手が 0 のとき 0 に倒すと、
+ * 均等割だけが課される期に矛盾した 2 行が並ぶ。実測 (2026-09-08・直す前):
+ *
+ * | 控え | 控除後所得 | 法人税等合計 | 刷っていた率 |
+ * | --- | ---: | ---: | ---: |
+ * | 欠損 (課税所得 0) | 0 | 70,000 円 | **0.0%** |
+ * | 所得 500 万・繰越欠損 5,000 万で全額控除 | 0 | 70,000 円 | **0.0%** |
+ *
+ * 2 行目が要点 —— 画面の関門は `ordinaryProfit <= 0` (**税引前利益**) を見ており、
+ * この率が割るのは**控除後の課税所得**なので、**繰越欠損で控除しきった期は
+ * 関門が開いたまま 0.0% が出た**。規準は姉妹モジュール `fxCurrency.ts` の
+ * 同名 `effectiveRate(): number | null` に在った。
+ */
+describe('実効税率 — 割る相手が 0 なら率は無い', () => {
+  it('★ 繰越欠損で控除しきった期: 税引前は黒字でも率は null (関門が別の量を見ていた形)', () => {
+    const r = calcCorporateTax(5_000_000, { capital: 10_000_000, carryforwardLoss: 50_000_000 });
+    expect(r.taxableIncome).toBe(5_000_000); // 税引前は黒字
+    expect(r.incomeAfterLoss).toBe(0); // 控除後は 0
+    expect(r.deductedLoss).toBe(5_000_000);
+    expect(r.totalTax).toBe(70_000); // 均等割のみ
+    // **税額が在るのに率が 0% という組み合わせを作らない**
+    expect(r.effectiveRate).toBeNull();
+  });
+
+  it('★ 不変条件: 率が null なのは控除後の課税所得が 0 以下のときに限る', () => {
+    const cases = [
+      calcCorporateTax(0),
+      calcCorporateTax(-5_000_000),
+      calcCorporateTax(5_000_000),
+      calcCorporateTax(5_000_000, { carryforwardLoss: 50_000_000 }),
+      calcCorporateTax(50_000_000, { carryforwardLoss: 10_000_000 }),
+      calcCorporateTax(1),
+    ];
+    for (const r of cases) {
+      expect(r.effectiveRate === null).toBe(r.incomeAfterLoss <= 0);
+    }
+    // 標本が両側を含むこと (片側だけなら不変条件は空の検査になる)
+    expect(cases.some((r) => r.effectiveRate === null)).toBe(true);
+    expect(cases.some((r) => r.effectiveRate !== null)).toBe(true);
+  });
+
+  it('★ 対照: 控除後に所得が残れば率は数で出て、税額と整合する', () => {
+    const r = calcCorporateTax(50_000_000, { carryforwardLoss: 10_000_000 });
+    expect(r.incomeAfterLoss).toBe(40_000_000);
+    expect(r.effectiveRate).not.toBeNull();
+    // 印刷する式どおり: 率 × 控除後所得 == 法人税等合計
+    expect(r.effectiveRate! * r.incomeAfterLoss).toBeCloseTo(r.totalTax, 6);
   });
 });

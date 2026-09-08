@@ -13646,12 +13646,12 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `renderer/data/profitSensitivity.ts` | 6 | パス 52 の台帳どおり |
 | `renderer/data/counselingResearch.ts` | 6 | 研究用の一致率。0 件中 0 件 |
 | `main/clients/linux.ts` | 4 | 使用率。0 が自然 |
-| `shared/taxCorporate.ts` | 3 | **実効税率** —— 所得 0 で「実効税率 0%」は主張。**要判断** |
+| `shared/taxCorporate.ts` | 3 | **実効税率** —— **パス 57 で直した** (残 2 件は法定実効税率の内部率で 0 が正しい) |
 | `shared/realEstateMetrics.ts` | 3 | **自己資金利回り (CCR)** —— 自己資金 0 で 0% は主張。**要判断** |
 | `shared/mutualFundsMetrics.ts` | 3 | **積立の損益率** —— 拠出 0 で 0% は主張。**要判断** |
 | `renderer/data/teamEmotionRadar.ts` | 3 | **チーム平均** —— メンバー 0 名で 0 点。パス 55 と同じ形。**要判断** |
 | `renderer/data/investments.ts` | 3 | パス 54 で 1 件直した。含み損益率が残る |
-| `renderer/data/sales.ts` | 3 | **本パスで 2 件直した**。`share` は理由つきで残す |
+| `renderer/data/sales.ts` | 3 | **パス 56 で 2 件直した**。`share` は理由つきで残す |
 | `renderer/data/crisisDeliberation.ts` | 3 | 演習の正答率 |
 | `components/FinancialAnalysis.tsx` | 3 | 利益率の履歴グラフ (パス 52 の台帳) |
 | `shared/taxFurusato.ts` / `managementScorecard.ts` / `StoragePage.tsx` | 各 1 | 未読 |
@@ -13667,8 +13667,9 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 
 **次にやるべき順序**は数えた結果から決まる:
 
-1. **相手に渡る面に出る物**から (本パスで `sales.aov` を消化。残りは
-   `taxCorporate.effectiveRate` が税の画面に出るかを確認する)。
+1. **相手に渡る面に出る物**から (パス 56 で `sales.aov`、**パス 57 で
+   `taxCorporate.effectiveRate`** を消化 —— 後者は経営レポート Markdown に
+   出ていた。この帯は残っていない)。
 2. **人・投資の判断に使う物** (`teamEmotionRadar` の平均・`realEstateMetrics`
    の CCR・`mutualFundsMetrics` の損益率)。
 3. 読んで理由が書けた分だけを台帳に積み、**台帳が 26 ファイル全部を覆ってから
@@ -13682,3 +13683,113 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 **面に出る値オブジェクトが何個あるか**は数えていなかった。
 書面 §2 は `overview.sales` を読み、§1 は `overview.kpi` を読む ——
 節を数えても、節ごとに別の値を読んでいれば漏れる。
+
+## パス 57 (2026-09-08) — 実効税率が「法人税等合計 **70,000 円** / 実効税率 **0.0%**」を並べる。**関門が、値の割る量とは別の量で規則を再導出していた**
+
+### 見つけた形
+
+`calcCorporateTax` の `effectiveRate` は「割れないを 0 に倒す」形だった
+(census の `shared/taxCorporate.ts` 3 件のうちの本命)。ここは他の 6 パスと
+**1 点だけ違う**:
+
+**画面には関門が在った。しかし関門が見る量と、値が割る量が別だった。**
+
+```
+値:   effectiveRate = totalTax / incomeAfterLoss   ← 控除後の課税所得で割る
+関門: isLoss        = ordinaryProfit <= 0          ← 税引前利益を見る
+```
+
+`incomeAfterLoss = max(0, ordinaryProfit − 繰越欠損金控除)` なので、
+**繰越欠損金で控除しきった期は `ordinaryProfit > 0` のまま `incomeAfterLoss === 0`**。
+関門が開いたまま `0.0%` が刷られる。
+
+### 実測 (`繰越欠損金` 欄に打ち込んで画面を見た)
+
+| 控え | 税引前利益 | 控除後所得 | 法人税等合計 | 直す前の画面 |
+| --- | ---: | ---: | ---: | ---: |
+| 欠損 | −200,000 | 0 | 70,000 円 | ―(関門が閉じた) |
+| **所得 500 万・繰越欠損 5,000 万** | **5,000,000** | **0** | **70,000 円** | **0.0%** |
+
+2 行目が本体。**均等割 70,000 円を課されている期に「実効税率 0.0%」**
+—— 同じカードの中で両立しない 2 つの数字が並ぶ。
+
+### 規準は姉妹モジュールに在った —— 11 か所目
+
+`src/shared/fxCurrency.ts` の**同名関数**:
+
+```ts
+export function effectiveRate(lots: readonly FxLot[]): number | null {
+  …
+  if (totalForeign <= 0) return null;   // 割る相手が 0 なら null
+```
+
+同じ名前・同じ「加重平均レート」の概念で、既に `number | null` だった。
+
+### 直した所
+
+| ファイル | 直し |
+| --- | --- |
+| `shared/taxCorporate.ts` | `effectiveRate: number \| null`、`incomeAfterLoss > 0 ? … : null` |
+| `renderer/data/financialReport.ts` | `fmtRate(rate: number \| null)` が null で「—」。**なぜ空欄かを述べる 1 文**を足した |
+| `components/FinancialAnalysis.tsx` | 関門を**値そのもの**で書く (`breakdown.effectiveRate === null`)。`isLoss` は欠損の注記にだけ残す |
+
+`statutoryEffectiveRate` (法定実効税率・参考) は **`number` のまま**にした ——
+損金算入を織り込んだ**限界税率**で、課税所得で割っていないので所得 0 でも定義される。
+その差自体を検査で留めた (「法定実効税率は所得 0 でも定義される (単純合算の実効税率は null)」)。
+
+### 面に出る値を数えた (パス 56 の教訓の適用)
+
+`.effectiveRate` の読み手は**リポジトリ全体で 3 か所**、いずれも本パスで値基準に直した:
+
+| 読み手 | 面 |
+| --- | --- |
+| `FinancialAnalysis.tsx:468` | 経営コックピットの税カード (画面) |
+| `financialReport.ts:101` | 経営レポート Markdown の表 (**相手に渡る**) |
+| `financialReport.ts:108` | 同レポートの「なぜ空欄か」 |
+
+CSV (`ratiosToCsv` / `statementToCsv`)・金融機関等提出用の書面は
+この値を持たない (確認済み)。分解代入での読みも無い。
+
+### 見本が欠陥を仕様として固定していた —— **11 例目**
+
+`0` / `0.0%` を期待していた既存の見本 **6 本**:
+
+- `shared/__tests__/taxCorporate.test.ts` ×5 —— うち 1 本の名前が
+  `stays defined (non-zero) even at a loss, unlike effectiveRate (0)` で、
+  **欠陥を対比の基準として名前に書いていた**
+- `renderer/data/__tests__/financialReport.test.ts` ×1 —— `| 実効税率 | 0.0% |`
+
+### 検査 (+7) と対照 (3 本とも実際に壊して確認)
+
+| 対照 | 落ちた検査 |
+| --- | ---: |
+| `effectiveRate` を `: 0` に戻す | **9 本** (単位 6・レポート 1・画面 2) |
+| 画面の関門を `isLoss` に戻す | **2 本** (画面のみ) |
+| レポートの「算定していません」を消す | **1 本** |
+
+3 本目は**最初は鳴らなかった**。文が 1 本も検査に留められていなかったので、
+先に見本と対照 (`★ 対照: 課税所得が残る期は率を刷り、空欄の理由は述べない`) を足し、
+そのうえで壊して鳴ることを見た。**鳴らない対照は「合格」ではなく、その検査についての報せ。**
+
+新しい画面の検査 `pages/__tests__/effectiveRateOnScreen.test.ts` は
+**実物の `繰越欠損金` 入力欄に打ち込んで**カードの値だけを読む
+(タイルのラベルで欄を特定するので、画面の他の「%」に当たらない)。
+「打ち込みを消せば率が戻る」を 1 本置いて、**関門が値に追随していること**を留めた。
+
+### 残した観察 (直していない)
+
+`renderer/data/businessFinancials.ts:101` が
+`netProfit = ordinaryProfit * 0.7 // 実効税率約30%` と**率を直書き**している。
+台帳 `finance.effectiveTaxRate` は在り、画面は `FinancialAnalysis` の
+`effectiveTaxRate` prop (NOPAT / ROIC) には渡しているが、**この 0.7 には届かない**。
+`lint:parameter-prose` は「画面が既定定数を直接刷る」形を見るので、
+**別の計算が同じ概念の写しを持つ**形は今のどのゲートにも当たらない。
+= パス 58 の候補 (census の順序では「判断に使う物」の帯)。
+
+### 教訓
+
+**関門は、守る値**そのもの**で書く。** 値の側の条件を関門に書き写すと、
+それは**規則の再導出**になり、写した先の量がずれた瞬間に境目で食い違う。
+パス 52 は「規則が関門にしか無い」形だった (値が素なので全部の面が無防備)。
+本パスは裏返し —— **関門が在るのに、値と違う量を見ていた**。
+どちらも直しは同じで、**規則を値に置き、関門は値を読むだけにする**。
