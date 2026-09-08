@@ -160,9 +160,35 @@ function renderTable(result) {
   ].join('\n');
 }
 
+/** 開始マーカーの見出し部分。**綴りを縮めた別形も検出する**ため、短い前置きで数える。 */
+const BEGIN_TAG = '<!-- zero-fold-census:begin';
+
 function findTable(doc) {
+  // **マーカーは 1 組だけ。** 2026-09-08 まで、この本には
+  // 空の `<!-- zero-fold-census:begin -->` / `end` の組が**もう 1 つ**在り、
+  // しかも**散文が表を導入している場所がそちら**だった (パス 85 で私が書いた)。
+  // `BEGIN` は説明文まで含む長い綴りなので `indexOf` は本物だけを見つけ、
+  // 表は `applyTable` の「マーカーが無ければ末尾へ足す」経路で
+  // **2,880 行離れた場所**へ付いていた —— 読者は空のブロックに行き着く。
+  //
+  // 今は無害でも、**`BEGIN` の綴りを少し縮めるだけで**`indexOf` が空の組を
+  // 先に拾い、生成物がそちらへ書かれて**本物が黙って腐る** (ゲートは緑のまま)。
+  // だから字面ではなく**組の数**を見て、複数あれば鳴らす (2026-09-08 · パス 95)。
+  let n = 0;
+  for (let i = doc.indexOf(BEGIN_TAG); i >= 0; i = doc.indexOf(BEGIN_TAG, i + 1)) n += 1;
+  if (n > 1) {
+    throw new Error(
+      `開始マーカー "${BEGIN_TAG}…" が ${n} 組あります。生成物の行き先が定まらないので 1 組にしてください`,
+    );
+  }
   const begin = doc.indexOf(BEGIN);
-  if (begin < 0) return null;
+  if (begin < 0) {
+    // 短い別形だけが在る = 綴りが合っていない。末尾へ足すと二重になるので鳴らす。
+    if (n === 1) {
+      throw new Error(`開始マーカーの綴りが違います。次の 1 行にしてください:\n${BEGIN}`);
+    }
+    return null;
+  }
   const end = doc.indexOf(END, begin);
   if (end < 0) throw new Error(`終端マーカー "${END}" がありません`);
   return { begin, end: end + END.length };
@@ -229,6 +255,25 @@ function selfTest() {
   check('★ 行が 1 つ減っても鳴る', typeof staleReason(doc, renderTable({ rows: [sample.rows[0]], files: 1, sites: 2 })) === 'string');
   check('★ ブロックが無ければ鳴る', typeof staleReason('# 見出しだけ\n', table) === 'string');
   check('2 度当てても増えない', applyTable(doc, table) === doc);
+
+  // --- マーカーの組が 1 つであること (パス 95) ---
+  const strayPair = `${doc}\n<!-- zero-fold-census:begin -->\n${END}\n`;
+  let threwOnDup = false;
+  try {
+    findTable(strayPair);
+  } catch {
+    threwOnDup = true;
+  }
+  check('★ 開始マーカーが 2 組あれば鳴る (生成物の行き先が定まらない)', threwOnDup);
+  let threwOnTypo = false;
+  try {
+    findTable('# 見出し\n\n<!-- zero-fold-census:begin -->\n<!-- zero-fold-census:end -->\n');
+  } catch {
+    threwOnTypo = true;
+  }
+  check('★ 綴りの違う開始マーカーだけなら鳴る (末尾へ足して二重にしない)', threwOnTypo);
+  check('対照: 正しい 1 組なら鳴らない', findTable(doc) !== null);
+  check('対照: マーカーが 1 つも無ければ null (初回の足し込みは通す)', findTable('# 見出しだけ\n') === null);
 
   // --- 床そのものの対照 (床が実測より上なら落ちる) ---
   const real = census();

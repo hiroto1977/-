@@ -2338,7 +2338,6 @@ null = 「この場では宇宙が分からない」として所属ではなく 
 > テストを書かない口実にはしない。
 
 
-
 モジュール読み込み時に一度だけ評価される初期化コード (定数テーブル / レジストリ /
 設定オブジェクト) の変異体は、vitest がモジュールを変異体ごとに読み直さないため
 **構造的に殺せない**。既定のままだと「生存」として報告され、テストの不足と
@@ -13673,7 +13672,115 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 偽枝が 0」という意味論的な規則を人が当てた**再現できない**量で、新しい数は script に
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
-<!-- zero-fold-census:begin -->
+<!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
+合計 **104 ファイル / 279 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+
+| ファイル | 構文上の 0 倒し |
+| --- | ---: |
+| `src/shared/funding.ts` | 13 |
+| `src/renderer/data/investments.ts` | 10 |
+| `src/main/clients/stocks.ts` | 9 |
+| `src/renderer/pages/DocstudioPage.tsx` | 9 |
+| `src/shared/taxDeductions.ts` | 9 |
+| `src/renderer/data/stocksAnalysisWeb.ts` | 8 |
+| `src/shared/mutualFundsMetrics.ts` | 7 |
+| `src/shared/taxCredits.ts` | 6 |
+| `src/main/clients/business.ts` | 5 |
+| `src/main/clients/linux.ts` | 5 |
+| `src/renderer/data/cashflowDebtService.ts` | 5 |
+| `src/renderer/pages/RealEstatePage.tsx` | 5 |
+| `src/renderer/pages/TaxPage.tsx` | 5 |
+| `src/shared/savingsPlanning.ts` | 5 |
+| `src/shared/tradeTax.ts` | 5 |
+| `src/main/clients/funding.ts` | 4 |
+| `src/renderer/components/FinancialAnalysis.tsx` | 4 |
+| `src/renderer/data/connectionStatus.ts` | 4 |
+| `src/renderer/data/members.ts` | 4 |
+| `src/renderer/data/overview.ts` | 4 |
+| `src/renderer/pages/StocksPage.tsx` | 4 |
+| `src/renderer/pages/VillagePage.tsx` | 4 |
+| `src/shared/buildingIso.ts` | 4 |
+| `src/shared/depreciation.ts` | 4 |
+| `src/shared/hydroponics.ts` | 4 |
+| `src/shared/ollama.ts` | 4 |
+| `src/shared/taxConsumptionBusiness.ts` | 4 |
+| `src/shared/taxSocialInsurance.ts` | 4 |
+| `src/shared/waterCyclePlanner.ts` | 4 |
+| `src/main/clients/kpi.ts` | 3 |
+| `src/main/clients/youtube.ts` | 3 |
+| `src/renderer/data/balanceSheet.ts` | 3 |
+| `src/renderer/data/charts.ts` | 3 |
+| `src/renderer/data/financialStatements.ts` | 3 |
+| `src/renderer/pages/OverviewPage.tsx` | 3 |
+| `src/shared/invoiceTax.ts` | 3 |
+| `src/shared/payroll.ts` | 3 |
+| `src/shared/securityRange.ts` | 3 |
+| `src/main/atomicWrite.ts` | 2 |
+| `src/main/clients/ollama.ts` | 2 |
+| `src/main/clients/teamradar.ts` | 2 |
+| `src/renderer/App.tsx` | 2 |
+| `src/renderer/components/AxonometricCharts.tsx` | 2 |
+| `src/renderer/data/businessUnits.ts` | 2 |
+| `src/renderer/data/cloudSync.ts` | 2 |
+| `src/renderer/data/counselingResearch.ts` | 2 |
+| `src/renderer/data/hydroponicsSetup.ts` | 2 |
+| `src/renderer/data/kpiActuals.ts` | 2 |
+| `src/renderer/data/sales.ts` | 2 |
+| `src/renderer/data/shopifyImport.ts` | 2 |
+| `src/renderer/data/statementAccounts.ts` | 2 |
+| `src/renderer/data/statementEquity.ts` | 2 |
+| `src/renderer/library/library.ts` | 2 |
+| `src/renderer/pages/BusinessPage.tsx` | 2 |
+| `src/renderer/pages/FundingPage.tsx` | 2 |
+| `src/renderer/pages/KpiPage.tsx` | 2 |
+| `src/renderer/pages/TalentPage.tsx` | 2 |
+| `src/shared/connectors/connectorRegistry.ts` | 2 |
+| `src/shared/taxCalc.ts` | 2 |
+| `src/shared/taxCorporate.ts` | 2 |
+| `src/shared/taxRetirement.ts` | 2 |
+| `src/shared/zoningPlanner.ts` | 2 |
+| `src/main/clients/canva.ts` | 1 |
+| `src/main/clients/cloudflare.ts` | 1 |
+| `src/main/clients/devEnv.ts` | 1 |
+| `src/main/clients/emotions.ts` | 1 |
+| `src/main/oauth.ts` | 1 |
+| `src/renderer/components/RealtimeTicker.tsx` | 1 |
+| `src/renderer/components/RecordShapeAuditPanel.tsx` | 1 |
+| `src/renderer/components/ShigyoConsole.tsx` | 1 |
+| `src/renderer/data/assistantContext.ts` | 1 |
+| `src/renderer/data/cashPlan.ts` | 1 |
+| `src/renderer/data/chatOrg.ts` | 1 |
+| `src/renderer/data/cloudBackup.ts` | 1 |
+| `src/renderer/data/crisisDeliberation.ts` | 1 |
+| `src/renderer/data/emotionsWeb.ts` | 1 |
+| `src/renderer/data/financialCsv.ts` | 1 |
+| `src/renderer/data/inputGuards.ts` | 1 |
+| `src/renderer/data/kessanImport.ts` | 1 |
+| `src/renderer/data/profitSensitivity.ts` | 1 |
+| `src/renderer/data/recordShapeAudit.ts` | 1 |
+| `src/renderer/data/teamRadarDraft.ts` | 1 |
+| `src/renderer/data/trendAlerts.ts` | 1 |
+| `src/renderer/data/useCollection.ts` | 1 |
+| `src/renderer/data/villageData.ts` | 1 |
+| `src/renderer/data/villageLayout.ts` | 1 |
+| `src/renderer/data/workingCapital.ts` | 1 |
+| `src/renderer/pages/ChartsPage.tsx` | 1 |
+| `src/renderer/pages/FreeePage.tsx` | 1 |
+| `src/renderer/pages/StoragePage.tsx` | 1 |
+| `src/shared/api/canva.ts` | 1 |
+| `src/shared/api/cursor.ts` | 1 |
+| `src/shared/fxCurrency.ts` | 1 |
+| `src/shared/httpLimits.ts` | 1 |
+| `src/shared/managementScorecard.ts` | 1 |
+| `src/shared/num.ts` | 1 |
+| `src/shared/passwordStrength.ts` | 1 |
+| `src/shared/talent.ts` | 1 |
+| `src/shared/taxCapitalGains.ts` | 1 |
+| `src/shared/taxCasual.ts` | 1 |
+| `src/shared/taxFurusato.ts` | 1 |
+| `src/shared/taxNationalHealthInsurance.ts` | 1 |
+| `src/shared/taxNationalPension.ts` | 1 |
+| `src/shared/welfareScheme.ts` | 1 |
 <!-- zero-fold-census:end -->
 
 
@@ -16553,116 +16660,6 @@ expect(h.costPerShippedPlantYen).toBe(0);   // ← 同じ理屈が当たって�
 (経営サマリーには**それが無い**のが今回の差)。理由が出ている面の表記を、
 理由が出ていなかった面の都合で動かさない。
 
-<!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **104 ファイル / 279 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
-
-| ファイル | 構文上の 0 倒し |
-| --- | ---: |
-| `src/shared/funding.ts` | 13 |
-| `src/renderer/data/investments.ts` | 10 |
-| `src/main/clients/stocks.ts` | 9 |
-| `src/renderer/pages/DocstudioPage.tsx` | 9 |
-| `src/shared/taxDeductions.ts` | 9 |
-| `src/renderer/data/stocksAnalysisWeb.ts` | 8 |
-| `src/shared/mutualFundsMetrics.ts` | 7 |
-| `src/shared/taxCredits.ts` | 6 |
-| `src/main/clients/business.ts` | 5 |
-| `src/main/clients/linux.ts` | 5 |
-| `src/renderer/data/cashflowDebtService.ts` | 5 |
-| `src/renderer/pages/RealEstatePage.tsx` | 5 |
-| `src/renderer/pages/TaxPage.tsx` | 5 |
-| `src/shared/savingsPlanning.ts` | 5 |
-| `src/shared/tradeTax.ts` | 5 |
-| `src/main/clients/funding.ts` | 4 |
-| `src/renderer/components/FinancialAnalysis.tsx` | 4 |
-| `src/renderer/data/connectionStatus.ts` | 4 |
-| `src/renderer/data/members.ts` | 4 |
-| `src/renderer/data/overview.ts` | 4 |
-| `src/renderer/pages/StocksPage.tsx` | 4 |
-| `src/renderer/pages/VillagePage.tsx` | 4 |
-| `src/shared/buildingIso.ts` | 4 |
-| `src/shared/depreciation.ts` | 4 |
-| `src/shared/hydroponics.ts` | 4 |
-| `src/shared/ollama.ts` | 4 |
-| `src/shared/taxConsumptionBusiness.ts` | 4 |
-| `src/shared/taxSocialInsurance.ts` | 4 |
-| `src/shared/waterCyclePlanner.ts` | 4 |
-| `src/main/clients/kpi.ts` | 3 |
-| `src/main/clients/youtube.ts` | 3 |
-| `src/renderer/data/balanceSheet.ts` | 3 |
-| `src/renderer/data/charts.ts` | 3 |
-| `src/renderer/data/financialStatements.ts` | 3 |
-| `src/renderer/pages/OverviewPage.tsx` | 3 |
-| `src/shared/invoiceTax.ts` | 3 |
-| `src/shared/payroll.ts` | 3 |
-| `src/shared/securityRange.ts` | 3 |
-| `src/main/atomicWrite.ts` | 2 |
-| `src/main/clients/ollama.ts` | 2 |
-| `src/main/clients/teamradar.ts` | 2 |
-| `src/renderer/App.tsx` | 2 |
-| `src/renderer/components/AxonometricCharts.tsx` | 2 |
-| `src/renderer/data/businessUnits.ts` | 2 |
-| `src/renderer/data/cloudSync.ts` | 2 |
-| `src/renderer/data/counselingResearch.ts` | 2 |
-| `src/renderer/data/hydroponicsSetup.ts` | 2 |
-| `src/renderer/data/kpiActuals.ts` | 2 |
-| `src/renderer/data/sales.ts` | 2 |
-| `src/renderer/data/shopifyImport.ts` | 2 |
-| `src/renderer/data/statementAccounts.ts` | 2 |
-| `src/renderer/data/statementEquity.ts` | 2 |
-| `src/renderer/library/library.ts` | 2 |
-| `src/renderer/pages/BusinessPage.tsx` | 2 |
-| `src/renderer/pages/FundingPage.tsx` | 2 |
-| `src/renderer/pages/KpiPage.tsx` | 2 |
-| `src/renderer/pages/TalentPage.tsx` | 2 |
-| `src/shared/connectors/connectorRegistry.ts` | 2 |
-| `src/shared/taxCalc.ts` | 2 |
-| `src/shared/taxCorporate.ts` | 2 |
-| `src/shared/taxRetirement.ts` | 2 |
-| `src/shared/zoningPlanner.ts` | 2 |
-| `src/main/clients/canva.ts` | 1 |
-| `src/main/clients/cloudflare.ts` | 1 |
-| `src/main/clients/devEnv.ts` | 1 |
-| `src/main/clients/emotions.ts` | 1 |
-| `src/main/oauth.ts` | 1 |
-| `src/renderer/components/RealtimeTicker.tsx` | 1 |
-| `src/renderer/components/RecordShapeAuditPanel.tsx` | 1 |
-| `src/renderer/components/ShigyoConsole.tsx` | 1 |
-| `src/renderer/data/assistantContext.ts` | 1 |
-| `src/renderer/data/cashPlan.ts` | 1 |
-| `src/renderer/data/chatOrg.ts` | 1 |
-| `src/renderer/data/cloudBackup.ts` | 1 |
-| `src/renderer/data/crisisDeliberation.ts` | 1 |
-| `src/renderer/data/emotionsWeb.ts` | 1 |
-| `src/renderer/data/financialCsv.ts` | 1 |
-| `src/renderer/data/inputGuards.ts` | 1 |
-| `src/renderer/data/kessanImport.ts` | 1 |
-| `src/renderer/data/profitSensitivity.ts` | 1 |
-| `src/renderer/data/recordShapeAudit.ts` | 1 |
-| `src/renderer/data/teamRadarDraft.ts` | 1 |
-| `src/renderer/data/trendAlerts.ts` | 1 |
-| `src/renderer/data/useCollection.ts` | 1 |
-| `src/renderer/data/villageData.ts` | 1 |
-| `src/renderer/data/villageLayout.ts` | 1 |
-| `src/renderer/data/workingCapital.ts` | 1 |
-| `src/renderer/pages/ChartsPage.tsx` | 1 |
-| `src/renderer/pages/FreeePage.tsx` | 1 |
-| `src/renderer/pages/StoragePage.tsx` | 1 |
-| `src/shared/api/canva.ts` | 1 |
-| `src/shared/api/cursor.ts` | 1 |
-| `src/shared/fxCurrency.ts` | 1 |
-| `src/shared/httpLimits.ts` | 1 |
-| `src/shared/managementScorecard.ts` | 1 |
-| `src/shared/num.ts` | 1 |
-| `src/shared/passwordStrength.ts` | 1 |
-| `src/shared/talent.ts` | 1 |
-| `src/shared/taxCapitalGains.ts` | 1 |
-| `src/shared/taxCasual.ts` | 1 |
-| `src/shared/taxFurusato.ts` | 1 |
-| `src/shared/taxNationalHealthInsurance.ts` | 1 |
-| `src/shared/taxNationalPension.ts` | 1 |
-| `src/shared/welfareScheme.ts` | 1 |
-<!-- zero-fold-census:end -->
 
 ---
 
@@ -17526,3 +17523,52 @@ expect(toNum('100個')).toBe(100);   // 議事録の定足数
 検査は**帯が空でないことを先に確かめる** (`toNum` が読めて `readNumber` が
 読めない、を標本ごとに assert してから当てる) —— 帯が空になったら、
 その下の検査は何も見ていないことになる。
+
+## パス 95 (2026-09-08) — **私がパス 85 で作った台帳が、散文の指す場所では空だった**
+
+### 何が起きていたか
+
+この本には 0 倒し census の生成ブロックを囲む開始/終端マーカーの組が **2 つ**在った。
+
+- **散文が表を導入している場所** (「`npm run lint:zero-fold` が再生成し…」の直後) の組は、
+  開始マーカーの綴りが**短い別形**で、**中身が空**だった。
+- 本物の表は、そこから **2,880 行離れた**パス 84 の節の末尾に付いていた
+  (誰も導入していない場所)。
+
+`findTable` は説明文まで含む長い綴りを `indexOf` で探すので本物だけを見つけ、
+表は `applyTable` の「マーカーが無ければ末尾へ足す」経路で当時の**ファイル末尾**へ
+付いた。以後のパスがその後ろに節を足したので、表は文書の真ん中に埋もれた。
+
+**読者への帰結**: census の説明を読み進めた人は**空のブロック**に行き着く。
+「0 倒しの母集団は数えてあり、ゲートが留めている」と書いた本人が、
+**その表を指していない**状態を 10 パス分放置していた (パス 85 → 94)。
+
+### なぜ「無害」で済まなかったか
+
+今日の綴りでは `indexOf` が本物を先に見つけるので、動作は正しい。
+しかし **開始マーカーの綴りを少しでも縮めれば** `indexOf` は空の組を先に拾い、
+生成物はそちらへ書かれ、**本物は黙って腐る** —— しかも `--check` は
+書いた側を見るので**ゲートは緑のまま**である。
+このリポジトリが繰り返し直してきた「台帳は在るが何も守っていない」形そのもの。
+
+### 直し
+
+1. **表を、散文が導入している場所へ移した。** 空の組は消えた (組は 1 つだけ)。
+2. **`findTable` が組の数を見る。** 字面の一致ではなく
+   `zero-fold-census:begin` の**出現回数**を数え、2 つ以上なら
+   「生成物の行き先が定まらない」と言って落ちる。短い別形だけが在る場合も
+   (= 綴り違い) 落ちる —— 末尾へ足して二重にしないため。
+   この本が**自分のマーカーを literal で引用できなくなった**のは、その代償である。
+
+### 対照
+
+| 壊した所 | 鳴った物 |
+| --- | --- |
+| **A: 直す前の committed の doc をそのまま当てる** | ★ **`開始マーカー … が 2 組あります`** |
+| B: 空の組を末尾に足す | ★ 同じ文面 |
+| C: 綴りの違う開始マーカーだけを置く | ★ `綴りが違います` |
+| 対照: 正しい 1 組 / マーカーが 1 つも無い (初回) | 鳴らない |
+
+**対照 A が本題である** —— 新しい関門は、**10 パス分 committed されていた状態を
+落とす**。自分の作った台帳の不備を、自分の作ったゲートで捕まえた形になった。
+self-test に 4 件 (★ 2 + 対照 2) を足した。
