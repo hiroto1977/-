@@ -583,19 +583,51 @@ export interface CasualtyLossInput {
  *   方式(1) = 差引損失額 − 総所得×10%
  *   方式(2) = (差引損失額のうち災害関連支出) − 5万円
  * の大きい方 (いずれも下限0) を控除額とする。所得税・住民税で同額。
- * 非有限・負の入力はガードして安全側に倒す。
+ *
+ * ## 読めない数は「0」ではない (2026-09-08 · パス 86)
+ *
+ * **渡された数が非有限なら控除を算定せず `{0,0}` を返す。** 2026-09-08 まで
+ * 全ての欄を 0 に倒しており、doc は「非有限・負の入力はガードして安全側に倒す」と
+ * 書いていたが、**この関数では 0 が安全側ではなかった**:
+ *
+ * | 欄 | 0 に倒すと | 向き |
+ * | --- | --- | --- |
+ * | `totalIncome` | 方式(1) の**足切り (総所得×10%) が消える** | **控除が増える** |
+ * | `reimbursed` | **補填が無かったことになる** | **控除が増える** |
+ * | `lossAmount` | 差引損失額が 0 → 早期 return | 控えめ |
+ * | `disasterRelatedSpending` | 方式(2) の素が減る | 控えめ |
+ *
+ * 実測 (損害 100 万): 総所得 300 万なら **70 万**だが、総所得が読めないと
+ * **100 万** (足切り 30 万が丸ごと消える)。補填 40 万なら **30 万**だが、
+ * 補填が読めないと **70 万**。
+ *
+ * **すぐ上の寄附金の 2 関数 (`calcGeneralDonationDeduction` /
+ * `calcDonationTaxCredit`) は同じ `Number.isFinite(totalIncome) ? … : 0` を
+ * 書いていて、そちらは正しい** —— 寄附金では所得が**上限**を決めるので 0 に倒すと
+ * 控除も 0 になり、doc の「上限0として安全側に倒す」がそのとおり成り立つ。
+ * 雑損では所得が**足切り**を決めるので、同じ倒し方が逆を向く。
+ * **所得が逆の役割を持つ 2 つの関数で、同じ書き方を再利用した形である。**
+ *
+ * 負の値は今までどおり 0 へ丸める —— **負は「読めるが範囲外」で最寄りの有効値が
+ * 定まる**のに対し、非有限は**読めない**ので最寄りの値が無い。この 2 つを同じ
+ * 扱いにしたことが元の誤りだった。
  */
 export function calcCasualtyLossDeduction(
   input: CasualtyLossInput,
   disasterFloor = CASUALTY_DISASTER_FLOOR,
   incomeRate = CASUALTY_INCOME_RATE,
 ): DeductionPair {
-  const loss = Number.isFinite(input.lossAmount) ? Math.max(0, input.lossAmount) : 0;
-  const disaster = Number.isFinite(input.disasterRelatedSpending ?? 0)
-    ? Math.max(0, input.disasterRelatedSpending ?? 0)
-    : 0;
-  const reimbursed = Number.isFinite(input.reimbursed ?? 0) ? Math.max(0, input.reimbursed ?? 0) : 0;
-  const income = Number.isFinite(input.totalIncome) ? Math.max(0, input.totalIncome) : 0;
+  // 渡された数のどれか 1 つでも読めなければ控除を算定しない。
+  // **0 に倒すと足切りと補填が消えて控除が増える** (doc の表)。
+  // 欄が無い (undefined) のは「該当なし = 0」で、読めないのとは別。
+  const supplied = [input.lossAmount, input.totalIncome, input.disasterRelatedSpending, input.reimbursed];
+  if (supplied.some((v) => v !== undefined && !Number.isFinite(v))) {
+    return { incomeTax: 0, residentTax: 0 };
+  }
+  const loss = Math.max(0, input.lossAmount);
+  const disaster = Math.max(0, input.disasterRelatedSpending ?? 0);
+  const reimbursed = Math.max(0, input.reimbursed ?? 0);
+  const income = Math.max(0, input.totalIncome);
 
   // 差引損失額 (補填額控除後, 下限0)。
   const netLoss = Math.max(0, loss + disaster - reimbursed);

@@ -741,22 +741,48 @@ describe('calcCasualtyLossDeduction (雑損控除)', () => {
       .toBe(1);
   });
 
-  it('guards non-finite and negative inputs', () => {
+  /**
+   * **この検査は 2026-09-08 まで欠陥を仕様として固定していた。**
+   * 名前が `guards non-finite and negative inputs` で「守っている」と述べ、
+   * コメントが `non-finite totalIncome → income treated as 0 → method1 = netLoss` と
+   * **機構を説明したうえで 100 万を要求**していた。だが 0 に倒すのは
+   * ここでは**守り**ではない —— 総所得は方式(1) の**足切り**を決めるので、
+   * 0 に倒すと足切りが消えて**控除が増える** (下の対照で 70 万 → 100 万)。
+   * 補填額も同じで、0 に倒すと**補填が無かったことになる** (30 万 → 70 万)。
+   *
+   * すぐ上の寄附金の 2 関数では所得が**上限**を決めるので、同じ倒し方で
+   * 控除が 0 になる (あちらの「安全側に倒す」は正しい)。
+   * **所得が逆の役割を持つ 2 つの関数で同じ書き方を再利用した**のが元。
+   */
+  it('★ 読めない数が渡されたら控除を算定しない (0 に倒して控除を増やさない)', () => {
+    // 損害額が読めない → 算定しない
     expect(calcCasualtyLossDeduction({ lossAmount: Number.NaN, totalIncome: 3_000_000 }))
       .toEqual({ incomeTax: 0, residentTax: 0 });
+    // **総所得が読めない → 算定しない。** 直す前は 100 万 (足切り 30 万が消えていた)
+    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, totalIncome: Number.NaN }))
+      .toEqual({ incomeTax: 0, residentTax: 0 });
+    // **補填額が読めない → 算定しない。** 直す前は 70 万 (補填 40 万が消えていた)
+    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, reimbursed: Number.NaN, totalIncome: 3_000_000 }))
+      .toEqual({ incomeTax: 0, residentTax: 0 });
+    // 災害関連支出が読めない → 算定しない (向きは控えめ側だが規則は 1 つにする)
+    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, disasterRelatedSpending: Number.NaN, totalIncome: 3_000_000 }))
+      .toEqual({ incomeTax: 0, residentTax: 0 });
+  });
+
+  it('★ 対照: 同じ入力が読めれば控除は出る (床が全部を飲み込んでいない)', () => {
+    // 読めない所得が 100 万を出していた、その同じ損害額での正しい答え
+    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, totalIncome: 3_000_000 }).incomeTax)
+      .toBe(700_000); // 100 万 − 300 万×10%
+    // 読めない補填が 70 万を出していた、その同じ補填額での正しい答え
+    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, reimbursed: 400_000, totalIncome: 3_000_000 }).incomeTax)
+      .toBe(300_000); // (100 万 − 40 万) − 30 万
+  });
+
+  it('負の値は今までどおり 0 へ丸める (読めるが範囲外 ≠ 読めない)', () => {
     expect(calcCasualtyLossDeduction({ lossAmount: -100, totalIncome: 3_000_000 }))
       .toEqual({ incomeTax: 0, residentTax: 0 });
-    // non-finite totalIncome → income treated as 0 → method1 = netLoss
-    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, totalIncome: Number.NaN }).incomeTax)
-      .toBe(1_000_000);
-    // negative reimbursed clamps to 0
+    // 負の補填は「補填なし」に丸める。最寄りの有効値が定まるので非有限とは別扱い。
     expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, reimbursed: -500_000, totalIncome: 0 }).incomeTax)
-      .toBe(1_000_000);
-    // non-finite disaster clamps to 0
-    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, disasterRelatedSpending: Number.NaN, totalIncome: 0 }).incomeTax)
-      .toBe(1_000_000);
-    // non-finite reimbursed clamps to 0
-    expect(calcCasualtyLossDeduction({ lossAmount: 1_000_000, reimbursed: Number.NaN, totalIncome: 0 }).incomeTax)
       .toBe(1_000_000);
   });
 });

@@ -16554,17 +16554,17 @@ expect(h.costPerShippedPlantYen).toBe(0);   // ← 同じ理屈が当たって�
 理由が出ていなかった面の都合で動かさない。
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **106 ファイル / 302 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **106 ファイル / 298 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
 | `src/shared/funding.ts` | 13 |
-| `src/shared/taxDeductions.ts` | 13 |
 | `src/main/clients/stocks.ts` | 10 |
 | `src/renderer/data/investments.ts` | 10 |
 | `src/shared/employerBenefits.ts` | 10 |
 | `src/renderer/data/stocksAnalysisWeb.ts` | 9 |
 | `src/renderer/pages/DocstudioPage.tsx` | 9 |
+| `src/shared/taxDeductions.ts` | 9 |
 | `src/renderer/pages/RealEstatePage.tsx` | 7 |
 | `src/shared/mutualFundsMetrics.ts` | 7 |
 | `src/renderer/components/FinancialAnalysis.tsx` | 6 |
@@ -16750,3 +16750,101 @@ expect(h.costPerShippedPlantYen).toBe(0);   // ← 同じ理屈が当たって�
 (増えたら鳴る)。読む順は従来どおり「相手に渡る面 → 人・投資の判断」で、
 **次は台帳に載っていなかった `shared/taxDeductions.ts` (13) と
 `shared/employerBenefits.ts` (10)** —— 税と給付の計算が丸ごと未読だった。
+
+---
+
+## パス 86 (2026-09-08) — 雑損控除の「安全側に倒す」が**逆を向いていた**
+
+パス 85 で母集団に現れた `shared/taxDeductions.ts` (構文上の 0 倒し 13 件) を読んだ。
+**1 件が本物**で、しかも**規準はすぐ上の 2 つの関数に在った**。
+
+### 何が起きていたか
+
+`calcCasualtyLossDeduction` (雑損控除・国税庁 No.1110) の doc は
+**「非有限・負の入力はガードして安全側に倒す」**と書いていたが、
+4 つの番人のうち 2 つは**控除額を増やす**向きだった。
+
+| 欄 | 0 に倒すと | 向き |
+| --- | --- | --- |
+| `totalIncome` | 方式(1) の**足切り (総所得×10%) が消える** | **控除が増える** |
+| `reimbursed` | **補填が無かったことになる** | **控除が増える** |
+| `lossAmount` | 差引損失額 0 → 早期 return | 控えめ |
+| `disasterRelatedSpending` | 方式(2) の素が減る | 控えめ |
+
+実測 (損害 100 万):
+
+| 入力 | 控除額 |
+| --- | ---: |
+| 総所得 300 万 (読める) | **70 万** |
+| 総所得が読めない (NaN) | **100 万** ← 足切り 30 万が丸ごと消える |
+| 補填 40 万 (読める) | **30 万** |
+| 補填が読めない (NaN) | **70 万** ← 補填 40 万が丸ごと消える |
+
+### 規準はすぐ上に在った (同じ書き方が逆を向く理由)
+
+**`calcGeneralDonationDeduction` と `calcDonationTaxCredit` は同じ
+`Number.isFinite(totalIncome) ? Math.max(0, totalIncome) : 0` を書いていて、
+そちらは正しい。** 寄附金では所得が**上限**を決めるので 0 に倒すと控除も 0 になり、
+その doc の「非有限・負の総所得は上限0として安全側に倒す」がそのとおり成り立つ。
+雑損では所得が**足切り**を決めるので、同じ倒し方が逆を向く。
+**所得が逆の役割を持つ 2 つの関数で、同じ書き方を再利用した形である。**
+
+### 見本が欠陥を仕様として固定していた (26 件目・うち 9 件は名前の中)
+
+古い検査の名前は `guards non-finite and negative inputs` で「守っている」と述べ、
+コメントは **`non-finite totalIncome → income treated as 0 → method1 = netLoss`** と
+**機構を説明したうえで 100 万を要求**していた。同じ suite の別の検査
+(`uses method (1)`) が総所得 300 万で 70 万を主張しているので、
+**同じ損害額に対する 2 つの答えが同じファイルの中に並んでいた。**
+
+### 直し
+
+**渡された数のどれか 1 つでも非有限なら控除を算定せず `{0,0}` を返す。**
+欄が無い (`undefined`) のは「該当なし = 0」で、読めないのとは別に扱う。
+負の値は今までどおり 0 へ丸める —— **負は「読めるが範囲外」で最寄りの有効値が
+定まる**のに対し、非有限は**読めない**ので最寄りの値が無い。
+**この 2 つを同じ扱いにしたことが元の誤りだった。**
+
+### 対照 (2 本とも実際に壊して確かめた)
+
+| 壊した所 | 鳴った物 |
+| --- | --- |
+| A: 直しを戻す (全部 0 に倒す) | ★ 1 本 (`expected { incomeTax: 1000000 } to deeply equal { incomeTax: 0 }`) |
+| B: `!== undefined` の区別を落とす | **6 本** —— 欄の無い普通の呼び出しまで断り、私の対照検査も鳴る |
+
+対照 B は**床が広過ぎないこと**の確認になっている (「読めない」と「欄が無い」を
+混ぜると、正常な計算まで 0 になる)。
+
+### 到達性は正直に
+
+`calcAllDeductions` が内部で呼び、`TaxPage` がその aggregator を import しているので
+**経路は在る**。ただし **`TaxPage` は `casualtyLoss` を渡していない**ので、
+今日の利用者に誤った数字は出ていない。それでもこれは
+`src/shared/` の export で、doc が守っていない安全性を約束し、検査がその向きを
+固定していた —— 次に配線する人が踏む。
+
+### 私が測り間違えたこと (訂正)
+
+作業中に「`taxDeductions.ts` の export 35 件のうち 21 件は production から
+使われていない」と測ったが、**これは誤り**だった。私の走査は**ファイルを跨ぐ参照**
+しか数えず、自ファイル内の行を除外していたため、`calcAllDeductions` が
+内部で呼んでいる 生命保険料・地震保険料・医療費・セルフメディケーション・寄附金・
+雑損・障害者・寡婦ひとり親・勤労学生・iDeCo 上限・小規模企業共済 上限 を
+すべて「未使用」と数えていた。**内部呼び出しも使用である。**
+
+同じ確認で `WelfareSchemeCard.tsx:385` の
+「生命保険料控除・地震保険料控除・医療費控除等は未反映の簡略モデルです」も疑ったが、
+これは**そのカード自身の簡略モデル** (`welfareScheme.ts` は
+`calcDependentDeduction` / `calcSpouseDeduction` だけを import する) について
+述べており、**文面は正確**だった。欠陥ではない。
+
+### 副産物 (直した)
+
+パス 85 の `stripCommentsAndStrings` は改行を落としていたので、
+この本で「どの行か」を出すと**行番号がずれた** (実際にずれた出力を読んで
+別の行を調べかけた)。改行を保つように直した —— 件数は変わらない
+(`--check` が 106 ファイル / 302 件のまま通ることで確認)。
+
+**このパスで census は 302 → 298 件になった** (雑損の 4 件が消えた)。
+`lint:zero-fold` は**入れた当日に自分の変更を捕まえた** —— `npm test` が
+「committed の docs が実物と一致している」で落ち、再生成が要ることを教えた。
