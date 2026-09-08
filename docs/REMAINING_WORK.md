@@ -14889,3 +14889,77 @@ it('切替日数が未指定なら範囲外として扱う (既定で「合っ�
 偽の警告は偽の安心より無害に見えるが、**健康に関わる面では狼少年になる** ——
 本物の警告 (実際に範囲外) が同じ色で並ぶので、区別がつかなくなる。
 だから対照に「**本物の範囲外は今も false**」を必ず置いた。
+
+---
+
+## パス 68 (2026-09-09) — 「判定を表す boolean」の走査: 6 件中 1 件 (自己検査が 0 件を「すべて通過」と言う)
+
+パス 67 の教訓 (**未入力に対する答えは 2 つではなく 3 つ: OK / NG / 判定しない**) を
+走査にした。判定を思わせる語尾を持つ非 nullable な boolean 欄を数えた
+(`Ok` / `Adequate` / `Valid` / `Risk` / `Stale` / `Violat` …)。
+
+**規準はリポジトリ内に既に在った** —— `waterCyclePlanner.ts` の
+`capacityAdequate: boolean | null` (「能力未指定なら null」)。
+つまりこのリポジトリは既に「判定しない」を知っている。
+
+### 6 件の判定
+
+| 箇所 | 判定 |
+| --- | --- |
+| `chartSelfCheck.ts:215` `allPassed` | **直した (下記)** |
+| `balanceSheet.ts:311` `substantiveInsolvencyRisk` | **既知・記録済みの保留** (下記) |
+| `revenueConcentration.ts:32/138` `singleChannelRisk` / `singleCustomerRisk` | 記録のみ (下記) |
+| `waterCyclePlanner.ts:169` `stagnationRisk` | パス 66 の census で**効かないと実測済み** |
+| `waterCyclePlanner.ts:108` `accumulationRisk` | 未読 (次) |
+
+### 直した 1 件 — 自己検査が「空振り合格」だった
+
+`runSelfCheck` は `allPassed: failed === 0` で、データセットが空なら
+`passed: 0 / failed: 0 / allPassed: true` になる。
+`ChartsPage.tsx:130-136` はこれを**緑の枠**と
+**「✅ 全 0 データセット × 3 種すべて通過（0 項目）」**にしていた ——
+**何も検査していないことを「すべて通過」と報告する。**
+
+**同じ形は 2026-09-06 に `verify:all` の 4 ゲートへ床を置いて塞いだ**
+(`lint:imports` / `lint:regex` / `lint:workflow-security` / `lint:shell`)。
+ここは**利用者に見える自己検査**なので、同じ規則を当てた:
+`allPassed = checked.length > 0 && failed === 0`、`checkedDatasets` を公開し、
+0 件のときは緑でも赤でもない断り書きを出す。
+
+**到達可能性は正直に**: 画面は既定の `CHART_DATASETS` (非空の const) を使うので
+**今日この経路では空にならない**。これは **export された契約側の床**である
+(引数で空配列を渡せる)。`stocks.ts` の折り込みを「到達不能だから直さない」と
+した判断との違いは、**この対象が「検査したという主張」そのもの**である点と、
+**同じ失敗様式に対する床を、このリポジトリが既に採用している**点。
+
+### `substantiveInsolvencyRisk` — 既知の保留で、正しく未配線だった
+
+`balanceSheet.ts:380-389` に**この欠陥がそのまま表になって書かれている**:
+
+```
+ * | 欄 | 入力が無いとき必ずこうなる | 読まれ方 |
+ * | `netCashPositive` | 常に `true` | 「借入より現預金が多い」 |
+ * | `substantiveInsolvencyRisk` | 常に `false` | 「実質債務超過の懸念なし」 |
+ * **未入力を 0 に倒さないこと。** 入力欄を足すか… `null` にしてから配線する
+```
+
+実測: **`substantiveInsolvencyRisk` と `netCashPositive` はどの画面・書面からも
+読まれていない** (grep で production の consumer 0 件)。
+doc の指示どおり「配線する前に」止まっており、**利用者に嘘は届いていない。**
+有利子負債の入力欄を足すかどうかは REMAINING_WORK の利用者判断に既に載っている ——
+**勝手に足さない。**
+
+### `singleChannelRisk` / `singleCustomerRisk` — 記録のみ (未実測)
+
+売上の集中リスク。記録が 0 件のとき「集中リスクなし」と出るなら同じ形だが、
+**まだ実測していない**。次に読む (`accumulationRisk` と併せて)。
+読まずに「正しい」とも「欠陥」とも書かない。
+
+### 教訓
+
+**教訓を走査にすると、族の大きさが分かる。**
+パス 64 の視点 → 13 件中 0 件 (単発)。
+パス 65 の視点 → 24 件中 3 件 (**自分の取りこぼしを含む**)。
+パス 67 の視点 → 6 件中 1 件 + 保留 1 + 未読 3。
+**どれも「走らせるまで分からなかった」** —— 0 件だった走査も、
+「族ではない」という結論そのものが次の人の時間を節約する。

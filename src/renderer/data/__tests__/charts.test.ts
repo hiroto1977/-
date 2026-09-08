@@ -686,3 +686,38 @@ describe('charts — 残りの境界', () => {
     expect(g.series[0]!.points[2]).toEqual({ x: 110, y: 110 });
   });
 });
+
+/**
+ * **検査を 1 件も走らせていないのに「すべて通過」と言わない (パス 68)。**
+ *
+ * `allPassed: failed === 0` は、データセットが空のとき
+ * `passed: 0 / failed: 0 / allPassed: true` になり、画面は緑の枠で
+ * 「✅ 全 0 データセット × 3 種すべて通過（0 項目）」を出していた ——
+ * **何も検査していないことを「すべて通過」と報告する**「空振り合格」。
+ *
+ * 同じ形は 2026-09-06 に `verify:all` の 4 ゲート
+ * (`lint:imports` / `lint:regex` / `lint:workflow-security` / `lint:shell`)
+ * へ床を置いて塞いだ。ここは**利用者に見える自己検査**なので同じ規則を当てる。
+ *
+ * 到達可能性は正直に —— 画面は既定の `CHART_DATASETS` (非空の const) を使うので
+ * **今日この経路では空にならない**。これは export された契約側の床である
+ * (引数で空配列を渡せる)。
+ */
+describe('自己検査 — 0 件を「合格」と言わない', () => {
+  it('★ データセットが空なら allPassed は false (空振り合格を作らない)', () => {
+    const r = runSelfCheck([]);
+    expect(r.checkedDatasets).toBe(0);
+    expect(r.passed).toBe(0);
+    expect(r.failed).toBe(0);
+    // 直す前は `failed === 0` なので true だった
+    expect(r.allPassed).toBe(false);
+  });
+
+  it('★ 対照: 実物のデータセットでは今も allPassed が true (床が邪魔をしない)', () => {
+    const r = runSelfCheck();
+    expect(r.checkedDatasets).toBeGreaterThan(0);
+    expect(r.checkedDatasets).toBe(CHART_DATASETS.length);
+    expect(r.failed).toBe(0);
+    expect(r.allPassed).toBe(true);
+  });
+});

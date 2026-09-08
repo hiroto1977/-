@@ -127,14 +127,23 @@ export function ChartsPage(): ReactElement {
         <div
           style={{
             ...CARD,
-            borderColor: overall.allPassed ? 'var(--ok, #27ae60)' : 'var(--ng, #eb5757)',
+            // 0 件は緑にしない (「通過」を主張しない)。
+            borderColor: overall.allPassed
+              ? 'var(--ok, #27ae60)'
+              : overall.checkedDatasets === 0
+                ? 'var(--border)'
+                : 'var(--ng, #eb5757)',
             marginBottom: 12,
           }}
         >
           <strong style={{ fontSize: 13 }}>
-            {overall.allPassed
-              ? `✅ 全 ${CHART_DATASETS.length} データセット × 3 種すべて通過（${overall.passed} 項目）`
-              : `❌ ${overall.failed} 項目が失敗（${overall.passed} 項目は通過）`}
+            {/* 検査を 1 件も走らせていないときは「合格」でも「失敗」でもない。
+                緑の「すべて通過」も赤の「N 項目が失敗」も、どちらも嘘になる。 */}
+            {overall.checkedDatasets === 0
+              ? '⚠️ 検査対象のデータセットがありません（検査は 1 件も走っていません）'
+              : overall.allPassed
+                ? `✅ 全 ${overall.checkedDatasets} データセット × 3 種すべて通過（${overall.passed} 項目）`
+                : `❌ ${overall.failed} 項目が失敗（${overall.passed} 項目は通過）`}
           </strong>
         </div>
 
