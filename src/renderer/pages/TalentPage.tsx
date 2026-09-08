@@ -3,6 +3,7 @@ import { localIsoDate } from '../../shared/localDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { describeDroppedEntries } from '../../shared/talent';
 import type { SourceStrength } from '../../shared/provenance';
 
 /**
@@ -198,7 +199,21 @@ export function TalentPage(): React.JSX.Element {
         updatedAt: localIsoDate(),
       });
       if (r.ok) {
-        setSaveMsg('保存しました');
+        // **「保存しました」だけでは足りない。** sanitizer は上限で切り、形の合わない
+        // 要素を落とすので、成功のまま**一部が消える**ことが在る (経緯は
+        // `shared/talent.ts` の `describeDroppedEntries`)。返ってくるのは
+        // sanitize 後の状態なので、送った件数と比べて落ちた分を言う。
+        const saved = r.data as {
+          reports?: readonly unknown[];
+          initiatives?: readonly unknown[];
+          members?: readonly unknown[];
+        };
+        const len = (v: readonly unknown[] | undefined): number => (Array.isArray(v) ? v.length : 0);
+        const dropped = describeDroppedEntries(
+          { reports: reports.length, initiatives: initiatives.length, members: members.length },
+          { reports: len(saved.reports), initiatives: len(saved.initiatives), members: len(saved.members) },
+        );
+        setSaveMsg(dropped === null ? '保存しました' : `保存しました — ただし ${dropped}`);
         refresh();
       } else {
         setSaveMsg(`保存できませんでした: ${r.message}`);

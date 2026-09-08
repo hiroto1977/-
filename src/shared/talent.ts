@@ -483,6 +483,43 @@ export const EMPTY_TALENT_STATE: TalentState = {
 export const TALENT_STORAGE_KEY = 'servicehub.talent.state.v1';
 
 /** どこから来た値でも、判定へ渡す前にこれを通す。 */
+/**
+ * **保存で落ちた項目を利用者に言うための文面。** (2026-09-08 · パス 89)
+ *
+ * `sanitizeTalentState` は上限で切り (`slice`)、形の合わない要素を落とす
+ * (`filter`)。`saveTalentState` は書く前に同じ sanitizer を通すので、
+ * **不適合な項目は保存時に黙って消えていた** —— 画面は `ok` を見て
+ * 「保存しました」と出し、読み直しでその項目が一覧から消える。
+ *
+ * 到達する経路の実例: 滞留年数の入力は `<input type="number" max={60}>` だが
+ * HTML の `max` は助言的で (form submit でもない) **61 と打てば state に入る**。
+ * `isValidLadderMember` は `years > 60` を弾くので、保存するとその人が落ちる。
+ *
+ * パス 74 で「保存の失敗を黙って捨てる」を直したが、こちらは
+ * **成功と言いながら一部を捨てている**形だった。`save-state` は sanitize 後の
+ * 状態を返すので、送った件数と返った件数を比べれば言える —— **channel は既に在った。**
+ *
+ * 落ちた理由は件数だけでは 2 通り (形が合わない / 上限超過) を見分けられないので、
+ * **両方を挙げて上限の実数を添える**。数を丸めて黙るより、利用者が確かめられる形にする。
+ *
+ * @param sent 画面が送った件数
+ * @param kept 保存後に返ってきた件数
+ * @returns 落ちた物が無ければ `null`
+ */
+export function describeDroppedEntries(
+  sent: { readonly reports: number; readonly initiatives: number; readonly members: number },
+  kept: { readonly reports: number; readonly initiatives: number; readonly members: number },
+): string | null {
+  const rows: { label: string; dropped: number; cap: number }[] = [
+    { label: '部署の申告', dropped: sent.reports - kept.reports, cap: MAX_DEPT_REPORTS },
+    { label: '施策', dropped: sent.initiatives - kept.initiatives, cap: MAX_INITIATIVES },
+    { label: 'メンバー', dropped: sent.members - kept.members, cap: MAX_LADDER_MEMBERS },
+  ].filter((r) => r.dropped > 0);
+  if (rows.length === 0) return null;
+  const parts = rows.map((r) => `${r.label} ${r.dropped} 件 (上限 ${r.cap} 件)`);
+  return `${parts.join(' / ')} は保存されませんでした。入力の形式が合わないか、上限を超えています。`;
+}
+
 export function sanitizeTalentState(raw: unknown): TalentState {
   if (raw === null || typeof raw !== 'object') return EMPTY_TALENT_STATE;
   const o = raw as Record<string, unknown>;

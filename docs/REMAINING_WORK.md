@@ -16554,7 +16554,7 @@ expect(h.costPerShippedPlantYen).toBe(0);   // ← 同じ理屈が当たって�
 理由が出ていなかった面の都合で動かさない。
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **105 ファイル / 288 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **105 ファイル / 289 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -16615,6 +16615,7 @@ expect(h.costPerShippedPlantYen).toBe(0);   // ← 同じ理屈が当たって�
 | `src/renderer/pages/BusinessPage.tsx` | 2 |
 | `src/renderer/pages/FundingPage.tsx` | 2 |
 | `src/renderer/pages/KpiPage.tsx` | 2 |
+| `src/renderer/pages/TalentPage.tsx` | 2 |
 | `src/shared/connectors/connectorRegistry.ts` | 2 |
 | `src/shared/taxCalc.ts` | 2 |
 | `src/shared/taxCorporate.ts` | 2 |
@@ -16648,7 +16649,6 @@ expect(h.costPerShippedPlantYen).toBe(0);   // ← 同じ理屈が当たって�
 | `src/renderer/pages/ChartsPage.tsx` | 1 |
 | `src/renderer/pages/FreeePage.tsx` | 1 |
 | `src/renderer/pages/StoragePage.tsx` | 1 |
-| `src/renderer/pages/TalentPage.tsx` | 1 |
 | `src/shared/api/canva.ts` | 1 |
 | `src/shared/api/cursor.ts` | 1 |
 | `src/shared/fxCurrency.ts` | 1 |
@@ -17006,3 +17006,88 @@ it('★ 母集団に税・給付の計算が入っている (手書きの表か�
    「要素を落としたら degraded と言う」方針を採ったのに、こちらには無い。
    **ただし `reviewLadder` の呼び出しは `main/clients/talent.ts:37` の doc コメント
    にしか現れない** —— 実際に呼ばれているかは未確認。次に読むときはそこから。
+
+---
+
+## パス 89 (2026-09-08) — 人材ページが**「保存しました」と言いながらメンバーを捨てていた**
+
+パス 88 の走査から出た手掛かり 2 件のうち、**両方が同じ 1 つの穴に収束した。**
+
+### 何が起きていたか
+
+`sanitizeTalentState` は 3 つの配列を畳む:
+
+```ts
+members: Array.isArray(o['members'])
+  ? o['members'].slice(0, MAX_LADDER_MEMBERS).filter(isValidLadderMember)
+  : [],
+```
+
+**`saveTalentState` は書く前に同じ sanitizer を通す** (`saveTalentStateImpl` の
+`sanitizeTalentState(ctx.payload)`)。つまり上限超過 (`slice`) と形の合わない要素
+(`filter`) は**保存の時点で消える**。ところが画面は
+
+```ts
+if (r.ok) { setSaveMsg('保存しました'); refresh(); }
+```
+
+で `r.data` を**捨てていた**ので、利用者には「保存しました」だけが出て、
+`refresh()` が sanitize 済みの状態を読み直すため**その人が一覧から消える**。
+
+### 到達する (画面から打てる値)
+
+滞留年数の入力は `<input type="number" min={0} max={60}>` だが、
+**HTML の `max` は助言的**で (form submit でもないので何も止めない)、
+`e.target.value` は `'61'` を返す。検査で標本つきで留めた:
+`expect(yearsInput().value).toBe('61')`。
+`isValidLadderMember` は `years > 60` を弾くので、保存でその人が落ちる。
+
+`step` は `<select>` で正しい STEP しか選べないので安全。
+上限 (メンバー 500 / 部署の申告 200 / 施策 200) の側も同じ形で黙って切れる。
+
+### パス 74 との関係
+
+パス 74 は「保存の**失敗**を黙って捨てる」を直した。こちらは
+**成功と言いながら一部を捨てている**形で、より見つけにくい ——
+`ok` は本当に `ok` だからである。
+
+**言う手段は既に在った**: `save-state` は sanitize 後の状態を返しており、
+画面はそれを受け取って捨てていただけ。**channel を足す必要はなかった。**
+
+### 直し
+
+- `shared/talent.ts` に `describeDroppedEntries(sent, kept)` (上限の定数と同じ
+  モジュールに置く —— 文面が上限の実数を要るため)。落ちた物が無ければ `null`。
+- 落ちた理由は件数だけでは 2 通り (形が合わない / 上限超過) を見分けられないので、
+  **両方を挙げて上限の実数を添える**。数を丸めて黙るより、利用者が確かめられる形。
+- `TalentPage.save()` が送った件数と返った件数を比べ、
+  `保存しました — ただし メンバー 1 件 (上限 500 件) は保存されませんでした。…` と出す。
+
+### 対照 (2 本とも実際に壊して確かめた)
+
+| 壊した所 | 鳴った物 |
+| --- | --- |
+| A: 画面のメッセージを `'保存しました'` だけに戻す | ★ **1 本** (jsdom) |
+| B: `describeDroppedEntries` を常に `null` にする | ★ **5 本** (単体 4 + jsdom 1) |
+
+対照の 2 本 (**60 年なら落ちない** / **何も編集しなければ断りが出ない**) は
+両方の対照で通り続けた —— **床が「いつでも鳴る」形になっていない**ことの確認。
+
+### 検査は IPC の 1 段だけを差し替えた
+
+jsdom の hub は `save-state` で**本物の `sanitizeTalentState` を通し**、その結果を
+返す。「main はこう返すはず」と私が書いた値ではなく、**実際に落ちること**を見る
+(`expect(stored.members).toHaveLength(0)` と、送った payload には 1 件在ることを
+両方留めた)。
+
+### 併せて確かめた (直していない)
+
+- `reviewLadder(state.members)` の `filter` は**冗長** —— `sanitizeTalentState` が
+  読み取りの時点で既に同じ判定を通しているので、ここで落ちる要素は無い。
+  パス 88 で「黙って落とす」と書いたのは**落ちる場所を 1 つ手前と見誤っていた**。
+  実際の落下点は sanitizer で、そこを今回言えるようにした。
+- 欄を空にしたときは `Number('') === 0` で `yearsInStep: 0` になり、これは
+  **有効な値なので落ちない** (その人は残るが年数が 0 になる)。パス 88 で
+  「挙がるべき人が黙って消える」と書いた向きは、**落下ではなく 0 化**だった。
+  0 は `stalled` の条件から外れるので結果は似るが、機構は別である。
+  入力を共有の読み取り (`inputGuards`) へ寄せるかは**別の判断**として残す。
