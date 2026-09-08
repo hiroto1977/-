@@ -16139,8 +16139,14 @@ const bad1: UpdateVerdict = { status: 'update-available', latest: null, … };
    画面は `BusinessCategoryId` の合併を失っており、カテゴリ id の打ち間違いを型で拾えない。
    `mockPayloadPolicy.test.ts:155` に client→page の台帳が既に在るので、
    そこに「型を共有しているか」を足せる。
-2. **`window.serviceHub` の宣言が実態より強い**: `shared/bridge.d.ts` が非 optional で
-   宣言しているため `if (!window.serviceHub) return;` が全部「常に偽」になる
+2. **`window.serviceHub` の「常に偽」は空振り —— 直さないと結論した (実測つき)**:
+   `shared/bridge.d.ts:5` が非 optional (`serviceHub: ServiceHubBridge`) なので
+   `if (!window.serviceHub) return;` は「常に偽」と報告される
    (`SecurityPage:114` `:144`、`OllamaPage:49` ほか)。
-   **ガードは正しく、宣言が間違っている** —— ブラウザ版は shim が入るまで無く、
-   テストでは差し替える。optional にするか `declare global` の形を見直すか。
+   **実測**: `window.serviceHub` の使用は **124 か所**、うちガード済みは **30 か所**。
+   optional にすると残り **約 94 か所**が型エラーになる。
+   **そして宣言のほうが正しい** —— デスクトップ版は preload が必ず入れ、
+   ブラウザ版は `web-shim.ts` を `main.tsx` が**最初に import する**ので、
+   どの画面が動くときにも橋は在る。**宣言は起動が確立する不変条件を述べている。**
+   30 個のガードは shim が入る前の窓とテストの差し替えに対する**安い保険**であって、
+   optional 化は 94 か所を騒がせるだけで守るものが増えない。**候補として消す。**
