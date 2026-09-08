@@ -213,7 +213,9 @@ export function SalesPage() {
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
             <Tile label="総売上" value={yen.format(summary.totalAmount)} />
             <Tile label="総注文件数" value={summary.totalOrders.toLocaleString('ja-JP')} />
-            <Tile label="平均注文単価 (AOV)" value={yen.format(Math.round(summary.aov))} />
+            {/* 注文が 0 件なら「—」。`¥0` は「平均単価が 0 円」という主張になる
+                (経緯は `data/sales.ts` の `SalesSummary.aov`)。 */}
+            <Tile label="平均注文単価 (AOV)" value={summary.aov === null ? '—' : yen.format(Math.round(summary.aov))} />
             <Tile label="チャネル数" value={`${summary.byChannel.length}`} />
           </div>
 
@@ -239,7 +241,7 @@ export function SalesPage() {
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(c.amount)}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{c.share.toFixed(1)}%</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{c.orders.toLocaleString('ja-JP')}</td>
-                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(Math.round(c.aov))}</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{c.aov === null ? '—' : yen.format(Math.round(c.aov))}</td>
                   </tr>
                 ))}
               </tbody>

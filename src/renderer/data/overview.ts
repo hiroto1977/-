@@ -115,7 +115,8 @@ export interface BusinessOverview {
   readonly sales: {
     totalAmount: number;
     totalOrders: number;
-    aov: number;
+    /** 平均受注単価。**注文が 0 件なら null** (経緯は `sales.ts` の同名の欄)。 */
+    aov: number | null;
     channelCount: number;
     topChannel: string | null;
     /** 売上集中度 (チャネル依存リスク)。売上が無ければ null。 */

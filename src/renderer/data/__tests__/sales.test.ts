@@ -156,11 +156,24 @@ describe('summarizeSales', () => {
     expect(amazon.label).toBe('Amazon');
   });
 
-  it('handles an empty set without dividing by zero', () => {
+  // **注文が 0 件なら平均受注単価は算定不能。** 額は 0 (足す物が無い) だが、
+  // 「平均受注単価 0 円」は主張である —— この値は**書面 §2** に算式
+  // 「売上高 ÷ 受注件数」と並べて刷られる。
+  // 2026-09-08 までこの見本の名前 (`without dividing by zero`) が **0** を
+  // 仕様として固定していた —— 0 除算を避ける手段は 0 だけではない。
+  it('注文 0 件 — 額は 0・平均受注単価は null (0 除算なし)', () => {
     const s = summarizeSales([]);
     expect(s.totalAmount).toBe(0);
-    expect(s.aov).toBe(0);
+    expect(s.totalOrders).toBe(0);
+    expect(s.aov).toBeNull();
     expect(s.byChannel).toEqual([]);
+  });
+
+  // ★ 対照: 注文が在れば数で出る (上の null が「常に null」ではないこと)。
+  it('★ 対照: 注文が在れば平均受注単価は数で出る', () => {
+    const s = summarizeSales([{ date: '2026-04-01', channel: 'amazon', amount: 10_000, orders: 4 }]);
+    expect(s.aov).toBe(2_500);
+    expect(s.byChannel[0]!.aov).toBe(2_500);
   });
 
   it('sorts byChannel by amount desc even when insertion order is ascending', () => {

@@ -1078,7 +1078,7 @@ export function OverviewPage() {
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
           <Tile label="総売上" value={yen.format(overview.sales.totalAmount)} sub={overview.sales.topChannel ? `主力: ${overview.sales.topChannel}` : undefined} />
           <Tile label="総注文件数" value={num.format(overview.sales.totalOrders)} />
-          <Tile label="平均注文単価" value={safeYen(overview.sales.aov)} />
+          <Tile label="平均注文単価" value={yenOrDash(overview.sales.aov)} />
           <Tile label="販売チャネル数" value={`${overview.sales.channelCount}`} />
           {overview.sales.concentration && (
             <Tile

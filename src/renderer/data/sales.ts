@@ -97,10 +97,22 @@ export interface ChannelTotal {
   readonly label: string;
   readonly amount: number;
   readonly orders: number;
-  /** Share of total amount, 0-100. */
+  /**
+   * Share of total amount, 0-100.
+   *
+   * **合計額 0 のときは 0 のまま。** この値は帯グラフの幅 (`width: ${share}%`) に
+   * そのまま入るので数でなければならず、額 0 の帯は長さ 0 が正しい表示である
+   * (「割れない」を null にする規則の例外。理由をここに置く)。
+   */
   readonly share: number;
-  /** Average order value (amount / orders), 0 when no orders. */
-  readonly aov: number;
+  /**
+   * Average order value (amount / orders)。**注文が 0 件なら null = 算定不能。**
+   *
+   * 0 に倒すと「平均受注単価は 0 円である」という主張になる。この値は
+   * **金融機関等提出用の書面 §2** に算式「売上高 ÷ 受注件数」と並べて刷られる
+   * (経緯は `SalesSummary.aov`)。
+   */
+  readonly aov: number | null;
 }
 
 /**
@@ -124,7 +136,26 @@ export interface SalesPeriod {
 export interface SalesSummary {
   readonly totalAmount: number;
   readonly totalOrders: number;
-  readonly aov: number;
+  /**
+   * 平均受注単価 = 合計額 ÷ 合計注文件数。**注文が 0 件なら null = 算定不能。**
+   *
+   * 2026-09-08 まで 0 に倒していたので、販売記録が 1 件も無い控えで
+   * **金融機関等提出用の書面 §2** がこう刷っていた:
+   *
+   * | 行 | 値 | 算式 |
+   * | --- | ---: | --- |
+   * | 売上高（販売記録） | 0 | 販売記録の合計 |
+   * | 受注件数 | 0件 | |
+   * | **平均受注単価** | **0円** | **売上高 ÷ 受注件数** |
+   * | 主力チャネル | ― | |
+   * | 売上分散スコア | ― | (1 − ハーフィンダール指数) × 100 |
+   *
+   * **同じ節の中で「割れない」の答え方が 2 通り**並んでいた。そして
+   * **規準は既に画面に在った** —— `BusinessPage.tsx` は同じ量を
+   * `c.aov > 0 ? yen.format(c.aov) : '—'` で「―」と刷っている
+   * (パス 52 の「規則が関門にしか無い」形・10 か所目)。
+   */
+  readonly aov: number | null;
   /** Per-channel breakdown, sorted by amount descending. Only channels with
    *  at least one entry appear. */
   readonly byChannel: readonly ChannelTotal[];
@@ -177,15 +208,22 @@ export function summarizeSales(entries: readonly SalesEntry[]): SalesSummary {
       share: totalAmount > 0 ? (v.amount / totalAmount) * 100 : 0,
       // チャネルは注文を持つエントリがある時のみ集計されるため v.orders は常に >0。
       // この防御分岐は到達不能 (equivalent) なので無効化する。
+      // **null 側は到達しない**が、`aov` の答え方は上の欄と揃える (0 は主張である)。
       // Stryker disable next-line ConditionalExpression,EqualityOperator
-      aov: v.orders > 0 ? v.amount / v.orders : 0,
+      aov: v.orders > 0 ? v.amount / v.orders : null,
     }))
     .sort((a, b) => b.amount - a.amount);
 
   return {
     totalAmount,
     totalOrders,
-    aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
+    // **注文が 0 件なら平均受注単価は算定不能。** 0 に倒すと
+    // 「平均受注単価は 0 円」という主張になり、**書面 §2** がそれを算式
+    // 「売上高 ÷ 受注件数」と並べて刷る (同じ §2 の 主力チャネル・売上分散スコアは
+    // 「―」なので、1 つの節に答え方が 2 通り並んでいた)。
+    // **規準は既に画面に在った** —— `BusinessPage.tsx` は同じ量を
+    // `c.aov > 0 ? yen.format(c.aov) : '—'` で「―」と刷っている。
+    aov: totalOrders > 0 ? totalAmount / totalOrders : null,
     byChannel,
     period: salesPeriod(entries),
   };

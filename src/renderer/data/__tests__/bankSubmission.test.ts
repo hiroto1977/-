@@ -1220,3 +1220,37 @@ describe('注記 — 手入力の上書きを述べる', () => {
     expect(one.notes.length).toBe(clean.notes.length + 1);
   });
 });
+
+/**
+ * **§2 平均受注単価 — 注文が 0 件なら算定不能。**
+ *
+ * 2026-09-08 まで `SalesSummary.aov` は 0 に倒れており、販売記録が 1 件も無い
+ * 控えで §2 が「平均受注単価 **0円**」を算式「売上高 ÷ 受注件数」と並べて刷って
+ * いた。同じ §2 の 主力チャネル・売上分散スコアは「―」なので、**1 つの節に
+ * 答え方が 2 通り**並んでいた。**規準は既に画面に在った** ——
+ * `BusinessPage.tsx` は同じ量を `c.aov > 0 ? … : '—'` で「―」と刷っている。
+ *
+ * パス 52 で「相手に渡る面の『割れないを 0 として刷る』は closed」と書いたが、
+ * それは `overview.kpi` と `productivity` の話で、**`sales` は別の値だった**。
+ */
+describe('§2 平均受注単価 — 割れないものを 0 円として刷らない', () => {
+  it('★ 販売記録が無ければ ―、売上高と受注件数は 0 のまま (額と比率を分ける)', () => {
+    const o = overviewWith({ sales: [] });
+    const s2 = section(buildBankSubmissionSheet(inputWith(o)).sections, '2.');
+    expect(value(s2, '売上高（販売記録）')).toBe('0');
+    expect(value(s2, '受注件数')).toBe('0件');
+    expect(value(s2, '平均受注単価')).toBe(BLANK);
+    // 同じ節の他の「算定不能」と答え方が揃っていること
+    expect(value(s2, '主力チャネル')).toBe(BLANK);
+    expect(value(s2, '売上分散スコア')).toBe(BLANK);
+  });
+
+  it('★ 対照: 販売記録が在れば平均受注単価は円で出る', () => {
+    const o = overviewWith({
+      sales: [{ date: '2026-04-01', channel: 'amazon', amount: 10_000, orders: 4 }],
+    });
+    const s2 = section(buildBankSubmissionSheet(inputWith(o)).sections, '2.');
+    expect(value(s2, '平均受注単価')).toBe('2,500円');
+    expect(value(s2, '主力チャネル')).not.toBe(BLANK);
+  });
+});
