@@ -104,8 +104,19 @@ export interface WaterBalanceResult {
   readonly annualFreshNoRecycleL: number;
   /** 年間節水量 (L) = 循環なし − 循環あり。 */
   readonly annualWaterSavedL: number;
-  /** 塩類蓄積の懸念フラグ: 除去率が低いと透過水の持ち越しで EC が下がりきらない。 */
-  readonly accumulationRisk: boolean;
+  /**
+   * 塩類蓄積の懸念フラグ: 除去率が低いと透過水の持ち越しで EC が下がりきらない。
+   * **除去率が未入力なら `null`** —— 「入力していない」を「除去率が低い」と報告しない。
+   *
+   * 2026-09-08 まで `boolean` で `rej < 0.9` だった。`nonNeg` は未入力を 0 に
+   * するので、**欄を空にしただけで「⚠ RO 塩除去率が 90% 未満です」という警告**が
+   * 出ていた。しかも欄の定義は `min: 1` で、**0 は画面が受け付けない値**である
+   * (パス 67 の `switchDaysBeforeHarvest` と同じ形・同じファイル)。
+   *
+   * 同じ return の `concentrationFactor` は既に「物理的に成立しない → null」と
+   * していたので、**この欄だけが倒れていた。**
+   */
+  readonly accumulationRisk: boolean | null;
 }
 
 /**
@@ -116,6 +127,10 @@ export function planWaterBalance(input: WaterBalanceInput): WaterBalanceResult {
   const feed = nonNeg(input.systemVolumeL);
   const cycleDays = nonNeg(input.exchangeCycleDays);
   const r = Math.min(100, nonNeg(input.roRecoveryPct)) / 100;
+  // **未入力 (0 以下・非有限) は「除去率が低い」ではなく「分からない」。**
+  // 欄の定義は `min: 1` なので、0 は画面が受け付けない値である。
+  const rejRaw = input.roRejectionPct;
+  const rejSet = Number.isFinite(rejRaw) && rejRaw > 0;
   const rej = Math.min(100, nonNeg(input.roRejectionPct)) / 100;
 
   const permeate = feed * r;
@@ -137,7 +152,8 @@ export function planWaterBalance(input: WaterBalanceInput): WaterBalanceResult {
     annualFreshNoRecycleL: round1(feed * batchesPerYear),
     annualWaterSavedL: round1(permeate * batchesPerYear),
     // 除去率 90% 未満だと透過水に 10% 超の塩が残り、閉ループで積み上がりやすい。
-    accumulationRisk: rej < 0.9,
+    // **未入力は判定しない** —— 偽の警告は本物の警告を薄める (パス 67)。
+    accumulationRisk: rejSet ? rej < 0.9 : null,
   };
 }
 

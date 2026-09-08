@@ -67,6 +67,16 @@ describe('planWaterBalance — 水収支と「100%再利用は成立しない」
   it('除去率90%以上なら蓄積リスクなし・90%未満は蓄積リスクあり', () => {
     expect(planWaterBalance(base).accumulationRisk).toBe(false);
     expect(planWaterBalance({ ...base, roRejectionPct: 85 }).accumulationRisk).toBe(true);
+    // **未入力は判定しない (パス 69)。** `nonNeg` は未入力を 0 にするので、
+    // 直す前は欄を空にしただけで `0 < 0.9` が真になり
+    // 「⚠ RO 塩除去率が 90% 未満です」という警告が出ていた。
+    // 欄の定義は `min: 1` なので、**0 は画面が受け付けない値**である
+    // (パス 67 の `switchDaysBeforeHarvest` と同じ形・同じファイル)。
+    expect(planWaterBalance({ ...base, roRejectionPct: 0 }).accumulationRisk).toBeNull();
+    expect(planWaterBalance({ ...base, roRejectionPct: Number.NaN }).accumulationRisk).toBeNull();
+    // ★ 対照: 境目 (ちょうど 90%) は警告しない / 89.9% は警告する
+    expect(planWaterBalance({ ...base, roRejectionPct: 90 }).accumulationRisk).toBe(false);
+    expect(planWaterBalance({ ...base, roRejectionPct: 89.9 }).accumulationRisk).toBe(true);
   });
 
   it('不正値 (0・負・NaN) はクラッシュせず 0 系で返す', () => {

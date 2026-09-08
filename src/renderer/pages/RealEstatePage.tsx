@@ -862,9 +862,16 @@ export function RealEstatePage() {
             回収率 100% は物質収支上成立しません — 排出をゼロにすると塩類が無限に蓄積します。ブリード (濃縮廃液の排出) が塩類の唯一の出口です。
           </div>
         )}
-        {water.balance.accumulationRisk && (
+        {water.balance.accumulationRisk === true && (
           <div style={{ fontSize: 12, color: 'var(--warning)', marginBottom: 8 }}>
             ⚠ RO 塩除去率が 90% 未満です — 透過水に 10% 超の塩が残り、閉ループで特定イオンが蓄積しやすくなります。
+          </div>
+        )}
+        {/* **未入力を警告にしない。** 欄の定義は `min: 1` なので 0 は画面が
+            受け付けない値であり、「除去率が低い」ではなく「まだ分からない」。 */}
+        {water.balance.accumulationRisk === null && (
+          <div data-rejection-unset style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 8 }}>
+            RO 塩除去率が未入力のため、塩類蓄積の判定はしていません（膜の仕様値を入力してください）。
           </div>
         )}
 
