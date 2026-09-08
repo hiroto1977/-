@@ -16150,3 +16150,81 @@ const bad1: UpdateVerdict = { status: 'update-available', latest: null, … };
    どの画面が動くときにも橋は在る。**宣言は起動が確立する不変条件を述べている。**
    30 個のガードは shim が入る前の窓とテストの差し替えに対する**安い保険**であって、
    optional 化は 94 か所を騒がせるだけで守るものが増えない。**候補として消す。**
+
+---
+
+## パス 80 (2026-09-08) — 手書きの payload 型が既にずれていた。移動できないので、ずれたら鳴るようにした
+
+パス 79 で記録した別件ⓐの処理。`BusinessPage.tsx` は `CategoryKpi` /
+`BusinessUnit` / `BusinessSnapshot` を**自前で宣言**している (`renderer` は `main` を
+import できないため)。本物は `main/clients/business.ts` の
+`CategoryKpi` / `BusinessUnit` / `BusinessOpsSnapshot`。
+
+### 実測したずれ (3 件・すべて写しが**広い**方向)
+
+| 欄 | client | 画面の写し |
+| --- | --- | --- |
+| `BusinessUnit.id` | `BusinessCategoryId` (10 値の合併) | `string` |
+| `BusinessUnit.trafficKind` | `BusinessCategoryDef['trafficKind']` | 合併を**字面で書き写し** |
+| `isMock` | `true` | `boolean` |
+
+**写しが広い方へずれると代入は通るので `tsc` は黙る** (パス 62 と同じ機構)。
+欄の集合そのものは 3 つとも一致していた (12 / 6 / 9)。
+
+### 一番効くのは `trafficKind` の書き写し (実害の経路を辿った)
+
+画面は `TRAFFIC_KIND_LABEL: Record<BusinessUnit['trafficKind'], string>` を
+**写した合併で鍵付け**し、`TRAFFIC_KIND_LABEL[unit.trafficKind]` を **3 か所**
+(`:208` `:433` `:484`) で刷る。client に 6 つ目の種類が増えると
+写しにその値が無いので **Record に項目が無く `undefined`** になり、
+3 つの欄が**理由も出ずに空欄**になる。2 つの合併は別物なので `tsc` は何も言わない。
+
+### 直し —— 型は動かせないので、**ずれが鳴る**ようにした
+
+型の移動 (payload 型を `shared/` へ) は **75 サービス分の置き場所という設計判断**で
+利用者待ち (パス 79 参照)。そこでリポジトリに既に在る
+**「原文を読む parity 検査」の型** (`advisorQuestionParity.test.ts` /
+`advisorResponseParity.test.ts` の `readOriginalSource`) を使った。
+
+`shared/__tests__/businessPayloadParity.test.ts` (**新規** 7 件):
+
+- 3 組の interface の**欄の集合が一致**する (client が欄を足したら鳴る)。
+- `trafficKind` の**合併の members が一致**する。
+- `TRAFFIC_KIND_LABEL` に **client の全種類の鍵が在る** (空欄が出ない)。
+- **注釈のずれは台帳 (`KNOWN_DRIFT`) に載っているものだけ。** 台帳に無いずれが
+  出たら鳴り、**解消済みなのに台帳に残っていても鳴る** (台帳を腐らせない)。
+- 走査の生死: 欄が 4 未満／合併が 5 未満なら落とす
+  (`originalSource.ts` の警告どおり —— 原文を読む検査は床が無いと空の検査になる)。
+- 抽出そのものの標本 (`revenue` が `number`・`id` が `BusinessCategoryId` と取れる)。
+
+**既知のずれを「期待値」として書かない。** `expect(pageIdType).toBe('string')` と
+書けば**欠陥を仕様として固定する** (今日 24 例数えた形)。
+理由つきの台帳に載せ、*変化*を鳴らす形にした。
+
+### 対照 4 本 (すべて実際に壊して確認)
+
+| 対照 | 鳴った検査 |
+| --- | ---: |
+| A: client に 6 つ目の `trafficKind` を足す | **2 本** (合併の一致・ラベル表の網羅) |
+| B: client に欄を 1 つ足す | **1 本** (欄の集合) |
+| C: 台帳から既知のずれ 1 件を消す | **1 本** (台帳との照合・差分を文面に出す) |
+| D: `tsc` (`verify:all` の typecheck) | **4 件** —— 下記 |
+
+**D は自分のミスを捕まえた対照である。** 書いた直後 `npx vitest` は 7/7 通ったが、
+`verify:all` の typecheck が正規表現の捕獲群 4 か所を
+`string | undefined` として落とした (`noUncheckedIndexedAccess`)。
+**vitest は型検査をしない**ので、検査だけ見ていたら気付かない。
+`!` で黙らせず明示的に絞り、**絞った後で対照 A を再走して鳴ることを確かめた**
+(`filter` を足したことで検査が空にならなかったかの確認)。
+
+### 検証の範囲は正直に
+
+**production のコードは 1 行も変えていない** (検査 1 本の追加)。
+renderer も起動経路も触らないので**実機パイプラインは回していない** ——
+`npm test` (13,877) と 35 ゲートで足りる範囲の変更である (パス 75 と同じ判断)。
+
+### 残っているもの
+
+`id` / `isMock` の**狭さの差**は台帳に載せただけで直していない ——
+画面が `BusinessCategoryId` を名乗るには合併をもう 1 つ書き写すか
+`main` を import するかで、**どちらも payload 型の置き場所の決定待ち**である。
