@@ -11,6 +11,8 @@ import {
   parseKpiActual,
   summarizeFundamentals,
   computeKpiMetrics,
+  finiteBep,
+  noBreakEvenNote,
   type KpiActual,
 } from '../data/kpiActuals';
 import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
@@ -106,30 +108,47 @@ function TimeSeriesChart({ unit }: { unit: Unit }) {
   const periods = [...unit.history].reverse();
   if (periods.length === 0) return null;
 
-  // Compute BEP + OP per period
+  // **式は 1 か所** —— この描画は `computeKpiMetrics` の結果を読むだけにする
+  // (以前はここに BEP の式を書き写していて、しかも「無い」を 0 に倒していた)。
   const rows = periods.map((f) => {
-    const variable = f.cogs + f.advertising;
-    const fixed = f.sga + f.depreciation;
-    const contrib = f.revenue - variable;
-    const bep = contrib > 0 ? (fixed / contrib) * f.revenue : 0;
-    const op = contrib - fixed;
-    return { revenue: f.revenue, bep, op };
+    const m = computeKpiMetrics(f);
+    return { revenue: f.revenue, bep: finiteBep(m.bep), op: m.operatingProfit };
   });
-  const maxV = Math.max(...rows.flatMap((r) => [r.revenue, r.bep, Math.max(0, r.op)]));
+  const missingBep = rows.filter((r) => r.bep === null).length;
+  // **算定できた BEP だけで縮尺を決める。** 0 を混ぜると軸の最大値まで動く。
+  const maxV = Math.max(
+    ...rows.flatMap((r) => [r.revenue, ...(r.bep === null ? [] : [r.bep]), Math.max(0, r.op)]),
+  );
   const minOp = Math.min(0, ...rows.map((r) => r.op));
   const range = maxV - minOp || 1;
   const x = (i: number) => P + (i * (W - P * 2)) / Math.max(1, rows.length - 1);
   const y = (v: number) => H - P - ((v - minOp) / range) * (H - P * 2);
 
-  const path = (key: 'revenue' | 'bep' | 'op') =>
+  const path = (key: 'revenue' | 'op') =>
     rows.map((r, i) => `${i === 0 ? 'M' : 'L'} ${x(i)} ${y(r[key])}`).join(' ');
+  /**
+   * BEP 線は**算定できない期で途切れる**。null の次の点は新しい部分パス (`M`) で
+   * 始めるので、線が軸の底を通らない。
+   */
+  const bepPath = (): string => {
+    const parts: string[] = [];
+    let open = false;
+    for (let i = 0; i < rows.length; i += 1) {
+      const v = rows[i]!.bep;
+      if (v === null) { open = false; continue; }
+      parts.push(`${open ? 'L' : 'M'} ${x(i)} ${y(v)}`);
+      open = true;
+    }
+    return parts.join(' ');
+  };
 
   return (
+    <>
     <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block' }}>
       <line x1={P} y1={y(0)} x2={W - P} y2={y(0)} stroke={COLORS.axis} strokeDasharray="2,3" />
       <text x={P - 4} y={y(0) + 4} fontSize="10" fill={COLORS.axis} textAnchor="end">0</text>
       <path d={path('revenue')} stroke={COLORS.revenue} fill="none" strokeWidth="2" />
-      <path d={path('bep')} stroke={COLORS.bep} fill="none" strokeWidth="2" strokeDasharray="4,3" />
+      <path d={bepPath()} stroke={COLORS.bep} fill="none" strokeWidth="2" strokeDasharray="4,3" />
       <path d={path('op')} stroke={COLORS.op} fill="none" strokeWidth="2" />
       <g fontSize="11">
         <rect x={W - 130} y={8} width="124" height="56" fill="var(--bg)" stroke={COLORS.axis} />
@@ -141,6 +160,16 @@ function TimeSeriesChart({ unit }: { unit: Unit }) {
         <text x={W - 110} y={56} fill="var(--text)">営業利益</text>
       </g>
     </svg>
+    {noBreakEvenNote(missingBep, rows.length) !== null && (
+      <div
+        data-no-breakeven
+        role="alert"
+        style={{ marginTop: 6, fontSize: 11, color: '#e36b6b', lineHeight: 1.7 }}
+      >
+        ⚠ {noBreakEvenNote(missingBep, rows.length)}
+      </div>
+    )}
+    </>
   );
 }
 
@@ -258,21 +287,36 @@ function DonutChart({ unit }: { unit: Unit }) {
 function UnitBars({ units }: { units: Unit[] }) {
   const W = 720, H = 220, P = 40;
   if (units.length === 0) return null;
-  const maxV = Math.max(...units.flatMap((u) => [u.fundamentals.revenue, Number.isFinite(u.kpi.bep) ? u.kpi.bep : 0, Math.max(0, u.kpi.operatingProfit)]));
+  // **算定できた BEP だけで縮尺を決める** (0 を混ぜると軸の最大値が動く)。
+  const maxV = Math.max(
+    ...units.flatMap((u) => {
+      const bep = finiteBep(u.kpi.bep);
+      return [u.fundamentals.revenue, ...(bep === null ? [] : [bep]), Math.max(0, u.kpi.operatingProfit)];
+    }),
+  );
+  const noBep = units.filter((u) => finiteBep(u.kpi.bep) === null);
   const groupW = (W - P * 2) / units.length;
   const barW = (groupW - 8) / 3;
   const Y = (v: number) => H - P - (v / (maxV || 1)) * (H - P * 2);
 
   return (
+    <>
     <svg width="100%" viewBox={`0 0 ${W} ${H}`}>
       <line x1={P} y1={H - P} x2={W - P} y2={H - P} stroke={COLORS.axis} />
       {units.map((u, i) => {
         const gx = P + i * groupW + 4;
-        const bep = Number.isFinite(u.kpi.bep) ? u.kpi.bep : 0;
+        // **`Number.isFinite` で「無い」と分かったうえで 0 の棒を描いていた** ——
+        // 高さ 0 の棒は「損益分岐点 0 円」と読める。棒を**描かない**。
+        const bep = finiteBep(u.kpi.bep);
         return (
           <g key={u.id}>
             <rect x={gx} y={Y(u.fundamentals.revenue)} width={barW} height={H - P - Y(u.fundamentals.revenue)} fill={COLORS.revenue} />
-            <rect x={gx + barW} y={Y(bep)} width={barW} height={H - P - Y(bep)} fill={COLORS.bep} />
+            {bep !== null && (
+              <rect x={gx + barW} y={Y(bep)} width={barW} height={H - P - Y(bep)} fill={COLORS.bep} />
+            )}
+            {bep === null && (
+              <text x={gx + barW * 1.5} y={H - P - 4} fontSize="10" fill={COLORS.bep} textAnchor="middle">—</text>
+            )}
             <rect x={gx + barW * 2} y={Y(Math.max(0, u.kpi.operatingProfit))} width={barW} height={H - P - Y(Math.max(0, u.kpi.operatingProfit))} fill={COLORS.op} />
             <text x={gx + groupW / 2 - 4} y={H - P + 14} fontSize="10" fill="var(--text-mute)" textAnchor="middle">{u.label}</text>
           </g>
@@ -288,6 +332,16 @@ function UnitBars({ units }: { units: Unit[] }) {
         <text x={W - 88} y={51} fill="var(--text)">営業利益</text>
       </g>
     </svg>
+    {noBep.length > 0 && (
+      <div
+        data-no-breakeven-units
+        role="alert"
+        style={{ marginTop: 6, fontSize: 11, color: '#e36b6b', lineHeight: 1.7 }}
+      >
+        ⚠ {noBep.map((u) => u.label).join('・')}は限界利益が 0 以下のため損益分岐点が存在せず（どれだけ売っても固定費を回収できない状態）、BEP の棒を描いていません。
+      </div>
+    )}
+    </>
   );
 }
 

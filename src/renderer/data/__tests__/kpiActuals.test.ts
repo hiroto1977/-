@@ -17,6 +17,8 @@ import {
   monthlyTrendSeries,
   computeYoYGrowth,
   type KpiActual,
+  finiteBep,
+  noBreakEvenNote,
 } from '../kpiActuals';
 
 const actual = (period: string, revenue: number, unit = '全社'): KpiActual => ({
@@ -657,5 +659,44 @@ describe('安全余裕率 = 100 − 損益分岐点比率 (0 で止めない)', 
     const m = computeKpiMetrics(f(2000, 800, 600));
     expect(m.bepRatio).toBeCloseTo(50);
     expect(m.safetyMargin).toBeCloseTo(50);
+  });
+});
+
+/**
+ * **損益分岐点が「存在しない」ことを、座標に 0 として渡さない。**
+ *
+ * `bep` の「無い」の印は `Infinity` (限界利益 0 以下 = どんな売上でも固定費を
+ * 回収できない)。2026-09-08 まで KPI 画面の 2 つのグラフがこれを 0 に倒し、
+ * BEP 線を軸の一番下に引いていた —— 「損益分岐点 0 円 = どんな売上でも黒字」で、
+ * **真実の正反対**である。
+ */
+describe('finiteBep / noBreakEvenNote — 損益分岐点が存在しない期', () => {
+  it('★ 限界利益が 0 以下なら null (0 に倒さない)', () => {
+    // 売上 100 万・変動費 120 万 → 限界利益 −20 万
+    const m = computeKpiMetrics({ revenue: 1_000_000, cogs: 1_200_000, advertising: 0, sga: 300_000, depreciation: 0 });
+    expect(m.bep).toBe(Infinity);
+    expect(finiteBep(m.bep)).toBeNull();
+  });
+
+  it('★ 限界利益ちょうど 0 も null (境目は「0 以下」)', () => {
+    const m = computeKpiMetrics({ revenue: 1_000_000, cogs: 1_000_000, advertising: 0, sga: 300_000, depreciation: 0 });
+    expect(finiteBep(m.bep)).toBeNull();
+  });
+
+  it('★ 対照: 限界利益が在れば数で出る (標本が在ることの確認)', () => {
+    const m = computeKpiMetrics({ revenue: 1_000_000, cogs: 400_000, advertising: 0, sga: 300_000, depreciation: 0 });
+    expect(finiteBep(m.bep)).toBe(500_000); // 30万 ÷ 60万 × 100万
+  });
+
+  it('★ 途切れの理由を述べ、「データが無い」と読ませない', () => {
+    const out = noBreakEvenNote(2, 12);
+    expect(out).toContain('12 期のうち 2 期');
+    expect(out).toContain('損益分岐点が存在しません');
+    expect(out).toContain('どれだけ売っても固定費を回収できない');
+  });
+
+  it('★ 対照: 欠けが無ければ断り書きは出ない', () => {
+    expect(noBreakEvenNote(0, 12)).toBeNull();
+    expect(noBreakEvenNote(-1, 12)).toBeNull();
   });
 });

@@ -476,6 +476,43 @@ export function computeRevenueLandingForecast(
 
 /** Pure break-even / KPI computation. Mirrors `computeKpi` in
  *  src/main/clients/kpi.ts (see module header). */
+/**
+ * 描画に渡せる損益分岐点売上高。**存在しない期は `null`。**
+ *
+ * `bep` の「無い」の印は `Infinity` である (限界利益が 0 以下 = **どんな売上でも
+ * 固定費を回収できない**)。タイルは `safeYen` が「∞」と刷り、安全余裕率は
+ * `pctOrDash` が「—」と刷る。ところが **2026-09-08 まで KPI 画面の 2 つのグラフが
+ * これを `0` に倒していた**:
+ *
+ * | 面 | 「損益分岐点が無い」の表し方 |
+ * | --- | --- |
+ * | タイル (BEP) | `∞` |
+ * | タイル (安全余裕率) | `—` |
+ * | BEP 交点図 | マーカーを**出さない** (正しい) |
+ * | **時系列グラフ** | **0** —— BEP 線を軸の一番下に引く |
+ * | **事業別 棒グラフ** | **0** —— 高さ 0 の棒 |
+ *
+ * 0 は座標に入ると主張ではなく**幾何**になる。軸の底に引かれた BEP 線は
+ * 「損益分岐点 0 円 = どんな売上でも黒字」と読め、**真実の正反対**である。
+ * しかも 0 は y 軸の最大値の計算にも入るので縮尺まで動かす。
+ *
+ * **座標を作る側には `null` を渡して、点を打たせない。**
+ */
+export function finiteBep(bep: number): number | null {
+  return Number.isFinite(bep) ? bep : null;
+}
+
+/**
+ * 損益分岐点が存在しない期が在るときの断り書き (無ければ `null`)。
+ *
+ * **線が途切れている理由を述べる。** 途切れだけを見せると「データが無い期」と
+ * 読まれるが、実際は「**その期はどんな売上でも赤字**」という最も重い状態である。
+ */
+export function noBreakEvenNote(missing: number, total: number): string | null {
+  if (missing <= 0) return null;
+  return `${total} 期のうち ${missing} 期は限界利益が 0 以下のため、損益分岐点が存在しません（どれだけ売っても固定費を回収できない状態）。その期はグラフに点を打っていません。`;
+}
+
 export function computeKpiMetrics(f: KpiFundamentals): KpiMetrics {
   const variableCost = f.cogs + f.advertising;
   const fixedCost = f.sga + f.depreciation;
