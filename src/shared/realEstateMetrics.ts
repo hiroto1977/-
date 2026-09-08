@@ -12,10 +12,17 @@
 import { round2 } from './num';
 
 export interface RealEstateYield {
-  /** 表面利回り (%)。 */
-  readonly grossYieldPct: number;
-  /** 実質利回り (%)。 */
-  readonly netYieldPct: number;
+  /**
+   * 表面利回り (%)。**物件価格が読めなければ `null` = 算定不能。**
+   *
+   * 0 に倒すと「この物件の利回りは 0% である」という主張になる。規準は
+   * 同じファイルの {@link RealEstateNoiYield.noiYieldPct} (round 61) —— そちらは
+   * 最初から「総取得費 0 以下なら null」だった。**同じファイルの中で
+   * 「割れない」の答え方が 2 通り**並んでいた (2026-09-08 に揃えた)。
+   */
+  readonly grossYieldPct: number | null;
+  /** 実質利回り (%)。**物件価格が読めなければ `null`** (経緯は `grossYieldPct`)。 */
+  readonly netYieldPct: number | null;
   /** 実質の年間純収入 (賃料×入居率 − 経費)。 */
   readonly annualNetIncome: number;
   /** 年間満室賃料。 */
@@ -26,7 +33,7 @@ export interface RealEstateYield {
  * 不動産の表面利回り・実質利回りを計算する。
  *
  * @param monthlyRent 月額満室賃料 (円)
- * @param purchasePrice 物件価格 (円)。0 以下なら全指標 0 (ゼロ除算回避)。
+ * @param purchasePrice 物件価格 (円)。**0 以下なら利回りは `null` (算定不能)。**
  * @param occupancyRate 入居率 (0..1)。既定 1.0 (満室)。範囲外はクランプ。
  * @param annualExpense 年間経費 (管理費・修繕・税金等, 円)。既定 0。
  * @param acquisitionCost 取得費 (仲介手数料・登記等, 円)。既定 0。
@@ -48,7 +55,9 @@ export function calcRealEstateYield(
   const annualNetIncome = Math.round(annualGrossRent * occ - expense);
 
   if (price <= 0) {
-    return { grossYieldPct: 0, netYieldPct: 0, annualNetIncome, annualGrossRent };
+    // **金額 (annualNetIncome / annualGrossRent) は返す** —— 賃料と経費だけで決まり、
+    // 物件価格に依らないので算定できている。割れないのは利回りだけ。
+    return { grossYieldPct: null, netYieldPct: null, annualNetIncome, annualGrossRent };
   }
   const grossYieldPct = round2((annualGrossRent / price) * 100);
   const netYieldPct = round2((annualNetIncome / (price + acqCost)) * 100);
@@ -61,10 +70,32 @@ export interface RealEstateLeverage {
   readonly annualDebtService: number;
   /** ローン返済後の年間キャッシュフロー (実質純収入 − 返済額)。 */
   readonly annualCashflow: number;
-  /** 自己資金回収率 CCR (%) = 返済後CF ÷ 自己資金。自己資金0なら0。 */
-  readonly cashOnCashReturnPct: number;
-  /** イールドギャップ (%) = 実質利回り − ローン金利。プラスなら正レバレッジ。 */
-  readonly yieldGapPct: number;
+  /**
+   * 自己資金回収率 CCR (%) = 返済後CF ÷ 自己資金。**自己資金 0 なら `null` = 算定不能。**
+   *
+   * 自己資金 0 は**フルローン**であって「回収率 0%」ではない (入力欄は
+   * `allowZero: true` で 0 を明示的に許している)。2026-09-08 まで 0 に倒しており、
+   * **順位が反転していた**:
+   *
+   * | 控え | 返済後CF | 直す前の CCR |
+   * | --- | ---: | ---: |
+   * | 自己資金 1,000 万 | −84,000 円 | −0.84% |
+   * | **自己資金 0 (フルローン)** | **−84,000 円** | **0%** ← 上より良く見える |
+   *
+   * 同じ持ち出しなのに、**自己資金を 1 円も入れていないほうが良い数字**として並ぶ。
+   */
+  readonly cashOnCashReturnPct: number | null;
+  /**
+   * イールドギャップ (%) = 実質利回り − ローン金利。プラスなら正レバレッジ。
+   * **実質利回りが算定不能なら `null`。**
+   *
+   * ここが本パスの核心 —— 2026-09-08 まで物件価格が空欄だと実質利回りが 0% に
+   * 倒れ、金利 2.0% を引いた **−2%** が「イールドギャップ」として画面に赤く出ていた。
+   * 画面の説明は「プラスなら正レバレッジ」なので、**未入力が「逆レバレッジ」という
+   * 判定に化けていた**。0 は伝播する —— 別の指標の入力になると、そこで**値ではなく
+   * 判定**になる。
+   */
+  readonly yieldGapPct: number | null;
 }
 
 /**
@@ -75,24 +106,51 @@ export interface RealEstateLeverage {
  * プラスなら借入が収益にプラスに働く (正レバレッジ)。
  *
  * @param annualNetIncome 実質の年間純収入 (calcRealEstateYield の annualNetIncome)
- * @param ownEquity 自己資金 (頭金 + 取得費の自己負担分, 円)。0 以下なら CCR 0。
+ * @param ownEquity 自己資金 (頭金 + 取得費の自己負担分, 円)。**0 以下なら CCR は `null`。**
  * @param annualDebtService 年間のローン返済額 (元利, 円)。既定 0。
- * @param netYieldPct 実質利回り (%, calcRealEstateYield の netYieldPct)
+ * @param netYieldPct 実質利回り (%, calcRealEstateYield の netYieldPct)。**`null` なら
+ *   イールドギャップも `null`** (算定不能から判定を作らない)。
  * @param loanRatePct ローンの年利 (%)。
  */
 export function calcRealEstateLeverage(
   annualNetIncome: number,
   ownEquity: number,
   annualDebtService: number,
-  netYieldPct: number,
+  netYieldPct: number | null,
   loanRatePct: number,
 ): RealEstateLeverage {
   const debtService = Math.max(0, annualDebtService);
   const equity = Math.max(0, ownEquity);
   const annualCashflow = Math.round(annualNetIncome - debtService);
-  const cashOnCashReturnPct = equity > 0 ? round2((annualCashflow / equity) * 100) : 0;
-  const yieldGapPct = round2(netYieldPct - loanRatePct);
+  const cashOnCashReturnPct = equity > 0 ? round2((annualCashflow / equity) * 100) : null;
+  const yieldGapPct = netYieldPct === null ? null : round2(netYieldPct - loanRatePct);
   return { annualDebtService: debtService, annualCashflow, cashOnCashReturnPct, yieldGapPct };
+}
+
+/**
+ * 利回りが算定できなかった理由を 1 文で返す (述べることが無ければ `null`)。
+ *
+ * **「—」だけを刷ると「利回りが無い物件」と読まれる。** どの欄が足りないかまで言う。
+ */
+export function missingPriceNote(y: RealEstateYield): string | null {
+  if (y.grossYieldPct !== null) return null;
+  return '物件価格が未入力のため、表面利回り・実質利回り・イールドギャップは算定していません（利回りは価格で割る指標です）。年間賃料と純収入は入力どおりに出しています。';
+}
+
+/**
+ * 自己資金が 0 のとき CCR を出せない理由を 1 文で返す (述べることが無ければ `null`)。
+ *
+ * **返済後 CF の符号まで述べる** —— フルローンで持ち出しなのか手残りなのかは、
+ * 率が出せなくても言える。
+ */
+export function fullLeverageNote(lev: RealEstateLeverage): string | null {
+  if (lev.cashOnCashReturnPct !== null) return null;
+  const cf = lev.annualCashflow;
+  const tail =
+    cf < 0
+      ? `返済後の年間キャッシュフローは ${Math.abs(cf).toLocaleString('ja-JP')} 円の持ち出しです。`
+      : `返済後の年間キャッシュフローは ${cf.toLocaleString('ja-JP')} 円です。`;
+  return `自己資金が 0 円のため、自己資金回収率（CCR）は算定していません（自己資金で割る指標です）。${tail}`;
 }
 
 /* ───────────────────────────────────────────────────────────────────────────

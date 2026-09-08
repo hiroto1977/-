@@ -471,7 +471,13 @@ export function MutualFundsPage() {
         <div className="stat-grid">
           <Stat label="将来評価額" value={jpy(sim.futureValue)} positive />
           <Stat label="累計拠出額" value={jpy(sim.totalContributed)} />
-          <Stat label={`運用益 (${sim.gainPct.toFixed(1)}%)`} value={jpy(sim.totalGain)} positive={sim.totalGain >= 0} />
+          {/* 拠出額 0 なら増加率は算定不能。**同じ画面の為替の損益率が既に「—」を
+              刷っている** (下の「損益率」)。同じ画面で答え方を 2 通りにしない。 */}
+          <Stat
+            label={sim.gainPct === null ? '運用益 (—)' : `運用益 (${sim.gainPct.toFixed(1)}%)`}
+            value={jpy(sim.totalGain)}
+            positive={sim.totalGain >= 0}
+          />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
           ※ 毎月末積立・年率一定を仮定した複利の概算です。実際の運用成績は変動し元本割れの可能性があります。投資助言ではありません。

@@ -120,4 +120,35 @@ describe('不動産投資 — 測れない物件と平均の分母', () => {
     await mountPage();
     expect(scopeBox()).toBeNull();
   });
+
+  /**
+   * **パス 54 は平均だけを直して、行を残していた** (2026-09-08 に当てた)。
+   * 平均が「測れた物件だけ」で出るなら、一覧の行も測れなかったことを言わないと
+   * 「利回り 0% の物件が在る」と読まれる。
+   */
+  it('★ 一覧の行も、価格が読めなければ利回りを「0.0%」と刷らない', async () => {
+    await getRecordStore().insert(PROPERTIES_COLLECTION, { name: '欄の無い物件', type: '区分', monthlyRent: 90_000, occupied: true });
+    await mountPage();
+    const row = Array.from(container.querySelectorAll('tr')).find((tr) =>
+      (tr.querySelector('td')?.textContent ?? '').includes('欄の無い物件'),
+    );
+    expect(row).toBeDefined();
+    const cells = Array.from(row!.querySelectorAll('td')).map((td) => (td.textContent ?? '').trim());
+    // 列は 名称 / 種別 / 月額賃料 / 物件価格 / 表面利回り / 実質利回り / 入居 / 操作
+    expect(cells[4]).toBe('—');
+    expect(cells[5]).toBe('—');
+    expect(cells[4]).not.toBe('0.0%');
+  });
+
+  it('★ 対照: 価格が読める行は利回りを % で刷る (標本が在ることの確認)', async () => {
+    await getRecordStore().insert(PROPERTIES_COLLECTION, { name: 'そろった物件', type: '区分', monthlyRent: 90_000, purchasePrice: 20_000_000, occupied: true, monthlyExpenses: 0, monthlyLoan: 0 });
+    await mountPage();
+    const row = Array.from(container.querySelectorAll('tr')).find((tr) =>
+      (tr.querySelector('td')?.textContent ?? '').includes('そろった物件'),
+    );
+    expect(row).toBeDefined();
+    const cells = Array.from(row!.querySelectorAll('td')).map((td) => (td.textContent ?? '').trim());
+    expect(cells[4]).toMatch(/^\d+\.\d%$/);
+    expect(cells[5]).toMatch(/^\d+\.\d%$/);
+  });
 });

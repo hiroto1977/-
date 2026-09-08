@@ -15,8 +15,14 @@ export interface CompoundingSimulation {
   readonly totalContributed: number;
   /** 運用益 (評価額 − 拠出額)。 */
   readonly totalGain: number;
-  /** 運用益率 (%)。 */
-  readonly gainPct: number;
+  /**
+   * 運用益率 (%) = 運用益 ÷ 累計拠出額。**拠出額が 0 なら `null` = 算定不能。**
+   *
+   * 0 に倒すと「積み立てたが増えも減りもしなかった」という主張になる。
+   * **規準は同じ画面に在った** —— `MutualFundsPage` は為替の損益率
+   * (`fxCurrency.gainPct: number | null`) を 50 行下で「—」と刷っている。
+   */
+  readonly gainPct: number | null;
 }
 
 /**
@@ -49,7 +55,10 @@ export function calcCompoundingFutureValue(
   const fvRaw = Math.abs(r) < 1e-12 ? pmt * n : pmt * ((Math.pow(1 + r, n) - 1) / r);
   const futureValue = yen(fvRaw);
   const totalGain = futureValue - totalContributed;
-  const gainPct = totalContributed > 0 ? Math.round((totalGain / totalContributed) * 100 * 100) / 100 : 0;
+  // **元本が 0 なら増加率は算定不能。** 0 に倒すと「積み立てたが増えも減りも
+  // しなかった」という主張になる。規準は**同じ画面**に在った —— `MutualFundsPage`
+  // は為替の損益率 (`fxCurrency.gainPct: number | null`) を 50 行下で「—」と刷っている。
+  const gainPct = totalContributed > 0 ? Math.round((totalGain / totalContributed) * 100 * 100) / 100 : null;
   return { futureValue, totalContributed, totalGain, gainPct };
 }
 
@@ -57,7 +66,21 @@ export function calcCompoundingFutureValue(
  * シャープレシオ (リスク調整後リターン) を計算する。
  *   SR = (年率リターン − 無リスク金利) / 年率標準偏差
  *
- * 標準偏差が 0 以下のときは指標として定義できないため 0 を返す。
+ * **標準偏差が 0 以下のときは指標として定義できないため `null`。**
+ *
+ * 2026-09-08 まで、この行のすぐ上に「定義できない」と書きながら **`0` を返して
+ * いた**。0 はシャープレシオとして**意味のある値** (超過リターンがちょうど無い) なので、
+ * 変動 0% の 3 つの正反対の状態が同じ数字に潰れていた:
+ *
+ * | 入力 | 実態 | 直す前の戻り値 |
+ * | --- | --- | ---: |
+ * | 年率 +8% / 変動 0% | 無リスクで年 8% (**最良**) | **0** |
+ * | 年率 +0.5% / 変動 0% | 無リスク金利ちょうど (中立) | **0** |
+ * | 年率 −20% / 変動 0% | 確実に年 −20% (**最悪**) | **0** |
+ *
+ * **規準は姉妹モジュールに在った** —— `renderer/data/stocksAnalysisWeb.ts` の
+ * `sharpeRatio(): number | null` は同じ 0 除算に対して
+ * 「リスク調整リターンが定義不能であることを明示」と書いて `null` を返している。
  *
  * @param annualReturnPct 年率リターン (%)
  * @param annualVolatilityPct 年率標準偏差 (%)
@@ -67,8 +90,8 @@ export function calcSharpeRatio(
   annualReturnPct: number,
   annualVolatilityPct: number,
   riskFreeRatePct = 0.5,
-): number {
-  if (annualVolatilityPct <= 0) return 0;
+): number | null {
+  if (annualVolatilityPct <= 0) return null;
   const sr = (annualReturnPct - riskFreeRatePct) / annualVolatilityPct;
   return Math.round(sr * 100) / 100;
 }

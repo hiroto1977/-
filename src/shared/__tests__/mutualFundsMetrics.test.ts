@@ -42,8 +42,9 @@ describe('calcCompoundingFutureValue', () => {
     expect(calcCompoundingFutureValue(pmt, annual, years).futureValue).toBe(expected);
   });
 
-  it('returns zeros for non-positive years or contribution', () => {
-    // n=0 / pmt=0 でも gainPct は totalContributed>0 ガードで 0 (NaN にならない)。
+  it('returns zeros for non-positive years or contribution (増加率だけは null)', () => {
+    // 金額は 0 で正しい (積み立てていないので評価額も拠出も 0 円)。
+    // **増加率だけは算定不能** —— 0% は「積み立てたが増減しなかった」の主張。
     for (const r of [
       calcCompoundingFutureValue(100_000, 5, 0),
       calcCompoundingFutureValue(0, 5, 10),
@@ -52,7 +53,7 @@ describe('calcCompoundingFutureValue', () => {
       expect(r.futureValue).toBe(0);
       expect(r.totalContributed).toBe(0);
       expect(r.totalGain).toBe(0);
-      expect(r.gainPct).toBe(0);
+      expect(r.gainPct).toBeNull();
     }
   });
 
@@ -73,9 +74,20 @@ describe('calcSharpeRatio', () => {
     expect(calcSharpeRatio(8, 10, 1)).toBe(0.7); // (8−1)/10
   });
 
-  it('returns 0 when volatility is zero or negative (undefined ratio)', () => {
-    expect(calcSharpeRatio(10, 0)).toBe(0);
-    expect(calcSharpeRatio(10, -5)).toBe(0);
+  it('変動 0 では null —— 正反対の 3 つを同じ「0」に潰さない', () => {
+    // 直す前は `toBe(0)` で、名前も `returns 0 … (undefined ratio)` だった ——
+    // **「定義できない」と名前に書いてから 0 を主張していた** (実装の doc も同じ)。
+    // 0 はシャープレシオとして**意味のある値** (超過リターンちょうど 0) なので、
+    // 次の 3 つが同じ数字になっていた:
+    expect(calcSharpeRatio(8, 0)).toBeNull();    // 無リスクで年 8% (最良)
+    expect(calcSharpeRatio(0.5, 0)).toBeNull();  // 無リスク金利ちょうど (中立)
+    expect(calcSharpeRatio(-20, 0)).toBeNull();  // 確実に年 −20% (最悪)
+    expect(calcSharpeRatio(10, -5)).toBeNull();
+  });
+
+  it('★ 対照: 変動が在れば数で出て、正負の別も付く (標本が在ることの確認)', () => {
+    expect(calcSharpeRatio(8, 15)).toBe(0.5);
+    expect(calcSharpeRatio(-20, 15)).toBe(-1.37);
   });
 
   it('can be negative when the return is below the risk-free rate', () => {

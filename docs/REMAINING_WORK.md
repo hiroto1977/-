@@ -13647,8 +13647,8 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `renderer/data/counselingResearch.ts` | 6 | 研究用の一致率。0 件中 0 件 |
 | `main/clients/linux.ts` | 4 | 使用率。0 が自然 |
 | `shared/taxCorporate.ts` | 3 | **実効税率** —— **パス 57 で直した** (残 2 件は法定実効税率の内部率で 0 が正しい) |
-| `shared/realEstateMetrics.ts` | 3 | **自己資金利回り (CCR)** —— 自己資金 0 で 0% は主張。**要判断** |
-| `shared/mutualFundsMetrics.ts` | 3 | **積立の損益率** —— 拠出 0 で 0% は主張。**要判断** |
+| `shared/realEstateMetrics.ts` | 3 | **自己資金利回り (CCR)** —— **パス 58 で直した** (表面/実質利回りとイールドギャップも) |
+| `shared/mutualFundsMetrics.ts` | 3 | **積立の損益率**とシャープレシオ —— **パス 58 で直した** |
 | `renderer/data/teamEmotionRadar.ts` | 3 | **チーム平均** —— メンバー 0 名で 0 点。パス 55 と同じ形。**要判断** |
 | `renderer/data/investments.ts` | 3 | パス 54 で 1 件直した。含み損益率が残る |
 | `renderer/data/sales.ts` | 3 | **パス 56 で 2 件直した**。`share` は理由つきで残す |
@@ -13670,8 +13670,10 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 1. **相手に渡る面に出る物**から (パス 56 で `sales.aov`、**パス 57 で
    `taxCorporate.effectiveRate`** を消化 —— 後者は経営レポート Markdown に
    出ていた。この帯は残っていない)。
-2. **人・投資の判断に使う物** (`teamEmotionRadar` の平均・`realEstateMetrics`
-   の CCR・`mutualFundsMetrics` の損益率)。
+2. **人・投資の判断に使う物** —— **パス 58 で `realEstateMetrics` と
+   `mutualFundsMetrics` を消化**。残るのは `teamEmotionRadar` の
+   チーム平均 (メンバー 0 名で全軸 0 点。`teamEmotionSummary` は `n === 0` で
+   守られているので、**値を直に読む面が在るかを先に数える**)。
 3. 読んで理由が書けた分だけを台帳に積み、**台帳が 26 ファイル全部を覆ってから
    ゲートにする**。覆う前にゲートを入れると、床が「今の実測値」になるだけで
    規則にならない。
@@ -13793,3 +13795,124 @@ CSV (`ratiosToCsv` / `statementToCsv`)・金融機関等提出用の書面は
 パス 52 は「規則が関門にしか無い」形だった (値が素なので全部の面が無防備)。
 本パスは裏返し —— **関門が在るのに、値と違う量を見ていた**。
 どちらも直しは同じで、**規則を値に置き、関門は値を読むだけにする**。
+
+## パス 58 (2026-09-08) — **算定不能な 0 が、別の指標の入力になって「判定」に化けた**
+
+census の 2 番目の帯 (「人・投資の判断に使う物」) を当たったら、
+**これまでの 7 パスと質の違う 2 つの形**が出た。
+
+### 形 A: 0 が伝播して判定になる (**未入力が「逆レバレッジ」と診断される**)
+
+不動産のレバレッジ試算は 4 つのタイルを並べる。イールドギャップは
+**実質利回りから作られる**:
+
+```
+netYieldPct = 価格 0 なら 0        ← 算定不能を 0 に倒す
+yieldGapPct = netYieldPct − 金利  ← その 0 が入力になる
+```
+
+実測 (画面の既定・物件価格の欄だけを空にした):
+
+| 打ち込み | 実質利回り | イールドギャップ | 画面の色 |
+| --- | ---: | ---: | --- |
+| 既定 (価格 4,200 万) | 3.37% | +1.37% | 緑 |
+| **物件価格を空に** | **0%** | **−2%** | **赤** |
+
+画面の説明は「プラスなら正レバレッジ」。つまり
+**価格を入れ忘れただけで「逆レバレッジ」という診断が出ていた。**
+これは「値が空欄になる」より重い —— **0 は伝播すると、値ではなく判定になる。**
+
+### 形 B: 0 が「良い側」に並んで**順位が反転する**
+
+CCR (自己資金回収率) は自己資金 0 で 0% に倒れていた。
+自己資金の入力欄は **`allowZero: true`** で、0 を明示的に許している
+(= フルローンは正当な入力)。実測:
+
+| 控え | 返済後CF | 直す前の CCR |
+| --- | ---: | ---: |
+| 自己資金 1,000 万 | −84,000 円 | −0.84% |
+| **自己資金 0 (フルローン)** | **−84,000 円** | **0%** |
+
+**同じ持ち出しなのに、自己資金を 1 円も入れていないほうが良い数字**として並ぶ。
+これまでのパスは「0 が悪く見える」形だったが、ここは逆で
+**0 が良く見える**ため、比較の順位そのものが狂う。
+
+### 形 C: 正反対の 3 つが同じ数字に潰れる
+
+`calcSharpeRatio` は変動 0 で 0 を返していた。**0 はシャープレシオとして
+意味のある値** (超過リターンがちょうど無い) なので:
+
+| 入力 | 実態 | 直す前の戻り値 |
+| --- | --- | ---: |
+| 年率 +8% / 変動 0% | 無リスクで年 8% (**最良**) | **0** |
+| 年率 +0.5% / 変動 0% | 無リスク金利ちょうど (中立) | **0** |
+| 年率 −20% / 変動 0% | 確実に年 −20% (**最悪**) | **0** |
+
+そして **doc コメント自身が「指標として定義できないため 0 を返す」**と書いていた ——
+**診断は正しく、答えが逆**。姉妹の `stocksAnalysisWeb.sharpeRatio` は同じ 0 除算に
+「リスク調整リターンが定義不能であることを明示」と書いて `null` を返している。
+
+### 規準は 3 つとも既にリポジトリの中に在った —— 12 か所目
+
+| 直した所 | 規準の在り場所 |
+| --- | --- |
+| `realEstateMetrics.grossYieldPct` / `netYieldPct` / `cashOnCashReturnPct` | **同じファイル**の `noiYieldPct: number \| null` (round 61)。round 60 の側だけが 0 に倒れていた |
+| `mutualFundsMetrics.calcSharpeRatio` | **姉妹モジュール** `stocksAnalysisWeb.sharpeRatio(): number \| null` |
+| `mutualFundsMetrics.gainPct` | **同じ画面** `MutualFundsPage` が 50 行下で `fxCurrency.gainPct: number \| null` を「—」と刷っている |
+
+### 直した所
+
+| ファイル | 直し |
+| --- | --- |
+| `shared/realEstateMetrics.ts` | `grossYieldPct` / `netYieldPct` / `cashOnCashReturnPct` / `yieldGapPct` を `number \| null`。**金額 (annualNetIncome / annualGrossRent / annualCashflow) は返す** —— 価格に依らないので算定できている |
+| 同 | `missingPriceNote` / `fullLeverageNote` (出せない理由を値の側が 1 か所で持つ)。後者は**持ち出しの符号まで述べる** |
+| `shared/mutualFundsMetrics.ts` | `calcSharpeRatio(): number \| null`、`gainPct: number \| null` |
+| `pages/RealEstatePage.tsx` | タイル 3 つを `pct1OrDash`、**一覧の行も**「—」、`role="alert"` の帯で 2 文 |
+| 同 | **イールドギャップの色は `?? 0` で塗らない** —— 色は判定なので、算定不能なら `undefined` を渡して色を付けない |
+| `pages/MutualFundsPage.tsx` | 運用益の率が null なら `運用益 (—)` |
+
+**`statutoryEffectiveRate` と同じ判断**: `yieldGapPct` は `netYieldPct` から
+**派生した null** を素直に伝える (0 を伝えるのが誤りだった)。
+
+### パス 54 が残した行を当てた
+
+パス 54 は**平均だけ**を「測れた物件だけで出す」形に直し、
+**一覧の各行は `0.0%` のまま**だった。平均が測れた物件だけで出るなら、
+行も測れなかったことを言わないと「利回り 0% の物件が在る」と読まれる。
+
+### 見本が欠陥を仕様として固定していた —— **12 例目 (4 本)**
+
+| 見本 | 名前が何を言っていたか |
+| --- | --- |
+| `realEstateMetrics.test.ts` | `guards against zero or negative purchase price` → `toBe(0)` |
+| 同 | **`guards zero own equity (CCR 0, no division by zero)`** —— **名前に欠陥が入っていた** |
+| `mutualFundsMetrics.test.ts` | **`returns 0 when volatility is zero or negative (undefined ratio)`** —— **「定義不能」と書いてから 0 を主張** |
+| 同 | `returns zeros for non-positive years or contribution` → `gainPct).toBe(0)` |
+
+パス 54・56 と**同じ形が 3 本目・4 本目** —— 「0 除算を避ける」という
+**正しい懸念**に **0 という誤った答え**を固定する。
+
+### 検査 (+11) と対照 (6 本とも実際に壊して確認)
+
+| 壊した物 | 落ちた検査 |
+| --- | ---: |
+| CCR を `: 0` に戻す | **4 本** (単体 2・画面 2) |
+| 価格 0 の利回りを `: 0` に戻す | **4 本** (単体 3・画面 1) |
+| 画面から断り書きの帯を外す | 2 本 |
+| **イールドギャップの色を `?? 0` で塗る** | **1 本** |
+| 一覧の行を `(x ?? 0).toFixed(1)` に戻す | 1 本 |
+| Sharpe / `gainPct` を `: 0` に戻す | 2 本 |
+
+4 本目の対照が要る理由 —— **値が「—」でも、色が「正レバレッジ」を主張しうる**。
+`?? 0` を色の側に書くと `0 >= 0` で緑になり、**空欄のタイルが緑に光る**。
+`Stat` は `positive == null` で無色にする作りだったので、渡し方だけの問題だった。
+
+### 教訓
+
+**0 に倒した値が別の計算の入力になっていないかを見る。**
+これまでの 7 パスは「0 が画面に出る」形で、直せば 1 つの欄が「—」になった。
+本パスの `yieldGapPct` は**入力**だったので、0 が
+**「−2% = 逆レバレッジ」という判定**に化けていた。
+そして **0 は「悪い側」に落ちるとは限らない** —— CCR では良い側に並んで
+順位を反転させ、Sharpe では最良・中立・最悪を 1 つの数字に潰した。
+**「0 は主張である」の次の一手は「その主張はどこへ流れるか」。**

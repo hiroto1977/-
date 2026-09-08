@@ -35,6 +35,8 @@ import {
   calcBreakEvenOccupancyPct,
   calcNpv,
   calcIrr,
+  fullLeverageNote,
+  missingPriceNote,
 } from '../../shared/realEstateMetrics';
 import { MAX_SCHEDULE_YEARS, isSchedulableLife, straightLineAnnual } from '../../shared/depreciation';
 import {
@@ -188,6 +190,10 @@ export function RealEstatePage() {
     const lev = calcRealEstateLeverage(y.annualNetIncome, reNum(reEquityStr), reNum(reDebtStr), y.netYieldPct, reNum(reLoanRateStr));
     return { y, lev };
   }, [reRentStr, rePriceStr, reExpenseStr, reEquityStr, reDebtStr, reLoanRateStr]);
+  // 出せなかった理由は**値を作った所**が持つ (画面が条件を書き写すと、値と関門で
+  // 別々に規則を持つことになる —— パス 57 で当たった形)。
+  const priceNote = useMemo(() => missingPriceNote(leverage.y), [leverage.y]);
+  const leverageNote = useMemo(() => fullLeverageNote(leverage.lev), [leverage.lev]);
 
   // 精緻化指標 (NOI 利回り・DSCR・損益分岐入居率) — レバレッジ試算の入力を再利用。
   const [reOccStr, setReOccStr] = useState('95'); // 想定入居率 (%)
@@ -488,8 +494,10 @@ export function RealEstatePage() {
                 <td style={tdStyle}>{p.type}</td>
                 <td style={tdNum}>{jpy(p.monthlyRent)}</td>
                 <td style={tdNum}>{jpyM(p.purchasePrice)}</td>
-                <td style={tdNum}>{y.grossYieldPct.toFixed(1)}%</td>
-                <td style={tdNum}>{y.netYieldPct.toFixed(1)}%</td>
+                {/* 価格が読めない行は「—」。パス 54 は平均だけを直して**行を残していた** ——
+                    平均が測れた物件だけで出るなら、行も測れなかったことを言う。 */}
+                <td style={tdNum}>{pct1OrDash(y.grossYieldPct)}</td>
+                <td style={tdNum}>{pct1OrDash(y.netYieldPct)}</td>
                 <td style={tdStyle}>
                   <span style={{ color: p.occupied ? '#22c55e' : '#ef4444', fontWeight: 600 }}>
                     {p.occupied ? '● 入居中' : '○ 空室'}
@@ -554,11 +562,28 @@ export function RealEstatePage() {
           ))}
         </div>
         <div className="stat-grid">
-          <Stat label="実質利回り" value={`${leverage.y.netYieldPct}%`} />
+          <Stat label="実質利回り" value={pct1OrDash(leverage.y.netYieldPct, 2)} />
           <Stat label="返済後CF (年)" value={jpy(leverage.lev.annualCashflow)} positive={leverage.lev.annualCashflow >= 0} />
-          <Stat label="CCR (自己資金回収率)" value={`${leverage.lev.cashOnCashReturnPct}%`} />
-          <Stat label="イールドギャップ" value={`${leverage.lev.yieldGapPct}%`} positive={leverage.lev.yieldGapPct >= 0} />
+          <Stat label="CCR (自己資金回収率)" value={pct1OrDash(leverage.lev.cashOnCashReturnPct, 2)} />
+          {/* **算定不能から判定を作らない。** `positive` は色 (緑/赤) を決めるので、
+              null に `?? 0` を当てると「ちょうど 0 = 正レバレッジ」と塗ってしまう。
+              出せないときは色を付けない (undefined を渡す)。 */}
+          <Stat
+            label="イールドギャップ"
+            value={pct1OrDash(leverage.lev.yieldGapPct, 2)}
+            positive={leverage.lev.yieldGapPct === null ? undefined : leverage.lev.yieldGapPct >= 0}
+          />
         </div>
+        {(leverageNote !== null || priceNote !== null) && (
+          <div
+            data-leverage-scope
+            role="alert"
+            style={{ marginTop: 10, padding: '8px 12px', background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 6, fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.7 }}
+          >
+            {priceNote !== null && <div>⚠ {priceNote}</div>}
+            {leverageNote !== null && <div>⚠ {leverageNote}</div>}
+          </div>
+        )}
       </Section>
 
       <Section title="精緻化指標 (NOI 利回り・DSCR・損益分岐入居率)">
