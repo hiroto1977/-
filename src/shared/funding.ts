@@ -998,11 +998,27 @@ export interface DebtServiceMetrics {
   readonly totalOperatingCashflow: number;
   /**
    * 全体の返済カバー率 = 営業CF合計 ÷ 返済額合計。1.0 以上で返済余力あり。
-   * 返済が無いときは 0 (指標として意味を持たない)。
+   * **返済が無いときは `null` = 算定不能。**
+   *
+   * 2026-09-08 まで 0 に倒しており、**この doc 自身が「返済が無いときは 0
+   * (指標として意味を持たない)」と書いていた** —— 意味を持たないと述べてから
+   * 数を返していた。DSCR 0 は「営業CFが返済を 1 円も賄えない」という**最悪の
+   * 読み**だが、返済が無いのは「返済すべき借入が無い」= 該当なしである。
+   *
+   * **規準は姉妹モジュールに在った** —— `renderer/data/cashflowDebtService.ts` は
+   * 同じ量を `overallDscr: totalRepay > 0 ? round2(totalCf / totalRepay) : null` で
+   * 返し、経営サマリーは「—」を刷って色も付けず、金融機関等提出用の書面も
+   * そちらを読む。**同じ量の双子で、片方だけが 0 に倒れていた。**
    */
-  readonly overallDscr: number;
-  /** 返済がある月のうち、カバー率 (営業CF ÷ 返済額) の最小値 (ボトルネック月)。 */
-  readonly worstMonthDscr: number;
+  readonly overallDscr: number | null;
+  /**
+   * 返済がある月のうち、カバー率 (営業CF ÷ 返済額) の最小値 (ボトルネック月)。
+   * **返済がある月が 1 つも無ければ `null`。**
+   *
+   * 実装は `Infinity` で始めて最小値を採る —— つまり「無い」の印は**既に在った**。
+   * 2026-09-08 まではそれを 0 に倒していた (印を作ってから捨てる形)。
+   */
+  readonly worstMonthDscr: number | null;
   /** カバー率がしきい値 (既定 1.0) を下回った月数。 */
   readonly shortfallMonths: number;
 }
@@ -1037,12 +1053,12 @@ export function debtServiceMetrics(
       if (dscr < threshold) shortfallMonths += 1;
     }
   }
-  const overallDscr = totalRepayment > 0 ? totalOperatingCashflow / totalRepayment : 0;
+  const overallDscr = totalRepayment > 0 ? totalOperatingCashflow / totalRepayment : null;
   return {
     totalRepayment,
     totalOperatingCashflow,
     overallDscr,
-    worstMonthDscr: sawRepayment ? worstMonthDscr : 0,
+    worstMonthDscr: sawRepayment ? worstMonthDscr : null,
     shortfallMonths,
   };
 }

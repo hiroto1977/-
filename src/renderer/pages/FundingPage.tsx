@@ -32,6 +32,16 @@ function jpy(n: number): string {
   return `¥${Math.round(n).toLocaleString('ja-JP')}`;
 }
 
+/**
+ * DSCR (倍) を 2 桁で。**算定不能 (`null`) は「—」。**
+ *
+ * 返済が無い期の DSCR は「営業CFが返済を賄えない」ではなく**該当なし**である。
+ * 経営サマリー側の双子 (`cashflowDebtService`) は既に「—」を刷っていた。
+ */
+function dscrOrDash(n: number | null): string {
+  return n === null ? '—' : n.toFixed(2);
+}
+
 // --- Chart 1: レーダーチャート (種別別の確定額・正規化) ----------------
 
 function axisPoint(cx: number, cy: number, r: number, idx: number, count: number, value: number, max: number) {
@@ -521,10 +531,13 @@ export function FundingPage() {
             {live.debtService.totalRepayment > 0 && (
               <div style={{ marginTop: 10, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
                 <strong>返済余力 (DSCR)</strong>：営業CF合計 {jpy(live.debtService.totalOperatingCashflow)} ÷ 返済額合計
-                {' '}{jpy(live.debtService.totalRepayment)} = <strong>{live.debtService.overallDscr.toFixed(2)}</strong>
-                （1.0 以上で返済余力あり）。最悪月のカバー率 {live.debtService.worstMonthDscr.toFixed(2)}、
+                {' '}{jpy(live.debtService.totalRepayment)} = <strong>{dscrOrDash(live.debtService.overallDscr)}</strong>
+                （1.0 以上で返済余力あり）。最悪月のカバー率 {dscrOrDash(live.debtService.worstMonthDscr)}、
                 カバー率1.0未満の月 {live.debtService.shortfallMonths} か月。
-                {live.debtService.overallDscr < 1 && live.accountingLinked && (
+                {/* **警告は値そのもので出す。** 節を出す関門 (`totalRepayment > 0`) は
+                    「この節を見せるか」を決めるだけで、DSCR が算定できたかは値が持つ。
+                    `?? 0` を当てると `0 < 1` で**算定不能が「返済を下回る」警告**になる。 */}
+                {live.debtService.overallDscr !== null && live.debtService.overallDscr < 1 && live.accountingLinked && (
                   <> ⚠️ 営業CFが返済を下回っています。返済条件の見直しや追加調達をご検討ください。</>
                 )}
                 {!live.accountingLinked && <> ※ 営業CFは会計ソフト連携時に反映されます。</>}

@@ -1224,9 +1224,11 @@ export const SNAPSHOT = {
     },
     debtService: {
       totalRepayment: 0,
+      // 返済が 0 なので DSCR は算定不能 —— 出荷する既定データに
+      // 「返済ゼロで DSCR 0」を入れない (6 行上の longTermRatioPct と同じ形)。
       totalOperatingCashflow: 0,
-      overallDscr: 0,
-      worstMonthDscr: 0,
+      overallDscr: null as number | null,
+      worstMonthDscr: null as number | null,
       shortfallMonths: 0,
     },
     costMetrics: {

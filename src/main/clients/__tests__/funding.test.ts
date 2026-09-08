@@ -1168,12 +1168,26 @@ describe('debtServiceMetrics (DSCR)', () => {
     expect(r.shortfallMonths).toBe(0);
   });
 
-  it('returns zeros when there is no repayment at all', () => {
+  it('返済が無ければ DSCR は null (0 に倒さない)', () => {
+    // 直す前はここが `toBe(0)` で、名前も `returns zeros …` だった。
+    // DSCR 0 は「営業CFが返済を 1 円も賄えない」= 最悪の読みだが、返済が無いのは
+    // 「返済すべき借入が無い」= 該当なしである。**型の doc 自身が「指標として
+    // 意味を持たない」と書いてから 0 を返していた。**
     const r = debtServiceMetrics([m('2026-01', 0, 500_000)]);
-    expect(r.overallDscr).toBe(0);
-    expect(r.worstMonthDscr).toBe(0);
+    expect(r.overallDscr).toBeNull();
+    expect(r.worstMonthDscr).toBeNull();
     expect(r.shortfallMonths).toBe(0);
+    // **金額は算定できている** —— 返済 0 と営業CF は入力どおり。
+    expect(r.totalRepayment).toBe(0);
+    expect(r.totalOperatingCashflow).toBe(500_000);
   });
+
+  it('★ 対照: 返済が在れば DSCR は数で出る (標本が在ることの確認)', () => {
+    const r = debtServiceMetrics([m('2026-01', 100_000, 200_000)]);
+    expect(r.overallDscr).toBe(2);
+    expect(r.worstMonthDscr).toBe(2);
+  });
+
 
   it('honors a custom shortfall threshold', () => {
     // dscr 1.2 with threshold 1.5 → counts as shortfall
@@ -1263,12 +1277,12 @@ describe('golden: funding quality / DSCR / cost metrics (branch coverage)', () =
     expect(fundingQualityScore(sum, [0, 0]).compositeScore).toBe(0); // wSum=0 → weighted 0
   });
 
-  it('debtServiceMetrics: tracks worst-month DSCR + shortfall, and zero-repayment fallback', () => {
+  it('debtServiceMetrics: tracks worst-month DSCR + shortfall; 返済ゼロは null', () => {
     expect(debtServiceMetrics([mk(100, 150), mk(100, 80), mk(0, 200)])).toEqual({
       totalRepayment: 200, totalOperatingCashflow: 430, overallDscr: 2.15, worstMonthDscr: 0.8, shortfallMonths: 1,
     });
     expect(debtServiceMetrics([mk(0, 200), mk(0, 100)])).toEqual({
-      totalRepayment: 0, totalOperatingCashflow: 300, overallDscr: 0, worstMonthDscr: 0, shortfallMonths: 0,
+      totalRepayment: 0, totalOperatingCashflow: 300, overallDscr: null, worstMonthDscr: null, shortfallMonths: 0,
     });
   });
 

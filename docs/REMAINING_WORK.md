@@ -13660,6 +13660,13 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 
 ### なぜ**ゲートにしなかった**か (これも判断として記録する)
 
+> **この節は、先に立てた計画 `lint:zero-fold` を意図して保留する判断である。**
+> 引継ぎの steward メモには「WORK IN PROGRESS: 新ゲート `lint:zero-fold` —
+> 0 に倒す箇所の台帳。未コミットなら仕上げよ」と書かれている。**仕上げていない。**
+> 理由は下記で、**再検討の条件も下に数字で置いた** —— 次のセッションが
+> 同じ計画を読んで蒸し返さないように、計画と判断をここで結ぶ。
+
+
 ゲートにするには 1 件ごとに**理由**が要る。理由を書けるのは読んだ所だけで、
 読まずに「正しい 0」と書いた台帳は、このリポジトリが一度直した
 **「無言の pragma」**と同じものになる (`lint:mutation-scope` の 3 つ目の事故)。
@@ -13677,6 +13684,37 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 3. 読んで理由が書けた分だけを台帳に積み、**台帳が 26 ファイル全部を覆ってから
    ゲートにする**。覆う前にゲートを入れると、床が「今の実測値」になるだけで
    規則にならない。
+
+### ゲートを入れられる条件と、いまの被覆 (2026-09-08 時点)
+
+**条件: 26 ファイルすべてを読み、1 件ごとに「正しい 0」か「台帳に理由つき」を
+書けること。** いまの被覆:
+
+| 状態 | ファイル |
+| --- | --- |
+| **読んで決着** (9) | `sales.ts` (56)・`taxCorporate.ts` (57)・`realEstateMetrics.ts` (58)・`mutualFundsMetrics.ts` (58)・`investments.ts` (54)・`overview.ts` / `kpiActuals.ts` (52)・`main/clients/kpi.ts` + `KpiPage.tsx` の BEP (59)・`hydroponics.ts` の一部 (51) |
+| **未読** (16 前後) | `shared/funding.ts` (**13 箇所・最多**)・`main/clients/business.ts`・`main/clients/stocks.ts`・`stocksAnalysisWeb.ts`・`waterCyclePlanner.ts`・`securityRange.ts`・`profitSensitivity.ts`・`counselingResearch.ts`・`crisisDeliberation.ts`・`linux.ts`・`RealEstatePage.tsx` の作図座標・`FinancialAnalysis.tsx`・`teamEmotionRadar.ts`・`taxFurusato.ts`・`managementScorecard.ts`・`StoragePage.tsx` |
+
+`funding.ts` だけで 13 箇所在り、しかも消費税の按分に掛かる物を含む
+(下の伝播 census の 1 行目)。**ここを読み終えるまでゲートは早い。**
+
+### 訂正 — 「every consumer が守っている」は consumer を数えていなかった
+
+引継ぎの観点 (c) にこう書いてあった:
+
+> Still unchecked: `computeKpiMetrics` returns `bep: Infinity` / `bepRatio: Infinity`
+> next to `safetyMargin: null` (**representation-only, guarded by every consumer**
+> — low yield, **do not spend a pass on it**)
+
+**これは誤りだった。** パス 59 で実測すると、`bep` を読む面 5 つのうち
+**2 つ (時系列グラフ・事業別 棒グラフ) は守っていなかった** ——
+しかも棒グラフは `Number.isFinite` を**呼んで false を得たうえで** 0 を描いていた。
+「low yield だから触るな」と書いた時、**consumer を数えていない**。
+
+これは私自身がパス 52 で犯した誤り (「相手に渡る面は closed」→ パス 56 で
+`sales.aov` が出てきた) と**同じ形**である。
+**「全部の consumer が守っている」は、consumer を列挙して初めて言える。**
+列挙していない時に言えるのは「**まだ数えていない**」だけ。
 
 ### 教訓
 
@@ -13989,7 +14027,7 @@ Chart 4 が特に悪い形で、`Number.isFinite` を**呼んで false を得た
 
 | 場所 | 何に流れるか |
 | --- | --- |
-| `shared/funding.ts:202` `specifiedIncomeRatio` | **消費税の仕入税額控除の按分**に掛かる (`taxableInputTax * ratio`)。0 に倒すと控除の調整が消える。**要判断** |
+| ~~`shared/funding.ts:202` `specifiedIncomeRatio`~~ | **パス 60 で読んだら空振り** —— 偽枝に入るのは `specifiedIncome === 0` のときだけで、そのとき「割合 0%」は真。**台帳の「正しい 0」1 件目**。代わりに同ファイルの DSCR が出た (パス 60) |
 | `renderer/data/profitSensitivity.ts:42` `variableRate` | `revenue − revenue * variableRate − fixedCost` = 感度表の利益。0 なら変動費ゼロの表になる |
 | `pages/KpiPage.tsx:154` `vRatio` | BEP 交点図の傾き。0 なら「変動費ゼロ = 限界利益率 100%」の図。既存コメントは「退化したチャートになるが描画は崩れない」と**描画の心配だけ**をしている |
 | `shared/hydroponics.ts:267,271` | `plantsPerSqm` → 栽培株数 → 年間収穫。物理量で 0 が自然な物も在る |
@@ -14003,3 +14041,104 @@ Chart 4 が特に悪い形で、`Number.isFinite` を**呼んで false を得た
 揃っていなかったのは**座標**で、しかも 3 つのグラフのうち 1 つだけが正しかった。
 座標は「読めば分かる文字」ではなく**見た瞬間に伝わる形**なので、
 **間違った幾何は間違った数字より速く伝わる。**
+
+## パス 60 (2026-09-08) — DSCR の**双子**で、片方だけが 0 に倒れていた
+
+伝播 census の 1 行目 (`shared/funding.ts`) を読みに行った。**13 箇所のうち
+最も重いと踏んだ `specifiedIncomeRatio` は空振りだった** —— そこで見つかったのは
+DSCR のほうだった。
+
+### まず空振りの記録 (`specifiedIncomeRatio` は**正しい 0**)
+
+```ts
+const specifiedIncomeRatio = totalIncome > 0 ? specifiedIncome / totalIncome : 0;
+```
+
+`totalIncome = specifiedIncome + otherIncome` で両方とも非負なので、
+**偽枝に入るのは `specifiedIncome === 0` のときだけ** ——
+そのとき「特定収入割合 0%」は**真**であり (特定収入が無い)、
+下流の判定 (`> 5%` で調整) も正しい。`FundingPage` が刷る文面も真。
+**台帳に「正しい 0」として登録できる 1 件目。**
+
+読む前に「消費税の按分が消える」と踏んでいたが、**読んだら違った。**
+census の順位は「重要そうな順」でしかない。
+
+### 見つけた形 — 同じ量の双子で答え方が違う
+
+| モジュール | 返済が無いときの DSCR | 面 |
+| --- | --- | --- |
+| `renderer/data/cashflowDebtService.ts` (パス 45 が作った側) | **`null`** | 経営サマリー (「—」・色なし)・**金融機関等提出用の書面** |
+| `shared/funding.ts` `debtServiceMetrics` | **`0`** | 資金調達の画面・`main/clients/funding.ts` |
+
+しかも **型の doc 自身がこう書いていた**:
+
+> 全体の返済カバー率 = 営業CF合計 ÷ 返済額合計。1.0 以上で返済余力あり。
+> **返済が無いときは 0 (指標として意味を持たない)。**
+
+**意味を持たないと述べてから数を返す** —— パス 58 の Sharpe
+(「定義できないため 0 を返す」) と同じ形が、別のモジュールで 2 例目。
+
+`worstMonthDscr` はさらに露骨で、`Infinity` で始めて最小値を採る ——
+**「無い」の印は既に在った**のに `sawRepayment ? worstMonthDscr : 0` で捨てていた
+(パス 59 の棒グラフと同じ)。
+
+### 訂正 — 「画面に出ていた」は誤り
+
+この形を見つけたとき、私は台帳に
+「**借入ゼロの事業者に『返済余力なし』の診断が出る**」と登録した。**これは誤り。**
+`FundingPage.tsx:521` が節全体を `live.debtService.totalRepayment > 0 &&` で
+囲っているので、返済が無いときは**節ごと描かれない**。画面は守られていた。
+
+正しい形は**パス 52 の「規則が関門にしか無い」**である ——
+値は偽を主張しているが、いまの読み手は全員関門で守られている。
+**「画面に出る」と「値が偽である」は別の主張で、前者は確かめてから書く。**
+
+### それでも直す理由 (3 つ)
+
+1. **出荷する既定データに入っていた** —— `snapshot.ts` が
+   `totalRepayment: 0` と `overallDscr: 0` を同梱していた。
+   同ファイル 6 行上の `longTermRatioPct: null as number | null` が規準。
+2. **2 つの面が別の答え方をしていた** —— 経営サマリーと書面は「—」、
+   資金調達の画面は数。同じ「返済余力」という語で。
+3. **関門は 1 つの edit で消える** —— `?? 0` を警告の条件に書けば
+   `0 < 1` で**算定不能が「返済を下回る」警告**になる。対照でそれを留めた。
+
+### 直した所
+
+| ファイル | 直し |
+| --- | --- |
+| `shared/funding.ts` | `overallDscr` / `worstMonthDscr` を `number \| null`、`: null` に。doc の「0 (意味を持たない)」を「`null` = 算定不能」に書き換え、双子の在り場所を書いた |
+| `renderer/data/snapshot.ts` | 同梱の既定を `null as number \| null` に (返済 0 なので算定不能) |
+| `pages/FundingPage.tsx` | `dscrOrDash()` で「—」。**節を出す関門 (`totalRepayment > 0`) は残す** —— それは「この節を見せるか」の判断で正しい。警告は**値そのもの** (`!== null &&`) で出す |
+
+### 見本が欠陥を仕様として固定していた —— **13 例目 (2 本)**
+
+| 見本 | 名前が何を言っていたか |
+| --- | --- |
+| `funding.test.ts` | **`returns zeros when there is no repayment at all`** |
+| 同 (golden) | **`… and zero-repayment fallback`** → `overallDscr: 0, worstMonthDscr: 0` |
+
+パス 58 に続いて**また名前の中に欠陥が入っていた**。
+
+### 検査 (+6) と対照 (4 本とも実際に壊して確認)
+
+| 壊した物 | 落ちた検査 |
+| --- | ---: |
+| `overallDscr` / `worstMonthDscr` を `: 0` に戻す | **2 本** |
+| 画面の警告条件を `?? 0` で書く | 1 本 |
+| 画面が `dscrOrDash` を使わず `?? 0` で刷る | 1 本 |
+| snapshot に DSCR 0 を戻す | 1 本 |
+
+**自分の検査で 1 つ躓いた**: `SNAPSHOT` は `as const` なので
+`typeof SNAPSHOT.funding` の各欄はリテラル型 (`0` / `false`) になり、
+差し替えた payload が代入できない。live fetch で届くのは**任意の JSON** なので、
+差し替える欄だけを構造で書き、受け口を `unknown` にした
+(`vitest` は型を見ないので、**`tsc` を回すまで気づかない**)。
+
+### 教訓
+
+**「無い」の答え方は、同じ量を計算する**すべての実装**で揃える。**
+このリポジトリには DSCR の実装が 2 つ在り、パス 45 が作った新しい側は `null`、
+古い側は `0` だった。**双子は片方を直しても、もう片方が残る。**
+census で「ファイル」を数えるだけでは足りない ——
+**同じ量を計算する関数が何本あるかを数える。**
