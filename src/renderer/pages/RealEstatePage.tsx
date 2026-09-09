@@ -26,7 +26,8 @@ import { jpy } from '../../shared/formatters';
 import { GuardedNumber } from '../components/GuardedNumber';
 import { readNumberOr0, readNumberOrNull, type NumSpec } from '../data/inputGuards';
 import { useParameters } from '../data/parameterOverrides';
-import { dscrThresholds, effluentStandards, zoningRules } from '../../shared/parameters';
+import { advisorThresholds, dscrThresholds, effluentStandards, zoningRules } from '../../shared/parameters';
+import type { RealEstateAdviceInput } from '../../shared/serviceAdvisor';
 import {
   calcRealEstateYield,
   calcRealEstateLeverage,
@@ -213,6 +214,26 @@ export function RealEstatePage() {
   const dscrT = useMemo(() => dscrThresholds(params), [params]);
   const zRules = useMemo(() => zoningRules(params), [params]);
   const effStd = useMemo(() => effluentStandards(params), [params]);
+  // 改善提案の元になる数字 —— **画面が刷っている物をそのまま渡す** (提案が言う数字と
+  // タイル・表の数字を一致させる。パス 119 までは payload を読まない固定文だった)。
+  // 表面利回りは表と同じ `calcRealEstateYield` の値 (取得価格が読めない行は null = 「—」)。
+  const advisorT = useMemo(() => advisorThresholds(params), [params]);
+  const adviseInput = useMemo<RealEstateAdviceInput>(
+    () => ({
+      properties: properties.map((p) => ({
+        name: p.name,
+        occupied: p.occupied,
+        monthlyRent: p.monthlyRent,
+        grossYieldPct: calcRealEstateYield(p.monthlyRent, p.purchasePrice, p.occupied ? 1 : 0).grossYieldPct,
+        demo: !p.user,
+      })),
+      netCashflow: portfolio.netCashflow,
+      portfolioYieldPct: portfolio.portfolioYield,
+      occupancyRate: portfolio.occupancyRate,
+      thresholds: advisorT,
+    }),
+    [properties, portfolio, advisorT],
+  );
   const refined = useMemo(() => {
     const annualGrossRent = reNum(reRentStr) * 12;
     const occ = Math.min(1, Math.max(0, reNum(reOccStr) / 100));
@@ -543,7 +564,7 @@ export function RealEstatePage() {
         </table>
       </Section>
 
-      <ServiceActionPanel serviceId="real-estate" serviceLabel="不動産投資" />
+      <ServiceActionPanel serviceId="real-estate" serviceLabel="不動産投資" adviseInput={adviseInput} />
 
       <Section title="月次キャッシュフロー内訳" count={4}>
         <table style={tableStyle}>

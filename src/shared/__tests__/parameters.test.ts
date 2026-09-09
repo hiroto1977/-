@@ -34,6 +34,7 @@ import {
   ckdPotassiumLimits,
   deductionParams,
   displayValue,
+  advisorThresholds,
   dscrThresholds,
   fromDisplayValue,
   hydroponicsProductionParams,
@@ -69,6 +70,7 @@ import {
 import { BALANCE_SHEET_STALE_AFTER_MONTHS } from '../balanceSheetFreshness';
 import { COMMUTE_PUBLIC_TRANSPORT_CAP } from '../payroll';
 import { DEFAULT_DSCR_THRESHOLDS, DSCR_CAUTION_THRESHOLD, DSCR_DANGER_THRESHOLD } from '../realEstateMetrics';
+import { ADVISOR_CONCENTRATION_SHARE, ADVISOR_YIELD_GAP_PT, DEFAULT_ADVISOR_THRESHOLDS } from '../serviceAdvisor';
 import {
   CONSUMPTION_TAX_REDUCED,
   CONSUMPTION_TAX_STANDARD,
@@ -235,6 +237,8 @@ const DEFAULT_SOURCE: Readonly<Record<ParameterId, number>> = {
   'payroll.commutePublicTransportCap': COMMUTE_PUBLIC_TRANSPORT_CAP,
   'realEstate.dscrDangerThreshold': DSCR_DANGER_THRESHOLD,
   'realEstate.dscrCautionThreshold': DSCR_CAUTION_THRESHOLD,
+  'advisor.yieldGapPt': ADVISOR_YIELD_GAP_PT,
+  'advisor.concentrationShare': ADVISOR_CONCENTRATION_SHARE,
   'tax.consumptionStandardRate': CONSUMPTION_TAX_STANDARD,
   'tax.consumptionReducedRate': CONSUMPTION_TAX_REDUCED,
   'incomeTax.reconstructionSurtaxRate': RECONSTRUCTION_SURTAX_RATE,
@@ -404,7 +408,7 @@ describe('台帳の形', () => {
 
   it('画面のまとまりは登場順で、重複しない', () => {
     expect(parameterFeatures()).toEqual([
-      '水耕栽培', '給与', '不動産', '税', '所得税・住民税', '所得控除・税額控除', '不動産・登記・印紙の税', '譲渡所得',
+      '水耕栽培', '給与', '不動産', '改善提案', '税', '所得税・住民税', '所得控除・税額控除', '不動産・登記・印紙の税', '譲渡所得',
       '法人税', '消費税 (事業者)', '年金・一時所得・ふるさと納税', '貿易', '社会保険', '財務',
       '敷地計画 (建築基準法)', '水循環 (排水基準)', '財務診断', '消費税 (申告・納付)', '配当所得', '感情ログ',
       '貯蓄・資産形成', '経営サマリー',
@@ -567,6 +571,8 @@ describe('機能ごとの取り出し口', () => {
     'hydroponics.ckdPotassiumLimitG5': 600,
     'realEstate.dscrDangerThreshold': 1.5,
     'realEstate.dscrCautionThreshold': 2,
+    'advisor.yieldGapPt': 2.5,
+    'advisor.concentrationShare': 0.3,
   });
 
   it('既定は各モジュールの既定引数と同じ物', () => {
@@ -574,6 +580,7 @@ describe('機能ごとの取り出し口', () => {
     expect(lowPotassiumParams(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_LOW_POTASSIUM_PARAMS);
     expect(ckdPotassiumLimits(DEFAULT_PARAMETER_VALUES)).toEqual(CKD_POTASSIUM_LIMIT_MG);
     expect(dscrThresholds(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_DSCR_THRESHOLDS);
+    expect(advisorThresholds(DEFAULT_PARAMETER_VALUES)).toEqual(DEFAULT_ADVISOR_THRESHOLDS);
   });
 
   it('上書きは正しい引数へ届く (id と引数の対応を 1 つずつ)', () => {
@@ -586,6 +593,7 @@ describe('機能ごとの取り出し口', () => {
     });
     expect(ckdPotassiumLimits(custom)).toEqual({ G1: null, G2: null, G3a: null, G3b: 1000, G4: 800, G5: 600 });
     expect(dscrThresholds(custom)).toEqual({ danger: 1.5, caution: 2 });
+    expect(advisorThresholds(custom)).toEqual({ yieldGapPt: 2.5, concentrationShare: 0.3 });
   });
 
   it('税・社会保険の取り出し口 — 既定は各モジュールの既定引数と同じ物', () => {
@@ -903,6 +911,8 @@ describe('台帳の表 (静的な値の固定)', () => {
       ['payroll.commutePublicTransportCap', '円', 1, 0, 1_000_000, true, 'law'],
       ['realEstate.dscrDangerThreshold', '倍', 1, 0.1, 10, false, 'threshold'],
       ['realEstate.dscrCautionThreshold', '倍', 1, 0.1, 10, false, 'threshold'],
+      ['advisor.yieldGapPt', 'pt', 1, 0.1, 20, false, 'threshold'],
+      ['advisor.concentrationShare', '%', 100, 0.05, 1, false, 'threshold'],
       ['tax.consumptionStandardRate', '%', 100, 0, 0.5, false, 'law'],
       ['tax.consumptionReducedRate', '%', 100, 0, 0.5, false, 'law'],
       ['incomeTax.reconstructionSurtaxRate', '%', 100, 0, 0.2, false, 'law'],

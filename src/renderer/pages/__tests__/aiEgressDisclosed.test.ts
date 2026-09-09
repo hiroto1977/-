@@ -273,7 +273,7 @@ describe('AI へ送る画面すべてに断りが在る (走査)', () => {
   it('★ 部品は AI へ送っていない (実測 — 送るなら断りが要る)', () => {
     // `ServiceActionPanel` は `advise` を**可変の serviceId** で呼ぶが、
     // 載っているのは real-estate / mutual-funds で、どちらの advise も
-    // stub (`phase: 'stub'`) なので導出した AI の組に入らない。
+    // 規則ベース (`phase: 'rules'`、shared/serviceAdvisor.ts。AI へは送らない) なので導出した AI の組に入らない。
     // `ChatbotWidget` / `VoiceCommandBar` は `VOICE_ACTIONS` の範囲でしか
     // invoke しない。**これは主張ではなく測定**で、変わればここが鳴る。
     const senders = pageFiles()

@@ -13673,7 +13673,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **104 ファイル / 279 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **104 ファイル / 280 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -13684,11 +13684,11 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/taxDeductions.ts` | 9 |
 | `src/renderer/data/stocksAnalysisWeb.ts` | 8 |
 | `src/shared/mutualFundsMetrics.ts` | 7 |
+| `src/renderer/pages/RealEstatePage.tsx` | 6 |
 | `src/shared/taxCredits.ts` | 6 |
 | `src/main/clients/business.ts` | 5 |
 | `src/main/clients/linux.ts` | 5 |
 | `src/renderer/data/cashflowDebtService.ts` | 5 |
-| `src/renderer/pages/RealEstatePage.tsx` | 5 |
 | `src/renderer/pages/TaxPage.tsx` | 5 |
 | `src/shared/buildingIso.ts` | 5 |
 | `src/shared/savingsPlanning.ts` | 5 |
@@ -18282,6 +18282,68 @@ talent が 2026-08-28 に e2e で捕まった形 —— 「保存の口は動く
 
 - `isMock: true` はデスクトップ版と同じく**保存した状態にも**付く (組み立てが見本と同じ関数)。画面のバッジが
   「見本」と言う根拠がここに在るので、保存済みなら `false` にするのが次 (両ビルドを同時に)。
+
+## パス 119 (2026-09-09) — **「AI 改善提案」は payload を読まない固定文で、見本の数字を利用者の物件・銘柄として語っていた**
+
+`ServiceActionPanel` (不動産投資 / 投資信託に載る) の「🤖 AI 改善提案」を両ビルドで実測した:
+
+| ビルド | 何が返るか |
+| --- | --- |
+| Electron | payload を**読まない**固定文 —— 「大阪空室の解消 (大阪市ワンルームが空室)」「札幌アパート (利回り 8.1%) が CF の主力」「平均利回り 6.15%」「評価損益率 +14.8%」「eMAXIS Slim S&P500 (YTD +14.2%)」。すべて**同梱の見本の数字を散文に写した物** |
+| ブラウザ版 | 双子が無く `action_not_found` —— 「AI 提案の取得に失敗: ブラウザ版では real-estate/advise は実行できません」 |
+
+利用者が自分の物件・銘柄を足しても (どちらの画面も追加・編集・削除できる)、提案は見本について語り、画面のタイル
+(ポートフォリオ利回り・評価損益率) と**別の数字を言う** —— パス 61 の「同じ画面に 2 つの数字」の形が、今度は
+**利用者の判断を促す文**の側に在った。ラベルは「🤖 AI」だが、中身は AI でも計算でもなかった。
+uber-eats / demae-can の advise は画面が無く (`VoiceCommandBar` と `BusinessPage` が id を持つだけ)、誰も呼べないまま
+同じ固定文を持っていた。`invokeDataTypes.test.ts` の台帳は 4 つを「双子が無い」として**理由つきで許していた** ——
+台帳は「無い」を記録するが、「無くてよいか」は誰も問わなかった。
+
+### 直し
+
+- **`shared/serviceAdvisor.ts`** —— 4 サービスの入力の形 (`RealEstateAdviceInput` …)・読み取り (行数 ≤ 500・名前 ≤ 64 字・
+  有限数・null 可の欄を 1 か所で判定し、`${id}.advise: …` の文面で断る)・規則 (空室の名指し / CF の主力 / 平均との利回り差、
+  集中度 / 年初来 / 評価損益率、店舗別売上の倍率 / 評価差 / 人気メニュー、キャンセル率 / 客単価の地域差 / 配達中)・
+  免責・入口 `adviseService(id, raw)`。**文が言う数字は入力の数字だけ** —— 数字を写した文は 1 つも無い。
+- 画面は**自分が刷っている集計をそのまま渡す** (`RealEstatePage`: 行 + `calcRealEstateYield` の表面利回り + `portfolio` の
+  月次 CF・平均利回り・入居率。`MutualFundsPage`: 行 + 評価額 + 取得原価が読めるときだけ評価損益率)。だから提案が言う数字は、
+  タイル・表の数字と**構成上**一致する。`basis` (「4 物件 (同梱の見本 4 件を含む)・月次 CF ¥243,000・平均表面利回り 6.2%・入居率 75%」)
+  を画面が「根拠:」として刷り、突き合わせられるようにした。
+- main の 4 action とブラウザ版の枝 (`action === 'advise' && isRecordEntryServiceId(serviceId)`) は同じ `adviseService` を通す。
+  読めない payload は main が throw・ブラウザ版が `action_failed` で、**文面は同じ**。
+- しきい値 (低利回りと呼ぶ差 1.0 pt / 集中と呼ぶ比率 50%) は台帳 (`advisor.yieldGapPt` / `advisor.concentrationShare`) に載せ、
+  画面が `advisorThresholds(params)` で読んで payload に載せる。店舗系の 4 つ (売上倍率 1.5 / 評価差 0.2 / キャンセル率 3%
+  (出典なし・置き値) / 客単価倍率 1.2) は**画面が無い**ので台帳に載せない (載せても「上書きすると画面が動く」を留められない)。
+- ラベルを「💡 改善提案」に、脇書きを「画面の数字から規則で組み立てます (AI ではありません)」に。`phase: 'rules'`。
+- 検査: `serviceAdvisor.test.ts` (規則ごとの文面・境界・読み取りの断り・固定文の不在)、4 client の advise 検査 (payload の物件名が
+  出る・見本の数字が残らない・空 payload は断る)、`webShimRouting` に 4 行、`invokeDataTypes` は 4 鍵を双子ありへ、
+  `dualBuildActionSurface` は集合分岐の走査を advise にも、`parameterWiring` に 4 本 (対照 2 + 上書き 2)、e2e `serviceAdviceSuite`
+  (提案が返る → 空室を足すと提案がそれを名指しする → 投資信託の集中度と評価損益率がタイルと同じ数字)。
+
+### 対照
+
+| # | 何を壊したか | 鳴ったか |
+| --- | --- | --- |
+| A | (unit) 利回り差のしきい値を 1.5 にする → 「ばらつきは小さい」に変わる | 🔔 `serviceAdvisor.test` (検査そのものが対照つき) |
+| B | (unit) CF の文の数字を `¥243,000` に固定する (見本の数字を写した固定文へ戻す) | 🔔 2 本 —— **最初は鳴らなかった**: CF の文を利用者の数字で留めていなかった。留めてから鳴った |
+| B2 | (unit) 集中の文の評価額を `¥8,240,140` に固定する | 🔔 1 本 (B と同じ穴を投資信託側で塞いだ) |
+| C | (e2e) パス 118 の版 (`standalone-pass118.html`) に当てる | 🔔 「根拠:」が 20 秒出ず落ちる (提案が返らない = `action_not_found` の版) |
+| D | (wiring) 台帳の `advisor.yieldGapPt` を 3 / `advisor.concentrationShare` を 0.3 にする → 同じ画面の提案が変わる | 🔔 `parameterWiring` (既定の描画を対照に) |
+| E | (unit) ブラウザ版の枝を消す | 🔔 5 本 (`webShimRouting` ×4 + `invokeDataTypes` の双子台帳) |
+
+**B が最初に鳴らなかった**のは、この検査の穴そのものだった —— 「入力を変えれば数字が消える」の検査が空室と利回りの文しか
+見ておらず、CF の文は見本の入力でしか留めていなかった。対照を回して初めて分かる (CLAUDE.md の規約どおり)。
+
+### 0 倒しの母集団
+
+279 → 280。増えた 1 件は `RealEstatePage` の `adviseInput` で表面利回りを表と同じ式で出すときの
+`p.occupied ? 1 : 0` (入居中の 1/0 を入居率として渡す。表の同じ式の写しで、正しい 0)。
+
+### 残る物
+
+- `uber-eats` / `demae-can` に `ServiceActionPanel` を載せるかは利用者の判断 (載せれば店舗系の 4 つのしきい値を台帳へ)。
+- 投資信託の利用者行は年初来リターン未入力を 0 として保存している (`normalizeHolding` の既定)。提案はそれを 0% として読む
+  (「未入力」と「0%」の区別は行の側の課題)。
 
 ## パス 115 (2026-09-09) — **同じ `YYYY-MM-DD` の判定が 7 通りに割れ、暦を見るのは 1 つだけだった**
 

@@ -36,6 +36,7 @@ import {
 import { BALANCE_SHEET_STALE_AFTER_MONTHS } from './balanceSheetFreshness';
 import { COMMUTE_PUBLIC_TRANSPORT_CAP } from './payroll';
 import { DSCR_DANGER_THRESHOLD, DSCR_CAUTION_THRESHOLD, type DscrThresholds } from './realEstateMetrics';
+import { ADVISOR_CONCENTRATION_SHARE, ADVISOR_YIELD_GAP_PT, type AdvisorThresholds } from './serviceAdvisor';
 import {
   CONSUMPTION_TAX_STANDARD,
   CONSUMPTION_TAX_REDUCED,
@@ -292,6 +293,17 @@ export function parameterDefinitions() {
     id: 'realEstate.dscrCautionThreshold', feature: '不動産', label: 'DSCR の注意水域 (未満)', unit: '倍',
     defaultValue: DSCR_CAUTION_THRESHOLD, min: 0.1, max: 10, kind: 'threshold',
     note: '金融機関が求めることの多い 1.2〜1.3 の下側',
+  },
+  // --- 改善提案 (業務操作パネル。不動産投資 / 投資信託の画面が payload に載せて渡す) -----
+  {
+    id: 'advisor.yieldGapPt', feature: '改善提案', label: '低利回りと呼ぶ差 (平均との差・以上)', unit: 'pt',
+    defaultValue: ADVISOR_YIELD_GAP_PT, min: 0.1, max: 20, kind: 'threshold',
+    note: '不動産の提案。表面利回りが平均をこの差以上下回る物件を名指しする',
+  },
+  {
+    id: 'advisor.concentrationShare', feature: '改善提案', label: '集中と呼ぶ 1 銘柄の評価額比率 (以上)', unit: '%', scale: 100,
+    defaultValue: ADVISOR_CONCENTRATION_SHARE, min: 0.05, max: 1, kind: 'threshold',
+    note: '投資信託の提案。最大の銘柄の評価額比率がこの値以上なら集中リスクとして名指しする',
   },
   // --- 税 -----------------------------------------------------------------
   {
@@ -1016,6 +1028,11 @@ export function ckdPotassiumLimits(v: ParameterValues): Readonly<Record<CkdStage
 
 export function dscrThresholds(v: ParameterValues): DscrThresholds {
   return { danger: v['realEstate.dscrDangerThreshold'], caution: v['realEstate.dscrCautionThreshold'] };
+}
+
+/** 改善提案のしきい値 —— 画面が `adviseInput.thresholds` に載せ、`shared/serviceAdvisor.ts` が読む。 */
+export function advisorThresholds(v: ParameterValues): AdvisorThresholds {
+  return { yieldGapPt: v['advisor.yieldGapPt'], concentrationShare: v['advisor.concentrationShare'] };
 }
 
 export function deductionParams(v: ParameterValues): DeductionParams {

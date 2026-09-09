@@ -15,7 +15,8 @@ const advice: ServiceAdvisorResponse = {
   recommendations: [{ title: 't', rationale: 'r' }],
   disclaimer: 'd',
   notForRealMoney: true,
-  phase: 'stub',
+  basis: 'b',
+  phase: 'rules',
 };
 
 describe('actionReducer', () => {

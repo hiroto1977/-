@@ -1,6 +1,7 @@
 import type { ActionContext, ActionMap, FetchContext } from './types';
 import type { ActionData } from '../../shared/actionData';
 import { MAX_RECORD_NOTE_CHARS } from '../../shared/recordEntryLimits';
+import { adviseService } from '../../shared/serviceAdvisor';
 
 /**
  * 投資信託 — 投資ポートフォリオ (snapshot 専用)。
@@ -74,32 +75,19 @@ async function recordEntry(ctx: ActionContext): Promise<ActionData<'mutual-funds
   return { ok: true, serviceId: 'mutual-funds', recordedAt: new Date().toISOString(), persisted: false };
 }
 
-// Stryker disable all
-// — disable for stub UX content (disclaimer text + recommendation titles/rationale).
-// These string literals are not security-critical; their exact wording will be replaced
-// by LLM output in Phase 6. Stryker mutations on these are noise.
-const MUTUAL_FUNDS_DISCLAIMER =
-  '本提案は教育目的の参考情報であり、投資助言ではありません。実際の投資判断は' +
-  'ファイナンシャルアドバイザーの確認を経てご自身の責任で行ってください。' +
-  'Phase 6 で実 LLM 推論を接続します。';
-
+/**
+ * 改善提案 —— 画面が渡した集計 (銘柄の行・評価額・評価損益率) から**規則で**組む。
+ * 判定と文面は `shared/serviceAdvisor.ts` が 1 つだけ持ち、ブラウザ版の枝も同じ関数を通す
+ * (2026-09-09 · パス 119。それまでは payload を読まない固定文で、見本の数字を写していた)。
+ * 読めない payload は断る —— 何も無い所から提案を作らない。
+ */
 async function advise(ctx: ActionContext): Promise<ActionData<'mutual-funds/advise'>> {
-  void ctx;
-  // Stryker disable next-line all
-  return {
-    recommendations: [
-      { title: 'リターン水準の確認', rationale: '評価損益率 +14.8% は良好なリターン。eMAXIS Slim S&P500 (YTD +14.2%) が牽引している点に注目。' },
-      { title: '米国ウェイトの調整', rationale: '全世界株式 (オール・カントリー) と S&P500 の重複に注意 — 米国ウェイトが過剰。先進国債券 (YTD +3.4%) のウェイトを高める検討を推奨。' },
-      { title: '積立履歴のトラッキング', rationale: 'ひふみプラスのみ「積立中」タグ。積立履歴の月次トラッキングを別途記録すると経営判断の精度が上がる。' },
-    ],
-    disclaimer: MUTUAL_FUNDS_DISCLAIMER,
-    notForRealMoney: true,
-    phase: 'stub',
-  };
+  const r = adviseService('mutual-funds', ctx.payload);
+  if (!r.ok) throw new Error(r.message);
+  return r.data;
 }
 
 export const ACTIONS: ActionMap = {
   'record-entry': recordEntry,
   advise,
 };
-// Stryker restore all

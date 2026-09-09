@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 29 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **12316** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **12347** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -1820,14 +1820,14 @@ union を参照する。
 | talent | `judge-leader` | `{ flagged, candidate }` | flagged は失格条項の id 以外を落とし、candidate は 64 字で切る | `talent.ts:177-180` |
 | emotions | `clear-history` | `{ kind }` | kind は moods / analyses / all / 未指定 のみ意味を持つ (未指定は気分だけ) | `emotions.ts:325-329` |
 | docstudio | `list-collections` | (payload なし) | ctx.payload を読まない (同梱の書式目録を返すだけ) | `docstudio.ts:34-36` |
-| real-estate | `record-entry` | `{ note, amount }` | note は文字列必須・amount は任意の数値。**保存はしない** (persisted: false) | `real-estate.ts:99-102` |
-| real-estate | `advise` | (payload なし) | payload を読まない stub。定型の助言と免責を返す | `real-estate.ts:99-102` |
-| mutual-funds | `record-entry` | `{ note, amount }` | 同上 | `mutual-funds.ts:102-105` |
-| mutual-funds | `advise` | (payload なし) | 同上 (stub) | `mutual-funds.ts:102-105` |
-| uber-eats | `record-entry` | `{ note, amount }` | 同上 | `uber-eats.ts:105-108` |
-| uber-eats | `advise` | (payload なし) | 同上 (stub) | `uber-eats.ts:105-108` |
-| demae-can | `record-entry` | `{ note, amount }` | 同上 | `demae-can.ts:100-103` |
-| demae-can | `advise` | (payload なし) | 同上 (stub) | `demae-can.ts:100-103` |
+| real-estate | `record-entry` | `{ note, amount }` | note は文字列必須・amount は任意の数値。**保存はしない** (persisted: false) | `real-estate.ts:87-90` |
+| real-estate | `advise` | 画面の集計 (RealEstateAdviceInput: 物件の行・月次 CF・平均利回り・入居率・しきい値) | shared/serviceAdvisor.ts の規則で提案を組む (パス 119)。読めない payload は断る。ブラウザ版の枝も同じ関数・同じ文面 | `real-estate.ts:87-90` |
+| mutual-funds | `record-entry` | `{ note, amount }` | 同上 | `mutual-funds.ts:90-93` |
+| mutual-funds | `advise` | 画面の集計 (MutualFundsAdviceInput: 銘柄の行・評価額・評価損益率・しきい値) | 同上 (規則) | `mutual-funds.ts:90-93` |
+| uber-eats | `record-entry` | `{ note, amount }` | 同上 | `uber-eats.ts:94-97` |
+| uber-eats | `advise` | 画面の集計 (UberEatsAdviceInput: 店舗・人気メニュー・平均評価) | 同上 (規則。画面が無いので今は呼ぶ物が無い) | `uber-eats.ts:94-97` |
+| demae-can | `record-entry` | `{ note, amount }` | 同上 | `demae-can.ts:89-92` |
+| demae-can | `advise` | 画面の集計 (DemaeCanAdviceInput: 月次件数・キャンセル率・地域別・配達中) | 同上 | `demae-can.ts:89-92` |
 | shopify | `sync-to-slack` | order + token + channel | 送り先は定数 (slack.com)。token は Bearer として載る。必須欄は CONNECTORS の requiredFields が持つ | `shopify.ts:399-407` |
 | shopify | `sync-to-discord` | order + webhookUrl | **送り先が payload 由来**。https かつ hostname が discord.com のものだけ通す | `shopify.ts:399-407` |
 | shopify | `sync-to-line` | order + token + to | 送り先は定数 (api.line.me)。to は宛先 ID | `shopify.ts:399-407` |
@@ -2180,7 +2180,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **276 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **277 ファイル**。
 
 #### 点数の定義 (分母に何を入れないか)
 

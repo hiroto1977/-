@@ -38,6 +38,8 @@ import { calcCapitalGainsTax, DEFAULT_CAPITAL_GAINS_PARAMS } from '../../../shar
 import { compareBusinessTaxMethods, DEFAULT_BUSINESS_CONSUMPTION_PARAMS } from '../../../shared/taxConsumptionBusiness';
 import { jpy } from '../../../shared/formatters';
 import type { ParameterOverrides } from '../../../shared/parameters';
+import { adviseService } from '../../../shared/serviceAdvisor';
+import { isRecordEntryServiceId } from '../../../shared/recordEntryLimits';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -250,6 +252,77 @@ describe('不動産 — DSCR の判定しきい値', () => {
     expect(text()).toContain('0.5 未満は危険水域');
     expect(text()).toContain('0.8 以上が目安');
     expect((tile('DSCR').children[1] as HTMLElement).style.color).toBe(GREEN);
+  });
+});
+
+// --- 改善提案 (不動産投資 / 投資信託の業務操作パネル) ------------------------------
+
+/**
+ * 画面の「改善提案」ボタンは `serviceHub.invoke(id, 'advise', <画面の集計>)` を呼ぶ。
+ * ここでは invoke を**ブラウザ版の枝と同じ関数** (`shared/serviceAdvisor.ts` の
+ * `adviseService`) へ流し、画面が組んだ payload (しきい値を含む) がそのまま提案の
+ * 文言に効くことを見る。既定の描画を対照に置く。
+ */
+const FAILING_INVOKE = () => Promise.resolve({ ok: false, code: 'x', message: 'x' });
+type Hub = { invoke: (svc: string, act: string, payload: Record<string, unknown>) => Promise<unknown> };
+const hub = (): Hub => (globalThis as unknown as { serviceHub: Hub }).serviceHub;
+
+async function clickButton(label: string): Promise<void> {
+  const button = Array.from(container.querySelectorAll('button')).find((b) => b.textContent?.includes(label));
+  if (!button) throw new Error(`button "${label}" not found`);
+  await act(async () => {
+    button.click();
+  });
+  await settle();
+}
+
+describe('改善提案 — 台帳のしきい値が、画面が渡す payload を通って提案の文言に効く', () => {
+  beforeEach(() => {
+    hub().invoke = (svc, act, payload) => {
+      if (act === 'advise' && isRecordEntryServiceId(svc)) {
+        const r = adviseService(svc, payload);
+        return Promise.resolve(r.ok ? { ok: true, data: r.data } : { ok: false, code: 'action_failed', message: r.message });
+      }
+      return FAILING_INVOKE();
+    };
+  });
+  afterEach(() => {
+    hub().invoke = FAILING_INVOKE;
+  });
+
+  it('対照: 不動産の既定は差 1.0 pt で、渋谷 (4.8% / 平均 6.2%) を低利回りと名指しする', async () => {
+    await mount(RealEstatePage);
+    await clickButton('改善提案');
+    expect(text()).toContain('根拠: 4 物件 (同梱の見本 4 件を含む)・月次 CF ¥243,000・平均表面利回り 6.2%・入居率 75%');
+    expect(text()).toContain('低利回り物件の見直し: 渋谷区マンション 1LDK');
+    expect(text()).toContain('(差のしきい値 1.0 pt)');
+    expect(text()).not.toContain('提案の取得に失敗');
+  });
+
+  it('差を 3 pt に上げれば同じ画面が「ばらつきは小さい」と言い、文言もその値を言う', async () => {
+    await seed({ 'advisor.yieldGapPt': 3 });
+    await mount(RealEstatePage);
+    await clickButton('改善提案');
+    expect(text()).toContain('利回りのばらつきは小さい');
+    expect(text()).toContain('しきい値 3.0 pt 未満');
+    expect(text()).not.toContain('低利回り物件の見直し');
+  });
+
+  it('対照: 投資信託の既定は 50% で、S&P500 (39.3%) は集中ではない', async () => {
+    await mount(MutualFundsPage);
+    await clickButton('改善提案');
+    expect(text()).toContain('根拠: 4 銘柄 (同梱の見本 4 件を含む)・評価額 ¥8,240,140・評価損益率 14.8%');
+    expect(text()).toContain('分散の状況');
+    expect(text()).toContain('(しきい値 50.0% 未満)');
+  });
+
+  it('比率を 30% に下げれば同じ画面が「集中リスク」と言い、文言もその値を言う', async () => {
+    await seed({ 'advisor.concentrationShare': 0.3 });
+    await mount(MutualFundsPage);
+    await clickButton('改善提案');
+    expect(text()).toContain('集中リスク: eMAXIS Slim 米国株式 (S&P500)');
+    expect(text()).toContain('(しきい値 30.0%)');
+    expect(text()).not.toContain('分散の状況');
   });
 });
 

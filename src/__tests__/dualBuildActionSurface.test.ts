@@ -115,15 +115,16 @@ function invokeBody(): string {
 }
 
 /**
- * `record-entry` を集合で受ける分岐の対象サービス。
+ * `record-entry` / `advise` を集合で受ける分岐の対象サービス。
  *
  * 2026-09-09 (パス 117) までブラウザ版は `RECORD_ENTRY_SERVICES = new Set([…])` を自前で持ち、
  * ここはその字面を読んでいた。いまは shared の `RECORD_ENTRY_SERVICE_IDS` を `isRecordEntryServiceId`
  * で読むので、**分岐がその関数で振り分けている**ことを字面で確かめた上で、集合は shared から取る
- * (集合を 2 度書かない)。分岐の形が変われば [] になり、`record-entry` が「拾えていない action」として鳴る。
+ * (集合を 2 度書かない)。分岐の形が変われば [] になり、その action が「拾えていない action」として鳴る。
+ * パス 119 で `advise` も同じ形の分岐になった (4 サービスの提案を shared の 1 関数が組む)。
  */
-function recordEntryServices(body: string): string[] {
-  return /action\s*===\s*'record-entry'\s*&&\s*isRecordEntryServiceId\(serviceId\)/.test(body)
+function sharedSetServices(body: string, action: 'record-entry' | 'advise'): string[] {
+  return new RegExp(`action\\s*===\\s*'${action}'\\s*&&\\s*isRecordEntryServiceId\\(serviceId\\)`).test(body)
     ? [...RECORD_ENTRY_SERVICE_IDS]
     : [];
 }
@@ -139,7 +140,9 @@ function browserPairs(body: string): Set<string> {
   for (const m of body.matchAll(/serviceId\s*===\s*'([^']+)'\s*&&\s*\(([^)]*action\s*===[^)]*)\)/g)) {
     for (const a of m[2]!.matchAll(/action\s*===\s*'([^']+)'/g)) out.add(`${m[1]}/${a[1]}`);
   }
-  for (const svc of recordEntryServices(body)) out.add(`${svc}/record-entry`);
+  for (const action of ['record-entry', 'advise'] as const) {
+    for (const svc of sharedSetServices(body, action)) out.add(`${svc}/${action}`);
+  }
   return out;
 }
 

@@ -78,6 +78,7 @@ const WEB_TWINS: Readonly<Record<string, Twin>> = {
   'canva/create-folder': { file: 'renderer/data/saasWriteWeb.ts', fn: 'createCanvaFolder' },
   'cloudflare/create-dns-record': { file: 'renderer/data/saasWriteWeb.ts', fn: 'createCloudflareDnsRecord' },
   'cloudflare/purge-cache': { file: 'renderer/data/saasWriteWeb.ts', fn: 'purgeCloudflareCache' },
+  'demae-can/advise': { file: WEB_SHIM, inline: true },
   'demae-can/record-entry': { file: WEB_SHIM, inline: true },
   'drive/create-folder': { file: 'renderer/data/saasWriteWeb.ts', fn: 'createDriveFolder' },
   'emotions/analyze-text': { file: WEB_SHIM, fn: 'callEmotionsAnalyze' },
@@ -85,9 +86,11 @@ const WEB_TWINS: Readonly<Record<string, Twin>> = {
   'emotions/log-mood': { file: 'renderer/data/emotionsWeb.ts', fn: 'logMood' },
   'github/create-issue': { file: 'renderer/data/saasWriteWeb.ts', fn: 'createGithubIssue' },
   'gmail/create-draft': { file: 'renderer/data/saasWriteWeb.ts', fn: 'createGmailDraft' },
+  'mutual-funds/advise': { file: WEB_SHIM, inline: true },
   'mutual-funds/record-entry': { file: WEB_SHIM, inline: true },
   'notion/create-page': { file: 'renderer/data/saasWriteWeb.ts', fn: 'createNotionPage' },
   'ollama/chat': { file: WEB_SHIM, inline: true },
+  'real-estate/advise': { file: WEB_SHIM, inline: true },
   'real-estate/record-entry': { file: WEB_SHIM, inline: true },
   'security/check-email-breach': { file: 'renderer/data/saasWriteWeb.ts', fn: 'checkEmailBreach' },
   'security/scan-url': { file: 'renderer/data/saasWriteWeb.ts', fn: 'scanUrlVirusTotal' },
@@ -99,6 +102,7 @@ const WEB_TWINS: Readonly<Record<string, Twin>> = {
   'talent/judge-leader': { file: WEB_SHIM, inline: true },
   'talent/save-state': { file: WEB_SHIM, inline: true },
   'teamradar/save-state': { file: WEB_SHIM, inline: true },
+  'uber-eats/advise': { file: WEB_SHIM, inline: true },
   'uber-eats/record-entry': { file: WEB_SHIM, inline: true },
   'wordpress/create-post-draft': { file: 'renderer/data/saasWriteWeb.ts', fn: 'createWordPressPostDraft' },
 };
@@ -107,12 +111,9 @@ const WEB_TWINS: Readonly<Record<string, Twin>> = {
 const WEB_TWIN_NONE: Readonly<Record<string, string>> = {
   'business/export-dashboard': 'web-shim.ts は downloaded / 保管庫の sinks を足した上位集合を返す',
   'business/export-dashboard-md': '同上',
-  'demae-can/advise': 'ブラウザ版に双子が無い (Electron 版のみ —— ServiceActionPanel の「AI 提案」はブラウザ版では action_not_found)',
   'docstudio/list-collections': 'ブラウザ版に双子が無い (画面はスナップショットの collections を読む)',
   'microsoft-365/create-event': 'ブラウザ版に双子が無い (Electron 版のみ)',
   'microsoft-365/send-mail': '同上',
-  'mutual-funds/advise': 'ブラウザ版に双子が無い (Electron 版のみ)',
-  'real-estate/advise': '同上',
   'shopify/sync-to-discord': 'ブラウザ版に双子が無い (Electron 版のみ)',
   'shopify/sync-to-gmail': '同上',
   'shopify/sync-to-line': '同上',
@@ -126,7 +127,6 @@ const WEB_TWIN_NONE: Readonly<Record<string, string>> = {
   'stocks/export-dashboard-md': '同上',
   'teamradar/export-svg': '同上',
   'templates/export-template': 'web-shim.ts は downloaded / sinks を足した上位集合を返す',
-  'uber-eats/advise': 'ブラウザ版に双子が無い (Electron 版のみ)',
 };
 
 /** 台帳の鍵 ('service/action')。 */

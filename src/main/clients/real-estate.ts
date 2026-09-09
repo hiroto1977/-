@@ -1,6 +1,7 @@
 import type { ActionContext, ActionMap, FetchContext } from './types';
 import type { ActionData } from '../../shared/actionData';
 import { MAX_RECORD_NOTE_CHARS } from '../../shared/recordEntryLimits';
+import { adviseService } from '../../shared/serviceAdvisor';
 
 /**
  * 不動産投資 — 投資ポートフォリオ (snapshot 専用)。
@@ -71,32 +72,19 @@ async function recordEntry(ctx: ActionContext): Promise<ActionData<'real-estate/
   return { ok: true, serviceId: 'real-estate', recordedAt: new Date().toISOString(), persisted: false };
 }
 
-// Stryker disable all
-// — disable for stub UX content (disclaimer text + recommendation titles/rationale).
-// These string literals are not security-critical; their exact wording will be replaced
-// by LLM output in Phase 6. Stryker mutations on these are noise.
-const REAL_ESTATE_DISCLAIMER =
-  '本提案は教育目的の参考情報であり、投資助言ではありません。実際の投資判断は' +
-  'ファイナンシャルアドバイザー・税理士・宅建士の確認を経てご自身の責任で行ってください。' +
-  'Phase 6 で実 LLM 推論を接続します。';
-
+/**
+ * 改善提案 —— 画面が渡した集計 (物件の行・月次 CF・平均利回り・入居率) から**規則で**組む。
+ * 判定と文面は `shared/serviceAdvisor.ts` が 1 つだけ持ち、ブラウザ版の枝も同じ関数を通す
+ * (2026-09-09 · パス 119。それまでは payload を読まない固定文で、見本の数字を写していた)。
+ * 読めない payload は断る —— 何も無い所から提案を作らない。
+ */
 async function advise(ctx: ActionContext): Promise<ActionData<'real-estate/advise'>> {
-  void ctx;
-  // Stryker disable next-line all
-  return {
-    recommendations: [
-      { title: '大阪空室の解消', rationale: '大阪市ワンルームが空室。賃料設定の市場比較と仲介媒介の見直しを推奨。' },
-      { title: '札幌アパートの CF 維持', rationale: '札幌アパート (利回り 8.1%) が CF の主力。修繕積立金の確保を継続。' },
-      { title: 'ポートフォリオ分散の維持', rationale: '平均利回り 6.15% は東京23区物件偏重と札幌の組合せで良好。地理的リスク分散は十分。' },
-    ],
-    disclaimer: REAL_ESTATE_DISCLAIMER,
-    notForRealMoney: true,
-    phase: 'stub',
-  };
+  const r = adviseService('real-estate', ctx.payload);
+  if (!r.ok) throw new Error(r.message);
+  return r.data;
 }
 
 export const ACTIONS: ActionMap = {
   'record-entry': recordEntry,
   advise,
 };
-// Stryker restore all

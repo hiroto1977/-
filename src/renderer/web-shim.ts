@@ -36,6 +36,9 @@
  *                              → Anthropic directly (Vault 'emotions' key)
  *   - invoke('<uber-eats|demae-can|real-estate|mutual-funds>', 'record-entry')
  *                              → stateless validation (matches Electron)
+ *   - invoke('<uber-eats|demae-can|real-estate|mutual-funds>', 'advise', <画面の集計>)
+ *                              → shared/serviceAdvisor.ts の規則で提案を組む
+ *                                (Electron 版と同じ関数・同じ文面 — パス 119)
  *   - invoke('github', 'create-issue', …)
  *                              → POST api.github.com directly (CORS-enabled)
  *                                with the Vault 'github' PAT (Part ②, 外部連携)
@@ -63,6 +66,7 @@ import {
   isRecordEntryServiceId,
   type RecordEntryServiceId,
 } from '../shared/recordEntryLimits';
+import { adviseService } from '../shared/serviceAdvisor';
 import type { ActionData } from '../shared/actionData';
 import {
   BUSINESS_CATEGORY_IDS,
@@ -1688,6 +1692,14 @@ const shim = {
         recordedAt: new Date().toISOString(),
         persisted: false,
       }) as ActionResult<T>;
+    }
+
+    // 改善提案 (advise): 画面が渡した集計から規則で組む。判定と文面は shared が 1 つだけ持ち、
+    // Electron 版の 4 つの action と同じ関数を通す (パス 119 —— それまで双子が無く action_not_found だった)。
+    if (action === 'advise' && isRecordEntryServiceId(serviceId)) {
+      const r = adviseService(serviceId, payload);
+      if (!r.ok) return err('action_failed', r.message);
+      return ok<ActionData<`${RecordEntryServiceId}/advise`>>(r.data) as ActionResult<T>;
     }
 
     // マルチエージェント AI アシスタント — Vault の資格情報で解決したプロバイダ

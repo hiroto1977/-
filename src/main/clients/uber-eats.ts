@@ -1,6 +1,7 @@
 import type { ActionContext, ActionMap, FetchContext } from './types';
 import type { ActionData } from '../../shared/actionData';
 import { MAX_RECORD_NOTE_CHARS } from '../../shared/recordEntryLimits';
+import { adviseService } from '../../shared/serviceAdvisor';
 
 /**
  * Uber Eats — フードデリバリー (snapshot 専用)。
@@ -78,31 +79,19 @@ async function recordEntry(ctx: ActionContext): Promise<ActionData<'uber-eats/re
   return { ok: true, serviceId: 'uber-eats', recordedAt: new Date().toISOString(), persisted: false };
 }
 
-// Stryker disable all
-// — disable for stub UX content (disclaimer text + recommendation titles/rationale).
-// These string literals are not security-critical; their exact wording will be replaced
-// by LLM output in Phase 6. Stryker mutations on these are noise.
-const UBER_EATS_DISCLAIMER =
-  '本提案は静的 snapshot に基づくテンプレートであり、店舗運営上の助言ではありません。' +
-  '実際の経営判断はオーナー・専門家の責任で行ってください。Phase 6 で実 LLM 推論を接続します。';
-
+/**
+ * 改善提案 —— 画面が渡した集計 (店舗・人気メニュー・平均評価) から**規則で**組む。
+ * 判定と文面は `shared/serviceAdvisor.ts` が 1 つだけ持ち、ブラウザ版の枝も同じ関数を通す
+ * (2026-09-09 · パス 119。それまでは payload を読まない固定文で、見本の数字を写していた)。
+ * 読めない payload は断る —— 何も無い所から提案を作らない。
+ */
 async function advise(ctx: ActionContext): Promise<ActionData<'uber-eats/advise'>> {
-  void ctx;
-  // Stryker disable next-line all
-  return {
-    recommendations: [
-      { title: '店舗別売上の平準化', rationale: 'Shibuya > Shinjuku > Ikebukuro のばらつきが大きい。Top 店舗のオペレーションを他 2 店舗へ展開すると平均化が見込める。' },
-      { title: '平均評価★ 4.60 → 4.70 への引き上げ', rationale: '配達時間短縮 / 包装改善 / クーポン施策の組み合わせで顧客満足度を底上げ。' },
-      { title: '人気メニュー TOP3 の店舗別展開', rationale: 'Shinjuku 店でも TOP3 を前面に出すと客単価向上が期待できる。' },
-    ],
-    disclaimer: UBER_EATS_DISCLAIMER,
-    notForRealMoney: true,
-    phase: 'stub',
-  };
+  const r = adviseService('uber-eats', ctx.payload);
+  if (!r.ok) throw new Error(r.message);
+  return r.data;
 }
 
 export const ACTIONS: ActionMap = {
   'record-entry': recordEntry,
   advise,
 };
-// Stryker restore all

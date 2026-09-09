@@ -2498,6 +2498,61 @@ async function teamRadarSuite(browser) {
 }
 
 
+async function serviceAdviceSuite(browser) {
+  console.log('\n=== serviceAdvice (改善提案: 画面の数字から規則で組む・ブラウザ版でも返る) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE + '#/real-estate', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('text=ポートフォリオ KPI', { timeout: 30000 });
+  const body = async () => (await page.locator('body').textContent()) ?? '';
+
+  // 1. 既定 (見本 4 物件): 提案が返り、赤い失敗が出ない。パス 118 までのブラウザ版は
+  //    action_not_found (「AI 提案の取得に失敗」) だった。
+  await page.getByRole('button', { name: '改善提案' }).click();
+  await page.waitForSelector('text=根拠:', { timeout: 20000 });
+  let t = await body();
+  ok(!t.includes('提案の取得に失敗'), 'serviceAdvice: ★ ブラウザ版で提案が返る (action_not_found ではない)');
+  ok(t.includes('空室 1 件の解消') && t.includes('大阪市ワンルーム (¥72,000/月)'), 'serviceAdvice: 空室は画面の行 (大阪) を名指しする');
+  ok(t.includes('4 物件 (同梱の見本 4 件を含む)'), 'serviceAdvice: 根拠が件数と見本の混在を言う');
+  ok(t.includes('低利回り物件の見直し: 渋谷区マンション 1LDK'), 'serviceAdvice: 低利回りは表の最低 (渋谷 4.8%) を名指しする');
+
+  // 2. 空室の物件を足すと、提案は**その物件**について語る (見本の数字を写した固定文ではない)。
+  await page.getByPlaceholder('例: 福岡市アパート').fill('E2E空室物件');
+  await page.getByPlaceholder('100000').first().fill('100000');
+  await page.getByPlaceholder('12000000').fill('12000000');
+  await page.locator('label', { hasText: '入居中' }).locator('input[type="checkbox"]').first().uncheck();
+  await page.getByRole('button', { name: '＋ 物件を追加' }).click();
+  await page.waitForSelector('text=E2E空室物件', { timeout: 15000 });
+  await page.getByRole('button', { name: '改善提案' }).click();
+  await page.waitForFunction(() => document.body.textContent.includes('空室 2 件の解消'), undefined, { timeout: 20000 });
+  t = await body();
+  ok(t.includes('E2E空室物件 (¥100,000/月)'), 'serviceAdvice: ★ 足した物件が提案に出る (固定文ではない)');
+  ok(t.includes('5 物件 (同梱の見本 4 件を含む)'), 'serviceAdvice: 根拠の件数が 5 に動く');
+  // 後片付け (利用者行だけに「削除」が在る)。提案の文にも物件名が残るので、表のセルだけを見る。
+  await page.locator('button', { hasText: '削除' }).first().click();
+  await page.waitForFunction(
+    () => !Array.from(document.querySelectorAll('td')).some((td) => td.textContent.includes('E2E空室物件')),
+    undefined,
+    { timeout: 15000 },
+  );
+
+  // 3. 投資信託: 集中度と評価損益率が画面のタイルと同じ数字で出る。
+  await gotoService(page, '#mutual-funds', 'text=保有銘柄');
+  await page.getByRole('button', { name: '改善提案' }).click();
+  await page.waitForSelector('text=根拠:', { timeout: 20000 });
+  t = await body();
+  ok(t.includes('分散の状況') && t.includes('39.3%'), 'serviceAdvice: 投資信託の集中度が画面の評価額から出る (S&P500 39.3%)');
+  ok(t.includes('含み益 14.8%'), 'serviceAdvice: 評価損益率はタイルと同じ 14.8%');
+  ok(!t.includes('提案の取得に失敗'), 'serviceAdvice: 投資信託でも失敗しない');
+
+  ok(errs.length === 0, `serviceAdvice: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
 async function parameterSuite(browser) {
   console.log('\n=== parameters (数値パラメータ: 設定 → 別画面へ反映 → 既定に戻す) ===');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
@@ -2568,7 +2623,7 @@ async function parameterSuite(browser) {
   const SUITES = [
     'desktop', 'manualData', 'dataOrigin', 'credential', 'businessComparison', 'kessanTax', 'frameGuard', 'noBeacon',
     'vaultPassword', 'credentialEgress', 'proxyEnvelope', 'cspEnforced', 'vaultOpacity', 'crossTabLock', 'storageDurability',
-    'securityPosture', 'thirdPartyDisclosure', 'realtime', 'phone', 'talent', 'teamRadar', 'parameters', 'tablet',
+    'securityPosture', 'thirdPartyDisclosure', 'realtime', 'phone', 'talent', 'teamRadar', 'serviceAdvice', 'parameters', 'tablet',
   ];
   const unknown = only.filter((n) => !SUITES.includes(n));
   if (unknown.length > 0) {
@@ -2602,6 +2657,7 @@ async function parameterSuite(browser) {
   if (run('phone')) await phoneSuite(browser);
   if (run('talent')) await talentSuite(browser);
   if (run('teamRadar')) await teamRadarSuite(browser);
+  if (run('serviceAdvice')) await serviceAdviceSuite(browser);
   if (run('parameters')) await parameterSuite(browser);
   if (run('tablet')) await tabletSuite(browser);
   await browser.close();

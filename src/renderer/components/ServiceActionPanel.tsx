@@ -1,6 +1,7 @@
 import { useReducer, useState } from 'react';
 import type { RecordEntryServiceId } from '../../shared/recordEntryLimits';
 import type { ActionData } from '../../shared/actionData';
+import type { AdviceInputFor } from '../../shared/serviceAdvisor';
 import { Section } from './StatusBar';
 import { parseAmountInput, sanitizeNote } from './serviceActionUtils';
 import { classifyActionResult } from '../data/actionOutcome';
@@ -26,15 +27,21 @@ import {
  *   ユーザーに伝える。動いているふりを構造的に防ぐ (PR #4 R1 BLOCKING-3)。
  * - advise の `disclaimer` / `notForRealMoney` を必ず表示。投資系
  *   (mutual-funds / real-estate) は法的 disclaimer 必須 (R1 BLOCKING-1)。
+ * - advise は **画面が渡した集計** (`adviseInput`) から `shared/serviceAdvisor.ts` の規則で
+ *   組む (2026-09-09 · パス 119)。それまでは payload を読まない固定文で、見本の数字
+ *   (「大阪市ワンルームが空室」「平均利回り 6.15%」) を利用者の物件として語り、ブラウザ版は
+ *   `action_not_found` だった。提案の `basis` (何件・どの数字から組んだか) も刷る。
  */
-export interface ServiceActionPanelProps {
+export interface ServiceActionPanelProps<S extends RecordEntryServiceId> {
   /** record-entry / advise を持つ 4 サービスに限る (台帳の鍵 `${RecordEntryServiceId}/record-entry` が全部在る)。 */
-  readonly serviceId: RecordEntryServiceId;
+  readonly serviceId: S;
   /** 例: "Uber Eats"。トースト / 表示用 */
   readonly serviceLabel: string;
+  /** 提案の元になる数字 —— 画面が刷っている集計をそのまま渡す (提案が言う数字と画面の数字を一致させるため)。 */
+  readonly adviseInput: AdviceInputFor<S>;
 }
 
-export function ServiceActionPanel({ serviceId, serviceLabel }: ServiceActionPanelProps) {
+export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, serviceLabel, adviseInput }: ServiceActionPanelProps<S>) {
   const [note, setNote] = useState('');
   const [amount, setAmount] = useState('');
   const [state, dispatch] = useReducer(actionReducer, INITIAL_ACTION_STATE);
@@ -90,9 +97,9 @@ export function ServiceActionPanel({ serviceId, serviceLabel }: ServiceActionPan
   async function submitAdvise() {
     dispatch({ type: 'advise/start' });
     try {
-      const r = await window.serviceHub.invoke<ActionData<`${RecordEntryServiceId}/advise`>>(serviceId, 'advise', {});
+      const r = await window.serviceHub.invoke<ActionData<`${RecordEntryServiceId}/advise`>>(serviceId, 'advise', adviseInput);
       if (!r.ok) {
-        dispatch({ type: 'error', text: `AI 提案の取得に失敗: ${r.message}` });
+        dispatch({ type: 'error', text: `改善提案の取得に失敗: ${r.message}` });
         return;
       }
       dispatch({ type: 'advise/success', advice: r.data });
@@ -135,15 +142,17 @@ export function ServiceActionPanel({ serviceId, serviceLabel }: ServiceActionPan
       {/* advise */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8, marginBottom: 8 }}>
         <button type="button" onClick={submitAdvise} disabled={advBusy} style={buttonStyle}>
-          {advBusy ? '生成中…' : '🤖 AI 改善提案'}
+          {advBusy ? '生成中…' : '💡 改善提案'}
         </button>
         <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>
-          現在は静的テンプレート (Phase 6 で LLM 接続)
+          画面の数字から規則で組み立てます (AI ではありません。Phase 6 で LLM 接続)
         </span>
       </div>
 
       {advice && (
         <div style={{ marginTop: 8, padding: 12, background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 8 }}>
+          {/* 何件・どの数字から組んだか。提案が言う数字を、画面のタイルと突き合わせられるように。 */}
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8 }}>根拠: {advice.basis}</div>
           <ul style={{ margin: 0, paddingLeft: 18 }}>
             {advice.recommendations.map((r, i) => (
               <li key={i} style={{ marginBottom: 8, fontSize: 13 }}>

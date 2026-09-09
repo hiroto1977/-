@@ -40,6 +40,8 @@ import {
 } from '../../shared/savingsPlanning';
 import { convertToJpy, fxGainLoss, ttRates, roundTripCost } from '../../shared/fxCurrency';
 import { useParameters } from '../data/parameterOverrides';
+import { advisorThresholds } from '../../shared/parameters';
+import type { MutualFundsAdviceInput } from '../../shared/serviceAdvisor';
 
 const simInputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -152,6 +154,18 @@ export function MutualFundsPage() {
   // 予備資金の月数は判断の要る参考値 (会社員 3〜6 / 自営 6〜12 か月) なので、
   // 台帳 `savings.emergencyFundMonths` から読んで引数で渡す (画面に写さない)。
   const { values: params } = useParameters();
+  // 改善提案の元になる数字 —— 画面が刷っている物をそのまま渡す (パス 119)。
+  // 評価損益率は取得原価が読めるときだけ (0 なら「未算定」として渡す —— 0% とは言わない)。
+  const advisorT = useMemo(() => advisorThresholds(params), [params]);
+  const adviseInput = useMemo<MutualFundsAdviceInput>(
+    () => ({
+      holdings: holdings.map((h) => ({ name: h.name, valuation: h.valuation, ytdReturnPct: h.ytdReturnPct, demo: !h.user })),
+      totalValuation: portfolio.totalValuation,
+      unrealizedGainPct: portfolio.totalCostBasis > 0 ? portfolio.unrealizedGainPct : null,
+      thresholds: advisorT,
+    }),
+    [holdings, portfolio, advisorT],
+  );
   const efMonths = params['savings.emergencyFundMonths'];
   const [goalTarget, setGoalTarget] = useState('10000000');
   const [goalRate, setGoalRate] = useState('3');
@@ -435,7 +449,7 @@ export function MutualFundsPage() {
         </table>
       </Section>
 
-      <ServiceActionPanel serviceId="mutual-funds" serviceLabel="投資信託" />
+      <ServiceActionPanel serviceId="mutual-funds" serviceLabel="投資信託" adviseInput={adviseInput} />
 
       <Section title="直近の分配金" count={recentDividends.length}>
         {recentDividends.length === 0 ? (
