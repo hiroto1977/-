@@ -292,8 +292,15 @@ export interface HoldingEntry extends Record<string, unknown> {
   readonly valuation: number;
   /** 評価額の算出モード (過去データに無い場合は auto 扱い)。 */
   readonly valuationMode: ValuationMode;
-  /** 取得額 (円・任意)。空欄は評価額と同額 (損益 0) とみなす。 */
-  readonly acquisitionCost: number;
+  /**
+   * 取得額 (円・任意)。**空欄は null = 未入力** —— 評価額と同額 (損益 0) とはみなさない (2026-09-09 · パス 123)。
+   *
+   * パス 123 までは「空欄は評価額と同額 (損益 0) とみなす」で、取得額を入れずに足した銘柄が
+   * **取得原価のタイルを増やし** (見本 ¥7,180,000 + ¥300,000)、**評価損益率を薄め** (14.8% → 14.2%、
+   * ¥3,000,000 なら 10.4%)、編集フォームには入力していない取得額が入って戻った。
+   * 規準は隣の欄 (`ytdReturnPct: number | null`・パス 122) と不動産側 (`yieldUnmeasured`・パス 54)。
+   */
+  readonly acquisitionCost: number | null;
   /**
    * 年初来リターン (%・任意)。**空欄は null = 未入力** —— 0% ではない (2026-09-09 · パス 122)。
    *
@@ -328,15 +335,15 @@ export function fundValuation(units: number, navPerUnit: number): number {
  * 直し方は「使う場所ごとに `??` を置く」ではなく**読む所を 1 つにする** ——
  * 散らすと必ずどれか 1 つが漏れる (`valuationMode` だけ画面側で補われていて、
  * 残り 3 つが漏れていたのがまさにそれ)。既定値は型の注記どおり:
- * 銘柄コードは空文字、評価モードは auto、取得額は評価額と同額 (損益 0)、
- * 年初来リターンは **null = 未入力** (0 に倒すと測った 0% と見分けが付かない・パス 122)。
+ * 銘柄コードは空文字、評価モードは auto、取得額と年初来リターンは **null = 未入力**
+ * (取得額を評価額に倒すと損益 0 の銘柄を作り、年初来を 0 に倒すと測った 0% と見分けが付かない・パス 122 / 123)。
  * 数でない値・非有限値も既定に倒す。
  */
 export function normalizeHolding(raw: unknown): HoldingEntry {
   const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
   const str = (v: unknown): string => (typeof v === 'string' ? v : '');
   const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
-  // 年初来リターンだけは「無い / 読めない = 未入力 (null)」。0 に倒すと測った 0% と見分けが付かない (パス 122)。
+  // 取得額と年初来リターンは「無い / 読めない = 未入力 (null)」。0 や評価額に倒すと、測った値と見分けが付かない (パス 122 / 123)。
   const numOrNull = (v: unknown): number | null => (Number.isFinite(v) ? (v as number) : null);
   const units = num(r.units);
   const navPerUnit = num(r.navPerUnit);
@@ -351,10 +358,8 @@ export function normalizeHolding(raw: unknown): HoldingEntry {
     navPerUnit,
     valuation,
     valuationMode: r.valuationMode === 'manual' ? 'manual' : 'auto',
-    // 取得額が無い / 読めない控えは評価額と同額 = 損益 0 (型の注記どおり)。
-    acquisitionCost: typeof r.acquisitionCost === 'number' && Number.isFinite(r.acquisitionCost)
-      ? r.acquisitionCost
-      : valuation,
+    // 取得額が無い / 読めない控えは null = 未入力 (パス 123 までは評価額と同額 = 損益 0 の銘柄にしていた)。
+    acquisitionCost: numOrNull(r.acquisitionCost),
     ytdReturnPct: numOrNull(r.ytdReturnPct),
   };
 }
@@ -427,8 +432,13 @@ export function parseHoldingEntry(input: {
   const acqRaw = input.acquisitionCost;
   // Stryker disable next-line StringLiteral: '' を別文字列にしても、その値は toAmount で
   // NaN → null になり同じ 取得額 エラーへ落ちる (等価変異)。
-  const acquisitionCost = acqRaw === undefined || acqRaw === '' ? valuation : toAmount(acqRaw);
-  if (acquisitionCost === null) throw new Error('取得額は 0 以上の数値で入力してください');
+  // 空欄は null = 未入力 (パス 123 —— それまでは評価額と同額にして「損益 0」の銘柄を作っていた)。
+  let acquisitionCost: number | null = null;
+  if (acqRaw !== undefined && acqRaw !== '') {
+    const cost = toAmount(acqRaw);
+    if (cost === null) throw new Error('取得額は 0 以上の数値で入力してください');
+    acquisitionCost = cost;
+  }
 
   const ytdRaw = input.ytdReturnPct;
   // 空欄は null (未入力)。0 にすると測った 0% と同じ顔になる (パス 122)。
@@ -451,8 +461,9 @@ export function parseHoldingEntry(input: {
 /**
  * 保存済みエントリを編集フォームの初期値 (文字列) に変換する。
  * auto の評価額は空欄にして「自動計算のまま」を保つ (値を入れると manual に
- * 切り替わる)。0 の任意項目 (口数・基準価額) は空欄に戻す。年初来リターンは
- * null (未入力) のときだけ空欄 —— 測った 0% は '0' のまま残す (パス 122)。
+ * 切り替わる)。0 の任意項目 (口数・基準価額) は空欄に戻す。取得額と年初来リターンは
+ * null (未入力) のときだけ空欄 —— 測った 0 は '0' のまま残す (パス 122 / 123。取得額はそれまで
+ * 評価額と同額の数を入れて戻していた = 利用者が入力していない取得額)。
  */
 export function holdingToForm(h: HoldingEntry): {
   code: string; name: string; units: string; navPerUnit: string;
@@ -467,7 +478,7 @@ export function holdingToForm(h: HoldingEntry): {
     units: h.units > 0 ? String(h.units) : '',
     navPerUnit: h.navPerUnit > 0 ? String(h.navPerUnit) : '',
     valuation: mode === 'manual' ? String(h.valuation) : '',
-    acquisitionCost: String(h.acquisitionCost),
+    acquisitionCost: h.acquisitionCost === null ? '' : String(h.acquisitionCost),
     ytdReturnPct: h.ytdReturnPct === null ? '' : String(h.ytdReturnPct),
   };
 }
@@ -491,37 +502,74 @@ export function propertyToForm(p: PropertyEntry): {
 /** 集計に必要な保有銘柄の最小 shape。 */
 export interface PortfolioHolding {
   readonly valuation: number;
+  /** 取得額。null = 未入力 (パス 123)。見本 (`demo`) は銘柄別に持たず、一括の `baseCostBasis` で見る。 */
+  readonly acquisitionCost: number | null;
+  /** 同梱の見本か (snapshot 行)。 */
+  readonly demo: boolean;
 }
 
 export interface FundPortfolio {
+  /** 評価額の合計 —— **全銘柄** (取得額の有無を問わない)。 */
   readonly totalValuation: number;
+  /** 取得原価 —— **取得額が分かる銘柄だけ** (見本は一括の `baseCostBasis`)。 */
   readonly totalCostBasis: number;
+  /** 取得額が分かる銘柄の評価額 (損益の分子側。トータルリターンの終値もこれ)。 */
+  readonly costMeasuredValuation: number;
+  /** 評価損益 = `costMeasuredValuation` − `totalCostBasis`。 */
   readonly unrealizedGain: number;
-  /** 評価損益率 (%・小数第 1 位まで)。取得原価 0 は 0。 */
-  readonly unrealizedGainPct: number;
+  /** 評価損益率 (%・小数第 1 位まで)。取得額が分かる銘柄が無ければ null (0 ではない・パス 123)。 */
+  readonly unrealizedGainPct: number | null;
+  /** 取得額が未入力で、原価・損益・損益率に**入れていない**銘柄 (画面はこれを注記に刷る)。 */
+  readonly costUnmeasured: { readonly count: number; readonly valuation: number };
 }
 
 /**
  * 保有銘柄リスト (snapshot + ユーザー追加) からポートフォリオ集計を再計算する。
- * snapshot 側の取得原価は銘柄別に持っていないため `baseCostBasis` で一括計上し、
- * ユーザー行の取得額は `userCosts` (取得額の配列) で加算する。
+ * snapshot 側の取得原価は銘柄別に持っていないため `baseCostBasis` で一括計上する
+ * (それが 0 なら見本ぜんぶが「取得額が分からない」側)。
+ *
+ * **取得額が未入力の銘柄を「原価 = 評価額」として数えない** (2026-09-09 · パス 123)。
+ * パス 123 までは `userCosts` に評価額と同じ数が来て、取得原価が増え・評価損益率が薄まった
+ * (見本 14.8% → ¥3,000,000 の銘柄を取得額なしで足すと 10.4%)。不動産側の `yieldUnmeasured` (パス 54)
+ * と同じく、分からない物は分母にも分子にも入れず、**数だけ言う**。負の取得額・NaN は「読めない」= 未入力側。
  */
-export function computeFundPortfolio(
-  holdings: readonly PortfolioHolding[],
-  baseCostBasis: number,
-  userCosts: readonly number[],
-): FundPortfolio {
+export function computeFundPortfolio(holdings: readonly PortfolioHolding[], baseCostBasis: number): FundPortfolio {
+  const base = Number.isFinite(baseCostBasis) && baseCostBasis > 0 ? baseCostBasis : 0;
   let totalValuation = 0;
-  for (const h of holdings) totalValuation += Number.isFinite(h.valuation) ? h.valuation : 0;
-  let totalCostBasis = Number.isFinite(baseCostBasis) && baseCostBasis > 0 ? baseCostBasis : 0;
-  // Stryker disable next-line EqualityOperator: `c > 0` → `c >= 0` は c が ±0 のときだけ差が出るが、
-  // どちらも加算結果は同一 (x + -0 === x + 0) のため観測不能 (等価変異)。
-  for (const c of userCosts) totalCostBasis += Number.isFinite(c) && c > 0 ? c : 0;
-  const unrealizedGain = totalValuation - totalCostBasis;
+  let demoValuation = 0;
+  let demoCount = 0;
+  let measuredValuation = 0;
+  let userCost = 0;
+  let unmeasuredCount = 0;
+  let unmeasuredValuation = 0;
+  for (const h of holdings) {
+    const v = Number.isFinite(h.valuation) ? h.valuation : 0;
+    totalValuation += v;
+    if (h.demo) {
+      demoValuation += v;
+      demoCount += 1;
+    } else if (h.acquisitionCost !== null && Number.isFinite(h.acquisitionCost) && h.acquisitionCost >= 0) {
+      measuredValuation += v;
+      userCost += h.acquisitionCost;
+    } else {
+      unmeasuredCount += 1;
+      unmeasuredValuation += v;
+    }
+  }
+  // 見本は一括の取得原価が在るときだけ「分かる」側。無ければ見本ぜんぶが未入力側 (数も言う)。
+  const demoMeasured = base > 0;
+  const costMeasuredValuation = measuredValuation + (demoMeasured ? demoValuation : 0);
+  const totalCostBasis = base + userCost;
+  const unrealizedGain = costMeasuredValuation - totalCostBasis;
   return {
     totalValuation,
     totalCostBasis,
+    costMeasuredValuation,
     unrealizedGain,
-    unrealizedGainPct: totalCostBasis > 0 ? Math.round((unrealizedGain / totalCostBasis) * 1000) / 10 : 0,
+    unrealizedGainPct: totalCostBasis > 0 ? Math.round((unrealizedGain / totalCostBasis) * 1000) / 10 : null,
+    costUnmeasured: {
+      count: unmeasuredCount + (demoMeasured ? 0 : demoCount),
+      valuation: unmeasuredValuation + (demoMeasured ? 0 : demoValuation),
+    },
   };
 }

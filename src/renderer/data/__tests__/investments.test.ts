@@ -269,8 +269,8 @@ describe('parseHoldingEntry (投資信託の任意追加)', () => {
     expect(h.valuation).toBe(fundValuation(500_000, 32_000));
     expect(h.valuation).toBe(1_600_000);
     expect(h.valuationMode).toBe('auto');
-    // 取得額の既定は評価額 (損益 0)。YTD の空欄は null = 未入力 (0% ではない・パス 122)。
-    expect(h.acquisitionCost).toBe(1_600_000);
+    // 取得額と YTD の空欄は null = 未入力 (評価額と同額 / 0% ではない・パス 122 / 123)。
+    expect(h.acquisitionCost).toBeNull();
     expect(h.ytdReturnPct).toBeNull();
   });
 
@@ -280,7 +280,7 @@ describe('parseHoldingEntry (投資信託の任意追加)', () => {
     expect(h.valuation).toBe(2_500_000);
     expect(h.units).toBe(0);
     expect(h.navPerUnit).toBe(0);
-    expect(h.acquisitionCost).toBe(2_500_000);
+    expect(h.acquisitionCost).toBeNull(); // 取得額は入れていない (パス 123 までは評価額と同額)
   });
 
   it('manual モードでも口数・基準価額を併記でき、評価額は入力値が勝つ', () => {
@@ -378,10 +378,15 @@ describe('parseHoldingEntry (投資信託の任意追加)', () => {
       .toThrow('取得額は 0 以上の数値で入力してください');
   });
 
-  it('取得額を空欄にすると評価額と同額 (損益 0) になる — 0 円ではない', () => {
+  it('★ 取得額を空欄にすると null = 未入力 — 評価額と同額 (損益 0) にも 0 円にもしない (パス 123)', () => {
     const h = parseHoldingEntry({ ...valid, acquisitionCost: '' });
-    expect(h.acquisitionCost).toBe(h.valuation);
-    expect(h.acquisitionCost).toBe(1_600_000);
+    expect(h.acquisitionCost).toBeNull();
+    // 対照: 入れた取得額はそのまま。0 円も測った値として残る
+    expect(parseHoldingEntry({ ...valid, acquisitionCost: '1,400,000' }).acquisitionCost).toBe(1_400_000);
+    expect(parseHoldingEntry({ ...valid, acquisitionCost: '0' }).acquisitionCost).toBe(0);
+    // 往復: 空欄 → null → '' → null
+    expect(holdingToForm(h).acquisitionCost).toBe('');
+    expect(parseHoldingEntry(holdingToForm(h)).acquisitionCost).toBeNull();
   });
 
   it('YTD リターンは −100〜1000 を含む範囲 (境界) で、空白入り・数値入力も受理する', () => {
@@ -410,7 +415,7 @@ describe('parseHoldingEntry (投資信託の任意追加)', () => {
     expect(form.navPerUnit).toBe('');
     expect(form.ytdReturnPct).toBe('');
     expect(form.valuation).toBe('2500000');
-    expect(form.acquisitionCost).toBe('2500000');
+    expect(form.acquisitionCost).toBe(''); // 入れていない取得額を戻さない (パス 123 までは評価額 '2500000' が入った)
     expect(parseHoldingEntry(form)).toEqual(manual);
   });
 
@@ -440,39 +445,81 @@ describe('parseHoldingEntry (投資信託の任意追加)', () => {
 
 describe('computeFundPortfolio', () => {
   const base = SNAPSHOT.mutualFunds;
+  /** 見本の行 (銘柄別の取得額は持たない)。 */
+  const demoRows = base.holdings.map((h) => ({ valuation: h.valuation, acquisitionCost: null, demo: true }));
+  const user = (valuation: number, acquisitionCost: number | null) => ({ valuation, acquisitionCost, demo: false });
 
   it('snapshot 行のみ → snapshot に手書きされた portfolio と完全一致 (不変条件)', () => {
-    const p = computeFundPortfolio(base.holdings, base.portfolio.totalCostBasis, []);
+    const p = computeFundPortfolio(demoRows, base.portfolio.totalCostBasis);
     expect(p.totalValuation).toBe(base.portfolio.totalValuation);
     expect(p.totalCostBasis).toBe(base.portfolio.totalCostBasis);
+    expect(p.costMeasuredValuation).toBe(base.portfolio.totalValuation);
     expect(p.unrealizedGain).toBe(base.portfolio.unrealizedGain);
     expect(p.unrealizedGainPct).toBe(base.portfolio.unrealizedGainPct);
+    expect(p.costUnmeasured).toEqual({ count: 0, valuation: 0 });
   });
 
-  it('ユーザー銘柄の評価額・取得額が加算される', () => {
+  it('ユーザー銘柄の評価額・取得額が加算される (取得額あり)', () => {
     const h = parseHoldingEntry({ code: '', name: '追加ファンド', units: '100000', navPerUnit: '20000', acquisitionCost: '150000' });
-    const p = computeFundPortfolio([...base.holdings, h], base.portfolio.totalCostBasis, [h.acquisitionCost]);
+    const p = computeFundPortfolio([...demoRows, user(h.valuation, h.acquisitionCost)], base.portfolio.totalCostBasis);
     expect(p.totalValuation).toBe(base.portfolio.totalValuation + 200_000);
     expect(p.totalCostBasis).toBe(base.portfolio.totalCostBasis + 150_000);
+    expect(p.costMeasuredValuation).toBe(p.totalValuation);
     expect(p.unrealizedGain).toBe(p.totalValuation - p.totalCostBasis);
+    expect(p.costUnmeasured).toEqual({ count: 0, valuation: 0 });
   });
 
-  it('保有 0 件・原価 0 は全て 0 (ゼロ除算なし)', () => {
-    expect(computeFundPortfolio([], 0, [])).toEqual({ totalValuation: 0, totalCostBasis: 0, unrealizedGain: 0, unrealizedGainPct: 0 });
+  it('★ 取得額が未入力の銘柄は原価・損益・損益率に入らず、数と評価額だけ言う (薄めない・パス 123)', () => {
+    const p = computeFundPortfolio([...demoRows, user(3_000_000, null)], base.portfolio.totalCostBasis);
+    // 評価額 (全銘柄) には入る
+    expect(p.totalValuation).toBe(base.portfolio.totalValuation + 3_000_000);
+    // 原価・損益・損益率は見本のまま —— 旧: 原価 ¥10,180,000 / 損益率 10.4%
+    expect(p.totalCostBasis).toBe(base.portfolio.totalCostBasis);
+    expect(p.costMeasuredValuation).toBe(base.portfolio.totalValuation);
+    expect(p.unrealizedGain).toBe(base.portfolio.unrealizedGain);
+    expect(p.unrealizedGainPct).toBe(14.8);
+    expect(p.unrealizedGainPct).not.toBe(10.4);
+    expect(p.costUnmeasured).toEqual({ count: 1, valuation: 3_000_000 });
+    // 対照: 同じ銘柄に取得額 ¥3,000,000 を入れれば分母に入り、損益率は薄まる (それが「測った」薄まり)
+    const measured = computeFundPortfolio([...demoRows, user(3_000_000, 3_000_000)], base.portfolio.totalCostBasis);
+    expect(measured.unrealizedGainPct).toBe(10.4);
+    expect(measured.costUnmeasured).toEqual({ count: 0, valuation: 0 });
   });
 
-  it('取得原価・ユーザー取得額の負値/NaN は 0 として扱う (原価を減らさない)', () => {
-    const p = computeFundPortfolio(base.holdings, -1_000, [-500, Number.NaN, 200_000]);
-    expect(p.totalCostBasis).toBe(200_000);
-    expect(p.totalValuation).toBe(base.portfolio.totalValuation);
+  it('取得額が分かる銘柄が無ければ損益率は null (0 ではない)。保有 0 件も同じ', () => {
+    expect(computeFundPortfolio([], 0)).toEqual({
+      totalValuation: 0, totalCostBasis: 0, costMeasuredValuation: 0, unrealizedGain: 0, unrealizedGainPct: null,
+      costUnmeasured: { count: 0, valuation: 0 },
+    });
+    const only = computeFundPortfolio([user(500_000, null), user(250_000, null)], 0);
+    expect(only.totalValuation).toBe(750_000);
+    expect(only.unrealizedGainPct).toBeNull();
+    expect(only.costUnmeasured).toEqual({ count: 2, valuation: 750_000 });
+  });
 
-    const nan = computeFundPortfolio(base.holdings, Number.NaN, []);
-    expect(nan.totalCostBasis).toBe(0);
-    expect(nan.unrealizedGainPct).toBe(0);
+  it('見本の一括原価が無ければ (0 / NaN / 負)、見本ぜんぶが「取得額が分からない」側', () => {
+    for (const bad of [0, Number.NaN, -1_000]) {
+      const p = computeFundPortfolio(demoRows, bad);
+      expect(p.totalCostBasis).toBe(0);
+      expect(p.unrealizedGainPct).toBeNull();
+      expect(p.costUnmeasured).toEqual({ count: demoRows.length, valuation: base.portfolio.totalValuation });
+    }
+  });
+
+  it('ユーザー取得額の負値 / NaN は「読めない」= 未入力側 (原価 0 の銘柄として数えない)', () => {
+    const p = computeFundPortfolio([...demoRows, user(100_000, -500), user(100_000, Number.NaN), user(100_000, 200_000)], base.portfolio.totalCostBasis);
+    expect(p.totalCostBasis).toBe(base.portfolio.totalCostBasis + 200_000);
+    expect(p.costMeasuredValuation).toBe(base.portfolio.totalValuation + 100_000);
+    expect(p.costUnmeasured).toEqual({ count: 2, valuation: 200_000 });
+    // 測った 0 円の取得額は分かる側 (対照)
+    const zero = computeFundPortfolio([user(100_000, 0)], 0);
+    expect(zero.costUnmeasured).toEqual({ count: 0, valuation: 0 });
+    expect(zero.totalCostBasis).toBe(0);
+    expect(zero.unrealizedGainPct).toBeNull(); // 原価 0 では率は定まらない
   });
 
   it('-0 の取得原価は +0 に正規化する (「-0 円」表示の防止)', () => {
-    const p = computeFundPortfolio([], -0, []);
+    const p = computeFundPortfolio([], -0);
     expect(Object.is(p.totalCostBasis, 0)).toBe(true);
   });
 });
@@ -509,9 +556,11 @@ describe('normalizeHolding', () => {
     expect(normalizeHolding({ ...full, ytdReturnPct: '12.5' }).ytdReturnPct).toBeNull();
   });
 
-  it('取得額が無い控えは評価額と同額 = 損益 0 (旧: NaN)', () => {
+  it('取得額が無い控えは null = 未入力 (パス 123 までは評価額と同額 = 損益 0。その前は NaN)', () => {
     const { acquisitionCost: _drop, ...without } = full;
-    expect(normalizeHolding(without).acquisitionCost).toBe(2_000_000);
+    expect(normalizeHolding(without).acquisitionCost).toBeNull();
+    expect(normalizeHolding({ ...full, acquisitionCost: null }).acquisitionCost).toBeNull();
+    expect(normalizeHolding({ ...full, acquisitionCost: 0 }).acquisitionCost).toBe(0);
   });
 
   it('評価モードが無い / 知らない値の控えは auto', () => {
@@ -529,7 +578,7 @@ describe('normalizeHolding', () => {
   it('評価額が無い控えは 口数 ÷ 1万 × 基準価額 から導く', () => {
     const { valuation: _drop, ...without } = full;
     expect(normalizeHolding(without).valuation).toBe(2_000_000);
-    expect(normalizeHolding(without).acquisitionCost).toBe(1_500_000);
+    expect(normalizeHolding(without).acquisitionCost).toBe(1_500_000); // 入れた取得額はそのまま
   });
 
   it('数でない値・非有限値も既定に倒す (文字列の金額・NaN・Infinity)', () => {
@@ -539,7 +588,7 @@ describe('normalizeHolding', () => {
     });
     expect(junk).toEqual({
       code: '', name: '', units: 0, navPerUnit: 0, valuation: 0,
-      valuationMode: 'auto', acquisitionCost: 0, ytdReturnPct: null,
+      valuationMode: 'auto', acquisitionCost: null, ytdReturnPct: null,
     });
     for (const v of Object.values(junk)) {
       if (typeof v === 'number') expect(Number.isFinite(v)).toBe(true);
@@ -555,7 +604,7 @@ describe('normalizeHolding', () => {
       expect(h.units).toBe(0);
       expect(h.navPerUnit).toBe(0);
       expect(h.valuation).toBe(0); // 導出も 0 × 0
-      expect(h.acquisitionCost).toBe(0); // = 評価額
+      expect(h.acquisitionCost).toBeNull(); // 読めない = 未入力 (パス 123)
       expect(h.ytdReturnPct).toBeNull(); // 読めない = 未入力 (パス 122)
     }
   });

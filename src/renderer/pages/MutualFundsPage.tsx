@@ -93,14 +93,14 @@ export function MutualFundsPage() {
   );
 
   // ポートフォリオ集計は結合リストから再計算 (追加ゼロなら snapshot と同値)。
+  // 取得額が未入力の銘柄は原価・損益・損益率に入れず、数だけ注記に出す (パス 123)。
   const computedPortfolio = useMemo(
     () =>
       computeFundPortfolio(
-        holdings,
+        holdings.map((h) => ({ valuation: h.valuation, acquisitionCost: h.acquisitionCost, demo: !h.user })),
         data.portfolio.totalCostBasis,
-        userHoldings.map((r) => normalizeHolding(r.data).acquisitionCost),
       ),
-    [holdings, data.portfolio.totalCostBasis, userHoldings],
+    [holdings, data.portfolio.totalCostBasis],
   );
   // 手入力の上書きを重ねる。入力欄は App が全画面共通で描くので、ここは
   // 読んで適用するだけ。
@@ -155,13 +155,13 @@ export function MutualFundsPage() {
   // 台帳 `savings.emergencyFundMonths` から読んで引数で渡す (画面に写さない)。
   const { values: params } = useParameters();
   // 改善提案の元になる数字 —— 画面が刷っている物をそのまま渡す (パス 119)。
-  // 評価損益率は取得原価が読めるときだけ (0 なら「未算定」として渡す —— 0% とは言わない)。
+  // 評価損益率は取得額が分かる銘柄が在るときだけ (無ければ null = 「未算定」として渡す —— 0% とは言わない)。
   const advisorT = useMemo(() => advisorThresholds(params), [params]);
   const adviseInput = useMemo<MutualFundsAdviceInput>(
     () => ({
       holdings: holdings.map((h) => ({ name: h.name, valuation: h.valuation, ytdReturnPct: h.ytdReturnPct, demo: !h.user })),
       totalValuation: portfolio.totalValuation,
-      unrealizedGainPct: portfolio.totalCostBasis > 0 ? portfolio.unrealizedGainPct : null,
+      unrealizedGainPct: portfolio.unrealizedGainPct,
       thresholds: advisorT,
     }),
     [holdings, portfolio, advisorT],
@@ -209,8 +209,9 @@ export function MutualFundsPage() {
     [recentDividends],
   );
   const totalReturn = useMemo(
-    () => calcTotalReturn(portfolio.totalCostBasis, portfolio.totalValuation, totalDividends, readNumberOr0(holdYears)),
-    [portfolio.totalCostBasis, portfolio.totalValuation, totalDividends, holdYears],
+    // 終値は取得額が分かる銘柄の評価額 —— 元本 (取得原価) と同じ集合で見る (パス 123)。
+    () => calcTotalReturn(portfolio.totalCostBasis, portfolio.costMeasuredValuation, totalDividends, readNumberOr0(holdYears)),
+    [portfolio.totalCostBasis, portfolio.costMeasuredValuation, totalDividends, holdYears],
   );
   // 年初来リターンは**入力された銘柄だけ**で取る —— 未入力 (null) は 0% ではない (パス 122)。
   const risk = useMemo(() => ytdReturnRisk(holdings.map((h) => h.ytdReturnPct)), [holdings]);
@@ -270,8 +271,18 @@ export function MutualFundsPage() {
           <Stat label="評価額" value={jpy(portfolio.totalValuation)} />
           <Stat label="取得原価" value={jpy(portfolio.totalCostBasis)} />
           <Stat label="評価損益" value={jpy(portfolio.unrealizedGain)} positive={portfolio.unrealizedGain >= 0} />
-          <Stat label="評価損益率" value={`${portfolio.unrealizedGainPct.toFixed(1)}%`} positive={portfolio.unrealizedGainPct >= 0} />
+          <Stat
+            label="評価損益率"
+            value={portfolio.unrealizedGainPct === null ? '—' : `${portfolio.unrealizedGainPct.toFixed(1)}%`}
+            positive={positiveIfKnown(portfolio.unrealizedGainPct)}
+          />
         </div>
+        {/* 取得額が未入力の銘柄は原価・損益・損益率に入れない (パス 123 までは評価額と同額 = 損益 0 として数え、損益率を薄めていた)。 */}
+        {portfolio.costUnmeasured.count > 0 && (
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: -8, marginBottom: 12, lineHeight: 1.6 }}>
+            ※ 取得額未入力 {portfolio.costUnmeasured.count} 銘柄 (評価額 {jpy(portfolio.costUnmeasured.valuation)}) は取得原価・評価損益・評価損益率・トータルリターンに含めていません (評価額には含めています)。取得額を入力すると含まれます。
+          </div>
+        )}
       </Section>
 
       <Section title="トータルリターン・リスク (分配金再投資ベース・概算)">
@@ -369,7 +380,7 @@ export function MutualFundsPage() {
           </label>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             取得額 (任意・円)
-            <input type="text" inputMode="numeric" value={fundForm.acquisitionCost} placeholder="空欄=損益0"
+            <input type="text" inputMode="numeric" value={fundForm.acquisitionCost} placeholder="空欄=未入力 (損益は算定しない)"
               onChange={(e) => setFundForm((f) => ({ ...f, acquisitionCost: e.target.value }))} style={simInputStyle} />
           </label>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>

@@ -151,6 +151,10 @@ async function desktopSuite(browser) {
   ok(ytdCell === '—', `funds: ★ 空欄の YTD は「—」で刷る (実際 "${ytdCell}")`);
   await page.waitForFunction(() => document.body.textContent.includes('未入力 1 銘柄は除外'), undefined, { timeout: 15000 });
   ok(true, 'funds: ★ リスクの注記が「未入力 1 銘柄は除外」と言う');
+  // パス 123: 取得額を空欄のまま足しても、取得原価のタイルは動かない (旧: ¥7,180,000 → ¥7,480,000)。注記が除外を言う。
+  ok((await has('7,180,000')) && !(await has('7,480,000')), 'funds: ★ 取得額未入力の銘柄は取得原価に入らない (¥7,180,000 のまま)');
+  await page.waitForFunction(() => document.body.textContent.includes('取得額未入力 1 銘柄'), undefined, { timeout: 15000 });
+  ok(true, 'funds: ★ 注記が「取得額未入力 1 銘柄」を言う');
   await page.locator('button', { hasText: '編集' }).first().click();
   await page.getByPlaceholder('空欄=自動計算').fill('');
   await page.getByPlaceholder('500000').fill('200000');

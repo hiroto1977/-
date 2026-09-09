@@ -42,8 +42,8 @@ const opt =
   (v) =>
     v === undefined || check(v);
 /**
- * 在るなら「null か型どおり」。**null を値として書く欄だけ**に使う —— 年初来リターンの未入力
- * (`investments.ts` · パス 122)。他の欄の null は今までどおり「在るのに違う」。
+ * 在るなら「null か型どおり」。**null を値として書く欄だけ**に使う —— 年初来リターン (パス 122) と
+ * 取得額 (パス 123) の未入力 (`investments.ts`)。他の欄の null は今までどおり「在るのに違う」。
  */
 const orNull =
   (check: Check): Check =>
@@ -128,7 +128,8 @@ export const COLLECTION_SHAPES: Readonly<Record<string, (data: Rec) => boolean>>
     navPerUnit: num,
     valuation: num,
     valuationMode: opt(oneOf(() => ['auto', 'manual'])),
-    acquisitionCost: opt(num),
+    // 未入力は null で書かれる (パス 123 —— 年初来リターン (パス 122) と同じ)。
+    acquisitionCost: opt(orNull(num)),
     // 未入力は null で書かれる (パス 122)。num だけだと、空欄で足した控えが復元で丸ごと落ちる。
     ytdReturnPct: opt(orNull(num)),
   }),

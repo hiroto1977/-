@@ -13673,13 +13673,13 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **104 ファイル / 281 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **104 ファイル / 280 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
 | `src/shared/funding.ts` | 13 |
-| `src/renderer/data/investments.ts` | 10 |
 | `src/main/clients/stocks.ts` | 9 |
+| `src/renderer/data/investments.ts` | 9 |
 | `src/renderer/pages/DocstudioPage.tsx` | 9 |
 | `src/shared/taxDeductions.ts` | 9 |
 | `src/renderer/data/stocksAnalysisWeb.ts` | 8 |
@@ -18388,6 +18388,62 @@ uber-eats / demae-can の advise は画面が無く (`VoiceCommandBar` と `Busi
 - `fetchedAt` は見本の固定時刻 (2035-04-15) のまま。画面は刷っていないが、保存した物の取得時刻としては嘘。
 - 下書き (`servicehub.teamradar.draft.v1`) は snapshot より優先して復元される。読めなかった保存と下書きが両方在るとき、
   画面のメンバーは下書き、注記は保存先について言う (別の物を指している)。
+
+## パス 123 (2026-09-09) — **投資信託の取得額は、空欄を「評価額と同額 (損益 0)」とみなして評価損益率を薄めていた**
+
+### 何が起きていたか
+
+パス 122 の「残る物」に書いた隣の欄。`HoldingEntry.acquisitionCost` は `number` で、型の注記は
+「空欄は評価額と同額 (損益 0) とみなす」。**取得額を空欄で足した銘柄は、評価額と同じ数を取得額として保存され**、
+その数が 4 つの面へ流れた:
+
+| 面 | 空欄で足した銘柄に起きること |
+| --- | --- |
+| 「取得原価」のタイル | 入力していない金額の分だけ増える (見本 ¥7,180,000 に ¥300,000 の銘柄を足すと **¥7,480,000**) |
+| 「評価損益率」のタイル | 分母だけ増えて薄まる (見本 14.8% → ¥300,000 で **14.2%**、¥3,000,000 なら **10.4%**) |
+| トータルリターン (CAGR) / 改善提案の「含み益」 | 同じ薄まった数字を言う (`calcTotalReturn(totalCostBasis, …)` / `adviseInput.unrealizedGainPct`) |
+| 編集フォーム | `holdingToForm` が `String(h.acquisitionCost)` を入れるので、**利用者が入力していない取得額が入って戻る** |
+
+パス 119 は `unrealizedGainPct: portfolio.totalCostBasis > 0 ? … : null` と守ったが、既定が「評価額と同額」なので
+**取得額を 1 つも入力していなくても `totalCostBasis > 0` になり、守りは届かなかった** —— パス 122 の年初来リターンと
+同じ形 (null の枝が在るのに、画面から null が来る道が無い)。
+
+### 規準は同じファイルと、1 つ前のパスに在った
+
+不動産側の `grossYieldPct: number | null` / `yieldUnmeasured` (パス 54) と、隣の欄 `ytdReturnPct: number | null`
+(パス 122)。**空欄を「損益 0」と読み替えるのは、空欄を「0%」と読み替えるのと同じ折り畳み**で、
+向きが逆なだけ (0% は成績を消し、損益 0 は原価を作る)。
+
+### 直し
+
+- `data/investments.ts`: `acquisitionCost: number | null` (空欄 → null)。`normalizeHolding` は無い / 読めない → null、
+  `holdingToForm` は null のときだけ空欄。`computeFundPortfolio(holdings, baseCostBasis)` は**取得額が分かる銘柄だけ**で
+  取得原価・評価損益・評価損益率を出し (見本は一括の `baseCostBasis` が在るときだけ「分かる」側)、
+  `costMeasuredValuation` と `costUnmeasured` (件数・評価額) を返す。分かる銘柄が無ければ `unrealizedGainPct: null`。
+  負の取得額・NaN は「読めない」= 未入力側 (それまでは原価 0 の銘柄として数えていた)。
+- `data/collectionShapes.ts`: `acquisitionCost: opt(orNull(num))` —— nullable の台帳 2 件目。
+- `MutualFundsPage`: 評価損益率は「—」/ `positiveIfKnown`、注記「取得額未入力 n 銘柄 (評価額 ¥X) は取得原価・評価損益・
+  評価損益率・トータルリターンに含めていません (評価額には含めています)」、トータルリターンの終値は取得額が分かる銘柄の
+  評価額 (`costMeasuredValuation`)。placeholder は「空欄=損益0」から「空欄=未入力 (損益は算定しない)」へ。
+- 検査: `investments.test.ts` (空欄 → null・往復・`computeFundPortfolio` の新しい形と薄まりの標本 14.8% / 10.4%・負値は未入力側)、
+  `collectionShapes.test.ts` (台帳)、`collectionShapesRoundTrip.test.ts`、`mutualFundsCostUnentered.test.ts` (jsdom: タイル・注記・
+  編集フォーム・改善提案 + 取得額ありの対照)、e2e `desktop` (取得原価が動かない・注記)。
+
+### 対照
+
+| # | 何を壊したか | 鳴ったか |
+| --- | --- | --- |
+| A | 空欄を評価額と同額に戻す (元の判断: `parseHoldingEntry` / `normalizeHolding`) | 🔔 11 本 / 3 ファイル —— `investments` ×7 (空欄 → null・往復・manual の取得額・無い控え・NaN・文字列)、`collectionShapesRoundTrip` ×1、画面 ×3 (タイルと注記・改善提案・編集フォーム)。取得額ありの対照は通ったまま |
+| B | `computeFundPortfolio` が未入力の銘柄を「原価 = 評価額」として数える (元の判断) | 🔔 5 本 / 2 ファイル —— `computeFundPortfolio` の「薄めない」「分かる銘柄が無ければ null」「負値 / NaN は未入力側」と、画面のタイル・改善提案。**空欄 → null の検査 (A の対象) は通ったまま** = 保存の形と集計の規則を別々に見ている |
+| C | (e2e) パス 122 の版に当てる | 🔔 `SERVICE_HUB_E2E_ONLY=desktop` を `standalone-pass122.html` に当てると、既存の検査は通ったまま `★ 取得額未入力の銘柄は取得原価に入らない (¥7,180,000 のまま)` が ❌ で落ち、続く注記「取得額未入力 1 銘柄」の待ちが 15 秒で切れる (TimeoutError · `controlC exit=1`)。落ちる場所が**足した検査そのもの** = 古い版はここで取得原価を ¥7,480,000 に増やしていた |
+
+### 残る物
+
+- 見本の取得原価は snapshot の一括値 (`portfolio.totalCostBasis`) で、銘柄別の取得額を持たない。見本を消せない画面
+  (パス 119 の「同梱の見本 4 件を含む」) では、利用者の銘柄の評価損益率は必ず見本と混ざる。
+- 手入力の上書き (`manual-overrides`) で `totalCostBasis` を書き換えると、`unrealizedGain` / `unrealizedGainPct` は
+  `staleDerived` として断り書きに出る (再計算はしない)。null の評価損益率を上書きすれば数になる —— 上書きは利用者の判断。
+- 0 倒しの census は 1 件減った (`investments.ts` 10 → 9・281 → 280): `userCosts` の `c > 0 ? c : 0` (負値を原価 0 の銘柄として数える) が消え、負値・NaN は未入力側へ移った。
 
 ## パス 122 (2026-09-09) — **投資信託の年初来リターンは、空欄を 0% として刷り・数え・「最低」と名指ししていた**
 

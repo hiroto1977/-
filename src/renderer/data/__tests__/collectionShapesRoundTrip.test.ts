@@ -85,6 +85,7 @@ describe('書く側の出力 → collectionShapes (往復)', () => {
     // ★ 年初来リターンを空欄で足した控えは null を書く (パス 122)。復元の形が null を落とせば、その控えごと消える。
     const blankYtd = parseHoldingEntry({ name: 'F', units: '10000', navPerUnit: '12345' });
     expect(blankYtd.ytdReturnPct).toBeNull();
+    expect(blankYtd.acquisitionCost).toBeNull(); // 取得額の空欄も null (パス 123)
     expect(hasCollectionShape('mutualfund-holdings', viaJson(blankYtd))).toBe(true);
   });
 

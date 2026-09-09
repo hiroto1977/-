@@ -104,11 +104,12 @@ describe('保有銘柄 — 任意の欄が無い控えでも画面が出る', ()
     expect(text()).not.toContain('問題が起きました'); // 境界の文面
   });
 
-  it('★ 取得額が無い控えは損益 0 として扱う (¥NaN を出さない)', async () => {
+  it('★ 取得額が無い控えは「未入力」として原価・損益から外す (¥NaN を出さず、損益 0 の銘柄にもしない)', async () => {
     await getRecordStore().insert(HOLDINGS_COLLECTION, CORE_ONLY);
     await mount();
-    // 取得原価は評価額と同額に倒れるので、含み損益の欄に NaN も ∞ も出ない。
+    // パス 123 までは取得原価が評価額と同額に倒れていた (NaN は出ないが、損益 0 の銘柄を作る)。
     expect(text()).not.toMatch(/NaN|Infinity|∞/);
+    expect(text()).toContain('取得額未入力 1 銘柄');
   });
 
   it('対照: 揃った控えは自分の数字で出る (既定に倒れていない)', async () => {

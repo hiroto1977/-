@@ -90,8 +90,8 @@ const SAMPLES: Readonly<Record<string, Sample>> = {
     required: ['name', 'units', 'navPerUnit', 'valuation'],
     optional: ['code', 'valuationMode', 'acquisitionCost', 'ytdReturnPct'],
     enumOut: [['valuationMode', 'guess']],
-    // 空欄で足した控えは null を書く (パス 122)。復元の形が null を落とせば、控えごと消える。
-    nullable: ['ytdReturnPct'],
+    // 空欄で足した控えは null を書く (パス 122 / 123)。復元の形が null を落とせば、控えごと消える。
+    nullable: ['acquisitionCost', 'ytdReturnPct'],
   },
   'parameter-overrides': {
     good: { values: { 'tax.rate': 0.1 } },
@@ -266,7 +266,8 @@ describe('mutualfund-holdings.ytdReturnPct — null は「未入力」として�
     expect(hasCollectionShape('mutualfund-holdings', without)).toBe(true);
     expect(hasCollectionShape('mutualfund-holdings', { ...good, ytdReturnPct: 'abc' })).toBe(false);
     expect(hasCollectionShape('mutualfund-holdings', { ...good, ytdReturnPct: Number.NaN })).toBe(false);
-    // 対照: null が「未入力」を意味するのはこの欄だけ —— 隣の取得額は null を今までどおり「在るのに違う」と落とす
-    expect(hasCollectionShape('mutualfund-holdings', { ...good, acquisitionCost: null })).toBe(false);
+    // 取得額も null = 未入力 (パス 123)。対照: 銘柄コードの null は今までどおり「在るのに違う」
+    expect(hasCollectionShape('mutualfund-holdings', { ...good, acquisitionCost: null })).toBe(true);
+    expect(hasCollectionShape('mutualfund-holdings', { ...good, code: null })).toBe(false);
   });
 });
