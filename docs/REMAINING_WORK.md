@@ -18098,6 +18098,99 @@ i1price: 品目1 の単価「abc」を金額として読み取れません。金
 明記しているので、**4 つの renderer を触る価値は無いと判断した**。
 揃えるなら `advisorTypes.ts` に文を 1 つ置いて 4 面が読む形が筋である。
 
+## パス 105 (2026-09-09) — **画面が「ウォッチリストを送ります」と書いているのに、デスクトップ版は 1 銘柄も送っていなかった**
+
+`StocksPage` の AI アドバイザーの免責帯は、2026-08-23 に足された egress の断りとして
+こう書いてある:
+
+> 送信内容: 質問文と、**登録済みウォッチリストのティッカー**が Anthropic API へ
+> 送信されます (指標はモック値)。
+
+ところが `runAdvisor` は `{ question }` だけを invoke していた。デスクトップ版の
+`askAdvisor` は `ctx.payload.universe` が無ければ `MOCK_TICKERS` (AAPL / MSFT /
+GOOGL / AMZN / META の 5 銘柄) を使い、**保存済みウォッチリストを一切読まない**。
+利用者は自分の登録銘柄について答えが返ると思って読み、実際は固定 5 銘柄の順位づけを
+渡されていた。ブラウザ版だけは `loadWatchlistSymbols()` を読むので断りは真になる。
+
+**断り書き自身のコメントが web 実装だけを引いていた** ——
+「(`callStocksAdvisor` が `loadWatchlistSymbols()` をユニバースにする)」。
+片方の実装を見て両方に当てはまる文を書いたことの、コード上の証拠である。
+
+### 2 つ目 — 同じ 25 を、2 つの実装が正反対に扱っていた
+
+| 実装 | 26 銘柄目 |
+| --- | --- |
+| `main/clients/stocks.ts:1268` | `throw new Error('universe exceeds 25 symbols')` — **断る** |
+| `renderer/web-shim.ts:612` | `watch.slice(0, 25)` — **黙って切る** |
+
+**規準は「同じ機能のもう一方の実装」に在り、しかもそちらが厳しかった** (10 か所目)。
+しかも `shared/advisorQuestionLimits.ts` は 2026-08-25 に**質問の上限**を 4 か所から
+1 か所へ寄せた本で、その注記に「同じ判断を 4 度書くと、片方だけ動かしたときに誰も
+気付かない」と書いてある。**ユニバースの上限は同じ関数の 25 行下に在ったのに
+置いていかれ、動かす前から食い違っていた。** `addWatchlistSymbol` に上限は無いので
+(`isSafeSymbol` は 16 文字の長さ検査だけ) 26 銘柄目は到達可能。
+
+### 3 つ目 — 写した型が、意図して留めた `true` を `boolean` へ広げていた
+
+本物 2 つ (`main/clients/stocks.ts` / `renderer/data/stocksAnalysisWeb.ts`) はどちらも
+`notForRealMoney: true` をリテラルで固定し、注記が「呼び出し側がこの出力を実弾発注の
+許可と取り違えられないように型で留める」と書いている。`StocksPage` の写しだけ
+`boolean` で、**答えを描く唯一の場所でその留めが外れていた** (パス 62 / 80 と同じ
+機構 —— 写しは広い方へずれるので `tsc` は黙る)。
+
+### 直し
+
+**画面が表示しているユニバースをそのまま送る。** `data.watchlist` は既に 4 か所で
+描いているので、そこから送れば両ビルドが**画面と同じ集合**について答え、断り書きが
+両方で真になる。
+
+- `shared/advisorQuestionLimits.ts`: `MAX_ADVISOR_UNIVERSE_SYMBOLS` と
+  `capAdvisorUniverse()` (`{ symbols, omitted }`) を、質問の上限と同じ本に置いた。
+  **外した件数を一緒に返すので黙って切れない** (パス 103 / 104 と同じ形)。
+- `main/clients/stocks.ts`: 上限は共有の定数を読む。**収めるのではなく断る**まま ——
+  ここは IPC の信頼境界で、画面は送る前に収めて件数を述べるので、ここへ来るのは
+  配線の誤りか乗っ取られたレンダラーだけである。返り値に `universeConsidered` と
+  `universeOmitted` を足した (必須の欄。`financialCsv` の `CsvProvenance` と同じ
+  方針 —— 任意にすると黙れる)。
+- `renderer/web-shim.ts`: `payload.universe` を優先し、共有の `capAdvisorUniverse` で
+  収める (自前の `slice(0, 25)` を削除)。同じ 2 欄を返す。
+- `renderer/pages/StocksPage.tsx`: `capAdvisorUniverse(data.watchlist.map(w => w.symbol))`
+  を送り、断り書きは**実物の件数**を出す (上限超えなら「残り N 件は今回の助言の
+  対象外です」)。答えのとなりに「対象にした銘柄 (N 件)」を**返り値から**刷る ——
+  送った物を写すと、送った物と見た物が食い違ったときに気付けない。写した型の
+  `notForRealMoney` をリテラルへ戻した。
+
+### 検査 +13 / 対照 5 本 (実際に壊して確認)
+
+`src/shared/__tests__/advisorUniverseDisclosed.test.ts`。
+
+- A 画面が `universe` を送らない (直す前の形) → 1 件
+- B 写した型を `boolean` へ戻す → 1 件
+- C shim を自前の `slice(0, 25)` に戻す → **2 件**
+- D 外した件数を常に 0 にする (黙って切る) → 1 件
+- E 画面の断り書きから件数を外す → 1 件
+- 戻すと 13 件通る
+
+### 途中で 1 つ間違えた
+
+「どちらの実装も上限の**定数**を読む」と書いた検査が落ちた。shim は数ではなく
+**規則** (`capAdvisorUniverse`) を読むのが正しく、数を 2 か所に置かない方が良い形
+だった。検査を「main は比べるので定数を読む / shim は収めるので関数を読む / どちらも
+25 を字面で持たない」に直した。**コードではなく私の検査が間違っていた。**
+
+### 当たって問題なし (再訪不要)
+
+- この助言は教育目的で、`notForRealMoney: true` が型に留められ実弾発注の道が無い。
+  今回直したのは金額の正しさではなく「何を見て答えたか」の申告である。
+- デスクトップ版に web の `loadWatchlistSymbols()` に当たる読み出しは無い ——
+  ウォッチリストは main の state に在り、スナップショット経由で画面へ渡る。だから
+  画面から送る形が両ビルドで唯一の筋である。
+
+`docs/ARCHITECTURE.md` の `stocks.ts:2031-2039` の引用 7 件が私の編集で行ずれしたので
+`2050-2058` へ更新した (`verify:arch` が捕まえた)。
+
+npm test 14,063 / verify:all 36 ゲート (exit 0)。
+
 ## パス 104 (2026-09-09) — **模式図が 8 層で黙って打ち切り、商業地域では延べ床の過半を落としていた**
 
 `buildSchematicFloors` の `while (remaining > 0 && level <= 8)` は 9 層以上の床を

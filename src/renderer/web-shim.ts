@@ -51,7 +51,11 @@
  */
 
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
-import { MAX_ADVISOR_QUESTION_CHARS, checkAdvisorQuestion } from '../shared/advisorQuestionLimits';
+import {
+  MAX_ADVISOR_QUESTION_CHARS,
+  capAdvisorUniverse,
+  checkAdvisorQuestion,
+} from '../shared/advisorQuestionLimits';
 import { MAX_ADVISOR_ACTION_ITEMS, MAX_ADVISOR_ITEM_CHARS, MAX_ADVISOR_RATIONALE_CHARS, MAX_ADVISOR_RECOMMENDATIONS, MAX_ADVISOR_RISK_FACTORS } from '../shared/advisorResponseLimits';
 import { MAX_ANALYZE_TEXT_CHARS } from '../shared/emotionsLimits';
 import { MAX_RECORD_NOTE_CHARS } from '../shared/recordEntryLimits';
@@ -607,9 +611,16 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
   }
   if (!apiKey) return err('not_configured', 'Anthropic API キーが未設定です。「設定」ページから設定してください');
 
-  // ユニバース = 登録ウォッチリスト。空なら既定の主要銘柄。
-  const watch = loadWatchlistSymbols();
-  const universe = watch.length > 0 ? watch.slice(0, 25) : [...DEFAULT_ADVISOR_UNIVERSE];
+  // ユニバースは**画面が送ってきた物を優先**する (パス 105)。デスクトップ版は
+  // main の `askAdvisor` が `payload.universe` を読むので、画面が 1 か所から
+  // 送れば両ビルドが**画面に出ている集合**について答える。送られなければ
+  // 従来どおり保存済みウォッチリスト、それも空なら既定の主要銘柄。
+  const sent = payload['universe'];
+  const requested = Array.isArray(sent)
+    ? sent.filter((v): v is string => typeof v === 'string')
+    : loadWatchlistSymbols();
+  const capped = capAdvisorUniverse(requested.length > 0 ? requested : [...DEFAULT_ADVISOR_UNIVERSE]);
+  const universe = capped.symbols;
   const allowed = new Set<string>(universe);
   const analyses = buildAnalysesForUniverse(universe);
 
@@ -670,7 +681,15 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
   }
   try {
     const recommendations = validateStockAdvisorJson(json, allowed);
-    return ok({ recommendations, disclaimer: STOCK_ADVISOR_DISCLAIMER, notForRealMoney: true });
+    // **見た銘柄を答えと一緒に運ぶ。** 上限で外した分が在れば、それも運ぶ ——
+    // 黙って切ると「一覧について答えた」が成り立たなくなる (パス 105)。
+    return ok({
+      recommendations,
+      disclaimer: STOCK_ADVISOR_DISCLAIMER,
+      notForRealMoney: true,
+      universeConsidered: universe,
+      universeOmitted: capped.omitted,
+    });
   } catch (e) {
     return err('action_failed', '検証エラー: ' + (e instanceof Error ? e.message : String(e)));
   }

@@ -2074,6 +2074,8 @@ describe('renderDashboardHtml', () => {
       ],
       disclaimer: ADVISOR_DISCLAIMER,
       notForRealMoney: true,
+      universeConsidered: [],
+      universeOmitted: 0,
     };
     const html = renderDashboardHtml({
       snapshot: emptySnapshot(),
@@ -2267,6 +2269,8 @@ describe('exportDashboardImpl', () => {
       ],
       disclaimer: ADVISOR_DISCLAIMER,
       notForRealMoney: true,
+      universeConsidered: [],
+      universeOmitted: 0,
     };
     let captured = '';
     await exportDashboardImpl(
@@ -2657,6 +2661,8 @@ describe('renderDashboardMarkdown', () => {
         ],
         disclaimer: 'TEST DISCLAIMER',
         notForRealMoney: true,
+        universeConsidered: [],
+        universeOmitted: 0,
       },
     });
     expect(md).toContain('## AI アドバイザー結果 (1 件)');
@@ -3559,6 +3565,8 @@ describe('renderDashboardMarkdown — 埋め込みが構造を乗っ取れない
         ],
         disclaimer: '<style>body{display:none}</style>',
         notForRealMoney: true,
+        universeConsidered: [],
+        universeOmitted: 0,
       },
       generatedAt: 'x',
     });
@@ -3575,6 +3583,8 @@ describe('renderDashboardMarkdown — 埋め込みが構造を乗っ取れない
         ],
         disclaimer: 'd\n本文',
         notForRealMoney: true,
+        universeConsidered: [],
+        universeOmitted: 0,
       },
       generatedAt: 'x',
     });
@@ -3591,6 +3601,8 @@ describe('renderDashboardMarkdown — 埋め込みが構造を乗っ取れない
         recommendations: [{ symbol: 'A', rank: 1, rationale: '一行目\n二行目', riskFactors: [] }],
         disclaimer: 'd',
         notForRealMoney: true,
+        universeConsidered: [],
+        universeOmitted: 0,
       },
       generatedAt: 'x',
     });

@@ -532,6 +532,10 @@ export interface AdvisorResponse {
   recommendations: AdvisorRecommendation[];
   disclaimer: string;
   notForRealMoney: true;
+  /** 実際に助言の対象にした銘柄 (パス 105 — 答えと一緒に運ぶ)。 */
+  universeConsidered: readonly string[];
+  /** 上限のために対象から外した件数。 */
+  universeOmitted: number;
 }
 
 export function advisorSystemPrompt(allowedSymbols: readonly string[]): string {

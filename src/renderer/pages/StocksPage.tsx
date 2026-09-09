@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { MAX_ADVISOR_UNIVERSE_SYMBOLS, capAdvisorUniverse } from '../../shared/advisorQuestionLimits';
 import { exportWarning } from '../data/exportOutcome';
 import { ratioPctOrDash } from '../../shared/num';
 import type { StrategyComparisonResult } from '../data/stocksAnalysisWeb';
@@ -15,7 +16,19 @@ interface AdvisorRecommendation {
 interface AdvisorResponse {
   recommendations: AdvisorRecommendation[];
   disclaimer: string;
-  notForRealMoney: boolean;
+  /**
+   * **リテラルで留める** —— 本物 2 つ (`main/clients/stocks.ts` /
+   * `renderer/data/stocksAnalysisWeb.ts`) はどちらも `true` に固定し、注記が
+   * 「呼び出し側がこの出力を実弾発注の許可と取り違えられないように型で留める」と
+   * 書いている。2026-09-09 までこの写しだけ `boolean` に広がっており、
+   * **答えを描く唯一の場所でその留めが外れていた** (パス 105)。
+   * 写しは必ず広い方へずれるので `tsc` は黙る (パス 62 / 80 と同じ機構)。
+   */
+  notForRealMoney: true;
+  /** 実際に助言の対象にした銘柄 (答えと一緒に運ぶ)。 */
+  universeConsidered: readonly string[];
+  /** 上限のために対象から外した件数。 */
+  universeOmitted: number;
 }
 
 interface Candle {
@@ -301,8 +314,16 @@ export function StocksPage() {
     setAdvisorBusy(true);
     setAdvisorError(null);
     try {
+      // **画面に出ているウォッチリストをそのまま送る** (パス 105)。
+      // 2026-09-09 まで `question` だけを送っており、デスクトップ版では main の
+      // `askAdvisor` が `payload.universe` を受け取れずに既定の 5 銘柄で答えて
+      // いた —— 画面の断り書きが「登録済みウォッチリストのティッカーが送られる」と
+      // 書いているのに、1 銘柄も送っていなかった。上限は shared に 1 つ在り、
+      // **収める前に件数を控えて画面で述べる** (黙って切らない)。
+      const capped = capAdvisorUniverse(data.watchlist.map((w) => w.symbol));
       const r = await window.serviceHub.invoke<AdvisorResponse>('stocks', 'advise', {
         question: advisorQuestion.trim(),
+        universe: capped.symbols,
       });
       if (r.ok) {
         setAdvisorResult(r.data);
@@ -583,8 +604,21 @@ export function StocksPage() {
             書いているのに、AI の画面だけ書いていなかった (2026-08-23)。
           */}
           <br />
-          送信内容: 質問文と、<strong>登録済みウォッチリストのティッカー</strong>が
-          Anthropic API へ送信されます (指標はモック値)。
+          送信内容: 質問文と、<strong>登録済みウォッチリストのティッカー
+          {data.watchlist.length > MAX_ADVISOR_UNIVERSE_SYMBOLS
+            ? ` ${MAX_ADVISOR_UNIVERSE_SYMBOLS} 件 (登録 ${data.watchlist.length} 件のうち)`
+            : ` ${data.watchlist.length} 件`}
+          </strong>が Anthropic API へ送信されます (指標はモック値)。
+          {data.watchlist.length > MAX_ADVISOR_UNIVERSE_SYMBOLS && (
+            <>
+              <br />
+              <span data-advisor-universe-capped>
+                ⚠ 1 度に見られるのは {MAX_ADVISOR_UNIVERSE_SYMBOLS} 件までです。
+                残り {data.watchlist.length - MAX_ADVISOR_UNIVERSE_SYMBOLS} 件は
+                <strong>今回の助言の対象外</strong>です。
+              </span>
+            </>
+          )}
         </div>
         <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
           <input
@@ -699,6 +733,25 @@ export function StocksPage() {
               }}
             >
               {advisorResult.disclaimer}
+            </div>
+            {/* **答えが何を見たかを、答えのとなりに置く。** 助言は「どの銘柄を
+                対象にしたか」で意味が変わるので、対象の集合は答えと同じ強さで
+                見えていなければならない (パス 105)。件数は返り値から出す —— 画面が
+                送った物を写すと、送った物と見た物が食い違ったときに気付けない。 */}
+            <div
+              data-advisor-universe
+              style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6, lineHeight: 1.6 }}
+            >
+              対象にした銘柄 ({advisorResult.universeConsidered.length} 件):{' '}
+              {advisorResult.universeConsidered.join(' / ')}
+              {advisorResult.universeOmitted > 0 && (
+                <>
+                  <br />
+                  <span style={{ color: '#fbbf24' }}>
+                    ⚠ 上限のため {advisorResult.universeOmitted} 件は対象外です。
+                  </span>
+                </>
+              )}
             </div>
           </div>
         )}

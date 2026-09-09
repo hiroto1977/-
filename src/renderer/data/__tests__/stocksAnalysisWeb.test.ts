@@ -371,6 +371,8 @@ describe('dashboard render', () => {
     recommendations: [{ symbol: 'AAPL', rank: 1, rationale: 'strong trend', riskFactors: ['volatility'] }],
     disclaimer: ADVISOR_DISCLAIMER,
     notForRealMoney: true,
+    universeConsidered: [],
+    universeOmitted: 0,
   };
   // NOTE: compareStrategies は describe ボディではなく各 it 内で呼ぶ (collection 時に
   // 評価すると、指標/戦略/backtest を壊す mutant がここで例外を投げて collection 全体が
@@ -559,6 +561,8 @@ describe('dashboard render (golden exact output, mutation hardening)', () => {
       recommendations: [{ symbol: 'AAPL', rank: 1, rationale: 'strong trend', riskFactors: ['volatility', 'liquidity'] }],
       disclaimer: 'DISC',
       notForRealMoney: true as const,
+      universeConsidered: ['AAPL'],
+      universeOmitted: 0,
     },
     generatedAt: '2026-01-31T00:00:00.000Z',
   };
@@ -756,6 +760,8 @@ describe('dashboard html — 複数 advisor 推奨 (join 区切りの golden)', 
           { symbol: 'MSFT', rank: 2, rationale: 'r2', riskFactors: ['y'] },
         ],
         disclaimer: 'D', notForRealMoney: true,
+        universeConsidered: [],
+        universeOmitted: 0,
       },
     });
     expect(html).toBe("<!doctype html><html lang=\"ja\"><head><meta charset=\"utf-8\"><title>Stocks ダッシュボード</title></head><body style=\"font-family:sans-serif;padding:24px;background:#0f1117;color:#e6e8ec\"><h1>Stocks ダッシュボード (ブラウザ版・モックデータ)</h1><p>生成: now</p><h2>ウォッチリスト</h2><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><th>シンボル</th><th>名称</th><th>終値</th><th>前日比</th></tr><tr><td colspan=\"4\">(登録銘柄なし)</td></tr></table><h2>アドバイザー</h2><ol><li><b>AAPL</b> — r1 <i>(リスク: x)</i></li><li><b>MSFT</b> — r2 <i>(リスク: y)</i></li></ol><p style=\"color:#fbbf24\">D</p><p style=\"margin-top:24px;color:#8a93a6;font-size:12px\">本機能は教育目的の参考情報であり、投資助言ではありません。過去パフォーマンスは将来のリターンを保証しません。実際の売買判断はご自身の責任で行ってください。</p></body></html>");
@@ -1080,6 +1086,8 @@ describe('renderDashboardMarkdown — 埋め込みが構造を乗っ取れない
         ],
         disclaimer: '<style>body{display:none}</style>',
         notForRealMoney: true as const,
+        universeConsidered: [],
+        universeOmitted: 0,
       },
       generatedAt: 'x',
     });
@@ -1096,6 +1104,8 @@ describe('renderDashboardMarkdown — 埋め込みが構造を乗っ取れない
         ],
         disclaimer: 'd\n本文',
         notForRealMoney: true as const,
+        universeConsidered: [],
+        universeOmitted: 0,
       },
       generatedAt: 'x',
     });

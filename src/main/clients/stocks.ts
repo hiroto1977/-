@@ -1,4 +1,8 @@
-import { MAX_ADVISOR_QUESTION_CHARS, checkAdvisorQuestion } from '../../shared/advisorQuestionLimits';
+import {
+  MAX_ADVISOR_QUESTION_CHARS,
+  MAX_ADVISOR_UNIVERSE_SYMBOLS,
+  checkAdvisorQuestion,
+} from '../../shared/advisorQuestionLimits';
 import { seededNoise } from '../../shared/seededNoise';
 import { ratioPctOrDash } from '../../shared/num';
 import { escapeXml, escapeMarkdownInline, escapeMarkdownText } from '../../shared/escape';
@@ -1029,6 +1033,12 @@ export interface AdvisorResponse {
   /** Always true. Pinned in the type so a caller can't mistake this
    *  output for a real-money execution authorization. */
   readonly notForRealMoney: true;
+  /** 実際に助言の対象にした銘柄。**答えと一緒に運ぶ** —— 画面が
+   *  「ウォッチリストについて答えた」と述べるなら、何を見たかを示せる
+   *  必要がある (2026-09-09 · パス 105)。 */
+  readonly universeConsidered: readonly string[];
+  /** 上限のために対象から外した件数 (0 なら全部見ている)。 */
+  readonly universeOmitted: number;
 }
 
 /** Fixed disclaimer prepended to every advisor response. Visible in UI. */
@@ -1265,8 +1275,12 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
   if (universeList.length === 0) {
     throw new Error('universe is empty');
   }
-  if (universeList.length > 25) {
-    throw new Error('universe exceeds 25 symbols');
+  // 上限は shared に 1 つ (パス 105 — ブラウザ側は同じ数で黙って切っていた)。
+  // ここは IPC の信頼境界なので、**収めるのではなく断る** —— 画面は送る前に
+  // `capAdvisorUniverse` で収めて件数を述べるので、ここへ来るのは配線の誤りか
+  // 乗っ取られたレンダラーだけである。
+  if (universeList.length > MAX_ADVISOR_UNIVERSE_SYMBOLS) {
+    throw new Error(`universe exceeds ${MAX_ADVISOR_UNIVERSE_SYMBOLS} symbols`);
   }
   const allowedSet = new Set(universeList);
 
@@ -1360,6 +1374,9 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
     recommendations,
     disclaimer: ADVISOR_DISCLAIMER,
     notForRealMoney: true,
+    universeConsidered: universeList,
+    // ここは上限超えを throw で断るので、返る時点で外した分は無い。
+    universeOmitted: 0,
   };
 }
 

@@ -55,3 +55,48 @@ export function checkAdvisorQuestion(question: unknown): AdvisorQuestionProblem 
   if (/[\r\n\0]/.test(question)) return 'control-chars';
   return null;
 }
+
+// ---------------------------------------------------------------------------
+// ユニバース (銘柄の許可リスト)
+// ---------------------------------------------------------------------------
+
+/**
+ * アドバイザーのユニバース (助言の対象にする銘柄) の上限 —— **両ビルドで 1 つだけ持つ。**
+ *
+ * ## なぜここに移したか (2026-09-09 · パス 105)
+ *
+ * 上の「質問」の上限は 2026-08-25 にここへ寄せたが、**同じ関数の 25 行下に在った
+ * ユニバースの上限は置いていかれた**。そして 2 つの実装が同じ 25 を**正反対に**
+ * 扱っていた:
+ *
+ * ```
+ *   main/clients/stocks.ts:1268   if (universeList.length > 25) throw   ← 断る
+ *   renderer/web-shim.ts:612      watch.slice(0, 25)                   ← 黙って切る
+ * ```
+ *
+ * この本の上のほうに「同じ判断を 4 度書くと、片方だけ動かしたときに誰も気付かない」と
+ * 書いてある。**動かさなくても、最初から食い違っていた。**
+ */
+export const MAX_ADVISOR_UNIVERSE_SYMBOLS = 25;
+
+/** 上限に収めたユニバースと、**外した件数**。 */
+export interface CappedAdvisorUniverse {
+  /** 助言の対象にする銘柄 (最大 {@link MAX_ADVISOR_UNIVERSE_SYMBOLS} 件)。 */
+  readonly symbols: readonly string[];
+  /** 上限のために外した件数。0 なら全部見ている。 */
+  readonly omitted: number;
+}
+
+/**
+ * ユニバースを上限に収める。**外した件数を一緒に返すので、黙って切れない。**
+ *
+ * 「答えは利用者の一覧について」と画面が述べるなら、一覧の一部しか見ていないことも
+ * 述べなければならない (パス 103 / 104 と同じ形 —— 内部の境界で切ったなら、それを
+ * 値と一緒に運ぶ)。
+ */
+export function capAdvisorUniverse(symbols: readonly string[]): CappedAdvisorUniverse {
+  return {
+    symbols: symbols.slice(0, MAX_ADVISOR_UNIVERSE_SYMBOLS),
+    omitted: Math.max(0, symbols.length - MAX_ADVISOR_UNIVERSE_SYMBOLS),
+  };
+}
