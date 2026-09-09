@@ -49,7 +49,7 @@ import {
   planSetbackTradeoff,
   SHADOW_HEIGHT_THRESHOLD_M,
 } from '../../shared/zoningPlanner';
-import { buildSchematicFloors } from '../../shared/buildingIso';
+import { buildSchematic } from '../../shared/buildingIso';
 
 /** しきい値の表示: 1 → 1.0、1.2 → 1.2、1.25 → 1.25 (末尾の 0 を 1 つだけ落とす)。 */
 function fmtDscr(x: number): string {
@@ -326,8 +326,8 @@ export function RealEstatePage() {
         : isoWidth > 0
           ? Math.min(tradeoff.buildableDepthM, tradeoff.footprint / isoWidth)
           : 0;
-    const schematic = buildSchematicFloors({
-      // 未入力は 0 として渡す (`buildSchematicFloors` は 0 以下で [] を返す)。
+    const schematic = buildSchematic({
+      // 未入力は 0 として渡す (`buildSchematic` は 0 以下で階を作らない)。
       // 描画そのものは下の関門で止めるので、この 0 は画面に出ない。
       widthM: isoWidth ?? 0,
       depthM: isoDepth ?? 0,
@@ -811,12 +811,38 @@ export function RealEstatePage() {
             敷地の奥行と間口が未入力のため、立体プレビューは描いていません（寸法を入力すると概形が出ます）。
           </div>
         ) : (
-          <BuildingIso
-            widthM={zoning.isoWidth}
-            depthM={zoning.isoDepth}
-            floors={zoning.schematic}
-            caption={`模式図です。間口 ${zoning.isoWidth.toLocaleString()} m × 奥行 ${zoning.isoDepth.toLocaleString()} m で、作業場を 1 階に敷き、残る延べ床を上階へ積んだ場合の概形。作業場を上階に置くと 150 ㎡ の合計制限を超えるため、緑は 1 階にしか出ません。`}
-          />
+          <>
+            {/* **図が延べ床を全部載せられなかったら言う。** この図の主題は
+                「上階に何層積むことになるか」なので、層を落とすことは主題を
+                落とすこと (パス 104)。数字は図の値から出す — 写さない。 */}
+            {zoning.schematic.unplacedSqm > 0 && (
+              <div
+                role="alert"
+                data-iso-truncated
+                style={{
+                  fontSize: 12,
+                  lineHeight: 1.6,
+                  marginBottom: 10,
+                  padding: '8px 10px',
+                  borderRadius: 6,
+                  border: '1px solid var(--warn, #d97706)',
+                  color: 'var(--warn, #d97706)',
+                }}
+              >
+                ⚠ この延べ床には <b>{zoning.schematic.floorsNeeded.toLocaleString()} 階</b>{' '}
+                必要ですが、立体プレビューは <b>{zoning.schematic.floors.length.toLocaleString()} 階</b>{' '}
+                までしか描けません。<b>{zoning.schematic.unplacedSqm.toLocaleString()} ㎡</b>{' '}
+                が図に含まれていないため、<b>図の高さと床面積を実際の計画として読まないでください</b>
+                （下の「2階以上に回せる面積」が正しい数字です）。
+              </div>
+            )}
+            <BuildingIso
+              widthM={zoning.isoWidth}
+              depthM={zoning.isoDepth}
+              floors={zoning.schematic.floors}
+              caption={`模式図です。間口 ${zoning.isoWidth.toLocaleString()} m × 奥行 ${zoning.isoDepth.toLocaleString()} m で、作業場を 1 階に敷き、残る延べ床を上階へ積んだ場合の概形。作業場を上階に置くと 150 ㎡ の合計制限を超えるため、緑は 1 階にしか出ません。`}
+            />
+          </>
         )}
 
         <div style={{ fontSize: 12, fontWeight: 700, margin: '4px 0 8px' }}>🌱 工場プラン (作業場 + 直売・カフェ併設)</div>

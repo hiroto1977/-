@@ -184,3 +184,122 @@ describe('用途地域プランナー — 未入力の敷地寸法を画面が�
     expect(t).toContain('後退と建築面積のトレードオフ'); // 標本 — 画面の文字を見ている
   });
 });
+
+/**
+ * **模式図が延べ床を全部載せられなかったら、画面がそう言う。** (2026-09-09 · パス 104)
+ *
+ * `buildSchematicFloors` は 8 層で打ち切るが、2026-09-09 まで**打ち切ったことが
+ * 返り値のどこにも現れず**、画面は 8 層の図を完全なものとして出していた。この図の
+ * 目的は関数自身の注記が「上階に**何層積むことになるか**を立体で掴むための概形」と
+ * 書いているとおりなので、層を落とすことは図の主題を落とすことである。
+ *
+ * ここが**同じページの検査本に同居している**のは、上と同じ一式 (jsdom + 実物の
+ * `RealEstatePage`) を使うから。harness を写すと、片方を直したときにもう片方が腐る。
+ *
+ * ## 画面を打ち切りへ持って行くには道路幅員も要る (実測で分かったこと)
+ *
+ * 容積率に 1300% を入れても効かない —— **前面道路幅員が実効容積率を頭打ちにする**
+ * (既定 6 m で実効 360%)。だから幅員も広げる。
+ *
+ * ## 数字は画面から引く (単体検査の値を写さない)
+ *
+ * 建築面積は後退距離で削られるので、`shared/__tests__/schematicTruncation.test.ts`
+ * の幾何 (間口 20 × 奥行 20 = 400 ㎡ ちょうど) とはずれる。最初この検査は単体側の
+ * 「3,300 ㎡」を写して書き、**画面では出ない数だったので落ちた**。今は帯の数字を
+ * 画面から読み、タイルとの**関係**を検査する (パス 101 の教訓 —— 文脈を跨いで数字を
+ * 写すと、写した先で必ずずれる)。
+ *
+ * パス 66 の教訓どおり、値の側 (`buildSchematic` の単体検査) と**画面が述べるか**は
+ * 別に留める。
+ */
+describe('用途地域プランナー — 立体プレビューが延べ床を載せ切れないときに述べる', () => {
+  /** 画面を「図に載り切らない延べ床」の状態へ持って行く。 */
+  async function makeTruncating(): Promise<void> {
+    await setField('敷地面積 (㎡)', '500');
+    await setField('敷地の奥行 (m)', '25');
+    await setField('敷地の間口 (m)', '20');
+    // 前面道路幅員が実効容積率を頭打ちにするので、先に広げる (既定 6 m → 実効 360%)。
+    await setField('前面道路幅員 (m)', '30');
+    await setField('容積率 (%)', '1300');
+  }
+
+  /** 帯の中の「N 階」を出た順に読む (必要な階数, 描けた階数)。 */
+  function bandFloors(): number[] {
+    const band = container.querySelector('[data-iso-truncated]');
+    if (!band) throw new Error('no truncation band');
+    const t = (band.textContent ?? '').replace(/\s+/g, ' ');
+    return Array.from(t.matchAll(/([\d,]+) 階/g)).map((m) => Number(m[1]!.replace(/,/g, '')));
+  }
+
+  /** 帯の中の「N ㎡」(図に入らない床)。 */
+  function bandUnplacedSqm(): number {
+    const band = container.querySelector('[data-iso-truncated]');
+    if (!band) throw new Error('no truncation band');
+    const m = /([\d,]+(?:\.\d+)?) ㎡/.exec((band.textContent ?? '').replace(/\s+/g, ' '));
+    if (!m) throw new Error('no sqm in band');
+    return Number(m[1]!.replace(/,/g, ''));
+  }
+
+  const tileSqm = (label: string): number => Number(tile(label).replace(/[^\d.]/g, ''));
+
+  it('★ 対照: 既定 (敷地 300 / 容積率 200 / 道路 6 m) では打ち切りの帯が出ない', async () => {
+    await mountPage();
+    expect(container.querySelector('[data-iso-truncated]')).toBeNull();
+    // 図そのものは出ている (帯が無いのは「図が無いから」ではない)。
+    expect(container.querySelector('[data-iso-unset]')).toBeNull();
+    expect(text()).toContain('模式図です');
+  });
+
+  it('★ 載り切らない延べ床では帯が出て、必要な階数と描けた階数の両方を述べる', async () => {
+    await mountPage();
+    await makeTruncating();
+    expect(container.querySelector('[data-iso-truncated]')).not.toBeNull();
+    const [needed, drawn] = bandFloors();
+    expect(needed).toBeDefined();
+    expect(drawn).toBeDefined();
+    // **両方**を出す (どちらか一方では「足りていない」が伝わらない)。
+    expect(needed!).toBeGreaterThan(drawn!);
+    // **帯が言う「描けた階数」は、図が実際に持つ層数と一致する。** 図の層数は
+    // BuildingIso の aria-label が持っている (「…立体図（N 層）」)。ここを
+    // 「|| drawn」で逃がすと、どの入力でも通る空の検査になる。
+    const svg = container.querySelector('svg[aria-label*="立体図"]');
+    expect(svg, '立体図が見つからない (走査が空振りしている)').not.toBeNull();
+    const layers = /（([\d,]+) 層）/.exec(svg!.getAttribute('aria-label') ?? '');
+    expect(layers, 'aria-label から層数が読めない').not.toBeNull();
+    expect(Number(layers![1]!.replace(/,/g, ''))).toBe(drawn!);
+    // 図を実際の計画として読ませず、正しい数字の在り場所を指す。
+    const t = (container.querySelector('[data-iso-truncated]')!.textContent ?? '').replace(/\s+/g, ' ');
+    expect(t).toContain('実際の計画として読まないでください');
+    expect(t).toContain('2階以上に回せる面積');
+  });
+
+  it('★ 帯の数字がタイルと食い違わない (同じ画面の 2 つの数が両立する)', async () => {
+    await mountPage();
+    await makeTruncating();
+    // タイルは 2 階以上の総面積。帯はそのうち**図に入らない分**なので、必ず小さい。
+    const total = tileSqm('2階以上に回せる面積');
+    const unplaced = bandUnplacedSqm();
+    expect(total).toBeGreaterThan(0);
+    expect(unplaced).toBeGreaterThan(0);
+    expect(unplaced).toBeLessThan(total);
+    // 帯はタイルの総面積をそのまま出さない (「全部が図に無い」と読ませない)。
+    expect(unplaced).not.toBe(total);
+  });
+
+  it('★ 容積率を下げると帯が消える (いつでも出る形になっていない)', async () => {
+    await mountPage();
+    await makeTruncating();
+    expect(container.querySelector('[data-iso-truncated]')).not.toBeNull();
+    await setField('容積率 (%)', '200');
+    expect(container.querySelector('[data-iso-truncated]')).toBeNull();
+  });
+
+  it('★ 寸法が未入力なら図も帯も出さない (未入力から打ち切りを主張しない)', async () => {
+    await mountPage();
+    await makeTruncating();
+    expect(container.querySelector('[data-iso-truncated]')).not.toBeNull();
+    await setField('敷地の間口 (m)', '');
+    expect(container.querySelector('[data-iso-unset]')).not.toBeNull();
+    expect(container.querySelector('[data-iso-truncated]')).toBeNull();
+  });
+});

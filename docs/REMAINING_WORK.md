@@ -13673,7 +13673,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **104 ファイル / 279 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **104 ファイル / 280 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -13690,6 +13690,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/data/cashflowDebtService.ts` | 5 |
 | `src/renderer/pages/RealEstatePage.tsx` | 5 |
 | `src/renderer/pages/TaxPage.tsx` | 5 |
+| `src/shared/buildingIso.ts` | 5 |
 | `src/shared/savingsPlanning.ts` | 5 |
 | `src/shared/tradeTax.ts` | 5 |
 | `src/main/clients/funding.ts` | 4 |
@@ -13699,7 +13700,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/data/overview.ts` | 4 |
 | `src/renderer/pages/StocksPage.tsx` | 4 |
 | `src/renderer/pages/VillagePage.tsx` | 4 |
-| `src/shared/buildingIso.ts` | 4 |
 | `src/shared/depreciation.ts` | 4 |
 | `src/shared/hydroponics.ts` | 4 |
 | `src/shared/ollama.ts` | 4 |
@@ -18097,6 +18097,81 @@ i1price: 品目1 の単価「abc」を金額として読み取れません。金
 「教育目的」に留まる。どちらも「実物ではない」は伝わり、web 側も教育目的を
 明記しているので、**4 つの renderer を触る価値は無いと判断した**。
 揃えるなら `advisorTypes.ts` に文を 1 つ置いて 4 面が読む形が筋である。
+
+## パス 104 (2026-09-09) — **模式図が 8 層で黙って打ち切り、商業地域では延べ床の過半を落としていた**
+
+`buildSchematicFloors` の `while (remaining > 0 && level <= 8)` は 9 層以上の床を
+**返り値のどこにも残さず**捨てていた。画面はその 8 層の図を完全なものとして出していた。
+
+この図の目的は関数自身の注記が書いている ——
+「作業場がどれだけを占め、**上階に何層積むことになるか**を立体で掴むための概形」。
+つまり**層を落とすことは図の主題を落とすこと**である。
+
+### 実測 (敷地 500 ㎡ · 建蔽率 80% → 建築面積 400 ㎡ = 間口 20 m × 奥行 20 m)
+
+| 容積率 | 延べ床 | 2 階以上 | 必要な階数 | 図の階数 | 図に入らない床 |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 600% | 3,000 ㎡ | 2,600 ㎡ | 8 | 8 | 0 ㎡ |
+| 800% | 4,000 ㎡ | 3,600 ㎡ | 10 | 8 | **800 ㎡** |
+| 1000% | 5,000 ㎡ | 4,600 ㎡ | 13 | 8 | **1,800 ㎡** |
+| 1300% | 6,500 ㎡ | 6,100 ㎡ | 17 | 8 | **3,300 ㎡** (過半) |
+
+**1300% は商業地域の法定上限**で、架空の入力ではない。しかも同じ画面が
+「2階以上に回せる面積 6,100 ㎡」を数字で出しているので、**図と数字が食い違う**。
+
+### 規準はリポジトリに在った (9 か所目)
+
+`depreciation.ts` の `MAX_SCHEDULE_YEARS` の注記が
+「**黙って切り詰めない**のが要点で、途中まで作った表を出すと『100 年で償却し終わる』
+という誤った内容になる」と書き、上限超えは `[]` を返す。ここは図なので空にするのでは
+なく、**打ち切った量を一緒に返して画面に述べさせる** (パス 103 で逆算に対してやったのと
+同じ形)。
+
+### 直し
+
+- `shared/buildingIso.ts`: `MAX_SCHEMATIC_FLOORS` で上限に名前を付け、
+  `buildSchematic()` が `{ floors, floorsNeeded, unplacedSqm }` を返す
+  (`buildSchematicFloors` はその `.floors`。既存の呼び出し元は不変)。
+- `renderer/pages/RealEstatePage.tsx`: 図の**前**に `role="alert"` の帯を置き、
+  必要な階数・描けた階数・図に入らない床を出し、「実際の計画として読まないでください」と
+  「正しい数字は下の『2階以上に回せる面積』」を述べる。
+
+### 検査 +14 / 対照 4 本 (実際に壊して確認)
+
+`src/shared/__tests__/schematicTruncation.test.ts` (9 件) +
+`renderer/pages/__tests__/siteDimensionsUnsetOnScreen.test.ts` へ画面側 5 件。
+
+- A `unplacedSqm` を常に 0 (打ち切りを報せない) → **7 件**
+- B `floorsNeeded` を図の階数に合わせる (足りているふり) → 3 件
+- C 画面の帯を消す → 4 件
+- D 上限を 8 → 40 に (打ち切りが起きなくなる) → 3 件
+- 戻すと 20 件通る
+
+対照 D が要点 —— 上限を上げると打ち切りの事例が消えるので、**検査が黙って空振りに
+なっていないこと**を確かめている (CLAUDE.md「鳴らない対照は『合格』ではない」)。
+
+### 途中で 2 つ間違えた (どちらも検査が教えてくれた)
+
+1. **画面側の検査に単体側の数字を写した。** 「3,300 ㎡」は間口 20 × 奥行 20 =
+   400 ㎡ ちょうどの幾何から出た数で、画面は後退距離で建築面積が削られる (398.8 ㎡)
+   ので出ない。今は帯の数字を画面から読み、タイルとの**関係**(図に入らない床 <
+   2 階以上の総面積) を検査する。パス 101 と同じ「文脈を跨いで数字を写した」誤り。
+2. **容積率 1300% を入れても効かなかった。** 前面道路幅員が実効容積率を頭打ちに
+   する (既定 6 m → 実効 360%)。画面を打ち切りへ持って行くには幅員も広げる必要が
+   あり、それを知らずに書いた検査は 4 件落ちた。**画面の状態を推さずに測る**。
+3. 一度、`|| drawn` で逃がす自己満足の assertion を書いた (走査が空振りでも通る形)。
+   `BuildingIso` の `aria-label`「…立体図（N 層）」が実物の層数を持っているので、
+   帯の言う階数と等値で当てる形に直した。
+
+### 当たって問題なし (再訪不要)
+
+- `depreciation.ts` の `Math.min(usefulLife, MAX_SCHEDULE_YEARS)` は上の理由で
+  黙った切り詰めではない (上限 100 年・法定最長 50 年・超えたら空)。
+- `salaryConversionCapYen` の `Math.min` は法定の上限そのもの (パス 87 済み)。
+- 新しく増えた 0 倒し 1 件 (`f.depthM ?? 0`) は届かない枝で、仮に届いても
+  **打ち切りを過大に報せる**側に倒れる。理由をコードに書いた (census 279 → 280)。
+
+npm test 14,050 / verify:all 36 ゲート (exit 0)。
 
 ## パス 103 (2026-09-09) — **逆算が探索上限に張り付いても「解けた」として返し、4 面が成り立たない主張を刷っていた**
 
