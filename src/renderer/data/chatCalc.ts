@@ -34,20 +34,54 @@ export interface CalcAnswer {
  * 日本語の金額表記を円へ解析する。「40万」「40.5万円」「400,000」「400000円」。
  * 対応外・0 以下・非有限は null。
  */
+/**
+ * **金額として読まない単位。** 数のすぐ後ろがこれなら、その数は金額ではない。
+ *
+ * ## なぜ要るのか (2026-09-09 · パス 102 の実測)
+ *
+ * 直す前は「最初に見つかった数」を金額にしていた。この skill の断り書きは
+ * **「扶養なし・40歳未満・基礎控除のみの概算です」** と書いてあり、つまり
+ * **利用者に年齢を言わせる誘い**になっている。実測 (7 問中 4 問が誤答):
+ *
+ * | 質問 | 拾った数 | 出た答え |
+ * | --- | ---: | --- |
+ * | 42歳ですが額面30万の手取りは？ | **42** | 手取り **¥-11,326** |
+ * | 私は45歳です。額面40万の手取りはいくら？ | **45** | 手取り ¥-11,323 |
+ * | 従業員3人の会社で額面25万の手取りは？ | **3** | 手取り ¥-11,365 |
+ * | 2026年の額面30万の手取りは？ | **2026** | 手取り ¥-9,352 |
+ *
+ * **答えは「見て分かる出鱈目」ではなかった** —— 社会保険料 ¥10,952 まで添えた
+ * 体裁の整った内訳が出て、拾い間違えたことは文面から分からない。
+ *
+ * `年` は「2026年」を弾くために入れる。金額に「年」が続く言い方
+ * (「30万年」) は無いので、金額を取りこぼす側の害は無い。
+ */
+const NON_MONEY_UNITS: readonly string[] = ['歳', '才', '人', '年', '月', '日', '時', '分', '秒', '件', '個', '回', '%'];
+
+/**
+ * 日本語の金額表記を円へ解析する。「40万」「40.5万円」「400,000」「400000円」。
+ * 対応外・0 以下・非有限は null。
+ *
+ * **金額でない単位が付く数は飛ばして次を見る** (上の `NON_MONEY_UNITS`)。
+ */
 export function parseAmountJa(raw: string): number | null {
-  const m = /([0-9][0-9,]*(?:\.[0-9]+)?)\s*(万)?/.exec(raw.normalize('NFKC'));
-  // 不一致 (m が null) は digits の undefined 判定で弾く — グループ1 は非任意なので
-  // 一致時は常に在る。万 グループも guard 前に読む (m null なら同様に undefined)。
-  const digits = m?.[1];
-  const man = m?.[2];
-  if (digits === undefined) return null;
-  const base = Number.parseFloat(digits.replace(/,/g, ''));
-  // 桁が大きすぎて Infinity になる入力 (例: 1 のあとに 0 が 309 個) を拒否する。
-  if (!Number.isFinite(base)) return null;
-  const yen = man === '万' ? base * 10_000 : base;
-  const rounded = Math.round(yen);
-  if (rounded <= 0) return null;
-  return rounded;
+  const text = raw.normalize('NFKC');
+  for (const m of text.matchAll(/([0-9][0-9,]*(?:\.[0-9]+)?)\s*(万)?/g)) {
+    const digits = m[1];
+    const man = m[2];
+    if (digits === undefined) continue;
+    // 数 (と「万」) の直後の 1 文字。金額でない単位ならこの数は金額ではない。
+    const after = text.charAt(m.index + m[0].length);
+    if (NON_MONEY_UNITS.includes(after)) continue;
+    const base = Number.parseFloat(digits.replace(/,/g, ''));
+    // 桁が大きすぎて Infinity になる入力 (例: 1 のあとに 0 が 309 個) を拒否する。
+    if (!Number.isFinite(base)) continue;
+    const yen = man === '万' ? base * 10_000 : base;
+    const rounded = Math.round(yen);
+    if (rounded <= 0) continue;
+    return rounded;
+  }
+  return null;
 }
 
 /**
@@ -96,10 +130,31 @@ export function runCalcQuery(query: CalcQuery, taxYear = new Date().getFullYear(
   return { query, comp: monthlyCompensation(query.amount, false, undefined, taxYear) };
 }
 
-/** 回答テキストを整形する (内容は表現 — 数値は runCalcQuery のテストで固定)。 */
+/**
+ * 回答テキストを整形する (内容は表現 — 数値は runCalcQuery のテストで固定)。
+ *
+ * **手取りが 0 以下になる額面には答えない。** 社会保険料は標準報酬月額の
+ * **最低等級**で下支えされるので、額面 ¥1 でも ¥10,952 が引かれ、手取りは
+ * 負になる (実測: 額面 ¥1 → 手取り ¥-11,367 / 額面 ¥10,000 → ¥-1,418 /
+ * 額面 ¥58,000 → ¥+46,342)。これは `welfareScheme` の欠陥ではなく**等級表の
+ * 正しい適用**で、表の下端より低い額面はこのモデルの外である。
+ *
+ * 「手取りはいくら？」に**負の手取り**を答えると、体裁の整った内訳の形で
+ * 成り立たない数を渡すことになる (2026-09-09 · パス 102)。**下限の金額を
+ * ここに写さない** —— 「手取りが 0 以下なら範囲外」は表から導かれるので、
+ * 等級表が動いても食い違わない。
+ */
 export function formatCalcAnswer(answer: CalcAnswer): string {
   const { query, comp } = answer;
   const yen = (n: number) => jpy(Math.round(n));
+  if (comp.takeHome <= 0) {
+    return (
+      `💴 額面 ${yen(comp.gross)}/月 は、このモデルの範囲外です。` +
+      `社会保険料は標準報酬月額の最低等級で下支えされるため、` +
+      `この額面では手取りが 0 以下になります (差し引き ${yen(comp.employeeSocialInsurance + comp.incomeTax + comp.residentTax)}/月)。\n` +
+      `※ 月額の金額を「額面30万」「手取り25万」のように書いてもう一度お試しください。`
+    );
+  }
   // Stryker disable all — 文面は表現。数値の正しさは runCalcQuery 側で担保。
   const breakdown =
     `額面 ${yen(comp.gross)}/月 → 社会保険料 ${yen(comp.employeeSocialInsurance)} / ` +
