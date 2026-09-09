@@ -15,6 +15,7 @@ import {
 import { sanitizeRadarDraft, type RadarDraft, type TeamMember } from '../data/teamRadarDraft';
 import { writeLocalJson, type LocalWriteResult } from '../data/localWrite';
 import { exportWarning } from '../data/exportOutcome';
+import type { ActionData } from '../../shared/actionData';
 
 
 /** snapshot 由来の読み取り専用メンバー (state に入る前の初期値の型)。
@@ -379,7 +380,7 @@ export function TeamRadarPage() {
     setExportMsg(null);
     setLastExport(null);
     try {
-      const r = await window.serviceHub.invoke<{ path: string; bytes: number }>(
+      const r = await window.serviceHub.invoke<ActionData<'teamradar/export-svg'>>(
         'teamradar',
         'export-svg',
         { title: `${title}｜${department} (${evaluatedAt})` },

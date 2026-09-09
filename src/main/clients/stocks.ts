@@ -20,6 +20,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { isSafeExportPath, writeExportFile } from './exportPaths';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
+import type { ActionData, ExportFileResult } from '../../shared/actionData';
 
 /**
  * Stocks analytics + paper trading.
@@ -1882,11 +1883,7 @@ interface ExportPayload {
   strategyComparison?: unknown;
 }
 
-export interface ExportDashboardResult {
-  readonly path: string;
-  readonly bytes: number;
-  readonly generatedAt: string;
-}
+// 書き出しの結果の形は台帳 `shared/actionData.ts` の `ExportFileResult` (パス 116)。
 
 /** Optional dependency-injection seam for tests. */
 export interface ExportDeps {
@@ -1973,7 +1970,7 @@ function isSafeFilePathWithExt(filePath: string, home: string, ext: string): boo
 export async function exportDashboardImpl(
   ctx: ActionContext,
   deps: ExportDeps = {},
-): Promise<ExportDashboardResult> {
+): Promise<ExportFileResult> {
   const { path: customPath, advisorResult, strategyComparison } = ctx.payload as ExportPayload;
   const home = os.homedir();
   const filePath =
@@ -2008,7 +2005,7 @@ export async function exportDashboardImpl(
 // test seam, which our tests intentionally avoid (it would touch the
 // real user filesystem).
 // Stryker disable next-line BlockStatement
-async function exportDashboard(ctx: ActionContext): Promise<ExportDashboardResult> {
+async function exportDashboard(ctx: ActionContext): Promise<ActionData<'stocks/export-dashboard'>> {
   return exportDashboardImpl(ctx);
 }
 
@@ -2021,7 +2018,7 @@ async function exportDashboard(ctx: ActionContext): Promise<ExportDashboardResul
 export async function exportDashboardMdImpl(
   ctx: ActionContext,
   deps: ExportDeps = {},
-): Promise<ExportDashboardResult> {
+): Promise<ExportFileResult> {
   const { path: customPath, advisorResult, strategyComparison } = ctx.payload as ExportPayload;
   const home = os.homedir();
   const filePath =
@@ -2049,7 +2046,7 @@ export async function exportDashboardMdImpl(
 // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction
 
 // Stryker disable next-line BlockStatement
-async function exportDashboardMd(ctx: ActionContext): Promise<ExportDashboardResult> {
+async function exportDashboardMd(ctx: ActionContext): Promise<ActionData<'stocks/export-dashboard-md'>> {
   return exportDashboardMdImpl(ctx);
 }
 

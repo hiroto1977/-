@@ -10,6 +10,7 @@ import { limitedFetch, readCapped, redactForMessage } from './types';
 import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
 import { isSafeExportPath, writeExportFile } from './exportPaths';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
+import type { ActionData, ExportFileResult } from '../../shared/actionData';
 
 /**
  * Business operations dashboard — 17 番目のサービス。
@@ -1043,11 +1044,8 @@ ${unitRows}
 ${advisorMd}`;
 }
 
-export interface ExportBusinessResult {
-  readonly path: string;
-  readonly bytes: number;
-  readonly generatedAt: string;
-}
+// 書き出しの結果の形は台帳 `shared/actionData.ts` の `ExportFileResult` (パス 116) —— stocks /
+// teamradar / templates と同じ 3 欄を 4 度書いていた。
 
 interface ExportPayload {
   path?: unknown;
@@ -1069,7 +1067,7 @@ export interface ExportDeps {
 export async function exportBusinessDashboardImpl(
   ctx: ActionContext,
   deps: ExportDeps = {},
-): Promise<ExportBusinessResult> {
+): Promise<ExportFileResult> {
   const { path: customPath, advisorResult } = ctx.payload as ExportPayload;
   const home = os.homedir();
   const filePath =
@@ -1097,7 +1095,7 @@ export async function exportBusinessDashboardImpl(
 // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction,ObjectLiteral
 
 // Stryker disable next-line BlockStatement
-async function exportBusinessDashboard(ctx: ActionContext): Promise<ExportBusinessResult> {
+async function exportBusinessDashboard(ctx: ActionContext): Promise<ActionData<'business/export-dashboard'>> {
   return exportBusinessDashboardImpl(ctx);
 }
 
@@ -1106,7 +1104,7 @@ async function exportBusinessDashboard(ctx: ActionContext): Promise<ExportBusine
 export async function exportBusinessDashboardMdImpl(
   ctx: ActionContext,
   deps: ExportDeps = {},
-): Promise<ExportBusinessResult> {
+): Promise<ExportFileResult> {
   const { path: customPath, advisorResult } = ctx.payload as ExportPayload;
   const home = os.homedir();
   const filePath =
@@ -1134,7 +1132,7 @@ export async function exportBusinessDashboardMdImpl(
 // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction,ObjectLiteral
 
 // Stryker disable next-line BlockStatement
-async function exportBusinessDashboardMd(ctx: ActionContext): Promise<ExportBusinessResult> {
+async function exportBusinessDashboardMd(ctx: ActionContext): Promise<ActionData<'business/export-dashboard-md'>> {
   return exportBusinessDashboardMdImpl(ctx);
 }
 

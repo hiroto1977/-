@@ -5,6 +5,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { localIsoDate } from '../../shared/localDate';
 import { CANVA_FOLDER_FIELDS } from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -37,7 +38,7 @@ export function CanvaPage() {
     if (!window.serviceHub) return;
     setSubmitting(true);
     setResult(undefined);
-    const res = await window.serviceHub.invoke<{ id: string; name: string }>(
+    const res = await window.serviceHub.invoke<ActionData<'canva/create-folder'>>(
       'canva',
       'create-folder',
       {

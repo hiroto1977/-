@@ -24,17 +24,15 @@
  * **規準は既に下の層に在り、画面が捨てていた。**
  */
 import type { AiEgressRecipients } from '../../shared/aiEgressNotice';
+import type { ActionData } from '../../shared/actionData';
+import type { AiProviderStatus } from '../../shared/ai/credentials';
 
-/** `assistant/providers` アクションが返すプロバイダ設定状況。 */
-export interface ProviderStatus {
-  readonly id: string;
-  readonly label: string;
-  readonly configured: boolean;
-  readonly isDefault: boolean;
-  readonly browserDirect: boolean;
-  readonly needsApiKey: boolean;
-  readonly defaultModel: string;
-}
+/**
+ * `assistant/providers` アクションが返すプロバイダ設定状況 —— **`shared/ai/credentials.ts` の
+ * `AiProviderStatus` そのもの** (パス 116)。2026-09-09 までここに同じ 7 欄を手で写していた
+ * (main は `unknown[]` と宣言していたので、写しがずれても誰も気づかない)。
+ */
+export type ProviderStatus = AiProviderStatus;
 
 /** エージェント選択の特別値: 設定済みの全プロバイダへ同時に質問する合議モード。 */
 export const ALL_AGENTS = '__all__';
@@ -57,7 +55,7 @@ export async function readProviderStatuses(): Promise<ProviderStatusRead> {
   // bridge が無ければ送る道自体が無い (端末内の簡易応答が答える)。未設定と同じ扱い。
   if (!hub) return { providers: [], unknown: false };
   try {
-    const res = await hub.invoke<{ providers: ProviderStatus[] }>('assistant', 'providers', {});
+    const res = await hub.invoke<ActionData<'assistant/providers'>>('assistant', 'providers', {});
     if (res.ok && Array.isArray(res.data.providers)) {
       return { providers: res.data.providers, unknown: false };
     }

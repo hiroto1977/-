@@ -18,6 +18,7 @@ import {
 import { buildDbSecurityReport } from '../../shared/dbSecurityPosture';
 import { currentDbSecurityInputs } from '../data/dbPosture';
 import { isAutoLockActive, subscribeAutoLockActive } from '../security/autoLock';
+import type { ActionData } from '../../shared/actionData';
 
 const GRADE_COLOR: Record<string, string> = {
   A: '#22c55e',
@@ -54,17 +55,7 @@ const inputStyle: React.CSSProperties = {
   flex: 1,
 };
 
-interface BreachResult {
-  email: string;
-  breaches: { name: string; title: string; date: string; pwnCount: number; dataClasses: string[] }[];
-}
-
-interface ScanResult {
-  url: string;
-  positives: number;
-  total: number;
-  reportUrl: string;
-}
+// 戻り値の形は台帳 `shared/actionData.ts` から読む (パス 116) —— 2026-09-09 まで 2 つとも手で写していた。
 
 export function SecurityPage() {
   const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
@@ -107,7 +98,7 @@ export function SecurityPage() {
   const [showBreach, setShowBreach] = useState(false);
   const [email, setEmail] = useState('');
   const [breachBusy, setBreachBusy] = useState(false);
-  const [breachResult, setBreachResult] = useState<BreachResult | null>(null);
+  const [breachResult, setBreachResult] = useState<ActionData<'security/check-email-breach'> | null>(null);
   const [breachError, setBreachError] = useState<string>();
 
   const checkBreach = async () => {
@@ -115,7 +106,7 @@ export function SecurityPage() {
     setBreachBusy(true);
     setBreachError(undefined);
     setBreachResult(null);
-    const res = await window.serviceHub.invoke<BreachResult>('security', 'check-email-breach', {
+    const res = await window.serviceHub.invoke<ActionData<'security/check-email-breach'>>('security', 'check-email-breach', {
       email: email.trim(),
     });
     setBreachBusy(false);
@@ -127,7 +118,7 @@ export function SecurityPage() {
   const [showScan, setShowScan] = useState(false);
   const [urlInput, setUrlInput] = useState('');
   const [scanBusy, setScanBusy] = useState(false);
-  const [scanResult, setScanResult] = useState<ScanResult | null>(null);
+  const [scanResult, setScanResult] = useState<ActionData<'security/scan-url'> | null>(null);
 
   // パスワード強度チェッカー (ローカル評価・送信しない)。
   const [pwInput, setPwInput] = useState('');
@@ -145,7 +136,7 @@ export function SecurityPage() {
     setScanBusy(true);
     setScanError(undefined);
     setScanResult(null);
-    const res = await window.serviceHub.invoke<ScanResult>('security', 'scan-url', {
+    const res = await window.serviceHub.invoke<ActionData<'security/scan-url'>>('security', 'scan-url', {
       url: urlInput.trim(),
     });
     setScanBusy(false);

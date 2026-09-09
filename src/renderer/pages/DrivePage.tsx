@@ -5,6 +5,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { GoogleConnectCard } from '../components/GoogleConnectCard';
 import { useServiceData } from '../hooks/useServiceData';
 import { DRIVE_FOLDER_FIELDS } from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
 
 const TYPE_LABEL: Record<string, string> = {
   'application/vnd.google-apps.document': 'Doc',
@@ -42,7 +43,7 @@ export function DrivePage() {
     if (!window.serviceHub) return;
     setSubmitting(true);
     setResult(undefined);
-    const res = await window.serviceHub.invoke<{ id: string; name: string; url: string }>(
+    const res = await window.serviceHub.invoke<ActionData<'drive/create-folder'>>(
       'drive',
       'create-folder',
       { name: name.trim(), parentId: parentId.trim() || undefined },

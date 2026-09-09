@@ -13,6 +13,7 @@ import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgress
 import { exportWarning } from '../data/exportOutcome';
 import { ratioPctOrDash } from '../../shared/num';
 import type { StrategyComparisonResult } from '../data/stocksAnalysisWeb';
+import type { ActionData } from '../../shared/actionData';
 
 interface AdvisorRecommendation {
   symbol: string;
@@ -284,7 +285,7 @@ export function StocksPage() {
       const payload: Record<string, unknown> = {};
       if (advisorResult) payload['advisorResult'] = advisorResult;
       if (compareResult) payload['strategyComparison'] = compareResult;
-      const r = await window.serviceHub.invoke<{ path: string; bytes: number }>(
+      const r = await window.serviceHub.invoke<ActionData<'stocks/export-dashboard'>>(
         'stocks',
         'export-dashboard',
         payload,

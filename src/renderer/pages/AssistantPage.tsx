@@ -39,6 +39,7 @@ import {
   type ProviderStatus,
 } from '../data/assistantProviders';
 import { MAX_ASSISTANT_CONTENT_CHARS } from '../../shared/assistantLimits';
+import type { ActionData } from '../../shared/actionData';
 
 interface ChatMessage {
   readonly role: 'user' | 'assistant';
@@ -86,13 +87,7 @@ const HISTORY_KEY = 'assistant-history';
 const THEME_KEY = 'assistant-theme';
 const PROVIDER_KEY = 'assistant-provider';
 /** chatAll (全AI合議) の 1 プロバイダ分の回答。 */
-interface EnsembleAnswer {
-  readonly provider: string;
-  readonly model: string;
-  readonly text: string;
-  readonly ok: boolean;
-  readonly error?: string;
-}
+// `EnsembleAnswer` は台帳 `shared/actionData.ts` から読む (パス 116) —— main と同じ型。
 const HISTORY_MAX = 50;
 const TURN_WINDOW = 16; // AI へ渡す直近会話数
 
@@ -426,7 +421,7 @@ export function AssistantPage() {
 
       // 🤝 全AI合議: 設定済みの全プロバイダへ同時に質問し、回答を並べて表示する。
       if (provider === ALL_AGENTS) {
-        const resAll = await hub.invoke<{ answers: EnsembleAnswer[] }>('assistant', 'chatAll', {
+        const resAll = await hub.invoke<ActionData<'assistant/chatAll'>>('assistant', 'chatAll', {
           system,
           messages: turns,
         });
@@ -467,7 +462,7 @@ export function AssistantPage() {
         return;
       }
 
-      const res = await hub.invoke<{ text: string; model?: string; provider?: string }>(
+      const res = await hub.invoke<ActionData<'assistant/chat'>>(
         'assistant',
         'chat',
         {

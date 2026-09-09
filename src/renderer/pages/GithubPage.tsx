@@ -4,12 +4,8 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import type { ActionData } from '../../shared/actionData';
 
-interface CreateIssueResult {
-  number: number;
-  url: string;
-  title: string;
-}
 
 export function GithubPage() {
   const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
@@ -30,7 +26,7 @@ export function GithubPage() {
     if (!window.serviceHub) return;
     setSubmitting(true);
     setResult(undefined);
-    const res = await window.serviceHub.invoke<CreateIssueResult>('github', 'create-issue', {
+    const res = await window.serviceHub.invoke<ActionData<'github/create-issue'>>('github', 'create-issue', {
       owner: owner.trim(),
       repo: repo.trim(),
       title: title.trim(),

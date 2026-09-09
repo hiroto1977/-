@@ -7,6 +7,7 @@ import { useServiceData } from '../hooks/useServiceData';
 import { AiEgressNotice } from '../components/AiEgressNotice';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import { GMAIL_DRAFT_FIELDS } from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -36,7 +37,7 @@ export function GmailPage() {
     if (!window.serviceHub) return;
     setSubmitting(true);
     setResult(undefined);
-    const res = await window.serviceHub.invoke<{ id: string; messageId: string }>(
+    const res = await window.serviceHub.invoke<ActionData<'gmail/create-draft'>>(
       'gmail',
       'create-draft',
       { to: to.trim(), subject: subject.trim(), body },

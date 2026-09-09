@@ -10,6 +10,7 @@ import { MAX_ANALYSES, MAX_MOODS, MAX_MOOD_NOTE_CHARS } from '../../shared/emoti
 import { asRecord, isAnalysisEntry, isMoodEntry, readStoredList } from '../../shared/emotionsShape';
 import { localIsoDate } from '../../shared/localDate';
 import { calendarDateMessage, isCalendarDate } from '../../shared/isoDate';
+import type { ActionData } from '../../shared/actionData';
 
 export const EMOTION_KEYS = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust'] as const;
 export type EmotionKey = (typeof EMOTION_KEYS)[number];
@@ -143,7 +144,7 @@ interface LogMoodPayload {
 }
 
 /** 気分を記録する (同日があれば置換)。Electron 版 logMood と同じ規則。 */
-export function logMood(payload: unknown, now: number = Date.now()): { date: string; score: number } {
+export function logMood(payload: unknown, now: number = Date.now()): ActionData<'emotions/log-mood'> {
   const { date, score, note } = (payload ?? {}) as LogMoodPayload;
   const finalScore = Number(score);
   if (!Number.isFinite(finalScore) || finalScore < 1 || finalScore > 5) {
@@ -183,7 +184,7 @@ export function logMood(payload: unknown, now: number = Date.now()): { date: str
 }
 
 /** 履歴をクリアする。戻り値はクリア前の件数。 */
-export function clearHistory(kind: 'moods' | 'analyses' | 'all' | undefined): { moods: number; analyses: number } {
+export function clearHistory(kind: 'moods' | 'analyses' | 'all' | undefined): ActionData<'emotions/clear-history'> {
   const store = loadStore();
   const before = { moods: store.moods.length, analyses: store.analyses.length };
   if (kind === 'moods' || kind === 'all' || kind === undefined) store.moods = [];

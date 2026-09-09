@@ -41,6 +41,7 @@ import { ANTHROPIC_FAST_MODEL } from '../../shared/ai/providers';
 import { calendarDateMessage, isCalendarDate } from '../../shared/isoDate';
 import { localIsoDate } from '../../shared/localDate';
 import { asRecord, isAnalysisEntry, isMoodEntry, readStoredList } from '../../shared/emotionsShape';
+import type { ActionData } from '../../shared/actionData';
 
 
 const EMOTION_KEYS = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust'] as const;
@@ -164,7 +165,7 @@ function todayLocal(): string {
   return localIsoDate();
 }
 
-async function logMood(ctx: ActionContext): Promise<{ date: string; score: number }> {
+async function logMood(ctx: ActionContext): Promise<ActionData<'emotions/log-mood'>> {
   void ctx; // signature parity with other actions; no remote call needed
   const { date, score, note } = ctx.payload as unknown as LogMoodPayload;
   const finalScore = Number(score);
@@ -338,7 +339,7 @@ interface ClearHistoryPayload {
   kind?: 'moods' | 'analyses' | 'all';
 }
 
-async function clearHistory(ctx: ActionContext): Promise<{ moods: number; analyses: number }> {
+async function clearHistory(ctx: ActionContext): Promise<ActionData<'emotions/clear-history'>> {
   const { kind } = ctx.payload as unknown as ClearHistoryPayload;
   const store = await readStore();
   const before = { moods: store.moods.length, analyses: store.analyses.length };

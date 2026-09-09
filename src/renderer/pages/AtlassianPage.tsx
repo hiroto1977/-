@@ -4,6 +4,7 @@ import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { ATLASSIAN_ISSUE_FIELDS } from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -35,7 +36,7 @@ export function AtlassianPage() {
     if (!window.serviceHub) return;
     setSubmitting(true);
     setResult(undefined);
-    const res = await window.serviceHub.invoke<{ key: string; url: string }>(
+    const res = await window.serviceHub.invoke<ActionData<'atlassian/create-issue'>>(
       'atlassian',
       'create-issue',
       {

@@ -11,6 +11,7 @@ import { emotionThresholds } from '../../shared/parameters';
 import { counsel } from '../data/counseling';
 import { SELF_CARE_LIBRARY } from '../data/selfCareLibrary';
 import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
+import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -238,7 +239,7 @@ export function EmotionsPage() {
     if (!window.serviceHub) return;
     setMoodBusy(true);
     setMoodMsg(undefined);
-    const res = await window.serviceHub.invoke<{ date: string; score: number }>(
+    const res = await window.serviceHub.invoke<ActionData<'emotions/log-mood'>>(
       'emotions',
       'log-mood',
       { score: moodScore, note: moodNote.trim() },

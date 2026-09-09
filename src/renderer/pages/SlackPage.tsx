@@ -6,6 +6,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { AiEgressNotice } from '../components/AiEgressNotice';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
+import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -34,7 +35,7 @@ export function SlackPage() {
     if (!window.serviceHub) return;
     setSubmitting(true);
     setResult(undefined);
-    const res = await window.serviceHub.invoke<{ ts: string; channel: string }>(
+    const res = await window.serviceHub.invoke<ActionData<'slack/send-message'>>(
       'slack',
       'send-message',
       { channel: channel.trim(), text },

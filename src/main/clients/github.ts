@@ -6,6 +6,7 @@ import {
   checkWriteLabels,
   describeWriteFieldFailure,
 } from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
 
 interface GithubUser {
   login: string;
@@ -168,7 +169,7 @@ interface CreateIssueResponse {
   state: string;
 }
 
-async function createIssue(ctx: ActionContext): Promise<{ number: number; url: string; title: string }> {
+async function createIssue(ctx: ActionContext): Promise<ActionData<'github/create-issue'>> {
   // 欄の型と長さは共有の台帳で断る (パス 110)。`labels` は届いた JSON をそのまま
   // 転送していたので、件数と 1 件の長さにも天井を置く。
   const bad = checkWriteFields(ctx.payload, GITHUB_ISSUE_FIELDS);

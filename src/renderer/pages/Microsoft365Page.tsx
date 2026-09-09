@@ -4,6 +4,7 @@ import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { MS365_EVENT_FIELDS, MS365_MAIL_FIELDS } from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
@@ -83,7 +84,7 @@ export function Microsoft365Page() {
     if (!window.serviceHub) return;
     setSubmitting(true);
     setResult(undefined);
-    const res = await window.serviceHub.invoke<{ ok: true; to: string; subject: string }>(
+    const res = await window.serviceHub.invoke<ActionData<'microsoft-365/send-mail'>>(
       'microsoft-365',
       'send-mail',
       { to: to.trim(), subject: mailSubject.trim(), body: mailBody },
@@ -103,7 +104,7 @@ export function Microsoft365Page() {
     if (!window.serviceHub) return;
     setSubmitting(true);
     setResult(undefined);
-    const res = await window.serviceHub.invoke<{ id: string; subject: string; webLink: string }>(
+    const res = await window.serviceHub.invoke<ActionData<'microsoft-365/create-event'>>(
       'microsoft-365',
       'create-event',
       {

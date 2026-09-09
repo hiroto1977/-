@@ -4,6 +4,7 @@ import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
 import { isSafeExportPath, writeExportFile } from './exportPaths';
 import { localIsoDate } from '../../shared/localDate';
+import type { ActionData, ExportFileResult } from '../../shared/actionData';
 
 /**
  * Team radar chart — 18 番目のサービス。
@@ -517,11 +518,7 @@ export function isSafeSvgExportPath(filePath: string, home: string): boolean {
   return isSafeExportPath(filePath, home, '.svg');
 }
 
-export interface ExportSvgResult {
-  readonly path: string;
-  readonly bytes: number;
-  readonly generatedAt: string;
-}
+// 書き出しの結果の形は台帳 `shared/actionData.ts` の `ExportFileResult` (パス 116)。
 
 interface ExportSvgPayload {
   path?: unknown;
@@ -538,7 +535,7 @@ export interface ExportSvgDeps {
 export async function exportTeamRadarSvgImpl(
   ctx: ActionContext,
   deps: ExportSvgDeps = {},
-): Promise<ExportSvgResult> {
+): Promise<ExportFileResult> {
   const { path: customPath, title } = ctx.payload as ExportSvgPayload;
   const home = os.homedir();
   const filePath =
@@ -562,7 +559,7 @@ export async function exportTeamRadarSvgImpl(
   return { path: filePath, bytes: Buffer.byteLength(svg), generatedAt };
 }
 
-async function exportTeamRadarSvg(ctx: ActionContext): Promise<ExportSvgResult> {
+async function exportTeamRadarSvg(ctx: ActionContext): Promise<ActionData<'teamradar/export-svg'>> {
   return exportTeamRadarSvgImpl(ctx);
 }
 

@@ -40,6 +40,7 @@ import {
   resolveProvider,
 } from '../../shared/ai/credentials';
 import { runAiChat } from '../../shared/ai/chat';
+import type { ActionData, EnsembleAnswer } from '../../shared/actionData';
 
 
 /** 既定モデル: Anthropic プロバイダの既定 (後方互換の再エクスポート)。 */
@@ -132,7 +133,7 @@ export function extractAssistantText(res: AnthropicResponse): string {
 
 async function chat(
   ctx: ActionContext,
-): Promise<{ text: string; model: string; provider: string }> {
+): Promise<ActionData<'assistant/chat'>> {
   const { messages, system, model, provider } = ctx.payload as unknown as ChatPayload;
   // 最新の発話は切らずに断る (パス 112)。履歴の窓 (`sanitizeMessages`) とは別の判断。
   if (latestTurnTooLong(messages)) throw new Error(inputTooLongMessage('入力'));
@@ -176,21 +177,14 @@ async function chat(
 }
 
 /** 各 AI プロバイダの設定状況 (UI のエージェント選択・接続チップ用)。 */
-async function providers(ctx: ActionContext): Promise<{ providers: unknown[] }> {
+async function providers(ctx: ActionContext): Promise<ActionData<'assistant/providers'>> {
   const creds = parseAiCredentials(ctx.token);
   return Promise.resolve({ providers: providerStatuses(creds) });
 }
 
 // --- chatAll action (全AI合議) ---------------------------------------------
 
-/** 合議モードの 1 プロバイダ分の回答 (失敗はエラー文字列つきで他を巻き込まない)。 */
-export interface EnsembleAnswer {
-  provider: string;
-  model: string;
-  text: string;
-  ok: boolean;
-  error?: string;
-}
+// `EnsembleAnswer` は台帳 `shared/actionData.ts` に在る (パス 116) —— 画面が同じ型を読む。
 
 /**
  * 設定済みの **全** AI プロバイダへ同じ質問を並列に投げ、回答を並べて返す。
@@ -198,7 +192,7 @@ export interface EnsembleAnswer {
  *   - 1 社の失敗は ok:false + error として返し、他社の回答を巻き込まない。
  *   - 1 社も設定が無ければ chat と同趣旨のエラーを投げる (UI は決定論フォールバックへ)。
  */
-async function chatAll(ctx: ActionContext): Promise<{ answers: EnsembleAnswer[] }> {
+async function chatAll(ctx: ActionContext): Promise<ActionData<'assistant/chatAll'>> {
   const { messages, system, model } = ctx.payload as unknown as ChatPayload;
   // chat と同じ (パス 112)。
   if (latestTurnTooLong(messages)) throw new Error(inputTooLongMessage('入力'));

@@ -9,6 +9,7 @@ import {
   type ActionMap,
   type FetchContext,
 } from './types';
+import type { ActionData } from '../../shared/actionData';
 
 export interface SkillEntry {
   name: string;
@@ -308,7 +309,7 @@ export function isSafeSkillName(name: unknown): name is string {
   return /^[A-Za-z0-9_-][A-Za-z0-9._-]*$/.test(name);
 }
 
-async function runSkill(ctx: ActionContext): Promise<{ text: string; stopReason: string }> {
+async function runSkill(ctx: ActionContext): Promise<ActionData<'skills/run-skill'>> {
   const { name, prompt } = ctx.payload as unknown as Partial<RunSkillPayload>;
   if (typeof name !== 'string' || name.length === 0 || typeof prompt !== 'string' || prompt.length === 0) {
     throw new Error('name and prompt are required');

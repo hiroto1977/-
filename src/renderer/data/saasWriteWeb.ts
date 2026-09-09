@@ -33,6 +33,7 @@ import {
 } from '../../shared/atlassianSite';
 import { redactForMessage } from '../../shared/redact';
 import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../../shared/httpLimits';
+import type { ActionData } from '../../shared/actionData';
 
 /**
  * 素の `fetch` と同じ形。
@@ -84,11 +85,6 @@ export interface CreateGithubIssueInput {
   labels?: unknown;
 }
 
-export interface CreateGithubIssueResult {
-  number: number;
-  url: string;
-  title: string;
-}
 
 interface GithubIssueApiResponse {
   number: number;
@@ -117,7 +113,7 @@ export async function createGithubIssue(
   input: CreateGithubIssueInput,
   token: string,
   transport: Transport,
-): Promise<CreateGithubIssueResult> {
+): Promise<ActionData<'github/create-issue'>> {
   // 欄の型と長さは main と同じ台帳で断る (パス 110)。それまで長さの天井は無かった。
   const bad = checkWriteFields(input, GITHUB_ISSUE_FIELDS);
   if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
@@ -169,16 +165,12 @@ export interface CreateNotionPageInput {
   body?: unknown;
 }
 
-export interface CreateNotionPageResult {
-  id: string;
-  url: string;
-}
 
 export async function createNotionPage(
   input: CreateNotionPageInput,
   token: string,
   transport: Transport,
-): Promise<CreateNotionPageResult> {
+): Promise<ActionData<'notion/create-page'>> {
   // 欄の型と長さは main と同じ台帳で断る (パス 111)。それまで文字列でない `body` は
   // undefined に**落として**本文の無いページを作っていた。
   const bad = checkWriteFields(input, NOTION_PAGE_FIELDS);
@@ -215,16 +207,12 @@ export interface SendSlackMessageInput {
   text?: unknown;
 }
 
-export interface SendSlackMessageResult {
-  ts: string;
-  channel: string;
-}
 
 export async function sendSlackMessage(
   input: SendSlackMessageInput,
   token: string,
   transport: Transport,
-): Promise<SendSlackMessageResult> {
+): Promise<ActionData<'slack/send-message'>> {
   // 欄の型と長さは main と同じ台帳で断る (パス 110)。
   const bad = checkWriteFields(input, SLACK_MESSAGE_FIELDS);
   if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
@@ -304,16 +292,12 @@ export interface CreateAtlassianIssueInput {
   issueType?: unknown;
 }
 
-export interface CreateAtlassianIssueResult {
-  key: string;
-  url: string;
-}
 
 export async function createAtlassianIssue(
   input: CreateAtlassianIssueInput,
   tokenJson: string,
   transport: Transport,
-): Promise<CreateAtlassianIssueResult> {
+): Promise<ActionData<'atlassian/create-issue'>> {
   const creds = parseAtlassianToken(tokenJson);
   // 欄の型と長さは main と同じ台帳で断る (パス 111)。それまで文字列でない `description` は
   // **落として**送っていた。
@@ -394,7 +378,7 @@ export async function createCalendarEvent(
   input: CreateCalendarEventInput,
   token: string,
   transport: Transport,
-): Promise<{ id: string; htmlLink: string }> {
+): Promise<ActionData<'calendar/create-event'>> {
   // 欄の型と長さは main と同じ台帳で断る (パス 110)。
   const bad = checkWriteFields(input, CALENDAR_EVENT_FIELDS);
   if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
@@ -448,7 +432,7 @@ export async function createGmailDraft(
   input: CreateGmailDraftInput,
   token: string,
   transport: Transport,
-): Promise<{ id: string; messageId: string }> {
+): Promise<ActionData<'gmail/create-draft'>> {
   // 欄の型と長さは main と同じ台帳で断る (パス 111)。`to` の CR/LF はここで断られる
   // (`buildRfc2822` の検査は二重の備え)。文字列でない `body` は空文字に**すり替えて**いた。
   const bad = checkWriteFields(input, GMAIL_DRAFT_FIELDS);
@@ -477,7 +461,7 @@ export async function createDriveFolder(
   input: CreateDriveFolderInput,
   token: string,
   transport: Transport,
-): Promise<{ id: string; name: string; url: string }> {
+): Promise<ActionData<'drive/create-folder'>> {
   // 欄の型と長さは main と同じ台帳で断る (パス 111)。文字列でない `parentId` は
   // **落として** My Drive 直下に作っていた。
   const bad = checkWriteFields(input, DRIVE_FOLDER_FIELDS);
@@ -511,7 +495,7 @@ export async function createWordPressPostDraft(
   input: CreateWordPressPostInput,
   token: string,
   transport: Transport,
-): Promise<{ id: number; url: string; title: string }> {
+): Promise<ActionData<'wordpress/create-post-draft'>> {
   // 欄の型と長さは main と同じ台帳で断る (パス 111)。それまで知らない `status` と
   // 文字列でない `content` は draft / 空文字に**すり替えて**投稿していた —— 一覧は
   // 台帳 (`WORDPRESS_POST_STATUSES`) が持ち、無い物は断る。
@@ -544,7 +528,7 @@ export async function createCanvaFolder(
   input: CreateCanvaFolderInput,
   token: string,
   transport: Transport,
-): Promise<{ id: string; name: string }> {
+): Promise<ActionData<'canva/create-folder'>> {
   // 欄の型と長さは main と同じ台帳で断る (パス 111)。文字列でない `parentFolderId` は
   // root に**すり替えて**いた。
   const bad = checkWriteFields(input, CANVA_FOLDER_FIELDS);
@@ -591,7 +575,7 @@ export async function createCloudflareDnsRecord(
   input: CreateCfDnsRecordInput,
   token: string,
   transport: Transport,
-): Promise<{ id: string; name: string; type: string }> {
+): Promise<ActionData<'cloudflare/create-dns-record'>> {
   // 欄の型と長さは main と同じ台帳で断る (パス 111)。それまで `type` は一覧で見ず、
   // 数でない `ttl` は 1 に、真偽値でない `proxied` は false に**すり替えて**いた。
   const bad = checkWriteFields(input, CLOUDFLARE_DNS_FIELDS);
@@ -624,7 +608,7 @@ export async function purgeCloudflareCache(
   input: PurgeCfCacheInput,
   token: string,
   transport: Transport,
-): Promise<{ id: string; purged: 'all' | number }> {
+): Promise<ActionData<'cloudflare/purge-cache'>> {
   // 欄の形は main と同じ台帳で断る (パス 111)。それまで文字列でない URL は**間引いて**
   // 残りをパージし、真偽値でない `purgeEverything` は false に**すり替えて**いた。
   const bad = checkWriteFields(input, CLOUDFLARE_PURGE_FIELDS);
@@ -699,7 +683,7 @@ export async function scanUrlVirusTotal(
   input: ScanUrlInput,
   vtKey: string,
   transport: Transport,
-): Promise<{ url: string; positives: number; total: number; reportUrl: string }> {
+): Promise<ActionData<'security/scan-url'>> {
   // main 側 (`clients/security.ts`) と同じ検証を同じ実装で通す。
   // 以前はどちらも任意の文字列をそのまま投入していた。
   const checked = validateScanUrl(input.url);
@@ -737,19 +721,12 @@ export interface CheckEmailBreachInput {
   email?: unknown;
 }
 
-export interface BreachRow {
-  name: string;
-  title: string;
-  date: string;
-  pwnCount: number;
-  dataClasses: string[];
-}
 
 export async function checkEmailBreach(
   input: CheckEmailBreachInput,
   hibpKey: string,
   transport: Transport,
-): Promise<{ email: string; breaches: BreachRow[] }> {
+): Promise<ActionData<'security/check-email-breach'>> {
   const email = typeof input.email === 'string' ? input.email.trim() : '';
   if (!email) throw new Error('email は必須です');
   const res = await transport(

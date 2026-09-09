@@ -35,6 +35,7 @@ import {
   type ActionMap,
   type FetchContext,
 } from './types';
+import type { ActionData } from '../../shared/actionData';
 
 interface NortonStatus {
   installed: boolean;
@@ -186,7 +187,7 @@ interface HibpBreach {
 
 async function checkEmailBreach(
   ctx: ActionContext,
-): Promise<{ email: string; breaches: { name: string; title: string; date: string; pwnCount: number; dataClasses: string[] }[] }> {
+): Promise<ActionData<'security/check-email-breach'>> {
   // **前後の空白を落とす。** ブラウザ版 (`saasWriteWeb.checkEmailBreach`) は
   // 元から `.trim()` していて、こちらだけ生のまま送っていた (2026-08-22)。
   // 貼り付けで空白が付いた住所をそのまま問い合わせると HIBP は 404 を返し、
@@ -293,7 +294,7 @@ const SCAN_URL_MESSAGES: Record<ScanUrlFailure, string> = {
 
 async function scanUrl(
   ctx: ActionContext,
-): Promise<{ url: string; positives: number; total: number; reportUrl: string }> {
+): Promise<ActionData<'security/scan-url'>> {
   const { url: rawUrl } = ctx.payload as unknown as ScanUrlPayload;
   // payload は renderer から来る任意の値。ここは**第三者へ送る**入口なので、
   // 送ってよい形かを先に確かめる (`src/shared/scanTarget.ts`)。

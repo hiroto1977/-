@@ -6,6 +6,7 @@ import { AiEgressNotice } from '../components/AiEgressNotice';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import { useServiceData } from '../hooks/useServiceData';
 import { MAX_ASSISTANT_CONTENT_CHARS } from '../../shared/assistantLimits';
+import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -34,7 +35,7 @@ export function SkillsPage() {
     if (!window.serviceHub) return;
     setSubmitting(true);
     setResult(undefined);
-    const res = await window.serviceHub.invoke<{ text: string; stopReason: string }>(
+    const res = await window.serviceHub.invoke<ActionData<'skills/run-skill'>>(
       'skills',
       'run-skill',
       { name: selected, prompt },

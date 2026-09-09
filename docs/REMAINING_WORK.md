@@ -18098,6 +18098,75 @@ i1price: 品目1 の単価「abc」を金額として読み取れません。金
 明記しているので、**4 つの renderer を触る価値は無いと判断した**。
 揃えるなら `advisorTypes.ts` に文を 1 つ置いて 4 面が読む形が筋である。
 
+## パス 116 (2026-09-09) — **action の戻り値の形が、main・ブラウザ版・画面で別々に手書きされていた**
+
+`serviceHub.invoke<T>()` は `T` を検査しない。画面が戻り値の形を手で写せば、写しがずれても
+`tsc` は黙る —— この形はパス 62 (`∞` を刷る) / 80 (BusinessPage) / 105 (`notForRealMoney: true` が
+`boolean` に広がる) / 113 (Ollama の答えが 1 度も出ない) / 114 (OllamaPage) で **5 度**直した。
+5 度目に、1 か所ずつ直すのをやめて**母集団を数えた**:
+
+| 写し | 件数 (直す前) |
+| --- | --- |
+| 画面の `invoke<{ … }>` (戻り値の形をその場で書く) | **22 か所** |
+| 画面の中の `interface …Result` / `…Response` (手写し) | 6 つ (Github / Security ×2 / Stocks / Business / Emotions / ServiceActionPanel) |
+| main の `Export…Result` (同じ 3 欄) | **4 度** (stocks / business / teamradar / templates) |
+| `EnsembleAnswer` | main と `AssistantPage` に 1 つずつ |
+| `ProviderStatus` | `assistantProviders.ts` が `shared/ai/credentials.ts` の `AiProviderStatus` を 7 欄写し、main は `unknown[]` と宣言 |
+| ブラウザ版の双子 (`saasWriteWeb.ts`) の `…Result` | 4 つ + 戻り値の形をその場で書く 9 つ |
+
+規準は手の届く所に在った (19 か所目) —— `shared/advisorTypes.ts` は 2026-08 に「5 重の写しを
+1 つにした」と書いて `ServiceAdvisorResponse` を置き、`OllamaChatResult` (パス 113) も同じ形。
+**型を 1 か所に置くことは分かっていて、action ごとにやっていた。**
+
+### 直し
+
+- `shared/actionData.ts` (新設): **`'service/action'` → 戻り値の形** の台帳 `ActionDataMap` (27 鍵) と
+  `ActionData<'slack/send-message'>`。`ExportFileResult` / `EnsembleAnswer` / `BreachRow` もここ。
+- main の handler 27 本が `Promise<ActionData<'…'>>` を宣言する (書き出しの `…Impl` は `ExportFileResult`)。
+  `assistant/providers` は `unknown[]` をやめて `AiProviderStatus[]`。
+- ブラウザ版の双子 (`saasWriteWeb.ts` の 13 関数・`emotionsWeb.ts` の 2 関数) も同じ型を宣言する。
+- 画面 22 か所 + 手写しの interface 3 つ (Github / Security ×2) が `invoke<ActionData<'…'>>` を読む。
+  `AssistantPage` の `EnsembleAnswer`、`assistantProviders.ts` の `ProviderStatus` (= `AiProviderStatus`) は
+  共有の物を読む。
+- 走査 (`renderer/__tests__/invokeDataTypes.test.ts`): renderer に `invoke<{` が無い / `ActionData<'a/b'>` の
+  鍵が引数 `'a', 'b'` と一致する (型を隣の action に付けない) / 名前つきの型は理由つきの台帳
+  (`OllamaChatResult`・`ServiceAdvisorResponse`・ブラウザ版の双子の型 2 つ・**まだ手写しの 4 つ**) /
+  台帳の鍵はすべて main の `ACTIONS` に登録され、handler と双子が台帳の型を宣言する (無い鍵は理由つき)。
+  母集団 (呼び出し・登録された action) は走査で導く。
+
+### 対照 (8 本・10 件)
+
+| 対照 | 落ちた検査 |
+| --- | --- |
+| A: 画面が `invoke<{ ts; channel }>` と手で写す (元の形へ戻す) | 2 件 |
+| B: 画面が隣の鍵 (`github/create-issue`) を付ける | 1 件 |
+| C: main の handler が台帳の型を宣言しない | 1 件 |
+| D: ブラウザ版の双子が宣言しない | 1 件 |
+| E: 台帳に登録の無い鍵を足す | 2 件 |
+| F: 名前つきの型の台帳から 1 行落とす | 1 件 |
+| G: 「双子が無い」の台帳に双子の在る鍵を書く | 1 件 |
+| H (型): 画面が handler の返さない欄 (`channelId`) を読む | `tsc` が落ちる (`Property 'channelId' does not exist`) —— 写しがずれても黙る、が終わった |
+
+### 残り
+
+- 台帳に載せていない action: 株式 (`advise` / `register-ticker` / `unregister-ticker` / `backtest` /
+  `compare-strategies`)・`business/advise`・`emotions/analyze-text`・`record-entry` ×4・`talent` ×2・
+  `teamradar/save-state`・`shopify/sync-*`・`ollama/chat`。画面の手写しはあと 4 つ
+  (`AdvisorResponse` / `BusinessAdvisorResponse` / `Analysis` / `RecordEntryResponse`) —— 走査の台帳に
+  理由つきで載せ、消えたら鳴る。構造化応答の型 (`AdvisorRecommendation` など) を main と
+  `stocksAnalysisWeb.ts` から `shared/` へ移すのが次。
+- `web-shim.ts` の inline の `ok({ … })` (書き出しは `downloaded` / 保管庫の sinks を足した上位集合) は
+  型注釈を持たない —— 台帳では「双子が無い」の理由つき。
+- `serviceHub.invoke` そのものを鍵で総称化する (`invoke('slack', 'send-message', …)` が型を推論する) のは、
+  台帳が全 action を覆ってから。
+
+### 整合性チェーン
+
+`assistant.ts` は保護対象なので block #165 を採掘した。台帳 `shared/actionData.ts` は `import type` でしか
+読まれない型だけのファイルなので、`advisorTypes.ts` と同じ基準 (実行時に残らない) で閉包検査の除外台帳
+(`DEP_EXCLUSIONS`) に理由つきで載せた —— 最初の `npm test` は閉包検査と tip の一致で 3 件落ち、
+除外と採掘の後に通った。
+
 ## パス 115 (2026-09-09) — **同じ `YYYY-MM-DD` の判定が 7 通りに割れ、暦を見るのは 1 つだけだった**
 
 パス 114 まで「入力の天井」を数えてきた。今回は**入力の形**のうち、いちばん多くの画面が持つ

@@ -6,6 +6,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
 import { exportWarning } from '../data/exportOutcome';
+import type { ActionData } from '../../shared/actionData';
 
 interface TemplateParams {
   title: string;
@@ -206,7 +207,7 @@ export function TemplatesPage() {
         setMsg('カラーは #RRGGBB 形式で指定してください');
         return;
       }
-      const r = await window.serviceHub.invoke<{ path: string; bytes: number }>(
+      const r = await window.serviceHub.invoke<ActionData<'templates/export-template'>>(
         'templates',
         'export-template',
         { templateId: selected.id, params },

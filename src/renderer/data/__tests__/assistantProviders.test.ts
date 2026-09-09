@@ -27,9 +27,10 @@ import {
   type ProviderStatus,
 } from '../assistantProviders';
 import { aiEgressNoticeLines } from '../../../shared/aiEgressNotice';
+import type { AiProviderId } from '../../../shared/ai/providers';
 
 const mk = (
-  id: string,
+  id: AiProviderId,
   label: string,
   configured: boolean,
   isDefault = false,

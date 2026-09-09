@@ -4,6 +4,7 @@ import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { NOTION_PAGE_FIELDS } from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -33,7 +34,7 @@ export function NotionPage() {
     if (!window.serviceHub) return;
     setSubmitting(true);
     setResult(undefined);
-    const res = await window.serviceHub.invoke<{ id: string; url: string }>(
+    const res = await window.serviceHub.invoke<ActionData<'notion/create-page'>>(
       'notion',
       'create-page',
       { parentPageId: parentPageId.trim(), title: title.trim(), body },

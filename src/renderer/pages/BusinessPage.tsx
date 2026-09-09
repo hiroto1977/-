@@ -10,6 +10,7 @@ import { sumShigyoMonthlyFees } from '../../shared/shigyoTypes';
 import { summarizeFoodDelivery } from '../data/foodDelivery';
 import { exportWarning } from '../data/exportOutcome';
 import { MAX_ADVISOR_QUESTION_CHARS } from '../../shared/advisorQuestionLimits';
+import type { ActionData } from '../../shared/actionData';
 
 interface BusinessAdvisorRecommendation {
   categoryId: string;
@@ -711,11 +712,8 @@ export function BusinessPage() {
       const action = format === 'html' ? 'export-dashboard' : 'export-dashboard-md';
       const payload: { advisorResult?: BusinessAdvisorResponse } = {};
       if (advisorResult) payload.advisorResult = advisorResult;
-      const r = await window.serviceHub.invoke<{
-        path: string;
-        bytes: number;
-        generatedAt: string;
-      }>('business', action, payload);
+      // html / md は同じ形 (台帳の ExportFileResult)。型は台帳から読む (パス 116)。
+      const r = await window.serviceHub.invoke<ActionData<'business/export-dashboard'>>('business', action, payload);
       if (r.ok) {
         setLastExport({ path: r.data.path, bytes: r.data.bytes, warning: exportWarning(r.data) });
       } else {

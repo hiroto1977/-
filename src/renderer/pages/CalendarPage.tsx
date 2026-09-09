@@ -5,6 +5,7 @@ import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { GoogleConnectCard } from '../components/GoogleConnectCard';
 import { useServiceData } from '../hooks/useServiceData';
+import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -54,7 +55,7 @@ export function CalendarPage() {
     if (!window.serviceHub) return;
     setSubmitting(true);
     setResult(undefined);
-    const res = await window.serviceHub.invoke<{ id: string; htmlLink: string }>(
+    const res = await window.serviceHub.invoke<ActionData<'calendar/create-event'>>(
       'calendar',
       'create-event',
       {

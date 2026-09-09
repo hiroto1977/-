@@ -43,6 +43,7 @@ import {
 } from '../data/assistantProviders';
 import { speak, cancelSpeech } from '../voice/ttsAdapter';
 import { MAX_ASSISTANT_CONTENT_CHARS } from '../../shared/assistantLimits';
+import type { ActionData } from '../../shared/actionData';
 
 const REG: VillageRegistry = {
   org: regOrg as VillageRegistry['org'],
@@ -251,7 +252,7 @@ export function VillagePage() {
     if (aiOn && hub && reply.kind !== 'action') {
       void (async () => {
         try {
-          const res = await hub.invoke<{ text: string; provider?: string }>('assistant', 'chat', {
+          const res = await hub.invoke<ActionData<'assistant/chat'>>('assistant', 'chat', {
             system: buildVillageSystemPrompt(),
             messages: [{ role: 'user', content: text }],
           });

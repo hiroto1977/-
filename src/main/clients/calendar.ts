@@ -4,6 +4,7 @@ import {
   checkWriteFields,
   describeWriteFieldFailure,
 } from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
 
 interface CalListItem {
   id: string;
@@ -95,7 +96,7 @@ export function defaultTimeZone(): string {
   return 'UTC';
 }
 
-async function createEvent(ctx: ActionContext): Promise<{ id: string; htmlLink: string }> {
+async function createEvent(ctx: ActionContext): Promise<ActionData<'calendar/create-event'>> {
   const { summary, start, end, description, location, timeZone } =
     ctx.payload as unknown as CreateEventPayload;
   // 欄の型と長さは共有の台帳で断る (パス 110)。

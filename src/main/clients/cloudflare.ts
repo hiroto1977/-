@@ -25,6 +25,7 @@ import {
   checkWriteFields,
   describeWriteFieldFailure,
 } from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
 
 
 const API_BASE = 'https://api.cloudflare.com/client/v4';
@@ -151,7 +152,7 @@ interface CfDnsRecord {
 
 async function createDnsRecord(
   ctx: ActionContext,
-): Promise<{ id: string; name: string; type: string }> {
+): Promise<ActionData<'cloudflare/create-dns-record'>> {
   // 欄の型と長さは共有の台帳で断る (パス 111)。それまでは 4 欄の真偽値だけで、
   // `type` は一覧で見ず、`ttl` / `proxied` は型も見ずに転送していた。
   const bad = checkWriteFields(ctx.payload, CLOUDFLARE_DNS_FIELDS);
@@ -189,7 +190,7 @@ interface CfPurgeResponse {
   id: string;
 }
 
-async function purgeCache(ctx: ActionContext): Promise<{ id: string; purged: 'all' | number }> {
+async function purgeCache(ctx: ActionContext): Promise<ActionData<'cloudflare/purge-cache'>> {
   // 欄の形は共有の台帳で断る (パス 111): `files` は文字列の配列 (件数と 1 件の長さに
   // 天井)、`purgeEverything` は真偽値。どちらが要るかの組み合わせは下で見る。
   const bad = checkWriteFields(ctx.payload, CLOUDFLARE_PURGE_FIELDS);

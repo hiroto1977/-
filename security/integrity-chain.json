@@ -1389,6 +1389,14 @@
       "leafCount": 66,
       "note": "update chat.ts,ollama.ts",
       "hash": "4672ca44bb47bf572cbbc5123c70e3c01d3a2dd4740680ec2cf2c9a1427b8014"
+    },
+    {
+      "index": 165,
+      "prevHash": "4672ca44bb47bf572cbbc5123c70e3c01d3a2dd4740680ec2cf2c9a1427b8014",
+      "merkleRoot": "9d1cf881f3a4f986fb02bfb8907fd89f7f99dafa5164e8bd06ef814547585954",
+      "leafCount": 66,
+      "note": "update integrity-chain.cjs,assistant.ts",
+      "hash": "1702b111a531873e52100098c7267afd60a9022c0d644541884416d326079cdf"
     }
   ],
   "tipManifest": {
@@ -1402,7 +1410,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "c17438d4b9933c620747ad2b2aee492a5329299325f44024fb6d9ab4cd3db7c5",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "6f52f716a9a8f9dbd7c6c6399ff822b77c0ec925022f7d74c4f9a9c5b6dfcd02",
+    "scripts/integrity-chain.cjs": "97a04e47a0b19b2291639bdc402e4ba4bb79ed1c85632f332cac35b0e84599f3",
     "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
     "scripts/lint-sample-data.cjs": "f5272803091a7aea49e3db4ddefa1243e88e0d1fed6e17b80f3a391cd2fa167b",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
@@ -1415,7 +1423,7 @@
     "scripts/smoke-app.cjs": "3308303649279f4ca49640e00f61f2451fea881e506005c51a97c3cbca2bd827",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
     "src/main/atomicWrite.ts": "7c4677b4cc87cdd7c4f807133254aa415be10e2f07dec599bcf988e869e43953",
-    "src/main/clients/assistant.ts": "9db275e2af0bb72456f0393c661d99db239bf7f3aa860ac8b9999517997a534a",
+    "src/main/clients/assistant.ts": "e004df9dcd353fb647d371f71354120fbe50aae4b630b2cc2f86843055b10a7f",
     "src/main/clients/exportPaths.ts": "bcf8712b41e9ee1682472ca1a67a067d0ed7d1d6a96b8f4e3c9ec6fe69d22419",
     "src/main/clients/types.ts": "17566fb0225201500a996d5c47926cc8fc0426d2f1b54f603dc973d021656134",
     "src/main/main.ts": "052ed1c345950a701cca6ff3e13ee33d9f390b6daefb02f1e2991aacce5c3f54",

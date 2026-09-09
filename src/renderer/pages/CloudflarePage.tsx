@@ -4,6 +4,7 @@ import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { CLOUDFLARE_DNS_FIELDS } from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -43,7 +44,7 @@ export function CloudflarePage() {
     if (!window.serviceHub) return;
     setDnsBusy(true);
     setDnsResult(undefined);
-    const res = await window.serviceHub.invoke<{ id: string; name: string; type: string }>(
+    const res = await window.serviceHub.invoke<ActionData<'cloudflare/create-dns-record'>>(
       'cloudflare',
       'create-dns-record',
       {
@@ -80,7 +81,7 @@ export function CloudflarePage() {
       .split(/\r?\n/)
       .map((s) => s.trim())
       .filter((s) => s.length > 0);
-    const res = await window.serviceHub.invoke<{ id: string; purged: 'all' | number }>(
+    const res = await window.serviceHub.invoke<ActionData<'cloudflare/purge-cache'>>(
       'cloudflare',
       'purge-cache',
       purgeMode === 'all'

@@ -62,6 +62,17 @@ npm run scaffold -- linear "Linear" LN bearer
    npm run dev    # サイドバーに新タブが出現
    ```
 
+### 書き込み action (`serviceHub.invoke`) を足すとき
+
+1. **入力の欄**は `src/shared/writeFieldLimits.ts` の台帳に載せ、handler は `checkWriteFields` で断る (パス 110 / 111)。
+   画面の `maxLength` は台帳の値を読む (数を写さない)。
+2. **戻り値の形**は `src/shared/actionData.ts` の `ActionDataMap` に `'service/action'` の鍵で載せる (パス 116)。
+   main の handler は `Promise<ActionData<'service/action'>>` を宣言し、ブラウザ版の双子も同じ型を返し、
+   画面は `invoke<ActionData<'service/action'>>('service', 'action', …)` と読む ——
+   `invoke<{ … }>` と形をその場で書くと `renderer/__tests__/invokeDataTypes.test.ts` が落ちる
+   (写しがずれても `tsc` は黙るので、写しを禁じている)。
+3. `docs/ARCHITECTURE.md` §3.2 の action 行 (payload の欄と検証) を足す —— `verify:arch` が登録済み action と突き合わせる。
+
 ## なぜこの形か
 
 - **single source of truth**: ServiceId は `src/shared/serviceId.ts` の `SERVICE_IDS` 配列だけが真実。preload / main / renderer はここから import。

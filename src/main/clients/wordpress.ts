@@ -1,5 +1,6 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 import { WORDPRESS_POST_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
 
 
 // Subset of fields returned by https://public-api.wordpress.com/rest/v1.1/me/sites
@@ -85,7 +86,7 @@ interface WpCreatePostResponse {
 
 async function createPostDraft(
   ctx: ActionContext,
-): Promise<{ id: number; url: string; title: string }> {
+): Promise<ActionData<'wordpress/create-post-draft'>> {
   // 欄の型と長さは共有の台帳で断る (パス 111)。それまでは `!siteId || !title` だけで、
   // `status` は一覧で見ずにそのまま転送していた。
   const bad = checkWriteFields(ctx.payload, WORDPRESS_POST_FIELDS);

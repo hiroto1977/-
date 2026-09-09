@@ -4,6 +4,7 @@ import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { WORDPRESS_POST_FIELDS } from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -33,7 +34,7 @@ export function WordPressPage() {
     if (!window.serviceHub) return;
     setSubmitting(true);
     setResult(undefined);
-    const res = await window.serviceHub.invoke<{ id: number; url: string; title: string }>(
+    const res = await window.serviceHub.invoke<ActionData<'wordpress/create-post-draft'>>(
       'wordpress',
       'create-post-draft',
       { siteId: siteId.trim(), title: title.trim(), content },
