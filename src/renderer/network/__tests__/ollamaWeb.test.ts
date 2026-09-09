@@ -69,7 +69,7 @@ describe('probeOllama — 接続成功', () => {
   it('バージョンとモデルを読み、running:true のスナップショットを返す', async () => {
     const r = await probeOllama(
       11434,
-      healthyFetch('0.5.4', [
+      healthyFetch('0.33.3', [
         {
           name: 'llama3.2:latest',
           size: 1024 * 1024 * 1024,
@@ -80,11 +80,11 @@ describe('probeOllama — 接続成功', () => {
     );
     expect(r.status).toBe('ok');
     expect(r.snapshot.running).toBe(true);
-    expect(r.snapshot.version).toBe('0.5.4');
+    expect(r.snapshot.version).toBe('0.33.3');
     expect(r.snapshot.versionSafe).toBe(true);
     expect(r.snapshot.models).toHaveLength(1);
     expect(r.snapshot.models[0]?.name).toBe('llama3.2:latest');
-    expect(r.message).toContain('0.5.4');
+    expect(r.message).toContain('0.33.3');
     expect(r.message).toContain('1 件');
   });
 
@@ -98,7 +98,7 @@ describe('probeOllama — 接続成功', () => {
   it('モデル一覧だけ失敗しても接続成功として扱う (バージョンが読めている)', async () => {
     const f = vi.fn(async (url: string | URL | Request) => {
       const u = String(url);
-      if (u.endsWith('/api/version')) return json({ version: '0.5.4' });
+      if (u.endsWith('/api/version')) return json({ version: '0.33.3' });
       throw new TypeError('tags failed');
     }) as unknown as typeof fetch;
     const r = await probeOllama(11434, f, '');
@@ -109,7 +109,7 @@ describe('probeOllama — 接続成功', () => {
   it('読み取り 3 エンドポイント以外は叩かない', async () => {
     const spy = vi.fn(async (url: string | URL | Request) => {
       const u = String(url);
-      if (u.endsWith('/api/version')) return json({ version: '0.5.4' });
+      if (u.endsWith('/api/version')) return json({ version: '0.33.3' });
       return json({ models: [] });
     }) as unknown as typeof fetch;
     await probeOllama(11434, spy, '');
@@ -128,7 +128,7 @@ describe('probeOllama — 別端末から使う経路', () => {
     const f = vi.fn(async (url: string | URL | Request) => {
       const u = String(url);
       expect(u.startsWith('http://192.168.1.10:11434/')).toBe(true);
-      if (u.endsWith('/api/version')) return json({ version: '0.5.4' });
+      if (u.endsWith('/api/version')) return json({ version: '0.33.3' });
       return json({ models: [] });
     }) as unknown as typeof fetch;
     const r = await probeOllama('http://192.168.1.10:11434', f, '192.168.1.10');
@@ -139,7 +139,7 @@ describe('probeOllama — 別端末から使う経路', () => {
     const f = vi.fn(async (url: string | URL | Request) => {
       const u = String(url);
       expect(u.startsWith('https://abc.trycloudflare.com/')).toBe(true);
-      if (u.endsWith('/api/version')) return json({ version: '0.5.4' });
+      if (u.endsWith('/api/version')) return json({ version: '0.33.3' });
       return json({ models: [] });
     }) as unknown as typeof fetch;
     const r = await probeOllama('https://abc.trycloudflare.com', f, 'hiroto1977.github.io');
@@ -227,7 +227,7 @@ describe('probeOllama — 失敗理由の切り分け', () => {
   });
 
   it('空文字は既定のループバックとして扱う (bad-endpoint にしない)', async () => {
-    const r = await probeOllama('', healthyFetch('0.5.4', []), '');
+    const r = await probeOllama('', healthyFetch('0.33.3', []), '');
     expect(r.status).toBe('ok');
   });
 
@@ -534,7 +534,7 @@ describe('probeOllama — 配信元 CSP による遮断', () => {
   });
 
   it('接続できている場合は watcher を見ない', async () => {
-    const r = await probeOllama(11434, healthyFetch('0.5.4', []), '', hitWatcher);
+    const r = await probeOllama(11434, healthyFetch('0.33.3', []), '', hitWatcher);
     expect(r.status).toBe('ok');
   });
 
@@ -554,7 +554,7 @@ describe('probeOllama — 配信元 CSP による遮断', () => {
   it('監視は必ず解除する (リスナを積み残さない)', async () => {
     let stopped = 0;
     const counting = () => ({ hit: () => false, stop: () => void stopped++ });
-    await probeOllama(11434, healthyFetch('0.5.4', []), '', counting);
+    await probeOllama(11434, healthyFetch('0.33.3', []), '', counting);
     await probeOllama(11434, unreachableFetch(), '', counting);
     expect(stopped).toBe(2);
   });
@@ -794,7 +794,7 @@ describe('つながらない理由の文言 golden', () => {
   });
 
   it('接続成功', async () => {
-    expect(await probeOllama(11434, healthyFetch('0.5.4', []), '', noCsp)).toMatchSnapshot('ok');
+    expect(await probeOllama(11434, healthyFetch('0.33.3', []), '', noCsp)).toMatchSnapshot('ok');
   });
 
   it('古い版は警告つきで返す', async () => {
@@ -1024,7 +1024,7 @@ describe('通信の枠', () => {
     const f = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
       if (String(url).endsWith('/api/version')) {
         signal = init?.signal ?? undefined;
-        return json({ version: '0.5.4' });
+        return json({ version: '0.33.3' });
       }
       return json({ models: [] });
     }) as unknown as typeof fetch;
@@ -1192,7 +1192,7 @@ describe('診断の問い合わせ方', () => {
     const inits: RequestInit[] = [];
     const f = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
       inits.push(init ?? {});
-      if (String(url).endsWith('/api/version')) return json({ version: '0.5.4' });
+      if (String(url).endsWith('/api/version')) return json({ version: '0.33.3' });
       return json({ models: [] });
     }) as unknown as typeof fetch;
     await probeOllama(11434, f, '', noCsp);
@@ -1310,7 +1310,7 @@ describe('配信ホストの既定値', () => {
       configurable: true,
     });
     const f = vi.fn(async (url: string | URL | Request) => {
-      if (String(url).endsWith('/api/version')) return json({ version: '0.5.4' });
+      if (String(url).endsWith('/api/version')) return json({ version: '0.33.3' });
       return json({ models: [] });
     }) as unknown as typeof fetch;
     // 第 3 引数を渡さない = 既定値の経路。同じホストなので許可される。
@@ -1328,7 +1328,7 @@ describe('配信ホストの既定値', () => {
     const urls: string[] = [];
     const f = vi.fn(async (url: string | URL | Request) => {
       urls.push(String(url));
-      if (String(url).endsWith('/api/version')) return json({ version: '0.5.4' });
+      if (String(url).endsWith('/api/version')) return json({ version: '0.33.3' });
       return json({ models: [] });
     }) as unknown as typeof fetch;
     const r = await probeOllama(undefined, f, '');
@@ -1482,7 +1482,7 @@ describe('時間切れと後始末', () => {
   it('★ 見張りは本文の間だけ残り、締切とともに自分で消える', async () => {
     vi.useFakeTimers();
     const f = vi.fn(async (url: string | URL | Request) => {
-      if (String(url).endsWith('/api/version')) return json({ version: '0.5.4' });
+      if (String(url).endsWith('/api/version')) return json({ version: '0.33.3' });
       return json({ models: [] });
     }) as unknown as typeof fetch;
     const r = await probeOllama(11434, f, '', noCsp);

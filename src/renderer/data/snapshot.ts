@@ -11,6 +11,7 @@ import {
   SKILL_STEPS_SOURCE,
 } from '../../shared/talent';
 import { NO_SECURED_FUNDING_NOTE } from '../../shared/funding';
+import { MIN_SAFE_VERSION } from '../../shared/ollama';
 
 /**
  * 見本の画像は **インライン (`data:`) にする**。
@@ -358,7 +359,7 @@ export const SNAPSHOT = {
     running: false,
     version: '' as string,
     versionSafe: false,
-    versionMinRecommended: '0.1.46',
+    versionMinRecommended: MIN_SAFE_VERSION,
     models: [] as {
       name: string;
       family: string;

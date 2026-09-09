@@ -303,3 +303,9 @@ shell metachars が必ず reject されることを確認)。
 - **property-based fuzz** (`src/main/__tests__/property.test.ts`):
   - 300 ランダム URL で write-side path / non-loopback host が allowlist 通らないことを検証
   - 200 ランダム model name で whitespace / shell metachars / null byte / 制御文字 / `..` を reject することを検証
+
+**2026-09-09 追記 (パス 139)**: 上の「未パッチ」は **CVE-2026-7482** として 2026-05-04 に公表され、修正 (PR #14406) は
+この節を書く前の 2026-02-25 に merge されて 0.17.1 に入っていた。`UNPATCHED_OOB_NOTICE` (日付の無い固定文) は
+廃し、`src/shared/ollama.ts` の日付つきの台帳 (`OLLAMA_ADVISORIES`・照合日 / 再照合期限) と、当てはまる CVE を
+名指しする `buildWarnings` に置き換えた。安全の床は台帳の修正版の最大 (0.31.2) で、期限は `lint:rate-freshness`、
+文書の床と日付は `lint:docs` が見る。多層防御 (`ALLOWED_ENDPOINTS` / `\0` reject / fuzz) はそのまま。

@@ -655,8 +655,8 @@ const FORBIDDEN_PATTERNS = [
     // and the two modules that *define* the deny-list: the Ollama client
     // (ALLOWED_ENDPOINTS) and src/shared/ollama.ts (OLLAMA_READ_PATHS —
     // the allowlist both processes share). Both enumerate these paths in
-    // order to refuse them, and UNPATCHED_OOB_NOTICE must name them for the
-    // user-facing warning to mean anything. Listed as exact paths, not a
+    // order to refuse them, and the advisory ledger notice (advisoryLedgerNotice /
+    // OLLAMA_ADVISORIES) must name them for the user-facing warning to mean anything. Listed as exact paths, not a
     // prefix, so a new file under src/shared/ is still checked.
     allowFile: (rel) =>
       rel === 'src/main/clients/ollama.ts' ||
@@ -815,7 +815,10 @@ const KNOWN_SUPPRESSIONS = [
   'Ollama write-side endpoints in network code :: scripts/ollama-cli.cjs :: 1',
   'Ollama write-side endpoints in network code :: src/main/clients/ollama.ts :: 3',
   'Ollama write-side endpoints in network code :: src/renderer/pages/OllamaPage.tsx :: 2',
-  'Ollama write-side endpoints in network code :: src/shared/ollama.ts :: 3',
+  // 2026-09-09 (パス 139): 3 → 8。脆弱性の台帳 OLLAMA_ADVISORIES の要約 5 行が「呼ばない口」の名前を
+  // 事実として書く (Probllama = /api/pull、CVE-2024-39719/39721 と CVE-2026-7482 = /api/create、
+  // CVE-2024-39722 = /api/push)。呼び出しではなく台帳の文言。
+  'Ollama write-side endpoints in network code :: src/shared/ollama.ts :: 8',
   // CSS の url() を組み立ててよい唯一の場所。`safeCssUrl` の本体で、
   // スキーム検証 (`safeImageSrc`) を通した値だけを引用して包む。
   // ここを例外にしないと関門自身が自分の規則に引っかかる。

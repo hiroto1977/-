@@ -66,6 +66,22 @@ const DATED_MEASURES = [
       '期限の翌日から 1 年は「課税期間が期限内の日を含みうる」帯なので外していません)。' +
       '国税庁 https://www.nta.go.jp/publication/pamph/shohi/kaisei/202304/01.htm',
   },
+  {
+    /*
+     * **安全の主張にも期限が要る** (2026-09-09 · パス 139)。Ollama の脆弱性の台帳は
+     * 「いつ照合したか」を持ち、その日から半年で見直す。2026-05-12 の「未パッチ」の
+     * 固定文は日付が無かったので、修正 (0.17.1) が出た後も 4 か月間そのまま刷られた。
+     */
+    label: 'Ollama 既知脆弱性の台帳の再照合 (src/shared/ollama.ts OLLAMA_ADVISORIES)',
+    source: 'src/shared/ollama.ts',
+    constName: 'OLLAMA_ADVISORIES_REVIEW_BY',
+    warnWithinDays: 60,
+    how:
+      'GitHub Advisory Database (github.com/advisories?query=ollama) と NVD で新しい CVE を確認し、' +
+      'OLLAMA_ADVISORIES に足して (修正版が出た項目は fixedIn を埋めて) MIN_SAFE_VERSION を台帳の最大に揃え、' +
+      'OLLAMA_ADVISORIES_VERIFIED_ON を今日・OLLAMA_ADVISORIES_REVIEW_BY を半年後に進めてください ' +
+      '(docs/OLLAMA_SECURITY.md の床と日付は lint:docs が照合します)。',
+  },
 ];
 
 /** `export const NAME = 'YYYY-MM-DD';` を読む。読めなければ null。 */

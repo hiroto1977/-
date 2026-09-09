@@ -29,8 +29,8 @@ import {
   MAX_OLLAMA_PROMPT_CHARS,
   MAX_OLLAMA_SYSTEM_CHARS,
   MIN_SAFE_VERSION,
-  UNPATCHED_OOB_NOTICE,
   adviseFromBody,
+  buildWarnings,
   compareVersions,
   isSafeModelName,
   isVersionSafe,
@@ -41,7 +41,7 @@ import type { ActionData } from '../../shared/actionData';
 import { isOverCap, readBodyWithCap } from '../../shared/httpLimits';
 
 // 既存の import 元 (このモジュール) を維持するため再 export する。
-export { MIN_SAFE_VERSION, UNPATCHED_OOB_NOTICE, compareVersions, isSafeModelName, isVersionSafe };
+export { MIN_SAFE_VERSION, compareVersions, isSafeModelName, isVersionSafe };
 export type { OllamaSnapshot };
 
 const OLLAMA_BASE = 'http://127.0.0.1:11434';
@@ -174,14 +174,10 @@ export async function fetchOllamaSnapshot(ctx: FetchContext): Promise<OllamaSnap
   }
 
   const versionSafe = isVersionSafe(version);
-  if (running && !versionSafe) {
-    warnings.push(
-      `Ollama ${version} is older than the minimum safe version ${MIN_SAFE_VERSION}. Known CVEs apply. See docs/OLLAMA_SECURITY.md.`,
-    );
-  }
   if (running) {
-    // Persistent until upstream ships a patch — see UNPATCHED_OOB_NOTICE.
-    warnings.push(UNPATCHED_OOB_NOTICE);
+    // 文面は両ビルドで 1 つ (shared の buildWarnings): 当てはまる CVE の名指し + 日付つきの台帳の注意。
+    // 2026-09-09 までここは独自の英文と「未パッチ」の固定文だった (パス 139)。
+    warnings.push(...buildWarnings(version));
   }
 
   const models: OllamaSnapshot['models'] = [];

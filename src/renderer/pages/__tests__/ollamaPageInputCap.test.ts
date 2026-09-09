@@ -12,16 +12,16 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { OllamaPage } from '../OllamaPage';
-import { MAX_OLLAMA_PROMPT_CHARS, MAX_OLLAMA_SYSTEM_CHARS } from '../../../shared/ollama';
+import { MAX_OLLAMA_PROMPT_CHARS, MAX_OLLAMA_SYSTEM_CHARS, MIN_SAFE_VERSION } from '../../../shared/ollama';
 import { inputTooLongMessage } from '../../../shared/assistantLimits';
 
 const MODEL = 'llama3.2:1b';
 /** 接続済み + モデル 1 つ (fetchSnapshot が返す。既定の snapshot は「未起動」でチャット欄が開かない)。 */
 const RUNNING = {
   running: true,
-  version: '0.6.0',
+  version: '0.33.3',
   versionSafe: true,
-  versionMinRecommended: '0.1.46',
+  versionMinRecommended: MIN_SAFE_VERSION,
   models: [
     { name: MODEL, family: 'llama', parameterSize: '1B', quantization: 'Q4_K_M', sizeMb: 1300, modifiedAt: '2026-09-01' },
   ],

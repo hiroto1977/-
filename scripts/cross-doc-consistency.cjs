@@ -142,6 +142,18 @@ function canonicalCitationLedgerCount() {
  * QUALITY.md 側は分母に `Ignored` を混ぜて 77.16% を出していた —— 同じ
  * 報告書から出た 2 つの数字が、互いを出典に名指ししたまま 23 ポイント違っていた。
  */
+/**
+ * `src/shared/ollama.ts` の `export const NAME = '…'` を読む (2026-09-09 · パス 139)。
+ * Ollama の安全の床 (MIN_SAFE_VERSION) と台帳の照合日は、2026-09-09 まで docs/OLLAMA_SECURITY.md に
+ * 手で 4 か所写されていて (0.1.46)、コードが動いても文書は動かなかった。
+ */
+function canonicalOllamaConst(name) {
+  const src = read(path.join(REPO_ROOT, 'src/shared/ollama.ts'));
+  if (src === null) return null;
+  const m = new RegExp(`export const ${name}\\s*=\\s*'([^']+)'`).exec(src);
+  return m === null ? null : m[1];
+}
+
 function canonicalMutationScore(which) {
   const src = read(path.join(DOCS, 'QUALITY.md'));
   if (src == null) return null;
@@ -184,6 +196,38 @@ const FACTS = [
         file: 'docs/REMAINING_WORK.md',
         pattern: /出典台帳の未確認件数: \*\*(\d+) 件\*\*/,
         parse: (m) => Number(m[1]),
+      },
+    ],
+  },
+  {
+    name: 'Ollama minimum safe version (台帳の修正版の最大)',
+    canonical: canonicalOllamaConst('MIN_SAFE_VERSION'),
+    claims: [
+      {
+        file: 'docs/OLLAMA_SECURITY.md',
+        pattern: /→ \*\*Ollama (\d+\.\d+\.\d+) 以降 \(推奨: 最新安定版\)\*\*/,
+        parse: (m) => m[1],
+      },
+      {
+        file: 'docs/OLLAMA_SECURITY.md',
+        pattern: /床は `(\d+\.\d+\.\d+)`\)/,
+        parse: (m) => m[1],
+      },
+      {
+        file: 'docs/OLLAMA_SECURITY.md',
+        pattern: /更新後 `ollama --version` で (\d+\.\d+\.\d+) 以上/,
+        parse: (m) => m[1],
+      },
+    ],
+  },
+  {
+    name: 'Ollama advisories verified on (台帳の照合日)',
+    canonical: canonicalOllamaConst('OLLAMA_ADVISORIES_VERIFIED_ON'),
+    claims: [
+      {
+        file: 'docs/OLLAMA_SECURITY.md',
+        pattern: /台帳[^\n]*は \*\*(\d{4}-\d{2}-\d{2}) 時点\*\*/,
+        parse: (m) => m[1],
       },
     ],
   },

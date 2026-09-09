@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **12571** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **12591** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -1938,7 +1938,7 @@ graph TB
 |---|---|---|
 | **プロトタイプ汚染** | `serviceId="__proto__"` | `isServiceId` (`serviceId.ts:93`) + `Object.hasOwn` (`main.ts:135,171,174,207`) |
 | **任意 URL の Ollama 接続** | renderer が他ホスト指定 | `OLLAMA_BASE` (`ollama.ts:44`) + `ALLOWED_ENDPOINTS` (`ollama.ts:61-66`) |
-| **モデル file OOB read (未パッチ)** | 悪意 GGUF ロード | 危険な書き込み endpoint 全 reject + 警告 (`UNPATCHED_OOB_NOTICE`, `ollama.ts:51-57`) |
+| **モデル file (GGUF) 経由の脆弱性** (CVE-2026-7482 ほか・台帳は shared/ollama.ts の OLLAMA_ADVISORIES) | 悪意 GGUF ロード | 危険な書き込み endpoint 全 reject + 日付つきの台帳の注意と当てはまる CVE の名指し (`buildWarnings`, `ollama.ts:177-181`) |
 | **Skill name path traversal** | `name="../etc/passwd"` | `isSafeSkillName` (`skills.ts:283`) + realpath による封じ込め (読み出し `skills.ts:231-236` / **列挙 `skills.ts:106-131`**) |
 | **RFC 2822 ヘッダ injection** | `to="x@y\r\nBcc: z"` | `isSafeHeaderValue` (`gmail.ts:94-97`) + throw in `buildRfc2822` (`gmail.ts:91-104`) |
 | **token 漏洩 (error body echo)** | API が Authorization 反射 | `safeErrorMessage` (`main.ts:18-20`) + `redactSecrets` (`src/shared/redact.ts`) + 200B 切り詰め |
@@ -1955,10 +1955,13 @@ graph TB
 |---|---|---|---|
 | **CVE-2024-37032** (Probllama) | `/api/pull` でパストラバーサル → RCE | ≥ 0.1.34 | `/api/pull` を呼ばない + `ALLOWED_ENDPOINTS` で reject |
 | **CVE-2024-39719** | `/api/create` でファイル存在情報漏洩 | ≥ 0.1.46 | `/api/create` を呼ばない |
-| **CVE-2024-39720** | 不正 GGUF → OOB read (DoS) | ≥ 0.1.46 | version < 0.1.46 で警告バッジ + アップロード面を絶つ |
+| **CVE-2024-39720** | 不正 GGUF → OOB read (DoS) | ≥ 0.1.46 | 台帳の修正版未満なら名指しで警告 + アップロード面を絶つ |
 | **CVE-2024-39721** | `/api/create` に `/dev/random` で DoS | ≥ 0.1.46 | `/api/create` を呼ばない |
 | **CVE-2024-39722** | `/api/push` でファイル情報漏洩 | ≥ 0.1.46 | `/api/push` を呼ばない |
-| **未パッチ OOB read** (model/engine file parser) | malformed GGUF で heap OOB → 情報漏洩 / RCE | **公式パッチ未公開** | `UNPATCHED_OOB_NOTICE` を毎 snapshot 表示 + 危険 endpoint 全 reject + `\0` reject |
+| **CVE-2025-66960** | GGUF v1 の文字列長で panic (`readGGUFV1String`) → DoS | **修正版未公表** (2026-09-09 時点) | 台帳の注意が「修正版未公表 1 件」と名指し + アップロード面を絶つ |
+| **CVE-2026-7482** (Bleeding Llama) | `/api/create` に細工した GGUF → heap OOB read → プロセスメモリの漏洩 | ≥ 0.17.1 (2026-02-25) | 2026-05-12〜2026-09-09 は「未パッチ」の固定文で刷っていた (パス 139 で台帳へ)。危険 endpoint 全 reject + `\0` reject |
+| **CVE-2026-86289** | GGUF の文字列長の整数オーバーフロー | ≥ 0.31.2 | 台帳の床 (`MIN_SAFE_VERSION` = 修正版の最大) |
+| **台帳の期限** | 日付の無い安全の主張は黙って古くなる | — | `OLLAMA_ADVISORIES_VERIFIED_ON` / `_REVIEW_BY` を `lint:rate-freshness` が見る (60 日前から警告・過ぎたら落とす)。床と照合日は `lint:docs` が OLLAMA_SECURITY.md と照合 |
 
 ```mermaid
 flowchart TB
@@ -2016,7 +2019,7 @@ flowchart TB
    関門の外に居り、実測で `sk-ant-...` が逐語で renderer まで届いた
    (`src/main/__tests__/rendererBoundMessages.test.ts` が実測で留める)
 2. `code` フィールドは discriminated-union として **UI 分岐の唯一の正解** (`message` は人間向けのみ)
-3. `safeStorage` の plain-base64 fallback / Ollama の未パッチ OOB read 警告など、**ユーザの操作を要しない警告** は warnings[] 配列で渡し、UI が permanent banner として表示
+3. `safeStorage` の plain-base64 fallback / Ollama の脆弱性台帳の注意 (日付つき) など、**ユーザの操作を要しない警告** は warnings[] 配列で渡し、UI が permanent banner として表示
 
 ## 5. 品質パイプライン
 
@@ -2357,7 +2360,7 @@ classDiagram
     +isSafeModelName(name) : ollama.ts:55
     +compareVersions(a, b) : ollama.ts:63
     +isVersionSafe(v) : ollama.ts:86
-    +UNPATCHED_OOB_NOTICE : ollama.ts:51
+    +buildWarnings() : shared/ollama.ts (台帳 OLLAMA_ADVISORIES)
     -withTimeout(f, url, init) : ollama.ts:142
   }
 
@@ -3619,7 +3622,7 @@ export interface TokenSet {
 |---|---|
 | `docs/SECURITY.md` | 脅威モデル A1-A7 |
 | `docs/SECURITY_AUDIT.md` | 監査ログ (P0-P3 findings + defense-in-depth) |
-| `docs/OLLAMA_SECURITY.md` | Ollama CVE + 未パッチ OOB read 対策 |
+| `docs/OLLAMA_SECURITY.md` | Ollama CVE の台帳 (日付つき・再照合期限) と防御 |
 | `docs/OAUTH_SETUP.md` | GOOGLE_OAUTH_CLIENT_ID 設定 |
 | `docs/EMOTIONS_SETUP.md` | Anthropic API key 設定 |
 | `docs/SECURITY_SETUP.md` | HIBP / VirusTotal キー設定 |

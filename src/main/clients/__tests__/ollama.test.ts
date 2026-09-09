@@ -6,9 +6,9 @@ import {
   isSafeModelName,
   isVersionSafe,
   MIN_SAFE_VERSION,
-  UNPATCHED_OOB_NOTICE,
   ACTIONS,
 } from '../ollama';
+import { OLLAMA_ADVISORIES_VERIFIED_ON, advisoryLedgerNotice } from '../../../shared/ollama';
 import { FetchError } from '../types';
 import {
   ASSISTANT_REPLY_TRUNCATED_NOTICE,
@@ -70,12 +70,13 @@ describe('isVersionSafe', () => {
   it('returns false for versions older than MIN_SAFE_VERSION', () => {
     expect(isVersionSafe('0.1.45')).toBe(false);
     expect(isVersionSafe('0.1.33')).toBe(false); // before Probllama fix
+    expect(isVersionSafe('0.5.10')).toBe(false); // 2024 年の床は超えるが CVE-2026-7482 (0.17.1 で修正) が当てはまる
     expect(isVersionSafe('0.0.1')).toBe(false);
   });
   it('returns true for MIN_SAFE_VERSION and newer', () => {
     expect(isVersionSafe(MIN_SAFE_VERSION)).toBe(true);
-    expect(isVersionSafe('0.1.47')).toBe(true);
-    expect(isVersionSafe('0.5.10')).toBe(true);
+    expect(isVersionSafe('0.31.2')).toBe(true);
+    expect(isVersionSafe('0.33.3')).toBe(true);
     expect(isVersionSafe('1.0.0')).toBe(true);
   });
 });
@@ -210,7 +211,7 @@ describe('fetchOllamaSnapshot', () => {
   it('reports safe version + normalized models when everything is current', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
-      .mockResolvedValueOnce(jsonResponse({ version: '0.5.0' }))
+      .mockResolvedValueOnce(jsonResponse({ version: '0.33.3' }))
       .mockResolvedValueOnce(
         jsonResponse({
           models: [
@@ -255,15 +256,16 @@ describe('fetchOllamaSnapshot', () => {
   });
 
   it('emits NO outdated-version warning when the running version is current', async () => {
-    // Kills the `if (running && !versionSafe)` ConditionalExpression `true`
-    // mutation: with the mutation, every run pushes the CVE warning even
-    // for fresh installs.
+    // 当てはまる CVE の名指し (「当てはまります」) は出ない。台帳の注意 (修正版未公表の
+    // CVE を名指しする) は常に 1 本出るので、/CVE/ で見ると誤って鳴る —— 名指しの文で見る。
     const fetchMock = vi
       .fn<typeof fetch>()
-      .mockResolvedValueOnce(jsonResponse({ version: '0.5.0' }))
+      .mockResolvedValueOnce(jsonResponse({ version: '0.33.3' }))
       .mockResolvedValueOnce(jsonResponse({ models: [] }));
     const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
-    expect(snap.warnings.some((w) => /older than|CVE/i.test(w))).toBe(false);
+    expect(snap.versionSafe).toBe(true);
+    expect(snap.warnings.some((w) => /当てはまります|older than/.test(w))).toBe(false);
+    expect(snap.warnings).toHaveLength(1);
   });
 
   it('does NOT attempt to list models when not running (kills `if (running)` → true)', async () => {
@@ -794,43 +796,43 @@ describe('isAllowedEndpoint', () => {
   });
 });
 
-describe('fetchOllamaSnapshot — unpatched OOB notice', () => {
-  it('emits UNPATCHED_OOB_NOTICE whenever Ollama is reachable', async () => {
+describe('fetchOllamaSnapshot — 日付つきの脆弱性台帳の注意 (2026-09-09 までは日付の無い「未パッチ」の固定文)', () => {
+  it('Ollama に届くときは台帳の注意を載せる (照合日を刷る)', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
-      .mockResolvedValueOnce(jsonResponse({ version: '0.5.0' }))
+      .mockResolvedValueOnce(jsonResponse({ version: '0.33.3' }))
       .mockResolvedValueOnce(jsonResponse({ models: [] }));
     const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
-    expect(snap.warnings).toContain(UNPATCHED_OOB_NOTICE);
+    expect(snap.warnings.some((w) => w.includes(`${OLLAMA_ADVISORIES_VERIFIED_ON} 時点`))).toBe(true);
+    expect(snap.warnings.some((w) => /未パッチ/.test(w))).toBe(false);
   });
 
-  it('does NOT emit the OOB notice when Ollama is not running', async () => {
+  it('Ollama が動いていなければ台帳の注意は出さない', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockRejectedValueOnce(new Error('ECONNREFUSED'));
     const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
-    expect(snap.warnings).not.toContain(UNPATCHED_OOB_NOTICE);
+    expect(snap.warnings.some((w) => w.includes(`${OLLAMA_ADVISORIES_VERIFIED_ON} 時点`))).toBe(false);
   });
 
-  it('mentions the operational mitigation (verified-source-only) in the notice', () => {
-    // Cross-check the wording so the contract with the user matches
-    // what docs/OLLAMA_SECURITY.md promises.
-    expect(UNPATCHED_OOB_NOTICE).toMatch(/out-of-bounds read/i);
-    expect(UNPATCHED_OOB_NOTICE).toMatch(/検証済み|verified/i);
+  it('★ 古い版には当てはまる CVE を名指しし、文面は shared の buildWarnings と同じ (main の独自英文は無い)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ version: '0.16.0' }))
+      .mockResolvedValueOnce(jsonResponse({ models: [] }));
+    const snap = await fetchOllamaSnapshot({ token: '', fetch: fetchMock });
+    expect(snap.versionSafe).toBe(false);
+    expect(snap.warnings[0]).toContain('CVE-2026-7482');
+    expect(snap.warnings[0]).toContain('0.17.1 で修正');
+    expect(snap.warnings.some((w) => /minimum safe version|older than/i.test(w))).toBe(false);
   });
 
-  it('pins each fragment of the OOB notice so partial wording drifts are caught', () => {
-    // Kills the four StringLiteral mutants on ollama.ts:53–57. Each
-    // concatenation fragment carries unique technical/UX content; any
-    // one of them silently mutating to "" or "Stryker was here" would
-    // strip the security contract.
-    expect(UNPATCHED_OOB_NOTICE).toContain('未パッチの out-of-bounds read');
-    expect(UNPATCHED_OOB_NOTICE).toContain('モデル/エンジンファイルパーサ');
-    expect(UNPATCHED_OOB_NOTICE).toContain('/api/pull');
-    expect(UNPATCHED_OOB_NOTICE).toContain('/api/create');
-    expect(UNPATCHED_OOB_NOTICE).toContain('/api/push');
-    expect(UNPATCHED_OOB_NOTICE).toContain('攻撃ベクトルを遮断');
-    expect(UNPATCHED_OOB_NOTICE).toContain('Ollama 公式 library');
-    expect(UNPATCHED_OOB_NOTICE).toContain('検証済みソース');
-    expect(UNPATCHED_OOB_NOTICE).toContain('docs/OLLAMA_SECURITY.md');
+  it('注意の文面は運用上の緩和策 (検証済みソースのみ) を言う', () => {
+    // docs/OLLAMA_SECURITY.md との契約を字面で確かめる (定数を定数自身と比べない)。
+    const n = advisoryLedgerNotice(new Date('2026-09-09T00:00:00Z'));
+    expect(n).toMatch(/検証済み|verified/i);
+    expect(n).toContain('/api/pull');
+    expect(n).toContain('/api/create');
+    expect(n).toContain('/api/push');
+    expect(n).toContain('docs/OLLAMA_SECURITY.md');
   });
 });
 
