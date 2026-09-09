@@ -3,7 +3,8 @@ import { localIsoDate } from '../../shared/localDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
-import { describeDroppedEntries } from '../../shared/talent';
+import { describeDroppedEntries, type LeaderFitness } from '../../shared/talent';
+import type { ActionData } from '../../shared/actionData';
 import type { SourceStrength } from '../../shared/provenance';
 
 /**
@@ -138,7 +139,7 @@ export function TalentPage(): React.JSX.Element {
 
   // --- 登用判定 (その場で計算せず、main の判定へ投げる) ---
   const [flagged, setFlagged] = useState<readonly string[]>([]);
-  const [verdict, setVerdict] = useState<{ eligible: boolean; hits: Disqualifier[] } | null>(null);
+  const [verdict, setVerdict] = useState<LeaderFitness | null>(null);
   const [judging, setJudging] = useState(false);
 
   const toggleFlag = (id: string): void => {
@@ -149,11 +150,9 @@ export function TalentPage(): React.JSX.Element {
   const judge = async (): Promise<void> => {
     setJudging(true);
     try {
-      const res = await window.serviceHub.invoke('talent', 'judge-leader', { flagged });
-      if (res.ok) {
-        const d = res.data as { fitness: { eligible: boolean; hits: Disqualifier[] } };
-        setVerdict(d.fitness);
-      }
+      // 戻り値の形は台帳を読む (パス 117 —— それまで `res.data as { fitness: … }` と手で写していた)。
+      const res = await window.serviceHub.invoke<ActionData<'talent/judge-leader'>>('talent', 'judge-leader', { flagged });
+      if (res.ok) setVerdict(res.data.fitness);
     } finally {
       setJudging(false);
     }
@@ -192,7 +191,7 @@ export function TalentPage(): React.JSX.Element {
     setSaving(true);
     setSaveMsg(null);
     try {
-      const r = await window.serviceHub.invoke('talent', 'save-state', {
+      const r = await window.serviceHub.invoke<ActionData<'talent/save-state'>>('talent', 'save-state', {
         reports,
         initiatives,
         members,
@@ -203,15 +202,10 @@ export function TalentPage(): React.JSX.Element {
         // 要素を落とすので、成功のまま**一部が消える**ことが在る (経緯は
         // `shared/talent.ts` の `describeDroppedEntries`)。返ってくるのは
         // sanitize 後の状態なので、送った件数と比べて落ちた分を言う。
-        const saved = r.data as {
-          reports?: readonly unknown[];
-          initiatives?: readonly unknown[];
-          members?: readonly unknown[];
-        };
-        const len = (v: readonly unknown[] | undefined): number => (Array.isArray(v) ? v.length : 0);
+        const saved = r.data;
         const dropped = describeDroppedEntries(
           { reports: reports.length, initiatives: initiatives.length, members: members.length },
-          { reports: len(saved.reports), initiatives: len(saved.initiatives), members: len(saved.members) },
+          { reports: saved.reports.length, initiatives: saved.initiatives.length, members: saved.members.length },
         );
         setSaveMsg(dropped === null ? '保存しました' : `保存しました — ただし ${dropped}`);
         refresh();

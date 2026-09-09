@@ -96,7 +96,7 @@ export function SlackPage() {
               const text = channels
                 .map((c) => `#${c.name}: ${c.purpose || '(no purpose)'}`)
                 .join('\n');
-              const res = await window.serviceHub.invoke('emotions', 'analyze-text', {
+              const res = await window.serviceHub.invoke<ActionData<'emotions/analyze-text'>>('emotions', 'analyze-text', {
                 text,
                 source: 'Slack channels',
               });

@@ -12,19 +12,8 @@ import { exportWarning } from '../data/exportOutcome';
 import { MAX_ADVISOR_QUESTION_CHARS } from '../../shared/advisorQuestionLimits';
 import type { ActionData } from '../../shared/actionData';
 
-interface BusinessAdvisorRecommendation {
-  categoryId: string;
-  rank: number;
-  rationale: string;
-  actionItems: string[];
-  riskFactors: string[];
-}
-
-interface BusinessAdvisorResponse {
-  recommendations: BusinessAdvisorRecommendation[];
-  disclaimer: string;
-  notForRealMoney: true;
-}
+// 助言の戻り値の形は台帳 (`shared/actionData.ts` → `shared/businessAdvisor.ts`) を読む (パス 117)。
+// それまでここの写しは `categoryId: string` に広がっていた (本物は 10 個の合併型)。
 
 interface CategoryKpi {
   readonly revenue: number;
@@ -696,7 +685,7 @@ export function BusinessPage() {
   const [advisorQuestion, setAdvisorQuestion] = useState('');
   const [advisorBusy, setAdvisorBusy] = useState(false);
   const [advisorError, setAdvisorError] = useState<string | null>(null);
-  const [advisorResult, setAdvisorResult] = useState<BusinessAdvisorResponse | null>(null);
+  const [advisorResult, setAdvisorResult] = useState<ActionData<'business/advise'> | null>(null);
 
   const labelById = useMemo(() => {
     const m: Record<string, string> = {};
@@ -710,7 +699,7 @@ export function BusinessPage() {
     setLastExport(null);
     try {
       const action = format === 'html' ? 'export-dashboard' : 'export-dashboard-md';
-      const payload: { advisorResult?: BusinessAdvisorResponse } = {};
+      const payload: { advisorResult?: ActionData<'business/advise'> } = {};
       if (advisorResult) payload.advisorResult = advisorResult;
       // html / md は同じ形 (台帳の ExportFileResult)。型は台帳から読む (パス 116)。
       const r = await window.serviceHub.invoke<ActionData<'business/export-dashboard'>>('business', action, payload);
@@ -735,7 +724,7 @@ export function BusinessPage() {
     setAdvisorBusy(true);
     setAdvisorError(null);
     try {
-      const r = await window.serviceHub.invoke<BusinessAdvisorResponse>(
+      const r = await window.serviceHub.invoke<ActionData<'business/advise'>>(
         'business',
         'advise',
         { question: q },

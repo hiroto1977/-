@@ -11,6 +11,21 @@ import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
 import { isSafeExportPath, writeExportFile } from './exportPaths';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
 import type { ActionData, ExportFileResult } from '../../shared/actionData';
+import {
+  isBusinessCategoryId,
+  type BusinessAdvisorRecommendation,
+  type BusinessAdvisorResponse,
+  type BusinessCategoryId,
+} from '../../shared/businessAdvisor';
+
+// カテゴリ id・助言の形・id の判定は shared/businessAdvisor.ts が 1 つだけ持つ (パス 117 ——
+// それまで id の一覧は main とブラウザ版に別々に書かれ、形は画面とブラウザ版で `string` に広がっていた)。
+export { isBusinessCategoryId } from '../../shared/businessAdvisor';
+export type {
+  BusinessAdvisorRecommendation,
+  BusinessAdvisorResponse,
+  BusinessCategoryId,
+} from '../../shared/businessAdvisor';
 
 /**
  * Business operations dashboard — 17 番目のサービス。
@@ -31,18 +46,9 @@ import type { ActionData, ExportFileResult } from '../../shared/actionData';
 
 // --- Category taxonomy ---------------------------------------------------
 
-/** 8 事業カテゴリ ID — 全 SoT は SERVICES_BY_CATEGORY (下記). */
-export type BusinessCategoryId =
-  | 'ec'
-  | 'dropship'
-  | 'oem-odm'
-  | 'blog'
-  | 'blog-affiliate'
-  | 'ppc-affiliate'
-  | 'video-production'
-  | 'video-upload'
-  | 'video-distribution'
-  | 'sns-ops';
+// 10 事業カテゴリ ID (`BusinessCategoryId`) は shared/businessAdvisor.ts の `BUSINESS_CATEGORY_IDS` から
+// 導く。表 (下記 `BUSINESS_CATEGORIES`) の各行の id がその一覧に在ることは型が留め、一覧の各 id に
+// 行が在ることは business.test.ts が留める。
 
 export interface BusinessCategoryDef {
   readonly id: BusinessCategoryId;
@@ -388,21 +394,11 @@ export function getCategoryDef(id: BusinessCategoryId): BusinessCategoryDef {
   return CATEGORY_BY_ID[id];
 }
 
-// `in` ではなく `Object.hasOwn` を使う。`in` はプロトタイプ鎖まで辿るので、
-// 表に無い 'constructor' / 'toString' / '__proto__' 等が **8 個とも通っていた**
-// (2026-08-22 実測)。ここは `askBusinessAdvisor` の `categories` を IPC 境界で
-// 絞る唯一の番人で、抜けた名前は外部 API へ送るプロンプトに載り、しかも
-// `allowedSet` にどの事業も一致しないので KPI 0 件のまま助言させてしまう。
-// 同じ判断は `templates.ts` の `isTemplateId` に先に書いてあった。
-//
-// `typeof value === 'string'` は型述語のための絞り込みで、安全性には要らない
-// (`Object.hasOwn` は非文字列でも throw せず false を返す)。この等価変異と、
-// 6 本の負のケースに対する perTest の帰属ずれを併せて黙らせる。
-// Stryker disable ConditionalExpression
-export function isBusinessCategoryId(value: unknown): value is BusinessCategoryId {
-  return typeof value === 'string' && Object.hasOwn(CATEGORY_BY_ID, value);
-}
-// Stryker restore ConditionalExpression
+// `isBusinessCategoryId` は shared/businessAdvisor.ts へ移した (パス 117 —— ブラウザ版と同じ
+// 一覧で判定する)。判定は一覧の `includes` で、`in` のようにプロトタイプ鎖は辿らない
+// ('constructor' / 'toString' / '__proto__' は通らない —— 2026-08-22 に `in` で 8 個通っていた
+// 形の検査は business.test.ts に残る)。ここは `askBusinessAdvisor` の `categories` を IPC 境界で
+// 絞る唯一の番人で、抜けた名前は外部 API へ送るプロンプトに載る。
 
 // --- AI advisor (Phase 2) ----------------------------------------------
 //
@@ -410,20 +406,7 @@ export function isBusinessCategoryId(value: unknown): value is BusinessCategoryI
 // 「次に注力すべきカテゴリ」をランク順に提案させる。投資助言ではなく、
 // 経営判断の補助情報。実弾発注やリソース移動は行わない。
 
-export interface BusinessAdvisorRecommendation {
-  readonly categoryId: BusinessCategoryId;
-  readonly rank: number;
-  readonly rationale: string;
-  readonly actionItems: readonly string[];
-  readonly riskFactors: readonly string[];
-}
-
-export interface BusinessAdvisorResponse {
-  readonly recommendations: readonly BusinessAdvisorRecommendation[];
-  readonly disclaimer: string;
-  /** 常に true。実弾発注を伴わない助言である型レベル保証。 */
-  readonly notForRealMoney: true;
-}
+// `BusinessAdvisorRecommendation` / `BusinessAdvisorResponse` は shared/businessAdvisor.ts (パス 117)。
 
 // The disclaimer is initialized once at module load; per-test coverage
 // (Stryker `perTest`) doesn't associate the init line with any specific
@@ -546,7 +529,10 @@ export function validateBusinessAdvisorJson(
       throw new Error('business-advisor recommendation entry is not an object');
     }
     const rec = item as Record<string, unknown>;
-    if (typeof rec.categoryId !== 'string' || !allowedIds.has(rec.categoryId)) {
+    // 型の門 (一覧に在る id か) と値の門 (この呼び出しで許した集合か) を両方通す —— 型の門が
+    // 無いと、`allowedIds` に一覧の外の文字列が紛れたとき台帳の型 (`categoryId: BusinessCategoryId`)
+    // を嘘にする (パス 117)。
+    if (typeof rec.categoryId !== 'string' || !isBusinessCategoryId(rec.categoryId) || !allowedIds.has(rec.categoryId)) {
       throw new Error(
         `business-advisor recommendation has invalid or out-of-universe categoryId: ${String(rec.categoryId)}`,
       );
@@ -588,7 +574,7 @@ export function validateBusinessAdvisorJson(
       riskFactors.push(rf);
     }
     out.push({
-      categoryId: rec.categoryId as BusinessCategoryId,
+      categoryId: rec.categoryId,
       rank: rec.rank,
       rationale: rec.rationale,
       actionItems,
@@ -747,7 +733,7 @@ export async function askBusinessAdvisorImpl(
 }
 
 // Stryker disable next-line BlockStatement
-async function askBusinessAdvisor(ctx: ActionContext): Promise<BusinessAdvisorResponse> {
+async function askBusinessAdvisor(ctx: ActionContext): Promise<ActionData<'business/advise'>> {
   return askBusinessAdvisorImpl(ctx);
 }
 

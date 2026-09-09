@@ -5,6 +5,9 @@ import type { ActionContext, ActionMap, FetchContext } from './types';
 import { isSafeExportPath, writeExportFile } from './exportPaths';
 import { localIsoDate } from '../../shared/localDate';
 import type { ActionData, ExportFileResult } from '../../shared/actionData';
+import type { TeamMember, TeamRadarState } from '../../shared/teamRadarState';
+
+export type { TeamMember, TeamRadarState } from '../../shared/teamRadarState';
 
 /**
  * Team radar chart — 18 番目のサービス。
@@ -40,15 +43,7 @@ export const SCORE_MAX = 5;
 
 // --- Member ------------------------------------------------------------
 
-/** メンバー1人分の評価。`scores` は CANONICAL_AXES と同順 (長さ 5)。 */
-export interface TeamMember {
-  readonly id: string;
-  readonly name: string;
-  /** scores[i] は CANONICAL_AXES[i] に対する 1-5 整数評価 */
-  readonly scores: readonly number[];
-  /** 任意の付箋コメント (軸 idx → コメント) */
-  readonly notes?: Readonly<Record<number, string>>;
-}
+// `TeamMember` / `TeamRadarState` は shared/teamRadarState.ts (パス 117 —— 台帳 `teamradar/save-state` が読む)。
 
 export interface TeamRadarSnapshot {
   readonly department: string;
@@ -355,12 +350,6 @@ export function renderTeamRadarSvg(
 
 // --- State persistence ------------------------------------------------
 
-export interface TeamRadarState {
-  readonly department: string;
-  readonly evaluatedAt: string;
-  readonly members: readonly TeamMember[];
-}
-
 export function defaultStatePath(): string {
   return path.join(os.homedir(), '.local', 'business-hub', 'team-radar.json');
 }
@@ -585,7 +574,7 @@ export async function saveTeamRadarStateImpl(
   return next;
 }
 
-async function saveTeamRadarStateAction(ctx: ActionContext): Promise<TeamRadarState> {
+async function saveTeamRadarStateAction(ctx: ActionContext): Promise<ActionData<'teamradar/save-state'>> {
   return saveTeamRadarStateImpl(ctx);
 }
 

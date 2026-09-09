@@ -37,6 +37,10 @@
  * 書いている。`StocksPage` の写しだけ `boolean` で、**答えを描く唯一の場所で
  * その留めが外れていた** (パス 62 / 80 と同じ機構 —— 写しは広い方へずれるので
  * `tsc` は黙る)。
+ *
+ * 2026-09-09 (パス 117) から宣言は `shared/stocksTypes.ts` の **1 つだけ**になった —— main と
+ * ブラウザ版は再輸出し、画面は台帳 (`ActionData<'stocks/advise'>`) を読む。写しが無ければ広がりようが
+ * ないので、ここは「3 つが同じ」ではなく「**1 つしか無く、3 か所に写しが戻っていない**」を留める。
  */
 import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
@@ -53,6 +57,8 @@ const MAIN_CLIENT = 'main/clients/stocks.ts';
 const WEB_DATA = 'renderer/data/stocksAnalysisWeb.ts';
 const PAGE = 'renderer/pages/StocksPage.tsx';
 const SHIM = 'renderer/web-shim.ts';
+/** 宣言はここ 1 つ (パス 117)。 */
+const SHARED_TYPES = 'shared/stocksTypes.ts';
 
 /** `interface Name { … }` の本体を波括弧の対応で取り出す (入れ子で切れない)。 */
 function interfaceBody(src: string, name: string): string {
@@ -174,29 +180,36 @@ describe('画面が送る物と、断り書きが言う物が一致する', () =
   });
 });
 
-describe('答えは「何を見たか」を運ぶ — 両実装の型が同じ欄を持つ', () => {
+describe('答えは「何を見たか」を運ぶ — 宣言は 1 つで、写しが戻っていない', () => {
   const REQUIRED = ['recommendations', 'disclaimer', 'notForRealMoney', 'universeConsidered', 'universeOmitted'];
+  /** 2026-09-09 (パス 117) まで写しを持っていた 3 か所。 */
+  const FORMER_COPIES = [MAIN_CLIENT, WEB_DATA, PAGE];
 
-  it('★ 3 つの宣言が同じ欄を持つ (写しが欄を落としていない)', () => {
-    const bodies = {
-      [MAIN_CLIENT]: interfaceBody(read(MAIN_CLIENT), 'AdvisorResponse'),
-      [WEB_DATA]: interfaceBody(read(WEB_DATA), 'AdvisorResponse'),
-      [PAGE]: interfaceBody(read(PAGE), 'AdvisorResponse'),
-    };
-    for (const [rel, body] of Object.entries(bodies)) {
-      for (const field of REQUIRED) {
-        expect(fieldType(body, field), `${rel} に ${field} が無い`).not.toBeNull();
-      }
+  it('★ shared の宣言が欄を全部持つ', () => {
+    const body = interfaceBody(read(SHARED_TYPES), 'AdvisorResponse');
+    for (const field of REQUIRED) {
+      expect(fieldType(body, field), `${SHARED_TYPES} に ${field} が無い`).not.toBeNull();
     }
   });
 
-  it('★ notForRealMoney は 3 つとも `true` で留まっている (写しが広げていない)', () => {
-    for (const rel of [MAIN_CLIENT, WEB_DATA, PAGE]) {
-      const t = fieldType(interfaceBody(read(rel), 'AdvisorResponse'), 'notForRealMoney');
-      expect(t, `${rel} の notForRealMoney`).toBe('true');
-      // **これが直した中身** —— 写しは 2026-09-09 まで `boolean` だった。
-      expect(t, `${rel} の notForRealMoney が boolean へ広がっている`).not.toBe('boolean');
+  it('★ notForRealMoney は `true` で留まっている (広がっていない)', () => {
+    const t = fieldType(interfaceBody(read(SHARED_TYPES), 'AdvisorResponse'), 'notForRealMoney');
+    expect(t).toBe('true');
+    // **これが直した中身** —— 画面の写しは 2026-09-09 まで `boolean` だった。
+    expect(t).not.toBe('boolean');
+  });
+
+  it('★ 3 か所に写しが戻っていない (main とブラウザ版は shared を再輸出し、画面は台帳を読む)', () => {
+    for (const rel of FORMER_COPIES) {
+      expect(read(rel), `${rel} が AdvisorResponse を手で宣言している (写しは shared/stocksTypes.ts へ)`).not.toMatch(
+        /(?:export\s+)?interface\s+AdvisorResponse\s*\{/,
+      );
     }
+    expect(read(MAIN_CLIENT)).toMatch(/AdvisorResponse,?\s*[\s\S]*?\} from '\.\.\/\.\.\/shared\/stocksTypes'/);
+    expect(read(WEB_DATA)).toMatch(/AdvisorResponse,?\s*[\s\S]*?\} from '\.\.\/\.\.\/shared\/stocksTypes'/);
+    expect(read(PAGE)).toContain("ActionData<'stocks/advise'>");
+    // 規則が実物に当たる: 写しの形は鳴る。
+    expect('export interface AdvisorResponse {\n  x: 1;\n}').toMatch(/(?:export\s+)?interface\s+AdvisorResponse\s*\{/);
   });
 
   it('★ 走査規則が実物に当たる (どの入力でも通る形になっていない)', () => {

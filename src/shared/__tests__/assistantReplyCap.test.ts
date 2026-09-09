@@ -96,13 +96,13 @@ describe('応答側の天井に、AI へ出る handler がすべて届く (母�
     expect(callers).toContain('pages/OllamaPage.tsx');
     for (const rel of callers) {
       const src = code(`renderer/${rel}`);
-      expect(src, `${rel} が共有の型を読んでいない`).toContain('invoke<OllamaChatResult>');
+      expect(src, `${rel} が台帳の型を読んでいない`).toContain("invoke<ActionData<'ollama/chat'>>");
       expect(src, `${rel} が戻り値の型を手で写している`).not.toMatch(/invoke<\{\s*reply/);
       expect(src, `${rel} が reply を読んでいない`).toContain('res.data.reply');
       expect(src, `${rel} が手写しの欄を読んでいる`).not.toMatch(/data\.response|data\.message/);
     }
     // 両ビルドの handler が同じ型を返す。
-    expect(code('main/clients/ollama.ts')).toContain('Promise<OllamaChatResult>');
+    expect(code('main/clients/ollama.ts')).toContain("Promise<ActionData<'ollama/chat'>>");
     expect(code('renderer/network/ollamaWeb.ts')).toContain('OllamaChatResult');
   });
 });

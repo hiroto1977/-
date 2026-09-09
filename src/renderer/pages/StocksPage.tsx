@@ -12,32 +12,11 @@ import { AiEgressNotice } from '../components/AiEgressNotice';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import { exportWarning } from '../data/exportOutcome';
 import { ratioPctOrDash } from '../../shared/num';
-import type { StrategyComparisonResult } from '../data/stocksAnalysisWeb';
 import type { ActionData } from '../../shared/actionData';
 
-interface AdvisorRecommendation {
-  symbol: string;
-  rank: number;
-  rationale: string;
-  riskFactors: string[];
-}
-interface AdvisorResponse {
-  recommendations: AdvisorRecommendation[];
-  disclaimer: string;
-  /**
-   * **リテラルで留める** —— 本物 2 つ (`main/clients/stocks.ts` /
-   * `renderer/data/stocksAnalysisWeb.ts`) はどちらも `true` に固定し、注記が
-   * 「呼び出し側がこの出力を実弾発注の許可と取り違えられないように型で留める」と
-   * 書いている。2026-09-09 までこの写しだけ `boolean` に広がっており、
-   * **答えを描く唯一の場所でその留めが外れていた** (パス 105)。
-   * 写しは必ず広い方へずれるので `tsc` は黙る (パス 62 / 80 と同じ機構)。
-   */
-  notForRealMoney: true;
-  /** 実際に助言の対象にした銘柄 (答えと一緒に運ぶ)。 */
-  universeConsidered: readonly string[];
-  /** 上限のために対象から外した件数。 */
-  universeOmitted: number;
-}
+// 助言・戦略比較・登録の戻り値の形は台帳 (`shared/actionData.ts` → `shared/stocksTypes.ts`) を読む
+// (パス 117)。それまでここに `AdvisorResponse` の写しが在り、パス 105 まで `notForRealMoney` が
+// `boolean` に広がっていた —— 写しは必ず広い方へずれ、`tsc` は黙る (パス 62 / 80)。
 
 interface Candle {
   date: string;
@@ -191,14 +170,9 @@ export function StocksPage() {
   const [advisorQuestion, setAdvisorQuestion] = useState('');
   const [advisorBusy, setAdvisorBusy] = useState(false);
   const [advisorError, setAdvisorError] = useState<string | null>(null);
-  const [advisorResult, setAdvisorResult] = useState<AdvisorResponse | null>(null);
+  const [advisorResult, setAdvisorResult] = useState<ActionData<'stocks/advise'> | null>(null);
 
   // --- Watchlist register / unregister state ----------------------------
-  interface RegisterResult {
-    symbol: string;
-    watchlist: readonly string[];
-    message: string;
-  }
   const [registerSymbol, setRegisterSymbol] = useState('');
   const [registerBusy, setRegisterBusy] = useState(false);
   const [registerError, setRegisterError] = useState<string | null>(null);
@@ -213,7 +187,9 @@ export function StocksPage() {
     setRegisterError(null);
     setRegisterMessage(null);
     try {
-      const r = await window.serviceHub.invoke<RegisterResult>(
+      // 型は `action` の合併型から鍵を組む —— 登録は `added`、解除は `removed` を返し、同じ型では
+      // ない (パス 117 まで `RegisterResult` を両方に付けていた)。合併型に台帳に無い鍵が入れば tsc が落ちる。
+      const r = await window.serviceHub.invoke<ActionData<`stocks/${typeof action}`>>(
         'stocks',
         action,
         { symbol: registerSymbol.trim() },
@@ -234,13 +210,13 @@ export function StocksPage() {
 
   // --- Strategy comparison state ----------------------------------------
   // **型を手で写さない。** `invoke<T>()` は T を検査しないので、写しがずれても
-  // tsc は黙る (パス 62 / 80)。実物 (ブラウザ版の双子) の型をそのまま読む ——
-  // 写しを残していたら `winRate: number` のままで、`(null * 100).toFixed(0)` が
-  // **"0"** を刷り、直したはずの欠陥がそのまま残っていた (2026-09-08 · パス 92)。
+  // tsc は黙る (パス 62 / 80)。台帳の型をそのまま読む (パス 92 はブラウザ版の双子の型、
+  // パス 117 から台帳) —— 写しを残していたら `winRate: number` のままで、
+  // `(null * 100).toFixed(0)` が **"0"** を刷り、直したはずの欠陥がそのまま残っていた (2026-09-08 · パス 92)。
   const [compareSymbol, setCompareSymbol] = useState('AAPL');
   const [compareBusy, setCompareBusy] = useState(false);
   const [compareError, setCompareError] = useState<string | null>(null);
-  const [compareResult, setCompareResult] = useState<StrategyComparisonResult | null>(null);
+  const [compareResult, setCompareResult] = useState<ActionData<'stocks/compare-strategies'> | null>(null);
 
   async function runCompare() {
     if (!compareSymbol.trim()) {
@@ -250,7 +226,7 @@ export function StocksPage() {
     setCompareBusy(true);
     setCompareError(null);
     try {
-      const r = await window.serviceHub.invoke<StrategyComparisonResult>(
+      const r = await window.serviceHub.invoke<ActionData<'stocks/compare-strategies'>>(
         'stocks',
         'compare-strategies',
         { symbol: compareSymbol.trim(), initialCash: portfolio.initialCash },
@@ -329,7 +305,7 @@ export function StocksPage() {
       // 書いているのに、1 銘柄も送っていなかった。上限は shared に 1 つ在り、
       // **収める前に件数を控えて画面で述べる** (黙って切らない)。
       const capped = capAdvisorUniverse(data.watchlist.map((w) => w.symbol));
-      const r = await window.serviceHub.invoke<AdvisorResponse>('stocks', 'advise', {
+      const r = await window.serviceHub.invoke<ActionData<'stocks/advise'>>('stocks', 'advise', {
         question: advisorQuestion.trim(),
         universe: capped.symbols,
       });

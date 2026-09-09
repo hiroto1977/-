@@ -17,6 +17,10 @@
 
 import { round2 } from '../../shared/num';
 import { MAX_TICKER_CHARS } from '../../shared/advisorQuestionLimits';
+import type { RegisterResult, UnregisterResult } from '../../shared/stocksTypes';
+
+// 戻り値の形は shared/stocksTypes.ts が 1 つだけ持つ (パス 117)。
+export type { RegisterResult, UnregisterResult } from '../../shared/stocksTypes';
 
 export const STOCKS_WATCHLIST_KEY = 'stocks.watchlist';
 
@@ -105,21 +109,7 @@ function saveWatchlistSymbols(list: readonly string[]): void {
   localStorage.setItem(STOCKS_WATCHLIST_KEY, JSON.stringify(list));
 }
 
-// --- 登録 / 解除 (Electron 版アクションと同じ戻り値の形) ------------------
-
-export interface RegisterResult {
-  symbol: string;
-  added: boolean;
-  watchlist: readonly string[];
-  message: string;
-}
-
-export interface UnregisterResult {
-  symbol: string;
-  removed: boolean;
-  watchlist: readonly string[];
-  message: string;
-}
+// --- 登録 / 解除 (Electron 版アクションと同じ戻り値の形 —— 型は shared/stocksTypes.ts) ----
 
 /** 銘柄を登録する。無効なシンボルは throw (web-shim 側で action_failed に変換)。 */
 export function registerSymbol(symbol: unknown): RegisterResult {

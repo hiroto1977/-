@@ -6,11 +6,14 @@ import {
   buildTalentSnapshot,
   judgeLeaderFitness,
   sanitizeTalentState,
-  type LeaderFitness,
+  type JudgeResult,
   type TalentSnapshot,
   type TalentState,
 } from '../../shared/talent';
 import type { ActionContext, ActionMap, FetchContext } from './types';
+import type { ActionData } from '../../shared/actionData';
+
+export type { JudgeResult } from '../../shared/talent';
 import { atomicWriteFile } from '../atomicWrite';
 
 // 判定と定義表は shared にある。ここは I/O (状態の保存・取得) と
@@ -140,14 +143,11 @@ export async function saveTalentStateImpl(
   return (deps.save ?? saveTalentState)(sanitizeTalentState(ctx.payload), deps);
 }
 
-async function saveStateAction(ctx: ActionContext): Promise<TalentState> {
+async function saveStateAction(ctx: ActionContext): Promise<ActionData<'talent/save-state'>> {
   return saveTalentStateImpl(ctx);
 }
 
-export interface JudgeResult {
-  readonly fitness: LeaderFitness;
-  readonly candidate: string;
-}
+// `JudgeResult` は shared/talent.ts (パス 117 —— 台帳 `talent/judge-leader` と画面が同じ物を読む)。
 
 /**
  * `judge-leader` が renderer から受け取る形。
@@ -170,7 +170,7 @@ export async function judgeLeaderImpl(ctx: ActionContext): Promise<JudgeResult> 
   };
 }
 
-async function judgeLeaderAction(ctx: ActionContext): Promise<JudgeResult> {
+async function judgeLeaderAction(ctx: ActionContext): Promise<ActionData<'talent/judge-leader'>> {
   return judgeLeaderImpl(ctx);
 }
 

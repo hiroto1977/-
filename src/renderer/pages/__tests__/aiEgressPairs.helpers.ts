@@ -126,21 +126,59 @@ export interface AiActionHandler {
  * AI へ出る handler を**実装から**導く (`ACTIONS` の値のうち `marks` に到達する物)。
  * 既定は外へ出る物だけ (断りの母集団)。入力の天井は `ANY_AI_MARKS` で端末内も数える。
  */
+export interface ActionEntry {
+  readonly action: string;
+  /** handler の関数名 (`ACTIONS` の値)。 */
+  readonly handler: string;
+}
+
+/**
+ * `ACTIONS` に登録された (action, handler) の組を**実装から**読む。
+ *
+ * 2 つの書き方を読む: `export const ACTIONS: ActionMap = { 'x': fn, … }` の字面と、
+ * `shopify.ts` の `ACTIONS = Object.fromEntries(CONNECTORS.map((c) => [c.action, c.run]))`
+ * (表 `CONNECTORS` の各行 `{ id, action: 'x', …, run: fn }`)。2026-09-09 (パス 117) まで走査は
+ * 前者しか読まず、後者の 7 action を**黙って飛ばしていた**。`ACTIONS` が在るのに 1 件も
+ * 読めなければ null を返し、呼び出し側が「読めない形」として鳴らす (黙って 0 件にしない)。
+ * `ACTIONS` が無いファイル (読み取りだけの client) は []。
+ */
+export function actionEntries(src: string): ActionEntry[] | null {
+  if (!/export\s+const\s+ACTIONS\b/.test(src)) return [];
+  const out: ActionEntry[] = [];
+  const at = src.search(/export\s+const\s+ACTIONS\s*:\s*ActionMap\s*=\s*\{/);
+  if (at >= 0) {
+    // 字面の `{ … }`。空 (`ACTIONS = {}` —— cursor.ts は書き込みを持たないと明示している) は
+    // 「読めない」ではなく「無い」。
+    const block = balanced(src, src.indexOf('{', at), '{', '}');
+    for (const e of block.matchAll(
+      /(?:^|\n)\s*(?:'([^']+)'|"([^"]+)"|([A-Za-z0-9_]+))\s*(?::\s*([A-Za-z0-9_]+))?\s*,/g,
+    )) {
+      const action = e[1] ?? e[2] ?? e[3]!;
+      out.push({ action, handler: e[4] ?? action });
+    }
+    return out;
+  }
+  if (/ACTIONS\s*:\s*ActionMap\s*=\s*Object\.fromEntries\(CONNECTORS/.test(src)) {
+    for (const e of src.matchAll(/\{\s*id:\s*'[^']+',\s*action:\s*'([^']+)'[^}]*?\brun:\s*([A-Za-z0-9_]+)\s*\}/g)) {
+      out.push({ action: e[1]!, handler: e[2]! });
+    }
+    // 表が読めなければ「読めない」(表の書き方が変わった) —— 0 件で通さない。
+    return out.length > 0 ? out : null;
+  }
+  return null;
+}
+
 export function aiActionHandlers(marks: readonly RegExp[] = AI_MARKS): AiActionHandler[] {
   const out: AiActionHandler[] = [];
   for (const f of fs.readdirSync(CLIENTS).filter((n) => n.endsWith('.ts'))) {
     const src = code(fs.readFileSync(path.join(CLIENTS, f), 'utf8'));
     if (!marks.some((r) => r.test(src))) continue;
-    const at = src.search(/export\s+const\s+ACTIONS\s*:\s*ActionMap\s*=\s*\{/);
-    if (at < 0) continue;
-    const block = balanced(src, src.indexOf('{', at), '{', '}');
+    const entries = actionEntries(src);
+    // 読めない形を黙って 0 件にしない (パス 117 —— shopify の計算された ACTIONS がそうだった)。
+    if (entries === null) throw new Error(`${f}: ACTIONS が読めない形 (走査が黙って飛ばしている)`);
     const bodies = functionBodies(src);
     const service = f.replace(/\.ts$/, '');
-    for (const e of block.matchAll(
-      /(?:^|\n)\s*(?:'([^']+)'|"([^"]+)"|([A-Za-z0-9_]+))\s*(?::\s*([A-Za-z0-9_]+))?\s*,/g,
-    )) {
-      const action = e[1] ?? e[2] ?? e[3]!;
-      const handler = e[4] ?? action;
+    for (const { action, handler } of entries) {
       if (reaches(handler, bodies, marks)) out.push({ service, action, handler, bodies });
     }
   }

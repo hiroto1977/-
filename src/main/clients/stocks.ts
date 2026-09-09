@@ -21,6 +21,27 @@ import path from 'node:path';
 import { isSafeExportPath, writeExportFile } from './exportPaths';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
 import type { ActionData, ExportFileResult } from '../../shared/actionData';
+import type {
+  AdvisorRecommendation,
+  AdvisorResponse,
+  BacktestSummary,
+  RegisterResult,
+  StrategyComparisonResult,
+  StrategyComparisonRow,
+  UnregisterResult,
+} from '../../shared/stocksTypes';
+
+// 構造化された戻り値の形は shared/stocksTypes.ts が 1 つだけ持つ (パス 117 —— それまで
+// ここ・ブラウザ版・画面の 3 か所に写しが在った)。検査はこのモジュールから読むので再輸出する。
+export type {
+  AdvisorRecommendation,
+  AdvisorResponse,
+  BacktestSummary,
+  RegisterResult,
+  StrategyComparisonResult,
+  StrategyComparisonRow,
+  UnregisterResult,
+} from '../../shared/stocksTypes';
 
 /**
  * Stocks analytics + paper trading.
@@ -106,13 +127,10 @@ export const DEFAULT_RISK_PARAMS: RiskParams = {
   takeProfitPct: 0.15,
 };
 
-/** Aggregate result of running `backtest`. */
-export interface BacktestResult {
-  readonly finalEquity: number;
-  readonly totalReturnPct: number;
-  readonly maxDrawdownPct: number;
-  readonly winRate: number | null; // 0..1。**決済済みが 0 件なら null (算定不能)**
-  readonly tradeCount: number;
+/** Aggregate result of running `backtest`. 要約 5 欄は共有 (`shared/stocksTypes.ts` の
+ *  `BacktestSummary`) —— 台帳 (`stocks/backtest`) が約束するのはそこまでで、取引の一覧と
+ *  資産曲線はデスクトップ版だけの上位集合 (パス 117)。 */
+export interface BacktestResult extends BacktestSummary {
   readonly trades: readonly PaperTrade[];
   /** Per-bar portfolio equity (cash + held position value). Length =
    *  candles.length − 50 (the loop starts at i=50 because SMA50 needs
@@ -853,7 +871,7 @@ export function isSafeSymbol(value: unknown): value is string {
 export async function registerTickerImpl(
   ctx: ActionContext,
   deps: StateDeps = {},
-): Promise<{ symbol: string; added: boolean; watchlist: readonly string[]; message: string }> {
+): Promise<RegisterResult> {
   const { symbol } = ctx.payload as RegisterTickerPayload;
   if (!isSafeSymbol(symbol)) {
     throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
@@ -873,14 +891,14 @@ export async function registerTickerImpl(
 }
 
 // Stryker disable next-line BlockStatement
-async function registerTicker(ctx: ActionContext) {
+async function registerTicker(ctx: ActionContext): Promise<ActionData<'stocks/register-ticker'>> {
   return registerTickerImpl(ctx);
 }
 
 export async function unregisterTickerImpl(
   ctx: ActionContext,
   deps: StateDeps = {},
-): Promise<{ symbol: string; removed: boolean; watchlist: readonly string[]; message: string }> {
+): Promise<UnregisterResult> {
   const { symbol } = ctx.payload as RegisterTickerPayload;
   if (!isSafeSymbol(symbol)) {
     throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
@@ -900,11 +918,11 @@ export async function unregisterTickerImpl(
 }
 
 // Stryker disable next-line BlockStatement
-async function unregisterTicker(ctx: ActionContext) {
+async function unregisterTicker(ctx: ActionContext): Promise<ActionData<'stocks/unregister-ticker'>> {
   return unregisterTickerImpl(ctx);
 }
 
-async function runBacktest(ctx: ActionContext): Promise<BacktestResult> {
+async function runBacktest(ctx: ActionContext): Promise<ActionData<'stocks/backtest'>> {
   const { symbol, strategy: strategyKey, initialCash } = ctx.payload as BacktestPayload;
   if (!isSafeSymbol(symbol)) throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
   // ConditionalExpression `false` mutants on these validation branches
@@ -928,23 +946,7 @@ async function runBacktest(ctx: ActionContext): Promise<BacktestResult> {
 
 // --- Strategy comparison --------------------------------------------------
 
-/** One row in a strategy-comparison result. */
-export interface StrategyComparisonRow {
-  readonly strategy: string;
-  readonly finalEquity: number;
-  readonly totalReturnPct: number;
-  readonly maxDrawdownPct: number;
-  readonly winRate: number | null;
-  readonly tradeCount: number;
-}
-
-export interface StrategyComparisonResult {
-  readonly symbol: string;
-  readonly initialCash: number;
-  readonly rows: readonly StrategyComparisonRow[];
-  /** Strategy with the highest totalReturnPct; null if all tied at 0. */
-  readonly bestByReturn: string | null;
-}
+// `StrategyComparisonRow` / `StrategyComparisonResult` は shared/stocksTypes.ts (パス 117)。
 
 interface CompareStrategiesPayload {
   symbol?: unknown;
@@ -1002,7 +1004,7 @@ export async function compareStrategiesImpl(
   return { symbol, initialCash, rows, bestByReturn };
 }
 
-async function compareStrategies(ctx: ActionContext): Promise<StrategyComparisonResult> {
+async function compareStrategies(ctx: ActionContext): Promise<ActionData<'stocks/compare-strategies'>> {
   return compareStrategiesImpl(ctx);
 }
 
@@ -1025,28 +1027,8 @@ export interface TickerAnalysis {
   readonly rsiSignal: 'oversold' | 'neutral' | 'overbought';
 }
 
-/** One recommendation from the LLM. The shape is enforced by JSON-schema
- *  validation; if Anthropic returns anything else the call throws. */
-export interface AdvisorRecommendation {
-  readonly symbol: string;
-  readonly rank: number; // 1 = top
-  readonly rationale: string;
-  readonly riskFactors: readonly string[];
-}
-
-export interface AdvisorResponse {
-  readonly recommendations: readonly AdvisorRecommendation[];
-  readonly disclaimer: string;
-  /** Always true. Pinned in the type so a caller can't mistake this
-   *  output for a real-money execution authorization. */
-  readonly notForRealMoney: true;
-  /** 実際に助言の対象にした銘柄。**答えと一緒に運ぶ** —— 画面が
-   *  「ウォッチリストについて答えた」と述べるなら、何を見たかを示せる
-   *  必要がある (2026-09-09 · パス 105)。 */
-  readonly universeConsidered: readonly string[];
-  /** 上限のために対象から外した件数 (0 なら全部見ている)。 */
-  readonly universeOmitted: number;
-}
+// `AdvisorRecommendation` / `AdvisorResponse` は shared/stocksTypes.ts (パス 117)。形は JSON の
+// 検証 (`validateAdvisorJson`) が保証し、`universeConsidered` は答えと一緒に運ぶ (パス 105)。
 
 /** Fixed disclaimer prepended to every advisor response. Visible in UI. */
 export const ADVISOR_DISCLAIMER =
@@ -1250,7 +1232,7 @@ interface AnthropicMessagesResponse {
   stop_reason?: string;
 }
 
-async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
+async function askAdvisor(ctx: ActionContext): Promise<ActionData<'stocks/advise'>> {
   const { question, universe } = ctx.payload as AdvisorPayload;
   // Each input-validation branch is exhaustively tested (empty, oversize,
   // control-char). ConditionalExpression `false` would skip the throw;

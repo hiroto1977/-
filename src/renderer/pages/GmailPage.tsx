@@ -102,7 +102,7 @@ export function GmailPage() {
             onClick={async () => {
               if (!window.serviceHub || threads.length < 1) return;
               const text = threads.map((t) => `- ${t.subject} (from ${t.sender})`).join('\n');
-              const res = await window.serviceHub.invoke('emotions', 'analyze-text', {
+              const res = await window.serviceHub.invoke<ActionData<'emotions/analyze-text'>>('emotions', 'analyze-text', {
                 text,
                 source: 'Gmail Inbox',
               });

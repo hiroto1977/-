@@ -27,5 +27,42 @@
  * 値は現行のまま (2000)。利用者から見た挙動は変えない。
  */
 
+import type { ServiceId } from './serviceId';
+
 /** `record-entry` の業務メモの上限。 */
 export const MAX_RECORD_NOTE_CHARS = 2000;
+
+/**
+ * `record-entry` / `advise` を持つ 4 サービス (2026-09-09 · パス 117)。
+ *
+ * ブラウザ版の振り分け (`web-shim.ts`) は同じ 4 つを**別の集合**で手に持っていた。
+ * `satisfies` で `ServiceId` に留める —— id を打ち間違えると `tsc` が落ちる。
+ */
+export const RECORD_ENTRY_SERVICE_IDS = [
+  'uber-eats',
+  'demae-can',
+  'real-estate',
+  'mutual-funds',
+] as const satisfies readonly ServiceId[];
+
+export type RecordEntryServiceId = (typeof RECORD_ENTRY_SERVICE_IDS)[number];
+
+/** 4 サービスの id だけを通す型の門 (ブラウザ版の振り分けが読む)。 */
+export function isRecordEntryServiceId(value: unknown): value is RecordEntryServiceId {
+  return typeof value === 'string' && (RECORD_ENTRY_SERVICE_IDS as readonly string[]).includes(value);
+}
+
+/**
+ * `record-entry` の答え —— 4 つの main handler・ブラウザ版・`ServiceActionPanel` が同じ型を読む
+ * (パス 117 までは main に 4 つ・画面に 1 つの写しが在った)。
+ *
+ * Phase 6 で Library 永続化を入れたら `persisted: true` に切替。UI は `persisted === false` の場合
+ * 「保存はされません」と表示しないと misleading になる (`data/actionOutcome.ts` が読んで分類する)。
+ */
+export interface RecordEntryResult<S extends RecordEntryServiceId = RecordEntryServiceId> {
+  readonly ok: true;
+  readonly serviceId: S;
+  readonly recordedAt: string;
+  /** Phase 6 で IndexedDB / Library 永続化に切り替えるまで false。 */
+  readonly persisted: false;
+}

@@ -13673,7 +13673,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **104 ファイル / 280 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **104 ファイル / 279 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -13733,7 +13733,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/pages/BusinessPage.tsx` | 2 |
 | `src/renderer/pages/FundingPage.tsx` | 2 |
 | `src/renderer/pages/KpiPage.tsx` | 2 |
-| `src/renderer/pages/TalentPage.tsx` | 2 |
 | `src/shared/connectors/connectorRegistry.ts` | 2 |
 | `src/shared/taxCalc.ts` | 2 |
 | `src/shared/taxCorporate.ts` | 2 |
@@ -13767,6 +13766,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/pages/ChartsPage.tsx` | 1 |
 | `src/renderer/pages/FreeePage.tsx` | 1 |
 | `src/renderer/pages/StoragePage.tsx` | 1 |
+| `src/renderer/pages/TalentPage.tsx` | 1 |
 | `src/shared/api/canva.ts` | 1 |
 | `src/shared/api/cursor.ts` | 1 |
 | `src/shared/fxCurrency.ts` | 1 |
@@ -18166,6 +18166,84 @@ i1price: 品目1 の単価「abc」を金額として読み取れません。金
 読まれない型だけのファイルなので、`advisorTypes.ts` と同じ基準 (実行時に残らない) で閉包検査の除外台帳
 (`DEP_EXCLUSIONS`) に理由つきで載せた —— 最初の `npm test` は閉包検査と tip の一致で 3 件落ち、
 除外と採掘の後に通った。
+
+
+## パス 117 (2026-09-09) — **台帳は登録済み action の 27/54 で、走査は片方向・shopify の 7 action は走査の外だった**
+
+パス 116 は `shared/actionData.ts` に 27 鍵を載せ、走査 (`invokeDataTypes.test.ts`) に「台帳の鍵はすべて
+main の `ACTIONS` に登録済みで、handler が台帳の型を宣言する」を留めた。**逆向きを見ていなかった** ——
+main に登録された action は **54** で、載っていない 27 は誰も数えていない。しかも `registered()` は
+`ACTIONS = { … }` の字面だけを読み、`shopify.ts` の `ACTIONS = Object.fromEntries(CONNECTORS…)` (7 action) を
+**黙って飛ばしていた** —— 走査が読めない形を 0 件と数えると、その 0 は「無い」ではなく「読めなかった」
+(パス 85 / 95 / 107 と同じ形。パス 116 で「母集団は走査で導く」と書いた当の走査が、母集団の一部を読めていなかった)。
+
+台帳の外に残っていた 27 には実際のずれが在った:
+
+| 場所 | ずれ |
+| --- | --- |
+| `StocksPage` | 解除 (`removed` を返す) にも登録の型 `RegisterResult` (`added`) を付けていた。読むのが `message` だけなので壊れてはいないが、`r.data.added` を読めば `undefined` で `tsc` は黙る |
+| `BusinessPage` / `web-shim.ts` | `categoryId: string` (本物は 10 個の合併型)。写しは必ず広い方へずれる (パス 62 / 105) |
+| `web-shim.ts` | カテゴリ id の一覧 (`ALLOWED_CATEGORY_IDS` 10 個) と record-entry の 4 サービス (`RECORD_ENTRY_SERVICES`) を main とは**別の写し**で持っていた (今日は一致していた) |
+| `TalentPage` | `res.data as { fitness: { eligible; hits } }` と手で写し (`checked` / `candidate` が落ちている)、保存の答えも `as { reports?: unknown[] … }` |
+| `ServiceActionPanel` | `RecordEntryResponse` = `serviceId` を落とした写し |
+| main / ブラウザ版 | `AdvisorResponse` ×3 (main / web / 画面)、`StrategyComparisonRow` / `Result` ×2、`BacktestResult` ×2 (形が違う: main は取引と資産曲線つき)、`RecordEntryResult` ×4 (main の 4 client に 1 つずつ) |
+
+規準は手の届く所に在った (20 か所目) —— `OllamaChatResult` (パス 113) と `ServiceAdvisorResponse`
+(`advisorTypes.ts`) は既に shared に 1 つだけ在り、台帳に結ぶだけだった。
+
+### 直し
+
+- 構造化された形を `shared/` に 1 つずつ置く: `stocksTypes.ts` (登録 / 解除 / バックテスト要約 / 戦略比較 / 助言)、
+  `businessAdvisor.ts` (`BUSINESS_CATEGORY_IDS` 10 個 + `BusinessCategoryId` + `isBusinessCategoryId` + 助言の形)、
+  `teamRadarState.ts` (`TeamMember` / `TeamRadarState`)、`recordEntryLimits.ts` に `RECORD_ENTRY_SERVICE_IDS`
+  (`satisfies readonly ServiceId[]`) + `isRecordEntryServiceId` + `RecordEntryResult<S>`、`talent.ts` に `JudgeResult`。
+  shopify の 7 つの答えと docstudio のコレクションは台帳のファイルに置く。main とブラウザ版は再輸出して既存の import を保つ。
+- 台帳 `ActionDataMap` を **54 鍵 (全域)** にする。`stocks/backtest` はデスクトップ版だけが上位集合 (取引・資産曲線) を
+  返すので、**両ビルドが約束する共通部分** (`BacktestSummary`) を載せる (書き出しの `downloaded` / sinks と同じ扱い)。
+- main の handler 27 本が `Promise<ActionData<'…'>>` を宣言する。`business` / `web-shim` の JSON 検証は**型の門**
+  (`isBusinessCategoryId`) を値の門 (`allowed.has`) の前に置く —— 許可集合に一覧の外の文字列が紛れても、台帳の型
+  (`categoryId: BusinessCategoryId`) を嘘にしない (ブラウザ版の検査は「別の集合なら別の categoryId が通る」を留めていた
+  ので、「一覧の中で狭められる」に改めた)。
+- ブラウザ版の双子: `web-shim.ts` の `callAssistantChat` / `callAssistantChatAll` / `callAssistantProviders` /
+  `callAnthropicAdvisor` / `callStocksAdvisor` / `callEmotionsAnalyze` が `Promise<ActionResult<ActionData<'…'>>>` を
+  宣言し、dispatch の中の 10 か所 (ollama / 登録・解除 / 戦略比較 / 人材 ×2 / record-entry ×4) は `ok<ActionData<'…'>>(…)`
+  で宣言する (`ok<T>` は引数を T で検査するので、`durationMs` を文字列にすると `tsc` が落ちる —— 対照 H)。
+  `web-shim.ts` の id の写し 2 つは shared を読む。
+- 画面: `StocksPage` は `ActionData<`stocks/${typeof action}`>` (変数の合併型がそのまま鍵になる)、`ServiceActionPanel` は
+  `serviceId: RecordEntryServiceId` と `ActionData<`${RecordEntryServiceId}/record-entry`>` (4 鍵の和 —— 1 つでも台帳に
+  無ければ `tsc` が落ちる: 対照 G)。`BusinessPage` / `EmotionsPage` / `TalentPage` / `TeamRadarPage` / `GmailPage` /
+  `SlackPage` / `OllamaPage` / `ChatbotWidget` は台帳を読み、手写しと `as` を消した。
+- 走査: `aiEgressPairs.helpers.ts` に `actionEntries()` (字面の `ACTIONS` と CONNECTORS の表の両方を読み、読めない形は
+  null —— 空の `ACTIONS = {}` (cursor.ts) は「無い」)。`invokeDataTypes.test.ts` は **両方向** (登録済み ⊆ 台帳 ∧ 台帳 ⊆
+  登録済み)、読めない client が 0、変数の引数は `NON_LITERAL_ALLOWED` に**形 (literal / template) つき**で載る (変数の
+  値ごとに形が違う所にリテラルの鍵を付けると鳴る)、双子は関数の戻り値か `ok<ActionData<'…'>>` で宣言する。
+  `NAMED_ALLOWED` は空になった。
+- Stryker の対象に `businessAdvisor.ts` / `recordEntryLimits.ts` を足した (273 → 275)。
+
+### 対照 (12 本)
+
+| 対照 | 落ちた検査 |
+| --- | --- |
+| A: main に台帳に無い action を登録する (`slack.ts` に `x-test`) | 両方向の検査 1 件 |
+| B: shopify の表の action 名を変える (`sync-to-slack2`) | 3 件 (計算された ACTIONS を読めている) |
+| C: `StocksPage` が変数の action にリテラルの鍵 (登録) を付ける (パス 117 前の形) | 2 件 |
+| D: `web-shim` の双子が `ok<ActionData<…>>` を宣言しない | 1 件 |
+| E: 台帳から登録済みの鍵 (`ollama/chat`) を落とす | 3 件 |
+| F: 走査が CONNECTORS を読めない (パス 117 前の走査) | 4 件 —— 最初は数の検査が先に落ちて狙った文面 (「読めない形」) が出なかったので、読めない形の検査を先頭に動かした |
+| G (型): `RECORD_ENTRY_SERVICE_IDS` に `stocks` を足す | `tsc` が落ちる (`"stocks/record-entry"` は台帳の鍵でない —— `ServiceActionPanel` と `web-shim` の 2 か所) |
+| H (型): `web-shim` の ollama の双子が `durationMs` を文字列で返す | `tsc` が落ちる (`Type 'string' is not assignable to type 'number'`) |
+| I1 / I2: main / ブラウザ版の型の門 (`isBusinessCategoryId`) を外す | それぞれ 1 件 |
+| J: 台帳に登録の無い鍵 (`nowhere/x`) を足す | 3 件 |
+| K: `BUSINESS_CATEGORY_IDS` から `sns-ops` を落とす (表と食い違わせる) | 2 件 |
+
+### 残り
+
+- `teamradar/save-state` のブラウザ版は payload を検証せずそのまま返す (既知の非対称)。台帳の双子の欄は「無い」の
+  理由つき —— main の `validateMembers` を `shared/` へ移して両ビルドで同じ判定を通すのが直し (型を宣言すると今は嘘になる)。
+- `uber-eats` / `demae-can` / `real-estate` / `mutual-funds` の `advise` はブラウザ版に双子が無い —— `ServiceActionPanel` の
+  「AI 提案」はブラウザ版では `action_not_found` を返す。
+- `serviceHub.invoke` そのものを鍵で総称化する (`invoke('slack', 'send-message', …)` が型を推論する) —— 台帳が全域に
+  なったので次に置ける。
 
 ## パス 115 (2026-09-09) — **同じ `YYYY-MM-DD` の判定が 7 通りに割れ、暦を見るのは 1 つだけだった**
 

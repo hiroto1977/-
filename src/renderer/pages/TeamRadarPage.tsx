@@ -357,7 +357,7 @@ export function TeamRadarPage() {
     setSaveBusy(true);
     setSaveMsg(null);
     try {
-      const r = await window.serviceHub.invoke('teamradar', 'save-state', {
+      const r = await window.serviceHub.invoke<ActionData<'teamradar/save-state'>>('teamradar', 'save-state', {
         department,
         evaluatedAt,
         members,

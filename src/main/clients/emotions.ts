@@ -270,7 +270,7 @@ function pickDominant(scores: EmotionScores): string {
   return scores[best] <= 0 ? 'mixed' : best;
 }
 
-async function analyzeText(ctx: ActionContext): Promise<AnalysisEntry> {
+async function analyzeText(ctx: ActionContext): Promise<ActionData<'emotions/analyze-text'>> {
   const { text, source } = ctx.payload as unknown as AnalyzeTextPayload;
   if (!text || typeof text !== 'string' || text.trim().length === 0) {
     throw new Error('text is required');

@@ -1,4 +1,5 @@
-import type { ActionContext, ActionMap, FetchContext, ServiceAdvisorResponse } from './types';
+import type { ActionContext, ActionMap, FetchContext } from './types';
+import type { ActionData } from '../../shared/actionData';
 import { MAX_RECORD_NOTE_CHARS } from '../../shared/recordEntryLimits';
 
 /**
@@ -57,24 +58,14 @@ export async function fetchUberEatsSnapshot(ctx: FetchContext): Promise<UberEats
 // として動作する。**永続化は未配線** — Library への保存は別 PR で。
 // 返り値 `persisted: false` で UI 側に明示する。
 
+// 戻り値の形は shared/recordEntryLimits.ts の `RecordEntryResult` (パス 117 —— 4 サービスと画面が同じ物を読む)。
 interface RecordEntryPayload {
   readonly note: string;
   readonly amount?: number;
 }
 
-/** record-entry 戻り値。Phase 6 で Library 永続化を入れたら `persisted: true`
- *  に切替。UI は `persisted === false` の場合「保存はされません (Phase 6 で対応)」
- *  と表示しないと misleading になる。 */
-export interface RecordEntryResult {
-  readonly ok: true;
-  readonly serviceId: 'uber-eats';
-  readonly recordedAt: string;
-  /** Phase 6 で IndexedDB / Library 永続化に切り替えるまで false。 */
-  readonly persisted: false;
-}
-
 // Stryker disable next-line all
-async function recordEntry(ctx: ActionContext): Promise<RecordEntryResult> {
+async function recordEntry(ctx: ActionContext): Promise<ActionData<'uber-eats/record-entry'>> {
   const p = (ctx.payload ?? {}) as Partial<RecordEntryPayload>;
   // Stryker disable all
   if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > MAX_RECORD_NOTE_CHARS) {
@@ -95,7 +86,7 @@ const UBER_EATS_DISCLAIMER =
   '本提案は静的 snapshot に基づくテンプレートであり、店舗運営上の助言ではありません。' +
   '実際の経営判断はオーナー・専門家の責任で行ってください。Phase 6 で実 LLM 推論を接続します。';
 
-async function advise(ctx: ActionContext): Promise<ServiceAdvisorResponse> {
+async function advise(ctx: ActionContext): Promise<ActionData<'uber-eats/advise'>> {
   void ctx;
   // Stryker disable next-line all
   return {

@@ -28,7 +28,6 @@ import {
 import {
   MAX_OLLAMA_PROMPT_CHARS,
   MAX_OLLAMA_SYSTEM_CHARS,
-  type OllamaChatResult,
   MIN_SAFE_VERSION,
   UNPATCHED_OOB_NOTICE,
   adviseFromBody,
@@ -38,6 +37,7 @@ import {
   type OllamaSnapshot,
 } from '../../shared/ollama';
 import { capAssistantReply, inputTooLongMessage } from '../../shared/assistantLimits';
+import type { ActionData } from '../../shared/actionData';
 import { isOverCap, readBodyWithCap } from '../../shared/httpLimits';
 
 // 既存の import 元 (このモジュール) を維持するため再 export する。
@@ -244,7 +244,7 @@ interface OllamaChatResponse {
   total_duration?: number;
 }
 
-async function chat(ctx: ActionContext): Promise<OllamaChatResult> {
+async function chat(ctx: ActionContext): Promise<ActionData<'ollama/chat'>> {
   const { model, prompt, system } = ctx.payload as unknown as ChatPayload;
   if (!model || !prompt) throw new Error('model and prompt are required');
   if (!isSafeModelName(model)) {

@@ -21,6 +21,21 @@ import {
   MAX_STOCK_ADVISOR_RISK_CHARS,
 } from '../../shared/advisorResponseLimits';
 import { mockCandles, type WebCandle, type WebSignal } from './stocksWatchlistWeb';
+import type {
+  AdvisorRecommendation,
+  AdvisorResponse,
+  BacktestSummary,
+  StrategyComparisonResult,
+  StrategyComparisonRow,
+} from '../../shared/stocksTypes';
+
+// 戻り値の形は shared/stocksTypes.ts が 1 つだけ持つ (パス 117 —— それまでここは main の写しだった)。
+export type {
+  AdvisorRecommendation,
+  AdvisorResponse,
+  StrategyComparisonResult,
+  StrategyComparisonRow,
+} from '../../shared/stocksTypes';
 
 const HISTORY_LENGTH = 120;
 
@@ -328,14 +343,8 @@ function portfolioEquity(port: PaperPortfolio, prices: Readonly<Record<string, n
   return equity;
 }
 
-export interface BacktestResult {
-  finalEquity: number;
-  totalReturnPct: number;
-  maxDrawdownPct: number;
-  /** 勝率 (0..1)。**決済済みが 0 件なら null (算定不能)。** */
-  winRate: number | null;
-  tradeCount: number;
-}
+/** ブラウザ版のバックテストは要約 5 欄だけを返す (デスクトップ版は取引と資産曲線を足す)。 */
+export type BacktestResult = BacktestSummary;
 
 export function backtest(
   candles: readonly WebCandle[],
@@ -415,20 +424,7 @@ export function backtest(
 
 // --- 戦略比較 ------------------------------------------------------------
 
-export interface StrategyComparisonRow {
-  strategy: string;
-  finalEquity: number;
-  totalReturnPct: number;
-  maxDrawdownPct: number;
-  winRate: number | null;
-  tradeCount: number;
-}
-export interface StrategyComparisonResult {
-  symbol: string;
-  initialCash: number;
-  rows: StrategyComparisonRow[];
-  bestByReturn: string | null;
-}
+// `StrategyComparisonRow` / `StrategyComparisonResult` は shared/stocksTypes.ts (上で再輸出)。
 
 /** `symbol` のモック履歴に対し全戦略をバックテストし比較する。 */
 export function compareStrategies(
@@ -527,21 +523,7 @@ export const ADVISOR_DISCLAIMER =
 /** ウォッチリストが空のときの既定ユニバース。 */
 export const DEFAULT_ADVISOR_UNIVERSE: readonly string[] = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META'];
 
-export interface AdvisorRecommendation {
-  symbol: string;
-  rank: number;
-  rationale: string;
-  riskFactors: string[];
-}
-export interface AdvisorResponse {
-  recommendations: AdvisorRecommendation[];
-  disclaimer: string;
-  notForRealMoney: true;
-  /** 実際に助言の対象にした銘柄 (パス 105 — 答えと一緒に運ぶ)。 */
-  universeConsidered: readonly string[];
-  /** 上限のために対象から外した件数。 */
-  universeOmitted: number;
-}
+// `AdvisorRecommendation` / `AdvisorResponse` は shared/stocksTypes.ts (上で再輸出)。
 
 export function advisorSystemPrompt(allowedSymbols: readonly string[]): string {
   return [

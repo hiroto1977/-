@@ -39,14 +39,8 @@ interface MoodLog {
   note: string;
 }
 
-interface Analysis {
-  id: string;
-  timestamp: number;
-  excerpt: string;
-  scores: Record<string, number>;
-  sentiment: 'positive' | 'neutral' | 'negative';
-  dominant: string;
-}
+/** 分析 1 件の形は台帳 (`emotions/analyze-text` = `shared/emotionsShape.ts` の `AnalysisEntryShape`) を読む (パス 117)。 */
+type Analysis = ActionData<'emotions/analyze-text'>;
 
 function MoodTrend({ moods }: { moods: MoodLog[] }) {
   // Simple 30-day sparkline. Days with no entry are gaps.
@@ -263,7 +257,7 @@ export function EmotionsPage() {
     if (!window.serviceHub) return;
     setAnalyzing(true);
     setAnalyzeErr(undefined);
-    const res = await window.serviceHub.invoke<Analysis>('emotions', 'analyze-text', {
+    const res = await window.serviceHub.invoke<ActionData<'emotions/analyze-text'>>('emotions', 'analyze-text', {
       text: text.trim(),
     });
     setAnalyzing(false);

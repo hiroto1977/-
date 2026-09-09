@@ -31,6 +31,7 @@ import {
   type BusinessAdvisorResponse,
   BUSINESS_ADVISOR_MAX_TOKENS,
 } from '../business';
+import { BUSINESS_CATEGORY_IDS } from '../../../shared/businessAdvisor';
 
 // --- Category taxonomy ------------------------------------------------
 
@@ -2228,5 +2229,35 @@ describe('BUSINESS_CATEGORIES — 読み直して static 変異体を届かせ�
         'variableRatio',
       ]);
     }
+  });
+});
+
+// --- パス 117: id の一覧 (shared) と表 (main) の一致・型の門 ----------------
+
+describe('BUSINESS_CATEGORY_IDS (shared) と BUSINESS_CATEGORIES (main の表)', () => {
+  it('一覧の各 id に表の行が在り、表の各行の id が一覧に在る (順序も同じ)', () => {
+    // 表の各行の id が一覧に在ることは型 (`BusinessCategoryDef.id: BusinessCategoryId`) が留める。
+    // 逆向き (一覧に足したのに行が無い) は型では留まらないので、ここで突き合わせる。
+    expect(BUSINESS_CATEGORIES.map((c) => c.id)).toEqual([...BUSINESS_CATEGORY_IDS]);
+  });
+
+  it('validateBusinessAdvisorJson は allowedIds に一覧の外の文字列が紛れても通さない (型の門)', () => {
+    // `allowedIds` は呼び出しごとの値の門。台帳の型 (`categoryId: BusinessCategoryId`) を嘘にしない
+    // ために、一覧に無い id は許可集合に在っても断る。
+    const rec = {
+      categoryId: 'other',
+      rank: 1,
+      rationale: '理由',
+      actionItems: ['やること'],
+      riskFactors: ['risk'],
+    };
+    expect(() => validateBusinessAdvisorJson({ recommendations: [rec] }, new Set(['other']))).toThrow(
+      /invalid or out-of-universe categoryId: other/,
+    );
+    // 一覧に在る id は、呼び出しの許可集合に在れば通る (値の門は残る)。
+    expect(validateBusinessAdvisorJson({ recommendations: [{ ...rec, categoryId: 'blog' }] }, new Set(['blog']))).toHaveLength(1);
+    expect(() => validateBusinessAdvisorJson({ recommendations: [{ ...rec, categoryId: 'blog' }] }, new Set(['ec']))).toThrow(
+      /out-of-universe categoryId: blog/,
+    );
   });
 });

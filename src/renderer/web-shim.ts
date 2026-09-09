@@ -58,7 +58,17 @@ import {
 } from '../shared/advisorQuestionLimits';
 import { MAX_ADVISOR_ACTION_ITEMS, MAX_ADVISOR_ITEM_CHARS, MAX_ADVISOR_RATIONALE_CHARS, MAX_ADVISOR_RECOMMENDATIONS, MAX_ADVISOR_RISK_FACTORS } from '../shared/advisorResponseLimits';
 import { MAX_ANALYZE_TEXT_CHARS } from '../shared/emotionsLimits';
-import { MAX_RECORD_NOTE_CHARS } from '../shared/recordEntryLimits';
+import {
+  MAX_RECORD_NOTE_CHARS,
+  isRecordEntryServiceId,
+  type RecordEntryServiceId,
+} from '../shared/recordEntryLimits';
+import type { ActionData } from '../shared/actionData';
+import {
+  BUSINESS_CATEGORY_IDS,
+  isBusinessCategoryId,
+  type BusinessAdvisorRecommendation,
+} from '../shared/businessAdvisor';
 import {
   MAX_ASSISTANT_CONTENT_CHARS,
   MAX_ASSISTANT_MESSAGES,
@@ -171,7 +181,8 @@ async function requestAndReadDurability(): Promise<'persistent' | 'best-effort'>
   }
 }
 
-const RECORD_ENTRY_SERVICES = new Set(['uber-eats', 'demae-can', 'real-estate', 'mutual-funds']);
+// record-entry を持つ 4 サービスは shared/recordEntryLimits.ts の `RECORD_ENTRY_SERVICE_IDS` が持つ
+// (パス 117 まではここに別の集合を手で持っていた)。振り分けは `isRecordEntryServiceId`。
 
 /** CORS をブロックする SaaS 用のトランスポート。ユーザー設定のプロキシ
  *  (Cloudflare Worker) 経由で呼ぶ。未設定なら案内付きで throw する。
@@ -405,19 +416,9 @@ const BUSINESS_ADVISOR_DISCLAIMER =
   '数値は模擬データに基づくシミュレーションです。' +
   '実際の経営判断はご自身の責任で行ってください。';
 
-const ALLOWED_CATEGORY_IDS = [
-  'ec', 'dropship', 'oem-odm', 'blog', 'blog-affiliate',
-  'ppc-affiliate', 'video-production', 'video-upload',
-  'video-distribution', 'sns-ops',
-] as const;
-
-interface BusinessAdvisorRecommendation {
-  categoryId: string;
-  rank: number;
-  rationale: string;
-  actionItems: string[];
-  riskFactors: string[];
-}
+// カテゴリ id の一覧 (`BUSINESS_CATEGORY_IDS`) と推奨の形 (`BusinessAdvisorRecommendation`) は
+// shared/businessAdvisor.ts が持つ (パス 117 —— それまでここに一覧の写しと `categoryId: string` に
+// 広がった形が在った)。
 
 function advisorSystemPrompt(allowed: readonly string[]): string {
   return [
@@ -467,7 +468,9 @@ export function validateAdvisorJson(raw: unknown, allowed: ReadonlySet<string>):
     // 同じ形に帯で `Stryker disable ConditionalExpression` を当てている)。
     // 分ければ「型が違う」と「値が許されない」を別の文面で区別でき、どちらの門も測れる。
     if (typeof r.categoryId !== 'string') throw new Error('categoryId is not a string');
-    if (!allowed.has(r.categoryId)) throw new Error('invalid categoryId: ' + r.categoryId);
+    // 型の門 (一覧に在る id か) と値の門 (この呼び出しで許した集合か) の両方 —— 型の門が無いと
+    // `allowed` に一覧の外の文字列が紛れたとき台帳の型を嘘にする (パス 117)。文面は値の門と同じ。
+    if (!isBusinessCategoryId(r.categoryId) || !allowed.has(r.categoryId)) throw new Error('invalid categoryId: ' + r.categoryId);
     if (typeof r.rank !== 'number') throw new Error('rank is not a number');
     if (!Number.isFinite(r.rank) || r.rank < 1) throw new Error('invalid rank');
     if (typeof r.rationale !== 'string' || r.rationale.length === 0 || r.rationale.length > MAX_ADVISOR_RATIONALE_CHARS) throw new Error('invalid rationale');
@@ -488,7 +491,7 @@ export function validateAdvisorJson(raw: unknown, allowed: ReadonlySet<string>):
   return out;
 }
 
-async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
+async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<ActionResult<ActionData<'business/advise'>>> {
   const question = payload['question'];
   const qProblem = checkAdvisorQuestion(question);
   if (qProblem === 'empty') return err('action_failed', '質問を入力してください');
@@ -515,7 +518,7 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
     return err('action_failed', '事業データを読み込めませんでした');
   }
 
-  const allowed = new Set<string>(ALLOWED_CATEGORY_IDS);
+  const allowed = new Set<string>(BUSINESS_CATEGORY_IDS);
   const systemPrompt = advisorSystemPrompt([...allowed]);
   const userPrompt = [
     'ユーザーの質問: ' + question,
@@ -596,7 +599,7 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
 // stocks/advise: ウォッチリスト(空なら既定ユニバース)のティッカーをモック
 // 指標で分析し、Anthropic に投げてランク提案を得る。投資助言ではない旨を
 // system prompt で制約し、固定の免責を必ず付ける。
-async function callStocksAdvisor(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
+async function callStocksAdvisor(payload: Record<string, unknown>): Promise<ActionResult<ActionData<'stocks/advise'>>> {
   const question = payload['question'];
   const qProblem = checkAdvisorQuestion(question);
   if (qProblem === 'empty') return err('action_failed', '質問を入力してください');
@@ -700,7 +703,7 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
 // --- Anthropic Emotions text analyzer (browser-direct) ----------------
 // emotions/analyze-text: Vault の emotions キーで Anthropic を直接呼び、
 // 感情スコアを正規化して localStorage の分析履歴に保存する。
-async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
+async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<ActionResult<ActionData<'emotions/analyze-text'>>> {
   const text = payload['text'];
   const source = typeof payload['source'] === 'string' ? (payload['source'] as string) : undefined;
   if (typeof text !== 'string' || text.trim().length === 0) return err('action_failed', 'text を入力してください');
@@ -825,7 +828,7 @@ async function readAssistantCredsRaw(): Promise<
   }
 }
 
-async function callAssistantChat(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
+async function callAssistantChat(payload: Record<string, unknown>): Promise<ActionResult<ActionData<'assistant/chat'>>> {
   // 最新の発話は切らずに断る (パス 112・main と同じ判断)。履歴の窓とは別。
   if (latestTurnTooLong(payload['messages'])) return err('action_failed', inputTooLongMessage('入力'));
   const turns = sanitizeAssistantTurns(payload['messages']);
@@ -896,7 +899,7 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
  * 回答を並べて返す。1 社の失敗 (CORS プロキシ未設定を含む) は ok:false として
  * 他社の回答を巻き込まない。順序は AI_PROVIDER_IDS の定義順で決定論。
  */
-async function callAssistantChatAll(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
+async function callAssistantChatAll(payload: Record<string, unknown>): Promise<ActionResult<ActionData<'assistant/chatAll'>>> {
   // chat と同じ (パス 112)。
   if (latestTurnTooLong(payload['messages'])) return err('action_failed', inputTooLongMessage('入力'));
   const turns = sanitizeAssistantTurns(payload['messages']);
@@ -977,7 +980,7 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
 }
 
 /** assistant/providers: 各 AI プロバイダの設定状況 (エージェント選択 UI 用)。 */
-async function callAssistantProviders(): Promise<ActionResult<unknown>> {
+async function callAssistantProviders(): Promise<ActionResult<ActionData<'assistant/providers'>>> {
   const credsRead = await readAssistantCredsRaw();
   if (!credsRead.ok) return credsRead.res;
   const creds = parseAiCredentials(credsRead.raw);
@@ -1356,7 +1359,7 @@ const shim = {
       const flagged = Array.isArray(p.flagged)
         ? p.flagged.filter((f): f is string => typeof f === 'string')
         : [];
-      return ok({
+      return ok<ActionData<'talent/judge-leader'>>({
         fitness: judgeLeaderFitness(flagged),
         candidate: typeof p.candidate === 'string' ? p.candidate.slice(0, 64) : '',
       }) as ActionResult<T>;
@@ -1369,7 +1372,7 @@ const shim = {
       const clean = sanitizeTalentState(payload);
       try {
         localStorage.setItem(TALENT_STORAGE_KEY, JSON.stringify(clean));
-        return ok(clean) as ActionResult<T>;
+        return ok<ActionData<'talent/save-state'>>(clean) as ActionResult<T>;
       } catch {
         return err('action_failed', 'localStorage への保存に失敗しました');
       }
@@ -1397,7 +1400,7 @@ const shim = {
         endpoint: loadEndpointSetting(),
       });
       return out.ok
-        ? (ok({ reply: out.reply, durationMs: out.durationMs }) as ActionResult<T>)
+        ? (ok<ActionData<'ollama/chat'>>({ reply: out.reply, durationMs: out.durationMs }) as ActionResult<T>)
         : err<T>(`ollama_${out.kind}`, out.message);
     }
 
@@ -1409,7 +1412,7 @@ const shim = {
         const symbol = (payload as { symbol?: unknown }).symbol;
         const result =
           action === 'register-ticker' ? registerSymbol(symbol) : unregisterSymbol(symbol);
-        return ok(result) as ActionResult<T>;
+        return ok<ActionData<'stocks/register-ticker'> | ActionData<'stocks/unregister-ticker'>>(result) as ActionResult<T>;
       } catch (e) {
         return err('action_failed', e instanceof Error ? e.message : String(e));
       }
@@ -1454,7 +1457,7 @@ const shim = {
         if (!Number.isFinite(initialCash) || initialCash <= 0) {
           return err('action_failed', 'initialCash must be a positive finite number');
         }
-        return ok(compareStrategies(symbol.toUpperCase(), initialCash)) as ActionResult<T>;
+        return ok<ActionData<'stocks/compare-strategies'>>(compareStrategies(symbol.toUpperCase(), initialCash)) as ActionResult<T>;
       } catch (e) {
         return err('action_failed', e instanceof Error ? e.message : String(e));
       }
@@ -1649,7 +1652,7 @@ const shim = {
     }
 
     // 業務記録 (record-entry): ステートレス検証のみ (Electron 版と同じ挙動)。
-    if (action === 'record-entry' && RECORD_ENTRY_SERVICES.has(serviceId)) {
+    if (action === 'record-entry' && isRecordEntryServiceId(serviceId)) {
       const p = (payload ?? {}) as { note?: unknown; amount?: unknown };
       if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > MAX_RECORD_NOTE_CHARS) {
         return err(
@@ -1660,7 +1663,12 @@ const shim = {
       if (p.amount !== undefined && (typeof p.amount !== 'number' || !Number.isFinite(p.amount))) {
         return err('action_failed', `${serviceId}.record-entry: amount は finite な数値で指定してください`);
       }
-      return ok({ ok: true, serviceId, recordedAt: new Date().toISOString(), persisted: false }) as ActionResult<T>;
+      return ok<ActionData<`${RecordEntryServiceId}/record-entry`>>({
+        ok: true,
+        serviceId,
+        recordedAt: new Date().toISOString(),
+        persisted: false,
+      }) as ActionResult<T>;
     }
 
     // マルチエージェント AI アシスタント — Vault の資格情報で解決したプロバイダ

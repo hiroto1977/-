@@ -1,6 +1,6 @@
 import { useReducer, useState } from 'react';
-import type { ServiceId } from '../services';
-import type { ServiceAdvisorResponse } from '../../shared/advisorTypes';
+import type { RecordEntryServiceId } from '../../shared/recordEntryLimits';
+import type { ActionData } from '../../shared/actionData';
 import { Section } from './StatusBar';
 import { parseAmountInput, sanitizeNote } from './serviceActionUtils';
 import { classifyActionResult } from '../data/actionOutcome';
@@ -28,15 +28,10 @@ import {
  *   (mutual-funds / real-estate) は法的 disclaimer 必須 (R1 BLOCKING-1)。
  */
 export interface ServiceActionPanelProps {
-  readonly serviceId: ServiceId;
+  /** record-entry / advise を持つ 4 サービスに限る (台帳の鍵 `${RecordEntryServiceId}/record-entry` が全部在る)。 */
+  readonly serviceId: RecordEntryServiceId;
   /** 例: "Uber Eats"。トースト / 表示用 */
   readonly serviceLabel: string;
-}
-
-interface RecordEntryResponse {
-  readonly ok: true;
-  readonly recordedAt: string;
-  readonly persisted: false;
 }
 
 export function ServiceActionPanel({ serviceId, serviceLabel }: ServiceActionPanelProps) {
@@ -67,7 +62,9 @@ export function ServiceActionPanel({ serviceId, serviceLabel }: ServiceActionPan
     }
     dispatch({ type: 'record/start' });
     try {
-      const r = await window.serviceHub.invoke<RecordEntryResponse>(serviceId, 'record-entry', payload);
+      // 戻り値の形は台帳を読む (パス 117 —— それまでここに `serviceId` を落とした写しが在った)。
+      // 4 鍵の和 —— 1 つでも台帳に無ければ tsc が落ちる。
+      const r = await window.serviceHub.invoke<ActionData<`${RecordEntryServiceId}/record-entry`>>(serviceId, 'record-entry', payload);
       // BLOCKING-3 対応: persisted=false を構造的に表示。
       // 分類は `data/actionOutcome.ts` に集約 — 音声・チャットと同じ読み方をする。
       const classified = classifyActionResult(r);
@@ -93,7 +90,7 @@ export function ServiceActionPanel({ serviceId, serviceLabel }: ServiceActionPan
   async function submitAdvise() {
     dispatch({ type: 'advise/start' });
     try {
-      const r = await window.serviceHub.invoke<ServiceAdvisorResponse>(serviceId, 'advise', {});
+      const r = await window.serviceHub.invoke<ActionData<`${RecordEntryServiceId}/advise`>>(serviceId, 'advise', {});
       if (!r.ok) {
         dispatch({ type: 'error', text: `AI 提案の取得に失敗: ${r.message}` });
         return;

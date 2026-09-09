@@ -164,11 +164,22 @@ describe('validateAdvisorJson — 通す側', () => {
     expect((out[0] as { rank: number }).rank).toBe(1.5);
   });
 
-  it('許可集合は呼び出し側から来る (別の集合なら別の categoryId が通る)', async () => {
+  it('許可集合は呼び出し側から来る (一覧の中で別の集合なら別の categoryId が通る)', async () => {
     const validate = await loadValidator();
-    expect(() => validate(wrap(rec({ categoryId: 'other' })), new Set(['other']))).not.toThrow();
-    expect(() => validate(wrap(rec({ categoryId: 'ec' })), new Set(['other']))).toThrow(
+    // 値の門: 一覧に在る id でも、この呼び出しの許可集合に無ければ断る。
+    expect(() => validate(wrap(rec({ categoryId: 'blog' })), new Set(['blog']))).not.toThrow();
+    expect(() => validate(wrap(rec({ categoryId: 'ec' })), new Set(['blog']))).toThrow(
       new Error('invalid categoryId: ec'),
+    );
+  });
+
+  it('型の門: 許可集合に一覧の外の文字列が紛れても通さない (パス 117)', async () => {
+    // 2026-09-09 まで `new Set(['other'])` なら 'other' が通っていた —— 答えの型が
+    // `categoryId: BusinessCategoryId` (10 個の合併型) になったので、許可集合は一覧を狭められても
+    // 広げられない。文面は値の門と同じ (画面に出る言葉を増やさない)。
+    const validate = await loadValidator();
+    expect(() => validate(wrap(rec({ categoryId: 'other' })), new Set(['other']))).toThrow(
+      new Error('invalid categoryId: other'),
     );
   });
 });

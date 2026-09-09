@@ -286,6 +286,12 @@ export interface LeaderFitness {
   readonly checked: number;
 }
 
+/** `talent/judge-leader` の答え —— main・ブラウザ版・画面が同じ型を読む (パス 117)。 */
+export interface JudgeResult {
+  readonly fitness: LeaderFitness;
+  readonly candidate: string;
+}
+
 /**
  * 登用の可否。**1 つでも該当したら不可**。
  *

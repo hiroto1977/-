@@ -19,8 +19,8 @@ import {
   MAX_OLLAMA_SYSTEM_CHARS,
   isLoopbackHostname,
   parseOllamaEndpoint,
-  type OllamaChatResult,
 } from '../../shared/ollama';
+import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -57,9 +57,9 @@ export function OllamaPage() {
     setBusy(true);
     setErrMsg(undefined);
     setReply(null);
-    // 戻り値の型は共有の `OllamaChatResult` を読む (パス 114 —— チャットボットをパス 113 で
-    // 直したのと同じ形。手で写した型は実物とずれても `tsc` が黙る)。
-    const res = await window.serviceHub.invoke<OllamaChatResult>(
+    // 戻り値の型は台帳 (`ollama/chat` = 共有の `OllamaChatResult`) を読む (パス 114 / 117 ——
+    // チャットボットをパス 113 で直したのと同じ形。手で写した型は実物とずれても `tsc` が黙る)。
+    const res = await window.serviceHub.invoke<ActionData<'ollama/chat'>>(
       'ollama',
       'chat',
       { model: model.trim(), prompt: prompt.trim(), system: systemPrompt.trim() || undefined },

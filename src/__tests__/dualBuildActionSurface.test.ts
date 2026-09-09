@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import { RECORD_ENTRY_SERVICE_IDS } from '../shared/recordEntryLimits';
 
 /*
  * **ブラウザ版が、デスクトップ版の許可表に無い操作を実行できてはいけない。**
@@ -113,12 +114,18 @@ function invokeBody(): string {
   return stripComments(braceBlock(shim, shim.indexOf('  invoke: async <T>')));
 }
 
-/** `record-entry` を集合で受ける分岐の対象サービス。 */
-function recordEntryServices(): string[] {
-  const shim = read('src/renderer/web-shim.ts');
-  const decl = shim.slice(shim.indexOf('RECORD_ENTRY_SERVICES ='));
-  const set = decl.slice(0, decl.indexOf(']'));
-  return [...set.matchAll(/'([a-z0-9-]+)'/g)].map((m) => m[1]!);
+/**
+ * `record-entry` を集合で受ける分岐の対象サービス。
+ *
+ * 2026-09-09 (パス 117) までブラウザ版は `RECORD_ENTRY_SERVICES = new Set([…])` を自前で持ち、
+ * ここはその字面を読んでいた。いまは shared の `RECORD_ENTRY_SERVICE_IDS` を `isRecordEntryServiceId`
+ * で読むので、**分岐がその関数で振り分けている**ことを字面で確かめた上で、集合は shared から取る
+ * (集合を 2 度書かない)。分岐の形が変われば [] になり、`record-entry` が「拾えていない action」として鳴る。
+ */
+function recordEntryServices(body: string): string[] {
+  return /action\s*===\s*'record-entry'\s*&&\s*isRecordEntryServiceId\(serviceId\)/.test(body)
+    ? [...RECORD_ENTRY_SERVICE_IDS]
+    : [];
 }
 
 function browserPairs(body: string): Set<string> {
@@ -132,7 +139,7 @@ function browserPairs(body: string): Set<string> {
   for (const m of body.matchAll(/serviceId\s*===\s*'([^']+)'\s*&&\s*\(([^)]*action\s*===[^)]*)\)/g)) {
     for (const a of m[2]!.matchAll(/action\s*===\s*'([^']+)'/g)) out.add(`${m[1]}/${a[1]}`);
   }
-  for (const svc of recordEntryServices()) out.add(`${svc}/record-entry`);
+  for (const svc of recordEntryServices(body)) out.add(`${svc}/record-entry`);
   return out;
 }
 
