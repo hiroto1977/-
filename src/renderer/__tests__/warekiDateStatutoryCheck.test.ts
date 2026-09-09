@@ -190,8 +190,49 @@ describe('読めない日付には断りを出す (パス 94 と同じ橋)', () 
     const msgs = messages(kenshu, { receiveDate: '令和8年9月1日', payday: 'そのうち' });
     const said = msgs.filter((m) => m.includes('読み取れません'));
     expect(said).toHaveLength(1);
-    expect(said[0]).toContain('支払期日');
+    // **ラベルは実物の書式から引く。** 部分一致では足りない ——
+    // 「支払期日」は「代金の支払期日」に含まれるので、写し間違いを見逃す
+    // (パス 100 で実際に「支払期日」と写しており、この書式の欄は
+    // 「代金の支払期日」だった。パス 101 で直した)。
+    const label = kenshu.fields.find((f) => f.k === 'payday')?.label;
+    expect(label).toBe('代金の支払期日');
+    expect(said[0]).toContain(`「${label!}」`);
     expect(said[0]).toContain('60日以内の判定を行いませんでした');
+  });
+
+  it('★ 断りの欄名は必ず実物の書式のラベル (鍵への倒れ込みが起きていない)', () => {
+    // `unreadableDates` は欄が見つからないと鍵をそのまま出す。**それが起きていない**
+    // ことを、書式のラベル一覧との照合で確かめる (パス 101)。
+    for (const [doc, values] of [
+      [kaiko, { noticeDate: 'きのう', dismissDate: 'あした' }],
+      [kenshu, { receiveDate: 'むかし', payday: 'そのうち' }],
+    ] as const) {
+      const labels = new Set(doc.fields.map((f) => f.label));
+      const said = checkDoc(doc, values).filter((i) => i.message.includes('日付として読み取れません'));
+      expect(said.length, doc.id).toBeGreaterThan(0);
+      for (const i of said) {
+        const m = /^「([^」]+)」/.exec(i.message);
+        expect(m, `${doc.id}/${i.field}: 文面が「ラベル」で始まっていない`).not.toBeNull();
+        expect(labels.has(m![1]!), `${doc.id}/${i.field}: 「${m![1]!}」は書式のラベルに無い`).toBe(true);
+      }
+    }
+  });
+
+  it('★ 同じ欄に「読み取れません」が 2 件並ばない (総称ループと重ならない)', () => {
+    // `checkDoc` は `f.num` の欄について既に「数値として読み取れません」を出す。
+    // パス 94 の断りが**両方の読み手が拒む入力**でも鳴ると、同じ欄に同趣旨の
+    // 断りが 2 件並ぶ (パス 101 の実測で 2 件出ていた)。
+    const invoice = STUDIO_TEMPLATES.find((d) => d.id === 'invoice')!;
+    const base = { i1kind: '標準10%', i1name: 'X', i1qty: '1' };
+    for (const price of ['abc', '30 000', '1,23', '100m2']) {
+      const said = checkDoc(invoice, { ...base, i1price: price })
+        .filter((i) => i.field === 'i1price' && i.message.includes('読み取れません'));
+      expect(said, `i1price=${price}`).toHaveLength(1);
+    }
+    // 対照: 読める単価では 1 件も出ない
+    expect(
+      checkDoc(invoice, { ...base, i1price: '1234' }).filter((i) => i.message.includes('読み取れません')),
+    ).toEqual([]);
   });
 
   it('★ 対照: 空欄では断らない (空欄と「読めない」を区別している)', () => {

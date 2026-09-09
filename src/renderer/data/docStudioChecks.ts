@@ -141,19 +141,26 @@ const DAY = 86_400_000;
  */
 function unreadableDates(
   v: Values,
-  fields: readonly (readonly [string, string])[],
+  doc: StudioDoc,
+  keys: readonly string[],
   judgement: string,
 ): DocIssue[] {
   const out: DocIssue[] = [];
-  for (const [key, label] of fields) {
+  for (const key of keys) {
     const raw = (v[key] ?? '').trim();
-    if (raw !== '' && parseJpDate(raw) === null) {
-      out.push({
-        level: 'warn',
-        field: key,
-        message: `${label}「${raw}」を日付として読み取れません。${judgement}を行いませんでした。`,
-      });
-    }
+    if (raw === '' || parseJpDate(raw) !== null) continue;
+    // **ラベルは実物の書式から引く。** 手で写すと食い違う ——
+    // 実測: `payday` は書式ごとに 7 通りのラベルを持ち (支払期日 / 代金の支払期日 /
+    // 支払予定日 / 賃金の支払日 / 支払日)、`kenshu` では「代金の支払期日」である。
+    // パス 100 で私は「支払期日」と写し、**画面に無い欄の名前**を出していた
+    // (2026-09-09 · パス 101。欄が見つからなければ鍵をそのまま出す ——
+    // 配線の誤りなので黙って隠さない。同じことを `docStudioDateFields.test.ts` が留める)。
+    const label = doc.fields.find((f) => f.k === key)?.label ?? key;
+    out.push({
+      level: 'warn',
+      field: key,
+      message: `「${label}」を日付として読み取れません（入力値: ${raw}）。${judgement}を行いませんでした。`,
+    });
   }
   return out;
 }
@@ -247,14 +254,19 @@ function taxItemIssues(v: Values, max: number): DocIssue[] {
     //   `30 000` (空白区切り) / `1,23` (桁が 3 でない) / `1、234` (読点) / `100m2`
     // 空欄だけを見ていたのが非対称の正体で、**読めない側にも同じ断りを出す**。
     const qty = text(v, `i${n}qty`);
-    if (filled && price !== '' && readNumber(price) === null) {
+    // **総称ループが既に言う分は言わない。** `checkDoc` は `f.num` の欄について
+    // `toNum` で読めなければ「数値として読み取れません」を出す。ここが狙うのは
+    // **`toNum` は読めるが `readNumber` は読めない帯** (`30 000` / `1,23` / `100m2`)
+    // —— そこだけ計算が黙って 0 になる。両方が拒む入力 (`abc`) で 2 件出すと
+    // 同じ欄に同じ趣旨の断りが並ぶ (2026-09-09 · パス 101 の実測で 2 件出ていた)。
+    if (filled && price !== '' && toNum(price) !== null && readNumber(price) === null) {
       out.push({
         level: 'warn',
         field: `i${n}price`,
         message: `品目${n} の単価「${price}」を金額として読み取れません。金額 0 円として計算されます。`,
       });
     }
-    if (filled && qty !== '' && readNumber(qty) === null) {
+    if (filled && qty !== '' && toNum(qty) !== null && readNumber(qty) === null) {
       out.push({
         level: 'warn',
         field: `i${n}qty`,
@@ -287,7 +299,12 @@ function taxItemIssues(v: Values, max: number): DocIssue[] {
 }
 
 /** 書式ごとの個別ルール。値が入っていない項目は原則として空欄チェックに任せる。 */
-const RULES: Record<string, (v: Values) => DocIssue[]> = {
+/**
+ * 書式ごとの規則。第 2 引数の書式は**欄のラベルを引くため**に渡す
+ * (規則の中でラベルを写すと実物とずれる —— パス 101 の実測)。
+ * 使わない規則は第 1 引数だけを宣言すればよい。
+ */
+const RULES: Record<string, (v: Values, doc: StudioDoc) => DocIssue[]> = {
   mimoto(v) {
     const out: DocIssue[] = [];
     const limit = num(v, 'limit');
@@ -419,11 +436,11 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
     return out;
   },
 
-  'kaiko-yokoku'(v) {
+  'kaiko-yokoku'(v, doc) {
     const out: DocIssue[] = [];
     // 読めない日付は NaN になり以下の比較はすべて false になる（＝判定しない）ので、
     // **読めなかったこと自体を言う** (パス 100)。
-    out.push(...unreadableDates(v, [['noticeDate', '通知日'], ['dismissDate', '解雇の日']], '30日前の予告の判定'));
+    out.push(...unreadableDates(v, doc, ['noticeDate', 'dismissDate'], '30日前の予告の判定'));
     const days = Math.round((day(v, 'dismissDate') - day(v, 'noticeDate')) / DAY);
     if (days < 0) {
       out.push({ level: 'warn', field: 'dismissDate', message: '解雇の日が通知日より前になっています。' });
@@ -530,11 +547,11 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
     return out;
   },
 
-  kenshu(v) {
+  kenshu(v, doc) {
     const out: DocIssue[] = [];
     // 読めない日付は NaN になり 60 日の判定は行われないので、
     // **読めなかったこと自体を言う** (パス 100)。
-    out.push(...unreadableDates(v, [['receiveDate', '受領日'], ['payday', '支払期日']], '60日以内の判定'));
+    out.push(...unreadableDates(v, doc, ['receiveDate', 'payday'], '60日以内の判定'));
     const days = Math.round((day(v, 'payday') - day(v, 'receiveDate')) / DAY);
     if (days > 60) {
       out.push({
@@ -973,7 +990,7 @@ export function checkDoc(doc: StudioDoc, values: Values): readonly DocIssue[] {
     }
   }
 
-  out.push(...(RULES[doc.id]?.(values) ?? []));
+  out.push(...(RULES[doc.id]?.(values, doc) ?? []));
 
   // sort は ES2019 以降 安定ソートが保証されるので、同順位は検出順のまま残る。
   return [...out].sort(byIssueLevel);
