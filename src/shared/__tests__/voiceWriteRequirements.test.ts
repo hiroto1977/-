@@ -86,7 +86,24 @@ describe('台帳と許可表が食い違わない (どちらの向きにも)', (
 
 describe('台帳の必須項目が実装と一致する', () => {
   it('★ 各項目を main の実装が実際に要求している', () => {
+    // 外へ書く 3 操作は `writeFieldLimits.ts` の台帳を main の handler が読む
+    // (パス 110)。必須欄はその台帳から導かれるので、handler が同じ台帳を渡して
+    // いれば一致する。record-entry は従来どおり実装の判定行を見る。
+    const LEDGER: Record<string, string> = {
+      'slack/send-message': 'SLACK_MESSAGE_FIELDS',
+      'github/create-issue': 'GITHUB_ISSUE_FIELDS',
+      'calendar/create-event': 'CALENDAR_EVENT_FIELDS',
+    };
     for (const r of VOICE_WRITE_REQUIREMENTS) {
+      const ledger = LEDGER[`${r.serviceId}/${r.action}`];
+      if (ledger !== undefined) {
+        expect(
+          read(`main/clients/${r.serviceId}.ts`),
+          `${r.serviceId}.${r.action}: main が台帳 ${ledger} で断っていない`,
+        ).toContain(`checkWriteFields(ctx.payload, ${ledger})`);
+        expect(r.required.length, `${ledger} に必須欄が無い`).toBeGreaterThan(0);
+        continue;
+      }
       const guards = guardText(r.serviceId);
       for (const field of r.required) {
         expect(

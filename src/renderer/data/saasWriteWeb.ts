@@ -11,6 +11,15 @@
  */
 import { validateScanUrl, type ScanUrlFailure } from '../../shared/scanTarget';
 import {
+  CALENDAR_EVENT_FIELDS,
+  GITHUB_ISSUE_FIELDS,
+  MAX_WRITE_LABELS,
+  SLACK_MESSAGE_FIELDS,
+  checkWriteFields,
+  checkWriteLabels,
+  describeWriteFieldFailure,
+} from '../../shared/writeFieldLimits';
+import {
   normalizeAtlassianSiteResult,
   type AtlassianSiteFailure,
 } from '../../shared/atlassianSite';
@@ -101,12 +110,22 @@ export async function createGithubIssue(
   token: string,
   transport: Transport,
 ): Promise<CreateGithubIssueResult> {
+  // 欄の型と長さは main と同じ台帳で断る (パス 110)。それまで長さの天井は無かった。
+  const bad = checkWriteFields(input, GITHUB_ISSUE_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
+  const badLabels = checkWriteLabels(input.labels);
+  if (badLabels !== null) {
+    throw new Error(
+      describeWriteFieldFailure({
+        field: 'labels',
+        problem: badLabels,
+        rule: { required: false, max: MAX_WRITE_LABELS, multiline: false },
+      }),
+    );
+  }
   const owner = typeof input.owner === 'string' ? input.owner.trim() : '';
   const repo = typeof input.repo === 'string' ? input.repo.trim() : '';
   const title = typeof input.title === 'string' ? input.title.trim() : '';
-  if (!owner || !repo || !title) {
-    throw new Error('owner, repo, title は必須です');
-  }
   const body = typeof input.body === 'string' ? input.body : undefined;
   const labels = Array.isArray(input.labels)
     ? input.labels.filter((l): l is string => typeof l === 'string')
@@ -195,9 +214,11 @@ export async function sendSlackMessage(
   token: string,
   transport: Transport,
 ): Promise<SendSlackMessageResult> {
+  // 欄の型と長さは main と同じ台帳で断る (パス 110)。
+  const bad = checkWriteFields(input, SLACK_MESSAGE_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const channel = typeof input.channel === 'string' ? input.channel.trim() : '';
   const text = typeof input.text === 'string' ? input.text : '';
-  if (!channel || !text) throw new Error('channel と text は必須です');
 
   const res = await transport('https://slack.com/api/chat.postMessage', {
     method: 'POST',
@@ -360,10 +381,12 @@ export async function createCalendarEvent(
   token: string,
   transport: Transport,
 ): Promise<{ id: string; htmlLink: string }> {
+  // 欄の型と長さは main と同じ台帳で断る (パス 110)。
+  const bad = checkWriteFields(input, CALENDAR_EVENT_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const summary = typeof input.summary === 'string' ? input.summary.trim() : '';
   const start = typeof input.start === 'string' ? input.start : '';
   const end = typeof input.end === 'string' ? input.end : '';
-  if (!summary || !start || !end) throw new Error('summary, start, end は必須です');
   const tz = typeof input.timeZone === 'string' && input.timeZone.length > 0 ? input.timeZone : defaultTimeZone();
   const body = {
     summary,

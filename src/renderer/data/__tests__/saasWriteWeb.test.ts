@@ -71,7 +71,7 @@ describe('createGithubIssue', () => {
   it('rejects missing required fields without calling fetch (exact message)', async () => {
     const fetchFn = vi.fn<typeof fetch>();
     await expect(createGithubIssue({ owner: 'o', repo: 'r' }, 'tok', fetchFn)).rejects.toThrow(
-      'owner, repo, title は必須です',
+      'title は必須です',
     );
     expect(fetchFn).not.toHaveBeenCalled();
   });
@@ -90,16 +90,21 @@ describe('createGithubIssue', () => {
 
   it('rejects non-string required fields (typeof guard)', async () => {
     const fetchFn = vi.fn<typeof fetch>();
-    await expect(createGithubIssue({ owner: 123, repo: 'r', title: 't' }, 'tok', fetchFn)).rejects.toThrow(/必須/);
-    await expect(createGithubIssue({ owner: 'o', repo: {}, title: 't' }, 'tok', fetchFn)).rejects.toThrow(/必須/);
-    await expect(createGithubIssue({ owner: 'o', repo: 'r', title: 5 }, 'tok', fetchFn)).rejects.toThrow(/必須/);
+    // 文字列でない物は「必須」ではなく型の問題として断る (共有の台帳 — パス 110)。
+    await expect(createGithubIssue({ owner: 123, repo: 'r', title: 't' }, 'tok', fetchFn)).rejects.toThrow(/owner は文字列で/);
+    await expect(createGithubIssue({ owner: 'o', repo: {}, title: 't' }, 'tok', fetchFn)).rejects.toThrow(/repo は文字列で/);
+    await expect(createGithubIssue({ owner: 'o', repo: 'r', title: 5 }, 'tok', fetchFn)).rejects.toThrow(/title は文字列で/);
     expect(fetchFn).not.toHaveBeenCalled();
   });
 
-  it('drops a non-string body to undefined', async () => {
-    const fetchFn = vi.fn<typeof fetch>().mockResolvedValue(jsonResponse(201, { number: 1, html_url: 'u', title: 't' }));
-    await createGithubIssue({ owner: 'o', repo: 'r', title: 't', body: 99 }, 'tok', fetchFn);
-    expect('body' in bodyOf(fetchFn.mock.calls[0]![1])).toBe(false);
+  it('refuses a non-string body instead of dropping it (本文の無い issue を黙って立てない)', async () => {
+    const fetchFn = vi.fn<typeof fetch>();
+    // 2026-09-09 まで `body: 99` は undefined に落とされ、本文の無い issue が立っていた
+    // (利用者は本文つきで立てたと思う)。壊れた入力は送らずに断る (パス 110)。
+    await expect(createGithubIssue({ owner: 'o', repo: 'r', title: 't', body: 99 }, 'tok', fetchFn)).rejects.toThrow(
+      /body は文字列で/,
+    );
+    expect(fetchFn).not.toHaveBeenCalled();
   });
 
   it('surfaces API errors with status and body excerpt', async () => {
@@ -109,14 +114,21 @@ describe('createGithubIssue', () => {
     ).rejects.toThrow(/GitHub API 422/);
   });
 
-  it('filters non-string labels; absent / non-array labels become undefined', async () => {
-    const fetchFn = vi.fn<typeof fetch>().mockResolvedValue(
-      jsonResponse(201, { number: 1, html_url: 'u', title: 't' }),
+  it('refuses non-string or non-array labels; absent labels are simply omitted', async () => {
+    const fetchFn = vi.fn<typeof fetch>().mockResolvedValue(jsonResponse(201, { number: 1, html_url: 'u', title: 't' }));
+    // 2026-09-09 まで `['bug', 3, 'ui']` は 3 を黙って間引いて送っていた (パス 110 で断る)。
+    await expect(createGithubIssue({ owner: 'o', repo: 'r', title: 't', labels: ['bug', 3, 'ui'] }, 'tok', fetchFn)).rejects.toThrow(
+      /labels は文字列で/,
     );
-    await createGithubIssue({ owner: 'o', repo: 'r', title: 't', labels: ['bug', 3, 'ui'] }, 'tok', fetchFn);
-    expect(bodyOf(fetchFn.mock.calls[0]![1]).labels).toEqual(['bug', 'ui']);
-    await createGithubIssue({ owner: 'o', repo: 'r', title: 't', labels: 'notarray' }, 'tok', fetchFn);
-    expect('labels' in bodyOf(fetchFn.mock.calls[1]![1])).toBe(false);
+    await expect(createGithubIssue({ owner: 'o', repo: 'r', title: 't', labels: 'notarray' }, 'tok', fetchFn)).rejects.toThrow(
+      /labels は文字列で/,
+    );
+    expect(fetchFn).not.toHaveBeenCalled();
+    // 対照: 無ければ送らない欄として省かれ、在れば通る。
+    await createGithubIssue({ owner: 'o', repo: 'r', title: 't' }, 'tok', fetchFn);
+    expect('labels' in bodyOf(fetchFn.mock.calls[0]![1])).toBe(false);
+    await createGithubIssue({ owner: 'o', repo: 'r', title: 't', labels: ['bug', 'ui'] }, 'tok', fetchFn);
+    expect(bodyOf(fetchFn.mock.calls[1]![1]).labels).toEqual(['bug', 'ui']);
   });
 });
 
@@ -199,14 +211,14 @@ describe('sendSlackMessage', () => {
   });
   it('requires channel and text (each alone is insufficient)', async () => {
     const transport = vi.fn();
-    await expect(sendSlackMessage({ channel: 'C' }, 'tok', transport)).rejects.toThrow('channel と text は必須です');
+    await expect(sendSlackMessage({ channel: 'C' }, 'tok', transport)).rejects.toThrow('text は必須です');
     await expect(sendSlackMessage({ text: 't' }, 'tok', transport)).rejects.toThrow(/必須/);
     await expect(sendSlackMessage({ channel: '  ', text: 't' }, 'tok', transport)).rejects.toThrow(/必須/);
     await expect(sendSlackMessage({ channel: 'C', text: '' }, 'tok', transport)).rejects.toThrow(/必須/);
-    await expect(sendSlackMessage({ channel: 5, text: 't' }, 'tok', transport)).rejects.toThrow(/必須/);
-    // text が非文字列 → '' に正規化されて弾かれる (typeof ガードの三項式を直接検証)。
-    await expect(sendSlackMessage({ channel: 'C', text: 5 }, 'tok', transport)).rejects.toThrow(/必須/);
-    await expect(sendSlackMessage({ channel: 'C', text: {} }, 'tok', transport)).rejects.toThrow(/必須/);
+    // 文字列でない物は「必須」ではなく型の問題として断る (共有の台帳 — パス 110)。
+    await expect(sendSlackMessage({ channel: 5, text: 't' }, 'tok', transport)).rejects.toThrow(/channel は文字列で/);
+    await expect(sendSlackMessage({ channel: 'C', text: 5 }, 'tok', transport)).rejects.toThrow(/text は文字列で/);
+    await expect(sendSlackMessage({ channel: 'C', text: {} }, 'tok', transport)).rejects.toThrow(/text は文字列で/);
     expect(transport).not.toHaveBeenCalled();
   });
   it('surfaces HTTP errors', async () => {
@@ -380,10 +392,31 @@ describe('createCalendarEvent', () => {
       end: { dateTime: '2026-01-31T11:00:00', timeZone: 'Asia/Tokyo' },
     });
   });
-  it('drops non-string description/location, trims summary, and falls back the timeZone to the environment default', async () => {
+  it('refuses non-string description/location instead of dropping them (パス 110)', async () => {
+    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { id: 'e', htmlLink: 'h' }));
+    // 2026-09-09 まで `description: 5` は undefined に落とされ、説明の無い予定が黙って
+    // 入っていた。壊れた入力は送らずに断る。
+    await expect(
+      createCalendarEvent(
+        { summary: 'M', start: '2026-01-01T10:00:00', end: '2026-01-01T11:00:00', description: 5 },
+        'tok',
+        transport,
+      ),
+    ).rejects.toThrow(/description は文字列で/);
+    await expect(
+      createCalendarEvent(
+        { summary: 'M', start: '2026-01-01T10:00:00', end: '2026-01-01T11:00:00', location: {} },
+        'tok',
+        transport,
+      ),
+    ).rejects.toThrow(/location は文字列で/);
+    expect(transport).not.toHaveBeenCalled();
+  });
+
+  it('trims summary and falls back the timeZone to the environment default', async () => {
     const transport = vi.fn().mockResolvedValue(jsonResponse(200, { id: 'e', htmlLink: 'h' }));
     await createCalendarEvent(
-      { summary: ' M ', start: '2026-01-01T10:00:00', end: '2026-01-01T11:00:00', description: 5, location: {}, timeZone: '' },
+      { summary: ' M ', start: '2026-01-01T10:00:00', end: '2026-01-01T11:00:00', timeZone: '' },
       'tok',
       transport,
     );
@@ -403,13 +436,13 @@ describe('createCalendarEvent', () => {
   });
   it('requires summary/start/end (each alone insufficient)', async () => {
     const transport = vi.fn();
-    await expect(createCalendarEvent({ summary: 'M' }, 'tok', transport)).rejects.toThrow('summary, start, end は必須です');
+    await expect(createCalendarEvent({ summary: 'M' }, 'tok', transport)).rejects.toThrow('start は必須です');
     await expect(createCalendarEvent({ start: 's', end: 'e' }, 'tok', transport)).rejects.toThrow(/必須/);
     await expect(createCalendarEvent({ summary: 'M', end: 'e' }, 'tok', transport)).rejects.toThrow(/必須/);
     await expect(createCalendarEvent({ summary: 'M', start: 's' }, 'tok', transport)).rejects.toThrow(/必須/);
     await expect(createCalendarEvent({ summary: '  ', start: 's', end: 'e' }, 'tok', transport)).rejects.toThrow(/必須/);
-    await expect(createCalendarEvent({ summary: 'M', start: 5, end: 'e' }, 'tok', transport)).rejects.toThrow(/必須/);
-    await expect(createCalendarEvent({ summary: 'M', start: 's', end: 5 }, 'tok', transport)).rejects.toThrow(/必須/);
+    await expect(createCalendarEvent({ summary: 'M', start: 5, end: 'e' }, 'tok', transport)).rejects.toThrow(/start は文字列で/);
+    await expect(createCalendarEvent({ summary: 'M', start: 's', end: 5 }, 'tok', transport)).rejects.toThrow(/end は文字列で/);
     expect(transport).not.toHaveBeenCalled();
   });
   it('surfaces API errors', async () => {

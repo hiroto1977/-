@@ -1,4 +1,9 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import {
+  CALENDAR_EVENT_FIELDS,
+  checkWriteFields,
+  describeWriteFieldFailure,
+} from '../../shared/writeFieldLimits';
 
 interface CalListItem {
   id: string;
@@ -93,7 +98,9 @@ export function defaultTimeZone(): string {
 async function createEvent(ctx: ActionContext): Promise<{ id: string; htmlLink: string }> {
   const { summary, start, end, description, location, timeZone } =
     ctx.payload as unknown as CreateEventPayload;
-  if (!summary || !start || !end) throw new Error('summary, start, end are required');
+  // 欄の型と長さは共有の台帳で断る (パス 110)。
+  const bad = checkWriteFields(ctx.payload, CALENDAR_EVENT_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
 
   const tz = timeZone ?? defaultTimeZone();
   const body = {

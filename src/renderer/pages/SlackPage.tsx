@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { SLACK_MESSAGE_FIELDS } from '../../shared/writeFieldLimits';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -123,16 +124,19 @@ export function SlackPage() {
       >
         {showForm ? (
           <div className="card" style={{ gap: 10 }}>
+            {/* 上限は main / ブラウザ版と同じ台帳から読む (パス 110)。数を写さない。 */}
             <input
               placeholder="チャンネル ID (C…) または #channel-name"
               value={channel}
               onChange={(e) => setChannel(e.target.value)}
+              maxLength={SLACK_MESSAGE_FIELDS.channel!.max}
               style={inputStyle}
             />
             <textarea
               placeholder="メッセージ本文（Slack mrkdwn 可）"
               value={text}
               onChange={(e) => setText(e.target.value)}
+              maxLength={SLACK_MESSAGE_FIELDS.text!.max}
               rows={3}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />

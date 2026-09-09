@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { CALENDAR_EVENT_FIELDS } from '../../shared/writeFieldLimits';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -121,10 +122,12 @@ export function CalendarPage() {
       >
         {showForm ? (
           <div className="card" style={{ gap: 10 }}>
+            {/* 上限は main / ブラウザ版と同じ台帳から読む (パス 110)。数を写さない。 */}
             <input
               placeholder="タイトル"
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
+              maxLength={CALENDAR_EVENT_FIELDS.summary!.max}
               style={inputStyle}
             />
             <div style={{ display: 'flex', gap: 8 }}>

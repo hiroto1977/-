@@ -37,6 +37,13 @@
  * 引いて渡す (パス 101 で「断りがラベルを写して実物とずれる」を直した)。
  */
 
+import {
+  CALENDAR_EVENT_FIELDS,
+  GITHUB_ISSUE_FIELDS,
+  SLACK_MESSAGE_FIELDS,
+  requiredWriteFields,
+} from './writeFieldLimits';
+
 export interface VoiceWriteRequirement {
   readonly serviceId: string;
   readonly action: string;
@@ -53,9 +60,12 @@ export interface VoiceWriteRequirement {
 }
 
 export const VOICE_WRITE_REQUIREMENTS: readonly VoiceWriteRequirement[] = [
-  { serviceId: 'slack', action: 'send-message', required: ['channel', 'text'], screenInput: true },
-  { serviceId: 'github', action: 'create-issue', required: ['owner', 'repo', 'title'], screenInput: true },
-  { serviceId: 'calendar', action: 'create-event', required: ['summary', 'start', 'end'], screenInput: true },
+  // 必須欄は**書く欄の台帳** (`writeFieldLimits.ts`) から導く —— 写すと片方だけ動く
+  // (パス 110 で台帳を作った時に、ここの手書きを導出へ替えた)。
+  { serviceId: 'slack', action: 'send-message', required: requiredWriteFields(SLACK_MESSAGE_FIELDS), screenInput: true },
+  { serviceId: 'github', action: 'create-issue', required: requiredWriteFields(GITHUB_ISSUE_FIELDS), screenInput: true },
+  { serviceId: 'calendar', action: 'create-event', required: requiredWriteFields(CALENDAR_EVENT_FIELDS), screenInput: true },
+  // `record-entry` の note は `recordEntryLimits.ts` が上限を持つ (4 サービス共通)。
   { serviceId: 'real-estate', action: 'record-entry', required: ['note'], screenInput: true },
   { serviceId: 'mutual-funds', action: 'record-entry', required: ['note'], screenInput: true },
   { serviceId: 'uber-eats', action: 'record-entry', required: ['note'], screenInput: false },

@@ -18098,6 +18098,70 @@ i1price: 品目1 の単価「abc」を金額として読み取れません。金
 明記しているので、**4 つの renderer を触る価値は無いと判断した**。
 揃えるなら `advisorTypes.ts` に文を 1 つ置いて 4 面が読む形が筋である。
 
+## パス 110 (2026-09-09) — **外へ書く欄に、型も長さの上限も無かった**
+
+外部サービスへ**書く**操作の欄は、2026-09-09 まで真偽値の検査しか持たなかった:
+
+| 場所 | 検査 |
+| --- | --- |
+| `main/clients/slack.ts` `sendMessage` | `if (!channel \|\| !text)` だけ —— object でも数 MB の本文でも通る |
+| `main/clients/github.ts` `createIssue` | 同上。`labels` は届いた JSON を**そのまま転送** |
+| `main/clients/calendar.ts` `createEvent` | 同上 |
+| `renderer/data/saasWriteWeb.ts` (ブラウザ版の双子) | `typeof === 'string'` は見るが**長さは見ない** |
+| `SlackPage` / `GithubPage` / `CalendarPage` の入力欄 | `maxLength` **0 件** |
+
+一方、同じ形の欄には上限が在る —— 業務メモ `MAX_RECORD_NOTE_CHARS` (2000)、AI への質問
+`MAX_ADVISOR_QUESTION_CHARS` (1000、制御文字も断る)、そして**同じ `saasWriteWeb.ts` の
+中**の Atlassian の email `MAX_ATLASSIAN_EMAIL` (254)。**外へ書く家系だけが上限を持たず、
+規準は同じファイルに在った** (15 か所目)。
+
+### もう 1 つ — 壊れた任意の欄を「落として送って」いた
+
+ブラウザ版の双子は、文字列でない `body` を **undefined に落として** issue を立て、
+文字列でない label を**黙って間引いて**送っていた (検査もその挙動を「正しい」として
+留めていた: 「drops a non-string body to undefined」)。利用者は本文つきで立てたと思うが、
+本文の無い issue が出来る —— 「黙って捨てる」家系そのもの (パス 74 / 84 / 89 と同じ)。
+壊れた入力は**送らずに断る**。
+
+### 直し
+
+- `shared/writeFieldLimits.ts` (新規): 送り先ごとの台帳 (`SLACK_MESSAGE_FIELDS` /
+  `GITHUB_ISSUE_FIELDS` / `CALENDAR_EVENT_FIELDS`。欄ごとに required / max / multiline) と
+  `checkWriteFields` (最初の問題を欄の名前つきで返す) / `checkWriteLabels` (件数と
+  1 件の長さ) / `describeWriteFieldFailure` (「text は 20000 文字以内で指定してください」——
+  `record-entry` の文面と同じ形)。制御文字はコードポイントで判定する
+  (ソースに制御文字を置かないため)。
+- **1 つの台帳を 5 か所が読む**: main の handler (断る)・ブラウザ版の双子 (断る)・
+  3 画面の `maxLength` (台帳の値を読み、数を写さない)・音声の台帳
+  `voiceWriteRequirements.ts` の `required` (手書きを `requiredWriteFields(台帳)` へ替えた)・
+  検査 (突き合わせる)。
+- **安全上限であって設定ではない** —— `parameters.ts` には載せない (CLAUDE.md)。
+  送り先の仕様上の上限は主張しない (確かめられない)。ここに書く数はこの app の天井。
+
+### 対照 (8 本)
+
+| 対照 | 落ちた検査 |
+| --- | --- |
+| A: main の slack が台帳で断らない (元の形) | 4 件 |
+| B: ブラウザ版の slack が台帳で断らない | 2 件 |
+| C: 画面が数を写す (`maxLength={20000}`) | 1 件 |
+| D: 音声の台帳が必須欄を手で写す | 1 件 |
+| E: labels を見ない (JSON をそのまま転送) | 1 件 |
+| F: 制御文字を通す | 2 件 |
+| G: 天井を 1 文字ずらす (境目) | 2 件 |
+| H: 任意の欄の壊れた型を黙って通す (落として送る形へ戻す) | 3 件 |
+
+既存の検査 12 本が文面と挙動の変更で落ちた —— 文面は「channel and text are required」
+から欄の名前を言う形へ、挙動は「落として送る」から「断る」へ。どちらも直した理由を
+検査に書いた。
+
+### 残り
+
+- `notion/create-page` · `atlassian/create-issue` などブラウザ版だけが持つ書き込みの双子は
+  まだ台帳に載せていない (Atlassian は email の上限だけ持つ)。同じ形で載せられる。
+- `main/clients` の `ctx.payload as unknown as` は 23 件・12 client。今回は外へ書く 3 つに
+  絞った (母集団は測ってある)。
+
 ## パス 109 (2026-09-09) — **音声とチャットが「必ず失敗する書き込み」の承認を求めていた**
 
 音声バーとチャットは書き込み操作を**提案し、確認まで取り、実行して必ず失敗して

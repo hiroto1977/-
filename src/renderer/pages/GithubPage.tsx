@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { GITHUB_ISSUE_FIELDS } from '../../shared/writeFieldLimits';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -88,16 +89,19 @@ export function GithubPage() {
         {showForm ? (
           <div className="card" style={{ gap: 10 }}>
             <div style={{ display: 'flex', gap: 8 }}>
+              {/* 上限は main / ブラウザ版と同じ台帳から読む (パス 110)。数を写さない。 */}
               <input
                 placeholder="owner (e.g. octocat)"
                 value={owner}
                 onChange={(e) => setOwner(e.target.value)}
+                maxLength={GITHUB_ISSUE_FIELDS.owner!.max}
                 style={inputStyle}
               />
               <input
                 placeholder="repo"
                 value={repo}
                 onChange={(e) => setRepo(e.target.value)}
+                maxLength={GITHUB_ISSUE_FIELDS.repo!.max}
                 style={inputStyle}
               />
             </div>
@@ -105,12 +109,14 @@ export function GithubPage() {
               placeholder="Issue title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              maxLength={GITHUB_ISSUE_FIELDS.title!.max}
               style={inputStyle}
             />
             <textarea
               placeholder="Body (Markdown 可)"
               value={body}
               onChange={(e) => setBody(e.target.value)}
+              maxLength={GITHUB_ISSUE_FIELDS.body!.max}
               rows={4}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />

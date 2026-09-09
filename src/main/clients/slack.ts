@@ -1,4 +1,9 @@
 import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
+import {
+  SLACK_MESSAGE_FIELDS,
+  checkWriteFields,
+  describeWriteFieldFailure,
+} from '../../shared/writeFieldLimits';
 
 interface SlackChannel {
   id: string;
@@ -91,8 +96,11 @@ interface SlackChatPostResponse {
 }
 
 async function sendMessage(ctx: ActionContext): Promise<{ ts: string; channel: string }> {
+  // 欄の型と長さは共有の台帳で断る (パス 110)。それまでは `!channel || !text` の
+  // 真偽値の検査だけで、object でも数 MB の本文でも通していた。
+  const bad = checkWriteFields(ctx.payload, SLACK_MESSAGE_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const { channel, text } = ctx.payload as unknown as SendMessagePayload;
-  if (!channel || !text) throw new Error('channel and text are required');
 
   const res = await jsonFetch<SlackChatPostResponse>(
     'https://slack.com/api/chat.postMessage',

@@ -166,12 +166,12 @@ describe('ACTIONS["send-message"]', () => {
     });
   });
 
-  it('rejects with the literal "channel and text are required" when fields are missing', async () => {
+  it('rejects by naming the missing field (共有の台帳 — パス 110) when fields are missing', async () => {
     // Kills StringLiteral mutant on slack.ts:95 (error text → "").
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['send-message']!({ token: 't', fetch: fetchMock, payload: { channel: 'C' } }),
-    ).rejects.toThrow(/^channel and text are required$/);
+    ).rejects.toThrow(/^text は必須です$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -179,7 +179,7 @@ describe('ACTIONS["send-message"]', () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['send-message']!({ token: 't', fetch: fetchMock, payload: { text: 'hi' } }),
-    ).rejects.toThrow(/^channel and text are required$/);
+    ).rejects.toThrow(/^channel は必須です$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
