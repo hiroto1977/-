@@ -97,7 +97,9 @@ describe('保有銘柄 — 任意の欄が無い控えでも画面が出る', ()
     await mount();
     // 画面が枠 (PageErrorBoundary) に落ちていない = 銘柄名が出ている。
     expect(text()).toContain('古い版で保存した投信');
-    expect(text()).toContain('+0.0%'); // 年初来は既定 0
+    // 年初来が無い控えは「—」= 未入力 (パス 122)。それまでは既定 0 で「+0.0%」を刷っていた —— 測った 0% と同じ顔。
+    expect(text()).not.toContain('+0.0%');
+    expect(text()).toContain('未入力 1 銘柄は除外'); // リスクの注記が、その控えを 0% として数えていないと言う
     expect(text()).not.toContain('NaN');
     expect(text()).not.toContain('問題が起きました'); // 境界の文面
   });

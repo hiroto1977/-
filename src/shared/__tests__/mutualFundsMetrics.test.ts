@@ -6,6 +6,7 @@ import {
   calcRealCost,
   calcStdDev,
   calcDcaSimulation,
+  ytdReturnRisk,
 } from '../mutualFundsMetrics';
 
 describe('calcCompoundingFutureValue', () => {
@@ -315,5 +316,29 @@ describe('calcDcaSimulation', () => {
     const r = calcDcaSimulation(10_000, [1000, 1500, 0]);
     expect(r.totalInvested).toBe(20_000);
     expect(r.finalValuation).toBe(25_000);
+  });
+});
+
+describe('ytdReturnRisk — 未入力 (null) を 0% として入れない (パス 122)', () => {
+  it('★ null を除いた銘柄だけで標準偏差を取り、除外した数を言う', () => {
+    const r = ytdReturnRisk([2, 4, 4, 4, 5, 5, 7, 9, null, null]);
+    expect(r).toEqual({ stdDevPct: 2, measured: 8, unmeasured: 2 });
+    // 旧: null を 0 として入れると σ が変わる —— 同じ系列に 0 を 2 つ足した版は 2 ではない
+    expect(calcStdDev([2, 4, 4, 4, 5, 5, 7, 9, 0, 0])).not.toBe(2);
+  });
+
+  it('画面の見本 4 銘柄 (14.2 / 11.8 / 3.4 / 8.7): 空欄 1 件を除けば 4.04%、0% として入れると 5.25%', () => {
+    expect(ytdReturnRisk([14.2, 11.8, 3.4, 8.7, null])).toEqual({ stdDevPct: 4.04, measured: 4, unmeasured: 1 });
+    expect(calcStdDev([14.2, 11.8, 3.4, 8.7, 0])).toBe(5.25);
+  });
+
+  it('測った 0% は除外しない (未入力と 0% を混ぜない)', () => {
+    expect(ytdReturnRisk([0, 0])).toEqual({ stdDevPct: 0, measured: 2, unmeasured: 0 });
+    expect(ytdReturnRisk([5, 0, null])).toEqual({ stdDevPct: 2.5, measured: 2, unmeasured: 1 });
+  });
+
+  it('入力された銘柄が無ければ null で、数だけ言う', () => {
+    expect(ytdReturnRisk([null, null])).toEqual({ stdDevPct: null, measured: 0, unmeasured: 2 });
+    expect(ytdReturnRisk([])).toEqual({ stdDevPct: null, measured: 0, unmeasured: 0 });
   });
 });

@@ -82,6 +82,10 @@ describe('書く側の出力 → collectionShapes (往復)', () => {
     expect(hasCollectionShape('realestate-properties', viaJson(parsePropertyEntry({ name: 'A', type: 'apartment', monthlyRent: 100000, purchasePrice: 10000000, occupied: false })))).toBe(true);
     expect(hasCollectionShape('mutualfund-holdings', viaJson(parseHoldingEntry({ code: '1234', name: 'F', units: '10000', navPerUnit: '12345', acquisitionCost: '10000', ytdReturnPct: '1.5' })))).toBe(true);
     expect(hasCollectionShape('mutualfund-holdings', viaJson(parseHoldingEntry({ name: 'F', units: 0, navPerUnit: 0, valuation: '500000' })))).toBe(true);
+    // ★ 年初来リターンを空欄で足した控えは null を書く (パス 122)。復元の形が null を落とせば、その控えごと消える。
+    const blankYtd = parseHoldingEntry({ name: 'F', units: '10000', navPerUnit: '12345' });
+    expect(blankYtd.ytdReturnPct).toBeNull();
+    expect(hasCollectionShape('mutualfund-holdings', viaJson(blankYtd))).toBe(true);
   });
 
   it('manual-metrics / manual-overrides: parseManualMetric + scope、画面の { scope, path, value }', () => {

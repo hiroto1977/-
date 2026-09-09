@@ -294,8 +294,15 @@ export interface HoldingEntry extends Record<string, unknown> {
   readonly valuationMode: ValuationMode;
   /** 取得額 (円・任意)。空欄は評価額と同額 (損益 0) とみなす。 */
   readonly acquisitionCost: number;
-  /** 年初来リターン (%・任意、既定 0)。 */
-  readonly ytdReturnPct: number;
+  /**
+   * 年初来リターン (%・任意)。**空欄は null = 未入力** —— 0% ではない (2026-09-09 · パス 122)。
+   *
+   * パス 122 までは「既定 0」だった。空欄で足した銘柄が一覧に **「+0.0%」(緑)** と刷られ、
+   * リスク (標準偏差) に 0% の銘柄として入り、改善提案 (パス 119) が「最低は X の 0.0%」と
+   * **入力していない銘柄を最低と名指し**していた。規準は同じファイルの不動産側に在った ——
+   * `grossYieldPct: number | null` と `yieldUnmeasured` (パス 54) は「測れない物件」を数に入れない。
+   */
+  readonly ytdReturnPct: number | null;
 }
 
 /** 基準価額 (1 万口あたり) と口数から評価額を導出する。 */
@@ -322,12 +329,15 @@ export function fundValuation(units: number, navPerUnit: number): number {
  * 散らすと必ずどれか 1 つが漏れる (`valuationMode` だけ画面側で補われていて、
  * 残り 3 つが漏れていたのがまさにそれ)。既定値は型の注記どおり:
  * 銘柄コードは空文字、評価モードは auto、取得額は評価額と同額 (損益 0)、
- * 年初来リターンは 0。数でない値・非有限値も既定に倒す。
+ * 年初来リターンは **null = 未入力** (0 に倒すと測った 0% と見分けが付かない・パス 122)。
+ * 数でない値・非有限値も既定に倒す。
  */
 export function normalizeHolding(raw: unknown): HoldingEntry {
   const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
   const str = (v: unknown): string => (typeof v === 'string' ? v : '');
   const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
+  // 年初来リターンだけは「無い / 読めない = 未入力 (null)」。0 に倒すと測った 0% と見分けが付かない (パス 122)。
+  const numOrNull = (v: unknown): number | null => (Number.isFinite(v) ? (v as number) : null);
   const units = num(r.units);
   const navPerUnit = num(r.navPerUnit);
   // 評価額が無い控えは口数 × 基準価額 から導く (auto と同じ式)。
@@ -345,7 +355,7 @@ export function normalizeHolding(raw: unknown): HoldingEntry {
     acquisitionCost: typeof r.acquisitionCost === 'number' && Number.isFinite(r.acquisitionCost)
       ? r.acquisitionCost
       : valuation,
-    ytdReturnPct: num(r.ytdReturnPct),
+    ytdReturnPct: numOrNull(r.ytdReturnPct),
   };
 }
 
@@ -421,7 +431,8 @@ export function parseHoldingEntry(input: {
   if (acquisitionCost === null) throw new Error('取得額は 0 以上の数値で入力してください');
 
   const ytdRaw = input.ytdReturnPct;
-  let ytdReturnPct = 0;
+  // 空欄は null (未入力)。0 にすると測った 0% と同じ顔になる (パス 122)。
+  let ytdReturnPct: number | null = null;
   // `!== ''` は**冗長ではない**: 読み取りが `readNumeric` になった 2026-09-06 から、
   // 空文字は 0 ではなく「読めない」なので、この門を外すと空欄が YTD エラーになる
   // (保存 → 入力欄 → 再保存 の往復の検査が落ちる)。
@@ -440,7 +451,8 @@ export function parseHoldingEntry(input: {
 /**
  * 保存済みエントリを編集フォームの初期値 (文字列) に変換する。
  * auto の評価額は空欄にして「自動計算のまま」を保つ (値を入れると manual に
- * 切り替わる)。0 の任意項目は空欄に戻す。
+ * 切り替わる)。0 の任意項目 (口数・基準価額) は空欄に戻す。年初来リターンは
+ * null (未入力) のときだけ空欄 —— 測った 0% は '0' のまま残す (パス 122)。
  */
 export function holdingToForm(h: HoldingEntry): {
   code: string; name: string; units: string; navPerUnit: string;
@@ -456,7 +468,7 @@ export function holdingToForm(h: HoldingEntry): {
     navPerUnit: h.navPerUnit > 0 ? String(h.navPerUnit) : '',
     valuation: mode === 'manual' ? String(h.valuation) : '',
     acquisitionCost: String(h.acquisitionCost),
-    ytdReturnPct: h.ytdReturnPct !== 0 ? String(h.ytdReturnPct) : '',
+    ytdReturnPct: h.ytdReturnPct === null ? '' : String(h.ytdReturnPct),
   };
 }
 

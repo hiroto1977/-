@@ -26,7 +26,7 @@ import {
   calcCompoundingFutureValue,
   calcTotalReturn,
   calcRealCost,
-  calcStdDev,
+  ytdReturnRisk,
   calcDcaSimulation,
 } from '../../shared/mutualFundsMetrics';
 import {
@@ -212,7 +212,8 @@ export function MutualFundsPage() {
     () => calcTotalReturn(portfolio.totalCostBasis, portfolio.totalValuation, totalDividends, readNumberOr0(holdYears)),
     [portfolio.totalCostBasis, portfolio.totalValuation, totalDividends, holdYears],
   );
-  const risk = useMemo(() => calcStdDev(holdings.map((h) => h.ytdReturnPct)), [holdings]);
+  // 年初来リターンは**入力された銘柄だけ**で取る —— 未入力 (null) は 0% ではない (パス 122)。
+  const risk = useMemo(() => ytdReturnRisk(holdings.map((h) => h.ytdReturnPct)), [holdings]);
 
   // 実質コスト (信託報酬 + 隠れコスト) と複利での蝕み効果。
   const [costExpense, setCostExpense] = useState('1.0');
@@ -289,10 +290,10 @@ export function MutualFundsPage() {
             positive={positiveIfKnown(totalReturn.cagrPct)}
           />
           <Stat label="累計分配金" value={jpy(totalDividends)} />
-          <Stat label="リスク (銘柄YTDの標準偏差)" value={risk === null ? '—' : `${risk}%`} />
+          <Stat label="リスク (銘柄YTDの標準偏差)" value={risk.stdDevPct === null ? '—' : `${risk.stdDevPct}%`} />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
-          ※ 分配金は再投資された前提で元本に対する総合収益として概算。リスクは保有銘柄のYTDリターンの母標準偏差です。概算であり投資助言ではありません。
+          ※ 分配金は再投資された前提で元本に対する総合収益として概算。リスクは年初来リターンが入力された {risk.measured} 銘柄の母標準偏差です{risk.unmeasured > 0 ? ` (未入力 ${risk.unmeasured} 銘柄は除外)` : ''}{risk.measured === 0 ? ' —— 入力された銘柄が無いので算定しません' : ''}。概算であり投資助言ではありません。
         </div>
       </Section>
 
@@ -373,7 +374,7 @@ export function MutualFundsPage() {
           </label>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             YTD % (任意)
-            <input type="text" inputMode="decimal" value={fundForm.ytdReturnPct} placeholder="0"
+            <input type="text" inputMode="decimal" value={fundForm.ytdReturnPct} placeholder="空欄=未入力"
               onChange={(e) => setFundForm((f) => ({ ...f, ytdReturnPct: e.target.value }))} style={simInputStyle} />
           </label>
           <button type="button" onClick={onSaveHolding}>
@@ -428,8 +429,12 @@ export function MutualFundsPage() {
                     </span>
                   )}
                 </td>
-                <td style={{ ...tdNum, color: h.ytdReturnPct >= 0 ? '#22c55e' : '#ef4444' }}>
-                  {h.ytdReturnPct >= 0 ? '+' : ''}{h.ytdReturnPct.toFixed(1)}%
+                {/* 未入力 (null) は「—」で色を付けない。「+0.0%」(緑) と刷ると測った 0% と見分けが付かない (パス 122)。 */}
+                <td
+                  style={{ ...tdNum, color: h.ytdReturnPct === null ? 'var(--text-mute)' : h.ytdReturnPct >= 0 ? '#22c55e' : '#ef4444' }}
+                  title={h.ytdReturnPct === null ? '年初来リターンは未入力です (0% ではありません)' : undefined}
+                >
+                  {h.ytdReturnPct === null ? '—' : `${h.ytdReturnPct >= 0 ? '+' : ''}${h.ytdReturnPct.toFixed(1)}%`}
                 </td>
                 <td style={tdStyle}>
                   {h.user && (

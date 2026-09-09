@@ -269,9 +269,9 @@ describe('parseHoldingEntry (投資信託の任意追加)', () => {
     expect(h.valuation).toBe(fundValuation(500_000, 32_000));
     expect(h.valuation).toBe(1_600_000);
     expect(h.valuationMode).toBe('auto');
-    // 取得額の既定は評価額 (損益 0)、YTD の既定は 0。
+    // 取得額の既定は評価額 (損益 0)。YTD の空欄は null = 未入力 (0% ではない・パス 122)。
     expect(h.acquisitionCost).toBe(1_600_000);
-    expect(h.ytdReturnPct).toBe(0);
+    expect(h.ytdReturnPct).toBeNull();
   });
 
   it('評価額を直接入力すると manual モード (口数・基準価額は任意)', () => {
@@ -396,12 +396,14 @@ describe('parseHoldingEntry (投資信託の任意追加)', () => {
   it('★ YTD も画面と同じ読み取り (1,5 を 15% にしない)', () => {
     expect(() => parseHoldingEntry({ ...valid, ytdReturnPct: '1,5' })).toThrow('YTD');
     expect(() => parseHoldingEntry({ ...valid, ytdReturnPct: '1e2' })).toThrow('YTD');
-    // 対照: 空欄は 0 のまま (読めない ≠ 未入力。この門を外すと往復で落ちる)
-    expect(parseHoldingEntry({ ...valid, ytdReturnPct: '' }).ytdReturnPct).toBe(0);
+    // 対照: 空欄は null = 未入力 (読めない ≠ 未入力。この門を外すと空欄が YTD エラーになり往復で落ちる)
+    expect(parseHoldingEntry({ ...valid, ytdReturnPct: '' }).ytdReturnPct).toBeNull();
+    // ★ 測った 0% は 0 のまま (未入力と見分ける・パス 122。それまでは空欄も 0 で同じ顔だった)
+    expect(parseHoldingEntry({ ...valid, ytdReturnPct: '0' }).ytdReturnPct).toBe(0);
     expect(parseHoldingEntry({ ...valid, ytdReturnPct: '-1.5' }).ytdReturnPct).toBe(-1.5);
   });
 
-  it('holdingToForm: manual の 0 の任意欄 (口数・基準価額・YTD) は空欄へ戻す', () => {
+  it('holdingToForm: manual の任意欄 (口数・基準価額 0・YTD 未入力) は空欄へ戻す', () => {
     const manual = parseHoldingEntry({ name: '手動ファンド', valuation: '2500000' });
     const form = holdingToForm(manual);
     expect(form.units).toBe('');
@@ -415,6 +417,17 @@ describe('parseHoldingEntry (投資信託の任意追加)', () => {
   it('holdingToForm: 0 以外の YTD は文字列で残す', () => {
     const form = holdingToForm(parseHoldingEntry({ ...valid, ytdReturnPct: '8.7' }));
     expect(form.ytdReturnPct).toBe('8.7');
+  });
+
+  it('★ holdingToForm: 測った 0% の YTD は "0" で残す —— 空欄 (未入力) へ戻さない (パス 122)', () => {
+    const zero = parseHoldingEntry({ ...valid, ytdReturnPct: '0' });
+    const form = holdingToForm(zero);
+    expect(form.ytdReturnPct).toBe('0');
+    // 往復しても 0 のまま (パス 122 までは 0 → '' → 0 と往復し、null → '' → null と見分けが無かった)
+    expect(parseHoldingEntry(form).ytdReturnPct).toBe(0);
+    const blank = parseHoldingEntry(valid);
+    expect(holdingToForm(blank).ytdReturnPct).toBe('');
+    expect(parseHoldingEntry(holdingToForm(blank)).ytdReturnPct).toBeNull();
   });
 
   it('holdingToForm: valuationMode を持たない過去データは auto 扱い (評価額欄は空欄)', () => {
@@ -485,9 +498,15 @@ describe('normalizeHolding', () => {
     expect(normalizeHolding(full)).toEqual(full);
   });
 
-  it('年初来リターンが無い控えは 0 になる (旧: .toFixed で TypeError)', () => {
+  it('年初来リターンが無い控えは null = 未入力 (パス 122 までは 0 → 一覧が「+0.0%」を刷った。その前は .toFixed で TypeError)', () => {
     const { ytdReturnPct: _drop, ...without } = full;
-    expect(normalizeHolding(without).ytdReturnPct).toBe(0);
+    expect(normalizeHolding(without).ytdReturnPct).toBeNull();
+    // パス 122 以降の保存 (null) も null のまま。測った 0 / 負の値はそのまま (対照)。
+    expect(normalizeHolding({ ...full, ytdReturnPct: null }).ytdReturnPct).toBeNull();
+    expect(normalizeHolding({ ...full, ytdReturnPct: 0 }).ytdReturnPct).toBe(0);
+    expect(normalizeHolding({ ...full, ytdReturnPct: -3.5 }).ytdReturnPct).toBe(-3.5);
+    // 文字列の数字は「読めない」= 未入力 (数として保存されていない)
+    expect(normalizeHolding({ ...full, ytdReturnPct: '12.5' }).ytdReturnPct).toBeNull();
   });
 
   it('取得額が無い控えは評価額と同額 = 損益 0 (旧: NaN)', () => {
@@ -520,7 +539,7 @@ describe('normalizeHolding', () => {
     });
     expect(junk).toEqual({
       code: '', name: '', units: 0, navPerUnit: 0, valuation: 0,
-      valuationMode: 'auto', acquisitionCost: 0, ytdReturnPct: 0,
+      valuationMode: 'auto', acquisitionCost: 0, ytdReturnPct: null,
     });
     for (const v of Object.values(junk)) {
       if (typeof v === 'number') expect(Number.isFinite(v)).toBe(true);
@@ -537,7 +556,7 @@ describe('normalizeHolding', () => {
       expect(h.navPerUnit).toBe(0);
       expect(h.valuation).toBe(0); // 導出も 0 × 0
       expect(h.acquisitionCost).toBe(0); // = 評価額
-      expect(h.ytdReturnPct).toBe(0);
+      expect(h.ytdReturnPct).toBeNull(); // 読めない = 未入力 (パス 122)
     }
   });
 
@@ -545,7 +564,7 @@ describe('normalizeHolding', () => {
     for (const raw of [null, undefined, 42, 'x', [] as unknown]) {
       const h = normalizeHolding(raw);
       expect(h.name).toBe('');
-      expect(h.ytdReturnPct).toBe(0);
+      expect(h.ytdReturnPct).toBeNull(); // 無い = 未入力 (パス 122)
     }
   });
 });

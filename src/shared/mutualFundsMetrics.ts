@@ -224,6 +224,31 @@ export function calcStdDev(returns: readonly number[], sample = false): number |
   return round2(Math.sqrt(sumSq / divisor));
 }
 
+/** 年初来リターンのリスク —— **入力された銘柄だけ**で標準偏差を取り、除外した数を返す (パス 122)。 */
+export interface YtdReturnRisk {
+  /** 母標準偏差 (%・小数 2 桁)。入力された銘柄が無ければ null。 */
+  readonly stdDevPct: number | null;
+  /** 標準偏差に入れた銘柄数。 */
+  readonly measured: number;
+  /** 年初来リターンが未入力 (null) で除外した銘柄数。画面はこの数を注記に刷る。 */
+  readonly unmeasured: number;
+}
+
+/**
+ * 未入力 (null) を 0% として入れない。パス 122 までは画面が `holdings.map((h) => h.ytdReturnPct)` を
+ * そのまま {@link calcStdDev} へ渡していて、空欄で足した銘柄が **0% の銘柄としてばらつきを作って**いた
+ * (見本 4 銘柄で 4.04% のところ、空欄 1 件で 5.25%)。
+ */
+export function ytdReturnRisk(returns: readonly (number | null)[]): YtdReturnRisk {
+  const measured: number[] = [];
+  for (const r of returns) if (r !== null) measured.push(r);
+  return {
+    stdDevPct: calcStdDev(measured),
+    measured: measured.length,
+    unmeasured: returns.length - measured.length,
+  };
+}
+
 export interface DcaSimulation {
   /** 取得口数の合計。 */
   readonly totalUnits: number;

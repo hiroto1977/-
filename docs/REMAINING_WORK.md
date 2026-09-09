@@ -18389,6 +18389,63 @@ uber-eats / demae-can の advise は画面が無く (`VoiceCommandBar` と `Busi
 - 下書き (`servicehub.teamradar.draft.v1`) は snapshot より優先して復元される。読めなかった保存と下書きが両方在るとき、
   画面のメンバーは下書き、注記は保存先について言う (別の物を指している)。
 
+## パス 122 (2026-09-09) — **投資信託の年初来リターンは、空欄を 0% として刷り・数え・「最低」と名指ししていた**
+
+### 何が起きていたか
+
+投資信託の保有銘柄の追加フォームには「YTD % (任意)」の欄が在る。`HoldingEntry.ytdReturnPct` は
+`number` で、型の注記は「任意、既定 0」。**空欄で足した銘柄は 0 として保存され**、3 つの面が別々の顔をした:
+
+| 面 | 空欄で足した銘柄に起きること |
+| --- | --- |
+| 一覧の YTD 列 | **「+0.0%」を緑で**刷る (符号は `>= 0`、色も `>= 0`)。測った 0% と同じ顔 |
+| 「リスク (銘柄YTDの標準偏差)」のタイル | `calcStdDev(holdings.map((h) => h.ytdReturnPct))` に **0% の銘柄として入る**。見本 4 銘柄 (14.2 / 11.8 / 3.4 / 8.7) で 4.04% のところ、空欄 1 件で **5.25%** |
+| 改善提案 (パス 119) | `adviseInput` は `ytdReturnPct: h.ytdReturnPct` をそのまま渡す。最高と最低を比べる規則が**入力していない銘柄を「最低は X の 0.0%」と名指し**する |
+
+パス 119 は `MutualFundsAdviceInput.holdings[].ytdReturnPct: number | null` と書き、null なら「年初来リターンは未入力」と
+言う枝を持っていた。**しかし画面は user 行に null を渡す道を持たず、その枝は画面から 1 度も届かなかった** —— 見本の
+行は必ず数を持ち、利用者の行は 0 に倒されているので、null は検査の中にしか存在しなかった (パス 118 の「口はあるが
+繋がっていない」の形)。しかも `holdingToForm` は `ytdReturnPct !== 0 ? String(v) : ''` で、**測った 0% を編集フォームで
+空欄へ戻していた** —— 型が 2 つの状態を 1 つの数で持っている限り、どちらの向きにも見分けは付かない。
+
+### 規準は同じファイルに在った (パス 54 の不動産)
+
+`data/investments.ts` の不動産側は、同じ「任意の割合」を `grossYieldPct: number | null` で持ち、`calcRealEstatePortfolio` は
+測れない物件を `yieldUnmeasured` に数えて平均に入れない (パス 54: 「測れない物件を 0% として数え、1 件で全体を
+5.5% → 4.13% に下げる」)。**同じファイルの 60 行下**で、投資信託の年初来リターンが同じことをしていた。
+
+### 直し
+
+- `data/investments.ts`: `ytdReturnPct: number | null`。`parseHoldingEntry` は空欄 → null、`'0'` → 0 (測った 0%)。
+  `normalizeHolding` は無い / 読めない → null (`numOrNull`)。`holdingToForm` は null のときだけ空欄 —— 測った 0% は `'0'` のまま。
+- `data/collectionShapes.ts`: `orNull` —— **この欄だけ** null を「未入力」として通す。`opt(num)` のままだと、空欄で足した控え
+  (null を書く) が**復元で丸ごと落ちる** (タスク #72 の往復検査がそれを留める)。他の欄の null は今までどおり「在るのに違う」
+  で、形の census (`collectionShapes.test.ts`) は null を値として持つ欄を `nullable` の台帳で明示する。
+- `shared/mutualFundsMetrics.ts`: `ytdReturnRisk` —— 入力された銘柄だけで母標準偏差を取り、`measured` / `unmeasured` を返す。
+- `MutualFundsPage`: 一覧は「—」(色なし・title「年初来リターンは未入力です (0% ではありません)」)、注記は
+  「リスクは年初来リターンが入力された n 銘柄の母標準偏差です (未入力 k 銘柄は除外)」、改善提案には null が届く。
+  placeholder は「0」から「空欄=未入力」へ (「0」は空欄 = 0 と読ませていた)。
+- 検査: `investments.test.ts` (空欄 → null・'0' → 0・往復)、`collectionShapes.test.ts` (nullable の台帳・隣の取得額は null を落とす対照)、
+  `collectionShapesRoundTrip.test.ts` (空欄で足した控えが復元を通る)、`mutualFundsMetrics.test.ts` (4.04% / 5.25% の標本)、
+  `mutualFundsYtdUnentered.test.ts` (jsdom: 一覧・注記・改善提案の 3 面 + 測った 0% の対照)、e2e `desktop` (空欄の行が「—」・注記)。
+
+### 対照
+
+| # | 何を壊したか | 鳴ったか |
+| --- | --- | --- |
+| A | `parseHoldingEntry` / `normalizeHolding` の空欄を 0 に戻す (元の判断) | 🔔 12 本 / 3 ファイル —— `investments` ×8 (空欄 → null・'0' → 0・往復・無い控え・NaN・物でない引数)、`collectionShapesRoundTrip` ×1 (空欄で足した控えが null を書く)、画面 ×3 (一覧「—」・注記の除外・改善提案の名指し)。3 面とも同じ 1 行で鳴る = 同じ型を通している証拠 |
+| B | (画面) null を「+0.0%」で刷る (元の判断) | 🔔 1 本だけ —— 画面の「一覧で「—」」。注記・改善提案・測った 0% の対照は通ったまま = 一覧の面だけを見ている検査が 1 本在る |
+| C | (e2e) パス 121 の版に当てる | 🔔 `SERVICE_HUB_E2E_ONLY=desktop` を `standalone-pass121.html` に当てると、既存の検査は通ったまま `★ 空欄の YTD は「—」で刷る` が ❌ (実際 "+0.0%") で落ちる (`controlC exit=1`)。落ちる場所が**足した検査そのもの** = 古い版はここで「+0.0%」を刷っていた |
+
+### 残る物
+
+- **取得額の空欄 = 損益 0** (`acquisitionCost` は「空欄は評価額と同額 (損益 0) とみなす」) —— 同じ折り畳みが隣の欄に在る。
+  `computeFundPortfolio` の `unrealizedGainPct` はパス 119 が `totalCostBasis > 0 ? … : null` で守ったが、既定が「評価額と同額」
+  なので**取得額を 1 つも入力していなくても totalCostBasis > 0 になり、守りは届かない** (評価損益率「+0.0%」)。別パス。
+- パス 122 より前に空欄で保存された控えは 0 を持っている。読む側では測った 0% と見分けられないので、そのまま「+0.0%」と
+  出る —— 編集フォームに `0` が入るので、利用者が消せば null になる。
+- 0 倒しの census は動かない (104 ファイル / 281 件)。`num` の `? v : 0` は口数・基準価額に残り、年初来は `numOrNull` (`: null`) で数えない側へ移った。
+
 ## パス 121 (2026-09-09) — **人材育成は読めない保存を黙って空にし、読み込みで落とした項目も言わなかった**
 
 パス 120 (チームレーダー) の直後に、隣のサービスを同じ目で実測した。人材育成の読み込みは**両ビルドとも**、

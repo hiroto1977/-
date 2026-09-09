@@ -145,6 +145,12 @@ async function desktopSuite(browser) {
   await page.getByRole('button', { name: '＋ 銘柄を追加' }).click();
   await page.waitForSelector('text=E2Eファンド', { timeout: 15000 });
   ok((await has('￥8,540,140')) || (await has('¥8,540,140')), 'funds: 手動評価額30万で合計 ¥8,540,140');
+  // パス 122: YTD を空欄のまま足した行は「+0.0%」(緑) ではなく「—」。リスクの注記が除外を言う。
+  // (パス 121 までの版はここで「+0.0%」を刷り、注記は「保有銘柄のYTDリターンの母標準偏差です」だけだった)
+  const ytdCell = ((await page.locator('tbody tr', { hasText: 'E2Eファンド' }).locator('td').nth(5).textContent()) ?? '').trim();
+  ok(ytdCell === '—', `funds: ★ 空欄の YTD は「—」で刷る (実際 "${ytdCell}")`);
+  await page.waitForFunction(() => document.body.textContent.includes('未入力 1 銘柄は除外'), undefined, { timeout: 15000 });
+  ok(true, 'funds: ★ リスクの注記が「未入力 1 銘柄は除外」と言う');
   await page.locator('button', { hasText: '編集' }).first().click();
   await page.getByPlaceholder('空欄=自動計算').fill('');
   await page.getByPlaceholder('500000').fill('200000');

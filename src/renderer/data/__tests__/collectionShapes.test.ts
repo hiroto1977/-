@@ -22,6 +22,12 @@ interface Sample {
   readonly optional: readonly string[];
   /** 列挙の欄と、一覧の外の値。 */
   readonly enumOut?: readonly (readonly [string, string])[];
+  /**
+   * **null を値として書く**任意の欄 (台帳)。既定では任意の欄の null は「在るのに違う」で落とすが、
+   * ここに挙げた欄は null を「未入力」として通す (投資信託の年初来リターン · パス 122)。台帳に無い欄の
+   * null が通れば、それは形が緩んだ報せ。
+   */
+  readonly nullable?: readonly string[];
 }
 
 const KPI = {
@@ -84,6 +90,8 @@ const SAMPLES: Readonly<Record<string, Sample>> = {
     required: ['name', 'units', 'navPerUnit', 'valuation'],
     optional: ['code', 'valuationMode', 'acquisitionCost', 'ytdReturnPct'],
     enumOut: [['valuationMode', 'guess']],
+    // 空欄で足した控えは null を書く (パス 122)。復元の形が null を落とせば、控えごと消える。
+    nullable: ['ytdReturnPct'],
   },
   'parameter-overrides': {
     good: { values: { 'tax.rate': 0.1 } },
@@ -170,10 +178,12 @@ describe('collection ごとの中身の形', () => {
       }
 
       for (const key of sample.optional) {
-        it(`任意 ${key}: 無ければ通り、型が違えば落ち、null も落ちる`, () => {
+        const nullable = (sample.nullable ?? []).includes(key);
+        it(`任意 ${key}: 無ければ通り、型が違えば落ち、null は${nullable ? '「未入力」として通る (台帳 nullable)' : '落ちる'}`, () => {
           expect(hasCollectionShape(collection, without(sample.good, key))).toBe(true);
           expect(hasCollectionShape(collection, { ...sample.good, [key]: wrongTyped(sample.good[key]) })).toBe(false);
-          expect(hasCollectionShape(collection, { ...sample.good, [key]: null })).toBe(false);
+          // 台帳に無い欄の null は「在るのに違う」。台帳の欄だけ null = 未入力 (パス 122)。
+          expect(hasCollectionShape(collection, { ...sample.good, [key]: null })).toBe(nullable);
         });
       }
 
@@ -245,5 +255,18 @@ describe('台帳の網羅 — `*_COLLECTION` 定数はすべて登録されて�
     expect(names.size).toBeGreaterThanOrEqual(20);
     const missing = [...names].filter((n) => !Object.hasOwn(COLLECTION_SHAPES, n));
     expect(missing, `台帳に無い collection: ${missing.join(', ')}`).toEqual([]);
+  });
+});
+
+describe('mutualfund-holdings.ytdReturnPct — null は「未入力」として通す (パス 122)', () => {
+  it('★ null は通り、無い欄も通り、数でない値は落ちる', () => {
+    const good = SAMPLES['mutualfund-holdings']!.good;
+    expect(hasCollectionShape('mutualfund-holdings', { ...good, ytdReturnPct: null })).toBe(true);
+    const { ytdReturnPct: _drop, ...without } = good;
+    expect(hasCollectionShape('mutualfund-holdings', without)).toBe(true);
+    expect(hasCollectionShape('mutualfund-holdings', { ...good, ytdReturnPct: 'abc' })).toBe(false);
+    expect(hasCollectionShape('mutualfund-holdings', { ...good, ytdReturnPct: Number.NaN })).toBe(false);
+    // 対照: null が「未入力」を意味するのはこの欄だけ —— 隣の取得額は null を今までどおり「在るのに違う」と落とす
+    expect(hasCollectionShape('mutualfund-holdings', { ...good, acquisitionCost: null })).toBe(false);
   });
 });
