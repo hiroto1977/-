@@ -1151,6 +1151,9 @@ export const SNAPSHOT = {
     updatedAt: '',
     disqualifiersSource: LEADER_DISQUALIFIERS_SOURCE,
     stepsSource: SKILL_STEPS_SOURCE,
+    // 保存先から何が読めたか (パス 121)。同梱の初期値は「まだ無い」。
+    stored: 'none' as 'saved' | 'none' | 'unreadable',
+    storedNote: null as string | null,
   },
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)

@@ -83,19 +83,37 @@ describe('talent — 保存した申告が診断に出る', () => {
     expect(snap.ok, snap.message).toBe(true);
     // 保存した部署名が診断の側に出る (同梱の空スナップショットではない)
     expect(JSON.stringify(snap.data)).toContain('営業');
+    expect(snap.data?.stored).toBe('saved');
+    expect(snap.data?.storedNote).toBeNull();
   });
 
-  it('保存が無い端末でも ok を返す (空の診断)', async () => {
+  it('保存が無い端末でも ok を返す (空の診断・stored=none)', async () => {
     const hub = await loadHub();
     const snap = await hub.fetchSnapshot('talent');
     expect(snap.ok).toBe(true);
+    expect(snap.data?.stored).toBe('none');
+    expect(snap.data?.storedNote).toBeNull();
   });
 
-  it('壊れた保存値でも ok を返す (空で続ける)', async () => {
+  it('★ 壊れた保存値は空を返しつつ「読めなかった」と言う (パス 121 までは黙って空で続けた)', async () => {
     localStorage.setItem('servicehub.talent.state.v1', '{壊れた');
     const hub = await loadHub();
     const snap = await hub.fetchSnapshot('talent');
     expect(snap.ok).toBe(true);
+    expect(snap.data?.stored).toBe('unreadable');
+    expect(String(snap.data?.storedNote)).toContain('保存した人材育成の状態を読めませんでした (JSON として読めません)');
+  });
+
+  it('★ 読み込みで落とした項目は saved のまま件数を言う (古い版・手で直した JSON)', async () => {
+    localStorage.setItem(
+      'servicehub.talent.state.v1',
+      JSON.stringify({ reports: [], initiatives: [], members: [{ id: 'm1', name: '山田', step: 1, yearsInStep: 61 }], updatedAt: '' }),
+    );
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('talent');
+    expect(snap.ok).toBe(true);
+    expect(snap.data?.stored).toBe('saved');
+    expect(String(snap.data?.storedNote)).toContain('メンバー 1 件 (上限 500 件) は読み込みで落としました');
   });
 });
 

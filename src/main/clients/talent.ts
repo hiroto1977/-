@@ -2,11 +2,13 @@ import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {
-  EMPTY_TALENT_STATE,
   buildTalentSnapshot,
   judgeLeaderFitness,
+  readStoredTalent,
   sanitizeTalentState,
+  talentProvenance,
   type JudgeResult,
+  type StoredTalent,
   type TalentSnapshot,
   type TalentState,
 } from '../../shared/talent';
@@ -63,17 +65,22 @@ export interface StateDeps {
 }
 
 /**
- * 保存された状態を読む。読めなければ空で返す —— 初回起動と壊れたファイルを
- * 区別しても画面ですることが同じなので、分けない。
+ * 保存された状態を読む —— 「まだ無い」(ENOENT) と「読めなかった」(権限・I/O・壊れた中身) を分ける
+ * (パス 121)。それまでは「初回起動と壊れたファイルを区別しても画面ですることが同じ」として空で
+ * 返していた —— 同じではない: 壊れたファイルでは利用者の申告・施策・メンバーが消えており、次の
+ * 保存で空に上書きされる。読めた後の判定は shared (`readStoredTalent`) が持つ。
  */
-export async function loadTalentState(deps: StateDeps = {}): Promise<TalentState> {
+export async function loadTalentState(deps: StateDeps = {}): Promise<StoredTalent> {
   const p = (deps.statePath ?? defaultStatePath)();
   const read = deps.readFile ?? ((q: string) => fs.readFile(q, 'utf8'));
+  let raw: string;
   try {
-    return sanitizeTalentState(JSON.parse(await read(p)) as unknown);
-  } catch {
-    return EMPTY_TALENT_STATE;
+    raw = await read(p);
+  } catch (e) {
+    if ((e as { code?: unknown } | null)?.code === 'ENOENT') return { kind: 'none' };
+    return { kind: 'unreadable', reason: e instanceof Error ? e.message : String(e) };
   }
+  return readStoredTalent(raw);
 }
 
 /**
@@ -89,10 +96,10 @@ export async function loadTalentState(deps: StateDeps = {}): Promise<TalentState
  * 権限の側は `chmod` で閉じていたが、**書き込みの途中で落ちる**side は開いていた。
  * `fs.writeFile` は本体を切り詰めてから書くので、その間に電源が落ちる・
  * `SIGKILL` される・容量が尽きると、**中途半端な JSON が本体として残る**。
- * 読み側 `loadTalentState` は壊れた JSON を catch して `EMPTY_TALENT_STATE` を
- * 返す設計なので、そのとき利用者に起きることは「**組織病の申告・施策・
- * メンバーの STEP が全部消えている**」であり、しかも**何も表示されない**
- * (初回起動と区別しない、という読み側の判断と組み合わさる)。
+ * 読み側 `loadTalentState` は (2026-09-09 のパス 121 まで) 壊れた JSON を catch して
+ * `EMPTY_TALENT_STATE` を返す設計だったので、そのとき利用者に起きることは「**組織病の
+ * 申告・施策・メンバーの STEP が全部消えている**」であり、しかも**何も表示されなかった**
+ * (初回起動と区別しない、という読み側の判断と組み合わさっていた。今は「読めなかった」と言う)。
  * 実際に全部消えた事例が `TalentPage.tsx` の注記に残っている。
  *
  * `atomicWriteFile` は一意な tmp に書いて fsync し、`rename` で被せて
@@ -116,14 +123,16 @@ export async function saveTalentState(state: TalentState, deps: StateDeps = {}):
 // --- スナップショット --------------------------------------------------
 
 export interface SnapshotDeps {
-  loadState?: (deps?: StateDeps) => Promise<TalentState>;
+  loadState?: (deps?: StateDeps) => Promise<StoredTalent>;
 }
 
 export async function fetchTalentSnapshotImpl(
   _ctx: FetchContext,
   deps: SnapshotDeps = {},
 ): Promise<TalentSnapshot> {
-  return buildTalentSnapshot(await (deps.loadState ?? loadTalentState)());
+  // 読んだ結果を状態と由来に分ける (ブラウザ版の枝と同じ関数)。見本は無い —— 空か、利用者の物か、読めなかったか。
+  const { state, provenance } = talentProvenance(await (deps.loadState ?? loadTalentState)());
+  return buildTalentSnapshot(state, provenance);
 }
 
 export async function fetchTalentSnapshot(ctx: FetchContext): Promise<TalentSnapshot> {

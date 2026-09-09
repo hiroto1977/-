@@ -358,7 +358,7 @@ describe('状態の保存と読み込み', () => {
       statePath: () => '/tmp/talent.json',
       readFile: async () => written,
     });
-    expect(back).toEqual(state);
+    expect(back).toEqual({ kind: 'saved', state, dropped: null });
   });
 
   it('★ 保存の前に正規化する — 壊れた入力でファイルを汚さない', async () => {
@@ -377,23 +377,51 @@ describe('状態の保存と読み込み', () => {
     expect(written).not.toContain('999');
   });
 
-  it('読めなければ空の状態を返す', async () => {
-    const r = await loadTalentState({
+  it('★ ファイルが無ければ「まだ無い」、他の失敗は「読めなかった」(パス 121 までは両方を黙って空にしていた)', async () => {
+    const none = await loadTalentState({
       statePath: () => '/tmp/talent.json',
       readFile: async () => {
-        throw new Error('ENOENT');
+        throw Object.assign(new Error('ENOENT: no such file'), { code: 'ENOENT' });
       },
     });
-    expect(r.reports).toEqual([]);
-    expect(r.updatedAt).toBe('');
+    expect(none).toEqual({ kind: 'none' });
+    const denied = await loadTalentState({
+      statePath: () => '/tmp/talent.json',
+      readFile: async () => {
+        throw Object.assign(new Error('EACCES: permission denied'), { code: 'EACCES' });
+      },
+    });
+    expect(denied).toEqual({ kind: 'unreadable', reason: 'EACCES: permission denied' });
+    // code の無い失敗 (I/O) も「読めなかった」。
+    const boom = await loadTalentState({ statePath: () => '/tmp/talent.json', readFile: async () => { throw new Error('boom'); } });
+    expect(boom).toEqual({ kind: 'unreadable', reason: 'boom' });
   });
 
-  it('JSON が object でなければ空の状態を返す', async () => {
+  it('★ JSON が object でなければ理由つきで「読めなかった」(空の状態に化けない)', async () => {
     const r = await loadTalentState({
       statePath: () => '/tmp/talent.json',
       readFile: async () => '"just a string"',
     });
-    expect(r.reports).toEqual([]);
+    expect(r).toEqual({ kind: 'unreadable', reason: 'オブジェクトではありません' });
+    const broken = await loadTalentState({ statePath: () => '/tmp/talent.json', readFile: async () => 'not json' });
+    expect(broken).toEqual({ kind: 'unreadable', reason: 'JSON として読めません' });
+  });
+
+  it('★ 読み込みで落とした項目は saved のまま件数を言う (パス 89 は保存側だけだった)', async () => {
+    const raw = JSON.stringify({
+      reports: [{ department: '営業', diseases: ['imprint'] }],
+      initiatives: [{ name: 'bad', probability: 999 }],
+      members: [{ id: 'm1', name: '山田', step: 1, yearsInStep: 61 }],
+      updatedAt: '2026-08-28',
+    });
+    const r = await loadTalentState({ statePath: () => '/tmp/talent.json', readFile: async () => raw });
+    expect(r.kind).toBe('saved');
+    if (r.kind !== 'saved') return;
+    expect(r.state.initiatives).toEqual([]);
+    expect(r.state.members).toEqual([]);
+    expect(r.dropped).toBe(
+      '施策 1 件 (上限 200 件) / メンバー 1 件 (上限 500 件) は読み込みで落としました (形式が合わないか、上限を超えています)。このまま保存すると、これらは失われます。',
+    );
   });
 });
 
@@ -413,8 +441,10 @@ describe('入力 → 保存 → 判定 の一巡', () => {
       members: [{ id: 'm1', name: '山田', step: 1, yearsInStep: 9 }],
       updatedAt: '2026-08-28',
     };
-    const snap = await fetchTalentSnapshotImpl(CTX, { loadState: async () => state });
+    const snap = await fetchTalentSnapshotImpl(CTX, { loadState: async () => ({ kind: 'saved', state, dropped: null }) });
     expect(snap.reports).toEqual(state.reports);
+    expect(snap.stored).toBe('saved');
+    expect(snap.storedNote).toBeNull();
     // 集計側には「管理」が現れない (病を挙げていないため) ことも確かめる。
     expect(snap.diagnosis.tallies.flatMap((t) => t.departments)).not.toContain('管理');
     // それでも申告部署としては数えられている。
@@ -445,7 +475,7 @@ describe('入力 → 保存 → 判定 の一巡', () => {
     );
     expect(stored).not.toBeNull();
     const snap = await fetchTalentSnapshotImpl(CTX, {
-      loadState: async () => stored as unknown as TalentState,
+      loadState: async () => ({ kind: 'saved', state: stored as unknown as TalentState, dropped: null }),
     });
     // 保存した値から判定が出ていること。
     expect(snap.diagnosis.systemic).toEqual(['imprint']);
@@ -458,13 +488,17 @@ describe('スナップショット', () => {
   it('保存された状態から判定済みの値を組み立てる', async () => {
     const snap = await fetchTalentSnapshotImpl(CTX, {
       loadState: async () => ({
-        reports: [
-          { department: '営業', diseases: ['imprint'] },
-          { department: '開発', diseases: ['imprint'] },
-        ],
-        initiatives: [{ name: 'a', probability: 40 }],
-        members: [{ id: 'm1', name: '山田', step: 1, yearsInStep: 9 }],
-        updatedAt: '2026-08-28',
+        kind: 'saved',
+        state: {
+          reports: [
+            { department: '営業', diseases: ['imprint'] },
+            { department: '開発', diseases: ['imprint'] },
+          ],
+          initiatives: [{ name: 'a', probability: 40 }],
+          members: [{ id: 'm1', name: '山田', step: 1, yearsInStep: 9 }],
+          updatedAt: '2026-08-28',
+        },
+        dropped: null,
       }),
     });
     expect(snap.diseases).toHaveLength(5);
@@ -472,6 +506,34 @@ describe('スナップショット', () => {
     expect(snap.diagnosis.systemic).toEqual(['imprint']);
     expect(snap.achievement.shortfall).toBe(60);
     expect(snap.ladder.stalled).toHaveLength(1);
+  });
+
+  it('★ 読めなかった保存は空の判定を返しつつ、そう言う (stored=unreadable・注記)', async () => {
+    const snap = await fetchTalentSnapshotImpl(CTX, { loadState: async () => ({ kind: 'unreadable', reason: 'EACCES' }) });
+    expect(snap.diagnosis.reportedDepartments).toBe(0);
+    expect(snap.stored).toBe('unreadable');
+    expect(snap.storedNote).toBe(
+      '保存した人材育成の状態を読めませんでした (EACCES)。空の状態を表示しています。このまま保存すると空で上書きされ、元の保存値は戻りません。',
+    );
+  });
+
+  it('まだ無い: 空の判定・stored=none・注記なし', async () => {
+    const snap = await fetchTalentSnapshotImpl(CTX, { loadState: async () => ({ kind: 'none' }) });
+    expect(snap.stored).toBe('none');
+    expect(snap.storedNote).toBeNull();
+    expect(snap.diseases).toHaveLength(5);
+  });
+
+  it('★ 読み込みで落とした項目の件数は注記として届く', async () => {
+    const snap = await fetchTalentSnapshotImpl(CTX, {
+      loadState: async () => ({
+        kind: 'saved',
+        state: { reports: [], initiatives: [], members: [], updatedAt: '' },
+        dropped: 'メンバー 1 件 (上限 500 件) は読み込みで落としました (形式が合わないか、上限を超えています)。このまま保存すると、これらは失われます。',
+      }),
+    });
+    expect(snap.stored).toBe('saved');
+    expect(snap.storedNote).toContain('メンバー 1 件');
   });
 });
 

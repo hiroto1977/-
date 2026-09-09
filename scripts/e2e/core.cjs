@@ -2417,6 +2417,12 @@ async function talentSuite(browser) {
   ok(stored !== null && stored.includes('営業'),
     'talent: 台帳に載せた鍵 (servicehub.talent.state.v1) へ保存されている');
 
+  // 壊れた保存値: 空を表示しつつ、そう言う (パス 121 までは黙って空で続けた)。この画面は開いた直後に読む。
+  await page.evaluate(() => localStorage.setItem('servicehub.talent.state.v1', '{壊れた'));
+  await gotoService(page, '#/talent', 'text=5つの企業組織病');
+  await page.waitForSelector('text=保存した人材育成の状態を読めませんでした', { timeout: 20000 });
+  ok(true, 'talent: ★ 読めない保存値は空を表示しつつ、注記が理由を言う');
+
   ok(errs.length === 0, `talent: ページエラー 0 (実際 ${errs.length})`);
   await ctx.close();
 }

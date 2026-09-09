@@ -3,7 +3,7 @@ import { localIsoDate } from '../../shared/localDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
-import { describeDroppedEntries, type LeaderFitness } from '../../shared/talent';
+import { describeDroppedEntries, type LeaderFitness, type TalentSnapshot } from '../../shared/talent';
 import type { ActionData } from '../../shared/actionData';
 import type { SourceStrength } from '../../shared/provenance';
 
@@ -22,28 +22,12 @@ import type { SourceStrength } from '../../shared/provenance';
 
 // 語彙は `src/shared/provenance.ts` が持つ。ここで書き写すと、段が増えた日に
 // 画面だけ古い union を持つ (2026-08-29 に実際そうなっていた)。
+// 同じ理由で **snapshot の形もここには写さない** —— 2026-09-09 (パス 121) まで
+// この画面は `TalentSnapshot` を手で写していて、shared に `stored` / `storedNote`
+// を足した日に**画面だけ古い形**を持ち、注記の欄が型に無かった (チームレーダーの
+// パス 120 と同じ形)。下の 3 つは**下書き (useState) の形**で、shared の readonly
+// 行を編集できる写しにするために置く。
 
-interface OrganDisease {
-  readonly id: string;
-  readonly name: string;
-  readonly summary: string;
-  readonly source: SourceStrength;
-}
-interface SkillStep {
-  readonly step: number;
-  readonly name: string;
-  readonly detail: string;
-}
-interface Disqualifier {
-  readonly id: string;
-  readonly text: string;
-}
-interface DiseaseTally {
-  readonly id: string;
-  readonly name: string;
-  readonly departments: readonly string[];
-  readonly systemic: boolean;
-}
 interface LadderMember {
   id: string;
   name: string;
@@ -57,33 +41,6 @@ interface DeptReport {
 interface Initiative {
   name: string;
   probability: number;
-}
-interface TalentSnapshot {
-  readonly diseases: readonly OrganDisease[];
-  readonly steps: readonly SkillStep[];
-  readonly disqualifiers: readonly Disqualifier[];
-  readonly diagnosis: {
-    readonly tallies: readonly DiseaseTally[];
-    readonly systemic: readonly string[];
-    readonly reportedDepartments: number;
-  };
-  readonly achievement: {
-    readonly total: number;
-    readonly shortfall: number;
-    readonly ok: boolean;
-    readonly counted: number;
-  };
-  readonly ladder: {
-    readonly members: readonly Readonly<LadderMember>[];
-    readonly stalled: readonly Readonly<LadderMember>[];
-    readonly byStep: Readonly<Record<number, number>>;
-  };
-  readonly initiatives: readonly Readonly<Initiative>[];
-  readonly reports: readonly Readonly<DeptReport>[];
-  readonly updatedAt: string;
-  /** 表ごとの出典の強さ。病は項ごと、10ヶ条と STEP は表まるごと 1 つ。 */
-  readonly disqualifiersSource: SourceStrength;
-  readonly stepsSource: SourceStrength;
 }
 
 /**
@@ -238,6 +195,12 @@ export function TalentPage(): React.JSX.Element {
         errorMessage={errorMessage}
         onRefresh={refresh}
       />
+      {/* 保存先が読めなかった / 読み込みで項目を落としたときだけ出る (パス 121)。黙って空にしない。 */}
+      {snap.storedNote !== null && (
+        <div role="status" style={{ margin: '8px 0', padding: '8px 12px', background: 'rgba(251, 191, 36, 0.08)', border: '1px solid #fbbf24', borderRadius: 6, fontSize: 12, color: '#fbbf24', lineHeight: 1.5 }}>
+          ⚠ {snap.storedNote}
+        </div>
+      )}
 
       <Section title="診断 — 5つの企業組織病">
         <p style={{ color: '#8a93a6', fontSize: 13, marginTop: 0 }}>

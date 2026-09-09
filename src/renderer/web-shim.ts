@@ -82,11 +82,13 @@ import {
 } from '../shared/assistantLimits';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import {
-  EMPTY_TALENT_STATE,
   TALENT_STORAGE_KEY,
   buildTalentSnapshot,
   judgeLeaderFitness,
+  readStoredTalent,
   sanitizeTalentState,
+  talentProvenance,
+  type StoredTalent,
 } from '../shared/talent';
 import {
   TEAM_RADAR_STORAGE_KEY,
@@ -1229,15 +1231,18 @@ const shim = {
      * `buildTalentSnapshot` を通すので、答えは 2 つの実行形態で一致する。
      */
     if (serviceId === 'talent') {
-      let state = EMPTY_TALENT_STATE;
+      // 「保存した」「まだ無い」「読めなかった」を混ぜない (パス 121)。それまでは「区別しても画面で
+      // することは同じ」として空で続けていた —— 壊れた保存値では申告・施策・メンバーが消えており、
+      // 次の保存で空に上書きされるので、同じではない。判定は shared の同じ関数を通す。
+      let stored: StoredTalent;
       try {
-        const raw = localStorage.getItem(TALENT_STORAGE_KEY);
-        if (raw !== null) state = sanitizeTalentState(JSON.parse(raw) as unknown);
-      } catch {
-        // 壊れた保存値と未保存を区別しても画面ですることは同じ。空で続ける。
-        state = EMPTY_TALENT_STATE;
+        stored = readStoredTalent(localStorage.getItem(TALENT_STORAGE_KEY));
+      } catch (e) {
+        // Web Storage そのものが拒む環境 (パス 89) —— 「読めなかった」として空を返す。
+        stored = { kind: 'unreadable', reason: e instanceof Error ? e.message : String(e) };
       }
-      return ok(buildTalentSnapshot(state)) as ActionResult<T>;
+      const { state, provenance } = talentProvenance(stored);
+      return ok(buildTalentSnapshot(state, provenance)) as ActionResult<T>;
     }
     /*
      * teamradar は保存した部署・評価日・メンバーをそのまま返す (パス 118)。

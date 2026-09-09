@@ -13673,7 +13673,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **104 ファイル / 280 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **104 ファイル / 281 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -13734,6 +13734,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/pages/FundingPage.tsx` | 2 |
 | `src/renderer/pages/KpiPage.tsx` | 2 |
 | `src/shared/connectors/connectorRegistry.ts` | 2 |
+| `src/shared/talent.ts` | 2 |
 | `src/shared/taxCalc.ts` | 2 |
 | `src/shared/taxCorporate.ts` | 2 |
 | `src/shared/taxRetirement.ts` | 2 |
@@ -13774,7 +13775,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/managementScorecard.ts` | 1 |
 | `src/shared/num.ts` | 1 |
 | `src/shared/passwordStrength.ts` | 1 |
-| `src/shared/talent.ts` | 1 |
 | `src/shared/taxCapitalGains.ts` | 1 |
 | `src/shared/taxCasual.ts` | 1 |
 | `src/shared/taxFurusato.ts` | 1 |
@@ -18388,6 +18388,50 @@ uber-eats / demae-can の advise は画面が無く (`VoiceCommandBar` と `Busi
 - `fetchedAt` は見本の固定時刻 (2035-04-15) のまま。画面は刷っていないが、保存した物の取得時刻としては嘘。
 - 下書き (`servicehub.teamradar.draft.v1`) は snapshot より優先して復元される。読めなかった保存と下書きが両方在るとき、
   画面のメンバーは下書き、注記は保存先について言う (別の物を指している)。
+
+## パス 121 (2026-09-09) — **人材育成は読めない保存を黙って空にし、読み込みで落とした項目も言わなかった**
+
+パス 120 (チームレーダー) の直後に、隣のサービスを同じ目で実測した。人材育成の読み込みは**両ビルドとも**、
+無いファイル・権限エラー・壊れた JSON・壊れた `localStorage` を黙って**空の状態**にしていた。main の注記は
+「初回起動と壊れたファイルを区別しても画面ですることが同じなので、分けない」、ブラウザ版の注記は「壊れた保存値と
+未保存を区別しても画面ですることは同じ。空で続ける」。**同じではない**:
+
+| 場面 | 画面が言うこと |
+| --- | --- |
+| 保存ファイル / `localStorage` の中身が壊れている・読めない | 黙って**空** —— 利用者の申告・施策・メンバーが消え、次に「保存」を押せば空で上書きされ、元の保存値は戻らない |
+| 古い版・手で直した JSON に、今の判定を通らない項目が在る | `sanitizeTalentState` が読むたびに黙って落とす (パス 89 は**保存側**にしか件数を言わせていなかった) |
+
+main 自身の注記 (`saveTalentState` の由来) がこの帰結を書いていた —— 「そのとき利用者に起きることは『組織病の申告・
+施策・メンバーの STEP が全部消えている』であり、しかも何も表示されない」。書き込みを原子的にして**起きにくく**したが、
+起きたときに**言う**側は空いたままだった。
+
+### 直し
+
+- `shared/talent.ts`: `StoredTalent` (`saved` / `none` / `unreadable`) と `readStoredTalent(raw | null)` (JSON でない・
+  オブジェクトでない・一覧の欄が在るのに配列でない → 理由つきで unreadable。欄が無いのは古い版なので空として読む。
+  読めた物は sanitize し、落ちた件数を `describeUnreadEntries` で言う —— 保存側の `describeDroppedEntries` と同じ数え方・
+  違う文)。`talentProvenance` で状態と由来を分け、`buildTalentSnapshot` は `stored` / `storedNote` を持つ (既定は saved・注記なし)。
+- main `loadTalentState`: ENOENT → `none`、それ以外の失敗 → `unreadable` (reason)。ブラウザ版は Web Storage が拒む環境
+  (パス 89) も `unreadable` として空を返す。
+- `TalentPage`: `storedNote` を注記として刷る (この画面は開いた直後に読むので、そのとき出る)。
+- 検査: shared (`talentStored.test.ts`: 3 状態・理由・落とした件数・上限超過)、main (mock: ENOENT / EACCES / boom /
+  壊れた JSON / 落とした件数)、shim の往復 (saved / none / unreadable / 落とした件数)、画面 (`talentStoredNotice.test.ts`)、
+  e2e `talentSuite` (壊れた保存値 → 注記)。
+
+### 対照
+
+| # | 何を壊したか | 鳴ったか |
+| --- | --- | --- |
+| A | 壊れた JSON を黙って `none` に倒す (元の判断) | 🔔 3 本 —— shared `talentStored` (JSON でない → 理由つき)・main `talent` (object でない → 理由つき)・shim `webShimSnapshotBranches` (壊れた保存値 → 「読めなかった」)。3 層とも同じ 1 行で鳴る = 同じ関数を通している証拠 |
+| B | (画面) `storedNote` を描かない | 🔔 2 本 —— `talentStoredNotice` の「読めなかった保存 → 注記」「落とした項目 → 件数の注記」。他の 2 本 (注記なし / 空の状態) は通ったまま = 注記の有無だけを見ている |
+| C | (e2e) パス 120 の版に当てる | 🔔 `SERVICE_HUB_E2E_ONLY=talent` を `standalone-pass120.html` に当てると、既存の 12 検査は通ったまま、壊れた保存値を入れて開き直した所で `保存した人材育成の状態を読めませんでした` の待ちが切れて落ちる (TimeoutError · `controlC exit=1`)。落ちる場所が**足した検査そのもの** = 古い版はここを黙って空にしていた |
+
+### 残る物
+
+- 0 倒しの census が 1 件増えた (`readStoredTalent` の `count`: `Array.isArray(v) ? v.length : 0`)。欄そのものが無い古い版は
+  「0 件送った」で正しい 0 —— 欄が在って配列でない物は、その手前で `unreadable` として返している。
+- 人材育成には見本が無い (空か利用者の物か) ので `isMock` は要らない —— バッジは「ローカル」のまま。
+- チームレーダーと人材育成で同じ形を 2 度書いた (`StoredX` / `readStoredX` / 由来)。3 つ目の保存先が現れたら共通化する。
 
 ## パス 115 (2026-09-09) — **同じ `YYYY-MM-DD` の判定が 7 通りに割れ、暦を見るのは 1 つだけだった**
 
