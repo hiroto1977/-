@@ -19,6 +19,12 @@ import {
   type ActionMap,
   type FetchContext,
 } from './types';
+import {
+  CLOUDFLARE_DNS_FIELDS,
+  CLOUDFLARE_PURGE_FIELDS,
+  checkWriteFields,
+  describeWriteFieldFailure,
+} from '../../shared/writeFieldLimits';
 
 
 const API_BASE = 'https://api.cloudflare.com/client/v4';
@@ -146,11 +152,12 @@ interface CfDnsRecord {
 async function createDnsRecord(
   ctx: ActionContext,
 ): Promise<{ id: string; name: string; type: string }> {
+  // 欄の型と長さは共有の台帳で断る (パス 111)。それまでは 4 欄の真偽値だけで、
+  // `type` は一覧で見ず、`ttl` / `proxied` は型も見ずに転送していた。
+  const bad = checkWriteFields(ctx.payload, CLOUDFLARE_DNS_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const { zoneId, type, name, content, ttl, proxied } =
     ctx.payload as unknown as CreateDnsRecordPayload;
-  if (!zoneId || !type || !name || !content) {
-    throw new Error('zoneId, type, name, content are required');
-  }
 
   const body: Record<string, unknown> = { type, name, content, ttl: ttl ?? 1 };
   if (type === 'A' || type === 'AAAA' || type === 'CNAME') {
@@ -183,8 +190,11 @@ interface CfPurgeResponse {
 }
 
 async function purgeCache(ctx: ActionContext): Promise<{ id: string; purged: 'all' | number }> {
+  // 欄の形は共有の台帳で断る (パス 111): `files` は文字列の配列 (件数と 1 件の長さに
+  // 天井)、`purgeEverything` は真偽値。どちらが要るかの組み合わせは下で見る。
+  const bad = checkWriteFields(ctx.payload, CLOUDFLARE_PURGE_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const { zoneId, files, purgeEverything } = ctx.payload as unknown as PurgeCachePayload;
-  if (!zoneId) throw new Error('zoneId is required');
   if (!purgeEverything && (!files || files.length === 0)) {
     throw new Error('either purgeEverything=true or non-empty files[] is required');
   }

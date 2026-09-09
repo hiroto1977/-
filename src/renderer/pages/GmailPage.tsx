@@ -6,6 +6,7 @@ import { GoogleConnectCard } from '../components/GoogleConnectCard';
 import { useServiceData } from '../hooks/useServiceData';
 import { AiEgressNotice } from '../components/AiEgressNotice';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
+import { GMAIL_DRAFT_FIELDS } from '../../shared/writeFieldLimits';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -132,18 +133,21 @@ export function GmailPage() {
             <input
               placeholder="宛先 (To)"
               value={to}
+              maxLength={GMAIL_DRAFT_FIELDS.to.max}
               onChange={(e) => setTo(e.target.value)}
               style={inputStyle}
             />
             <input
               placeholder="件名"
               value={subject}
+              maxLength={GMAIL_DRAFT_FIELDS.subject.max}
               onChange={(e) => setSubject(e.target.value)}
               style={inputStyle}
             />
             <textarea
               placeholder="本文 (text/plain UTF-8)"
               value={body}
+              maxLength={GMAIL_DRAFT_FIELDS.body.max}
               onChange={(e) => setBody(e.target.value)}
               rows={5}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}

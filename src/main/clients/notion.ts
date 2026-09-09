@@ -1,4 +1,5 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { NOTION_PAGE_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../../shared/writeFieldLimits';
 
 
 interface NotionPage {
@@ -82,8 +83,10 @@ interface NotionCreatePageResponse {
 }
 
 async function createPage(ctx: ActionContext): Promise<{ id: string; url: string }> {
+  // 欄の型と長さは共有の台帳で断る (パス 111)。それまでは `!parentPageId || !title` だけだった。
+  const bad = checkWriteFields(ctx.payload, NOTION_PAGE_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const { parentPageId, title, body } = ctx.payload as unknown as CreatePagePayload;
-  if (!parentPageId || !title) throw new Error('parentPageId and title are required');
 
   const blocks = body
     ? [

@@ -314,9 +314,17 @@ describe('ACTIONS["create-dns-record"] — proxied の既定', () => {
     }
   });
 
-  it('種別が未知でも proxied は付けない', async () => {
-    const { body } = await createRecord({ zoneId: 'z', type: 'SRV', name: 'n', content: 'v' });
-    expect(body).not.toHaveProperty('proxied');
+  it('種別が一覧に無ければ送らない (画面の選択肢と同じ一覧を台帳が持つ — パス 111)', async () => {
+    // 2026-09-09 まで未知の種別 (SRV) はそのまま転送していた (proxied を付けないだけ)。
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['create-dns-record']!({
+        token: 'cf-secret',
+        fetch: fetchMock,
+        payload: { zoneId: 'z', type: 'SRV', name: 'n', content: 'v' },
+      }),
+    ).rejects.toThrow(/^type は A \/ AAAA \/ CNAME \/ TXT \/ MX のいずれかで指定してください$/);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });
 
@@ -345,7 +353,7 @@ describe('ACTIONS["create-dns-record"] — 送り方と入口の検査', () => {
       const fetchMock = vi.fn<typeof fetch>();
       await expect(
         ACTIONS['create-dns-record']!({ token: 't', fetch: fetchMock, payload }),
-      ).rejects.toThrow('zoneId, type, name, content are required');
+      ).rejects.toThrow(/^(zoneId|type|name|content) は必須です$/); // 欄の名前を言う (共有の台帳 — パス 111)
       expect(fetchMock).not.toHaveBeenCalled();
     }
   });
@@ -356,7 +364,7 @@ describe('ACTIONS["purge-cache"] — 入口の検査と送り方', () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['purge-cache']!({ token: 't', fetch: fetchMock, payload: { purgeEverything: true } }),
-    ).rejects.toThrow('zoneId is required');
+    ).rejects.toThrow('zoneId は必須です');
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

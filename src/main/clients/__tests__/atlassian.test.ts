@@ -417,7 +417,7 @@ describe('ACTIONS["create-issue"]', () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['create-issue']!({ token, fetch: fetchMock, payload: { projectKey: 'KAN' } }),
-    ).rejects.toThrow(/^projectKey and summary are required$/);
+    ).rejects.toThrow(/^summary は必須です$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -425,7 +425,7 @@ describe('ACTIONS["create-issue"]', () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['create-issue']!({ token, fetch: fetchMock, payload: { summary: 'x' } }),
-    ).rejects.toThrow(/^projectKey and summary are required$/);
+    ).rejects.toThrow(/^projectKey は必須です$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

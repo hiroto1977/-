@@ -3,6 +3,7 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { WORDPRESS_POST_FIELDS } from '../../shared/writeFieldLimits';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -89,18 +90,21 @@ export function WordPressPage() {
             <input
               placeholder="サイト ID (blog_id または hostname)"
               value={siteId}
+              maxLength={WORDPRESS_POST_FIELDS.siteId.max}
               onChange={(e) => setSiteId(e.target.value)}
               style={inputStyle}
             />
             <input
               placeholder="投稿タイトル"
               value={title}
+              maxLength={WORDPRESS_POST_FIELDS.title.max}
               onChange={(e) => setTitle(e.target.value)}
               style={inputStyle}
             />
             <textarea
               placeholder="本文 (HTML 可)"
               value={content}
+              maxLength={WORDPRESS_POST_FIELDS.content.max}
               onChange={(e) => setContent(e.target.value)}
               rows={5}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}

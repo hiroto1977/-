@@ -154,20 +154,21 @@ describe('createNotionPage', () => {
       ],
     });
   });
-  it('omits children (empty array) when no body, and when body is non-string', async () => {
+  it('omits children (empty array) when no body; refuses a non-string body instead of dropping it (パス 111)', async () => {
     const transport = vi.fn().mockResolvedValue(jsonResponse(200, { id: 'p', url: 'u' }));
     await createNotionPage({ parentPageId: 'par', title: 'T' }, 'tok', transport);
     expect(bodyOf(transport.mock.calls[0]![1]).children).toEqual([]);
-    await createNotionPage({ parentPageId: 'par', title: 'T', body: 42 }, 'tok', transport);
-    expect(bodyOf(transport.mock.calls[1]![1]).children).toEqual([]);
+    // 2026-09-09 まで `body: 42` は undefined に落とされ、本文の無いページが出来ていた。
+    await expect(createNotionPage({ parentPageId: 'par', title: 'T', body: 42 }, 'tok', transport)).rejects.toThrow(/body は文字列で/);
+    expect(transport).toHaveBeenCalledTimes(1);
   });
   it('requires parentPageId and title (each alone is insufficient)', async () => {
     const transport = vi.fn();
-    await expect(createNotionPage({ title: 'T' }, 'tok', transport)).rejects.toThrow('parentPageId と title は必須です');
+    await expect(createNotionPage({ title: 'T' }, 'tok', transport)).rejects.toThrow('parentPageId は必須です');
     await expect(createNotionPage({ parentPageId: 'p' }, 'tok', transport)).rejects.toThrow(/必須/);
     await expect(createNotionPage({ parentPageId: '  ', title: 'T' }, 'tok', transport)).rejects.toThrow(/必須/);
     await expect(createNotionPage({ parentPageId: 'p', title: '  ' }, 'tok', transport)).rejects.toThrow(/必須/);
-    await expect(createNotionPage({ parentPageId: 1, title: 'T' }, 'tok', transport)).rejects.toThrow(/必須/);
+    await expect(createNotionPage({ parentPageId: 1, title: 'T' }, 'tok', transport)).rejects.toThrow(/parentPageId は文字列で/);
     expect(transport).not.toHaveBeenCalled();
   });
   it('surfaces API errors', async () => {
@@ -350,19 +351,22 @@ describe('createAtlassianIssue', () => {
     let sent = bodyOf(transport.mock.calls[0]![1]) as { fields: Record<string, unknown> & { issuetype: { name: string } } };
     expect(sent.fields.issuetype.name).toBe('Bug');
     expect('description' in sent.fields).toBe(false);
-    // 空文字 issueType は Task にフォールバック。description が非文字列も省略。
-    await createAtlassianIssue({ projectKey: 'P', summary: 'S', issueType: '', description: 5 }, TOK, transport);
+    // 空文字 issueType は Task にフォールバック (任意の欄の空文字は「無い」)。
+    await createAtlassianIssue({ projectKey: 'P', summary: 'S', issueType: '' }, TOK, transport);
     sent = bodyOf(transport.mock.calls[1]![1]) as { fields: Record<string, unknown> & { issuetype: { name: string } } };
     expect(sent.fields.issuetype.name).toBe('Task');
     expect('description' in sent.fields).toBe(false);
+    // 文字列でない description は落として送らず、断る (パス 111)。
+    await expect(createAtlassianIssue({ projectKey: 'P', summary: 'S', description: 5 }, TOK, transport)).rejects.toThrow(/description は文字列で/);
+    expect(transport).toHaveBeenCalledTimes(2);
   });
   it('requires projectKey and summary (each alone insufficient, trimmed)', async () => {
     const transport = vi.fn();
-    await expect(createAtlassianIssue({ summary: 'S' }, TOK, transport)).rejects.toThrow('projectKey と summary は必須です');
+    await expect(createAtlassianIssue({ summary: 'S' }, TOK, transport)).rejects.toThrow('projectKey は必須です');
     await expect(createAtlassianIssue({ projectKey: 'P' }, TOK, transport)).rejects.toThrow(/必須/);
     await expect(createAtlassianIssue({ projectKey: '  ', summary: 'S' }, TOK, transport)).rejects.toThrow(/必須/);
     await expect(createAtlassianIssue({ projectKey: 'P', summary: '  ' }, TOK, transport)).rejects.toThrow(/必須/);
-    await expect(createAtlassianIssue({ projectKey: 3, summary: 'S' }, TOK, transport)).rejects.toThrow(/必須/);
+    await expect(createAtlassianIssue({ projectKey: 3, summary: 'S' }, TOK, transport)).rejects.toThrow(/projectKey は文字列で/);
     expect(transport).not.toHaveBeenCalled();
   });
   it('surfaces API errors', async () => {
@@ -510,25 +514,22 @@ describe('gmail helpers + createGmailDraft', () => {
     );
     expect(raw.endsWith('=')).toBe(false); // == パディングは完全に除去 (末尾に = が残らない)
   });
-  it('treats a non-string body as empty', async () => {
-    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { id: 'd', message: { id: 'm' } }));
-    await createGmailDraft({ to: 'a@b.com', subject: 'S', body: 123 }, 'tok', transport);
-    const raw = (bodyOf(transport.mock.calls[0]![1]).message as { raw: string }).raw;
-    // body 省略時 (空文字) の golden と一致。
-    expect(raw).toBe(
-      'VG86IGFAYi5jb20NClN1YmplY3Q6ID0_VVRGLTg_Qj9Vdz09Pz0NCkNvbnRlbnQtVHlwZTogdGV4dC9wbGFpbjsgY2hhcnNldD0iVVRGLTgiDQpNSU1FLVZlcnNpb246IDEuMA0KDQo',
-    );
+  it('refuses a non-string body instead of sending an empty one (パス 111)', async () => {
+    const transport = vi.fn();
+    // 2026-09-09 まで `body: 123` は空文字にすり替えられ、本文の無い下書きが出来ていた。
+    await expect(createGmailDraft({ to: 'a@b.com', subject: 'S', body: 123 }, 'tok', transport)).rejects.toThrow(/body は文字列で/);
+    expect(transport).not.toHaveBeenCalled();
   });
   it('requires to and subject (each alone insufficient)', async () => {
     const transport = vi.fn();
-    await expect(createGmailDraft({ to: 'a@b.com' }, 'tok', transport)).rejects.toThrow('to と subject は必須です');
+    await expect(createGmailDraft({ to: 'a@b.com' }, 'tok', transport)).rejects.toThrow('subject は必須です');
     await expect(createGmailDraft({ subject: 'S' }, 'tok', transport)).rejects.toThrow(/必須/);
     await expect(createGmailDraft({ to: '  ', subject: 'S' }, 'tok', transport)).rejects.toThrow(/必須/);
     await expect(createGmailDraft({ to: 'a@b.com', subject: '' }, 'tok', transport)).rejects.toThrow(/必須/);
-    await expect(createGmailDraft({ to: 5, subject: 'S' }, 'tok', transport)).rejects.toThrow(/必須/);
-    // subject が非文字列 → '' に正規化されて弾かれる (typeof ガードの三項式を直接検証)。
-    await expect(createGmailDraft({ to: 'a@b.com', subject: 5 }, 'tok', transport)).rejects.toThrow(/必須/);
-    await expect(createGmailDraft({ to: 'a@b.com', subject: {} }, 'tok', transport)).rejects.toThrow(/必須/);
+    // 文字列でない物は「必須」ではなく型の問題として断る (共有の台帳 — パス 111)。
+    await expect(createGmailDraft({ to: 5, subject: 'S' }, 'tok', transport)).rejects.toThrow(/to は文字列で/);
+    await expect(createGmailDraft({ to: 'a@b.com', subject: 5 }, 'tok', transport)).rejects.toThrow(/subject は文字列で/);
+    await expect(createGmailDraft({ to: 'a@b.com', subject: {} }, 'tok', transport)).rejects.toThrow(/subject は文字列で/);
     expect(transport).not.toHaveBeenCalled();
   });
   it('surfaces API errors', async () => {
@@ -558,16 +559,17 @@ describe('createDriveFolder', () => {
       parents: ['P'],
     });
   });
-  it('ignores a non-string parentId', async () => {
-    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { id: 'f', name: 'N' }));
-    await createDriveFolder({ name: 'N', parentId: 5 }, 'tok', transport);
-    expect('parents' in bodyOf(transport.mock.calls[0]![1])).toBe(false);
+  it('refuses a non-string parentId instead of dropping it (パス 111)', async () => {
+    const transport = vi.fn();
+    // 2026-09-09 まで `parentId: 5` は落とされ、My Drive 直下にフォルダが出来ていた。
+    await expect(createDriveFolder({ name: 'N', parentId: 5 }, 'tok', transport)).rejects.toThrow(/parentId は文字列で/);
+    expect(transport).not.toHaveBeenCalled();
   });
   it('requires name (also trimmed) and surfaces API errors', async () => {
     const transport = vi.fn();
     await expect(createDriveFolder({}, 'tok', transport)).rejects.toThrow('name は必須です');
     await expect(createDriveFolder({ name: '   ' }, 'tok', transport)).rejects.toThrow(/必須/);
-    await expect(createDriveFolder({ name: 7 }, 'tok', transport)).rejects.toThrow(/必須/);
+    await expect(createDriveFolder({ name: 7 }, 'tok', transport)).rejects.toThrow(/name は文字列で/);
     expect(transport).not.toHaveBeenCalled();
     transport.mockResolvedValue(jsonResponse(500, {}));
     await expect(createDriveFolder({ name: 'N' }, 'tok', transport)).rejects.toThrow(/Drive API 500/);
@@ -585,7 +587,7 @@ describe('createWordPressPostDraft', () => {
     expect(headersOf(init)).toEqual({ Authorization: 'Bearer tok', 'Content-Type': 'application/json' });
     expect(bodyOf(init)).toEqual({ title: 'T', content: 'C', status: 'draft' });
   });
-  it('keeps each allowed status and coerces unknown/non-string to draft; defaults empty content', async () => {
+  it('keeps each allowed status (the list lives in the shared ledger)', async () => {
     const transport = vi.fn().mockResolvedValue(jsonResponse(200, { ID: 1, URL: 'u', title: 'T' }));
     for (const s of ['draft', 'publish', 'pending', 'private']) {
       await createWordPressPostDraft({ siteId: 's', title: 'T', status: s }, 'tok', transport);
@@ -593,23 +595,29 @@ describe('createWordPressPostDraft', () => {
     const got = transport.mock.calls.map((c) => bodyOf(c[1]).status);
     expect(got).toEqual(['draft', 'publish', 'pending', 'private']);
   });
-  it('coerces an unknown status to draft (allowlist miss → default)', async () => {
-    const transport = vi.fn().mockResolvedValue(jsonResponse(200, { ID: 1, URL: 'u', title: 'T' }));
-    await createWordPressPostDraft({ siteId: 's', title: 'T', status: 'bogus' }, 'tok', transport);
-    expect(bodyOf(transport.mock.calls[0]![1]).status).toBe('draft');
+  it('refuses an unknown status instead of publishing it as draft (パス 111)', async () => {
+    const transport = vi.fn();
+    // 2026-09-09 まで `status: 'bogus'` は draft にすり替えられていた。
+    await expect(createWordPressPostDraft({ siteId: 's', title: 'T', status: 'bogus' }, 'tok', transport)).rejects.toThrow(
+      /status は draft \/ publish \/ pending \/ private のいずれかで/,
+    );
+    expect(transport).not.toHaveBeenCalled();
   });
-  it('coerces a non-string status to draft and defaults empty content', async () => {
+  it('refuses a non-string status / content instead of coercing them; absent content is an empty string', async () => {
     const transport = vi.fn().mockResolvedValue(jsonResponse(200, { ID: 1, URL: 'u', title: 'T' }));
-    await createWordPressPostDraft({ siteId: 's', title: 'T', status: 5, content: 9 }, 'tok', transport);
+    await expect(createWordPressPostDraft({ siteId: 's', title: 'T', status: 5 }, 'tok', transport)).rejects.toThrow(/status は文字列で/);
+    await expect(createWordPressPostDraft({ siteId: 's', title: 'T', content: 9 }, 'tok', transport)).rejects.toThrow(/content は文字列で/);
+    expect(transport).not.toHaveBeenCalled();
+    await createWordPressPostDraft({ siteId: 's', title: 'T' }, 'tok', transport);
     expect(bodyOf(transport.mock.calls[0]![1])).toEqual({ title: 'T', content: '', status: 'draft' });
   });
   it('requires siteId and title (each alone insufficient) and surfaces API errors', async () => {
     const transport = vi.fn();
-    await expect(createWordPressPostDraft({ title: 'T' }, 'tok', transport)).rejects.toThrow('siteId と title は必須です');
+    await expect(createWordPressPostDraft({ title: 'T' }, 'tok', transport)).rejects.toThrow('siteId は必須です');
     await expect(createWordPressPostDraft({ siteId: 's' }, 'tok', transport)).rejects.toThrow(/必須/);
     await expect(createWordPressPostDraft({ siteId: '  ', title: 'T' }, 'tok', transport)).rejects.toThrow(/必須/);
     await expect(createWordPressPostDraft({ siteId: 's', title: '  ' }, 'tok', transport)).rejects.toThrow(/必須/);
-    await expect(createWordPressPostDraft({ siteId: 5, title: 'T' }, 'tok', transport)).rejects.toThrow(/必須/);
+    await expect(createWordPressPostDraft({ siteId: 5, title: 'T' }, 'tok', transport)).rejects.toThrow(/siteId は文字列で/);
     expect(transport).not.toHaveBeenCalled();
     transport.mockResolvedValue(jsonResponse(401, {}));
     await expect(createWordPressPostDraft({ siteId: 's', title: 'T' }, 'tok', transport)).rejects.toThrow(/WordPress API 401/);
@@ -627,20 +635,21 @@ describe('createCanvaFolder', () => {
     expect(headersOf(init)).toEqual({ Authorization: 'Bearer tok', 'Content-Type': 'application/json' });
     expect(bodyOf(init)).toEqual({ name: 'N', parent_folder_id: 'root' });
   });
-  it('uses a provided non-empty parentFolderId instead of root; empty/non-string falls back to root', async () => {
+  it('uses a provided non-empty parentFolderId instead of root; empty falls back to root; non-string is refused (パス 111)', async () => {
     const transport = vi.fn().mockResolvedValue(jsonResponse(200, { folder: { id: 'c', name: 'N' } }));
     await createCanvaFolder({ name: 'N', parentFolderId: 'FID' }, 'tok', transport);
     expect(bodyOf(transport.mock.calls[0]![1]).parent_folder_id).toBe('FID');
     await createCanvaFolder({ name: 'N', parentFolderId: '' }, 'tok', transport);
     expect(bodyOf(transport.mock.calls[1]![1]).parent_folder_id).toBe('root');
-    await createCanvaFolder({ name: 'N', parentFolderId: 5 }, 'tok', transport);
-    expect(bodyOf(transport.mock.calls[2]![1]).parent_folder_id).toBe('root');
+    // 2026-09-09 まで `parentFolderId: 5` は root にすり替えられていた。
+    await expect(createCanvaFolder({ name: 'N', parentFolderId: 5 }, 'tok', transport)).rejects.toThrow(/parentFolderId は文字列で/);
+    expect(transport).toHaveBeenCalledTimes(2);
   });
   it('requires name (also trimmed) and surfaces API errors', async () => {
     const transport = vi.fn();
     await expect(createCanvaFolder({}, 'tok', transport)).rejects.toThrow('name は必須です');
     await expect(createCanvaFolder({ name: '  ' }, 'tok', transport)).rejects.toThrow(/必須/);
-    await expect(createCanvaFolder({ name: 9 }, 'tok', transport)).rejects.toThrow(/必須/);
+    await expect(createCanvaFolder({ name: 9 }, 'tok', transport)).rejects.toThrow(/name は文字列で/);
     expect(transport).not.toHaveBeenCalled();
     transport.mockResolvedValue(jsonResponse(500, {}));
     await expect(createCanvaFolder({ name: 'N' }, 'tok', transport)).rejects.toThrow(/Canva API 500/);
@@ -665,26 +674,30 @@ describe('cloudflare', () => {
     expect(bodyOf(transport.mock.calls[0]![1])).toEqual({ type: 'AAAA', name: 'n', content: '::1', ttl: 300, proxied: true });
     await createCloudflareDnsRecord({ zoneId: 'z', type: 'CNAME', name: 'n', content: 'x', proxied: true }, 'tok', transport);
     expect(bodyOf(transport.mock.calls[1]![1]).proxied).toBe(true);
-    // proxied は真偽厳密 (=== true)。'true' 文字列は false。
-    await createCloudflareDnsRecord({ zoneId: 'z', type: 'A', name: 'n', content: 'x', proxied: 'true' }, 'tok', transport);
-    expect(bodyOf(transport.mock.calls[2]![1]).proxied).toBe(false);
-    // 非 A/AAAA/CNAME (TXT) は proxied キー自体を持たない。ttl が非数値なら 1。
-    await createCloudflareDnsRecord({ zoneId: 'z', type: 'TXT', name: 'n', content: 'v', ttl: 'x' }, 'tok', transport);
-    const txt = bodyOf(transport.mock.calls[3]![1]);
+    // 真偽値でない proxied ('true' 文字列) と整数でない ttl は、false / 1 にすり替えずに断る (パス 111)。
+    await expect(createCloudflareDnsRecord({ zoneId: 'z', type: 'A', name: 'n', content: 'x', proxied: 'true' }, 'tok', transport)).rejects.toThrow(/proxied は true \/ false で/);
+    await expect(createCloudflareDnsRecord({ zoneId: 'z', type: 'TXT', name: 'n', content: 'v', ttl: 'x' }, 'tok', transport)).rejects.toThrow(/ttl は 1 以上の整数で/);
+    await expect(createCloudflareDnsRecord({ zoneId: 'z', type: 'TXT', name: 'n', content: 'v', ttl: 0 }, 'tok', transport)).rejects.toThrow(/ttl は 1 以上の整数で/);
+    // 非 A/AAAA/CNAME (TXT) は proxied キー自体を持たない。ttl 省略なら 1。
+    await createCloudflareDnsRecord({ zoneId: 'z', type: 'TXT', name: 'n', content: 'v' }, 'tok', transport);
+    const txt = bodyOf(transport.mock.calls[2]![1]);
     expect('proxied' in txt).toBe(false);
     expect(txt.ttl).toBe(1);
+    expect(transport).toHaveBeenCalledTimes(3);
   });
   it('requires zoneId/type/name/content (each alone insufficient, trimmed)', async () => {
     const transport = vi.fn();
     const base = { zoneId: 'z', type: 'A', name: 'n', content: 'c' };
-    await expect(createCloudflareDnsRecord({ ...base, zoneId: '' }, 'tok', transport)).rejects.toThrow('zoneId, type, name, content は必須です');
+    await expect(createCloudflareDnsRecord({ ...base, zoneId: '' }, 'tok', transport)).rejects.toThrow('zoneId は必須です');
     await expect(createCloudflareDnsRecord({ ...base, type: '' }, 'tok', transport)).rejects.toThrow(/必須/);
     await expect(createCloudflareDnsRecord({ ...base, name: '  ' }, 'tok', transport)).rejects.toThrow(/必須/);
     await expect(createCloudflareDnsRecord({ ...base, content: '  ' }, 'tok', transport)).rejects.toThrow(/必須/);
-    await expect(createCloudflareDnsRecord({ ...base, zoneId: 5 }, 'tok', transport)).rejects.toThrow(/必須/);
-    await expect(createCloudflareDnsRecord({ ...base, type: 5 }, 'tok', transport)).rejects.toThrow(/必須/);
-    await expect(createCloudflareDnsRecord({ ...base, name: 5 }, 'tok', transport)).rejects.toThrow(/必須/);
-    await expect(createCloudflareDnsRecord({ ...base, content: 5 }, 'tok', transport)).rejects.toThrow(/必須/);
+    await expect(createCloudflareDnsRecord({ ...base, zoneId: 5 }, 'tok', transport)).rejects.toThrow(/zoneId は文字列で/);
+    await expect(createCloudflareDnsRecord({ ...base, type: 5 }, 'tok', transport)).rejects.toThrow(/type は文字列で/);
+    await expect(createCloudflareDnsRecord({ ...base, name: 5 }, 'tok', transport)).rejects.toThrow(/name は文字列で/);
+    await expect(createCloudflareDnsRecord({ ...base, content: 5 }, 'tok', transport)).rejects.toThrow(/content は文字列で/);
+    // 種別は画面の選択肢と同じ一覧 (台帳) に無ければ断る。
+    await expect(createCloudflareDnsRecord({ ...base, type: 'SRV' }, 'tok', transport)).rejects.toThrow(/type は A \/ AAAA \/ CNAME \/ TXT \/ MX のいずれかで/);
     expect(transport).not.toHaveBeenCalled();
   });
   it('throws on CF success:false with the first error message, else a generic one', async () => {
@@ -709,16 +722,19 @@ describe('cloudflare', () => {
     expect(headersOf(init)).toEqual({ Authorization: 'Bearer tok', Accept: 'application/json', 'Content-Type': 'application/json' });
     expect(bodyOf(init)).toEqual({ purge_everything: true });
   });
-  it('purges specific files (filtering non-strings) and reports their count', async () => {
+  it('purges specific files and reports their count; a non-string entry refuses the whole request (パス 111)', async () => {
     const transport = vi.fn().mockResolvedValue(jsonResponse(200, { success: true, result: { id: 'p' } }));
-    const r = await purgeCloudflareCache({ zoneId: 'z', files: ['https://a/x', 'https://a/y', 5] }, 'tok', transport);
+    // 2026-09-09 まで `5` は黙って間引かれ、残り 2 件だけがパージされていた。
+    await expect(purgeCloudflareCache({ zoneId: 'z', files: ['https://a/x', 'https://a/y', 5] }, 'tok', transport)).rejects.toThrow(/files は文字列で/);
+    expect(transport).not.toHaveBeenCalled();
+    const r = await purgeCloudflareCache({ zoneId: 'z', files: ['https://a/x', 'https://a/y'] }, 'tok', transport);
     expect(r).toEqual({ id: 'p', purged: 2 });
     expect(bodyOf(transport.mock.calls[0]![1])).toEqual({ files: ['https://a/x', 'https://a/y'] });
   });
-  it('treats purgeEverything strictly (only === true triggers the all path)', async () => {
+  it('treats purgeEverything strictly (only a boolean is accepted)', async () => {
     const transport = vi.fn();
-    // purgeEverything が真値でも true でなければ files が必要 → 空 files で弾く。
-    await expect(purgeCloudflareCache({ zoneId: 'z', purgeEverything: 1 }, 'tok', transport)).rejects.toThrow(/purgeEverything/);
+    // 真偽値でない purgeEverything は false にすり替えずに断る (パス 111)。
+    await expect(purgeCloudflareCache({ zoneId: 'z', purgeEverything: 1 }, 'tok', transport)).rejects.toThrow(/purgeEverything は true \/ false で/);
     expect(transport).not.toHaveBeenCalled();
   });
   it('purgeCloudflareCache requires zoneId and (files or purgeEverything)', async () => {
@@ -728,8 +744,8 @@ describe('cloudflare', () => {
     await expect(purgeCloudflareCache({ zoneId: 5 }, 'tok', transport)).rejects.toThrow(/zoneId/);
     await expect(purgeCloudflareCache({ zoneId: 'z' }, 'tok', transport)).rejects.toThrow('purgeEverything=true か、空でない files[] のいずれかが必要です');
     await expect(purgeCloudflareCache({ zoneId: 'z', files: [] }, 'tok', transport)).rejects.toThrow(/purgeEverything/);
-    await expect(purgeCloudflareCache({ zoneId: 'z', files: [5, 6] }, 'tok', transport)).rejects.toThrow(/purgeEverything/);
-    await expect(purgeCloudflareCache({ zoneId: 'z', files: 'notarray' }, 'tok', transport)).rejects.toThrow(/purgeEverything/);
+    await expect(purgeCloudflareCache({ zoneId: 'z', files: [5, 6] }, 'tok', transport)).rejects.toThrow(/files は文字列で/);
+    await expect(purgeCloudflareCache({ zoneId: 'z', files: 'notarray' }, 'tok', transport)).rejects.toThrow(/files は文字列で/);
     expect(transport).not.toHaveBeenCalled();
   });
   it('purge surfaces CF success:false and HTTP errors', async () => {

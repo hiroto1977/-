@@ -3,6 +3,7 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { NOTION_PAGE_FIELDS } from '../../shared/writeFieldLimits';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -95,18 +96,21 @@ export function NotionPage() {
             <input
               placeholder="親ページ ID (インテグレーションに共有済みの)"
               value={parentPageId}
+              maxLength={NOTION_PAGE_FIELDS.parentPageId.max}
               onChange={(e) => setParentPageId(e.target.value)}
               style={inputStyle}
             />
             <input
               placeholder="ページタイトル"
               value={title}
+              maxLength={NOTION_PAGE_FIELDS.title.max}
               onChange={(e) => setTitle(e.target.value)}
               style={inputStyle}
             />
             <textarea
               placeholder="本文 (プレーンテキスト)"
               value={body}
+              maxLength={NOTION_PAGE_FIELDS.body.max}
               onChange={(e) => setBody(e.target.value)}
               rows={4}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}

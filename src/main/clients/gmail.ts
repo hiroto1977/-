@@ -1,5 +1,6 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 import { localIsoDate } from '../../shared/localDate';
+import { GMAIL_DRAFT_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../../shared/writeFieldLimits';
 
 interface GmailListResponse {
   messages?: { id: string; threadId: string }[];
@@ -115,8 +116,12 @@ export function buildRfc2822(to: string, subject: string, body: string): string 
 }
 
 async function createDraft(ctx: ActionContext): Promise<{ id: string; messageId: string }> {
+  // 欄の型と長さは共有の台帳で断る (パス 111)。それまでは `!to || !subject` の真偽値の
+  // 検査だけだった。`to` の CR/LF はここで 1 行の欄として断られる ——
+  // `buildRfc2822` の検査は二重の備えとして残す。
+  const bad = checkWriteFields(ctx.payload, GMAIL_DRAFT_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const { to, subject, body } = ctx.payload as unknown as CreateDraftPayload;
-  if (!to || !subject) throw new Error('to and subject are required');
 
   const raw = base64url(buildRfc2822(to, subject, body ?? ''));
 

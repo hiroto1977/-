@@ -4,6 +4,7 @@ import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { localIsoDate } from '../../shared/localDate';
+import { CANVA_FOLDER_FIELDS } from '../../shared/writeFieldLimits';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -105,12 +106,14 @@ export function CanvaPage() {
             <input
               placeholder="フォルダ名"
               value={name}
+              maxLength={CANVA_FOLDER_FIELDS.name.max}
               onChange={(e) => setName(e.target.value)}
               style={inputStyle}
             />
             <input
               placeholder="親フォルダ ID (空 → root)"
               value={parentFolderId}
+              maxLength={CANVA_FOLDER_FIELDS.parentFolderId.max}
               onChange={(e) => setParentFolderId(e.target.value)}
               style={inputStyle}
             />

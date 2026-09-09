@@ -18098,6 +18098,78 @@ i1price: 品目1 の単価「abc」を金額として読み取れません。金
 明記しているので、**4 つの renderer を触る価値は無いと判断した**。
 揃えるなら `advisorTypes.ts` に文を 1 つ置いて 4 面が読む形が筋である。
 
+## パス 111 (2026-09-09) — **パス 110 は「外へ書く 3 家系」と言ったが、実装から数え直すと 12 家系だった**
+
+パス 110 は Slack / GitHub / カレンダーの 3 家系に台帳を載せ、「残りは同じ形で載せられる」と
+書いて終えた。**その「残り」を手で数えず、`main/clients/*.ts` の `ACTIONS` から導いた** ——
+`method: 'POST'` で外へ投げる handler は **16**、うち AI への送信 3 つ (`emotions/analyze-text` は
+`MAX_ANALYZE_TEXT_CHARS`、`security/scan-url` は `validateScanUrl` と自前の入口を持つ。
+`skills/run-skill` の `prompt` は**天井が無い** —— 下の残りに記す) を除くと**書き込みは 12 家系**。
+残り 9 家系はすべて同じ形だった:
+
+| handler | 検査 (直す前) | 黙って直していた物 |
+| --- | --- | --- |
+| `gmail/create-draft` | `!to \|\| !subject` | — (`To:` の CR/LF だけは見ていた) |
+| `drive/create-folder` | `!name` | ブラウザ版: 文字列でない `parentId` を**落とす** (My Drive 直下に作る) |
+| `microsoft-365/send-mail` · `create-event` | `!to \|\| !subject` / `!subject \|\| !start \|\| !end` | — (ブラウザ版の双子は無い) |
+| `canva/create-folder` | `!name` | ブラウザ版: 文字列でない `parentFolderId` を root に**すり替える** |
+| `notion/create-page` | `!parentPageId \|\| !title` | ブラウザ版: 文字列でない `body` を**落とす** (本文の無いページ) |
+| `atlassian/create-issue` | `!projectKey \|\| !summary` | ブラウザ版: 文字列でない `description` を**落とす** |
+| `cloudflare/create-dns-record` | 4 欄の真偽値 | `type` を一覧で見ない (未知の SRV もそのまま転送)・main は `ttl` / `proxied` の型を見ない・ブラウザ版: 数でない `ttl` を 1 に、真偽値でない `proxied` を false に**すり替える** |
+| `cloudflare/purge-cache` | `!zoneId` | ブラウザ版: 文字列でない URL を**間引いて**残りをパージする (利用者は全部消えたと思う) |
+| `wordpress/create-post-draft` | `!siteId \|\| !title` | main は `status` を一覧で見ない・ブラウザ版: 知らない `status` を draft に、文字列でない `content` を空文字に**すり替える** |
+
+「落とす / すり替える / 間引く」は、利用者が入れたつもりの物と違う物を外へ送る形
+(パス 74 / 84 / 89 / 110 と同じ家系)。**しかも検査がその挙動を「正しい」として留めていた**
+(「ignores a non-string parentId」「coerces an unknown status to draft」「purges specific files
+(filtering non-strings)」)。**壊れた入力は送らずに断る。**
+
+### 直し
+
+- `shared/writeFieldLimits.ts`: 台帳に**欄の種類**が増えた —— 文字列 (`choices` で一覧を持てる:
+  投稿の status / DNS の type は画面の選択肢と同じ一覧) · 整数 (`ttl`: 1 以上) · 真偽値
+  (`proxied` / `purgeEverything`: `=== true` ですり替えない) · 配列 (`files` / `labels`: 件数と
+  1 件の長さ。1 件でも壊れていれば**全体を断る**)。1 行だが長い欄 (宛先・DNS の content・URL) の
+  天井 `MAX_WRITE_LINE_CHARS` (4096) を足した。9 つの台帳を新設し、新しい台帳は欄ごとに型が
+  付く (`satisfies`) ので画面は `X.field.max` と読む。
+- main の 8 handler と ブラウザ版の 8 双子が `checkWriteFields(…)` で断り、8 画面の 24 欄に
+  `maxLength` (台帳の値。数を写さない)。Microsoft 365 は双子が無いので main と画面だけ ——
+  **双子が無いことも検査が留める** (出来たら台帳を読む側へ回す)。
+- **母集団は実装から導く**: `writeFieldLimits.test.ts` が `ACTIONS` の handler 本体を読み、
+  `method: 'POST'` の物すべてが台帳を読むことを確かめる。読まない 3 つは理由つきの除外で、
+  除外が古くなる (POST を止めた / 台帳を読み始めた) と落ちる。
+- `main/clients/__tests__/writeLedgerWiring.test.ts` (新規): 13 操作 × 台帳の全欄について、
+  規則の種類から**導いた**壊れた値を 1 つずつ入れ、handler が**送らずに**欄の名前を添えて断ること、
+  正しい payload なら送信に届くこと (対照) を動かして見る。欄が増えても検査は増えない。
+- Gmail の `To:` の CR/LF は台帳が 1 行の欄として先に断る。`buildRfc2822` の検査は二重の備えと
+  して残し、直接の検査 (`rfc2822Parity.test.ts`) も残る。
+
+### 対照 (9 本)
+
+| 対照 | 落ちた検査 |
+| --- | --- |
+| A: main の drive が台帳で断らない (元の形へ戻す) | 5 件 |
+| B: ブラウザ版の purge が台帳で断らない (間引く形へ戻す) | 4 件 |
+| C: 画面の `maxLength` を 1 つ外す | 1 件 |
+| D: 画面が数を写す (`maxLength={256}`) | 1 件 |
+| E: 除外の台帳が古い (台帳を読む handler を除外に載せる) | 1 件 |
+| F: 一覧を見ない (`choices` の判定を外す) | 4 件 |
+| G: 整数の欄が整数でない物を通す | 2 件 |
+| H: 配列の 1 件を間引く | 6 件 |
+| I: 天井を 1 文字ずらす | 47 件 |
+
+既存の検査 34 本が落ちた —— 文面 (「name is required」→「name は必須です」・欄の名前を言う) と
+挙動 (落として送る → 断る) の変更。どちらも直した理由を検査に書いた。
+
+### 残り
+
+- `skills/run-skill` の `prompt` に天井が無い (name は `isSafeSkillName` で 128 文字まで)。
+  AI への入力の家系 (`checkAdvisorQuestion` = 1000 文字・制御文字も断る) に載せる。
+- `ctx.payload as unknown as` は 23 件・12 client のまま (台帳の後ろの cast なので害は無いが、
+  台帳から型を導けば cast そのものが要らなくなる)。
+- Cloudflare の `purge-cache` の URL は「1 行の長い欄」として見るだけで、URL として解釈はしない
+  (`security/scan-url` は `validateScanUrl` で形を見る —— 規準は在る)。
+
 ## パス 110 (2026-09-09) — **外へ書く欄に、型も長さの上限も無かった**
 
 外部サービスへ**書く**操作の欄は、2026-09-09 まで真偽値の検査しか持たなかった:

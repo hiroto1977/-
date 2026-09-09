@@ -333,7 +333,7 @@ describe('ACTIONS["create-page"] — 送り方', () => {
       const fetchMock = vi.fn<typeof fetch>();
       await expect(
         ACTIONS['create-page']!({ token: 't', fetch: fetchMock, payload }),
-      ).rejects.toThrow('parentPageId and title are required');
+      ).rejects.toThrow(/^(parentPageId|title) は必須です$/); // 欄の名前を言う (共有の台帳 — パス 111)
       expect(fetchMock).not.toHaveBeenCalled();
     }
   });

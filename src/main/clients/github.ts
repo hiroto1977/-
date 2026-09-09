@@ -1,7 +1,7 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 import {
   GITHUB_ISSUE_FIELDS,
-  MAX_WRITE_LABELS,
+  GITHUB_LABELS,
   checkWriteFields,
   checkWriteLabels,
   describeWriteFieldFailure,
@@ -180,7 +180,7 @@ async function createIssue(ctx: ActionContext): Promise<{ number: number; url: s
       describeWriteFieldFailure({
         field: 'labels',
         problem: badLabels,
-        rule: { required: false, max: MAX_WRITE_LABELS, multiline: false },
+        rule: GITHUB_LABELS,
       }),
     );
   }

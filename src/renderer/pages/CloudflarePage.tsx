@@ -3,6 +3,7 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { CLOUDFLARE_DNS_FIELDS } from '../../shared/writeFieldLimits';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -181,6 +182,7 @@ export function CloudflarePage() {
             <input
               placeholder="name (例: @ / www / api)"
               value={dnsName}
+              maxLength={CLOUDFLARE_DNS_FIELDS.name.max}
               onChange={(e) => setDnsName(e.target.value)}
               style={inputStyle}
             />
@@ -193,6 +195,7 @@ export function CloudflarePage() {
                 : 'TXT 値'
               }
               value={dnsContent}
+              maxLength={CLOUDFLARE_DNS_FIELDS.content.max}
               onChange={(e) => setDnsContent(e.target.value)}
               style={inputStyle}
             />

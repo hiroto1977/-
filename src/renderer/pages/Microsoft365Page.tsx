@@ -3,6 +3,7 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { MS365_EVENT_FIELDS, MS365_MAIL_FIELDS } from '../../shared/writeFieldLimits';
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
@@ -241,9 +242,9 @@ export function Microsoft365Page() {
       >
         {openForm === 'mail' ? (
           <div className="card" style={{ gap: 10 }}>
-            <input placeholder="宛先 (to@example.com)" value={to} onChange={(e) => setTo(e.target.value)} style={inputStyle} />
-            <input placeholder="件名" value={mailSubject} onChange={(e) => setMailSubject(e.target.value)} style={inputStyle} />
-            <textarea placeholder="本文" value={mailBody} onChange={(e) => setMailBody(e.target.value)} rows={4} style={inputStyle} />
+            <input placeholder="宛先 (to@example.com)" value={to} maxLength={MS365_MAIL_FIELDS.to.max} onChange={(e) => setTo(e.target.value)} style={inputStyle} />
+            <input placeholder="件名" value={mailSubject} maxLength={MS365_MAIL_FIELDS.subject.max} onChange={(e) => setMailSubject(e.target.value)} style={inputStyle} />
+            <textarea placeholder="本文" value={mailBody} maxLength={MS365_MAIL_FIELDS.body.max} onChange={(e) => setMailBody(e.target.value)} rows={4} style={inputStyle} />
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <button className="primary" onClick={sendMail} disabled={submitting || !to.trim() || !mailSubject.trim()}>
                 {submitting ? '送信中…' : '送信'}
@@ -260,12 +261,12 @@ export function Microsoft365Page() {
 
         {openForm === 'event' ? (
           <div className="card" style={{ gap: 10 }}>
-            <input placeholder="件名" value={evSubject} onChange={(e) => setEvSubject(e.target.value)} style={inputStyle} />
+            <input placeholder="件名" value={evSubject} maxLength={MS365_EVENT_FIELDS.subject.max} onChange={(e) => setEvSubject(e.target.value)} style={inputStyle} />
             <div style={{ display: 'flex', gap: 8 }}>
               <input type="datetime-local" value={evStart} onChange={(e) => setEvStart(e.target.value)} style={inputStyle} />
               <input type="datetime-local" value={evEnd} onChange={(e) => setEvEnd(e.target.value)} style={inputStyle} />
             </div>
-            <input placeholder="場所 (任意)" value={evLocation} onChange={(e) => setEvLocation(e.target.value)} style={inputStyle} />
+            <input placeholder="場所 (任意)" value={evLocation} maxLength={MS365_EVENT_FIELDS.location.max} onChange={(e) => setEvLocation(e.target.value)} style={inputStyle} />
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <button
                 className="primary"

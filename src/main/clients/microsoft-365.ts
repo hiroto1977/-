@@ -1,4 +1,10 @@
 import { jsonFetch, limitedFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
+import {
+  MS365_EVENT_FIELDS,
+  MS365_MAIL_FIELDS,
+  checkWriteFields,
+  describeWriteFieldFailure,
+} from '../../shared/writeFieldLimits';
 
 /**
  * Microsoft 365 (Microsoft Graph API) 連携クライアント (実 API)。
@@ -144,10 +150,10 @@ interface SendMailPayload {
 
 /** Outlook でメールを送信する (POST /me/sendMail)。202 Accepted・本文なし。 */
 async function sendMail(ctx: ActionContext): Promise<{ ok: true; to: string; subject: string }> {
+  // 欄の型と長さは共有の台帳で断る (パス 111)。それまでは `!to || !subject` だけだった。
+  const bad = checkWriteFields(ctx.payload, MS365_MAIL_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const { to, subject, body } = ctx.payload as unknown as SendMailPayload;
-  if (!to || !subject) {
-    throw new Error('to, subject are required');
-  }
   // 202 Accepted・本文なしなので `jsonFetch` は使えない (必ず JSON を読む)。
   // だが**打ち切りは本文の形に関係なく要る** —— `limitedFetch` で掛ける。
   await limitedFetch(
@@ -199,10 +205,10 @@ interface GraphCreatedEvent {
 async function createEvent(
   ctx: ActionContext,
 ): Promise<{ id: string; subject: string; webLink: string }> {
+  // 同上 (パス 111)。
+  const bad = checkWriteFields(ctx.payload, MS365_EVENT_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const { subject, start, end, location } = ctx.payload as unknown as CreateEventPayload;
-  if (!subject || !start || !end) {
-    throw new Error('subject, start, end are required');
-  }
   const res = await jsonFetch<GraphCreatedEvent>(
     `${GRAPH_BASE}/me/events`,
     {

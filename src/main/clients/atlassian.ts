@@ -3,6 +3,7 @@ import {
   type AtlassianSiteFailure,
 } from '../../shared/atlassianSite';
 import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { ATLASSIAN_ISSUE_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../../shared/writeFieldLimits';
 
 interface JiraProject {
   key: string;
@@ -149,9 +150,11 @@ async function createJiraIssue(
   ctx: ActionContext,
 ): Promise<{ key: string; url: string }> {
   const creds = parseAtlassianToken(ctx.token);
+  // 欄の型と長さは共有の台帳で断る (パス 111)。それまでは `!projectKey || !summary` だけだった。
+  const bad = checkWriteFields(ctx.payload, ATLASSIAN_ISSUE_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const { projectKey, summary, description, issueType } =
     ctx.payload as unknown as CreateJiraIssuePayload;
-  if (!projectKey || !summary) throw new Error('projectKey and summary are required');
 
   // Jira Cloud REST v3 wants Atlassian Document Format for description.
   const descBody = description

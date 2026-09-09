@@ -11,10 +11,18 @@
  */
 import { validateScanUrl, type ScanUrlFailure } from '../../shared/scanTarget';
 import {
+  ATLASSIAN_ISSUE_FIELDS,
   CALENDAR_EVENT_FIELDS,
+  CANVA_FOLDER_FIELDS,
+  CLOUDFLARE_DNS_FIELDS,
+  CLOUDFLARE_PURGE_FIELDS,
+  DRIVE_FOLDER_FIELDS,
   GITHUB_ISSUE_FIELDS,
-  MAX_WRITE_LABELS,
+  GITHUB_LABELS,
+  GMAIL_DRAFT_FIELDS,
+  NOTION_PAGE_FIELDS,
   SLACK_MESSAGE_FIELDS,
+  WORDPRESS_POST_FIELDS,
   checkWriteFields,
   checkWriteLabels,
   describeWriteFieldFailure,
@@ -119,7 +127,7 @@ export async function createGithubIssue(
       describeWriteFieldFailure({
         field: 'labels',
         problem: badLabels,
-        rule: { required: false, max: MAX_WRITE_LABELS, multiline: false },
+        rule: GITHUB_LABELS,
       }),
     );
   }
@@ -171,9 +179,12 @@ export async function createNotionPage(
   token: string,
   transport: Transport,
 ): Promise<CreateNotionPageResult> {
+  // 欄の型と長さは main と同じ台帳で断る (パス 111)。それまで文字列でない `body` は
+  // undefined に**落として**本文の無いページを作っていた。
+  const bad = checkWriteFields(input, NOTION_PAGE_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const parentPageId = typeof input.parentPageId === 'string' ? input.parentPageId.trim() : '';
   const title = typeof input.title === 'string' ? input.title.trim() : '';
-  if (!parentPageId || !title) throw new Error('parentPageId と title は必須です');
   const body = typeof input.body === 'string' ? input.body : undefined;
   const children = body
     ? [{ object: 'block', type: 'paragraph', paragraph: { rich_text: [{ type: 'text', text: { content: body } }] } }]
@@ -304,9 +315,12 @@ export async function createAtlassianIssue(
   transport: Transport,
 ): Promise<CreateAtlassianIssueResult> {
   const creds = parseAtlassianToken(tokenJson);
+  // 欄の型と長さは main と同じ台帳で断る (パス 111)。それまで文字列でない `description` は
+  // **落として**送っていた。
+  const bad = checkWriteFields(input, ATLASSIAN_ISSUE_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const projectKey = typeof input.projectKey === 'string' ? input.projectKey.trim() : '';
   const summary = typeof input.summary === 'string' ? input.summary.trim() : '';
-  if (!projectKey || !summary) throw new Error('projectKey と summary は必須です');
   const description = typeof input.description === 'string' ? input.description : undefined;
   const issueType = typeof input.issueType === 'string' && input.issueType.length > 0 ? input.issueType : 'Task';
   const descBody = description
@@ -435,9 +449,12 @@ export async function createGmailDraft(
   token: string,
   transport: Transport,
 ): Promise<{ id: string; messageId: string }> {
+  // 欄の型と長さは main と同じ台帳で断る (パス 111)。`to` の CR/LF はここで断られる
+  // (`buildRfc2822` の検査は二重の備え)。文字列でない `body` は空文字に**すり替えて**いた。
+  const bad = checkWriteFields(input, GMAIL_DRAFT_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const to = typeof input.to === 'string' ? input.to.trim() : '';
   const subject = typeof input.subject === 'string' ? input.subject : '';
-  if (!to || !subject) throw new Error('to と subject は必須です');
   const raw = utf8ToBase64Url(buildRfc2822(to, subject, typeof input.body === 'string' ? input.body : ''));
   const res = await transport('https://gmail.googleapis.com/gmail/v1/users/me/drafts', {
     method: 'POST',
@@ -461,8 +478,11 @@ export async function createDriveFolder(
   token: string,
   transport: Transport,
 ): Promise<{ id: string; name: string; url: string }> {
+  // 欄の型と長さは main と同じ台帳で断る (パス 111)。文字列でない `parentId` は
+  // **落として** My Drive 直下に作っていた。
+  const bad = checkWriteFields(input, DRIVE_FOLDER_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const name = typeof input.name === 'string' ? input.name.trim() : '';
-  if (!name) throw new Error('name は必須です');
   const parentId = typeof input.parentId === 'string' ? input.parentId : undefined;
   const res = await transport('https://www.googleapis.com/drive/v3/files?fields=id,name,webViewLink', {
     method: 'POST',
@@ -492,13 +512,14 @@ export async function createWordPressPostDraft(
   token: string,
   transport: Transport,
 ): Promise<{ id: number; url: string; title: string }> {
+  // 欄の型と長さは main と同じ台帳で断る (パス 111)。それまで知らない `status` と
+  // 文字列でない `content` は draft / 空文字に**すり替えて**投稿していた —— 一覧は
+  // 台帳 (`WORDPRESS_POST_STATUSES`) が持ち、無い物は断る。
+  const bad = checkWriteFields(input, WORDPRESS_POST_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const siteId = typeof input.siteId === 'string' ? input.siteId.trim() : '';
   const title = typeof input.title === 'string' ? input.title.trim() : '';
-  if (!siteId || !title) throw new Error('siteId と title は必須です');
-  // 既定値 'draft' は allowlist に含めない (含めても未指定時と同じ 'draft' になり等価変異を生むため)。
-  const allowedNonDefault = new Set(['publish', 'pending', 'private']);
-  const status =
-    typeof input.status === 'string' && allowedNonDefault.has(input.status) ? input.status : 'draft';
+  const status = typeof input.status === 'string' && input.status.length > 0 ? input.status : 'draft';
   const res = await transport(
     `https://public-api.wordpress.com/rest/v1.1/sites/${encodeURIComponent(siteId)}/posts/new`,
     {
@@ -524,8 +545,11 @@ export async function createCanvaFolder(
   token: string,
   transport: Transport,
 ): Promise<{ id: string; name: string }> {
+  // 欄の型と長さは main と同じ台帳で断る (パス 111)。文字列でない `parentFolderId` は
+  // root に**すり替えて**いた。
+  const bad = checkWriteFields(input, CANVA_FOLDER_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const name = typeof input.name === 'string' ? input.name.trim() : '';
-  if (!name) throw new Error('name は必須です');
   const parentFolderId = typeof input.parentFolderId === 'string' && input.parentFolderId.length > 0 ? input.parentFolderId : 'root';
   const res = await transport('https://api.canva.com/rest/v1/folders', {
     method: 'POST',
@@ -568,12 +592,17 @@ export async function createCloudflareDnsRecord(
   token: string,
   transport: Transport,
 ): Promise<{ id: string; name: string; type: string }> {
+  // 欄の型と長さは main と同じ台帳で断る (パス 111)。それまで `type` は一覧で見ず、
+  // 数でない `ttl` は 1 に、真偽値でない `proxied` は false に**すり替えて**いた。
+  const bad = checkWriteFields(input, CLOUDFLARE_DNS_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const zoneId = typeof input.zoneId === 'string' ? input.zoneId.trim() : '';
   const type = typeof input.type === 'string' ? input.type : '';
   const name = typeof input.name === 'string' ? input.name.trim() : '';
   const content = typeof input.content === 'string' ? input.content.trim() : '';
-  if (!zoneId || !type || !name || !content) throw new Error('zoneId, type, name, content は必須です');
-  const body: Record<string, unknown> = { type, name, content, ttl: typeof input.ttl === 'number' && Number.isFinite(input.ttl) ? input.ttl : 1 };
+  // ttl は台帳が「無いか 1 以上の整数」を保証済み —— main の `ttl ?? 1` と同じ読み方をする
+  // (`typeof` で形を判定し直さない。判定は台帳 1 か所)。
+  const body: Record<string, unknown> = { type, name, content, ttl: input.ttl ?? 1 };
   if (type === 'A' || type === 'AAAA' || type === 'CNAME') body.proxied = input.proxied === true;
   const res = await transport(`${CF_API_BASE}/zones/${encodeURIComponent(zoneId)}/dns_records`, {
     method: 'POST',
@@ -596,8 +625,11 @@ export async function purgeCloudflareCache(
   token: string,
   transport: Transport,
 ): Promise<{ id: string; purged: 'all' | number }> {
+  // 欄の形は main と同じ台帳で断る (パス 111)。それまで文字列でない URL は**間引いて**
+  // 残りをパージし、真偽値でない `purgeEverything` は false に**すり替えて**いた。
+  const bad = checkWriteFields(input, CLOUDFLARE_PURGE_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const zoneId = typeof input.zoneId === 'string' ? input.zoneId.trim() : '';
-  if (!zoneId) throw new Error('zoneId は必須です');
   const purgeEverything = input.purgeEverything === true;
   const files = Array.isArray(input.files) ? input.files.filter((f): f is string => typeof f === 'string') : [];
   if (!purgeEverything && files.length === 0) {

@@ -3,6 +3,7 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { ATLASSIAN_ISSUE_FIELDS } from '../../shared/writeFieldLimits';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -110,12 +111,14 @@ export function AtlassianPage() {
               <input
                 placeholder="プロジェクト Key (e.g. KAN)"
                 value={projectKey}
+                maxLength={ATLASSIAN_ISSUE_FIELDS.projectKey.max}
                 onChange={(e) => setProjectKey(e.target.value)}
                 style={inputStyle}
               />
               <input
                 placeholder="Issue Type (Task / Bug / Story)"
                 value={issueType}
+                maxLength={ATLASSIAN_ISSUE_FIELDS.issueType.max}
                 onChange={(e) => setIssueType(e.target.value)}
                 style={inputStyle}
               />
@@ -123,12 +126,14 @@ export function AtlassianPage() {
             <input
               placeholder="Summary"
               value={summary}
+              maxLength={ATLASSIAN_ISSUE_FIELDS.summary.max}
               onChange={(e) => setSummary(e.target.value)}
               style={inputStyle}
             />
             <textarea
               placeholder="Description (プレーンテキスト → ADF にラップ)"
               value={description}
+              maxLength={ATLASSIAN_ISSUE_FIELDS.description.max}
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}

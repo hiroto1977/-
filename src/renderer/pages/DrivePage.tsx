@@ -4,6 +4,7 @@ import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { GoogleConnectCard } from '../components/GoogleConnectCard';
 import { useServiceData } from '../hooks/useServiceData';
+import { DRIVE_FOLDER_FIELDS } from '../../shared/writeFieldLimits';
 
 const TYPE_LABEL: Record<string, string> = {
   'application/vnd.google-apps.document': 'Doc',
@@ -98,12 +99,14 @@ export function DrivePage() {
             <input
               placeholder="フォルダ名"
               value={name}
+              maxLength={DRIVE_FOLDER_FIELDS.name.max}
               onChange={(e) => setName(e.target.value)}
               style={inputStyle}
             />
             <input
               placeholder="親フォルダ ID (空 → My Drive 直下)"
               value={parentId}
+              maxLength={DRIVE_FOLDER_FIELDS.parentId.max}
               onChange={(e) => setParentId(e.target.value)}
               style={inputStyle}
             />
