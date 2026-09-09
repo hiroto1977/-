@@ -38,6 +38,10 @@
  *
  *   node scripts/zero-fold-census.cjs              表を再生成して書き戻す
  *   node scripts/zero-fold-census.cjs --check      再生成が committed と一致するか (差分なら exit 1)
+ *
+ * 再生成のときは **前回 (committed) との差**を合計とファイル別に刷る (2026-09-09 · パス 135)。
+ * 生成ブロックは正しく動いても、散文が「N のまま」と写し続ける —— パス 124〜134 の 10 節が
+ * 280 と書き続け、生成ブロックは 279 だった。数を写す前に、ここに出た差を読む。
  *   node scripts/zero-fold-census.cjs --self-test  検査そのものの対照 (陽性・陰性)
  */
 'use strict';
@@ -214,6 +218,37 @@ function staleReason(doc, table) {
   return '内容が違います';
 }
 
+/** 生成ブロックの表を読む (合計とファイル別の件数)。`renderTable` の綴りの逆。 */
+function parseTable(block) {
+  const total = /合計 \*\*(\d+) ファイル \/ (\d+) 件\*\*/.exec(block);
+  const rows = new Map();
+  // 行の綴りは `renderTable` の物。バッククォートは \x60 で書く —— 正規表現の中に素で置くと、
+  // この本自身の走査 (`stripCommentsAndStrings`) がテンプレート文字列の始まりと読み、後ろの標本まで数えてしまう。
+  for (const m of block.matchAll(/^\| \x60([^\x60]+)\x60 \| (\d+) \|$/gm)) rows.set(m[1], Number(m[2]));
+  return { files: total ? Number(total[1]) : null, sites: total ? Number(total[2]) : null, rows };
+}
+
+/**
+ * committed (前回) と再生成 (今回) の差 —— 合計の行と、件数の変わったファイルの行。同じなら空配列。
+ * 表に無いファイルは 0 件なので「(表に無し)」と書く (0 と書くと、この本自身が数える綴りになる)。
+ * 散文に数を写す前に読む物。`--check` (ゲート) は使わない —— 差が在れば `staleReason` が鳴る。
+ */
+function censusDelta(doc, table) {
+  const found = findTable(doc);
+  if (!found) return ['前回の生成ブロックが無いので差は測れない (初回)'];
+  const before = parseTable(doc.slice(found.begin, found.end));
+  const after = parseTable(table);
+  const lines = [];
+  if (before.files !== after.files || before.sites !== after.sites) {
+    lines.push(`合計 ${before.files} ファイル / ${before.sites} 件 → ${after.files} ファイル / ${after.sites} 件`);
+  }
+  const at = (rows, file) => (rows.has(file) ? String(rows.get(file)) : '(表に無し)');
+  for (const file of [...new Set([...before.rows.keys(), ...after.rows.keys()])].sort()) {
+    if (at(before.rows, file) !== at(after.rows, file)) lines.push(`${file} ${at(before.rows, file)} → ${at(after.rows, file)}`);
+  }
+  return lines;
+}
+
 function selfTest() {
   const fails = [];
   const check = (name, ok) => {
@@ -281,6 +316,18 @@ function selfTest() {
   check(`実測が件数の床を超えている (${real.sites} >= ${MIN_SITES})`, real.sites >= MIN_SITES);
   check('★ 空の木を走査したら床に掛かる (走査の死が「問題なし」にならない)', census(path.join(REPO_ROOT, 'scripts')).files < MIN_FILES);
 
+  // --- 前回との差 (散文が写しにならないための出力) ---
+  {
+    const t1 = renderTable({ rows: [{ file: 'src/a.ts', count: 2 }, { file: 'src/b.ts', count: 1 }], files: 2, sites: 3 });
+    const t2 = renderTable({ rows: [{ file: 'src/a.ts', count: 1 }, { file: 'src/c.ts', count: 1 }], files: 2, sites: 2 });
+    const doc = applyTable('# 見出し\n', t1);
+    const delta = censusDelta(doc, t2);
+    check('★ 差: 合計の行が前回 → 今回', delta[0] === '合計 2 ファイル / 3 件 → 2 ファイル / 2 件');
+    check('★ 差: 減ったファイル・消えたファイル・現れたファイルを 1 行ずつ', delta.slice(1).join('|') === 'src/a.ts 2 → 1|src/b.ts 1 → (表に無し)|src/c.ts (表に無し) → 1');
+    check('同じなら差は空', censusDelta(doc, t1).length === 0);
+    check('前回の生成ブロックが無ければそう言う', censusDelta('# 見出しだけ\n', t1).join('') .includes('初回'));
+  }
+
   if (fails.length > 0) {
     console.error(`\n❌ self-test ${fails.length} 件不一致`);
     process.exit(1);
@@ -317,10 +364,17 @@ function main() {
     return;
   }
 
+  const delta = censusDelta(doc, table);
   fs.writeFileSync(DOC, applyTable(doc, table));
   console.log(`✅ census を再生成しました (${result.files} ファイル / ${result.sites} 件)`);
+  if (delta.length === 0) {
+    console.log('   前回 (committed) と同じ');
+  } else {
+    console.log('   前回 (committed) との差 —— 散文に数を写す前にここを読む:');
+    for (const line of delta) console.log(`   ${line}`);
+  }
 }
 
 if (require.main === module) main();
 
-module.exports = { FOLD, stripCommentsAndStrings, countFolds, census, renderTable, findTable, applyTable, staleReason, MIN_FILES, MIN_SITES };
+module.exports = { FOLD, stripCommentsAndStrings, countFolds, census, renderTable, findTable, applyTable, staleReason, parseTable, censusDelta, MIN_FILES, MIN_SITES };

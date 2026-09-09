@@ -2097,6 +2097,12 @@ async function storageDurabilitySuite(browser) {
     warned === (sp.durability === 'best-effort'),
     `★ 表示: durability の値と警告の有無が一致する (durability=${sp.durability} / 警告=${warned})`,
   );
+  // パス 135: 節はトークン以外の保存物の状態も言う —— ブラウザ版は気分の記録・人材育成・チームレーダーを
+  // 保管庫の外 (localStorage) に平文で置くので、そう言う。
+  ok(
+    body.includes('ブラウザの localStorage に平文で保存されています') && body.includes('気分の記録') && body.includes('チームレーダー'),
+    'settings: ★ 保護状態の節は、気分の記録・人材育成・チームレーダーが保管庫の外 (localStorage・平文) だと言う',
+  );
   if (sp.durability === 'best-effort') {
     ok(body.includes('24 語では戻せません'), '表示: 24 語では戻せないことを書いている');
     ok(body.includes('生成元の保存領域ごと'), '表示: 消えるのは保管庫だけでないと書いている');

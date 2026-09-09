@@ -28,6 +28,7 @@ const census = require_(path.join(REPO_ROOT, 'scripts', 'zero-fold-census.cjs'))
   census: (root?: string) => { rows: { file: string; count: number }[]; files: number; sites: number };
   renderTable: (r: { rows: { file: string; count: number }[]; files: number; sites: number }) => string;
   applyTable: (doc: string, table: string) => string;
+  censusDelta: (doc: string, table: string) => string[];
   staleReason: (doc: string, table: string) => string | null;
   MIN_FILES: number;
   MIN_SITES: number;
@@ -115,6 +116,32 @@ describe('0 倒しの母集団を数える (構文上の量)', () => {
   it('★ 生成ブロックが無ければ鳴る (マーカーごと消しても黙らない)', () => {
     const table = census.renderTable({ rows: [{ file: 'src/a.ts', count: 1 }], files: 1, sites: 1 });
     expect(census.staleReason('# 見出しだけ\n', table)).toContain('ありません');
+  });
+
+  it('★ 再生成の差は「前回 → 今回」を合計とファイル別に刷る (散文が数を写す前に読む物)', () => {
+    // 2026-09-09 · パス 135: パス 124〜134 の 10 節が「280 のまま」と写し続け、生成ブロックは 279 だった。
+    // 再生成は正しく動いていた —— 動いたことを**誰にも言わなかった**だけ。
+    const t1 = census.renderTable({ rows: [{ file: 'src/a.ts', count: 2 }, { file: 'src/b.ts', count: 1 }], files: 2, sites: 3 });
+    const t2 = census.renderTable({ rows: [{ file: 'src/a.ts', count: 1 }, { file: 'src/c.ts', count: 1 }], files: 2, sites: 2 });
+    const doc = census.applyTable('# 見出し\n', t1);
+    expect(census.censusDelta(doc, t2)).toEqual([
+      '合計 2 ファイル / 3 件 → 2 ファイル / 2 件',
+      'src/a.ts 2 → 1',
+      'src/b.ts 1 → (表に無し)',
+      'src/c.ts (表に無し) → 1',
+    ]);
+  });
+
+  it('対照: 同じ表なら差は空 / 前回の生成ブロックが無ければ「初回」と言う', () => {
+    const t1 = census.renderTable({ rows: [{ file: 'src/a.ts', count: 2 }], files: 1, sites: 2 });
+    expect(census.censusDelta(census.applyTable('# 見出し\n', t1), t1)).toEqual([]);
+    expect(census.censusDelta('# 見出しだけ\n', t1).join('')).toContain('初回');
+  });
+
+  it('★ 実物: committed の生成ブロックと再生成の差は空 (差が在るなら、まず散文がそれを言う)', () => {
+    const fs = require_('node:fs') as typeof import('node:fs');
+    const doc = fs.readFileSync(path.join(REPO_ROOT, 'docs', 'REMAINING_WORK.md'), 'utf8');
+    expect(census.censusDelta(doc, census.renderTable(census.census()))).toEqual([]);
   });
 
   it('committed の docs が実物と一致している (ゲートと同じ判定)', () => {

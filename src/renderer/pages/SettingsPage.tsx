@@ -15,6 +15,7 @@ import { describeWipeOutcome, getVault, MIN_PASSWORD_LENGTH } from '../security/
 import { announceLockToOtherTabs, lockEverywhere } from '../security/lockWorkspace';
 import { credentialUseOf, unusedStoredCredentials } from '../../shared/credentialUse';
 import { EVICTION_RECOVERY, isEvictableStorage } from '../../shared/storageDurability';
+import { describeStateStores } from '../../shared/atRestInventory';
 import type { ServiceId } from '../../shared/serviceId';
 import { inspectStoredProxyConfig, setProxyConfig, type ProxyConfig } from '../network/proxy';
 import { deviceStoreFailureMessage, reportDeviceStoreFailure } from '../data/deviceStoreFailure';
@@ -1002,7 +1003,8 @@ function EvictionNotice() {
   );
 }
 
-function StorageProtectionNotice() {
+/** 検査のために公開 (`ProxySection` / `FsaSection` と同じ理由)。 */
+export function StorageProtectionNotice() {
   const [state, setState] = useState<{
     encrypted: boolean;
     plainCount: number;
@@ -1069,6 +1071,14 @@ function StorageProtectionNotice() {
             <>トークンは OS のキーチェーン由来の鍵で暗号化して保存されています。</>
           )}
           <br />
+          {/*
+            **トークン以外の保存物の状態も言う** (パス 135)。節の題は「保存時の保護状態」なので、
+            トークンしか言わないと「保存する物は全部この状態」と読める。デスクトップ版は気分の記録・
+            人材育成・チームレーダーの状態ファイルを同じ鍵で封緘し (パス 132 / 133)、ブラウザ版はそれらを
+            保管庫の外 (localStorage) に平文で置く。在庫と文は `shared/atRestInventory.ts` が 1 か所で持つ。
+          */}
+          {describeStateStores(state.mechanism ?? 'os-keychain')}
+          <br />
           保存先: <code>{state.file}</code>
           {/*
             **暗号化と、消えないことは別の話である。**
@@ -1105,6 +1115,9 @@ function StorageProtectionNotice() {
         OS のキーチェーン (safeStorage) が利用できないため、トークンは
         <strong> base64 の難読化のみ</strong>で保存されています（暗号化ではありません）。
         このユーザーでファイルを読める人・バックアップ・root は復元できます。
+        <br />
+        {/* 難読化のみ、はトークンだけの話ではない (パス 135) —— 健康に関わる記録と他人の評価も同じ。 */}
+        {describeStateStores('obfuscated')}
         {state.plainCount > 0 && (
           <>
             <br />
