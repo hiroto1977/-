@@ -18389,6 +18389,56 @@ uber-eats / demae-can の advise は画面が無く (`VoiceCommandBar` と `Busi
 - 下書き (`servicehub.teamradar.draft.v1`) は snapshot より優先して復元される。読めなかった保存と下書きが両方在るとき、
   画面のメンバーは下書き、注記は保存先について言う (別の物を指している)。
 
+## パス 132 (2026-09-09) — **デスクトップ版の感情ログ (健康に関わる記録) が平文で置かれていた —— 同じ userData の secrets.json は OS のキーチェーンで封緘しているのに。しかも状態ファイルの在庫が文書に無かった**
+
+### 何が起きていたか
+
+`src/main/clients/emotions.ts` は気分の点数・メモ・解析に貼った文の抜粋を `service-hub-emotions.json` に
+`JSON.stringify` のまま書いていた (0600・原子的)。同じディレクトリの `secrets.json` は `safeStorage` (OS の
+キーチェーン) で封緘している。ファイルの権限 (0600) は同じ利用者の別のプロセスには効かず、バックアップソフトや
+同期フォルダにはそのまま載る —— 「同じ端末に 2 つの約束が在る」形で、`docs/DATA_PROTECTION.md` はブラウザ側の
+媒体 (IndexedDB / localStorage …) を在庫にしていたが、デスクトップ版の状態ファイル 5 つの表が無く、どれが封緘されて
+いてどれが平文かを誰も言っていなかった。
+
+### 直し
+
+- `src/main/atRest.ts` (新規): `sealAtRest` / `openAtRest` / `isAtRestEnvelope` / `atRestMechanism` —— `secrets.ts` の
+  encode / decode と同じ約束 (キーチェーンが有れば封緘した base64、無ければ `plain:` + base64 の難読化)。`secrets.ts` は
+  保護対象でトークン専用なので、状態ファイル用の口を別に置いた (写しではなく同じ約束の別の口)。`openAtRest` は投げず
+  理由 (`no-keychain` / `undecryptable`) を返す。
+- `src/main/clients/emotions.ts`: 書くときは `{ v: 2, sealed }` の封筒。読むときは封筒なら開け、2026-09-09 までの平文は
+  そのまま読む (次の書き込みで封緘される = 移行)。読めない封緘は理由つきで断り上書きしない
+  (`EMOTIONS_UNREADABLE_NO_KEYCHAIN` / `EMOTIONS_UNREADABLE_CORRUPT`)。「履歴を消去」は読めないファイルでも通る
+  (唯一の出口を塞がない)。
+- `stryker.config.json` に `atRest.ts` (277 → 278)。
+- `docs/DATA_PROTECTION.md`: デスクトップ版の状態ファイル 5 つの在庫 (secrets / emotions は封緘、talent / team-radar /
+  state は平文 0600) と実装済み 13。
+- 検査: `emotions.test.ts` (electron の代役に `safeStorage` を足し、検査側の読み出しは封筒を開く。★ 書いたファイルに
+  平文が残らない / 平文の移行 / キーチェーン無し = plain: / 壊れた封緘 2 形は理由つきで断る / 封緘済みをキーチェーン
+  無しで開くと理由を言う / 消去は読めなくても通る)。`emotionsLogMoodParity.test.ts` の electron の代役にも `safeStorage` を
+  足した —— main 側の log-mood を掴んで振る舞いを比べる検査で、全件実行 (14,492) で落ちたのはこの 1 本だけ (chain の対象集合には
+  無かった。**代役に無い口は、封緘を足した日に初めて要る**)。
+
+### 対照
+
+| # | 何を壊したか | 鳴ったか |
+| --- | --- | --- |
+| A | `writeStore` を平文に戻す (元の判断: JSON.stringify のまま) | 🔔 4 / 85 (`emotions.test.ts`): ★ 平文が残らない・平文の移行・`plain:` の往復・キーチェーン無しの理由 —— 封筒の無い書き込みは 4 本全部に当たる |
+| A2 | 平文の移行の枝を消す (封筒でなければ空として読む) | 🔔 16 / 85: 平文を植えて読む既存の検査 (30 日 / 365 日 / 50 件・clear-history ×4・形の違う要素 ×6 …) と移行の検査が全部落ちる —— 2026-09-09 までのファイルが「空」に化ける形は、既存の検査だけでも鳴る |
+
+(e2e の対照 B は無い —— main プロセスの変更で、ブラウザ版の e2e は触らない。実機の起動は chain の smoke:app と
+pipeline が通す。)
+
+### 残る物
+
+- `talent.json` / `team-radar.json` / `state.json` は平文 0600 のまま (氏名・人事評価を含む)。封緘するなら同じ `atRest.ts`
+  を通す —— 移行の形はこのパスと同じ。
+- ブラウザ版の `emotions.store` (localStorage) は平文のまま (ブラウザに safeStorage は無い。保管庫の鍵で封緘するのは
+  別の設計)。
+- キーチェーンの無い環境の `plain:` は難読化であって暗号化ではない (`secrets.ts` と同じ)。設定画面の「保存時の保護状態」は
+  トークンについて述べており、感情ログはまだ言わない。
+- 0 倒しの母集団 (`lint:zero-fold`) は **280 のまま** (main 側の変更で、走査の範囲は renderer)。
+
 ## パス 131 (2026-09-09) — **暗号化バックアップの合言葉を、平文の問い合わせ (prompt) で受けていた —— 隣にマスクされた欄が在るのに。Electron の renderer には prompt が無く、デスクトップ版ではその道が必ず失敗していた**
 
 ### 何が起きていたか
