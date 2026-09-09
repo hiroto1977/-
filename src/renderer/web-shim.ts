@@ -63,6 +63,8 @@ import {
   MAX_ASSISTANT_CONTENT_CHARS,
   MAX_ASSISTANT_MESSAGES,
   MAX_ASSISTANT_SYSTEM_CHARS,
+  inputTooLongMessage,
+  latestTurnTooLong,
 } from '../shared/assistantLimits';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import {
@@ -824,6 +826,8 @@ async function readAssistantCredsRaw(): Promise<
 }
 
 async function callAssistantChat(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
+  // 最新の発話は切らずに断る (パス 112・main と同じ判断)。履歴の窓とは別。
+  if (latestTurnTooLong(payload['messages'])) return err('action_failed', inputTooLongMessage('入力'));
   const turns = sanitizeAssistantTurns(payload['messages']);
   if (turns.length === 0 || turns[turns.length - 1]?.role !== 'user') {
     return err('action_failed', '最後の発話は user である必要があります');
@@ -893,6 +897,8 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
  * 他社の回答を巻き込まない。順序は AI_PROVIDER_IDS の定義順で決定論。
  */
 async function callAssistantChatAll(payload: Record<string, unknown>): Promise<ActionResult<unknown>> {
+  // chat と同じ (パス 112)。
+  if (latestTurnTooLong(payload['messages'])) return err('action_failed', inputTooLongMessage('入力'));
   const turns = sanitizeAssistantTurns(payload['messages']);
   if (turns.length === 0 || turns[turns.length - 1]?.role !== 'user') {
     return err('action_failed', '最後の発話は user である必要があります');

@@ -5,6 +5,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { AiEgressNotice } from '../components/AiEgressNotice';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import { useServiceData } from '../hooks/useServiceData';
+import { MAX_ASSISTANT_CONTENT_CHARS } from '../../shared/assistantLimits';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -126,6 +127,7 @@ export function SkillsPage() {
             <textarea
               placeholder="プロンプト (このスキルに何を依頼するか)"
               value={prompt}
+              maxLength={MAX_ASSISTANT_CONTENT_CHARS}
               onChange={(e) => setPrompt(e.target.value)}
               rows={4}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}

@@ -1,6 +1,7 @@
 import {
   MAX_ADVISOR_QUESTION_CHARS,
   MAX_ADVISOR_UNIVERSE_SYMBOLS,
+  MAX_TICKER_CHARS,
   checkAdvisorQuestion,
 } from '../../shared/advisorQuestionLimits';
 import { seededNoise } from '../../shared/seededNoise';
@@ -839,7 +840,7 @@ export function isSafeSymbol(value: unknown): value is string {
   // string would pass otherwise), but the cap is pinned by the
   // 'A.repeat(17) → false' test elsewhere.
   // Stryker disable next-line ConditionalExpression
-  if (value.length === 0 || value.length > 16) return false;
+  if (value.length === 0 || value.length > MAX_TICKER_CHARS) return false;
   return /^[A-Za-z0-9.\-^]+$/.test(value);
 }
 

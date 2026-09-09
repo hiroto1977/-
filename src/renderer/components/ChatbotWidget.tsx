@@ -27,6 +27,7 @@ import {
   voiceWriteRefusal,
   voiceWriteRefusalMessage,
 } from '../../shared/voiceWriteRequirements';
+import { MAX_OLLAMA_PROMPT_CHARS } from '../../shared/ollama';
 
 /** チャット履歴 1 件。 */
 interface ChatMessage {
@@ -408,6 +409,7 @@ export function ChatbotWidget() {
           >
             <input
               value={input}
+              maxLength={MAX_OLLAMA_PROMPT_CHARS}
               onChange={(e) => setInput(e.target.value)}
               placeholder="例: 税務試算を開いて / 福利厚生の機能が欲しい"
               aria-label="チャット入力"

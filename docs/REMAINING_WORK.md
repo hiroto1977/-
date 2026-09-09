@@ -18098,6 +18098,73 @@ i1price: 品目1 の単価「abc」を金額として読み取れません。金
 明記しているので、**4 つの renderer を触る価値は無いと判断した**。
 揃えるなら `advisorTypes.ts` に文を 1 つ置いて 4 面が読む形が筋である。
 
+## パス 112 (2026-09-09) — **AI への入力の天井が 4 通りで、画面はどれも知らなかった**
+
+パス 111 の残りに「`skills/run-skill` の `prompt` に天井が無い」と書いた。その 1 件を直す前に、
+**AI へ利用者の文を送る入口すべて** (母集団はパス 107 の到達可能性の走査から) について
+天井を数えた:
+
+| 入口 | main | ブラウザ版 | 画面 |
+| --- | --- | --- | --- |
+| `assistant/chat` · `chatAll` (アシスタント本体・村の文字と**声**) | `slice(0, 8000)` —— **最新の発話まで黙って切る** | 同じ | `maxLength` 無し |
+| `skills/run-skill` | **天井なし** (`!name \|\| !prompt`) | (双子なし) | 無し |
+| `business/advise` · `stocks/advise` | `checkAdvisorQuestion` 1000 で**断る** | 同じ | `maxLength={1000}` —— **数を写す** (2 画面) |
+| `emotions/analyze-text` · `log-mood` | 5000 / 2000 で断る | 同じ | 無し |
+
+**4 通り** (黙って切る / 無い / 断る / 断るが画面は数を写す)。そして応答側の規則は
+**同じファイル** (`shared/assistantLimits.ts`) に在った —— 「切り詰めたことを黙らせない。
+画面には必ずこの一行が付く」(`ASSISTANT_REPLY_TRUNCATED_NOTICE`)。**送る側だけが黙っていた**
+(規準は同じファイルに在った —— 16 か所目)。8,001 字目からの入力は、利用者に何も言わずに
+消え、AI は途中で切れた質問に答えていた。村ではマイクで話した内容が同じ経路を通る。
+
+ついでに `16` (ティッカーの長さ) が main (`isSafeTicker`)・ブラウザ版の双子
+(`stocksWatchlistWeb.ts`)・`StocksPage` の `maxLength` ×2 に**字面で 4 度**在った ——
+`advisorQuestionLimits.ts` の頭が 2026-08-25 に「4 か所の写し」として直した形の、隣の数字。
+
+### 直し
+
+- `shared/assistantLimits.ts`: `latestTurnTooLong(messages)` (最新の発話だけを見る。前後の空白は
+  `sanitize*` と同じく数えない) と `inputTooLongMessage(label)` (文面 1 つ)。**履歴は窓のまま**
+  (応答 10 万字を次の往復で履歴として送るとき、断ると会話が止まる) —— 判断を分けた理由を
+  同じファイルに書いた。
+- main の `chat` / `chatAll` と ブラウザ版の双子が **sanitize の前に** 最新の発話を断る
+  (切ってから測ると必ず通る —— 検査が順序も留める)。`skills/run-skill` の `prompt` も同じ天井
+  (`MAX_ASSISTANT_CONTENT_CHARS`) で断り、文字列でない `name` / `prompt` は必須の断りで止める。
+- 画面: アシスタント・村・Skills の入力欄は `MAX_ASSISTANT_CONTENT_CHARS`、Business / Stocks の
+  質問欄は `MAX_ADVISOR_QUESTION_CHARS` (**`1000` の写しを消した**)、Emotions は
+  `MAX_ANALYZE_TEXT_CHARS` / `MAX_MOOD_NOTE_CHARS`、チャットボットは `MAX_OLLAMA_PROMPT_CHARS`、
+  ティッカーは新設の `MAX_TICKER_CHARS` を読む。アシスタントの断り (`what`) に「1 発話は先頭
+  N 字まで」を定数から刷る。
+- **母集団は実装から導く** (`renderer/__tests__/aiInputCaps.test.ts`): AI へ出る handler
+  (`ACTIONS` から到達可能性で) はすべて天井の印に届き、AI へ送る画面はすべて台帳に在り、
+  `maxLength` に字面の数を持たず、AI へ行く欄はその定数を読む。導き方は
+  `pages/__tests__/aiEgressPairs.helpers.ts` へ出し、パス 107 の走査と**同じ部品**を読む
+  (母集団を 2 度書かない)。
+- 動かして見る検査: main (`assistant.test.ts` · `skills.test.ts`)・ブラウザ版
+  (`webShimAssistantInputCap.test.ts` — jsdom で `invoke` を叩き、ネットワークへ出ないことも見る)・
+  共有 (`assistantInputCap.test.ts` — 境目・空白・履歴は見ない・両ビルドの順序)。
+
+### 対照 (9 本)
+
+| 対照 | 落ちた検査 |
+| --- | --- |
+| A: main の chat が最新の発話を断らない (元の形へ戻す) | 3 件 |
+| B: ブラウザ版の chat が断らない | 2 件 |
+| C: skills の prompt の天井を外す | 3 件 |
+| D: 画面が数を写す (`maxLength={1000}` に戻す) | 1 件 |
+| E: 画面の `maxLength` を外す | 1 件 |
+| F: 台帳から AI の画面を落とす | 2 件 |
+| G: 天井を 1 文字ずらす | 4 件 |
+| H: 切ってから測る (順序を入れ替える) | 2 件 |
+| I: ティッカーの天井を画面が写す (`16` に戻す) | 1 件 |
+
+### 残り
+
+- `ollama/chat` は `prompt` を `MAX_OLLAMA_PROMPT_CHARS` (32,768) で**黙って切る** (端末内の
+  モデルなので費用も第三者も無いが、形は同じ)。チャットボットの入力欄には天井を読ませた。
+- `investments.ts` の銘柄コード `16` は投資信託の別の欄 (ティッカーではない) —— 触っていない。
+- `ctx.payload as unknown as` 23 件は変わらず。
+
 ## パス 111 (2026-09-09) — **パス 110 は「外へ書く 3 家系」と言ったが、実装から数え直すと 12 家系だった**
 
 パス 110 は Slack / GitHub / カレンダーの 3 家系に台帳を載せ、「残りは同じ形で載せられる」と

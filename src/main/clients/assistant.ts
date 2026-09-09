@@ -27,6 +27,8 @@ import {
   MAX_ASSISTANT_CONTENT_CHARS,
   MAX_ASSISTANT_MESSAGES,
   MAX_ASSISTANT_SYSTEM_CHARS,
+  inputTooLongMessage,
+  latestTurnTooLong,
 } from '../../shared/assistantLimits';
 import { redactForMessage } from './types';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
@@ -132,6 +134,8 @@ async function chat(
   ctx: ActionContext,
 ): Promise<{ text: string; model: string; provider: string }> {
   const { messages, system, model, provider } = ctx.payload as unknown as ChatPayload;
+  // 最新の発話は切らずに断る (パス 112)。履歴の窓 (`sanitizeMessages`) とは別の判断。
+  if (latestTurnTooLong(messages)) throw new Error(inputTooLongMessage('入力'));
   const turns = sanitizeMessages(messages);
   if (turns.length === 0) throw new Error('messages is required (1 件以上の user/assistant 発話)');
   // 直前の `turns.length === 0` で空を弾いているので末尾は必ず在る。`?.` を
@@ -196,6 +200,8 @@ export interface EnsembleAnswer {
  */
 async function chatAll(ctx: ActionContext): Promise<{ answers: EnsembleAnswer[] }> {
   const { messages, system, model } = ctx.payload as unknown as ChatPayload;
+  // chat と同じ (パス 112)。
+  if (latestTurnTooLong(messages)) throw new Error(inputTooLongMessage('入力'));
   const turns = sanitizeMessages(messages);
   if (turns.length === 0) throw new Error('messages is required (1 件以上の user/assistant 発話)');
   // 直前の `turns.length === 0` で空を弾いているので末尾は必ず在る。`?.` を

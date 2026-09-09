@@ -10,6 +10,7 @@ import { useParameters } from '../data/parameterOverrides';
 import { emotionThresholds } from '../../shared/parameters';
 import { counsel } from '../data/counseling';
 import { SELF_CARE_LIBRARY } from '../data/selfCareLibrary';
+import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -325,6 +326,7 @@ export function EmotionsPage() {
           <input
             placeholder="メモ (任意) — 何があった？ どう感じた？"
             value={moodNote}
+            maxLength={MAX_MOOD_NOTE_CHARS}
             onChange={(e) => setMoodNote(e.target.value)}
             style={inputStyle}
           />
@@ -378,6 +380,7 @@ export function EmotionsPage() {
           <textarea
             placeholder="分析したいテキストを貼り付け — メール本文、自分の日記、誰かのメッセージなど"
             value={text}
+            maxLength={MAX_ANALYZE_TEXT_CHARS}
             onChange={(e) => setText(e.target.value)}
             rows={4}
             style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}

@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { parseFrontmatter, scanSkills, ACTIONS, isSafeSkillName, fetchSkillsSnapshot, SKILLS_MAX_TOKENS } from '../skills';
 import { FetchError } from '../types';
+import { MAX_ASSISTANT_CONTENT_CHARS, inputTooLongMessage } from '../../../shared/assistantLimits';
 
 describe('parseFrontmatter', () => {
   it('extracts name and description', () => {
@@ -367,6 +368,28 @@ describe('ACTIONS["run-skill"]', () => {
       ACTIONS['run-skill']!({ token: 't', fetch: fetchMock, payload: { name: 'echo' } }),
     ).rejects.toThrow(/^name and prompt are required$/);
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('★ prompt が MAX_ASSISTANT_CONTENT_CHARS を超えていれば送らない (パス 112 まで天井が無かった)', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['run-skill']!({
+        token: 'sk-ant-xxxxx',
+        fetch: fetchMock,
+        payload: { name: 'echo', prompt: 'a'.repeat(MAX_ASSISTANT_CONTENT_CHARS + 1) },
+      }),
+    ).rejects.toThrow(inputTooLongMessage('プロンプト'));
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('★ 文字列でない name / prompt は必須の断りで止める (JSON にして送らない)', async () => {
+    for (const payload of [{ name: 'echo', prompt: { evil: true } }, { name: 5, prompt: 'x' }, { name: ['echo'], prompt: 'x' }]) {
+      const fetchMock = vi.fn<typeof fetch>();
+      await expect(
+        ACTIONS['run-skill']!({ token: 'sk-ant-xxxxx', fetch: fetchMock, payload }),
+      ).rejects.toThrow(/^name and prompt are required$/);
+      expect(fetchMock).not.toHaveBeenCalled();
+    }
   });
 
   it('rejects when the prompt is provided but name is empty (same literal message)', async () => {

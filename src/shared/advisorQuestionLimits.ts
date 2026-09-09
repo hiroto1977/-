@@ -79,6 +79,14 @@ export function checkAdvisorQuestion(question: unknown): AdvisorQuestionProblem 
  */
 export const MAX_ADVISOR_UNIVERSE_SYMBOLS = 25;
 
+/**
+ * ティッカー 1 つの長さの天井 —— **両ビルドと画面で 1 つだけ持つ** (2026-09-09 · パス 112)。
+ * それまで `16` は main (`isSafeTicker`)・ブラウザ版の双子 (`stocksWatchlistWeb.ts`)・
+ * `StocksPage` の `maxLength` ×2 に**字面で 4 度**書いてあった (上の「質問」の上限が
+ * 2026-08-25 に寄せられたときと同じ形)。
+ */
+export const MAX_TICKER_CHARS = 16;
+
 /** 上限に収めたユニバースと、**外した件数**。 */
 export interface CappedAdvisorUniverse {
   /** 助言の対象にする銘柄 (最大 {@link MAX_ADVISOR_UNIVERSE_SYMBOLS} 件)。 */

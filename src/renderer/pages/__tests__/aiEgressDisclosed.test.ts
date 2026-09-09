@@ -45,133 +45,18 @@ import {
   aiEgressNoticeLines,
   remoteOnly,
 } from '../../../shared/aiEgressNotice';
+import {
+  PAGES,
+  RENDERER,
+  aiActionPairs,
+  code,
+  functionBodies,
+  invokesAi,
+  pageFiles,
+  reachesAi,
+} from './aiEgressPairs.helpers';
 
-const PAGES = path.resolve(__dirname, '..');
-/**
- * 走査は **renderer 全体**を見る。`pages/` だけを見ると `components/` が
- * 丸ごと見えない —— `lint:network-targets` は 2026-08-22 に同じ理由で
- * ディレクトリの一覧をやめて `src` 全体にした (その注記に
- * 「一覧に書き忘れると、そのディレクトリは丸ごと見えない。実際そうなっていた」と
- * 書いてある)。**規準は隣のゲートに在った** (2026-09-09 · パス 108)。
- */
-const RENDERER = path.resolve(__dirname, '../..');
-const CLIENTS = path.resolve(__dirname, '../../../main/clients');
 const read = (f: string): string => fs.readFileSync(path.join(PAGES, f), 'utf8');
-
-/** AI へ本文が出る印 (実際に外部モデルを叩いている場所)。 */
-const AI_MARKS = [/api\.anthropic\.com/, /\brunAiChat\s*\(/];
-
-/** コメントを落とした本体 (説明の中の綴りを配線と読まない)。 */
-function code(src: string): string {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .split('\n')
-    .filter((l) => !/^\s*\/\//.test(l))
-    .join('\n');
-}
-
-/** `open` から対応する `close` までの中身 (入れ子で切れない)。 */
-function balanced(src: string, from: number, open: string, close: string): string {
-  let depth = 0;
-  for (let i = from; i < src.length; i += 1) {
-    if (src[i] === open) depth += 1;
-    else if (src[i] === close) {
-      depth -= 1;
-      if (depth === 0) return src.slice(from + 1, i);
-    }
-  }
-  return '';
-}
-
-/**
- * 本体の開き波括弧。**戻り値の型の中の `{` を本体と読まない** ——
- * `Promise<{ text: string }> {` では最初の `{` は型のものである
- * (これで最初の試作は `runSkill` / `chat` を「AI に到達しない」と誤判定した)。
- * 本体の `{` には改行が続く。
- */
-function bodyBrace(src: string, from: number): number {
-  for (let i = from; i < src.length; i += 1) {
-    if (src[i] !== '{') continue;
-    let j = i + 1;
-    while (src[j] === ' ' || src[j] === '\t') j += 1;
-    if (src[j] === '\n') return i;
-  }
-  return -1;
-}
-
-/** ファイル内の関数名 → 本体。 */
-function functionBodies(src: string): Map<string, string> {
-  const out = new Map<string, string>();
-  const decl = /(?:^|\n)\s*(?:export\s+)?(?:async\s+)?function\s+([A-Za-z0-9_]+)\s*(?:<[^>]*>)?\s*\(/g;
-  let m: RegExpExecArray | null;
-  while ((m = decl.exec(src)) !== null) {
-    const brace = bodyBrace(src, decl.lastIndex);
-    if (brace >= 0) out.set(m[1]!, balanced(src, brace, '{', '}'));
-  }
-  const arrow = /(?:^|\n)\s*(?:export\s+)?const\s+([A-Za-z0-9_]+)\s*(?::[^=\n]+)?=\s*(?:async\s*)?\(/g;
-  while ((m = arrow.exec(src)) !== null) {
-    const brace = bodyBrace(src, arrow.lastIndex);
-    if (brace >= 0 && !out.has(m[1]!)) out.set(m[1]!, balanced(src, brace, '{', '}'));
-  }
-  return out;
-}
-
-/** `start` から呼び出しを辿って AI の印に届くか (helper 経由も拾う)。 */
-function reachesAi(start: string, bodies: Map<string, string>): boolean {
-  const seen = new Set<string>();
-  const queue = [start];
-  while (queue.length > 0) {
-    const name = queue.shift()!;
-    if (seen.has(name)) continue;
-    seen.add(name);
-    const body = bodies.get(name);
-    if (body === undefined) continue;
-    if (AI_MARKS.some((r) => r.test(body))) return true;
-    for (const id of body.match(/[A-Za-z0-9_]+/g) ?? []) {
-      if (!seen.has(id) && bodies.has(id)) queue.push(id);
-    }
-  }
-  return false;
-}
-
-/** AI へ出る `(serviceId, action)` の組を**実装から**導く。 */
-function aiActionPairs(): Array<readonly [string, string]> {
-  const pairs: Array<readonly [string, string]> = [];
-  for (const f of fs.readdirSync(CLIENTS).filter((n) => n.endsWith('.ts'))) {
-    const src = code(fs.readFileSync(path.join(CLIENTS, f), 'utf8'));
-    if (!AI_MARKS.some((r) => r.test(src))) continue;
-    const at = src.search(/export\s+const\s+ACTIONS\s*:\s*ActionMap\s*=\s*\{/);
-    if (at < 0) continue;
-    const block = balanced(src, src.indexOf('{', at), '{', '}');
-    const bodies = functionBodies(src);
-    const service = f.replace(/\.ts$/, '');
-    for (const e of block.matchAll(
-      /(?:^|\n)\s*(?:'([^']+)'|"([^"]+)"|([A-Za-z0-9_]+))\s*(?::\s*([A-Za-z0-9_]+))?\s*,/g,
-    )) {
-      const action = e[1] ?? e[2] ?? e[3]!;
-      const handler = e[4] ?? action;
-      if (reachesAi(handler, bodies)) pairs.push([service, action]);
-    }
-  }
-  return pairs;
-}
-
-/** renderer の .tsx をすべて (画面も部品も)。 */
-function pageFiles(): string[] {
-  const out: string[] = [];
-  const walk = (dir: string): void => {
-    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-      const p = path.join(dir, e.name);
-      if (e.isDirectory()) {
-        if (e.name !== '__tests__' && e.name !== 'node_modules') walk(p);
-        continue;
-      }
-      if (e.name.endsWith('.tsx')) out.push(p);
-    }
-  };
-  walk(RENDERER);
-  return out;
-}
 
 /**
  * 断りの部品を**タグの境目つき**で探す。`includes('<AiEgressNotice')` は
@@ -179,14 +64,6 @@ function pageFiles(): string[] {
  * 数えてしまう (2026-09-09 の対照 A がこれで鳴らず、検査の穴として見つかった)。
  */
 const DRAWS_NOTICE = /<AiEgressNotice[\s/>]/;
-
-/** その画面が AI の組を invoke しているか。 */
-function invokesAi(src: string, pairs: ReadonlyArray<readonly [string, string]>): boolean {
-  const body = code(src);
-  return pairs.some(([s, a]) =>
-    new RegExp(`['"]${s}['"]\\s*,\\s*\\n?\\s*['"]${a}['"]`).test(body),
-  );
-}
 
 /**
  * `what:` に渡している字面を取り出す。**入れ子のテンプレート**

@@ -2,7 +2,12 @@ import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
-import { MAX_ADVISOR_UNIVERSE_SYMBOLS, capAdvisorUniverse } from '../../shared/advisorQuestionLimits';
+import {
+  MAX_ADVISOR_QUESTION_CHARS,
+  MAX_ADVISOR_UNIVERSE_SYMBOLS,
+  MAX_TICKER_CHARS,
+  capAdvisorUniverse,
+} from '../../shared/advisorQuestionLimits';
 import { AiEgressNotice } from '../components/AiEgressNotice';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import { exportWarning } from '../data/exportOutcome';
@@ -396,7 +401,7 @@ export function StocksPage() {
             value={registerSymbol}
             onChange={(e) => setRegisterSymbol(e.target.value)}
             placeholder="銘柄コード (例: AAPL / 7203.T / ^N225)"
-            maxLength={16}
+            maxLength={MAX_TICKER_CHARS}
             style={{
               flex: 1,
               padding: '8px 12px',
@@ -644,7 +649,7 @@ export function StocksPage() {
             value={advisorQuestion}
             onChange={(e) => setAdvisorQuestion(e.target.value)}
             placeholder="例: 長期保有に向いている銘柄を 3 つ"
-            maxLength={1000}
+            maxLength={MAX_ADVISOR_QUESTION_CHARS}
             style={{
               flex: 1,
               padding: '8px 12px',
@@ -782,7 +787,7 @@ export function StocksPage() {
             value={compareSymbol}
             onChange={(e) => setCompareSymbol(e.target.value)}
             placeholder="銘柄コード (例: AAPL / 7203.T)"
-            maxLength={16}
+            maxLength={MAX_TICKER_CHARS}
             style={{
               flex: 1,
               padding: '8px 12px',

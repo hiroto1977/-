@@ -2,6 +2,7 @@ import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
+import { MAX_ASSISTANT_CONTENT_CHARS, inputTooLongMessage } from '../../shared/assistantLimits';
 import {
   jsonFetch,
   type ActionContext,
@@ -308,8 +309,13 @@ export function isSafeSkillName(name: unknown): name is string {
 }
 
 async function runSkill(ctx: ActionContext): Promise<{ text: string; stopReason: string }> {
-  const { name, prompt } = ctx.payload as unknown as RunSkillPayload;
-  if (!name || !prompt) throw new Error('name and prompt are required');
+  const { name, prompt } = ctx.payload as unknown as Partial<RunSkillPayload>;
+  if (typeof name !== 'string' || name.length === 0 || typeof prompt !== 'string' || prompt.length === 0) {
+    throw new Error('name and prompt are required');
+  }
+  // 指示文の天井 (パス 112)。それまで prompt に天井が無く、貼り付けた物が丸ごと有料 API へ
+  // 出ていた。1 発話の天井はアシスタントと同じ 1 つ (`MAX_ASSISTANT_CONTENT_CHARS`)。
+  if (prompt.length > MAX_ASSISTANT_CONTENT_CHARS) throw new Error(inputTooLongMessage('プロンプト'));
 
   const body = await readSkillBody(name);
 

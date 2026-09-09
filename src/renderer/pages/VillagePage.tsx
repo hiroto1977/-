@@ -42,6 +42,7 @@ import {
   type ProviderStatus,
 } from '../data/assistantProviders';
 import { speak, cancelSpeech } from '../voice/ttsAdapter';
+import { MAX_ASSISTANT_CONTENT_CHARS } from '../../shared/assistantLimits';
 
 const REG: VillageRegistry = {
   org: regOrg as VillageRegistry['org'],
@@ -642,6 +643,7 @@ function VoiceFooter({ transcript, onSubmit }: { transcript: string; onSubmit: (
       >
         <input
           value={text}
+          maxLength={MAX_ASSISTANT_CONTENT_CHARS}
           onChange={(e) => setText(e.target.value)}
           placeholder="文字でも話しかけられます"
           aria-label="村への入力"

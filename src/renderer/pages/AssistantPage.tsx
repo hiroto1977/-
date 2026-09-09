@@ -38,6 +38,7 @@ import {
   readProviderStatuses,
   type ProviderStatus,
 } from '../data/assistantProviders';
+import { MAX_ASSISTANT_CONTENT_CHARS } from '../../shared/assistantLimits';
 
 interface ChatMessage {
   readonly role: 'user' | 'assistant';
@@ -841,7 +842,7 @@ export function AssistantPage() {
           設定済みの全プロバイダへ同時に送る。文面は `shared/aiEgressNotice.ts`。 */}
       <AiEgressNotice
         subject={{
-          what: `入力した質問文と、直近 ${TURN_WINDOW} 往復までの会話 (AI の返答を含む) `,
+          what: `入力した質問文と、直近 ${TURN_WINDOW} 往復までの会話 (AI の返答を含む。1 発話は先頭 ${MAX_ASSISTANT_CONTENT_CHARS} 字まで) `,
           recipients: egressRecipients,
         }}
       />
@@ -855,6 +856,7 @@ export function AssistantPage() {
       >
         <input
           value={input}
+          maxLength={MAX_ASSISTANT_CONTENT_CHARS}
           onChange={(e) => setInput(e.target.value)}
           placeholder="例: 補助金の候補を表で比較して / 創業計画のたたき台を作って"
           aria-label="アシスタントへの入力"

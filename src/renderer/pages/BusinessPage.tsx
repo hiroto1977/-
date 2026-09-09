@@ -9,6 +9,7 @@ import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgress
 import { sumShigyoMonthlyFees } from '../../shared/shigyoTypes';
 import { summarizeFoodDelivery } from '../data/foodDelivery';
 import { exportWarning } from '../data/exportOutcome';
+import { MAX_ADVISOR_QUESTION_CHARS } from '../../shared/advisorQuestionLimits';
 
 interface BusinessAdvisorRecommendation {
   categoryId: string;
@@ -1032,7 +1033,7 @@ export function BusinessPage() {
             value={advisorQuestion}
             onChange={(e) => setAdvisorQuestion(e.target.value)}
             placeholder="例: 来期に最も注力すべき事業を 3 つ"
-            maxLength={1000}
+            maxLength={MAX_ADVISOR_QUESTION_CHARS}
             style={{
               flex: 1,
               padding: '8px 12px',

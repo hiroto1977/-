@@ -76,3 +76,37 @@ export const MAX_ASSISTANT_REPLY_CHARS = 100_000;
 /** 切り詰めたことを黙らせない。画面には必ずこの一行が付く。 */
 export const ASSISTANT_REPLY_TRUNCATED_NOTICE =
   '\n\n…（応答が長すぎたため、ここで打ち切りました）';
+
+// ---------------------------------------------------------------------------
+// 最新の発話 —— 切らずに断る (2026-09-09 · パス 112)
+// ---------------------------------------------------------------------------
+
+/**
+ * **いま送ろうとしている発話は、切らずに断る。**
+ *
+ * `sanitizeMessages` (main) / `sanitizeAssistantTurns` (ブラウザ版) は会話履歴を窓に
+ * 収めるため、1 発話を `MAX_ASSISTANT_CONTENT_CHARS` で**黙って切る**。既に交わした
+ * 履歴を窓に収めるのは設計だが、**最新の発話** (利用者がいま書いた物・マイクで話した物)
+ * まで黙って切ると、利用者は全文が届いたと思い、AI は途中で切れた質問に答える。
+ *
+ * このファイルの下にある応答側の規則 —— 「切り詰めたことを黙らせない」
+ * (`ASSISTANT_REPLY_TRUNCATED_NOTICE`) —— を送る側にも当てる: 最新の発話が天井を
+ * 超えていたら切らずに断り、画面は `maxLength` で同じ天井を持つ (数は写さない)。
+ * 2026-09-09 まで画面に天井は無く、8,001 字目からは黙って消えていた。
+ *
+ * 履歴の判定と分けるのは、応答 (`MAX_ASSISTANT_REPLY_CHARS` = 10 万字) を次の往復で
+ * 履歴として送るときに、断ると会話そのものが止まるから —— そちらは窓のまま。
+ */
+export function latestTurnTooLong(raw: unknown): boolean {
+  if (!Array.isArray(raw) || raw.length === 0) return false;
+  const last: unknown = raw[raw.length - 1];
+  if (last === null || typeof last !== 'object') return false;
+  const content = (last as { content?: unknown }).content;
+  // `sanitize*` と同じく前後の空白は数えない (同じ発話を片方が通し片方が断らないように)。
+  return typeof content === 'string' && content.trim().length > MAX_ASSISTANT_CONTENT_CHARS;
+}
+
+/** 断りの文面。両ビルドと skills が同じ 1 つを読む (`label` は「入力」「プロンプト」)。 */
+export function inputTooLongMessage(label: string): string {
+  return `${label}が長すぎます (${MAX_ASSISTANT_CONTENT_CHARS} 字以内)`;
+}
