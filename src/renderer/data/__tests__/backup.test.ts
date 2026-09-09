@@ -15,7 +15,11 @@ import {
   planRestore,
   replaceRestoreConfirmMessage,
   restoreResultMessage,
+  plaintextExposure,
+  plaintextBackupConfirmMessage,
+  PERSONAL_DATA_LABELS,
 } from '../backup';
+import { personalDataCollections } from '../collectionShapes';
 import type { StoredRecord } from '../store';
 import { encryptString } from '../../security/dataCrypto';
 import { MIN_PASSWORD_LENGTH } from '../../security/vault';
@@ -520,5 +524,34 @@ describe('復元の計画 — 何が足され・残り・消えるか (パス 12
     expect(merge).toBe('2 件のレコードを復元しました（マージ: 追加 1・更新 1・この端末の方が新しい 1 件はそのまま）。再読み込みで反映されます。');
     const replace = restoreResultMessage(planRestore(EXISTING, INCOMING, 'replace', null), 2, 1);
     expect(replace).toBe('2 件のレコードを復元しました（既存データは置換。消えた 2 件 = バックアップに無い 1 件 + この端末の方が新しかった 1 件）。1 件は形式が不正なため取り込みませんでした。再読み込みで反映されます。');
+  });
+});
+
+describe('平文バックアップは、個人情報の件数を言ってから書く (パス 130)', () => {
+  const rec = (collection: string, i: number): StoredRecord => ({ id: `${collection}-${i}`, collection, createdAt: i, updatedAt: i, data: {} });
+
+  it('★ 個人情報を持つ collection の件数を数え、確認の文が件数・内訳・暗号化の道を言う', () => {
+    const records = [rec('team-members', 1), rec('team-members', 2), rec('shigyo-contacts', 1), rec('sales-entries', 1), rec('bank-submission-settings', 1)];
+    const x = plaintextExposure(records);
+    expect(x.total).toBe(4);
+    expect(x.parts.map((p) => `${p.collection}:${p.count}`)).toEqual(['team-members:2', 'shigyo-contacts:1', 'bank-submission-settings:1']);
+    const msg = plaintextBackupConfirmMessage(x);
+    expect(msg).toContain('平文 (暗号化なし) で書き出します');
+    expect(msg).toContain('個人情報を含む記録が 4 件入ります: チームメンバー (メールアドレス) 2 件・士業の連絡先 (電話番号・メールアドレス) 1 件・提出者情報 (代表者名・住所) 1 件。');
+    expect(msg).toContain(`合言葉 (${MIN_PASSWORD_LENGTH} 文字以上) を入れて暗号化してください`);
+    expect(msg).toContain('このまま平文で書き出しますか？');
+  });
+
+  it('対照: 個人情報の記録が無ければ確認しない (null) —— 売上だけの控えに合言葉を強いない', () => {
+    const x = plaintextExposure([rec('sales-entries', 1), rec('kpi-actuals', 1)]);
+    expect(x.total).toBe(0);
+    expect(x.parts).toEqual([]);
+    expect(plaintextBackupConfirmMessage(x)).toBeNull();
+  });
+
+  it('走査が出す collection には全部、表示名がある (欄を足した日に名前も要る) —— 逆も (古い表示名を残さない)', () => {
+    const scanned = personalDataCollections().map((p) => p.collection);
+    for (const c of scanned) expect(PERSONAL_DATA_LABELS[c], `${c} の表示名が無い`).toBeDefined();
+    for (const c of Object.keys(PERSONAL_DATA_LABELS)) expect(scanned, `${c} は走査に出ない (古い表示名)`).toContain(c);
   });
 });

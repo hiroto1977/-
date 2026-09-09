@@ -13,7 +13,7 @@
  */
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { COLLECTION_SHAPES, hasCollectionShape } from '../collectionShapes';
+import { COLLECTION_SHAPES, NESTED_PERSONAL_DATA, PERSONAL_DATA_FIELDS, hasCollectionShape, personalDataCollections } from '../collectionShapes';
 import { readOriginalDir, readOriginalSource } from '../../../shared/__tests__/originalSource';
 
 interface Sample {
@@ -269,5 +269,41 @@ describe('mutualfund-holdings.ytdReturnPct — null は「未入力」として�
     // 取得額も null = 未入力 (パス 123)。対照: 銘柄コードの null は今までどおり「在るのに違う」
     expect(hasCollectionShape('mutualfund-holdings', { ...good, acquisitionCost: null })).toBe(true);
     expect(hasCollectionShape('mutualfund-holdings', { ...good, code: null })).toBe(false);
+  });
+});
+
+describe('個人情報を持つ collection は欄の名前から導く (パス 130)', () => {
+  it('★ email / phone の欄を持つ collection が走査で出る (チームメンバー・士業の連絡先)', () => {
+    const found = Object.fromEntries(personalDataCollections().map((p) => [p.collection, p.fields]));
+    expect(found['team-members']).toEqual(['email']);
+    expect(found['shigyo-contacts']).toEqual(['phone', 'email']);
+  });
+
+  it('対照: 個人情報の欄を持たない collection は出ない (売上・KPI・貸借対照表・投信)', () => {
+    const names = personalDataCollections().map((p) => p.collection);
+    for (const c of ['sales-entries', 'kpi-actuals', 'balance-sheet', 'mutualfund-holdings']) expect(names).not.toContain(c);
+    expect(names.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it('入れ子の台帳は、実在する collection で、走査で既に出る物ではなく、理由と欄が空でない', () => {
+    const scanned = new Set(
+      Object.entries(COLLECTION_SHAPES)
+        .filter(([, s]) => s.fields.some((f) => PERSONAL_DATA_FIELDS.includes(f)))
+        .map(([c]) => c),
+    );
+    for (const [collection, entry] of Object.entries(NESTED_PERSONAL_DATA)) {
+      expect(Object.hasOwn(COLLECTION_SHAPES, collection), `${collection} が台帳に無い`).toBe(true);
+      expect(scanned.has(collection), `${collection} は走査で出るので台帳は要らない`).toBe(false);
+      expect(entry.why.trim().length).toBeGreaterThan(0);
+      expect(entry.fields.length).toBeGreaterThan(0);
+    }
+    expect(personalDataCollections().map((p) => p.collection)).toContain('bank-submission-settings');
+  });
+
+  it('形は欄の名前を添えている (fields) —— 判定は今までどおり', () => {
+    const s = COLLECTION_SHAPES['team-members']!;
+    expect(s.fields).toEqual(['name', 'email', 'role']);
+    expect(s(SAMPLES['team-members']!.good)).toBe(true);
+    expect(s({ ...SAMPLES['team-members']!.good, email: 7 })).toBe(false);
   });
 });

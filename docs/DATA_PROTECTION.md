@@ -255,6 +255,13 @@ Ollama の接続先とポート・銘柄のウォッチリスト・クライア�
     本体を直接書いていた**（権限は `chmod` で締めていたので、抜けていたのは原子性だけ）。台帳と検査は
     `src/main/__tests__/stateWritePolicy.test.ts`（`fs.writeFile` を直接呼ぶ場所は 3 つ = 成果物の口と
     tmp を書く 2 つだけ・双方向・inode の置き換えで原子性を観測）（消失対策）。
+12. **平文バックアップは、個人情報の件数を言ってから書く** — `data/collectionShapes.ts` の `personalDataCollections`
+    + `data/backup.ts` の `plaintextExposure` / `plaintextBackupConfirmMessage` + `components/BackupPanel.tsx`
+    （2026-09-09 · パス 130）。合言葉が空の書き出しは平文で、5 の言う「最も持ち出されやすい流出経路」に
+    チームメンバーのメールアドレス・士業の連絡先の電話番号・提出者情報の住所がそのまま入る。それまで画面は
+    「（任意）」の欄を空のまま押せば黙って平文を書いた。どの collection が個人情報を持つかは中身の形の
+    **欄の名前から導き**（email / phone / address / representative）、入れ物の形しか無い提出者情報だけ台帳に
+    理由つきで載せる。確認は件数と内訳と暗号化の道を言い、個人情報の記録が 0 件なら確認しない（漏洩対策）。
 
 ## 優先度の高い残対策（漏洩 / 損壊 / 消失 別）
 

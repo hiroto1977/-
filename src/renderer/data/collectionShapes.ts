@@ -64,9 +64,17 @@ const calendarDate: Check = (v) => isCalendarDate(v);
 /** 未入力 ('') か、暦に在る `YYYY-MM-DD` / `YYYY-MM`。 */
 const blankOrCalendar: Check = (v) => v === '' || isCalendarDateOrMonth(v);
 
+/** collection の中身の形 —— 判定関数に、挙げた欄の名前を添える (個人情報の欄の走査に使う · パス 130)。 */
+export interface CollectionShape {
+  (data: Rec): boolean;
+  /** 挙げた欄の名前 (判定の対象)。 */
+  readonly fields: readonly string[];
+}
+
 /** 欄ごとの判定を並べた形。挙げた欄だけ見る。 */
-function shape(fields: Readonly<Record<string, Check>>): (data: Rec) => boolean {
-  return (data) => Object.entries(fields).every(([key, check]) => check(data[key]));
+function shape(fields: Readonly<Record<string, Check>>): CollectionShape {
+  const check = (data: Rec): boolean => Object.entries(fields).every(([key, c]) => c(data[key]));
+  return Object.assign(check, { fields: Object.keys(fields) });
 }
 
 const KPI_SHAPE = shape({
@@ -81,7 +89,7 @@ const KPI_SHAPE = shape({
 });
 
 /** collection 名 → 中身の判定。名前は各モジュールの `*_COLLECTION` 定数と同じ文字列。 */
-export const COLLECTION_SHAPES: Readonly<Record<string, (data: Rec) => boolean>> = {
+export const COLLECTION_SHAPES: Readonly<Record<string, CollectionShape>> = {
   'sales-entries': shape({ date: calendarDate, channel: oneOf(() => SALES_CHANNELS), amount: num, orders: num, note: opt(str) }),
   'kpi-actuals': KPI_SHAPE,
   'kpi-budgets': KPI_SHAPE,
@@ -182,4 +190,41 @@ export const COLLECTION_SHAPES: Readonly<Record<string, (data: Rec) => boolean>>
 export function hasCollectionShape(collection: string, data: Rec): boolean {
   if (!Object.hasOwn(COLLECTION_SHAPES, collection)) return true;
   return COLLECTION_SHAPES[collection]!(data);
+}
+
+/**
+ * 個人情報の欄の名前。**中身の形から導く** (パス 130) —— どの collection に個人情報が入るかを
+ * 手で挙げると、欄を足した日に台帳が置き去りになる。欄の名前で走査し、台帳は「入れ物の形だけ
+ * なので欄の名前から導けない collection」に限る (`NESTED_PERSONAL_DATA`)。
+ */
+export const PERSONAL_DATA_FIELDS: readonly string[] = ['email', 'phone', 'address', 'representative'];
+
+/**
+ * 欄の名前から導けない個人情報 (理由つき)。入れ物 (`rec`) の形だけを見る collection は、
+ * 中の欄が走査に出ない。空の理由は認めない (検査が見る)。
+ */
+export const NESTED_PERSONAL_DATA: Readonly<Record<string, { readonly fields: readonly string[]; readonly why: string }>> = {
+  'bank-submission-settings': {
+    fields: ['representative', 'address'],
+    why: '提出者情報 (`profile: opt(rec)`) は読む側が欄ごとに既定へ倒すので、形は入れ物だけ。代表者名と住所はその中に在る。',
+  },
+};
+
+export interface PersonalDataCollection {
+  readonly collection: string;
+  /** 個人情報の欄 (走査で当たった名前、または台帳の名前)。 */
+  readonly fields: readonly string[];
+}
+
+/** 個人情報を持つ collection —— 走査 (欄の名前) + 台帳 (入れ子)。同じ collection が両方に出ることはない (検査が留める)。 */
+export function personalDataCollections(): readonly PersonalDataCollection[] {
+  const out: PersonalDataCollection[] = [];
+  for (const [collection, s] of Object.entries(COLLECTION_SHAPES)) {
+    const fields = s.fields.filter((f) => PERSONAL_DATA_FIELDS.includes(f));
+    if (fields.length > 0) out.push({ collection, fields });
+  }
+  for (const [collection, entry] of Object.entries(NESTED_PERSONAL_DATA)) {
+    if (!out.some((p) => p.collection === collection)) out.push({ collection, fields: entry.fields });
+  }
+  return out;
 }

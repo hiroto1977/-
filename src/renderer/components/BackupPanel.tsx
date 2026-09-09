@@ -9,6 +9,8 @@ import {
   planRestore,
   replaceRestoreConfirmMessage,
   restoreResultMessage,
+  plaintextExposure,
+  plaintextBackupConfirmMessage,
   isEncryptedBackup,
 } from '../data/backup';
 import { isEncryptionEnabled } from '../data/recordEncryption';
@@ -35,6 +37,14 @@ export function BackupPanel() {
     try {
       const records = await getRecordStore().exportAll();
       const encrypted = passphrase.length > 0;
+      // 平文なら、何が入るかを言ってから書く (パス 130)。個人情報の記録が無ければ確認しない。
+      if (!encrypted) {
+        const notice = plaintextBackupConfirmMessage(plaintextExposure(records));
+        if (notice !== null && !window.confirm(notice)) {
+          setMsg('書き出しをやめました（上の欄に合言葉を入れると暗号化して書き出せます）');
+          return;
+        }
+      }
       const text = encrypted
         ? await serializeEncryptedBackup(records, passphrase)
         : await serializeBackup(records);
@@ -46,7 +56,7 @@ export function BackupPanel() {
       a.download = `service-hub-backup-${localIsoDate()}${suffix}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      setMsg(`${records.length} 件のレコードをバックアップしました${encrypted ? '（暗号化済み）' : ''}`);
+      setMsg(`${records.length} 件のレコードをバックアップしました${encrypted ? '（暗号化済み）' : '（平文）'}`);
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'バックアップに失敗しました');
     }

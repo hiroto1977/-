@@ -18389,6 +18389,54 @@ uber-eats / demae-can の advise は画面が無く (`VoiceCommandBar` と `Busi
 - 下書き (`servicehub.teamradar.draft.v1`) は snapshot より優先して復元される。読めなかった保存と下書きが両方在るとき、
   画面のメンバーは下書き、注記は保存先について言う (別の物を指している)。
 
+## パス 130 (2026-09-09) — **平文バックアップが、何をさらすかを言わずに書いていた —— 合言葉が空の書き出しに、メールアドレス・電話番号・住所がそのまま入る**
+
+### 何が起きていたか
+
+バックアップの合言葉は「（任意）」で、空のまま「書き出す」を押せば**平文**の JSON を黙って書いた。
+`docs/DATA_PROTECTION.md` 5 は「バックアップファイルは最も持ち出されやすい流出経路」と書いているのに、
+そのファイルに何が入るかを画面は言わなかった:
+
+| collection | 入る個人情報 |
+| --- | --- |
+| `team-members` | メールアドレス |
+| `shigyo-contacts` | 電話番号・メールアドレス (士業の連絡先 —— 第三者の個人情報) |
+| `bank-submission-settings` | 提出者情報の代表者名・住所 |
+
+パス 128 (合言葉の下限) はパスワードを**入れた人**を守ったが、入れない人には何も言っていなかった。
+
+### 直し
+
+- `data/collectionShapes.ts`: `shape()` が欄の名前を添える (`CollectionShape.fields`)。**どの collection が個人情報を
+  持つかは欄の名前から導く** (`PERSONAL_DATA_FIELDS` = email / phone / address / representative →
+  `personalDataCollections()`)。手で collection を挙げると欄を足した日に台帳が置き去りになる。入れ物の形しか無い
+  提出者情報 (`profile: opt(rec)`) だけ `NESTED_PERSONAL_DATA` に理由つきで載せる (走査で出る物は台帳に置けない ——
+  検査が留める)。
+- `data/backup.ts`: `plaintextExposure(records)` が件数と内訳を数え、`plaintextBackupConfirmMessage` が確認の文を組む
+  (件数・内訳・合言葉の下限つきの暗号化の道)。個人情報の記録が 0 件なら null (売上だけの控えに合言葉を強いない)。
+  表示名 `PERSONAL_DATA_LABELS` は走査と双方向に一致する (検査)。
+- `components/BackupPanel.tsx`: 合言葉が空なら、書く前に確認。やめれば「書き出しをやめました（上の欄に合言葉を
+  入れると暗号化して書き出せます）」。結果の文は「（平文）」/「（暗号化済み）」を言い分ける。
+- `docs/DATA_PROTECTION.md` 12。
+- 検査: `collectionShapes.test.ts` (走査・対照・入れ子の台帳・fields)、`backup.test.ts` (件数と文・null・表示名の双方向)、
+  `plaintextBackupNotice.test.ts` (実物の画面: ★ 確認が件数を言い やめれば書かない / OK で平文 / 個人情報が無ければ
+  確認しない)、e2e `desktop` (連絡先を復元してから書き出す → dialog の文を読んで dismiss → やめた文 / accept → 「平文」)。
+
+### 対照
+
+| # | 何を壊したか | 鳴ったか |
+| --- | --- | --- |
+| A | `PERSONAL_DATA_FIELDS` を空に (元の判断: 個人情報の欄を知らない) | 🔔 5 本が落ちる: `collectionShapes.test.ts` の ★ (チームメンバー・士業の連絡先が走査に出ない) と、対照に置いた床 (走査が 3 件未満 = 空振り —— 入れ子の台帳 1 件しか残らない)、`backup.test.ts` の ★ (4 件が 1 件になる) と表示名の双方向 (走査に出ない表示名が残る)、`plaintextBackupNotice.test.ts` の ★ (確認が出ず黙って書く)。対照「個人情報が無ければ確認しない」「OK で平文」「入れ子の台帳の検査」「fields」は通ったまま = 落ちる場所が**足した検査そのもの** (`controlA.log`: 5 failed / 3 files) |
+| B | (e2e) パス 129 の版に当てる | 🔔 パス 129 の版は合言葉が空でも黙って書くので、確認 dialog の待ちが 15 秒で切れる (TimeoutError · `controlB exit=1`)。既存の検査 (パス 122〜129 の ★ を含む) は通ったまま |
+
+### 残る物
+
+- 走査は**欄の名前**で当てる (email / phone / address / representative)。`name` は個人名にも事業名にも使われるので
+  入れていない —— 氏名だけの collection は数えない。
+- 確認は件数と内訳を言うが、中身 (誰の) は言わない (封緘済みなら読めないし、確認の文に個人情報を刷る理由も無い)。
+- 暗号化した書き出しにも「含まれないもの」(パス 21) は残る —— こちらは変えていない。
+- 0 倒しの母集団 (`lint:zero-fold`) は **280 のまま** —— 件数は `reduce(…, 0)` の初期値で、`?? 0` の形を足していない。
+
 ## パス 129 (2026-09-09) — **復元が、何が足され・残り・消えるかを言わなかった —— マージはバックアップを取った後に直した記録を古い中身で黙って上書きし、置換の確認は一文だけだった**
 
 ### 何が起きていたか

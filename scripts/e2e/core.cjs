@@ -307,6 +307,28 @@ async function desktopSuite(browser) {
   ok(true, 'settings: 置換をやめれば何も書かない (直前の結果の文も消えている)');
   await page.locator('[data-backup-replace]').uncheck();
 
+  // パス 130: 平文バックアップは、個人情報の件数を言ってから書く (合言葉が空で、個人情報の記録が在るとき)
+  await restoreBackup('contact.json', [{
+    id: 'e2e-contact-1',
+    collection: 'shigyo-contacts',
+    createdAt: 1_700_000_000_000,
+    updatedAt: 1_700_000_000_000,
+    data: { serviceId: 'tax-accountant', name: 'E2E 税理士', phone: '090-0000-0000' },
+  }], '2026-01-01T12:00:00Z');
+  await page.waitForFunction(() => document.body.textContent.includes('追加 1・更新 0'), undefined, { timeout: 15000 });
+  const plainDialog = page.waitForEvent('dialog', { timeout: 15000 });
+  await page.getByRole('button', { name: 'バックアップを書き出す', exact: true }).click();
+  const plain = await plainDialog;
+  const plainText = plain.message();
+  await plain.dismiss();
+  ok(plainText.includes('士業の連絡先 (電話番号・メールアドレス) 1 件') && plainText.includes('平文 (暗号化なし)'), `settings: ★ 合言葉が空の書き出しは、個人情報の件数を言ってから確認する (実際 ${JSON.stringify(plainText)})`);
+  await page.waitForFunction(() => document.body.textContent.includes('書き出しをやめました'), undefined, { timeout: 15000 });
+  ok(!(await has('件のレコードをバックアップしました')), 'settings: やめれば書き出さない');
+  page.once('dialog', (d) => void d.accept());
+  await page.getByRole('button', { name: 'バックアップを書き出す', exact: true }).click();
+  await page.waitForFunction(() => document.body.textContent.includes('件のレコードをバックアップしました（平文）'), undefined, { timeout: 15000 });
+  ok(true, 'settings: 対照 — 確認で OK すれば平文で書き出し、結果の文が「平文」と言う');
+
   // 士業 CRM: 追加 → ステータス変更 → 他ページ非漏出
   await gotoService(page, '#cpa', 'text=連携先一覧');
   await page.getByPlaceholder('例: 山田 太郎').fill('E2E会計士');

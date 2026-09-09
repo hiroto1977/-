@@ -32,6 +32,7 @@
 import type { StoredRecord } from './store';
 import { encryptString, decryptString, isEncryptedBundle, type EncryptedBundle } from '../security/dataCrypto';
 import { MIN_PASSWORD_LENGTH } from '../security/vault';
+import { personalDataCollections } from './collectionShapes';
 
 export const BACKUP_VERSION = 1;
 
@@ -350,4 +351,49 @@ export function restoreResultMessage(plan: RestorePlan, imported: number, droppe
       ? `既存データは置換。消えた ${plan.lost} 件 = バックアップに無い ${plan.localOnly} 件 + この端末の方が新しかった ${plan.newerLocal} 件`
       : `マージ: 追加 ${plan.added}・更新 ${plan.overwritten}・この端末の方が新しい ${plan.newerLocal} 件はそのまま`;
   return `${imported} 件のレコードを復元しました（${detail}）。${droppedNote}再読み込みで反映されます。`;
+}
+
+/**
+ * 平文バックアップが**さらす物**を、書く前に数える (2026-09-09 · パス 130)。
+ *
+ * 合言葉が空なら書き出しは平文で、`docs/DATA_PROTECTION.md` が「バックアップファイルは最も
+ * 持ち出されやすい流出経路」と言うファイルに、チームメンバーのメールアドレス・士業の連絡先の
+ * 電話番号・提出者情報の住所が**そのまま**入る。2026-09-09 まで画面は「（任意）」の欄を
+ * 空のまま押せば黙って平文を書いた —— 何が入るかは言わなかった。
+ *
+ * どの collection が個人情報を持つかは `collectionShapes.personalDataCollections()` が
+ * 欄の名前から導く。ここは件数を数え、確認の文を組む。個人情報の記録が 0 件なら確認は要らない
+ * (null) —— 売上だけの控えに合言葉を強いる理由は無い。
+ */
+export interface PlaintextExposure {
+  readonly total: number;
+  readonly parts: readonly { readonly collection: string; readonly label: string; readonly count: number }[];
+}
+
+/** 個人情報を持つ collection の表示名。走査が新しい collection を見つけたら、ここにも名前が要る (検査が留める)。 */
+export const PERSONAL_DATA_LABELS: Readonly<Record<string, string>> = {
+  'team-members': 'チームメンバー (メールアドレス)',
+  'shigyo-contacts': '士業の連絡先 (電話番号・メールアドレス)',
+  'bank-submission-settings': '提出者情報 (代表者名・住所)',
+};
+
+export function plaintextExposure(records: readonly { readonly collection: string }[]): PlaintextExposure {
+  const parts: { collection: string; label: string; count: number }[] = [];
+  for (const { collection } of personalDataCollections()) {
+    const count = records.filter((r) => r.collection === collection).length;
+    if (count > 0) parts.push({ collection, label: PERSONAL_DATA_LABELS[collection] ?? collection, count });
+  }
+  return { total: parts.reduce((sum, p) => sum + p.count, 0), parts };
+}
+
+/** 平文で書き出す前の確認文。個人情報の記録が無ければ null (確認しない)。 */
+export function plaintextBackupConfirmMessage(exposure: PlaintextExposure): string | null {
+  if (exposure.total === 0) return null;
+  const parts = exposure.parts.map((p) => `${p.label} ${p.count} 件`).join('・');
+  return [
+    '合言葉が空なので、平文 (暗号化なし) で書き出します。',
+    `個人情報を含む記録が ${exposure.total} 件入ります: ${parts}。`,
+    `このファイルを持ち出す・共有するなら、上の欄に合言葉 (${MIN_PASSWORD_LENGTH} 文字以上) を入れて暗号化してください。`,
+    'このまま平文で書き出しますか？',
+  ].join('\n');
 }
