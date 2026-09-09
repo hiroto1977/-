@@ -30,7 +30,7 @@ import {
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { atomicWriteFile } from '../atomicWrite';
-import { isAtRestEnvelope, openAtRest, sealAtRest } from '../atRest';
+import { sealJsonDocument, unsealJsonDocument } from '../atRest';
 import {
   jsonFetch,
   redactForMessage,
@@ -147,16 +147,17 @@ export const EMOTIONS_UNREADABLE_CORRUPT =
  * (次の書き込みで封緘される —— 読めるものを移行のために失わない)。
  */
 function unsealStore(raw: string): unknown {
-  const parsed: unknown = JSON.parse(raw);
-  if (!isAtRestEnvelope(parsed)) return parsed;
-  const opened = openAtRest(parsed.sealed);
+  // 封筒の扱いは main/atRest.ts の 1 組 (パス 133 で人材育成・チームレーダーと共有)。
+  const opened = unsealJsonDocument(raw);
   if (!opened.ok) {
     throw new Error(opened.reason === 'no-keychain' ? EMOTIONS_UNREADABLE_NO_KEYCHAIN : EMOTIONS_UNREADABLE_CORRUPT);
   }
   try {
-    return JSON.parse(opened.text);
-  } catch {
-    throw new Error(EMOTIONS_UNREADABLE_CORRUPT);
+    return JSON.parse(opened.json);
+  } catch (e) {
+    // 開けた中身が JSON でなければ壊れた封緘。平文が JSON でないのは 2026-09-09 までの壊れ方 (従来どおり投げる)。
+    if (opened.sealed) throw new Error(EMOTIONS_UNREADABLE_CORRUPT);
+    throw e;
   }
 }
 
@@ -165,12 +166,11 @@ function unsealStore(raw: string): unknown {
  * 同じ userData の `secrets.json` と同じ約束 (キーチェーン / 無ければ `plain:`) を通す。
  */
 async function writeStore(store: EmotionsStore): Promise<void> {
-  const envelope = { v: 2, sealed: sealAtRest(JSON.stringify(store)) };
   // Stryker disable next-line ObjectLiteral: `atomicWriteFile` の既定が
   // `opts.mode ?? 0o600` なので、落としても同じ 600 で作られる (等価変異)。
   // 明示を残すのは意図の表明 —— 個人情報を持つファイルの権限を、
   // 呼び出し側の既定値に委ねない。
-  await atomicWriteFile(storePath(), JSON.stringify(envelope), { mode: 0o600 });
+  await atomicWriteFile(storePath(), sealJsonDocument(JSON.stringify(store)), { mode: 0o600 });
 }
 
 export async function fetchEmotionsSnapshot(ctx: FetchContext): Promise<EmotionsSnapshot> {

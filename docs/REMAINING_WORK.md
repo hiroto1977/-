@@ -18389,6 +18389,66 @@ uber-eats / demae-can の advise は画面が無く (`VoiceCommandBar` と `Busi
 - 下書き (`servicehub.teamradar.draft.v1`) は snapshot より優先して復元される。読めなかった保存と下書きが両方在るとき、
   画面のメンバーは下書き、注記は保存先について言う (別の物を指している)。
 
+## パス 133 (2026-09-09) — **人材育成 (部署名・氏名) とチームレーダー (他人の氏名と評価) の状態ファイルが平文で置かれていた —— パス 132 が「残る物」に書いた 3 つのうち、守る物が在る 2 つ。そして封緘しているかを数える検査が無かった**
+
+### 何が起きていたか
+
+`~/.local/business-hub/talent.json` (組織病の申告の部署名・施策・メンバーの氏名と STEP) と `team-radar.json` (部署名・
+メンバーの氏名・軸ごとの 1〜5 評価) は 0600 で置かれていた。0600 は**同じ機械の他の利用者**を防ぐが、同じ利用者の
+別のプロセス・バックアップソフト・同期フォルダにはそのまま載る。同じ端末の `secrets.json` と感情ログ (パス 132) は
+OS のキーチェーン (`safeStorage`) で封緘している。チームレーダーの中身は**利用者本人ではなく第三者**の人事評価で、
+`teamradar.ts` の注記自身が「ここに入るのは他人の評価である」と書きながら、平文で置いていた。
+
+そして誰も数えていなかった —— `stateWritePolicy.test.ts` は状態ファイルの**原子性**を数えるが、封緘は数えない。
+パス 132 は在庫の表を書いたが、表は文書であって検査ではない (数は機械が持つ・パス 85 / 97)。
+
+### 直し
+
+- `src/main/atRest.ts`: 文書の封筒を 1 組に —— `sealJsonDocument(json)` / `unsealJsonDocument(raw)` (封筒でなければ
+  2026-09-09 までの平文としてそのまま返す = 移行。中身が JSON として正しいか・形が合うかの判定は各モジュールの読み手が
+  今までどおり持つ) と `atRestUnreadableReason` (理由の文 2 つ)。感情ログ (パス 132) も同じ組を通すように寄せた。
+- `src/main/clients/talent.ts` / `teamradar.ts`: 書くときは封筒、読むときは開けてから `readStoredTalent` /
+  `readStoredTeamRadar`。開けられなければ `unreadable` に理由を載せる —— 画面はパス 120 / 121 の注記
+  (「読めませんでした (理由)。保存すると上書きされます」) をそのまま刷る (鍵違いのファイルを黙って空や見本に化けさせない)。
+  **書き手の差し替え口 (`StateDeps.writeFile`) の外**で封緘するので、検査が差し替えた書き手にも封筒が届く
+  (封緘を既定の書き手の中に隠すと、検査は平文しか見ず、封緘は測れない)。
+- `src/main/__tests__/atRestPolicy.test.ts`: **母集団を実装から数える** —— 置き場所を決める関数
+  (`defaultStatePath` / `storePath` / `secretsPath`) を定義する `src/main` のモジュール (5 つ) は `sealJsonDocument(` か
+  `safeStorage.encryptString(` を通る。通らない物は台帳に理由つき (`stocks.ts` = 銘柄記号だけ)。双方向・床 4・標本 4・
+  規則は標本に当たる (コメントは数えない)。
+- `src/main/__tests__/safeStorageMock.ts`: `safeStorage` の代役を 1 か所に (人材育成・チームレーダーを読む検査 5 本が
+  同時に要るようになった —— 単体テストは実物の electron を読まない)。`unsealForTest` / `sealForTest` で検査側が封筒を
+  開け閉めする。
+- 検査: `atRest.test.ts` (口そのものを 8 本)、`talent.test.ts` / `teamradar.test.ts` (★ 平文が残らない / 平文の移行 /
+  plain: の往復 / キーチェーン無しの理由 / 別の鍵の理由 / 壊れた中身は従来の文)、`teamradar.realfs.test.ts` /
+  `stateWritePolicy.test.ts` / `staleTmpMode.test.ts` は代役を差し、封筒を開いてから読む。
+- `docs/DATA_PROTECTION.md`: 在庫の表 (talent / team-radar を封緘に・state は台帳) と実装済み 14。
+- (ついで) `scripts/e2e/core.cjs`: 設定画面の 2 か所で、`window.confirm` を開く操作を **dialog を受ける前に await** していた。確認が
+  開くと画面の main thread が止まるので、開いた瞬間にクリック側が完了できず 30 秒で落ちる —— pipeline132 の e2e が **2 度続けて**
+  その形で落ちた (ビルドはパス 131 と同一バイト・同じ日の chain132 の desktop 単独では通っていた = 競合の勝ち負けで決まる)。
+  dialog を先に受けて閉じてから操作を待つ (Playwright の作法どおり) に直してから通った (e2e 全項目)。
+
+### 対照
+
+| # | 何を壊したか | 鳴ったか |
+| --- | --- | --- |
+| A | `saveTalentState` を平文に戻す (元の判断: JSON.stringify のまま) | 🔔 4 / 75 (`talent.test.ts` + 台帳): ★ 平文が残らない・移行・`plain:` の往復・**台帳の ★ (封緘していない状態ファイル)** —— 封筒の無い書き込みは検査と台帳の両方に当たる |
+| A2 | `saveTeamRadarState` を平文に戻す | 🔔 4 / 125 (`teamradar.test.ts` + 台帳): 同上 —— 差し替えた `writeFile` に封筒が届かないので、権限の検査 (0600) は通ったまま封緘の検査だけが落ちる |
+| A3 | `unsealJsonDocument` の平文の移行の枝を消す (封筒でなければ undecryptable) | 🔔 36 / 283 (talent / teamradar / emotions / atRest): 平文を植えて読む既存の検査と移行の検査が落ちる —— 2026-09-09 までのファイルが「読めない」に化ける形は、既存の検査だけでも鳴る |
+
+(e2e の対照 B は無い —— main プロセスの変更で、ブラウザ版の e2e は触らない。実機の起動は chain の smoke:app
+(`xvfb-run -a` —— パス 132 の chain は DISPLAY 無しで呼んで exit 2 を出し、手で xvfb を通し直した) と pipeline が通す。)
+
+### 残る物
+
+- `state.json` (株式のウォッチリスト) は平文 0600 のまま —— 中身は銘柄記号だけで、封緘は「鍵違いで読めなくなる」道を足す。
+  台帳 (`atRestPolicy.test.ts`) に理由つき。銘柄以外を置く日が来たら同じ口を通す。
+- ブラウザ版の `talent` / `teamradar.state` / `emotions.store` (localStorage) は平文のまま (ブラウザに safeStorage は無い。
+  保管庫の鍵で封緘するのは別の設計)。
+- キーチェーンの無い環境の `plain:` は難読化であって暗号化ではない (`secrets.ts` と同じ)。設定画面の「保存時の保護状態」は
+  トークンについて述べており、状態ファイル 4 つはまだ言わない。
+- 0 倒しの母集団 (`lint:zero-fold`) は **280 のまま** (main 側の変更で、走査の範囲は renderer)。
+
 ## パス 132 (2026-09-09) — **デスクトップ版の感情ログ (健康に関わる記録) が平文で置かれていた —— 同じ userData の secrets.json は OS のキーチェーンで封緘しているのに。しかも状態ファイルの在庫が文書に無かった**
 
 ### 何が起きていたか

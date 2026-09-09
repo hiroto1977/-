@@ -3,6 +3,7 @@ import * as os from 'node:os';
 import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
 import { isSafeExportPath, writeExportFile } from './exportPaths';
+import { atRestUnreadableReason, sealJsonDocument, unsealJsonDocument } from '../atRest';
 import type { ActionData, ExportFileResult } from '../../shared/actionData';
 import {
   SCORE_MAX,
@@ -42,7 +43,8 @@ export type { AxisLabel, StoredTeamRadar, TeamMember, TeamRadarSnapshot, TeamRad
  *  - スコアは 1-5 整数 (validator で範囲チェック)
  *  - SVG は self-contained (no <script>, no external assets) — Canva
  *    でも安全にインポート可能
- *  - 状態は ~/.local/business-hub/team-radar.json に atomic 書き込み
+ *  - 状態は ~/.local/business-hub/team-radar.json に atomic 書き込み (中身は OS のキーチェーンで封緘 ——
+ *    `main/atRest.ts`・パス 133。氏名と評価を含むので、`secrets.json` / 感情ログと同じ約束)
  */
 
 // 見本 (DEFAULT_TEAM_RADAR) と判定 (isValidScore / isValidMemberId / validateMembers) は
@@ -239,7 +241,11 @@ export async function loadTeamRadarState(
     if ((e as { code?: unknown } | null)?.code === 'ENOENT') return { kind: 'none' };
     return { kind: 'unreadable', reason: e instanceof Error ? e.message : String(e) };
   }
-  return readStoredTeamRadar(raw);
+  // 封緘を開けてから中身を判定する (パス 133)。開けられなければ、その理由を「読めなかった」に載せる ——
+  // 画面は「見本を表示 / 保存を押すと上書き」と言う (パス 120 の注記がそのまま出口になる)。
+  const opened = unsealJsonDocument(raw);
+  if (!opened.ok) return { kind: 'unreadable', reason: atRestUnreadableReason(opened.reason) };
+  return readStoredTeamRadar(opened.json);
 }
 
 /**
@@ -302,7 +308,8 @@ export async function saveTeamRadarState(
   const writeFn = deps.writeFile ?? writeTight;
   const renameFn = deps.rename ?? ((a: string, b: string) => fs.rename(a, b));
   await mkdirFn(path.dirname(p));
-  await writeFn(tmp, JSON.stringify(state, null, 2));
+  // 封緘して書く (パス 133): 他人の氏名と評価なので、secrets.json / 感情ログと同じ約束 (main/atRest.ts) を通す。
+  await writeFn(tmp, sealJsonDocument(JSON.stringify(state)));
   await renameFn(tmp, p);
 }
 

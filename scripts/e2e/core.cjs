@@ -298,10 +298,13 @@ async function desktopSuite(browser) {
   ok(await has('0 件のレコードを復元しました（マージ: 追加 0・更新 0・この端末の方が新しい 1 件はそのまま）'), 'settings: ★ マージは id ごとに新しい方を残す (古いバックアップは後から直した記録を上書きしない)');
   await page.locator('[data-backup-replace]').check();
   const replaceDialog = page.waitForEvent('dialog', { timeout: 15000 });
-  await restoreBackup('older-replace.json', [restoreRow(1_700_000_000_000, 1000)], '2026-01-01T12:00:00Z');
+  // 確認 (window.confirm) が開くと画面の main thread は止まる。先に dialog を受けて閉じてから、開かせた操作を待つ ——
+  // 操作を先に await すると、確認が開いた瞬間に操作側 (クリック / ファイル選択) が完了できず 30 秒で落ちる (pipeline132 で実測)。
+  const replaceTrigger = restoreBackup('older-replace.json', [restoreRow(1_700_000_000_000, 1000)], '2026-01-01T12:00:00Z');
   const dialog = await replaceDialog;
   const dialogText = dialog.message();
   await dialog.dismiss();
+  await replaceTrigger;
   ok(dialogText.includes('この端末の方が新しい 1 件') && dialogText.includes('元に戻せません') && dialogText.includes('2026/1/1'), `settings: ★ 置換の確認は書き出し時刻と消える件数を言う (実際 ${JSON.stringify(dialogText)})`);
   await page.waitForFunction(() => !document.body.textContent.includes('レコードを復元しました'), undefined, { timeout: 15000 });
   ok(true, 'settings: 置換をやめれば何も書かない (直前の結果の文も消えている)');
@@ -317,10 +320,11 @@ async function desktopSuite(browser) {
   }], '2026-01-01T12:00:00Z');
   await page.waitForFunction(() => document.body.textContent.includes('追加 1・更新 0'), undefined, { timeout: 15000 });
   const plainDialog = page.waitForEvent('dialog', { timeout: 15000 });
-  await page.getByRole('button', { name: 'バックアップを書き出す', exact: true }).click();
+  const plainClick = page.getByRole('button', { name: 'バックアップを書き出す', exact: true }).click(); // 同上: dialog を先に受ける
   const plain = await plainDialog;
   const plainText = plain.message();
   await plain.dismiss();
+  await plainClick;
   ok(plainText.includes('士業の連絡先 (電話番号・メールアドレス) 1 件') && plainText.includes('平文 (暗号化なし)'), `settings: ★ 合言葉が空の書き出しは、個人情報の件数を言ってから確認する (実際 ${JSON.stringify(plainText)})`);
   await page.waitForFunction(() => document.body.textContent.includes('書き出しをやめました'), undefined, { timeout: 15000 });
   ok(!(await has('件のレコードをバックアップしました')), 'settings: やめれば書き出さない');

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   ACTIONS,
   LEADER_DISQUALIFIERS,
@@ -27,6 +27,10 @@ import {
   type LadderMember,
   type TalentState,
 } from '../talent';
+import { resetSafeStorageState, safeStorageState, sealForTest, unsealForTest } from '../../__tests__/safeStorageMock';
+
+// talent.ts は保存を OS のキーチェーンで封緘する (main/atRest.ts → electron)。単体テストは実物の electron を読まない。
+vi.mock('electron', async () => (await import('../../__tests__/safeStorageMock')).electronSafeStorageMock());
 
 const CTX = { token: '', payload: {} };
 
@@ -751,5 +755,80 @@ describe('メンバー id の形 — 外しても誰も気付かなかった 2 �
     expect(isValidLadderMember(member('M1')), '大文字は落とす').toBe(false);
     expect(isValidLadderMember(member('m_1')), 'アンダースコアは落とす').toBe(false);
     expect(isValidLadderMember(member('')), '空文字は落とす').toBe(false);
+  });
+});
+
+/*
+ * **ここに入るのは部署名と氏名である** (パス 133)。`talent.json` は組織病の申告 (部署名)・施策・
+ * メンバー (氏名・STEP・滞留年数) を持つ。2026-09-09 まで平文 0600 で、同じ端末の `secrets.json` と
+ * 感情ログ (パス 132) は OS のキーチェーンで封緘していた。封緘の口は `main/atRest.ts` の 1 つ。
+ */
+describe('保存先の封緘 — 人材育成の状態は氏名を含む (パス 133)', () => {
+  beforeEach(resetSafeStorageState);
+  const state: TalentState = {
+    reports: [{ department: '営業', diseases: ['imprint'] }],
+    initiatives: [{ name: '週次の棚卸し', probability: 40 }],
+    members: [{ id: 'm1', name: '山田', step: 1, yearsInStep: 2 }],
+    updatedAt: '2026-09-09',
+  };
+  const capture = () => {
+    const box = { written: '' };
+    const deps = {
+      statePath: () => '/tmp/talent.json',
+      mkdir: async () => undefined,
+      writeFile: async (_p: string, c: string) => {
+        box.written = c;
+      },
+    };
+    return { box, deps };
+  };
+  const load = (raw: string) => loadTalentState({ statePath: () => '/tmp/talent.json', readFile: async () => raw });
+
+  it('★ 書いた文字列に部署名も氏名も欄名も平文で残らない —— 封筒 { v: 2, sealed } で置く', async () => {
+    const { box, deps } = capture();
+    await saveTalentState(state, deps);
+    for (const needle of ['営業', '山田', '週次の棚卸し', 'members', 'reports']) expect(box.written, needle).not.toContain(needle);
+    expect(JSON.parse(box.written)).toMatchObject({ v: 2 });
+    expect((JSON.parse(box.written) as { sealed: string }).sealed).not.toMatch(/^plain:/);
+    // 標本: 検査側で開けば正規化した状態がそのまま在る (上の「無い」は封筒の外を見ている)
+    expect(JSON.parse(unsealForTest(box.written))).toEqual(sanitizeTalentState(state));
+    expect(await load(box.written)).toEqual({ kind: 'saved', state, dropped: null });
+  });
+
+  it('2026-09-09 までの平文ファイルはそのまま読める (移行 —— 次の保存で封緘される)', async () => {
+    expect(await load(JSON.stringify(state, null, 2))).toEqual({ kind: 'saved', state, dropped: null });
+    const { box, deps } = capture();
+    await saveTalentState(state, deps);
+    expect(box.written).not.toContain('山田');
+  });
+
+  it('対照: キーチェーンが無い環境は plain: (難読化) で往復する —— 封緘は名乗らない', async () => {
+    safeStorageState.encryptionAvailable = false;
+    const { box, deps } = capture();
+    await saveTalentState(state, deps);
+    expect((JSON.parse(box.written) as { sealed: string }).sealed).toMatch(/^plain:/);
+    expect(await load(box.written)).toEqual({ kind: 'saved', state, dropped: null });
+  });
+
+  it('★ 封緘済みをキーチェーンの無い環境で読むと、理由つきで「読めなかった」(空に化けない)', async () => {
+    const sealed = sealForTest(JSON.stringify(state));
+    safeStorageState.encryptionAvailable = false;
+    expect(await load(sealed)).toEqual({
+      kind: 'unreadable',
+      reason: 'OS のキーチェーンで封緘されていますが、この環境ではキーチェーンが使えません',
+    });
+  });
+
+  it('★ 保存時と別の鍵 (復号の失敗) も理由つきで「読めなかった」', async () => {
+    const sealed = sealForTest(JSON.stringify(state));
+    safeStorageState.decryptThrows = true;
+    expect(await load(sealed)).toEqual({
+      kind: 'unreadable',
+      reason: '封緘を復号できません (値が壊れているか、保存時と別の鍵が使われています)',
+    });
+  });
+
+  it('対照: 封筒の中が壊れていれば、従来の文 (JSON として読めません) で「読めなかった」', async () => {
+    expect(await load(sealForTest('not json'))).toEqual({ kind: 'unreadable', reason: 'JSON として読めません' });
   });
 });

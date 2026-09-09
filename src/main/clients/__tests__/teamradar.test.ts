@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach, afterEach } from 'vitest';
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
 import { promises as fsp } from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
@@ -28,6 +28,10 @@ import {
   type TeamMember,
   type TeamRadarState,
 } from '../teamradar';
+import { resetSafeStorageState, safeStorageState, sealForTest, unsealForTest } from '../../__tests__/safeStorageMock';
+
+// teamradar.ts は保存を OS のキーチェーンで封緘する (main/atRest.ts → electron)。単体テストは実物の electron を読まない。
+vi.mock('electron', async () => (await import('../../__tests__/safeStorageMock')).electronSafeStorageMock());
 
 // --- Constants ---------------------------------------------------------
 
@@ -398,7 +402,7 @@ describe('saveTeamRadarState', () => {
     expect(writes[0]!.path).toBe('/tmp/team-radar.json.tmp');
     expect(renamed).toEqual({ from: '/tmp/team-radar.json.tmp', to: '/tmp/team-radar.json' });
     // Round-trip the content
-    const parsed = JSON.parse(writes[0]!.content) as TeamRadarState;
+    const parsed = JSON.parse(unsealForTest(writes[0]!.content)) as TeamRadarState;
     expect(parsed.department).toBe('営業部');
   });
 
@@ -1208,7 +1212,7 @@ describe('saveTeamRadarState の権限', () => {
     await saveTeamRadarState(state as never, { statePath: () => target });
     expect(await modeOf(target)).toBe('600');
     // 中身も書けていること (権限だけ見て中身を見ないと、書けていなくても通る)。
-    expect(JSON.parse(await fsp.readFile(target, 'utf8')).members[0].name).toBe('山田');
+    expect(JSON.parse(unsealForTest(await fsp.readFile(target, 'utf8'))).members[0].name).toBe('山田');
   });
 
   it('既にある 644 のファイルも、次の保存で締まる', async () => {
@@ -1220,5 +1224,80 @@ describe('saveTeamRadarState の権限', () => {
     await saveTeamRadarState(state as never, { statePath: () => target });
 
     expect(await modeOf(target)).toBe('600');
+  });
+});
+
+/*
+ * **ここに入るのは他人の評価である** (パス 133)。上の権限 (0600) は同じ機械の他の利用者を防ぐが、
+ * 同じ利用者の別のプロセス・バックアップ・同期フォルダには効かない。2026-09-09 まで平文で、
+ * 同じ端末の `secrets.json` と感情ログ (パス 132) は OS のキーチェーンで封緘していた。
+ */
+describe('保存先の封緘 — チームレーダーは氏名と評価を含む (パス 133)', () => {
+  beforeEach(resetSafeStorageState);
+  const state: TeamRadarState = {
+    department: '営業部',
+    evaluatedAt: '2026-09-09',
+    members: [{ id: 'm1', name: '山田', scores: [3, 4, 2, 5, 1] }],
+  };
+  const capture = () => {
+    const box = { written: '' };
+    const deps = {
+      statePath: () => '/tmp/team-radar.json',
+      mkdir: async () => undefined,
+      writeFile: async (_p: string, c: string) => {
+        box.written = c;
+      },
+      rename: async () => undefined,
+    };
+    return { box, deps };
+  };
+  const load = (raw: string) => loadTeamRadarState({ statePath: () => '/tmp/team-radar.json', readFile: async () => raw });
+
+  it('★ 書いた文字列に部署名も氏名も評価も平文で残らない —— 封筒 { v: 2, sealed } で置く', async () => {
+    const { box, deps } = capture();
+    await saveTeamRadarState(state, deps);
+    for (const needle of ['営業部', '山田', 'scores', 'members']) expect(box.written, needle).not.toContain(needle);
+    expect(JSON.parse(box.written)).toMatchObject({ v: 2 });
+    expect((JSON.parse(box.written) as { sealed: string }).sealed).not.toMatch(/^plain:/);
+    // 標本: 検査側で開けば状態がそのまま在る (上の「無い」は封筒の外を見ている)
+    expect(JSON.parse(unsealForTest(box.written))).toEqual(state);
+    expect(await load(box.written)).toMatchObject({ kind: 'saved', state });
+  });
+
+  it('2026-09-09 までの平文ファイルはそのまま読める (移行 —— 次の保存で封緘される)', async () => {
+    expect(await load(JSON.stringify(state, null, 2))).toMatchObject({ kind: 'saved', state });
+    const { box, deps } = capture();
+    await saveTeamRadarState(state, deps);
+    expect(box.written).not.toContain('山田');
+  });
+
+  it('対照: キーチェーンが無い環境は plain: (難読化) で往復する —— 封緘は名乗らない', async () => {
+    safeStorageState.encryptionAvailable = false;
+    const { box, deps } = capture();
+    await saveTeamRadarState(state, deps);
+    expect((JSON.parse(box.written) as { sealed: string }).sealed).toMatch(/^plain:/);
+    expect(await load(box.written)).toMatchObject({ kind: 'saved', state });
+  });
+
+  it('★ 封緘済みをキーチェーンの無い環境で読むと、理由つきで「読めなかった」(見本に化けない)', async () => {
+    const sealed = sealForTest(JSON.stringify(state));
+    safeStorageState.encryptionAvailable = false;
+    expect(await load(sealed)).toEqual({
+      kind: 'unreadable',
+      reason: 'OS のキーチェーンで封緘されていますが、この環境ではキーチェーンが使えません',
+    });
+  });
+
+  it('★ 保存時と別の鍵 (復号の失敗) も理由つきで「読めなかった」', async () => {
+    const sealed = sealForTest(JSON.stringify(state));
+    safeStorageState.decryptThrows = true;
+    expect(await load(sealed)).toEqual({
+      kind: 'unreadable',
+      reason: '封緘を復号できません (値が壊れているか、保存時と別の鍵が使われています)',
+    });
+  });
+
+  it('対照: 封筒の中が壊れていれば、従来の文 (JSON として読めません) で「読めなかった」', async () => {
+    expect(await load(sealForTest('not json'))).toEqual({ kind: 'unreadable', reason: 'JSON として読めません' });
   });
 });

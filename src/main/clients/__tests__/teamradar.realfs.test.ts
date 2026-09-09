@@ -15,6 +15,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import * as path from 'node:path';
 import { access, mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
+import { unsealForTest } from '../../__tests__/safeStorageMock';
 
 const state = vi.hoisted(() => ({ home: '' }));
 
@@ -23,6 +24,9 @@ vi.mock('node:os', async (importOriginal) => {
   const homedir = () => state.home;
   return { ...actual, homedir, default: { ...actual, homedir } };
 });
+
+// 保存は OS のキーチェーンで封緘する (main/atRest.ts → electron)。単体テストは実物の electron を読まない。
+vi.mock('electron', async () => (await import('../../__tests__/safeStorageMock')).electronSafeStorageMock());
 
 const {
   ACTIONS,
@@ -57,7 +61,8 @@ describe('teamradar — 本物のファイルシステム', () => {
       members: [{ id: 'm1', name: '田中', scores: [3, 3, 3, 3, 3] }],
     });
 
-    const written = JSON.parse(await readFile(target, 'utf8'));
+    // 中身は封筒 (パス 133) —— 検査側で開いてから読む。
+    const written = JSON.parse(unsealForTest(await readFile(target, 'utf8')));
     expect(written).toMatchObject({ department: '開発部', evaluatedAt: '2026-05-01' });
     expect(written.members).toHaveLength(1);
 

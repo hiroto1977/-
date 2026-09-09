@@ -17,6 +17,7 @@ import type { ActionData } from '../../shared/actionData';
 
 export type { JudgeResult } from '../../shared/talent';
 import { atomicWriteFile } from '../atomicWrite';
+import { atRestUnreadableReason, sealJsonDocument, unsealJsonDocument } from '../atRest';
 
 // 判定と定義表は shared にある。ここは I/O (状態の保存・取得) と
 // action の口だけを持つ。**同じ判定を二度書かない。**
@@ -42,7 +43,8 @@ export * from '../../shared/talent';
  *   4. `reviewLadder`       — 育成ロードマップ。STEP1 の滞留を検出する。
  *
  * ネットワークは使わない (`LOCAL_SERVICES`)。状態は teamradar と同じく
- * `~/.local/business-hub/` 配下へ 0600 で置く。
+ * `~/.local/business-hub/` 配下へ 0600 で置き、中身は OS のキーチェーンで封緘する
+ * (`main/atRest.ts`・パス 133 —— 部署名と氏名を含むので、`secrets.json` / 感情ログと同じ約束)。
  *
  * ## 出典の扱い
  *
@@ -80,7 +82,11 @@ export async function loadTalentState(deps: StateDeps = {}): Promise<StoredTalen
     if ((e as { code?: unknown } | null)?.code === 'ENOENT') return { kind: 'none' };
     return { kind: 'unreadable', reason: e instanceof Error ? e.message : String(e) };
   }
-  return readStoredTalent(raw);
+  // 封緘を開けてから中身を判定する (パス 133)。開けられなければ、その理由を「読めなかった」に載せる ——
+  // 画面は「空の状態を表示 / このまま保存すると上書き」と言う (パス 121 の注記がそのまま出口になる)。
+  const opened = unsealJsonDocument(raw);
+  if (!opened.ok) return { kind: 'unreadable', reason: atRestUnreadableReason(opened.reason) };
+  return readStoredTalent(opened.json);
 }
 
 /**
@@ -116,7 +122,8 @@ export async function saveTalentState(state: TalentState, deps: StateDeps = {}):
   const write = deps.writeFile ?? ((q: string, c: string) => atomicWriteFile(q, c, { mode: 0o600 }));
   const clean = sanitizeTalentState(state);
   await mkdir(path.dirname(p));
-  await write(p, JSON.stringify(clean, null, 2));
+  // 封緘して書く (パス 133): 部署名・氏名を含むので、secrets.json / 感情ログと同じ約束 (main/atRest.ts) を通す。
+  await write(p, sealJsonDocument(JSON.stringify(clean)));
   return clean;
 }
 

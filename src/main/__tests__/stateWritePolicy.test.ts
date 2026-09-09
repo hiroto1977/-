@@ -20,10 +20,14 @@
 import { chmod, mkdtemp, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { globSync } from 'tinyglobby';
 import { saveTalentState, type TalentState } from '../clients/talent';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { unsealForTest } from './safeStorageMock';
+
+// talent の保存は OS のキーチェーンで封緘する (main/atRest.ts → electron)。単体テストは実物の electron を読まない。
+vi.mock('electron', async () => (await import('./safeStorageMock')).electronSafeStorageMock());
 
 const REPO = join(__dirname, '..', '..', '..');
 
@@ -119,7 +123,8 @@ describe('saveTalentState の既定の経路 (実物のディスク)', () => {
     await saveTalentState(state, { statePath: () => target });
     const entries = await readdir(dir);
     expect(entries).toEqual(['talent.json']);
-    expect(JSON.parse(await readFile(target, 'utf8'))).toEqual(state);
+    // 中身は封筒 (パス 133) —— 検査側で開いてから読む。
+    expect(JSON.parse(unsealForTest(await readFile(target, 'utf8')))).toEqual(state);
   });
 
   it('★ 保存のたびに本体が置き換わる (inode が変わる = rename で被せている)', async () => {
@@ -139,7 +144,7 @@ describe('saveTalentState の既定の経路 (実物のディスク)', () => {
     await saveTalentState({ ...state, updatedAt: '2026-09-07' }, { statePath: () => target });
     const second = (await stat(target)).ino;
     expect(second).not.toBe(first);
-    expect(JSON.parse(await readFile(target, 'utf8')).updatedAt).toBe('2026-09-07');
+    expect(JSON.parse(unsealForTest(await readFile(target, 'utf8'))).updatedAt).toBe('2026-09-07');
   });
 
   // この 2 件は権限の性質で、旧実装 (chmod つき) でも通る —— 原子性の検査は上の inode。
