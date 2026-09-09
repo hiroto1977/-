@@ -17,7 +17,7 @@ import { isCalendarMonth } from '../../shared/isoDate';
 // 取り込みと書類の差込も同じ物を使う)。**写さずに読む。** kessanImport から
 // こちらへの辺は `import type` だけなので実行時の循環にはならない。
 import { fiscalYearMonths, fiscalYearWindow } from './kessanImport';
-import { isValidPeriod, zeroMembersPerCapitaNote, zeroRevenueRatioNote } from './kpiActuals';
+import { duplicateActualsSheetNote, isValidPeriod, zeroMembersPerCapitaNote, zeroRevenueRatioNote } from './kpiActuals';
 import {
   BANK_FORMAT_DEFAULT,
   BLANK,
@@ -328,9 +328,14 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
    */
   const sectionOneCaption = (): string | null => {
     if (!has) return 'KPI 実績が未入力のため算定していません。';
-    const scope = periodScopeNote(p.fiscalYearEnd, o.kpi.periods, f);
-    if (k.revenue > 0) return scope;
-    return scope === null ? zeroRevenueRatioNote() : `${scope}${zeroRevenueRatioNote()}`;
+    // 断り書きは 3 つまで並ぶ: 対象期間 (パス 34) → 売上 0 の理由 (パス 52) →
+    // 同じ期・事業の重複 = 合算値 (パス 124)。画面の警告と同じ事実を、相手に渡る面でも言う。
+    const parts = [
+      periodScopeNote(p.fiscalYearEnd, o.kpi.periods, f),
+      k.revenue > 0 ? null : zeroRevenueRatioNote(),
+      duplicateActualsSheetNote(k.duplicateActuals),
+    ].filter((s): s is string => s !== null);
+    return parts.length === 0 ? null : parts.join('');
   };
   const sections: SheetSection[] = [];
 

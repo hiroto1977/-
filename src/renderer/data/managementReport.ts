@@ -11,7 +11,7 @@ import { budgetScopeSentence } from './budgetVariance';
 import type { BusinessOverview } from './overview';
 import { verdictLabel, type ManagementScorecard } from '../../shared/managementScorecard';
 import { summarizeHighlights, RISK_BAND_LABEL, type Highlight } from './managementHighlights';
-import { formatPeriodWindow, zeroRevenueRatioNote, type MonthlyTrendRow } from './kpiActuals';
+import { duplicateActualsSheetNote, formatPeriodWindow, zeroRevenueRatioNote, type MonthlyTrendRow } from './kpiActuals';
 import { manualOverrideNote, staleDerivedNote, type ManualOverrideDisclosure } from './overviewOverrides';
 
 const SEVERITY_MARK: Record<Highlight['severity'], string> = {
@@ -134,6 +134,9 @@ export function buildManagementReport(
     // 売上 0 のときは売上高を分母にする比率がすべて「—」になる。**なぜ空欄なのかを
     // 述べる** (書面 §1 と同じ文。理由が無いと入力漏れと区別できない)。
     if (k.revenue <= 0) lines.push(`- ${zeroRevenueRatioNote()}`);
+    // 同じ期・事業の重複が在れば、上の金額はその合算値 (パス 124)。書面 §1 と同じ文。
+    const duplicateNote = duplicateActualsSheetNote(k.duplicateActuals);
+    if (duplicateNote !== null) lines.push(`- ${duplicateNote}`);
     lines.push('');
   }
 

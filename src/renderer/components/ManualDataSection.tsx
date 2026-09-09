@@ -15,6 +15,7 @@
  */
 
 import { useState } from 'react';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import { fireReported } from '../data/deviceStoreFailure';
 import {
@@ -175,6 +176,7 @@ function BusinessUnits({
     fixedCost: '',
   });
   const [error, setError] = useState<string>();
+  const submit = useSubmitGuard();
 
   async function add() {
     const parsed = parseBusinessUnit(draft);
@@ -281,7 +283,7 @@ function BusinessUnits({
           onChange={(e) => setDraft((d) => ({ ...d, fixedCost: e.target.value }))}
           style={{ ...input, width: 150 }}
         />
-        <button type="button" onClick={() => fireReported(add())} style={{ fontSize: 12 }}>
+        <button type="button" onClick={() => fireReported(submit.run(add))} disabled={submit.busy} style={{ fontSize: 12 }}>
           事業を追加
         </button>
         {error !== undefined && <span style={{ fontSize: 11, color: '#ef4444' }}>{error}</span>}
@@ -311,6 +313,7 @@ function ManualMetrics({
     businessId: '',
   });
   const [error, setError] = useState<string>();
+  const submit = useSubmitGuard();
 
   async function add() {
     const parsed = parseManualMetric(draft);
@@ -402,7 +405,7 @@ function ManualMetrics({
           onChange={(e) => setDraft((d) => ({ ...d, note: e.target.value }))}
           style={{ ...input, width: 170 }}
         />
-        <button type="button" onClick={() => fireReported(add())} style={{ fontSize: 12 }}>
+        <button type="button" onClick={() => fireReported(submit.run(add))} disabled={submit.busy} style={{ fontSize: 12 }}>
           数値を追加
         </button>
         {error !== undefined && <span style={{ fontSize: 11, color: '#ef4444' }}>{error}</span>}
@@ -425,6 +428,7 @@ function Overrides({
   const [draft, setDraft] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const byPath = new Map(rows.map((r) => [r.data.path, r]));
+  const submit = useSubmitGuard();
 
   async function save(path: string, unit: MetricUnit) {
     const parsed = parseOverrideValue(draft[path] ?? '', unit);
@@ -486,7 +490,7 @@ function Overrides({
                   onChange={(e) => setDraft((d) => ({ ...d, [f.path]: e.target.value }))}
                   style={{ ...input, width: 110 }}
                 />
-                <button type="button" onClick={() => fireReported(save(f.path, f.unit))} style={{ fontSize: 12 }}>
+                <button type="button" onClick={() => fireReported(submit.run(() => save(f.path, f.unit)))} disabled={submit.busy} style={{ fontSize: 12 }}>
                   保存
                 </button>
                 {hit !== undefined && (

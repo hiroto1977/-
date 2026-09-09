@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Section } from '../components/StatusBar';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import { usePlan } from '../plan/usePlan';
 import { getPlan, hasFeature, requiredPlanForFeature, PLANS } from '../../shared/plan';
@@ -100,6 +101,7 @@ export function TeamPage() {
   const { records, add, edit, remove } = useCollection<Member>(MEMBERS_COLLECTION);
   const [form, setForm] = useState(EMPTY);
   const [error, setError] = useState<string>();
+  const submit = useSubmitGuard();
 
   const members = useMemo(() => records.map((r) => r.data), [records]);
   const planDef = getPlan(plan);
@@ -195,7 +197,7 @@ export function TeamPage() {
               <option key={r} value={r}>{ROLE_LABEL[r]}</option>
             ))}
           </select>
-          <button type="button" onClick={onAdd} disabled={!canAddMember(usage)}>
+          <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy || !canAddMember(usage)}>
             招待
           </button>
           <span style={{ fontSize: 12, color: 'var(--text-mute)' }}>
@@ -246,8 +248,8 @@ export function TeamPage() {
                   <td style={{ padding: '4px 8px' }}>
                     <button
                       type="button"
-                      onClick={() => onRemove(r.id, r.data.role)}
-                      disabled={!canRemoveMember(r.data.role, owners)}
+                      onClick={() => void submit.run(() => onRemove(r.id, r.data.role))}
+                      disabled={submit.busy || !canRemoveMember(r.data.role, owners)}
                       aria-label="削除"
                     >
                       ×

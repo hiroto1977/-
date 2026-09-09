@@ -165,6 +165,50 @@ async function desktopSuite(browser) {
   await page.locator('button', { hasText: '削除' }).first().click();
   await page.waitForFunction(() => !document.body.textContent.includes('E2Eファンド'), undefined, { timeout: 15000 });
 
+  // パス 124: 追加ボタンのダブルクリックで銘柄が 2 件にならない (旧: 同じ入力から 2 件が保存された)
+  await page.getByPlaceholder('例: ニッセイ外国株式').fill('E2E二度押し');
+  await page.getByPlaceholder('空欄=自動計算').fill('300000');
+  await page.getByRole('button', { name: '＋ 銘柄を追加' }).dblclick();
+  await page.waitForSelector('tbody tr:has-text("E2E二度押し")', { timeout: 15000 });
+  // 保存が終わるとフォームが空になる。旧版の 2 件目もその直後に終わるので、もう 2 往復してから数える。
+  await page.waitForFunction(() => document.querySelector('input[placeholder="例: ニッセイ外国株式"]').value === '', undefined, { timeout: 15000 });
+  await page.getByPlaceholder('例: ニッセイ外国株式').fill('x');
+  await page.getByPlaceholder('例: ニッセイ外国株式').fill('');
+  const dblRows = page.locator('tbody tr', { hasText: 'E2E二度押し' });
+  ok((await dblRows.count()) === 1, `funds: ★ 追加ボタンのダブルクリックでも銘柄は 1 件 (実際 ${await dblRows.count()} 件)`);
+  while ((await dblRows.count()) > 0) {
+    const before = await page.locator('tbody tr').count();
+    await dblRows.first().locator('button', { hasText: '削除' }).click();
+    await page.waitForFunction((n) => document.querySelectorAll('tbody tr').length < n, before, { timeout: 15000 });
+  }
+
+  // パス 124: 同じ (期間, 事業) の KPI 実績は断られて件数が増えない。追加ボタンのダブルクリックでも 1 件。
+  // (パス 123 までの版はダブルクリックで 2 行になり、2 件目も黙って通って売上高が合算されていた)
+  await gotoService(page, '#kpi', 'input[placeholder="YYYY-MM"]');
+  const dupFormBox = page.locator('input[placeholder="YYYY-MM"]').first().locator('xpath=ancestor::div[1]');
+  const dupForm = [
+    ['YYYY-MM', '2026-02'],
+    ['事業名', 'E2E重複'],
+    ['売上高', '1000000'],
+    ['売上原価', '0'],
+    ['広告費', '0'],
+    ['販管費', '0'],
+    ['減価償却費', '0'],
+  ];
+  for (const [ph, v] of dupForm) await page.locator(`input[placeholder="${ph}"]`).first().fill(v);
+  await dupFormBox.getByRole('button', { name: '追加' }).first().dblclick();
+  await page.waitForSelector('tbody tr:has-text("E2E重複")', { timeout: 15000 });
+  await page.waitForFunction(() => document.querySelector('input[placeholder="YYYY-MM"]').value === '', undefined, { timeout: 15000 });
+  // 2 度目の入力 (7 欄を埋める間に、旧版の 2 件目の保存が在れば終わっている)
+  for (const [ph, v] of dupForm) await page.locator(`input[placeholder="${ph}"]`).first().fill(v);
+  const dupRows = page.locator('tbody tr', { hasText: 'E2E重複' });
+  ok((await dupRows.count()) === 1, `KPI: ★ 追加ボタンのダブルクリックでも実績は 1 件 (実際 ${await dupRows.count()} 件)`);
+  await dupFormBox.getByRole('button', { name: '追加' }).first().click();
+  await page.waitForFunction(() => document.body.textContent.includes('既に入力されています'), undefined, { timeout: 15000 });
+  ok((await dupRows.count()) === 1, 'KPI: ★ 同じ期・事業の 2 件目は断られ、1 件のまま (訂正の案内つき)');
+  await dupRows.first().getByRole('button', { name: '削除' }).click();
+  await page.waitForFunction(() => !Array.from(document.querySelectorAll('tbody tr')).some((tr) => tr.textContent.includes('E2E重複')), undefined, { timeout: 15000 });
+
   // 士業 CRM: 追加 → ステータス変更 → 他ページ非漏出
   await gotoService(page, '#cpa', 'text=連携先一覧');
   await page.getByPlaceholder('例: 山田 太郎').fill('E2E会計士');

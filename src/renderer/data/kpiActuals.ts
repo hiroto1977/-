@@ -531,3 +531,69 @@ export function computeKpiMetrics(f: KpiFundamentals): KpiMetrics {
     operatingProfit,
   };
 }
+
+// --- 同じ期・事業の重複 (パス 124) ----------------------------------------------
+
+/**
+ * **実績・予算は (期間, 事業) が 1 件の単位。** 同じ組を 2 件持つと `summarizeFundamentals` /
+ * `groupRevenueByPeriod` / `monthlyTrendSeries` が**合算**し、訂正のつもりの入れ直しが
+ * 「旧 + 新」の売上高になって経営サマリー・経営スコアカード・着地見込み・金融機関等提出用の
+ * 書面 §1 まで届く (実績に「編集」は無く、訂正は × で消してから入れ直す)。
+ *
+ * 鍵は期と事業名 (前後の空白を落とす) をそのまま結ぶ。大文字小文字や全角半角は**別物**のまま
+ * (「EC」と「ec」を同じとは言わない —— 同じかどうかは利用者の判断で、機械は完全一致しか見ない)。
+ * 期は `isValidPeriod` の 7 文字なので区切りは要らないが、読めるように `|` を挟む。
+ */
+export function actualKey(a: Pick<KpiActual, 'period' | 'unit'>): string {
+  return `${a.period}|${a.unit.trim()}`;
+}
+
+/** 同じ (期間, 事業) が既に在るか。画面が追加を断る判断。 */
+export function hasSamePeriodUnit(existing: readonly KpiActual[], candidate: Pick<KpiActual, 'period' | 'unit'>): boolean {
+  const key = actualKey(candidate);
+  return existing.some((a) => actualKey(a) === key);
+}
+
+/** 同じ (期間, 事業) が 2 件以上ある組。 */
+export interface DuplicateActualGroup {
+  readonly period: string;
+  readonly unit: string;
+  /** その組の件数 (2 以上)。 */
+  readonly count: number;
+}
+
+/** 既に在る重複 (件数 2 以上の組) を期・事業の昇順で返す。無ければ空。 */
+export function findDuplicateActuals(actuals: readonly KpiActual[]): DuplicateActualGroup[] {
+  const groups = new Map<string, DuplicateActualGroup>();
+  for (const a of actuals) {
+    const key = actualKey(a);
+    const g = groups.get(key);
+    groups.set(key, g ? { ...g, count: g.count + 1 } : { period: a.period, unit: a.unit.trim(), count: 1 });
+  }
+  return [...groups.values()]
+    .filter((g) => g.count >= 2)
+    .sort((x, y) => x.period.localeCompare(y.period) || x.unit.localeCompare(y.unit));
+}
+
+/** 「実績」「予算」—— 断りと警告の文に入る種別。 */
+export type ActualKind = '実績' | '予算';
+
+/** 同じ (期間, 事業) の追加を断るときの文。訂正の道 (× で消してから) を言う。 */
+export function duplicateActualMessage(kind: ActualKind, c: Pick<KpiActual, 'period' | 'unit'>): string {
+  return `${c.period} の「${c.unit.trim()}」の${kind}は既に入力されています。訂正するときは一覧の × で消してから入れ直してください（同じ期・事業を 2 件入れると合算されます）。`;
+}
+
+const listGroups = (groups: readonly DuplicateActualGroup[]): string =>
+  groups.map((g) => `${g.period} ${g.unit} ×${g.count}`).join('、');
+
+/** 一覧の上の警告 (既に重複が在るとき)。無ければ null。 */
+export function duplicateActualsNote(kind: ActualKind, groups: readonly DuplicateActualGroup[]): string | null {
+  if (groups.length === 0) return null;
+  return `同じ期・事業の${kind}が ${groups.length} 組重複しており、合算されています（${listGroups(groups)}）。一覧の × で余分な行を消してください。`;
+}
+
+/** 書面 §1 と経営レポートの但し書き (**相手に渡る面**)。無ければ null。 */
+export function duplicateActualsSheetNote(groups: readonly DuplicateActualGroup[]): string | null {
+  if (groups.length === 0) return null;
+  return `KPI 実績に同じ期・事業の重複が ${groups.length} 組あり（${listGroups(groups)}）、本表の金額はその合算値です。`;
+}

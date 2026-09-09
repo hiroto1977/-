@@ -10,6 +10,7 @@ import { Stat, positiveIfKnown } from '../components/Stat';
 import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import {
   PROPERTIES_COLLECTION,
@@ -129,6 +130,7 @@ export function RealEstatePage() {
   const [propError, setPropError] = useState<string>();
   /** 編集中のユーザー物件 id (null = 新規追加モード)。 */
   const [editingPropId, setEditingPropId] = useState<string | null>(null);
+  const submit = useSubmitGuard();
 
   /** デモ (snapshot) 行 + ユーザー行の結合リスト。 */
   const properties = useMemo(
@@ -494,7 +496,7 @@ export function RealEstatePage() {
               onChange={(e) => setPropForm((f) => ({ ...f, occupied: e.target.checked }))} />
             入居中
           </label>
-          <button type="button" onClick={onSaveProperty}>
+          <button type="button" onClick={() => void submit.run(onSaveProperty)} disabled={submit.busy}>
             {editingPropId !== null ? '保存 (自動反映)' : '＋ 物件を追加'}
           </button>
           {editingPropId !== null && (

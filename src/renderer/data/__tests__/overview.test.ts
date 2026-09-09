@@ -712,3 +712,17 @@ describe('実績の期の選別は、基準日の古さの判定を守る', () =
     expect(o.balanceSheetFreshness!.stale).toBe(false);
   });
 });
+
+describe('kpi.duplicateActuals — 同じ期・事業の重複 (パス 124)', () => {
+  it('★ 同じ (期間, 事業) が 2 件あれば census に載り、合計はその合算値のまま (断り書きが事実を述べる)', () => {
+    const o = buildBusinessOverview({ plan: 'business', sales: [], kpiActuals: [...KPI, ...KPI], members: [] });
+    expect(o.kpi.duplicateActuals).toEqual([{ period: '2026-05', unit: '全社', count: 2 }]);
+    expect(o.kpi.revenue).toBe(200000);
+  });
+
+  it('対照: 重複が無ければ空', () => {
+    const o = buildBusinessOverview({ plan: 'business', sales: [], kpiActuals: KPI, members: [] });
+    expect(o.kpi.duplicateActuals).toEqual([]);
+    expect(o.kpi.revenue).toBe(100000);
+  });
+});

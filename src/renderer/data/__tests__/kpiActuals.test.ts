@@ -19,6 +19,12 @@ import {
   type KpiActual,
   finiteBep,
   noBreakEvenNote,
+  actualKey,
+  hasSamePeriodUnit,
+  findDuplicateActuals,
+  duplicateActualMessage,
+  duplicateActualsNote,
+  duplicateActualsSheetNote,
 } from '../kpiActuals';
 
 const actual = (period: string, revenue: number, unit = '全社'): KpiActual => ({
@@ -698,5 +704,67 @@ describe('finiteBep / noBreakEvenNote — 損益分岐点が存在しない期',
   it('★ 対照: 欠けが無ければ断り書きは出ない', () => {
     expect(noBreakEvenNote(0, 12)).toBeNull();
     expect(noBreakEvenNote(-1, 12)).toBeNull();
+  });
+});
+
+describe('同じ期・事業の重複 (パス 124)', () => {
+  const row = (period: string, unit: string, revenue = 1): KpiActual => ({ period, unit, revenue, cogs: 0, advertising: 0, sga: 0, depreciation: 0 });
+
+  it('actualKey は期と事業 (前後の空白を落とす) で決まり、金額は関係ない', () => {
+    expect(actualKey(row('2026-04', '全社', 1))).toBe(actualKey(row('2026-04', ' 全社 ', 999)));
+    expect(actualKey(row('2026-04', '全社'))).not.toBe(actualKey(row('2026-05', '全社')));
+    expect(actualKey(row('2026-04', '全社'))).not.toBe(actualKey(row('2026-04', 'EC')));
+    // 大文字小文字は別物 (同じかどうかは利用者の判断)
+    expect(actualKey(row('2026-04', 'EC'))).not.toBe(actualKey(row('2026-04', 'ec')));
+  });
+
+  it('★ hasSamePeriodUnit は同じ組が在れば true・別の期や別の事業なら false', () => {
+    const existing = [row('2026-04', '全社'), row('2026-04', 'EC')];
+    expect(hasSamePeriodUnit(existing, { period: '2026-04', unit: '全社' })).toBe(true);
+    expect(hasSamePeriodUnit(existing, { period: '2026-04', unit: ' EC ' })).toBe(true);
+    expect(hasSamePeriodUnit(existing, { period: '2026-05', unit: '全社' })).toBe(false);
+    expect(hasSamePeriodUnit(existing, { period: '2026-04', unit: '店舗' })).toBe(false);
+    expect(hasSamePeriodUnit([], { period: '2026-04', unit: '全社' })).toBe(false);
+  });
+
+  it('findDuplicateActuals は件数 2 以上の組だけを期・事業の昇順で返す', () => {
+    const groups = findDuplicateActuals([
+      row('2026-05', 'EC'), row('2026-04', '全社'), row('2026-05', 'EC'), row('2026-04', '全社'), row('2026-04', '全社'), row('2026-06', '全社'),
+    ]);
+    expect(groups).toEqual([
+      { period: '2026-04', unit: '全社', count: 3 },
+      { period: '2026-05', unit: 'EC', count: 2 },
+    ]);
+    expect(findDuplicateActuals([row('2026-04', '全社'), row('2026-04', 'EC')])).toEqual([]);
+    expect(findDuplicateActuals([])).toEqual([]);
+  });
+
+  it('合算の実測: 同じ組を 2 件持つと summarizeFundamentals / groupRevenueByPeriod は足す (だから 2 件目を断る)', () => {
+    const two = [row('2026-04', '全社', 1_000_000), row('2026-04', '全社', 1_200_000)];
+    expect(summarizeFundamentals(two).revenue).toBe(2_200_000);
+    expect(groupRevenueByPeriod(two)).toEqual([{ period: '2026-04', revenue: 2_200_000 }]);
+    expect(findDuplicateActuals(two)).toEqual([{ period: '2026-04', unit: '全社', count: 2 }]);
+  });
+
+  it('文面: 断り・一覧の警告・書面の但し書きは、期と事業と件数を名指しする', () => {
+    expect(duplicateActualMessage('実績', { period: '2026-04', unit: '全社' })).toBe(
+      '2026-04 の「全社」の実績は既に入力されています。訂正するときは一覧の × で消してから入れ直してください（同じ期・事業を 2 件入れると合算されます）。',
+    );
+    expect(duplicateActualMessage('予算', { period: '2026-04', unit: ' EC ' })).toContain('2026-04 の「EC」の予算は既に入力されています');
+    const groups = [
+      { period: '2026-04', unit: '全社', count: 2 },
+      { period: '2026-05', unit: 'EC', count: 3 },
+    ];
+    expect(duplicateActualsNote('実績', groups)).toBe(
+      '同じ期・事業の実績が 2 組重複しており、合算されています（2026-04 全社 ×2、2026-05 EC ×3）。一覧の × で余分な行を消してください。',
+    );
+    expect(duplicateActualsNote('予算', groups.slice(0, 1))).toBe(
+      '同じ期・事業の予算が 1 組重複しており、合算されています（2026-04 全社 ×2）。一覧の × で余分な行を消してください。',
+    );
+    expect(duplicateActualsSheetNote(groups)).toBe(
+      'KPI 実績に同じ期・事業の重複が 2 組あり（2026-04 全社 ×2、2026-05 EC ×3）、本表の金額はその合算値です。',
+    );
+    expect(duplicateActualsNote('実績', [])).toBeNull();
+    expect(duplicateActualsSheetNote([])).toBeNull();
   });
 });

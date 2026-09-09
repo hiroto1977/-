@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { getRecordStore } from '../data/store';
 import {
   BACKUP_EXCLUSIONS,
@@ -20,6 +21,7 @@ import { MAX_BACKUP_IMPORT_BYTES, readImportText } from '../data/importFile';
 export function BackupPanel() {
   const [msg, setMsg] = useState<string>();
   const [err, setErr] = useState<string>();
+  const submit = useSubmitGuard();
   const [replace, setReplace] = useState(false);
   const [passphrase, setPassphrase] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
@@ -160,7 +162,7 @@ export function BackupPanel() {
             この端末での災害復旧のためだけなら、このままで問題ありません。
           </p>
         )}
-        <button type="button" onClick={onBackup}>バックアップを書き出す</button>
+        <button type="button" onClick={() => void submit.run(onBackup)} disabled={submit.busy}>バックアップを書き出す</button>
         <label style={{ fontSize: 13, cursor: 'pointer', color: 'var(--accent)' }}>
           バックアップから復元
           <input
@@ -170,7 +172,7 @@ export function BackupPanel() {
             style={{ display: 'none' }}
             onChange={(e) => {
               const file = e.target.files?.[0];
-              if (file) onRestore(file);
+              if (file) void submit.run(() => onRestore(file));
             }}
           />
         </label>

@@ -6,6 +6,7 @@
 import { summarizeSales, type SalesEntry, type SalesPeriod } from './sales';
 import {
   summarizeFundamentals,
+  findDuplicateActuals,
   computeKpiMetrics,
   computeRevenueGrowthPct,
   computeRevenueCagrPct,
@@ -16,6 +17,7 @@ import {
   isValidPeriod,
   periodWindow,
   type KpiActual,
+  type DuplicateActualGroup,
   type PeriodWindow,
   type RevenueTrend,
   type RevenueLandingForecast,
@@ -138,6 +140,12 @@ export interface BusinessOverview {
     periods: readonly string[];
     /** 実績が覆う窓 (最初と最後の期・月数)。読める期が無ければ null。 */
     periodWindow: PeriodWindow | null;
+    /**
+     * 同じ (期間, 事業) が 2 件以上ある組 (パス 124)。空なら重複なし。
+     * 下の `revenue` 以下の合計はこの重複を**含んだまま**なので、相手に渡る面
+     * (書面 §1・経営レポート) はこれが空でなければ「合算値」と述べる。
+     */
+    duplicateActuals: readonly DuplicateActualGroup[];
     revenue: number;
     operatingProfit: number;
     bep: number;
@@ -323,6 +331,7 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       hasData: hasKpi,
       periods: validKpiPeriods,
       periodWindow: periodWindow(validKpiPeriods),
+      duplicateActuals: findDuplicateActuals(input.kpiActuals),
       revenue: fundamentals.revenue,
       operatingProfit: kpi.operatingProfit,
       bep: kpi.bep,

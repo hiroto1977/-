@@ -12,6 +12,7 @@ import { Stat, positiveIfKnown } from '../components/Stat';
 import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import {
   HOLDINGS_COLLECTION,
@@ -68,6 +69,7 @@ export function MutualFundsPage() {
   const [fundError, setFundError] = useState<string>();
   /** 編集中のユーザー銘柄 id (null = 新規追加モード)。 */
   const [editingFundId, setEditingFundId] = useState<string | null>(null);
+  const submit = useSubmitGuard();
 
   /** デモ (snapshot) 行 + ユーザー行の結合リスト (追加行は「追加」チップ)。 */
   const holdings = useMemo(
@@ -388,7 +390,7 @@ export function MutualFundsPage() {
             <input type="text" inputMode="decimal" value={fundForm.ytdReturnPct} placeholder="空欄=未入力"
               onChange={(e) => setFundForm((f) => ({ ...f, ytdReturnPct: e.target.value }))} style={simInputStyle} />
           </label>
-          <button type="button" onClick={onSaveHolding}>
+          <button type="button" onClick={() => void submit.run(onSaveHolding)} disabled={submit.busy}>
             {editingFundId !== null ? '保存 (自動反映)' : '＋ 銘柄を追加'}
           </button>
           {editingFundId !== null && (

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { navigateTo, takeNavigationIntent } from '../navigate';
 import { Section } from '../components/StatusBar';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import { fireReported } from '../data/deviceStoreFailure';
 import {
@@ -173,6 +174,7 @@ function HighlightSettingsPanel({
   });
   const [error, setError] = useState<string>();
   const [saved, setSaved] = useState(false);
+  const submit = useSubmitGuard();
 
   async function save() {
     try {
@@ -228,7 +230,7 @@ function HighlightSettingsPanel({
         {field('declineCriticalStreak', '連続下落 危険(期)')}
         {field('laborShareWarnPct', '労働分配率 警告(%)')}
         {field('singleChannelWarnPct', '単一チャネル依存(%)')}
-        <button type="button" onClick={save}>保存</button>
+        <button type="button" onClick={() => void submit.run(save)} disabled={submit.busy}>保存</button>
       </div>
       {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
       {saved && !error && <div style={{ color: '#22c55e', fontSize: 12, marginTop: 6 }}>保存しました。</div>}
@@ -338,6 +340,7 @@ function HydroponicsPanel({
   });
   const [saved, setSaved] = useState(false);
   const [lowK, setLowK] = useState(base.lowPotassium === true);
+  const submit = useSubmitGuard();
   const [ec, setEc] = useState('');
   const [ph, setPh] = useState('');
 
@@ -478,9 +481,9 @@ function HydroponicsPanel({
                 </span>{' '}
                 <button
                   type="button"
-                  disabled={crops.length <= 1}
+                  disabled={submit.busy || crops.length <= 1}
                   aria-label={`${c.label} を消す`}
-                  onClick={() => fireReported(onRemoveCrop(c))}
+                  onClick={() => fireReported(submit.run(() => onRemoveCrop(c)))}
                   style={{ fontSize: 11 }}
                 >
                   消す
@@ -490,7 +493,7 @@ function HydroponicsPanel({
           </ul>
           {missingBuiltins.length > 0 && (
             <div>
-              <button type="button" onClick={() => fireReported(onRestoreCrops())} style={{ fontSize: 11 }}>
+              <button type="button" onClick={() => fireReported(submit.run(onRestoreCrops))} disabled={submit.busy} style={{ fontSize: 11 }}>
                 参考値の品目を戻す（{missingBuiltins.map((c) => c.label).join('・')}）
               </button>
             </div>
@@ -519,7 +522,7 @@ function HydroponicsPanel({
                 />
               </label>
             ))}
-            <button type="button" onClick={() => fireReported(onAddCrop())}>
+            <button type="button" onClick={() => fireReported(submit.run(onAddCrop))} disabled={submit.busy}>
               この品目を足す
             </button>
           </div>
@@ -548,7 +551,8 @@ function HydroponicsPanel({
         {field('otherFixedYenPerMonth')}
         <button
           type="button"
-          onClick={() => fireReported(saveSetup())}
+          onClick={() => fireReported(submit.run(saveSetup))}
+          disabled={submit.busy}
         >
           保存して経営サマリーへ反映
         </button>
@@ -632,6 +636,7 @@ function Tile({ label, value, sub, accent }: { label: string; value: string; sub
 
 export function OverviewPage() {
   const { plan } = usePlan();
+  const reportCopy = useSubmitGuard();
   const { records: salesRecords } = useCollection<SalesEntry>(SALES_COLLECTION);
   const { records: kpiRecords } = useCollection<KpiActual>(KPI_ACTUALS_COLLECTION);
   const { records: budgetRecords } = useCollection<KpiActual>(KPI_BUDGETS_COLLECTION);
@@ -943,7 +948,7 @@ export function OverviewPage() {
             ))}
           </ul>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 12 }}>
-            <button type="button" onClick={copyReport}>経営レポートをコピー (Markdown)</button>
+            <button type="button" onClick={() => void reportCopy.run(copyReport)} disabled={reportCopy.busy}>経営レポートをコピー (Markdown)</button>
             <button type="button" onClick={downloadReport}>レポートをダウンロード</button>
             {reportCopied && <span style={{ color: '#22c55e', fontSize: 12 }}>コピーしました。</span>}
           </div>

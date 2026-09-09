@@ -3,6 +3,7 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import { orderToSalesEntry } from '../data/shopifyImport';
@@ -25,6 +26,7 @@ function OrderToSalesForm() {
   const [date, setDate] = useState('');
   const [msg, setMsg] = useState<string>();
   const [err, setErr] = useState<string>();
+  const submit = useSubmitGuard();
 
   async function onRecord() {
     setMsg(undefined);
@@ -50,7 +52,7 @@ function OrderToSalesForm() {
         <input value={date} placeholder="YYYY-MM-DD (任意)" onChange={(e) => setDate(e.target.value)} style={{ ...inputStyle, width: 140 }} />
         <input value={name} placeholder="注文名 (#1001)" onChange={(e) => setName(e.target.value)} style={{ ...inputStyle, width: 130 }} />
         <input value={total} placeholder="金額 (¥12,000)" onChange={(e) => setTotal(e.target.value)} style={{ ...inputStyle, width: 130 }} />
-        <button type="button" onClick={onRecord}>売上集計に記録</button>
+        <button type="button" onClick={() => void submit.run(onRecord)} disabled={submit.busy}>売上集計に記録</button>
       </div>
       {msg && <div style={{ color: '#22c55e', fontSize: 12, marginTop: 6 }}>{msg}</div>}
       {err && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{err}</div>}

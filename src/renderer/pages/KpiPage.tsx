@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import { MAX_CSV_IMPORT_BYTES, readImportText } from '../data/importFile';
 import { latestRecord } from '../data/latestRecord';
@@ -13,6 +14,10 @@ import {
   computeKpiMetrics,
   finiteBep,
   noBreakEvenNote,
+  duplicateActualMessage,
+  duplicateActualsNote,
+  findDuplicateActuals,
+  hasSamePeriodUnit,
   type KpiActual,
 } from '../data/kpiActuals';
 import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
@@ -342,6 +347,9 @@ function ActualsPanel() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState<string>();
   const [importMonth, setImportMonth] = useState('');
+  const submit = useSubmitGuard();
+  // 既に在る重複 (同じ期・事業が 2 件以上)。一覧の上で「合算されている」と言う (パス 124)。
+  const duplicateNote = useMemo(() => duplicateActualsNote('実績', findDuplicateActuals(records.map((r) => r.data))), [records]);
 
   // 実績の素の合計。**画面で数え直さない** —— 以前は「実績合計 売上高」の札だけが
   // 別の `reduce` を持っており、同じ量に 2 つの出所が在った (2026-09-07)。
@@ -390,17 +398,25 @@ function ActualsPanel() {
       setError(e instanceof Error ? e.message : String(e));
       return;
     }
-    const { entries, errors } = kpiActualsFromCsv(text);
+    // 既に在る (期間, 事業) とファイル内の重複行はスキップ (パス 124)。
+    const { entries, errors, duplicates } = kpiActualsFromCsv(text, records.map((r) => r.data));
     // Atomic: all valid rows commit together or none (no partial import).
     if (entries.length > 0) await addMany(entries);
     setError(
-      errors.length > 0 ? `${entries.length} 件取り込み / ${errors.length} 件スキップ (行 ${errors.map((x) => x.row).join(', ')})` : undefined,
+      errors.length > 0
+        ? `${entries.length} 件取り込み / ${errors.length} 件スキップ (行 ${errors.map((x) => x.row).join(', ')})${duplicates > 0 ? `。うち ${duplicates} 件は同じ期・事業が既に在る重複行` : ''}`
+        : undefined,
     );
   }
 
   async function onAdd() {
     try {
       const parsed = parseKpiActual(form);
+      // 同じ (期間, 事業) は 1 件 —— 2 件目を入れると合算される (パス 124)。訂正は × で消してから。
+      if (hasSamePeriodUnit(records.map((r) => r.data), parsed)) {
+        setError(duplicateActualMessage('実績', parsed));
+        return;
+      }
       setError(undefined);
       await add(parsed);
       setForm(EMPTY_FORM);
@@ -455,7 +471,7 @@ function ActualsPanel() {
         {field('sga', '販管費')}
         {field('depreciation', '減価償却費')}
         {field('laborCost', '人件費(任意)')}
-        <button type="button" onClick={onAdd}>追加</button>
+        <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy}>追加</button>
       </div>
       <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 8 }}>
         <button type="button" onClick={onExportCsv} disabled={records.length === 0}>CSV エクスポート</button>
@@ -478,6 +494,11 @@ function ActualsPanel() {
       </div>
       {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
 
+      {duplicateNote !== null && (
+        <p role="alert" style={{ color: '#f59e0b', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+          {duplicateNote}
+        </p>
+      )}
       {records.length > 0 ? (
         <>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
@@ -507,7 +528,7 @@ function ActualsPanel() {
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.data.revenue)}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(m.operatingProfit)}</td>
                     <td style={{ padding: '4px 8px' }}>
-                      <button type="button" onClick={() => remove(r.id)} aria-label="削除">×</button>
+                      <button type="button" onClick={() => { setError(undefined); return remove(r.id); }} aria-label="削除">×</button>
                     </td>
                   </tr>
                 );
@@ -538,10 +559,17 @@ function BudgetPanel() {
   );
   // 「突合できなかった期」の断り書きは **1 回だけ**呼ぶ (関門と表示で同じ値を見る)。
   const unmatchedNote = variance === null ? null : budgetUnmatchedNote(variance.alignment);
+  const submit = useSubmitGuard();
+  const duplicateNote = useMemo(() => duplicateActualsNote('予算', findDuplicateActuals(budgets.map((r) => r.data))), [budgets]);
 
   async function onAdd() {
     try {
       const parsed = parseKpiActual(form);
+      // 同じ (期間, 事業) は 1 件 —— 2 件目を入れると合算される (パス 124)。訂正は × で消してから。
+      if (hasSamePeriodUnit(budgets.map((r) => r.data), parsed)) {
+        setError(duplicateActualMessage('予算', parsed));
+        return;
+      }
       setError(undefined);
       await add(parsed);
       setForm(EMPTY_FORM);
@@ -577,7 +605,7 @@ function BudgetPanel() {
         {field('advertising', '広告費')}
         {field('sga', '販管費')}
         {field('depreciation', '減価償却費')}
-        <button type="button" onClick={onAdd}>予算を追加</button>
+        <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy}>予算を追加</button>
       </div>
       {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
 
@@ -605,6 +633,11 @@ function BudgetPanel() {
         </>
       )}
 
+      {duplicateNote !== null && (
+        <p role="alert" style={{ color: '#f59e0b', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+          {duplicateNote}
+        </p>
+      )}
       {budgets.length > 0 ? (
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
           <thead>
@@ -622,7 +655,7 @@ function BudgetPanel() {
                 <td style={{ padding: '4px 8px' }}>{r.data.unit}</td>
                 <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.data.revenue)}</td>
                 <td style={{ padding: '4px 8px' }}>
-                  <button type="button" onClick={() => remove(r.id)} aria-label="削除">×</button>
+                  <button type="button" onClick={() => { setError(undefined); return remove(r.id); }} aria-label="削除">×</button>
                 </td>
               </tr>
             ))}
@@ -649,6 +682,7 @@ function BalanceSheetPanel() {
   // 最新の 1 レコードを採用 (BS は時点情報)。createdAt で選ぶ — list は新しい順なので
   // 末尾は最古 (`latestRecord` の説明を参照)。
   const latest = latestRecord(records) ?? undefined;
+  const submit = useSubmitGuard();
   // 欄の無い控えも 0 と読んでから集計する (NaN のタイルを出さない)。
   const metrics = useMemo(
     () => (latest ? computeBalanceSheetMetrics(normalizeBalanceSheet(latest.data)) : undefined),
@@ -700,7 +734,7 @@ function BalanceSheetPanel() {
         {field('accountsPayable', '仕入債務')}
         {field('fixedLiabilities', '固定負債')}
         {field('netIncome', '当期純利益')}
-        <button type="button" onClick={onAdd}>BS を保存</button>
+        <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy}>BS を保存</button>
       </div>
       {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
 

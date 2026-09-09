@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { Section } from '../components/StatusBar';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import { MAX_CSV_IMPORT_BYTES, readImportText } from '../data/importFile';
 import { localIsoDate } from '../../shared/localDate';
@@ -70,6 +71,7 @@ export function SalesPage() {
   const { records, add, addMany, remove } = useCollection<SalesEntry>(SALES_COLLECTION);
   const [form, setForm] = useState(EMPTY);
   const [error, setError] = useState<string>();
+  const submit = useSubmitGuard();
   const [notice, setNotice] = useState<string>();
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -178,7 +180,7 @@ export function SalesPage() {
             onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))}
             style={{ ...inputStyle, width: 140 }}
           />
-          <button type="button" onClick={onAdd}>追加</button>
+          <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy}>追加</button>
         </div>
         <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 8 }}>
           <button type="button" onClick={onExport} disabled={entries.length === 0}>

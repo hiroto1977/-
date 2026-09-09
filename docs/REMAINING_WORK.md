@@ -18389,6 +18389,84 @@ uber-eats / demae-can の advise は画面が無く (`VoiceCommandBar` と `Busi
 - 下書き (`servicehub.teamradar.draft.v1`) は snapshot より優先して復元される。読めなかった保存と下書きが両方在るとき、
   画面のメンバーは下書き、注記は保存先について言う (別の物を指している)。
 
+## パス 124 (2026-09-09) — **同じ期・事業の KPI 実績が合算され、記録を保存する画面の押しただけの操作 (12 ファイル・23 か所) に押している間の関門が無かった**
+
+### 何が起きていたか
+
+2 つの欠陥が同じ数字 (売上高) に届いていた。
+
+**1. 同じ (期間, 事業) の実績が合算される。** KPI 実績 (と予算) は (期間, 事業) が 1 件の単位だが、
+画面は同じ組の追加を断らず、`summarizeFundamentals` / `groupRevenueByPeriod` / `monthlyTrendSeries` は
+**期の中の全件を足す**。実績の一覧には「編集」が無く (× だけ)、訂正は入れ直しである —— だから
+2026-04 の売上を 100 万円から 120 万円に訂正した利用者は、**220 万円**を次の面に見る:
+
+| 面 | 何を刷るか |
+| --- | --- |
+| KPI の画面 | 実績合計 売上高・損益分岐点・安全余裕率 (全件の合計) |
+| 経営サマリー / 経営スコアカード / 着地見込み | `buildBusinessOverview` の `kpi.revenue` = `summarizeFundamentals(kpiActuals)` |
+| 金融機関等提出用の書面 §1 | 「売上高 … KPI 実績の合計」 —— **相手に渡る面** |
+| 経営レポート | 同じ `overview.kpi` |
+
+CSV の取り込みも同じファイルを 2 度読めば 2 倍になった (`addMany` は既存と照合しない)。
+
+**2. 押している間の守りが無い。** 保存の入口 (`useCollection.add` → `RecordStore.insert`) は暗号化と
+IndexedDB のトランザクションを await する。その間にもう 1 度押す (ダブルクリック) と、**同じ入力から
+2 件**が保存される —— `insert` は毎回新しい id を振り、フォームは `await add()` の後でしか空にならない。
+実測 (2026-09-09・走査は実装から): record store に触る **12 ファイル**で、同じファイルの async の handler を
+`onClick` から呼ぶ所は **23 か所** —— KPI 実績・予算・貸借対照表 (3)、保有銘柄、物件、販売記録、メンバーの招待と
+削除 (2)、経営サマリーのしきい値・品目の追加/削除/戻す・設備の保存・レポートのコピー (6)、事業と数値の追加・
+計算値の置き換え (3)、士業の連絡先と相談 (2)、Shopify の記録、バックアップ、点検パネルの走査と削除 (2)。押している
+間の関門を持っていたのは点検パネル (`RecordShapeAuditPanel` の `busy`) の 2 か所だけ。書面の提出者情報の保存は親の
+collection へ書くので規則の外だが、同じ形なので同じ関門を通した (+1)。
+
+2 つは重なる —— KPI 実績の追加ボタンのダブルクリックは、(1) を利用者の指 1 本で作る。
+
+### 直し
+
+- `data/kpiActuals.ts`: `actualKey` / `hasSamePeriodUnit` / `findDuplicateActuals` / `duplicateActualMessage` /
+  `duplicateActualsNote` / `duplicateActualsSheetNote`。KPI の画面は同じ (期間, 事業) を**断り** (訂正は × で
+  消してから、と言う)、既に重複が在れば一覧の上で「合算されています」と警告する (実績・予算とも)。
+  CSV の取り込みは既存・ファイル内の重複行をスキップして件数に数える。
+- `data/overview.ts`: `kpi.duplicateActuals` (census)。書面 §1 の但し書きと経営レポートが「本表の金額は
+  その合算値です」と述べる (同じ数字を刷る面が 2 つあるなら断り書きも 2 つ —— パス 50)。
+- `hooks/useSubmitGuard.ts`: `run()` は前の実行が終わるまで 2 度目を落とし (戻り値 false)、`busy` を
+  ボタンの `disabled` へ。task の拒否は握り潰さない。**規則の内 21 か所 + 提出者情報 1 か所 = 22 か所に配線**
+  (残る 2 か所は独自の `busy` を持つ `RecordShapeAuditPanel` —— 台帳に理由つき)。同じファイルの削除やコピーも同じ関門を通す (安い・押している間は
+  押せない見た目が揃う)。
+- `renderer/__tests__/submitGuardCensus.test.ts`: 母集団を**実装から**数える —— pages / components の
+  `.tsx` のうち record store に触るファイル (`useCollection` / `getRecordStore`) で、同じファイルの async の
+  handler を `onClick` から呼ぶ所は `.run(` を通る (12 ファイル・23 か所・関門 21)。独自の busy を持つ 1 ファイルは
+  台帳に理由つき (空の理由は認めない・古い項目は落ちる・record store に触らなくなったら外す)。走査が空振りして
+  いないことは下限 (ファイル 10・関門 15) と標本 (投信の追加・KPI の追加 ×3) で留める。
+- KPI の一覧の × で消すと、直前の「既に入力されています」の断りも消える (空の一覧の隣に古い断りを残さない)。
+- 検査: `kpiActuals.test.ts` (鍵・重複・文面)、`kpiActualsCsv.test.ts` (取り込みのスキップ)、`overview.test.ts` /
+  `bankSubmission.test.ts` / `managementReport.test.ts` (census と但し書き)、`useSubmitGuard.test.ts`、
+  画面 (`kpiDuplicateActuals.test.ts`: 断り・警告・別事業の対照 / `mutualFundsDoubleSubmit.test.ts`: 同じ tick の
+  2 度押しで 1 件)、e2e `desktop` (KPI の重複を断る・保有銘柄のダブルクリックで 1 行)。
+
+### 対照
+
+| # | 何を壊したか | 鳴ったか |
+| --- | --- | --- |
+| A | `hasSamePeriodUnit` を常に false に (元の判断: 同じ組を断らない) | 🔔 `kpiActuals.test.ts` の ★ (同じ組で true) と `kpiDuplicateActuals.test.ts` の ★ (同じ組の追加を断り・訂正の案内) の 2 本だけが落ちる (2 failed / 90 passed)。対照「別の事業なら同じ期でも通る」と「重複が無ければ警告は出ない」は通ったまま = 落ちる場所が**足した検査そのもの** |
+| B | `useSubmitGuard.run` の関門を外す (元の判断: 2 度目も走る) | 🔔 `useSubmitGuard.test.ts` の ★ (task は 1 度) と `mutualFundsDoubleSubmit.test.ts` の ★ (同じ tick の 2 度押しで 1 件 —— 実際は 2 件) の 2 本だけが落ちる (2 failed / 3 passed)。対照「間を置けば 2 件」「終われば次は走る」「投げても開き直る」は通ったまま。**最初の版の ★ は 2 度目の await を先に置いていて、関門が無いと task (release 待ち) を待って 30 秒の timeout で落ち、宙に浮いた act が同ファイルの対照 2 本を巻き添えにした** —— 件数を先に見る形に直してから測り直した (落ちる理由が「timeout」では対照にならない) |
+| C | (e2e) パス 123 の版に当てる | 🔔 新しい driver で `SERVICE_HUB_E2E_ONLY=desktop` を `standalone-pass123.html` に当てると、既存の検査 (パス 122・123 の ★ を含む) は通ったまま `funds: ★ 追加ボタンのダブルクリックでも銘柄は 1 件` が ❌ (実際 2 件)、`KPI: ★ 追加ボタンのダブルクリックでも実績は 1 件` が ❌ (実際 2 件)、続く「既に入力されています」の待ちが 15 秒で切れる (TimeoutError · `controlC exit=1`)。落ちる場所が**足した検査そのもの** = 古い版はダブルクリックで 2 件保存し、同じ組の 2 件目を黙って通していた |
+
+### 残る物
+
+- 実績の「編集」は無いまま (訂正は × → 入れ直し)。断りの文がその道を言うので、編集の口を足すのは別パス。
+- 同じ期に**別の事業**が並ぶのは正当 (全社 + 事業別を混ぜて入れると全社が 2 重に数えられる —— 事業の
+  粒度が揃っているかは利用者の判断で、機械は (期間, 事業) の完全一致しか見ない)。
+- 走査は同じファイルで宣言された async の handler だけを見る —— 親から渡された `onRemove` のような prop や、
+  `useCollection` の `remove` を直に呼ぶ `onClick` は数えない (2 度目は no-op)。
+- **外へ書く入口は今回の規則の外。** GitHub の issue・Slack・Gmail・DNS・予定の `create` / `send` の類は record
+  store に触らないので数えていない。実測 (2026-09-09・`store` を外した走査): 規則の外は **71 か所**で、うち 50 は
+  ボタンに `disabled=` を持ち (大半は busy / loading)、**21 は持たない** —— チャットボットの送信 ×2 (2 度目は AI
+  への 2 通目)・設定画面の OAuth 開始と保存先の選択・ライブラリの削除 ×4・書き出しの開く/コピー ×3 など。二重送信が
+  **相手に 2 通届く**形が混じるので、同じ関門を通す次のパスの候補。
+- CSV の取り込みは重複行を**スキップ**する (置き換えない)。訂正の道は画面の実績と同じ (× で消してから)。
+- 0 倒しの母集団 (`lint:zero-fold`) は **280 のまま** —— 足した `duplicates += 1` / `count: g.count + 1` / `.filter(...).length` は規則 (`? … : 0` / `?? 0` / `|| 0`) の外。
+
 ## パス 123 (2026-09-09) — **投資信託の取得額は、空欄を「評価額と同額 (損益 0)」とみなして評価損益率を薄めていた**
 
 ### 何が起きていたか

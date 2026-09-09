@@ -4,6 +4,7 @@ import { Section, StatusBar } from './StatusBar';
 import { Stat } from './Stat';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from './tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import { fireReported } from '../data/deviceStoreFailure';
 import type { ServiceId } from '../../shared/serviceId';
@@ -94,6 +95,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
   const [editingContactId, setEditingContactId] = useState<string | null>(null);
   const [consultForm, setConsultForm] = useState(EMPTY_CONSULTATION_FORM);
   const [consultError, setConsultError] = useState<string>();
+  const submit = useSubmitGuard();
 
   /** デモ (snapshot) 行 + ユーザー行の結合。 */
   const contacts = useMemo(
@@ -361,7 +363,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
               />
             </label>
           ))}
-          <button type="button" onClick={onSaveContact}>
+          <button type="button" onClick={() => void submit.run(onSaveContact)} disabled={submit.busy}>
             {editingContactId !== null ? '保存' : `＋ ${label}を追加`}
           </button>
           {editingContactId !== null && (
@@ -465,7 +467,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
               {CONSULTATION_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
           </label>
-          <button type="button" onClick={onAddConsultation}>＋ 相談を記録</button>
+          <button type="button" onClick={() => void submit.run(onAddConsultation)} disabled={submit.busy}>＋ 相談を記録</button>
         </div>
         {consultError && <div style={{ color: '#f87171', fontSize: 12, marginBottom: 8 }}>{consultError}</div>}
         {recentConsultations.length === 0 ? (

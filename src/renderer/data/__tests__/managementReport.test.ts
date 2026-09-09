@@ -252,6 +252,8 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
       // 実績の窓 (対象期間) —— 実物の `kpi` は必ず持つ。
       periods: ['2026-04', '2026-05'],
       periodWindow: { from: '2026-04', to: '2026-05', months: 2 },
+      // 同じ期・事業の重複 (パス 124) —— 実物の `kpi` は必ず持つ (空 = 重複なし)。
+      duplicateActuals: [],
       ...p.kpi,
     },
     financialPosition: 'fp' in p ? p.fp : null,
@@ -554,5 +556,17 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
     expect(md).toContain('| 2026-03 | ¥1,000,000 | ¥100,000 | 10.0% | — |');
     expect(md).toContain('| 2026-04 | ¥900,000 | ¥50,000 | 5.5% | -10% |');
     expect(md).toContain('| 2026-05 | ¥900,000 | ¥50,000 | 5.5% | 0% |');
+  });
+});
+
+describe('同じ期・事業の重複 (パス 124)', () => {
+  it('★ 重複が在れば損益の節に「本表の金額はその合算値です」の但し書きが入る (書面 §1 と同じ文)', () => {
+    const md = report({ kpiActuals: [kpi, kpi] });
+    expect(md).toContain('- KPI 実績に同じ期・事業の重複が 1 組あり（2026-05 全社 ×2）、本表の金額はその合算値です。');
+  });
+
+  it('対照: 重複が無ければ入らない', () => {
+    expect(report()).not.toContain('合算値');
+    expect(report({ kpiActuals: [kpi, kpi] })).toContain('合算値');
   });
 });

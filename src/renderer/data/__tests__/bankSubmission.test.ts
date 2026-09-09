@@ -1318,3 +1318,21 @@ describe('§2 平均受注単価 — 割れないものを 0 円として刷ら�
     expect(value(s2, '主力チャネル')).not.toBe(BLANK);
   });
 });
+
+describe('§1 の但し書き — 同じ期・事業の重複は「合算値」と述べる (パス 124)', () => {
+  it('★ 重複が在れば、対象期間の断りに続けて「本表の金額はその合算値です」と言い、金額は合算のまま', () => {
+    const m = buildBankSubmissionSheet(inputWith(overviewWith({ kpiActuals: [...KPI, ...KPI] })));
+    const s = section(m.sections, '1.');
+    expect(s.caption).toContain('上の金額は令和8年4月');
+    expect(s.caption).toContain('KPI 実績に同じ期・事業の重複が 1 組あり（2026-04 全社 ×2）、本表の金額はその合算値です。');
+    // 24,691,356 円 → 千円 (千円未満切捨て)
+    expect(value(s, '売上高')).toContain('24,691');
+  });
+
+  it('対照: 重複が無ければ但し書きに「合算値」は無い (上の検査が同じ文へ当たる標本)', () => {
+    const m = buildBankSubmissionSheet(inputWith(overviewWith()));
+    const s = section(m.sections, '1.');
+    expect(s.caption ?? '').not.toContain('合算値');
+    expect(value(s, '売上高')).toContain('12,345');
+  });
+});
