@@ -73,6 +73,20 @@ function openDb(): Promise<IDBDatabase> {
   });
 }
 
+/**
+ * この保管層の DB を丸ごと消す (ハードリセット · 2026-09-09 · パス 136)。`vault.wipeAndReset` と同じ約束 ——
+ * **必ず解決し、何が起きたかを返す**。他のタブが接続を掴んでいれば `blocked` (消えていない)。
+ * 画面は保管庫の内部を触らない (`lint:forbidden`) ので、消すのもここ。呼ぶのは `security/eraseAll.ts`。
+ */
+export function deleteLibraryDatabase(): Promise<'deleted' | 'blocked' | 'failed'> {
+  return new Promise((resolve) => {
+    const req = indexedDB.deleteDatabase(DB_NAME);
+    req.onsuccess = () => resolve('deleted');
+    req.onerror = () => resolve('failed');
+    req.onblocked = () => resolve('blocked');
+  });
+}
+
 // 取引の失敗・中断は fake-indexeddb では決定的に起こせない。配線がある
 // ことに意味があり、中身 (どの Error か) では呼び出し側が分岐しない。
 // Stryker disable ArrowFunction,LogicalOperator,StringLiteral,BlockStatement: IDB の失敗イベントは決定的に起こせない

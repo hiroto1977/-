@@ -2836,6 +2836,85 @@ async function parameterSuite(browser) {
   await ctx.close();
 }
 
+/** ハードリセットは保管庫だけでなく全媒体を消す (2026-09-09 · パス 136)。前の人の事業が、次の人には見えない。 */
+async function hardResetSuite(browser) {
+  console.log('--- ハードリセットは保管庫だけでなく全媒体を消す (パス 136) ---');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  await page.goto(FILE + '#overview', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  // 前の人の状態: 料金プラン (手入力欄の前提)・隣人の鍵 (別のアプリの物 —— file:// は生成元を共有しうる)・
+  // 気分の記録・会話履歴 (localStorage)・PKCE の種 (sessionStorage)。addInitScript は再読込のたびに
+  // 書き直すので使わない (消えたかどうかを見る検査が空になる)。
+  await page.evaluate(() => {
+    localStorage.setItem('servicehub.plan', 'enterprise');
+    localStorage.setItem('other-app.keep', '1');
+    localStorage.setItem('emotions.store', JSON.stringify({ v: 1, entries: [{ date: '2026-09-09', score: 2, note: 'e2e-secret-note' }] }));
+    localStorage.setItem('chatbot-history', JSON.stringify([{ role: 'user', content: 'e2e-secret-chat' }]));
+    sessionStorage.setItem('pkce.verifier', 'e2e-secret-verifier');
+  });
+  // 前の人の業務レコード (IndexedDB business-hub-data): 事業を 1 件、画面から足す
+  await gotoService(page, '#overview', '[data-manual-data]');
+  await page.click('[data-manual-data] > button');
+  await page.waitForSelector('[data-business-units]', { timeout: 30000 });
+  await page.fill('input[aria-label="事業名"]', '前の人の事業');
+  await page.fill('input[aria-label="開始時期"]', '2024-04');
+  await page.click('button:has-text("事業を追加")');
+  await page.waitForSelector('[data-business-unit]', { timeout: 30000 });
+  ok((await page.locator('[data-business-unit]').count()) === 1, 'hardReset: 前の人の事業が 1 件保存されている (消す前)');
+
+  // ── ハードリセット ──
+  await gotoService(page, '#settings', 'text=すべてのデータを削除');
+  const explain = await page.locator('body').innerText();
+  ok(
+    explain.includes('業務レコード') && explain.includes('消えない物'),
+    'hardReset: ★ 説明が消す物 (業務レコード …) と消えない物を言う',
+  );
+  await page.getByRole('button', { name: 'すべてのデータを削除…' }).click();
+  await page.locator('input[placeholder="DELETE"]').fill('DELETE');
+  await page.getByRole('button', { name: '確定して削除' }).click();
+  const firstTime = await page
+    .waitForSelector('text=はじめてのご利用', { timeout: 30000 })
+    .then(() => true)
+    .catch(() => false);
+  ok(firstTime, 'hardReset: 実行後は最初のセットアップ画面 (保管庫が消えた)');
+  const left = await page.evaluate(() => ({
+    emotions: localStorage.getItem('emotions.store'),
+    chat: localStorage.getItem('chatbot-history'),
+    plan: localStorage.getItem('servicehub.plan'),
+    verifier: sessionStorage.getItem('pkce.verifier'),
+    neighbour: localStorage.getItem('other-app.keep'),
+  }));
+  ok(
+    left.emotions === null && left.chat === null && left.verifier === null,
+    `hardReset: ★ 気分の記録・会話履歴・PKCE の種が消えた (実際 ${JSON.stringify(left)})`,
+  );
+  ok(left.plan === null, 'hardReset: ★ 料金プランの選択 (servicehub.plan) も消えた');
+  ok(left.neighbour === '1', 'hardReset: ★ 隣人の鍵 (other-app.keep) は消さない');
+  if (!firstTime) {
+    ok(false, 'hardReset: 最初のセットアップ画面が出ないので、次の人の検査は行えない');
+    await ctx.close();
+    return;
+  }
+
+  // ── 次の人: 新しい保管庫を作っても、前の人の事業は見えない ──
+  await setupVault(page);
+  await page.evaluate(() => localStorage.setItem('servicehub.plan', 'enterprise'));
+  await gotoService(page, '#overview', '[data-manual-data]');
+  await page.click('[data-manual-data] > button');
+  await page.waitForSelector('[data-business-units]', { timeout: 30000 });
+  const units = await page.locator('[data-business-unit]').count();
+  const afterText = await page.locator('body').innerText();
+  ok(
+    units === 0 && !afterText.includes('前の人の事業'),
+    `hardReset: ★ 次の人には前の人の事業が見えない (事業 ${units} 件)`,
+  );
+  ok(errs.length === 0, `hardReset: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
 (async () => {
   console.log(`E2E 対象: ${targetAbs} (${(fs.statSync(targetAbs).size / 1048576).toFixed(2)} MB)`);
   const browser = await pw.chromium.launch({
@@ -2850,7 +2929,7 @@ async function parameterSuite(browser) {
   // 1 つも走らないまま「ALL E2E CHECKS PASSED」が出た —— 空振りを合格と読む穴。
   const SUITES = [
     'desktop', 'manualData', 'dataOrigin', 'credential', 'businessComparison', 'kessanTax', 'frameGuard', 'noBeacon',
-    'vaultPassword', 'credentialEgress', 'proxyEnvelope', 'cspEnforced', 'vaultOpacity', 'crossTabLock', 'storageDurability',
+    'vaultPassword', 'credentialEgress', 'proxyEnvelope', 'cspEnforced', 'vaultOpacity', 'crossTabLock', 'storageDurability', 'hardReset',
     'securityPosture', 'thirdPartyDisclosure', 'realtime', 'phone', 'talent', 'teamRadar', 'serviceAdvice', 'parameters', 'tablet',
   ];
   const unknown = only.filter((n) => !SUITES.includes(n));
@@ -2879,6 +2958,7 @@ async function parameterSuite(browser) {
   if (run('vaultOpacity')) await vaultOpacitySuite(browser);
   if (run('crossTabLock')) await crossTabLockSuite(browser);
   if (run('storageDurability')) await storageDurabilitySuite(browser);
+  if (run('hardReset')) await hardResetSuite(browser);
   if (run('securityPosture')) await securityPostureSuite(browser);
   if (run('thirdPartyDisclosure')) await thirdPartyDisclosureSuite(browser);
   if (run('realtime')) await realtimeSuite(browser);

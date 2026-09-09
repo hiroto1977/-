@@ -18389,6 +18389,69 @@ uber-eats / demae-can の advise は画面が無く (`VoiceCommandBar` と `Busi
 - 下書き (`servicehub.teamradar.draft.v1`) は snapshot より優先して復元される。読めなかった保存と下書きが両方在るとき、
   画面のメンバーは下書き、注記は保存先について言う (別の物を指している)。
 
+## パス 136 (2026-09-09) — **「⚠ すべてのデータを削除 (ハードリセット)」が消していたのは保管庫 (`business-hub-vault`) だけ —— 業務レコード・ライブラリ・プロキシ設定 (共有秘密)・localStorage 21 鍵 (気分の記録・会話履歴 …)・sessionStorage・キャッシュは残り、「最初のセットアップ画面」が出るので次の人が前の人の記録を見る**
+
+### 何が起きていたか
+
+設定画面の節は見出しも押しボタンも「すべてのデータを削除」と言い、実行後は「最初のセットアップ画面に戻ります」と
+書いてある。ところが `wipeEverything` が呼ぶのは `getVault().wipeAndReset()` —— IndexedDB `business-hub-vault` の削除 ——
+だけだった (パス 20 は「消えた時だけ再読込する」を直したが、**何を消すか**は誰も見ていなかった)。台帳
+(`lint:storage` の `STORES`、30 行) のうち消えるのは 1 行。残る 29 行には、業務レコード (`business-hub-data`・
+売上・KPI・CRM・貸借対照表・提出者情報。record cipher は未配線なので**平文**)、ライブラリの書類 (blob・平文)、
+プロキシ設定 (**共有秘密**を含む) と保存先フォルダの許可、localStorage 21 鍵 (気分の記録・人材育成・チームレーダー・
+アシスタントとチャットの会話履歴・書類スタジオと Team Radar の下書き …)、sessionStorage の PKCE `code_verifier`、
+Cache Storage のアプリシェルが含まれる。端末を手放す・共用の PC で使い終える人が押す操作なので、保管庫だけ新しく
+なって「はじめてのご利用」が出る形は、**次に使う人へ前の人の記録を渡す** (レコードは平文のまま同じ生成元に在り、
+新しい保管庫で開けば見える)。USER_GUIDE も「最初からやり直す」と書いていた。
+
+### 直し
+
+- `src/renderer/security/eraseAll.ts` (新規): 消す物の在庫 (IndexedDB 4 / Cache Storage 1 / localStorage 21 / sessionStorage 4
+  —— 台帳と同じ 1 組) と手順 `eraseEverything` (媒体ごとに `deleted` / `blocked` / `failed` / `unavailable` を返し、
+  Web Storage は消した後に読み直す。保管庫は最後)、報告 `describeEraseReport` (残った物を名指しし、原因ごとに打ち手)、
+  説明 `eraseScopeSummary` (数は在庫の長さから)。
+- IndexedDB は**各保管層が自分の DB を消す**: `store.deleteRecordDatabase` / `library.deleteLibraryDatabase` /
+  `fsa.deletePreferencesDatabase` (`vault.wipeAndReset` と同じ約束: 必ず解決し結果を返す)。画面もこの本も保管庫の内部を
+  触らない (`lint:forbidden` の台帳 27→28 / 11→12 / 7→8)。`fsa.ts` は保護対象なので整合性チェーン #167。
+- `SettingsPage.tsx`: `wipeEverything` は `eraseEverything` を呼び、**全部消えた時だけ**再読込 (パス 20 の規則を全媒体へ)。
+  説明は在庫から刷り (消えない物 —— 保存先フォルダの控え・ダウンロードした物・ブラウザの履歴 —— も言う)、確認の文も
+  業務レコード・ライブラリ・設定と記録を言う。
+- `lint:storage` **規則 11**: 台帳の全行が在庫に名前で在り (消えない物が在るのに「すべて」と言わない)、在庫に台帳の外の名前が無く
+  (消したはずの保存先)、媒体ごとに一覧が在る (cookie / OPFS の行が現れたら一覧も要る)。self-test 6 例 + 実物の ablation 2 本
+  (`emotions.store` を外すと 1 件鳴る / sessionStorage の扉 `pkceSessionKeys()` を空にすると 4 鍵が鳴る)。
+- 検査: `security/__tests__/eraseAll.test.ts` (実物の媒体で全部消える ★ / 隣人の鍵は残る ★ / 他のタブが掴んで blocked ★ ×3 DB /
+  SecurityError ★ / 黙って何もしない removeItem ★ / 無い媒体は失敗ではない / 消し方の無い在庫は failed ★ / 保管庫は最後 /
+  各保管層の onerror / 在庫 == 台帳 ★ / 説明文)、`settingsHardReset.test.ts` (媒体ごとの結果で画面: 業務レコードが残れば
+  再読込しない ★・説明は在庫を刷る ★)、e2e `hardReset` (実 chromium: 前の人の事業と localStorage / sessionStorage の種を
+  蒔く → ハードリセット → 「はじめてのご利用」・種が消え隣人の鍵は残る ★ → 次の人が保管庫を作っても前の人の事業が見えない ★)。
+- `stryker.config.json` 278 → 279 (`eraseAll.ts`)。`docs/DATA_PROTECTION.md`: 在庫の節に「ハードリセットが消す範囲」と実装済み 17。
+  `docs/USER_GUIDE.md` の手順と範囲。`CLAUDE.md` の `lint:storage` の説明。
+
+### 対照
+
+| # | 何を壊したか | 鳴ったか |
+| --- | --- | --- |
+| A | 在庫から `emotions.store` を外す (元の判断: 消す物を手で選ぶ) | 🔔 `lint:storage` 規則 11「ハードリセットが消さない保存先: emotions.store (気分の記録)」で落ち、`eraseAll.test.ts` も 1 / 15 (★ 在庫 == 台帳) |
+| A2 | 手順が localStorage を消さない (在庫は正しいまま) | 🔔 1 / 15 (`eraseAll.test.ts`): ★ 実物の媒体で localStorage の鍵が残る —— 在庫が正しくても手順が消さなければ鳴る |
+| A3 | 報告が blocked を「消えた」と数える (パス 20 の逆戻り) | 🔔 4 / 15 (`eraseAll.test.ts`): ★ blocked ×3 と消し方の無い在庫が「消えた」になる —— 報告が嘘をつけば鳴る |
+| B | (e2e) パス 135 の版に当てる | 🔔 e2e `hardReset` をパス 135 の版に当てると 4 件落ちる: hardReset: ★ 料金プランの選択 / hardReset: ★ 次の人には前の人の事業が見えない / hardReset: ★ 気分の記録・会話履歴・PKCE の種が消えた / hardReset: ★ 説明が消す物 |
+
+### 残る物
+
+- デスクトップ版 (Electron) に「すべて消す」は無い —— `secrets.json`・状態ファイル・renderer の IndexedDB / localStorage は
+  OS のユーザー領域に残る。端末を手放す時の手順は USER_GUIDE が「アプリのデータフォルダを消す」と言うべきで、次の候補。
+- IndexedDB の `deleted` は `onsuccess` を信じている (Web Storage のように読み直していない)。`indexedDB.databases()` での
+  後追い確認は 2026-09-07 に「届かない」として消した経緯があるので足していない。
+- Service Worker 自体は登録解除しない (キャッシュだけ消す)。アプリの code であって利用者のデータではない。
+- 隣人の鍵 (別のアプリが同じ生成元に置いた物) は消さない設計なので、**在庫に無い鍵は残る** —— 規則 11 が在庫を台帳に
+  縛るのはそのため。
+- (全件実行で 2 本落ちて直した) sessionStorage の在庫は `pkce.*` を**写していた** —— `pkceSession.test.ts` の census
+  (「鍵を知っているのは pkceSession.ts だけ」) が鳴った。扉 `pkceSessionKeys()` から読む形にし、規則 11 はその形を
+  `INDIRECT_SITES` の登録から解く。もう 1 本は消し方 (`deleteRecordDatabase` ほか) を **import 時に束縛**していたので、
+  保管層を部分的に差し替える 21 本の検査が読み込みで落ちた —— 呼ぶ時に解く形に。**単独で通る検査群は、全件の中で
+  初めて隣の検査と出会う。**
+- 0 倒しの母集団 (`lint:zero-fold`) は生成ブロックのまま (再生成の差分出力は「前回と同じ」—— 足した物に `? … : 0` / `?? 0` / `|| 0` の形は無い)。
+
 ## パス 135 (2026-09-09) — **「保存時の保護状態」の節がトークンのことしか言わず、同じ日に封緘した (あるいは難読化のみ・平文のままの) 気分の記録・人材育成・チームレーダーの状態には触れていなかった**
 
 ### 何が起きていたか

@@ -11,7 +11,8 @@ import { PARAMETERS } from '../../shared/parameters';
 import { usePlan } from '../plan/usePlan';
 import { getPlan } from '../../shared/plan';
 import { issueInviteCode } from '../plan/internalLicense';
-import { describeWipeOutcome, getVault, MIN_PASSWORD_LENGTH } from '../security/vault';
+import { getVault, MIN_PASSWORD_LENGTH } from '../security/vault';
+import { describeEraseReport, eraseEverything, eraseScopeSummary } from '../security/eraseAll';
 import { announceLockToOtherTabs, lockEverywhere } from '../security/lockWorkspace';
 import { credentialUseOf, unusedStoredCredentials } from '../../shared/credentialUse';
 import { EVICTION_RECOVERY, isEvictableStorage } from '../../shared/storageDurability';
@@ -413,8 +414,8 @@ export function VaultControls() {
     setWipeStage('wiping');
     try {
       announceLockToOtherTabs();
-      const outcome = await getVault().wipeAndReset();
-      const problem = describeWipeOutcome(outcome);
+      // パス 136: 保管庫だけでなく、台帳 (lint:storage) の全行を消す。全部消えた時だけ再読込 (パス 20 の規則を全媒体へ)。
+      const problem = describeEraseReport(await eraseEverything());
       if (problem !== null) {
         setWipeErr(problem);
         setWipeStage('confirm1');
@@ -486,8 +487,8 @@ export function VaultControls() {
           ⚠ すべてのデータを削除 (ハードリセット)
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 10, lineHeight: 1.5 }}>
-          マスターパスワードもリカバリーキーも紛失した場合の最終手段です。
-          保管中の全トークン・暗号化メタデータ・現在のリカバリーキーが <strong>復旧不可</strong> な形で消去されます。
+          マスターパスワードもリカバリーキーも紛失した場合の最終手段、または端末を手放す・共用の PC で使い終えるときの消去です。
+          {eraseScopeSummary()} どれも <strong>復旧不可</strong> です。
           実行後はページが再読込みされ、最初のセットアップ画面に戻ります。
         </div>
         {wipeStage === 'idle' && (
@@ -522,7 +523,7 @@ export function VaultControls() {
             >
               <strong>本当に削除しますか?</strong>
               <br />
-              すべての保存済みトークン・現在の 24 単語リカバリーキーが無効になります。
+              すべての保存済みトークン・現在の 24 単語リカバリーキー・業務レコード・ライブラリの書類・設定と記録が無効になります。
               この操作は取り消せません。
               <br />
               続行するには、下の欄に <code style={{ background: 'var(--bg)', padding: '1px 4px', borderRadius: 3 }}>{WIPE_CONFIRM_PHRASE}</code> と入力してください。

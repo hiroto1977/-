@@ -106,7 +106,8 @@ npm run lint:deps          # 依存の供給網 (本番依存の閉包 5 件 / �
 npm run lint:storage       # ブラウザに残す物の台帳 (IndexedDB 4 / Cache Storage 1 /
                            #   localStorage 21 / sessionStorage 4。cookie と OPFS は 0 件だが走査はする)。
                            #   新しい保存先が黙って増えないこと・バックアップが覆うのは 1 つだけ・
-                           #   **媒体そのものが `docs/DATA_PROTECTION.md` の在庫に載っていること**
+                           #   **媒体そのものが `docs/DATA_PROTECTION.md` の在庫に載っていること**・
+                           #   **ハードリセット (すべてのデータを削除) が台帳の全行を覆うこと** (規則 11、パス 136)
 npm run lint:shell         # scripts/*.sh: bash -n syntax + strict mode (set -euo pipefail)
 npm run lint:mutation-scope # 変異検査の「測っていない範囲」の台帳 (広い Stryker disable と、
                            #   **理由が書かれていない pragma** —— 無言の pragma はその行の変異体を

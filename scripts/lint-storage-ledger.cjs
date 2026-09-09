@@ -359,6 +359,50 @@ function scan(files) {
 
 // --- 評価 -----------------------------------------------------------------
 
+/*
+ * 規則 11 の在庫 (2026-09-09 · パス 136)。設定画面の「すべてのデータを削除」が消す物の一覧は
+ * `src/renderer/security/eraseAll.ts` の `ERASE_*` にあり、台帳の行と**両方向**に突き合わせる。
+ * 媒体ごとに一覧が要る —— 台帳に新しい媒体 (cookie / OPFS) の行が現れたら、在庫にも一覧が要る。
+ */
+const ERASE_SOURCE = 'src/renderer/security/eraseAll.ts';
+const ERASE_LIST_BY_MEDIUM = {
+  indexeddb: 'ERASE_INDEXEDDB',
+  cachestorage: 'ERASE_CACHE_STORAGE',
+  localstorage: 'ERASE_LOCAL_STORAGE_KEYS',
+  sessionstorage: 'ERASE_SESSION_STORAGE_KEYS',
+};
+
+function readEraseSource() {
+  const full = path.join(REPO_ROOT, ERASE_SOURCE);
+  if (!fs.existsSync(full)) throw new Error('ハードリセットの在庫が消えている: ' + ERASE_SOURCE);
+  return fs.readFileSync(full, 'utf8');
+}
+
+/**
+ * 在庫を扉から読む形 —— `ERASE_X: readonly string[] = pkceSessionKeys()`。鍵を知っているモジュールが
+ * 1 つに決まっている媒体は、在庫がその関数を呼ぶ (字面に鍵を写さない)。規則はその関数の持ち主の
+ * `INDIRECT_SITES` の登録 (流れる鍵の一覧) から解く —— 登録は規則 4〜6 が実在と台帳に縛っている。
+ */
+const ERASE_DELEGATES = { pkceSessionKeys: 'src/renderer/oauth/pkceSession.ts' };
+
+/** `export const ERASE_X: readonly string[] = [ '…', … ]` (か扉の関数) の字面から名前を拾う (無い一覧は載せない)。 */
+function parseEraseLists(text, indirect = INDIRECT_SITES) {
+  const lists = {};
+  for (const listName of Object.values(ERASE_LIST_BY_MEDIUM)) {
+    const viaDoor = new RegExp(listName + '\\s*:\\s*readonly string\\[\\]\\s*=\\s*([A-Za-z_]+)\\(\\)').exec(text);
+    if (viaDoor !== null) {
+      const owner = ERASE_DELEGATES[viaDoor[1]];
+      const site = owner === undefined ? undefined : indirect.find((s) => s.file === owner);
+      lists[listName] = site === undefined ? [] : [...site.keys];
+      continue;
+    }
+    const m = new RegExp(listName + '\\s*:\\s*readonly string\\[\\]\\s*=\\s*\\[([^\\]]*)\\]').exec(text);
+    if (m === null) continue;
+    lists[listName] = [...m[1].matchAll(/'([^']+)'/g)].map((x) => x[1]);
+  }
+  return lists;
+}
+
 function evaluate(input) {
   const files = input.files;
   const stores = input.stores ?? STORES;
@@ -488,6 +532,51 @@ function evaluate(input) {
     }
   }
 
+  /*
+   * 11. **ハードリセットが台帳の全行を覆う** (2026-09-09 · パス 136)。
+   *
+   * 設定画面の「すべてのデータを削除」は 2026-09-09 まで保管庫 (business-hub-vault) しか消さず、
+   * 台帳 30 行のうち 29 行 (業務レコード・ライブラリ・共有秘密・気分の記録 …) が「最初の
+   * セットアップ画面」の裏に残っていた。台帳に在って在庫に無い = 消えない物が在るのに「すべて」と
+   * 言う。在庫に在って台帳に無い = 消したはずの保存先が残っているか、綴りが違う。
+   */
+  const eraseSource = input.eraseSource;
+  if (typeof eraseSource === 'string') {
+    const lists = parseEraseLists(eraseSource, indirect);
+    for (const [name, row] of Object.entries(stores)) {
+      const listName = ERASE_LIST_BY_MEDIUM[row.medium];
+      if (listName === undefined) {
+        problems.push(
+          'ハードリセットが覆わない媒体: ' + row.medium + ' (' + name + ') — ' + ERASE_SOURCE +
+            ' に一覧を足し、ERASE_LIST_BY_MEDIUM に登録すること (媒体ごと抜けると、その中の行は 1 つも消えない)',
+        );
+        continue;
+      }
+      const list = lists[listName];
+      if (list === undefined) {
+        problems.push(ERASE_SOURCE + ' に ' + listName + ' が無い (' + row.medium + ' の在庫。' + name + ' が消えない)');
+        continue;
+      }
+      if (!list.includes(name)) {
+        problems.push(
+          'ハードリセットが消さない保存先: ' + name + ' (' + row.holds + ') — ' + ERASE_SOURCE + ' の ' + listName +
+            ' に足すこと (消えない物が在るのに「すべてのデータを削除」と言う)',
+        );
+      }
+    }
+    for (const [listName, list] of Object.entries(lists)) {
+      for (const name of list) {
+        const row = stores[name];
+        if (row === undefined || ERASE_LIST_BY_MEDIUM[row.medium] !== listName) {
+          problems.push(
+            'ハードリセットが台帳に無い名前を消そうとしている: ' + name + ' (' + listName + ') — ' +
+              '消した保存先なら在庫からも消し、綴りが違うなら直すこと',
+          );
+        }
+      }
+    }
+  }
+
   return problems;
 }
 
@@ -542,6 +631,12 @@ const BASE_STORES = {
   'business-hub-data': { medium: 'indexeddb', holds: 'レコード', backedUp: true },
   'k.one': { medium: 'localstorage', holds: '何か', backedUp: false },
 };
+/** 規則 11 の合成標本: 在庫の字面 (`ls` が null なら localStorage の一覧そのものを書かない)。 */
+const ERASE_SRC = (idb, ls) =>
+  "export const ERASE_INDEXEDDB: readonly string[] = [" + idb.map((n) => "'" + n + "'").join(', ') + '];\n' +
+  (ls === null ? '' : "export const ERASE_LOCAL_STORAGE_KEYS: readonly string[] = [" + ls.map((n) => "'" + n + "'").join(', ') + '];\n') +
+  'export const ERASE_SESSION_STORAGE_KEYS: readonly string[] = [];\n' +
+  'export const ERASE_CACHE_STORAGE: readonly string[] = [];\n';
 const BASE_FILES = [
   SRC('src/renderer/data/store.ts', idbSource('business-hub-data')),
   SRC('src/renderer/a.ts', "const K = 'k.one';\nlocalStorage.setItem(K, '1');"),
@@ -620,6 +715,38 @@ function selfTest() {
       { files: [...BASE_FILES, SRC('src/renderer/j.ts', 'export const c = document.cookie;')], ...opts },
       0,
     ],
+    /* 規則 11 — ハードリセットが台帳の全行を覆う (2026-09-09 · パス 136)。 */
+    [
+      'ハードリセットの在庫が台帳の全行を持てば通る',
+      { files: BASE_FILES, ...opts, eraseSource: ERASE_SRC(['business-hub-data'], ['k.one']) },
+      0,
+    ],
+    [
+      '★ 台帳に在って在庫に無い鍵は鳴る (消えない物が在るのに「すべて」と言う)',
+      { files: BASE_FILES, ...opts, eraseSource: ERASE_SRC(['business-hub-data'], []) },
+      1,
+    ],
+    [
+      '★ 在庫に在って台帳に無い名前は鳴る (消したはずの保存先か、綴り違い)',
+      { files: BASE_FILES, ...opts, eraseSource: ERASE_SRC(['business-hub-data'], ['k.one', 'k.gone']) },
+      1,
+    ],
+    [
+      '在庫の一覧そのものが無い媒体は鳴る (一覧が消えたら、その媒体は 1 行も消えない)',
+      { files: BASE_FILES, ...opts, eraseSource: ERASE_SRC(['business-hub-data'], null) },
+      1,
+    ],
+    [
+      '台帳に一覧の無い媒体 (cookie) の行が現れたら鳴る',
+      {
+        files: [...BASE_FILES, SRC('src/renderer/g.ts', "document.cookie = 'probe_tok=1; path=/';")],
+        ...opts,
+        stores: { ...BASE_STORES, probe_tok: { medium: 'cookie', holds: '標本', backedUp: false } },
+        eraseSource: ERASE_SRC(['business-hub-data'], ['k.one']),
+      },
+      1,
+    ],
+    ['eraseSource を渡さなければ照合しない (見ていないことを明示)', { files: BASE_FILES, ...opts }, 0],
     /* 規則 10 — 媒体そのものが在庫に載っているか。 */
     [
       '媒体が監査報告に無ければ鳴る',
@@ -833,6 +960,38 @@ function selfTest() {
       '(' + docAblated.length + ' 件)',
   );
 
+  /*
+   * **規則 11 も実物で 1 度。** 在庫から気分の記録の鍵を外すと 1 件だけ鳴り、実物どおりなら鳴らない
+   * (規則が実物の字面に当たっていることの証拠 —— 合成標本だけでは示せない)。
+   */
+  const realErase = readEraseSource();
+  const eraseOk = evaluate({ files: realFiles, auditDoc: realAudit, eraseSource: realErase });
+  const eraseAblated = evaluate({
+    files: realFiles,
+    auditDoc: realAudit,
+    eraseSource: realErase.replace("'emotions.store',", ''),
+  });
+  const eraseAblationWorks =
+    eraseOk.length === 0 && eraseAblated.length === 1 && eraseAblated[0].includes('emotions.store');
+  // 扉から読む形も実物で: pkceSessionKeys() を空の配列に替えると sessionStorage の 4 鍵が全部鳴る。
+  const doorAblated = evaluate({
+    files: realFiles,
+    auditDoc: realAudit,
+    eraseSource: realErase.replace('= pkceSessionKeys();', '= [];'),
+  });
+  const doorAblationWorks =
+    realErase.includes('= pkceSessionKeys();') && doorAblated.length === 4 && doorAblated.every((m) => m.includes('pkce.'));
+  if (!doorAblationWorks) bad += 1;
+  console.log(
+    '  ' + (doorAblationWorks ? '✓' : '✗') + ' 実ファイル: 在庫の扉 (pkceSessionKeys) を空にすると sessionStorage の 4 鍵が鳴る ' +
+      '(' + doorAblated.length + ' 件)',
+  );
+  if (!eraseAblationWorks) bad += 1;
+  console.log(
+    '  ' + (eraseAblationWorks ? '✓' : '✗') + ' 実ファイル: ハードリセットの在庫から emotions.store を外すと 1 件鳴る ' +
+      '(実物 ' + eraseOk.length + ' 件 / 外したとき ' + eraseAblated.length + ' 件)',
+  );
+
   for (const [label, input, want] of cases) {
     const n = evaluate(input).length;
     const okCase = n === want;
@@ -851,7 +1010,9 @@ function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
   const files = readSources();
   const auditDoc = fs.readFileSync(path.join(REPO_ROOT, 'docs/DATA_PROTECTION.md'), 'utf8');
-  const problems = evaluate({ files, auditDoc });
+  const eraseSource = readEraseSource();
+  const problems = evaluate({ files, auditDoc, eraseSource });
+  const eraseCount = Object.values(parseEraseLists(eraseSource)).reduce((n, l) => n + l.length, 0);
   const siteCount = scan(files).siteCount;
   const byMedium = Object.values(STORES).reduce((acc, r) => {
     acc[r.medium] = (acc[r.medium] ?? 0) + 1;
@@ -861,7 +1022,7 @@ function main(argv) {
     'Scanned ' + files.length + ' renderer file(s), ' + siteCount + ' 保存箇所 — 台帳 ' +
       Object.keys(STORES).length + ' 件 (' +
       Object.entries(byMedium).map(([m, n]) => m + ' ' + n).join(' / ') + ')、' +
-      'バックアップが覆うのは ' + BACKED_UP_STORE + ' のみ',
+      'バックアップが覆うのは ' + BACKED_UP_STORE + ' のみ、ハードリセットの在庫 ' + eraseCount + ' 件 (規則 11)',
   );
   if (problems.length === 0) {
     console.log('✅ 保存先は台帳どおりです');
