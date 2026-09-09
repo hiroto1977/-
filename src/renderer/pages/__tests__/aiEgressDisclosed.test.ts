@@ -1,44 +1,41 @@
 /**
- * **Anthropic へ送る 5 画面のうち、断りが在るのは 1 つだけだった。** (2026-09-09 · パス 106)
+ * **AI へ利用者のデータを送る画面すべてに断りが在ること。母集団は実装から導く。**
  *
- * 実測 (直す前):
+ * ## 出発点 (2026-09-09 · パス 106)
  *
- * | 画面 | Anthropic へ送る物 | egress の断り |
+ * `StocksPage` に egress の断りを足した 2026-08-23 のコメントはこう書いていた ——
+ * 「他の画面 (クラウド同期・保存状態) では『何が送られないか』まで書いているのに、
+ * **AI の画面**だけ書いていなかった」。**「AI の画面」を単数として扱っており**、
+ * 実際は複数在った。パス 106 で 5 画面に断りを足した。
+ *
+ * ## その走査が母集団を手で書いていた (パス 107 で訂正)
+ *
+ * パス 106 の走査は `AI_ACTIONS = ['advise', 'analyze-text']` という**手書きの
+ * 一覧**で数えていた。手で書けば、手で書いた分だけしか見つからない ——
+ * 実装から導き直すと 2 画面増えた:
+ *
+ * | 見落とし | 送る物 | なぜ漏れたか |
  * | --- | --- | --- |
- * | `StocksPage` | 質問文 + ウォッチリストのティッカー | **在った** (2026-08-23) |
- * | `BusinessPage` | 質問文 + **各事業カテゴリの現在 KPI・売上トレンド (JSON)** | **無かった** (免責のみ) |
- * | `EmotionsPage` | **貼り付けた本文そのまま** | **無かった** |
- * | `GmailPage` | 受信スレッドの**件名と送信者のメールアドレス** | **無かった** |
- * | `SlackPage` | チャンネル名と目的 | **無かった** |
+ * | `AssistantPage` | 直近 16 往復の会話 (`assistant/chat`・`chatAll`) | action 名が `chat` で一覧に無い |
+ * | `SkillsPage` | 指示文 + 選んだスキルの定義 (`skills/run-skill`) | 同上 |
+ * | `VillagePage` | **マイクで話した内容の書き起こし** (`assistant/chat`) | 同上 |
  *
- * `EmotionsPage` が最も重い。入力欄の placeholder が「分析したいテキストを貼り付け —
- * メール本文、**自分の日記**、**誰かのメッセージ**など」と、最も秘めた内容と
- * **第三者の文面** (利用者に共有の同意が無い可能性がある) を明示的に誘っている。
- * ティッカー記号を断っている画面が在り、日記を断っていない画面が在った。
+ * **数は 3 → 5 → 8 と動いた。** 手で 3 と見立て、パス 106 の (手書きの) 走査が 5 に
+ * 訂正し、実装から導いたこの走査が 8 にした。`AssistantPage` はこの app の主チャットで
+ * 「全AI合議」は設定済みの全プロバイダへ同時に送り、`VillagePage` は**声**を送る
+ * (しかも AI の切り替えは既定で入っている)。母集団の走査を書いた当のパスが、
+ * 最も大きい画面と最も意外な画面を落としていた
+ * (パス 85 / 95 と同じ形 —— **数える所を手で書くと、そこが穴になる**)。
  *
- * `StocksPage` に断りを足したときのコメントはこう書いてある ——
- * 「このアプリは他の画面 (クラウド同期・保存状態) では『何が送られないか』まで
- * 書いているのに、**AI の画面**だけ書いていなかった (2026-08-23)」。
- * **「AI の画面」を単数として扱っており、実際は 5 つ在った** (パス 66 と同じ形)。
+ * だからいまは `main/clients/*.ts` の `ACTIONS` から**到達可能性で**導く:
+ * AI へ出る印 (`api.anthropic.com` / `runAiChat(`) に到達する handler の action だけを
+ * 母集団とし、その組を invoke する画面を数える。action を足しても一覧を直さなくてよい。
  *
- * ## 走査が 2 つ余分に見つけた (私の見立ては 3 画面だった)
+ * ## 走査が守るもの
  *
- * 最初は 3 画面だと思って直し、この走査を書いたら `GmailPage` と `SlackPage` が
- * 落ちた。どちらも `invoke('emotions', 'analyze-text', …)` を呼んでおり、
- * **`emotions` の action を他の画面から借りている**ので、AI の画面を「AI らしい名前の
- * 画面」で数えると漏れる。走査が私の見立てを訂正した。
- *
- * **送る物も実測して書いた。** 最初「メール本文」「Slack のメッセージ」と書きかけたが、
- * 実物は `threads.map(t => \`- ${t.subject} (from ${t.sender})\`)` と
- * `channels.map(c => \`#${c.name}: ${c.purpose}\`)` で、**本文は送っていない**。
- * 断りに嘘を書けば、それはこのパスが直している欠陥そのものになる。
- *
- * ## この検査が守るもの
- *
- * 文面を 5 度書かせない (`shared/aiEgressNotice.ts` が 1 か所) ことと、
- * **Anthropic へ送る画面が黙って 6 つ目に増えないこと**。後者が要点 ——
- * 画面を直しても、走査が無ければ次の画面はまた黙る。実際この走査は、私が
- * 「3 画面」と思って直した直後に 2 つ余分を見つけた。
+ * 文面を 8 度書かせないこと (`shared/aiEgressNotice.ts` が 1 か所) と、
+ * **送る画面が黙って 9 つ目に増えないこと**。後者が要点 —— 画面を直しても、
+ * 走査が無ければ次の画面はまた黙る。
  */
 import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
@@ -46,13 +43,110 @@ import path from 'node:path';
 import {
   AI_EGRESS_RECIPIENT_ANTHROPIC,
   aiEgressNoticeLines,
+  remoteOnly,
 } from '../../../shared/aiEgressNotice';
 
 const PAGES = path.resolve(__dirname, '..');
+const CLIENTS = path.resolve(__dirname, '../../../main/clients');
 const read = (f: string): string => fs.readFileSync(path.join(PAGES, f), 'utf8');
 
-/** Anthropic へ本文を送る action (`web-shim.ts` / main の client がどちらも実装)。 */
-const AI_ACTIONS = ['advise', 'analyze-text'] as const;
+/** AI へ本文が出る印 (実際に外部モデルを叩いている場所)。 */
+const AI_MARKS = [/api\.anthropic\.com/, /\brunAiChat\s*\(/];
+
+/** コメントを落とした本体 (説明の中の綴りを配線と読まない)。 */
+function code(src: string): string {
+  return src
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .split('\n')
+    .filter((l) => !/^\s*\/\//.test(l))
+    .join('\n');
+}
+
+/** `open` から対応する `close` までの中身 (入れ子で切れない)。 */
+function balanced(src: string, from: number, open: string, close: string): string {
+  let depth = 0;
+  for (let i = from; i < src.length; i += 1) {
+    if (src[i] === open) depth += 1;
+    else if (src[i] === close) {
+      depth -= 1;
+      if (depth === 0) return src.slice(from + 1, i);
+    }
+  }
+  return '';
+}
+
+/**
+ * 本体の開き波括弧。**戻り値の型の中の `{` を本体と読まない** ——
+ * `Promise<{ text: string }> {` では最初の `{` は型のものである
+ * (これで最初の試作は `runSkill` / `chat` を「AI に到達しない」と誤判定した)。
+ * 本体の `{` には改行が続く。
+ */
+function bodyBrace(src: string, from: number): number {
+  for (let i = from; i < src.length; i += 1) {
+    if (src[i] !== '{') continue;
+    let j = i + 1;
+    while (src[j] === ' ' || src[j] === '\t') j += 1;
+    if (src[j] === '\n') return i;
+  }
+  return -1;
+}
+
+/** ファイル内の関数名 → 本体。 */
+function functionBodies(src: string): Map<string, string> {
+  const out = new Map<string, string>();
+  const decl = /(?:^|\n)\s*(?:export\s+)?(?:async\s+)?function\s+([A-Za-z0-9_]+)\s*(?:<[^>]*>)?\s*\(/g;
+  let m: RegExpExecArray | null;
+  while ((m = decl.exec(src)) !== null) {
+    const brace = bodyBrace(src, decl.lastIndex);
+    if (brace >= 0) out.set(m[1]!, balanced(src, brace, '{', '}'));
+  }
+  const arrow = /(?:^|\n)\s*(?:export\s+)?const\s+([A-Za-z0-9_]+)\s*(?::[^=\n]+)?=\s*(?:async\s*)?\(/g;
+  while ((m = arrow.exec(src)) !== null) {
+    const brace = bodyBrace(src, arrow.lastIndex);
+    if (brace >= 0 && !out.has(m[1]!)) out.set(m[1]!, balanced(src, brace, '{', '}'));
+  }
+  return out;
+}
+
+/** `start` から呼び出しを辿って AI の印に届くか (helper 経由も拾う)。 */
+function reachesAi(start: string, bodies: Map<string, string>): boolean {
+  const seen = new Set<string>();
+  const queue = [start];
+  while (queue.length > 0) {
+    const name = queue.shift()!;
+    if (seen.has(name)) continue;
+    seen.add(name);
+    const body = bodies.get(name);
+    if (body === undefined) continue;
+    if (AI_MARKS.some((r) => r.test(body))) return true;
+    for (const id of body.match(/[A-Za-z0-9_]+/g) ?? []) {
+      if (!seen.has(id) && bodies.has(id)) queue.push(id);
+    }
+  }
+  return false;
+}
+
+/** AI へ出る `(serviceId, action)` の組を**実装から**導く。 */
+function aiActionPairs(): Array<readonly [string, string]> {
+  const pairs: Array<readonly [string, string]> = [];
+  for (const f of fs.readdirSync(CLIENTS).filter((n) => n.endsWith('.ts'))) {
+    const src = code(fs.readFileSync(path.join(CLIENTS, f), 'utf8'));
+    if (!AI_MARKS.some((r) => r.test(src))) continue;
+    const at = src.search(/export\s+const\s+ACTIONS\s*:\s*ActionMap\s*=\s*\{/);
+    if (at < 0) continue;
+    const block = balanced(src, src.indexOf('{', at), '{', '}');
+    const bodies = functionBodies(src);
+    const service = f.replace(/\.ts$/, '');
+    for (const e of block.matchAll(
+      /(?:^|\n)\s*(?:'([^']+)'|"([^"]+)"|([A-Za-z0-9_]+))\s*(?::\s*([A-Za-z0-9_]+))?\s*,/g,
+    )) {
+      const action = e[1] ?? e[2] ?? e[3]!;
+      const handler = e[4] ?? action;
+      if (reachesAi(handler, bodies)) pairs.push([service, action]);
+    }
+  }
+  return pairs;
+}
 
 /** `pages/` の .tsx をすべて。 */
 function pageFiles(): string[] {
@@ -78,12 +172,12 @@ function pageFiles(): string[] {
  */
 const DRAWS_NOTICE = /<AiEgressNotice[\s/>]/;
 
-/** コメントを落とした本体 (説明の中の綴りを配線と読まない)。 */
-function code(src: string): string {
-  return src
-    .split('\n')
-    .filter((l) => !/^\s*(\/\/|\*|\/\*)/.test(l))
-    .join('\n');
+/** その画面が AI の組を invoke しているか。 */
+function invokesAi(src: string, pairs: ReadonlyArray<readonly [string, string]>): boolean {
+  const body = code(src);
+  return pairs.some(([s, a]) =>
+    new RegExp(`['"]${s}['"]\\s*,\\s*\\n?\\s*['"]${a}['"]`).test(body),
+  );
 }
 
 /**
@@ -125,17 +219,65 @@ function whatOf(src: string): string {
   return '';
 }
 
-/** その画面が AI の action を invoke しているか。 */
-function invokesAi(src: string): boolean {
-  const body = code(src);
-  return AI_ACTIONS.some((a) => new RegExp(`invoke<[^>]*>\\([^)]*'${a}'`).test(body) || body.includes(`'${a}'`));
-}
+describe('母集団を実装から導く (手書きの一覧に頼らない)', () => {
+  it('★ 戻り値の型の波括弧を本体と読まない (最初の試作が落ちた所)', () => {
+    const sample = [
+      'async function f(ctx: Ctx): Promise<{ text: string }> {',
+      "  await fetch('https://api.anthropic.com/v1/messages');",
+      '}',
+      '',
+      'function g(): void {',
+      '  return;',
+      '}',
+    ].join('\n');
+    const bodies = functionBodies(sample);
+    expect(bodies.get('f'), '戻り値の型を本体と読んでいる').toContain('api.anthropic.com');
+    expect(reachesAi('f', bodies)).toBe(true);
+    // 対照: AI へ出ない関数は false (どの入力でも true を返す形になっていない)。
+    expect(reachesAi('g', bodies)).toBe(false);
+    expect(reachesAi('存在しない関数', bodies)).toBe(false);
+  });
+
+  it('★ helper 経由でも辿る (直呼びだけを見ていない)', () => {
+    const sample = [
+      'function handler(ctx: Ctx): Promise<void> {',
+      '  return helper(ctx);',
+      '}',
+      '',
+      'function helper(ctx: Ctx): Promise<void> {',
+      '  return runAiChat({ ...ctx });',
+      '}',
+    ].join('\n');
+    const bodies = functionBodies(sample);
+    expect(reachesAi('handler', bodies), 'helper 経由の到達を見落としている').toBe(true);
+  });
+
+  it('★ 導いた組が実物に当たっている (空でない・既知の 6 組を含む)', () => {
+    const pairs = aiActionPairs().map(([s, a]) => `${s}/${a}`);
+    // **標本が空なら何も検査していない。**
+    expect(pairs.length, 'AI へ出る action が 1 つも導けていない (走査が壊れている)').toBeGreaterThanOrEqual(6);
+    for (const known of [
+      'assistant/chat',
+      'assistant/chatAll',
+      'business/advise',
+      'emotions/analyze-text',
+      'skills/run-skill',
+      'stocks/advise',
+    ]) {
+      expect(pairs, `${known} を導けていない`).toContain(known);
+    }
+    // AI へ出ない action を巻き込んでいない (母集団が広すぎない)。
+    for (const notAi of ['stocks/backtest', 'stocks/export-dashboard', 'emotions/log-mood', 'assistant/providers']) {
+      expect(pairs, `${notAi} を AI 経路と誤判定している`).not.toContain(notAi);
+    }
+  });
+});
 
 describe('機構 — 断りの文面は 1 か所が持ち、書けることだけを書く', () => {
   it('★ 送る物と送り先を必ず名指しする', () => {
     const lines = aiEgressNoticeLines({
       what: '入力したテキスト本文',
-      recipient: AI_EGRESS_RECIPIENT_ANTHROPIC,
+      recipients: remoteOnly(AI_EGRESS_RECIPIENT_ANTHROPIC),
     });
     expect(lines[0]).toContain('入力したテキスト本文');
     expect(lines[0]).toContain(AI_EGRESS_RECIPIENT_ANTHROPIC);
@@ -144,7 +286,7 @@ describe('機構 — 断りの文面は 1 か所が持ち、書けることだ�
   });
 
   it('★ 受け取った側の扱いは主張しない (SecurityPage の HIBP と同じ方針)', () => {
-    const text = aiEgressNoticeLines({ what: 'x', recipient: 'Z' }).join('\n');
+    const text = aiEgressNoticeLines({ what: 'x', recipients: remoteOnly('Z') }).join('\n');
     expect(text).toContain('確かめられないため主張しません');
     // **安全だとは言わない。** 言えないことを言わないための検査。
     expect(text).not.toContain('安全');
@@ -152,9 +294,58 @@ describe('機構 — 断りの文面は 1 か所が持ち、書けることだ�
     expect(text).not.toContain('学習に使われません');
   });
 
+  it('★ 複数の送り先を全部名指しする (合議で 1 社だけ書かない)', () => {
+    const lines = aiEgressNoticeLines({
+      what: 'x',
+      recipients: { remote: ['A 社', 'B 社', 'C 社'] },
+    });
+    // **「何処へ送るか」の行そのものが全社を挙げること。** 文書のどこかに
+    // 名前が在るだけでは足りない —— 末尾の「取り扱いは主張しません」に
+    // 名前が並んでいれば通ってしまい、送信の行が 1 社だけでも鳴らない
+    // (2026-09-09 の対照 E がこれで鳴らず、検査の穴として見つかった)。
+    for (const n of ['A 社', 'B 社', 'C 社']) {
+      expect(lines[0], `送信の行が ${n} を挙げていない`).toContain(n);
+    }
+    expect(lines.join('\n')).toContain('端末内で完結しません');
+  });
+
+  it('★ 端末内だけなら「出ません」と言い切る (逆に嘘をつかない)', () => {
+    const text = aiEgressNoticeLines({
+      what: '会話',
+      recipients: { remote: [], local: ['Ollama (この端末)'] },
+    }).join('\n');
+    expect(text).toContain('Ollama (この端末)');
+    expect(text).toContain('端末の外へは出ません');
+    // 出ないのだから、受け手の扱いの話も「完結しません」も出さない。
+    expect(text).not.toContain('端末内で完結しません');
+    expect(text).not.toContain('主張しません');
+  });
+
+  it('★ 端末内と外部が混ざるときは両方書く', () => {
+    const text = aiEgressNoticeLines({
+      what: 'x',
+      recipients: { remote: ['A 社'], local: ['Ollama (この端末)'] },
+    }).join('\n');
+    expect(text).toContain('A 社 へ送信されます');
+    expect(text).toContain('端末内で完結しません');
+    expect(text).toContain('Ollama (この端末) はこの端末内で処理されます');
+  });
+
+  it('★ 設定状況が読めないときは locality を主張しない (未設定と混ぜない)', () => {
+    const text = aiEgressNoticeLines({ what: 'x', recipients: { remote: [], unknown: true } }).join('\n');
+    expect(text).toContain('送り先を今は確認できません');
+    // **「出ません」と言ってはいけない** —— 保存済みの資格情報で実際に送る場合がある。
+    expect(text).not.toContain('端末の外へは出ません');
+    expect(text).not.toContain('主張しません');
+  });
+
   it('★ 第三者の文面を貼る誘いがある画面だけ、同意の 1 行が増える', () => {
-    const withOthers = aiEgressNoticeLines({ what: 'x', recipient: 'Z', mayIncludeOthers: true });
-    const without = aiEgressNoticeLines({ what: 'x', recipient: 'Z' });
+    const withOthers = aiEgressNoticeLines({
+      what: 'x',
+      recipients: remoteOnly('Z'),
+      mayIncludeOthers: true,
+    });
+    const without = aiEgressNoticeLines({ what: 'x', recipients: remoteOnly('Z') });
     expect(withOthers.join('\n')).toContain('その人の同意を確認してください');
     // 対照: 既定では出ない (どの画面でも同じ文になっていない)。
     expect(without.join('\n')).not.toContain('同意');
@@ -162,16 +353,21 @@ describe('機構 — 断りの文面は 1 か所が持ち、書けることだ�
   });
 
   it('★ プロキシの話を書かない (Anthropic へは直接送るので嘘になる)', () => {
-    const text = aiEgressNoticeLines({ what: 'x', recipient: 'Z', mayIncludeOthers: true }).join('\n');
+    const text = aiEgressNoticeLines({
+      what: 'x',
+      recipients: remoteOnly('Z'),
+      mayIncludeOthers: true,
+    }).join('\n');
     // `fetchViaProxy` を通るのは notion / atlassian / cloudflare だけ。
     expect(text).not.toContain('プロキシ');
     expect(text).not.toContain('Cloudflare');
   });
 });
 
-describe('Anthropic へ送る画面すべてに断りが在る (走査)', () => {
+describe('AI へ送る画面すべてに断りが在る (走査)', () => {
+  const pairs = aiActionPairs();
+
   it('★ 走査規則がタグの境目で当たる (名前の書き損じを断りと数えない)', () => {
-    // 規則を標本に当てる。前方一致だとこの 2 つが区別できない。
     expect(DRAWS_NOTICE.test('  <AiEgressNotice\n    subject={{')).toBe(true);
     expect(DRAWS_NOTICE.test('  <AiEgressNotice subject={s} />')).toBe(true);
     expect(DRAWS_NOTICE.test('  <AiEgressNotice/>')).toBe(true);
@@ -179,39 +375,46 @@ describe('Anthropic へ送る画面すべてに断りが在る (走査)', () => 
     expect(DRAWS_NOTICE.test('  <div>断りはここに無い</div>')).toBe(false);
   });
 
-  it('★ 走査が実物に当たっている (AI の画面を見つけている)', () => {
-    const ai = pageFiles().filter((f) => invokesAi(fs.readFileSync(f, 'utf8')));
-    // **標本が空なら何も検査していない。** 実測で 5 画面。
-    expect(ai.length, 'AI の action を呼ぶ画面が見つからない (走査が壊れている)').toBeGreaterThanOrEqual(5);
+  it('★ 走査が実物に当たっている (AI の画面 8 つを見つけている)', () => {
+    const ai = pageFiles().filter((f) => invokesAi(fs.readFileSync(f, 'utf8'), pairs));
+    expect(ai.length, 'AI の action を呼ぶ画面が見つからない (走査が壊れている)').toBeGreaterThanOrEqual(8);
     const names = ai.map((f) => path.basename(f)).sort();
-    // AI らしい名前の画面だけでは足りない —— Gmail / Slack は emotions の action を借りる。
-    for (const n of ['StocksPage.tsx', 'BusinessPage.tsx', 'EmotionsPage.tsx', 'GmailPage.tsx', 'SlackPage.tsx']) {
+    // AI らしい名前の画面だけでは足りない —— Gmail / Slack は emotions の action を借り、
+    // Assistant / Skills / Village は action 名が `chat` / `run-skill` である。
+    for (const n of [
+      'AssistantPage.tsx',
+      'BusinessPage.tsx',
+      'EmotionsPage.tsx',
+      'GmailPage.tsx',
+      'SkillsPage.tsx',
+      'SlackPage.tsx',
+      'StocksPage.tsx',
+      'VillagePage.tsx',
+    ]) {
       expect(names, `${n} を走査が見落としている`).toContain(n);
     }
   });
 
-  it('★ 送る画面はすべて断りを描く (6 つ目が黙って増えない)', () => {
+  it('★ 送る画面はすべて断りを描く (9 つ目が黙って増えない)', () => {
     const missing: string[] = [];
     for (const f of pageFiles()) {
       const src = fs.readFileSync(f, 'utf8');
-      if (!invokesAi(src)) continue;
+      if (!invokesAi(src, pairs)) continue;
       if (!DRAWS_NOTICE.test(code(src))) missing.push(path.basename(f));
     }
     expect(
       missing,
-      'Anthropic へ利用者のデータを送るのに、何が外へ出るかを述べていない画面がある:\n' + missing.join('\n'),
+      'AI へ利用者のデータを送るのに、何が外へ出るかを述べていない画面がある:\n' + missing.join('\n'),
     ).toEqual([]);
   });
 
   it('★ どの画面も文面を自前で書かない (共有の 1 か所から読む)', () => {
     for (const f of pageFiles()) {
       const src = fs.readFileSync(f, 'utf8');
-      if (!invokesAi(src)) continue;
+      if (!invokesAi(src, pairs)) continue;
       const body = code(src);
       // 「へ送信されます」の文を画面が持っていたら、それは写しである。
-      expect(body, `${path.basename(f)} が断りの文面を自前で持っている`).not.toContain(
-        'へ送信されます',
-      );
+      expect(body, `${path.basename(f)} が断りの文面を自前で持っている`).not.toContain('へ送信されます');
     }
   });
 });
@@ -223,17 +426,19 @@ describe('画面ごとに「何を送るか」を自分の言葉で埋めてい�
     'EmotionsPage.tsx',
     'GmailPage.tsx',
     'SlackPage.tsx',
+    'SkillsPage.tsx',
+    'AssistantPage.tsx',
+    'VillagePage.tsx',
   ];
 
   it('★ 走査規則が実物に当たる (入れ子のテンプレートで切れない)', () => {
-    // 規則そのものを標本に当てる (どの入力でも '' を返す空の検査になっていないこと)。
     expect(whatOf('what: `a${x ? `b${y}c` : 1}e`,')).toBe('`a${x ? `b${y}c` : 1}e`');
     expect(whatOf("what: 'plain',")).toBe("'plain'");
-    expect(whatOf(' * what: `説明の中の綴り`'), 'コメントを配線と読んでいる').toBe('');
-    expect(whatOf('recipient: X'), 'what が無いのに字面を返している').toBe('');
+    expect(whatOf(' // what: `説明の中の綴り`'), 'コメントを配線と読んでいる').toBe('');
+    expect(whatOf('recipients: X'), 'what が無いのに字面を返している').toBe('');
   });
 
-  it('★ 5 画面が違う what を渡す (同じ文を貼り回していない)', () => {
+  it('★ 8 画面が違う what を渡す (同じ文を貼り回していない)', () => {
     const whats = AI_PAGES.map((f) => {
       const w = whatOf(read(f));
       expect(w, `${f} が what を渡していない`).not.toBe('');
@@ -245,14 +450,48 @@ describe('画面ごとに「何を送るか」を自分の言葉で埋めてい�
   it('★ Gmail / Slack は実物どおりに書く (本文は送っていない)', () => {
     // 実物は `threads.map(t => `- ${t.subject} (from ${t.sender})`)` —— 本文は載らない。
     expect(whatOf(read('GmailPage.tsx'))).toContain('件名と送信者のメールアドレス');
-    expect(whatOf(read('GmailPage.tsx')), 'Gmail が「本文」を送ると偽っている').not.toContain(
-      'メール本文',
-    );
+    expect(whatOf(read('GmailPage.tsx')), 'Gmail が「本文」を送ると偽っている').not.toContain('メール本文');
     // 実物は `channels.map(c => `#${c.name}: ${c.purpose}`)` —— 発言は載らない。
     expect(whatOf(read('SlackPage.tsx'))).toContain('チャンネル名と目的');
-    expect(whatOf(read('SlackPage.tsx')), 'Slack が発言を送ると偽っている').not.toContain(
-      'メッセージ',
-    );
+    expect(whatOf(read('SlackPage.tsx')), 'Slack が発言を送ると偽っている').not.toContain('メッセージ');
+  });
+
+  it('★ Skills はスキルの定義も送ることを書く (指示文だけではない)', () => {
+    // `runSkill` は `readSkillBody(name)` の Markdown を system プロンプトに載せる。
+    const what = whatOf(read('SkillsPage.tsx'));
+    expect(what).toContain('指示文');
+    expect(what, 'スキルの定義が送られることを書いていない').toContain('スキルの定義');
+  });
+
+  it('★ Assistant は会話の範囲を書く (1 往復だけと誤解させない)', () => {
+    const what = whatOf(read('AssistantPage.tsx'));
+    expect(what).toContain('会話');
+    // 実物の窓 (`TURN_WINDOW`) を字面で写さず、値から刷る。
+    expect(what).toContain('${TURN_WINDOW}');
+    expect(code(read('AssistantPage.tsx'))).toContain('const TURN_WINDOW = 16');
+  });
+
+  it('★ VillagePage は声が出ることを書く (画面の入力はマイクだから)', () => {
+    const what = whatOf(read('VillagePage.tsx'));
+    expect(what).toContain('マイク');
+    expect(what, '書き起こしが送られることを書いていない').toContain('書き起こし');
+    // **AI を切れば送らない** —— その分岐が実際に在ることを確かめる
+    // (切っているのに「送信されます」と書けば、それは嘘になる)。
+    const body = code(read('VillagePage.tsx'));
+    expect(body).toMatch(/aiOn\s*\n?\s*\?\s*assistantEgressRecipients/);
+    expect(body).toContain('{ remote: [], local: [] }');
+  });
+
+  it('★ 会話を送る 3 画面は送り先の判断を共有する (2 度書かない)', () => {
+    // `assistant/chat` を呼ぶ画面は送り先が可変 —— 判断を写すと片方だけ動く。
+    for (const f of ['AssistantPage.tsx', 'VillagePage.tsx']) {
+      expect(code(read(f)), `${f} が送り先の判断を自前で持っている`).toContain(
+        'assistantEgressRecipients',
+      );
+      expect(code(read(f)), `${f} が設定状況の読み方を自前で持っている`).toContain(
+        'readProviderStatuses',
+      );
+    }
   });
 
   it('★ EmotionsPage だけが第三者の同意に触れる (placeholder がそれを誘うから)', () => {
@@ -261,7 +500,7 @@ describe('画面ごとに「何を送るか」を自分の言葉で埋めてい�
     // placeholder が実際に他人の文面を誘っていることを、同じ検査の中で確かめる。
     expect(read('EmotionsPage.tsx')).toContain('誰かのメッセージ');
     // 対照: 貼り付け欄でない画面には付けない (どの画面でも同じ文になっていない)。
-    for (const f of ['StocksPage.tsx', 'BusinessPage.tsx', 'GmailPage.tsx', 'SlackPage.tsx']) {
+    for (const f of AI_PAGES.filter((n) => n !== 'EmotionsPage.tsx')) {
       expect(code(read(f)), `${f} が同意の行まで出している`).not.toContain('mayIncludeOthers');
     }
   });

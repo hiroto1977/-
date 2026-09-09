@@ -4,7 +4,7 @@ import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { AiEgressNotice } from '../components/AiEgressNotice';
-import { AI_EGRESS_RECIPIENT_ANTHROPIC } from '../../shared/aiEgressNotice';
+import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -82,7 +82,7 @@ export function SlackPage() {
       <AiEgressNotice
         subject={{
           what: 'チャンネル名と目的 (purpose)',
-          recipient: AI_EGRESS_RECIPIENT_ANTHROPIC,
+          recipients: remoteOnly(AI_EGRESS_RECIPIENT_ANTHROPIC),
         }}
       />
       <Section

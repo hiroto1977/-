@@ -4,7 +4,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { MAX_ADVISOR_UNIVERSE_SYMBOLS, capAdvisorUniverse } from '../../shared/advisorQuestionLimits';
 import { AiEgressNotice } from '../components/AiEgressNotice';
-import { AI_EGRESS_RECIPIENT_ANTHROPIC } from '../../shared/aiEgressNotice';
+import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import { exportWarning } from '../data/exportOutcome';
 import { ratioPctOrDash } from '../../shared/num';
 import type { StrategyComparisonResult } from '../data/stocksAnalysisWeb';
@@ -625,7 +625,7 @@ export function StocksPage() {
                 ? ` ${MAX_ADVISOR_UNIVERSE_SYMBOLS} 件 (登録 ${data.watchlist.length} 件のうち)`
                 : ` ${data.watchlist.length} 件`
             } (指標はモック値) `,
-            recipient: AI_EGRESS_RECIPIENT_ANTHROPIC,
+            recipients: remoteOnly(AI_EGRESS_RECIPIENT_ANTHROPIC),
           }}
         />
         {data.watchlist.length > MAX_ADVISOR_UNIVERSE_SYMBOLS && (

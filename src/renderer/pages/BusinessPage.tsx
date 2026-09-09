@@ -5,7 +5,7 @@ import { Stat } from '../components/Stat';
 import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
 import { AiEgressNotice } from '../components/AiEgressNotice';
-import { AI_EGRESS_RECIPIENT_ANTHROPIC } from '../../shared/aiEgressNotice';
+import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import { sumShigyoMonthlyFees } from '../../shared/shigyoTypes';
 import { summarizeFoodDelivery } from '../data/foodDelivery';
 import { exportWarning } from '../data/exportOutcome';
@@ -1023,7 +1023,7 @@ export function BusinessPage() {
         <AiEgressNotice
           subject={{
             what: '質問文と、各事業カテゴリの現在 KPI・売上トレンド (JSON) ',
-            recipient: AI_EGRESS_RECIPIENT_ANTHROPIC,
+            recipients: remoteOnly(AI_EGRESS_RECIPIENT_ANTHROPIC),
           }}
         />
         <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>

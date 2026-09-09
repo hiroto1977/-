@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
+import { AiEgressNotice } from '../components/AiEgressNotice';
+import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import { useServiceData } from '../hooks/useServiceData';
 
 const inputStyle: React.CSSProperties = {
@@ -98,6 +100,17 @@ export function SkillsPage() {
       >
         {showForm ? (
           <div className="card" style={{ gap: 10 }}>
+            {/* **何が外へ出るかを書く。** この画面は 2026-09-09 (パス 106) の走査から
+                漏れていた —— 走査が `AI_ACTIONS` を手で書いており、`run-skill` が
+                その一覧に無かった。送るのは指示文だけではなく、**選んだスキルの
+                定義そのもの** (`readSkillBody(name)` が `~/.claude/skills` から
+                読んだ Markdown 本文) が system プロンプトに載る (パス 107)。 */}
+            <AiEgressNotice
+              subject={{
+                what: '入力した指示文と、選んだスキルの定義 (Markdown 本文) ',
+                recipients: remoteOnly(AI_EGRESS_RECIPIENT_ANTHROPIC),
+              }}
+            />
             <select
               value={selected}
               onChange={(e) => setSelected(e.target.value)}

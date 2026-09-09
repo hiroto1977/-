@@ -5,7 +5,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { analyzeProfile, type EmotionProfile } from '../data/emotionInsights';
 import { AiEgressNotice } from '../components/AiEgressNotice';
-import { AI_EGRESS_RECIPIENT_ANTHROPIC } from '../../shared/aiEgressNotice';
+import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import { useParameters } from '../data/parameterOverrides';
 import { emotionThresholds } from '../../shared/parameters';
 import { counsel } from '../data/counseling';
@@ -370,7 +370,7 @@ export function EmotionsPage() {
         <AiEgressNotice
           subject={{
             what: '入力したテキスト本文',
-            recipient: AI_EGRESS_RECIPIENT_ANTHROPIC,
+            recipients: remoteOnly(AI_EGRESS_RECIPIENT_ANTHROPIC),
             mayIncludeOthers: true,
           }}
         />

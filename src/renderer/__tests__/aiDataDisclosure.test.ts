@@ -4,6 +4,7 @@ import path from 'node:path';
 import {
   AI_EGRESS_RECIPIENT_ANTHROPIC,
   aiEgressNoticeLines,
+  remoteOnly,
 } from '../../shared/aiEgressNotice';
 
 const REPO_ROOT = path.resolve(__dirname, '../../..');
@@ -44,15 +45,15 @@ const WEB_SHIM = read('src/renderer/web-shim.ts');
 const withoutComments = (src: string): string => src.replace(/\{\/\*[\s\S]*?\*\/\}/g, '');
 
 /**
- * この画面が `what` に渡している字面 (次の欄 `recipient:` の手前まで)。
+ * この画面が `what` に渡している字面 (次の欄 `recipients:` の手前まで)。
  * 画面の言葉を**画面から**取るので、検査側に文面を書き写さない。
  */
 function whatSource(src: string): string {
   const body = withoutComments(src);
   const a = body.indexOf('what:');
-  const b = body.indexOf('recipient:', a);
+  const b = body.indexOf('recipients:', a);
   expect(a, 'what を渡していない').toBeGreaterThan(-1);
-  expect(b, 'recipient を渡していない').toBeGreaterThan(a);
+  expect(b, 'recipients を渡していない').toBeGreaterThan(a);
   return body.slice(a + 'what:'.length, b);
 }
 
@@ -67,7 +68,7 @@ describe('AI へ送る物を、その画面が明示している', () => {
     // **画面が渡した what から、利用者が読む文を組み立てて見る。**
     const shown = aiEgressNoticeLines({
       what: whatSource(STOCKS_PAGE),
-      recipient: AI_EGRESS_RECIPIENT_ANTHROPIC,
+      recipients: remoteOnly(AI_EGRESS_RECIPIENT_ANTHROPIC),
     }).join('\n');
     expect(shown, '送信内容の記載が無い').toMatch(/送信内容/);
     expect(shown, 'ウォッチリストが出ることを書いていない').toMatch(/ウォッチリスト/);
@@ -76,7 +77,7 @@ describe('AI へ送る物を、その画面が明示している', () => {
 
   it('走査規則が実物に当たる (what を画面から取れている)', () => {
     // 規則を標本に当てる —— どの入力でも空を返す検査になっていないこと。
-    const sample = 'subject={{\n  what: `質問文と、X`,\n  recipient: R,\n}}';
+    const sample = 'subject={{\n  what: `質問文と、X`,\n  recipients: R,\n}}';
     expect(whatSource(sample)).toContain('質問文と、X');
     // 実物からも空でない字面が取れる。
     expect(whatSource(STOCKS_PAGE).trim().length).toBeGreaterThan(10);

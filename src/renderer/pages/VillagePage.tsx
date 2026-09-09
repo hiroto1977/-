@@ -34,6 +34,12 @@ import { CAPABILITIES } from '../components/VoiceCommandBar';
 import { SERVICES } from '../services';
 import type { ServiceId } from '../../shared/serviceId';
 import { startSpeechRecognition, isSpeechRecognitionSupported } from '../voice/speechAdapter';
+import { AiEgressNotice } from '../components/AiEgressNotice';
+import {
+  assistantEgressRecipients,
+  readProviderStatuses,
+  type ProviderStatus,
+} from '../data/assistantProviders';
 import { speak, cancelSpeech } from '../voice/ttsAdapter';
 
 const REG: VillageRegistry = {
@@ -104,10 +110,39 @@ export function VillagePage() {
   const [transcript, setTranscript] = useState('');
   const [voiceTargetId, setVoiceTargetId] = useState<string | null>(null);
   const [aiOn, setAiOn] = useState(true);
+  /**
+   * 送り先を書くための設定状況。**この画面はマイクの声を外へ出す** ——
+   * `assistant/chat` へ渡すのは音声認識で書き起こした本文で、送り先は利用者が
+   * アシスタント画面で設定したプロバイダである。パス 106 の走査は action 名を
+   * 手で書いていたためこの画面を数えておらず、断りが無かった (パス 107)。
+   */
+  const [providers, setProviders] = useState<readonly ProviderStatus[]>([]);
+  const [providersUnknown, setProvidersUnknown] = useState(false);
   const [paused, setPaused] = useState(false);
   const [focusedExec, setFocusedExec] = useState<string | null>(null);
   const recRef = useRef<{ stop: () => void; abort: () => void } | null>(null);
   const voiceClearRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    void (async () => {
+      const read = await readProviderStatuses();
+      setProviders(read.providers);
+      setProvidersUnknown(read.unknown);
+    })();
+  }, []);
+
+  /**
+   * 断りに書く送り先。**AI を切っていれば外へは出ない** (`aiOn` が false のとき
+   * `invoke` しないので、そう書けるし、そう書くべきである)。判断は
+   * `data/assistantProviders.ts` が 1 か所で持つ (アシスタント画面と同じ)。
+   */
+  const egressRecipients = useMemo(
+    () =>
+      aiOn
+        ? assistantEgressRecipients({ providers, providersUnknown, selected: '' })
+        : { remote: [], local: [] },
+    [aiOn, providers, providersUnknown],
+  );
 
   const activeStep = dispatchPlan.length > 0 ? dispatchPlan[step % dispatchPlan.length] : undefined;
   const activeTeamId = !focusedExec && phase < 4 ? activeStep?.teamId ?? null : null;
@@ -290,6 +325,17 @@ export function VillagePage() {
           </button>
         </div>
       </div>
+
+      {/* **声も外へ出る。** マイクで話した内容は音声認識で文字になり、
+          `assistant/chat` へ送られる —— 送り先は利用者がアシスタント画面で
+          設定したプロバイダ。「AI」を切れば送らないので、そのときは
+          「出ません」と書ける (文面は `shared/aiEgressNotice.ts`)。 */}
+      <AiEgressNotice
+        subject={{
+          what: 'マイクで話した内容 (音声認識の書き起こし) と、入力した文',
+          recipients: egressRecipients,
+        }}
+      />
 
       <div style={sceneStyle}>
         <Scenery />

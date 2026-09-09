@@ -18098,6 +18098,133 @@ i1price: 品目1 の単価「abc」を金額として読み取れません。金
 明記しているので、**4 つの renderer を触る価値は無いと判断した**。
 揃えるなら `advisorTypes.ts` に文を 1 つ置いて 4 面が読む形が筋である。
 
+## パス 107 (2026-09-09) — **母集団の走査を、私が手で書いていた —— AI へ送る画面は 5 ではなく 8 だった**
+
+パス 106 は「AI の画面が黙って増えないための走査」を足したパスである。その走査は
+
+```ts
+const AI_ACTIONS = ['advise', 'analyze-text'] as const;
+```
+
+と、**私が手で書いた一覧**で母集団を決めていた。手で書けば、手で書いた分だけしか
+見つからない。実装から導き直したら **3 画面**増えた。
+
+### 実測 — 導出は `main/clients/*.ts` の `ACTIONS` から
+
+AI へ出る印 (`api.anthropic.com` / `runAiChat(`) に**到達可能な** handler の action だけを
+母集団にすると 6 組:
+`assistant/chat` · `assistant/chatAll` · `business/advise` · `emotions/analyze-text` ·
+`skills/run-skill` · `stocks/advise`。これを invoke する画面は **8**。
+
+| 見落としていた画面 | 送る物 | なぜ漏れたか |
+| --- | --- | --- |
+| `AssistantPage` | 直近 16 往復の会話 (入力文と AI の返答) | action 名が `chat` / `chatAll` で、私の一覧に無い |
+| `SkillsPage` | 入力した指示文 + **選んだスキルの定義 (Markdown 本文)** | 同上 (`run-skill`) |
+| `VillagePage` | **マイクで話した内容の書き起こし** | 同上 (`assistant/chat` を借りる) |
+
+**数は 3 → 5 → 8 と動いた。** 手で 3 と見立て、パス 106 の (手書きの) 走査が 5 に訂正し、
+実装から導いた走査が 8 にした。落としていたのは**最も大きい画面と、最も意外な画面**である:
+
+- `AssistantPage` はこの app の主チャットで、しかも「**全AI合議**」は設定済みの
+  **全プロバイダへ同時に**送る (`chatAll`)。
+- `VillagePage` は「AIの村」——「マイクで話しかけると担当部門のキャラが歩み寄って
+  答える」画面で、`startSpeechRecognition` の書き起こしが `assistant/chat` へ出る。
+  **AI の切り替え (`aiOn`) は既定で入っている**。かわいい村に話しかけた声が外部の
+  AI 事業者へ渡ることを、画面のどこにも書いていなかった。
+
+パス 85 / 95 と同じ形 —— **数える所を手で書くと、そこが穴になる**。
+
+### 送り先は固定の文字列にできなかった
+
+`AssistantPage` / `VillagePage` の送り先は利用者が選ぶ (Anthropic / OpenAI / Gemini /
+Ollama / 互換エンドポイント) ので、パス 106 の `recipient: AI_EGRESS_RECIPIENT_ANTHROPIC`
+をそのまま貼ると**嘘になる**。さらに:
+
+- 「全AI合議」では**複数へ同時に**出る → 1 社だけ書けない。
+- **Ollama は端末内**で終わる → 「外へ送信されます」と書くと嘘。
+- 設定状況が**読めなかった**とき → 「出ません」と書くと嘘 (後述)。
+- `VillagePage` は AI を切れば送らない → そのときは「出ません」と**書ける**。
+
+そこで送り先を `AiEgressRecipients { remote / local / unknown }` にした。
+文面は 4 通りに分岐する (外へ出る / 端末内だけ / 両方 / 確認できない)。
+**端末内だけのときは「端末の外へは出ません」と言い切る** —— `SecurityPage` の
+パスワード強度チェッカーが「この端末内だけで評価し、外部に送信しません」と
+書いているのと同じで、**言えることは強く言う**。
+
+### 2 つ目の欠陥 — 「未設定」と「確認できません」を混ぜていた
+
+`AssistantPage.refreshProviders` はこうだった:
+
+```ts
+const res = await hub.invoke<{ providers: ProviderStatus[] }>('assistant', 'providers', {});
+if (res.ok && Array.isArray(res.data.providers)) setProviders(res.data.providers);
+} catch { /* 取得失敗は無視 (チャットのフォールバックは別途機能する) */ }
+```
+
+**`{ ok: false }` (ブラウザ版で保管庫が施錠されている) と例外を、どちらも空配列に
+していた。** 空配列は画面では「プロバイダ未設定 = 外へ出ない」と読めるが、`chat` は
+保存済みの資格情報で**実際に送る**ので、その読みは嘘になる ——
+つまりこのパスで断りを足すと、**断りそのものが嘘をつく**形だった。
+
+下の層は区別を渡していた: `web-shim.ts` の `callAssistantProviders` は
+`credsRead.ok` が偽なら `credsRead.res` を**そのまま返す**。
+**規準は手の届く所に在り、画面が捨てていた** (12 か所目。パス 86 / 87 / 88 で
+「読めなかったを未設定と混ぜない」を直したのと同じ形)。
+
+### 直し
+
+- `shared/aiEgressNotice.ts`: `AiEgressRecipients` (remote / local / unknown) と
+  `remoteOnly(name)`。4 通りの文面を 1 か所で組む。
+- `renderer/data/assistantProviders.ts` (新規): **設定状況の読み方**
+  (`readProviderStatuses` —— `unknown` を返す) と**送り先の判断**
+  (`assistantEgressRecipients`) を 1 か所で持つ。`assistant/chat` を呼ぶ画面は
+  2 つあるので、判断を写せば片方だけ動く形になる。
+- `SkillsPage` / `AssistantPage` / `VillagePage`: 断りを配線。`SkillsPage` は
+  「スキルの定義も送る」ことまで書く (指示文だけではない)。
+- 既存 5 画面: `recipients: remoteOnly(AI_EGRESS_RECIPIENT_ANTHROPIC)` へ移行。
+- 走査 (`pages/__tests__/aiEgressDisclosed.test.ts`): 母集団を `ACTIONS` から
+  到達可能性で導く。**action が増えても一覧を直さなくてよい。**
+
+### 導出の試作が 2 度間違えた (どちらも自分の検査で見つけた)
+
+1. **1 段しか辿らなかった** —— `business/advise` は handler が helper 経由で
+   Anthropic を叩くので拾えなかった。呼び出しを BFS で辿るようにした。
+2. **戻り値の型の波括弧を本体と読んだ** —— `async function runSkill(ctx): Promise<{
+   text: string; stopReason: string }> {` では最初の `{` は**型**のもので、
+   `balanced()` が型注釈を「本体」として返し、6 組のうち 2 組しか出なかった。
+   本体の `{` には改行が続くことで見分ける (`bodyBrace`)。
+   この 2 つは検査に**標本を当てる**節として残した (規則が実物に当たることを、
+   同じテストの中で確かめる)。
+
+### 対照 (9 本)
+
+| 対照 | 落ちた検査 |
+| --- | --- |
+| A: `VillagePage` の断りを消す | 3 件 |
+| B: `SkillsPage` の断りを消す | 3 件 |
+| C: `ok:false` を「未設定」に丸め戻す | 2 件 |
+| D: Ollama を外部の送り先として書く | 2 件 |
+| E: 合議なのに送信の行で 1 社だけ名指しする | 1 件 (**直す前は 0 件** — 下記) |
+| F: 確認できないのに「出ません」と言う | 2 件 |
+| G: AI を切っていても「送信されます」と書く | 1 件 |
+| H: 実装から AI の印を消す (導出が縮む) | 2 件 |
+| I: 村が送り先の判断を自前で持つ | 1 件 |
+
+**対照 E が最初は鳴らなかった。** 「A 社 / B 社 / C 社 が全部出ているか」を
+**文書全体**に当てていたので、末尾の「取り扱いは主張しません」に名前が並んでいれば
+通ってしまい、**送信の行が 1 社だけでも鳴らない**。行ごとに当てるよう直した。
+パス 106 の対照 A (前方一致で `<AiEgressNoticeXX` を断りと数えた) と同じ ——
+**鳴らない対照は「合格」ではなく、その検査についての報せである**。
+2 パス続けて、対照が検査の穴を 1 つずつ教えた。
+
+### 残り
+
+走査が守るのは「在ること」と「実物どおりであること」まで。**9 つ目の画面が
+黙って増えたら鳴る**が、断りの**中身**は人が書く物である。
+`compat` (OpenAI 互換エンドポイント) の送り先は利用者が入れた URL なので、
+表示名はプロバイダのラベル (「OpenAI 互換」) に留まる —— どのホストかまでは
+画面に出していない。ここは「言えることだけを書く」の範囲内に収めた。
+
 ## パス 106 (2026-09-09) — **Anthropic へ利用者のデータを送る 5 画面のうち、断りが在るのは 1 つだけだった**
 
 パス 105 で `StocksPage` の egress の断りを直しているとき、その断りを足した

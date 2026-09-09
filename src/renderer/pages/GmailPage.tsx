@@ -5,7 +5,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { GoogleConnectCard } from '../components/GoogleConnectCard';
 import { useServiceData } from '../hooks/useServiceData';
 import { AiEgressNotice } from '../components/AiEgressNotice';
-import { AI_EGRESS_RECIPIENT_ANTHROPIC } from '../../shared/aiEgressNotice';
+import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -90,7 +90,7 @@ export function GmailPage() {
       <AiEgressNotice
         subject={{
           what: '受信スレッドの件名と送信者のメールアドレス',
-          recipient: AI_EGRESS_RECIPIENT_ANTHROPIC,
+          recipients: remoteOnly(AI_EGRESS_RECIPIENT_ANTHROPIC),
         }}
       />
       <Section

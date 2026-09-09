@@ -31,6 +31,13 @@ import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
 import { CAPABILITIES } from '../components/VoiceCommandBar';
 import { org as registryOrg, teams as registryTeams } from '../../../orchestration/registry.json';
 import { safeCssUrl } from '../../shared/imageUrlGate';
+import { AiEgressNotice } from '../components/AiEgressNotice';
+import {
+  ALL_AGENTS,
+  assistantEgressRecipients,
+  readProviderStatuses,
+  type ProviderStatus,
+} from '../data/assistantProviders';
 
 interface ChatMessage {
   readonly role: 'user' | 'assistant';
@@ -41,17 +48,6 @@ interface ChatMessage {
   readonly offline?: boolean;
   /** 応答した AI プロバイダ (assistant 発話・オンライン時)。 */
   readonly provider?: string;
-}
-
-/** assistant/providers アクションが返すプロバイダ設定状況。 */
-interface ProviderStatus {
-  readonly id: string;
-  readonly label: string;
-  readonly configured: boolean;
-  readonly isDefault: boolean;
-  readonly browserDirect: boolean;
-  readonly needsApiKey: boolean;
-  readonly defaultModel: string;
 }
 
 /** エージェント設定パネルの入力フィールド (保存時に空欄は除外)。 */
@@ -88,9 +84,6 @@ interface Theme {
 const HISTORY_KEY = 'assistant-history';
 const THEME_KEY = 'assistant-theme';
 const PROVIDER_KEY = 'assistant-provider';
-/** エージェント選択の特別値: 設定済みの全プロバイダへ同時に質問する合議モード。 */
-const ALL_AGENTS = '__all__';
-
 /** chatAll (全AI合議) の 1 プロバイダ分の回答。 */
 interface EnsembleAnswer {
   readonly provider: string;
@@ -267,7 +260,9 @@ export function AssistantPage() {
   const [busy, setBusy] = useState(false);
   const [theme, setTheme] = useState<Theme>(() => loadTheme());
   const [showTheme, setShowTheme] = useState(false);
-  const [providers, setProviders] = useState<ProviderStatus[]>([]);
+  const [providers, setProviders] = useState<readonly ProviderStatus[]>([]);
+  /** 設定状況を**読めなかった**か (空配列と区別する。パス 107)。 */
+  const [providersUnknown, setProvidersUnknown] = useState(false);
   const [provider, setProvider] = useState<string>(() => {
     try {
       return localStorage.getItem(PROVIDER_KEY) ?? '';
@@ -280,16 +275,15 @@ export function AssistantPage() {
   const [credsMessage, setCredsMessage] = useState('');
   const listRef = useRef<HTMLDivElement | null>(null);
 
-  /** プロバイダ設定状況を取得 (未設定・ブラウザ版 Vault ロック時は空のまま)。 */
+  /**
+   * プロバイダ設定状況を取得する。**「未設定」と「確認できません」を混ぜない** ——
+   * 読み方は `data/assistantProviders.ts` が 1 か所で持つ (`VillagePage` も同じ
+   * 判断を要るので。2026-09-09 · パス 107)。
+   */
   const refreshProviders = async () => {
-    try {
-      const hub = window.serviceHub;
-      if (!hub) return;
-      const res = await hub.invoke<{ providers: ProviderStatus[] }>('assistant', 'providers', {});
-      if (res.ok && Array.isArray(res.data.providers)) setProviders(res.data.providers);
-    } catch {
-      /* 取得失敗は無視 (チャットのフォールバックは別途機能する) */
-    }
+    const read = await readProviderStatuses();
+    setProviders(read.providers);
+    setProvidersUnknown(read.unknown);
   };
 
   useEffect(() => {
@@ -303,6 +297,11 @@ export function AssistantPage() {
       /* 無視 */
     }
   }, [provider]);
+
+  const egressRecipients = useMemo(
+    () => assistantEgressRecipients({ providers, providersUnknown, selected: provider }),
+    [providers, providersUnknown, provider],
+  );
 
   /** エージェント設定 (JSON マルチプロバイダ資格情報) を assistant スロットへ保存。 */
   const saveAgentCreds = async () => {
@@ -835,6 +834,17 @@ export function AssistantPage() {
           </button>
         ))}
       </div>
+
+      {/* **何が外へ出るかを、送る画面が書く。** この画面はパス 106 の走査から
+          漏れていた (走査が action 名を手で書いており `chat` / `chatAll` が
+          一覧に無かった) —— この app の主チャットで、しかも「全AI合議」は
+          設定済みの全プロバイダへ同時に送る。文面は `shared/aiEgressNotice.ts`。 */}
+      <AiEgressNotice
+        subject={{
+          what: `入力した質問文と、直近 ${TURN_WINDOW} 往復までの会話 (AI の返答を含む) `,
+          recipients: egressRecipients,
+        }}
+      />
 
       <form
         onSubmit={(e) => {
