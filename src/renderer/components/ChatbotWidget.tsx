@@ -23,6 +23,10 @@ import { CAPABILITIES } from './VoiceCommandBar';
 import { isExecutableIntent, type VoiceIntent } from '../data/voiceCommand';
 import { org as registryOrg, teams as registryTeams } from '../../../orchestration/registry.json';
 import { writeLocalJson, type LocalWriteResult } from '../data/localWrite';
+import {
+  voiceWriteRefusal,
+  voiceWriteRefusalMessage,
+} from '../../shared/voiceWriteRequirements';
 
 /** チャット履歴 1 件。 */
 interface ChatMessage {
@@ -264,6 +268,22 @@ export function ChatbotWidget() {
     append({ role: 'bot', text: reply.text + storeNote, routedThrough: reply.routedThrough });
 
     if (reply.kind === 'action' && reply.intent) {
+      // **起こり得ないことに承認を求めない** (パス 109)。書き込み操作の必須項目は
+      // `intent.params` から来るが、解析器はそれを設定しない —— 2026-09-09 まで
+      // 「⚠ 書き込み操作のため、実行前に確認してください」と言って承認を取り、
+      // invoke は毎回「channel and text are required」で落ちていた。
+      // 判断は `shared/voiceWriteRequirements.ts` が 1 か所で持つ (音声も同じ物を読む)。
+      const refusal = voiceWriteRefusal(reply.intent.serviceId, reply.intent.action, reply.intent.params);
+      if (refusal !== null) {
+        const label = SERVICES.find((sv) => sv.id === reply.intent?.serviceId)?.label
+          ?? reply.intent.serviceId ?? '（サービス未特定）';
+        append({
+          role: 'bot',
+          text: `⚠ ${voiceWriteRefusalMessage(label, reply.intent.action ?? '', refusal)}`,
+        });
+        if (reply.navigateTo) navigateTo(reply.navigateTo);
+        return;
+      }
       if (reply.needsConfirmation) {
         setPendingIntent(reply.intent);
       } else {
