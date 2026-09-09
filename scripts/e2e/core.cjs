@@ -246,6 +246,26 @@ async function desktopSuite(browser) {
     await page.waitForFunction((n) => document.querySelectorAll('tbody tr').length < n, before, { timeout: 15000 });
   }
 
+  // パス 127: 貸借対照表は基準日で「現在」を選ぶ (旧: 最後に入力した控え —— 古い基準日を後から入れると、そちらを現在として使い、一覧も無かった)
+  await gotoService(page, '#kpi', 'input[placeholder="基準日"]');
+  const bsFill = async (rows) => {
+    for (const [ph, v] of rows) await page.locator(`input[placeholder="${ph}"]`).first().fill(v);
+  };
+  await bsFill([['基準日', '2026-03-31'], ['流動資産', '1000000'], ['固定資産', '500000'], ['流動負債', '300000'], ['固定負債', '200000']]);
+  await page.getByRole('button', { name: 'BS を保存', exact: true }).click();
+  await page.waitForSelector('[data-bs-row="current"]', { timeout: 15000 });
+  await bsFill([['基準日', '2025-03-31'], ['流動資産', '800000'], ['固定資産', '400000'], ['流動負債', '500000'], ['固定負債', '400000']]);
+  await page.getByRole('button', { name: 'BS を保存', exact: true }).click();
+  await page.waitForFunction(() => document.body.textContent.includes('より新しい基準日の控え'), undefined, { timeout: 15000 });
+  const currentBs = ((await page.locator('[data-bs-row="current"]').first().textContent()) ?? '').trim();
+  ok(currentBs.includes('2026-03-31'), `KPI: ★ 「現在」の貸借対照表は基準日の新しい 2026-03-31 (実際 "${currentBs.slice(0, 40)}")`);
+  ok((await page.locator('[data-bs-row]').count()) === 2, 'KPI: 貸借対照表の一覧に 2 件が並ぶ (どれを使っているかが見える)');
+  while ((await page.locator('[data-bs-row]').count()) > 0) {
+    const before = await page.locator('[data-bs-row]').count();
+    await page.locator('[data-bs-row]').first().getByRole('button', { name: '削除' }).click();
+    await page.waitForFunction((n) => document.querySelectorAll('[data-bs-row]').length < n, before, { timeout: 15000 });
+  }
+
   // 士業 CRM: 追加 → ステータス変更 → 他ページ非漏出
   await gotoService(page, '#cpa', 'text=連携先一覧');
   await page.getByPlaceholder('例: 山田 太郎').fill('E2E会計士');

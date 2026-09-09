@@ -5,7 +5,6 @@ import { useServiceData } from '../hooks/useServiceData';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import { MAX_CSV_IMPORT_BYTES, readImportText } from '../data/importFile';
-import { latestRecord } from '../data/latestRecord';
 import { localIsoDate } from '../../shared/localDate';
 import {
   KPI_ACTUALS_COLLECTION,
@@ -34,6 +33,10 @@ import {
   normalizeBalanceSheet,
   parseBalanceSheet,
   computeBalanceSheetMetrics,
+  balanceSheetAsOfKey,
+  balanceSheetChoiceNote,
+  compareBalanceSheetRecords,
+  currentBalanceSheet,
   type BalanceSheet,
 } from '../data/balanceSheet';
 
@@ -679,9 +682,11 @@ function BalanceSheetPanel() {
   const [form, setForm] = useState(EMPTY_BS);
   const [error, setError] = useState<string>();
 
-  // 最新の 1 レコードを採用 (BS は時点情報)。createdAt で選ぶ — list は新しい順なので
-  // 末尾は最古 (`latestRecord` の説明を参照)。
-  const latest = latestRecord(records) ?? undefined;
+  // 「現在」の 1 件は**基準日**で選ぶ (入力した順ではない —— パス 127。それまでは最後に入力した
+  // 控えを使い、古い基準日を後から入れると経営サマリー・書面 §4・計算書類が古い方を「現在」とした)。
+  const latest = currentBalanceSheet(records) ?? undefined;
+  const bsRows = useMemo(() => [...records].sort(compareBalanceSheetRecords), [records]);
+  const choiceNote = useMemo(() => balanceSheetChoiceNote(records, latest ?? null), [records, latest]);
   const submit = useSubmitGuard();
   // 欄の無い控えも 0 と読んでから集計する (NaN のタイルを出さない)。
   const metrics = useMemo(
@@ -744,13 +749,41 @@ function BalanceSheetPanel() {
           <Tile label="流動比率" value={metrics.currentRatioPct === null ? '—' : `${metrics.currentRatioPct}%`} />
           <Tile label="ROA" value={metrics.roaPct === null ? '—' : `${metrics.roaPct}%`} />
           <Tile label="ROE" value={metrics.roePct === null ? '—' : `${metrics.roePct}%`} />
-          {latest && (
-            <button type="button" onClick={() => remove(latest.id)} style={{ alignSelf: 'center' }}>最新BSを削除</button>
-          )}
         </div>
       )}
       {metrics?.insolvent && (
         <div style={{ color: '#ef4444', fontSize: 12 }}>⚠ 純資産がマイナス（債務超過）です。</div>
+      )}
+      {choiceNote !== null && (
+        <p role="alert" style={{ color: '#f59e0b', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
+          {choiceNote}
+        </p>
+      )}
+      {bsRows.length > 0 && (
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, marginTop: 8 }}>
+          <thead>
+            <tr style={{ textAlign: 'left', color: 'var(--text-mute)' }}>
+              <th style={{ padding: '4px 8px' }}>基準日</th>
+              <th style={{ padding: '4px 8px' }}>入力</th>
+              <th style={{ padding: '4px 8px', textAlign: 'right' }}>純資産</th>
+              <th style={{ padding: '4px 8px' }}>使用</th>
+              <th style={{ padding: '4px 8px' }} />
+            </tr>
+          </thead>
+          <tbody>
+            {bsRows.map((r) => (
+              <tr key={r.id} data-bs-row={r.id === latest?.id ? 'current' : 'other'} style={{ borderTop: '1px solid var(--border)' }}>
+                <td style={{ padding: '4px 8px' }}>{balanceSheetAsOfKey(r.data.asOf) || '基準日なし'}</td>
+                <td style={{ padding: '4px 8px', color: 'var(--text-mute)' }}>{new Date(r.createdAt).toLocaleString('ja-JP')}</td>
+                <td style={{ padding: '4px 8px', textAlign: 'right' }}>{safeYen(computeBalanceSheetMetrics(normalizeBalanceSheet(r.data)).netAssets)}</td>
+                <td style={{ padding: '4px 8px' }}>{r.id === latest?.id ? '使用中' : ''}</td>
+                <td style={{ padding: '4px 8px' }}>
+                  <button type="button" onClick={() => { setError(undefined); return remove(r.id); }} aria-label="削除">×</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );

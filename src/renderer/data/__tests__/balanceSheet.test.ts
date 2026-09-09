@@ -7,6 +7,10 @@ import {
   type BalanceSheet,
   normalizeBalanceSheet,
   balanceSheetOrNull,
+  balanceSheetAsOfKey,
+  compareBalanceSheetRecords,
+  currentBalanceSheet,
+  balanceSheetChoiceNote,
 } from '../balanceSheet';
 
 const VALID = { currentAssets: 100, currentLiabilities: 100, fixedAssets: 0, fixedLiabilities: 0, netIncome: 0 };
@@ -649,5 +653,49 @@ describe('読み直して測る — collection 名と比率ヘルパー', () => 
       asOf: '', currentAssets: 0, inventory: 0, accountsReceivable: 0, fixedAssets: 0,
       currentLiabilities: 0, accountsPayable: 0, fixedLiabilities: 0, netIncome: 0,
     }).currentRatioPct).toBeNull();
+  });
+});
+
+describe('どの貸借対照表を「現在」と呼ぶか (パス 127)', () => {
+  const rec = (id: string, createdAt: number, asOf: unknown) => ({ id, createdAt, data: { asOf } });
+
+  it('balanceSheetAsOfKey は前後の空白を落とし、文字列でなければ空 (基準日なし)', () => {
+    expect(balanceSheetAsOfKey(' 2026-03-31 ')).toBe('2026-03-31');
+    expect(balanceSheetAsOfKey('')).toBe('');
+    expect(balanceSheetAsOfKey(undefined)).toBe('');
+    expect(balanceSheetAsOfKey(20260331)).toBe('');
+  });
+
+  it('★ currentBalanceSheet は基準日の新しい控えを選ぶ —— 後から入力した古い基準日ではない', () => {
+    const newerAsOfEnteredFirst = rec('a', 100, '2026-03-31');
+    const olderAsOfEnteredLater = rec('b', 200, '2025-03-31');
+    expect(currentBalanceSheet([newerAsOfEnteredFirst, olderAsOfEnteredLater])?.id).toBe('a');
+    expect(currentBalanceSheet([olderAsOfEnteredLater, newerAsOfEnteredFirst])?.id).toBe('a');
+  });
+
+  it('同じ基準日なら後に入力した方・基準日なしは最下位・月だけの基準日も並ぶ・空なら null', () => {
+    expect(currentBalanceSheet([rec('a', 100, '2026-03-31'), rec('b', 200, '2026-03-31')])?.id).toBe('b');
+    expect(currentBalanceSheet([rec('a', 100, ''), rec('b', 50, '2020-01-31'), rec('c', 300, '')])?.id).toBe('b');
+    expect(currentBalanceSheet([rec('a', 100, ''), rec('b', 300, '')])?.id).toBe('b');
+    expect(currentBalanceSheet([rec('a', 100, '2026-03'), rec('b', 50, '2026-02-28')])?.id).toBe('a');
+    expect(currentBalanceSheet([])).toBeNull();
+  });
+
+  it('compareBalanceSheetRecords は「現在」を先頭にする順 (sort にそのまま渡せる)', () => {
+    const rows = [rec('old', 400, '2024-03-31'), rec('none', 500, ''), rec('new', 100, '2026-03-31'), rec('mid', 200, '2025-03-31')];
+    expect([...rows].sort(compareBalanceSheetRecords).map((r) => r.id)).toEqual(['new', 'mid', 'old', 'none']);
+  });
+
+  it('★ balanceSheetChoiceNote は、最後に入力した控えと違う控えを使うときだけ、両方の基準日を名指しして言う', () => {
+    const a = rec('a', 100, '2026-03-31');
+    const b = rec('b', 200, '2025-03-31');
+    expect(balanceSheetChoiceNote([a, b], a)).toBe(
+      '最後に入力した貸借対照表（基準日 2025-03-31）より新しい基準日の控え（基準日 2026-03-31）があるので、そちらを「現在」として経営サマリー・書面・計算書類に使っています。古い方を消すか、基準日を直してください。',
+    );
+    expect(balanceSheetChoiceNote([a, rec('c', 300, '')], a)).toContain('（基準日なし）より新しい基準日の控え（基準日 2026-03-31）');
+    // 対照: 最後に入力した控えを使っている・控えが無い
+    expect(balanceSheetChoiceNote([b, a], currentBalanceSheet([b, a]))).not.toBeNull();
+    expect(balanceSheetChoiceNote([rec('x', 100, '2025-03-31'), rec('y', 200, '2026-03-31')], rec('y', 200, '2026-03-31'))).toBeNull();
+    expect(balanceSheetChoiceNote([], null)).toBeNull();
   });
 });

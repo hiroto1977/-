@@ -11,6 +11,7 @@
  */
 
 import { isCalendarDateOrMonth } from '../../shared/isoDate';
+import { latestRecord } from './latestRecord';
 
 export const BALANCE_SHEET_COLLECTION = 'balance-sheet';
 
@@ -433,3 +434,71 @@ export {
   balanceSheetFreshness,
   type BalanceSheetFreshness,
 } from '../../shared/balanceSheetFreshness';
+
+// --- どの貸借対照表を「現在」と呼ぶか (パス 127) -----------------------------------------
+
+/**
+ * **貸借対照表は基準日で並ぶ。入力した順ではない。** 以前は `latestRecord` (createdAt = 最後に
+ * 入力した 1 件) を「最新の BS」としていたので、新しい基準日の控えを先に入れ、比較のために古い
+ * 基準日の控えを後から入れると、経営サマリー (`financialPosition`)・金融機関等提出用の書面 §4
+ * 「財政状態（貸借対照表 基準日現在）」・計算書類と資金繰り表の取り込みが**古い方**を「現在」と
+ * して使った。画面はどの控えを使っているかを言わず、消せるのは最後に入力した 1 件だけだった。
+ *
+ * 順序: 基準日 (`YYYY-MM-DD` / `YYYY-MM` の文字列比較 —— 同じ月の日付と月は接頭辞で並び、差が
+ * 付かなければ入力順) の新しい方 → 同じなら後に入力した方。基準日の無い控えは最下位。
+ * `latestRecord` は「入力した順に意味がある」設定の類 (しきい値・提出者情報) に残す。
+ */
+export interface BalanceSheetRecordLike {
+  readonly id: string;
+  readonly createdAt: number;
+  readonly data: { readonly asOf?: unknown };
+}
+
+/** 基準日の順序鍵 (前後の空白を落とす。文字列でなければ空 = 基準日なし)。 */
+export function balanceSheetAsOfKey(asOf: unknown): string {
+  return typeof asOf === 'string' ? asOf.trim() : '';
+}
+
+/** a の基準日が b より新しいか (空は最下位。同じなら false)。 */
+function newerAsOf(a: string, b: string): boolean {
+  if (a === b || a === '') return false;
+  if (b === '') return true;
+  return a > b;
+}
+
+/**
+ * 「現在」として使う順に並べる比較 (先頭が現在)。基準日の新しい方 → 同じなら後に入力した方。
+ * `Array.prototype.sort` にそのまま渡せる (負なら a が先)。
+ */
+export function compareBalanceSheetRecords(a: BalanceSheetRecordLike, b: BalanceSheetRecordLike): number {
+  const ka = balanceSheetAsOfKey(a.data.asOf);
+  const kb = balanceSheetAsOfKey(b.data.asOf);
+  if (newerAsOf(ka, kb)) return -1;
+  if (newerAsOf(kb, ka)) return 1;
+  return b.createdAt - a.createdAt;
+}
+
+/** 「現在」として使う控え (無ければ null)。 */
+export function currentBalanceSheet<R extends BalanceSheetRecordLike>(records: readonly R[]): R | null {
+  let best: R | null = null;
+  for (const r of records) {
+    if (best === null || compareBalanceSheetRecords(r, best) < 0) best = r;
+  }
+  return best;
+}
+
+const asOfLabel = (r: BalanceSheetRecordLike): string => {
+  const k = balanceSheetAsOfKey(r.data.asOf);
+  return k === '' ? '基準日なし' : `基準日 ${k}`;
+};
+
+/**
+ * 使っている控えが最後に入力した控えと違うときの注記 (どれを使っているかを画面が言う)。
+ * 同じ控えか、控えが無ければ null。
+ */
+export function balanceSheetChoiceNote<R extends BalanceSheetRecordLike>(records: readonly R[], chosen: R | null): string | null {
+  if (chosen === null) return null;
+  const lastEntered = latestRecord(records);
+  if (lastEntered === null || lastEntered.id === chosen.id) return null;
+  return `最後に入力した貸借対照表（${asOfLabel(lastEntered)}）より新しい基準日の控え（${asOfLabel(chosen)}）があるので、そちらを「現在」として経営サマリー・書面・計算書類に使っています。古い方を消すか、基準日を直してください。`;
+}
