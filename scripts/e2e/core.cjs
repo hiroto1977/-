@@ -266,6 +266,14 @@ async function desktopSuite(browser) {
     await page.waitForFunction((n) => document.querySelectorAll('[data-bs-row]').length < n, before, { timeout: 15000 });
   }
 
+  // パス 128: 暗号化バックアップの合言葉は保管庫のパスワードと同じ下限 (12 文字) —— 短い合言葉で「暗号化済み」を作らない
+  await gotoService(page, '#settings', '[data-backup-passphrase]');
+  await page.locator('[data-backup-passphrase]').fill('abc');
+  await page.getByRole('button', { name: 'バックアップを書き出す', exact: true }).click();
+  await page.waitForFunction(() => document.body.textContent.includes('12 文字以上で設定してください'), undefined, { timeout: 15000 });
+  ok(!(await has('件のレコードをバックアップしました')), 'settings: ★ 3 文字の合言葉では暗号化バックアップを書き出さない (下限は保管庫と同じ 12 文字)');
+  await page.locator('[data-backup-passphrase]').fill('');
+
   // 士業 CRM: 追加 → ステータス変更 → 他ページ非漏出
   await gotoService(page, '#cpa', 'text=連携先一覧');
   await page.getByPlaceholder('例: 山田 太郎').fill('E2E会計士');

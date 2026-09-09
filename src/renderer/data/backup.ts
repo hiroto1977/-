@@ -31,6 +31,7 @@
  */
 import type { StoredRecord } from './store';
 import { encryptString, decryptString, isEncryptedBundle, type EncryptedBundle } from '../security/dataCrypto';
+import { MIN_PASSWORD_LENGTH } from '../security/vault';
 
 export const BACKUP_VERSION = 1;
 
@@ -119,14 +120,31 @@ export async function serializeBackup(
   return JSON.stringify(file, null, 2);
 }
 
+/**
+ * 暗号化バックアップのパスフレーズが短すぎるときの文 (無ければ null)。
+ *
+ * **下限は保管庫のマスターパスワードと同じ 1 つ** (`vault.ts` の `MIN_PASSWORD_LENGTH` = 12)。
+ * それまで保管庫は 12 文字以上を強制していたのに、同じデータを**外へ持ち出す**暗号化バックアップは
+ * 1 文字でも「暗号化済み」を名乗っていた (2026-09-09 実測 —— パス 128)。PBKDF2 は 1 回の試行を
+ * 遅くするだけで、1〜3 文字の合言葉の総当たりは秒で終わる。バックアップファイルは最も持ち出され
+ * やすい流出経路 (docs/DATA_PROTECTION.md 5) なので、書き出しの側で断る。**復元は断らない** ——
+ * 古いファイルの短い合言葉も開ける (開けなくなる方が事故)。
+ */
+export function backupPassphraseTooShort(password: string): string | null {
+  if (password.length >= MIN_PASSWORD_LENGTH) return null;
+  return `暗号化バックアップのパスワードは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください（保管庫のパスワードと同じ下限です。短い合言葉は総当たりで開きます）`;
+}
+
 /** Encrypt a backup with a passphrase (AES-GCM). The plaintext is a normal
  *  BackupFile (with its SHA-256 integrity intact) so decryption yields a file
- *  that still verifies. */
+ *  that still verifies. 短い合言葉は断る (`backupPassphraseTooShort`)。 */
 export async function serializeEncryptedBackup(
   records: readonly StoredRecord[],
   password: string,
   now: Date = new Date(),
 ): Promise<string> {
+  const tooShort = backupPassphraseTooShort(password);
+  if (tooShort !== null) throw new Error(tooShort);
   const inner = await serializeBackup(records, now);
   const payload = await encryptString(inner, password);
   const envelope: EncryptedBackupFile = { app: 'service-hub', encrypted: true, payload };

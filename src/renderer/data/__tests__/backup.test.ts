@@ -8,8 +8,11 @@ import {
   BACKUP_VERSION,
   serializeEncryptedBackup,
   isEncryptedBackup,
+  backupPassphraseTooShort,
 } from '../backup';
 import type { StoredRecord } from '../store';
+import { encryptString } from '../../security/dataCrypto';
+import { MIN_PASSWORD_LENGTH } from '../../security/vault';
 
 const RECORDS: StoredRecord[] = [
   { id: 'a', collection: 'sales', createdAt: 2, updatedAt: 2, data: { amount: 100 } },
@@ -112,17 +115,17 @@ describe('parseBackup', () => {
 
 describe('encrypted backup', () => {
   it('round-trips serialize(encrypted) → parse with the passphrase', async () => {
-    const enc = await serializeEncryptedBackup(RECORDS, 'pw-123');
+    const enc = await serializeEncryptedBackup(RECORDS, 'pw-123456789');
     expect(isEncryptedBackup(enc)).toBe(true);
     // 暗号化エンベロープも app で識別できる ('service-hub' を '' にする mutant を kill)。
     expect(JSON.parse(enc).app).toBe('service-hub');
     // ciphertext must not leak plaintext record content
     expect(enc).not.toContain('sales');
-    expect(await parseBackup(enc, 'pw-123')).toEqual(RECORDS);
+    expect(await parseBackup(enc, 'pw-123456789')).toEqual(RECORDS);
   });
 
   it('isEncryptedBackup distinguishes the encrypted flag from a valid payload', async () => {
-    const enc = await serializeEncryptedBackup(RECORDS, 'pw-123');
+    const enc = await serializeEncryptedBackup(RECORDS, 'pw-123456789');
     const payload = JSON.parse(enc).payload;
     // 有効な payload でも encrypted!==true なら false (左辺を true 固定する mutant を kill)。
     expect(isEncryptedBackup(JSON.stringify({ encrypted: false, payload }))).toBe(false);
@@ -151,11 +154,11 @@ describe('encrypted backup', () => {
     // **どの欄が壊れているか**まで見る。欄名が空になっても「暗号化データが
     // 壊れています（ が base64 として…）」で通ってしまうので、文言の型だけでは
     // 留まらない (実測で欄名の変異体が生き残った)。
-    await expect(parseBackup(text, 'pw-123')).rejects.toThrow(
+    await expect(parseBackup(text, 'pw-123456789')).rejects.toThrow(
       new RegExp(`暗号化データが壊れています（${field} が base64`),
     );
     // プラットフォームの生の例外を出さない。
-    await expect(parseBackup(text, 'pw-123')).rejects.not.toThrow(/Invalid character/);
+    await expect(parseBackup(text, 'pw-123456789')).rejects.not.toThrow(/Invalid character/);
   });
 
   it('中身 (ct) が壊れている場合は従来どおり「復号に失敗」', async () => {
@@ -166,7 +169,7 @@ describe('encrypted backup', () => {
       salt: 'AAAAAAAAAAAAAAAAAAAAAA==', iv: 'AAAAAAAAAAAAAAAA', ct: 'AAAAAAAAAAAAAAAAAAAAAAAA',
     };
     await expect(
-      parseBackup(JSON.stringify({ encrypted: true, payload: bundle }), 'pw-123'),
+      parseBackup(JSON.stringify({ encrypted: true, payload: bundle }), 'pw-123456789'),
     ).rejects.toThrow(/復号に失敗しました/);
   });
 
@@ -185,12 +188,12 @@ describe('encrypted backup', () => {
   });
 
   it('requires a password to restore an encrypted backup', async () => {
-    const enc = await serializeEncryptedBackup(RECORDS, 'pw-123');
+    const enc = await serializeEncryptedBackup(RECORDS, 'pw-123456789');
     await expect(parseBackup(enc)).rejects.toThrow(/パスワードが必要/);
   });
 
   it('rejects a wrong passphrase', async () => {
-    const enc = await serializeEncryptedBackup(RECORDS, 'pw-123');
+    const enc = await serializeEncryptedBackup(RECORDS, 'pw-123456789');
     await expect(parseBackup(enc, 'nope')).rejects.toThrow(/復号に失敗/);
   });
 
@@ -405,5 +408,47 @@ describe('BACKUP_EXCLUSIONS (書き出されない保存先)', () => {
 
   it('空にできない (範囲を語らない状態へ戻さない)', () => {
     expect(BACKUP_EXCLUSIONS.length).toBeGreaterThanOrEqual(3);
+  });
+});
+
+describe('暗号化バックアップの合言葉の下限 (パス 128)', () => {
+  it('下限は保管庫のマスターパスワードと同じ 1 つ (12 文字)', () => {
+    expect(MIN_PASSWORD_LENGTH).toBe(12);
+    expect(backupPassphraseTooShort('a'.repeat(MIN_PASSWORD_LENGTH))).toBeNull();
+    expect(backupPassphraseTooShort('a'.repeat(MIN_PASSWORD_LENGTH - 1))).toContain('12 文字以上で設定してください');
+    expect(backupPassphraseTooShort('')).toContain('保管庫のパスワードと同じ下限');
+  });
+
+  it('★ 短い合言葉では暗号化バックアップを作らない (11 文字は断り、12 文字は作る)', async () => {
+    await expect(serializeEncryptedBackup(RECORDS, 'abc')).rejects.toThrow(/12 文字以上で設定してください/);
+    await expect(serializeEncryptedBackup(RECORDS, 'a'.repeat(11))).rejects.toThrow(/12 文字以上/);
+    const enc = await serializeEncryptedBackup(RECORDS, 'a'.repeat(12));
+    expect(isEncryptedBackup(enc)).toBe(true);
+    expect(await parseBackup(enc, 'a'.repeat(12))).toEqual(RECORDS);
+  });
+
+  it('対照: 復元は断らない —— 短い合言葉で作られた古いファイルは、その合言葉で開く', async () => {
+    const inner = await serializeBackup(RECORDS);
+    const legacy = JSON.stringify({ app: 'service-hub', encrypted: true, payload: await encryptString(inner, 'abc') });
+    expect(isEncryptedBackup(legacy)).toBe(true);
+    expect(await parseBackup(legacy, 'abc')).toEqual(RECORDS);
+  });
+});
+
+describe('docs/DATA_PROTECTION.md の暗号化バックアップの節は実物の数字を書いている (パス 128)', () => {
+  const DOC = readFileSync(new URL('../../../../docs/DATA_PROTECTION.md', import.meta.url), 'utf8');
+  const section = DOC.slice(DOC.indexOf('**暗号化バックアップ (AES-GCM-256)**'), DOC.indexOf('**復元時の中身の形の検査**'));
+
+  it('節が見つかり、反復回数は cryptoParams の実物 (60 万回) を言う', () => {
+    expect(section.length).toBeGreaterThan(100);
+    expect(section).toContain('60 万回');
+    // 標本: 古い写し (21万回) はもう無い —— 上の肯定形が同じ節に当たっている
+    expect(section).not.toContain('21万回');
+    expect(DOC).not.toContain('21万回');
+  });
+
+  it('合言葉の下限 (保管庫と同じ 12 文字) と、復元は断らないことを書いている', () => {
+    expect(section).toContain(`${MIN_PASSWORD_LENGTH} 文字`);
+    expect(section).toContain('復元は古いファイルの短い合言葉も開く');
   });
 });
