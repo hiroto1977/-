@@ -13673,7 +13673,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **104 ファイル / 280 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **104 ファイル / 279 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -13715,7 +13715,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/invoiceTax.ts` | 3 |
 | `src/shared/payroll.ts` | 3 |
 | `src/shared/securityRange.ts` | 3 |
-| `src/main/atomicWrite.ts` | 2 |
 | `src/main/clients/ollama.ts` | 2 |
 | `src/main/clients/teamradar.ts` | 2 |
 | `src/renderer/App.tsx` | 2 |
@@ -13739,6 +13738,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/taxCorporate.ts` | 2 |
 | `src/shared/taxRetirement.ts` | 2 |
 | `src/shared/zoningPlanner.ts` | 2 |
+| `src/main/atomicWrite.ts` | 1 |
 | `src/main/clients/canva.ts` | 1 |
 | `src/main/clients/cloudflare.ts` | 1 |
 | `src/main/clients/devEnv.ts` | 1 |
@@ -18388,6 +18388,54 @@ uber-eats / demae-can の advise は画面が無く (`VoiceCommandBar` と `Busi
 - `fetchedAt` は見本の固定時刻 (2035-04-15) のまま。画面は刷っていないが、保存した物の取得時刻としては嘘。
 - 下書き (`servicehub.teamradar.draft.v1`) は snapshot より優先して復元される。読めなかった保存と下書きが両方在るとき、
   画面のメンバーは下書き、注記は保存先について言う (別の物を指している)。
+
+## パス 134 (2026-09-09) — **「トークンを消去」しても直前の控え (`.prev`) に残り、本体が消える・壊れると消したはずのトークンが復活していた**
+
+### 何が起きていたか
+
+`secrets.json` は `atomicWriteFile(…, { keepBackup: true })` で書かれ、控え `.prev` は **rename の前に本体を複製した物 =
+直前の内容**だった。`clearToken` は鍵を消した store を書くので、直後の `.prev` には**消したトークンがそのまま**
+(キーチェーンで封緘した形、無い環境では `plain:` の base64) 残る。`setToken` で入れ替えた古いトークンも同じ。
+そして `readStore` は本体が**無い・JSON として読めない**とき `.prev` から復旧する —— 利用者が「消去」を押した後、
+本体が壊れる・手で消すと、**消したはずのトークンが復活**して一覧に戻り、次の API 呼び出しに使われる (パス 20
+「消し尽くすと言って消せていない」の形)。
+
+控えが直前の内容であることは、実は何の役にも立っていなかった: rename は原子的なので、書き込みの途中で落ちても本体は
+前の内容のまま (控えは読まれない)。控えが読まれるのは本体を**後から**失ったときで、そのとき戻したいのは**最後に
+書けた内容**である。
+
+### 直し
+
+- `src/main/atomicWrite.ts` (保護対象 · chain #166): 控えは **rename の後に、書いたばかりの内容を同じ経路 (一意な tmp →
+  rename) で** `.prev` へ置く。直前の内容は 1 バイトも残らない。同じ経路なので mode は必ず効き (2026-08-23 の
+  「控えが 644 のまま」の窓は経路ごと消え、`copyFile` + `chmod` は無くなった)。控えを書けなければ**投げる** (古い控えを
+  黙って残すと「消した」と信じた物がディスクに在ることになる。本体は既に新しい内容で、投げても壊れない)。
+- `src/main/secrets.ts` (保護対象): 注記だけ実物に (行数は同じ)。`readStore` の復旧は今までどおり `.prev` を読む ——
+  中身が最後に書けた内容になったので、消した物は戻らない。
+- (ついで) `recordShapeAuditPanel.test.ts`: 点検の結果を固定回数の settle で待っていて、全件実行の負荷の下で 1 本だけ落ちた
+  (14,521 件中・単独では 3/3 通る = 競合)。出るはずの文を待つ (最大 10 秒・出なければ本物の失敗) に直した。
+- 検査: `atomicWrite.test.ts` (★ 消した物を控えに残さない / 初回でも控えを置く / 控えを書けなければ投げる / 控えにも mode /
+  緩い控えが置き換えで締まる)、`secretsWrite.test.ts` (★ 入れ替えたトークンは控えに残らない / ★ 消した後に本体が壊れても
+  復活しない / ★ 本体を手で消しても戻らない)、`writeModeGate.test.ts` の台帳の理由を実物に。
+
+### 対照
+
+| # | 何を壊したか | 鳴ったか |
+| --- | --- | --- |
+| A | 控えを rename の前の複製 (直前の内容) に戻す (元の判断) | 🔔 9 / 66 (`atomicWrite.test.ts` + `secretsWrite.test.ts`): ★ 消した物を控えに残さない・入れ替えたトークン・本体が壊れても復活しない・手で消しても戻らない —— 直前の内容の控えは 4 面全部に当たる |
+| A2 | 控えの書き込み失敗を握り潰す (古い控えを残す) | 🔔 1 / 66: 「控えを書けなければ投げる」だけが落ちる (握り潰すと古い控えが黙って残る) |
+
+(e2e の対照 B は無い —— main プロセスの変更で、ブラウザ版の e2e は触らない。実機の起動は chain の smoke:app と
+pipeline が通す。)
+
+### 残る物
+
+- 消去の**直後**の数ミリ秒 (本体の rename から控えの rename まで) は控えに直前の内容が在る。その窓で落ちれば次の保存で
+  消える (読み出しは本体を優先するので、復活は本体も同時に失ったときだけ)。
+- 控えを書けずに投げたとき、本体は既に新しい内容・控えは古いまま。呼び出し側 (設定画面) は「保存に失敗」と言い、
+  再試行で両方が揃う。「本体は書けた」と別に言う口は無い。
+- ブラウザ版 (保管庫) に控えは無い。
+- 0 倒しの母集団 (`lint:zero-fold`) は **280 のまま** (main 側の変更で、走査の範囲は renderer)。
 
 ## パス 133 (2026-09-09) — **人材育成 (部署名・氏名) とチームレーダー (他人の氏名と評価) の状態ファイルが平文で置かれていた —— パス 132 が「残る物」に書いた 3 つのうち、守る物が在る 2 つ。そして封緘しているかを数える検査が無かった**
 

@@ -1397,6 +1397,14 @@
       "leafCount": 66,
       "note": "update integrity-chain.cjs,assistant.ts",
       "hash": "1702b111a531873e52100098c7267afd60a9022c0d644541884416d326079cdf"
+    },
+    {
+      "index": 166,
+      "prevHash": "1702b111a531873e52100098c7267afd60a9022c0d644541884416d326079cdf",
+      "merkleRoot": "4c31dcb1167e631de0dfb43aaad7c41ccd13bfa8024751bb5d132fefc9db4e31",
+      "leafCount": 66,
+      "note": "update atomicWrite.ts,secrets.ts",
+      "hash": "e6256ca397a19d88858dcbaf2a6a8790323d47533fc90418d61d2126cdb42ac9"
     }
   ],
   "tipManifest": {
@@ -1422,13 +1430,13 @@
     "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
     "scripts/smoke-app.cjs": "3308303649279f4ca49640e00f61f2451fea881e506005c51a97c3cbca2bd827",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
-    "src/main/atomicWrite.ts": "7c4677b4cc87cdd7c4f807133254aa415be10e2f07dec599bcf988e869e43953",
+    "src/main/atomicWrite.ts": "b1840895edf0bf5394fa36a64352b28cf852ca1a2b02e246dd6d6c82c457db44",
     "src/main/clients/assistant.ts": "e004df9dcd353fb647d371f71354120fbe50aae4b630b2cc2f86843055b10a7f",
     "src/main/clients/exportPaths.ts": "bcf8712b41e9ee1682472ca1a67a067d0ed7d1d6a96b8f4e3c9ec6fe69d22419",
     "src/main/clients/types.ts": "17566fb0225201500a996d5c47926cc8fc0426d2f1b54f603dc973d021656134",
     "src/main/main.ts": "052ed1c345950a701cca6ff3e13ee33d9f390b6daefb02f1e2991aacce5c3f54",
     "src/main/oauth.ts": "3d3e5b5516b44f9da1a7449e194adeae0dd42575c89a3b8a56cd10f4f44c345f",
-    "src/main/secrets.ts": "c7466d7a8b91db2e793f96b69db45ddd2c803eb946b5f7439a09c05b07be1a0a",
+    "src/main/secrets.ts": "f8914917ac5cdf8a4880ed8f57cdecfe8811b4bfe92a01a167f5d07836749fca",
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
     "src/preload/preload.ts": "ec4bcd1283a8cb949dbb92857727d2a84c98e788a0bfd78c4b5cb718663a4027",
     "src/renderer/data/assistantMarkdown.ts": "7d08dc362233f8ca3d52257e84c2bd6c95ad34d3ea97d5208359aa730d969d6b",

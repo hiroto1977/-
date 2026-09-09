@@ -153,13 +153,41 @@ describe('setToken — 保存時の暗号化', () => {
     expect(mode).toBe(0o600);
   });
 
-  it('上書き時は直前の内容を .prev へ退避する (途中で落ちても失わない)', async () => {
+  it('★ 控えは最後に書けた内容 —— 入れ替えたトークンは控えに残らない (パス 134)', async () => {
     const { setToken } = await import('../secrets');
     await setToken('github', 'first');
     await setToken('github', 'second');
 
     const prev = JSON.parse(await fs.readFile(`${storePath()}.prev`, 'utf8')) as Record<string, string>;
-    expect(prev.github).toBe(encrypted('first'));
+    // 2026-09-09 まで控えは 'first' だった (直前の内容)。
+    expect(prev.github).toBe(encrypted('second'));
+    expect(JSON.stringify(prev)).not.toContain(encrypted('first'));
+  });
+
+  it('★ 消したトークンは控えにも残らず、本体が壊れても復活しない', async () => {
+    const err = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { setToken, clearToken, getToken, listConfiguredServices } = await import('../secrets');
+    await setToken('github', 'ghp_gone');
+    await setToken('slack', 'xoxb_keep');
+    await clearToken('github');
+
+    const prev = JSON.parse(await fs.readFile(`${storePath()}.prev`, 'utf8')) as Record<string, string>;
+    expect(Object.keys(prev)).toEqual(['slack']);
+
+    // 本体が壊れて控えから復旧しても、消した物は戻らない (2026-09-09 まではここで 'ghp_gone' が復活した)。
+    await fs.writeFile(storePath(), '{ this is not json', 'utf8');
+    expect(await getToken('github')).toBeNull();
+    expect(await listConfiguredServices()).toEqual(['slack']);
+    expect(String(err.mock.calls[0]![0])).toContain('.prev');
+  });
+
+  it('★ 本体を手で消しても、消したトークンは戻らない (残るのは最後に書けた内容)', async () => {
+    const { setToken, clearToken, getToken, listConfiguredServices } = await import('../secrets');
+    await setToken('github', 'ghp_gone');
+    await clearToken('github');
+    await fs.rm(storePath());
+    expect(await getToken('github')).toBeNull();
+    expect(await listConfiguredServices()).toEqual([]);
   });
 });
 

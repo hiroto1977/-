@@ -32,7 +32,7 @@ const EXEMPT: Readonly<Record<string, string>> = {
   'atomicWrite.ts':
     '書き先は `${target}.tmp-${pid}-${Date.now()}-${乱数}` で毎回一意な新規ファイルなので、' +
     '`fs.open(tmp, "w", mode)` の mode が必ず効く (既存の権限を継ぐ経路が無い)。' +
-    '控え (`.prev`) は copyFile が複製元の mode を継ぐため、別途 chmod している。',
+    '控え (`.prev`) も同じ経路 (一意な tmp → rename) で書くので、mode が必ず効く (パス 134 まで copyFile + chmod だった)。',
 };
 
 interface Source {

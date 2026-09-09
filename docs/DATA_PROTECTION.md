@@ -290,6 +290,10 @@ Ollama の接続先とポート・銘柄のウォッチリスト・クライア�
     （画面は「保存すると上書きされる」と言う —— 鍵違いのファイルを黙って空や見本に化けさせない）。2026-09-09 までの平文は
     そのまま読み、次の保存で封緘される。封緘しているモジュールの母集団は `src/main/__tests__/atRestPolicy.test.ts` が
     実装から数える（漏洩対策）。
+15. **消したトークンを控えに残さない** — `main/atomicWrite.ts` の `keepBackup`（2026-09-09 · パス 134）。控え `.prev` は
+    「直前の内容」だったので、`clearToken` / `setToken` の直後は消した・入れ替えたトークンがそこに残り、本体が消える・壊れると
+    `readStore` の復旧で**復活**していた。控えは rename の後に**最後に書けた内容**を同じ経路で置く（消した物は 1 バイトも
+    残らない・書けなければ投げる）。復旧の意味は変わらない —— 本体を後から失ったとき戻したいのは最後に書けた内容である（漏洩対策）。
 
 ## 優先度の高い残対策（漏洩 / 損壊 / 消失 別）
 
@@ -297,7 +301,7 @@ Ollama の接続先とポート・銘柄のウォッチリスト・クライア�
 |---|---|---|---|
 | 1 | ~~業務レコードを AES-GCM 暗号化~~ → **エンジン + 有効化/アンロック/解除のオーケストレーションまで実装済み** (`recordCipher.ts` + `recordEncryption.ts`: enable/unlock/disable, KCV 検証, `store.configureCipher`/`reencryptAll(from)`)。誤パスフレーズは false を返すだけ (ロックアウトしない)。残りは設定 UI/起動時アンロック画面の配線のみ | 漏洩 | 既定は平文(後方互換)。封緘後はキー無しで閲覧不可 |
 | 2 | Electron `secrets` の keychain 非依存パスフレーズ暗号化 + 未初期化警告 UI | 漏洩 | `plain:base64` フォールバック解消 |
-| 3 | ~~`secrets.json` の atomic write~~ → **実装済み** (`atomicWrite.ts`: fsync + dir fsync + `.prev` バックアップ + temp 後始末、読取りは `.prev` フォールバック) | 消失 | 強制終了/電源断時のトークン破損・消失を防止 |
+| 3 | ~~`secrets.json` の atomic write~~ → **実装済み** (`atomicWrite.ts`: fsync + dir fsync + `.prev` の控え (**最後に書けた内容** —— 2026-09-09 · パス 134 まで直前の内容で、消したトークンが残っていた) + temp 後始末、読取りは `.prev` フォールバック) | 消失 | 強制終了/電源断時のトークン破損・消失を防止 |
 | 4 | ~~CSV 一括取込のトランザクション化~~ → **実装済み** (`store.insertMany` = 単一 IndexedDB tx で全件 commit/全件 abort)。SalesPage/KpiPage の CSV 取込を per-row ループから `addMany` に置換。復元 (`importAll`) は元から単一 tx で atomic | 損壊 | 取込途中失敗での部分書込みを防止 |
 | 5 | プロキシ漏洩緩和 → **一部実装**: プロキシのエラー応答に反射したトークンを `redactSecrets` で秘匿 (`shared/redact.ts` に集約し main/renderer 共有) + 機密性の前提を明文化。upstream へは Authorization 透過が必須のため、第三者運用プロキシでは運用者がトークンを閲覧可能 → 自己運用を推奨 (本質的な残リスク) | 漏洩 | 第三者 Worker ログ対策 |
 

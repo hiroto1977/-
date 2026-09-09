@@ -112,9 +112,9 @@ async function readStore(): Promise<Record<string, string>> {
     if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
   }
 
-  // Primary file, falling back to the `.prev` backup on a crash that left the
-  // primary missing or truncated. Lets a mid-write SIGKILL degrade to the
-  // previous good token set instead of losing every credential.
+  // Primary file, falling back to the `.prev` copy if the primary went missing
+  // or corrupt afterwards. The copy holds the content **last written** (パス 134) —
+  // never the previous one, so a cleared / rotated token cannot come back.
   const text = await readFileWithBackup(secretsPath());
   if (text == null) return {};
   const store = parseStore(text);
@@ -135,8 +135,8 @@ async function readStore(): Promise<Record<string, string>> {
 }
 
 async function writeStore(store: Record<string, string>): Promise<void> {
-  // Durable atomic write: temp + fsync + rename + dir fsync, keeping a `.prev`
-  // backup so a corrupt/clobbered write is recoverable on next read.
+  // Durable atomic write: temp + fsync + rename + dir fsync, then a `.prev` copy
+  // of the same content so a later loss/corruption of the primary is recoverable.
   await atomicWriteFile(secretsPath(), JSON.stringify(store), { mode: 0o600, keepBackup: true });
 }
 
