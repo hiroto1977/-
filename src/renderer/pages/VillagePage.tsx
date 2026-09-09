@@ -35,6 +35,7 @@ import { SERVICES } from '../services';
 import type { ServiceId } from '../../shared/serviceId';
 import { startSpeechRecognition, isSpeechRecognitionSupported } from '../voice/speechAdapter';
 import { AiEgressNotice } from '../components/AiEgressNotice';
+import { VoiceEgressNotice } from '../components/VoiceEgressNotice';
 import {
   assistantEgressRecipients,
   readProviderStatuses,
@@ -330,6 +331,12 @@ export function VillagePage() {
           `assistant/chat` へ送られる —— 送り先は利用者がアシスタント画面で
           設定したプロバイダ。「AI」を切れば送らないので、そのときは
           「出ません」と書ける (文面は `shared/aiEgressNotice.ts`)。 */}
+      {/* **声そのものの話は AI の話と別である。** 上が「音声をどこで文字にするか」
+          (ブラウザ任せ・経路を選べない)、下が「その文を何処へ送るか」(利用者が
+          選んだプロバイダ)。`transcriptStaysLocal: false` にするのは、文の
+          行き先を下の断りが送り先の内訳つきで述べるから (パス 108)。 */}
+      <VoiceEgressNotice subject={{ transcriptStaysLocal: false }} />
+
       <AiEgressNotice
         subject={{
           what: 'マイクで話した内容 (音声認識の書き起こし) と、入力した文',

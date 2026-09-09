@@ -27,6 +27,7 @@ import {
   startSpeechRecognition,
   type SpeechSessionHandle,
 } from '../voice/speechAdapter';
+import { VoiceEgressNotice } from './VoiceEgressNotice';
 
 // 音声からルーティング可能な write action を serviceId 別に宣言。
 // (main の LIVE_ACTIONS は import 境界外なので renderer 側に最小の対応表を持つ。)
@@ -233,13 +234,23 @@ export function VoiceCommandBar() {
           style={{
             fontSize: 12,
             display: 'inline-flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '2px 8px',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: 6,
+            padding: '4px 8px',
             borderRadius: 6,
             background: 'var(--panel, rgba(0,0,0,0.05))',
           }}
         >
+          {/* **マイクの声について書く。** この入口は `App.tsx` に載っているので
+              **全画面**に在るのに、2026-09-09 (パス 108) まで何も書いていなかった。
+              書き起こす前に音声そのものがブラウザの提供元へ出る場合があり、
+              しかも経路は選べない。文面は `shared/voiceEgressNotice.ts`。
+              **ここは端末内で解釈するだけ** (`VOICE_ACTIONS` に AI の action は
+              無い) なので、その分は言い切る。 */}
+          <VoiceEgressNotice subject={{ transcriptStaysLocal: true }} compact />
+
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
           {state.transcript && (
             <span className="voice-transcript" aria-label="認識テキスト">
               「{state.transcript}」
@@ -283,6 +294,7 @@ export function VoiceCommandBar() {
               ✕
             </button>
           )}
+          </div>
         </div>
       )}
     </div>

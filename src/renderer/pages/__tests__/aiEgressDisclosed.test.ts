@@ -47,6 +47,14 @@ import {
 } from '../../../shared/aiEgressNotice';
 
 const PAGES = path.resolve(__dirname, '..');
+/**
+ * 走査は **renderer 全体**を見る。`pages/` だけを見ると `components/` が
+ * 丸ごと見えない —— `lint:network-targets` は 2026-08-22 に同じ理由で
+ * ディレクトリの一覧をやめて `src` 全体にした (その注記に
+ * 「一覧に書き忘れると、そのディレクトリは丸ごと見えない。実際そうなっていた」と
+ * 書いてある)。**規準は隣のゲートに在った** (2026-09-09 · パス 108)。
+ */
+const RENDERER = path.resolve(__dirname, '../..');
 const CLIENTS = path.resolve(__dirname, '../../../main/clients');
 const read = (f: string): string => fs.readFileSync(path.join(PAGES, f), 'utf8');
 
@@ -148,20 +156,20 @@ function aiActionPairs(): Array<readonly [string, string]> {
   return pairs;
 }
 
-/** `pages/` の .tsx をすべて。 */
+/** renderer の .tsx をすべて (画面も部品も)。 */
 function pageFiles(): string[] {
   const out: string[] = [];
   const walk = (dir: string): void => {
     for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
       const p = path.join(dir, e.name);
       if (e.isDirectory()) {
-        if (e.name !== '__tests__') walk(p);
+        if (e.name !== '__tests__' && e.name !== 'node_modules') walk(p);
         continue;
       }
       if (e.name.endsWith('.tsx')) out.push(p);
     }
   };
-  walk(PAGES);
+  walk(RENDERER);
   return out;
 }
 
@@ -373,6 +381,30 @@ describe('AI へ送る画面すべてに断りが在る (走査)', () => {
     expect(DRAWS_NOTICE.test('  <AiEgressNotice/>')).toBe(true);
     expect(DRAWS_NOTICE.test('  <AiEgressNoticeXX subject={s} />'), '別の部品を断りと数えている').toBe(false);
     expect(DRAWS_NOTICE.test('  <div>断りはここに無い</div>')).toBe(false);
+  });
+
+  it('★ 走査は renderer 全体を見る (components/ が丸ごと抜けていない)', () => {
+    const files = pageFiles().map((f) => path.relative(RENDERER, f));
+    // 画面と部品の両方が標本に入っていること (パス 107 の走査は pages/ だけだった)。
+    expect(files, '画面が走査に入っていない').toContain(path.join('pages', 'StocksPage.tsx'));
+    expect(files, 'components/ が走査に入っていない').toContain(
+      path.join('components', 'VoiceCommandBar.tsx'),
+    );
+    expect(files.length, '走査するファイルが少なすぎる (歩き方が壊れている)').toBeGreaterThan(60);
+  });
+
+  it('★ 部品は AI へ送っていない (実測 — 送るなら断りが要る)', () => {
+    // `ServiceActionPanel` は `advise` を**可変の serviceId** で呼ぶが、
+    // 載っているのは real-estate / mutual-funds で、どちらの advise も
+    // stub (`phase: 'stub'`) なので導出した AI の組に入らない。
+    // `ChatbotWidget` / `VoiceCommandBar` は `VOICE_ACTIONS` の範囲でしか
+    // invoke しない。**これは主張ではなく測定**で、変わればここが鳴る。
+    const senders = pageFiles()
+      .filter((f) => invokesAi(fs.readFileSync(f, 'utf8'), pairs))
+      .map((f) => path.relative(RENDERER, f));
+    for (const f of senders) {
+      expect(f.startsWith(`pages${path.sep}`), `${f} が AI へ送っている (断りの配線を確かめること)`).toBe(true);
+    }
   });
 
   it('★ 走査が実物に当たっている (AI の画面 8 つを見つけている)', () => {
