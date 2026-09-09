@@ -157,6 +157,8 @@ describe('designWelfareScheme', () => {
       inKindValue: 0,
       employeeRealValue: 265_000,
       companyTotalCost: 670_243,
+      // 目標手元残りに届いた筋書き (パス 103 で足した欄)。
+      reachedTarget: true,
     });
     expect(r.scheme).toEqual({
       gross: 357_303,
@@ -168,6 +170,8 @@ describe('designWelfareScheme', () => {
       inKindValue: 157_500,
       employeeRealValue: 422_500,
       companyTotalCost: 569_851,
+      // 目標手元残りに届いた筋書き (パス 103 で足した欄)。
+      reachedTarget: true,
     });
     expect(r.diff).toEqual({
       gross: -222_785,
@@ -447,6 +451,8 @@ describe('追加所得控除 (扶養控除・青色申告特別控除)', () => {
       inKindValue: 0,
       employeeRealValue: 265_000,
       companyTotalCost: 620_155,
+      // 目標手元残りに届いた筋書き (パス 103 で足した欄)。
+      reachedTarget: true,
     });
     expect(r.scheme).toEqual({
       gross: 335_386,
@@ -458,6 +464,8 @@ describe('追加所得控除 (扶養控除・青色申告特別控除)', () => {
       inKindValue: 157_500,
       employeeRealValue: 422_500,
       companyTotalCost: 544_852,
+      // 目標手元残りに届いた筋書き (パス 103 で足した欄)。
+      reachedTarget: true,
     });
     expect(r.diff).toEqual({
       gross: -203_577,

@@ -22,16 +22,49 @@ import type { WelfareSchemeInput, WelfareSchemeResult } from './welfareScheme';
 const yen = (n: number) => jpy(Math.round(n));
 const today = () => localIsoDate();
 
+/**
+ * 両筋書きが目標手元残りに届いたか。片方でも届いていなければ、この資料は
+ * 「手元残りは同じ」と言ってはいけない (パス 103)。
+ */
+function bothReachedTarget(result: WelfareSchemeResult): boolean {
+  return result.normal.reachedTarget && result.scheme.reachedTarget;
+}
+
+/**
+ * 目標に届かなかったときの断り書き。**この資料は基本給の引き下げを従業員に
+ * 説明する物**なので、「手元残りは同じ」が成り立たないなら、成り立たないと
+ * 書く (2026-09-09 · パス 103)。
+ *
+ * 直す前の実測 (目標手元残り ¥1,600,000): 表は ① ¥1,444,127 / ② ¥1,600,000 を
+ * 並べ、2 行下の散文が「手元残りは **同じ ¥1,600,000** をキープします」と書き、
+ * 実質手取りの増加を ¥170,000 ではなく **¥325,873** (1.92 倍) と書いていた。
+ */
+function outOfRangeNotice(result: WelfareSchemeResult): string {
+  const { normal, scheme } = result;
+  const sides = [
+    normal.reachedTarget ? null : `① これまで（${yen(normal.freeCash)}）`,
+    scheme.reachedTarget ? null : `② 新制度（${yen(scheme.freeCash)}）`,
+  ].filter((x): x is string => x !== null);
+  return `> ⚠ **この目標の手元残りは、本試算モデルの範囲を超えています。**
+> ${sides.join(' と ')} が目標額に届いていないため、**下表の 2 つの筋書きは
+> 「同じ手元残り」での比較になっていません。**額面の上限に張り付いた結果を
+> 並べているだけなので、差額をそのまま制度の効果として読まないでください。
+> 目標額を下げるか、税理士・社労士にご相談ください。
+
+`;
+}
+
 /** 従業員向け説明資料 (Markdown)。 */
 export function employeeExplanationMarkdown(result: WelfareSchemeResult): string {
   const { normal, scheme, diff } = result;
+  const reached = bothReachedTarget(result);
   return `# 新しい給与・福利厚生制度のご説明
 
-## なぜ額面（基本給）が下がるのに、手取りが増えるのか
+${reached ? '' : outOfRangeNotice(result)}## なぜ額面（基本給）が下がるのに、手取りが増えるのか
 
 会社が **社宅・食事補助・育児補助・自社EC ポイント** を直接ご提供することで、
 その分の基本給を下げます。額面が下がると **社会保険料と税金も下がる** ため、
-生活費を払った後に自由に使えるお金（手元残り）は同じでも、**会社が現物で
+生活費を払った後に自由に使えるお金（手元残り）${reached ? 'は同じでも' : 'の変化は下表のとおりで'}、**会社が現物で
 提供する価値の分だけ、あなたの実質的な手取りは増えます。**
 
 ## 数字での比較（月額・概算）
@@ -48,9 +81,17 @@ export function employeeExplanationMarkdown(result: WelfareSchemeResult): string
 
 ## ポイント
 
-- 手元残り（自由に使えるお金）は **同じ ${yen(scheme.freeCash)}** をキープします。
+${
+    reached
+      ? `- 手元残り（自由に使えるお金）は **同じ ${yen(scheme.freeCash)}** をキープします。`
+      : `- 手元残りは **同額になっていません**（① ${yen(normal.freeCash)} / ② ${yen(scheme.freeCash)}）。目標額が本試算モデルの範囲を超えています。`
+  }
 - 会社が家賃・食事・育児・EC を負担/支給するため、あなたが支払う固定費が減ります。
-- 結果として、実質的な手取りは **月 ${yen(diff.employeeRealValue)} 増える** 計算です。
+${
+    reached
+      ? `- 結果として、実質的な手取りは **月 ${yen(diff.employeeRealValue)} 増える** 計算です。`
+      : `- 実質的な手取りの差 **月 ${yen(diff.employeeRealValue)}** は、手元残りが揃っていないため制度の効果とは言えません。`
+  }
 
 ## ご注意（必ずお読みください）
 
@@ -66,9 +107,11 @@ _作成日: ${today()}（概算・社内説明用）_
 /** 給与変更・天引き 同意書 (Markdown)。 */
 export function consentFormMarkdown(result: WelfareSchemeResult): string {
   const { normal, scheme } = result;
+  // **署名を求める書面**なので、下表が「同じ手元残りでの比較」でないなら黙らない。
+  const reached = bothReachedTarget(result);
   return `# 給与制度変更に関する同意書
 
-私は、会社が導入する福利厚生制度（社宅・食事補助・育児補助・カフェテリアプラン）
+${reached ? '' : outOfRangeNotice(result)}私は、会社が導入する福利厚生制度（社宅・食事補助・育児補助・カフェテリアプラン）
 の適用に伴い、下記の給与変更および給与天引きについて、内容を理解したうえで同意します。
 
 ## 変更内容（月額・概算）
