@@ -551,6 +551,61 @@ function checkE2eBuildOrder(failures, textOverride) {
 }
 
 /**
+ * **発信先の台帳は 1 つ** —— `docs/ARCHITECTURE.md` §3.3 だけ。
+ *
+ * `docs/SECURITY_AUDIT.md` の「ネットワーク発信先一覧」は 2026-09-09 まで §3.3 の手書きの
+ * 写し (12 行) を持ち、「その他のホストへの接続は **存在しない**」「Ollama は
+ * 127.0.0.1:11434 (ハードコード、変更不可)」と書いていた。実物の §3.3 は 29 ホストで、
+ * freee / Microsoft Graph / BASE / Stripe / LINE / Discord / Salesforce / OpenAI / Gemini が
+ * 写しに無く、ブラウザ版の Ollama と AI ハブは接続先を設定できる。§3.3 は `verify:arch`
+ * が実物と照合するが、写しは誰も見ない —— **写しを持つこと自体を禁じる** (節は §3.3 を
+ * 指し、表を持たず、絶対の否定を置かない)。
+ */
+function checkSingleEgressLedger(failures, auditOverride) {
+  const FACT = '発信先の台帳は 1 つ';
+  const text =
+    auditOverride === undefined ? read(path.join(REPO_ROOT, 'docs/SECURITY_AUDIT.md')) : auditOverride;
+  if (text === null) {
+    failures.push({ fact: FACT, reason: 'docs/SECURITY_AUDIT.md を読めない' });
+    return 0;
+  }
+  const lines = text.split('\n');
+  const start = lines.findIndex((l) => l.startsWith('## ネットワーク発信先一覧'));
+  if (start < 0) {
+    failures.push({
+      fact: FACT,
+      reason: 'SECURITY_AUDIT.md に「## ネットワーク発信先一覧」の節が無い — §3.3 への案内が消えている',
+    });
+    return 0;
+  }
+  let end = start + 1;
+  while (end < lines.length && !lines[end].startsWith('## ')) end += 1;
+  const section = lines.slice(start + 1, end);
+  const body = section.join('\n');
+  if (!/ARCHITECTURE\.md[^\n]*§\s*3\.3|§\s*3\.3[^\n]*ARCHITECTURE\.md/.test(body)) {
+    failures.push({ fact: FACT, reason: 'SECURITY_AUDIT.md の発信先の節が docs/ARCHITECTURE.md §3.3 を指していない' });
+  }
+  const tableRows = section.filter((l) => /^\|/.test(l));
+  if (tableRows.length > 0) {
+    failures.push({
+      fact: FACT,
+      reason:
+        `SECURITY_AUDIT.md の発信先の節に表が ${tableRows.length} 行ある — 発信先の台帳は ARCHITECTURE.md §3.3 だけ` +
+        ' (verify:arch が実物と照合する)。写しは 2026-09-09 に 12 行 / 実物 29 ホストまでずれていた',
+    });
+  }
+  if (/接続は\s*\*{0,2}存在しない/.test(body)) {
+    failures.push({
+      fact: FACT,
+      reason:
+        'SECURITY_AUDIT.md の発信先の節が「接続は存在しない」と絶対の否定を置いている — ' +
+        'その主張を持てるのは verify:arch が照合する §3.3 だけ',
+    });
+  }
+  return 1;
+}
+
+/**
  * 変異スコアの**鮮度**。等値の照合 (FACTS) では捕まらない種類の腐り方を見る。
  *
  * `docs/QUALITY.md` は自動生成だが、生成し直さなければ古いまま committed で
@@ -1314,6 +1369,34 @@ function selfTest() {
    * 「✗」は画面に出るが、CI が見るのは終了コードだけである。
    * 対照を書いておきながら、その対照の結果を捨てていた。
    */
+  /*
+   * 発信先の台帳が 1 つであること。**2026-09-09 まで実在した形を最初のケースに置く** ——
+   * SECURITY_AUDIT の節が表 (12 行) と「その他のホストへの接続は存在しない」を持ち、
+   * §3.3 を指していなかった。「§3.3 を指していれば通る」も同じ強さで要る。
+   */
+  {
+    const head = '## ネットワーク発信先一覧（許可されている外部接続先）\n';
+    const pointer = '\n発信先の台帳は **`docs/ARCHITECTURE.md` §3.3** の 1 つだけ。\n';
+    const table = '\n| サービス | ホスト |\n|---|---|\n| GitHub | api.github.com |\n';
+    const denial = '\nその他のホストへの接続は **存在しない**。\n';
+    const next = '\n## 次の節\n';
+    for (const [label, text, expected] of [
+      ['★ 2026-09-09 まで実在した形 (表 + 絶対の否定・§3.3 を指さない) で鳴る', head + table + denial + next, 3],
+      ['§3.3 を指し、表も否定も無ければ鳴らない', head + pointer + next, 0],
+      ['★ §3.3 を指していても表が戻れば鳴る', head + pointer + table + next, 1],
+      ['絶対の否定だけでも鳴る', head + pointer + denial + next, 1],
+      ['節の外の表は見ない', head + pointer + next + table, 0],
+      ['節が無ければ鳴る', '# 監査\n' + next, 1],
+      ['読めなければ鳴る', null, 1],
+    ]) {
+      const f = [];
+      checkSingleEgressLedger(f, text);
+      const ok = f.length === expected;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} 発信先の台帳: ${label}: ${f.length} 件 (期待 ${expected})`);
+    }
+  }
+
   if (bad > 0 || selfTestFailed) {
     console.error(`❌ self-test 不一致 ${bad} 件 (+ 旗 ${selfTestFailed}) — ゲートのゲートが鳴っていない`);
     return 1;
@@ -1369,6 +1452,7 @@ function main() {
   const catCount = checkReadmeCategories(failures);
   const pubCount = checkPublishScanCoverage(failures);
   const orderCount = checkE2eBuildOrder(failures);
+  const ledgerCount = checkSingleEgressLedger(failures);
   const freshCount = checkMutationScoreFresh(failures) + checkPerFileMutationScores(failures);
 
   console.log(
@@ -1376,7 +1460,8 @@ function main() {
       ` + README ${catCount} カテゴリの内訳を services.ts と照合` +
       ` + 出荷物検査 ${pubCount} 件が pages.yml でも公開前に走ることを照合` +
       ` + e2e.yml のビルド順 ${orderCount} 件 (dist/ を掃除する側が後ろに来ていないこと)`,
-      `+ 変異スコアの鮮度 ${freshCount} 件 (doc の点数が stryker の break 閾値を下回っていないこと)`,
+      `+ 変異スコアの鮮度 ${freshCount} 件 (doc の点数が stryker の break 閾値を下回っていないこと)` +
+      ` + 発信先の台帳 ${ledgerCount} 件 (SECURITY_AUDIT に §3.3 の写しが無いこと)`,
   );
   if (failures.length === 0) {
     console.log('✅ all docs agree with source, and every gate runs in CI');

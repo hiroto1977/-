@@ -223,22 +223,20 @@ warn message に PII / トークンを含まない。ログ漁りでの情報取
 
 ## ネットワーク発信先一覧（許可されている外部接続先）
 
-| サービス | ホスト |
-|---|---|
-| GitHub | api.github.com |
-| WordPress.com | public-api.wordpress.com |
-| Atlassian | `{site}.atlassian.net` (https 必須) |
-| Notion | api.notion.com |
-| Google (Drive/Calendar/Gmail) | www.googleapis.com, gmail.googleapis.com, accounts.google.com, oauth2.googleapis.com |
-| Slack | slack.com |
-| Canva | api.canva.com |
-| Cloudflare | api.cloudflare.com |
-| Anthropic (Skills, Emotions) | api.anthropic.com |
-| HIBP | haveibeenpwned.com |
-| VirusTotal | www.virustotal.com |
-| Ollama (ローカルのみ) | 127.0.0.1:11434 (ハードコード、変更不可) |
+発信先の台帳は **`docs/ARCHITECTURE.md` §3.3 (ネットワーク egress マトリクス) の 1 つだけ**。`verify:arch` が `src` の字面
+(main は全部、shared / renderer は送信文脈のもの) と照合し、増えた宛先は表に載るまで CI が落ちる。ここには写しを置かない
+(`lint:docs` がこの節に表と絶対の否定が戻らないことを見る)。
 
-その他のホストへの接続は **存在しない**。
+2026-09-09 までここに在った表は **12 行**で、§3.3 の 29 ホストに対し freee / Microsoft Graph / BASE / Stripe / LINE /
+Discord / Salesforce / OpenAI / Gemini が無く、それでも「他のホストは無い」と書いていた。同じ日に §3.3 側でも、
+ブラウザ版から直接送る `src/shared` / `src/renderer` が走査の外で、`api.cursor.com` (Admin API キーを Bearer で載せる) が
+台帳に無いまま両ビルドから送っていた —— 写しが古いだけでなく、正典も片方の木しか見ていなかった (パス 138)。
+
+送り先が**利用者の設定で決まる**通信 (AI 互換 API・Ollama の接続先・BYO プロキシ・Atlassian サイト・Salesforce・
+Discord webhook) は `lint:network-targets` の台帳 (`scripts/lint-network-targets.cjs` の `REVIEWED`) が、どう絞っているかを
+1 件ずつ持つ。Ollama について正確には: Electron 版の Ollama ページのクライアント (`src/main/clients/ollama.ts` の
+`OLLAMA_BASE`) だけが `127.0.0.1:11434` 固定で、ブラウザ版は 3 経路 (ループバック / ページと同じホスト / 任意の https ——
+`docs/OLLAMA_SECURITY.md`)、AI ハブの Ollama プロバイダは両ビルドで接続先を上書きできる (§3.3 の行のとおり)。
 
 ## レビューチェックリスト（PR 用）
 

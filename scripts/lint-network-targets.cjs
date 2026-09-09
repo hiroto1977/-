@@ -72,6 +72,14 @@ const NETWORK_CALL_NAMES = [
   'transport',
   'postExpectOk',
   'fetchViaProxy',
+  // 2026-09-09: §3.3 の egress 照合 (verify-architecture.cjs) がこの一覧を借りるようになって、
+  // 送る側の名前が 4 つ抜けていると分かった —— web-shim の timedFetch / timedFetchAi、
+  // main の limitedFetch、ブラウザ版 Ollama の fetchWithTimeout (URL が 2 番目の引数なので
+  // BARE_SEND には掛からず、文脈にだけ効く)。名前は 2 つの門で 1 つの一覧。
+  'timedFetch',
+  'timedFetchAi',
+  'limitedFetch',
+  'fetchWithTimeout',
 ];
 
 const NETWORK_CALL = new RegExp(`\\b(${NETWORK_CALL_NAMES.join('|')})\\b`);

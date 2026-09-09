@@ -72,9 +72,10 @@ snapshot の `warnings[]` に追加し、UI のステータスバーで継続的
 
 これは「**実装拒否ライン**」。攻撃面を最小化するため敢えて未対応:
 
-1. **任意 URL の Ollama 接続** — Electron 版は `127.0.0.1:11434` 固定 (`OLLAMA_BASE`)。
-   ブラウザ版のみ接続先を設定できるが、許可されるのは後述の **3 経路だけ**で、
-   平文 http による別ホスト接続は拒否する (`isAllowedOllamaBase`)
+1. **任意 URL の Ollama 接続** — Electron 版の Ollama ページは `127.0.0.1:11434` 固定 (`OLLAMA_BASE`)。
+   ブラウザ版の Ollama ページは接続先を設定できるが、許可されるのは後述の **3 経路だけ**で、
+   平文 http による別ホスト接続は拒否する (`isAllowedOllamaBase`)。AI ハブ (アシスタント) の Ollama
+   プロバイダは両ビルドで接続先を上書きできる —— 絞り方は `shared/aiEndpoint.ts` (`docs/ARCHITECTURE.md` §3.3 の行)
 2. **`/api/pull` の呼び出し** — モデルダウンロードはアプリ内からは禁止。ユーザが CLI でやる
 3. **`/api/create` の呼び出し** — 上記 CVE-2024-39719/39721 の根源。アプリ内からは呼ばない
 4. **`/api/push` の呼び出し** — 上記 CVE-2024-39722 の根源。同上

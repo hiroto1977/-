@@ -18389,6 +18389,58 @@ uber-eats / demae-can の advise は画面が無く (`VoiceCommandBar` と `Busi
 - 下書き (`servicehub.teamradar.draft.v1`) は snapshot より優先して復元される。読めなかった保存と下書きが両方在るとき、
   画面のメンバーは下書き、注記は保存先について言う (別の物を指している)。
 
+## パス 138 (2026-09-09) — **`docs/SECURITY_AUDIT.md` の「ネットワーク発信先一覧」は §3.3 の古い手書きの写し (12 行 / 実物 29 ホスト) で「その他のホストへの接続は存在しない」「Ollama は 127.0.0.1 固定・変更不可」と言い、その §3.3 を守る `verify:arch` は `src/main` しか見ておらず、ブラウザ版が直接送る `api.cursor.com` (Admin API キーを Bearer で載せる) が台帳の外だった**
+
+### 何が起きていたか
+
+パス 24 (2026-09-07) は「外部接続先ホストの数が 4 通り在る」を直し、§3.3 を正典にして数を 1 つの解析に寄せた。
+ところが (1) 監査レポート `docs/SECURITY_AUDIT.md` は §3.3 と別に手書きの表を持ち、誰も照合していなかった —— 12 行で、
+freee / Microsoft Graph / BASE / Stripe / LINE / Discord / Salesforce / OpenAI / Gemini が無く、「その他のホストへの接続は
+**存在しない**」「Ollama (ローカルのみ) 127.0.0.1:11434 (ハードコード、変更不可)」と書いていた (ブラウザ版の Ollama は 3 経路、
+AI ハブの Ollama は両ビルドで上書き可)。監査レポートを読む人は攻撃面をこの 12 行だと見積もる。(2) 正典を守る
+`verifyEgressHosts` は **`src/main` の字面しか読まない**。§3.3 の冒頭は「外部接続は main プロセスからのみ」だが、それは
+デスクトップ版の話で、ブラウザ版は `src/renderer` / `src/shared` から直接送る。実測: `src/shared/api/cursor.ts` の
+`CURSOR_API_BASE` (`https://api.cursor.com`) へ `jsonFetch` で Admin API キーを Bearer で送る (main の cursor クライアントと
+ブラウザ版の `liveRead.ts` の両方から) のに、§3.3 に `api.cursor.com` は無く、ゲートは緑だった。「下記以外のホストへの
+接続は存在しない」は、片方の木しか見ていない検査が支える主張だった。
+
+### 直し
+
+- `scripts/verify-architecture.cjs` の egress 照合を `src` 全体に: `src/main` は従来どおり全字面、`src/shared` / `src/renderer` は
+  **送信文脈** (その行か直前 3 行に送信の呼び出し —— `scripts/lint-network-targets.cjs` の `NETWORK_CALL_NAMES` と **1 つの一覧** ——
+  があるか、その行が使う ALL_CAPS の定数が URL を持つか) だけを数える。引用・出典・案内リンクの URL (学術コーパスだけで
+  数千件) は数えない。`.tsx` も読む。限界 (組み立てと送信が別モジュールの `providers.ts` の形・小文字の変数へ置いた形) は
+  注記に書き、あちらは `lint:network-targets` の台帳が持つ。標本 10 本 (renderer の fetch / ★ cursor の形 = ALL_CAPS 定数 +
+  jsonFetch / 引用 URL / openExternal / .tsx / main の字面 / 台帳に在る宛先 / コメント / 4 行前 / 別名 timedFetch)。
+- `NETWORK_CALL_NAMES` に送る側の名前が 4 つ抜けていた (`timedFetch` / `timedFetchAi` / `limitedFetch` / `fetchWithTimeout`) ——
+  1 つの一覧を 2 つの門で使うようにして分かった。
+- `docs/ARCHITECTURE.md` §3.3: `cursor` の行 (`api.cursor.com`・Bearer・両ビルド) と `app` (更新の確認 —— `api.github.com` の
+  `releases/latest`。利用者が押した時だけ) の行、冒頭の「main プロセスからのみ」をデスクトップ版に限定しブラウザ版の
+  送り口と CORS の 4 社 (プロキシ経由) を書く。ホストは 29 → 30 (見出し・指標表)。不変条件 3 の文も同じ但し書き。
+- `docs/SECURITY_AUDIT.md`: 表を消し、台帳は §3.3 の 1 つだけと書く (何が抜けていたかも)。`scripts/cross-doc-consistency.cjs`
+  (`lint:docs`) に `checkSingleEgressLedger`: 節は §3.3 を指し、表を持たず、「接続は存在しない」の絶対の否定を置かない
+  (標本 7 本。★ 2026-09-09 まで実在した形 = 3 件)。
+- `docs/DATA_PROTECTION.md` の「Ollama は端末内」→「既定で端末内 —— 接続先を上書きすればその先」、`docs/OLLAMA_SECURITY.md` の
+  「Electron 版は固定」を Ollama ページに限定し AI ハブの上書きを書く。
+
+### 対照
+
+| # | 何を壊したか | 鳴ったか |
+| --- | --- | --- |
+| A | §3.3 から `cursor` の行を消す (2026-09-09 まで実在した形 —— 数は 29 に戻して数の検査を黙らせる) | 🔔 `verify:arch` exit=1: ★ `api.cursor.com` が「egress マトリクス (§3.3) に無い宛先です (src/shared/api/cursor.ts)」で鳴る |
+| A2 | `src/renderer/network/liveRead.ts` に台帳に無い宛先へ Bearer を載せて送る関数を植える (ブラウザ版は走査の外だった形) | 🔔 `verify:arch` exit=1: ★ `exfil.example` が「§3.3 に無い宛先 (src/renderer/network/liveRead.ts)」で鳴る |
+| A3 | `docs/SECURITY_AUDIT.md` に発信先の表と「存在しない」を戻す | 🔔 `lint:docs` exit=1: ★「発信先の台帳が 2 つ」で鳴る |
+
+### 残る物
+
+- 送信文脈の走査は字面の規則で、`const u = 'https://…'; fetch(u)` のように小文字の変数へ一度置けば拾わない。`providers.ts` の
+  「組み立てと送信を分けた形」も同じ。どちらも `lint:network-targets` の台帳 (変数の宛先) が受けるが、**定数の宛先を小文字の
+  変数に置いた形**は両方の門の間に落ちる —— 注記に書いた。
+- §3.3 の行の `Method + Path` は手書きで、ゲートが見るのは Host 欄だけ。パスの写し (例: github の `releases/latest` はこの
+  パスまで無かった) は照合していない。
+- 実物の Electron / ブラウザで宛先を測る検査 (network log) は無い —— これは字面の門。src は触っていないので e2e / pipeline は
+  走らせていない (`npm test` と `verify:all` は main で回した)。
+
 ## パス 137 (2026-09-09) — **デスクトップ版では「すべてのデータを削除」が renderer の保存領域しか消せず、トークン (`secrets.json` と控え)・状態ファイル 4 つ・書き込みの残骸は OS に残った —— しかも保管庫の無いデスクトップに「マスターパスワード変更」「Vault を今すぐロック」が出ていた**
 
 ### 何が起きていたか

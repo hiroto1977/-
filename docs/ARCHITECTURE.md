@@ -22,7 +22,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | IPC ハンドラ数 | 14 | `src/main/main.ts:111-296` |
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
-| 外部接続先ホスト | 29 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
+| 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
 | ユニットテスト | **12571** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 31 / 36 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 530 | 自己検証 |
+| `file:line` 参照数 | 538 | 自己検証 |
 
 ### 統合フロー図
 
@@ -102,7 +102,7 @@ flowchart LR
 
 1. Renderer は **Node API を直接呼ばない**。`window.serviceHub` 経由のみ。
 2. Renderer に **raw token は届かない**。`secrets:list` は ID のみ返す。
-3. 外部接続は **main プロセスからのみ**。renderer の CSP `connect-src 'self'` で遮断。
+3. 外部接続は **main プロセスからのみ** (デスクトップ版。ブラウザ版は renderer が §3.3 と同じ宛先へ直接つなぐ)。renderer の CSP `connect-src 'self'` で遮断。
 4. **すべてのエラー** は `safeErrorMessage()` → `redactSecrets()` を経由してマスク。
 5. 任意のシステム呼び出しは **allowlist + isServiceId 検証** を必ず通る。
 
@@ -1837,13 +1837,21 @@ union を参照する。
 | shopify | `sync-to-salesforce` | order + token + instanceUrl | **送り先が payload 由来**。https かつ salesforce.com / *.salesforce.com のみ (2026-08-23 まで https しか見ておらず、トークンと顧客情報が任意のホストへ届いた) | `shopify.ts:399-407` |
 | shopify | `sync-to-stripe` | order + token | 送り先は定数 (api.stripe.com) | `shopify.ts:399-407` |
 
-### 3.3 ネットワーク egress マトリクス (29 ホスト + ユーザー指定)
+### 3.3 ネットワーク egress マトリクス (30 ホスト + ユーザー指定)
 
-外部接続は **main プロセスからのみ**。下記以外のホストへの接続は存在しない。
+デスクトップ版の外部接続は **main プロセスからのみ** (renderer は CSP `connect-src 'self'`)。ブラウザ版は同じ宛先へ
+renderer が直接つなぐ (`src/renderer/data/saasWriteWeb.ts` / `src/shared/api/` の各クライアント / `src/renderer/network/ollamaWeb.ts` /
+`src/renderer/oauth/pkce.ts` / `src/renderer/web-shim.ts`。CORS を許可しない相手 —— Notion / Atlassian / Cloudflare / Cursor —— は
+利用者のプロキシ経由)。下記以外のホストへの接続は存在しない —— `verify:arch` が `src` 全体の字面と照合する
+(`src/main` は全部、`src/shared` / `src/renderer` は送信文脈のもの。2026-09-09 までは `src/main` だけで、ブラウザ版が
+走査の外だった —— パス 138)。宛先が**利用者の設定で決まる**通信 (AI 互換 API・Ollama の接続先・BYO プロキシ・Atlassian サイト・
+Salesforce・Discord webhook) は、どう絞っているかを `lint:network-targets` の台帳 (`scripts/lint-network-targets.cjs` の
+`REVIEWED`) が 1 件ずつ持つ。
 
 | Service | Host | Method + Path | Auth | 出典 |
 |---|---|---|---|---|
 | github | `api.github.com` | `GET /user`, `GET /search/issues`, `GET /repos/{owner}/{repo}/pulls/{n}`, `POST /repos/{owner}/{repo}/issues` | Bearer | `github.ts:74-164` |
+| app (更新の確認・両ビルド) | `api.github.com` | `GET /repos/hiroto1977/-/releases/latest` (利用者が押した時だけ。応答は形と案内先ホストまで確かめる —— §1.4 の app:checkUpdate) | none | `main.ts:231-238`, `src/renderer/web-shim.ts:1088-1095` |
 | wordpress | `public-api.wordpress.com` | `GET /rest/v1.1/me/sites`, `POST /rest/v1.1/sites/{id}/posts/new` | Bearer | `wordpress.ts:46-89` |
 | atlassian | `*.atlassian.net` (https only) | `GET /rest/api/3/project/search`, `POST /rest/api/3/issue` | Basic | `atlassian.ts:62-148` |
 | notion | `api.notion.com` | `POST /v1/search`, `POST /v1/pages` | Bearer | `notion.ts:43-98` |
@@ -1866,6 +1874,7 @@ union を参照する。
 | microsoft-365 | `graph.microsoft.com` | `GET /v1.0/me`, `POST /v1.0/me/sendMail`, `POST /v1.0/me/events` | Bearer | `microsoft-365.ts:21` |
 | freee | `api.freee.co.jp` | `GET /api/1/companies`, `GET /api/1/deals` | Bearer | `freee.ts:21` |
 | base | `api.thebase.in` | `GET /1/items` | Bearer | `base.ts:34` |
+| cursor (両ビルド。ブラウザ版はプロキシ経由 —— api.cursor.com はブラウザ発の CORS を許可しない) | `api.cursor.com` | `GET /teams/members`, `POST /teams/daily-usage-data`, `POST /teams/spend` | Bearer (Admin API キー) | `src/shared/api/cursor.ts:252-262` |
 | shopify→discord | `discord.com` | `POST` webhook (payload 由来。https + hostname 完全一致で絞る) | webhook URL | `shopify.ts:172-194` |
 | shopify→line | `api.line.me` | `POST /v2/bot/message/push` | Bearer | `shopify.ts:205-215` |
 | shopify→stripe | `api.stripe.com` | `POST /v1/customers` | Bearer | `shopify.ts:354-366` |
@@ -2387,7 +2396,7 @@ classDiagram
 | 4 | Error message は `safeErrorMessage()` / `redactSecrets()` 経由 | property fuzz 600 試行 (`src/main/__tests__/property.test.ts`) |
 | 5 | 外部 URL を OS へ渡す扉は 2 つ (`app:openExternal` と新窓ハンドラ)、**どちらも同じ関門**を通る — http(s) 限定 | `EXTERNAL_URL_SCHEMES` `src/shared/externalUrlGate.ts:50` + `src/shared/__tests__/externalUrlGate.test.ts` 37 件 (扉の数を数える検査を含む) |
 | 6 | fetcher / action の URL path 動的部分は `encodeURIComponent` | **`lint:url-encoding`** (2026-08-22 新設。それまで機械検証は無く、各クライアントの個別テストだけだった) + `github.test.ts`, `wordpress.test.ts`, ... |
-| 7 | Ollama は `127.0.0.1:11434` 以外には接続しない | `ollama.test.ts` `only ever hits 127.0.0.1:11434` |
+| 7 | Ollama ページのクライアント (main の ollama.ts) は `127.0.0.1:11434` 以外には接続しない (AI ハブの Ollama プロバイダは利用者の設定で決まる —— §3.3 の行と `lint:network-targets` の台帳) | `ollama.test.ts` `only ever hits 127.0.0.1:11434` |
 | 8 | Ollama は `/api/pull|create|push|copy|delete|blobs|upload` を呼ばない | `ollama.test.ts` `isAllowedEndpoint` + property fuzz 700 試行 |
 | 9 | `dangerouslySetInnerHTML` / `eval` / `new Function` 禁止 | `lint:forbidden` (24 パターン・自己検査つき)。§8.2 には最初から書いてあったのに、この欄だけ手作業の grep audit のままだった |
 | 10 | Skill name は path traversal を含まない | `skills.test.ts` + property fuzz 500 試行 |
