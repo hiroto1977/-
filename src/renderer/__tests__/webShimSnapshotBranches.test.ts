@@ -99,6 +99,57 @@ describe('talent — 保存した申告が診断に出る', () => {
   });
 });
 
+describe('teamradar — 保存したメンバーがスナップショットに出る (パス 118)', () => {
+  const member = (id: string, name: string) => ({ id, name, scores: [1, 2, 3, 4, 5], notes: { 0: '付箋' } });
+
+  it('★ 保存した状態がスナップショットに反映される (talent の 2026-08-28 と同じ形の回帰)', async () => {
+    const hub = await loadHub();
+    const saved = await hub.invoke('teamradar', 'save-state', {
+      department: '開発部',
+      evaluatedAt: '2026-09-09',
+      members: [member('sato', '佐藤')],
+    });
+    expect(saved.ok, saved.message).toBe(true);
+    // 返るのは判定を通した後の状態 (台帳の型どおり)。
+    expect(saved.data).toEqual({ department: '開発部', evaluatedAt: '2026-09-09', members: [member('sato', '佐藤')] });
+    const snap = await hub.fetchSnapshot('teamradar');
+    expect(snap.ok, snap.message).toBe(true);
+    expect(snap.data?.department).toBe('開発部');
+    expect((snap.data?.members as { name: string }[]).map((m) => m.name)).toEqual(['佐藤']);
+  });
+
+  it('保存が無い端末は見本 (3 人の営業部) を返し、ok で終わる', async () => {
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('teamradar');
+    expect(snap.ok).toBe(true);
+    expect(snap.data?.department).toBe('営業部');
+    expect((snap.data?.members as unknown[]).length).toBe(3);
+  });
+
+  it('壊れた保存値は見本へ倒す (main の loadTeamRadarState と同じ判断)', async () => {
+    localStorage.setItem('teamradar.state', '{壊れた');
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('teamradar');
+    expect(snap.ok).toBe(true);
+    expect((snap.data?.members as unknown[]).length).toBe(3);
+  });
+
+  it('★ 判定を通らない保存は断り、鍵に書かない (パス 118 まで素通しだった)', async () => {
+    const hub = await loadHub();
+    const bad = await hub.invoke('teamradar', 'save-state', {
+      department: '開発部',
+      evaluatedAt: '2026-09-09',
+      members: [{ id: 'sato', name: '佐藤', scores: [1, 2, 3] }],
+    });
+    expect(bad.ok).toBe(false);
+    expect(bad.message).toMatch(/array of length 5/);
+    expect(localStorage.getItem('teamradar.state')).toBeNull();
+    const noDept = await hub.invoke('teamradar', 'save-state', { evaluatedAt: '2026-09-09', members: [] });
+    expect(noDept.ok).toBe(false);
+    expect(noDept.message).toMatch(/department/);
+  });
+});
+
 describe('security — 鍵を入れたら門が開く', () => {
   it('★ 鍵を保存すると keysConfigured が立つ (2026-08-25 の回帰)', async () => {
     tokens.set('security', JSON.stringify({ hibp: 'hibp-key', vt: 'vt-key' }));

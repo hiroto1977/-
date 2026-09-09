@@ -98,6 +98,7 @@ const WEB_TWINS: Readonly<Record<string, Twin>> = {
   'stocks/unregister-ticker': { file: WEB_SHIM, inline: true },
   'talent/judge-leader': { file: WEB_SHIM, inline: true },
   'talent/save-state': { file: WEB_SHIM, inline: true },
+  'teamradar/save-state': { file: WEB_SHIM, inline: true },
   'uber-eats/record-entry': { file: WEB_SHIM, inline: true },
   'wordpress/create-post-draft': { file: 'renderer/data/saasWriteWeb.ts', fn: 'createWordPressPostDraft' },
 };
@@ -124,8 +125,6 @@ const WEB_TWIN_NONE: Readonly<Record<string, string>> = {
   'stocks/export-dashboard': 'web-shim.ts は downloaded / sinks を足した上位集合を返す',
   'stocks/export-dashboard-md': '同上',
   'teamradar/export-svg': '同上',
-  'teamradar/save-state':
-    'ブラウザ版は payload を検証せずそのまま返す (既知の非対称 —— main の validateMembers を共有へ移すまで型を宣言すると嘘になる)',
   'templates/export-template': 'web-shim.ts は downloaded / sinks を足した上位集合を返す',
   'uber-eats/advise': 'ブラウザ版に双子が無い (Electron 版のみ)',
 };

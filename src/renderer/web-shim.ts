@@ -84,6 +84,13 @@ import {
   judgeLeaderFitness,
   sanitizeTalentState,
 } from '../shared/talent';
+import {
+  DEFAULT_TEAM_RADAR_STATE,
+  TEAM_RADAR_STORAGE_KEY,
+  buildTeamRadarSnapshot,
+  parseStoredTeamRadarState,
+  validateTeamRadarState,
+} from '../shared/teamRadarState';
 import { getVault } from './security/vault';
 import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_LENGTH } from '../shared/redact';
 import {
@@ -1229,6 +1236,26 @@ const shim = {
       return ok(buildTalentSnapshot(state)) as ActionResult<T>;
     }
     /*
+     * teamradar は保存した部署・評価日・メンバーをそのまま返す (パス 118)。
+     *
+     * ここが無いまま `not_implemented` へ落ちていた —— talent と同じ壊れ方が隣に残っていた:
+     * 画面は「保存しました」の直後に `refresh()` し、赤いバッジ (「ブラウザ版では live fetch を
+     * 行いません」) が並び、保存した状態は 2 度と画面へ戻らなかった。デスクトップ版と同じ
+     * `parseStoredTeamRadarState` / `buildTeamRadarSnapshot` を通すので、答えは 2 つの実行形態で一致する。
+     * 読めない保存値は見本へ倒す (main の `loadTeamRadarState` と同じ判断)。
+     */
+    if (serviceId === 'teamradar') {
+      let state = DEFAULT_TEAM_RADAR_STATE;
+      try {
+        const raw = localStorage.getItem(TEAM_RADAR_STORAGE_KEY);
+        if (raw !== null) state = parseStoredTeamRadarState(raw);
+      } catch {
+        // Web Storage そのものが拒む環境 (パス 89) —— 見本で続ける。
+        state = DEFAULT_TEAM_RADAR_STATE;
+      }
+      return ok(buildTeamRadarSnapshot(state)) as ActionResult<T>;
+    }
+    /*
      * security は「鍵が入っているか」だけがブラウザでも観測できる。
      *
      * ## ここが `not_implemented` を返し続けていた影響 (2026-08-25 実測)
@@ -1326,33 +1353,11 @@ const shim = {
       return ok({ path: filename, bytes: new Blob([svg]).size, generatedAt: new Date().toISOString(), downloaded, ...sinks }) as ActionResult<T>;
     }
 
-    /*
-     * TeamRadar save-state (ブラウザ版)。
-     *
-     * **注意: ここが書く `teamradar.state` を読む所は無い。** 実測
-     * (2026-08-23): この鍵は `src/` 全体で**この 1 行にしか現れない** (検査にも無い)。
-     * リロードで編集が残るのは、`TeamRadarPage` 自身が別の鍵
-     * (`servicehub.teamradar.draft.v1`) へ下書きを保存しているためで、
-     * **この action のおかげではない**。元は「persist into localStorage so
-     * reloads keep edits」と書いてあったが、それは事実ではなかった。
-     *
-     * **なぜ消さないか**: デスクトップ版では `save-state` が
-     * `team-radar.json` を書き、`loadTeamRadarState` → `fetchSnapshot` が
-     * それを読む。つまり action 自体は意味を持つ口で、ブラウザ版の実装だけが
-     * 行き止まりになっている。消すのは口の意味を変える話なので触らない。
-     *
-     * **検証の非対称**: main 側は `validateMembers` (最大 50 人・scores は
-     * 長さ 5・id 重複なし) と department/evaluatedAt の長さを見るが、
-     * こちらは素通し。`validateMembers` は `src/main` にあり renderer からは
-     * import できない (`lint:imports` の境界)。揃えるなら `src/shared` へ
-     * 出す必要がある。**今は書いた物を誰も読まないので実害は無いが、
-     * ここを読む人が現れたら先に揃えること。**
-     */
     /**
      * 人材育成の登用判定。**判定そのものは `shared/talent.ts` の同じ関数**を
      * 呼ぶ —— デスクトップ版 (`clients/talent.ts`) と同じ答えが返る。
-     * ここで判定を書き直すと、teamradar の `save-state` で起きている
-     * 「main は検証するのにブラウザ版は素通し」という非対称を新しく作ることになる。
+     * ここで判定を書き直すと「main は検証するのにブラウザ版は素通し」という非対称を
+     * 新しく作ることになる (teamradar の `save-state` に 2026-09-09 まで在った形 —— パス 118 で揃えた)。
      */
     if (serviceId === 'talent' && action === 'judge-leader') {
       const p = payload as { flagged?: unknown; candidate?: unknown };
@@ -1378,10 +1383,24 @@ const shim = {
       }
     }
 
+    /*
+     * TeamRadar save-state (ブラウザ版) —— **デスクトップ版と同じ判定を通してから書く** (パス 118)。
+     *
+     * 2026-08-23 の実測では、この鍵 (`teamradar.state`) を書く 1 行が `src/` で唯一の出現で、
+     * 読む所が無く、判定も無かった (main は `validateMembers` で 50 人・scores 長さ 5・id 重複なし・
+     * department / evaluatedAt の長さを見る)。いまは `fetchSnapshot` の teamradar の枝が読み、
+     * 判定は shared の `validateTeamRadarState` (両ビルドで同じ文面) を通す。
+     */
     if (serviceId === 'teamradar' && action === 'save-state') {
+      let next: ReturnType<typeof validateTeamRadarState>;
       try {
-        localStorage.setItem('teamradar.state', JSON.stringify(payload));
-        return ok(payload) as ActionResult<T>;
+        next = validateTeamRadarState(payload);
+      } catch (e) {
+        return err('action_failed', e instanceof Error ? e.message : String(e));
+      }
+      try {
+        localStorage.setItem(TEAM_RADAR_STORAGE_KEY, JSON.stringify(next));
+        return ok<ActionData<'teamradar/save-state'>>(next) as ActionResult<T>;
       } catch {
         return err('action_failed', 'localStorage への保存に失敗しました');
       }

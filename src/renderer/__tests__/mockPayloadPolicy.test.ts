@@ -14,11 +14,21 @@
  *
  * この検査は**台帳を双方向に**見る: 名乗る側が増えたら登録を要求し、登録が腐っても
  * 落とす。走査が死んだら気付けるように件数の床も置く。
+ *
+ * ## 母集団は `main/clients/` だけではない (2026-09-09 · パス 118)
+ *
+ * チームレーダーの組み立て (`buildTeamRadarSnapshot`) が `shared/teamRadarState.ts` へ
+ * 移り、main の `teamradar.ts` は**それを呼んで返すだけ**になった。字面で `isMock: true`
+ * を探す走査は呼び出しを透かして見られないので、`main/clients/` だけを見ると
+ * **名乗る側が 1 つ黙って消える** (この検査は「腐った台帳」として鳴った —— 台帳が
+ * 主より長生きしたから気付けた)。走査は `shared/` も母集団に入れ、台帳は
+ * **字面の在る場所**で登録する。
  */
 import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { globSync } from 'tinyglobby';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { code } from '../pages/__tests__/aiEgressPairs.helpers';
 
 const REPO = join(__dirname, '..', '..', '..');
 
@@ -47,9 +57,9 @@ const LEDGER: Record<string, LedgerEntry> = {
     surfacing: 'badge',
     why: '補助金・融資の一覧とキャッシュランウェイ・債務償還年数・特定収入割合を返す。FundingPage が payloadIsMock を StatusBar へ渡し、バッジが「同梱データ」になる。',
   },
-  'src/main/clients/teamradar.ts': {
+  'src/shared/teamRadarState.ts': {
     surfacing: 'badge',
-    why: 'チームの状態 (人数・軸の値) を返す。TeamRadarPage が payloadIsMock を StatusBar へ渡す。',
+    why: 'チームの状態 (人数・軸の値) を組む buildTeamRadarSnapshot / 見本 DEFAULT_TEAM_RADAR。main の teamradar.ts とブラウザ版の fetchSnapshot の枝が両方これを返す (パス 118)。TeamRadarPage が payloadIsMock を StatusBar へ渡す。',
   },
   'src/main/clients/stocks.ts': {
     surfacing: 'notice',
@@ -89,14 +99,15 @@ const LEDGER: Record<string, LedgerEntry> = {
   },
 };
 
-/** `isMock: true` を返すモジュール。 */
+/** `isMock: true` を字面に持つモジュール (main の fetcher と、fetcher が返す物を組む shared)。 */
 function mockClients(): string[] {
-  return globSync(['src/main/clients/**/*.ts'], {
+  return globSync(['src/main/clients/**/*.ts', 'src/shared/**/*.ts'], {
     cwd: REPO,
     absolute: true,
     ignore: ['**/__tests__/**'],
   })
-    .filter((abs) => /isMock:\s*true/.test(readOriginalSource(abs)))
+    // コメントは落とす —— 説明文の中の `isMock: true` (dataOrigin.ts の注記) を名乗りと読まない。
+    .filter((abs) => /isMock:\s*true/.test(code(readOriginalSource(abs))))
     .map((abs) => relative(REPO, abs).split('\\').join('/'))
     .sort();
 }
@@ -112,8 +123,15 @@ describe('同梱データを名乗る中身の台帳', () => {
 
   it('標本: 走査は `isMock: true` を実際に見ている', () => {
     expect(CLIENTS).toContain('src/main/clients/funding.ts');
+    // shared に在る字面も拾う (main が呼んで返すだけの物を落とさない —— パス 118)。
+    expect(CLIENTS).toContain('src/shared/teamRadarState.ts');
+    expect(CLIENTS, 'main の teamradar.ts は字面を持たない (組み立ては shared)').not.toContain('src/main/clients/teamradar.ts');
     // 名乗らないモジュールは入らない (走査が全件を拾っているだけではない)。
     expect(CLIENTS).not.toContain('src/main/clients/github.ts');
+    expect(CLIENTS).not.toContain('src/shared/talent.ts');
+    // 綴りがコメントにしか無い物は入らない (dataOrigin.ts は注記で funding の名乗りを引用している)。
+    expect(/isMock:\s*true/.test(readOriginalSource(join(REPO, 'src/shared/dataOrigin.ts'))), '標本: 注記に綴りが在る').toBe(true);
+    expect(CLIENTS).not.toContain('src/shared/dataOrigin.ts');
   });
 
   it('★ 台帳に無いモジュールは無い', () => {
@@ -137,7 +155,7 @@ describe('同梱データを名乗る中身の台帳', () => {
     // 台帳が `badge` と言うなら、実際に配線が在ること。
     const pages: Record<string, string> = {
       'src/main/clients/funding.ts': 'src/renderer/pages/FundingPage.tsx',
-      'src/main/clients/teamradar.ts': 'src/renderer/pages/TeamRadarPage.tsx',
+      'src/shared/teamRadarState.ts': 'src/renderer/pages/TeamRadarPage.tsx',
     };
     const missing = Object.entries(LEDGER)
       .filter(([, e]) => e.surfacing === 'badge')
@@ -167,7 +185,7 @@ describe('同梱データを名乗る中身の台帳', () => {
 
   it('★ 図表を持つと宣言した画面が `no-figures` になっていない', () => {
     // 数字を出すのに「言うことが無い」と登録するのが、この台帳のいちばん危ない腐り方。
-    const figures = ['src/main/clients/funding.ts', 'src/main/clients/teamradar.ts', 'src/main/clients/stocks.ts', 'src/main/clients/business.ts', 'src/main/clients/kpi.ts'];
+    const figures = ['src/main/clients/funding.ts', 'src/shared/teamRadarState.ts', 'src/main/clients/stocks.ts', 'src/main/clients/business.ts', 'src/main/clients/kpi.ts'];
     const wrong = figures.filter((f) => LEDGER[f]?.surfacing === 'no-figures');
     expect(wrong).toEqual([]);
   });

@@ -272,6 +272,7 @@
     "src/shared/taxRetirement.ts",
     "src/shared/taxSocialInsurance.ts",
     "src/shared/taxStampDuty.ts",
+    "src/shared/teamRadarState.ts",
     "src/shared/team.ts",
     "src/shared/textWrap.ts",
     "src/shared/tokenInput.ts",

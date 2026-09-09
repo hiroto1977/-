@@ -111,7 +111,7 @@ const LEDGER: Record<string, LedgerEntry> = {
   'src/renderer/web-shim.ts': {
     policy: 'surfaced',
     keys: ['servicehub.talent.state.v1', 'teamradar.state'],
-    why: '人材育成の状態は失敗を action_failed で返し、画面が「保存できませんでした」を出す。teamradar.state は読む所が無い (実質デッド) と別途記録済み。',
+    why: '人材育成とチームレーダーの状態は失敗を action_failed で返し、画面が「保存失敗」を出す。teamradar.state は 2026-09-09 (パス 118) から fetchSnapshot が読む (それまで書くだけの鍵だった)。',
   },
 };
 

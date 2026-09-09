@@ -4,12 +4,12 @@
  *
  * デスクトップ側は `src/main/clients/__tests__/snapshotShapeParity.test.ts` が
  * 51 サービス分を突き合わせた。ブラウザ版 (`web-shim.ts`) は別実装で
- * **4 サービスだけ**自前に合成する (stocks / emotions / talent / security)。
+ * **5 サービスだけ**自前に合成する (stocks / emotions / talent / teamradar / security)。
  * 残りは `not_implemented` を返して画面が同梱を見続けるか、`liveRead` 経由で
  * **shared の実装**を通る (`LIVE_READERS` は今 cursor 1 件で、main と同じ
  * `fetchCursorSnapshotWith` を呼ぶので形はずれようがない)。
  *
- * 合成の 4 件は**ブラウザ版だけの道**なので、ここがずれると
+ * 合成の 5 件は**ブラウザ版だけの道**なので、ここがずれると
  * `hiroto1977.github.io/-/app.html` でだけ画面が壊れる —— 同梱にしか無い欄は
  * 「取得できた瞬間に」消え、合成にしか無い欄は未取得のあいだ出ない。
  * 物差し (`shapeDiff`) はデスクトップ側と同じ物を使う。
@@ -68,16 +68,17 @@ const SYNTHESIZED: readonly { readonly id: string; readonly snapshotKey: string;
   { id: 'stocks', snapshotKey: 'stocks', why: 'ウォッチリストを localStorage から読み、モック価格で合成する' },
   { id: 'emotions', snapshotKey: 'emotions', why: '気分ログ・分析履歴を localStorage から読んで組み直す' },
   { id: 'talent', snapshotKey: 'talent', why: '保存した申告・施策から判定し直す (main と同じ buildTalentSnapshot)' },
+  { id: 'teamradar', snapshotKey: 'teamradar', why: '保存した部署・評価日・メンバーを返す (main と同じ buildTeamRadarSnapshot —— パス 118)' },
   { id: 'security', snapshotKey: 'security', why: '同梱を広げて keysConfigured だけ金庫の実態に差し替える' },
 ];
 
 describe('ブラウザ版が合成した形 vs 同梱スナップショット', () => {
-  it('走査が生きている (合成するサービスが 4 件以上ある)', () => {
-    expect(SYNTHESIZED.length).toBeGreaterThanOrEqual(4);
+  it('走査が生きている (合成するサービスが 5 件以上ある)', () => {
+    expect(SYNTHESIZED.length).toBeGreaterThanOrEqual(5);
     for (const s of SYNTHESIZED) expect(s.why.length, s.id).toBeGreaterThanOrEqual(20);
   });
 
-  it('★ 4 サービスすべてで、合成と同梱の欄が一致する', async () => {
+  it('★ 5 サービスすべてで、合成と同梱の欄が一致する', async () => {
     const hub = await loadHub();
     const { SNAPSHOT } = await import('../data/snapshot');
     const snap = SNAPSHOT as unknown as Record<string, unknown>;

@@ -18245,6 +18245,44 @@ main に登録された action は **54** で、載っていない 27 は誰も�
 - `serviceHub.invoke` そのものを鍵で総称化する (`invoke('slack', 'send-message', …)` が型を推論する) —— 台帳が全域に
   なったので次に置ける。
 
+
+## パス 118 (2026-09-09) — **ブラウザ版のチームレーダーは「口はあるが繋がっていない」まま残っていた**
+
+talent が 2026-08-28 に e2e で捕まった形 —— 「保存の口は動くのに、画面は同梱の見本を見続ける」—— が、
+隣のサービスに**そのまま**在った。しかも `web-shim.ts` の注記 (2026-08-23) が 3 つとも実測して書いてある:
+
+| 何が | 実測 |
+| --- | --- |
+| 書く | `save-state` は payload を**検証せず** `localStorage['teamradar.state']` へ書く (main は `validateMembers` で 50 人・5 軸・1〜5 の整数・id の重複、department / evaluatedAt の長さを見てから 0600 で書く) |
+| 読む | その鍵を**読む所が無い** —— `src/` 全体で書く 1 行だけ (`storageWritePolicy.test.ts` の台帳にも「実質デッド」と書いてあった) |
+| 画面 | 「保存しました」の直後に `refresh()` するが、ブラウザ版の `fetchSnapshot` に teamradar の枝が無く `not_implemented` へ落ちる —— **「保存しました」と赤いバッジ (「ブラウザ版では live fetch を行いません」) が同時に出る**。保存した状態は 2 度と画面へ戻らない |
+
+`origin` が `local` (`dataOrigin.ts`) なので `refresh()` は呼ばれる (`sample` なら呼ばれない)。
+注記は「判定は `src/main` にあり renderer からは読めない」で止まっていた —— 規準は手の届く所に在った
+(21 か所目): `shared/talent.ts` が同じ形をとうに解いていた (判定・既定値・組み立てを shared に置き、main は
+ファイルの読み書きだけを持ち、ブラウザ版は同じ関数を通す)。パス 117 で `TeamMember` / `TeamRadarState` の
+型だけ shared へ置いたので、残りを移すだけだった。
+
+### 直し
+
+- `shared/teamRadarState.ts` に軸 (`CANONICAL_AXES` …)・判定 (`isValidScore` / `isValidMemberId` / `validateMembers` /
+  **`validateTeamRadarState`** = members → department → evaluatedAt の順・同じ文面)・見本 (`DEFAULT_TEAM_RADAR_STATE` /
+  `DEFAULT_TEAM_RADAR`)・読み込み (`parseStoredTeamRadarState` —— 読めない物は見本へ倒す。main の `loadTeamRadarState`
+  の判断をそのまま移した)・組み立て (`buildTeamRadarSnapshot`)・鍵 (`TEAM_RADAR_STORAGE_KEY`) を置く。main は
+  ファイルの読み書き (0600 / atomic) と SVG だけを持ち、検査が読む名前は再輸出する。
+- `web-shim.ts`: `save-state` は `validateTeamRadarState` を通してから鍵へ書き、`ok<ActionData<'teamradar/save-state'>>`
+  で宣言する (台帳の「双子が無い」から外れた)。`fetchSnapshot` に teamradar の枝 (鍵 → `parseStoredTeamRadarState` →
+  `buildTeamRadarSnapshot`。無い・壊れた・Web Storage が拒む → 見本)。
+- 検査: `webShimSnapshotBranches.test.ts` に往復 4 本 (保存 → 反映 / 無し → 見本 3 人 / 壊れた → 見本 /
+  形の合わない保存は断り鍵を汚さない)、`webShimSnapshotParity.test.ts` の合成 5 件目、e2e `teamRadarSuite`
+  (追加 → 保存 → 赤バッジが出ない → 欄に残る → shim の往復 → 断り)。`lint:storage` の台帳は `sensitive: true`
+  (部署名・氏名・第三者の評価)。Stryker の対象に `shared/teamRadarState.ts` (275 → 276)。
+
+### 残り
+
+- `isMock: true` はデスクトップ版と同じく**保存した状態にも**付く (組み立てが見本と同じ関数)。画面のバッジが
+  「見本」と言う根拠がここに在るので、保存済みなら `false` にするのが次 (両ビルドを同時に)。
+
 ## パス 115 (2026-09-09) — **同じ `YYYY-MM-DD` の判定が 7 通りに割れ、暦を見るのは 1 つだけだった**
 
 パス 114 まで「入力の天井」を数えてきた。今回は**入力の形**のうち、いちばん多くの画面が持つ

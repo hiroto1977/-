@@ -154,7 +154,10 @@ const STORES = {
   'servicehub.teamradar.draft.v1': { medium: 'localstorage', holds: 'Team Radar の下書き', backedUp: false, sensitive: true },
   'servicehub.ollama.endpoint': { medium: 'localstorage', holds: 'Ollama の接続先', backedUp: false },
   'servicehub.ollama.port': { medium: 'localstorage', holds: 'Ollama の待ち受けポート', backedUp: false },
-  'teamradar.state': { medium: 'localstorage', holds: 'Team Radar の状態 (web-shim 経由)', backedUp: false },
+  // チームレーダーの保存状態 (部署名・メンバーの氏名・軸ごとの 1〜5 評価・付箋)。第三者の人事評価
+  // なので sensitive。デスクトップ版は ~/.local/business-hub/team-radar.json (0600) で、こちらは
+  // ブラウザ版の置き場 —— 2026-09-09 (パス 118) から fetchSnapshot が読む (それまで書くだけだった)。
+  'teamradar.state': { medium: 'localstorage', holds: 'チームレーダーの保存状態 (部署・メンバーの氏名・評価・付箋)', backedUp: false, sensitive: true },
   // 人材育成の入力 (部署ごとの組織病の申告・施策の達成確率・メンバーの STEP)。
   // 部署名と個人名が入るので sensitive。デスクトップ版は
   // ~/.local/business-hub/talent.json (0600) で、こちらはブラウザ版の置き場。
@@ -216,6 +219,12 @@ const INDIRECT_SITES = [
     expr: 'TALENT_STORAGE_KEY',
     keys: ['servicehub.talent.state.v1'],
     why: '`src/shared/talent.ts` の定数を import している。デスクトップ版と読み書きの入口を 1 つにするため、鍵の定義も shared 側に置いた (走査は同一ファイル内の const しか解決しない)。',
+  },
+  {
+    file: 'src/renderer/web-shim.ts',
+    expr: 'TEAM_RADAR_STORAGE_KEY',
+    keys: ['teamradar.state'],
+    why: '`src/shared/teamRadarState.ts` の定数を import している (パス 118)。デスクトップ版と同じ判定・組み立てを shared に置いたので、鍵の定義も shared 側 —— 書く (save-state) と読む (fetchSnapshot) の両方がこの定数を通る。',
   },
 ];
 

@@ -65,7 +65,10 @@ type Route =
 const ROUTES: readonly (readonly [string, string, Route])[] = [
   ['templates', 'export-template', { ok: false, code: 'action_failed', message: 'unknown template id: undefined' }],
   ['teamradar', 'export-svg', { ok: false, code: 'action_failed', message: 'チームレーダーページに切り替えてからもう一度お試しください' }],
-  ['teamradar', 'save-state', { ok: true, shape: (d) => expect(d).toEqual({}) }],
+  // パス 118 まではここが `ok: true` で `{}` をそのまま返していた (検証せずに書く)。
+  // いまは main と同じ判定を通すので、空の payload は main と同じ文面で断る。
+  // 正しい payload の往復は webShimSnapshotBranches.test.ts が持つ。
+  ['teamradar', 'save-state', { ok: false, code: 'action_failed', message: 'department must be a 1-64 char string' }],
   ['talent', 'judge-leader', { ok: true, shape: (d) => expect(d).toHaveProperty('fitness.eligible') }],
   ['talent', 'save-state', { ok: true, shape: (d) => expect(Object.keys(d as object)).toEqual(expect.arrayContaining(['reports', 'initiatives', 'members'])) }],
   ['ollama', 'chat', { ok: false, code: 'ollama_bad-model', message: 'モデル名が不正です: ' }],

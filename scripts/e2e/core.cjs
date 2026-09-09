@@ -2427,6 +2427,77 @@ async function talentSuite(browser) {
  * 束ねた standalone.html で 設定 → 遷移 (リロード) → 保存先から読み直し → 反映 の
  * 経路が切れていないかは実機でしか分からない。既定 (対照) → 上書き → 既定に戻す の順。
  */
+/**
+ * チームレーダー —— **保存した物が画面へ戻ってくるか** (2026-09-09 · パス 118)。
+ *
+ * talent が 2026-08-28 に捕まった形 (「口も検査も揃っているのに画面から呼べない」) が隣に
+ * 残っていた: ブラウザ版の \`save-state\` は検証せず \`teamradar.state\` へ書き、その鍵を読む所が
+ * 無く、画面は「保存しました」の直後に \`refresh()\` して赤いバッジ (「ブラウザ版では live fetch を
+ * 行いません」) を出していた。単体検査は shared の判定と shim の往復を留めるが、**画面の
+ * 保存ボタンからその往復が繋がっているか**は実物でしか確かめられない。
+ */
+async function teamRadarSuite(browser) {
+  console.log('\n=== teamRadar (チームレーダー: 追加 → 保存 → 取得し直し) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE + '#/teamradar', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('text=保存 / エクスポート', { timeout: 30000 });
+
+  // 見本は 3 人。1 人足すと「メンバー4」が出来る。
+  await page.getByRole('button', { name: 'メンバーを追加' }).click();
+  // 欄の値は DOM の property で見る (React は attribute を同期しない版がある)。
+  const hasMemberInput = () =>
+    page.locator('input[type="text"]').evaluateAll((els) => els.some((e) => e.value === 'メンバー4'));
+  ok(await hasMemberInput(), 'teamRadar: 追加したメンバーが欄に出る');
+
+  await page.getByRole('button', { name: 'チーム情報を保存' }).click();
+  await page.waitForSelector('text=保存しました', { timeout: 20000 });
+  ok(true, 'teamRadar: 保存が成功する (口が画面から呼べている)');
+
+  // 保存の直後に refresh() が走る。ブラウザ版の fetchSnapshot に枝が無かった頃は、ここで
+  // 「ブラウザ版では live fetch を行いません」の赤いバッジが「保存しました」と並んでいた。
+  await page.waitForTimeout(500);
+  ok(await page.locator('text=ブラウザ版では live fetch を行いません').count() === 0,
+    'teamRadar: ★ 保存の直後の取得し直しが not_implemented に落ちない');
+  ok(await hasMemberInput(),
+    'teamRadar: ★ 取得し直した後も追加したメンバーが残る (保存した物が戻ってくる)');
+
+  // 保存先が台帳の鍵で、fetchSnapshot がそれを読んでいること (shim の往復)。
+  const roundTrip = await page.evaluate(async () => {
+    const stored = localStorage.getItem('teamradar.state');
+    const snap = await window.serviceHub.fetchSnapshot('teamradar');
+    return {
+      stored: stored !== null && stored.includes('メンバー4'),
+      ok: snap.ok,
+      names: snap.ok ? snap.data.members.map((m) => m.name) : [],
+    };
+  });
+  ok(roundTrip.stored, 'teamRadar: 台帳に載せた鍵 (teamradar.state) へ保存されている');
+  ok(roundTrip.ok && roundTrip.names.includes('メンバー4'),
+    `teamRadar: ★ fetchSnapshot が保存した状態を返す — 実際 ${JSON.stringify(roundTrip.names)}`);
+
+  // 判定はデスクトップ版と同じ物を通る: 形の合わない保存は断り、鍵は汚さない。
+  const refused = await page.evaluate(async () => {
+    const before = localStorage.getItem('teamradar.state');
+    const r = await window.serviceHub.invoke('teamradar', 'save-state', {
+      department: '開発部',
+      evaluatedAt: '2026-09-09',
+      members: [{ id: 'x', name: 'X', scores: [1, 2, 3] }],
+    });
+    return { ok: r.ok, message: r.ok ? '' : r.message, untouched: localStorage.getItem('teamradar.state') === before };
+  });
+  ok(!refused.ok && /length 5/.test(refused.message) && refused.untouched,
+    `teamRadar: ★ 形の合わない保存は断り、保存先を汚さない — 実際 ${JSON.stringify(refused)}`);
+
+  ok(errs.length === 0, `teamRadar: ページエラー 0 (実際 ${errs.length})`);
+  await ctx.close();
+}
+
+
 async function parameterSuite(browser) {
   console.log('\n=== parameters (数値パラメータ: 設定 → 別画面へ反映 → 既定に戻す) ===');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
@@ -2497,7 +2568,7 @@ async function parameterSuite(browser) {
   const SUITES = [
     'desktop', 'manualData', 'dataOrigin', 'credential', 'businessComparison', 'kessanTax', 'frameGuard', 'noBeacon',
     'vaultPassword', 'credentialEgress', 'proxyEnvelope', 'cspEnforced', 'vaultOpacity', 'crossTabLock', 'storageDurability',
-    'securityPosture', 'thirdPartyDisclosure', 'realtime', 'phone', 'talent', 'parameters', 'tablet',
+    'securityPosture', 'thirdPartyDisclosure', 'realtime', 'phone', 'talent', 'teamRadar', 'parameters', 'tablet',
   ];
   const unknown = only.filter((n) => !SUITES.includes(n));
   if (unknown.length > 0) {
@@ -2530,6 +2601,7 @@ async function parameterSuite(browser) {
   if (run('realtime')) await realtimeSuite(browser);
   if (run('phone')) await phoneSuite(browser);
   if (run('talent')) await talentSuite(browser);
+  if (run('teamRadar')) await teamRadarSuite(browser);
   if (run('parameters')) await parameterSuite(browser);
   if (run('tablet')) await tabletSuite(browser);
   await browser.close();
