@@ -18389,6 +18389,48 @@ uber-eats / demae-can の advise は画面が無く (`VoiceCommandBar` と `Busi
 - 下書き (`servicehub.teamradar.draft.v1`) は snapshot より優先して復元される。読めなかった保存と下書きが両方在るとき、
   画面のメンバーは下書き、注記は保存先について言う (別の物を指している)。
 
+## パス 131 (2026-09-09) — **暗号化バックアップの合言葉を、平文の問い合わせ (prompt) で受けていた —— 隣にマスクされた欄が在るのに。Electron の renderer には prompt が無く、デスクトップ版ではその道が必ず失敗していた**
+
+### 何が起きていたか
+
+復元の合言葉は `type="password"` の欄で受ける形になっているが、欄が**空**のまま暗号化バックアップを選ぶと、
+`window.prompt('暗号化バックアップのパスワードを入力してください')` で訊き直していた。
+
+| 面 | 何が起きるか |
+| --- | --- |
+| ブラウザ版 | prompt の入力は**平文で映る** (マスクが無い)。合言葉を肩越しに読める。保管庫のパスワードは 12 文字以上を強制し、書き出しの合言葉にも同じ下限を置いた (パス 128) のに、入口の 1 つが平文だった |
+| デスクトップ版 (Electron) | renderer は prompt を実装しない (null を返し、console に "prompt() is and will not be supported" と出す)。この道は必ず「パスワードが入力されませんでした」に落ちる —— 欄を使えば済むことを画面は言わなかった |
+
+`lint:forbidden` は eval / innerHTML / window.open などを禁止していたが、prompt は誰も見ていなかった
+(実測: runtime の呼び出しはこの 1 か所)。
+
+### 直し
+
+- `components/BackupPanel.tsx`: 暗号化バックアップで欄が空なら断る (`ENCRYPTED_RESTORE_NEEDS_FIELD`:
+  「上の『暗号化パスワード』欄に合言葉を入力してから、もう一度ファイルを選んでください」)。prompt は使わない。
+- `scripts/lint-forbidden-patterns.cjs`: 規則 37 本目「prompt() で入力を受ける (平文で映る・Electron は未実装)」。
+  `prompt` の直後に `(` が続く形だけ (性質名 `prompt:`・変数・`buildPrompt(` は当てない)。self-test に標本 7 本
+  (陽性 3・陰性 4)。数は `verify:arch` が CLAUDE.md / ARCHITECTURE.md と突き合わせる (36 → 37)。
+- `docs/DATA_PROTECTION.md` 5 に 1 文。
+- 検査: `restorePassphraseField.test.ts` (実物の画面: ★ 欄が空なら断って何も復元せず prompt を呼ばない / 対照 欄に
+  入れれば復元 / 対照 平文は欄が空でも復元)、lint:forbidden の self-test、e2e `desktop` (Node 側の WebCrypto で
+  dataCrypto と同じ形に封緘したファイルを、欄が空のまま選ぶ → 断り / 欄に入れて選ぶ → 復元)。
+
+### 対照
+
+| # | 何を壊したか | 鳴ったか |
+| --- | --- | --- |
+| A | 断りを外して `pw = passphrase` のまま進める (元の判断: 欄が空でも進む) | 🔔 `restorePassphraseField.test.ts` の ★ が落ちる (断りの文が出ず、`parseBackupFile` の「暗号化バックアップの復元にはパスワードが必要です」が出る。prompt を呼ばない検査は通る —— 呼ぶ道を消したのは同じ差分)。対照 2 本は通ったまま = 落ちる場所が**足した検査そのもの** |
+| A2 | 規則 37 本目を消す (元の判断: prompt を誰も見ない) | 🔔 `lint:forbidden --self-test` が「self-test 不一致 3 件」(陽性の標本 3 本が鳴らない) で落ち、`verify:arch` が禁止パターン数 36 ≠ 37 で落ちる (名簿が名簿を守る) |
+| B | (e2e) パス 130 の版に当てる | 🔔 パス 130 の版は欄が空だと prompt を開く —— Playwright は聴き手の無い dialog を dismiss するので null が返り「パスワードが入力されませんでした」が出て、新しい断りの文の待ちが 15 秒で切れる (TimeoutError · `controlB exit=1`)。既存の検査 (パス 122〜130 の ★ を含む) は通ったまま |
+
+### 残る物
+
+- `confirm()` / `alert()` は残す —— 秘密を受けない (確認と通知)。禁止するのは入力を受ける prompt だけ。
+- **chain の `npm test` が 1 度 exit 1 になった** —— 14,486 件は全部通ったが、`useRealtimeTick` の interval が jsdom の teardown 後に `setAt` を呼び "window is not defined" (Vitest の Unhandled Error。帰属は `overviewBankSheet.test.ts` だが「その間に走った」という意味)。同じファイル単独 3 回・全件の再実行は緑 —— 並列 worker の間の時間の揺れで、掃除 (`clearInterval`) と teardown の順が入れ替わる形。このパスの変更 (BackupPanel / lint / e2e) とは無関係だが、CI でも起きうるので記録する。根本は「アンマウント前に teardown された木」で、次のパスの候補。
+- Electron で prompt が無いことは Electron の FAQ と console の文言によるもので、実機の smoke:app は復元の道を通らない。
+- 0 倒しの母集団 (`lint:zero-fold`) は **280 のまま**。
+
 ## パス 130 (2026-09-09) — **平文バックアップが、何をさらすかを言わずに書いていた —— 合言葉が空の書き出しに、メールアドレス・電話番号・住所がそのまま入る**
 
 ### 何が起きていたか

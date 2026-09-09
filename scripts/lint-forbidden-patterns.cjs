@@ -725,6 +725,28 @@ const FORBIDDEN_PATTERNS = [
       + ' 値を変えたいなら表を直すこと (差し替え可能にする変更は、資格情報の宛先を'
       + ' 外部に委ねる変更と同義)',
   },
+  /*
+   * 秘密を prompt で受けない (2026-09-09 · パス 131)。
+   *
+   * ブラウザの prompt は入力を**平文で映す** (マスクが無い) ので、合言葉・トークンの
+   * 入口には使えない。加えて Electron の renderer は prompt を実装しない
+   * (null を返し console に "prompt() is and will not be supported" と出す) ——
+   * つまりデスクトップ版ではその道が必ず「入力されなかった」に落ちる。
+   * 復元の合言葉が 2026-09-09 までこの形だった (`components/BackupPanel.tsx` ——
+   * 隣にマスクされた欄が在るのに、空なら prompt で訊いていた)。受けるなら
+   * `type="password"` の欄で。`prompt` の直後に `(` が続く形だけを当てる
+   * (性質名 `prompt:` / 変数 `prompt` / `buildPrompt(` は当てない)。
+   */
+  {
+    name: 'prompt() で入力を受ける (平文で映る・Electron は未実装)',
+    pattern: /\b(?:window|globalThis|self)\.prompt\(|(?<![\w.$])prompt\(/,
+    codeOnly: true,
+    rationale:
+      'prompt() はマスクの無い平文の入力で、合言葉やトークンを受ける口にできない。'
+      + ' Electron の renderer は prompt() を実装しておらず null を返すので、'
+      + ' デスクトップ版ではその経路が必ず失敗する。type="password" の欄で受けること'
+      + ' (components/BackupPanel.tsx の合言葉欄がその形)',
+  },
 ];
 
 /**
@@ -1137,6 +1159,13 @@ function selfTest() {
     ['陰性対照: 素の fetch はこの規則では鳴らない', '  await fetch(url, init);', 0],
     ['陰性対照: JSX の <img> は通す (safeImageSrc を通る正しい形)', '  <img src={thumbSrc} alt="" />', 0],
     ['陰性対照: 名前が注釈に出るだけなら鳴らない', '  // sendBeacon や new WebSocket は使わない', 0],
+    ['window.prompt( を弾く (平文の入力・Electron 未実装)', "const pw = window.prompt('合言葉を入力');", 1],
+    ['裸の prompt( も弾く', "const pw = prompt('合言葉') || '';", 1],
+    ['globalThis.prompt( も弾く', "globalThis.prompt('x');", 1],
+    ['AI の buildPrompt( / systemPrompt( は当てない', 'const p = buildPrompt(text); const q = systemPrompt(x);', 0],
+    ['性質名の prompt: は当てない', 'const body = { prompt: text, model };', 0],
+    ['変数の prompt (呼び出しでない) は当てない', 'const prompt = draft.trim(); send(prompt);', 0],
+    ['注釈の中の言及は当てない', '  // prompt() は Electron に無い', 0],
   ];
 
   /*

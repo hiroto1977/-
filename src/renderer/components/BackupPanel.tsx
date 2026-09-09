@@ -23,6 +23,10 @@ import { MAX_BACKUP_IMPORT_BYTES, readImportText } from '../data/importFile';
  * recovery. Optionally passphrase-encrypted (AES-GCM) for confidentiality;
  * always SHA-256 integrity-checked. Lives in Settings.
  */
+/** 暗号化バックアップを、合言葉の欄が空のまま選んだときの断り (e2e と検査が同じ文を読む)。 */
+export const ENCRYPTED_RESTORE_NEEDS_FIELD =
+  '暗号化バックアップです。上の「暗号化パスワード」欄に合言葉を入力してから、もう一度ファイルを選んでください（合言葉はマスクされた欄でしか受け取りません）';
+
 export function BackupPanel() {
   const [msg, setMsg] = useState<string>();
   const [err, setErr] = useState<string>();
@@ -70,13 +74,16 @@ export function BackupPanel() {
       const text = await readImportText(file, MAX_BACKUP_IMPORT_BYTES, 'バックアップファイル');
       let pw: string | undefined;
       if (isEncryptedBackup(text)) {
-        // 暗号化バックアップ: パスフレーズ欄、無ければプロンプトで取得。
-        pw = passphrase || window.prompt('暗号化バックアップのパスワードを入力してください') || '';
-        if (!pw) {
-          setErr('パスワードが入力されませんでした');
+        // 暗号化バックアップ: 合言葉は**マスクされた欄**でしか受けない (パス 131)。
+        // 2026-09-09 まで、欄が空なら prompt で訊いていた —— prompt は入力を平文で映し、
+        // Electron の renderer には無い (null を返す) ので、デスクトップ版ではその道が
+        // 必ず「入力されなかった」に落ちていた。`lint:forbidden` が prompt を禁止する。
+        if (passphrase.length === 0) {
+          setErr(ENCRYPTED_RESTORE_NEEDS_FIELD);
           if (fileRef.current) fileRef.current.value = '';
           return;
         }
+        pw = passphrase;
       }
       const parsed = await parseBackupFile(text, pw);
       // 何が足され・上書きされ・残り・消えるかを**書く前に**数える (パス 129)。

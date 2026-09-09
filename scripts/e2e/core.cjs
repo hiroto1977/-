@@ -19,7 +19,7 @@
 
 const path = require('node:path');
 const fs = require('node:fs');
-const { createHash } = require('node:crypto');
+const { createHash, webcrypto } = require('node:crypto');
 
 function resolvePlaywright() {
   const candidates = [undefined, { paths: ['/opt/node22/lib/node_modules'] }];
@@ -328,6 +328,30 @@ async function desktopSuite(browser) {
   await page.getByRole('button', { name: 'バックアップを書き出す', exact: true }).click();
   await page.waitForFunction(() => document.body.textContent.includes('件のレコードをバックアップしました（平文）'), undefined, { timeout: 15000 });
   ok(true, 'settings: 対照 — 確認で OK すれば平文で書き出し、結果の文が「平文」と言う');
+
+  // パス 131: 暗号化バックアップの合言葉は、マスクされた欄でしか受けない (prompt は平文で映り、Electron には無い)。
+  // ファイルは Node 側の WebCrypto で dataCrypto と同じ形 (PBKDF2-SHA256 60 万回 → AES-GCM-256) に封緘する。
+  const encryptedBackup = async (records, exportedAt, pw) => {
+    const inner = JSON.stringify({ app: 'service-hub', version: 1, exportedAt, checksum: createHash('sha256').update(JSON.stringify(records)).digest('hex'), records });
+    const enc = new TextEncoder();
+    const salt = webcrypto.getRandomValues(new Uint8Array(16));
+    const iv = webcrypto.getRandomValues(new Uint8Array(12));
+    const base = await webcrypto.subtle.importKey('raw', enc.encode(pw), 'PBKDF2', false, ['deriveKey']);
+    const key = await webcrypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 600_000, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt']);
+    const ct = new Uint8Array(await webcrypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(inner)));
+    const b64 = (u8) => Buffer.from(u8).toString('base64');
+    return JSON.stringify({ app: 'service-hub', encrypted: true, payload: { v: 1, kdf: 'PBKDF2-SHA256', iterations: 600_000, salt: b64(salt), iv: b64(iv), ct: b64(ct) } });
+  };
+  const encBackup = await encryptedBackup([{ ...restoreRow(1_700_000_000_000, 3000), id: 'e2e-restore-enc' }], '2026-02-01T12:00:00Z', 'correct-horse-battery');
+  await page.locator('[data-backup-passphrase]').fill('');
+  await page.locator('[data-backup-restore]').setInputFiles({ name: 'enc.json', mimeType: 'application/json', buffer: Buffer.from(encBackup) });
+  await page.waitForFunction(() => document.body.textContent.includes('上の「暗号化パスワード」欄に合言葉を入力してから'), undefined, { timeout: 15000 });
+  ok(!(await has('レコードを復元しました')), 'settings: ★ 合言葉の欄が空なら暗号化バックアップは復元せず、マスクされた欄を使うよう言う (平文の問い合わせで訊かない)');
+  await page.locator('[data-backup-passphrase]').fill('correct-horse-battery');
+  await page.locator('[data-backup-restore]').setInputFiles({ name: 'enc.json', mimeType: 'application/json', buffer: Buffer.from(encBackup) });
+  await page.waitForFunction(() => document.body.textContent.includes('レコードを復元しました'), undefined, { timeout: 30000 });
+  ok(await has('追加 1・更新 0'), 'settings: 対照 — 欄に合言葉を入れれば暗号化バックアップを復元できる');
+  await page.locator('[data-backup-passphrase]').fill('');
 
   // 士業 CRM: 追加 → ステータス変更 → 他ページ非漏出
   await gotoService(page, '#cpa', 'text=連携先一覧');
