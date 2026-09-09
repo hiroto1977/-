@@ -1336,3 +1336,24 @@ describe('§1 の但し書き — 同じ期・事業の重複は「合算値」�
     expect(value(s, '売上高')).toContain('12,345');
   });
 });
+
+describe('§3 の但し書き — 同じメールアドレスの重複 (パス 125)', () => {
+  it('★ 重複が在れば、一人当たりの但し書きに続けて「その重複を含んだ値です」と言い、従業員数は重複を含んだまま', () => {
+    const m = buildBankSubmissionSheet(inputWith(overviewWith({ members: [{ role: 'owner', email: 'a@x.jp' }, { role: 'admin', email: ' A@X.JP ' }] })));
+    const s = section(m.sections, '3.');
+    expect(s.caption).toContain('一人当たりの金額と人件費は、実績の令和8年4月・1 か月分の累計を従業員数で割ったものです（年額ではありません）。');
+    expect(s.caption).toContain('登録メンバーに同じメールアドレスの重複が 1 組あり（a@x.jp ×2）、従業員数と一人当たりの金額はその重複を含んだ値です。');
+    expect(value(s, '従業員数')).toBe('2名');
+  });
+
+  it('★ KPI 実績が無くても従業員数は刷るので、重複の断りはその後に続く', () => {
+    const m = buildBankSubmissionSheet(inputWith(overviewWith({ kpiActuals: [], members: [{ role: 'owner', email: 'a@x.jp' }, { role: 'admin', email: 'a@x.jp' }] })));
+    const s = section(m.sections, '3.');
+    expect(s.caption).toBe('KPI 実績が未入力のため、一人当たりの金額は算定していません。登録メンバーに同じメールアドレスの重複が 1 組あり（a@x.jp ×2）、従業員数と一人当たりの金額はその重複を含んだ値です。');
+  });
+
+  it('対照: 重複が無ければ但し書きに「重複」は無い (役割だけの詰め物も同じ)', () => {
+    expect(section(buildBankSubmissionSheet(inputWith(overviewWith())).sections, '3.').caption ?? '').not.toContain('重複');
+    expect(section(buildBankSubmissionSheet(inputWith(overviewWith({ members: [{ role: 'owner', email: 'a@x.jp' }, { role: 'admin', email: 'b@x.jp' }] }))).sections, '3.').caption ?? '').not.toContain('重複');
+  });
+});

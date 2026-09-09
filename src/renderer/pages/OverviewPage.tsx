@@ -738,7 +738,7 @@ export function OverviewPage() {
         // BS は最新の 1 レコードを採用。
         balanceSheet: balanceSheetOrNull(latestRecord(bsRecords)?.data),
         accounting: accountingMonthly,
-        members: memberRecords.map((r) => ({ role: r.data.role })),
+        members: memberRecords.map((r) => ({ role: r.data.role, email: r.data.email })),
         hydroponics,
         lowPotassium,
         // 台帳の値を渡す。**画面は数字を持たない** (既定はモジュールの定数)。

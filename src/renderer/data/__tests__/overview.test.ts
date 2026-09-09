@@ -39,7 +39,7 @@ describe('buildBusinessOverview', () => {
     // variable=50000, fixed=25000 → OP=25000
     expect(o.kpi.operatingProfit).toBe(25000);
 
-    expect(o.team).toEqual({ members: 2, seatLimit: 25, seatsRemaining: 23 });
+    expect(o.team).toEqual({ members: 2, seatLimit: 25, seatsRemaining: 23, duplicateMembers: [] });
     expect(o.flags.profitable).toBe(true);
     expect(o.flags.seatsFull).toBe(false);
   });
@@ -724,5 +724,25 @@ describe('kpi.duplicateActuals — 同じ期・事業の重複 (パス 124)', ()
     const o = buildBusinessOverview({ plan: 'business', sales: [], kpiActuals: KPI, members: [] });
     expect(o.kpi.duplicateActuals).toEqual([]);
     expect(o.kpi.revenue).toBe(100000);
+  });
+});
+
+describe('team.duplicateMembers — 同じメールアドレスの重複 (パス 125)', () => {
+  it('★ 同じメールアドレス (大文字違い) が 2 件あれば census に載り、人数と一人当たりの分母はその重複を含んだまま', () => {
+    const o = buildBusinessOverview({
+      plan: 'business',
+      sales: [],
+      kpiActuals: KPI,
+      members: [{ role: 'owner', email: 'a@x.jp' }, { role: 'member', email: 'A@X.JP' }, { role: 'member', email: 'b@x.jp' }],
+    });
+    expect(o.team.duplicateMembers).toEqual([{ email: 'a@x.jp', count: 2 }]);
+    expect(o.team.members).toBe(3);
+    // 100,000 ÷ 3 (重複を含む) —— 断り書きが事実を述べる側
+    expect(o.productivity.revenuePerCapita).toBe(33333);
+  });
+
+  it('対照: 重複が無ければ空・役割だけの射影 (メール無し) でも空', () => {
+    expect(buildBusinessOverview({ plan: 'business', sales: [], kpiActuals: KPI, members: [{ role: 'owner', email: 'a@x.jp' }, { role: 'member', email: 'b@x.jp' }] }).team.duplicateMembers).toEqual([]);
+    expect(buildBusinessOverview({ plan: 'business', sales: [], kpiActuals: KPI, members: [{ role: 'owner' }, { role: 'owner' }] }).team.duplicateMembers).toEqual([]);
   });
 });

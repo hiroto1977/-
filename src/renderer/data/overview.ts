@@ -25,6 +25,7 @@ import {
   type YoYComparison,
 } from './kpiActuals';
 import { seatsRemaining, type Role } from '../../shared/team';
+import { findDuplicateMembers, type DuplicateMemberGroup } from './members';
 import { getPlan, type PlanTier } from '../../shared/plan';
 import {
   budgetPeriodAlignment,
@@ -62,8 +63,11 @@ export interface OverviewInput {
   readonly balanceSheetStaleAfterMonths?: number;
   /** 会計連携 (freee 等) の月次キャッシュフロー。未連携なら空。 */
   readonly accounting?: readonly AccountingMonthly[];
-  /** Team members (only the count + roles matter here). */
-  readonly members: readonly { readonly role: Role }[];
+  /**
+   * Team members. 人数と役割が本体。`email` は同じ人の重複 (パス 125) を数えるためだけに読む ——
+   * 無い射影 (検査の詰め物) も受け、その場合は重複を数えない。
+   */
+  readonly members: readonly { readonly role: Role; readonly email?: string }[];
   /**
    * 水耕栽培の試算。利用者が入力した設備・品目・費用から算出したもので、
    * 実績 (`kpiActuals`) とは混ぜない。未入力なら経営サマリーに節は出ない。
@@ -196,6 +200,11 @@ export interface BusinessOverview {
     members: number;
     seatLimit: number;
     seatsRemaining: number;
+    /**
+     * 同じメールアドレスが 2 件以上ある組 (パス 125)。空なら重複なし。`members` と一人当たりの
+     * 分母はこの重複を**含んだまま**なので、相手に渡る面 (書面 §3) はこれが空でなければ述べる。
+     */
+    duplicateMembers: readonly DuplicateMemberGroup[];
   };
   /**
    * 生産性 (一人当たり) 指標。**メンバーが 0 人なら per-capita は null = 算定不能。**
@@ -355,6 +364,7 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       members: memberCount,
       seatLimit,
       seatsRemaining: remaining,
+      duplicateMembers: findDuplicateMembers(input.members),
     },
     productivity: {
       members: memberCount,

@@ -18,6 +18,7 @@ import { isCalendarMonth } from '../../shared/isoDate';
 // こちらへの辺は `import type` だけなので実行時の循環にはならない。
 import { fiscalYearMonths, fiscalYearWindow } from './kessanImport';
 import { duplicateActualsSheetNote, isValidPeriod, zeroMembersPerCapitaNote, zeroRevenueRatioNote } from './kpiActuals';
+import { duplicateMembersSheetNote } from './members';
 import {
   BANK_FORMAT_DEFAULT,
   BLANK,
@@ -405,7 +406,7 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
    * §3 の但し書き。一人当たりの金額は**対象期間の累計 ÷ 従業員数**で、年額ではない。
    * 1 年分そろっていれば述べることは無い (`periodScopeNote` と同じ規則)。
    */
-  const perCapitaCaption = (): string | null => {
+  const perCapitaBase = (): string | null => {
     // **狭い理由より広い理由を先に述べる** —— KPI 実績が無ければこの節は
     // 丸ごと空欄なので、そちらを言う。KPI は在って従業員が 0 名なら、
     // 空欄になるのは一人当たりの 3 行だけ (人件費・労働分配率・人件費率は出る)。
@@ -417,6 +418,12 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
     if (pr.members <= 0) return zeroMembersPerCapitaNote();
     if (months === fiscalYearMonths()) return null;
     return `一人当たりの金額と人件費は、実績の${periodSpan(o.kpi.periods, f)}分の累計を従業員数で割ったものです（年額ではありません）。`;
+  };
+  // 同じメールアドレスの重複 (パス 125) は上の但し書きの後に続ける —— 従業員数は KPI が無くても
+  // 刷るので、重複の断りは KPI の有無に関わらず言う (相手に渡る面は画面の警告と同じ事実を述べる)。
+  const perCapitaCaption = (): string | null => {
+    const parts = [perCapitaBase(), duplicateMembersSheetNote(o.team.duplicateMembers)].filter((s): s is string => s !== null);
+    return parts.length === 0 ? null : parts.join('');
   };
   sections.push({
     title: '3. 人員・生産性',

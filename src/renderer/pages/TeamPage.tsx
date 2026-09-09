@@ -13,7 +13,16 @@ import {
   seatsRemaining,
   type Role,
 } from '../../shared/team';
-import { MEMBERS_COLLECTION, parseMember, countOwners, type Member } from '../data/members';
+import {
+  MEMBERS_COLLECTION,
+  parseMember,
+  countOwners,
+  duplicateMemberMessage,
+  duplicateMembersNote,
+  findDuplicateMembers,
+  sameEmailMember,
+  type Member,
+} from '../data/members';
 import { publicTransportCommute, carCommuteNonTaxableLimit, bonusWithholdingTax } from '../../shared/payroll';
 import { useParameters } from '../data/parameterOverrides';
 import { jpy } from '../../shared/formatters';
@@ -108,6 +117,8 @@ export function TeamPage() {
   const usage = { used: records.length, limit: planDef.maxSeats };
   const remaining = seatsRemaining(usage);
   const owners = countOwners(members);
+  // 同じメールアドレスの重複 (既に在る分)。一覧の上で「2 度数えられている」と言う (パス 125)。
+  const duplicateNote = useMemo(() => duplicateMembersNote(findDuplicateMembers(members)), [members]);
 
   const teamFeatureEnabled = hasFeature(plan, 'team-seats');
   const requiredPlan = requiredPlanForFeature('team-seats');
@@ -115,6 +126,12 @@ export function TeamPage() {
   async function onAdd() {
     try {
       const parsed = parseMember(form);
+      // 同じメールアドレスは 1 人 —— 2 度招待するとシートを 2 つ使い、一人当たりの金額が薄まる (パス 125)。
+      const dup = sameEmailMember(members, parsed);
+      if (dup !== null) {
+        setError(duplicateMemberMessage(dup));
+        return;
+      }
       if (!canAddMember(usage)) {
         setError(`シート上限 (${planDef.maxSeats}) に達しています。プランをアップグレードしてください。`);
         return;
@@ -208,6 +225,11 @@ export function TeamPage() {
       </Section>
 
       <Section title="メンバー" count={records.length}>
+        {duplicateNote !== null && (
+          <p role="alert" style={{ color: '#f59e0b', fontSize: 12, marginBottom: 8, lineHeight: 1.6 }}>
+            {duplicateNote}
+          </p>
+        )}
         {records.length === 0 ? (
           <p style={{ color: 'var(--text-mute)', fontSize: 13 }}>
             まだメンバーがいません。最初のオーナーを招待してください。

@@ -209,6 +209,24 @@ async function desktopSuite(browser) {
   await dupRows.first().getByRole('button', { name: '削除' }).click();
   await page.waitForFunction(() => !Array.from(document.querySelectorAll('tbody tr')).some((tr) => tr.textContent.includes('E2E重複')), undefined, { timeout: 15000 });
 
+  // パス 125: 同じメールアドレスのメンバーは 2 度招待できない (旧: 2 行になりシートを 2 つ使い、一人当たりが薄まった)
+  await gotoService(page, '#team', 'input[placeholder="メールアドレス"]');
+  await page.getByPlaceholder('氏名').fill('E2E太郎');
+  await page.getByPlaceholder('メールアドレス').fill('e2e-dup@example.com');
+  await page.getByRole('button', { name: '招待', exact: true }).click();
+  await page.waitForSelector('tbody tr:has-text("e2e-dup@example.com")', { timeout: 15000 });
+  await page.getByPlaceholder('氏名').fill('E2E太郎 (再)');
+  await page.getByPlaceholder('メールアドレス').fill('e2e-dup@example.com');
+  await page.getByRole('button', { name: '招待', exact: true }).click();
+  await page.waitForFunction(() => document.body.textContent.includes('既に登録されています'), undefined, { timeout: 15000 });
+  const dupMembers = page.locator('tbody tr', { hasText: 'e2e-dup@example.com' });
+  ok((await dupMembers.count()) === 1, `team: ★ 同じメールアドレスの 2 度目は断られ、1 行のまま (実際 ${await dupMembers.count()} 行)`);
+  while ((await dupMembers.count()) > 0) {
+    const before = await page.locator('tbody tr').count();
+    await dupMembers.first().getByRole('button', { name: '削除' }).click();
+    await page.waitForFunction((n) => document.querySelectorAll('tbody tr').length < n, before, { timeout: 15000 });
+  }
+
   // 士業 CRM: 追加 → ステータス変更 → 他ページ非漏出
   await gotoService(page, '#cpa', 'text=連携先一覧');
   await page.getByPlaceholder('例: 山田 太郎').fill('E2E会計士');
