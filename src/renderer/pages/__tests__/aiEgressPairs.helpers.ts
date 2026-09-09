@@ -23,6 +23,18 @@ export const CLIENTS = path.resolve(__dirname, '../../../main/clients');
 /** AI へ本文が出る印 (実際に外部モデルを叩いている場所)。 */
 export const AI_MARKS: readonly RegExp[] = [/api\.anthropic\.com/, /\brunAiChat\s*\(/];
 
+/**
+ * **端末内**のモデルへ本文が出る印 (Ollama の `/api/chat`)。外へは出ないので断り (パス 106 / 107)
+ * の母集団には入れないが、**入力の天井の話は同じ** (パス 114: 端末内だからと走査の外に置いた
+ * 結果、`ollama/chat` だけが黙って切る形のまま残り、`OllamaPage` の欄には天井が無かった)。
+ * `/api/chat` だけで当てると Slack の `chat.postMessage` (`slack.ts` / `shopify.ts`) にも当たる ——
+ * Ollama の接続先 (`OLLAMA_BASE`) と組で見る。
+ */
+export const LOCAL_AI_MARKS: readonly RegExp[] = [/\{OLLAMA_BASE\}\/api\/chat\b/];
+
+/** 外へ出る物と端末内の物の両方 (入力の天井の母集団)。 */
+export const ANY_AI_MARKS: readonly RegExp[] = [...AI_MARKS, ...LOCAL_AI_MARKS];
+
 /** コメントを落とした本体 (説明の中の綴りを配線と読まない)。 */
 export function code(src: string): string {
   return src
@@ -110,12 +122,15 @@ export interface AiActionHandler {
   readonly bodies: Map<string, string>;
 }
 
-/** AI へ出る handler を**実装から**導く (`ACTIONS` の値のうち AI の印に到達する物)。 */
-export function aiActionHandlers(): AiActionHandler[] {
+/**
+ * AI へ出る handler を**実装から**導く (`ACTIONS` の値のうち `marks` に到達する物)。
+ * 既定は外へ出る物だけ (断りの母集団)。入力の天井は `ANY_AI_MARKS` で端末内も数える。
+ */
+export function aiActionHandlers(marks: readonly RegExp[] = AI_MARKS): AiActionHandler[] {
   const out: AiActionHandler[] = [];
   for (const f of fs.readdirSync(CLIENTS).filter((n) => n.endsWith('.ts'))) {
     const src = code(fs.readFileSync(path.join(CLIENTS, f), 'utf8'));
-    if (!AI_MARKS.some((r) => r.test(src))) continue;
+    if (!marks.some((r) => r.test(src))) continue;
     const at = src.search(/export\s+const\s+ACTIONS\s*:\s*ActionMap\s*=\s*\{/);
     if (at < 0) continue;
     const block = balanced(src, src.indexOf('{', at), '{', '}');
@@ -126,7 +141,7 @@ export function aiActionHandlers(): AiActionHandler[] {
     )) {
       const action = e[1] ?? e[2] ?? e[3]!;
       const handler = e[4] ?? action;
-      if (reachesAi(handler, bodies)) out.push({ service, action, handler, bodies });
+      if (reaches(handler, bodies, marks)) out.push({ service, action, handler, bodies });
     }
   }
   return out;

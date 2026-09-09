@@ -43,7 +43,7 @@ import {
   type OllamaSnapshot,
 } from '../../shared/ollama';
 import { isOverCap, readBodyWithCap, withBodyDeadline } from '../../shared/httpLimits';
-import { capAssistantReply } from '../../shared/assistantLimits';
+import { capAssistantReply, inputTooLongMessage } from '../../shared/assistantLimits';
 
 /** 接続先設定の保存キー (localStorage)。UI と web-shim が共有する。
  *  値は「ポート番号のみ」または `http(s)://host:port`。旧 `…ollama.port` の値も読む。 */
@@ -470,9 +470,17 @@ export async function chatOllama(
   // base は許可済み、パスは定数なので null にならない (probeOllama と同じ)。
   const url = buildOllamaUrl(base, '/api/chat', pageHostname)!;
 
+  // 天井超えは切らずに断る (main 版と同じ判断・同じ文面 —— パス 114)。
+  if (system.length > MAX_OLLAMA_SYSTEM_CHARS) {
+    return { ok: false, kind: 'too-long', message: inputTooLongMessage('システムプロンプト', MAX_OLLAMA_SYSTEM_CHARS) };
+  }
+  if (prompt.length > MAX_OLLAMA_PROMPT_CHARS) {
+    return { ok: false, kind: 'too-long', message: inputTooLongMessage('プロンプト', MAX_OLLAMA_PROMPT_CHARS) };
+  }
+
   const messages: { role: string; content: string }[] = [];
-  if (system !== '') messages.push({ role: 'system', content: system.slice(0, MAX_OLLAMA_SYSTEM_CHARS) });
-  messages.push({ role: 'user', content: prompt.slice(0, MAX_OLLAMA_PROMPT_CHARS) });
+  if (system !== '') messages.push({ role: 'system', content: system });
+  messages.push({ role: 'user', content: prompt });
 
   const started = now();
   let res: Response;

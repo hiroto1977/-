@@ -106,9 +106,14 @@ export function latestTurnTooLong(raw: unknown): boolean {
   return typeof content === 'string' && content.trim().length > MAX_ASSISTANT_CONTENT_CHARS;
 }
 
-/** 断りの文面。両ビルドと skills が同じ 1 つを読む (`label` は「入力」「プロンプト」)。 */
-export function inputTooLongMessage(label: string): string {
-  return `${label}が長すぎます (${MAX_ASSISTANT_CONTENT_CHARS} 字以内)`;
+/**
+ * 断りの文面。両ビルドと skills と ollama が同じ 1 つを読む (`label` は「入力」「プロンプト」
+ * 「システムプロンプト」)。天井は既定でアシスタントの物 —— **端末内の Ollama は別の天井**
+ * (`MAX_OLLAMA_PROMPT_CHARS` / `MAX_OLLAMA_SYSTEM_CHARS`) を渡す (2026-09-09 · パス 114)。
+ * 文面を家系ごとに書くと、数を写す道が家系の数だけ開く。
+ */
+export function inputTooLongMessage(label: string, max: number = MAX_ASSISTANT_CONTENT_CHARS): string {
+  return `${label}が長すぎます (${max} 字以内)`;
 }
 
 /**

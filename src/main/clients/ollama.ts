@@ -37,7 +37,7 @@ import {
   isVersionSafe,
   type OllamaSnapshot,
 } from '../../shared/ollama';
-import { capAssistantReply } from '../../shared/assistantLimits';
+import { capAssistantReply, inputTooLongMessage } from '../../shared/assistantLimits';
 import { isOverCap, readBodyWithCap } from '../../shared/httpLimits';
 
 // 既存の import 元 (このモジュール) を維持するため再 export する。
@@ -267,9 +267,20 @@ async function chat(ctx: ActionContext): Promise<OllamaChatResult> {
     throw new FetchError('null byte in chat input rejected', 0, 'ollama');
   }
 
+  // 天井超えは**切らずに断る** (パス 114)。それまで `slice(0, MAX_…)` で黙って切っており、
+  // 貼った長文の末尾 (質問はたいてい末尾に在る) が届かないまま答えが返っていた。
+  // アシスタント (`assistant.ts`) はパス 112 で同じ形を断つと決めている —— 端末内の
+  // モデルでも形は同じで、文面は同じ関数 (`inputTooLongMessage`) が持つ。
+  if (systemStr.length > MAX_OLLAMA_SYSTEM_CHARS) {
+    throw new Error(inputTooLongMessage('システムプロンプト', MAX_OLLAMA_SYSTEM_CHARS));
+  }
+  if (promptStr.length > MAX_OLLAMA_PROMPT_CHARS) {
+    throw new Error(inputTooLongMessage('プロンプト', MAX_OLLAMA_PROMPT_CHARS));
+  }
+
   const messages: OllamaChatMessage[] = [];
-  if (system) messages.push({ role: 'system', content: systemStr.slice(0, MAX_OLLAMA_SYSTEM_CHARS) });
-  messages.push({ role: 'user', content: promptStr.slice(0, MAX_OLLAMA_PROMPT_CHARS) });
+  if (system) messages.push({ role: 'system', content: systemStr });
+  messages.push({ role: 'user', content: promptStr });
 
   const f = ctx.fetch ?? fetch;
   return withTimeout(

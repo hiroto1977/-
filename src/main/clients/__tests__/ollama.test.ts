@@ -10,7 +10,12 @@ import {
   ACTIONS,
 } from '../ollama';
 import { FetchError } from '../types';
-import { ASSISTANT_REPLY_TRUNCATED_NOTICE, MAX_ASSISTANT_REPLY_CHARS } from '../../../shared/assistantLimits';
+import {
+  ASSISTANT_REPLY_TRUNCATED_NOTICE,
+  MAX_ASSISTANT_REPLY_CHARS,
+  inputTooLongMessage,
+} from '../../../shared/assistantLimits';
+import { MAX_OLLAMA_PROMPT_CHARS, MAX_OLLAMA_SYSTEM_CHARS } from '../../../shared/ollama';
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -423,22 +428,22 @@ describe('ACTIONS["chat"]', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('clamps oversize prompts to 32 KB', async () => {
-    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({ message: { role: 'assistant', content: 'ok' } }),
-        { status: 200, headers: { 'content-type': 'application/json' } },
-      ),
-    );
-    const longPrompt = 'A'.repeat(50_000);
-    await ACTIONS['chat']!({
-      token: '',
-      fetch: fetchMock,
-      payload: { model: 'llama3.2', prompt: longPrompt },
-    });
-    const init = fetchMock.mock.calls[0]![1] as RequestInit;
-    const body = JSON.parse(init.body as string);
-    expect(body.messages[0].content.length).toBe(32768);
+  // 天井超えは**切らずに断る** (パス 114)。2026-09-09 までは `slice(0, 32768)` で黙って切り、
+  // この検査は「切れていること」を合格としていた —— 貼った長文の末尾 (質問はたいてい末尾) が
+  // 届かないまま答えが返る形を、検査が守っていた。
+  it('★ prompt は天井ちょうどを 1 字も変えずに送り、1 字超は送らずに断る (パス 114)', async () => {
+    const okOnce = () =>
+      vi.fn<typeof fetch>().mockResolvedValueOnce(jsonResponse({ message: { role: 'assistant', content: 'ok' } }));
+    const atCap = 'A'.repeat(MAX_OLLAMA_PROMPT_CHARS);
+    const f1 = okOnce();
+    await ACTIONS['chat']!({ token: '', fetch: f1, payload: { model: 'llama3.2', prompt: atCap } });
+    const body = JSON.parse((f1.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.messages[0].content).toBe(atCap);
+    const f2 = okOnce();
+    await expect(
+      ACTIONS['chat']!({ token: '', fetch: f2, payload: { model: 'llama3.2', prompt: atCap + 'A' } }),
+    ).rejects.toThrow(inputTooLongMessage('プロンプト', MAX_OLLAMA_PROMPT_CHARS));
+    expect(f2).not.toHaveBeenCalled();
   });
 
   it('includes a system prompt when provided', async () => {
@@ -576,23 +581,20 @@ describe('ACTIONS["chat"]', () => {
     expect(headers['Content-Type']).toBe('application/json');
   });
 
-  it('clamps an oversized system prompt to 8192 chars (kills `systemStr.slice(0, 8192)` → `systemStr`)', async () => {
-    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({ message: { role: 'assistant', content: 'ok' } }),
-        { status: 200, headers: { 'content-type': 'application/json' } },
-      ),
-    );
-    const longSystem = 'S'.repeat(20_000);
-    await ACTIONS['chat']!({
-      token: '',
-      fetch: fetchMock,
-      payload: { model: 'llama3.2', prompt: 'hi', system: longSystem },
-    });
-    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+  it('★ system も天井ちょうどは 1 字も変えずに送り、1 字超は送らずに断る (パス 114)', async () => {
+    const okOnce = () =>
+      vi.fn<typeof fetch>().mockResolvedValueOnce(jsonResponse({ message: { role: 'assistant', content: 'ok' } }));
+    const atCap = 'S'.repeat(MAX_OLLAMA_SYSTEM_CHARS);
+    const f1 = okOnce();
+    await ACTIONS['chat']!({ token: '', fetch: f1, payload: { model: 'llama3.2', prompt: 'hi', system: atCap } });
+    const body = JSON.parse((f1.mock.calls[0]![1] as RequestInit).body as string);
     // messages[0] is the system message (since `system` was provided).
-    expect(body.messages[0].role).toBe('system');
-    expect(body.messages[0].content.length).toBe(8192);
+    expect(body.messages[0]).toEqual({ role: 'system', content: atCap });
+    const f2 = okOnce();
+    await expect(
+      ACTIONS['chat']!({ token: '', fetch: f2, payload: { model: 'llama3.2', prompt: 'hi', system: atCap + 'S' } }),
+    ).rejects.toThrow(inputTooLongMessage('システムプロンプト', MAX_OLLAMA_SYSTEM_CHARS));
+    expect(f2).not.toHaveBeenCalled();
   });
 
   it('bounds a long chat-error body instead of echoing it whole', async () => {

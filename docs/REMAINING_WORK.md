@@ -18098,6 +18098,93 @@ i1price: 品目1 の単価「abc」を金額として読み取れません。金
 明記しているので、**4 つの renderer を触る価値は無いと判断した**。
 揃えるなら `advisorTypes.ts` に文を 1 つ置いて 4 面が読む形が筋である。
 
+## パス 114 (2026-09-09) — **端末内の AI は走査の外に在り、Ollama の画面は入力を黙って切られていた**
+
+パス 112 は「AI へ利用者の文を送る入口すべて」に天井を揃え、残りに `ollama/chat` が
+`MAX_OLLAMA_PROMPT_CHARS` (32,768) で**黙って切る**と書いた —— 「端末内のモデルなので費用も
+第三者も無いが、形は同じ」。形が同じなら直し方も同じはずで、直していなかった理由は
+**走査の母集団**に在る: パス 107 / 112 の母集団は「外へ出る印」(`api.anthropic.com` /
+`runAiChat(`) で導いた。断り (パス 106) にはそれで正しいが、入力の天井の話に外か内かは
+関係ない。端末内の Ollama は母集団に入らず、こうなっていた:
+
+| 入口 | main | ブラウザ版 | 画面 |
+| --- | --- | --- | --- |
+| `ollama/chat` の `prompt` | `slice(0, 32768)` —— **黙って切る** | 同じ | `OllamaPage` の欄に天井**無し** (チャットボットはパス 112 で読ませた) |
+| `ollama/chat` の `system` | `slice(0, 8192)` —— 同上 | 同じ | `OllamaPage` の欄に天井無し |
+
+貼った長文の末尾 (質問はたいてい末尾に在る) が届かないまま、途中で切れた文への答えが返る。
+32,769 字目からは利用者に何も言わずに消える —— パス 112 が 8,001 字目について断つと決めた形の
+双子で、規準は `inputTooLongMessage` として**同じファイル** (`assistantLimits.ts`) に在った
+(17 か所目)。
+
+### もう 2 つ —— 走査の弱さと、手写しの型
+
+1. パス 112 の走査は天井の印を**名前**で当てていた (`MAX_ANALYZE_TEXT_CHARS` が本体に在れば
+   合格)。名前が在ることと、その値で断っていることは別 —— `slice(0, MAX_…)` でも名前は在る。
+   パス 113 の対照 H が 1 度目に鳴らなかったのはこの形で、そこに「判定の場所を見る走査に
+   するのは残作業」と書いた。今回、印を比較式 (`.length > MAX_…`) と共有の判定関数に限り、
+   さらに**黙って切る印** (`slice(0, MAX_…)`) に届く handler を数えて、届いてよい物は理由つきの
+   台帳に置いた (assistant の system は app が組む RAG 文脈・履歴の窓はパス 112 で分けた判断・
+   emotions は保存件数の窓)。
+2. `OllamaPage` は `invoke<{ reply: string; durationMs: number }>` と戻り値の型を**手で写して**
+   いた —— パス 113 がチャットボットで直した形そのもの。パス 113 の検査はチャットボット
+   1 ファイルを名指ししており、同じ形の 2 つ目を見ていなかった。値は偶然一致していたので
+   壊れてはいないが、写しがずれても `tsc` は黙る (パス 62)。
+
+### 直し
+
+- `main/clients/ollama.ts` / `renderer/network/ollamaWeb.ts`: prompt / system の天井超えは
+  **切らずに断る** (`inputTooLongMessage(label, max)` —— 文面 1 つ。天井を渡せるようにした)。
+  ブラウザ版は `kind: 'too-long'` (`ollama_too-long`)。
+- `OllamaPage`: prompt / system の欄が `MAX_OLLAMA_PROMPT_CHARS` / `MAX_OLLAMA_SYSTEM_CHARS` を
+  `maxLength` に読む。戻り値は共有の `OllamaChatResult`。
+- 走査 (`aiEgressPairs.helpers.ts`): `LOCAL_AI_MARKS` (`{OLLAMA_BASE}/api/chat`) と `ANY_AI_MARKS`。
+  `aiActionHandlers(marks)` で母集団の印を選べる —— 断りの走査は外へ出る物のまま、入力の天井の
+  走査 (`aiInputCaps.test.ts`) は端末内も数える。**`/api/chat` だけで当てると Slack の
+  `chat.postMessage` (`slack.ts` / `shopify.ts`) にも当たる** —— 印を書いた直後に走査の正の
+  対照 (`slack/send-message` が母集団に無いこと) が教えた。接続先 (`OLLAMA_BASE`) と組で当てる。
+- `aiInputCaps.test.ts`: 印は比較式で当てる。黙って切る印の台帳 (理由つき・古くなれば鳴る)。
+  画面の台帳は「定数 → 欄の数」の形にして、prompt と system で天井が違う `OllamaPage` を持てる
+  ようにした。
+- `assistantReplyCap.test.ts`: 「共有の型を読む」をチャットボット 1 ファイルの名指しから、
+  `'ollama', 'chat'` を invoke する .tsx の走査へ。
+- 動かして見る: `ollama.test.ts` / `ollamaWeb.test.ts` (天井ちょうどは 1 字も変えずに送り、
+  1 字超は送らずに断る —— 2 本の旧検査は「切れていること」を合格としていたので書き換えた)、
+  `webShimAssistantInputCap.test.ts` (ブラウザ版の `invoke` がネットワークへ出る前に断る)、
+  `ollamaPageInputCap.test.ts` (jsdom で欄の `maxLength` と、断りの文面が画面に出ること・成功なら
+  `reply` が出ること)、`ollamaInputLimits.test.ts` (両ビルドに `slice(0, MAX_OLLAMA_…)` が戻って
+  いない・比較式で断っている・文面を写していない —— 標本つき)。
+
+### 対照 (10 本・22 件)
+
+| 対照 | 落ちた検査 |
+| --- | --- |
+| A: main の prompt を黙って切る形へ戻す | 3 件 (境目・静的・黙って切る印) |
+| A2: main の prompt と system の両方を戻す (比較式が 1 つも無い) | 5 件 |
+| B: ブラウザ版の prompt を戻す | 3 件 |
+| D: 画面の `maxLength` を外す | 2 件 (走査・jsdom) |
+| E: 画面が戻り値の型を手で写す | 1 件 |
+| F: emotions が名前だけ残して比較をやめる (`slice(0, MAX_ANALYZE_TEXT_CHARS)`) | 1 件 —— パス 112 の印 (名前) なら通っていた |
+| G: 端末内の印を空にする | 3 件 (母集団・台帳の古い行) |
+| H: assistant が切らなくなる (台帳が古くなる) | 1 件 |
+| J: 断りの文面の label がずれる | 2 件 |
+| K: 天井を 1 ずらす (`>=`) | 1 件 |
+
+**対照 H は 1 度目は鳴らなかった** —— `system.slice(0, MAX_SYSTEM)` の 2 か所だけを戻し、
+`sanitizeMessages` の履歴の窓 (`c.trim().slice(0, MAX_CONTENT)`) を残していた。走査は正しく
+「まだ切っている」と読んでいた (台帳の理由に書いたとおり、assistant/chat が届く印は 2 種類在る)。
+**対照の不備であって検査の穴ではない**。3 か所すべてを戻した 2 度目は鳴った。
+
+### 残り
+
+- 端末内の Ollama の画面には egress の断り (`AiEgressNotice`) が無い。`aiEgressNoticeLines` は
+  「端末内で処理されます / 端末の外へは出ません」を言えるので置けるが、断りの母集団 (外へ出る物)
+  の外に在り、パス 106 の規則には触れない —— 置くなら「端末内」を主張する根拠 (接続先が
+  ループバックであること) と組で。
+- `assistant/chat` の system (RAG 文脈) は 60,000 字で黙って切る (台帳に理由つきで置いた)。
+  app が組む文脈なので利用者の文は消えないが、文脈の末尾が落ちても誰も気づかない。
+- `ctx.payload as unknown as` 23 件は変わらず。
+
 ## パス 113 (2026-09-09) — **AI の応答の天井は 1 経路にしか無く、チャットボットは Ollama の答えを 1 度も出していなかった**
 
 パス 112 で送る側の天井を揃えた。**受ける側**を同じ母集団 (AI へ出る handler) で数えた:

@@ -15,8 +15,17 @@ import {
   REQUEST_TIMEOUT_MS,
   setupCommands,
 } from '../ollamaWeb';
-import { DEFAULT_SETUP_MODEL, MIN_SAFE_VERSION } from '../../../shared/ollama';
-import { ASSISTANT_REPLY_TRUNCATED_NOTICE, MAX_ASSISTANT_REPLY_CHARS } from '../../../shared/assistantLimits';
+import {
+  DEFAULT_SETUP_MODEL,
+  MAX_OLLAMA_PROMPT_CHARS,
+  MAX_OLLAMA_SYSTEM_CHARS,
+  MIN_SAFE_VERSION,
+} from '../../../shared/ollama';
+import {
+  ASSISTANT_REPLY_TRUNCATED_NOTICE,
+  MAX_ASSISTANT_REPLY_CHARS,
+  inputTooLongMessage,
+} from '../../../shared/assistantLimits';
 
 /*
  * probeOllama の要点は **失敗理由の切り分け**。利用者から見ると「未起動」と
@@ -1660,27 +1669,41 @@ describe('chatOllama — 送る前の整形と上限', () => {
     expect(sent(f).messages).toEqual([{ role: 'user', content: 'こんにちは' }]);
   });
 
-  it('system は 8192 字で切る', async () => {
+  // 天井超えは**切らずに断る** (main 版と同じ判断・同じ文面 —— パス 114)。2026-09-09 までは
+  // `slice` で黙って切り、この 2 本は「切れていること」を合格としていた。
+  it('★ system は天井ちょうどを 1 字も変えずに送り、1 字超は送らずに断る (パス 114)', async () => {
+    const atCap = 'あ'.repeat(MAX_OLLAMA_SYSTEM_CHARS);
     const f = okChat();
-    await chatOllama(
-      { endpoint: '11434', model: 'llama3.2:1b', prompt: 'こんにちは', system: 'あ'.repeat(9000) },
-      f,
+    await chatOllama({ endpoint: '11434', model: 'llama3.2:1b', prompt: 'こんにちは', system: atCap }, f, '');
+    expect(sent(f).messages[0]).toEqual({ role: 'system', content: atCap });
+    const g = okChat();
+    const r = await chatOllama(
+      { endpoint: '11434', model: 'llama3.2:1b', prompt: 'こんにちは', system: atCap + 'あ' },
+      g,
       '',
     );
-    const [sys] = sent(f).messages;
-    expect(sys!.role).toBe('system');
-    expect(sys!.content.length).toBe(8192);
+    expect(r).toEqual({
+      ok: false,
+      kind: 'too-long',
+      message: inputTooLongMessage('システムプロンプト', MAX_OLLAMA_SYSTEM_CHARS),
+    });
+    expect(g).not.toHaveBeenCalled();
   });
 
-  it('プロンプトは 32768 字で切る', async () => {
+  it('★ prompt も天井ちょうどは通し、1 字超は送らずに断る', async () => {
+    const atCap = 'い'.repeat(MAX_OLLAMA_PROMPT_CHARS);
     const f = okChat();
-    await chatOllama(
-      { endpoint: '11434', model: 'llama3.2:1b', prompt: 'い'.repeat(40_000) },
-      f,
-      '',
-    );
+    await chatOllama({ endpoint: '11434', model: 'llama3.2:1b', prompt: atCap }, f, '');
     const msgs = sent(f).messages;
-    expect(msgs[msgs.length - 1]!.content.length).toBe(32_768);
+    expect(msgs[msgs.length - 1]).toEqual({ role: 'user', content: atCap });
+    const g = okChat();
+    const r = await chatOllama({ endpoint: '11434', model: 'llama3.2:1b', prompt: atCap + 'い' }, g, '');
+    expect(r).toEqual({
+      ok: false,
+      kind: 'too-long',
+      message: inputTooLongMessage('プロンプト', MAX_OLLAMA_PROMPT_CHARS),
+    });
+    expect(g).not.toHaveBeenCalled();
   });
 });
 

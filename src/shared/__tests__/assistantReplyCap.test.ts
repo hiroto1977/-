@@ -27,7 +27,13 @@ import {
   MAX_ASSISTANT_REPLY_CHARS,
   capAssistantReply,
 } from '../assistantLimits';
-import { aiActionHandlers, reaches } from '../../renderer/pages/__tests__/aiEgressPairs.helpers';
+import {
+  RENDERER,
+  aiActionHandlers,
+  invokesAi,
+  pageFiles,
+  reaches,
+} from '../../renderer/pages/__tests__/aiEgressPairs.helpers';
 
 const SRC = path.resolve(__dirname, '../..');
 const code = (rel: string): string =>
@@ -80,11 +86,21 @@ describe('応答側の天井に、AI へ出る handler がすべて届く (母�
     }
   });
 
-  it('★ チャットボットは共有の戻り値の型 (reply) を読む —— 手写しの response / message を持たない', () => {
-    const widget = code('renderer/components/ChatbotWidget.tsx');
-    expect(widget).toContain('invoke<OllamaChatResult>');
-    expect(widget).toContain('res.data.reply');
-    expect(widget).not.toMatch(/data\.response|data\.message/);
+  it('★ ollama/chat を呼ぶ画面はすべて共有の戻り値の型 (reply) を読む —— 手写しの型を持たない', () => {
+    // 母集団は「'ollama', 'chat' を invoke する .tsx」を走査で導く (パス 114: パス 113 は
+    // チャットボットだけを見て、同じ形 `invoke<{ reply; durationMs }>` の OllamaPage を落としていた)。
+    const callers = pageFiles()
+      .filter((f) => invokesAi(fs.readFileSync(f, 'utf8'), [['ollama', 'chat']]))
+      .map((f) => path.relative(RENDERER, f));
+    expect(callers).toContain('components/ChatbotWidget.tsx');
+    expect(callers).toContain('pages/OllamaPage.tsx');
+    for (const rel of callers) {
+      const src = code(`renderer/${rel}`);
+      expect(src, `${rel} が共有の型を読んでいない`).toContain('invoke<OllamaChatResult>');
+      expect(src, `${rel} が戻り値の型を手で写している`).not.toMatch(/invoke<\{\s*reply/);
+      expect(src, `${rel} が reply を読んでいない`).toContain('res.data.reply');
+      expect(src, `${rel} が手写しの欄を読んでいる`).not.toMatch(/data\.response|data\.message/);
+    }
     // 両ビルドの handler が同じ型を返す。
     expect(code('main/clients/ollama.ts')).toContain('Promise<OllamaChatResult>');
     expect(code('renderer/network/ollamaWeb.ts')).toContain('OllamaChatResult');

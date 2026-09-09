@@ -59,6 +59,9 @@ describe('断りの文面', () => {
   it('★ 天井の数を定数から刷る (写さない) と、何が長すぎたかを言う', () => {
     expect(inputTooLongMessage('入力')).toBe(`入力が長すぎます (${MAX_ASSISTANT_CONTENT_CHARS} 字以内)`);
     expect(inputTooLongMessage('プロンプト')).toContain('プロンプトが長すぎます');
+    // 天井は渡せる (端末内の Ollama は別の天井 —— パス 114)。省略は既定の天井と同じ文。
+    expect(inputTooLongMessage('プロンプト', 32_768)).toBe('プロンプトが長すぎます (32768 字以内)');
+    expect(inputTooLongMessage('入力', MAX_ASSISTANT_CONTENT_CHARS)).toBe(inputTooLongMessage('入力'));
     // 応答側の規則 (同じファイル) と同じ方針 —— 黙らない。
     expect(ASSISTANT_REPLY_TRUNCATED_NOTICE).toContain('打ち切りました');
   });

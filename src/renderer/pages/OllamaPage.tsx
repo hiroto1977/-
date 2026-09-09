@@ -13,7 +13,14 @@ import {
   originsSetupSteps,
   setupCommands,
 } from '../network/ollamaWeb';
-import { DEFAULT_OLLAMA_PORT, isLoopbackHostname, parseOllamaEndpoint } from '../../shared/ollama';
+import {
+  DEFAULT_OLLAMA_PORT,
+  MAX_OLLAMA_PROMPT_CHARS,
+  MAX_OLLAMA_SYSTEM_CHARS,
+  isLoopbackHostname,
+  parseOllamaEndpoint,
+  type OllamaChatResult,
+} from '../../shared/ollama';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -50,7 +57,9 @@ export function OllamaPage() {
     setBusy(true);
     setErrMsg(undefined);
     setReply(null);
-    const res = await window.serviceHub.invoke<{ reply: string; durationMs: number }>(
+    // 戻り値の型は共有の `OllamaChatResult` を読む (パス 114 —— チャットボットをパス 113 で
+    // 直したのと同じ形。手で写した型は実物とずれても `tsc` が黙る)。
+    const res = await window.serviceHub.invoke<OllamaChatResult>(
       'ollama',
       'chat',
       { model: model.trim(), prompt: prompt.trim(), system: systemPrompt.trim() || undefined },
@@ -173,12 +182,14 @@ export function OllamaPage() {
               placeholder="System prompt (任意)"
               value={systemPrompt}
               onChange={(e) => setSystemPrompt(e.target.value)}
+              maxLength={MAX_OLLAMA_SYSTEM_CHARS}
               style={inputStyle}
             />
             <textarea
               placeholder="プロンプト"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
+              maxLength={MAX_OLLAMA_PROMPT_CHARS}
               rows={4}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />

@@ -100,8 +100,9 @@ Electron / ブラウザ / CLI の 3 経路で共有する（片方だけ緩い�
 プロンプトの平文送信を防ぐため。認証情報つき URL・パス/クエリつき URL も拒否。
 
 叩くのは `/api/version`・`/api/tags`・`/api/chat` の 3 本のみ (`OLLAMA_READ_PATHS`)。
-チャットは Electron 版と同じ検証を通す: モデル名検証・NUL 拒否・system 8 KB /
-prompt 32 KB クランプ・`stream:false`・120 秒タイムアウト・応答サイズ上限
+チャットは Electron 版と同じ検証を通す: モデル名検証・NUL 拒否・system 8,192 字 /
+prompt 32,768 字の天井 (超えは**切らずに断る** —— 2026-09-09 · パス 114 までは黙って
+クランプしていた)・`stream:false`・120 秒タイムアウト・応答サイズ上限
 (`src/renderer/network/ollamaWeb.ts` の `chatOllama`)。
 
 **失敗理由の切り分け**: 通常 fetch が失敗したら `mode:'no-cors'` で再試行する。
