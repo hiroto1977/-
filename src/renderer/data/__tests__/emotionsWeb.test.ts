@@ -12,6 +12,7 @@ import {
   recordAnalysis,
   buildEmotionsSnapshot,
 } from '../emotionsWeb';
+import { calendarDateMessage } from '../../../shared/isoDate';
 
 beforeEach(() => localStorage.clear());
 
@@ -64,34 +65,24 @@ describe('logMood', () => {
     logMood({ score: 3, date: '2026-01-31' });
     expect(loadStore().moods[0]!.note).toBe('');
   });
-  it('defaults the date to today when omitted/invalid', () => {
-    const r = logMood({ score: 3 }, NOW);
-    expect(r.date).toBe('2026-01-31');
+  it('defaults the date to today when omitted (null も同じ)', () => {
+    expect(logMood({ score: 3 }, NOW).date).toBe('2026-01-31');
+    expect(logMood({ score: 3, date: null }, NOW).date).toBe('2026-01-31');
   });
   it('zero-pads a single-digit month/day in today\'s date', () => {
     // padStart(2,'0') の '0' を '' にする mutant は 1 桁日を詰めず '2026-01-5' になるため、
     // 1 桁の日を持つ now で kill。
     expect(logMood({ score: 3 }, Date.UTC(2026, 0, 5, 9, 0, 0)).date).toBe('2026-01-05');
   });
-  it('a malformed string date falls back to today (ternary condition load-bearing)', () => {
-    // 日付三項の条件を true 固定する mutant は不正文字列をそのまま採用するため kill。
-    expect(logMood({ score: 3, date: 'zzzz-zz-zz' }, NOW).date).toBe('2026-01-31');
-  });
-  it('rejects a non-string date that stringifies to a date pattern (typeof guard)', () => {
-    // `typeof date === 'string'` を外すと regex.test が引数を String 強制するため、
-    // 配列 ['2026-01-31'] が "2026-01-31" として通ってしまう。型ガードが弾くことを確認。
-    expect(logMood({ score: 3, date: ['2026-01-31'] }, NOW).date).toBe('2026-01-31');
-  });
-  it('falls back to today for a malformed date string', () => {
-    expect(logMood({ score: 3, date: '2026-1-1' }, NOW).date).toBe('2026-01-31');
-    expect(logMood({ score: 3, date: 'not-a-date' }, NOW).date).toBe('2026-01-31');
-    expect(logMood({ score: 3, date: 12345 }, NOW).date).toBe('2026-01-31');
-  });
-  it('rejects a date with leading/trailing junk (regex ^ and $ anchors)', () => {
-    // アンカーを外す Regex mutant は部分一致を許し前後ゴミ付きを保持してしまうため、
-    // どちらも今日にフォールバックすることを確認して kill。
-    expect(logMood({ score: 3, date: 'x2026-01-31' }, NOW).date).toBe('2026-01-31'); // ^ アンカー
-    expect(logMood({ score: 3, date: '2026-01-31x' }, NOW).date).toBe('2026-01-31'); // $ アンカー
+  it('★ 暦に無い・形の違う日付は断る —— 今日に倒さない (パス 115。それまでは黙って今日の記録に化けていた)', () => {
+    // 配列 ['2026-01-31'] は String() で日付の綴りになる —— 型を見る行が効いていること。
+    for (const bad of [
+      'zzzz-zz-zz', '2026-1-1', 'not-a-date', 12345, ['2026-01-31'], 'x2026-01-31', '2026-01-31x',
+      '2026-02-30', '2026-13-01',
+    ]) {
+      expect(() => logMood({ score: 3, date: bad }, NOW), JSON.stringify(bad)).toThrow(calendarDateMessage('date'));
+    }
+    expect(loadStore().moods).toEqual([]);
   });
   it('keeps a well-formed explicit date verbatim', () => {
     expect(logMood({ score: 3, date: '2025-12-25' }, NOW).date).toBe('2025-12-25');

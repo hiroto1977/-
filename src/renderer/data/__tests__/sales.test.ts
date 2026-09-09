@@ -84,6 +84,12 @@ describe('isValidDate', () => {
     expect(isValidDate('x2026-05-29')).toBe(false); // ^ アンカー
     expect(isValidDate('2026-05-29x')).toBe(false); // $ アンカー
   });
+  it('★ 暦に無い日は断る (2026-09-09 まで日 1-31 なら通していた)', () => {
+    expect(isValidDate('2026-02-30')).toBe(false);
+    expect(isValidDate('2026-04-31')).toBe(false);
+    expect(isValidDate('2023-02-29')).toBe(false);
+    expect(isValidDate('2024-02-29')).toBe(true);
+  });
   it('rejects malformed or out-of-range', () => {
     expect(isValidDate('2026-13-01')).toBe(false);
     expect(isValidDate('2026-05-32')).toBe(false);

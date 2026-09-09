@@ -13,6 +13,8 @@
  * (`shared/parameters.ts` と同じ約束 — 大域の状態を置かない)。
  */
 
+import { parseIsoDate } from './isoDate';
+
 export type AmountUnit = 'yen' | 'thousand' | 'million';
 export type NegativeStyle = 'triangle' | 'solid' | 'minus';
 export type RoundingMode = 'truncate' | 'round';
@@ -206,31 +208,9 @@ export function fromWareki(era: string, eraYear: number, month: number, day: num
   return stamp < next ? year : null;
 }
 
-interface ParsedDate {
-  readonly year: number;
-  readonly month: number;
-  /** 「YYYY-MM」だけの入力は null。 */
-  readonly day: number | null;
-}
-
-/**
- * `YYYY-MM-DD` / `YYYY-MM` を読む。暦に無い日 (2 月 30 日・0 日) は null。
- * 文字列以外は `String()` で「null」などになり、正規表現に当たらず null。
- * 日の検査は 1 つで足りる — 暦から外れた日は `Date.UTC` が隣の月へ繰り越し、
- * 日の数字が必ず変わる (0 日は前月末、32 日は翌月 1〜4 日)。
- */
-export function parseIsoDate(iso: string | null | undefined): ParsedDate | null {
-  const m = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(String(iso));
-  if (!m) return null;
-  const year = Number(m[1]);
-  const month = Number(m[2]);
-  if (month < 1 || month > 12) return null;
-  if (m[3] === undefined) return { year, month, day: null };
-  const day = Number(m[3]);
-  const probe = new Date(Date.UTC(year, month - 1, day));
-  if (probe.getUTCDate() !== day) return null;
-  return { year, month, day };
-}
+// `parseIsoDate` は 2026-09-09 (パス 115) に `shared/isoDate.ts` へ移した —— 暦を見る判定が
+// 書面のためだけに在り、販売記録・相談日・気分ログ・基準日は各自の正規表現 (暦を見ない) を
+// 持っていた。日付の綴りの判定はあちらの 1 か所。
 
 const eraYearLabel = (n: number): string => (n === 1 ? '元' : String(n));
 

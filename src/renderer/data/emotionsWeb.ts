@@ -9,6 +9,7 @@
 import { MAX_ANALYSES, MAX_MOODS, MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
 import { asRecord, isAnalysisEntry, isMoodEntry, readStoredList } from '../../shared/emotionsShape';
 import { localIsoDate } from '../../shared/localDate';
+import { calendarDateMessage, isCalendarDate } from '../../shared/isoDate';
 
 export const EMOTION_KEYS = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust'] as const;
 export type EmotionKey = (typeof EMOTION_KEYS)[number];
@@ -164,8 +165,9 @@ export function logMood(payload: unknown, now: number = Date.now()): { date: str
   if (noteStr.length > MAX_MOOD_NOTE_CHARS) {
     throw new Error(`note exceeds ${MAX_MOOD_NOTE_CHARS} chars`);
   }
-  const finalDate =
-    (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : null) ?? todayLocal(now);
+  // 日付: 省略 (undefined / null) は利用者の時計の今日。暦に無ければ断る (main 版と同じ判断 —— パス 115)。
+  const finalDate = date == null ? todayLocal(now) : date;
+  if (!isCalendarDate(finalDate)) throw new Error(calendarDateMessage('date'));
   const store = loadStoreForWrite();
   const idx = store.moods.findIndex((m) => m.date === finalDate);
   const entry: MoodEntry = { date: finalDate, score: Math.round(finalScore), note: noteStr };

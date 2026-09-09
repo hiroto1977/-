@@ -24,6 +24,7 @@ import { SALES_CHANNELS } from './sales';
 import { CONSULTATION_STATUSES } from './shigyoDirectory';
 import { METRIC_UNITS } from './overviewOverrides';
 import { ROLE_ORDER } from '../../shared/team';
+import { isCalendarDate, isCalendarDateOrMonth } from '../../shared/isoDate';
 
 type Rec = Record<string, unknown>;
 type Check = (v: unknown) => boolean;
@@ -50,6 +51,10 @@ const oneOf =
     (values() as readonly unknown[]).includes(v);
 /** 値がすべて数値の辞書 (`parameter-overrides.values`)。 */
 const numRec: Check = (v) => rec(v) && Object.values(v as Rec).every((n) => num(n));
+/** 暦に在る `YYYY-MM-DD` (判定は `shared/isoDate.ts`)。型だけ見て `2026-02-30` を通していた (パス 115)。 */
+const calendarDate: Check = (v) => isCalendarDate(v);
+/** 未入力 ('') か、暦に在る `YYYY-MM-DD` / `YYYY-MM`。 */
+const blankOrCalendar: Check = (v) => v === '' || isCalendarDateOrMonth(v);
 
 /** 欄ごとの判定を並べた形。挙げた欄だけ見る。 */
 function shape(fields: Readonly<Record<string, Check>>): (data: Rec) => boolean {
@@ -69,11 +74,11 @@ const KPI_SHAPE = shape({
 
 /** collection 名 → 中身の判定。名前は各モジュールの `*_COLLECTION` 定数と同じ文字列。 */
 export const COLLECTION_SHAPES: Readonly<Record<string, (data: Rec) => boolean>> = {
-  'sales-entries': shape({ date: str, channel: oneOf(() => SALES_CHANNELS), amount: num, orders: num, note: opt(str) }),
+  'sales-entries': shape({ date: calendarDate, channel: oneOf(() => SALES_CHANNELS), amount: num, orders: num, note: opt(str) }),
   'kpi-actuals': KPI_SHAPE,
   'kpi-budgets': KPI_SHAPE,
   'balance-sheet': shape({
-    asOf: str,
+    asOf: blankOrCalendar,
     currentAssets: num,
     cash: opt(num),
     inventory: opt(num),
@@ -89,7 +94,7 @@ export const COLLECTION_SHAPES: Readonly<Record<string, (data: Rec) => boolean>>
   'business-units': shape({
     name: str,
     category: opt(str),
-    startedOn: opt(str),
+    startedOn: opt(blankOrCalendar),
     note: opt(str),
     revenue: opt(num),
     variableCost: opt(num),
@@ -98,7 +103,7 @@ export const COLLECTION_SHAPES: Readonly<Record<string, (data: Rec) => boolean>>
   // 読む側 (`settingsFromRecord`) が欄ごとに既定へ倒すので、ここは入れ物の形だけ。
   'bank-submission-settings': shape({ profile: opt(rec), format: opt(rec) }),
   'shigyo-contacts': shape({ serviceId: str, name: str, firm: opt(str), phone: opt(str), email: opt(str) }),
-  'shigyo-consultations': shape({ serviceId: str, date: str, topic: str, status: oneOf(() => CONSULTATION_STATUSES) }),
+  'shigyo-consultations': shape({ serviceId: str, date: calendarDate, topic: str, status: oneOf(() => CONSULTATION_STATUSES) }),
   'realestate-properties': shape({
     name: str,
     type: str,

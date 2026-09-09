@@ -12,6 +12,7 @@
  * 分からなくなる。
  */
 import { hasControlChar } from '../../shared/controlChars';
+import { isCalendarMonth } from '../../shared/isoDate';
 // `fiscalYearWindow` は決算期から事業年度の 12 か月を出す唯一の実装 (計算書類の
 // 取り込みと書類の差込も同じ物を使う)。**写さずに読む。** kessanImport から
 // こちらへの辺は `import type` だけなので実行時の循環にはならない。
@@ -97,7 +98,7 @@ export function parseSubmissionProfile(input: {
     }
     out[key] = t;
   }
-  if (out.fiscalYearEnd !== '' && !/^\d{4}-(0[1-9]|1[0-2])$/.test(out.fiscalYearEnd)) {
+  if (out.fiscalYearEnd !== '' && !isCalendarMonth(out.fiscalYearEnd)) {
     return { ok: false, reason: '決算期は 2026-03 のように「年-月」で入力してください' };
   }
   return { ok: true, profile: out };

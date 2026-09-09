@@ -78,6 +78,12 @@ describe('buildCashPlanImport — 資金繰り表', () => {
 
 describe('buildBusinessPlanImport — 事業計画書', () => {
   const kpi = (period: string, revenue: number): KpiActual => ({ period, unit: '全社', revenue, cogs: revenue * 0.4, advertising: 10_000, sga: 100_000, depreciation: 5_000 });
+  it('作成日が日まで無い綴り (YYYY-MM) や暦に無い日はそのまま (分解は isoDate の判定を読む —— パス 115)', () => {
+    for (const today of ['2026-09', '2026-02-30', 'x']) {
+      const r = buildBusinessPlanImport({ kpiActuals: [kpi('2026-03', 1_000)], profile: PROFILE, today, existing: {} });
+      expect(r.values.date, today).toBe(today);
+    }
+  });
   it('会社名・代表者・作成日と、決算期に入る実績を 1 年目に置く (この見本は端の 2 か月)', () => {
     const r = buildBusinessPlanImport({ kpiActuals: [kpi('2025-03', 9_999_999), kpi('2025-04', 1_000_000), kpi('2026-03', 2_000_000), kpi('2026-04', 5_555_555)], profile: PROFILE, today: '2026-09-04', existing: { y2sales: '30000000' } });
     expect(r.rows.map((x) => x.k)).toEqual(['company', 'rep', 'date', 'y1sales', 'y1profit']);

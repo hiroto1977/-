@@ -18098,6 +18098,75 @@ i1price: 品目1 の単価「abc」を金額として読み取れません。金
 明記しているので、**4 つの renderer を触る価値は無いと判断した**。
 揃えるなら `advisorTypes.ts` に文を 1 つ置いて 4 面が読む形が筋である。
 
+## パス 115 (2026-09-09) — **同じ `YYYY-MM-DD` の判定が 7 通りに割れ、暦を見るのは 1 つだけだった**
+
+パス 114 まで「入力の天井」を数えてきた。今回は**入力の形**のうち、いちばん多くの画面が持つ
+日付の綴りを、正規表現の字面 (`\d{4}-…`) で `src/` を総当たりした —— **14 か所**。日まで判定する
+7 つのうち、暦を見る (2 月 30 日を断る) のは `bankFormat.parseIsoDate` (2026-09-04 に書面のために
+書かれ、`taxConsumption` も読んでいた) だけで、残りはこうだった:
+
+| 場所 | 判定 (直す前) | `2026-02-30` | 直した先 |
+| --- | --- | --- | --- |
+| `sales.isValidDate` (販売記録の欄・CSV 取り込み・Shopify) | 月 1-12 / 日 1-31 | **通す** | `isCalendarDate` |
+| `sales.salesPeriod` (同じファイルの 2 つ目の正規表現) | 01-12 / 01-31 | 通す | 同上 |
+| `businessUnits` の開始時期 | 正規表現 (01-31) | 通す | `isCalendarDateOrMonth` |
+| `shigyoDirectory` の相談日 | 正規表現だけ | 通す (`2026-13-45` も) | `isCalendarDate` |
+| `emotions/log-mood` (main / ブラウザ版) | 正規表現だけ。通らなければ**黙って今日** | 通す。`2026/05/01` は**今日の記録に化ける** | 断る (`calendarDateMessage`) |
+| `balanceSheet` の基準日 | **無し** (trim だけ) | 何でも通す。`2026/3/31` だと鮮度の判定が黙って null | `isCalendarDateOrMonth` (空は許す) |
+| `collectionShapes` の日付欄 4 つ (販売記録・相談日・基準日・開始時期) / `emotionsShape` | 型だけ | 復元で通す | `calendarDate` / `blankOrCalendar` |
+| `kpiActuals.isValidPeriod` · `bankSubmission` の決算期 · `docImports.dateLabel` | 月だけ (正しい) / 表示用の分解 | — | `isCalendarMonth` / `parseIsoDate` (綴りを 2 度書かない) |
+
+**規準は手の届く所に在った (18 か所目)** —— `parseIsoDate` を `shared/isoDate.ts` へ移し、日・月・
+どちらかの判定 3 つと断りの文面 1 つをそこから出す。`emotions` の「読めない日付は今日」は
+パス 52 以来の「割れない値を倒す」の形そのもので、断る側へ揃えた (省略 / null は今日のまま)。
+
+### 走査で留める
+
+`shared/__tests__/calendarDateCensus.test.ts` が `src/` を歩き、`\d{4}` の直後に `-` を持つ正規表現を
+持つファイルを数える。`isoDate.ts` の外に在ってよいのは理由つきの台帳 3 件 (月だけを組で読む
+`balanceSheetFreshness` / `kpiActuals.yearEarlier` / `kessanImport.PERIOD_RE`) だけ。台帳が古くなれば鳴り、
+印は直す前の字面 5 通りに当たる (標本つき)。`docStudioChecks.parseJpDate` (和暦・区切り自由の文法) は
+`\d{4}` の直後が `-` でないので印に当たらず母集団の外 —— 最初は台帳に書いて、走査が「持っていない」と
+教えた (台帳の古い行は鳴る、の対照が最初の実行で効いた形)。
+
+### 直し
+
+- `shared/isoDate.ts` (新設・Stryker の対象に追加 → 273 ファイル): `parseIsoDate` (移動)・`isCalendarDate`・
+  `isCalendarMonth`・`isCalendarDateOrMonth`・`calendarDateMessage`。
+- 上の表の 12 か所が読む。`emotions` (両ビルド) は文字列で来て暦に無ければ断る。`balanceSheet` は
+  未入力を許し、書くなら暦に在る日か月。
+- 検査: `isoDate.test.ts` (境目 —— 月 00/01/12/13・日 00/01/末日/末日+1・うるう年・文字列以外 (配列は
+  `String()` で綴りになる))、`calendarDateCensus.test.ts`、各家系の検査に「暦に無い日」を足し、`emotions`
+  の「今日に倒す」検査 5 本を「断る」に書き換えた (2 本の fixture は 1 月 32 日以降・`T0000` 付きの
+  日付を作っていたので暦に在る日付に直した)。
+
+### 対照 (12 本・20 件)
+
+| 対照 | 落ちた検査 |
+| --- | --- |
+| A: sales を 1-31 の判定へ戻す | 2 件 (暦・走査) |
+| B: main の log-mood を「今日に倒す」へ戻す | 2 件 |
+| C: ブラウザ版の log-mood を戻す | 1 件 |
+| D: 相談日を正規表現だけへ戻す | 2 件 (暦・走査) |
+| E: 開始時期を自前の正規表現へ戻す | 2 件 (暦・走査) |
+| F: 基準日の判定を外す | 1 件 |
+| G: 復元の形 (販売記録の date) を型だけへ戻す | 1 件 |
+| H: 気分の形を型だけへ戻す | 1 件 |
+| I: 月の天井を 1 ずらす (`> 13`) | 4 件 |
+| J: isoDate の外に日付の正規表現を 1 つ置く | 1 件 |
+| J2: 台帳の 1 件が正規表現をやめる (`[0-9]{4}` に書き換える) | 2 件 |
+| K: `isCalendarDate` の型の行を外す | 1 件 |
+
+### 残り
+
+- 月だけを読む正規表現 3 件 (`balanceSheetFreshness` / `kpiActuals.yearEarlier` / `kessanImport.PERIOD_RE`)
+  は組 (年・月) を取るので残した。`parseIsoDate` の `year` / `month` を読めば消せる (台帳が 0 になる)。
+- 復元 (`importAll`) は暦に無い日付の記録を「形が違う」として落とすようになった —— 画面の
+  `<input>` からは作れない値なので、当たるのは手で編集したバックアップだけ。パス 70 の診断画面が
+  出口。
+- `TeamRadarPage` の「評価時点」は自由文 (`maxLength={32}`) で、日付として計算に入らない —— 触っていない。
+- `ctx.payload as unknown as` 23 件は変わらず。
+
 ## パス 114 (2026-09-09) — **端末内の AI は走査の外に在り、Ollama の画面は入力を黙って切られていた**
 
 パス 112 は「AI へ利用者の文を送る入口すべて」に天井を揃え、残りに `ollama/chat` が

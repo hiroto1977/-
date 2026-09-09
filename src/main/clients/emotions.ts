@@ -38,6 +38,7 @@ import {
   type FetchContext,
 } from './types';
 import { ANTHROPIC_FAST_MODEL } from '../../shared/ai/providers';
+import { calendarDateMessage, isCalendarDate } from '../../shared/isoDate';
 import { localIsoDate } from '../../shared/localDate';
 import { asRecord, isAnalysisEntry, isMoodEntry, readStoredList } from '../../shared/emotionsShape';
 
@@ -170,7 +171,11 @@ async function logMood(ctx: ActionContext): Promise<{ date: string; score: numbe
   if (!Number.isFinite(finalScore) || finalScore < 1 || finalScore > 5) {
     throw new Error('score must be a number between 1 and 5');
   }
-  const finalDate = (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : null) ?? todayLocal();
+  // 日付: 省略 (undefined / null) は利用者の時計の今日。**暦に無ければ断る** (パス 115 ——
+  // それまでは正規表現だけを見て、通らなければ黙って今日に倒していた: 2026-02-30 はそのまま
+  // 保存され、2026/05/01 は今日の記録に化けていた)。
+  const finalDate = date == null ? todayLocal() : date;
+  if (!isCalendarDate(finalDate)) throw new Error(calendarDateMessage('date'));
   const store = await readStore({ forWrite: true });
   // Replace today's entry if it exists, else append.
   const idx = store.moods.findIndex((m) => m.date === finalDate);

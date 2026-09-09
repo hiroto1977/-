@@ -9,6 +9,8 @@
  * consumed in the renderer via `useCollection(SALES_COLLECTION)`.
  */
 
+import { isCalendarDate } from '../../shared/isoDate';
+
 export const SALES_COLLECTION = 'sales-entries';
 
 /** Known sales channels. `other` is the catch-all. */
@@ -51,17 +53,12 @@ export function isSalesChannel(v: unknown): v is SalesChannel {
   return typeof v === 'string' && (SALES_CHANNELS as readonly string[]).includes(v);
 }
 
-/** `YYYY-MM-DD` with a real-ish calendar check (month 01-12, day 01-31). */
+/**
+ * `YYYY-MM-DD` で暦に在る日。判定は `shared/isoDate.ts` の 1 か所 (2026-09-09 · パス 115)。
+ * それまでは月 1-12 / 日 1-31 だけを見て、`2026-02-30` を販売記録として通していた。
+ */
 export function isValidDate(s: unknown): s is string {
-  // 非文字列は下の regex.exec でも一致しない (String 強制) ため、この早期 return の
-  // ConditionalExpression は equivalent。型述語のため文自体は残す。
-  // Stryker disable next-line ConditionalExpression
-  if (typeof s !== 'string') return false;
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
-  if (!m) return false;
-  const month = Number(m[2]);
-  const day = Number(m[3]);
-  return month >= 1 && month <= 12 && day >= 1 && day <= 31;
+  return isCalendarDate(s);
 }
 
 /** Validate + coerce raw input into a clean SalesEntry, or throw with a
@@ -172,11 +169,10 @@ export interface SalesSummary {
  * 読める日付が 1 件も無ければ `null`。
  */
 export function salesPeriod(entries: readonly SalesEntry[]): SalesPeriod | null {
-  // 正規表現は**関数の中**に置く (module 直下の const は読み込み時に 1 度だけ
-  // 評価される「静的な変異体」になり、変異検査が届かない)。
+  // 読める日付 = 暦に在る日 (判定は `shared/isoDate.ts` —— 保存側の `isValidDate` と同じ 1 つ)。
   const valid = entries
     .map((e) => e.date)
-    .filter((d) => /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/.test(d))
+    .filter(isCalendarDate)
     .sort();
   if (valid.length === 0) return null;
   return {

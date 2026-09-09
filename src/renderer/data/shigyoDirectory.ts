@@ -10,6 +10,7 @@
  */
 
 import type { ServiceId } from '../../shared/serviceId';
+import { calendarDateMessage, isCalendarDate } from '../../shared/isoDate';
 import type { ShigyoConsultationStatus } from '../../shared/shigyoTypes';
 
 export const SHIGYO_CONTACTS_COLLECTION = 'shigyo-contacts';
@@ -91,9 +92,10 @@ export function parseShigyoConsultation(input: {
   status?: unknown;
 }): ShigyoConsultationEntry {
   // Stryker disable next-line StringLiteral: '' を別文字列にしても直後の
-  // /^\d{4}-\d{2}-\d{2}$/ を通らず、同一の 相談日 エラーになる (等価変異)。
+  // isCalendarDate を通らず、同一の 相談日 エラーになる (等価変異)。
   const date = typeof input.date === 'string' ? input.date.trim() : '';
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error('相談日は YYYY-MM-DD 形式で入力してください (例: 2026-07-25)');
+  // 暦に在る日だけ (パス 115 —— それまでは正規表現だけで、2026-02-30 も 2026-13-45 も通していた)。
+  if (!isCalendarDate(date)) throw new Error(`${calendarDateMessage('相談日')} (例: 2026-07-25)`);
 
   const topic = typeof input.topic === 'string' ? input.topic.trim() : '';
   if (topic.length === 0 || topic.length > 80) throw new Error('相談テーマは 1〜80 文字で入力してください');

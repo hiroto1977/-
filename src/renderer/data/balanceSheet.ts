@@ -10,6 +10,8 @@
  * 中小企業の一般的な目安で、業種・規模で適正値は異なります。
  */
 
+import { isCalendarDateOrMonth } from '../../shared/isoDate';
+
 export const BALANCE_SHEET_COLLECTION = 'balance-sheet';
 
 /**
@@ -115,6 +117,11 @@ export function parseBalanceSheet(input: {
     return n;
   };
   const asOf = typeof input.asOf === 'string' ? input.asOf.trim() : '';
+  // 基準日: 未入力 ('') は許す。書くなら暦に在る `YYYY-MM-DD` か `YYYY-MM` (パス 115 —— それまでは
+  // 何も見ずに保存し、`2026/3/31` と書けば鮮度の判定 (`balanceSheetFreshness`) が黙って null になった)。
+  if (asOf !== '' && !isCalendarDateOrMonth(asOf)) {
+    throw new Error('基準日は暦に在る日付 (YYYY-MM-DD または YYYY-MM) で入力してください');
+  }
   /**
    * 内数の任意欄。**空欄は `undefined` のまま返す** (0 に倒さない。理由は型の説明)。
    *

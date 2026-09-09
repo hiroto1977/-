@@ -15,6 +15,7 @@
 import type { MonthlyBusinessKpi } from './businessFinancials';
 import { readNumeric } from '../../shared/readNumeric';
 import { hasControlChar } from '../../shared/controlChars';
+import { isCalendarDateOrMonth } from '../../shared/isoDate';
 
 export const BUSINESS_UNITS_COLLECTION = 'business-units';
 
@@ -57,14 +58,14 @@ export type BusinessUnitResult =
   | { ok: true; entry: BusinessUnitInput }
   | { ok: false; reason: string };
 
-/**
- * 開始年月の形。`YYYY-MM` と `YYYY-MM-DD` の 2 つだけ受ける。
+/*
+ * 開始年月の形。`YYYY-MM` と `YYYY-MM-DD` の 2 つだけ受ける —— 判定は `shared/isoDate.ts`
+ * (2026-09-09 · パス 115 までは自前の正規表現で、`2024-02-30` を通していた)。
  *
  * 月だけで足りる場面が多いので日付を必須にしない。曖昧な表記
  * (`2026/4`・`令和8年4月`) は受けずに言い直してもらう —
  * 解釈を推測すると、後で並べ替えたときに黙って順序が狂う。
  */
-const STARTED_ON_RE = /^\d{4}-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?$/;
 
 /** 入力を検証して、保存する形にする。 */
 export function parseBusinessUnit(input: {
@@ -89,7 +90,7 @@ export function parseBusinessUnit(input: {
   }
 
   const startedOn = (input.startedOn ?? '').trim();
-  if (startedOn.length > 0 && !STARTED_ON_RE.test(startedOn)) {
+  if (startedOn.length > 0 && !isCalendarDateOrMonth(startedOn)) {
     return { ok: false, reason: '開始時期は YYYY-MM か YYYY-MM-DD で入力してください。' };
   }
 

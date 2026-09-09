@@ -200,6 +200,26 @@ describe('collection ごとの中身の形', () => {
     expect(hasCollectionShape('sales-entries', { ...SAMPLES['sales-entries']!.good, channel: null })).toBe(false);
   });
 
+  it('★ 日付の欄は暦に在る綴りだけ (型だけ見て 2026-02-30 を通していた —— パス 115)', () => {
+    const sales = SAMPLES['sales-entries']!.good;
+    const consult = SAMPLES['shigyo-consultations']!.good;
+    const bs = SAMPLES['balance-sheet']!.good;
+    const unit = SAMPLES['business-units']!.good;
+    for (const bad of ['2026-02-30', '2026-13-01', '2026/04/01', '2026-04', '']) {
+      expect(hasCollectionShape('sales-entries', { ...sales, date: bad }), `sales ${bad}`).toBe(false);
+      expect(hasCollectionShape('shigyo-consultations', { ...consult, date: bad }), `consult ${bad}`).toBe(false);
+    }
+    // 基準日と開始時期は月だけでもよく、未入力 ('') も許す。
+    for (const ok of ['', '2026-03', '2026-03-31']) {
+      expect(hasCollectionShape('balance-sheet', { ...bs, asOf: ok }), `asOf ${ok}`).toBe(true);
+      expect(hasCollectionShape('business-units', { ...unit, startedOn: ok }), `startedOn ${ok}`).toBe(true);
+    }
+    for (const bad of ['2026-02-30', '2026-13', '2026/03']) {
+      expect(hasCollectionShape('balance-sheet', { ...bs, asOf: bad }), `asOf ${bad}`).toBe(false);
+      expect(hasCollectionShape('business-units', { ...unit, startedOn: bad }), `startedOn ${bad}`).toBe(false);
+    }
+  });
+
   it('parameter-overrides.values は値が全部数値のときだけ通る', () => {
     expect(hasCollectionShape('parameter-overrides', { values: { a: 1, b: 2.5 } })).toBe(true);
     expect(hasCollectionShape('parameter-overrides', { values: { a: 1, b: '2' } })).toBe(false);

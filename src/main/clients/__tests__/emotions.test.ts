@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../../shared/emotionsLimits';
+import { calendarDateMessage } from '../../../shared/isoDate';
 import { extractJson, normalizeAnalysis } from '../emotions';
 
 describe('extractJson', () => {
@@ -311,8 +312,9 @@ describe('fetchEmotionsSnapshot', () => {
   });
 
   it('気分は直近 30 日ぶん、解析は新しい 10 件だけ返す', async () => {
+    // 40 日ぶんの**暦に在る**日付 (1 月 32 日以降は 2026-09-09 (パス 115) から読めない)。
     const moods = Array.from({ length: 40 }, (_, i) => ({
-      date: `2026-01-${String(i + 1).padStart(2, '0')}`,
+      date: new Date(Date.UTC(2026, 0, 1 + i)).toISOString().slice(0, 10),
       score: 3,
       note: `m${i}`,
     }));
@@ -363,17 +365,24 @@ describe('ACTIONS["log-mood"] — 日付と点数', () => {
     expect(result.date).toBe('2026-05-03');
   });
 
-  it('日付の形が違えば今日として扱う', async () => {
+  it('★ 日付の形が違えば断る —— 今日に倒さない (パス 115。それまでは黙って今日の記録に化けていた)', async () => {
+    for (const bad of ['not-a-date', 'xx2026-05-01', '2026-05-01junk', '2026-5-1', '2026-02-30', '2026-13-01', 20260501]) {
+      await expect(
+        ACTIONS['log-mood']!({ token: '', fetch: noFetch(), payload: { date: bad, score: 4 } }),
+        String(bad),
+      ).rejects.toThrow(calendarDateMessage('date'));
+    }
+  });
+
+  it('null の日付は省略と同じ (今日)', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(2026, 4, 3, 12, 0, 0));
-    for (const bad of ['not-a-date', 'xx2026-05-01', '2026-05-01junk', '2026-5-1']) {
-      const r = (await ACTIONS['log-mood']!({
-        token: '',
-        fetch: noFetch(),
-        payload: { date: bad, score: 4 },
-      })) as { date: string };
-      expect(r.date).toBe('2026-05-03');
-    }
+    const r = (await ACTIONS['log-mood']!({
+      token: '',
+      fetch: noFetch(),
+      payload: { date: null, score: 4 },
+    })) as { date: string };
+    expect(r.date).toBe('2026-05-03');
   });
 
   it('点数の境界 — 1 と 5 は通し、0 と 6 と数値でないものは拒む', async () => {
@@ -415,8 +424,9 @@ describe('ACTIONS["log-mood"] — 日付と点数', () => {
   });
 
   it('365 日を超えたら古いほうから捨てる', async () => {
+    // 366 日ぶんの暦に在る日付 (2025-01-01 〜 2026-01-01)。辞書順 = 時系列順。
     const moods = Array.from({ length: 366 }, (_, i) => ({
-      date: `2025-01-01T${String(i).padStart(4, '0')}`,
+      date: new Date(Date.UTC(2025, 0, 1 + i)).toISOString().slice(0, 10),
       score: 3,
       note: `old${i}`,
     }));
@@ -757,21 +767,16 @@ describe('壊れた記録の扱い', () => {
     expect(snap.analyses).toEqual([]);
   });
 
-  it('日付が文字列に化ける値でも今日として扱う', async () => {
-    // `toString` が正しい形を返すオブジェクトは、正規表現には通るが
-    // 文字列ではない。先に typeof を見ていないと保存に紛れ込む。
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 4, 3, 12, 0, 0));
-    try {
-      const r = (await ACTIONS['log-mood']!({
+  it('日付が文字列に化ける値は断る (今日に倒さない —— パス 115)', async () => {
+    // `toString` が正しい形を返すオブジェクトは、`String()` を通す判定なら通るが
+    // 文字列ではない。型を見る行が効いていること。
+    await expect(
+      ACTIONS['log-mood']!({
         token: '',
         fetch: noFetch(),
         payload: { date: { toString: () => '2026-05-01' }, score: 3 },
-      })) as { date: string };
-      expect(r.date).toBe('2026-05-03');
-    } finally {
-      vi.useRealTimers();
-    }
+      }),
+    ).rejects.toThrow(calendarDateMessage('date'));
   });
 });
 

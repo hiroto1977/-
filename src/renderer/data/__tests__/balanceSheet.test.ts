@@ -20,6 +20,15 @@ describe('parseBalanceSheet — validation messages & boundaries', () => {
     expect(parseBalanceSheet({ ...VALID, asOf: 123 }).asOf).toBe('');
   });
 
+  it('★ 基準日は暦に在る YYYY-MM-DD / YYYY-MM だけ (空は許す) —— パス 115 までは何も見なかった', () => {
+    expect(parseBalanceSheet({ ...VALID, asOf: '' }).asOf).toBe('');
+    expect(parseBalanceSheet({ ...VALID, asOf: '2026-03' }).asOf).toBe('2026-03');
+    expect(parseBalanceSheet({ ...VALID, asOf: '2026-03-31' }).asOf).toBe('2026-03-31');
+    for (const bad of ['2026/3/31', '2026-02-30', '2026-13', '20260331', 'x2026-03-31']) {
+      expect(() => parseBalanceSheet({ ...VALID, asOf: bad }), bad).toThrow('基準日は暦に在る日付');
+    }
+  });
+
   it('rejects each negative figure with the exact field label', () => {
     const cases: Array<[Record<string, unknown>, string]> = [
       [{ currentAssets: -1 }, '流動資産は 0 以上の数値で入力してください'],

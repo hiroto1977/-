@@ -13,7 +13,7 @@
  * `taxConsumptionBusiness.ts` にあります。
  */
 
-import { parseIsoDate } from './bankFormat';
+import { parseIsoDate } from './isoDate';
 import { localIsoDate } from './localDate';
 
 /** 簡易課税の事業区分。 */

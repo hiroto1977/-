@@ -7,6 +7,7 @@ import {
   SHIGYO_CONTACTS_COLLECTION,
   SHIGYO_CONSULTATIONS_COLLECTION,
 } from '../shigyoDirectory';
+import { calendarDateMessage } from '../../../shared/isoDate';
 
 describe('parseShigyoContact (専門家の任意登録)', () => {
   const valid = { serviceId: 'cpa' as const, name: '中村 六実', firm: '中村会計事務所', phone: '03-1234-5678', email: 'n@example.com' };
@@ -103,6 +104,9 @@ describe('parseShigyoConsultation (相談履歴の任意登録)', () => {
 
   it('rejects bad date / empty topic / unknown status', () => {
     expect(() => parseShigyoConsultation({ ...valid, date: '2026/07/25' })).toThrow('YYYY-MM-DD');
+    // 暦に無い日 (パス 115 までは正規表現だけで通していた)。
+    expect(() => parseShigyoConsultation({ ...valid, date: '2026-02-30' })).toThrow('暦に在る日付');
+    expect(() => parseShigyoConsultation({ ...valid, date: '2026-13-45' })).toThrow('相談日');
     expect(() => parseShigyoConsultation({ ...valid, date: '' })).toThrow('相談日');
     expect(() => parseShigyoConsultation({ ...valid, topic: '' })).toThrow('相談テーマ');
     expect(() => parseShigyoConsultation({ ...valid, status: '検討中' })).toThrow('ステータス');
@@ -121,7 +125,7 @@ describe('parseShigyoConsultation (相談履歴の任意登録)', () => {
 
   it('date/topic が文字列でない場合もそれぞれのエラーになる', () => {
     expect(() => parseShigyoConsultation({ serviceId: 'tax-accountant', topic: '相談', status: '完了' }))
-      .toThrow('相談日は YYYY-MM-DD 形式で入力してください (例: 2026-07-25)');
+      .toThrow(`${calendarDateMessage('相談日')} (例: 2026-07-25)`);
     expect(() => parseShigyoConsultation({ ...valid, topic: undefined }))
       .toThrow('相談テーマは 1〜80 文字で入力してください');
   });

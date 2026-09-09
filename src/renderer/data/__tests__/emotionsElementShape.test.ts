@@ -25,7 +25,7 @@ beforeEach(() => {
 describe('要素の形', () => {
   it('isMoodEntry / isAnalysisEntry: 書く形は通り、欠け・型違いは通らない', () => {
     expect(isMoodEntry(GOOD_MOOD)).toBe(true);
-    for (const bad of [null, 'x', { date: 5, score: 4, note: '' }, { date: '2026-01-01', score: '4', note: '' }, { date: '2026-01-01', score: NaN, note: '' }, { date: '2026-01-01', score: 4 }]) {
+    for (const bad of [null, 'x', { date: 5, score: 4, note: '' }, { date: '2026-02-30', score: 4, note: '' }, { date: '2026-01-01', score: '4', note: '' }, { date: '2026-01-01', score: NaN, note: '' }, { date: '2026-01-01', score: 4 }]) {
       expect(isMoodEntry(bad), JSON.stringify(bad)).toBe(false);
     }
     expect(isAnalysisEntry(GOOD_ANALYSIS)).toBe(true);

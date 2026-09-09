@@ -8,6 +8,8 @@
  * ずれる (`emotionsLimits.ts` と同じ理由でここに置く)。
  */
 
+import { isCalendarDate } from './isoDate';
+
 export interface MoodEntryShape {
   date: string; // YYYY-MM-DD
   score: number; // 1..5
@@ -36,7 +38,8 @@ export function asRecord(value: unknown): Record<string, unknown> {
 export function isMoodEntry(value: unknown): value is MoodEntryShape {
   return (
     isRecord(value) &&
-    typeof value.date === 'string' &&
+    // 暦に在る日だけ (パス 115 —— それまでは型だけで、2026-02-30 も読んでいた)。
+    isCalendarDate(value.date) &&
     // `Number.isFinite` は数値以外に false (型を見る typeof は冗長 — 変異検査で等価と出た)
     Number.isFinite(value.score) &&
     typeof value.note === 'string'

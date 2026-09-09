@@ -10,6 +10,8 @@
  * (enforced by `lint:imports`); both derive from docs/ARCHITECTURE.md §3.
  */
 
+import { isCalendarMonth } from '../../shared/isoDate';
+
 export const KPI_ACTUALS_COLLECTION = 'kpi-actuals';
 
 /** One month of raw business figures (JPY). */
@@ -57,16 +59,9 @@ export interface KpiMetrics {
   operatingProfit: number;
 }
 
-/** `YYYY-MM`, months 01-12. */
+/** `YYYY-MM`, months 01-12 (判定は `shared/isoDate.ts` の 1 か所 —— パス 115)。 */
 export function isValidPeriod(s: unknown): s is string {
-  // 非文字列は下の regex.exec でも一致せず false になるため、この早期 return の
-  // ConditionalExpression は equivalent (型述語のため文は残す)。
-  // Stryker disable next-line ConditionalExpression
-  if (typeof s !== 'string') return false;
-  const m = /^(\d{4})-(\d{2})$/.exec(s);
-  if (!m) return false;
-  const month = Number(m[2]);
-  return month >= 1 && month <= 12;
+  return isCalendarMonth(s);
 }
 
 /**

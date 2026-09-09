@@ -16,6 +16,7 @@ import type { KpiActual } from './kpiActuals';
 import type { SubmissionProfile } from './bankSubmission';
 import { PLAN_ITEMS, PLAN_MONTHS, planKey } from './cashPlan';
 import { PERIOD_RE, fiscalYearMonths, fiscalYearWindow, monthLabel } from './kessanImport';
+import { parseIsoDate } from '../../shared/isoDate';
 
 export interface ImportRow {
   /** 書式の入力欄のキー。 */
@@ -104,8 +105,8 @@ export interface BusinessPlanImportInput {
 
 /** `YYYY-MM-DD` → 「2026年9月4日」。読めなければそのまま。 */
 function dateLabel(iso: string): string {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
-  return m ? `${Number(m[1])}年${Number(m[2])}月${Number(m[3])}日` : iso;
+  const d = parseIsoDate(iso);
+  return d !== null && d.day !== null ? `${d.year}年${d.month}月${d.day}日` : iso;
 }
 
 /** KPI 実績と提出者情報を事業計画書へ (1 年目の欄に実績を置く)。 */

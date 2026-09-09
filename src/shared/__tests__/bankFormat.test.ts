@@ -25,7 +25,6 @@ import {
   formatRatio,
   formatScaled,
   parseBankFormat,
-  parseIsoDate,
   roundingCaption,
   scaleAmount,
   toWareki,
@@ -194,16 +193,7 @@ describe('和暦', () => {
     expect(formatDate('2026-01-01', seireki)).toBe('2026年1月1日');
     expect(formatDate('2024-02-29', seireki)).toBe('2024年2月29日');
   });
-  it('parseIsoDate', () => {
-    expect(parseIsoDate('2026-09-04')).toEqual({ year: 2026, month: 9, day: 4 });
-    expect(parseIsoDate('2026-09')).toEqual({ year: 2026, month: 9, day: null });
-    expect(parseIsoDate('2024-02-29')).toEqual({ year: 2024, month: 2, day: 29 });
-    expect(parseIsoDate('2026-02-29')).toBeNull();
-    expect(parseIsoDate('2026-04-31')).toBeNull();
-    expect(parseIsoDate('2026-04-00')).toBeNull();
-    expect(parseIsoDate(null)).toBeNull();
-    expect(parseIsoDate(undefined)).toBeNull();
-  });
+  // parseIsoDate の検査は `shared/__tests__/isoDate.test.ts` へ移した (パス 115)。
   it('決算期と対象期間', () => {
     expect(formatFiscalPeriod('2026-03', D)).toBe('令和8年3月期');
     expect(formatFiscalPeriod('2026-03', seireki)).toBe('2026年3月期');
