@@ -4,6 +4,8 @@ import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { GoogleConnectCard } from '../components/GoogleConnectCard';
 import { useServiceData } from '../hooks/useServiceData';
+import { AiEgressNotice } from '../components/AiEgressNotice';
+import { AI_EGRESS_RECIPIENT_ANTHROPIC } from '../../shared/aiEgressNotice';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -78,6 +80,19 @@ export function GmailPage() {
         />
       </Section>
 
+      {/* **何が外へ出るかを書く** (2026-09-09 · パス 106)。
+            受信スレッドの**件名と送信者のメールアドレス**が Anthropic へ送られる
+            (本文は送っていない —— `threads.map` が組むのは `- 件名 (from 送信者)` の
+            行だけ)。送信者のアドレスは**第三者の個人情報**である。
+            この画面は 2026-09-09 まで、外へ出ることを述べる文を 1 つも持っていなかった
+            —— パス 106 の走査 (`aiEgressDisclosed.test.ts`) が見つけた。
+            断りを 3 画面に足したつもりが、実際は 5 画面だった。 */}
+      <AiEgressNotice
+        subject={{
+          what: '受信スレッドの件名と送信者のメールアドレス',
+          recipient: AI_EGRESS_RECIPIENT_ANTHROPIC,
+        }}
+      />
       <Section
         title="受信トーン分析"
         action={

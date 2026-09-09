@@ -3,6 +3,8 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { AiEgressNotice } from '../components/AiEgressNotice';
+import { AI_EGRESS_RECIPIENT_ANTHROPIC } from '../../shared/aiEgressNotice';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -71,6 +73,18 @@ export function SlackPage() {
         />
       </Section>
 
+      {/* **何が外へ出るかを書く** (2026-09-09 · パス 106)。
+            チャンネルの**名前と目的**が Anthropic へ送られる (メッセージ本文は
+            送っていない)。社内の体制が読み取れる情報である。
+            この画面は 2026-09-09 まで、外へ出ることを述べる文を 1 つも持っていなかった
+            —— パス 106 の走査 (`aiEgressDisclosed.test.ts`) が見つけた。
+            断りを 3 画面に足したつもりが、実際は 5 画面だった。 */}
+      <AiEgressNotice
+        subject={{
+          what: 'チャンネル名と目的 (purpose)',
+          recipient: AI_EGRESS_RECIPIENT_ANTHROPIC,
+        }}
+      />
       <Section
         title="チャンネル雰囲気分析"
         action={

@@ -4,6 +4,8 @@ import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { analyzeProfile, type EmotionProfile } from '../data/emotionInsights';
+import { AiEgressNotice } from '../components/AiEgressNotice';
+import { AI_EGRESS_RECIPIENT_ANTHROPIC } from '../../shared/aiEgressNotice';
 import { useParameters } from '../data/parameterOverrides';
 import { emotionThresholds } from '../../shared/parameters';
 import { counsel } from '../data/counseling';
@@ -360,6 +362,18 @@ export function EmotionsPage() {
       ) : null}
 
       <Section title="テキスト感情分析 (Anthropic API)">
+        {/* **何が外へ出るかを書く。** 下の placeholder は「メール本文、自分の日記、
+            誰かのメッセージ」と、**最も秘めた内容と第三者の文面**を明示的に誘って
+            いるのに、2026-09-09 (パス 106) までこの画面には端末を出ることを述べる文が
+            1 つも無かった。ティッカー記号を断っている画面 (StocksPage) が在り、
+            日記を断っていない画面が在った。`mayIncludeOthers` で同意の 1 行を足す。 */}
+        <AiEgressNotice
+          subject={{
+            what: '入力したテキスト本文',
+            recipient: AI_EGRESS_RECIPIENT_ANTHROPIC,
+            mayIncludeOthers: true,
+          }}
+        />
         <div className="card" style={{ gap: 10 }}>
           <textarea
             placeholder="分析したいテキストを貼り付け — メール本文、自分の日記、誰かのメッセージなど"

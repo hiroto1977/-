@@ -4,6 +4,8 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
 import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
+import { AiEgressNotice } from '../components/AiEgressNotice';
+import { AI_EGRESS_RECIPIENT_ANTHROPIC } from '../../shared/aiEgressNotice';
 import { sumShigyoMonthlyFees } from '../../shared/shigyoTypes';
 import { summarizeFoodDelivery } from '../data/foodDelivery';
 import { exportWarning } from '../data/exportOutcome';
@@ -1011,6 +1013,19 @@ export function BusinessPage() {
           AI 出力は誤った推論を含む可能性があるため、実際の経営判断は別途裏取りが必要です。
           回答は登録されている 10 事業カテゴリに限定されます。
         </div>
+        {/* **何が外へ出るかを書く。** 質問文だけでなく、各事業カテゴリの
+            現在 KPI と売上トレンドが JSON で system / user 両方のプロンプトに
+            載って Anthropic へ送られる (`web-shim.ts` の `callBusinessAdvisor` /
+            `business.ts` の `askAdvisor` がどちらも `JSON.stringify(analyses)` を
+            userPrompt に積む)。売上は利用者が入れた情報である。
+            2026-09-09 (パス 106) まで、この画面には免責はあっても
+            **外へ出ることに触れる文が 1 つも無かった**。 */}
+        <AiEgressNotice
+          subject={{
+            what: '質問文と、各事業カテゴリの現在 KPI・売上トレンド (JSON) ',
+            recipient: AI_EGRESS_RECIPIENT_ANTHROPIC,
+          }}
+        />
         <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
           <input
             type="text"

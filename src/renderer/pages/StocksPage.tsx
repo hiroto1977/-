@@ -3,6 +3,8 @@ import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { MAX_ADVISOR_UNIVERSE_SYMBOLS, capAdvisorUniverse } from '../../shared/advisorQuestionLimits';
+import { AiEgressNotice } from '../components/AiEgressNotice';
+import { AI_EGRESS_RECIPIENT_ANTHROPIC } from '../../shared/aiEgressNotice';
 import { exportWarning } from '../data/exportOutcome';
 import { ratioPctOrDash } from '../../shared/num';
 import type { StrategyComparisonResult } from '../data/stocksAnalysisWeb';
@@ -602,24 +604,40 @@ export function StocksPage() {
             別の目的で登録したものがここで外部へ出る。
             このアプリは他の画面 (クラウド同期・保存状態) では「何が送られないか」まで
             書いているのに、AI の画面だけ書いていなかった (2026-08-23)。
+
+            **その「AI の画面」は単数ではなかった** (2026-09-09 · パス 106) ——
+            Anthropic へ送るのは 5 画面 (ここ / BusinessPage の経営アドバイザー /
+            EmotionsPage のテキスト感情分析 / GmailPage の受信要約 /
+            SlackPage のチャンネル要約 —— 後の 2 つは `emotions` の action を借りる)
+            で、断りが在ったのはここだけだった。
+            文面は `shared/aiEgressNotice.ts` へ移し、5 画面が同じ物を読む。
           */}
-          <br />
-          送信内容: 質問文と、<strong>登録済みウォッチリストのティッカー
-          {data.watchlist.length > MAX_ADVISOR_UNIVERSE_SYMBOLS
-            ? ` ${MAX_ADVISOR_UNIVERSE_SYMBOLS} 件 (登録 ${data.watchlist.length} 件のうち)`
-            : ` ${data.watchlist.length} 件`}
-          </strong>が Anthropic API へ送信されます (指標はモック値)。
-          {data.watchlist.length > MAX_ADVISOR_UNIVERSE_SYMBOLS && (
-            <>
-              <br />
-              <span data-advisor-universe-capped>
-                ⚠ 1 度に見られるのは {MAX_ADVISOR_UNIVERSE_SYMBOLS} 件までです。
-                残り {data.watchlist.length - MAX_ADVISOR_UNIVERSE_SYMBOLS} 件は
-                <strong>今回の助言の対象外</strong>です。
-              </span>
-            </>
-          )}
         </div>
+        {/* 文面は `shared/aiEgressNotice.ts` が 1 か所で持つ (パス 106)。
+            ここが唯一の断りだった時代の自前の文は捨てた —— 5 画面で同じ物を
+            書くと、片方だけ動かしたときに誰も気付かない。**何を送るか**だけを
+            この画面の言葉で埋める。指標がモック値であることと上限の話は、
+            この画面固有なので下に足す。 */}
+        <AiEgressNotice
+          subject={{
+            what: `質問文と、登録済みウォッチリストのティッカー${
+              data.watchlist.length > MAX_ADVISOR_UNIVERSE_SYMBOLS
+                ? ` ${MAX_ADVISOR_UNIVERSE_SYMBOLS} 件 (登録 ${data.watchlist.length} 件のうち)`
+                : ` ${data.watchlist.length} 件`
+            } (指標はモック値) `,
+            recipient: AI_EGRESS_RECIPIENT_ANTHROPIC,
+          }}
+        />
+        {data.watchlist.length > MAX_ADVISOR_UNIVERSE_SYMBOLS && (
+          <div
+            data-advisor-universe-capped
+            style={{ fontSize: 12, lineHeight: 1.6, marginBottom: 12, color: '#fbbf24' }}
+          >
+            ⚠ 1 度に見られるのは {MAX_ADVISOR_UNIVERSE_SYMBOLS} 件までです。
+            残り {data.watchlist.length - MAX_ADVISOR_UNIVERSE_SYMBOLS} 件は
+            <strong>今回の助言の対象外</strong>です。
+          </div>
+        )}
         <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
           <input
             type="text"
