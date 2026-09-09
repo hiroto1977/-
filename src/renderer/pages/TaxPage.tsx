@@ -6,6 +6,7 @@ import { tableStyle, thStyle, tdStyle } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { RealtimeTicker, type RealtimeRow } from '../components/RealtimeTicker';
 import { jpy } from '../../shared/formatters';
+import { localIsoDate } from '../../shared/localDate';
 import { parseAmountInput } from '../components/serviceActionUtils';
 import { GuardSummary, GuardedNumber } from '../components/GuardedNumber';
 import {
@@ -142,6 +143,8 @@ export function TaxPage() {
   const [topic, setTopic] = useState<ComplianceTopic>('micro-corp');
 
   const schemes = useMemo(() => schemesForEntity(entity), [entity]);
+  // 期限つきの制度の「今日」。期限を過ぎた行は赤く言う (コードの日付が更新されていない印)。
+  const today = localIsoDate();
   const checklist = useMemo(() => complianceChecklist(topic), [topic]);
 
   const TOPIC_LABEL: Record<ComplianceTopic, string> = {
@@ -2040,7 +2043,16 @@ export function TaxPage() {
             {schemes.map((s) => (
               <tr key={s.id}>
                 <td style={tdStyle}>{s.name}</td>
-                <td style={{ ...tdStyle, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5 }}>{s.summary}</td>
+                <td style={{ ...tdStyle, fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5 }}>
+                  {s.summary}
+                  {s.until !== undefined && (
+                    <div style={{ marginTop: 4, color: s.until < today ? '#f87171' : 'var(--text-mute)' }}>
+                      {s.until < today
+                        ? `適用期限 ${s.until} を過ぎています — 延長の有無を国税庁で確認してください (このアプリの期限は未更新)`
+                        : `適用期限 ${s.until} (この日までの取得等が対象。期限つきの措置は延長・見直しがあるため、実行前に最新の改正を確認)`}
+                    </div>
+                  )}
+                </td>
                 <td style={tdStyle}>
                   {s.needsAdvisor ? (
                     <span style={{ color: '#fbbf24', fontWeight: 600 }}>⚠️ 必須</span>

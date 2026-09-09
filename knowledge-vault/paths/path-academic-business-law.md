@@ -22,10 +22,10 @@ tags:
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]]（接続 29）
 - [[bizlaw-moral-rights|著作者人格権（著作権法18〜20条）]]（接続 29）
 - [[bizlaw-international-arbitration-uncitral|国際商事仲裁——UNCITRAL規則とニューヨーク条約による紛争解決の法的枠組み]]（接続 28）
+- [[bizlaw-toushiho|出資法]]（接続 28）
 - [[bizlaw-benefit-of-time|期限の利益（民法136条）]]（接続 27）
 - [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]]（接続 26）
 - [[bizlaw-scope-of-damages|損害賠償の範囲（民法416条）]]（接続 26）
-- [[bizlaw-toushiho|出資法]]（接続 26）
 - [[bizlaw-earnest-money|手付（民法557条）]]（接続 25）
 - [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]]（接続 25）
 

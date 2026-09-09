@@ -10,6 +10,13 @@
  */
 
 import { yen } from './num';
+import {
+  SME_ANNUAL_CAP,
+  SME_MEASURE_END,
+  SME_UNIT_LIMIT,
+  SME_UNIT_LIMIT_BEFORE_STEP,
+  SME_UNIT_LIMIT_STEP_DATE,
+} from './depreciation';
 
 /** 円未満を四捨五入。 */
 
@@ -663,7 +670,24 @@ export interface TaxScheme {
    * **税理士への個別相談が特に必須** の高度スキームか。
    */
   readonly needsAdvisor: boolean;
+  /**
+   * 適用期限 (`YYYY-MM-DD`・この日までの取得等が対象)。**期限つきの措置だけが持つ。**
+   * 値はコードの定数から読む —— 同じ定数を `lint:rate-freshness` の台帳が見て、期限の 180 日前から
+   * 鳴らす。2026-09-09 までカタログは期限を持たず、期限つきの 2 制度 (少額減価償却資産の特例・
+   * 中小企業投資促進税制) を日付なしで案内していた (パス 140)。
+   */
+  readonly until?: string;
 }
+
+/**
+ * 中小企業投資促進税制 (措法 42 の 6) の適用期限 —— 令和 7 年度税制改正で 2 年延長 (令和 9 年 3 月 31 日)、
+ * 令和 8 年度改正では変更なし。出所: 中小企業庁の制度案内・税理士法人の令和 7 年度改正解説 (一次情報の
+ * 国税庁 No.5433 はこの環境から届かず未照合)。`lint:rate-freshness` の台帳が 180 日前から鳴らす。
+ */
+export const INVESTMENT_PROMOTION_MEASURE_END = '2027-03-31';
+
+/** 円を「万円」の数字にする (カタログの文言用)。 */
+const man = (v: number): string => String(v / 10_000);
 
 /**
  * 一般的に知られた節税制度の「案内」カタログ。
@@ -680,12 +704,21 @@ export function taxSchemeCatalog(): readonly TaxScheme[] {
     { id: 'corp-bankruptcy-kyosai', name: '経営セーフティ共済 (倒産防止共済)', entity: 'corporation', summary: '掛金 (月最大20万・年240万) を全額損金算入。40か月以上で解約時 100% 返戻。', needsAdvisor: false },
     { id: 'corp-officer-salary', name: '役員報酬の最適化', entity: 'corporation', summary: '定期同額給与等のルール内で個人/法人の税負担バランスを調整。', needsAdvisor: false },
     { id: 'corp-company-housing', name: '役員社宅制度', entity: 'corporation', summary: '会社契約の住居を役員へ社宅貸与。一定計算の家賃差額を法人経費化。', needsAdvisor: true },
-    { id: 'corp-investment-tax', name: '中小企業投資促進税制', entity: 'corporation', summary: '一定の設備投資で 30% 特別償却 または 7% 税額控除を選択。', needsAdvisor: false },
+    { id: 'corp-investment-tax', name: '中小企業投資促進税制', entity: 'corporation', summary: '一定の設備投資で 30% 特別償却 または 7% 税額控除を選択。', needsAdvisor: false, until: INVESTMENT_PROMOTION_MEASURE_END },
     { id: 'corp-bonus', name: '決算賞与', entity: 'corporation', summary: '決算日までに支給通知し1か月以内に支払えば当期損金に計上可。', needsAdvisor: false },
     // --- 個人事業主 ---
     { id: 'sp-blue', name: '青色申告 (65万円特別控除)', entity: 'sole-proprietor', summary: '複式簿記+e-Tax 等で最大65万円の所得控除。基本かつ最大の節税。', needsAdvisor: false },
     { id: 'sp-family-salary', name: '青色事業専従者給与', entity: 'sole-proprietor', summary: '事前届出で生計同一親族への給与を全額経費化 (所得分散)。', needsAdvisor: true },
-    { id: 'sp-small-depreciation', name: '少額減価償却資産の特例', entity: 'sole-proprietor', summary: '取得価額が基準未満の資産を取得年に一括経費化 (青色限定・年間上限あり)。', needsAdvisor: false },
+    {
+      id: 'sp-small-depreciation',
+      name: '少額減価償却資産の特例',
+      entity: 'sole-proprietor',
+      summary:
+        `取得価額 ${man(SME_UNIT_LIMIT)}万円未満 (${SME_UNIT_LIMIT_STEP_DATE} 以後の取得。それ以前は ${man(SME_UNIT_LIMIT_BEFORE_STEP)}万円未満) の資産を` +
+        `取得年に一括経費化 (青色限定・年 ${man(SME_ANNUAL_CAP)}万円まで)。`,
+      needsAdvisor: false,
+      until: SME_MEASURE_END,
+    },
     { id: 'sp-loss-carryover', name: '純損失の繰越し・繰戻し', entity: 'sole-proprietor', summary: '青色なら赤字を翌3年繰越、または前年へ繰戻し還付。', needsAdvisor: false },
     // --- 両方 ---
     { id: 'both-small-biz-kyosai', name: '小規模企業共済', entity: 'both', summary: '掛金 (月最大7万) が全額所得控除。退職金/廃業資金の準備。', needsAdvisor: false },

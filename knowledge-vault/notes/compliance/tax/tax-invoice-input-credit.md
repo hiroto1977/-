@@ -35,6 +35,7 @@ aliases:
 - [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 語彙が近い
 - [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]] — 語彙が近い
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 語彙が近い
+- [[tax-small-amount-depreciation|中小企業者等の少額減価償却資産の特例]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

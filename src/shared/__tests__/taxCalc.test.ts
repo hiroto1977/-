@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   DEFAULT_NET_SALARY_PARAMS,
   DEFAULT_SALARY_TAX_PARAMS,
@@ -30,10 +30,13 @@ import {
   suggestTaxTips,
   schemesForEntity,
   taxSchemeCatalog,
+  INVESTMENT_PROMOTION_MEASURE_END,
   complianceChecklist,
   COMPLIANCE_TOPICS,
   type MunicipalityOverride,
 } from '../taxCalc';
+import { SME_MEASURE_END } from '../depreciation';
+import { isCalendarDate } from '../isoDate';
 
 describe('calcIncomeTax', () => {
   it('returns 0 for zero or negative taxable income', () => {
@@ -289,6 +292,7 @@ describe('taxSchemeCatalog', () => {
       expect(s.summary).toBeTruthy();
       expect(['corporation', 'sole-proprietor', 'both']).toContain(s.entity);
       expect(typeof s.needsAdvisor).toBe('boolean');
+      if (s.until !== undefined) expect(isCalendarDate(s.until), s.id).toBe(true);
     }
   });
 
@@ -297,6 +301,17 @@ describe('taxSchemeCatalog', () => {
     expect(byId.get('both-micro-corp')?.needsAdvisor).toBe(true);
     expect(byId.get('sp-family-salary')?.needsAdvisor).toBe(true);
     expect(byId.get('sp-blue')?.needsAdvisor).toBe(false);
+  });
+
+  it('★ 期限つきの制度は適用期限を定数から持つ (少額減価償却 / 投資促進) — 期限の無い制度は持たない', () => {
+    const byId = new Map(taxSchemeCatalog().map((s) => [s.id, s]));
+    expect(byId.get('sp-small-depreciation')?.until).toBe(SME_MEASURE_END);
+    expect(byId.get('corp-investment-tax')?.until).toBe(INVESTMENT_PROMOTION_MEASURE_END);
+    expect(byId.get('sp-blue')?.until).toBeUndefined();
+    expect(byId.get('sp-small-depreciation')?.summary).toContain('40万円未満');
+    expect(byId.get('sp-small-depreciation')?.summary).toContain('30万円未満');
+    expect(byId.get('sp-small-depreciation')?.summary).toContain('2026-04-01');
+    expect(byId.get('sp-small-depreciation')?.summary).toContain('300万円');
   });
 });
 
@@ -1021,5 +1036,36 @@ describe('台帳から渡す前提 (surtax / 社保概算率 / 住民税の自�
     expect(r.takeHome).toBe(6_000_000 - r.incomeTax - r.residentTax);
     // 年収 0 の早期 return も自治体の均等割。
     expect(calcSalaryWithDeductions(0, 480_000, 430_000, 0, 0, 0, 2026, p).residentTax).toBe(6_000);
+  });
+});
+
+describe('★ module レベルの定数は読み直して測る (import 時に評価済みの const は、変異体の切替の前に読まれた値が残る)', () => {
+  it('期限・概要の万円・速算表 7 段・既定の前提・トピック一覧は読み直しても同じ', async () => {
+    vi.resetModules();
+    const fresh = await import('../taxCalc');
+    expect(fresh.INVESTMENT_PROMOTION_MEASURE_END).toBe('2027-03-31');
+    const small = fresh.taxSchemeCatalog().find((s) => s.id === 'sp-small-depreciation');
+    expect(small?.summary).toContain('取得価額 40万円未満 (2026-04-01 以後の取得。それ以前は 30万円未満)');
+    expect(small?.summary).toContain('年 300万円まで');
+    // 速算表 7 段 (各段の中に 1 点ずつ): 基準所得税額 × (1 + 2.1%) を円未満四捨五入。
+    const surtax = 1 + fresh.RECONSTRUCTION_SURTAX_RATE;
+    const table: readonly (readonly [number, number])[] = [
+      [1_000_000, 50_000],
+      [3_000_000, 202_500],
+      [5_000_000, 572_500],
+      [8_000_000, 1_204_000],
+      [15_000_000, 3_414_000],
+      [30_000_000, 9_204_000],
+      [50_000_000, 17_704_000],
+    ];
+    for (const [taxable, base] of table) {
+      expect(fresh.calcIncomeTax(taxable), String(taxable)).toBe(Math.round(base * surtax));
+    }
+    expect(fresh.DEFAULT_NET_SALARY_PARAMS).toEqual({
+      socialInsuranceRate: fresh.SOCIAL_INSURANCE_RATE,
+      surtaxRate: fresh.RECONSTRUCTION_SURTAX_RATE,
+    });
+    expect(fresh.DEFAULT_SALARY_TAX_PARAMS).toEqual({ surtaxRate: fresh.RECONSTRUCTION_SURTAX_RATE });
+    expect(fresh.COMPLIANCE_TOPICS).toEqual(['micro-corp', 'family-transaction', 'incorporation']);
   });
 });

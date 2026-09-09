@@ -18389,6 +18389,80 @@ uber-eats / demae-can の advise は画面が無く (`VoiceCommandBar` と `Busi
 - 下書き (`servicehub.teamradar.draft.v1`) は snapshot より優先して復元される。読めなかった保存と下書きが両方在るとき、
   画面のメンバーは下書き、注記は保存先について言う (別の物を指している)。
 
+## パス 140 (2026-09-09) — **少額減価償却資産の特例は 2026-04-01 の令和 8 年度税制改正 (上限 30 万 → 40 万円・従業員 500 → 400 人・期限 2029-03-31) に取り残されていた —— 計算 (`depreciation.ts`) は 30 万円のまま取得日も期限も持たず、知識台帳は 1 項目だけ 40 万円で兄弟 2 項目は日付の無い「30万円未満」、節税カタログの期限つき 2 制度に期限が無かった**
+
+### 何が起きていたか
+
+パス 139 の「日付の無い安全の主張」を、法定値へ当て直した。`src/shared/depreciation.ts` の中小企業者等の
+少額減価償却資産の特例 (措法 67 の 5) は `SME_UNIT_LIMIT = 300_000` (30 万円未満) で、`classifySmallAsset` /
+`smeImmediateDeduction` は取得日を取らず、適用期限も持たなかった。実測 (2026-09-09・財務省の令和 8 年度税制改正の
+大綱と国税庁 No.5408 はこの環境から届かず、弥生・税理士法人 (山田&パートナーズ・辻・本郷 ほか) の改正解説 4 本を
+突き合わせた):
+
+- **令和 8 年度税制改正 (2026-04-01 施行)** で、1 資産あたりの上限は **30 万円未満 → 40 万円未満** (2026-04-01 以後の取得分。
+  それ以前の取得は 30 万円未満のまま)、対象は常時使用する従業員 **500 人以下 → 400 人以下**、適用期限は **3 年延長されて
+  2029-03-31**。年間合計 300 万円は変わらない。
+- コードは改正から 5 か月、30 万円のまま答えていた —— 35 万円の資産を「通常償却」と言う (消費者は今日は検査だけ。
+  変異検査の対象 (`stryker.config.json`) に載る「測られている」モジュールが、測られたまま古くなっていた)。
+- **規準はリポジトリの中に在った (12 か所目)**: `complianceKnowledge.ts` の `tax-small-amount-depreciation` (asOf 2026-06)
+  は「令和8年度税制改正により2026年4月1日以後取得分は40万円未満に引き上げ」と書き、財務省の大綱を出典に持っていた。
+  ところが同じ台帳の兄弟 2 項目 —— 償却資産の申告 (`tax-depreciable-asset-filing`)「30万円未満を即時償却」「30万円特例」、
+  一括償却資産 (`tax-lump-sum-depreciation`)「取得価額30万円未満」—— は日付の無い 30 万円のまま (同じ asOf 2026-06)。
+  **同じ数字が 4 か所に手で写され、1 か所だけが動いた。** 誰も 4 か所を突き合わせていない。
+- 節税制度カタログ (`taxCalc.ts` → 税務ページ) は「少額減価償却資産の特例」「中小企業投資促進税制」を期限なしで案内していた。
+  どちらも期限つきの措置 (前者 2029-03-31、後者は令和 7 年度改正で 2027-03-31 まで)。`lint:rate-freshness` の期限台帳は
+  2 件 (2割特例・Ollama) で、**台帳の母集団を数える物が無かった** —— 定数が在っても台帳に足し忘れれば誰も見ない
+  (パス 85 / 95 の census と同じ病)。
+
+### 直し
+
+- `src/shared/depreciation.ts`: 日付つきの定数 —— `SME_UNIT_LIMIT_STEP_DATE` (2026-04-01)・`SME_UNIT_LIMIT_BEFORE_STEP` (30 万)・
+  `SME_UNIT_LIMIT` (40 万)・`SME_EMPLOYEE_CAP` (400)・`SME_MEASURE_END` (2029-03-31)。`smeMeasureWindow(acquiredOn)` が取得日から
+  窓 (`applies` + 上限 / `measure-ended` / `unreadable-date`) を引き、`classifySmallAsset(cost, acquiredOn)` と
+  `smeImmediateDeduction(cost, acquiredOn, prior)` は**取得日を必須**にした (読めなければ null / `unreadable-date` —— 今日の
+  日付へ倒さない)。結果は `unitLimit` と `status` (applied / invalid-cost / unreadable-date / measure-ended / over-unit-limit /
+  cap-exhausted) を持つ。
+- `src/shared/taxCalc.ts`: `TaxScheme.until` (期限つきの制度だけ) と `INVESTMENT_PROMOTION_MEASURE_END` (2027-03-31)。
+  少額減価償却資産の特例の概要は定数から組み立てる (40 万円未満・2026-04-01 以後・それ以前は 30 万円未満・年 300 万円)。
+  税務ページの一覧は `until` を「適用期限 YYYY-MM-DD (この日までの取得等が対象…)」と刷り、今日を過ぎていれば赤で
+  「延長の有無を国税庁で確認 (このアプリの期限は未更新)」。
+- `complianceKnowledge.ts`: 本項目に従業員 400 人・期限 2029-03-31 を足し、兄弟 2 項目を「取得価額30万円未満、2026年4月1日以後の
+  取得分は40万円未満」に (3 項目とも asOf 2026-09・財務省の大綱を出典に)。`npm run vault:build` で保管庫の note を再生成。
+- `scripts/lint-rate-freshness.cjs`: 期限台帳 +2 (`SME_MEASURE_END` / `INVESTMENT_PROMOTION_MEASURE_END`・180 日前から警告・
+  直し方を明記)。**台帳の母集団の走査** `checkLedgerCoverage()` —— `src/shared` の期限の名前 (`_END` / `_UNTIL` / `_DEADLINE` /
+  `_REVIEW_BY` / `_EXPIRES`) を持つ日付定数が台帳に無ければ落とす。1 件も見つからなければ走査の故障として落とす。
+  self-test に標本 6 本 (拾う / 台帳済み / 過去の日付の名前 / 小文字 / 別ファイル)。
+- 検査: `depreciation.test.ts` (★ 35 万円が 2026-03-31 では通常償却・2026-04-01 では特例 / ★ 期限の翌日は無い / 窓の 3 状態 /
+  ★ 定数の値 / status 6 種)、`smallAssetMeasureConsistency.test.ts` (★ 知識台帳の数字と日付 = 計算の定数 / ★ 大綱を出典に /
+  ★ 特例に触れる項目に日付の無い 30 万円を残さない + 標本 / ★ カタログの until = 定数 / 台帳に載っている / ★ 母集団の走査の標本)、
+  `taxCalc.test.ts` (★ until)、`TaxPage.render.test.ts` (★ 適用期限が行に出る・期限の無い行には出ない + 標本)。
+- 変異検査 (`depreciation.ts` + `taxCalc.ts`・884 変異体): 初回は **20 件生存** (97.49%) —— 新規 5 (`SME_UNIT_LIMIT_STEP_DATE` / `SME_MEASURE_END` / `INVESTMENT_PROMOTION_MEASURE_END` / `man` の
+  4 つの module レベルの const と、等価変異体 1) + **既存 15** (`depreciation.ts` の `yen`、`taxCalc.ts` の速算表 `INCOME_TAX_BRACKETS` 8・
+  `DEFAULT_NET_SALARY_PARAMS`・`DEFAULT_SALARY_TAX_PARAMS`・`COMPLIANCE_TOPICS` 4)。static の 19 は **covered-static** (module レベルの const は
+  import 時に評価済みで、変異体の切替の前に読まれた値が残る —— `stryker.config.json` の `_commentIgnoreStatic` の形) で、
+  `vi.resetModules()` + 動的 import の読み直し検査 2 本で全部落ちた。等価変異体 1 (`classifySmallAsset` の期限後の枝: unitLimit が null で、
+  正の取得価額は null (= 0) 未満になりえない) は理由つきの pragma。再測定 **100% / 100%** (789 killed + 5 timeout・0 survived)。
+  既存 15 は #117 (covered-static の総ざらい) の分を 2 ファイルぶん先に消化した形。
+
+### 対照
+
+| # | 何を壊したか | 鳴ったか |
+| --- | --- | --- |
+| A | `SME_UNIT_LIMIT` を `300_000` に戻す (2026-09-09 までの数字) | 🔔 16 / 211 (`depreciation` / `smallAssetMeasureConsistency` / `taxCalc`): ★ 35 万円の段差 / ★ 定数の値 / ★ 知識台帳の数字 = 計算の定数 / ★ カタログの概要 ほか |
+| A2 | 兄弟項目 (一括償却資産) を日付の無い「取得価額30万円未満」に戻す | 🔔 1 / 8 (`smallAssetMeasureConsistency.test.ts`): ★ 特例に触れる項目に日付の無い 30 万円を残さない |
+| A3 | 期限台帳から `SME_MEASURE_END` の行を消す (定数は残す) —— 母集団の走査が拾うか | 🔔 `lint:rate-freshness` exit=1: ❌「台帳 (DATED_MEASURES) に無い期限の定数が 1 件: src/shared/depreciation.ts::SME_MEASURE_END」 |
+| A4 | `SME_MEASURE_END` を過去 (`2026-01-01`) にする —— 期限の門 | 🔔 `lint:rate-freshness` exit=1: ❌「少額減価償却資産の特例 … の適用期限を過ぎています」 |
+| B | (画面) 税務ページの一覧から `until` の行を消す | 🔔 2 / 14 (`TaxPage.render.test.ts`): ★ 少額減価償却資産の特例の行に適用期限が出る |
+
+### 残る物
+
+- 一次情報 (財務省の大綱・国税庁 No.5408 / No.5433) はこの環境から届かず、二次情報 4 本の一致で書いた。期限の 180 日前に
+  `lint:rate-freshness` が鳴るので、その時に一次情報で照合すること (2027-03-31 の投資促進税制は 2026-10-02 から警告)。
+- 従業員 400 人の要件は定数と文言だけで、判定には入っていない (入力に従業員数が無い)。
+- `smeImmediateDeduction` / `classifySmallAsset` の消費者は検査だけ (画面は無い)。カタログの概要と知識台帳が数字を刷る。
+- 少額減価償却資産の特例はカタログで「個人事業主」の列にだけ在るが、青色申告の中小法人も対象。列の直しは別 (今回は期限だけ)。
+- 0 倒しの母集団 (`lint:zero-fold`) は生成ブロックのまま (再生成の差分出力は「前回と同じ」—— 足した物に `? … : 0` / `?? 0` / `|| 0` の形は無い)。
+
 ## パス 139 (2026-09-09) — **Ollama の「未パッチ out-of-bounds read」警告は 2026-05-12 の固定文で日付が無く、その OOB read (CVE-2026-7482) は固定文を書く前の 2026-02-25 に修正 (0.17.1) されていた。安全の床 0.1.46 は 2024 年の CVE のもので、0.17.1 未満の版にも「既知の脆弱性が修正された」と言っていた**
 
 ### 何が起きていたか

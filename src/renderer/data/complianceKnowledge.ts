@@ -1373,18 +1373,19 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
         '義務がある。課税標準額の合計が150万円未満の場合は免税点に達せず課税されないが、申告自体は必要。' +
         '対象になるかどうかは国税側でどの償却方法を選んだかと連動する。' +
         '取得価額10万円未満で一時に損金算入した資産と、20万円未満で3年一括償却を選んだ資産は申告対象から外れる。' +
-        'ところが中小企業者の少額減価償却資産の特例（30万円未満を即時償却）で損金算入した資産は、' +
+        'ところが中小企業者の少額減価償却資産の特例（取得価額30万円未満、2026年4月1日以後の取得分は40万円未満を即時償却）で損金算入した資産は、' +
         '租税特別措置法による特例のため償却資産では対象のままで、申告が必要になる。' +
         '同じ「即時に経費化した資産」でも根拠条文の違いで固定資産税の扱いが分かれるのがこの申告の罠で、' +
-        '30万円特例を多用するほど償却資産の申告漏れが起きやすい。' +
+        '少額減価償却資産の特例を多用するほど償却資産の申告漏れが起きやすい。' +
         '少額でも個別に減価償却を選択した資産は対象になる。税額は課税標準額×1.4%（標準税率）。',
       authority: '所管: 総務省・市町村（地方税法）',
-      asOf: '2026-06',
+      asOf: '2026-09',
     },
     sources: [
       { url: 'https://www.soumu.go.jp/main_sosiki/jichi_zeisei/czaisei/czaisei_seido/149767_08.html', type: 'government', label: '総務省 固定資産税の概要' },
       { url: 'https://www.city.funabashi.lg.jp/kurashi/zei/003/04/p000859.html', type: 'municipality', label: '船橋市 償却資産の概要' },
       { url: 'https://www.tax.metro.tokyo.lg.jp/kazei/work/shokyak_sis', type: 'municipality', label: '東京都主税局 固定資産税（償却資産）— 少額資産の取扱い' },
+      { url: 'https://www.mof.go.jp/tax_policy/tax_reform/outline/fy2026/08taikou_03.htm', type: 'government', label: '財務省 令和8年度税制改正の大綱（取得価額の引上げ・適用期限延長）' },
     ],
   },
   {
@@ -1936,9 +1937,11 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       statement:
         '青色申告書を提出する一定の中小企業者等は、取得価額が基準額未満の減価償却資産を取得・事業供用した場合、' +
         'その取得価額の全額を取得事業年度に損金算入できる（租税特別措置法上の時限措置）。基準額は1単位30万円未満であったが、' +
-        '令和8年度税制改正により2026年4月1日以後取得分は40万円未満に引き上げられ、1事業年度の合計上限は300万円。',
+        '令和8年度税制改正により2026年4月1日以後取得分は40万円未満に引き上げられ、1事業年度の合計上限は300万円。' +
+        '同改正で対象は常時使用する従業員数が400人以下（改正前は500人以下）の中小企業者等に絞られ、適用期限は3年延長されて' +
+        '2029年3月31日までに取得した資産が対象（措法67条の5。2年・3年おきに延長されてきた時限措置なので、期限が近づいたら改正の有無を確認）。',
       authority: '所管: 国税庁（租税特別措置法）',
-      asOf: '2026-06',
+      asOf: '2026-09',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5408.htm', type: 'government', label: '国税庁 No.5408 中小企業者等の少額減価償却資産の特例' },
@@ -6276,14 +6279,15 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       statement:
         '取得価額が20万円未満の減価償却資産については、各事業年度ごとにその全部又は一部を一括し、その取得価額の合計額の3分の1ずつを3年間にわたって' +
         '損金算入できる「一括償却資産」の制度がある（法人税法施行令133条の2、所得税は所得税法施行令139条）。法定耐用年数による通常の減価償却や、中小企業者等の' +
-        '少額減価償却資産の特例（取得価額30万円未満）とは別個に選択できる方法である。',
+        '少額減価償却資産の特例（取得価額30万円未満、2026年4月1日以後の取得分は40万円未満）とは別個に選択できる方法である。',
       authority: '所管: 国税庁（法人税法・所得税法）',
-      asOf: '2026-06',
+      asOf: '2026-09',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/hojin/5403.htm', type: 'government', label: '国税庁 No.5403 少額の減価償却資産の判定' },
       { url: 'https://www.keisan.nta.go.jp/r5yokuaru/aoiroshinkoku/hitsuyokeihi/genkashokyakuhi/ikkatsushokyaku.html', type: 'government', label: '国税庁 一括償却資産とは' },
       { url: 'https://www.freee.co.jp/kb/kb-accounting/lump-sum-depreciable-assets/', type: 'media', label: '一括償却資産 解説' },
+      { url: 'https://www.mof.go.jp/tax_policy/tax_reform/outline/fy2026/08taikou_03.htm', type: 'government', label: '財務省 令和8年度税制改正の大綱（取得価額の引上げ・適用期限延長）' },
     ],
   },
   {

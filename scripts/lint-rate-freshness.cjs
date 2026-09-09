@@ -82,7 +82,69 @@ const DATED_MEASURES = [
       'OLLAMA_ADVISORIES_VERIFIED_ON を今日・OLLAMA_ADVISORIES_REVIEW_BY を半年後に進めてください ' +
       '(docs/OLLAMA_SECURITY.md の床と日付は lint:docs が照合します)。',
   },
+  {
+    /*
+     * **2 年・3 年おきに延長されてきた措置** (2026-09-09 · パス 140)。令和 8 年度改正 (2026-04-01 施行) で
+     * 上限 30 万 → 40 万円・従業員 500 → 400 人・期限 2029-03-31 になったのに、コードは 5 か月間 30 万円の
+     * ままで、期限そのものを持っていなかった —— 定数さえ在ればこの台帳が鳴らす。
+     */
+    label: '少額減価償却資産の特例 (措法 67 の 5・中小企業者等の即時償却)',
+    source: 'src/shared/depreciation.ts',
+    constName: 'SME_MEASURE_END',
+    warnWithinDays: 180,
+    how:
+      '翌年度の税制改正大綱 (財務省) と国税庁 No.5408 で延長の有無・取得価額の上限・従業員数要件を確かめ、' +
+      'SME_MEASURE_END / SME_UNIT_LIMIT / SME_EMPLOYEE_CAP (src/shared/depreciation.ts) と ' +
+      'complianceKnowledge.ts の tax-small-amount-depreciation を同時に進めてください ' +
+      '(延長されなければ smeMeasureWindow() が measure-ended を返し、画面は特例を勧めません)。',
+  },
+  {
+    label: '中小企業投資促進税制 (措法 42 の 6)',
+    source: 'src/shared/taxCalc.ts',
+    constName: 'INVESTMENT_PROMOTION_MEASURE_END',
+    warnWithinDays: 180,
+    how:
+      '翌年度の税制改正大綱 (財務省) と国税庁 No.5433 で延長の有無を確かめ、INVESTMENT_PROMOTION_MEASURE_END ' +
+      '(src/shared/taxCalc.ts) を進めるか、延長されなければ節税制度カタログから下げてください。',
+  },
 ];
+
+/**
+ * **台帳の母集団を機械で数える** (2026-09-09 · パス 140)。
+ *
+ * 台帳は手で足す物で、足し忘れた期限は誰も見ない。そこで `src/shared` の期限の定数 —— 名前が
+ * `_END` / `_UNTIL` / `_DEADLINE` / `_REVIEW_BY` / `_EXPIRES` で終わる `export const X = 'YYYY-MM-DD'` ——
+ * を全部拾い、台帳に無ければ落とす。過去の日付を表す名前 (`_VERIFIED_ON` / `_STEP_DATE` / `_SINCE` /
+ * `_FROM`) は期限ではないので外。**1 件も見つからなければ走査の故障**として落とす (0 件で通る門は門でない)。
+ */
+const DEADLINE_NAME = /^[A-Z0-9_]+_(END|UNTIL|DEADLINE|REVIEW_BY|EXPIRES)$/;
+const DATED_CONST = /export const ([A-Z0-9_]+)\s*=\s*'(\d{4}-\d{2}-\d{2})'/g;
+
+/** 期限の名前を持つ日付定数の名前を列挙する。 */
+function deadlineConstsIn(text) {
+  const out = [];
+  for (const m of text.matchAll(DATED_CONST)) if (DEADLINE_NAME.test(m[1])) out.push(m[1]);
+  return out;
+}
+
+/** `[{ file, text }]` のうち台帳に無い期限定数を `file::NAME` で返す。 */
+function unledgeredDeadlines(files, ledger = DATED_MEASURES) {
+  const known = new Set(ledger.map((m) => `${m.source}::${m.constName}`));
+  const out = [];
+  for (const { file, text } of files) {
+    for (const name of deadlineConstsIn(text)) if (!known.has(`${file}::${name}`)) out.push(`${file}::${name}`);
+  }
+  return out;
+}
+
+/** `src/shared` の実装ファイル (検査は除く) を読む。 */
+function sharedSources() {
+  const dir = path.join(REPO_ROOT, 'src', 'shared');
+  return fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith('.ts') && !f.endsWith('.d.ts'))
+    .map((f) => ({ file: `src/shared/${f}`, text: fs.readFileSync(path.join(dir, f), 'utf8') }));
+}
 
 /** `export const NAME = 'YYYY-MM-DD';` を読む。読めなければ null。 */
 function declaredDate(src, constName) {
@@ -166,6 +228,28 @@ function selfTest() {
     console.log(`  ${ok ? '✓' : '✗'} ${m.constName} をコードから読める: ${got ?? '読めない'}`);
   }
 
+  // --- 台帳の母集団の対照 (標本) --- 台帳に無い期限定数は拾い、期限でない名前と台帳済みは拾わない。
+  const ledger = [{ source: 'src/shared/x.ts', constName: 'KNOWN_END' }];
+  const coverageCases = [
+    ['台帳に無い _END は拾う', "export const FOO_MEASURE_END = '2027-01-01';", ['src/shared/x.ts::FOO_MEASURE_END']],
+    ['台帳に無い _REVIEW_BY は拾う', "export const BAR_REVIEW_BY = '2027-01-01';", ['src/shared/x.ts::BAR_REVIEW_BY']],
+    ['台帳済みは拾わない', "export const KNOWN_END = '2027-01-01';", []],
+    ['過去の日付の名前 (_VERIFIED_ON / _STEP_DATE) は期限ではない', "export const A_VERIFIED_ON = '2026-09-09';\nexport const B_STEP_DATE = '2026-04-01';", []],
+    ['日付でない値・小文字の名前は拾わない', "export const foo_end = '2027-01-01';\nexport const BAZ_END = 'later';", []],
+    ['同じファイルで別のファイルの台帳項目は拾う (file::NAME で照合)', "export const KNOWN_END = '2027-01-01';", ['src/shared/y.ts::KNOWN_END'], 'src/shared/y.ts'],
+  ];
+  for (const [label, text, want, file = 'src/shared/x.ts'] of coverageCases) {
+    const got = unledgeredDeadlines([{ file, text }], ledger);
+    const ok = JSON.stringify(got) === JSON.stringify(want);
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${JSON.stringify(got)}`);
+  }
+  // 実物の走査が生きている (台帳の定数を自分で見つける) ことも見る。
+  const found = sharedSources().flatMap((f) => deadlineConstsIn(f.text));
+  const liveOk = DATED_MEASURES.every((m) => found.includes(m.constName));
+  if (!liveOk) failed += 1;
+  console.log(`  ${liveOk ? '✓' : '✗'} 走査が台帳の定数 ${DATED_MEASURES.length} 件を src/shared で見つける (${found.length} 件)`);
+
   if (failed > 0) {
     console.error(`❌ self-test ${failed} 件失敗 — 規則が壊れています`);
     return 1;
@@ -185,7 +269,7 @@ function main(argv) {
   // **料率の結果に関わらず期限も見る。** 片方で早期 return すると、
   // もう片方が黙って測られなくなる。
   console.log(`期限つき措置 ${DATED_MEASURES.length} 件:`);
-  const datedFailures = checkDatedMeasures(now);
+  const datedFailures = checkDatedMeasures(now) + checkLedgerCoverage();
 
   if (declared === null) {
     console.error(`❌ ${SOURCE} に ${CONST_NAME} がありません`);
@@ -212,6 +296,31 @@ function main(argv) {
       `${CONST_NAME} を更新してください。`,
   );
   return 1;
+}
+
+/**
+ * 台帳の母集団: `src/shared` の期限定数が全部台帳に在るか。戻り値は失敗した件数。
+ * 走査が 1 件も見つけなければ (台帳の定数さえ見えない) 走査の故障として落とす。
+ */
+function checkLedgerCoverage() {
+  const files = sharedSources();
+  const found = files.flatMap((f) => deadlineConstsIn(f.text));
+  if (found.length === 0) {
+    console.error('❌ src/shared に期限の定数が 1 件も見つかりません (走査の不具合を疑ってください)');
+    return 1;
+  }
+  const missing = unledgeredDeadlines(files);
+  if (missing.length === 0) {
+    console.log(`  ✅ 期限の定数 ${found.length} 件はすべて台帳に在ります`);
+    return 0;
+  }
+  console.error(
+    `❌ 台帳 (DATED_MEASURES) に無い期限の定数が ${missing.length} 件:\n` +
+      missing.map((m) => `   - ${m}`).join('\n') +
+      '\n   期限なら scripts/lint-rate-freshness.cjs の DATED_MEASURES に (label / source / constName / warnWithinDays / how) を足し、' +
+      '期限でないなら _END / _UNTIL / _DEADLINE / _REVIEW_BY / _EXPIRES で終わらない名前にしてください。',
+  );
+  return missing.length;
 }
 
 /** 期限つき措置を全部見る。戻り値は失敗した件数。 */
@@ -247,7 +356,7 @@ function checkDatedMeasures(now) {
   return failed;
 }
 
-module.exports = { evaluate, fiscalYear, declaredFiscalYear, evaluateDated, declaredDate, DATED_MEASURES };
+module.exports = { evaluate, fiscalYear, declaredFiscalYear, evaluateDated, declaredDate, DATED_MEASURES, deadlineConstsIn, unledgeredDeadlines };
 
 if (require.main === module) {
   process.exit(main(process.argv.slice(2)));
