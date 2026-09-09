@@ -18389,6 +18389,57 @@ uber-eats / demae-can の advise は画面が無く (`VoiceCommandBar` と `Busi
 - 下書き (`servicehub.teamradar.draft.v1`) は snapshot より優先して復元される。読めなかった保存と下書きが両方在るとき、
   画面のメンバーは下書き、注記は保存先について言う (別の物を指している)。
 
+## パス 126 (2026-09-09) — **同じ注文の Shopify 記録と同じ CSV の 2 度読みが、売上高と受注件数を 2 度数えていた**
+
+### 何が起きていたか
+
+パス 124・125 の「同じ鍵の 2 件目」を、販売記録で当たり直した。入口は 2 つ:
+
+1. **Shopify の画面**は注文名と金額から売上集計へ 1 件を書くが、同じ注文名 (`Shopify #1001`) を 2 度記録しても
+   断らない。注文名は 1 注文に 1 つなので、2 件目は同じ注文である。
+2. **売上集計の CSV 取り込み**は既存の記録と照合せず `addMany` する。同じファイルを 2 度読むと全行が 2 倍になる。
+
+2 度数えられた売上は、売上集計のタイル・チャネル別構成・月次推移・KPI の「売上集計から取り込む」・経営サマリー
+(`sales.totalAmount` / `totalOrders`・平均受注単価・集中度)・金融機関等提出用の書面 §2「売上高（販売記録）」
+「受注件数」に届く。
+
+**行の内容は鍵にならない。** 同じ日に同じ額の別の注文はありうる (日付・チャネル・金額・件数・メモが同じ 2 行)。
+だから CSV は行を落とさず、**全行が既存と同じ**ときだけ「同じファイルを 2 度読んだ」として断り (本当に同じ売上が
+2 度あったのなら、その行だけフォームから足す道を言う)、一部が同じなら取り込んで件数を言う。注文名は鍵になるので
+Shopify の画面は断る。
+
+### 直し
+
+- `data/sales.ts`: `SHOPIFY_NOTE_PREFIX` / `shopifyOrderNote` (書く側の形を 1 か所に —— `shopifyImport.ts` が使う。
+  形を 2 か所に写すと、片方が変わった日に重複が見えなくなる)、`salesOrderRef` (読む側)、`findOrderEntry` /
+  `findShopifyOrder`、`findDuplicateOrders`、`duplicateOrderMessage` / `duplicateOrdersNote` /
+  `duplicateOrdersSheetNote`、`salesRowKey` / `countStoredRows` (多重集合として 1 対 1 に当てる)。
+- `data/salesCsv.ts`: `salesFromCsv(text, existing)` が `stored` (既存と同じ内容の行数) と `allStored` を返す。
+- `pages/SalesPage.tsx`: 全行同じ CSV を断る・一部同じなら件数を言う・同じ注文名の重複が在れば一覧の上に警告。
+- `pages/ShopifyPage.tsx`: 同じ注文名の 2 度目を断る (訂正の道: 売上集計の × で消してから)。
+- `data/overview.ts`: `sales.duplicateOrders` (census)。`data/bankSubmission.ts`: §2 の但し書きに「売上高と受注件数は
+  その重複を含んだ値です」を続ける (金額は畳まない —— パス 124・125 と同じ答え方)。
+- 検査: `sales.test.ts` (形・判定・census・文面・行の印)、`salesCsv.test.ts` (`stored` / `allStored`)、`overview.test.ts`、
+  `bankSubmission.test.ts` (§2 + 対照)、画面 (`salesDuplicateImport.test.ts`: 断り・一部・対照・警告 /
+  `shopifyDuplicateOrder.test.ts`: 断り・対照)、e2e `desktop` (Shopify の 2 度目を断り、売上集計は 1 行)。
+
+### 対照
+
+| # | 何を壊したか | 鳴ったか |
+| --- | --- | --- |
+| A | `findShopifyOrder` を常に null に (元の判断: 同じ注文名を断らない) | 🔔 `sales.test.ts` の ★ (同じ注文名の既存の控えを返す) と `shopifyDuplicateOrder.test.ts` の ★ (2 度目を断り・訂正の案内) の 2 本だけが落ちる (2 failed / 31 passed)。対照「別の注文名なら通り・注文名の無い記録は判定しない」は通ったまま = 落ちる場所が**足した検査そのもの** |
+| B | `findDuplicateOrders` を常に空に (元の判断: 既存の重複を数えない) | 🔔 4 本が落ちる —— `sales.test.ts` の ★ (census)、`overview.test.ts` の ★ (`sales.duplicateOrders`)、`bankSubmission.test.ts` の ★ (§2 の但し書きに「重複を含んだ値」が無い)、`salesDuplicateImport.test.ts` の ★ (一覧の上の警告)。対照 (注文名が違う・注文名無し) は通ったまま (4 failed / 186 passed) |
+| C | `salesFromCsv` の `allStored` を常に false に (元の判断: 同じファイルを 2 度読んでも取り込む) | 🔔 `salesCsv.test.ts` の ★ (全行既存なら allStored) と `salesDuplicateImport.test.ts` の ★ (全行同じ CSV を断り、件数が増えない) の 2 本だけが落ちる (2 failed / 11 passed)。対照「一部だけ同じなら取り込んで件数を言う」「重ならなければ従来どおり」は通ったまま |
+| D | (e2e) パス 125 の版に当てる | 🔔 新しい driver で `SERVICE_HUB_E2E_ONLY=desktop` を `standalone-pass125.html` に当てると、既存の 14 検査 (パス 122〜125 の ★ を含む) は通ったまま、同じ注文名の 2 度目の記録の後の「既に売上集計に記録されています」の待ちが 15 秒で切れる (TimeoutError · `controlD exit=1`)。落ちる場所が**足した検査そのもの** = 古い版は 2 度目の記録を黙って通し、売上高を 2 度数えていた |
+
+### 残る物
+
+- 売上集計のフォーム (手入力) は同じ内容の 2 件目を断らない —— 断る鍵が無い (同じ売上が 2 度ある) ので、意図した
+  設計。注文名つきで入れれば Shopify と同じ判定が効く (メモを `Shopify #…` の形にする)。
+- KPI 実績の CSV (パス 124) は同じ (期間, 事業) を**行ごとに**スキップし、販売記録の CSV は**全行一致**でだけ断る ——
+  鍵の有無で答え方が違う (前者には鍵がある)。
+- 0 倒しの母集団 (`lint:zero-fold`) は **280 のまま** —— `findOrderEntry` の `?? null`・`countStoredRows` の `prev === undefined ? 1 : prev + 1` / `left - 1` は規則 (`? … : 0` / `?? 0` / `|| 0`) の外。
+
 ## パス 125 (2026-09-09) — **同じメールアドレスのメンバーが 2 度招待でき、シートを 2 つ使い、一人当たりの金額を薄めていた**
 
 ### 何が起きていたか

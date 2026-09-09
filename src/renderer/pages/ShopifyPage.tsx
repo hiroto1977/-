@@ -5,7 +5,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
-import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
+import { SALES_COLLECTION, duplicateOrderMessage, findShopifyOrder, type SalesEntry } from '../data/sales';
 import { orderToSalesEntry } from '../data/shopifyImport';
 
 const inputStyle = {
@@ -20,7 +20,7 @@ const inputStyle = {
 /** Record a Shopify order into the cross-channel 売上集計 (→ KPI). Bridges
  *  Shopify into the analytics pipeline so dashboards reflect real orders. */
 function OrderToSalesForm() {
-  const { add } = useCollection<SalesEntry>(SALES_COLLECTION);
+  const { records, add } = useCollection<SalesEntry>(SALES_COLLECTION);
   const [name, setName] = useState('');
   const [total, setTotal] = useState('');
   const [date, setDate] = useState('');
@@ -34,6 +34,12 @@ function OrderToSalesForm() {
     const entry = orderToSalesEntry({ name, total }, date ? { date } : {});
     if (!entry) {
       setErr('金額を正しく入力してください (例: ¥12,000)');
+      return;
+    }
+    // 同じ注文名は 1 件 —— 2 度記録すると売上高と受注件数に 2 度数えられる (パス 126)。
+    const dup = findShopifyOrder(records.map((r) => r.data), name);
+    if (dup !== null) {
+      setErr(duplicateOrderMessage(dup));
       return;
     }
     try {

@@ -241,3 +241,113 @@ export function monthlyTotals(entries: readonly SalesEntry[]): readonly { month:
     .sort((a, b) => (a.month < b.month ? 1 : -1));
   // Stryker restore EqualityOperator
 }
+
+// --- 同じ記録の 2 件目 (パス 126) ---------------------------------------------------
+
+/**
+ * Shopify の注文を売上集計へ記録するときのメモの形。`orderToSalesEntry` (書く側) と
+ * `salesOrderRef` (読む側) が**同じ 1 か所**を使う —— 形を 2 か所に写すと、片方が変わった日に
+ * 重複が見えなくなる。
+ */
+export const SHOPIFY_NOTE_PREFIX = 'Shopify ';
+
+/** 注文名つきなら `Shopify #1001`、無ければ `Shopify`。 */
+export function shopifyOrderNote(name: string | undefined): string {
+  const n = (name ?? '').trim();
+  return n.length > 0 ? `${SHOPIFY_NOTE_PREFIX}${n}` : 'Shopify';
+}
+
+/**
+ * 控えの「注文名」。`Shopify #1001` の形のメモだけを注文名と読む (注文名の無い `Shopify` や
+ * 手で書いたメモは null)。**同じ注文名の 2 件目は同じ注文** —— 販売記録は日付・チャネル・金額・
+ * 件数が同じ別の売上を持てる (同じ日に同じ額の注文が 2 つ) ので、行の内容は鍵にならないが、
+ * 注文名は 1 注文に 1 つである。
+ */
+export function salesOrderRef(e: Pick<SalesEntry, 'note'>): string | null {
+  const note = (e.note ?? '').trim();
+  return note.startsWith(SHOPIFY_NOTE_PREFIX) && note.length > SHOPIFY_NOTE_PREFIX.length ? note : null;
+}
+
+/** 同じ注文名の控えが既に在ればそれを返す (無ければ null)。Shopify の画面が記録を断る判断。 */
+export function findOrderEntry(existing: readonly SalesEntry[], ref: string): SalesEntry | null {
+  const key = ref.trim();
+  if (key.length === 0) return null;
+  return existing.find((e) => salesOrderRef(e) === key) ?? null;
+}
+
+/** 注文名で引く (注文名が空なら null —— 注文名の無い記録は重複を判定しない)。 */
+export function findShopifyOrder(existing: readonly SalesEntry[], name: string | undefined): SalesEntry | null {
+  const n = (name ?? '').trim();
+  return n.length === 0 ? null : findOrderEntry(existing, shopifyOrderNote(n));
+}
+
+/** 同じ注文名が 2 件以上ある組。 */
+export interface DuplicateOrderGroup {
+  readonly ref: string;
+  /** その組の件数 (2 以上)。 */
+  readonly count: number;
+}
+
+/** 既に在る重複 (同じ注文名が 2 件以上) を注文名の昇順で返す。無ければ空。 */
+export function findDuplicateOrders(entries: readonly SalesEntry[]): DuplicateOrderGroup[] {
+  const counts = new Map<string, number>();
+  for (const e of entries) {
+    const ref = salesOrderRef(e);
+    if (ref === null) continue;
+    const prev = counts.get(ref);
+    counts.set(ref, prev === undefined ? 1 : prev + 1);
+  }
+  return [...counts.entries()]
+    .filter(([, count]) => count >= 2)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([ref, count]) => ({ ref, count }));
+}
+
+/** 同じ注文名の記録を断るときの文。訂正の道 (売上集計の × で消してから) を言う。 */
+export function duplicateOrderMessage(existing: SalesEntry): string {
+  const ref = salesOrderRef(existing) ?? (existing.note ?? '').trim();
+  return `${ref} は既に売上集計に記録されています（${existing.date}・${existing.amount.toLocaleString('ja-JP')} 円）。訂正するときは売上集計の一覧の × で消してから記録し直してください（同じ注文を 2 度記録すると売上高に 2 度数えられます）。`;
+}
+
+const listOrderGroups = (groups: readonly DuplicateOrderGroup[]): string =>
+  groups.map((g) => `${g.ref} ×${g.count}`).join('、');
+
+/** 売上集計の一覧の上の警告 (既に重複が在るとき)。無ければ null。 */
+export function duplicateOrdersNote(groups: readonly DuplicateOrderGroup[]): string | null {
+  if (groups.length === 0) return null;
+  return `同じ注文名の記録が ${groups.length} 組重複しており、売上高と受注件数に 2 度数えられています（${listOrderGroups(groups)}）。一覧の × で余分な行を消してください。`;
+}
+
+/** 書面 §2 の但し書き (**相手に渡る面**)。無ければ null。 */
+export function duplicateOrdersSheetNote(groups: readonly DuplicateOrderGroup[]): string | null {
+  if (groups.length === 0) return null;
+  return `販売記録に同じ注文名の記録が ${groups.length} 組あり（${listOrderGroups(groups)}）、売上高と受注件数はその重複を含んだ値です。`;
+}
+
+/**
+ * 行の内容 (日付・チャネル・金額・件数・メモ) の印。**断る鍵ではない** —— 同じ内容の別の売上は
+ * ありうる。CSV の取り込みが「同じファイルを 2 度読んだか」を測るために使う。
+ */
+export function salesRowKey(e: SalesEntry): string {
+  return `${e.date}|${e.channel}|${e.amount}|${e.orders}|${(e.note ?? '').trim()}`;
+}
+
+/** `rows` のうち、内容が `existing` に既に在る行の数 (多重集合として 1 対 1 に当てる)。 */
+export function countStoredRows(existing: readonly SalesEntry[], rows: readonly SalesEntry[]): number {
+  const pool = new Map<string, number>();
+  for (const e of existing) {
+    const key = salesRowKey(e);
+    const prev = pool.get(key);
+    pool.set(key, prev === undefined ? 1 : prev + 1);
+  }
+  let stored = 0;
+  for (const r of rows) {
+    const key = salesRowKey(r);
+    const left = pool.get(key);
+    if (left !== undefined && left > 0) {
+      stored += 1;
+      pool.set(key, left - 1);
+    }
+  }
+  return stored;
+}

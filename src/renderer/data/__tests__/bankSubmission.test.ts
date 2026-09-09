@@ -1357,3 +1357,23 @@ describe('§3 の但し書き — 同じメールアドレスの重複 (パス 1
     expect(section(buildBankSubmissionSheet(inputWith(overviewWith({ members: [{ role: 'owner', email: 'a@x.jp' }, { role: 'admin', email: 'b@x.jp' }] }))).sections, '3.').caption ?? '').not.toContain('重複');
   });
 });
+
+describe('§2 の但し書き — 同じ注文名の重複 (パス 126)', () => {
+  const dupSales = [
+    { date: '2026-04-10', channel: 'shopify' as const, amount: 12_000, orders: 1, note: 'Shopify #1001' },
+    { date: '2026-04-12', channel: 'shopify' as const, amount: 12_000, orders: 1, note: 'Shopify #1001' },
+  ];
+
+  it('★ 重複が在れば、期間の断りに続けて「売上高と受注件数はその重複を含んだ値です」と言い、金額は重複を含んだまま', () => {
+    const m = buildBankSubmissionSheet(inputWith(overviewWith({ sales: dupSales })));
+    const s = section(m.sections, '2.');
+    expect(s.caption).toContain('上の金額は販売記録の');
+    expect(s.caption).toContain('販売記録に同じ注文名の記録が 1 組あり（Shopify #1001 ×2）、売上高と受注件数はその重複を含んだ値です。');
+    expect(value(s, '受注件数')).toBe('2件');
+  });
+
+  it('対照: 重複が無ければ但し書きに「重複」は無い', () => {
+    const m = buildBankSubmissionSheet(inputWith(overviewWith({ sales: [dupSales[0]!, { ...dupSales[1]!, note: 'Shopify #1002' }] })));
+    expect(section(m.sections, '2.').caption ?? '').not.toContain('重複');
+  });
+});

@@ -19,6 +19,7 @@ import { isCalendarMonth } from '../../shared/isoDate';
 import { fiscalYearMonths, fiscalYearWindow } from './kessanImport';
 import { duplicateActualsSheetNote, isValidPeriod, zeroMembersPerCapitaNote, zeroRevenueRatioNote } from './kpiActuals';
 import { duplicateMembersSheetNote } from './members';
+import { duplicateOrdersSheetNote } from './sales';
 import {
   BANK_FORMAT_DEFAULT,
   BLANK,
@@ -364,7 +365,7 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
    * §2 の但し書き。**販売記録が覆う期間**を述べ、KPI 実績の対象期間と食い違うなら
    * それも述べる (同じ書面に 2 つの売上高が並ぶので、読み手が突き合わせられるように)。
    */
-  const salesScopeCaption = (): string | null => {
+  const salesScopeBase = (): string | null => {
     const sp = o.sales.period;
     if (sp === null) return null;
     const salesSpan = `${formatPeriodRange(sp.from.slice(0, 7), sp.to.slice(0, 7), f)}・${sp.months} か月`;
@@ -376,6 +377,11 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
     return sameWindow
       ? head
       : `${head}§1 の売上高（KPI 実績）は${periodSpan(o.kpi.periods, f)}分の累計で、期間が異なります。`;
+  };
+  // 同じ注文名の重複 (パス 126) は期間の断りの後に続ける (相手に渡る面は画面の警告と同じ事実を述べる)。
+  const salesScopeCaption = (): string | null => {
+    const parts = [salesScopeBase(), duplicateOrdersSheetNote(o.sales.duplicateOrders)].filter((s): s is string => s !== null);
+    return parts.length === 0 ? null : parts.join('');
   };
 
   const conc = o.sales.concentration;

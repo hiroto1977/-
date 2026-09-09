@@ -3,7 +3,7 @@
  * プラン) を 1 つの経営概況に束ねる純粋な集約ロジック。各機能の純粋関数を
  * 合成するだけで、IO は持たない (呼び出し側が record store から渡す)。
  */
-import { summarizeSales, type SalesEntry, type SalesPeriod } from './sales';
+import { findDuplicateOrders, summarizeSales, type DuplicateOrderGroup, type SalesEntry, type SalesPeriod } from './sales';
 import {
   summarizeFundamentals,
   findDuplicateActuals,
@@ -127,6 +127,12 @@ export interface BusinessOverview {
     topChannel: string | null;
     /** 売上集中度 (チャネル依存リスク)。売上が無ければ null。 */
     concentration: RevenueConcentration | null;
+    /**
+     * 同じ注文名 (`Shopify #1001`) の記録が 2 件以上ある組 (パス 126)。空なら重複なし。
+     * `totalAmount` / `totalOrders` はこの重複を**含んだまま**なので、相手に渡る面 (書面 §2) は
+     * これが空でなければ述べる。
+     */
+    duplicateOrders: readonly DuplicateOrderGroup[];
     /**
      * 販売記録の合計が覆っている期間。**KPI 実績の対象期間とは別物** ——
      * 書面は 2 つの売上高を並べて刷るので、それぞれが何か月分かを述べる口が要る
@@ -334,6 +340,7 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
       channelCount: salesSummary.byChannel.length,
       topChannel,
       concentration: computeRevenueConcentration(salesSummary.byChannel),
+      duplicateOrders: findDuplicateOrders(input.sales),
       period: salesSummary.period,
     },
     kpi: {

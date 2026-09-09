@@ -746,3 +746,25 @@ describe('team.duplicateMembers — 同じメールアドレスの重複 (パス
     expect(buildBusinessOverview({ plan: 'business', sales: [], kpiActuals: KPI, members: [{ role: 'owner' }, { role: 'owner' }] }).team.duplicateMembers).toEqual([]);
   });
 });
+
+describe('sales.duplicateOrders — 同じ注文名の重複 (パス 126)', () => {
+  it('★ 同じ注文名が 2 件あれば census に載り、売上高と受注件数はその重複を含んだまま', () => {
+    const o = buildBusinessOverview({
+      plan: 'business',
+      sales: [
+        { date: '2026-05-01', channel: 'shopify', amount: 12000, orders: 1, note: 'Shopify #1001' },
+        { date: '2026-05-01', channel: 'shopify', amount: 12000, orders: 1, note: 'Shopify #1001' },
+      ],
+      kpiActuals: [],
+      members: [],
+    });
+    expect(o.sales.duplicateOrders).toEqual([{ ref: 'Shopify #1001', count: 2 }]);
+    expect(o.sales.totalAmount).toBe(24000);
+    expect(o.sales.totalOrders).toBe(2);
+  });
+
+  it('対照: 注文名が違えば空・注文名の無い記録は数えない', () => {
+    const o = buildBusinessOverview({ plan: 'business', sales: SALES, kpiActuals: [], members: [] });
+    expect(o.sales.duplicateOrders).toEqual([]);
+  });
+});

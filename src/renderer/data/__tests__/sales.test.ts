@@ -8,6 +8,17 @@ import {
   monthlyTotals,
   SALES_COLLECTION,
   CHANNEL_LABEL,
+  SHOPIFY_NOTE_PREFIX,
+  shopifyOrderNote,
+  salesOrderRef,
+  findOrderEntry,
+  findShopifyOrder,
+  findDuplicateOrders,
+  duplicateOrderMessage,
+  duplicateOrdersNote,
+  duplicateOrdersSheetNote,
+  salesRowKey,
+  countStoredRows,
   type SalesEntry,
 } from '../sales';
 
@@ -222,5 +233,80 @@ describe('monthlyTotals', () => {
       { date: '2026-04-10', channel: 'amazon', amount: 1, orders: 1 },
     ];
     expect(monthlyTotals(entries).map((m) => m.month)).toEqual(['2026-05', '2026-04', '2026-03']);
+  });
+});
+
+describe('同じ記録の 2 件目 (パス 126)', () => {
+  const e = (date: string, amount: number, note?: string, orders = 1): SalesEntry =>
+    note === undefined ? { date, channel: 'shopify', amount, orders } : { date, channel: 'shopify', amount, orders, note };
+
+  it('shopifyOrderNote は書く側の形、salesOrderRef は読む側 —— 同じ接頭辞を 1 か所で持つ', () => {
+    expect(shopifyOrderNote('#1001')).toBe('Shopify #1001');
+    expect(shopifyOrderNote(' #1001 ')).toBe('Shopify #1001');
+    expect(shopifyOrderNote('')).toBe('Shopify');
+    expect(shopifyOrderNote(undefined)).toBe('Shopify');
+    expect(SHOPIFY_NOTE_PREFIX).toBe('Shopify ');
+    expect(salesOrderRef({ note: shopifyOrderNote('#1001') })).toBe('Shopify #1001');
+    // 注文名の無い控え・手で書いたメモ・メモ無しは注文名ではない
+    expect(salesOrderRef({ note: 'Shopify' })).toBeNull();
+    expect(salesOrderRef({ note: 'Shopify ' })).toBeNull();
+    expect(salesOrderRef({ note: 'セール' })).toBeNull();
+    expect(salesOrderRef({})).toBeNull();
+  });
+
+  it('★ findOrderEntry / findShopifyOrder は同じ注文名の既存の控えを返し、無ければ null (注文名が空なら判定しない)', () => {
+    const existing = [e('2026-04-01', 12000, 'Shopify #1001'), e('2026-04-02', 8000, 'セール'), e('2026-04-03', 5000)];
+    expect(findOrderEntry(existing, 'Shopify #1001')).toEqual(existing[0]);
+    expect(findOrderEntry(existing, 'Shopify #9999')).toBeNull();
+    expect(findOrderEntry(existing, '')).toBeNull();
+    expect(findShopifyOrder(existing, '#1001')).toEqual(existing[0]);
+    expect(findShopifyOrder(existing, ' #1001 ')).toEqual(existing[0]);
+    expect(findShopifyOrder(existing, '#1002')).toBeNull();
+    expect(findShopifyOrder(existing, '')).toBeNull();
+    expect(findShopifyOrder(existing, undefined)).toBeNull();
+  });
+
+  it('★ findDuplicateOrders は同じ注文名が 2 件以上の組だけを昇順で返し、注文名の無い控えは数えない', () => {
+    const groups = findDuplicateOrders([
+      e('2026-04-01', 12000, 'Shopify #1002'), e('2026-04-01', 12000, 'Shopify #1001'), e('2026-04-05', 12000, 'Shopify #1001'),
+      e('2026-04-06', 3000, 'Shopify #1002'), e('2026-04-07', 3000, 'Shopify #1002'), e('2026-04-08', 3000, 'Shopify'),
+      e('2026-04-08', 3000, 'Shopify'), e('2026-04-09', 100), e('2026-04-09', 100),
+    ]);
+    expect(groups).toEqual([
+      { ref: 'Shopify #1001', count: 2 },
+      { ref: 'Shopify #1002', count: 3 },
+    ]);
+    expect(findDuplicateOrders([e('2026-04-01', 1, 'Shopify #1'), e('2026-04-01', 1, 'Shopify #2')])).toEqual([]);
+    expect(findDuplicateOrders([])).toEqual([]);
+  });
+
+  it('文面: 断り・一覧の警告・書面の但し書きは、注文名と日付・金額・件数を名指しする', () => {
+    expect(duplicateOrderMessage(e('2026-04-01', 12000, 'Shopify #1001'))).toBe(
+      'Shopify #1001 は既に売上集計に記録されています（2026-04-01・12,000 円）。訂正するときは売上集計の一覧の × で消してから記録し直してください（同じ注文を 2 度記録すると売上高に 2 度数えられます）。',
+    );
+    const groups = [
+      { ref: 'Shopify #1001', count: 2 },
+      { ref: 'Shopify #1002', count: 3 },
+    ];
+    expect(duplicateOrdersNote(groups)).toBe(
+      '同じ注文名の記録が 2 組重複しており、売上高と受注件数に 2 度数えられています（Shopify #1001 ×2、Shopify #1002 ×3）。一覧の × で余分な行を消してください。',
+    );
+    expect(duplicateOrdersSheetNote(groups.slice(0, 1))).toBe(
+      '販売記録に同じ注文名の記録が 1 組あり（Shopify #1001 ×2）、売上高と受注件数はその重複を含んだ値です。',
+    );
+    expect(duplicateOrdersNote([])).toBeNull();
+    expect(duplicateOrdersSheetNote([])).toBeNull();
+  });
+
+  it('salesRowKey は行の内容 (日付・チャネル・金額・件数・メモ) で決まり、countStoredRows は多重集合として 1 対 1 に当てる', () => {
+    expect(salesRowKey(e('2026-04-01', 100, 'a'))).toBe(salesRowKey(e('2026-04-01', 100, ' a ')));
+    expect(salesRowKey(e('2026-04-01', 100))).toBe(salesRowKey(e('2026-04-01', 100, '')));
+    expect(salesRowKey(e('2026-04-01', 100))).not.toBe(salesRowKey(e('2026-04-01', 100, undefined, 2)));
+    const existing = [e('2026-04-01', 100), e('2026-04-01', 100), e('2026-04-02', 200)];
+    // 同じ内容 3 行のうち、既存に在るのは 2 行 (3 行目は新しい売上)
+    expect(countStoredRows(existing, [e('2026-04-01', 100), e('2026-04-01', 100), e('2026-04-01', 100)])).toBe(2);
+    expect(countStoredRows(existing, [e('2026-04-02', 200), e('2026-04-03', 300)])).toBe(1);
+    expect(countStoredRows([], [e('2026-04-01', 100)])).toBe(0);
+    expect(countStoredRows(existing, [])).toBe(0);
   });
 });

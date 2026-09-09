@@ -227,6 +227,25 @@ async function desktopSuite(browser) {
     await page.waitForFunction((n) => document.querySelectorAll('tbody tr').length < n, before, { timeout: 15000 });
   }
 
+  // パス 126: 同じ注文名の Shopify 注文は 2 度記録できない (旧: 売上集計に 2 件入り、売上高が 2 度数えられた)
+  await gotoService(page, '#shopify', 'input[placeholder="注文名 (#1001)"]');
+  await page.getByPlaceholder('注文名 (#1001)').fill('#E2E-DUP');
+  await page.getByPlaceholder('金額 (¥12,000)').fill('12000');
+  await page.getByRole('button', { name: '売上集計に記録', exact: true }).click();
+  await page.waitForFunction(() => document.body.textContent.includes('売上集計に記録しました'), undefined, { timeout: 15000 });
+  await page.getByPlaceholder('注文名 (#1001)').fill('#E2E-DUP');
+  await page.getByPlaceholder('金額 (¥12,000)').fill('12000');
+  await page.getByRole('button', { name: '売上集計に記録', exact: true }).click();
+  await page.waitForFunction(() => document.body.textContent.includes('既に売上集計に記録されています'), undefined, { timeout: 15000 });
+  await gotoService(page, '#sales', 'input[placeholder="YYYY-MM-DD"]');
+  const dupOrders = page.locator('tbody tr', { hasText: 'Shopify #E2E-DUP' });
+  ok((await dupOrders.count()) === 1, `sales: ★ 同じ注文名の 2 度目は断られ、売上集計は 1 行のまま (実際 ${await dupOrders.count()} 行)`);
+  while ((await dupOrders.count()) > 0) {
+    const before = await page.locator('tbody tr').count();
+    await dupOrders.first().getByRole('button', { name: '削除' }).click();
+    await page.waitForFunction((n) => document.querySelectorAll('tbody tr').length < n, before, { timeout: 15000 });
+  }
+
   // 士業 CRM: 追加 → ステータス変更 → 他ページ非漏出
   await gotoService(page, '#cpa', 'text=連携先一覧');
   await page.getByPlaceholder('例: 山田 太郎').fill('E2E会計士');
