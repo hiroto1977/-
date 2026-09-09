@@ -1668,6 +1668,9 @@ export const SNAPSHOT = {
     ],
     fetchedAt: '',
     isMock: true,
+    // 保存先から何が読めたか (パス 120)。同梱の初期値は「まだ無い」。
+    stored: 'none' as 'saved' | 'none' | 'unreadable',
+    storedNote: null as string | null,
   },
 
   templates: {

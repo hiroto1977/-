@@ -18345,6 +18345,50 @@ uber-eats / demae-can の advise は画面が無く (`VoiceCommandBar` と `Busi
 - 投資信託の利用者行は年初来リターン未入力を 0 として保存している (`normalizeHolding` の既定)。提案はそれを 0% として読む
   (「未入力」と「0%」の区別は行の側の課題)。
 
+## パス 120 (2026-09-09) — **チームレーダーは保存した物を「同梱データ」と刷り、読めなかった保存を黙って見本に化けさせていた**
+
+パス 118 で保存と読み込みを繋いだ直後の実測。`buildTeamRadarSnapshot` は**常に `isMock: true`** で組む (main は 2026-08 から
+そうで、パス 118 はそれを shared へ移した)。`StatusBar` は `source === 'live' && payloadIsMock` なら「同梱データ」のバッジを
+出す (パス 91) —— だから:
+
+| 場面 | 画面が言うこと |
+| --- | --- |
+| 自分のチームを保存し、直後に `refresh()` が走る | バッジ **「同梱データ」** —— 利用者のメンバーが「作り物」と刷られる |
+| 保存ファイル / `localStorage` の中身が壊れている・読めない | 黙って**見本の 3 人 (営業部)** に化ける。バッジは「同梱データ」で、なぜ見本なのかは誰も言わない。「チーム情報を保存」を押せば画面の内容で上書きされ、元の保存値は戻らない |
+
+2 つ目はパス 88 の形 (読めない保管を「初めまして」に見せる) がチームレーダーに在った。talent の枝は「壊れた保存値と
+未保存を区別しても画面ですることは同じ」と注記して空で続けるが、こちらは**見本の人物**が出る —— 区別しないと、
+利用者の物が消えたことに気付けない。
+
+### 直し
+
+- `shared/teamRadarState.ts`: `StoredTeamRadar` (`saved` / `none` / `unreadable`) と `readStoredTeamRadar(raw | null)`
+  (JSON でない・オブジェクトでない・`members` が判定を通らない → **理由つきで unreadable**。department / evaluatedAt は
+  寛容に読む —— 失うのは飾りだけ)。`buildTeamRadarSnapshot(stored)` は**見本を返すときだけ `isMock`**、`stored` と
+  `storedNote` (読めなかったときの 1 行) を持つ。
+- main `loadTeamRadarState`: ENOENT は `none`、それ以外の失敗 (権限・I/O) は `unreadable`。ブラウザ版は Web Storage が拒む
+  環境 (パス 89) も `unreadable` として見本を返す (黙って見本にしない)。
+- `TeamRadarPage`: shared の `TeamRadarSnapshot` を読み (画面が持っていた写しを削除 —— パス 62 / 116 の形が 1 つ残っていた)、
+  `storedNote` を注記として刷る。バッジは `isMock` から「ローカル」/「同梱データ」に分かれる。
+- 検査: shared (`readStoredTeamRadar` の 3 状態と理由・`buildTeamRadarSnapshot` の 3 状態)、main (mock + 実 fs)、shim の往復
+  (saved / none / unreadable)、画面 (`teamRadarStoredNotice.test.ts`: バッジと注記)、e2e `teamRadarSuite` (保存後のバッジは
+  「ローカル」・壊れた保存値は注記が理由を言い、バッジは「同梱データ」)。
+
+### 対照
+
+| # | 何を壊したか | 鳴ったか |
+| --- | --- | --- |
+| A | `isMock: true` に固定し直す | 🔔 3 本 (shared / main / shim) |
+| B | 壊れた JSON を黙って `none` に倒す (元の判断) | 🔔 4 本 |
+| C | (e2e) パス 119 の版に当てる | 🔔 保存後のバッジが「同梱データ」のまま (「ローカル」の ★ が落ち、注記は 20 秒出ない) |
+| D | (画面) `storedNote` を描かない | 🔔 1 本 (`teamRadarStoredNotice.test.ts`) |
+
+### 残る物
+
+- `fetchedAt` は見本の固定時刻 (2035-04-15) のまま。画面は刷っていないが、保存した物の取得時刻としては嘘。
+- 下書き (`servicehub.teamradar.draft.v1`) は snapshot より優先して復元される。読めなかった保存と下書きが両方在るとき、
+  画面のメンバーは下書き、注記は保存先について言う (別の物を指している)。
+
 ## パス 115 (2026-09-09) — **同じ `YYYY-MM-DD` の判定が 7 通りに割れ、暦を見るのは 1 つだけだった**
 
 パス 114 まで「入力の天井」を数えてきた。今回は**入力の形**のうち、いちばん多くの画面が持つ

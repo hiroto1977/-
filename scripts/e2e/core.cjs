@@ -2493,6 +2493,20 @@ async function teamRadarSuite(browser) {
   ok(!refused.ok && /length 5/.test(refused.message) && refused.untouched,
     `teamRadar: ★ 形の合わない保存は断り、保存先を汚さない — 実際 ${JSON.stringify(refused)}`);
 
+  // 保存した物は利用者の物 —— バッジが「同梱データ」と言わない (パス 120 までは常に isMock: true だった)。
+  const afterSave = (await page.locator('body').textContent()) ?? '';
+  ok(!afterSave.includes('同梱データ') && afterSave.includes('ローカル'),
+    'teamRadar: ★ 保存した状態のバッジは「ローカル」(「同梱データ」ではない)');
+
+  // 壊れた保存値: 見本を表示しつつ、そう言う (黙って見本の 3 人に化けない)。
+  await page.evaluate(() => localStorage.setItem('teamradar.state', '{壊れた'));
+  await gotoService(page, '#/teamradar', 'text=保存 / エクスポート');
+  // 保存先を読むのは「更新」(マウント時の自動取得は資格情報のあるサービスだけ)。
+  await page.getByRole('button', { name: '更新' }).click();
+  await page.waitForSelector('text=保存したチームの状態を読めませんでした', { timeout: 20000 });
+  const afterCorrupt = (await page.locator('body').textContent()) ?? '';
+  ok(afterCorrupt.includes('同梱データ'), 'teamRadar: ★ 読めなかったときのバッジは「同梱データ」で、注記が理由を言う');
+
   ok(errs.length === 0, `teamRadar: ページエラー 0 (実際 ${errs.length})`);
   await ctx.close();
 }

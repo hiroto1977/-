@@ -5,12 +5,12 @@ import type { ActionContext, ActionMap, FetchContext } from './types';
 import { isSafeExportPath, writeExportFile } from './exportPaths';
 import type { ActionData, ExportFileResult } from '../../shared/actionData';
 import {
-  DEFAULT_TEAM_RADAR_STATE,
   SCORE_MAX,
   buildTeamRadarSnapshot,
-  parseStoredTeamRadarState,
+  readStoredTeamRadar,
   validateMembers,
   validateTeamRadarState,
+  type StoredTeamRadar,
   type TeamRadarSnapshot,
   type TeamRadarState,
 } from '../../shared/teamRadarState';
@@ -27,7 +27,7 @@ export {
   isValidScore,
   validateMembers,
 } from '../../shared/teamRadarState';
-export type { AxisLabel, TeamMember, TeamRadarSnapshot, TeamRadarState } from '../../shared/teamRadarState';
+export type { AxisLabel, StoredTeamRadar, TeamMember, TeamRadarSnapshot, TeamRadarState } from '../../shared/teamRadarState';
 
 /**
  * Team radar chart — 18 番目のサービス。
@@ -222,24 +222,24 @@ export interface StateDeps {
 }
 
 // Default-arrow lambdas in deps fallback only run in production (tests
-// always inject deps). String-literal fallbacks ("営業部", "ISO date")
-// are decorative defaults. Boundary mutants on slice(0, 64) / slice(0, 32) /
-// length > 0 are equivalent for any non-empty input — 1 boundary test
-// (oversize-truncate) pins the contract; sub-boundary mutants don't
-// change behavior for the standard load path. perTest noise is silenced.
+// always inject deps).
+/**
+ * 保存先を読む —— 「まだ無い」(ENOENT) と「読めなかった」(権限・I/O・壊れた中身) を分ける (パス 120)。
+ * それまでは両方を黙って見本に倒していた。読めた後の判定は shared (`readStoredTeamRadar`) が持つ。
+ */
 export async function loadTeamRadarState(
   deps: StateDeps = {},
-): Promise<TeamRadarState> {
+): Promise<StoredTeamRadar> {
   const p = (deps.statePath ?? defaultStatePath)();
   const read = deps.readFile ?? ((q: string) => fs.readFile(q, 'utf8'));
   let raw: string;
   try {
     raw = await read(p);
-  } catch {
-    // 無い・読めないファイルは見本 (読めた後の判定は shared が持ち、同じく見本へ倒す)。
-    return DEFAULT_TEAM_RADAR_STATE;
+  } catch (e) {
+    if ((e as { code?: unknown } | null)?.code === 'ENOENT') return { kind: 'none' };
+    return { kind: 'unreadable', reason: e instanceof Error ? e.message : String(e) };
   }
-  return parseStoredTeamRadarState(raw);
+  return readStoredTeamRadar(raw);
 }
 
 /**
@@ -309,7 +309,7 @@ export async function saveTeamRadarState(
 // --- Snapshot fetcher --------------------------------------------------
 
 export interface SnapshotDeps {
-  loadState?: (deps?: StateDeps) => Promise<TeamRadarState>;
+  loadState?: (deps?: StateDeps) => Promise<StoredTeamRadar>;
 }
 
 export async function fetchTeamRadarSnapshotImpl(
@@ -317,9 +317,8 @@ export async function fetchTeamRadarSnapshotImpl(
   deps: SnapshotDeps = {},
 ): Promise<TeamRadarSnapshot> {
   const loader = deps.loadState ?? loadTeamRadarState;
-  const state = await loader();
-  // 形の組み立ては shared (ブラウザ版の枝と同じ関数)。
-  return buildTeamRadarSnapshot(state);
+  // 形の組み立ては shared (ブラウザ版の枝と同じ関数)。見本を返すときだけ isMock。
+  return buildTeamRadarSnapshot(await loader());
 }
 
 export async function fetchTeamRadarSnapshot(

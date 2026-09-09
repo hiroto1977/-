@@ -16,25 +16,9 @@ import { sanitizeRadarDraft, type RadarDraft, type TeamMember } from '../data/te
 import { writeLocalJson, type LocalWriteResult } from '../data/localWrite';
 import { exportWarning } from '../data/exportOutcome';
 import type { ActionData } from '../../shared/actionData';
+// スナップショットの形は shared が 1 つだけ持つ (パス 120 までは画面が写しを持っていた —— パス 62 / 116 の形)。
+import type { TeamRadarSnapshot } from '../../shared/teamRadarState';
 
-
-/** snapshot 由来の読み取り専用メンバー (state に入る前の初期値の型)。
- *  state 側は structuredClone で mutable な TeamMember[] にコピーする。 */
-interface ReadonlyTeamMember {
-  readonly id: string;
-  readonly name: string;
-  readonly scores: readonly number[];
-  readonly notes?: Readonly<Record<number, string>>;
-}
-
-interface TeamRadarSnapshot {
-  readonly department: string;
-  readonly evaluatedAt: string;
-  readonly axes: readonly string[];
-  readonly members: readonly ReadonlyTeamMember[];
-  readonly fetchedAt: string;
-  readonly isMock: boolean;
-}
 
 const AXES_FALLBACK = ['営業力', '顧客対応力', 'プレゼン力', '交渉力', '顧客管理力'];
 const TITLE_FALLBACK = '営業チーム強み・弱みシート';
@@ -409,6 +393,12 @@ export function TeamRadarPage() {
         isConfigured
         onRefresh={refresh}
       />
+      {/* 保存先が読めなかったときだけ出る (パス 120)。見本に化けたことを黙らない。 */}
+      {data.storedNote !== null && (
+        <div role="status" style={{ padding: '8px 12px', background: 'rgba(251, 191, 36, 0.08)', border: '1px solid #fbbf24', borderRadius: 6, fontSize: 12, color: '#fbbf24', lineHeight: 1.5 }}>
+          ⚠ {data.storedNote}
+        </div>
+      )}
 
       <div
         style={{

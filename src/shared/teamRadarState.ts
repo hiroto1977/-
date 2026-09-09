@@ -16,6 +16,12 @@
  * 判定は main (`src/main/clients/teamradar.ts`) に在り、renderer からは import 境界で読めなかった。
  * だから判定・既定値・組み立てをここへ移し、main は再輸出し、ブラウザ版は同じ関数を通す
  * (`shared/talent.ts` と同じ置き方)。ファイルの読み書き (0600 / atomic) と SVG は main に残る。
+ *
+ * ## パス 120 (2026-09-09) —— 見本と保存した物と読めなかった物を混ぜない
+ *
+ * 組み立ては常に `isMock: true` だったので、保存した自分のチームも「同梱データ」と刷られ、壊れた保存値は
+ * 黙って見本の 3 人に化けた。{@link StoredTeamRadar} で 3 つを分け、`isMock` は見本のときだけ、
+ * 読めなかったときは {@link unreadableTeamRadarNote} を画面へ渡す。
  */
 
 import { localIsoDate } from './localDate';
@@ -66,7 +72,12 @@ export interface TeamRadarSnapshot {
   readonly axes: readonly string[];
   readonly members: readonly TeamMember[];
   readonly fetchedAt: string;
+  /** 見本 (まだ無い / 読めなかった) を返しているとき true。保存した物は false (パス 120)。 */
   readonly isMock: boolean;
+  /** 保存先から何が読めたか。画面のバッジと注記が読む。 */
+  readonly stored: 'saved' | 'none' | 'unreadable';
+  /** 読めなかったときの 1 行 (それ以外は null)。 */
+  readonly storedNote: string | null;
 }
 
 // --- Validation ----------------------------------------------------------
@@ -229,49 +240,83 @@ export const DEFAULT_TEAM_RADAR: TeamRadarSnapshot = {
   axes: CANONICAL_AXES,
   fetchedAt: '',
   isMock: true,
+  stored: 'none',
+  storedNote: null,
 };
 
 // --- Stored state → state ------------------------------------------------
 
 /**
- * 保存された JSON 文字列を状態として読む —— **両ビルドの読み込みが同じ 1 つを通す。**
+ * 保存先から読んだ結果 —— **「保存した」「まだ無い」「読めなかった」を混ぜない** (2026-09-09 · パス 120)。
  *
- * 読めない物 (JSON でない・オブジェクトでない・members が形に合わない) は**見本へ倒す**。
- * これは main の `loadTeamRadarState` が 2026-08 から持つ判断で、そのまま移した。
- * department / evaluatedAt は空なら既定に倒し、長ければ切る (書く側は断るが、読む側は寛容)。
+ * パス 118 までは読めない物を黙って見本へ倒し、組み立ては常に `isMock: true` だった。だから
+ *   - 利用者が保存した自分のチームが、更新の直後に「同梱データ」のバッジで刷られ (画面が「作り物」と言う)、
+ *   - 壊れた保存値は**見本の 3 人**に化けて、誰も何も言わなかった
+ *     (パス 88 の形 —— 読めない保管を「初めまして」に見せる)。
+ * 読む側の判断は 1 つにして、画面には 3 つの状態を渡す。
  */
-export function parseStoredTeamRadarState(raw: string): TeamRadarState {
+export type StoredTeamRadar =
+  | { readonly kind: 'saved'; readonly state: TeamRadarState }
+  | { readonly kind: 'none' }
+  | { readonly kind: 'unreadable'; readonly reason: string };
+
+/**
+ * 保存された文字列 (無ければ null) を読む —— **両ビルドの読み込みが同じ 1 つを通す。**
+ *
+ * JSON でない・オブジェクトでない・members が判定を通らない物は**理由つきで「読めなかった」**
+ * (データを失う形なので黙らない)。department / evaluatedAt は空なら既定に倒し、長ければ切る
+ * (書く側は断るが、読む側は寛容 —— 失うのは飾りだけ)。
+ */
+export function readStoredTeamRadar(raw: string | null): StoredTeamRadar {
+  if (raw === null) return { kind: 'none' };
+  let parsed: unknown;
   try {
-    const parsed = JSON.parse(raw) as unknown;
-    // 文言は下の catch が飲むので画面には出ない (分岐の存在だけが意味を持つ)。
-    // Stryker disable next-line StringLiteral: catch が飲むため観測不能
-    if (parsed === null || typeof parsed !== 'object') throw new Error('not object');
-    const o = parsed as Record<string, unknown>;
-    const dept = typeof o['department'] === 'string' && o['department'].length > 0
-      ? (o['department'] as string).slice(0, 64)
-      : DEFAULT_TEAM_RADAR_STATE.department;
-    const at = typeof o['evaluatedAt'] === 'string' && o['evaluatedAt'].length > 0
-      ? (o['evaluatedAt'] as string).slice(0, 32)
-      : localIsoDate();
-    const members = validateMembers(o['members'] ?? []);
-    return { department: dept, evaluatedAt: at, members };
+    parsed = JSON.parse(raw) as unknown;
   } catch {
-    return DEFAULT_TEAM_RADAR_STATE;
+    return { kind: 'unreadable', reason: 'JSON として読めません' };
   }
+  if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    return { kind: 'unreadable', reason: 'オブジェクトではありません' };
+  }
+  const o = parsed as Record<string, unknown>;
+  let members: readonly TeamMember[];
+  try {
+    members = validateMembers(o['members'] ?? []);
+  } catch (e) {
+    return { kind: 'unreadable', reason: e instanceof Error ? e.message : String(e) };
+  }
+  const dept = typeof o['department'] === 'string' && o['department'].length > 0
+    ? o['department'].slice(0, 64)
+    : DEFAULT_TEAM_RADAR_STATE.department;
+  const at = typeof o['evaluatedAt'] === 'string' && o['evaluatedAt'].length > 0
+    ? o['evaluatedAt'].slice(0, 32)
+    : localIsoDate();
+  return { kind: 'saved', state: { department: dept, evaluatedAt: at, members } };
+}
+
+/** 読めなかったときに画面が刷る 1 行 (両ビルドで同じ文)。 */
+export function unreadableTeamRadarNote(reason: string): string {
+  return `保存したチームの状態を読めませんでした (${reason})。見本を表示しています。「チーム情報を保存」を押すと画面の内容で上書きされ、元の保存値は戻りません。`;
 }
 
 // Module-level const init; perTest can't link to a specific test.
 // Stryker disable next-line StringLiteral: 見本の取得時刻 (装飾)
 const FETCHED_AT = '2035-04-15T00:00:00.000Z';
 
-/** 状態からスナップショットを組む —— main の fetcher とブラウザ版の枝が同じ形を返す。 */
-export function buildTeamRadarSnapshot(state: TeamRadarState): TeamRadarSnapshot {
+/**
+ * 読んだ結果からスナップショットを組む —— main の fetcher とブラウザ版の枝が同じ形を返す。
+ * **見本を返すときだけ「同梱データ」を名乗る** (`isMock`)。保存した物は利用者の物。
+ */
+export function buildTeamRadarSnapshot(stored: StoredTeamRadar): TeamRadarSnapshot {
+  const state = stored.kind === 'saved' ? stored.state : DEFAULT_TEAM_RADAR_STATE;
   return {
     department: state.department,
     evaluatedAt: state.evaluatedAt,
     axes: CANONICAL_AXES,
     members: state.members,
     fetchedAt: FETCHED_AT,
-    isMock: true,
+    isMock: stored.kind !== 'saved',
+    stored: stored.kind,
+    storedNote: stored.kind === 'unreadable' ? unreadableTeamRadarNote(stored.reason) : null,
   };
 }

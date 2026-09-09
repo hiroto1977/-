@@ -68,8 +68,10 @@ describe('teamradar — 本物のファイルシステム', () => {
 
   it('書いた内容をそのまま読み戻せる', async () => {
     const back = await loadTeamRadarState();
-    expect(back.department).toBe('開発部');
-    expect(back.members[0]).toMatchObject({ id: 'm1', name: '田中' });
+    expect(back.kind).toBe('saved');
+    if (back.kind !== 'saved') return;
+    expect(back.state.department).toBe('開発部');
+    expect(back.state.members[0]).toMatchObject({ id: 'm1', name: '田中' });
   });
 
   it('SVG の書き出しも階層を掘り、bytes が実ファイルと一致する', async () => {
@@ -100,6 +102,7 @@ describe('teamradar — 本物のファイルシステム', () => {
       payload: { department: '品質保証部', evaluatedAt: '2026-06-01', members: [] },
     })) as { department: string };
     expect(saved.department).toBe('品質保証部');
-    expect((await loadTeamRadarState()).department).toBe('品質保証部');
+    const back = await loadTeamRadarState();
+    expect(back.kind === 'saved' && back.state.department).toBe('品質保証部');
   });
 });

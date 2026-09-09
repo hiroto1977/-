@@ -116,6 +116,10 @@ describe('teamradar — 保存したメンバーがスナップショットに�
     expect(snap.ok, snap.message).toBe(true);
     expect(snap.data?.department).toBe('開発部');
     expect((snap.data?.members as { name: string }[]).map((m) => m.name)).toEqual(['佐藤']);
+    // 保存した物は利用者の物 —— 「同梱データ」を名乗らない (パス 120 までは常に isMock: true)。
+    expect(snap.data?.isMock).toBe(false);
+    expect(snap.data?.stored).toBe('saved');
+    expect(snap.data?.storedNote).toBeNull();
   });
 
   it('保存が無い端末は見本 (3 人の営業部) を返し、ok で終わる', async () => {
@@ -124,14 +128,19 @@ describe('teamradar — 保存したメンバーがスナップショットに�
     expect(snap.ok).toBe(true);
     expect(snap.data?.department).toBe('営業部');
     expect((snap.data?.members as unknown[]).length).toBe(3);
+    expect(snap.data?.isMock).toBe(true);
+    expect(snap.data?.stored).toBe('none');
   });
 
-  it('壊れた保存値は見本へ倒す (main の loadTeamRadarState と同じ判断)', async () => {
+  it('★ 壊れた保存値は見本を返しつつ「読めなかった」と言う (パス 120 までは黙って見本に化けた)', async () => {
     localStorage.setItem('teamradar.state', '{壊れた');
     const hub = await loadHub();
     const snap = await hub.fetchSnapshot('teamradar');
     expect(snap.ok).toBe(true);
     expect((snap.data?.members as unknown[]).length).toBe(3);
+    expect(snap.data?.isMock).toBe(true);
+    expect(snap.data?.stored).toBe('unreadable');
+    expect(String(snap.data?.storedNote)).toContain('保存したチームの状態を読めませんでした (JSON として読めません)');
   });
 
   it('★ 判定を通らない保存は断り、鍵に書かない (パス 118 まで素通しだった)', async () => {

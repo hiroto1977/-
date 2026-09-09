@@ -89,11 +89,11 @@ import {
   sanitizeTalentState,
 } from '../shared/talent';
 import {
-  DEFAULT_TEAM_RADAR_STATE,
   TEAM_RADAR_STORAGE_KEY,
   buildTeamRadarSnapshot,
-  parseStoredTeamRadarState,
+  readStoredTeamRadar,
   validateTeamRadarState,
+  type StoredTeamRadar,
 } from '../shared/teamRadarState';
 import { getVault } from './security/vault';
 import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_LENGTH } from '../shared/redact';
@@ -1245,19 +1245,19 @@ const shim = {
      * ここが無いまま `not_implemented` へ落ちていた —— talent と同じ壊れ方が隣に残っていた:
      * 画面は「保存しました」の直後に `refresh()` し、赤いバッジ (「ブラウザ版では live fetch を
      * 行いません」) が並び、保存した状態は 2 度と画面へ戻らなかった。デスクトップ版と同じ
-     * `parseStoredTeamRadarState` / `buildTeamRadarSnapshot` を通すので、答えは 2 つの実行形態で一致する。
-     * 読めない保存値は見本へ倒す (main の `loadTeamRadarState` と同じ判断)。
+     * `readStoredTeamRadar` / `buildTeamRadarSnapshot` を通すので、答えは 2 つの実行形態で一致する。
+     * 読めない保存値は見本を返すが、**そう言う** (パス 120 —— それまでは黙って見本に化け、
+     * 保存した物まで「同梱データ」と刷られていた)。
      */
     if (serviceId === 'teamradar') {
-      let state = DEFAULT_TEAM_RADAR_STATE;
+      let stored: StoredTeamRadar;
       try {
-        const raw = localStorage.getItem(TEAM_RADAR_STORAGE_KEY);
-        if (raw !== null) state = parseStoredTeamRadarState(raw);
-      } catch {
-        // Web Storage そのものが拒む環境 (パス 89) —— 見本で続ける。
-        state = DEFAULT_TEAM_RADAR_STATE;
+        stored = readStoredTeamRadar(localStorage.getItem(TEAM_RADAR_STORAGE_KEY));
+      } catch (e) {
+        // Web Storage そのものが拒む環境 (パス 89) —— 「読めなかった」として見本を返す。
+        stored = { kind: 'unreadable', reason: e instanceof Error ? e.message : String(e) };
       }
-      return ok(buildTeamRadarSnapshot(state)) as ActionResult<T>;
+      return ok(buildTeamRadarSnapshot(stored)) as ActionResult<T>;
     }
     /*
      * security は「鍵が入っているか」だけがブラウザでも観測できる。
