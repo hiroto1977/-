@@ -166,13 +166,13 @@ export function isEncryptedBackup(text: string): boolean {
 
 /**
  * Parse + validate a backup file. Throws a user-facing message if the envelope
- * is wrong or the integrity checksum fails. Returns the records array
- * (record-level validation is done by `store.importAll`, which drops malformed
+ * is wrong or the integrity checksum fails. Returns the records array and the
+ * export time (`exportedAt`; null when unreadable — パス 129) (record-level validation is done by `store.importAll`, which drops malformed
  * entries). checksum が無いファイルは**拒否する** (理由は BackupFile.checksum)。
  *
  * Encrypted backups require `password`; it is ignored for plaintext files.
  */
-export async function parseBackup(text: string, password?: string): Promise<readonly StoredRecord[]> {
+export async function parseBackupFile(text: string, password?: string): Promise<ParsedBackup> {
   let parsed: unknown;
   try {
     parsed = JSON.parse(text);
@@ -189,7 +189,7 @@ export async function parseBackup(text: string, password?: string): Promise<read
     if (!password) throw new Error('暗号化バックアップの復元にはパスワードが必要です');
     if (!isEncryptedBundle(maybeEnc.payload)) throw new Error('暗号化バックアップの形式が不正です');
     const inner = await decryptString(maybeEnc.payload, password);
-    return parseBackup(inner);
+    return parseBackupFile(inner);
   }
 
   const file = parsed as Partial<BackupFile>;
@@ -210,5 +210,144 @@ export async function parseBackup(text: string, password?: string): Promise<read
     throw new Error('バックアップファイルが破損しています (チェックサム不一致)');
   }
 
-  return file.records as StoredRecord[];
+  return { exportedAt: backupExportedAt(file.exportedAt), records: file.records as StoredRecord[] };
+}
+
+/** レコードだけ要る呼び出し (検査・互換)。 */
+export async function parseBackup(text: string, password?: string): Promise<readonly StoredRecord[]> {
+  return (await parseBackupFile(text, password)).records;
+}
+
+/**
+ * 復元の入口が読むもの —— レコードと、**書き出した時刻**。(2026-09-09 · パス 129)
+ *
+ * `parseBackup` はレコードだけを返していたので、画面は「どのバックアップか」を利用者に
+ * 言えず、置換の確認は「既存の業務データを全て削除してから復元します」の一文だけだった。
+ * `exportedAt` は最初の版から書いてある (`serializeBackup`)。読めない形 (手で直した JSON) は
+ * null —— 復元は断らない (時刻は表示にしか使わない)。
+ */
+export interface ParsedBackup {
+  readonly exportedAt: string | null;
+  readonly records: readonly StoredRecord[];
+}
+
+/** ISO 文字列として読める時刻だけ通す。 */
+export function backupExportedAt(v: unknown): string | null {
+  return typeof v === 'string' && Number.isFinite(Date.parse(v)) ? v : null;
+}
+
+/** 復元の計画に要る封筒。中身は見ない —— 封緘済みでも id と時刻は平文 (`exportAll` で読める)。 */
+export interface RestoreEnvelope {
+  readonly id: string;
+  readonly updatedAt: number;
+}
+
+export type RestoreMode = 'merge' | 'replace';
+
+/**
+ * 復元で何が足され・上書きされ・残り・消えるか —— **書く前に**数える。
+ *
+ * 2026-09-09 まで、復元は `importAll` に全件を渡していた (`put` = id ごとの upsert)。
+ * 2 つの形で利用者の記録が黙って戻っていた:
+ *
+ *   マージ: バックアップを取った**後に**直した記録 (同じ id・この端末の updatedAt の方が新しい)
+ *           が、バックアップの古い中身で上書きされる —— 「マージ」は足すだけに読める。
+ *   置換:   確認は一文だけで、消える件数 (バックアップに無い記録・この端末の方が新しい記録) を
+ *           言わない。3 か月前のファイルを選んだ人は、3 か月分を失うと知らずに「OK」を押す。
+ *
+ * マージは id ごとに**新しい方を残す** (この端末の方が新しい id は書かない)。置換は全部書くが、
+ * 確認が消える件数を言う (`replaceRestoreConfirmMessage`)。
+ *
+ * 数えるのは id と updatedAt だけ —— 中身は封緘済みで見られないことがあるし、時刻で足りる。
+ * 削除の墓標は無いので、この端末で消した記録はマージで戻る (REMAINING_WORK パス 129「残る物」)。
+ */
+export interface RestorePlan {
+  readonly mode: RestoreMode;
+  readonly exportedAt: string | null;
+  /** バックアップの件数 / この端末の件数。 */
+  readonly incoming: number;
+  readonly existing: number;
+  /** バックアップにあってこの端末に無い id —— 足される。 */
+  readonly added: number;
+  /** 両方にあり、バックアップの方が新しいか同時刻 —— バックアップの中身になる。 */
+  readonly overwritten: number;
+  /** 両方にあり、この端末の方が新しい —— マージでは残し、置換では消える。 */
+  readonly newerLocal: number;
+  /** この端末にだけある id —— マージでは残り、置換では消える。 */
+  readonly localOnly: number;
+  /** 置換で失う (元に戻せない) 件数 = localOnly + newerLocal。マージでは 0。 */
+  readonly lost: number;
+  /** 実際に書く物 —— マージでは newerLocal を除き、置換では全部。 */
+  readonly toImport: readonly StoredRecord[];
+}
+
+export function planRestore(
+  existing: readonly RestoreEnvelope[],
+  incoming: readonly StoredRecord[],
+  mode: RestoreMode,
+  exportedAt: string | null,
+): RestorePlan {
+  const local = new Map<string, number>();
+  for (const r of existing) local.set(r.id, r.updatedAt);
+  const incomingIds = new Set<string>();
+  let added = 0;
+  let overwritten = 0;
+  let newerLocal = 0;
+  const toImport: StoredRecord[] = [];
+  for (const rec of incoming) {
+    incomingIds.add(rec.id);
+    const mine = local.get(rec.id);
+    if (mine === undefined) {
+      added += 1;
+      toImport.push(rec);
+    } else if (mine > rec.updatedAt) {
+      newerLocal += 1;
+      if (mode === 'replace') toImport.push(rec);
+    } else {
+      overwritten += 1;
+      toImport.push(rec);
+    }
+  }
+  let localOnly = 0;
+  for (const id of local.keys()) {
+    if (!incomingIds.has(id)) localOnly += 1;
+  }
+  let lost = 0;
+  if (mode === 'replace') lost = localOnly + newerLocal;
+  return { mode, exportedAt, incoming: incoming.length, existing: existing.length, added, overwritten, newerLocal, localOnly, lost, toImport };
+}
+
+/** 書き出し時刻の表示 (端末のロケール)。null は「書き出し時刻不明」。 */
+export function exportedAtLabel(exportedAt: string | null): string {
+  return exportedAt === null ? '書き出し時刻不明' : `${new Date(exportedAt).toLocaleString('ja-JP')} 書き出し`;
+}
+
+/**
+ * 置換の確認文 —— **何件消えるか**を言う。一文だけの確認は、何も言っていないのと同じ。
+ * 消える物が無いときはそう言う (「消える記録はありません」) —— 空欄ではなく明示。
+ */
+export function replaceRestoreConfirmMessage(plan: RestorePlan): string {
+  const loss =
+    plan.lost === 0
+      ? '消える記録はありません (この端末の記録は全てバックアップにあり、バックアップの方が新しいか同時刻です)。'
+      : `バックアップに無い ${plan.localOnly} 件と、この端末の方が新しい ${plan.newerLocal} 件 (計 ${plan.lost} 件) が消え、元に戻せません。`;
+  return [
+    '既存の業務データを全て削除してから復元します。',
+    `バックアップ: ${exportedAtLabel(plan.exportedAt)}・${plan.incoming} 件`,
+    `この端末: ${plan.existing} 件 —— ${loss}`,
+    'よろしいですか？',
+  ].join('\n');
+}
+
+/**
+ * 復元の結果の文。`${imported} 件のレコードを復元しました` で始まる
+ * (`importSizeGuard.test.ts` がこの形を留めている)。`dropped` は importAll が形で捨てた件数。
+ */
+export function restoreResultMessage(plan: RestorePlan, imported: number, dropped: number): string {
+  const droppedNote = dropped > 0 ? `${dropped} 件は形式が不正なため取り込みませんでした。` : '';
+  const detail =
+    plan.mode === 'replace'
+      ? `既存データは置換。消えた ${plan.lost} 件 = バックアップに無い ${plan.localOnly} 件 + この端末の方が新しかった ${plan.newerLocal} 件`
+      : `マージ: 追加 ${plan.added}・更新 ${plan.overwritten}・この端末の方が新しい ${plan.newerLocal} 件はそのまま`;
+  return `${imported} 件のレコードを復元しました（${detail}）。${droppedNote}再読み込みで反映されます。`;
 }

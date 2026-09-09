@@ -9,6 +9,12 @@ import {
   serializeEncryptedBackup,
   isEncryptedBackup,
   backupPassphraseTooShort,
+  parseBackupFile,
+  backupExportedAt,
+  exportedAtLabel,
+  planRestore,
+  replaceRestoreConfirmMessage,
+  restoreResultMessage,
 } from '../backup';
 import type { StoredRecord } from '../store';
 import { encryptString } from '../../security/dataCrypto';
@@ -450,5 +456,69 @@ describe('docs/DATA_PROTECTION.md の暗号化バックアップの節は実物�
   it('合言葉の下限 (保管庫と同じ 12 文字) と、復元は断らないことを書いている', () => {
     expect(section).toContain(`${MIN_PASSWORD_LENGTH} 文字`);
     expect(section).toContain('復元は古いファイルの短い合言葉も開く');
+  });
+});
+
+describe('復元の計画 — 何が足され・残り・消えるか (パス 129)', () => {
+  const env = (id: string, updatedAt: number): StoredRecord => ({ id, collection: 'sales-entries', createdAt: updatedAt, updatedAt, data: { amount: updatedAt } });
+  const EXISTING = [env('same-newer-here', 200), env('same-older-here', 100), env('only-here', 50)];
+  const INCOMING = [env('same-newer-here', 100), env('same-older-here', 150), env('only-in-backup', 10)];
+
+  it('parseBackupFile は書き出し時刻も返し、parseBackup は従来どおりレコードだけ', async () => {
+    const json = await serializeBackup(RECORDS, new Date('2026-06-01T12:00:00Z'));
+    const parsed = await parseBackupFile(json);
+    expect(parsed.exportedAt).toBe('2026-06-01T12:00:00.000Z');
+    expect(parsed.records).toEqual(RECORDS);
+    expect(await parseBackup(json)).toEqual(RECORDS);
+  });
+
+  it('読めない exportedAt は null で、復元は断らない (時刻は表示にしか使わない)', async () => {
+    const obj = JSON.parse(await serializeBackup(RECORDS)) as Record<string, unknown>;
+    delete obj.exportedAt;
+    const parsed = await parseBackupFile(JSON.stringify(obj));
+    expect(parsed.exportedAt).toBeNull();
+    expect(parsed.records).toEqual(RECORDS);
+    expect(backupExportedAt('not a date')).toBeNull();
+    expect(backupExportedAt(12345)).toBeNull();
+    expect(backupExportedAt('2026-06-01T12:00:00Z')).toBe('2026-06-01T12:00:00Z');
+    expect(exportedAtLabel(null)).toBe('書き出し時刻不明');
+    expect(exportedAtLabel('2026-06-01T12:00:00Z')).toMatch(/^2026\/6\/1 .* 書き出し$/);
+  });
+
+  it('★ マージは、この端末の方が新しい id を書かない (toImport の外・件数は newerLocal)', () => {
+    const plan = planRestore(EXISTING, INCOMING, 'merge', '2026-06-01T12:00:00Z');
+    expect(plan.toImport.map((r) => r.id)).toEqual(['same-older-here', 'only-in-backup']);
+    expect(plan).toMatchObject({ mode: 'merge', exportedAt: '2026-06-01T12:00:00Z', incoming: 3, existing: 3, added: 1, overwritten: 1, newerLocal: 1, localOnly: 1, lost: 0 });
+  });
+
+  it('対照: 同時刻は上書き (同じ中身のはず)・この端末にだけある id はマージでは残る (lost 0)', () => {
+    const plan = planRestore([env('a', 100), env('only-here', 1)], [env('a', 100)], 'merge', null);
+    expect(plan.toImport.map((r) => r.id)).toEqual(['a']);
+    expect(plan).toMatchObject({ added: 0, overwritten: 1, newerLocal: 0, localOnly: 1, lost: 0 });
+  });
+
+  it('置換は全部書き、消える件数 = バックアップに無い + この端末の方が新しい', () => {
+    const plan = planRestore(EXISTING, INCOMING, 'replace', null);
+    expect(plan.toImport.map((r) => r.id)).toEqual(['same-newer-here', 'same-older-here', 'only-in-backup']);
+    expect(plan).toMatchObject({ mode: 'replace', added: 1, overwritten: 1, newerLocal: 1, localOnly: 1, lost: 2 });
+  });
+
+  it('★ 置換の確認文は書き出し時刻・件数・消える件数を言い、元に戻せないと言う (消える物が無ければそう言う)', () => {
+    const msg = replaceRestoreConfirmMessage(planRestore(EXISTING, INCOMING, 'replace', '2026-06-01T12:00:00Z'));
+    expect(msg).toContain('既存の業務データを全て削除してから復元します。');
+    expect(msg).toMatch(/バックアップ: 2026\/6\/1 .* 書き出し・3 件/);
+    expect(msg).toContain('この端末: 3 件 —— バックアップに無い 1 件と、この端末の方が新しい 1 件 (計 2 件) が消え、元に戻せません。');
+    expect(msg).toContain('よろしいですか？');
+    const safe = replaceRestoreConfirmMessage(planRestore([env('a', 100)], [env('a', 100)], 'replace', null));
+    expect(safe).toContain('バックアップ: 書き出し時刻不明・1 件');
+    expect(safe).toContain('この端末: 1 件 —— 消える記録はありません');
+    expect(safe).not.toContain('元に戻せません');
+  });
+
+  it('結果の文は「N 件のレコードを復元しました」で始まる (importSizeGuard の pin) —— マージと置換で内訳が違う', () => {
+    const merge = restoreResultMessage(planRestore(EXISTING, INCOMING, 'merge', null), 2, 0);
+    expect(merge).toBe('2 件のレコードを復元しました（マージ: 追加 1・更新 1・この端末の方が新しい 1 件はそのまま）。再読み込みで反映されます。');
+    const replace = restoreResultMessage(planRestore(EXISTING, INCOMING, 'replace', null), 2, 1);
+    expect(replace).toBe('2 件のレコードを復元しました（既存データは置換。消えた 2 件 = バックアップに無い 1 件 + この端末の方が新しかった 1 件）。1 件は形式が不正なため取り込みませんでした。再読み込みで反映されます。');
   });
 });

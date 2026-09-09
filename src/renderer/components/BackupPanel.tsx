@@ -5,7 +5,10 @@ import {
   BACKUP_EXCLUSIONS,
   serializeBackup,
   serializeEncryptedBackup,
-  parseBackup,
+  parseBackupFile,
+  planRestore,
+  replaceRestoreConfirmMessage,
+  restoreResultMessage,
   isEncryptedBackup,
 } from '../data/backup';
 import { isEncryptionEnabled } from '../data/recordEncryption';
@@ -52,11 +55,6 @@ export function BackupPanel() {
   async function onRestore(file: File) {
     setErr(undefined);
     setMsg(undefined);
-    // 置換復元は既存データを全消去するため、誤操作によるデータ消失を防ぐ確認を挟む。
-    if (replace && !window.confirm('既存の業務データを全て削除してから復元します。よろしいですか？')) {
-      if (fileRef.current) fileRef.current.value = '';
-      return;
-    }
     try {
       // 読む前に大きさで断る (`data/importFile.ts`)。読んでからでは落ちるのが先。
       const text = await readImportText(file, MAX_BACKUP_IMPORT_BYTES, 'バックアップファイル');
@@ -70,15 +68,21 @@ export function BackupPanel() {
           return;
         }
       }
-      const records = await parseBackup(text, pw);
-      const n = await getRecordStore().importAll(records, { replace });
+      const parsed = await parseBackupFile(text, pw);
+      // 何が足され・上書きされ・残り・消えるかを**書く前に**数える (パス 129)。
+      // 封筒 (id / updatedAt) は封緘済みでも平文なので exportAll で読める。
+      const store = getRecordStore();
+      const plan = planRestore(await store.exportAll(), parsed.records, replace ? 'replace' : 'merge', parsed.exportedAt);
+      // 置換は元に戻せない。確認は「何件消えるか」を言う —— 一文だけの確認は何も言っていないのと同じ。
+      // (2026-09-09 まで確認は読む**前**にあった —— 何も知らない時点の確認だった。)
+      if (plan.mode === 'replace' && !window.confirm(replaceRestoreConfirmMessage(plan))) {
+        if (fileRef.current) fileRef.current.value = '';
+        return;
+      }
+      const n = await store.importAll(plan.toImport, { replace });
       // importAll は形式の合わないレコードを黙って捨てる。捨てた件数を言わないと
       // 「100 件のファイルを入れたのに 60 件と出た」理由が利用者に分からない。
-      const dropped = records.length - n;
-      const droppedNote = dropped > 0 ? `${dropped} 件は形式が不正なため取り込みませんでした。` : '';
-      setMsg(
-        `${n} 件のレコードを復元しました${replace ? '（既存データは置換）' : '（マージ）'}。${droppedNote}再読み込みで反映されます。`,
-      );
+      setMsg(restoreResultMessage(plan, n, plan.toImport.length - n));
     } catch (e) {
       setErr(e instanceof Error ? e.message : '復元に失敗しました');
     }
@@ -169,6 +173,7 @@ export function BackupPanel() {
           <input
             ref={fileRef}
             type="file"
+            data-backup-restore
             accept=".json,application/json"
             style={{ display: 'none' }}
             onChange={(e) => {
@@ -178,8 +183,8 @@ export function BackupPanel() {
           />
         </label>
         <label style={{ fontSize: 12, color: 'var(--text-mute)', display: 'flex', alignItems: 'center', gap: 4 }}>
-          <input type="checkbox" checked={replace} onChange={(e) => setReplace(e.target.checked)} />
-          既存データを置換（チェック無しはマージ）
+          <input type="checkbox" data-backup-replace checked={replace} onChange={(e) => setReplace(e.target.checked)} />
+          既存データを置換（チェック無しはマージ = id ごとに新しい方を残す）
         </label>
       </div>
       {msg && <div style={{ fontSize: 11, color: '#22c55e', marginTop: 6 }}>{msg}</div>}

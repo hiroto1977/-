@@ -19,6 +19,7 @@
 
 const path = require('node:path');
 const fs = require('node:fs');
+const { createHash } = require('node:crypto');
 
 function resolvePlaywright() {
   const candidates = [undefined, { paths: ['/opt/node22/lib/node_modules'] }];
@@ -273,6 +274,38 @@ async function desktopSuite(browser) {
   await page.waitForFunction(() => document.body.textContent.includes('12 文字以上で設定してください'), undefined, { timeout: 15000 });
   ok(!(await has('件のレコードをバックアップしました')), 'settings: ★ 3 文字の合言葉では暗号化バックアップを書き出さない (下限は保管庫と同じ 12 文字)');
   await page.locator('[data-backup-passphrase]').fill('');
+
+  // パス 129: 復元は「何が足され・残り・消えるか」を言う —— マージは id ごとに新しい方を残し、
+  // 置換の確認は消える件数を言う (一文だけの確認は何も言っていないのと同じ)。ファイルは Node 側で組む。
+  const restoreBackup = async (name, records, exportedAt) => {
+    const checksum = createHash('sha256').update(JSON.stringify(records)).digest('hex');
+    const body = JSON.stringify({ app: 'service-hub', version: 1, exportedAt, checksum, records });
+    await page.locator('[data-backup-restore]').setInputFiles({ name, mimeType: 'application/json', buffer: Buffer.from(body) });
+  };
+  const restoreRow = (updatedAt, amount) => ({
+    id: 'e2e-restore-1',
+    collection: 'sales-entries',
+    createdAt: 1_700_000_000_000,
+    updatedAt,
+    data: { date: '2026-04-01', channel: 'amazon', amount, orders: 1, note: 'e2e-restore' },
+  });
+  await restoreBackup('older.json', [restoreRow(1_700_000_000_000, 1000)], '2026-01-01T12:00:00Z');
+  await page.waitForFunction(() => document.body.textContent.includes('追加 1・更新 0'), undefined, { timeout: 15000 });
+  await restoreBackup('newer.json', [restoreRow(1_760_000_000_000, 2000)], '2026-06-01T12:00:00Z');
+  await page.waitForFunction(() => document.body.textContent.includes('追加 0・更新 1'), undefined, { timeout: 15000 });
+  await restoreBackup('older-again.json', [restoreRow(1_700_000_000_000, 1000)], '2026-01-01T12:00:00Z');
+  await page.waitForFunction(() => document.body.textContent.includes('この端末の方が新しい 1 件はそのまま'), undefined, { timeout: 15000 });
+  ok(await has('0 件のレコードを復元しました（マージ: 追加 0・更新 0・この端末の方が新しい 1 件はそのまま）'), 'settings: ★ マージは id ごとに新しい方を残す (古いバックアップは後から直した記録を上書きしない)');
+  await page.locator('[data-backup-replace]').check();
+  const replaceDialog = page.waitForEvent('dialog', { timeout: 15000 });
+  await restoreBackup('older-replace.json', [restoreRow(1_700_000_000_000, 1000)], '2026-01-01T12:00:00Z');
+  const dialog = await replaceDialog;
+  const dialogText = dialog.message();
+  await dialog.dismiss();
+  ok(dialogText.includes('この端末の方が新しい 1 件') && dialogText.includes('元に戻せません') && dialogText.includes('2026/1/1'), `settings: ★ 置換の確認は書き出し時刻と消える件数を言う (実際 ${JSON.stringify(dialogText)})`);
+  await page.waitForFunction(() => !document.body.textContent.includes('レコードを復元しました'), undefined, { timeout: 15000 });
+  ok(true, 'settings: 置換をやめれば何も書かない (直前の結果の文も消えている)');
+  await page.locator('[data-backup-replace]').uncheck();
 
   // 士業 CRM: 追加 → ステータス変更 → 他ページ非漏出
   await gotoService(page, '#cpa', 'text=連携先一覧');
