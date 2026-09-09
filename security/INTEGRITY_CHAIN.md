@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 168
+- ブロック数: 170
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `e86b31d3468802d885d8ea92455f1e74e94687d18bc99f016ef0754b4753d3ed`
-- 保護対象: 66 ファイル
+- 末尾(tip)ハッシュ: `1d24807548cffbf3b003e75ac4acfa9bab85000cd20428b2aad364adcf3821f7`
+- 保護対象: 68 ファイル
 
 ## ブロック
 
@@ -181,6 +181,8 @@
 | 165 | `9d1cf881f3a4f986` | `4672ca44bb47bf57` | `1702b111a531873e` | update integrity-chain.cjs,assistant.ts |
 | 166 | `4c31dcb1167e631d` | `1702b111a531873e` | `e6256ca397a19d88` | update atomicWrite.ts,secrets.ts |
 | 167 | `0afc115ab54105d1` | `e6256ca397a19d88` | `e86b31d3468802d8` | update fsa.ts |
+| 168 | `bb46d1384b5e1fae` | `e86b31d3468802d8` | `57c7cf667a7ee417` | update integrity-chain.cjs,eraseAll.ts,main.ts,secrets.ts,preload.ts,eraseReport.ts |
+| 169 | `1d2446226be4c549` | `57c7cf667a7ee417` | `1d24807548cffbf3` | update main.ts,eraseReport.ts |
 
 ## 保護対象ファイル
 
@@ -210,6 +212,7 @@
 - `src/main/clients/assistant.ts`
 - `src/main/clients/exportPaths.ts`
 - `src/main/clients/types.ts`
+- `src/main/eraseAll.ts`
 - `src/main/main.ts`
 - `src/main/oauth.ts`
 - `src/main/secrets.ts`
@@ -239,6 +242,7 @@
 - `src/shared/atlassianSite.ts`
 - `src/shared/controlChars.ts`
 - `src/shared/cryptoParams.ts`
+- `src/shared/eraseReport.ts`
 - `src/shared/escape.ts`
 - `src/shared/externalUrlGate.ts`
 - `src/shared/httpLimits.ts`

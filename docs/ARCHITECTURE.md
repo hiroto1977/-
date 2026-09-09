@@ -19,11 +19,11 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | 軸 | 値 | 出典 |
 |---|---:|---|
 | サービス数 | 75 | `src/shared/serviceId.ts:9-43` |
-| IPC ハンドラ数 | 13 | `src/main/main.ts:111-296` |
+| IPC ハンドラ数 | 14 | `src/main/main.ts:111-296` |
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 29 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **12551** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **12571** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -50,7 +50,7 @@ flowchart LR
       BRIDGE[window.serviceHub<br/>8 methods, typed]
     end
     subgraph MN["Main (Node, full privileges)"]
-      IPC[ipcMain.handle × 13]
+      IPC[ipcMain.handle × 14]
       CLIENTS[68 clients<br/>fetcher + ActionMap]
       SEC[secrets.ts<br/>safeStorage + 1MB cap]
       OA[oauth.ts<br/>PKCE + loopback]
@@ -193,7 +193,7 @@ form-action 'none';
 
 `localhost:5173` は dev mode Vite HMR 専用。production renderer の外向き HTTP は **ゼロ**。
 
-### 1.4 IPC 契約 (13 チャンネル —— `ipcMain.handle` の全部。`verify:arch` が漏れを落とす)
+### 1.4 IPC 契約 (14 チャンネル —— `ipcMain.handle` の全部。`verify:arch` が漏れを落とす)
 
 `src/preload/preload.ts:6-16` で型定義、`src/main/main.ts:99-224` で実装:
 
@@ -205,6 +205,7 @@ form-action 'none';
 | `app:openPath` | `filePath: string` | `OsOpResult` | 同上。**OS の「開く」動詞**を使うので Windows では関連付け次第で実行される | `shell.openPath` の失敗文字列を返す |
 | `app:checkUpdate` | — | `UpdateVerdict` | 送り先は定数。応答は `parseLatestRelease` が形と案内先ホストまで確かめる | 失敗はすべて `unknown` へ寄せる |
 | `secrets:protection` | — | `StorageProtection` | (出力のみ) 保存先・暗号化の有無・平文の件数を返す。**トークンそのものは返さない** | — |
+| `app:eraseAll` | — | `DesktopEraseReport` | (出力のみ) トークン・状態ファイル (控え・残骸) と renderer の保存領域を消し、ファイルごとの結果を返す。**全部消えた時だけ**再起動する (パス 137) | — |
 | `secrets:set` | `(serviceId, token)` | `void` | `isServiceId` + token 長さ `(0, 65536]` | — |
 | `secrets:clear` | `serviceId` | `void` | `isServiceId` | — |
 | `secrets:list` | — | `ServiceId[]` | (出力のみ) | — |
@@ -2180,7 +2181,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **279 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **281 ファイル**。
 
 #### 点数の定義 (分母に何を入れないか)
 

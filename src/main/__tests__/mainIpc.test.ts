@@ -17,6 +17,8 @@ type Handler = (ev: unknown, ...args: unknown[]) => unknown;
 const handlers = new Map<string, Handler>();
 const appListeners = new Map<string, () => void>();
 let quitCalls = 0;
+let relaunchCalls = 0;
+const exitCodes: number[] = [];
 let allWindows: unknown[] = [];
 
 let openedExternal: string[] = [];
@@ -39,6 +41,12 @@ vi.mock('electron', () => ({
     },
     quit: () => {
       quitCalls++;
+    },
+    relaunch: () => {
+      relaunchCalls++;
+    },
+    exit: (code: number) => {
+      exitCodes.push(code);
     },
   },
   BrowserWindow: class {
@@ -73,6 +81,20 @@ vi.mock('electron', () => ({
 
 // --- 協力者 ---------------------------------------------------------------
 let validToken: unknown = { ok: true, token: 'tok' };
+
+/** app:eraseAll の中身は main/eraseAll.ts (実物のファイルで別に検査)。ここは**再起動の判断**だけを見る。 */
+function desktopReport(allDeleted: boolean): import('../../shared/eraseReport').DesktopEraseReport {
+  return {
+    kind: 'desktop',
+    files: { '/tmp/x/service-hub-secrets.json': allDeleted ? 'deleted' : 'failed' },
+    renderer: 'deleted',
+    allDeleted,
+  };
+}
+let eraseReportImpl: () => Promise<import('../../shared/eraseReport').DesktopEraseReport> = async () => desktopReport(true);
+vi.mock('../eraseAll', () => ({
+  eraseDesktopData: async () => eraseReportImpl(),
+}));
 let setTokenThrows: Error | null = null;
 let clearTokenThrows: Error | null = null;
 const setTokenCalls: [string, string][] = [];
@@ -162,6 +184,9 @@ beforeEach(async () => {
   authorizeConfigs.length = 0;
   gateResult = '/root/ok.md';
   quitCalls = 0;
+  relaunchCalls = 0;
+  exitCodes.length = 0;
+  eraseReportImpl = async () => desktopReport(true);
   allWindows = [];
   vi.resetModules();
   await import('../main');
@@ -170,11 +195,12 @@ beforeEach(async () => {
 // ---------------------------------------------------------------------------
 
 describe('登録', () => {
-  it('13 個のハンドラが登録される', () => {
+  it('14 個のハンドラが登録される', () => {
     expect([...handlers.keys()].sort()).toEqual(
       [
         'action:invoke',
         'app:checkUpdate',
+        'app:eraseAll',
         'app:getVersion',
         'app:openExternal',
         'app:openPath',
@@ -188,6 +214,52 @@ describe('登録', () => {
         'secrets:set',
       ].sort(),
     );
+  });
+});
+
+describe('app:eraseAll — デスクトップ版の「すべてのデータを削除」 (パス 137)', () => {
+  it('★ 全部消えた時だけ再起動する (relaunch → exit 0)。返してから —— 画面が「再起動します」を出せる', async () => {
+    vi.useFakeTimers();
+    try {
+      const report = (await invoke('app:eraseAll')) as { kind: string; allDeleted: boolean };
+      expect(report).toMatchObject({ kind: 'desktop', allDeleted: true });
+      expect(relaunchCalls).toBe(0);
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(relaunchCalls).toBe(1);
+      expect(exitCodes).toEqual([0]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('手順が投げても IPC を reject しない — error つきの報告を返し、再起動しない', async () => {
+    eraseReportImpl = async () => {
+      throw new Error('disk on fire');
+    };
+    vi.useFakeTimers();
+    try {
+      const report = (await invoke('app:eraseAll')) as { kind: string; allDeleted: boolean; error?: string };
+      expect(report).toMatchObject({ kind: 'desktop', allDeleted: false });
+      expect(report.error).toContain('disk on fire');
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(relaunchCalls).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('★ 残った物が在れば再起動しない — 報告を返し、画面が名指しする', async () => {
+    eraseReportImpl = async () => desktopReport(false);
+    vi.useFakeTimers();
+    try {
+      const report = (await invoke('app:eraseAll')) as { kind: string; allDeleted: boolean };
+      expect(report).toMatchObject({ kind: 'desktop', allDeleted: false });
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(relaunchCalls).toBe(0);
+      expect(exitCodes).toEqual([]);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 

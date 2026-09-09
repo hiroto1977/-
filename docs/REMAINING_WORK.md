@@ -18389,6 +18389,68 @@ uber-eats / demae-can の advise は画面が無く (`VoiceCommandBar` と `Busi
 - 下書き (`servicehub.teamradar.draft.v1`) は snapshot より優先して復元される。読めなかった保存と下書きが両方在るとき、
   画面のメンバーは下書き、注記は保存先について言う (別の物を指している)。
 
+## パス 137 (2026-09-09) — **デスクトップ版では「すべてのデータを削除」が renderer の保存領域しか消せず、トークン (`secrets.json` と控え)・状態ファイル 4 つ・書き込みの残骸は OS に残った —— しかも保管庫の無いデスクトップに「マスターパスワード変更」「Vault を今すぐロック」が出ていた**
+
+### 何が起きていたか
+
+設定画面の「Vault 管理」の節は両ビルドで同じ物を描く。ところがデスクトップ版のトークンは main の
+`service-hub-secrets.json` (OS のキーチェーンで封緘) に在り、renderer の保管庫 (`business-hub-vault`) は**使われていない**
+(App はロック画面を出さない)。それでも節は「マスターパスワード変更」(初期化されていない保管庫に対して投げる)・
+「Vault を今すぐロック」(何も守っていない鍵を捨てる) を出し、「すべてのデータを削除」はパス 136 でも
+**renderer の保存領域まで**しか消せなかった。main 側に残る物: `service-hub-secrets.json` とその控え `.prev`
+(トークン)、`service-hub-emotions.json` (気分の記録)、`~/.local/business-hub/talent.json` (部署名・氏名)・
+`team-radar.json` (他人の氏名と評価)・`state.json` (ウォッチリスト)・`data/dashboard.html`、それと書き込みの残骸
+`<名前>.tmp-*`。しかも説明文は「このブラウザにアプリが保存した物をすべて消します: 保管庫 (全トークン …)」と、
+デスクトップでは当てはまらない文を刷っていた。パス 136 の「残る物」は「デスクトップ版に『すべて消す』は無い」と
+書いたが、**無いのではなく、在って嘘をついていた**。
+
+### 直し
+
+- `src/shared/eraseReport.ts` (新規): 報告の型を両ビルドで 1 つに (`BrowserEraseReport` / `DesktopEraseReport`、
+  `EraseAllReport` の union)。デスクトップ版の文面 `describeDesktopEraseReport` (残ったファイルを**パスで**名指し —— 利用者が
+  手で消せる) と説明 `desktopEraseScopeSummary` (消えない物: 書き出したファイル・OS のキーチェーンに残る鍵の器・アプリ本体)。
+- `src/main/eraseAll.ts` (新規): 在庫は**置き場所の関数から** (`secretsPath` / emotions `storePath` / talent・teamradar・stocks
+  `defaultStatePath` / `defaultDashboardPath` —— 綴りを写さない)。`eraseFileAndLitter` は本体・`.prev`・`<名前>.tmp-*` を
+  まとめて消し、控えか残骸が 1 つでも残れば failed (本体だけ消して「消えた」と言わない —— パス 134)。
+  `eraseDesktopData` はそれに `session.defaultSession.clearStorageData()` (renderer の保存領域) を足し、ファイルごと +
+  renderer の結果を返す。投げない。
+- `main.ts` に `app:eraseAll` (橋は 13 → 14 本): 報告を返し、**全部消えた時だけ** 300 ms 後に `app.relaunch()` → `app.exit(0)`
+  (画面が「再起動します」を出せる)。手順が投げても IPC を reject しない (`lint:ipc-handlers` が求める形) —— `error` つきの
+  報告を返し、画面は「どこまで消えたか分からない」と言う。`preload.ts` の `eraseAll`、`web-shim.ts` の `eraseAll` (パス 136 の `eraseEverything` に
+  `kind: 'browser'` を付けて返す)。**画面は橋を 1 つ呼ぶ**だけになった (`report.kind` で文面を選ぶ)。
+- `SettingsPage.tsx`: `isBrowserBuild()` (`renderer/runtimeMode.ts` —— App のロック画面の判定と**同じ 1 つ**) でデスクトップ版を
+  見分け、保管庫の操作 (パスワード変更・施錠) を出さない。削除の説明・確認の文はデスクトップの範囲、全部消えたら
+  「削除しました。アプリを再起動します…」で再読込しない (main が再起動する)、残れば名指しして押し直せる。
+- 検査: `main/__tests__/eraseAll.test.ts` (**実物の一時ディレクトリ**: 本体・控え・残骸が消え隣は残る ★ / 元から無ければ missing /
+  ディレクトリが居座れば failed ★ / 本体が消えても控えが残れば failed ★ / 残骸が残れば failed ★ / renderer の消去が拒まれたら
+  failed ★ / 文面はパスを名指し / 在庫は 6 つ)、`mainIpc.test.ts` (登録 14 本 / ★ 全部消えた時だけ relaunch → exit 0 /
+  ★ 残れば再起動しない)、`bridgeContract` 14 本・`bridgeStatic` +1 チャンネル・`webShimBridge` (橋の名前が preload と一致)、
+  `settingsDesktopErase.test.ts` (jsdom: ★ 保管庫の操作が消える / ★ 説明はデスクトップの範囲 / ★ 全部消えたら再起動の文で
+  再読込しない / ★ 残ればパスを名指し / 橋が投げたら message)、`settingsHardReset.test.ts` は橋経由に。
+- `docs/ARCHITECTURE.md` の IPC 契約 (13 → 14 チャンネル、`verify:arch` の標本も 14)、`stryker` 279 → 281 (`main/eraseAll.ts` と `shared/eraseReport.ts` —— 後者は「保護対象は変異検査にも載る」規則 (`lint:mutation-scope`) が鳴って足した)、
+  `DATA_PROTECTION` (デスクトップ版の範囲・実装済み 18)、`USER_GUIDE` (デスクトップ版の手順)。`main.ts` / `preload.ts` /
+  `secrets.ts` は保護対象 —— 整合性チェーン #169。`main/eraseAll.ts` と `shared/eraseReport.ts` も保護対象に (消す先が黙って
+  変わらない)。eraseAll が読む 4 つの保管モジュールは置き場所の関数だけなので除外台帳に理由つきで。
+
+### 対照
+
+| # | 何を壊したか | 鳴ったか |
+| --- | --- | --- |
+| A | main が全部消えていなくても再起動する (`if (report.allDeleted)` を外す — パス 20 の逆戻り) | 🔔 1 / 70 (`mainIpc.test.ts`): ★ 残った物が在っても relaunch → exit が走る |
+| A2 | 控え (`.prev`) を消さない (本体だけ消して「消えた」と言う — パス 134 の逆戻り) | 🔔 2 / 11 (`main/__tests__/eraseAll.test.ts`): ★ 控えが残る・控えが消せなくても deleted と言う |
+| A3 | 画面がデスクトップでもブラウザ版の説明を刷る (元の判断: 両ビルドで同じ節) | 🔔 1 / 5 (`settingsDesktopErase.test.ts`): ★ デスクトップでブラウザ版の文 (このブラウザに …) を刷る |
+| B | 実物の `electron .` が新しいハンドラを載せて起動する (`smoke:app`) | ✅ `xvfb-run -a npm run smoke:app`: 実物の `electron .` が `app:eraseAll` を載せて起動し 8 秒生きた |
+
+### 残る物
+
+- 実物の Electron で「消して再起動」を通す検査は無い (`smoke:app` は起動だけ)。ファイルの消去は実物の fs、再起動の判断は
+  IPC の検査、renderer の消去は `session.clearStorageData` の呼び出しまで —— Electron の API そのものは信じている。
+- OS のキーチェーンに残る鍵の器 (`safeStorage` の鍵) は消さない (Electron に消す口が無い)。中身の暗号文は消えるので、器だけでは
+  何も復元できない —— 説明文がそう言う。
+- 残骸の走査は `<名前>.tmp-*` の綴り (`atomicWrite.ts` の tmp 名) に依る。綴りが変われば走査も変える必要がある —— 検査が
+  実物の `atomicWriteFile` の残骸で測ってはいない (tmp は成功時に rename される)。次の候補。
+- 0 倒しの母集団 (`lint:zero-fold`) は生成ブロックのまま (再生成の差分出力は「前回と同じ」—— 足した物に `? … : 0` / `?? 0` / `|| 0` の形は無い)。
+
 ## パス 136 (2026-09-09) — **「⚠ すべてのデータを削除 (ハードリセット)」が消していたのは保管庫 (`business-hub-vault`) だけ —— 業務レコード・ライブラリ・プロキシ設定 (共有秘密)・localStorage 21 鍵 (気分の記録・会話履歴 …)・sessionStorage・キャッシュは残り、「最初のセットアップ画面」が出るので次の人が前の人の記録を見る**
 
 ### 何が起きていたか

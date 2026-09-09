@@ -28,6 +28,7 @@
  */
 import 'fake-indexeddb/auto';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { eraseEverything } from '../security/eraseAll';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { webcrypto } from 'node:crypto';
@@ -57,6 +58,8 @@ beforeAll(() => {
     oauthSupported: () => Promise.resolve(false),
     setToken: () => Promise.resolve(),
     clearToken: () => Promise.resolve(),
+    // 「すべてのデータを削除」は橋を呼ぶ (パス 137)。ブラウザ版の橋と同じく在庫を消す実装を写す。
+    eraseAll: async () => ({ kind: 'browser', ...(await eraseEverything()) }),
     // 設定画面はこれを呼ぶ。無いと画面が `PageErrorBoundary` の枠になり、
     // Vault 管理の札まで描かれない (実際それで 1 度落ちた)。
     storageProtection: () => Promise.resolve({ mechanism: 'os-keychain' }),

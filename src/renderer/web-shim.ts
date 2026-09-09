@@ -98,6 +98,8 @@ import {
   type StoredTeamRadar,
 } from '../shared/teamRadarState';
 import { getVault } from './security/vault';
+import { eraseEverything } from './security/eraseAll';
+import type { EraseAllReport } from '../shared/eraseReport';
 import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_LENGTH } from '../shared/redact';
 import {
   withBodyDeadline,
@@ -1126,6 +1128,8 @@ const shim = {
 
   revealInFolder: notSupportedAlert,
   openPath: notSupportedAlert,
+  // 「すべてのデータを削除」— ブラウザ版は保管層ごとの在庫 (security/eraseAll.ts) を消す。橋の形は両ビルドで 1 つ (パス 137)。
+  eraseAll: async (): Promise<EraseAllReport> => ({ kind: 'browser', ...(await eraseEverything()) }),
 
   // Electron 側と同じ規則で弾き、弾いた理由を返す (shared/tokenInput.ts)。
   // Vault の書き込み失敗も握り潰さない — 黙って捨てると画面は「保存した」と

@@ -49,16 +49,6 @@ function reportWith(vault: EraseOutcome, data: EraseOutcome = 'deleted'): EraseR
 let eraseImpl: () => Promise<EraseReport> = async () => reportWith('deleted');
 const calls: string[] = [];
 
-vi.mock('../../security/eraseAll', async (importOriginal) => {
-  const real = await importOriginal<typeof import('../../security/eraseAll')>();
-  return {
-    ...real,
-    eraseEverything: async () => {
-      calls.push('eraseEverything');
-      return eraseImpl();
-    },
-  };
-});
 
 vi.mock('../../security/vault', async (importOriginal) => {
   const real = await importOriginal<typeof import('../../security/vault')>();
@@ -133,6 +123,14 @@ async function runHardReset(): Promise<void> {
 beforeEach(() => {
   calls.length = 0;
   eraseImpl = async () => reportWith('deleted');
+  // パス 137: 画面は橋 (`window.serviceHub.eraseAll`) を呼ぶ。ブラウザ版の橋 (web-shim) は eraseEverything を写す。
+  (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
+    getVersion: async () => '0.1.0-web',
+    eraseAll: async () => {
+      calls.push('eraseAll');
+      return { kind: 'browser', ...(await eraseImpl()) };
+    },
+  };
   reload = vi.fn();
   Object.defineProperty(window, 'location', {
     configurable: true,
@@ -160,7 +158,7 @@ describe('設定画面のハードリセット — 消えた時だけ再読込�
     wire.onmessage = (e: MessageEvent) => announced.push(String(e.data));
     try {
       await runHardReset();
-      expect(calls).toEqual(['eraseEverything']);
+      expect(calls).toEqual(['eraseAll']);
       // 他のタブへは施錠を配る (消えた後に作った保管庫へ古い鍵で書かせない)。
       await waitFor(announced);
       expect(announced).toEqual([LOCK_MESSAGE]);

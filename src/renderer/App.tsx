@@ -7,6 +7,7 @@ import { serviceIdFromHash, hashForService } from './hashRoute';
 import { ManualDataSection } from './components/ManualDataSection';
 import { pushRecent, toggleFavorite, keepKnown, RECENTS_MAX } from './recents';
 import { LockScreen } from './security/LockScreen';
+import { isBrowserBuild } from './runtimeMode';
 import { getVault } from './security/vault';
 import { startAutoLock } from './security/autoLock';
 import { lockWorkspace, startLockRelay, subscribeWorkspaceLocked } from './security/lockWorkspace';
@@ -27,14 +28,8 @@ import {
 // True when the renderer is loaded in a plain browser (no Electron preload).
 // The Electron preload sets serviceHub via contextBridge — if `getVersion`
 // returns the web shim's '0.1.0-web', we're in the browser.
-async function detectBrowserMode(): Promise<boolean> {
-  try {
-    const v = await window.serviceHub.getVersion();
-    return v === '0.1.0-web';
-  } catch {
-    return false;
-  }
-}
+/** 設定画面と同じ判定 (`runtimeMode.ts` · パス 137) —— 片方だけ写すとデスクトップ版に保管庫の操作が出る。 */
+const detectBrowserMode = isBrowserBuild;
 
 const COLLAPSED_BY_DEFAULT: ReadonlySet<ServiceCategory> = new Set<ServiceCategory>([
   'tools',

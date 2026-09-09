@@ -35,6 +35,7 @@ import { deletePreferencesDatabase } from '../fs/fsa';
 import { deleteLibraryDatabase } from '../library/library';
 import { pkceSessionKeys } from '../oauth/pkceSession';
 import { getVault, type WipeOutcome } from './vault';
+import type { BrowserEraseReport, EraseOutcome } from '../../shared/eraseReport';
 
 /** IndexedDB。保管庫は最後 —— 途中で止まっても「保管庫だけ新しく、記録は前の人の物」の向きにはならない。 */
 export const ERASE_INDEXEDDB: readonly string[] = [
@@ -88,17 +89,13 @@ export const ERASE_SESSION_STORAGE_KEYS: readonly string[] = pkceSessionKeys();
 
 export const ERASE_CACHE_STORAGE: readonly string[] = ['service-hub-v2'];
 
-/** `unavailable` = この環境にその媒体が無い (file:// の Cache Storage など)。残る物は無いので「消えた」と同じ扱い。 */
-export type EraseOutcome = WipeOutcome | 'unavailable';
-
-export interface EraseReport {
-  readonly indexeddb: Readonly<Record<string, EraseOutcome>>;
-  readonly localStorage: EraseOutcome;
-  readonly sessionStorage: EraseOutcome;
-  readonly cacheStorage: EraseOutcome;
-  /** 全部が `deleted` か `unavailable`。これが真の時だけ再読込してよい。 */
-  readonly allDeleted: boolean;
-}
+/**
+ * `unavailable` = この環境にその媒体が無い (file:// の Cache Storage など)。残る物は無いので「消えた」と同じ扱い。
+ * 型は両ビルドで 1 つ (`shared/eraseReport.ts` · パス 137) —— 橋 `window.serviceHub.eraseAll` はこの報告に
+ * `kind: 'browser'` を付けて返す。
+ */
+export type { EraseOutcome };
+export type EraseReport = Omit<BrowserEraseReport, 'kind'>;
 
 interface StorageLike {
   getItem(key: string): string | null;

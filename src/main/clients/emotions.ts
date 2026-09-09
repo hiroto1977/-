@@ -76,7 +76,8 @@ export interface EmotionsSnapshot extends EmotionsStore {
 }
 
 
-function storePath(): string {
+/** 置き場所。ハードリセット (`main/eraseAll.ts`) が在庫を作るために読む (パス 137)。 */
+export function storePath(): string {
   return path.join(app.getPath('userData'), 'service-hub-emotions.json');
 }
 

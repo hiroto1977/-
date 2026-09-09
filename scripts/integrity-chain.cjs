@@ -254,6 +254,10 @@ const PROTECTED = [
   // 一時ファイルの置き場と `.prev` の扱いを決めるので、ここが変われば
   // 平文や旧世代が予期しない場所に残りうる。
   'src/main/atomicWrite.ts',
+  // ハードリセット (2026-09-09 · パス 137): main のファイル (トークン・状態ファイル・控え・残骸) を消す手順と、
+  // 両ビルドの報告の型・文面。消す先が黙って変わらないこと。
+  'src/main/eraseAll.ts',
+  'src/shared/eraseReport.ts',
   // IPC 境界で資格情報の文字列を検査する唯一の場所 (main.ts が読む)。
   // 制御文字・長さ・空を落としているので、緩めば折り返しごと保存される。
   'src/shared/tokenInput.ts',
@@ -314,6 +318,13 @@ const PROTECTED = [
  * 残り続ける。
  */
 const DEP_EXCLUSIONS = {
+  // ハードリセット (main/eraseAll.ts · パス 137) が読むのは**置き場所の関数**だけ (storePath / defaultStatePath /
+  // defaultDashboardPath)。置き場所が変われば消す先も同じに変わる (在庫は綴りを写さない)。中身の変更で消す対象は
+  // 変わらない。名前は `main/__tests__/eraseAll.test.ts` (6 つ) と封緘の台帳 `atRestPolicy.test.ts` が留める。
+  'src/main/clients/emotions.ts': 'ハードリセットが読むのは置き場所の関数 storePath だけ (上の注記)。',
+  'src/main/clients/talent.ts': 'ハードリセットが読むのは置き場所の関数 defaultStatePath だけ (上の注記)。',
+  'src/main/clients/teamradar.ts': 'ハードリセットが読むのは置き場所の関数 defaultStatePath だけ (上の注記)。',
+  'src/main/clients/stocks.ts': 'ハードリセットが読むのは置き場所の関数 defaultStatePath / defaultDashboardPath だけ (上の注記)。',
   'src/shared/serviceId.ts':
     'サービスを 1 つ足すたびに変わる (現在 74)。かつ、この一覧自体は関門ではない — '
     + '未知の id を弾いているのは SERVICE_ID_SET を使う isServiceId で、'

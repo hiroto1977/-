@@ -203,7 +203,15 @@ sessionStorage 4 鍵。消す物の一覧は `src/renderer/security/eraseAll.ts`
 
 消えたと言うのは全媒体が消えた時だけ（他のタブが掴んで消せない / ブラウザが拒む場合は残った物を名指しして再読込しない）。
 **消えない物**: 保存先フォルダに書き出した控え（利用者の PC のファイル）・ダウンロードしたバックアップと書き出し・
-ブラウザの履歴・デスクトップ版の `userData`（デスクトップ版にこの操作は無い）。
+ブラウザの履歴。
+
+**デスクトップ版**（2026-09-09 · パス 137）: 同じボタンが main の `app:eraseAll` を呼び、トークン (`service-hub-secrets.json`
+とその控え `.prev`)・状態ファイル（`service-hub-emotions.json` / `~/.local/business-hub/talent.json` / `team-radar.json` /
+`state.json` / `data/dashboard.html`）・書き込みの残骸 `<名前>.tmp-*`・renderer の保存領域（`session.clearStorageData()`）を消す。
+在庫は各モジュールの置き場所の関数から作る（綴りを写さない）。控えか残骸が 1 つでも残ればそのファイルは failed で、
+全部消えた時だけアプリが再起動する。**消えない物**: 書き出したファイル・OS のキーチェーンに残る鍵の器（中身の暗号文は消える）・
+アプリ本体。2026-09-09 まではデスクトップ版でも renderer の保存領域（パス 136 まではその中の使われていない保管庫 1 つ）しか
+消えず、トークンと健康に関わる記録が OS のユーザー領域に残っていた。
 
 ### デスクトップ版の状態ファイル（`userData` / `~/.local/business-hub`）
 
@@ -315,6 +323,11 @@ sessionStorage 4 鍵。消す物の一覧は `src/renderer/security/eraseAll.ts`
     `pages/SettingsPage.tsx`（2026-09-09 · パス 136）。保管庫だけでなく業務レコード・ライブラリ・preferences・localStorage・
     sessionStorage・Cache Storage を消し、全部消えた時だけ再読込、残った物は名指し。在庫は台帳と `lint:storage` 規則 11 で
     両方向に一致（次に使う人へ前の人の記録を渡さない）。
+18. **デスクトップ版のハードリセットは main のファイルも消す** — `main/eraseAll.ts` + `app:eraseAll` +
+    `shared/eraseReport.ts`（2026-09-09 · パス 137）。トークン (`service-hub-secrets.json` と控え `.prev`)・状態ファイル 4 つ・
+    書き込みの残骸 `*.tmp-*`・renderer の保存領域 (`session.clearStorageData`) を消し、全部消えた時だけ再起動。残った物は
+    パスで名指し。保管庫の無いデスクトップには保管庫の操作 (パスワード変更・施錠) を出さない（次に使う人へ前の人の
+    トークンと健康に関わる記録を渡さない）。
 
 ## 優先度の高い残対策（漏洩 / 損壊 / 消失 別）
 

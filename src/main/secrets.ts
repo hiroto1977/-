@@ -9,7 +9,8 @@ import { atomicWriteFile, readFileWithBackup } from './atomicWrite';
 const FILE_NAME = 'service-hub-secrets.json';
 const MAX_STORE_SIZE = 1 * 1024 * 1024; // 1 MB — generous for hundreds of tokens
 
-function secretsPath(): string {
+/** 置き場所。ハードリセット (`main/eraseAll.ts`) が在庫を作るために読む (パス 137)。 */
+export function secretsPath(): string {
   return path.join(app.getPath('userData'), FILE_NAME);
 }
 

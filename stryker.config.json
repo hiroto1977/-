@@ -9,6 +9,7 @@
   "mutate": [
     "src/main/atRest.ts",
     "src/main/atomicWrite.ts",
+    "src/main/eraseAll.ts",
     "src/main/clients/assistant.ts",
     "src/main/clients/atlassian.ts",
     "src/main/clients/base.ts",
@@ -213,6 +214,7 @@
     "src/shared/emotionThresholds.ts",
     "src/shared/emotionsShape.ts",
     "src/shared/employerBenefits.ts",
+    "src/shared/eraseReport.ts",
     "src/shared/escape.ts",
     "src/shared/externalUrlGate.ts",
     "src/shared/financialHealthBands.ts",

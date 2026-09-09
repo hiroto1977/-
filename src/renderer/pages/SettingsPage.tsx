@@ -12,7 +12,9 @@ import { usePlan } from '../plan/usePlan';
 import { getPlan } from '../../shared/plan';
 import { issueInviteCode } from '../plan/internalLicense';
 import { getVault, MIN_PASSWORD_LENGTH } from '../security/vault';
-import { describeEraseReport, eraseEverything, eraseScopeSummary } from '../security/eraseAll';
+import { describeEraseReport, eraseScopeSummary } from '../security/eraseAll';
+import { describeDesktopEraseReport, desktopEraseScopeSummary } from '../../shared/eraseReport';
+import { isBrowserBuild } from '../runtimeMode';
 import { announceLockToOtherTabs, lockEverywhere } from '../security/lockWorkspace';
 import { credentialUseOf, unusedStoredCredentials } from '../../shared/credentialUse';
 import { EVICTION_RECOVERY, isEvictableStorage } from '../../shared/storageDurability';
@@ -316,9 +318,21 @@ export function VaultControls() {
   //   'idle'     → user has not clicked the button yet
   //   'confirm1' → first dialog ("really?") accepted, now showing typed-confirmation
   //   'wiping'   → wipeAndReset in flight; UI locked
-  const [wipeStage, setWipeStage] = useState<'idle' | 'confirm1' | 'wiping'>('idle');
+  const [wipeStage, setWipeStage] = useState<'idle' | 'confirm1' | 'wiping' | 'restarting'>('idle');
   const [wipeConfirmText, setWipeConfirmText] = useState('');
   const [wipeErr, setWipeErr] = useState<string | null>(null);
+  // デスクトップ版には保管庫が無い (トークンは main の secrets.json) —— パスワード変更と施錠は出さず、
+  // 「すべてのデータを削除」は main がファイルごと消して再起動する (パス 137)。判定は App と同じ 1 つ。
+  const [desktop, setDesktop] = useState<boolean | null>(null);
+  useEffect(() => {
+    let alive = true;
+    void isBrowserBuild().then((web) => {
+      if (alive) setDesktop(!web);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   async function changePassword() {
     setErr(null);
@@ -415,10 +429,16 @@ export function VaultControls() {
     try {
       announceLockToOtherTabs();
       // パス 136: 保管庫だけでなく、台帳 (lint:storage) の全行を消す。全部消えた時だけ再読込 (パス 20 の規則を全媒体へ)。
-      const problem = describeEraseReport(await eraseEverything());
+      // パス 137: 橋は両ビルドで 1 つ —— ブラウザ版は媒体ごと、デスクトップ版は main がファイルごと消して再起動する。
+      const report = await window.serviceHub.eraseAll();
+      const problem = report.kind === 'desktop' ? describeDesktopEraseReport(report) : describeEraseReport(report);
       if (problem !== null) {
         setWipeErr(problem);
         setWipeStage('confirm1');
+        return;
+      }
+      if (report.kind === 'desktop') {
+        setWipeStage('restarting'); // main が再起動する。ここで reload すると消した後の画面を一瞬描く
         return;
       }
       // Reload to bring up the first-run LockScreen flow from a clean slate.
@@ -431,6 +451,8 @@ export function VaultControls() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {desktop !== true && (
+        <>
       <div style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 8, padding: 14 }}>
         <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 8 }}>マスターパスワード変更</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -474,6 +496,8 @@ export function VaultControls() {
           🔒 ロックする
         </button>
       </div>
+        </>
+      )}
 
       <div
         style={{
@@ -488,8 +512,10 @@ export function VaultControls() {
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 10, lineHeight: 1.5 }}>
           マスターパスワードもリカバリーキーも紛失した場合の最終手段、または端末を手放す・共用の PC で使い終えるときの消去です。
-          {eraseScopeSummary()} どれも <strong>復旧不可</strong> です。
-          実行後はページが再読込みされ、最初のセットアップ画面に戻ります。
+          {desktop === true ? desktopEraseScopeSummary() : eraseScopeSummary()} どれも <strong>復旧不可</strong> です。
+          {desktop === true
+            ? '実行後はアプリが再起動し、最初の状態に戻ります。'
+            : '実行後はページが再読込みされ、最初のセットアップ画面に戻ります。'}
         </div>
         {wipeStage === 'idle' && (
           <button
@@ -523,7 +549,9 @@ export function VaultControls() {
             >
               <strong>本当に削除しますか?</strong>
               <br />
-              すべての保存済みトークン・現在の 24 単語リカバリーキー・業務レコード・ライブラリの書類・設定と記録が無効になります。
+              {desktop === true
+                ? 'すべての保存済みトークン・状態ファイル (気分の記録・人材育成・チームレーダー・ウォッチリスト)・業務レコード・ライブラリの書類・設定と記録が無効になります。'
+                : 'すべての保存済みトークン・現在の 24 単語リカバリーキー・業務レコード・ライブラリの書類・設定と記録が無効になります。'}
               この操作は取り消せません。
               <br />
               続行するには、下の欄に <code style={{ background: 'var(--bg)', padding: '1px 4px', borderRadius: 3 }}>{WIPE_CONFIRM_PHRASE}</code> と入力してください。
@@ -568,7 +596,12 @@ export function VaultControls() {
           </div>
         )}
         {wipeStage === 'wiping' && (
-          <div style={{ fontSize: 12, color: 'var(--text-mute)' }}>削除中… ページを再読み込みします</div>
+          <div style={{ fontSize: 12, color: 'var(--text-mute)' }}>
+            {desktop === true ? '削除中…' : '削除中… ページを再読み込みします'}
+          </div>
+        )}
+        {wipeStage === 'restarting' && (
+          <div style={{ fontSize: 12, color: 'var(--text-mute)' }}>削除しました。アプリを再起動します…</div>
         )}
       </div>
     </div>

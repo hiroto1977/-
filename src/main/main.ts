@@ -19,6 +19,8 @@ import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { shellTargetOrNull } from './shellOpenGate';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../shared/httpLimits';
+import { eraseDesktopData } from './eraseAll';
+import type { DesktopEraseReport } from '../shared/eraseReport';
 
 const isDev = !app.isPackaged;
 
@@ -354,6 +356,30 @@ ipcMain.handle('secrets:list', () => listConfiguredServices());
 // whether the OS keychain is usable, how many values are still `plain:`, and the
 // file path — so the UI can warn the user instead of degrading silently.
 ipcMain.handle('secrets:protection', () => getStorageProtection());
+
+/**
+ * デスクトップ版の「すべてのデータを削除」(2026-09-09 · パス 137)。トークン (secrets.json と控え)・状態ファイル
+ * (気分の記録・人材育成・チームレーダー・ウォッチリスト) と書き込みの残骸、renderer の保存領域を消し、
+ * **全部消えた時だけ**再起動する (パス 20 の規則)。残った物はファイルごとの報告で画面が名指しする。
+ * 再起動は返してから —— 画面が「再起動します」を出せる。
+ */
+const RELAUNCH_DELAY_MS = 300;
+function scheduleRelaunch(): void {
+  setTimeout(() => {
+    app.relaunch();
+    app.exit(0);
+  }, RELAUNCH_DELAY_MS);
+}
+ipcMain.handle('app:eraseAll', async (): Promise<DesktopEraseReport> => {
+  try {
+    const report = await eraseDesktopData();
+    if (report.allDeleted) scheduleRelaunch();
+    return report;
+  } catch (e) {
+    // eraseDesktopData は投げない設計だが、IPC を reject させない (lint:ipc-handlers) —— 画面が用意していない経路に落とさない。
+    return { kind: 'desktop', files: {}, renderer: 'failed', allDeleted: false, error: safeErrorMessage(e) };
+  }
+});
 
 ipcMain.handle('fetch:snapshot', async (_e, serviceId: unknown) => {
   if (!isServiceId(serviceId)) {
