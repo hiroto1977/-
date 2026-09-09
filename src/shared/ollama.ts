@@ -66,6 +66,18 @@ const LOOPBACK_HOSTS = new Set(['127.0.0.1', 'localhost', '[::1]', '::1']);
 export const MAX_OLLAMA_SYSTEM_CHARS = 8_192;
 export const MAX_OLLAMA_PROMPT_CHARS = 32_768;
 
+/**
+ * `ollama/chat` が返す形 —— **両ビルドと画面が同じ型を読む** (2026-09-09 · パス 113)。
+ * それまでチャットボットは `{ response?, message? }` と**手で写した型**で読んでおり、
+ * 実物 (`reply`) と食い違っていた —— Ollama の答えは 1 度も画面に出ていなかった
+ * (パス 62 と同じ形: 手写しの型がずれても `tsc` は黙る)。
+ */
+export interface OllamaChatResult {
+  /** モデルの返答本文 (`capAssistantReply` で天井つき)。 */
+  readonly reply: string;
+  readonly durationMs: number;
+}
+
 export const OLLAMA_READ_PATHS = ['/api/version', '/api/tags', '/api/chat'] as const;
 export type OllamaReadPath = (typeof OLLAMA_READ_PATHS)[number];
 

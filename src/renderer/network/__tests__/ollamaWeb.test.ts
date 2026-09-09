@@ -16,6 +16,7 @@ import {
   setupCommands,
 } from '../ollamaWeb';
 import { DEFAULT_SETUP_MODEL, MIN_SAFE_VERSION } from '../../../shared/ollama';
+import { ASSISTANT_REPLY_TRUNCATED_NOTICE, MAX_ASSISTANT_REPLY_CHARS } from '../../../shared/assistantLimits';
 
 /*
  * probeOllama の要点は **失敗理由の切り分け**。利用者から見ると「未起動」と
@@ -285,6 +286,24 @@ describe('chatOllama — 送信', () => {
       });
     }) as unknown as typeof fetch;
   }
+
+  it('★ 返答は MAX_ASSISTANT_REPLY_CHARS で打ち切り、切ったことを本文に残す (パス 113 まで 2 MiB まで素通し)', async () => {
+    const f = vi.fn(async (url: string | URL | Request) => {
+      const u = String(url);
+      if (u.endsWith('/api/tags')) {
+        return new Response(JSON.stringify({ models: [{ name: 'llama3.2:latest', size: 1024 ** 3 }] }), { status: 200, headers: { 'content-type': 'application/json' } });
+      }
+      return new Response(
+        JSON.stringify({ message: { role: 'assistant', content: 'z'.repeat(MAX_ASSISTANT_REPLY_CHARS + 1) }, total_duration: 0 }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      );
+    }) as unknown as typeof fetch;
+    const r = await chatOllama({ model: 'llama3.2:latest', prompt: 'やあ' }, f, '');
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.reply).toHaveLength(MAX_ASSISTANT_REPLY_CHARS + ASSISTANT_REPLY_TRUNCATED_NOTICE.length);
+    expect(r.reply.endsWith(ASSISTANT_REPLY_TRUNCATED_NOTICE)).toBe(true);
+  });
 
   it('応答本文を返す', async () => {
     const r = await chatOllama({ model: 'llama3.2:latest', prompt: 'やあ' }, chatServer(), '');
@@ -1844,7 +1863,12 @@ describe('chat の応答サイズの境界', () => {
     expect(body.length).toBe(LIMIT);
     const r = await chatOllama(base, chatBody(body), '');
     expect(r.ok).toBe(true);
-    if (r.ok) expect(r.reply).toBe(pad);
+    // byte の天井ちょうどは**断らない** (境界はそのまま)。文字数はパス 113 から
+    // `capAssistantReply` が 10 万字で打ち切る。
+    if (r.ok) {
+      expect(r.reply.startsWith('z'.repeat(MAX_ASSISTANT_REPLY_CHARS))).toBe(true);
+      expect(r.reply.endsWith(ASSISTANT_REPLY_TRUNCATED_NOTICE)).toBe(true);
+    }
   });
 
   it('上限を 1 バイト超えたら読まない', async () => {

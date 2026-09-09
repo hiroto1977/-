@@ -2,7 +2,7 @@ import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
-import { MAX_ASSISTANT_CONTENT_CHARS, inputTooLongMessage } from '../../shared/assistantLimits';
+import { MAX_ASSISTANT_CONTENT_CHARS, capAssistantReply, inputTooLongMessage } from '../../shared/assistantLimits';
 import {
   jsonFetch,
   type ActionContext,
@@ -339,7 +339,9 @@ async function runSkill(ctx: ActionContext): Promise<{ text: string; stopReason:
   );
 
   const text = res.content?.find((c) => c.type === 'text')?.text ?? '';
-  return { text, stopReason: res.stop_reason ?? '' };
+  // 応答の天井 (パス 113)。`runAiChat` を通らないので、同じ判断をここで読む ——
+  // それまで 10 MiB (byte の天井) までの本文がそのまま画面の <pre> へ出ていた。
+  return { text: capAssistantReply(text), stopReason: res.stop_reason ?? '' };
 }
 
 export const ACTIONS: ActionMap = {

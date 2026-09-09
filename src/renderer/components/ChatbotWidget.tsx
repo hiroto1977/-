@@ -27,7 +27,7 @@ import {
   voiceWriteRefusal,
   voiceWriteRefusalMessage,
 } from '../../shared/voiceWriteRequirements';
-import { MAX_OLLAMA_PROMPT_CHARS } from '../../shared/ollama';
+import { MAX_OLLAMA_PROMPT_CHARS, type OllamaChatResult } from '../../shared/ollama';
 
 /** チャット履歴 1 件。 */
 interface ChatMessage {
@@ -134,17 +134,13 @@ async function tryOllama(prompt: string): Promise<string | null> {
     }
   })();
   try {
-    const res = await window.serviceHub.invoke<{ response?: string; message?: string }>(
-      'ollama',
-      'chat',
-      { model, prompt },
-    );
-    if (res.ok) {
-      const data = res.data;
-      const text = data.response ?? data.message ?? '';
-      return text || null;
-    }
-    return null;
+    // 戻り値の型は共有の `OllamaChatResult` を読む (パス 113)。それまで `{ response?, message? }`
+    // と手で写しており、実物の `reply` を 1 度も読めていなかった —— Ollama の答えは
+    // 常に空として捨てられ、定型の「解釈できません」だけが出ていた。
+    const res = await window.serviceHub.invoke<OllamaChatResult>('ollama', 'chat', { model, prompt });
+    if (!res.ok) return null;
+    const text = res.data.reply.trim();
+    return text.length > 0 ? text : null;
   } catch {
     return null;
   }

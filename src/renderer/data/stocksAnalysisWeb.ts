@@ -15,6 +15,11 @@
 
 import { escapeXml, escapeMarkdownInline } from '../../shared/escape';
 import { ratioPctOrDash } from '../../shared/num';
+import {
+  MAX_ADVISOR_RECOMMENDATIONS,
+  MAX_STOCK_ADVISOR_RATIONALE_CHARS,
+  MAX_STOCK_ADVISOR_RISK_CHARS,
+} from '../../shared/advisorResponseLimits';
 import { mockCandles, type WebCandle, type WebSignal } from './stocksWatchlistWeb';
 
 const HISTORY_LENGTH = 120;
@@ -565,7 +570,7 @@ export function validateAdvisorJson(
   const obj = raw as { recommendations?: unknown };
   if (!Array.isArray(obj.recommendations)) throw new Error('advisor response missing recommendations array');
   if (obj.recommendations.length === 0) throw new Error('advisor response has zero recommendations');
-  if (obj.recommendations.length > 5) throw new Error('advisor response exceeds 5 recommendations');
+  if (obj.recommendations.length > MAX_ADVISOR_RECOMMENDATIONS) throw new Error(`advisor response exceeds ${MAX_ADVISOR_RECOMMENDATIONS} recommendations`);
   const out: AdvisorRecommendation[] = [];
   for (const item of obj.recommendations) {
     if (item === null || typeof item !== 'object') throw new Error('recommendation entry is not an object');
@@ -583,11 +588,11 @@ export function validateAdvisorJson(
       throw new Error(`recommendation has invalid rank: ${String(rec.rank)}`);
     }
     if (typeof rec.rationale !== 'string' || rec.rationale.length === 0) throw new Error('recommendation has empty rationale');
-    if (rec.rationale.length > 400) throw new Error('recommendation rationale exceeds 400 chars');
+    if (rec.rationale.length > MAX_STOCK_ADVISOR_RATIONALE_CHARS) throw new Error(`recommendation rationale exceeds ${MAX_STOCK_ADVISOR_RATIONALE_CHARS} chars`);
     if (!Array.isArray(rec.riskFactors) || rec.riskFactors.length === 0) throw new Error('recommendation has no riskFactors');
     const riskFactors: string[] = [];
     for (const rf of rec.riskFactors) {
-      if (typeof rf !== 'string' || rf.length === 0 || rf.length > 200) throw new Error('riskFactor entry is not a 1-200 char string');
+      if (typeof rf !== 'string' || rf.length === 0 || rf.length > MAX_STOCK_ADVISOR_RISK_CHARS) throw new Error(`riskFactor entry is not a 1-${MAX_STOCK_ADVISOR_RISK_CHARS} char string`);
       riskFactors.push(rf);
     }
     out.push({ symbol: rec.symbol, rank: rec.rank, rationale: rec.rationale, riskFactors });

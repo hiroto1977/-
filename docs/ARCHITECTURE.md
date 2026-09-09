@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 29 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **12251** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **12265** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 31 / 36 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 529 | 自己検証 |
+| `file:line` 参照数 | 530 | 自己検証 |
 
 ### 統合フロー図
 
@@ -1790,14 +1790,14 @@ union を参照する。
 | gmail | `create-draft` | `{ to, subject, body? }` | **共有台帳 `GMAIL_DRAFT_FIELDS` (`checkWriteFields`) で型・長さ・CR/LF を reject** + `isSafeHeaderValue(to)` (二重の備え) | `gmail.ts:61-146` |
 | slack | `send-message` | `{ channel, text }` | **共有台帳 `SLACK_MESSAGE_FIELDS`** (型・長さ) | `slack.ts:84-126` |
 | canva | `create-folder` | `{ name, parentFolderId? }` | **共有台帳 `CANVA_FOLDER_FIELDS`** (型・長さ) | `canva.ts:81-122` |
-| skills | `run-skill` | `{ name, prompt }` | **`isSafeSkillName(name)`** + path containment。**`prompt` は `MAX_ASSISTANT_CONTENT_CHARS` 超を断る** (パス 112 まで天井なし)。**`model` / `maxTokens` は payload から受けない** (2026-08-23 — 有料 API のパラメータをレンダラーに握らせない。定数 `SKILLS_MAX_TOKENS`) | `skills.ts:171-347` |
+| skills | `run-skill` | `{ name, prompt }` | **`isSafeSkillName(name)`** + path containment。**`prompt` は `MAX_ASSISTANT_CONTENT_CHARS` 超を断る** (パス 112 まで天井なし)。**応答は `capAssistantReply` で 10 万字に打ち切り注記を残す** (パス 113 まで byte の天井だけ)。**`model` / `maxTokens` は payload から受けない** (2026-08-23 — 有料 API のパラメータをレンダラーに握らせない。定数 `SKILLS_MAX_TOKENS`) | `skills.ts:171-347` |
 | security | `check-email-breach` | `{ email }` | `encodeURIComponent(email)` | `security.ts:187-338` |
 | security | `scan-url` | `{ url }` | **`validateScanUrl(url)`** (http/https のみ・長さ上限) → base64url(url) → VT id | `security.ts:290-338` |
 | cloudflare | `create-dns-record` | `{ zoneId, type, name, content, ttl?, proxied? }` | **共有台帳 `CLOUDFLARE_DNS_FIELDS`** (型・長さ・**type は台帳の一覧 (A / AAAA / CNAME / TXT / MX) 以外を reject**・ttl は 1 以上の整数・proxied は真偽値)。zoneId encodeURIComponent | `cloudflare.ts:132-220` |
 | cloudflare | `purge-cache` | `{ zoneId, files?, purgeEverything? }` | **共有台帳 `CLOUDFLARE_PURGE_FIELDS`** (files は文字列の配列で件数と 1 件の長さに天井・purgeEverything は真偽値)。zoneId encodeURIComponent。**`purgeEverything` はゾーン全体のキャッシュを落とす** —— 破壊的な既定値なので payload に載ることを明記する | `cloudflare.ts:180-220` |
 | emotions | `log-mood` | `{ date?, score, note? }` | score は 1..5 の数値・date は YYYY-MM-DD 形式・**note は `MAX_MOOD_NOTE_CHARS` (2000) 上限** | `emotions.ts:121-290` |
 | emotions | `analyze-text` | `{ text, source? }` | **text は `MAX_ANALYZE_TEXT_CHARS` (5000) 上限** + extractJson | `emotions.ts:220-290` |
-| ollama | `chat` | `{ model, prompt, system? }` | **`isSafeModelName(model)`** + `\0` reject + 32KB/8KB clamp | `ollama.ts:211-294` |
+| ollama | `chat` | `{ model, prompt, system? }` | **`isSafeModelName(model)`** + `\0` reject + 32KB/8KB clamp。**応答は `capAssistantReply` で 10 万字に打ち切り** (パス 113 まで 10 MiB まで素通し)。戻り値の形は `OllamaChatResult` (両ビルドとチャットボットが同じ型を読む) | `ollama.ts:247-364` |
 | microsoft-365 | `send-mail` | `{ to, subject, body? }` | **共有台帳 `MS365_MAIL_FIELDS`** (型・長さ) + Graph message envelope | `microsoft-365.ts:145-188` |
 | microsoft-365 | `create-event` | `{ subject, start, end, location? }` | **共有台帳 `MS365_EVENT_FIELDS`** (型・長さ) + Tokyo TZ | `microsoft-365.ts:189-232` |
 | assistant | `chat` | `{ messages, system, model, provider }` | **最新の発話が 1 発話の天井を超えていれば切らずに断る (`latestTurnTooLong` · パス 112。履歴は窓)**。sanitizeMessages が role を user/assistant に限定し最後は user 必須。system は MAX_SYSTEM で切る。**maxTokens は payload から受けない** (ASSISTANT_MAX_TOKENS)。**model / provider は利用者が選ぶ設計**なので許可リストは掛けない —— provider は設定済み資格情報にしか解決せず、model が URL に入る Gemini 経路だけ encodeURIComponent で包む (shared/ai/providers.ts) | `assistant.ts:133-262` |
@@ -1810,7 +1810,7 @@ union を参照する。
 | stocks | `unregister-ticker` | `{ symbol }` | 同上 (RegisterTickerPayload を共用) | `stocks.ts:2050-2058` |
 | stocks | `backtest` | `{ symbol, strategy, initialCash }` | isSafeSymbol + strategy は登録済み戦略名のみ + initialCash は有限の正数 | `stocks.ts:2050-2058` |
 | stocks | `compare-strategies` | `{ symbol, initialCash }` | 同上 (全戦略を同じ足で回す) | `stocks.ts:2050-2058` |
-| stocks | `advise` | `{ question, universe }` | **model / maxTokens は payload から受けない** (定数)。universe 既定は MOCK_TICKERS | `stocks.ts:2050-2058` |
+| stocks | `advise` | `{ question, universe }` | **model / maxTokens は payload から受けない** (定数)。universe 既定は MOCK_TICKERS。**応答の欄の天井は `advisorResponseLimits.ts` の株式用の定数** (パス 113 まで main / ブラウザ版に 5 / 400 / 200 が字面で) | `stocks.ts:2050-2058` |
 | stocks | `export-dashboard` | `{ path, advisorResult, strategyComparison }` | path は書き出し関門を通る | `stocks.ts:2050-2058` |
 | stocks | `export-dashboard-md` | `{ path, advisorResult, strategyComparison }` | 同上 (Markdown 版) | `stocks.ts:2050-2058` |
 | templates | `export-template` | `{ templateId, params, path }` | templateId は目録の id のみ、params は既定値へ clamp、path は書き出し関門 | `templates.ts:506-508` |

@@ -28,6 +28,7 @@ import {
 import {
   MAX_OLLAMA_PROMPT_CHARS,
   MAX_OLLAMA_SYSTEM_CHARS,
+  type OllamaChatResult,
   MIN_SAFE_VERSION,
   UNPATCHED_OOB_NOTICE,
   adviseFromBody,
@@ -36,6 +37,7 @@ import {
   isVersionSafe,
   type OllamaSnapshot,
 } from '../../shared/ollama';
+import { capAssistantReply } from '../../shared/assistantLimits';
 import { isOverCap, readBodyWithCap } from '../../shared/httpLimits';
 
 // 既存の import 元 (このモジュール) を維持するため再 export する。
@@ -242,7 +244,7 @@ interface OllamaChatResponse {
   total_duration?: number;
 }
 
-async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: number }> {
+async function chat(ctx: ActionContext): Promise<OllamaChatResult> {
   const { model, prompt, system } = ctx.payload as unknown as ChatPayload;
   if (!model || !prompt) throw new Error('model and prompt are required');
   if (!isSafeModelName(model)) {
@@ -348,7 +350,9 @@ async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: nu
   }
 
   return {
-    reply: parsed.message?.content ?? '',
+    // 応答の天井 (パス 113)。byte の天井 (10 MiB) は「画面に出す量」としては論外 ——
+    // アシスタントと同じ 10 万字で打ち切り、切ったことを本文に残す。
+    reply: capAssistantReply(parsed.message?.content ?? ''),
     durationMs: Math.round((parsed.total_duration ?? 0) / 1_000_000),
   };
     },

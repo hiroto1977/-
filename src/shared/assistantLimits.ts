@@ -110,3 +110,19 @@ export function latestTurnTooLong(raw: unknown): boolean {
 export function inputTooLongMessage(label: string): string {
   return `${label}が長すぎます (${MAX_ASSISTANT_CONTENT_CHARS} 字以内)`;
 }
+
+/**
+ * **応答の天井を 1 か所で掛ける** (2026-09-09 · パス 113)。
+ *
+ * 上の `MAX_ASSISTANT_REPLY_CHARS` は `shared/ai/chat.ts` (`runAiChat`) だけが読んでいた ——
+ * 「両ビルドと chat / chatAll が必ず通る唯一の場所」だから。だが AI の応答が画面へ出る経路は
+ * それだけではなかった: `skills/run-skill` は Anthropic の本文を 10 MiB (byte の天井) まで
+ * `<pre>` へ、`ollama/chat` は端末内モデルの本文を 10 MiB (main) / 2 MiB (ブラウザ版) まで
+ * チャットボットの吹き出しへ、そのまま渡していた。**同じ画面で、同じ症状 (固まる) が、
+ * 別の入口から起きる。** 判断は 1 つなので関数にして、3 経路が同じ物を読む。
+ */
+export function capAssistantReply(text: string): string {
+  return text.length > MAX_ASSISTANT_REPLY_CHARS
+    ? text.slice(0, MAX_ASSISTANT_REPLY_CHARS) + ASSISTANT_REPLY_TRUNCATED_NOTICE
+    : text;
+}

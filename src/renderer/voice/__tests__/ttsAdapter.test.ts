@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
+  MAX_SPOKEN_CHARS,
+  SPOKEN_TRUNCATED_NOTICE,
   isSpeechSynthesisSupported,
   speak,
   cancelSpeech,
@@ -46,6 +48,32 @@ function mockWin(voices: V[] = []) {
 }
 
 beforeEach(() => resetVoiceCache());
+
+describe('読み上げる量の天井 (パス 113)', () => {
+  it('★ 天井を超える文は先頭だけを読み、最後に「続きは画面で」と言う', () => {
+    const { win, spoken } = mockWin();
+    const long = 'あ'.repeat(MAX_SPOKEN_CHARS + 500);
+    expect(speak(long, { raw: true }, win as never)).toBe(true);
+    const said = spoken.map((s) => s.text).join('');
+    expect(said.length).toBe(MAX_SPOKEN_CHARS + SPOKEN_TRUNCATED_NOTICE.length);
+    expect(said.startsWith('あ'.repeat(MAX_SPOKEN_CHARS))).toBe(true);
+    expect(spoken[spoken.length - 1]!.text).toContain('続きは画面でご覧ください');
+  });
+
+  it('★ 天井ちょうどは全部読み、注記は付けない (境目)', () => {
+    const { win, spoken } = mockWin();
+    speak('い'.repeat(MAX_SPOKEN_CHARS), { raw: true }, win as never);
+    const said = spoken.map((s) => s.text).join('');
+    expect(said).toBe('い'.repeat(MAX_SPOKEN_CHARS));
+    expect(said).not.toContain('続きは画面');
+  });
+
+  it('★ 対照: 短い文は 1 文字も変えない', () => {
+    const { win, spoken } = mockWin();
+    speak('こんにちは。', { raw: true }, win as never);
+    expect(spoken.map((s) => s.text).join('')).toBe('こんにちは。');
+  });
+});
 
 describe('normalizeForSpeech', () => {
   it('strips markdown, list markers and pipes', () => {

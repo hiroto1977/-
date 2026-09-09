@@ -1381,6 +1381,14 @@
       "leafCount": 66,
       "note": "update assistant.ts",
       "hash": "a187e057e798613cb351826f4559cb4aa019b278733e65a00c3d7de0d5f1830e"
+    },
+    {
+      "index": 164,
+      "prevHash": "a187e057e798613cb351826f4559cb4aa019b278733e65a00c3d7de0d5f1830e",
+      "merkleRoot": "476aae4a503b3eb14d491d89845b63dfdac608dbde0cde62efbb7fe685f7d6ad",
+      "leafCount": 66,
+      "note": "update chat.ts,ollama.ts",
+      "hash": "4672ca44bb47bf572cbbc5123c70e3c01d3a2dd4740680ec2cf2c9a1427b8014"
     }
   ],
   "tipManifest": {
@@ -1432,7 +1440,7 @@
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
     "src/renderer/security/vault.ts": "253867da8f9c5d984398756cd16bab02ac9b27caa555f3569e2c745b738e2c9a",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
-    "src/shared/ai/chat.ts": "a90292c80854c9feb016141107710d8929179371119dcee830556191a274b80a",
+    "src/shared/ai/chat.ts": "fb4b09c9d607b67d10f45cd6801db72ca74b5293d94f446975ce35c7af8a9524",
     "src/shared/ai/credentials.ts": "69603ba457c124794e3e2c38f75eb35bc487e9766eab2d03bd53d035c885d85a",
     "src/shared/ai/providers.ts": "31e4637844d479c5c6b8c43bdd24e9196c2924e0d3e9b467141cbfb73d335e5b",
     "src/shared/aiEndpoint.ts": "03c50a6cb3c2b777f128edd5fc0f752745ba21d4440404cf80b14fe704517438",
@@ -1443,7 +1451,7 @@
     "src/shared/externalUrlGate.ts": "01b2f3904381ca98950ac331aa0558b1a6fda14e2a7e7c85b6b5bd1b6f9b9ce6",
     "src/shared/httpLimits.ts": "9e980f75cba0e5a29051e648f77fa9cca0728425a987b72bacf49d18fd08df2c",
     "src/shared/imageUrlGate.ts": "c7b928e51fdbac71b154f9d0f97aa51a341eb8db3203105292cf47f79eda6760",
-    "src/shared/ollama.ts": "61fe2b61be79c2a5bb7a5f54a952ca882a72b04796ab3af3b3cd84c2f204ed15",
+    "src/shared/ollama.ts": "d7c4de13180eb8ea76f0ce3a3ed906e1d7cc5f316ff888a895f15c81527f1519",
     "src/shared/proxyEndpoint.ts": "1bb5bf73ca41bd73770a16531740ae0738e1cacdb21945c517adefe9aa4091c7",
     "src/shared/redact.ts": "b4e8d450e5952f756ad6849a7b6965734572dda56e9f6d0c0e746da479a6a3ea",
     "src/shared/safeFilename.ts": "6c054facd96b064715f9e50ebeada09645486d5c599a3058f1b253a73ba7ff57",

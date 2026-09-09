@@ -38,10 +38,12 @@ import {
   MAX_OLLAMA_SYSTEM_CHARS,
   normalizeModels,
   parseOllamaEndpoint,
+  type OllamaChatResult,
   type OllamaErrorAdvice,
   type OllamaSnapshot,
 } from '../../shared/ollama';
 import { isOverCap, readBodyWithCap, withBodyDeadline } from '../../shared/httpLimits';
+import { capAssistantReply } from '../../shared/assistantLimits';
 
 /** 接続先設定の保存キー (localStorage)。UI と web-shim が共有する。
  *  値は「ポート番号のみ」または `http(s)://host:port`。旧 `…ollama.port` の値も読む。 */
@@ -421,7 +423,7 @@ export const CHAT_TIMEOUT_MS = 120_000;
 // 上限は `shared/ollama.ts` に 1 つだけ置く (main も同じものを読む)。
 
 export type OllamaChatOutcome =
-  | { ok: true; reply: string; durationMs: number }
+  | ({ ok: true } & OllamaChatResult)
   | { ok: false; kind: string; message: string };
 
 export interface OllamaChatInput {
@@ -565,7 +567,9 @@ export async function chatOllama(
   const content = (parsed as { message?: { content?: unknown } } | null)?.message?.content;
   return {
     ok: true,
-    reply: typeof content === 'string' ? content.trim() : '',
+    // 応答の天井 (パス 113) —— main と同じ判断を読む。byte の天井 (2 MiB) は「画面に出す量」
+    // としては論外で、10 万字で打ち切って切ったことを本文に残す。
+    reply: capAssistantReply(typeof content === 'string' ? content.trim() : ''),
     durationMs: Math.max(0, Math.round(now() - started)),
   };
 }

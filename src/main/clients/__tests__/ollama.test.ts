@@ -10,6 +10,7 @@ import {
   ACTIONS,
 } from '../ollama';
 import { FetchError } from '../types';
+import { ASSISTANT_REPLY_TRUNCATED_NOTICE, MAX_ASSISTANT_REPLY_CHARS } from '../../../shared/assistantLimits';
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -350,6 +351,18 @@ describe('fetchOllamaSnapshot', () => {
 // --- action: chat
 
 describe('ACTIONS["chat"]', () => {
+  it('★ 返答は MAX_ASSISTANT_REPLY_CHARS で打ち切り、切ったことを本文に残す (パス 113 まで 10 MiB まで素通し)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({ message: { role: 'assistant', content: 'y'.repeat(MAX_ASSISTANT_REPLY_CHARS + 1) }, total_duration: 0 }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    const result = (await ACTIONS['chat']!({ token: '', fetch: fetchMock, payload: { model: 'llama3.2', prompt: 'hi' } })) as { reply: string };
+    expect(result.reply).toHaveLength(MAX_ASSISTANT_REPLY_CHARS + ASSISTANT_REPLY_TRUNCATED_NOTICE.length);
+    expect(result.reply.endsWith(ASSISTANT_REPLY_TRUNCATED_NOTICE)).toBe(true);
+  });
+
   it('POSTs to /api/chat with stream=false and returns the assistant text', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(
@@ -654,7 +667,10 @@ describe('ACTIONS["chat"]', () => {
       fetch: fetchMock,
       payload: { model: 'llama3.2', prompt: 'hi' },
     })) as { reply: string };
-    expect(result.reply.length).toBe(fillerLen);
+    // byte の天井ちょうどは**断らない** (境界はそのまま)。応答の文字数はパス 113 から
+    // `capAssistantReply` が 10 万字で打ち切るので、長さは天井 + 注記になる。
+    expect(result.reply.length).toBe(MAX_ASSISTANT_REPLY_CHARS + ASSISTANT_REPLY_TRUNCATED_NOTICE.length);
+    expect(result.reply.startsWith('x'.repeat(MAX_ASSISTANT_REPLY_CHARS))).toBe(true);
   });
 
   it('truncates unsafe model name to 32 chars in error (kills `model.slice(0, 32)` → `model`)', async () => {

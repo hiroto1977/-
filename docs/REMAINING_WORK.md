@@ -18098,6 +18098,72 @@ i1price: 品目1 の単価「abc」を金額として読み取れません。金
 明記しているので、**4 つの renderer を触る価値は無いと判断した**。
 揃えるなら `advisorTypes.ts` に文を 1 つ置いて 4 面が読む形が筋である。
 
+## パス 113 (2026-09-09) — **AI の応答の天井は 1 経路にしか無く、チャットボットは Ollama の答えを 1 度も出していなかった**
+
+パス 112 で送る側の天井を揃えた。**受ける側**を同じ母集団 (AI へ出る handler) で数えた:
+
+| 経路 | 応答の天井 (直す前) | 出る先 |
+| --- | --- | --- |
+| `assistant/chat` · `chatAll` (`runAiChat`) | 10 万字 + 注記 (2026-08-29) | アシスタント・村 |
+| `skills/run-skill` | **byte の天井 (10 MiB) だけ** | `SkillsPage` の `<pre>` |
+| `ollama/chat` (main / ブラウザ版) | **10 MiB / 2 MiB だけ** | チャットボットの吹き出し |
+| 村の読み上げ (`speak`) | **無し** —— 10 万字を声に | スピーカー |
+| `emotions` · `business` · `stocks` | 欄ごとの天井 (`normalizeAnalysis` / `advisorResponseLimits`) | — |
+
+2026-08-29 の直しは `runAiChat` に置いた ——「両ビルドと chat / chatAll が**必ず通る唯一の場所**」
+だから。その言葉どおり、**通らない経路には掛かっていなかった**。同じ画面で同じ症状 (10 MiB の
+本文で固まる) が、別の入口から起きる。
+
+### もう 1 つ —— 手写しの型がずれて、答えが捨てられていた
+
+チャットボットの自由質問は Ollama 接続時に `invoke('ollama','chat')` へ落ちる。戻り値を
+`{ response?, message? }` と**手で写した型**で読んでおり、両ビルドの実物は `{ reply, durationMs }`。
+`data.response ?? data.message ?? ''` は常に `''`、`'' || null` は `null` —— **Ollama の答えは
+1 度も画面に出ず、定型の「うまく解釈できませんでした」だけが出ていた**。`tsc` は手写しの型に
+黙る (パス 62 と同じ形)。検査も無かった。
+
+### 3 つ目 —— 走査が挙げた `stocks/advise`
+
+応答側の天井を「AI へ出る handler がすべて持つ」と走査したら `stocks/advise` が挙がった。持っていないのではなく、`5` / `400` / `200` を **main (`stocks.ts`) とブラウザ版の双子 (`stocksAnalysisWeb.ts`) に字面で** 持っていた —— `advisorResponseLimits.ts` (business の応答の台帳。「両側に現れる数値リテラルを数える検出器」で 2026-08-25 に寄せた物) の **100 行下に同じ形の数字が 2 度ずつ**在った。値は両側で一致していたが、片方だけ緩めばそのビルドだけがより大きな第三者由来の値を通す。同じ台帳に `MAX_STOCK_ADVISOR_RATIONALE_CHARS` (400) / `MAX_STOCK_ADVISOR_RISK_CHARS` (200) を足し、件数は `MAX_ADVISOR_RECOMMENDATIONS` (5) を読む。
+
+### 直し
+
+- `shared/assistantLimits.ts` に `capAssistantReply(text)` (判断 1 つ)。`runAiChat` はそれを読み、
+  `skills/run-skill`・`ollama/chat` (main / ブラウザ版) も同じ関数を読む。
+- `shared/ollama.ts` に `OllamaChatResult` (`reply` / `durationMs`) —— main の handler・ブラウザ版の
+  双子・チャットボットが**同じ型**を読む。チャットボットは `res.data.reply` を読む。
+- `voice/ttsAdapter.ts`: `MAX_SPOKEN_CHARS` (1,000。判断であって典拠のある数ではない) と
+  `SPOKEN_TRUNCATED_NOTICE` —— 先頭だけを読み、「続きは画面でご覧ください」と言う。画面の吹き出しは
+  全文を持つ。黙って切らない。
+- `shared/advisorResponseLimits.ts`: 株式アドバイザーの応答の欄 (上の 3 つ目)。main とブラウザ版の検証器が同じ定数を読む。
+- 検査: `shared/__tests__/assistantReplyCap.test.ts` (境目・AI へ出る handler がすべて応答側の天井に
+  届く —— 母集団は `aiEgressPairs.helpers` から・4 経路が同じ関数を読み判断を写していない・
+  チャットボットが共有の型を読む)、`chatbotOllamaReply.test.ts` (jsdom で `reply` が 🧠 として出る・
+  失敗と空の対照)、skills / ollama (main) / ollamaWeb の打ち切り、`ttsAdapter` の天井。
+
+### 対照 (9 本)
+
+| 対照 | 落ちた検査 |
+| --- | --- |
+| A: `runAiChat` が応答を切らない (元の形へ戻す) | 3 件 |
+| B: skills が応答を切らない | 3 件 |
+| C: ollama (main) が応答を切らない | 3 件 |
+| D: ollama (ブラウザ版) が応答を切らない | 3 件 |
+| E: チャットボットが手写しの欄 (`response`) を読む (元の形へ戻す) | 2 件 |
+| F: 読み上げの天井を外す | 1 件 |
+| G: 応答の天井を 1 文字ずらす | 2 件 |
+| H: stocks が応答の天井を字面の数で持つ (元の形へ戻す) | 1 件 |
+| I: 走査の印を 1 つ落とす (走査が空でない) | 1 件 |
+
+**対照 H は 1 度目は鳴らなかった** —— 条件だけを `> 400` へ戻し、断りの文面 `${MAX_STOCK_ADVISOR_RATIONALE_CHARS}` を残していた。走査は関数本体の字面で印を探すので、文面に残った定数名が「天井に届いている」と読めた。**対照の不備であって検査の穴ではない**が、印を字面で探す走査は「名前が出てくること」と「その値で判定していること」を区別できない —— 判定の場所 (比較式) を見る走査にするのは残作業。条件と文面の両方を戻した 2 度目は鳴った。
+
+### 残り
+
+- `MAX_SPOKEN_CHARS` の値 (1,000) は利用者の判断で変えてよい —— 台帳に載せない安全上限として
+  置いたが、読み上げの好みは人による。
+- チャットボットの `routedThrough: 'Ollama (ローカル LLM)'` は接続の実測ではなく、`invoke` が
+  成功したことの言い換え。
+
 ## パス 112 (2026-09-09) — **AI への入力の天井が 4 通りで、画面はどれも知らなかった**
 
 パス 111 の残りに「`skills/run-skill` の `prompt` に天井が無い」と書いた。その 1 件を直す前に、

@@ -4,7 +4,12 @@ import os from 'node:os';
 import path from 'node:path';
 import { parseFrontmatter, scanSkills, ACTIONS, isSafeSkillName, fetchSkillsSnapshot, SKILLS_MAX_TOKENS } from '../skills';
 import { FetchError } from '../types';
-import { MAX_ASSISTANT_CONTENT_CHARS, inputTooLongMessage } from '../../../shared/assistantLimits';
+import {
+  ASSISTANT_REPLY_TRUNCATED_NOTICE,
+  MAX_ASSISTANT_CONTENT_CHARS,
+  MAX_ASSISTANT_REPLY_CHARS,
+  inputTooLongMessage,
+} from '../../../shared/assistantLimits';
 
 describe('parseFrontmatter', () => {
   it('extracts name and description', () => {
@@ -390,6 +395,22 @@ describe('ACTIONS["run-skill"]', () => {
       ).rejects.toThrow(/^name and prompt are required$/);
       expect(fetchMock).not.toHaveBeenCalled();
     }
+  });
+
+  it('★ 応答は MAX_ASSISTANT_REPLY_CHARS で打ち切り、切ったことを本文に残す (パス 113 まで天井なし)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({ content: [{ type: 'text', text: 'x'.repeat(MAX_ASSISTANT_REPLY_CHARS + 10) }], stop_reason: 'max_tokens' }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    const result = (await ACTIONS['run-skill']!({
+      token: 'sk-ant-xxxxx',
+      fetch: fetchMock,
+      payload: { name: 'echo', prompt: 'ping' },
+    })) as { text: string };
+    expect(result.text).toHaveLength(MAX_ASSISTANT_REPLY_CHARS + ASSISTANT_REPLY_TRUNCATED_NOTICE.length);
+    expect(result.text.endsWith(ASSISTANT_REPLY_TRUNCATED_NOTICE)).toBe(true);
   });
 
   it('rejects when the prompt is provided but name is empty (same literal message)', async () => {
