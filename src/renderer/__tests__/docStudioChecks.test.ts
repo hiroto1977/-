@@ -486,9 +486,22 @@ describe('各ルールの分岐を個別に踏む', () => {
     expect(at('kaiko-yokoku', { reason: '就業規則第10条該当' }).some((i) => i.field === 'reason')).toBe(false);
   });
 
-  it('解雇予告: 日付が読めなければ日数の指摘は出ない', () => {
-    expect(at('kaiko-yokoku', { noticeDate: '未定', dismissDate: '未定' })
-      .some((i) => i.field === 'teate' || i.field === 'teateAmount' || i.field === 'dismissDate')).toBe(false);
+  it('解雇予告: 日付が読めなければ日数の指摘は出ないが、読めなかったことは言う', () => {
+    /*
+     * この検査は 2026-09-08 まで「`dismissDate` の指摘が 1 件も出ない」と書いており、
+     * **黙って判定しないことを仕様として固定していた** (パス 100)。
+     * 意図は「**日数の**指摘が出ない」であって「何も言わない」ではない ——
+     * 欄で数えると、同じ欄に付く「読み取れません」の断りまで禁じてしまう。
+     * 意図のとおり**文面**で見る形に直し、断りが出ることを併せて留める。
+     */
+    const out = at('kaiko-yokoku', { noticeDate: '未定', dismissDate: '未定' });
+    // 日数を根拠にした指摘は出ない (予告期間・手当の判定はできていない)
+    expect(out.some((i) => i.message.includes('予告期間が'))).toBe(false);
+    expect(out.some((i) => i.field === 'teate' || i.field === 'teateAmount')).toBe(false);
+    // が、読めなかったことは欄ごとに言う
+    const said = out.filter((i) => i.message.includes('読み取れません'));
+    expect(said).toHaveLength(2);
+    expect(said.every((i) => i.level === 'warn')).toBe(true);
   });
 
   it('領収書: 印紙の info は 5万円が境界', () => {

@@ -156,13 +156,15 @@ interface Era {
   readonly firstYear: number;
   /** 始まりの日 (YYYYMMDD の整数)。 */
   readonly start: number;
+  /** 書面で略記に使われる頭文字 (令和 = R)。**元号名と同じ台帳に置く。** */
+  readonly initial: string;
 }
 
 /** 新しい順。昭和より前は扱わない (西暦へ倒す)。 */
 const ERAS: readonly Era[] = [
-  { name: '令和', firstYear: 2019, start: 20190501 },
-  { name: '平成', firstYear: 1989, start: 19890108 },
-  { name: '昭和', firstYear: 1926, start: 19261225 },
+  { name: '令和', firstYear: 2019, start: 20190501, initial: 'R' },
+  { name: '平成', firstYear: 1989, start: 19890108, initial: 'H' },
+  { name: '昭和', firstYear: 1926, start: 19261225, initial: 'S' },
 ];
 
 /** 和暦の元号と年。昭和より前は null。元年は 1。 */
@@ -172,6 +174,36 @@ export function toWareki(year: number, month: number, day: number): { era: strin
     if (key >= e.start) return { era: e.name, year: year - e.firstYear + 1 };
   }
   return null;
+}
+
+/**
+ * **和暦 → 西暦** (`toWareki` の逆向き)。元号は名前 (`令和`)・1 文字 (`令`)・
+ * 頭文字 (`R` / `r`) のどれでもよい。元号年は 1 以上 (`元` は呼び出し側で 1 に直す)。
+ *
+ * **その日付がその元号の期間内に無ければ null。** 元号の切れ目は 1 日単位なので、
+ * 年だけの換算では足りない ——
+ *
+ * | 入力 | 西暦 | 判定 |
+ * | --- | --- | --- |
+ * | 平成31年4月30日 | 2019-04-30 | **在る** (平成は 4/30 まで) |
+ * | 令和元年4月30日 | 2019-04-30 | **無い** (令和は 5/1 から) |
+ * | 令和元年5月1日 | 2019-05-01 | 在る |
+ *
+ * 表は `ERAS` 1 つ —— `formatDate` が組み立てに使う物をそのまま読む
+ * (元号の境目を 2 か所に書くと、次の改元で片方が腐る)。
+ */
+export function fromWareki(era: string, eraYear: number, month: number, day: number): number | null {
+  if (!Number.isInteger(eraYear) || eraYear < 1) return null;
+  const key = era.trim().toUpperCase();
+  const i = ERAS.findIndex((e) => key === e.name || key === e.name[0] || key === e.initial);
+  if (i < 0) return null;
+  const e = ERAS[i]!;
+  const year = e.firstYear + eraYear - 1;
+  const stamp = year * 10000 + month * 100 + day;
+  if (stamp < e.start) return null;
+  // 1 つ新しい元号 (配列は新しい順なので i-1) の始まりより前でなければならない。
+  const next = i > 0 ? ERAS[i - 1]!.start : Number.POSITIVE_INFINITY;
+  return stamp < next ? year : null;
 }
 
 interface ParsedDate {

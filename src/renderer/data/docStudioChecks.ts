@@ -19,6 +19,7 @@ import { byIssueLevel, type IssueLevel } from '../../shared/issueLevel';
 import { namedShareholderCount, totalHeldShares } from './shareholders';
 // 明細の金額はこの厳しい読み取りで計算される。橋を掛けるために読む (パス 94)。
 import { readNumber } from './inputGuards';
+import { fromWareki } from '../../shared/bankFormat';
 
 /** 重大度はアプリ全体で 1 つ（`shared/issueLevel.ts`）。旧名は呼び出し側のために残す。 */
 export type CheckLevel = IssueLevel;
@@ -71,7 +72,7 @@ export function toNum(raw: string | undefined): number | null {
 export function parseJpDate(raw: string | undefined): number | null {
   if (!raw) return null;
   const half = raw.replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
-  const m = half.match(/(\d{4})\s*[年/\-.]\s*(\d{1,2})\s*[月/\-.]\s*(\d{1,2})/);
+  const m = half.match(/(\d{4})\s*[年/\-.]\s*(\d{1,2})\s*[月/\-.]\s*(\d{1,2})/) ?? matchWareki(half);
   if (!m) return null;
   const y = Number(m[1]);
   const mo = Number(m[2]);
@@ -86,7 +87,76 @@ export function parseJpDate(raw: string | undefined): number | null {
   return t;
 }
 
+/**
+ * **和暦の日付を西暦の組に直す。** 元号名 (`令和`)・1 文字 (`令`)・頭文字 (`R`) を受ける。
+ * `元` は 1 年。返す形は西暦の正規表現と同じ `[全体, 年, 月, 日]` なので、
+ * 呼び出し側は以降を 1 本で書ける。
+ *
+ * ## なぜ要るのか (2026-09-08 · パス 100 の実測)
+ *
+ * 直す前の `parseJpDate` は `(\d{4})` の年しか読まず、**和暦は 1 つも読めなかった** ——
+ * `令和8年9月30日` / `R8.9.30` / `平成31年4月30日` / `令8.9.30` はすべて null。
+ * 読めなければ `day()` が NaN を返し、**法定の判定が黙って行われない**。
+ * 実測 (解雇予告通知書・予告 4 日・手当「支給しない」):
+ *
+ * | 日付の書き方 | 交付前チェックの結論 |
+ * | --- | --- |
+ * | `2026年9月1日` → `2026年9月5日` | **fatal: 予告期間が 4 日しかありません…解雇予告手当の支払が必要です** |
+ * | `令和8年9月1日` → `令和8年9月5日` | **fatal が 1 件も出ない** |
+ *
+ * つまり**和暦で書いた解雇予告通知書は、労基法 20 条の検査を失っていた**。
+ * しかもこの app は**自分で和暦を刷る** (`formatDate(..., { era: 'wareki' })` が
+ * 税制の適用期限を「令和8年9月30日」と出す) —— **教えている書き方を読めなかった。**
+ *
+ * ★ 規準は手の届く所に在った (7 か所目): 元号の境目を持つ表 `ERAS` は
+ * `shared/bankFormat.ts` に在り、その注記に「和暦の組み立てはここ 1 か所に置く」と
+ * 書いてある。足りなかったのは**逆向きの変換**だけで、`fromWareki` は同じ表を読む。
+ */
+function matchWareki(half: string): RegExpMatchArray | null {
+  const m = half
+    .trim()
+    .match(/^(令和|平成|昭和|令|平|昭|[RrHhSs])\s*(元|\d{1,2})\s*[年/\-.]\s*(\d{1,2})\s*[月/\-.]\s*(\d{1,2})/);
+  if (!m) return null;
+  const eraYear = m[2] === '元' ? 1 : Number(m[2]);
+  const month = Number(m[3]);
+  const day = Number(m[4]);
+  const year = fromWareki(m[1]!, eraYear, month, day);
+  if (year === null) return null;
+  // 西暦側と同じ形に揃える (以降の月・日の検査を 1 本で通す)。
+  return [m[0], String(year), String(month), String(day)] as unknown as RegExpMatchArray;
+}
+
 const DAY = 86_400_000;
+
+/**
+ * **日付欄が埋まっているのに読めないとき、その旨を言う。**
+ *
+ * 読めない日付は `day()` が NaN にし、差の比較はすべて false になる ——
+ * つまり**法定の判定が黙って行われない**。空欄は「まだ書いていない」と分かるが、
+ * 「読めない」は画面から見分けが付かない (パス 94 で請求書の単価に同じ橋を架けた:
+ * 「空欄と『読めない』の非対称がそのまま欠陥だった」)。
+ *
+ * 段階は `warn` —— 書面が違法だと言っているのではなく、**検査ができなかった**と
+ * 言っている。`fatal` にすると、私が覆えていない書き方 1 つで印刷が止まる。
+ */
+function unreadableDates(
+  v: Values,
+  fields: readonly (readonly [string, string])[],
+  judgement: string,
+): DocIssue[] {
+  const out: DocIssue[] = [];
+  for (const [key, label] of fields) {
+    const raw = (v[key] ?? '').trim();
+    if (raw !== '' && parseJpDate(raw) === null) {
+      out.push({
+        level: 'warn',
+        field: key,
+        message: `${label}「${raw}」を日付として読み取れません。${judgement}を行いませんでした。`,
+      });
+    }
+  }
+  return out;
+}
 
 /** 利息制限法1条の上限利率（％）。元本の額で決まる。 */
 export function interestCap(principal: number): number {
@@ -351,7 +421,9 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
 
   'kaiko-yokoku'(v) {
     const out: DocIssue[] = [];
-    // 日付が読めなければ days は NaN になり、以下の比較はすべて false になる（＝判定しない）。
+    // 読めない日付は NaN になり以下の比較はすべて false になる（＝判定しない）ので、
+    // **読めなかったこと自体を言う** (パス 100)。
+    out.push(...unreadableDates(v, [['noticeDate', '通知日'], ['dismissDate', '解雇の日']], '30日前の予告の判定'));
     const days = Math.round((day(v, 'dismissDate') - day(v, 'noticeDate')) / DAY);
     if (days < 0) {
       out.push({ level: 'warn', field: 'dismissDate', message: '解雇の日が通知日より前になっています。' });
@@ -460,7 +532,9 @@ const RULES: Record<string, (v: Values) => DocIssue[]> = {
 
   kenshu(v) {
     const out: DocIssue[] = [];
-    // 日付が読めなければ NaN になり、60日の判定は行われない。
+    // 読めない日付は NaN になり 60 日の判定は行われないので、
+    // **読めなかったこと自体を言う** (パス 100)。
+    out.push(...unreadableDates(v, [['receiveDate', '受領日'], ['payday', '支払期日']], '60日以内の判定'));
     const days = Math.round((day(v, 'payday') - day(v, 'receiveDate')) / DAY);
     if (days > 60) {
       out.push({
