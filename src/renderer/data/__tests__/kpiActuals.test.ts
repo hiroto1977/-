@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   formatPeriodWindow,
   periodWindow,
@@ -739,6 +739,19 @@ describe('同じ期・事業の重複 (パス 124)', () => {
     expect(findDuplicateActuals([])).toEqual([]);
   });
 
+  it('★ 前後の空白は組の鍵だけでなく、報告する事業名からも落とす', () => {
+    // `actualKey` は空白を落とすので ' 全社 ' と '全社' は同じ組になる。
+    // **組を代表する `unit` も揃っていないと**、画面の警告と書面の但し書きに
+    // 空白つきの名前が出て、同じ事業が 2 通りの綴りで人に見える。
+    expect(findDuplicateActuals([row('2026-04', ' 全社 '), row('2026-04', '全社')])).toEqual([
+      { period: '2026-04', unit: '全社', count: 2 },
+    ]);
+    // 1 件目が空白つきでも 2 件目が空白つきでも同じ (代表は最初の 1 件から作る)。
+    expect(findDuplicateActuals([row('2026-05', 'EC'), row('2026-05', '  EC')])).toEqual([
+      { period: '2026-05', unit: 'EC', count: 2 },
+    ]);
+  });
+
   it('合算の実測: 同じ組を 2 件持つと summarizeFundamentals / groupRevenueByPeriod は足す (だから 2 件目を断る)', () => {
     const two = [row('2026-04', '全社', 1_000_000), row('2026-04', '全社', 1_200_000)];
     expect(summarizeFundamentals(two).revenue).toBe(2_200_000);
@@ -766,5 +779,47 @@ describe('同じ期・事業の重複 (パス 124)', () => {
     );
     expect(duplicateActualsNote('実績', [])).toBeNull();
     expect(duplicateActualsSheetNote([])).toBeNull();
+  });
+});
+
+/*
+ * **モジュール直下の値は、読み直してから確かめる (静的変異体)。**
+ *
+ * `KPI_ACTUALS_COLLECTION` と `listGroups` は module 直下で評価されるので、
+ * Stryker が変異体を有効にする**前に**モジュールが読み込まれてしまい、
+ * 上の検査が字面で値を持っていても変異体が届かず「生存」と報告される
+ * (実測 2026-09-10: この 2 件がまさにそれで、手で書き換えて全件を回すと
+ * 上の検査は落ちる —— つまり「テストが無い」のではなく「届いていない」)。
+ *
+ * `stryker.config.json` の `_commentIgnoreStatic` が指す形 (`vi.resetModules()`
+ * + 毎回の動的 `import()`) で読み直して、同じ値を改めて留める。
+ * `oauth.test.ts` の `freshConfigs` / `autoLock.test.ts` と同じ形。
+ */
+describe('モジュール直下の値 (読み直してから確かめる — 静的変異体)', () => {
+  async function fresh(): Promise<typeof import('../kpiActuals')> {
+    vi.resetModules();
+    return (await import('../kpiActuals')) as typeof import('../kpiActuals');
+  }
+
+  it('★ 保存先の collection 名は読み直しても kpi-actuals', async () => {
+    const mod = await fresh();
+    expect(mod.KPI_ACTUALS_COLLECTION).toBe('kpi-actuals');
+    // 空文字だと record store の鍵が消えて別の場所へ書く (= 保存が迷子になる)。
+    expect(mod.KPI_ACTUALS_COLLECTION.length).toBeGreaterThan(0);
+  });
+
+  it('★ 警告の中の重複一覧は、読み直しても「期 事業 ×件数」を並べる', async () => {
+    const mod = await fresh();
+    const note = mod.duplicateActualsNote('実績', [
+      { period: '2026-04', unit: '全社', count: 2 },
+      { period: '2026-05', unit: 'EC', count: 3 },
+    ]);
+    expect(note).toBe(
+      '同じ期・事業の実績が 2 組重複しており、合算されています（2026-04 全社 ×2、2026-05 EC ×3）。一覧の × で余分な行を消してください。',
+    );
+    // 書面の但し書きも同じ一覧を通る。
+    expect(mod.duplicateActualsSheetNote([{ period: '2026-04', unit: '全社', count: 2 }])).toContain(
+      '2026-04 全社 ×2',
+    );
   });
 });
