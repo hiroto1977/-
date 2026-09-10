@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **12614** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **12657** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -2927,6 +2927,30 @@ UTC 日付だと日本の 0〜9 時に前日として判定する)。文字列�
 `bankFormat.parseIsoDate` へ寄せた —— 日の検査が月の検査に包含されて**殺せない
 変異体**になっていたため (2 桁の日がどう外れても繰り上がりで月が変わる)。
 
+#### 2割特例の後継 —— 3割特例と納税者の区分 (2026-09-10・パス 141)
+
+上の `twentyPercentMeasureStatus` は**法人の**帯である。個人事業者の課税期間は暦年なので
+「期限の属する課税期間」は令和 8 年分 (2026 年) と言い切れる —— 期限の翌日から
+1 年の period-dependent の帯は要らない。`TaxpayerKind` ('sole-proprietor' / 'corporation' /
+'unknown' —— 分からないときは unknown) を足し、個人事業者なら期限の年の末日まで `active`・
+翌年から `ended`。
+
+令和 8 年度税制改正で 2割特例の後継が決まった: **個人事業者に限り**令和 9 年分・
+令和 10 年分の納付税額を売上税額の 3 割とする「3割特例」(法人に後継は無い)。
+`thirtyPercentMeasureStatus(today, kind)` (src/shared/taxConsumption.ts) は
+`not-applicable` (法人) / `upcoming` / `active` / `ended` の 4 値で、読めない時計・日付は
+`upcoming` に倒す (使えると言い切らない)。比較 (`compareBusinessTaxMethods`) の
+`MethodAvailability.thirtyPercent` は**省略時 false** —— 他の 2 つと逆で、対象が区分と
+年分で決まるので、呼ぶ側が言い切れるとき (個人事業者かつ対象年分) だけ true にする。
+経営分析のカードは事業形態を「未選択」から選ばせ (未選択では額だけ出して候補に入れない)、
+税務ページ ⑩ は節税制度カタログと共有する個人事業主 / 法人の切替を読む。
+
+`lint:rate-freshness` の 2割特例の行には**猶予の帯** (`graceDays: 364`) を足した ——
+期限の翌日から 1 年は判定の period-dependent の帯と同じ理由で落とさずに警告し、
+帯を過ぎたら落とす。門と判定が同じ理由で同じ日に動く。後継の定数
+`THIRTY_PERCENT_MEASURE_END` (2028-12-31) は台帳に載せ、パス 140 の母集団の走査が
+台帳に無ければ落とす。
+
 #### 同じ事実に 4 つの数字が並んでいた —— 要約の数を誰も見ていなかった (2026-09-07)
 
 `verify:arch` は 18 個の live metric を実測と突き合わせていた。ところが**この表の
@@ -3522,11 +3546,11 @@ NOPAT / ROIC。この 2 指標は計算していたのに表に無かったの�
 特別法人事業税率、大法人の資本金の境目、繰越欠損金の控除限度) を `calcCorporateTax(income, profile, r)` で
 受け、内部の各計算へ末尾引数で流す。事業税系の限界率 (`STATUTORY_BUSINESS_RATE_TIER*`) は率から組む
 (既定では定数と同じ値、検査で固定)。`taxConsumptionBusiness.ts` は `BusinessConsumptionParams` (税率 2 つ +
-2 割特例の割合、免税 / 簡易課税の境目、全額控除の 2 要件) を `compareBusinessTaxMethods` /
+2 割特例・3 割特例の割合、免税 / 簡易課税の境目、全額控除の 2 要件) を `compareBusinessTaxMethods` /
 `calcStandardTaxDetailed` / `compareInputCreditMethods` / `isTaxExempt` / `canUseSimplified` で受ける — 税率は
 「税」の消費税率 (`tax.consumptionStandardRate` / `ReducedRate`) を**共有**する。配線先は財務分析の法人税
 カードと消費税カード (`FinancialAnalysis` の props → `CorporateTaxCard`、Markdown レポートにも同じ率)、
-税ページ ⑩ (3 方式の比較・免税の注記・簡易課税の境目・仕入税額控除の方式比較)。
+税ページ ⑩ (4 方式の比較・免税の注記・簡易課税の境目・仕入税額控除の方式比較)。
 
 配線先 (wave 2d-2 — 年金・一時所得・ふるさと納税・貿易): `taxPublicPension.ts` は最低額 2 つを
 `PensionDeductionParams` で、`taxCasual.ts` は特別控除の上限を末尾引数で、`taxFurusato.ts` は自己負担額と
@@ -3556,7 +3580,7 @@ NOPAT / ROIC。この 2 指標は計算していたのに表に無かったの�
 強み / 要改善・帯の色) と Markdown の診断レポート。
 
 配線先 (wave 2f — 消費税の申告・納付・配当・感情ログ): `taxConsumptionSchedule.ts` は `ScheduleParams` (国税分の割合、
-2 割特例の割合 (「消費税 (事業者)」の項を共有)、中間申告の回数の境目 3 つ) を `calcAnnualTax` / `interimCount` /
+2 割特例・3 割特例の割合 (「消費税 (事業者)」の項を共有)、中間申告の回数の境目 3 つ) を `calcAnnualTax` / `interimCount` /
 `interimBandLabel` / `planInterim` / `sweepRates` / `breakEvenRate` / `buildSchedule` の末尾引数で受ける。地方消費税の比
 (22/78) は `localRatioOf(share)` が百万分率の整数比で組む (既定で `22 / 78` と同じ double — 1 − 0.78 の丸め誤差を
 持ち込まない)。区分の文言 (「48万円超 400万円以下 — 年1回」) も境目から出す。`taxDividend.ts` は `DividendParams`

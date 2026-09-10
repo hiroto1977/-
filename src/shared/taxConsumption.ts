@@ -13,7 +13,7 @@
  * `taxConsumptionBusiness.ts` にあります。
  */
 
-import { parseIsoDate } from './isoDate';
+import { isCalendarDate, parseIsoDate } from './isoDate';
 import { localIsoDate } from './localDate';
 
 /** 簡易課税の事業区分。 */
@@ -125,6 +125,19 @@ function shiftIsoDate(iso: string, years: number, days: number): string | null {
 }
 
 /**
+ * 消費税の納税者の区分。**分からないときは `'unknown'`** —— 区分で決まる措置 (3割特例は個人事業者
+ * だけ・2割特例の期限の帯は暦年なら言い切れる) は、分からないまま勧めない。
+ */
+export type TaxpayerKind = 'sole-proprietor' | 'corporation' | 'unknown';
+
+/**
+ * 区分を渡されなかったときの既定。**定数で持つ** —— 既定を字面で書くと、区分で分岐しない
+ * 値 (`''` など) に変えても両方の関数が同じ答えを返すので、既定の取り違えを留められない
+ * (変異検査の生存 2 件。定数にすると値そのものを読み直しの検査で留められる · パス 141)。
+ */
+export const DEFAULT_TAXPAYER_KIND: TaxpayerKind = 'unknown';
+
+/**
  * 2割特例が今日の時点で使えるか (3 値。判定の理由は型の注記にある)。
  *
  * 日付は**利用者の時計の暦日**で比べる (`localIsoDate`)。`toISOString()` の UTC 日付で
@@ -138,6 +151,7 @@ function shiftIsoDate(iso: string, years: number, days: number): string | null {
 export function twentyPercentMeasureStatus(
   today: Date = new Date(),
   end: string = TWENTY_PERCENT_MEASURE_END,
+  kind: TaxpayerKind = DEFAULT_TAXPAYER_KIND,
 ): TwentyPercentMeasureStatus {
   const t = localIsoDate(today);
   // 期限 + 1年 - 1日 —— この日までは「今日を含む課税期間」が期限内の日を含みうる。
@@ -147,8 +161,84 @@ export function twentyPercentMeasureStatus(
   const lastMaybe = shiftIsoDate(end, 1, -1);
   if (t === '' || lastMaybe === null) return 'period-dependent';
   if (t <= end) return 'active';
+  // 個人事業者の課税期間は暦年 (課税期間の短縮特例は外) —— 期限の年の末日までは「期限を含む
+  // 課税期間」なので active、翌年からは ended と**言い切れる** (2026-09-10 · パス 141)。
+  if (kind === 'sole-proprietor') return t <= `${end.slice(0, 4)}-12-31` ? 'active' : 'ended';
   return t <= lastMaybe ? 'period-dependent' : 'ended';
 }
 
+/*
+ * **2割特例の後継 —— 3割特例** (2026-09-10 · パス 141)。
+ *
+ * 令和 8 年度税制改正 (2026) で、2割特例は令和 8 年 9 月 30 日の属する課税期間で終了することが
+ * 確定し、**個人事業者に限り** 令和 9 年分・令和 10 年分の納付税額を売上税額の 3 割とする
+ * 「3割特例」が創設された (法人に後継措置は無い。事前届出は不要で申告書に付記して選ぶ。要件は
+ * 2割特例と同じ: 免税事業者がインボイス登録で課税事業者になった場合 = 基準期間の課税売上高
+ * 1,000 万円以下)。免税事業者等からの課税仕入れの 80% 控除も同改正で 70% → 50% → 30%
+ * (2031-09-30 まで) に緩和・延長されたが、本アプリはその控除を計算していない
+ * (`taxConsumptionSchedule.ts` の冒頭に「扱わない」と明記)。
+ *
+ * 出所: 国税庁「令和 8 年度税制改正特集」(invoice-review) の「3割特例の創設 —— 個人事業者である
+ * 適格請求書発行事業者の令和 9 年分及び令和 10 年分の消費税申告について」と `complianceKnowledge.ts`
+ * の `tax-invoice` (一次情報はこの環境から届かず、税理士法人・会計事務所の改正解説 5 本で突き合わせた)。
+ * 2026-09-10 まで本アプリは 2割特例の期限 (20 日後) の先を持たず、個人事業者の 2027 年以降の
+ * 見積りから特例が黙って消えるだけだった。
+ */
+/** 3割特例の納付割合 (売上に係る消費税額の 30%)。 */
+export const THIRTY_PERCENT_RATE = 0.3;
+/** 3割特例の最初の年分の初日 (令和 9 年分 = 2027 年。個人事業者の課税期間は暦年)。 */
+export const THIRTY_PERCENT_MEASURE_START = '2027-01-01';
+/** 3割特例の最後の年分の末日 (令和 10 年分 = 2028 年)。`lint:rate-freshness` の台帳が 180 日前から鳴らす。 */
+export const THIRTY_PERCENT_MEASURE_END = '2028-12-31';
+
+/**
+ * 3割特例が今日の時点で使えるか。
+ * - `not-applicable` … 法人 (後継措置は無い)
+ * - `upcoming`       … まだ対象年分の前 (令和 8 年分までは 2割特例)。時計や日付が読めないときもこちらへ倒す (言い切らない)
+ * - `active`         … 対象年分 (令和 9 年分・令和 10 年分)
+ * - `ended`          … 対象年分の後 (延長の有無は `lint:rate-freshness` が期限の 180 日前から促す)
+ *
+ * `'unknown'` の区分は個人事業者と同じ帯を返す (画面は「事業形態を選ぶと候補に入る」と書き、
+ * 最有利の候補には**入れない** —— 候補に入れるかは呼ぶ側が区分で決める)。
+ */
+export type ThirtyPercentMeasureStatus = 'not-applicable' | 'upcoming' | 'active' | 'ended';
+
+export function thirtyPercentMeasureStatus(
+  today: Date = new Date(),
+  kind: TaxpayerKind = DEFAULT_TAXPAYER_KIND,
+  start: string = THIRTY_PERCENT_MEASURE_START,
+  end: string = THIRTY_PERCENT_MEASURE_END,
+): ThirtyPercentMeasureStatus {
+  if (kind === 'corporation') return 'not-applicable';
+  const t = localIsoDate(today);
+  // **読めない時計を別に書かない。** `localIsoDate` は読めなければ `''` を返し、`'' < start` は
+  // 辞書順で必ず真なので、下の `t < start` がそのまま `'upcoming'` に落とす (言い切らない側)。
+  // 専用の枝を置くと同じ答えを 2 通りに書くことになり、どちらを消しても結果が変わらない
+  // (変異検査の生存 2 件 · パス 141)。期限の文字列の読めなさは比較では代われないので残す。
+  if (!isCalendarDate(start) || !isCalendarDate(end)) return 'upcoming';
+  if (t < start) return 'upcoming';
+  return t <= end ? 'active' : 'ended';
+}
+
+/**
+ * 「令和9年分・令和10年分」—— 対象年分の文面は定数から作る (書き写さない)。
+ * 始点と終点の年が読めない・逆なら空文字 (画面は空を刷らず、条件も付けない)。
+ *
+ * **番人を置かない。** 年が読めなければ `Number(...)` は `NaN`、逆順なら `from > to` で、
+ * どちらも下の `for` が 1 度も回らないので `[].join()` = `''` になる。`if (…) return ''` は
+ * 繰り返しと**同じ答え**を別の書き方で言っていただけで、消しても結果が変わらなかった
+ * (変異検査の生存 5 件 · パス 141)。空文字になる 3 通りは検査が標本で留めている。
+ */
+export function thirtyPercentMeasureYearsLabel(
+  start: string = THIRTY_PERCENT_MEASURE_START,
+  end: string = THIRTY_PERCENT_MEASURE_END,
+): string {
+  const from = Number(start.slice(0, 4));
+  const to = Number(end.slice(0, 4));
+  const years: string[] = [];
+  for (let y = from; y <= to; y += 1) years.push(y >= 2019 ? `令和${y - 2018}年分` : `${y}年分`);
+  return years.join('・');
+}
+
 /** 納付税額の算定方式。 */
-export type ConsumptionTaxMethod = 'standard' | 'simplified' | 'twenty-percent';
+export type ConsumptionTaxMethod = 'standard' | 'simplified' | 'twenty-percent' | 'thirty-percent';

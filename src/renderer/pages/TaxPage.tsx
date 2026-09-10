@@ -13,6 +13,7 @@ import {
   MAX_RATE,
   buildSchedule,
   type ScheduleInput,
+  type TaxMethod,
 } from '../../shared/taxConsumptionSchedule';
 import {
   VAT_REFERENCE,
@@ -83,6 +84,8 @@ import { calcPublicPensionIncome } from '../../shared/taxPublicPension';
 import {
   DEEMED_PURCHASE_RATES,
   TWENTY_PERCENT_MEASURE_END,
+  thirtyPercentMeasureStatus,
+  thirtyPercentMeasureYearsLabel,
   twentyPercentMeasureStatus,
   type SimplifiedBusinessType,
   type ConsumptionTaxMethod,
@@ -463,13 +466,21 @@ export function TaxPage() {
     () => canUseSimplified(num(ctSalesStr) + num(ctReducedSalesStr), bizParams.simplifiedEligibilityThreshold),
     [ctSalesStr, ctReducedSalesStr, bizParams],
   );
-  const ctMeasure = twentyPercentMeasureStatus();
+  // 事業形態 (このページの節税制度カタログと同じ切替) で、2割特例の期限の帯と 3割特例の対象が決まる。
+  const ctMeasure = twentyPercentMeasureStatus(new Date(), TWENTY_PERCENT_MEASURE_END, entity);
   const ctTwentyPercentOk = ctExempt && ctMeasure !== 'ended';
+  const ctThirty = thirtyPercentMeasureStatus(new Date(), entity);
+  const ctThirtyPercentOk = ctExempt && ctThirty === 'active';
+  const thirtyYears = thirtyPercentMeasureYearsLabel();
   /** 外した方式とその理由。**判定と同じ値から作る**ので、片方だけ直ることがない。 */
   const ctUnavailable: string[] = [];
   if (!ctSimplifiedOk) ctUnavailable.push(`簡易課税（基準期間の課税売上${jpy(bizParams.simplifiedEligibilityThreshold)}超）`);
   if (!ctExempt) ctUnavailable.push(`2割特例（課税売上${jpy(bizParams.exemptionThreshold)}超は元から免税ではない）`);
   else if (ctMeasure === 'ended') ctUnavailable.push(`2割特例（適用期限 ${formatDate(TWENTY_PERCENT_MEASURE_END, { era: 'wareki' })} 経過）`);
+  if (!ctExempt) ctUnavailable.push(`3割特例（課税売上${jpy(bizParams.exemptionThreshold)}超は元から免税ではない）`);
+  else if (ctThirty === 'not-applicable') ctUnavailable.push('3割特例（法人は対象外）');
+  else if (ctThirty === 'upcoming') ctUnavailable.push(`3割特例（${thirtyYears}から）`);
+  else if (ctThirty === 'ended') ctUnavailable.push(`3割特例（${thirtyYears}で終了）`);
 
   const consumptionMethods = useMemo(
     () =>
@@ -477,9 +488,9 @@ export function TaxPage() {
         [{ type: ctBizType, sales: { standard: num(ctSalesStr), reduced: num(ctReducedSalesStr) } }],
         { standard: num(ctPurchaseStr), reduced: 0 },
         bizParams,
-        { simplified: ctSimplifiedOk, twentyPercent: ctTwentyPercentOk },
+        { simplified: ctSimplifiedOk, twentyPercent: ctTwentyPercentOk, thirtyPercent: ctThirtyPercentOk },
       ),
-    [ctSalesStr, ctReducedSalesStr, ctPurchaseStr, ctBizType, bizParams, ctSimplifiedOk, ctTwentyPercentOk],
+    [ctSalesStr, ctReducedSalesStr, ctPurchaseStr, ctBizType, bizParams, ctSimplifiedOk, ctTwentyPercentOk, ctThirtyPercentOk],
   );
   // ⑩-2 納付/還付スケジュール — 税率 0%〜50% を範囲に、金額と時期を出す。
   const [csRateStr, setCsRateStr] = useState('10');
@@ -487,7 +498,7 @@ export function TaxPage() {
   const [csEndMonth, setCsEndMonth] = useState('12');
   const [csEndYear, setCsEndYear] = useState('2026');
   const [csExtended, setCsExtended] = useState(false);
-  const [csMethod, setCsMethod] = useState<'standard' | 'simplified' | 'twenty-percent'>('standard');
+  const [csMethod, setCsMethod] = useState<TaxMethod>('standard');
   const [csPriorStr, setCsPriorStr] = useState('0');
   const [csETax, setCsETax] = useState(true);
 
@@ -594,6 +605,7 @@ export function TaxPage() {
     standard: '本則課税',
     simplified: '簡易課税',
     'twenty-percent': '2割特例',
+    'thirty-percent': '3割特例',
   };
 
   // --- ⑪ 不動産・資産にかかる税 (概算) ---
@@ -1308,12 +1320,36 @@ export function TaxPage() {
         </div>
       </Section>
 
-      <Section title="⑩ 消費税の納付方式の比較 (本則 / 簡易 / 2割特例)" count={3}>
+      <Section title="⑩ 消費税の納付方式の比較 (本則 / 簡易 / 2割特例 / 3割特例)" count={4}>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.6 }}>
           消費税の課税事業者は<strong>本則課税・簡易課税・2割特例</strong>から納付方式を選べます。
           簡易課税は基準期間の課税売上{jpy(bizParams.simplifiedEligibilityThreshold)}以下、2割特例はインボイス登録した免税事業者向けの経過措置
           ({formatDate(TWENTY_PERCENT_MEASURE_END, { era: 'wareki' })}を含む課税期間まで) です。
+          その後、個人事業者は<strong>3割特例</strong>（{thirtyYears}・納付税額 = 売上税額 × {Math.round(bizParams.thirtyPercentRate * 100)}%・令和8年度税制改正）を選べます。法人に後継の措置はありません。
+          事業形態は下の切替（節税制度カタログと共通）: 現在 <strong>{entity === 'corporation' ? '法人' : '個人事業主'}</strong>。
           ※ 概算試算であり、適用要件・端数処理の細部は反映しません。確定申告は税理士・国税庁でご確認ください。
+        </div>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+          {(['sole-proprietor', 'corporation'] as const).map((e) => (
+            <button
+              key={`ct-kind-${e}`}
+              type="button"
+              onClick={() => setEntity(e)}
+              aria-pressed={entity === e}
+              style={{
+                padding: '4px 12px',
+                borderRadius: 6,
+                border: '1px solid var(--border)',
+                background: entity === e ? 'var(--accent)' : 'var(--bg-elev)',
+                color: entity === e ? '#fff' : 'var(--text)',
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              {e === 'corporation' ? '法人' : '個人事業主'}
+            </button>
+          ))}
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -1364,10 +1400,11 @@ export function TaxPage() {
             </div>
           )}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
           <Stat label="本則課税" value={jpy(consumptionMethods.standard)} positive={consumptionMethods.best === 'standard'} />
           <Stat label="簡易課税" value={jpy(consumptionMethods.simplified)} positive={consumptionMethods.best === 'simplified'} />
           <Stat label="2割特例" value={jpy(consumptionMethods.twentyPercent)} positive={consumptionMethods.best === 'twenty-percent'} />
+          <Stat label="3割特例" value={jpy(consumptionMethods.thirtyPercent)} positive={consumptionMethods.best === 'thirty-percent'} />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 12, lineHeight: 1.6 }}>
           ※ ここの<strong>本則課税</strong>は課税仕入れの消費税を<strong>全額引ける</strong>前提の額です。
@@ -1481,6 +1518,7 @@ export function TaxPage() {
               <option value="standard">本則課税</option>
               <option value="simplified">簡易課税</option>
               <option value="twenty-percent">2割特例</option>
+              <option value="thirty-percent">3割特例</option>
             </select>
           </label>
           <GuardedNumber

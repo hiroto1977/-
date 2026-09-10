@@ -64,9 +64,22 @@ async function mount(): Promise<void> {
 
 const text = (): string => container.textContent ?? '';
 
+/**
+ * 事業形態の切替 (節税制度カタログと ⑩ が共有する `entity`・既定は個人事業主)。
+ * 2割特例の期限の帯と 3割特例の対象 (個人事業者だけ) がこれで決まる (パス 141)。
+ */
+async function chooseEntity(label: '個人事業主' | '法人'): Promise<void> {
+  const button = Array.from(container.querySelectorAll<HTMLButtonElement>('button[aria-pressed]')).find((b) => b.textContent === label);
+  if (!button) throw new Error(`事業形態のボタン ${label} が無い`);
+  await act(async () => {
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+  await settle();
+}
+
 /** 「✅ 最も納付が少ない方式: ○○」の ○○。 */
 function recommended(): string {
-  const m = /最も納付が少ない方式:\s*(本則課税|簡易課税|2割特例)/.exec(text());
+  const m = /最も納付が少ない方式:\s*(本則課税|簡易課税|2割特例|3割特例)/.exec(text());
   return m ? m[1]! : '(見つからない)';
 }
 
@@ -119,32 +132,66 @@ describe('TaxPage ⑩ — 選べる方式の中から勧める', () => {
     clockAt(2026, 9, 6);
     await mount();
     expect(recommended()).toBe('2割特例');
-    expect(text()).not.toContain('選べない方式は比較から外しています');
+    // 3割特例はまだ対象年分の前 (令和 9 年分から) なので候補に入らず、その理由だけが書かれる。
+    // 簡易課税・2割特例は外していない (対照 —— 外した文面は下の ★ が標本)。
+    expect(text()).toContain('3割特例（令和9年分・令和10年分から）');
+    // 外した理由の文面そのもので当てる —— 「簡易課税（」「2割特例（」は ⑩ の説明文と
+    // 節税制度カタログにも在るので、綴りの断片では**どの場面でも鳴らない**空の検査になる。
+    expect(text()).not.toContain('簡易課税（基準期間の課税売上');
+    expect(text()).not.toContain('2割特例（適用期限');
   });
 
-  it('★ 適用期限を過ぎた時計では 2割特例を勧めない — 最も安くても', async () => {
+  it('★ 適用期限を過ぎた時計では 2割特例を勧めない — 最も安くても (法人: 後継の 3割特例も無い)', async () => {
     clockAt(2027, 9, 30);
     await mount();
+    await chooseEntity('法人');
     expect(recommended()).toBe('簡易課税');
     expect(text()).toContain('2割特例（適用期限 令和8年9月30日 経過）');
+    expect(text()).toContain('3割特例（法人は対象外）');
+    expect(text()).toContain('現在 法人');
+  });
+
+  it('★ 個人事業者は令和 9 年分から 3割特例を勧める — 2割特例は終了、簡易課税より安い (パス 141)', async () => {
+    clockAt(2027, 9, 30);
+    await mount(); // 既定の事業形態は個人事業主
+    expect(DEFAULTS.thirtyPercent).toBeLessThan(DEFAULTS.simplified);
+    expect(recommended()).toBe('3割特例');
+    expect(text()).toContain('2割特例（適用期限 令和8年9月30日 経過）');
+    // 3割特例は外していない (外した理由の 3 つの文面のどれも出ない)。
+    expect(text()).not.toContain('3割特例（法人は対象外）');
+    expect(text()).not.toContain('3割特例（令和9年分・令和10年分から）');
+    expect(text()).not.toContain('3割特例（令和9年分・令和10年分で終了）');
+    expect(text()).toContain('現在 個人事業主');
   });
 
   it('★ 簡易課税の境目を超える売上では簡易課税を勧めない', async () => {
     clockAt(2027, 9, 30); // 2割特例も外れる場面にして、残るのが本則だけになるようにする
     await seed({ 'consumptionBusiness.simplifiedEligibilityThreshold': 5_000_000 });
     await mount();
+    await chooseEntity('法人'); // 個人事業者なら 3割特例が残る (上の ★)
     expect(recommended()).toBe('本則課税');
     expect(text()).toContain('簡易課税（基準期間の課税売上¥5,000,000超）');
     expect(text()).toContain('2割特例（適用期限 令和8年9月30日 経過）');
   });
 
-  it('★ 外しても 3 方式の金額は出し続ける (参考として消さない)', async () => {
+  it('個人事業者でも対象年分の後 (2029 年) は 3割特例を勧めない — 残るのは本則だけ', async () => {
+    clockAt(2029, 1, 15);
+    await seed({ 'consumptionBusiness.simplifiedEligibilityThreshold': 5_000_000 });
+    await mount();
+    expect(recommended()).toBe('本則課税');
+    expect(text()).toContain('3割特例（令和9年分・令和10年分で終了）');
+    expect(text()).toContain('2割特例（適用期限 令和8年9月30日 経過）');
+  });
+
+  it('★ 外しても 4 方式の金額は出し続ける (参考として消さない)', async () => {
     clockAt(2027, 9, 30);
     await seed({ 'consumptionBusiness.simplifiedEligibilityThreshold': 5_000_000 });
     await mount();
+    await chooseEntity('法人');
     expect(text()).toContain(jpy(DEFAULTS.standard));
     expect(text()).toContain(jpy(DEFAULTS.simplified));
     expect(text()).toContain(jpy(DEFAULTS.twentyPercent));
+    expect(text()).toContain(jpy(DEFAULTS.thirtyPercent));
   });
 
   it('期限の文面は定数から作る — 「令和8年分まで」の書き写しを残さない', async () => {

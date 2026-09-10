@@ -115,8 +115,15 @@ async function typeIntoLabeled(labelText: string, value: string): Promise<void> 
 /** ラベル → 値 の 2 段の枠 (Stat / Tile / stat) を読む。 */
 function statValue(label: string): string {
   // 値の枠は要素を子に持たない — 見出しだけ同じ注記の div (<strong> を含む) を掴まないため。
+  // ラベルは枠の**最初の節点**でもある (Stat は <div><div>ラベル</div><div>値</div></div>)。
+  // 前に文字がある枠は掴まない —— 「✅ 最も納付が少ない方式: <strong>2割特例</strong>」の枠は
+  // 2026-09-10 (パス 141) に 3割特例の行が増えて注記が 2 番目の子になり、Stat と同じ形になった。
   const tile = Array.from(container.querySelectorAll('div')).find(
-    (d) => d.firstElementChild?.textContent === label && d.children.length >= 2 && d.children[1]!.children.length === 0,
+    (d) =>
+      d.firstElementChild?.textContent === label &&
+      d.firstChild === d.firstElementChild &&
+      d.children.length >= 2 &&
+      d.children[1]!.children.length === 0,
   );
   if (!tile) throw new Error(`stat "${label}" not found`);
   return tile.children[1]!.textContent ?? '';
@@ -446,13 +453,15 @@ describe('税 — 消費税率', () => {
     expect(statValue('印紙税額')).toBe(jpy(5_000));
   });
 
-  it('事業者の消費税: 税率・2 割特例の割合・境目の上書きが ⑩ の 3 方式と文言に出る', async () => {
+  it('事業者の消費税: 税率・2 割特例・3 割特例の割合・境目の上書きが ⑩ の 4 方式と文言に出る', async () => {
     await mount(TaxPage);
     const control = compareBusinessTaxMethods(
       [{ type: 'service', sales: { standard: 8_000_000, reduced: 0 } }],
       { standard: 3_000_000, reduced: 0 },
     );
     expect(statValue('2割特例')).toBe(jpy(control.twentyPercent));
+    expect(statValue('3割特例')).toBe(jpy(control.thirtyPercent));
+    expect(text()).toContain('納付税額 = 売上税額 × 30%');
     expect(text()).toContain('簡易課税は基準期間の課税売上¥50,000,000以下');
     expect(text()).toContain('課税売上が¥10,000,000以下です');
     await unmount();
@@ -460,6 +469,7 @@ describe('税 — 消費税率', () => {
     await seed({
       'tax.consumptionStandardRate': 0.12,
       'consumptionBusiness.twentyPercentRate': 0.3,
+      'consumptionBusiness.thirtyPercentRate': 0.45,
       'consumptionBusiness.exemptionThreshold': 20_000_000,
       'consumptionBusiness.simplifiedEligibilityThreshold': 60_000_000,
     });
@@ -468,6 +478,7 @@ describe('税 — 消費税率', () => {
       ...DEFAULT_BUSINESS_CONSUMPTION_PARAMS,
       rates: { standard: 0.12, reduced: 0.08 },
       twentyPercentRate: 0.3,
+      thirtyPercentRate: 0.45,
       exemptionThreshold: 20_000_000,
       simplifiedEligibilityThreshold: 60_000_000,
     };
@@ -478,6 +489,11 @@ describe('税 — 消費税率', () => {
     );
     expect(seeded.twentyPercent).not.toBe(control.twentyPercent);
     expect(statValue('2割特例')).toBe(jpy(seeded.twentyPercent));
+    // 3 割特例の割合 (パス 141) も同じ項から届く —— 額と、⑩ の説明文の「売上税額 × 45%」。
+    expect(seeded.thirtyPercent).not.toBe(control.thirtyPercent);
+    expect(statValue('3割特例')).toBe(jpy(seeded.thirtyPercent));
+    expect(text()).toContain('納付税額 = 売上税額 × 45%');
+    expect(text()).not.toContain('納付税額 = 売上税額 × 30%');
     expect(statValue('本則課税')).toBe(jpy(seeded.standard));
     expect(text()).toContain('簡易課税は基準期間の課税売上¥60,000,000以下');
     expect(text()).toContain('課税売上が¥20,000,000以下です');

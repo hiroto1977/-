@@ -2,7 +2,7 @@
 title: "nta.go.jp"
 type: source-domain
 host: "nta.go.jp"
-cite_count: 287
+cite_count: 288
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nta.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **287 件**（公的 287）
+> [!info] 出典ドメイン索引 ・ 引用 **288 件**（公的 288）
 
 ## このドメインを出典とする項目
 
@@ -169,6 +169,7 @@ tags:
 - [[tax-inheritance-basic-deduction|相続税の基礎控除額]] — 国税庁No.4152相続税の計算
 - [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]] — 国税庁No.6401仕入控除税額の計算方法
 - [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]] — 国税庁課税売上高5億円超の場合の仕入税額控除
+- [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 国税庁3割特例の創設（個人事業者の令和9年分・令和10年分の消費税申告）
 - [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 国税庁インボイス制度について
 - [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 国税庁令和8年度税制改正インボイス関連特集
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 国税庁2割特例特設ページ

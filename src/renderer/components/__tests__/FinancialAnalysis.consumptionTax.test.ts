@@ -65,10 +65,11 @@ describe('消費税の概算ブロック — render (通常規模の事業)', ()
     expect(html).toContain('消費税の概算');
   });
 
-  it('shows all three methods 本則課税 / 簡易課税 / 2割特例', () => {
+  it('shows all four methods 本則課税 / 簡易課税 / 2割特例 / 3割特例', () => {
     expect(html).toContain('本則課税');
     expect(html).toContain('簡易課税');
     expect(html).toContain('2割特例');
+    expect(html).toContain('3割特例');
   });
 
   it('shows the combined tax burden tile (法人税等 ＋ 消費税)', () => {
@@ -85,6 +86,7 @@ describe('消費税の概算ブロック — render (通常規模の事業)', ()
     expect(html).toContain(yen.format(ct.standard));
     expect(html).toContain(yen.format(ct.simplified));
     expect(html).toContain(yen.format(ct.twentyPercent));
+    expect(html).toContain(yen.format(ct.thirtyPercent));
   });
 
   it('lists all six 簡易課税 business-type options (第1種〜第6種)', () => {

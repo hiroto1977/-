@@ -18389,6 +18389,86 @@ uber-eats / demae-can の advise は画面が無く (`VoiceCommandBar` と `Busi
 - 下書き (`servicehub.teamradar.draft.v1`) は snapshot より優先して復元される。読めなかった保存と下書きが両方在るとき、
   画面のメンバーは下書き、注記は保存先について言う (別の物を指している)。
 
+## パス 141 (2026-09-10) — **2割特例の後継 (令和 8 年度税制改正の「3割特例」) が無く、法人と個人の区別も無いので、2027 年以降の個人事業者には 3 方式しか示せなかった —— 期限台帳の 2割特例は「人が決める」のまま 20 日後に CI が落ちる**
+
+### 何が起きていたか
+
+- 2割特例 (インボイス登録で免税から課税になった小規模事業者の納付税額 = 売上税額 × 20%) の期限は
+  `TWENTY_PERCENT_MEASURE_END = '2026-09-30'` で、パス 10 が `twentyPercentMeasureStatus` (active / period-dependent /
+  ended) を足し、`lint:rate-freshness` の台帳が 180 日前から警告していた。実測 2026-09-10: **残り 20 日**。台帳の `how` は
+  「経過措置そのものを画面から下げるか、参考として残すかを決めてください」—— **後継が何かを言っていない**。期限の翌日から
+  CI が落ちる (猶予の帯が無い) のに、判定の側は 1 年の period-dependent の帯を持っている —— 門と判定が別の日付で動く。
+- 令和 8 年度税制改正 (2026) で 2割特例は令和 8 年 9 月 30 日の属する課税期間で終了することが確定し、**個人事業者に限り**
+  令和 9 年分・令和 10 年分の納付税額を売上税額の 3 割とする「3割特例」が創設された (法人に後継措置は無い。事前届出は不要で
+  申告書に付記して選ぶ。要件は 2割特例と同じ)。本アプリは 3割特例を持たず、**納税者の区分 (個人 / 法人) も持たなかった** ——
+  消費税の比較 (経営分析の消費税カード・税務ページ ⑩・申告予定表 ⑩-2) は 3 方式で、2027 年の個人事業者には 2割特例が
+  消えるだけで後継を言わない。個人事業者の課税期間は暦年なので 2割特例の終わりは「令和 8 年分まで」と**言い切れる**のに、
+  法人と同じ 1 年の「言い切れない帯」を出していた。
+- 規準はリポジトリの中に在った (13 か所目): `complianceKnowledge.ts` の `tax-invoice` は 80% → 70% の経過措置の日付を
+  持つが、2割特例の終わりと 3割特例は無い (asOf 2026-07)。国税庁の「令和 8 年度税制改正特集」と財務省の大綱はこの環境から
+  届かず (egress)、税理士法人・会計事務所の改正解説 5 本で突き合わせた。
+
+### 直し
+
+- `src/shared/taxConsumption.ts`: `TaxpayerKind` ('sole-proprietor' / 'corporation' / 'unknown' —— **分からないときは unknown**)。
+  `twentyPercentMeasureStatus(today, end, kind)` は個人事業者なら暦年で言い切る (期限の年の末日まで active・翌年から ended)。
+  `THIRTY_PERCENT_RATE` (0.3) / `THIRTY_PERCENT_MEASURE_START` (2027-01-01) / `THIRTY_PERCENT_MEASURE_END` (2028-12-31)、
+  `thirtyPercentMeasureStatus(today, kind)` → not-applicable (法人) / upcoming / active / ended (読めない時計・日付は upcoming に
+  倒す —— 使えると言い切らない)、`thirtyPercentMeasureYearsLabel()` → 「令和9年分・令和10年分」(文面は定数から)。
+- `taxConsumptionBusiness.ts`: `calcThirtyPercentTax`、比較の 4 方式目 (`thirtyPercent`)、`MethodAvailability.thirtyPercent` は
+  **省略時 false** (他の 2 つと逆 —— 対象が区分と年分で決まるので、言い切れるときだけ true)、同値の順は本則 → 簡易 → 2割 → 3割。
+  `taxConsumptionSchedule.ts`: `TaxMethod` に 'thirty-percent' (年税額・分岐税率)。`parameters.ts` に
+  `consumptionBusiness.thirtyPercentRate` (両取り出し口に配線)。
+- 画面: 経営分析の消費税カードに**事業形態** (未選択 / 個人事業者 / 法人・既定は未選択) と 3割特例の 4 枚目 —— 未選択では額だけ
+  出して候補に入れず「事業形態を選ぶと候補に入ります」、個人事業者は「令和8年分で終了（後継は 3割特例）」→ 3割特例が最有利、
+  法人は「法人は対象外（後継措置なし）」。税務ページ ⑩ は既存の個人事業主 / 法人の切替 (`entity`・節税制度カタログと共通) を
+  読み、4 方式目の Stat と外した理由 (法人は対象外 / 令和 9 年分から / 令和 9 年分・令和 10 年分で終了)、⑩-2 の方式に 3割特例。
+- `complianceKnowledge.ts` の `tax-invoice`: 2割特例の終わりと 3割特例の文 (asOf 2026-09・国税庁の 3割特例の資料を出典に)。
+  `npm run vault:build` で保管庫の note を再生成。
+- `scripts/lint-rate-freshness.cjs`: 台帳 +1 (`THIRTY_PERCENT_MEASURE_END`・180 日前から警告)。2割特例の行に**猶予の帯**
+  `graceDays: 364` (`graceWhy` つき) —— 期限の翌日から 1 年は `twentyPercentMeasureStatus` の period-dependent の帯と同じ理由で
+  **落とさずに警告**し、帯を過ぎたら落とす (門と判定が同じ理由で同じ日に動く)。`how` は後継 (法人は無し・個人は 3割特例・
+  実装済み) と「猶予帯を過ぎたら 2割特例の行と定数を外す」を言う。`evaluateDated(dateStr, now, warnWithinDays, graceDays)` の
+  4 値目 `grace`、self-test に標本 5 本 (翌日 / 帯の最終日 / 帯の翌日 / 猶予 0 / 期限前は warn のまま)。
+- 検査: `taxConsumption.test.ts` (+区分の帯 4・3割特例の帯 5・文面 3・読み直し 1)、`taxConsumptionBusiness.test.ts` (+4・比較 8・読み直し 1)、
+  `taxConsumptionSchedule.test.ts` (+4・読み直し 1)、`parameters.test.ts` / `parameterWiring.test.ts` (3割特例の配線)、
+  `taxPageMethodAvailability.test.ts` (法人 / 個人事業者 / 2029 年)、`FinancialAnalysis.parameters` / `.consumptionTax` /
+  `.ctEligibility`、新規 `FinancialAnalysis.thirtyPercent.test.ts` (jsdom・2027 / 2026 / 2029 の時計 × 事業形態 5 本)、
+  `invoiceMeasureConsistency.test.ts` (知識台帳の文 = 定数・出典・期限台帳 2 件 5 本)。
+
+### 対照
+
+| # | 何を壊したか | 鳴ったか |
+| --- | --- | --- |
+| A | `MethodAvailability.thirtyPercent === true` の候補入りを外す (3割特例は額だけ) | 🔔 3 / 84 (`taxConsumptionBusiness` / `FinancialAnalysis.thirtyPercent` / `taxPageMethodAvailability`: ★ 個人事業者の対象年分なら候補に入る / ★ 2027 年・個人事業者 / ★ 個人事業者は令和 9 年分から 3割特例 ほか) |
+| A2 | `twentyPercentMeasureStatus` の個人事業者の枝 (暦年で言い切る) を消す | 🔔 4 / 34 (`taxConsumption` / `FinancialAnalysis.thirtyPercent`: ★ 個人事業者は翌年の初日から ended / ★ 2027 年・個人事業者は「令和8年分で終了」 ほか) |
+| A3 | 期限台帳から `THIRTY_PERCENT_MEASURE_END` の行を消す (定数は残す) —— パス 140 の母集団の走査 | 🔔 `lint:rate-freshness` exit=1: ❌「台帳 (DATED_MEASURES) に無い期限の定数が 1 件: src/shared/taxConsumption.ts::THIRTY_PERCENT_MEASURE_END」 + `invoiceMeasureConsistency` 1 / 5 |
+| A4 | 知識台帳の `tax-invoice` から 2割特例の終わりと 3割特例の文を消す | 🔔 2 / 5 (`invoiceMeasureConsistency.test.ts`: ★ 2割特例の期限の文 / ★ 3割特例の対象年分と割合) |
+| B | (画面) 経営分析のカードが `thirtyPercent: ctThirtyPercentOk` を渡すのをやめる (常に false) | 🔔 1 / 5 (`FinancialAnalysis.thirtyPercent.test.ts`: ★ 2027 年・個人事業者で 3割特例が最有利) |
+| B2 | (画面) 税務ページ ⑩ が同じく渡すのをやめる | 🔔 1 / 8 (`taxPageMethodAvailability.test.ts`: ★ 個人事業者は令和 9 年分から 3割特例を勧める) |
+
+### 残る物
+
+- 一次情報 (国税庁の令和 8 年度税制改正特集・財務省の大綱) は届かず、二次情報 5 本の一致で書いた。3割特例の要件
+  (基準期間の課税売上高 1,000 万円以下 = 2割特例と同じ) は本アプリの免税の判定 (`isTaxExempt`) をそのまま使っている。
+- 免税事業者等からの課税仕入れの 80% → 70% → 50% → 30% (2031-09-30 まで) の緩和・延長は計算していない
+  (`taxConsumptionSchedule.ts` の冒頭)。知識台帳の `tax-invoice` は 80% / 70% の日付を持つが、50% / 30% は書いていない —— 別のパスで。
+- 経営分析の事業形態は「未選択」が既定で、税務ページ ⑩ は既存の切替 (既定 個人事業主) を読む —— 2 画面で既定が違う。
+  ⑩ は「現在 個人事業主」と書き、切替はすぐ上に在る。
+- 2割特例の猶予帯 (2027-09-29 まで) を過ぎたら、2割特例の行と定数を外す番 (台帳の `how` に書いた)。
+- 0 倒しの母集団 (`lint:zero-fold`) は生成ブロックのまま (再生成の差分出力は「前回と同じ」—— 足した物に `? … : 0` / `?? 0` / `|| 0` の形は無い)。
+- 変異検査 (`taxConsumption.ts` / `taxConsumptionBusiness.ts` / `taxConsumptionSchedule.ts`): 初回は **14 件生存** (97.42%)。**うち 9 件は等価変異で、黙らせずに単純化して消した** (`stryker.config.json` の
+  「等価変異が出たら、まずコードを単純化できないか疑う」に従った · pragma は 1 つも足していない): ★ 区分の既定 `'unknown'` の
+  文字列変異 2 件 → 既定を公開の定数 `DEFAULT_TAXPAYER_KIND` にして**値そのものを読み直しで留めた** (既定引数は識別子に
+  なるので変異の的から外れる)、★ `thirtyPercentMeasureStatus` の `t === ''` の枝 2 件 → 読めない時計は `''` を返し
+  `'' < start` は辞書順で必ず真なので、この枝は下の `t < start` と**同じ答えを 2 通りに書いていた** (消した)、
+  ★ `thirtyPercentMeasureYearsLabel` の番人 5 件 → NaN と逆順では `for` が 1 度も回らず `[].join()` = `''` なので、
+  番人は繰り返しと同じ答えの別の書き方だった (消した。空文字になる 3 通りは標本が留めている)。
+  残る **5 件は covered-static** (`DEFAULT_CONSUMPTION_RATES` / `DEFAULT_BUSINESS_CONSUMPTION_PARAMS` /
+  `LOCAL_RATIO` / `DEFAULT_SCHEDULE_PARAMS` / `DEFAULT_RATE_POINTS` —— module レベルなので import 時に評価済みで、
+  変異体の切替の前に読まれた値が残る) で、`vi.resetModules()` + 動的 import の読み直し検査 2 本で全部落ちた。
+  再測定 **100% / 100%** (523 killed + 3 timeout・0 survived・0 no-coverage)。
+
 ## パス 140 (2026-09-09) — **少額減価償却資産の特例は 2026-04-01 の令和 8 年度税制改正 (上限 30 万 → 40 万円・従業員 500 → 400 人・期限 2029-03-31) に取り残されていた —— 計算 (`depreciation.ts`) は 30 万円のまま取得日も期限も持たず、知識台帳は 1 項目だけ 40 万円で兄弟 2 項目は日付の無い「30万円未満」、節税カタログの期限つき 2 制度に期限が無かった**
 
 ### 何が起きていたか

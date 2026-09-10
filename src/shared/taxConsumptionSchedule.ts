@@ -24,7 +24,7 @@
  */
 
 import { floorHundred } from './num';
-import { TWENTY_PERCENT_RATE } from './taxConsumption';
+import { THIRTY_PERCENT_RATE, TWENTY_PERCENT_RATE } from './taxConsumption';
 
 /** 現行法における消費税（国税）の割合。標準10% = 国税7.8% + 地方2.2%。 */
 export const NATIONAL_SHARE = 0.78;
@@ -70,6 +70,8 @@ export interface ScheduleParams {
   readonly nationalShare: number;
   /** 2 割特例で納める割合 (売上税額 × 20%)。 */
   readonly twentyPercentRate: number;
+  /** 3 割特例で納める割合 (売上税額 × 30%・個人事業者の令和 9 年分/10 年分)。 */
+  readonly thirtyPercentRate: number;
   /** これ以下なら中間申告なし。 */
   readonly interimTier1: number;
   /** これ以下なら年 1 回。 */
@@ -81,6 +83,7 @@ export interface ScheduleParams {
 export const DEFAULT_SCHEDULE_PARAMS: ScheduleParams = {
   nationalShare: NATIONAL_SHARE,
   twentyPercentRate: TWENTY_PERCENT_RATE,
+  thirtyPercentRate: THIRTY_PERCENT_RATE,
   interimTier1: INTERIM_TIER1,
   interimTier2: INTERIM_TIER2,
   interimTier3: INTERIM_TIER3,
@@ -90,7 +93,7 @@ export const DEFAULT_SCHEDULE_PARAMS: ScheduleParams = {
 export const MAX_RATE = 0.5;
 
 export type FilerKind = 'individual' | 'corporate';
-export type TaxMethod = 'standard' | 'simplified' | 'twenty-percent';
+export type TaxMethod = 'standard' | 'simplified' | 'twenty-percent' | 'thirty-percent';
 
 /** 還付額の端数処理: 1円未満切捨て。ただし 1円未満の正値は 1円とする。 */
 export function roundRefund(n: number): number {
@@ -293,6 +296,8 @@ export function calcAnnualTax(input: ScheduleInput, rate: number, p: SchedulePar
     deductibleNational = salesTaxNational * Math.min(Math.max(input.deemedPurchaseRate, 0), 1);
   } else if (input.method === 'twenty-percent') {
     deductibleNational = salesTaxNational * (1 - p.twentyPercentRate);
+  } else if (input.method === 'thirty-percent') {
+    deductibleNational = salesTaxNational * (1 - p.thirtyPercentRate);
   } else {
     deductibleNational = purchases * r * p.nationalShare;
   }
@@ -493,6 +498,8 @@ export function breakEvenRate(input: ScheduleInput, p: ScheduleParams = DEFAULT_
     base = sales * (1 - Math.min(Math.max(input.deemedPurchaseRate, 0), 1));
   } else if (input.method === 'twenty-percent') {
     base = sales * p.twentyPercentRate;
+  } else if (input.method === 'thirty-percent') {
+    base = sales * p.thirtyPercentRate;
   } else {
     base = sales - Math.max(0, input.taxablePurchases);
   }

@@ -58,13 +58,31 @@ const DATED_MEASURES = [
     label: 'インボイス 2割特例 (小規模事業者の税額控除に関する経過措置)',
     source: 'src/shared/taxConsumption.ts',
     constName: 'TWENTY_PERCENT_MEASURE_END',
-    // 期限の前にこれだけ猶予があれば警告に留める。過ぎたら失敗。
+    // 期限の前にこれだけ猶予があれば警告に留める。
+    warnWithinDays: 180,
+    /*
+     * **期限の後の帯** (2026-09-10 · パス 141)。2割特例は「期限の属する課税期間まで」なので、期限の翌日から
+     * 1 年は今日を含む課税期間が期限内の日を含みうる (twentyPercentMeasureStatus の period-dependent)。
+     * その帯では画面が条件を書いて選ばせるので、落とさずに警告に留める。帯を過ぎたら落とす —— 2割特例の
+     * 行と定数を外す番。後継は決まっている: 法人は無し、個人事業者は 3割特例 (下の項)。
+     */
+    graceDays: 364,
+    graceWhy: '期限の翌日から 1 年は今日を含む課税期間が期限内の日を含みうる (twentyPercentMeasureStatus の period-dependent の帯)',
+    how:
+      '法人は令和 8 年 9 月 30 日を含む課税期間で終了 (後継なし)、個人事業者は令和 9 年分・令和 10 年分の 3割特例へ ' +
+      '(2026-09-10 に実装済み: thirtyPercentMeasureStatus / calcThirtyPercentTax)。猶予帯 (期限後 1 年) を過ぎたら ' +
+      '2割特例の行 (FinancialAnalysis / TaxPage ⑩) と TWENTY_PERCENT_MEASURE_END を外し、3割特例だけを残してください。' +
+      '国税庁 https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice-review/index.htm',
+  },
+  {
+    label: 'インボイス 3割特例 (個人事業者の令和 9 年分・令和 10 年分・2割特例の後継)',
+    source: 'src/shared/taxConsumption.ts',
+    constName: 'THIRTY_PERCENT_MEASURE_END',
     warnWithinDays: 180,
     how:
-      '経過措置そのものを画面から下げるか、参考として残すかを決めてください ' +
-      '(勧めない判定は twentyPercentMeasureStatus() が既に持っています。' +
-      '期限の翌日から 1 年は「課税期間が期限内の日を含みうる」帯なので外していません)。' +
-      '国税庁 https://www.nta.go.jp/publication/pamph/shohi/kaisei/202304/01.htm',
+      '令和 10 年分の後に後継の措置が無ければ thirtyPercentMeasureStatus が ended を返し、画面は勧めません。' +
+      '令和 11 年度の税制改正大綱 (財務省) と国税庁のインボイス特集で延長・後継の有無を確かめ、あれば ' +
+      'THIRTY_PERCENT_MEASURE_END を進め、無ければ 3割特例の行を外してください。',
   },
   {
     /*
@@ -152,12 +170,15 @@ function declaredDate(src, constName) {
   return m === null ? null : m[1];
 }
 
-/** 期限つき措置の判定。`days` は期限までの残日数 (過ぎていれば負)。 */
-function evaluateDated(dateStr, now, warnWithinDays) {
+/**
+ * 期限つき措置の判定。`days` は期限までの残日数 (過ぎていれば負)。
+ * `graceDays` は期限の後の帯 (その中は `grace` = 警告で落とさない。既定 0 = 翌日から失敗)。
+ */
+function evaluateDated(dateStr, now, warnWithinDays, graceDays = 0) {
   if (dateStr === null) return { level: 'error', days: null };
   const end = new Date(`${dateStr}T23:59:59Z`);
   const days = Math.floor((end.getTime() - now.getTime()) / 86400000);
-  if (days < 0) return { level: 'error', days };
+  if (days < 0) return { level: -days <= graceDays ? 'grace' : 'error', days };
   if (days <= warnWithinDays) return { level: 'warn', days };
   return { level: 'ok', days };
 }
@@ -203,6 +224,12 @@ function selfTest() {
     ['期限当日はまだ使える (境界)', '2026-09-30', new Date('2026-09-30T12:00:00Z'), 180, 'warn'],
     ['翌日は失敗 (境界)', '2026-09-30', new Date('2026-10-01T12:00:00Z'), 180, 'error'],
     ['日付が読めなければ失敗', null, new Date('2026-08-23T00:00:00Z'), 180, 'error'],
+    // 期限の後の帯 (2割特例: 期限の翌日から 1 年は課税期間が期限内の日を含みうる)。
+    ['猶予帯の中なら grace (翌日)', '2026-09-30', new Date('2026-10-01T12:00:00Z'), 180, 'grace', 364],
+    ['猶予帯の最終日は grace (境界)', '2026-09-30', new Date('2027-09-29T12:00:00Z'), 180, 'grace', 364],
+    ['猶予帯の翌日は失敗 (境界)', '2026-09-30', new Date('2027-09-30T12:00:00Z'), 180, 'error', 364],
+    ['猶予が 0 なら翌日から失敗 (既定)', '2026-09-30', new Date('2026-10-01T12:00:00Z'), 180, 'error', 0],
+    ['猶予帯があっても期限の前は warn のまま', '2026-09-30', new Date('2026-09-01T12:00:00Z'), 180, 'warn', 364],
   ];
 
   console.log('self-test:');
@@ -212,8 +239,8 @@ function selfTest() {
     if (!ok) failed += 1;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} (期待 ${want})`);
   }
-  for (const [name, dateStr, now, within, want] of datedCases) {
-    const got = evaluateDated(dateStr, now, within).level;
+  for (const [name, dateStr, now, within, want, grace = 0] of datedCases) {
+    const got = evaluateDated(dateStr, now, within, grace).level;
     const ok = got === want;
     if (!ok) failed += 1;
     console.log(`  ${ok ? '✓' : '✗'} ${name}: ${got} (期待 ${want})`);
@@ -329,7 +356,7 @@ function checkDatedMeasures(now) {
   for (const m of DATED_MEASURES) {
     const src = fs.readFileSync(path.join(REPO_ROOT, m.source), 'utf8');
     const dateStr = declaredDate(src, m.constName);
-    const { level, days } = evaluateDated(dateStr, now, m.warnWithinDays);
+    const { level, days } = evaluateDated(dateStr, now, m.warnWithinDays, m.graceDays ?? 0);
     if (dateStr === null) {
       console.error(`❌ ${m.source} に ${m.constName} がありません`);
       failed += 1;
@@ -343,6 +370,13 @@ function checkDatedMeasures(now) {
       console.warn(
         `::warning::${m.label} の適用期限が近づいています (${dateStr} / 残り ${days} 日)。` +
           `${m.how} 期限を過ぎると CI が落ちます`,
+      );
+      continue;
+    }
+    if (level === 'grace') {
+      console.warn(
+        `::warning::${m.label} の適用期限 (${dateStr}) を ${-days} 日過ぎましたが、猶予帯 (期限後 ${m.graceDays} 日: ${m.graceWhy}) の中です。` +
+          `${m.how} 帯を過ぎると CI が落ちます`,
       );
       continue;
     }

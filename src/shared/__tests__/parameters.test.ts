@@ -157,7 +157,7 @@ import {
   FULL_CREDIT_SALES_THRESHOLD,
   SIMPLIFIED_ELIGIBILITY_THRESHOLD,
 } from '../taxConsumptionBusiness';
-import { TWENTY_PERCENT_RATE } from '../taxConsumption';
+import { THIRTY_PERCENT_RATE, TWENTY_PERCENT_RATE } from '../taxConsumption';
 import { DEFAULT_PENSION_DEDUCTION_PARAMS, PENSION_DEDUCTION_MIN_OVER65, PENSION_DEDUCTION_MIN_UNDER65 } from '../taxPublicPension';
 import { CASUAL_INCOME_SPECIAL_DEDUCTION } from '../taxCasual';
 import { DEFAULT_FURUSATO_PARAMS, FURUSATO_ONE_STOP_MAX_MUNICIPALITIES, FURUSATO_SELF_PAY } from '../taxFurusato';
@@ -295,6 +295,7 @@ const DEFAULT_SOURCE: Readonly<Record<ParameterId, number>> = {
   'corporate.largeCorpCapitalThreshold': LARGE_CORP_CAPITAL_THRESHOLD,
   'corporate.largeCorpLossDeductionRatio': LARGE_CORP_LOSS_DEDUCTION_RATIO,
   'consumptionBusiness.twentyPercentRate': TWENTY_PERCENT_RATE,
+  'consumptionBusiness.thirtyPercentRate': THIRTY_PERCENT_RATE,
   'consumptionBusiness.exemptionThreshold': EXEMPTION_THRESHOLD,
   'consumptionBusiness.simplifiedEligibilityThreshold': SIMPLIFIED_ELIGIBILITY_THRESHOLD,
   'consumptionBusiness.fullCreditRatioThreshold': FULL_CREDIT_RATIO_THRESHOLD,
@@ -721,6 +722,7 @@ describe('機能ごとの取り出し口', () => {
       'corporate.largeCorpCapitalThreshold': 300_000_000,
       'corporate.largeCorpLossDeductionRatio': 0.6,
       'consumptionBusiness.twentyPercentRate': 0.3,
+      'consumptionBusiness.thirtyPercentRate': 0.45,
       'consumptionBusiness.exemptionThreshold': 20_000_000,
       'consumptionBusiness.simplifiedEligibilityThreshold': 60_000_000,
       'consumptionBusiness.fullCreditRatioThreshold': 0.9,
@@ -738,7 +740,7 @@ describe('機能ごとの取り出し口', () => {
     // 事業者の消費税の税率は「税」の消費税率を共有する。
     expect(businessConsumptionParams(v)).toEqual({
       rates: { standard: 0.12, reduced: 0.05 },
-      twentyPercentRate: 0.3, exemptionThreshold: 20_000_000, simplifiedEligibilityThreshold: 60_000_000,
+      twentyPercentRate: 0.3, thirtyPercentRate: 0.45, exemptionThreshold: 20_000_000, simplifiedEligibilityThreshold: 60_000_000,
       fullCreditRatioThreshold: 0.9, fullCreditSalesThreshold: 600_000_000,
     });
   });
@@ -861,6 +863,7 @@ describe('機能ごとの取り出し口', () => {
     const v = resolveParameters({
       'consumptionSchedule.nationalShare': 0.8,
       'consumptionBusiness.twentyPercentRate': 0.3,
+      'consumptionBusiness.thirtyPercentRate': 0.45,
       'consumptionSchedule.interimTier1': 600_000,
       'consumptionSchedule.interimTier2': 5_000_000,
       'consumptionSchedule.interimTier3': 50_000_000,
@@ -873,8 +876,8 @@ describe('機能ごとの取り出し口', () => {
       'emotion.lowScore': 1,
       'emotion.triggerMinCount': 5,
     });
-    // 2 割特例の割合は「消費税 (事業者)」の項を共有する。
-    expect(scheduleParams(v)).toEqual({ nationalShare: 0.8, twentyPercentRate: 0.3, interimTier1: 600_000, interimTier2: 5_000_000, interimTier3: 50_000_000 });
+    // 2 割特例・3 割特例の割合は「消費税 (事業者)」の項を共有する。
+    expect(scheduleParams(v)).toEqual({ nationalShare: 0.8, twentyPercentRate: 0.3, thirtyPercentRate: 0.45, interimTier1: 600_000, interimTier2: 5_000_000, interimTier3: 50_000_000 });
     // 付加率・配当割・住民税率は所得税・税額控除・住民税の項を共有する。
     expect(dividendParams(v)).toEqual({ withholdingIncomeRate: 0.2, surtaxRate: 0, withholdingResidentRate: 0.08, residentTaxRate: 0.2 });
     expect(emotionThresholds(v)).toEqual({ recentWindow: 3, triggerMinCount: 5, lowScore: 1, trendHysteresis: 4 });
@@ -969,6 +972,7 @@ describe('台帳の表 (静的な値の固定)', () => {
       ['corporate.largeCorpCapitalThreshold', '円', 1, 0, 100_000_000_000, true, 'law'],
       ['corporate.largeCorpLossDeductionRatio', '%', 100, 0, 1, false, 'law'],
       ['consumptionBusiness.twentyPercentRate', '%', 100, 0, 1, false, 'law'],
+      ['consumptionBusiness.thirtyPercentRate', '%', 100, 0, 1, false, 'law'],
       ['consumptionBusiness.exemptionThreshold', '円', 1, 0, 10_000_000_000, true, 'law'],
       ['consumptionBusiness.simplifiedEligibilityThreshold', '円', 1, 0, 10_000_000_000, true, 'law'],
       ['consumptionBusiness.fullCreditRatioThreshold', '%', 100, 0, 1, false, 'law'],

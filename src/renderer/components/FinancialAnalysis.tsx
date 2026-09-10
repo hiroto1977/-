@@ -18,11 +18,15 @@ import {
   SIMPLIFIED_ELIGIBILITY_THRESHOLD,
 } from '../../shared/taxConsumptionBusiness';
 import {
+  THIRTY_PERCENT_RATE,
   TWENTY_PERCENT_MEASURE_END,
   TWENTY_PERCENT_RATE,
+  thirtyPercentMeasureStatus,
+  thirtyPercentMeasureYearsLabel,
   twentyPercentMeasureStatus,
   type SimplifiedBusinessType,
   type ConsumptionTaxMethod,
+  type TaxpayerKind,
 } from '../../shared/taxConsumption';
 import { formatDate } from '../../shared/bankFormat';
 import { deriveBusinessFinancials, type MonthlyBusinessKpi } from '../data/businessFinancials';
@@ -319,6 +323,14 @@ const CT_METHOD_LABEL: Record<ConsumptionTaxMethod, string> = {
   standard: '本則課税',
   simplified: '簡易課税',
   'twenty-percent': '2割特例',
+  'thirty-percent': '3割特例',
+};
+
+/** 事業形態の選択肢 (2割特例の期限の帯と 3割特例の対象が区分で決まる)。 */
+const TAXPAYER_KIND_LABEL: Record<TaxpayerKind, string> = {
+  unknown: '未選択',
+  'sole-proprietor': '個人事業者',
+  corporation: '法人',
 };
 
 /**
@@ -387,6 +399,9 @@ function CorporateTaxCard({
   const [ctSalesStr, setCtSalesStr] = useState('');
   const [ctPurchasesStr, setCtPurchasesStr] = useState('');
   const [ctBizType, setCtBizType] = useState<SimplifiedBusinessType>('service');
+  // 事業形態 —— 2割特例の期限の帯 (個人は暦年で言い切れる) と 3割特例の対象 (個人だけ) が決まる。
+  // 既定は「未選択」: 分からないまま 3割特例を勧めない (パス 141)。
+  const [ctKind, setCtKind] = useState<TaxpayerKind>('unknown');
 
   const ctSalesParsed = ctSalesStr.trim() !== '' ? parseFloat(ctSalesStr.replace(/,/g, '')) : undefined;
   const ctPurchasesParsed = ctPurchasesStr.trim() !== '' ? parseFloat(ctPurchasesStr.replace(/,/g, '')) : undefined;
@@ -406,24 +421,45 @@ function CorporateTaxCard({
    * 3 値に落とす。この card は課税期間を入力に持たないので、**言い切れる `ended`
    * でだけ**候補から外し、言い切れない帯は条件を欄に書いて選ばせる (下の caption)。
    */
-  const ctMeasure = twentyPercentMeasureStatus();
+  const ctMeasure = twentyPercentMeasureStatus(new Date(), TWENTY_PERCENT_MEASURE_END, ctKind);
   const ctTwentyPercentOk = ctExempt && ctMeasure !== 'ended';
   /** 期限の文面は定数から作る (書き写すと 2 か所になる)。「令和8年9月30日」。 */
   const measureEndLabel = formatDate(TWENTY_PERCENT_MEASURE_END, { era: 'wareki' });
+  /** 個人事業者の最後の年分 (暦年)。「令和8年分」。 */
+  const measureYearLabel = thirtyPercentMeasureYearsLabel(TWENTY_PERCENT_MEASURE_END, TWENTY_PERCENT_MEASURE_END);
   const measureNote =
     ctMeasure === 'ended'
-      ? ` · 適用期限（${measureEndLabel}）が過ぎています`
-      : ` · ${measureEndLabel}を含む課税期間まで`;
+      ? ctKind === 'sole-proprietor'
+        ? ` · 個人事業者は${measureYearLabel}で終了（後継は 3割特例）`
+        : ` · 適用期限（${measureEndLabel}）が過ぎています`
+      : ctKind === 'sole-proprietor'
+        ? ` · 個人事業者は${measureYearLabel}まで（暦年）`
+        : ` · ${measureEndLabel}を含む課税期間まで`;
+  // 3割特例 (2割特例の後継・個人事業者の令和 9 年分/10 年分)。言い切れるときだけ候補に入れる。
+  const ctThirty = thirtyPercentMeasureStatus(new Date(), ctKind);
+  const ctThirtyPercentOk = ctExempt && ctKind === 'sole-proprietor' && ctThirty === 'active';
+  const thirtyYears = thirtyPercentMeasureYearsLabel();
+  const thirtyNote =
+    ctThirty === 'not-applicable'
+      ? ' · 法人は対象外（後継措置なし）'
+      : ctKind === 'unknown'
+        ? ` · 個人事業者の${thirtyYears}のみ（事業形態を選ぶと候補に入ります）`
+        : ctThirty === 'upcoming'
+          ? ` · ${thirtyYears}から（まだ対象年分ではありません）`
+          : ctThirty === 'active'
+            ? ` · ${thirtyYears}の対象年分です`
+            : ` · ${thirtyYears}で終了しました`;
   // 選べないと宣言した方式で「最有利」を決めない (それが 2026-09-06 の実測の穴)。
   const ct = compareBusinessTaxMethods(
     [{ type: ctBizType, sales: { standard: ctSales, reduced: 0 } }],
     { standard: ctPurchases, reduced: 0 },
     businessConsumption,
-    { simplified: ctSimplifiedOk, twentyPercent: ctTwentyPercentOk },
+    { simplified: ctSimplifiedOk, twentyPercent: ctTwentyPercentOk, thirtyPercent: ctThirtyPercentOk },
   );
   const simplifiedLimit = businessConsumption?.simplifiedEligibilityThreshold ?? SIMPLIFIED_ELIGIBILITY_THRESHOLD;
   const exemptionLimit = businessConsumption?.exemptionThreshold ?? EXEMPTION_THRESHOLD;
   const twentyPct = (businessConsumption?.twentyPercentRate ?? TWENTY_PERCENT_RATE) * 100;
+  const thirtyPct = (businessConsumption?.thirtyPercentRate ?? THIRTY_PERCENT_RATE) * 100;
   // 本則が還付見込み (負値) のときは合計に 0 として算入し、還付は注記で伝える。
   const ctBestPayable = Math.max(0, ct.bestAmount);
   const totalTaxBurden = breakdown.totalTax + (ctExempt ? 0 : ctBestPayable);
@@ -542,7 +578,7 @@ function CorporateTaxCard({
 
       {/* --- 消費税の概算 (納付見込み) --- */}
       <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>🧾 消費税の概算（納付見込み・本則 / 簡易 / 2割特例）</div>
+        <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>🧾 消費税の概算（納付見込み・本則 / 簡易 / 2割特例 / 3割特例）</div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(180px, 100%), 1fr))', gap: 8, marginBottom: 12, padding: '10px 12px', background: 'var(--bg)', borderRadius: 8, border: '1px solid var(--border)' }}>
           <div>
@@ -587,6 +623,20 @@ function CorporateTaxCard({
               ))}
             </select>
           </div>
+          <div>
+            <label style={labelStyle} htmlFor="ct-kind">事業形態（2割特例の期限・3割特例の対象）</label>
+            <select
+              id="ct-kind"
+              value={ctKind}
+              onChange={(e) => setCtKind(e.target.value as TaxpayerKind)}
+              aria-label="事業形態"
+              style={{ ...inputStyle, height: 30 }}
+            >
+              {(Object.keys(TAXPAYER_KIND_LABEL) as TaxpayerKind[]).map((k) => (
+                <option key={k} value={k}>{TAXPAYER_KIND_LABEL[k]}</option>
+              ))}
+            </select>
+          </div>
           <div style={{ display: 'flex', alignItems: 'flex-end' }}>
             <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5 }}>
               空欄 = 既定（売上高と、費用から給与・償却・利息を除いた概算仕入）。
@@ -610,6 +660,12 @@ function CorporateTaxCard({
               ct.twentyPercent,
               `売上税額 × ${Number(twentyPct.toPrecision(12))}%（インボイス登録の小規模事業者）` +
                 `${ctExempt ? '' : ` · 課税売上高${yen.format(exemptionLimit)}超は対象外`}${measureNote}`,
+            ],
+            [
+              'thirty-percent',
+              ct.thirtyPercent,
+              `売上税額 × ${Number(thirtyPct.toPrecision(12))}%（個人事業者・${thirtyYears}）` +
+                `${ctExempt ? '' : ` · 課税売上高${yen.format(exemptionLimit)}超は対象外`}${thirtyNote}`,
             ],
           ] as const).map(([method, amount, sub]) => (
             <div
@@ -642,6 +698,7 @@ function CorporateTaxCard({
           ※ 消費税は「預かった税 − 支払った税」を納付する仕組みのため、税引後利益の計算には含めていません（税抜経理を前提）。
           簡易課税は基準期間の課税売上高 {yen.format(simplifiedLimit)} 以下＋事前届出で選択可。
           2割特例はインボイス登録で免税から課税になった事業者の経過措置（{measureEndLabel}を含む課税期間まで）。
+          その後、個人事業者は{thirtyYears}に限り 3割特例（納付税額 = 売上税額 × {Number(thirtyPct.toPrecision(12))}%・令和8年度税制改正）を選べます。法人に後継の措置はありません。
           軽減税率 8% の売上・仕入は未考慮。
           <strong>本則課税は課税仕入れの消費税を全額引ける前提</strong>です（課税売上割合 95% 以上かつ課税売上高 5億円以下のとき）。
           住宅家賃・利子などの非課税売上があると全額は引けず、実際の納付はこれより多くなります。按分（個別対応方式・一括比例配分方式）は

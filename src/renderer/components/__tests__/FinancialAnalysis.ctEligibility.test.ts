@@ -71,7 +71,7 @@ const html = () => container.innerHTML;
  * **勧めているのは札のほうなので、札を見る。**
  */
 function bestBadge(): string {
-  const m = /(本則課税|簡易課税|2割特例) · 最有利/.exec(container.textContent ?? '');
+  const m = /(本則課税|簡易課税|2割特例|3割特例) · 最有利/.exec(container.textContent ?? '');
   return m ? m[1]! : '(札が無い)';
 }
 

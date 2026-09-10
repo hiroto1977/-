@@ -51,13 +51,17 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
         '令和5年（2023年）10月1日から開始。仕入税額控除には適格請求書（インボイス）の保存が必要。' +
         '免税事業者等からの課税仕入れの経過措置は令和8年度税制改正で見直され、控除割合は2026年9月30日まで80%、' +
         '以後 70%（〜2028年9月）→50%（〜2030年9月）→30%（〜2031年9月）と段階縮小して2031年9月末で終了する' +
-        '（同一の免税事業者等からの課税仕入れは年1億円が上限。80%か70%かは請求書の発行日ではなく課税仕入れの時期で判定）。',
+        '（同一の免税事業者等からの課税仕入れは年1億円が上限。80%か70%かは請求書の発行日ではなく課税仕入れの時期で判定）。' +
+        'インボイス登録で免税から課税になった小規模事業者の納付税額を売上税額の2割とする「2割特例」は令和8年9月30日の属する課税期間で終了し、' +
+        '同じ令和8年度税制改正で個人事業者に限り令和9年分・令和10年分の納付税額を売上税額の3割とする「3割特例」が創設された' +
+        '（法人に後継措置はない。事前届出は不要で申告書に付記して選ぶ）。',
       authority: '所管: 国税庁（消費税法）',
-      asOf: '2026-07',
+      asOf: '2026-09',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice-review/index.htm', type: 'government', label: '国税庁 令和8年度税制改正 インボイス関連特集' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice_about.htm', type: 'government', label: '国税庁 インボイス制度について' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice-review/pdf/0026002-095.pdf', type: 'government', label: '国税庁 3割特例の創設（個人事業者の令和9年分・令和10年分の消費税申告）' },
       { url: 'https://www.gov-online.go.jp/article/202210/entry-10343.html', type: 'government', label: '政府広報オンライン インボイス制度' },
       { url: 'https://www.nichizeiren.or.jp/taxaccount/invoice/', type: 'operator', label: '日本税理士会連合会' },
     ],

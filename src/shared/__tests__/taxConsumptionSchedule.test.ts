@@ -1,5 +1,5 @@
 import { floorHundred } from '../num';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   DEFAULT_RATE_POINTS,
   DEFAULT_SCHEDULE_PARAMS,
@@ -24,7 +24,7 @@ import {
   sweepRates,
   type ScheduleInput,
 } from '../taxConsumptionSchedule';
-import { TWENTY_PERCENT_RATE } from '../taxConsumption';
+import { THIRTY_PERCENT_RATE, TWENTY_PERCENT_RATE } from '../taxConsumption';
 
 /** 個人事業者・暦年・本則課税の基本形。 */
 const individual = (over: Partial<ScheduleInput> = {}): ScheduleInput => ({
@@ -562,6 +562,7 @@ describe('台帳から渡す法定値 (ScheduleParams)', () => {
     expect(DEFAULT_SCHEDULE_PARAMS).toEqual({
       nationalShare: NATIONAL_SHARE,
       twentyPercentRate: TWENTY_PERCENT_RATE,
+      thirtyPercentRate: THIRTY_PERCENT_RATE,
       interimTier1: INTERIM_TIER1,
       interimTier2: INTERIM_TIER2,
       interimTier3: INTERIM_TIER3,
@@ -691,5 +692,72 @@ describe('MIN_NATIONAL_SHARE — 割る値の下限', () => {
       }
     }
     expect(nonFinite, '端の値で非有限になる欄は無いこと (画面に ¥NaN / ¥Infinity が出る)').toEqual([]);
+  });
+});
+
+/*
+ * **3割特例** (2026-09-10 · パス 141) —— 2割特例の後継 (個人事業者の令和 9 年分・令和 10 年分)。
+ * 申告・納付の予定表でも同じ方式を選べる。
+ */
+describe('3割特例 (thirty-percent) — 個人事業者の令和 9 年分・令和 10 年分', () => {
+  it('★ 年税額は売上税額の 30% で、仕入額に影響されない', () => {
+    const base = individual({ method: 'thirty-percent' });
+    const a = calcAnnualTax(base, 0.1);
+    // 3,000 万 × 10% × 30% = 900,000 (国税 702,000 + 地方 198,000)
+    expect(a.total).toBe(900_000);
+    expect([a.national, a.local]).toEqual([702_000, 198_000]);
+    expect(calcAnnualTax({ ...base, taxablePurchases: 0 }, 0.1).total).toBe(900_000);
+    expect(calcAnnualTax({ ...base, taxablePurchases: 100_000_000 }, 0.1).total).toBe(900_000);
+    // 2割特例 (60 万) の 1.5 倍。
+    expect(a.total).toBe(calcAnnualTax(individual({ method: 'twenty-percent' }), 0.1).total * 1.5);
+  });
+
+  it('分岐税率が求まり、2割特例より課税ベースが大きいので低い (0.2 / 0.3 倍)', () => {
+    const twenty = breakEvenRate(individual({ method: 'twenty-percent', priorNationalTax: 600_000 }))!;
+    const thirty = breakEvenRate(individual({ method: 'thirty-percent', priorNationalTax: 600_000 }))!;
+    expect(thirty).toBeGreaterThan(0);
+    expect(thirty).toBeCloseTo(twenty * (0.2 / 0.3), 12);
+  });
+
+  it('★ 割合は台帳から渡せる (年税額と分岐税率の両方に効く・2割特例の欄とは別)', () => {
+    const input = individual({ method: 'thirty-percent', priorNationalTax: 600_000 });
+    const p = { ...DEFAULT_SCHEDULE_PARAMS, thirtyPercentRate: 0.4 };
+    // 売上 3,000 万 × 10% × 78% = 234 万の 30% = 70.2 万 (0.4 なら 93.6 万)。
+    expect(calcAnnualTax(input, 0.1).national).toBe(702_000);
+    expect(calcAnnualTax(input, 0.1, p).national).toBe(936_000);
+    expect(breakEvenRate(input, p)!).toBeCloseTo(breakEvenRate(input)! * (0.3 / 0.4), 12);
+    expect(calcAnnualTax(input, 0.1, { ...DEFAULT_SCHEDULE_PARAMS, twentyPercentRate: 0.5 }).national).toBe(702_000);
+  });
+
+  it('buildSchedule も同じ方式を通す', () => {
+    const input = individual({ method: 'thirty-percent', priorNationalTax: 600_000 });
+    expect(buildSchedule(input, 0.1).annual).toEqual(calcAnnualTax(input, 0.1));
+    expect(buildSchedule(input, 0.1, DEFAULT_SCHEDULE_PARAMS)).toEqual(buildSchedule(input, 0.1));
+  });
+});
+
+/*
+ * covered-static (上と同じ理由) —— 地方消費税の比・申告予定の既定の束・掃引の既定の刻みは
+ * module レベルなので、読み直して値そのものを留める。
+ */
+describe('既定の定数 (読み直して測る)', () => {
+  it('★ 地方消費税の比 22/78・予定表の既定の束・掃引の既定の刻み', async () => {
+    vi.resetModules();
+    const fresh = await import('../taxConsumptionSchedule');
+    expect(fresh.LOCAL_RATIO).toBeCloseTo(22 / 78, 15);
+    expect(fresh.LOCAL_RATIO).toBeLessThan(1);
+    expect(fresh.DEFAULT_SCHEDULE_PARAMS).toEqual({
+      nationalShare: 0.78,
+      twentyPercentRate: 0.2,
+      thirtyPercentRate: 0.3,
+      interimTier1: 480_000,
+      interimTier2: 4_000_000,
+      interimTier3: 48_000_000,
+    });
+    expect(fresh.DEFAULT_RATE_POINTS).toEqual([0, 0.03, 0.05, 0.08, 0.1, 0.12, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5]);
+    // 読み直した束で組んでも、省略時と同じ年税額になる (束が空だと NaN になって落ちる)。
+    const input = individual({ method: 'thirty-percent' });
+    expect(fresh.calcAnnualTax(input, 0.1, fresh.DEFAULT_SCHEDULE_PARAMS).total).toBe(900_000);
+    expect(fresh.sweepRates(input).length).toBe(fresh.DEFAULT_RATE_POINTS.length);
   });
 });

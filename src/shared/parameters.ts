@@ -124,7 +124,7 @@ import {
   SIMPLIFIED_ELIGIBILITY_THRESHOLD,
   type BusinessConsumptionParams,
 } from './taxConsumptionBusiness';
-import { TWENTY_PERCENT_RATE } from './taxConsumption';
+import { THIRTY_PERCENT_RATE, TWENTY_PERCENT_RATE } from './taxConsumption';
 import { PENSION_DEDUCTION_MIN_OVER65, PENSION_DEDUCTION_MIN_UNDER65, type PensionDeductionParams } from './taxPublicPension';
 import { CASUAL_INCOME_SPECIAL_DEDUCTION } from './taxCasual';
 import { FURUSATO_ONE_STOP_MAX_MUNICIPALITIES, FURUSATO_SELF_PAY, type FurusatoParams } from './taxFurusato';
@@ -545,6 +545,10 @@ export function parameterDefinitions() {
   {
     id: 'consumptionBusiness.twentyPercentRate', feature: '消費税 (事業者)', label: '2 割特例の納付割合 (売上税額に対して)', unit: '%', scale: 100,
     defaultValue: TWENTY_PERCENT_RATE, min: 0, max: 1, kind: 'law', source: '平成 28 年改正法附則 51 条の 2 (20%)',
+  },
+  {
+    id: 'consumptionBusiness.thirtyPercentRate', feature: '消費税 (事業者)', label: '3 割特例の納付割合 (売上税額に対して・個人事業者の令和 9 年分/10 年分)', unit: '%', scale: 100,
+    defaultValue: THIRTY_PERCENT_RATE, min: 0, max: 1, kind: 'law', source: '令和 8 年度税制改正 (2割特例の後継。個人事業者の令和 9 年分・令和 10 年分は納付税額 = 売上税額 × 30%。法人に後継なし)',
   },
   {
     id: 'consumptionBusiness.exemptionThreshold', feature: '消費税 (事業者)', label: '免税事業者となる基準期間の課税売上高の上限', unit: '円',
@@ -1128,6 +1132,7 @@ export function businessConsumptionParams(v: ParameterValues): BusinessConsumpti
   return {
     rates: { standard: v['tax.consumptionStandardRate'], reduced: v['tax.consumptionReducedRate'] },
     twentyPercentRate: v['consumptionBusiness.twentyPercentRate'],
+    thirtyPercentRate: v['consumptionBusiness.thirtyPercentRate'],
     exemptionThreshold: v['consumptionBusiness.exemptionThreshold'],
     simplifiedEligibilityThreshold: v['consumptionBusiness.simplifiedEligibilityThreshold'],
     fullCreditRatioThreshold: v['consumptionBusiness.fullCreditRatioThreshold'],
@@ -1210,6 +1215,7 @@ export function scheduleParams(v: ParameterValues): ScheduleParams {
   return {
     nationalShare: v['consumptionSchedule.nationalShare'],
     twentyPercentRate: v['consumptionBusiness.twentyPercentRate'],
+    thirtyPercentRate: v['consumptionBusiness.thirtyPercentRate'],
     interimTier1: v['consumptionSchedule.interimTier1'],
     interimTier2: v['consumptionSchedule.interimTier2'],
     interimTier3: v['consumptionSchedule.interimTier3'],

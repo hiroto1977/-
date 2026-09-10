@@ -1,8 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   DEEMED_PURCHASE_RATES,
+  THIRTY_PERCENT_MEASURE_END,
+  THIRTY_PERCENT_MEASURE_START,
+  THIRTY_PERCENT_RATE,
   TWENTY_PERCENT_MEASURE_END,
   TWENTY_PERCENT_RATE,
+  thirtyPercentMeasureStatus,
+  thirtyPercentMeasureYearsLabel,
   twentyPercentMeasureStatus,
   type SimplifiedBusinessType,
 } from '../taxConsumption';
@@ -164,5 +169,127 @@ describe('定数を読み直しても同じ (static 変異体の検査)', () => 
     });
     expect(fresh.TWENTY_PERCENT_MEASURE_END).toBe('2026-09-30');
     expect(fresh.TWENTY_PERCENT_RATE).toBe(0.2);
+  });
+});
+
+/** 利用者の時計の正午 (時間帯で日付が動かない位置)。 */
+const noon = (iso: string): Date => {
+  const p = iso.split('-');
+  return new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]), 12, 0, 0);
+};
+
+/*
+ * **納税者の区分** (2026-09-10 · パス 141)。個人事業者の課税期間は暦年なので、2割特例の
+ * 「期限の属する課税期間」は令和 8 年分 (2026 年) と言い切れる —— 法人の period-dependent の帯は要らない。
+ */
+describe('twentyPercentMeasureStatus — 納税者の区分 (個人事業者は暦年で言い切れる)', () => {
+  it('★ 個人事業者: 期限の翌日でも同じ暦年なら active (課税期間 = 暦年が期限を含む)', () => {
+    expect(twentyPercentMeasureStatus(noon('2026-10-01'), TWENTY_PERCENT_MEASURE_END, 'sole-proprietor')).toBe('active');
+    expect(twentyPercentMeasureStatus(noon('2026-12-31'), TWENTY_PERCENT_MEASURE_END, 'sole-proprietor')).toBe('active');
+  });
+
+  it('★ 個人事業者: 翌年の初日から ended (period-dependent の帯は無い)', () => {
+    expect(twentyPercentMeasureStatus(noon('2027-01-01'), TWENTY_PERCENT_MEASURE_END, 'sole-proprietor')).toBe('ended');
+    expect(twentyPercentMeasureStatus(noon('2027-09-29'), TWENTY_PERCENT_MEASURE_END, 'sole-proprietor')).toBe('ended');
+  });
+
+  it('個人事業者でも期限内は active。暦年の末日は引数の期限の年から取る', () => {
+    expect(twentyPercentMeasureStatus(noon('2026-09-30'), TWENTY_PERCENT_MEASURE_END, 'sole-proprietor')).toBe('active');
+    expect(twentyPercentMeasureStatus(noon('2025-12-31'), '2025-03-31', 'sole-proprietor')).toBe('active');
+    expect(twentyPercentMeasureStatus(noon('2026-01-01'), '2025-03-31', 'sole-proprietor')).toBe('ended');
+  });
+
+  it('法人と未選択は従来どおり 3 値 (翌日は period-dependent、期限 + 1 年から ended)', () => {
+    for (const kind of ['corporation', 'unknown'] as const) {
+      expect(twentyPercentMeasureStatus(noon('2026-10-01'), TWENTY_PERCENT_MEASURE_END, kind)).toBe('period-dependent');
+      expect(twentyPercentMeasureStatus(noon('2027-09-29'), TWENTY_PERCENT_MEASURE_END, kind)).toBe('period-dependent');
+      expect(twentyPercentMeasureStatus(noon('2027-09-30'), TWENTY_PERCENT_MEASURE_END, kind)).toBe('ended');
+    }
+    expect(twentyPercentMeasureStatus(noon('2026-10-01'))).toBe('period-dependent'); // 省略 = unknown
+  });
+});
+
+/*
+ * **2割特例の後継 —— 3割特例** (令和 8 年度税制改正)。個人事業者に限り令和 9 年分・令和 10 年分の
+ * 納付税額を売上税額の 3 割とする。法人に後継措置は無い。
+ */
+describe('thirtyPercentMeasureStatus (3割特例 — 個人事業者の令和 9 年分・令和 10 年分)', () => {
+  it('★ 法人は日付によらず not-applicable (後継措置なし)', () => {
+    for (const d of ['2026-09-10', '2027-01-01', '2028-06-30', '2029-01-01']) {
+      expect(thirtyPercentMeasureStatus(noon(d), 'corporation')).toBe('not-applicable');
+    }
+  });
+
+  it('★ 個人事業者: 2026-12-31 は upcoming、2027-01-01 から active、2028-12-31 まで active、2029-01-01 から ended (境界)', () => {
+    expect(thirtyPercentMeasureStatus(noon('2026-12-31'), 'sole-proprietor')).toBe('upcoming');
+    expect(thirtyPercentMeasureStatus(noon('2027-01-01'), 'sole-proprietor')).toBe('active');
+    expect(thirtyPercentMeasureStatus(noon('2028-12-31'), 'sole-proprietor')).toBe('active');
+    expect(thirtyPercentMeasureStatus(noon('2029-01-01'), 'sole-proprietor')).toBe('ended');
+  });
+
+  it('未選択 (既定) は個人事業者と同じ帯 —— 候補に入れるかは呼ぶ側が区分で決める', () => {
+    expect(thirtyPercentMeasureStatus(noon('2026-09-10'))).toBe('upcoming');
+    expect(thirtyPercentMeasureStatus(noon('2027-06-01'))).toBe('active');
+    expect(thirtyPercentMeasureStatus(noon('2029-06-01'))).toBe('ended');
+    expect(thirtyPercentMeasureStatus(noon('2027-06-01'), 'unknown')).toBe('active');
+  });
+
+  it('★ 読めない時計・読めない始点/終点は upcoming に倒す (使えると言い切らない)', () => {
+    expect(thirtyPercentMeasureStatus(new Date(NaN), 'sole-proprietor')).toBe('upcoming');
+    expect(thirtyPercentMeasureStatus(noon('2027-06-01'), 'sole-proprietor', 'いつか')).toBe('upcoming');
+    expect(thirtyPercentMeasureStatus(noon('2027-06-01'), 'sole-proprietor', THIRTY_PERCENT_MEASURE_START, '2028-2-30')).toBe('upcoming');
+    expect(thirtyPercentMeasureStatus(noon('2027-06-01'), 'sole-proprietor', '2027-02-30')).toBe('upcoming'); // 暦に無い日
+    // 法人の not-applicable は時計より先に決まる。
+    expect(thirtyPercentMeasureStatus(new Date(NaN), 'corporation')).toBe('not-applicable');
+  });
+
+  it('始点と終点は引数で差し替えられる (既定は定数)', () => {
+    expect(thirtyPercentMeasureStatus(noon('2027-06-01'), 'sole-proprietor', '2027-07-01', '2028-12-31')).toBe('upcoming');
+    expect(thirtyPercentMeasureStatus(noon('2027-06-01'), 'sole-proprietor', '2027-01-01', '2027-05-31')).toBe('ended');
+    expect(thirtyPercentMeasureStatus(noon('2027-06-01'), 'sole-proprietor', THIRTY_PERCENT_MEASURE_START, THIRTY_PERCENT_MEASURE_END))
+      .toBe(thirtyPercentMeasureStatus(noon('2027-06-01'), 'sole-proprietor'));
+  });
+});
+
+describe('thirtyPercentMeasureYearsLabel (対象年分の文面は定数から作る)', () => {
+  it('★ 既定は「令和9年分・令和10年分」', () => {
+    expect(thirtyPercentMeasureYearsLabel()).toBe('令和9年分・令和10年分');
+  });
+
+  it('1 年分なら 1 つ、3 年分なら 3 つ (和暦は 2019 年から令和)', () => {
+    expect(thirtyPercentMeasureYearsLabel('2026-09-30', '2026-09-30')).toBe('令和8年分');
+    expect(thirtyPercentMeasureYearsLabel('2019-01-01', '2021-12-31')).toBe('令和1年分・令和2年分・令和3年分');
+    expect(thirtyPercentMeasureYearsLabel('2018-01-01', '2019-12-31')).toBe('2018年分・令和1年分');
+  });
+
+  it('★ 読めない・逆順なら空文字 (画面は空を刷らず、条件も付けない)', () => {
+    expect(thirtyPercentMeasureYearsLabel('いつか', '2028-12-31')).toBe('');
+    expect(thirtyPercentMeasureYearsLabel('2027-01-01', 'いつか')).toBe('');
+    expect(thirtyPercentMeasureYearsLabel('2028-01-01', '2027-12-31')).toBe('');
+  });
+});
+
+/*
+ * module レベルの const は import 時に評価済みで、変異体の切替の前に読まれた値が残る
+ * (covered-static —— `stryker.config.json` の `_commentIgnoreStatic`)。読み直して測る。
+ */
+describe('3割特例の定数 (読み直して測る)', () => {
+  it('★ 割合 30%・対象年分 2027-01-01 〜 2028-12-31 (令和 9 年分・令和 10 年分)・2割特例の期限の後', async () => {
+    vi.resetModules();
+    const fresh = await import('../taxConsumption');
+    expect(fresh.THIRTY_PERCENT_RATE).toBe(0.3);
+    expect(fresh.THIRTY_PERCENT_MEASURE_START).toBe('2027-01-01');
+    expect(fresh.THIRTY_PERCENT_MEASURE_END).toBe('2028-12-31');
+    expect(fresh.thirtyPercentMeasureYearsLabel()).toBe('令和9年分・令和10年分');
+    expect(fresh.thirtyPercentMeasureStatus(noon('2027-06-01'), 'sole-proprietor')).toBe('active');
+    expect(fresh.thirtyPercentMeasureStatus(noon('2026-12-31'), 'sole-proprietor')).toBe('upcoming');
+    expect(fresh.thirtyPercentMeasureStatus(noon('2029-01-01'), 'sole-proprietor')).toBe('ended');
+    expect(fresh.THIRTY_PERCENT_MEASURE_START > fresh.TWENTY_PERCENT_MEASURE_END).toBe(true);
+    expect(THIRTY_PERCENT_RATE).toBe(fresh.THIRTY_PERCENT_RATE);
+    // 区分の既定は 'unknown' —— 分からないまま 3割特例を勧めない側。
+    expect(fresh.DEFAULT_TAXPAYER_KIND).toBe('unknown');
+    expect(fresh.twentyPercentMeasureStatus(noon('2026-10-01'))).toBe(
+      fresh.twentyPercentMeasureStatus(noon('2026-10-01'), fresh.TWENTY_PERCENT_MEASURE_END, 'unknown'),
+    );
   });
 });
