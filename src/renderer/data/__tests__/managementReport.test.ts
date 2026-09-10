@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { buildManagementReport } from '../managementReport';
 import { buildBusinessOverview } from '../overview';
 import { buildManagementScorecard } from '../../../shared/managementScorecard';
-import { buildManagementHighlights } from '../managementHighlights';
+import { buildManagementHighlights, type Highlight } from '../managementHighlights';
 import { monthlyTrendSeries, type KpiActual } from '../kpiActuals';
 import { NO_MANUAL_OVERRIDES } from '../overviewOverrides';
 
@@ -568,5 +568,86 @@ describe('同じ期・事業の重複 (パス 124)', () => {
   it('対照: 重複が無ければ入らない', () => {
     expect(report()).not.toContain('合算値');
     expect(report({ kpiActuals: [kpi, kpi] })).toContain('合算値');
+  });
+});
+
+/**
+ * **レポートが刷る定数と整形関数を、読み直して測る。** (2026-09-10)
+ *
+ * module 直下の `const` は**読み込みのときに 1 度だけ**評価されるので、Stryker が
+ * 実行時に切り替える仕組みは届かない —— 覆われていても「生存」と報告される
+ * (`stryker.config.json` の `_commentIgnoreStatic`)。このファイルの射程は 2 種:
+ *
+ * 1. `SEVERITY_MARK` の表 —— オブジェクトそのものと 🔴 / 🟡 / 🟢 の 3 文字。
+ * 2. **module 直下の矢印関数そのもの** (`yen` / `pct` / `pctOrDash`) —— 矢印式は
+ *    代入のときに評価されるので、本体ではなく**式全体**を差し替える変異体
+ *    (`() => undefined`) の被覆は読み込み時に記録される = 静的になる。
+ *    同じ形は `bankSubmission.test.ts` の `row()` に在る。
+ *
+ * このレポートの前文は自ら「役員会・銀行・税理士への共有に」と書いてある ——
+ * 深刻さの印が消えた・金額や比率が `undefined` になったことに気付けない状態で
+ * 置いておけない。殺し方は**テスト側で読み直す**こと (`vi.resetModules()` +
+ * 動的 `import()`) で、変異体が有効な状態でモジュール本体が評価される。
+ */
+describe('読み直して測る — 深刻さの印と整形関数', () => {
+  const HIGHLIGHTS: readonly Highlight[] = [
+    { severity: 'critical', category: '安全性', message: '純資産がマイナスです' },
+    { severity: 'warning', category: '効率性', message: '在庫が滞留しています' },
+    { severity: 'good', category: '収益性', message: '営業利益率が高い水準です' },
+  ];
+
+  /** 読み直した `managementReport` でレポートを組む (上書きなし・所見は 3 種そろい)。 */
+  async function freshMd(
+    extra: Partial<Parameters<typeof buildBusinessOverview>[0]> = {},
+    highlights: readonly Highlight[] = HIGHLIGHTS,
+  ): Promise<string> {
+    vi.resetModules();
+    const m = await import('../managementReport');
+    const overview = buildBusinessOverview({ plan: 'pro', sales: [], kpiActuals: [kpi], members: [], ...extra });
+    const sc = buildManagementScorecard({
+      operatingMarginPct: overview.kpi.operatingMarginPct ?? undefined,
+      safetyMarginPct: overview.kpi.safetyMargin ?? undefined,
+    });
+    return m.buildManagementReport(overview, sc, highlights, '2026-05-31', MANUAL);
+  }
+
+  const BS = {
+    asOf: '2026-03-31', currentAssets: 6000, cash: 0, inventory: 2000, accountsReceivable: 1500, fixedAssets: 4000,
+    currentLiabilities: 3000, accountsPayable: 1000, fixedLiabilities: 2000, netIncome: 1000,
+  } as const;
+
+  it('★ 深刻さの印は読み直しても 🔴 / 🟡 / 🟢 の 3 つ (表が空になれば undefined が刷られる)', async () => {
+    const md = await freshMd();
+    expect(md).toContain('- 🔴 [安全性] 純資産がマイナスです');
+    expect(md).toContain('- 🟡 [効率性] 在庫が滞留しています');
+    expect(md).toContain('- 🟢 [収益性] 営業利益率が高い水準です');
+    // 印が落ちた形は 1 つも出ない (表が `{}` になると `- undefined [安全性] …`)。
+    expect(md).not.toContain('- undefined [');
+  });
+
+  it('★ 金額の整形は読み直しても ¥ と 3 桁区切り', async () => {
+    const md = await freshMd();
+    expect(md).toContain('- 売上高: ¥1,000,000');
+    expect(md).toContain('- 営業利益: ¥250,000');
+  });
+
+  it('★ 小数第 1 位の比率は読み直しても数字 + %', async () => {
+    const md = await freshMd();
+    expect(md).toContain('- 営業利益: ¥250,000 (営業利益率 25.0%)');
+  });
+
+  it('★ 整数の比率は読み直しても数字 + % (財政状態の 4 欄)', async () => {
+    const md = await freshMd({ balanceSheet: { ...BS } });
+    expect(md).toContain('- 自己資本比率: 50% / 流動比率: 200%');
+    expect(md).toContain('- ROA: 10% / ROE: 20%');
+  });
+
+  it('対照: 標本の側 — 印も整形も、この 4 本が見ている文字がレポートに実在する', async () => {
+    const md = await freshMd({ balanceSheet: { ...BS } });
+    for (const sample of ['🔴', '🟡', '🟢', '¥', '25.0%', '50%']) {
+      expect(md, sample).toContain(sample);
+    }
+    // `undefined` は 1 文字も刷られない (整形関数が式ごと差し替わった形)。
+    expect(md).not.toContain('undefined');
   });
 });
