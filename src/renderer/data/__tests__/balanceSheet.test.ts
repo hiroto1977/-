@@ -351,14 +351,53 @@ describe('computeBalanceSheetInsights — debt structure', () => {
     expect(neg.debtToEquityPct).toBeNull(); // netAssets -200
   });
 
-  it('treats missing interest-bearing debt (undefined) as 0', () => {
+  /*
+   * **2026-09-10 に方針を変えた。** ここは以前 `treats missing interest-bearing debt
+   * (undefined) as 0` という名前で、**未入力を 0 に倒す**ことを期待値として固定していた。
+   * その形だと有利子負債の入力欄が無い利用者 (= 全員だった) に必ず
+   * 「有利子負債比率 0%・ネットデット = −現預金 (実質無借金)・実質債務超過の懸念なし」
+   * という**都合の良い答え**が出る。既知のずれを期待値として書かない、が repo の規則。
+   */
+  it('★ 有利子負債が未入力なら、借入に依る欄は算定しない (0 に倒さない)', () => {
     const bs: BalanceSheet = {
-      asOf: '', currentAssets: 100, inventory: 0, accountsReceivable: 0, fixedAssets: 0,
+      asOf: '', currentAssets: 100, cash: 40, inventory: 0, accountsReceivable: 0, fixedAssets: 0,
       currentLiabilities: 50, accountsPayable: 0, fixedLiabilities: 0, netIncome: 0,
     };
     const i = computeBalanceSheetInsights(bs);
-    expect(i.interestBearingDebtRatioPct).toBe(0); // 0/100
-    expect(i.netDebt).toBe(0); // 0 - 0
+    expect(i.interestBearingDebtRatioPct).toBeNull();
+    expect(i.netDebt).toBeNull();
+    expect(i.netCashPositive).toBeNull();
+    expect(i.substantiveInsolvencyRisk).toBeNull();
+    expect(i.interestBearingDebtUnentered).toBe(true);
+    expect(i.cashUnentered).toBe(false);
+  });
+
+  it('★ 現預金が未入力ならネットデットは算定しない (比率は有利子負債だけで決まるので出る)', () => {
+    const bs: BalanceSheet = {
+      asOf: '', currentAssets: 100, inventory: 0, accountsReceivable: 0, fixedAssets: 0,
+      currentLiabilities: 50, accountsPayable: 0, fixedLiabilities: 0,
+      interestBearingDebt: 20, netIncome: 0,
+    };
+    const i = computeBalanceSheetInsights(bs);
+    expect(i.netDebt).toBeNull();
+    expect(i.netCashPositive).toBeNull();
+    expect(i.substantiveInsolvencyRisk).toBeNull();
+    expect(i.interestBearingDebtRatioPct).toBe(20); // 20 / 100
+    expect(i.cashUnentered).toBe(true);
+  });
+
+  it('★ 0 と入力したときは「借入なし」として算定する (0 と未入力は別の事実)', () => {
+    const bs: BalanceSheet = {
+      asOf: '', currentAssets: 100, cash: 40, inventory: 0, accountsReceivable: 0, fixedAssets: 0,
+      currentLiabilities: 50, accountsPayable: 0, fixedLiabilities: 0,
+      interestBearingDebt: 0, netIncome: 0,
+    };
+    const i = computeBalanceSheetInsights(bs);
+    expect(i.interestBearingDebtRatioPct).toBe(0); // 0 / 100
+    expect(i.netDebt).toBe(-40); // 0 - 40
+    expect(i.netCashPositive).toBe(true);
+    expect(i.substantiveInsolvencyRisk).toBe(false);
+    expect(i.interestBearingDebtUnentered).toBe(false);
   });
 });
 

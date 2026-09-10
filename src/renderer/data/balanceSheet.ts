@@ -299,14 +299,21 @@ export interface BalanceSheetInsights {
   readonly equityHealth: EquityHealthGrade;
   /** 固定長期適合率 (%) = 固定資産 ÷ (純資産 + 固定負債)。100% 以下が目安。分母 0/負なら null。 */
   readonly fixedLongTermFitPct: number | null;
-  /** 有利子負債比率 (%) = 有利子負債 ÷ 総資産。総資産 0 なら null。 */
+  /**
+   * 有利子負債比率 (%) = 有利子負債 ÷ 総資産。
+   * **有利子負債が未入力なら null** (「借入依存ゼロ」と言わない)。総資産 0 でも null。
+   */
   readonly interestBearingDebtRatioPct: number | null;
   /** 負債比率 / D/E レシオ (%) = 総負債 ÷ 純資産 (純資産が正のときのみ)。 */
   readonly debtToEquityPct: number | null;
-  /** ネットデット = 有利子負債 − 現預金 (円。負は実質無借金=ネットキャッシュ)。 */
-  readonly netDebt: number;
-  /** ネットキャッシュ (ネットデットが 0 以下) か。 */
-  readonly netCashPositive: boolean;
+  /**
+   * ネットデット = 有利子負債 − 現預金 (円。負は実質無借金=ネットキャッシュ)。
+   * **有利子負債と現預金の両方が入っているときだけ算定する** —— 片方でも欠けると
+   * 差は決まらない (0 に倒すと「実質無借金」という都合の良い答えが必ず出る)。
+   */
+  readonly netDebt: number | null;
+  /** ネットキャッシュ (ネットデットが 0 以下) か。算定不能なら null。 */
+  readonly netCashPositive: boolean | null;
   /** 流動性段階の総合判定。 */
   readonly liquidityStage: LiquidityStage;
   /** 純資産の質。 */
@@ -315,8 +322,13 @@ export interface BalanceSheetInsights {
    * 実質債務超過 (純資産は正だが、有利子負債が現預金 + 換金性の高い資産を上回り
    * 純資産を食い潰している懸念) フラグ。ここでは「純資産が正かつネットデットが
    * 純資産を超える」を簡易シグナルとする (概算)。
+   * **ネットデットが算定できなければ null** —— 「懸念なし」と言わない。
    */
-  readonly substantiveInsolvencyRisk: boolean;
+  readonly substantiveInsolvencyRisk: boolean | null;
+  /** 有利子負債が未入力か (上の 3 欄が null になっている理由を画面が言うため)。 */
+  readonly interestBearingDebtUnentered: boolean;
+  /** 現預金が未入力か (ネットデットが null になるもう 1 つの理由)。 */
+  readonly cashUnentered: boolean;
 }
 
 /**
@@ -375,51 +387,57 @@ function classifyNetAssetQuality(netAssets: number): NetAssetQuality {
  * この関数と `BalanceSheetInsights` の 10 欄は、**検査からしか呼ばれていない**
  * (実測: production 0 件 / `__tests__/balanceSheet.test.ts` から 39 か所)。
  * `balanceSheet.ts` は `stryker.config.json` の `mutate` に載っているので、
- * ここの変異体は 100% の変異検査スコアに算入される —— **利用者が届かない範囲を
- * 測って「守られている」ように見せている**状態で、無言の pragma と同じ形である。
- * 消すか配線するかは仕様の判断なので、ここでは触っていない。
+ * ## 配線した (2026-09-10) —— 申し送りの 2 つを先に済ませてから
  *
- * ## 配線する人への申し送り —— 今のまま画面に出すと嘘になる欄がある
+ * それまでこの 101 行は**検査からしか呼ばれていなかった** (production の呼び出し 0 件)。
+ * `mutate` 台帳に載っているので変異体は 100% のスコアに算入され、**利用者が届かない
+ * 範囲を測って「守られている」ように見せている**状態だった (無言の pragma と同じ形)。
  *
- * `interestBearingDebt` は `BalanceSheet` の**任意**欄で、**入力欄がどの画面にも
- * 無い** (実測: `src/renderer` に「有利子負債」の入力は 0 件。`kessanImport` が
- * 読む口だけが在る)。下の `?? 0` は「未入力」を「借入なし」に畳むので、
- * 現状のまま次の 3 欄を表示すると**どの利用者にも同じ、都合の良い答え**が出る:
+ * 配線の前に、当時の注記が挙げていた「今のまま出すと嘘になる欄」を両方とも直した:
  *
- * | 欄 | 入力が無いとき必ずこうなる | 読まれ方 |
- * | --- | --- | --- |
- * | `netDebt` | `0 − 現預金` = 負 | 実質無借金 |
- * | `netCashPositive` | 常に `true` | 「借入より現預金が多い」 |
- * | `substantiveInsolvencyRisk` | 常に `false` | 「実質債務超過の懸念なし」 |
- * | `interestBearingDebtRatioPct` | 常に 0% | 「借入依存ゼロ」 |
+ * 1. **入力欄を足した。** `interestBearingDebt` は `BalanceSheet` の任意欄なのに
+ *    **入力欄がどの画面にも無かった** (`kessanImport` が読む口だけが在った)。
+ *    KPI の貸借対照表フォームに「有利子負債」を足した。
+ * 2. **未入力を 0 に倒すのをやめた。** `?? 0` は「未入力」を「借入なし」に畳むので、
+ *    そのまま表示すると**どの利用者にも同じ、都合の良い答え**が出ていた:
  *
- * **未入力を 0 に倒さないこと。** 入力欄を足すか、`interestBearingDebt` が無いなら
- * これらを `null` = 算定不能にしてから配線する (同じ規則の実例は
- * `src/shared/balanceSheetFreshness.ts`「測れないときに『新しい』と言わない」と、
- * `kpiActuals.ts` の安全余裕率)。
+ * | 欄 | 入力が無いと必ずこうなっていた | 読まれ方 | 今 |
+ * | --- | --- | --- | --- |
+ * | `netDebt` | `0 − 現預金` = 負 | 実質無借金 | `null` |
+ * | `netCashPositive` | 常に `true` | 「借入より現預金が多い」 | `null` |
+ * | `substantiveInsolvencyRisk` | 常に `false` | 「実質債務超過の懸念なし」 | `null` |
+ * | `interestBearingDebtRatioPct` | 常に 0% | 「借入依存ゼロ」 | `null` |
+ *
+ * 同じ規則の実例は `src/shared/balanceSheetFreshness.ts`「測れないときに『新しい』と
+ * 言わない」と `kpiActuals.ts` の安全余裕率。**本当に借入が無い事業者は 0 と入力する** ——
+ * 「0 と入力した」と「入力していない」は別の事実である (現預金・棚卸資産と同じ約束)。
  */
 export function computeBalanceSheetInsights(bs: BalanceSheet): BalanceSheetInsights {
   const base = computeBalanceSheetMetrics(bs);
-  const interestBearingDebt = bs.interestBearingDebt ?? 0;
-  const cash = bs.cash ?? 0;
+  const debt = bs.interestBearingDebt;
+  const cash = bs.cash;
 
   const workingCapital = bs.currentAssets - bs.currentLiabilities;
   const longTermCapital = base.netAssets + bs.fixedLiabilities;
-  const netDebt = interestBearingDebt - cash;
+  // **片方でも欠けたら差は決まらない。** 0 に倒すと「実質無借金」が必ず出る。
+  const netDebt = debt === undefined || cash === undefined ? null : debt - cash;
 
   return {
     workingCapital,
     workingCapitalRatioPct: pct(workingCapital, bs.currentAssets),
     equityHealth: classifyEquityHealth(base.netAssets, base.totalAssets),
     fixedLongTermFitPct: pct(bs.fixedAssets, longTermCapital),
-    interestBearingDebtRatioPct: pct(interestBearingDebt, base.totalAssets),
+    interestBearingDebtRatioPct: debt === undefined ? null : pct(debt, base.totalAssets),
     debtToEquityPct: pct(base.totalLiabilities, base.netAssets),
     netDebt,
-    netCashPositive: netDebt <= 0,
+    netCashPositive: netDebt === null ? null : netDebt <= 0,
     liquidityStage: classifyLiquidityStage(bs.currentAssets, bs.inventory, bs.currentLiabilities),
     netAssetQuality: classifyNetAssetQuality(base.netAssets),
     // 純資産が正 (sound) かつ ネットデットが純資産を上回る → 実質的な財務リスクシグナル。
-    substantiveInsolvencyRisk: base.netAssets > 0 && netDebt > base.netAssets,
+    // ネットデットが算定できなければ「懸念なし」ではなく「分からない」。
+    substantiveInsolvencyRisk: netDebt === null ? null : base.netAssets > 0 && netDebt > base.netAssets,
+    interestBearingDebtUnentered: debt === undefined,
+    cashUnentered: cash === undefined,
   };
 }
 

@@ -332,7 +332,7 @@ assetTurnover: financialPosition && financialPosition.totalAssets > 0 && kpi.rev
 以後は退避 (`cp <gate> <backup>`) を取り、復元は退避から行う。
 **未コミットの物に `git checkout` を当ててはいけない。**
 
-## 判断待ち — 検査からしか呼ばれない財務分析が 101 行 (2026-09-07・実測。触っていない)
+## 判断待ち → 配線した (2026-09-10) — 検査からしか呼ばれていなかった財務分析 101 行
 
 パス 35 の逆向き (「計算しているのに誰にも見せない」) を探して見つけた。
 `src/renderer/data/balanceSheet.ts` の `computeBalanceSheetInsights` と
@@ -349,9 +349,43 @@ assetTurnover: financialPosition && financialPosition.totalAssets > 0 && kpi.rev
 見せている状態で、無言の pragma (パス 25 / 32) と同じ形である。スコアは 100% でも、
 その一部は誰も使わない道を測っている。
 
-### 触らなかった理由と、配線する前に必ず直すこと
+### 配線した (2026-09-10) —— 依頼「全て自動代行して」で解禁
 
-消すか配線するかは**仕様の判断**なので勝手に決めていない。ただし
+**申し送りの 2 つを先に済ませてから配線した** (順序を逆にすると、下に書いたとおり
+「どの利用者にも同じ、都合の良い答え」を画面に出すことになる):
+
+1. **入力欄を足した。** `interestBearingDebt` は `BalanceSheet` の任意欄なのに
+   **入力欄がどの画面にも無かった**。KPI の「財政状態入力 — 貸借対照表」フォームに
+   「有利子負債」を足し、**空欄は 0 ではなく未入力**であること・**借入が無いなら 0 と
+   入力する**ことを、隣の現預金・棚卸資産と同じ言い方で書いた。
+2. **`?? 0` をやめた。** `netDebt` / `netCashPositive` / `substantiveInsolvencyRisk` /
+   `interestBearingDebtRatioPct` は算定できなければ `null` を返す。
+   `netDebt` は**有利子負債と現預金の両方**が要る (片方でも欠けたら差は決まらない)。
+   `interestBearingDebtUnentered` / `cashUnentered` を足して、画面が**なぜ算定できないかを
+   言える**ようにした。
+
+**画面 (KPI の BS の節)**: 運転資本・ネットデット・有利子負債比率・固定長期適合率・
+D/E レシオの 5 タイル + 算定できない理由の注記 + 実質債務超過の懸念の警告 (算定できた
+ときだけ)。
+
+**既知のずれを期待値として書いていた検査を 1 件書き換えた** ——
+`treats missing interest-bearing debt (undefined) as 0` は**欠陥を仕様として固定**していた。
+新しい 3 件 (未入力 / 現預金だけ未入力 / 0 と入力) に置き換えた。
+
+**対照 2 本**: (A) 画面の節を落とすと jsdom の ★ 3 本が落ちる。
+(B) `?? 0` に戻すと ★ 3 本が落ち、**その出力に欠陥がそのまま出る** ——
+何も入力していない利用者の画面に「ネットデット -￥150 / 実質無借金 (現預金が上回る) /
+有利子負債比率 0%」。
+
+**自分の罠を 1 つ**: 「実質無借金と言わない」を本文全体の綴りで見たら、**フォームの
+説明文が同じ語を含んでいて自分の説明を欠陥として数えた** (パス 98 で 1 度踏んだ形)。
+判定はタイルの副題ごと (`実質無借金 (現預金が上回る)`) 見る。
+
+`?? 0` が 2 件消えたので census は 278 → **276 件**。
+
+### 当時の観察 (残す) —— 触らなかった理由と、配線する前に必ず直すこと
+
+消すか配線するかは**仕様の判断**なので勝手に決めていなかった。ただし
 **今のまま画面に出すと嘘になる欄が 4 つある**ので、それはモジュールの冒頭に
 申し送りとして書いた:
 
@@ -13757,7 +13791,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **104 ファイル / 278 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **104 ファイル / 276 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -13792,7 +13826,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/waterCyclePlanner.ts` | 4 |
 | `src/main/clients/kpi.ts` | 3 |
 | `src/main/clients/youtube.ts` | 3 |
-| `src/renderer/data/balanceSheet.ts` | 3 |
 | `src/renderer/data/charts.ts` | 3 |
 | `src/renderer/data/financialStatements.ts` | 3 |
 | `src/renderer/pages/OverviewPage.tsx` | 3 |
@@ -13832,6 +13865,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/components/RecordShapeAuditPanel.tsx` | 1 |
 | `src/renderer/components/ShigyoConsole.tsx` | 1 |
 | `src/renderer/data/assistantContext.ts` | 1 |
+| `src/renderer/data/balanceSheet.ts` | 1 |
 | `src/renderer/data/cashPlan.ts` | 1 |
 | `src/renderer/data/chatOrg.ts` | 1 |
 | `src/renderer/data/cloudBackup.ts` | 1 |

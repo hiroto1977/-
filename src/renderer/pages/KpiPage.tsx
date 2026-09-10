@@ -32,6 +32,7 @@ import {
   BALANCE_SHEET_COLLECTION,
   normalizeBalanceSheet,
   parseBalanceSheet,
+  computeBalanceSheetInsights,
   computeBalanceSheetMetrics,
   balanceSheetAsOfKey,
   balanceSheetChoiceNote,
@@ -675,7 +676,7 @@ function BudgetPanel() {
 
 // --- Balance sheet (財政状態) panel — drives BS指標 ----------------------
 
-const EMPTY_BS = { asOf: '', currentAssets: '', cash: '', inventory: '', accountsReceivable: '', fixedAssets: '', currentLiabilities: '', accountsPayable: '', fixedLiabilities: '', netIncome: '' };
+const EMPTY_BS = { asOf: '', currentAssets: '', cash: '', inventory: '', accountsReceivable: '', fixedAssets: '', currentLiabilities: '', accountsPayable: '', fixedLiabilities: '', interestBearingDebt: '', netIncome: '' };
 
 function BalanceSheetPanel() {
   const { records, add, remove } = useCollection<BalanceSheet>(BALANCE_SHEET_COLLECTION);
@@ -691,6 +692,13 @@ function BalanceSheetPanel() {
   // 欄の無い控えも 0 と読んでから集計する (NaN のタイルを出さない)。
   const metrics = useMemo(
     () => (latest ? computeBalanceSheetMetrics(normalizeBalanceSheet(latest.data)) : undefined),
+    [latest],
+  );
+  // **2026-09-10 に配線した。** それまでこの 101 行は検査からしか呼ばれていなかった
+  // (`balanceSheet.ts` の冒頭に経緯)。算定できない欄は「—」で、**なぜ算定できないかを
+  // 隣で言う** —— 「借入なし」と「入力していない」を同じ顔で出さないため。
+  const insights = useMemo(
+    () => (latest ? computeBalanceSheetInsights(normalizeBalanceSheet(latest.data)) : undefined),
     [latest],
   );
 
@@ -727,6 +735,11 @@ function BalanceSheetPanel() {
         現預金・棚卸資産・売上債権・仕入債務は内数で、<strong>空欄にすると 0 円ではなく「未入力」として扱い、
         当座比率・現金化サイクル (CCC)・運転資本は算定しません</strong>。
         本当に 0 円のとき (現金商売で売上債権が無い等) は 0 と入力してください。
+        <br />
+        有利子負債 (借入金・社債など利息の付く負債) は固定負債・流動負債の内数です。
+        <strong>空欄のままだとネットデット・有利子負債比率・実質債務超過の判定は算定しません</strong> ——
+        空欄を「借入なし」と読むと、どの利用者にも「実質無借金」という都合の良い答えが出てしまうためです。
+        <strong>借入が無いなら 0 と入力してください。</strong>
       </p>
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
         {field('asOf', '基準日')}
@@ -738,6 +751,7 @@ function BalanceSheetPanel() {
         {field('currentLiabilities', '流動負債')}
         {field('accountsPayable', '仕入債務')}
         {field('fixedLiabilities', '固定負債')}
+        {field('interestBearingDebt', '有利子負債')}
         {field('netIncome', '当期純利益')}
         <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy}>BS を保存</button>
       </div>
@@ -751,8 +765,51 @@ function BalanceSheetPanel() {
           <Tile label="ROE" value={metrics.roePct === null ? '—' : `${metrics.roePct}%`} />
         </div>
       )}
+      {insights && (
+        <div style={{ margin: '12px 0' }} data-bs-insights>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <Tile label="運転資本" value={safeYen(insights.workingCapital)} sub="流動資産 − 流動負債" />
+            <Tile
+              label="ネットデット"
+              value={insights.netDebt === null ? '—' : safeYen(insights.netDebt)}
+              sub={insights.netDebt === null ? '有利子負債と現預金の両方が要ります' : insights.netCashPositive === true ? '実質無借金 (現預金が上回る)' : '有利子負債 − 現預金'}
+            />
+            <Tile
+              label="有利子負債比率"
+              value={insights.interestBearingDebtRatioPct === null ? '—' : `${insights.interestBearingDebtRatioPct}%`}
+              sub="有利子負債 ÷ 総資産"
+            />
+            <Tile
+              label="固定長期適合率"
+              value={insights.fixedLongTermFitPct === null ? '—' : `${insights.fixedLongTermFitPct}%`}
+              sub="100% 以下が目安"
+            />
+            <Tile
+              label="D/E レシオ"
+              value={insights.debtToEquityPct === null ? '—' : `${insights.debtToEquityPct}%`}
+              sub="総負債 ÷ 純資産"
+            />
+          </div>
+          {(insights.interestBearingDebtUnentered || insights.cashUnentered) && (
+            <p style={{ color: 'var(--text-mute)', fontSize: 12, marginTop: 6, lineHeight: 1.6 }}>
+              {insights.interestBearingDebtUnentered && insights.cashUnentered
+                ? '有利子負債と現預金が未入力のため、ネットデット・有利子負債比率・実質債務超過の判定は算定していません。'
+                : insights.interestBearingDebtUnentered
+                  ? '有利子負債が未入力のため、ネットデット・有利子負債比率・実質債務超過の判定は算定していません。'
+                  : '現預金が未入力のため、ネットデットと実質債務超過の判定は算定していません。'}
+              借入が無いなら 0 と入力してください（0 と「未入力」は別の事実として扱います）。
+            </p>
+          )}
+        </div>
+      )}
       {metrics?.insolvent && (
         <div style={{ color: '#ef4444', fontSize: 12 }}>⚠ 純資産がマイナス（債務超過）です。</div>
+      )}
+      {insights?.substantiveInsolvencyRisk === true && (
+        <div role="alert" style={{ color: '#f59e0b', fontSize: 12, marginTop: 6, lineHeight: 1.6 }}>
+          ⚠ 純資産は正ですが、ネットデット（有利子負債 − 現預金）が純資産を上回っています（実質債務超過の懸念）。
+          借入の返済計画と資金繰りを確認してください。
+        </div>
       )}
       {choiceNote !== null && (
         <p role="alert" style={{ color: '#f59e0b', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
