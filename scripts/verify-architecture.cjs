@@ -321,6 +321,41 @@ function countStaticIts() {
   return total;
 }
 
+/**
+ * 台帳の件数を数える助け (パス 145)。**ブロックを切り出してから数える** ——
+ * ファイル全体を grep すると自己検査の合成データや別の台帳まで拾い、
+ * 実測 (`lint:storage` が刷る 21) と食い違う (最初にこれを踏んだ)。
+ */
+function ledgerBlockCount(file, name, open, close, row) {
+  const src = readFileSafe(path.join(REPO_ROOT, file));
+  if (src === null) return null;
+  const m = src.match(new RegExp(`const ${name} = \\${open}([\\s\\S]*?)\\n\\${close};`));
+  return m === null ? null : (m[1].match(row) ?? []).length;
+}
+
+/** `lint-storage-ledger.cjs` の `STORES` に在る、その媒体の行数。 */
+function storesMediumCount(medium) {
+  // `STORES` は**オブジェクト**である (配列と読み違えて null を返し、
+  // 「値が計算できない」で 3 件落とした。ゲートが自分の抽出漏れを捕まえた形)。
+  return ledgerBlockCount(
+    'scripts/lint-storage-ledger.cjs',
+    'STORES',
+    '{',
+    '}',
+    new RegExp(`medium: '${medium}'`, 'g'),
+  );
+}
+
+/** `lint-dependencies.cjs` の台帳 (オブジェクト) の鍵の数。 */
+function depsLedgerCount(name) {
+  return ledgerBlockCount('scripts/lint-dependencies.cjs', name, '{', '}', /^ {2}'?[\w@/-]+'?:/gm);
+}
+
+/** `lint-doi-prefix.cjs` の誌の台帳 (配列) の行数。 */
+function doiLedgerCount(name) {
+  return ledgerBlockCount('scripts/lint-doi-prefix.cjs', name, '[', ']', /^ {2}[[{]/gm);
+}
+
 const METRICS = [
   {
     /*
@@ -574,6 +609,78 @@ const METRICS = [
       if (!m) return null;
       return (m[1].match(/medium: 'localstorage'/g) ?? []).length;
     },
+  },
+  /*
+   * **CLAUDE.md の手書きの数のうち、誰も見ていなかった 8 つ** (2026-09-10 · パス 145)。
+   *
+   * すぐ上の localStorage の項目は、2026-08-28 に talent の鍵を足したとき
+   * CLAUDE.md だけ 20 のまま残った事故から生まれた。**ところが足したのは 1 つだけ**で、
+   * 同じ行に並ぶ兄弟 (sessionStorage / IndexedDB / Cache Storage) も、
+   * `lint:deps` の 3 つも、`lint:doi-prefix` の 2 つも据え置かれていた。
+   * 実測 (2026-09-10) ではいずれも一致していたが、**一致しているのは今日たまたま**である。
+   *
+   * とりわけ「セキュリティの床 4 件」は 2026-09-10 のパス 143 で書いたばかりで、
+   * その 2 パス後にゲートが無いことに気付いた —— **同じ穴を自分で新しく掘っていた**。
+   *
+   * 数を消すのではなく機械に見せるのは localStorage の項目と同じ判断:
+   * これらの行は「そのゲートが何を見ているか」を読む人に伝える価値がある。
+   */
+  {
+    name: 'CLAUDE.md: sessionStorage ledger entry count',
+    docFile: 'CLAUDE.md',
+    docPattern: /sessionStorage (\d+)。/,
+    compute: () => storesMediumCount('sessionstorage'),
+  },
+  {
+    name: 'CLAUDE.md: IndexedDB ledger entry count',
+    docFile: 'CLAUDE.md',
+    docPattern: /\(IndexedDB (\d+) \//,
+    compute: () => storesMediumCount('indexeddb'),
+  },
+  {
+    name: 'CLAUDE.md: Cache Storage ledger entry count',
+    docFile: 'CLAUDE.md',
+    docPattern: /Cache Storage (\d+) \//,
+    compute: () => storesMediumCount('cachestorage'),
+  },
+  {
+    name: 'CLAUDE.md: production dependency closure count',
+    docFile: 'CLAUDE.md',
+    docPattern: /本番依存の閉包 (\d+) 件/,
+    compute: () => depsLedgerCount('PROD_ALLOW'),
+  },
+  {
+    name: 'CLAUDE.md: install-script dependency count',
+    docFile: 'CLAUDE.md',
+    docPattern: /インストール時コード (\d+) 件/,
+    compute: () => depsLedgerCount('INSTALL_SCRIPT_ALLOW'),
+  },
+  {
+    /*
+     * **セキュリティの床。** パス 143 で `SECURITY_FLOORS` を作り、その件数を
+     * CLAUDE.md に書いた。書いた本人がゲートを付け忘れていた (パス 145 で発見)。
+     */
+    name: 'CLAUDE.md: security floor count',
+    docFile: 'CLAUDE.md',
+    docPattern: /セキュリティの床 (\d+) 件/,
+    compute: () => {
+      const src = readFileSafe(path.join(REPO_ROOT, 'scripts/lint-dependencies.cjs'));
+      if (src === null) return null;
+      const m = src.match(/const SECURITY_FLOORS = \[([\s\S]*?)\n\];/);
+      return m ? (m[1].match(/^  \{$/gm) ?? []).length : null;
+    },
+  },
+  {
+    name: 'CLAUDE.md: ISSN journal ledger size',
+    docFile: 'CLAUDE.md',
+    docPattern: /は台帳 (\d+) 誌で、誌の略号/,
+    compute: () => doiLedgerCount('ISSN_JOURNALS'),
+  },
+  {
+    name: 'CLAUDE.md: journal-code ledger size',
+    docFile: 'CLAUDE.md',
+    docPattern: /台帳 (\d+) 誌で誌名も照合/,
+    compute: () => doiLedgerCount('CODE_JOURNALS'),
   },
   {
     name: 'CLAUDE.md: forbidden pattern count',
