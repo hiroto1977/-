@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { statSync } from 'node:fs';
+import { readOriginalDir, readOriginalSource } from '../../../shared/__tests__/originalSource';
 import { join } from 'node:path';
 
 /*
@@ -62,7 +63,7 @@ const KNOWN_CLEARTEXT: readonly string[] = [
 ];
 
 function dataFiles(dir: string, out: string[] = []): string[] {
-  for (const name of readdirSync(dir)) {
+  for (const name of readOriginalDir(dir)) {
     const full = join(dir, name);
     if (statSync(full).isDirectory()) {
       if (name !== '__tests__' && name !== 'node_modules') dataFiles(full, out);
@@ -83,7 +84,7 @@ export function citationUrls(text: string): string[] {
 const allUrls = (): string[] => {
   const out: string[] = [];
   for (const f of [...dataFiles('src/renderer/data'), ...dataFiles('src/shared')]) {
-    out.push(...citationUrls(readFileSync(f, 'utf8')));
+    out.push(...citationUrls(readOriginalSource(f)));
   }
   return out;
 };

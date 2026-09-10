@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readOriginalSource } from '../shared/__tests__/originalSource';
 import path from 'node:path';
 import { RECORD_ENTRY_SERVICE_IDS } from '../shared/recordEntryLimits';
 
@@ -28,7 +28,7 @@ import { RECORD_ENTRY_SERVICE_IDS } from '../shared/recordEntryLimits';
  */
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
-const read = (rel: string): string => readFileSync(path.join(REPO_ROOT, rel), 'utf8');
+const read = (rel: string): string => readOriginalSource(path.join(REPO_ROOT, rel));
 
 /** コメントを落とす (説明文の中の例を数えないため)。 */
 function stripComments(text: string): string {

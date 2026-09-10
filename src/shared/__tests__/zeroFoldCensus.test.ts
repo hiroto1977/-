@@ -19,6 +19,7 @@
 import { describe, expect, it } from 'vitest';
 import { createRequire } from 'node:module';
 import path from 'node:path';
+import { readOriginalSource } from './originalSource';
 
 const require_ = createRequire(import.meta.url);
 const REPO_ROOT = path.resolve(__dirname, '..', '..', '..');
@@ -87,12 +88,11 @@ describe('0 倒しの母集団を数える (構文上の量)', () => {
    * ファイルを直に数えた数と一致する) を留める。これは直しても壊れない。
    */
   it('★ 各行の件数は、そのファイルを直に数えた数と一致する (母集団は source から導く)', () => {
-    const fs = require_('node:fs') as typeof import('node:fs');
     const rows = census.census().rows;
     expect(rows.length).toBeGreaterThan(26); // 手書きの表は 26 ファイルだった
     // 上位 5 件を直に数え直す (全件だと遅いので、多い順の先頭で機構を確かめる)
     for (const r of rows.slice(0, 5)) {
-      const direct = census.countFolds(fs.readFileSync(path.join(REPO_ROOT, r.file), 'utf8'));
+      const direct = census.countFolds(readOriginalSource(path.join(REPO_ROOT, r.file)));
       expect(direct, `${r.file} の件数が表と一致しない`).toBe(r.count);
     }
   });
@@ -139,14 +139,12 @@ describe('0 倒しの母集団を数える (構文上の量)', () => {
   });
 
   it('★ 実物: committed の生成ブロックと再生成の差は空 (差が在るなら、まず散文がそれを言う)', () => {
-    const fs = require_('node:fs') as typeof import('node:fs');
-    const doc = fs.readFileSync(path.join(REPO_ROOT, 'docs', 'REMAINING_WORK.md'), 'utf8');
+    const doc = readOriginalSource(path.join(REPO_ROOT, 'docs', 'REMAINING_WORK.md'));
     expect(census.censusDelta(doc, census.renderTable(census.census()))).toEqual([]);
   });
 
   it('committed の docs が実物と一致している (ゲートと同じ判定)', () => {
-    const fs = require_('node:fs') as typeof import('node:fs');
-    const doc = fs.readFileSync(path.join(REPO_ROOT, 'docs', 'REMAINING_WORK.md'), 'utf8');
+    const doc = readOriginalSource(path.join(REPO_ROOT, 'docs', 'REMAINING_WORK.md'));
     expect(census.staleReason(doc, census.renderTable(census.census()))).toBeNull();
   });
 });

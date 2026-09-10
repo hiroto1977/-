@@ -42,7 +42,7 @@
  * `Number.isFinite` は TS の型を**絞らない**ので `typeof` は残す
  * (`shared/talent.ts:362` の注記どおり —— 「残すのは TS の絞り込みのため」)。
  */
-import fs from 'node:fs';
+import { readOriginalDirEntries, readOriginalSource } from './originalSource';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { isAnalysisEntry, isMoodEntry, readStoredList } from '../emotionsShape';
@@ -214,7 +214,7 @@ const norm = (s: string): string => s.trim().replace(/\s+/g, ' ');
 function scanTypeofNumber(): { file: string; line: number; code: string }[] {
   const hits: { file: string; line: number; code: string }[] = [];
   const walk = (dir: string): void => {
-    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    for (const e of readOriginalDirEntries(dir)) {
       const p = path.join(dir, e.name);
       if (e.isDirectory()) {
         if (e.name !== '__tests__') walk(p);
@@ -222,7 +222,7 @@ function scanTypeofNumber(): { file: string; line: number; code: string }[] {
       }
       if (!/\.tsx?$/.test(e.name)) continue;
       const file = path.relative(SRC_ROOT, p).split(path.sep).join('/');
-      const raw = fs.readFileSync(p, 'utf8').split('\n');
+      const raw = readOriginalSource(p).split('\n');
       for (let i = 0; i < raw.length; i++) {
         const line = raw[i]!;
         if (COMMENT_LINE.test(line)) continue;

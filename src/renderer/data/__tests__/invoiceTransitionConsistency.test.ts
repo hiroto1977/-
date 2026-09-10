@@ -25,7 +25,7 @@ import {
   invoiceTransitionPercent,
   invoiceTransitionScheduleLabel,
 } from '../../../shared/invoiceTransition';
-import { readOriginalSource } from '../../../shared/__tests__/originalSource';
+import { readOriginalDirEntries, readOriginalSource } from '../../../shared/__tests__/originalSource';
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..', '..', '..');
 const req = createRequire(import.meta.url);
@@ -80,7 +80,7 @@ function carriers(): { where: string; text: string }[] {
 function filesMentioningMeasure(): string[] {
   const found: string[] = [];
   const walk = (dir: string): void => {
-    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    for (const e of readOriginalDirEntries(dir)) {
       const abs = path.join(dir, e.name);
       if (e.isDirectory()) {
         if (e.name === 'node_modules' || e.name === '__tests__') continue;

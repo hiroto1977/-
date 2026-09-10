@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
 import path from 'node:path';
 
 /*
@@ -37,7 +37,7 @@ interface FakeReq {
 const ORIGIN = 'https://hiroto1977.github.io';
 
 function load(): Harness {
-  const src = readFileSync(path.resolve(process.cwd(), 'assets/sw.js'), 'utf8');
+  const src = readOriginalSource(path.resolve(process.cwd(), 'assets/sw.js'));
   const listeners = new Map<string, Listener>();
   const cacheStore = new Map<string, Map<string, unknown>>();
   const putCalls: { cache: string; url: string }[] = [];
@@ -245,7 +245,7 @@ describe('キャッシュの世代交代', () => {
  */
 describe('PWA manifest — 名乗る数が実物と合っている', () => {
   const MANIFEST = JSON.parse(
-    readFileSync(path.join(__dirname, '../../../assets/manifest.webmanifest'), 'utf8'),
+    readOriginalSource(path.join(__dirname, '../../../assets/manifest.webmanifest')),
   ) as { description: string; start_url: string; scope: string; icons: unknown[] };
 
   /*
@@ -264,7 +264,7 @@ describe('PWA manifest — 名乗る数が実物と合っている', () => {
    * **数を書くときは、その文が何を数えているかまで読む。**
    */
   const SERVICE_COUNT = (() => {
-    const src = readFileSync(path.join(__dirname, '../services.ts'), 'utf8');
+    const src = readOriginalSource(path.join(__dirname, '../services.ts'));
     return (src.match(/^\s*category:\s*'/gm) ?? []).length;
   })();
 

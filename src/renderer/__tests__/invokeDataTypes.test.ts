@@ -30,13 +30,13 @@
  * 母集団 (呼び出し・登録された action) は走査で導く。
  */
 import { describe, expect, it } from 'vitest';
-import fs from 'node:fs';
+import { readOriginalDir, readOriginalSource } from '../../shared/__tests__/originalSource';
 import path from 'node:path';
 import { CLIENTS, RENDERER, actionEntries, balanced, code, pageFiles } from '../pages/__tests__/aiEgressPairs.helpers';
 import { RECORD_ENTRY_SERVICE_IDS } from '../../shared/recordEntryLimits';
 
 const SRC = path.resolve(__dirname, '../..');
-const read = (rel: string): string => fs.readFileSync(path.join(SRC, rel), 'utf8');
+const read = (rel: string): string => readOriginalSource(path.join(SRC, rel));
 
 /** 台帳に載らない名前つきの型と、その理由 (パス 117 で 0 —— 増えたら理由を書く)。 */
 const NAMED_ALLOWED: Readonly<Record<string, string>> = {};
@@ -141,8 +141,8 @@ function ledgerKeys(): string[] {
 function registered(): { map: Map<string, { file: string; handler: string }>; unreadable: string[] } {
   const map = new Map<string, { file: string; handler: string }>();
   const unreadable: string[] = [];
-  for (const f of fs.readdirSync(CLIENTS).filter((n) => n.endsWith('.ts'))) {
-    const src = code(fs.readFileSync(path.join(CLIENTS, f), 'utf8'));
+  for (const f of readOriginalDir(CLIENTS).filter((n) => n.endsWith('.ts'))) {
+    const src = code(readOriginalSource(path.join(CLIENTS, f)));
     const entries = actionEntries(src);
     if (entries === null) {
       unreadable.push(f);
@@ -222,12 +222,11 @@ function invokeCalls(src: string, file: string): Call[] {
 
 const CALLS = pageFiles()
   .concat(
-    fs
-      .readdirSync(path.join(RENDERER, 'data'))
+    readOriginalDir(path.join(RENDERER, 'data'))
       .filter((n) => n.endsWith('.ts'))
       .map((n) => path.join(RENDERER, 'data', n)),
   )
-  .flatMap((f) => invokeCalls(fs.readFileSync(f, 'utf8'), path.relative(RENDERER, f).split(path.sep).join('/')));
+  .flatMap((f) => invokeCalls(readOriginalSource(f), path.relative(RENDERER, f).split(path.sep).join('/')));
 
 const KEYS = ledgerKeys();
 const REG = registered();
@@ -317,7 +316,7 @@ describe('画面の invoke<T> は台帳の型を読む (母集団は走査で数
   it('★ main の handler が台帳の型を宣言している', () => {
     for (const key of KEYS) {
       const reg = REGISTERED.get(key)!;
-      const src = code(fs.readFileSync(path.join(CLIENTS, reg.file), 'utf8'));
+      const src = code(readOriginalSource(path.join(CLIENTS, reg.file)));
       expect(signature(src, reg.handler), `${key}: handler ${reg.handler} が ActionData<'${key}'> を宣言していない`).toContain(
         `ActionData<'${key}'>`,
       );

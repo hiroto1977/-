@@ -34,7 +34,7 @@
  * 「端末内で完結します」とも言わない。提供元の名前も書かない。
  */
 import { describe, expect, it } from 'vitest';
-import fs from 'node:fs';
+import { readOriginalDirEntries, readOriginalSource } from '../../../shared/__tests__/originalSource';
 import path from 'node:path';
 import {
   VOICE_RECOGNITION_MECHANISM,
@@ -56,7 +56,7 @@ function code(src: string): string {
 function rendererFiles(): string[] {
   const out: string[] = [];
   const walk = (dir: string): void => {
-    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    for (const e of readOriginalDirEntries(dir)) {
       const p = path.join(dir, e.name);
       if (e.isDirectory()) {
         if (e.name !== '__tests__' && e.name !== 'node_modules') walk(p);
@@ -126,7 +126,7 @@ describe('マイクを開く入口すべてに断りが在る (走査)', () => {
 
   it('★ 走査が実物に当たっている (入口 2 つを見つけている)', () => {
     const entries = rendererFiles()
-      .filter((f) => opensMic(f, fs.readFileSync(f, 'utf8')))
+      .filter((f) => opensMic(f, readOriginalSource(f)))
       .map((f) => path.relative(RENDERER, f));
     // **標本が空なら何も検査していない。** 実測 2 件。
     expect(entries.length, 'マイクを開く入口が見つからない (走査が壊れている)').toBeGreaterThanOrEqual(2);
@@ -141,7 +141,7 @@ describe('マイクを開く入口すべてに断りが在る (走査)', () => {
   it('★ マイクを開く所はすべて断りを描く (3 つ目が黙って増えない)', () => {
     const missing: string[] = [];
     for (const f of rendererFiles()) {
-      const src = fs.readFileSync(f, 'utf8');
+      const src = readOriginalSource(f);
       if (!opensMic(f, src)) continue;
       if (!DRAWS_NOTICE.test(code(src))) missing.push(path.relative(RENDERER, f));
     }
@@ -157,7 +157,7 @@ describe('マイクを開く入口すべてに断りが在る (走査)', () => {
     // 書きながら送ることになる。2026-09-09 の対照 E がこれで鳴らず、検査の穴として
     // 見つかった —— 旗を人が書く以上、実物と照らす節が要る。
     for (const f of rendererFiles()) {
-      const src = fs.readFileSync(f, 'utf8');
+      const src = readOriginalSource(f);
       if (!opensMic(f, src)) continue;
       const body = code(src);
       const forwards = /<AiEgressNotice[\s/>]/.test(body);
@@ -174,7 +174,7 @@ describe('マイクを開く入口すべてに断りが在る (走査)', () => {
 
   it('★ どの入口も文面を自前で書かない (共有の 1 か所から読む)', () => {
     for (const f of rendererFiles()) {
-      const src = fs.readFileSync(f, 'utf8');
+      const src = readOriginalSource(f);
       if (!opensMic(f, src)) continue;
       expect(code(src), `${path.relative(RENDERER, f)} が断りの文面を自前で持っている`).not.toContain(
         'ブラウザが決めます',
@@ -188,7 +188,7 @@ describe('「AI へは送りません」の根拠 — 音声から呼べる acti
 
   /** `VOICE_ACTIONS` の宣言から action 名を取り出す。 */
   function voiceActions(): string[] {
-    const src = code(fs.readFileSync(BAR, 'utf8'));
+    const src = code(readOriginalSource(BAR));
     const at = src.indexOf('const VOICE_ACTIONS');
     expect(at, 'VOICE_ACTIONS が見つからない').toBeGreaterThan(-1);
     const block = src.slice(at, src.indexOf('};', at));

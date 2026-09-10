@@ -22,7 +22,7 @@ import { describe, expect, it } from 'vitest';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createRequire } from 'node:module';
-import fs from 'node:fs';
+import { readOriginalDirEntries, readOriginalSource } from '../../../shared/__tests__/originalSource';
 import path from 'node:path';
 import { Stat, UNDETERMINED, positiveIfKnown } from '../Stat';
 
@@ -91,7 +91,7 @@ describe('Stat — 「—」に色を付けない', () => {
   it('印は画面が実際に使っている 1 文字である (別の字を見張っていない)', () => {
     // `UNDETERMINED` が実物のページで使われている綴りと一致すること。
     // ここがずれると関門は「在るのに何も止めない」形になる。
-    const page = fs.readFileSync(path.join(RENDERER_ROOT, 'pages', 'RealEstatePage.tsx'), 'utf8');
+    const page = readOriginalSource(path.join(RENDERER_ROOT, 'pages', 'RealEstatePage.tsx'));
     expect(page).toContain(`? '${UNDETERMINED}' :`);
   });
 });
@@ -99,7 +99,7 @@ describe('Stat — 「—」に色を付けない', () => {
 describe('呼び出し側に `?? 0` の判定が残っていない', () => {
   /** renderer 配下の .tsx を集める (テストは除く)。 */
   function pages(dir: string, out: string[] = []): string[] {
-    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    for (const e of readOriginalDirEntries(dir)) {
       const p = path.join(dir, e.name);
       if (e.isDirectory()) {
         if (e.name !== '__tests__') pages(p, out);
@@ -128,7 +128,7 @@ describe('呼び出し側に `?? 0` の判定が残っていない', () => {
     let scanned = 0;
     for (const file of pages(RENDERER_ROOT)) {
       // 散文は数えない —— この規則を説明している doc コメント自身が引っかかる。
-      const src = stripCommentsAndStrings(fs.readFileSync(file, 'utf8'));
+      const src = stripCommentsAndStrings(readOriginalSource(file));
       for (const m of src.matchAll(POSITIVE_PROP)) {
         scanned += 1;
         if (FOLDS_NULL.test(m[1] as string)) {

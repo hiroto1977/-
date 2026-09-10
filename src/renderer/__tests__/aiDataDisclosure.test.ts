@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
 import path from 'node:path';
 import {
   AI_EGRESS_RECIPIENT_ANTHROPIC,
@@ -8,7 +8,7 @@ import {
 } from '../../shared/aiEgressNotice';
 
 const REPO_ROOT = path.resolve(__dirname, '../../..');
-const read = (rel: string): string => readFileSync(path.join(REPO_ROOT, rel), 'utf8');
+const read = (rel: string): string => readOriginalSource(path.join(REPO_ROOT, rel));
 
 const STOCKS_PAGE = read('src/renderer/pages/StocksPage.tsx');
 const WEB_SHIM = read('src/renderer/web-shim.ts');

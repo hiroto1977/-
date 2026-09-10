@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readdirSync, readFileSync } from 'node:fs';
+import { readOriginalDir, readOriginalSource } from '../../shared/__tests__/originalSource';
 import path from 'node:path';
 
 /*
@@ -82,7 +82,7 @@ export function scanOnClickHandlers(file: string, src: string): Scan {
 function listTsx(): string[] {
   const out: string[] = [];
   for (const dir of DIRS) {
-    for (const f of readdirSync(path.join(REPO_ROOT, dir))) {
+    for (const f of readOriginalDir(path.join(REPO_ROOT, dir))) {
       if (f.endsWith('.tsx')) out.push(`${dir}/${f}`);
     }
   }
@@ -90,7 +90,7 @@ function listTsx(): string[] {
 }
 
 describe('記録を保存する画面の押しただけの操作は useSubmitGuard を通る (母集団は実装から)', () => {
-  const scanned = listTsx().map((f) => scanOnClickHandlers(f, readFileSync(path.join(REPO_ROOT, f), 'utf8')));
+  const scanned = listTsx().map((f) => scanOnClickHandlers(f, readOriginalSource(path.join(REPO_ROOT, f))));
   const storeFiles = scanned.filter((s) => s.store);
 
   it('走査は実物に当たる (record store のファイルが 10 未満・関門を通る呼び出しが 15 未満なら、規則が空振りしている)', () => {

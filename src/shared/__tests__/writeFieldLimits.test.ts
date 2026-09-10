@@ -28,7 +28,7 @@
  * (パス 74 / 84 / 89 と同じ)。壊れた入力は**送らずに断る**。
  */
 import { describe, expect, it } from 'vitest';
-import fs from 'node:fs';
+import { readOriginalDir, readOriginalSource } from './originalSource';
 import path from 'node:path';
 import {
   ATLASSIAN_ISSUE_FIELDS,
@@ -68,7 +68,7 @@ import {
 import { VOICE_WRITE_REQUIREMENTS } from '../voiceWriteRequirements';
 
 const SRC = path.resolve(__dirname, '../..');
-const read = (rel: string): string => fs.readFileSync(path.join(SRC, rel), 'utf8');
+const read = (rel: string): string => readOriginalSource(path.join(SRC, rel));
 const code = (rel: string): string =>
   read(rel)
     .split('\n')
@@ -335,7 +335,7 @@ describe('5 か所が同じ台帳を読む (数を写していない)', () => {
     const dir = path.join(SRC, 'main/clients');
     const posting: string[] = [];
     const reading: string[] = [];
-    for (const f of fs.readdirSync(dir).filter((n) => n.endsWith('.ts') && n !== 'index.ts' && n !== 'types.ts')) {
+    for (const f of readOriginalDir(dir).filter((n) => n.endsWith('.ts') && n !== 'index.ts' && n !== 'types.ts')) {
       const src = read(`main/clients/${f}`);
       const m = /export const ACTIONS: ActionMap = \{([\s\S]*?)\n\};/.exec(src);
       if (m === null) continue;

@@ -27,7 +27,7 @@
  * (パス 113 の対照 H が鳴らなかったのはこの形)。印は比較式 (`.length > MAX_…`) で当てる。
  */
 import { describe, expect, it } from 'vitest';
-import fs from 'node:fs';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
 import path from 'node:path';
 import {
   ANY_AI_MARKS,
@@ -142,7 +142,7 @@ describe('AI へ出る handler はすべて入力の天井で断る (母集団�
 describe('AI へ送る画面は台帳に在り、入力欄は共有の定数を読む (数を写さない)', () => {
   const pairs = aiActionHandlers(ANY_AI_MARKS).map((h) => [h.service, h.action] as const);
   const aiPages = pageFiles()
-    .filter((f) => invokesAi(fs.readFileSync(f, 'utf8'), pairs))
+    .filter((f) => invokesAi(readOriginalSource(f), pairs))
     .map((f) => path.relative(RENDERER, f));
 
   it('★ 走査が実物に当たる', () => {
@@ -162,7 +162,7 @@ describe('AI へ送る画面は台帳に在り、入力欄は共有の定数を�
 
   it('★ 入力欄の maxLength は定数で、字面の数を持たない。AI へ行く欄はその天井の定数を読む', () => {
     for (const p of aiPages) {
-      const src = code(fs.readFileSync(path.join(RENDERER, p), 'utf8'));
+      const src = code(readOriginalSource(path.join(RENDERER, p)));
       expect(src, `${p} が maxLength に数を写している`).not.toMatch(/maxLength=\{\s*\d/);
       const cap = PAGE_CAPS[p]!;
       if (cap.constants === null) {

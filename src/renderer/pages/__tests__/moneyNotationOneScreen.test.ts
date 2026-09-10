@@ -29,7 +29,7 @@
  * | `managementReport` の私的 `yen` | **経営レポート** (役員会・銀行・税理士) | `¥1,234,567` |
  * | `bankFormat` の `formatAmount` + 「円」 | **金融機関提出書面** | `1,234,567円` |
  */
-import fs from 'node:fs';
+import { readOriginalDirEntries, readOriginalSource } from '../../../shared/__tests__/originalSource';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
@@ -50,8 +50,8 @@ const PAGES_ROOT = path.resolve(__dirname, '..');
  */
 const COMMENT_LINE = /^\s*(\/\/|\*|\/\*)/;
 
-function countStyles(file: string): { jpy: number; intl: number } {
-  const lines = fs.readFileSync(file, 'utf8').split('\n');
+function countStyles(text: string): { jpy: number; intl: number } {
+  const lines = text.split('\n');
   let jpy = 0;
   let intl = 0;
   for (const line of lines) {
@@ -92,7 +92,7 @@ describe('BusinessPage — 金額の書式が 1 つ', () => {
 
   it('★ 走査が実物に当たっている (空振りしていない)', () => {
     // **不在を主張する前に、走査が金額の呼び出しを見つけていることを確かめる。**
-    const { jpy, intl } = countStyles(file);
+    const { jpy, intl } = countStyles(readOriginalSource(file));
     expect(intl, 'この画面は金額を刷っているはず').toBeGreaterThan(5);
     // 直した後なので jpy 側は 0 —— ただし「0 だから通った」ではなく、
     // 上の行で intl 側が確かに数えられていることを確かめてから言う。
@@ -107,18 +107,13 @@ describe('BusinessPage — 金額の書式が 1 つ', () => {
       '  // jpy(z) と yen.format(z) の違いを説明する散文 (数えない)',
       '   * jpy(w)',
     ].join('\n');
-    const tmp = path.join(PAGES_ROOT, '__tests__', '.money-notation-sample.tsx');
-    fs.writeFileSync(tmp, sample, 'utf8');
-    try {
-      expect(countStyles(tmp)).toEqual({ jpy: 1, intl: 1 });
-    } finally {
-      fs.unlinkSync(tmp);
-    }
+    // **一時ファイルを置かない。** 綴りを数えるのは本文であって道ではないので、
+    // 標本は文字列のまま当てる (`countStyles` は本文を受け取る)。
+    expect(countStyles(sample)).toEqual({ jpy: 1, intl: 1 });
   });
 
   it('★ 半角の円記号を字面で持っていない (書式を戻したら鳴る)', () => {
-    const src = fs
-      .readFileSync(file, 'utf8')
+    const src = readOriginalSource(file)
       .split('\n')
       .filter((l) => !COMMENT_LINE.test(l))
       .join('\n');
@@ -133,7 +128,7 @@ describe('画面ごとに書式が混ざっていない (全ページ走査)', (
   function pageFiles(): string[] {
     const out: string[] = [];
     const walk = (dir: string): void => {
-      for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      for (const e of readOriginalDirEntries(dir)) {
         const p = path.join(dir, e.name);
         if (e.isDirectory()) {
           if (e.name !== '__tests__') walk(p);
@@ -150,7 +145,7 @@ describe('画面ごとに書式が混ざっていない (全ページ走査)', (
     const mixed: string[] = [];
     let anyMoney = 0;
     for (const f of pageFiles()) {
-      const { jpy, intl } = countStyles(f);
+      const { jpy, intl } = countStyles(readOriginalSource(f));
       if (jpy > 0 || intl > 0) anyMoney += 1;
       if (jpy > 0 && intl > 0) {
         mixed.push(`${path.relative(PAGES_ROOT, f)}  jpy=${jpy} intl=${intl}`);

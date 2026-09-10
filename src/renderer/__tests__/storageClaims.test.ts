@@ -1,12 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { statSync } from 'node:fs';
+import { readOriginalDir, readOriginalSource } from '../../shared/__tests__/originalSource';
 import path from 'node:path';
 
 const REPO_ROOT = path.resolve(__dirname, '../../..');
-const CARD = readFileSync(
-  path.join(REPO_ROOT, 'src/renderer/components/GoogleConnectCard.tsx'),
-  'utf8',
-);
+const CARD = readOriginalSource(path.join(REPO_ROOT, 'src/renderer/components/GoogleConnectCard.tsx'));
 
 /*
  * **トークンの保存方法について画面が言うこと**を留める。
@@ -61,7 +59,7 @@ describe('トークン保存の説明が、環境によらず正しいこと', (
  */
 describe('同じ断言が他の画面に無い', () => {
   function tsxFiles(dir: string, out: string[] = []): string[] {
-    for (const name of readdirSync(dir)) {
+    for (const name of readOriginalDir(dir)) {
       const p = path.join(dir, name);
       if (statSync(p).isDirectory()) {
         if (name !== '__tests__' && name !== 'node_modules') tsxFiles(p, out);
@@ -101,7 +99,7 @@ describe('同じ断言が他の画面に無い', () => {
   it('断言そのものが、どの画面にも 1 つも無い', () => {
     const offenders: string[] = [];
     for (const f of tsxFiles(path.join(REPO_ROOT, 'src/renderer'))) {
-      const text = readFileSync(f, 'utf8');
+      const text = readOriginalSource(f);
       const hits = text.match(UNCONDITIONAL);
       if (hits) offenders.push(`${path.relative(REPO_ROOT, f)} (${hits.length})`);
     }
@@ -139,10 +137,7 @@ describe('同じ断言が他の画面に無い', () => {
  * 「ブラウザ版は変更できる」という打ち消しが同居していることを要求する。
  */
 describe('Ollama 画面が、接続先について矛盾したことを言っていない', () => {
-  const PAGE = readFileSync(
-    path.join(REPO_ROOT, 'src/renderer/pages/OllamaPage.tsx'),
-    'utf8',
-  );
+  const PAGE = readOriginalSource(path.join(REPO_ROOT, 'src/renderer/pages/OllamaPage.tsx'));
 
   it('接続先の入力欄がある (前提)', () => {
     expect(PAGE).toMatch(/aria-label="Ollama の接続先"/);
@@ -181,7 +176,7 @@ describe('Ollama 画面が、接続先について矛盾したことを言って
  * ここではその**台帳**を確かめる —— 定数を変えたら画面の表示も動くこと。
  */
 describe('Ollama 画面の数字が、実物の定数から出ている', () => {
-  const PAGE = readFileSync(path.join(REPO_ROOT, 'src/renderer/pages/OllamaPage.tsx'), 'utf8');
+  const PAGE = readOriginalSource(path.join(REPO_ROOT, 'src/renderer/pages/OllamaPage.tsx'));
 
   /*
    * **ファイル単位で「どこかに書いてあるか」を見ない。**
@@ -229,7 +224,7 @@ describe('Ollama 画面の数字が、実物の定数から出ている', () => 
   });
 
   it('表示する正規表現が実物と一致している (長さ上限と大小無視を落としていない)', () => {
-    const shared = readFileSync(path.join(REPO_ROOT, 'src/shared/ollama.ts'), 'utf8');
+    const shared = readOriginalSource(path.join(REPO_ROOT, 'src/shared/ollama.ts'));
     // **束ね方ではなく模様そのものを見る。** 以前は
     // `const MODEL_NAME_RE = …;` という**行の形**に一致させていたが、
     // モジュール定数を関数の中へ移した (静的変異体になって変異検査から
@@ -258,9 +253,9 @@ describe('Ollama 画面の数字が、実物の定数から出ている', () => 
  * 数字を 2 か所に持たないのが直し方。ここではそれを台帳として留める。
  */
 describe('パスワードの最小長が、画面と実装で 1 つになっている', () => {
-  const SETTINGS = readFileSync(path.join(REPO_ROOT, 'src/renderer/pages/SettingsPage.tsx'), 'utf8');
-  const LOCK = readFileSync(path.join(REPO_ROOT, 'src/renderer/security/LockScreen.tsx'), 'utf8');
-  const VAULT = readFileSync(path.join(REPO_ROOT, 'src/renderer/security/vault.ts'), 'utf8');
+  const SETTINGS = readOriginalSource(path.join(REPO_ROOT, 'src/renderer/pages/SettingsPage.tsx'));
+  const LOCK = readOriginalSource(path.join(REPO_ROOT, 'src/renderer/security/LockScreen.tsx'));
+  const VAULT = readOriginalSource(path.join(REPO_ROOT, 'src/renderer/security/vault.ts'));
 
   it('強制する側の定数が 1 つだけ在る', () => {
     expect(VAULT).toMatch(/export const MIN_PASSWORD_LENGTH = \d+;/);
@@ -337,7 +332,7 @@ describe('パスワードの最小長が、画面と実装で 1 つになって�
 const KEYCHAIN_CLAIM = /キーチェーン(に|由来の鍵で|の鍵で)[^。\n]*(暗号化|保存)/;
 
 describe('保存状態カードの文言は mechanism で分かれる', () => {
-  const PAGE = readFileSync('src/renderer/pages/SettingsPage.tsx', 'utf8');
+  const PAGE = readOriginalSource('src/renderer/pages/SettingsPage.tsx');
 
   it('キーチェーンの一文は mechanism を見た分岐の中にある', () => {
     const claim = KEYCHAIN_CLAIM;
@@ -356,7 +351,7 @@ describe('保存状態カードの文言は mechanism で分かれる', () => {
   });
 
   it('web-shim は webcrypto-vault と名乗る', () => {
-    const shim = readFileSync('src/renderer/web-shim.ts', 'utf8');
+    const shim = readOriginalSource('src/renderer/web-shim.ts');
     expect(shim).toMatch(/mechanism:\s*'webcrypto-vault'/);
   });
 });
@@ -375,10 +370,7 @@ describe('保存状態カードの文言は mechanism で分かれる', () => {
  * 「省いたときに何が起きるかが書いてあること」だけを留める。
  */
 describe('BYO プロキシ — 共有秘密を省いたときの説明', () => {
-  const SETTINGS = readFileSync(
-    path.join(REPO_ROOT, 'src/renderer/pages/SettingsPage.tsx'),
-    'utf8',
-  );
+  const SETTINGS = readOriginalSource(path.join(REPO_ROOT, 'src/renderer/pages/SettingsPage.tsx'));
 
   it('入力欄がある (前提)', () => {
     expect(SETTINGS).toMatch(/MAX_PROXY_SECRET_LENGTH/);

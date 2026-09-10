@@ -43,7 +43,7 @@
  * ないので、ここは「3 つが同じ」ではなく「**1 つしか無く、3 か所に写しが戻っていない**」を留める。
  */
 import { describe, expect, it } from 'vitest';
-import fs from 'node:fs';
+import { readOriginalSource } from './originalSource';
 import path from 'node:path';
 import {
   MAX_ADVISOR_UNIVERSE_SYMBOLS,
@@ -51,7 +51,7 @@ import {
 } from '../advisorQuestionLimits';
 
 const SRC = path.resolve(__dirname, '../..');
-const read = (rel: string): string => fs.readFileSync(path.join(SRC, rel), 'utf8');
+const read = (rel: string): string => readOriginalSource(path.join(SRC, rel));
 
 const MAIN_CLIENT = 'main/clients/stocks.ts';
 const WEB_DATA = 'renderer/data/stocksAnalysisWeb.ts';

@@ -38,7 +38,7 @@
  * 走査が無ければ次の画面はまた黙る。
  */
 import { describe, expect, it } from 'vitest';
-import fs from 'node:fs';
+import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 import path from 'node:path';
 import {
   AI_EGRESS_RECIPIENT_ANTHROPIC,
@@ -56,7 +56,7 @@ import {
   reachesAi,
 } from './aiEgressPairs.helpers';
 
-const read = (f: string): string => fs.readFileSync(path.join(PAGES, f), 'utf8');
+const read = (f: string): string => readOriginalSource(path.join(PAGES, f));
 
 /**
  * 断りの部品を**タグの境目つき**で探す。`includes('<AiEgressNotice')` は
@@ -277,7 +277,7 @@ describe('AI へ送る画面すべてに断りが在る (走査)', () => {
     // `ChatbotWidget` / `VoiceCommandBar` は `VOICE_ACTIONS` の範囲でしか
     // invoke しない。**これは主張ではなく測定**で、変わればここが鳴る。
     const senders = pageFiles()
-      .filter((f) => invokesAi(fs.readFileSync(f, 'utf8'), pairs))
+      .filter((f) => invokesAi(readOriginalSource(f), pairs))
       .map((f) => path.relative(RENDERER, f));
     for (const f of senders) {
       expect(f.startsWith(`pages${path.sep}`), `${f} が AI へ送っている (断りの配線を確かめること)`).toBe(true);
@@ -285,7 +285,7 @@ describe('AI へ送る画面すべてに断りが在る (走査)', () => {
   });
 
   it('★ 走査が実物に当たっている (AI の画面 8 つを見つけている)', () => {
-    const ai = pageFiles().filter((f) => invokesAi(fs.readFileSync(f, 'utf8'), pairs));
+    const ai = pageFiles().filter((f) => invokesAi(readOriginalSource(f), pairs));
     expect(ai.length, 'AI の action を呼ぶ画面が見つからない (走査が壊れている)').toBeGreaterThanOrEqual(8);
     const names = ai.map((f) => path.basename(f)).sort();
     // AI らしい名前の画面だけでは足りない —— Gmail / Slack は emotions の action を借り、
@@ -307,7 +307,7 @@ describe('AI へ送る画面すべてに断りが在る (走査)', () => {
   it('★ 送る画面はすべて断りを描く (9 つ目が黙って増えない)', () => {
     const missing: string[] = [];
     for (const f of pageFiles()) {
-      const src = fs.readFileSync(f, 'utf8');
+      const src = readOriginalSource(f);
       if (!invokesAi(src, pairs)) continue;
       if (!DRAWS_NOTICE.test(code(src))) missing.push(path.basename(f));
     }
@@ -319,7 +319,7 @@ describe('AI へ送る画面すべてに断りが在る (走査)', () => {
 
   it('★ どの画面も文面を自前で書かない (共有の 1 か所から読む)', () => {
     for (const f of pageFiles()) {
-      const src = fs.readFileSync(f, 'utf8');
+      const src = readOriginalSource(f);
       if (!invokesAi(src, pairs)) continue;
       const body = code(src);
       // 「へ送信されます」の文を画面が持っていたら、それは写しである。

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { statSync } from 'node:fs';
+import { readOriginalDir, readOriginalSource } from '../shared/__tests__/originalSource';
 import { join } from 'node:path';
 
 /*
@@ -35,7 +36,7 @@ import { join } from 'node:path';
  */
 
 function testFiles(dir: string, out: string[] = []): string[] {
-  for (const name of readdirSync(dir)) {
+  for (const name of readOriginalDir(dir)) {
     const full = join(dir, name);
     if (statSync(full).isDirectory()) {
       if (name === 'node_modules') continue;
@@ -74,7 +75,7 @@ describe('手作り Response の忠実さ', () => {
   it('json() が中身を返すのに text() が空文字を返すモックは無い', () => {
     const offenders: string[] = [];
     for (const f of testFiles('src')) {
-      const n = inconsistentResponseMocks(readFileSync(f, 'utf8'));
+      const n = inconsistentResponseMocks(readOriginalSource(f));
       if (n > 0) offenders.push(`${f} (${n})`);
     }
     expect(

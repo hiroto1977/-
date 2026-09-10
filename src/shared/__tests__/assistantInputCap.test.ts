@@ -14,7 +14,7 @@
  * 「切り詰めたことを黙らせない」(`ASSISTANT_REPLY_TRUNCATED_NOTICE`)。**送る側だけが黙っていた。**
  */
 import { describe, expect, it } from 'vitest';
-import fs from 'node:fs';
+import { readOriginalSource } from './originalSource';
 import path from 'node:path';
 import {
   ASSISTANT_REPLY_TRUNCATED_NOTICE,
@@ -24,7 +24,7 @@ import {
 } from '../assistantLimits';
 
 const SRC = path.resolve(__dirname, '../..');
-const read = (rel: string): string => fs.readFileSync(path.join(SRC, rel), 'utf8');
+const read = (rel: string): string => readOriginalSource(path.join(SRC, rel));
 const code = (rel: string): string =>
   read(rel)
     .split('\n')

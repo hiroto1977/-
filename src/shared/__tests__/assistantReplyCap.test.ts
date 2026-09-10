@@ -20,7 +20,7 @@
  * がすべて応答側の天井に届くことを留める。
  */
 import { describe, expect, it } from 'vitest';
-import fs from 'node:fs';
+import { readOriginalSource } from './originalSource';
 import path from 'node:path';
 import {
   ASSISTANT_REPLY_TRUNCATED_NOTICE,
@@ -37,8 +37,7 @@ import {
 
 const SRC = path.resolve(__dirname, '../..');
 const code = (rel: string): string =>
-  fs
-    .readFileSync(path.join(SRC, rel), 'utf8')
+  readOriginalSource(path.join(SRC, rel))
     .split('\n')
     .filter((l) => !/^\s*(\*|\/\/|\/\*)/.test(l))
     .join('\n');
@@ -90,7 +89,7 @@ describe('応答側の天井に、AI へ出る handler がすべて届く (母�
     // 母集団は「'ollama', 'chat' を invoke する .tsx」を走査で導く (パス 114: パス 113 は
     // チャットボットだけを見て、同じ形 `invoke<{ reply; durationMs }>` の OllamaPage を落としていた)。
     const callers = pageFiles()
-      .filter((f) => invokesAi(fs.readFileSync(f, 'utf8'), [['ollama', 'chat']]))
+      .filter((f) => invokesAi(readOriginalSource(f), [['ollama', 'chat']]))
       .map((f) => path.relative(RENDERER, f));
     expect(callers).toContain('components/ChatbotWidget.tsx');
     expect(callers).toContain('pages/OllamaPage.tsx');

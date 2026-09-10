@@ -27,7 +27,7 @@
  * 承認の口を閉じるだけで、実行できない物は実行されない。
  */
 import { describe, expect, it } from 'vitest';
-import fs from 'node:fs';
+import { readOriginalDir, readOriginalSource } from './originalSource';
 import path from 'node:path';
 import {
   VOICE_WRITE_REQUIREMENTS,
@@ -37,7 +37,7 @@ import {
 } from '../voiceWriteRequirements';
 
 const SRC = path.resolve(__dirname, '../..');
-const read = (rel: string): string => fs.readFileSync(path.join(SRC, rel), 'utf8');
+const read = (rel: string): string => readOriginalSource(path.join(SRC, rel));
 
 /** `VOICE_ACTIONS` の宣言 (画面側にある許可表) を字面から取り出す。 */
 function voiceActionPairs(): Array<readonly [string, string]> {
@@ -144,8 +144,7 @@ describe('台帳の必須項目が実装と一致する', () => {
     }
     // **uber-eats / demae-can はどちらも無い** —— `ServiceActionPanel` の注記は
     // 4 サービスを挙げているが、載っているのは 2 つだった (実測)。
-    const mounted = fs
-      .readdirSync(path.join(SRC, 'renderer/pages'))
+    const mounted = readOriginalDir(path.join(SRC, 'renderer/pages'))
       .filter((f) => f.endsWith('.tsx'))
       .map((f) => read(`renderer/pages/${f}`))
       .join('\n');
