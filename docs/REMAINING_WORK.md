@@ -19157,6 +19157,8 @@ pipeline が通す。)
 
 - `confirm()` / `alert()` は残す —— 秘密を受けない (確認と通知)。禁止するのは入力を受ける prompt だけ。
 - **chain の `npm test` が 1 度 exit 1 になった** —— 14,486 件は全部通ったが、`useRealtimeTick` の interval が jsdom の teardown 後に `setAt` を呼び "window is not defined" (Vitest の Unhandled Error。帰属は `overviewBankSheet.test.ts` だが「その間に走った」という意味)。同じファイル単独 3 回・全件の再実行は緑 —— 並列 worker の間の時間の揺れで、掃除 (`clearInterval`) と teardown の順が入れ替わる形。このパスの変更 (BackupPanel / lint / e2e) とは無関係だが、CI でも起きうるので記録する。根本は「アンマウント前に teardown された木」で、次のパスの候補。
+  **追記 (2026-09-10 · 調べた。直していない。理由つき)**: 再現しなかった (renderer の jsdom 検査 `pages` + `components` + `hooks` 100 ファイル・831 件を 3 回連続で回して 3 回とも緑)。**「アンマウント前に teardown された木」という根本の見立ては、実測すると既に塞がっていた** —— `createRoot` する検査 88 ファイルのうち `afterEach` で片付けていないのは 6 ファイルだが、**その 6 つはどれも本物のタイマーを持つ木を建てない** (hook の実験台と `StatusBar`)。実物の `setInterval` が走るのは `RealtimeTicker.test.ts` と OverviewPage / TaxPage を建てる検査で、**それらは全部 `afterEach` で unmount している**。つまり残っているのは repo のコードではなく **vitest / jsdom の後始末の競合** (掃除は走るが、既に待ち行列に載った callback が環境の消滅後に発火しうる) である。
+  **直さなかった理由**: ここで打てる手は production の hook に `typeof window === 'undefined'` の門を足すことだが、**それを鳴らす対照が書けない** (再現しない race を、実環境を壊さずに検査から作れない)。「鳴らない対照は合格ではない」を自分に当てると、**検証できない防御を出荷することになる**。次に当たる人へ: まず再現を狙うこと (`--pool=threads --poolOptions.threads.maxThreads` を上げて全件を繰り返す)。再現できたら hook 側の門 + 注入した deps でその門を鳴らす標本が書ける。
 - Electron で prompt が無いことは Electron の FAQ と console の文言によるもので、実機の smoke:app は復元の道を通らない。
 - 0 倒しの母集団 (`lint:zero-fold`) は **280 のまま**。
 
