@@ -22,6 +22,17 @@ export interface DocField {
   readonly req?: true;
 }
 
+/**
+ * 見積書・注文書・注文請書・納品書の「品目N 税率区分」の選択肢。
+ *
+ * **適格請求書 (`i{N}kind`) の 8 択とは意図的に違う。** これらの書式には
+ * 任意税率 A / B の率を入れる欄 (`rateA` / `rateB`) が無いので、選べるようにすると
+ * **率 0% で黙って計算する**ことになる (画面には「任意税率A」と出るのに税額は 0)。
+ * 「（使わない）」も無い —— 行を落とすのは品目と金額が両方空のときで、
+ * 同じことを 2 通りで指示できるようにしない。
+ */
+const ITEM_TAX_KIND_OPTIONS = ['標準税率', '軽減税率', '免税（輸出取引等）', '非課税', '不課税（対象外）'] as const;
+
 /** 汎用の差込表（36協定・精算書・株主名簿など、定型の表を持つ書式で使う）。 */
 export interface DocTable {
   readonly head: readonly string[];
@@ -280,10 +291,13 @@ export const STUDIO_TEMPLATES: readonly StudioDoc[] = [
       { k: 'payterm', label: '支払条件', ph: '納品月の翌月末日 銀行振込' },
       { k: 'item1', req: true, label: '品目1', ph: 'Web サイト制作一式' },
       { k: 'amount1', req: true, label: '金額1（税抜）', ph: '500,000', num: true },
+      { k: 'item1kind', label: '品目1 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item2', label: '品目2', ph: '保守（月額×3か月）' },
       { k: 'amount2', label: '金額2（税抜）', ph: '90,000', num: true },
+      { k: 'item2kind', label: '品目2 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item3', label: '品目3', ph: '' },
       { k: 'amount3', label: '金額3（税抜）', ph: '', num: true },
+      { k: 'item3kind', label: '品目3 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
     ],
     body: [
       { center: '御　見　積　書' },
@@ -313,10 +327,13 @@ export const STUDIO_TEMPLATES: readonly StudioDoc[] = [
       { k: 'date', req: true, label: '発注日', ph: '2026年7月19日' },
       { k: 'item1', req: true, label: '品目1（給付の内容）', ph: 'バナー画像デザイン 10点' },
       { k: 'amount1', req: true, label: '金額1（税抜）', ph: '100,000', num: true },
+      { k: 'item1kind', label: '品目1 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item2', label: '品目2', ph: '' },
       { k: 'amount2', label: '金額2（税抜）', ph: '', num: true },
+      { k: 'item2kind', label: '品目2 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item3', label: '品目3', ph: '' },
       { k: 'amount3', label: '金額3（税抜）', ph: '', num: true },
+      { k: 'item3kind', label: '品目3 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'due', label: '納期（給付を受領する期日）', ph: '2026年8月10日' },
       { k: 'place', label: '納入場所（受領場所）', ph: '当社本社／データ納品はメール' },
       { k: 'inspect', label: '検査完了期日', ph: '受領後10日以内' },
@@ -996,10 +1013,13 @@ export const STUDIO_TEMPLATES: readonly StudioDoc[] = [
       { k: 'payterm', label: '支払条件', ph: '検収完了月の翌月末日 銀行振込' },
       { k: 'item1', req: true, label: '品目1', ph: 'バナー画像デザイン 10点' },
       { k: 'amount1', req: true, label: '金額1（税抜）', ph: '100,000', num: true },
+      { k: 'item1kind', label: '品目1 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item2', label: '品目2', ph: '' },
       { k: 'amount2', label: '金額2（税抜）', ph: '', num: true },
+      { k: 'item2kind', label: '品目2 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item3', label: '品目3', ph: '' },
       { k: 'amount3', label: '金額3（税抜）', ph: '', num: true },
+      { k: 'item3kind', label: '品目3 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
     ],
     body: [
       { center: '注　文　請　書' },
@@ -1038,10 +1058,13 @@ export const STUDIO_TEMPLATES: readonly StudioDoc[] = [
       { k: 'place', label: '納入場所', ph: '御社 本社受付' },
       { k: 'item1', req: true, label: '品目1', ph: 'バナー画像デザイン 10点' },
       { k: 'amount1', req: true, label: '金額1（税抜）', ph: '100,000', num: true },
+      { k: 'item1kind', label: '品目1 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item2', label: '品目2', ph: '' },
       { k: 'amount2', label: '金額2（税抜）', ph: '', num: true },
+      { k: 'item2kind', label: '品目2 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item3', label: '品目3', ph: '' },
       { k: 'amount3', label: '金額3（税抜）', ph: '', num: true },
+      { k: 'item3kind', label: '品目3 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
     ],
     body: [
       { center: '納　品　書' },

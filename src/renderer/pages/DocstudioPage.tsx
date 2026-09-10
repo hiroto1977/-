@@ -184,42 +184,87 @@ function useTaxRates(): { readonly standardRate: number; readonly reducedRate: n
  * 税額は請求書と**同じ計算器** (`groupByTaxKind`) を通す。以前はここだけ
  * `Math.floor(subtotal * 0.1)` を持っており、同じページの適格請求書とは
  * 別の計算・別の端数処理・別の税率だった (同じ取引の見積書と請求書で
- * 税額が食い違いうる形)。この書面には品目ごとの税率区分の欄が無いので、
- * 全行を標準税率として扱う —— **軽減税率の品目を見積れないことは残る**
- * (欄を足すのは書式の変更なので、`docs/REMAINING_WORK.md` に残した)。
+ * 税額が食い違いうる形)。
+ *
+ * **2026-09-10: 品目ごとの税率区分の欄を足した。** それまでは全行を標準税率として
+ * 扱っており、飲食料品を扱う事業者は**軽減税率の品目を見積れなかった** ——
+ * 請求書では選べるのに見積書では選べないので、同じ取引の見積と請求で税額が違う。
+ * 区分は 5 択 (`ITEM_TAX_KIND_OPTIONS`) で、適格請求書の 8 択とは意図的に違う
+ * (理由はそちらの注記)。仕分けと端数処理は請求書と**同じ `groupByTaxKind`** を通す。
+ *
+ * **見た目は区分が 1 つのときだけ従来どおり**にしてある —— 大半の見積は単一税率で、
+ * そこに区分ごとの内訳を足すと読みにくくなるだけだからである。2 区分以上のときは
+ * 区分ごとの小計と消費税額を出す (軽減税率対象は ※ で示す・請求書と同じ約束)。
  */
 function ItemsTable({ values }: { values: Values }) {
-  const { standardRate } = useTaxRates();
+  const { standardRate, reducedRate } = useTaxRates();
   const rows = [1, 2, 3]
-    .map((i) => ({ item: values[`item${i}`] ?? '', amount: readNumber(values[`amount${i}`]) }))
+    .map((i) => ({
+      item: values[`item${i}`] ?? '',
+      amount: readNumber(values[`amount${i}`]),
+      kind: itemKind(values[`item${i}kind`] ?? ''),
+    }))
     .filter((r) => r.item || r.amount !== null);
   const totals = groupByTaxKind(
-    rows.map((r) => ({ name: r.item, qty: 1, unitPrice: r.amount ?? 0, kind: 'standard' as const })),
-    { standardRate, rounding: 'floor' },
+    rows.map((r) => ({ name: r.item, qty: 1, unitPrice: r.amount ?? 0, kind: r.kind })),
+    { standardRate, reducedRate, rounding: 'floor' },
   );
-  const subtotal = totals.groups[0]?.subtotal ?? 0;
+  const subtotal = totals.taxableSubtotal + totals.nonTaxableSubtotal;
   const tax = totals.totalTax;
-  const label = totals.groups[0] === undefined ? `${Number((standardRate * 100).toFixed(2))}%` : rateLabel(totals.groups[0]);
+  const taxed = totals.groups.filter((g) => g.taxable && g.rate !== null);
+  const many = totals.groups.length > 1;
+  // 区分が 1 つのときは従来どおりの 1 行 (「消費税（10%）」)。品目が 1 つも無いときは
+  // 台帳の標準税率を出す —— 空欄の書面でも「何%で計算するか」は読めるほうがよい。
+  const soleLabel = taxed[0] === undefined ? `${Number((standardRate * 100).toFixed(2))}%` : rateLabel(taxed[0]);
   return (
-    <table className="ds-table">
-      <thead>
-        <tr><th>品目</th><th>金額（税抜）</th></tr>
-      </thead>
-      <tbody>
-        {rows.length === 0 ? (
-          <tr><td>（フォームで品目と金額を入力してください）</td><td className="ds-num">—</td></tr>
-        ) : (
-          rows.map((r, i) => (
-            <tr key={i}><td>{r.item || '—'}</td><td className="ds-num">{r.amount !== null ? `${fmt(r.amount)} 円` : '—'}</td></tr>
-          ))
-        )}
-      </tbody>
-      <tfoot>
-        <tr><td>小計（税抜）</td><td className="ds-num">{fmt(subtotal)} 円</td></tr>
-        <tr><td>消費税（{label}）</td><td className="ds-num">{fmt(tax)} 円</td></tr>
-        <tr className="ds-total"><td>合計（税込）</td><td className="ds-num">{fmt(subtotal + tax)} 円</td></tr>
-      </tfoot>
-    </table>
+    <div data-items>
+      <table className="ds-table">
+        <thead>
+          <tr><th>品目</th>{many && <th>税率</th>}<th>金額（税抜）</th></tr>
+        </thead>
+        <tbody>
+          {rows.length === 0 ? (
+            <tr><td colSpan={many ? 2 : 1}>（フォームで品目と金額を入力してください）</td><td className="ds-num">—</td></tr>
+          ) : (
+            totals.groups.flatMap((g) =>
+              g.lines.map((l, i) => (
+                <tr key={`${g.kind}-${i}`} data-item-kind={g.kind}>
+                  <td>{(l.name || '—') + (g.isReduced ? ' ※' : '')}</td>
+                  {many && <td>{g.taxable ? rateLabel(g) : g.label}</td>}
+                  <td className="ds-num">{fmt(lineAmount(l))} 円</td>
+                </tr>
+              )),
+            )
+          )}
+        </tbody>
+        <tfoot>
+          {many &&
+            totals.groups.map((g) => (
+              <tr key={g.kind} data-group={g.kind}>
+                <td colSpan={2}>{g.label}{g.taxable && g.rate !== null ? ` ${rateLabel(g)} 対象 計（税抜）` : ' 計'}</td>
+                <td className="ds-num">{fmt(g.subtotal)} 円</td>
+              </tr>
+            ))}
+          <tr><td colSpan={many ? 2 : 1}>小計（税抜）</td><td className="ds-num">{fmt(subtotal)} 円</td></tr>
+          {many ? (
+            taxed.map((g) => (
+              <tr key={`tax-${g.kind}`} data-group-tax={g.kind}>
+                <td colSpan={2}>{g.label} 消費税（{rateLabel(g)}）</td>
+                <td className="ds-num">{fmt(g.tax)} 円</td>
+              </tr>
+            ))
+          ) : (
+            <tr><td>消費税（{soleLabel}）</td><td className="ds-num">{fmt(tax)} 円</td></tr>
+          )}
+          <tr className="ds-total"><td colSpan={many ? 2 : 1}>合計（税込）</td><td className="ds-num">{fmt(subtotal + tax)} 円</td></tr>
+        </tfoot>
+      </table>
+      {totals.hasReduced && (
+        <p className="ds-p">
+          ※ は軽減税率（{rateLabel(totals.groups.find((g) => g.isReduced) ?? totals.groups[0]!)}）の対象品目です。
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -251,6 +296,20 @@ const KIND_BY_LABEL: Record<string, TaxKind> = {
   '非課税': 'nonTaxable',
   '不課税（対象外）': 'outOfScope',
 };
+/**
+ * 見積書などの「品目N 税率区分」の選択肢 → 税率区分。
+ *
+ * **読めない値は標準税率へ倒す。** `values` は保存された書類レコード (JSON) なので、
+ * 古い版で作った書類には `item{N}kind` がそもそも無いし、手で直した JSON には
+ * 選択肢の外の値も入りうる。倒し先を標準税率にするのは、この 4 書式が
+ * **2026-09-10 まで全行を標準税率として扱っていた**ため —— 既存の書類を開き直した
+ * ときに税額が変わらない。素の添字だと `'constructor'` 等がプロトタイプ側の値を
+ * 返すので `Object.hasOwn` で確かめる (`readTaxLines` と同じ守り)。
+ */
+function itemKind(label: string): TaxKind {
+  return Object.hasOwn(KIND_BY_LABEL, label) ? (KIND_BY_LABEL[label] ?? 'standard') : 'standard';
+}
+
 const ROUNDING_BY_LABEL: Record<string, RoundingMode> = {
   '切捨て': 'floor',
   '切上げ': 'ceil',
