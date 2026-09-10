@@ -321,6 +321,15 @@ function countStaticIts() {
   return total;
 }
 
+/** ゲートのモジュールを読む。読めなければ null (metric は「計算できない」で落ちる)。 */
+function requireSafe(file) {
+  try {
+    return require(file);
+  } catch {
+    return null;
+  }
+}
+
 /**
  * 台帳の件数を数える助け (パス 145)。**ブロックを切り出してから数える** ——
  * ファイル全体を grep すると自己検査の合成データや別の台帳まで拾い、
@@ -625,6 +634,50 @@ const METRICS = [
    * 数を消すのではなく機械に見せるのは localStorage の項目と同じ判断:
    * これらの行は「そのゲートが何を見ているか」を読む人に伝える価値がある。
    */
+  {
+    /*
+     * **利用者が上書きできる値の裏づけ定数の数。**
+     *
+     * パス 145 でこの数を metric にしなかったのは、`parameters.ts` の `id: '` が
+     * 150 回出るのに散文は 114 と言っており、**数え方を推測で決めると
+     * 「規則」ではなく「今日の数の写し」になる**からだった。
+     * パス 146 で実装を読み、`lint-parameter-prose.cjs` の `ledgerNames()`
+     * (台帳が import している大文字の定数名) が散文の言う「定数」だと分かった。
+     * **保留は正しかった** —— 実測は **115** で、散文の 114 は 1 件ずれていた。
+     * 台帳の項目数 (150) を metric にしていたら、正しい数を誤った数へ書き換えていた。
+     *
+     * 数え方は**ゲート自身の関数を呼ぶ**。ここで正規表現を書き直すと、
+     * ゲートと metric が別々に腐る (2 か所に書くのと同じ)。
+     */
+    name: 'CLAUDE.md: overridable parameter backing-constant count',
+    docFile: 'CLAUDE.md',
+    docPattern: /上書きできる (\d+) の定数/,
+    compute: () => {
+      const gate = requireSafe(path.join(REPO_ROOT, 'scripts/lint-parameter-prose.cjs'));
+      const src = readFileSafe(path.join(REPO_ROOT, 'src/shared/parameters.ts'));
+      if (gate === null || src === null || typeof gate.ledgerNames !== 'function') return null;
+      return gate.ledgerNames(src).size;
+    },
+  },
+  {
+    /*
+     * **CSP を当てるデモの本数。** 対象は `ci.yml` が
+     * `lint-artifact-csp.cjs` へ渡す `--document` の引数で決まる
+     * (landing は `dist/landing.html` を `index.html` に写して渡すので、
+     * デモとは別に数える)。
+     */
+    name: 'CLAUDE.md: demo pages under the shipped-CSP check',
+    docFile: 'CLAUDE.md',
+    docPattern: /landing \/ デモ (\d+) 本/,
+    compute: () => {
+      const ci = readFileSafe(path.join(REPO_ROOT, '.github/workflows/ci.yml'));
+      if (ci === null) return null;
+      // ブロックを切り出さず素直に数える —— `-demo.html` を渡す場所は
+      // この 1 箇所しかなく、0 件になればそれ自体が doc の 3 と食い違って落ちる
+      // (走査の死が「0 件だから健全」にならない)。
+      return (ci.match(/--document \S*-demo\.html/g) ?? []).length;
+    },
+  },
   {
     name: 'CLAUDE.md: sessionStorage ledger entry count',
     docFile: 'CLAUDE.md',

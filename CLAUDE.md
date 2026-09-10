@@ -120,7 +120,7 @@ npm run lint:mutation-scope # 変異検査の「測っていない範囲」の�
 npm run lint:regex         # 正規表現の破滅的バックトラック (ReDoS) を実測。worker + 番犬つき
                            #   (モデル応答を解析する assistantMarkdown.ts が主眼。指数のみ)
 npm run lint:parameter-prose # 画面が刷る数字と、計算に使う数字の出所が同じか
-                           #   (`parameters.ts` の台帳で上書きできる 114 の定数について、
+                           #   (`parameters.ts` の台帳で上書きできる 115 の定数について、
                            #   renderer が既定定数を**直接**刷っていないか。上書きすると
                            #   「効いているのに画面が古い数字で説明する」形になる。
                            #   倒し込み (`??` / 既定引数 / `=== 既定`) は規則の外・
