@@ -155,6 +155,10 @@ to 1 to minimize GitHub Actions minutes on the free tier. **`lint:docs` enforces
 existing but guarding nothing, which is exactly what happened to `lint:citations`,
 `lint:knowledge-refs` and `verify:knowledge` (the provenance gate) until 2026-07-30.
 `.github/workflows/release.yml` builds Mac/Win/Linux installers on `v*` tags;
+`dependency-audit.yml` runs **weekly** (Mon 07:00 JST) — `npm audit` (全体 / prod) +
+`audit:floors` を突き合わせ、要対応を常設 Issue 1 つに集める。**PR の門は狭いまま**
+(`--omit=dev --audit-level=high`) で、狭くした外側 (dev の勧告・床の古び) を週次が受け持つ。
+予定実行なので誰の PR も赤くしない;
 `mutation.yml` runs Stryker (weekly + on pushes to `main` that touch `stryker.config.json`,
 `vitest.config.ts`, `src/main/clients/**` or `src/main/oauth.ts`). `e2e` / `e2e:lite` / `perf` / `smoke:app` **are** wired into `.github/workflows/e2e.yml`, but it does **not run by
 default** (Actions 分の節約): trigger it from the Actions tab (`workflow_dispatch`) or by putting the

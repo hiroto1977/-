@@ -378,6 +378,9 @@ const FORBIDDEN_PATTERNS = [
         // 生成物の実行 ID (YYYYMMDD) の刻印。利用者に見せる日付ではなく、
         // 走るのは UTC の CI。TS の helper を .cjs から import できない。
         'scripts/orchestrate.cjs',
+        // 週次の依存監査の実行日の刻印。走るのは UTC の CI (毎週日曜 22:00 UTC) で、
+        // 利用者の画面には出ない。報告の文面も「(UTC)」と明記する。同上の import 制約。
+        'scripts/dependency-audit-report.cjs',
       ].includes(rel),
   },
   {
@@ -807,6 +810,10 @@ const KNOWN_SUPPRESSIONS = [
   // なので、プロセスを作らずには成り立たない。渡す引数は台帳 (`SECURITY_FLOORS`) の
   // パッケージ名と版だけで、シェルを経由しない (`execFileSync`)。
   'child_process exec/spawn :: scripts/audit-floors.cjs :: 1',
+  // 週次の依存監査。`npm audit --json` を全体と --omit=dev の 2 回走らせて
+  // 突き合わせる。npm の勧告データベースを使うのが目的なので、
+  // プロセスを作らずには成り立たない。引数は固定 (シェルを経由しない execFileSync)。
+  'child_process exec/spawn :: scripts/dependency-audit-report.cjs :: 1',
   'child_process exec/spawn :: scripts/knowledge-autopilot.cjs :: 1',
   'child_process exec/spawn :: scripts/lint-repo-size.cjs :: 1',
   'child_process exec/spawn :: scripts/lint-shell.cjs :: 1',
@@ -818,6 +825,10 @@ const KNOWN_SUPPRESSIONS = [
   // 生成物の実行 ID (YYYYMMDD) の刻印。利用者に見せる日付ではなく、走るのは UTC の CI。
   // TS の helper (`localIsoDate`) を .cjs から import できない (2026-09-02)。
   '今日を UTC で取る (new Date().toISOString().slice(0, 10)) :: scripts/orchestrate.cjs :: 1',
+  // 週次の依存監査の**実行日の刻印**。走るのは UTC の CI (毎週日曜 22:00 UTC) で、
+  // 利用者の画面には出ない。報告の文面も「(UTC)」と明記する。
+  // TS の helper (`localIsoDate`) を .cjs から import できないのは orchestrate.cjs と同じ。
+  '今日を UTC で取る (new Date().toISOString().slice(0, 10)) :: scripts/dependency-audit-report.cjs :: 1',
   'Ollama write-side endpoints in network code :: scripts/ollama-cli.cjs :: 1',
   'Ollama write-side endpoints in network code :: src/main/clients/ollama.ts :: 3',
   'Ollama write-side endpoints in network code :: src/renderer/pages/OllamaPage.tsx :: 2',

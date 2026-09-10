@@ -78,58 +78,101 @@ function measure(floor, dir) {
   return advisoryIds(JSON.parse(out));
 }
 
-function main() {
-  if (SECURITY_FLOORS.length === 0) {
-    console.error('❌ 床の台帳が空です (走査の不具合を疑ってください)');
-    return 1;
-  }
+/**
+ * 床を全件測る。**印字せずに結果を返す** —— 週次の報告 (`dependency-audit.yml`)
+ * が同じ測定を使うため。実装を 2 つ持つと片方が腐る。
+ *
+ * 戻り値の `status`:
+ *   `ok`         床は今日の勧告を通さない
+ *   `too-low`    床ちょうどの版に勧告が当たる (床を上げる)
+ *   `unmeasured` 勧告データベースへ出られなかった / 出力を読めなかった
+ */
+function probeFloors(floors = SECURITY_FLOORS) {
+  if (floors.length === 0) return null; // 走査の死。呼び手が落とす
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'floor-probe-'));
-  let low = 0;
-  let drift = 0;
   try {
-    for (const floor of SECURITY_FLOORS) {
+    return floors.map((floor) => {
+      const recorded = [...(floor.advisories ?? [])].sort();
       let hits;
       try {
         hits = measure(floor, path.join(root, floor.package.replace(/[^\w.-]/g, '_')));
       } catch (err) {
-        console.error(
-          `❌ ${floor.package}@${floor.atLeast} を測れませんでした (${String(err?.message ?? err)})。\n` +
-            '   勧告データベースへ出られない環境では測れません — この道具は緑になりません',
-        );
-        return 2;
+        return {
+          package: floor.package,
+          atLeast: floor.atLeast,
+          checkedOn: floor.checkedOn,
+          recorded,
+          hits: [],
+          status: 'unmeasured',
+          detail: String(err?.message ?? err),
+        };
       }
       if (hits === null) {
-        console.error(`❌ ${floor.package}: npm audit の出力を読めませんでした`);
-        return 2;
+        return {
+          package: floor.package,
+          atLeast: floor.atLeast,
+          checkedOn: floor.checkedOn,
+          recorded,
+          hits: [],
+          status: 'unmeasured',
+          detail: 'npm audit の出力を読めませんでした',
+        };
       }
-      const recorded = [...(floor.advisories ?? [])].sort();
-      if (hits.length > 0) {
-        low += 1;
-        console.error(
-          `❌ ${floor.package} の床 ${floor.atLeast} は低すぎます — その版に ${hits.length} 件の勧告が当たります:\n` +
-            hits.map((h) => `     https://github.com/advisories/${h}`).join('\n') +
-            '\n   床を上げ (package.json と SECURITY_FLOORS の atLeast)、checkedOn を今日にしてください',
-        );
-        continue;
-      }
-      const gone = recorded.filter((r) => !hits.includes(r));
-      console.log(`✅ ${floor.package}@${floor.atLeast}: 勧告 0 件 (台帳 ${recorded.length} 件: ${recorded.join(' / ')})`);
-      if (gone.length === recorded.length && recorded.length > 0) {
-        // 床が効いている証拠なので、これは正常。念のため据えた日を出す。
-        console.log(`   (checkedOn ${String(floor.checkedOn)} —— 台帳の勧告はこの床で解消済み)`);
-      }
-    }
+      return {
+        package: floor.package,
+        atLeast: floor.atLeast,
+        checkedOn: floor.checkedOn,
+        recorded,
+        hits,
+        status: hits.length > 0 ? 'too-low' : 'ok',
+        detail: '',
+      };
+    });
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
-  if (low > 0 || drift > 0) {
+}
+
+function main() {
+  const results = probeFloors();
+  if (results === null) {
+    console.error('❌ 床の台帳が空です (走査の不具合を疑ってください)');
+    return 1;
+  }
+  let low = 0;
+  let unmeasured = 0;
+  for (const r of results) {
+    if (r.status === 'unmeasured') {
+      unmeasured += 1;
+      console.error(
+        `❌ ${r.package}@${r.atLeast} を測れませんでした (${r.detail})。\n` +
+          '   勧告データベースへ出られない環境では測れません — この道具は緑になりません',
+      );
+      continue;
+    }
+    if (r.status === 'too-low') {
+      low += 1;
+      console.error(
+        `❌ ${r.package} の床 ${r.atLeast} は低すぎます — その版に ${r.hits.length} 件の勧告が当たります:\n` +
+          r.hits.map((h) => `     https://github.com/advisories/${h}`).join('\n') +
+          '\n   床を上げ (package.json と SECURITY_FLOORS の atLeast)、checkedOn を今日にしてください',
+      );
+      continue;
+    }
+    console.log(
+      `✅ ${r.package}@${r.atLeast}: 勧告 0 件 (台帳 ${r.recorded.length} 件: ${r.recorded.join(' / ')})`,
+    );
+    console.log(`   (checkedOn ${String(r.checkedOn)} —— 台帳の勧告はこの床で解消済み)`);
+  }
+  if (unmeasured > 0) return 2;
+  if (low > 0) {
     console.error(`\n❌ 低すぎる床 ${low} 件`);
     return 1;
   }
-  console.log(`\n✅ セキュリティの床 ${SECURITY_FLOORS.length} 件はいずれも今日の勧告を通しません`);
+  console.log(`\n✅ セキュリティの床 ${results.length} 件はいずれも今日の勧告を通しません`);
   console.log('   測り直したら SECURITY_FLOORS の checkedOn を今日に更新してください');
   return 0;
 }
 
 if (require.main === module) process.exit(main());
-module.exports = { advisoryIds };
+module.exports = { advisoryIds, probeFloors };

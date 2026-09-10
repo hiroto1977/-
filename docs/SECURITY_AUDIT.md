@@ -67,9 +67,16 @@ npm audit: **prod / dev とも 0 件** (2026-09-10 実測)。
   lockfile がたまたま 6.16.0 に解決されていたので `npm audit` は緑のままだった。**`^6.16.0` へ据え直した。**
   床は据えた日の勧告に対してしか正しくないので、各行に `checkedOn` を持たせ、
   180 日を超えると `lint:deps` が警告する。
-- **定期点検**: `npm run audit:floors` —— 床ちょうどの版だけを持つ使い捨ての依存関係を作って
-  `npm audit` に掛け、床がまだ十分かを測り直す (上の `qs` を見つけたのがこれ)。網が要るので
-  `verify:all` にも CI にも入れない (勧告は日々変わり、無関係な PR が赤くなると門が門でなくなる)。
+- **定期点検 (自動・週次)**: `.github/workflows/dependency-audit.yml` が毎週月曜 07:00 JST に
+  `npm run audit:report` を回す —— `npm audit` の全体と `--omit=dev` を突き合わせて
+  **dev だけの勧告**を切り出し、`npm run audit:floors` と同じ測定 (`probeFloors`) で
+  **床がまだ十分か**を測り直し、要対応を**常設 Issue 1 つ**に集める (0 件になれば自動で閉じる)。
+  手で回すなら `npm run audit:report` / `npm run audit:floors`。網が要るので
+  `verify:all` にも `ci.yml` にも入れない。
+  **2026-09-10 の当初の判断を訂正した** —— パス 143 では「無関係な PR が赤くなると門が門でなくなる」
+  を理由に週次も置かなかったが、その懸念は **PR / push の門についてのもの**で、
+  **予定実行は誰の PR も赤くしない**。`knowledge-auto.yml` が既に採っている型
+  (結果は Issue・片付いたら閉じる) に揃えたので懸念は当たらない (パス 144)。
 - dev 依存の勧告そのものを CI で落とさない方針は変えていない (`ci.yml` の注記)。
   出荷物に入らず、moderate 以下は推移依存で頻繁に出るため。**狭くする代わり、落ちたら本物として扱う。**
   電子署名まわりで npm が提案する electron-builder 25 系への降格は、Electron 43 を扱えなくなるため採らない。

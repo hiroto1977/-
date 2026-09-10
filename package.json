@@ -99,7 +99,8 @@
     "lint:parameter-prose": "node scripts/lint-parameter-prose.cjs && node scripts/lint-parameter-prose.cjs --self-test",
     "lint:zero-fold": "node scripts/zero-fold-census.cjs --check && node scripts/zero-fold-census.cjs --self-test",
     "lint:mutation-scope": "node scripts/lint-mutation-scope.cjs && node scripts/lint-mutation-scope.cjs --self-test",
-    "audit:floors": "node scripts/audit-floors.cjs"
+    "audit:floors": "node scripts/audit-floors.cjs",
+    "audit:report": "node scripts/dependency-audit-report.cjs && node scripts/dependency-audit-report.cjs --self-test"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
