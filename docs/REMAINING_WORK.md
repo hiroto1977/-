@@ -20818,3 +20818,95 @@ npm test 14,036 / verify:all 36 ゲート (exit 0)。
 標本が空だと何も検査していないので、`checked > 6` を併せて確かめる。
 `taxYear` は 2026 に固定する (基礎控除の段階が年で変わるので、既定のままだと
 **暦が変わった日に検査が落ちる** —— モジュール自身の注記どおり)。
+
+## パス 143 (2026-09-10) — **勧告 4 件と、「自分で押さえた版」の台帳が道を 1 本しか見ていなかった**
+
+実測 2026-09-10。`npm audit` (dev 込み) が **4 件**返した。
+
+| パッケージ | 重大度 | 勧告 | 中身 |
+|---|---|---|---|
+| `vitest` / `@vitest/coverage-v8` / `@vitest/mocker` | moderate | GHSA-82fw-gwwq-j7x9 | `@vitest/mocker` の redirect mock を経由した**パストラバーサル / 任意ファイル読み出し** (>=2.1.0 <4.1.11) |
+| `js-yaml` | **high** | GHSA-2883-xcg3-v3hh | `maxTotalMergeKeys` が空のマージ元に対して CPU を制限しない (>=4.0.0 <4.3.2) |
+
+どちらも**宣言の範囲の内側**で解消できた: `vitest` / `@vitest/coverage-v8` 4.1.10 → **4.1.11** (`^4.1.10` の内側)、
+`js-yaml` 4.3.1 → **4.3.2** (`electron-builder` の `^4.1.0` の内側)。
+lockfile の差分は **追加 0 / 削除 0 / 版が動いたのは 10 件**だけ。
+
+`npm audit fix` は使えなかった —— npm の解決器が `Cannot read properties of null (reading 'edgesOut')` で落ちる。
+原因は `vitest` が `peerOptional @vitest/coverage-v8@"<自分と同じ版>"` を持つことで、片方だけ動かそうとすると
+null の辺ができる。**`--legacy-peer-deps` で版を動かしてから通常の解決で peer の閉包を戻す 2 段**で当てた
+(`npm ci` は lockfile どおりに入れるので、閉包が欠けた lockfile を残すわけにはいかない)。
+
+### 本題 — 受け入れの散文が実物とずれ、台帳は道を 1 本しか見ていなかった
+
+`docs/SECURITY_AUDIT.md` は dev の残りを「electron-builder の推移的依存 (brace-expansion / minimatch / ejs /
+temp / glob の DoS・ReDoS) と vite/vitest 系」と名指ししていたが、**その日の勧告集合と 1 件も重なっていなかった**。
+実際に在ったのは検査を走らせる道具そのものの**任意ファイル読み出し**で、読んだ人は「残りは梱包道具の DoS だけ」
+と受け取る。散文で在庫を持つのをやめた。
+
+`src/shared/__tests__/dependencyOverrides.test.ts` の散文は「`overrides` は**上流が直るまで自分で押さえている
+脆弱性**の記録である」と正しく書いていたが、**走査は `package.json` の `overrides` の鍵しか見ていなかった**。
+この repo が床を作る道は 3 本ある:
+
+1. `overrides` — 推移的依存を強制的に上げる (`qs`)
+2. `devDependencies` の範囲 — 直接依存の下限を上げる (`vitest` 系・今回)
+3. **lockfile だけ** — どこにも宣言が無く、解決結果としてだけ存在する (`js-yaml`・今回)
+
+3 は `overrides` で宣言し直した。**宣言の無い床は lockfile の衝突ひとつで黙って戻る**し、戻っても型検査も
+単体テストも通る。
+
+### 既にあった 1 本の床も、24 日で低すぎになっていた
+
+`qs` の `^6.15.2` は 2026-08-17 に GHSA-q8mj-m7cp-5q26 (<=6.15.1) に対して据えられた。
+2026-09-10 に**床ちょうどの版を実際に audit に掛けたら**、後から出た 2 件が床の許す版を覆っていた:
+
+| 版 | 勧告 |
+|---|---|
+| 6.15.2 | GHSA-x5fp-wj9c-mxmx / GHSA-4mjr-xmp4-gh2g |
+| 6.15.3 | GHSA-x5fp-wj9c-mxmx / GHSA-4mjr-xmp4-gh2g |
+| **6.16.0** | **0 件** |
+
+lockfile がたまたま 6.16.0 に解決されていたので `npm audit` は緑のままだった。
+**古い検査は「綴りが緩んでいないか」しか見ていない** —— `toMatch(/\^?6\.(1[5-9]|[2-9]\d)\./)` は `^6.15.2` を
+永遠に通す。**`^6.16.0` へ据え直した。**
+
+### 直し
+
+- `scripts/lint-dependencies.cjs` に**規則 7** と台帳 `SECURITY_FLOORS` (床 4 件・`package` / `atLeast` /
+  `mechanism` / `advisories` / `checkedOn` / `why`)。道を問わず **宣言の消失・指定が許す最小の版の緩み・
+  lockfile の解決版 (入れ子の複製も全部) の下回り・双方向 (台帳に無い `overrides`)** を見る。
+  **ネットワークに出ない**ので CI で安定する。
+- `staleFloors()`: `checkedOn` から 180 日で `lint:deps` が警告する (床は据えた日の勧告に対してしか正しくない)。
+- **`npm run audit:floors`** (`scripts/audit-floors.cjs`・新設): 床ちょうどの版だけを持つ使い捨ての依存関係を
+  一時ディレクトリに作って `npm audit` に掛け、**床がまだ十分かを測り直す** (上の `qs` を見つけたのがこれ)。
+  網が要るので `verify:all` にも CI にも入れない —— 勧告は日々変わり、無関係な PR が赤くなると門が門でなくなる
+  (`ci.yml` の注記と同じ判断)。`docs/SECURITY_AUDIT.md` の定期点検に載せた。
+- `dependencyOverrides.test.ts` を台帳 1 つに寄せて書き直した (15 件)。
+- `lint:forbidden` の `KNOWN_SUPPRESSIONS` に `scripts/audit-floors.cjs` の `child_process` を理由つきで登録
+  (**この門は新しい `child_process` をその場で捕まえた**)。
+- `SECURITY.md` の `electron-builder` pin が `^25.1.8` のまま (実物 `^26.15.3`) だったのも直した。
+
+### 対照 (実物を壊して鳴らした 8 本 + 無改変)
+
+| 壊し方 | 結果 |
+|---|---|
+| `js-yaml` の override を消す | ✓ 鳴る |
+| `qs` の override を消す | ✓ 鳴る |
+| `vitest` の宣言を `^4.1` へ緩める | ✓ 鳴る (4.1.0 まで下がれる) |
+| `@vitest/coverage-v8` の宣言を消す | ✓ 鳴る |
+| lockfile の `js-yaml` を 4.3.1 へ戻す | ✓ 鳴る |
+| lockfile の `vitest` を 4.1.10 へ戻す | ✓ 鳴る |
+| 入れ子で古い `js-yaml` が 1 本だけ残る | ✓ 鳴る |
+| 理由の無い override (`tar-fs`) を足す | ✓ 鳴る |
+| **無改変** | **✓ 黙る** |
+
+self-test は床 14 本 + 台帳の衛生 3 本 + 古びの境界 5 本 (179 日は黙り、180 日ちょうどで鳴る)。
+
+### 残る穴 (正直に)
+
+床が**据えた日の後に低すぎになる**のは、ネットワークに出ない門では検出できない。
+`lint:deps` が測れるのは「いつ測ったか」まで (180 日で警告)。
+実際に測り直すのは `npm run audit:floors` を**人が回したとき**だけで、
+`qs` は 24 日で低すぎになったのだから 180 日の警告では間に合わない。
+自動化するなら CI に週次で `audit:floors` を置くのが筋だが、
+Actions 分と「赤を無視する習慣」を天秤にかけて今回は置いていない。

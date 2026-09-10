@@ -100,9 +100,14 @@ npm run lint:csp           # 出荷 HTML の CSP を**実物**に当てる (self
                            #   雛形側 (index.html / inline-html.cjs の buildCsp) は
                            #   `shared/__tests__/shippedCsp.test.ts` が既に留めている ——
                            #   こちらが見るのは **注入後の公開ファイル** と landing / デモ 3 本
-npm run lint:deps          # 依存の供給網 (本番依存の閉包 5 件 / インストール時コード 3 件 の台帳・
-                           #   取得元は registry のみ・integrity 必須。本番依存は単一 HTML へ
-                           #   畳み込まれ保管庫と同じオリジンで走るので、増やすなら理由を書く)
+npm run lint:deps          # 依存の供給網 (本番依存の閉包 5 件 / インストール時コード 3 件 /
+                           #   **セキュリティの床 4 件** の台帳・取得元は registry のみ・integrity 必須。
+                           #   本番依存は単一 HTML へ畳み込まれ保管庫と同じオリジンで走るので、
+                           #   増やすなら理由を書く。床は「上流が直るまで自分で押さえている版」で、
+                           #   道 (overrides / devDependencies の範囲) を問わず 1 つの台帳に載せ、
+                           #   宣言の消失・指定の緩み・lockfile の解決版 (入れ子の複製も) を見る。
+                           #   **床が今日の勧告にまだ十分かは網が要る** → `npm run audit:floors`
+                           #   (CI では走らせない。定期点検の道具)
 npm run lint:storage       # ブラウザに残す物の台帳 (IndexedDB 4 / Cache Storage 1 /
                            #   localStorage 21 / sessionStorage 4。cookie と OPFS は 0 件だが走査はする)。
                            #   新しい保存先が黙って増えないこと・バックアップが覆うのは 1 つだけ・

@@ -45,11 +45,34 @@ Electron main / OAuth+PKCE / プロキシ SSRF ガード / WebCrypto Vault / XSS
 | R3-6 | `components/DataList.tsx`, `StatusBar.tsx` | 第三者由来 `thumbnailUrl`/`avatarUrl` のスキーム未検証 (現状 `<img>` なので実害なし。`href`/CSS `url()`/SVG `use` へ移した瞬間に危険) → https?/data:image のみ許可し、それ以外は `src` 属性自体を出さない。tab/CR/LF を除去してから判定 | 修正 |
 | R3-7 | `package.json` | Electron ^33 の既知 CVE → **43.2.0** / electron-builder → 26.15.3。E34〜43 の breaking-changes を精査し使用 API に影響なしを確認。2026-09-05 に 43 系の最新 **43.6.0** へ（patch 4 つぶんの Chromium / Node の security backport。`npm audit` は patch release を勧告として出さないので `npm outdated` の `wanted` で見る。実物の起動は `smoke:app` で確認） | 修正 |
 
-production npm audit: **0 脆弱性**。dev 依存の残りは electron-builder の推移的依存 (brace-expansion /
-minimatch / ejs / temp / glob の DoS・ReDoS) と vite/vitest 系。いずれも**出荷物の依存ツリーには入らず**、
-かつ攻撃前提が本プロジェクトの使い方では成立しない (`vitest --ui` は未使用、vite dev server は
-ローカルのみ、electron-builder はリリースタグ時に自前ソースをビルドするだけ)。
-electron-builder については npm の提案が 25 系への降格であり、Electron 43 を扱えなくなるため採らない。
+npm audit: **prod / dev とも 0 件** (2026-09-10 実測)。
+
+> **この段落は 2026-09-10 まで実物とずれていた。** 「dev 依存の残りは brace-expansion / minimatch /
+> ejs / temp / glob と vite/vitest 系」と名指ししていたが、その日の勧告集合は **1 件も重なっていなかった**
+> —— 実際に在ったのは `@vitest/mocker` の**パストラバーサル / 任意ファイル読み出し**
+> (GHSA-82fw-gwwq-j7x9) と `js-yaml` の DoS (GHSA-2883-xcg3-v3hh · **high**) で、どちらもここに理由が
+> 書かれていなかった。読んだ人は「残りは梱包道具の DoS だけ」と受け取る。
+> **散文で在庫を持つのをやめた** —— 受け入れではなく「自分で押さえた床」を台帳にして機械に持たせた。
+
+- **勧告 4 件は宣言の範囲内で解消**した (2026-09-10): `vitest` / `@vitest/coverage-v8` 4.1.10 → **4.1.11**
+  (`^4.1.10` の内側)、`js-yaml` 4.3.1 → **4.3.2** (electron-builder の `^4.1.0` の内側)。
+  追加・削除されたパッケージは 0 件で、動いたのは 10 件の patch だけ。
+- **押さえた版は `scripts/lint-dependencies.cjs` の `SECURITY_FLOORS` (床 4 件) が持つ** (`lint:deps` / 規則 7)。
+  床は道 (`overrides` / `devDependencies` の範囲) を問わず 1 つの台帳に載り、
+  **宣言の消失・指定の緩み・lockfile の解決版 (入れ子の複製も) の下回り**で落ちる。
+  `js-yaml` は解決結果としてしか存在しなかったので `overrides` で宣言し直した ——
+  宣言の無い床は lockfile の衝突ひとつで黙って戻る。
+- **既にあった床も古びていた。** `qs` の `^6.15.2` (2026-08-17 に据えた) は 24 日後には低すぎで、
+  後から出た GHSA-x5fp-wj9c-mxmx (<=6.15.3) と GHSA-4mjr-xmp4-gh2g (<6.16.0) が床の許す版を覆っていた。
+  lockfile がたまたま 6.16.0 に解決されていたので `npm audit` は緑のままだった。**`^6.16.0` へ据え直した。**
+  床は据えた日の勧告に対してしか正しくないので、各行に `checkedOn` を持たせ、
+  180 日を超えると `lint:deps` が警告する。
+- **定期点検**: `npm run audit:floors` —— 床ちょうどの版だけを持つ使い捨ての依存関係を作って
+  `npm audit` に掛け、床がまだ十分かを測り直す (上の `qs` を見つけたのがこれ)。網が要るので
+  `verify:all` にも CI にも入れない (勧告は日々変わり、無関係な PR が赤くなると門が門でなくなる)。
+- dev 依存の勧告そのものを CI で落とさない方針は変えていない (`ci.yml` の注記)。
+  出荷物に入らず、moderate 以下は推移依存で頻繁に出るため。**狭くする代わり、落ちたら本物として扱う。**
+  電子署名まわりで npm が提案する electron-builder 25 系への降格は、Electron 43 を扱えなくなるため採らない。
 
 ### 第1ラウンド (2026-05-12)
 
