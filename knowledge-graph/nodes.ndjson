@@ -2967,7 +2967,7 @@
 {"id":"labor-managerial-supervisor","collection":"compliance","category":"labor","categoryLabel":"労務","title":"労働基準法上の管理監督者（労基法41条2号）","year":null,"authors":[],"degree":4}
 {"id":"labor-mandatory-retirement-age","collection":"compliance","category":"labor","categoryLabel":"労務","title":"定年年齢の下限（60歳未満定年の禁止）","year":null,"authors":[],"degree":8}
 {"id":"labor-maternity-allowance","collection":"compliance","category":"labor","categoryLabel":"労務","title":"健康保険の出産手当金","year":null,"authors":[],"degree":13}
-{"id":"labor-maternity-harassment","collection":"compliance","category":"labor","categoryLabel":"労務","title":"妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）","year":null,"authors":[],"degree":19}
+{"id":"labor-maternity-harassment","collection":"compliance","category":"labor","categoryLabel":"労務","title":"妊娠・出産・育児休業等に関するハラスメント防止措置義務（マタハラ）","year":null,"authors":[],"degree":18}
 {"id":"labor-maternity-leave","collection":"compliance","category":"labor","categoryLabel":"労務","title":"産前産後休業（労働基準法第65条）","year":null,"authors":[],"degree":13}
 {"id":"labor-medical-interview","collection":"compliance","category":"labor","categoryLabel":"労務","title":"長時間労働者に対する医師による面接指導","year":null,"authors":[],"degree":8}
 {"id":"labor-midcareer-hiring-ratio-disclosure","collection":"compliance","category":"labor","categoryLabel":"労務","title":"正規雇用労働者の中途採用比率の公表義務（労働施策総合推進法）","year":null,"authors":[],"degree":6}
@@ -3908,7 +3908,7 @@
 {"id":"support-03","collection":"support","category":"resource","categoryLabel":"相談窓口","title":"こころの健康相談統一ダイヤル","year":null,"authors":[],"degree":8}
 {"id":"tax-amended-return","collection":"compliance","category":"tax","categoryLabel":"税務","title":"修正申告・期限後申告と加算税","year":null,"authors":[],"degree":31}
 {"id":"tax-angel-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"エンジェル税制（ベンチャー企業投資促進税制）","year":null,"authors":[],"degree":9}
-{"id":"tax-asset-replacement","collection":"compliance","category":"tax","categoryLabel":"税務","title":"特定の事業用資産の買換えの場合の譲渡所得の課税の特例","year":null,"authors":[],"degree":5}
+{"id":"tax-asset-replacement","collection":"compliance","category":"tax","categoryLabel":"税務","title":"特定の事業用資産の買換えの場合の譲渡所得の課税の特例","year":null,"authors":[],"degree":4}
 {"id":"tax-automobile-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"自動車税（種別割）","year":null,"authors":[],"degree":16}
 {"id":"tax-bad-debt","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の貸倒損失と貸倒引当金","year":null,"authors":[],"degree":3}
 {"id":"tax-basic-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税の基礎控除（令和7年改正反映）","year":null,"authors":[],"degree":29}
@@ -3967,14 +3967,14 @@
 {"id":"tax-housing-fund-gift","collection":"compliance","category":"tax","categoryLabel":"税務","title":"直系尊属からの住宅取得等資金贈与の非課税特例","year":null,"authors":[],"degree":11}
 {"id":"tax-housing-loan-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"住宅借入金等特別控除（住宅ローン控除）","year":null,"authors":[],"degree":18}
 {"id":"tax-income-categories","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税における所得の10種類の区分","year":null,"authors":[],"degree":6}
-{"id":"tax-income-tax-progressive","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税の超過累進税率","year":null,"authors":[],"degree":17}
+{"id":"tax-income-tax-progressive","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税の超過累進税率","year":null,"authors":[],"degree":18}
 {"id":"tax-individual-business-tax","collection":"compliance","category":"tax","categoryLabel":"税務","title":"個人事業税","year":null,"authors":[],"degree":13}
 {"id":"tax-individual-loss-carryover","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税 純損失の繰越控除（青色申告者）","year":null,"authors":[],"degree":2}
 {"id":"tax-inheritance-basic-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"相続税の基礎控除額","year":null,"authors":[],"degree":6}
-{"id":"tax-input-credit-method","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の仕入税額控除（個別対応方式・一括比例配分方式）","year":null,"authors":[],"degree":11}
-{"id":"tax-invoice","collection":"compliance","category":"tax","categoryLabel":"税務","title":"インボイス制度（適格請求書等保存方式）","year":null,"authors":[],"degree":10}
+{"id":"tax-input-credit-method","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の仕入税額控除（個別対応方式・一括比例配分方式）","year":null,"authors":[],"degree":10}
+{"id":"tax-invoice","collection":"compliance","category":"tax","categoryLabel":"税務","title":"インボイス制度（適格請求書等保存方式）","year":null,"authors":[],"degree":11}
 {"id":"tax-invoice-20percent-special","collection":"compliance","category":"tax","categoryLabel":"税務","title":"インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）","year":null,"authors":[],"degree":18}
-{"id":"tax-invoice-input-credit","collection":"compliance","category":"tax","categoryLabel":"税務","title":"インボイス制度と仕入税額控除の要件","year":null,"authors":[],"degree":6}
+{"id":"tax-invoice-input-credit","collection":"compliance","category":"tax","categoryLabel":"税務","title":"インボイス制度と仕入税額控除の要件","year":null,"authors":[],"degree":4}
 {"id":"tax-invoice-small-amount-special","collection":"compliance","category":"tax","categoryLabel":"税務","title":"インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）","year":null,"authors":[],"degree":16}
 {"id":"tax-large-corp-efiling","collection":"compliance","category":"tax","categoryLabel":"税務","title":"大法人の電子申告（e-Tax）義務化","year":null,"authors":[],"degree":10}
 {"id":"tax-life-insurance-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"生命保険料控除","year":null,"authors":[],"degree":3}
@@ -3984,7 +3984,7 @@
 {"id":"tax-loss-carryback","collection":"compliance","category":"tax","categoryLabel":"税務","title":"法人税の欠損金の繰戻しによる還付","year":null,"authors":[],"degree":25}
 {"id":"tax-loss-carryforward","collection":"compliance","category":"tax","categoryLabel":"税務","title":"青色申告法人の繰越欠損金","year":null,"authors":[],"degree":2}
 {"id":"tax-loss-offsetting","collection":"compliance","category":"tax","categoryLabel":"税務","title":"所得税の損益通算","year":null,"authors":[],"degree":14}
-{"id":"tax-lump-sum-depreciation","collection":"compliance","category":"tax","categoryLabel":"税務","title":"一括償却資産の損金算入（3年均等償却）","year":null,"authors":[],"degree":18}
+{"id":"tax-lump-sum-depreciation","collection":"compliance","category":"tax","categoryLabel":"税務","title":"一括償却資産の損金算入（3年均等償却）","year":null,"authors":[],"degree":20}
 {"id":"tax-medical-expense-deduction","collection":"compliance","category":"tax","categoryLabel":"税務","title":"医療費控除","year":null,"authors":[],"degree":11}
 {"id":"tax-newco-consumption-exemption","collection":"compliance","category":"tax","categoryLabel":"税務","title":"新設法人の消費税納税義務免除の特例","year":null,"authors":[],"degree":5}
 {"id":"tax-nisa","collection":"compliance","category":"tax","categoryLabel":"税務","title":"NISA（少額投資非課税制度）","year":null,"authors":[],"degree":11}
@@ -4010,7 +4010,7 @@
 {"id":"tax-securities-account","collection":"compliance","category":"tax","categoryLabel":"税務","title":"上場株式等の特定口座制度","year":null,"authors":[],"degree":11}
 {"id":"tax-self-medication","collection":"compliance","category":"tax","categoryLabel":"税務","title":"セルフメディケーション税制（医療費控除の特例）","year":null,"authors":[],"degree":3}
 {"id":"tax-simplified-consumption","collection":"compliance","category":"tax","categoryLabel":"税務","title":"消費税の簡易課税制度","year":null,"authors":[],"degree":10}
-{"id":"tax-small-amount-depreciation","collection":"compliance","category":"tax","categoryLabel":"税務","title":"中小企業者等の少額減価償却資産の特例","year":null,"authors":[],"degree":11}
+{"id":"tax-small-amount-depreciation","collection":"compliance","category":"tax","categoryLabel":"税務","title":"中小企業者等の少額減価償却資産の特例","year":null,"authors":[],"degree":10}
 {"id":"tax-small-business-mutual-aid","collection":"compliance","category":"tax","categoryLabel":"税務","title":"小規模企業共済制度","year":null,"authors":[],"degree":6}
 {"id":"tax-small-enterprise-mutual-aid","collection":"compliance","category":"tax","categoryLabel":"税務","title":"小規模企業共済等掛金控除","year":null,"authors":[],"degree":11}
 {"id":"tax-small-residential-land","collection":"compliance","category":"tax","categoryLabel":"税務","title":"小規模宅地等についての相続税の課税価格の計算の特例","year":null,"authors":[],"degree":12}

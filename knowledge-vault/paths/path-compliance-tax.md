@@ -21,11 +21,11 @@ tags:
 - [[tax-flat-amount-reduction-2024|令和6年（2024年）分の定額減税（所得税3万円・住民税1万円）]]（接続 22）
 - [[tax-sme-management-enhancement|中小企業経営強化税制（経営力向上計画に基づく即時償却・税額控除）]]（接続 22）
 - [[tax-global-minimum-tax|グローバル・ミニマム課税（国際最低課税額に対する法人税・IIR）]]（接続 21）
+- [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]]（接続 20）
 - [[tax-business-tax-pro-forma|法人事業税の外形標準課税]]（接続 19）
 - [[tax-housing-loan-deduction|住宅借入金等特別控除（住宅ローン控除）]]（接続 18）
+- [[tax-income-tax-progressive|所得税の超過累進税率]]（接続 18）
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]]（接続 18）
-- [[tax-lump-sum-depreciation|一括償却資産の損金算入（3年均等償却）]]（接続 18）
-- [[tax-income-tax-progressive|所得税の超過累進税率]]（接続 17）
 - [[tax-automobile-tax|自動車税（種別割）]]（接続 16）
 - [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]]（接続 16）
 

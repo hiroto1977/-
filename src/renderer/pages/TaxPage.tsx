@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
+import { invoiceTransitionCurrentLabel, invoiceTransitionScheduleLabel } from '../../shared/invoiceTransition';
 import { tableStyle, thStyle, tdStyle } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { RealtimeTicker, type RealtimeRow } from '../components/RealtimeTicker';
@@ -1421,6 +1422,10 @@ export function TaxPage() {
           <strong>非課税売上</strong>があると按分が必要です。按分せずに全額を引くと<strong>納付が過少に出ます</strong>。
           ここでは実際の 2 方式（個別対応方式・一括比例配分方式）で計算します。売上 (標準/軽減) は ⑩ の入力を使います。
           ※ 概算試算です。課税売上割合に準ずる割合の承認・調整対象固定資産の調整等は反映しません。
+          <br />
+          ※ <strong>免税事業者等（インボイス登録の無い相手）からの課税仕入れ</strong>は、経過措置で
+          <strong>{invoiceTransitionCurrentLabel()}</strong>しか控除できません（{invoiceTransitionScheduleLabel()}と段階縮小・同一先からの仕入れは年1億円まで）。
+          <strong>この試算はその区別をしていません</strong>ので、登録の無い相手からの仕入れが多いほど実際の納付は多くなります。
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>

@@ -1521,13 +1521,16 @@ export const VERIFIED_COMPLIANCE: readonly SourcedClaim<ComplianceFact>[] = [
       title: 'インボイス制度と仕入税額控除の要件',
       statement:
         '2023年10月のインボイス制度開始以後、原則として適格請求書（インボイス）と一定事項を記載した帳簿の保存が' +
-        '仕入税額控除の要件。免税事業者等からの課税仕入れには経過措置（2023/10〜2026/9は80%、2026/10〜2029/9は50%控除）がある。',
+        '仕入税額控除の要件。免税事業者等からの課税仕入れには経過措置があり、控除割合は令和8年度税制改正で見直された' +
+        '（2026年9月30日まで80%、以後 70%（〜2028年9月）→50%（〜2030年9月）→30%（〜2031年9月）と段階縮小して2031年9月末で終了）。' +
+        '適用には区分経理と帳簿への記載が必要で、同一の免税事業者等からの課税仕入れは年1億円が上限。',
       authority: '所管: 国税庁（消費税法）',
-      asOf: '2026-06',
+      asOf: '2026-09',
     },
     sources: [
       { url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6498.htm', type: 'government', label: '国税庁 No.6498 インボイス制度' },
       { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice_about.htm', type: 'government', label: '国税庁 インボイス制度について' },
+      { url: 'https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice-review/index.htm', type: 'government', label: '国税庁 令和8年度税制改正 インボイス関連特集' },
       { url: 'https://ayusawa-partners.jp/column/invoice-keika-sochi-80-50', type: 'media', label: 'インボイスの経過措置 解説' },
     ],
   },

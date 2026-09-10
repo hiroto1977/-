@@ -256,6 +256,7 @@
     "src/shared/taxCalc.ts",
     "src/shared/taxCapitalGains.ts",
     "src/shared/taxCasual.ts",
+    "src/shared/invoiceTransition.ts",
     "src/shared/taxConsumption.ts",
     "src/shared/taxConsumptionBusiness.ts",
     "src/shared/taxConsumptionSchedule.ts",

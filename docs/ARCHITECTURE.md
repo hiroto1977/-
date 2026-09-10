@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **12657** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **12677** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
 | 陰性対照つきゲート | 31 / 36 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 538 | 自己検証 |
+| `file:line` 参照数 | 540 | 自己検証 |
 
 ### 統合フロー図
 
@@ -2193,7 +2193,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **281 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **282 ファイル**。
 
 #### 点数の定義 (分母に何を入れないか)
 
@@ -2926,6 +2926,24 @@ UTC 日付だと日本の 0〜9 時に前日として判定する)。文字列�
 (2027-09-10) でしか見えない。自作の ISO 日付の読み取りは
 `bankFormat.parseIsoDate` へ寄せた —— 日の検査が月の検査に包含されて**殺せない
 変異体**になっていたため (2 桁の日がどう外れても繰り上がりで月が変わる)。
+
+#### 経過措置の割合は表 1 つから (2026-09-10・パス 142)
+
+免税事業者等 (適格請求書発行事業者でない者) からの課税仕入れは、経過措置として仕入税額相当額の
+一定割合を控除できる。その割合は年月で段階的に縮小する —— `src/shared/invoiceTransition.ts` の
+`INVOICE_TRANSITION_STAGES` が**唯一の出所**で、段は `{ from, to, rate }` を持ち、
+`invoiceTransitionStageOn` / `invoiceTransitionRateOn` が今日の段を引く (措置の外と読めない時計は
+**null**。「0%」と混ぜない)。文面 (`invoiceTransitionScheduleLabel` /
+`invoiceTransitionCurrentLabel`) も表から組み、書類スタジオの注記と税務ページ ⑩-3 はそれを差し込む。
+
+2026-09-10 まではこの日程が**6 か所に手で書かれ、2 か所が令和 8 年度改正の前のまま**だった
+(知識台帳の 2 項目が同じ期間について 70% と 50% を言っていた)。散文の一致は
+`src/renderer/data/__tests__/invoiceTransitionConsistency.test.ts` が見る —— 割合が**段の順に**現れること・
+改正前の終わり (2029 年 9 月) を残していないこと・`免税事業者等` を書くファイルが台帳のとおりであること
+(母集団の走査)。期限 `INVOICE_TRANSITION_END` は `lint:rate-freshness` の台帳に在る。
+
+**この割合は計算に入っていない。** 本則課税の概算は課税仕入れの消費税を全額控除できる前提なので、
+画面はその旨を断る (区別して計算するには仕入れの入力を分ける必要がある)。
 
 #### 2割特例の後継 —— 3割特例と納税者の区分 (2026-09-10・パス 141)
 

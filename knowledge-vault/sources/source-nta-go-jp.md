@@ -2,7 +2,7 @@
 title: "nta.go.jp"
 type: source-domain
 host: "nta.go.jp"
-cite_count: 288
+cite_count: 289
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # nta.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **288 件**（公的 288）
+> [!info] 出典ドメイン索引 ・ 引用 **289 件**（公的 289）
 
 ## このドメインを出典とする項目
 
@@ -176,6 +176,7 @@ tags:
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 国税庁2割特例（小規模事業者に対する負担軽減措置）の概要
 - [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 国税庁No.6498インボイス制度
 - [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 国税庁インボイス制度について
+- [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 国税庁令和8年度税制改正インボイス関連特集
 - [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 国税庁インボイスQ&A事務負担の軽減措置
 - [[tax-invoice-small-amount-special|インボイス制度の少額特例（税込1万円未満は帳簿のみで仕入税額控除）]] — 国税庁少額特例（事務負担の軽減措置）の概要
 - [[tax-large-corp-efiling|大法人の電子申告（e-Tax）義務化]] — 国税庁大法人の電子申告義務化について

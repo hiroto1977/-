@@ -117,6 +117,21 @@ const DATED_MEASURES = [
       '(延長されなければ smeMeasureWindow() が measure-ended を返し、画面は特例を勧めません)。',
   },
   {
+    /*
+     * **同じ日程が 6 か所に手で書かれ、2 か所が改正前のまま残っていた** (2026-09-10 · パス 142)。
+     * 定数を 1 つにしたので、ここに載せれば終わりの 180 日前から鳴る。
+     */
+    label: 'インボイス 免税事業者等からの課税仕入れの経過措置 (段階的に縮小)',
+    source: 'src/shared/invoiceTransition.ts',
+    constName: 'INVOICE_TRANSITION_END',
+    warnWithinDays: 180,
+    how:
+      '延長・再改正の有無を国税庁のインボイス特集と翌年度の税制改正大綱 (財務省) で確かめ、' +
+      'INVOICE_TRANSITION_STAGES (src/shared/invoiceTransition.ts) の段を進めてください。延長されなければ ' +
+      'invoiceTransitionRateOn() が null を返し、画面は「経過措置は終了（控除できません）」と書きます ' +
+      '(文面と知識台帳は表から組む / 突き合わせるので、ここだけ直せば全部が動きます)。',
+  },
+  {
     label: '中小企業投資促進税制 (措法 42 の 6)',
     source: 'src/shared/taxCalc.ts',
     constName: 'INVESTMENT_PROMOTION_MEASURE_END',
