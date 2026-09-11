@@ -145,6 +145,29 @@ renderer に `caches.open(…)` を足しても ✅ を返した（実測）。
 どちらかが戻れば CI が落ちる。上の表の「中身」と「保護」の欄は、
 **その 2 つの検査が生きていることに依存している**。
 
+**ただしその 2 つは「SW が走っている前提で何を焼くか」しか見ていない ——
+「どこで走るか」は見ていない。** (2026-09-11 · パス 149)
+走る場所を決めているのは**組み立ての分離**である:
+
+- `scripts/inject-pwa.cjs` が SW 登録を差し込むのは Pages の `_site/*.html` **だけ**
+- 配布物を作る `build:web` (= `tsc -b && vite build && inline-html.cjs`) は injector を通らない
+- 実測 2026-09-11: `dist/standalone.html` は `serviceWorker` / `sw.js` /
+  `manifest.webmanifest` / `apple-touch-icon` のいずれも **0 件**。同じファイルに
+  injector を当てた写しは各 **1 件**
+
+**なぜ分離が要るか。** `register('./sw.js')` の scope は script の置き場所なので、
+Pages では `/-/` に収まる。もし配布物が登録を持ち、利用者が `sw.js` も一緒に自分の
+サーバのルートへ置いたら、scope は**そのオリジン全体**になる。唯一の絞りは
+「同一オリジン」だけなので、**そのオリジンが配るものは何でも平文で Cache Storage に
+無期限で残る** —— 上で閉じた 2026-07 の指摘と同じ形が、別の扉から開く。
+
+**この扉には 2026-09-11 まで鍵が無かった。** `build:web` に injector を 1 行足せば、
+`serviceWorker.test.ts` の 2 判定は通ったまま・上の表も「アプリシェルだけ」と読めたまま、
+配布物が SW を撒くようになる。いまは
+`src/shared/__tests__/distributedArtifactNoPwa.test.ts` が分離そのものを留める
+(npm script のどれも injector を呼ばない・`inline-html` は injector を参照しない・
+**pages.yml は実際に呼んでいる**・実物の `injectPwaTags` が探している綴りを足す)。
+
 なお Cache Storage が生成元ごとに持たれるのは**この媒体に限った話ではない**ので、
 在庫の冒頭「この在庫全体に掛かる前提」へ移した（2026-08-28 に判断済み）。
 
