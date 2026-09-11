@@ -389,6 +389,7 @@ export function SecurityPage() {
         </div>
         <input
           type="password"
+          autoComplete="off"
           placeholder="パスワードを入力して強度を確認"
           value={pwInput}
           onChange={(e) => setPwInput(e.target.value)}

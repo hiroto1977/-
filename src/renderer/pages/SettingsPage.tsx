@@ -252,6 +252,7 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
         <div style={{ display: 'flex', gap: 6 }}>
           <input
             type="password"
+            autoComplete="off"
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={(e) => {
@@ -458,6 +459,7 @@ export function VaultControls() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <input
             type="password"
+            autoComplete="current-password"
             value={oldPw}
             onChange={(e) => setOldPw(e.target.value)}
             placeholder="現在のパスワード"
@@ -465,6 +467,7 @@ export function VaultControls() {
           />
           <input
             type="password"
+            autoComplete="new-password"
             value={newPw}
             onChange={(e) => setNewPw(e.target.value)}
             placeholder={`新しいパスワード (${MIN_PASSWORD_LENGTH} 文字以上)`}
@@ -472,6 +475,7 @@ export function VaultControls() {
           />
           <input
             type="password"
+            autoComplete="new-password"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             placeholder="新しいパスワード (確認)"
@@ -1381,6 +1385,7 @@ export function ProxySection() {
           />
           <input
             type="password"
+            autoComplete="off"
             value={secret}
             onChange={(e) => setSecret(e.target.value)}
             placeholder="共有秘密 (空欄にすると誰でも中継できます)"

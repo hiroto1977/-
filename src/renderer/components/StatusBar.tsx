@@ -198,6 +198,7 @@ export function StatusBar({
         <span style={{ display: 'flex', gap: 6 }}>
           <input
             type="password"
+            autoComplete="off"
             placeholder={tokenUi.placeholder ?? 'トークン'}
             value={token}
             onChange={(e) => setToken(e.target.value)}

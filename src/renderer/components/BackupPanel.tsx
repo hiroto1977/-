@@ -122,6 +122,7 @@ export function BackupPanel() {
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 8 }}>
         <input
           type="password"
+          autoComplete="new-password"
           data-backup-passphrase
           value={passphrase}
           placeholder="暗号化パスワード（任意・12 文字以上）"

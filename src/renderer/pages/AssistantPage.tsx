@@ -625,6 +625,7 @@ export function AssistantPage() {
             Anthropic API キー
             <input
               type="password"
+              autoComplete="off"
               value={credsForm.anthropic}
               placeholder="sk-ant-…"
               aria-label="Anthropic API キー"
@@ -635,6 +636,7 @@ export function AssistantPage() {
             OpenAI API キー (ChatGPT)
             <input
               type="password"
+              autoComplete="off"
               value={credsForm.openai}
               placeholder="sk-…"
               aria-label="OpenAI API キー"
@@ -645,6 +647,7 @@ export function AssistantPage() {
             Google Gemini API キー
             <input
               type="password"
+              autoComplete="off"
               value={credsForm.gemini}
               placeholder="AIza…"
               aria-label="Google Gemini API キー"
@@ -685,6 +688,7 @@ export function AssistantPage() {
             互換 API キー (任意)
             <input
               type="password"
+              autoComplete="off"
               value={credsForm.compatKey}
               placeholder="キー不要のサーバーは空欄"
               aria-label="互換 API キー"
