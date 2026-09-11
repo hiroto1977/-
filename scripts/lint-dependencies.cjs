@@ -116,7 +116,7 @@ const SECURITY_FLOORS = [
     package: 'qs',
     atLeast: '6.16.0',
     mechanism: 'overrides',
-    checkedOn: '2026-09-10',
+    checkedOn: '2026-09-11',
     advisories: ['GHSA-q8mj-m7cp-5q26', 'GHSA-x5fp-wj9c-mxmx', 'GHSA-4mjr-xmp4-gh2g'],
     why:
       '2026-08-17 に qs.stringify の DoS (GHSA-q8mj-m7cp-5q26 / <=6.15.1) を @stryker-mutator/core → '
@@ -129,7 +129,7 @@ const SECURITY_FLOORS = [
     package: 'js-yaml',
     atLeast: '4.3.2',
     mechanism: 'overrides',
-    checkedOn: '2026-09-10',
+    checkedOn: '2026-09-11',
     advisories: ['GHSA-2883-xcg3-v3hh'],
     why:
       '2026-09-10: js-yaml の DoS (high・maxTotalMergeKeys が空のマージ元に対して CPU を制限しない)。'
@@ -141,7 +141,7 @@ const SECURITY_FLOORS = [
     package: 'vitest',
     atLeast: '4.1.11',
     mechanism: 'devDependency',
-    checkedOn: '2026-09-10',
+    checkedOn: '2026-09-11',
     advisories: ['GHSA-82fw-gwwq-j7x9'],
     why:
       '2026-09-10: @vitest/mocker の redirect mock を経由したパストラバーサル / 任意ファイル読み出し'
@@ -152,7 +152,7 @@ const SECURITY_FLOORS = [
     package: '@vitest/coverage-v8',
     atLeast: '4.1.11',
     mechanism: 'devDependency',
-    checkedOn: '2026-09-10',
+    checkedOn: '2026-09-11',
     advisories: ['GHSA-82fw-gwwq-j7x9'],
     why:
       '2026-09-10: 同上。vitest は @vitest/coverage-v8 を厳密一致 (peerOptional) で見るので、'
