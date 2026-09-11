@@ -21464,3 +21464,74 @@ metric は**ゲート自身の関数を呼ぶ** (`require('./lint-parameter-pros
 - `PageErrorBoundary` はスタックを出さず `componentDidCatch` に `console` も書かない (保存値が開発者ツールへ流れない)。
 - 保管庫の鍵導出は PBKDF2-SHA-256 600k / salt 32B / IV 12B / `extractable: false` / AAD で保管場所に束ねる。
 - mnemonic を clipboard へ出す経路 (`LockScreen.tsx`) は、読み直して自分が書いた物なら空で上書きする掃除つき。
+
+---
+
+## パス 148 (2026-09-11) — **権限を拒む「根拠」の側だけが、散文に書かれた実測のままだった**
+
+### 何が留まっていて、何が留まっていなかったか
+
+`main/main.ts` の `ALLOWED_PERMISSIONS` はクリップボードの 2 つだけで、
+media / geolocation / notifications / midi / display-capture を拒む。
+
+**許可表そのものは既に厳重に留まっていた** —— `main/__tests__/mainWindow.test.ts` は
+Electron の `.d.ts` から権限の union を読み、クリップボード 2 つ以外は
+**要求側 (`setPermissionRequestHandler`) と問い合わせ側 (`setPermissionCheckHandler`) の
+両方**が拒むことを総当たりする。ここは何も足すことが無い。
+
+**留まっていなかったのは「拒む根拠」の側**である。根拠は散文にこう書かれていた:
+
+> このアプリはどれも使っていない (実測: `getUserMedia` 0 件・`geolocation` 0 件・`new Notification` 0 件)
+
+**この実測は今日も正しい** (再測: 3 つとも実装の呼び出しは 0 件で、当たるのは
+この散文そのものだけ)。正しいのに、**それを測り続ける物が無かった**。
+
+### 放っておくとどう壊れるか
+
+誰かが音声録音のために `getUserMedia` を足すと:
+
+1. **Electron では権限が拒否されて黙って動かない** —— 許可表は変わらないので、
+   マイクを要求した瞬間に拒否される。画面には何も出ない。
+2. **散文の「実測 0 件」は嘘になる** —— が、何も鳴らない。
+
+リポジトリの最上位の原則は「手でやった検査は、その場でゲートにする」だが、
+**この実測にはそれが当たっていなかった** (パス 145 が CLAUDE.md の手書きの数 10 個に
+metric を付けたのと同じ形。あちらは「数」、こちらは「0 件という測定結果」)。
+
+### 直し
+
+- **`shared/__tests__/permissionJustification.test.ts`** (新) —— 拒んでいる権限の入口 6 つ
+  (`getUserMedia` / `navigator.geolocation` / `new Notification(` /
+  `Notification.requestPermission` / `getDisplayMedia` / `requestMIDIAccess`) を
+  `src/` の実装ファイル全件から走査する。`readOriginalSource` / `readOriginalDirEntries`
+  経由 (残作業 A の門を通る)。コメントと文字列は落とし、**根拠を書いている `main/main.ts`
+  自身は走査から外す** (そこには綴りが在るのが正しい)。
+  走査の床: 実装ファイル 300 本以上 + `main/main.ts` が母集団に居ること。
+- **`main/main.ts`** の散文に、その実測を**どこが測っているか**を書いた。
+
+### 両方向に鳴るようになった (対照で確かめた)
+
+| 壊した物 | 鳴った物 |
+| --- | --- |
+| 実物 (`VoiceCommandBar.tsx`) に `navigator.mediaDevices.getUserMedia` を植える | **新しい走査** (「入口を誰も呼んでいない」が落ちる) |
+| `ALLOWED_PERMISSIONS` に `'media'` を足す | **既存の `mainWindow.test.ts` 3 本** (media は拒否する / 許すのは 2 つだけ / 2 つの口が一致する) |
+
+つまり **API を足せば走査が落ち、許可表を広げれば既存の検査が落ちる。**
+片方だけ動かして整合を崩すことができない。
+
+走査そのものの対照も同じ検査の中に置いた (6 つの綴りを 1 つずつ標本に植えて拾うこと・
+コメントの中は拾わないこと・文字列の中は拾わないこと・散文のファイルは外すが
+**他のファイルでは拾う**こと)。**不在の主張には標本を添える**という規約どおり。
+
+### 退避は `cp` で行った (パス 147 の教訓を当てた)
+
+対照の後片付けはすべて `cp` の保存・復元で行い、`git checkout --` は使わなかった
+(パス 147 でそれでコミットしていない直しを消している)。無改変の回を先に印刷し、
+復元後にもう一度印刷して 11/11 に戻ることを確かめた。
+
+### この走査が当たらない範囲 (正直に)
+
+- **ブラウザ版のマイクは別の話。** `SpeechRecognition` を使う音声機能はブラウザ自身が
+  権限を訊くので、`ALLOWED_PERMISSIONS` は関係しない (この表は Electron の中だけの判断)。
+- **「Electron に `SpeechRecognition` の実装が無い」は散文のまま。** これは Electron 側の
+  事実で、この箱の中の走査では測れない。

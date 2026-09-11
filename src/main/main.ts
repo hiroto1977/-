@@ -90,6 +90,13 @@ function createWindow(): BrowserWindow {
    * このアプリはどれも使っていない (実測: `getUserMedia` 0 件・
    * `geolocation` 0 件・`new Notification` 0 件)。`SpeechRecognition` は
    * ブラウザ版だけで動くもので、Electron には実装が無い。
+   *
+   * **その「使っていない」は `shared/__tests__/permissionJustification.test.ts` が
+   * 走査で測る。** (2026-09-11 · パス 148) 許可表そのものは `mainWindow.test.ts` が
+   * 留めているが、**拒む根拠**の側はこの散文だけが持っていた —— 誰かが
+   * `getUserMedia` を足すと Electron では黙って動かなくなり (許可表は変わらない)、
+   * この実測は嘘になるのに何も鳴らない、という形だった。いまは両方向に鳴る:
+   * API を足せば走査が落ち、許可表を広げれば `mainWindow.test.ts` が落ちる。
    */
   const ALLOWED_PERMISSIONS: ReadonlySet<string> = new Set([
     'clipboard-read',
