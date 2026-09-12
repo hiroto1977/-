@@ -22428,3 +22428,121 @@ Google 側はもう同じ理由ではない。**参照で書いた理由は、�
   パス 112 が「最新の発話は切らずに断る」と決めた方針とずれている可能性がある。
   入力欄の `maxLength` はブラウザが打てなくするので「黙って切る」とは違うが、
   貼り付けでは黙って切れる。測ってから判断すること (未測定)。
+
+## パス 157 (2026-09-12) — **画面が「code を貼れ」と言い、受け取る側は code と state の両方を要求していた (Google OAuth)**
+
+60% 未満の次の 1 本は `pages/SettingsPage.tsx` (**41.71%** —— 設定画面向けの検査 9 本だけで
+測った値。全域計測の 52.57% とは母数が違う)。1828 行のうち**未踏 207 行**で、いちばん大きな
+連続した塊が `GoogleOAuthSection` (1607-1777 行) —— **`start` も `complete` も 1 度も
+走ったことがなかった**。押す前に読んで見つけた欠陥は 2 つで、どちらも
+「画面の指示どおりに操作すると必ず失敗する」形である。
+
+### 欠陥 1: 指示と実装が別の物を求めていた
+
+| どこ | 何と書いてあったか |
+| --- | --- |
+| 節の説明文 | 「認可後に**表示される code** をこの画面に貼り付けて完了」 |
+| 貼る欄の placeholder | `4/0Ab... (Google から受け取った code)` |
+| リダイレクト URI の既定値 | `urn:ietf:wg:oauth:2.0:oob` |
+| `oauth/pkce.ts` の冒頭 | 「認可ページの URL から **code を**コピー」 |
+
+受け取る側 `parseGoogleCallback` は **`code` と `state` の両方**を要求し、片方でも
+欠ければ `null` を返す。`exchangeGoogleCode` が CSRF 対策で `receivedState` を必須に
+しているからで、**この要求は正しい** (Security Audit R2 #3 でそう直された)。
+つまり**画面が指示するとおりに「code」だけを貼ると、必ず失敗する。** 押した後に
+初めて「URL 全体 (code= と state= を含む) を貼り付けてください」という**別の文面**が出る
+—— 真実を述べているのは、失敗してから出る 1 文だけだった。
+
+さらに悪いのは既定のリダイレクト URI で、`urn:ietf:wg:oauth:2.0:oob` は**構造上
+state を持ち帰れない** (ブラウザがどこへも飛ばないので「URL 全体」というものが
+存在しない)。**既定値のままでは、どうやっても完了できなかった。**
+
+### 欠陥 2: 認可 URL は生成されるが、画面に出ない
+
+`start()` は `setAuthUrl(url)` してから `window.serviceHub.openExternal(url)` を呼ぶが、
+`authUrl` は**段の切り替えにしか使われていない** (JSX のどこにも出ない)。
+`app:openExternal` の約束は `Promise<void>` で、OS が開けなかった場合 main は
+記録だけ残して解決する (`main.ts` にその理由が書いてある) ので、**失敗はレンダラーへ
+届かない**。既定ブラウザ未設定・`xdg-open` が無い端末では、画面は 2 段目
+(「認可を完了したら…」) に進み、**認可ページへ行く手が 1 つも残らない**。
+パス 151 (「押しても何も起きない」) の同族。
+
+### どちらを直すか
+
+「`code` だけを受け付ける」方向には直さない —— `state` の照合は CSRF 防御である。
+**落とすべきは、できない指示の方。**
+
+リダイレクト先を `http://localhost` のような http(s) にすると、Google は認可後に
+ブラウザをそこへ飛ばす。受け手は居ないので「接続できません」になるが、
+**アドレスバーには `?code=…&state=…` が出ている**。それを丸ごと貼る
+—— `file://` で開いた standalone でも成立する (コールバックを受け取るのではなく、
+人が手で運ぶ)。これが `parseGoogleCallback` が最初から想定していた形である。
+
+### 直し
+
+`src/renderer/oauth/callbackPaste.ts` (新設) が判定と文面を 1 組だけ持つ:
+
+- `redirectKind(uri)` → `'callback' | 'no-callback' | 'empty'`。
+  **「OOB かどうか」ではなく「ブラウザが URL を持って戻るか」で分ける** ——
+  `urn:…:oob` も `myapp://cb` も同じ結果になるので、名前を結果に合わせた。
+- `redirectBlockedReason(uri)` → 進めない理由 (`null` なら進める)。理由は `state` を
+  名指しし、**打ち手** (`http://localhost`) まで書く。
+- `CALLBACK_PASTE_PLACEHOLDER` / `CALLBACK_PASTE_HINT` → 求める物そのものを見せる。
+  「接続できませんと出ますが、アドレスバーには…」まで言う (利用者が失敗と読まないため)。
+- `describeCallbackPasteFailure(input)` → 欠けている側を述べる。`error=` は
+  **code/state の勘定より先**に見る (Google の拒否は `?error=…&state=…` で state を
+  載せてくるので、後ろに置くと「貼り方の話」にすり替わる)。
+
+解析は `pkce.ts` の `callbackParams` **1 つだけ**を通す (`parseGoogleCallback` を
+その薄い包みに書き換えた) —— 診断が別の読み方を持つと、「code だけが貼られています」
+という説明が実際に落とした理由と食い違う。
+
+画面側: 既定のリダイレクト URI を `http://localhost` に / 完了できない形なら
+**認可ページを開く前**に帯で断る (`[data-redirect-unusable]`。秘密も作らない) /
+**認可 URL を画面に出す** (`[data-google-auth-url]`。`userSelect: 'all'`) /
+2 段目の説明と placeholder を共有の文面から刷る / 貼り付けの失敗は理由を述べる。
+
+`oauth/pkce.ts` の冒頭 (「code をコピー」) と `GoogleAuthOptions.redirectUri` の
+注記 (「OOB (deprecated) or http://localhost」) も実物に合わせて書き直した。
+
+### 対照 (4 本とも鳴る)
+
+| 対照 | 戻した物 | 落ちた検査 |
+| --- | --- | --- |
+| C1 | 既定値を `urn:ietf:wg:oauth:2.0:oob` に戻す | **10 本** |
+| C2 | 押す前の関門 (`redirectBlockedReason`) を外す | 1 本 |
+| C3 | 認可 URL の表示を消す | 1 本 |
+| C4 | 貼り付け失敗の理由を元の 1 文に戻す | 2 本 |
+
+C1 がいちばん大きく鳴るのが正しい —— **既定値が欠陥の中心**だった。
+
+**★ 自分の実装を、自分の検査が捕まえた**: `describeCallbackPasteFailure` は最初
+`error=` の枝を code/state の勘定の**後ろ**に書いていた。Google の拒否は
+`?error=access_denied&state=…` で `state` を載せてくるので、「state は読めましたが
+code がありません」= **貼り方を直せば解決する**という誤った案内になっていた。
+検査 (`error=` の 1 本) が落ちて気付き、枝を先頭へ移した。
+
+### 測定
+
+| 対象 | 前 | 後 |
+| --- | --- | --- |
+| `oauth/callbackPaste.ts` | (新設) | **100%** (行 28/28・枝 25/25・関数 3/3) |
+| `pages/SettingsPage.tsx` (検査 9 本での測定) | 41.71% | **55.64%** |
+| `GoogleOAuthSection` の塊 (1607-1777) | **0%** | 残りは成功経路 2 行と JSX 一部のみ |
+| `oauth/pkce.ts` | — | 79.31% (交換の内部は既存の検査が持つ) |
+
+it() 12899 → **12931** (`callbackPaste` 19 + `settingsGoogleOAuth` 13)。
+
+`redirectKind` から `typeof uri === 'string'` の防御を落とした —— 呼び出し側は入力欄の
+state で必ず文字列であり、**測れない枝を 1 つ増やすだけ**になる (パス 79 の規準)。
+
+### 残り
+
+- **実機 (e2e) を回していない。** パス 153/154/155/156/157 の 5 パス分が未検証。
+- **成功経路 (token を保存できた枝) は押していない** —— `getVault().setToken` を 4 回
+  呼ぶので、解錠した保管庫が要る (PBKDF2 60 万回 × 複数)。state 不一致・交換失敗・
+  後片付けは押したので、残るのは「4 サービスへ同じ token を配る」1 か所。
+- **Google が `urn:ietf:wg:oauth:2.0:oob` を今どう扱うかは、このリポジトリからは
+  確かめられない** (外向き通信は遮断されている)。ここで断っている根拠は
+  **外部仕様ではなく自分の実装** —— 「state を持ち帰れない形は `complete()` が
+  受け取れない」という、リポジトリの中だけで検算できる事実である。

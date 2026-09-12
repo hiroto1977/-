@@ -1,13 +1,21 @@
 /**
  * PKCE OAuth helpers — Google (Drive / Calendar / Gmail) 向け。
  *
- * file:// で開かれた standalone HTML では callback redirect が
- * 不可能なため、本実装は「Out-of-band paste」フローを採用:
+ * file:// で開かれた standalone HTML では callback を受け取れないため、
+ * 本実装は「貼り付け」フローを採用:
  *   1. アプリで code_verifier / challenge / state を生成
  *   2. authorize URL を新規タブで開く
- *   3. ユーザーが Google ログイン → 認可ページの URL から code をコピー
- *   4. アプリのテキストエリアに貼り付け → token exchange
+ *   3. ユーザーが Google ログイン → 飛ばされた先の**アドレスバーの URL 全体**
+ *      (`?code=…&state=…`) をコピー
+ *   4. アプリの入力欄に貼り付け → token exchange
  *   5. token を Vault に保存
+ *
+ * **3 で「code だけ」を運ぶ形にはできない。** `exchangeGoogleCode` は CSRF 対策で
+ * `receivedState` を必須にしており、`state` は**飛ばされた先の URL にしか載らない**。
+ * だからリダイレクト先は http(s) でなければならず (受け手は不要 ——
+ * ブラウザが「接続できません」を出した時点でアドレスバーに URL は在る)、
+ * `urn:ietf:wg:oauth:2.0:oob` では完了できない。この判定と文面は
+ * `oauth/callbackPaste.ts` に 1 つだけ置く (2026-09-12 · パス 157)。
  *
  * Hosted 版 (HTTPS) では popup + postMessage で完全自動化可能だが、
  * 本フェーズでは file:// と hosted の両方で動く共通フローとして
@@ -84,21 +92,38 @@ export function safeStateEquals(a: string, b: string): boolean {
  *  query-string-only, or "code=...&state=..." fragment) and feed the result
  *  into `exchangeGoogleCode`. */
 export function parseGoogleCallback(input: string): { code: string; state: string } | null {
+  const params = callbackParams(input);
+  if (params === null) return null;
+  const code = params.get('code');
+  const state = params.get('state');
+  if (!code || !state) return null;
+  return { code, state };
+}
+
+/**
+ * 貼られた文字列を**1 通りにだけ**読む。`parseGoogleCallback` と
+ * 「なぜ読めなかったか」を述べる `oauth/callbackPaste.ts` の両方がここを通る
+ * ——「code だけが貼られている」という診断が、実際の解析と別の読み方で
+ * 出されると、画面の説明が実物とずれる (2026-09-12 · パス 157)。
+ */
+export function callbackParams(input: string): URLSearchParams | null {
   if (typeof input !== 'string') return null;
   const trimmed = input.trim();
   // **空文字の早期 return も置かない。** `new URLSearchParams('')` は空なので
-  // 下の `!code || !state` で null に落ちる。上の分岐と同じ理由 —
+  // 呼び出し側の `!code || !state` で null に落ちる。上の分岐と同じ理由 —
   // 結果が変わらない枝を置くと、黙らせるしかない変異体が 1 つ増える。
   // Accepted forms:
   //   1. full URL: https://localhost:12345/cb?code=...&state=...
   //   2. query-only: ?code=...&state=...  or  code=...&state=...
   // それ以外 (bare "code=4/..." のように state が無いもの・そもそも
-  // クエリでないもの) は下の `!code || !state` で null になる。
+  // クエリでないもの) も**ここでは通る** —— 欠けている側を数えるのは
+  // 呼び出し側 (`parseGoogleCallback` は null に落とし、
+  // `describeCallbackPasteFailure` はどちらが欠けたかを述べる)。
   let params: URLSearchParams;
   try {
     // **`=` を含むかの判定は置かない。** 以前は
     // `} else if (trimmed.includes('='))` と書いていたが、`=` を含まない
-    // 文字列がその枝へ入っても `URLSearchParams` は空になり、結局下の
+    // 文字列がその枝へ入っても `URLSearchParams` は空になり、結局呼び出し側の
     // `!code || !state` で null に落ちる — 条件の有無で結果が変わらない。
     //
     // 2026-08 の時点では「範囲指定で黙らせると 163 → 97 変異体に縮むので
@@ -117,17 +142,18 @@ export function parseGoogleCallback(input: string): { code: string; state: strin
   } catch {
     return null;
   }
-  const code = params.get('code');
-  const state = params.get('state');
-  if (!code || !state) return null;
-  return { code, state };
+  return params;
 }
 
 export interface GoogleAuthOptions {
   readonly clientId: string;
   /** スコープ (例: 'https://www.googleapis.com/auth/drive.readonly') */
   readonly scopes: readonly string[];
-  /** OOB の場合は 'urn:ietf:wg:oauth:2.0:oob' (deprecated) or `http://localhost` */
+  /**
+   * 認可後にブラウザを飛ばす先。**`http://localhost` のような http(s) でなければ
+   * 完了できない** (state はその URL にしか載らない)。判定は
+   * `oauth/callbackPaste.ts` の `redirectKind`。
+   */
   readonly redirectUri: string;
 }
 

@@ -43,6 +43,13 @@ import {
   GOOGLE_SCOPES,
   parseGoogleCallback,
 } from '../oauth/pkce';
+import {
+  CALLBACK_PASTE_HINT,
+  CALLBACK_PASTE_PLACEHOLDER,
+  describeCallbackPasteFailure,
+  LOOPBACK_REDIRECT_URI,
+  redirectBlockedReason,
+} from '../oauth/callbackPaste';
 import { clearPkceSession, readPkceSession, savePkceSession } from '../oauth/pkceSession';
 
 /**
@@ -1604,9 +1611,19 @@ export function FsaSection() {
 
 // --- Phase C: PKCE OAuth (Google) -------------------------------------
 
-function GoogleOAuthSection() {
+/**
+ * **検査のために公開している** (`ProxySection` / `FsaSection` と同じ理由・パス 157)。
+ * 2026-09-12 の計測でこの節は行カバレッジ 0% —— `start` も `complete` も
+ * 一度も走ったことがなく、画面の指示どおりに操作すると必ず失敗する状態だった。
+ */
+export function GoogleOAuthSection() {
   const [clientId, setClientId] = useState('');
-  const [redirectUri, setRedirectUri] = useState('urn:ietf:wg:oauth:2.0:oob');
+  /*
+   * **既定は http(s) のループバック。** 以前は `urn:ietf:wg:oauth:2.0:oob` で、
+   * それでは `state` が持ち帰れず `complete()` が必ず断っていた
+   * (理由と文面は `oauth/callbackPaste.ts`・パス 157)。
+   */
+  const [redirectUri, setRedirectUri] = useState(LOOPBACK_REDIRECT_URI);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
   const [code, setCode] = useState('');
   const [msg, setMsg] = useState<string | null>(null);
@@ -1625,6 +1642,14 @@ function GoogleOAuthSection() {
     setMsg(null);
     if (clientId.length === 0) {
       setErr('Google OAuth Client ID を入力してください');
+      return;
+    }
+    // **完了できない形なら、開く前に断る。** Google まで往復してから
+    // 「その形式では完了できません」と言うのでは、利用者は認可を 1 度
+    // 済ませた後に行き止まりに着く (パス 157)。
+    const blocked = redirectBlockedReason(redirectUri);
+    if (blocked !== null) {
+      setErr(blocked);
       return;
     }
     const secrets = await generatePkce();
@@ -1650,14 +1675,22 @@ function GoogleOAuthSection() {
       secrets,
     );
     setAuthUrl(url);
-    window.serviceHub.openExternal(url);
+    /*
+     * **開けたかどうかは分からない。** `app:openExternal` の約束は
+     * `Promise<void>` で、OS が開けなかった場合 main は記録だけ残して
+     * 解決する (`main.ts` の該当箇所にその理由が書いてある)。だから
+     * 「開いた」と信じて次の段へ進めるのではなく、**URL を画面に出す** ——
+     * 以前は `authUrl` を段の切り替えにしか使っておらず、ブラウザが
+     * 開かない端末では認可ページへ行く手が 1 つも残らなかった (パス 157)。
+     */
+    void window.serviceHub.openExternal(url);
   }
 
   async function complete() {
     setErr(null);
     setMsg(null);
     if (code.length === 0) {
-      setErr('Google から受け取った code (またはコールバック URL 全体) を貼り付けてください');
+      setErr('ブラウザのアドレスバーに出た URL 全体 (code= と state= を含む) を貼り付けてください');
       return;
     }
     const session = readPkceSession();
@@ -1672,7 +1705,8 @@ function GoogleOAuthSection() {
     // prevents users from silently dropping the state check.
     const parsed = parseGoogleCallback(code);
     if (!parsed) {
-      setErr('コールバック URL の形式が不正です。URL 全体 (code= と state= を含む) を貼り付けてください');
+      // 何が欠けていたかを言う (文面は `oauth/callbackPaste.ts`・パス 157)。
+      setErr(describeCallbackPasteFailure(code) ?? 'コールバック URL の形式が不正です');
       return;
     }
     setBusy(true);
@@ -1720,9 +1754,15 @@ function GoogleOAuthSection() {
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>Google OAuth (Drive / Calendar / Gmail)</div>
           <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.5 }}>
+            {/*
+              **画面が求める物を、受け取る物と一致させる。** 2026-09-12 (パス 157) まで
+              ここは「認可後に表示される code をこの画面に貼り付けて完了」と書いていたが、
+              `parseGoogleCallback` は code と state の両方を要求するので、
+              code だけを貼ると必ず失敗した。文面は `oauth/callbackPaste.ts` に 1 組だけ置く。
+            */}
             PKCE フローで Google の access token を取得します。Cloud Console で OAuth Client ID
-            (Desktop アプリ) を発行し、ID をペーストしてください。認可後に表示される code を
-            この画面に貼り付けて完了。
+            (Desktop アプリ) を発行し、ID をペーストしてください。認可後にブラウザのアドレスバーへ
+            出る URL 全体 (code と state を含む) を、この画面に貼り付けて完了します。
           </div>
         </div>
       </div>
@@ -1741,10 +1781,16 @@ function GoogleOAuthSection() {
             type="text"
             value={redirectUri}
             onChange={(e) => setRedirectUri(e.target.value)}
-            placeholder="urn:ietf:wg:oauth:2.0:oob (Out-of-band)"
+            placeholder={LOOPBACK_REDIRECT_URI}
             maxLength={256}
             style={pwInput}
           />
+          {/* 完了できない形なら、押す前に理由を出す (パス 157)。 */}
+          {redirectBlockedReason(redirectUri) !== null && (
+            <div data-redirect-unusable style={{ fontSize: 11, color: '#fbbf24', lineHeight: 1.6 }}>
+              ⚠ {redirectBlockedReason(redirectUri)}
+            </div>
+          )}
           <button type="button" onClick={start} style={btn('accent')}>
             認可ページを開く
           </button>
@@ -1753,14 +1799,37 @@ function GoogleOAuthSection() {
 
       {authUrl && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5 }}>
-            Google で認可を完了したら、表示された code をここに貼ってください。
+          {/*
+            **認可 URL を画面に出す。** ブラウザが開かない端末 (既定ブラウザ未設定・
+            xdg-open が無い等) では、`openExternal` の失敗はレンダラーへ届かないので、
+            ここに URL が無いと認可ページへ行く手が 1 つも残らない (パス 157)。
+          */}
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+            ブラウザが開かなかった場合は、この URL を開いてください:
+          </div>
+          <code
+            data-google-auth-url
+            style={{
+              fontSize: 10,
+              color: 'var(--text)',
+              background: 'var(--bg)',
+              border: '1px solid var(--border)',
+              borderRadius: 6,
+              padding: '6px 8px',
+              wordBreak: 'break-all',
+              userSelect: 'all',
+            }}
+          >
+            {authUrl}
+          </code>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+            {CALLBACK_PASTE_HINT}
           </div>
           <input
             type="text"
             value={code}
             onChange={(e) => setCode(e.target.value)}
-            placeholder="4/0Ab... (Google から受け取った code)"
+            placeholder={CALLBACK_PASTE_PLACEHOLDER}
             maxLength={2048}
             style={pwInput}
           />
