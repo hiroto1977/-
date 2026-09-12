@@ -75,7 +75,14 @@ export function Microsoft365Page() {
   const [to, setTo] = useState('');
   const [mailSubject, setMailSubject] = useState('');
   const [mailBody, setMailBody] = useState('');
-  /* 貼り付けを黙って切らない (パス 172)。天井は台帳から読む。 */
+  /*
+   * 貼り付けを黙って切らない (パス 172 → **全欄へ** パス 183)。天井は台帳から読む。
+   * 宛先 (`to`) は 1 行だが天井 4,096 字 —— **宛先の一覧を貼る欄**で、
+   * `maxLength` に任せると貼った宛先の後ろが黙って落ち、画面は「送信しました」と言う。
+   * 件名が 2 つ在るので (メール / 予定) 断りのラベルで言い分ける。
+   */
+  const toOver = charsOverCeiling(to, MS365_MAIL_FIELDS.to.max);
+  const mailSubjectOver = charsOverCeiling(mailSubject, MS365_MAIL_FIELDS.subject.max);
   const mailBodyOver = charsOverCeiling(mailBody, MS365_MAIL_FIELDS.body.max);
 
   // 予定作成フォーム
@@ -83,6 +90,8 @@ export function Microsoft365Page() {
   const [evStart, setEvStart] = useState('');
   const [evEnd, setEvEnd] = useState('');
   const [evLocation, setEvLocation] = useState('');
+  const evSubjectOver = charsOverCeiling(evSubject, MS365_EVENT_FIELDS.subject.max);
+  const evLocationOver = charsOverCeiling(evLocation, MS365_EVENT_FIELDS.location.max);
 
   const sendMail = async () => {
     if (!window.serviceHub) return;
@@ -257,12 +266,14 @@ export function Microsoft365Page() {
       >
         {openForm === 'mail' ? (
           <div className="card" style={{ gap: 10 }}>
-            <input placeholder="宛先 (to@example.com)" value={to} maxLength={MS365_MAIL_FIELDS.to.max} onChange={(e) => setTo(e.target.value)} style={inputStyle} />
-            <input placeholder="件名" value={mailSubject} maxLength={MS365_MAIL_FIELDS.subject.max} onChange={(e) => setMailSubject(e.target.value)} style={inputStyle} />
+            <input placeholder="宛先 (to@example.com)" value={to} onChange={(e) => setTo(e.target.value)} style={inputStyle} />
+            <CeilingNotice label="宛先" value={to} max={MS365_MAIL_FIELDS.to.max} />
+            <input placeholder="件名" value={mailSubject} onChange={(e) => setMailSubject(e.target.value)} style={inputStyle} />
+            <CeilingNotice label="件名 (メール)" value={mailSubject} max={MS365_MAIL_FIELDS.subject.max} />
             <textarea placeholder="本文" value={mailBody} onChange={(e) => setMailBody(e.target.value)} rows={4} style={inputStyle} />
             <CeilingNotice label="本文" value={mailBody} max={MS365_MAIL_FIELDS.body.max} />
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <button className="primary" onClick={sendMail} disabled={submitting || !to.trim() || !mailSubject.trim() || mailBodyOver > 0}>
+              <button className="primary" onClick={sendMail} disabled={submitting || !to.trim() || !mailSubject.trim() || toOver > 0 || mailSubjectOver > 0 || mailBodyOver > 0}>
                 {submitting ? '送信中…' : '送信'}
               </button>
               {result?.kind === 'ok' ? (
@@ -277,17 +288,19 @@ export function Microsoft365Page() {
 
         {openForm === 'event' ? (
           <div className="card" style={{ gap: 10 }}>
-            <input placeholder="件名" value={evSubject} maxLength={MS365_EVENT_FIELDS.subject.max} onChange={(e) => setEvSubject(e.target.value)} style={inputStyle} />
+            <input placeholder="件名" value={evSubject} onChange={(e) => setEvSubject(e.target.value)} style={inputStyle} />
+            <CeilingNotice label="件名 (予定)" value={evSubject} max={MS365_EVENT_FIELDS.subject.max} />
             <div style={{ display: 'flex', gap: 8 }}>
               <input type="datetime-local" value={evStart} onChange={(e) => setEvStart(e.target.value)} style={inputStyle} />
               <input type="datetime-local" value={evEnd} onChange={(e) => setEvEnd(e.target.value)} style={inputStyle} />
             </div>
-            <input placeholder="場所 (任意)" value={evLocation} maxLength={MS365_EVENT_FIELDS.location.max} onChange={(e) => setEvLocation(e.target.value)} style={inputStyle} />
+            <input placeholder="場所 (任意)" value={evLocation} onChange={(e) => setEvLocation(e.target.value)} style={inputStyle} />
+            <CeilingNotice label="場所" value={evLocation} max={MS365_EVENT_FIELDS.location.max} />
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <button
                 className="primary"
                 onClick={createEvent}
-                disabled={submitting || !evSubject.trim() || !evStart || !evEnd}
+                disabled={submitting || !evSubject.trim() || !evStart || !evEnd || evSubjectOver > 0 || evLocationOver > 0}
               >
                 {submitting ? '作成中…' : '作成'}
               </button>

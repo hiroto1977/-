@@ -254,13 +254,40 @@ describe('外へ送る本文の天井 — 超えたら断る (7 画面を駆動 
     });
   }
 
-  it('★ 断りは本文の欄にだけ出る (短い欄の maxLength は残してある)', async () => {
-    // 識別子・題名の欄は `maxLength` のままにした (人が貼る本文ではない)。
-    // 台帳との対応は census が見るので、ここでは「残っている」ことだけ確かめる。
+  it('★ 断りはどの欄にも出る — `maxLength` はどこにも残っていない (パス 183)', async () => {
+    /*
+     * ここは 2026-09-12 まで「識別子・題名の欄は `maxLength` のままにした
+     * (人が貼る本文ではない)」と書いて**属性が在ること**を確かめていた。
+     * パス 183 で軸を直した (分けるのは `multiline` ではなく「貼り付けで天井に
+     * 届くか」) ので、台帳の欄はどれも `maxLength` を持たない。
+     * 欄ごとの対応は `writeBodyCeilingCensus.test.ts` が数える。
+     */
     await mount('notion');
     await click('ページを作成');
-    expect(field('親ページ ID').getAttribute('maxlength')).toBe(String(NOTION_PAGE_FIELDS.parentPageId.max));
-    expect(field('ページタイトル').getAttribute('maxlength')).toBe(String(NOTION_PAGE_FIELDS.title.max));
-    expect(field('本文').getAttribute('maxlength'), '本文に maxLength が残っている').toBeNull();
+    for (const [label, rule] of [
+      ['親ページ ID', NOTION_PAGE_FIELDS.parentPageId],
+      ['ページタイトル', NOTION_PAGE_FIELDS.title],
+      ['本文', NOTION_PAGE_FIELDS.body],
+    ] as const) {
+      expect(field(label).getAttribute('maxlength'), `${label} に maxLength が残っている`).toBeNull();
+      // 天井そのものは生きている (断りの側で使う)。
+      expect(rule.max).toBeGreaterThan(0);
+    }
+    // 断りは超えるまで出ない (この時点では空なので 1 つも無い)。
+    expect(container.querySelector('[data-ceiling-notice]')).toBeNull();
+  });
+
+  it('★ 識別子の欄も超えれば断って止まる (本文だけの規則になっていない)', async () => {
+    await mount('notion');
+    await click('ページを作成');
+    await type(field('親ページ ID'), 'p'.repeat(NOTION_PAGE_FIELDS.parentPageId.max + 1));
+    await type(field('ページタイトル'), '題');
+    expect(
+      container.querySelector('[data-ceiling-notice="親ページ ID"]'),
+      '識別子の欄で断っていない',
+    ).not.toBeNull();
+    expect(button('作成').disabled, '超えているのに押せる').toBe(true);
+    await click('作成');
+    expect(invoked, '超えているのに送っている').toEqual([]);
   });
 });

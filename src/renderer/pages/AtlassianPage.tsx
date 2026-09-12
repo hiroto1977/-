@@ -31,9 +31,12 @@ export function AtlassianPage() {
   const [projectKey, setProjectKey] = useState('');
   const [summary, setSummary] = useState('');
   const [description, setDescription] = useState('');
-  /* 貼り付けを黙って切らない (パス 172)。天井は台帳から読む。 */
-  const descriptionOver = charsOverCeiling(description, ATLASSIAN_ISSUE_FIELDS.description.max);
   const [issueType, setIssueType] = useState('Task');
+  /* 貼り付けを黙って切らない (パス 172 → **全欄へ** パス 183)。天井は台帳から読む。 */
+  const projectKeyOver = charsOverCeiling(projectKey, ATLASSIAN_ISSUE_FIELDS.projectKey.max);
+  const issueTypeOver = charsOverCeiling(issueType, ATLASSIAN_ISSUE_FIELDS.issueType.max);
+  const summaryOver = charsOverCeiling(summary, ATLASSIAN_ISSUE_FIELDS.summary.max);
+  const descriptionOver = charsOverCeiling(description, ATLASSIAN_ISSUE_FIELDS.description.max);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string; url?: string }>();
 
@@ -119,14 +122,12 @@ export function AtlassianPage() {
               <input
                 placeholder="プロジェクト Key (e.g. KAN)"
                 value={projectKey}
-                maxLength={ATLASSIAN_ISSUE_FIELDS.projectKey.max}
                 onChange={(e) => setProjectKey(e.target.value)}
                 style={inputStyle}
               />
               <input
                 placeholder="Issue Type (Task / Bug / Story)"
                 value={issueType}
-                maxLength={ATLASSIAN_ISSUE_FIELDS.issueType.max}
                 onChange={(e) => setIssueType(e.target.value)}
                 style={inputStyle}
               />
@@ -134,7 +135,6 @@ export function AtlassianPage() {
             <input
               placeholder="Summary"
               value={summary}
-              maxLength={ATLASSIAN_ISSUE_FIELDS.summary.max}
               onChange={(e) => setSummary(e.target.value)}
               style={inputStyle}
             />
@@ -145,12 +145,15 @@ export function AtlassianPage() {
               rows={4}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />
+            <CeilingNotice label="プロジェクト Key" value={projectKey} max={ATLASSIAN_ISSUE_FIELDS.projectKey.max} />
+            <CeilingNotice label="Issue Type" value={issueType} max={ATLASSIAN_ISSUE_FIELDS.issueType.max} />
+            <CeilingNotice label="Summary" value={summary} max={ATLASSIAN_ISSUE_FIELDS.summary.max} />
             <CeilingNotice label="説明" value={description} max={ATLASSIAN_ISSUE_FIELDS.description.max} />
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="primary"
                 onClick={create}
-                disabled={submitting || !projectKey.trim() || !summary.trim() || descriptionOver > 0}
+                disabled={submitting || !projectKey.trim() || !summary.trim() || projectKeyOver > 0 || issueTypeOver > 0 || summaryOver > 0 || descriptionOver > 0}
               >
                 {submitting ? '作成中…' : '作成'}
               </button>

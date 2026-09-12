@@ -4,6 +4,8 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { GoogleConnectCard } from '../components/GoogleConnectCard';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
 import { useServiceData } from '../hooks/useServiceData';
 import type { ActionData } from '../../shared/actionData';
 
@@ -46,6 +48,8 @@ export function CalendarPage() {
 
   const [showForm, setShowForm] = useState(false);
   const [summary, setSummary] = useState('');
+  /* 貼り付けを黙って切らない (パス 172 → **全欄へ** パス 183)。天井は台帳から読む。 */
+  const summaryOver = charsOverCeiling(summary, CALENDAR_EVENT_FIELDS.summary!.max);
   const [start, setStart] = useState('');
   const [end, setEnd] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -130,9 +134,9 @@ export function CalendarPage() {
               placeholder="タイトル"
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
-              maxLength={CALENDAR_EVENT_FIELDS.summary!.max}
               style={inputStyle}
             />
+            <CeilingNotice label="タイトル" value={summary} max={CALENDAR_EVENT_FIELDS.summary!.max} />
             <div style={{ display: 'flex', gap: 8 }}>
               <input
                 type="datetime-local"
@@ -151,7 +155,7 @@ export function CalendarPage() {
               <button
                 className="primary"
                 onClick={create}
-                disabled={submitting || !summary.trim() || !start || !end}
+                disabled={submitting || !summary.trim() || !start || !end || summaryOver > 0}
               >
                 {submitting ? '作成中…' : '作成'}
               </button>

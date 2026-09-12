@@ -23788,6 +23788,97 @@ export function _resetRecordStoreForTests(): void {
 - `ManualDataSection` の行カバレッジは測り直していない (11 本の駆動で上がるはず)。
   次に全域を測るときに確かめる。
 
+## パス 183 (2026-09-12) — **「切らずに断る」が本文にしか掛かっておらず、宛先と DNS の値は黙って切れていた**
+
+行カバレッジの次に低い画面は `DrivePage` (**46.15% · 専用の検査 0 本**)。147 行しかない
+小さな画面で、読むと `maxLength={DRIVE_FOLDER_FIELDS.name.max}` が 2 つ在った ——
+パス 172 が**同じリポジトリの隣の画面で外した属性**である。母集団を数えた。
+
+### 実測
+
+```
+$ # 台帳 (writeFieldLimits.ts) の欄を作り手で分け、画面の maxLength と突き合わせる
+kind=id     (9 件)  Atlassian projectKey/issueType · Canva parentFolderId · Drive parentId
+                    · GitHub owner/repo · Notion parentPageId · Slack channel · WordPress siteId
+kind=line   (3 件)  Cloudflare DNS content · Gmail to · Microsoft365 mail to
+kind=title (12 件)  Atlassian summary · Calendar summary · Canva name · Cloudflare DNS name
+                    · Drive name · GitHub title · Gmail subject · MS365 location/subject×2
+                    · Notion title · WordPress title
+```
+
+**24 欄 / 10 画面が `maxLength` のまま。** しかも `writeFieldLimits.test.ts` は逆向きに
+**「短い欄は `maxLength` を持つこと」を要求していた** —— つまり意図した設計である。
+分けた軸は `multiline` (`text(` か否か)。
+
+だが `maxLength` が害になる条件は「改行を許すか」ではなく**「貼り付けで天井に届くか」**で、
+`line(` は 1 行でも天井 4,096 字ある:
+
+| 欄 | 天井 | 切られると |
+|---|---:|---|
+| Gmail の宛先 | 4,096 | 貼った宛先の後ろが落ち、**宛先が減った下書き**を「作成しました」と言う |
+| Microsoft 365 の宛先 | 4,096 | 同じ (送信まで行く) |
+| Cloudflare の DNS `content` | 4,096 | 長い TXT (DKIM / SPF) が途中で切れ、**壊れたレコードを公開する** |
+| 件名・題・Summary (`title(` 12 欄) | 256 | 貼った題が黙って切れる |
+| id (`id(` 9 欄) | 200 | URL や JSON を貼ると切れる (実害は出にくい) |
+
+`GmailPage` では `to` / `subject` の `maxLength` が、`body` の `CeilingNotice` の**2 行上**に
+在った。**`maxLength` を残す理由はどこにも書かれていなかった。**
+
+### 直した形
+
+切るのが正しい欄は無い (切った物を外へ送ると、送られた物が正しく見えるので誰にも見えない)。
+規則を**全欄で 1 本**にした:
+
+- 24 欄すべてから `maxLength` を外し、`charsOverCeiling` + `<CeilingNotice label="…">` +
+  `disabled` の 3 点を配線 (10 画面)。`CeilingNotice` は既に在る共有部品で、文面は
+  `shared/inputCeiling.ts` が 1 つ持つ (画面ごとに書き写さない)。
+- 同じ画面に 2 つの件名が在る Microsoft 365 は、断りのラベルで言い分ける
+  (`件名 (メール)` / `件名 (予定)`)。
+- 走査 (`shared/__tests__/writeBodyFields.ts`) に `ledgerFieldsIn` を足し、`id` / `title` /
+  `line` / `text` の**全部**を作り手つきで返す。`bodyFieldsIn` はその絞り込みに変えた
+  (パス 172 の散文と検査が読んでいるので残す)。
+- `writeFieldLimits.test.ts` の規則を「本文は断り・他は `maxLength`」から
+  **「どの欄も断り」**へ。`writeBodyCeilingCensus.test.ts` は母集団を全欄に広げ、
+  **画面ごとの断りの数が欄の数と合う**ことも見る (1 欄だけ断って残りが黙る形を許さない)。
+
+### 母集団を広げて出てきた 8 欄 (これが広げた値打ち)
+
+台帳には画面の欄に対応しない文字列の欄が 8 つ在り、前の母集団では見えていなかった。
+**理由なしで外さない**ために台帳を 1 つ増やした:
+
+| 欄 | 扱い | 確かめ方 |
+|---|---|---|
+| Calendar / MS365 の `start` `end` | `datetime-local` は `maxLength` が効かない代わり、ブラウザが `YYYY-MM-DDTHH:mm` か空文字しか返さないので天井 (200) に届かない | `type="datetime-local"` で描いていること |
+| Cloudflare の `zoneId` ×2 | 取得済みゾーンの `<select>`。API が返した id の中からしか選べない | `value={dnsZone}` / `value={purgeZone}` |
+| Calendar の `location` `timeZone` | 画面に欄が無い (timeZone は端末の設定から入れる) | `value={location}` が無いこと |
+
+### 検査 (16 本) と対照 (5 本)
+
+`writeFieldCeilingOnScreen.test.ts` (新設・jsdom) が**害のいちばん具体的な 2 欄**を実際に
+駆動する —— 走査は「`maxLength` が無い」までしか言えない。
+
+| 対照 (壊した物) | 鳴った検査 |
+|---|---|
+| Gmail の宛先に `maxLength` を戻す | 3 (census / 欄ごとの規則 / 画面) |
+| Cloudflare の content の断りを消す | 2 (断りの数 / 画面) |
+| `disabled` から超過を外す | 2 (census / 画面) |
+| 走査を `text(` だけに戻す | 3 |
+| `datetime-local` を `type="text"` にする | 1 |
+
+**対照 3 本目が、私の検査の欠陥を教えた。** 最初に書いた Cloudflare の画面検査は
+ゾーンを選んでいなかったので、押せない理由が `!dnsZone` でも通ってしまい、
+`disabled` から超過を外しても**鳴らなかった**。ゾーンを選んでから測る形に直して鳴らした
+(「守っている物を壊して、狙った検査が落ちるのを見る」を実際にやらないと分からない類)。
+
+### 残り
+
+- `CLOUDFLARE_PURGE_FIELDS.files` は `list(…, line(true))` で、画面は URL の一覧を 1 つの
+  textarea で受ける (`purgeUrlList` が行に分ける)。要素ごとの欄が無いので走査の母集団
+  (文字列の欄) に入らない。**一覧の側の天井は別の話として残っている。**
+- `id(` 9 欄の断りは実際には鳴りにくい (200 字を貼る道が細い)。規則を 1 本にするために
+  配線したので、効かないこと自体は欠陥ではない —— ただし「効かないから外す」は
+  やらない (外すと軸が戻る)。
+
 ## パス 182 (2026-09-12) — **画面 2 枚が同じ会社に矛盾した返済余力を出し、警告する側が誤っていた**
 
 行カバレッジの次に低い画面は `FundingPage` (**45.83% · 専用の検査 0 本**)。

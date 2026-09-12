@@ -32,6 +32,7 @@ export function SlackPage() {
   const [channel, setChannel] = useState('');
   const [text, setText] = useState('');
   /* 貼り付けを黙って切らない (パス 172)。天井は台帳から読む。 */
+  const channelOver = charsOverCeiling(channel, SLACK_MESSAGE_FIELDS.channel!.max);
   const textOver = charsOverCeiling(text, SLACK_MESSAGE_FIELDS.text!.max);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string }>();
@@ -148,7 +149,6 @@ export function SlackPage() {
               placeholder="チャンネル ID (C…) または #channel-name"
               value={channel}
               onChange={(e) => setChannel(e.target.value)}
-              maxLength={SLACK_MESSAGE_FIELDS.channel!.max}
               style={inputStyle}
             />
             <textarea
@@ -158,12 +158,13 @@ export function SlackPage() {
               rows={3}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />
+            <CeilingNotice label="チャンネル" value={channel} max={SLACK_MESSAGE_FIELDS.channel!.max} />
             <CeilingNotice label="メッセージ本文" value={text} max={SLACK_MESSAGE_FIELDS.text!.max} />
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="primary"
                 onClick={send}
-                disabled={submitting || !channel.trim() || !text.trim() || textOver > 0}
+                disabled={submitting || !channel.trim() || !text.trim() || channelOver > 0 || textOver > 0}
               >
                 {submitting ? '送信中…' : '送信'}
               </button>

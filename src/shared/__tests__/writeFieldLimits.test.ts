@@ -328,27 +328,43 @@ describe('5 か所が同じ台帳を読む (数を写していない)', () => {
    * 断る側に制御が来ない (台帳は双方向)。どちらの欄かは
    * `shared/__tests__/writeBodyFields.ts` が台帳から導く (手で並べない)。
    */
-  it('★ 画面の天井は台帳の値を読む —— 短い欄は maxLength、本文は断り (数を写さない)', () => {
+  /**
+   * **どの欄も切らずに断る** (2026-09-12 · パス 183 で `text(` 限定から全欄へ)。
+   *
+   * ここは 2026-09-12 まで「本文は断り・**それ以外は `maxLength` を持つこと**」を
+   * 要求していた —— 分けた軸は `multiline` である。だが `maxLength` が害になる条件は
+   * 「改行を許すか」ではなく**「貼り付けで天井に届くか」**で、`line(` は 1 行でも
+   * 天井 4,096 字ある (Gmail / Microsoft 365 の宛先・Cloudflare の DNS `content`)。
+   * 経緯と実測は `shared/__tests__/writeBodyFields.ts` の冒頭。
+   */
+  it('★ 画面の天井は台帳の値を読み、どの欄も切らずに断る (数を写さない)', () => {
     const bodyKeys = bodyFieldKeys();
-    // 走査の生死: 本文の欄が 1 つも導けていないなら、下の分岐は全部 else に落ちる。
+    // 走査の生死: 本文の欄が 1 つも導けていないなら、下の確かめは空になる。
     expect(bodyKeys.size, '本文の欄が導けていない (走査が死んでいる)').toBeGreaterThanOrEqual(8);
     for (const l of LEDGERS) {
       const page = code(l.page);
       for (const f of l.fields) {
         // 古い台帳は `Record<string, …>` 型なので `!` が要り、新しい台帳は欄ごとに型が付くので要らない。
-        const forms = [`maxLength={${l.name}.${f}!.max}`, `maxLength={${l.name}.${f}.max}`];
-        if (bodyKeys.has(`${l.name}.${f}`)) {
-          expect(
-            forms.some((s) => page.includes(s)),
-            `${l.page} の ${f} は本文の欄 — maxLength ではなく断り (CeilingNotice) で持つ`,
-          ).toBe(false);
-          expect(page, `${l.page} が超過を数えていない`).toMatch(/\bcharsOverCeiling\s*\(/);
-          expect(page, `${l.page} が断りを描いていない`).toMatch(/<CeilingNotice\b/);
-        } else {
-          expect(forms.some((s) => page.includes(s)), `${l.page} の ${f} に maxLength が無い`).toBe(true);
-        }
+        const cut = [`maxLength={${l.name}.${f}!.max}`, `maxLength={${l.name}.${f}.max}`];
+        expect(
+          cut.some((s) => page.includes(s)),
+          `${l.page} の ${f} が maxLength を持っている — 貼り付けはブラウザが黙って切る`,
+        ).toBe(false);
+        // 断りは台帳の `.max` を読む (数を写さない)。
+        const notice = [
+          `<CeilingNotice label="`,
+        ];
+        expect(notice.every((s) => page.includes(s)), `${l.page} が断りを描いていない`).toBe(true);
+        const refs = [`${l.name}.${f}!.max`, `${l.name}.${f}.max`];
+        expect(
+          refs.some((s) => page.includes(s)),
+          `${l.page} の ${f} の天井を台帳から読んでいない`,
+        ).toBe(true);
       }
-      // 数の写しが無い (20000 / 256 / 200 を字面で持たない)。
+      if (l.fields.length > 0) {
+        expect(page, `${l.page} が超過を数えていない`).toMatch(/\bcharsOverCeiling\s*\(/);
+      }
+      // 数の写しが無い (20000 / 4096 / 256 / 200 を字面で持たない)。
       expect(page, `${l.page} が数を写している`).not.toMatch(/maxLength=\{\d+\}/);
     }
   });

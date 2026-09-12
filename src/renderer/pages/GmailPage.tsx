@@ -33,7 +33,14 @@ export function GmailPage() {
   const [to, setTo] = useState('');
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
-  /* 貼り付けを黙って切らない (パス 172)。天井は台帳から読む。 */
+  /*
+   * 貼り付けを黙って切らない (パス 172 → **全欄へ** パス 183)。天井は台帳から読む。
+   *
+   * 宛先 (`to`) は 1 行だが天井 4,096 字で、**人が宛先の一覧を貼る欄**である ——
+   * `maxLength` に任せると貼った宛先の後ろが黙って落ち、画面は「下書きを作成しました」と言う。
+   */
+  const toOver = charsOverCeiling(to, GMAIL_DRAFT_FIELDS.to.max);
+  const subjectOver = charsOverCeiling(subject, GMAIL_DRAFT_FIELDS.subject.max);
   const bodyOver = charsOverCeiling(body, GMAIL_DRAFT_FIELDS.body.max);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string }>();
@@ -154,17 +161,17 @@ export function GmailPage() {
             <input
               placeholder="宛先 (To)"
               value={to}
-              maxLength={GMAIL_DRAFT_FIELDS.to.max}
               onChange={(e) => setTo(e.target.value)}
               style={inputStyle}
             />
+            <CeilingNotice label="宛先" value={to} max={GMAIL_DRAFT_FIELDS.to.max} />
             <input
               placeholder="件名"
               value={subject}
-              maxLength={GMAIL_DRAFT_FIELDS.subject.max}
               onChange={(e) => setSubject(e.target.value)}
               style={inputStyle}
             />
+            <CeilingNotice label="件名" value={subject} max={GMAIL_DRAFT_FIELDS.subject.max} />
             <textarea
               placeholder="本文 (text/plain UTF-8)"
               value={body}
@@ -177,7 +184,7 @@ export function GmailPage() {
               <button
                 className="primary"
                 onClick={create}
-                disabled={submitting || !to.trim() || !subject.trim() || bodyOver > 0}
+                disabled={submitting || !to.trim() || !subject.trim() || toOver > 0 || subjectOver > 0 || bodyOver > 0}
               >
                 {submitting ? '保存中…' : '下書きを保存'}
               </button>

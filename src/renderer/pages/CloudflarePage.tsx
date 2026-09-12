@@ -3,6 +3,8 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
 import { CLOUDFLARE_DNS_FIELDS } from '../../shared/writeFieldLimits';
 import { purgeEverythingConfirmMessage, purgeUrlList } from '../data/cachePurge';
 import type { ActionData } from '../../shared/actionData';
@@ -35,6 +37,9 @@ export function CloudflarePage() {
   const [dnsType, setDnsType] = useState<'A' | 'AAAA' | 'CNAME' | 'TXT' | 'MX'>('A');
   const [dnsName, setDnsName] = useState('');
   const [dnsContent, setDnsContent] = useState('');
+  /* 貼り付けを黙って切らない (パス 183)。天井は台帳から読む。 */
+  const dnsNameOver = charsOverCeiling(dnsName, CLOUDFLARE_DNS_FIELDS.name.max);
+  const dnsContentOver = charsOverCeiling(dnsContent, CLOUDFLARE_DNS_FIELDS.content.max);
   const [dnsProxied, setDnsProxied] = useState(false);
   const [dnsBusy, setDnsBusy] = useState(false);
   const [dnsResult, setDnsResult] = useState<{ kind: 'ok' | 'error'; message: string }>();
@@ -196,10 +201,10 @@ export function CloudflarePage() {
             <input
               placeholder="name (例: @ / www / api)"
               value={dnsName}
-              maxLength={CLOUDFLARE_DNS_FIELDS.name.max}
               onChange={(e) => setDnsName(e.target.value)}
               style={inputStyle}
             />
+            <CeilingNotice label="name" value={dnsName} max={CLOUDFLARE_DNS_FIELDS.name.max} />
             <input
               placeholder={
                 dnsType === 'A' ? 'IPv4 アドレス'
@@ -209,10 +214,15 @@ export function CloudflarePage() {
                 : 'TXT 値'
               }
               value={dnsContent}
-              maxLength={CLOUDFLARE_DNS_FIELDS.content.max}
               onChange={(e) => setDnsContent(e.target.value)}
               style={inputStyle}
             />
+            {/*
+             * content は 1 行だが天井 4,096 字で、**人が値を貼る欄**である (TXT の
+             * DKIM / SPF は長い)。`maxLength` に任せると貼った値の後ろが黙って落ち、
+             * 画面は「作成しました」と言う —— 壊れたレコードが公開される (パス 183)。
+             */}
+            <CeilingNotice label="content" value={dnsContent} max={CLOUDFLARE_DNS_FIELDS.content.max} />
             {supportsProxy ? (
               <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
                 <input
@@ -227,7 +237,7 @@ export function CloudflarePage() {
               <button
                 className="primary"
                 onClick={createDns}
-                disabled={dnsBusy || !dnsZone || !dnsName.trim() || !dnsContent.trim()}
+                disabled={dnsBusy || !dnsZone || !dnsName.trim() || !dnsContent.trim() || dnsNameOver > 0 || dnsContentOver > 0}
               >
                 {dnsBusy ? '作成中…' : '作成'}
               </button>

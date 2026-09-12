@@ -30,6 +30,8 @@ export function NotionPage() {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   /* 貼り付けを黙って切らない (パス 172)。天井は台帳から読む。 */
+  const parentPageIdOver = charsOverCeiling(parentPageId, NOTION_PAGE_FIELDS.parentPageId.max);
+  const titleOver = charsOverCeiling(title, NOTION_PAGE_FIELDS.title.max);
   const bodyOver = charsOverCeiling(body, NOTION_PAGE_FIELDS.body.max);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string; url?: string }>();
@@ -108,14 +110,12 @@ export function NotionPage() {
             <input
               placeholder="親ページ ID (インテグレーションに共有済みの)"
               value={parentPageId}
-              maxLength={NOTION_PAGE_FIELDS.parentPageId.max}
               onChange={(e) => setParentPageId(e.target.value)}
               style={inputStyle}
             />
             <input
               placeholder="ページタイトル"
               value={title}
-              maxLength={NOTION_PAGE_FIELDS.title.max}
               onChange={(e) => setTitle(e.target.value)}
               style={inputStyle}
             />
@@ -126,12 +126,14 @@ export function NotionPage() {
               rows={4}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />
+            <CeilingNotice label="親ページ ID" value={parentPageId} max={NOTION_PAGE_FIELDS.parentPageId.max} />
+            <CeilingNotice label="ページタイトル" value={title} max={NOTION_PAGE_FIELDS.title.max} />
             <CeilingNotice label="本文" value={body} max={NOTION_PAGE_FIELDS.body.max} />
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="primary"
                 onClick={create}
-                disabled={submitting || !parentPageId.trim() || !title.trim() || bodyOver > 0}
+                disabled={submitting || !parentPageId.trim() || !title.trim() || parentPageIdOver > 0 || titleOver > 0 || bodyOver > 0}
               >
                 {submitting ? '作成中…' : '作成'}
               </button>

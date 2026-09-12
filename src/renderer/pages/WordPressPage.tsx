@@ -33,6 +33,8 @@ export function WordPressPage() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   /* 貼り付けを黙って切らない (パス 172)。天井は台帳から読む。 */
+  const siteIdOver = charsOverCeiling(siteId, WORDPRESS_POST_FIELDS.siteId.max);
+  const titleOver = charsOverCeiling(title, WORDPRESS_POST_FIELDS.title.max);
   const contentOver = charsOverCeiling(content, WORDPRESS_POST_FIELDS.content.max);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string; url?: string }>();
@@ -98,14 +100,12 @@ export function WordPressPage() {
             <input
               placeholder="サイト ID (blog_id または hostname)"
               value={siteId}
-              maxLength={WORDPRESS_POST_FIELDS.siteId.max}
               onChange={(e) => setSiteId(e.target.value)}
               style={inputStyle}
             />
             <input
               placeholder="投稿タイトル"
               value={title}
-              maxLength={WORDPRESS_POST_FIELDS.title.max}
               onChange={(e) => setTitle(e.target.value)}
               style={inputStyle}
             />
@@ -116,12 +116,14 @@ export function WordPressPage() {
               rows={5}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />
+            <CeilingNotice label="サイト ID" value={siteId} max={WORDPRESS_POST_FIELDS.siteId.max} />
+            <CeilingNotice label="投稿タイトル" value={title} max={WORDPRESS_POST_FIELDS.title.max} />
             <CeilingNotice label="本文" value={content} max={WORDPRESS_POST_FIELDS.content.max} />
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="primary"
                 onClick={create}
-                disabled={submitting || !siteId.trim() || !title.trim() || contentOver > 0}
+                disabled={submitting || !siteId.trim() || !title.trim() || siteIdOver > 0 || titleOver > 0 || contentOver > 0}
               >
                 {submitting ? '作成中…' : '下書き保存'}
               </button>
