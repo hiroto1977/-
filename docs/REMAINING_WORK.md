@@ -21886,3 +21886,55 @@ window.serviceHub.openExternal(url);
   0 件になる。どちらの経路がどちらのビルドで出るかを測ってから直すこと。
 - **実機 (e2e / perf / smoke:app) は未実行。** `ExportActions` へ寄せたので、
   書き出し後のボタンの並びが実機で変わる —— 次の実機で目で見ること。
+
+### パス 151 の追記 — **「await した invoke に catch が無い」は欠陥として立証できなかった** (2026-09-12)
+
+`Microsoft365Page` (32.05%・次に低いファイル) を読んでいて、`sendMail` / `createEvent` /
+`signIn` が `await window.serviceHub.invoke(...)` を **try/catch なしで**呼び、
+`setSubmitting(false)` を await の後ろにしか置いていないことに気付いた ——
+拒否 (reject) されれば**ボタンは「送信中…」のまま固まり、画面は何も言わない**。
+`StocksPage` の 5 つのハンドラは全部 `try / catch / finally` を持っていたので、
+不一致に見えた。
+
+**族の大きさを測った**: renderer の `await window.serviceHub.invoke|authorize` は
+**41 件**、うち前後 30 行に `catch` が無いのが **25 件 / 20 ファイル**
+(`VoiceCommandBar` / `StatusBar` / `ChatbotWidget` / `GmailPage` ×2 / `AtlassianPage` /
+`CalendarPage` / `NotionPage` / `CloudflarePage` ×2 / `TalentPage` / `SecurityPage` ×2 /
+`CanvaPage` / `OllamaPage` / `SlackPage` ×2 / `GithubPage` / `EmotionsPage` ×2 /
+`WordPressPage` / `DrivePage` / `SkillsPage` / `Microsoft365Page` ×2)。
+
+**しかし前提が立たなかった。** 「拒否されうるか」を橋の両側で測ると:
+
+- **デスクトップ版は total だった。** `main.ts` の `action:invoke` は全経路が値を返し、
+  2 つの await はどちらも try の中 (`getValidToken` と `fn(...)`)。
+  つまり handler の例外で `ipcRenderer.invoke` が拒否することはない。
+- **ブラウザ版の `web-shim.invoke` は 413 行・await 30・try 18 で、
+  トップレベルの try が無い。** 粗く数えると try に包まれていない await が **19 件**。
+  ここまでは「拒否されうる」に見えた。
+- **ところが呼ばれている側が total だった。** 実際に読んだ 2 つ:
+  - `saveToLibrary` (4 か所で使われる) は `library.put` を try で包み、
+    残る `mirrorToFolder` も **`fs/folderMirror.ts:59` で全経路が値を返す**
+    (`load` の失敗 → `'failed'`、権限なし → `'permission'`、`write` の失敗 → `'failed'`)。
+  - `runProxyBearer` (8 か所) は `vault.getToken` を try で包み `err('not_configured', …)` を返す。
+
+**これはこのリポジトリの一貫した作法である** —— `shellTargetOrNull` /
+`externalUrlOrNull` / `mirrorToFolder` / `runProxyBearer` はどれも
+「駄目を例外ではなく値で返す」。**関門が呼び出し側ではなく呼ばれる側に在る**ので、
+呼び出し側に `catch` が無いことは、それだけでは欠陥ではない。
+
+**残っている不確かさは正直に書く。** 読んだのは 8 つほどの呼び先のうち **2 つ**で、
+`chatOllama` / `callStocksAdvisor` / `callEmotionsAnalyze` / `callAssistantChat` /
+`callAssistantChatAll` / `callAssistantProviders` / `callAnthropicAdvisor` /
+`runProxyBearer` の内側の `fn(...)` は**未確認**。だから
+「族は安全だ」とは言わない —— 言えるのは
+**「欠陥として立証できず、証拠は関門が呼ばれる側に在ることを指している」**まで。
+
+**次にやるなら**: 呼び先 6 つを読んで total かを確かめ、total でない物が 1 つでも在れば
+(a) その呼び先を total にする (橋の宣言した型 `Promise<ActionResult<T>>` は拒否を含まない ——
+デスクトップ側は既にその約束を守っているので、これは parity の話になる)、
+(b) 「橋は拒否しない」を検査で留める。25 か所へ `catch` を足すのは**最後の手段**で、
+根で閉じれば 1 か所で済む。
+
+**教訓**: **走査は当たりを付けるだけで、欠陥の証明にはならない。**
+「catch が近くに無い」は構文の観察であって、振る舞いの主張ではない。
+振る舞いを主張するには、拒否されうることを示さなければならない。
