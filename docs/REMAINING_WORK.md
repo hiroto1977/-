@@ -23788,6 +23788,106 @@ export function _resetRecordStoreForTests(): void {
 - `ManualDataSection` の行カバレッジは測り直していない (11 本の駆動で上がるはず)。
   次に全域を測るときに確かめる。
 
+## パス 179 (2026-09-12) — **一覧で選んだスキルと、実際に走るスキルが別物だった**
+
+レンダラで行カバレッジが次に低い画面を読む (パス 151 の規準)。
+`SkillsPage` は **43.47% · 専用の検査 0 本**で、`scanSkills` が 1 つの欄 (`name`) に
+**2 つの役**を兼ねさせていた —— frontmatter の `name:` が在ればそれ、無ければファイル名。
+画面はそれを題として刷り、**同じ値を `run-skill` の鍵として送っていた**。
+ところが `readSkillBody` は鍵から `~/.claude/skills/<鍵>/SKILL.md` を組む。
+
+### 直す前の実測 (4 通りを直接呼んだ)
+
+| 置いた物 | 一覧の表示 | 「実行」を押すと |
+|---|---|---|
+| `invoice/SKILL.md` · `name: 請求書作成` | 請求書作成 | `skill "請求書作成" has an unsafe name` |
+| `my-tool/SKILL.md` · `name: helper` | helper | `skill "helper" not found in ~/.claude/skills` |
+| `alpha/SKILL.md` · `name: beta` + `beta/SKILL.md` | beta | **`beta/SKILL.md` の本文が Anthropic へ** (成功として表示) |
+| `plain.md` (frontmatter 無し) | plain | 動く |
+
+**動いていたのは 4 通りめだけ** —— frontmatter の名前がファイル名と同じときである。
+
+1 行目は**この app でいちばん出やすい形**だ (日本語向けの app で、スキル名を日本語で
+書くのは自然)。しかも断りが「あなたのスキルの名前が安全でない」と言う ——
+悪いのは利用者の命名ではなく、**一覧が持っているパスを捨てて題から組み直した**ことである。
+
+3 行目がいちばん重い: **選んだのとは別のスキルの定義が第三者の API へ送られ、画面は成功と言う。**
+利用者には見分けられない (パス 103 の「成り立たない主張を刷る」の家系)。
+
+### 直した所
+
+| 何 | どこ |
+|---|---|
+| 鍵 (`id`) と題 (`label`) を別の欄に。`runnable` / `unrunnableReason` も走査から決める | `main/clients/skills.ts` (`SkillEntry` / `scanSkills` / `markRunnable`) |
+| payload は `{ id, prompt }` (題は受け取らない) | 同 `RunSkillPayload` / `runSkill` |
+| 選択肢の `value` は鍵・見えるのは題。**実行できない物は選ばせず、理由を行に出す** | `renderer/pages/SkillsPage.tsx` |
+| 文面と選択肢の書き方 | `src/shared/skillIdentity.ts` (新設) |
+| 同梱の要素型 | `renderer/data/snapshot.ts` |
+
+**判定 (`isSafeSkillName`) は写さなかった** —— main に 1 つだけ在り、`scanSkills` が呼ぶ。
+同じ規則を 2 か所に置くのはパス 167 / 174 で 2 度直した形である。
+
+### 「実行できない」を 2 種類、走査から決める
+
+1. **鍵に使えない字** (日本語のフォルダ名など) → 直す先はフォルダ名で、`name:` は日本語のままでよい
+   と書く (パス 157 の「できない指示を出さない」)。
+2. **同じ鍵を 2 つの項目が持つ** (`dup/SKILL.md` と `dup.md`) → `readSkillBody` の候補順どおり
+   **フォルダ側が勝つ**ので、負けた側を押させず勝つ側のパスを言う。
+
+台帳は書かない (走査した実物から決まる)。
+
+### 題が重なる残り半分
+
+題は frontmatter が決めるので重なりうる。重なったまま並べると**どちらを選んだか読めない**ので、
+`skillOptionText` が**一意でないときだけ**鍵を添える (`レビュー (alpha)`)。
+
+### `name: ""` は題にしない
+
+`fm.name ?? fallbackName` は `''` が nullish でないため**題が空の行**を作っていた
+(選択肢も空欄)。`||` に変えて鍵へ倒す。`''` そのものは `parseFrontmatter` の検査が持つ。
+
+### 関門
+
+| 何 | 件数 |
+|---|---|
+| `shared/__tests__/skillIdentity.test.ts` (文面は全文書き写し・選択肢の重なり・0 件) | 12 |
+| `main/clients/__tests__/skills.test.ts` に「鍵と題」の describe (上の 4 通り + 2 種類の実行不可 + 並び + 同梱との欄一致) | 10 |
+| `renderer/pages/__tests__/skillsPageIdentity.test.ts` (画面から `invoke` へ渡る payload を掴む) | 10 |
+
+**既存の検査は広げた (消していない)**: `skills.test.ts` の `.name` 読み 10 か所と
+payload 22 か所、パス 175 の `aiCeilingOnScreen.test.ts` の `skills` 標本。
+
+### 対照 13 本すべて鳴った (1 本は最初鳴らなかった)
+
+`C12 勝者をフォルダ形式でなく先頭にする` が **0 件失敗** だった ——
+`readdir` は `dup` を `dup.md` より先に並べるので、素直に書いた標本では**偶然どちらの
+規則でも同じ答え**になる。列挙の順を逆にして渡す標本を足したら鳴った。
+**鳴らない対照は「合格」ではなく、その標本が規則を区別していないという報せである。**
+
+### 同梱と取得の欄の一致 (`shapeDiff` が見ない所)
+
+`snapshotShapeParity` は**両方に 1 件以上あるときだけ**要素の形を比べる。
+`SNAPSHOT.skills.items` は常に `[]` (ブラウザ版は `~/.claude/skills` を読めない) なので
+**skills は要素の形を 1 度も突き合わせていない**。`skills.test.ts` に
+「`SkillEntry` と同梱要素型の両方として通る literal」を置き、走査した項目の欄と比べた
+(型検査が片方向・実行時がもう片方向)。
+
+### 測って欠陥ではなかった物
+
+- ブラウザ版で `run-skill` は `action_not_found` を返すが、**画面はその文を出す**ので黙っていない
+  (パス 176 の走査どおり)。しかも `items` が常に空なので「スキル実行」自体押せない。
+- `SkillEntry.source` の `'project' | 'plugin'` は `fetchSkillsSnapshot` が `'user'` しか渡さないので
+  出ない。**型が実物より広いだけで、画面が嘘をつく形ではない** (`~/.claude/skills` しか読まないと
+  画面が明記している)。
+
+### 残り (判断を保留した)
+
+`isSafeSkillName` は `^[A-Za-z0-9_-][A-Za-z0-9._-]*$` なので、**フォルダ名自体が日本語**の
+スキルは今も実行できない (画面が理由と打てる手を出す)。この allowlist を広げるかは
+**セキュリティの規則を緩める判断**なので単独で見る —— 実際の封じ込めは realpath が持っており
+(`skills.ts` の注記)、この正規表現は字面の防御である。広げるなら `NUL` / 区切り / `..` /
+先頭ドットの禁止を保ったまま、Unicode の文字種で許す形になる。
+
 ## パス 178 (2026-09-12) — **23 か所の欄と 6 本の検査が読む 3 関数が、変異検査の外に在った**
 
 パス 167 / 168 / 172 / 174 / 175 は「天井を超えた入力をどう扱うか」を繰り返し直し、

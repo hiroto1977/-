@@ -78,7 +78,20 @@ vi.mock('../voice/ttsAdapter', () => ({
 /** 取得に差し替える中身 (画面が要る前提を満たす分だけ)。 */
 const FETCHED: Readonly<Record<string, unknown>> = {
   skills: {
-    items: [{ name: 'tax-check', description: '税務の点検', source: 'user', path: '/s/tax-check.md' }],
+    /*
+     * パス 179 で鍵 (`id`) と題 (`label`) が別の欄になり、`runnable` が無いと
+     * 「スキル実行」が押せなくなった (押しても選べない口を開けないため)。
+     * 選択肢の value は鍵なので `pickOption` に渡すのも鍵である。
+     */
+    items: [{
+      id: 'tax-check',
+      label: '税務の点検',
+      description: '税務の点検',
+      source: 'user',
+      path: '/s/tax-check.md',
+      runnable: true,
+      unrunnableReason: '',
+    }],
   },
   ollama: {
     ...SNAPSHOT.ollama,

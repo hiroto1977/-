@@ -3,6 +3,9 @@ import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { parseFrontmatter, scanSkills, ACTIONS, isSafeSkillName, fetchSkillsSnapshot, SKILLS_MAX_TOKENS } from '../skills';
+import type { SkillEntry } from '../skills';
+import { shadowedSkillIdNote, unsafeSkillIdNote } from '../../../shared/skillIdentity';
+import { SNAPSHOT } from '../../../renderer/data/snapshot';
 import { FetchError } from '../types';
 import {
   ASSISTANT_REPLY_TRUNCATED_NOTICE,
@@ -164,7 +167,10 @@ describe('scanSkills', () => {
 
     const result = await scanSkills(tmpDir, 'user');
     expect(result).toHaveLength(2);
-    expect(result.map((s) => s.name)).toEqual(['init', 'security-review']);
+    expect(result.map((s) => s.label)).toEqual(['init', 'security-review']);
+    // 鍵と題は別の欄 (パス 179)。この 2 件は frontmatter が実体と同じ名前なので一致する。
+    expect(result.map((s) => s.id)).toEqual(['init', 'security-review']);
+    expect(result.every((s) => s.runnable)).toBe(true);
     expect(result[1]).toMatchObject({
       source: 'user',
       description: 'Reviews diffs for security issues.',
@@ -192,14 +198,14 @@ describe('scanSkills', () => {
       return real.sort((a, b) => b.name.localeCompare(a.name)); // z → a
     };
     const result = await scanSkills(tmpDir, 'user', reverseReadDir);
-    expect(result.map((s) => s.name)).toEqual(['alpha', 'mango', 'zebra']);
+    expect(result.map((s) => s.label)).toEqual(['alpha', 'mango', 'zebra']);
   });
 
   it('still includes .md files without frontmatter, using the filename as name', async () => {
     await fs.writeFile(path.join(tmpDir, 'bare.md'), '# bare skill\n\nno frontmatter');
     const result = await scanSkills(tmpDir, 'user');
     expect(result).toHaveLength(1);
-    expect(result[0]).toMatchObject({ name: 'bare', description: '', source: 'user' });
+    expect(result[0]).toMatchObject({ id: 'bare', label: 'bare', description: '', source: 'user', runnable: true });
   });
 
   it('only strips the FINAL .md from the filename (kills `/\\.md$/` → `/\\.md/`)', async () => {
@@ -212,7 +218,8 @@ describe('scanSkills', () => {
     );
     const result = await scanSkills(tmpDir, 'user');
     expect(result).toHaveLength(1);
-    expect(result[0]!.name).toBe('legacy.md.notes');
+    expect(result[0]!.id).toBe('legacy.md.notes');
+    expect(result[0]!.label).toBe('legacy.md.notes');
   });
 
   it('ignores README.md so docs do not show up as skills', async () => {
@@ -234,27 +241,28 @@ describe('scanSkills', () => {
       '---\nname: trimme\ndescription:    has spaces   \n---\n',
     );
     const result = await scanSkills(tmpDir, 'user');
-    expect(result[0]!.name).toBe('trimme');
+    // **鍵は実体・題は frontmatter** (パス 179)。ファイルは `s.md` なので鍵は `s`。
+    // パス 179 まで両方を 1 つの欄が兼ねており、この項目は押すと
+    // `skill "trimme" not found in ~/.claude/skills` で落ちていた。
+    expect(result[0]!.id).toBe('s');
+    expect(result[0]!.label).toBe('trimme');
+    expect(result[0]!.runnable).toBe(true);
     expect(result[0]!.description).toBe('has spaces');
   });
 
-  it('falls back to (無題) when the title rich_text array contains only empty plain_text', async () => {
-    // Verifies the `if (text) return text` guard in extractTitle —
-    // if the guard is mutated to `if (true)`, we would return '' instead
-    // of falling through to the (無題) fallback. Exercise via the
-    // notion fetcher tests... but we can test the equivalent here by
-    // creating a SKILL.md with empty quoted name. Different code path
-    // but exercises stripBalancedQuotes + fallback.
+  it('★ `name: ""` は題に使わず鍵を出す (無題の行を作らない・パス 179)', async () => {
+    // `stripBalancedQuotes('""')` は `''` を返すので `fm.name` は `''` になる。
+    // パス 179 まで `fm.name ?? fallbackName` だったため (`''` は nullish ではない)
+    // **題が空の行**が一覧に出ていた —— 選択肢としても空欄で、どれを選んだか読めない。
+    // `''` そのものは `parseFrontmatter` の検査が留める (下の describe)。
     await fs.writeFile(
       path.join(tmpDir, 'empty-name.md'),
       '---\nname: ""\ndescription: ok\n---\n',
     );
+    expect(parseFrontmatter('---\nname: ""\ndescription: ok\n---\n').name).toBe('');
     const result = await scanSkills(tmpDir, 'user');
-    // stripBalancedQuotes("\"\"") returns "" → fm.name = ""
-    // scanSkills falls back to fallbackName when fm.name is falsy/missing
-    // (we use fm.name ?? fallbackName, but "" is not nullish).
-    // So this confirms our trimmed empty-string is preserved as ''.
-    expect(result[0]!.name).toBe('');
+    expect(result[0]!.label).toBe('empty-name');
+    expect(result[0]!.id).toBe('empty-name');
     expect(result[0]!.description).toBe('ok');
   });
 });
@@ -291,9 +299,11 @@ describe('fetchSkillsSnapshot', () => {
     expect(Array.isArray(snap.items)).toBe(true);
     expect(snap.items).toHaveLength(1);
     expect(snap.items[0]).toMatchObject({
-      name: 'one',
+      id: 'one',
+      label: 'one',
       description: 'first',
       source: 'user',
+      runnable: true,
     });
   });
 });
@@ -334,7 +344,7 @@ describe('ACTIONS["run-skill"]', () => {
     const result = (await ACTIONS['run-skill']!({
       token: 'sk-ant-xxxxx',
       fetch: fetchMock,
-      payload: { name: 'echo', prompt: 'ping' },
+      payload: { id: 'echo', prompt: 'ping' },
     })) as { text: string; stopReason: string };
 
     expect(result).toEqual({ text: 'pong', stopReason: 'end_turn' });
@@ -361,17 +371,17 @@ describe('ACTIONS["run-skill"]', () => {
       ACTIONS['run-skill']!({
         token: 'sk-ant-x',
         fetch: fetchMock,
-        payload: { name: 'nonexistent', prompt: 'hi' },
+        payload: { id: 'nonexistent', prompt: 'hi' },
       }),
     ).rejects.toThrow(/not found/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('rejects when name/prompt are missing with the literal "name and prompt are required" message', async () => {
+  it('rejects when id/prompt are missing with the literal "id and prompt are required" message', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
-      ACTIONS['run-skill']!({ token: 't', fetch: fetchMock, payload: { name: 'echo' } }),
-    ).rejects.toThrow(/^name and prompt are required$/);
+      ACTIONS['run-skill']!({ token: 't', fetch: fetchMock, payload: { id: 'echo' } }),
+    ).rejects.toThrow(/^id and prompt are required$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -381,18 +391,18 @@ describe('ACTIONS["run-skill"]', () => {
       ACTIONS['run-skill']!({
         token: 'sk-ant-xxxxx',
         fetch: fetchMock,
-        payload: { name: 'echo', prompt: 'a'.repeat(MAX_ASSISTANT_CONTENT_CHARS + 1) },
+        payload: { id: 'echo', prompt: 'a'.repeat(MAX_ASSISTANT_CONTENT_CHARS + 1) },
       }),
     ).rejects.toThrow(inputTooLongMessage('プロンプト'));
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('★ 文字列でない name / prompt は必須の断りで止める (JSON にして送らない)', async () => {
-    for (const payload of [{ name: 'echo', prompt: { evil: true } }, { name: 5, prompt: 'x' }, { name: ['echo'], prompt: 'x' }]) {
+  it('★ 文字列でない id / prompt は必須の断りで止める (JSON にして送らない)', async () => {
+    for (const payload of [{ id: 'echo', prompt: { evil: true } }, { id: 5, prompt: 'x' }, { id: ['echo'], prompt: 'x' }]) {
       const fetchMock = vi.fn<typeof fetch>();
       await expect(
         ACTIONS['run-skill']!({ token: 'sk-ant-xxxxx', fetch: fetchMock, payload }),
-      ).rejects.toThrow(/^name and prompt are required$/);
+      ).rejects.toThrow(/^id and prompt are required$/);
       expect(fetchMock).not.toHaveBeenCalled();
     }
   });
@@ -407,13 +417,13 @@ describe('ACTIONS["run-skill"]', () => {
     const result = (await ACTIONS['run-skill']!({
       token: 'sk-ant-xxxxx',
       fetch: fetchMock,
-      payload: { name: 'echo', prompt: 'ping' },
+      payload: { id: 'echo', prompt: 'ping' },
     })) as { text: string };
     expect(result.text).toHaveLength(MAX_ASSISTANT_REPLY_CHARS + ASSISTANT_REPLY_TRUNCATED_NOTICE.length);
     expect(result.text.endsWith(ASSISTANT_REPLY_TRUNCATED_NOTICE)).toBe(true);
   });
 
-  it('rejects when the prompt is provided but name is empty (same literal message)', async () => {
+  it('rejects when the prompt is provided but id is empty (same literal message)', async () => {
     // Kills the StringLiteral mutant on skills.ts:198 — pin the exact
     // error text so it cannot drift silently.
     const fetchMock = vi.fn<typeof fetch>();
@@ -421,13 +431,13 @@ describe('ACTIONS["run-skill"]', () => {
       ACTIONS['run-skill']!({
         token: 't',
         fetch: fetchMock,
-        payload: { name: '', prompt: 'hi' },
+        payload: { id: '', prompt: 'hi' },
       }),
-    ).rejects.toThrow(/^name and prompt are required$/);
+    ).rejects.toThrow(/^id and prompt are required$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('resolves a flat-file skill at ~/.claude/skills/<name>.md (kills `${name}.md` template literal mutation)', async () => {
+  it('resolves a flat-file skill at ~/.claude/skills/<id>.md (kills `${id}.md` template literal mutation)', async () => {
     // Tests the SECOND candidate path in readSkillBody. The first
     // candidate (~/.claude/skills/<name>/SKILL.md) doesn't exist for
     // 'flat'; the fallback is exercised here. If the template literal
@@ -447,7 +457,7 @@ describe('ACTIONS["run-skill"]', () => {
     const result = (await ACTIONS['run-skill']!({
       token: 'sk-ant-x',
       fetch: fetchMock,
-      payload: { name: 'flat', prompt: 'hi' },
+      payload: { id: 'flat', prompt: 'hi' },
     })) as { text: string };
     expect(result.text).toBe('flat-ok');
     const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
@@ -462,7 +472,7 @@ describe('ACTIONS["run-skill"]', () => {
     const err = await ACTIONS['run-skill']!({
       token: 'sk-ant-x',
       fetch: fetchMock,
-      payload: { name: 'echo', prompt: 'p' },
+      payload: { id: 'echo', prompt: 'p' },
     }).catch((e: unknown) => e);
     expect(err).toBeInstanceOf(FetchError);
     expect((err as FetchError).serviceId).toBe('skills');
@@ -499,7 +509,7 @@ describe('ACTIONS["run-skill"]', () => {
     await ACTIONS['run-skill']!({
       token: 'sk-ant-x',
       fetch: fetchMock,
-      payload: { name: 'echo', prompt: 'p', maxTokens },
+      payload: { id: 'echo', prompt: 'p', maxTokens },
     });
     const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
     expect(body.max_tokens).toBe(SKILLS_MAX_TOKENS);
@@ -515,7 +525,7 @@ describe('ACTIONS["run-skill"]', () => {
     await ACTIONS['run-skill']!({
       token: 'sk-ant-x',
       fetch: fetchMock,
-      payload: { name: 'echo', prompt: 'p', model: 'claude-opus-4-7' },
+      payload: { id: 'echo', prompt: 'p', model: 'claude-opus-4-7' },
     });
     const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
     expect(body.model).toBe('claude-sonnet-4-6');
@@ -531,7 +541,7 @@ describe('ACTIONS["run-skill"]', () => {
     const result = (await ACTIONS['run-skill']!({
       token: 'sk-ant-x',
       fetch: fetchMock,
-      payload: { name: 'echo', prompt: 'p' },
+      payload: { id: 'echo', prompt: 'p' },
     })) as { text: string };
     expect(result.text).toBe('');
   });
@@ -548,7 +558,7 @@ describe('ACTIONS["run-skill"]', () => {
     const result = (await ACTIONS['run-skill']!({
       token: 'sk-ant-x',
       fetch: fetchMock,
-      payload: { name: 'echo', prompt: 'p' },
+      payload: { id: 'echo', prompt: 'p' },
     })) as { text: string; stopReason: string };
     expect(result.text).toBe('');
     expect(result.stopReason).toBe('end_turn');
@@ -574,7 +584,7 @@ describe('ACTIONS["run-skill"]', () => {
     const result = (await ACTIONS['run-skill']!({
       token: 'sk-ant-x',
       fetch: fetchMock,
-      payload: { name: 'echo', prompt: 'p' },
+      payload: { id: 'echo', prompt: 'p' },
     })) as { text: string };
     expect(result.text).toBe('pong');
   });
@@ -591,7 +601,7 @@ describe('ACTIONS["run-skill"]', () => {
     const result = (await ACTIONS['run-skill']!({
       token: 'sk-ant-x',
       fetch: fetchMock,
-      payload: { name: 'echo', prompt: 'p' },
+      payload: { id: 'echo', prompt: 'p' },
     })) as { stopReason: string };
     expect(result.stopReason).toBe('');
   });
@@ -636,7 +646,7 @@ describe('readSkillBody と symlink', () => {
     await expect(
       ACTIONS['run-skill']!({
         token: 'sk-ant-x',
-        payload: { name: 'evil', prompt: 'hi' },
+        payload: { id: 'evil', prompt: 'hi' },
         fetch: fetchMock,
       } as unknown as Parameters<NonNullable<(typeof ACTIONS)['run-skill']>>[0]),
     ).rejects.toThrow(/not found/);
@@ -676,7 +686,7 @@ describe('readSkillBody と symlink', () => {
     );
     await ACTIONS['run-skill']!({
       token: 'sk-ant-x',
-      payload: { name: 'alias', prompt: 'hi' },
+      payload: { id: 'alias', prompt: 'hi' },
       fetch: fetchMock,
     } as unknown as Parameters<NonNullable<(typeof ACTIONS)['run-skill']>>[0]);
 
@@ -754,7 +764,7 @@ describe('isSafeSkillName', () => {
   });
 });
 
-describe('ACTIONS["run-skill"] — name validation', () => {
+describe('ACTIONS["run-skill"] — id validation', () => {
   let tmpDir = '';
   beforeEach(async () => {
     tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'skills-run-validate-'));
@@ -772,13 +782,13 @@ describe('ACTIONS["run-skill"] — name validation', () => {
       ACTIONS['run-skill']!({
         token: 'sk-ant-x',
         fetch: fetchMock,
-        payload: { name: '../../etc/passwd', prompt: 'p' },
+        payload: { id: '../../etc/passwd', prompt: 'p' },
       }),
     ).rejects.toThrow(/unsafe name/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('truncates unsafe skill name to 32 chars in error (kills `name.slice(0, 32)` → `name`)', async () => {
+  it('truncates unsafe skill id to 32 chars in error (kills `id.slice(0, 32)` → `id`)', async () => {
     const longUnsafe = 'a'.repeat(40) + ' bad-tail-with-secret-data';
     const fetchMock = vi.fn<typeof fetch>();
     let caught: Error | undefined;
@@ -786,7 +796,7 @@ describe('ACTIONS["run-skill"] — name validation', () => {
       await ACTIONS['run-skill']!({
         token: 'sk-ant-x',
         fetch: fetchMock,
-        payload: { name: longUnsafe, prompt: 'hi' },
+        payload: { id: longUnsafe, prompt: 'hi' },
       });
     } catch (err) {
       caught = err as Error;
@@ -804,7 +814,7 @@ describe('ACTIONS["run-skill"] — name validation', () => {
       ACTIONS['run-skill']!({
         token: 'sk-ant-x',
         fetch: fetchMock,
-        payload: { name: '/etc/hostname', prompt: 'p' },
+        payload: { id: '/etc/hostname', prompt: 'p' },
       }),
     ).rejects.toThrow(/unsafe name/);
     expect(fetchMock).not.toHaveBeenCalled();
@@ -844,7 +854,7 @@ describe('scanSkills — 根の外は列挙しない', () => {
     await fs.symlink(outside, path.join(skills, 'evil.md'));
 
     const out = await scanSkills(skills, 'user');
-    expect(out.map((s) => s.name)).not.toContain('LEAKED-NAME');
+    expect(out.map((s) => s.label)).not.toContain('LEAKED-NAME');
     expect(JSON.stringify(out)).not.toContain('TOP-SECRET');
     expect(out).toEqual([]);
   });
@@ -859,7 +869,7 @@ describe('scanSkills — 根の外は列挙しない', () => {
     await fs.writeFile(path.join(skills, 'good.md'), '---\nname: good\ndescription: fine\n---\n');
 
     const out = await scanSkills(skills, 'user');
-    expect(out.map((s) => s.name)).toEqual(['good']);
+    expect(out.map((s) => s.label)).toEqual(['good']);
   });
 
   /*
@@ -874,7 +884,7 @@ describe('scanSkills — 根の外は列挙しない', () => {
     await fs.symlink(path.join(skills, 'real.md'), path.join(skills, 'alias.md'));
 
     const out = await scanSkills(skills, 'user');
-    expect(out.map((s) => s.name).sort()).toEqual(['real', 'real']);
+    expect(out.map((s) => s.label).sort()).toEqual(['real', 'real']);
   });
 
   /*
@@ -890,7 +900,7 @@ describe('scanSkills — 根の外は列挙しない', () => {
     await fs.symlink(skills, linkToSkills);
 
     const out = await scanSkills(linkToSkills, 'user');
-    expect(out.map((s) => s.name)).toEqual(['good']);
+    expect(out.map((s) => s.label)).toEqual(['good']);
   });
 
   it('壊れた symlink は静かに飛ばす (走査は止めない)', async () => {
@@ -900,6 +910,177 @@ describe('scanSkills — 根の外は列挙しない', () => {
     await fs.writeFile(path.join(skills, 'good.md'), '---\nname: good\ndescription: fine\n---\n');
 
     const out = await scanSkills(skills, 'user');
-    expect(out.map((s) => s.name)).toEqual(['good']);
+    expect(out.map((s) => s.label)).toEqual(['good']);
+  });
+});
+
+/**
+ * **一覧が出した物を押したら、その物が走る** (2026-09-12 · パス 179)。
+ *
+ * 直す前の実測 (この 4 通りを直接呼んで確かめた):
+ *
+ * | 置いた物 | 一覧の表示 | 実行を押すと |
+ * |---|---|---|
+ * | `invoice/SKILL.md` · `name: 請求書作成` | 請求書作成 | `skill "請求書作成" has an unsafe name` |
+ * | `my-tool/SKILL.md` · `name: helper` | helper | `skill "helper" not found in ~/.claude/skills` |
+ * | `alpha/SKILL.md` · `name: beta` + `beta/SKILL.md` | beta | **`beta/SKILL.md` が Anthropic へ** (成功として表示) |
+ * | `plain.md` (frontmatter 無し) | plain | 動く |
+ *
+ * **動いていたのは 4 通りめだけ** —— frontmatter の名前がファイル名と同じときである。
+ */
+describe('スキルの鍵と題 (パス 179)', () => {
+  let home: string;
+  let root: string;
+  let prevHome: string | undefined;
+
+  beforeEach(async () => {
+    home = await fs.mkdtemp(path.join(os.tmpdir(), 'skill-identity-'));
+    root = path.join(home, '.claude', 'skills');
+    await fs.mkdir(root, { recursive: true });
+    prevHome = process.env.HOME;
+    process.env.HOME = home;
+  });
+
+  afterEach(async () => {
+    if (prevHome === undefined) delete process.env.HOME;
+    else process.env.HOME = prevHome;
+    await fs.rm(home, { recursive: true, force: true });
+  });
+
+  const write = async (rel: string, body: string) => {
+    const f = path.join(root, rel);
+    await fs.mkdir(path.dirname(f), { recursive: true });
+    await fs.writeFile(f, body, 'utf8');
+  };
+
+  /** 画面の「実行」と同じ道を通す (送るのは鍵)。system に載った本文を返す。 */
+  const run = async (id: string) => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(JSON.stringify({ content: [{ type: 'text', text: 'OK' }] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    await ACTIONS['run-skill']!({
+      token: 't',
+      payload: { id, prompt: 'hi' },
+      fetch: fetchMock,
+    } as never);
+    return (JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body ?? '{}')) as { system: string }).system;
+  };
+
+  it('★ ① 日本語の `name:` は題になり、鍵はフォルダ名なので実行できる', async () => {
+    await write('invoice/SKILL.md', '---\nname: 請求書作成\n---\nBODY-INVOICE\n');
+    const [entry] = await scanSkills(root, 'user');
+    expect(entry).toMatchObject({ id: 'invoice', label: '請求書作成', runnable: true });
+    await expect(run(entry!.id)).resolves.toContain('BODY-INVOICE');
+  });
+
+  it('★ ② `name:` がフォルダ名と違っても実行できる (鍵はフォルダ名)', async () => {
+    await write('my-tool/SKILL.md', '---\nname: helper\n---\nBODY-MYTOOL\n');
+    const [entry] = await scanSkills(root, 'user');
+    expect(entry).toMatchObject({ id: 'my-tool', label: 'helper', runnable: true });
+    await expect(run(entry!.id)).resolves.toContain('BODY-MYTOOL');
+  });
+
+  it('★ ③ 別のスキルの名前を `name:` に書いても、走るのは選んだ物 (元は別物が送られた)', async () => {
+    await write('alpha/SKILL.md', '---\nname: beta\n---\nBODY-OF-ALPHA\n');
+    await write('beta/SKILL.md', '---\nname: beta-real\n---\nBODY-OF-BETA\n');
+    const items = await scanSkills(root, 'user');
+    const chosen = items.find((s) => s.label === 'beta');
+    expect(chosen?.id).toBe('alpha');
+    const sent = await run(chosen!.id);
+    expect(sent, 'よその定義が Anthropic へ行っている').toContain('BODY-OF-ALPHA');
+    expect(sent, 'パス 179 まではこちらが送られていた').not.toContain('BODY-OF-BETA');
+  });
+
+  it('★ ④ frontmatter 無しは今までどおり (鍵 = 題 = ファイル名)', async () => {
+    await write('plain.md', 'JUST-BODY\n');
+    const [entry] = await scanSkills(root, 'user');
+    expect(entry).toMatchObject({ id: 'plain', label: 'plain', runnable: true });
+    await expect(run(entry!.id)).resolves.toContain('JUST-BODY');
+  });
+
+  it('★ 鍵に使えない字のフォルダは押させない (理由つき)', async () => {
+    await write('請求書/SKILL.md', '---\nname: 請求書\n---\nBODY\n');
+    const [entry] = await scanSkills(root, 'user');
+    expect(entry).toMatchObject({ id: '請求書', label: '請求書', runnable: false });
+    expect(entry!.unrunnableReason).toBe(unsafeSkillIdNote('請求書'));
+  });
+
+  it('★ 同じ鍵が 2 つあれば、負ける側を押させない (フォルダ形式が勝つ)', async () => {
+    await write('dup/SKILL.md', '---\nname: フォルダ側\n---\nBODY-DIR\n');
+    await write('dup.md', '---\nname: ファイル側\n---\nBODY-FLAT\n');
+    const items = await scanSkills(root, 'user');
+    expect(items).toHaveLength(2);
+    const dir = items.find((s) => s.path.endsWith(path.join('dup', 'SKILL.md')));
+    const flat = items.find((s) => s.path.endsWith(`dup.md`) && !s.path.includes(path.sep + 'dup' + path.sep));
+    expect(dir, 'フォルダ側が勝つ (readSkillBody の候補順)').toMatchObject({ runnable: true });
+    expect(flat).toMatchObject({ runnable: false });
+    expect(flat!.unrunnableReason).toBe(shadowedSkillIdNote('dup', dir!.path));
+    // 勝つ側が実際に読まれる (理由の文が言っていることが本当か).
+    await expect(run('dup')).resolves.toContain('BODY-DIR');
+  });
+
+  it('★ 勝つのは列挙の順ではなく `readSkillBody` の候補順 (フォルダ形式)', async () => {
+    /*
+     * **この標本が無いと「先頭を勝ちにする」実装と区別できない** ——
+     * `readdir` は `dup` を `dup.md` より先に並べるので、素直に書いた標本では
+     * 偶然どちらの規則でも同じ答えになる (対照 C12 が鳴らないことで分かった)。
+     * 列挙の順を**逆にして**渡し、候補順が効いていることを見る。
+     */
+    await write('dup/SKILL.md', '---\nname: フォルダ側\n---\nBODY-DIR\n');
+    await write('dup.md', '---\nname: ファイル側\n---\nBODY-FLAT\n');
+    const flatFirst = async () => {
+      const real = await fs.readdir(root, { withFileTypes: true });
+      return real.sort((a, b) => b.name.localeCompare(a.name)); // dup.md → dup
+    };
+    const items = await scanSkills(root, 'user', flatFirst);
+    const dir = items.find((s) => s.label === 'フォルダ側');
+    const flat = items.find((s) => s.label === 'ファイル側');
+    expect(dir, '列挙が後でもフォルダ形式が勝つ').toMatchObject({ runnable: true });
+    expect(flat, '列挙が先でもファイル形式は負ける').toMatchObject({ runnable: false });
+    expect(flat!.unrunnableReason).toBe(shadowedSkillIdNote('dup', dir!.path));
+    // 実際に読まれるのもフォルダ側 (理由の文が言っていることが本当か)。
+    await expect(run('dup')).resolves.toContain('BODY-DIR');
+  });
+
+  it('★ 実行できない項目は理由を持ち、実行できる項目は持たない (片方だけ埋まる)', async () => {
+    await write('ok/SKILL.md', '---\nname: 通る\n---\nB\n');
+    await write('だめ/SKILL.md', '---\nname: 通らない\n---\nB\n');
+    const items = await scanSkills(root, 'user');
+    // 標本に両方が在ること —— 片方しか無い標本では「片方だけ埋まる」を見ていない。
+    expect(items.filter((s) => s.runnable)).toHaveLength(1);
+    expect(items.filter((s) => !s.runnable)).toHaveLength(1);
+    for (const s of items) {
+      if (s.runnable) expect(s.unrunnableReason, `${s.id}: 実行できるのに理由が在る`).toBe('');
+      else expect(s.unrunnableReason.length, `${s.id}: 実行できないのに理由が無い`).toBeGreaterThan(20);
+    }
+  });
+
+  it('★ 題で並ぶ (画面の順と同じ)', async () => {
+    await write('z/SKILL.md', '---\nname: あ\n---\nB\n');
+    await write('a/SKILL.md', '---\nname: ん\n---\nB\n');
+    expect((await scanSkills(root, 'user')).map((s) => s.label)).toEqual(['あ', 'ん']);
+  });
+
+  it('★ 同梱の形と取ってきた形の欄が一致する (空配列なので shapeDiff は見ない)', async () => {
+    await write('shape/SKILL.md', '---\nname: 形\ndescription: d\n---\nB\n');
+    const [entry] = await scanSkills(root, 'user');
+    /*
+     * この literal は `SkillEntry` と**同梱の要素型の両方**として型検査を通る。
+     * 片方に欄が増えれば `npm run typecheck` が落ちる (実行時には拾えない向き)。
+     * 実行時は「fetcher が欄を出さなくなった」側を見る。
+     */
+    const sample: SkillEntry & (typeof SNAPSHOT.skills.items)[number] = {
+      id: 'x',
+      label: 'X',
+      description: '',
+      source: 'user',
+      path: '/x',
+      runnable: true,
+      unrunnableReason: '',
+    };
+    expect(Object.keys(entry!).sort()).toEqual(Object.keys(sample).sort());
   });
 });

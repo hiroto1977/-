@@ -8,6 +8,7 @@ import { useServiceData } from '../hooks/useServiceData';
 import { MAX_ASSISTANT_CONTENT_CHARS } from '../../shared/assistantLimits';
 import { CeilingNotice } from '../components/CeilingNotice';
 import { charsOverCeiling } from '../../shared/inputCeiling';
+import { skillOptionText, unrunnableSkillsNote } from '../../shared/skillIdentity';
 import type { ActionData } from '../../shared/actionData';
 import { DESKTOP_PATHS, localReadUnavailableNote } from '../../shared/buildDestinations';
 import { useBuildKind } from '../hooks/useBuildKind';
@@ -30,6 +31,12 @@ export function SkillsPage() {
     SNAPSHOT.skills,
   );
   const { items } = data;
+  /*
+   * **押して動く物だけを選ばせる** (パス 179)。`runnable` は `scanSkills` が
+   * 走査した実物から決める (鍵に使えない字・同じ鍵の重なり)。理由は行に出す。
+   */
+  const runnable = items.filter((s) => s.runnable);
+  const unrunnableNote = unrunnableSkillsNote(items.length - runnable.length);
 
   const [showForm, setShowForm] = useState(false);
   const [selected, setSelected] = useState('');
@@ -46,7 +53,8 @@ export function SkillsPage() {
     const res = await window.serviceHub.invoke<ActionData<'skills/run-skill'>>(
       'skills',
       'run-skill',
-      { name: selected, prompt },
+      /* 送るのは鍵 (`id`) —— 画面の題 (`label`) ではない (パス 179)。 */
+      { id: selected, prompt },
     );
     setSubmitting(false);
     if (res.ok) {
@@ -72,6 +80,12 @@ export function SkillsPage() {
             <strong>{buildKind === 'browser' ? 'スキル' : DESKTOP_PATHS.claudeSkills}</strong>
             <span style={{ color: 'var(--text-muted)', marginLeft: 8 }}>
               {items.length} 件のスキル
+              {unrunnableNote ? (
+                <span data-skills-unrunnable-note style={{ color: 'var(--warning)' }}>
+                  {' '}
+                  {unrunnableNote}
+                </span>
+              ) : null}
             </span>
           </>
         }
@@ -106,8 +120,27 @@ export function SkillsPage() {
           <DataList
             items={items.map((s) => ({
               key: s.path,
-              title: s.name,
-              meta: s.description || s.path,
+              title: s.label,
+              /* 鍵が題と違うときは鍵も見せる —— 押しても動かないときに何を直すか分かる。 */
+              meta: (
+                <>
+                  {s.description || s.path}
+                  {s.label === s.id ? null : (
+                    <>
+                      <br />
+                      実行名: <code>{s.id}</code>
+                    </>
+                  )}
+                  {s.runnable ? null : (
+                    <>
+                      <br />
+                      <span data-skill-unrunnable={s.id} style={{ color: 'var(--danger)' }}>
+                        ⚠ {s.unrunnableReason}
+                      </span>
+                    </>
+                  )}
+                </>
+              ),
               badge: s.source,
             }))}
           />
@@ -117,7 +150,7 @@ export function SkillsPage() {
       <Section
         title="Run"
         action={
-          <button onClick={() => setShowForm((v) => !v)} disabled={items.length === 0}>
+          <button onClick={() => setShowForm((v) => !v)} disabled={runnable.length === 0}>
             {showForm ? '閉じる' : 'スキル実行'}
           </button>
         }
@@ -127,7 +160,7 @@ export function SkillsPage() {
             {/* **何が外へ出るかを書く。** この画面は 2026-09-09 (パス 106) の走査から
                 漏れていた —— 走査が `AI_ACTIONS` を手で書いており、`run-skill` が
                 その一覧に無かった。送るのは指示文だけではなく、**選んだスキルの
-                定義そのもの** (`readSkillBody(name)` が `~/.claude/skills` から
+                定義そのもの** (`readSkillBody(id)` が `~/.claude/skills` から
                 読んだ Markdown 本文) が system プロンプトに載る (パス 107)。 */}
             <AiEgressNotice
               subject={{
@@ -141,9 +174,9 @@ export function SkillsPage() {
               style={inputStyle}
             >
               <option value="">スキルを選択…</option>
-              {items.map((s) => (
-                <option key={s.path} value={s.name}>
-                  {s.name}
+              {runnable.map((s) => (
+                <option key={s.path} value={s.id}>
+                  {skillOptionText(s, runnable)}
                 </option>
               ))}
             </select>

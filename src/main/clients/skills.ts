@@ -3,6 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
 import { MAX_ASSISTANT_CONTENT_CHARS, capAssistantReply, inputTooLongMessage } from '../../shared/assistantLimits';
+import { shadowedSkillIdNote, unsafeSkillIdNote } from '../../shared/skillIdentity';
 import {
   jsonFetch,
   type ActionContext,
@@ -12,10 +13,23 @@ import {
 import type { ActionData } from '../../shared/actionData';
 
 export interface SkillEntry {
-  name: string;
+  /**
+   * **実行するときの鍵** —— フォルダ名 (`<id>/SKILL.md`) かファイル名 (`<id>.md`)。
+   *
+   * パス 179 までこれと `label` が 1 つの欄 (`name`) を兼ねており、frontmatter の
+   * `name:` がフォルダ名と違うスキルは**実行できない・別の物が走る**という
+   * 3 通りの壊れ方をした (`shared/skillIdentity.ts` の冒頭に実測の表)。
+   */
+  id: string;
+  /** 画面に出す題 (frontmatter の `name:`、無ければ `id`)。**鍵には使わない。** */
+  label: string;
   description: string;
   source: 'user' | 'project' | 'plugin';
   path: string;
+  /** `id` で実行できるか。false のときだけ `unrunnableReason` に理由が入る。 */
+  runnable: boolean;
+  /** 実行できない理由 (実行できるときは空文字)。文面は `shared/skillIdentity.ts`。 */
+  unrunnableReason: string;
 }
 
 export interface SkillsSnapshot {
@@ -185,16 +199,67 @@ export async function scanSkills(
       continue;
     }
     const fm = parseFrontmatter(content);
+    /*
+     * **鍵は実体 (フォルダ名・ファイル名) から、題は frontmatter から。**
+     * `fallbackName` がそのまま鍵 —— `readSkillBody` が組む候補
+     * (`<id>/SKILL.md` / `<id>.md`) と同じ字を持つのはこちらだけである。
+     */
     results.push({
-      name: fm.name ?? fallbackName,
+      id: fallbackName,
+      /*
+       * `??` ではなく `||` —— `name: ""` は `''` を返し、`''` は nullish ではないので
+       * `??` だと**題が空の行**が一覧に出る (選択肢も空欄になり、どれを選んだか読めない)。
+       */
+      label: fm.name || fallbackName,
       description: fm.description ?? '',
       source,
       path: skillFile,
+      // 実行できるかは下でまとめて決める (同じ鍵の重なりを見るため)。
+      runnable: false,
+      unrunnableReason: '',
     });
   }
 
-  results.sort((a, b) => a.name.localeCompare(b.name));
+  markRunnable(results);
+  results.sort((a, b) => a.label.localeCompare(b.label));
   return results;
+}
+
+/**
+ * **押して動く物だけを `runnable` にする。**
+ *
+ * 2 つの理由で動かない:
+ *
+ * 1. 鍵に `isSafeSkillName` が通さない字が入っている (日本語のフォルダ名など)。
+ * 2. 同じ鍵を 2 つの項目が持っている —— `readSkillBody` は `<id>/SKILL.md` を
+ *    先に見るので**フォルダ側が勝ち**、`<id>.md` 側を押すと別の定義が走る。
+ *
+ * どちらも走査した実物から決める (台帳を手で書かない)。
+ */
+function markRunnable(entries: SkillEntry[]): void {
+  const byId = new Map<string, SkillEntry[]>();
+  for (const e of entries) {
+    const group = byId.get(e.id);
+    if (group) group.push(e);
+    else byId.set(e.id, [e]);
+  }
+  for (const e of entries) {
+    if (!isSafeSkillName(e.id)) {
+      e.runnable = false;
+      e.unrunnableReason = unsafeSkillIdNote(e.id);
+      continue;
+    }
+    const group = byId.get(e.id) ?? [e];
+    // `readSkillBody` の候補順と同じ —— フォルダ形式が先。
+    const winner = group.find((g) => g.path.endsWith(`${path.sep}SKILL.md`)) ?? group[0];
+    if (winner !== e) {
+      e.runnable = false;
+      e.unrunnableReason = shadowedSkillIdNote(e.id, winner?.path ?? e.path);
+      continue;
+    }
+    e.runnable = true;
+    e.unrunnableReason = '';
+  }
 }
 
 export async function fetchSkillsSnapshot(_ctx: FetchContext): Promise<SkillsSnapshot> {
@@ -210,7 +275,12 @@ export async function fetchSkillsSnapshot(_ctx: FetchContext): Promise<SkillsSna
 // mechanism as the other service tokens).
 
 interface RunSkillPayload {
-  name: string;
+  /**
+   * **一覧が出した `SkillEntry.id`** (フォルダ名・ファイル名) —— 画面に出ている題
+   * (`label`) ではない。パス 179 まで題を受け取っており、frontmatter の `name:` が
+   * フォルダ名と違うスキルは実行できなかった / 別の物が走った。
+   */
+  id: string;
   prompt: string;
 }
 
@@ -241,13 +311,13 @@ interface AnthropicMessagesResponse {
   stop_reason?: string;
 }
 
-async function readSkillBody(name: string): Promise<string> {
-  if (!isSafeSkillName(name)) {
-    const safe = String(name as unknown).slice(0, 32);
+async function readSkillBody(id: string): Promise<string> {
+  if (!isSafeSkillName(id)) {
+    const safe = String(id as unknown).slice(0, 32);
     throw new Error(`skill "${safe}" has an unsafe name`);
   }
   const base = path.join(os.homedir(), '.claude', 'skills');
-  const candidates = [path.join(base, name, 'SKILL.md'), path.join(base, `${name}.md`)];
+  const candidates = [path.join(base, id, 'SKILL.md'), path.join(base, `${id}.md`)];
   /*
    * **閉じ込めを見る前に symlink を実体まで辿る。**
    *
@@ -286,7 +356,7 @@ async function readSkillBody(name: string): Promise<string> {
       // try next
     }
   }
-  throw new Error(`skill "${name}" not found in ~/.claude/skills`);
+  throw new Error(`skill "${id}" not found in ~/.claude/skills`);
 }
 
 /** A skill name is a single path segment used to locate
@@ -310,15 +380,15 @@ export function isSafeSkillName(name: unknown): name is string {
 }
 
 async function runSkill(ctx: ActionContext): Promise<ActionData<'skills/run-skill'>> {
-  const { name, prompt } = ctx.payload as unknown as Partial<RunSkillPayload>;
-  if (typeof name !== 'string' || name.length === 0 || typeof prompt !== 'string' || prompt.length === 0) {
-    throw new Error('name and prompt are required');
+  const { id, prompt } = ctx.payload as unknown as Partial<RunSkillPayload>;
+  if (typeof id !== 'string' || id.length === 0 || typeof prompt !== 'string' || prompt.length === 0) {
+    throw new Error('id and prompt are required');
   }
   // 指示文の天井 (パス 112)。それまで prompt に天井が無く、貼り付けた物が丸ごと有料 API へ
   // 出ていた。1 発話の天井はアシスタントと同じ 1 つ (`MAX_ASSISTANT_CONTENT_CHARS`)。
   if (prompt.length > MAX_ASSISTANT_CONTENT_CHARS) throw new Error(inputTooLongMessage('プロンプト'));
 
-  const body = await readSkillBody(name);
+  const body = await readSkillBody(id);
 
   const res = await jsonFetch<AnthropicMessagesResponse>(
     'https://api.anthropic.com/v1/messages',

@@ -297,7 +297,14 @@ Discord webhook) は `lint:network-targets` の台帳 (`scripts/lint-network-tar
 
 **実装位置**: `src/main/clients/skills.ts` `readSkillBody()` + `isSafeSkillName()`
 
-- `isSafeSkillName(name)`: `^[A-Za-z0-9_-][A-Za-z0-9._-]*$` 限定 + length ≤ 128 + `..`
+**この allowlist が当たるのは `SkillEntry.id` (フォルダ名・ファイル名) である** (2026-09-12 · パス 179)。
+それまで `run-skill` の payload は**画面に出ている題** (frontmatter の `name:`) を受け取っており、
+題と実体が違うスキルは実行できず、題が他のスキパスのフォルダ名と一致すると**別の定義が
+Anthropic へ送られた**。鍵と題を分けたので、この規則は「実行に使う名前」だけを縛る ——
+日本語の `name:` は題として通り、フォルダ名が英数字でなければ**画面が押させない**
+(理由は `src/shared/skillIdentity.ts` の文面)。
+
+- `isSafeSkillName(id)`: `^[A-Za-z0-9_-][A-Za-z0-9._-]*$` 限定 + length ≤ 128 + `..`
   reject + 先頭ドット reject。`/`, `\`, NUL, 空白, `:`, `;`, `|`, `` ` ``, `$` 全部禁止。
 - `path.resolve(candidate).startsWith(path.resolve(base) + path.sep)` で belt-and-braces。
   Windows alternate separators / 短名 / シンボリックリンク等の platform quirk に対する保険。

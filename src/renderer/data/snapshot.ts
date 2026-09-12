@@ -311,11 +311,21 @@ export const SNAPSHOT = {
   },
 
   skills: {
+    /*
+     * ブラウザ版はここを読めないので常に空 (`localReadUnavailableNote` が画面で言う)。
+     * 欄は `main/clients/skills.ts` の `SkillEntry` と対応する ——
+     * **`id` (実行の鍵) と `label` (画面の題) は別の欄**である (パス 179)。
+     * 空配列なので `snapshotShapeParity` の走査は要素の形を見ない (両方に 1 件以上
+     * 要る)。対応は `main/clients/__tests__/skills.test.ts` の型検査が留める。
+     */
     items: [] as {
-      name: string;
+      id: string;
+      label: string;
       description: string;
       source: 'user' | 'project' | 'plugin';
       path: string;
+      runnable: boolean;
+      unrunnableReason: string;
     }[],
   },
 

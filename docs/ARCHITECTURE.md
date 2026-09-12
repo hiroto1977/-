@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **13232** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **13265** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -1791,7 +1791,7 @@ union を参照する。
 | gmail | `create-draft` | `{ to, subject, body? }` | **共有台帳 `GMAIL_DRAFT_FIELDS` (`checkWriteFields`) で型・長さ・CR/LF を reject** + `isSafeHeaderValue(to)` (二重の備え) | `gmail.ts:61-146` |
 | slack | `send-message` | `{ channel, text }` | **共有台帳 `SLACK_MESSAGE_FIELDS`** (型・長さ) | `slack.ts:84-126` |
 | canva | `create-folder` | `{ name, parentFolderId? }` | **共有台帳 `CANVA_FOLDER_FIELDS`** (型・長さ) | `canva.ts:81-122` |
-| skills | `run-skill` | `{ name, prompt }` | **`isSafeSkillName(name)`** + path containment。**`prompt` は `MAX_ASSISTANT_CONTENT_CHARS` 超を断る** (パス 112 まで天井なし)。**応答は `capAssistantReply` で 10 万字に打ち切り注記を残す** (パス 113 まで byte の天井だけ)。**`model` / `maxTokens` は payload から受けない** (2026-08-23 — 有料 API のパラメータをレンダラーに握らせない。定数 `SKILLS_MAX_TOKENS`) | `skills.ts:171-347` |
+| skills | `run-skill` | `{ id, prompt }` | **`isSafeSkillName(id)`** + path containment。**`id` は一覧が出した `SkillEntry.id` (フォルダ名・ファイル名) で、画面に出ている題 (`label` = frontmatter の `name:`) ではない** —— パス 179 までここが題を受け取っており、題と実体が違うスキルは実行できない / **別のスキルの定義が送られる**。**`prompt` は `MAX_ASSISTANT_CONTENT_CHARS` 超を断る** (パス 112 まで天井なし)。**応答は `capAssistantReply` で 10 万字に打ち切り注記を残す** (パス 113 まで byte の天井だけ)。**`model` / `maxTokens` は payload から受けない** (2026-08-23 — 有料 API のパラメータをレンダラーに握らせない。定数 `SKILLS_MAX_TOKENS`) | `skills.ts:205-420` |
 | security | `check-email-breach` | `{ email }` | `encodeURIComponent(email)` | `security.ts:187-338` |
 | security | `scan-url` | `{ url }` | **`validateScanUrl(url)`** (http/https のみ・長さ上限) → base64url(url) → VT id | `security.ts:290-338` |
 | cloudflare | `create-dns-record` | `{ zoneId, type, name, content, ttl?, proxied? }` | **共有台帳 `CLOUDFLARE_DNS_FIELDS`** (型・長さ・**type は台帳の一覧 (A / AAAA / CNAME / TXT / MX) 以外を reject**・ttl は 1 以上の整数・proxied は真偽値)。zoneId encodeURIComponent | `cloudflare.ts:132-220` |
@@ -1863,7 +1863,7 @@ Salesforce・Discord webhook) は、どう絞っているかを `lint:network-ta
 | security (HIBP) | `haveibeenpwned.com` | `GET /api/v3/breachedaccount/{email}` | `hibp-api-key` | `security.ts:227` |
 | security (VT) | `www.virustotal.com` | `POST /api/v3/urls`, `GET /api/v3/urls/{id}` | `x-apikey` | `security.ts:290-321` |
 | cloudflare | `api.cloudflare.com` | `GET /client/v4/user`, `/zones` | Bearer | `cloudflare.ts:23-114` |
-| skills, emotions | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `skills.ts:327`, `emotions.ts:209` |
+| skills, emotions | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `skills.ts:398`, `emotions.ts:209` |
 | assistant (AI ハブ・anthropic) | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `src/shared/ai/providers.ts:150-186` |
 | assistant (AI ハブ・openai) | `api.openai.com` | `POST /v1/chat/completions` | Bearer | `src/shared/ai/providers.ts:149-172` |
 | assistant (AI ハブ・gemini) | `generativelanguage.googleapis.com` | `POST /v1beta/models/{model}:generateContent` | `x-goog-api-key` | `src/shared/ai/providers.ts:213-253` |
@@ -1939,7 +1939,7 @@ graph TB
 | **プロトタイプ汚染** | `serviceId="__proto__"` | `isServiceId` (`serviceId.ts:93`) + `Object.hasOwn` (`main.ts:135,171,174,207`) |
 | **任意 URL の Ollama 接続** | renderer が他ホスト指定 | `OLLAMA_BASE` (`ollama.ts:44`) + `ALLOWED_ENDPOINTS` (`ollama.ts:61-66`) |
 | **モデル file (GGUF) 経由の脆弱性** (CVE-2026-7482 ほか・台帳は shared/ollama.ts の OLLAMA_ADVISORIES) | 悪意 GGUF ロード | 危険な書き込み endpoint 全 reject + 日付つきの台帳の注意と当てはまる CVE の名指し (`buildWarnings`, `ollama.ts:177-181`) |
-| **Skill name path traversal** | `name="../etc/passwd"` | `isSafeSkillName` (`skills.ts:283`) + realpath による封じ込め (読み出し `skills.ts:231-236` / **列挙 `skills.ts:106-131`**) |
+| **Skill id path traversal** | `id="../etc/passwd"` | `isSafeSkillName` (`skills.ts:367`) + realpath による封じ込め (読み出し `skills.ts:347-352` / **列挙 `skills.ts:151-189`**)。**鍵は一覧が出した `SkillEntry.id` で、frontmatter の `name:` は鍵にしない** (パス 179) |
 | **RFC 2822 ヘッダ injection** | `to="x@y\r\nBcc: z"` | `isSafeHeaderValue` (`gmail.ts:94-97`) + throw in `buildRfc2822` (`gmail.ts:91-104`) |
 | **token 漏洩 (error body echo)** | API が Authorization 反射 | `safeErrorMessage` (`main.ts:18-20`) + `redactSecrets` (`src/shared/redact.ts`) + 200B 切り詰め |
 | **token 漏洩 (プロキシがヘッダを JSON で返す)** | 利用者の BYO Worker が `{"headers":{"authorization":"Bearer …"}}` を返す | `redactSecrets` を**ヘッダ名起点**にした (線上の `名前: 値` と JSON の `"名前":"値"` の両方)。旧規則はコロン直結のみを見ており、この形が素通りしていた (2026-08-20 実測) |
@@ -2372,8 +2372,8 @@ classDiagram
   }
 
   class SkillsGuards~clients/skills.ts~ {
-    +isSafeSkillName(name) : skills.ts:204
-    -readSkillBody(name) : skills.ts:124 ~containment check~
+    +isSafeSkillName(id) : skills.ts:367
+    -readSkillBody(id) : skills.ts:314 ~containment check~
   }
 
   class GmailGuards~clients/gmail.ts~ {
