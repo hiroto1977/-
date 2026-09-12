@@ -154,13 +154,29 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
   const [value, setValue] = useState('');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  /** 一覧が読めなかった理由。**「未設定」と混ぜない** (パス 159)。 */
+  const [unreadable, setUnreadable] = useState<string | null>(null);
 
+  /*
+   * **「読めなかった」を「未設定」に畳まない。**
+   *
+   * 2026-09-12 (パス 159) まで、ここは `catch { setConfigured(false) }` だった ——
+   * 保管庫が施錠中・IndexedDB が容量超過・プライベートウィンドウで拒まれた端末では
+   * **16 枚の札すべてが「未設定」**になり、設定した本人に「設定する」と勧めていた。
+   * パス 86 / 87 が `ProxySection` / `FsaSection` / 使われていない資格情報の節で
+   * 直したのと同じ形で、**同じファイルの中に規準が 3 つ在った**
+   * (どれも「確認できません」+ 理由を出す)。この 1 枚だけが残っていた。
+   */
   async function refresh() {
     try {
       const list = await getVault().listConfigured();
       setConfigured(list.includes(slot.vaultKey));
-    } catch {
-      setConfigured(false);
+      setUnreadable(null);
+    } catch (e) {
+      setConfigured(null);
+      setUnreadable(deviceStoreFailureMessage('settings', 'read', e));
+      // 経路にも写す (上端の帯は最後の 1 件だけを出すので、16 枚でも 1 本になる)。
+      reportDeviceStoreFailure('settings', 'read', `credential:${slot.vaultKey}`, e);
     }
   }
   useEffect(() => {
@@ -233,6 +249,15 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
                 未設定
               </span>
             )}
+            {/* 語彙は同じファイルの `ProxySection` / `FsaSection` と揃える (パス 159)。 */}
+            {unreadable !== null && (
+              <span
+                data-credential-unreadable={slot.vaultKey}
+                style={{ fontSize: 10, padding: '2px 6px', background: '#fbbf24', color: '#000', borderRadius: 4 }}
+              >
+                確認できません
+              </span>
+            )}
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.5 }}>
             {slot.description}
@@ -288,17 +313,42 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
         </div>
       ) : (
         <div style={{ display: 'flex', gap: 6 }}>
-          <button type="button" onClick={() => setEditing(true)} style={btn(configured ? undefined : 'accent')}>
-            {configured ? '変更' : '設定する'}
-          </button>
-          {configured && (
-            <button type="button" onClick={clear} disabled={busy} style={{ ...btn(), color: '#ef4444' }}>
-              削除
+          {/*
+            **読めていないときに「設定する」を勧めない** (パス 159)。
+            既に入っているかどうかが分からない状態で新しい値を書くと、
+            見えていない資格情報を黙って上書きしうる。しかも読みを断った
+            保管庫は書きも断るので、押しても同じ所で失敗する
+            (パス 155 の Google カードで「サインインは止めない」と決めたのとは
+             別の状況 —— あちらはトークンの保管層が別で、書けば本当に通った)。
+          */}
+          {unreadable !== null ? (
+            <button type="button" onClick={() => void refresh()} style={btn('accent')}>
+              やり直す
             </button>
+          ) : (
+            <>
+              <button type="button" onClick={() => setEditing(true)} style={btn(configured ? undefined : 'accent')}>
+                {configured ? '変更' : '設定する'}
+              </button>
+              {configured && (
+                <button type="button" onClick={clear} disabled={busy} style={{ ...btn(), color: '#ef4444' }}>
+                  削除
+                </button>
+              )}
+            </>
           )}
         </div>
       )}
 
+      {unreadable !== null && (
+        <div
+          role="alert"
+          data-credential-unreadable-reason={slot.vaultKey}
+          style={{ fontSize: 11, color: '#fbbf24', lineHeight: 1.6 }}
+        >
+          ⚠ {unreadable}
+        </div>
+      )}
       {err && <div style={{ fontSize: 11, color: '#ef4444' }}>{err}</div>}
     </div>
   );
