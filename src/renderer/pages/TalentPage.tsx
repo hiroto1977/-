@@ -98,18 +98,35 @@ export function TalentPage(): React.JSX.Element {
   const [flagged, setFlagged] = useState<readonly string[]>([]);
   const [verdict, setVerdict] = useState<LeaderFitness | null>(null);
   const [judging, setJudging] = useState(false);
+  /**
+   * 判定できなかった理由 (パス 176)。**押しても何も起きない形にしない** ——
+   * 2026-09-12 まで `if (res.ok) setVerdict(…)` に else が無く、失敗すると
+   * 「判定中…」から元に戻るだけで画面は何も変わらなかった。利用者には
+   * 「押せていない」と見えるので押し直す (パス 169 で直したのと同じ形)。
+   */
+  const [judgeError, setJudgeError] = useState<string>();
 
   const toggleFlag = (id: string): void => {
     setVerdict(null);
+    setJudgeError(undefined);
     setFlagged((prev) => (prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]));
   };
 
   const judge = async (): Promise<void> => {
     setJudging(true);
+    setJudgeError(undefined);
     try {
       // 戻り値の形は台帳を読む (パス 117 —— それまで `res.data as { fitness: … }` と手で写していた)。
       const res = await window.serviceHub.invoke<ActionData<'talent/judge-leader'>>('talent', 'judge-leader', { flagged });
-      if (res.ok) setVerdict(res.data.fitness);
+      if (res.ok) {
+        setVerdict(res.data.fitness);
+        return;
+      }
+      // 失敗を黙って捨てない (パス 176)。判定は shared の純粋関数だが、通るのは IPC なので
+      // 施錠・未登録・main の例外で落ちうる —— そのとき「押せていない」と読まれない形にする。
+      setJudgeError(res.message);
+    } catch (e) {
+      setJudgeError(e instanceof Error ? e.message : String(e));
     } finally {
       setJudging(false);
     }
@@ -396,6 +413,15 @@ export function TalentPage(): React.JSX.Element {
         <button type="button" onClick={() => void judge()} disabled={judging} style={{ marginTop: 12 }}>
           {judging ? '判定中…' : '登用可否を判定'}
         </button>
+        {judgeError !== undefined && (
+          <p
+            data-judge-error
+            role="alert"
+            style={{ marginTop: 12, fontSize: 13, color: '#9C4A3C' }}
+          >
+            ⚠ 判定できませんでした: {judgeError}
+          </p>
+        )}
         {verdict !== null && (
           <p style={{ marginTop: 12, fontSize: 14, color: verdict.eligible ? '#0E5C6B' : '#9C4A3C' }}>
             {verdict.eligible

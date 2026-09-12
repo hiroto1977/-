@@ -113,6 +113,14 @@ export function VillagePage() {
   const [bubbles, setBubbles] = useState<Record<string, Bubble>>({});
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState('');
+  /**
+   * AI へ送ったが答えが来なかった理由 (パス 176)。**黙って端末内の応答に落ちない** ——
+   * 2026-09-12 まで `if (res.ok && res.data.text)` に else が無く、`catch` は空だったので、
+   * 鍵未設定・通信断・天井超えの断りはどれも**誰にも届かなかった**。利用者から見ると
+   * 「AI を入れているのに、いつも簡易応答しか返らない」で、原因を知る手が 1 つも無い。
+   * 吹き出しは端末内の応答を出したままにして (聞こえた答えを消さない)、理由はここに出す。
+   */
+  const [aiError, setAiError] = useState<string>();
   const [voiceTargetId, setVoiceTargetId] = useState<string | null>(null);
   const [aiOn, setAiOn] = useState(true);
   /**
@@ -239,6 +247,7 @@ export function VillagePage() {
   const handleUtterance = (raw: string) => {
     const text = raw.trim();
     if (!text) return;
+    setAiError(undefined);
     const scored = routeTopicScored(ORG_INDEX, text);
     const r = scored.route;
     const targetId = r.team?.id ?? r.manager?.id ?? r.executive?.id ?? 'coo';
@@ -274,9 +283,13 @@ export function VillagePage() {
           if (res.ok && res.data.text) {
             setVoiceBubble(targetId, res.data.text);
             speak(res.data.text);
+            return;
           }
-        } catch {
-          /* オフライン応答のまま */
+          // 失敗 (と、本文が空の成功) を言う。文面はアシスタント本体と同じ形
+          // 「AI 応答を利用できないため簡易モードで回答します: …」の村版。
+          setAiError(res.ok ? '応答が空でした' : res.message);
+        } catch (e) {
+          setAiError(e instanceof Error ? e.message : String(e));
         }
       })();
     }
@@ -343,6 +356,16 @@ export function VillagePage() {
           </button>
         </div>
       </div>
+
+      {aiError !== undefined && (
+        <div
+          data-village-ai-error
+          role="alert"
+          style={{ fontSize: 12, color: '#fbbf24', lineHeight: 1.6, padding: '4px 8px' }}
+        >
+          ⚠ AI の応答を利用できないため、端末内の簡易応答を出しています: {aiError}
+        </div>
+      )}
 
       {/* **声も外へ出る。** マイクで話した内容は音声認識で文字になり、
           `assistant/chat` へ送られる —— 送り先は利用者がアシスタント画面で
