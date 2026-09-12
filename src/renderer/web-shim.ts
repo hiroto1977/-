@@ -1285,9 +1285,12 @@ const shim = {
      * 送信側 (`scan-url` / `check-email-breach`) は**この shim に実装済み**で
      * プロキシ経由で動く。**動く機能が、開かない門の向こうに在った。**
      *
-     * Norton の検出だけは端末固有でブラウザからは見られないので、
-     * 同梱スナップショット (`installed: false`) のまま返す —— これは嘘ではない。
-     * すぐ上の `emotions` と同じ形である。
+     * Norton の検出だけは端末固有でブラウザからは見られない。**2026-09-12 (パス 165)
+     * まで「同梱スナップショット (`installed: false`) のまま返す —— これは嘘ではない」
+     * と書いていたが、それは誤りだった**: 画面は `installed` の真偽 1 つで描いており、
+     * 警告色の札「Not detected」と**区切りだけの説明「·」**が出ていた (jsdom で実測)。
+     * **警告の札は主張である** —— 見ていない端末について言ってはいけない。
+     * `detection: 'unavailable'` を明示して、札を中立色・理由つきにした。
      */
     if (serviceId === 'security') {
       let keys: ReturnType<typeof parseSecurityKeys> = {};
@@ -1297,10 +1300,15 @@ const shim = {
         keys = {};
       }
       const mod = (await import('./data/snapshot')) as unknown as {
-        SNAPSHOT: { security: Record<string, unknown> };
+        // `norton` だけ形を書くのは、下で detection を差し替えるため (パス 165)。
+        // 残りは触らないので `unknown` のまま通す。
+        SNAPSHOT: { security: Record<string, unknown> & { norton: Record<string, unknown> } };
       };
       return ok({
         ...mod.SNAPSHOT.security,
+        // 端末のファイルを読めないので「探せない」。同梱値の detection も
+        // 'unavailable' だが、ここで明示しておく (snapshot の既定に依存しない)。
+        norton: { ...mod.SNAPSHOT.security.norton, detection: 'unavailable' },
         keysConfigured: { hibp: Boolean(keys.hibp), vt: Boolean(keys.vt) },
       }) as ActionResult<T>;
     }

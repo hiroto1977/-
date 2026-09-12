@@ -1,4 +1,5 @@
 import { useMemo, useState, useSyncExternalStore } from 'react';
+import { nortonBadgeLabel, nortonBadgeTone, nortonDetailsLine } from '../../shared/nortonDetection';
 import { describeScanUrlRisk } from '../../shared/scanTarget';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -171,11 +172,16 @@ export function SecurityPage() {
       <Section title="Norton 360">
         <div className="card" style={{ gap: 6 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span className={norton.installed ? 'badge ok' : 'badge warn'}>
-              {norton.installed ? 'Installed' : 'Not detected'}
+            {/*
+              「探して無かった」と「探せない」を分けて描く (パス 165)。
+              警告色は absent だけ —— 見ていない端末について警告を出さない。
+              文面と色は shared/nortonDetection.ts が 1 か所で持つ。
+            */}
+            <span className={`badge ${nortonBadgeTone(norton.detection)}`} data-norton-badge={norton.detection}>
+              {nortonBadgeLabel(norton.detection)}
             </span>
-            <span style={{ fontSize: 13 }}>
-              {norton.platform} · {norton.details}
+            <span style={{ fontSize: 13 }} data-norton-details>
+              {nortonDetailsLine(norton.detection, norton.platform, norton.details)}
             </span>
           </div>
           {norton.installPath ? (

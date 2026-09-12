@@ -36,12 +36,19 @@ import {
   type FetchContext,
 } from './types';
 import type { ActionData } from '../../shared/actionData';
+import type { NortonDetection } from '../../shared/nortonDetection';
 
 interface NortonStatus {
   installed: boolean;
   installPath: string;
   platform: string;
   details: string;
+  /**
+   * 「見た結果」と「見られなかった」を分ける (パス 165)。`installed` の真偽だけでは
+   * 「探して無かった」と「探せない」が同じ札になり、**ウイルス対策の有無について
+   * 見ていない端末に警告を出す**。文面と色は `shared/nortonDetection.ts` が持つ。
+   */
+  detection: NortonDetection;
 }
 
 export interface SecuritySnapshot {
@@ -144,6 +151,7 @@ export async function detectNorton(
       installPath: found,
       platform,
       details: `${path.basename(found)} を検出`,
+      detection: 'found',
     };
   }
   return {
@@ -151,6 +159,9 @@ export async function detectNorton(
     installPath: '',
     platform,
     details: nortonNotFoundDetails(platform),
+    // 候補のパスが 1 本も無い OS (linux) は「探して無かった」ではなく「製品が無い」。
+    // 判定は `NORTON_PATHS_BY_PLATFORM` の実物から導く (OS 名を写さない)。
+    detection: candidates.length === 0 ? 'unsupported' : 'absent',
   };
 }
 

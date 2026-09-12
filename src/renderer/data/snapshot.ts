@@ -3,6 +3,7 @@
 // until each ServiceClient is wired up to call the live REST APIs.
 
 import type { ShigyoSnapshot } from '../../shared/shigyoTypes';
+import type { NortonDetection } from '../../shared/nortonDetection';
 import {
   LEADER_DISQUALIFIERS,
   LEADER_DISQUALIFIERS_SOURCE,
@@ -324,6 +325,9 @@ export const SNAPSHOT = {
       installPath: '' as string,
       platform: '' as string,
       details: '' as string,
+      // 同梱値が出ている = 端末を見ていない (ブラウザ版、または取得に失敗した後)。
+      // `installed: false` を「無い」と読ませないため、状態を明示する (パス 165)。
+      detection: 'unavailable' as NortonDetection,
     },
     breaches: [] as { email: string; checkedAt: string; count: number }[],
     lastUrlScan: null as { url: string; scannedAt: string; positives: number; total: number } | null,
