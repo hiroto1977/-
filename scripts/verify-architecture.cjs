@@ -270,6 +270,102 @@ function verifyReferences(archText) {
   return { successCount, failures };
 }
 
+/**
+ * **図の中の `file:line` も検査する** (2026-09-12 · パス 180)。
+ *
+ * `verifyReferences` が見るのは**バッククォートで囲まれた**参照だけ
+ * (`REF_RE` が `` ` `` を要求する)。ところが ARCHITECTURE.md には mermaid の
+ * クラス図という**第 2 の書き方**が在り、そこでは囲まれていない:
+ *
+ * ```
+ *   class SkillsGuards~clients/skills.ts~ {
+ *     +isSafeSkillName(id) : skills.ts:367
+ *   }
+ * ```
+ *
+ * この形は 27 件在って、**1 件も検査されていなかった**。2026-09-12 に当ててみたら
+ * **23 件 (85%) がずれていた** (`setToken` は `secrets.ts:73` と書かれているが実際は 68、
+ * `generatePkce` は 98 と書かれて実際は 311、など)。文書の参照の 1/8 が、
+ * 「自己検証している」という見出しの下で腐っていた。
+ *
+ * 規則は囲まれた側と同じ —— **記号が ±SYMBOL_WINDOW 行の帯に居ること**。
+ * ただし記号の取り方が違う: 囲まれた側は参照の**手前の散文**から `` `sym` `` を拾うが、
+ * 図では `+sym(args) : file:line` の形なので行から直に取る。
+ */
+const DIAGRAM_REF_RE = /^\s*[+\-]?([A-Za-z_][A-Za-z0-9_]*)\s*\([^)]*\)\s*:\s*([A-Za-z][A-Za-z0-9./_-]*\.(?:ts|tsx|cjs))\s*:\s*(\d+)/;
+
+/** 図の 1 行から参照を取る (取れなければ null)。`selfTest` から呼べるよう分けてある。 */
+function parseDiagramRef(line) {
+  const m = DIAGRAM_REF_RE.exec(line);
+  if (!m) return null;
+  return { symbol: m[1], file: m[2], line: Number(m[3]) };
+}
+
+function verifyDiagramRefs(archText) {
+  const failures = [];
+  let successCount = 0;
+
+  archText.split('\n').forEach((line, idx) => {
+    const ref = parseDiagramRef(line);
+    if (!ref) return;
+    const lineNo = idx + 1;
+    const fullRef = `${ref.file}:${ref.line}`;
+    const refPath = resolveRef(ref.file);
+
+    if (!fs.existsSync(refPath) || !isTracked(refPath)) {
+      failures.push({
+        archLine: lineNo,
+        ref: fullRef,
+        reason: `図の参照が解決できません (${path.relative(REPO_ROOT, refPath)})`,
+      });
+      return;
+    }
+
+    const srcArr = readFileSafe(refPath).split('\n');
+    if (ref.line < 1 || ref.line > srcArr.length) {
+      failures.push({
+        archLine: lineNo,
+        ref: fullRef,
+        reason: `図の参照が範囲外 (${srcArr.length} 行のファイル)`,
+      });
+      return;
+    }
+
+    const lo = Math.max(1, ref.line - SYMBOL_WINDOW);
+    const hi = Math.min(srcArr.length, ref.line + SYMBOL_WINDOW);
+    const inWindow = srcArr.slice(lo - 1, hi).some((l) => l.includes(ref.symbol));
+    if (!inWindow) {
+      const actual = srcArr.map((l, i) => (l.includes(ref.symbol) ? i + 1 : 0)).filter(Boolean);
+      failures.push({
+        archLine: lineNo,
+        ref: fullRef,
+        reason:
+          `図の記号 "${ref.symbol}" drifted: cited near line ${ref.line} but actually at line(s) `
+          + `${actual.slice(0, 4).join(', ') || '(見つからない)'} (${path.relative(REPO_ROOT, refPath)})`,
+      });
+      return;
+    }
+    successCount++;
+  });
+
+  /*
+   * **走査が死んだら鳴る** (パス 65 の生存下限)。図を書き換えて 1 件も取れなくなったら
+   * 「0 件で全部一致」と報告してしまうので、実測より下がったら落とす。
+   * 2026-09-12 の実測は 27 件。
+   */
+  const FLOOR = 20;
+  if (successCount + failures.length < FLOOR) {
+    failures.push({
+      ref: '図の参照',
+      reason:
+        `図の参照が ${successCount + failures.length} 件しか取れませんでした (下限 ${FLOOR})。`
+        + ' mermaid の書き方が変わったか走査が死んでいます —— 0 件は「全部一致」ではありません。',
+    });
+  }
+
+  return { successCount, failures };
+}
+
 // ---------------------------------------------------------------------------
 // Phase 2 — live metric verification
 // ---------------------------------------------------------------------------
@@ -528,6 +624,15 @@ const METRICS = [
       const REF_RE = /`[A-Za-z][A-Za-z0-9./_-]*?\.(ts|tsx|cjs|sh|json|html|md)(?::[0-9]+(?:[,-][0-9]+)*)?`/g;
       return countOccurrences(arch, REF_RE);
     },
+  },
+  {
+    /*
+     * **図の中の参照も数える** (パス 180)。バッククォートの参照とは別の書き方なので
+     * 数も別に持つ —— 「542 件」に混ぜると、図が丸ごと消えても外側の数で埋め合わされる。
+     */
+    name: 'verify:arch diagram ref count',
+    docPattern: /図の中の `file:line` 参照数 \| (\d+) /,
+    compute: () => verifyDiagramRefs(readFileSafe(ARCH_FILE) ?? '').successCount,
   },
   {
     name: 'OAuth-supported service count',
@@ -951,6 +1056,51 @@ function selfTest() {
       `  ${ok ? '✓' : '✗'} ${label}: 違反 ${r.failures.length} 件 / 参照 ${r.successCount} 件`
         + `${reasonOk ? '' : ` / 理由が違う (${r.failures[0].reason.slice(0, 40)}…)`}`
         + ` (期待 ${wantFail} / ${wantOk}${wantReason ? ` / ${wantReason.source}` : ''})`,
+    );
+  }
+
+  /*
+   * **図の参照の規則 (パス 180)。**
+   *
+   * `verifyDiagramRefs` は `verifyReferences` とは別の書き方を見るので、
+   * 対照も別に要る —— 2026-09-12 に足したとき、実物の図 27 件のうち
+   * **18 件がずれていた** (誰も見ていなかった)。
+   *
+   * 生存下限 (`FLOOR`) は 1 行の標本では必ず割るので、鳴らせる規則は
+   * 「下限を割ったら鳴る」ほうで、ドリフトは下限の失敗と一緒に出る。
+   * そこで**下限より多い件数の標本**を組んで、ドリフトだけを見る。
+   */
+  {
+    const sym = once.sym;
+    const good = `    +${sym}(x) : ${REF}:${once.at[0]}`;
+    const bad = `    +${sym}(x) : ${REF}:${far}`;
+    /** 下限を満たす嵩上げ (実在の行を指す正しい参照を並べる)。 */
+    const pad = (n) => Array.from({ length: n }, () => good).join('\n');
+
+    for (const [label, doc, wantFail, wantOk] of [
+      ['図の参照を数える (バッククォート無しでも見る)', pad(25), 0, 25],
+      ['★ 図の記号がずれたら鳴る', `${pad(25)}\n${bad}`, 1, 25],
+      ['図でない行は数えない (散文)', `${pad(25)}\nふつうの文に ${REF}:1 と書いただけ`, 0, 25],
+      ['引数の括弧が無ければ図の参照ではない', `${pad(25)}\n    +justAName : ${REF}:1`, 0, 25],
+      ['★ 走査が死んだら鳴る (生存下限)', good, 1, 1],
+      ['★ 実在しないファイルなら鳴る', `${pad(25)}\n    +zzz(x) : src/shared/no-such-file.ts:1`, 1, 25],
+      ['★ 範囲外の行なら鳴る', `${pad(25)}\n    +${sym}(x) : ${REF}:${total + 500}`, 1, 25],
+    ]) {
+      const r = verifyDiagramRefs(doc);
+      const ok = r.failures.length === wantFail && r.successCount === wantOk;
+      if (!ok) failed += 1;
+      console.log(
+        `  ${ok ? '✓' : '✗'} 図の参照: ${label}: 違反 ${r.failures.length} 件 / 参照 ${r.successCount} 件`
+          + ` (期待 ${wantFail} / ${wantOk})`,
+      );
+    }
+
+    /* 実物の図が 1 件も取れていなければ、この規則は何も守っていない。 */
+    const live = verifyDiagramRefs(readFileSafe(ARCH_FILE) ?? '');
+    const liveOk = live.successCount >= 20 && live.failures.length === 0;
+    if (!liveOk) failed += 1;
+    console.log(
+      `  ${liveOk ? '✓' : '✗'} 図の参照: ★ 実物の図が全件一致: ${live.successCount} 件 / 違反 ${live.failures.length} 件`,
     );
   }
 
@@ -1743,6 +1893,7 @@ function main() {
   }
 
   const refs = verifyReferences(arch);
+  const diagrams = verifyDiagramRefs(arch);
   const metrics = verifyMetrics(arch);
   const payloads = verifyActionPayloads(arch);
   const coverage = verifyActionCoverage(arch);
@@ -1750,6 +1901,7 @@ function main() {
   const channels = verifyIpcChannels(arch);
 
   console.log(`Verified ${refs.successCount} file:line references in docs/ARCHITECTURE.md`);
+  console.log(`Verified ${diagrams.successCount} file:line reference(s) inside mermaid diagrams`);
   console.log(`Verified ${metrics.ok.length} live metric(s): ${metrics.ok.join(', ') || '(none)'}`);
   console.log(`Verified ${payloads.checked} IPC action payload row(s) against their interfaces`);
   console.log(
@@ -1765,6 +1917,7 @@ function main() {
 
   const allFailures = [
     ...refs.failures,
+    ...diagrams.failures,
     ...metrics.failures,
     ...payloads.failures,
     ...coverage.failures,

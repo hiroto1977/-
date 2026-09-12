@@ -23788,6 +23788,81 @@ export function _resetRecordStoreForTests(): void {
 - `ManualDataSection` の行カバレッジは測り直していない (11 本の駆動で上がるはず)。
   次に全域を測るときに確かめる。
 
+## パス 180 (2026-09-12) — **「自己検証している」文書が、自分の参照の 1/8 を見ていなかった**
+
+パス 179 で `skills.ts` を触ったあと mermaid のクラス図を読んだら、
+`+isSafeSkillName(name) : skills.ts:204` と書いてあった —— 実際は 367 行目である。
+**`verify:arch` は 542 件の参照を検証して緑だったのに、この行は見ていなかった。**
+
+### なぜ見えなかったか
+
+`verifyReferences` の正規表現は**バッククォートを要求する**:
+
+```js
+const REF_RE = /`([A-Za-z][A-Za-z0-9./_-]*?\.(ts|tsx|cjs|sh|json|html|md))(?::([0-9]+…))?`/g;
+```
+
+ところが図の中は囲まれていない:
+
+```
+  class SkillsGuards~clients/skills.ts~ {
+    +isSafeSkillName(id) : skills.ts:367
+  }
+```
+
+**文書には参照の書き方が 2 つ在り、ゲートは片方しか知らなかった。**
+「フェンスの中だから」ではない —— バッククォートが無いからである
+(最初はフェンスを疑ったが、当たってみたら原因が違った)。
+
+### 実測した腐り
+
+図の参照は 27 件。同じ規則 (記号が ±15 行の帯に居る) を当てたら **18 件がずれていた**:
+
+| 記号 | 文書 | 実際 |
+|---|---:|---:|
+| `setToken` | secrets.ts:73 | 68 |
+| `getToken` | secrets.ts:79 | 279 |
+| `generatePkce` | oauth.ts:98 | 311 |
+| `listenForCallback` | oauth.ts:173 | 531 |
+| `refresh` | oauth.ts:290 | 763 |
+| `withTimeout` | ollama.ts:142 | 101 |
+| …ほか 12 件 | | |
+
+**さらに 3 件は file ごと間違っていた**: `isSafeModelName` / `compareVersions` /
+`isVersionSafe` は `src/shared/ollama.ts` に在り、`clients/ollama.ts` は再 export だけ。
+`isSafeModelName` は**再 export 行が偶然 ±15 行の帯に入って**いたので、
+規則を当てても鳴らなかった (帯は「そこに在る」しか見ないので、
+定義か再 export かは区別できない)。図に注記を書いた。
+
+### 直した所
+
+| 何 | どこ |
+|---|---|
+| 図の参照を検証する (`verifyDiagramRefs` + `parseDiagramRef`) | `scripts/verify-architecture.cjs` |
+| 18 件の行番号 + 3 件のファイル | `docs/ARCHITECTURE.md` の mermaid |
+| 数を指標に (`図の中の file:line 参照数 = 27`) | 同・指標表 |
+
+**数は外側の 542 に混ぜない** —— 混ぜると図が丸ごと消えても外側で埋め合わされる
+(パス 24 で 4 通りに割れた「正典のホスト数」の逆向きの失敗)。
+
+### 生存下限
+
+図の書き方が変わって 1 件も取れなくなったら、このゲートは
+「0 件で全部一致」と報告して緑になる。パス 65 の規準どおり**下限 20 件**を置き、
+割ったら落とす (実測 27)。
+
+### 対照
+
+| 何 | 結果 |
+|---|---|
+| self-test 7 本 (ずれ / 散文は数えない / 括弧が無ければ参照でない / 実在しないファイル / 範囲外 / 生存下限 / 実物の全件一致) | ✅ 全部鳴る |
+| **実物の対照**: 直した `generatePkce` を元の `oauth.ts:98` に戻す | ✅ 鳴った (1 件失敗) |
+
+### 残り
+
+図には `+ACTIONS : ActionMap` のように**行番号を持たない**行も在る。
+そこは検証していない (指す先が無い)。行番号を書けば検証される。
+
 ## パス 179 (2026-09-12) — **一覧で選んだスキルと、実際に走るスキルが別物だった**
 
 レンダラで行カバレッジが次に低い画面を読む (パス 151 の規準)。

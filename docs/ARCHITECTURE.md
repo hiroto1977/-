@@ -32,6 +32,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | 陰性対照つきゲート | 31 / 36 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
 | `file:line` 参照数 | 542 | 自己検証 |
+| 図の中の `file:line` 参照数 | 27 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
 
@@ -2321,25 +2322,25 @@ classDiagram
 
   class SecretsStore~secrets.ts~ {
     +setToken(id, token) : secrets.ts:73
-    +getToken(id) : secrets.ts:79
-    +clearToken(id) : secrets.ts:86
-    +listConfiguredServices() : secrets.ts:92
-    +setOAuthTokens(id, ts) : secrets.ts:113
-    +getOAuthTokens(id) : secrets.ts:117
-    +getValidToken(id) : secrets.ts:223 ~auto-refresh~
+    +getToken(id) : secrets.ts:279
+    +clearToken(id) : secrets.ts:284
+    +listConfiguredServices() : secrets.ts:306
+    +setOAuthTokens(id, ts) : secrets.ts:391
+    +getOAuthTokens(id) : secrets.ts:395
+    +getValidToken(id) : secrets.ts:424 ~auto-refresh~
   }
 
   class OAuthHelper~oauth.ts~ {
     +OAUTH_CONFIGS : oauth.ts:54
-    +isOAuthSupported(id) : oauth.ts:87
-    +generatePkce() : oauth.ts:98
-    +buildAuthorizeUrl() : oauth.ts:104
-    +buildTokenExchangeBody() : oauth.ts:123
-    +buildRefreshBody() : oauth.ts:138
-    +tokenResponseToSet() : oauth.ts:146
+    +isOAuthSupported(id) : oauth.ts:293
+    +generatePkce() : oauth.ts:311
+    +buildAuthorizeUrl() : oauth.ts:317
+    +buildTokenExchangeBody() : oauth.ts:351
+    +buildRefreshBody() : oauth.ts:366
+    +tokenResponseToSet() : oauth.ts:402
     +authorize(config) : oauth.ts:258 ~loopback HTTP~
-    +refresh(config, tokens) : oauth.ts:290
-    -listenForCallback(state) : oauth.ts:173 ~Host pin~
+    +refresh(config, tokens) : oauth.ts:763
+    -listenForCallback(state) : oauth.ts:531 ~Host pin~
   }
 
   class ServiceIdGuard~shared/serviceId.ts~ {
@@ -2361,14 +2362,16 @@ classDiagram
     +ACTIONS : ActionMap
   }
 
+  %% 版と名前の 3 判定は shared/ollama.ts に在り、clients/ollama.ts は再 export だけ
+  %% (2026-09-12 パス 180 —— 図は clients の行番号を指していた)。
   class OllamaGuards~clients/ollama.ts~ {
     +ALLOWED_ENDPOINTS : Set : ollama.ts:61
-    +isAllowedEndpoint(url) : ollama.ts:48
-    +isSafeModelName(name) : ollama.ts:55
-    +compareVersions(a, b) : ollama.ts:63
-    +isVersionSafe(v) : ollama.ts:86
+    +isAllowedEndpoint(url) : ollama.ts:70
+    +isSafeModelName(name) : src/shared/ollama.ts:339
+    +compareVersions(a, b) : src/shared/ollama.ts:354
+    +isVersionSafe(v) : src/shared/ollama.ts:383
     +buildWarnings() : shared/ollama.ts (台帳 OLLAMA_ADVISORIES)
-    -withTimeout(f, url, init) : ollama.ts:142
+    -withTimeout(f, url, init) : ollama.ts:101
   }
 
   class SkillsGuards~clients/skills.ts~ {
