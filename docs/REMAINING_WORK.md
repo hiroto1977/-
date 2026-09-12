@@ -22546,3 +22546,112 @@ state で必ず文字列であり、**測れない枝を 1 つ増やすだけ**�
   確かめられない** (外向き通信は遮断されている)。ここで断っている根拠は
   **外部仕様ではなく自分の実装** —— 「state を持ち帰れない形は `complete()` が
   受け取れない」という、リポジトリの中だけで検算できる事実である。
+
+## パス 158 (2026-09-12) — **押しても何も起きないボタンを出していた (社内ライセンスの「解除」)**
+
+パス 157 と同じ `pages/SettingsPage.tsx` の未踏領域 (597-768 行の塊) を読み進めた。
+`LicenseSection` —— 行カバレッジ **0%** —— は「解除」ボタンを出していた。
+
+### 実測した欠陥
+
+```
+  SELF_PRODUCT_ALL_ACCESS = true  (internalLicense.ts の const)
+    → hasInternalLicense() は常に true
+    → usePlan の internalUnlocked も常に true
+    → LicenseSection は「✅ 社内ライセンス有効」+「解除」ボタンの枝しか描かない
+```
+
+「解除」は `revokeInvite()` を呼ぶ。その中身は
+
+1. `deactivateInternalLicense()` —— 保存 (`servicehub.internalLicense`) を消す
+2. `setInternalUnlocked(false)`
+3. `window.dispatchEvent(new Event('servicehub:license-changed'))`
+
+で、**3 の listener が同じ tick で `setInternalUnlocked(hasInternalLicense())` =
+`true` に戻す**。React は 1 回の描画に畳むので、**画面は何も変わらない。**
+
+**この挙動は既に固定されていた** —— `plan/__tests__/usePlan.test.ts` に
+「revokeInvite 後も SELF_PRODUCT_ALL_ACCESS で internalUnlocked=true のまま」という
+検査が在り、コメントで理由まで書いてある。**分かっていたのは論理だけで、画面は
+それを知らなかった** —— ボタンと「社内ライセンスを解除し Free に戻す」という
+説明を出し続けていた。パス 137 で「保管庫の無いデスクトップの『パスワードを変更』」を
+消したのと同じ家系 (**効かない操作**)。
+
+同じ理由で 3 つの文面も実物とずれていた:
+
+| 文面 | 実物 |
+| --- | --- |
+| 「招待コードを**入力すると**全機能を無償で利用できます」 | 入力を求めずに開いている (入力欄はそもそも描かれない) |
+| 「解除」 | 押しても開いたまま |
+| オーナー向け「配ってください。受け取った人は入力するだけで開放されます」 | 受け取った人は**既に開いている** (配っても見え方は変わらない) |
+
+### 直し
+
+**「開いているか」では足りない。「なぜ開いているか」を持つ。**
+
+```ts
+export type AllAccessSource = 'build' | 'invite' | 'none';
+export function allAccessSource(allAccess = SELF_PRODUCT_ALL_ACCESS): AllAccessSource
+export function canRevokeAllAccess(allAccess = SELF_PRODUCT_ALL_ACCESS): boolean  // invite のみ
+export function hasInternalLicense(allAccess = SELF_PRODUCT_ALL_ACCESS): boolean  // 理由から導く
+export function deactivateInternalLicense(allAccess = SELF_PRODUCT_ALL_ACCESS): boolean  // 効いたか
+```
+
+`hasInternalLicense` は `allAccessSource() !== 'none'` に書き換えた —— 同じ判断を
+2 か所に持たない。`deactivateInternalLicense` は **効いたかどうかを返す**
+(保存は消すが、`build` では `false`)。`usePlan` は `licenseSource` を公開し、
+`revokeInvite` は `boolean` を返す。
+
+画面は理由で分岐する: `build` では**解除ボタンを出さず** 理由を出す
+(`[data-license-cannot-revoke]`)・前置きを「このビルドは招待コードを必要としません」に
+・オーナー向けの節に「配っても受け取った人の見え方は変わりません」を足す。
+`invite` では解除ボタンを出し、戻れたかどうかを文面で言う。
+
+### 対照 (4 本とも鳴る)
+
+| 対照 | 戻した物 | 落ちた検査 |
+| --- | --- | --- |
+| C1 | 解除ボタンを常に出す | 1 本 |
+| C2 | 前置きを無条件版に戻す | 1 本 |
+| C3 | `build` と `invite` を畳む (`if (allAccess) return 'invite'`) | **6 本** |
+| C4 | `deactivateInternalLicense` が常に `true` を返す | 2 本 |
+
+### ★ 測っていない物を測ったことにしない
+
+最初は jsdom の検査で `vi.doMock` を使い、`SELF_PRODUCT_ALL_ACCESS: false` に
+差し替えて**有償配布側の画面**も押すつもりだった。**3 本落ちた** ——
+`allAccessSource` が読むのは**モジュール内の束縛**なので、export を差し替えても
+関数の挙動は変わらない。
+
+そこで 2 つに分けた:
+
+- `allAccessSource` ほかに **test seam** (引数) を足し、
+  `plan/__tests__/allAccessSource.test.ts` が `invite` / `none` の枝を
+  **実物の論理で** 11 本測る (`exchangeGoogleCode` の `fetchImpl` と同じ形)。
+- jsdom (`settingsLicensePanel.test.ts` 5 本) は**出荷する枝** (`build`) だけを押し、
+  「有償配布側の画面はここでは押せない」と検査の冒頭に書いた。
+
+**モックで枝を作ったことにはしない。**
+
+### 測定
+
+| 対象 | 前 | 後 |
+| --- | --- | --- |
+| `plan/internalLicense.ts` | (計測なし) | **100%** (行 37/37・枝 26/26・関数 10/10) |
+| `plan/usePlan.ts` | — | 92.3% 行 (残りは storage event の枝) |
+| `pages/SettingsPage.tsx` (検査 11 本での測定) | 55.64% | **57.46%** |
+| `LicenseSection` | **0%** | 描画・文面・オーナー節まで押した |
+
+it() 12931 → **12947**。
+
+### 残り
+
+- **有償配布側 (`SELF_PRODUCT_ALL_ACCESS = false`) の画面そのものは押していない。**
+  フラグを実際に落とす日には、`LicenseSection` の `invite` / `none` の枝を
+  jsdom で押すこと (今は `usePlan` が既定引数で呼ぶので、画面からは届かない)。
+- **招待コードは同じ画面に印字されている** —— `<details>` を開けば誰でも読める。
+  これは欠陥ではなく設計 (`internalLicense.ts` の冒頭が「強固な DRM ではない。
+  シークレットを共有する範囲が配布範囲になる」と明記している) が、
+  **有償配布へ切り替えるならこの節は隠す必要がある** (今は全員が開放済みなので
+  実害が無い)。切り替えの日の作業として記録しておく。
+- 実機 (e2e) はパス 153-158 の 6 パス分が未検証。

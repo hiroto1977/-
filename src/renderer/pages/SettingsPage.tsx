@@ -619,9 +619,17 @@ export function VaultControls() {
   );
 }
 
-/** 社内ライセンス (招待コードで全機能無償) のパネル。 */
-function LicenseSection() {
-  const { plan, internalUnlocked, redeemInvite, revokeInvite } = usePlan();
+/**
+ * 社内ライセンス (招待コードで全機能無償) のパネル。
+ *
+ * **検査のために公開している** (パス 158)。2026-09-12 の計測でこの節は行カバレッジ 0%
+ * で、`revokeInvite` を呼ぶ「解除」ボタンを出していた —— そのボタンは
+ * `usePlan.test.ts` が**「押しても internalUnlocked=true のまま」と既に固定していた**
+ * 操作である (自社商品ビルドでは `SELF_PRODUCT_ALL_ACCESS` が開放を続ける)。
+ * 論理は分かっていて、画面だけが知らなかった。
+ */
+export function LicenseSection() {
+  const { plan, internalUnlocked, licenseSource, redeemInvite, revokeInvite } = usePlan();
   const [code, setCode] = useState('');
   const [holder, setHolder] = useState('');
   const [msg, setMsg] = useState<{ text: string; ok: boolean } | null>(null);
@@ -643,9 +651,23 @@ function LicenseSection() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {/* **開いている理由で文面を変える** (パス 158)。「入力すると使えます」は
+            `build` では嘘になる —— このビルドは入力を求めずに開いている。 */}
       <p style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, margin: 0 }}>
-        自社商品のため、<strong>オーナー・自社社員・招待された方</strong>は招待コードを入力すると
-        全機能を<strong>無償</strong>で利用できます（{getPlan('internal').label}・{getPlan('internal').audience}）。
+        {licenseSource === 'build' ? (
+          <>
+            <strong>このビルドは招待コードを必要としません。</strong>
+            自社商品として配布されているため、起動した時点で全機能が
+            <strong>無償</strong>で開いています（{getPlan('internal').label}・
+            {getPlan('internal').audience}）。
+          </>
+        ) : (
+          <>
+            自社商品のため、<strong>オーナー・自社社員・招待された方</strong>は招待コードを入力すると
+            全機能を<strong>無償</strong>で利用できます（{getPlan('internal').label}・
+            {getPlan('internal').audience}）。
+          </>
+        )}
       </p>
 
       {internalUnlocked ? (
@@ -653,7 +675,31 @@ function LicenseSection() {
           <span style={{ fontSize: 13, color: '#22c55e' }}>
             ✅ 社内ライセンス有効 — 全機能が無償で利用できます（現在のプラン: {getPlan(plan).label}）。
           </span>
-          <button type="button" onClick={() => { revokeInvite(); setMsg(null); }}>解除</button>
+          {/*
+            **効かない操作はボタンにしない** (パス 158)。`build` で開いている間は
+            解除しても `hasInternalLicense()` がビルド定数で true を返すので、
+            押しても何も起きない。代わりに「なぜ解除できないのか」を出す。
+          */}
+          {licenseSource === 'build' ? (
+            <span data-license-cannot-revoke style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+              このビルドでは解除できません（ビルド設定で開放しているため、招待コードの保存を
+              消しても Free には戻りません）。
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                const freed = revokeInvite();
+                setMsg(
+                  freed
+                    ? { text: '社内ライセンスを解除しました（Free に戻りました）。', ok: true }
+                    : { text: '⚠ 解除しましたが、このビルドでは全機能が開いたままです。', ok: false },
+                );
+              }}
+            >
+              解除
+            </button>
+          )}
         </div>
       ) : (
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
@@ -676,6 +722,16 @@ function LicenseSection() {
         <div style={{ marginTop: 8, lineHeight: 1.7 }}>
           下記の<strong>汎用招待コード</strong>を社員・招待者に共有してください。受け取った人は
           このページで入力するだけで全機能が無償で開放されます。
+          {licenseSource === 'build' && (
+            <>
+              {' '}
+              <strong>
+                ただし現在のビルドは招待コード無しで全機能が開いているため、このコードを配っても
+                受け取った人の見え方は変わりません
+              </strong>
+              （有償配布へ切り替えたときに効きます）。
+            </>
+          )}
           <div style={{ marginTop: 6, fontFamily: 'monospace', fontSize: 14, color: 'var(--text)', userSelect: 'all' }}>
             {ownerCode}
           </div>
