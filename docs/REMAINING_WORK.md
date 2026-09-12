@@ -23788,6 +23788,78 @@ export function _resetRecordStoreForTests(): void {
 - `ManualDataSection` の行カバレッジは測り直していない (11 本の駆動で上がるはず)。
   次に全域を測るときに確かめる。
 
+## パス 178 (2026-09-12) — **23 か所の欄と 6 本の検査が読む 3 関数が、変異検査の外に在った**
+
+パス 167 / 168 / 172 / 174 / 175 は「天井を超えた入力をどう扱うか」を繰り返し直し、
+**文面と判定を `src/shared/inputCeiling.ts` の 3 関数へ寄せた**
+(`charsOverCeiling` / `clampedCeilingNote` / `refusedCeilingNote`)。
+寄せた結果いま**これだけの場所が同じ判断を読む** (2026-09-12 実測):
+
+```
+$ grep -rl charsOverCeiling src --include=*.tsx --include=*.ts \
+    | grep -v __tests__ | grep -v shared/inputCeiling.ts | wc -l
+18                      # 実装モジュール
+$ grep -rn "charsOverCeiling(" src --include=*.tsx --include=*.ts \
+    | grep -v __tests__ | grep -v shared/inputCeiling.ts | wc -l
+23                      # 呼び出し (= 天井を見る欄)
+$ grep -rn "<CeilingNotice" src --include=*.tsx | grep -v __tests__ | wc -l
+16                      # 画面に出る断り書き
+$ grep -rln "inputCeiling\|charsOverCeiling\|refusedCeilingNote\|clampedCeilingNote" \
+    src --include=*.ts --include=*.tsx | grep __tests__ | wc -l
+6                       # 検査 (うち census 2 本: aiInputCaps / writeBodyCeilingCensus)
+```
+
+**この 4 つの数は機械が検算していない。** 最初に書いたときは「入力欄 15 個・関門 4 本」と
+書いており、上を回したら 23 と 6 だった —— リポジトリが繰り返し踏んでいる
+「数を 2 か所に書くと必ず食い違う」そのもので、自分の散文で 1 度踏んだ。
+数が要る散文にはコマンドを添える (次に読む人が検算できる)。
+
+ところが `stryker.config.json` の `mutate` にこのファイルが無かった。**寄せるほど
+1 ファイルの重みは増えるのに、測る範囲は寄せた先を追っていなかった。**
+`Math.max(0, …)` を `Math.min` に変えれば、天井を超えていない入力が「−N 字超過」を
+名乗り、`disabled` の `over > 0` が偽のまま**送信が通る** —— 変異 1 つで
+パス 112 / 175 の断りが全部無効になる形が、測っていない場所に在った。
+
+### 直した所
+
+| 何 | どこ |
+|---|---|
+| `mutate` に 1 行 (283 → **284 ファイル**) | `stryker.config.json` |
+| 数と経緯 | `docs/ARCHITECTURE.md` §5.5 |
+
+### 載せる前に変異体を手で当てた
+
+部分 Stryker (`npx stryker run --mutate …`) の許可が無いので、**12 個の変異体を
+1 つずつ当てて全部死ぬことを見た** (各回 `cp` の控えから復元。
+`src/shared/__tests__/inputCeiling.test.ts` +
+`src/renderer/components/__tests__/ceilingNotice.test.ts` を回す)。
+
+| 関数 | 変異体 | 結果 |
+|---|---|---|
+| `charsOverCeiling` | 本体を空に / `Math.max`→`Math.min` / `-`→`+` | ✅ ×3 |
+| `clampedCeilingNote` | 本体を空に / テンプレートを空に / 文字列を空に / `+`→`-` | ✅ ×4 |
+| `refusedCeilingNote` | 本体を空に / `Math.max`→`Math.min` / `-`→`+` / テンプレートを空に / 文字列を空に / `+`→`-` | ✅ ×5 (`-`→`+` は 2 箇所) |
+
+復元後 `Tests 17 passed`。**実測のスコアは週次 `mutation.yml` が初めて出す** ——
+ここで言えるのは「手で当てた 12 個は死ぬ」までで、Stryker が作る変異体の集合が
+この 12 個と同じとは限らない。
+
+### 途中で自分が踏んだ罠 (記録)
+
+`verify:arch` と `lint:mutation-scope` を**同じシェル行で続けて**走らせたため、
+前者の `❌ 2 failure(s)` を後者の出力と読み違えた。**門は 1 本ずつ回して終了コードを見る。**
+実際の 2 件はどちらも私が書いた散文の行に在った:
+
+| 失敗 | 原因 |
+|---|---|
+| `shared/inputCeiling.ts` — file not found: `src/main/shared/inputCeiling.ts` | 参照の綴り。`resolveRef` は `src/` 始まりを絶対扱いし、それ以外は `SEARCH_DIRS` を順に探して**最後は `src/main` に倒す**。`SEARCH_DIRS` に `src/` は無いので `shared/…` は解決できない (この綴りは文書 540 参照のうち 1 件だけだった) |
+| `file:line` 参照数 — doc says 540, source says 541 | 散文に参照を 1 本足したので自己検証の数も動く |
+
+**散文に `` `path.ts` `` と書くことは、この文書では参照を 1 本足すこと**である
+(数が動き、実在しなければ落ちる)。`src/shared/…` の綴りに直して 541 にし、その後
+上の実測コマンドへ案内するために `docs/REMAINING_WORK.md` を 1 本足したので **542** で閉じた
+—— 同じ門が 2 度鳴った。**散文を直すたびに `verify:arch` を回す**のが安い。
+
 ## パス 177 (2026-09-12) — **払っている人に「すべて free プランです。アップグレードが必要」と言う固定文**
 
 レンダラで行カバレッジが最も低い画面を順に読む (パス 151 の規準)。
