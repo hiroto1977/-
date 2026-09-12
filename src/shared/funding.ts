@@ -364,6 +364,19 @@ export interface FundingMonthly {
   readonly netCashflow: number;
   /** 会計ソフト連携の営業キャッシュフロー (任意。未連携なら 0)。 */
   readonly operatingCashflow: number;
+  /**
+   * その月の営業CF が**会計連携から実際に得られたか** (2026-09-12 · パス 182)。
+   *
+   * `operatingCashflow: number` では**未取得と実測ゼロが同じ 0** になる。
+   * 返済予定は借入期間ぶん将来へ伸びるのに実績CF は過去しか無いので、
+   * 比率 (DSCR) を作るときこの区別が無いと「営業CF 0 ÷ 返済額」= 0 という
+   * **測っていない月の答え**が混ざる (下の `debtServiceMetrics` の経緯)。
+   *
+   * 会計連携の Map に**その月の鍵が在るか** (`has`) で決まる ——
+   * 連携していて net 0 だった月は `true` (実測ゼロ)。姉妹モジュール
+   * `renderer/data/cashflowDebtService.ts` が同じ区別を `has` で持つ。
+   */
+  readonly operatingCashflowKnown: boolean;
   /** 株式ポートフォリオ評価額 (任意。未連携なら 0)。 */
   readonly portfolioValue: number;
 }
@@ -767,6 +780,8 @@ export function monthlyFlow(
       // 支払利息は損金算入され税負担を減らす (実効税率分の節税効果)。
       const interestTaxShield = Math.round(interest * rate);
       const operatingCashflow = options.accountingCashflow?.get(month) ?? 0;
+      // 未取得と実測ゼロを分ける印。`get` の値では区別できないので `has` で見る。
+      const operatingCashflowKnown = options.accountingCashflow?.has(month) ?? false;
       return {
         month,
         funding,
@@ -776,6 +791,7 @@ export function monthlyFlow(
         interestTaxShield,
         netCashflow: fundingAfterTax + operatingCashflow - repayment + interestTaxShield,
         operatingCashflow,
+        operatingCashflowKnown,
         portfolioValue: options.portfolioByMonth?.get(month) ?? 0,
       };
     });
@@ -1032,10 +1048,21 @@ export function fundingQualityScore(
 
 /** 返済余力指標 (Debt Service Coverage Ratio 系)。 */
 export interface DebtServiceMetrics {
-  /** 期間中の返済額合計 (元利)。 */
+  /**
+   * 期間中の返済額合計 (元利)。**返済予定の全期間**を含む (突合の有無に関わらず)。
+   *
+   * DSCR の分母では**ない** —— 分母は突合できた月だけの `coveredRepayment`。
+   * こちらは「返済すべき借入が在るか」(節を出すかの判定) と総額の表示に使う。
+   */
   readonly totalRepayment: number;
-  /** 期間中の営業キャッシュフロー合計。 */
-  readonly totalOperatingCashflow: number;
+  /**
+   * DSCR の分子 = **突合できた月**の営業キャッシュフロー合計。
+   *
+   * 「突合できた月」= 返済があり、かつ会計連携にその月の月次CF が在る月。
+   */
+  readonly coveredOperatingCashflow: number;
+  /** DSCR の分母 = **突合できた月**の返済額合計。 */
+  readonly coveredRepayment: number;
   /**
    * 全体の返済カバー率 = 営業CF合計 ÷ 返済額合計。1.0 以上で返済余力あり。
    * **返済が無いときは `null` = 算定不能。**
@@ -1049,6 +1076,38 @@ export interface DebtServiceMetrics {
    * 同じ量を `overallDscr: totalRepay > 0 ? round2(totalCf / totalRepay) : null` で
    * 返し、経営サマリーは「—」を刷って色も付けず、金融機関等提出用の書面も
    * そちらを読む。**同じ量の双子で、片方だけが 0 に倒れていた。**
+   *
+   * ## 分子が無い月も対象外 (2026-09-12 · パス 182)
+   *
+   * 上の 2026-09-08 の修正 (パス 60) は**分母**だけを直し、姉妹モジュールが
+   * 2026-09-07 (パス 45) に直した**分子**の側を写していなかった ——
+   * 返済予定は借入期間ぶん将来へ伸びるのに、会計連携の月次CF は過去しか無い。
+   * 将来の各月を「営業CF 0」として割ると DSCR 0 = 返済不足月になる。
+   *
+   * 実測 (2026-09-12、この app 同梱の見本データ: 融資 1,000万 60回 + 公庫 600万 84回
+   * 据置6か月・会計連携は 2026-01..06 の 6 か月・返済月は 93 か月):
+   *
+   * | | 全月を対象にする (直す前) | 突合できた月だけ |
+   * | --- | ---: | ---: |
+   * | 返済余力 (DSCR) | **0.53** | 9.03 |
+   * | 最悪月のカバー率 | **0.00** | 8.00 |
+   * | カバー率 1.0 未満の月 | **89 か月** | 0 / 4 か月 |
+   *
+   * **同じ会社の同じデータで、経営サマリーは DSCR 9.03 (返済余力十分)、
+   * 資金調達レーダーは 0.53 と赤い警告 (⚠️ 営業CFが返済を下回っています) を出す。**
+   * 画面 2 枚が同時に矛盾した診断を表示し、警告する側が誤っていた。
+   *
+   * 欠陥は 2 つ重なっていた —— 分母に未取得の月を入れる一方で、**分子には
+   * 返済の無い月の営業CF まで足していた** (0.53 の分子は全 95 か月の 891 万で、
+   * 返済月だけなら 636 万)。方向が逆なので互いを部分的に打ち消しており、
+   * 全体 DSCR 0.53 と最悪月 0.00 が同じ行に並んでいた。両方を「突合できた月」に
+   * 揃えた結果、全体と月次が同じ母集団を見るようになった
+   * (返済の無い月を分子から外す件は `debtServiceMetrics` の検査に対照つきで在る)。
+   *
+   * 警告の側には `&& live.accountingLinked` という関門が掛かっていた ——
+   * 書いた者は未連携を意識していたのに、**関門を値ではなく警告に掛けた**ので
+   * 数字そのもの (0.53 / 0.00 / 89 か月) はそのまま測定値として刷られていた
+   * (パス 57 と同じ形)。値が `null` を持つなら、関門は値が持つ。
    */
   readonly overallDscr: number | null;
   /**
@@ -1059,15 +1118,30 @@ export interface DebtServiceMetrics {
    * 2026-09-08 まではそれを 0 に倒していた (印を作ってから捨てる形)。
    */
   readonly worstMonthDscr: number | null;
-  /** カバー率がしきい値 (既定 1.0) を下回った月数。 */
+  /** カバー率がしきい値 (既定 1.0) を下回った月数 (**突合できた月のうち**)。 */
   readonly shortfallMonths: number;
+  /** 評価対象 = 返済があり、かつ会計連携に月次CF が在る月数 (`shortfallMonths` の分母)。 */
+  readonly coveredMonths: number;
+  /**
+   * 返済予定はあるが**会計連携に月次CF が無い**ため突合できなかった月数。
+   *
+   * 返済予定は借入期間ぶん先まで伸びるのに実績CF は過去しか無いので、通常この数は
+   * 大きい。**0 でない限り、上の DSCR 3 つは「突合できた月について」の数字である**
+   * ことを画面が述べる —— 黙って狭めると、4 か月の突合が 93 か月の借入についての
+   * 主張に読める。
+   */
+  readonly unmatchedMonths: number;
 }
 
 /**
  * 月次フローから返済余力指標 (DSCR) を計算する。
  *
- * 営業キャッシュフローが返済額をどれだけカバーできるかを、全体・最悪月・
- * 不足月数で評価する。返済が 0 の月は分母にできないため DSCR の対象外。
+ * **突合できた月だけ**を評価する = 返済があり (分母)、かつ会計連携にその月の
+ * 月次CF が在る (分子) 月。返済が 0 の月は分母にできず、`operatingCashflowKnown`
+ * が `false` の月は**分子が無い** (未取得を 0 とは読まない)。突合できた月が
+ * 1 つも無ければ DSCR は `null` —— 0 を並べた答えを作らない。
+ *
+ * 経緯と実測は `DebtServiceMetrics.overallDscr` の doc。
  *
  * @param monthly `monthlyFlow` の結果
  * @param threshold 不足と判定するカバー率のしきい値 (既定 1.0)
@@ -1077,29 +1151,40 @@ export function debtServiceMetrics(
   threshold = 1,
 ): DebtServiceMetrics {
   let totalRepayment = 0;
-  let totalOperatingCashflow = 0;
+  let coveredOperatingCashflow = 0;
+  let coveredRepayment = 0;
   let worstMonthDscr = Infinity;
   let shortfallMonths = 0;
-  let sawRepayment = false;
+  let coveredMonths = 0;
+  let unmatchedMonths = 0;
   for (const m of monthly) {
     totalRepayment += m.repayment;
-    totalOperatingCashflow += m.operatingCashflow;
-    if (m.repayment > 0) {
-      sawRepayment = true;
-      const dscr = m.operatingCashflow / m.repayment;
-      // worstMonthDscr は最小値。`<`↔`<=` は等値で更新先が同値になり結果不変 (equivalent)。
-      // Stryker disable next-line EqualityOperator
-      if (dscr < worstMonthDscr) worstMonthDscr = dscr;
-      if (dscr < threshold) shortfallMonths += 1;
+    if (m.repayment <= 0) continue;
+    // 分子が無い月は測れない。**実測ゼロ (連携に載っていて net 0) は対象に残る。**
+    if (!m.operatingCashflowKnown) {
+      unmatchedMonths += 1;
+      continue;
     }
+    coveredMonths += 1;
+    coveredOperatingCashflow += m.operatingCashflow;
+    coveredRepayment += m.repayment;
+    const dscr = m.operatingCashflow / m.repayment;
+    // worstMonthDscr は最小値。`<`↔`<=` は等値で更新先が同値になり結果不変 (equivalent)。
+    // Stryker disable next-line EqualityOperator
+    if (dscr < worstMonthDscr) worstMonthDscr = dscr;
+    if (dscr < threshold) shortfallMonths += 1;
   }
-  const overallDscr = totalRepayment > 0 ? totalOperatingCashflow / totalRepayment : null;
   return {
     totalRepayment,
-    totalOperatingCashflow,
-    overallDscr,
-    worstMonthDscr: sawRepayment ? worstMonthDscr : null,
+    coveredOperatingCashflow,
+    coveredRepayment,
+    // coveredMonths>0 の月は返済>0 のみ → coveredRepayment は必ず正。
+    // 分母が 0 になる道は coveredMonths===0 の側だけなので、そちらで null を返す。
+    overallDscr: coveredMonths > 0 ? coveredOperatingCashflow / coveredRepayment : null,
+    worstMonthDscr: coveredMonths > 0 ? worstMonthDscr : null,
     shortfallMonths,
+    coveredMonths,
+    unmatchedMonths,
   };
 }
 

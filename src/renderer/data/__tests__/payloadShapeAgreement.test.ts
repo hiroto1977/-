@@ -126,10 +126,14 @@ const EXACTNESS_PINNED: readonly [
 const KPI_UNIT_PINNED: readonly (keyof _KpiUnitAgrees)[] = ['id', 'label', 'fundamentals', 'kpi', 'history'];
 const DEBT_SERVICE_PINNED: readonly (keyof _DebtServiceAgrees)[] = [
   'totalRepayment',
-  'totalOperatingCashflow',
+  // DSCR の分子・分母は**突合できた月**の合計 (パス 182)。
+  'coveredOperatingCashflow',
+  'coveredRepayment',
   'overallDscr',
   'worstMonthDscr',
   'shortfallMonths',
+  'coveredMonths',
+  'unmatchedMonths',
 ];
 
 describe('同梱データ ⇄ live payload の形が一致する', () => {
@@ -155,11 +159,16 @@ describe('同梱データ ⇄ live payload の形が一致する', () => {
   });
 
   it('★ funding: 同梱の debtService は DebtServiceMetrics を満たす', () => {
-    expect(DEBT_SERVICE_PINNED).toHaveLength(5);
+    // 5 → 8 (パス 182): DSCR の分子・分母を「突合できた月」の合計に分け、
+    // 突合できた月数と突合できなかった月数を持たせた。
+    expect(DEBT_SERVICE_PINNED).toHaveLength(8);
     // パス 60 の実測: 返済 0 の同梱データは DSCR を算定不能で持つ。
     expect(SNAPSHOT.funding.debtService.totalRepayment).toBe(0);
     expect(SNAPSHOT.funding.debtService.overallDscr).toBeNull();
     expect(SNAPSHOT.funding.debtService.worstMonthDscr).toBeNull();
+    // パス 182 の実測: 突合の母数も 0 (返済が 1 か月も無いので未突合も 0)。
+    expect(SNAPSHOT.funding.debtService.coveredMonths).toBe(0);
+    expect(SNAPSHOT.funding.debtService.unmatchedMonths).toBe(0);
   });
 
   it('★ linux: ロードアベレージの「算定不能」の表し方が main と同梱で揃っている', () => {

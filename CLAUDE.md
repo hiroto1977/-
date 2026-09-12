@@ -28,7 +28,7 @@ with a verified 事業仕分け duty map (`professionalMap.ts`) and a local-firs
 **Two runtime targets ship from the same codebase:**
 1. **Electron desktop app** (`npm run dev` / `npm run build`) — full OS integration, 3-process model.
 2. **Browser standalone** (`npm run build:web` → `dist/standalone.html`) — a single self-contained HTML
-   file (実測 11.22 MiB full / 3.03 MiB `build:web:lite` mobile variant — 2026-09-12 計測: 11,765,766 B / 3,178,512 B。天井は CI が両方に掛けている: 16 MB / 4 MB、85% で警告。前回 2026-09-11 は 11,752,227 B / 3,164,973 B で、1 日で両方 +約 13.5 KB。LITE は 85% の警告線 3.4 MB まで残り約 222 KB) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
+   file (実測 11.22 MiB full / 3.03 MiB `build:web:lite` mobile variant — 2026-09-12 パス 182 後の計測: 11,774,254 B / 3,187,002 B。天井は CI が両方に掛けている: 16 MB / 4 MB、85% で警告。同日パス 181 後は 11,765,766 B / 3,178,512 B・前日 2026-09-11 は 11,752,227 B / 3,164,973 B。LITE は 85% の警告線 3.4 MB まで残り約 213 KB) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
 
 Each service page starts from a static snapshot in `src/renderer/data/snapshot.ts` and can swap to a
 live REST fetch. The `useServiceData(serviceId, snapshot)` hook returns `data`, `source`

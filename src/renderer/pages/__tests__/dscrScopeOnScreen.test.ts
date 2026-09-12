@@ -25,20 +25,20 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { SNAPSHOT } from '../../data/snapshot';
+import type { DebtServiceMetrics } from '../../../shared/funding';
 
 /**
  * `SNAPSHOT` は `as const` なので `typeof SNAPSHOT.funding` の各欄はリテラル型
  * (`0` / `false`) になる。live fetch で届く payload は**任意の JSON** なので、
  * 差し替える欄だけを構造で書き、受け口は `unknown` にする
  * (`fetchSnapshot` の返り値は元から検査を通ってから使われる)。
+ *
+ * **差し替える形は本体の型をそのまま使う** (2026-09-12 · パス 182)。
+ * ここは 2026-09-12 まで `DebtServicePatch` という手写しの interface を持っており、
+ * 受け口が `unknown` なので**欄が変わっても tsc が黙った** —— パス 182 で
+ * `totalOperatingCashflow` が無くなったあとも、この検査は存在しない欄を渡し、
+ * 画面には `¥NaN` が出ていた (パス 62 / 80 / 116 で 3 度直した「手写しの payload 型」)。
  */
-interface DebtServicePatch {
-  readonly totalRepayment: number;
-  readonly totalOperatingCashflow: number;
-  readonly overallDscr: number | null;
-  readonly worstMonthDscr: number | null;
-  readonly shortfallMonths: number;
-}
 
 const hub = () =>
   (globalThis as unknown as { serviceHub: { fetchSnapshot: unknown; listConfigured: unknown } }).serviceHub;
@@ -73,7 +73,7 @@ async function settle(): Promise<void> {
  * 画面は `live.items.length > 0` で本体を出すので**案件を 1 件入れる**
  * (snapshot は空配列。返済余力の節は ⑤ ランウェイの中に在る)。
  */
-function payload(debtService: DebtServicePatch, accountingLinked: boolean): unknown {
+function payload(debtService: DebtServiceMetrics, accountingLinked: boolean): unknown {
   return {
     ...SNAPSHOT.funding,
     items: [
@@ -127,7 +127,10 @@ describe('資金調達 — 返済余力 (DSCR) が算定できない期', () => 
   it('★ 対照: 返済が在れば DSCR は数で出る (節と値の両方が生きている)', async () => {
     await mountWith(
       payload(
-        { totalRepayment: 1_200_000, totalOperatingCashflow: 2_400_000, overallDscr: 2, worstMonthDscr: 1.5, shortfallMonths: 0 },
+        {
+          totalRepayment: 1_200_000, coveredOperatingCashflow: 2_400_000, coveredRepayment: 1_200_000,
+          overallDscr: 2, worstMonthDscr: 1.5, shortfallMonths: 0, coveredMonths: 6, unmatchedMonths: 0,
+        },
         true,
       ),
     );
@@ -143,7 +146,11 @@ describe('資金調達 — 返済余力 (DSCR) が算定できない期', () => 
     // 書くと `0 < 1` で警告が鳴る —— それを鳴らさないことを留める。
     await mountWith(
       payload(
-        { totalRepayment: 1_200_000, totalOperatingCashflow: 0, overallDscr: null, worstMonthDscr: null, shortfallMonths: 0 },
+        {
+          // 返済額はあるが突合が 0 件 = 算定不能 (パス 182 の形)。
+          totalRepayment: 1_200_000, coveredOperatingCashflow: 0, coveredRepayment: 0,
+          overallDscr: null, worstMonthDscr: null, shortfallMonths: 0, coveredMonths: 0, unmatchedMonths: 12,
+        },
         true,
       ),
     );
@@ -157,7 +164,10 @@ describe('資金調達 — 返済余力 (DSCR) が算定できない期', () => 
   it('★ 対照: DSCR が 1 を下回れば警告は出る (警告そのものが生きている)', async () => {
     await mountWith(
       payload(
-        { totalRepayment: 1_200_000, totalOperatingCashflow: 600_000, overallDscr: 0.5, worstMonthDscr: 0.4, shortfallMonths: 3 },
+        {
+          totalRepayment: 1_200_000, coveredOperatingCashflow: 600_000, coveredRepayment: 1_200_000,
+          overallDscr: 0.5, worstMonthDscr: 0.4, shortfallMonths: 3, coveredMonths: 6, unmatchedMonths: 0,
+        },
         true,
       ),
     );

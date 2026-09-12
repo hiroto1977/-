@@ -633,7 +633,7 @@ describe('scenarioRunways', () => {
 
 describe('cashRunway', () => {
   function row(month: string, net: number): FundingMonthly {
-    return { month, funding: 0, fundingAfterTax: 0, repayment: 0, interest: 0, interestTaxShield: 0, netCashflow: net, operatingCashflow: 0, portfolioValue: 0 };
+    return { month, funding: 0, fundingAfterTax: 0, repayment: 0, interest: 0, interestTaxShield: 0, netCashflow: net, operatingCashflow: 0, operatingCashflowKnown: false, portfolioValue: 0 };
   }
 
   it('accumulates net cashflow from the opening balance', () => {
@@ -1161,8 +1161,9 @@ describe('fundingTermStructure', () => {
 });
 
 describe('debtServiceMetrics (DSCR)', () => {
-  function m(month: string, repayment: number, operatingCashflow: number): FundingMonthly {
-    return { month, funding: 0, fundingAfterTax: 0, repayment, interest: 0, interestTaxShield: 0, netCashflow: 0, operatingCashflow, portfolioValue: 0 };
+  /** 営業CF を明示する月は「会計連携に載っている」= 突合できる (パス 182)。 */
+  function m(month: string, repayment: number, operatingCashflow: number, known = true): FundingMonthly {
+    return { month, funding: 0, fundingAfterTax: 0, repayment, interest: 0, interestTaxShield: 0, netCashflow: 0, operatingCashflow, operatingCashflowKnown: known, portfolioValue: 0 };
   }
 
   it('computes overall DSCR = operating CF total / repayment total', () => {
@@ -1170,7 +1171,10 @@ describe('debtServiceMetrics (DSCR)', () => {
     // CF 200,000 / repayment 200,000 = 1.0
     expect(r.overallDscr).toBe(1);
     expect(r.totalRepayment).toBe(200_000);
-    expect(r.totalOperatingCashflow).toBe(200_000);
+    expect(r.coveredOperatingCashflow).toBe(200_000);
+    expect(r.coveredRepayment).toBe(200_000);
+    expect(r.coveredMonths).toBe(2);
+    expect(r.unmatchedMonths).toBe(0);
   });
 
   it('finds the worst month and counts shortfall months below 1.0', () => {
@@ -1180,11 +1184,16 @@ describe('debtServiceMetrics (DSCR)', () => {
     expect(r.shortfallMonths).toBe(1);
   });
 
-  it('ignores months with no repayment (not in the DSCR denominator)', () => {
+  it('ignores months with no repayment — 分子からも外す (全体と最悪月が一致する)', () => {
     const r = debtServiceMetrics([m('2026-01', 0, 500_000), m('2026-02', 100_000, 200_000)]);
-    expect(r.overallDscr).toBe(7); // (500k+200k) / 100k
-    expect(r.worstMonthDscr).toBe(2); // only the repayment month counts
+    // 2026-09-12 まで全体 DSCR は 7 (= (500k+200k) / 100k) で、**返済の無い月の
+    // 営業CF まで分子に入れていた** —— 最悪月 2 と 3.5 倍ずれる。返済の無い月を
+    // 分母から外すなら分子からも外す (パス 182)。
+    expect(r.overallDscr).toBe(2); // 200k / 100k
+    expect(r.worstMonthDscr).toBe(2); // 全体と一致する
+    expect(r.coveredOperatingCashflow).toBe(200_000);
     expect(r.shortfallMonths).toBe(0);
+    expect(r.coveredMonths).toBe(1);
   });
 
   it('返済が無ければ DSCR は null (0 に倒さない)', () => {
@@ -1196,9 +1205,14 @@ describe('debtServiceMetrics (DSCR)', () => {
     expect(r.overallDscr).toBeNull();
     expect(r.worstMonthDscr).toBeNull();
     expect(r.shortfallMonths).toBe(0);
-    // **金額は算定できている** —— 返済 0 と営業CF は入力どおり。
+    // **返済額は算定できている** —— 返済 0 は入力どおり。
     expect(r.totalRepayment).toBe(0);
-    expect(r.totalOperatingCashflow).toBe(500_000);
+    // 分子・分母は「突合できた月」の合計なので、突合が 0 件なら 0 —— これは
+    // 「営業CF を 0 と測った」ではなく**足す対象が無い**の 0 である (パス 182)。
+    expect(r.coveredOperatingCashflow).toBe(0);
+    expect(r.coveredRepayment).toBe(0);
+    expect(r.coveredMonths).toBe(0);
+    expect(r.unmatchedMonths).toBe(0); // 返済月そのものが無い
   });
 
   it('★ 対照: 返済が在れば DSCR は数で出る (標本が在ることの確認)', () => {
@@ -1287,7 +1301,7 @@ describe('golden: funding quality / DSCR / cost metrics (branch coverage)', () =
   };
   const mk = (repayment: number, ocf: number): FundingMonthly => ({
     month: '2026-01', funding: 0, fundingAfterTax: 0, repayment, interest: 0, interestTaxShield: 0,
-    netCashflow: 0, operatingCashflow: ocf, portfolioValue: 0,
+    netCashflow: 0, operatingCashflow: ocf, operatingCashflowKnown: true, portfolioValue: 0,
   });
 
   it('fundingQualityScore: 算定できる場合は数・確定 0 と重み 0 は算定不能', () => {
@@ -1313,11 +1327,15 @@ describe('golden: funding quality / DSCR / cost metrics (branch coverage)', () =
   });
 
   it('debtServiceMetrics: tracks worst-month DSCR + shortfall; 返済ゼロは null', () => {
+    // 3 行目 (返済 0・営業CF 200) は分母にも**分子にも**入らない → 230/200 = 1.15。
+    // 直す前は 430/200 = 2.15 で、返済の無い月の営業CF を分子に足していた。
     expect(debtServiceMetrics([mk(100, 150), mk(100, 80), mk(0, 200)])).toEqual({
-      totalRepayment: 200, totalOperatingCashflow: 430, overallDscr: 2.15, worstMonthDscr: 0.8, shortfallMonths: 1,
+      totalRepayment: 200, coveredOperatingCashflow: 230, coveredRepayment: 200,
+      overallDscr: 1.15, worstMonthDscr: 0.8, shortfallMonths: 1, coveredMonths: 2, unmatchedMonths: 0,
     });
     expect(debtServiceMetrics([mk(0, 200), mk(0, 100)])).toEqual({
-      totalRepayment: 0, totalOperatingCashflow: 300, overallDscr: null, worstMonthDscr: null, shortfallMonths: 0,
+      totalRepayment: 0, coveredOperatingCashflow: 0, coveredRepayment: 0,
+      overallDscr: null, worstMonthDscr: null, shortfallMonths: 0, coveredMonths: 0, unmatchedMonths: 0,
     });
   });
 
@@ -1334,7 +1352,7 @@ describe('golden: funding quality / DSCR / cost metrics (branch coverage)', () =
 describe('golden: cashRunway dip/shortfall + scenarioRunways ordering', () => {
   const mk = (month: string, net: number): FundingMonthly => ({
     month, funding: 0, fundingAfterTax: 0, repayment: 0, interest: 0, interestTaxShield: 0,
-    netCashflow: net, operatingCashflow: 0, portfolioValue: 0,
+    netCashflow: net, operatingCashflow: 0, operatingCashflowKnown: false, portfolioValue: 0,
   });
   it('tracks the minimum balance (dip) and stays above zero', () => {
     expect(cashRunway([mk('2026-01', -50), mk('2026-02', 100)], 100)).toEqual({
@@ -1361,5 +1379,82 @@ describe('golden: cashRunway dip/shortfall + scenarioRunways ordering', () => {
     expect(sr.optimistic.rows.at(-1)!.balance).toBe(4_200_000); // 確定3.5M + 申請0.7M×1.0
     expect(sr.expected.rows.at(-1)!.balance).toBe(4_060_000); // + ×0.8
     expect(sr.pessimistic.rows.at(-1)!.balance).toBe(3_780_000); // + ×0.8×0.5
+  });
+});
+
+/**
+ * **同梱の見本データで実測した、返済余力の取り違え** (2026-09-12 · パス 182)。
+ *
+ * この app が既定で描くデータ = 民間融資 1,000万 (60回・2026-03 開始) + 公庫 600万
+ * (84回・据置 6 か月・2026-06 開始) と、会計連携 6 か月 (2026-01..06)。
+ * 返済月は 93 か月あり、会計の実績と重なるのは 4 か月だけである。
+ *
+ * 直す前は残り 89 か月を「営業CF 0」として割っていたので、
+ * **DSCR 0.53・最悪月 0.00・不足 89 か月**と出て、赤い警告
+ * (⚠️ 営業CFが返済を下回っています) まで点いた。同じデータで経営サマリー
+ * (`cashflowDebtService`) は DSCR 9.03 と出す —— 画面 2 枚が矛盾し、
+ * 警告する側が誤っていた。
+ */
+describe('buildFundingSnapshot DSCR — 実績のある月だけで測る (パス 182)', () => {
+  const loans: FundingItem[] = [
+    { id: 'f-bank', kind: 'loan', name: '民間融資', amount: 10_000_000, status: 'received', month: '2026-02', repayable: true, repayment: { annualRate: 0.022, months: 60, startMonth: '2026-03' } },
+    { id: 'f-jfc', kind: 'jfc', name: '公庫', amount: 6_000_000, status: 'approved', month: '2026-05', repayable: true, repayment: { annualRate: 0.012, months: 84, startMonth: '2026-06', gracePeriodMonths: 6, graceInterestHandling: 'compound' } },
+  ];
+  const accounting = new Map([
+    ['2026-01', 1_200_000], ['2026-02', 1_350_000], ['2026-03', 1_580_000],
+    ['2026-04', 1_410_000], ['2026-05', 1_650_000], ['2026-06', 1_720_000],
+  ]);
+
+  it('★ 実績と重なる 4 か月だけを突合し、残りを未突合として数える', () => {
+    const snap = buildFundingSnapshot(loans, { accounting });
+    const d = snap.debtService;
+    const repayMonths = snap.monthly.filter((m) => m.repayment > 0).length;
+    expect(repayMonths).toBe(93);
+    expect(d.coveredMonths).toBe(4); // 2026-03..06 (返済があり、かつ会計に在る)
+    expect(d.unmatchedMonths).toBe(89);
+    expect(d.coveredMonths + d.unmatchedMonths).toBe(repayMonths);
+    // 分子は突合できた 4 か月の実績CF の合計。
+    expect(d.coveredOperatingCashflow).toBe(1_580_000 + 1_410_000 + 1_650_000 + 1_720_000);
+  });
+
+  it('★ DSCR は 9 倍台 (直す前は 0.53) で、不足月も最悪月も測れた月のもの', () => {
+    const d = buildFundingSnapshot(loans, { accounting }).debtService;
+    expect(d.overallDscr).not.toBeNull();
+    expect(d.overallDscr!).toBeGreaterThan(9);
+    expect(d.overallDscr!).toBeLessThan(9.1);
+    expect(d.worstMonthDscr!).toBeGreaterThan(8); // 直す前は 0.00
+    expect(d.shortfallMonths).toBe(0); // 直す前は 89
+    // 画面の警告は値が持つ: 1.0 を下回っていないので出ない。
+    expect(d.overallDscr! < 1).toBe(false);
+  });
+
+  it('★ 対照: 89 か月を突合済みとして扱うと 1.0 未満に戻る (標本が効いている)', () => {
+    // **鳴らない対照は合格ではない。** 同じ月次に known を全部立てると
+    // 「営業CF 0 の 89 か月」が分母に入り、DSCR は 9.03 → 0.38、
+    // 最悪月 8 → 0、不足月 0 → 89 になる (= 赤い警告が点く)。
+    //
+    // 出荷していた実物は 0.53 だった —— そちらは分子を**全月**の営業CF
+    // (返済の無い 2026-01/02 の 255 万を含む 891 万) で取っていたため。
+    // 欠陥は 2 つ重なっており、互いを部分的に打ち消していた
+    // (分子に余分を足す方向と、分母に未取得を足す方向)。ここは分子を
+    // 返済月に揃えた**新しい規則の下で**未取得を混ぜた場合を測る。
+    const snap = buildFundingSnapshot(loans, { accounting });
+    const all = snap.monthly.map((m) => ({ ...m, operatingCashflowKnown: true }));
+    const d = debtServiceMetrics(all);
+    expect(d.overallDscr!).toBeGreaterThan(0.37);
+    expect(d.overallDscr!).toBeLessThan(0.38);
+    expect(d.worstMonthDscr).toBe(0);
+    expect(d.shortfallMonths).toBe(89);
+    expect(d.overallDscr! < 1).toBe(true); // ← 赤い警告が点く条件
+  });
+
+  it('★ 会計未連携でも借入の総額は残り、DSCR だけが算定不能になる', () => {
+    const d = buildFundingSnapshot(loans).debtService;
+    expect(d.overallDscr).toBeNull();
+    expect(d.worstMonthDscr).toBeNull();
+    expect(d.shortfallMonths).toBe(0);
+    expect(d.coveredMonths).toBe(0);
+    expect(d.unmatchedMonths).toBe(93);
+    expect(d.totalRepayment).toBeGreaterThan(16_000_000); // 節は出る (借入は在る)
   });
 });

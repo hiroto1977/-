@@ -1204,6 +1204,7 @@ export const SNAPSHOT = {
       interestTaxShield: number;
       netCashflow: number;
       operatingCashflow: number;
+      operatingCashflowKnown: boolean;
       portfolioValue: number;
     }[],
     bars: [] as { label: string; secured: number; pipeline: number }[],
@@ -1270,10 +1271,14 @@ export const SNAPSHOT = {
       totalRepayment: 0,
       // 返済が 0 なので DSCR は算定不能 —— 出荷する既定データに
       // 「返済ゼロで DSCR 0」を入れない (6 行上の longTermRatioPct と同じ形)。
-      totalOperatingCashflow: 0,
+      coveredOperatingCashflow: 0,
+      coveredRepayment: 0,
       overallDscr: null as number | null,
       worstMonthDscr: null as number | null,
       shortfallMonths: 0,
+      // 突合できた月も突合できなかった月も 0 (返済が 1 か月も無いので)。
+      coveredMonths: 0,
+      unmatchedMonths: 0,
     },
     costMetrics: {
       totalLoanPrincipal: 0,

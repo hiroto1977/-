@@ -25,7 +25,9 @@ const item = (over: Partial<FundingItem> = {}): FundingItem => ({
 /** Minimal FundingMonthly builder for cashRunway / debtServiceMetrics. */
 const fm = (over: Partial<FundingMonthly>): FundingMonthly => ({
   month: '2026-01', funding: 0, fundingAfterTax: 0, repayment: 0, interest: 0, interestTaxShield: 0,
-  netCashflow: 0, operatingCashflow: 0, portfolioValue: 0, ...over,
+  // 既定は「実績が在る」—— 検査が営業CF を明示するのは「その月は測れた」という意味。
+  // 未取得を表したい検査は `operatingCashflowKnown: false` を明示する (パス 182)。
+  netCashflow: 0, operatingCashflow: 0, operatingCashflowKnown: true, portfolioValue: 0, ...over,
 });
 
 describe('fundingDiversification', () => {
@@ -151,5 +153,104 @@ describe('totalInterestOf / effectiveFundingCostRate / fundingCostMetrics', () =
       summary,
     );
     expect(m.totalLoanPrincipal).toBe(0); // `||` を `&&` にする mutant は誤って計上する
+  });
+});
+
+/**
+ * **未取得の営業CF を「0」として比率に混ぜない** (2026-09-12 · パス 182)。
+ *
+ * 返済予定は借入期間ぶん将来へ伸びるのに、会計連携の月次CF は過去しか無い。
+ * `monthlyFlow` は無い月を `?? 0` で埋めるので、そのまま割ると
+ * 「営業CF 0 ÷ 返済額」= DSCR 0 = 返済不足月が並ぶ。姉妹モジュール
+ * `renderer/data/cashflowDebtService.ts` が 2026-09-07 (パス 45) に直した形で、
+ * こちらは分母 (パス 60) だけが直り、分子が残っていた。
+ */
+describe('営業CF の未取得と実測ゼロ (パス 182)', () => {
+  it('★ monthlyFlow: 会計連携に在る月は known・無い月は not known', () => {
+    const acc = new Map([['2026-01', 500], ['2026-02', 0]]);
+    const rows = monthlyFlow(
+      [item({ kind: 'loan', status: 'received', amount: 1_200, month: '2026-01', repayable: true,
+        repayment: { annualRate: 0, months: 3, startMonth: '2026-01' } })],
+      { accountingCashflow: acc },
+    );
+    const by = new Map(rows.map((r) => [r.month, r]));
+    expect(by.get('2026-01')?.operatingCashflowKnown, '連携に在る月').toBe(true);
+    // **実測ゼロは known** —— 連携に載っていて net 0 だった月は「測れた 0」。
+    expect(by.get('2026-02')?.operatingCashflow).toBe(0);
+    expect(by.get('2026-02')?.operatingCashflowKnown, '実測ゼロを未取得と混ぜている').toBe(true);
+    expect(by.get('2026-03')?.operatingCashflowKnown, '連携に無い月').toBe(false);
+  });
+
+  it('★ monthlyFlow: 会計連携そのものが無ければ全月 not known', () => {
+    const rows = monthlyFlow([item({ month: '2026-01', status: 'received' })]);
+    expect(rows.every((r) => r.operatingCashflowKnown)).toBe(false);
+    expect(rows.some((r) => r.operatingCashflowKnown)).toBe(false);
+  });
+
+  it('★ 未取得の返済月は分子・分母から外し、件数で数える', () => {
+    const m = debtServiceMetrics([
+      fm({ month: '2026-01', repayment: 100, operatingCashflow: 300 }),
+      fm({ month: '2026-02', repayment: 100, operatingCashflow: 0, operatingCashflowKnown: false }),
+      fm({ month: '2026-03', repayment: 100, operatingCashflow: 0, operatingCashflowKnown: false }),
+    ]);
+    expect(m.overallDscr).toBe(3); // 300 / 100 —— 未取得の 2 か月を混ぜれば 1.0 になる
+    expect(m.worstMonthDscr).toBe(3);
+    expect(m.shortfallMonths).toBe(0);
+    expect(m.coveredMonths).toBe(1);
+    expect(m.unmatchedMonths).toBe(2);
+    // 返済額の総額は全期間ぶん残る (節を出すかの判定と表示に使う)。
+    expect(m.totalRepayment).toBe(300);
+    expect(m.coveredRepayment).toBe(100);
+  });
+
+  it('★ 対照: 同じ標本で known を立てると元の欠陥が戻る (検査が区別を見ている)', () => {
+    // **鳴らない対照は合格ではない。** known を全月 true にすると
+    // 「営業CF 0 の月」が 2 つ分母に入り、DSCR は 3 → 1.0、不足月 0 → 2 になる。
+    const m = debtServiceMetrics([
+      fm({ month: '2026-01', repayment: 100, operatingCashflow: 300 }),
+      fm({ month: '2026-02', repayment: 100, operatingCashflow: 0 }),
+      fm({ month: '2026-03', repayment: 100, operatingCashflow: 0 }),
+    ]);
+    expect(m.overallDscr).toBe(1);
+    expect(m.worstMonthDscr).toBe(0);
+    expect(m.shortfallMonths).toBe(2);
+    expect(m.unmatchedMonths).toBe(0);
+  });
+
+  it('★ 突合が 1 件も無ければ DSCR は null (0 を並べた答えを作らない)', () => {
+    const m = debtServiceMetrics([
+      fm({ month: '2026-01', repayment: 100, operatingCashflow: 0, operatingCashflowKnown: false }),
+      fm({ month: '2026-02', repayment: 200, operatingCashflow: 0, operatingCashflowKnown: false }),
+    ]);
+    expect(m.overallDscr).toBeNull();
+    expect(m.worstMonthDscr).toBeNull();
+    expect(m.shortfallMonths).toBe(0);
+    expect(m.coveredMonths).toBe(0);
+    expect(m.unmatchedMonths).toBe(2);
+    expect(m.totalRepayment).toBe(300); // 借入は在る (節は出す)
+  });
+
+  it('★ 実測ゼロの月は不足月として数える (安全側に倒さない)', () => {
+    // 連携に載っていて営業CF が 0 だった月は**本当にカバーできていない**。
+    // 未取得を外す規則が、実測ゼロまで外してしまわないこと。
+    const m = debtServiceMetrics([fm({ month: '2026-01', repayment: 100, operatingCashflow: 0 })]);
+    expect(m.overallDscr).toBe(0);
+    expect(m.worstMonthDscr).toBe(0);
+    expect(m.shortfallMonths).toBe(1);
+    expect(m.coveredMonths).toBe(1);
+    expect(m.unmatchedMonths).toBe(0);
+  });
+
+  it('★ 画面が刷る式が成り立つ: 分子 ÷ 分母 = DSCR', () => {
+    // 画面は「営業CF合計 X ÷ 返済額 Y = DSCR」と刷る。X と Y は DSCR の
+    // 実際の被演算子でなければならない (パス 53 / 81 の規準)。
+    for (const rows of [
+      [fm({ repayment: 100, operatingCashflow: 250 }), fm({ month: '2026-02', repayment: 300, operatingCashflow: 150 })],
+      [fm({ repayment: 100, operatingCashflow: 250 }), fm({ month: '2026-02', repayment: 300, operatingCashflow: 150, operatingCashflowKnown: false })],
+    ]) {
+      const m = debtServiceMetrics(rows);
+      expect(m.overallDscr).not.toBeNull();
+      expect(m.coveredOperatingCashflow / m.coveredRepayment).toBe(m.overallDscr);
+    }
   });
 });
