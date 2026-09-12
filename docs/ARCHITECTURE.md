@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **13433** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **13466** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 31 / 36 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 573 | 自己検証 |
+| `file:line` 参照数 | 579 | 自己検証 |
 | 図の中の `file:line` 参照数 | 27 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -1816,8 +1816,8 @@ union を参照する。
 | stocks | `export-dashboard` | `{ path, advisorResult, strategyComparison }` | path は書き出し関門を通る | `stocks.ts:2035-2043` |
 | stocks | `export-dashboard-md` | `{ path, advisorResult, strategyComparison }` | 同上 (Markdown 版) | `stocks.ts:2035-2043` |
 | templates | `export-template` | `{ templateId, params, path }` | templateId は目録の id のみ、params は既定値へ clamp、path は書き出し関門 | `templates.ts:344-349` |
-| teamradar | `save-state` | `{ department, evaluatedAt, members }` | members は形と件数を検証してから 0600 で保存 | `teamradar.ts:412-415` |
-| teamradar | `export-svg` | `{ path, title }` | path は書き出し関門。図の文字列は escapeXml を通してから書く | `teamradar.ts:412-415` |
+| teamradar | `save-state` | `{ department, evaluatedAt, members, axes }` | members は形と件数を検証してから 0600 で保存。**axes はパス 190 で足した** —— それまで画面で付け直した軸名はブラウザの下書きにしか残らず、保存にも書き出しにも届かなかった (省略可: 既存の保存値をそのまま読む) | `teamradar.ts:466-468` |
+| teamradar | `export-svg` | `{ path, title, chart }` | path は書き出し関門。図の文字列は escapeXml を通してから書く。**chart はパス 190 で足した画面の図** (validateTeamRadarState が通す形) —— それまで title だけを受け、本体は保存済み状態から読んでいたので、1 枚の SVG が 2 つの部署・2 つの評価時点を名乗った。省略時だけ保存済みへ落ちる | `teamradar.ts:466-468` |
 | talent | `save-state` | (payload 全体を sanitize) | src/shared/talent.ts の入力検査 (sanitize) が申告・施策・ロードマップを型と上限で選り分ける。main とブラウザ版で同じ関数を通す | `talent.ts:186-189` |
 | talent | `judge-leader` | `{ flagged, candidate }` | flagged は失格条項の id 以外を落とし、candidate は 64 字で切る | `talent.ts:186-189` |
 | emotions | `clear-history` | `{ kind }` | kind は moods / analyses / all / 未指定 のみ意味を持つ (未指定は気分だけ) | `emotions.ts:372-386` |
@@ -3592,6 +3592,52 @@ payload を数える (数字と文面だけ合わせても「口はあるが繋�
 **検査の側が「1 度も約定していない口座の損益」を正解として留めていた**。
 金額と色の検査は約定が在る口座に当てるべきもので、雛形に取引 1 件を足して
 そのまま通る (期待値は変えていない)。
+
+**渡す物が画面の図と別だった面も在った** (2026-09-12 · パス 190)。
+チームレーダーの「SVG を保存 (Canva 用)」は、画面が `title` **だけ**を送り、
+デスクトップ版は本体を**保存済み状態**から読んでいた。実測:
+
+```
+  svg title   編集したタイトル｜編集した部署 (2026-09-12)   ← 画面が送った値
+  svg header  部署: 保存した部署 · 評価時点: 2026-01-01     ← 保存済み状態
+  svg axes    営業力 | 顧客対応力 | プレゼン力 | …          ← 常に CANONICAL_AXES
+```
+
+1 枚のファイルが**2 つの部署・2 つの評価時点**を名乗り、まだ保存していなければ
+同梱の見本 3 人が書き出される。画面は何も言わない。しかも `TeamRadarState` に
+`axes` の欄が無かったので、**画面で付け直した軸名は保存にも書き出しにも 1 文字も
+届かない** (下書き = localStorage にしか残らない)。パス 118 の「口はあるが
+繋がっていない」の再発である。
+
+3 つ目は幾何だった。`renderTeamRadarSvg` は `m.scores[i] ?? 0` を 2 か所で使い、
+評点の無い軸の頂点が**中心そのもの**に落ちる (実測 720×720 で `360.0,370.0` = cx, cy)。
+画面の `RadarChart` は 2026-09-09 (パス 65/66) からその幾何を拒んでいたのに、
+**渡す物の側だけ**が古い形だった (パス 41 の「断りが画面にだけ乗る」+ パス 66 の
+「1 か所しか直していない」)。
+
+**ブラウザ版は既に正しかった** —— `web-shim.ts` は `tryGrabSvgFromPage()` で
+画面の SVG をそのまま出す。**デスクトップ版だけが 2 つ目の実装で外れていた。**
+
+**欠測はもう 1 つの形で画面にも残っていた。** `RadarChart` が見ていたのは
+`null` / `undefined` だけで、**未評価の `0` は中心に描かれていた** ——
+同じ画面の評点の欄が `isEvaluatedScore` を見て「—」と刷っているその横で。
+0 が入る道は下書きで、`sanitizeRadarDraft` の `finiteOrZero` が数でない値
+(古い版・手で直した localStorage) を 0 に倒す (評点の入力は 1-5 の range なので
+画面からは書けない)。
+
+直した形:
+
+| 置いた物 | 役目 |
+| --- | --- |
+| `src/shared/radarPlot.ts` | `isPlottableScore` (欠測の判定 1 つ) / `planRadarPlot` (誰を描くか) / `omittedRadarNote` (誰の何が欠けたか) / `axisName` |
+| `src/shared/teamRadarState.ts` | `TeamRadarState.axes` (省略可 —— 既存の保存値をそのまま読む) と `validateTeamRadarState` の判定 |
+| `src/main/clients/teamradar.ts` | `export-svg` の payload に `chart` (画面の図)、`save-state` に `axes`。SVG は描かなかった人を**図の中に**書く |
+| `src/renderer/data/memberCare.ts` | `isEvaluatedScore` が `isPlottableScore` へ委譲 (写しを持たない) |
+| `src/renderer/pages/TeamRadarPage.tsx` | 図・凡例・注記が同じ計画を読む。書き出しと保存に軸名を送る |
+
+**`verify:arch` の payload 台帳が私の直しの穴を教えた** —— `SaveStatePayload` に
+`axes` の欄が無い間、画面が送った軸名は `saveTeamRadarStateImpl` の分解で
+**黙って落ちていた**。同じパスの中に同じ形が残っていた。
 
 **暗号パラメータ**も同じ形だった。AES-GCM の IV 長と PBKDF2 の強度が
 `src/renderer/security/vault.ts` / `src/renderer/security/dataCrypto.ts` /

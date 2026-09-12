@@ -2721,6 +2721,41 @@ async function teamRadarSuite(browser) {
   const afterCorrupt = (await page.locator('body').textContent()) ?? '';
   ok(afterCorrupt.includes('同梱データ'), 'teamRadar: ★ 読めなかったときのバッジは「同梱データ」で、注記が理由を言う');
 
+  /*
+   * **未評価の軸が在る人を、図が中心に描かない** (パス 190)。
+   *
+   * 評点の入力は 1-5 の range なので画面から 0 は書けない —— 0 が入る道は下書きで、
+   * `sanitizeRadarDraft` の `finiteOrZero` が数でない値を 0 に倒す。実機で同じ道を通す。
+   */
+  await page.evaluate(() => {
+    localStorage.removeItem('teamradar.state');
+    localStorage.setItem('servicehub.teamradar.draft.v1', JSON.stringify({
+      title: 'T',
+      axes: ['営業力', '顧客対応力', 'プレゼン力', '交渉力', '顧客管理力'],
+      department: '開発部',
+      evaluatedAt: '2026-09-12',
+      members: [
+        { id: 'ok', name: 'E2E描ける人', scores: [5, 4, 3, 2, 1] },
+        { id: 'ng', name: 'E2E描けない人', scores: [5, 4, 'x', 2, 1] },
+      ],
+    }));
+  });
+  await gotoService(page, '#/teamradar', 'text=保存 / エクスポート');
+  await page.waitForSelector('[data-skill-radar-omitted]', { timeout: 20000 });
+  const omitted = (await page.locator('[data-skill-radar-omitted]').textContent()) ?? '';
+  ok(omitted.includes('1 名を図に描いていません'),
+    'teamRadar: ★ 描かなかった人の件数を言う');
+  ok(omitted.includes('E2E描けない人') && omitted.includes('プレゼン力'),
+    `teamRadar: ★ 誰のどの軸が欠けているかを言う — 実際 ${omitted.slice(0, 80)}`);
+  // 図には描ける人の多角形が 1 つだけ (中心に落ちた頂点が無い)
+  const polygons = await page.locator('svg').first().locator('polygon').evaluateAll(
+    (els) => els.filter((e) => e.getAttribute('fill') !== 'none').map((e) => e.getAttribute('points') ?? ''),
+  );
+  ok(polygons.length === 1, `teamRadar: ★ 未評価が在る人の多角形は描かない — 実際 ${polygons.length} 個`);
+  ok(!polygons.some((p) => p.includes('260.0,268.0')),
+    'teamRadar: ★ 中心 (260.0,268.0) に落ちた頂点が無い');
+  await page.evaluate(() => localStorage.removeItem('servicehub.teamradar.draft.v1'));
+
   ok(errs.length === 0, `teamRadar: ページエラー 0 (実際 ${errs.length})`);
   await ctx.close();
 }

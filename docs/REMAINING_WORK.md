@@ -13918,7 +13918,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **106 ファイル / 280 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **105 ファイル / 278 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -13961,7 +13961,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/payroll.ts` | 3 |
 | `src/shared/securityRange.ts` | 3 |
 | `src/main/clients/ollama.ts` | 2 |
-| `src/main/clients/teamradar.ts` | 2 |
 | `src/renderer/App.tsx` | 2 |
 | `src/renderer/components/AxonometricCharts.tsx` | 2 |
 | `src/renderer/data/businessUnits.ts` | 2 |
@@ -25516,3 +25515,68 @@ ShigyoConsole のように 2 本のリストを混ぜる画面では「1 本に�
 - **ペーパー口座に「自分の取引」を持たせるかは別の判断**。今日の直しは「何なのかを
   正しく述べる」までで、蓄積する口座 (状態ファイルに履歴を持ち、複数日を跨ぐ) を
   作るのは機能の追加であり、欠陥の修復ではない。ブラウザ版も同じ。
+
+---
+
+## パス 190 (2026-09-12) — **書き出す SVG が、画面の図と別の図だった**
+
+チームレーダーの「SVG を保存 (Canva 用)」は人に渡す成果物である。実測した食い違い:
+
+```
+  svg title   編集したタイトル｜編集した部署 (2026-09-12)   ← 画面が送った値
+  svg header  部署: 保存した部署 · 評価時点: 2026-01-01     ← 保存済み状態
+  svg axes    営業力 | 顧客対応力 | プレゼン力 | …          ← 常に CANONICAL_AXES
+  短い points … 360.0,370.0  (= cx 360, cy 370 · 中心そのもの)
+```
+
+**3 つの欠陥が重なっていた。**
+
+| # | 欠陥 | 経緯 |
+| --- | --- | --- |
+| 1 | 画面は `title` だけを送り、本体は保存済み状態から読む | 1 枚が 2 つの部署・2 つの評価時点を名乗る。未保存なら同梱の見本 3 人が出る |
+| 2 | `TeamRadarState` に `axes` の欄が無い | 画面で付け直した軸名は下書き (localStorage) にしか残らず、保存にも書き出しにも届かない (パス 118 の再発) |
+| 3 | `renderTeamRadarSvg` の `m.scores[i] ?? 0` ×2 | 評点の無い軸の頂点が中心に落ちる。**画面の `RadarChart` は同じ幾何を拒むコメントを持っていた** (パス 41 + パス 66) |
+
+**ブラウザ版は既に正しかった** —— `tryGrabSvgFromPage()` で画面の SVG をそのまま出す。
+デスクトップ版だけが 2 つ目の実装で外れていた。
+
+### 画面にも同じ欠測が残っていた
+
+`RadarChart` が見ていたのは `null` / `undefined` だけで、**未評価の `0` は中心に
+描かれていた** —— 同じ画面の評点の欄が `isEvaluatedScore` を見て「—」と刷っている
+その横で。数字は「無い」と言い、図は「最低」と言っていた。0 が入る道は下書きで、
+`sanitizeRadarDraft` の `finiteOrZero` が数でない値を 0 に倒す (評点の入力は 1-5 の
+range なので画面からは書けない)。
+
+### 直した所
+
+`src/shared/radarPlot.ts` に判断を 1 つ (`isPlottableScore` / `planRadarPlot` /
+`omittedRadarNote` / `axisName`)。`memberCare.isEvaluatedScore` はそこへ委譲する
+(写しを持つと「平均が数える値」と「図に置ける値」が別々に動く)。
+`TeamRadarState.axes` は**省略可**で、既存の保存値はそのまま読める。
+`export-svg` の payload に `chart` (画面の図・`validateTeamRadarState` が通す形)、
+`save-state` に `axes`。SVG は描かなかった人を**図の中に**書く。
+
+### ゲートが私の穴を教えた
+
+`verify:arch` の payload 台帳が `SaveStatePayload` に `axes` の欄が無いことを鳴らした
+—— そのままだと画面が送った軸名は `saveTeamRadarStateImpl` の分解で**黙って落ちる**。
+同じパスの中に、私が直している最中の形が残っていた。対照 (C8) で落ちることを確かめた。
+
+### 対照 8 本すべて鳴った
+
+`?? 0` に戻す / `chart` を無視する / 軸名を固定に戻す / `axes` の判定を外す /
+欠測を `null` だけに戻す / 画面の図を自前の判定に戻す / SVG の注記を消す /
+`save-state` が `axes` を落とす —— どれも狙った検査だけが落ちる。
+
+### 残した物 / 次に見る所
+
+- **軸の本数は 5 に固定のまま。** `scores` の長さと付箋の鍵の上限が同じ数を前提に
+  しているので、本数を可変にするのは別の仕事 (`clients/teamradar.ts` の冒頭が
+  「拡張は将来課題」と書いている)。`axes` の判定も `AXIS_COUNT` を要求する。
+- `memberCare.ts` は `SCORE_MIN` / `SCORE_MAX` を自分で宣言したまま
+  (`shared/teamRadarState.ts` にも在る 1..5 の写し)。判定は 1 つに寄せたが、
+  **数の写しは残っている** —— 寄せるのは機械的・別パス。
+- 感情レーダーの `data-emotion-missing` は `buildTeamEmotionRadar` の
+  `missingData` を読む別系統のまま (理由がより詳しいのでそのままにした)。
+  才能レーダー側は `data-skill-radar-omitted` が `planRadarPlot` を読む。

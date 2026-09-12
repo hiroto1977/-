@@ -76,6 +76,7 @@ export function colorFor(index: number): { stroke: string; fill: string } {
 
 /** マークアップ用のエスケープ。実装は `shared/escape.ts` に 1 つだけ持つ。 */
 import { escapeXml } from '../../shared/escape';
+import { omittedRadarNote, planRadarPlot } from '../../shared/radarPlot';
 
 export { escapeXml };
 
@@ -166,14 +167,22 @@ export function renderTeamRadarSvg(
     );
   }
 
-  // Member polygons
+  /*
+   * Member polygons —— **描く / 描かないは `shared/radarPlot.ts` が決める** (パス 190)。
+   *
+   * 2026-09-12 まで `m.scores[i] ?? 0` を当てており、評点の無い軸の頂点が
+   * **中心そのもの**に落ちていた (実測 720×720 で `360.0,370.0` = cx, cy)。画面の
+   * `RadarChart` はその幾何を拒んでいたのに、**渡す物の側だけ**が古い形で残っていた。
+   * 描けなかった人は図の下に名指しで出す (`omittedRadarNote`)。
+   */
+  const plan = planRadarPlot(axes, snap.members);
   const polygons: string[] = [];
   const legend: string[] = [];
-  snap.members.forEach((m, idx) => {
+  plan.drawable.forEach((m, idx) => {
     const c = colorFor(idx);
     const pts: string[] = [];
     for (let i = 0; i < axisCount; i++) {
-      const p = axisPoint(cx, cy, radius, i, axisCount, m.scores[i] ?? 0);
+      const p = axisPoint(cx, cy, radius, i, axisCount, m.scores[i]!);
       pts.push(p.x.toFixed(1) + ',' + p.y.toFixed(1));
     }
     polygons.push(
@@ -181,7 +190,7 @@ export function renderTeamRadarSvg(
     );
     // Vertex dots
     for (let i = 0; i < axisCount; i++) {
-      const p = axisPoint(cx, cy, radius, i, axisCount, m.scores[i] ?? 0);
+      const p = axisPoint(cx, cy, radius, i, axisCount, m.scores[i]!);
       polygons.push(
         `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="${c.stroke}" />`,
       );
@@ -196,6 +205,11 @@ export function renderTeamRadarSvg(
       `<text x="${width - 168}" y="${legendY + 4}" font-size="13" fill="#e6e8ec">${escapeXml(m.name)}</text>`,
     );
   });
+  // 描かなかった人を**この図の中に**書く —— 断りは渡す物に乗る (パス 41)。
+  const omitted = omittedRadarNote(plan);
+  const omittedText = omitted === null
+    ? ''
+    : `\n  <text x="24" y="${height - 16}" font-size="11" fill="#fbbf24">⚠ ${escapeXml(omitted)}</text>`;
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeXml(opts.title ?? 'チームレーダーチャート')}">
@@ -205,7 +219,7 @@ export function renderTeamRadarSvg(
   ${rings.join('\n  ')}
   ${spokes.join('\n  ')}
   ${polygons.join('\n  ')}
-  ${legend.join('\n  ')}
+  ${legend.join('\n  ')}${omittedText}
 </svg>`;
   // Stryker restore ArithmeticOperator,StringLiteral
 }
@@ -351,6 +365,25 @@ export function isSafeSvgExportPath(filePath: string, home: string): boolean {
 interface ExportSvgPayload {
   path?: unknown;
   title?: unknown;
+  /**
+   * **画面が見ている図** (パス 190)。`validateTeamRadarState` が通す形
+   * (`department` / `evaluatedAt` / `members` / 任意の `axes`)。
+   *
+   * 2026-09-12 まで画面は `title` **だけ**を送り、本体は保存済み状態から読んでいた。
+   * 実測では 1 枚の SVG が 2 つの部署・2 つの評価時点を同時に名乗った:
+   *
+   * ```
+   *   title  編集したタイトル｜編集した部署 (2026-09-12)   ← 画面の編集後
+   *   header 部署: 保存した部署 · 評価時点: 2026-01-01     ← 保存済み
+   * ```
+   *
+   * まだ 1 度も保存していなければ**同梱の見本 3 人**が書き出され、画面は何も言わない。
+   * ブラウザ版は `tryGrabSvgFromPage()` で画面の SVG をそのまま出すので、
+   * デスクトップ版だけがこの食い違いを持っていた。
+   *
+   * 省略されたときだけ保存済み状態へ落とす (直接 action を叩く経路の後方互換)。
+   */
+  chart?: unknown;
 }
 
 export interface ExportSvgDeps {
@@ -364,17 +397,19 @@ export async function exportTeamRadarSvgImpl(
   ctx: ActionContext,
   deps: ExportSvgDeps = {},
 ): Promise<ExportFileResult> {
-  const { path: customPath, title } = ctx.payload as ExportSvgPayload;
+  const { path: customPath, title, chart } = ctx.payload as ExportSvgPayload;
   const home = os.homedir();
   const filePath =
     typeof customPath === 'string' && customPath.length > 0 ? customPath : defaultSvgExportPath();
   if (!isSafeSvgExportPath(filePath, home)) {
     throw new Error('team-radar svg path must be a .svg file under the user home directory');
   }
-  const snap = await (deps.fetchSnapshot ?? fetchTeamRadarSnapshot)({
-    token: ctx.token,
-    fetch: ctx.fetch,
-  });
+  // **画面が送ってきた図を描く。** 判定は保存と同じ 1 つ (`validateTeamRadarState`) を
+  // 通すので、書き出しの口から緩い値が入ることはない。送られていないときだけ
+  // 保存済み状態へ落とす。
+  const snap = chart === undefined
+    ? await (deps.fetchSnapshot ?? fetchTeamRadarSnapshot)({ token: ctx.token, fetch: ctx.fetch })
+    : buildTeamRadarSnapshot({ kind: 'saved', state: validateTeamRadarState(chart) });
   // 天井は `shared/teamRadarState.ts` が 1 つだけ持つ (パス 167 —— ここが字面で 120、
   // 画面の `maxLength` が字面で 64 と**既にずれていた**)。
   const titleStr = typeof title === 'string' && title.length > 0 && title.length <= MAX_CHART_TITLE_CHARS
@@ -399,18 +434,27 @@ interface SaveStatePayload {
   department?: unknown;
   evaluatedAt?: unknown;
   members?: unknown;
+  /** 軸名 (パス 190)。**ここに欄が無い間、画面が送った軸名は黙って落ちていた。** */
+  axes?: unknown;
 }
 
 export async function saveTeamRadarStateImpl(
   ctx: ActionContext,
   deps: StateDeps = {},
 ): Promise<TeamRadarState> {
-  const { department, evaluatedAt, members } = ctx.payload as SaveStatePayload;
+  const { department, evaluatedAt, members, axes } = ctx.payload as SaveStatePayload;
   // 長さと型の判定は `saveTeamRadarState` が持つ。ここで同じ判定を重ねると、
   // 外側を外しても内側が同じ文言で弾くため観測できない分岐になる
   // (規則を決める場所は 1 つにする)。
   const validated = validateMembers(members ?? []);
-  const next = { department, evaluatedAt, members: validated } as TeamRadarState;
+  // 軸名は `validateTeamRadarState` が判定を持つ (件数と 1 文字以上)。省略なら欄を作らない
+  // —— 既存の保存値と同じ形のままにする。
+  const next = validateTeamRadarState({
+    department,
+    evaluatedAt,
+    members: validated,
+    ...(axes === undefined ? {} : { axes }),
+  });
   await saveTeamRadarState(next, deps);
   return next;
 }

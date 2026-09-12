@@ -1058,10 +1058,32 @@ describe('renderTeamRadarSvg — 図の構造', () => {
     expect(svg).toContain('&lt;script&gt;');
   });
 
-  it('スコアが欠けている軸は 0 として描く (落ちない)', () => {
+  /*
+   * **スコアが欠けている軸が在る人は描かない** (2026-09-12 · パス 190)。
+   *
+   * それまでこの検査は「0 として描く (落ちない)」を**正解として留めていた** ——
+   * 実測では欠けた頂点が中心そのもの (720×720 で `360.0,370.0` = cx, cy) に落ち、
+   * 「その軸が最低」という幾何になる。画面の `RadarChart` は 2026-09-09 から
+   * それを拒んでおり、**渡す物の側だけ**が古い形で残っていた。
+   */
+  it('★ スコアが欠けている軸が在る人は描かず、誰の何が欠けたかを図に書く', () => {
     const svg = renderTeamRadarSvg(snap([mem('a', '田中', [5, 5])]));
+    // 多角形も頂点も出さない (格子の 5 リングの目盛りだけが残る)
+    expect(count(svg, /<circle /g)).toBe(0);
+    expect(svg).not.toMatch(/<polygon points="[^"]*" fill="rgba/);
+    // 黙って落とさない —— 名前と欠けた軸を書く
+    expect(svg).toContain('1 名を図に描いていません');
+    expect(svg).toContain('田中');
+    expect(svg).toContain('プレゼン力');
+    // 標本: 直っていなければ出ていた座標 (中心 = cx 360, cy 370)
+    expect(svg).not.toContain('360.0,370.0');
+  });
+
+  it('対照 — 全軸に点が在れば描く (凡例の丸 1 + 頂点 5)', () => {
+    const svg = renderTeamRadarSvg(snap([mem('a', '田中', [5, 5, 4, 3, 2])]));
     expect(count(svg, /<circle /g)).toBe(CANONICAL_AXES.length + 1);
     expect(svg).toContain('田中');
+    expect(svg).not.toContain('図に描いていません');
   });
 });
 

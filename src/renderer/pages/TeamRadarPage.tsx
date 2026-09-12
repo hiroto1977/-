@@ -29,6 +29,7 @@ import {
 } from '../../shared/teamRadarState';
 import { DESKTOP_PATHS, exportDestinationNote } from '../../shared/buildDestinations';
 import { useBuildKind } from '../hooks/useBuildKind';
+import { omittedRadarNote, planRadarPlot } from '../../shared/radarPlot';
 
 
 const AXES_FALLBACK = ['営業力', '顧客対応力', 'プレゼン力', '交渉力', '顧客管理力'];
@@ -158,19 +159,21 @@ function RadarChart({
           </g>
         );
       })}
-      {members.map((m, idx) => {
+      {planRadarPlot(axes, members).drawable.map((m, idx) => {
         const c = PALETTE[idx % PALETTE.length]!;
-        // **値の無い軸が 1 つでもあれば、その人の多角形は描かない。**
-        // `?? 0` を当てると欠けた頂点が中心に落ち、「その軸が最低」という
-        // 幾何になる (パス 59: 0 は座標に入ると主張ではなく幾何になる)。
-        // 閉じた多角形は全軸に頂点を要求するので、部分的に描くこともできない
-        // —— 描かずに、誰の何が欠けているかを図の外で名指しする。
-        const vals: number[] = [];
-        for (let i = 0; i < axes.length; i++) {
-          const v = m.scores[i];
-          if (v === null || v === undefined) return null;
-          vals.push(v);
-        }
+        /*
+         * **値の無い軸が 1 つでもあれば、その人の多角形は描かない。**
+         * `?? 0` を当てると欠けた頂点が中心に落ち、「その軸が最低」という
+         * 幾何になる (パス 59: 0 は座標に入ると主張ではなく幾何になる)。
+         * 閉じた多角形は全軸に頂点を要求するので、部分的に描くこともできない
+         * —— 描かずに、誰の何が欠けているかを図の外で名指しする。
+         *
+         * **判断は `shared/radarPlot.ts` の 1 つ** (パス 190)。ここで `null` だけを
+         * 見ていた間、**未評価の `0` は中心に描かれていた** —— 同じ画面の評点の欄が
+         * `isEvaluatedScore` を見て「—」と刷っているその横で。図が呼ぶ側に依らず
+         * 守るため、`planRadarPlot` はこの中で呼ぶ (呼ぶ側の渡し方を信じない)。
+         */
+        const vals = m.scores;
         const pts = vals.map((v, i) => {
           const p = axisPoint(cx, cy, radius, i, axes.length, v);
           return p.x.toFixed(1) + ',' + p.y.toFixed(1);
@@ -278,6 +281,10 @@ export function TeamRadarPage() {
     draft.current.axes && draft.current.axes.length === baseAxes.length ? draft.current.axes : baseAxes,
   );
 
+  /** 才能レーダーで描ける人・描けない人 (凡例と注記が読む)。判断は shared の 1 つ。 */
+  const skillPlan = useMemo(() => planRadarPlot(axes, members), [axes, members]);
+  const skillPlanNote = useMemo(() => omittedRadarNote(skillPlan), [skillPlan]);
+
   function updateAxis(axisIdx: number, name: string) {
     setAxes((prev) => {
       const next = [...prev];
@@ -383,10 +390,13 @@ export function TeamRadarPage() {
     setSaveBusy(true);
     setSaveMsg(null);
     try {
+      // **軸名も保存する** (パス 190) —— それまで軸名はブラウザの下書きにしか残らず、
+      // デスクトップの保存にも書き出す SVG にも 1 文字も届いていなかった。
       const r = await window.serviceHub.invoke<ActionData<'teamradar/save-state'>>('teamradar', 'save-state', {
         department,
         evaluatedAt,
         members,
+        axes,
       });
       if (r.ok) {
         setSaveMsg('保存しました');
@@ -406,10 +416,22 @@ export function TeamRadarPage() {
     setExportMsg(null);
     setLastExport(null);
     try {
+      /*
+       * **画面が見ている図をそのまま送る** (パス 190)。
+       *
+       * 2026-09-12 まで送っていたのは `title` だけで、デスクトップ版は本体を
+       * 保存済み状態から読んでいた —— 1 枚の SVG がタイトル行に編集後の部署・
+       * 評価時点を、ヘッダ行に保存済みの部署・評価時点を載せ、まだ保存していなければ
+       * 同梱の見本 3 人が書き出された。ブラウザ版は画面の SVG をそのまま出すので
+       * 正しく、**デスクトップ版だけが食い違っていた**。
+       */
       const r = await window.serviceHub.invoke<ActionData<'teamradar/export-svg'>>(
         'teamradar',
         'export-svg',
-        { title: `${title}｜${department} (${evaluatedAt})` },
+        {
+          title: `${title}｜${department} (${evaluatedAt})`,
+          chart: { department, evaluatedAt, members, axes },
+        },
       );
       if (r.ok) {
         setLastExport({ path: r.data.path, bytes: r.data.bytes, warning: exportWarning(r.data) });
@@ -603,8 +625,20 @@ export function TeamRadarPage() {
         <Section title="レーダーチャート プレビュー" count={members.length}>
           <div style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 10, padding: 16, maxWidth: '100%' }}>
             <RadarChart axes={axes} members={members} size={520} />
+            {/* **図から消えた人を名指しする** (パス 190)。評点の欄は「—」と出すのに、
+                図だけが未評価の 0 を中心に描いていた。凡例も描いた人だけにする ——
+                色の丸が在るのに多角形が無い、が起きないように。 */}
+            {skillPlanNote !== null && (
+              <div
+                data-skill-radar-omitted
+                role="alert"
+                style={{ fontSize: 11, color: '#f59e0b', marginTop: 8, lineHeight: 1.6 }}
+              >
+                ⚠ {skillPlanNote}
+              </div>
+            )}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 8 }}>
-              {members.map((m, idx) => {
+              {skillPlan.drawable.map((m, idx) => {
                 const c = PALETTE[idx % PALETTE.length]!;
                 return (
                   <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text)' }}>

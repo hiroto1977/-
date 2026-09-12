@@ -12,6 +12,7 @@
  */
 
 import { analyzeProfile, type EmotionProfile, type ScoredNote, type DominantLike, type SentimentLike } from './emotionInsights';
+import { isPlottableScore } from '../../shared/radarPlot';
 
 /** スキル熟達レベル。 */
 export type SkillLevel = '要支援' | '標準' | '良好' | '優秀';
@@ -102,7 +103,10 @@ export const SCORE_MAX = 5;
  * 長さを揃えないので、**読む側が「無い」を扱う**。
  */
 export function isEvaluatedScore(v: unknown): v is number {
-  return typeof v === 'number' && Number.isFinite(v) && v >= SCORE_MIN && v <= SCORE_MAX;
+  // **判定は `shared/radarPlot.ts` の 1 つ** (パス 190) —— ここに写しを持つと、
+  // 「平均が数える値」と「図に置ける値」が別々に動く (実測でそうなっていた:
+  // 評点の欄は 0 を「—」と刷り、多角形は 0 を中心に置いていた)。
+  return isPlottableScore(v);
 }
 
 /** 平均スコアから熟達レベルを判定する。 */

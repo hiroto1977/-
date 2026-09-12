@@ -98,6 +98,18 @@ export interface TeamRadarState {
   readonly department: string;
   readonly evaluatedAt: string;
   readonly members: readonly TeamMember[];
+  /**
+   * 軸名。**省略可** —— 2026-09-12 (パス 190) までこの欄は無く、画面で付け直した
+   * 軸名はブラウザの下書き (localStorage) にしか残らなかった。デスクトップの保存にも
+   * 書き出す SVG にも 1 文字も届かず、書き出しは常に `CANONICAL_AXES` を刷っていた
+   * (「口はあるが繋がっていない」・パス 118 の形)。
+   *
+   * 省略されていれば `CANONICAL_AXES` —— 既に保存済みの状態 (この欄を持たない) を
+   * そのまま読めるようにするため。件数は `AXIS_COUNT` に固定する: `scores` の長さと
+   * 付箋の鍵の上限が同じ数を前提にしているので、軸の**本数**を可変にするのは別の仕事
+   * (`clients/teamradar.ts` の冒頭が「拡張は将来課題」と書いている)。
+   */
+  readonly axes?: readonly string[];
 }
 
 export interface TeamRadarSnapshot {
@@ -211,7 +223,19 @@ export function validateTeamRadarState(raw: unknown): TeamRadarState {
   if (typeof evaluatedAt !== 'string' || evaluatedAt.length === 0 || evaluatedAt.length > MAX_EVALUATED_AT_CHARS) {
     throw new Error(`evaluatedAt must be a 1-${MAX_EVALUATED_AT_CHARS} char string`);
   }
-  return { department, evaluatedAt, members };
+  const rawAxes = o['axes'];
+  if (rawAxes === undefined) return { department, evaluatedAt, members };
+  if (!Array.isArray(rawAxes) || rawAxes.length !== AXIS_COUNT) {
+    throw new Error(`axes must be an array of length ${AXIS_COUNT}`);
+  }
+  const axes: string[] = [];
+  for (const a of rawAxes) {
+    if (typeof a !== 'string' || a.length === 0 || a.length > MAX_AXIS_LABEL_CHARS) {
+      throw new Error(`axis label must be a 1-${MAX_AXIS_LABEL_CHARS} char string: ${String(a)}`);
+    }
+    axes.push(a);
+  }
+  return { department, evaluatedAt, members, axes };
 }
 
 // --- Default state (matches the user's reference image) ------------------
@@ -354,7 +378,8 @@ export function buildTeamRadarSnapshot(stored: StoredTeamRadar): TeamRadarSnapsh
   return {
     department: state.department,
     evaluatedAt: state.evaluatedAt,
-    axes: CANONICAL_AXES,
+    // 保存された軸名を使う (無ければ既定の 5 軸)。パス 190 まで固定で刷っていた。
+    axes: state.axes ?? CANONICAL_AXES,
     members: state.members,
     fetchedAt: FETCHED_AT,
     isMock: stored.kind !== 'saved',
