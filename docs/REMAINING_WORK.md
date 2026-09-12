@@ -23703,3 +23703,87 @@ TypeError: 'set value' called on an object that is not a valid instance of HTMLI
 - 台帳の 6 行のうち 3 行 (出るまで待つ形) は共有側へ寄せられる。上限を渡す口は在る。
 - 固定 8 周の `settle` が 50 ファイル在る。**全部直す話ではない** —— 後ろに
   `crypto.subtle` / IndexedDB / `fetch` が在る物だけが取りこぼしうる。
+
+## パス 170 (2026-09-12) — **全 75 画面に出るのに 1 度も押されていなかった欄と、隔離していない隔離**
+
+`App.tsx` は現在の画面の後ろに `ManualDataSection` を**1 つだけ**描く —— どのサービスを
+開いていても出る欄である。行カバレッジは **37.5%** (renderer で最低) で、専用の検査は
+1 つも無かった。パス 151 の規準「カバレッジが低い画面は動かない物が見つかる確率が高い」
+を当てた。
+
+### 実測した欠陥 1 — 同じ量を 2 通りに導いていた
+
+見出しの件数は `metricsForScope(scope, …)` (自分の検査を持つ共有関数) で数え、
+並べる行は画面の中で `records.filter((r) => r.data.scope === scope)` と**書き直して**
+いた。上書き側も同様で、**写しは 2 か所**あった (さらに「既存の上書きを探す」で 3 か所目)。
+
+今日は一致するが、片方だけを直すと **「3 件」と書いてあるのに 2 行しか出ない**形になる
+(パス 61 で直した「同じ量を 2 通りに導いて画面で食い違う」家系)。
+
+`manualData.ts` に `belongsToScope(scope, entry)` を 1 つ置き、
+**`metricsForScope` / `overridesForScope` / 画面の 3 か所すべてがそれを通る**。
+件数は**並べる配列の長さ**から出す (別に数えない)。
+
+### 実測した欠陥 2 — `_resetRecordStoreForTests()` は隔離ではない
+
+検査を書いたら **3 本落ちた**。原因は本体ではなく harness だった:
+
+```ts
+export function _resetRecordStoreForTests(): void {
+  singleton = null;      // ← これだけ。IndexedDB は残る
+}
+```
+
+| 落ちた検査 | 期待 | 実際 |
+| --- | --- | --- |
+| 事業名が空なら 1 件も足さない | 0 行 | **1 行** (前の `it()` の「第二工場」) |
+| 開始時期が不正なら足さない | 0 行 | **1 行** (同じ) |
+| 見出しの件数 == 行数 | 2 | **3** (前の `it()` の数値) |
+
+**「0 件であること」を見る検査は、その前に何が走ったかで結果が変わる。**
+単独では通り、並べると落ちる —— そして**逆に、落ちるべき欠陥を見逃す側にも倒れる**。
+パス 169 の固定 `settle` と同じ形で、**隔離しているつもりの仕掛けが隔離していない**。
+
+**母集団 (走査で数えた)**: `_resetRecordStoreForTests` を呼ぶ検査 **67 ファイル**、
+うち **49 は自分で `deleteDatabase` も呼んでいた** (同じ 6 行を 49 回写している)、
+**18 は呼んでいなかった**。
+
+「書き込む検査だけ直す」は成り立たない —— 書き込みは UI の click から起きるので
+静的に数えられない (`.add(` を探すと `container.remove()` に当たる)。だから
+**呼ぶなら必ず隔離する**にした (空の DB を消す費用は数 ms)。
+
+**症状として記録しておく 2 件**:
+
+- 2 ファイルは `await _resetRecordStoreForTests();` と**同期の void を await** していた
+  —— 「後始末の I/O をしてくれる」と読んだ跡である。
+- 1 ファイル (`appDeviceStoreFailure.test.ts`) は `data/store` を丸ごと `vi.mock` し、
+  `fake-indexeddb` も入れていない。DB を消そうとすると `indexedDB is not defined` で
+  落ちる —— **消す物が無い**ので台帳の免除に理由つきで入れた。
+
+### 直し
+
+| | 何を |
+| --- | --- |
+| `renderer/__tests__/recordStoreHarness.ts` (新) | `resetRecordStore()` が singleton と DB の両方を落とす (順序も理由つきで固定) |
+| 17 検査ファイル | 弱い形 → 共有 helper |
+| `data/manualData.ts` | `belongsToScope` を 1 つ (Stryker の対象に既に在るので測られる) |
+| `components/ManualDataSection.tsx` | 写し 3 か所を落とし、件数は行の配列から出す |
+| `components/__tests__/manualDataSectionOnScreen.test.ts` (新・11) | 実物を jsdom で開いて押す (事業・数値・置き換えの 3 節) |
+| `renderer/__tests__/recordStoreIsolation.test.ts` (新・6) | 隔離を走査で数え、理由つき台帳と双方向に突き合わせる |
+
+### 対照 (4 本すべて鳴った)
+
+| 壊した物 | 鳴った検査 |
+| --- | --- |
+| 隔離を弱い形 (singleton だけ) に戻す | 4 (漏れに依存する 3 本 + 台帳の関門) |
+| 見出しの件数を別の規則から出す | 1 (別の画面の数値が出ていないかを見る検査) |
+| 共有 helper から DB 削除を抜く | 3 |
+| `belongsToScope` を常に true にする | 5 |
+
+### 残り
+
+- **49 ファイルが `deleteDatabase` を自分で書いている。** 共有 helper へ寄せるのは
+  機械的だが差分が大きいので別パスにした。関門は「隔離しているか」を見るので
+  どちらの形でも通る (寄せていないことは欠陥ではなく、写しが 49 あるという事実)。
+- `ManualDataSection` の行カバレッジは測り直していない (11 本の駆動で上がるはず)。
+  次に全域を測るときに確かめる。

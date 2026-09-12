@@ -55,9 +55,9 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
-import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../../shared/emotionsLimits';
+import { resetRecordStore } from '../../__tests__/recordStoreHarness';
 
 /** `analyze-text` へ実際に渡された payload (切られていないことを確かめる)。 */
 let invoked: { serviceId: string; action: string; payload: unknown }[];
@@ -143,8 +143,8 @@ function analyzeButton(): HTMLButtonElement {
 const overNote = (): HTMLElement | null => container.querySelector('[data-analyze-over-ceiling]');
 const moodNote = (): HTMLElement | null => container.querySelector('[data-mood-note-overflow]');
 
-beforeEach(() => {
-  _resetRecordStoreForTests();
+beforeEach(async () => {
+  await resetRecordStore();
   _resetCollectionSubscribersForTests();
   localStorage.clear();
   container = document.createElement('div');

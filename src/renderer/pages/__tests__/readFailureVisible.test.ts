@@ -22,9 +22,9 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
-import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { _resetNavigationIntentForTests } from '../../navigate';
+import { resetRecordStore } from '../../__tests__/recordStoreHarness';
 
 const DOCSTUDIO_KEY = 'servicehub.docstudio.v1';
 const DRAFT_KEY = 'servicehub.teamradar.draft.v1';
@@ -76,8 +76,8 @@ function text(): string {
   return container.textContent ?? '';
 }
 
-beforeEach(() => {
-  _resetRecordStoreForTests();
+beforeEach(async () => {
+  await resetRecordStore();
   _resetCollectionSubscribersForTests();
   _resetNavigationIntentForTests();
   localStorage.clear();

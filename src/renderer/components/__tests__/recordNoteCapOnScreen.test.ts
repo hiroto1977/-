@@ -30,9 +30,9 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
-import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { MAX_RECORD_NOTE_CHARS } from '../../../shared/recordEntryLimits';
+import { resetRecordStore } from '../../__tests__/recordStoreHarness';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -99,8 +99,8 @@ async function type(value: string): Promise<void> {
 const text = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
 const overflowBox = (): HTMLElement | null => container.querySelector('[data-note-overflow]');
 
-beforeEach(() => {
-  _resetRecordStoreForTests();
+beforeEach(async () => {
+  await resetRecordStore();
   _resetCollectionSubscribersForTests();
   localStorage.clear();
   container = document.createElement('div');

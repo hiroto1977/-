@@ -29,8 +29,7 @@ import {
 import {
   MANUAL_METRICS_COLLECTION,
   MANUAL_OVERRIDES_COLLECTION,
-  metricsForScope,
-  overridesForScope,
+  belongsToScope,
   parseManualMetric,
   sectionsFor,
   hasCatalog,
@@ -64,15 +63,17 @@ export function ManualDataSection({ scope }: { scope: string }) {
 
   const unitRecords: BusinessUnitRecord[] = units.records.map((r) => ({ id: r.id, data: r.data }));
   const sorted = sortBusinessUnits(unitRecords);
-  const mine = metricsForScope(
-    scope,
-    metrics.records.map((r) => r.data),
-  );
-  const mineWithId = metrics.records.filter((r) => r.data.scope === scope);
-  const scopedOverrides = overridesForScope(
-    scope,
-    overrides.records.map((r) => r.data),
-  );
+  /*
+   * **この画面のものを選ぶ規則は 1 本** (`belongsToScope`)。
+   *
+   * パス 170 まで、見出しの件数は `metricsForScope` で数え、並べる行は
+   * `records.filter((r) => r.data.scope === scope)` と**書き直して**いた ——
+   * 同じ量を 2 通りに導いていたので、片方だけが動くと
+   * 「3 件」と書いて 2 行しか出ない形になりうる (パス 61 の家系)。
+   * **件数は並べる配列の長さから出す。**
+   */
+  const myMetrics = metrics.records.filter((r) => belongsToScope(scope, r.data));
+  const myOverrides = overrides.records.filter((r) => belongsToScope(scope, r.data));
 
   return (
     <div
@@ -107,8 +108,8 @@ export function ManualDataSection({ scope }: { scope: string }) {
         <span>{open ? '▾' : '▸'}</span>
         <span>事業・数値の手入力</span>
         <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-mute)' }}>
-          この画面に任意の数値を足す / 置き換える（{mine.length} 件
-          {scopedOverrides.length > 0 ? ` ・置き換え ${scopedOverrides.length} 件` : ''}）
+          この画面に任意の数値を足す / 置き換える（{myMetrics.length} 件
+          {myOverrides.length > 0 ? ` ・置き換え ${myOverrides.length} 件` : ''}）
         </span>
       </button>
 
@@ -123,7 +124,7 @@ export function ManualDataSection({ scope }: { scope: string }) {
           <ManualMetrics
             scope={scope}
             units={sorted}
-            rows={mineWithId.map((r) => ({ id: r.id, data: r.data }))}
+            rows={myMetrics.map((r) => ({ id: r.id, data: r.data }))}
             onAdd={(e) => metrics.add({ ...e, scope } as ManualMetricEntry)}
             onRemove={(id) => metrics.remove(id)}
           />
@@ -131,11 +132,9 @@ export function ManualDataSection({ scope }: { scope: string }) {
           {hasCatalog(scope) && (
             <Overrides
               scope={scope}
-              rows={overrides.records.filter((r) => r.data.scope === scope)}
+              rows={myOverrides}
               onSave={async (path, value) => {
-                const existing = overrides.records.find(
-                  (r) => r.data.scope === scope && r.data.path === path,
-                );
+                const existing = myOverrides.find((r) => r.data.path === path);
                 if (existing !== undefined) await overrides.edit(existing.id, { value });
                 else await overrides.add({ scope, path, value } as ManualOverrideEntry);
               }}

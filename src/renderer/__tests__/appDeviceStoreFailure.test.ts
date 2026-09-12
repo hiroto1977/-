@@ -168,6 +168,10 @@ async function addBusinessUnit(name: string): Promise<void> {
 
 beforeEach(async () => {
   h.refuseWrites = false;
+  // **ここは `resetRecordStore` を使わない。** このファイルは `data/store` を丸ごと
+  // `vi.mock` しており、本物の IndexedDB を開かない (`fake-indexeddb` も入れていない)。
+  // DB を消そうとすると `indexedDB is not defined` で落ちる —— 掃除する物が無いので
+  // singleton を捨てるだけでよい (台帳: `recordStoreIsolation.test.ts`)。
   _resetRecordStoreForTests();
   _resetCollectionSubscribersForTests();
   _resetDeviceStoreFailureForTests();

@@ -27,8 +27,8 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { SNAPSHOT } from '../../data/snapshot';
-import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
+import { resetRecordStore } from '../../__tests__/recordStoreHarness';
 
 let container: HTMLDivElement;
 let root: Root | null = null;
@@ -72,8 +72,8 @@ async function mount(id: string): Promise<void> {
 
 const text = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
 
-beforeEach(() => {
-  _resetRecordStoreForTests();
+beforeEach(async () => {
+  await resetRecordStore();
   _resetCollectionSubscribersForTests();
   container = document.createElement('div');
   document.body.appendChild(container);

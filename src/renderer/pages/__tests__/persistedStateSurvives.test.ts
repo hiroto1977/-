@@ -11,9 +11,9 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { ChatbotWidget } from '../../components/ChatbotWidget';
-import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { _resetNavigationIntentForTests } from '../../navigate';
+import { resetRecordStore } from '../../__tests__/recordStoreHarness';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -80,7 +80,7 @@ async function click(el: HTMLElement): Promise<void> {
 }
 
 beforeEach(async () => {
-  _resetRecordStoreForTests();
+  await resetRecordStore();
   _resetCollectionSubscribersForTests();
   _resetNavigationIntentForTests();
   localStorage.clear();

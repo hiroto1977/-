@@ -19,9 +19,10 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { KpiPage } from '../KpiPage';
-import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
+import { getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { BALANCE_SHEET_COLLECTION } from '../../data/balanceSheet';
+import { resetRecordStore } from '../../__tests__/recordStoreHarness';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -50,7 +51,7 @@ let root: Root | null = null;
 beforeEach(async () => {
   localStorage.clear();
   _resetCollectionSubscribersForTests();
-  await _resetRecordStoreForTests();
+  await resetRecordStore();
   container = document.createElement('div');
   document.body.appendChild(container);
 });

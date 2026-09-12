@@ -27,8 +27,8 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
-import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
+import { resetRecordStore } from '../../__tests__/recordStoreHarness';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -92,7 +92,7 @@ function tile(label: string): string {
 }
 
 beforeEach(async () => {
-  _resetRecordStoreForTests();
+  await resetRecordStore();
   _resetCollectionSubscribersForTests();
   container = document.createElement('div');
   document.body.appendChild(container);

@@ -14,9 +14,9 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SecurityPage } from '../SecurityPage';
-import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { NORTON_UNAVAILABLE_DETAILS } from '../../../shared/nortonDetection';
+import { resetRecordStore } from '../../__tests__/recordStoreHarness';
 
 /** `fetchSnapshot` の返し方を差し替えて、実行形態ごとの payload を描く。 */
 let snapshotResult: { ok: boolean; code?: string; message?: string; data?: unknown };
@@ -66,8 +66,8 @@ function details(): string {
   return container.querySelector('[data-norton-details]')?.textContent ?? '';
 }
 
-beforeEach(() => {
-  _resetRecordStoreForTests();
+beforeEach(async () => {
+  await resetRecordStore();
   _resetCollectionSubscribersForTests();
   localStorage.clear();
   // 既定は「取得できない」 = 同梱値が出る道 (ブラウザ版と、取得に失敗したデスクトップ版)。

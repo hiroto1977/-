@@ -23,9 +23,9 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../services';
-import { _resetRecordStoreForTests } from '../data/store';
 import { _resetCollectionSubscribersForTests } from '../data/useCollection';
 import { _resetNavigationIntentForTests } from '../navigate';
+import { resetRecordStore } from './recordStoreHarness';
 
 /**
  * 実測 2026-09-12: サイドバーの画面は **73**。減ったら走査が痩せたので落とす。
@@ -79,8 +79,8 @@ beforeAll(() => {
 let host: HTMLDivElement;
 let root: Root | null = null;
 
-beforeEach(() => {
-  _resetRecordStoreForTests();
+beforeEach(async () => {
+  await resetRecordStore();
   _resetCollectionSubscribersForTests();
   _resetNavigationIntentForTests();
   host = document.createElement('div');

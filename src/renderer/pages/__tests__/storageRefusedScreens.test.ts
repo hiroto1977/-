@@ -23,7 +23,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { BackupPanel } from '../../components/BackupPanel';
-import { _resetRecordStoreForTests } from '../../data/store';
+import { resetRecordStore } from '../../__tests__/recordStoreHarness';
 
 let container: HTMLDivElement | null = null;
 let root: Root | null = null;
@@ -47,8 +47,8 @@ function installRefusingLocalStorage(name = 'SecurityError'): void {
   });
 }
 
-beforeEach(() => {
-  _resetRecordStoreForTests();
+beforeEach(async () => {
+  await resetRecordStore();
   container = document.createElement('div');
   document.body.appendChild(container);
 });

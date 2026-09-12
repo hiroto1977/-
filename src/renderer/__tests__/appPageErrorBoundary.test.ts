@@ -20,9 +20,9 @@ vi.mock('../services', async (importOriginal) => {
 
 import { App } from '../App';
 import { SERVICES } from '../services';
-import { _resetRecordStoreForTests } from '../data/store';
 import { _resetCollectionSubscribersForTests } from '../data/useCollection';
 import { _resetNavigationIntentForTests } from '../navigate';
+import { resetRecordStore } from './recordStoreHarness';
 
 const BROKEN = SERVICES.find((s) => s.id === 'templates')!;
 const HOME = SERVICES.find((s) => s.id === 'home')!;
@@ -75,7 +75,7 @@ async function click(el: Element | null | undefined): Promise<void> {
 const sidebarItem = (id: string) => container.querySelector<HTMLButtonElement>(`button.sidebar-item[data-service-id="${id}"]`);
 
 beforeEach(async () => {
-  _resetRecordStoreForTests();
+  await resetRecordStore();
   _resetCollectionSubscribersForTests();
   _resetNavigationIntentForTests();
   localStorage.clear();

@@ -21,8 +21,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
-import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
+import { resetRecordStore } from '../../__tests__/recordStoreHarness';
 
 type SaveResult = { ok: true } | { ok: false; code: string; message: string };
 
@@ -110,7 +110,7 @@ beforeEach(async () => {
   protectionThrows = false;
   saved.length = 0;
   stubHub();
-  _resetRecordStoreForTests();
+  await resetRecordStore();
   _resetCollectionSubscribersForTests();
   container = document.createElement('div');
   document.body.appendChild(container);

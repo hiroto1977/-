@@ -23,10 +23,10 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { navigateTo } from '../../navigate';
 import { DocstudioPage } from '../DocstudioPage';
-import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { groupByTaxKind } from '../../../shared/invoiceTax';
 import { CONSUMPTION_TAX_REDUCED, CONSUMPTION_TAX_STANDARD } from '../../../shared/taxCalc';
+import { resetRecordStore } from '../../__tests__/recordStoreHarness';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -55,7 +55,7 @@ let root: Root | null = null;
 beforeEach(async () => {
   localStorage.clear();
   _resetCollectionSubscribersForTests();
-  await _resetRecordStoreForTests();
+  await resetRecordStore();
   container = document.createElement('div');
   document.body.appendChild(container);
 });
