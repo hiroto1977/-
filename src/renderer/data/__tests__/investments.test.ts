@@ -163,6 +163,9 @@ describe('computeRealEstatePortfolio', () => {
       grossRent: 0, operatingExpenses: 0, mortgagePayment: 0, netCashflow: 0,
       portfolioYield: null, occupancyRate: null,
       yieldMeasured: 0, yieldUnmeasured: 0, occupiedWithoutRent: 0,
+      // 見本と自分の分の内訳 (パス 187)。0 件なら両方 0。
+      demoCount: 0, userCount: 0,
+      userOnly: { grossRent: 0, operatingExpenses: 0, mortgagePayment: 0, netCashflow: 0 },
     });
   });
 
@@ -490,6 +493,9 @@ describe('computeFundPortfolio', () => {
     expect(computeFundPortfolio([], 0)).toEqual({
       totalValuation: 0, totalCostBasis: 0, costMeasuredValuation: 0, unrealizedGain: 0, unrealizedGainPct: null,
       costUnmeasured: { count: 0, valuation: 0 },
+      // 見本と自分の分の内訳 (パス 187)。0 件なら両方 0・率は null。
+      demoCount: 0, userCount: 0,
+      userOnly: { totalValuation: 0, totalCostBasis: 0, costMeasuredValuation: 0, unrealizedGain: 0, unrealizedGainPct: null },
     });
     const only = computeFundPortfolio([user(500_000, null), user(250_000, null)], 0);
     expect(only.totalValuation).toBe(750_000);

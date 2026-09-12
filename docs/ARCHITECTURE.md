@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **13338** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **13364** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 31 / 36 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 559 | 自己検証 |
+| `file:line` 参照数 | 563 | 自己検証 |
 | 図の中の `file:line` 参照数 | 27 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -3446,6 +3446,42 @@ payload を数える (数字と文面だけ合わせても「口はあるが繋�
 `what:` は**1 つのテンプレートリテラル**で書く —— 走査の `whatOf` は `what:` の
 最初のリテラルだけを読むので、`+` で連結すると文の後半が検査の外に出る
 (直している途中で一度そうしてしまい、`往復` を見る検査が鳴って気付いた)。
+
+**「合計しか出さない」も同じ形だった** (2026-09-12 · パス 187)。不動産投資 /
+投資信託 / 士業の 3 画面は、同梱の見本 (snapshot) の行と利用者が登録した行を
+**1 本のリストにまとめて集計**する (追加ゼロでも画面が空にならない設計)。
+一覧の行には「デモ」の印が付くのに、**タイル・見出し・試算には付かない**。実測:
+
+| | 合計 (見本を含む) | 自分の分 |
+| --- | ---: | ---: |
+| 不動産 家賃収入 (月) | ¥913,000 | ¥90,000 |
+| 不動産 月次キャッシュフロー | +¥248,000 | +¥5,000 |
+| 投信 評価額 | ¥8,340,140 | ¥100,000 |
+| 投信 評価損益率 | +14.6% | +5.3% |
+| 投信 実質コスト 5 年累計 | ¥594,505 | ¥7,128 |
+| 士業 連携 | 2 名 | 1 名 (顧問料は見本の値) |
+
+最後の 2 行が一番効く。「実質コスト」の節は `totalValuation` を**元本として**
+コストを複利で積むので、自分の 10 万に対し **83 倍**の負担を刷っていた。
+士業の見出しの「顧問料」は snapshot の値で、この画面は連携先ごとの顧問料を
+持たない —— 自分の税理士を登録しても ¥33,000 は見本の額である。
+
+**規準は同じファイルに在った**: `computeFundPortfolio` は 2026-09-09 (パス 123)
+から銘柄ごとに `demo` を受けているのに、隣の `computeRealEstatePortfolio` は
+受けていなかった。いまは両方が `demoCount` / `userCount` / `userOnly` を返し、
+文面は 4 つの純関数が 1 か所で持つ (`demoMixNote` / `fundDemoMixNote` /
+`fundCostPrincipalNote` in `src/renderer/data/investments.ts`,
+`shigyoDemoMixNote` in `src/renderer/data/shigyoDirectory.ts`)。
+
+**見本の基準費用は自分の側に入れない。** snapshot の運営費用 ¥380,000 と返済
+¥200,000 を自分の分に足すと、同じ人の手残りが +¥5,000 → **−¥575,000** (符号が
+逆) になる。`src/renderer/data/__tests__/demoMixNote.test.ts` がこの対照を持つ。
+
+母集団は走査で数える (`src/renderer/__tests__/demoMixDisclosureCensus.test.ts`)
+—— 見本の行の目印 `user: false as const` を持つ画面はすべて `data-…-demo-mix` の
+断りを要求される。**粒度はファイル単位**で、ShigyoConsole のように 2 本の
+リストを混ぜる画面では「1 本について述べていれば通る」——
+どのリストで何を述べるかは画面のテストが持つ。
 
 **暗号パラメータ**も同じ形だった。AES-GCM の IV 長と PBKDF2 の強度が
 `src/renderer/security/vault.ts` / `src/renderer/security/dataCrypto.ts` /

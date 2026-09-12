@@ -166,6 +166,14 @@ export interface PortfolioProperty {
   /** ユーザー行のみ >0 になりうる (snapshot 行は集計値側で一括計上)。 */
   readonly monthlyExpenses?: number;
   readonly monthlyLoan?: number;
+  /**
+   * 同梱の見本 (snapshot) 行か (2026-09-12 · パス 187)。
+   *
+   * **`computeFundPortfolio` は 2026-09-09 から銘柄ごとに `demo` を受けている**
+   * のに、こちらは受けていなかった —— 同じファイルの中で片方だけが
+   * 「見本と自分の記録は別物」を知っていた。
+   */
+  readonly demo?: boolean;
 }
 
 export interface RealEstatePortfolio {
@@ -196,6 +204,33 @@ export interface RealEstatePortfolio {
   readonly yieldMeasured: number;
   /** 取得価格が読めず、利回りの平均から外した物件数。 */
   readonly yieldUnmeasured: number;
+  /** 同梱の見本 (snapshot) 行の件数。 */
+  readonly demoCount: number;
+  /** 利用者が登録した行の件数。 */
+  readonly userCount: number;
+  /**
+   * **見本を除いた** 家賃収入・運営費用・返済額・キャッシュフロー
+   * (2026-09-12 · パス 187)。
+   *
+   * 合計の側は見本を含む (追加ゼロでも画面が空にならないための設計で、
+   * 一覧の行も「デモ」と印がついている)。だが**合計しか出さないと、
+   * 自分の物件の数字が読めない** —— 実測で、自分の物件 1 件 (家賃 9 万・
+   * 経費 3 万・返済 5.5 万) だけの人に対し 家賃収入 ¥913,000・月次
+   * キャッシュフロー **+¥248,000** と出ていた。自分の分は ¥90,000 と
+   * **+¥5,000** —— 家賃は 10 倍、手残りは 49 倍である。両方を持ち、画面が並べる。
+   *
+   * 見本の基準費用 (¥380,000) と返済 (¥200,000) を自分の側へ足すのは**逆の
+   * 誤り**で、同じ人の手残りが **−¥575,000** (符号が逆) になる。だから
+   * `computeRealEstatePortfolio` は自分の側に基準額を入れない。
+   *
+   * 見本が 0 件なら合計と同じ値になる。
+   */
+  readonly userOnly: {
+    readonly grossRent: number;
+    readonly operatingExpenses: number;
+    readonly mortgagePayment: number;
+    readonly netCashflow: number;
+  };
   /**
    * 入居中と記録されているのに家賃が読めない (0 の) 物件数。
    * **入居率と家賃収入が食い違う元**なので数えて画面に出す ——
@@ -236,15 +271,30 @@ export function computeRealEstatePortfolio(
   let yieldMeasured = 0;
   let occupiedCount = 0;
   let occupiedWithoutRent = 0;
+  // 見本を除いた側 (パス 187)。基準の運営費用・返済額は snapshot の値なので
+  // **自分の分には入れない** —— 入れると、自分の物件 1 件の人が見本の
+  // 経費 ¥380,000 と返済 ¥200,000 を背負い、手残り +¥5,000 が −¥575,000 に
+  // なる (符号が逆)。`demoMixNote.test.ts` がこの対照を持つ。
+  let demoCount = 0;
+  let userRent = 0;
+  let userExpenses = 0;
+  let userLoan = 0;
   for (const p of properties) {
+    const isDemo = p.demo === true;
+    if (isDemo) demoCount += 1;
     if (p.occupied) {
       grossRent += p.monthlyRent;
+      if (!isDemo) userRent += p.monthlyRent;
       occupiedCount += 1;
       // 入居中なのに家賃が 0 = 読めない。数えて画面が述べる (上の欄の脇)。
       if (!(p.monthlyRent > 0)) occupiedWithoutRent += 1;
     }
     expenses += p.monthlyExpenses ?? 0;
     loan += p.monthlyLoan ?? 0;
+    if (!isDemo) {
+      userExpenses += p.monthlyExpenses ?? 0;
+      userLoan += p.monthlyLoan ?? 0;
+    }
     // 表面利回りは表示と同じく物件ごとに小数第 1 位へ丸めてから平均する
     // (snapshot の portfolioYield 6.15 = (4.8+6.2+5.5+8.1)/4 と一致させる)。
     // **取得価格が読めない物件は分子にも分母にも入れない** (0% は主張である)。
@@ -263,8 +313,39 @@ export function computeRealEstatePortfolio(
     occupancyRate: count > 0 ? Math.round((occupiedCount / count) * 10000) / 10000 : null,
     yieldMeasured,
     yieldUnmeasured: count - yieldMeasured,
+    demoCount,
+    userCount: count - demoCount,
+    userOnly: {
+      grossRent: userRent,
+      operatingExpenses: userExpenses,
+      mortgagePayment: userLoan,
+      netCashflow: userRent - userExpenses - userLoan,
+    },
     occupiedWithoutRent,
   };
+}
+
+/**
+ * **合計に同梱の見本が混ざっていることの断り** (2026-09-12 · パス 187)。
+ *
+ * 見本が 0 件 (利用者の記録だけ) なら `null` —— 断る物が無い。
+ * 利用者の記録が 0 件なら「見本だけを表示している」と述べる。
+ * 両方在るときは**自分の分の数字も並べる** (合計しか出さないと、自分の
+ * 物件のキャッシュフローが読めない。実測で符号まで違っていた)。
+ *
+ * 文面をここに置くのは `yieldScopeNote` / `occupiedWithoutRentNote` と同じ理由
+ * —— 画面が組み立てると、同じ説明が画面ごとに言い換わる。
+ */
+export function demoMixNote(p: RealEstatePortfolio, yen: (n: number) => string): string | null {
+  if (p.demoCount === 0) return null;
+  if (p.userCount === 0) {
+    return `同梱の見本 ${p.demoCount} 件を表示しています（自分の物件はまだ登録されていません）。`;
+  }
+  return (
+    `合計には同梱の見本 ${p.demoCount} 件が含まれています（自分の物件は ${p.userCount} 件）。` +
+    `見本を除くと 家賃収入 ${yen(p.userOnly.grossRent)}／月・` +
+    `月次キャッシュフロー ${yen(p.userOnly.netCashflow)}／月です。`
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -521,6 +602,32 @@ export interface FundPortfolio {
   readonly unrealizedGainPct: number | null;
   /** 取得額が未入力で、原価・損益・損益率に**入れていない**銘柄 (画面はこれを注記に刷る)。 */
   readonly costUnmeasured: { readonly count: number; readonly valuation: number };
+  /** 同梱の見本 (snapshot) 行の件数。 */
+  readonly demoCount: number;
+  /** 利用者が登録した行の件数。 */
+  readonly userCount: number;
+  /**
+   * **見本を除いた** 評価額・取得原価・評価損益 (2026-09-12 · パス 187)。
+   *
+   * 不動産側の `RealEstatePortfolio.userOnly` と同じ理由 —— 合計は見本を含む
+   * (追加ゼロでも画面が空にならない設計) が、**合計しか出さないと自分の
+   * 銘柄の数字が読めない**。実測で、自分の銘柄 1 件 (評価額 10 万・取得額
+   * 9.5 万 = +5.3%) の人に 評価額 ¥8,340,140・評価損益 **+¥1,065,140
+   * (+14.6%)** と出ていた。しかも「実質コスト」の節は `totalValuation` を
+   * **元本として** コストを複利で積むので、画面の既定 (信託報酬 1.0% /
+   * 隠れコスト 0.2% / 想定年率 5% / 保有 5 年) で 年間 ¥100,082・5 年累計
+   * ¥594,505 と出る —— 自分の 10 万だけなら ¥1,200 / ¥7,128 で **83 倍**。
+   *
+   * 見本が 0 件なら合計と同じ値になる。取得額が未入力の銘柄は合計側と
+   * 同じく原価・損益から外す (パス 123 の規準をそのまま使う)。
+   */
+  readonly userOnly: {
+    readonly totalValuation: number;
+    readonly totalCostBasis: number;
+    readonly costMeasuredValuation: number;
+    readonly unrealizedGain: number;
+    readonly unrealizedGainPct: number | null;
+  };
 }
 
 /**
@@ -561,6 +668,8 @@ export function computeFundPortfolio(holdings: readonly PortfolioHolding[], base
   const costMeasuredValuation = measuredValuation + (demoMeasured ? demoValuation : 0);
   const totalCostBasis = base + userCost;
   const unrealizedGain = costMeasuredValuation - totalCostBasis;
+  // 見本を除いた側 (パス 187)。`base` は snapshot の一括取得原価なので**入れない**。
+  const userGain = measuredValuation - userCost;
   return {
     totalValuation,
     totalCostBasis,
@@ -571,5 +680,63 @@ export function computeFundPortfolio(holdings: readonly PortfolioHolding[], base
       count: unmeasuredCount + (demoMeasured ? 0 : demoCount),
       valuation: unmeasuredValuation + (demoMeasured ? 0 : demoValuation),
     },
+    demoCount,
+    userCount: holdings.length - demoCount,
+    userOnly: {
+      totalValuation: totalValuation - demoValuation,
+      totalCostBasis: userCost,
+      costMeasuredValuation: measuredValuation,
+      unrealizedGain: userGain,
+      unrealizedGainPct: userCost > 0 ? Math.round((userGain / userCost) * 1000) / 10 : null,
+    },
   };
+}
+
+/**
+ * **合計に同梱の見本が混ざっていることの断り** (投資信託・2026-09-12 · パス 187)。
+ * 不動産側の `demoMixNote` の双子 —— 文面を 1 か所に置く理由も同じ。
+ *
+ * 評価損益率は取得額が分かる銘柄が無ければ述べない (`null` → 金額だけ)。
+ */
+export function fundDemoMixNote(p: FundPortfolio, yen: (n: number) => string): string | null {
+  if (p.demoCount === 0) return null;
+  if (p.userCount === 0) {
+    return `同梱の見本 ${p.demoCount} 銘柄を表示しています（自分の銘柄はまだ登録されていません）。`;
+  }
+  const pct = p.userOnly.unrealizedGainPct;
+  return (
+    `合計には同梱の見本 ${p.demoCount} 銘柄が含まれています（自分の銘柄は ${p.userCount} 銘柄）。` +
+    `見本を除くと 評価額 ${yen(p.userOnly.totalValuation)}・` +
+    `評価損益 ${yen(p.userOnly.unrealizedGain)}` +
+    `${pct === null ? '（取得額が入力された銘柄が無いので損益率は算定しません）' : `（${pct.toFixed(1)}%）`}です。`
+  );
+}
+
+/**
+ * **「実質コスト」の元本に見本が混ざっていることの断り** (2026-09-12 · パス 187)。
+ *
+ * この節は `totalValuation` を元本としてコストを複利で積む。見本 4 銘柄
+ * (¥8,240,140) が入った状態で自分が 10 万しか持っていなければ、刷られる
+ * 負担は **83 倍** になる (既定の入力で 5 年累計 ¥594,505 / 自分だけなら ¥7,128)。
+ * 合計の側は消さず、自分の元本での額を並べる。
+ *
+ * 自分の銘柄が 0 件なら出さない —— 「見本を除く元本 ¥0」は読み手を惑わせる。
+ *
+ * @param years  実際に計算に使った保有年数 (画面の入力欄の値)
+ * @param userAnnualCostYen      見本を除く元本での年間コスト
+ * @param userCumulativeCostYen  同・`years` 年の累計
+ */
+export function fundCostPrincipalNote(
+  p: FundPortfolio,
+  yen: (n: number) => string,
+  years: number,
+  userAnnualCostYen: number,
+  userCumulativeCostYen: number,
+): string | null {
+  if (p.demoCount === 0 || p.userCount === 0) return null;
+  return (
+    `この元本には同梱の見本 ${p.demoCount} 銘柄が含まれています。` +
+    `見本を除く元本 ${yen(p.userOnly.totalValuation)} なら ` +
+    `年間コスト ${yen(userAnnualCostYen)}・${years}年累計 ${yen(userCumulativeCostYen)} です。`
+  );
 }

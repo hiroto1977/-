@@ -20,6 +20,8 @@ import {
   parseHoldingEntry,
   holdingToForm,
   computeFundPortfolio,
+  fundCostPrincipalNote,
+  fundDemoMixNote,
   type HoldingEntry,
 } from '../data/investments';
 import { jpy } from '../../shared/formatters';
@@ -114,6 +116,11 @@ export function MutualFundsPage() {
         .overview,
     [computedPortfolio, manualRecords],
   );
+  /**
+   * 合計に見本が混ざっていることの断り (自分の分の数字つき · パス 187)。
+   * 文面は `data/investments.ts` が 1 か所で持つ (不動産側と同じ理由)。
+   */
+  const mixNote = useMemo(() => fundDemoMixNote(portfolio, jpy), [portfolio]);
 
   async function onSaveHolding() {
     try {
@@ -226,6 +233,25 @@ export function MutualFundsPage() {
     () => calcRealCost(portfolio.totalValuation, readNumberOr0(costExpense), readNumberOr0(costHidden), readNumberOr0(costGross), readNumberOr0(holdYears)),
     [portfolio.totalValuation, costExpense, costHidden, costGross, holdYears],
   );
+  /*
+   * **同じコストを、見本を除いた元本でも出す** (パス 187)。
+   *
+   * 上の `realCost` は `totalValuation` を元本とするので、同梱の見本 4 銘柄
+   * (¥8,240,140) が入っている人には、既定の入力で「5 年で ¥594,505 が
+   * 蝕まれる」と出る —— 自分の 10 万だけなら ¥7,128 で、**83 倍**の額を
+   * 自分の負担として読む。合計の側は消さず (見本の一覧と釣り合う)、
+   * 自分の分を並べて言う。
+   */
+  const userRealCost = useMemo(
+    () =>
+      calcRealCost(portfolio.userOnly.totalValuation, readNumberOr0(costExpense), readNumberOr0(costHidden), readNumberOr0(costGross), readNumberOr0(holdYears)),
+    [portfolio.userOnly.totalValuation, costExpense, costHidden, costGross, holdYears],
+  );
+  /** 元本に見本が入っていることの断り (文面は `data/investments.ts`)。 */
+  const costPrincipalNote = useMemo(
+    () => fundCostPrincipalNote(portfolio, jpy, readNumberOr0(holdYears), userRealCost.annualCostYen, userRealCost.cumulativeCostYen),
+    [portfolio, holdYears, userRealCost],
+  );
 
   // ドルコスト平均法シミュレーション (価格系列はカンマ区切り入力)。
   const [dcaMonthly, setDcaMonthly] = useState('30000');
@@ -279,6 +305,16 @@ export function MutualFundsPage() {
             positive={positiveIfKnown(portfolio.unrealizedGainPct)}
           />
         </div>
+        {/* **合計の中身**を先に言う (見本が混ざっているか・自分の分はいくらか · パス 187)。 */}
+        {mixNote !== null && (
+          <div
+            data-fund-demo-mix
+            role="alert"
+            style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: -8, marginBottom: 12, lineHeight: 1.7 }}
+          >
+            ⚠ {mixNote}
+          </div>
+        )}
         {/* 取得額が未入力の銘柄は原価・損益・損益率に入れない (パス 123 までは評価額と同額 = 損益 0 として数え、損益率を薄めていた)。 */}
         {portfolio.costUnmeasured.count > 0 && (
           <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: -8, marginBottom: 12, lineHeight: 1.6 }}>
@@ -324,6 +360,13 @@ export function MutualFundsPage() {
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
           ※ 評価額 {jpy(portfolio.totalValuation)} を元本としコストがリターンを複利で蝕む効果を概算。隠れコストは売買委託手数料等の目安です。概算であり投資助言ではありません。
         </div>
+        {/* 元本に見本が入っているなら、自分の分の額も言う (でないと 83 倍の負担を自分の物として読む · パス 187)。
+            文面は `data/investments.ts` が 1 か所で持つ。 */}
+        {costPrincipalNote !== null && (
+          <div data-fund-cost-user-only role="alert" style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.6 }}>
+            ⚠ {costPrincipalNote}
+          </div>
+        )}
       </Section>
 
       <Section title="ドルコスト平均法シミュレーション (概算)">

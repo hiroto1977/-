@@ -21,6 +21,7 @@ import {
   contactToForm,
   type ShigyoContactEntry,
   type ShigyoConsultationEntry,
+  shigyoDemoMixNote,
 } from '../data/shigyoDirectory';
 
 const EMPTY_CONTACT_FORM = { name: '', firm: '', phone: '', email: '' };
@@ -107,6 +108,14 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
     ],
     [data.contacts, contactsCol.records, serviceId],
   );
+  /**
+   * 見出しの「連携 N 名 · 顧問料 ¥X/月」に見本が混ざっていることの断り
+   * (パス 187)。文面は `data/shigyoDirectory.ts` が 1 か所で持つ。
+   */
+  const mixNote = useMemo(
+    () => shigyoDemoMixNote(data.contacts.length, contacts.length - data.contacts.length, jpy(monthlyFee)),
+    [data.contacts.length, contacts.length, monthlyFee],
+  );
 
   const recentConsultations = useMemo(() => {
     const combined = [
@@ -163,6 +172,17 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
         onRefresh={refresh}
         who={<>{label} · 連携 {contacts.length} 名 · 顧問料 {jpy(monthlyFee)}/月</>}
       />
+
+      {/* **見出しの数と金額の出所**を最初に言う (一覧の行だけが「デモ」と印を持っていた · パス 187)。 */}
+      {mixNote !== null && (
+        <div
+          data-shigyo-demo-mix
+          role="alert"
+          style={{ margin: '0 0 12px', fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.7 }}
+        >
+          ⚠ {mixNote}
+        </div>
+      )}
 
       {disclaimer != null && (
         <div

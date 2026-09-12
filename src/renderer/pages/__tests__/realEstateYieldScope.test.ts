@@ -88,10 +88,21 @@ afterEach(async () => {
 });
 
 describe('不動産投資 — 測れない物件と平均の分母', () => {
-  it('★ 対照: 全件そろっていれば断り書きは出ない (snapshot だけ)', async () => {
+  /*
+   * **2026-09-12 (パス 187) で見るものを狭めた。**
+   *
+   * ここは「断りの箱そのものが出ない」を見ていたが、同じ箱に
+   * **合計に見本が混ざっていることの断り** (`demoMixNote`) が入るように
+   * なったので、箱は常に出る (同梱の見本が 4 件在るため)。
+   * この検査の言いたいことは「**利回りの**断りが出ない」なので、
+   * 見るのはその文面に絞る (箱の有無ではなく、中の主張)。
+   */
+  it('★ 対照: 全件そろっていれば利回りの断りは出ない (snapshot だけ)', async () => {
     await mountPage();
-    expect(scopeBox()).toBeNull();
     expect(text()).not.toContain('表面利回りの平均から外して');
+    expect(text()).not.toContain('家賃が読めないため');
+    // 箱は在る —— 合計に見本が混ざっているので、そのことは述べる。
+    expect(scopeBox()?.textContent ?? '').toContain('見本');
   });
 
   it('★ 取得価格の欄が読めない物件を足すと、外したことを画面が述べる', async () => {
@@ -115,10 +126,12 @@ describe('不動産投資 — 測れない物件と平均の分母', () => {
     expect(t).toContain('月次家賃収入に含まれていません');
   });
 
-  it('★ 対照: 取得価格も家賃も在る物件を足しても断り書きは出ない', async () => {
+  it('★ 対照: 取得価格も家賃も在る物件を足しても利回りの断りは出ない', async () => {
     await getRecordStore().insert(PROPERTIES_COLLECTION, { name: 'そろった物件', type: '区分', monthlyRent: 90_000, purchasePrice: 20_000_000, occupied: true, monthlyExpenses: 0, monthlyLoan: 0 });
     await mountPage();
-    expect(scopeBox()).toBeNull();
+    expect(text()).not.toContain('表面利回りの平均から外して');
+    // 自分の物件が 1 件在るので、合計との差を述べる (パス 187)。
+    expect(scopeBox()?.textContent ?? '').toContain('自分の物件は 1 件');
   });
 
   /**

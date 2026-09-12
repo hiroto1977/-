@@ -2726,6 +2726,70 @@ async function teamRadarSuite(browser) {
 }
 
 
+/**
+ * **合計に同梱の見本が混ざっていることを、実機の画面が言う** (パス 187)。
+ *
+ * jsdom では 3 画面すべてで確かめてあるが、断りは**出荷する 1 枚の HTML の中で
+ * 出る**必要がある (画面がタイルを刷る側と同じ節に置いたので、束ね方が変われば
+ * 消えうる)。ここは「見本だけ」の既定の状態と、自分の行を 1 件足した後を見る。
+ */
+async function demoMixSuite(browser) {
+  console.log('\n=== demoMix (合計に見本が混ざっていることの断り · パス 187) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+  const body = async () => (await page.locator('body').textContent()) ?? '';
+
+  // --- 不動産: 既定は見本 4 件だけ ---
+  await page.goto(FILE + '#/real-estate', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('[data-portfolio-demo-mix]', { timeout: 30000 });
+  let note = (await page.locator('[data-portfolio-demo-mix]').textContent()) ?? '';
+  ok(note.includes('同梱の見本 4 件を表示しています'), 'demoMix: ★ 不動産 — 見本だけなら「見本を表示している」と言う');
+  ok(!note.includes('見本を除くと'), 'demoMix: 自分の物件が 0 件なら「見本を除くと ¥0」は言わない');
+
+  // 自分の物件を 1 件足すと、自分の分の数字を述べる (合計は消えない)。
+  await page.getByPlaceholder('例: 福岡市アパート').fill('E2E自分の物件');
+  await page.getByPlaceholder('100000').first().fill('90000');
+  await page.getByPlaceholder('12000000').fill('20000000');
+  await page.getByRole('button', { name: '＋ 物件を追加' }).click();
+  await page.waitForFunction(
+    () => (document.querySelector('[data-portfolio-demo-mix]')?.textContent ?? '').includes('自分の物件は 1 件'),
+    undefined,
+    { timeout: 20000 },
+  );
+  note = (await page.locator('[data-portfolio-demo-mix]').textContent()) ?? '';
+  ok(note.includes('同梱の見本 4 件が含まれています'), 'demoMix: ★ 不動産 — 合計に見本が混ざっていると言う');
+  ok(note.includes('¥90,000'), 'demoMix: ★ 不動産 — 自分の家賃収入 (¥90,000) を述べる');
+  // 見本 4 件の家賃は ¥823,000 なので、自分の ¥90,000 を足した合計は ¥913,000。
+  ok((await body()).includes('¥913,000'), 'demoMix: 合計の側は消していない (家賃 ¥913,000)');
+  // 後片付け (表のセルから消えるまで待つ)。
+  await page.locator('button', { hasText: '削除' }).first().click();
+  await page.waitForFunction(
+    () => !Array.from(document.querySelectorAll('td')).some((td) => td.textContent.includes('E2E自分の物件')),
+    undefined,
+    { timeout: 15000 },
+  );
+
+  // --- 投資信託: 見出しの断りと、実質コストの元本の断り ---
+  await page.goto(FILE + '#/mutual-funds', { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('[data-fund-demo-mix]', { timeout: 30000 });
+  note = (await page.locator('[data-fund-demo-mix]').textContent()) ?? '';
+  ok(note.includes('同梱の見本 4 銘柄を表示しています'), 'demoMix: ★ 投信 — 見本だけなら「見本を表示している」と言う');
+  ok(await page.locator('[data-fund-cost-user-only]').count() === 0, 'demoMix: 自分の銘柄が 0 件なら元本の断りは出ない');
+  ok((await body()).includes('を元本とし'), 'demoMix: 対照 — 元本の説明そのものは在る (節が消えたのではない)');
+
+  // --- 士業: 見出しの「連携 N 名 / 顧問料」の出所 ---
+  await page.goto(FILE + '#/tax-accountant', { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('[data-shigyo-demo-mix]', { timeout: 30000 });
+  note = (await page.locator('[data-shigyo-demo-mix]').textContent()) ?? '';
+  ok(note.includes('月次顧問料 ¥33,000 は同梱の見本です'), 'demoMix: ★ 士業 — 顧問料が見本の値だと言う');
+
+  ok(errs.length === 0, `demoMix: コンソールエラー 0 件 (${errs.join(' | ')})`);
+  await ctx.close();
+}
+
 async function serviceAdviceSuite(browser) {
   console.log('\n=== serviceAdvice (改善提案: 画面の数字から規則で組む・ブラウザ版でも返る) ===');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
@@ -3074,7 +3138,7 @@ async function hardResetSuite(browser) {
   const SUITES = [
     'desktop', 'manualData', 'dataOrigin', 'credential', 'businessComparison', 'kessanTax', 'frameGuard', 'noBeacon',
     'vaultPassword', 'credentialEgress', 'proxyEnvelope', 'cspEnforced', 'vaultOpacity', 'crossTabLock', 'storageDurability', 'hardReset',
-    'securityPosture', 'thirdPartyDisclosure', 'realtime', 'phone', 'talent', 'teamRadar', 'serviceAdvice', 'parameters', 'writeCeiling', 'aiCeiling', 'tablet',
+    'securityPosture', 'thirdPartyDisclosure', 'realtime', 'phone', 'talent', 'teamRadar', 'demoMix', 'serviceAdvice', 'parameters', 'writeCeiling', 'aiCeiling', 'tablet',
   ];
   const unknown = only.filter((n) => !SUITES.includes(n));
   if (unknown.length > 0) {
@@ -3109,6 +3173,7 @@ async function hardResetSuite(browser) {
   if (run('phone')) await phoneSuite(browser);
   if (run('talent')) await talentSuite(browser);
   if (run('teamRadar')) await teamRadarSuite(browser);
+  if (run('demoMix')) await demoMixSuite(browser);
   if (run('serviceAdvice')) await serviceAdviceSuite(browser);
   if (run('parameters')) await parameterSuite(browser);
   if (run('writeCeiling')) await writeCeilingSuite(browser);

@@ -111,3 +111,27 @@ export function contactToForm(c: ShigyoContactEntry): {
 } {
   return { name: c.name, firm: c.firm, phone: c.phone, email: c.email };
 }
+
+/**
+ * **見出しの「連携 N 名」と「月次顧問料」に同梱の見本が混ざっていることの断り**
+ * (2026-09-12 · パス 187)。
+ *
+ * `investments.ts` の `demoMixNote` / `fundDemoMixNote` と同じ家系 —— 一覧の行は
+ * 「デモ」と印がつくが、**見出しの数と金額には印が付かない**。実測で、自分の
+ * 連携先を 1 名登録した人の見出しは「連携 2 名 · 顧問料 ¥33,000/月」になる ——
+ * 2 名のうち 1 名は見本で、その ¥33,000 は snapshot の値 (登録した連携先の
+ * 顧問料ではない。この画面は連携先ごとの顧問料を持たない)。
+ *
+ * 顧問料は見本が 1 件でも在れば見本の値なので、**常に出所を言う**。
+ *
+ * @param demoCount 同梱の見本の連携先の数
+ * @param userCount 利用者が登録した連携先の数
+ * @param feeLabel 月次顧問料の表示文字列 (呼び側が `jpy` で整形して渡す)
+ */
+export function shigyoDemoMixNote(demoCount: number, userCount: number, feeLabel: string): string | null {
+  if (demoCount === 0) return null;
+  if (userCount === 0) {
+    return `表示中の連携先 ${demoCount} 名と月次顧問料 ${feeLabel} は同梱の見本です（自分の連携先はまだ登録されていません）。`;
+  }
+  return `「連携 ${demoCount + userCount} 名」には同梱の見本 ${demoCount} 名が含まれています（自分が登録した連携先は ${userCount} 名）。月次顧問料 ${feeLabel} は見本の値です。`;
+}
