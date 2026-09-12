@@ -9,6 +9,7 @@ import {
   capAdvisorUniverse,
 } from '../../shared/advisorQuestionLimits';
 import { AiEgressNotice } from '../components/AiEgressNotice';
+import { ExportActions } from '../components/ExportActions';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import { exportWarning } from '../data/exportOutcome';
 import { ratioPctOrDash } from '../../shared/num';
@@ -280,15 +281,30 @@ export function StocksPage() {
     }
   }
 
-  function openExportedDashboard() {
-    if (exportPath) {
-      // Convert OS path to file:// URL — serviceHub.openExternal routes
-      // it through the main process which the OS browser will render.
-      const url =
-        'file:///' + exportPath.replace(/\\/g, '/').replace(/^\//, '');
-      window.serviceHub.openExternal(url);
-    }
-  }
+  /*
+   * **「開く」は `openExternal` ではなく `openPath` を通る。** (2026-09-12 · パス 151)
+   *
+   * 2026-09-12 まで、ここは書き出し先の OS パスから `file:///…` を組んで
+   * `window.serviceHub.openExternal(url)` へ渡していた。**その道は閉じている** ——
+   * `shared/externalUrlGate.ts` の `EXTERNAL_URL_SCHEMES` は `http:` / `https:` だけで、
+   * 同じファイルの散文が「`file:` はローカル読み出し」を拒む理由として挙げている。
+   * ブラウザ版も同じ関門を通り、`webShimBridge.test.ts` は `file:///etc/passwd` を
+   * 落とすことを検査している。
+   *
+   * 実測 (2026-09-12): 組み上がる 3 通り
+   *   `file:///home/user/stocks-dashboard.html` / `file:///C:/Users/x/stocks-dashboard.html` /
+   *   `file:///tmp/out/My Reports/stocks.html`
+   * のすべてで `externalUrlOrNull()` が **null**。main の handler は `null` なら
+   * `return;` するので、**押しても何も起きないボタン**だった (両ビルド)。
+   *
+   * 関門が正しく、呼ぶ側が間違っていた。ローカルのファイルを開く口は
+   * `openPath` (→ `shell.openPath` · `shellOpenGate` が書き出し先の封じ込めと
+   * 拡張子 `.html` を見る) で、リポジトリの他の書き出し画面
+   * (テンプレート / チームレーダー / 経営ダッシュボード) は最初から
+   * `components/ExportActions.tsx` を通していた。**この画面だけが取り残されていた。**
+   * `ExportActions` は戻り値の `OsOpResult` も画面に出す (2026-08 の
+   * 「`shell.openPath` の失敗を捨てていた」の直しがそこに入っている)。
+   */
 
   async function runAdvisor() {
     if (!advisorQuestion.trim()) {
@@ -908,22 +924,6 @@ export function StocksPage() {
           >
             {exportBusy ? '書き出し中…' : 'ダッシュボードを書き出す'}
           </button>
-          {exportPath && (
-            <button
-              onClick={openExportedDashboard}
-              style={{
-                padding: '8px 16px',
-                background: 'var(--bg-elev)',
-                border: '1px solid var(--border)',
-                borderRadius: 6,
-                color: 'var(--text)',
-                fontSize: 13,
-                cursor: 'pointer',
-              }}
-            >
-              外部ブラウザで開く
-            </button>
-          )}
         </div>
         {exportError && (
           <div
@@ -940,28 +940,18 @@ export function StocksPage() {
             {exportError}
           </div>
         )}
-        {exportWarn && (
-          <div
-            data-export-warning
-            role="alert"
-            style={{
-              border: '1px solid #f59e0b',
-              color: '#f59e0b',
-              padding: '8px 12px',
-              borderRadius: 6,
-              fontSize: 12,
-              marginBottom: 8,
-              lineHeight: 1.6,
-            }}
-          >
-            ⚠ {exportWarn}
-          </div>
-        )}
         {exportPath && (
-          <div style={{ fontSize: 12, color: 'var(--text-mute)' }}>
-            書き出し済み: <code>{exportPath}</code>
-            {exportBytes != null && ` (${(exportBytes / 1024).toFixed(1)} KB)`}
-          </div>
+          /*
+           * 開く / フォルダを開く / 場所をコピー と「収まらなかった先」の断りを
+           * 1 つの部品に寄せる。手書きだった頃はここが生の絶対パスを刷っており
+           * (`<code>{exportPath}</code>`)、`ExportActions` が意図して避けている形
+           * (「never show the raw path; only the filename」) と食い違っていた。
+           */
+          <ExportActions
+            path={exportPath}
+            bytes={exportBytes ?? undefined}
+            warning={exportWarn}
+          />
         )}
       </Section>
 

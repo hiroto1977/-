@@ -21774,3 +21774,115 @@ CLAUDE.md に例外 (`uber-eats` / `demae-can` は `BusinessPage` が直接読�
   `onChange` 3 つ。jsdom で叩けるが、このパスでは置いていない。
 - **実機 (e2e / perf / smoke:app) は回していない。** renderer を触ったので次の実機パイプラインで
   `nodata` の選択肢と 0 件の断りを目で見ること。
+
+## パス 151 (2026-09-12) — **書き出したダッシュボードの「開く」が、関門に落とされて何も起きなかった**
+
+パス 150 の残りを消化した。60% 未満の 25 ファイルのうち**最も低い**
+`pages/StocksPage.tsx` (123 行・**28.45%**) から始めた ——
+**カバレッジが低い画面は、動かない物が見つかる確率が高い**。
+
+### 実測した欠陥
+
+`StocksPage` の 5 つの非同期ハンドラ (登録 / 解除 / 戦略比較 / 助言 / 書き出し) は
+どれも **1 度も走ったことがなかった**。そのうち「書き出したダッシュボードを開く」が
+こう書かれていた:
+
+```ts
+const url = 'file:///' + exportPath.replace(/\\/g, '/').replace(/^\//, '');
+window.serviceHub.openExternal(url);
+```
+
+**その道は閉じている。** `shared/externalUrlGate.ts` の `EXTERNAL_URL_SCHEMES` は
+`http:` / `https:` だけで、同じファイルの散文が「`file:` はローカル読み出し」を
+拒む理由として挙げている。実測 (関門を直接呼んだ):
+
+| 書き出し先 | 組み上がる URL | `externalUrlOrNull()` |
+| --- | --- | --- |
+| `/home/user/stocks-dashboard.html` | `file:///home/user/stocks-dashboard.html` | **null** |
+| `C:\Users\x\stocks-dashboard.html` | `file:///C:/Users/x/stocks-dashboard.html` | **null** |
+| `/tmp/out/My Reports/stocks.html` | `file:///tmp/out/My Reports/stocks.html` | **null** |
+
+`app:openExternal` の handler は `null` なら `return;` するので、
+**押しても何も起きないボタン**だった。ブラウザ版も同じ関門を通り、
+`webShimBridge.test.ts` が `file:///etc/passwd` を落とすことを検査している ——
+**両ビルドで死んでいた。**
+
+### 関門が正しく、呼ぶ側が間違っていた
+
+ローカルのファイルを開く口は `openPath` (→ `shell.openPath`。`shellOpenGate` が
+書き出し先の封じ込めと拡張子 `.html` を見る) で、他の書き出し画面
+(テンプレート / チームレーダー / 経営ダッシュボード) は最初から
+`components/ExportActions.tsx` を通していた。**この画面だけが取り残されていた。**
+
+`ExportActions` へ寄せたので、ついでに 3 つ揃った:
+
+1. `OsOpResult` の失敗を画面に出す (`data-os-op-error`) —— 2026-08 の
+   「`shell.openPath` は失敗時にエラー文字列を返す契約なのに戻り値を捨てていた」の直しが
+   あの部品に入っている。
+2. 保存先フォルダを開く / 保存場所をコピー が付く。
+3. **生の絶対パスを刷らなくなった。** 手書きだった頃は `<code>{exportPath}</code>` で
+   絶対パス (OS のユーザー名を含む) を画面に出しており、`ExportActions` が意図して
+   避けている形 (「never show the raw path; only the filename」) と食い違っていた。
+
+### ゲート: `openExternal` に `file:` を渡す形を族として塞いだ
+
+`shared/__tests__/localFileOpenPolicy.test.ts`:
+
+- **前提を肯定形で確かめる** —— 関門が `file:` の 3 通りを落とすこと (ここが
+  通らなくなったら規則ごと読み直す)。対照に `https:` が通ることも見る。
+- `openExternal(` を呼ぶファイル (実測 **21**・床 15) に `file://` の URL が無いこと。
+- **ファイル単位で見る理由**: 直す前の実物は**組み立てと呼び出しが 2 行に分かれて**
+  いて、引数は `url` という変数だった。呼び出しの括弧の中だけを見る走査では
+  **見つからない。**
+
+### この検査自身の欠陥を 2 つ、走らせて見つけた
+
+1. **綴りが緩すぎた。** 最初は `file:` で探しており、TypeScript の**属性名**に
+   当たった —— 実測 3 件の偽検知 (`profile: ApplicantProfile` /
+   `profile: EmotionProfile` / `file: string;`)。URL を探しているので `file://` に絞った。
+2. **生存の錨が「定義」を指していた。** `renderer/web-shim.ts` を錨にしていたが、
+   あれは `openExternal: (url) => {…}` の**定義**side で、走査が見ている
+   `openExternal(` には当たらない。錨を実際の**呼び出し**を持つ 2 ファイルに直した。
+
+### 画面の残りの操作も 1 度は押した
+
+空入力の断り (登録 / 解除 / 助言 —— **IPC を呼ばないことまで**) と、action の
+失敗が画面に出ること、絞り込みの選択が動くこと。
+
+**★ 絞り込みの検査は、最初「押したら表示が変わる」と書いて落ちた。**
+実測すると同梱の `SNAPSHOT.stocks.watchlist` は**空**で、画面は
+「ウォッチリスト 0 件 / 該当する銘柄はありません」を出している ——
+絞り込む対象が無いので一覧は変わらない。**アプリではなく私の前提が間違っていた。**
+一覧を差し替えずに測れるのは「どの絞り込みが選ばれているか」なので、
+押した札が強調へ変わることを見る形に直した。
+
+### 測定
+
+| | パス 150 の後 | パス 151 の後 |
+| --- | ---: | ---: |
+| `StocksPage.tsx` 行 | 28.45% (35/123) | **55% (66/120)** |
+| `StocksPage.tsx` 関数 | 16.66% | **41.37%** |
+| 全域 行 | 91.63% | **91.79%** |
+| 全域 関数 | 84.25% | **84.39%** |
+
+### 対照 (2 本、狙った検査で鳴った)
+
+| 対照 | やったこと | 鳴った検査 |
+| --- | --- | --- |
+| C1 | `StocksPage` を直す前の姿に戻す (`file:///` + `openExternal`) | 走査 1 本 + 画面 3 本 (計 4) |
+| C2 | `EXTERNAL_URL_SCHEMES` に `file:` を足す | 前提の 1 本だけ (走査は通ったまま = 結合していない) |
+
+### 残り
+
+- `StocksPage` は **55%** で、まだ 60% 未満の一覧に居る。残るのは助言 / 比較 /
+  登録の**成功**の枝 (台帳 `actionData.ts` の payload の形を組む必要がある) と
+  スパークラインの座標。
+- 60% 未満は **25 ファイル**のまま (StocksPage が 60% に届いていないため件数は動かず)。
+  次に低いのは `Microsoft365Page` 32.05% / `FreeePage` 33.33% / `GmailPage` 36.36% /
+  `ManualDataSection` 37.5% / `SlackPage` 37.93%。
+- **観察 (直していない)**: 銘柄登録の節が「初期状態 (登録なし) では mock 5 銘柄が
+  表示されます」と書いているが、**静的な見本の watchlist は空**である。あの文は
+  端末内の state を読む fetcher の振る舞いで、ブラウザ版で見本に落ちた時は
+  0 件になる。どちらの経路がどちらのビルドで出るかを測ってから直すこと。
+- **実機 (e2e / perf / smoke:app) は未実行。** `ExportActions` へ寄せたので、
+  書き出し後のボタンの並びが実機で変わる —— 次の実機で目で見ること。
