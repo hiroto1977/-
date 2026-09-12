@@ -6,7 +6,12 @@
  * 行う (Vault のキーを使うため)。ここは純粋ロジック + localStorage のみ。
  */
 
-import { MAX_ANALYSES, MAX_MOODS, MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
+import {
+  MAX_ANALYSES,
+  MAX_ANALYSIS_EXCERPT_CHARS,
+  MAX_MOODS,
+  MAX_MOOD_NOTE_CHARS,
+} from '../../shared/emotionsLimits';
 import { asRecord, isAnalysisEntry, isMoodEntry, readStoredList } from '../../shared/emotionsShape';
 import { localIsoDate } from '../../shared/localDate';
 import { calendarDateMessage, isCalendarDate } from '../../shared/isoDate';
@@ -250,7 +255,7 @@ export function recordAnalysis(
     // Stryker disable next-line StringLiteral,MethodExpression
     id: `${now.toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
     timestamp: now,
-    excerpt: (source ? `[${source}] ` : '') + text.slice(0, 80),
+    excerpt: (source ? `[${source}] ` : '') + text.slice(0, MAX_ANALYSIS_EXCERPT_CHARS),
     ...normalized,
   };
   const store = loadStoreForWrite();

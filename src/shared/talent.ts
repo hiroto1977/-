@@ -300,6 +300,16 @@ export interface JudgeResult {
  * 据えない」——をそのまま実装している。能力の高い該当者ほど組織への
  * マイナスは大きくなるので、閾値を設けると制度の意味が消える。
  */
+/**
+ * 登用判定に添える候補者名の天井 (2026-09-12 · パス 174)。
+ *
+ * **両ビルドが 64 を別々に写していた** —— `main/clients/talent.ts` の
+ * `name.slice(0, 64)` と `web-shim.ts` の `p.candidate.slice(0, 64)`。
+ * 片方だけ動かすと、同じ操作がデスクトップとブラウザで別の長さを返す
+ * (パス 62 / 116 で直した「2 つの実装が同じ判断を別々に持つ」形)。
+ */
+export const MAX_LEADER_CANDIDATE_CHARS = 64;
+
 export function judgeLeaderFitness(flagged: readonly string[]): LeaderFitness {
   // 未知の id を here で弾く必要は無い —— `hits` は **`LEADER_DISQUALIFIERS` を
   // 回して作る**ので、知らない id が `seen` に入っても二度と読まれない。

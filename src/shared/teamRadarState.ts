@@ -319,11 +319,19 @@ export function readStoredTeamRadar(raw: string | null): StoredTeamRadar {
   } catch (e) {
     return { kind: 'unreadable', reason: e instanceof Error ? e.message : String(e) };
   }
+  /*
+   * **天井は上の検証と同じ定数から読む** (2026-09-12 · パス 174)。
+   * ここは 2026-09-12 まで `slice(0, 64)` / `slice(0, 32)` と**数を写して**いた ——
+   * 同じモジュールの 100 行上で `validateMembers` / この関数の下の検証が
+   * `MAX_DEPARTMENT_CHARS` / `MAX_EVALUATED_AT_CHARS` で**断って**いるのに。
+   * 定数を 128 に上げると、検証は 128 字を通すのに読み出しが 64 字へ黙って切る ——
+   * **保存した状態が読むたびに短くなる**形だった。
+   */
   const dept = typeof o['department'] === 'string' && o['department'].length > 0
-    ? o['department'].slice(0, 64)
+    ? o['department'].slice(0, MAX_DEPARTMENT_CHARS)
     : DEFAULT_TEAM_RADAR_STATE.department;
   const at = typeof o['evaluatedAt'] === 'string' && o['evaluatedAt'].length > 0
-    ? o['evaluatedAt'].slice(0, 32)
+    ? o['evaluatedAt'].slice(0, MAX_EVALUATED_AT_CHARS)
     : localIsoDate();
   return { kind: 'saved', state: { department: dept, evaluatedAt: at, members } };
 }

@@ -79,6 +79,16 @@ export const MAX_MOODS = 365;
 /** 分析結果の保持件数 (新しいものを先頭に積む)。 */
 export const MAX_ANALYSES = 50;
 
+/**
+ * 分析レコードに残す本文の抜粋の長さ (2026-09-12 · パス 174)。
+ *
+ * **両ビルドが 80 を別々に写していた** —— `main/clients/emotions.ts` と
+ * `renderer/data/emotionsWeb.ts` がどちらも `text.slice(0, 80)`。
+ * 片方だけ動かすと、同じ分析がデスクトップとブラウザで別の長さの抜粋を保存する
+ * (保存したレコードに残るので、後から見分けが付かない)。
+ */
+export const MAX_ANALYSIS_EXCERPT_CHARS = 80;
+
 /*
  * ## 一覧から本文を組む所の天井 (2026-09-12 · パス 156)
  *

@@ -88,6 +88,7 @@ import {
   readStoredTalent,
   sanitizeTalentState,
   talentProvenance,
+  MAX_LEADER_CANDIDATE_CHARS,
   type StoredTalent,
 } from '../shared/talent';
 import {
@@ -1387,7 +1388,7 @@ const shim = {
         : [];
       return ok<ActionData<'talent/judge-leader'>>({
         fitness: judgeLeaderFitness(flagged),
-        candidate: typeof p.candidate === 'string' ? p.candidate.slice(0, 64) : '',
+        candidate: typeof p.candidate === 'string' ? p.candidate.slice(0, MAX_LEADER_CANDIDATE_CHARS) : '',
       }) as ActionResult<T>;
     }
 

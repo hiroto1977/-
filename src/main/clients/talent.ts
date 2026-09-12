@@ -11,6 +11,7 @@ import {
   type StoredTalent,
   type TalentSnapshot,
   type TalentState,
+  MAX_LEADER_CANDIDATE_CHARS,
 } from '../../shared/talent';
 import type { ActionContext, ActionMap, FetchContext } from './types';
 import type { ActionData } from '../../shared/actionData';
@@ -182,7 +183,7 @@ export async function judgeLeaderImpl(ctx: ActionContext): Promise<JudgeResult> 
   const flagged = Array.isArray(raw) ? raw.filter((f): f is string => typeof f === 'string') : [];
   return {
     fitness: judgeLeaderFitness(flagged),
-    candidate: typeof name === 'string' ? name.slice(0, 64) : '',
+    candidate: typeof name === 'string' ? name.slice(0, MAX_LEADER_CANDIDATE_CHARS) : '',
   };
 }
 

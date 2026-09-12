@@ -3,6 +3,7 @@ import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
+import { charsOverCeiling, clampedCeilingNote } from '../../shared/inputCeiling';
 import { buildTeamEmotionRadar, teamEmotionSummary, type MemberEmotion } from '../data/teamEmotionRadar';
 import {
   SCORE_MAX as MEMBER_SCORE_MAX,
@@ -339,13 +340,29 @@ export function TeamRadarPage() {
     });
   }
 
+  /** 直前の付箋コメントで天井を超えて落ちた字数 (どの欄かも覚える)。 */
+  const [noteOver, setNoteOver] = useState<{ member: number; axis: number; over: number } | null>(null);
+
   function updateNote(memberIdx: number, axisIdx: number, text: string) {
+    /*
+     * **天井は台帳から読み、落とした分は言う** (2026-09-12 · パス 174)。
+     *
+     * ここは `text.slice(0, 200)` と**数を写して**いた —— 同じファイルが
+     * `MAX_MEMBER_NOTE_CHARS` を import して `maxLength` と placeholder に使っている
+     * のに。定数を動かすと欄は新しい長さを受け取るのに、state は 200 字へ黙って切る。
+     *
+     * `maxLength` も外した。付いていると**貼り付けをブラウザが先に切る**ので、
+     * 切れたことが React まで届かず「落とした分を言う」ことが原理的にできない
+     * (パス 167 が業務メモで決めた形。`ServiceActionPanel` も `maxLength` を持たない)。
+     */
+    const over = charsOverCeiling(text, MAX_MEMBER_NOTE_CHARS);
+    setNoteOver(over === 0 ? null : { member: memberIdx, axis: axisIdx, over });
     setMembers((prev) => {
       const next = [...prev];
       const m = { ...next[memberIdx]! };
       const notes = { ...(m.notes ?? {}) };
       if (text.length === 0) delete notes[axisIdx];
-      else notes[axisIdx] = text.slice(0, 200);
+      else notes[axisIdx] = text.slice(0, MAX_MEMBER_NOTE_CHARS);
       m.notes = notes;
       next[memberIdx] = m;
       return next;
@@ -819,7 +836,6 @@ export function TeamRadarPage() {
                           <input
                             type="text"
                             value={m.notes?.[ai] ?? ''}
-                            maxLength={MAX_MEMBER_NOTE_CHARS}
                             onChange={(e) => updateNote(idx, ai, e.target.value)}
                             placeholder={`特徴・課題を ${MAX_MEMBER_NOTE_CHARS} 字以内`}
                             style={{
@@ -832,6 +848,11 @@ export function TeamRadarPage() {
                               fontSize: 11,
                             }}
                           />
+                          {noteOver !== null && noteOver.member === idx && noteOver.axis === ai ? (
+                            <span data-note-clamped style={{ color: 'var(--danger)', fontSize: 10, lineHeight: 1.4 }}>
+                              ⚠ {clampedCeilingNote('付箋コメント', noteOver.over, MAX_MEMBER_NOTE_CHARS)}
+                            </span>
+                          ) : null}
                         </div>
                       ))}
                     </div>

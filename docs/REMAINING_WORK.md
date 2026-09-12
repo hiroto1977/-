@@ -23788,6 +23788,71 @@ export function _resetRecordStoreForTests(): void {
 - `ManualDataSection` の行カバレッジは測り直していない (11 本の駆動で上がるはず)。
   次に全域を測るときに確かめる。
 
+## パス 174 (2026-09-12) — **天井の写しは `maxLength` の外にも在り、同じモジュールの中にも在った**
+
+パス 167 は「画面が天井の数を写していないか」を **`maxLength={<数字>}` の形だけ**で
+数えた。同じ写しは**切る所**にも在る。走査を `slice(0, <数字>)` へ広げ、
+コメントと文字列を落としてから数えたら 4 家系が出た。
+
+| 場所 | 直す前 | 台帳の定数 |
+| --- | --- | --- |
+| `TeamRadarPage.updateNote` | `text.slice(0, 200)` | `MAX_MEMBER_NOTE_CHARS` (**同じファイルが import 済み**で `maxLength` と placeholder に使っている) |
+| `teamRadarState.readStoredTeamRadar` | `slice(0, 64)` / `slice(0, 32)` | `MAX_DEPARTMENT_CHARS` / `MAX_EVALUATED_AT_CHARS` (**同じモジュールの中**) |
+| `main/clients/talent.ts` + `web-shim.ts` | どちらも `slice(0, 64)` | 定数が**無かった** → `MAX_LEADER_CANDIDATE_CHARS` を新設 |
+| `main/clients/emotions.ts` + `emotionsWeb.ts` | どちらも `slice(0, 80)` | 同上 → `MAX_ANALYSIS_EXCERPT_CHARS` |
+
+### いちばん厄介だったのは、同じモジュールの中の食い違い
+
+`teamRadarState.ts` は**検証では定数で断り、読み出しでは literal で切って**いた:
+
+```
+  validateMembers …  if (v.length > MAX_MEMBER_NOTE_CHARS) throw   ← 断る (定数)
+  readStoredTeamRadar …  o['department'].slice(0, 64)              ← 切る (写し)
+```
+
+`MAX_DEPARTMENT_CHARS` を 128 に上げると、検証は 128 字を通すのに読み出しが 64 字へ
+切る —— **保存した状態が読むたびに短くなる。** 書いた人は同じファイルの中で
+2 通りに書いており、どちらも「正しい」ように見える。
+
+### 両ビルドが同じ数を別々に持っていた 2 つ
+
+`talent/judge-leader` の候補者名 (64) と分析の抜粋 (80) は、main とブラウザ版が
+**それぞれ literal を持って**いた。片方だけ動かすと、同じ操作がデスクトップと
+ブラウザで別の長さを返す / 別の長さの抜粋を保存する (パス 62 / 116 の家系)。
+共有の定数を作って両方に読ませた。
+
+### 付箋コメントは「切って、言う」へ (パス 167 の形)
+
+`maxLength` も外した。**付いているとブラウザが貼り付けを先に切るので、切れたことが
+React に届かず「落とした分を言う」ことが原理的にできない** (パス 172 で外へ送る本文に
+ついて測ったのと同じ理屈。あちらは**断る**、こちらは保存する短い欄なので
+パス 167 どおり**切って言う**)。文面は `shared/inputCeiling.ts` の
+`clampedCeilingNote` が 1 つ持つ。
+
+### 関門: 走査を「切る所」へ広げた (`ceilingLiteralCensus.test.ts`)
+
+- 台帳: `export const MAX_… = <数字>` を `src/shared/**` から集める (実測 51 個)。
+- 走査: `slice(0, <数字>)` の数が、**そのファイルが知っている**天井と同じなら写し。
+- **コメントと文字列は落としてから数える。** 最初の版は散文の中の引用
+  (`watch.slice(0, 25)`) と、`stocks.ts` のコメントに書かれた `body.slice(0, 200)` を
+  掴んだ (パス 85 の 0 倒し census と同じ罠)。落とすと `stocks.ts` の行は消えたので、
+  偶然の台帳から外した —— **「在ると思っていた物が無い」のも実測である。**
+- 偶然の一致は理由つきの台帳へ (メンバー id の slug 32 字は `MAX_EVALUATED_AT_CHARS` と
+  同じ数だが別物)。台帳は双方向で、直った行が残っていれば鳴る。
+- **床は「写しの件数」ではなく走査そのものに置いた** —— 写しは直せば 0 に近づくので、
+  件数を床にすると直すたびに関門が壊れる (パス 172 で「数えた」と「効く」を分けたのと同じ)。
+
+### 対照 (6 本すべて鳴った)
+
+| 壊した物 | 鳴った検査 |
+| --- | --- |
+| note を literal 200 に戻す (**元の写し**) | census |
+| note に `maxLength` を戻す | 画面 |
+| 落とした分の警告を消す | 画面 |
+| 超過を常に 0 と数える | 画面 |
+| 読み出しを literal 64 / 32 に戻す | census |
+| コメント落としを殺す (素の走査に戻す) | census |
+
 ## パス 173 (2026-09-12) — **「作成成功」と出るのに、作った物が画面に出ない**
 
 パス 172 で `NotionPage` を駆動していて気付いた。押した後の画面はこうだった:
