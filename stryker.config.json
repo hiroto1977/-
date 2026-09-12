@@ -197,6 +197,7 @@
     "src/shared/api/slack.ts",
     "src/shared/api/types.ts",
     "src/shared/api/wordpress.ts",
+    "src/shared/atlassianLinks.ts",
     "src/shared/atlassianSite.ts",
     "src/shared/balanceSheetFreshness.ts",
     "src/shared/bankFormat.ts",

@@ -4,6 +4,7 @@ import {
 } from '../../shared/atlassianSite';
 import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
 import { ATLASSIAN_ISSUE_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../../shared/writeFieldLimits';
+import { jiraBrowseUrl } from '../../shared/atlassianLinks';
 import type { ActionData } from '../../shared/actionData';
 
 interface JiraProject {
@@ -192,7 +193,7 @@ async function createJiraIssue(
     { fetch: ctx.fetch, serviceId: 'atlassian' },
   );
 
-  return { key: res.key, url: `${creds.site}/browse/${res.key}` };
+  return { key: res.key, url: jiraBrowseUrl(creds.site, res.key) };
 }
 
 export const ACTIONS: ActionMap = {

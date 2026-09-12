@@ -31,6 +31,7 @@ import {
   normalizeAtlassianSiteResult,
   type AtlassianSiteFailure,
 } from '../../shared/atlassianSite';
+import { jiraBrowseUrl } from '../../shared/atlassianLinks';
 import { redactForMessage } from '../../shared/redact';
 import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../../shared/httpLimits';
 import type { ActionData } from '../../shared/actionData';
@@ -329,7 +330,7 @@ export async function createAtlassianIssue(
   });
   await ensureOk(res, 'Atlassian API');
   const data = (await res.json()) as { key: string };
-  return { key: data.key, url: `${creds.site}/browse/${data.key}` };
+  return { key: data.key, url: jiraBrowseUrl(creds.site, data.key) };
 }
 
 // --- UTF-8 安全な base64 / base64url (ブラウザの btoa は Latin1 のみ) -------

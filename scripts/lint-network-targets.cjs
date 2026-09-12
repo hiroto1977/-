@@ -137,16 +137,19 @@ const REVIEWED = [
     template: '`${creds.site}/rest/api/3/project/search?maxResults=50`',
     guard: 'parseAtlassianToken → shared/atlassianSite.ts。2026-08 に検出器を直すまで台帳から漏れていた（jsonFetch が次の行にあり、直前 3 行しか見ない文脈判定に掛からなかった）',
   },
-  {
-    file: 'src/main/clients/atlassian.ts',
-    template: '`${creds.site}/browse/${res.key}`',
-    guard: '同上のホスト検証済み。これは送信ではなく画面へ返す表示用 URL（openExternal で開く）で、資格情報は乗らない',
-  },
-  {
-    file: 'src/renderer/data/saasWriteWeb.ts',
-    template: '`${creds.site}/browse/${data.key}`',
-    guard: '同上（ブラウザ版の表示用 URL）',
-  },
+  /*
+   * **2026-09-12 (パス 181) に 2 行を外した。**
+   *
+   * `${creds.site}/browse/${key}` の組み立ては main / ブラウザ版 / 画面の 3 か所に
+   * 散っており (画面だけ `/jira/projects/` という別の形)、`src/shared/atlassianLinks.ts`
+   * の `jiraBrowseUrl` に寄せた。新しい場所は**送信の文脈に無い** (`fetch` が近くに無い)
+   * ので、この走査の母集団には入らない —— 元の 2 行の理由も「送信ではなく画面へ返す
+   * 表示用 URL」だったので、扱いは変わっていない。
+   *
+   * 台帳に残すと**現物が無いのに見張っているつもり**になるので消した
+   * (この関門自身がそう言って鳴った)。ホスト検証は `shared/atlassianSite.ts` が持ち、
+   * 動的部分の `encodeURIComponent` は `atlassianLinks.ts` が持つ。
+   */
   {
     file: 'src/shared/ai/providers.ts',
     template: '`${base}/v1/messages`',

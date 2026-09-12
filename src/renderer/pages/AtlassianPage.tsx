@@ -6,6 +6,7 @@ import { useServiceData } from '../hooks/useServiceData';
 import { CeilingNotice } from '../components/CeilingNotice';
 import { charsOverCeiling } from '../../shared/inputCeiling';
 import { ATLASSIAN_ISSUE_FIELDS } from '../../shared/writeFieldLimits';
+import { jiraBrowseUrl } from '../../shared/atlassianLinks';
 import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
@@ -97,7 +98,9 @@ export function AtlassianPage() {
             key: p.key,
             title: `${p.key} · ${p.name}`,
             meta: `${p.projectTypeKey} · ${p.style}`,
-            href: site ? `${site.url}/jira/projects/${p.key}` : undefined,
+            /* リンクの形は `shared/atlassianLinks.ts` が 1 つ持つ (パス 181)。
+               ここは `/jira/projects/...` という**他のどこにも無い形**を組んでいた。 */
+            href: site ? jiraBrowseUrl(site.url, p.key) : undefined,
           }))}
         />
       </Section>
