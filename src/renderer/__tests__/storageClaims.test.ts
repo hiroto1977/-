@@ -414,7 +414,19 @@ describe('BYO プロキシ — 共有秘密を省いたときの説明', () => {
   it('「自前で」の一文だけで終わっていない', () => {
     const idx = SETTINGS.indexOf('自前で Cloudflare Worker');
     expect(idx, '前提の一文が消えた — 検査の綴りを実物から取り直すこと').toBeGreaterThan(0);
-    expect(SETTINGS.slice(idx, idx + 1400)).toMatch(/あなたが管理している Worker だけ/);
+    /*
+     * **固定長の窓を使わない** (2026-09-12 · パス 166)。
+     * ここは `slice(idx, idx + 1400)` だった。実測すると目標の一文は **+1009** ——
+     * **余裕は 391 文字**しかなく、この節に注記や欄を足せば越える。越えたとき
+     * 守っている性質は何も壊れていないのに**誤った理由で鳴る**
+     * (パス 165 で `browserSnapshotGates` の窓 4000 を 28 文字で踏み抜いた形)。
+     *
+     * 留めたいのは「前提の一文の**後ろに**、誰の Worker かを述べる一文が在る」——
+     * 距離ではなく**順序**なので、順序で書く。
+     */
+    const follow = SETTINGS.indexOf('あなたが管理している Worker だけ');
+    expect(follow, '誰の Worker かを述べる一文が消えた').toBeGreaterThan(0);
+    expect(follow, '前提の一文より後ろに在ること').toBeGreaterThan(idx);
   });
 
   it('設定済みの表示でも、秘密が無ければそう出す', () => {
