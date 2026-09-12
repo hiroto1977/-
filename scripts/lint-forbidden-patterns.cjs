@@ -858,7 +858,7 @@ const KNOWN_SUPPRESSIONS = [
   // deletePreferencesDatabase — ハードリセットの在庫 security/eraseAll.ts が呼ぶ)。27→28 / 7→8 / 11→12。
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/data/store.ts :: 28',
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/fs/fsa.ts :: 8',
-  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/library/library.ts :: 12',
+  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/library/library.ts :: 14',
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/network/proxy.ts :: 6',
   // 2026-09-07: 13 → 12。届かない後追い診断 (`indexedDB.databases()` で
   // 削除を再確認していた) を消したので、直接触る箇所が 1 つ減った。

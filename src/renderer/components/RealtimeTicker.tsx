@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { parseTimestamp } from '../../shared/isoDate';
 import { useRealtimeTick, DEFAULT_TICK_MS } from '../hooks/useRealtimeTick';
 import {
   accruedSoFar,
@@ -55,8 +56,18 @@ function safe(n: number): number {
   return Number.isFinite(n) ? n : 0;
 }
 
+/**
+ * 時刻の帯。読めない値は `--:--:--` (2026-09-12 · パス 188)。
+ *
+ * **今日ここへ来るのは自前の時計 (`Date.now()`) だけなので、到達はしない** ——
+ * 直したのは床であって欠陥ではない。ただし **同じ判定が 2 つ上の `safe()` に
+ * 既に在り、この関数だけが通っていなかった** (パス 91 / 98 / 187 と同じ形)。
+ * 素の `getHours()` は `NaN` を返し、`String(NaN).padStart(2, '0')` は詰めもしないので
+ * `NaN:NaN:NaN` になる。
+ */
 function clock(ms: number): string {
-  const d = new Date(ms);
+  const d = parseTimestamp(ms);
+  if (d === null) return '--:--:--';
   const p = (n: number) => String(n).padStart(2, '0');
   return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
 }

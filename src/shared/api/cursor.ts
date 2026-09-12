@@ -18,6 +18,8 @@
  * 混ぜると、使っていないのか取得に失敗したのか画面から判別できなくなる)。
  */
 
+import { isoDateFromTimestamp } from '../isoDate';
+
 /** Cursor Admin API の基底 URL。 */
 export const CURSOR_API_BASE = 'https://api.cursor.com';
 
@@ -110,10 +112,17 @@ export interface CursorSnapshot {
 
 const num = (v: number | undefined): number => (Number.isFinite(v) ? (v as number) : 0);
 
-/** epoch ミリ秒 → YYYY-MM-DD（UTC）。読めない値は空文字にして日付欄を詐称しない。 */
+/**
+ * epoch ミリ秒 → YYYY-MM-DD（UTC）。読めない値は空文字にして日付欄を詐称しない。
+ *
+ * **`Number.isFinite` だけでは足りなかった** (2026-09-12 · パス 188) —— `1e20` は
+ * 有限で、しかも `new Date(1e20).toISOString()` は `RangeError` を**投げる**。
+ * ここは `normalizeUsage` が `api.cursor.com` の JSON の `date` をそのまま渡す所で、
+ * 投げると**1 行の日付が読めないだけで取得そのものが失敗する**。範囲の判定は
+ * `shared/isoDate.ts` が 1 か所で持つ (日付を読むのは 1 ファイル · パス 115)。
+ */
 export function toIsoDate(epochMs: number | undefined): string {
-  if (!Number.isFinite(epochMs)) return '';
-  return new Date(epochMs as number).toISOString().slice(0, 10);
+  return isoDateFromTimestamp(epochMs) ?? '';
 }
 
 /**

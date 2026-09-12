@@ -40,16 +40,84 @@ const SRC = path.resolve(__dirname, '../..');
  * **この散文自身が同じ字面を含んでいる**ので、落とさないと自分で鳴る
  * (パス 181 で `lint:forbidden` に同じことをされた)。
  */
+/**
+ * コメントと文字列リテラルを落とす —— **1 度で走る小さな走査器**。
+ *
+ * **並べた `replace` では壊れる** (2026-09-12 · パス 188 で気付いた)。パス 185 は
+ * ブロック → 行 → テンプレート → `'` → `"` の順で置換していたが、
+ * **行コメントの規則が文字列の中の `https://…` にも当たる**ので、
+ *
+ *     const url = 'https://api.cursor.com/teams/daily-usage-data';
+ *
+ * は `const url = 'https:` になり、**閉じない引用符**が残る。その引用符は次の
+ * 引用符と対にされ、**間に挟まれた本物のコードが丸ごと消える**。
+ *
+ * 実測: この壊れ方のせいで、`shared/api/cursor.ts` を元の (守りの無い) 形へ
+ * 戻した対照が**鳴らなかった** —— 走査はそのファイルの後半を見ていなかった。
+ * **対照が、私が広げた規則ではなく、前から在った走査の欠陥を教えた。**
+ *
+ * 状態を持って 1 度歩けば、どの規則も互いを壊せない。
+ */
+export function stripNonCode(src: string): string {
+  let out = '';
+  let i = 0;
+  while (i < src.length) {
+    const two = src.slice(i, i + 2);
+    if (two === '//') {
+      while (i < src.length && src[i] !== '\n') i += 1;
+      continue;
+    }
+    if (two === '/*') {
+      i += 2;
+      while (i < src.length && src.slice(i, i + 2) !== '*/') i += 1;
+      i += 2;
+      continue;
+    }
+    const ch = src[i]!;
+    if (ch === "'" || ch === '"' || ch === '`') {
+      i += 1;
+      while (i < src.length && src[i] !== ch) {
+        // バックスラッシュの次の 1 文字は中身として飛ばす。
+        i += src[i] === '\\' ? 2 : 1;
+      }
+      i += 1;
+      // 中身は落とすが、**引用符は残す** (字面の境界が消えると
+      // `new Date('x').getHours()` のような形が繋がって見える)。
+      out += `${ch}${ch}`;
+      continue;
+    }
+    out += ch;
+    i += 1;
+  }
+  return out;
+}
+
+/**
+ * **`Date` から読み出す口の一覧** (2026-09-12 · パス 188 で広げた)。
+ *
+ * パス 185 は `toLocale…` だけを見ていた。だが**同じ害は暦の部品を読む形にも
+ * 在り、`toISOString` はさらに悪い**:
+ *
+ * | 読み口 | 読めない `Date` での振る舞い |
+ * | --- | --- |
+ * | `toLocaleString` ほか | 英語で `Invalid Date` を返す (刷られる) |
+ * | `getFullYear` / `getHours` ほか | `NaN` を返す (`NaN/NaN/NaN NaN:NaN` と刷られる) |
+ * | **`toISOString`** | **`RangeError: Invalid time value` を投げる** |
+ *
+ * 実測 (2026-09-12): この広げた規則に当たる 7 か所のうち **1 つも守られて
+ * いなかった**。中でも `shared/api/cursor.ts` の `normalizeUsage` は
+ * `api.cursor.com` の JSON の `date` をそのまま `toISOString` の側へ渡しており、
+ * **1 行の日付が読めないだけで取得そのものが失敗する** (`1e20` は有効な JSON で
+ * `Number.isFinite` を通る)。`getTime` は入れない —— 読めない値は `NaN` になるが、
+ * そこから先の算術は `Number.isFinite` で判定されるのが普通で、刷る口ではない。
+ */
+const READERS = 'toLocale|getFullYear|getMonth|getDate|getDay|getHours|getMinutes|getSeconds|toISOString|toJSON';
+
 export function rawDatePrints(src: string): string[] {
-  const code = src
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/\/\/[^\n]*/g, '')
-    .replace(/`(?:\\[\s\S]|[^\\`])*`/g, '``')
-    .replace(/'(?:\\.|[^\\'])*'/g, "''")
-    .replace(/"(?:\\.|[^\\"])*"/g, '""');
+  const code = stripNonCode(src);
   const out: string[] = [];
-  // (a) 直に繋いだ形: new Date(<引数あり>).toLocale…
-  for (const m of code.matchAll(/new Date\(\s*[^)\s][^)]*\)\s*\.\s*toLocale/g)) out.push(m[0]);
+  // (a) 直に繋いだ形: new Date(<引数あり>) から**読む**形。
+  for (const m of code.matchAll(new RegExp(`new Date\\(\\s*[^)\\s][^)]*\\)\\s*\\.\\s*(?:${READERS})`, 'g'))) out.push(m[0]);
   /*
    * (b) **変数に置いてから刷る形。**
    *
@@ -59,11 +127,24 @@ export function rawDatePrints(src: string): string[] {
    * **このパスを始めた当の欠陥を規則が見逃していた** (パス 183 の対照 C3 と
    * 同じ、「対照が私の検査の欠陥を教えた」形)。
    */
-  for (const m of code.matchAll(/(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*new Date\(\s*[^)\s][^)]*\)/g)) {
+  for (const m of code.matchAll(/(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*new Date\(\s*([^)\s][^)]*)\)/g)) {
     const name = m[1]!;
-    if (new RegExp(`\\b${name}\\s*\\.\\s*toLocale`).test(code)) out.push(m[0]);
+    // **「今」の写しは投げも NaN も作れない** —— 引数が同じファイルで
+    // `new Date()` (引数なし) を受けた識別子なら、それは必ず有効な Date である
+    // (`new Date(<Date>)` は複製)。これは規則の穴ではなく、**危なくない形を
+    // 台帳の免除ではなく判定で外す**ためのもの。実測で `EmotionsPage` の
+    // 30 日スパークラインがこの形 (`const today = new Date();` →
+    // `const d = new Date(today);` → `d.setDate(d.getDate() - i)`)。
+    if (isCopyOfNow(m[2]!.trim(), code)) continue;
+    if (new RegExp(`\\b${name}\\s*\\.\\s*(?:${READERS})`).test(code)) out.push(m[0]);
   }
   return out;
+}
+
+/** 引数が、同じ範囲で `new Date()` (引数なし) を受けた識別子か。 */
+function isCopyOfNow(arg: string, code: string): boolean {
+  if (!/^[A-Za-z_$][\w$]*$/.test(arg)) return false;
+  return new RegExp(`(?:const|let|var)\\s+${arg}\\s*=\\s*new Date\\(\\s*\\)`).test(code);
 }
 
 /** `src/` を歩いて、規則に当たる行を持つファイルを集める。 */
@@ -109,6 +190,52 @@ describe('時刻を刷る所の母集団 (パス 185)', () => {
     // 散文の中に同じ字面が在っても当たらない (この検査自身がそう書いている)。
     expect(rawDatePrints("// new Date(x).toLocaleString() は禁止")).toEqual([]);
     expect(rawDatePrints("/* new Date(x).toLocaleString() */")).toEqual([]);
+  });
+
+  /**
+   * **「今」の写しを外す判定に、両方向の標本を添える** (パス 188)。
+   * 片方向だけ見ると「何にも当たらない規則」になりうる。
+   */
+  it('★ 対照: `new Date()` の写しは当たらないが、値から作った Date は当たる', () => {
+    // 免除される形 (EmotionsPage の 30 日スパークライン)。
+    expect(
+      rawDatePrints('const today = new Date();\nconst d = new Date(today);\nd.setDate(d.getDate() - i);'),
+    ).toEqual([]);
+    // **同じ綴りでも、値から作っていれば当たる** —— 免除が広すぎないこと。
+    expect(
+      rawDatePrints('const today = payload.at;\nconst d = new Date(today);\nreturn d.getFullYear();'),
+    ).toHaveLength(1);
+    // 引数が式なら免除しない。
+    expect(rawDatePrints('const d = new Date(today + 1);\nreturn d.getHours();')).toHaveLength(1);
+  });
+
+  it('★ 対照: パス 188 で広げた 3 つの読み口はどれも当たる', () => {
+    expect(rawDatePrints('new Date(ts).getFullYear()')).toHaveLength(1);
+    expect(rawDatePrints('new Date(epochMs as number).toISOString().slice(0, 10)')).toHaveLength(1);
+    expect(rawDatePrints('const d = new Date(ms);\nreturn p(d.getHours());')).toHaveLength(1);
+    // 直した形は当たらない (共有の判定を通している)。
+    expect(rawDatePrints("const d = parseTimestamp(ts);\nreturn d.getFullYear();")).toEqual([]);
+    expect(rawDatePrints("isoDateFromTimestamp(epochMs) ?? ''")).toEqual([]);
+  });
+
+  /**
+   * **走査器そのものの対照** (パス 188)。並べた `replace` だと URL の `//` で
+   * 文字列が切れ、閉じない引用符が後続のコードを食った —— それで実ファイルの
+   * 欠陥が見えなくなっていた。**この検査はその壊れ方を直接再現する。**
+   */
+  it('★ 対照: URL を含む文字列の後ろのコードも見える (走査器が食わない)', () => {
+    const sample = [
+      "const url = 'https://api.cursor.com/teams/daily-usage-data';",
+      'return new Date(epochMs as number).toISOString();',
+    ].join('\n');
+    // 直す前の並べた replace はここで空を返した (URL の // で切れ、引用符が残った)。
+    expect(rawDatePrints(sample)).toHaveLength(1);
+    // 走査器の単体: 文字列の中身は落ちるが、境界の引用符は残り、後続は残る。
+    expect(stripNonCode("const u = 'a//b';\nconst v = 1;")).toBe("const u = '';\nconst v = 1;");
+    expect(stripNonCode('// 行コメント\nconst v = 1;')).toBe('\nconst v = 1;');
+    expect(stripNonCode('/* 塊 */const v = 1;')).toBe('const v = 1;');
+    // 逃した引用符も飲み込まない。
+    expect(stripNonCode("const s = 'a\\'b';\nconst v = 2;")).toBe("const s = '';\nconst v = 2;");
   });
 
   it('★ 走査が実ファイルを読めている (0 ファイルで通る検査になっていない)', () => {

@@ -16,6 +16,7 @@
  */
 
 import { round2 } from '../../shared/num';
+import { isoDateFromTimestamp, parseTimestamp } from '../../shared/isoDate';
 import { MAX_TICKER_CHARS } from '../../shared/advisorQuestionLimits';
 import type { RegisterResult, UnregisterResult } from '../../shared/stocksTypes';
 
@@ -182,10 +183,14 @@ function mulberry32(seed: number): () => number {
   };
 }
 
-/** `daysAgo` 日前の YYYY-MM-DD (UTC ベース、`now` を注入可能でテスト可能)。 */
+/**
+ * `daysAgo` 日前の YYYY-MM-DD (UTC ベース、`now` を注入可能でテスト可能)。
+ *
+ * **`toISOString()` は範囲外で投げる**ので共有の判定を通す (パス 188)。
+ * 今日 `now` に来るのは `Date.now()` だけなので到達はしない —— 床である。
+ */
 function isoDaysAgo(daysAgo: number, now: number): string {
-  const d = new Date(now - daysAgo * 24 * 60 * 60 * 1000);
-  return d.toISOString().slice(0, 10);
+  return isoDateFromTimestamp(now - daysAgo * 24 * 60 * 60 * 1000) ?? '';
 }
 
 /** シンボルに対する決定論的なモック・ローソク足 (ランダムウォーク)。
@@ -259,7 +264,7 @@ export function buildStocksSnapshot(now: number = Date.now()): WebStocksSnapshot
       positions: {},
       history: [],
     },
-    fetchedAt: new Date(now).toISOString(),
+    fetchedAt: parseTimestamp(now)?.toISOString() ?? '',
     isMock: true,
   };
 }

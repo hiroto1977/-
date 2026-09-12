@@ -108,3 +108,29 @@ export function parseTimestamp(v: unknown): Date | null {
   if (Math.abs(ms) > MAX_TIMESTAMP_MS) return null;
   return new Date(ms);
 }
+
+/**
+ * **epoch ミリ秒 → `YYYY-MM-DD` (UTC)。読めなければ `null`** (2026-09-12 · パス 188)。
+ *
+ * `parseTimestamp` の兄弟で、`toISOString()` を**必ず有効な `Date` にだけ**当てる。
+ * 素の `new Date(v).toISOString()` は **投げる** —— `toLocaleString` が英語の
+ * `Invalid Date` を返すのに対し、`toISOString` は `RangeError: Invalid time value`
+ * を上へ放る。だから応答の正規化の中で使うと、**1 行の日付が読めないだけで
+ * 取得そのものが失敗する** (実測: `shared/api/cursor.ts` の `normalizeUsage` は
+ * `api.cursor.com` の JSON の `date` をそのまま渡しており、`1e20` は有効な JSON で
+ * `Number.isFinite` を通る)。
+ *
+ * パス 185 の走査は `new Date(…)` → `toLocale…` の形だけを見ていたので、
+ * **暦の部品を読む形 (`getFullYear` / `getHours` …) と `toISOString` は外に在った**。
+ */
+export function isoDateFromTimestamp(v: unknown): string | null {
+  const d = parseTimestamp(v);
+  if (d === null) return null;
+  /*
+   * **`slice(0, 10)` では切る位置がずれる。** 年が 4 桁でない (拡張年) とき、
+   * `toISOString()` は `+275760-09-13T…` を返すので 10 文字では `+275760-09` に
+   * なり、**日が落ちた「月」に見える**。時刻の区切り (`T`) で割る
+   * (呼び出し側 3 か所が同じ `slice(0, 10)` を写していたのも、これで消える)。
+   */
+  return d.toISOString().split('T')[0]!;
+}

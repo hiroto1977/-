@@ -12,6 +12,7 @@
 // ordering. Decorative error messages, default fallbacks, IDB error
 // strings are not differentiable.
 import { isSafeFilename } from '../../shared/safeFilename';
+import { parseTimestamp } from '../../shared/isoDate';
 
 const DB_NAME = 'business-hub-library';
 const DB_VERSION = 1;
@@ -39,8 +40,64 @@ export interface LibraryItemMeta {
   readonly filename: string;
   readonly mime: string;
   readonly serviceId: string;
-  readonly createdAt: number;
-  readonly size: number;
+  /**
+   * 保存時刻 (epoch ms)。**`null` = 保存されている値が読めない**
+   * (2026-09-12 · パス 188)。`list()` は `cur.value as LibraryItem` と
+   * 無検査でキャストしていたので、壊れた・手で直された控えの `NaN` が
+   * そのまま画面へ届き `NaN/NaN/NaN NaN:NaN` と刷られていた。
+   */
+  readonly createdAt: number | null;
+  /**
+   * バイト数。**`null` = 読めない**。
+   *
+   * ここが一番重い: `enforceLimits()` は `all.reduce((a, it) => a + it.size, 0)` で
+   * 合計を作り `total > MAX_BYTES` で古いものから消すので、**1 件でも `NaN` が
+   * 混ざると合計が `NaN` になり、`NaN > MAX_BYTES` は必ず false** ——
+   * **50 MB の上限が黙って効かなくなる** (件数の上限だけが残る)。
+   */
+  readonly size: number | null;
+}
+
+/** 読めない数値 (NaN / ±Infinity / 負 / 数値でない) を `null` に落とす。 */
+function readableNonNeg(v: unknown): number | null {
+  return typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : null;
+}
+
+/**
+ * 読める保存時刻 (epoch ms) だけを通す。
+ *
+ * **数値だけを受ける** —— `parseTimestamp` は文字列も読むが、この欄は
+ * `monotonicNow()` が書く数値で、型も `number | null` である
+ * (文字列を通すと型と中身が食い違う。検査が最初にそれを捕まえた)。
+ * `Number.isFinite` は `parseTimestamp` の中にも在るが**同じ文に書く** ——
+ * 読む人にも `finiteShapeGuards` の走査にも、範囲を見ていることが見える
+ * (パス 98 の規則)。範囲 (`MAX_TIMESTAMP_MS`) は `parseTimestamp` が持つ。
+ */
+function readableTimestamp(v: unknown): number | null {
+  if (typeof v !== 'number' || !Number.isFinite(v)) return null;
+  return parseTimestamp(v) === null ? null : v;
+}
+
+/**
+ * 保存されている控え 1 件を、読める形にして返す (2026-09-12 · パス 188)。
+ *
+ * **行そのものは落とさない** —— `id` が読めれば「消す」「取り出す」はできるので、
+ * 落とすと壊れた控えが UI から触れなくなる (パス 136 の教訓: 保存した物は
+ * 必ず消せる道が要る)。読めない欄だけを `null` にし、画面がそう言う。
+ * `id` が読めない控えだけは何もできないので `null` を返して飛ばす。
+ */
+export function metaFromStored(v: unknown): LibraryItemMeta | null {
+  if (typeof v !== 'object' || v === null) return null;
+  const r = v as Record<string, unknown>;
+  if (typeof r.id !== 'string' || r.id === '') return null;
+  return {
+    id: r.id,
+    filename: typeof r.filename === 'string' ? r.filename : '(名前が読めません)',
+    mime: typeof r.mime === 'string' ? r.mime : 'application/octet-stream',
+    serviceId: typeof r.serviceId === 'string' ? r.serviceId : 'unknown',
+    createdAt: readableTimestamp(r.createdAt),
+    size: readableNonNeg(r.size),
+  };
 }
 
 export interface Library {
@@ -177,6 +234,16 @@ class IndexedDBLibrary implements Library {
     };
   }
 
+  /**
+   * 新しい順の一覧。
+   *
+   * **`createdAt` の索引だけでは足りない** (2026-09-12 · パス 188) ——
+   * `NaN` は IndexedDB の有効なキーではないので、保存時刻が読めない控えは
+   * **索引に載らず `list()` から丸ごと見えない**。見えないと 一覧にも出ず・
+   * 「削除」も押せず・容量の集計にも入らないのに**場所は占める** ——
+   * 消せない物を作らないという規則 (パス 136) に反する。
+   * 索引を走ってから、**本体も走って索引が拾えなかった控えを後ろに足す**。
+   */
   async list(): Promise<readonly LibraryItemMeta[]> {
     const db = await openDb();
     const out: LibraryItemMeta[] = [];
@@ -186,15 +253,9 @@ class IndexedDBLibrary implements Library {
       req.onsuccess = () => {
         const cur = req.result;
         if (cur) {
-          const v = cur.value as LibraryItem;
-          out.push({
-            id: v.id,
-            filename: v.filename,
-            mime: v.mime,
-            serviceId: v.serviceId,
-            createdAt: v.createdAt,
-            size: v.size,
-          });
+          // **無検査のキャストをやめた** (パス 188)。id が読めない控えだけ飛ばす。
+          const meta = metaFromStored(cur.value);
+          if (meta !== null) out.push(meta);
           cur.continue();
         } else {
           resolve();
@@ -202,6 +263,29 @@ class IndexedDBLibrary implements Library {
       };
       // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IDB の失敗イベントは決定的に起こせない
       req.onerror = () => reject(req.error ?? new Error('cursor failed'));
+    });
+    // **索引が拾えなかった控えを後ろに足す** (パス 188)。`createdAt` が
+    // `NaN` の控えは索引に載らないので、本体を走らないと一生見えない。
+    const seen = new Set(out.map((m) => m.id));
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).openCursor();
+      req.onsuccess = () => {
+        const cur = req.result;
+        if (cur) {
+          const meta = metaFromStored(cur.value);
+          if (meta !== null && !seen.has(meta.id)) out.push(meta);
+          cur.continue();
+        } else {
+          resolve();
+        }
+      };
+      // IDB の失敗イベントは決定的に起こせない (fake-indexeddb も本物も、
+      // 読み取り専用のカーソルを外から失敗させる口を持たない) ので、この
+      // 経路は測れない。`同上` ではなく理由を書く —— 走査は後方参照を
+      // 「理由なし」として数える (パス 25 の規則・パス 188 で鳴った)。
+      // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: 失敗イベントを決定的に起こせない
+      req.onerror = () => reject(req.error ?? new Error('sweep failed'));
     });
     db.close();
     return out;
@@ -242,15 +326,24 @@ class IndexedDBLibrary implements Library {
     db.close();
   }
 
+  /**
+   * **読める** バイト数の合計 (パス 188)。読めない控え (`size === null`) は
+   * 足さない —— 足すと `NaN` になり、合計そのものが意味を失う。
+   * 「いくつ読めなかったか」は `list()` の結果から呼び出し側が数える
+   * (画面はそれを注記に刷る)。
+   */
   async totalBytes(): Promise<number> {
     const items = await this.list();
-    return items.reduce((acc, it) => acc + it.size, 0);
+    return items.reduce((acc, it) => acc + (it.size ?? 0), 0);
   }
 
   /** 上限超過時に古いものから削除。put() の後で呼ぶ。 */
   private async enforceLimits(): Promise<void> {
     const all = await this.list(); // sorted newest-first
-    let total = all.reduce((acc, it) => acc + it.size, 0);
+    // 読めない size は 0 として数える (パス 188)。**足すと合計が NaN になり
+    // `NaN > MAX_BYTES` が必ず false = 上限が丸ごと効かなくなる。** 0 として
+    // 数えると上限は「測れた分について」効く —— 件数の上限も併せて掛かる。
+    let total = all.reduce((acc, it) => acc + (it.size ?? 0), 0);
     let count = all.length;
     // Iterate from oldest (end of array) and remove until under both limits.
     // `i >= 0` の下限には届かない — put() が 1 件あたり MAX_BYTES 以下しか
@@ -261,7 +354,7 @@ class IndexedDBLibrary implements Library {
     for (let i = all.length - 1; i >= 0 && (count > MAX_ITEMS || total > MAX_BYTES); i--) {
       const it = all[i]!;
       await this.remove(it.id);
-      total -= it.size;
+      total -= it.size ?? 0;
       count -= 1;
     }
   }

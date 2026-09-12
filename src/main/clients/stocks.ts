@@ -1,3 +1,4 @@
+import { isoDateFromTimestamp } from '../../shared/isoDate';
 import {
   MAX_ADVISOR_QUESTION_CHARS,
   MAX_ADVISOR_UNIVERSE_SYMBOLS,
@@ -770,7 +771,7 @@ export function createMockStocksDataSource(): StocksDataSource {
         // (low ≤ open/close ≤ high) hold under any monotonic scaling.
         // Stryker disable ArithmeticOperator
         out.push({
-          date: new Date(startMs + i * DAY_MS).toISOString().slice(0, 10),
+          date: isoDateFromTimestamp(startMs + i * DAY_MS) ?? '',
           open: Math.round(c.open * 100) / 100,
           high: Math.round(c.high * 100) / 100,
           low: Math.round(c.low * 100) / 100,

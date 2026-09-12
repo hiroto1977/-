@@ -13918,7 +13918,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **105 ファイル / 279 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **106 ファイル / 283 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -13934,6 +13934,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/main/clients/business.ts` | 5 |
 | `src/main/clients/linux.ts` | 5 |
 | `src/renderer/data/cashflowDebtService.ts` | 5 |
+| `src/renderer/library/library.ts` | 5 |
 | `src/renderer/pages/TaxPage.tsx` | 5 |
 | `src/shared/buildingIso.ts` | 5 |
 | `src/shared/savingsPlanning.ts` | 5 |
@@ -13972,7 +13973,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/data/shopifyImport.ts` | 2 |
 | `src/renderer/data/statementAccounts.ts` | 2 |
 | `src/renderer/data/statementEquity.ts` | 2 |
-| `src/renderer/library/library.ts` | 2 |
 | `src/renderer/pages/BusinessPage.tsx` | 2 |
 | `src/renderer/pages/FundingPage.tsx` | 2 |
 | `src/renderer/pages/KpiPage.tsx` | 2 |
@@ -14012,6 +14012,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/data/workingCapital.ts` | 1 |
 | `src/renderer/pages/ChartsPage.tsx` | 1 |
 | `src/renderer/pages/FreeePage.tsx` | 1 |
+| `src/renderer/pages/LibraryPage.tsx` | 1 |
 | `src/renderer/pages/StoragePage.tsx` | 1 |
 | `src/renderer/pages/TalentPage.tsx` | 1 |
 | `src/shared/api/canva.ts` | 1 |
@@ -25324,3 +25325,103 @@ ShigyoConsole のように 2 本のリストを混ぜる画面では「1 本に�
   計算のまま。断りの文は「合計には見本が N 件」(リストの事実) と「見本を除くと
   いくら」(計算値) なので、上書きしても偽にはならない。ただし上書きした人には
   合計と `userOnly` の差が「上書き分 + 見本分」になる —— パス 53 の家系。
+
+## パス 188 (2026-09-12) — **走査が `toLocale…` しか見ておらず、暦の部品と `toISOString` は外に在った**
+
+パス 185 は「保存値・取得値から `Date` を作って刷る」形を直し、走査
+(`timestampPrintCensus`) で留めた。だが走査が見ていたのは `toLocale…` だけで、
+**`Date` から読み出す口は他にも在る**:
+
+| 読み口 | 読めない `Date` での振る舞い |
+| --- | --- |
+| `toLocaleString` ほか | 英語で `Invalid Date` を返す (刷られる) |
+| `getFullYear` / `getHours` ほか | `NaN` を返す (`NaN/NaN/NaN NaN:NaN` と刷られる) |
+| **`toISOString`** | **`RangeError: Invalid time value` を投げる** |
+
+### 実測 7 か所 — 到達するのは 2 つ (残り 5 つは床)
+
+| 場所 | 引数の出所 | 到達するか |
+| --- | --- | --- |
+| `shared/api/cursor.ts` `toIsoDate` | **api.cursor.com の JSON** (`normalizeUsage`) | **する** — `Number.isFinite` だけで守り、`1e20` で投げる |
+| `renderer/pages/LibraryPage.tsx` `formatDate` / `formatBytes` | IndexedDB の控え (無検査キャスト) | **する** — `NaN/NaN/NaN NaN:NaN` / `NaN MB` |
+| `renderer/components/RealtimeTicker.tsx` `clock` | 自前の時計 (`Date.now()`) | しない (床。ただし**同じ判定が 2 つ上の `safe()` に在り**、この関数だけ通っていなかった) |
+| `renderer/data/stocksWatchlistWeb.ts` ×2 | `Date.now()` を注入 | しない (床) |
+| `main/clients/stocks.ts` | `Date.parse(MOCK_START)` = 定数 | しない (床) |
+| `renderer/pages/EmotionsPage.tsx` | `new Date()` の写し | **しない・免除**  (`new Date(<Date>)` は複製) |
+
+**7 件の欠陥ではない。** 直したのは 2 つで、残りは同じ形が次に payload 経路へ
+生えないための床である。
+
+### ライブラリには、表示より重い欠陥が 2 つ在った
+
+`list()` は `cur.value as LibraryItem` と**無検査でキャスト**していた。
+
+1. **`size: NaN` は 50 MB の上限を丸ごと無効にする。** `enforceLimits()` は
+   `all.reduce((a, it) => a + it.size, 0)` の合計を `total > MAX_BYTES` で見るが、
+   **`NaN > MAX_BYTES` は必ず false** —— 件数の上限 (`MAX_ITEMS` 100) だけが残る。
+   表示の崩れではなく**保存容量の門が黙って開く**。
+2. **`createdAt: NaN` の控えは `list()` から丸ごと見えない。** `NaN` は IndexedDB の
+   有効なキーではないので `index('createdAt')` の走査に載らない —— 一覧に出ず・
+   「削除」も押せず・容量の集計にも入らないのに**場所は占める**
+   (パス 136「保存した物は必ず消せる」の側の欠陥)。
+
+直し: `metaFromStored` が読めない欄を `null` にする (**行は落とさない** —— `id` が
+在れば取り出しも削除もできるので、落とすと触れなくなる)。`list()` は索引の後に
+**本体も走って索引が拾えなかった控えを後ろに足す**。画面は「時刻不明」「サイズ不明」と
+言い、合計から外した件数を `[data-library-unreadable]` に刷る。
+
+### 走査そのものが壊れていた (対照が教えた)
+
+パス 185 の `rawDatePrints` はコメントと文字列を**並べた `replace`** で落としていた:
+
+```
+.replace(/\/\*[\s\S]*?\*\//g, '')   // ブロック
+.replace(/\/\/[^\n]*/g, '')         // 行 ← 文字列の中の https:// にも当たる
+.replace(/'…'/g, "''")              // ← 閉じない引用符が次の引用符と対になる
+```
+
+`'https://api.cursor.com/…'` は `'https:` になり、**残った引用符が次の引用符と対に
+されて間の本物のコードが消える**。実測で、`cursor.ts` を元の形へ戻した対照が
+**鳴らなかった** —— 走査はそのファイルの後半を見ていなかった。
+状態を持つ `stripNonCode` (1 度歩く) に替え、その壊れ方を標本で留めた。
+
+**対照が、私が広げた規則ではなく前から在った走査の欠陥を教えた。** 今セッション
+3 度目 (パス 183 C3・パス 185 C1・今回)。
+
+### 検査 23 本 (新設 19 + 既存 4 を更新) / 対照 5 本すべて鳴った
+
+| 対照 | 壊した物 | 鳴った検査 |
+| --- | --- | --- |
+| C1 | `cursor.toIsoDate` を `Number.isFinite` だけに戻す | 単位 1 + **census 1** |
+| C2 | `library.list()` を無検査キャストに戻す | 4 (単位 2 + 画面 2) |
+| C3 | 本体の走査 (索引が拾えない控え) を消す | 4 |
+| C4 | `formatDate` の `null` の枝を消す | 2 |
+| C5 | 画面の `data-library-unreadable` を消す | 1 |
+
+**対照にならなかった物も記録する**: `?? 0` を `as number` に替えても鳴らない ——
+**`1024 + null === 1024`** なので、`null` を足すことは `?? 0` と数値的に同じ。
+効いている守りは `metaFromStored` で、それは C2 が鳴らす。
+
+### 既存のゲート 3 つが正しく鳴った (どれも直した)
+
+- **`finiteShapeGuards`** (パス 98): 裸の `typeof x === 'number'` を許さない →
+  `readableTimestamp` に `Number.isFinite` を同じ文へ書いた (`parseTimestamp` の
+  中にも在るが、**読む人と走査に見える所へ**)。
+- **`lint:mutation-scope`** (パス 25): 理由の無い pragma を数える → 私が写した
+  `同上` は**後方参照で理由ではない**ので、実際の理由を書いた。
+- **`lint:forbidden`** の行で固定した免除台帳: import を足して行が動いた → 貼り直した。
+
+### ついで直した物
+
+`isoDateFromTimestamp` は `toISOString().slice(0, 10)` ではなく **`T` で割る** ——
+拡張年 (`+275760-09-13T…`) では 10 文字が `+275760-09` になり、**日が落ちた「月」に
+見える**。写しが 3 か所に在った `slice(0, 10)` もこれで消えた。
+
+### 残した物
+
+- `RealtimeTicker` の `safe()` は今も `clock` 以外の 2 か所で使われている
+  (同じ判定が 2 つ在る形は残っている。`parseTimestamp` へ寄せるのは別パス)。
+- `library.ts` の `get()` の `同上` pragma は前から在り、台帳が 1 件として数えている
+  (私の分だけ直した。もう 1 つも理由を書くのは機械的・別パス)。
+- **`LibraryItemMeta.createdAt` が `null` の控えは並び順が最後**になる (索引に載らない
+  ので「新しい順」に混ぜられない)。画面はそう述べている。

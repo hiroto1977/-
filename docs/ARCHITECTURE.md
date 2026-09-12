@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **13364** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **13386** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 31 / 36 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 563 | 自己検証 |
+| `file:line` 参照数 | 567 | 自己検証 |
 | 図の中の `file:line` 参照数 | 27 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -3446,6 +3446,51 @@ payload を数える (数字と文面だけ合わせても「口はあるが繋�
 `what:` は**1 つのテンプレートリテラル**で書く —— 走査の `whatOf` は `what:` の
 最初のリテラルだけを読むので、`+` で連結すると文の後半が検査の外に出る
 (直している途中で一度そうしてしまい、`往復` を見る検査が鳴って気付いた)。
+
+**パス 185 の走査は、暦の部品を読む形を見ていなかった** (2026-09-12 · パス 188)。
+パス 185 は `new Date(x)` → `toLocale…` を禁じたが、`Date` から読み出す口は他にも在り、
+**`toISOString` は「返す」のではなく「投げる」**:
+
+| 読み口 | 読めない `Date` での振る舞い |
+| --- | --- |
+| `toLocaleString` ほか | 英語で `Invalid Date` を返す (刷られる) |
+| `getFullYear` / `getHours` ほか | `NaN` を返す (`NaN/NaN/NaN NaN:NaN` と刷られる) |
+| **`toISOString`** | **`RangeError: Invalid time value` を投げる** |
+
+実測 7 か所のうち、**到達するのは 2 つ**だった (残り 5 つは自前の時計か定数 ——
+床として通しただけで欠陥ではない):
+
+- `src/shared/api/cursor.ts` の `toIsoDate` は `normalizeUsage` が `api.cursor.com` の
+  JSON の `date` をそのまま渡す所で、`Number.isFinite` だけを見ていた。**`1e20` は
+  有限で有効な JSON**なので、**1 行の日付が読めないだけで取得そのものが失敗する**。
+- `src/renderer/pages/LibraryPage.tsx` の `formatDate` は `NaN/NaN/NaN NaN:NaN` を刷り、
+  `formatBytes` は `NaN MB` を刷っていた (見出しの合計も 1 件混ざれば `NaN MB`)。
+
+**ライブラリの読み口には、表示より重い欠陥が 2 つ在った。**
+`list()` は `cur.value as LibraryItem` と**無検査でキャスト**していた:
+
+1. **`size: NaN` は 50 MB の上限を丸ごと無効にする。** `enforceLimits()` は
+   `all.reduce((a, it) => a + it.size, 0)` で合計を作り `total > MAX_BYTES` で古い物を
+   消すが、**`NaN > MAX_BYTES` は必ず false** —— 件数の上限だけが残る。
+2. **`createdAt: NaN` の控えは `list()` から丸ごと見えない。** `NaN` は IndexedDB の
+   有効なキーではないので `index('createdAt')` の走査に載らず、一覧に出ず・「削除」も
+   押せず・容量の集計にも入らないのに場所は占める (パス 136 の「消せない物を作らない」)。
+
+`metaFromStored` が読めない欄を `null` にし (行は落とさない —— `id` が在れば消せる)、
+`list()` は索引の後に**本体も走って索引が拾えなかった控えを足す**。画面は
+「時刻不明」「サイズ不明」と言い、合計から外した件数を `[data-library-unreadable]` に刷る。
+
+**そして走査そのものが壊れていた。** パス 185 の `rawDatePrints` はコメントと文字列を
+**並べた `replace`** で落としており、**行コメントの規則が文字列の中の `https://…` にも
+当たる**。`'https://api.cursor.com/…'` は `'https:` になって**閉じない引用符**が残り、
+その引用符が次の引用符と対にされて**間の本物のコードが消える**。実測で、
+`cursor.ts` を元の形へ戻した対照が**鳴らなかった** —— 走査はそのファイルの後半を
+見ていなかった。状態を持つ `stripNonCode` に替え、その壊れ方を標本で留めた
+(`src/shared/__tests__/timestampPrintCensus.test.ts`)。
+
+**「今」の写しは免除する** —— 引数が同じファイルで `new Date()` (引数なし) を受けた
+識別子なら、それは必ず有効な `Date` である (`EmotionsPage` の 30 日スパークライン)。
+台帳の免除ではなく**判定**で外し、両方向に標本を添えた。
 
 **「合計しか出さない」も同じ形だった** (2026-09-12 · パス 187)。不動産投資 /
 投資信託 / 士業の 3 画面は、同梱の見本 (snapshot) の行と利用者が登録した行を

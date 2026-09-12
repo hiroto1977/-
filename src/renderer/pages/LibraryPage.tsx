@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Section, StatusBar } from '../components/StatusBar';
 import { getLibrary, type LibraryItem, type LibraryItemMeta } from '../library/library';
 import { reportDeviceStoreFailure } from '../data/deviceStoreFailure';
+import { parseTimestamp } from '../../shared/isoDate';
 import {
   MAX_TEXT_PREVIEW_CHARS,
   previewBlocker,
@@ -15,14 +16,31 @@ const SERVICE_ICONS: Record<string, string> = {
   business: '💼',
 };
 
-function formatBytes(n: number): string {
+/**
+ * バイト数を読める字に。**`null` = 保存されている値が読めない**
+ * (2026-09-12 · パス 188)。以前は `number` を取り、`NaN` が来ると
+ * `NaN < 1024` も `NaN < 1024*1024` も false なので**最後の枝へ落ちて
+ * 「NaN MB」** と刷っていた (見出しの合計も 1 件混ざれば「NaN MB」)。
+ */
+function formatBytes(n: number | null): string {
+  if (n === null) return 'サイズ不明';
   if (n < 1024) return `${n} B`;
   if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
   return `${(n / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-function formatDate(ts: number): string {
-  const d = new Date(ts);
+/**
+ * 保存時刻を読める字に。**読めなければ「時刻不明」** (2026-09-12 · パス 188)。
+ *
+ * 以前は `new Date(ts)` の部品 (`getFullYear` …) をそのまま刷っていたので、
+ * `NaN` / `1e20` / `Infinity` はどれも **`NaN/NaN/NaN NaN:NaN`** になった。
+ * パス 185 は同じ家系を `toLocaleString` の側で直したが、**走査が
+ * `toLocale…` の形だけを見ていたのでこの形は外に在った**。範囲の判定は
+ * `shared/isoDate.ts` の `parseTimestamp` が 1 か所で持つ。
+ */
+function formatDate(ts: number | null): string {
+  const d = parseTimestamp(ts);
+  if (d === null) return '時刻不明';
   return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 
@@ -51,7 +69,9 @@ export function LibraryPage() {
       return;
     }
     setItems(list);
-    setTotalBytes(list.reduce((acc, it) => acc + it.size, 0));
+    // **読める size だけ足す** (パス 188)。足せない控えは数えて注記に出す ——
+    // 混ぜると合計が NaN になり、見出しが「NaN MB」になる。
+    setTotalBytes(list.reduce((acc, it) => acc + (it.size ?? 0), 0));
   }
 
   useEffect(() => {
@@ -73,6 +93,14 @@ export function LibraryPage() {
   }
 
   const visible = filter === 'all' ? items : items.filter((i) => i.serviceId === filter);
+  /**
+   * **合計から外した控えの数** (パス 188)。`size` が読めない控えは合計に
+   * 足せないので、**足さなかったことを言う** —— 黙って外すと見出しの合計が
+   * 実際より小さく見え、上限 (50 MB) の話と食い違う。
+   * `createdAt` の側は行ごとに「時刻不明」と出るので数だけで足りる。
+   */
+  const unreadableSizes = items.filter((i) => i.size === null).length;
+  const unreadableDates = items.filter((i) => i.createdAt === null).length;
   const services = Array.from(new Set(items.map((i) => i.serviceId)));
 
   async function download(id: string) {
@@ -167,7 +195,7 @@ export function LibraryPage() {
   return (
     <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 20 }}>
       <StatusBar
-        who={`ライブラリ · ${items.length} 件 / ${formatBytes(totalBytes)}`}
+        who={`ライブラリ · ${items.length} 件 / ${formatBytes(totalBytes)}${unreadableSizes > 0 ? ` (サイズが読めない ${unreadableSizes} 件は合計に含めていません)` : ''}`}
         serviceId="library"
         source="snapshot"
         status="idle"
@@ -240,6 +268,22 @@ export function LibraryPage() {
       ) : (
         <>
           <Section title="一覧" count={visible.length}>
+            {/* **読めなかった欄を言う** (パス 188)。控えそのものは残す —— 取り出しも
+                削除もできる形にしておかないと、壊れた控えが UI から触れなくなる。 */}
+            {(unreadableSizes > 0 || unreadableDates > 0) && (
+              <div
+                data-library-unreadable
+                role="alert"
+                style={{ fontSize: 12, lineHeight: 1.7, color: 'var(--text-mute)', marginBottom: 12 }}
+              >
+                {unreadableSizes > 0 && (
+                  <div>⚠ サイズが読めない {unreadableSizes} 件は合計 (と保存容量の上限の判定) に含めていません。ファイル自体は「開く」「保存」「削除」できます。</div>
+                )}
+                {unreadableDates > 0 && (
+                  <div>⚠ 保存時刻が読めない {unreadableDates} 件は「時刻不明」と表示しています (並び順は保存された値のままです)。</div>
+                )}
+              </div>
+            )}
             <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
               <button
                 type="button"
