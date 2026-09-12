@@ -18,6 +18,7 @@
     "scripts/make-autoinstall.sh",
     "scripts/make-live-usb.sh",
     "scripts/migrate.sh",
+    "scripts/public-host-guard.cjs",
     "scripts/safe-vault-write.cjs",
     "scripts/security-audit.sh",
     "scripts/setup-linux.sh",
@@ -1480,6 +1481,14 @@
       "leafCount": 69,
       "note": "update integrity-chain.cjs,dataCrypto.ts,vault.ts,webCrypto.ts",
       "hash": "e2f7eacb42e3cb68f6d98b32e3bde9b2476346b11adb82591bc6eb606799ab4f"
+    },
+    {
+      "index": 176,
+      "prevHash": "e2f7eacb42e3cb68f6d98b32e3bde9b2476346b11adb82591bc6eb606799ab4f",
+      "merkleRoot": "20dfa75dd8e55ea18a9c69b32c4f43fef7436207632cb53b2fd842381db8c960",
+      "leafCount": 70,
+      "note": "update integrity-chain.cjs,public-host-guard.cjs,proxy.ts",
+      "hash": "f8b634ca5650570478bcc0bb1ad4a3eb17473df28ec54d26cad8eb3618e7d67d"
     }
   ],
   "tipManifest": {
@@ -1493,12 +1502,13 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "c17438d4b9933c620747ad2b2aee492a5329299325f44024fb6d9ab4cd3db7c5",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "c1355f23b10654d087fd64442f49258cd9eea7901a4b07be4c942d2490b1f858",
+    "scripts/integrity-chain.cjs": "58663984c12250de0853837a1fc8975242731ec1cad7f5878fdc8899333504b2",
     "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
     "scripts/lint-sample-data.cjs": "f5272803091a7aea49e3db4ddefa1243e88e0d1fed6e17b80f3a391cd2fa167b",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
     "scripts/make-live-usb.sh": "ece38ba927100fc42f4227fd149f88b9ffbdd67b9fc9d3a37dcbfebff74ca2b1",
     "scripts/migrate.sh": "78d13dcde6a78953eb57c4f70f300c61fdb6b26df05ff1781e6c1e84647388e9",
+    "scripts/public-host-guard.cjs": "7970ad1ccf8f9b2fa1e6c8d6a2bd7a01c2e148ad50ded827ca88fea4228d1175",
     "scripts/safe-vault-write.cjs": "263ad4e8e52952769cda1be6e25b31025e0f023439e93f6eccdc996ec15215f3",
     "scripts/security-audit.sh": "c50257fabca4b4c6def121dfc676539bd5db97679da6db4ef4961a48c6993064",
     "scripts/setup-linux.sh": "d759d679007975cf3cfbf9a26eb01a3240741ba769d6da9d886e9d57a17b5cba",
@@ -1520,7 +1530,7 @@
     "src/renderer/data/recordCipher.ts": "dcc3aaaec7f027e62791e2bfb0a8f56f799363a2a11b475cc5cf7e941ee61551",
     "src/renderer/fs/fsa.ts": "fb721de4a0aa024a6834b04e4bb22fc891d6c380518458957af18084b88b3e3d",
     "src/renderer/network/liveRead.ts": "aae9f14472c4442ddc482d11ed4843557a47c67b75d1a832800abaf387b424e1",
-    "src/renderer/network/proxy.ts": "d1f1e9dab213f299907c43f81a0d636e83be20aec9e30b41d71b9616d9d279cb",
+    "src/renderer/network/proxy.ts": "b4ec8ba48beb306dcc2c4227cf8d283fc5ba7c35d284023bd39302bfa34838f9",
     "src/renderer/oauth/pkce.ts": "9d5e69bfd010419475f26ac1838110adeaaaa9faa4a97796afa00a9e3113e946",
     "src/renderer/oauth/pkceSession.ts": "4d47589621512b9ec321e0a7db3553a9c87d32e9016d015ea51b9555bd5273a9",
     "src/renderer/security/LockScreen.tsx": "a05a31d56248d1c9b9cebad5d9bde1c0628f635b59d1787f8b843a5f993526f9",

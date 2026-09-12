@@ -25580,3 +25580,177 @@ range なので画面からは書けない)。
 - 感情レーダーの `data-emotion-missing` は `buildTeamEmotionRadar` の
   `missingData` を読む別系統のまま (理由がより詳しいのでそのままにした)。
   才能レーダー側は `data-skill-radar-omitted` が `planRadarPlot` を読む。
+
+---
+
+## パス 191 (2026-09-12) — **`--self-test` と書いてあるのに、`--self-test` が無かった**
+
+### 何を測ったか
+
+前パスで残した問いは「`selfTest` を持つゲートの陰性対照は、全部走っているか」だった。
+2026-08-25 の census はそれを一度測って 28 本すべて exit 1 を確認しているが、
+起動経路の数え方に穴が在った —— **npm と workflow しか見ていなかった**。
+vitest から呼ぶ経路が 1 本在る (`scan-credential-headers.cjs` →
+`redactionCoverage.test.ts`)。3 経路で数え直した実測:
+
+```
+  --self-test を名乗る script      38 本
+    実装していて、走っている       37
+    名乗るだけで実装が無い          1   ← scripts/public-host-guard.cjs
+```
+
+**私が前パスで「孤児 2 本」と書いたのは、この計測漏れによる誤りだった。**
+代わりに 1 本、別の形が在った。
+
+### 欠陥
+
+`scripts/public-host-guard.cjs` は週次 CI (`knowledge-auto.yml --links=400`) が
+出典 URL 11,004 本の生死を確かめるとき、第三者の `302 Location:` で runner の
+網の内側へ向けられる経路を塞ぐ関門である。その冒頭にこう書いてあった:
+
+```
+ * 使い方:
+ *   node scripts/public-host-guard.cjs --self-test
+```
+
+`selfTest` は存在しない。関数も CLI の分岐も無く、**引数を何にしても黙って
+exit 0** を返す。実測:
+
+```
+$ node scripts/public-host-guard.cjs --self-test ; echo $?
+0                                    ← 出力なし
+$ node scripts/public-host-guard.cjs --this-flag-does-not-exist ; echo $?
+0
+```
+
+書いてあるとおりに叩いた人は「関門は無事」と読む。**2026-08-25 の census は
+実装している物を数えたので、名乗るだけのこれは母集団に入らなかった。**
+
+### 走っていなかった分だけ、測られていなかった
+
+行カバレッジ (この関門に触れるテスト 3 本を全部走らせて計測): **126 文のうち
+18 文が一度も実行されていない**。
+
+| 走っていなかった判定 | 何を塞ぐか |
+| --- | --- |
+| `parsed.username !== '' \|\| parsed.password !== ''` | 資格情報を URL に載せた出典 |
+| `64:ff9b::/96` の埋め込み IPv4 | NAT64 経由の IMDS (`[64:ff9b::169.254.169.254]`) |
+| `2002::/16` の埋め込み IPv4 | 6to4 経由の IMDS |
+| `::a.b.c.d` (IPv4-compatible) | 同上 |
+| `resolvesToPublicHost` の早期 return 5 つ | 解決不能 → deny・答えが空 → deny・リテラルは解決しない |
+| `expandV6` の境界 6 つ | ゾーン ID・`::` が 2 つ・hex でない群・8 群の完全形・埋める余地無し |
+
+**振る舞いはどれも正しかった** —— 34 形を手で当てて確かめた
+(NAT64 / 6to4 / IPv4-compatible の IMDS はすべて deny、公開 IPv4 を載せた形は
+allow、`2130706433` / `127.1` / `0x7f.0.0.1` は `new URL` が正規化するので
+`isFetchableUrl` が deny)。**無かったのは、それを留めておく物である。**
+
+### そして、留めていなかった側でずれていた
+
+この判断は 3 実装ある (client = `proxy.ts` / Worker = `docs/PROXY_EXAMPLE.md` /
+CI = この関門)。`proxyWorkerParity.test.ts` が 3 つを同じ標本に当てているが、
+その注記は **名前を比較の外に置くと明記**していた ——「名前は解決してから
+判定するので、ここでの比較はリテラル (IP) の標本に限る」。
+
+理由は正しい。ところが**解決を待たずに落とす名前**が両側に在る (loopback を
+指す名前。hosts の書き換えと検索ドメインの補完で揺れるので、揺れる物を唯一の
+守りにしないため)。そこが比較の外だった。名前 21 形を当てた実測 —— **11 形で
+答えが違い、ずれは両方向**:
+
+```
+  host                     client   CI関門
+  localhost                true     true
+  localhost.               true     false   ★ CI 側だけが通す
+  LOCALHOST.               true     false   ★
+  ip6-localhost            true     false   ★
+  ip6-loopback             true     false   ★
+  foo.localhost            false    true    ★ client だけが通す
+  foo.localhost.           false    false   ★ 両方が通す
+  metadata.google.internal true     false   (役割分担・意図した差)
+  printer.local            true     false   (同上)
+  x.internal               true     false   (同上)
+  x.home.arpa              true     false   (同上)
+```
+
+- 末尾ドットの迂回 (`localhost.`) は **2026-07 の監査が client 側で見つけて
+  直したもの**で、CI 側には来ていなかった。`URL` は名前の末尾ドットを残す。
+- `*.localhost` は **RFC 6761 §6.3** が `localhost.` 直下のすべてを loopback と
+  定めており、glibc の nss・systemd-resolved・主要ブラウザがそのとおりに振る舞う。
+  client 側は完全一致しか見ていなかった。
+
+つまり**両方が相手の穴を持っていた**。client 側は 2026-07 の監査と 2026-08 の
+変異検査を通った固いファイルである —— それでも「比較の外に置いた区域」では
+2 形を通していた。残り 5 形 (`metadata.google.internal` など) は**設計どおりの
+差**で、client は proxy へ渡す前の先回り・CI は解決後の IP で見る役割分担なので、
+そこは「違うこと」を留める形にした。
+
+### 直した物
+
+| 置いた物 | 役目 |
+| --- | --- |
+| `scripts/public-host-guard.cjs` の `selfTest` | 65 件の対照 (ホスト 40 / URL 13 / 解決 12)。CLI の受け口・`module.exports`・引数不明時の使い方表示 (exit 2) |
+| 同 `LOOPBACK_NAMES` / `trimDots` | loopback の別名 3 つ + 先頭・末尾ドットの正規化 |
+| `src/renderer/network/proxy.ts` | loopback 名の枝に `*.localhost` を足し、別名を `LOOPBACK_NAMES` の集合へ |
+| `src/shared/__tests__/gateSelfTests.test.ts` (新) | 両方向 census + 関門の self-test を CI の中で実行 |
+| `proxyWorkerParity.test.ts` の名前の節 | 名前 19 形 × 2 実装 + 設計で分かれる 5 形を「違うこととして」留める |
+| `scripts/integrity-chain.cjs` の `PROTECTED` | 関門を保護対象へ (ブロック #176)。`proxy.ts` の三つ子で 1 人だけ鍵が無かった |
+
+### 対照 (19 件・すべて鳴った)
+
+| # | 壊した物 | 鳴った所 |
+| --- | --- | --- |
+| C1 | ドットの正規化を消す | self-test (`localhost.` を通す) |
+| C2 | loopback 別名を `localhost` だけに戻す | self-test |
+| C3 | `*.localhost` を落とす | self-test |
+| C4 | 資格情報つき URL の拒否を消す | self-test |
+| C5-C7 | NAT64 / 6to4 / IPv4-compatible の検査を消す | self-test |
+| C8 | 解析不能を allow へ倒す | self-test |
+| C9 | 解決できない名前を allow へ倒す | self-test |
+| C10 | 答えが空でも allow へ倒す | self-test |
+| C11 | ゾーン ID の除去を消す | **最初は鳴らなかった** (下記) |
+| C12 | 常に true へ落とす偽物 | self-test (通す側の標本) |
+| C13 | CI 側のドット正規化を消す | 名前パリティ 3 件 |
+| C14 | client の `*.localhost` を消す | 名前パリティ 2 件 |
+| C15 | selfTest を消して名乗りだけ残す | census 2 件 |
+| C16 | vitest からの起動を外す | census 2 件 |
+| C17 | `fill < 1` を `fill < 0` へ | self-test |
+| C18 | 実装は残し CLI の受け口だけ消す | census 1 件 |
+| C19 | 下位命令 (`self-test`) の起動を外す | census 2 件 |
+
+**C11 は最初の形では鳴らなかった。** `fe80::1%eth0` からゾーン ID を落とさないと
+解析不能になり、**安全側 (deny) へ倒れて期待値と一致してしまう**。
+ゾーン ID を落とす効果が観測できるのは**通す側**だけなので、
+`2001:4860:4860::8888%eth0 → false` を標本に足して鳴らした。
+パス 188 / 189 と同じ形 —— **安全側へ倒れる変異は、通す側の標本でしか捕まらない。**
+
+### census を作りながら 3 度自分で踏んだ
+
+1. 起動経路に **vitest を数えず**「孤児 2 本」と誤った (前パスの記録を訂正)。
+2. 名乗りを `/--self-test/` だけで見たので、**他のファイルについて書いた注記**が
+   名乗りとして当たった (`integrity-chain.cjs` —— しかもそれは私がこのパスで
+   書いた注記だった)。自分の道を含めた形 (`scripts/<自分> … --self-test`) に直した。
+3. 起動経路を「テストが名前に触れている」で数えたので、**散文で名前を挙げている
+   だけのファイル (census 自身)** が経路として数えられた。`selfTest` を取り出して
+   いる require の場所を見る形に直した。
+
+どれも**緩い判定が「走っている」を作ってしまう**形である。規則が実際の書き方に
+当たることを、2 形ずつの標本で同じ検査の中に留めた。判定は「関数が在るか」では
+なく**引数の受け口が在るか**にした —— 欠陥は「関数が無い」ではなく「叩いても
+何も起きない」だったから。受け口の変数名も決め打ちにしない
+(`args` で書いている script が在り、名前で数えると正しい物を欠陥として挙げる)。
+
+### 残した物 / 次に見る所
+
+- **`64:ff9b:1::/48` (RFC 8215 の local-use NAT64 prefix) は 2 実装とも通す。**
+  埋め込み IPv4 を取り出すのは well-known prefix (`64:ff9b::/96`) だけで、
+  client 側は「best-effort・任意の 6to4 符号化は Worker の解決後 IP 検査で捕まる」
+  と明記している。**CI 側にはその後詰めが無い** —— `resolvesToPublicHost` は
+  IPv6 リテラルを見ると解決せずに true を返すので、リテラルの検査が唯一の守り。
+  runner に当該 prefix の NAT64 が要るので現実性は低いが、非対称は事実として残る。
+- 名前の「設計で分かれる 5 形」は現状を固定しただけ。CI 側でも先回りするなら
+  内部 TLD の表が 3 つ目になるので、寄せ方を決めてからにする。
+- `selfTest` を持ちながら CLI の受け口が無い script が 6 本在る
+  (`cross-doc-consistency` / `lint-charset` / `lint-test-coverage` /
+  `safe-vault-write` / `verify-architecture` / `verify-graph`)。
+  **どれも名乗っていないので今回の規則の外** —— 呼ぶ側 (npm) が
+  自分の引数で走らせている。名乗りと受け口の対応だけを規則にした。

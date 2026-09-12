@@ -280,6 +280,9 @@ export const MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES;
  *  draft-private-use TLDs, and typical home-router zones. Compared
  *  against the *last DNS label only* so that a public name like
  *  `example.localcom.` (no dot before "local") is not flagged. */
+/** loopback を指す名前。`ip6-*` は Debian / Ubuntu の `/etc/hosts` の既定の別名。 */
+const LOOPBACK_NAMES: ReadonlySet<string> = new Set(['localhost', 'ip6-localhost', 'ip6-loopback']);
+
 const INTERNAL_TLDS: ReadonlySet<string> = new Set([
   'local',     // mDNS (RFC 6762)
   'internal',  // common internal zone
@@ -316,7 +319,15 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
   const bare = bracketless.replace(/^\.+/, '').replace(/\.+$/, '');
 
   // Loopback / common local hostnames.
-  if (bare === 'localhost' || bare === 'ip6-localhost' || bare === 'ip6-loopback') return true;
+  //
+  // `*.localhost` も loopback である —— RFC 6761 §6.3 は `localhost.` 直下の
+  // **すべての名前**を loopback として解決すべきと定めており、glibc の nss と
+  // systemd-resolved、主要ブラウザはそのとおりに振る舞う。2026-09-12 に CI 側の
+  // 関門 (`scripts/public-host-guard.cjs`) と名前の標本で突き合わせたところ、
+  // **ここだけが `foo.localhost` を通していた** (完全一致しか見ていなかった)。
+  // Worker 側は解決後の IP を見るので最終的には塞がれるが、この関数の注記が
+  // 挙げている「loopback: … localhost」の網に穴が在る状態だった。
+  if (LOOPBACK_NAMES.has(bare) || bare.endsWith('.localhost')) return true;
 
   // Explicit cloud-metadata hostnames.
   // Stryker disable next-line ConditionalExpression,StringLiteral: この名前は最終ラベルが

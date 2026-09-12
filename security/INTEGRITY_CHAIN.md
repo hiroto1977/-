@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 176
+- ブロック数: 177
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `e2f7eacb42e3cb68f6d98b32e3bde9b2476346b11adb82591bc6eb606799ab4f`
-- 保護対象: 69 ファイル
+- 末尾(tip)ハッシュ: `f8b634ca5650570478bcc0bb1ad4a3eb17473df28ec54d26cad8eb3618e7d67d`
+- 保護対象: 70 ファイル
 
 ## ブロック
 
@@ -189,6 +189,7 @@
 | 173 | `3fe75a462c025e45` | `720192b295ce1200` | `b17be4721c89ceaf` | update localWrite.ts |
 | 174 | `f81458429b0e5a9b` | `b17be4721c89ceaf` | `13893b909040ef22` | update pkce.ts,vault.ts |
 | 175 | `ad1c9a552a1fffdc` | `13893b909040ef22` | `e2f7eacb42e3cb68` | update integrity-chain.cjs,dataCrypto.ts,vault.ts,webCrypto.ts |
+| 176 | `20dfa75dd8e55ea1` | `e2f7eacb42e3cb68` | `f8b634ca56505704` | update integrity-chain.cjs,public-host-guard.cjs,proxy.ts |
 
 ## 保護対象ファイル
 
@@ -208,6 +209,7 @@
 - `scripts/make-autoinstall.sh`
 - `scripts/make-live-usb.sh`
 - `scripts/migrate.sh`
+- `scripts/public-host-guard.cjs`
 - `scripts/safe-vault-write.cjs`
 - `scripts/security-audit.sh`
 - `scripts/setup-linux.sh`

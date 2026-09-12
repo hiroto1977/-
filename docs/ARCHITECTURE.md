@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **13466** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **13473** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 31 / 36 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 579 | 自己検証 |
+| `file:line` 参照数 | 590 | 自己検証 |
 | 図の中の `file:line` 参照数 | 27 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -3638,6 +3638,90 @@ payload を数える (数字と文面だけ合わせても「口はあるが繋�
 **`verify:arch` の payload 台帳が私の直しの穴を教えた** —— `SaveStatePayload` に
 `axes` の欄が無い間、画面が送った軸名は `saveTeamRadarStateImpl` の分解で
 **黙って落ちていた**。同じパスの中に同じ形が残っていた。
+
+**「`--self-test` と書いてある」ことと、「`--self-test` が在る」ことは別だった**
+(2026-09-12 · パス 191)。`scripts/public-host-guard.cjs` は週次 CI
+(`knowledge-auto.yml --links=400`) が出典 URL の生死を確かめるときに、第三者の
+`302 Location:` で runner の網の内側へ向けられる経路を塞ぐ関門である。その冒頭は
+こう書いていた:
+
+```
+ * 使い方:
+ *   node scripts/public-host-guard.cjs --self-test
+```
+
+**`selfTest` は存在しなかった。** 関数も CLI の分岐も無く、引数を何にしても
+黙って exit 0 を返す。書いてあるとおりに叩いた人は「関門は無事」と読む。
+
+この形は 2026-08-25 の census を**すり抜けていた**。あのとき self-test を持つ
+`scripts/*.cjs` 28 本を 1 本ずつ壊して終了コードを測ったが、数えたのは
+**実装している物**だったので、名乗るだけのこれは母集団に入らなかった。
+起動経路を数え直した実測 (npm / workflow / **vitest** の 3 経路):
+
+```
+  --self-test を名乗る script      38 本
+    実装していて、走っている       37   ← 前回「2 本が孤児」と書いたのは私の
+                                        計測が vitest を経路に数えていなかった誤り
+    名乗るだけで実装が無い          1   ← public-host-guard.cjs
+```
+
+**走っていなかった分だけ、測られていなかった。** 行カバレッジで 126 文のうち
+**18 文が一度も実行されていない**。中身は関門の要そのものである:
+
+| 走っていなかった判定 | 何を塞ぐか |
+| --- | --- |
+| `parsed.username !== ''` | 資格情報を URL に載せた出典 (`https://u:pw@host/`) |
+| `64:ff9b::/96` の埋め込み IPv4 | NAT64 経由の IMDS (`[64:ff9b::169.254.169.254]`) |
+| `2002::/16` の埋め込み IPv4 | 6to4 経由の IMDS |
+| `::a.b.c.d` (IPv4-compatible) | 同上 |
+| `resolvesToPublicHost` の早期 return 全部 | 解決できない名前 → deny・答えが空 → deny・リテラルは解決しない |
+| `expandV6` の境界 6 つ | ゾーン ID・`::` が 2 つ・hex でない群・8 群の完全形・埋める余地が無い形 |
+
+**振る舞いはどれも正しかった** —— 34 形を手で当てて確かめた。無かったのは、
+それを留めておく物である。
+
+**そして、留めていなかった側でずれていた。** この判断は 3 実装ある
+(`src/renderer/network/proxy.ts` = client / `docs/PROXY_EXAMPLE.md` = Worker / この関門 = CI) が、
+`src/renderer/network/__tests__/proxyWorkerParity.test.ts` の比較は**リテラル (IP) の標本に限る**と明記して
+**名前を比較の外に置いていた** —— 「名前は解決してから判定するから」。
+その理由は正しいが、**解決を待たずに落とす名前**が両側に在る (loopback を指す
+名前。hosts の書き換えと検索ドメインの補完で揺れるので、揺れる物を唯一の守りに
+しないため)。そこが比較の外だった。名前 21 形を当てると **11 形で答えが違い、
+ずれは両方向**だった:
+
+```
+  CI 側だけが通していた : localhost. / LOCALHOST. / ip6-localhost / ip6-loopback
+                          ← 末尾ドットの迂回は 2026-07 の監査が client 側で
+                            見つけて直したもので、CI 側には来ていなかった
+  client だけが通していた: foo.localhost / foo.localhost.
+                          ← RFC 6761 §6.3 は `localhost.` 直下の**すべて**を
+                            loopback と定める。完全一致しか見ていなかった
+```
+
+つまり**両方が相手の穴を持っていた**。client 側は 2026-07 の監査と 2026-08 の
+変異検査を通った、このリポジトリで最も固い部類のファイルである —— それでも
+「比較の外に置いた区域」では 2 形を通していた。
+
+直した形:
+
+| 置いた物 | 役目 |
+| --- | --- |
+| `scripts/public-host-guard.cjs` の `selfTest` | 65 件の対照 (塞ぐ 31 / 通す 9 + URL 13 + 解決 12)。CLI の受け口と `module.exports` も付けた |
+| 同 `LOOPBACK_NAMES` / `trimDots` | loopback の別名 3 つと、先頭・末尾ドットの正規化 (client と同じ規則) |
+| `src/renderer/network/proxy.ts` の loopback 名の枝 | `*.localhost` を足した (RFC 6761 §6.3) |
+| `src/shared/__tests__/gateSelfTests.test.ts` | 「名乗ったなら叩くと走る」「実装が在るなら誰かが走らせる」の両方向 census + 関門の self-test を CI の中で実行 |
+| `src/renderer/network/__tests__/proxyWorkerParity.test.ts` の名前の節 | 名前を受け取る 2 実装を同じ標本へ。**設計で分かれる組は「違うこと」を留める** (client は先回り・CI は解決後に見る) |
+| `scripts/integrity-chain.cjs` の `PROTECTED` | 関門を保護対象へ (`src/renderer/network/proxy.ts` の三つ子の 3 人目だけ鍵が無かった)。ブロック #176 |
+
+**census を作りながら 3 度自分で踏んだ** —— (1) 起動経路に vitest を数えず
+「孤児 2 本」と誤った。(2) 名乗りを `/--self-test/` だけで見たので、**他の
+ファイルについて書いた注記**が名乗りとして当たった (`integrity-chain.cjs`)。
+(3) 起動経路を「テストが名前に触れている」で数えたので、散文で名前を挙げている
+だけのファイル (census 自身) が経路として数えられた。どれも**緩い判定が
+「走っている」を作ってしまう**形で、規則を実際の書き方へ当てる標本
+(`advertises` / `DISPATCHES` / `DEFINES` の 2 形ずつ) を同じ検査に添えて留めた。
+判定は「関数が在るか」ではなく**引数の受け口が在るか**にした —— 欠陥は
+「関数が無い」ではなく「叩いても何も起きない」だったから。
 
 **暗号パラメータ**も同じ形だった。AES-GCM の IV 長と PBKDF2 の強度が
 `src/renderer/security/vault.ts` / `src/renderer/security/dataCrypto.ts` /
