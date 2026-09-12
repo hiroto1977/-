@@ -58,15 +58,17 @@ const LEDGER: Record<string, LedgerEntry> = {
     keys: ['chatbot-history'],
     why: '会話の表示履歴。会話そのものは続けられ、失うのは過去の吹き出しだけ。要望の記録 (chatbot-requests) は返事が「記録します」と言い切るので localWrite を通す。',
   },
-  'src/renderer/components/GoogleConnectCard.tsx': {
-    policy: 'deliberate-swallow',
-    keys: ['google-client-id'],
-    why: 'OAuth のクライアント ID (秘密ではない)。保存できなくてもサインインはそのまま進み、次回に入れ直せる。',
-  },
+  /*
+   * `GoogleConnectCard.tsx` は 2026-09-12 (パス 155) に**この台帳から外れた** ——
+   * `localWrite` の入口を通すようにしたので、直接 setItem を呼ぶ場所ではなくなった。
+   * 外した理由は「秘密でない ID だから捨ててよい」が成り立たなかったこと:
+   * あのカードは「1 回貼れば各ページで使えます」と**書いている**ので、
+   * 保存できないときに黙ると画面が嘘をつく。**約束している保存は捨てられない。**
+   */
   'src/renderer/pages/Microsoft365Page.tsx': {
     policy: 'deliberate-swallow',
     keys: ['ms365-client-id'],
-    why: 'OAuth のクライアント ID (秘密ではない)。GoogleConnectCard と同じ理由で、失っても入れ直すだけで済む。',
+    why: 'OAuth のクライアント ID (秘密ではない)。**画面は保存を約束していない** (「次回のために残す」とも書いていない) ので、失っても入れ直すだけで済む。約束を書いた時点でこの行は surfaced か localWrite へ移す — Google 側は約束していたのでパス 155 で移した。',
   },
   'src/renderer/pages/AssistantPage.tsx': {
     policy: 'deliberate-swallow',
@@ -188,13 +190,15 @@ describe('端末への書き込みの台帳', () => {
   });
 
   it('★ localWrite を通した画面には、生の setItem が残っていない', () => {
-    // 2026-09-06 のパスで書類スタジオ / Team Radar / 要望の記録を入口へ寄せた。
+    // 2026-09-06 のパスで書類スタジオ / Team Radar / 要望の記録を入口へ寄せ、
+    // 2026-09-12 (パス 155) に Google の「かんたん接続」カードも寄せた。
     // ここが再び現れたら、そのときは台帳にも載るので上の検査が鳴る —— この検査は
     // 「寄せた物が戻っていない」ことを直接見る。
     const moved = SITES.filter(
       (s) =>
         s.file === 'src/renderer/pages/DocstudioPage.tsx'
-        || s.file === 'src/renderer/pages/TeamRadarPage.tsx',
+        || s.file === 'src/renderer/pages/TeamRadarPage.tsx'
+        || s.file === 'src/renderer/components/GoogleConnectCard.tsx',
     );
     expect(moved).toEqual([]);
   });

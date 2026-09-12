@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Section } from './StatusBar';
+import { describeStorageError, writeLocalString } from '../data/localWrite';
 
 /**
  * Google ワークスペース「かんたん接続」カード (Drive / Calendar / Gmail 共通)。
@@ -33,16 +34,36 @@ export interface GoogleConnectCardProps {
   readonly onConnected?: () => void;
 }
 
+/**
+ * 保存済みのクライアント ID を読む。**「未設定」と「読めなかった」を分ける** ——
+ * プライベートウィンドウやブラウザ設定で Web Storage 自体が拒まれると `getItem` は
+ * 投げる。そこを `catch { return '' }` で畳むと、**保存できない端末を「まだ貼っていない
+ * 端末」と同じ**に見せてしまい、下の「1 回貼れば各ページで使えます」が嘘になる
+ * (パス 86 で設定画面に同じ形を直した)。
+ */
+function readSavedClientId(): { readonly value: string; readonly readable: boolean; readonly reason: string } {
+  try {
+    return { value: localStorage.getItem(GOOGLE_CLIENT_ID_STORAGE_KEY) ?? '', readable: true, reason: '' };
+  } catch (err) {
+    return { value: '', readable: false, reason: describeStorageError(err) };
+  }
+}
+
 export function GoogleConnectCard({ serviceId, onConnected }: GoogleConnectCardProps) {
-  const [clientId, setClientId] = useState(() => {
-    try {
-      return localStorage.getItem(GOOGLE_CLIENT_ID_STORAGE_KEY) ?? '';
-    } catch {
-      return '';
-    }
-  });
+  const [saved] = useState(readSavedClientId);
+  const [clientId, setClientId] = useState(saved.value);
   const [signingIn, setSigningIn] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string }>();
+  /**
+   * クライアント ID が**他の 2 画面へ持ち越せるか**。
+   *
+   * 読めなかった時点で持ち越せないと分かっているので `false` で始める。
+   * サインインのときの保存が失敗したらそこでも `false` にする。
+   * この値が下の説明文を切り替える —— **できないことを「できます」と書かない。**
+   */
+  const [shareNote, setShareNote] = useState<string | null>(
+    saved.readable ? null : `この端末ではクライアント ID を保存できません (${saved.reason})。`,
+  );
 
   const openExternal = (url: string) => window.serviceHub?.openExternal(url);
 
@@ -50,11 +71,14 @@ export function GoogleConnectCard({ serviceId, onConnected }: GoogleConnectCardP
     if (!window.serviceHub) return;
     setSigningIn(true);
     setResult(undefined);
-    try {
-      localStorage.setItem(GOOGLE_CLIENT_ID_STORAGE_KEY, clientId.trim());
-    } catch {
-      // localStorage 不可でもサインイン自体は続行できる。
-    }
+    /*
+     * **保存の失敗を黙って捨てない** (パス 155)。サインイン自体は保存できなくても
+     * 続けられる (トークンは別の保管層) が、下の「1 回貼れば各ページで使えます」は
+     * この保存に乗った約束なので、書けなかったらその約束を取り下げる。
+     * 文面は `data/localWrite.ts` の 1 か所から (容量超過 / 保存禁止 / その他)。
+     */
+    const write = writeLocalString(GOOGLE_CLIENT_ID_STORAGE_KEY, clientId.trim());
+    setShareNote(write.ok ? null : write.message);
     const res = await window.serviceHub.authorize(serviceId, clientId.trim() || undefined);
     setSigningIn(false);
     if (res.ok) {
@@ -114,8 +138,25 @@ export function GoogleConnectCard({ serviceId, onConnected }: GoogleConnectCardP
             上部の「トークン設定」に貼り付け。クライアント ID 不要・約 1 時間有効（試用向け）。
           </div>
         </div>
+        {shareNote !== null && (
+          <div
+            data-google-client-id-not-saved
+            role="status"
+            style={{
+              fontSize: 12,
+              lineHeight: 1.6,
+              padding: '6px 10px',
+              borderRadius: 4,
+              border: '1px solid #fbbf24',
+              background: 'rgba(251, 191, 36, 0.08)',
+              color: '#fbbf24',
+            }}
+          >
+            ⚠ {shareNote}Drive / Calendar / Gmail それぞれの画面で貼り直してください。
+          </div>
+        )}
         <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>
-          ※ クライアント ID は Drive / Calendar / Gmail で共通（1 回貼れば各ページで使えます）。
+          ※ クライアント ID は Drive / Calendar / Gmail で共通（{shareNote === null ? '1 回貼れば各ページで使えます' : 'ただしこの端末では保存できないため、画面ごとに貼り直しが必要です'}）。
           サインインはサービスごとに行い、必要スコープのみ同意します。ライブ接続（実データ取得・送信）は
           デスクトップ版の機能で、ブラウザ版は同梱スナップショットを表示します。
           トークンの保存方法はビルドと環境で変わります —— デスクトップ版は OS キーチェーン由来の鍵で暗号化、
