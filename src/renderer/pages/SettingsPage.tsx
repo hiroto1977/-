@@ -42,7 +42,9 @@ import {
   generatePkce,
   GOOGLE_SCOPES,
   parseGoogleCallback,
+  type PkceSecrets,
 } from '../oauth/pkce';
+import { describeCryptoFailure } from '../security/webCrypto';
 import {
   CALLBACK_PASTE_HINT,
   CALLBACK_PASTE_PLACEHOLDER,
@@ -1761,7 +1763,23 @@ export function GoogleOAuthSection() {
       setErr(blocked);
       return;
     }
-    const secrets = await generatePkce();
+    /*
+     * **鍵を作れなかったら、ここで止めて理由を出す。** `onClick={start}` は `async` なので、
+     * 投げたまま抜けると拒否が宙に浮き**画面には何も出ない** —— 押しても文が 1 つも
+     * 増えず、認可 URL も出ず、ボタンが死んでいるように見える。2026-09-12 実測
+     * (パス 169): 1 段目の文のまま・`openExternal` 0 回・`readPkceSession()` は null。
+     *
+     * **2 行下の `savePkceSession` には パス 157 でこの守りを付けてあった** ——
+     * 隣の `await` が素のまま残っていた。`crypto.subtle` は安全なコンテキストに
+     * しか無いので、平文の http:// で配ると必ずここを通る (文面は `security/webCrypto.ts`)。
+     */
+    let secrets: PkceSecrets;
+    try {
+      secrets = await generatePkce();
+    } catch (e) {
+      setErr(describeCryptoFailure(e));
+      return;
+    }
     // 必須: token exchange まで verifier を保持。置き場所と消し方は
     // `oauth/pkceSession.ts` に 1 つだけ持つ (2026-08-23)。
     //
