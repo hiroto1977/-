@@ -16,8 +16,13 @@ import { isSafeFilename } from '../../shared/safeFilename';
 const DB_NAME = 'business-hub-library';
 const DB_VERSION = 1;
 const STORE = 'items';
-const MAX_ITEMS = 100;
-const MAX_BYTES = 50 * 1024 * 1024;
+/**
+ * 保存の上限。**外へ出す** —— サイドバーの説明が「50 MB / 100 件」と名乗るので、
+ * `sidebarNumberClaims.test.ts` がこの定数と突き合わせる (パス 163)。
+ * 数を 2 か所に書くと必ず食い違う。
+ */
+export const MAX_ITEMS = 100;
+export const MAX_BYTES = 50 * 1024 * 1024;
 
 export interface LibraryItem {
   readonly id: string;
