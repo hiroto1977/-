@@ -232,10 +232,20 @@ export function Microsoft365Page() {
         title="アクション (書き込み)"
         action={
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={() => setOpenForm((v) => (v === 'mail' ? 'none' : 'mail'))}>
+            {/*
+              **フォームを切り替えたら前の結果を消す。** (2026-09-12 · パス 152)
+
+              `result` は 1 つの state で、メールの節と予定の節の**両方**が同じものを刷る。
+              2026-09-12 まで切り替えても消えなかったので、メール送信の
+              「送信しました → a@example.com」が**予定作成ボタンの隣**に出ていた ——
+              どの操作の結果なのか読めない (逆向きも同じで、予定作成の失敗が
+              メールの 送信 の隣に出る)。この画面は全域計測で 32.05% で、
+              3 つのハンドラはどれも 1 度も走っていなかった。
+            */}
+            <button onClick={() => { setResult(undefined); setOpenForm((v) => (v === 'mail' ? 'none' : 'mail')); }}>
               {openForm === 'mail' ? '閉じる' : '✉ メール送信'}
             </button>
-            <button onClick={() => setOpenForm((v) => (v === 'event' ? 'none' : 'event'))}>
+            <button onClick={() => { setResult(undefined); setOpenForm((v) => (v === 'event' ? 'none' : 'event')); }}>
               {openForm === 'event' ? '閉じる' : '📅 予定を作成'}
             </button>
           </div>
