@@ -25,9 +25,22 @@
  * もう 1 つ、パス 112 の印は**名前**で当てていた (`MAX_ANALYZE_TEXT_CHARS` が本体に在れば合格)。
  * 名前が在ることと、その値で**断っている**ことは別 —— `slice(0, MAX_…)` でも名前は在る
  * (パス 113 の対照 H が鳴らなかったのはこの形)。印は比較式 (`.length > MAX_…`) で当てる。
+ *
+ * ## 画面側の天井は 1 形ではない (パス 168)
+ *
+ * パス 112 は画面の天井を `maxLength={定数}` の**1 形だけ**で留めていた。パス 168 で、
+ * **人が本文を貼る欄**ではそれが害になると実測した —— ブラウザは天井を超えた分を
+ * **黙って**落とすので、`EmotionsPage` では先頭 5,000 字だけが Anthropic へ行き、
+ * 返ってきた感情分析が「貼った文の分析」として出ていた。結果は正しく見えるので
+ * 切れたことは誰にも見えない。貼る欄は**切らずに断る** (`charsOverCeiling` + 送らない)。
+ *
+ * だからここは「天井を持っているか」ではなく「**どちらの形で**持っているか」を台帳に書き、
+ * 形ごとに別の印で当てる。`'refuse'` の行は `maxLength={定数}` が**無い**ことも要る ——
+ * 両方在るとブラウザが先に落とし、断る側に制御が来ない (台帳は双方向)。
  */
 import { describe, expect, it } from 'vitest';
-import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { originalSourcePath, readOriginalSource } from '../../shared/__tests__/originalSource';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import {
   ANY_AI_MARKS,
@@ -64,21 +77,69 @@ const SILENT_CUT_ALLOWED: Readonly<Record<string, string>> = {
     '切るのは保存する履歴の件数 (MAX_ANALYSES) で、入力ではない。text は MAX_ANALYZE_TEXT_CHARS で先に断る',
 };
 
-/** 画面 → AI へ行く入力欄が読む定数と、その欄の数 (`null` = 利用者の入力欄は AI へ行かない。理由を書く)。 */
+/**
+ * 画面が天井を持つ **2 つの形**。どちらも「黙って落とさない」を満たすが、
+ * **利用者に起きることが違う**ので、どちらなのかを台帳が持つ。
+ *
+ * | `how` | 画面の作り | 利用者に起きること |
+ * | --- | --- | --- |
+ * | `'maxLength'` | `maxLength={定数}` | ブラウザが天井で打ち止めにする (それ以上入らない) |
+ * | `'refuse'` | `charsOverCeiling(…, 定数)` で**送らない** | 全文が欄に残り、いくら超えているかが出る |
+ *
+ * 打ち止めが向くのは**自分で打つ短い欄** (質問 1 行)。断るのが向くのは
+ * **人が本文を貼る欄** —— 貼った本文を黙って切ると、切れた文への答えが
+ * 全文への答えとして返る (パス 168 の実測)。
+ */
+type Bound =
+  | { readonly how: 'maxLength'; readonly fields: number }
+  | {
+      readonly how: 'refuse';
+      /**
+       * `charsOverCeiling(…, 定数)` が要る回数。
+       * **2 か所**なのは、超過を述べる側と、送る手前の**最後の砦**の両方が要るから ——
+       * 押せなくするだけでは、state が古いまま押された経路で切れた本文が出ていく。
+       */
+      readonly reads: number;
+      readonly why: string;
+      /**
+       * 振る舞い (押せない・`invoke` しない・全文が残る) を留めている検査
+       * (`RENDERER` からの相対)。ここの走査は綴りしか見られないので、
+       * **断りが本当に効いているか**はその検査が持つ。消えたらここが鳴る。
+       */
+      readonly provenBy: string;
+    };
+
+/** 画面 → AI へ行く入力欄が読む定数と、その天井の持ち方 (`null` = 利用者の入力欄は AI へ行かない。理由を書く)。 */
 type PageCap =
-  | { readonly constants: Readonly<Record<string, number>> }
+  | { readonly constants: Readonly<Record<string, Bound>> }
   | { readonly constants: null; readonly why: string };
 
+const MAX_LEN = (fields: number): Bound => ({ how: 'maxLength', fields });
+
 const PAGE_CAPS: Readonly<Record<string, PageCap>> = {
-  'pages/AssistantPage.tsx': { constants: { MAX_ASSISTANT_CONTENT_CHARS: 1 } },
-  'pages/VillagePage.tsx': { constants: { MAX_ASSISTANT_CONTENT_CHARS: 1 } },
-  'pages/SkillsPage.tsx': { constants: { MAX_ASSISTANT_CONTENT_CHARS: 1 } },
-  'pages/BusinessPage.tsx': { constants: { MAX_ADVISOR_QUESTION_CHARS: 1 } },
-  'pages/StocksPage.tsx': { constants: { MAX_ADVISOR_QUESTION_CHARS: 1 } },
-  'pages/EmotionsPage.tsx': { constants: { MAX_ANALYZE_TEXT_CHARS: 1 } },
+  'pages/AssistantPage.tsx': { constants: { MAX_ASSISTANT_CONTENT_CHARS: MAX_LEN(1) } },
+  'pages/VillagePage.tsx': { constants: { MAX_ASSISTANT_CONTENT_CHARS: MAX_LEN(1) } },
+  'pages/SkillsPage.tsx': { constants: { MAX_ASSISTANT_CONTENT_CHARS: MAX_LEN(1) } },
+  'pages/BusinessPage.tsx': { constants: { MAX_ADVISOR_QUESTION_CHARS: MAX_LEN(1) } },
+  'pages/StocksPage.tsx': { constants: { MAX_ADVISOR_QUESTION_CHARS: MAX_LEN(1) } },
+  'pages/EmotionsPage.tsx': {
+    constants: {
+      MAX_ANALYZE_TEXT_CHARS: {
+        how: 'refuse',
+        reads: 2,
+        why:
+          'この画面の欄だけは**人が本文を貼る** (placeholder が「メール本文、自分の日記」と貼り付けを誘い、'
+          + 'どちらも 5,000 字をふつうに超える)。maxLength に任せると超過分が黙って落ち、先頭 5,000 字への'
+          + '分析が全文への分析として画面に出る —— 結果は正しく見えるので利用者に見分けられない (パス 168)',
+        provenBy: 'pages/__tests__/emotionsCeilingOnScreen.test.ts',
+      },
+    },
+  },
   // 端末内 (Ollama)。prompt と system は別の天井 —— 欄ごとに読む定数が違う。
-  'pages/OllamaPage.tsx': { constants: { MAX_OLLAMA_PROMPT_CHARS: 1, MAX_OLLAMA_SYSTEM_CHARS: 1 } },
-  'components/ChatbotWidget.tsx': { constants: { MAX_OLLAMA_PROMPT_CHARS: 1 } },
+  'pages/OllamaPage.tsx': {
+    constants: { MAX_OLLAMA_PROMPT_CHARS: MAX_LEN(1), MAX_OLLAMA_SYSTEM_CHARS: MAX_LEN(1) },
+  },
+  'components/ChatbotWidget.tsx': { constants: { MAX_OLLAMA_PROMPT_CHARS: MAX_LEN(1) } },
   'pages/GmailPage.tsx': {
     constants: null,
     why: '受信スレッドの件名と送信者 (取得済みデータ) を送る。利用者の入力欄 (下書き) は AI へ行かない',
@@ -88,6 +149,16 @@ const PAGE_CAPS: Readonly<Record<string, PageCap>> = {
     why: 'チャンネル名と目的 (取得済みデータ) を送る。利用者の入力欄 (送信) は AI へ行かない',
   },
 };
+
+/** `maxLength={定数}` が在る回数 (ブラウザに打ち止めさせている欄の数)。 */
+function maxLengthReads(src: string, constant: string): number {
+  return src.split(`maxLength={${constant}}`).length - 1;
+}
+
+/** `charsOverCeiling(…, 定数)` が在る回数 (断る形でこの天井を読んでいる回数)。 */
+function refusalReads(src: string, constant: string): number {
+  return src.match(new RegExp(`charsOverCeiling\\(\\s*[^()]*\\b${constant}\\b`, 'g'))?.length ?? 0;
+}
 
 describe('AI へ出る handler はすべて入力の天井で断る (母集団は ACTIONS から導く。端末内も数える)', () => {
   const handlers = aiActionHandlers(ANY_AI_MARKS);
@@ -160,7 +231,7 @@ describe('AI へ送る画面は台帳に在り、入力欄は共有の定数を�
     expect(Object.keys(PAGE_CAPS).filter((p) => !aiPages.includes(p)), '台帳の古い行').toEqual([]);
   });
 
-  it('★ 入力欄の maxLength は定数で、字面の数を持たない。AI へ行く欄はその天井の定数を読む', () => {
+  it('★ 入力欄は字面の数を持たず、AI へ行く欄は台帳の形でその天井の定数を読む', () => {
     for (const p of aiPages) {
       const src = code(readOriginalSource(path.join(RENDERER, p)));
       expect(src, `${p} が maxLength に数を写している`).not.toMatch(/maxLength=\{\s*\d/);
@@ -169,13 +240,56 @@ describe('AI へ送る画面は台帳に在り、入力欄は共有の定数を�
         expect(cap.why.length, `${p}: 理由が無い`).toBeGreaterThan(10);
         continue;
       }
-      for (const [constant, count] of Object.entries(cap.constants)) {
-        const n = src.split(`maxLength={${constant}}`).length - 1;
-        expect(n, `${p} の AI 入力欄が ${constant} を読んでいない`).toBeGreaterThanOrEqual(count);
+      for (const [constant, bound] of Object.entries(cap.constants)) {
         expect(src, `${p} が ${constant} を import していない`).toMatch(
           new RegExp(`import[^;]*\\b${constant}\\b[^;]*from`),
         );
+        if (bound.how === 'maxLength') {
+          expect(
+            maxLengthReads(src, constant),
+            `${p} の AI 入力欄が ${constant} を maxLength で読んでいない`,
+          ).toBeGreaterThanOrEqual(bound.fields);
+          continue;
+        }
+        // 断る形。**綴りで当てられるのはここまで** —— 効いているかは provenBy が持つ。
+        expect(
+          refusalReads(src, constant),
+          `${p} が ${constant} で断っていない (charsOverCeiling が足りない)`,
+        ).toBeGreaterThanOrEqual(bound.reads);
+        // 台帳は双方向: maxLength が戻っていたら、この行の 'refuse' は古い
+        // (両方在るとブラウザが先に落とし、断る側に制御が来ない)。
+        expect(
+          maxLengthReads(src, constant),
+          `${p}: ${constant} を maxLength でも止めている (台帳の 'refuse' が古い)`,
+        ).toBe(0);
+        expect(bound.why.length, `${p}: ${constant} を断る形にした理由が無い`).toBeGreaterThan(10);
+        const proof = path.join(RENDERER, bound.provenBy);
+        expect(
+          existsSync(originalSourcePath(proof)),
+          `${p}: ${constant} の振る舞いを留める検査 (${bound.provenBy}) が無い`,
+        ).toBe(true);
+        expect(
+          readOriginalSource(proof),
+          `${bound.provenBy} が ${constant} を見ていない`,
+        ).toContain(constant);
       }
     }
+  });
+
+  it('★ 対照: 2 つの形の印は互いに取り違えない (どちらも空の検査になっていない)', () => {
+    const withMax = '<textarea maxLength={MAX_X} />';
+    const withRefuse =
+      'const over = charsOverCeiling(text, MAX_X);\n'
+      + 'if (charsOverCeiling(text, MAX_X) > 0) return;\n';
+    expect(maxLengthReads(withMax, 'MAX_X')).toBe(1);
+    expect(refusalReads(withMax, 'MAX_X')).toBe(0);
+    expect(refusalReads(withRefuse, 'MAX_X')).toBe(2);
+    expect(maxLengthReads(withRefuse, 'MAX_X')).toBe(0);
+    // 別の定数を読んでいる呼び・別の定数の欄は数えない (欄ごとに天井が違う)。
+    expect(refusalReads('charsOverCeiling(raw, MAX_XY)', 'MAX_X')).toBe(0);
+    expect(maxLengthReads('maxLength={MAX_XY}', 'MAX_X')).toBe(0);
+    // 字面の数を掴む規則が実際に当たる (不在の主張に標本を添える)。
+    expect('<input maxLength={2000} />').toMatch(/maxLength=\{\s*\d/);
+    expect(withMax).not.toMatch(/maxLength=\{\s*\d/);
   });
 });

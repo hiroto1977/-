@@ -11,6 +11,7 @@ import { emotionThresholds } from '../../shared/parameters';
 import { counsel } from '../data/counseling';
 import { SELF_CARE_LIBRARY } from '../data/selfCareLibrary';
 import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
+import { charsOverCeiling, clampedCeilingNote, refusedCeilingNote } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
@@ -226,6 +227,8 @@ export function EmotionsPage() {
   // --- mood log
   const [moodScore, setMoodScore] = useState<number>(3);
   const [moodNote, setMoodNote] = useState('');
+  /** 直前の入力が天井を超えていた字数 (0 なら超えていない。パス 168)。 */
+  const [moodNoteOverflow, setMoodNoteOverflow] = useState(0);
   const [moodBusy, setMoodBusy] = useState(false);
   const [moodMsg, setMoodMsg] = useState<string>();
 
@@ -242,6 +245,7 @@ export function EmotionsPage() {
     if (res.ok) {
       setMoodMsg(`記録: ${res.data.date} → ${res.data.score}/5`);
       setMoodNote('');
+      setMoodNoteOverflow(0);
       refresh();
     } else {
       setMoodMsg(res.message);
@@ -252,9 +256,13 @@ export function EmotionsPage() {
   const [text, setText] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
   const [analyzeErr, setAnalyzeErr] = useState<string>();
+  /** 天井を何字超えているか (0 なら送れる)。**切らずに断るため**に持つ (パス 168)。 */
+  const textOver = charsOverCeiling(text, MAX_ANALYZE_TEXT_CHARS);
 
   const analyze = async () => {
     if (!window.serviceHub) return;
+    // 押せない形にしてあるが、ここでも見る —— 送る手前が最後の砦。
+    if (charsOverCeiling(text, MAX_ANALYZE_TEXT_CHARS) > 0) return;
     setAnalyzing(true);
     setAnalyzeErr(undefined);
     const res = await window.serviceHub.invoke<ActionData<'emotions/analyze-text'>>('emotions', 'analyze-text', {
@@ -321,10 +329,24 @@ export function EmotionsPage() {
           <input
             placeholder="メモ (任意) — 何があった？ どう感じた？"
             value={moodNote}
-            maxLength={MAX_MOOD_NOTE_CHARS}
-            onChange={(e) => setMoodNote(e.target.value)}
+            onChange={(e) => {
+              // `maxLength` に任せない —— ブラウザが黙って落とすので、落ちた事実を
+              // 画面が知れない (パス 167 で業務メモに入れたのと同じ形)。
+              const raw = e.target.value;
+              setMoodNoteOverflow(charsOverCeiling(raw, MAX_MOOD_NOTE_CHARS));
+              setMoodNote(raw.slice(0, MAX_MOOD_NOTE_CHARS));
+            }}
             style={inputStyle}
           />
+          {moodNoteOverflow > 0 && (
+            <div
+              data-mood-note-overflow={moodNoteOverflow}
+              role="alert"
+              style={{ fontSize: 11, color: '#fbbf24', lineHeight: 1.6 }}
+            >
+              ⚠ {clampedCeilingNote('気分のメモ', moodNoteOverflow, MAX_MOOD_NOTE_CHARS)}
+            </div>
+          )}
           <div style={{ display: 'flex', gap: 8 }}>
             <button className="primary" onClick={logMood} disabled={moodBusy}>
               {moodBusy ? '保存中…' : '記録'}
@@ -372,19 +394,35 @@ export function EmotionsPage() {
           }}
         />
         <div className="card" style={{ gap: 10 }}>
+          {/**
+            * **切らない。** `maxLength` に任せると、5,000 字を超える貼り付け
+            * (メール本文・日記はふつうに超える) は黙って先頭だけが残り、
+            * **途中で切れた文に対する分析が、全文に対する分析として返る** ——
+            * 結果は正しく見えるので利用者には見分けられない。
+            * 天井を超えているあいだは送らず、いくら超えているかを述べる
+            * (パス 168。パス 112 が「最新の発話は切らずに断る」と決めた向き)。
+            */}
           <textarea
             placeholder="分析したいテキストを貼り付け — メール本文、自分の日記、誰かのメッセージなど"
             value={text}
-            maxLength={MAX_ANALYZE_TEXT_CHARS}
             onChange={(e) => setText(e.target.value)}
             rows={4}
             style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
           />
+          {textOver > 0 && (
+            <div
+              data-analyze-over-ceiling={textOver}
+              role="alert"
+              style={{ fontSize: 11, color: '#fbbf24', lineHeight: 1.6 }}
+            >
+              ⚠ {refusedCeilingNote('分析するテキスト', text.length, MAX_ANALYZE_TEXT_CHARS)}
+            </div>
+          )}
           <div style={{ display: 'flex', gap: 8 }}>
             <button
               className="primary"
               onClick={analyze}
-              disabled={analyzing || !text.trim() || !keyConfigured}
+              disabled={analyzing || !text.trim() || !keyConfigured || textOver > 0}
             >
               {analyzing ? '分析中…' : '分析'}
             </button>

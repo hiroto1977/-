@@ -1,5 +1,6 @@
 import { useReducer, useState } from 'react';
 import { MAX_RECORD_NOTE_CHARS, type RecordEntryServiceId } from '../../shared/recordEntryLimits';
+import { charsOverCeiling, clampedCeilingNote } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
 import type { AdviceInputFor } from '../../shared/serviceAdvisor';
 import { Section } from './StatusBar';
@@ -142,7 +143,7 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
             // **天井は掛けるが、黙っては落とさない。** `maxLength` に任せると
             // ブラウザが貼り付けを切ってしまい、落ちたことを画面が知れない。
             const raw = e.target.value;
-            setNoteOverflow(Math.max(0, raw.length - MAX_RECORD_NOTE_CHARS));
+            setNoteOverflow(charsOverCeiling(raw, MAX_RECORD_NOTE_CHARS));
             setNote(raw.slice(0, MAX_RECORD_NOTE_CHARS));
           }}
           placeholder="メモ (例: 売上記録 / 修繕費発生)"
@@ -166,8 +167,9 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
           role="alert"
           style={{ fontSize: 11, color: '#fbbf24', marginBottom: 8, lineHeight: 1.6 }}
         >
-          ⚠ メモは {MAX_RECORD_NOTE_CHARS} 字までです。直前の入力はこれを {noteOverflow} 字超えていたため、
-          超えた分は入っていません（元の文章を短くしてから貼り直してください）。
+          {/* 文面は `shared/inputCeiling.ts` が 1 つだけ持つ (パス 168 —— ここに直接書くと
+              同じ判断の文が画面の数だけ増える)。 */}
+          ⚠ {clampedCeilingNote('メモ', noteOverflow, MAX_RECORD_NOTE_CHARS)}
         </div>
       )}
       <div data-note-cap style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.5 }}>
