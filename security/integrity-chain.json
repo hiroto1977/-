@@ -1455,6 +1455,14 @@
       "leafCount": 68,
       "note": "update pkce.ts",
       "hash": "720192b295ce1200debf312b12c7511a47494d2ba983803d92d71479bb59d4ea"
+    },
+    {
+      "index": 173,
+      "prevHash": "720192b295ce1200debf312b12c7511a47494d2ba983803d92d71479bb59d4ea",
+      "merkleRoot": "3fe75a462c025e45ce64cecea266937e83d3533d006e66c5c6ed27bca76863f4",
+      "leafCount": 68,
+      "note": "update localWrite.ts",
+      "hash": "b17be4721c89ceaf8ca60b1b3006e6daf28f4c2dd53cc636f91c0b47e46fc3ed"
     }
   ],
   "tipManifest": {
@@ -1491,7 +1499,7 @@
     "src/main/shellOpenGate.ts": "863b9a0661a80b9232c451a22cfd844174556b2adbcc0b74a43c9b2b841967a9",
     "src/preload/preload.ts": "6985953d4e8253f5ece972ac22e5294c8aaa64293d7ff2e57e80dc21411aa667",
     "src/renderer/data/assistantMarkdown.ts": "7d08dc362233f8ca3d52257e84c2bd6c95ad34d3ea97d5208359aa730d969d6b",
-    "src/renderer/data/localWrite.ts": "979be371bd5fb64b9836ed5363652ac8f47e2fcbf89a55a5523dc165f5c33f7e",
+    "src/renderer/data/localWrite.ts": "9259538f11e80ac21c5a13a81fc4fe008fa5d6d3e19a96aa362821e1630885c5",
     "src/renderer/data/recordCipher.ts": "dcc3aaaec7f027e62791e2bfb0a8f56f799363a2a11b475cc5cf7e941ee61551",
     "src/renderer/fs/fsa.ts": "fb721de4a0aa024a6834b04e4bb22fc891d6c380518458957af18084b88b3e3d",
     "src/renderer/network/liveRead.ts": "aae9f14472c4442ddc482d11ed4843557a47c67b75d1a832800abaf387b424e1",

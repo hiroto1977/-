@@ -101,3 +101,78 @@ export function describeStorageError(err: unknown): string {
 
 /** 理由の文面に載せる長さの上限 (安全上限。台帳には載せない)。 */
 const MAX_REASON_CHARS = 60;
+
+/**
+ * **読み取り側** (2026-09-12 · パス 160)。
+ *
+ * パス 74 (2026-09-06) は書き込みだけを直した。**同じ約束が読みにも乗っている**のに、
+ * 読みは `catch { return {} }` のままだった:
+ *
+ * ```
+ *   DocstudioPage.loadStore()   catch { return {}; }   ← 画面は「入力は端末内に自動保存」
+ *   TeamRadarPage.loadDraft()   catch { return {}; }   ← 「リロードしても消えない」前提
+ * ```
+ *
+ * どちらも**保存できたはずの入力が戻らなかった**ことを「保存が無い」と同じ見た目に
+ * 畳む。プライベートウィンドウや Web Storage を拒む端末では、フォームが空で開き、
+ * 見出しは「自動保存」と言い続ける —— **書き込み側と全く同じ嘘である。**
+ * (`saveStore` の注記が「画面が嘘をつく」と書いている、その 4 行上に在った。)
+ *
+ * ここは「**保存領域そのものを読めなかった**」だけを分ける。壊れた保存値
+ * (JSON にならない / 形が合わない) は既存の裁定どおり「下書きなし」に倒す
+ * —— `sanitizeDocstudioStore` / `sanitizeRadarDraft` がその判断を持っている。
+ */
+export interface LocalReadResult<T> {
+  /** 読めた値。読めなかったときは既定 (`sanitize(null)`)。 */
+  readonly value: T;
+  /** 保存領域を読めたか。**「値が無い」と混ぜない。** */
+  readonly readable: boolean;
+  /** 読めなかった理由 (読めたなら `null`)。 */
+  readonly message: string | null;
+}
+
+/**
+ * 文字列を読む。**保存領域を読めなかったときだけ** `readable: false`。
+ *
+ * 分けるのは 2 通り。書き込み側の 3 通りと違って**容量超過の枝を置かない** ——
+ * `getItem` は領域を使わないので容量で断られることが無く、置いても
+ * 「測れるが起こらない枝」が 1 つ増えるだけになる (パス 79 の規準)。
+ */
+export function readLocalString(key: string): LocalReadResult<string | null> {
+  try {
+    return { value: localStorage.getItem(key), readable: true, message: null };
+  } catch (err) {
+    if (isBlocked(err)) {
+      return {
+        value: null,
+        readable: false,
+        message:
+          'ブラウザの設定 (プライベートモードなど) で端末の保存領域を読めません。'
+          + '通常のウィンドウで開き直すと、保存した内容が戻ることがあります。',
+      };
+    }
+    return {
+      value: null,
+      readable: false,
+      message: `端末に保存した内容を読み出せませんでした (${describeStorageError(err)})。`,
+    };
+  }
+}
+
+/**
+ * JSON を読んで `sanitize` に通す。
+ *
+ * **壊れた保存値は `readable: true`。** 読めてはいるので、扱いは既存どおり
+ * 「形の合う欄だけを受ける」(= たいてい空) —— ここで `false` に混ぜると、
+ * 「保存領域が使えない」と「古い版が書いた値だった」が同じ文面になる。
+ */
+export function readLocalJson<T>(key: string, sanitize: (raw: unknown) => T): LocalReadResult<T> {
+  const got = readLocalString(key);
+  if (!got.readable) return { value: sanitize(null), readable: false, message: got.message };
+  if (got.value === null) return { value: sanitize(null), readable: true, message: null };
+  try {
+    return { value: sanitize(JSON.parse(got.value)), readable: true, message: null };
+  } catch {
+    return { value: sanitize(null), readable: true, message: null };
+  }
+}

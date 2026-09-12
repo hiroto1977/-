@@ -102,7 +102,7 @@ import {
   type TaxKind,
   type TaxLine,
 } from '../../shared/invoiceTax';
-import { writeLocalJson, type LocalWriteResult } from '../data/localWrite';
+import { readLocalJson, writeLocalJson, type LocalReadResult, type LocalWriteResult } from '../data/localWrite';
 
 /**
  * 書類スタジオ — これまで単体 HTML として配布していた 3 ツール
@@ -117,14 +117,17 @@ import { writeLocalJson, type LocalWriteResult } from '../data/localWrite';
 type Collection = DocstudioCollection;
 const LS_KEY = 'servicehub.docstudio.v1';
 
-function loadStore(): StoreShape {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    // 保存値は型が守らない —— 形の合う欄だけを受ける (2026-09-05 に 'foo' で画面が落ちた)。
-    return sanitizeDocstudioStore(raw ? JSON.parse(raw) : null);
-  } catch {
-    return {};
-  }
+/**
+ * 差込値を読む。**「保存領域が読めなかった」を「保存が無い」に畳まない** (パス 160)。
+ *
+ * 2026-09-12 まで `catch { return {} }` で、プライベートウィンドウや Web Storage を
+ * 拒む端末ではフォームが空で開き、**見出しは「入力は端末内に自動保存」と言い続けた**。
+ * 下の `saveStore` の注記が「画面が嘘をつく」と書いている、その 4 行上に在った
+ * —— パス 74 は書き込み側だけを直していた。形の検査 (`sanitizeDocstudioStore`) は
+ * そのまま通す (壊れた保存値は既存の裁定どおり「無し」に倒す)。
+ */
+function loadStore(): LocalReadResult<StoreShape> {
+  return readLocalJson(LS_KEY, sanitizeDocstudioStore);
 }
 /**
  * 差込値を保存する。**失敗を黙って捨てない** —— この画面は「入力は端末内に自動保存」と
@@ -133,6 +136,16 @@ function loadStore(): StoreShape {
  */
 function saveStore(s: StoreShape): LocalWriteResult {
   return writeLocalJson(LS_KEY, s);
+}
+
+/**
+ * 差込フォームの見出し。**読めていない / 書けていない / どちらも通っている**の 3 通りを
+ * 1 か所で言い分ける (パス 160)。「自動保存」と名乗れるのは 3 つ目だけである。
+ */
+export function docstudioFormTitle(readError: string | null, saveError: string | undefined): string {
+  if (readError !== null) return '差込フォーム（⚠ 保存した入力を読み出せていません）';
+  if (saveError !== undefined) return '差込フォーム（⚠ 端末に保存できていません）';
+  return '差込フォーム（入力は端末内に自動保存）';
 }
 
 const fmt = (n: number) => n.toLocaleString('ja-JP');
@@ -1441,14 +1454,22 @@ function OverviewImportPanel({
 
 export function DocstudioPage() {
   const { source, status, errorMessage, refresh } = useServiceData('docstudio', SNAPSHOT.docstudio);
-  const [store, setStore] = useState<StoreShape>(() => loadStore());
+  /*
+   * **読むのは 1 回だけ。** 2026-09-12 まで `loadStore()` をマウント時に 3 回
+   * 呼んでいた (差込値・群れ・会社形態)。同じ鍵を 3 度読む理由が無く、
+   * 読めなかった理由も 3 通りに散る (パス 160)。
+   */
+  const [restored] = useState(loadStore);
+  /** 保存領域を読めなかった理由 (`null` なら読めている)。「自動保存」の主張と対にする。 */
+  const readError = restored.message;
+  const [store, setStore] = useState<StoreShape>(restored.value);
   /**
    * 開いている書類の群れ。**保存値から復元する** —— 計算書類 4 点が一覧の独立した
    * エントリになったので、群れを覚えないと「開き直しても同じ書面から続く」が
    * 成り立たない (`docstudioStore.ts` の `collection` の注記)。
    */
   const [collection, setCollectionState] = useState<Collection>(
-    () => loadStore().collection ?? 'studio',
+    restored.value.collection ?? 'studio',
   );
   const setCollection = useCallback((next: Collection) => {
     setCollectionState(next);
@@ -1458,7 +1479,7 @@ export function DocstudioPage() {
   /** 電子定款の会社形態。**保存値から復元する** —— `collection` と対で覚えないと、
    *  合同会社を書いていても開き直すと株式会社に戻る (`docstudioStore.ts` の注記)。 */
   const [teikanType, setTeikanTypeState] = useState<TeikanType>(
-    () => loadStore().teikanType ?? 'kk',
+    restored.value.teikanType ?? 'kk',
   );
   const setTeikanType = useCallback((next: TeikanType) => {
     setTeikanTypeState(next);
@@ -1470,9 +1491,15 @@ export function DocstudioPage() {
   /** 保存できなかった理由 (undefined なら保存できている)。画面の「自動保存」の主張と対にする。 */
   const [saveError, setSaveError] = useState<string>();
   useEffect(() => {
+    /*
+     * **読めていない store を書き戻さない** (パス 160)。`store` は読めなければ
+     * `{}` から始まるので、そのまま保存すると**他の書類の差込値まで消す**。
+     * 読みを断った localStorage は書きも断るので、止めても失う物は無い。
+     */
+    if (readError !== null) return;
     const r = saveStore(store);
     setSaveError(r.ok ? undefined : r.message);
-  }, [store]);
+  }, [store, readError]);
   /** 計算書類で見ている書面。store に持たせるので、開き直しても同じ書面から続けられる。 */
   // 保存値は型が守らない（古い版・手で直した JSON）。知らない値は「まとめて」に倒し、画面を壊さない。
   const kessanSheet: KessanSheet = isKessanSheet(store.kessanSheet) ? store.kessanSheet : 'all';
@@ -1936,9 +1963,19 @@ export function DocstudioPage() {
           />
 
           <Section
-            title={saveError ? '差込フォーム（⚠ 端末に保存できていません）' : '差込フォーム（入力は端末内に自動保存）'}
+            title={docstudioFormTitle(readError, saveError)}
             count={inputFields.length}
           >
+            {/* 読めていないことを先に言う (空のフォームの理由がこれである・パス 160)。 */}
+            {readError !== null && (
+              <div
+                role="alert"
+                data-store-unreadable
+                style={{ fontSize: 12, color: '#fbbf24', border: '1px solid #fbbf24', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
+              >
+                ⚠ {readError}この画面の入力は、この端末には残りません。
+              </div>
+            )}
             {saveError && (
               <div
                 role="alert"

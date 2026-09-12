@@ -13,7 +13,7 @@ import {
   type CarePriority,
 } from '../data/memberCare';
 import { sanitizeRadarDraft, type RadarDraft, type TeamMember } from '../data/teamRadarDraft';
-import { writeLocalJson, type LocalWriteResult } from '../data/localWrite';
+import { readLocalJson, writeLocalJson, type LocalReadResult, type LocalWriteResult } from '../data/localWrite';
 import { exportWarning } from '../data/exportOutcome';
 import type { ActionData } from '../../shared/actionData';
 // スナップショットの形は shared が 1 つだけ持つ (パス 120 までは画面が写しを持っていた —— パス 62 / 116 の形)。
@@ -31,14 +31,17 @@ const SCORE_MAX = MEMBER_SCORE_MAX;
  *  リロードしても編集した名前が消えないようにするのが目的。 */
 const DRAFT_KEY = 'servicehub.teamradar.draft.v1';
 
-function loadDraft(): RadarDraft {
-  try {
-    const raw = localStorage.getItem(DRAFT_KEY);
-    // 保存値は型が守らない —— 形の合う欄だけを受ける (members が配列でなければ .map で落ちていた)。
-    return sanitizeRadarDraft(raw ? JSON.parse(raw) : null);
-  } catch {
-    return {};
-  }
+/**
+ * 下書きを読む。**「保存領域が読めなかった」を「下書きが無い」に畳まない** (パス 160)。
+ *
+ * 2026-09-12 まで `catch { return {} }` で、Web Storage を拒む端末では
+ * 編集した氏名・軸名が戻らず、**同梱の見本のチームが出て**「リロードしても消えない」
+ * という前提だけが残った。下の `saveDraft` の注記が「打ち込ませておいて消えるのが
+ * 最悪」と書いている、その 6 行上に在った —— パス 74 は書き込み側だけを直した。
+ * 形の検査 (`sanitizeRadarDraft`) はそのまま通す。
+ */
+function loadDraft(): LocalReadResult<RadarDraft> {
+  return readLocalJson(DRAFT_KEY, sanitizeRadarDraft);
 }
 
 /**
@@ -199,7 +202,10 @@ export function TeamRadarPage() {
 
   // 初回マウント時に localStorage の下書きを優先して復元する
   // (チャート名・軸名・メンバー名を「任意で変更して残せる」ようにするため)。
-  const draft = useRef(loadDraft());
+  const restored = useRef(loadDraft());
+  const draft = useRef(restored.current.value);
+  /** 保存領域を読めなかった理由 (`null` なら読めている)。「消えない」の前提と対にする。 */
+  const draftUnreadable = restored.current.message;
   const [title, setTitle] = useState(draft.current.title ?? TITLE_FALLBACK);
   const [department, setDepartment] = useState(draft.current.department ?? data.department);
   const [evaluatedAt, setEvaluatedAt] = useState(draft.current.evaluatedAt ?? data.evaluatedAt);
@@ -271,9 +277,16 @@ export function TeamRadarPage() {
   /** 保存できなかった理由 (undefined なら保存できている)。 */
   const [saveError, setSaveError] = useState<string>();
   useEffect(() => {
+    /*
+     * **読めていない下書きを書き戻さない** (パス 160)。読めなければ画面は
+     * 見本のチームから始まるので、そのまま保存すると**保存済みの下書きを
+     * 見本で上書きする**。読みを断った localStorage は書きも断るので、
+     * 止めても失う物は無い。
+     */
+    if (draftUnreadable !== null) return;
     const r = saveDraft({ title, axes, department, evaluatedAt, members });
     setSaveError(r.ok ? undefined : r.message);
-  }, [title, axes, department, evaluatedAt, members]);
+  }, [title, axes, department, evaluatedAt, members, draftUnreadable]);
 
   // 評価 × ケア支援: スキルスコア + 気分から 1on1 支援レポートを組み立てる。
   const teamCare = useMemo(
@@ -416,7 +429,24 @@ export function TeamRadarPage() {
         に書き出されます。Canva のキャンバスに直接ドラッグ&ドロップして取り込めるベクター画像です。
       </div>
 
-      <Section title="メタ情報 / 名前の変更" count={3 + axes.length}>
+      <Section
+        title={
+          draftUnreadable !== null
+            ? 'メタ情報 / 名前の変更（⚠ 保存した下書きを読み出せていません）'
+            : 'メタ情報 / 名前の変更'
+        }
+        count={3 + axes.length}
+      >
+        {/* 読めていないことを先に言う (見本の氏名が出ている理由がこれである・パス 160)。 */}
+        {draftUnreadable !== null && (
+          <div
+            role="alert"
+            data-draft-unreadable
+            style={{ fontSize: 12, color: '#fbbf24', border: '1px solid #fbbf24', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
+          >
+            ⚠ {draftUnreadable}下に出ているのは同梱の見本で、この画面の編集はこの端末には残りません。
+          </div>
+        )}
         {saveError && (
           <div
         role="alert"
