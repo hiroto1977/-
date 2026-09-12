@@ -283,6 +283,7 @@
     "src/shared/taxStampDuty.ts",
     "src/shared/teamRadarState.ts",
     "src/shared/team.ts",
+    "src/shared/templateSvg.ts",
     "src/shared/textWrap.ts",
     "src/shared/tokenInput.ts",
     "src/shared/tradeTax.ts",

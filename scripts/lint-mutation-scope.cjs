@@ -96,7 +96,12 @@ const MAX_SPAN = 30;
  * 0 になったらエントリごと消す。
  */
 const KNOWN_BROAD = {
-  'src/main/clients/templates.ts':               { regions: 1, lines:  139 },
+  // 2026-09-12 (パス 184): この帯は `src/main/clients/templates.ts` から移ってきた
+  // (テンプレートの組み立てを 3 写しから 1 つに畳んだ移設)。帯の中身は
+  // 「SVG の座標計算の算術だけ測らない」で、1 行も変えていない —— 実測が
+  // 139 → 138 行になったのは、移設前は `}` と restore の間に空行が 2 つ
+  // 在ったのを 1 つにしたためである (測る範囲は 1 行も減っていない)。
+  'src/shared/templateSvg.ts':                   { regions: 1, lines:  138 },
 };
 
 /** 同じ行に並記する理由は、これだけの字数が要る (「等価」の 3 字では説明にならない)。 */

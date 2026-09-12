@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **13300** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **13316** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 31 / 36 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 543 | 自己検証 |
+| `file:line` 参照数 | 552 | 自己検証 |
 | 図の中の `file:line` 参照数 | 27 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -1815,7 +1815,7 @@ union を参照する。
 | stocks | `advise` | `{ question, universe }` | **model / maxTokens は payload から受けない** (定数)。universe 既定は MOCK_TICKERS。**応答の欄の天井は `advisorResponseLimits.ts` の株式用の定数** (パス 113 まで main / ブラウザ版に 5 / 400 / 200 が字面で) | `stocks.ts:2035-2043` |
 | stocks | `export-dashboard` | `{ path, advisorResult, strategyComparison }` | path は書き出し関門を通る | `stocks.ts:2035-2043` |
 | stocks | `export-dashboard-md` | `{ path, advisorResult, strategyComparison }` | 同上 (Markdown 版) | `stocks.ts:2035-2043` |
-| templates | `export-template` | `{ templateId, params, path }` | templateId は目録の id のみ、params は既定値へ clamp、path は書き出し関門 | `templates.ts:503-505` |
+| templates | `export-template` | `{ templateId, params, path }` | templateId は目録の id のみ、params は既定値へ clamp、path は書き出し関門 | `templates.ts:344-349` |
 | teamradar | `save-state` | `{ department, evaluatedAt, members }` | members は形と件数を検証してから 0600 で保存 | `teamradar.ts:412-415` |
 | teamradar | `export-svg` | `{ path, title }` | path は書き出し関門。図の文字列は escapeXml を通してから書く | `teamradar.ts:412-415` |
 | talent | `save-state` | (payload 全体を sanitize) | src/shared/talent.ts の入力検査 (sanitize) が申告・施策・ロードマップを型と上限で選り分ける。main とブラウザ版で同じ関数を通す | `talent.ts:186-189` |
@@ -2194,7 +2194,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **285 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **286 ファイル**。
 2026-09-12 (パス 178) に `src/shared/inputCeiling.ts` を足した —— パス 167 / 168 / 172 / 174 / 175 が
 「切ったのか、送らなかったのか」の言い分けをこの 3 関数に寄せた結果、**実装 18 モジュール・
 呼び出し 23 か所 (画面の断り書きは 16 個) と検査 6 本が同じ判断を読む**ようになったのに、
@@ -3352,6 +3352,52 @@ Claude のモデル ID の直書き / 表への所属判定に `in` を使う形
 両方置いてある。移設に伴い `templates.ts` にあった Stryker の Regex pragma は
 **黙らせずに消えた** — 共有側でアンカー・桁数・文字クラスの変異体を全て殺せている
 (`escape.ts` 28 mutants / 100%)。
+
+**そして 2026-09-12 (パス 184) に、同じ 3 つのファイルで「本体」が同じ形をして
+いたことが分かった。** 色の判定を 1 つにしたとき、**その色を埋める SVG の
+組み立てそのものは 3 写しのまま残されていた** —— `templates.ts` の 8 つの
+renderer、`web-templates.ts` の 8 つの `if` 枝、`TemplatesPage.tsx` の
+`renderPreview` (自ら「Mirror of the backend renderers」と名乗っていた)。
+実測すると **8 テンプレートすべてで、どの 2 つも一致しなかった**:
+
+| | プレビュー | ブラウザ版の書き出し | デスクトップ版の書き出し |
+| --- | --- | --- | --- |
+| `<?xml … ?>` | ない | ある | ある |
+| `role="img"` / `aria-label` | **ない** | **ない** | ある |
+| `font-family` | **ない** | **ない** | ある (明朝 / ゴシック) |
+| 長さ (プレゼン表紙) | 763 | 732 | 986 |
+
+害は 3 つ。(1) 名刺・証明書・履歴書の見出しはデスクトップ版だけ**明朝**なので、
+**プレビューで詰めた字面が書き出すと別の書体で組まれる** (字幅が違えば折り返しも
+変わる)。(2) **代替テキストが付くのはデスクトップ版だけ** —— 同じテンプレートでも
+ブラウザ版で書き出した SVG は読み上げできない。(3) 画面が「これが出ます」と
+見せている物が、どちらのビルドでも出ない。
+
+`src/shared/__tests__/templateCatalogParity.test.ts` は「**同じ id で同じ成果物を
+出すはず**の表」と書いて id・寸法・既定値を突き合わせており、そこは完全に
+一致していた。**成果物そのものを比べる者が居なかった。**
+
+組み立ては `src/shared/templateSvg.ts` の 1 つに畳み、いちばん豊かな
+デスクトップ版へ寄せた (他の 2 つは代替テキストと書体を失っていただけである)。
+字数の上限も `TEMPLATE_FIELD_LIMITS` の 1 か所にして、画面の入力欄と
+`validateParams` の両方が読む —— 画面は 80 / 120 / 48 / 400 を字面で持っており、
+`templates.ts` の欄ごとの JSDoc は「40 字以内 / 80 字以内 / 200 字以内 /
+24 字以内」と**実装の半分以下**を説明していた。留めるのは 3 本:
+
+- `src/shared/__tests__/templateSvgAgreement.test.ts` — **実画面を描いて** `<img>` の
+  data URL を復号し、両ビルドの書き出しと文字単位で比べる (25 検査)。
+  「一致」だけでは貧しい側へ寄せても通るので、**寄せた方向** (代替テキスト・
+  書体・証明書と履歴書の明朝) も直接留める
+- `src/shared/__tests__/templateRendererCensus.test.ts` — 4 つ目の写しが生まれたら
+  落ちる母集団の走査 (`<svg xmlns` かつテンプレート id 2 つ以上。
+  パス 184 の前 3 件 / 後 1 件)
+- 引数の入口は**畳まない** —— `validateParams` (IPC 境界・throw) と
+  `normalizeTemplateParams` (既定値へ落とす) の差は意図的で、
+  `src/shared/__tests__/templateParamsParity.test.ts` が理由つきで留めている
+
+移設に伴い Stryker の `ArithmeticOperator` の帯 (座標計算の算術だけ測らない
+139 行) も共有側へ移り、`lint:mutation-scope` の `KNOWN_BROAD` の行も移した
+(台帳は双方向なので、移し忘れれば落ちる)。
 
 **暗号パラメータ**も同じ形だった。AES-GCM の IV 長と PBKDF2 の強度が
 `src/renderer/security/vault.ts` / `src/renderer/security/dataCrypto.ts` /

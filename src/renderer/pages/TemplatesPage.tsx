@@ -1,5 +1,10 @@
-import { wrapLines } from '../../shared/textWrap';
-import { escapeXml, isHexColor } from '../../shared/escape';
+import { isHexColor } from '../../shared/escape';
+import {
+  TEMPLATE_FIELD_LIMITS,
+  normalizeTemplateParams,
+  renderTemplateSvg,
+  type TemplateSvgParams,
+} from '../../shared/templateSvg';
 import { useEffect, useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -10,14 +15,8 @@ import type { ActionData } from '../../shared/actionData';
 import { DESKTOP_PATHS, exportDestinationNote } from '../../shared/buildDestinations';
 import { useBuildKind } from '../hooks/useBuildKind';
 
-interface TemplateParams {
-  title: string;
-  subtitle: string;
-  body: string;
-  accentColor: string;
-  secondaryColor: string;
-  brandText: string;
-}
+/** 欄の形は共有の 1 つを使う (画面で写すと、欄が増えたとき画面だけ古くなる)。 */
+type TemplateParams = TemplateSvgParams;
 
 interface TemplateDef {
   readonly id: string;
@@ -32,121 +31,6 @@ interface TemplatesSnapshot {
   readonly templates: readonly TemplateDef[];
   readonly fetchedAt: string;
   readonly isMock: boolean;
-}
-
-// Mirror of the backend renderers so the renderer can preview without an IPC round-trip.
-function renderPreview(id: string, p: TemplateParams, d: TemplateDef): string {
-  switch (id) {
-    case 'presentation-cover': {
-      const lines = wrapLines(p.title, 24);
-      const titleY = d.height / 2 - lines.length * 30;
-      const tspans = lines
-        .map((l, i) => `<tspan x="${d.width / 2}" dy="${i === 0 ? 0 : 100}">${escapeXml(l)}</tspan>`)
-        .join('');
-      return `<svg xmlns="http://www.w3.org/2000/svg" width="${d.width}" height="${d.height}" viewBox="0 0 ${d.width} ${d.height}">
-        <rect width="${d.width}" height="${d.height}" fill="${p.secondaryColor}"/>
-        <rect width="14" height="${d.height}" fill="${p.accentColor}"/>
-        <rect x="60" y="${d.height - 80}" width="120" height="6" fill="${p.accentColor}"/>
-        <text x="${d.width / 2}" y="${titleY}" font-size="92" font-weight="800" fill="#fff" text-anchor="middle">${tspans}</text>
-        <text x="${d.width / 2}" y="${d.height / 2 + 100}" font-size="36" fill="#cbd5e1" text-anchor="middle">${escapeXml(p.subtitle)}</text>
-        <text x="60" y="${d.height - 32}" font-size="20" fill="#94a3b8">${escapeXml(p.body)}</text>
-        <text x="${d.width - 60}" y="${d.height - 32}" font-size="22" font-weight="600" fill="${p.accentColor}" text-anchor="end">${escapeXml(p.brandText)}</text>
-      </svg>`;
-    }
-    case 'business-card':
-      return `<svg xmlns="http://www.w3.org/2000/svg" width="${d.width}" height="${d.height}" viewBox="0 0 ${d.width} ${d.height}">
-        <rect width="${d.width}" height="${d.height}" fill="${p.secondaryColor}"/>
-        <rect width="${d.width}" height="22" fill="${p.accentColor}"/>
-        <text x="60" y="180" font-size="64" font-weight="700" fill="#0f1117">${escapeXml(p.title)}</text>
-        <text x="60" y="240" font-size="28" fill="${p.accentColor}">${escapeXml(p.subtitle)}</text>
-        <line x1="60" y1="280" x2="${d.width - 60}" y2="280" stroke="${p.accentColor}" stroke-width="2"/>
-        <text x="60" y="340" font-size="22" fill="#475569">${escapeXml(p.body)}</text>
-        <text x="${d.width - 60}" y="${d.height - 56}" font-size="28" font-weight="700" fill="${p.accentColor}" text-anchor="end">${escapeXml(p.brandText)}</text>
-      </svg>`;
-    case 'social-square': {
-      const lines = wrapLines(p.title, 14);
-      const tspans = lines
-        .map((l, i) => `<tspan x="${d.width / 2}" dy="${i === 0 ? 0 : 90}">${escapeXml(l)}</tspan>`)
-        .join('');
-      return `<svg xmlns="http://www.w3.org/2000/svg" width="${d.width}" height="${d.height}" viewBox="0 0 ${d.width} ${d.height}">
-        <rect width="${d.width}" height="${d.height}" fill="${p.secondaryColor}"/>
-        <circle cx="${d.width - 100}" cy="100" r="180" fill="${p.accentColor}" opacity="0.18"/>
-        <circle cx="80" cy="${d.height - 80}" r="240" fill="${p.accentColor}" opacity="0.12"/>
-        <rect x="60" y="120" width="80" height="6" fill="${p.accentColor}"/>
-        <text x="${d.width / 2}" y="${d.height / 2 - lines.length * 30}" font-size="80" font-weight="800" fill="#fff" text-anchor="middle">${tspans}</text>
-        <text x="${d.width / 2}" y="${d.height / 2 + 100}" font-size="34" fill="#cbd5e1" text-anchor="middle">${escapeXml(p.subtitle)}</text>
-        <text x="${d.width / 2}" y="${d.height - 80}" font-size="26" fill="${p.accentColor}" text-anchor="middle">${escapeXml(p.body)}</text>
-        <text x="60" y="80" font-size="22" font-weight="600" fill="#fff">${escapeXml(p.brandText)}</text>
-      </svg>`;
-    }
-    case 'social-story': {
-      const lines = wrapLines(p.title, 11);
-      const tspans = lines
-        .map((l, i) => `<tspan x="${d.width / 2}" dy="${i === 0 ? 0 : 120}">${escapeXml(l)}</tspan>`)
-        .join('');
-      return `<svg xmlns="http://www.w3.org/2000/svg" width="${d.width}" height="${d.height}" viewBox="0 0 ${d.width} ${d.height}">
-        <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${p.secondaryColor}"/><stop offset="100%" stop-color="${p.accentColor}" stop-opacity="0.4"/></linearGradient></defs>
-        <rect width="${d.width}" height="${d.height}" fill="url(#g)"/>
-        <rect x="${d.width / 2 - 60}" y="${d.height / 2 - 360}" width="120" height="8" fill="${p.accentColor}"/>
-        <text x="${d.width / 2}" y="${d.height / 2 - 80 - lines.length * 30}" font-size="120" font-weight="900" fill="#fff" text-anchor="middle">${tspans}</text>
-        <text x="${d.width / 2}" y="${d.height / 2 + 200}" font-size="56" fill="#fafafa" text-anchor="middle">${escapeXml(p.subtitle)}</text>
-        <rect x="${d.width / 2 - 200}" y="${d.height - 280}" width="400" height="80" rx="40" fill="${p.accentColor}"/>
-        <text x="${d.width / 2}" y="${d.height - 224}" font-size="38" font-weight="700" fill="#fff" text-anchor="middle">${escapeXml(p.body)}</text>
-        <text x="${d.width / 2}" y="${d.height - 120}" font-size="32" fill="#cbd5e1" text-anchor="middle">${escapeXml(p.brandText)}</text>
-      </svg>`;
-    }
-    case 'flyer-a4': {
-      const lines = wrapLines(p.body, 36);
-      const tspans = lines
-        .map((l, i) => `<tspan x="80" dy="${i === 0 ? 0 : 56}">${escapeXml(l)}</tspan>`)
-        .join('');
-      return `<svg xmlns="http://www.w3.org/2000/svg" width="${d.width}" height="${d.height}" viewBox="0 0 ${d.width} ${d.height}">
-        <rect width="${d.width}" height="${d.height}" fill="#fdfbf7"/>
-        <rect width="${d.width}" height="380" fill="${p.accentColor}"/>
-        <rect y="380" width="${d.width}" height="14" fill="${p.secondaryColor}"/>
-        <text x="80" y="200" font-size="96" font-weight="800" fill="#fff">${escapeXml(p.title)}</text>
-        <text x="80" y="280" font-size="42" fill="#fefefe">${escapeXml(p.subtitle)}</text>
-        <text x="80" y="500" font-size="40" fill="#1f2937">${tspans}</text>
-        <rect x="80" y="${d.height - 200}" width="${d.width - 160}" height="100" fill="${p.accentColor}" opacity="0.1"/>
-        <text x="${d.width / 2}" y="${d.height - 140}" font-size="38" font-weight="700" fill="${p.accentColor}" text-anchor="middle">${escapeXml(p.brandText)}</text>
-      </svg>`;
-    }
-    case 'certificate':
-      return `<svg xmlns="http://www.w3.org/2000/svg" width="${d.width}" height="${d.height}" viewBox="0 0 ${d.width} ${d.height}">
-        <rect width="${d.width}" height="${d.height}" fill="${p.secondaryColor}"/>
-        <rect x="40" y="40" width="${d.width - 80}" height="${d.height - 80}" fill="none" stroke="${p.accentColor}" stroke-width="6"/>
-        <rect x="60" y="60" width="${d.width - 120}" height="${d.height - 120}" fill="none" stroke="${p.accentColor}" stroke-width="2"/>
-        <text x="${d.width / 2}" y="${d.height / 2 - 220}" font-size="32" letter-spacing="12" fill="${p.accentColor}" text-anchor="middle">CERTIFICATE</text>
-        <text x="${d.width / 2}" y="${d.height / 2 - 140}" font-size="120" font-weight="700" fill="#1f2937" text-anchor="middle">${escapeXml(p.title)}</text>
-        <text x="${d.width / 2}" y="${d.height / 2 - 40}" font-size="56" fill="#1f2937" text-anchor="middle">${escapeXml(p.subtitle)}</text>
-        <line x1="${d.width / 2 - 200}" y1="${d.height / 2}" x2="${d.width / 2 + 200}" y2="${d.height / 2}" stroke="${p.accentColor}" stroke-width="2"/>
-        <text x="${d.width / 2}" y="${d.height / 2 + 90}" font-size="34" fill="#374151" text-anchor="middle">${escapeXml(p.body.split('\n')[0] ?? '')}</text>
-        <text x="${d.width / 2}" y="${d.height / 2 + 150}" font-size="34" fill="#374151" text-anchor="middle">${escapeXml(p.body.split('\n')[1] ?? '')}</text>
-        <text x="${d.width / 2}" y="${d.height - 100}" font-size="32" font-weight="600" fill="${p.accentColor}" text-anchor="middle">${escapeXml(p.brandText)}</text>
-      </svg>`;
-    case 'invoice-header':
-      return `<svg xmlns="http://www.w3.org/2000/svg" width="${d.width}" height="${d.height}" viewBox="0 0 ${d.width} ${d.height}">
-        <rect width="${d.width}" height="${d.height}" fill="${p.secondaryColor}"/>
-        <rect width="${d.width}" height="${d.height}" fill="${p.accentColor}" opacity="0.07"/>
-        <text x="80" y="130" font-size="84" font-weight="800" letter-spacing="6" fill="${p.accentColor}">${escapeXml(p.title)}</text>
-        <text x="80" y="190" font-size="28" fill="#475569">${escapeXml(p.subtitle)}</text>
-        <text x="80" y="240" font-size="22" fill="#94a3b8">${escapeXml(p.body)}</text>
-        <text x="${d.width - 80}" y="80" font-size="32" font-weight="700" fill="#1f2937" text-anchor="end">${escapeXml(p.brandText)}</text>
-        <rect y="${d.height - 6}" width="${d.width}" height="6" fill="${p.accentColor}"/>
-      </svg>`;
-    case 'resume-header':
-      return `<svg xmlns="http://www.w3.org/2000/svg" width="${d.width}" height="${d.height}" viewBox="0 0 ${d.width} ${d.height}">
-        <rect width="${d.width}" height="${d.height}" fill="${p.secondaryColor}"/>
-        <rect width="280" height="${d.height}" fill="${p.accentColor}"/>
-        <circle cx="140" cy="${d.height / 2}" r="100" fill="#fff" opacity="0.18"/>
-        <text x="320" y="200" font-size="88" font-weight="800" fill="#fff">${escapeXml(p.title)}</text>
-        <text x="320" y="280" font-size="36" fill="${p.accentColor}">${escapeXml(p.subtitle)}</text>
-        <text x="320" y="380" font-size="26" fill="#cbd5e1">${escapeXml(p.body)}</text>
-        <text x="320" y="${d.height - 60}" font-size="24" fill="${p.accentColor}">${escapeXml(p.brandText)}</text>
-      </svg>`;
-    default:
-      return `<svg xmlns="http://www.w3.org/2000/svg" width="${d.width}" height="${d.height}"><rect width="${d.width}" height="${d.height}" fill="#222"/></svg>`;
-  }
 }
 
 function svgDataUrl(svg: string): string {
@@ -177,7 +61,26 @@ export function TemplatesPage() {
   const [msg, setMsg] = useState<string | null>(null);
   const [lastExport, setLastExport] = useState<{ path: string; bytes: number; warning?: string } | null>(null);
 
-  const svgPreview = useMemo(() => renderPreview(selected.id, params, selected), [selected, params]);
+  /*
+   * **プレビューは書き出す物そのもの** (2026-09-12 · パス 184)。
+   *
+   * ここには「Mirror of the backend renderers」と名乗る 3 つ目の写経が在り、
+   * 実測すると**デスクトップ版の書き出しともブラウザ版の書き出しとも別物**
+   * だった (代替テキストも書体も無い)。名刺・証明書・履歴書の見出しは
+   * デスクトップ版だけ明朝で組まれるので、**プレビューで詰めた字面が
+   * 書き出すと別の書体になる**。共有の 1 実装に畳んで、
+   * `shared/__tests__/templateSvgAgreement.test.ts` が「画面 ＝ 書き出し」を
+   * 実画面から留めている。
+   *
+   * 色は `normalizeTemplateParams` を通す —— 入力途中の読めない色で
+   * プレビューが壊れる (属性が崩れて真っ白になる) のを避けるため、
+   * ブラウザ版の書き出しと同じ落とし方をする。契約 (`#RRGGBB` ちょうど) の
+   * 判定は書き出しの直前に別に在る。
+   */
+  const svgPreview = useMemo(
+    () => renderTemplateSvg(selected.id, normalizeTemplateParams(params, selected.defaults), selected),
+    [selected, params],
+  );
 
   function applyPreset(preset: 'default' | 'cool' | 'light' | 'mono') {
     if (preset === 'default') {
@@ -355,12 +258,19 @@ export function TemplatesPage() {
                 </button>
               ))}
             </div>
+            {/*
+              上限は共有台帳 (`TEMPLATE_FIELD_LIMITS`) から読む。ここに数字を
+              書き写すと、`validateParams` が throw する境界と画面の案内が
+              黙ってずれる (パス 167 の形)。
+            */}
             {([
-              ['title', 'タイトル', 80, 'text'],
-              ['subtitle', '副題 / リード', 120, 'text'],
-              ['brandText', 'ブランド名', 48, 'text'],
-              ['body', '本文 / 補足 (改行可)', 400, 'textarea'],
-            ] as const).map(([key, label, max, kind]) => (
+              ['title', 'タイトル', 'text'],
+              ['subtitle', '副題 / リード', 'text'],
+              ['brandText', 'ブランド名', 'text'],
+              ['body', '本文 / 補足 (改行可)', 'textarea'],
+            ] as const).map(([key, label, kind]) => {
+              const max = TEMPLATE_FIELD_LIMITS[key];
+              return (
               <label key={key} style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: 'var(--text-mute)' }}>
                 {label} <span style={{ fontSize: 10 }}>({params[key].length}/{max})</span>
                 {kind === 'textarea' ? (
@@ -397,7 +307,8 @@ export function TemplatesPage() {
                   />
                 )}
               </label>
-            ))}
+              );
+            })}
             <div style={{ display: 'flex', gap: 8 }}>
               {(['accentColor', 'secondaryColor'] as const).map((key) => (
                 <label key={key} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: 'var(--text-mute)' }}>

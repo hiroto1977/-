@@ -1,3 +1,14 @@
+/**
+ * ブラウザ版の書き出し。
+ *
+ * **2026-09-12 (パス 184) で出力そのものが変わった。** それまでこのファイルの
+ * スナップショット 17 枚は、ブラウザ版**だけ**の写経された組み立てを留めて
+ * いた —— `role="img"` / `aria-label` (代替テキスト) も `font-family`
+ * (明朝 / ゴシックの使い分け) も無い版である。組み立ては
+ * `src/shared/templateSvg.ts` の 1 つに畳んだので、ここのスナップショットは
+ * **デスクトップ版の書き出し・画面のプレビューと同じ物**になった
+ * (一致そのものは `shared/__tests__/templateSvgAgreement.test.ts` が見る)。
+ */
 import { describe, expect, it } from 'vitest';
 import {
   TEMPLATE_CATALOG_FOR_WEB,
@@ -201,7 +212,9 @@ describe('renderTemplateForWeb — esc / wrap edge behaviour', () => {
     expect(svg).toContain('ONLY-ONE-LINE');
     expect(svg).not.toContain('Stryker');
     // 2 番目の body text 要素は空 (中身なし)。
-    expect(svg).toContain('font-size="34" fill="#374151" text-anchor="middle"></text>');
+    expect(svg).toContain(
+      'font-size="34" fill="#374151" text-anchor="middle" font-family="\'Hiragino Sans\',sans-serif"></text>',
+    );
   });
 
   it('preserves blank paragraphs from newlines (empty-para branch)', () => {
