@@ -4,6 +4,7 @@ import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import { CLOUDFLARE_DNS_FIELDS } from '../../shared/writeFieldLimits';
+import { purgeEverythingConfirmMessage, purgeUrlList } from '../data/cachePurge';
 import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
@@ -75,12 +76,22 @@ export function CloudflarePage() {
 
   const runPurge = async () => {
     if (!window.serviceHub) return;
+    /*
+     * **ゾーン全体は確認してから送る** (2026-09-12 · パス 154)。
+     *
+     * 選択肢のラベルは「ゾーン全体（破壊的）」—— 画面自身が破壊的だと名乗っている
+     * のに、2026-09-12 まで 1 回押すだけで `purgeEverything: true` が飛んでいた。
+     * このリポジトリはライブラリの 1 ファイル削除にも確認を付けており、
+     * **端末の外に効く唯一の破壊的操作**にだけ無いのは順序が逆だった。
+     * 範囲は id ではなく**ゾーン名**で言う (文面は `data/cachePurge.ts`)。
+     */
+    if (purgeMode === 'all') {
+      const zoneName = zoneOptions.find((z) => z.id === purgeZone)?.label ?? '';
+      if (!window.confirm(purgeEverythingConfirmMessage(zoneName))) return;
+    }
     setPurgeBusy(true);
     setPurgeResult(undefined);
-    const files = purgeUrls
-      .split(/\r?\n/)
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0);
+    const files = purgeUrlList(purgeUrls);
     const res = await window.serviceHub.invoke<ActionData<'cloudflare/purge-cache'>>(
       'cloudflare',
       'purge-cache',
@@ -95,7 +106,9 @@ export function CloudflarePage() {
         message:
           res.data.purged === 'all' ? 'ゾーン全体をパージしました' : `${res.data.purged} URL をパージしました`,
       });
-      setPurgeUrls('');
+      // **URL 一覧を消すのは、その一覧を使ったときだけ。** ゾーン全体のパージは
+      // 一覧を読まないので、打ってあった URL を消すと打ち直させることになる。
+      if (purgeMode === 'urls') setPurgeUrls('');
     } else {
       setPurgeResult({ kind: 'error', message: res.message });
     }
