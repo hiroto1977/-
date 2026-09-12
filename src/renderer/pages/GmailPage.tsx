@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -8,6 +8,7 @@ import { AiEgressNotice } from '../components/AiEgressNotice';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import { GMAIL_DRAFT_FIELDS } from '../../shared/writeFieldLimits';
 import type { ActionData } from '../../shared/actionData';
+import { analyzeBatchNote, packAnalyzeText } from '../../shared/emotionsLimits';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -32,6 +33,18 @@ export function GmailPage() {
   const [body, setBody] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string }>();
+
+  /*
+   * 感情分析へ送る本文は**受信スレッドの数で決まる** —— 利用者が長さを決められない。
+   * `analyze-text` は 5000 字を超えると断る (英語の生の例外文が alert に出るだけで、
+   * 一覧を減らす手が無い)。先頭から入るぶんだけ送り、外した件数を**押す前に**言う
+   * (詰め方と文面は `shared/emotionsLimits.ts`・パス 156)。
+   */
+  const analyzeBatch = useMemo(
+    () => packAnalyzeText(threads.map((t) => `- ${t.subject} (from ${t.sender})`)),
+    [threads],
+  );
+  const analyzeNote = analyzeBatchNote(analyzeBatch);
 
   const create = async () => {
     if (!window.serviceHub) return;
@@ -100,16 +113,15 @@ export function GmailPage() {
         action={
           <button
             onClick={async () => {
-              if (!window.serviceHub || threads.length < 1) return;
-              const text = threads.map((t) => `- ${t.subject} (from ${t.sender})`).join('\n');
+              if (!window.serviceHub || analyzeBatch.included < 1) return;
               const res = await window.serviceHub.invoke<ActionData<'emotions/analyze-text'>>('emotions', 'analyze-text', {
-                text,
+                text: analyzeBatch.text,
                 source: 'Gmail Inbox',
               });
               if (!res.ok) alert('感情分析失敗: ' + res.message);
-              else alert('Emotions タブに結果を保存しました');
+              else alert(`Emotions タブに結果を保存しました (${analyzeBatch.included} 件を送信)`);
             }}
-            disabled={threads.length < 1}
+            disabled={analyzeBatch.included < 1}
           >
             Emotions で分析
           </button>
@@ -118,6 +130,10 @@ export function GmailPage() {
         <div className="empty" style={{ fontSize: 12 }}>
           受信トレイ件名一覧を Emotions タブに送り、ストレス兆候・トーン傾向を分析します。
           結果は Emotions タブの履歴に残ります（Anthropic API キーが必要）。
+          {/* 天井に収まらない件数は**押す前に**言う (パス 156)。文面は shared/emotionsLimits.ts。 */}
+          {analyzeNote !== null && (
+            <div data-analyze-batch-note style={{ marginTop: 6, color: '#fbbf24' }}>⚠ {analyzeNote}</div>
+          )}
         </div>
       </Section>
 

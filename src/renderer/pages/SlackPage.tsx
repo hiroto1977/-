@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { SLACK_MESSAGE_FIELDS } from '../../shared/writeFieldLimits';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
@@ -7,6 +7,7 @@ import { useServiceData } from '../hooks/useServiceData';
 import { AiEgressNotice } from '../components/AiEgressNotice';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import type { ActionData } from '../../shared/actionData';
+import { analyzeBatchNote, packAnalyzeText } from '../../shared/emotionsLimits';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -30,6 +31,18 @@ export function SlackPage() {
   const [text, setText] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string }>();
+
+  /*
+   * 感情分析へ送る本文は**チャンネルの数で決まる** —— 利用者が長さを決められない。
+   * `analyze-text` は 5000 字を超えると断る (英語の生の例外文が alert に出るだけで、
+   * 一覧を減らす手が無い)。先頭から入るぶんだけ送り、外した件数を**押す前に**言う
+   * (詰め方と文面は `shared/emotionsLimits.ts`・パス 156)。
+   */
+  const analyzeBatch = useMemo(
+    () => packAnalyzeText(channels.map((c) => `#${c.name}: ${c.purpose || '(no purpose)'}`)),
+    [channels],
+  );
+  const analyzeNote = analyzeBatchNote(analyzeBatch);
 
   const send = async () => {
     if (!window.serviceHub) return;
@@ -92,18 +105,15 @@ export function SlackPage() {
         action={
           <button
             onClick={async () => {
-              if (!window.serviceHub || channels.length < 1) return;
-              const text = channels
-                .map((c) => `#${c.name}: ${c.purpose || '(no purpose)'}`)
-                .join('\n');
+              if (!window.serviceHub || analyzeBatch.included < 1) return;
               const res = await window.serviceHub.invoke<ActionData<'emotions/analyze-text'>>('emotions', 'analyze-text', {
-                text,
+                text: analyzeBatch.text,
                 source: 'Slack channels',
               });
               if (!res.ok) alert('感情分析失敗: ' + res.message);
-              else alert('Emotions タブに結果を保存しました');
+              else alert(`Emotions タブに結果を保存しました (${analyzeBatch.included} 件を送信)`);
             }}
-            disabled={channels.length < 1}
+            disabled={analyzeBatch.included < 1}
           >
             Emotions で分析
           </button>
@@ -112,6 +122,10 @@ export function SlackPage() {
         <div className="empty" style={{ fontSize: 12 }}>
           チャンネル名と purpose の一覧を Emotions タブに送り、ワークスペース全体の
           ムード傾向を分析します。
+          {/* 天井に収まらない件数は**押す前に**言う (パス 156)。文面は shared/emotionsLimits.ts。 */}
+          {analyzeNote !== null && (
+            <div data-analyze-batch-note style={{ marginTop: 6, color: '#fbbf24' }}>⚠ {analyzeNote}</div>
+          )}
         </div>
       </Section>
 
