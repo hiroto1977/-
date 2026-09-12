@@ -20,6 +20,7 @@ import { fiscalYearMonths, fiscalYearWindow } from './kessanImport';
 import { duplicateActualsSheetNote, isValidPeriod, zeroMembersPerCapitaNote, zeroRevenueRatioNote } from './kpiActuals';
 import { duplicateMembersSheetNote } from './members';
 import { duplicateOrdersSheetNote } from './sales';
+import { dealIntakeSheetNote } from '../../shared/freeeIntake';
 import {
   BANK_FORMAT_DEFAULT,
   BLANK,
@@ -518,9 +519,34 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
   const cf = o.cashForecast;
   // 予測は 12 か月分 (overview が horizon 12 で組む)。最後の行が 12 か月後。
   const lastForecast = cf === null ? null : cf.rows[cf.rows.length - 1]!.balance;
+  /**
+   * §6 の断りは 3 つの事実を順に述べる (パス 153 で 3 つ目を足した)。
+   *
+   * 1. 会計連携が無いなら算定していないこと
+   * 2. 取り込みで落ちた取引 (取引日が読めない・金額が数でない・金額が負)
+   * 3. 返済予定のうち実績CFと突合できた月の範囲
+   *
+   * **1 つの枠に 1 文ずつ書き込むと、後から足した文が前の文を消す。**
+   * 2026-09-12 まで 2 と 3 は別々に `caption:` を立てていた —— 3 は
+   * オブジェクト展開 (`...(cond ? { caption } : {})`) なので、両方成り立つ日には
+   * 1 が黙って消えていた (`acc === null` なら `debtService` も null なので今日は
+   * 到達しないが、片方の条件を緩めた瞬間に消える形だった)。§2 と同じく
+   * **部品を集めて連結する**形に揃える。
+   */
+  const cashScopeCaption = (): string | null => {
+    const parts = [
+      acc === null ? '会計ソフト連携（freee）の月次キャッシュフローが無いため算定していません。' : null,
+      dealIntakeSheetNote(o.accountingIntake),
+      debtService !== null && debtService.unmatchedMonths > 0
+        ? `上記の返済余力は、会計キャッシュフローが在る ${debtService.coveredMonths} か月について算定したものです。`
+          + `返済予定のある残り ${debtService.unmatchedMonths} か月は実績の営業キャッシュフローがまだ無いため対象外です。`
+        : null,
+    ].filter((x): x is string => x !== null);
+    return parts.length === 0 ? null : parts.join('');
+  };
   sections.push({
     title: '6. 資金繰り・返済余力',
-    caption: acc === null ? '会計ソフト連携（freee）の月次キャッシュフローが無いため算定していません。' : null,
+    caption: cashScopeCaption(),
     rows: [
       // **月数だけでなく、どの月かを書く。** §1 は対象期間、§4/§5 は基準日と隔たりを
       // 書いているのに、§6 だけ「12 か月分」としか言わず、読む人はそれが今年の
@@ -547,16 +573,6 @@ export function buildBankSubmissionSheet(input: BankSubmissionInput): BankSubmis
         'カバー率 1.0 倍未満の月 ／ 対象月',
       ),
     ],
-    // **突合できた月の範囲を述べる。** 返済予定は借入期間ぶん先まで伸びるが実績CFは
-    // 過去しか無いので、突合できない月がある。黙って落とすと数か月の突合が借入期間
-    // ぜんぶについての主張に読める (経緯は `data/cashflowDebtService.ts`)。
-    ...(debtService !== null && debtService.unmatchedMonths > 0
-      ? {
-          caption:
-            `上記の返済余力は、会計キャッシュフローが在る ${debtService.coveredMonths} か月について算定したものです。`
-            + `返済予定のある残り ${debtService.unmatchedMonths} か月は実績の営業キャッシュフローがまだ無いため対象外です。`,
-        }
-      : {}),
   });
 
   const landing = k.revenueLanding;

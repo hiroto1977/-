@@ -47,6 +47,7 @@ import { computeRevenueConcentration, type RevenueConcentration } from './revenu
 import { computeTrendAlerts, type TrendAlerts } from './trendAlerts';
 import { summarizeAccounting, accountingRecency, computeRunwayMonths, type AccountingMonthly, type AccountingRecency, type AccountingSummary } from './accounting';
 import type { HydroponicsEconomics, LowPotassiumAssessment } from '../../shared/hydroponics';
+import { NO_DEAL_INTAKE, type FreeeDealIntake } from '../../shared/freeeIntake';
 
 export interface OverviewInput {
   readonly plan: PlanTier;
@@ -63,6 +64,13 @@ export interface OverviewInput {
   readonly balanceSheetStaleAfterMonths?: number;
   /** 会計連携 (freee 等) の月次キャッシュフロー。未連携なら空。 */
   readonly accounting?: readonly AccountingMonthly[];
+  /**
+   * その月次キャッシュフローの素性 —— 取り込みで何件をどう扱ったか (パス 153)。
+   *
+   * 落ちた取引が在れば書面 §6 がそう述べる。渡されなければ「1 件も読んでいない」
+   * (`NO_DEAL_INTAKE`) として扱う —— 未連携・検査の詰め物がこれ。
+   */
+  readonly accountingIntake?: FreeeDealIntake;
   /**
    * Team members. 人数と役割が本体。`email` は同じ人の重複 (パス 125) を数えるためだけに読む ——
    * 無い射影 (検査の詰め物) も受け、その場合は重複を数えない。
@@ -255,6 +263,13 @@ export interface BusinessOverview {
   readonly workingCapital: CashConversionCycle | null;
   /** 会計連携の月次キャッシュフロー要約。未連携なら null。 */
   readonly accounting: AccountingSummary | null;
+  /**
+   * 会計連携の取り込みで何件をどう扱ったか (パス 153)。
+   *
+   * `accounting` が null でも**素性は在る** —— 全件落ちたときが正にそれで、
+   * 「連携していない」と「連携したが全件落ちた」を書面が書き分けられる。
+   */
+  readonly accountingIntake: FreeeDealIntake;
   /** 資金ランウェイ (月数)。会計連携CF と現預金が揃い、かつ資金流出時のみ。 */
   readonly runwayMonths: number | null;
   /** 月次キャッシュ予測 (現預金を起点に会計CFを外挿)。会計連携+現預金が揃うと算定。 */
@@ -414,6 +429,7 @@ export function buildBusinessOverview(input: OverviewInput): BusinessOverview {
         })
       : null,
     accounting: accountingSummary,
+    accountingIntake: input.accountingIntake ?? NO_DEAL_INTAKE,
     runwayMonths: accountingSummary && input.balanceSheet && (input.balanceSheet.cash ?? 0) > 0
       ? computeRunwayMonths(input.balanceSheet.cash ?? 0, accountingSummary.avgMonthlyNet)
       : null,

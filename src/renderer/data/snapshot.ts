@@ -12,6 +12,7 @@ import {
 } from '../../shared/talent';
 import { NO_SECURED_FUNDING_NOTE } from '../../shared/funding';
 import { MIN_SAFE_VERSION } from '../../shared/ollama';
+import { NO_DEAL_INTAKE } from '../../shared/freeeIntake';
 
 /**
  * 見本の画像は **インライン (`data:`) にする**。
@@ -1284,6 +1285,9 @@ export const SNAPSHOT = {
     // `as string` の理由は microsoft365.userName と同じ (リテラル `""` だと表示の枝が死ぬ)。
     companyName: '' as string,
     monthly: [] as { month: string; income: number; expense: number; net: number }[],
+    // 見本は取引を 1 件も読んでいない。件数は `shared/freeeIntake.ts` の定数から
+    // 引く (0 を 4 つ手で書くと、欄が増えたときにここだけ古くなる)。
+    intake: NO_DEAL_INTAKE,
     fetchedAt: '',
   },
 

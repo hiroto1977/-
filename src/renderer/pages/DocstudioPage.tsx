@@ -1505,11 +1505,13 @@ export function DocstudioPage() {
     () =>
       buildCashPlanImport({
         accounting: freeeData.monthly,
+        // 月次の素性も渡す —— 落ちた取引が在れば取り込み注記が言う (パス 153)。
+        accountingIntake: freeeData.intake,
         balanceSheet: balanceSheetOrNull(currentBalanceSheet(bsCol.records)?.data),
         profile: submissionProfile,
         existing: store.studio?.['shikin-guri'] ?? {},
       }),
-    [freeeData.monthly, bsCol.records, submissionProfile, store.studio],
+    [freeeData.monthly, freeeData.intake, bsCol.records, submissionProfile, store.studio],
   );
   const businessPlanImport = useMemo(
     () =>

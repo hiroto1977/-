@@ -738,6 +738,8 @@ export function OverviewPage() {
         // BS は基準日の新しい 1 件を「現在」として採用 (入力した順ではない —— パス 127)。
         balanceSheet: balanceSheetOrNull(currentBalanceSheet(bsRecords)?.data),
         accounting: accountingMonthly,
+        // 月次CF の素性 (取り込みで落ちた取引) も渡す —— 書面 §6 が述べる (パス 153)。
+        accountingIntake: freeeData.intake,
         members: memberRecords.map((r) => ({ role: r.data.role, email: r.data.email })),
         hydroponics,
         lowPotassium,
@@ -751,6 +753,7 @@ export function OverviewPage() {
       budgetRecords,
       bsRecords,
       accountingMonthly,
+      freeeData.intake,
       memberRecords,
       hydroponics,
       lowPotassium,

@@ -274,6 +274,56 @@ describe('buildBankSubmissionSheet — 各節の数値', () => {
   });
 
   /**
+   * **落ちた取引は、書面が述べる** (2026-09-12 · パス 153)。
+   *
+   * §6 の 9 行はすべて freee の月次キャッシュフローから来る。取り込みで
+   * 取引日が読めない / 金額が数でない取引を外し、金額が負の取引を 0 円として
+   * 数えていたのに、書面はそれを一言も言わなかった。
+   */
+  it('★ 取り込みで落ちた取引があれば、§6 の断りがその件数を述べる', () => {
+    const m = buildBankSubmissionSheet(inputWith(overviewWith({
+      accountingIntake: { deals: 120, skippedNoDate: 3, skippedBadAmount: 1, clampedNegative: 2 },
+    })));
+    const s = section(m.sections, '6.');
+    expect(s.caption).toContain('取引 120 件から組んだもの');
+    expect(s.caption).toContain('取引日が読めない 3 件は集計から除いています。');
+    expect(s.caption).toContain('金額が数として読めない 1 件は集計から除いています。');
+    expect(s.caption).toContain('金額が負の 2 件は 0 円として数えています。');
+  });
+
+  it('★ 対照: 1 件も落ちていなければ §6 は取り込みについて何も言わない', () => {
+    // 走査が実物に当たっていることを、同じ検査の中で両方向に見る。
+    const clean = buildBankSubmissionSheet(inputWith(overviewWith({
+      accountingIntake: { deals: 120, skippedNoDate: 0, skippedBadAmount: 0, clampedNegative: 0 },
+    })));
+    expect(section(clean.sections, '6.').caption).toBeNull();
+    // 渡さない (未連携・古い呼び出し) ときも同じ —— 既定は「1 件も読んでいない」。
+    expect(section(buildBankSubmissionSheet(inputWith(overviewWith())).sections, '6.').caption).toBeNull();
+  });
+
+  /**
+   * §6 の断りは 3 つの事実を**同じ枠に**書き込む。2026-09-12 までは
+   * `caption:` を 2 か所で立てており、後から展開する側が前を黙って消す形だった
+   * (`acc === null` なら `debtService` も null なので当時は到達しなかったが、
+   *  条件を緩めた瞬間に消える)。3 つ揃う入力で全部残ることを留める。
+   */
+  it('★ 会計連携なし + 落ちた取引 + 突合できない月 が同時に立っても、3 文とも残る', () => {
+    const acc = [{ month: '2026-04', income: 900_000, expense: 600_000, net: 300_000 }];
+    const repay = ['2026-04', '2026-05'].map((month) => ({ month, repayment: 100_000 }));
+    const m = buildBankSubmissionSheet(inputWith(
+      overviewWith({
+        accounting: acc,
+        accountingIntake: { deals: 9, skippedNoDate: 1, skippedBadAmount: 0, clampedNegative: 0 },
+      }),
+      SETTINGS,
+      { debtService: combineCashflowDebtService(acc, repay) },
+    ));
+    const caption = section(m.sections, '6.').caption ?? '';
+    expect(caption).toContain('取引日が読めない 1 件は集計から除いています。');
+    expect(caption).toContain('返済予定のある残り 1 か月');
+  });
+
+  /**
    * **返済余力は「突合できた月について」の数字である。**
    * 返済予定は借入期間ぶん将来へ伸びるが実績CFは過去しか無いので、突合できない月がある。
    * 黙って落とすと、数か月の突合が借入期間ぜんぶについての主張に読める

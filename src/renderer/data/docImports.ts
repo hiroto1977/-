@@ -17,6 +17,7 @@ import type { SubmissionProfile } from './bankSubmission';
 import { PLAN_ITEMS, PLAN_MONTHS, planKey } from './cashPlan';
 import { PERIOD_RE, fiscalYearMonths, fiscalYearWindow, monthLabel } from './kessanImport';
 import { parseIsoDate } from '../../shared/isoDate';
+import { NO_DEAL_INTAKE, dealIntakeImportNote, type FreeeDealIntake } from '../../shared/freeeIntake';
 
 export interface ImportRow {
   /** 書式の入力欄のキー。 */
@@ -46,6 +47,11 @@ function finish(rows: readonly ImportRow[], notes: readonly string[], skipped: r
 export interface CashPlanImportInput {
   /** 会計連携の月次 (順不同でよい。`YYYY-MM` の月)。 */
   readonly accounting: readonly AccountingMonthly[];
+  /**
+   * その月次の素性 —— 取り込みで落ちた取引の件数 (パス 153)。
+   * 渡されなければ「1 件も読んでいない」として扱う。
+   */
+  readonly accountingIntake?: FreeeDealIntake;
   readonly balanceSheet: BalanceSheet | null;
   readonly profile: SubmissionProfile;
   readonly existing: Readonly<Record<string, string>>;
@@ -80,6 +86,9 @@ export function buildCashPlanImport(input: CashPlanImportInput): ImportPreview {
       rows.push({ k: planKey(n, 'expense'), label: `${itemLabel('expense')} ${n}月目`, value: String(Math.round(m.expense)), source: `${monthLabel(m.month)} の支出` });
     });
     notes.push('会計連携の月次は収入・支出の合計しか無いので、収入は売上入金、支出はその他経費に置いた。仕入・外注費・人件費・借入の行へ分け直すこと。');
+    // 取り込みで落ちた取引が在れば言う。この表は税理士・金融機関に渡る (パス 153)。
+    const intakeNote = dealIntakeImportNote(input.accountingIntake ?? NO_DEAL_INTAKE);
+    if (intakeNote !== null) notes.push(intakeNote);
     if (months.length < PLAN_MONTHS) {
       notes.push(`会計連携は ${months.length} か月分。${months.length + 1} か月目以降は空欄のままなので、見込みを入れること。`);
     }
