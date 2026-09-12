@@ -44,17 +44,29 @@ export function checkLine(
   const geo = lineChart(series, { width, height });
   const out: CheckResult[] = [];
 
+  /*
+   * 数えるのは**描ける値**である (パス 150)。`lineChart` は NaN / ±Infinity を
+   * 落とすので、生の `values.length` と比べると「正しく落とした」ことが
+   * 「点数がずれた」と報告されてしまう。描ける値が 1 つも無ければ
+   * geometry は空を返す契約なので、期待する系列数も 0 になる。
+   */
+  const drawable = (s: LineSeries): number => s.values.filter((v) => Number.isFinite(v)).length;
+  const anyDrawable = series.some((s) => drawable(s) > 0);
+  const expectedSeries = anyDrawable ? series.length : 0;
+
   out.push(
-    geo.series.length === series.length
+    geo.series.length === expectedSeries
       ? ok('折れ線: 系列数が入力と一致')
-      : ng('折れ線: 系列数が入力と一致', `入力 ${series.length} / 出力 ${geo.series.length}`),
+      : ng('折れ線: 系列数が入力と一致', `期待 ${expectedSeries} / 出力 ${geo.series.length}`),
   );
 
-  const countMismatch = geo.series.find((g, i) => g.points.length !== (series[i]?.values.length ?? -1));
+  const countMismatch = geo.series.find(
+    (g, i) => g.points.length !== (series[i] === undefined ? -1 : drawable(series[i])),
+  );
   out.push(
     countMismatch === undefined
-      ? ok('折れ線: 各系列の点数が入力と一致')
-      : ng('折れ線: 各系列の点数が入力と一致', `系列「${countMismatch.label}」でずれ`),
+      ? ok('折れ線: 各系列の点数が描ける値の数と一致')
+      : ng('折れ線: 各系列の点数が描ける値の数と一致', `系列「${countMismatch.label}」でずれ`),
   );
 
   const outside = geo.series

@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import path from 'node:path';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
 import { SERVICES } from '../services';
 import { SERVICE_IDS, type ServiceId } from '../../shared/serviceId';
 import { SNAPSHOT } from '../data/snapshot';
@@ -73,13 +75,52 @@ describe('サイドバーは SERVICE_IDS を覆う', () => {
     expect(sidebar.size).toBe(SERVICES.length);
   });
 
-  it('数の内訳が実測と合う (74 = 72 + 台帳 2)', () => {
-    expect(sidebar.size + Object.keys(SIDEBAR_LESS).length).toBe(SERVICE_IDS.length);
+  it('数の内訳が閉じている (サイドバー + 台帳 == SERVICE_IDS)', () => {
+    /*
+     * **題名に数を書かない。** 2026-09-12 まで題名は「74 = 72 + 台帳 2」で、
+     * 実測は **75 = 73 + 2** だった —— 式そのものは導出なので通り続け、
+     * *名前だけ*が 1 年分古びていた (CLAUDE.md の「数を 2 か所に書くと必ず食い違う」)。
+     * 数は失敗時のメッセージに実測として出す。
+     */
+    expect(
+      sidebar.size + Object.keys(SIDEBAR_LESS).length,
+      `サイドバー ${sidebar.size} + 台帳 ${Object.keys(SIDEBAR_LESS).length} != SERVICE_IDS ${SERVICE_IDS.length}`,
+    ).toBe(SERVICE_IDS.length);
   });
 
   it('すべてのサイドバー項目が page を持つ', () => {
     const noPage = SERVICES.filter((s) => typeof s.page !== 'function').map((s) => s.id);
     expect(noPage as ServiceId[]).toEqual([]);
+  });
+
+  /*
+   * **散文も台帳に束ねる。** (2026-09-12 · パス 150)
+   *
+   * CLAUDE.md は最初に読まれる説明で、2026-09-12 まで
+   * 「exposing **75 services** through a unified, category-grouped sidebar」
+   * と書いていた —— **サイドバーに出るのは 73 で、2 つは出ない。**
+   * 数 (75) は `lint:docs` が `SERVICE_IDS` と突き合わせているが、
+   * **「サイドバー経由で」という主張の側には何も無かった**。
+   *
+   * ここで散文に台帳の id を名指しさせ、その名指しを走査する。
+   * 例外が 3 つ目になれば、この検査が「散文が言っていない」と落とす。
+   */
+  it('★ CLAUDE.md の散文が台帳の例外を 1 つずつ名指ししている', () => {
+    const claudeMd = readOriginalSource(path.resolve(__dirname, '../../../CLAUDE.md'));
+    // 走査が実物に当たっていること (空のファイルで通らない)。
+    expect(claudeMd).toContain('exposing **75 services**');
+    expect(claudeMd, 'サイドバーに出ない物が在るという断りが消えた').toContain(
+      'Not every service has a sidebar',
+    );
+    const unnamed = Object.keys(SIDEBAR_LESS).filter((id) => !claudeMd.includes(`\`${id}\``));
+    expect(unnamed, 'CLAUDE.md が名指ししていない例外があります').toEqual([]);
+  });
+
+  it('★ 対照: 走査は名指しの欠落を拾う (綴り違いで黙っていない)', () => {
+    // 標本 —— 台帳に在る id が散文から抜けた形。
+    const sample = 'exposing **75 services** ... Not every service has a sidebar entry: `uber-eats` only.';
+    const unnamed = Object.keys(SIDEBAR_LESS).filter((id) => !sample.includes(`\`${id}\``));
+    expect(unnamed).toEqual(['demae-can']);
   });
 });
 

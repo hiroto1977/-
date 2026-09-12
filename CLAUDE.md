@@ -11,7 +11,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project
 
 Service Hub — a Japanese-facing business dashboard exposing **75 services** through a unified,
-category-grouped sidebar (おすすめ / 士業連携 / 分析・ツール / 外部サービス連携). Services span third-party SaaS
+category-grouped sidebar (おすすめ / 士業連携 / 分析・ツール / 外部サービス連携). **Not every service has a sidebar
+entry of its own**: `uber-eats` and `demae-can` are consumed inside the Business Dashboard instead
+(`BusinessPage.tsx` reads their snapshots directly). That split is a reasoned, bidirectional ledger in
+`src/renderer/__tests__/sidebarCoverage.test.ts` — a service that silently loses its sidebar entry fails
+CI (it would also become impossible to delete its saved credentials from the UI), and an id that is
+still in the ledger while back on the sidebar fails too. Services span third-party SaaS
 (GitHub, WordPress.com, Atlassian, Notion, Google Drive / Calendar / Gmail, Slack, Canva,
 Microsoft 365, Dropbox, Salesforce, Discord, Asana, Linear, Sentry, Shopify, Stripe, LINE), local
 tools (Skills, Security, Cloudflare, Emotions, Ollama, KPI, Stocks, Storage), business operations
