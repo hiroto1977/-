@@ -14,6 +14,8 @@ import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgress
 import { exportWarning } from '../data/exportOutcome';
 import { ratioPctOrDash } from '../../shared/num';
 import type { ActionData } from '../../shared/actionData';
+import { DESKTOP_PATHS, emptyWatchlistNote, exportDestinationNote, persistDestinationNote } from '../../shared/buildDestinations';
+import { useBuildKind } from '../hooks/useBuildKind';
 
 // 助言・戦略比較・登録の戻り値の形は台帳 (`shared/actionData.ts` → `shared/stocksTypes.ts`) を読む
 // (パス 117)。それまでここに `AdvisorResponse` の写しが在り、パス 105 まで `notForRealMoney` が
@@ -144,6 +146,8 @@ function Tile({ label, value, sub, accent }: { label: string; value: string; sub
 // --- Page ---------------------------------------------------------------
 
 export function StocksPage() {
+  /** どの実行形態か (パス 161)。分かるまでは null —— 実行形態に依る文を出さない。 */
+  const buildKind = useBuildKind();
   const { data, source, status, errorMessage, refresh } = useServiceData<StocksSnapshot>(
     'stocks',
     SNAPSHOT.stocks,
@@ -384,10 +388,18 @@ export function StocksPage() {
       </Section>
 
       <Section title="銘柄登録 / 解除" count={data.watchlist.length}>
-        <div style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 12 }}>
-          銘柄を登録すると <code>~/.local/business-hub/state.json</code> に永続化されます。
-          初期状態 (登録なし) では mock 5 銘柄が表示されます。
-        </div>
+        {/*
+          **どこに残り、登録が無いと何が出るか**は実行形態で違う (パス 161)。
+          2026-09-12 まで両方ともデスクトップの話を無条件に書いていた ——
+          ブラウザ版は localStorage に残し、登録が無ければ一覧は**空**である
+          (main の fetcher だけが見本 5 銘柄に倒す)。文面は shared/buildDestinations.ts。
+        */}
+        {buildKind !== null && (
+          <div data-watchlist-storage style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 12 }}>
+            {persistDestinationNote(buildKind, DESKTOP_PATHS.stocksState)}
+            {emptyWatchlistNote(buildKind)}
+          </div>
+        )}
         <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
           <input
             type="text"
@@ -901,11 +913,13 @@ export function StocksPage() {
         <div style={{ fontSize: 13, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.5 }}>
           現在のスナップショット (ウォッチリスト / ペーパー口座 / 取引履歴
           {advisorResult ? ' / AI アドバイザー結果' : ''}) を 1 つの自己完結
-          HTML ファイルとして書き出します。出力先は{' '}
-          <code style={{ background: 'var(--bg-elev)', padding: '1px 6px', borderRadius: 3 }}>
-            ~/.local/business-hub/data/dashboard.html
-          </code>
-          。ファイルにはインライン CSS のみで外部スクリプトなし、CSP 制約下でも OS
+          HTML ファイルとして書き出します。
+          {buildKind !== null && (
+            <span data-export-destination>
+              {' '}{exportDestinationNote(buildKind, DESKTOP_PATHS.stocksDashboard)}
+            </span>
+          )}{' '}
+          ファイルにはインライン CSS のみで外部スクリプトなし、CSP 制約下でも OS
           ブラウザで開けます。
         </div>
         <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>

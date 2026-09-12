@@ -7,6 +7,8 @@ import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
 import { exportWarning } from '../data/exportOutcome';
 import type { ActionData } from '../../shared/actionData';
+import { DESKTOP_PATHS, exportDestinationNote } from '../../shared/buildDestinations';
+import { useBuildKind } from '../hooks/useBuildKind';
 
 interface TemplateParams {
   title: string;
@@ -153,6 +155,8 @@ function svgDataUrl(svg: string): string {
 }
 
 export function TemplatesPage() {
+  /** どの実行形態か (パス 161)。分かるまでは null —— 実行形態に依る文を出さない。 */
+  const buildKind = useBuildKind();
   const { data, source, status, errorMessage, refresh } = useServiceData<TemplatesSnapshot>(
     'templates',
     SNAPSHOT.templates,
@@ -247,9 +251,14 @@ export function TemplatesPage() {
           lineHeight: 1.5,
         }}
       >
-        <strong>Canva 連動:</strong> パラメータを編集 → 「SVG を保存」で
-        {' '}<code>~/.local/business-hub/data/templates/&lt;id&gt;.svg</code>{' '}
-        にベクター画像を出力します。Canva のキャンバスへドラッグ&ドロップして取り込み、文字や色を追加編集できます。
+        {/* 実行形態で書き出し先が違う (パス 161)。文面は shared/buildDestinations.ts。 */}
+        <strong>Canva 連動:</strong> パラメータを編集 → 「SVG を保存」でベクター画像を出力します。
+        {buildKind !== null && (
+          <span data-export-destination>
+            {' '}{exportDestinationNote(buildKind, DESKTOP_PATHS.templateSvg)}
+          </span>
+        )}{' '}
+        Canva のキャンバスへドラッグ&ドロップして取り込み、文字や色を追加編集できます。
       </div>
 
       <Section title="テンプレート選択" count={data.templates.length}>

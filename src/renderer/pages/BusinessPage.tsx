@@ -11,6 +11,8 @@ import { summarizeFoodDelivery } from '../data/foodDelivery';
 import { exportWarning } from '../data/exportOutcome';
 import { MAX_ADVISOR_QUESTION_CHARS } from '../../shared/advisorQuestionLimits';
 import type { ActionData } from '../../shared/actionData';
+import { DESKTOP_PATHS, exportDestinationNote } from '../../shared/buildDestinations';
+import { useBuildKind } from '../hooks/useBuildKind';
 
 // 助言の戻り値の形は台帳 (`shared/actionData.ts` → `shared/businessAdvisor.ts`) を読む (パス 117)。
 // それまでここの写しは `categoryId: string` に広がっていた (本物は 10 個の合併型)。
@@ -672,6 +674,8 @@ function FoodDeliverySection() {
 // --- Page -----------------------------------------------------------
 
 export function BusinessPage() {
+  /** どの実行形態か (パス 161)。分かるまでは null —— 実行形態に依る文を出さない。 */
+  const buildKind = useBuildKind();
   const { data, source, status, errorMessage, refresh } = useServiceData<BusinessSnapshot>(
     'business',
     SNAPSHOT.business,
@@ -946,9 +950,12 @@ export function BusinessPage() {
           >
             Markdown を保存
           </button>
-          <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>
-            保存先: ~/.local/business-hub/data/business-dashboard.{`{html,md}`}
-          </span>
+          {/* 実行形態で書き出し先が違う (パス 161)。文面は shared/buildDestinations.ts。 */}
+          {buildKind !== null && (
+            <span data-export-destination style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+              {exportDestinationNote(buildKind, DESKTOP_PATHS.businessDashboard)}
+            </span>
+          )}
         </div>
         {lastExport && (
           <div

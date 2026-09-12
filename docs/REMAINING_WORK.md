@@ -22828,6 +22828,113 @@ C3 の検査は**先に本物の値を置いてから読みだけを壊す** —
 
 - 実機 (e2e) はパス 153-160 の 8 パス分が未検証。
 - `ollamaWeb` の接続先 (上の表の最後の行) は測っていない。
-- **同じ問いを IndexedDB の読み手にも立てていない** —— `library/library.ts` /
-  `data/store.ts` はパス 84/85 で経路を持ったが、`fs/fsa.ts` の handle と
-  `security/vault.ts` の一部はまだ数えていない。
+- **IndexedDB の読み手には、この後で問いを立てた —— 残っていなかった** (2026-09-12 に確認):
+  `data/store.ts` はパス 84、`library/library.ts` はパス 85 (`catch` が 1 つも無く
+  素通しで上へ投げる)、`fs/fsa.ts` の handle はパス 86 (「**開けなければ投げる。**
+  `null` は『フォルダを選んでいない』だけを意味する」と冒頭に書いてある)、
+  `network/proxy.ts` も パス 86、`security/vault.ts` はパス 88。
+  **この節に「まだ数えていない」と書いたのは私の早合点だった** —— 数えたら 0 件で、
+  読み手の家系は閉じている。次に疑うなら別の媒体 (Cache Storage / OPFS は
+  `lint:storage` の走査で 0 件) か、別の家系である。
+
+## パス 161 (2026-09-12) — **画面が在りもしない場所を案内する: 5 画面がデスクトップのパスをブラウザ版でも刷っていた**
+
+パス 157 は「**できない指示**」(code だけ貼れ)、パス 158 は「**効かない操作**」(押しても解除されない
+解除ボタン) を直した。同じ問い —— **画面が言っていることは、この実行形態で本当に起きるか** ——
+を「保存先 / 読み取り元を名乗る文」に立てた。
+
+### 実測した欠陥 — 7 か所 / 5 画面
+
+| 画面 | 刷っていた文 | ブラウザ版で本当に起きること |
+| --- | --- | --- |
+| Business | 保存先: `~/.local/business-hub/data/business-dashboard.{html,md}` | ダウンロード + ライブラリ (IndexedDB) + 選んだ PC フォルダ |
+| Stocks | 銘柄を登録すると `~/.local/business-hub/state.json` に永続化されます | localStorage (`data/stocksWatchlistWeb.ts`) |
+| Stocks | 初期状態 (登録なし) では **mock 5 銘柄**が表示されます | **空のまま** (見本に倒すのは main の fetcher だけ) |
+| Stocks | 出力先は `~/.local/business-hub/data/dashboard.html` | 同上の 3 か所 |
+| Team Radar | 「SVG を保存」で `~/.local/business-hub/data/team-radar.svg` に書き出されます | 同上の 3 か所 |
+| Templates | 「SVG を保存」で `~/.local/business-hub/data/templates/<id>.svg` に出力します | 同上の 3 か所 |
+| Skills | `~/.claude/skills` / 「**ディレクトリを作って** `SKILL.md` を置いてください」 | **読めない** (shim に枝が無く `not_implemented`)。作っても一覧は空のまま |
+
+ブラウザ版 (単一 HTML) はそこへ **1 バイトも書かない**。`data/exportOutcome.ts` の冒頭が
+実装を述べており (3 か所)、画面はその隣で別のことを言っていた。Skills はさらに重く、
+**やっても何も起きない手順**を案内していた (パス 157 と同じ形)。
+
+### 直し
+
+`src/shared/buildDestinations.ts` を 1 つ置いた。**デスクトップの生パスを持つのはここだけ**:
+
+```ts
+export const DESKTOP_PATHS = { businessDashboard, stocksState, stocksDashboard,
+                               teamRadarSvg, templateSvg, claudeSkills } as const;
+export function exportDestinationNote(kind, desktopPath): string
+export function persistDestinationNote(kind, desktopPath): string
+export function localReadUnavailableNote(kind, what): string | null   // desktop は null
+export function emptyWatchlistNote(kind): string
+```
+
+判定で決めた 3 つ:
+
+- **ブラウザ版の文にパスを混ぜない。** 混ぜると同じ文が「そこを開けば在る」と読める。
+- **見本の件数を名乗らない。** `MOCK_TICKERS` は `src/main/clients/stocks.ts` に在り、
+  renderer は main を import できない (`lint:imports`)。写せば必ず古くなるので、
+  数を言わずに済む文にした (規則: 数を 2 か所に書かない)。
+- **`localReadUnavailableNote` はデスクトップで `null`。** 読める側に断りは要らない ——
+  「読めません」を出す枝を両方に持たせると、片方が必ず嘘になる。
+
+`renderer/hooks/useBuildKind.ts` が判定を配る。**分かるまでは `null`** で、呼び出し側は
+その間**実行形態に依る文を出さない** —— 既定を `'desktop'` に倒すと、ブラウザ版で一瞬だけ
+在りもしないパスが出る (1 フレーム遅れて出るのは害が無い / 間違った文が出るのは害が在る)。
+判定そのものは `runtimeMode.isBrowserBuild()` の 1 か所のまま (写しを作ると片方が見誤る)。
+
+サイドバーの説明文 (`services.ts`) は**静的な台帳なので実行形態で切り替えられない** ——
+Skills の 1 行だけ「一覧の読み取りはデスクトップ版のみ」と**どちらでも正しい**書き方に直した。
+
+### 常設した門 — `src/renderer/__tests__/desktopPathClaims.test.ts`
+
+renderer の実装 (コメントを除く) に `~/.local/` / `~/.claude/` が**再び現れたら鳴る**。
+台帳 (`LEDGER`) は**空であるのが正しい姿**で、双方向に見る (腐った台帳も落とす)。
+走査が死んだら落ちるよう、fixture への対照・コメント除去の両方向・`DESKTOP_PATHS` の
+全項目が走査の形をしていること・renderer 実装 100 本以上を見ていることを同じ検査で確かめる。
+
+### 対照 (4 本とも鳴る。C3 は**最初は鳴らなかった**)
+
+| 対照 | 戻した物 | 落ちた検査 |
+| --- | --- | --- |
+| C1 | Stocks の帯をデスクトップの文に固定 | 3 本 |
+| C2 | Skills の「ディレクトリを作って」を無条件に戻す | 2 本 |
+| C3 | `useBuildKind` の既定を `'desktop'` にする | 1 本 (下記) |
+| C4 | 生のパスを 1 行、画面に書き戻す | 1 本 (門) |
+
+**C3 は検査を足すまで鳴らなかった。** `settle()` が `getVersion()` の解決を待ってから
+見ていたので、「分かる前の一瞬」を誰も見ていなかった —— 既定を `'desktop'` にしても
+最終状態は同じなので全件通る。`getVersion` を**保留させたまま描く**検査
+(「判定が返るまで、実行形態に依る文を出さない」) を足して初めて鳴った。
+**鳴らない対照は「合格」ではなく、その検査についての報せである。**
+
+### 私がこのパスで踏んだ罠 (記録)
+
+`services.ts` の `icon:` と `description:` の**間**に注記を 2 行挟んだところ、
+`landingServiceParse.test.ts` が `72 parsed / 73 entries` で落ちた。ランディングの抽出は
+`id → label → icon → description → page → category` が**連続**していることを要求する。
+同じ事故がこのリポジトリに既に 3 度記録されている (2026-07 ×2・2026-08-28) ——
+**門は正しく鳴った**が、落ちたメッセージは件数の差だけで、どの項が落ちたかは言わない。
+注記を項の外 (`{` の上) へ移し、その位置に「欄の並びに注記を挟まないこと」と理由を書いた。
+**抽出側の脆さ (連続の要求) は残っている** —— 次のパスの候補として下に載せる。
+
+### 測定
+
+`shared/buildDestinations.ts` は 100% (行・枝・関数・文)。`hooks/useBuildKind.ts` は
+行・文・関数 100% / 枝 **75%** —— 残るのは `cancelled` (アンマウント後の setState 防御) で、
+React 18 の `createRoot` が no-op 化するため**外から観測できる差が無い**。
+`useServiceData.ts` が同じフラグについて同じ判断を既に書いており、そこに合わせて理由を
+コードに残した (鳴らない検査を書いて「測った」ことにはしない)。
+it() 12974 → **13001** (`buildDestinations` 12 + `buildDestinationNotes` 9 + `desktopPathClaims` 6)。
+
+### 残り
+
+- 実機 (e2e) はパス 153-161 の **9 パス分**が未検証。
+- **ランディングの抽出が欄の順序と連続に依存している** (上の罠)。落ちても
+  「どの項が落ちたか」を言わないので、次に踏む人も `services.ts` を目で追うことになる。
+  抽出を項ごとの塊に分けて欄を個別に読む形にすれば、この家系は閉じる。
+- `services.ts` の説明文は静的なので、**他にも実行形態で嘘になる説明が在りうる** ——
+  今回は Skills 1 件しか実測していない (75 件の全数は見ていない)。

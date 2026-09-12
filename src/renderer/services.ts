@@ -181,11 +181,16 @@ export const SERVICES: ServiceDefinition[] = [
     page: CanvaPage,
     category: 'integrations',
   },
+  // 実行形態に依らない書き方にする (パス 161) —— サイドバーの説明は静的な台帳なので
+  // 実行形態で切り替えられない。ブラウザ版は一覧を読めないので、そこを明示する。
+  // (欄の並びに注記を挟まないこと —— ランディングの抽出は
+  //  id → label → icon → description → page → category が**連続**していることを要求する。
+  //  挟むとその項だけが黙って落ち、landingServiceParse.test.ts が鳴る。)
   {
     id: 'skills',
     label: 'Skills',
     icon: 'SK',
-    description: '~/.claude/skills 一覧 + Anthropic API 経由で実行',
+    description: 'スキル一覧 + Anthropic API 経由で実行（一覧の読み取りはデスクトップ版のみ）',
     page: SkillsPage,
     category: 'tools',
   },

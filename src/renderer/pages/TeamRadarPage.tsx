@@ -18,6 +18,8 @@ import { exportWarning } from '../data/exportOutcome';
 import type { ActionData } from '../../shared/actionData';
 // スナップショットの形は shared が 1 つだけ持つ (パス 120 までは画面が写しを持っていた —— パス 62 / 116 の形)。
 import type { TeamRadarSnapshot } from '../../shared/teamRadarState';
+import { DESKTOP_PATHS, exportDestinationNote } from '../../shared/buildDestinations';
+import { useBuildKind } from '../hooks/useBuildKind';
 
 
 const AXES_FALLBACK = ['営業力', '顧客対応力', 'プレゼン力', '交渉力', '顧客管理力'];
@@ -195,6 +197,8 @@ function uniqueId(name: string, existing: string[]): string {
 }
 
 export function TeamRadarPage() {
+  /** どの実行形態か (パス 161)。分かるまでは null —— 実行形態に依る文を出さない。 */
+  const buildKind = useBuildKind();
   const { data, source, payloadIsMock, status, errorMessage, refresh } = useServiceData<TeamRadarSnapshot>(
     'teamradar',
     SNAPSHOT.teamradar,
@@ -424,9 +428,14 @@ export function TeamRadarPage() {
           lineHeight: 1.5,
         }}
       >
-        <strong>Canva 連動:</strong> 「SVG を保存」ボタンで{' '}
-        <code>~/.local/business-hub/data/team-radar.svg</code>{' '}
-        に書き出されます。Canva のキャンバスに直接ドラッグ&ドロップして取り込めるベクター画像です。
+        {/* 実行形態で書き出し先が違う (パス 161)。文面は shared/buildDestinations.ts。 */}
+        <strong>Canva 連動:</strong> 「SVG を保存」ボタンで書き出します。
+        {buildKind !== null && (
+          <span data-export-destination>
+            {' '}{exportDestinationNote(buildKind, DESKTOP_PATHS.teamRadarSvg)}
+          </span>
+        )}{' '}
+        Canva のキャンバスに直接ドラッグ&ドロップして取り込めるベクター画像です。
       </div>
 
       <Section

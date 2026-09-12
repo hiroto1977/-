@@ -7,6 +7,8 @@ import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgress
 import { useServiceData } from '../hooks/useServiceData';
 import { MAX_ASSISTANT_CONTENT_CHARS } from '../../shared/assistantLimits';
 import type { ActionData } from '../../shared/actionData';
+import { DESKTOP_PATHS, localReadUnavailableNote } from '../../shared/buildDestinations';
+import { useBuildKind } from '../hooks/useBuildKind';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -19,6 +21,8 @@ const inputStyle: React.CSSProperties = {
 };
 
 export function SkillsPage() {
+  /** どの実行形態か (パス 161)。分かるまでは null —— 実行形態に依る文を出さない。 */
+  const buildKind = useBuildKind();
   const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'skills',
     SNAPSHOT.skills,
@@ -60,7 +64,8 @@ export function SkillsPage() {
         onRefresh={refresh}
         who={
           <>
-            <strong>~/.claude/skills</strong>
+            {/* 読み取り元はデスクトップだけの話 (パス 161)。ブラウザ版は触れない。 */}
+            <strong>{buildKind === 'browser' ? 'スキル' : DESKTOP_PATHS.claudeSkills}</strong>
             <span style={{ color: 'var(--text-muted)', marginLeft: 8 }}>
               {items.length} 件のスキル
             </span>
@@ -75,10 +80,23 @@ export function SkillsPage() {
       <Section title="Skills" count={items.length}>
         {items.length === 0 ? (
           <div className="empty">
-            ~/.claude/skills/ にユーザスキルが見つかりません。
-            <br />
-            ディレクトリを作って <code>SKILL.md</code> を置くか、<code>&lt;name&gt;.md</code>{' '}
-            ファイルを直接置いてください。
+            {/*
+              **できない指示を出さない** (パス 161)。ブラウザ版は単一 HTML で動くので
+              `~/.claude/skills` を読めない —— ディレクトリを作っても一覧は空のままで、
+              画面はそれを黙って「見つかりません」と言い続けていた。
+            */}
+            {buildKind === 'browser' ? (
+              <span data-skills-unavailable>
+                {localReadUnavailableNote('browser', DESKTOP_PATHS.claudeSkills)}
+              </span>
+            ) : (
+              <>
+                {DESKTOP_PATHS.claudeSkills}/ にユーザスキルが見つかりません。
+                <br />
+                ディレクトリを作って <code>SKILL.md</code> を置くか、<code>&lt;name&gt;.md</code>{' '}
+                ファイルを直接置いてください。
+              </>
+            )}
           </div>
         ) : (
           <DataList
