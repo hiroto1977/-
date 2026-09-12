@@ -377,7 +377,30 @@ describe('画面ごとに「何を送るか」を自分の言葉で埋めてい�
     expect(what).toContain('会話');
     // 実物の窓 (`TURN_WINDOW`) を字面で写さず、値から刷る。
     expect(what).toContain('${TURN_WINDOW}');
-    expect(code(read('AssistantPage.tsx'))).toContain('const TURN_WINDOW = 16');
+    expect(code(read('AssistantPage.tsx'))).toContain('ASSISTANT_TURN_WINDOW = 16');
+    expect(code(read('AssistantPage.tsx'))).toContain('const TURN_WINDOW = ASSISTANT_TURN_WINDOW');
+  });
+
+  /*
+   * **単位も見る** (2026-09-12 · パス 186)。
+   *
+   * すぐ上の検査は**このまさに同じ文**を読んでいて、「会話と書いてあるか」
+   * 「数字を写していないか」までしか訊いていなかった。だから
+   * **「直近 16 往復」と書いて 16 発話しか送っていない**状態を 通していた ——
+   * 往復 (利用者 + AI の 1 組) に直すと約 8 往復で、断りが送る量を 2 倍に
+   * 述べていたことになる。**正しい文を見て、違うことを訊いていた** (パス 12 の家系)。
+   *
+   * 送る件数そのものは `pages/__tests__/assistantContextWindow.test.ts` が
+   * 画面を描いて `invoke` の payload を数える。ここが見るのは文面の単位だけ。
+   */
+  it('★ Assistant の窓の単位は「発話」である (往復と取り違えない)', () => {
+    const what = whatOf(read('AssistantPage.tsx'));
+    expect(what, '窓の数字の単位が発話になっていない').toContain('${TURN_WINDOW} 発話');
+    // 往復に直した数も添えてよい (人が数え直さずに済む) が、**窓の単位は発話**。
+    expect(what).toContain('往復');
+    // 標本: 直す前の文面はこの規則に当たらない (規則が空でないことの確認)。
+    const before = '入力した質問文と、直近 ${TURN_WINDOW} 往復までの会話';
+    expect(before.includes('${TURN_WINDOW} 発話')).toBe(false);
   });
 
   it('★ VillagePage は声が出ることを書く (画面の入力はマイクだから)', () => {

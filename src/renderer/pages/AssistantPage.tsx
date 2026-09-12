@@ -91,7 +91,14 @@ const PROVIDER_KEY = 'assistant-provider';
 /** chatAll (全AI合議) の 1 プロバイダ分の回答。 */
 // `EnsembleAnswer` は台帳 `shared/actionData.ts` から読む (パス 116) —— main と同じ型。
 const HISTORY_MAX = 50;
-const TURN_WINDOW = 16; // AI へ渡す直近会話数
+/**
+ * AI へ渡す直近の**発話数** (往復ではない —— 利用者と AI の発話を合わせて数える)。
+ *
+ * 検査がこの値を読むために輸出する (数を写すと、片方だけ動いて断り書きがずれる ——
+ * 2026-09-12 のパス 186 まで断りは「16 往復」と書いており、実際の 2 倍を述べていた)。
+ */
+export const ASSISTANT_TURN_WINDOW = 16;
+const TURN_WINDOW = ASSISTANT_TURN_WINDOW;
 
 const DEFAULT_THEME: Theme = { bg: '#ffffff', fg: '#000000', image: '' };
 
@@ -850,7 +857,20 @@ export function AssistantPage() {
           設定済みの全プロバイダへ同時に送る。文面は `shared/aiEgressNotice.ts`。 */}
       <AiEgressNotice
         subject={{
-          what: `入力した質問文と、直近 ${TURN_WINDOW} 往復までの会話 (AI の返答を含む。1 発話は先頭 ${MAX_ASSISTANT_CONTENT_CHARS} 字まで) `,
+          /*
+           * **単位を実装に合わせた** (2026-09-12 · パス 186)。
+           *
+           * ここは「直近 16 **往復**までの会話」と書いていたが、送っているのは
+           * `history.slice(-TURN_WINDOW)` —— 平らな発話の列の**末尾 16 発話**で、
+           * 往復 (利用者 + AI の 1 組) に直すと約 8 往復である。つまり断り書きが
+           * **送る量を 2 倍に述べていた**。外へ何が出るかの断りなので、
+           * 単位を取り違えたままにはしない (パス 101 の「断りが実物とずれる」形)。
+           *
+           * **1 つのテンプレートリテラルで書く。** 走査 (`aiEgressDisclosed` の
+           * `whatOf`) は `what:` の**最初のリテラル**だけを読むので、`+` で
+           * 連結すると文の後半が走査から見えなくなる (断りの一部が検査の外に出る)。
+           */
+          what: `入力した質問文と、直近 ${TURN_WINDOW} 発話までの会話 (利用者と AI の発話を合わせて数えるので約 ${Math.floor(TURN_WINDOW / 2)} 往復。AI の返答を含む。1 発話は先頭 ${MAX_ASSISTANT_CONTENT_CHARS} 字まで) `,
           recipients: egressRecipients,
         }}
       />

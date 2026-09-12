@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **13332** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **13338** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 31 / 36 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 557 | 自己検証 |
+| `file:line` 参照数 | 559 | 自己検証 |
 | 図の中の `file:line` 参照数 | 27 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -3429,6 +3429,23 @@ catch は一度も走らない** (`new Date(1e20)` は投げない) —— 守�
 同じパスで `CalendarPage` の**終了 ≤ 開始**も画面で断るようにした。Google は
 この組を 400 で拒むので「押せば必ず失敗する」操作で、画面には API の英語の
 文面だけが出ていた (パス 109 の家系)。
+
+**断り書きの数字そのものがずれていた例** (2026-09-12 · パス 186)。`AssistantPage` の
+egress の断り (パス 106 / 107 が置いた「何が外へ出るか」) は「直近 16 **往復**までの
+会話」と書いていたが、送るのは `history.slice(-TURN_WINDOW)` ——
+**平らな発話の列の末尾 16 発話**で、往復 (利用者 + AI の 1 組) に直すと約 8 往復。
+**送る量を 2 倍に述べていた。**
+
+`pages/__tests__/aiEgressDisclosed.test.ts` には**この文を読む検査が既に在った** ——
+「会話と書いてあるか」「数字を字面で写していないか」までは見ており、
+**単位は見ていなかった**。正しい文を見て、違うことを訊いていた (パス 12 の家系)。
+いまは単位 (`${TURN_WINDOW} 発話`) をそこで留め、**実際に送る件数**は
+`pages/__tests__/assistantContextWindow.test.ts` が画面を描いて `invoke` の
+payload を数える (数字と文面だけ合わせても「口はあるが繋がっていない」になる)。
+
+`what:` は**1 つのテンプレートリテラル**で書く —— 走査の `whatOf` は `what:` の
+最初のリテラルだけを読むので、`+` で連結すると文の後半が検査の外に出る
+(直している途中で一度そうしてしまい、`往復` を見る検査が鳴って気付いた)。
 
 **暗号パラメータ**も同じ形だった。AES-GCM の IV 長と PBKDF2 の強度が
 `src/renderer/security/vault.ts` / `src/renderer/security/dataCrypto.ts` /
