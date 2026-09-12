@@ -11,7 +11,8 @@ import { emotionThresholds } from '../../shared/parameters';
 import { counsel } from '../data/counseling';
 import { SELF_CARE_LIBRARY } from '../data/selfCareLibrary';
 import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
-import { charsOverCeiling, clampedCeilingNote, refusedCeilingNote } from '../../shared/inputCeiling';
+import { charsOverCeiling, clampedCeilingNote } from '../../shared/inputCeiling';
+import { CeilingNotice } from '../components/CeilingNotice';
 import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
@@ -261,8 +262,6 @@ export function EmotionsPage() {
 
   const analyze = async () => {
     if (!window.serviceHub) return;
-    // 押せない形にしてあるが、ここでも見る —— 送る手前が最後の砦。
-    if (charsOverCeiling(text, MAX_ANALYZE_TEXT_CHARS) > 0) return;
     setAnalyzing(true);
     setAnalyzeErr(undefined);
     const res = await window.serviceHub.invoke<ActionData<'emotions/analyze-text'>>('emotions', 'analyze-text', {
@@ -409,15 +408,9 @@ export function EmotionsPage() {
             rows={4}
             style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
           />
-          {textOver > 0 && (
-            <div
-              data-analyze-over-ceiling={textOver}
-              role="alert"
-              style={{ fontSize: 11, color: '#fbbf24', lineHeight: 1.6 }}
-            >
-              ⚠ {refusedCeilingNote('分析するテキスト', text.length, MAX_ANALYZE_TEXT_CHARS)}
-            </div>
-          )}
+          {/* 節は共有の部品が持つ (パス 175 —— ここが手書きだったので、
+                「超過を述べているか」を走査で当てられなかった)。 */}
+          <CeilingNotice label="分析するテキスト" value={text} max={MAX_ANALYZE_TEXT_CHARS} />
           <div style={{ display: 'flex', gap: 8 }}>
             <button
               className="primary"

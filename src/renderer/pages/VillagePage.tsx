@@ -43,6 +43,8 @@ import {
 } from '../data/assistantProviders';
 import { speak, cancelSpeech } from '../voice/ttsAdapter';
 import { MAX_ASSISTANT_CONTENT_CHARS } from '../../shared/assistantLimits';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling, refusedCeilingNote } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
 
 const REG: VillageRegistry = {
@@ -250,6 +252,19 @@ export function VillagePage() {
 
     const hub = window.serviceHub;
     if (aiOn && hub && reply.kind !== 'action') {
+      /*
+       * **マイクは欄を通らない** (パス 175)。footer の欄は超過を述べて押せなくできるが、
+       * `startSpeechRecognition` の `onTranscript` はここへ直に来るので、`disabled` が効かない。
+       * 天井を超えた発話を送ると main / ブラウザ版が断り (`latestTurnTooLong`)、その断りは
+       * 下の `if (res.ok && …)` に else が無いので**誰にも届かない** —— ここで断って、声で言う。
+       * 端末内の規則ベースの応答 (`reply`) は既に出ているので、止めるのは AI への送信だけ。
+       */
+      if (charsOverCeiling(text, MAX_ASSISTANT_CONTENT_CHARS) > 0) {
+        const note = refusedCeilingNote('話しかけた文', text.length, MAX_ASSISTANT_CONTENT_CHARS);
+        setVoiceBubble(targetId, note);
+        speak(note);
+        return;
+      }
       void (async () => {
         try {
           const res = await hub.invoke<ActionData<'assistant/chat'>>('assistant', 'chat', {
@@ -627,6 +642,8 @@ function Character({ v, x, y, flip, active, enlarged, showLabel, ring, bubble }:
 // ---------------------------------------------------------------------------
 function VoiceFooter({ transcript, onSubmit }: { transcript: string; onSubmit: (t: string) => void }) {
   const [text, setText] = useState('');
+  /* 貼り付けを黙って切らない (パス 175)。天井は共有の定数から読む。 */
+  const over = charsOverCeiling(text, MAX_ASSISTANT_CONTENT_CHARS);
   return (
     <div style={footerStyle}>
       <div style={{ fontSize: 12, opacity: 0.8, minHeight: 16, flex: 1 }}>
@@ -644,16 +661,16 @@ function VoiceFooter({ transcript, onSubmit }: { transcript: string; onSubmit: (
       >
         <input
           value={text}
-          maxLength={MAX_ASSISTANT_CONTENT_CHARS}
           onChange={(e) => setText(e.target.value)}
           placeholder="文字でも話しかけられます"
           aria-label="村への入力"
           style={{ padding: '7px 10px', borderRadius: 8, border: '1px solid rgba(127,127,127,0.4)', minWidth: 200 }}
         />
-        <button type="submit" className="primary" disabled={!text.trim()}>
+        <button type="submit" className="primary" disabled={!text.trim() || over > 0}>
           伝える
         </button>
       </form>
+      <CeilingNotice label="入力" value={text} max={MAX_ASSISTANT_CONTENT_CHARS} />
     </div>
   );
 }

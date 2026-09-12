@@ -140,7 +140,8 @@ function analyzeButton(): HTMLButtonElement {
   return el as HTMLButtonElement;
 }
 
-const overNote = (): HTMLElement | null => container.querySelector('[data-analyze-over-ceiling]');
+const overNote = (): HTMLElement | null =>
+  container.querySelector('[data-ceiling-notice="分析するテキスト"]');
 const moodNote = (): HTMLElement | null => container.querySelector('[data-mood-note-overflow]');
 
 beforeEach(async () => {
@@ -193,7 +194,8 @@ describe('分析するテキスト — 切らずに断る (パス 168)', () => {
     await typeInto(analyzeBox(), 'あ'.repeat(length));
     const note = overNote();
     expect(note, '超えているのに何も言っていない').not.toBeNull();
-    expect(note!.getAttribute('data-analyze-over-ceiling')).toBe('2300');
+    // 節は共有の `CeilingNotice` (パス 175 で寄せた)。欄の名前が属性に載る。
+    expect(note!.getAttribute('data-ceiling-notice')).toBe('分析するテキスト');
     expect(note!.textContent).toContain(String(MAX_ANALYZE_TEXT_CHARS));
     expect(note!.textContent).toContain(String(length));
     expect(note!.textContent).toContain('2300');

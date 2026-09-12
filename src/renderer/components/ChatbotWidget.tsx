@@ -28,6 +28,8 @@ import {
   voiceWriteRefusalMessage,
 } from '../../shared/voiceWriteRequirements';
 import { MAX_OLLAMA_PROMPT_CHARS } from '../../shared/ollama';
+import { CeilingNotice } from './CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
 
 /** チャット履歴 1 件。 */
@@ -183,6 +185,8 @@ export function ChatbotWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>(() => loadHistory());
   const [input, setInput] = useState('');
+  /* 貼り付けを黙って切らない (パス 175)。解釈できない入力は端末内のモデルへ回る (`tryOllama`)。 */
+  const inputOver = charsOverCeiling(input, MAX_OLLAMA_PROMPT_CHARS);
   const [busy, setBusy] = useState(false);
   const [pendingIntent, setPendingIntent] = useState<VoiceIntent | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
@@ -397,6 +401,7 @@ export function ChatbotWidget() {
             ))}
           </div>
 
+          <CeilingNotice label="入力" value={input} max={MAX_OLLAMA_PROMPT_CHARS} />
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -406,7 +411,6 @@ export function ChatbotWidget() {
           >
             <input
               value={input}
-              maxLength={MAX_OLLAMA_PROMPT_CHARS}
               onChange={(e) => setInput(e.target.value)}
               placeholder="例: 税務試算を開いて / 福利厚生の機能が欲しい"
               aria-label="チャット入力"
@@ -420,7 +424,7 @@ export function ChatbotWidget() {
                 fontSize: 13,
               }}
             />
-            <button type="submit" className="primary" disabled={busy || !input.trim()}>
+            <button type="submit" className="primary" disabled={busy || !input.trim() || inputOver > 0}>
               送信
             </button>
           </form>

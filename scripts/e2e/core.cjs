@@ -2856,6 +2856,75 @@ async function writeCeilingSuite(browser) {
   await ctx.close();
 }
 
+/**
+ * **AI へ送る欄も、貼り付けを黙って切らない** (2026-09-12 · パス 175)。
+ *
+ * `writeCeiling` (外部サービスへ**書く**本文・パス 172) と同じ形が、**AI へ送る**欄にも
+ * 8 つ残っていた —— パス 112 / 114 が両ビルドの handler に「切らずに断る」を置いたのに、
+ * 画面が `maxLength` を持っていたので、その断りには 1 度も到達していなかった。
+ * 仕組みの標本 (maxlength の欄はブラウザが黙って切る) は `writeCeiling` が持っている。
+ * ここが見るのは **AI の欄で実際にどうなるか**、と **Enter の迂回経路**である
+ * (`onKeyDown` は `disabled` を見ないので、押せなくするだけでは送れてしまう ——
+ *  この経路は実機のキー入力でしか確かめられない)。
+ */
+async function aiCeilingSuite(browser) {
+  console.log('\n=== aiCeiling (AI へ送る欄: 切らずに断る・Enter も断る) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  // --- 経営アドバイザーの質問 (天井 1,000 字 = 台帳 MAX_ADVISOR_QUESTION_CHARS) ---
+  const MAX = 1000;
+  await page.goto(FILE + '#business', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('text=AI 経営アドバイザー', { timeout: 30000 });
+
+  const box = page.getByPlaceholder('例: 来期に最も注力すべき事業を 3 つ');
+  await box.fill('あ'.repeat(MAX + 1));
+  const kept = await box.inputValue();
+  ok(kept.length === MAX + 1,
+    `aiCeiling: ★ 質問は切られない (${MAX + 1} 字を入れて ${kept.length} 字)`);
+
+  await page.waitForSelector('[data-ceiling-notice="質問"]', { timeout: 15000 });
+  const notice = (await page.locator('[data-ceiling-notice="質問"]').innerText()).replace(/\s+/g, ' ');
+  ok(notice.includes(`いま ${MAX + 1} 字あり、1 字超えています`),
+    `aiCeiling: ★ 断りが今の字数と超過分を述べる — 実際 ${JSON.stringify(notice.slice(0, 60))}`);
+  ok(notice.includes('この状態では送りません'),
+    'aiCeiling: ★ 断りが「送っていない」ことを述べる');
+
+  const ask = page.getByRole('button', { name: 'AI に聞く' });
+  ok(await ask.isDisabled(), 'aiCeiling: ★ 超えている間は「AI に聞く」が押せない');
+
+  // --- Enter の迂回経路 (`disabled` を見ない道) ---
+  ok(await page.locator('[data-advisor-error]').count() === 0,
+    'aiCeiling: 対照 — 押す前は助言の断り欄が出ていない');
+  await box.press('Enter');
+  await page.waitForSelector('[data-advisor-error]', { timeout: 15000 });
+  const err = (await page.locator('[data-advisor-error]').innerText()).replace(/\s+/g, ' ');
+  ok(err.includes('1 字超えています') && err.includes('送りません'),
+    `aiCeiling: ★ Enter でも断る (欄の注記ではなく助言欄が言う) — 実際 ${JSON.stringify(err.slice(0, 60))}`);
+
+  // --- 天井ちょうどまで縮めると通る ---
+  await box.fill('い'.repeat(MAX));
+  await page.waitForSelector('[data-ceiling-notice="質問"]', { state: 'detached', timeout: 15000 });
+  ok(!(await ask.isDisabled()), 'aiCeiling: ★ 天井ちょうどなら押せる');
+
+  // --- 別の家系 (アシスタント本体・天井 8,000 字) でも同じ ---
+  await gotoService(page, '#assistant', 'input[aria-label="アシスタントへの入力"]');
+  const chat = page.locator('input[aria-label="アシスタントへの入力"]');
+  await chat.fill('あ'.repeat(8001));
+  const chatKept = await chat.inputValue();
+  ok(chatKept.length === 8001,
+    `aiCeiling: ★ アシスタントの入力も切られない (8001 字を入れて ${chatKept.length} 字)`);
+  await page.waitForSelector('[data-ceiling-notice="入力"]', { timeout: 15000 });
+  ok(await page.getByRole('button', { name: '送信' }).isDisabled(),
+    'aiCeiling: ★ アシスタントも超えている間は送れない');
+
+  ok(errs.length === 0, `aiCeiling: コンソールエラー 0 件 (${errs.slice(0, 2).join(' / ')})`);
+  await ctx.close();
+}
+
 async function parameterSuite(browser) {
   console.log('\n=== parameters (数値パラメータ: 設定 → 別画面へ反映 → 既定に戻す) ===');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
@@ -3005,7 +3074,7 @@ async function hardResetSuite(browser) {
   const SUITES = [
     'desktop', 'manualData', 'dataOrigin', 'credential', 'businessComparison', 'kessanTax', 'frameGuard', 'noBeacon',
     'vaultPassword', 'credentialEgress', 'proxyEnvelope', 'cspEnforced', 'vaultOpacity', 'crossTabLock', 'storageDurability', 'hardReset',
-    'securityPosture', 'thirdPartyDisclosure', 'realtime', 'phone', 'talent', 'teamRadar', 'serviceAdvice', 'parameters', 'writeCeiling', 'tablet',
+    'securityPosture', 'thirdPartyDisclosure', 'realtime', 'phone', 'talent', 'teamRadar', 'serviceAdvice', 'parameters', 'writeCeiling', 'aiCeiling', 'tablet',
   ];
   const unknown = only.filter((n) => !SUITES.includes(n));
   if (unknown.length > 0) {
@@ -3043,6 +3112,7 @@ async function hardResetSuite(browser) {
   if (run('serviceAdvice')) await serviceAdviceSuite(browser);
   if (run('parameters')) await parameterSuite(browser);
   if (run('writeCeiling')) await writeCeilingSuite(browser);
+  if (run('aiCeiling')) await aiCeilingSuite(browser);
   if (run('tablet')) await tabletSuite(browser);
   await browser.close();
   if (failures.length > 0) {

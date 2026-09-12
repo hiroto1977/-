@@ -26,7 +26,7 @@
  * 名前が在ることと、その値で**断っている**ことは別 —— `slice(0, MAX_…)` でも名前は在る
  * (パス 113 の対照 H が鳴らなかったのはこの形)。印は比較式 (`.length > MAX_…`) で当てる。
  *
- * ## 画面側の天井は 1 形ではない (パス 168)
+ * ## 画面側の天井は 1 形ではない —— そして AI の欄に**打ち止めは向かない** (パス 168 → 175)
  *
  * パス 112 は画面の天井を `maxLength={定数}` の**1 形だけ**で留めていた。パス 168 で、
  * **人が本文を貼る欄**ではそれが害になると実測した —— ブラウザは天井を超えた分を
@@ -34,9 +34,36 @@
  * 返ってきた感情分析が「貼った文の分析」として出ていた。結果は正しく見えるので
  * 切れたことは誰にも見えない。貼る欄は**切らずに断る** (`charsOverCeiling` + 送らない)。
  *
- * だからここは「天井を持っているか」ではなく「**どちらの形で**持っているか」を台帳に書き、
- * 形ごとに別の印で当てる。`'refuse'` の行は `maxLength={定数}` が**無い**ことも要る ——
- * 両方在るとブラウザが先に落とし、断る側に制御が来ない (台帳は双方向)。
+ * パス 168 はそれを 1 画面だけ直し、台帳には「打ち止めが向くのは**自分で打つ短い欄**
+ * (質問 1 行)」と書いた。**それが誤りだった** (パス 175 で数えた)。残っていた 8 欄の天井は
+ * 1,000 / 8,000 / 8,192 / 32,768 字で、**どれも打って届く量ではない** —— つまり
+ * `maxLength` が発火するのは貼り付けのときだけで、そのとき超過分は必ず黙って落ちる。
+ * 「打っていて止まる」(指に伝わるので見える) 形は、この母集団に 1 つも無かった。
+ * そして落ちた先で `latestTurnTooLong` / `checkAdvisorQuestion('too-long')` ——
+ * パス 112 / 114 が両ビルドに置いた断り —— は**1 度も通らない**。
+ *
+ * 結果として **AI へ行く欄に `maxLength` は使わない**。台帳の行はすべて「断る」形で、
+ * 走査は同じ定数が `maxLength={…}` に戻っていないことも見る (台帳は双方向 ——
+ * 両方在るとブラウザが先に落とし、断る側に制御が来ない)。
+ * 外へ**書く**欄 (`shared/writeFieldLimits.ts`・パス 172) は **2 形のまま**である ——
+ * あちらには「自分で打つ短い欄」(チャンネル ID・ラベル・ページ ID) が実在する。
+ *
+ * ## 押せなくするだけでは足りない経路を、**源から導く** (パス 175)
+ *
+ * パス 168 は「送る手前が最後の砦」として 2 か所目の `charsOverCeiling` を求め、理由を
+ * 「state が古いまま押された経路で切れた本文が出ていく」と書いた。**これも誤り**である ——
+ * React の handler はその描画の state を掴むので、古い state で押されたなら送られるのは
+ * **古くて短い**本文であり、天井を超えた本文ではない。押す道がボタンだけの画面では、
+ * 2 か所目は**到達できない行**である (パス 169 の「到達できない行を増やさない」)。
+ *
+ * 2 か所目が本当に要るのは、**`disabled` を見ない送信経路**を持つ画面である。実測で 2 種:
+ *
+ *   - `onKeyDown` の Enter (`BusinessPage` / `StocksPage` の助言欄) —— `advisorBusy` しか見ない。
+ *   - `onTranscript` のマイク (`VillagePage`) —— 欄を通らず `handleUtterance` へ直に来る。
+ *
+ * どちらも**源から導く** (`enterSubmitFns` / `micSubmitFns`)。台帳の `bypass` は導いた結果と
+ * 一致していなければ鳴る —— 新しい Enter 経路が黙って増えたら、その画面は砦を要求される。
+ * そして砦は**黙って `return` しない** —— 何字超えているかを述べる (`refusedCeilingNote`)。
  */
 import { describe, expect, it } from 'vitest';
 import { originalSourcePath, readOriginalSource } from '../../shared/__tests__/originalSource';
@@ -77,69 +104,141 @@ const SILENT_CUT_ALLOWED: Readonly<Record<string, string>> = {
     '切るのは保存する履歴の件数 (MAX_ANALYSES) で、入力ではない。text は MAX_ANALYZE_TEXT_CHARS で先に断る',
 };
 
-/**
- * 画面が天井を持つ **2 つの形**。どちらも「黙って落とさない」を満たすが、
- * **利用者に起きることが違う**ので、どちらなのかを台帳が持つ。
- *
- * | `how` | 画面の作り | 利用者に起きること |
- * | --- | --- | --- |
- * | `'maxLength'` | `maxLength={定数}` | ブラウザが天井で打ち止めにする (それ以上入らない) |
- * | `'refuse'` | `charsOverCeiling(…, 定数)` で**送らない** | 全文が欄に残り、いくら超えているかが出る |
- *
- * 打ち止めが向くのは**自分で打つ短い欄** (質問 1 行)。断るのが向くのは
- * **人が本文を貼る欄** —— 貼った本文を黙って切ると、切れた文への答えが
- * 全文への答えとして返る (パス 168 の実測)。
- */
-type Bound =
-  | { readonly how: 'maxLength'; readonly fields: number }
-  | {
-      readonly how: 'refuse';
-      /**
-       * `charsOverCeiling(…, 定数)` が要る回数。
-       * **2 か所**なのは、超過を述べる側と、送る手前の**最後の砦**の両方が要るから ——
-       * 押せなくするだけでは、state が古いまま押された経路で切れた本文が出ていく。
-       */
-      readonly reads: number;
-      readonly why: string;
-      /**
-       * 振る舞い (押せない・`invoke` しない・全文が残る) を留めている検査
-       * (`RENDERER` からの相対)。ここの走査は綴りしか見られないので、
-       * **断りが本当に効いているか**はその検査が持つ。消えたらここが鳴る。
-       */
-      readonly provenBy: string;
-    };
+/** `disabled` を見ない送信経路の種類。**源から導き**、台帳の `bypass` と突き合わせる。 */
+type Bypass = 'enter' | 'mic';
 
-/** 画面 → AI へ行く入力欄が読む定数と、その天井の持ち方 (`null` = 利用者の入力欄は AI へ行かない。理由を書く)。 */
+/** 画面がこの天井を**断る形**で持っていること (`maxLength` は使わない。上の散文)。 */
+interface Bound {
+  /**
+   * `charsOverCeiling(…, 定数)` が要る回数 —— 欄で超過を述べるのに 1 か所、
+   * `bypass` を持つ画面はその送信関数の中にもう 1 か所 (`disabled` が効かない道の砦)。
+   */
+  readonly reads: number;
+  /** この画面の `disabled` を迂回する送信経路。**導いた結果と一致していること** (双方向)。 */
+  readonly bypass: readonly Bypass[];
+  /** この欄に人が何を入れるか (= 打ち止めではなく断りが向く理由)。 */
+  readonly why: string;
+  /**
+   * 振る舞い (押せない・`invoke` しない・全文が残る・迂回経路が断る) を留めている検査
+   * (`RENDERER` からの相対)。ここの走査は綴りしか見られないので、
+   * **断りが本当に効いているか**はその検査が持つ。消えたらここが鳴る。
+   */
+  readonly provenBy: string;
+}
+
+/** 画面 → AI へ行く入力欄が読む定数 (`null` = 利用者の入力欄は AI へ行かない。理由を書く)。 */
 type PageCap =
-  | { readonly constants: Readonly<Record<string, Bound>> }
+  | {
+      /** `invoke` を持つ関数の名 —— 迂回経路 (Enter / マイク) をこの名から導く。 */
+      readonly submitFn: string;
+      readonly constants: Readonly<Record<string, Bound>>;
+    }
   | { readonly constants: null; readonly why: string };
 
-const MAX_LEN = (fields: number): Bound => ({ how: 'maxLength', fields });
+/** 断りの振る舞いを留めている検査 (8 欄すべてを 1 か所で駆動する。パス 175)。 */
+const PROVEN = '__tests__/aiCeilingOnScreen.test.ts';
 
 const PAGE_CAPS: Readonly<Record<string, PageCap>> = {
-  'pages/AssistantPage.tsx': { constants: { MAX_ASSISTANT_CONTENT_CHARS: MAX_LEN(1) } },
-  'pages/VillagePage.tsx': { constants: { MAX_ASSISTANT_CONTENT_CHARS: MAX_LEN(1) } },
-  'pages/SkillsPage.tsx': { constants: { MAX_ASSISTANT_CONTENT_CHARS: MAX_LEN(1) } },
-  'pages/BusinessPage.tsx': { constants: { MAX_ADVISOR_QUESTION_CHARS: MAX_LEN(1) } },
-  'pages/StocksPage.tsx': { constants: { MAX_ADVISOR_QUESTION_CHARS: MAX_LEN(1) } },
+  'pages/AssistantPage.tsx': {
+    submitFn: 'send',
+    constants: {
+      MAX_ASSISTANT_CONTENT_CHARS: {
+        reads: 1,
+        bypass: [],
+        why: '「創業計画のたたき台を作って」と誘う画面 —— 人は自分の計画・メール・議事録を貼る。8,000 字は打って届かない',
+        provenBy: PROVEN,
+      },
+    },
+  },
+  'pages/VillagePage.tsx': {
+    submitFn: 'handleUtterance',
+    constants: {
+      MAX_ASSISTANT_CONTENT_CHARS: {
+        reads: 2,
+        bypass: ['mic'],
+        why: '文字でも話しかけられる欄 (貼り付けが通る)。マイクは欄を通らないので、'
+          + '`handleUtterance` にも砦が要る —— 送った先の断りは `if (res.ok && …)` に else が無く、誰にも届かない',
+        provenBy: PROVEN,
+      },
+    },
+  },
+  'pages/SkillsPage.tsx': {
+    submitFn: 'run',
+    constants: {
+      MAX_ASSISTANT_CONTENT_CHARS: {
+        reads: 1,
+        bypass: [],
+        why: '「このスキルに何を依頼するか」の複数行の欄 —— 資料を貼って渡す使い方が主である',
+        provenBy: PROVEN,
+      },
+    },
+  },
+  'pages/BusinessPage.tsx': {
+    submitFn: 'runAdvisor',
+    constants: {
+      MAX_ADVISOR_QUESTION_CHARS: {
+        reads: 2,
+        bypass: ['enter'],
+        why: '1 行の欄だが天井は 1,000 字 —— 打って届く量ではなく、状況説明を貼ると超える。'
+          + 'Enter は `advisorBusy` しか見ないので、押せなくするだけでは送れてしまう',
+        provenBy: PROVEN,
+      },
+    },
+  },
+  'pages/StocksPage.tsx': {
+    submitFn: 'runAdvisor',
+    constants: {
+      MAX_ADVISOR_QUESTION_CHARS: {
+        reads: 2,
+        bypass: ['enter'],
+        why: '経営ダッシュボードの助言欄と同じ作り・同じ天井・同じ Enter の迂回',
+        provenBy: PROVEN,
+      },
+    },
+  },
+  // 端末内 (Ollama)。prompt と system は別の天井 —— 欄ごとに読む定数が違う。
+  'pages/OllamaPage.tsx': {
+    submitFn: 'sendChat',
+    constants: {
+      MAX_OLLAMA_PROMPT_CHARS: {
+        reads: 1,
+        bypass: [],
+        why: '端末内モデルへの複数行のプロンプト。32,768 字は貼り付け専用の天井である',
+        provenBy: PROVEN,
+      },
+      MAX_OLLAMA_SYSTEM_CHARS: {
+        reads: 1,
+        bypass: [],
+        why: '同じ画面の System prompt (8,192 字)。handler は 2 つを別々に断る (パス 114)',
+        provenBy: PROVEN,
+      },
+    },
+  },
+  'components/ChatbotWidget.tsx': {
+    submitFn: 'send',
+    constants: {
+      MAX_OLLAMA_PROMPT_CHARS: {
+        reads: 1,
+        bypass: [],
+        why: '解釈できなかった入力が端末内モデルへ回る (`tryOllama`) —— 天井は Ollama の物',
+        provenBy: PROVEN,
+      },
+    },
+  },
   'pages/EmotionsPage.tsx': {
+    submitFn: 'analyze',
     constants: {
       MAX_ANALYZE_TEXT_CHARS: {
-        how: 'refuse',
-        reads: 2,
+        reads: 1,
+        bypass: [],
         why:
-          'この画面の欄だけは**人が本文を貼る** (placeholder が「メール本文、自分の日記」と貼り付けを誘い、'
+          'この画面の欄は**人が本文を貼る** (placeholder が「メール本文、自分の日記」と貼り付けを誘い、'
           + 'どちらも 5,000 字をふつうに超える)。maxLength に任せると超過分が黙って落ち、先頭 5,000 字への'
           + '分析が全文への分析として画面に出る —— 結果は正しく見えるので利用者に見分けられない (パス 168)',
         provenBy: 'pages/__tests__/emotionsCeilingOnScreen.test.ts',
       },
     },
   },
-  // 端末内 (Ollama)。prompt と system は別の天井 —— 欄ごとに読む定数が違う。
-  'pages/OllamaPage.tsx': {
-    constants: { MAX_OLLAMA_PROMPT_CHARS: MAX_LEN(1), MAX_OLLAMA_SYSTEM_CHARS: MAX_LEN(1) },
-  },
-  'components/ChatbotWidget.tsx': { constants: { MAX_OLLAMA_PROMPT_CHARS: MAX_LEN(1) } },
   'pages/GmailPage.tsx': {
     constants: null,
     why: '受信スレッドの件名と送信者 (取得済みデータ) を送る。利用者の入力欄 (下書き) は AI へ行かない',
@@ -150,6 +249,37 @@ const PAGE_CAPS: Readonly<Record<string, PageCap>> = {
   },
 };
 
+/**
+ * `onKeyDown` が Enter のときに呼ぶ関数の名 —— **`disabled` を見ない送信経路**を源から導く。
+ * (`<button disabled>` は Enter の暗黙の submit を止めるが、`onKeyDown` の手書きは止まらない。)
+ */
+function enterSubmitFns(src: string): ReadonlySet<string> {
+  const out = new Set<string>();
+  for (const m of src.matchAll(/onKeyDown=\{\([^)]*\)\s*=>\s*\{([\s\S]*?)\n\s*\}\}/g)) {
+    const body = m[1] ?? '';
+    if (!/['"]Enter['"]/.test(body)) continue;
+    for (const c of body.matchAll(/\b([a-z][A-Za-z0-9_]*)\s*\(/g)) out.add(c[1]!);
+  }
+  return out;
+}
+
+/** `onTranscript` (マイクの確定文) が呼ぶ関数の名 —— 欄を通らない送信経路。 */
+function micSubmitFns(src: string): ReadonlySet<string> {
+  const out = new Set<string>();
+  for (const m of src.matchAll(/onTranscript:\s*\([^)]*\)\s*=>\s*\{([\s\S]*?)\n\s*\},/g)) {
+    for (const c of (m[1] ?? '').matchAll(/\b([a-z][A-Za-z0-9_]*)\s*\(/g)) out.add(c[1]!);
+  }
+  return out;
+}
+
+/** この画面で `submitFn` へ届く「`disabled` を見ない」経路 (導いた結果)。 */
+function derivedBypass(src: string, submitFn: string): Bypass[] {
+  const found: Bypass[] = [];
+  if (enterSubmitFns(src).has(submitFn)) found.push('enter');
+  if (micSubmitFns(src).has(submitFn)) found.push('mic');
+  return found;
+}
+
 /** `maxLength={定数}` が在る回数 (ブラウザに打ち止めさせている欄の数)。 */
 function maxLengthReads(src: string, constant: string): number {
   return src.split(`maxLength={${constant}}`).length - 1;
@@ -158,6 +288,17 @@ function maxLengthReads(src: string, constant: string): number {
 /** `charsOverCeiling(…, 定数)` が在る回数 (断る形でこの天井を読んでいる回数)。 */
 function refusalReads(src: string, constant: string): number {
   return src.match(new RegExp(`charsOverCeiling\\(\\s*[^()]*\\b${constant}\\b`, 'g'))?.length ?? 0;
+}
+
+/**
+ * その天井の `<CeilingNotice … max={定数} />` が在る回数 (**超過を画面が述べている**か)。
+ *
+ * `refusalReads` だけでは足りない —— パス 175 の対照 C3 で実測した: 節 (`<CeilingNotice>`) を
+ * 消しても `const over = charsOverCeiling(…)` は残るので、読みの数は 1 のまま通ってしまう
+ * (画面は何も言わなくなっているのに)。**読んでいることと、述べていることは別**である。
+ */
+function noticeReads(src: string, constant: string): number {
+  return src.match(new RegExp(`<CeilingNotice[^>]*max=\\{\\s*${constant}\\s*\\}`, 'g'))?.length ?? 0;
 }
 
 describe('AI へ出る handler はすべて入力の天井で断る (母集団は ACTIONS から導く。端末内も数える)', () => {
@@ -231,7 +372,7 @@ describe('AI へ送る画面は台帳に在り、入力欄は共有の定数を�
     expect(Object.keys(PAGE_CAPS).filter((p) => !aiPages.includes(p)), '台帳の古い行').toEqual([]);
   });
 
-  it('★ 入力欄は字面の数を持たず、AI へ行く欄は台帳の形でその天井の定数を読む', () => {
+  it('★ 入力欄は字面の数を持たず、AI へ行く欄は断る形でその天井の定数を読む (maxLength は使わない)', () => {
     for (const p of aiPages) {
       const src = code(readOriginalSource(path.join(RENDERER, p)));
       expect(src, `${p} が maxLength に数を写している`).not.toMatch(/maxLength=\{\s*\d/);
@@ -244,23 +385,21 @@ describe('AI へ送る画面は台帳に在り、入力欄は共有の定数を�
         expect(src, `${p} が ${constant} を import していない`).toMatch(
           new RegExp(`import[^;]*\\b${constant}\\b[^;]*from`),
         );
-        if (bound.how === 'maxLength') {
-          expect(
-            maxLengthReads(src, constant),
-            `${p} の AI 入力欄が ${constant} を maxLength で読んでいない`,
-          ).toBeGreaterThanOrEqual(bound.fields);
-          continue;
-        }
-        // 断る形。**綴りで当てられるのはここまで** —— 効いているかは provenBy が持つ。
+        // **綴りで当てられるのはここまで** —— 効いているかは provenBy が持つ。
         expect(
           refusalReads(src, constant),
           `${p} が ${constant} で断っていない (charsOverCeiling が足りない)`,
         ).toBeGreaterThanOrEqual(bound.reads);
-        // 台帳は双方向: maxLength が戻っていたら、この行の 'refuse' は古い
-        // (両方在るとブラウザが先に落とし、断る側に制御が来ない)。
+        // 読むだけでは足りない —— **超過を述べる節**が在ること (対照 C3)。
+        expect(
+          noticeReads(src, constant),
+          `${p}: ${constant} の超過を画面が述べていない (<CeilingNotice> が無い)`,
+        ).toBeGreaterThanOrEqual(1);
+        // 台帳は双方向: `maxLength` が戻っていたらブラウザが先に黙って落とし、
+        // 断る側に制御が来ない (パス 175 —— AI の欄に打ち止めは向かない)。
         expect(
           maxLengthReads(src, constant),
-          `${p}: ${constant} を maxLength でも止めている (台帳の 'refuse' が古い)`,
+          `${p}: ${constant} を maxLength でも止めている (超過分が黙って落ちる)`,
         ).toBe(0);
         expect(bound.why.length, `${p}: ${constant} を断る形にした理由が無い`).toBeGreaterThan(10);
         const proof = path.join(RENDERER, bound.provenBy);
@@ -272,6 +411,38 @@ describe('AI へ送る画面は台帳に在り、入力欄は共有の定数を�
           readOriginalSource(proof),
           `${bound.provenBy} が ${constant} を見ていない`,
         ).toContain(constant);
+      }
+    }
+  });
+
+  it('★ `disabled` を見ない送信経路は源から導き、台帳と一致する (両方向)', () => {
+    for (const p of aiPages) {
+      const cap = PAGE_CAPS[p]!;
+      if (cap.constants === null) continue;
+      const src = code(readOriginalSource(path.join(RENDERER, p)));
+      // 送信関数が実在すること —— 名前が変わったら導出が黙って空になる。
+      expect(src, `${p}: 台帳の送信関数 ${cap.submitFn} が見つからない`).toMatch(
+        new RegExp(`\\b${cap.submitFn}\\b`),
+      );
+      const derived = derivedBypass(src, cap.submitFn);
+      for (const [constant, bound] of Object.entries(cap.constants)) {
+        expect(
+          [...bound.bypass].sort(),
+          `${p}: ${constant} の bypass が実装と食い違う (導出: ${derived.join(',') || 'なし'})`,
+        ).toEqual([...derived].sort());
+        // 迂回経路が在るなら、欄の注記だけでは足りない —— その関数の中に砦が要る。
+        expect(
+          bound.reads,
+          `${p}: ${constant} は迂回経路 (${derived.join(',')}) を持つので 2 か所目 (${cap.submitFn} の中) が要る`,
+        ).toBeGreaterThanOrEqual(derived.length > 0 ? 2 : 1);
+        if (derived.length === 0) continue;
+        // 砦は**黙って return しない** (何字超えているかを述べる)。振る舞いは provenBy が持つ。
+        expect(src, `${p}: 迂回経路の砦が何も述べていない`).toMatch(/\brefusedCeilingNote\s*\(/);
+        const proof = readOriginalSource(path.join(RENDERER, bound.provenBy));
+        for (const kind of derived) {
+          const mark = kind === 'enter' ? 'Enter' : 'onTranscript';
+          expect(proof, `${bound.provenBy}: ${kind} の迂回経路を通していない`).toContain(mark);
+        }
       }
     }
   });
@@ -288,8 +459,39 @@ describe('AI へ送る画面は台帳に在り、入力欄は共有の定数を�
     // 別の定数を読んでいる呼び・別の定数の欄は数えない (欄ごとに天井が違う)。
     expect(refusalReads('charsOverCeiling(raw, MAX_XY)', 'MAX_X')).toBe(0);
     expect(maxLengthReads('maxLength={MAX_XY}', 'MAX_X')).toBe(0);
+    // 述べる節の印も、読みの印とは別に当たる (C3 が鳴らなかったので足した)。
+    expect(noticeReads('<CeilingNotice label="本文" value={t} max={MAX_X} />', 'MAX_X')).toBe(1);
+    expect(noticeReads(withRefuse, 'MAX_X'), '読みだけで節が在ると数えている').toBe(0);
+    expect(noticeReads('<CeilingNotice label="x" value={t} max={MAX_XY} />', 'MAX_X')).toBe(0);
     // 字面の数を掴む規則が実際に当たる (不在の主張に標本を添える)。
     expect('<input maxLength={2000} />').toMatch(/maxLength=\{\s*\d/);
     expect(withMax).not.toMatch(/maxLength=\{\s*\d/);
+  });
+
+  it('★ 対照: 迂回経路の導出が実物に当たり、似て非なる形では鳴らない', () => {
+    const enter = [
+      '            onKeyDown={(e) => {',
+      "              if (e.key === 'Enter' && !advisorBusy) runAdvisor();",
+      '            }}',
+    ].join('\n');
+    expect([...enterSubmitFns(enter)]).toContain('runAdvisor');
+    // Enter を見ない onKeyDown は送信経路ではない (Escape で閉じるだけの欄など)。
+    const esc = [
+      '            onKeyDown={(e) => {',
+      "              if (e.key === 'Escape') setOpen(false);",
+      '            }}',
+    ].join('\n');
+    expect([...enterSubmitFns(esc)]).toEqual([]);
+    const mic = [
+      '      onTranscript: (t, isFinal) => {',
+      '        setTranscript(t);',
+      '        if (isFinal) handleUtterance(t);',
+      '      },',
+    ].join('\n');
+    expect([...micSubmitFns(mic)]).toContain('handleUtterance');
+    expect([...micSubmitFns(enter)]).toEqual([]);
+    expect(derivedBypass(enter + '\n' + mic, 'runAdvisor')).toEqual(['enter']);
+    expect(derivedBypass(enter + '\n' + mic, 'handleUtterance')).toEqual(['mic']);
+    expect(derivedBypass(enter + '\n' + mic, 'sendChat')).toEqual([]);
   });
 });

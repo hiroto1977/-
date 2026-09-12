@@ -39,6 +39,8 @@ import {
   type ProviderStatus,
 } from '../data/assistantProviders';
 import { MAX_ASSISTANT_CONTENT_CHARS } from '../../shared/assistantLimits';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
 
 interface ChatMessage {
@@ -253,6 +255,13 @@ async function storageMechanismOrNull(hub: Window['serviceHub']): Promise<Storag
 export function AssistantPage() {
   const [messages, setMessages] = useState<ChatMessage[]>(() => loadHistory());
   const [input, setInput] = useState('');
+  /*
+   * **貼り付けを黙って切らない** (パス 175)。`maxLength` に任せると、ブラウザが天井を超えた分を
+   * 黙って落とし、先頭 8,000 字だけが AI へ行く —— 切れた質問への答えが全文への答えとして返る。
+   * 天井は打てば届く量ではないので、`maxLength` が発火するのは**貼り付けのときだけ**であり、
+   * そのときは必ず見えない (パス 168 が感情分析の欄で実測した形)。
+   */
+  const inputOver = charsOverCeiling(input, MAX_ASSISTANT_CONTENT_CHARS);
   const [busy, setBusy] = useState(false);
   const [theme, setTheme] = useState<Theme>(() => loadTheme());
   const [showTheme, setShowTheme] = useState(false);
@@ -846,6 +855,7 @@ export function AssistantPage() {
         }}
       />
 
+      <CeilingNotice label="入力" value={input} max={MAX_ASSISTANT_CONTENT_CHARS} />
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -855,7 +865,6 @@ export function AssistantPage() {
       >
         <input
           value={input}
-          maxLength={MAX_ASSISTANT_CONTENT_CHARS}
           onChange={(e) => setInput(e.target.value)}
           placeholder="例: 補助金の候補を表で比較して / 創業計画のたたき台を作って"
           aria-label="アシスタントへの入力"
@@ -869,7 +878,7 @@ export function AssistantPage() {
             fontSize: 14,
           }}
         />
-        <button type="submit" className="primary" disabled={busy || !input.trim()}>
+        <button type="submit" className="primary" disabled={busy || !input.trim() || inputOver > 0}>
           送信
         </button>
       </form>

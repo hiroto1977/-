@@ -10,6 +10,8 @@ import { sumShigyoMonthlyFees } from '../../shared/shigyoTypes';
 import { summarizeFoodDelivery } from '../data/foodDelivery';
 import { exportWarning } from '../data/exportOutcome';
 import { MAX_ADVISOR_QUESTION_CHARS } from '../../shared/advisorQuestionLimits';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling, refusedCeilingNote } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
 import { DESKTOP_PATHS, exportDestinationNote } from '../../shared/buildDestinations';
 import { useBuildKind } from '../hooks/useBuildKind';
@@ -687,6 +689,9 @@ export function BusinessPage() {
   const [exportMsg, setExportMsg] = useState<string | null>(null);
   const [lastExport, setLastExport] = useState<{ path: string; bytes: number; warning?: string } | null>(null);
   const [advisorQuestion, setAdvisorQuestion] = useState('');
+  /* 貼り付けを黙って切らない (パス 175)。1,000 字は打って届く量ではない —— `maxLength` が
+     発火するのは貼り付けのときだけで、そのとき超過分は黙って消える。 */
+  const advisorQuestionOver = charsOverCeiling(advisorQuestion, MAX_ADVISOR_QUESTION_CHARS);
   const [advisorBusy, setAdvisorBusy] = useState(false);
   const [advisorError, setAdvisorError] = useState<string | null>(null);
   const [advisorResult, setAdvisorResult] = useState<ActionData<'business/advise'> | null>(null);
@@ -723,6 +728,16 @@ export function BusinessPage() {
     const q = advisorQuestion.trim();
     if (!q) {
       setAdvisorError('質問を入力してください');
+      return;
+    }
+    /*
+     * **Enter は `disabled` を見ない** (パス 175)。欄は超過を述べて押せなくなるが、
+     * 下の `onKeyDown` は `advisorBusy` だけを見てここへ来るので、押せない状態のまま
+     * 送れてしまう —— main / ブラウザ版の `checkAdvisorQuestion` が断る道
+     * (`'too-long'`) は `maxLength` のせいで 1 度も通っていなかった。ここが最後の砦。
+     */
+    if (charsOverCeiling(advisorQuestion, MAX_ADVISOR_QUESTION_CHARS) > 0) {
+      setAdvisorError(refusedCeilingNote('質問', advisorQuestion.length, MAX_ADVISOR_QUESTION_CHARS));
       return;
     }
     setAdvisorBusy(true);
@@ -1027,7 +1042,6 @@ export function BusinessPage() {
             value={advisorQuestion}
             onChange={(e) => setAdvisorQuestion(e.target.value)}
             placeholder="例: 来期に最も注力すべき事業を 3 つ"
-            maxLength={MAX_ADVISOR_QUESTION_CHARS}
             style={{
               flex: 1,
               padding: '8px 12px',
@@ -1043,7 +1057,7 @@ export function BusinessPage() {
           />
           <button
             onClick={runAdvisor}
-            disabled={advisorBusy}
+            disabled={advisorBusy || advisorQuestionOver > 0}
             style={{
               padding: '8px 16px',
               background: advisorBusy ? 'var(--bg-elev)' : 'var(--accent)',
@@ -1057,8 +1071,13 @@ export function BusinessPage() {
             {advisorBusy ? '分析中…' : 'AI に聞く'}
           </button>
         </div>
+        <CeilingNotice label="質問" value={advisorQuestion} max={MAX_ADVISOR_QUESTION_CHARS} />
         {advisorError && (
           <div
+            /* 断りの出所を言い分けられるようにする (パス 175 —— 欄の注記と、
+               Enter の砦が出す文は別物で、どちらが出ているかを検査が見る)。 */
+            data-advisor-error
+            role="alert"
             style={{
               border: '1px solid #ef4444',
               background: 'rgba(239, 68, 68, 0.08)',

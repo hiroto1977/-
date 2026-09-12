@@ -6,6 +6,8 @@ import { AiEgressNotice } from '../components/AiEgressNotice';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import { useServiceData } from '../hooks/useServiceData';
 import { MAX_ASSISTANT_CONTENT_CHARS } from '../../shared/assistantLimits';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
 import { DESKTOP_PATHS, localReadUnavailableNote } from '../../shared/buildDestinations';
 import { useBuildKind } from '../hooks/useBuildKind';
@@ -32,6 +34,8 @@ export function SkillsPage() {
   const [showForm, setShowForm] = useState(false);
   const [selected, setSelected] = useState('');
   const [prompt, setPrompt] = useState('');
+  /* 貼り付けを黙って切らない (パス 175)。スキルへの指示文は**貼る欄**である。 */
+  const promptOver = charsOverCeiling(prompt, MAX_ASSISTANT_CONTENT_CHARS);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string }>();
 
@@ -146,16 +150,16 @@ export function SkillsPage() {
             <textarea
               placeholder="プロンプト (このスキルに何を依頼するか)"
               value={prompt}
-              maxLength={MAX_ASSISTANT_CONTENT_CHARS}
               onChange={(e) => setPrompt(e.target.value)}
               rows={4}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />
+            <CeilingNotice label="プロンプト" value={prompt} max={MAX_ASSISTANT_CONTENT_CHARS} />
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="primary"
                 onClick={run}
-                disabled={submitting || !selected || !prompt.trim() || !isConfigured}
+                disabled={submitting || !selected || !prompt.trim() || !isConfigured || promptOver > 0}
               >
                 {submitting ? '実行中…' : '実行'}
               </button>

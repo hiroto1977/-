@@ -21,6 +21,8 @@ import {
   parseOllamaEndpoint,
 } from '../../shared/ollama';
 import type { ActionData } from '../../shared/actionData';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -51,6 +53,13 @@ export function OllamaPage() {
   const [busy, setBusy] = useState(false);
   const [reply, setReply] = useState<{ text: string; durationMs: number } | null>(null);
   const [errMsg, setErrMsg] = useState<string>();
+  /*
+   * 貼り付けを黙って切らない (パス 175)。端末内のモデルでも同じ ——
+   * パス 114 が handler を「切らずに断る」に直したのに、画面の `maxLength` が
+   * その断りを 1 度も通していなかった (32,768 / 8,192 字は貼り付けでしか届かない)。
+   */
+  const promptOver = charsOverCeiling(prompt, MAX_OLLAMA_PROMPT_CHARS);
+  const systemOver = charsOverCeiling(systemPrompt, MAX_OLLAMA_SYSTEM_CHARS);
 
   const sendChat = async () => {
     if (!window.serviceHub) return;
@@ -182,22 +191,22 @@ export function OllamaPage() {
               placeholder="System prompt (任意)"
               value={systemPrompt}
               onChange={(e) => setSystemPrompt(e.target.value)}
-              maxLength={MAX_OLLAMA_SYSTEM_CHARS}
               style={inputStyle}
             />
             <textarea
               placeholder="プロンプト"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              maxLength={MAX_OLLAMA_PROMPT_CHARS}
               rows={4}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />
+            <CeilingNotice label="システムプロンプト" value={systemPrompt} max={MAX_OLLAMA_SYSTEM_CHARS} />
+            <CeilingNotice label="プロンプト" value={prompt} max={MAX_OLLAMA_PROMPT_CHARS} />
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="primary"
                 onClick={sendChat}
-                disabled={busy || !model || !prompt.trim()}
+                disabled={busy || !model || !prompt.trim() || promptOver > 0 || systemOver > 0}
               >
                 {busy ? '生成中…' : '送信'}
               </button>

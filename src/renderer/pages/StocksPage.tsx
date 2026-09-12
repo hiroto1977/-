@@ -8,6 +8,8 @@ import {
   MAX_TICKER_CHARS,
   capAdvisorUniverse,
 } from '../../shared/advisorQuestionLimits';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling, refusedCeilingNote } from '../../shared/inputCeiling';
 import { AiEgressNotice } from '../components/AiEgressNotice';
 import { ExportActions } from '../components/ExportActions';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
@@ -173,6 +175,8 @@ export function StocksPage() {
 
   // --- AI advisor state -------------------------------------------------
   const [advisorQuestion, setAdvisorQuestion] = useState('');
+  /* 貼り付けを黙って切らない (パス 175)。経営ダッシュボードの助言欄と同じ判断・同じ天井。 */
+  const advisorQuestionOver = charsOverCeiling(advisorQuestion, MAX_ADVISOR_QUESTION_CHARS);
   const [advisorBusy, setAdvisorBusy] = useState(false);
   const [advisorError, setAdvisorError] = useState<string | null>(null);
   const [advisorResult, setAdvisorResult] = useState<ActionData<'stocks/advise'> | null>(null);
@@ -313,6 +317,16 @@ export function StocksPage() {
   async function runAdvisor() {
     if (!advisorQuestion.trim()) {
       setAdvisorError('質問を入力してください');
+      return;
+    }
+    /*
+     * **Enter は `disabled` を見ない** (パス 175)。欄は超過を述べて押せなくなるが、
+     * 下の `onKeyDown` は `advisorBusy` だけを見てここへ来るので、押せない状態のまま
+     * 送れてしまう —— main / ブラウザ版の `checkAdvisorQuestion` が断る道
+     * (`'too-long'`) は `maxLength` のせいで 1 度も通っていなかった。ここが最後の砦。
+     */
+    if (charsOverCeiling(advisorQuestion, MAX_ADVISOR_QUESTION_CHARS) > 0) {
+      setAdvisorError(refusedCeilingNote('質問', advisorQuestion.length, MAX_ADVISOR_QUESTION_CHARS));
       return;
     }
     setAdvisorBusy(true);
@@ -654,7 +668,6 @@ export function StocksPage() {
             value={advisorQuestion}
             onChange={(e) => setAdvisorQuestion(e.target.value)}
             placeholder="例: 長期保有に向いている銘柄を 3 つ"
-            maxLength={MAX_ADVISOR_QUESTION_CHARS}
             style={{
               flex: 1,
               padding: '8px 12px',
@@ -670,7 +683,7 @@ export function StocksPage() {
           />
           <button
             onClick={runAdvisor}
-            disabled={advisorBusy}
+            disabled={advisorBusy || advisorQuestionOver > 0}
             style={{
               padding: '8px 16px',
               background: advisorBusy ? 'var(--bg-elev)' : 'var(--accent)',
@@ -684,8 +697,13 @@ export function StocksPage() {
             {advisorBusy ? '分析中…' : 'AI に聞く'}
           </button>
         </div>
+        <CeilingNotice label="質問" value={advisorQuestion} max={MAX_ADVISOR_QUESTION_CHARS} />
         {advisorError && (
           <div
+            /* 断りの出所を言い分けられるようにする (パス 175 —— 欄の注記と、
+               Enter の砦が出す文は別物で、どちらが出ているかを検査が見る)。 */
+            data-advisor-error
+            role="alert"
             style={{
               border: '1px solid #ef4444',
               background: 'rgba(239, 68, 68, 0.08)',
