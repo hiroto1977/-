@@ -22026,3 +22026,47 @@ window.serviceHub.openExternal(url);
   まだ走査していない。** `SlackPage` / `GmailPage` / `CloudflarePage` は
   どれも複数の action を持つので、次に見るならそこ。
 - **実機 (e2e / perf / smoke:app) は未実行** (パス 150 から続く持ち越し)。
+
+### パス 152 の追記 — **同じ形は他に無かった (族の大きさは 1)** (2026-09-12)
+
+パス 152 の残作業に「同じ『1 つの結果 state を複数フォームが刷る』形が他の画面に
+在るかは未走査」と書いた。**走査した。**
+
+**方法**: 画面 (`pages/*.tsx`) ごとに、結果らしい state
+(`…result` / `…Result` / `…msg` / `…Msg` / `…message` / `…Message`) について
+**値を書く回数** (`setX({`) と **`kind` を判定する回数** (`x?.kind ===`) を数える。
+1 つのハンドラは ok / error の 2 回書き、1 つの描画箇所は ok / error の 2 回判定するので、
+**判定 4 回以上 = 描画箇所が 2 つ以上**が探している形になる。
+
+**結果 (13 件が該当、うち 1 件だけが 4/4)**:
+
+| 画面 | state | 書く | 判定 |
+| --- | --- | ---: | ---: |
+| **`Microsoft365Page.tsx`** | **`result`** | **4** | **4** |
+| `AtlassianPage` / `CalendarPage` / `CanvaPage` / `DrivePage` / `GithubPage` / `GmailPage` / `NotionPage` / `SkillsPage` / `SlackPage` / `WordPressPage` | `result` | 2 | 2 |
+| `CloudflarePage` | `dnsResult` | 2 | 2 |
+| `CloudflarePage` | `purgeResult` | 2 | 2 |
+
+**2/2 は普通の形である** —— ハンドラ 1 つが ok / error を書き、描画箇所 1 つが
+両方を判定する。**`Microsoft365Page` だけが 4/4** = ハンドラ 2 つ × 描画箇所 2 つで、
+それがパス 152 で直した実物だった。
+
+**読んで確かめた 2 件** (走査を信じない):
+
+- `GmailPage` の 2 つ目の action (`emotions/analyze-text`) は **`alert()`** で報せており、
+  `result` を触らない (`GmailPage.tsx:105-111`)。だから 1 書き手・1 描画箇所。
+- `SlackPage` も同じで、`setResult` を書くのは `send-message` の側だけ。
+- `CloudflarePage` は**最初から action ごとに state を分けている** (`dnsResult` / `purgeResult`)
+  —— 2 つの書き込み action を持つ画面で、正しい形の実例。
+
+**結論: 族の大きさは 1 で、パス 152 で閉じた。**
+パス 66 の失敗 (「3 か所のうち 1 か所しか直していなかった」) の逆で、
+**走査して 1 か所だと確かめたので「直し残し」は無い。**
+
+**ゲートは置かなかった (理由を書く)**: 判定 4 回という閾値は
+「ハンドラ 1 つ = 2 回」という数え方に乗った**代用**で、ok / error 以外の枝を持つ
+state が現れれば誤検知する。**誤った理由で落ちる関門は、無いより悪い。**
+実物の回帰は `pages/__tests__/ms365Actions.test.ts` の
+「片方の結果が、もう片方のフォームに出ない」が押さえており、
+新しい画面で同じ形が生まれたかを知りたければ上の方法で再測すればよい
+(このパスの散文がその手順である)。
