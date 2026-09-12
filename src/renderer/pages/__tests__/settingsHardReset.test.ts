@@ -56,6 +56,8 @@ vi.mock('../../security/vault', async (importOriginal) => {
     // 文面と最小長は**本物を読み直す** (写経すると、画面と実物がずれていないかを
     // 見ている当の検査が嘘をつく)。
     MIN_PASSWORD_LENGTH: real.MIN_PASSWORD_LENGTH,
+    // 天井も本物を読む (パス 167 —— 画面の `maxLength` がこれを読むようになった)。
+    MAX_TOKEN_CHARS: real.MAX_TOKEN_CHARS,
     describeWipeOutcome: real.describeWipeOutcome,
     getVault: () => ({
       isUnlocked: () => true,

@@ -37,18 +37,24 @@ import {
  */
 let listConfigured: () => Promise<string[]>;
 let setTokenCalls: { key: string; value: string }[];
-vi.mock('../../security/vault', () => ({
-  getVault: () => ({
-    listConfigured: () => listConfigured(),
-    setToken: (key: string, value: string) => {
-      setTokenCalls.push({ key, value });
-      return Promise.resolve();
-    },
-    clearToken: () => Promise.resolve(),
-    getToken: () => Promise.resolve(null),
-    status: () => Promise.resolve('unlocked'),
-  }),
-}));
+vi.mock('../../security/vault', async (importOriginal) => {
+  const real = await importOriginal<typeof import('../../security/vault')>();
+  return {
+    // 天井は**本物を読み直す** (画面の `maxLength` がこれを読む —— パス 167)。
+    MAX_TOKEN_CHARS: real.MAX_TOKEN_CHARS,
+    MIN_PASSWORD_LENGTH: real.MIN_PASSWORD_LENGTH,
+    getVault: () => ({
+      listConfigured: () => listConfigured(),
+      setToken: (key: string, value: string) => {
+        setTokenCalls.push({ key, value });
+        return Promise.resolve();
+      },
+      clearToken: () => Promise.resolve(),
+      getToken: () => Promise.resolve(null),
+      status: () => Promise.resolve('unlocked'),
+    }),
+  };
+});
 
 const { CredentialRow } = await import('../SettingsPage');
 

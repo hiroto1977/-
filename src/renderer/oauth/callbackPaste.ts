@@ -108,6 +108,31 @@ export function redirectBlockedReason(uri: string): string | null {
   }
 }
 
+/**
+ * **貼る欄の文字数の天井** (2026-09-12 · パス 167)。
+ *
+ * 2026-09-12 まで、設定画面の貼る欄は `maxLength={2048}` を字面で持っていた ——
+ * これは `pkce.ts` の `MAX_AUTH_CODE_CHARS` (認可コード 1 本の天井) の写しである。
+ * だが**この欄が受け取るのは URL 全体** (`http://localhost/?code=…&state=…&scope=…`)
+ * なので、最大長の code を含む URL は必ず 2048 字を超え、**貼った URL の末尾が
+ * 黙って落ちる**。落ちるのは末尾なので、`state` と `scope` が先に消える ——
+ * `state` が欠ければ `describeCallbackPasteFailure` の断りが出るが、
+ * 「なぜ state が消えたのか」は誰も言えない。
+ *
+ * 天井を code の天井より広く取る (下の検査が `> MAX_AUTH_CODE_CHARS` を留める)。
+ * 判定する量が違うなら、天井も別の名前で持つ ——
+ * パス 57「関門が値と別の量で規則を再導出していた」と同じ向き。
+ */
+export const MAX_CALLBACK_PASTE_CHARS = 4096;
+
+/**
+ * Google Cloud Console の client ID と、登録したリダイレクト URI の入力欄の天井。
+ * どちらも人が Console から写す短い値で、検証側に写しは無い (画面だけが持つ)。
+ * `URL` の実装上限より十分手前で、貼り間違いを早く止める。
+ */
+export const MAX_OAUTH_CLIENT_ID_CHARS = 256;
+export const MAX_OAUTH_REDIRECT_URI_CHARS = 256;
+
 /** 貼る欄の placeholder。**求める物そのものを見せる** (code だけを求めない)。 */
 export const CALLBACK_PASTE_PLACEHOLDER = 'http://localhost/?code=4/0Ab…&state=… ← アドレスバーの URL 全体';
 

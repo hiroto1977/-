@@ -45,6 +45,40 @@ export const SCORE_MAX = 5;
 /** 1 部署の上限。人事評価の一覧なので、無制限に溜めない (main は 2026-08 からこの数で断っている)。 */
 export const MAX_TEAM_MEMBERS = 50;
 
+/**
+ * **欄ごとの文字数の天井 —— 画面と検証が同じ 1 つを読む** (2026-09-12 · パス 167)。
+ *
+ * ここに名前を付けるまで、同じ天井が**画面と検証に別々の字面で**在った
+ * (行番号は書かない —— 動くので。欄の名前で引く):
+ *
+ * ```
+ *   氏名      TeamRadarPage  maxLength={64}   ↔ 下の条件 `> 64` と文面 `1-64`
+ *   部署      TeamRadarPage  maxLength={64}   ↔ 下の条件 `> 64` と文面 `1-64`
+ *   評価時点  TeamRadarPage  maxLength={32}   ↔ 下の条件 `> 32` と文面 `1-32`
+ *   付箋      TeamRadarPage  maxLength={200}  ↔ 下の条件 `> 200` と文面 `0-200`
+ *                           placeholder 「200 字以内」 ← **同じ行に 3 つ目の写し**
+ *   チャート名 TeamRadarPage maxLength={64}   ↔ main/clients/teamradar.ts は `<= 120`
+ *   軸名      TeamRadarPage  maxLength={24}   ↔ 検証は無い
+ * ```
+ *
+ * **チャート名は既にずれていた** —— 画面は 64 字で打ち込みを止めるのに、SVG を書き出す
+ * `saveTeamRadarSvg` は 120 字まで受ける。「同じ判断を 2 か所に書くと、必ずどれかが先に
+ * 古くなる」(`recordEntryLimits.ts` / `proxyEndpoint.ts` と同じ理由) が、この家系では
+ * **既に起きていた**。広い方 (120) に揃える —— 狭める向きは、main が 2026-08 から
+ * 受けてきた題名を今日から黙って弾くことになる。
+ */
+export const MAX_MEMBER_NAME_CHARS = 64;
+/** 部署名の天井。氏名と同じ数だが**別の判断**なので別の名前を持つ (片方だけ動かせる)。 */
+export const MAX_DEPARTMENT_CHARS = 64;
+/** 「評価時点」の天井。日付そのものの検査ではない (書式は自由な欄)。 */
+export const MAX_EVALUATED_AT_CHARS = 32;
+/** 軸ごとの付箋コメントの天井。画面の placeholder もこの数から組む。 */
+export const MAX_MEMBER_NOTE_CHARS = 200;
+/** 軸の名前の天井。図の外周に並ぶので短い。保存する状態には入らない (下書きにだけ載る)。 */
+export const MAX_AXIS_LABEL_CHARS = 24;
+/** チャート名 (SVG の題名) の天井。`main/clients/teamradar.ts` の書き出しが同じ物を読む。 */
+export const MAX_CHART_TITLE_CHARS = 120;
+
 /** ブラウザ版の保存先。`lint:storage` の台帳に載る鍵はこれ 1 つ (パス 118 から読む所が在る)。 */
 export const TEAM_RADAR_STORAGE_KEY = 'teamradar.state';
 
@@ -123,8 +157,8 @@ export function validateMembers(raw: unknown): readonly TeamMember[] {
       throw new Error(`duplicate member id: ${m['id']}`);
     }
     seenIds.add(m['id']);
-    if (typeof m['name'] !== 'string' || m['name'].length === 0 || m['name'].length > 64) {
-      throw new Error('member name must be a 1-64 char string');
+    if (typeof m['name'] !== 'string' || m['name'].length === 0 || m['name'].length > MAX_MEMBER_NAME_CHARS) {
+      throw new Error(`member name must be a 1-${MAX_MEMBER_NAME_CHARS} char string`);
     }
     if (!Array.isArray(m['scores']) || m['scores'].length !== AXIS_COUNT) {
       throw new Error(`member scores must be an array of length ${AXIS_COUNT}`);
@@ -147,8 +181,8 @@ export function validateMembers(raw: unknown): readonly TeamMember[] {
         if (!Number.isInteger(idx) || idx < 0 || idx >= AXIS_COUNT) {
           throw new Error(`note key must be 0-${AXIS_COUNT - 1}: ${k}`);
         }
-        if (typeof v !== 'string' || v.length > 200) {
-          throw new Error(`note value must be a 0-200 char string`);
+        if (typeof v !== 'string' || v.length > MAX_MEMBER_NOTE_CHARS) {
+          throw new Error(`note value must be a 0-${MAX_MEMBER_NOTE_CHARS} char string`);
         }
         notes[idx] = v;
       }
@@ -170,12 +204,12 @@ export function validateTeamRadarState(raw: unknown): TeamRadarState {
   const o = raw as Record<string, unknown>;
   const members = validateMembers(o['members'] ?? []);
   const department = o['department'];
-  if (typeof department !== 'string' || department.length === 0 || department.length > 64) {
-    throw new Error('department must be a 1-64 char string');
+  if (typeof department !== 'string' || department.length === 0 || department.length > MAX_DEPARTMENT_CHARS) {
+    throw new Error(`department must be a 1-${MAX_DEPARTMENT_CHARS} char string`);
   }
   const evaluatedAt = o['evaluatedAt'];
-  if (typeof evaluatedAt !== 'string' || evaluatedAt.length === 0 || evaluatedAt.length > 32) {
-    throw new Error('evaluatedAt must be a 1-32 char string');
+  if (typeof evaluatedAt !== 'string' || evaluatedAt.length === 0 || evaluatedAt.length > MAX_EVALUATED_AT_CHARS) {
+    throw new Error(`evaluatedAt must be a 1-${MAX_EVALUATED_AT_CHARS} char string`);
   }
   return { department, evaluatedAt, members };
 }

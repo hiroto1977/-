@@ -19,6 +19,8 @@ vi.mock('../../security/vault', async (importOriginal) => {
   const real = await importOriginal<typeof import('../../security/vault')>();
   return {
     MIN_PASSWORD_LENGTH: real.MIN_PASSWORD_LENGTH,
+    // 天井も本物を読む (パス 167 —— 画面の `maxLength` がこれを読むようになった)。
+    MAX_TOKEN_CHARS: real.MAX_TOKEN_CHARS,
     describeWipeOutcome: real.describeWipeOutcome,
     getVault: () => ({
       isUnlocked: () => false,

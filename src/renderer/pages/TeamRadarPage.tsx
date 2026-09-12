@@ -17,7 +17,15 @@ import { readLocalJson, writeLocalJson, type LocalReadResult, type LocalWriteRes
 import { exportWarning } from '../data/exportOutcome';
 import type { ActionData } from '../../shared/actionData';
 // スナップショットの形は shared が 1 つだけ持つ (パス 120 までは画面が写しを持っていた —— パス 62 / 116 の形)。
-import type { TeamRadarSnapshot } from '../../shared/teamRadarState';
+import {
+  MAX_AXIS_LABEL_CHARS,
+  MAX_CHART_TITLE_CHARS,
+  MAX_DEPARTMENT_CHARS,
+  MAX_EVALUATED_AT_CHARS,
+  MAX_MEMBER_NAME_CHARS,
+  MAX_MEMBER_NOTE_CHARS,
+  type TeamRadarSnapshot,
+} from '../../shared/teamRadarState';
 import { DESKTOP_PATHS, exportDestinationNote } from '../../shared/buildDestinations';
 import { useBuildKind } from '../hooks/useBuildKind';
 
@@ -471,7 +479,7 @@ export function TeamRadarPage() {
             <input
               type="text"
               value={title}
-              maxLength={64}
+              maxLength={MAX_CHART_TITLE_CHARS}
               onChange={(e) => setTitle(e.target.value)}
               aria-label="チャート名"
               placeholder={TITLE_FALLBACK}
@@ -491,7 +499,7 @@ export function TeamRadarPage() {
             <input
               type="text"
               value={department}
-              maxLength={64}
+              maxLength={MAX_DEPARTMENT_CHARS}
               onChange={(e) => setDepartment(e.target.value)}
               style={{
                 padding: '6px 10px',
@@ -509,7 +517,7 @@ export function TeamRadarPage() {
             <input
               type="text"
               value={evaluatedAt}
-              maxLength={32}
+              maxLength={MAX_EVALUATED_AT_CHARS}
               onChange={(e) => setEvaluatedAt(e.target.value)}
               placeholder="2035-04-15"
               style={{
@@ -534,7 +542,7 @@ export function TeamRadarPage() {
                 key={ai}
                 type="text"
                 value={axis}
-                maxLength={24}
+                maxLength={MAX_AXIS_LABEL_CHARS}
                 onChange={(e) => updateAxis(ai, e.target.value)}
                 aria-label={`軸${ai + 1} の名前`}
                 style={{
@@ -750,7 +758,7 @@ export function TeamRadarPage() {
                     <input
                       type="text"
                       value={m.name}
-                      maxLength={64}
+                      maxLength={MAX_MEMBER_NAME_CHARS}
                       onChange={(e) => updateName(idx, e.target.value)}
                       style={{
                         flex: 1,
@@ -811,9 +819,9 @@ export function TeamRadarPage() {
                           <input
                             type="text"
                             value={m.notes?.[ai] ?? ''}
-                            maxLength={200}
+                            maxLength={MAX_MEMBER_NOTE_CHARS}
                             onChange={(e) => updateNote(idx, ai, e.target.value)}
-                            placeholder="特徴・課題を 200 字以内"
+                            placeholder={`特徴・課題を ${MAX_MEMBER_NOTE_CHARS} 字以内`}
                             style={{
                               flex: 1,
                               padding: '3px 6px',

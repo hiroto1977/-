@@ -23331,3 +23331,140 @@ C6 が「範囲だけ」を落とすのは設計どおり —— 窓が広すぎ
   余裕は上の表に実測値が在るので、次に触る人はそこから始められる。
 - **`storageClaims:450` の作者は既に囮対策 (出現数を数える) を書いている** ——
   窓の脆さに気付いていた形跡で、そこは真似する価値がある。
+
+---
+
+## パス 167 (2026-09-12) — **入力欄の天井が字面で 12 か所に在り、1 組は既にずれていた**
+
+パス 110/111 は「画面の `maxLength` は台帳の値を読む (数を写さない)」を関門にした
+(`writeFieldLimits.test.ts:319`)。だがその関門は**手で並べた 12 画面の 12 欄**しか見ない。
+**母集団を数えていない**ので、その外は 1 件も見ていなかった。
+
+### 実測 (2026-09-12) — 母集団と、写しの相手
+
+renderer の `.tsx` に `maxLength` は **59 件**。うち**字面の数**を持つのは **12 件**:
+
+| 画面 | 字面 | 検証側にある同じ数 | 判定 |
+| --- | ---: | --- | --- |
+| `ServiceActionPanel.tsx:120` | 2000 | `MAX_RECORD_NOTE_CHARS` (**定数は在った**) | 画面と `sanitizeNote` の既定だけが写し |
+| `SettingsPage.tsx:294` (資格情報) | 8192 | `vault.ts:785` の条件 + 786 の文面 `1-8192 字` | 3 か所に字面 |
+| `SettingsPage.tsx:1939` (貼る欄) | 2048 | `pkce.ts:208` の `code` の天井 | **別の量**に同じ天井 |
+| `SettingsPage.tsx:1883,1891` | 256 ×2 | 無し | 画面だけが持つ |
+| `TeamRadarPage.tsx:474` (チャート名) | 64 | `main/clients/teamradar.ts:377` は **120** | **既にずれていた** |
+| `TeamRadarPage.tsx:494` (部署) | 64 | `teamRadarState.ts:173` の条件 + 文面 | 3 か所 |
+| `TeamRadarPage.tsx:512` (評価時点) | 32 | `teamRadarState.ts:177` の条件 + 文面 | 3 か所 |
+| `TeamRadarPage.tsx:753` (氏名) | 64 | `teamRadarState.ts:126` の条件 + 文面 | 3 か所 |
+| `TeamRadarPage.tsx:814` (付箋) | 200 | `teamRadarState.ts:150` の条件 + 文面 | **4 か所** (同じ行の placeholder 「200 字以内」も写し) |
+| `TeamRadarPage.tsx:537` (軸名) | 24 | 無し (保存する状態に入らない) | 画面だけが持つ |
+| `TemplatesPage.tsx:415` (色) | 7 | 無し (`#rrggbb` の書式の長さ) | 台帳の免除 |
+
+**ずれは仮定ではなく実測である。** チャート名は画面が 64 字で打ち込みを止め、SVG を
+書き出す `saveTeamRadarSvg` は 120 字まで受ける。「同じ判断を 2 か所に書くと必ずどれかが
+先に古くなる」(`recordEntryLimits.ts` / `proxyEndpoint.ts` が 2026-08 に書いた理由) が、
+この家系では**既に起きていた**。
+
+### 直し 1 — 天井ごとに名前を 1 つ、画面と検証が同じ物を読む
+
+`shared/teamRadarState.ts` に 6 つ (`MAX_MEMBER_NAME_CHARS` / `MAX_DEPARTMENT_CHARS` /
+`MAX_EVALUATED_AT_CHARS` / `MAX_MEMBER_NOTE_CHARS` / `MAX_AXIS_LABEL_CHARS` /
+`MAX_CHART_TITLE_CHARS`)、`security/vault.ts` に `MAX_TOKEN_CHARS`、`oauth/pkce.ts` に
+`MAX_AUTH_CODE_CHARS`、`oauth/callbackPaste.ts` に `MAX_CALLBACK_PASTE_CHARS` /
+`MAX_OAUTH_CLIENT_ID_CHARS` / `MAX_OAUTH_REDIRECT_URI_CHARS`。**断りの文面も条件も
+その名前から組む** (`1-${MAX_…} char string`) ので、写しが 1 つも残らない。
+
+チャート名は**広い方 (120) に揃えた** —— 狭める向きは、main が 2026-08 から受けてきた
+題名を今日から黙って弾くことになる。
+
+### 直し 2 — 貼る欄の天井は「別の量」なので別の名前で持つ
+
+貼る欄が受け取るのは `?code=…&state=…` を含む **URL 全体**である。`code` 1 本の天井
+(2048) をそこへ当てると、**最大長の code を含む URL は必ず溢れ、末尾から `state` が
+落ちる** —— 画面には「state が読めません」だけが出て、理由は誰も言えない
+(パス 57「関門が値と別の量で規則を再導出していた」の家系)。
+`MAX_CALLBACK_PASTE_CHARS = 4096` を別に持ち、検査が
+**`> MAX_AUTH_CODE_CHARS` を不変条件として留める**。
+
+### 直し 3 — 業務メモの天井を、画面が述べる
+
+`ServiceActionPanel` のメモ欄は天井を持ちながら、**画面のどこにも数字が無かった**
+(走査: `文字` / `残り` / `上限` / `length` のどれも表示に無く、在ったのは空判定だけ)。
+`maxLength` はブラウザが黙って落とすので、2,000 字を超える文章を貼ると超えた分は消え、
+利用者は全文を記録したと思う。**そのメモは業務記録として保存される側**である。
+
+直したあと: `maxLength` を使わず、同じ天井を `onChange` で掛け、**超えた字数を述べる**
+(`data-note-overflow` · `role="alert"`)。天井そのものも常に出す (`data-note-cap`)。
+パス 112 が AI の入力で採った「黙って切らない」と同じ向き —— あちらは切らずに断れたが、
+ここは 1 行の入力欄なので「落ちた事実と字数」を述べる形にした。
+
+### 直し 4 — 注記の訂正 (4 サービス → 載っているのは 2 画面)
+
+`ServiceActionPanel` の注記は「uber-eats / demae-can / real-estate / mutual-funds の 4 つ」と
+書いていたが、実測では前の 2 つは**どの画面にもこのパネルを載せていない**。
+この食い違いは `shared/voiceWriteRequirements.ts` の `screenInput` が既に**測って**持って
+おり (両方 `false`)、音声から呼べない理由として使われている。**注記だけが古かった。**
+
+### 関門 — 母集団を走査で数える
+
+`renderer/__tests__/inputCapLiterals.test.ts` (8 件):
+
+1. `src/renderer/**/*.tsx` 全体を走査し、字面の `maxLength={<数字>}` は**台帳に理由つきで
+   載っている 1 件だけ**許す。
+2. 台帳は**双方向** (現物の無い行も落とす)・理由が空の行も落とす。
+3. 走査の生死を見る床 (`maxLength` が 25 件未満なら走査が死んでいる)。
+4. 天井ごとに「画面と検証が同じ**名前**を読む」ことを 8 組で突き合わせる
+   (**値ではなく名前**で見る —— 値だと、たまたま同じ数の別の天井を通してしまう。64 が 2 つ在る)。
+5. チャート名は画面と書き出しの一致を名指しで留め、字面 (`maxLength={64}` /
+   `title.length <= 120`) が戻っていないことも見る。
+6. 対照: 規則が字面の書き方に当たり、定数の書き方には当たらないことを標本で確かめる。
+
+`components/__tests__/recordNoteCapOnScreen.test.ts` (7 件) は**実物の画面を jsdom で描き、
+欄に値を流して**確かめる (不動産投資 / 投資信託の両方)。
+
+### 対照 (5 本すべて鳴った)
+
+| 壊した物 | 鳴った検査 |
+| --- | --- |
+| 画面を `maxLength={2000}` に戻す | 字面の関門 + 画面の振る舞い 4 件 (計 5) |
+| main の題名を `<= 120` の字面に戻す | チャート名の一致 |
+| `MAX_CALLBACK_PASTE_CHARS` を 2048 (code と同じ) にする | 貼る欄の不変条件 |
+| TeamRadar の付箋を `maxLength={200}` に戻す | 字面の関門 |
+| 走査の `stripComments` を素通しにする | 字面の関門 (自分の説明文を現物として掴む) |
+
+### 私がこのパスで踏んだ罠 (2 件)
+
+1. **走査が自分の散文を掴んだ。** 直した形を説明するために注記へ古い書き方
+   (`maxLength={2000}`) を引用しており、走査はそれを現物として数えて落ちた。
+   パス 161 で 1 度やっている ——「規則について書いた文書は、規則そのものと
+   見分けられなければならない」。`stripComments` を入れて解決し、**それを対照にもした**。
+2. **jsdom で `el.value = v` は React に届かない。** React は input の `value` を node ごとに
+   上書きして最後の値を覚えているので、素で代入すると控えも一緒に更新され、`input` を
+   投げても「変わっていない」と見なして `onChange` を飛ばす。3 件落ちた。リポジトリには
+   既に `StatusBar.credentials.test.ts` ほか 5 件が prototype の素のセッターを使う形を
+   持っていた —— 探さずに書いたのが原因。
+
+### 波及 — モックが天井を持っていなかった (4 ファイル)
+
+画面が本物の定数を読むようになったので、`vi.mock('../../security/vault')` の 4 ファイルが
+`MAX_TOKEN_CHARS` を返していなかった (2 ファイルは失敗、2 ファイルは `importOriginal` の
+一覧に無かった)。4 つすべて **`importOriginal` で本物を読み直す**形に揃えた ——
+`settingsHardReset.test.ts` が既に書いていた理由をそのまま使う:
+「写経すると、画面と実物がずれていないかを見ている当の検査が嘘をつく」。
+
+### 完全性チェーン
+
+`pkce.ts` と `vault.ts` は保護対象なので、`npm run chain:append` で**ブロック #174** を採掘した
+(`chain:verify` が「保護対象が tip ブロックと一致しません（変更: pkce.ts,vault.ts）」で
+`verify:all` の最後の門を落としたのが発端 —— 正しい鳴り方である)。
+
+### 測定
+
+`npm test` 637 ファイル / **15,222**。it() 13050 → **13067**。`verify:all` 36 ゲート。
+
+### 残り
+
+- 実機 (e2e) はパス 165-167 の分が未検証。
+- **軸名 (24) と client ID / redirect URI (256 ×2) は検証側に相手が無い** ——
+  名前は付けたが、読む所は画面 1 つだけ。保存する状態に軸名が入るようになったら、
+  そのときに検証側も同じ名前を読む。
+- `TemplatesPage` の色の `7` は台帳の免除 1 件目。色の検証がリポジトリに生まれたら、
+  そこへ名前を移す。

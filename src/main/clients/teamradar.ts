@@ -6,6 +6,7 @@ import { isSafeExportPath, writeExportFile } from './exportPaths';
 import { atRestUnreadableReason, sealJsonDocument, unsealJsonDocument } from '../atRest';
 import type { ActionData, ExportFileResult } from '../../shared/actionData';
 import {
+  MAX_CHART_TITLE_CHARS,
   SCORE_MAX,
   buildTeamRadarSnapshot,
   readStoredTeamRadar,
@@ -374,7 +375,9 @@ export async function exportTeamRadarSvgImpl(
     token: ctx.token,
     fetch: ctx.fetch,
   });
-  const titleStr = typeof title === 'string' && title.length > 0 && title.length <= 120
+  // 天井は `shared/teamRadarState.ts` が 1 つだけ持つ (パス 167 —— ここが字面で 120、
+  // 画面の `maxLength` が字面で 64 と**既にずれていた**)。
+  const titleStr = typeof title === 'string' && title.length > 0 && title.length <= MAX_CHART_TITLE_CHARS
     ? title
     : 'チームレーダーチャート';
   const svg = renderTeamRadarSvg(snap, { title: titleStr });

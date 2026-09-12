@@ -29,6 +29,18 @@ import {
   withTimeout,
 } from '../../shared/httpLimits';
 
+/**
+ * 認可コード 1 本の文字数の天井 (2026-09-12 · パス 167 で名前を付けた)。
+ *
+ * `exchangeGoogleCode` の条件に字面で在り、**設定画面の「貼る欄」の `maxLength` に
+ * 同じ 2048 が写されていた** —— しかも貼る欄が受け取るのは `?code=…&state=…` を
+ * 含む **URL 全体**なので、写した先では**別の量**に同じ天井が当たっていた
+ * (最大長の code を含む URL は必ずこれより長い)。貼る欄の天井は
+ * `callbackPaste.ts` の `MAX_CALLBACK_PASTE_CHARS` が持ち、この数より広いことを
+ * 検査が留める (パス 57「関門が値と別の量で規則を再導出していた」の家系)。
+ */
+export const MAX_AUTH_CODE_CHARS = 2048;
+
 export interface PkceSecrets {
   /** code_verifier — token exchange までブラウザに保持 */
   readonly verifier: string;
@@ -205,7 +217,7 @@ export async function exchangeGoogleCode(
   fetchImpl: typeof fetch = fetch,
 ): Promise<TokenResult> {
   const { code, verifier, expectedState, receivedState, clientId, redirectUri } = args;
-  if (typeof code !== 'string' || code.length === 0 || code.length > 2048) {
+  if (typeof code !== 'string' || code.length === 0 || code.length > MAX_AUTH_CODE_CHARS) {
     throw new Error('code が不正です');
   }
   if (typeof verifier !== 'string' || verifier.length === 0) {

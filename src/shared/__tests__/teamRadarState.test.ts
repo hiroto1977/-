@@ -10,6 +10,10 @@ import {
   CANONICAL_AXES,
   DEFAULT_TEAM_RADAR,
   DEFAULT_TEAM_RADAR_STATE,
+  MAX_DEPARTMENT_CHARS,
+  MAX_EVALUATED_AT_CHARS,
+  MAX_MEMBER_NAME_CHARS,
+  MAX_MEMBER_NOTE_CHARS,
   MAX_TEAM_MEMBERS,
   TEAM_RADAR_STORAGE_KEY,
   buildTeamRadarSnapshot,
@@ -55,6 +59,58 @@ describe('validateTeamRadarState — 両ビルドの save-state が通す 1 つ'
   it('上限の文面は定数から (50 人)', () => {
     const many = Array.from({ length: MAX_TEAM_MEMBERS + 1 }, (_, i) => member(`m${i}`, `M${i}`));
     expect(() => validateTeamRadarState({ ...good(), members: many })).toThrow(`members exceeds ${MAX_TEAM_MEMBERS}`);
+  });
+
+  /**
+   * **文面の数字も定数から組む** (2026-09-12 · パス 167)。
+   *
+   * 4 つの天井は 2026-09-12 まで**条件と文面の両方に字面で**在り、画面もまた別に
+   * 持っていた (`TeamRadarPage` の `maxLength`)。定数 1 つに寄せたので、文面が
+   * **その定数から組まれていること**をここで留める —— 片方だけ直せば落ちる。
+   *
+   * 全文で見る (部分一致だと、定数を読まない写しでも通ってしまう)。
+   */
+  it('★ 4 つの天井は、条件も文面も同じ定数から組む', () => {
+    const cases: readonly { readonly state: unknown; readonly message: string }[] = [
+      {
+        state: { ...good(), members: [member('m1', 'x'.repeat(MAX_MEMBER_NAME_CHARS + 1))] },
+        message: `member name must be a 1-${MAX_MEMBER_NAME_CHARS} char string`,
+      },
+      {
+        state: { ...good(), department: 'x'.repeat(MAX_DEPARTMENT_CHARS + 1) },
+        message: `department must be a 1-${MAX_DEPARTMENT_CHARS} char string`,
+      },
+      {
+        state: { ...good(), evaluatedAt: 'x'.repeat(MAX_EVALUATED_AT_CHARS + 1) },
+        message: `evaluatedAt must be a 1-${MAX_EVALUATED_AT_CHARS} char string`,
+      },
+      {
+        state: {
+          ...good(),
+          members: [{ ...member('m1', 'A'), notes: { 0: 'x'.repeat(MAX_MEMBER_NOTE_CHARS + 1) } }],
+        },
+        message: `note value must be a 0-${MAX_MEMBER_NOTE_CHARS} char string`,
+      },
+    ];
+    for (const c of cases) {
+      expect(() => validateTeamRadarState(c.state), c.message).toThrow(c.message);
+    }
+  });
+
+  it('天井ちょうどは通る (境界を締めすぎていない)', () => {
+    expect(() =>
+      validateTeamRadarState({
+        ...good(),
+        department: 'x'.repeat(MAX_DEPARTMENT_CHARS),
+        evaluatedAt: 'x'.repeat(MAX_EVALUATED_AT_CHARS),
+        members: [
+          {
+            ...member('m1', 'x'.repeat(MAX_MEMBER_NAME_CHARS)),
+            notes: { 0: 'x'.repeat(MAX_MEMBER_NOTE_CHARS) },
+          },
+        ],
+      }),
+    ).not.toThrow();
   });
 });
 

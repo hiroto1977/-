@@ -24,15 +24,22 @@ import { unusedStoredCredentials } from '../../../shared/credentialUse';
 
 /** 保管庫はモックする (施錠を再現するため)。 */
 const vaultClear = vi.fn<(key: string) => Promise<void>>();
-vi.mock('../../security/vault', () => ({
-  getVault: () => ({
-    listConfigured: async () => ['anthropic'],
-    clearToken: (key: string) => vaultClear(key),
-    setToken: async () => {},
-    getToken: async () => null,
-    status: async () => 'unlocked',
-  }),
-}));
+vi.mock('../../security/vault', async (importOriginal) => {
+  const real = await importOriginal<typeof import('../../security/vault')>();
+  return {
+    // 天井は**本物を読み直す** (写経すると、画面と実物がずれていないかを見ている
+    // 当の検査が嘘をつく —— `settingsHardReset.test.ts` と同じ理由。パス 167)。
+    MAX_TOKEN_CHARS: real.MAX_TOKEN_CHARS,
+    MIN_PASSWORD_LENGTH: real.MIN_PASSWORD_LENGTH,
+    getVault: () => ({
+      listConfigured: async () => ['anthropic'],
+      clearToken: (key: string) => vaultClear(key),
+      setToken: async () => {},
+      getToken: async () => null,
+      status: async () => 'unlocked',
+    }),
+  };
+});
 
 /** 台帳から「どの経路でも読まれない資格情報」を 1 つ取る (id を写さない)。 */
 const UNUSED: ServiceId = unusedStoredCredentials([...SERVICE_IDS])[0]!;

@@ -11,7 +11,7 @@ import { PARAMETERS } from '../../shared/parameters';
 import { usePlan } from '../plan/usePlan';
 import { getPlan } from '../../shared/plan';
 import { issueInviteCode } from '../plan/internalLicense';
-import { getVault, MIN_PASSWORD_LENGTH } from '../security/vault';
+import { getVault, MAX_TOKEN_CHARS, MIN_PASSWORD_LENGTH } from '../security/vault';
 import { describeEraseReport, eraseScopeSummary } from '../security/eraseAll';
 import { describeDesktopEraseReport, desktopEraseScopeSummary } from '../../shared/eraseReport';
 import { isBrowserBuild } from '../runtimeMode';
@@ -48,6 +48,9 @@ import {
   CALLBACK_PASTE_PLACEHOLDER,
   describeCallbackPasteFailure,
   LOOPBACK_REDIRECT_URI,
+  MAX_CALLBACK_PASTE_CHARS,
+  MAX_OAUTH_CLIENT_ID_CHARS,
+  MAX_OAUTH_REDIRECT_URI_CHARS,
   redirectBlockedReason,
 } from '../oauth/callbackPaste';
 import { clearPkceSession, readPkceSession, savePkceSession } from '../oauth/pkceSession';
@@ -291,7 +294,7 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
               if (e.key === 'Enter' && !busy) save();
             }}
             placeholder={slot.placeholder}
-            maxLength={8192}
+            maxLength={MAX_TOKEN_CHARS}
             autoFocus
             style={{
               flex: 1,
@@ -1880,7 +1883,7 @@ export function GoogleOAuthSection() {
             value={clientId}
             onChange={(e) => setClientId(e.target.value)}
             placeholder="xxx.apps.googleusercontent.com"
-            maxLength={256}
+            maxLength={MAX_OAUTH_CLIENT_ID_CHARS}
             style={pwInput}
           />
           <input
@@ -1888,7 +1891,7 @@ export function GoogleOAuthSection() {
             value={redirectUri}
             onChange={(e) => setRedirectUri(e.target.value)}
             placeholder={LOOPBACK_REDIRECT_URI}
-            maxLength={256}
+            maxLength={MAX_OAUTH_REDIRECT_URI_CHARS}
             style={pwInput}
           />
           {/* 完了できない形なら、押す前に理由を出す (パス 157)。 */}
@@ -1936,7 +1939,7 @@ export function GoogleOAuthSection() {
             value={code}
             onChange={(e) => setCode(e.target.value)}
             placeholder={CALLBACK_PASTE_PLACEHOLDER}
-            maxLength={2048}
+            maxLength={MAX_CALLBACK_PASTE_CHARS}
             style={pwInput}
           />
           <div style={{ display: 'flex', gap: 6 }}>

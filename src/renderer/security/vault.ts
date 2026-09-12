@@ -34,6 +34,16 @@ const PBKDF2_ITERATIONS = SHARED_ITERATIONS;
 /** Minimum master-password length for new vaults / password resets. */
 export const MIN_PASSWORD_LENGTH = 12;
 
+/**
+ * 保管する資格情報 1 件の文字数の天井 (2026-09-12 · パス 167 で名前を付けた)。
+ *
+ * `setToken` の条件・その断りの文面・`SettingsPage` の入力欄 `maxLength` の
+ * **3 か所に字面の 8192 が在った**。同じ判断なので 1 つにする
+ * (`shared/recordEntryLimits.ts` が 2026-08-23 に同じ理由で作られている)。
+ * 安全上限なので `parameters.ts` の台帳には載せない (CLAUDE.md の規則)。
+ */
+export const MAX_TOKEN_CHARS = 8192;
+
 const SALT_BYTES = 32;
 const IV_BYTES = AES_GCM_IV_BYTES;
 const KCV_PLAINTEXT = 'service-hub-v1'; // 復号検証用固定文字列
@@ -782,8 +792,8 @@ class BrowserVault implements Vault {
     if (typeof serviceId !== 'string' || serviceId.length === 0 || serviceId.length > 64) {
       throw new Error('serviceId が不正です');
     }
-    if (typeof token !== 'string' || token.length === 0 || token.length > 8192) {
-      throw new Error('token が不正です (1-8192 字)');
+    if (typeof token !== 'string' || token.length === 0 || token.length > MAX_TOKEN_CHARS) {
+      throw new Error(`token が不正です (1-${MAX_TOKEN_CHARS} 字)`);
     }
     const db = await openDb();
     try {

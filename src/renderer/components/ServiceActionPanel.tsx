@@ -1,5 +1,5 @@
 import { useReducer, useState } from 'react';
-import type { RecordEntryServiceId } from '../../shared/recordEntryLimits';
+import { MAX_RECORD_NOTE_CHARS, type RecordEntryServiceId } from '../../shared/recordEntryLimits';
 import type { ActionData } from '../../shared/actionData';
 import type { AdviceInputFor } from '../../shared/serviceAdvisor';
 import { Section } from './StatusBar';
@@ -18,8 +18,28 @@ import {
 /**
  * 業務操作パネル — record-entry / advise を実行する UI。
  *
- * snapshot-only サービス (uber-eats / demae-can / real-estate / mutual-funds)
- * の record-entry 入力フォーム + advise ボタンを 1 つの Section に集約。
+ * **載っているのは 2 画面** (`RealEstatePage` / `MutualFundsPage`) —— この注記は
+ * 2026-09-12 まで「uber-eats / demae-can / real-estate / mutual-funds の 4 つ」と
+ * 書いていたが、実測では前の 2 つは**どの画面にもこのパネルを載せていない**
+ * (パス 167 で訂正)。型 (`RecordEntryServiceId`) は 4 つを通す —— 台帳
+ * `recordEntryLimits.ts` が持つ 4 サービスは `record-entry` / `advise` を**持つ**
+ * 側の一覧で、「画面が在る」一覧ではない。この食い違いは
+ * `shared/voiceWriteRequirements.ts` の `screenInput` が既に**測って**持っており
+ * (uber-eats / demae-can は `false`)、音声から呼べない理由として使われている。
+ * 注記だけが古かった。
+ *
+ * ## メモの天井は、画面が述べる (パス 167)
+ *
+ * 入力欄は `maxLength={2000}` を字面で持っていた。数の写しであると同時に、
+ * **`maxLength` はブラウザが黙って落とす** —— 2,000 字を超える文章を貼ると
+ * 超えた分は消え、画面には天井の存在すら出ていなかった (走査した: `文字` `残り`
+ * `上限` `length` のどれも、この部品には無かった)。そのメモは業務記録として
+ * 保存される側なので、「送ったつもりの全文が入っていない」が起こる。
+ *
+ * 直したあとは **`maxLength` を使わず、同じ天井を `onChange` で掛け、
+ * 落ちた字数を述べる**。天井そのものも常に画面に出す。
+ * (パス 112 が AI の入力で採った「黙って切らない」と同じ向き。あちらは切らずに
+ *  断れたが、ここは 1 行の入力欄なので、落ちた事実と字数を述べる形にした。)
  *
  * **重要な UX 契約:**
  * - record-entry の戻り値 `persisted: false` を **可視的に表示** する。
@@ -43,6 +63,8 @@ export interface ServiceActionPanelProps<S extends RecordEntryServiceId> {
 
 export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, serviceLabel, adviseInput }: ServiceActionPanelProps<S>) {
   const [note, setNote] = useState('');
+  /** 直前の入力が天井を超えていた字数 (0 なら超えていない)。 */
+  const [noteOverflow, setNoteOverflow] = useState(0);
   const [amount, setAmount] = useState('');
   const [state, dispatch] = useReducer(actionReducer, INITIAL_ACTION_STATE);
 
@@ -88,6 +110,7 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
         text: `${note2} · ${new Date(classified.data.recordedAt).toLocaleTimeString()}`,
       });
       setNote('');
+      setNoteOverflow(0);
       setAmount('');
     } catch (e) {
       dispatch({ type: 'error', text: e instanceof Error ? e.message : String(e) });
@@ -115,9 +138,14 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
         <input
           type="text"
           value={note}
-          onChange={(e) => setNote(e.target.value)}
+          onChange={(e) => {
+            // **天井は掛けるが、黙っては落とさない。** `maxLength` に任せると
+            // ブラウザが貼り付けを切ってしまい、落ちたことを画面が知れない。
+            const raw = e.target.value;
+            setNoteOverflow(Math.max(0, raw.length - MAX_RECORD_NOTE_CHARS));
+            setNote(raw.slice(0, MAX_RECORD_NOTE_CHARS));
+          }}
           placeholder="メモ (例: 売上記録 / 修繕費発生)"
-          maxLength={2000}
           style={inputStyle}
         />
         <input
@@ -132,8 +160,18 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
           {recBusy ? '送信中…' : 'メモを記録'}
         </button>
       </div>
-      <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.5 }}>
-        ※ 現フェーズでは入力受信のみ。Library への永続化は Phase 6 で接続予定です。
+      {noteOverflow > 0 && (
+        <div
+          data-note-overflow={noteOverflow}
+          role="alert"
+          style={{ fontSize: 11, color: '#fbbf24', marginBottom: 8, lineHeight: 1.6 }}
+        >
+          ⚠ メモは {MAX_RECORD_NOTE_CHARS} 字までです。直前の入力はこれを {noteOverflow} 字超えていたため、
+          超えた分は入っていません（元の文章を短くしてから貼り直してください）。
+        </div>
+      )}
+      <div data-note-cap style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12, lineHeight: 1.5 }}>
+        ※ メモは {MAX_RECORD_NOTE_CHARS} 字まで。現フェーズでは入力受信のみ。Library への永続化は Phase 6 で接続予定です。
       </div>
 
       {feedback && <div style={{ ...feedbackStyle, color: '#22c55e' }}>{feedback}</div>}
