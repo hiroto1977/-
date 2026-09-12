@@ -68,6 +68,8 @@ export function CalendarPage() {
     if (res.ok) {
       setResult({ kind: 'ok', message: '作成成功', url: res.data.htmlLink });
       setSummary('');
+      // 作った予定は「Upcoming Events」(timeMin=now の 10 件) に入る —— 取り直す (パス 173)。
+      refresh();
     } else {
       setResult({ kind: 'error', message: res.message });
     }

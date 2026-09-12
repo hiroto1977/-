@@ -48,6 +48,13 @@ export function NotionPage() {
       setResult({ kind: 'ok', message: '作成成功', url: res.data.url });
       setTitle('');
       setBody('');
+      /*
+       * **作った物が一覧に出るまで面倒を見る** (パス 173)。この画面が並べるのは
+       * Notion の検索結果 (最近のページ) で、いま作ったページはそこに入る ——
+       * 取り直さないと「作成成功」と出たまま一覧は変わらず、
+       * 利用者には本当に出来たのか分からない (押し直して 2 つ作る形になる)。
+       */
+      refresh();
     } else {
       setResult({ kind: 'error', message: res.message });
     }

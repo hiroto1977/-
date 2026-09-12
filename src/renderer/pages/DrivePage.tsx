@@ -52,6 +52,8 @@ export function DrivePage() {
     if (res.ok) {
       setResult({ kind: 'ok', message: `作成: ${res.data.name}`, url: res.data.url });
       setName('');
+      // 作ったフォルダは「Recent Files」(modifiedTime 降順・種別で絞っていない) の先頭に入る —— 取り直す (パス 173)。
+      refresh();
     } else {
       setResult({ kind: 'error', message: res.message });
     }
