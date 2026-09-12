@@ -183,9 +183,10 @@ export const SERVICES: ServiceDefinition[] = [
   },
   // 実行形態に依らない書き方にする (パス 161) —— サイドバーの説明は静的な台帳なので
   // 実行形態で切り替えられない。ブラウザ版は一覧を読めないので、そこを明示する。
-  // (欄の並びに注記を挟まないこと —— ランディングの抽出は
-  //  id → label → icon → description → page → category が**連続**していることを要求する。
-  //  挟むとその項だけが黙って落ち、landingServiceParse.test.ts が鳴る。)
+  // (パス 161 ではこの注記を `icon:` と `description:` の**間**に置いて
+  //  landingServiceParse.test.ts を落とした —— 当時のランディングの抽出は
+  //  6 欄の**連続**を要求していた。パス 162 で欄を 1 つずつ読む形に直したので、
+  //  今はどこに注記を置いても・欄をどう並べても落ちない。)
   {
     id: 'skills',
     label: 'Skills',

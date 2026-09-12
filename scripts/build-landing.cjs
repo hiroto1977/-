@@ -29,18 +29,178 @@ const DESC = 'を 1 つのサイドバー UI に統合した業務支援ダッ�
 const CATEGORY_LABEL = { featured: 'おすすめ', professionals: '士業連携', tools: '分析・ツール', integrations: '外部サービス連携' };
 const CATEGORY_ORDER = ['featured', 'professionals', 'tools', 'integrations'];
 
-/** services.ts の SERVICES 配列から {id,label,icon,description,category} を抽出。 */
+/**
+ * services.ts の SERVICES 配列から {id,label,icon,description,category} を抽出。
+ *
+ * ## なぜ 1 本の正規表現をやめたか (2026-09-12 · パス 162)
+ *
+ * 元の実装は 1 本の長い正規表現で
+ * `id → label → icon → description → page → … → category` が**連続**していることを
+ * 要求していた。欄の間に注記を 1 行挟む・`category:` を `description:` より前に書く
+ * ——それだけで**その項だけが黙って落ち**、カードが 1 枚消えたランディングが出る。
+ *
+ * 実際に **4 度**起きている (2026-07 に 2 度・2026-08-28・2026-09-12)。落ちるのは
+ * `selfCheck` / `landingServiceParse.test.ts` の**件数の差**で、
+ * 「72 parsed but 73 entries」しか言わないので**どの項が落ちたかは人が目で探す**。
+ *
+ * 直した形: 配列を**項ごとの塊に分け、欄は 1 つずつ読む**。
+ *
+ * - 欄の順序に依らない (どう並べても読める)
+ * - 欄の間・項の間の注記に依らない (引用符を見ながらコメントを落とす)
+ * - 読めない項は**行番号と id を名指しして**投げる (件数の差ではなく場所を言う)
+ *
+ * 件数の突き合わせ (`countEntries`) は**別の数え方のまま残す** ——
+ * 同じ走査で両方を出すと、突き合わせが「自分と自分の一致」になって何も守らない。
+ */
 function parseServices() {
-  const text = fs.readFileSync(SERVICES_TS, 'utf8');
-  const entry =
-    /id:\s*'([^']+)',\s*label:\s*'([^']+)',\s*icon:\s*'([^']+)',\s*description:\s*'([^']*)',\s*page:[\s\S]*?category:\s*'([^']+)'/g;
+  return parseServicesFromText(fs.readFileSync(SERVICES_TS, 'utf8'));
+}
+
+/** 文字列から抽出する本体 (検査が対照を当てられるよう、ファイル読み込みと分けてある)。 */
+function parseServicesFromText(source) {
+  const array = servicesArrayText(source);
   const out = [];
-  let m;
-  while ((m = entry.exec(text)) !== null) {
-    out.push({ id: m[1], label: m[2], icon: m[3], description: m[4], category: m[5] });
+  const problems = [];
+  for (const entry of splitEntries(array.text)) {
+    const body = stripCommentsOutsideStrings(entry.text);
+    const rec = {};
+    for (const field of ['id', 'label', 'icon', 'description', 'category']) {
+      rec[field] = readQuotedField(body, field);
+    }
+    rec.page = readIdentifierField(body, 'page');
+    const missing = ['id', 'label', 'icon', 'description', 'page', 'category'].filter(
+      (f) => rec[f] === null,
+    );
+    if (missing.length > 0) {
+      const line = lineNumberAt(source, array.offset + entry.offset);
+      problems.push(`services.ts:${line} の項 (${rec.id ?? 'id 不明'}) に ${missing.join(' / ')} が無い`);
+      continue;
+    }
+    out.push({ id: rec.id, label: rec.label, icon: rec.icon, description: rec.description, category: rec.category });
+  }
+  if (problems.length > 0) {
+    throw new Error(`SERVICES の項を読み切れません:\n  ${problems.join('\n  ')}`);
   }
   if (out.length === 0) throw new Error('no services parsed from services.ts');
   return out;
+}
+
+/**
+ * `export const SERVICES` の配列リテラルの中身 (角括弧の内側) と、その開始位置。
+ *
+ * 型注釈の `ServiceDefinition[]` を数えないよう、`=` の後の `[` から始める
+ * (最初はそこを踏んで中身が空になった)。
+ */
+function servicesArrayText(source) {
+  const decl = source.indexOf('export const SERVICES');
+  if (decl < 0) throw new Error('services.ts に export const SERVICES がありません');
+  const eq = source.indexOf('=', decl);
+  const open = eq < 0 ? -1 : source.indexOf('[', eq);
+  if (open < 0) throw new Error('SERVICES の配列リテラルが見つかりません');
+  let depth = 0;
+  for (let i = open; i < source.length; i += 1) {
+    const skipped = skipStringOrComment(source, i);
+    if (skipped !== null) {
+      i = skipped;
+      continue;
+    }
+    if (source[i] === '[') depth += 1;
+    else if (source[i] === ']') {
+      depth -= 1;
+      if (depth === 0) return { text: source.slice(open + 1, i), offset: open + 1 };
+    }
+  }
+  throw new Error('SERVICES の配列リテラルが閉じていません');
+}
+
+/** 配列の中身を、深さ 1 の `{ … }` ごとに分ける (中身の位置も返す)。 */
+function splitEntries(arrayText) {
+  const entries = [];
+  let depth = 0;
+  let start = -1;
+  for (let i = 0; i < arrayText.length; i += 1) {
+    const skipped = skipStringOrComment(arrayText, i);
+    if (skipped !== null) {
+      i = skipped;
+      continue;
+    }
+    if (arrayText[i] === '{') {
+      if (depth === 0) start = i;
+      depth += 1;
+    } else if (arrayText[i] === '}') {
+      depth -= 1;
+      if (depth === 0 && start >= 0) {
+        entries.push({ text: arrayText.slice(start, i + 1), offset: start });
+        start = -1;
+      }
+    }
+  }
+  return entries;
+}
+
+/**
+ * `src[i]` が文字列・コメントの開始なら、その**末尾の位置**を返す (でなければ null)。
+ * 文字列の中の `//` を落とさない・コメントの中の引用符で崩れない、の両方をここが持つ。
+ */
+function skipStringOrComment(src, i) {
+  const c = src[i];
+  if (c === "'" || c === '"' || c === '`') {
+    for (let j = i + 1; j < src.length; j += 1) {
+      if (src[j] === '\\') {
+        j += 1;
+        continue;
+      }
+      if (src[j] === c) return j;
+    }
+    return src.length;
+  }
+  if (c === '/' && src[i + 1] === '*') {
+    const end = src.indexOf('*/', i + 2);
+    return end < 0 ? src.length : end + 1;
+  }
+  if (c === '/' && src[i + 1] === '/') {
+    const end = src.indexOf('\n', i);
+    return end < 0 ? src.length : end - 1;
+  }
+  return null;
+}
+
+/** 文字列の外側のコメントだけを空白に落とす (行数は変えない)。 */
+function stripCommentsOutsideStrings(src) {
+  let out = '';
+  for (let i = 0; i < src.length; i += 1) {
+    const skipped = skipStringOrComment(src, i);
+    if (skipped === null) {
+      out += src[i];
+      continue;
+    }
+    const chunk = src.slice(i, skipped + 1);
+    // 文字列はそのまま残す。コメントは改行だけ残して空白に倒す。
+    out += /^['"`]/.test(chunk) ? chunk : chunk.replace(/[^\n]/g, ' ');
+    i = skipped;
+  }
+  return out;
+}
+
+/** `name: '…'` を読む (無ければ null)。項の中で**どこに在っても**読める。 */
+function readQuotedField(body, name) {
+  const m = new RegExp(`(?:^|[\\s{,])${name}:\\s*'([^']*)'`).exec(body);
+  return m === null ? null : m[1];
+}
+
+/** `name: Identifier` を読む (`page: SkillsPage` のような値。無ければ null)。 */
+function readIdentifierField(body, name) {
+  const m = new RegExp(`(?:^|[\\s{,])${name}:\\s*([A-Za-z_$][\\w$]*)`).exec(body);
+  return m === null ? null : m[1];
+}
+
+/** 位置 `index` の 1 始まりの行番号 (人が services.ts を開ける形で言うため)。 */
+function lineNumberAt(source, index) {
+  let line = 1;
+  for (let i = 0; i < index && i < source.length; i += 1) {
+    if (source[i] === '\n') line += 1;
+  }
+  return line;
 }
 
 /** SERVICES 配列の category: 出現数 (parse 漏れ検知の基準)。 */
@@ -258,7 +418,15 @@ function selfCheck(html, services, entryCount) {
     throw new Error(`unknown categor(y/ies) in services.ts: ${unknown.join(', ')} — CATEGORY_LABEL / CATEGORY_ORDER に追加してください`);
   }
   if (services.length !== entryCount) {
-    throw new Error(`parse mismatch: ${services.length} parsed but ${entryCount} SERVICES entries (正規表現の取りこぼし)`);
+    // 2 つの数え方は**別の走査**である (パス 162 でもそこは崩していない):
+    //   parseServices  … 配列を項の塊に分け、欄を 1 つずつ読む
+    //   countEntries   … 行頭の `category: '…'` を数える
+    // 食い違ったら、どちらの走査が届いていないかを人が見る必要があるので、両方の数え方を書く。
+    throw new Error(
+      `parse mismatch: 項として読めたのは ${services.length} 件、行頭の category: は ${entryCount} 件`
+        + ` (読めた id: ${services.map((s) => s.id).join(', ')})`
+        + ' — 1 行で書いた項は countEntries が数えず、注記の中の category: は parseServices が数えない',
+    );
   }
   const cards = (html.match(/class="card"/g) || []).length;
   if (cards !== services.length) throw new Error(`card count ${cards} != services ${services.length}`);
@@ -280,6 +448,6 @@ function main() {
 
 // 読み込むだけで dist/ へ書き出していたので、外から証人を立てられなかった。
 // (build-knowledge-vault.cjs と同じ形。2026-08-28 に両方へ番をつけた。)
-module.exports = { parseServices, countEntries };
+module.exports = { parseServices, parseServicesFromText, countEntries };
 
 if (require.main === module) main();
