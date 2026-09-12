@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { localIsoDate } from '../../shared/localDate';
+import { parseTimestamp } from '../../shared/isoDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
@@ -439,7 +440,7 @@ export function EmotionsPage() {
             <div key={a.id} className="card" style={{ gap: 8, marginBottom: 8 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
                 <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-                  {new Date(a.timestamp).toLocaleString('ja-JP')} · 主感情:{' '}
+                  {parseTimestamp(a.timestamp)?.toLocaleString('ja-JP') ?? '時刻不明'} · 主感情:{' '}
                   <strong style={{ color: EMOTION_LABELS[a.dominant]?.color ?? 'var(--text)' }}>
                     {EMOTION_LABELS[a.dominant]?.ja ?? a.dominant}
                   </strong>{' '}

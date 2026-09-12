@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CALENDAR_EVENT_FIELDS } from '../../shared/writeFieldLimits';
+import { parseTimestamp } from '../../shared/isoDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -19,9 +20,17 @@ const inputStyle: React.CSSProperties = {
   flex: 1,
 };
 
+/**
+ * 予定の開始を刷る。**読めない値は「Invalid Date」と刷らない** (パス 185)。
+ *
+ * `startDate` は取得の側で `e.start.dateTime ?? ''` と倒れるので、時間指定の
+ * 予定に `dateTime` が無ければ空文字が届く —— `new Date('')` は例外を投げず、
+ * `toLocaleString` が英語で `Invalid Date` を返す。
+ */
 function formatStart(startDate: string, allDay: boolean): string {
   if (allDay) return `${startDate}（終日）`;
-  const d = new Date(startDate);
+  const d = parseTimestamp(startDate);
+  if (d === null) return '開始時刻が読めません';
   return d.toLocaleString('ja-JP', {
     month: 'numeric',
     day: 'numeric',
@@ -32,8 +41,13 @@ function formatStart(startDate: string, allDay: boolean): string {
 }
 
 // "datetime-local" returns "YYYY-MM-DDTHH:mm" in local time. Treat it as
-// the local time zone and append :00 for ISO compliance. The Calendar
-// API will normalize against the timeZone field we send.
+// the local time zone and append :00 for ISO compliance.
+//
+// **帯 (timeZone) を送るのはこの画面ではない** (パス 185 で注記を実物に直した)。
+// 以前ここは「the timeZone field we send」と書いていたが、payload に入れるのは
+// main の `createEvent` / ブラウザ版の `createCalendarEvent` で、どちらも
+// `Intl.DateTimeFormat().resolvedOptions().timeZone` (端末の帯) に倒す ——
+// 両ビルドで同じ既定である。画面は壁時計の時刻だけを渡す。
 function localToIso(local: string): string {
   if (!local) return '';
   return `${local}:00`;
@@ -52,6 +66,19 @@ export function CalendarPage() {
   const summaryOver = charsOverCeiling(summary, CALENDAR_EVENT_FIELDS.summary!.max);
   const [start, setStart] = useState('');
   const [end, setEnd] = useState('');
+  /*
+   * **終了が開始より後でなければ、押す前に断る** (パス 185)。
+   *
+   * Google Calendar は end <= start を 400 で拒むので、この組では
+   * 「押せば必ず失敗する」—— 画面には API の英語の文面だけが出ていた
+   * (パス 109 の「必ず失敗する書き込みの承認を求めていた」と同じ形)。
+   * 順序は**刷る前に読む** `parseTimestamp` で見る (`datetime-local` は
+   * `YYYY-MM-DDTHH:mm` だが、値は state なので綴りを仮定しない)。
+   */
+  const startAt = parseTimestamp(localToIso(start));
+  const endAt = parseTimestamp(localToIso(end));
+  const rangeBad =
+    startAt !== null && endAt !== null && endAt.getTime() <= startAt.getTime();
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string; url?: string }>();
 
@@ -151,11 +178,18 @@ export function CalendarPage() {
                 style={inputStyle}
               />
             </div>
+            {rangeBad ? (
+              <span data-calendar-range-note style={{ color: 'var(--danger)', fontSize: 12 }}>
+                終了は開始より後の時刻にしてください (この組は Calendar 側で必ず拒まれます)
+              </span>
+            ) : null}
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="primary"
                 onClick={create}
-                disabled={submitting || !summary.trim() || !start || !end || summaryOver > 0}
+                disabled={
+                  submitting || !summary.trim() || !start || !end || summaryOver > 0 || rangeBad
+                }
               >
                 {submitting ? '作成中…' : '作成'}
               </button>

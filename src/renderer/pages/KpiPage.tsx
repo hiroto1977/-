@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { parseTimestamp } from '../../shared/isoDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
@@ -831,7 +832,7 @@ function BalanceSheetPanel() {
             {bsRows.map((r) => (
               <tr key={r.id} data-bs-row={r.id === latest?.id ? 'current' : 'other'} style={{ borderTop: '1px solid var(--border)' }}>
                 <td style={{ padding: '4px 8px' }}>{balanceSheetAsOfKey(r.data.asOf) || '基準日なし'}</td>
-                <td style={{ padding: '4px 8px', color: 'var(--text-mute)' }}>{new Date(r.createdAt).toLocaleString('ja-JP')}</td>
+                <td style={{ padding: '4px 8px', color: 'var(--text-mute)' }}>{parseTimestamp(r.createdAt)?.toLocaleString('ja-JP') ?? '時刻不明'}</td>
                 <td style={{ padding: '4px 8px', textAlign: 'right' }}>{safeYen(computeBalanceSheetMetrics(normalizeBalanceSheet(r.data)).netAssets)}</td>
                 <td style={{ padding: '4px 8px' }}>{r.id === latest?.id ? '使用中' : ''}</td>
                 <td style={{ padding: '4px 8px' }}>

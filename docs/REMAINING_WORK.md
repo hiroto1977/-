@@ -25050,3 +25050,104 @@ grep -rl '<svg xmlns' src --include=*.ts --include=*.tsx | grep -v __tests__ \
   外へ書く欄より害は小さい。**同じ規則を当てるかは別パスの判断。**
 - `TemplatesPage` の行カバレッジは上がったが、**書き出しの失敗の枝**
   (`msg` に `エクスポート失敗: …` を出す道) はまだ画面から駆動していない。
+
+---
+
+## パス 185 (2026-09-12) — **英語の「Invalid Date」を、日本語の画面に時刻として刷っていた**
+
+行カバレッジの次に低い `CalendarPage.tsx` (**48.48%** · 189 行) を読んだ。
+既知の欠陥の形を当てたうえで、`formatStart` の 3 行目で止まった。
+
+```ts
+const d = new Date(startDate);
+return d.toLocaleString('ja-JP', { … });
+```
+
+`startDate` は取得の側で `e.start.dateTime ?? ''` と倒れる。**`new Date('')` は
+例外を投げず**、`toLocaleString` が英語で `Invalid Date` を返す。
+
+### ★ 実測 — 母集団 7 か所のうち、断っていたのは 1 か所
+
+| 場所 | 直す前 | 読めない値が来る道 |
+| --- | --- | --- |
+| `renderer/data/backup.ts` (`backupExportedAt`) | **断っていた** (`Number.isFinite(Date.parse(v))` · パス 129) | 手で直したバックアップ |
+| `pages/CalendarPage.tsx` (予定の開始) | 素の `new Date` | 取得側の `?? ''` |
+| `pages/KpiPage.tsx` (記録の作成時刻) | 素の `new Date` | 封筒の `createdAt` |
+| `pages/EmotionsPage.tsx` (分析の時刻) | 素の `new Date` | 気分の記録の `timestamp` |
+| `pages/YoutubePage.tsx` (公開日) | 素の `new Date` | API の文字列 |
+| `components/CloudSyncPanel.tsx` (最終同期) | `try`/`catch` —— **走らない** | 保存した数字 |
+| `components/ServiceActionPanel.tsx` (記録した時刻) | 素の `new Date` | action の戻り値 |
+
+**規準は手の届く所に在った** —— パス 129 が `backupExportedAt` に書いた
+`Number.isFinite(Date.parse(v))` が、刷る側の 6 か所に伝わっていなかった
+(このリポジトリで 20 回目くらいの形)。
+
+### ★ `try`/`catch` は形だけだった
+
+`CloudSyncPanel` は `new Date(ms).toLocaleString()` を `try` で囲んでいたが、
+**`new Date(1e20)` は投げない**。`Invalid Date` を返すだけなので `catch` は
+この場合に一度も走らない —— 守っている向きが違う (パス 12 の家系)。
+
+### ★ パス 98 の守りは範囲を見ていなかった
+
+封筒の時刻 (`createdAt` / `updatedAt`) と気分の記録の `timestamp` には
+`Number.isFinite` が掛かっている (パス 98 が `1e999` → `Infinity` を塞いだ)。
+だが **`1e20` は有限で、しかも `new Date(1e20)` は Invalid Date** である。
+`1e20` は**有効な JSON** なのでバックアップから持ち込める。境界は
+`MAX_TIMESTAMP_MS` = 8,640,000,000,000,000 (ECMA-262 の time clip) ——
+**ちょうどまでは有効、1 超えると無効**。
+
+### 直し
+
+- `src/shared/isoDate.ts` に `parseTimestamp(v): Date | null` を足した
+  (`YYYY-MM-DD` の綴りを読む `parseIsoDate` と**同じファイル** ——
+  日付を読むのは 1 ファイル · パス 115)。文字列は `Date.parse` に任せる
+  (綴りを自分で決めると「8 通り」に戻る)。
+- 7 か所すべてがこれを通す。読めなければ `時刻不明` / `開始時刻が読めません` /
+  `公開日が読めません` と**読めないことを言う**。
+- `src/shared/__tests__/timestampPrintCensus.test.ts` が `new Date(<引数>)` の値を
+  `toLocale…` に渡す形を原文の走査で禁じる。
+
+### ついでに直した (同じ画面)
+
+**終了 ≤ 開始でも押せた。** Google Calendar はこの組を 400 で拒むので
+「押せば必ず失敗する」操作で、画面には API の英語の文面だけが出ていた
+(パス 109 の家系)。押す前に断り、理由を言う。
+
+### ★ 対照 4 本すべて鳴った —— そのうち 1 本が私の走査の欠陥を教えた
+
+| 対照 | 壊した物 | 鳴った検査 |
+| --- | --- | --- |
+| C1 | `CalendarPage` を素の `new Date` に戻す | 画面 1 本 / **最初は census が鳴らなかった** ↓ |
+| C2 | `disabled` から範囲の判定を外す | 画面 2 本 |
+| C3 | 境界を `>` から `>=` にする | `parseTimestamp` 1 本 |
+| C4 | 範囲の検査を消す | `parseTimestamp` 3 本 |
+
+**C1 が教えたこと**: 最初の走査は直に繋いだ形 (`new Date(x).toLocale…`) だけを
+見ており、`CalendarPage` が直す前に書いていた **2 段の形**
+(`const d = new Date(x);` → `d.toLocaleString(…)`) に当たらなかった ——
+**このパスを始めた当の欠陥を、私の規則が見逃していた**。変数に置く形も
+拾うように広げ、標本で両方向を留めた (パス 183 の対照 C3 と同じ形で、
+2 度目である)。
+
+### 再測るコマンド
+
+```bash
+npx vitest run src/shared/__tests__/parseTimestamp.test.ts
+npx vitest run src/shared/__tests__/timestampPrintCensus.test.ts
+npx vitest run src/renderer/pages/__tests__/calendarTimeOnScreen.test.ts
+# 母集団を素で数える
+grep -rn "new Date(" src --include=*.ts --include=*.tsx | grep -v __tests__ | grep -v "new Date()"
+```
+
+### 残した物
+
+- **`CalendarPage` は `timeZone` を送らない。** 画面の注記は「the timeZone field
+  we send」と書いていたが送るのは main / ブラウザ版で、どちらも
+  `Intl.DateTimeFormat().resolvedOptions().timeZone` (端末の帯) に倒す ——
+  **両ビルドで同じ**なので欠陥ではない。注記の主語だけが違っており、
+  そこは直した。利用者が「どのカレンダーの帯で作るか」を選べないのは別の話
+  (画面は各カレンダーの `timeZone` を刷っているが、作成は `primary` 固定)。
+- 記録の `createdAt` / `timestamp` は**書く側**も `MAX_TIMESTAMP_MS` を見ていない
+  (`Number.isFinite` のみ)。刷る側は断るようになったが、書く側で断るのが
+  本来の順で、`collectionShapes` / `emotionsShape` に足すのは別パス。

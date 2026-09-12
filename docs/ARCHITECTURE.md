@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **13316** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **13332** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 31 / 36 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 552 | 自己検証 |
+| `file:line` 参照数 | 557 | 自己検証 |
 | 図の中の `file:line` 参照数 | 27 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -3398,6 +3398,37 @@ renderer、`web-templates.ts` の 8 つの `if` 枝、`TemplatesPage.tsx` の
 移設に伴い Stryker の `ArithmeticOperator` の帯 (座標計算の算術だけ測らない
 139 行) も共有側へ移り、`lint:mutation-scope` の `KNOWN_BROAD` の行も移した
 (台帳は双方向なので、移し忘れれば落ちる)。
+
+**時刻を刷る所も同じ形だった** (2026-09-12 · パス 185)。保存値・取得値から
+`Date` を作って刷る所は **7 か所**あり、**読めない値を断っていたのは 1 か所だけ**
+(`src/renderer/data/backup.ts` の `backupExportedAt` —— パス 129 が
+`Number.isFinite(Date.parse(v))` で書いた)。残り 6 か所は素の
+`new Date(x).toLocale…()` を通す。これは例外を投げず、**英語で `Invalid Date` を
+返す**ので、日本語の画面に本物の時刻と並んで出る。
+
+`components/CloudSyncPanel.tsx` には `try`/`catch` が在ったが、**この場合に
+catch は一度も走らない** (`new Date(1e20)` は投げない) —— 守っている向きが
+違う形である (パス 12)。
+
+数字の時刻にはパス 98 が `Number.isFinite` を足していたが、**`Date` の範囲を
+見ていなかった**: `1e20` は有限で、しかも `new Date(1e20)` は Invalid Date。
+`1e20` は**有効な JSON** なのでバックアップから持ち込める。境界は
+`src/shared/isoDate.ts` の `MAX_TIMESTAMP_MS` (ちょうどまで有効・1 超えると無効)。
+
+判定を `src/shared/isoDate.ts` の `parseTimestamp` 1 つにし (`YYYY-MM-DD` の綴りを
+読む `parseIsoDate` と同じファイル —— **日付を読むのは 1 ファイル**)、7 か所
+すべてが通る。`src/shared/__tests__/timestampPrintCensus.test.ts` が
+`new Date(<引数>)` の値を `toLocale…` へ渡す形を原文の走査で禁じる。
+
+**この走査は対照が広げさせた**: 最初の規則は直に繋いだ形
+(`new Date(x).toLocale…`) だけを見ており、`CalendarPage` が直す前に書いていた
+2 段の形 (`const d = new Date(x);` → `d.toLocaleString(…)`) を**見逃していた**
+—— つまりこのパスを始めた当の欠陥に当たらない規則だった。対照 C1 で元の形へ
+戻したときに鳴らなかったので気付いた (パス 183 の対照 C3 と同じ形)。
+
+同じパスで `CalendarPage` の**終了 ≤ 開始**も画面で断るようにした。Google は
+この組を 400 で拒むので「押せば必ず失敗する」操作で、画面には API の英語の
+文面だけが出ていた (パス 109 の家系)。
 
 **暗号パラメータ**も同じ形だった。AES-GCM の IV 長と PBKDF2 の強度が
 `src/renderer/security/vault.ts` / `src/renderer/security/dataCrypto.ts` /

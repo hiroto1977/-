@@ -68,3 +68,43 @@ export function isCalendarDateOrMonth(v: unknown): v is string {
 export function calendarDateMessage(label: string): string {
   return `${label} は暦に在る日付 (YYYY-MM-DD) で入力してください`;
 }
+
+// --- 表示用の時刻 (パス 185) ---------------------------------------------
+
+/**
+ * `Date` が表せる最大の絶対値 (ms)。**これを 1 超えると `new Date` は Invalid Date** ——
+ * `Number.isFinite` は通してしまう境界である (ECMA-262 の time clip)。
+ */
+export const MAX_TIMESTAMP_MS = 8_640_000_000_000_000;
+
+/**
+ * **刷る前に時刻を読む。読めなければ `null`** (2026-09-12 · パス 185)。
+ *
+ * ## なぜ要るか
+ *
+ * `new Date(x).toLocaleString('ja-JP')` は、`x` が読めないと**例外を投げず
+ * 英語で `Invalid Date` を返す**。日本語の画面に本物の時刻と並んで出るので、
+ * 読む人には「そういう値が保存されている」ようにしか見えない。
+ *
+ * 実測 (2026-09-12): 保存値・取得値から `Date` を作って刷る 7 か所のうち、
+ * **読めない値を断っていたのは 1 か所だけ** (`renderer/data/backup.ts` の
+ * `backupExportedAt` —— パス 129 が `Number.isFinite(Date.parse(v))` で書いた)。
+ * **規準は手の届く所に在った**。
+ *
+ * ## 数字の時刻には守りが在ったが、範囲を見ていなかった
+ *
+ * パス 98 は封筒の時刻に `Number.isFinite` を足した (`1e999` は有効な JSON で
+ * `Infinity` に読めるため)。だが **`1e20` は有限で、しかも `new Date(1e20)` は
+ * Invalid Date** である。`Number.isFinite` を通る値が Invalid Date になる境界は
+ * `MAX_TIMESTAMP_MS` で、そこまでは有効・1 超えると無効。
+ *
+ * 文字列は `Date.parse` に任せる —— 綴りを自分で決めると
+ * 「日付を読む実装が 8 通り」に戻る (パス 115)。`YYYY-MM-DD` だけを読むのは
+ * 上の `parseIsoDate` で、こちらは**時刻つきの値**を読む係である。
+ */
+export function parseTimestamp(v: unknown): Date | null {
+  const ms = typeof v === 'number' ? v : typeof v === 'string' ? Date.parse(v) : NaN;
+  if (!Number.isFinite(ms)) return null;
+  if (Math.abs(ms) > MAX_TIMESTAMP_MS) return null;
+  return new Date(ms);
+}

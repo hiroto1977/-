@@ -30,6 +30,7 @@
  * IndexedDB の読み書きは `store.exportAll()` / `store.importAll()`。
  */
 import type { StoredRecord } from './store';
+import { parseTimestamp } from '../../shared/isoDate';
 import { encryptString, decryptString, isEncryptedBundle, type EncryptedBundle } from '../security/dataCrypto';
 import { MIN_PASSWORD_LENGTH } from '../security/vault';
 import { personalDataCollections } from './collectionShapes';
@@ -234,7 +235,10 @@ export interface ParsedBackup {
 
 /** ISO 文字列として読める時刻だけ通す。 */
 export function backupExportedAt(v: unknown): string | null {
-  return typeof v === 'string' && Number.isFinite(Date.parse(v)) ? v : null;
+  // 読めるかの判定は `shared/isoDate.ts` の 1 つを通す (パス 185)。
+  // ここが「読めない時刻を断る」唯一の場所だった —— 規準はここに在り、
+  // 刷る側の 6 か所が知らなかった。
+  return typeof v === 'string' && parseTimestamp(v) !== null ? v : null;
 }
 
 /** 復元の計画に要る封筒。中身は見ない —— 封緘済みでも id と時刻は平文 (`exportAll` で読める)。 */
@@ -320,7 +324,8 @@ export function planRestore(
 
 /** 書き出し時刻の表示 (端末のロケール)。null は「書き出し時刻不明」。 */
 export function exportedAtLabel(exportedAt: string | null): string {
-  return exportedAt === null ? '書き出し時刻不明' : `${new Date(exportedAt).toLocaleString('ja-JP')} 書き出し`;
+  const at = parseTimestamp(exportedAt);
+  return at === null ? '書き出し時刻不明' : `${at.toLocaleString('ja-JP')} 書き出し`;
 }
 
 /**

@@ -1,5 +1,6 @@
 import { useReducer, useState } from 'react';
 import { MAX_RECORD_NOTE_CHARS, type RecordEntryServiceId } from '../../shared/recordEntryLimits';
+import { parseTimestamp } from '../../shared/isoDate';
 import { charsOverCeiling, clampedCeilingNote } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
 import type { AdviceInputFor } from '../../shared/serviceAdvisor';
@@ -108,7 +109,7 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
           : '✅ 保存しました';
       dispatch({
         type: 'record/success',
-        text: `${note2} · ${new Date(classified.data.recordedAt).toLocaleTimeString()}`,
+        text: `${note2} · ${parseTimestamp(classified.data.recordedAt)?.toLocaleTimeString() ?? '時刻不明'}`,
       });
       setNote('');
       setNoteOverflow(0);
