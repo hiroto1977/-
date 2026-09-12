@@ -19,6 +19,7 @@
 
 import { decodeMnemonic, encodeMnemonic, generateEntropy, normalizeMnemonic } from './mnemonic';
 import { assertKdfIterations, assertSaltBytes } from './dataCrypto';
+import { webCryptoUnavailableReason } from './webCrypto';
 import { AES_GCM_IV_BYTES, PBKDF2_ITERATIONS as SHARED_ITERATIONS } from '../../shared/cryptoParams';
 
 // Constants below are pinned by integration behavior (DB name / iterations
@@ -419,6 +420,19 @@ function tokenAad(serviceId: string): Uint8Array {
 // either breaks at runtime (caught by integration tests) or makes no
 // observable difference (decorative).
 async function deriveKey(password: string, salt: Uint8Array, iterations: number): Promise<CryptoKey> {
+  /*
+   * **WebCrypto が無い端末では、ここが最初に触る所である** (パス 171)。
+   *
+   * 素のまま呼ぶと `Cannot read properties of undefined (reading 'importKey')` に
+   * なり、`LockScreen` と設定画面はその `message` をそのまま出す —— 内部 API の
+   * 名前しか言わないので、読んだ人に打てる手が無い。
+   *
+   * `crypto.subtle` は**安全なコンテキストにしか無い**ので、単一 HTML を平文の
+   * `http://` で社内サーバや LAN の IP から配ると必ずここを通る。文面は
+   * `webCrypto.ts` が 1 つだけ持つ (パス 169 で OAuth の節に付けたのと同じ物)。
+   */
+  const missing = webCryptoUnavailableReason();
+  if (missing !== null) throw new Error(missing);
   const baseKey = await crypto.subtle.importKey(
     'raw',
     new TextEncoder().encode(password) as BufferSource,
@@ -491,6 +505,12 @@ async function deriveKeyFromMnemonic(
   salt: Uint8Array,
   version: number | undefined,
 ): Promise<CryptoKey> {
+  // 鍵を作る所は**すべて**守る (パス 171)。`crypto.subtle` が無い端末では
+  // ここが最初に触る所になりうる —— 守り漏れが 1 つ在ると、その経路だけが
+  // 素の TypeError を見せる (この形を何度も直してきた)。
+  const missing = webCryptoUnavailableReason();
+  if (missing !== null) throw new Error(missing);
+
   const normalized = normalizeMnemonic(mnemonic);
   const pbkdf2Input = version === 1 ? RECOVERY_DERIVATION_PREFIX_V1 + normalized : normalized;
   const baseKey = await crypto.subtle.importKey(
@@ -513,6 +533,12 @@ async function deriveKeyFromMnemonic(
  *  initialize() and recoverWithMnemonic() — the extractable handle is
  *  scoped to the function body and dereferenced before return. */
 async function generateMasterKey(): Promise<CryptoKey> {
+  // 鍵を作る所は**すべて**守る (パス 171)。`crypto.subtle` が無い端末では
+  // ここが最初に触る所になりうる —— 守り漏れが 1 つ在ると、その経路だけが
+  // 素の TypeError を見せる (この形を何度も直してきた)。
+  const missing = webCryptoUnavailableReason();
+  if (missing !== null) throw new Error(missing);
+
   return crypto.subtle.generateKey(
     { name: 'AES-GCM', length: 256 },
     true, // extractable — required so we can wrap it for the recovery branch
@@ -528,6 +554,19 @@ async function exportRawKey(key: CryptoKey): Promise<Uint8Array> {
 
 /** Re-import raw key bytes as a non-extractable handle for runtime use. */
 async function importNonExtractable(raw: Uint8Array): Promise<CryptoKey> {
+  /*
+   * ここも鍵を作る呼び (`importKey`) なので守る (パス 171)。
+   *
+   * **実際には `deriveKey` が先に走るので、この行に到達する経路は無い。**
+   * それでも置くのは、「どれが最初か」を呼び順の読みで決めるのが
+   * **このパスで既に 1 度外れた**から —— `deriveKey` だけを守って直したつもりが、
+   * `initialize` は `generateMasterKey` を先に触っていた。規則は
+   * 「鍵を作る所はすべて守る」に固定し、走査で数える
+   * (`__tests__/webCryptoGuardCensus.test.ts`)。
+   */
+  const missing = webCryptoUnavailableReason();
+  if (missing !== null) throw new Error(missing);
+
   return crypto.subtle.importKey(
     'raw',
     raw as BufferSource,

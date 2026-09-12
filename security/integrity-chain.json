@@ -50,6 +50,7 @@
     "src/renderer/security/lockWorkspace.ts",
     "src/renderer/security/mnemonic.ts",
     "src/renderer/security/vault.ts",
+    "src/renderer/security/webCrypto.ts",
     "src/renderer/security/webauthn.ts",
     "src/shared/ai/chat.ts",
     "src/shared/ai/credentials.ts",
@@ -1471,6 +1472,14 @@
       "leafCount": 68,
       "note": "update pkce.ts,vault.ts",
       "hash": "13893b909040ef22845de9093b56edbdc793a3df9956712dfaa06ff00d1b6530"
+    },
+    {
+      "index": 175,
+      "prevHash": "13893b909040ef22845de9093b56edbdc793a3df9956712dfaa06ff00d1b6530",
+      "merkleRoot": "ad1c9a552a1fffdc9f8570fcb2e1776c33a9a1a7dd0ca549cbe561377599aff2",
+      "leafCount": 69,
+      "note": "update integrity-chain.cjs,dataCrypto.ts,vault.ts,webCrypto.ts",
+      "hash": "e2f7eacb42e3cb68f6d98b32e3bde9b2476346b11adb82591bc6eb606799ab4f"
     }
   ],
   "tipManifest": {
@@ -1484,7 +1493,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "c17438d4b9933c620747ad2b2aee492a5329299325f44024fb6d9ab4cd3db7c5",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "aab9e03207fbb4c3cb60031783de568a2069a1ba63bea23ec0f65edc96d4fd9c",
+    "scripts/integrity-chain.cjs": "c1355f23b10654d087fd64442f49258cd9eea7901a4b07be4c942d2490b1f858",
     "scripts/lint-artifact-csp.cjs": "dd504e69ae42426be701ad8cf5060ab30032770527f377d849f56bfe60ddd93d",
     "scripts/lint-sample-data.cjs": "f5272803091a7aea49e3db4ddefa1243e88e0d1fed6e17b80f3a391cd2fa167b",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
@@ -1517,11 +1526,12 @@
     "src/renderer/security/LockScreen.tsx": "a05a31d56248d1c9b9cebad5d9bde1c0628f635b59d1787f8b843a5f993526f9",
     "src/renderer/security/autoLock.ts": "a868fe64d85384a698dfd2ba1c210e2b3bdf663edf2efa90c79d0c14be036156",
     "src/renderer/security/bip39-wordlist.ts": "158d4c3eed64474223aefe917c6497f4afd0200054efd089d9d0f323332d6761",
-    "src/renderer/security/dataCrypto.ts": "43c3663c6e4e7c20f49c92648227d03bbb8edf79cb0d0e4a392dcf7436b6419c",
+    "src/renderer/security/dataCrypto.ts": "98db7322152dc04dee919baa1a6619797b0e405e3618c5c65108a42033f9b73e",
     "src/renderer/security/frameGuard.ts": "66ad10cf7e5a48fcc4a406aa66b9de544609877944fd073c7bf3af8190991559",
     "src/renderer/security/lockWorkspace.ts": "b1e7210a61ed100c2bae43359482eaa696ad367f63a25ec463ab0ed44477aca7",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
-    "src/renderer/security/vault.ts": "a944a485f131b7e03eedad4f3f4c4ae28b82c7d59cbb64af60f7961fcd5a99d1",
+    "src/renderer/security/vault.ts": "b8be24debb27934eebd52556f2c6ef63ea8d7327943ad8ef7ad32b7e7c0d4702",
+    "src/renderer/security/webCrypto.ts": "d0be2ab7b15ba0315c7dff1e9c7da482ec17d9a021aa0921d580e39c7c631964",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
     "src/shared/ai/chat.ts": "fb4b09c9d607b67d10f45cd6801db72ca74b5293d94f446975ce35c7af8a9524",
     "src/shared/ai/credentials.ts": "69603ba457c124794e3e2c38f75eb35bc487e9766eab2d03bd53d035c885d85a",

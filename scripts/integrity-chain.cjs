@@ -43,6 +43,12 @@ const PROTECTED = [
   'scripts/integrity-chain.cjs',
   'src/renderer/security/vault.ts',
   'src/renderer/security/dataCrypto.ts',
+  // 2026-09-12 (パス 171): `vault.ts` / `dataCrypto.ts` の鍵導出が最初に触る所を
+  // 守るために入れた。**実行時の判断を持つ** —— `crypto.subtle` が在るかを決め、
+  // 無いときに画面へ出す文を持つ。ここを書き換えて「在る」と答えさせると、
+  // 鍵導出は素の TypeError に戻り、利用者は内部 API の名前だけを見る。
+  // 除外の基準は「型だけに見えるか」ではなく「実行時に残るか」なので保護対象。
+  'src/renderer/security/webCrypto.ts',
   'src/renderer/security/autoLock.ts',
   'src/renderer/security/mnemonic.ts',
   'src/renderer/security/webauthn.ts',

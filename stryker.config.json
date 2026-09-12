@@ -178,6 +178,7 @@
     "src/renderer/security/mnemonic.ts",
     "src/renderer/security/vault.ts",
     "src/renderer/security/webauthn.ts",
+    "src/renderer/security/webCrypto.ts",
     "src/renderer/sidebarFilter.ts",
     "src/renderer/voice/speechAdapter.ts",
     "src/renderer/voice/ttsAdapter.ts",

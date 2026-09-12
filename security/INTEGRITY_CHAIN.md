@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 175
+- ブロック数: 176
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `13893b909040ef22845de9093b56edbdc793a3df9956712dfaa06ff00d1b6530`
-- 保護対象: 68 ファイル
+- 末尾(tip)ハッシュ: `e2f7eacb42e3cb68f6d98b32e3bde9b2476346b11adb82591bc6eb606799ab4f`
+- 保護対象: 69 ファイル
 
 ## ブロック
 
@@ -188,6 +188,7 @@
 | 172 | `9a697517fefa6d02` | `62ea193ca4394f07` | `720192b295ce1200` | update pkce.ts |
 | 173 | `3fe75a462c025e45` | `720192b295ce1200` | `b17be4721c89ceaf` | update localWrite.ts |
 | 174 | `f81458429b0e5a9b` | `b17be4721c89ceaf` | `13893b909040ef22` | update pkce.ts,vault.ts |
+| 175 | `ad1c9a552a1fffdc` | `13893b909040ef22` | `e2f7eacb42e3cb68` | update integrity-chain.cjs,dataCrypto.ts,vault.ts,webCrypto.ts |
 
 ## 保護対象ファイル
 
@@ -239,6 +240,7 @@
 - `src/renderer/security/lockWorkspace.ts`
 - `src/renderer/security/mnemonic.ts`
 - `src/renderer/security/vault.ts`
+- `src/renderer/security/webCrypto.ts`
 - `src/renderer/security/webauthn.ts`
 - `src/shared/ai/chat.ts`
 - `src/shared/ai/credentials.ts`
