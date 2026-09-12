@@ -6,6 +6,7 @@ import { useServiceData } from '../hooks/useServiceData';
 import { CeilingNotice } from '../components/CeilingNotice';
 import { charsOverCeiling } from '../../shared/inputCeiling';
 import { WORDPRESS_POST_FIELDS } from '../../shared/writeFieldLimits';
+import { mcpAccessNote } from '../data/wordpressMcpAccess';
 import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
@@ -24,6 +25,8 @@ export function WordPressPage() {
     SNAPSHOT.wordpress,
   );
   const { sites } = data;
+  /* MCP ツールが使えるかは、取得したサイトのプランから述べる (パス 177)。 */
+  const access = mcpAccessNote(sites);
 
   const [showForm, setShowForm] = useState(false);
   const [siteId, setSiteId] = useState('');
@@ -148,10 +151,15 @@ export function WordPressPage() {
         ) : null}
       </Section>
 
+      {/*
+        * **取得したサイトから述べる** (パス 177)。2026-09-12 までここは固定文で
+        * 「すべてのサイトが free プラン」と言っており、上の一覧が `paid` のバッジを
+        * 刷っている利用者にも同じ文を出していた (しかも「アップグレードが必要」と、
+        * 既に払っている人に言う)。判定と文面は `data/wordpressMcpAccess.ts` が持つ。
+        */}
       <Section title="MCP Access">
-        <div className="empty">
-          すべてのサイトが free プラン（mcp_access: <code>wpcom_paid_plan_required</code>）。
-          site 単位の MCP ツール (投稿作成・サイトエディタ等) を使うには WordPress.com 有料プランへのアップグレードが必要。
+        <div className="empty" data-mcp-access={access.kind}>
+          {access.text}
         </div>
       </Section>
     </div>
