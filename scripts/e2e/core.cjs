@@ -2790,6 +2790,58 @@ async function demoMixSuite(browser) {
   await ctx.close();
 }
 
+async function paperAccountSuite(browser) {
+  console.log('\n=== paperAccount (1 度も約定していない口座の損益 · パス 189) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE + '#/stocks', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('[data-paper-account-note]', { timeout: 30000 });
+
+  // ブラウザ版はペーパートレードを行わない —— 口座の注記と帯がそれを言う。
+  const note = (await page.locator('[data-paper-account-note]').textContent()) ?? '';
+  ok(
+    note.includes('ブラウザ版はペーパートレードを行いません'),
+    'paperAccount: ★ 口座の注記がブラウザ版の事実を述べる',
+  );
+  const scope = (await page.locator('[data-simulation-scope]').textContent()) ?? '';
+  ok(
+    scope.includes('ペーパートレードは行いません'),
+    'paperAccount: ★ 帯が「ペーパートレードのみ稼働中」と名乗らない',
+  );
+  ok(
+    !scope.includes('ペーパートレードのみ稼働中'),
+    'paperAccount: 帯の古い文面 (デスクトップ用) が残っていない',
+  );
+
+  // 損益タイルは「—」と理由を刷る (「+￥0」ではない)。
+  const body = (await page.locator('body').textContent()) ?? '';
+  ok(
+    body.includes('取引 0 件 — 損益は算定できません'),
+    'paperAccount: ★ 損益タイルが算定できない理由を刷る',
+  );
+  ok(!body.includes('+￥0'), 'paperAccount: ★ 「+￥0」を刷らない');
+  ok(body.includes('まだ 1 件もありません'), 'paperAccount: 取引履歴 0 件を成績に見せない');
+  // 対照 —— 金額の欄そのものは消していない
+  ok(body.includes('￥1,000,000'), 'paperAccount: 対照 — 現在資産・初期入金は出ている');
+
+  // 絞り込みが空になる理由を言う (同梱データではシグナルが 1 度も出ない)。
+  await page.getByRole('button', { name: '買い' }).first().click();
+  await page.waitForSelector('[data-watchlist-filter-empty]', { timeout: 15000 });
+  const empty = (await page.locator('[data-watchlist-filter-empty]').textContent()) ?? '';
+  ok(
+    empty.includes('登録されている銘柄はありません') || empty.includes('「買い」の銘柄はありません'),
+    `paperAccount: ★ 絞り込みが空の理由を述べる (${empty})`,
+  );
+  ok(empty !== '該当する銘柄はありません', 'paperAccount: 古い一言に戻っていない');
+
+  ok(errs.length === 0, `paperAccount: コンソールエラー 0 件 (${errs.join(' | ')})`);
+  await ctx.close();
+}
+
 async function serviceAdviceSuite(browser) {
   console.log('\n=== serviceAdvice (改善提案: 画面の数字から規則で組む・ブラウザ版でも返る) ===');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
@@ -3138,7 +3190,7 @@ async function hardResetSuite(browser) {
   const SUITES = [
     'desktop', 'manualData', 'dataOrigin', 'credential', 'businessComparison', 'kessanTax', 'frameGuard', 'noBeacon',
     'vaultPassword', 'credentialEgress', 'proxyEnvelope', 'cspEnforced', 'vaultOpacity', 'crossTabLock', 'storageDurability', 'hardReset',
-    'securityPosture', 'thirdPartyDisclosure', 'realtime', 'phone', 'talent', 'teamRadar', 'demoMix', 'serviceAdvice', 'parameters', 'writeCeiling', 'aiCeiling', 'tablet',
+    'securityPosture', 'thirdPartyDisclosure', 'realtime', 'phone', 'talent', 'teamRadar', 'demoMix', 'paperAccount', 'serviceAdvice', 'parameters', 'writeCeiling', 'aiCeiling', 'tablet',
   ];
   const unknown = only.filter((n) => !SUITES.includes(n));
   if (unknown.length > 0) {
@@ -3174,6 +3226,7 @@ async function hardResetSuite(browser) {
   if (run('talent')) await talentSuite(browser);
   if (run('teamRadar')) await teamRadarSuite(browser);
   if (run('demoMix')) await demoMixSuite(browser);
+  if (run('paperAccount')) await paperAccountSuite(browser);
   if (run('serviceAdvice')) await serviceAdviceSuite(browser);
   if (run('parameters')) await parameterSuite(browser);
   if (run('writeCeiling')) await writeCeilingSuite(browser);

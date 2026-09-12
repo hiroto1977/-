@@ -13918,16 +13918,16 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **106 ファイル / 283 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **106 ファイル / 280 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
 | `src/shared/funding.ts` | 13 |
 | `src/renderer/data/investments.ts` | 11 |
-| `src/main/clients/stocks.ts` | 9 |
 | `src/shared/taxDeductions.ts` | 9 |
 | `src/renderer/data/stocksAnalysisWeb.ts` | 8 |
 | `src/renderer/pages/DocstudioPage.tsx` | 8 |
+| `src/main/clients/stocks.ts` | 7 |
 | `src/shared/mutualFundsMetrics.ts` | 7 |
 | `src/renderer/pages/RealEstatePage.tsx` | 6 |
 | `src/shared/taxCredits.ts` | 6 |
@@ -13944,7 +13944,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/data/connectionStatus.ts` | 4 |
 | `src/renderer/data/members.ts` | 4 |
 | `src/renderer/data/overview.ts` | 4 |
-| `src/renderer/pages/StocksPage.tsx` | 4 |
 | `src/renderer/pages/VillagePage.tsx` | 4 |
 | `src/shared/depreciation.ts` | 4 |
 | `src/shared/hydroponics.ts` | 4 |
@@ -13957,6 +13956,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/data/charts.ts` | 3 |
 | `src/renderer/data/financialStatements.ts` | 3 |
 | `src/renderer/pages/OverviewPage.tsx` | 3 |
+| `src/renderer/pages/StocksPage.tsx` | 3 |
 | `src/shared/invoiceTax.ts` | 3 |
 | `src/shared/payroll.ts` | 3 |
 | `src/shared/securityRange.ts` | 3 |
@@ -25425,3 +25425,94 @@ ShigyoConsole のように 2 本のリストを混ぜる画面では「1 本に�
   (私の分だけ直した。もう 1 つも理由を書くのは機械的・別パス)。
 - **`LibraryItemMeta.createdAt` が `null` の控えは並び順が最後**になる (索引に載らない
   ので「新しい順」に混ぜられない)。画面はそう述べている。
+
+---
+
+## パス 189 (2026-09-12) — **1 度も約定していない口座に「損益 +￥0 (0.00%)」を緑で刷る (3 面)**
+
+株式の「ペーパー口座」の 5 タイル (現在資産 / 現金残高 / **損益** / 初期入金 / 取引履歴)
+は、画面・書き出す HTML・書き出す Markdown の **3 面**で同じ組を刷る。実測
+(`fetchStocksSnapshotImpl` に既定の差し替え口):
+
+```
+  watchlist   7203.T:hold 9984.T:hold 6758.T:hold AAPL:hold MSFT:hold
+  positions   {}          history 0 entries
+  cash        1000000     initialCash 1000000     equity 1000000
+  pnl         0           pnlPct 0
+```
+
+**0 は偶然ではない。** 理由が 3 つ重なっている:
+
+| # | 理由 | 帰結 |
+| --- | --- | --- |
+| 1 | 取得のたびに `createPaperPortfolio(1_000_000)` から組み直す | 「取引履歴 N」は蓄積した記録ではない (2 度取っても 0) |
+| 2 | `applySignal` は `last.close` で買い、評価も同じ `latestClose` | 買いが起きても `equity === initialCash` で**損益は構造上 ±0** |
+| 3 | `SMA_CROSSOVER_STRATEGY` は最終足の**交差**だけを見る | 同梱のモック系列は滑らかなので 1 度も出ない |
+
+3 の母集団は閉じている —— `createMockStocksDataSource` の種は
+`(symbol.charCodeAt(0) || 1) * 1000` で**先頭 1 文字しか効かない**ので、
+`isSafeSymbol` が通す 39 文字が全部である。実測 **39/39 が hold**。だから
+「買い」の絞り込みは必ず空になり、「取引履歴」の節 (`history.length > 0` の枝) は
+1 度も描かれない。ブラウザ版は `buildStocksSnapshot` が固定の空リテラルを返すので
+ペーパートレードを一切行わないのに、帯は「ペーパートレードのみ稼働中」と名乗っていた。
+
+パス 92 (勝率 `0%` → `number | null`)・パス 39 (構造上定数の軸)・パス 64
+(中立のつもりの 1.0 が満点) と同じ家系で、**この面にはまだ規準が届いていなかった**。
+
+### 直した所
+
+`src/shared/paperAccount.ts` に規則を 1 つ置いた。
+
+| 関数 | 役目 |
+| --- | --- |
+| `paperAccountView` | 取引 0 件なら `pnl` / `pnlPct` を `null`、値段の分からない玉を `unpricedPositions` で返す |
+| `pnlLabel` / `pnlSubLabel` / `pnlColor` | 「—」「取引 0 件 — 損益は算定できません」「中立色」 |
+| `tradeCountSubLabel` | 0 件なら「まだ 1 件もありません」(`paper trades` と刷らない) |
+| `paperAccountNote` / `simulationScopeNote` | 実行形態ごとの文 (パス 161 と同じ `BuildKind \| null` の扱い) |
+| `signalFilterEmptyNote` | 絞り込みが空になった理由 (登録の内訳を挙げる) |
+| `paperAccountExportNote` | 同じことを書き出しに載せる (断りが画面にだけ在る形はパス 41 で 1 度直した) |
+| `portfolioEquity` / `watchlistPrices` | 時価評価の**唯一の**規則 (main とブラウザ版は再輸出で読む) |
+
+### 時価評価の写しは 2 つ残っていた
+
+`src/main/clients/stocks.ts` は 2026-08 に「時価評価は `portfolioEquity` に 1 つだけ
+置く。…値段の取り違えは画面に出ないので、写し間違えても気付けない形だった」と
+**書いた**のに、実測ではその宣言の外に `src/renderer/pages/StocksPage.tsx` の
+`useMemo` と `src/renderer/data/stocksAnalysisWeb.ts` の私用 `portfolioEquity` が在った。
+**散文の宣言は鍵にならない** —— `src/shared/__tests__/paperEquityOneRule.test.ts` が
+「保有 × 値段を累算器へ足し込む形」(`+= x.shares *`) を走査し、所有者の外に現れたら鳴る
+(1 取引の現金の動き `const cost = shares * price` は別の量なので当たらない)。
+
+### 鳴らなかった対照 (記録)
+
+`if (price != null) equity += pos.shares * price` を
+`equity += pos.shares * (price ?? 0)` に替えても**何も落ちない** —— `+= 0` は
+足さないのと同じで、**等価な変異**である。鳴る対照は `price ?? pos.avgCost`
+(値段の分からない玉を取得原価で埋め、「持っていないお金」を資産に載せる) で、
+これは 4 本落ちる。パス 188 の「`?? 0` は belt-and-braces で、守りは別に在る」と
+同じ形を、同じ 1 行で 2 度踏んだ。
+
+### 既存の検査 8 本が落ちた (これも欠陥の証拠)
+
+`renderDashboardHtml` / `renderDashboardMarkdown` の符号・色・率の検査はどれも雛形が
+`history: []` のまま「+￥0」「+10.00%」「緑」を期待しており、**検査の側が「1 度も
+約定していない口座の損益」を正解として留めていた**。金額と色は約定が在る口座に
+当てるべきもので、雛形に取引 1 件を足してそのまま通る (期待値は変えていない)。
+1 本だけ主張が変わる: 初期入金 0 の率は「0.00%」ではなく
+「初期入金 0 円 — 率は算定できません」。
+
+### 残した物 / 次に見る所
+
+- **`Sparkline` は 3 写し**。`renderer/pages/StocksPage.tsx` の `Sparkline`、
+  `main/clients/stocks.ts` の `renderSparkline`、共有の `Charts.tsx` の `lineChart`
+  (パス 150 で「描けない点を落とす」ようにしたのは**最後の 1 つだけ**)。
+  実測で 1 本でも `close` が読めないと**全点が `NaN`** になり `polyline` が何も
+  描かないが、`max - min || 1` がそれを隠す (パス 150 の「それらしい図が出るのが最悪」)。
+  **今日は到達しない** —— 両ビルドのローソク足生成器は有限の算術しか通さず、
+  `Math.round` / `Math.max(1, …)` で閉じている。`StocksDataSource` は Phase 7 の
+  差し替え口なので、実 API を差し込む時に**必ず**先に直す (床として記録)。
+- `pctLabel(NaN)` → `NaN%` / `pctLabel(Infinity)` → `+Infinity%` / `yen.format(NaN)`
+  → `￥NaN`。上と同じ理由で今日は到達しない (`changePct` は有限の終値の比)。
+- **ペーパー口座に「自分の取引」を持たせるかは別の判断**。今日の直しは「何なのかを
+  正しく述べる」までで、蓄積する口座 (状態ファイルに履歴を持ち、複数日を跨ぐ) を
+  作るのは機能の追加であり、欠陥の修復ではない。ブラウザ版も同じ。

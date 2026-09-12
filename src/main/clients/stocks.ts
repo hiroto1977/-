@@ -1,5 +1,15 @@
 import { isoDateFromTimestamp } from '../../shared/isoDate';
 import {
+  watchlistPrices,
+  paperAccountExportNote,
+  paperAccountView,
+  pnlColor,
+  pnlLabel,
+  pnlSubLabel,
+  portfolioEquity,
+  tradeCountSubLabel,
+} from '../../shared/paperAccount';
+import {
   MAX_ADVISOR_QUESTION_CHARS,
   MAX_ADVISOR_UNIVERSE_SYMBOLS,
   MAX_TICKER_CHARS,
@@ -535,27 +545,18 @@ export function applySignal(
 }
 
 /** ウォッチリストの最終値を「銘柄 → 値段」の表にする。時価評価は
- *  `portfolioEquity` だけが持つ規則なので、画面側はこの表を作って渡す。 */
-export function watchlistPrices(
-  watchlist: readonly WatchlistItem[],
-): Readonly<Record<string, number>> {
-  const prices: Record<string, number> = {};
-  for (const w of watchlist) prices[w.symbol] = w.latestClose;
-  return prices;
-}
+ *  `portfolioEquity` だけが持つ規則なので、画面側はこの表を作って渡す。
+ *  **規則は `shared/paperAccount.ts` に在る** (パス 189) —— 画面も同じ物を読む。 */
+export { watchlistPrices } from '../../shared/paperAccount';
 
-/** Total portfolio value at the given snapshot of prices (cash + held shares). */
-export function portfolioEquity(
-  port: PaperPortfolio,
-  prices: Readonly<Record<string, number>>,
-): number {
-  let equity = port.cash;
-  for (const [ticker, pos] of Object.entries(port.positions)) {
-    const price = prices[ticker];
-    if (price != null) equity += pos.shares * price;
-  }
-  return equity;
-}
+/** Total portfolio value at the given snapshot of prices (cash + held shares).
+ *
+ *  **規則は `shared/paperAccount.ts` が 1 つだけ持つ** (パス 189) —— 2026-08 に
+ *  「時価評価は `portfolioEquity` に 1 つだけ置く」と書いたのに、画面
+ *  (`StocksPage.tsx`) はその後も自分で書いた 4 つ目の写しを使っていた。
+ *  main のものは renderer から輸入できない (`lint:imports`) ので、規則を
+ *  shared へ移し、ここは再輸出する —— 呼び出し側 (`backtest` / 書き出し) は変えない。 */
+export { portfolioEquity } from '../../shared/paperAccount';
 
 // --- Backtest ------------------------------------------------------------
 
@@ -1432,9 +1433,9 @@ export function renderDashboardHtml(input: DashboardInput): string {
   // 時価評価は `portfolioEquity` に 1 つだけ置く。ここと Markdown 側と
   // バックテストで同じ式を 3 つ持っていたが、値段の取り違えは画面に
   // 出ないので、写し間違えても気付けない形だった。
-  const equity = portfolioEquity(port, watchlistPrices(snapshot.watchlist));
-  const pnl = equity - port.initialCash;
-  const pnlPct = port.initialCash > 0 ? (pnl / port.initialCash) * 100 : 0;
+  // 損益は **取引が 0 件なら算定できない** (パス 189)。組は shared が作る。
+  const acct = paperAccountView(port, watchlistPrices(snapshot.watchlist));
+  const equity = acct.equity;
 
   const watchlistRows = snapshot.watchlist
     .map((w) => {
@@ -1556,10 +1557,11 @@ footer { margin-top: 32px; color: #64748b; font-size: 11px; }
   <div class="tiles">
     <div class="tile"><div class="label">現在資産</div><div class="value">${escapeXml(YEN_FMT.format(equity))}</div></div>
     <div class="tile"><div class="label">現金残高</div><div class="value">${escapeXml(YEN_FMT.format(port.cash))}</div></div>
-    <div class="tile"><div class="label">損益</div><div class="value" style="color:${pnl >= 0 ? '#22c55e' : '#ef4444'}">${pnl >= 0 ? '+' : ''}${escapeXml(YEN_FMT.format(pnl))}</div><div class="sub">${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(2)}%</div></div>
+    <div class="tile"><div class="label">損益</div><div class="value" style="color:${pnlColor(acct)}">${escapeXml(pnlLabel(acct, (n) => YEN_FMT.format(n)))}</div><div class="sub">${escapeXml(pnlSubLabel(acct))}</div></div>
     <div class="tile"><div class="label">初期入金</div><div class="value">${escapeXml(YEN_FMT.format(port.initialCash))}</div></div>
-    <div class="tile"><div class="label">取引履歴</div><div class="value">${port.history.length}</div><div class="sub">paper trades</div></div>
+    <div class="tile"><div class="label">取引履歴</div><div class="value">${acct.tradeCount}</div><div class="sub">${escapeXml(tradeCountSubLabel(acct))}</div></div>
   </div>
+  <p class="mute">${escapeXml(paperAccountExportNote(acct))}</p>
 </section>
 
 <section>
@@ -1765,12 +1767,9 @@ export function defaultDashboardMdPath(): string {
 export function renderDashboardMarkdown(input: DashboardInput): string {
   const { snapshot, advisorResult, strategyComparison, generatedAt } = input;
 
-  const equity = portfolioEquity(snapshot.portfolio, watchlistPrices(snapshot.watchlist));
-  const pnl = equity - snapshot.portfolio.initialCash;
-  const pnlPct =
-    snapshot.portfolio.initialCash > 0
-      ? (pnl / snapshot.portfolio.initialCash) * 100
-      : 0;
+  // 画面と書き出し HTML と同じ組を読む (パス 189)。
+  const acct = paperAccountView(snapshot.portfolio, watchlistPrices(snapshot.watchlist));
+  const equity = acct.equity;
 
   const watchlistTable =
     snapshot.watchlist.length === 0
@@ -1837,12 +1836,12 @@ export function renderDashboardMarkdown(input: DashboardInput): string {
     '|---|---:|',
     `| 現在資産 | ${YEN_FMT.format(equity)} |`,
     `| 現金残高 | ${YEN_FMT.format(snapshot.portfolio.cash)} |`,
-    // P&L sign pinned via positive (+￥10,000) / boundary (+￥0) /
-    // negative (-￥10,000 / -￥25,000) / position-tracked (-25.00%) tests.
-    // Stryker disable next-line ConditionalExpression,EqualityOperator
-    `| 損益 | ${pnl >= 0 ? '+' : ''}${YEN_FMT.format(pnl)} (${pnl >= 0 ? '+' : ''}${pnlPct.toFixed(2)}%) |`,
+    // 符号と「—」の出し方は `shared/paperAccount.ts` が 1 か所で持つ (パス 189)。
+    `| 損益 | ${pnlLabel(acct, (n) => YEN_FMT.format(n))} (${pnlSubLabel(acct)}) |`,
     `| 初期入金 | ${YEN_FMT.format(snapshot.portfolio.initialCash)} |`,
-    `| 取引履歴 | ${snapshot.portfolio.history.length} 取引 |`,
+    `| 取引履歴 | ${acct.tradeCount} 取引 |`,
+    '',
+    paperAccountExportNote(acct),
     '',
     `## ウォッチリスト (${snapshot.watchlist.length} 銘柄)`,
     '',

@@ -2017,7 +2017,11 @@ describe('renderDashboardHtml', () => {
         cash: 900_000,
         initialCash: 1_000_000,
         positions: { X: { shares: 500, avgCost: 200 } },
-        history: [],
+        // 約定が無ければ損益は「—」で色も付かない (パス 189) —— 色の検査は
+        // **約定が在る口座**に当てる。
+        history: [
+          { date: '01', ticker: 'X', action: 'buy', shares: 500, price: 200, cashAfter: 900_000, reason: 'r' },
+        ],
       },
     };
     renderDashboardHtml({ snapshot: snap, generatedAt: '01' });
@@ -2725,10 +2729,21 @@ describe('renderDashboardMarkdown', () => {
     expect(md).not.toContain('## 戦略比較');
   });
 
+  /**
+   * **損益が「在る」ための取引 1 件** (パス 189)。
+   *
+   * それまでこの節の雛形はどれも `history: []` で「+￥0」「+10.00%」を
+   * 期待していた —— 1 度も約定していない口座について。取引 0 件の損益は
+   * 「—」であり、金額の検査はどれも**約定が在る口座**に当てるべきものだった。
+   */
+  const ONE_TRADE = [
+    { date: '01', ticker: 'X', action: 'buy' as const, shares: 1, price: 1, cashAfter: 0, reason: 'r' },
+  ];
+
   it('shows P&L sign + percent in the portfolio table', () => {
     const snap: StocksSnapshot = {
       ...emptySnapshot(),
-      portfolio: { cash: 110_000, initialCash: 100_000, positions: {}, history: [] },
+      portfolio: { cash: 110_000, initialCash: 100_000, positions: {}, history: ONE_TRADE },
     };
     const md = renderDashboardMarkdown({ snapshot: snap, generatedAt: '01' });
     // ￥ is the fullwidth yen sign Intl.NumberFormat returns for ja-JP.
@@ -2738,7 +2753,7 @@ describe('renderDashboardMarkdown', () => {
   it('handles negative P&L sign (kills `>= 0` boundary on sign formatting)', () => {
     const snap: StocksSnapshot = {
       ...emptySnapshot(),
-      portfolio: { cash: 90_000, initialCash: 100_000, positions: {}, history: [] },
+      portfolio: { cash: 90_000, initialCash: 100_000, positions: {}, history: ONE_TRADE },
     };
     const md = renderDashboardMarkdown({ snapshot: snap, generatedAt: '01' });
     expect(md).toMatch(/損益.*-￥10,000.*-10\.00%/);
@@ -2749,7 +2764,7 @@ describe('renderDashboardMarkdown', () => {
     // mutated `pnl > 0` → "" (no sign).
     const snap: StocksSnapshot = {
       ...emptySnapshot(),
-      portfolio: { cash: 100_000, initialCash: 100_000, positions: {}, history: [] },
+      portfolio: { cash: 100_000, initialCash: 100_000, positions: {}, history: ONE_TRADE },
     };
     const md = renderDashboardMarkdown({ snapshot: snap, generatedAt: '01' });
     expect(md).toMatch(/損益.*\+￥0.*\+0\.00%/);
@@ -2790,14 +2805,16 @@ describe('renderDashboardMarkdown', () => {
     expect(md).toContain('+0.00%');
   });
 
-  it('boundary: initialCash === 0 → pnlPct === 0, no NaN (kills `> 0` → `>= 0` on initialCash gate)', () => {
+  it('boundary: initialCash === 0 → 率は算定不能と言う, no NaN (kills `> 0` → `>= 0` on initialCash gate)', () => {
     const snap: StocksSnapshot = {
       ...emptySnapshot(),
-      portfolio: { cash: 0, initialCash: 0, positions: {}, history: [] },
+      portfolio: { cash: 0, initialCash: 0, positions: {}, history: ONE_TRADE },
     };
     const md = renderDashboardMarkdown({ snapshot: snap, generatedAt: '01' });
     expect(md).not.toContain('NaN');
-    expect(md).toMatch(/損益.*0\.00%/);
+    // 0 で割れないので「0.00%」ではなく理由を書く (パス 189)。
+    expect(md).toMatch(/損益.*初期入金 0 円 — 率は算定できません/);
+    expect(md).not.toMatch(/損益.*0\.00%/);
   });
 
   it('embeds held position values in the equity total (kills positions reduce + find-predicate mutants)', () => {
@@ -2811,7 +2828,7 @@ describe('renderDashboardMarkdown', () => {
         cash: 50_000,
         initialCash: 100_000,
         positions: { MSFT: { shares: 100, avgCost: 200 } },
-        history: [],
+        history: ONE_TRADE,
       },
       watchlist: [
         {
@@ -3278,7 +3295,7 @@ describe('Stocks ダッシュボードの符号と色', () => {
   /** 「損益」タイルの色・金額・パーセントを 1 つの塊として取り出す。 */
   function pnlTile(page: string): { color: string; amount: string; pct: string } {
     const re =
-      /<div class="label">損益<\/div><div class="value" style="color:(#[0-9a-f]{6})">([^<]*)<\/div><div class="sub">([^<]*)<\/div>/;
+      /<div class="label">損益<\/div><div class="value" style="color:([^"]+)">([^<]*)<\/div><div class="sub">([^<]*)<\/div>/;
     const m = re.exec(page);
     return { color: m?.[1] ?? '', amount: m?.[2] ?? '', pct: m?.[3] ?? '' };
   }
@@ -3306,7 +3323,10 @@ describe('Stocks ダッシュボードの符号と色', () => {
         cash,
         initialCash: 1_000_000,
         positions: { X: { shares, avgCost: latestClose } },
-        history: [],
+        // 玉が在るなら約定が在った —— 取引 0 件の口座は損益を出さない (パス 189)。
+        history: [
+          { date: '01', ticker: 'X', action: 'buy', shares, price: latestClose, cashAfter: cash, reason: 'r' },
+        ],
       },
     };
   }
@@ -3376,13 +3396,22 @@ describe('Stocks ダッシュボードの符号と色', () => {
     expect(equityTile(renderDashboardHtml({ snapshot: snap, generatedAt: '01' }))).toBe('￥100,000');
   });
 
-  it('初期入金が 0 でも利益率は 0% にする (0 除算を出さない)', () => {
+  it('初期入金が 0 なら率は「算定できません」と言う (0 除算を出さない)', () => {
     const snap: StocksSnapshot = {
       ...emptySnapshot(),
-      portfolio: { cash: 500, initialCash: 0, positions: {}, history: [] },
+      portfolio: {
+        cash: 500,
+        initialCash: 0,
+        positions: {},
+        history: [
+          { date: '01', ticker: 'X', action: 'sell', shares: 1, price: 500, cashAfter: 500, reason: 'r' },
+        ],
+      },
     };
     const page = renderDashboardHtml({ snapshot: snap, generatedAt: '01' });
-    expect(pnlTile(page).pct).toBe('+0.00%');
+    // 0 で割った「0.00%」は答えではない (パス 189)。
+    expect(pnlTile(page).pct).toBe('初期入金 0 円 — 率は算定できません');
+    expect(pnlTile(page).pct).not.toBe('+0.00%');
     expect(page).not.toContain('NaN');
     expect(page).not.toContain('Infinity');
   });

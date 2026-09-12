@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **13386** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **13433** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 31 / 36 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 567 | 自己検証 |
+| `file:line` 参照数 | 573 | 自己検証 |
 | 図の中の `file:line` 参照数 | 27 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -3527,6 +3527,71 @@ payload を数える (数字と文面だけ合わせても「口はあるが繋�
 断りを要求される。**粒度はファイル単位**で、ShigyoConsole のように 2 本の
 リストを混ぜる画面では「1 本について述べていれば通る」——
 どのリストで何を述べるかは画面のテストが持つ。
+
+**「1 度も起きていないこと」を「±0 という成績」として刷る面も在った**
+(2026-09-12 · パス 189)。株式の「ペーパー口座」の 5 タイル ——
+現在資産 / 現金残高 / **損益** / 初期入金 / 取引履歴 —— は、画面と
+書き出す HTML と書き出す Markdown の **3 面**で同じ組を刷る。実測
+(`fetchStocksSnapshotImpl` に既定の差し替え口):
+
+```
+  watchlist   7203.T:hold 9984.T:hold 6758.T:hold AAPL:hold MSFT:hold
+  positions   {}          history 0 entries
+  cash        1000000     initialCash 1000000     equity 1000000
+  pnl         0           pnlPct 0
+```
+
+3 面が揃って「**損益 +￥0 (+0.00%)**」を**緑で**刷る —— 1 度も約定していない
+口座について。0 は偶然ではなく、理由が 3 つ重なっている:
+
+| # | 理由 | 帰結 |
+| --- | --- | --- |
+| 1 | 取得のたびに `createPaperPortfolio(1_000_000)` から組み直す | 「取引履歴 N」は蓄積した記録ではない (2 度取っても 0) |
+| 2 | `applySignal` は `last.close` で買い、評価も同じ `latestClose` | 買いが起きても `equity === initialCash`、**損益は構造上 ±0** |
+| 3 | `SMA_CROSSOVER_STRATEGY` は最終足の**交差**だけを見る | 同梱のモック系列は滑らかなので 1 度も出ない |
+
+3 の母集団は閉じている —— `createMockStocksDataSource` の種は
+`(symbol.charCodeAt(0) || 1) * 1000` で**先頭 1 文字しか効かない**ので、
+`isSafeSymbol` が通す 39 文字が全部である。実測 **39/39 が hold**
+(`src/main/clients/__tests__/paperAccountReality.test.ts` が総当たりで留める)。
+だから「買い」の絞り込みは**必ず**空になり、「取引履歴」の節
+(`history.length > 0` の枝) は 1 度も描かれない。
+
+ブラウザ版はさらに単純で、`buildStocksSnapshot` が
+`{ cash: 1_000_000, initialCash: 1_000_000, positions: {}, history: [] }` という
+**固定のリテラル**を返す (ペーパートレードを一切行わない)。それでも帯は
+「過去データでの分析・シグナル生成・**ペーパートレードのみ稼働中**」と
+名乗っていた —— パス 161 が直した「実行形態に依る文を無条件に刷る」形の再発。
+
+規則は `src/shared/paperAccount.ts` に 1 つ置いた (`paperAccountView` は
+取引 0 件なら `pnl` / `pnlPct` を `null` にし、`pnlLabel` / `pnlSubLabel` /
+`pnlColor` が「—」「取引 0 件 — 損益は算定できません」「中立色」を返す;
+`paperAccountNote` / `simulationScopeNote` が実行形態ごとの文を持ち、
+`paperAccountExportNote` が同じことを書き出しに載せる —— 断りが画面にだけ
+在って渡す物に乗らない形はパス 41 で 1 度直している)。
+
+**時価評価の写しは 2 つ残っていた。** `src/main/clients/stocks.ts` は 2026-08 に
+「時価評価は `portfolioEquity` に 1 つだけ置く。…値段の取り違えは画面に出ないので、
+写し間違えても気付けない形だった」と**書いた**のに、実測ではその宣言の外に
+`src/renderer/pages/StocksPage.tsx` の `useMemo` と
+`src/renderer/data/stocksAnalysisWeb.ts` の私用 `portfolioEquity` が在った。
+**散文の宣言は鍵にならない** —— `portfolioEquity` / `watchlistPrices` を shared へ
+移して main とブラウザ版は再輸出で読み、
+`src/shared/__tests__/paperEquityOneRule.test.ts` が「保有 × 値段を累算器へ
+足し込む形」(`+= x.shares *`) が所有者の外に現れたら鳴る走査を持つ
+(1 取引の現金の動き `const cost = shares * price` は別の量なので当たらない)。
+
+**鳴らなかった対照を 1 つ記録する。** `if (price != null) equity += pos.shares * price`
+を `equity += pos.shares * (price ?? 0)` に替えても何も落ちない —— `+= 0` は
+足さないのと同じで、**等価な変異**だった。鳴る対照は
+`price ?? pos.avgCost` (値段が分からない玉を取得原価で埋め、「持っていないお金」を
+資産に載せる) で、これは 4 本落ちる。
+
+**既存の検査 8 本が私の変更で落ちた**のも記録に値する。どれも雛形が
+`history: []` のまま「+￥0」「+10.00%」「緑」を期待しており、
+**検査の側が「1 度も約定していない口座の損益」を正解として留めていた**。
+金額と色の検査は約定が在る口座に当てるべきもので、雛形に取引 1 件を足して
+そのまま通る (期待値は変えていない)。
 
 **暗号パラメータ**も同じ形だった。AES-GCM の IV 長と PBKDF2 の強度が
 `src/renderer/security/vault.ts` / `src/renderer/security/dataCrypto.ts` /

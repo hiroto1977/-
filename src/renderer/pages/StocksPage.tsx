@@ -18,6 +18,17 @@ import { ratioPctOrDash } from '../../shared/num';
 import type { ActionData } from '../../shared/actionData';
 import { DESKTOP_PATHS, emptyWatchlistNote, exportDestinationNote, persistDestinationNote } from '../../shared/buildDestinations';
 import { useBuildKind } from '../hooks/useBuildKind';
+import {
+  paperAccountNote,
+  paperAccountView,
+  pnlColor,
+  pnlLabel,
+  pnlSubLabel,
+  signalFilterEmptyNote,
+  simulationScopeNote,
+  tradeCountSubLabel,
+  watchlistPrices,
+} from '../../shared/paperAccount';
 
 // 助言・戦略比較・登録の戻り値の形は台帳 (`shared/actionData.ts` → `shared/stocksTypes.ts`) を読む
 // (パス 117)。それまでここに `AdvisorResponse` の写しが在り、パス 105 まで `notForRealMoney` が
@@ -156,22 +167,31 @@ export function StocksPage() {
   );
 
   const portfolio = data.portfolio;
-  const equity = useMemo(() => {
-    let e = portfolio.cash;
-    for (const [ticker, pos] of Object.entries(portfolio.positions)) {
-      const w = data.watchlist.find((x) => x.symbol === ticker);
-      if (w) e += pos.shares * w.latestClose;
-    }
-    return e;
-  }, [portfolio, data.watchlist]);
-
-  const pnl = equity - portfolio.initialCash;
-  const pnlPct = portfolio.initialCash > 0 ? (pnl / portfolio.initialCash) * 100 : 0;
+  /*
+   * **時価評価と損益は `shared/paperAccount.ts` が 1 か所で持つ** (パス 189)。
+   *
+   * ここには 2026-09-12 まで 4 つ目の写しが在った —— `main/clients/stocks.ts` の
+   * 注記が「時価評価は `portfolioEquity` に 1 つだけ置く」と書いた後も、画面だけは
+   * 自分で足し上げ、`pnl` を無条件に「金額」として刷っていた。実測では同梱データで
+   * 取引が 1 件も起きないので (`shared/paperAccount.ts` の注記に 39/39 の内訳)、
+   * その `pnl` は常に 0 で、**1 度も約定していない口座に「+￥0 (0.00%)」が緑で**
+   * 出ていた。取引が 0 件なら損益は `null` (= 「—」) である。
+   */
+  const acct = useMemo(
+    () => paperAccountView(portfolio, watchlistPrices(data.watchlist)),
+    [portfolio, data.watchlist],
+  );
 
   const [filterAction, setFilterAction] = useState<'all' | Signal['action']>('all');
   const visibleWatchlist = data.watchlist.filter(
     (w) => filterAction === 'all' || w.signal.action === filterAction,
   );
+  /** シグナル別の件数 —— 絞り込みが空になった理由を言うために数える (パス 189)。 */
+  const signalCounts = useMemo(() => {
+    const c: Record<Signal['action'], number> = { buy: 0, sell: 0, hold: 0 };
+    for (const w of data.watchlist) c[w.signal.action] += 1;
+    return c;
+  }, [data.watchlist]);
 
   // --- AI advisor state -------------------------------------------------
   const [advisorQuestion, setAdvisorQuestion] = useState('');
@@ -381,24 +401,42 @@ export function StocksPage() {
         >
           <strong>シミュレーション中 / 実弾発注は行いません.</strong> Phase 7 で証券会社 API
           (Interactive Brokers / Alpaca / 楽天 / SBI) 連携時に有効化。
-          過去データでの分析・シグナル生成・ペーパートレードのみ稼働中で、表示される売買は仮想資金です。
+          {/* **「何が動いているか」は実行形態で違う** (パス 189) —— ブラウザ版は
+              ペーパートレードを 1 度も行わない (`buildStocksSnapshot` が固定の空リテラルを返す)
+              のに、ここは無条件に「ペーパートレードのみ稼働中」と名乗っていた。 */}
+          <span data-simulation-scope>{simulationScopeNote(buildKind)}</span>{' '}
           過去パフォーマンスは将来リターンを保証しません。
         </div>
       )}
 
-      <Section title="ペーパー口座" count={Object.keys(portfolio.positions).length}>
+      <Section title="ペーパー口座" count={acct.positionCount}>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <Tile label="現在資産 (cash + 保有時価)" value={yen.format(equity)} />
-          <Tile label="現金残高" value={yen.format(portfolio.cash)} />
+          <Tile label="現在資産 (cash + 保有時価)" value={yen.format(acct.equity)} />
+          <Tile label="現金残高" value={yen.format(acct.cash)} />
           <Tile
             label="損益"
-            value={(pnl >= 0 ? '+' : '') + yen.format(pnl)}
-            sub={pctLabel(pnlPct)}
-            accent={pnl >= 0 ? '#22c55e' : '#ef4444'}
+            value={pnlLabel(acct, (n) => yen.format(n))}
+            sub={pnlSubLabel(acct)}
+            accent={pnlColor(acct)}
           />
-          <Tile label="初期入金" value={yen.format(portfolio.initialCash)} />
-          <Tile label="取引履歴" value={String(portfolio.history.length)} sub="paper trades" />
+          <Tile label="初期入金" value={yen.format(acct.initialCash)} />
+          <Tile label="取引履歴" value={String(acct.tradeCount)} sub={tradeCountSubLabel(acct)} />
         </div>
+        {/* **この口座が何なのかを述べる** (パス 189)。取得ごとに組み直す・約定値と
+            評価値が同じ終値・ブラウザ版は取引しない —— どれも画面から読めなかった。 */}
+        <div
+          data-paper-account-note
+          style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 12, lineHeight: 1.6 }}
+        >
+          {paperAccountNote(buildKind)}
+        </div>
+        {acct.unpricedPositions.length > 0 && (
+          <div data-paper-account-unpriced style={{ fontSize: 12, color: '#fbbf24', marginTop: 8, lineHeight: 1.6 }}>
+            ⚠ 値段が分からない {acct.unpricedPositions.length} 銘柄 (
+            {acct.unpricedPositions.join(' / ')}) を時価評価に入れていません ——
+            <strong>現在資産は実際より小さく出ています</strong>。
+          </div>
+        )}
       </Section>
 
       <Section title="銘柄登録 / 解除" count={data.watchlist.length}>
@@ -567,15 +605,19 @@ export function StocksPage() {
             </div>
           ))}
           {visibleWatchlist.length === 0 && (
-            <div style={{ fontSize: 13, color: 'var(--text-mute)' }}>
-              該当する銘柄はありません
+            /* **なぜ空かを言う** (パス 189)。同梱データでは 39/39 のシグナルが
+               「見送り」になるので、「買い」を押すとこの枝が必ず出る ——
+               それまでは「該当する銘柄はありません」の一言で、登録が 0 件なのか
+               絞り込みが外れたのか読めなかった。 */
+            <div data-watchlist-filter-empty style={{ fontSize: 13, color: 'var(--text-mute)' }}>
+              {signalFilterEmptyNote(filterAction, signalCounts, ACTION_LABELS)}
             </div>
           )}
         </div>
       </Section>
 
-      {portfolio.history.length > 0 && (
-        <Section title="取引履歴" count={portfolio.history.length}>
+      {acct.tradeCount > 0 && (
+        <Section title="取引履歴" count={acct.tradeCount}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             {portfolio.history.slice(-20).reverse().map((t, i) => (
               <div

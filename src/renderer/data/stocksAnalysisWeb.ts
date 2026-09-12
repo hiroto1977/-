@@ -14,6 +14,7 @@
  */
 
 import { escapeXml, escapeMarkdownInline } from '../../shared/escape';
+import { portfolioEquity } from '../../shared/paperAccount';
 import { ratioPctOrDash } from '../../shared/num';
 import {
   MAX_ADVISOR_RECOMMENDATIONS,
@@ -331,17 +332,10 @@ function applySignal(
   return { ...port, cash: newCash, positions: newPositions, history: [...port.history, trade] };
 }
 
-function portfolioEquity(port: PaperPortfolio, prices: Readonly<Record<string, number>>): number {
-  let equity = port.cash;
-  for (const [ticker, pos] of Object.entries(port.positions)) {
-    const price = prices[ticker];
-    // backtest からの呼び出しでは価格 ({[ticker]: bar.close / lastClose}) が常に渡される
-    // ため price は常に非 null。この防御ガードを true 固定する変異は equivalent。
-    // Stryker disable next-line ConditionalExpression
-    if (price != null) equity += pos.shares * price;
-  }
-  return equity;
-}
+// 時価評価はここに写しを持たない —— **規則は `shared/paperAccount.ts` の 1 か所** (パス 189)。
+// それまでこのモジュールは自前の `portfolioEquity` を持っており、main と shared と
+// 画面と合わせて**同じ式が 4 つ**在った (画面の分はパス 189 で消した)。
+// 値段の取り違えは画面に出ないので、写し間違えても気付けない形である。
 
 /** ブラウザ版のバックテストは要約 5 欄だけを返す (デスクトップ版は取引と資産曲線を足す)。 */
 export type BacktestResult = BacktestSummary;
