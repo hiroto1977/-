@@ -4,6 +4,8 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
 
 
@@ -19,6 +21,8 @@ export function GithubPage() {
   const [repo, setRepo] = useState('');
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
+  /* 貼り付けを黙って切らない (パス 172)。天井は台帳から読む。 */
+  const bodyOver = charsOverCeiling(body, GITHUB_ISSUE_FIELDS.body!.max);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string; url?: string }>();
 
@@ -112,15 +116,15 @@ export function GithubPage() {
               placeholder="Body (Markdown 可)"
               value={body}
               onChange={(e) => setBody(e.target.value)}
-              maxLength={GITHUB_ISSUE_FIELDS.body!.max}
               rows={4}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />
+            <CeilingNotice label="本文" value={body} max={GITHUB_ISSUE_FIELDS.body!.max} />
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="primary"
                 onClick={submitIssue}
-                disabled={submitting || !owner.trim() || !repo.trim() || !title.trim()}
+                disabled={submitting || !owner.trim() || !repo.trim() || !title.trim() || bodyOver > 0}
               >
                 {submitting ? '送信中…' : '作成'}
               </button>

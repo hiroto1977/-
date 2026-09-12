@@ -3,6 +3,8 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
 import { WORDPRESS_POST_FIELDS } from '../../shared/writeFieldLimits';
 import type { ActionData } from '../../shared/actionData';
 
@@ -27,6 +29,8 @@ export function WordPressPage() {
   const [siteId, setSiteId] = useState('');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  /* 貼り付けを黙って切らない (パス 172)。天井は台帳から読む。 */
+  const contentOver = charsOverCeiling(content, WORDPRESS_POST_FIELDS.content.max);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string; url?: string }>();
 
@@ -105,16 +109,16 @@ export function WordPressPage() {
             <textarea
               placeholder="本文 (HTML 可)"
               value={content}
-              maxLength={WORDPRESS_POST_FIELDS.content.max}
               onChange={(e) => setContent(e.target.value)}
               rows={5}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />
+            <CeilingNotice label="本文" value={content} max={WORDPRESS_POST_FIELDS.content.max} />
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="primary"
                 onClick={create}
-                disabled={submitting || !siteId.trim() || !title.trim()}
+                disabled={submitting || !siteId.trim() || !title.trim() || contentOver > 0}
               >
                 {submitting ? '作成中…' : '下書き保存'}
               </button>

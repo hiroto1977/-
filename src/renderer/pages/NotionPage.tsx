@@ -3,6 +3,8 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
 import { NOTION_PAGE_FIELDS } from '../../shared/writeFieldLimits';
 import type { ActionData } from '../../shared/actionData';
 
@@ -27,6 +29,8 @@ export function NotionPage() {
   const [parentPageId, setParentPageId] = useState('');
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
+  /* 貼り付けを黙って切らない (パス 172)。天井は台帳から読む。 */
+  const bodyOver = charsOverCeiling(body, NOTION_PAGE_FIELDS.body.max);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string; url?: string }>();
 
@@ -111,16 +115,16 @@ export function NotionPage() {
             <textarea
               placeholder="本文 (プレーンテキスト)"
               value={body}
-              maxLength={NOTION_PAGE_FIELDS.body.max}
               onChange={(e) => setBody(e.target.value)}
               rows={4}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />
+            <CeilingNotice label="本文" value={body} max={NOTION_PAGE_FIELDS.body.max} />
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="primary"
                 onClick={create}
-                disabled={submitting || !parentPageId.trim() || !title.trim()}
+                disabled={submitting || !parentPageId.trim() || !title.trim() || bodyOver > 0}
               >
                 {submitting ? '作成中…' : '作成'}
               </button>

@@ -305,8 +305,17 @@ describe('Gmail の下書き作成 / Slack のメッセージ送信 (書き込�
     const ch = container.querySelector('[placeholder="チャンネル ID (C…) または #channel-name"]') as HTMLInputElement;
     const body = container.querySelector('[placeholder="メッセージ本文（Slack mrkdwn 可）"]') as HTMLTextAreaElement;
     expect(ch.maxLength).toBe(SLACK_MESSAGE_FIELDS.channel!.max);
-    expect(body.maxLength).toBe(SLACK_MESSAGE_FIELDS.text!.max);
-    // 走査が空振りしていない標本: 上限は実際に正の数である。
+    /*
+     * **本文の欄に `maxLength` は付けない** (2026-09-12 · パス 172 で変えた)。
+     * ブラウザは `maxLength` を超えた貼り付けを黙って切るので、25,000 字を貼ると
+     * 20,000 字だけが Slack へ行き、画面は「送信しました」と言う。本文は
+     * 切らずに断る (`CeilingNotice`) —— 断りの側は
+     * `pages/__tests__/writeBodyCeilings.test.ts` が 7 画面で駆動している。
+     * `maxLength` が無い textarea の `maxLength` プロパティは **-1**。
+     */
+    expect(body.getAttribute('maxlength'), '本文に maxLength が戻っている').toBeNull();
+    expect(body.maxLength).toBe(-1);
+    // 走査が空振りしていない標本: 上限は実際に正の数である (断り側がこれを読む)。
     expect(SLACK_MESSAGE_FIELDS.text!.max).toBeGreaterThan(0);
   });
 

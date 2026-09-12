@@ -3,6 +3,8 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
 import { ATLASSIAN_ISSUE_FIELDS } from '../../shared/writeFieldLimits';
 import type { ActionData } from '../../shared/actionData';
 
@@ -28,6 +30,8 @@ export function AtlassianPage() {
   const [projectKey, setProjectKey] = useState('');
   const [summary, setSummary] = useState('');
   const [description, setDescription] = useState('');
+  /* 貼り付けを黙って切らない (パス 172)。天井は台帳から読む。 */
+  const descriptionOver = charsOverCeiling(description, ATLASSIAN_ISSUE_FIELDS.description.max);
   const [issueType, setIssueType] = useState('Task');
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string; url?: string }>();
@@ -134,16 +138,16 @@ export function AtlassianPage() {
             <textarea
               placeholder="Description (プレーンテキスト → ADF にラップ)"
               value={description}
-              maxLength={ATLASSIAN_ISSUE_FIELDS.description.max}
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />
+            <CeilingNotice label="説明" value={description} max={ATLASSIAN_ISSUE_FIELDS.description.max} />
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="primary"
                 onClick={create}
-                disabled={submitting || !projectKey.trim() || !summary.trim()}
+                disabled={submitting || !projectKey.trim() || !summary.trim() || descriptionOver > 0}
               >
                 {submitting ? '作成中…' : '作成'}
               </button>

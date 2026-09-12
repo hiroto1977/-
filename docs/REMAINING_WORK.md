@@ -23788,6 +23788,104 @@ export function _resetRecordStoreForTests(): void {
 - `ManualDataSection` の行カバレッジは測り直していない (11 本の駆動で上がるはず)。
   次に全域を測るときに確かめる。
 
+## パス 172 (2026-09-12) — **外へ送る本文の欄が、貼り付けを黙って切っていた**
+
+`NotionPage` はレンダラで最も行カバレッジが低い画面 (**39.28%** · 専用の検査が 0 本) で、
+パス 151 の規準「カバレッジが低い画面は動かない物が見つかる確率が高い」を当てたら、
+画面 1 つの問題ではなく **7 画面に同じ形**が在った。
+
+### 実測 (実機 Chromium · `writeCeiling` suite)
+
+外部サービスへ**書く**欄の天井は台帳 `writeFieldLimits.ts` が持ち、画面はそれを
+**`maxLength` で**持っていた。`maxLength` は**貼り付けを黙って切る**:
+
+| | 直す前 | 直した後 |
+| --- | --- | --- |
+| 20,001 字を貼る | 欄に残るのは **20,000 字** (画面は何も言わない) | 20,001 字が残る |
+| 押す | 送れる。相手のサービスには**切れた本文**が残り、画面は「作成成功」 | 押せない (断りが出る) |
+
+**利用者が貼った物と、相手のサービスに残る物が違う。** しかも main とブラウザ版は
+どちらも `too-long` を断るように書いてあるのに、画面が先に切るので**その断りには
+永久に届かない** —— 書いたのに一度も効かない関門である。
+
+この「切ったことが見えない」形はパス 168 (`EmotionsPage` → Anthropic) と同じ家系で、
+そのとき決めた判断がそのまま効く: **人が本文を貼る欄は、切らずに断る。**
+
+### 母集団 (台帳から導いた · 8 欄 / 7 画面)
+
+`writeFieldLimits.ts` で `text(` から作られた欄 = 改行を許す 20,000 字の欄 =
+人が本文を貼る欄。導出は `shared/__tests__/writeBodyFields.ts` が 1 つ持つ
+(2 つの関門が同じ走査を要るので、写さない)。
+
+| 欄 | 画面 |
+| --- | --- |
+| `SLACK_MESSAGE_FIELDS.text` | `SlackPage` |
+| `GITHUB_ISSUE_FIELDS.body` | `GithubPage` |
+| `GMAIL_DRAFT_FIELDS.body` | `GmailPage` |
+| `NOTION_PAGE_FIELDS.body` | `NotionPage` |
+| `ATLASSIAN_ISSUE_FIELDS.description` | `AtlassianPage` |
+| `WORDPRESS_POST_FIELDS.content` | `WordPressPage` |
+| `MS365_MAIL_FIELDS.body` | `Microsoft365Page` |
+| `CALENDAR_EVENT_FIELDS.description` | **画面に欄が無い** (音声・チャット経由のみ) —— 理由つきで台帳に載せ、「本当に欄が無い」ことを確かめる |
+
+短い欄 (識別子・題名・1 行・選択肢) は `maxLength` のままにした —— 貼るより打つ欄で、
+入れさせない方が早い。**どちらの形を求めるかは台帳が決める**ので、送り先が増えても
+足した人が気付く。
+
+### 直した形
+
+`components/CeilingNotice.tsx` (新設) が「出す / 出さないの判断と見せ方」を持ち、
+文面は `shared/inputCeiling.ts` の `refusedCeilingNote` が 1 つ持つ (パス 168 で寄せた物)。
+各画面は `charsOverCeiling` で超過を数え、`disabled` に `over > 0` を足した。
+
+**送信ハンドラ側に守りは置いていない** —— ボタンが `disabled` のとき click は
+ハンドラに届かないので、そこに置くと**到達できない行**が増えるだけになる
+(パス 169 で `waitForElement` の到達不能な防御を消したのと同じ判断)。
+
+### 英語のラベルは、断りの中では日本語で呼ぶ
+
+共有の文は「`<ラベル>`は … 字までです」と続くので、`label="Description"` だと
+「Descriptionは」になる。最初の版はそう書いていて、`ceilingNotice.test.ts` が実測で拾った。
+placeholder が英語の 2 つ (GitHub の Body / Atlassian の Description) は、断りの中では
+「本文」「説明」と呼ぶ —— 節は欄の直下に出るので、どの欄かは読める。
+
+### 既存の関門を 2 つ広げた (消さずに)
+
+| 関門 | 直す前の主張 | 広げた後 |
+| --- | --- | --- |
+| `shared/__tests__/writeFieldLimits.test.ts` | **すべての**欄に `maxLength` が在ること | 本文の欄は `maxLength` を**持たない** + `charsOverCeiling` + `<CeilingNotice`、それ以外は従来どおり |
+| `pages/__tests__/analyzeBatchOnScreen.test.ts` | Slack の本文の `maxLength` が台帳の値 | 本文に `maxLength` が**無い** (`maxLength` プロパティは -1) |
+
+どちらも「間違っていた」のではなく**狭かった** —— パス 168 で `aiInputCaps` を
+広げたのと同じ形。
+
+### jsdom では測れないものを、実機で測った
+
+jsdom は `maxLength` を**属性として持つだけ**で値の代入には当てない (実測:
+`maxLength=10` の欄に 25 字を代入できる)。だから「貼り付けが切られる」は
+**実機でしか測れない**。`writeCeiling` suite は仕組みの標本も持つ ——
+`maxlength="5"` の欄に 10 字を流すと Chromium は 5 字に切る (実測)。
+
+### 対照 (14 本すべて鳴った)
+
+| 壊した物 | 鳴った検査 |
+| --- | --- |
+| 本文に `maxLength` を戻す | jsdom 1 / census 2 / **実機 e2e (20,001 → 20,000 字・断りが出ない)** |
+| `disabled` から `over` を外す | jsdom 2 / census 1 |
+| `CeilingNotice` を消す | jsdom 3 / census 2 |
+| 天井を 100 字と読む | jsdom 2 |
+| **送る前に本文を切る (元の欠陥の再現)** | jsdom 1 |
+| 断りを常に描かない / 常に描く | jsdom 7 / 7 |
+| 走査を殺す (常に空) | census 3 |
+| 台帳から 1 画面を落とす | census 1 |
+| 「欄が無い」行を、欄が在る画面に向ける | census 1 |
+
+### 自分で踏んだ規則 (パス 170 の)
+
+新しい jsdom 検査は `_resetRecordStoreForTests()` だけを呼んでいて、
+**パス 170 で自分が足した隔離の関門に落とされた**。`resetRecordStore()` へ回した ——
+関門が自分の新しい検査を掴むのは、関門が生きている証である。
+
 ## パス 171 (2026-09-12) — **パス 169 の宿題を閉じたら、守り漏れが 2 つ出てきた**
 
 パス 169 は Google OAuth の節について「`crypto.subtle` が無いと押しても何も出ない」を

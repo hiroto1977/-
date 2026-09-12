@@ -29,6 +29,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { readOriginalDir, readOriginalSource } from './originalSource';
+import { bodyFieldKeys } from './writeBodyFields';
 import path from 'node:path';
 import {
   ATLASSIAN_ISSUE_FIELDS,
@@ -307,13 +308,45 @@ describe('5 か所が同じ台帳を読む (数を写していない)', () => {
     expect(web).toContain('checkWriteLabels(input.labels)');
   });
 
-  it('★ 画面の maxLength は台帳の値を読む (数を写さない)', () => {
+  /**
+   * **画面の天井は 2 形ある** (パス 172 で広げた)。
+   *
+   * パス 110/111 はここを `maxLength` の**1 形だけ**で留めていた。パス 172 で、
+   * **人が本文を貼る欄**ではそれが害になると実測した —— ブラウザは `maxLength` を
+   * 超えた貼り付けを**黙って切る**ので、25,000 字を貼ると 20,000 字だけが外部
+   * サービスへ行き、画面は「作成成功」と言う。しかも main / ブラウザ版が書いてある
+   * `too-long` の断りには**永久に届かない**。
+   *
+   * だから欄ごとに求める形を変える (パス 168 で `aiInputCaps` を広げたのと同じ):
+   *
+   * | 欄 | 画面に求める形 |
+   * | --- | --- |
+   * | 本文 (`text(` = 改行可の 20,000 字) | `maxLength` を**持たない** + `charsOverCeiling` + `<CeilingNotice` |
+   * | それ以外 (識別子・題名・1 行・選択肢) | `maxLength={台帳.欄.max}` |
+   *
+   * **本文の欄は「持たない」ことも見る** —— 両方在るとブラウザが先に切り、
+   * 断る側に制御が来ない (台帳は双方向)。どちらの欄かは
+   * `shared/__tests__/writeBodyFields.ts` が台帳から導く (手で並べない)。
+   */
+  it('★ 画面の天井は台帳の値を読む —— 短い欄は maxLength、本文は断り (数を写さない)', () => {
+    const bodyKeys = bodyFieldKeys();
+    // 走査の生死: 本文の欄が 1 つも導けていないなら、下の分岐は全部 else に落ちる。
+    expect(bodyKeys.size, '本文の欄が導けていない (走査が死んでいる)').toBeGreaterThanOrEqual(8);
     for (const l of LEDGERS) {
       const page = code(l.page);
       for (const f of l.fields) {
         // 古い台帳は `Record<string, …>` 型なので `!` が要り、新しい台帳は欄ごとに型が付くので要らない。
         const forms = [`maxLength={${l.name}.${f}!.max}`, `maxLength={${l.name}.${f}.max}`];
-        expect(forms.some((s) => page.includes(s)), `${l.page} の ${f} に maxLength が無い`).toBe(true);
+        if (bodyKeys.has(`${l.name}.${f}`)) {
+          expect(
+            forms.some((s) => page.includes(s)),
+            `${l.page} の ${f} は本文の欄 — maxLength ではなく断り (CeilingNotice) で持つ`,
+          ).toBe(false);
+          expect(page, `${l.page} が超過を数えていない`).toMatch(/\bcharsOverCeiling\s*\(/);
+          expect(page, `${l.page} が断りを描いていない`).toMatch(/<CeilingNotice\b/);
+        } else {
+          expect(forms.some((s) => page.includes(s)), `${l.page} の ${f} に maxLength が無い`).toBe(true);
+        }
       }
       // 数の写しが無い (20000 / 256 / 200 を字面で持たない)。
       expect(page, `${l.page} が数を写している`).not.toMatch(/maxLength=\{\d+\}/);

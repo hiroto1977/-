@@ -4,6 +4,8 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
 import { AiEgressNotice } from '../components/AiEgressNotice';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import type { ActionData } from '../../shared/actionData';
@@ -29,6 +31,8 @@ export function SlackPage() {
   const [showForm, setShowForm] = useState(false);
   const [channel, setChannel] = useState('');
   const [text, setText] = useState('');
+  /* 貼り付けを黙って切らない (パス 172)。天井は台帳から読む。 */
+  const textOver = charsOverCeiling(text, SLACK_MESSAGE_FIELDS.text!.max);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string }>();
 
@@ -151,15 +155,15 @@ export function SlackPage() {
               placeholder="メッセージ本文（Slack mrkdwn 可）"
               value={text}
               onChange={(e) => setText(e.target.value)}
-              maxLength={SLACK_MESSAGE_FIELDS.text!.max}
               rows={3}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />
+            <CeilingNotice label="メッセージ本文" value={text} max={SLACK_MESSAGE_FIELDS.text!.max} />
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="primary"
                 onClick={send}
-                disabled={submitting || !channel.trim() || !text.trim()}
+                disabled={submitting || !channel.trim() || !text.trim() || textOver > 0}
               >
                 {submitting ? '送信中…' : '送信'}
               </button>

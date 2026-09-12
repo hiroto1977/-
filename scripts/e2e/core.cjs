@@ -2781,6 +2781,81 @@ async function serviceAdviceSuite(browser) {
   await ctx.close();
 }
 
+/**
+ * **外へ送る本文の欄 —— ブラウザが本当に黙って切るのか** (2026-09-12 · パス 172)。
+ *
+ * jsdom は `maxLength` を**属性として持つだけ**で値の代入には当てない (実測:
+ * `maxLength=10` の欄に 25 字を代入できた)。だから「貼り付けが黙って切られる」は
+ * **実機でしか測れない**。ここは 3 つを実物の Chromium で見る:
+ *
+ * 1. **仕組みの標本** —— `maxlength` を持つ欄に長い文字列を流すと、ブラウザが切る。
+ *    (これが直す前の 7 画面で起きていたこと。切れたことは画面に出ない。)
+ * 2. 直した後の本文の欄は**切らない** —— 天井を超えた全文がそのまま残る。
+ * 3. 超えている間は**断りが出て、送るボタンが押せない**。
+ */
+async function writeCeilingSuite(browser) {
+  console.log('\n=== writeCeiling (外へ送る本文: 切らずに断る) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE + '#/notion', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('text=Teamspaces', { timeout: 30000 });
+
+  // --- 1. 仕組みの標本: `maxlength` を持つ欄はブラウザが黙って切る ---
+  // 実物のエンジンで確かめる (これが直す前に 7 画面で起きていたこと)。
+  await page.evaluate(() => {
+    const t = document.createElement('textarea');
+    t.setAttribute('maxlength', '5');
+    t.setAttribute('data-e2e-cut-sample', '');
+    document.body.appendChild(t);
+  });
+  await page.locator('[data-e2e-cut-sample]').fill('0123456789');
+  const cut = await page.locator('[data-e2e-cut-sample]').inputValue();
+  ok(cut.length === 5,
+    `writeCeiling: ★ 標本 — maxlength の欄はブラウザが黙って切る (10 字 → ${cut.length} 字)`);
+  await page.evaluate(() => { document.querySelector('[data-e2e-cut-sample]')?.remove(); });
+
+  // --- 2. 本文の欄は切らない ---
+  const MAX = 20000; // 台帳 MAX_WRITE_TEXT_CHARS。画面の断り文がこの数を刷るので下で照合する。
+  await page.getByRole('button', { name: 'ページを作成' }).click();
+  await page.waitForSelector('textarea', { timeout: 15000 });
+  const body = page.locator('textarea').first();
+  await body.fill('あ'.repeat(MAX + 1));
+  const kept = await body.inputValue();
+  ok(kept.length === MAX + 1,
+    `writeCeiling: ★ 本文は切られない (${MAX + 1} 字を入れて ${kept.length} 字)`);
+
+  // --- 3. 超えている間は断りが出て、押せない ---
+  await page.waitForSelector('[data-ceiling-notice]', { timeout: 15000 });
+  const notice = (await page.locator('[data-ceiling-notice]').innerText()).replace(/\s+/g, ' ');
+  ok(notice.includes(`${MAX} 字までです`),
+    'writeCeiling: ★ 断りが天井の字数を述べる');
+  ok(notice.includes(`いま ${MAX + 1} 字あり、1 字超えています`),
+    'writeCeiling: ★ 断りが今の字数と超過分を述べる');
+  ok(notice.includes('この状態では送りません'),
+    'writeCeiling: ★ 断りが「送っていない」ことを述べる');
+
+  await page.getByPlaceholder('親ページ ID (インテグレーションに共有済みの)').fill('p-1');
+  await page.getByPlaceholder('ページタイトル').fill('議事録');
+  const create = page.getByRole('button', { name: '作成', exact: true });
+  ok(await create.isDisabled(),
+    'writeCeiling: ★ 超えている間は「作成」が押せない (必須欄は埋まっている)');
+
+  // --- 天井ちょうどまで縮めると、断りが消えて押せる ---
+  await body.fill('い'.repeat(MAX));
+  await page.waitForSelector('[data-ceiling-notice]', { state: 'detached', timeout: 15000 });
+  ok(await page.locator('[data-ceiling-notice]').count() === 0,
+    'writeCeiling: ★ 天井ちょうどなら断りが消える');
+  ok(!(await create.isDisabled()),
+    'writeCeiling: ★ 天井ちょうどなら押せる');
+
+  ok(errs.length === 0, `writeCeiling: コンソールエラー 0 件 (${errs.slice(0, 2).join(' / ')})`);
+  await ctx.close();
+}
+
 async function parameterSuite(browser) {
   console.log('\n=== parameters (数値パラメータ: 設定 → 別画面へ反映 → 既定に戻す) ===');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
@@ -2930,7 +3005,7 @@ async function hardResetSuite(browser) {
   const SUITES = [
     'desktop', 'manualData', 'dataOrigin', 'credential', 'businessComparison', 'kessanTax', 'frameGuard', 'noBeacon',
     'vaultPassword', 'credentialEgress', 'proxyEnvelope', 'cspEnforced', 'vaultOpacity', 'crossTabLock', 'storageDurability', 'hardReset',
-    'securityPosture', 'thirdPartyDisclosure', 'realtime', 'phone', 'talent', 'teamRadar', 'serviceAdvice', 'parameters', 'tablet',
+    'securityPosture', 'thirdPartyDisclosure', 'realtime', 'phone', 'talent', 'teamRadar', 'serviceAdvice', 'parameters', 'writeCeiling', 'tablet',
   ];
   const unknown = only.filter((n) => !SUITES.includes(n));
   if (unknown.length > 0) {
@@ -2967,6 +3042,7 @@ async function hardResetSuite(browser) {
   if (run('teamRadar')) await teamRadarSuite(browser);
   if (run('serviceAdvice')) await serviceAdviceSuite(browser);
   if (run('parameters')) await parameterSuite(browser);
+  if (run('writeCeiling')) await writeCeilingSuite(browser);
   if (run('tablet')) await tabletSuite(browser);
   await browser.close();
   if (failures.length > 0) {

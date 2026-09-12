@@ -3,6 +3,8 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
 import { MS365_EVENT_FIELDS, MS365_MAIL_FIELDS } from '../../shared/writeFieldLimits';
 import type { ActionData } from '../../shared/actionData';
 
@@ -73,6 +75,8 @@ export function Microsoft365Page() {
   const [to, setTo] = useState('');
   const [mailSubject, setMailSubject] = useState('');
   const [mailBody, setMailBody] = useState('');
+  /* 貼り付けを黙って切らない (パス 172)。天井は台帳から読む。 */
+  const mailBodyOver = charsOverCeiling(mailBody, MS365_MAIL_FIELDS.body.max);
 
   // 予定作成フォーム
   const [evSubject, setEvSubject] = useState('');
@@ -255,9 +259,10 @@ export function Microsoft365Page() {
           <div className="card" style={{ gap: 10 }}>
             <input placeholder="宛先 (to@example.com)" value={to} maxLength={MS365_MAIL_FIELDS.to.max} onChange={(e) => setTo(e.target.value)} style={inputStyle} />
             <input placeholder="件名" value={mailSubject} maxLength={MS365_MAIL_FIELDS.subject.max} onChange={(e) => setMailSubject(e.target.value)} style={inputStyle} />
-            <textarea placeholder="本文" value={mailBody} maxLength={MS365_MAIL_FIELDS.body.max} onChange={(e) => setMailBody(e.target.value)} rows={4} style={inputStyle} />
+            <textarea placeholder="本文" value={mailBody} onChange={(e) => setMailBody(e.target.value)} rows={4} style={inputStyle} />
+            <CeilingNotice label="本文" value={mailBody} max={MS365_MAIL_FIELDS.body.max} />
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <button className="primary" onClick={sendMail} disabled={submitting || !to.trim() || !mailSubject.trim()}>
+              <button className="primary" onClick={sendMail} disabled={submitting || !to.trim() || !mailSubject.trim() || mailBodyOver > 0}>
                 {submitting ? '送信中…' : '送信'}
               </button>
               {result?.kind === 'ok' ? (
