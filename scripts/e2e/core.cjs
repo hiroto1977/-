@@ -103,7 +103,11 @@ const noHScroll = (page) =>
 
 async function desktopSuite(browser) {
   console.log('--- desktop 1280x900 ---');
-  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const ctx = await browser.newContext({
+    viewport: { width: 1280, height: 900 },
+    // ライブラリの「ダウンロード」を押す (パス 193)。既定値に頼らず明示する。
+    acceptDownloads: true,
+  });
   const page = await ctx.newPage();
   const errs = [];
   collectErrors(page, errs);
@@ -539,6 +543,35 @@ async function desktopSuite(browser) {
   );
   // 新しいタブが開いていないこと。window.open へ戻したらここが落ちる。
   ok(ctx.pages().length === 1, 'library: 新しいタブを開かない');
+
+  // 「ダウンロード」を押す (2026-09-13 ・ パス 193)。
+  //
+  // このボタンは **どのハーネスでも 1 度も押されていなかった**。隣の「開く」は
+  // 上で実ブラウザを通しているのに、ダウンロードは jsdom にも実機にも無かった。
+  // jsdom では `fake-indexeddb` が Blob を保てないので **中身が読める道は
+  // ここしか通せない** —— 保存した Blob が本物の Blob として戻るのを
+  // 確かめる唯一の検査である。
+  const dl = page.waitForEvent('download', { timeout: 15000 });
+  await page.locator('[data-library-download]').first().click();
+  const download = await dl;
+  ok(true, 'library: 「ダウンロード」で実際に保存が始まる（無反応でない）');
+  // 保存名は控えの名前。ブラウザが付ける乱数の名になっていたらここが落ちる。
+  const suggested = download.suggestedFilename();
+  ok(
+    typeof suggested === 'string' && suggested.endsWith('.svg'),
+    `library: 保存名が控えの名前になる (${String(suggested)})`,
+  );
+  // 中身が取り出せていること。`get()` が corrupt を返していたら
+  // 上の click は download イベントを出さずここまで来ない。
+  const dlPath = await download.path();
+  ok(typeof dlPath === 'string' && dlPath.length > 0, 'library: 保存されたファイルが存在する');
+  const dlBytes = require('node:fs').statSync(dlPath).size;
+  ok(dlBytes > 0, `library: 保存された中身が空でない (${dlBytes} B)`);
+  // 壊れていると言わない (読めているのだから)。
+  ok(
+    (await page.locator('text=中身が取り出せません').count()) === 0,
+    'library: 読める控えを「壊れている」と言わない',
+  );
 
   const realErrs = errs.filter((e) => !/favicon|Autofocus/.test(e));
   ok(realErrs.length === 0, `desktop: console エラーゼロ (${realErrs.length})`);

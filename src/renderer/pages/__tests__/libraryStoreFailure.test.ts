@@ -22,6 +22,8 @@ const h = vi.hoisted(() => ({
   /** 失敗させる操作名。テストごとに入れ替える。 */
   failOn: new Set<string>(),
   items: [] as { id: string; serviceId: string; filename: string; mime: string; size: number; createdAt: number }[],
+  /** 中身が取り出せない控えの id (パス 193)。 */
+  corrupt: new Set<string>(),
 }));
 
 vi.mock('../../library/library', () => {
@@ -36,11 +38,18 @@ vi.mock('../../library/library', () => {
       boom('list');
       return h.items;
     },
+    // `get()` は 2026-09-13 (パス 193) から 3 択を返す。**代役も同じ契約を名乗る** ——
+    // ここが古い `null` を返していると、画面の側だけを直しても検査が通る
+    // (契約を変えたとき、このファイルは実際に鳴った)。
     async get(id: string) {
       boom('get');
       const meta = h.items.find((i) => i.id === id);
-      if (meta === undefined) return null;
-      return { ...meta, blob: new Blob(['x'], { type: meta.mime }) };
+      if (meta === undefined) return { kind: 'missing' as const };
+      if (h.corrupt.has(id)) return { kind: 'corrupt' as const, meta };
+      return {
+        kind: 'found' as const,
+        item: { ...meta, blob: new Blob(['x'], { type: meta.mime }) },
+      };
     },
     async remove(id: string) {
       boom('remove');
@@ -115,6 +124,7 @@ const buttonWith = (text: string) =>
 
 beforeEach(() => {
   h.failOn.clear();
+  h.corrupt.clear();
   h.items = [
     { id: 'f1', serviceId: 'templates', filename: '提案書.svg', mime: 'image/svg+xml', size: 1024, createdAt: 1 },
   ];
@@ -199,6 +209,79 @@ describe('ライブラリから消せないとき', () => {
     await click(buttonWith('削除'));
     expect(container.textContent).toContain('削除しました');
     expect(container.textContent).not.toContain('提案書.svg');
+    expect(currentDeviceStoreFailure()).toBeNull();
+  });
+});
+
+/*
+ * **「ダウンロード」は、どちらのハーネスでも 1 度も押されていなかった** (2026-09-13 ・ パス 193)。
+ *
+ * e2e は「開く」を実ブラウザで押して data: URL の `<img>` まで見ていたが、
+ * 隣の「ダウンロード」は jsdom でも実ブラウザでも押されていなかった。
+ * そしてその関数には**失敗の道が 1 本も無かった** —— `preview` は全段を
+ * `.catch` で受けて文を出すのに、`download` は投げっぱなしで、async の
+ * onClick から呼ばれるので**拒否は未処理のまま消え、画面は何も変わらない**。
+ *
+ * このファイルは `URL.createObjectURL` を差し替えているので、**成功の道と
+ * ブラウザが断った道の両方をここで押せる**。
+ */
+describe('ライブラリ — ダウンロードを押す', () => {
+  it('★ 読める控えならダウンロードが始まる (リンクを組んで押す)', async () => {
+    const created: string[] = [];
+    const clicked: { href: string; download: string }[] = [];
+    const origCreate = (URL as unknown as { createObjectURL: (b: Blob) => string }).createObjectURL;
+    (URL as unknown as { createObjectURL: (b: Blob) => string }).createObjectURL = () => {
+      created.push('blob:dl');
+      return 'blob:dl';
+    };
+    const origClick = HTMLAnchorElement.prototype.click;
+    HTMLAnchorElement.prototype.click = function patched(this: HTMLAnchorElement) {
+      clicked.push({ href: this.href, download: this.download });
+    };
+    try {
+      await mount();
+      await click(buttonWith('ダウンロード'));
+    } finally {
+      (URL as unknown as { createObjectURL: (b: Blob) => string }).createObjectURL = origCreate;
+      HTMLAnchorElement.prototype.click = origClick;
+    }
+    expect(created, 'blob の URL を作っていない').toHaveLength(1);
+    expect(clicked, '★ ダウンロードのリンクを押していません').toHaveLength(1);
+    // 保存名は控えの名前 (ブラウザが付ける乱数の名ではない)。
+    expect(clicked[0]!.download).toBe('提案書.svg');
+    expect(currentDeviceStoreFailure(), '成功したのに報せが出ている').toBeNull();
+    // 残留しない: 押せた後に断りの文が出ていない。
+    expect(container.textContent).not.toContain('ダウンロードを開始できません');
+  });
+
+  it('★ ブラウザが断ったらそう言う (無反応で終わらない)', async () => {
+    const origCreate = (URL as unknown as { createObjectURL: (b: Blob) => string }).createObjectURL;
+    (URL as unknown as { createObjectURL: (b: Blob) => string }).createObjectURL = () => {
+      throw new TypeError('refused');
+    };
+    try {
+      await mount();
+      await click(buttonWith('ダウンロード'));
+    } finally {
+      (URL as unknown as { createObjectURL: (b: Blob) => string }).createObjectURL = origCreate;
+    }
+    expect(
+      container.textContent,
+      '★ ブラウザが断っても画面は何も言いませんでした',
+    ).toContain('ダウンロードを開始できません');
+  });
+
+  it('★ 中身が取り出せない控えは、名指して削除を促す', async () => {
+    h.corrupt.add('f1');
+    await mount();
+    await click(buttonWith('ダウンロード'));
+    const t = container.textContent ?? '';
+    expect(t).toContain('中身が取り出せません');
+    expect(t).toContain('提案書.svg');
+    expect(t).toContain('削除');
+    // 「無い」とは言わない (打ち手が違う)。
+    expect(t).not.toContain('ファイルが見つかりません');
+    // 保管層の失敗ではないので、端末の報せは出ない。
     expect(currentDeviceStoreFailure()).toBeNull();
   });
 });

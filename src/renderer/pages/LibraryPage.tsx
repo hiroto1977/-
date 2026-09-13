@@ -79,17 +79,38 @@ export function LibraryPage() {
   }, []);
 
   /**
-   * 1 件を読む。**「消えている」と「読めない」を混ぜない** —— 打ち手が違う
-   * (前者は諦める / 後者は容量を空けるか通常のウィンドウで開き直す)。
-   * 読めなかったときは経路へ報せて `'unreadable'` を返し、呼び出し側は黙って戻る。
+   * 1 件を読む。**3 つの「読めない」を混ぜない** —— 打ち手が全部違う。
+   *
+   * | 返り値 | 何が起きたか | 利用者の打ち手 |
+   * | --- | --- | --- |
+   * | `LibraryItem` | 読めた | — |
+   * | `null` | その控えが無い (削除済み) | 諦める |
+   * | `'unreadable'` | **保管層が開けない** (容量・権限) | 容量を空ける・別の窓で開く |
+   * | `{ corrupt: meta }` | **控えは在るが中身が取り出せない** | **その行を削除する** |
+   *
+   * 最後の 1 つは 2026-09-13 (パス 193) に足した。それまで `get()` が
+   * `as LibraryItem` と無検査でキャストしていたので、壊れた控えは「読めた」と
+   * して返り、「ダウンロード」は `URL.createObjectURL` の TypeError で
+   * **画面を何も変えずに終わって**いた。
    */
-  async function readItem(id: string): Promise<LibraryItem | null | 'unreadable'> {
+  type Read = LibraryItem | null | 'unreadable' | { readonly corrupt: LibraryItemMeta };
+
+  async function readItem(id: string): Promise<Read> {
+    let r;
     try {
-      return await getLibrary().get(id);
+      r = await getLibrary().get(id);
     } catch (err) {
       reportDeviceStoreFailure('files', 'read', 'library', err);
       return 'unreadable';
     }
+    if (r.kind === 'found') return r.item;
+    if (r.kind === 'missing') return null;
+    return { corrupt: r.meta };
+  }
+
+  /** 壊れた控えのときに画面が言う 1 文 (ダウンロードとプレビューで同じ)。 */
+  function corruptMessage(meta: LibraryItemMeta): string {
+    return `「${meta.filename}」の中身が取り出せません (控えが壊れています)。この行を削除してください。`;
   }
 
   const visible = filter === 'all' ? items : items.filter((i) => i.serviceId === filter);
@@ -106,18 +127,35 @@ export function LibraryPage() {
   async function download(id: string) {
     const item = await readItem(id);
     if (item === 'unreadable') return; // 報せは画面上端に出ている
-    if (!item) {
+    if (item === null) {
       setMsg('ファイルが見つかりません (削除済みの可能性)');
       return;
     }
-    const url = URL.createObjectURL(item.blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = item.filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    if ('corrupt' in item) {
+      setMsg(corruptMessage(item.corrupt));
+      return;
+    }
+    // **ここは投げっぱなしだった** (パス 193)。`URL.createObjectURL` は
+    // Blob でない値に TypeError を投げ、この関数は async の onClick から
+    // 呼ばれるので拒否は未処理のまま消え、**画面は何も変わらなかった**。
+    // 隣の `preview` は同じ危険を `.catch` で受けて文を出していた。
+    let url: string | null = null;
+    try {
+      url = URL.createObjectURL(item.blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = item.filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setMsg(null);
+    } catch {
+      if (url !== null) URL.revokeObjectURL(url);
+      setMsg('ダウンロードを開始できませんでした (ブラウザが拒否した可能性)');
+      return;
+    }
+    const created = url;
+    setTimeout(() => URL.revokeObjectURL(created), 1000);
   }
 
   /**
@@ -132,11 +170,17 @@ export function LibraryPage() {
   async function preview(id: string) {
     const item = await readItem(id);
     if (item === 'unreadable') return; // 報せは画面上端に出ている
-    if (!item) {
+    if (item === null) {
       setMsg('ファイルが見つかりません (削除済みの可能性)');
       return;
     }
-    const blocked = previewBlocker(item.mime, item.size);
+    if ('corrupt' in item) {
+      setMsg(corruptMessage(item.corrupt));
+      return;
+    }
+    // **上限は控えの申告ではなく中身の大きさで見る** (パス 193) ——
+    // `size` は書いた時の値で、中身とずれうる。
+    const blocked = previewBlocker(item.mime, item.blob.size);
     if (blocked !== null) {
       setMsg(blocked);
       return;
@@ -355,11 +399,17 @@ export function LibraryPage() {
                     <button type="button" data-library-open={it.id} onClick={() => preview(it.id)} style={actionBtn('accent')}>
                       開く
                     </button>
-                    <button type="button" onClick={() => download(it.id)} style={actionBtn()}>
+                    <button
+                      type="button"
+                      data-library-download={it.id}
+                      onClick={() => download(it.id)}
+                      style={actionBtn()}
+                    >
                       ダウンロード
                     </button>
                     <button
                       type="button"
+                      data-library-delete={it.id}
                       onClick={() => remove(it.id)}
                       style={{ ...actionBtn(), color: '#ef4444' }}
                     >

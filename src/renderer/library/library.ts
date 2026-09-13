@@ -25,15 +25,32 @@ const STORE = 'items';
 export const MAX_ITEMS = 100;
 export const MAX_BYTES = 50 * 1024 * 1024;
 
-export interface LibraryItem {
-  readonly id: string;
-  readonly filename: string;
-  readonly mime: string;
-  readonly serviceId: string;
-  readonly createdAt: number;
-  readonly size: number;
+/**
+ * 中身つきの 1 件。**`LibraryItemMeta` に `blob` が付いただけ** にしてある
+ * (2026-09-13 · パス 193)。以前は `createdAt: number` / `size: number` を
+ * 非 null で宣言していたが、**保存されている値は読めないことがある** ——
+ * メタ側はパス 188 でそれを `number | null` として認めたのに、こちらは
+ * 「必ず読める」と名乗っていた。型が中身より強い主張をしていた。
+ *
+ * 大きさを確かに知りたい所は `blob.size` を読む (控えの `size` は書いた時の
+ * 申告で、中身とずれうる)。
+ */
+export interface LibraryItem extends LibraryItemMeta {
   readonly blob: Blob;
 }
+
+/**
+ * `get()` の結果。**「無い」と「壊れている」を混ぜない** (2026-09-13 · パス 193)。
+ *
+ * 打ち手が違う —— 無いなら諦める、壊れているなら**その行を消す**。
+ * 画面の `readItem` は既にこの語彙を持っていた (`'unreadable'` = 保管層の失敗) が、
+ * `get()` が `req.result as LibraryItem` と**無検査でキャスト**していたので、
+ * 壊れた控えは「見つかった」として返っていた。
+ */
+export type LibraryRead =
+  | { readonly kind: 'found'; readonly item: LibraryItem }
+  | { readonly kind: 'missing' }
+  | { readonly kind: 'corrupt'; readonly meta: LibraryItemMeta };
 
 export interface LibraryItemMeta {
   readonly id: string;
@@ -100,10 +117,32 @@ export function metaFromStored(v: unknown): LibraryItemMeta | null {
   };
 }
 
+/**
+ * 保存されている控え 1 件を、**中身まで確かめて**返す (2026-09-13 · パス 193)。
+ *
+ * `list()` はパス 188 で無検査のキャストをやめたが、**`get()` はそのままだった**
+ * —— 1 か所しか直していない形 (パス 66 の家系)。実測 (jsdom): メタが読めて
+ * `blob` が Blob でない控えは行として普通に並び、「ダウンロード」を押すと
+ * `URL.createObjectURL` が TypeError を投げ、**画面は何も変わらない**
+ * (async の onClick なので拒否は未処理のまま消える)。隣の「開く」は
+ * `blobToDataUrl` を `.catch` で包んでいたので「プレビューを生成できませんでした」
+ * と言えていた —— 同じ画面の双子で、片方だけが守られていた。
+ *
+ * **大きさは `blob.size` を採る** —— 控えの `size` は書いた時の申告で、
+ * 中身とずれうる (`previewBlocker` の上限判定はずれない方を見るべき)。
+ */
+export function itemFromStored(v: unknown): LibraryItem | null {
+  const meta = metaFromStored(v);
+  if (meta === null) return null;
+  const blob = (v as { blob?: unknown }).blob;
+  if (!(blob instanceof Blob)) return null;
+  return { ...meta, size: blob.size, blob };
+}
+
 export interface Library {
   put(serviceId: string, filename: string, mime: string, blob: Blob): Promise<LibraryItemMeta>;
   list(): Promise<readonly LibraryItemMeta[]>;
-  get(id: string): Promise<LibraryItem | null>;
+  get(id: string): Promise<LibraryRead>;
   remove(id: string): Promise<void>;
   clear(): Promise<void>;
   totalBytes(): Promise<number>;
@@ -291,21 +330,33 @@ class IndexedDBLibrary implements Library {
     return out;
   }
 
-  async get(id: string): Promise<LibraryItem | null> {
-    // 文字列でない id は後段の IDB 取得でも見つからず null になるため、
-    // 前置きだけを変異させても結果は変わらない (空文字も同じ)。
+  async get(id: string): Promise<LibraryRead> {
+    // 文字列でない id は後段の IDB 取得でも見つからないため、前置きだけを
+    // 変異させても結果は変わらない (空文字も同じ)。
     // Stryker disable next-line ConditionalExpression: 後段の取得と重なる (観測不能)
-    if (typeof id !== 'string' || id.length === 0) return null;
+    if (typeof id !== 'string' || id.length === 0) return { kind: 'missing' };
     const db = await openDb();
-    const item = await new Promise<LibraryItem | undefined>((resolve, reject) => {
+    const stored = await new Promise<unknown>((resolve, reject) => {
       const tx = db.transaction(STORE, 'readonly');
       const req = tx.objectStore(STORE).get(id);
-      req.onsuccess = () => resolve(req.result as LibraryItem | undefined);
+      // **無検査のキャストをやめた** (パス 193)。`list()` は パス 188 で
+      // 直していたが、こちらは `as LibraryItem` のままだった。
+      req.onsuccess = () => resolve(req.result);
       // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: 同上
       req.onerror = () => reject(req.error ?? new Error('get failed'));
     });
     db.close();
-    return item ?? null;
+    // ここで `undefined` / `null` を別に見ないのは意図的 —— どちらも
+    // `metaFromStored` が null を返し (`typeof` が 'object' でない / null を弾く)、
+    // 下の最後の行で `{ kind: 'missing' }` になる。**前置きで書くと同じ
+    // 結論を 2 通りに導くことになる** —— 変異検査から見れば殺せない枝である
+    // (IDB は keyPath を持つので素の null を値として戻さないし、不在は undefined)。
+    const item = itemFromStored(stored);
+    if (item !== null) return { kind: 'found', item };
+    // 中身が取り出せない控え。**行は残す** —— 消す道が要る (パス 136)。
+    // `id` すら読めなければ名指しもできないので、そのときだけ「無い」と同じ扱い。
+    const meta = metaFromStored(stored);
+    return meta === null ? { kind: 'missing' } : { kind: 'corrupt', meta };
   }
 
   async remove(id: string): Promise<void> {

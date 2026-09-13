@@ -25865,3 +25865,96 @@ census の注記自身が carve-out を持っており (「外へ書く入口は
   書かれる先が相手方で、二重投稿は相手側に見える。パス 124 の「残る物」のまま。
 - カバレッジの次の的: `LibraryPage.tsx` 53.47% / `ShigyoConsole.tsx` 55.00% /
   `CanvaPage.tsx` 55.56% / `HomePage.tsx` 60.00%。
+
+## パス 193 (2026-09-13) — **「無い」と「壊れている」を混ぜ、ダウンロードは無反応で終わる**
+
+### どこを見たか
+
+パス 192 が名指した次の的 —— `src/renderer/pages/LibraryPage.tsx` **53.47% (54/101 行)**。
+書き出した書類 (テンプレート・スナップショット) を IndexedDB に貯め、開く / ダウンロード /
+削除ができる画面である。
+
+走査してまず分かったのは **「ダウンロード」はどちらのハーネスでも 1 度も押されていない**
+こと。e2e は「開く」を実ブラウザで押して data: URL の `<img>` まで見ている
+(`scripts/e2e/core.cjs`) のに、**隣のボタンは jsdom にも実機にも無かった**。
+
+### 実測した欠陥 (2 つ)
+
+**① `get()` が無検査のキャストだった。** パス 188 は `list()` の
+`cur.value as LibraryItem` を `metaFromStored` に置き換えたが、**双子の `get()` は
+`req.result as LibraryItem` のまま**だった (パス 66 の家系「3 か所のうち 1 か所しか
+直していない」)。だから中身が Blob でない控えは「見つかった」として返り、画面は
+それを本物として扱っていた。
+
+**② `download` には失敗の道が 1 本も無かった。**
+
+```
+  [1] 中身が壊れた控えの行は、一覧に普通に並ぶ (名前・大きさ・時刻はメタから読める)
+  [2] 「ダウンロード」を押す → URL.createObjectURL(非Blob) が TypeError
+  [3] onClick は async なので拒否は未処理のまま消える
+      → ★ 画面は何も変わらない。押しても押しても無反応。
+```
+
+隣の `preview` は同じ危険を `.catch(() => null)` で受けて
+「プレビューを生成できませんでした」と言えていた —— **同じ画面の双子で、片方だけが
+守られていた。**
+
+### 直した物
+
+| 置いた物 | 役目 |
+| --- | --- |
+| `library.ts` の `LibraryRead` | `get()` は 3 択を返す —— `found` / `missing` / `corrupt`。**打ち手が違うから分ける** (無いなら諦める・壊れているなら**その行を削除する**) |
+| `library.ts` の `itemFromStored` | `metaFromStored` の上に **`blob instanceof Blob`** を重ねる。大きさは控えの申告ではなく **`blob.size`** から採る (申告は書いた時の値で中身とずれうる) |
+| `LibraryPage.tsx` の `readItem` | 4 択 (`LibraryItem` / `null` / `'unreadable'` / `{corrupt}`) に広げ、`corruptMessage(meta)` が**名前を挙げて削除を促す** |
+| `LibraryPage.tsx` の `download` | 壊れた控えの枝 + object URL / DOM 操作を `try`/`catch` で包み、ブラウザが断ったら文を出す |
+| `LibraryPage.tsx` の `preview` | 上限の判定を `item.size` から **`item.blob.size`** へ (ずれない方を見る) |
+| `data-library-download` / `data-library-delete` | 押す的を付けた (ボタンに印が無く、走査も e2e も指せなかった) |
+
+`get()` にあった `if (stored === undefined || stored === null) return missing;` は
+**削除した** —— どちらも後段の `metaFromStored` が null を返して同じ結論に至るので、
+同じ結論へ 2 通りに導く枝であり、変異検査から見れば殺せない。
+
+### 代役の限界 —— `fake-indexeddb` は `Blob` を保てない
+
+これは実装ではなく**測り方**の発見である。実測:
+
+```
+  書く前: instanceof Blob=true  size=6    type=image/svg+xml
+  読んだ後: instanceof Blob=false ctor=Object size=undefined type=undefined
+           arrayBuffer 関数か=false  text 関数か=false  keys=[]
+```
+
+格納した Blob は **空の素のオブジェクト**として戻る。だから vitest の中では `get()` は
+どの控えに対しても `'found'` を返せない —— **中身が読める道をこの層で検査できない**。
+見分けないと「壊れている」の検査が**何を種しても通る空の検査**になる。
+
+分けて置いた:
+
+- 見分け (found か corrupt か) は **`itemFromStored` の単体検査**が持つ
+  (jsdom の `new Blob` は本物なので、ここでは差が出る)。
+- **代役の限界そのものを留める引き線**を置いた —— `fake-indexeddb` が Blob を扱える
+  ようになったらそこが鳴り、`'found'` の道をこの層でも検査できるようになる。
+- ダウンロードの**成功の道と、ブラウザが断った道**は `libraryStoreFailure.test.ts`
+  (`URL.createObjectURL` を差し替えているハーネス) で押す。
+- 実ブラウザでの取り出しは e2e が持つ。
+
+また、この契約変更で **`libraryStoreFailure.test.ts` の代役 `get()` が古い `null` を
+返したまま鳴った** —— 画面だけ直しても検査が通ってしまう形だったので、代役も同じ
+契約 (3 択) を名乗るようにした。
+
+### 対照 (5 件・すべて鳴った)
+
+| # | 壊した物 | 鳴った所 |
+| --- | --- | --- |
+| C1 | `itemFromStored` の `blob instanceof Blob` を外す | 4 件 |
+| C2 | `get()` が corrupt を missing として返す (元の形) | 3 件 |
+| C3 | 大きさを `blob.size` でなく控えの申告から採る | 1 件 |
+| C4 | `download` の corrupt 枝を外す | 1 件 |
+| C5 | `preview` の corrupt 枝を外す | 1 件 |
+
+### 残した物 / 次に見る所
+
+- **`createdAt === null` の行は末尾に寄る** (パス 188 の残り)。壊れた控えの並び順は
+  今も「読めない物が最後」で、利用者が探すときに不利な位置に来る。
+- カバレッジの次の的: `ShigyoConsole.tsx` 55.00% / `CanvaPage.tsx` 55.56% /
+  `HomePage.tsx` 60.00% / `SecurityPage.tsx` 62.12%。
