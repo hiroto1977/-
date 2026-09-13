@@ -27,7 +27,8 @@ import { publicTransportCommute, carCommuteNonTaxableLimit, bonusWithholdingTax 
 import { useParameters } from '../data/parameterOverrides';
 import { jpy } from '../../shared/formatters';
 import { GuardedNumber } from '../components/GuardedNumber';
-import { readNumberOr0, type NumSpec } from '../data/inputGuards';
+import { readNumberOr0, refusalLabels, refusedFields, type NumSpec } from '../data/inputGuards';
+import { RefusedFieldsNote } from '../components/RefusedFieldsNote';
 
 /**
  * 給与計算の入力欄の性質。読み取り (`readNumberOr0`) と警告 (`GuardedNumber`) が
@@ -42,6 +43,33 @@ const PAYROLL_SPECS = {
   si: { label: '社会保険料 (円)', kind: 'money' },
   prevSalary: { label: '前月給与 (社保控除後・円)', kind: 'money' },
 } as const satisfies Record<string, NumSpec>;
+
+/**
+ * **どの数字がどの欄を読むか** (パス 213)。
+ *
+ * この節の数字は `.stat-grid` ではなく**局所の `stat()` が描く素の div** なので、
+ * パス 210〜212 の走査 (タイルだけを見る) から丸ごと外れていた。パス 209 は
+ * 「`team` はタイルが 1 つも動かない」ことを検査で留めたが —— **その主張は正しく、
+ * そこから読み取った「だから何も起きない」が誤りだった**。⛔ で実際に動いていた物:
+ *
+ * | 欄 | 出ていた物 |
+ * | --- | --- |
+ * | 社会保険料 = −9999 | `課税対象 (賞与−社保) ¥425,000 → **¥500,000**`・`源泉徴収税額 ¥34,713 → **¥40,839**` (社保が 0 になり課税対象が増える) |
+ * | 前月給与 = −9999 | **`源泉徴収税率 8.168% → 0%`**・`源泉徴収税額 → ¥0` —— 「源泉徴収しなくてよい」 |
+ * | 賞与額 = −9999 | `課税対象 → ¥0`・`源泉徴収税額 → ¥0` |
+ * | 公共交通機関の月額 = −9999 | `非課税 ¥150,000 → ¥0`・`課税(超過) ¥10,000 → ¥0` |
+ * | マイカー片道 = −9999 | `非課税限度/月 ¥7,100 → ¥0` |
+ *
+ * **源泉徴収は預かって納める税なので、少なく出る方が重い** (不足分は徴収義務者が負う)。
+ *
+ * 段は依存で切る —— 公共交通の 2 つは `commute` だけ、マイカーは `km` だけ、
+ * 賞与の 3 つは 3 欄すべてを読む。⛔ 1 件で節全体を黙らせない (パス 206 の規準)。
+ */
+const PAYROLL_READS = {
+  publicTransport: ['commute'],
+  car: ['km'],
+  bonus: ['bonus', 'si', 'prevSalary'],
+} as const satisfies Record<string, readonly (keyof typeof PAYROLL_SPECS)[]>;
 
 const EMPTY = { name: '', email: '', role: 'member' as Role };
 
@@ -65,6 +93,14 @@ function PayrollPanel() {
     }),
     [bonus, si, prevSalary],
   );
+  const payrollRefusedBy = useMemo(() => {
+    const refused = refusedFields(PAYROLL_SPECS, { commute, km, bonus, si, prevSalary });
+    return {
+      publicTransport: refusalLabels(PAYROLL_SPECS, refused, PAYROLL_READS.publicTransport),
+      car: refusalLabels(PAYROLL_SPECS, refused, PAYROLL_READS.car),
+      bonus: refusalLabels(PAYROLL_SPECS, refused, PAYROLL_READS.bonus),
+    };
+  }, [commute, km, bonus, si, prevSalary]);
   const stat = (l: string, v: string) => (
     <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 12, minWidth: 150 }}>
       <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>{l}</div>
@@ -83,9 +119,19 @@ function PayrollPanel() {
         <GuardedNumber spec={PAYROLL_SPECS.km} value={km} width={120} onChange={setKm} />
       </div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
-        {stat('公共交通: 非課税', jpy(pt.nonTaxable))}
-        {stat('公共交通: 課税(超過)', jpy(pt.taxable))}
-        {stat('マイカー: 非課税限度/月', jpy(carLimit))}
+        {payrollRefusedBy.publicTransport.length > 0 ? (
+          <RefusedFieldsNote labels={payrollRefusedBy.publicTransport} />
+        ) : (
+          <>
+            {stat('公共交通: 非課税', jpy(pt.nonTaxable))}
+            {stat('公共交通: 課税(超過)', jpy(pt.taxable))}
+          </>
+        )}
+        {payrollRefusedBy.car.length > 0 ? (
+          <RefusedFieldsNote labels={payrollRefusedBy.car} />
+        ) : (
+          stat('マイカー: 非課税限度/月', jpy(carLimit))
+        )}
       </div>
       <div style={{ fontSize: 11, color: 'var(--text-mute)', margin: '-8px 0 12px' }}>
         公共交通機関の非課税限度は月 {jpy(commuteCap)} (設定 › 数値パラメータ で変更できます)
@@ -96,11 +142,15 @@ function PayrollPanel() {
         <GuardedNumber spec={PAYROLL_SPECS.si} value={si} width={120} onChange={setSi} />
         <GuardedNumber spec={PAYROLL_SPECS.prevSalary} value={prevSalary} width={120} onChange={setPrevSalary} />
       </div>
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        {stat('課税対象 (賞与−社保)', jpy(bw.taxableBonus))}
-        {stat('源泉徴収税率', `${bw.ratePct}%`)}
-        {stat('源泉徴収税額', jpy(bw.tax))}
-      </div>
+      {payrollRefusedBy.bonus.length > 0 ? (
+        <RefusedFieldsNote labels={payrollRefusedBy.bonus} />
+      ) : (
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {stat('課税対象 (賞与−社保)', jpy(bw.taxableBonus))}
+          {stat('源泉徴収税率', `${bw.ratePct}%`)}
+          {stat('源泉徴収税額', jpy(bw.tax))}
+        </div>
+      )}
     </div>
   );
 }

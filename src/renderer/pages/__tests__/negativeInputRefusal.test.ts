@@ -26,6 +26,10 @@
  *
  * **`team` (5 欄) と `overview` (12 欄) はタイルが 1 つも動かない** ので触っていない ——
  * 実測で確かめた（パス 208 で「対象外」と書いた根拠を負値でも確かめた）。
+ * ⚠️ **`team` についてこの行から読み取った結論は誤りだった (パス 213 で訂正)。**
+ * タイルが動かないのは事実だが、給与計算は `.stat-grid` を使わず局所の `stat()` が
+ * 素の div を描くので、`tiles()` には最初から 1 つも映っていなかった ——
+ * ⛔ では `源泉徴収税率 8.168% → 0%` などが出ていた。下の専用 describe を参照。
  * `mutual-funds` のほかの ⛔ 欄と `tax` の金額欄は 0 に倒れるだけで、`nonNeg` の
  * 契約どおり（「負は無意味なので 0」）なので defect ではない。
  */
@@ -100,6 +104,31 @@ function tiles(): Map<string, string> {
       const value = (kids[1]?.textContent ?? '').replace(/\s+/g, ' ').trim();
       if (label !== '') m.set(label, value);
     }
+  }
+  return m;
+}
+
+/**
+ * **`.stat-grid` を使わずに数字を刷る段を読む** (パス 213)。
+ *
+ * 人材ページの給与計算は局所の `stat()` が素の div を 2 つ重ねて描くので、
+ * `tiles()` には 1 つも映らない —— だから⛔で税額が動いていても、
+ * 「タイルは変わらない」という検査は**正しいまま**通っていた。
+ * 形の規準は `__tests__/guardedJudgements.test.ts` の走査と同じ:
+ * 「葉の要素 2 つだけを子に持ち、1 つ目が語・2 つ目が数字を含む」。
+ */
+function stats(): Map<string, string> {
+  const m = new Map<string, string>();
+  for (const el of Array.from(container.querySelectorAll('*'))) {
+    const a = el.children[0];
+    const b = el.children[1];
+    if (el.children.length !== 2 || a === undefined || b === undefined) continue;
+    if (a.children.length !== 0 || b.children.length !== 0) continue;
+    if (el.closest('[data-refused-fields]') !== null || el.closest('label') !== null) continue;
+    if (el.querySelector('input, select, textarea, button') !== null) continue;
+    const label = (a.textContent ?? '').replace(/\s+/g, ' ').trim();
+    const value = (b.textContent ?? '').replace(/\s+/g, ' ').trim();
+    if (label !== '' && /[0-9]/.test(value) && !m.has(label)) m.set(label, value);
   }
   return m;
 }
@@ -325,20 +354,100 @@ describe('投資信託 — 0 に倒れて「より good な方向」へ動いて
   });
 });
 
-describe('チーム・ホーム — ⛔ でもタイルが動かないことを確かめる (触っていない根拠)', () => {
+describe('人材の給与計算 — ⛔ のマイナスから源泉徴収税額を作らない (パス 213)', () => {
+  // **源泉徴収は預かって納めた税なので、少なく出る方が重い** —— 不足分は
+  // 徴収義務者 (会社) が負い、あとから納付不足として追徴される。
+  it('★ 対照: 既定値では 6 つの数字が出て、断りは出ない', async () => {
+    await mountPage('team');
+    const p = stats();
+    expect(p.get('公共交通: 非課税')).toBe('¥150,000');
+    expect(p.get('公共交通: 課税(超過)')).toBe('¥10,000');
+    expect(p.get('マイカー: 非課税限度/月')).toBe('¥7,100');
+    expect(p.get('課税対象 (賞与−社保)')).toBe('¥425,000');
+    expect(p.get('源泉徴収税率')).toBe('8.168%');
+    expect(p.get('源泉徴収税額')).toBe('¥34,713');
+    expect(refusals()).toEqual([]);
+  });
+
+  it('★ 社会保険料がマイナスなら、課税対象を ¥500,000 に増やして税額 ¥40,839 と答えない', async () => {
+    await mountPage('team');
+    const input = await typeField('社会保険料 (円)', '-9999');
+    expect(input.getAttribute('data-guard')).toBe('fatal');
+    const p = stats();
+    // 社保が 0 に倒れると**課税対象が賞与額そのものに増え、税額が上がる** ——
+    // 「多めに徴収する」方向なので一見安全に見えるが、根拠の無い額である。
+    expect(p.get('課税対象 (賞与−社保)')).toBeUndefined();
+    expect(p.get('源泉徴収税率')).toBeUndefined();
+    expect(p.get('源泉徴収税額')).toBeUndefined();
+    expect(text()).not.toContain('¥40,839');
+    expect(refusals().join(' | ')).toContain('社会保険料 (円)');
+    // 通勤手当の 2 段は社保を読まないので残る (段は依存で切る・パス 206 の規準)。
+    expect(p.get('公共交通: 非課税')).toBe('¥150,000');
+    expect(p.get('マイカー: 非課税限度/月')).toBe('¥7,100');
+  });
+
+  it('★ 前月給与がマイナスなら「源泉徴収税率 0% / 税額 ¥0」と答えない', async () => {
+    await mountPage('team');
+    await typeField('前月給与 (社保控除後・円)', '-9999');
+    const p = stats();
+    // **前月給与が 0 に倒れると率表の一番下の段 (0%) が引かれ、「源泉徴収しなくてよい」
+    // と読める答えになる。** 5 件のうちこれが最も危ない向き。
+    expect(p.get('源泉徴収税率')).toBeUndefined();
+    expect(p.get('源泉徴収税額')).toBeUndefined();
+    expect(p.get('課税対象 (賞与−社保)')).toBeUndefined();
+    expect(refusals().join(' | ')).toContain('前月給与 (社保控除後・円)');
+  });
+
+  it('★ 賞与額がマイナスなら、課税対象と税額を ¥0 と答えない', async () => {
+    await mountPage('team');
+    await typeField('賞与額 (円)', '-9999');
+    const p = stats();
+    expect(p.get('課税対象 (賞与−社保)')).toBeUndefined();
+    expect(p.get('源泉徴収税額')).toBeUndefined();
+    expect(refusals().join(' | ')).toContain('賞与額 (円)');
+  });
+
+  it('★ 通勤手当は公共交通とマイカーで段を分ける (片方の⛔で他方を黙らせない)', async () => {
+    await mountPage('team');
+    await typeField('公共交通機関の月額 (円)', '-9999');
+    let p = stats();
+    expect(p.get('公共交通: 非課税')).toBeUndefined();
+    expect(p.get('公共交通: 課税(超過)')).toBeUndefined();
+    // マイカーは `km` だけを読むので残る。
+    expect(p.get('マイカー: 非課税限度/月')).toBe('¥7,100');
+    // 賞与の段も残る。
+    expect(p.get('源泉徴収税額')).toBe('¥34,713');
+    expect(refusals().join(' | ')).toContain('公共交通機関の月額 (円)');
+
+    await typeField('公共交通機関の月額 (円)', '160000');
+    await typeField('マイカー片道 (km)', '-9999');
+    p = stats();
+    expect(p.get('マイカー: 非課税限度/月')).toBeUndefined();
+    expect(p.get('公共交通: 非課税')).toBe('¥150,000');
+    expect(refusals().join(' | ')).toContain('マイカー片道 (km)');
+  });
+});
+
+describe('ホーム — ⛔ でも数字が動かないことを確かめる (触っていない根拠)', () => {
   // **触っていないことの根拠を検査で持つ。** 「対象外」と散文で書くだけだと、
   // あとで動くようになっても誰も気づかない (パス 148 の形)。
+  //
+  // **`team` はここに在ったが、パス 213 で上の describe に移した。** パス 209 は
+  // 「`team` は⛔でもタイルが 1 つも動かない」を実測して留めた —— **その主張は
+  // 正しく、そこから読み取った「だから何も起きない」が誤りだった**。給与計算は
+  // `.stat-grid` を使わないので、`tiles()` には最初から 1 つも映っていなかった。
+  // 検査が真であることと、検査が主張を支えることは別である (パス 14 の形)。
   for (const [id, label, tile] of [
-    ['team', '賞与額 (円)', null],
     ['overview', '床面積 (m²)', null],
   ] as const) {
     it(`★ ${id}: ${label} がマイナスでも Stat タイルは変わらない`, async () => {
       await mountPage(id);
-      const before = JSON.stringify([...tiles()]);
+      // **タイルだけでなく素の「ラベル + 数字」の組も見る** (パス 213 の教訓)。
+      const before = JSON.stringify([[...tiles()], [...stats()]]);
       const input = await typeField(label, '-9999');
       expect(input.getAttribute('data-guard'), `${label} が ⛔ にならない`).toBe('fatal');
-      expect(JSON.stringify([...tiles()])).toBe(before);
-      expect(tile).toBeNull(); // 変わるタイルは無い
+      expect(JSON.stringify([[...tiles()], [...stats()]])).toBe(before);
+      expect(tile).toBeNull(); // 変わる数字は無い
     });
   }
 });

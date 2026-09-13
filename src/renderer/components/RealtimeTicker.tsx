@@ -129,6 +129,12 @@ export function RealtimeTicker({
 
   return (
     <div
+      // **ここの数字は入力ではなく壁時計から来る** (パス 213)。刻むたびに
+      // 時刻・年初来の進捗・積み上がった額が変わるので、「⛔ の欄から別の数が
+      // 出ていないか」を測る走査 (`__tests__/guardedJudgements.test.ts`) は
+      // この印を見て中を除く —— 除かないと、どの欄を踏んでも必ず差が出る。
+      // 印を消したり綴りを変えたりすると、その走査の「印が実在する」検査が鳴る。
+      data-live-clock
       style={{
         border: '1px solid #2a3550',
         borderRadius: 10,

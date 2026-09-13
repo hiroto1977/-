@@ -9,8 +9,22 @@
  * 表に無かったため節ごと母集団から落ちていた (`地下水基準比 40倍 → 0倍` など)。
  *
  * **母集団は走査で採る。** ここは `SERVICES` の全画面を jsdom で描き、
- * `input[data-guard]` を 1 つずつ ⛔ にして `.stat-grid` のタイルを前後で比べる。
- * 手で書いた一覧はどこにも無いので、**新しい画面・新しい欄が黙って増えない**。
+ * `input[data-guard]` を 1 つずつ ⛔ にして、画面が刷る**ラベルと数字の組**を
+ * 前後で比べる。手で書いた一覧はどこにも無いので、**新しい画面・新しい欄が
+ * 黙って増えない**。
+ *
+ * ## 読む物 —— `.stat-grid` だけでは足りなかった (パス 213)
+ *
+ * パス 210〜212 は `.stat-grid` のカードだけを読んでいた。**画面が数字を刷る形は
+ * それだけではない**: 人材ページの給与計算は局所の `stat()` が素の div を 2 つ
+ * 重ねて描くので、走査から丸ごと外れており、⛔ から次の物が出ていた ——
+ * `源泉徴収税率 8.168% → 0%`・`源泉徴収税額 ¥34,713 → ¥40,839`
+ * (**源泉徴収は預かって納める税なので、少なく出る方が重い**)。
+ *
+ * そこで母集団を**形で定める**: 「葉の要素 2 つだけを子に持ち、1 つ目が語・
+ * 2 つ目が数字を含む要素」。`.stat-grid` のカードもこの形なので、同じ規準 1 つで
+ * 両方を覆う。実測 2026-09-13 —— `.stat-grid` のカード **121** に対し、
+ * この規準では **619 組**。走査が見ていなかったのは 5 倍あった。
  *
  * ## 不変条件
  *
@@ -116,10 +130,10 @@ function setVal(input: HTMLInputElement, value: string): void {
 }
 
 /**
- * `.stat-grid` のタイルを読む。
+ * **画面が刷る「ラベルと数字の組」を読む。**
  *
- * 鍵は **ラベル + 同名タイルの何番目か**。2 つの間違いを両方避けるため:
- *   - 値を鍵に混ぜると、値が変わったタイルが別物として数えられ差分が空になる
+ * 鍵は **ラベル + 同名の何番目か**。2 つの間違いを両方避けるため:
+ *   - 値を鍵に混ぜると、値が変わった組が別物として数えられ差分が空になる
  *     (パス 209 で 1 度やった)。
  *   - **通し番号を鍵にすると、段が断りに差し替わって消えた分だけ後続の番号がずれ、
  *     その先の変化がすべて見えなくなる。** これは対照 D2 が教えた —— 地下水基準比の
@@ -127,20 +141,52 @@ function setVal(input: HTMLInputElement, value: string): void {
  *     番号が 3 つずれていたから。**まさに直し方が引き起こすずれ**なので、
  *     この鍵でなければ検査は自分の直し方に対して盲になる。
  * 同名ラベルが同じ画面に 2 つ在る例は実在する (パス 61 の「限界利益率」)。
+ *
+ * 母集団は 2 通りで採る:
+ *   1. `.stat-grid` のカード (子の 1 つ目がラベル・2 つ目が値)。
+ *   2. **葉の要素 2 つだけを子に持つ要素** —— 局所の `stat()` が描く素の div が
+ *      これ (パス 213)。`.stat-grid` を使っていない画面もこれで覆える。
+ *
+ * 外す物は 3 つだけで、どれも理由が在る:
+ *   - `[data-live-clock]` の中 —— 数字が入力ではなく**壁時計**から来るので、
+ *     どの欄を踏んでも必ず動く (`RealtimeTicker`)。印の実在は下で検査する。
+ *   - `[data-refused-fields]` の中 —— 断りの文面そのもの。**天井の値を引用する**
+ *     ので (「100 以下で入力してください」)、数字が「現れた」ように見える。
+ *   - `label` の中 —— 入力欄の見出しも天井を述べる。同じ理由。
  */
-function tiles(): Map<string, string> {
+function readings(): Map<string, string> {
   const m = new Map<string, string>();
   const seen = new Map<string, number>();
+  const txt = (e: Element | undefined): string => (e?.textContent ?? '').replace(/\s+/g, ' ').trim();
+  const add = (label: string, value: string): void => {
+    // ラベルが空/長すぎる物は見出しでなく本文なので採らない。値に数字が無ければ
+    // 比べる意味が無い (「—」になった側は鍵が消えるだけで、消失として扱われる)。
+    if (label === '' || label.length > 80) return;
+    if (!/[0-9]/.test(value)) return;
+    const n = (seen.get(label) ?? 0) + 1;
+    seen.set(label, n);
+    m.set(`${label}#${n}`, value);
+  };
+  const done = new Set<Element>();
   for (const grid of Array.from(container.querySelectorAll('.stat-grid'))) {
     for (const card of Array.from(grid.children)) {
+      done.add(card);
       const kids = Array.from(card.children);
-      const label = (kids[0]?.textContent ?? '').replace(/\s+/g, ' ').trim();
-      const value = (kids[1]?.textContent ?? '').replace(/\s+/g, ' ').trim();
-      if (label === '') continue;
-      const n = (seen.get(label) ?? 0) + 1;
-      seen.set(label, n);
-      m.set(`${label}#${n}`, value);
+      add(txt(kids[0]), txt(kids[1]));
     }
+  }
+  for (const el of Array.from(container.querySelectorAll('*'))) {
+    if (done.has(el)) continue;
+    if (el.children.length !== 2) continue;
+    const a = el.children[0];
+    const b = el.children[1];
+    if (a === undefined || b === undefined) continue;
+    if (a.children.length !== 0 || b.children.length !== 0) continue;
+    if (el.closest('[data-live-clock]') !== null) continue;
+    if (el.closest('[data-refused-fields]') !== null) continue;
+    if (el.closest('label') !== null) continue;
+    if (el.querySelector('input, select, textarea, button') !== null) continue;
+    add(txt(a), txt(b));
   }
   return m;
 }
@@ -153,6 +199,10 @@ interface Sweep {
   readonly fatalProbes: number;
   /** 踏んだ欄の総数 (走査が痩せたら落ちる床のため)。 */
   readonly fields: number;
+  /** 比べている「ラベルと数字の組」の総数 (母集団が痩せたら落ちる床のため)。 */
+  readonly readings: number;
+  /** 壁時計の印 `[data-live-clock]` を見つけた回数 (綴りが変わったら落ちる)。 */
+  readonly liveClock: number;
 }
 
 /** 1 画面ぶん走査する。器の用意と後片付けはここで完結させる。 */
@@ -166,6 +216,8 @@ async function sweepPage(def: (typeof SERVICES)[number]): Promise<Sweep> {
   const moved: Moved[] = [];
   let fatalProbes = 0;
   let fields = 0;
+  let readingCount = 0;
+  let liveClock = 0;
   try {
     await act(async () => { root!.render(createElement(def.page)); });
     await settle();
@@ -175,6 +227,8 @@ async function sweepPage(def: (typeof SERVICES)[number]): Promise<Sweep> {
     // 1 つずつ・`想定年率 (%)` は 3 つ)。`querySelector` は最初の 1 つを返すので、
     // ラベルで引くと**2 つ目以降は 1 度も踏まれない**まま緑になる (D2 と同じ形の盲点)。
     // 入力欄は断りに差し替わる段より上に在るので、番号は描き直しても動かない。
+    readingCount = readings().size;
+    liveClock = container.querySelectorAll('[data-live-clock]').length;
     const count = container.querySelectorAll('input[data-guard]').length;
     for (let idx = 0; idx < count; idx += 1) {
       const at = (): HTMLInputElement | undefined =>
@@ -186,12 +240,12 @@ async function sweepPage(def: (typeof SERVICES)[number]): Promise<Sweep> {
         const input = at();
         if (!input) continue;
         const original = input.value;
-        const before = tiles();
+        const before = readings();
         await act(async () => { setVal(input, probe); });
         await settle();
         if (input.getAttribute('data-guard') === 'fatal') {
           fatalProbes += 1;
-          const after = tiles();
+          const after = readings();
           const detail: string[] = [];
           for (const [k, was] of before) {
             const now = after.get(k);
@@ -212,7 +266,7 @@ async function sweepPage(def: (typeof SERVICES)[number]): Promise<Sweep> {
     }
     container.remove();
   }
-  return { moved, fatalProbes, fields };
+  return { moved, fatalProbes, fields, readings: readingCount, liveClock };
 }
 
 /**
@@ -224,7 +278,7 @@ async function sweepPage(def: (typeof SERVICES)[number]): Promise<Sweep> {
  * なく、絞り込みそのもので 0 になっていた)。1 つの `beforeAll` に寄せれば
  * 主張の間に順序の依存が無くなる。
  */
-const RESULT: { moved: Moved[]; fatalProbes: number; fields: number } = { moved: [], fatalProbes: 0, fields: 0 };
+const RESULT = { moved: [] as Moved[], fatalProbes: 0, fields: 0, readings: 0, liveClock: 0 };
 
 beforeAll(async () => {
   for (const def of SERVICES) {
@@ -232,6 +286,8 @@ beforeAll(async () => {
     RESULT.moved.push(...r.moved);
     RESULT.fatalProbes += r.fatalProbes;
     RESULT.fields += r.fields;
+    RESULT.readings += r.readings;
+    RESULT.liveClock += r.liveClock;
   }
 }, 600000);
 
@@ -249,6 +305,29 @@ describe('⛔ の欄から「別の数」を作らない (パス 210・全画面
     // 何度も踏み**、件数だけが増えていた。110 が 89 欄に対する正直な数である。
     expect(RESULT.fields, '関門つきの欄を踏んでいない').toBeGreaterThanOrEqual(89);
     expect(RESULT.fatalProbes, '⛔ を 1 つも作れていない').toBeGreaterThanOrEqual(110);
+  });
+
+  it('★ 比べている母集団が痩せていない (ラベルと数字の組)', () => {
+    // 実測 2026-09-13 (パス 213): **619 組** (`.stat-grid` のカードは 121)。
+    // 床を 600 に置くのは、期限や年度で段が 1 つ増減する画面が在るため ——
+    // **5 倍の差 (121 → 619) を守るのが目的**で、1 桁の揺れは追わない。
+    // ここが 121 付近まで落ちたら、走査が `.stat-grid` だけに戻っている。
+    expect(RESULT.readings, '読んでいる組が減っている (走査が痩せた)').toBeGreaterThanOrEqual(600);
+  });
+
+  it('★ 壁時計の印が実在する (除外が空振りしていない)', () => {
+    // `[data-live-clock]` は `RealtimeTicker` に付いている (パス 213)。
+    // **綴りが変わると除外が黙って効かなくなり**、どの欄を踏んでも時刻が動くので
+    // 上の主張が偽の違反で埋まる —— あるいは印が消えた画面を誰も気付かない。
+    // 実測: 税金の「いま この瞬間 (秒単位)」が 1 つ (経営サマリー側は実績が
+    // 無いと描かれないので、空の保管庫では 0 個)。
+    //
+    // **この主張が要るのは、時計のずれが散発的だから。** 対照 D10 (印の綴りを
+    // 変える) を回すと、上の「別の数が出ていない」は**通ってしまった** ——
+    // jsdom の走査は 1 組あたり数ミリ秒なので、秒が変わる組だけが違反になり、
+    // その回は当たらなかった。**除外の空振りは、除外そのものを検査しないと
+    // 気付けない** (当たった回だけ赤くなる検査は、原因を指さない)。
+    expect(RESULT.liveClock, '[data-live-clock] が 1 つも見つからない').toBeGreaterThanOrEqual(1);
   });
 
   it('★ ⛔ の欄から別の数が出ていない (台帳の分を除く)', () => {

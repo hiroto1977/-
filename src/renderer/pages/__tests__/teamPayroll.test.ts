@@ -101,11 +101,20 @@ describe('チームページ — 給与計算の入力欄は黙って 0 にし�
     expect(q.stat('公共交通: 非課税')).toBe(jpy(publicTransportCommute(160_000).nonTaxable));
   });
 
-  it('読めない値は fatal の文言と aria-invalid で知らせ、税額は 0 になる', async () => {
+  it('読めない値は fatal の文言と aria-invalid で知らせ、税額は算定しない', async () => {
     await type('賞与額 (円)', '百');
     expect(q.input('賞与額 (円)').getAttribute('aria-invalid')).toBe('true');
     expect(q.guardText('賞与額 (円)')).toContain('「百」を数値として読み取れません。0 円 として計算されています。');
-    expect(q.stat('源泉徴収税額')).toBe(jpy(0));
+    // **パス 213 で `¥0` から「算定していません」へ変えた。** それまでこの検査は
+    // 「税額は 0 になる」を留めていた —— つまり**欠陥を仕様として固定していた**。
+    // 読めない賞与額から源泉徴収税額 ¥0 を出すのは「源泉徴収しなくてよい」と
+    // 読めるので、段ごと断る (`PAYROLL_READS.bonus`)。
+    expect(() => q.stat('源泉徴収税額')).toThrow('not found');
+    expect(container.querySelector('[data-refused-fields]')?.textContent ?? '').toContain('賞与額 (円)');
+    // ⚠️ **文言の「0 円 として計算されています」は、この欄については既に正しくない。**
+    // `guardNumber` は自分の値を読む段が断るかどうかを知らないので、読めない値の
+    // 3 枝が共通で「0 として計算されています」と述べている。断りの表で覆った欄が
+    // 増えたら、この節を落とす —— 残作業として `docs/REMAINING_WORK.md` に記録。
   });
 
   it('単位語つき (50万) は単位を外すよう促す', async () => {
