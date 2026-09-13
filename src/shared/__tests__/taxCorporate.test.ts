@@ -4,6 +4,7 @@ import {
   STATUTORY_BUSINESS_RATE_TIER1,
   STATUTORY_BUSINESS_RATE_TIER3,
   selectStatutoryRates,
+  orderedBusinessTaxLimits,
   resolveCorporatePerCapita,
   applyLossCarryforward,
   calcStatutoryEffectiveRate,
@@ -944,5 +945,90 @@ describe('実効税率 — 割る相手が 0 なら率は無い', () => {
     expect(r.effectiveRate).not.toBeNull();
     // 印刷する式どおり: 率 × 控除後所得 == 法人税等合計
     expect(r.effectiveRate! * r.incomeAfterLoss).toBeCloseTo(r.totalTax, 6);
+  });
+});
+
+/**
+ * 段の境目が逆でも所得を二重に数えない (パス 221)。
+ *
+ * 台帳 (`parameters.ts`) の検査は 1 欄ずつなので、下 800 万 / 上 400 万という
+ * 組が保存できていた。畳む前は第 2 段の課税標準が **−400 万円**、第 3 段が
+ * 第 1 段と同じ所得を二重に数え、所得 500 万円の所得割が 175,000 円ではなく
+ * 33,000 円になっていた。画面は `parameterOrderIssues` で断るが、**古い版で
+ * 置いた上書き・復元したバックアップはその関門を通っていない**。
+ */
+describe('orderedBusinessTaxLimits — 逆順の境目を使う前に畳む (パス 221)', () => {
+  const reversed = {
+    ...DEFAULT_CORPORATE_TAX_RATES,
+    businessTaxTier1Limit: BUSINESS_TAX_TIER2_LIMIT,
+    businessTaxTier2Limit: BUSINESS_TAX_TIER1_LIMIT,
+  };
+
+  it('既定はそのまま (畳んでも動かない)', () => {
+    expect(orderedBusinessTaxLimits(DEFAULT_CORPORATE_TAX_RATES)).toEqual({
+      limit1: BUSINESS_TAX_TIER1_LIMIT,
+      limit2: BUSINESS_TAX_TIER2_LIMIT,
+    });
+  });
+
+  it('逆順なら上の境目を下に合わせる (第 2 段が空になる)', () => {
+    expect(orderedBusinessTaxLimits(reversed)).toEqual({
+      limit1: BUSINESS_TAX_TIER2_LIMIT,
+      limit2: BUSINESS_TAX_TIER2_LIMIT,
+    });
+  });
+
+  it('マイナスの境目は 0 に底打ちする', () => {
+    const neg = { ...DEFAULT_CORPORATE_TAX_RATES, businessTaxTier1Limit: -1, businessTaxTier2Limit: -2 };
+    expect(orderedBusinessTaxLimits(neg)).toEqual({ limit1: 0, limit2: 0 });
+  });
+
+  it('読めない境目 (NaN) は 0 に倒す', () => {
+    const nan = {
+      ...DEFAULT_CORPORATE_TAX_RATES,
+      businessTaxTier1Limit: Number.NaN,
+      businessTaxTier2Limit: Number.NaN,
+    };
+    expect(orderedBusinessTaxLimits(nan)).toEqual({ limit1: 0, limit2: 0 });
+  });
+
+  it('逆順でも所得割はマイナスの課税標準を作らない (畳む前は 33,000 円だった)', () => {
+    const got = calcBusinessTaxIncomePortion(5_000_000, reversed);
+    // 第 1 段の境目が 800 万に上がるので、所得 500 万は全額が第 1 段の率になる。
+    expect(got).toBe(Math.round(5_000_000 * BUSINESS_TAX_RATE_TIER1));
+    // 畳まなければ 5_000_000*r1 + (-4_000_000)*r2 + 1_000_000*r3 になっていた。
+    const unfolded =
+      5_000_000 * BUSINESS_TAX_RATE_TIER1 +
+      (BUSINESS_TAX_TIER1_LIMIT - BUSINESS_TAX_TIER2_LIMIT) * BUSINESS_TAX_RATE_TIER2 +
+      1_000_000 * BUSINESS_TAX_RATE_TIER3;
+    expect(Math.round(unfolded)).toBeLessThan(got);
+  });
+
+  it('どんな境目でも 各段の合計 == 所得 (二重計上も取りこぼしも無い)', () => {
+    for (const [l1, l2] of [
+      [BUSINESS_TAX_TIER1_LIMIT, BUSINESS_TAX_TIER2_LIMIT],
+      [BUSINESS_TAX_TIER2_LIMIT, BUSINESS_TAX_TIER1_LIMIT],
+      [0, 0],
+      [-5, -9],
+      [1_000_000_000, 1],
+    ]) {
+      const r = { ...DEFAULT_CORPORATE_TAX_RATES, businessTaxTier1Limit: l1!, businessTaxTier2Limit: l2! };
+      const { limit1, limit2 } = orderedBusinessTaxLimits(r);
+      for (const income of [0, 1, 3_999_999, 4_000_000, 8_000_000, 30_000_000]) {
+        const t1 = Math.min(income, limit1);
+        const t2 = Math.min(Math.max(0, income - limit1), limit2 - limit1);
+        const t3 = Math.max(0, income - limit2);
+        expect(t1 + t2 + t3, `${l1}/${l2} 所得 ${income}`).toBe(income);
+        expect(Math.min(t1, t2, t3)).toBeGreaterThanOrEqual(0);
+      }
+    }
+  });
+
+  it('限界率の選び方も畳んだ境目で決まる (届かない段を作らない)', () => {
+    // 逆順のまま比べると、所得 500 万が「第 3 段の率」になっていた。
+    expect(selectStatutoryRates(5_000_000, true, reversed).businessRate).toBeCloseTo(
+      STATUTORY_BUSINESS_RATE_TIER1,
+      10,
+    );
   });
 });

@@ -4,6 +4,9 @@
  *
  * - 入力は文字列で持ち、`readNumber` で読む (全角・桁区切りを受け、読めない値は
  *   黙って 0 にしない)。範囲は `parameterIssue` が内部値で見る。
+ * - **隣の欄との順序は `parameterOrderIssueFor` が見る** (`parameterIssue` は 1 欄ずつ
+ *   しか見えないので、「良好の下限 40 / 注意の下限 60」のような組は素通りしていた)。
+ *   すでに保存されている矛盾は、検索で絞っても消えない画面上部の断りで言う。
  * - 「保存」は値が変わっていて通るときだけ押せる。既定と同じ値を保存すると
  *   **上書きとして残る** (既定が改正で動いても、置いた値は動かない)。
  * - 行は `key` に有効値を含める — 既定へ戻したときに入力欄も既定の表示へ戻る
@@ -20,7 +23,9 @@ import {
   toDisplayValue,
   type ParameterDef,
   type ParameterId,
+  type ParameterValues,
 } from '../../shared/parameters';
+import { parameterOrderIssueFor, parameterOrderIssues } from '../../shared/parameterOrder';
 import { useParameters } from '../data/parameterOverrides';
 import { readNumber } from '../data/inputGuards';
 
@@ -56,12 +61,15 @@ export function matchesParameterQuery(def: ParameterDef, query: string): boolean
 function ParameterRow({
   def,
   value,
+  values,
   overridden,
   onSave,
   onReset,
 }: {
   def: ParameterDef;
   value: number;
+  /** 全欄の有効値 — 隣の欄との順序を見るのに要る。 */
+  values: ParameterValues;
   overridden: boolean;
   onSave: (internal: number) => Promise<void>;
   onReset: () => Promise<void>;
@@ -70,7 +78,11 @@ function ParameterRow({
   const [busy, setBusy] = useState(false);
   const shown = readNumber(text);
   const candidate = shown === null ? Number.NaN : fromDisplayValue(def, shown);
-  const issue = parameterIssue(def, candidate);
+  const rangeIssue = parameterIssue(def, candidate);
+  // 範囲を通っても、隣の欄と矛盾する値は保存させない (1 欄ずつの検査では見えない)。
+  const orderIssue =
+    rangeIssue === null ? parameterOrderIssueFor(def.id as ParameterId, candidate, values) : null;
+  const issue = rangeIssue ?? orderIssue;
   const unchanged = issue === null && candidate === value;
   const defaultShown = `${toDisplayValue(def, def.defaultValue)}${def.unit}`;
 
@@ -164,6 +176,10 @@ export function ParametersPanel() {
   const [query, setQuery] = useState('');
   const overridden = overriddenCount(params.overrides);
   const visible = useMemo(() => PARAMETERS.filter((p) => matchesParameterQuery(p, query)), [query]);
+  // 古い版で置いた上書き・復元したバックアップは保存の関門を通っていないので、
+  // 現在の有効値に対しても同じ検査を出す (検索で絞っても消さない — 直す欄が
+  // 画面外に在るときこそ要る)。
+  const orderIssues = useMemo(() => parameterOrderIssues(params.values), [params.values]);
   const features = parameterFeatures().filter((f) => visible.some((p) => p.feature === f));
 
   async function resetAll() {
@@ -177,8 +193,32 @@ export function ParametersPanel() {
       <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.7, margin: '0 0 10px' }}>
         各機能が計算に使う法定値・参考値・しきい値・前提です。法改正や医師の指示、自分の実測に
         合わせて上書きできます。<strong>範囲は桁誤りを止める幅で、値が正しいかは見ません</strong>
-        — 出典を確かめてから変えてください。通信や保存の安全上限はここには出しません。
+        — 出典を確かめてから変えてください。ただし<strong>帯の下限と上限が入れ替わる組み合わせは
+        保存しません</strong> (届かない段ができ、低い点数に高い評価が付くため)。通信や保存の
+        安全上限はここには出しません。
       </p>
+      {orderIssues.length > 0 && (
+        <div
+          role="alert"
+          data-parameter-order-issues={orderIssues.length}
+          style={{
+            border: '1px solid #ef4444',
+            borderRadius: 6,
+            padding: '8px 10px',
+            marginBottom: 10,
+            fontSize: 12,
+            lineHeight: 1.7,
+            color: '#ef4444',
+          }}
+        >
+          <strong>⛔ 保存されている値が矛盾しています</strong>
+          <ul style={{ margin: '4px 0 0', paddingLeft: 18 }}>
+            {orderIssues.map((t) => (
+              <li key={t}>{t}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 8 }}>
         <input
           aria-label="パラメータを検索"
@@ -215,6 +255,7 @@ export function ParametersPanel() {
                   key={`${id}:${value}`}
                   def={def}
                   value={value}
+                  values={params.values}
                   overridden={params.overrides[id] !== undefined}
                   onSave={(v) => params.set(id, v)}
                   onReset={() => params.reset(id)}

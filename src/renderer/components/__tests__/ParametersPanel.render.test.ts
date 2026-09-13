@@ -286,3 +286,94 @@ describe('matchesParameterQuery', () => {
     expect(matchesParameterQuery({ ...def, source: undefined, note: undefined }, '施行令')).toBe(false);
   });
 });
+
+/**
+ * 欄と欄の順序 (パス 221)。
+ *
+ * `parameterIssue` は 1 欄ずつしか見ないので、2026-09-13 まで「良好の下限 40 /
+ * 注意の下限 60」はそのまま保存でき、45 点の軸が「良好」として刷られていた。
+ */
+describe('隣の欄と矛盾する値は保存させない (パス 221)', () => {
+  const GOOD = '軸の評価「良好」の下限';
+  const WARN = '軸の評価「注意」の下限';
+  const T1 = '法人事業税の所得段階の境目 (下)';
+  const T2 = '法人事業税の所得段階の境目 (上)';
+
+  it('「良好」の下限を「注意」の下限より下げると保存が押せず、理由が出る', async () => {
+    await type(GOOD, '40'); // 既定の「注意」の下限は 45
+    expect(q.button(`${GOOD} を保存`).disabled).toBe(true);
+    const alert = q.alertIn('financeHealth.levelGoodMin');
+    expect(alert).toContain(WARN);
+    expect(alert).toContain('注意の帯が空になり');
+    expect(await stored()).toEqual([]);
+  });
+
+  it('逆側の欄でも鳴る (「注意」の下限を「良好」の下限より上げる)', async () => {
+    await type(WARN, '80'); // 既定の「良好」の下限は 70
+    expect(q.button(`${WARN} を保存`).disabled).toBe(true);
+    expect(q.alertIn('financeHealth.levelWarnMin')).toContain('注意の帯が空になり');
+  });
+
+  it('順序を保つ値なら保存できる (対照 — 断りが全部を止めていないこと)', async () => {
+    await type(GOOD, '60'); // 「注意」の下限 45 以上なので通る
+    expect(q.button(`${GOOD} を保存`).disabled).toBe(false);
+    await click(q.button(`${GOOD} を保存`));
+    expect(await stored()).toEqual([{ values: { 'financeHealth.levelGoodMin': 60 } }]);
+  });
+
+  it('法人事業税の段の境目も同じ関門を通る (負の課税標準を作らせない)', async () => {
+    await type(T2, '4000000');
+    expect(q.button(`${T2} を保存`).disabled).toBe(false); // 既定の下は 400 万 → 等しいので通る
+    await type(T2, '3000000');
+    expect(q.button(`${T2} を保存`).disabled).toBe(true);
+    expect(q.alertIn('corporate.businessTaxTier2Limit')).toContain('マイナス');
+  });
+
+  it('範囲の断りが先に出る (順序の断りで上書きしない)', async () => {
+    await type(T1, '-1');
+    expect(q.alertIn('corporate.businessTaxTier1Limit')).toContain('以上で入力してください');
+  });
+
+  it('順序を持たない欄は今までどおり保存できる (対照)', async () => {
+    await type(DAYS, '300');
+    expect(q.button(`${DAYS} を保存`).disabled).toBe(false);
+  });
+});
+
+describe('すでに保存されている矛盾を画面上部で言う (パス 221)', () => {
+  /**
+   * 関門を通らずに上書きを置く (古い版で保存した記録・復元したバックアップと
+   * 同じ形)。画面の `set` を通すと `parameterOrderIssueFor` に止められるので、
+   * ここは record store へ直に書く。
+   */
+  async function seed(values: Record<string, number>): Promise<void> {
+    await act(async () => {
+      root!.unmount();
+    });
+    root = null;
+    await getRecordStore().insert<ParameterOverrideRecord>(PARAMETER_OVERRIDES_COLLECTION, { values });
+    await mount();
+  }
+
+  it('矛盾が無ければ断りを出さない (対照)', () => {
+    expect(container.querySelector('[data-parameter-order-issues]')).toBeNull();
+  });
+
+  it('逆順の上書きが保存されていたら、件数と理由を刷る', async () => {
+    await seed({ 'financeHealth.levelWarnMin': 60, 'financeHealth.levelGoodMin': 40 });
+    const el = container.querySelector<HTMLElement>('[data-parameter-order-issues]');
+    expect(el).not.toBeNull();
+    expect(el!.dataset.parameterOrderIssues).toBe('1');
+    expect(el!.getAttribute('role')).toBe('alert');
+    expect(el!.textContent).toContain('保存されている値が矛盾しています');
+    expect(el!.textContent).toContain('(60点)');
+    expect(el!.textContent).toContain('(40点)');
+  });
+
+  it('検索で絞っても消えない (直す欄が画面外に在るときこそ要る)', async () => {
+    await seed({ 'financeHealth.levelWarnMin': 60, 'financeHealth.levelGoodMin': 40 });
+    await type('パラメータを検索', '通勤手当');
+    expect(q.rows().length).toBe(1);
+    expect(container.querySelector('[data-parameter-order-issues]')).not.toBeNull();
+  });
+});

@@ -370,6 +370,25 @@ export function calcResidentCorporateTax(
 }
 
 /**
+ * 法人事業税の所得段階の境目を、**使う前に昇順へ畳む**。
+ *
+ * 台帳 (`parameters.ts`) の検査は 1 欄ずつしか見ないので、下 800 万 / 上 400 万の
+ * ような組が保存されうる (画面は `parameterOrderIssues` で断るが、古い版で置いた
+ * 上書き・復元したバックアップはその関門を通っていない)。畳まないと
+ * `tier2Limit - tier1Limit` が負になり、第 2 段の課税標準が **−400 万円**、
+ * 第 3 段が第 1 段と同じ所得を二重に数え、所得 500 万円の所得割が 175,000 円
+ * ではなく 33,000 円になっていた (2026-09-13 実測・パス 221)。
+ *
+ * 畳んだ後は、どんな境目でも **第1段 + 第2段 + 第3段 = 所得** が成り立つ。
+ */
+export function orderedBusinessTaxLimits(
+  r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
+): { readonly limit1: number; readonly limit2: number } {
+  const limit1 = nonNeg(r.businessTaxTier1Limit);
+  return { limit1, limit2: Math.max(limit1, nonNeg(r.businessTaxTier2Limit)) };
+}
+
+/**
  * 法人事業税 (所得割) を計算する。
  *   400万以下 3.5% + 400万超800万以下 5.3% + 800万超 7.0%
  * 「基準法人所得割額」(=所得割の標準税率による額) を返す。
@@ -387,12 +406,10 @@ export function calcBusinessTaxIncomePortion(
   const income = nonNeg(taxableIncome);
   // Stryker disable next-line ConditionalExpression: income=0 の早期returnを外しても、各 tier が 0×率=0 を返すため等価。
   if (income === 0) return 0;
-  const tier1 = Math.min(income, r.businessTaxTier1Limit);
-  const tier2 = Math.min(
-    Math.max(0, income - r.businessTaxTier1Limit),
-    r.businessTaxTier2Limit - r.businessTaxTier1Limit,
-  );
-  const tier3 = Math.max(0, income - r.businessTaxTier2Limit);
+  const { limit1, limit2 } = orderedBusinessTaxLimits(r);
+  const tier1 = Math.min(income, limit1);
+  const tier2 = Math.min(Math.max(0, income - limit1), limit2 - limit1);
+  const tier3 = Math.max(0, income - limit2);
   return yen(
     tier1 * r.businessTaxRateTier1 +
       tier2 * r.businessTaxRateTier2 +
@@ -481,9 +498,10 @@ export function selectStatutoryRates(
   let businessRate: number;
   // 事業税系の限界率 = 所得割率 × (1 + 特別法人事業税率)。既定では STATUTORY_BUSINESS_RATE_TIER* と同じ値。
   const statutory = 1 + r.specialBusinessTaxRate;
-  if (income <= r.businessTaxTier1Limit) {
+  const { limit1, limit2 } = orderedBusinessTaxLimits(r);
+  if (income <= limit1) {
     businessRate = r.businessTaxRateTier1 * statutory;
-  } else if (income <= r.businessTaxTier2Limit) {
+  } else if (income <= limit2) {
     businessRate = r.businessTaxRateTier2 * statutory;
   } else {
     businessRate = r.businessTaxRateTier3 * statutory;
