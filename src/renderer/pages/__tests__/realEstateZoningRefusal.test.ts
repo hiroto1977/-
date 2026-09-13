@@ -175,10 +175,36 @@ describe('ZONING_READS / refusedZoningFields — 表そのもの', () => {
     site: '200', coverage: '60', far: '200', road: '6',
     height: '12', setback: '1', shadowThreshold: '10',
     siteDepth: '20', siteWidth: '10', rear: '1', side: '2',
+    // 工場プランの 2 欄 (パス 216 で表に足した)。どちらも空欄に意味が在るので
+    // 既定は空欄 —— `allowEmpty` なので ⛔ にも ⚠️ にもならない。
+    workshopCap: '', workshopDesired: '',
   };
 
   it('★ 範囲内なら ⛔ は 0 件 (対照)', () => {
     expect(refusedZoningFields(all)).toEqual([]);
+  });
+
+  it('★ 工場プランの 2 欄も表に在る (パス 216 — 落ちていた 2 欄)', () => {
+    // **パス 206 がこの表を手で書いたときに落としていた。** 素の `<input>` だったので
+    // ⛔ が 1 度も出ず、常設の走査 (`input[data-guard]` を踏む) からも外れ、
+    // `作業場の法定上限 = −9999` で `作業場 150 ㎡ → 0 ㎡`・`1階の残り 90 ㎡ → 240 ㎡`
+    // という**都市計画上の答え**が出ていた (パス 216 で実測)。
+    expect(refusedZoningFields({ ...all, workshopCap: '-9999' })).toEqual(['workshopCap']);
+    expect(refusedZoningFields({ ...all, workshopDesired: '-1' })).toEqual(['workshopDesired']);
+    // 工場プランと立体プレビューの両方がこの 2 欄を読む。
+    expect(zoningRefusalLabels(['workshopCap'], ZONING_READS.factory))
+      .toEqual(['作業場の法定上限 (㎡・空欄=制限なし)']);
+    expect(zoningRefusalLabels(['workshopDesired'], ZONING_READS.iso))
+      .toEqual(['希望する作業場面積 (㎡・空欄=上限まで)']);
+    // **敷地・高さ・トレードオフの段は読まない** —— ⛔ 1 件で画面全体を黙らせない。
+    expect(zoningRefusalLabels(['workshopCap'], ZONING_READS.site)).toEqual([]);
+    expect(zoningRefusalLabels(['workshopCap'], ZONING_READS.height)).toEqual([]);
+    expect(zoningRefusalLabels(['workshopCap'], ZONING_READS.tradeoff)).toEqual([]);
+  });
+
+  it('★ 0 は通る (作業場を建てられない用途地域 / 作業場を置かない)', () => {
+    // `area` は既定で 0 を ⛔ にするので `allowZero` を明示した。**0 には意味が在る。**
+    expect(refusedZoningFields({ ...all, workshopCap: '0', workshopDesired: '0' })).toEqual([]);
   });
 
   it('★ 空欄は warn なので ⛔ に入らない (パス 77 の未入力の扱いを壊さない)', () => {

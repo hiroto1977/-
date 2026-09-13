@@ -120,6 +120,15 @@ const ZONING_SPECS = {
   siteWidth: { label: '敷地の間口 (m)', kind: 'length', max: 2000 },
   rear: { label: '背面の後退 (m)', kind: 'length', allowZero: true, max: 100 },
   side: { label: '側面の後退 合計 (m)', kind: 'length', allowZero: true, max: 200 },
+  // **工場プランの 2 欄** (パス 216 で表に足した)。パス 206 がこの表を手で書いたときに
+  // 落としており、`GuardedNumber` ではなく素の `<input>` だったので ⛔ が 1 度も
+  // 出ず、常設の走査 (`input[data-guard]` を踏む) からも外れていた。
+  // 実測: `作業場の法定上限 = −9999` で `作業場 (栽培室等) 150 ㎡ → 0 ㎡`・
+  // `1階の残り 90 ㎡ → 240 ㎡` ——**負の法定上限から都市計画上の答えが出ていた**。
+  // どちらも空欄に意味が在る (上限=制限なし / 希望=上限まで) ので `allowEmpty`、
+  // 0 にも意味が在る (作業場を建てられない用途地域 / 作業場を置かない) ので `allowZero`。
+  workshopCap: { label: '作業場の法定上限 (㎡・空欄=制限なし)', kind: 'area', allowEmpty: true, allowZero: true },
+  workshopDesired: { label: '希望する作業場面積 (㎡・空欄=上限まで)', kind: 'area', allowEmpty: true, allowZero: true },
 } as const satisfies Record<string, NumSpec>;
 
 export type ZoningField = keyof typeof ZONING_SPECS;
@@ -158,10 +167,11 @@ export const ZONING_READS = {
   site: ZONING_READS_SITE,
   height: ZONING_READS_HEIGHT,
   tradeoff: ZONING_READS_TRADEOFF,
-  // 工場プランは敷地の段の `maxTotalFloor` を配るだけ。立体プレビューは
-  // トレードオフの寸法と工場プランの面積の両方で組む (= 両方の和集合)。
-  factory: ZONING_READS_SITE,
-  iso: ZONING_READS_TRADEOFF,
+  // 工場プランは敷地の段の `maxTotalFloor` を配り、**上限と希望の 2 欄も読む**
+  // (パス 216)。立体プレビューはトレードオフの寸法と工場プランの面積の両方で
+  // 組むので、和集合になる。
+  factory: [...ZONING_READS_SITE, 'workshopCap', 'workshopDesired'] as const,
+  iso: [...ZONING_READS_TRADEOFF, 'workshopCap', 'workshopDesired'] as const,
 } as const satisfies Record<string, readonly ZoningField[]>;
 
 /**
@@ -600,6 +610,7 @@ export function RealEstatePage() {
       site: zpSiteStr, coverage: zpCovStr, far: zpFarStr, road: zpRoadStr,
       height: zpHeightStr, setback: zpSetbackStr, shadowThreshold: zpShadowThresholdStr,
       siteDepth: zpSiteDepthStr, siteWidth: zpSiteWidthStr, rear: zpRearStr, side: zpSideStr,
+      workshopCap: zpCapStr, workshopDesired: zpWorkshopStr,
     });
     const refused = {
       site: zoningRefusalLabels(zoningRefused, ZONING_READS.site),
@@ -1208,14 +1219,8 @@ export function RealEstatePage() {
 
         <div style={{ fontSize: 12, fontWeight: 700, margin: '4px 0 8px' }}>🌱 工場プラン (作業場 + 直売・カフェ併設)</div>
         <div className="field-grid" style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            作業場の法定上限 (㎡・空欄=制限なし)
-            <input type="text" inputMode="numeric" value={zpCapStr} onChange={(e) => setZpCapStr(e.target.value)} style={{ ...reInputStyle, width: 150 }} />
-          </label>
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            希望する作業場面積 (㎡・空欄=上限まで)
-            <input type="text" inputMode="numeric" value={zpWorkshopStr} onChange={(e) => setZpWorkshopStr(e.target.value)} style={{ ...reInputStyle, width: 170 }} />
-          </label>
+          <GuardedNumber spec={ZONING_SPECS.workshopCap} value={zpCapStr} width={150} onChange={setZpCapStr} />
+          <GuardedNumber spec={ZONING_SPECS.workshopDesired} value={zpWorkshopStr} width={170} onChange={setZpWorkshopStr} />
         </div>
         {zoning.refused.factory.length > 0 ? (
           <RefusedFieldsNote labels={zoning.refused.factory} />

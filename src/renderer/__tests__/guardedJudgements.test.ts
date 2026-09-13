@@ -303,8 +303,11 @@ describe('⛔ の欄から「別の数」を作らない (パス 210・全画面
     // ★ 番号で引く前 (パス 210) はここが 114 と出ていた。ラベルで引き直していたため
     // 同名の欄 (`毎月の積立額 (円)` ×2・`想定年率 (%)` ×3) で**同じ 1 つ目を
     // 何度も踏み**、件数だけが増えていた。110 が 89 欄に対する正直な数である。
-    expect(RESULT.fields, '関門つきの欄を踏んでいない').toBeGreaterThanOrEqual(89);
-    expect(RESULT.fatalProbes, '⛔ を 1 つも作れていない').toBeGreaterThanOrEqual(110);
+    // パス 216 で **89 → 91**: 工場プランの 2 欄 (`作業場の法定上限` / `希望する作業場面積`)
+    // は素の `<input>` だったので走査の外に在った。⛔ は負の値でのみ立つ (`area` に
+    // `max` は無く、巨大な値は `sane` 超えの ⚠️) ので ⛔ の組は 110 → 112。
+    expect(RESULT.fields, '関門つきの欄を踏んでいない').toBeGreaterThanOrEqual(91);
+    expect(RESULT.fatalProbes, '⛔ を 1 つも作れていない').toBeGreaterThanOrEqual(112);
   });
 
   it('★ 比べている母集団が痩せていない (ラベルと数字の組)', () => {
