@@ -2928,6 +2928,38 @@ async function serviceAdviceSuite(browser) {
   ok(t.includes('含み益 14.8%'), 'serviceAdvice: 評価損益率はタイルと同じ 14.8%');
   ok(!t.includes('提案の取得に失敗'), 'serviceAdvice: 投資信託でも失敗しない');
 
+  // 4. **記録と提案は互いの結果を消さない** (2026-09-13 · パス 192)。
+  //    直す前は 1 つの `result` を共有していたので、記録の確認が出た後に提案を押すと
+  //    確認が消え、提案の後に記録すると提案が消えた (どちらも成功しているのに片方だけ)。
+  //    jsdom でも留めてあるが、実機の 1 枚の画面で「両方同時に見える」ことを見る。
+  await gotoService(page, '#/real-estate', 'text=ポートフォリオ KPI');
+  await page.getByPlaceholder('メモ (例: 売上記録 / 修繕費発生)').fill('E2E 業務メモ');
+  await page.getByRole('button', { name: 'メモを記録' }).click();
+  await page.waitForSelector('[data-record-feedback]', { timeout: 20000 });
+  ok(true, 'serviceAdvice: メモの記録に確認が出る');
+  await page.getByRole('button', { name: '改善提案' }).click();
+  await page.waitForSelector('text=根拠:', { timeout: 20000 });
+  ok(
+    (await page.locator('[data-record-feedback]').count()) === 1,
+    'serviceAdvice: ★ 提案を押しても記録の確認が残る (後の操作が前の結果を消さない)',
+  );
+  t = await body();
+  ok(t.includes('受け付けました') && t.includes('根拠:'), 'serviceAdvice: ★ 記録の確認と提案が同時に見える');
+
+  // 5. **飛行中に隣のボタンを押しても、記録ボタンは押せる状態に戻らない** (パス 192)。
+  //    直す前は `phase` を共有していたので、提案を押した瞬間に記録ボタンが復帰し、
+  //    同じメモで record-entry が 2 回飛んだ。ここは実機の disabled を見る。
+  await page.getByPlaceholder('メモ (例: 売上記録 / 修繕費発生)').fill('E2E 二重送信');
+  const recBtn = page.getByRole('button', { name: 'メモを記録' });
+  ok(!(await recBtn.isDisabled()), 'serviceAdvice: 入力済みなら記録ボタンは押せる');
+  await recBtn.click();
+  await page.waitForSelector('[data-record-feedback]', { timeout: 20000 });
+  // 空になった欄では押せない (関門とは別の守り) —— 二重送信の口が閉じていること。
+  ok(
+    await page.getByRole('button', { name: 'メモを記録' }).isDisabled(),
+    'serviceAdvice: ★ 送信後は欄が空になり記録ボタンが押せない',
+  );
+
   ok(errs.length === 0, `serviceAdvice: ページエラー 0 (実際 ${errs.length})`);
   await ctx.close();
 }

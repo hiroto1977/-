@@ -25754,3 +25754,114 @@ CI = この関門)。`proxyWorkerParity.test.ts` が 3 つを同じ標本に当�
   `safe-vault-write` / `verify-architecture` / `verify-graph`)。
   **どれも名乗っていないので今回の規則の外** —— 呼ぶ側 (npm) が
   自分の引数で走らせている。名乗りと受け口の対応だけを規則にした。
+
+---
+
+## パス 192 (2026-09-13) — **隣のボタンが自分の関門を外し、同じメモが 2 回飛ぶ**
+
+### どこを見たか
+
+全域の行カバレッジを測り直し (`src/` 20,166/21,315 = 94.61%)、**最も低い出荷コード**を
+取った —— `src/renderer/components/ServiceActionPanel.tsx` **44.00% (22/50 行)**。
+不動産投資 / 投資信託に載る「業務操作」パネルで、業務メモの記録 (`record-entry`) と
+改善提案 (`advise`) を送る。**`submitRecord` (79-120 行) は 1 行も実行されていなかった**
+—— 「メモを記録」ボタンは、どの検査でも 1 度も押されていない。
+
+### 実測した欠陥
+
+jsdom で実物の画面 (`RealEstatePage`) を描いて押した。`invoke` は解決を保留できる
+差し替えを渡し、**飛行中の状態**を実際に作った。
+
+```
+  [1] メモを記録            → 「⚠ メモを受け付けました」が出る
+  [2] 続けて改善提案を押す   → ★ 記録の確認が消える (提案に置き換わる)
+  [3] 提案の後にもう一度記録 → ★ 提案が消える (確認に置き換わる)
+
+  [4] メモを記録 (飛行中)    → record-entry 1 回 / ボタンは「送信中…」で disabled (正しい)
+  [5] その間に改善提案を押す  → ★ 記録ボタンが「メモを記録」に戻り disabled=false
+  [6] もう一度押す          → ★ record-entry 2 回 (payload も同一)
+```
+
+[2]/[3] は **どちらも成功しているのに片方しか残らない**。記録の確認が消えた後、
+メモが受け付けられたことを示す物は画面に何も無い。逆向きでは、読んでいた提案が
+記録によって消える。
+
+[5]/[6] は **隣のボタンが自分の関門を外す**形。原因は 1 つの `phase` を共有していた
+こと —— 提案を押すと `phase` が `'advising'` へ移り、`isRecording(state)` が false に
+なるので記録ボタンが復帰する。
+
+### なぜパス 124 の関門が来ていなかったか
+
+パス 124 は `useSubmitGuard` を 22 か所に配線し、母集団を
+`submitGuardCensus.test.ts` が実装から数えている。その線は
+**`useCollection` / `getRecordStore` を使うファイル** = *record store に触るか*で
+引かれていた。このパネルは業務メモを `serviceHub.invoke(id, 'record-entry', …)` で
+送る —— **記録する物は同じ**なのに経路が違うので、線の外側に落ちていた。
+census の注記自身が carve-out を持っており (「外へ書く入口は record store に触らない
+のでこの規則の外」)、`record-entry` はその文に**巻き込まれて**いた。
+
+パス 191 の「実装している物だけを数えた census が、名乗るだけの物を見落とした」と
+同じ形である。**母集団を仕組みで引くと、同じ危険が別の経路で外に落ちる。**
+
+### 直した物
+
+| 置いた物 | 役目 |
+| --- | --- |
+| `serviceActionMachine.ts` | 枠を 2 つ (`record` / `advice`)。自分の枠だけを書き換える。`error` を `record/error` と `advise/error` に割る (1 つでは入れる枠が決まらない) |
+| `ServiceActionPanel.tsx` | `useSubmitGuard` を**操作ごとに 1 つ**。結果は枠ごとに刷る (`data-record-feedback` / `data-record-error` / `data-advise-error`) |
+| `submitGuardCensus.test.ts` | 母集団を**危険**で引き直す —— record store に触るか、`record-entry` を `invoke` するか。`via` で理由を持つ |
+| `serviceActionConcurrency.test.ts` (新) | 実物の画面で押して 7 件。飛行中の 2 度押しと同じ tick の 2 度押しの両方 |
+| `scripts/e2e/core.cjs` | `serviceAdvice` に 5 件 (実機で「確認と提案が同時に見える」) |
+
+**押している間の守りは `useSubmitGuard` が持つ** —— reducer の state は次の描画まで
+古い値なので、同じ tick の 2 度押しを止められない (`useSubmitGuard` は ref で見る)。
+枠ごとの discriminated union は残したので、**1 つの操作の中では**今も不整合が起きない。
+
+### 既存の検査が欠陥を正しい振る舞いとして留めていた
+
+`serviceActionMachine.test.ts` の 4 本 —— 「never holds two results at once」
+「advise/start clears prior feedback」「advice replaces a prior feedback result」
+「record/start while advising … clears advice」。主張を反転させ、
+**1 つの枠の中では今も両立しない**ことを別に留めた (PR #4 が入れた性質を捨てない)。
+パス 189 / 190 と同じ形で、3 パス連続。
+
+### 対照 (7 件・すべて鳴った)
+
+| # | 壊した物 | 鳴った所 |
+| --- | --- | --- |
+| C1 | 記録ボタンが関門を通らない (`onClick={submitRecord}`) | 2 件 (飛行中 / 同じ tick) |
+| C2 | `recBusy` を `recGuard.busy && !advGuard.busy` に (元の形) | 1 件 |
+| C3 | 提案の成功が記録の枠を消す (元の形) | 画面 1 + 機械 1 |
+| C4 | 記録の成功が提案の枠を消す (元の形) | 1 件 |
+| C5 | 提案の失敗が記録の枠に入る (元の形) | 4 件 |
+| C6 | `data-advise-error` の印を消す | 1 件 |
+| C7 | census の `record-entry` の印を消す | 2 件 |
+
+### 測ったうえで白だった物 (この面では直すところが無い)
+
+- **`serviceActionUtils.parseAmountInput`** —— `1e3` / `0x10` / `Infinity` / `NaN` /
+  `++500` / `1..2` を全部弾き、`Number.isFinite` で締める。全角・カンマ区切りは通す。
+- **`notForRealMoney`** —— パネルの注記は「必ず表示」と書くが、画面が刷るのは
+  `disclaimer` である。`notForRealMoney: true` は**型で固定した機械可読の印**で
+  (main 側の `isAdvisorShape` が `!== true` を弾く)、法的な文面は `disclaimer` が持つ
+  (投資系は「投資助言ではありません」を含むことを検査が求める)。注記の言葉が
+  緩いだけで、渡す物に断りは乗っている。
+- **記録の成功枝が言う「✅ 保存しました」** —— `recordEntryLimits.ts` の
+  `persisted: false` は**リテラル型**なので、今日この枝には到達しない
+  (常に「⚠ メモを受け付けました (Phase 6 まで保存されません)」)。Phase 6 で
+  `persisted: true` にしたときのための枝で、そのとき画面の下の常設注記
+  (「現フェーズでは入力受信のみ」) と**同時に真でなくなる** —— そのときに直す組。
+
+### 残した物 / 次に見る所
+
+- **`sanitizeNote` の天井は code unit で切り、走査は code point で読む。**
+  画面は `raw.slice(0, MAX_RECORD_NOTE_CHARS)` (UTF-16 code unit)、`sanitizeNote` は
+  `for (const ch of raw)` (code point)。2,000 字目が絵文字などのサロゲートペアだと
+  `slice` が半分を落とし、**孤立サロゲートが payload に残る**
+  (制御文字でもないので `isStrippableControlChar` に当たらない)。
+  今日は `persisted: false` でどこにも保存されないので到達しないが、
+  **Phase 6 で永続化を繋ぐ前に直す** (パス 189 の Sparkline と同じ「床」として記録)。
+- **外部サービスへ書く入口は今も census の外** (GitHub の issue / Slack / Gmail / DNS)。
+  書かれる先が相手方で、二重投稿は相手側に見える。パス 124 の「残る物」のまま。
+- カバレッジの次の的: `LibraryPage.tsx` 53.47% / `ShigyoConsole.tsx` 55.00% /
+  `CanvaPage.tsx` 55.56% / `HomePage.tsx` 60.00%。

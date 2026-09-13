@@ -4,17 +4,17 @@ import { parseTimestamp } from '../../shared/isoDate';
 import { charsOverCeiling, clampedCeilingNote } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
 import type { AdviceInputFor } from '../../shared/serviceAdvisor';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { Section } from './StatusBar';
 import { parseAmountInput, sanitizeNote } from './serviceActionUtils';
 import { classifyActionResult } from '../data/actionOutcome';
 import {
   actionReducer,
+  adviceError,
   adviceResult,
-  errorText,
-  feedbackText,
   INITIAL_ACTION_STATE,
-  isAdvising,
-  isRecording,
+  recordError,
+  recordFeedback,
 } from './serviceActionMachine';
 
 /**
@@ -43,6 +43,22 @@ import {
  * (パス 112 が AI の入力で採った「黙って切らない」と同じ向き。あちらは切らずに
  *  断れたが、ここは 1 行の入力欄なので、落ちた事実と字数を述べる形にした。)
  *
+ * ## 2 つの操作は、互いの結果も関門も消さない (2026-09-13 · パス 192)
+ *
+ * このパネルには独立した操作が 2 つ在る (記録 / 提案)。2026-09-13 まで 1 つの
+ * `phase` と 1 つの `result` を共有しており、実測で 2 つの欠陥が出た:
+ *
+ * - **後の操作が前の結果を黙って消す** —— 記録して「受け付けました」が出た後に
+ *   提案を押すと、確認が消える (逆も同じ)。どちらも成功しているのに片方しか残らない。
+ * - **隣のボタンが自分の関門を外す** —— 記録が飛行中に提案を押すと `phase` が
+ *   移って記録ボタンが押せる状態に戻り、**同じメモで record-entry が 2 回飛ぶ**。
+ *
+ * 直した形: 押している間の守りは操作ごとに `useSubmitGuard` (ref なので同じ tick の
+ * 2 度目も止まる)、結果は `serviceActionMachine` が枠を 2 つ持つ。
+ * パス 124 の関門がここに来ていなかったのは、あの母集団が「record store に触る
+ * ファイル」だったため —— 業務記録を `invoke` で送るこのパネルは、**仕組みで
+ * 引いた線の外側**に在った (`submitGuardCensus.test.ts` が母集団を広げた)。
+ *
  * **重要な UX 契約:**
  * - record-entry の戻り値 `persisted: false` を **可視的に表示** する。
  *   Phase 6 で Library 永続化を入れるまでは「メモのみ・保存はされません」と
@@ -69,23 +85,27 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
   const [noteOverflow, setNoteOverflow] = useState(0);
   const [amount, setAmount] = useState('');
   const [state, dispatch] = useReducer(actionReducer, INITIAL_ACTION_STATE);
+  // **操作ごとに 1 つ。** 共有すると隣のボタンが自分の関門を外す (パス 192)。
+  const recGuard = useSubmitGuard();
+  const advGuard = useSubmitGuard();
 
-  const recBusy = isRecording(state);
-  const advBusy = isAdvising(state);
-  const feedback = feedbackText(state);
-  const error = errorText(state);
+  const recBusy = recGuard.busy;
+  const advBusy = advGuard.busy;
+  const feedback = recordFeedback(state);
+  const error = recordError(state);
   const advice = adviceResult(state);
+  const adviseFailed = adviceError(state);
 
   async function submitRecord() {
     const cleanNote = sanitizeNote(note);
     if (cleanNote.length === 0) {
-      dispatch({ type: 'error', text: 'note を入力してください' });
+      dispatch({ type: 'record/error', text: 'note を入力してください' });
       return;
     }
     const payload: { note: string; amount?: number } = { note: cleanNote };
     const parsed = parseAmountInput(amount);
     if (!parsed.ok) {
-      dispatch({ type: 'error', text: 'amount は数値で入力してください (全角・カンマ区切り可)' });
+      dispatch({ type: 'record/error', text: 'amount は数値で入力してください (全角・カンマ区切り可)' });
       return;
     }
     if (parsed.value !== undefined) {
@@ -100,7 +120,7 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
       // 分類は `data/actionOutcome.ts` に集約 — 音声・チャットと同じ読み方をする。
       const classified = classifyActionResult(r);
       if (classified.verdict === 'failed') {
-        dispatch({ type: 'error', text: `保存に失敗: ${classified.message}` });
+        dispatch({ type: 'record/error', text: `保存に失敗: ${classified.message}` });
         return;
       }
       const note2 =
@@ -115,7 +135,7 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
       setNoteOverflow(0);
       setAmount('');
     } catch (e) {
-      dispatch({ type: 'error', text: e instanceof Error ? e.message : String(e) });
+      dispatch({ type: 'record/error', text: e instanceof Error ? e.message : String(e) });
     }
   }
 
@@ -124,12 +144,12 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
     try {
       const r = await window.serviceHub.invoke<ActionData<`${RecordEntryServiceId}/advise`>>(serviceId, 'advise', adviseInput);
       if (!r.ok) {
-        dispatch({ type: 'error', text: `改善提案の取得に失敗: ${r.message}` });
+        dispatch({ type: 'advise/error', text: `改善提案の取得に失敗: ${r.message}` });
         return;
       }
       dispatch({ type: 'advise/success', advice: r.data });
     } catch (e) {
-      dispatch({ type: 'error', text: e instanceof Error ? e.message : String(e) });
+      dispatch({ type: 'advise/error', text: e instanceof Error ? e.message : String(e) });
     }
   }
 
@@ -158,7 +178,12 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
           inputMode="decimal"
           style={inputStyle}
         />
-        <button type="button" onClick={submitRecord} disabled={recBusy || note.length === 0} style={buttonStyle}>
+        <button
+          type="button"
+          onClick={() => void recGuard.run(submitRecord)}
+          disabled={recBusy || note.length === 0}
+          style={buttonStyle}
+        >
           {recBusy ? '送信中…' : 'メモを記録'}
         </button>
       </div>
@@ -177,18 +202,26 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
         ※ メモは {MAX_RECORD_NOTE_CHARS} 字まで。現フェーズでは入力受信のみ。Library への永続化は Phase 6 で接続予定です。
       </div>
 
-      {feedback && <div style={{ ...feedbackStyle, color: '#22c55e' }}>{feedback}</div>}
-      {error && <div style={{ ...feedbackStyle, color: '#ef4444' }}>{error}</div>}
+      {/* 記録の結果 —— 提案の結果とは別の枠なので、提案を押しても消えない (パス 192)。 */}
+      {feedback && <div data-record-feedback style={{ ...feedbackStyle, color: '#22c55e' }}>{feedback}</div>}
+      {error && <div data-record-error role="alert" style={{ ...feedbackStyle, color: '#ef4444' }}>{error}</div>}
 
       {/* advise */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8, marginBottom: 8 }}>
-        <button type="button" onClick={submitAdvise} disabled={advBusy} style={buttonStyle}>
+        <button type="button" onClick={() => void advGuard.run(submitAdvise)} disabled={advBusy} style={buttonStyle}>
           {advBusy ? '生成中…' : '💡 改善提案'}
         </button>
         <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>
           画面の数字から規則で組み立てます (AI ではありません。Phase 6 で LLM 接続)
         </span>
       </div>
+
+      {/* 提案の失敗は提案の側に出す —— 記録の確認を消さない (パス 192)。 */}
+      {adviseFailed && (
+        <div data-advise-error role="alert" style={{ ...feedbackStyle, color: '#ef4444' }}>
+          {adviseFailed}
+        </div>
+      )}
 
       {advice && (
         <div style={{ marginTop: 8, padding: 12, background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 8 }}>

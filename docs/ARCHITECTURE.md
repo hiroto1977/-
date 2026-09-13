@@ -23,7 +23,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **13473** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **13483** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 31 / 36 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 590 | 自己検証 |
+| `file:line` 参照数 | 594 | 自己検証 |
 | 図の中の `file:line` 参照数 | 27 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -3722,6 +3722,49 @@ payload を数える (数字と文面だけ合わせても「口はあるが繋�
 (`advertises` / `DISPATCHES` / `DEFINES` の 2 形ずつ) を同じ検査に添えて留めた。
 判定は「関数が在るか」ではなく**引数の受け口が在るか**にした —— 欠陥は
 「関数が無い」ではなく「叩いても何も起きない」だったから。
+
+**母集団を「仕組み」で引くと、同じ危険が別の経路で外に落ちる** (2026-09-13 · パス 192)。
+`ServiceActionPanel` (不動産投資 / 投資信託に載る「業務操作」) には独立した操作が
+2 つ在る —— 業務メモの記録 (`record-entry`) と改善提案 (`advise`)。この 2 つが
+**1 つの `phase` と 1 つの `result`** を共有していた。jsdom で実物の画面を押して測った:
+
+```
+  [1] メモを記録            → 「⚠ メモを受け付けました」が出る
+  [2] 続けて改善提案を押す   → ★ 記録の確認が消える (提案に置き換わる)
+  [3] 提案の後にもう一度記録 → ★ 提案が消える (確認に置き換わる)
+
+  [4] メモを記録 (飛行中)    → 記録ボタンは「送信中…」で disabled (正しい)
+  [5] その間に改善提案を押す  → ★ 記録ボタンが「メモを記録」に戻り disabled=false
+  [6] もう一度押す          → ★ 同じメモで record-entry が 2 回飛ぶ
+```
+
+[2]/[3] は**どちらも成功しているのに片方しか残らない**。記録の確認が消えた後、
+メモが受け付けられたことを示す物は画面に何も無い。[5]/[6] は
+**隣のボタンが自分の関門を外す**形である。
+
+パス 124 が 22 か所に入れた `useSubmitGuard` はここに来ていなかった。理由は
+母集団の引き方で、`src/renderer/__tests__/submitGuardCensus.test.ts` は **`useCollection` /
+`getRecordStore` を使うファイル**、つまり *record store に触るか*で線を引いていた。
+このパネルは業務メモを `serviceHub.invoke(id, 'record-entry', …)` で送る ——
+**記録する物は同じ**なのに経路が違うので、線の外側に落ちていた。
+パス 191 の「実装している物だけを数えた census が、名乗るだけの物を見落とした」と
+同じ形である。
+
+直した形:
+
+| 置いた物 | 役目 |
+| --- | --- |
+| `src/renderer/components/serviceActionMachine.ts` | 枠を 2 つ (`record` / `advice`)。`error` を `record/error` と `advise/error` に割る (1 つでは入れる枠が決まらない) |
+| `src/renderer/components/ServiceActionPanel.tsx` | `useSubmitGuard` を操作ごとに 1 つ。結果は枠ごとに刷る (`data-record-feedback` / `data-record-error` / `data-advise-error`) |
+| `src/renderer/__tests__/submitGuardCensus.test.ts` | 母集団を**危険**で引き直す —— record store に触るか、`record-entry` を `invoke` するか |
+
+**押している間の守りは `useSubmitGuard` が持つ** —— reducer の state は次の描画まで
+古い値なので、同じ tick の 2 度押しを止められない (`useSubmitGuard` は ref で見る)。
+枠ごとの discriminated union は残したので、**1 つの操作の中では**今も不整合が起きない
+(提案の失敗と古い提案は同じ枠なので両立しない)。
+
+外部サービスへ書く入口 (GitHub の issue / Slack / Gmail / DNS) は**今も規則の外**
+——書かれる先が相手方で、二重投稿は相手側に見える。パス 124 の「残る物」のまま。
 
 **暗号パラメータ**も同じ形だった。AES-GCM の IV 長と PBKDF2 の強度が
 `src/renderer/security/vault.ts` / `src/renderer/security/dataCrypto.ts` /
