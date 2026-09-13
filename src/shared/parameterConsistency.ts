@@ -1,5 +1,11 @@
 /**
- * 台帳 (`parameters.ts`) の**欄と欄の順序**を検査する。
+ * 台帳 (`parameters.ts`) の**欄と欄の関係**を検査する。2 種類ある:
+ *
+ *   1. **順序** (`PARAMETER_ORDERS`) —— 昇順でなければならない帯の下限。
+ *   2. **相違** (`PARAMETER_DISTINCT`) —— 等しいと値が使えなくなり、**別の値が
+ *      黙って代わりに使われる**組。等しくても矛盾しない組 (段が空になるだけ・
+ *      届かない格付けができるだけ) はここに載せない —— 載せる規準は
+ *      「等しいと計算が定まらず、誰かが黙って別の値に差し替える」こと。
  *
  * `parameterIssue` は 1 欄ずつしか見ない (min / max / integer)。それは桁誤りを
  * 止めるための幅で、**2 つの欄が互いに矛盾する組み合わせは 1 件も止まらない**。
@@ -30,6 +36,7 @@
  *   は読まないと決まらないので、`ORDER_NOT_REQUIRED` に理由ごと置き、
  *   `parameterOrder.test.ts` が母集団を両方向から突き合わせる。
  */
+import { RADAR_AXIS_KEYS } from './financialHealthBands';
 import { PARAMETER_BY_ID, toDisplayValue, type ParameterId, type ParameterValues } from './parameters';
 
 /** 昇順 (前 ≤ 次) でなければならない欄の並び。 */
@@ -79,6 +86,42 @@ export const PARAMETER_ORDERS: readonly ParameterOrder[] = [
     why: '切替の目安の下限が上限を超えると、どの日数を入れても「範囲外」と警告します',
   },
 ];
+
+/** 等しくてはならない欄の組。 */
+export interface ParameterDistinct {
+  readonly ids: readonly [ParameterId, ParameterId];
+  /** 等しいと何が起きるか (断りの文に入れる)。 */
+  readonly why: string;
+}
+
+/**
+ * 0 点の水準と 100 点の水準 (`financeHealth.<軸>Bad` / `Good`) は、**等しくては
+ * ならない**。
+ *
+ * `financialRatios.linScore` は `(raw - bad) / (good - bad)` で点数を作るので、
+ * 幅 0 の帯では 0 除算になる。`financialRatios.axisBand` はそれを避けるために
+ * **既定の帯へ黙って倒していた** —— 2026-09-13 の実測 (パス 222):
+ *
+ *     'financeHealth.equityRatioBad': 50 / 'financeHealth.equityRatioGood': 50
+ *       sanitize          4/4 そのまま通る (min -1000 / max 1000)
+ *       台帳が出す帯       { bad: 50, good: 50 }
+ *       axisBand が使う帯  { bad: 0, good: 50 }   ← 既定
+ *       順序の検査         [] (等しいのは順序違反ではない)
+ *       スコア            上書きあり 60 / 上書きなし 60  ← 完全に同じ
+ *
+ * 設定画面は両方の欄に「上書き中」と出したまま、**上書きは 1 度も効いていない**。
+ * 台帳の設計文が「設定できるのに効かない項目は、画面が嘘をつく最悪の形」と
+ * 呼んでいるものそのもの。倒し込み自体は正しい防御なので残し (0 除算は作れない)、
+ * **効いていないことを画面が言う**ようにした。
+ *
+ * **大小の向きは軸ごとに違う** (自己資本比率は高い方が良い / CCC は低い方が良い) ので
+ * 順序は要らないが、**等しくないことは全軸に要る**。軸の一覧は写さず
+ * `RADAR_AXIS_KEYS` から導く —— 軸を足したら制約も自動で付く。
+ */
+export const PARAMETER_DISTINCT: readonly ParameterDistinct[] = RADAR_AXIS_KEYS.map((axis) => ({
+  ids: [`financeHealth.${axis}Bad`, `financeHealth.${axis}Good`] as [ParameterId, ParameterId],
+  why: '0 点の水準と 100 点の水準が同じだと点数が決まらないため、この軸は既定の水準で採点されます (上書きが効きません)',
+}));
 
 /**
  * 順序を見なくてよい欄と、その理由。`parameterOrder.test.ts` が
@@ -144,13 +187,20 @@ function shown(id: ParameterId, values: ParameterValues): string {
 }
 
 /**
- * 有効値が順序を満たしているかを見て、破れている組の文を返す。空なら矛盾なし。
+ * 有効値が組の制約 (順序・相違) を満たしているかを見て、破れている組の文を返す。
+ * 空なら矛盾なし。
  *
  * `values` は**有効値** (既定に上書きを重ねた後) を渡す。上書きだけを見ると、
  * 片方だけを置いたときに既定との関係を見落とす。
  */
 function violations(values: ParameterValues): { pair: string; text: string }[] {
   const out: { pair: string; text: string }[] = [];
+  for (const d of PARAMETER_DISTINCT) {
+    const [a, b] = d.ids;
+    if (values[a] === values[b]) {
+      out.push({ pair: `${a}=${b}`, text: `${shown(a, values)} と ${shown(b, values)} が同じです — ${d.why}` });
+    }
+  }
   for (const order of PARAMETER_ORDERS) {
     for (let i = 0; i + 1 < order.ids.length; i++) {
       const lo = order.ids[i]!;
@@ -166,21 +216,23 @@ function violations(values: ParameterValues): { pair: string; text: string }[] {
   return out;
 }
 
-export function parameterOrderIssues(values: ParameterValues): readonly string[] {
+export function parameterConsistencyIssues(values: ParameterValues): readonly string[] {
   return violations(values).map((v) => v.text);
 }
 
 /**
- * 1 欄を `candidate` に置いたら順序が破れるかを見る (保存の前の関門)。
+ * 1 欄を `candidate` に置いたら組の制約が破れるかを見る (保存の前の関門)。
  * 破れなければ null。`values` は置く前の有効値。
  */
-export function parameterOrderIssueFor(
+export function parameterConsistencyIssueFor(
   id: ParameterId,
   candidate: number,
   values: ParameterValues,
 ): string | null {
-  const orders = PARAMETER_ORDERS.filter((o) => o.ids.includes(id));
-  if (orders.length === 0) return null;
+  const touched =
+    PARAMETER_ORDERS.some((o) => o.ids.includes(id)) ||
+    PARAMETER_DISTINCT.some((d) => d.ids.includes(id));
+  if (!touched) return null;
   const next = { ...values, [id]: candidate } as ParameterValues;
   // すでに破れている組を新たな断りとして出さない —— 直している途中の 1 欄を
   // 「あなたのせい」と止めると、順序を戻す道が閉じる。**組で数える**: 文には

@@ -7,7 +7,7 @@
  *
  * ここで留めるのは 3 つ:
  *   1. 既定値はどの順序も満たす (逆向きに書いた台帳を見つける)。
- *   2. 順序を崩すと `parameterOrderIssues` が**その組を名前で**言う。
+ *   2. 順序を崩すと `parameterConsistencyIssues` が**その組を名前で**言う。
  *   3. 名前が順序を持ちうる欄 (73 件) は、順序の台帳か「要らない理由」の
  *      どちらかに載っている (両方向)。
  */
@@ -19,17 +19,21 @@ import {
   resolveParameters,
   type ParameterId,
 } from '../parameters';
+import { RADAR_AXIS_KEYS } from '../financialHealthBands';
 import {
   ORDER_NOT_REQUIRED,
+  PARAMETER_DISTINCT,
   PARAMETER_ORDERS,
   isAxisBandParameter,
   looksOrdered,
-  parameterOrderIssueFor,
-  parameterOrderIssues,
-} from '../parameterOrder';
+  parameterConsistencyIssueFor,
+  parameterConsistencyIssues,
+} from '../parameterConsistency';
 
 /** 台帳に載っている順序つきの欄 (重複なし)。 */
 const ORDERED_IDS = [...new Set(PARAMETER_ORDERS.flatMap((o) => o.ids))];
+/** 台帳に載っている相違つきの欄 (重複なし)。 */
+const DISTINCT_IDS = [...new Set(PARAMETER_DISTINCT.flatMap((d) => d.ids))];
 
 describe('PARAMETER_ORDERS の台帳', () => {
   it('載せた id はすべて実在する', () => {
@@ -50,7 +54,7 @@ describe('PARAMETER_ORDERS の台帳', () => {
   });
 
   it('既定値はどの順序も満たす', () => {
-    expect(parameterOrderIssues(DEFAULT_PARAMETER_VALUES)).toEqual([]);
+    expect(parameterConsistencyIssues(DEFAULT_PARAMETER_VALUES)).toEqual([]);
   });
 
   it('単位と種別が家系の中で揃っている (点と円を比べない)', () => {
@@ -61,7 +65,7 @@ describe('PARAMETER_ORDERS の台帳', () => {
   });
 });
 
-describe('parameterOrderIssues — 順序を崩したら名前で言う', () => {
+describe('parameterConsistencyIssues — 順序を崩したら名前で言う', () => {
   /** 家系の隣り合う組を入れ替えた有効値を作る。 */
   function swapped(order: readonly ParameterId[], i: number) {
     const lo = order[i]!;
@@ -79,7 +83,7 @@ describe('parameterOrderIssues — 順序を崩したら名前で言う', () => 
       it(`${lo} > ${hi} を断る`, () => {
         // 既定が等しい組は入れ替えても崩れない — その組は順序の検査の対象外。
         if (DEFAULT_PARAMETER_VALUES[lo] === DEFAULT_PARAMETER_VALUES[hi]) return;
-        const issues = parameterOrderIssues(swapped(o.ids, i));
+        const issues = parameterConsistencyIssues(swapped(o.ids, i));
         expect(issues.length).toBeGreaterThan(0);
         const loLabel = PARAMETER_BY_ID.get(lo)!.label;
         const hiLabel = PARAMETER_BY_ID.get(hi)!.label;
@@ -95,7 +99,7 @@ describe('parameterOrderIssues — 順序を崩したら名前で言う', () => 
       'financeHealth.levelWarnMin': 60,
       'financeHealth.levelGoodMin': 40,
     });
-    const issues = parameterOrderIssues(v);
+    const issues = parameterConsistencyIssues(v);
     expect(issues.length).toBe(1);
     expect(issues[0]).toContain('(60点)');
     expect(issues[0]).toContain('(40点)');
@@ -103,13 +107,13 @@ describe('parameterOrderIssues — 順序を崩したら名前で言う', () => 
 
   it('順序を持たない欄を動かしても何も言わない (対照)', () => {
     const v = resolveParameters({ 'deduction.smallBizMutualAnnualCap': 1 });
-    expect(parameterOrderIssues(v)).toEqual([]);
+    expect(parameterConsistencyIssues(v)).toEqual([]);
   });
 });
 
-describe('parameterOrderIssueFor — 保存の前の関門', () => {
+describe('parameterConsistencyIssueFor — 保存の前の関門', () => {
   it('「良好」の下限を「注意」の下限より下げる保存を断る', () => {
-    const issue = parameterOrderIssueFor(
+    const issue = parameterConsistencyIssueFor(
       'financeHealth.levelGoodMin',
       DEFAULT_PARAMETER_VALUES['financeHealth.levelWarnMin'] - 1,
       DEFAULT_PARAMETER_VALUES,
@@ -119,7 +123,7 @@ describe('parameterOrderIssueFor — 保存の前の関門', () => {
   });
 
   it('「注意」の下限を「良好」の下限より上げる保存を断る (逆向きの欄でも鳴る)', () => {
-    const issue = parameterOrderIssueFor(
+    const issue = parameterConsistencyIssueFor(
       'financeHealth.levelWarnMin',
       DEFAULT_PARAMETER_VALUES['financeHealth.levelGoodMin'] + 1,
       DEFAULT_PARAMETER_VALUES,
@@ -129,11 +133,11 @@ describe('parameterOrderIssueFor — 保存の前の関門', () => {
 
   it('等しい値は通す (帯が空になるだけで矛盾はしない)', () => {
     const same = DEFAULT_PARAMETER_VALUES['financeHealth.levelGoodMin'];
-    expect(parameterOrderIssueFor('financeHealth.levelWarnMin', same, DEFAULT_PARAMETER_VALUES)).toBeNull();
+    expect(parameterConsistencyIssueFor('financeHealth.levelWarnMin', same, DEFAULT_PARAMETER_VALUES)).toBeNull();
   });
 
   it('順序を持たない欄は常に通す', () => {
-    expect(parameterOrderIssueFor('deduction.smallBizMutualAnnualCap', 1, DEFAULT_PARAMETER_VALUES)).toBeNull();
+    expect(parameterConsistencyIssueFor('deduction.smallBizMutualAnnualCap', 1, DEFAULT_PARAMETER_VALUES)).toBeNull();
   });
 
   it('すでに壊れている組を直す途中の 1 欄は止めない', () => {
@@ -143,10 +147,10 @@ describe('parameterOrderIssueFor — 保存の前の関門', () => {
       'financeHealth.levelWarnMin': 60,
       'financeHealth.levelGoodMin': 40,
     });
-    expect(parameterOrderIssues(broken).length).toBe(1);
-    expect(parameterOrderIssueFor('financeHealth.levelGoodMin', 50, broken)).toBeNull();
+    expect(parameterConsistencyIssues(broken).length).toBe(1);
+    expect(parameterConsistencyIssueFor('financeHealth.levelGoodMin', 50, broken)).toBeNull();
     // 直し切る手も当然通る。
-    expect(parameterOrderIssueFor('financeHealth.levelGoodMin', 70, broken)).toBeNull();
+    expect(parameterConsistencyIssueFor('financeHealth.levelGoodMin', 70, broken)).toBeNull();
   });
 
   it('壊れている組の**別の**家系を壊す保存は断る (前の矛盾に紛れない)', () => {
@@ -154,9 +158,72 @@ describe('parameterOrderIssueFor — 保存の前の関門', () => {
       'financeHealth.levelWarnMin': 60,
       'financeHealth.levelGoodMin': 40,
     });
-    const issue = parameterOrderIssueFor('corporate.businessTaxTier2Limit', 1, broken);
+    const issue = parameterConsistencyIssueFor('corporate.businessTaxTier2Limit', 1, broken);
     expect(issue).not.toBeNull();
     expect(issue).toContain('法人事業税の所得段階の境目');
+  });
+});
+
+describe('PARAMETER_DISTINCT — 等しいと上書きが黙って捨てられる組 (パス 222)', () => {
+  it('レーダーの軸ぶん・1 軸 2 件を並べている (軸の一覧は RADAR_AXIS_KEYS から導く)', () => {
+    expect(PARAMETER_DISTINCT.length).toBe(RADAR_AXIS_KEYS.length);
+    expect(PARAMETER_DISTINCT.length).toBe(15);
+    for (const d of PARAMETER_DISTINCT) expect(d.ids.length).toBe(2);
+    expect(DISTINCT_IDS.length).toBe(30);
+  });
+
+  it('載せた id はすべて実在する', () => {
+    for (const id of DISTINCT_IDS) expect(PARAMETER_BY_ID.has(id), id).toBe(true);
+  });
+
+  it('順序の台帳と重ねない (断りが二重になる)', () => {
+    for (const id of DISTINCT_IDS) expect(ORDERED_IDS.includes(id), id).toBe(false);
+  });
+
+  it('既定値はどの組も等しくない', () => {
+    for (const d of PARAMETER_DISTINCT) {
+      const [a, b] = d.ids;
+      expect(DEFAULT_PARAMETER_VALUES[a], `${a} / ${b}`).not.toBe(DEFAULT_PARAMETER_VALUES[b]);
+    }
+  });
+
+  it('理由は「既定の水準で採点される」= 上書きが効かないことを述べている', () => {
+    for (const d of PARAMETER_DISTINCT) {
+      expect(d.why).toContain('既定');
+      expect(d.why).toContain('効きません');
+    }
+  });
+
+  for (const d of PARAMETER_DISTINCT) {
+    const [a, b] = d.ids;
+    it(`${a} == ${b} を断る`, () => {
+      const v = resolveParameters({ [a]: DEFAULT_PARAMETER_VALUES[b], [b]: DEFAULT_PARAMETER_VALUES[b] });
+      const issues = parameterConsistencyIssues(v);
+      expect(issues.length).toBe(1);
+      expect(issues[0]).toContain(PARAMETER_BY_ID.get(a)!.label);
+      expect(issues[0]).toContain(PARAMETER_BY_ID.get(b)!.label);
+      expect(issues[0]).toContain(d.why);
+    });
+  }
+
+  it('保存の前の関門が、等しくする 1 手を断る (両方向)', () => {
+    const bad = DEFAULT_PARAMETER_VALUES['financeHealth.equityRatioBad'];
+    const good = DEFAULT_PARAMETER_VALUES['financeHealth.equityRatioGood'];
+    expect(parameterConsistencyIssueFor('financeHealth.equityRatioBad', good, DEFAULT_PARAMETER_VALUES)).not.toBeNull();
+    expect(parameterConsistencyIssueFor('financeHealth.equityRatioGood', bad, DEFAULT_PARAMETER_VALUES)).not.toBeNull();
+  });
+
+  it('等しくない値は通す (対照 — 断りが全部を止めていないこと)', () => {
+    expect(parameterConsistencyIssueFor('financeHealth.equityRatioBad', 10, DEFAULT_PARAMETER_VALUES)).toBeNull();
+    // 向きを逆にするのは利用者の選択なので通す (軸ごとに高い方が良い / 低い方が良いが変わる)。
+    expect(parameterConsistencyIssueFor('financeHealth.equityRatioBad', 99, DEFAULT_PARAMETER_VALUES)).toBeNull();
+  });
+
+  it('等しいまま保存されている組を直す途中の 1 手は止めない', () => {
+    const same = DEFAULT_PARAMETER_VALUES['financeHealth.equityRatioGood'];
+    const broken = resolveParameters({ 'financeHealth.equityRatioBad': same });
+    expect(parameterConsistencyIssues(broken).length).toBe(1);
+    expect(parameterConsistencyIssueFor('financeHealth.equityRatioBad', 5, broken)).toBeNull();
   });
 });
 
@@ -174,7 +241,7 @@ describe('母集団 — 順序を持ちうる欄はすべて裁定済み (パス
     const unjudged = SUSPECTS.filter(
       (id) =>
         !ORDERED_IDS.includes(id as ParameterId) &&
-        !isAxisBandParameter(id) &&
+        !DISTINCT_IDS.includes(id as ParameterId) &&
         ORDER_NOT_REQUIRED[id] === undefined,
     );
     expect(unjudged).toEqual([]);
@@ -182,6 +249,7 @@ describe('母集団 — 順序を持ちうる欄はすべて裁定済み (パス
 
   it('逆向き — 台帳に載っている id は実際に走査に拾われる (綴りのずれを見つける)', () => {
     for (const id of ORDERED_IDS) expect(SUSPECTS.includes(id), id).toBe(true);
+    for (const id of DISTINCT_IDS) expect(SUSPECTS.includes(id), id).toBe(true);
     for (const id of Object.keys(ORDER_NOT_REQUIRED)) expect(SUSPECTS.includes(id), id).toBe(true);
   });
 
@@ -195,8 +263,12 @@ describe('母集団 — 順序を持ちうる欄はすべて裁定済み (パス
     for (const id of ORDERED_IDS) expect(ORDER_NOT_REQUIRED[id], id).toBeUndefined();
   });
 
-  it('軸の 0-100 点の水準は 15 軸 × 2 件ある (走査の綴りの対照)', () => {
-    expect(SUSPECTS.filter((id) => isAxisBandParameter(id)).length).toBe(30);
+  it('軸の 0-100 点の水準は 15 軸 × 2 件あり、すべて相違の台帳に載っている', () => {
+    const axisIds = SUSPECTS.filter((id) => isAxisBandParameter(id));
+    expect(axisIds.length).toBe(30);
+    for (const id of axisIds) expect(DISTINCT_IDS.includes(id as ParameterId), id).toBe(true);
+    // 逆向き: 相違の台帳に軸以外を混ぜていない。
+    for (const id of DISTINCT_IDS) expect(isAxisBandParameter(id), id).toBe(true);
   });
 
   it('looksOrdered / isAxisBandParameter は標本に当たる (空の走査でないこと)', () => {

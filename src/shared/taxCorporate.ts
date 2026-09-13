@@ -373,7 +373,7 @@ export function calcResidentCorporateTax(
  * 法人事業税の所得段階の境目を、**使う前に昇順へ畳む**。
  *
  * 台帳 (`parameters.ts`) の検査は 1 欄ずつしか見ないので、下 800 万 / 上 400 万の
- * ような組が保存されうる (画面は `parameterOrderIssues` で断るが、古い版で置いた
+ * ような組が保存されうる (画面は `parameterConsistencyIssues` で断るが、古い版で置いた
  * 上書き・復元したバックアップはその関門を通っていない)。畳まないと
  * `tier2Limit - tier1Limit` が負になり、第 2 段の課税標準が **−400 万円**、
  * 第 3 段が第 1 段と同じ所得を二重に数え、所得 500 万円の所得割が 175,000 円

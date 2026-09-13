@@ -221,8 +221,15 @@ function linScore(raw: number | null, bad: number, good: number): number | null 
 }
 
 /**
- * 軸の帯を引く。0 点と 100 点の水準が同じ帯 (幅 0) は割り算が壊れるので既定の帯に戻す —
- * 台帳は 1 件ずつしか検査できず、2 件の組み合わせの矛盾はここで受ける。
+ * 軸の帯を引く。0 点と 100 点の水準が同じ帯 (幅 0) は割り算が壊れるので既定の帯に戻す。
+ *
+ * **これは防御であって、断りではない。** 倒し込んだことをここで言う口は無いので、
+ * 2026-09-13 まで「上書き中と表示されているのに上書きが 1 度も効かない」状態が
+ * 画面のどこにも現れなかった (実測: `equityRatioBad = equityRatioGood = 50` で
+ * スコアが上書きなしと完全に同じ 60 点)。**言う役は設定画面が持つ** ——
+ * `shared/parameterConsistency.ts` の `PARAMETER_DISTINCT` が保存を断り、
+ * すでに保存されている組を画面上部で名指しする (パス 222)。倒し込み自体は
+ * 古い保存・復元したバックアップのために残す (0 除算は作れない)。
  */
 export function axisBand(key: RadarAxisKey, bands: RadarBands): AxisBand {
   const b = bands[key];

@@ -377,3 +377,42 @@ describe('すでに保存されている矛盾を画面上部で言う (パス 2
     expect(container.querySelector('[data-parameter-order-issues]')).not.toBeNull();
   });
 });
+
+/**
+ * 0 点の水準と 100 点の水準が同じ組 (パス 222)。
+ *
+ * 等しいと `financialRatios.axisBand` が既定の帯へ黙って倒すので、**上書きが
+ * 1 度も効かない**。2026-09-13 まで画面のどこにもその事実が出ていなかった。
+ */
+describe('0 点と 100 点の水準が同じ上書きを保存させない (パス 222)', () => {
+  const BAD = '自己資本比率: 0 点の水準';
+  const GOOD = '自己資本比率: 100 点の水準';
+
+  it('0 点の水準を 100 点の水準と同じにすると保存が押せず、効かない理由が出る', async () => {
+    await type(BAD, '50'); // 既定の 100 点の水準は 50
+    expect(q.button(`${BAD} を保存`).disabled).toBe(true);
+    const alert = q.alertIn('financeHealth.equityRatioBad');
+    expect(alert).toContain(GOOD);
+    expect(alert).toContain('既定の水準で採点されます');
+    expect(alert).toContain('効きません');
+    expect(await stored()).toEqual([]);
+  });
+
+  it('逆側の欄でも鳴る', async () => {
+    await type(GOOD, '0'); // 既定の 0 点の水準は 0
+    expect(q.button(`${GOOD} を保存`).disabled).toBe(true);
+    expect(q.alertIn('financeHealth.equityRatioGood')).toContain('効きません');
+  });
+
+  it('向きを逆にするのは通す (軸ごとに高い方が良い / 低い方が良いが変わる)', async () => {
+    await type(BAD, '99');
+    expect(q.button(`${BAD} を保存`).disabled).toBe(false);
+    await click(q.button(`${BAD} を保存`));
+    expect(await stored()).toEqual([{ values: { 'financeHealth.equityRatioBad': 99 } }]);
+  });
+
+  it('等しくない値は今までどおり保存できる (対照)', async () => {
+    await type(BAD, '10');
+    expect(q.button(`${BAD} を保存`).disabled).toBe(false);
+  });
+});
