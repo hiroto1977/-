@@ -35,7 +35,7 @@
  * 「直したのに台帳に残っている」ので落とす (パス 117 が片方向だった教訓)。
  */
 import 'fake-indexeddb/auto';
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../services';
@@ -87,20 +87,9 @@ beforeAll(() => {
  * 「測っていない範囲を 100% と報告する」形になる (パス 25 / 145)。
  */
 const KNOWN: Readonly<Record<string, string>> = {
-  // `nonNeg` の契約 (「負は無意味なので 0」) どおり 0 に倒れる。⛔ は出ているが
-  // 画面が「何を計算したか」を言わない。うち 2 件は**より good な方向**:
-  //   達成年数 −9999 → 実質価値 ¥8,203,483 → ¥10,000,000
-  //   為替手数料 −9999 → 売り戻し後の円 ¥1,490,033 → ¥1,500,000 (手数料が消える)
-  'mutual-funds/毎月の積立額 (円)': '0 倒し (取得口数・評価額・評価損益)。段の断りを足す (次のパス)',
-  'mutual-funds/積立年数': '0 倒し (将来評価額・累計拠出額)',
-  'mutual-funds/達成年数': '0 倒し。ただし実質価値は **増える** 向き —— 優先して直す',
-  'mutual-funds/毎月の生活費 (円)': '0 倒し (緊急予備資金)',
-  'mutual-funds/現在の積立額 (円)': '0 倒し (到達見込み・必要な追加積立)',
-  'mutual-funds/手元資金 (円)': '0 倒し (予備資金 充足率・まかなえる月数)',
-  'mutual-funds/外貨額': '0 倒し (円換算額・為替損益・両替コスト)',
-  'mutual-funds/為替手数料 (片道・円)': 'TTS/TTB が一致して「両替無料」になる。**より good な方向**',
   // 課税価格が refused な金額を 0 として再計算される (¥535,000 → ¥35,000)。
   // 税額は減る側なので申告には不利に働かないが、税関に出す数字が変わる。
+  // パス 211 で `mutual-funds` の 8 件は閉じた (段ごとの断り)。残りはこの 6 件。
   'tax/商品代金 (輸入・円)': '0 倒し (課税価格から下流すべて)。段の断りを足す (次のパス)',
   'tax/国際運賃 (輸入・円)': '0 倒し (課税価格から下流すべて)',
   'tax/保険料 (輸入・円)': '0 倒し (課税価格から下流すべて)',
@@ -161,87 +150,122 @@ function tiles(): Map<string, string> {
   return m;
 }
 
-beforeEach(async () => {
+interface Moved { readonly key: string; readonly field: string; readonly detail: readonly string[] }
+
+interface Sweep {
+  readonly moved: readonly Moved[];
+  /** ⛔ を作れた回数。**0 なら上の主張は何も確かめていない。** */
+  readonly fatalProbes: number;
+  /** 踏んだ欄の総数 (走査が痩せたら落ちる床のため)。 */
+  readonly fields: number;
+}
+
+/** 1 画面ぶん走査する。器の用意と後片付けはここで完結させる。 */
+async function sweepPage(def: (typeof SERVICES)[number]): Promise<Sweep> {
   await resetRecordStore();
   _resetCollectionSubscribersForTests();
   _resetNavigationIntentForTests();
   container = document.createElement('div');
   document.body.appendChild(container);
-});
-
-afterEach(async () => {
-  if (root) {
-    await act(async () => { root!.unmount(); });
-    root = null;
-  }
-  container.remove();
-});
-
-interface Moved { readonly key: string; readonly field: string; readonly detail: readonly string[] }
-
-/** 1 画面ぶん走査し、「別の数に変わった」組を返す。 */
-async function sweepPage(def: (typeof SERVICES)[number]): Promise<{ moved: Moved[]; fatalCount: number }> {
   root = createRoot(container);
-  await act(async () => { root!.render(createElement(def.page)); });
-  await settle();
-
-  const labels = Array.from(container.querySelectorAll<HTMLInputElement>('input[data-guard]'))
-    .map((e) => e.getAttribute('aria-label') ?? '')
-    .filter((s) => s !== '');
   const moved: Moved[] = [];
-  let fatalCount = 0;
+  let fatalProbes = 0;
+  let fields = 0;
+  try {
+    await act(async () => { root!.render(createElement(def.page)); });
+    await settle();
 
-  for (const label of labels) {
-    for (const probe of PROBES) {
-      const input = container.querySelector<HTMLInputElement>(`input[aria-label="${label}"]`);
-      if (!input) continue;
-      const original = input.value;
-      const before = tiles();
-      await act(async () => { setVal(input, probe); });
-      await settle();
-      if (input.getAttribute('data-guard') === 'fatal') {
-        fatalCount += 1;
-        const after = tiles();
-        const detail: string[] = [];
-        for (const [k, was] of before) {
-          const now = after.get(k);
-          // 消えた (undefined) / `—` になった = 「算定していない」。それ以外の変化は破り。
-          if (now !== undefined && now !== was && !DASHES.has(now)) detail.push(`${k}: ${was} → ${now}`);
+    // **欄は「何番目か」で取る。ラベルで引き直してはいけない** —— 同じ `aria-label` を
+    // 持つ欄が実在する (`毎月の積立額 (円)` は積立シミュレーションとドルコスト平均法に
+    // 1 つずつ・`想定年率 (%)` は 3 つ)。`querySelector` は最初の 1 つを返すので、
+    // ラベルで引くと**2 つ目以降は 1 度も踏まれない**まま緑になる (D2 と同じ形の盲点)。
+    // 入力欄は断りに差し替わる段より上に在るので、番号は描き直しても動かない。
+    const count = container.querySelectorAll('input[data-guard]').length;
+    for (let idx = 0; idx < count; idx += 1) {
+      const at = (): HTMLInputElement | undefined =>
+        container.querySelectorAll<HTMLInputElement>('input[data-guard]')[idx];
+      const label = at()?.getAttribute('aria-label') ?? '';
+      if (label === '') continue;
+      fields += 1;
+      for (const probe of PROBES) {
+        const input = at();
+        if (!input) continue;
+        const original = input.value;
+        const before = tiles();
+        await act(async () => { setVal(input, probe); });
+        await settle();
+        if (input.getAttribute('data-guard') === 'fatal') {
+          fatalProbes += 1;
+          const after = tiles();
+          const detail: string[] = [];
+          for (const [k, was] of before) {
+            const now = after.get(k);
+            // 消えた (undefined) / `—` になった = 「算定していない」。それ以外の変化は破り。
+            if (now !== undefined && now !== was && !DASHES.has(now)) detail.push(`${k}: ${was} → ${now}`);
+          }
+          if (detail.length > 0) moved.push({ key: `${def.id}/${label}`, field: label, detail });
         }
-        if (detail.length > 0) moved.push({ key: `${def.id}/${label}`, field: label, detail });
+        await act(async () => { setVal(input, original); });
+        await settle();
       }
-      await act(async () => { setVal(input, original); });
-      await settle();
     }
+  } finally {
+    if (root) {
+      const r = root;
+      root = null;
+      await act(async () => { r.unmount(); });
+    }
+    container.remove();
   }
-  return { moved, fatalCount };
+  return { moved, fatalProbes, fields };
 }
 
-describe('⛔ の欄から「別の数」を作らない (パス 210・全画面の走査)', () => {
-  const allMoved: Moved[] = [];
-  let totalFatal = 0;
+/**
+ * **走査は 1 度だけ回し、すべての主張が同じ結果を読む。**
+ *
+ * 最初は画面ごとに `it` を立て、件数を `let` に足していった。その形だと
+ * `-t` で 1 本だけ走らせたとき件数が 0 のまま「空振り検査」が落ち、**対照が
+ * 狙いとは別の理由で鳴る** (実際に D4 がそうだった —— 走査を盲にした変異では
+ * なく、絞り込みそのもので 0 になっていた)。1 つの `beforeAll` に寄せれば
+ * 主張の間に順序の依存が無くなる。
+ */
+const RESULT: { moved: Moved[]; fatalProbes: number; fields: number } = { moved: [], fatalProbes: 0, fields: 0 };
 
+beforeAll(async () => {
   for (const def of SERVICES) {
-    it(`${def.id} (${def.label})`, async () => {
-      const { moved, fatalCount } = await sweepPage(def);
-      totalFatal += fatalCount;
-      allMoved.push(...moved);
-      const unexpected = moved.filter((m) => !(m.key in KNOWN));
-      expect(
-        unexpected.map((m) => `${m.key}\n      ${m.detail.join('\n      ')}`),
-        `${def.id}: ⛔ の欄から別の数が出ている (段ごと断るか、値を「—」にする)`,
-      ).toEqual([]);
-    }, 120000);
+    const r = await sweepPage(def);
+    RESULT.moved.push(...r.moved);
+    RESULT.fatalProbes += r.fatalProbes;
+    RESULT.fields += r.fields;
   }
+}, 600000);
 
+describe('⛔ の欄から「別の数」を作らない (パス 210・全画面の走査)', () => {
   it('★ 走査が実際に欄を踏んでいる (空振りしていない)', () => {
     // **鳴らない走査は「合格」ではない。** ⛔ を 1 つも作れていなければ、
-    // 上の 76 件は何も確かめていない。実測 114 組 (2026-09-13・パス 210)。
-    expect(totalFatal).toBeGreaterThanOrEqual(100);
+    // 下の主張は何も確かめていない。実測 2026-09-13 (パス 211): 欄 **89**・⛔ **110 組**。
+    //
+    // 89 は `guardedDefaults.test.ts` の `GUARDED_FIELD_FLOOR` (パス 206 が別途
+    // 数えた値) と一致する —— **2 つの走査が独立に同じ母集団を数えている**ので、
+    // どちらかが痩せれば差が出る。
+    //
+    // ★ 番号で引く前 (パス 210) はここが 114 と出ていた。ラベルで引き直していたため
+    // 同名の欄 (`毎月の積立額 (円)` ×2・`想定年率 (%)` ×3) で**同じ 1 つ目を
+    // 何度も踏み**、件数だけが増えていた。110 が 89 欄に対する正直な数である。
+    expect(RESULT.fields, '関門つきの欄を踏んでいない').toBeGreaterThanOrEqual(89);
+    expect(RESULT.fatalProbes, '⛔ を 1 つも作れていない').toBeGreaterThanOrEqual(110);
+  });
+
+  it('★ ⛔ の欄から別の数が出ていない (台帳の分を除く)', () => {
+    const unexpected = RESULT.moved.filter((m) => !(m.key in KNOWN));
+    expect(
+      unexpected.map((m) => `${m.key}\n      ${m.detail.join('\n      ')}`),
+      '⛔ の欄から別の数が出ている (段ごと断るか、値を「—」にする)',
+    ).toEqual([]);
   });
 
   it('★ 台帳は双方向 — 直したのに残っている項目があれば落ちる', () => {
-    const stillMoving = new Set(allMoved.map((m) => m.key));
+    const stillMoving = new Set(RESULT.moved.map((m) => m.key));
     const stale = Object.keys(KNOWN).filter((k) => !stillMoving.has(k));
     expect(
       stale,

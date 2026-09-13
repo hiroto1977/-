@@ -267,6 +267,64 @@ describe('投資信託 — ⛔ のマイナスから判定を作らない (パ�
   });
 });
 
+describe('投資信託 — 0 に倒れて「より good な方向」へ動いていた 2 件 (パス 211)', () => {
+  // パス 209 は「`nonNeg` の契約どおりなので defect ではない」と書いた。**甘かった。**
+  // 0 倒しの向きは欄ごとに違い、この 2 件は**利用者を安心させる方向**へ動く。
+  // パス 210 の走査 (`guardedJudgements.test.ts`) が台帳に載せ、ここで閉じた。
+
+  it('★ 達成年数がマイナスなら「実質価値 = 目標額そのまま」と答えない', async () => {
+    await mountPage('mutual-funds');
+    const input = await typeField('達成年数', '-9999');
+    expect(input.getAttribute('data-guard')).toBe('fatal');
+    const t = tiles();
+    // **割引年数が 0 になると、インフレ調整が何もしないのと同じ**になる ——
+    // 「10 年後の 1,000 万円の実質価値は 1,000 万円」という、いちばん都合のよい答え。
+    expect(t.get('目標額のインフレ調整後 実質価値')).toBeUndefined();
+    expect(text()).not.toContain('¥10,000,000');
+    expect(t.get('現行積立での到達見込み')).toBeUndefined();
+    expect(refusals().join(' | ')).toContain('達成年数');
+    // 予備資金は別の欄を読むので残る (段を分けた・パス 211)。
+    expect(t.get('現預金でまかなえる月数')).toBe('約 3 か月');
+  });
+
+  it('★ 為替手数料がマイナスなら「両替無料 (TTS = TTB)」と答えない', async () => {
+    await mountPage('mutual-funds');
+    const before = tiles();
+    expect(before.get('TTS (売・顧客が買う)')).toBe('150.5');
+    expect(before.get('TTB (買・顧客が売る)')).toBe('149.5');
+    expect(before.get('売り戻し後の円')).toBe('¥1,490,033');
+    const input = await typeField('為替手数料 (片道・円)', '-9999');
+    expect(input.getAttribute('data-guard')).toBe('fatal');
+    const t = tiles();
+    // 手数料が 0 に倒れると **TTS と TTB が一致し、往復コストが消える** ——
+    // 「売り戻したら出したお金がそのまま戻る」という、実在しない答え。
+    expect(t.get('TTS (売・顧客が買う)')).toBeUndefined();
+    expect(t.get('TTB (買・顧客が売る)')).toBeUndefined();
+    expect(t.get('売り戻し後の円')).toBeUndefined();
+    expect(t.get('往復両替コスト')).toBeUndefined();
+    expect(t.get('往復コスト率')).toBeUndefined();
+    // **`text()` 全体に `¥1,500,000` が無いことは主張できない** —— 隣の
+    // `現在の円換算額` (外貨額 10,000 × 現在レート 150) が正しく ¥1,500,000 を
+    // 刷っている。危ないのは「往復したのに減らない」= `売り戻し後の円` が
+    // 同じ額になることなので、**タイルの単位で見る**。
+    expect(t.get('現在の円換算額')).toBe('¥1,500,000');
+    expect(refusals().join(' | ')).toContain('為替手数料 (片道・円)');
+    // 損益の段は手数料を読まないので残る。
+    expect(t.get('為替損益')).toBe('¥200,000');
+  });
+
+  it('★ 手元資金がマイナスでも「目標達成に必要な毎月積立額」は出し続ける (段を分けた)', async () => {
+    await mountPage('mutual-funds');
+    await typeField('手元資金 (円)', '-9999');
+    const t = tiles();
+    expect(t.get('予備資金 充足率')).toBeUndefined();
+    expect(t.get('現預金でまかなえる月数')).toBeUndefined();
+    // **⛔ 1 件で節全体を黙らせない** (パス 206 の規準)。
+    expect(t.get('目標達成に必要な毎月積立額')).toBe('¥71,711');
+    expect(refusals().join(' | ')).toContain('手元資金 (円)');
+  });
+});
+
 describe('チーム・ホーム — ⛔ でもタイルが動かないことを確かめる (触っていない根拠)', () => {
   // **触っていないことの根拠を検査で持つ。** 「対象外」と散文で書くだけだと、
   // あとで動くようになっても誰も気づかない (パス 148 の形)。
