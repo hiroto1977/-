@@ -1,3 +1,4 @@
+import { nonNeg, finiteOr0 } from '../../shared/num';
 import { useMemo, useState } from 'react';
 import { parseTimestamp } from '../../shared/isoDate';
 import { SNAPSHOT } from '../data/snapshot';
@@ -113,10 +114,13 @@ function TimeSeriesChart({ unit }: { unit: Unit }) {
   });
   const missingBep = rows.filter((r) => r.bep === null).length;
   // **算定できた BEP だけで縮尺を決める。** 0 を混ぜると軸の最大値まで動く。
+  // **`|| 1` は NaN も吸い込む** (NaN は falsy)。縮尺が黙って 1 に化けると
+  // 棒の高さが全部おかしくなるので、縮尺に入る値を先に落とす (パス 205)。
+  // 売上は非負・営業利益は負を取りうるので消毒の種類が違う。
   const maxV = Math.max(
-    ...rows.flatMap((r) => [r.revenue, ...(r.bep === null ? [] : [r.bep]), Math.max(0, r.op)]),
+    ...rows.flatMap((r) => [nonNeg(r.revenue), ...(r.bep === null ? [] : [nonNeg(r.bep)]), Math.max(0, finiteOr0(r.op))]),
   );
-  const minOp = Math.min(0, ...rows.map((r) => r.op));
+  const minOp = Math.min(0, ...rows.map((r) => finiteOr0(r.op)));
   const range = maxV - minOp || 1;
   const x = (i: number) => P + (i * (W - P * 2)) / Math.max(1, rows.length - 1);
   const y = (v: number) => H - P - ((v - minOp) / range) * (H - P * 2);

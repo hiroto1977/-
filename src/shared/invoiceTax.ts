@@ -142,9 +142,35 @@ export interface GroupOptions {
   readonly rounding?: RoundingMode;
 }
 
-/** 区分に適用する税率を決める。範囲外は 0〜50% に丸める。 */
+/**
+ * 区分に適用する税率を決める。**範囲外と読めない値はすべて 0〜50% に丸める。**
+ *
+ * `Math.max(0, n)` だけでは NaN が落ちない (`Math.max(0, NaN)` は `NaN`) ので、
+ * 散文の「範囲外は 0〜50% に丸める」という主張は**NaN についてだけ偽**だった
+ * (実測・パス 205): `resolveRate('customA', {customRateA: NaN})` は `NaN` を返し、
+ * `Infinity` は正しく 0.5 に、`0.9` も 0.5 に丸まっていた。その税率は
+ * `groupByTaxKind` で `subtotal * rate` になるので、**適格請求書の税額・合計が
+ * NaN** になる (行の金額側はパス 94 で既に 0 に倒れている —— 率の側だけが開いていた)。
+ *
+ * **今日この NaN に届く道は無い** (画面の `pct` は `readNumber` が非有限を `null` に
+ * 倒し、標準・軽減は `parameters.ts` の台帳が `Number.isFinite` を見る)。
+ * それでもここを閉じるのは、**書いてある約束を本当にする**ためと、
+ * この関数が export されていて新しい呼び出しが増えうるため。
+ *
+ * ★ **ここで `nonNeg` を使うのは誤り。** 最初そう書いて実測で捕まえた ——
+ * `nonNeg(Infinity)` は 0 なので、**`Infinity` が上限 50% ではなく 0% に化けた**。
+ * `Infinity` は「範囲外の上」なので `0.9 → 0.5` と同じく**天井へ丸めるのが
+ * 書いてある約束**であり、`NaN` だけが「数でない」= 0 に倒す対象である。
+ * `Math.max(0, -Infinity)` は 0・`Math.min(0.5, Infinity)` は 0.5 なので、
+ * **`NaN` だけを先に落とせば残りは既存の 2 段が正しく扱う。**
+ *
+ * これはパス 204 で作った消毒の選び方の表に足る 4 行目である ——
+ * 「負が無意味なら `nonNeg` / 負が答えなら `finiteOr0` / 算定不能の道が在れば
+ * `finiteOrNull` / **天井へ丸める約束が在るなら NaN だけを落とす**」。
+ */
 export function resolveRate(kind: TaxKind, opts: GroupOptions = {}): number | null {
-  const clamp = (n: number) => Math.min(MAX_ITEM_RATE, Math.max(0, n));
+  // Stryker disable next-line EqualityOperator: Number.isNaN は等価比較を持たない (置換対象外)
+  const clamp = (n: number) => (Number.isNaN(n) ? 0 : Math.min(MAX_ITEM_RATE, Math.max(0, n)));
   if (kind === 'customA') return clamp(opts.customRateA ?? 0);
   if (kind === 'customB') return clamp(opts.customRateB ?? 0);
   // 標準・軽減は台帳の上書きを受ける (省略時は法定値)。

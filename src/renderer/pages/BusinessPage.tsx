@@ -1,3 +1,4 @@
+import { nonNeg } from '../../shared/num';
 import { useMemo, useState, type CSSProperties } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -1221,7 +1222,9 @@ function CrossServiceKpis() {
   const stocksCash = st?.portfolio?.cash ?? 0;
   const investmentValuation = Math.max(0, stocksCash + mf.portfolio.totalValuation);
   // 不動産取得価格合計 = 取得原価ベースの資産 (非負)。
-  const realEstateAssets = re.properties.reduce((sum, p) => sum + Math.max(0, p.purchasePrice), 0);
+  // `Math.max(0, NaN)` は NaN なので、1 件でも読めない取得価格が在ると
+  // 総資産のタイルが NaN になる。取得価格は負を取らない量 (パス 205)。
+  const realEstateAssets = re.properties.reduce((sum, p) => sum + nonNeg(p.purchasePrice), 0);
   const totalAssets = investmentValuation + realEstateAssets;
 
   return (

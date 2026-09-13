@@ -8,6 +8,8 @@
  * （テストで固定）。村シーンはこの静的データをアニメーションで見せるだけ。
  */
 
+import { nonNeg } from '../../shared/num';
+
 // registry.json の必要スライスだけを型付きで取り込む（純データ）。
 interface RawCeo {
   readonly id: string;
@@ -193,7 +195,7 @@ export function buildVillagers(reg: VillageRegistry): Villager[] {
   // 秘書室: 各室 members 名を個別キャラに展開（1:1 で役員の街区に配置）。
   for (const s of secretaries) {
     const execId = s.supports;
-    const n = Math.max(0, s.members);
+    const n = nonNeg(s.members);
     for (let i = 1; i <= n; i++) {
       villagers.push({
         id: `${s.id}-${i}`,
@@ -310,7 +312,10 @@ export function buildDispatchPlan(reg: VillageRegistry): DispatchStep[] {
 
 /** 組織サマリー（1 行）。 */
 export function villageSummary(reg: VillageRegistry): string {
-  const secBodies = reg.org.secretaries.reduce((n, s) => n + Math.max(0, s.members), 0);
+  // `Math.max(0, NaN)` は NaN なので、1 室でも読めない人数が在ると
+  // **「秘書室 1室(NaN体) … 合計 NaN 体」という文**になる (実測・パス 205)。
+  // 人数は負を取らない量なので `nonNeg` で落とす。
+  const secBodies = reg.org.secretaries.reduce((n, s) => n + nonNeg(s.members), 0);
   const activeTeams = reg.teams.filter((t) => t.active).length;
   const total = 1 + 1 + reg.org.executives.length + secBodies + reg.org.managers.length + activeTeams;
   return (

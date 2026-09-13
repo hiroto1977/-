@@ -7,6 +7,7 @@
  *
  * **概算であり財務助言ではありません。**
  */
+import { nonNeg } from '../../shared/num';
 import { useMemo, useState, type CSSProperties } from 'react';
 import { calcCorporateTax, type CorporateTaxRates } from '../../shared/taxCorporate';
 import type { BusinessConsumptionParams } from '../../shared/taxConsumptionBusiness';
@@ -144,13 +145,17 @@ function LineChart({ values }: { values: number[] }) {
 // --- 円 (売上構成) ------------------------------------------------------
 function PieChart({ slices }: { slices: { label: string; value: number; color: string }[] }) {
   const size = 150, cx = size / 2, cy = size / 2, r = size * 0.42;
-  const total = slices.reduce((s, x) => s + Math.max(0, x.value), 0) || 1;
+  // **`|| 1` は 0 除算の守りに見えて、NaN も吸い込む** —— `NaN` は falsy なので
+  // 合計が NaN のとき縮尺が黙って 1 に化け、凡例は `(NaN/1*100).toFixed(1)` =
+  // **「NaN%」**を刷っていた (実測・パス 205)。金額は負を取らない量なので
+  // `nonNeg` で落としてから合計する (こうすると `|| 1` は本来の 0 除算の守りだけになる)。
+  const total = slices.reduce((s, x) => s + nonNeg(x.value), 0) || 1;
   let angle = -Math.PI / 2;
   return (
     <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
       <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size} role="img" aria-label="売上構成">
         {slices.map((s) => {
-          const frac = Math.max(0, s.value) / total;
+          const frac = nonNeg(s.value) / total;
           const a0 = angle;
           const a1 = angle + frac * 2 * Math.PI;
           angle = a1;
@@ -165,7 +170,7 @@ function PieChart({ slices }: { slices: { label: string; value: number; color: s
         {slices.map((s) => (
           <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11 }}>
             <span style={{ width: 10, height: 10, background: s.color, borderRadius: 2, display: 'inline-block' }} />
-            {s.label} {((Math.max(0, s.value) / total) * 100).toFixed(1)}%
+            {s.label} {((nonNeg(s.value) / total) * 100).toFixed(1)}%
           </div>
         ))}
       </div>

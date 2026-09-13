@@ -128,6 +128,7 @@ import { restoreResultMessage, type RestorePlan } from '../../renderer/data/back
 import { computeBudgetVarianceFromFundamentals } from '../../renderer/data/budgetVariance';
 import { noBreakEvenNote } from '../../renderer/data/kpiActuals';
 import { shigyoDemoMixNote } from '../../renderer/data/shigyoDirectory';
+import { villageSummary } from '../../renderer/data/villageData';
 import { acceptRateOf } from '../api/cursor';
 import {
   straightLineAnnual,
@@ -140,6 +141,7 @@ import { clampToCeiling } from '../inputCeiling';
 import { calcSharpeRatio } from '../mutualFundsMetrics';
 import { calcMonthlySocialInsurance } from '../payroll';
 import { estimateCrackSeconds, humanizeCrackTime, CRACK_TIME_UNMEASURABLE } from '../passwordStrength';
+import { groupByTaxKind, resolveRate } from '../invoiceTax';
 import { calcDscr } from '../realEstateMetrics';
 import { requiredMonthlyContribution, yearsToDouble } from '../savingsPlanning';
 import { unrunnableSkillsNote } from '../skillIdentity';
@@ -268,6 +270,23 @@ const ENTRY_POINTS: readonly EntryPoint[] = [
       { revenue: c!, cogs: d!, advertising: 0, sga: 0, depreciation: 0 },
     ),
   },
+  // ── パス 205 で足した入口 (`Math.max(0, <アローの仮引数の欄>)` の側) ──
+  { label: 'resolveRate', args: [0.1], call: (a) => resolveRate('customA', { customRateA: a! }) },
+  // **税率の位置だけを振る。** `groups[].lines` は**呼び側が渡した行をそのまま
+  // 返す**設計 (画面が明細を並べるため) なので、非有限の単価・数量はそこに
+  // 「渡されたまま」現れる —— それは計算結果ではなく入力の写しである。
+  // 導出される `subtotal` / `tax` / `total` は `lineAmount` が 0 に倒す
+  // (パス 94)。下の `it` でその 2 つを別々に留める。
+  {
+    label: 'groupByTaxKind',
+    args: [0.1],
+    call: (a) => groupByTaxKind([{ name: 'A', qty: 2, unitPrice: 1000, kind: 'standard' }], { standardRate: a! }),
+  },
+  { label: 'villageSummary', args: [4], call: (a) => villageSummary({
+    org: { ceo: { id: 'c', title: 'CEO', name: 'c' }, coo: { id: 'o', title: 'COO', name: 'o' },
+      executives: [], secretaries: [{ id: 's', title: '秘書室', members: a! }], managers: [] },
+    teams: [], rounds: [], backlog: [],
+  } as never) },
   // **宣言された断り**: `@throws taxableShare が負値・非有限のとき` (`assertNonNegativeFinite`)。
   // 7 モジュール・24 か所で使われているリポジトリの方針で、0 や null を推測せず断る。
   { label: 'inheritanceTaxOnShare', args: [50_000_000], call: (a) => inheritanceTaxOnShare(a!), refusesByThrow: true },
@@ -391,7 +410,7 @@ describe('非有限な入力を入口に当てる (出てくる物は有限か�
   });
 
   it('台帳は空でない (入口を 1 つも測っていない検査は合格ではない)', () => {
-    expect(ENTRY_POINTS.length).toBeGreaterThanOrEqual(43);
+    expect(ENTRY_POINTS.length).toBeGreaterThanOrEqual(46);
     // 各入口が少なくとも 1 つの数値の位置を持つ (置き換える先が無ければ何も測らない)
     for (const ep of ENTRY_POINTS) expect(ep.args.length).toBeGreaterThan(0);
   });
@@ -420,6 +439,34 @@ describe('非有限な入力を入口に当てる (出てくる物は有限か�
       0,
     )).not.toContain('NaN');
     expect(shigyoDemoMixNote(Number.NaN, 2, '¥1')).toBeNull();
+  });
+
+  it('パス 205: `Math.max(0, …)` の天井は NaN だけを落とす (±Infinity は天井へ丸める約束)', () => {
+    // ★ **ここで `nonNeg` を使うのは誤りだった。** 最初そう直して実測で捕まえた ——
+    // `nonNeg(Infinity)` は 0 なので、`Infinity` が**上限 50% ではなく 0% に化けた**。
+    // `Infinity` は「範囲外の上」なので `0.9 → 0.5` と同じく天井へ丸めるのが
+    // 書いてある約束で、`NaN` だけが「数でない」= 0 に倒す対象である。
+    expect(resolveRate('customA', { customRateA: Number.NaN })).toBe(0);
+    expect(resolveRate('reduced', { reducedRate: Number.POSITIVE_INFINITY })).toBe(0.5);
+    expect(resolveRate('customA', { customRateA: 0.9 })).toBe(0.5); // 範囲外 (上) は天井へ
+    expect(resolveRate('customA', { customRateA: -1 })).toBe(0); // 範囲外 (下) は床へ
+    // 導出される金額は 0 に倒れる。**返ってくる明細は入力の写しなので非有限が残る** ——
+    // そこは `lineAmount` の守りが効く場所ではない (画面が刷るのは導出値)。
+    const bad = groupByTaxKind(
+      [{ name: 'A', qty: Number.NaN, unitPrice: Number.NaN, kind: 'standard' }],
+      { standardRate: Number.NaN },
+    );
+    expect(bad.totalTax).toBe(0);
+    expect(bad.grandTotal).toBe(0);
+    expect(bad.groups[0]?.subtotal).toBe(0);
+    expect(bad.groups[0]?.rate).toBe(0);
+    expect(Number.isNaN(bad.groups[0]?.lines[0]?.unitPrice)).toBe(true); // 入力の写し
+    // 文に NaN を埋めない (秘書室の人数)
+    expect(villageSummary({
+      org: { ceo: { id: 'c', title: 'CEO', name: 'c' }, coo: { id: 'o', title: 'COO', name: 'o' },
+        executives: [], secretaries: [{ id: 's', title: '秘書室', members: Number.NaN }], managers: [] },
+      teams: [], rounds: [], backlog: [],
+    } as never)).not.toContain('NaN');
   });
 
   it('★ 否定形の関門 `!(x > 0)` は NaN を落とす / 比較 `x <= 0` は落とさない (この家系の中心)', () => {
