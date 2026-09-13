@@ -105,7 +105,7 @@ import {
   calcStandardTaxDetailed,
   compareInputCreditMethods,
 } from '../../shared/taxConsumptionBusiness';
-import { calcSocialInsurance, calcSocialInsuranceWithBonus } from '../../shared/taxSocialInsurance';
+import { calcSocialInsurance, calcSocialInsuranceWithBonus, maxEmployeeSocialInsurance } from '../../shared/taxSocialInsurance';
 import { calcFurusatoBreakdown, furusatoOneStopEligibility } from '../../shared/taxFurusato';
 import { compareDividendMethods, withholdingTotalRate, type DividendMethod } from '../../shared/taxDividend';
 import {
@@ -807,7 +807,20 @@ export function TaxPage() {
       [bonusPerStr, { label: '賞与1回あたり (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [bonusCountStr, { label: '賞与の回数', kind: 'count', allowEmpty: true, allowZero: true, max: 12 }],
       [dGrossStr, { label: '給与収入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
-      [dSocialStr, { label: '社会保険料 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      // **社会保険料控除には法定上限が無い** (実際に支払った額をそのまま引く)。
+      // 実測: `支払社会保険料 = 9,999,999,999` で控除合計が `¥10,000,669,999` になり、
+      // 画面は何も言わなかった —— `money` の既定の `sane` は 10 兆円で、
+      // 個人の家計の欄には緩すぎた (パス 218)。
+      //
+      // 法定の天井が無いので ⛔ (`max`) は作れない。使えるのは⚠️ (`sane`) で、
+      // **2 つの本物の上界のうち緩い方**を採る (どちらの読み方でも説明が付かない
+      // ときだけ警告する): 申告した給与収入と、被用者としての法定最大額。
+      // 給与を超える支払いは、事業所得から国民年金を払う人には起こりうるので
+      // 断らない —— 「桁を間違えていないか」と訊くだけ。
+      [dSocialStr, {
+        label: '社会保険料 (円)', kind: 'money', allowEmpty: true, allowZero: true,
+        sane: Math.max(num(dGrossStr), maxEmployeeSocialInsurance(siRates)),
+      }],
       // **法定の拠出上限を関門にする** (パス 217)。それまで天井が無く、巨大な拠出が
       // そのまま控除になって `所得税 ¥147,535 → ¥0` が出ていた。区分を選べば
       // その区分の上限、未選択なら**どの区分でも超えられない最大値**で見る。
@@ -909,8 +922,9 @@ export function TaxPage() {
     costAssessedStr,
     costContractStr,
     // 小規模企業共済の上限は台帳 (`parameters.ts`) から来るので、上書きされたら
-    // 関門も動く必要がある。
+    // 関門も動く必要がある。社会保険料の⚠️の基準 (料率と標準賞与額の上限) も同じ。
     dedParams,
+    siRates,
   ]);
   return (
     <div>

@@ -1,5 +1,33 @@
 /** @vitest-environment jsdom */
 /**
+ * **③ 全控除込みの精密試算 の控除欄の天井** (パス 217 / 218)。
+ *
+ * 名前はパス 218 で `taxIdecoCeiling` から変えた —— 同じ節の別の欄を足したので、
+ * iDeCo だけの名前は狭い (**古い名前は仕様ではなく、その時点の記録である**)。
+ *
+ * ## パス 218 の実測 —— 残りの欄は既に法定上限で倒れていた
+ *
+ * `calcAllDeductions` に 9,999,999,999 を入れて控除合計の増分を測った
+ * (総所得 500 万・令和8年分):
+ *
+ * | 欄 | 増分 | 判定 |
+ * | --- | ---: | --- |
+ * | 生命保険料 (新・一般) | +40,000 | 法定上限で倒れる |
+ * | 生命保険料 (新・3区分) | +120,000 | 〃 |
+ * | 生命保険料 (旧・一般) | +50,000 | 〃 |
+ * | 地震保険料 | +50,000 | 〃 |
+ * | 医療費 | +2,000,000 | 〃 (200 万) |
+ * | セルフメディケーション | +88,000 | 〃 |
+ * | 寄附金 | +2,000,000 | 〃 (総所得 40%) |
+ * | **社会保険料** | **+9,999,999,999** | **天井が無い** |
+ *
+ * **予定していた「保険料の欄に `sane` を足す」は不要だった** —— 測ると全部
+ * 倒れていた。残ったのは社会保険料 1 欄で、こちらは**法定上限が本当に無い**
+ * (控除額 = 実際に支払った額)。だから ⛔ (`max`) は作れず、⚠️ (`sane`) を使う。
+ * `money` の既定の `sane` は 10 兆円なので、100 億円は何も言わずに通っていた。
+ *
+ * ---
+ *
  * **iDeCo 拠出に法定の天井が無く、所得税が ¥0 になっていた** (パス 217)。
  *
  * `TaxPage` の ③ 全控除込みの精密試算 は `iDeCo 職業区分 (拠出上限)` の選択肢に
@@ -33,6 +61,7 @@ import { SERVICES } from '../../services';
 import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { IDECO_ANNUAL_CAPS, IDECO_ANNUAL_CAP_MAX } from '../../../shared/taxDeductions';
+import { maxEmployeeSocialInsurance } from '../../../shared/taxSocialInsurance';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -216,5 +245,50 @@ describe('iDeCo 拠出の法定上限 (パス 217)', () => {
     await typeLabelled('小規模企業共済 (年・上限', '9999999999');
     expect(says('「小規模企業共済 (円)」840000 円 以下で入力してください')).toBe(true);
     expect(says('9,999,999,999')).toBe(false);
+  });
+});
+
+describe('社会保険料の桁の目安 (パス 218)', () => {
+  it('★ 対照: 既定の ¥900,000 では ⚠️ も ⛔ も出ない', async () => {
+    await mountPage();
+    // 既定の 額面年収 は 6,000,000 円・支払社会保険料 は 900,000 円。
+    expect(container.querySelector('[data-guard-summary]')).toBeNull();
+  });
+
+  it('★ 100 億円は ⚠️ で名指しされ、控除合計にも入らない…わけではないので警告で伝える', async () => {
+    await mountPage();
+    await typeLabelled('支払社会保険料 (実額/年)', '9999999999');
+    const summary = container.querySelector('[data-guard-summary]');
+    expect(summary).not.toBeNull();
+    // **法定上限が無いので ⛔ ではなく ⚠️。** fatal は 0 件・warn が 1 件。
+    expect(summary?.getAttribute('data-fatal')).toBe('0');
+    expect(summary?.getAttribute('data-warn')).toBe('1');
+    expect(says('「社会保険料 (円)」9,999,999,999 円 は想定の範囲を超えています')).toBe(true);
+    // 計算は法定どおり実額を引くので、控除合計はその額になる。**画面はそれを隠さず、
+    // 桁を確かめるよう促す** (断ると「払った額を引けない」という別の嘘になる)。
+    expect(says('所得控除合計')).toBe(true);
+  });
+
+  it('★ 目安は「申告した給与収入」と「被用者としての法定最大額」の緩い方', async () => {
+    await mountPage();
+    const max = maxEmployeeSocialInsurance();
+    // 給与収入 6,000,000 > 法定最大額 (約 366 万) なので、境界は給与収入の側。
+    expect(max).toBeLessThan(6_000_000);
+    await typeLabelled('支払社会保険料 (実額/年)', '6000000');
+    expect(container.querySelector('[data-guard-summary]')).toBeNull(); // 境界そのものは通す
+    await typeLabelled('支払社会保険料 (実額/年)', '6000001');
+    expect(says('「社会保険料 (円)」')).toBe(true);
+  });
+
+  it('★ 給与収入を下げると、境界は法定最大額の側に切り替わる', async () => {
+    await mountPage();
+    const max = maxEmployeeSocialInsurance();
+    await typeLabelled('額面年収 (円)', '1000000');
+    // 給与収入 100 万 < 法定最大額 なので、100 万を超えても警告しない
+    // (事業所得から国民年金を払う人が居るため断らない)。
+    await typeLabelled('支払社会保険料 (実額/年)', String(max));
+    expect(says('「社会保険料 (円)」')).toBe(false);
+    await typeLabelled('支払社会保険料 (実額/年)', String(max + 1));
+    expect(says('「社会保険料 (円)」')).toBe(true);
   });
 });
