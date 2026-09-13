@@ -8,8 +8,18 @@
  * neutral display.
  */
 
-/** 算定不能を表す印。画面はこの 1 文字で「値が無い」ことを言う。 */
-export const UNDETERMINED = '—';
+import { DASH } from '../../shared/formatters';
+
+/**
+ * 算定不能を表す印。画面はこの 1 文字で「値が無い」ことを言う。
+ *
+ * **綴りは `shared/formatters.ts` の `DASH` が唯一の出所。** 2026-09-13
+ * (パス 198) まで同じ「—」が独立に 2 か所で宣言されていた —— 片方だけ
+ * 別の字 (ハイフン・全角ダッシュ) に変えると、`Stat` の
+ * 「算定不能なら色を付けない」判定 (下の `value === UNDETERMINED`) が
+ * **静かに効かなくなる**。
+ */
+export const UNDETERMINED = DASH;
 
 /**
  * `number | null` から `positive` を作る。**算定不能 (null / undefined) は色を付けない。**

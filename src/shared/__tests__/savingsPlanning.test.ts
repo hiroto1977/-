@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { measured } from './measured';
 import {
   requiredMonthlyContribution,
   yearsToDouble,
@@ -26,15 +27,15 @@ describe('requiredMonthlyContribution', () => {
 
   it('is the inverse of the compounding future-value calc', () => {
     // Find PMT to reach 10,000,000 in 10y at 3%, then feed it back in.
-    const pmt = requiredMonthlyContribution(10_000_000, 3, 10);
-    const fv = calcCompoundingFutureValue(pmt, 3, 10).futureValue;
+    const pmt = measured(requiredMonthlyContribution(10_000_000, 3, 10));
+    const fv = measured(calcCompoundingFutureValue(pmt, 3, 10).futureValue);
     // Round-trip should land within a small rounding tolerance of the target.
     expect(Math.abs(fv - 10_000_000)).toBeLessThan(1000);
   });
 
   it('requires a smaller monthly amount at a higher return', () => {
-    const low = requiredMonthlyContribution(10_000_000, 1, 10);
-    const high = requiredMonthlyContribution(10_000_000, 8, 10);
+    const low = measured(requiredMonthlyContribution(10_000_000, 1, 10));
+    const high = measured(requiredMonthlyContribution(10_000_000, 8, 10));
     expect(high).toBeLessThan(low);
   });
 });
@@ -76,8 +77,8 @@ describe('futureValueWithFrequency', () => {
   });
 
   it('monthly compounding beats annual for the same nominal rate', () => {
-    const monthly = futureValueWithFrequency(30_000, 5, 20, 'monthly');
-    const annual = futureValueWithFrequency(30_000, 5, 20, 'annual');
+    const monthly = measured(futureValueWithFrequency(30_000, 5, 20, 'monthly'));
+    const annual = measured(futureValueWithFrequency(30_000, 5, 20, 'annual'));
     expect(monthly).toBeGreaterThan(annual);
   });
 
@@ -139,10 +140,22 @@ describe('inflationAdjustedValue', () => {
     expect(inflationAdjustedValue(1_000_000, -150, 5)).toBe(0);
   });
 
-  it('returns 0 for non-finite inputs', () => {
+  /**
+   * 2026-09-13 (パス 198) に**この検査の期待値を 1 行だけ変えた**。
+   *
+   * 守っていた物は「非有限な入力から非有限な出力を作らない」で、それは今も守る。
+   * 変えたのは**年数が非有限のときの答え**で、`0` (= 実質価値はゼロ) から
+   * `null` (= 算定していない) にした —— `0` は「測った結果」として読める値で、
+   * このリポジトリが 3 度直してきた 0 倒し (パス 52 / 85 / 91) と同じ形だった。
+   * 金額・率が非有限のときの `0` はそのまま (年数だけが天井を持つ量である)。
+   */
+  it('金額・率が非有限なら 0、年数が非有限なら null (算定不能)', () => {
     expect(inflationAdjustedValue(Number.NaN, 2, 10)).toBe(0);
     expect(inflationAdjustedValue(1_000_000, Number.NaN, 10)).toBe(0);
-    expect(inflationAdjustedValue(1_000_000, 2, Number.POSITIVE_INFINITY)).toBe(0);
+    expect(inflationAdjustedValue(1_000_000, 2, Number.POSITIVE_INFINITY)).toBeNull();
+    expect(inflationAdjustedValue(1_000_000, 2, Number.NaN)).toBeNull();
+    // 対照: 範囲内の年数なら値が出る (この検査が何でも通る形でないこと)
+    expect(inflationAdjustedValue(1_000_000, 2, 10)).toBe(820_348);
   });
 });
 
@@ -242,7 +255,7 @@ describe('emergencyFundCoverage', () => {
 describe('goalProjection', () => {
   it('flags an on-track plan with no shortfall or extra contribution', () => {
     // 必要積立額は切り捨て丸めのため、+1 円だけ上乗せすれば確実に届く。
-    const required = requiredMonthlyContribution(10_000_000, 3, 10);
+    const required = measured(requiredMonthlyContribution(10_000_000, 3, 10));
     const p = goalProjection(required + 1, 10_000_000, 3, 10);
     expect(p.onTrack).toBe(true);
     expect(p.shortfall).toBe(0);

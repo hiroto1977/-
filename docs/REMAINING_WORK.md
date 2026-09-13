@@ -26098,6 +26098,128 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 この 5 つは**欠陥ではなく範囲**だが、画面と仕様書の両方が明示する
 (黙っていると「自動管理」という名前が実態より広く読まれる)。
 
+## パス 198 (2026-09-13) — **宣言した数の天井は、計算側が強制しなければ天井ではない**
+
+`GuardedNumber` は `spec.max` を宣言し、`guardNumber` は超過に ⛔ (fatal) を出す。だが
+**`GuardedNumber` は入力を書き換えない** —— 黙って丸めないための意図的な設計で、
+`components/GuardedNumber.tsx` と `RealEstatePage.tsx:441` が自分でそう書いている。
+つまり**上限の強制は計算側の責任**で、それを最初に文章にしたのは `depreciation.ts` の
+`MAX_SCHEDULE_YEARS` / `isSchedulableLife` (2026-08 監査・耐用年数 99999999 が
+`useMemo` の中で 1 億行の配列を組んでいた。実測 1,000 万行で 2.4 秒 / ヒープ 777 MB)。
+
+**その責任を果たしていない宣言が 3 つ在った。** 実測 (直す前):
+
+| 欄 (画面の宣言) | 入力 | 画面が刷っていた物 |
+| --- | --- | --- |
+| 積立年数 (`max: 80`) | 100,000 | 将来評価額 **`¥∞`** · 累計拠出額 `¥∞` · 運用益 `¥∞` · 運用益率 `Infinity%` |
+| 達成年数 (`max: 80`) | 100,000 | 到達見込み **`¥∞` (達成)** |
+| 達成年数 (`max: 80`) | 99,999,999 | 必要な毎月積立額 **`¥0`** · インフレ調整後 実質価値 **`¥0`** |
+| 保有年数 (`max: 100`) | 100,000 | `100000年累計の蝕み効果` **`¥NaN`** |
+
+`¥∞` は `¥NaN` より危ない —— **∞ は「無限に豊か」「無限に安全」と読める**のに、
+実際の意味は「入力が範囲外で計算が成り立たない」である。同じ読み違えを
+`OverviewPage` の損益分岐点で 2026-09-08 (パス 84) に直している。とくに達成年数は
+`projected: Infinity` から `onTrack: true` / `shortfall: 0` を作っていたので、画面は
+**利用者に「目標は達成済み」と告げていた**。`¥0` の 2 件は 0 倒し
+(パス 52 / 85 / 91 で 3 度直した形) で、「積み立てなくてよい」「実質価値はゼロ」
+という**別の断定**になっていた。
+
+**資源の側も測った。** `futureValueWithFrequency` の `annual` 複利の枝は
+`for (i < Math.round(years))` を回すので、年数がそのまま反復回数になる:
+
+| 年数 | 結果 | 所要 (直す前) | 所要 (直した後) |
+| ---: | --- | ---: | ---: |
+| 80 | 349,642,376 | 0.16 ms | 0.16 ms |
+| 1,000,000 | `Infinity` | 7.97 ms | — (断る) |
+| 100,000,000 | `Infinity` | **243.71 ms** | **0.003 ms** |
+
+`useMemo` の中なので**1 文字打つたびに**走り、その間 描画スレッドが止まる。
+答えは `Infinity` なので、止まって得る物は何も無い。今日この枝は UI から
+`'monthly'` しか呼ばれていないが、天井が無いことは経路が 1 本増えた瞬間に効く。
+
+### 直した物
+
+| 層 | 何を置いたか |
+| --- | --- |
+| 金額の funnel | `jpy` が非有限を `DASH` (`—`) にする。**227 か所 / 14 ファイルを 1 か所で覆う床** |
+| 算定不能の綴り | `shared/num.ts` の `finiteOrNull` (`nonNeg` は非有限を **0 に倒す**ので別物) |
+| 年数の天井 | `MAX_PLAN_YEARS = 80` / `isPlannableYears`、`MAX_HOLDING_YEARS = 100` / `isMeasurableHoldingYears` —— **画面の `spec.max` がこの定数を読む** (literal の写しを消した) |
+| 計算 | `calcCompoundingFutureValue` / `futureValueWithFrequency` / `requiredMonthlyContribution` / `inflationAdjustedValue` / `goalProjection` / `calcRealCost` が範囲外で `null` |
+| 画面 | タイルは `jpyOrDash` で「—」、節の脚注が**なぜ算定していないか**を述べる |
+| 「—」の綴り | `Stat.UNDETERMINED = DASH` (同じ字が独立に 2 か所で宣言されていた) |
+| パス 84 の残り | `OverviewPage` の `safeYen` が `'∞'` を返していた (呼び先は水耕栽培の「出荷 1 株あたり原価」1 か所) → `UNDETERMINED` |
+
+**下限の契約は触っていない。** 0 年・負の年数・非有限な金額/率に対する既存の
+「0 を返す」はそのまま —— **「0 年積み立てたら 0 円」は正しい答え**で、算定不能ではない。
+`isPlannableYears` が見るのは**上限だけ**である。
+
+**範囲外でも隣は測り続ける。** `calcRealCost` は保有年数が範囲外でも
+`annualCostPct` / `annualCostYen` を返す (年率のコストは年数に依らない)。
+1 つの範囲外の欄で、測れている数字まで隠さない。
+
+### 走査の 2 つの盲点 (どちらも実測した)
+
+母集団を探すのに `src/shared/*.ts` の輸出関数を極端な数値で総当たりした
+(189 本が「数値を受ける」と判定され、28 本が非有限を返した)。**その走査は使えなかった**:
+
+| 盲点 | 何が起きたか |
+| --- | --- |
+| **偽陽性** | 引数が object の関数を数値で呼ぶと `NaN` が出る。28 件のうち **24 件**がこれ (`fxGainLoss` / `calcDividendCredit` / `bonusWithholdingTax` …) |
+| **偽陰性** | **既定値つき引数は `fn.length` に数えられない**ので、走査はその引数を 1 度も動かさない。`calcRealCost(…, years = 1)` の `years` がまさにそれで、**手で見つけた本物の欠陥を走査は見落とした** |
+
+最初に書いた版は `arity <= 4` で切っていたので `calcRealCost` (arity 5) も外れており、
+**上限を 6 に広げても既定値のせいで拾えなかった** —— 2 段構えで見落としていた。
+だからゲートは走査ではなく**呼び経路ごとの総当たり**にしてある
+(`numericCeilingEnforced.test.ts` の `CEILINGS` = 7 経路 × 境界 `max` / `max+1` +
+1,000 / 100,000 / 99,999,999 / 1e21)。
+
+なお `passwordStrength.estimateCrackSeconds` は 10,000 bit で `Infinity` を返すが、
+**これは欠陥ではない** —— 消費側の `humanizeCrackTime` が最後の枝で
+「事実上解読不能」と答えている。走査の 28 件を 1 件ずつ当たって分けた結果である。
+
+### 対照 (7 件すべて鳴った)
+
+| # | 壊した物 | 落ちた検査 |
+| --- | --- | --- |
+| C1 | `jpy` の床を外す | 金額の funnel が非有限を刷らない |
+| C2 | `calcCompoundingFutureValue` の天井を外す | 天井を超えた入力から非有限を作らない |
+| C3 | `calcRealCost` の天井を外す | 同上 + 「隣は測り続ける」(2 件) |
+| C4 | 算定不能でも `onTrack: true` を返す | 「達成」という判定を作らない |
+| C5 | 画面の `spec.max` を literal `80` に戻す | `spec.max` は共有定数を読む |
+| C6 | `safeYen` の `'∞'` を戻す | 「—」の綴りは 1 つ |
+| C7 | `isPlannableYears` を常に `true` に | 非有限を作らない + 「達成」+ 述語の死活 (3 件) |
+
+### 既存の検査 2 本が 0 倒しを正しい振る舞いとして留めていた
+
+パス 196 の `preview.test.ts`・パス 197 の 4 本と同じ形で、今度は 2 本:
+
+- `savingsPlanning.test.ts` の「returns 0 for non-finite inputs」が
+  `inflationAdjustedValue(1_000_000, 2, Infinity) === 0` を固定していた。
+- `mutualFundsMetrics.test.ts` の「treats non-finite inputs defensively」が
+  `calcRealCost(NaN…).cumulativeCostYen === 0` を固定していた。
+
+どちらも守っていた物 (「非有限を持ち出さない」) は保ち、**年数の欄の期待値だけ**を
+`null` にして、なぜ `0` が誤りだったかを検査の中に書いた。金額・率の `0` は残した。
+
+### 残り
+
+- **実機 3 種 (`e2e` / `e2e:lite` / `perf`) は回していない。** パス 196・197・198 で
+  renderer を広く触っている (SettingsPage / TemplatesPage / TeamRadarPage / StocksPage /
+  HydroponicsPage / PageErrorBoundary / preview / MutualFundsPage / OverviewPage / Stat)
+  ので、**次に必ず回す。**
+- **`GuardedNumber` の `max` 宣言 25 件のうち、計算側の関門を確かめたのは年数の 3 件だけ。**
+  残り 22 件は率 (`percent`・既定上限 1000)・長さ (`length`)・件数 (`count`) で、
+  `Math.pow` を通らないので非有限にはなりにくい —— だが「なりにくい」は
+  「ならない」ではない。次は不動産の寸法 (`max: 2000` ×2 / `max: 300` ×2) と
+  貿易の税率 (`max: 100` ×4) を同じ形で当たる。
+- **`type="number"` の生の欄 5 件**は `GuardedNumber` を通らない
+  (`TalentPage` の 達成確率 `min 0 max 100` / 滞留年数 `min 0 max 60`、
+  `FinancialAnalysis` の 5 欄 `min 0`、`CloudSyncPanel` の 同期間隔 `min 1`、
+  `WelfareSchemeCard` の 配偶者の合計所得 = **上下限なし**)。
+  `min` / `max` 属性も `maxLength` と同じく**関門ではない** (`type="number"` は
+  範囲外の値を打てるし、`el.value` への代入も素通りする)。滞留年数はパス 89 が
+  保存側で断るようにしてあるが、**達成確率は 500% を打てる**。次のパスの対象。
+
 ## パス 197 (2026-09-13) — **`maxLength` は関門ではない。その天井を画面だけが持っていた**
 
 ### 実機 chromium で測った `maxLength` の挙動
@@ -26196,7 +26318,7 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 ### 検証
 
 `npm test` 15,948 件 / 693 ファイル・`verify:all` exit 0 (36 ゲート)・
-`build:web` 11,825,177 B / `build:web:lite` 3,237,923 B (両方 +1,797 B)・chain tip #181。
+`build:web` 11,826,707 B / `build:web:lite` 3,239,453 B (両方 +1,530 B)・chain tip #181 (保護対象のファイルは触っていないので据え置き)。
 **実機 3 種 (`e2e` / `e2e:lite` / `perf`) は回していない** —— この 2 パスで renderer を
 広く触っている (SettingsPage / TemplatesPage / TeamRadarPage / StocksPage /
 HydroponicsPage / PageErrorBoundary / preview) ので、**次に必ず回す**。

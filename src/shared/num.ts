@@ -43,6 +43,23 @@ export function nonNeg(n: number | undefined): number {
   return Number.isFinite(n) ? Math.max(0, n as number) : 0;
 }
 
+/**
+ * 有限なら その数、そうでなければ `null` —— 「算定不能」の綴りを 1 つに揃える。
+ *
+ * `nonNeg` (すぐ上) は非有限を **0 に倒す**。0 は多くの欄で**意味のある値**なので、
+ * 「測れなかった」を 0 で表すと最も安心させる向き・最も悲観的な向きのどちらにも
+ * 化ける (パス 52 / 85 / 91 が同じ形を 3 度直している)。こちらは
+ * **算定不能を算定不能として持ち回る**ためのもので、画面は `null` を「—」と刷る。
+ *
+ * 2026-09-13 (パス 198) に足した。`Infinity` / `NaN` が金額として画面へ届く経路が
+ * 3 本在り (`calcCompoundingFutureValue` / `goalProjection` / `calcRealCost`)、
+ * `jpy` が `¥∞` / `¥NaN` として刷っていた —— **∞ は「無限に豊か」と読め、
+ * 実際には「年数が範囲外で計算が成り立たない」という意味だった**。
+ */
+export function finiteOrNull(n: number): number | null {
+  return Number.isFinite(n) ? n : null;
+}
+
 /** 100円未満を切り捨てる（国税の端数処理・自動車税の月割など）。 */
 export function floorHundred(n: number): number {
   return Math.floor(n / 100) * 100;

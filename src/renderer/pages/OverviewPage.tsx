@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { navigateTo, takeNavigationIntent } from '../navigate';
 import { Section } from '../components/StatusBar';
+import { UNDETERMINED } from '../components/Stat';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import { fireReported } from '../data/deviceStoreFailure';
@@ -106,7 +107,16 @@ const RISK_BAND_COLOR: Record<RiskBand, string> = { high: '#ef4444', medium: '#f
 
 const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 0 });
 const num = new Intl.NumberFormat('ja-JP');
-const safeYen = (n: number) => (Number.isFinite(n) ? yen.format(Math.round(n)) : '∞');
+/**
+ * 非有限を「—」として刷る金額。**`'∞'` を返していたのを 2026-09-13 (パス 198) に直した。**
+ *
+ * パス 84 で損益分岐点のタイルを `bepDisplay` に移したとき、この関数は残り
+ * (いまの呼び先は水耕栽培の「出荷 1 株あたり原価」1 か所)、同じ `'∞'` を
+ * **理由を添えずに**刷り続けていた。1 株あたり原価の `∞` に意味は無い ——
+ * 出荷 0 は呼び出し側が既に `null` で「—」にしているので、ここへ来る非有限は
+ * 「算定が壊れた」以外にない。下の `yenOrDash` と同じ字に揃える。
+ */
+const safeYen = (n: number) => (Number.isFinite(n) ? yen.format(Math.round(n)) : UNDETERMINED);
 /**
  * **損益分岐点売上高の「無い」の印は `Infinity`** ——
  * 限界利益が 0 以下 = *どれだけ売っても固定費を回収できない*、という最も重い状態を
@@ -116,7 +126,7 @@ const safeYen = (n: number) => (Number.isFinite(n) ? yen.format(Math.round(n)) :
  *
  * | タイル | 刷っていた物 | 理由の説明 |
  * | --- | --- | --- |
- * | 損益分岐点 (BEP) | `∞` (`safeYen`) | 無し |
+ * | 損益分岐点 (BEP) | `∞` (`safeYen` — パス 198 で「—」に直した) | 無し |
  * | **損益分岐点売上高 (月)** | **`￥∞`** (生の `yen.format`) | 無し |
  * | 損益分岐の出荷株数 (月) | `—` | **有り** (同じ行の 1 つ左) |
  *

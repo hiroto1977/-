@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { measured } from './measured';
 import {
   calcCompoundingFutureValue,
   calcSharpeRatio,
@@ -61,7 +62,7 @@ describe('calcCompoundingFutureValue', () => {
   it('longer horizons accumulate more than shorter ones', () => {
     const short = calcCompoundingFutureValue(100_000, 5, 5);
     const long = calcCompoundingFutureValue(100_000, 5, 20);
-    expect(long.futureValue).toBeGreaterThan(short.futureValue);
+    expect(measured(long.futureValue)).toBeGreaterThan(measured(short.futureValue));
   });
 });
 
@@ -203,11 +204,19 @@ describe('calcRealCost', () => {
     expect(r.cumulativeCostYen).toBe(0);
   });
 
-  it('treats non-finite inputs defensively', () => {
+  /**
+   * パス 198 で `cumulativeCostYen` の期待値を `0` → `null` に変えた。
+   * 守っていた物 (「非有限を持ち出さない」) は保つ。`0` は「コストの蝕みが
+   * 無かった」と読める値で、**保有年数が読めていないこととは別のこと**である。
+   * 年率側の 2 欄は年数に依らないので `0` のまま。
+   */
+  it('金額・率が非有限なら年率側は 0、年数が非有限なら累計は null', () => {
     const r = calcRealCost(NaN, NaN, NaN, NaN, NaN);
     expect(r.annualCostPct).toBe(0);
     expect(r.annualCostYen).toBe(0);
-    expect(r.cumulativeCostYen).toBe(0);
+    expect(r.cumulativeCostYen).toBeNull();
+    // 対照: 年数が範囲内なら累計が出る
+    expect(calcRealCost(1_000_000, 1, 0, 5, 10).cumulativeCostYen).not.toBeNull();
   });
 });
 

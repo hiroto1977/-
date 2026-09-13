@@ -26,6 +26,46 @@ const yen = (n: number): number => Math.round(n);
 export const EMERGENCY_FUND_MONTHS_DEFAULT = 6;
 
 /**
+ * 積立・貯蓄計画を組み立てられる年数の上限。**画面の宣言と同じ数の唯一の出所。**
+ *
+ * `MutualFundsPage` の 積立年数 / 達成年数 の欄は `GuardedNumber` で
+ * `max: 80` を宣言し、`guardNumber` は 81 年以上に ⛔ (fatal) を出す。だが
+ * **`GuardedNumber` は入力を書き換えない** (黙って丸めないための意図的な設計)。
+ * 上限の強制は計算側の責任であり、`depreciation.ts` の `MAX_SCHEDULE_YEARS` /
+ * `isSchedulableLife` が 2026-08 監査で同じ形を先に直している。
+ *
+ * 2026-09-13 (パス 198) まで、この上限は**画面の literal `80` にしか無かった**。
+ * 実測した結果:
+ *
+ * | 入力 | 実際に出ていた物 |
+ * | --- | --- |
+ * | 積立年数 100,000 年 | 将来評価額 **`¥∞`** · 運用益 `¥∞` · 運用益率 `Infinity%` |
+ * | 達成年数 100,000 年 | 到達見込み **`¥∞`** で `onTrack === true` = **「達成」** |
+ * | 達成年数 99,999,999 年 | 必要な毎月積立額 **`¥0`** (= 「積み立てなくてよい」) |
+ *
+ * `annual` 複利の枝は `for (i < Math.round(years))` を回すので、年数がそのまま
+ * 反復回数になる —— **実測 1 億年で 243 ms** (答えは `Infinity`)。`useMemo` の中で
+ * 1 文字打つたびに走るので、描画スレッドがその間止まる。
+ *
+ * 上限は 80 年 —— 人の資産形成の計画期間として実在の最長側 (20 歳から 100 歳) で、
+ * これを超える入力は打ち間違いである。**黙って 80 に丸めない**: 丸めると
+ * 「100,000 年の計画が 80 年で成り立つ」という別の誤りになるので、`null`
+ * (算定不能) を返し、画面が「—」と理由を出す。
+ */
+export const MAX_PLAN_YEARS = 80;
+
+/**
+ * 計画を組み立てられる年数か (上限は {@link MAX_PLAN_YEARS})。
+ *
+ * **下限は見ない** —— 0 年・負の年数・非有限は各関数の既存の契約
+ * (「0 を返す」) のままにしてある。`0 年積み立てたら 0 円` は**正しい答え**で、
+ * 算定不能ではない。この述語が見るのは**上限だけ**である。
+ */
+export function isPlannableYears(years: number): boolean {
+  return Number.isFinite(years) && years <= MAX_PLAN_YEARS;
+}
+
+/**
  * 目標額に到達するために必要な毎月積立額 (年金終価の逆算)。
  *
  * FV = PMT × ((1 + r)^n − 1) / r  を PMT について解く。r≈0 のときは PMT = FV / n。
@@ -39,7 +79,10 @@ export function requiredMonthlyContribution(
   targetFutureValue: number,
   annualRatePct: number,
   years: number,
-): number {
+): number | null {
+  // 上限を超えた年数は算定不能 (`null`)。**0 を返すと「積み立てなくてよい」**
+  // という最も安心させる向きの断定になる (実測: 99,999,999 年 → `¥0`)。
+  if (!isPlannableYears(years)) return null;
   // years <= 0 は下の n <= 0 (= round(years*12)) で捕捉されるため、ここでは
   // targetFutureValue のみ判定する。targetFutureValue===0 は計算経路でも 0 に
   // なり <= → < は equivalent のため EqualityOperator を無効化。
@@ -112,10 +155,13 @@ export function futureValueWithFrequency(
   // 他の文字列に変えても monthly 経路に落ち結果は不変 (equivalent) → StringLiteral 無効化。
   // Stryker disable next-line StringLiteral
   frequency: CompoundingFrequency = 'monthly',
-): number {
+): number | null {
   if (!Number.isFinite(monthlyContribution) || !Number.isFinite(annualRatePct) || !Number.isFinite(years)) {
     return 0;
   }
+  // 上限を超えた年数は算定不能 (`null`)。`annual` の枝は年数を反復回数にするので、
+  // ここは**答えの正しさと描画スレッドの両方**の関門である (実測 1 億年 = 243 ms)。
+  if (!isPlannableYears(years)) return null;
   // 負の積立額・年数は 0 にクランプ。これ以降 pmt>=0・yrs>=0 が保証され、
   // 年数 0 (= periods/n が 0) のときは各計算経路がそのまま 0 を返すため、
   // 追加の <=0 早期 return ガードは冗長 (equivalent) として置かない。
@@ -159,7 +205,10 @@ export function inflationAdjustedValue(
   nominalAmount: number,
   annualInflationPct: number,
   years: number,
-): number {
+): number | null {
+  // 上限を超えた年数は算定不能 (`null`)。`0` を返すと「実質価値はゼロ」という
+  // **別の断定**になる (実測: 99,999,999 年 → `¥0`)。
+  if (!isPlannableYears(years)) return null;
   if (!Number.isFinite(nominalAmount) || !Number.isFinite(annualInflationPct) || !Number.isFinite(years)) {
     return 0;
   }
@@ -246,18 +295,27 @@ export function emergencyFundCoverage(
   return { target, coveragePct, shortfall, monthsCovered };
 }
 
-/** 目標達成見込みの判定結果。 */
+/**
+ * 目標達成見込みの判定結果。
+ *
+ * **年数が {@link MAX_PLAN_YEARS} を超えると全欄が `null` (算定不能)。**
+ * 2026-09-13 (パス 198) まで、この構造体は範囲外の年数から
+ * `projected: Infinity` / `onTrack: true` / `shortfall: 0` を作っていた ——
+ * 画面はそれを **「到達見込み ¥∞ (達成)」** と刷り、利用者に
+ * *目標は達成済み* と告げていた。`onTrack` を `boolean | null` にしたのは、
+ * `false` も「未達」という**同じ重さの断定**だからである。
+ */
 export interface GoalProjection {
-  /** 現行積立で到達する将来価値 (円)。 */
-  readonly projected: number;
-  /** 目標額に届くか。 */
-  readonly onTrack: boolean;
-  /** 目標に対する不足額 (円)。届くなら 0。 */
-  readonly shortfall: number;
-  /** 目標達成に必要な毎月積立額 (円)。 */
-  readonly requiredMonthly: number;
-  /** 目標達成に必要な追加積立額 = 必要額 − 現行 (円)。既に十分なら 0。 */
-  readonly additionalMonthly: number;
+  /** 現行積立で到達する将来価値 (円)。算定不能なら `null`。 */
+  readonly projected: number | null;
+  /** 目標額に届くか。算定不能なら `null` (`false` = 「未達」とは別)。 */
+  readonly onTrack: boolean | null;
+  /** 目標に対する不足額 (円)。届くなら 0。算定不能なら `null`。 */
+  readonly shortfall: number | null;
+  /** 目標達成に必要な毎月積立額 (円)。算定不能なら `null`。 */
+  readonly requiredMonthly: number | null;
+  /** 目標達成に必要な追加積立額 = 必要額 − 現行 (円)。既に十分なら 0。算定不能なら `null`。 */
+  readonly additionalMonthly: number | null;
 }
 
 /**
@@ -283,6 +341,13 @@ export function goalProjection(
   const projected = futureValueWithFrequency(current, annualRatePct, years, 'monthly');
   const requiredMonthly = requiredMonthlyContribution(targetFutureValue, annualRatePct, years);
   const target = Number.isFinite(targetFutureValue) ? Math.max(0, targetFutureValue) : 0;
+
+  // **算定できなかった物から判定を作らない。** 到達見込みが出ていないのに
+  // 「達成」と答えるのがパス 198 で見つけた形なので、1 つでも `null` なら
+  // この構造体は全欄 `null` を返す (値と理由を 1 つの判定から出す・パス 84)。
+  if (projected === null || requiredMonthly === null) {
+    return { projected: null, onTrack: null, shortfall: null, requiredMonthly: null, additionalMonthly: null };
+  }
 
   const onTrack = projected >= target;
   const shortfall = Math.max(0, target - projected);

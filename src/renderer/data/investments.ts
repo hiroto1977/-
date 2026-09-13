@@ -731,12 +731,23 @@ export function fundCostPrincipalNote(
   yen: (n: number) => string,
   years: number,
   userAnnualCostYen: number,
-  userCumulativeCostYen: number,
+  /**
+   * 見本を除いた元本での期間累計コスト。**保有年数が範囲外なら `null`**
+   * (`calcRealCost` が算定しない・2026-09-13 · パス 198)。
+   */
+  userCumulativeCostYen: number | null,
 ): string | null {
   if (p.demoCount === 0 || p.userCount === 0) return null;
+  // **算定できなかった数字を文に混ぜない。** 以前は `number` を受けていたので
+  // `NaN` がそのまま `¥NaN` として断り書きの中に入っていた —— 断り書き自体が
+  // 壊れた数字を運ぶ形になる。累計が出ていないときは年間コストだけを述べる。
+  const cumulative =
+    userCumulativeCostYen === null
+      ? `${years}年累計は保有年数が範囲外のため算定していません。`
+      : `${years}年累計 ${yen(userCumulativeCostYen)} です。`;
   return (
     `この元本には同梱の見本 ${p.demoCount} 銘柄が含まれています。` +
     `見本を除く元本 ${yen(p.userOnly.totalValuation)} なら ` +
-    `年間コスト ${yen(userAnnualCostYen)}・${years}年累計 ${yen(userCumulativeCostYen)} です。`
+    `年間コスト ${yen(userAnnualCostYen)}・${cumulative}`
   );
 }

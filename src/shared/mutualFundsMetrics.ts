@@ -7,14 +7,34 @@
  */
 
 import { round2, yen } from './num';
+import { isPlannableYears } from './savingsPlanning';
+
+/**
+ * 保有年数を測れる上限。**画面の宣言と同じ数の唯一の出所** (保有年数 欄の `max`)。
+ *
+ * `calcRealCost` は `Math.pow(1 + 率, 年数)` を 2 回引き算する。年数が大きいと
+ * **両方が `Infinity` になり `Infinity - Infinity = NaN`** ——
+ * 実測 100,000 年で `cumulativeCostYen: NaN` で、画面は
+ * **「100000年累計の蝕み効果 `¥NaN`」** と刷っていた (2026-09-13 · パス 198)。
+ *
+ * 100 年は投資信託の保有期間として実在の最長側で、`MAX_PLAN_YEARS` (80) より
+ * 長いのは「積み立てる期間」ではなく「持ち続ける期間」だから (相続を挟んで
+ * 引き継ぐ想定を残す)。**2 つの天井は別の量なので、同じ定数にしない。**
+ */
+export const MAX_HOLDING_YEARS = 100;
+
+/** 保有年数を測れるか (上限は {@link MAX_HOLDING_YEARS})。 */
+export function isMeasurableHoldingYears(years: number): boolean {
+  return Number.isFinite(years) && years <= MAX_HOLDING_YEARS;
+}
 
 export interface CompoundingSimulation {
-  /** 期間終了時の評価額 (円)。 */
-  readonly futureValue: number;
-  /** 累計拠出額 (円)。 */
-  readonly totalContributed: number;
-  /** 運用益 (評価額 − 拠出額)。 */
-  readonly totalGain: number;
+  /** 期間終了時の評価額 (円)。**年数が範囲外なら `null`** (算定不能)。 */
+  readonly futureValue: number | null;
+  /** 累計拠出額 (円)。**年数が範囲外なら `null`**。 */
+  readonly totalContributed: number | null;
+  /** 運用益 (評価額 − 拠出額)。**年数が範囲外なら `null`**。 */
+  readonly totalGain: number | null;
   /**
    * 運用益率 (%) = 運用益 ÷ 累計拠出額。**拠出額が 0 なら `null` = 算定不能。**
    *
@@ -41,6 +61,12 @@ export function calcCompoundingFutureValue(
   annualReturnPct: number,
   years: number,
 ): CompoundingSimulation {
+  // 上限を超えた年数は算定不能。**`Math.pow(1 + r, n)` が `Infinity` になり、
+  // 画面が「将来評価額 ¥∞ / 運用益率 Infinity%」を刷っていた** (パス 198)。
+  // 積立年数の天井は `savingsPlanning` が 1 つ持つ (画面の `max` と同じ出所)。
+  if (!isPlannableYears(years)) {
+    return { futureValue: null, totalContributed: null, totalGain: null, gainPct: null };
+  }
   const pmt = Math.max(0, monthlyContribution);
   const yrs = Math.max(0, years);
   const n = Math.round(yrs * 12);
@@ -152,8 +178,12 @@ export interface RealCost {
   readonly annualCostPct: number;
   /** 1年あたりの概算コスト額 (円)。 */
   readonly annualCostYen: number;
-  /** 期間累計の概算コスト額 (複利でリターンを蝕む効果込み, 円)。 */
-  readonly cumulativeCostYen: number;
+  /**
+   * 期間累計の概算コスト額 (複利でリターンを蝕む効果込み, 円)。
+   * **保有年数が {@link MAX_HOLDING_YEARS} を超えると `null`** (算定不能) ——
+   * `Infinity - Infinity = NaN` が `¥NaN` として刷られていた (パス 198)。
+   */
+  readonly cumulativeCostYen: number | null;
 }
 
 /**
@@ -187,6 +217,12 @@ export function calcRealCost(
   const annualCostYen = yen(amount * (annualCostPct / 100));
 
   // コスト無し vs コスト控除後の将来価値差 (複利での蝕み効果)。
+  // **年率のコストは年数と無関係に測れる** ので `annualCostPct` / `annualCostYen`
+  // は返し続ける。算定不能なのは累計の蝕み効果だけ —— 1 つの範囲外の欄で
+  // 測れている隣の数字まで隠さない。
+  if (!isMeasurableHoldingYears(years)) {
+    return { annualCostPct, annualCostYen, cumulativeCostYen: null };
+  }
   const grossRate = gross / 100;
   const netRate = (gross - annualCostPct) / 100;
   const fvGross = amount * Math.pow(1 + grossRate, yrs);

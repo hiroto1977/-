@@ -24,13 +24,15 @@ import {
   fundDemoMixNote,
   type HoldingEntry,
 } from '../data/investments';
-import { jpy } from '../../shared/formatters';
+import { DASH, jpy } from '../../shared/formatters';
 import {
   calcCompoundingFutureValue,
   calcTotalReturn,
   calcRealCost,
   ytdReturnRisk,
   calcDcaSimulation,
+  MAX_HOLDING_YEARS,
+  isMeasurableHoldingYears,
 } from '../../shared/mutualFundsMetrics';
 import {
   requiredMonthlyContribution,
@@ -40,6 +42,8 @@ import {
   realRateOfReturn,
   emergencyFundCoverage,
   goalProjection,
+  MAX_PLAN_YEARS,
+  isPlannableYears,
 } from '../../shared/savingsPlanning';
 import { convertToJpy, fxGainLoss, ttRates, roundTripCost } from '../../shared/fxCurrency';
 import { useParameters } from '../data/parameterOverrides';
@@ -57,6 +61,16 @@ const simInputStyle: React.CSSProperties = {
 };
 
 const EMPTY_HOLDING_FORM = { code: '', name: '', units: '', navPerUnit: '', valuation: '', acquisitionCost: '', ytdReturnPct: '' };
+
+/**
+ * 算定不能 (`null`) は「—」。**金額の綴りは `jpy` / `DASH` の 1 組だけ。**
+ *
+ * 2026-09-13 (パス 198) まで、これらのタイルは `number` を直接 `jpy` へ渡し、
+ * 範囲外の年数から生まれた `Infinity` / `NaN` を **`¥∞` / `¥NaN`** として
+ * 刷っていた。いまは計算側が `null` を返し、ここが「—」に落とす。
+ * **理由は欄のすぐ下の `GuardedNumber` の ⛔ と、節の脚注が述べる。**
+ */
+const jpyOrDash = (n: number | null): string => (n === null ? DASH : jpy(n));
 
 export function MutualFundsPage() {
   const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
@@ -325,7 +339,7 @@ export function MutualFundsPage() {
 
       <Section title="トータルリターン・リスク (分配金再投資ベース・概算)">
         <div className="field-grid" style={{ marginBottom: 12 }}>
-          <GuardedNumber spec={{ label: '保有年数', kind: 'years', allowZero: true, max: 100 }} value={holdYears} onChange={setHoldYears} width={120} />
+          <GuardedNumber spec={{ label: '保有年数', kind: 'years', allowZero: true, max: MAX_HOLDING_YEARS }} value={holdYears} onChange={setHoldYears} width={120} />
         </div>
         <div className="stat-grid">
           <Stat
@@ -355,9 +369,18 @@ export function MutualFundsPage() {
         <div className="stat-grid">
           <Stat label="実質コスト率 (年率)" value={`${realCost.annualCostPct}%`} />
           <Stat label="年間コスト概算" value={jpy(realCost.annualCostYen)} />
-          <Stat label={`${holdYears}年累計の蝕み効果`} value={jpy(realCost.cumulativeCostYen)} />
+          <Stat label={`${holdYears}年累計の蝕み効果`} value={jpyOrDash(realCost.cumulativeCostYen)} />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          {/* **「—」の理由をその場で言う。** 欄の ⛔ は「何年以下か」を言うが、
+              タイルが空いている理由は別に述べる必要がある (パス 198)。 */}
+          {!isMeasurableHoldingYears(readNumberOr0(holdYears)) && (
+            <>
+              <strong>累計の蝕み効果は算定していません</strong> —— 保有年数は {MAX_HOLDING_YEARS} 年以下で入力してください
+              （年率のコストは年数に依らないのでそのまま出しています）。
+              <br />
+            </>
+          )}
           ※ 評価額 {jpy(portfolio.totalValuation)} を元本としコストがリターンを複利で蝕む効果を概算。隠れコストは売買委託手数料等の目安です。概算であり投資助言ではありません。
         </div>
         {/* 元本に見本が入っているなら、自分の分の額も言う (でないと 83 倍の負担を自分の物として読む · パス 187)。
@@ -541,20 +564,26 @@ export function MutualFundsPage() {
         <div className="field-grid" style={{ marginBottom: 12 }}>
           <GuardedNumber spec={{ label: '毎月の積立額 (円)', kind: 'money', allowZero: false }} value={simMonthly} onChange={setSimMonthly} width={120} />
           <GuardedNumber spec={{ label: '想定年率 (%)', kind: 'percent', allowZero: true, max: 100 }} value={simRate} onChange={setSimRate} width={120} />
-          <GuardedNumber spec={{ label: '積立年数', kind: 'years', allowZero: false, max: 80 }} value={simYears} onChange={setSimYears} width={120} />
+          <GuardedNumber spec={{ label: '積立年数', kind: 'years', allowZero: false, max: MAX_PLAN_YEARS }} value={simYears} onChange={setSimYears} width={120} />
         </div>
         <div className="stat-grid">
-          <Stat label="将来評価額" value={jpy(sim.futureValue)} positive />
-          <Stat label="累計拠出額" value={jpy(sim.totalContributed)} />
+          <Stat label="将来評価額" value={jpyOrDash(sim.futureValue)} positive />
+          <Stat label="累計拠出額" value={jpyOrDash(sim.totalContributed)} />
           {/* 拠出額 0 なら増加率は算定不能。**同じ画面の為替の損益率が既に「—」を
               刷っている** (下の「損益率」)。同じ画面で答え方を 2 通りにしない。 */}
           <Stat
             label={sim.gainPct === null ? '運用益 (—)' : `運用益 (${sim.gainPct.toFixed(1)}%)`}
-            value={jpy(sim.totalGain)}
-            positive={sim.totalGain >= 0}
+            value={jpyOrDash(sim.totalGain)}
+            positive={positiveIfKnown(sim.totalGain === null ? null : sim.totalGain >= 0 ? 1 : -1)}
           />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          {!isPlannableYears(readNumberOr0(simYears)) && (
+            <>
+              <strong>この節は算定していません</strong> —— 積立年数は {MAX_PLAN_YEARS} 年以下で入力してください。
+              <br />
+            </>
+          )}
           ※ 毎月末積立・年率一定を仮定した複利の概算です。実際の運用成績は変動し元本割れの可能性があります。投資助言ではありません。
         </div>
       </Section>
@@ -563,24 +592,28 @@ export function MutualFundsPage() {
         <div className="field-grid" style={{ marginBottom: 12 }}>
           <GuardedNumber spec={{ label: '目標額 (円)', kind: 'money', allowZero: false }} value={goalTarget} onChange={setGoalTarget} width={120} />
           <GuardedNumber spec={{ label: '想定年率 (%)', kind: 'percent', allowZero: true, max: 100 }} value={goalRate} onChange={setGoalRate} width={120} />
-          <GuardedNumber spec={{ label: '達成年数', kind: 'years', allowZero: false, max: 80 }} value={goalYears} onChange={setGoalYears} width={120} />
+          <GuardedNumber spec={{ label: '達成年数', kind: 'years', allowZero: false, max: MAX_PLAN_YEARS }} value={goalYears} onChange={setGoalYears} width={120} />
           <GuardedNumber spec={{ label: '毎月の生活費 (円)', kind: 'money', allowZero: false }} value={monthlyExpense} onChange={setMonthlyExpense} width={120} />
           <GuardedNumber spec={{ label: '現在の積立額 (円)', kind: 'money', allowZero: true }} value={currentMonthly} onChange={setCurrentMonthly} width={120} />
           <GuardedNumber spec={{ label: '想定インフレ率 (%)', kind: 'percent', allowZero: true, max: 100 }} value={inflationRate} onChange={setInflationRate} width={120} />
           <GuardedNumber spec={{ label: '手元資金 (円)', kind: 'money', allowZero: true }} value={cashOnHand} onChange={setCashOnHand} width={120} />
         </div>
         <div className="stat-grid">
-          <Stat label="目標達成に必要な毎月積立額" value={jpy(requiredMonthly)} />
+          <Stat label="目標達成に必要な毎月積立額" value={jpyOrDash(requiredMonthly)} />
           <Stat label="72の法則 (資産倍増)" value={doubleYears === null ? '—' : `約 ${doubleYears} 年`} />
           <Stat label={`緊急予備資金 (生活費${efMonths}か月)`} value={jpy(emergency)} />
         </div>
         <div className="stat-grid" style={{ marginTop: 12 }}>
           <Stat
             label="現行積立での到達見込み"
-            value={`${jpy(projection.projected)}${projection.onTrack ? ' (達成)' : ` (不足 ${jpy(projection.shortfall)})`}`}
+            value={
+              projection.projected === null || projection.onTrack === null
+                ? DASH
+                : `${jpy(projection.projected)}${projection.onTrack ? ' (達成)' : ` (不足 ${jpyOrDash(projection.shortfall)})`}`
+            }
           />
-          <Stat label="必要な追加積立 (毎月)" value={jpy(projection.additionalMonthly)} />
-          <Stat label="目標額のインフレ調整後 実質価値" value={jpy(realTarget)} />
+          <Stat label="必要な追加積立 (毎月)" value={jpyOrDash(projection.additionalMonthly)} />
+          <Stat label="目標額のインフレ調整後 実質価値" value={jpyOrDash(realTarget)} />
           <Stat label="実質利回り (インフレ調整後)" value={realRate === null ? '—' : `${realRate}%`} />
           {/* **目標が定まらなければ「—」。** 隣の「まかなえる月数」は同じ条件で
               既に「—」を出しており、片方だけが 100% と断定していた (パス 90)。 */}
@@ -594,6 +627,13 @@ export function MutualFundsPage() {
           />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          {!isPlannableYears(readNumberOr0(goalYears)) && (
+            <>
+              <strong>到達見込み・必要積立額・実質価値は算定していません</strong> —— 達成年数は {MAX_PLAN_YEARS} 年以下で
+              入力してください（範囲外の年数から「達成」とは答えません）。
+              <br />
+            </>
+          )}
           {efCoverage.coveragePct === null && (
             <>
               毎月の生活費を入力すると予備資金の充足率を算定します（未入力のため「—」）。
