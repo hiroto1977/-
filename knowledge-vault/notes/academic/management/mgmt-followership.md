@@ -26,7 +26,7 @@ aliases:
 ロバート・ケリー（Robert E. Kelley）／初出：1988年 Harvard Business Review "In Praise of Followers"
 
 ## 出典
-- [Kelley, R. E. (1988) "In Praise of Followers" Harvard Business Review 66(6)](https://hbr.org/1988/11/in-praise-of-followers) `学術`
+- [Kelley, R. E. (1988) "In Praise of Followers" Harvard Business Review 66(6)](https://hbr.org/1988/11/in-praise-of-followers) `メディア`
 - [Wikipedia — Followership](https://en.wikipedia.org/wiki/Followership) `リファレンス`
 
 ## 関連概念

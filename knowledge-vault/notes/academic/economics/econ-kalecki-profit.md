@@ -35,6 +35,7 @@ aliases:
 - [[econ-political-business-cycle-nordhaus|政治的景気循環——選挙を見据えた政策操作が生む景気の周期的変動]] — 同じ思想家
 - [[econ-lerner-index|ラーナーの独占度（ラーナー指数）]] — 同分野の近傍
 - [[econ-job-guarantee-functional-finance-lerner|機能的財政論と雇用保証——ラーナーのMMT先駆け理論と完全雇用財政政策の根拠]] — 同分野の近傍
+- [[econ-schumpeterian-growth-aghion-howitt|アギオン＝ハウイットのシュンペーター型内生成長モデル——創造的破壊による成長]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

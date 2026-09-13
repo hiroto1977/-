@@ -18,7 +18,8 @@
  */
 
 /** 保存を受け付ける最大長。安全側の上限で、実在のトークンより十分に大きい。 */
-export const TOKEN_MAX_LENGTH = 65536;
+import { countChars } from './inputCeiling';
+export const MAX_TOKEN_INPUT_CHARS = 65536;
 
 export type TokenRejectReason = 'empty' | 'too-long' | 'control-char';
 
@@ -39,11 +40,11 @@ export function checkTokenInput(raw: unknown): TokenInputCheck {
   if (value.length === 0) {
     return { ok: false, reason: 'empty', message: '資格情報を入力してください' };
   }
-  if (value.length > TOKEN_MAX_LENGTH) {
+  if (countChars(value) > MAX_TOKEN_INPUT_CHARS) {
     return {
       ok: false,
       reason: 'too-long',
-      message: `資格情報が長すぎます (${value.length} 文字 / 上限 ${TOKEN_MAX_LENGTH} 文字)`,
+      message: `資格情報が長すぎます (${countChars(value)} 文字 / 上限 ${MAX_TOKEN_INPUT_CHARS} 文字)`,
     };
   }
   /*

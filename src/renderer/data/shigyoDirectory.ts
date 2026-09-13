@@ -10,6 +10,7 @@
  */
 
 import type { ServiceId } from '../../shared/serviceId';
+import { calendarDateMessage, isCalendarDate } from '../../shared/isoDate';
 import type { ShigyoConsultationStatus } from '../../shared/shigyoTypes';
 
 export const SHIGYO_CONTACTS_COLLECTION = 'shigyo-contacts';
@@ -91,9 +92,10 @@ export function parseShigyoConsultation(input: {
   status?: unknown;
 }): ShigyoConsultationEntry {
   // Stryker disable next-line StringLiteral: '' を別文字列にしても直後の
-  // /^\d{4}-\d{2}-\d{2}$/ を通らず、同一の 相談日 エラーになる (等価変異)。
+  // isCalendarDate を通らず、同一の 相談日 エラーになる (等価変異)。
   const date = typeof input.date === 'string' ? input.date.trim() : '';
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error('相談日は YYYY-MM-DD 形式で入力してください (例: 2026-07-25)');
+  // 暦に在る日だけ (パス 115 —— それまでは正規表現だけで、2026-02-30 も 2026-13-45 も通していた)。
+  if (!isCalendarDate(date)) throw new Error(`${calendarDateMessage('相談日')} (例: 2026-07-25)`);
 
   const topic = typeof input.topic === 'string' ? input.topic.trim() : '';
   if (topic.length === 0 || topic.length > 80) throw new Error('相談テーマは 1〜80 文字で入力してください');
@@ -108,4 +110,28 @@ export function contactToForm(c: ShigyoContactEntry): {
   name: string; firm: string; phone: string; email: string;
 } {
   return { name: c.name, firm: c.firm, phone: c.phone, email: c.email };
+}
+
+/**
+ * **見出しの「連携 N 名」と「月次顧問料」に同梱の見本が混ざっていることの断り**
+ * (2026-09-12 · パス 187)。
+ *
+ * `investments.ts` の `demoMixNote` / `fundDemoMixNote` と同じ家系 —— 一覧の行は
+ * 「デモ」と印がつくが、**見出しの数と金額には印が付かない**。実測で、自分の
+ * 連携先を 1 名登録した人の見出しは「連携 2 名 · 顧問料 ¥33,000/月」になる ——
+ * 2 名のうち 1 名は見本で、その ¥33,000 は snapshot の値 (登録した連携先の
+ * 顧問料ではない。この画面は連携先ごとの顧問料を持たない)。
+ *
+ * 顧問料は見本が 1 件でも在れば見本の値なので、**常に出所を言う**。
+ *
+ * @param demoCount 同梱の見本の連携先の数
+ * @param userCount 利用者が登録した連携先の数
+ * @param feeLabel 月次顧問料の表示文字列 (呼び側が `jpy` で整形して渡す)
+ */
+export function shigyoDemoMixNote(demoCount: number, userCount: number, feeLabel: string): string | null {
+  if (demoCount === 0) return null;
+  if (userCount === 0) {
+    return `表示中の連携先 ${demoCount} 名と月次顧問料 ${feeLabel} は同梱の見本です（自分の連携先はまだ登録されていません）。`;
+  }
+  return `「連携 ${demoCount + userCount} 名」には同梱の見本 ${demoCount} 名が含まれています（自分が登録した連携先は ${userCount} 名）。月次顧問料 ${feeLabel} は見本の値です。`;
 }

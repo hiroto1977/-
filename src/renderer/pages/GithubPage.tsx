@@ -1,14 +1,13 @@
 import { useState } from 'react';
+import { GITHUB_ISSUE_FIELDS } from '../../shared/writeFieldLimits';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
+import type { ActionData } from '../../shared/actionData';
 
-interface CreateIssueResult {
-  number: number;
-  url: string;
-  title: string;
-}
 
 export function GithubPage() {
   const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
@@ -22,6 +21,11 @@ export function GithubPage() {
   const [repo, setRepo] = useState('');
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
+  /* 貼り付けを黙って切らない (パス 172)。天井は台帳から読む。 */
+  const ownerOver = charsOverCeiling(owner, GITHUB_ISSUE_FIELDS.owner!.max);
+  const repoOver = charsOverCeiling(repo, GITHUB_ISSUE_FIELDS.repo!.max);
+  const titleOver = charsOverCeiling(title, GITHUB_ISSUE_FIELDS.title!.max);
+  const bodyOver = charsOverCeiling(body, GITHUB_ISSUE_FIELDS.body!.max);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string; url?: string }>();
 
@@ -29,7 +33,7 @@ export function GithubPage() {
     if (!window.serviceHub) return;
     setSubmitting(true);
     setResult(undefined);
-    const res = await window.serviceHub.invoke<CreateIssueResult>('github', 'create-issue', {
+    const res = await window.serviceHub.invoke<ActionData<'github/create-issue'>>('github', 'create-issue', {
       owner: owner.trim(),
       repo: repo.trim(),
       title: title.trim(),
@@ -88,6 +92,7 @@ export function GithubPage() {
         {showForm ? (
           <div className="card" style={{ gap: 10 }}>
             <div style={{ display: 'flex', gap: 8 }}>
+              {/* 上限は main / ブラウザ版と同じ台帳から読む (パス 110)。数を写さない。 */}
               <input
                 placeholder="owner (e.g. octocat)"
                 value={owner}
@@ -114,11 +119,15 @@ export function GithubPage() {
               rows={4}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />
+            <CeilingNotice label="owner" value={owner} max={GITHUB_ISSUE_FIELDS.owner!.max} />
+            <CeilingNotice label="repo" value={repo} max={GITHUB_ISSUE_FIELDS.repo!.max} />
+            <CeilingNotice label="タイトル" value={title} max={GITHUB_ISSUE_FIELDS.title!.max} />
+            <CeilingNotice label="本文" value={body} max={GITHUB_ISSUE_FIELDS.body!.max} />
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="primary"
                 onClick={submitIssue}
-                disabled={submitting || !owner.trim() || !repo.trim() || !title.trim()}
+                disabled={submitting || !owner.trim() || !repo.trim() || !title.trim() || ownerOver > 0 || repoOver > 0 || titleOver > 0 || bodyOver > 0}
               >
                 {submitting ? '送信中…' : '作成'}
               </button>

@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Harvard Business School Working Knowledge — Information Rules: Avoiding “Lock-In” (Shapiro & Varian)](https://hbswk.hbs.edu/archive/information-rules-avoiding-lock-in-in-the-information-economy) `学術`
 - [Springer Nature — “Lock-In and Switching Costs”](https://link.springer.com/chapter/10.1007/978-3-030-78237-5_12) `学術`
-- [EH.net Encyclopedia (Economic History Association) — Path Dependence (QWERTY; David, Arthur)](https://eh.net/encyclopedia/path-dependence/) `リファレンス`
+- [EH.net Encyclopedia (Economic History Association) — Path Dependence (QWERTY; David, Arthur)](https://eh.net/encyclopedia/path-dependence/) `学術`
 
 ## 関連概念
 - [[econ-path-dependence|経路依存]] — 同じ思想家

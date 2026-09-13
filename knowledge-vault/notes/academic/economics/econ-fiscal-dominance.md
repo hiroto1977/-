@@ -31,7 +31,7 @@ aliases:
 - [Uribe (2021) Is It Time for Some Unpleasant Monetarist Arithmetic? — St. Louis Fed Review](https://www.stlouisfed.org/publications/review/2021/05/26/is-it-time-for-some-unpleasant-monetarist-arithmetic) `学術`
 
 ## 関連概念
-- [[econ-fiscal-dominance-sargent|財政支配と物価水準の財政理論——政府債務が金融政策を拘束するメカニズム]] — 語彙が近い
+- [[econ-sargent-wallace-unpleasant-arithmetic|サージェント＝ウォレスの不愉快なマネタリスト算術——財政が支配的なら、金融引き締めは将来の貨幣化を通じてかえってインフレを高める]] — 語彙が近い
 - [[econ-policy-ineffectiveness|政策無効命題]] — 同じ思想家
 - [[econ-disinflation-sacrifice-ratio|犠牲率——ディスインフレーション政策における産出量コストの測定]] — 同じ思想家
 - [[econ-goodharts-law-lucas-critique|グッドハートの法則とルーカス批判——政策目標化された統計的関係の崩壊]] — 同じ思想家

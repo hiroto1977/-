@@ -34,7 +34,7 @@ aliases:
 - [[econ-path-dependence-david|経路依存性——歴史的偶然が固定化し劣位の技術が存続する]] — 同じ思想家
 - [[econ-switching-cost|スイッチングコストとロックイン]] — 同じ思想家
 - [[econ-unbalanced-growth-hirschman|不均衡成長論——戦略的部門への投資が連関を通じて発展を牽引する]] — 同分野の近傍
-- [[econ-lucas-islands-monetary-misperception|ルーカスの島モデル（Lucas islands model／貨幣的誤認・信号抽出問題）——局所価格しか見えない合理的主体の誤認から右上がりの総供給曲線を導く]] — 同分野の近傍
+- [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

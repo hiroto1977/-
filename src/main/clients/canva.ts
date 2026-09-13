@@ -1,4 +1,6 @@
 import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { CANVA_FOLDER_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
 
 interface CanvaDesign {
   id: string;
@@ -91,9 +93,11 @@ interface CanvaCreateFolderResponse {
   };
 }
 
-async function createFolder(ctx: ActionContext): Promise<{ id: string; name: string }> {
+async function createFolder(ctx: ActionContext): Promise<ActionData<'canva/create-folder'>> {
+  // 欄の型と長さは共有の台帳で断る (パス 111)。それまでは `!name` だけだった。
+  const bad = checkWriteFields(ctx.payload, CANVA_FOLDER_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const { name, parentFolderId } = ctx.payload as unknown as CreateFolderPayload;
-  if (!name) throw new Error('name is required');
 
   const res = await jsonFetch<CanvaCreateFolderResponse>(
     'https://api.canva.com/rest/v1/folders',

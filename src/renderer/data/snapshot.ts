@@ -3,6 +3,7 @@
 // until each ServiceClient is wired up to call the live REST APIs.
 
 import type { ShigyoSnapshot } from '../../shared/shigyoTypes';
+import type { NortonDetection } from '../../shared/nortonDetection';
 import {
   LEADER_DISQUALIFIERS,
   LEADER_DISQUALIFIERS_SOURCE,
@@ -10,6 +11,10 @@ import {
   SKILL_STEPS,
   SKILL_STEPS_SOURCE,
 } from '../../shared/talent';
+import { NO_SECURED_FUNDING_NOTE } from '../../shared/funding';
+import { MIN_SAFE_VERSION } from '../../shared/ollama';
+import { NO_DEAL_INTAKE } from '../../shared/freeeIntake';
+import { buildHydroponicsSnapshot } from '../../shared/hydroponicsControl';
 
 /**
  * 見本の画像は **インライン (`data:`) にする**。
@@ -307,11 +312,21 @@ export const SNAPSHOT = {
   },
 
   skills: {
+    /*
+     * ブラウザ版はここを読めないので常に空 (`localReadUnavailableNote` が画面で言う)。
+     * 欄は `main/clients/skills.ts` の `SkillEntry` と対応する ——
+     * **`id` (実行の鍵) と `label` (画面の題) は別の欄**である (パス 179)。
+     * 空配列なので `snapshotShapeParity` の走査は要素の形を見ない (両方に 1 件以上
+     * 要る)。対応は `main/clients/__tests__/skills.test.ts` の型検査が留める。
+     */
     items: [] as {
-      name: string;
+      id: string;
+      label: string;
       description: string;
       source: 'user' | 'project' | 'plugin';
       path: string;
+      runnable: boolean;
+      unrunnableReason: string;
     }[],
   },
 
@@ -321,6 +336,9 @@ export const SNAPSHOT = {
       installPath: '' as string,
       platform: '' as string,
       details: '' as string,
+      // 同梱値が出ている = 端末を見ていない (ブラウザ版、または取得に失敗した後)。
+      // `installed: false` を「無い」と読ませないため、状態を明示する (パス 165)。
+      detection: 'unavailable' as NortonDetection,
     },
     breaches: [] as { email: string; checkedAt: string; count: number }[],
     lastUrlScan: null as { url: string; scannedAt: string; positives: number; total: number } | null,
@@ -357,7 +375,7 @@ export const SNAPSHOT = {
     running: false,
     version: '' as string,
     versionSafe: false,
-    versionMinRecommended: '0.1.46',
+    versionMinRecommended: MIN_SAFE_VERSION,
     models: [] as {
       name: string;
       family: string;
@@ -500,7 +518,12 @@ export const SNAPSHOT = {
   },
 
   microsoft365: {
-    userName: '',
+    // **`as string` を落とすと枝が死ぬ。** `SNAPSHOT` は末尾が `as const` なので、
+    // 素の `''` はリテラル型 `""` になる。画面は `typeof SNAPSHOT.microsoft365` から型を取るので
+    // `userName ? … : ''` の真の枝が `never` = **型の上で死に、tsc が中を検査しなくなる** ——
+    // 一方 live 取得は `userName: string` を返すので**その枝は実際に走る**。
+    // 直下の配列が既に `as T[]` で広げているのと同じ理由 (プレースホルダは実物の型で持つ)。
+    userName: '' as string,
     messages: [] as { id: string; subject: string; from: string; received: string; unread: boolean }[],
     events: [] as { id: string; subject: string; start: string; location: string }[],
     items: [
@@ -956,7 +979,16 @@ export const SNAPSHOT = {
     uptimeSec: 277_320,
     uptimeLabel: '3日 5時間 2分',
     cpu: { model: 'Intel Core i7', cores: 8, speedMhz: 2600 },
-    load: { avg1: 0.42, avg5: 0.55, avg15: 0.61, perCorePct: 5 },
+    // 同梱は Linux ホストの標本なので数で持つ。**型は `number | null` に広げる** ——
+    // live 側 (`clients/linux.ts`) はロードアベレージを提供しない OS で `null` を
+    // 返すため、狭いままだと写しがずれる (payloadShapeAgreement.test.ts が留める)。
+    load: {
+      avg1: 0.42 as number | null,
+      avg5: 0.55 as number | null,
+      avg15: 0.61 as number | null,
+      perCorePct: 5 as number | null,
+      unavailableNote: null as string | null,
+    },
     memory: { totalMb: 16384, freeMb: 7168, usedMb: 9216, usagePct: 56.3 },
     notes: [] as string[],
     devEnv: {
@@ -1136,7 +1168,22 @@ export const SNAPSHOT = {
     updatedAt: '',
     disqualifiersSource: LEADER_DISQUALIFIERS_SOURCE,
     stepsSource: SKILL_STEPS_SOURCE,
+    // 保存先から何が読めたか (パス 121)。同梱の初期値は「まだ無い」。
+    stored: 'none' as 'saved' | 'none' | 'unreadable',
+    storedNote: null as string | null,
   },
+
+  /**
+   * 水耕栽培の運転管理。**利用者のデータでなく「何を測るか」の台帳**で、
+   * 見本ではない —— **`shared/hydroponicsControl.ts` から組む**。
+   *
+   * ここを型だけの空の入れ物にしていたとき、**初回描画の台帳が空の表**に
+   * なった (`useServiceData` はまず snapshot を返すので、「更新」を押すまで
+   * 何も出ない)。e2e が実測で拾った —— パス 118 の「口はあるが繋がっていない」。
+   *
+   * 測定・ロット・設定は record store (端末内) に在り、**ここには入らない**。
+   */
+  hydroponics: buildHydroponicsSnapshot(),
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
@@ -1170,6 +1217,7 @@ export const SNAPSHOT = {
       interestTaxShield: number;
       netCashflow: number;
       operatingCashflow: number;
+      operatingCashflowKnown: boolean;
       portfolioValue: number;
     }[],
     bars: [] as { label: string; secured: number; pipeline: number }[],
@@ -1207,7 +1255,17 @@ export const SNAPSHOT = {
       };
       return { optimistic: emptyRunway, expected: emptyRunway, pessimistic: emptyRunway };
     })(),
-    qualityScore: { nonRepayableRatio: 0, afterTaxRatio: 0, compositeScore: 0 },
+    // 同梱は案件 0 件なので**確定総額も 0** —— live 計算 (`fundingQualityScore`) と
+    // 同じ答え (算定不能) を持つ。2026-09-09 まで見本は `0` を持ち、live 計算は
+    // 同じ入力に `100` を返していた —— **同じ空状態について見本と実装が正反対**
+    // だった (どちらが正しいかではなく、どちらも数で答えていたのが誤り)。
+    qualityScore: {
+      nonRepayableRatio: null as number | null,
+      afterTaxRatio: null as number | null,
+      compositeScore: null as number | null,
+      // 文面は `shared/funding.ts` の 1 本を読む (見本に写さない)。
+      unavailableNote: NO_SECURED_FUNDING_NOTE as string | null,
+    },
     diversification: null as {
       kindsPresent: number;
       hhi: number;
@@ -1224,10 +1282,16 @@ export const SNAPSHOT = {
     },
     debtService: {
       totalRepayment: 0,
-      totalOperatingCashflow: 0,
-      overallDscr: 0,
-      worstMonthDscr: 0,
+      // 返済が 0 なので DSCR は算定不能 —— 出荷する既定データに
+      // 「返済ゼロで DSCR 0」を入れない (6 行上の longTermRatioPct と同じ形)。
+      coveredOperatingCashflow: 0,
+      coveredRepayment: 0,
+      overallDscr: null as number | null,
+      worstMonthDscr: null as number | null,
       shortfallMonths: 0,
+      // 突合できた月も突合できなかった月も 0 (返済が 1 か月も無いので)。
+      coveredMonths: 0,
+      unmatchedMonths: 0,
     },
     costMetrics: {
       totalLoanPrincipal: 0,
@@ -1250,8 +1314,12 @@ export const SNAPSHOT = {
   },
 
   freee: {
-    companyName: '',
+    // `as string` の理由は microsoft365.userName と同じ (リテラル `""` だと表示の枝が死ぬ)。
+    companyName: '' as string,
     monthly: [] as { month: string; income: number; expense: number; net: number }[],
+    // 見本は取引を 1 件も読んでいない。件数は `shared/freeeIntake.ts` の定数から
+    // 引く (0 を 4 つ手で書くと、欄が増えたときにここだけ古くなる)。
+    intake: NO_DEAL_INTAKE,
     fetchedAt: '',
   },
 
@@ -1270,12 +1338,12 @@ export const SNAPSHOT = {
         variableCost: number;
         fixedCost: number;
         contribution: number;
-        contributionRatio: number;
-        variableRatio: number;
-        fixedRatio: number;
+        contributionRatio: number | null;
+        variableRatio: number | null;
+        fixedRatio: number | null;
         bep: number;
         bepRatio: number;
-        safetyMargin: number;
+        safetyMargin: number | null;
         operatingProfit: number;
         operatingLeverage: number;
       };
@@ -1295,12 +1363,13 @@ export const SNAPSHOT = {
         variableCost: 0,
         fixedCost: 0,
         contribution: 0,
-        contributionRatio: 0,
-        variableRatio: 0,
-        fixedRatio: 0,
+        // 売上 0 の合算なので率は算定不能 (safetyMargin: null と同じ扱い)。
+        contributionRatio: null as number | null,
+        variableRatio: null as number | null,
+        fixedRatio: null as number | null,
         bep: 0,
         bepRatio: 0,
-        safetyMargin: 0,
+        safetyMargin: null,
         operatingProfit: 0,
         operatingLeverage: 0,
       },
@@ -1639,6 +1708,9 @@ export const SNAPSHOT = {
     ],
     fetchedAt: '',
     isMock: true,
+    // 保存先から何が読めたか (パス 120)。同梱の初期値は「まだ無い」。
+    stored: 'none' as 'saved' | 'none' | 'unreadable',
+    storedNote: null as string | null,
   },
 
   templates: {

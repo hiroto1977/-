@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach, afterEach } from 'vitest';
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
 import { promises as fsp } from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
@@ -28,6 +28,10 @@ import {
   type TeamMember,
   type TeamRadarState,
 } from '../teamradar';
+import { resetSafeStorageState, safeStorageState, sealForTest, unsealForTest } from '../../__tests__/safeStorageMock';
+
+// teamradar.ts は保存を OS のキーチェーンで封緘する (main/atRest.ts → electron)。単体テストは実物の electron を読まない。
+vi.mock('electron', async () => (await import('../../__tests__/safeStorageMock')).electronSafeStorageMock());
 
 // --- Constants ---------------------------------------------------------
 
@@ -304,28 +308,33 @@ describe('defaultStatePath', () => {
 });
 
 describe('loadTeamRadarState', () => {
-  it('returns defaults when file is missing', async () => {
-    const state = await loadTeamRadarState({
+  it('★ ファイルが無ければ「まだ保存していない」(見本を返すが、見本だと言える)', async () => {
+    const stored = await loadTeamRadarState({
       readFile: async () => {
-        throw new Error('ENOENT');
+        throw Object.assign(new Error('ENOENT: no such file'), { code: 'ENOENT' });
       },
     });
-    expect(state.department).toBe(DEFAULT_TEAM_RADAR.department);
-    expect(state.members).toHaveLength(3);
+    expect(stored).toEqual({ kind: 'none' });
   });
 
-  it('returns defaults on malformed JSON', async () => {
-    const state = await loadTeamRadarState({
-      readFile: async () => 'not-json{',
+  it('★ 読めない (権限・I/O) は「読めなかった」—— パス 120 までは見本へ黙って倒していた', async () => {
+    const stored = await loadTeamRadarState({
+      readFile: async () => {
+        throw Object.assign(new Error('EACCES: permission denied'), { code: 'EACCES' });
+      },
     });
-    expect(state.department).toBe(DEFAULT_TEAM_RADAR.department);
+    expect(stored).toEqual({ kind: 'unreadable', reason: 'EACCES: permission denied' });
   });
 
-  it('returns defaults when root is not an object', async () => {
-    const state = await loadTeamRadarState({
-      readFile: async () => JSON.stringify('hello'),
-    });
-    expect(state.department).toBe(DEFAULT_TEAM_RADAR.department);
+  it('壊れた JSON / オブジェクトでない根 / 判定を通らない members は「読めなかった」(理由つき)', async () => {
+    const load = (raw: string) => loadTeamRadarState({ readFile: async () => raw });
+    expect(await load('not-json{')).toEqual({ kind: 'unreadable', reason: 'JSON として読めません' });
+    expect(await load(JSON.stringify('hello'))).toEqual({ kind: 'unreadable', reason: 'オブジェクトではありません' });
+    expect(
+      await load(
+        JSON.stringify({ department: 'X', evaluatedAt: '2030-01-01', members: [{ id: 'BAD', name: 'Y', scores: [1, 2, 3, 4, 5] }] }),
+      ),
+    ).toEqual({ kind: 'unreadable', reason: 'member id is invalid: BAD' });
   });
 
   it('loads a valid state file', async () => {
@@ -334,42 +343,28 @@ describe('loadTeamRadarState', () => {
       evaluatedAt: '2030-01-01',
       members: [{ id: 'a', name: 'A', scores: [1, 2, 3, 4, 5] }],
     });
-    const state = await loadTeamRadarState({ readFile: async () => raw });
-    expect(state.department).toBe('開発部');
-    expect(state.evaluatedAt).toBe('2030-01-01');
-    expect(state.members).toHaveLength(1);
+    const stored = await loadTeamRadarState({ readFile: async () => raw });
+    expect(stored.kind).toBe('saved');
+    if (stored.kind !== 'saved') return;
+    expect(stored.state.department).toBe('開発部');
+    expect(stored.state.evaluatedAt).toBe('2030-01-01');
+    expect(stored.state.members).toHaveLength(1);
   });
 
-  it('falls back to "営業部" when department field is empty/missing', async () => {
-    const raw = JSON.stringify({ members: [] });
-    const state = await loadTeamRadarState({ readFile: async () => raw });
-    expect(state.department).toBe('営業部');
+  it('falls back to "営業部" when department field is empty/missing (読む側は寛容)', async () => {
+    const stored = await loadTeamRadarState({ readFile: async () => JSON.stringify({ members: [] }) });
+    expect(stored.kind === 'saved' && stored.state.department).toBe('営業部');
   });
 
   it('truncates oversize department string at 64 chars', async () => {
-    const raw = JSON.stringify({
-      department: 'x'.repeat(200),
-      evaluatedAt: '2030-01-01',
-      members: [],
-    });
-    const state = await loadTeamRadarState({ readFile: async () => raw });
-    expect(state.department).toHaveLength(64);
-  });
-
-  it('returns defaults when members payload fails validation', async () => {
-    const raw = JSON.stringify({
-      department: 'X',
-      evaluatedAt: '2030-01-01',
-      members: [{ id: 'BAD', name: 'Y', scores: [1, 2, 3, 4, 5] }],
-    });
-    const state = await loadTeamRadarState({ readFile: async () => raw });
-    // Validation throws → caught → defaults returned
-    expect(state.department).toBe(DEFAULT_TEAM_RADAR.department);
+    const raw = JSON.stringify({ department: 'x'.repeat(200), evaluatedAt: '2030-01-01', members: [] });
+    const stored = await loadTeamRadarState({ readFile: async () => raw });
+    expect(stored.kind === 'saved' && stored.state.department).toHaveLength(64);
   });
 
   it('uses the custom statePath when provided', async () => {
     const captured: string[] = [];
-    const state = await loadTeamRadarState({
+    const stored = await loadTeamRadarState({
       statePath: () => '/tmp/x.json',
       readFile: async (p) => {
         captured.push(p);
@@ -377,7 +372,8 @@ describe('loadTeamRadarState', () => {
       },
     });
     expect(captured).toEqual(['/tmp/x.json']);
-    expect(state.department).toBe(DEFAULT_TEAM_RADAR.department);
+    // code の無い失敗は「読めなかった」(無いファイルではない)。
+    expect(stored).toEqual({ kind: 'unreadable', reason: 'boom' });
   });
 });
 
@@ -406,7 +402,7 @@ describe('saveTeamRadarState', () => {
     expect(writes[0]!.path).toBe('/tmp/team-radar.json.tmp');
     expect(renamed).toEqual({ from: '/tmp/team-radar.json.tmp', to: '/tmp/team-radar.json' });
     // Round-trip the content
-    const parsed = JSON.parse(writes[0]!.content) as TeamRadarState;
+    const parsed = JSON.parse(unsealForTest(writes[0]!.content)) as TeamRadarState;
     expect(parsed.department).toBe('営業部');
   });
 
@@ -449,27 +445,52 @@ describe('saveTeamRadarState', () => {
 // --- fetchTeamRadarSnapshot -------------------------------------------
 
 describe('fetchTeamRadarSnapshot', () => {
-  it('returns the loaded state with isMock=true and canonical axes', async () => {
+  it('★ 保存した状態は利用者の物 —— isMock=false・stored=saved (パス 120 までは常に true で「同梱データ」と刷られた)', async () => {
     const snap = await fetchTeamRadarSnapshotImpl(
       { token: '' },
       {
         loadState: async () => ({
-          department: '開発部',
-          evaluatedAt: '2030-01-01',
-          members: [{ id: 'a', name: 'A', scores: [1, 2, 3, 4, 5] }],
+          kind: 'saved',
+          state: {
+            department: '開発部',
+            evaluatedAt: '2030-01-01',
+            members: [{ id: 'a', name: 'A', scores: [1, 2, 3, 4, 5] }],
+          },
         }),
       },
     );
     expect(snap.department).toBe('開発部');
     expect(snap.axes).toEqual(CANONICAL_AXES);
     expect(snap.members).toHaveLength(1);
+    expect(snap.isMock).toBe(false);
+    expect(snap.stored).toBe('saved');
+    expect(snap.storedNote).toBeNull();
+  });
+
+  it('★ 読めなかった保存は見本を返しつつ、そう言う (isMock=true・stored=unreadable・注記)', async () => {
+    const snap = await fetchTeamRadarSnapshotImpl(
+      { token: '' },
+      { loadState: async () => ({ kind: 'unreadable', reason: 'EACCES: permission denied' }) },
+    );
+    expect(snap.department).toBe(DEFAULT_TEAM_RADAR.department);
+    expect(snap.members).toHaveLength(3);
     expect(snap.isMock).toBe(true);
+    expect(snap.stored).toBe('unreadable');
+    expect(snap.storedNote).toContain('EACCES: permission denied');
+  });
+
+  it('まだ無い: 見本を isMock=true・stored=none で返す', async () => {
+    const snap = await fetchTeamRadarSnapshotImpl({ token: '' }, { loadState: async () => ({ kind: 'none' }) });
+    expect(snap.isMock).toBe(true);
+    expect(snap.stored).toBe('none');
+    expect(snap.storedNote).toBeNull();
   });
 
   it('production wrapper delegates to impl', async () => {
     const snap = await fetchTeamRadarSnapshot({ token: '' });
-    expect(snap.isMock).toBe(true);
     expect(snap.axes).toEqual(CANONICAL_AXES);
+    expect(['saved', 'none', 'unreadable']).toContain(snap.stored);
+    expect(snap.isMock).toBe(snap.stored !== 'saved');
   });
 });
 
@@ -528,6 +549,8 @@ describe('exportTeamRadarSvgImpl', () => {
     members: [{ id: 'a', name: 'A', scores: [1, 2, 3, 4, 5] as number[] }],
     fetchedAt: 'x',
     isMock: true,
+    stored: 'saved' as const,
+    storedNote: null,
   };
 
   it('writes SVG to the default path when none provided', async () => {
@@ -767,52 +790,46 @@ describe('colorFor — 色の割り当て', () => {
 
 // --- 保存されている状態の読み込み --------------------------------------
 
-describe('loadTeamRadarState — 壊れた保存内容', () => {
+describe('loadTeamRadarState — 壊れた保存内容は「読めなかった」と言う (パス 120)', () => {
   const load = (raw: string) =>
     loadTeamRadarState({ statePath: () => '/x.json', readFile: () => Promise.resolve(raw) });
+  const saved = async (raw: string): Promise<TeamRadarState> => {
+    const s = await load(raw);
+    if (s.kind !== 'saved') throw new Error(`expected saved, got ${s.kind}`);
+    return s.state;
+  };
 
-  it('オブジェクトでない JSON は既定値に落とす', async () => {
+  it('オブジェクトでない JSON (null / 数 / 文字列 / 配列) は読めなかった', async () => {
     for (const raw of ['null', '42', '"str"', '[1,2]']) {
-      const s = await load(raw);
-      // 配列は typeof 'object' なので通るが、members が無いので空になる
-      expect(typeof s.department).toBe('string');
-      expect(s.department.length).toBeGreaterThan(0);
+      expect(await load(raw), raw).toEqual({ kind: 'unreadable', reason: 'オブジェクトではありません' });
     }
-    expect((await load('null')).department).toBe(DEFAULT_TEAM_RADAR.department);
   });
 
-  it('読めない JSON は既定値に落とす', async () => {
-    const s = await load('not json');
-    expect(s).toEqual({
-      department: DEFAULT_TEAM_RADAR.department,
-      evaluatedAt: DEFAULT_TEAM_RADAR.evaluatedAt,
-      members: DEFAULT_TEAM_RADAR.members,
-    });
+  it('読めない JSON は理由つきで読めなかった (パス 120 までは既定値に落としていた)', async () => {
+    expect(await load('not json')).toEqual({ kind: 'unreadable', reason: 'JSON として読めません' });
   });
 
-  it('部署名が空・文字列でなければ既定の部署名を使う', async () => {
+  it('部署名が空・文字列でなければ既定の部署名を使う (飾りは寛容に読む)', async () => {
     for (const dept of ['""', '123', 'null']) {
-      const s = await load(`{"department":${dept},"evaluatedAt":"2026-05-01","members":[]}`);
+      const s = await saved(`{"department":${dept},"evaluatedAt":"2026-05-01","members":[]}`);
       expect(s.department).toBe('営業部');
     }
   });
 
   it('部署名は 64 文字で切り、評価日は 32 文字で切る', async () => {
-    const s = await load(
-      JSON.stringify({ department: 'あ'.repeat(80), evaluatedAt: 'い'.repeat(40), members: [] }),
-    );
+    const s = await saved(JSON.stringify({ department: 'あ'.repeat(80), evaluatedAt: 'い'.repeat(40), members: [] }));
     expect(s.department).toHaveLength(64);
     expect(s.evaluatedAt).toHaveLength(32);
   });
 
   it('評価日が空・文字列でなければ今日 (YYYY-MM-DD) を使う', async () => {
-    const s = await load('{"department":"開発部","evaluatedAt":"","members":[]}');
+    const s = await saved('{"department":"開発部","evaluatedAt":"","members":[]}');
     expect(s.evaluatedAt).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(s.evaluatedAt).toBe(new Date().toISOString().slice(0, 10));
   });
 
   it('members が無ければ空として読む', async () => {
-    const s = await load('{"department":"開発部","evaluatedAt":"2026-05-01"}');
+    const s = await saved('{"department":"開発部","evaluatedAt":"2026-05-01"}');
     expect(s.members).toEqual([]);
   });
 });
@@ -967,6 +984,8 @@ describe('renderTeamRadarSvg — 図の構造', () => {
     members,
     fetchedAt: '2035-05-15T00:00:00.000Z',
     isMock: true,
+    stored: 'saved' as const,
+    storedNote: null,
   });
   const mem = (id: string, name: string, scores: number[]): TeamMember =>
     ({ id, name, scores } as TeamMember);
@@ -1039,10 +1058,32 @@ describe('renderTeamRadarSvg — 図の構造', () => {
     expect(svg).toContain('&lt;script&gt;');
   });
 
-  it('スコアが欠けている軸は 0 として描く (落ちない)', () => {
+  /*
+   * **スコアが欠けている軸が在る人は描かない** (2026-09-12 · パス 190)。
+   *
+   * それまでこの検査は「0 として描く (落ちない)」を**正解として留めていた** ——
+   * 実測では欠けた頂点が中心そのもの (720×720 で `360.0,370.0` = cx, cy) に落ち、
+   * 「その軸が最低」という幾何になる。画面の `RadarChart` は 2026-09-09 から
+   * それを拒んでおり、**渡す物の側だけ**が古い形で残っていた。
+   */
+  it('★ スコアが欠けている軸が在る人は描かず、誰の何が欠けたかを図に書く', () => {
     const svg = renderTeamRadarSvg(snap([mem('a', '田中', [5, 5])]));
+    // 多角形も頂点も出さない (格子の 5 リングの目盛りだけが残る)
+    expect(count(svg, /<circle /g)).toBe(0);
+    expect(svg).not.toMatch(/<polygon points="[^"]*" fill="rgba/);
+    // 黙って落とさない —— 名前と欠けた軸を書く
+    expect(svg).toContain('1 名を図に描いていません');
+    expect(svg).toContain('田中');
+    expect(svg).toContain('プレゼン力');
+    // 標本: 直っていなければ出ていた座標 (中心 = cx 360, cy 370)
+    expect(svg).not.toContain('360.0,370.0');
+  });
+
+  it('対照 — 全軸に点が在れば描く (凡例の丸 1 + 頂点 5)', () => {
+    const svg = renderTeamRadarSvg(snap([mem('a', '田中', [5, 5, 4, 3, 2])]));
     expect(count(svg, /<circle /g)).toBe(CANONICAL_AXES.length + 1);
     expect(svg).toContain('田中');
+    expect(svg).not.toContain('図に描いていません');
   });
 });
 
@@ -1054,6 +1095,8 @@ describe('renderTeamRadarSvg — 形そのもの', () => {
     members,
     fetchedAt: '2035-05-15T00:00:00.000Z',
     isMock: true,
+    stored: 'saved' as const,
+    storedNote: null,
   });
   const mem = (id: string, name: string, scores: number[]): TeamMember =>
     ({ id, name, scores } as TeamMember);
@@ -1119,6 +1162,8 @@ describe('renderTeamRadarSvg — 座標の書式と重なり', () => {
     members,
     fetchedAt: '2035-05-15T00:00:00.000Z',
     isMock: true,
+    stored: 'saved' as const,
+    storedNote: null,
   });
   const mem = (id: string, name: string, scores: number[]): TeamMember =>
     ({ id, name, scores } as TeamMember);
@@ -1189,7 +1234,7 @@ describe('saveTeamRadarState の権限', () => {
     await saveTeamRadarState(state as never, { statePath: () => target });
     expect(await modeOf(target)).toBe('600');
     // 中身も書けていること (権限だけ見て中身を見ないと、書けていなくても通る)。
-    expect(JSON.parse(await fsp.readFile(target, 'utf8')).members[0].name).toBe('山田');
+    expect(JSON.parse(unsealForTest(await fsp.readFile(target, 'utf8'))).members[0].name).toBe('山田');
   });
 
   it('既にある 644 のファイルも、次の保存で締まる', async () => {
@@ -1201,5 +1246,80 @@ describe('saveTeamRadarState の権限', () => {
     await saveTeamRadarState(state as never, { statePath: () => target });
 
     expect(await modeOf(target)).toBe('600');
+  });
+});
+
+/*
+ * **ここに入るのは他人の評価である** (パス 133)。上の権限 (0600) は同じ機械の他の利用者を防ぐが、
+ * 同じ利用者の別のプロセス・バックアップ・同期フォルダには効かない。2026-09-09 まで平文で、
+ * 同じ端末の `secrets.json` と感情ログ (パス 132) は OS のキーチェーンで封緘していた。
+ */
+describe('保存先の封緘 — チームレーダーは氏名と評価を含む (パス 133)', () => {
+  beforeEach(resetSafeStorageState);
+  const state: TeamRadarState = {
+    department: '営業部',
+    evaluatedAt: '2026-09-09',
+    members: [{ id: 'm1', name: '山田', scores: [3, 4, 2, 5, 1] }],
+  };
+  const capture = () => {
+    const box = { written: '' };
+    const deps = {
+      statePath: () => '/tmp/team-radar.json',
+      mkdir: async () => undefined,
+      writeFile: async (_p: string, c: string) => {
+        box.written = c;
+      },
+      rename: async () => undefined,
+    };
+    return { box, deps };
+  };
+  const load = (raw: string) => loadTeamRadarState({ statePath: () => '/tmp/team-radar.json', readFile: async () => raw });
+
+  it('★ 書いた文字列に部署名も氏名も評価も平文で残らない —— 封筒 { v: 2, sealed } で置く', async () => {
+    const { box, deps } = capture();
+    await saveTeamRadarState(state, deps);
+    for (const needle of ['営業部', '山田', 'scores', 'members']) expect(box.written, needle).not.toContain(needle);
+    expect(JSON.parse(box.written)).toMatchObject({ v: 2 });
+    expect((JSON.parse(box.written) as { sealed: string }).sealed).not.toMatch(/^plain:/);
+    // 標本: 検査側で開けば状態がそのまま在る (上の「無い」は封筒の外を見ている)
+    expect(JSON.parse(unsealForTest(box.written))).toEqual(state);
+    expect(await load(box.written)).toMatchObject({ kind: 'saved', state });
+  });
+
+  it('2026-09-09 までの平文ファイルはそのまま読める (移行 —— 次の保存で封緘される)', async () => {
+    expect(await load(JSON.stringify(state, null, 2))).toMatchObject({ kind: 'saved', state });
+    const { box, deps } = capture();
+    await saveTeamRadarState(state, deps);
+    expect(box.written).not.toContain('山田');
+  });
+
+  it('対照: キーチェーンが無い環境は plain: (難読化) で往復する —— 封緘は名乗らない', async () => {
+    safeStorageState.encryptionAvailable = false;
+    const { box, deps } = capture();
+    await saveTeamRadarState(state, deps);
+    expect((JSON.parse(box.written) as { sealed: string }).sealed).toMatch(/^plain:/);
+    expect(await load(box.written)).toMatchObject({ kind: 'saved', state });
+  });
+
+  it('★ 封緘済みをキーチェーンの無い環境で読むと、理由つきで「読めなかった」(見本に化けない)', async () => {
+    const sealed = sealForTest(JSON.stringify(state));
+    safeStorageState.encryptionAvailable = false;
+    expect(await load(sealed)).toEqual({
+      kind: 'unreadable',
+      reason: 'OS のキーチェーンで封緘されていますが、この環境ではキーチェーンが使えません',
+    });
+  });
+
+  it('★ 保存時と別の鍵 (復号の失敗) も理由つきで「読めなかった」', async () => {
+    const sealed = sealForTest(JSON.stringify(state));
+    safeStorageState.decryptThrows = true;
+    expect(await load(sealed)).toEqual({
+      kind: 'unreadable',
+      reason: '封緘を復号できません (値が壊れているか、保存時と別の鍵が使われています)',
+    });
+  });
+
+  it('対照: 封筒の中が壊れていれば、従来の文 (JSON として読めません) で「読めなかった」', async () => {
+    expect(await load(sealForTest('not json'))).toEqual({ kind: 'unreadable', reason: 'JSON として読めません' });
   });
 });

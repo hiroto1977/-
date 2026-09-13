@@ -33,7 +33,6 @@ aliases:
 - [[human-late-selection-deutsch-norman|後期選択理論——すべての刺激が意味処理された後で注意が選択する]] — 語彙が近い
 - [[human-filter-model-attention-broadbent|ブロードベントのフィルターモデル——選択的注意の早期選択ボトルネック理論]] — 同じ思想家
 - [[human-cocktail-party-effect|カクテルパーティー効果]] — 同じ思想家
-- [[human-negative-priming|負のプライミング——無視した刺激への反応が遅れる]] — 同分野の近傍
 - [[human-testing-effect-roediger|テスト効果——検索練習が長期記憶保持を促進するメカニズム]] — 同分野の近傍
 
 ## 関連

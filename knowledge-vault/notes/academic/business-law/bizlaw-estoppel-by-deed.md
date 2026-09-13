@@ -34,14 +34,14 @@ Herbert Thorndike Tiffany ／ Robert W. Swenson ／ James W. Callison
 ## 関連概念
 - [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — 出典を共有
 - [[bizlaw-clean-hands-doctrine|クリーンハンズ法理（不正行為の抗弁）]] — 出典を共有
+- [[bizlaw-doctrine-of-necessities|必需品の法理（Doctrine of Necessaries）― 配偶者間扶養義務と契約責任]] — 出典を共有
 - [[bizlaw-environmental-law|環境法：公共信託理論・ポーター仮説・国際気候法が形成する自然環境保護の法的体系]] — 出典を共有
+- [[bizlaw-rule-against-perpetuities|永久拘束禁止原則]] — 出典を共有
 - [[econ-anticommons|アンチコモンズの悲劇]] — 出典を共有
 - [[bizlaw-doctrine-of-necessaries|必需品の法理]] — 出典を共有
-- [[bizlaw-doctrine-of-necessities|必需品の法理（Doctrine of Necessaries）― 配偶者間扶養義務と契約責任]] — 出典を共有
-- [[bizlaw-rule-against-perpetuities|永久拘束禁止原則]] — 出典を共有
+- [[bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff|パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争]] — 出典を共有
 - [[bizlaw-battle-of-the-forms|書式の戦い]] — 出典を共有
 - [[bizlaw-dragnet-clause-doctrine|包括担保条項の法理——将来債務を含む担保権の有効性と限界]] — 同分野の近傍
-- [[bizlaw-stabilization-clause|安定化条項（Stabilization Clause）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -30,16 +30,16 @@ aliases:
 - [Wikipedia: Resource-based view — causal ambiguity, isolating mechanisms, imitability](https://en.wikipedia.org/wiki/Resource-based_view) `リファレンス`
 
 ## 関連概念
-- [[mgmt-vrio-framework-barney|VRIOフレームワーク——持続的競争優位をもたらす経営資源の四条件]] — 語彙が近い
 - [[mgmt-penrose-growth|ペンローズの企業成長理論]] — 同じ思想家
-- [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 同じ思想家
 - [[mgmt-diversification|多角化戦略]] — 同じ思想家
-- [[mgmt-resource-based-view|資源ベース理論（Resource-Based View, RBV）とVRIO]] — 同じ思想家
 - [[mgmt-strategic-factor-markets-barney|戦略的要素市場論——競争優位の源泉としての資源獲得の非完全性]] — 同じ思想家
-- [[mgmt-dominant-logic-prahalad-bettis|支配的論理——経営者の事業の捉え方が資源配分と適応を方向づける認知枠組み]] — 同じ思想家
+- [[mgmt-vrio-framework-barney|資源ベース理論と VRIO フレームワーク（バーニー）——競争優位の源泉を企業内部の資源に求め、価値・希少性・模倣困難性・組織の四条件を満たす資源だけが持続的優位をもたらすとする]] — 同じ思想家
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]] — 同じ思想家
 - [[mgmt-vrio|VRIO分析（VRIOフレームワーク）]] — 同じ思想家
-- [[mgmt-micro-foundations-movement-felin-foss|ミクロ的基礎運動——組織・戦略現象の個人レベル還元]] — 同じ思想家
+- [[mgmt-asset-stock-accumulation-dierickx-cool|資産ストック蓄積論——時間圧縮の不経済・資産量効率・相互連結性・資産の減耗・因果的曖昧性]] — 同じ思想家
+- [[mgmt-good-strategy-kernel-rumelt|ルメルトの「良い戦略」のカーネル——診断・基本方針・一貫した行動の三要素で戦略を判定する]] — 同じ思想家
+- [[mgmt-microfoundations-strategy|戦略のミクロ的基礎（フェリン＆フォス）——組織能力やルーティンといった集合的概念を、個人の行為・相互作用・異質性から説明しようとする研究プログラム]] — 同じ思想家
+- [[mgmt-strategic-group-theory|戦略グループ（ハント／ケイブス＆ポーター）——同一産業内で似た戦略をとる企業群を単位に、移動障壁がグループ間の収益差を持続させる]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

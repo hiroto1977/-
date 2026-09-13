@@ -14,7 +14,7 @@ tags:
 
 ## このドメインを出典とする項目
 
-- [[agile-development|アジャイルソフトウェア開発]] — TheScrumGuide—Schwaber&Sutherland（Scrum公式定義）
+- [[mgmt-agile-development|アジャイルソフトウェア開発]] — TheScrumGuide—Schwaber&Sutherland（Scrum公式定義）
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

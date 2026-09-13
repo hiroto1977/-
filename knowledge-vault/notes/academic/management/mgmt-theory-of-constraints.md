@@ -33,7 +33,7 @@ aliases:
 
 ## 関連概念
 - [[mgmt-mbo|目標による管理（MBO）]] — 同分野の近傍
-- [[mgmt-pdca-cycle|PDCAサイクル]] — 同分野の近傍
+- [[mgmt-organizational-energy-bruch|組織エネルギー理論——集団的活力の質と強度による組織診断]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

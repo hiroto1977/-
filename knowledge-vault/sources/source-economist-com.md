@@ -14,7 +14,7 @@ tags:
 
 ## このドメインを出典とする項目
 
-- [[econ-dutch-disease-theory|オランダ病理論]] — "TheDutchDisease"—TheEconomist(1977年11月26日号,命名記事)
+- [[econ-dutch-disease-corden|オランダ病（コーデン＝ニアリー）——資源ブームが支出効果と資源移動効果で交易財部門を萎縮させる脱工業化のメカニズム]] — "TheDutchDisease"—TheEconomist,1977年11月26日号（命名記事）
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

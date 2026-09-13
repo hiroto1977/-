@@ -36,13 +36,11 @@ Charles M. Goetz ／ Robert E. Scott ／ Juliet M. Kostritsky ／ Steven J. Burt
 - [[bizlaw-efficient-breach-theory|効率的契約違反論]] — 同じ思想家
 - [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 同じ思想家
 - [[bizlaw-implied-covenant-good-faith|誠実義務・公正取引の黙示的誓約]] — 同じ思想家
-- [[bizlaw-business-judgment-rule-delaware|経営判断の原則（デラウェア州法）]] — 出典を共有
-- [[bizlaw-contractual-unconscionability|契約の非良心性法理]] — 出典を共有
-- [[bizlaw-crown-jewel-defense|クラウンジュエル防衛（Crown Jewel Defense）]] — 出典を共有
-- [[bizlaw-derivative-suit-shareholder|株主代表訴訟]] — 出典を共有
-- [[bizlaw-entrenchment-doctrine-unocal|防衛策の正当性審査——ユノカル基準と取締役の合理性テスト]] — 出典を共有
-- [[bizlaw-equitable-subordination|衡平法上の劣後化（エクイタブル・サボーディネーション）]] — 出典を共有
-- [[bizlaw-material-adverse-change-clause|MAC条項法理]] — 出典を共有
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 出典を共有
+- [[infosoc-content-moderation-theory|大規模コンテンツ・モデレーション：プラットフォームにおけるユーザー生成コンテンツ統治の理論と実践]] — 出典を共有
+- [[bizlaw-election-of-remedies|救済手段の選択法理（エレクション・オブ・レメディーズ）]] — 出典を共有
+- [[bizlaw-consumer-protection-unfair-terms|消費者契約法と不当条項規制——約款の透明性と情報の非対称性への法的対応]] — 同分野の近傍
+- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

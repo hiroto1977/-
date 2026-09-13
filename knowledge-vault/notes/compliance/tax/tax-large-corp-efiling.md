@@ -32,12 +32,12 @@ aliases:
 
 ## 関連概念
 - [[tax-consumption-interim|消費税の中間申告・中間納付]] — 語彙が近い
-- [[tax-special-corporate-business-tax|特別法人事業税及び特別法人事業譲与税]] — 語彙が近い
 - [[labor-unfair-labor-practice|不当労働行為の禁止（労働組合法7条）]] — 出典を共有
 - [[subsidy-saitama|埼玉県中小企業省力化支援事業補助金]] — 出典を共有
 - [[tax-automobile-tax|自動車税（種別割）]] — 出典を共有
 - [[tax-hotei-chosho-etax|法定調書の e-Tax 等による提出義務]] — 出典を共有
 - [[tax-corporate-tax-rate|法人税の税率（普通法人・中小法人の軽減税率）]] — 同分野の近傍
+- [[tax-special-corporate-business-tax|特別法人事業税及び特別法人事業譲与税]] — 同分野の近傍
 - [[tax-tax-inclusive-pricing|消費税の総額表示義務（税込価格表示）]] — 同分野の近傍
 
 ## 関連

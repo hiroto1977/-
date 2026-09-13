@@ -33,6 +33,7 @@ aliases:
 ## 関連概念
 - [[labor-wage-payment|賃金支払の5原則とデジタル払い]] — 語彙が近い
 - [[bizlaw-labor-contract-act|労働契約法]] — 出典を共有
+- [[human-riasec-vocational-interests-holland|ホランドのRIASEC理論——六類型の適合度で職業選択と職務満足を説明する六角形モデル]] — 出典を共有
 - [[labor-customer-harassment|カスタマーハラスメント対策の事業主の措置義務化（2025年改正）]] — 出典を共有
 - [[mgmt-mbo|目標による管理（MBO）]] — 出典を共有
 - [[mgmt-job-based-employment|ジョブ型雇用]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[mgmt-job-demands-resources|仕事の要求度－資源モデル（JD-R）]] — 出典を共有
 - [[labor-childcare-short-time|育児のための短時間勤務制度（育児・介護休業法23条）]] — 同分野の近傍
 - [[labor-dispatch-period|労働者派遣の期間制限（3年ルール）]] — 同分野の近傍
-- [[labor-collective-bargaining|団体交渉拒否の禁止（労働組合法7条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

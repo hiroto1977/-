@@ -15,7 +15,9 @@
  */
 
 import { useState } from 'react';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
+import { fireReported } from '../data/deviceStoreFailure';
 import {
   BUSINESS_UNITS_COLLECTION,
   findBusinessName,
@@ -27,8 +29,7 @@ import {
 import {
   MANUAL_METRICS_COLLECTION,
   MANUAL_OVERRIDES_COLLECTION,
-  metricsForScope,
-  overridesForScope,
+  belongsToScope,
   parseManualMetric,
   sectionsFor,
   hasCatalog,
@@ -62,15 +63,17 @@ export function ManualDataSection({ scope }: { scope: string }) {
 
   const unitRecords: BusinessUnitRecord[] = units.records.map((r) => ({ id: r.id, data: r.data }));
   const sorted = sortBusinessUnits(unitRecords);
-  const mine = metricsForScope(
-    scope,
-    metrics.records.map((r) => r.data),
-  );
-  const mineWithId = metrics.records.filter((r) => r.data.scope === scope);
-  const scopedOverrides = overridesForScope(
-    scope,
-    overrides.records.map((r) => r.data),
-  );
+  /*
+   * **この画面のものを選ぶ規則は 1 本** (`belongsToScope`)。
+   *
+   * パス 170 まで、見出しの件数は `metricsForScope` で数え、並べる行は
+   * `records.filter((r) => r.data.scope === scope)` と**書き直して**いた ——
+   * 同じ量を 2 通りに導いていたので、片方だけが動くと
+   * 「3 件」と書いて 2 行しか出ない形になりうる (パス 61 の家系)。
+   * **件数は並べる配列の長さから出す。**
+   */
+  const myMetrics = metrics.records.filter((r) => belongsToScope(scope, r.data));
+  const myOverrides = overrides.records.filter((r) => belongsToScope(scope, r.data));
 
   return (
     <div
@@ -105,8 +108,8 @@ export function ManualDataSection({ scope }: { scope: string }) {
         <span>{open ? '▾' : '▸'}</span>
         <span>事業・数値の手入力</span>
         <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-mute)' }}>
-          この画面に任意の数値を足す / 置き換える（{mine.length} 件
-          {scopedOverrides.length > 0 ? ` ・置き換え ${scopedOverrides.length} 件` : ''}）
+          この画面に任意の数値を足す / 置き換える（{myMetrics.length} 件
+          {myOverrides.length > 0 ? ` ・置き換え ${myOverrides.length} 件` : ''}）
         </span>
       </button>
 
@@ -121,7 +124,7 @@ export function ManualDataSection({ scope }: { scope: string }) {
           <ManualMetrics
             scope={scope}
             units={sorted}
-            rows={mineWithId.map((r) => ({ id: r.id, data: r.data }))}
+            rows={myMetrics.map((r) => ({ id: r.id, data: r.data }))}
             onAdd={(e) => metrics.add({ ...e, scope } as ManualMetricEntry)}
             onRemove={(id) => metrics.remove(id)}
           />
@@ -129,11 +132,9 @@ export function ManualDataSection({ scope }: { scope: string }) {
           {hasCatalog(scope) && (
             <Overrides
               scope={scope}
-              rows={overrides.records.filter((r) => r.data.scope === scope)}
+              rows={myOverrides}
               onSave={async (path, value) => {
-                const existing = overrides.records.find(
-                  (r) => r.data.scope === scope && r.data.path === path,
-                );
+                const existing = myOverrides.find((r) => r.data.path === path);
                 if (existing !== undefined) await overrides.edit(existing.id, { value });
                 else await overrides.add({ scope, path, value } as ManualOverrideEntry);
               }}
@@ -174,6 +175,7 @@ function BusinessUnits({
     fixedCost: '',
   });
   const [error, setError] = useState<string>();
+  const submit = useSubmitGuard();
 
   async function add() {
     const parsed = parseBusinessUnit(draft);
@@ -208,14 +210,14 @@ function BusinessUnits({
           {typeof u.data.note === 'string' && (
             <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>{u.data.note}</span>
           )}
-          {typeof u.data.revenue === 'number' && (
+          {typeof u.data.revenue === 'number' && Number.isFinite(u.data.revenue) && (
             <span data-business-amounts style={{ fontSize: 11, color: 'var(--text-mute)' }}>
               月次 売上 {u.data.revenue.toLocaleString()} 円
-              {typeof u.data.variableCost === 'number' && ` / 変動費 ${u.data.variableCost.toLocaleString()} 円`}
-              {typeof u.data.fixedCost === 'number' && ` / 固定費 ${u.data.fixedCost.toLocaleString()} 円`}
+              {typeof u.data.variableCost === 'number' && Number.isFinite(u.data.variableCost) && ` / 変動費 ${u.data.variableCost.toLocaleString()} 円`}
+              {typeof u.data.fixedCost === 'number' && Number.isFinite(u.data.fixedCost) && ` / 固定費 ${u.data.fixedCost.toLocaleString()} 円`}
             </span>
           )}
-          <button type="button" onClick={() => void onRemove(u.id)} style={{ fontSize: 12 }}>
+          <button type="button" onClick={() => fireReported(onRemove(u.id))} style={{ fontSize: 12 }}>
             削除
           </button>
         </div>
@@ -280,7 +282,7 @@ function BusinessUnits({
           onChange={(e) => setDraft((d) => ({ ...d, fixedCost: e.target.value }))}
           style={{ ...input, width: 150 }}
         />
-        <button type="button" onClick={() => void add()} style={{ fontSize: 12 }}>
+        <button type="button" onClick={() => fireReported(submit.run(add))} disabled={submit.busy} style={{ fontSize: 12 }}>
           事業を追加
         </button>
         {error !== undefined && <span style={{ fontSize: 11, color: '#ef4444' }}>{error}</span>}
@@ -310,6 +312,7 @@ function ManualMetrics({
     businessId: '',
   });
   const [error, setError] = useState<string>();
+  const submit = useSubmitGuard();
 
   async function add() {
     const parsed = parseManualMetric(draft);
@@ -344,7 +347,7 @@ function ManualMetrics({
             {typeof r.data.note === 'string' && (
               <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>{r.data.note}</span>
             )}
-            <button type="button" onClick={() => void onRemove(r.id)} style={{ fontSize: 12 }}>
+            <button type="button" onClick={() => fireReported(onRemove(r.id))} style={{ fontSize: 12 }}>
               削除
             </button>
           </div>
@@ -401,7 +404,7 @@ function ManualMetrics({
           onChange={(e) => setDraft((d) => ({ ...d, note: e.target.value }))}
           style={{ ...input, width: 170 }}
         />
-        <button type="button" onClick={() => void add()} style={{ fontSize: 12 }}>
+        <button type="button" onClick={() => fireReported(submit.run(add))} disabled={submit.busy} style={{ fontSize: 12 }}>
           数値を追加
         </button>
         {error !== undefined && <span style={{ fontSize: 11, color: '#ef4444' }}>{error}</span>}
@@ -424,6 +427,7 @@ function Overrides({
   const [draft, setDraft] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const byPath = new Map(rows.map((r) => [r.data.path, r]));
+  const submit = useSubmitGuard();
 
   async function save(path: string, unit: MetricUnit) {
     const parsed = parseOverrideValue(draft[path] ?? '', unit);
@@ -485,11 +489,11 @@ function Overrides({
                   onChange={(e) => setDraft((d) => ({ ...d, [f.path]: e.target.value }))}
                   style={{ ...input, width: 110 }}
                 />
-                <button type="button" onClick={() => void save(f.path, f.unit)} style={{ fontSize: 12 }}>
+                <button type="button" onClick={() => fireReported(submit.run(() => save(f.path, f.unit)))} disabled={submit.busy} style={{ fontSize: 12 }}>
                   保存
                 </button>
                 {hit !== undefined && (
-                  <button type="button" onClick={() => void onClear(hit.id)} style={{ fontSize: 12 }}>
+                  <button type="button" onClick={() => fireReported(onClear(hit.id))} style={{ fontSize: 12 }}>
                     自動に戻す
                   </button>
                 )}

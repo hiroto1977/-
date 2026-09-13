@@ -33,14 +33,14 @@ aliases:
 ## 関連概念
 - [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — 同じ思想家
 - [[infosoc-open-source-governance-ostrom|オープンソースガバナンスとコモンズ——オストロムの共有資源論とデジタルコモンズ]] — 同じ思想家
-- [[infosoc-remix-copyright-digital-culture|リミックス文化とデジタル著作権のジレンマ——クリエイティブ・コモンズの思想と実践]] — 同じ思想家
 - [[infosoc-remix-culture-lessig|リミックス文化とクリエイティブ・コモンズ（レシッグ）]] — 同じ思想家
-- [[infosoc-remix-culture-lessig-jenkins|リミックス文化論——デジタル技術による文化的再利用と著作権の緊張]] — 同じ思想家
 - [[mgmt-lead-user|リードユーザー法]] — 同じ思想家
-- [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 同じ思想家
+- [[infosoc-remix-culture-lessig-jenkins|リミックス文化（レシッグ／ジェンキンス）——既存の文化的素材を再構成して創作するデジタル時代の実践と、それを抑圧しうる著作権制度との緊張]] — 同じ思想家
 - [[infosoc-wikinomics-tapscott|ウィキノミクス——マス・コラボレーションが変える生産と経済]] — 同じ思想家
 - [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]] — 同じ思想家
 - [[econ-commons-tragedy-hardin-ostrom|共有地の悲劇とオストロムの制度分析——コモンズ管理のガバナンス設計]] — 同じ思想家
+- [[econ-public-goods-samuelson|公共財（サミュエルソン）——非競合性と非排除性を持つ財はフリーライダー問題により市場で過少供給され、政府供給や集合的解決の根拠になる]] — 同じ思想家
+- [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

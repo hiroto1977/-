@@ -27,7 +27,7 @@ R・エドワード・フリーマン ／ ミルトン・フリードマン ／ 
 
 ## 出典
 - [Business Roundtable (2019) Statement on the Purpose of a Corporation — businessroundtable.org（181 CEO署名声明）](https://www.businessroundtable.org/business-roundtable-redefines-the-purpose-of-a-corporation-to-promote-an-economy-that-serves-all-americans) `リファレンス`
-- [Freeman, R. E. (1984) Strategic Management: A Stakeholder Approach — Pitman Publishing（ステークホルダー理論の原典）](https://doi.org/10.2307/2095lass) `学術`
+- [Freeman, R. E. (1984) Strategic Management: A Stakeholder Approach — Pitman（Cambridge University Press 2010 年再刊の DOI。旧 URL 10.2307/2095lass は存在しない DOI だったため差し替え）](https://doi.org/10.1017/CBO9781139192675) `学術`
 - [Mayer, C. (2018) Prosperity: Better Business Makes the Greater Good — Oxford University Press](https://global.oup.com/academic/product/prosperity-9780198799887) `学術`
 - [Wikipedia: Stakeholder capitalism — history, BRT 2019 statement, and critique of purpose-washing](https://en.wikipedia.org/wiki/Stakeholder_capitalism) `リファレンス`
 
@@ -37,11 +37,11 @@ R・エドワード・フリーマン ／ ミルトン・フリードマン ／ 
 - [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
 - [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 同じ思想家
 - [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]] — 同じ思想家
-- [[mgmt-stakeholder-capitalism-freeman|ステークホルダー資本主義と企業の目的（フリーマン）]] — 同じ思想家
+- [[mgmt-stakeholder-theory-freeman-strategic|ステークホルダー理論（フリーマン）——企業の目的を株主利益に限定せず、目的達成に影響を与え影響を受けるすべての集団の利害を戦略に組み込む規範的・道具的・記述的理論]] — 同じ思想家
 - [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]] — 同じ思想家
 - [[econ-phillips-curve-inflation-unemployment|フィリップス曲線——インフレ率と失業率のトレードオフと期待修正型の展開]] — 同じ思想家
-- [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 同じ思想家
 - [[econ-universal-basic-income|ユニバーサル・ベーシックインカム（UBI）]] — 同じ思想家
+- [[bizlaw-corporate-purpose-enlightened-shareholder|企業目的と啓発的株主価値論（英国会社法172条）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

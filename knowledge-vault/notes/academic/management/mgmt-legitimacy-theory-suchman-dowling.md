@@ -39,8 +39,8 @@ aliases:
 - [[mgmt-high-performance-work-systems-huselid|高業績労働システム——ヒューセリッドの人的資源管理バンドルと企業業績]] — 同じ思想家
 - [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]] — 同じ思想家
 - [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — 同じ思想家
-- [[mgmt-organizational-decline-theory|組織衰退理論]] — 同分野の近傍
-- [[mgmt-organizational-ecology-density|組織エコロジーの密度依存モデル——個体群密度と組織の設立・消滅]] — 同分野の近傍
+- [[mgmt-organizational-decline-weitzel|組織衰退（ウェイツェル＝ヨンソンの五段階モデル）——盲目・不作為・誤った行動・危機・解体と進み、段階が進むほど反転が難しくなる衰退の動態]] — 同分野の近傍
+- [[mgmt-organizational-equilibrium|組織均衡論（誘因と貢献）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

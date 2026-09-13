@@ -62,6 +62,23 @@ npm run scaffold -- linear "Linear" LN bearer
    npm run dev    # サイドバーに新タブが出現
    ```
 
+### 書き込み action (`serviceHub.invoke`) を足すとき
+
+1. **入力の欄**は `src/shared/writeFieldLimits.ts` の台帳に載せ、handler は `checkWriteFields` で断る (パス 110 / 111)。
+   画面の `maxLength` は台帳の値を読む (数を写さない)。
+2. **戻り値の形**は `src/shared/actionData.ts` の `ActionDataMap` に `'service/action'` の鍵で載せる (パス 116)。
+   main の handler は `Promise<ActionData<'service/action'>>` を宣言し、ブラウザ版の双子も同じ型を返し、
+   画面は `invoke<ActionData<'service/action'>>('service', 'action', …)` と読む ——
+   `invoke<{ … }>` と形をその場で書くと `renderer/__tests__/invokeDataTypes.test.ts` が落ちる
+   (写しがずれても `tsc` は黙るので、写しを禁じている)。
+   **台帳は全域** (パス 117): main の `ACTIONS` に登録した鍵は必ず台帳に載せる —— 載せないと同じ検査の
+   両方向の突き合わせが落ちる。構造化された形 (推奨・状態など) は `shared/*.ts` に 1 つだけ置いて台帳から
+   結ぶ (main / ブラウザ版 / 画面に写しを作らない)。`ACTIONS` を `Object.fromEntries(…)` で組むなら、走査
+   (`pages/__tests__/aiEgressPairs.helpers.ts` の `actionEntries`) が読める形 (CONNECTORS の表) にする ——
+   読めない形は「読めない」として鳴る。ブラウザ版の双子は関数の戻り値 `Promise<ActionResult<ActionData<'…'>>>`
+   か、dispatch の中の `ok<ActionData<'…'>>(…)` で同じ型を宣言する。
+3. `docs/ARCHITECTURE.md` §3.2 の action 行 (payload の欄と検証) を足す —— `verify:arch` が登録済み action と突き合わせる。
+
 ## なぜこの形か
 
 - **single source of truth**: ServiceId は `src/shared/serviceId.ts` の `SERVICE_IDS` 配列だけが真実。preload / main / renderer はここから import。

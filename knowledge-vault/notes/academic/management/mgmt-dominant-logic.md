@@ -3,8 +3,8 @@ collection: academic
 id: mgmt-dominant-logic
 category: "management"
 category_ja: "経営学"
-title: "ドミナント・ロジック（Dominant Logic）"
-as_of: "2026-06"
+title: "ドミナント・ロジック（プラハラード＆ベティス）——経営陣が事業を捉え資源を配分する支配的な認知枠組みが、多角化の成否と環境変化への適応を左右する"
+as_of: "2026-09"
 source_count: 2
 authoritative: true
 tags:
@@ -12,29 +12,28 @@ tags:
   - academic/management
   - knowledge/verified
 aliases:
-  - "ドミナント・ロジック（Dominant Logic）"
+  - "ドミナント・ロジック（プラハラード＆ベティス）——経営陣が事業を捉え資源を配分する支配的な認知枠組みが、多角化の成否と環境変化への適応を左右する"
 ---
 
-# ドミナント・ロジック（Dominant Logic）
+# ドミナント・ロジック（プラハラード＆ベティス）——経営陣が事業を捉え資源を配分する支配的な認知枠組みが、多角化の成否と環境変化への適応を左右する
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06 ・ 出典: 2件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-09 ・ 出典: 2件（うち権威ある出典 ✓）
 
 ## 概要
-ドミナント・ロジック（dominant logic / dominant general management logic）とは、インド出身の経営学者C・K・プラハラード（C. K. Prahalad, 1941-2010, ミシガン大学ロス経営大学院）とリチャード・A・ベティス（Richard A. Bettis, ノースカロライナ大学キーナン＝フラグラー経営大学院）が1986年の論文「The Dominant Logic: A New Linkage Between Diversity and Performance」（Strategic Management Journal, Vol.7, No.6, pp.485-501, DOI: 10.1002/smj.4250070602）において提唱した概念であり、トップマネジメント・チームが事業環境を概念化し重要な資源配分決定を行う際の支配的な認知枠組み（cognitive map / mental model）を指す。プラハラードとベティスは、多角化企業のパフォーマンスが事業ポートフォリオの「戦略的多様性」（strategic variety）ではなく、経営者が多様な事業を統括するために用いる認知的スキーマの適合性によって規定されるという命題を提示した。具体的には、トップマネジメントは過去の成功体験から形成されたドミナント・ロジックを通じて環境情報をフィルタリングし、注意配分（attention allocation）・情報処理・意思決定を行うため、中核事業と「支配的論理」が適合する関連多角化は高業績をもたらすが、異なるロジックを要求する非関連多角化では認知的不適合が生じ業績が低下する。ベティスとプラハラードは1995年の論文「The Dominant Logic: Retrospective and Extension」（Strategic Management Journal, Vol.16, No.1, pp.5-14, DOI: 10.1002/smj.4250160104）において、ドミナント・ロジックの概念を回顧的に再検討し、情報フィルター・スキーマ・認知バイアスの観点から理論的精緻化を行った。彼らはドミナント・ロジックを「組織内で情報がフィルタリングされ、戦略的に関連する情報のみが抽出される情報漏斗（information funnel）」として再定式化し、組織学習（organizational learning）との接点を強調した。この概念はハーバート・サイモン（Herbert Simon）の限定合理性（bounded rationality）、認知科学におけるスキーマ理論、カーネマン（Kahneman）の注意の二重過程理論と理論的に接続し、戦略的認知（strategic cognition / managerial cognition）研究の基盤的概念として定着している。なお、ヴァーゴ＝ラッシュ（Vargo & Lusch, 2004）のサービス・ドミナント・ロジック（service-dominant logic）はマーケティング・パラダイムに関する全く異なる概念であり、本概念とは無関係である。
+ドミナント・ロジック（dominant logic）は、C・K・プラハラードとリチャード・ベティスが1986年の論文（Strategic Management Journal 7巻6号）で提唱した概念で、トップマネジメントが事業をどう概念化し重要な資源配分の決定をどう下すかを規定する、共有された認知の枠組み（メンタルマップ）を指す。多角化企業の業績を左右するのは事業構成の多様性そのものではなく、経営者が多様な事業を統括するために用いる認知スキーマの適合であり、中核事業での成功体験から形成された論理と整合する関連多角化は高業績をもたらすが、異なる論理を要する事業では認知的不適合が生じて業績が落ちる。ベティスとプラハラード（1995）は概念を回顧し、ドミナント・ロジックを戦略的に関連する情報だけを通す「情報の漏斗」として再定式化して組織学習との接点を強調した。枠組みは迅速な判断を可能にする道具である一方、整合しない情報を無意識に濾過するフィルターとして働くため、環境が根本的に変わったときに経営者が新しい現実を認識できず、過去の成功体験に基づく判断を続けてしまう。組織の慣性、中核硬直性、能力の罠といった過去の強みが変化の足枷に転じる現象を経営者の認知の水準から説明し、限定合理性やスキーマ理論と接続して戦略的認知研究の基盤となった。批判として、ロジックの直接測定が難しく事例と業績の相関からの推論に頼ること、ロジックを意図的に更新する条件の理論化が弱いことがある。中小企業には、創業事業で身につけた「儲かる勘所」が新規事業や環境変化の局面では見落としの原因になること、異なる論理を持つ人材や外部の視点を意図的に判断に入れることが含意となる。
 
 ## 提唱者・初出
-C. K. Prahalad & Richard A. Bettis（SMJ 7(6), 1986, 原提唱）／Bettis & Prahalad（SMJ 16(1), 1995, 回顧と拡張）
+C・K・プラハラード＆リチャード・ベティス（1986 提唱／1995 回顧と拡張）／対比: スティーヴン・ヴァーゴ＆ロバート・ラッシュ（サービス・ドミナント・ロジック）
 
 ## 出典
-- [Prahalad & Bettis (1986) The Dominant Logic: A New Linkage Between Diversity and Performance — SMJ 7(6), pp.485-501](https://doi.org/10.1002/smj.4250070602) `学術`
-- [Bettis & Prahalad (1995) The Dominant Logic: Retrospective and Extension — SMJ 16(1), pp.5-14](https://doi.org/10.1002/smj.4250160104) `学術`
+- [Prahalad, C. K. & Bettis, R. A. (1986) The Dominant Logic: A New Linkage Between Diversity and Performance — Strategic Management Journal 7(6), 485–501（原典）](https://doi.org/10.1002/smj.4250070602) `学術`
+- [Bettis, R. A. & Prahalad, C. K. (1995) The Dominant Logic: Retrospective and Extension — Strategic Management Journal 16(1), 5–14](https://doi.org/10.1002/smj.4250160104) `学術`
 
 ## 関連概念
-- [[mgmt-strategic-intent|戦略的意図（ストラテジック・インテント）]] — 同じ思想家
-- [[mgmt-bop|BOP（ベース・オブ・ザ・ピラミッド）]] — 同じ思想家
+- [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）——すべての交換をサービスの交換と捉え、知識と技能というオペラント資源を統合する複数のアクターの共創として価値を理解するパラダイム]] — 同じ思想家
 - [[mgmt-strategic-consensus-bourgeois|戦略的コンセンサスとトップ・マネジメント・チーム（ブルジョワ）]] — 同分野の近傍
-- [[mgmt-service-dominant-logic-vargo|サービス・ドミナント・ロジック（ヴァーゴ＆ラッシュ）]] — 同分野の近傍
-- [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同分野の近傍
+- [[mgmt-psychological-empowerment-spreitzer|心理的エンパワーメント——仕事への内発的動機を構成する四つの認知]] — 同分野の近傍
+- [[mgmt-strategic-types-miles-snow|マイルズ＆スノーの戦略類型——環境適応の様式による四つの組織類型]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

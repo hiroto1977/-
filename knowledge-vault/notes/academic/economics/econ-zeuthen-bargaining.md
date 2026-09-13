@@ -26,7 +26,7 @@ aliases:
 フレデリック・ツォイテン ／ ジョン・ハーサニ ／ ジョン・ナッシュ ／ ジョン・ヒックス
 
 ## 出典
-- [Zeuthen, F. (1930) Problems of Monopoly and Economic Warfare — Routledge](https://www.worldcat.org/oclc/953185) `学術`
+- [Zeuthen, F. (1930) Problems of Monopoly and Economic Warfare — Routledge](https://www.worldcat.org/oclc/953185) `リファレンス`
 - [Wikipedia: Bargaining — Zeuthen model, risk limit, Nash bargaining solution, Harsanyi](https://en.wikipedia.org/wiki/Bargaining) `リファレンス`
 
 ## 関連概念

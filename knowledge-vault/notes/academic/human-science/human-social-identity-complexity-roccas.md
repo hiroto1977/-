@@ -30,6 +30,7 @@ aliases:
 - [Wikipedia: Social identity complexity — intergroup relations](https://en.wikipedia.org/wiki/Social_identity_complexity) `リファレンス`
 
 ## 関連概念
+- [[econ-giffen-goods-inferior-demand|ギッフェン財——価格が上がると需要が増える需要法則の例外は、負の所得効果が代替効果を上回る下級財で生じる]] — 同じ思想家
 - [[human-social-identity-theory-tajfel|社会的アイデンティティ理論——タジフェルの最小集団パラダイムと集団間関係]] — 同じ思想家
 - [[human-outgroup-homogeneity-effect|外集団均質性効果]] — 同分野の近傍
 - [[human-social-identity-complexity|社会的アイデンティティ複雑性理論]] — 同分野の近傍

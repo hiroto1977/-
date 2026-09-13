@@ -27,14 +27,14 @@ W・チャン・キム（W. Chan Kim, INSEAD教授）／レネ・モボルニュ
 
 ## 出典
 - [INSEAD — Blue Ocean Strategy（著者所属校・公式書籍ページ）](https://www.insead.edu/faculty-research/publications/books/blue-ocean-strategy-how-create-uncontested-market-space-and) `学術`
-- [Harvard Business Review — “Blue Ocean Strategy” (Kim & Mauborgne, 2004)](https://hbr.org/2004/10/blue-ocean-strategy) `学術`
+- [Harvard Business Review — “Blue Ocean Strategy” (Kim & Mauborgne, 2004)](https://hbr.org/2004/10/blue-ocean-strategy) `メディア`
 - [Encyclopædia Britannica Money — Blue Ocean Strategy Explained（戦略キャンバス・ERRCグリッド・事例）](https://www.britannica.com/money/blue-ocean-strategy-explained) `リファレンス`
 - [Wikipedia — Blue Ocean Strategy（出版情報・定義）](https://en.wikipedia.org/wiki/Blue_Ocean_Strategy) `リファレンス`
 - [Kim, W.C. & Mauborgne, R. (2005) Blue Ocean Strategy — HBS Press](https://doi.org/10.1016/j.lrp.2015.09.002) `学術`
 
 ## 関連概念
 - [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 同分野の近傍
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

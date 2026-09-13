@@ -26,7 +26,7 @@ aliases:
 クリス・アージリス ／ ドナルド・ショーン ／ ピーター・センゲ ／ エドガー・シャイン
 
 ## 出典
-- [Argyris, C. (1990) Overcoming Organizational Defenses — Allyn & Bacon](https://www.worldcat.org/oclc/20826933) `学術`
+- [Argyris, C. (1990) Overcoming Organizational Defenses — Allyn & Bacon](https://www.worldcat.org/oclc/20826933) `リファレンス`
 - [Wikipedia: Chris Argyris — defensive routines, single/double-loop learning, theory-in-use](https://en.wikipedia.org/wiki/Chris_Argyris) `リファレンス`
 
 ## 関連概念
@@ -34,7 +34,7 @@ aliases:
 - [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
 - [[mgmt-learning-organization-senge|学習する組織（センゲ）]] — 同じ思想家
 - [[mgmt-organizational-learning-argyris|組織学習とシングル・ダブルループ学習（アージリス）]] — 同じ思想家
-- [[mgmt-psychological-contract|心理的契約]] — 同じ思想家
+- [[mgmt-psychological-contract|心理的契約（ルソー）——雇用関係における明文化されない相互義務についての従業員の主観的信念と、その違反が信頼とコミットメントに与える影響]] — 同じ思想家
 - [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同じ思想家
 - [[mgmt-corporate-culture-schein-artifacts|組織文化論——シャインの三層モデル（人工物・信念・基本的仮定）と文化変革]] — 同じ思想家
 - [[mgmt-humble-leadership-owens|謙虚なリーダーシップ——自己認識・他者尊重・学習志向による影響過程]] — 同じ思想家

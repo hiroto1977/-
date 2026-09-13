@@ -38,8 +38,8 @@ aliases:
 - [[bizlaw-nuisance|ニューサンス（生活妨害）——土地の使用収益に対する不当な干渉の不法行為]] — 同じ思想家
 - [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]] — 同じ思想家
 - [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 同じ思想家
+- [[bizlaw-palsgraf-proximate-cause-foreseeable-plaintiff|パルスグラフ対ロングアイランド鉄道事件——注意義務の範囲と近因をめぐるカードーゾ・アンドリュース論争]] — 同じ思想家
 - [[bizlaw-respondeat-superior-scope|使用者責任の範囲——代理責任法理と雇用関係における帰責原理]] — 同じ思想家
-- [[bizlaw-tortfeasor-contribution-doctrine|共同不法行為者間の求償——寄与過失に基づく損害分担の法理]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

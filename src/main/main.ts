@@ -19,6 +19,8 @@ import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { shellTargetOrNull } from './shellOpenGate';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 import { MAX_HTTP_RESPONSE_BYTES, readBodyWithCap } from '../shared/httpLimits';
+import { eraseDesktopData } from './eraseAll';
+import type { DesktopEraseReport } from '../shared/eraseReport';
 
 const isDev = !app.isPackaged;
 
@@ -88,6 +90,13 @@ function createWindow(): BrowserWindow {
    * このアプリはどれも使っていない (実測: `getUserMedia` 0 件・
    * `geolocation` 0 件・`new Notification` 0 件)。`SpeechRecognition` は
    * ブラウザ版だけで動くもので、Electron には実装が無い。
+   *
+   * **その「使っていない」は `shared/__tests__/permissionJustification.test.ts` が
+   * 走査で測る。** (2026-09-11 · パス 148) 許可表そのものは `mainWindow.test.ts` が
+   * 留めているが、**拒む根拠**の側はこの散文だけが持っていた —— 誰かが
+   * `getUserMedia` を足すと Electron では黙って動かなくなり (許可表は変わらない)、
+   * この実測は嘘になるのに何も鳴らない、という形だった。いまは両方向に鳴る:
+   * API を足せば走査が落ち、許可表を広げれば `mainWindow.test.ts` が落ちる。
    */
   const ALLOWED_PERMISSIONS: ReadonlySet<string> = new Set([
     'clipboard-read',
@@ -355,6 +364,30 @@ ipcMain.handle('secrets:list', () => listConfiguredServices());
 // file path — so the UI can warn the user instead of degrading silently.
 ipcMain.handle('secrets:protection', () => getStorageProtection());
 
+/**
+ * デスクトップ版の「すべてのデータを削除」(2026-09-09 · パス 137)。トークン (secrets.json と控え)・状態ファイル
+ * (気分の記録・人材育成・チームレーダー・ウォッチリスト) と書き込みの残骸、renderer の保存領域を消し、
+ * **全部消えた時だけ**再起動する (パス 20 の規則)。残った物はファイルごとの報告で画面が名指しする。
+ * 再起動は返してから —— 画面が「再起動します」を出せる。
+ */
+const RELAUNCH_DELAY_MS = 300;
+function scheduleRelaunch(): void {
+  setTimeout(() => {
+    app.relaunch();
+    app.exit(0);
+  }, RELAUNCH_DELAY_MS);
+}
+ipcMain.handle('app:eraseAll', async (): Promise<DesktopEraseReport> => {
+  try {
+    const report = await eraseDesktopData();
+    if (report.allDeleted) scheduleRelaunch();
+    return report;
+  } catch (e) {
+    // eraseDesktopData は投げない設計だが、IPC を reject させない (lint:ipc-handlers) —— 画面が用意していない経路に落とさない。
+    return { kind: 'desktop', files: {}, renderer: 'failed', allDeleted: false, error: safeErrorMessage(e) };
+  }
+});
+
 ipcMain.handle('fetch:snapshot', async (_e, serviceId: unknown) => {
   if (!isServiceId(serviceId)) {
     return { ok: false, code: 'not_implemented', message: 'unknown service id' };
@@ -378,8 +411,10 @@ ipcMain.handle('fetch:snapshot', async (_e, serviceId: unknown) => {
     const read = await getValidToken(serviceId);
     if (!read.ok) {
       // LOCAL_SERVICES は資格情報なしでも動くので、読めないことは異常ではない。
-      // ただし「保存済みだが復号できない」場合はローカルでも黙らない。
-      if (read.reason === 'undecryptable') {
+      // ただし「保存済みだが復号できない」「保管ファイルが読めない」場合は
+      // ローカルでも黙らない —— どちらも**未設定ではない**ので、
+      // 「トークン未設定」と案内すると利用者は鍵を貼り直そうとする。
+      if (read.reason !== 'absent') {
         return { ok: false, code: 'not_configured', message: read.message };
       }
       if (!LOCAL_SERVICES.has(serviceId)) {
@@ -427,7 +462,8 @@ ipcMain.handle(
         return {
           ok: false,
           code: 'not_configured',
-          message: read.reason === 'undecryptable' ? read.message : 'トークン未設定',
+          // 未設定だけが「トークン未設定」。復号できない・保管ファイルが読めないは理由を出す。
+          message: read.reason === 'absent' ? 'トークン未設定' : read.message,
         };
       }
       token = read.token;

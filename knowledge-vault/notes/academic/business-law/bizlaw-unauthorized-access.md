@@ -36,8 +36,8 @@ aliases:
 - [[bizlaw-private-detective-act|探偵業法（探偵業の業務の適正化に関する法律）]] — 出典を共有
 - [[legal-anti-money-laundering-act|犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）]] — 出典を共有
 - [[legal-secondhand-dealer|古物営業法と古物商許可]] — 出典を共有
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
 - [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
+- [[bizlaw-abuse-of-rights|権利濫用の禁止（民法1条3項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -40,6 +40,7 @@ aliases:
 - [[bizlaw-consideration-doctrine|約因の法理——約束が拘束力を持つために要する交換的対価]] — 同じ思想家
 - [[bizlaw-frustration-of-purpose|契約目的達成不能の法理——履行は可能でも契約の根本目的が消滅した場合の免責]] — 同じ思想家
 - [[bizlaw-secured-transactions-ucc-article9|動産担保取引法——UCC第9編と動産・債権担保の近代的枠組み]] — 同じ思想家
+- [[bizlaw-trade-secret-misappropriation-dtsa|営業秘密不正流用と連邦防衛営業秘密法——DTSAによる統一的民事救済の確立]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

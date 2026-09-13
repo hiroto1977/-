@@ -2,7 +2,7 @@
 title: "elibrary.imf.org"
 type: source-domain
 host: "elibrary.imf.org"
-cite_count: 6
+cite_count: 7
 tags:
   - source-domain
   - index
@@ -10,10 +10,11 @@ tags:
 
 # elibrary.imf.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **6 件**（学術 6）
+> [!info] 出典ドメイン索引 ・ 引用 **7 件**（学術 7）
 
 ## このドメインを出典とする項目
 
+- [[econ-armington-elasticity-national-product-differentiation|アーミントンの仮定とアーミントン弾力性——同じ財でも生産国が違えば不完全代替とみなし、その代替の弾力性で貿易モデルを閉じる考え方]] — Armington,P.S.(1969)"ATheoryofDemandforProductsDistinguishedbyPlaceof…
 - [[econ-mundell-fleming-model|マンデル＝フレミング・モデル（Mundell-Fleming Model）]] — Fleming(1962)DomesticFinancialPoliciesunderFixedandFloatingExchangeRa…
 - [[econ-olivera-tanzi-effect|オリベラ＝タンジ効果]] — IMFWorkingPaper1990/048,"FiscalRevenueandInflationaryFinance"（赤字＝インフレ…
 - [[econ-olivera-tanzi-effect|オリベラ＝タンジ効果]] — VitoTanzi,"Inflation,LagsinCollection,andtheRealValueofTaxRevenue,"IM…

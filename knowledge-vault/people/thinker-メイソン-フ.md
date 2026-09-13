@@ -2,7 +2,7 @@
 title: "フィリス・メイソン"
 type: thinker
 person_key: "メイソン|フ"
-concept_count: 4
+concept_count: 3
 tags:
   - person
   - index
@@ -10,13 +10,12 @@ tags:
 
 # フィリス・メイソン
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **4 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（4件）
+## 学術概念（3件）
+- [[mgmt-dynamic-managerial-capabilities-adner-helfat|動的経営者能力（アドナー＝ヘルファット）——経営者個人の人的資本・社会関係資本・認知が組織の資源基盤を構築・統合・再構成する能力を規定する]] — 動的経営者能力（dynamicmanagerialcapabilities）は、ロン・アドナーとコンスタンス・ヘルファ…
 - [[mgmt-executive-succession|経営者承継理論：CEO交代と企業業績]] — 組織トップの交代が企業業績にどのような影響を及ぼすかを分析する経営学の研究領域。
-- [[mgmt-upper-echelon-theory-hambrick|アッパー・エシェロン理論（ハンブリック＆メイソン）]] — アッパー・エシェロン理論（upperechelontheory）は、ハンブリック＆メイソン（1984）が提唱した、組織…
-- [[mgmt-upper-echelons-hambrick|上層部理論（ハンブリック＆メイソン）]] — 上層部理論（UpperEchelonsTheory）は、ハンブリック＆メイソン（1984）が提唱した、組織の戦略的選択…
-- [[mgmt-upper-echelons-theory|アッパー・エシュロン理論（Upper Echelons Theory）]] — アッパー・エシュロン理論（UpperEchelonsTheory）とは、組織の戦略的選択と業績がトップマネジメントチー…
+- [[mgmt-upper-echelons-theory|上層部理論（ハンブリック＝メイソン）——組織はトップ経営陣の反映であり、経営者の経歴と特性が認知のフィルターとして戦略的選択と業績を部分的に予測する]] — 上層部理論（upperechelonstheory）は、ドナルド・ハンブリックとフィリス・メイソンが1984年の論文（…
 
 ## 関連
 - 索引: [[人物索引]]

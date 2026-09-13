@@ -34,7 +34,6 @@ aliases:
 - [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 同じ思想家
 - [[infosoc-solutionism|テクノロジカル・ソリューショニズム（技術的解決主義）]] — 同じ思想家
 - [[infosoc-information-avoidance-theory|情報回避理論]] — 同分野の近傍
-- [[infosoc-attention-economy-goldhaber|注意経済（ゴールドハーバー）]] — 同分野の近傍
 - [[infosoc-risk-society|リスク社会（ベック）]] — 同分野の近傍
 
 ## 関連

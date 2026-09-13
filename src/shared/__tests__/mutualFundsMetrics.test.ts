@@ -6,6 +6,7 @@ import {
   calcRealCost,
   calcStdDev,
   calcDcaSimulation,
+  ytdReturnRisk,
 } from '../mutualFundsMetrics';
 
 describe('calcCompoundingFutureValue', () => {
@@ -42,8 +43,9 @@ describe('calcCompoundingFutureValue', () => {
     expect(calcCompoundingFutureValue(pmt, annual, years).futureValue).toBe(expected);
   });
 
-  it('returns zeros for non-positive years or contribution', () => {
-    // n=0 / pmt=0 でも gainPct は totalContributed>0 ガードで 0 (NaN にならない)。
+  it('returns zeros for non-positive years or contribution (増加率だけは null)', () => {
+    // 金額は 0 で正しい (積み立てていないので評価額も拠出も 0 円)。
+    // **増加率だけは算定不能** —— 0% は「積み立てたが増減しなかった」の主張。
     for (const r of [
       calcCompoundingFutureValue(100_000, 5, 0),
       calcCompoundingFutureValue(0, 5, 10),
@@ -52,7 +54,7 @@ describe('calcCompoundingFutureValue', () => {
       expect(r.futureValue).toBe(0);
       expect(r.totalContributed).toBe(0);
       expect(r.totalGain).toBe(0);
-      expect(r.gainPct).toBe(0);
+      expect(r.gainPct).toBeNull();
     }
   });
 
@@ -73,9 +75,20 @@ describe('calcSharpeRatio', () => {
     expect(calcSharpeRatio(8, 10, 1)).toBe(0.7); // (8−1)/10
   });
 
-  it('returns 0 when volatility is zero or negative (undefined ratio)', () => {
-    expect(calcSharpeRatio(10, 0)).toBe(0);
-    expect(calcSharpeRatio(10, -5)).toBe(0);
+  it('変動 0 では null —— 正反対の 3 つを同じ「0」に潰さない', () => {
+    // 直す前は `toBe(0)` で、名前も `returns 0 … (undefined ratio)` だった ——
+    // **「定義できない」と名前に書いてから 0 を主張していた** (実装の doc も同じ)。
+    // 0 はシャープレシオとして**意味のある値** (超過リターンちょうど 0) なので、
+    // 次の 3 つが同じ数字になっていた:
+    expect(calcSharpeRatio(8, 0)).toBeNull();    // 無リスクで年 8% (最良)
+    expect(calcSharpeRatio(0.5, 0)).toBeNull();  // 無リスク金利ちょうど (中立)
+    expect(calcSharpeRatio(-20, 0)).toBeNull();  // 確実に年 −20% (最悪)
+    expect(calcSharpeRatio(10, -5)).toBeNull();
+  });
+
+  it('★ 対照: 変動が在れば数で出て、正負の別も付く (標本が在ることの確認)', () => {
+    expect(calcSharpeRatio(8, 15)).toBe(0.5);
+    expect(calcSharpeRatio(-20, 15)).toBe(-1.37);
   });
 
   it('can be negative when the return is below the risk-free rate', () => {
@@ -303,5 +316,29 @@ describe('calcDcaSimulation', () => {
     const r = calcDcaSimulation(10_000, [1000, 1500, 0]);
     expect(r.totalInvested).toBe(20_000);
     expect(r.finalValuation).toBe(25_000);
+  });
+});
+
+describe('ytdReturnRisk — 未入力 (null) を 0% として入れない (パス 122)', () => {
+  it('★ null を除いた銘柄だけで標準偏差を取り、除外した数を言う', () => {
+    const r = ytdReturnRisk([2, 4, 4, 4, 5, 5, 7, 9, null, null]);
+    expect(r).toEqual({ stdDevPct: 2, measured: 8, unmeasured: 2 });
+    // 旧: null を 0 として入れると σ が変わる —— 同じ系列に 0 を 2 つ足した版は 2 ではない
+    expect(calcStdDev([2, 4, 4, 4, 5, 5, 7, 9, 0, 0])).not.toBe(2);
+  });
+
+  it('画面の見本 4 銘柄 (14.2 / 11.8 / 3.4 / 8.7): 空欄 1 件を除けば 4.04%、0% として入れると 5.25%', () => {
+    expect(ytdReturnRisk([14.2, 11.8, 3.4, 8.7, null])).toEqual({ stdDevPct: 4.04, measured: 4, unmeasured: 1 });
+    expect(calcStdDev([14.2, 11.8, 3.4, 8.7, 0])).toBe(5.25);
+  });
+
+  it('測った 0% は除外しない (未入力と 0% を混ぜない)', () => {
+    expect(ytdReturnRisk([0, 0])).toEqual({ stdDevPct: 0, measured: 2, unmeasured: 0 });
+    expect(ytdReturnRisk([5, 0, null])).toEqual({ stdDevPct: 2.5, measured: 2, unmeasured: 1 });
+  });
+
+  it('入力された銘柄が無ければ null で、数だけ言う', () => {
+    expect(ytdReturnRisk([null, null])).toEqual({ stdDevPct: null, measured: 0, unmeasured: 2 });
+    expect(ytdReturnRisk([])).toEqual({ stdDevPct: null, measured: 0, unmeasured: 0 });
   });
 });

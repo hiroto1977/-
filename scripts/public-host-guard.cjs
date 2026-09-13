@@ -67,12 +67,35 @@ function expandV6(input) {
 }
 
 /**
+ * loopback を指す名前。**解決を待たずに落とす**唯一の組。
+ *
+ * `resolvesToPublicHost` は DNS に頼るが、loopback を指す名前は hosts の
+ * 書き換えと検索ドメインの補完で揺れる —— 揺れる物を唯一の守りにしない。
+ *
+ * `ip6-localhost` / `ip6-loopback` は Debian / Ubuntu の `/etc/hosts` が
+ * **既定で持っている** ::1 の別名で、GitHub の runner にも在る。
+ */
+const LOOPBACK_NAMES = new Set(['localhost', 'ip6-localhost', 'ip6-loopback']);
+
+/**
+ * 先頭・末尾のドットを落とす。**同じ相手を指す別表記**だから。
+ *
+ * `URL` は名前の末尾ドットを残す (`new URL('http://localhost./').hostname`
+ * は `'localhost.'`)。2026-07 の監査が client 側 (`proxy.ts`) で見つけた
+ * 迂回路で、そちらでは直っているが**こちらには適用されていなかった**
+ * (2026-09-12 実測)。IP リテラルは `URL` が正規化するので影響しない。
+ */
+function trimDots(name) {
+  return name.replace(/^\.+/, '').replace(/\.+$/, '');
+}
+
+/**
  * 私設 / 予約なら true。**解析できない入力も true (deny)** —— パーサ差異を
  * 攻撃側に有利へ働かせない。角括弧つきの IPv6 リテラルも受ける。
  */
 function isPrivateOrReservedHost(host) {
   if (typeof host !== 'string' || host.length === 0) return true;
-  const bare0 = host.trim().toLowerCase();
+  const bare0 = trimDots(host.trim().toLowerCase());
   const bare = bare0.startsWith('[') && bare0.endsWith(']') ? bare0.slice(1, -1) : bare0;
 
   const v4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(bare);
@@ -99,8 +122,9 @@ function isPrivateOrReservedHost(host) {
 
   if (!bare.includes(':')) {
     // 名前。**ここでは通す** —— 解決後の IP を見るのは resolvesToPublicHost の役目。
-    // localhost だけは解決を待たずに落とす (hosts の書き換えで揺れるため)。
-    return bare === 'localhost' || bare.endsWith('.localhost');
+    // loopback を指す名前だけは解決を待たずに落とす (LOOPBACK_NAMES の注記)。
+    // `*.localhost` も loopback である (RFC 6761 §6.3)。
+    return LOOPBACK_NAMES.has(bare) || bare.endsWith('.localhost');
   }
 
   const g = expandV6(bare);
@@ -160,4 +184,175 @@ async function resolvesToPublicHost(hostname, lookup = dns.lookup) {
   return addrs.every((a) => !isPrivateOrReservedHost(a.address));
 }
 
-module.exports = { isPrivateOrReservedHost, isFetchableUrl, resolvesToPublicHost, expandV6 };
+/**
+ * 自分の規則ごとの対照実験。
+ *
+ * ## なぜ 2026-09-12 まで無かったか
+ *
+ * **このファイルの冒頭は `node scripts/public-host-guard.cjs --self-test` と
+ * 書いていたが、`selfTest` は存在しなかった。** 引数を何にしても黙って
+ * exit 0 を返す —— 書いてあるとおりに叩いた人は「関門は無事」と読む。
+ * 姉妹の 37 本はすべて実装しており、2026-08-25 に「self-test を持つ 28 本を
+ * 1 本ずつ壊して終了コードを測った」census は**実装している物**を数えたので、
+ * 実装していない物を名乗るだけのこのファイルは census の外に在った。
+ *
+ * 実測の結果: 走査対象 126 文のうち **18 文が一度も実行されていなかった**。
+ * 中身は関門の要そのもの —— 資格情報つき URL の拒否、NAT64 / 6to4 /
+ * IPv4-compatible に埋め込んだ IPv4 (IMDS への迂回路 3 種)、
+ * `resolvesToPublicHost` の早期 return 全部 (解決できない → deny を含む)。
+ * **振る舞いはどれも正しかった** (34 形を手で当てて確かめた)。
+ * 無かったのは、それを留めておく物である。
+ *
+ * ## 標本は両側を持つ
+ *
+ * 「全部 deny を期待する一覧」は、実装が常に true へ落ちても通る。
+ * 通す側も同じ数だけ並べる。
+ */
+async function selfTest() {
+  const cases = [
+    // ---- 名前 (解決を待たずに落とす唯一の組) ----
+    ['localhost は落とす', 'localhost', true],
+    ['末尾ドットの localhost も落とす (URL は名前の末尾ドットを残す)', 'localhost.', true],
+    ['大文字 + 末尾ドットも落とす', 'LOCALHOST.', true],
+    ['先頭ドットも落とす', '.localhost', true],
+    ['ip6-localhost (Debian/Ubuntu の既定の別名) を落とす', 'ip6-localhost', true],
+    ['ip6-loopback も落とす', 'ip6-loopback', true],
+    ['*.localhost も loopback (RFC 6761 §6.3)', 'foo.localhost', true],
+    ['公開名は通す', 'www.nta.go.jp', false],
+    ['localhost を含むだけの公開名は通す', 'notlocalhost.example', false],
+    // ---- IPv4 リテラル ----
+    ['loopback', '127.0.0.1', true],
+    ['IMDS (link-local)', '169.254.169.254', true],
+    ['CGNAT', '100.64.0.1', true],
+    ['octet が範囲外 → 解析不能なので deny', '999.1.1.1', true],
+    ['末尾ドットつきの IMDS も落とす', '169.254.169.254.', true],
+    ['公開 IPv4 は通す', '93.184.216.34', false],
+    ['172.16/12 の 1 つ手前は通す', '172.15.0.1', false],
+    // ---- IPv6 に埋め込んだ IPv4 (IMDS への迂回路) ----
+    ['IPv4-mapped で IMDS', '::ffff:169.254.169.254', true],
+    ['IPv4-compatible で IMDS', '::169.254.169.254', true],
+    ['NAT64 (RFC 6052 の well-known prefix) で IMDS', '64:ff9b::a9fe:a9fe', true],
+    ['6to4 (RFC 3056) で IMDS', '2002:a9fe:a9fe::1', true],
+    ['NAT64 に公開 IPv4 を載せたものは通す', '64:ff9b::93.184.216.34', false],
+    ['6to4 に公開 IPv4 を載せたものは通す', '2002:5db8:d822::1', false],
+    // ---- IPv6 リテラル ----
+    ['::1', '::1', true],
+    ['未指定アドレス', '::', true],
+    ['ULA', 'fd12:3456::1', true],
+    ['link-local', 'fe80::1', true],
+    ['ゾーン ID つき link-local', 'fe80::1%eth0', true],
+    // ゾーン ID を落とす効果が**観測できる**のは通す側だけ ——
+    // 落とさないと解析不能になり、安全側 (deny) へ倒れて差が出ない。
+    ['ゾーン ID つきの公開 IPv6 は、住所で判定して通す', '2001:4860:4860::8888%eth0', false],
+    ['文書用 (8 群の完全形)', '2001:0db8:0:0:0:0:0:1', true],
+    ['角括弧つきでも同じ', '[::ffff:127.0.0.1]', true],
+    ['公開 IPv6 は通す', '2001:4860:4860::8888', false],
+    ['db8 の隣は通す', '2001:db9::1', false],
+    // ---- 解析できない入力は deny (パーサ差異を攻撃側に渡さない) ----
+    ['空文字', '', true],
+    ['文字列でない', null, true],
+    [':: が 2 つ', 'a::b::c', true],
+    ['hex でない群', 'gggg::1', true],
+    ['群が 9 つ (fill < 1)', '2001:0db8:1:2:3:4:5:6:7', true],
+    ['群が 7 つ・:: 無し', '1:2:3:4:5:6:7', true],
+    ['`::` の両側で 8 群に達している (埋める余地が無い)', '1:2:3:4::5:6:7:8', true],
+    ['埋め込み dotted-quad が範囲外', '::ffff:999.1.1.1', true],
+  ];
+
+  const urls = [
+    ['https は通す', 'https://www.nta.go.jp/x', true],
+    ['http も通す (コーパスに 22 件ある)', 'http://example.jp/x', true],
+    ['資格情報を載せた URL は通さない', 'https://u:pw@example.com/x', false],
+    ['利用者名だけでも通さない', 'https://u@example.com/x', false],
+    ['合言葉だけでも通さない', 'https://:pw@example.com/x', false],
+    ['ホストを userinfo に偽装した形も通さない', 'https://example.com@169.254.169.254/x', false],
+    ['http でないものは通さない', 'file:///etc/passwd', false],
+    ['URL として読めないものは通さない', 'not a url', false],
+    ['文字列でないものは通さない', 42, false],
+    ['10 進整数形の loopback (URL が正規化する)', 'http://2130706433/x', false],
+    ['短縮形の loopback', 'http://127.1/x', false],
+    ['16 進形の loopback', 'http://0x7f.0.0.1/x', false],
+    ['NAT64 で IMDS を指す URL', 'http://[64:ff9b::169.254.169.254]/x', false],
+  ];
+
+  /**
+   * 解決の対照。実 DNS は使わない (差し替え口から渡す)。
+   *
+   * 下の `解決してはいけない` を投げる lookup は**仕掛け線**である ——
+   * 呼ばれないことが期待値なので、行カバレッジでは「未実行」に見える。
+   * 実行されたらその場で落ちる。**未実行が正しい数少ない行。**
+   */
+  const answer = (...addrs) => async () => addrs.map((address) => ({ address, family: address.includes(':') ? 6 : 4 }));
+  const resolves = [
+    ['名前が公開 IP へ解決すれば通す', 'example.com', answer('93.184.216.34'), true],
+    ['1 つでも私設へ解決するなら落とす', 'mixed.example', answer('93.184.216.34', '169.254.169.254'), false],
+    ['すべて私設なら落とす', 'internal.example', answer('10.1.2.3'), false],
+    ['解決できなければ落とす (deny)', 'nx.example', async () => { throw new Error('ENOTFOUND'); }, false],
+    ['答えが空なら落とす', 'empty.example', answer(), false],
+    ['答えが配列でなければ落とす', 'weird.example', async () => ({ address: '93.184.216.34' }), false],
+    ['公開 IPv4 リテラルは解決を要らない', '93.184.216.34', () => { throw new Error('解決してはいけない'); }, true],
+    ['公開 IPv6 リテラルも解決を要らない', '2001:4860:4860::8888', () => { throw new Error('解決してはいけない'); }, true],
+    ['私設リテラルは解決の前に落とす', '127.0.0.1', () => { throw new Error('解決してはいけない'); }, false],
+    ['名前が loopback 名なら解決の前に落とす', 'localhost.', () => { throw new Error('解決してはいけない'); }, false],
+    ['空の名前は落とす', '', () => { throw new Error('解決してはいけない'); }, false],
+    ['文字列でない名前は落とす', null, () => { throw new Error('解決してはいけない'); }, false],
+  ];
+
+  let bad = 0;
+  const say = (ok, label, got, want) => {
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${JSON.stringify(got)} (期待 ${JSON.stringify(want)})`);
+  };
+
+  console.log('self-test:');
+  console.log(' isPrivateOrReservedHost (true = 塞ぐ)');
+  for (const [label, host, want] of cases) {
+    const got = isPrivateOrReservedHost(host);
+    say(got === want, label, got, want);
+  }
+  console.log(' isFetchableUrl (true = 通す)');
+  for (const [label, url, want] of urls) {
+    const got = isFetchableUrl(url);
+    say(got === want, label, got, want);
+  }
+  console.log(' resolvesToPublicHost (true = 通す)');
+  for (const [label, host, lookup, want] of resolves) {
+    let got;
+    try {
+      got = await resolvesToPublicHost(host, lookup);
+    } catch (e) {
+      got = `throw: ${e.message}`;
+    }
+    say(got === want, label, got, want);
+  }
+
+  // **標本が片側に寄っていないこと。** 全部 deny を期待する一覧は、実装が
+  // 常に true へ落ちても通る。両側が在ることを数で留める。
+  const blocked = cases.filter(([, , w]) => w === true).length;
+  const allowed = cases.length - blocked;
+  if (blocked < 10 || allowed < 5) {
+    bad++;
+    console.log(`  ✗ 標本が片側に寄っている (塞ぐ ${blocked} / 通す ${allowed})`);
+  } else {
+    console.log(`  ✓ 標本は両側を持つ (塞ぐ ${blocked} / 通す ${allowed})`);
+  }
+
+  if (bad > 0) {
+    console.error(`❌ self-test 不一致 ${bad} 件`);
+    return 1;
+  }
+  console.log(`✅ self-test 全件一致 (${cases.length + urls.length + resolves.length} 件)`);
+  return 0;
+}
+
+function main(argv) {
+  if (argv.includes('--self-test')) return selfTest();
+  console.error('使い方: node scripts/public-host-guard.cjs --self-test');
+  return Promise.resolve(2);
+}
+
+module.exports = { isPrivateOrReservedHost, isFetchableUrl, resolvesToPublicHost, expandV6, selfTest };
+
+if (require.main === module) {
+  main(process.argv.slice(2)).then((code) => process.exit(code));
+}

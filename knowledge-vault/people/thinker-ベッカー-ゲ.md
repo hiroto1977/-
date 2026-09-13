@@ -2,7 +2,7 @@
 title: "ゲイリー・ベッカー"
 type: thinker
 person_key: "ベッカー|ゲ"
-concept_count: 17
+concept_count: 16
 tags:
   - person
   - index
@@ -10,9 +10,9 @@ tags:
 
 # ゲイリー・ベッカー
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **17 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **16 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（17件）
+## 学術概念（16件）
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 法の経済分析とは、経済学の手法——特に価格理論・ミクロ経済学——を法制度の評価と設計に適用する学問分野である。
 - [[econ-bandwagon-snob|バンドワゴン効果・スノッブ効果]] — ハーヴェイ・ライベンシュタインが1950年の論文「Bandwagon,Snob,andVeblenEffectsint…
 - [[econ-becker-crime|犯罪の経済学]] — ゲイリー・ベッカーが1968年の論文「CrimeandPunishment:AnEconomicApproach」（J…
@@ -29,7 +29,6 @@ tags:
 - [[econ-regulatory-capture-stigler|規制の虜——規制が被規制産業の利益のために運営される現象]] — 規制の虜（regulatorycapture）は、本来は公共の利益のために設けられた政府の規制が、規制される側の産業に…
 - [[econ-rotten-kid-theorem|腐った子定理]] — 家族に全員の厚生を気にかける利他的な家長（親）がいて、各成員へ正の移転（贈与）を行っているなら、たとえ純粋に利己的な「…
 - [[econ-samaritan-dilemma-buchanan|サマリア人のジレンマ（ブキャナン）——利他の時間非整合性と「戦略的勇気」]] — サマリア人のジレンマ（theSamaritan'sdilemma）は、ジェームズ・ブキャナンが1975年の論考（フェル…
-- [[econ-signaling-theory-spence|教育シグナリング理論（スペンス）]] — スペンス（MichaelSpence）は1973年に，高等教育が生産性を向上させる（人的資本理論）のではなく，もともと…
 
 ## 関連
 - 索引: [[人物索引]]

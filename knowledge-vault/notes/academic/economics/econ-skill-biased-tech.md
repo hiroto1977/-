@@ -30,16 +30,15 @@ aliases:
 - [OECD (1998) "Technology, Productivity and Job Creation"（スキルバイアス型技術変化と雇用・賃金格差への政策的含意）](https://www.oecd.org/en/publications/technology-productivity-and-job-creation_9789264065529-en.html) `公的`
 
 ## 関連概念
+- [[econ-bartik-shift-share-instrument|バーティック操作変数（シフトシェア操作変数）——全国産業成長率と地域産業構成の積で地域労働需要ショックを予測する識別戦略]] — 同じ思想家
 - [[econ-gender-wage-gap-goldin|ジェンダー賃金格差と職業分離の経済学——ゴールディンの労働経済分析]] — 同じ思想家
 - [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]] — 同じ思想家
+- [[econ-task-based-automation-acemoglu-restrepo|アセモグル＝レストレポのタスクベース自動化モデル——置換効果・生産性効果・復元効果の綱引き]] — 同じ思想家
 - [[econ-technological-unemployment|技術的失業]] — 同じ思想家
-- [[bizlaw-employment-at-will-doctrine|随意雇用法理——米国の雇用自由原則と日本の解雇権濫用法理の比較]] — 出典を共有
-- [[bizlaw-employment-law-dismissal|雇用法と解雇規制の法律体系——正当事由と解雇権濫用法理]] — 出典を共有
-- [[bizlaw-tax-avoidance-beps-regulation|タックス・アボイダンスとBEPS規制——OECD・G20による多国籍企業課税改革]] — 出典を共有
-- [[bizlaw-transfer-pricing-arms-length-principle|移転価格税制と独立企業間原則——多国籍企業の利益移転と国際課税の攻防]] — 出典を共有
-- [[econ-compensating-equivalent-variation|補償変分と等価変分（ヒックスの厚生変化測度）]] — 出典を共有
-- [[econ-fiscal-federalism|財政連邦主義（オーツの分権化定理）]] — 出典を共有
-- [[econ-petty-clark-law|ペティ＝クラークの法則]] — 出典を共有
+- [[econ-search-matching|サーチ理論／マッチング理論]] — 出典を共有
+- [[econ-emissions-trading|排出権取引（キャップ・アンド・トレード）]] — 出典を共有
+- [[econ-fair-wage-effort|公正賃金・努力仮説]] — 同分野の近傍
+- [[econ-job-polarization|雇用の二極化とタスク・アプローチ（Job Polarization／Autor-Levy-Murnane 2003）——コンピュータ化は中位のルーティン職を掘り崩す]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

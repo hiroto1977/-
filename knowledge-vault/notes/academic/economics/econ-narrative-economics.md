@@ -32,8 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-securities-insider-trading-regulation|インサイダー取引規制——証券市場の公正性と情報の非対称性への法的対応]] — 同じ思想家
-- [[econ-adverse-selection|逆選択（レモン市場）]] — 同じ思想家
-- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同じ思想家
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する]] — 同じ思想家
 - [[econ-asset-price-bubbles-kindleberger-minsky|資産価格バブル——キンドルバーガーとミンスキーの信用サイクルと崩壊のモデル]] — 同じ思想家
 - [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
 - [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]] — 同じ思想家
@@ -41,6 +40,7 @@ aliases:
 - [[econ-efficient-market-hypothesis|効率的市場仮説（efficient market hypothesis, EMH）]] — 同じ思想家
 - [[econ-efficient-market-hypothesis-fama|効率的市場仮説とファーマの資産価格形成論]] — 同じ思想家
 - [[econ-fair-wage-effort|公正賃金・努力仮説]] — 同じ思想家
+- [[econ-generalized-method-of-moments-hansen|一般化モーメント法（GMM）——モーメント条件のみから分布を仮定せず母数を推定するハンセンの一般理論]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

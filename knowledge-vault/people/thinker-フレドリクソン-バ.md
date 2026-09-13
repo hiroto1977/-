@@ -2,7 +2,7 @@
 title: "バーバラ・フレドリクソン"
 type: thinker
 person_key: "フレドリクソン|バ"
-concept_count: 6
+concept_count: 4
 tags:
   - person
   - index
@@ -10,15 +10,13 @@ tags:
 
 # バーバラ・フレドリクソン
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **6 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **4 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（6件）
-- [[human-broaden-and-build-fredrickson|拡張＆構築理論（フレドリクソン）]] — 拡張＆構築理論（broaden-and-buildtheoryofpositiveemotions）は、バーバラ・フレ…
-- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論——フレドリクソンのポジティブ感情と個人的資源の螺旋的構築]] — 拡張＝形成理論（broaden-and-buildtheory）は、バーバラ・フレドリクソンが1998年に提唱した、ポ…
+## 学術概念（4件）
+- [[human-broaden-and-build-theory-fredrickson|拡張＝形成理論（フレドリクソン）——ポジティブ感情が思考と行動のレパートリーを広げ、持続的な個人資源を築くという機能理論]] — 拡張＝形成理論（broaden-and-buildtheory）は、バーバラ・フレドリクソンが1998年に提唱し200…
 - [[human-positive-psychology-flourishing|ポジティブ心理学における繁栄とPERMAモデル（セリグマン）]] — ポジティブ心理学（positivepsychology）は、マーティン・セリグマンが1998年APA会長就任講演で提唱…
 - [[human-positive-psychology-seligman-perma|ポジティブ心理学とPERMAモデル——ウェルビーイング科学の理論的基盤]] — ポジティブ心理学（PositivePsychology）は、マーティン・セリグマンが1998年アメリカ心理学会会長就任…
 - [[human-self-expansion-aron|自己拡張モデル（アーロン）]] — 自己拡張モデル（self-expansionmodel）は、アーロン＆アーロン（1986）が提唱した、人間の基本的動機…
-- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — バーバラ・フレドリクソンが提唱した拡張形成理論（broaden-and-buildtheory）は、ポジティブ感情がネ…
 
 ## 関連
 - 索引: [[人物索引]]

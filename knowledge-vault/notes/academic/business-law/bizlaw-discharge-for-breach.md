@@ -28,7 +28,7 @@ Guenter Treitel ／ E. Allan Farnsworth
 ## 出典
 - [Treitel (1988) Remedies for Breach of Contract: A Comparative Account — Clarendon Press, Oxford](https://global.oup.com/academic/product/remedies-for-breach-of-contract-9780198258193) `学術`
 - [Farnsworth (1970) Legal Remedies for Breach of Contract — Columbia Law Review](https://www.jstor.org/stable/1116042) `学術`
-- [e-Gov法令検索 民法541条・542条・545条4項（2020年施行改正民法）](https://laws.e-gov.go.jp/law/129AC0000000089) `リファレンス`
+- [e-Gov法令検索 民法541条・542条・545条4項（2020年施行改正民法）](https://laws.e-gov.go.jp/law/129AC0000000089) `公的`
 
 ## 関連概念
 - [[bizlaw-acceleration-clause|加速条項（期限の利益喪失条項）]] — 同じ思想家
@@ -36,8 +36,8 @@ Guenter Treitel ／ E. Allan Farnsworth
 - [[bizlaw-force-majeure-doctrine|不可抗力の法理]] — 同じ思想家
 - [[bizlaw-good-faith-performance|契約履行における誠実・公正取引義務（Good Faith and Fair Dealing）]] — 同じ思想家
 - [[bizlaw-implied-covenant-good-faith|誠実義務・公正取引の黙示的誓約]] — 同じ思想家
-- [[bizlaw-contract-termination|契約の解除（民法541条・542条）]] — 同分野の近傍
 - [[bizlaw-efficient-breach-theory|効率的契約違反論]] — 同分野の近傍
+- [[bizlaw-contract-termination|契約の解除（民法541条・542条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

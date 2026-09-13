@@ -26,11 +26,12 @@ aliases:
 タルン・カンナ & クリシュナ・パレプ（1997 HBR／2000 Journal of Finance／2005 Five Contexts Framework／2010 Winning in Emerging Markets）
 
 ## 出典
-- [Khanna & Palepu (1997) Why Focused Strategies May Be Wrong for Emerging Markets, Harvard Business Review 75(4)](https://hbr.org/1997/07/why-focused-strategies-may-be-wrong-for-emerging-markets) `学術`
+- [Khanna & Palepu (1997) Why Focused Strategies May Be Wrong for Emerging Markets, Harvard Business Review 75(4)](https://hbr.org/1997/07/why-focused-strategies-may-be-wrong-for-emerging-markets) `メディア`
 - [Khanna & Palepu (2005) Spotting Institutional Voids in Emerging Markets, HBS Background Note](https://www.hbs.edu/faculty/Pages/item.aspx?num=32645) `学術`
 - [Springer JIBS — International business responses to institutional voids（制度的空白への企業対応の体系的レビュー）](https://link.springer.com/article/10.1057/s41267-017-0074-z) `学術`
 
 ## 関連概念
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（アイゼンマン＝パーカー＝ヴァン・アルスタイン）——隣接するプラットフォーム市場へ自社機能とのバンドルで参入し、既存のネットワーク効果を武器に転用して相手の利用者基盤を奪う競争戦略]] — 出典を共有
 - [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 出典を共有
 - [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[mgmt-kanter-tokenism-theory|カンターのトークニズム理論（Tokenism Theory）]] — 出典を共有
 - [[mgmt-shared-value|共有価値の創造（CSV）]] — 出典を共有
 - [[mgmt-strategic-alliances-doz-hamel|戦略的提携の競争的協調——ドズ＆ハメルの学習競争とアライアンス・マネジメント]] — 出典を共有
-- [[mgmt-team-effectiveness-hackman-wageman|チーム有効性理論——ハックマンの条件モデルとチームコーチング]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

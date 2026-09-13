@@ -26,7 +26,7 @@ aliases:
 ギー・ドゥボール ／ 状況主義インターナショナル ／ カール・マルクス ／ ジャン・ボードリヤール
 
 ## 出典
-- [Debord, G. (1967) La Société du spectacle (The Society of the Spectacle) — Buchet-Chastel (WorldCat)](https://www.worldcat.org/oclc/30736961) `学術`
+- [Debord, G. (1967) La Société du spectacle (The Society of the Spectacle) — Buchet-Chastel (WorldCat)](https://www.worldcat.org/oclc/30736961) `リファレンス`
 - [Wikipedia: The Society of the Spectacle — Debord, Situationist, social relation mediated by images, consumer society](https://en.wikipedia.org/wiki/The_Society_of_the_Spectacle) `リファレンス`
 
 ## 関連概念

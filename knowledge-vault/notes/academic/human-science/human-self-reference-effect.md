@@ -31,9 +31,9 @@ Thomas B. Rogers・Nicholas L. Kuiper・Walter S. Kirk（1977）「Self-referenc
 
 ## 関連概念
 - [[human-interpersonal-theory-leary|対人関係理論（リアリー／サリヴァン）]] — 同分野の近傍
-- [[human-isolation-effect-restorff|孤立効果——均質なリスト中の異質項目が優先的に記憶される現象]] — 同分野の近傍
 - [[human-levels-of-processing-craik-lockhart|処理水準説——記憶の定着は情報を処理する深さに依存する]] — 同分野の近傍
 - [[human-peak-end-rule-kahneman|ピーク・エンドの法則——経験の記憶における最高点と終了時の偏重]] — 同分野の近傍
+- [[human-generation-effect-slamecka|生成効果——自ら生成した情報は受動的に読んだ情報より記憶されやすい]] — 同分野の近傍
 - [[human-hawthorne-effect|ホーソン効果]] — 同分野の近傍
 
 ## 関連

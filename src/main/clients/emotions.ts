@@ -20,9 +20,11 @@
  * complexity.
  */
 
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import { app } from 'electron';
 import {
   MAX_ANALYSES,
+  MAX_ANALYSIS_EXCERPT_CHARS,
   MAX_ANALYZE_TEXT_CHARS,
   MAX_MOODS,
   MAX_MOOD_NOTE_CHARS,
@@ -30,6 +32,7 @@ import {
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { atomicWriteFile } from '../atomicWrite';
+import { sealJsonDocument, unsealJsonDocument } from '../atRest';
 import {
   jsonFetch,
   redactForMessage,
@@ -38,7 +41,10 @@ import {
   type FetchContext,
 } from './types';
 import { ANTHROPIC_FAST_MODEL } from '../../shared/ai/providers';
+import { calendarDateMessage, isCalendarDate } from '../../shared/isoDate';
 import { localIsoDate } from '../../shared/localDate';
+import { asRecord, isAnalysisEntry, isMoodEntry, readStoredList } from '../../shared/emotionsShape';
+import type { ActionData } from '../../shared/actionData';
 
 
 const EMOTION_KEYS = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust'] as const;
@@ -72,25 +78,41 @@ export interface EmotionsSnapshot extends EmotionsStore {
 }
 
 
-function storePath(): string {
+/** 置き場所。ハードリセット (`main/eraseAll.ts`) が在庫を作るために読む (パス 137)。 */
+export function storePath(): string {
   return path.join(app.getPath('userData'), 'service-hub-emotions.json');
 }
 
-async function readStore(): Promise<EmotionsStore> {
+/**
+ * 保存先を読む。ENOENT だけを飲み、壊れた JSON は投げ直す (黙って消すより良い)。
+ *
+ * 要素の形はブラウザ版と同じ規則 (`shared/emotionsShape.ts`) で確かめる —— 2026-09-05 まで
+ * `as Partial<EmotionsStore>` で要素を信じていて、null が 1 つ混じると `m.date` で落ちた。
+ * 欄が在るのに配列でない・形の違う要素が混じる = **在るのに読めない**: 読み出しは残りを返し、
+ * `forWrite` の読み (log-mood / analyze-text) は断る —— 上書きすると読めなかった分が消える。
+ * `clear-history` だけは通す (壊れた保存先から抜け出す唯一の道)。
+ */
+async function readStore(opts: { forWrite?: boolean } = {}): Promise<EmotionsStore> {
+  let raw: string;
   try {
     // encoding を空にすると Buffer が返るが、`JSON.parse` は toString()
     // 経由で読むため結果は変わらない (実測)。型のために明示している。
     // Stryker disable next-line StringLiteral: 空文字でも Buffer 経由で同じ結果 (実測)
-    const raw = await fs.readFile(storePath(), 'utf8');
-    const parsed = JSON.parse(raw) as Partial<EmotionsStore>;
-    return {
-      moods: Array.isArray(parsed.moods) ? parsed.moods : [],
-      analyses: Array.isArray(parsed.analyses) ? parsed.analyses : [],
-    };
+    raw = await fs.readFile(storePath(), 'utf8');
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') return { moods: [], analyses: [] };
     throw err;
   }
+  // オブジェクトでない JSON (null / 配列 / 数値) は「欄が無い古い形」と同じ扱い (空)。判定は共有側 1 か所。
+  const rec = asRecord(unsealStore(raw));
+  const moods = readStoredList(rec.moods, isMoodEntry);
+  const analyses = readStoredList(rec.analyses, isAnalysisEntry);
+  if (opts.forWrite && (moods.dropped > 0 || analyses.dropped > 0)) {
+    throw new Error(
+      '保存された記録の一部を読めませんでした。上書きすると失われるため、記録を中止しました。「履歴を消去」で作り直せます。',
+    );
+  }
+  return { moods: moods.items as MoodEntry[], analyses: analyses.items as AnalysisEntry[] };
 }
 
 /**
@@ -117,12 +139,41 @@ async function readStore(): Promise<EmotionsStore> {
  * 控え (`keepBackup`) は取らない —— 読み出し側が使わない控えは、
  * 同じ個人情報の写しがもう 1 つディスクに残るだけになる。
  */
+/** 封緘したファイルが読めないときの文 (検査と画面が同じ文を読む)。 */
+export const EMOTIONS_UNREADABLE_NO_KEYCHAIN =
+  '気分の記録は OS のキーチェーンで封緘されていますが、この環境ではキーチェーンが使えないため読めません。「履歴を消去」で作り直せます。';
+export const EMOTIONS_UNREADABLE_CORRUPT =
+  '保存された気分の記録を復号できません (値が壊れているか、保存時と別の鍵が使われています)。「履歴を消去」で作り直せます。';
+
+/**
+ * 保存形 → 中身。封緘済み (`{ v: 2, sealed }`) は開けてから、2026-09-09 までの平文はそのまま読む
+ * (次の書き込みで封緘される —— 読めるものを移行のために失わない)。
+ */
+function unsealStore(raw: string): unknown {
+  // 封筒の扱いは main/atRest.ts の 1 組 (パス 133 で人材育成・チームレーダーと共有)。
+  const opened = unsealJsonDocument(raw);
+  if (!opened.ok) {
+    throw new Error(opened.reason === 'no-keychain' ? EMOTIONS_UNREADABLE_NO_KEYCHAIN : EMOTIONS_UNREADABLE_CORRUPT);
+  }
+  try {
+    return JSON.parse(opened.json);
+  } catch (e) {
+    // 開けた中身が JSON でなければ壊れた封緘。平文が JSON でないのは 2026-09-09 までの壊れ方 (従来どおり投げる)。
+    if (opened.sealed) throw new Error(EMOTIONS_UNREADABLE_CORRUPT);
+    throw e;
+  }
+}
+
+/**
+ * **封緘して書く** (パス 132)。気分の点数・メモ・解析の抜粋は健康に関わる記録で、
+ * 同じ userData の `secrets.json` と同じ約束 (キーチェーン / 無ければ `plain:`) を通す。
+ */
 async function writeStore(store: EmotionsStore): Promise<void> {
   // Stryker disable next-line ObjectLiteral: `atomicWriteFile` の既定が
   // `opts.mode ?? 0o600` なので、落としても同じ 600 で作られる (等価変異)。
   // 明示を残すのは意図の表明 —— 個人情報を持つファイルの権限を、
   // 呼び出し側の既定値に委ねない。
-  await atomicWriteFile(storePath(), JSON.stringify(store), { mode: 0o600 });
+  await atomicWriteFile(storePath(), sealJsonDocument(JSON.stringify(store)), { mode: 0o600 });
 }
 
 export async function fetchEmotionsSnapshot(ctx: FetchContext): Promise<EmotionsSnapshot> {
@@ -147,22 +198,26 @@ function todayLocal(): string {
   return localIsoDate();
 }
 
-async function logMood(ctx: ActionContext): Promise<{ date: string; score: number }> {
+async function logMood(ctx: ActionContext): Promise<ActionData<'emotions/log-mood'>> {
   void ctx; // signature parity with other actions; no remote call needed
   const { date, score, note } = ctx.payload as unknown as LogMoodPayload;
   const finalScore = Number(score);
   if (!Number.isFinite(finalScore) || finalScore < 1 || finalScore > 5) {
     throw new Error('score must be a number between 1 and 5');
   }
-  const finalDate = (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : null) ?? todayLocal();
-  const store = await readStore();
+  // 日付: 省略 (undefined / null) は利用者の時計の今日。**暦に無ければ断る** (パス 115 ——
+  // それまでは正規表現だけを見て、通らなければ黙って今日に倒していた: 2026-02-30 はそのまま
+  // 保存され、2026/05/01 は今日の記録に化けていた)。
+  const finalDate = date == null ? todayLocal() : date;
+  if (!isCalendarDate(finalDate)) throw new Error(calendarDateMessage('date'));
+  const store = await readStore({ forWrite: true });
   // Replace today's entry if it exists, else append.
   const idx = store.moods.findIndex((m) => m.date === finalDate);
   // note の上限。当初「ブラウザ版だけが持っていた」と書いたが**それは誤り**で、
   // ブラウザ版の `log-mood` も素通しだった (同日実測・`emotionsLimits.ts` の訂正を参照)。
   // 今は両方がこの定数を見る。保存先が際限なく育つのを止める。
   const noteStr = String(note ?? '');
-  if (noteStr.length > MAX_MOOD_NOTE_CHARS) {
+  if (countChars(noteStr) > MAX_MOOD_NOTE_CHARS) {
     throw new Error(`note exceeds ${MAX_MOOD_NOTE_CHARS} chars`);
   }
   const entry: MoodEntry = { date: finalDate, score: Math.round(finalScore), note: noteStr };
@@ -248,17 +303,21 @@ function pickDominant(scores: EmotionScores): string {
   return scores[best] <= 0 ? 'mixed' : best;
 }
 
-async function analyzeText(ctx: ActionContext): Promise<AnalysisEntry> {
+async function analyzeText(ctx: ActionContext): Promise<ActionData<'emotions/analyze-text'>> {
   const { text, source } = ctx.payload as unknown as AnalyzeTextPayload;
   if (!text || typeof text !== 'string' || text.trim().length === 0) {
     throw new Error('text is required');
   }
   // 上限はブラウザ版だけが持っていた (2026-08-23)。**境界の側が緩かった**ので
   // 揃える —— この本文は Anthropic の要求本文へそのまま載る。
-  if (text.length > MAX_ANALYZE_TEXT_CHARS) {
+  if (countChars(text) > MAX_ANALYZE_TEXT_CHARS) {
     throw new Error(`text exceeds ${MAX_ANALYZE_TEXT_CHARS} chars`);
   }
   if (!ctx.token) throw new Error('Anthropic API key required for analyze-text');
+  // 保存できない保存先なら**送る前に**断る。断るのが保存の直前だと、本文は Anthropic へ渡り
+  // API 呼び出しも済んだ後で捨てることになる (2026-09-05 まではそうだった)。
+  // 送っている間に壊れる分は、保存の直前でもう一度読んで断る (下)。
+  await readStore({ forWrite: true });
 
   const res = await jsonFetch<AnthropicResponse>(
     'https://api.anthropic.com/v1/messages',
@@ -291,11 +350,11 @@ async function analyzeText(ctx: ActionContext): Promise<AnalysisEntry> {
   const entry: AnalysisEntry = {
     id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
     timestamp: Date.now(),
-    excerpt: (source ? `[${source}] ` : '') + text.slice(0, 80),
+    excerpt: (source ? `[${source}] ` : '') + clampToCeiling(text, MAX_ANALYSIS_EXCERPT_CHARS),
     ...normalized,
   };
 
-  const store = await readStore();
+  const store = await readStore({ forWrite: true });
   store.analyses.unshift(entry);
   // 上と同じ理由 — `slice(0, MAX)` は短い配列に対しては恒等。
   store.analyses = store.analyses.slice(0, MAX_ANALYSES);
@@ -313,9 +372,15 @@ interface ClearHistoryPayload {
   kind?: 'moods' | 'analyses' | 'all';
 }
 
-async function clearHistory(ctx: ActionContext): Promise<{ moods: number; analyses: number }> {
+async function clearHistory(ctx: ActionContext): Promise<ActionData<'emotions/clear-history'>> {
   const { kind } = ctx.payload as unknown as ClearHistoryPayload;
-  const store = await readStore();
+  // 読めない記録 (鍵違い・壊れた封緘) も消せる —— ここが唯一の出口なので、読めないことで塞がない。
+  let store: EmotionsStore;
+  try {
+    store = await readStore();
+  } catch {
+    store = { moods: [], analyses: [] };
+  }
   const before = { moods: store.moods.length, analyses: store.analyses.length };
   if (kind === 'moods' || kind === 'all' || kind === undefined) store.moods = [];
   if (kind === 'analyses' || kind === 'all') store.analyses = [];

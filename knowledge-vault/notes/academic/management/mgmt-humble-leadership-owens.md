@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-five-dysfunctions-lencioni|チームの五つの機能不全——信頼の欠如から始まる連鎖]] — 同じ思想家
 - [[mgmt-high-performance-work-systems-huselid|高業績労働システム——ヒューセリッドの人的資源管理バンドルと企業業績]] — 同じ思想家
 - [[mgmt-organizational-change-kotter|組織変革の8ステップ——コッターの変革管理フレームワークと抵抗の克服]] — 同じ思想家
-- [[mgmt-psychological-contract|心理的契約]] — 同じ思想家
+- [[mgmt-psychological-contract|心理的契約（ルソー）——雇用関係における明文化されない相互義務についての従業員の主観的信念と、その違反が信頼とコミットメントに与える影響]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

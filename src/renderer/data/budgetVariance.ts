@@ -5,8 +5,14 @@
  * 出す純粋ロジック。予算は実績と同じ `KpiActual` 形で `kpi-budgets` コレクション
  * に保存し、本モジュールは IO を持たない (呼び出し側が record store から渡す)。
  *
- * 注意: 予算と実績は同じ期間粒度で入力する前提 (年間予算 vs 年間実績、または
- * 月次 vs 月次)。粒度が食い違うと達成率の意味が崩れるため、UI 側で注意喚起する。
+ * **期の突合**: `period` は `YYYY-MM` のみ (`kpiActuals.ts` の `isValidPeriod`) なので、
+ * 「年間予算」は 12 行として入る。したがって予算と実績を突き合わせられるのは
+ * **両方に同じ期が在る月だけ**である。2026-09-07 まではどちらの側も全行を合算して
+ * 割っていたため、通期予算 (12 か月) と実績 3 か月で達成率 25%、予算 1 か月と実績
+ * 12 か月で 1200%、**期が 1 つも重ならない控えでも 125%「予算達成」**が出ていた
+ * (経営サマリー・KPI ページ・金融機関等提出用の書面 §8・経営ハイライト・レポート)。
+ * 以後 `computeBudgetVariance` は突合できた期だけを合算し、対象外の期を
+ * `BudgetPeriodAlignment` で返す (画面と書面が「何か月分の比較か」を述べる)。
  */
 import {
   computeKpiMetrics,
@@ -28,10 +34,92 @@ export interface VarianceLine {
   readonly achievementPct: number | null;
 }
 
-/** 売上・営業利益の予実差異。 */
-export interface BudgetVariance {
+/** 売上・営業利益の予実差異 (期の突合結果を持たない素の 2 行)。 */
+export interface BudgetVarianceLines {
   readonly revenue: VarianceLine;
   readonly operatingProfit: VarianceLine;
+}
+
+/**
+ * 予算と実績の期 (`YYYY-MM`) の突合結果。**どの月を比較したのか**を持ち回るための値で、
+ * 画面・書面・レポートはこれを読んで「何か月分の比較か」「どの月が対象外か」を述べる。
+ */
+export interface BudgetPeriodAlignment {
+  /** 突合できた期 = 予算と実績の**両方**に在る期 (昇順)。 */
+  readonly comparedPeriods: readonly string[];
+  /** 予算だけに在る期 = まだ実績が無い月 (昇順)。 */
+  readonly budgetOnlyPeriods: readonly string[];
+  /** 実績だけに在る期 = 予算を入れていない月 (昇順)。 */
+  readonly actualOnlyPeriods: readonly string[];
+}
+
+/** 売上・営業利益の予実差異 + どの期を突き合わせたか。 */
+export interface BudgetVariance extends BudgetVarianceLines {
+  /** 突合できた期の内訳。数字はこの `comparedPeriods` の合計だけで出している。 */
+  readonly alignment: BudgetPeriodAlignment;
+}
+
+/**
+ * 予算・実績の期を突き合わせる。両方に在る期・予算だけの期・実績だけの期を昇順で返す。
+ * 期の重複 (同じ月に複数事業) は 1 つの期として数える (月数を数えるため)。
+ */
+export function budgetPeriodAlignment(
+  budgets: readonly { readonly period: string }[],
+  actuals: readonly { readonly period: string }[],
+): BudgetPeriodAlignment {
+  const b = new Set(budgets.map((r) => r.period));
+  const a = new Set(actuals.map((r) => r.period));
+  const sorted = (xs: Iterable<string>): string[] => [...xs].sort();
+  return {
+    comparedPeriods: sorted([...b].filter((p) => a.has(p))),
+    budgetOnlyPeriods: sorted([...b].filter((p) => !a.has(p))),
+    actualOnlyPeriods: sorted([...a].filter((p) => !b.has(p))),
+  };
+}
+
+/**
+ * 突合できなかった期の内訳を一言で。全期が突合できていれば null (断り書き不要)。
+ * **月数を数える所はここ 1 か所**にして、画面・書面・レポートが同じ数を述べる。
+ */
+export function budgetUnmatchedNote(a: BudgetPeriodAlignment): string | null {
+  const parts: string[] = [];
+  if (a.budgetOnlyPeriods.length > 0) parts.push(`予算のみ ${a.budgetOnlyPeriods.length} か月`);
+  if (a.actualOnlyPeriods.length > 0) parts.push(`実績のみ ${a.actualOnlyPeriods.length} か月`);
+  if (parts.length === 0) return null;
+  return `${parts.join('・')}は対象外`;
+}
+
+/**
+ * 画面向けの「突合した期」の 1 語 (`2026-04〜2026-06・3 か月`)。
+ * **範囲だけでなく月数も出す** —— 端の 2 か月しか無い控えを「1 年分」と読まれないため。
+ * 書面は和暦などの書式を通すので `bankSubmission.ts` の `periodSpan` を使う。
+ */
+export function budgetComparedRangeLabel(a: BudgetPeriodAlignment): string {
+  // **突合できた期が 0 のときに範囲を作らない。** 添字は空配列で `undefined` になり、
+  // 裸の補間は文字列 `"undefined"` を刷るので `undefined〜undefined・0 か月` になっていた。
+  // 今の呼び手はどちらも `computeBudgetVariance` (空なら null) 経由なので届かないが、
+  // `budgetPeriodAlignment` も export されており**直に組んだ突合を渡せる**
+  // (`overview.ts` の `budgetAlignment` がまさにそれ)。**関門は関数の側に置く。**
+  const from = a.comparedPeriods[0];
+  const to = a.comparedPeriods[a.comparedPeriods.length - 1];
+  if (from === undefined || to === undefined) return '突合できた期なし';
+  return `${from}〜${to}・${a.comparedPeriods.length} か月`;
+}
+
+/**
+ * 突合の範囲を述べる文。全期が突合できていれば null (述べることが無い)。
+ * 例: `予算と実績の両方が在る 3 か月分の比較です (予算のみ 9 か月は対象外)。`
+ */
+export function budgetScopeSentence(a: BudgetPeriodAlignment): string | null {
+  const un = budgetUnmatchedNote(a);
+  if (un === null) return null;
+  // **0 か月分の「比較」は成り立たない。** 突合できた期が無いときに
+  // 「予算と実績の両方が在る 0 か月分の比較です」と述べていた —— 比較していない。
+  // 文面は `managementReport.ts` の突合ゼロの枝と揃える (同じ事実を 2 通りに言わない)。
+  if (a.comparedPeriods.length === 0) {
+    return `予算と実績で期が重なっていないため、予実差異は算定していません (${un})。`;
+  }
+  return `予算と実績の両方が在る ${a.comparedPeriods.length} か月分の比較です (${un})。`;
 }
 
 function line(budget: number, actual: number): VarianceLine {
@@ -47,7 +135,7 @@ function line(budget: number, actual: number): VarianceLine {
 export function computeBudgetVarianceFromFundamentals(
   budget: KpiFundamentals,
   actual: KpiFundamentals,
-): BudgetVariance {
+): BudgetVarianceLines {
   const budgetOp = computeKpiMetrics(budget).operatingProfit;
   const actualOp = computeKpiMetrics(actual).operatingProfit;
   return {
@@ -57,18 +145,26 @@ export function computeBudgetVarianceFromFundamentals(
 }
 
 /**
- * 予算・実績の明細 (`KpiActual[]`) を集計して予実差異を返す。
- * どちらかが空 (予算・実績が無い) のときは null (比較対象なし)。
+ * 予算・実績の明細 (`KpiActual[]`) を**期で突き合わせて**予実差異を返す。
+ *
+ * 合算するのは `budgetPeriodAlignment` が突合できた期だけ。突合できた期が 1 つも
+ * 無ければ null —— どちらかが空のときも、期がまったく重ならないときも同じ扱いで、
+ * 「片側しか無い期を 0 と数えた比率」を作らない (`cashflowDebtService.ts` の
+ * 返済余力と同じ規則: 片側が無い月は分子にも分母にもできない)。
+ * 対象外の期は戻り値の `alignment` に残るので、呼び手は月数を述べられる。
  */
 export function computeBudgetVariance(
   budgets: readonly KpiActual[],
   actuals: readonly KpiActual[],
 ): BudgetVariance | null {
-  if (budgets.length === 0 || actuals.length === 0) return null;
-  return computeBudgetVarianceFromFundamentals(
-    summarizeFundamentals(budgets),
-    summarizeFundamentals(actuals),
+  const alignment = budgetPeriodAlignment(budgets, actuals);
+  if (alignment.comparedPeriods.length === 0) return null;
+  const compared = new Set(alignment.comparedPeriods);
+  const lines = computeBudgetVarianceFromFundamentals(
+    summarizeFundamentals(budgets.filter((b) => compared.has(b.period))),
+    summarizeFundamentals(actuals.filter((a) => compared.has(a.period))),
   );
+  return { ...lines, alignment };
 }
 
 // ---------------------------------------------------------------------------
@@ -193,13 +289,15 @@ export function assessVariance(
 /** 月次の予実達成行 + 累計 (YTD)。 */
 export interface BudgetAchievementRow {
   readonly period: string;
-  readonly budget: number;
-  readonly actual: number;
-  /** 当月達成率 (%) = 実績 ÷ 予算 × 100。予算 0 以下なら null。 */
+  /** その期の予算。予算を入れていない期は **null** (0 ではない)。 */
+  readonly budget: number | null;
+  /** その期の実績。実績がまだ無い期は **null** (0 ではない)。 */
+  readonly actual: number | null;
+  /** 当月達成率 (%) = 実績 ÷ 予算 × 100。片側が無い期・予算 0 以下なら null。 */
   readonly achievementPct: number | null;
-  /** 期初からの累計予算。 */
+  /** 突合できた期だけの累計予算。 */
   readonly cumulativeBudget: number;
-  /** 期初からの累計実績。 */
+  /** 突合できた期だけの累計実績。 */
   readonly cumulativeActual: number;
   /** 累計 (YTD) 達成率 (%) = 累計実績 ÷ 累計予算 × 100。累計予算 0 以下なら null。 */
   readonly ytdAchievementPct: number | null;
@@ -213,8 +311,12 @@ function pct(numer: number, denom: number): number | null {
 /**
  * 予算・実績の月次系列を突き合わせ、各月の達成率と累計 (YTD) 達成率を返す。
  *
- * 予算・実績は同じ period キーで対応づける (`Map`)。どちらかに無い period は欠損として
- * 0 とみなす (UI 側で注意喚起する前提)。period 昇順にソートして返す。両系列が空なら空配列。
+ * 行は予算・実績の**期の和**（どちらかにしか無い月も「片側が無い」として見えるように）
+ * だが、**達成率は両方が在る月しか出さない**。2026-09-07 まではどちらかに無い期を 0 と
+ * みなしていた —— 実績がまだ無い月が「達成率 0%」になり、当時の検査
+ * (`treats a period missing from one side as zero`) が**その欠陥を仕様として固定**して
+ * いた。累計も突合できた月だけを足す (片側が無い月を足すと、辺の期間の長さがそのまま
+ * 誤差になる)。period 昇順。両系列が空なら空配列。
  * 注意: 季節性・期ずれは考慮しない素朴な累計。
  */
 export function computeMonthlyAchievement(
@@ -230,15 +332,18 @@ export function computeMonthlyAchievement(
   let cumulativeActual = 0;
   const rows: BudgetAchievementRow[] = [];
   for (const period of periods) {
-    const budget = budgetByPeriod.get(period) ?? 0;
-    const actual = actualByPeriod.get(period) ?? 0;
-    cumulativeBudget += budget;
-    cumulativeActual += actual;
+    const budget = budgetByPeriod.get(period) ?? null;
+    const actual = actualByPeriod.get(period) ?? null;
+    const matched = budget !== null && actual !== null;
+    if (matched) {
+      cumulativeBudget += budget;
+      cumulativeActual += actual;
+    }
     rows.push({
       period,
       budget,
       actual,
-      achievementPct: pct(actual, budget),
+      achievementPct: matched ? pct(actual, budget) : null,
       cumulativeBudget,
       cumulativeActual,
       ytdAchievementPct: pct(cumulativeActual, cumulativeBudget),

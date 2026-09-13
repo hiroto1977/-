@@ -2,7 +2,7 @@
 title: "princeton.edu"
 type: source-domain
 host: "princeton.edu"
-cite_count: 5
+cite_count: 4
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # princeton.edu
 
-> [!info] 出典ドメイン索引 ・ 引用 **5 件**（学術 5）
+> [!info] 出典ドメイン索引 ・ 引用 **4 件**（学術 4）
 
 ## このドメインを出典とする項目
 
@@ -18,7 +18,6 @@ tags:
 - [[econ-coase-conjecture|コースの推測（耐久財独占）]] — Gul,Sonnenschein&Wilson,"FoundationsofDynamicMonopolyandtheCoaseConje…
 - [[econ-deaton-paradox|ディートンのパラドックス（消費の過剰平滑性）]] — AngusDeaton(Princeton)—fulltextofCampbell&Deaton(1989)
 - [[econ-regression-discontinuity|回帰不連続デザイン（RDD）]] — Lee&Lemieux(2010),RegressionDiscontinuityDesignsinEconomics,NBERWorki…
-- [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]] — PrincetonUniversity(A.Dixit)—AdverseSelectioninInsuranceMarkets講義ノート
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

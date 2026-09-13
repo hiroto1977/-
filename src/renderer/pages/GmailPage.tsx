@@ -1,9 +1,16 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { GoogleConnectCard } from '../components/GoogleConnectCard';
 import { useServiceData } from '../hooks/useServiceData';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
+import { AiEgressNotice } from '../components/AiEgressNotice';
+import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
+import { GMAIL_DRAFT_FIELDS } from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
+import { analyzeBatchNote, packAnalyzeText } from '../../shared/emotionsLimits';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -26,14 +33,35 @@ export function GmailPage() {
   const [to, setTo] = useState('');
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
+  /*
+   * 貼り付けを黙って切らない (パス 172 → **全欄へ** パス 183)。天井は台帳から読む。
+   *
+   * 宛先 (`to`) は 1 行だが天井 4,096 字で、**人が宛先の一覧を貼る欄**である ——
+   * `maxLength` に任せると貼った宛先の後ろが黙って落ち、画面は「下書きを作成しました」と言う。
+   */
+  const toOver = charsOverCeiling(to, GMAIL_DRAFT_FIELDS.to.max);
+  const subjectOver = charsOverCeiling(subject, GMAIL_DRAFT_FIELDS.subject.max);
+  const bodyOver = charsOverCeiling(body, GMAIL_DRAFT_FIELDS.body.max);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string }>();
+
+  /*
+   * 感情分析へ送る本文は**受信スレッドの数で決まる** —— 利用者が長さを決められない。
+   * `analyze-text` は 5000 字を超えると断る (英語の生の例外文が alert に出るだけで、
+   * 一覧を減らす手が無い)。先頭から入るぶんだけ送り、外した件数を**押す前に**言う
+   * (詰め方と文面は `shared/emotionsLimits.ts`・パス 156)。
+   */
+  const analyzeBatch = useMemo(
+    () => packAnalyzeText(threads.map((t) => `- ${t.subject} (from ${t.sender})`)),
+    [threads],
+  );
+  const analyzeNote = analyzeBatchNote(analyzeBatch);
 
   const create = async () => {
     if (!window.serviceHub) return;
     setSubmitting(true);
     setResult(undefined);
-    const res = await window.serviceHub.invoke<{ id: string; messageId: string }>(
+    const res = await window.serviceHub.invoke<ActionData<'gmail/create-draft'>>(
       'gmail',
       'create-draft',
       { to: to.trim(), subject: subject.trim(), body },
@@ -78,21 +106,33 @@ export function GmailPage() {
         />
       </Section>
 
+      {/* **何が外へ出るかを書く** (2026-09-09 · パス 106)。
+            受信スレッドの**件名と送信者のメールアドレス**が Anthropic へ送られる
+            (本文は送っていない —— `threads.map` が組むのは `- 件名 (from 送信者)` の
+            行だけ)。送信者のアドレスは**第三者の個人情報**である。
+            この画面は 2026-09-09 まで、外へ出ることを述べる文を 1 つも持っていなかった
+            —— パス 106 の走査 (`aiEgressDisclosed.test.ts`) が見つけた。
+            断りを 3 画面に足したつもりが、実際は 5 画面だった。 */}
+      <AiEgressNotice
+        subject={{
+          what: '受信スレッドの件名と送信者のメールアドレス',
+          recipients: remoteOnly(AI_EGRESS_RECIPIENT_ANTHROPIC),
+        }}
+      />
       <Section
         title="受信トーン分析"
         action={
           <button
             onClick={async () => {
-              if (!window.serviceHub || threads.length < 1) return;
-              const text = threads.map((t) => `- ${t.subject} (from ${t.sender})`).join('\n');
-              const res = await window.serviceHub.invoke('emotions', 'analyze-text', {
-                text,
+              if (!window.serviceHub || analyzeBatch.included < 1) return;
+              const res = await window.serviceHub.invoke<ActionData<'emotions/analyze-text'>>('emotions', 'analyze-text', {
+                text: analyzeBatch.text,
                 source: 'Gmail Inbox',
               });
               if (!res.ok) alert('感情分析失敗: ' + res.message);
-              else alert('Emotions タブに結果を保存しました');
+              else alert(`Emotions タブに結果を保存しました (${analyzeBatch.included} 件を送信)`);
             }}
-            disabled={threads.length < 1}
+            disabled={analyzeBatch.included < 1}
           >
             Emotions で分析
           </button>
@@ -101,6 +141,10 @@ export function GmailPage() {
         <div className="empty" style={{ fontSize: 12 }}>
           受信トレイ件名一覧を Emotions タブに送り、ストレス兆候・トーン傾向を分析します。
           結果は Emotions タブの履歴に残ります（Anthropic API キーが必要）。
+          {/* 天井に収まらない件数は**押す前に**言う (パス 156)。文面は shared/emotionsLimits.ts。 */}
+          {analyzeNote !== null && (
+            <div data-analyze-batch-note style={{ marginTop: 6, color: '#fbbf24' }}>⚠ {analyzeNote}</div>
+          )}
         </div>
       </Section>
 
@@ -120,12 +164,14 @@ export function GmailPage() {
               onChange={(e) => setTo(e.target.value)}
               style={inputStyle}
             />
+            <CeilingNotice label="宛先" value={to} max={GMAIL_DRAFT_FIELDS.to.max} />
             <input
               placeholder="件名"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               style={inputStyle}
             />
+            <CeilingNotice label="件名" value={subject} max={GMAIL_DRAFT_FIELDS.subject.max} />
             <textarea
               placeholder="本文 (text/plain UTF-8)"
               value={body}
@@ -133,11 +179,12 @@ export function GmailPage() {
               rows={5}
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />
+            <CeilingNotice label="本文" value={body} max={GMAIL_DRAFT_FIELDS.body.max} />
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="primary"
                 onClick={create}
-                disabled={submitting || !to.trim() || !subject.trim()}
+                disabled={submitting || !to.trim() || !subject.trim() || toOver > 0 || subjectOver > 0 || bodyOver > 0}
               >
                 {submitting ? '保存中…' : '下書きを保存'}
               </button>

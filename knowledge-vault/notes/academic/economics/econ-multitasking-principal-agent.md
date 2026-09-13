@@ -31,7 +31,7 @@ Bengt Holmström（1991年論文の共著者・2016年ノーベル経済学賞�
 
 ## 関連概念
 - [[econ-linder-hypothesis|リンダー仮説（重複需要理論）]] — 同分野の近傍
-- [[econ-informativeness-principle-holmstrom|情報性原理（ホルムストローム）——どの情報を報酬に結びつけるべきか]] — 同分野の近傍
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

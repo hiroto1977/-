@@ -26,7 +26,7 @@ aliases:
 レイモンド・マイルズ ／ チャールズ・スノー ／ ヘンリー・ミンツバーグ ／ ダニー・ミラー
 
 ## 出典
-- [Miles, R.E. & Snow, C.C. (1978) Organizational Strategy, Structure, and Process — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/3650499) `学術`
+- [Miles, R.E. & Snow, C.C. (1978) Organizational Strategy, Structure, and Process — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/3650499) `リファレンス`
 - [Wikipedia: Miles and Snow strategic typologies — Defenders/Prospectors/Analyzers/Reactors, adaptive cycle](https://en.wikipedia.org/wiki/Miles_and_Snow_strategic_typologies) `リファレンス`
 
 ## 関連概念

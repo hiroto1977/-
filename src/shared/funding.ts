@@ -14,6 +14,11 @@
  * UI から切り離して単体テスト可能にするため、集計はすべてここに集約する。
  */
 
+// 消費税の標準税率は税計算モジュールの定数が唯一の出所 (台帳
+// `tax.consumptionStandardRate` の既定値もこれを参照している)。ここで
+// リテラルを書き写すと、法定値が 2 か所に分かれて片方だけ古くなる。
+import { CONSUMPTION_TAX_STANDARD } from './taxCalc';
+
 // --- 資金調達の種別 ----------------------------------------------------
 
 /** 資金調達手段の種別。レーダーチャートの 6 軸に対応する。 */
@@ -359,6 +364,19 @@ export interface FundingMonthly {
   readonly netCashflow: number;
   /** 会計ソフト連携の営業キャッシュフロー (任意。未連携なら 0)。 */
   readonly operatingCashflow: number;
+  /**
+   * その月の営業CF が**会計連携から実際に得られたか** (2026-09-12 · パス 182)。
+   *
+   * `operatingCashflow: number` では**未取得と実測ゼロが同じ 0** になる。
+   * 返済予定は借入期間ぶん将来へ伸びるのに実績CF は過去しか無いので、
+   * 比率 (DSCR) を作るときこの区別が無いと「営業CF 0 ÷ 返済額」= 0 という
+   * **測っていない月の答え**が混ざる (下の `debtServiceMetrics` の経緯)。
+   *
+   * 会計連携の Map に**その月の鍵が在るか** (`has`) で決まる ——
+   * 連携していて net 0 だった月は `true` (実測ゼロ)。姉妹モジュール
+   * `renderer/data/cashflowDebtService.ts` が同じ区別を `has` で持つ。
+   */
+  readonly operatingCashflowKnown: boolean;
   /** 株式ポートフォリオ評価額 (任意。未連携なら 0)。 */
   readonly portfolioValue: number;
 }
@@ -762,6 +780,8 @@ export function monthlyFlow(
       // 支払利息は損金算入され税負担を減らす (実効税率分の節税効果)。
       const interestTaxShield = Math.round(interest * rate);
       const operatingCashflow = options.accountingCashflow?.get(month) ?? 0;
+      // 未取得と実測ゼロを分ける印。`get` の値では区別できないので `has` で見る。
+      const operatingCashflowKnown = options.accountingCashflow?.has(month) ?? false;
       return {
         month,
         funding,
@@ -771,6 +791,7 @@ export function monthlyFlow(
         interestTaxShield,
         netCashflow: fundingAfterTax + operatingCashflow - repayment + interestTaxShield,
         operatingCashflow,
+        operatingCashflowKnown,
         portfolioValue: options.portfolioByMonth?.get(month) ?? 0,
       };
     });
@@ -892,13 +913,14 @@ export function scenarioRunways(
  *   補助金・助成金・給付金・購入型CF は益金算入で課税対象、融資・公庫は
  *   借入金で非課税。圧縮記帳 (`compressedEntry`) 適用分は当年度課税を繰延。
  *   手残り = 確定総額 − 当年度課税対象確定額 × 実効税率。
- * @param consumptionTaxRate 消費税率 (0..1)。既定 0.1。購入型CF は課税売上の
+ * @param consumptionTaxRate 消費税率 (0..1)。既定 `CONSUMPTION_TAX_STANDARD`
+ *   (消費税法の標準税率)。購入型CF は課税売上の
  *   ため、内税ベースの消費税相当額を概算する。
  */
 export function summarize(
   items: readonly FundingItem[],
   effectiveTaxRate: number = DEFAULT_EFFECTIVE_TAX_RATE,
-  consumptionTaxRate = 0.1,
+  consumptionTaxRate: number = CONSUMPTION_TAX_STANDARD,
 ): FundingSummary {
   const rate = clampRate(effectiveTaxRate);
   const consRate = clampRate(consumptionTaxRate);
@@ -945,21 +967,50 @@ export function summarize(
 
 // --- 資金調達の質スコア -----------------------------------------------
 
-/** 資金調達の質スコア。 */
+/**
+ * 資金調達の質スコア。
+ *
+ * **3 欄とも「確定した調達が無ければ `null`」** —— 比率は確定総額で割る量なので、
+ * 分母が 0 なら値が無い。0 でも 1 でもない。
+ *
+ * 2026-09-09 まで、分母 0 のときは比率を **1.0** に倒していた。実装コメントは
+ * それを「中立」と呼んでいたが、**同じファイルの型の doc は「1.0 が最良」と
+ * 書いていた** —— 0..1 を 0..100 点へ写す指標で 1.0 は中立ではなく満点である。
+ * 結果、**1 円も確定していない事業者の画面に「資金調達 質スコア 100 / 100」**が
+ * 出ていた (申請中の案件が在れば「確定総額 ¥0 / パイプライン ¥1,100万 /
+ * 質スコア 100 点」が同じタイル群に並ぶ)。
+ */
 export interface FundingQualityScore {
-  /** 返済不要資金の比率 (返済不要 / 確定総額)。1.0 が最良。 */
-  readonly nonRepayableRatio: number;
-  /** 税引後実質調達額の比率 (税引後手残り / 確定総額)。 */
-  readonly afterTaxRatio: number;
-  /** 総合スコア (0..100)。返済不要比率と税引後比率の加重平均。 */
-  readonly compositeScore: number;
+  /** 返済不要資金の比率 (返済不要 / 確定総額)。1.0 が最良。確定 0 なら `null`。 */
+  readonly nonRepayableRatio: number | null;
+  /** 税引後実質調達額の比率 (税引後手残り / 確定総額)。確定 0 なら `null`。 */
+  readonly afterTaxRatio: number | null;
+  /** 総合スコア (0..100)。返済不要比率と税引後比率の加重平均。確定 0 なら `null`。 */
+  readonly compositeScore: number | null;
+  /**
+   * 算定できなかった理由の文面 (算定できていれば `null`)。
+   *
+   * **画面はこの 1 本を読む** —— 文面を画面側に書くと、規則が 2 か所に分かれる
+   * (パス 62・63)。
+   */
+  readonly unavailableNote: string | null;
 }
+
+/**
+ * 確定した調達が無く、質スコアを算定できないときの断り書き。
+ *
+ * **export しているのは同梱データ (`snapshot.ts`) が同じ 1 本を読むため。**
+ * 見本に文面を写すと、直した側だけが新しくなる (パス 62)。
+ */
+export const NO_SECURED_FUNDING_NOTE =
+  '確定した調達がまだ無いため、資金調達の質スコアは算定していません（返済不要比率・税引後比率はいずれも確定総額で割る指標です）。申請中・予定の案件はパイプライン総額に出ています。';
 
 /**
  * 資金調達の「質」を 0..100 のスコアで評価する。
  *
  * 返済不要資金 (補助金等) の比率と、税負担を考慮した実質調達額の比率を
- * 加重平均する。確定総額が 0 のときは比率を 1.0 (中立) として返す。
+ * 加重平均する。**確定総額が 0 のときは算定せず `null` を返す** ——
+ * 「まだ何も確定していない」は「質が最高」でも「質が最低」でもない。
  *
  * @param summary `summarize` の結果
  * @param weights [返済不要比率の重み, 税引後比率の重み] (既定 [0.4, 0.6])
@@ -969,16 +1020,27 @@ export function fundingQualityScore(
   weights: readonly [number, number] = [0.4, 0.6],
 ): FundingQualityScore {
   const total = summary.totalSecured;
-  // ゼロ除算ガード: 確定額が無いときは中立の 1.0。
-  const nonRepayableRatio = total > 0 ? clampRate(summary.nonRepayableSecured / total) : 1;
-  const afterTaxRatio = total > 0 ? clampRate(summary.afterTaxSecured / total) : 1;
+  // **割れないので算定しない。** 1.0 に倒すと満点になる (この関数の直上の doc)。
+  if (total <= 0) {
+    return {
+      nonRepayableRatio: null,
+      afterTaxRatio: null,
+      compositeScore: null,
+      unavailableNote: NO_SECURED_FUNDING_NOTE,
+    };
+  }
+  const nonRepayableRatio = clampRate(summary.nonRepayableSecured / total);
+  const afterTaxRatio = clampRate(summary.afterTaxSecured / total);
   const [wNon, wTax] = weights;
   const wSum = wNon + wTax;
-  const weighted = wSum > 0 ? (nonRepayableRatio * wNon + afterTaxRatio * wTax) / wSum : 0;
+  // 重みの合計が 0 なのは呼び出し側の指定の誤りで、値の欠落ではない。
+  // ここも「割れない」なので算定しない (0 点という判定を作らない)。
+  const weighted = wSum > 0 ? (nonRepayableRatio * wNon + afterTaxRatio * wTax) / wSum : null;
   return {
     nonRepayableRatio,
     afterTaxRatio,
-    compositeScore: Math.round(Math.min(1, Math.max(0, weighted)) * 100),
+    compositeScore: weighted === null ? null : Math.round(Math.min(1, Math.max(0, weighted)) * 100),
+    unavailableNote: weighted === null ? '重みの合計が 0 のため、総合スコアは算定していません。' : null,
   };
 }
 
@@ -986,26 +1048,100 @@ export function fundingQualityScore(
 
 /** 返済余力指標 (Debt Service Coverage Ratio 系)。 */
 export interface DebtServiceMetrics {
-  /** 期間中の返済額合計 (元利)。 */
+  /**
+   * 期間中の返済額合計 (元利)。**返済予定の全期間**を含む (突合の有無に関わらず)。
+   *
+   * DSCR の分母では**ない** —— 分母は突合できた月だけの `coveredRepayment`。
+   * こちらは「返済すべき借入が在るか」(節を出すかの判定) と総額の表示に使う。
+   */
   readonly totalRepayment: number;
-  /** 期間中の営業キャッシュフロー合計。 */
-  readonly totalOperatingCashflow: number;
+  /**
+   * DSCR の分子 = **突合できた月**の営業キャッシュフロー合計。
+   *
+   * 「突合できた月」= 返済があり、かつ会計連携にその月の月次CF が在る月。
+   */
+  readonly coveredOperatingCashflow: number;
+  /** DSCR の分母 = **突合できた月**の返済額合計。 */
+  readonly coveredRepayment: number;
   /**
    * 全体の返済カバー率 = 営業CF合計 ÷ 返済額合計。1.0 以上で返済余力あり。
-   * 返済が無いときは 0 (指標として意味を持たない)。
+   * **返済が無いときは `null` = 算定不能。**
+   *
+   * 2026-09-08 まで 0 に倒しており、**この doc 自身が「返済が無いときは 0
+   * (指標として意味を持たない)」と書いていた** —— 意味を持たないと述べてから
+   * 数を返していた。DSCR 0 は「営業CFが返済を 1 円も賄えない」という**最悪の
+   * 読み**だが、返済が無いのは「返済すべき借入が無い」= 該当なしである。
+   *
+   * **規準は姉妹モジュールに在った** —— `renderer/data/cashflowDebtService.ts` は
+   * 同じ量を `overallDscr: totalRepay > 0 ? round2(totalCf / totalRepay) : null` で
+   * 返し、経営サマリーは「—」を刷って色も付けず、金融機関等提出用の書面も
+   * そちらを読む。**同じ量の双子で、片方だけが 0 に倒れていた。**
+   *
+   * ## 分子が無い月も対象外 (2026-09-12 · パス 182)
+   *
+   * 上の 2026-09-08 の修正 (パス 60) は**分母**だけを直し、姉妹モジュールが
+   * 2026-09-07 (パス 45) に直した**分子**の側を写していなかった ——
+   * 返済予定は借入期間ぶん将来へ伸びるのに、会計連携の月次CF は過去しか無い。
+   * 将来の各月を「営業CF 0」として割ると DSCR 0 = 返済不足月になる。
+   *
+   * 実測 (2026-09-12、この app 同梱の見本データ: 融資 1,000万 60回 + 公庫 600万 84回
+   * 据置6か月・会計連携は 2026-01..06 の 6 か月・返済月は 93 か月):
+   *
+   * | | 全月を対象にする (直す前) | 突合できた月だけ |
+   * | --- | ---: | ---: |
+   * | 返済余力 (DSCR) | **0.53** | 9.03 |
+   * | 最悪月のカバー率 | **0.00** | 8.00 |
+   * | カバー率 1.0 未満の月 | **89 か月** | 0 / 4 か月 |
+   *
+   * **同じ会社の同じデータで、経営サマリーは DSCR 9.03 (返済余力十分)、
+   * 資金調達レーダーは 0.53 と赤い警告 (⚠️ 営業CFが返済を下回っています) を出す。**
+   * 画面 2 枚が同時に矛盾した診断を表示し、警告する側が誤っていた。
+   *
+   * 欠陥は 2 つ重なっていた —— 分母に未取得の月を入れる一方で、**分子には
+   * 返済の無い月の営業CF まで足していた** (0.53 の分子は全 95 か月の 891 万で、
+   * 返済月だけなら 636 万)。方向が逆なので互いを部分的に打ち消しており、
+   * 全体 DSCR 0.53 と最悪月 0.00 が同じ行に並んでいた。両方を「突合できた月」に
+   * 揃えた結果、全体と月次が同じ母集団を見るようになった
+   * (返済の無い月を分子から外す件は `debtServiceMetrics` の検査に対照つきで在る)。
+   *
+   * 警告の側には `&& live.accountingLinked` という関門が掛かっていた ——
+   * 書いた者は未連携を意識していたのに、**関門を値ではなく警告に掛けた**ので
+   * 数字そのもの (0.53 / 0.00 / 89 か月) はそのまま測定値として刷られていた
+   * (パス 57 と同じ形)。値が `null` を持つなら、関門は値が持つ。
    */
-  readonly overallDscr: number;
-  /** 返済がある月のうち、カバー率 (営業CF ÷ 返済額) の最小値 (ボトルネック月)。 */
-  readonly worstMonthDscr: number;
-  /** カバー率がしきい値 (既定 1.0) を下回った月数。 */
+  readonly overallDscr: number | null;
+  /**
+   * 返済がある月のうち、カバー率 (営業CF ÷ 返済額) の最小値 (ボトルネック月)。
+   * **返済がある月が 1 つも無ければ `null`。**
+   *
+   * 実装は `Infinity` で始めて最小値を採る —— つまり「無い」の印は**既に在った**。
+   * 2026-09-08 まではそれを 0 に倒していた (印を作ってから捨てる形)。
+   */
+  readonly worstMonthDscr: number | null;
+  /** カバー率がしきい値 (既定 1.0) を下回った月数 (**突合できた月のうち**)。 */
   readonly shortfallMonths: number;
+  /** 評価対象 = 返済があり、かつ会計連携に月次CF が在る月数 (`shortfallMonths` の分母)。 */
+  readonly coveredMonths: number;
+  /**
+   * 返済予定はあるが**会計連携に月次CF が無い**ため突合できなかった月数。
+   *
+   * 返済予定は借入期間ぶん先まで伸びるのに実績CF は過去しか無いので、通常この数は
+   * 大きい。**0 でない限り、上の DSCR 3 つは「突合できた月について」の数字である**
+   * ことを画面が述べる —— 黙って狭めると、4 か月の突合が 93 か月の借入についての
+   * 主張に読める。
+   */
+  readonly unmatchedMonths: number;
 }
 
 /**
  * 月次フローから返済余力指標 (DSCR) を計算する。
  *
- * 営業キャッシュフローが返済額をどれだけカバーできるかを、全体・最悪月・
- * 不足月数で評価する。返済が 0 の月は分母にできないため DSCR の対象外。
+ * **突合できた月だけ**を評価する = 返済があり (分母)、かつ会計連携にその月の
+ * 月次CF が在る (分子) 月。返済が 0 の月は分母にできず、`operatingCashflowKnown`
+ * が `false` の月は**分子が無い** (未取得を 0 とは読まない)。突合できた月が
+ * 1 つも無ければ DSCR は `null` —— 0 を並べた答えを作らない。
+ *
+ * 経緯と実測は `DebtServiceMetrics.overallDscr` の doc。
  *
  * @param monthly `monthlyFlow` の結果
  * @param threshold 不足と判定するカバー率のしきい値 (既定 1.0)
@@ -1015,29 +1151,40 @@ export function debtServiceMetrics(
   threshold = 1,
 ): DebtServiceMetrics {
   let totalRepayment = 0;
-  let totalOperatingCashflow = 0;
+  let coveredOperatingCashflow = 0;
+  let coveredRepayment = 0;
   let worstMonthDscr = Infinity;
   let shortfallMonths = 0;
-  let sawRepayment = false;
+  let coveredMonths = 0;
+  let unmatchedMonths = 0;
   for (const m of monthly) {
     totalRepayment += m.repayment;
-    totalOperatingCashflow += m.operatingCashflow;
-    if (m.repayment > 0) {
-      sawRepayment = true;
-      const dscr = m.operatingCashflow / m.repayment;
-      // worstMonthDscr は最小値。`<`↔`<=` は等値で更新先が同値になり結果不変 (equivalent)。
-      // Stryker disable next-line EqualityOperator
-      if (dscr < worstMonthDscr) worstMonthDscr = dscr;
-      if (dscr < threshold) shortfallMonths += 1;
+    if (m.repayment <= 0) continue;
+    // 分子が無い月は測れない。**実測ゼロ (連携に載っていて net 0) は対象に残る。**
+    if (!m.operatingCashflowKnown) {
+      unmatchedMonths += 1;
+      continue;
     }
+    coveredMonths += 1;
+    coveredOperatingCashflow += m.operatingCashflow;
+    coveredRepayment += m.repayment;
+    const dscr = m.operatingCashflow / m.repayment;
+    // worstMonthDscr は最小値。`<`↔`<=` は等値で更新先が同値になり結果不変 (equivalent)。
+    // Stryker disable next-line EqualityOperator
+    if (dscr < worstMonthDscr) worstMonthDscr = dscr;
+    if (dscr < threshold) shortfallMonths += 1;
   }
-  const overallDscr = totalRepayment > 0 ? totalOperatingCashflow / totalRepayment : 0;
   return {
     totalRepayment,
-    totalOperatingCashflow,
-    overallDscr,
-    worstMonthDscr: sawRepayment ? worstMonthDscr : 0,
+    coveredOperatingCashflow,
+    coveredRepayment,
+    // coveredMonths>0 の月は返済>0 のみ → coveredRepayment は必ず正。
+    // 分母が 0 になる道は coveredMonths===0 の側だけなので、そちらで null を返す。
+    overallDscr: coveredMonths > 0 ? coveredOperatingCashflow / coveredRepayment : null,
+    worstMonthDscr: coveredMonths > 0 ? worstMonthDscr : null,
     shortfallMonths,
+    coveredMonths,
+    unmatchedMonths,
   };
 }
 

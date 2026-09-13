@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { navigateTo, takeNavigationIntent } from '../navigate';
 import { Section } from '../components/StatusBar';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
+import { fireReported } from '../data/deviceStoreFailure';
 import {
   BUSINESS_UNITS_COLLECTION,
   financialUnitsFromBusinessUnits,
@@ -18,8 +20,9 @@ import { INDUSTRY_PRESETS } from '../data/industryPresets';
 import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import { KPI_ACTUALS_COLLECTION, monthlyTrendSeries, summarizeFundamentals, type KpiActual } from '../data/kpiActuals';
 import { profitSensitivity, breakEvenDeltaPct, requiredRevenueForTarget, fixedCostReductionImpact, operatingLeverage } from '../data/profitSensitivity';
-import { KPI_BUDGETS_COLLECTION } from '../data/budgetVariance';
-import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceSheet';
+import { budgetComparedRangeLabel, budgetScopeSentence, KPI_BUDGETS_COLLECTION } from '../data/budgetVariance';
+import { periodDaysForMonths } from '../data/workingCapital';
+import { BALANCE_SHEET_COLLECTION, balanceSheetOrNull, currentBalanceSheet, type BalanceSheet } from '../data/balanceSheet';
 import { MEMBERS_COLLECTION, type Member } from '../data/members';
 import {
   HYDROPONICS_COLLECTION,
@@ -75,7 +78,8 @@ import {
   applyManualOverrides,
   type ManualOverrideEntry,
 } from '../data/manualData';
-import { VERDICT_LABEL, buildManagementScorecard } from '../../shared/managementScorecard';
+import { verdictLabel, buildManagementScorecard, type ManagementScorecard } from '../../shared/managementScorecard';
+import { scorecardMetrics } from '../data/overviewScorecard';
 import { buildManagementHighlights, summarizeHighlights, RISK_BAND_LABEL, type RiskBand } from '../data/managementHighlights';
 import { buildManagementReport } from '../data/managementReport';
 import { sparklinePoints } from '../data/sparkline';
@@ -103,7 +107,51 @@ const RISK_BAND_COLOR: Record<RiskBand, string> = { high: '#ef4444', medium: '#f
 const yen = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 0 });
 const num = new Intl.NumberFormat('ja-JP');
 const safeYen = (n: number) => (Number.isFinite(n) ? yen.format(Math.round(n)) : '∞');
+/**
+ * **損益分岐点売上高の「無い」の印は `Infinity`** ——
+ * 限界利益が 0 以下 = *どれだけ売っても固定費を回収できない*、という最も重い状態を
+ * `computeKpiMetrics` はこう表す (経緯は `data/kpiActuals.ts` の `finiteBep`)。
+ *
+ * 2026-09-08 まで、このページはそれを 2 通りで刷っていた:
+ *
+ * | タイル | 刷っていた物 | 理由の説明 |
+ * | --- | --- | --- |
+ * | 損益分岐点 (BEP) | `∞` (`safeYen`) | 無し |
+ * | **損益分岐点売上高 (月)** | **`￥∞`** (生の `yen.format`) | 無し |
+ * | 損益分岐の出荷株数 (月) | `—` | **有り** (同じ行の 1 つ左) |
+ *
+ * `￥∞` は**金額として読める形**で、しかも ∞ は「無限に安全」と読み違えられる ——
+ * 実際は正反対である。**規準は隣のタイルに在った**: 同じ限界利益 ≤ 0 を
+ * 「—」+「何株売っても固定費を回収できません」と答えている。このページの
+ * 算定不能はすべて「—」(`pct1OrDash` / `yenOrDash` / `scoreHeading`) なので、
+ * 損益分岐点売上高もそこへ揃える。
+ *
+ * **値と理由は 1 つの判定から返す。** 別々に書くと「— なのに理由が出ない」
+ * 「数が出ているのに理由が付く」形が型の上で開く (パス 57 と同じ轍)。
+ */
+const NO_BEP_REASON = '限界利益が 0 以下です。どれだけ売っても固定費を回収できません。';
+const bepDisplay = (bep: number): { value: string; sub?: string } =>
+  Number.isFinite(bep) ? { value: yen.format(Math.round(bep)) } : { value: '—', sub: NO_BEP_REASON };
 const pctOrDash = (n: number | null) => (n === null ? '—' : `${n}%`);
+/**
+ * 小数第 1 位の比率。算定不能 (null) は「—」 —— **`0.0%` は「その比率が 0 である」
+ * という主張**であり、「割れない」とは別のこと (経緯は `data/overview.ts` の
+ * `pctOfRevenue`)。
+ */
+const pct1OrDash = (n: number | null) => (n === null ? '—' : `${n.toFixed(1)}%`);
+/**
+ * 節の見出しに載せる総合スコア。
+ *
+ * **採点できたカテゴリが 0 件のときは「総合 0/100（要改善）」と書かない** ——
+ * 何も測っていないことを落第点として見出しに掲げないため
+ * (同じ判定が `bankSubmission` の書面と経営レポートにも載る)。
+ */
+const scoreHeading = (sc: ManagementScorecard): string =>
+  sc.overallScore === null
+    ? `総合 ${verdictLabel(sc.verdict)}（採点できる指標が未入力）`
+    : `総合 ${sc.overallScore}/100（${verdictLabel(sc.verdict)}）`;
+/** 金額。算定不能 (null) は 0 円として刷らない —— 未入力の内数が混ざると合計は意味を失う。 */
+const yenOrDash = (n: number | null) => (n === null ? '—' : yen.format(n));
 
 const settingsInput: React.CSSProperties = {
   background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6,
@@ -126,6 +174,7 @@ function HighlightSettingsPanel({
   });
   const [error, setError] = useState<string>();
   const [saved, setSaved] = useState(false);
+  const submit = useSubmitGuard();
 
   async function save() {
     try {
@@ -181,7 +230,7 @@ function HighlightSettingsPanel({
         {field('declineCriticalStreak', '連続下落 危険(期)')}
         {field('laborShareWarnPct', '労働分配率 警告(%)')}
         {field('singleChannelWarnPct', '単一チャネル依存(%)')}
-        <button type="button" onClick={save}>保存</button>
+        <button type="button" onClick={() => void submit.run(save)} disabled={submit.busy}>保存</button>
       </div>
       {error && <div style={{ color: '#f87171', fontSize: 12, marginTop: 6 }}>{error}</div>}
       {saved && !error && <div style={{ color: '#22c55e', fontSize: 12, marginTop: 6 }}>保存しました。</div>}
@@ -291,6 +340,7 @@ function HydroponicsPanel({
   });
   const [saved, setSaved] = useState(false);
   const [lowK, setLowK] = useState(base.lowPotassium === true);
+  const submit = useSubmitGuard();
   const [ec, setEc] = useState('');
   const [ph, setPh] = useState('');
 
@@ -330,6 +380,36 @@ function HydroponicsPanel({
   const onRestoreCrops = async () => {
     if ((await applyCrops(restoreBuiltinCrops(crops))) === null) return;
     setCropNotice('参考値の品目を戻しました。');
+  };
+
+  /**
+   * 設備と費用を保存する。**「保存しました」は保存できてから出す** ——
+   * 断られたときは印を立てず (画面上端の報せがその理由を出す)、
+   * 経営サマリーは前回保存した設定のまま計算し続ける。
+   */
+  const saveSetup = async (): Promise<void> => {
+    await onSave({
+      cropId: crop.id,
+      floorAreaSqm: n(form.floorAreaSqm),
+      tiers: n(form.tiers),
+      usableRatioPct: n(form.usableRatioPct),
+      yieldRatePct: n(form.yieldRatePct),
+      unitPriceYen: n(form.unitPriceYen),
+      electricityYenPerKwh: n(form.electricityYenPerKwh),
+      energyIntensityKwhPerKg: n(form.energyIntensityKwhPerKg),
+      seedYenPerPlant: n(form.seedYenPerPlant),
+      nutrientYenPerPlant: n(form.nutrientYenPerPlant),
+      packagingYenPerPlant: n(form.packagingYenPerPlant),
+      laborYenPerMonth: n(form.laborYenPerMonth),
+      depreciationYenPerMonth: n(form.depreciationYenPerMonth),
+      rentYenPerMonth: n(form.rentYenPerMonth),
+      otherFixedYenPerMonth: n(form.otherFixedYenPerMonth),
+      lowPotassium: lowK,
+      switchDaysBeforeHarvest: n(form.switchDaysBeforeHarvest),
+      measuredPotassiumMgPer100g: n(form.measuredPotassiumMgPer100g),
+      measuredSodiumMgPer100g: n(form.measuredSodiumMgPer100g),
+    });
+    setSaved(true);
   };
 
   // 読めない値は 0 になるが、同じ欄の `GuardedNumber` がその旨を出す (黙って 0 にしない)。
@@ -401,9 +481,9 @@ function HydroponicsPanel({
                 </span>{' '}
                 <button
                   type="button"
-                  disabled={crops.length <= 1}
+                  disabled={submit.busy || crops.length <= 1}
                   aria-label={`${c.label} を消す`}
-                  onClick={async () => { await onRemoveCrop(c); }}
+                  onClick={() => fireReported(submit.run(() => onRemoveCrop(c)))}
                   style={{ fontSize: 11 }}
                 >
                   消す
@@ -413,7 +493,7 @@ function HydroponicsPanel({
           </ul>
           {missingBuiltins.length > 0 && (
             <div>
-              <button type="button" onClick={async () => { await onRestoreCrops(); }} style={{ fontSize: 11 }}>
+              <button type="button" onClick={() => fireReported(submit.run(onRestoreCrops))} disabled={submit.busy} style={{ fontSize: 11 }}>
                 参考値の品目を戻す（{missingBuiltins.map((c) => c.label).join('・')}）
               </button>
             </div>
@@ -442,7 +522,7 @@ function HydroponicsPanel({
                 />
               </label>
             ))}
-            <button type="button" onClick={async () => { await onAddCrop(); }}>
+            <button type="button" onClick={() => fireReported(submit.run(onAddCrop))} disabled={submit.busy}>
               この品目を足す
             </button>
           </div>
@@ -471,30 +551,8 @@ function HydroponicsPanel({
         {field('otherFixedYenPerMonth')}
         <button
           type="button"
-          onClick={async () => {
-            await onSave({
-              cropId: crop.id,
-              floorAreaSqm: n(form.floorAreaSqm),
-              tiers: n(form.tiers),
-              usableRatioPct: n(form.usableRatioPct),
-              yieldRatePct: n(form.yieldRatePct),
-              unitPriceYen: n(form.unitPriceYen),
-              electricityYenPerKwh: n(form.electricityYenPerKwh),
-              energyIntensityKwhPerKg: n(form.energyIntensityKwhPerKg),
-              seedYenPerPlant: n(form.seedYenPerPlant),
-              nutrientYenPerPlant: n(form.nutrientYenPerPlant),
-              packagingYenPerPlant: n(form.packagingYenPerPlant),
-              laborYenPerMonth: n(form.laborYenPerMonth),
-              depreciationYenPerMonth: n(form.depreciationYenPerMonth),
-              rentYenPerMonth: n(form.rentYenPerMonth),
-              otherFixedYenPerMonth: n(form.otherFixedYenPerMonth),
-              lowPotassium: lowK,
-              switchDaysBeforeHarvest: n(form.switchDaysBeforeHarvest),
-              measuredPotassiumMgPer100g: n(form.measuredPotassiumMgPer100g),
-              measuredSodiumMgPer100g: n(form.measuredSodiumMgPer100g),
-            });
-            setSaved(true);
-          }}
+          onClick={() => fireReported(submit.run(saveSetup))}
+          disabled={submit.busy}
         >
           保存して経営サマリーへ反映
         </button>
@@ -578,6 +636,7 @@ function Tile({ label, value, sub, accent }: { label: string; value: string; sub
 
 export function OverviewPage() {
   const { plan } = usePlan();
+  const reportCopy = useSubmitGuard();
   const { records: salesRecords } = useCollection<SalesEntry>(SALES_COLLECTION);
   const { records: kpiRecords } = useCollection<KpiActual>(KPI_ACTUALS_COLLECTION);
   const { records: budgetRecords } = useCollection<KpiActual>(KPI_BUDGETS_COLLECTION);
@@ -676,14 +735,30 @@ export function OverviewPage() {
         sales: salesRecords.map((r) => r.data),
         kpiActuals: kpiRecords.map((r) => r.data),
         kpiBudgets: budgetRecords.map((r) => r.data),
-        // BS は最新の 1 レコードを採用。
-        balanceSheet: latestRecord(bsRecords)?.data ?? null,
+        // BS は基準日の新しい 1 件を「現在」として採用 (入力した順ではない —— パス 127)。
+        balanceSheet: balanceSheetOrNull(currentBalanceSheet(bsRecords)?.data),
         accounting: accountingMonthly,
-        members: memberRecords.map((r) => ({ role: r.data.role })),
+        // 月次CF の素性 (取り込みで落ちた取引) も渡す —— 書面 §6 が述べる (パス 153)。
+        accountingIntake: freeeData.intake,
+        members: memberRecords.map((r) => ({ role: r.data.role, email: r.data.email })),
         hydroponics,
         lowPotassium,
+        // 台帳の値を渡す。**画面は数字を持たない** (既定はモジュールの定数)。
+        balanceSheetStaleAfterMonths: paramValues['overview.balanceSheetStaleAfterMonths'],
       }),
-    [plan, salesRecords, kpiRecords, budgetRecords, bsRecords, accountingMonthly, memberRecords, hydroponics, lowPotassium],
+    [
+      plan,
+      salesRecords,
+      kpiRecords,
+      budgetRecords,
+      bsRecords,
+      accountingMonthly,
+      freeeData.intake,
+      memberRecords,
+      hydroponics,
+      lowPotassium,
+      paramValues,
+    ],
   );
 
   // 手入力の上書きを自動計算の上に重ねる。**ここ 1 か所**で、以降の表示・
@@ -694,29 +769,13 @@ export function OverviewPage() {
   );
   const overview = applied.overview;
 
-  // 経営スコアカード — KPI実績から収益性・安全性・成長性を集約 (データがある時のみ意味を持つ)。
-  const scorecard = useMemo(() => {
-    if (!overview.kpi.hasData) return buildManagementScorecard({});
-    const hasRevenue = overview.kpi.revenue > 0;
-    return buildManagementScorecard({
-      operatingMarginPct: hasRevenue ? overview.kpi.operatingMarginPct : undefined,
-      grossMarginPct: hasRevenue ? overview.kpi.grossMarginPct : undefined,
-      contributionRatioPct: hasRevenue ? overview.kpi.contributionRatio : undefined,
-      safetyMarginPct: overview.kpi.safetyMargin,
-      // 資金繰り: 会計連携CF + 現預金からランウェイを、会計CF×返済から DSCR を加点。
-      runwayMonths: overview.runwayMonths ?? undefined,
-      dscr: debtService?.overallDscr ?? undefined,
-      // 安全性: 貸借対照表を入力すると自己資本比率が加点される。
-      equityRatioPct: overview.financialPosition?.equityRatioPct ?? undefined,
-      // 成長性: 期 (YYYY-MM) が 2 つ以上揃うと前期比成長率が自動で加点される。
-      revenueGrowthPct: overview.kpi.revenueGrowthPct ?? undefined,
-      // 効率性: CCC と総資産回転率 (BS + 運転資金が揃うと加点)。
-      cashConversionDays: overview.workingCapital?.ccc ?? undefined,
-      assetTurnover: overview.financialPosition && overview.financialPosition.totalAssets > 0 && overview.kpi.revenue > 0
-        ? Math.round((overview.kpi.revenue / overview.financialPosition.totalAssets) * 100) / 100
-        : undefined,
-    });
-  }, [overview, debtService]);
+  // 経営スコアカード — 組み替えは `data/overviewScorecard.ts` が持つ。
+  // **画面の中に算術と条件を書かない** —— `.tsx` は変異検査の対象外なので、
+  // ここに書いた判断はずれても誰も気付けない (実際 1 件ずれていた。経緯は同モジュール)。
+  const scorecard = useMemo(
+    () => buildManagementScorecard(scorecardMetrics(overview, { overallDscr: debtService?.overallDscr })),
+    [overview, debtService],
+  );
 
   const highlights = useMemo(
     () => buildManagementHighlights(overview, { overallDscr: debtService?.overallDscr, thresholds }),
@@ -773,8 +832,10 @@ export function OverviewPage() {
 
   const [reportCopied, setReportCopied] = useState(false);
   const report = useMemo(
-    () => buildManagementReport(overview, scorecard, highlights, localIsoDate(), monthlyTrend, sensitivity?.breakEvenDelta ?? null),
-    [overview, scorecard, highlights, monthlyTrend, sensitivity],
+    // **手入力の上書きの状況を渡す** —— 画面が出している「自動値のままの指標」の
+    // 注意は、同じ数字を刷るレポートにも要る (経緯は `overviewOverrides.ts`)。
+    () => buildManagementReport(overview, scorecard, highlights, localIsoDate(), applied, monthlyTrend, sensitivity?.breakEvenDelta ?? null),
+    [overview, scorecard, highlights, applied, monthlyTrend, sensitivity],
   );
 
   // 金融機関等提出用の書面。書式と提出者情報は 1 レコードに保存し、最新を採用する
@@ -791,19 +852,20 @@ export function OverviewPage() {
     if (takeNavigationIntent('overview')?.action === 'bank-sheet') setSheetOpen(true);
   }, []);
   const kpiPeriods = useMemo(() => kpiRecords.map((r) => r.data.period), [kpiRecords]);
-  const balanceSheetAsOf = latestRecord(bsRecords)?.data.asOf ?? null;
+  const balanceSheetAsOf = balanceSheetOrNull(currentBalanceSheet(bsRecords)?.data)?.asOf ?? null;
   const sheetModel = useMemo(
     () =>
       buildBankSubmissionSheet({
         overview,
         scorecard,
         debtService,
-        kpiPeriods,
         balanceSheetAsOf,
         today: localIsoDate(),
         settings: submissionSettings,
+        // 画面の「自動値のままの指標」と同じ断りを、書面の注記にも載せる。
+        manual: applied,
       }),
-    [overview, scorecard, debtService, kpiPeriods, balanceSheetAsOf, submissionSettings],
+    [overview, scorecard, debtService, kpiPeriods, balanceSheetAsOf, submissionSettings, applied],
   );
 
   async function copyReport() {
@@ -864,7 +926,7 @@ export function OverviewPage() {
         </button>
       </div>
       {hasData && highlights.length > 0 && (
-        <Section title={`経営ハイライト — 総合 ${scorecard.overallScore}/100（${VERDICT_LABEL[scorecard.verdict]}）`}>
+        <Section title={`経営ハイライト — ${scoreHeading(scorecard)}`}>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 12, fontSize: 13 }}>
             <span
               style={{
@@ -889,7 +951,7 @@ export function OverviewPage() {
             ))}
           </ul>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 12 }}>
-            <button type="button" onClick={copyReport}>経営レポートをコピー (Markdown)</button>
+            <button type="button" onClick={() => void reportCopy.run(copyReport)} disabled={reportCopy.busy}>経営レポートをコピー (Markdown)</button>
             <button type="button" onClick={downloadReport}>レポートをダウンロード</button>
             {reportCopied && <span style={{ color: '#22c55e', fontSize: 12 }}>コピーしました。</span>}
           </div>
@@ -922,7 +984,7 @@ export function OverviewPage() {
                     <td style={{ padding: '4px 8px' }}>{r.period}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.revenue)}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right', color: r.operatingProfit >= 0 ? 'var(--text)' : '#ef4444' }}>{yen.format(r.operatingProfit)}</td>
-                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{r.operatingMarginPct.toFixed(1)}%</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{pct1OrDash(r.operatingMarginPct)}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right', color: r.revenueGrowthPct === null ? 'var(--text-mute)' : r.revenueGrowthPct >= 0 ? '#22c55e' : '#ef4444' }}>
                       {r.revenueGrowthPct === null ? '—' : `${r.revenueGrowthPct > 0 ? '+' : ''}${r.revenueGrowthPct}%`}
                     </td>
@@ -962,7 +1024,7 @@ export function OverviewPage() {
                     <td style={{ padding: '4px 8px' }}>{r.deltaPct > 0 ? '+' : ''}{r.deltaPct}%{r.deltaPct === 0 ? ' (現状)' : ''}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{yen.format(r.revenue)}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right', color: r.operatingProfit >= 0 ? '#22c55e' : '#ef4444' }}>{yen.format(r.operatingProfit)}</td>
-                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{r.operatingMarginPct.toFixed(1)}%</td>
+                    <td style={{ padding: '4px 8px', textAlign: 'right' }}>{pct1OrDash(r.operatingMarginPct)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -980,7 +1042,11 @@ export function OverviewPage() {
                 style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text)', padding: '6px 8px', fontSize: 13, width: 160 }}
               />
               {targetRevenue && (
-                targetRevenue.upliftPct === null ? (
+                // **刷る値そのもので関門を張る。** 以前は `upliftPct` だけを見て
+                // `requiredRevenue` を刷っていた —— 別の量で規則を再導出する形
+                // (パス 57 で直したのと同じ) で、算定不能な必要売上が
+                // 「0 円」として出る経路が型の上で開いていた。
+                targetRevenue.requiredRevenue === null || targetRevenue.upliftPct === null ? (
                   <span style={{ fontSize: 13, color: 'var(--text-mute)' }}>限界利益が非正のため算定できません。</span>
                 ) : (
                   <span style={{ fontSize: 13 }}>
@@ -1049,10 +1115,18 @@ export function OverviewPage() {
         )}
 
         <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>売上</div>
+        {/* 総売上は**販売記録の全件の合計**で、上の KPI 実績とは別の入力・別の期間。
+            期間を書かないと同じ期間の 2 つの売上高として読まれる
+            (金融機関等提出用の書面 §1 / §2 で実測した食い違い)。 */}
+        {overview.sales.period !== null && (
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', margin: '0 0 6px' }}>
+            {`販売記録 ${overview.sales.period.from}〜${overview.sales.period.to}・${overview.sales.period.months} か月分の累計です（KPI 実績とは別の入力です）。`}
+          </div>
+        )}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
           <Tile label="総売上" value={yen.format(overview.sales.totalAmount)} sub={overview.sales.topChannel ? `主力: ${overview.sales.topChannel}` : undefined} />
           <Tile label="総注文件数" value={num.format(overview.sales.totalOrders)} />
-          <Tile label="平均注文単価" value={safeYen(overview.sales.aov)} />
+          <Tile label="平均注文単価" value={yenOrDash(overview.sales.aov)} />
           <Tile label="販売チャネル数" value={`${overview.sales.channelCount}`} />
           {overview.sales.concentration && (
             <Tile
@@ -1072,47 +1146,60 @@ export function OverviewPage() {
                 label="営業利益"
                 value={yen.format(overview.kpi.operatingProfit)}
                 accent={overview.flags.profitable ? '#22c55e' : '#ef4444'}
-                sub={`営業利益率 ${overview.kpi.operatingMarginPct.toFixed(1)}%`}
+                sub={`営業利益率 ${pct1OrDash(overview.kpi.operatingMarginPct)}`}
               />
               <Tile
                 label="売上総利益 (粗利)"
                 value={yen.format(overview.kpi.grossProfit)}
-                sub={`粗利率 ${overview.kpi.grossMarginPct.toFixed(1)}%`}
+                sub={`粗利率 ${pct1OrDash(overview.kpi.grossMarginPct)}`}
               />
               <Tile
                 label="EBITDA"
                 value={yen.format(overview.kpi.ebitda)}
-                sub={`償却前営業利益・マージン ${overview.kpi.ebitdaMarginPct.toFixed(1)}%`}
+                sub={`償却前営業利益・マージン ${pct1OrDash(overview.kpi.ebitdaMarginPct)}`}
               />
-              <Tile label="限界利益率" value={`${overview.kpi.contributionRatio.toFixed(1)}%`} sub="高いほど固定費を回収しやすい" />
-              <Tile label="損益分岐点 (BEP)" value={safeYen(overview.kpi.bep)} />
-              <Tile label="安全余裕率" value={`${overview.kpi.safetyMargin.toFixed(1)}%`} sub="高いほど安全" />
+              <Tile label="限界利益率" value={pct1OrDash(overview.kpi.contributionRatio)} sub="高いほど固定費を回収しやすい" />
+              <Tile label="損益分岐点 (BEP)" {...bepDisplay(overview.kpi.bep)} />
+              <Tile
+                label="安全余裕率"
+                value={pct1OrDash(overview.kpi.safetyMargin)}
+                sub="高いほど安全"
+              />
             </>
           ) : (
             <Tile label="KPI" value="未入力" sub="KPI 実績を入力すると表示" />
           )}
         </div>
 
-        {overview.kpi.hasData && overview.kpi.revenue > 0 && (
+        {/* 枠の条件は**値そのもの**で書く —— `revenue > 0` を写すと同じ規則が 2 か所に
+            分かれる (2026-09-08 まで、この枠だけが規則を持ち、上の損益タイルと書面は
+            0.0% を刷っていた)。手入力で上書きすれば売上 0 でも表示される。 */}
+        {overview.kpi.hasData && overview.kpi.cogsRatioPct !== null && (
           <>
             <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>コスト構造 (対売上)</div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
-              <Tile label="原価率" value={`${overview.kpi.cogsRatioPct.toFixed(1)}%`} />
-              <Tile label="広告費比率" value={`${overview.kpi.advertisingRatioPct.toFixed(1)}%`} />
-              <Tile label="販管費率" value={`${overview.kpi.sgaRatioPct.toFixed(1)}%`} />
+              <Tile label="原価率" value={pct1OrDash(overview.kpi.cogsRatioPct)} />
+              <Tile label="広告費比率" value={pct1OrDash(overview.kpi.advertisingRatioPct)} />
+              <Tile label="販管費率" value={pct1OrDash(overview.kpi.sgaRatioPct)} />
             </div>
           </>
         )}
 
-        {overview.kpi.hasData && overview.productivity.members > 0 && (
+        {/* 同じく値そのもので。`members > 0` ⟺ 一人当たりが非 null (`perCapita` の定義)。 */}
+        {overview.kpi.hasData && overview.productivity.revenuePerCapita !== null && (
           <>
             <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>生産性 (一人当たり)</div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
-              <Tile label="一人当たり売上" value={yen.format(overview.productivity.revenuePerCapita)} sub={`${overview.productivity.members} 名`} />
+              <Tile label="一人当たり売上" value={yenOrDash(overview.productivity.revenuePerCapita)} sub={`${overview.productivity.members} 名`} />
               <Tile
                 label="一人当たり営業利益"
-                value={yen.format(overview.productivity.operatingProfitPerCapita)}
-                accent={overview.productivity.operatingProfitPerCapita >= 0 ? '#22c55e' : '#ef4444'}
+                value={yenOrDash(overview.productivity.operatingProfitPerCapita)}
+                accent={
+                  // 算定不能なら色を付けない —— 緑 (黒字) は「0 以上」の主張である。
+                  overview.productivity.operatingProfitPerCapita === null
+                    ? undefined
+                    : overview.productivity.operatingProfitPerCapita >= 0 ? '#22c55e' : '#ef4444'
+                }
               />
               {overview.productivity.labor.laborCost > 0 && (
                 <>
@@ -1139,7 +1226,7 @@ export function OverviewPage() {
       </Section>
 
       {overview.kpi.hasData && (
-        <Section title={`経営スコアカード — 総合 ${scorecard.overallScore}/100（${VERDICT_LABEL[scorecard.verdict]}）`}>
+        <Section title={`経営スコアカード — ${scoreHeading(scorecard)}`}>
           <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginBottom: 12 }}>
             収益性・安全性・資金繰り・成長性の経営指標を 0〜100 で集約した健全性スコアです。
             <strong>※ 概算の経営診断であり財務助言ではありません。</strong>業種・規模で適正値は異なります。
@@ -1208,12 +1295,27 @@ export function OverviewPage() {
         </Section>
       )}
 
+      {overview.budget === null && overview.budgetAlignment !== null && (
+        <Section title="予算実績差異 (BVA)">
+          <p role="alert" style={{ color: '#f59e0b', fontSize: 13, lineHeight: 1.6 }}>
+            予算と実績で<strong>期 (YYYY-MM) が 1 つも重なっていない</strong>ため、達成率を算定できません
+            （予算 {overview.budgetAlignment.budgetOnlyPeriods.length} か月・実績{' '}
+            {overview.budgetAlignment.actualOnlyPeriods.length} か月）。KPI ページで、実績と同じ月の予算を入力してください。
+          </p>
+        </Section>
+      )}
+
       {overview.budget && (
         <Section title="予算実績差異 (BVA)">
           <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginBottom: 12 }}>
-            予算 (計画) と実績の差異・達成率です。<strong>※ 予算と実績は同じ期間粒度で入力してください</strong>
-            （年間 vs 年間、または月次 vs 月次）。予算は KPI ページで入力できます。
+            予算 (計画) と実績の差異・達成率です。突き合わせたのは<strong>予算と実績の両方が在る期</strong>だけで、
+            {`${budgetComparedRangeLabel(overview.budget.alignment)}分です。`}予算は KPI ページで入力できます。
           </p>
+          {budgetScopeSentence(overview.budget.alignment) !== null && (
+            <p role="alert" style={{ color: '#f59e0b', fontSize: 12, lineHeight: 1.6, marginBottom: 12 }}>
+              {budgetScopeSentence(overview.budget.alignment)}通年の比較ではありません。
+            </p>
+          )}
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {([
               { label: '売上高', v: overview.budget.revenue },
@@ -1293,8 +1395,25 @@ export function OverviewPage() {
               value={debtService.worstMonthDscr === null ? '—' : `${debtService.worstMonthDscr}`}
               accent={debtService.worstMonthDscr === null ? undefined : debtService.worstMonthDscr >= 1 ? '#22c55e' : '#ef4444'}
             />
-            <Tile label="カバー率1.0未満の月" value={`${debtService.shortfallMonths} / ${debtService.coveredMonths} か月`} accent={debtService.shortfallMonths > 0 ? '#f59e0b' : undefined} />
+            <Tile
+              label="カバー率1.0未満の月"
+              value={`${debtService.shortfallMonths} / ${debtService.coveredMonths} か月`}
+              accent={debtService.shortfallMonths > 0 ? '#f59e0b' : undefined}
+              sub={debtService.unmatchedMonths > 0 ? `会計連携に月次CFが無い ${debtService.unmatchedMonths} か月は対象外` : undefined}
+            />
           </div>
+          {/*
+            突合できなかった月を黙って落とすと、数か月ぶんの突合が借入期間ぜんぶに
+            ついての主張に読める。返済予定は借入期間ぶん将来へ伸びるので、この数は
+            通常大きい (経緯は `data/cashflowDebtService.ts`)。
+          */}
+          {debtService.unmatchedMonths > 0 && (
+            <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginTop: 10 }}>
+              上の 3 つは<strong>会計連携に月次CFが在る {debtService.coveredMonths} か月</strong>についての数字です。
+              返済予定のある残り {debtService.unmatchedMonths} か月は、実績の営業CF がまだ無いので突合していません
+              (借入期間の先の月を「営業CF 0」として数えると、返せている会社でも返済不足に見えます)。
+            </p>
+          )}
         </Section>
       )}
 
@@ -1329,16 +1448,26 @@ export function OverviewPage() {
                 label="営業利益"
                 value={yen.format(overview.hydroponics.operatingProfit)}
                 accent={overview.hydroponics.operatingProfit >= 0 ? '#22c55e' : '#ef4444'}
-                sub={`営業利益率 ${overview.hydroponics.operatingMarginPct.toFixed(1)}%`}
+                sub={`営業利益率 ${pct1OrDash(overview.hydroponics.operatingMarginPct)}`}
               />
+              {/* 出荷 0 は「1 株あたり 0 円」ではなく**算定しない** ——
+                  費用は出ているので、0 円と刷ると同じ画面の費用の数字と両立しない。 */}
               <Tile
                 label="出荷 1 株あたり原価"
-                value={safeYen(Math.round(overview.hydroponics.costPerShippedPlantYen))}
-                sub="変動費と固定費の両方を売れた株が背負う"
+                value={
+                  overview.hydroponics.costPerShippedPlantYen === null
+                    ? '—'
+                    : safeYen(Math.round(overview.hydroponics.costPerShippedPlantYen))
+                }
+                sub={
+                  overview.hydroponics.costPerShippedPlantYen === null
+                    ? '出荷が 0 のため算定していません (費用は発生しています)'
+                    : '変動費と固定費の両方を売れた株が背負う'
+                }
               />
               <Tile
                 label="電気代が費用に占める割合"
-                value={`${overview.hydroponics.electricityCostRatioPct.toFixed(1)}%`}
+                value={pct1OrDash(overview.hydroponics.electricityCostRatioPct)}
                 sub={`年間 ${yen.format(overview.hydroponics.electricityYenPerYear)}`}
               />
             </div>
@@ -1361,8 +1490,8 @@ export function OverviewPage() {
                       : `現在の出荷は ${num.format(overview.hydroponics.shippedPlantsPerMonth)} 株。単価か歩留まりを上げるか、固定費を下げる必要があります。`
                 }
               />
-              <Tile label="損益分岐点売上高 (月)" value={yen.format(overview.hydroponics.bep)} />
-              <Tile label="限界利益率" value={`${overview.hydroponics.contributionRatio.toFixed(1)}%`} />
+              <Tile label="損益分岐点売上高 (月)" {...bepDisplay(overview.hydroponics.bep)} />
+              <Tile label="限界利益率" value={pct1OrDash(overview.hydroponics.contributionRatio)} />
             </div>
 
             {overview.hydroponics.lowPotassium && (
@@ -1370,23 +1499,53 @@ export function OverviewPage() {
                 <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '4px 0' }}>
                   低カリウム栽培（腎臓病の方向け）
                 </div>
-                {overview.hydroponics.lowPotassium.measured ? (
+                {/* **枠を開ける条件そのものを実測値で書く。** `measured` と
+                    「実測値が非 null」は構成上つねに同値 (`hydroponics.test.ts` の
+                    不変条件が留めている) なので、値で書けば型も絞れて `!` が要らない。
+                    削減率だけは実測が在っても null になりうる (比較の基準値を台帳で
+                    0 にした場合) ので、そちらは別に見る。 */}
+                {overview.hydroponics.lowPotassium.potassiumMgPer100g !== null ? (
                   <>
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
                       <Tile
                         label="実測カリウム"
                         value={`${overview.hydroponics.lowPotassium.potassiumMgPer100g} mg/100g`}
-                        sub={`通常品 ${overview.hydroponics.lowPotassium.referenceMgPer100g} mg/100g 比 ${overview.hydroponics.lowPotassium.reductionPct >= 0 ? '−' : '+'}${Math.abs(overview.hydroponics.lowPotassium.reductionPct).toFixed(1)}%`}
-                        accent={overview.hydroponics.lowPotassium.reductionPct > 0 ? '#22c55e' : '#ef4444'}
+                        sub={
+                          overview.hydroponics.lowPotassium.reductionPct === null
+                            ? `通常品の比較値が ${overview.hydroponics.lowPotassium.referenceMgPer100g} mg/100g なので削減率は出せません`
+                            : `通常品 ${overview.hydroponics.lowPotassium.referenceMgPer100g} mg/100g 比 ${overview.hydroponics.lowPotassium.reductionPct >= 0 ? '−' : '+'}${Math.abs(overview.hydroponics.lowPotassium.reductionPct).toFixed(1)}%`
+                        }
+                        accent={
+                          overview.hydroponics.lowPotassium.reductionPct === null
+                            ? '#f59e0b'
+                            : overview.hydroponics.lowPotassium.reductionPct > 0 ? '#22c55e' : '#ef4444'
+                        }
                       />
+                      {/* **未入力を「0 日」とも「範囲外」とも言わない。** 0 は
+                          「収穫当日に切り替える」という具体的な指示で、しかも
+                          この欄自身が `allowZero: false` で 0 を拒否している。
+                          すぐ下の 食塩相当量 タイルは既に null を「未測定」と
+                          刷っており、規約はこのパネルに在った (パス 67)。 */}
                       <Tile
                         label="切替 (収穫前)"
-                        value={`${hydroSetup?.switchDaysBeforeHarvest ?? 0} 日`}
-                        accent={overview.hydroponics.lowPotassium.switchWindowOk ? undefined : '#f59e0b'}
+                        value={
+                          overview.hydroponics.lowPotassium.switchWindowOk === null
+                            ? '未設定'
+                            : `${hydroSetup?.switchDaysBeforeHarvest ?? 0} 日`
+                        }
+                        accent={
+                          overview.hydroponics.lowPotassium.switchWindowOk === null
+                            ? undefined // 未入力は違反ではない —— 警告色を付けない
+                            : overview.hydroponics.lowPotassium.switchWindowOk
+                              ? undefined
+                              : '#f59e0b'
+                        }
                         sub={
-                          overview.hydroponics.lowPotassium.switchWindowOk
-                            ? `目安 ${lowKParams.switchDaysMin}〜${lowKParams.switchDaysMax} 日の範囲内`
-                            : `目安は ${lowKParams.switchDaysMin}〜${lowKParams.switchDaysMax} 日です`
+                          overview.hydroponics.lowPotassium.switchWindowOk === null
+                            ? `収穫の何日前に K 抜きへ切り替えるかを入力してください (目安 ${lowKParams.switchDaysMin}〜${lowKParams.switchDaysMax} 日)`
+                            : overview.hydroponics.lowPotassium.switchWindowOk
+                              ? `目安 ${lowKParams.switchDaysMin}〜${lowKParams.switchDaysMax} 日の範囲内`
+                              : `目安は ${lowKParams.switchDaysMin}〜${lowKParams.switchDaysMax} 日です`
                         }
                       />
                       <Tile
@@ -1470,6 +1629,16 @@ export function OverviewPage() {
           {overview.workingCapital && (
             <>
               <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '12px 0 4px' }}>運転資金 (CCC)</div>
+              {/* 回転日数は**期間の長さ**で決まる。何か月分の実績で出したのかを書かないと
+                  1 年分の回転日数として読まれる (`workingCapital.ts` 冒頭の実測表)。 */}
+              <div style={{ fontSize: 11, color: 'var(--text-mute)', margin: '0 0 6px' }}>
+                {`回転日数は実績 ${overview.workingCapital.periodMonths} か月分（${Math.round(periodDaysForMonths(overview.workingCapital.periodMonths) * 10) / 10} 日）で算定しています。`}
+              </div>
+              {overview.workingCapital.missingStocks.length > 0 && (
+                <div style={{ fontSize: 12, color: '#f59e0b', margin: '0 0 6px' }}>
+                  貸借対照表の{overview.workingCapital.missingStocks.join('・')}が未入力のため、該当する回転日数と運転資本は「—」です (0 円として扱っていません)。
+                </div>
+              )}
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 <Tile
                   label="CCC (現金回収日数)"
@@ -1480,7 +1649,7 @@ export function OverviewPage() {
                 <Tile label="売上債権回転 (DSO)" value={overview.workingCapital.dso === null ? '—' : `${overview.workingCapital.dso} 日`} />
                 <Tile label="棚卸回転 (DIO)" value={overview.workingCapital.dio === null ? '—' : `${overview.workingCapital.dio} 日`} />
                 <Tile label="仕入債務回転 (DPO)" value={overview.workingCapital.dpo === null ? '—' : `${overview.workingCapital.dpo} 日`} />
-                <Tile label="運転資本" value={yen.format(overview.workingCapital.workingCapital)} sub="売上債権+棚卸−仕入債務" />
+                <Tile label="運転資本" value={yenOrDash(overview.workingCapital.workingCapital)} sub="売上債権+棚卸−仕入債務" />
               </div>
             </>
           )}

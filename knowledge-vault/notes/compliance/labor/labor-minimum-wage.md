@@ -33,9 +33,9 @@ aliases:
 - [厚生労働省 地域別最低賃金と特定最低賃金](https://saiteichingin.mhlw.go.jp/point/page_point_class.html) `公的`
 
 ## 関連概念
-- [[subsidy-work-improvement|業務改善助成金]] — 出典を共有
+- [[subsidy-work-improvement|業務改善助成金]] — 語彙が近い
 - [[labor-equal-pay|同一労働同一賃金（パート・有期雇用労働法）]] — 同分野の近傍
-- [[labor-elderly-continued-benefit|高年齢雇用継続給付（雇用保険）]] — 同分野の近傍
+- [[labor-midcareer-hiring-ratio-disclosure|正規雇用労働者の中途採用比率の公表義務（労働施策総合推進法）]] — 同分野の近傍
 - [[labor-resignation-notice|期間の定めのない労働契約の退職申入れ（民法627条）]] — 同分野の近傍
 
 ## 関連

@@ -38,7 +38,7 @@ aliases:
 - [[econ-herfindahl-hirschman-index|ハーフィンダール・ハーシュマン指数（HHI）]] — 出典を共有
 - [[bizlaw-lien-priority-rule|担保権優先順位の法則]] — 出典を共有
 - [[bizlaw-corporate-restructuring-m-and-a|M&A法と企業再構築——株主保護・競争法審査・情報開示義務の国際比較]] — 同分野の近傍
-- [[bizlaw-competition-law-market-definition|競争法における市場画定とHHI集中度分析の法的枠組み]] — 同分野の近傍
+- [[bizlaw-antitrust-market-definition-ssnip|独禁法における市場画定——SSNIPテストと競争政策の分析枠組み]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

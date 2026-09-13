@@ -26,7 +26,7 @@ aliases:
 アダム・スミス ／ シャーウィン・ローゼン ／ ロバート・E・B・ルーカス ／ ジョン・ヒックス
 
 ## 出典
-- [Smith, A. (1776) An Inquiry into the Nature and Causes of the Wealth of Nations — Book I, Ch. 10 (WorldCat)](https://www.worldcat.org/oclc/2304948) `学術`
+- [Smith, A. (1776) An Inquiry into the Nature and Causes of the Wealth of Nations — Book I, Ch. 10 (WorldCat)](https://www.worldcat.org/oclc/2304948) `リファレンス`
 - [Wikipedia: Compensating differential — Adam Smith, net advantages, hedonic wages, Rosen](https://en.wikipedia.org/wiki/Compensating_differential) `リファレンス`
 
 ## 関連概念

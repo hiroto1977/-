@@ -2,7 +2,7 @@
 title: "taylorfrancis.com"
 type: source-domain
 host: "taylorfrancis.com"
-cite_count: 1
+cite_count: 2
 tags:
   - source-domain
   - index
@@ -10,10 +10,11 @@ tags:
 
 # taylorfrancis.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **1 件**（学術 1）
+> [!info] 出典ドメイン索引 ・ 引用 **2 件**（学術 2）
 
 ## このドメインを出典とする項目
 
+- [[mgmt-eprg-orientations-perlmutter|EPRGフレームワーク——本国志向から世界志向へ至る多国籍企業経営者の心的構え]] — Perlmutter,H.V.(1969)."TheTortuousEvolutionoftheMultinationalCorporat…
 - [[mgmt-team-mental-models-theory|チーム・メンタルモデル理論]] — Cannon-Bowers,Salas&Converse(1993)—SharedMentalModelsinExpertTeamDeci…
 
 ## 関連

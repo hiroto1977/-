@@ -34,12 +34,12 @@ aliases:
 - [[econ-agglomeration-economies-urban-economics|集積経済と都市経済学——マーシャルの外部経済からグレーザーの都市生産性まで]] — 同じ思想家
 - [[econ-deadweight-loss-harberger|死荷重損失とハーバーガーの三角形——歪みが生む厚生の純損失の計測]] — 同じ思想家
 - [[econ-elasticity-pessimism-thesis|弾力性ペシミズム——為替レート調整による貿易収支改善への懐疑論]] — 同じ思想家
-- [[econ-giffen-goods-inferior-demand|ギッフェン財と需要法則の例外——所得効果が代替効果を凌駕する極限的ケース]] — 同じ思想家
-- [[econ-giffen-paradox|ギッフェン財（Giffen Good / Giffen Paradox）]] — 同じ思想家
+- [[econ-giffen-goods-inferior-demand|ギッフェン財——価格が上がると需要が増える需要法則の例外は、負の所得効果が代替効果を上回る下級財で生じる]] — 同じ思想家
 - [[econ-harberger-triangle-deadweight-loss|ハーバーガーの三角形——独占・課税による死荷重損失と余剰分析]] — 同じ思想家
 - [[econ-land-value-tax-george|土地価値税とジョージズム]] — 同じ思想家
 - [[econ-marginal-revolution-jevons-menger-walras|限界革命——ジェヴォンズ・メンガー・ワルラスの限界効用理論と新古典派の誕生]] — 同じ思想家
 - [[econ-marshall-lerner-condition|マーシャル＝ラーナー条件——通貨減価が貿易収支を改善する弾力性条件]] — 同じ思想家
+- [[econ-pigou-externality|ピグー的外部性とピグー税——私的費用と社会的費用の乖離の是正]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

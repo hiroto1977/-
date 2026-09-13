@@ -36,11 +36,11 @@ IS-LMモデル（ヒックス＝ハンセン・モデル）は、ジョン・ヒ
 - [[econ-multiplier-accelerator-samuelson|乗数＝加速度モデル——消費乗数と投資加速度の相互作用が景気循環を生む]] — 同じ思想家
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
 - [[econ-compensating-differentials-smith|補償賃金格差——労働の非金銭的な性質の差を埋め合わせる賃金の違い]] — 同じ思想家
-- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]] — 同じ思想家
-- [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 同じ思想家
+- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——勝者が敗者を補償してなお余剰が残るなら改善とみなす潜在的パレート改善で、費用便益分析の理論的基礎]] — 同じ思想家
+- [[econ-elasticity-of-substitution-ces|代替の弾力性と CES 生産関数——要素比率が相対価格にどれだけ反応するかを一つの数 σ で表し、コブ＝ダグラスとレオンチェフを特殊ケースに含む]] — 同じ思想家
+- [[econ-giffen-goods-inferior-demand|ギッフェン財——価格が上がると需要が増える需要法則の例外は、負の所得効果が代替効果を上回る下級財で生じる]] — 同じ思想家
 - [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
 - [[econ-hicks-allen-consumer-demand|序数効用と無差別曲線分析（ヒックス＆アレン）]] — 同じ思想家
-- [[econ-hicks-trade-cycle|ヒックスの景気循環論——天井と床に挟まれた持続的な循環]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

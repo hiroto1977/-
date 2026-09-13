@@ -38,8 +38,8 @@ aliases:
 - [[bizlaw-cross-border-merger-eu|越境合併と株式会社指令（EU）]] — 同じ思想家
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同じ思想家
 - [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同じ思想家
+- [[bizlaw-procd-v-zeidenberg-shrinkwrap-clickwrap|プロCD対ザイデンバーグ事件——包装を開けた・クリックしたことで成立するライセンス契約の拘束力を認めた米連邦控訴審判例]] — 同じ思想家
 - [[bizlaw-veil-piercing-corporate-liability|法人格否認の法理と株主責任（コーポレート・ベール）]] — 同じ思想家
-- [[econ-alchian-demsetz-team-production|チーム生産と残余請求権（アルチャン＆デムセッツ）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

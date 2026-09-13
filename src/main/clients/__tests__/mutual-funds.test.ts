@@ -34,12 +34,21 @@ describe('mutual-funds ACTIONS', () => {
 
   describe('advise', () => {
     const action = ACTIONS['advise']!;
-    it('returns AdvisorResponse-compatible shape (with strict investment disclaimer)', async () => {
-      const r = await action({ token: '', payload: {} }) as {
+    const input = {
+      holdings: [
+        { name: '国内株式ファンド', valuation: 700_000, ytdReturnPct: -1.5, demo: false },
+        { name: '先進国債券ファンド', valuation: 300_000, ytdReturnPct: 2.0, demo: false },
+      ],
+      totalValuation: 1_000_000,
+      unrealizedGainPct: -4.0,
+    };
+
+    it('画面が渡した集計から規則で組む (銘柄名・数字が payload の物で、見本の数字を写した固定文ではない)', async () => {
+      const r = await action({ token: '', payload: input }) as {
         recommendations: { title: string; rationale: string }[];
-        disclaimer: string; notForRealMoney: true; phase: 'stub' | 'live';
+        disclaimer: string; notForRealMoney: true; basis: string; phase: 'stub' | 'rules' | 'live';
       };
-      expect(r.phase).toBe('stub');
+      expect(r.phase).toBe('rules');
       expect(r.notForRealMoney).toBe(true);
       // 3 片の連結。真ん中 (誰に確かめるか) を片ごとに留める —— 理由は
       // `real-estate.test.ts` の同じ検査に書いてある。
@@ -47,7 +56,18 @@ describe('mutual-funds ACTIONS', () => {
       expect(r.disclaimer).toMatch(/ファイナンシャルアドバイザーの確認を経て/);
       expect(r.disclaimer).toMatch(/ご自身の責任で行ってください/);
       expect(r.disclaimer).toMatch(/Phase 6/);
-      expect(r.recommendations.length).toBeGreaterThan(0);
+      expect(r.recommendations.map((x) => x.title)).toEqual([
+        '集中リスク: 国内株式ファンド',
+        '年初来マイナスの銘柄: 国内株式ファンド',
+        '含み損 4.0%',
+      ]);
+      expect(r.basis).toBe('2 銘柄 (すべて利用者の入力)・評価額 ¥1,000,000・評価損益率 -4.0%');
+      const text = JSON.stringify(r);
+      for (const frozen of ['14.8', '14.2', 'S&P500', 'ひふみ']) expect(text, frozen).not.toContain(frozen);
+    });
+
+    it('読めない payload は断る (文面は shared と同じ)', async () => {
+      await expect(action({ token: '', payload: {} })).rejects.toThrow('mutual-funds.advise: holdings は配列 (1〜500 件) で指定してください');
     });
   });
 });

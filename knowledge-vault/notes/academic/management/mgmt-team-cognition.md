@@ -34,9 +34,7 @@ aliases:
 ## 関連概念
 - [[mgmt-team-mental-models-cannon-bowers|チーム・メンタルモデル——共有認知とチーム・パフォーマンス]] — 語彙が近い
 - [[mgmt-empowering-leadership-ahearne|エンパワリング・リーダーシップ——権限を分かち自律を高めるリーダー]] — 同じ思想家
-- [[mgmt-team-effectiveness-hackman-wageman|チーム有効性理論——ハックマンの条件モデルとチームコーチング]] — 同じ思想家
-- [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]] — 同分野の近傍
-- [[mgmt-team-reflexivity-west|チーム省察性——集団による目標・プロセス・戦略の内省的再検討]] — 同分野の近傍
+- [[mgmt-team-mental-models-theory|チーム・メンタルモデル理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

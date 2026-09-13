@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 143
+- ブロック数: 182
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `69589af155d3ae5d4aecabb3480e3076e00df8077d77e4063a7614d32668405c`
-- 保護対象: 65 ファイル
+- 末尾(tip)ハッシュ: `593ba511b74d9924ada139e000ddd32e83649735ac9868d6a57b0fdd545daa47`
+- 保護対象: 71 ファイル
 
 ## ブロック
 
@@ -156,6 +156,45 @@
 | 140 | `c776e99e54a7f9bc` | `fafa5a0c3110cea9` | `2601e7c68364cc6b` | update integrity-chain.cjs,assistant.ts |
 | 141 | `db33e6606dcb0ff7` | `2601e7c68364cc6b` | `a608dedaf93d15f6` | update integrity-chain.cjs,chat.ts,credentials.ts,providers.ts |
 | 142 | `4809c27beb714f99` | `a608dedaf93d15f6` | `69589af155d3ae5d` | update ci.yml |
+| 143 | `8aea0c2f52f8138b` | `69589af155d3ae5d` | `400e4edecfbd6f11` | update ci.yml |
+| 144 | `81a3ce85f9924fbe` | `400e4edecfbd6f11` | `038f7e0885f100bb` | update proxy.ts |
+| 145 | `f57c861f3614642e` | `038f7e0885f100bb` | `d164f7802730003f` | update fsa.ts,proxy.ts |
+| 146 | `91f3f1436e940d03` | `d164f7802730003f` | `df69a8f51b94e6db` | update proxy.ts |
+| 147 | `06327687108ab3e1` | `df69a8f51b94e6db` | `fd31b6ddfc92568a` | update proxy.ts |
+| 148 | `92e0b65f731bfab2` | `fd31b6ddfc92568a` | `ad0ff862e661ea85` | update proxy.ts |
+| 149 | `be167b4609dfb65c` | `ad0ff862e661ea85` | `6eb22f58157533eb` | update proxy.ts |
+| 150 | `f332d6a8a37247dc` | `6eb22f58157533eb` | `98bae01596737bac` | update main.ts,secrets.ts |
+| 151 | `fdd11550ff27c3e4` | `98bae01596737bac` | `89246daa726d738b` | update LockScreen.tsx,vault.ts |
+| 152 | `f606793c30cff64a` | `89246daa726d738b` | `efc501487f020d47` | update pkceSession.ts |
+| 153 | `f22f939447993c7a` | `efc501487f020d47` | `93584bb44ebbd8bd` | update pkceSession.ts |
+| 154 | `e9cecef70974c4fc` | `93584bb44ebbd8bd` | `372531b5494570e1` | update integrity-chain.cjs,localWrite.ts |
+| 155 | `6cefc543f6675d95` | `372531b5494570e1` | `e7983061ca3ecf07` | update ci.yml |
+| 156 | `50ac0c3c641e6c0a` | `e7983061ca3ecf07` | `e84bab6459b71da0` | update lockWorkspace.ts |
+| 157 | `28202b616742428d` | `e84bab6459b71da0` | `a1917593c3509668` | update LockScreen.tsx,vault.ts |
+| 158 | `9e58c4998b7853e9` | `a1917593c3509668` | `807afadb0f0a2c8e` | update LockScreen.tsx,lockWorkspace.ts,vault.ts |
+| 159 | `fe83631956352e68` | `807afadb0f0a2c8e` | `4fe9956bf0ba2aa0` | update lockWorkspace.ts |
+| 160 | `0a37c64b7de8a45a` | `4fe9956bf0ba2aa0` | `ae1c8f4d8e2dc526` | update autoLock.ts,vault.ts |
+| 161 | `b353d35eee046219` | `ae1c8f4d8e2dc526` | `042c87f96d9711cf` | update ci.yml |
+| 162 | `27c309c5a2d868ea` | `042c87f96d9711cf` | `42c788b02cbc8242` | update secrets.ts,dataCrypto.ts |
+| 163 | `4922e693b9c74d3d` | `42c788b02cbc8242` | `a187e057e798613c` | update assistant.ts |
+| 164 | `476aae4a503b3eb1` | `a187e057e798613c` | `4672ca44bb47bf57` | update chat.ts,ollama.ts |
+| 165 | `9d1cf881f3a4f986` | `4672ca44bb47bf57` | `1702b111a531873e` | update integrity-chain.cjs,assistant.ts |
+| 166 | `4c31dcb1167e631d` | `1702b111a531873e` | `e6256ca397a19d88` | update atomicWrite.ts,secrets.ts |
+| 167 | `0afc115ab54105d1` | `e6256ca397a19d88` | `e86b31d3468802d8` | update fsa.ts |
+| 168 | `bb46d1384b5e1fae` | `e86b31d3468802d8` | `57c7cf667a7ee417` | update integrity-chain.cjs,eraseAll.ts,main.ts,secrets.ts,preload.ts,eraseReport.ts |
+| 169 | `1d2446226be4c549` | `57c7cf667a7ee417` | `1d24807548cffbf3` | update main.ts,eraseReport.ts |
+| 170 | `a5322af408e45912` | `1d24807548cffbf3` | `1b4d7633b405a714` | update ollama.ts |
+| 171 | `be4bcb1f36477b8f` | `1b4d7633b405a714` | `62ea193ca4394f07` | update main.ts |
+| 172 | `9a697517fefa6d02` | `62ea193ca4394f07` | `720192b295ce1200` | update pkce.ts |
+| 173 | `3fe75a462c025e45` | `720192b295ce1200` | `b17be4721c89ceaf` | update localWrite.ts |
+| 174 | `f81458429b0e5a9b` | `b17be4721c89ceaf` | `13893b909040ef22` | update pkce.ts,vault.ts |
+| 175 | `ad1c9a552a1fffdc` | `13893b909040ef22` | `e2f7eacb42e3cb68` | update integrity-chain.cjs,dataCrypto.ts,vault.ts,webCrypto.ts |
+| 176 | `20dfa75dd8e55ea1` | `e2f7eacb42e3cb68` | `f8b634ca56505704` | update integrity-chain.cjs,public-host-guard.cjs,proxy.ts |
+| 177 | `32a23823dfb8765f` | `f8b634ca56505704` | `781a89c3713f97df` | update manifest.webmanifest |
+| 178 | `bf6d7facedc77e05` | `781a89c3713f97df` | `bdf2a0cbc9bd7e20` | update localWrite.ts,pkce.ts,vault.ts |
+| 179 | `61652a96ff1a5874` | `bdf2a0cbc9bd7e20` | `67f759ceadfc90e4` | update integrity-chain.cjs,inputCeiling.ts |
+| 180 | `54e2597aafc6db7b` | `67f759ceadfc90e4` | `df0135fbbcecf630` | update inputCeiling.ts |
+| 181 | `9df0a01dbedd16f2` | `df0135fbbcecf630` | `593ba511b74d9924` | update assistant.ts,aiEndpoint.ts,ollama.ts,proxyEndpoint.ts,redact.ts,scanTarget.ts |
 
 ## 保護対象ファイル
 
@@ -175,6 +214,7 @@
 - `scripts/make-autoinstall.sh`
 - `scripts/make-live-usb.sh`
 - `scripts/migrate.sh`
+- `scripts/public-host-guard.cjs`
 - `scripts/safe-vault-write.cjs`
 - `scripts/security-audit.sh`
 - `scripts/setup-linux.sh`
@@ -185,12 +225,14 @@
 - `src/main/clients/assistant.ts`
 - `src/main/clients/exportPaths.ts`
 - `src/main/clients/types.ts`
+- `src/main/eraseAll.ts`
 - `src/main/main.ts`
 - `src/main/oauth.ts`
 - `src/main/secrets.ts`
 - `src/main/shellOpenGate.ts`
 - `src/preload/preload.ts`
 - `src/renderer/data/assistantMarkdown.ts`
+- `src/renderer/data/localWrite.ts`
 - `src/renderer/data/recordCipher.ts`
 - `src/renderer/fs/fsa.ts`
 - `src/renderer/network/liveRead.ts`
@@ -205,6 +247,7 @@
 - `src/renderer/security/lockWorkspace.ts`
 - `src/renderer/security/mnemonic.ts`
 - `src/renderer/security/vault.ts`
+- `src/renderer/security/webCrypto.ts`
 - `src/renderer/security/webauthn.ts`
 - `src/shared/ai/chat.ts`
 - `src/shared/ai/credentials.ts`
@@ -213,10 +256,12 @@
 - `src/shared/atlassianSite.ts`
 - `src/shared/controlChars.ts`
 - `src/shared/cryptoParams.ts`
+- `src/shared/eraseReport.ts`
 - `src/shared/escape.ts`
 - `src/shared/externalUrlGate.ts`
 - `src/shared/httpLimits.ts`
 - `src/shared/imageUrlGate.ts`
+- `src/shared/inputCeiling.ts`
 - `src/shared/ollama.ts`
 - `src/shared/proxyEndpoint.ts`
 - `src/shared/redact.ts`

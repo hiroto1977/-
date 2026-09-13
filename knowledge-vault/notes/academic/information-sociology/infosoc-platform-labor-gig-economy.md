@@ -26,19 +26,19 @@ aliases:
 ニック・スルニチェク ／ ヴィリ・レヘドンヴィルタ ／ ジュリエット・スコア ／ トレバー・ショルツ
 
 ## 出典
-- [Srnicek, N. (2017) Platform Capitalism — Polity Press（Polity, 2017, ISBN 978-1-5095-0487-9）](https://search.worldcat.org/title/Platform-capitalism/oclc/974841289) `学術`
+- [Srnicek, N. (2017) Platform Capitalism — Polity Press（Polity, 2017, ISBN 978-1-5095-0487-9）](https://search.worldcat.org/title/Platform-capitalism/oclc/974841289) `リファレンス`
 - [Wikipedia: Gig economy — platform labor, independent contractors, algorithmic management](https://en.wikipedia.org/wiki/Gig_economy) `リファレンス`
 
 ## 関連概念
-- [[infosoc-platform-labor-control|プラットフォーム労働とアルゴリズム的統制]] — 語彙が近い
-- [[infosoc-platform-labor-regulation|プラットフォーム労働規制論——ギグワーカーの法的地位と社会的保護]] — 語彙が近い
 - [[infosoc-gig-economy-platform-labor|ギグエコノミーとプラットフォーム労働の法的・社会学的課題]] — 語彙が近い
-- [[infosoc-digital-labor-fuchs|デジタル労働論——プラットフォーム資本主義における価値創造と搾取]] — 同じ思想家
-- [[infosoc-digital-labor-platform|デジタル労働プラットフォーム論（Digital Labor Platform Theory）]] — 同じ思想家
+- [[infosoc-platform-labor-regulation|プラットフォーム労働規制論——ギグワーカーの法的地位と社会的保護]] — 語彙が近い
+- [[infosoc-platform-labor-control|プラットフォーム労働とアルゴリズム的統制]] — 語彙が近い
+- [[infosoc-digital-labor-fuchs|デジタル労働（デジタル・レイバー）——ユーザーの投稿・閲覧・データ提供をプラットフォームの価値を生む無償の労働として分析する枠組み（テラノヴァ・フックス・ショルツ・カシッリ）]] — 同じ思想家
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — 同じ思想家
 - [[infosoc-platform-capitalism|プラットフォーム資本主義]] — 同じ思想家
+- [[infosoc-platform-governance-tarleton|プラットフォームの政治学（ギレスピー）——「プラットフォーム」という語の多義性が中立で開かれた場のイメージを作り、選別・推薦・削除という編集的介入と私的統治を見えなくする]] — 同じ思想家
 - [[infosoc-platform-workers-gig-rights|ギグワーカーの権利とプラットフォーム労働——雇用分類の争点と情報社会の新しい労働関係]] — 同じ思想家
-- [[infosoc-digital-labor-scholz-casilli|デジタル労働論——プラットフォーム経済における労働の不可視化]] — 同じ思想家
+- [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — 同じ思想家
 - [[infosoc-enshittification-doctorow|エンシッティフィケーション（ドクトロウ）]] — 同じ思想家
 
 ## 関連

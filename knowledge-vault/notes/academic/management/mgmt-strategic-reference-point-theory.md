@@ -35,7 +35,7 @@ Avi Fiegenbaum ／ Stuart L. Hart ／ Dan E. Schendel ／ Daniel Kahneman ／ Am
 - [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 語彙が近い
 - [[econ-endowment-effect-loss-aversion|保有効果と損失回避]] — 同じ思想家
 - [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 同じ思想家
-- [[mgmt-strategic-group-theory|戦略グループ理論]] — 同じ思想家
+- [[mgmt-behavioral-strategy-powell-lovallo|行動戦略論——認知バイアスと限定合理性が戦略的意思決定に及ぼす体系的影響]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

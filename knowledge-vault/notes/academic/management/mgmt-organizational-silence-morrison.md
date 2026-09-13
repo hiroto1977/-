@@ -36,6 +36,7 @@ aliases:
 - [[mgmt-mintzberg-5p|ミンツバーグの戦略の5P]] — 同分野の近傍
 - [[mgmt-prosocial-motivation-grant|向社会的動機付けと他者指向的動機の組織行動論（グラント）]] — 同分野の近傍
 - [[mgmt-strategic-silence|組織における戦略的沈黙]] — 同分野の近傍
+- [[mgmt-psychological-safety-edmondson|心理的安全性（エドモンドソン）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

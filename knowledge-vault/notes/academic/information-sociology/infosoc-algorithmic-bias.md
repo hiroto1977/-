@@ -26,7 +26,7 @@ aliases:
 バティア・フリードマン（Batya Friedman）／ジョイ・ブオラムウィニ（Joy Buolamwini, 1990–）／ティムニット・ゲブル（Timnit Gebru, 1982–）／サフィヤ・ウモジャ・ノーブル（Safiya Umoja Noble）
 
 ## 出典
-- [Stanford Encyclopedia of Philosophy — Algorithmic Fairness](https://plato.stanford.edu/entries/algorithmic-fairness/) `学術`
+- [Stanford Encyclopedia of Philosophy — Algorithmic Fairness](https://plato.stanford.edu/entries/algorithmic-fairness/) `リファレンス`
 - [Buolamwini & Gebru (2018) "Gender Shades" Proceedings of Machine Learning Research 81](https://proceedings.mlr.press/v81/buolamwini18a.html) `学術`
 
 ## 関連概念
@@ -36,10 +36,9 @@ aliases:
 - [[infosoc-critical-algorithm-studies-seaver|批判的アルゴリズム研究——シーヴァーの文化的実践としてのアルゴリズム分析]] — 同じ思想家
 - [[infosoc-epistemic-injustice|認識的不正義（epistemic injustice）]] — 同じ思想家
 - [[infosoc-information-asymmetry-social|情報の非対称性の社会学——知識格差と権力関係の情報社会論的分析]] — 同じ思想家
+- [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — 同じ思想家
 - [[infosoc-techno-feminism-wajcman|テクノフェミニズム——技術とジェンダーの相互構成的関係]] — 同じ思想家
 - [[infosoc-techno-moral-change-verbeek|技術道徳変容論——技術的媒介による道徳的知覚と行為の再構成]] — 同じ思想家
-- [[infosoc-calculated-publics|算出された公衆（calculated publics）]] — 同分野の近傍
-- [[infosoc-information-fiduciary|情報受託義務者（インフォメーション・フィデューシャリー）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

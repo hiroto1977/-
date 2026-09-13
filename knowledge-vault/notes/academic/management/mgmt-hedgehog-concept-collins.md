@@ -26,7 +26,7 @@ aliases:
 ジム・コリンズ ／ アイザイア・バーリン ／ ピーター・ドラッカー ／ ジェリー・ポラス
 
 ## 出典
-- [Collins, J. (2001) Good to Great — HarperBusiness](https://www.worldcat.org/oclc/44732499) `学術`
+- [Collins, J. (2001) Good to Great — HarperBusiness](https://www.worldcat.org/oclc/44732499) `リファレンス`
 - [Wikipedia: Good to Great — Hedgehog Concept, three circles, Level 5 leadership](https://en.wikipedia.org/wiki/Good_to_Great) `リファレンス`
 
 ## 関連概念

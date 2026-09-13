@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Bruner 1986 — Actual Minds, Possible Worlds, Harvard University Press](https://www.hup.harvard.edu/catalog.php?isbn=9780674003668) `学術`
 - [McAdams 1993 — The Stories We Live By: Personal Myths and the Making of the Self, Guilford Press](https://guilford.com/books/The-Stories-We-Live-By/Dan-McAdams/9780898621730) `学術`
-- [White & Epston 1990 — Narrative Means to Therapeutic Ends, W.W. Norton](https://wwnorton.com/books/Narrative-Means-to-Therapeutic-Ends/) `リファレンス`
+- [White & Epston 1990 — Narrative Means to Therapeutic Ends, W.W. Norton](https://wwnorton.com/books/Narrative-Means-to-Therapeutic-Ends/) `学術`
 
 ## 関連概念
 - [[human-developmental-psychology-vygotsky|文化歴史的発達理論——ヴィゴツキーの最近接発達領域と社会的学習の認知科学]] — 同じ思想家

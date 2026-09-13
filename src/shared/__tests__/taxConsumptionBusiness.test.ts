@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   DEFAULT_BUSINESS_CONSUMPTION_PARAMS,
   DEFAULT_CONSUMPTION_RATES,
@@ -13,6 +13,7 @@ import {
   FULL_CREDIT_SALES_THRESHOLD,
   type PurchaseByUse,
   calcSimplifiedTax,
+  calcThirtyPercentTax,
   calcTwentyPercentTax,
   weightedDeemedRate,
   isTaxExempt,
@@ -508,6 +509,7 @@ describe('台帳から渡す率と境目 (BusinessConsumptionParams)', () => {
     expect(DEFAULT_BUSINESS_CONSUMPTION_PARAMS).toEqual({
       rates: DEFAULT_CONSUMPTION_RATES,
       twentyPercentRate: 0.2,
+      thirtyPercentRate: 0.3,
       exemptionThreshold: EXEMPTION_THRESHOLD,
       simplifiedEligibilityThreshold: SIMPLIFIED_ELIGIBILITY_THRESHOLD,
       fullCreditRatioThreshold: FULL_CREDIT_RATIO_THRESHOLD,
@@ -554,5 +556,184 @@ describe('台帳から渡す率と境目 (BusinessConsumptionParams)', () => {
     expect(detailed.salesTax).toBe(1_060_000);
     expect(detailed.fullyDeductible).toBe(true);
     expect(calcStandardTaxDetailed(detailedInput).fullyDeductible).toBe(false);
+  });
+});
+
+// --- 選べない方式で「最有利」を決めない ------------------------------------
+//
+// 3 方式のうち 2 つは条件付き (簡易課税は基準期間 5,000 万円以下 + 事前届出、
+// 2 割特例はインボイス登録で免税から課税になった事業者の経過措置)。
+// 2026-09-06 の実測では、画面が簡易課税の欄に「選択不可」と自分で書きながら
+// その欄に「· 最有利」を付け、税負担合計まで「最有利方式（簡易課税）で合算」と
+// 言っていた —— **選べないと宣言した方式で合計を出していた**。
+describe('compareBusinessTaxMethods — 方式の選択可否', () => {
+  /** 第5種 (サービス業・みなし仕入率 50%)、仕入が少ないので簡易 < 本則。 */
+  const segments = [{ type: 'service' as const, sales: { standard: 60_000_000, reduced: 0 } }];
+  const purchases = { standard: 6_000_000, reduced: 0 };
+
+  it('対照: 何も外さなければ従来どおり 3 方式から選ぶ', () => {
+    const c = compareBusinessTaxMethods(segments, purchases);
+    // 2 割特例 (売上税額 × 20%) がいちばん安い。
+    expect(c.best).toBe('twenty-percent');
+    expect(c.bestAmount).toBe(c.twentyPercent);
+  });
+
+  it('★ 2 割特例を外すと、残りから選ぶ (簡易 < 本則)', () => {
+    const c = compareBusinessTaxMethods(segments, purchases, undefined, { twentyPercent: false });
+    expect(c.best).toBe('simplified');
+    expect(c.bestAmount).toBe(c.simplified);
+  });
+
+  it('★ 両方外すと本則課税になる (いつでも選べるのは本則だけ)', () => {
+    const c = compareBusinessTaxMethods(segments, purchases, undefined, {
+      simplified: false,
+      twentyPercent: false,
+    });
+    expect(c.best).toBe('standard');
+    expect(c.bestAmount).toBe(c.standard);
+  });
+
+  it('★ 外しても 3 方式の金額そのものは出す (画面は 3 つ並べて見せる)', () => {
+    const all = compareBusinessTaxMethods(segments, purchases);
+    const limited = compareBusinessTaxMethods(segments, purchases, undefined, {
+      simplified: false,
+      twentyPercent: false,
+    });
+    expect(limited.standard).toBe(all.standard);
+    expect(limited.simplified).toBe(all.simplified);
+    expect(limited.twentyPercent).toBe(all.twentyPercent);
+    expect(limited.appliedDeemedRate).toBe(all.appliedDeemedRate);
+  });
+
+  it('簡易課税だけ外した場合は本則と 2 割特例から選ぶ', () => {
+    const c = compareBusinessTaxMethods(segments, purchases, undefined, { simplified: false });
+    expect(c.best).toBe('twenty-percent');
+  });
+
+  it('true を明示しても既定と同じ (省略と同義)', () => {
+    const explicit = compareBusinessTaxMethods(segments, purchases, undefined, {
+      simplified: true,
+      twentyPercent: true,
+    });
+    expect(explicit.best).toBe(compareBusinessTaxMethods(segments, purchases).best);
+  });
+
+  it('選べる方式が本則より高いときは本則のまま (安い方だけを採る)', () => {
+    // 仕入が多く本則が最安。簡易・2 割特例を許しても本則が勝つ。
+    const c = compareBusinessTaxMethods(segments, { standard: 55_000_000, reduced: 0 });
+    expect(c.best).toBe('standard');
+  });
+});
+
+/*
+ * **3割特例** (2026-09-10 · パス 141) —— 2割特例の後継。個人事業者に限り令和 9 年分・令和 10 年分の
+ * 納付税額を売上税額の 3 割とする (法人に後継措置は無い)。
+ */
+describe('calcThirtyPercentTax (3割特例 — 個人事業者の令和 9 年分・令和 10 年分)', () => {
+  it('★ 売上税額の 30% (標準 1,000 万 → 100 万の 30% = 30 万)', () => {
+    expect(calcThirtyPercentTax({ standard: 10_000_000, reduced: 0 })).toBe(300_000);
+  });
+
+  it('軽減税率の売上も売上税額に入る (1,000 万 + 軽減 1,000 万 → (100 万 + 80 万) × 30%)', () => {
+    expect(calcThirtyPercentTax({ standard: 10_000_000, reduced: 10_000_000 })).toBe(540_000);
+  });
+
+  it('仕入は影響せず、0 や負の売上は 0', () => {
+    expect(calcThirtyPercentTax({ standard: 0, reduced: 0 })).toBe(0);
+    expect(calcThirtyPercentTax({ standard: -50, reduced: -50 })).toBe(0);
+  });
+
+  it('割合は台帳から渡せる (既定は THIRTY_PERCENT_RATE = 0.3・2割特例の割合とは別の欄)', () => {
+    const sales = { standard: 8_000_000, reduced: 2_000_000 };
+    expect(calcThirtyPercentTax(sales, DEFAULT_BUSINESS_CONSUMPTION_PARAMS)).toBe(calcThirtyPercentTax(sales));
+    expect(calcThirtyPercentTax(sales)).toBe(Math.round((800_000 + 160_000) * 0.3));
+    expect(calcThirtyPercentTax(sales, { ...DEFAULT_BUSINESS_CONSUMPTION_PARAMS, thirtyPercentRate: 0.4 })).toBe(Math.round((800_000 + 160_000) * 0.4));
+    expect(calcThirtyPercentTax(sales, { ...DEFAULT_BUSINESS_CONSUMPTION_PARAMS, twentyPercentRate: 0.5 })).toBe(calcThirtyPercentTax(sales));
+  });
+});
+
+describe('compareBusinessTaxMethods — 3割特例は言い切れるときだけ候補に入る', () => {
+  const segments = [{ type: 'service', sales: { standard: 8_000_000, reduced: 0 } }] as const;
+  const purchases = { standard: 3_000_000, reduced: 0 };
+  // 本則 50 万 / 簡易 40 万 (第 5 種 50%) / 2割特例 16 万 / 3割特例 24 万。
+
+  it('前提: 3割特例の額は常に出る (売上税額 × 30%) —— 候補に入るかとは別', () => {
+    const c = compareBusinessTaxMethods(segments, purchases);
+    expect(c.thirtyPercent).toBe(240_000);
+    expect(c.thirtyPercent).toBe(calcThirtyPercentTax({ standard: 8_000_000, reduced: 0 }));
+    expect([c.standard, c.simplified, c.twentyPercent]).toEqual([500_000, 400_000, 160_000]);
+  });
+
+  it('★ 省略時 (区分が分からない) は候補に入らない —— 2割特例を外しても簡易課税が残る (3割特例のほうが安いのに)', () => {
+    const c = compareBusinessTaxMethods(segments, purchases, undefined, { twentyPercent: false });
+    expect(c.thirtyPercent).toBeLessThan(c.simplified);
+    expect(c.best).toBe('simplified');
+    expect(c.bestAmount).toBe(400_000);
+    // false を明示しても同じ。
+    expect(compareBusinessTaxMethods(segments, purchases, undefined, { twentyPercent: false, thirtyPercent: false }).best).toBe('simplified');
+  });
+
+  it('★ 個人事業者の対象年分 (thirtyPercent: true) なら候補に入り、2割特例が終わった後は最安になる', () => {
+    const c = compareBusinessTaxMethods(segments, purchases, undefined, { twentyPercent: false, thirtyPercent: true });
+    expect(c.best).toBe('thirty-percent');
+    expect(c.bestAmount).toBe(c.thirtyPercent);
+    expect(c.bestAmount).toBe(240_000);
+  });
+
+  it('2割特例がまだ使えるなら 2割特例のほうが安い (両方 true)', () => {
+    const c = compareBusinessTaxMethods(segments, purchases, undefined, { twentyPercent: true, thirtyPercent: true });
+    expect(c.best).toBe('twenty-percent');
+    expect(c.bestAmount).toBe(160_000);
+  });
+
+  it('同額なら 2割特例が先 (本則 → 簡易 → 2割 → 3割の順で確定)', () => {
+    const p = { ...DEFAULT_BUSINESS_CONSUMPTION_PARAMS, twentyPercentRate: 0.3 };
+    const c = compareBusinessTaxMethods(segments, purchases, p, { twentyPercent: true, thirtyPercent: true });
+    expect(c.twentyPercent).toBe(c.thirtyPercent);
+    expect(c.best).toBe('twenty-percent');
+  });
+
+  it('候補に入っても本則より高ければ本則のまま (安い方だけを採る)', () => {
+    const c = compareBusinessTaxMethods(segments, { standard: 7_500_000, reduced: 0 }, undefined, { twentyPercent: false, thirtyPercent: true });
+    expect(c.standard).toBe(50_000);
+    expect(c.best).toBe('standard');
+    expect(c.bestAmount).toBe(50_000);
+  });
+
+  it('割合を台帳から渡すと 3割特例の額だけが動く', () => {
+    const c = compareBusinessTaxMethods(segments, purchases, { ...DEFAULT_BUSINESS_CONSUMPTION_PARAMS, thirtyPercentRate: 0.4 });
+    expect(c.thirtyPercent).toBe(320_000);
+    expect(c.twentyPercent).toBe(160_000);
+  });
+
+  it('外しても 4 方式の金額そのものは出す (画面は 4 つ並べて見せる)', () => {
+    const all = compareBusinessTaxMethods(segments, purchases, undefined, { thirtyPercent: true });
+    const limited = compareBusinessTaxMethods(segments, purchases, undefined, { simplified: false, twentyPercent: false, thirtyPercent: false });
+    expect(limited.thirtyPercent).toBe(all.thirtyPercent);
+    expect(limited.best).toBe('standard');
+  });
+});
+
+/*
+ * module レベルの const は import 時に評価済みなので、変異体の切替の前に読まれた値が残る
+ * (covered-static —— `stryker.config.json` の `_commentIgnoreStatic`)。**読み直して測る。**
+ */
+describe('既定の束 (読み直して測る)', () => {
+  it('★ 税率の束と事業者の消費税の台帳は、法定の定数から組む', async () => {
+    vi.resetModules();
+    const fresh = await import('../taxConsumptionBusiness');
+    expect(fresh.DEFAULT_CONSUMPTION_RATES).toEqual({ standard: 0.1, reduced: 0.08 });
+    expect(fresh.DEFAULT_BUSINESS_CONSUMPTION_PARAMS).toEqual({
+      rates: { standard: 0.1, reduced: 0.08 },
+      twentyPercentRate: 0.2,
+      thirtyPercentRate: 0.3,
+      exemptionThreshold: 10_000_000,
+      simplifiedEligibilityThreshold: 50_000_000,
+      fullCreditRatioThreshold: 0.95,
+      fullCreditSalesThreshold: 500_000_000,
+    });
+    // 読み直した束で組んでも、省略時と同じ額になる (束が空だと NaN になって落ちる)。
+    expect(fresh.calcThirtyPercentTax({ standard: 10_000_000, reduced: 0 }, fresh.DEFAULT_BUSINESS_CONSUMPTION_PARAMS)).toBe(300_000);
+    expect(fresh.calcStandardTax({ standard: 10_000_000, reduced: 0 }, { standard: 0, reduced: 0 }, fresh.DEFAULT_CONSUMPTION_RATES)).toBe(1_000_000);
   });
 });

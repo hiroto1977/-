@@ -31,8 +31,8 @@ Eaton, B. Curtis （1975 Principle of Minimum Differentiation Reconsidered）／
 - [ResearchGate record of Eaton & Lipsey (1975) — full paper metadata and abstract, principle of local clustering](https://www.researchgate.net/publication/4782151_The_Principle_of_Minimum_Differentiation_Reconsidered_Some_New_Developments_in_the_Theory_of_Spatial_Competition) `学術`
 
 ## 関連概念
+- [[econ-volatility-clustering-engle|ボラティリティ・クラスタリングとARCH——時間変動するリスクのモデル化]] — 同分野の近傍
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

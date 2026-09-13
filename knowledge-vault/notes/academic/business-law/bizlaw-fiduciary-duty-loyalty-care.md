@@ -31,6 +31,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-duty-of-loyalty|取締役の忠実義務（会社法355条）]] — 語彙が近い
+- [[bizlaw-duty-of-care|善管注意義務（善良な管理者の注意義務）]] — 語彙が近い
 - [[bizlaw-de-facto-corporation|事実上の会社——設立手続きに瑕疵があっても会社として扱う法理]] — 同じ思想家
 - [[econ-alchian-allen-theorem|アルチャン＝アレンの定理——「良いリンゴは外へ送られる」]] — 同じ思想家
 - [[bizlaw-civil-preservation|民事保全法]] — 出典を共有
@@ -39,7 +40,6 @@ aliases:
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 出典を共有
 - [[bizlaw-defamation|名誉毀損（刑法230条・民法709条/723条）]] — 出典を共有
 - [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]] — 出典を共有
-- [[bizlaw-hoteijichijoken|法定地上権（民法388条）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

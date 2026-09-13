@@ -35,7 +35,7 @@ Edward L. Deci ／ Richard M. Ryan ／ Richard Koestner
 ## 関連概念
 - [[human-self-determination-theory-mini|自己決定ミニ理論群]] — 同じ思想家
 - [[mgmt-self-determination-theory-work|自己決定理論（職場応用）]] — 同じ思想家
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-positive-organizational-scholarship|ポジティブ組織学（POS）]] — 同分野の近傍
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連

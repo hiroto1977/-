@@ -26,7 +26,7 @@ aliases:
 マックス・ヴェルトハイマー ／ ヴォルフガング・ケーラー ／ クルト・コフカ ／ クリスチャン・フォン・エーレンフェルス
 
 ## 出典
-- [Wertheimer, M. (1912) Experimentelle Studien über das Sehen von Bewegung — Zeitschrift für Psychologie](https://www.worldcat.org/oclc/5184644) `学術`
+- [Wertheimer, M. (1912) Experimentelle Studien über das Sehen von Bewegung — Zeitschrift für Psychologie](https://www.worldcat.org/oclc/5184644) `リファレンス`
 - [Wikipedia: Phi phenomenon — apparent motion, Gestalt psychology, Wertheimer](https://en.wikipedia.org/wiki/Phi_phenomenon) `リファレンス`
 
 ## 関連概念

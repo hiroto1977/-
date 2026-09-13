@@ -34,8 +34,8 @@ aliases:
 - [[human-catharsis-hypothesis|カタルシス仮説（攻撃性の浄化理論）]] — 同じ思想家
 - [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 同じ思想家
 - [[human-defense-mechanisms|防衛機制]] — 同じ思想家
+- [[human-deja-vu|デジャヴ（既視感）——初めての経験を「前にもあった」と感じる]] — 同分野の近傍
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]] — 同分野の近傍
-- [[human-spreading-activation|活性化拡散]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

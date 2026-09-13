@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Ancona, D. & Chong, C. 1996. Entrainment: Pace, Cycle, and Rhythm in Organizational Behavior. Research in Organizational Behavior, 18, 251-284.](https://dspace.mit.edu/handle/1721.1/2421) `学術`
-- [Eisenhardt, K.M. & Brown, S.L. 1998. Time Pacing: Competing in Markets That Won't Stand Still. Harvard Business Review, 76(2), 59-69.](https://hbr.org/1998/03/time-pacing-competing-in-markets-that-wont-stand-still) `学術`
+- [Eisenhardt, K.M. & Brown, S.L. 1998. Time Pacing: Competing in Markets That Won't Stand Still. Harvard Business Review, 76(2), 59-69.](https://hbr.org/1998/03/time-pacing-competing-in-markets-that-wont-stand-still) `メディア`
 - [Ancona, D., Goodman, P., Lawrence, B. & Tushman, M. 2001. Time: A New Research Lens. Academy of Management Review, 26(4), 645-663.](https://journals.aom.org/doi/abs/10.5465/amr.2001.5393903) `学術`
 
 ## 関連概念
@@ -37,8 +37,7 @@ aliases:
 - [[econ-externality-market-failure|外部性と市場の失敗]] — 出典を共有
 - [[mgmt-supply-chain-resilience|サプライチェーン強靭化（supply chain resilience）]] — 出典を共有
 - [[econ-revelation-principle|顕示原理（メカニズムデザイン）]] — 出典を共有
-- [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]] — 出典を共有
-- [[mgmt-organizational-ambidexterity-context|文脈的両利き経営]] — 同分野の近傍
+- [[mgmt-temporal-ambidexterity|時間的両利き性]] — 同分野の近傍
 - [[mgmt-agile-scrum-organizational|アジャイル・スクラムと組織アジリティの経営論——ソフトウェア開発から経営変革へ]] — 同分野の近傍
 - [[mgmt-okr|OKR（目標と主要な結果）]] — 同分野の近傍
 

@@ -194,13 +194,37 @@ describe('emergencyFundCoverage', () => {
     expect(emergencyFundCoverage(0, 100_000).target).toBe(600_000);
   });
 
-  it('handles a zero target: 100% if cash exists, else 0%', () => {
-    expect(emergencyFundCoverage(50_000, 0, 6).coveragePct).toBe(100);
-    expect(emergencyFundCoverage(0, 0, 6).coveragePct).toBe(0);
+  /**
+   * **この検査は 2026-09-08 まで欠陥を仕様として固定していた。**
+   * 名前が `handles a zero target: 100% if cash exists, else 0%` で、
+   * `toBe(100)` を要求していた。だが目標 0 は「予備資金は要らない」ではなく、
+   * たいていは**月支出を入力していない**という意味である ——
+   * `MutualFundsPage` は `readNumberOr0` で読むので**空欄が 0 になる**。
+   *
+   * **規準はすぐ下の検査に在った**: `monthsCovered` は**同じ入力**
+   * (`expense = 0`) で `null` を要求している。同じ戻り値の 2 つの欄に対して、
+   * 隣り合う 2 本の検査が**逆の判定**を固定していた。
+   *
+   * 画面でも 2 つの `<Stat>` が同じ grid に並び、
+   * 「予備資金 充足率 **100%**」と「現預金でまかなえる月数 **—**」を同時に出していた。
+   */
+  it('★ 目標が定まらなければ充足率は出さない (100% と断定しない)', () => {
+    // 月支出が未入力 → 目標 0 → 充足率は算定不能
+    expect(emergencyFundCoverage(50_000, 0, 6).coveragePct).toBeNull();
+    expect(emergencyFundCoverage(0, 0, 6).coveragePct).toBeNull();
+    // 目標月数 0 も同じ (目標が立たない)
+    expect(emergencyFundCoverage(50_000, 100_000, 0).coveragePct).toBeNull();
   });
 
-  it('returns null monthsCovered when monthly expense is zero', () => {
-    expect(emergencyFundCoverage(500_000, 0, 6).monthsCovered).toBeNull();
+  it('★ 対照: 月支出が在れば充足率は数で出る (床が全部を飲み込んでいない)', () => {
+    expect(emergencyFundCoverage(900_000, 300_000, 6).coveragePct).toBe(50);
+    expect(emergencyFundCoverage(50_000, 100_000, 6).coveragePct).toBeCloseTo(8.3, 1);
+  });
+
+  it('★ 姉妹欄と同じ条件で同じ答え方をする (片方だけが断定しない)', () => {
+    const c = emergencyFundCoverage(500_000, 0, 6);
+    expect(c.monthsCovered).toBeNull();
+    expect(c.coveragePct).toBeNull(); // ← 直す前はここが 100 だった
   });
 
   it('clamps negative and non-finite inputs to zero', () => {
@@ -209,7 +233,8 @@ describe('emergencyFundCoverage', () => {
     expect(c.shortfall).toBe(0);
     const nf = emergencyFundCoverage(Number.NaN, Number.POSITIVE_INFINITY, Number.NaN);
     expect(nf.target).toBe(0);
-    expect(nf.coveragePct).toBe(0);
+    // 読めない入力から目標は立たない → 充足率も出さない (旧: 0)
+    expect(nf.coveragePct).toBeNull();
     expect(nf.monthsCovered).toBeNull();
   });
 });

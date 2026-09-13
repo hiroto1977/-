@@ -35,9 +35,8 @@ aliases:
 - [[econ-bandwagon-snob|バンドワゴン効果・スノッブ効果]] — 同じ思想家
 - [[econ-o-ring-theory-kremer|オーリング理論——一つの弱点が全体の価値を損なう生産と発展]] — 同じ思想家
 - [[econ-spatial-equilibrium-rosen-roback|空間均衡モデル——ローゼン＝ロバックの都市間均衡と補償的賃金格差]] — 同じ思想家
-- [[econ-tournament-theory-lazear-rosen|トーナメント理論——相対的順位に基づく報酬が努力を引き出す仕組み]] — 同じ思想家
+- [[econ-tournament-theory-lazear-rosen|トーナメント理論（レイザー＝ローゼン）——絶対成果ではなく相対順位で報酬を決める仕組みが努力を引き出し、昇進ごとの大きな報酬格差を説明する]] — 同じ思想家
 - [[mgmt-mum-effect-bad-news|MUM効果——悪い知らせを伝えたがらない心理]] — 同じ思想家
-- [[mgmt-upper-echelons-tournament-theory|トーナメント理論と経営者インセンティブ（レイザー＆ローゼン）]] — 同じ思想家
 - [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同分野の近傍
 - [[econ-hirshleifer-private-social-value-information|情報の私的価値と社会的価値の乖離（ハーシュライファー）——予見的情報は私的に有利でも社会的には過剰・無価値になりうる]] — 同分野の近傍
 

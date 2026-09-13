@@ -26,7 +26,7 @@ aliases:
 今井正明 ／ 大野耐一 ／ W・エドワーズ・デミング ／ 新郷重夫
 
 ## 出典
-- [Imai, M. (1986) Kaizen: The Key to Japans Competitive Success — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/13096733) `学術`
+- [Imai, M. (1986) Kaizen: The Key to Japans Competitive Success — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/13096733) `リファレンス`
 - [Wikipedia: Kaizen — Imai, continuous incremental improvement, everyone participates, Toyota Production System, PDCA](https://en.wikipedia.org/wiki/Kaizen) `リファレンス`
 
 ## 関連概念

@@ -34,7 +34,7 @@ aliases:
 - [[infosoc-technological-affordance|テクノロジカル・アフォーダンス（Technological Affordance）]] — 出典を共有
 - [[infosoc-participatory-design-information-systems|情報システムにおける参加型デザイン]] — 出典を共有
 - [[infosoc-smart-city-critique-greenfield|スマートシティ批判——技術的ソリューショニズムと都市ガバナンス]] — 同分野の近傍
-- [[infosoc-digital-labour|デジタル労働（digital labour）]] — 同分野の近傍
+- [[infosoc-digital-minimalism|デジタル・ミニマリズム]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

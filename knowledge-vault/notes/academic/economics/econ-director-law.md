@@ -32,6 +32,7 @@ Aaron Director（アーロン・ディレクター・法則の名の由来・命
 ## 関連概念
 - [[econ-lucas-paradox|ルーカスのパラドックス]] — 同分野の近傍
 - [[econ-twin-peaks-quah|双峰分布仮説——世界所得分布の二極化と収束クラブの形成]] — 同分野の近傍
+- [[econ-rand-health-insurance-experiment|RAND医療保険実験（The RAND Health Insurance Experiment, HIE）——自己負担率を無作為に変え、医療需要の費用分担効果（モラルハザード）を実証した大規模社会実験]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

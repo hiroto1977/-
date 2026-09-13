@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
-  MAX_PROXY_SECRET_LENGTH,
-  MAX_PROXY_URL_LENGTH,
+  MAX_PROXY_SECRET_CHARS,
+  MAX_PROXY_URL_CHARS,
   describeProxyEndpointFailure,
   isValidProxySecret,
   normalizeProxyEndpoint,
@@ -53,9 +53,9 @@ describe('normalizeProxyEndpoint — 通すもの', () => {
   });
 
   it('長さの上限ちょうどは通る', () => {
-    const pad = 'a'.repeat(MAX_PROXY_URL_LENGTH - 'https://w.example.com/'.length);
+    const pad = 'a'.repeat(MAX_PROXY_URL_CHARS - 'https://w.example.com/'.length);
     const url = `https://w.example.com/${pad}`;
-    expect(url.length).toBe(MAX_PROXY_URL_LENGTH);
+    expect(url.length).toBe(MAX_PROXY_URL_CHARS);
     expect(reasonOf(url)).toBeNull();
   });
 });
@@ -73,10 +73,34 @@ describe('normalizeProxyEndpoint — 断るもの', () => {
   });
 
   it('上限を 1 文字超えたら断る', () => {
-    const pad = 'a'.repeat(MAX_PROXY_URL_LENGTH - 'https://w.example.com/'.length + 1);
+    const pad = 'a'.repeat(MAX_PROXY_URL_CHARS - 'https://w.example.com/'.length + 1);
     const url = `https://w.example.com/${pad}`;
-    expect(url.length).toBe(MAX_PROXY_URL_LENGTH + 1);
+    expect(url.length).toBe(MAX_PROXY_URL_CHARS + 1);
     expect(reasonOf(url)).toBe('too-long');
+  });
+
+  /*
+   * **天井は「字」で数える** (2026-09-13 · パス 196)。断りの文面が
+   * 「1024 **文字**まで」と言う一方で、判定は `.length` (UTF-16 コード単位) だった ——
+   * 絵文字や BMP 外の漢字を含む URL は**天井の半分**で断られていた。
+   * ASCII の標本では両者が一致するので、この検査だけが単位を留める。
+   */
+  it('★ 絵文字の URL は字で数える (コード単位なら半分で断られる)', () => {
+    const base = 'https://w.example.com/';
+    // 絵文字 1 つ = 2 コード単位 / 1 字。天井いっぱいまで絵文字で埋める。
+    const emoji = '\u{1F600}'.repeat(MAX_PROXY_URL_CHARS - base.length);
+    const url = base + emoji;
+    expect([...url].length).toBe(MAX_PROXY_URL_CHARS);
+    expect(url.length).toBeGreaterThan(MAX_PROXY_URL_CHARS); // コード単位では超えている
+    expect(reasonOf(url)).toBeNull();                        // 字では超えていないので通る
+  });
+
+  it('★ 共有秘密も字で数える', () => {
+    const atLimit = '\u{1F600}'.repeat(MAX_PROXY_SECRET_CHARS);
+    expect([...atLimit].length).toBe(MAX_PROXY_SECRET_CHARS);
+    expect(atLimit.length).toBe(MAX_PROXY_SECRET_CHARS * 2);
+    expect(isValidProxySecret(atLimit)).toBe(true);
+    expect(isValidProxySecret(atLimit + '\u{1F600}')).toBe(false);
   });
 
   it('制御文字（URL の解析より先に落とす）', () => {
@@ -125,7 +149,7 @@ describe('normalizeProxyEndpoint — 断るもの', () => {
   // 分断された URL を先に受け入れてしまう可能性がある。
   it('複数の違反があるときは、先に見る規則の理由を返す', () => {
     // 長すぎる + 制御文字 → 長さが先
-    const long = `https://w.example.com/${'a'.repeat(MAX_PROXY_URL_LENGTH)}\u0000`;
+    const long = `https://w.example.com/${'a'.repeat(MAX_PROXY_URL_CHARS)}\u0000`;
     expect(reasonOf(long)).toBe('too-long');
     // 制御文字 + 解釈不能 → 制御文字が先
     expect(reasonOf('not a url\u0000')).toBe('control-char');
@@ -163,7 +187,7 @@ describe('describeProxyEndpointFailure', () => {
 
   it('何を直せばよいかを含む', () => {
     expect(describeProxyEndpointFailure('empty')).toContain('空');
-    expect(describeProxyEndpointFailure('too-long')).toContain(String(MAX_PROXY_URL_LENGTH));
+    expect(describeProxyEndpointFailure('too-long')).toContain(String(MAX_PROXY_URL_CHARS));
     expect(describeProxyEndpointFailure('control-char')).toContain('制御文字');
     expect(describeProxyEndpointFailure('not-a-url')).toContain('https://');
     expect(describeProxyEndpointFailure('not-http')).toContain('http(s)');
@@ -173,7 +197,7 @@ describe('describeProxyEndpointFailure', () => {
     expect(describeProxyEndpointFailure('insecure-remote')).toContain('平文');
     expect(describeProxyEndpointFailure('insecure-remote')).toContain('127.0.0.1');
     expect(describeProxyEndpointFailure('secret-too-long')).toContain('共有秘密');
-    expect(describeProxyEndpointFailure('secret-too-long')).toContain(String(MAX_PROXY_SECRET_LENGTH));
+    expect(describeProxyEndpointFailure('secret-too-long')).toContain(String(MAX_PROXY_SECRET_CHARS));
   });
 
   // 表に載っているのに誰も返さない理由が増えると、文言だけが増えて
@@ -182,7 +206,7 @@ describe('describeProxyEndpointFailure', () => {
     const seen = new Set<ProxyEndpointFailure>();
     for (const raw of [
       '',
-      `https://w.example.com/${'a'.repeat(MAX_PROXY_URL_LENGTH)}`,
+      `https://w.example.com/${'a'.repeat(MAX_PROXY_URL_CHARS)}`,
       'https://w.example.com/\u0000',
       'not a url',
       'ftp://w.example.com/',
@@ -196,7 +220,7 @@ describe('describeProxyEndpointFailure', () => {
     // 共有秘密の理由は URL の検証からは出ない。保存済み設定の検証から出る。
     const secret = reviewStoredProxyConfig({
       url: 'https://w.example.com/',
-      sharedSecret: 'x'.repeat(MAX_PROXY_SECRET_LENGTH + 1),
+      sharedSecret: 'x'.repeat(MAX_PROXY_SECRET_CHARS + 1),
     }).rejected;
     if (secret !== null) seen.add(secret);
     expect([...seen].sort()).toEqual([...ALL].sort());
@@ -213,8 +237,8 @@ describe('isValidProxySecret', () => {
   });
 
   it('上限ちょうどは許し、1 文字超えると断る', () => {
-    expect(isValidProxySecret('x'.repeat(MAX_PROXY_SECRET_LENGTH))).toBe(true);
-    expect(isValidProxySecret('x'.repeat(MAX_PROXY_SECRET_LENGTH + 1))).toBe(false);
+    expect(isValidProxySecret('x'.repeat(MAX_PROXY_SECRET_CHARS))).toBe(true);
+    expect(isValidProxySecret('x'.repeat(MAX_PROXY_SECRET_CHARS + 1))).toBe(false);
   });
 
   it('文字列でない値は断る（null は undefined と同じに扱わない）', () => {
@@ -226,8 +250,8 @@ describe('isValidProxySecret', () => {
 
 describe('上限の値そのもの', () => {
   it('決め打ちの値である（変えると保存済み設定の可否が変わる）', () => {
-    expect(MAX_PROXY_URL_LENGTH).toBe(1024);
-    expect(MAX_PROXY_SECRET_LENGTH).toBe(256);
+    expect(MAX_PROXY_URL_CHARS).toBe(1024);
+    expect(MAX_PROXY_SECRET_CHARS).toBe(256);
   });
 });
 
@@ -282,7 +306,7 @@ describe('reviewStoredProxyConfig — 保存済みの値を読むとき', () => 
   it('共有秘密が長すぎるときは、URL ではなく秘密の理由を返す', () => {
     const r = reviewStoredProxyConfig({
       url: 'https://w.example.com/p',
-      sharedSecret: 'x'.repeat(MAX_PROXY_SECRET_LENGTH + 1),
+      sharedSecret: 'x'.repeat(MAX_PROXY_SECRET_CHARS + 1),
     });
     expect(r.config).toBeNull();
     expect(r.rejected).toBe('secret-too-long');
@@ -295,7 +319,7 @@ describe('reviewStoredProxyConfig — 保存済みの値を読むとき', () => 
   });
 
   it('上限ちょうどの共有秘密は通す', () => {
-    const secret = 'x'.repeat(MAX_PROXY_SECRET_LENGTH);
+    const secret = 'x'.repeat(MAX_PROXY_SECRET_CHARS);
     const r = reviewStoredProxyConfig({ url: 'https://w.example.com/p', sharedSecret: secret });
     expect(r.config).toEqual({ url: 'https://w.example.com/p', sharedSecret: secret });
   });
@@ -304,7 +328,7 @@ describe('reviewStoredProxyConfig — 保存済みの値を読むとき', () => 
   it('URL と秘密の両方が駄目なら URL の理由が出る', () => {
     const r = reviewStoredProxyConfig({
       url: 'http://evil.example.com/',
-      sharedSecret: 'x'.repeat(MAX_PROXY_SECRET_LENGTH + 1),
+      sharedSecret: 'x'.repeat(MAX_PROXY_SECRET_CHARS + 1),
     });
     expect(r.rejected).toBe('insecure-remote');
   });

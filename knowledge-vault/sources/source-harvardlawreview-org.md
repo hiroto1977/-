@@ -2,7 +2,7 @@
 title: "harvardlawreview.org"
 type: source-domain
 host: "harvardlawreview.org"
-cite_count: 1
+cite_count: 3
 tags:
   - source-domain
   - index
@@ -10,11 +10,13 @@ tags:
 
 # harvardlawreview.org
 
-> [!info] 出典ドメイン索引 ・ 引用 **1 件**（学術 1）
+> [!info] 出典ドメイン索引 ・ 引用 **3 件**（学術 3）
 
 ## このドメインを出典とする項目
 
 - [[infosoc-information-fiduciary|情報受託義務者（インフォメーション・フィデューシャリー）]] — HarvardLawReview—ASkepticalViewofInformationFiduciaries（批判的検討、Vol.133）
+- [[infosoc-new-governors-online-speech-klonick|新しい統治者論——プラットフォームを独自の規則・手続・文化でオンライン言論を統治する私的統治システムとみなす議論]] — EvelynDouek(2022)"ContentModerationasSystemsThinking,"HarvardLawRevie…
+- [[infosoc-new-governors-online-speech-klonick|新しい統治者論——プラットフォームを独自の規則・手続・文化でオンライン言論を統治する私的統治システムとみなす議論]] — KateKlonick(2018)"TheNewGovernors:ThePeople,Rules,andProcessesGoverni…
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

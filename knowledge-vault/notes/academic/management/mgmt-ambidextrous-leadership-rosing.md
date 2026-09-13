@@ -3,8 +3,8 @@ collection: academic
 id: mgmt-ambidextrous-leadership-rosing
 category: "management"
 category_ja: "経営学"
-title: "両利きのリーダーシップ——探索と活用の動的切替え"
-as_of: "2026-06-26"
+title: "両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる"
+as_of: "2026-09"
 source_count: 3
 authoritative: true
 tags:
@@ -12,33 +12,35 @@ tags:
   - academic/management
   - knowledge/verified
 aliases:
-  - "両利きのリーダーシップ——探索と活用の動的切替え"
+  - "両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる"
 ---
 
-# 両利きのリーダーシップ——探索と活用の動的切替え
+# 両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06-26 ・ 出典: 3件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-09 ・ 出典: 3件（うち権威ある出典 ✓）
 
 ## 概要
-両利きのリーダーシップ（ambidextrous leadership）は、組織の探索（exploration）と活用（exploitation）を効果的に統合するリーダー行動の理論である。ローシングらは2011年の研究で、リーダーが開放的行動（opening behavior）と閉鎖的行動（closing behavior）を状況に応じて柔軟に切り替える能力がイノベーション成果を高めることを実証した。開放的行動は実験・リスク許容・多様な視点の奨励を含み、閉鎖的行動はルーティン確立・目標遵守・効率追求を含む。この理論はマーチの探索・活用トレードオフを個人レベルのリーダーシップ行動に翻訳し、タシュマンとオライリーの組織的アンビデクストリティ論を補完する。両利きのリーダーは二つの行動レパートリーの時間的切替え（temporal switching）を通じて、チームの創造性と実行力を同時に維持する。
+両利きのリーダーシップ（ambidextrous leadership）は、探索と深化をリーダーの行動で統合する理論で、カトリン・ローシング、ミヒャエル・フレーゼ、アンドレアス・バウシュが2011年の論文『Explaining the Heterogeneity of the Leadership-Innovation Relationship: Ambidextrous Leadership』（The Leadership Quarterly 22巻5号）で提示した。リーダーは、実験やリスク許容、多様な視点を奨励する開放的行動（opening behavior）と、ルーティン確立・目標遵守・効率追求で行動の幅を絞る閉鎖的行動（closing behavior）を、イノベーション過程の局面に応じて切り替えることで、チームの創造性と実行力を同時に保つ。マーチの探索と深化のトレードオフを個人のリーダー行動の水準に翻訳し、構造的両利きと文脈的両利きを補完する理論である。ウェンディ・スミスとマリアンヌ・ルイスのパラドックス理論は、矛盾を「どちらか」でなく「両方」で捉えるパラドックス・マインドセットをリーダーの要件として位置づけ、心理的安全性や認知的柔軟性がそれを支えると論じられる。限界として、切替えの適切な時機を判断する基準が弱いこと、実証が自己報告に偏ること、一人に両方の行動を求める負荷がある。中小企業の経営者は一人で切り替えざるを得ないことが多く、試作や新規開拓では失敗を許容して意見を募り、量産や納期の局面では手順と目標を締める使い分けを会議や評価基準に落とし込むことが含意となる。
 
 ## 提唱者・初出
-カトリン・ローシング ／ マイケル・フレーゼ ／ マイケル・タシュマン ／ チャールズ・オライリー
+カトリン・ローシング＆ミヒャエル・フレーゼ＆アンドレアス・バウシュ（2011『Explaining the Heterogeneity of the Leadership-Innovation Relationship: Ambidextrous Leadership』The Leadership Quarterly 22(5)）／ジェームズ・マーチ（1991 探索と深化）／マイケル・タッシュマン＆チャールズ・オライリー（組織的両利き）／対比: ウェンディ・スミス＆マリアンヌ・ルイス（パラドックス・マインドセット）
 
 ## 出典
-- [Rosing, K., Frese, M. & Bausch, A. (2011) Explaining the Heterogeneity of the Leadership-Innovation Relationship — Leadership Quarterly](https://doi.org/10.1016/j.leaqua.2011.02.013) `学術`
-- [March, J. G. (1991) Exploration and Exploitation in Organizational Learning — Organization Science](https://doi.org/10.1287/orsc.7.2.136) `学術`
-- [Wikipedia: Ambidextrous organization — structural and contextual approaches overview](https://en.wikipedia.org/wiki/Ambidextrous_organization) `リファレンス`
+- [Rosing, K., Frese, M. & Bausch, A. (2011) Explaining the Heterogeneity of the Leadership-Innovation Relationship: Ambidextrous Leadership — The Leadership Quarterly 22(5), 956–974（開放的行動と閉鎖的行動の切替え）](https://doi.org/10.1016/j.leaqua.2011.07.014) `学術`
+- [March, J. G. (1991) Exploration and Exploitation in Organizational Learning — Organization Science 2(1), 71–87（探索と深化のトレードオフ）](https://pubsonline.informs.org/doi/10.1287/orsc.2.1.71) `学術`
+- [Wikipedia: Organizational ambidexterity — ambidextrous leadership, structural and contextual approaches](https://en.wikipedia.org/wiki/Organizational_ambidexterity) `リファレンス`
 
 ## 関連概念
-- [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]] — 同じ思想家
-- [[mgmt-boundaryspanning-roles|バウンダリースパニング役割：組織と環境を結ぶ境界連結機能・ゲートキーパー・役割葛藤の組織論的体系]] — 同じ思想家
-- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 同じ思想家
-- [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]] — 同じ思想家
-- [[mgmt-innovation-s-curve-foster|イノベーションのSカーブとテクノロジーサイクル——技術的限界と不連続的イノベーションの経営戦略]] — 同じ思想家
+- [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]] — 同じ思想家
+- [[mgmt-paradoxical-leadership-zhang|パラドキシカル・リーダーシップ——相反する要請を同時に満たす]] — 同じ思想家
 - [[mgmt-strategic-renewal-volberda|戦略的刷新と組織アンビデクストリティの動態能力論（フォルベルダ）]] — 同じ思想家
-- [[mgmt-upper-echelons-tournament-theory|トーナメント理論と経営者インセンティブ（レイザー＆ローゼン）]] — 同じ思想家
-- [[mgmt-tannenbaum-schmidt|タンネンバウム＝シュミットのリーダーシップ連続体]] — 同分野の近傍
+- [[mgmt-paradox-theory-smith-lewis|組織パラドックス理論（ルイス／スミス＝ルイス）——相互に矛盾しつつ相互依存する要求を排除せず受容し、動態的均衡として管理する]] — 同じ思想家
+- [[human-mirror-self-recognition|鏡像自己認知（Mirror Self-Recognition）]] — 同じ思想家
+- [[mgmt-boundary-spanning|境界連結（バウンダリー・スパニング）]] — 同じ思想家
+- [[mgmt-organizational-slack|組織スラック]] — 同じ思想家
+- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
+- [[mgmt-behavioral-decision-theory-march|行動的意思決定理論——限定合理性下の組織的選択プロセス]] — 同じ思想家
+- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

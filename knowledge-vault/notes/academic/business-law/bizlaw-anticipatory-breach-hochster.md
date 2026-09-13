@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Hochster v De La Tour [1853] EWHC QB J72 — anticipatory breach landmark](https://www.bailii.org/ew/cases/EWHC/QB/1853/J72.html) `公的`
-- [Peel, E. (2015) Anticipatory Breach — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397](https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405) `学術`
+- [Peel, E. (2015) Anticipatory Breach — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397](https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405) `リファレンス`
 - [Wikipedia: Anticipatory repudiation — pre-performance breach doctrine overview](https://en.wikipedia.org/wiki/Anticipatory_repudiation) `リファレンス`
 
 ## 関連概念
@@ -38,9 +38,9 @@ aliases:
 - [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 同じ思想家
 - [[bizlaw-penalty-clause-liquidated-damages|違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制]] — 同じ思想家
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 同じ思想家
+- [[bizlaw-exculpatory-clause|免責条項の法理：契約上の責任制限・免除とその規制]] — 出典を共有
 - [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 出典を共有
 - [[bizlaw-restraint-of-trade|取引制限の法理——営業の自由を制約する条項の合理性審査]] — 出典を共有
-- [[bizlaw-rule-in-claytons-case|クレイトン事件の準則（Rule in Clayton's Case／Devaynes v Noble）——混合口座の追及で引き出しを入金順に充当する先入先出の推定]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

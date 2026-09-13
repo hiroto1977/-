@@ -26,7 +26,7 @@ aliases:
 アンソニー・ダウンズ ／ J・M・トムソン ／ ハーバート・モーリング ／ ディートリッヒ・ブライス
 
 ## 出典
-- [Thomson, J. M. (1977) Great Cities and Their Traffic — Gollancz](https://www.worldcat.org/oclc/3186950) `学術`
+- [Thomson, J. M. (1977) Great Cities and Their Traffic — Gollancz](https://www.worldcat.org/oclc/3186950) `リファレンス`
 - [Wikipedia: Downs–Thomson paradox — road capacity, public transport, Mohring effect](https://en.wikipedia.org/wiki/Downs%E2%80%93Thomson_paradox) `リファレンス`
 
 ## 関連概念
@@ -36,8 +36,8 @@ aliases:
 - [[econ-hotelling-law|ホテリングの法則（最小差別化の原理）]] — 同じ思想家
 - [[econ-rational-ignorance-downs|合理的無知——情報収集の費用が便益を上回るときの意図的な無知]] — 同じ思想家
 - [[econ-rational-irrationality|合理的非合理性（rational irrationality）——一票が結果を変えないため有権者があえて偏った経済観を抱く公共選択論の概念]] — 同じ思想家
+- [[econ-supplier-induced-demand|供給者誘発需要——医師は自らの需要を生み出すのか]] — 同分野の近傍
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

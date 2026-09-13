@@ -369,10 +369,16 @@ export function planShadowRegulation(input: ShadowRegulationInput): ShadowRegula
 /* ───────────────  後退距離と建築面積のトレードオフ  ─────────────── */
 
 export interface SetbackTradeoffInput {
-  /** 敷地の奥行 (m・道路に直交する方向)。 */
-  readonly siteDepthM: number;
-  /** 敷地の間口 (m・道路に平行な方向)。 */
-  readonly siteWidthM: number;
+  /**
+   * 敷地の奥行 (m・道路に直交する方向)。
+   *
+   * **未入力は `null`。** 画面の欄は `kind: 'length'` (= `allowZero` 無し) なので
+   * **0 は受け付けない値**であり、空欄と 0 は別である。0 以下も未入力として扱う
+   * (奥行 0 の敷地は存在しないので、それは「まだ分からない」の言い換えでしかない)。
+   */
+  readonly siteDepthM: number | null;
+  /** 敷地の間口 (m・道路に平行な方向)。**未入力は `null`** (奥行と同じ規準)。 */
+  readonly siteWidthM: number | null;
   /** 道路と反対側 (背面) の後退距離 (m)。民法 234 条の 0.5m など。 */
   readonly rearSetbackM: number;
   /** 側面の後退距離の合計 (m)。 */
@@ -388,18 +394,30 @@ export interface SetbackTradeoffInput {
 }
 
 export interface SetbackTradeoffResult {
-  /** 道路斜線を通すのに必要な最小後退 (m)。 */
+  /**
+   * 道路斜線を通すのに必要な最小後退 (m)。
+   *
+   * **敷地寸法に依らない** —— 道路幅員・用途区分・計画高さだけで決まるので、
+   * 寸法が未入力でも答えられる (パス 71・76 と同じ判断: 倒す範囲は
+   * 「その入力に依る欄」だけで、依らない欄は数のまま残す)。
+   */
   readonly requiredSetbackM: number;
-  /** 建てられる奥行 (m) = 敷地奥行 − 必要後退 − 背面後退。 */
-  readonly buildableDepthM: number;
-  /** 建てられる間口 (m) = 敷地間口 − 側面後退合計。 */
-  readonly buildableWidthM: number;
-  /** 幾何的に取れる建築面積 (㎡) = 奥行 × 間口。 */
-  readonly geometricFootprint: number;
-  /** 実際に取れる建築面積 (㎡) = min(幾何, 建蔽率上限)。 */
-  readonly footprint: number;
-  /** 何に縛られているか。建蔽率か、後退による寸法か。 */
-  readonly limitedBy: 'coverage' | 'geometry';
+  /** 建てられる奥行 (m) = 敷地奥行 − 必要後退 − 背面後退。**奥行が未入力なら `null`**。 */
+  readonly buildableDepthM: number | null;
+  /** 建てられる間口 (m) = 敷地間口 − 側面後退合計。**間口が未入力なら `null`**。 */
+  readonly buildableWidthM: number | null;
+  /** 幾何的に取れる建築面積 (㎡) = 奥行 × 間口。**どちらかが未入力なら `null`**。 */
+  readonly geometricFootprint: number | null;
+  /** 実際に取れる建築面積 (㎡) = min(幾何, 建蔽率上限)。**寸法が未入力なら `null`**。 */
+  readonly footprint: number | null;
+  /**
+   * 何に縛られているか。建蔽率か、後退による寸法か。
+   *
+   * **寸法が未入力なら `null`** —— 「寸法で決まる」は**寸法が拘束条件だという主張**で、
+   * 寸法を知らないまま述べられない。直す前はここが常に `'geometry'` になり、
+   * 画面はタイルのラベルに「建築面積 (寸法で決まる)」と刷っていた。
+   */
+  readonly limitedBy: 'coverage' | 'geometry' | null;
 }
 
 /**
@@ -421,15 +439,25 @@ export function planSetbackTradeoff(input: SetbackTradeoffInput, rules: ZoningRu
   );
   const requiredSetbackM = slope.minSetbackM;
 
-  const buildableDepthM = round2(
-    Math.max(0, nonNeg(input.siteDepthM) - requiredSetbackM - nonNeg(input.rearSetbackM)),
-  );
-  const buildableWidthM = round2(
-    Math.max(0, nonNeg(input.siteWidthM) - nonNeg(input.sideSetbackTotalM)),
-  );
-  const geometricFootprint = sqm(buildableDepthM * buildableWidthM);
+  // **未入力から「建てられない敷地」という判定を作らない。**
+  // 直す前は `nonNeg` が空欄 (画面の `readNumberOr0` 経由で 0) を 0 のまま通し、
+  // 間口・奥行を空にした結果が「間口 3m・側面後退 3m の**実際に建てられない敷地**」
+  // と**完全に一致**していた (どちらも幅 0 / 面積 0 / `limitedBy: 'geometry'`)。
+  // **床は「測っていない」だけに当てる** —— 寸法が入っていて結果が 0 なら、
+  // それは本物の判定なので 0 のまま返す。
+  const known = (v: number | null): number | null =>
+    typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : null;
+  const depthIn = known(input.siteDepthM);
+  const widthIn = known(input.siteWidthM);
+
+  const buildableDepthM =
+    depthIn === null ? null : round2(Math.max(0, depthIn - requiredSetbackM - nonNeg(input.rearSetbackM)));
+  const buildableWidthM =
+    widthIn === null ? null : round2(Math.max(0, widthIn - nonNeg(input.sideSetbackTotalM)));
+  const geometricFootprint =
+    buildableDepthM === null || buildableWidthM === null ? null : sqm(buildableDepthM * buildableWidthM);
   const cap = nonNeg(input.maxFootprint);
-  const footprint = sqm(Math.min(geometricFootprint, cap));
+  const footprint = geometricFootprint === null ? null : sqm(Math.min(geometricFootprint, cap));
 
   return {
     requiredSetbackM,
@@ -437,6 +465,6 @@ export function planSetbackTradeoff(input: SetbackTradeoffInput, rules: ZoningRu
     buildableWidthM,
     geometricFootprint,
     footprint,
-    limitedBy: geometricFootprint > cap ? 'coverage' : 'geometry',
+    limitedBy: geometricFootprint === null ? null : geometricFootprint > cap ? 'coverage' : 'geometry',
   };
 }

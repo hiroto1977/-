@@ -26,7 +26,7 @@ aliases:
 クレイトン・クリステンセン（Clayton Christensen）／タディ・ホール（Taddy Hall）／カレン・ディロン（Karen Dillon）／デイビッド・ダンカン（David S. Duncan）（HBR 2016「Know Your Customers’ Jobs to Be Done」・著書『Competing Against Luck』2016）／源流＝セオドア・レビット
 
 ## 出典
-- [Christensen, Hall, Dillon & Duncan, “Know Your Customers’ ‘Jobs to Be Done’,” Harvard Business Review, vol.94 no.9 (Sept 2016), pp.54-62](https://hbr.org/2016/09/know-your-customers-jobs-to-be-done) `学術`
+- [Christensen, Hall, Dillon & Duncan, “Know Your Customers’ ‘Jobs to Be Done’,” Harvard Business Review, vol.94 no.9 (Sept 2016), pp.54-62](https://hbr.org/2016/09/know-your-customers-jobs-to-be-done) `メディア`
 - [Clayton Christensen Institute — Jobs to Be Done Theory（解説ページ）](https://www.christenseninstitute.org/theory/jobs-to-be-done/) `リファレンス`
 - [Harvard Business School Faculty & Research — “Know Your Customers’ ‘Jobs to Be Done’” 書誌情報（R1609D）](https://www.hbs.edu/faculty/Pages/item.aspx?num=51553) `学術`
 
@@ -40,7 +40,7 @@ aliases:
 - [[mgmt-innovation-s-curve-foster|イノベーションのSカーブとテクノロジーサイクル——技術的限界と不連続的イノベーションの経営戦略]] — 同じ思想家
 - [[mgmt-second-curve-handy|セカンド・カーブ——衰退する前に次の成長曲線を始める]] — 同じ思想家
 - [[mgmt-strategic-momentum-miller|戦略的モメンタム——成功パターンの固定化が組織衰退を招くメカニズム]] — 同じ思想家
-- [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（アイゼンマン＝パーカー＝ヴァン・アルスタイン）——隣接するプラットフォーム市場へ自社機能とのバンドルで参入し、既存のネットワーク効果を武器に転用して相手の利用者基盤を奪う競争戦略]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

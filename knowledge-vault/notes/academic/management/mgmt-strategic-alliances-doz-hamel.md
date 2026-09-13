@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[mgmt-core-competence|コアコンピタンス（中核的能力）]] — 同じ思想家
 - [[mgmt-strategic-intent|戦略的意図（ストラテジック・インテント）]] — 同じ思想家
-- [[mgmt-dominant-logic-prahalad-bettis|支配的論理——経営者の事業の捉え方が資源配分と適応を方向づける認知枠組み]] — 同じ思想家
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（アイゼンマン＝パーカー＝ヴァン・アルスタイン）——隣接するプラットフォーム市場へ自社機能とのバンドルで参入し、既存のネットワーク効果を武器に転用して相手の利用者基盤を奪う競争戦略]] — 出典を共有
 - [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 出典を共有
 - [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]] — 出典を共有

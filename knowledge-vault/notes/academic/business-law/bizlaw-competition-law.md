@@ -38,9 +38,9 @@ aliases:
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 同じ思想家
 - [[bizlaw-learned-hand-formula|ラーニッド・ハンドの定式——過失を費用と確率で測る]] — 同じ思想家
 - [[bizlaw-tort-law|不法行為法：過失・厳格責任・経済分析による民事損害賠償の理論体系]] — 同じ思想家
+- [[bizlaw-vincent-v-lake-erie-private-necessity|ヴィンセント対レイク・エリー運送事件——緊急時に他人の財産を使うことは許されるが、生じた損害は賠償しなければならないという「不完全な特権」の法理]] — 同じ思想家
 - [[econ-fiscal-multiplier-keynesian-analysis|財政乗数——政府支出と減税の国民所得波及効果]] — 同じ思想家
 - [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — 同じ思想家
-- [[econ-regulatory-capture-stigler|規制の虜——規制が被規制産業の利益のために運営される現象]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -38,6 +38,7 @@ aliases:
 - [[infosoc-small-world-life-chatman|スモールワールドと「円環の生活」——周縁集団の情報世界]] — 同じ思想家
 - [[infosoc-social-capital|社会関係資本（ソーシャル・キャピタル）]] — 同じ思想家
 - [[infosoc-social-capital-digital-civic|ソーシャル・キャピタルとデジタル社会参加の情報社会論]] — 同じ思想家
+- [[mgmt-social-capital-intellectual-capital-nahapiet-ghoshal|ナハピエト＝ゴシャールの社会関係資本論——構造的・関係的・認知的の三次元による知的資本創造と組織の優位性]] — 同じ思想家
 - [[infosoc-serious-leisure-stebbins|シリアスレジャー——余暇を「キャリア」として追求する営み]] — 同分野の近傍
 
 ## 関連

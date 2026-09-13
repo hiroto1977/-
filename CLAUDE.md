@@ -10,8 +10,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Service Hub — a Japanese-facing business dashboard exposing **75 services** through a unified,
-category-grouped sidebar (おすすめ / 士業連携 / 分析・ツール / 外部サービス連携). Services span third-party SaaS
+Service Hub — a Japanese-facing business dashboard exposing **76 services** through a unified,
+category-grouped sidebar (おすすめ / 士業連携 / 分析・ツール / 外部サービス連携). **Not every service has a sidebar
+entry of its own**: `uber-eats` and `demae-can` are consumed inside the Business Dashboard instead
+(`BusinessPage.tsx` reads their snapshots directly). That split is a reasoned, bidirectional ledger in
+`src/renderer/__tests__/sidebarCoverage.test.ts` — a service that silently loses its sidebar entry fails
+CI (it would also become impossible to delete its saved credentials from the UI), and an id that is
+still in the ledger while back on the sidebar fails too. Services span third-party SaaS
 (GitHub, WordPress.com, Atlassian, Notion, Google Drive / Calendar / Gmail, Slack, Canva,
 Microsoft 365, Dropbox, Salesforce, Discord, Asana, Linear, Sentry, Shopify, Stripe, LINE), local
 tools (Skills, Security, Cloudflare, Emotions, Ollama, KPI, Stocks, Storage), business operations
@@ -23,7 +28,7 @@ with a verified 事業仕分け duty map (`professionalMap.ts`) and a local-firs
 **Two runtime targets ship from the same codebase:**
 1. **Electron desktop app** (`npm run dev` / `npm run build`) — full OS integration, 3-process model.
 2. **Browser standalone** (`npm run build:web` → `dist/standalone.html`) — a single self-contained HTML
-   file (実測 10.9 MiB full / 2.8 MiB `build:web:lite` mobile variant — 2026-09-02 計測: 11,418,740 B / 2,913,792 B) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
+   file (実測 11.28 MiB full / 3.09 MiB `build:web:lite` mobile variant — 2026-09-13 パス 196 後の計測: 11,823,380 B / 3,236,126 B (`_LENGTH` と名乗る天井を字で数える直しで両方 +72 B)・パス 195 後は 11,823,308 B / 3,236,054 B (両方 -29 B)・パス 194 後は 11,823,337 B / 3,236,083 B (**水耕栽培の運転管理 1 サービス分で 両方 +42,223 B** —— 共有の判定・調製・日程と画面 1 枚ぶん。学術コーパスに依らないので LITE も同じだけ増える)・パス 193 後は 11,781,114 B / 3,193,860 B・パス 192 後は 11,780,315 B / 3,193,061 B・パス 191 後は 11,780,034 B / 3,192,780 B・パス 190 後は 11,779,996 B / 3,192,742 B)。天井は CI が両方に掛けている: 16 MB / 4 MB、85% で警告。パス 189 後は 11,778,832 B / 3,191,576 B・パス 188 後は 11,776,126 B / 3,188,874 B・パス 187 後は 11,774,564 B / 3,187,312 B・パス 186 後は 11,771,487 B / 3,184,235 B・パス 185 後は 11,771,393 B / 3,184,141 B・パス 184 後は 11,770,727 B / 3,183,475 B (パス 183 から**両方が 5,168 B 減った** —— テンプレートの SVG の組み立てが 3 写しから 1 つになった分)・パス 183 後は 11,775,895 B / 3,188,643 B・パス 182 後は 11,774,254 B / 3,187,002 B・パス 181 後は 11,765,766 B / 3,178,512 B・前日 2026-09-11 は 11,752,227 B / 3,164,973 B。LITE は 85% の警告線 3.4 MB (CI は 3,400,000 B で見る) まで残り約 164 KB) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
 
 Each service page starts from a static snapshot in `src/renderer/data/snapshot.ts` and can swap to a
 live REST fetch. The `useServiceData(serviceId, snapshot)` hook returns `data`, `source`
@@ -32,11 +37,14 @@ live REST fetch. The `useServiceData(serviceId, snapshot)` hook returns `data`, 
 All verified (sourced) knowledge datasets — academic concepts (`academicKnowledge.ts`), tax/labor/legal
 compliance (`complianceKnowledge.ts`), subsidies (`subsidyKnowledge.ts`), support hotlines
 (`counselorKnowledge.ts`), and economic history (`economicHistoryKnowledge.ts`) — are the single source
-of truth for an **Obsidian knowledge vault** (`knowledge-vault/`, 7,500+ notes, `npm run vault:build`)
+of truth for an **Obsidian knowledge vault** (`knowledge-vault/`, 7,000+ notes, `npm run vault:build`)
 and are injected as context into the AI-orchestration runtime per executive role
 (`orchestration/knowledge-map.json`, `orchestration/knowledge-context.cjs`, `npm run orchestrate:context`
-/ dispatch). `vault:check` (in `verify:all`/CI) enforces vault sync and forbids duplicate ids
-(`node scripts/dedupe-knowledge.cjs` consolidates). See `docs/KNOWLEDGE_VAULT.md`.
+/ dispatch). `vault:check` (in `verify:all`/CI) enforces vault sync, forbids duplicate ids
+(`node scripts/dedupe-knowledge.cjs` consolidates), and fails when the concept table in
+`docs/ACADEMIC_KNOWLEDGE.md` is stale — that table is **generated** from the corpus by
+`npm run knowledge:md` (never hand-edit rows; 2026-09-05 実測で手書き表は本体と 942 行／909 項目ずれていた).
+See `docs/KNOWLEDGE_VAULT.md`.
 
 ## Commands
 
@@ -77,13 +85,18 @@ Vitest config is in `vitest.config.ts` (node environment).
 npm run verify:arch        # docs/ARCHITECTURE.md file:line refs + live metrics must match reality
 npm run lint:imports       # main / preload / renderer import-boundary enforcement
 npm run lint:forbidden     # forbidden patterns (nodeIntegration: true / contextIsolation: false /
-                           #   sandbox: false / webSecurity: false / eval / innerHTML ほか 36 種)
+                           #   sandbox: false / webSecurity: false / eval / innerHTML ほか 37 種)
 npm run lint:workflow-security # .github/workflows/: permissions の明示・第三者 action の SHA 固定・
                            #   pull_request_target 禁止・run: への信用できない値の埋め込み
 npm run lint:network-targets # 送り先ホストが変数で決まる通信の台帳 (資格情報の流出経路)
 npm run lint:docs          # cross-document consistency
-npm run lint:citations     # 出典の内部矛盾 (同一 DOI が別々の出版年で引かれていないか)
-npm run lint:doi-prefix    # DOI プレフィックス(=登録機関=出版社) とラベルの出版社の矛盾
+npm run lint:citations     # 出典の内部矛盾 (同一 DOI が別々の出版年・別々の著作で引かれていないか)、
+                           #   種別の偽装 (雑誌・ブログ・百科事典の URL に 'academic' が付いていないか)、
+                           #   同じ URL は同じ種別 (項目ごとに 'academic' / 'media' が揺れていないか)
+npm run lint:doi-prefix    # DOI プレフィックス(=登録機関=出版社) とラベルの出版社の矛盾。
+                           #   ISSN を埋め込む DOI (APA / Elsevier PII / Wiley j. / SAGE) は台帳 164 誌で、誌の略号を
+                           #   持つ DOI (INFORMS / Oxford / Wiley / Springer / Annual Reviews / MIT / Emerald) は
+                           #   台帳 153 誌で誌名も照合し、ISSN の検査数字も検算する (1 回しか引かれない誤 DOI を拾う)
 npm run lint:charset       # 他文字種・簡体字の混入 (CJK は共有ブロックなので字を列挙するしかない)
 npm run lint:knowledge-refs # 裁定台帳が実在しない知識 id を参照していないか
 npm run lint:test-coverage # every service must have a test + an action registered
@@ -92,30 +105,54 @@ npm run lint:csp           # 出荷 HTML の CSP を**実物**に当てる (self
                            #   雛形側 (index.html / inline-html.cjs の buildCsp) は
                            #   `shared/__tests__/shippedCsp.test.ts` が既に留めている ——
                            #   こちらが見るのは **注入後の公開ファイル** と landing / デモ 3 本
-npm run lint:deps          # 依存の供給網 (本番依存の閉包 5 件 / インストール時コード 3 件 の台帳・
-                           #   取得元は registry のみ・integrity 必須。本番依存は単一 HTML へ
-                           #   畳み込まれ保管庫と同じオリジンで走るので、増やすなら理由を書く)
+npm run lint:deps          # 依存の供給網 (本番依存の閉包 5 件 / インストール時コード 3 件 /
+                           #   **セキュリティの床 4 件** の台帳・取得元は registry のみ・integrity 必須。
+                           #   本番依存は単一 HTML へ畳み込まれ保管庫と同じオリジンで走るので、
+                           #   増やすなら理由を書く。床は「上流が直るまで自分で押さえている版」で、
+                           #   道 (overrides / devDependencies の範囲) を問わず 1 つの台帳に載せ、
+                           #   宣言の消失・指定の緩み・lockfile の解決版 (入れ子の複製も) を見る。
+                           #   **床が今日の勧告にまだ十分かは網が要る** → `npm run audit:floors`
+                           #   (CI では走らせない。定期点検の道具)
 npm run lint:storage       # ブラウザに残す物の台帳 (IndexedDB 4 / Cache Storage 1 /
                            #   localStorage 21 / sessionStorage 4。cookie と OPFS は 0 件だが走査はする)。
                            #   新しい保存先が黙って増えないこと・バックアップが覆うのは 1 つだけ・
-                           #   **媒体そのものが `docs/DATA_PROTECTION.md` の在庫に載っていること**
+                           #   **媒体そのものが `docs/DATA_PROTECTION.md` の在庫に載っていること**・
+                           #   **ハードリセット (すべてのデータを削除) が台帳の全行を覆うこと** (規則 11、パス 136)
 npm run lint:shell         # scripts/*.sh: bash -n syntax + strict mode (set -euo pipefail)
-npm run lint:mutation-scope # 変異検査の「測っていない範囲」の台帳 (広い Stryker disable)
+npm run lint:mutation-scope # 変異検査の「測っていない範囲」の台帳 (広い Stryker disable と、
+                           #   **理由が書かれていない pragma** —— 無言の pragma はその行の変異体を
+                           #   消すので、測っていない範囲が「100%」として報告される)
 npm run lint:regex         # 正規表現の破滅的バックトラック (ReDoS) を実測。worker + 番犬つき
                            #   (モデル応答を解析する assistantMarkdown.ts が主眼。指数のみ)
-npm run verify:all         # typecheck + all of the above + eslint (34 ゲート)
+npm run lint:parameter-prose # 画面が刷る数字と、計算に使う数字の出所が同じか
+                           #   (`parameters.ts` の台帳で上書きできる 115 の定数について、
+                           #   renderer が既定定数を**直接**刷っていないか。上書きすると
+                           #   「効いているのに画面が古い数字で説明する」形になる。
+                           #   倒し込み (`??` / 既定引数 / `=== 既定`) は規則の外・
+                           #   それ以外の直接使用は台帳に理由つきで登録する)
+npm run lint:zero-fold     # 「割れない値を 0 に倒す」箇所の**母集団**を数え、
+                           #   `docs/REMAINING_WORK.md` の生成ブロックと突き合わせる
+                           #   (`? … : 0` / `?? 0` / `|| 0`。コメントと文字列は落とす)。
+                           #   **これは分母であって欠陥の一覧ではない** —— 正しい 0
+                           #   (0 除算の防御・明示的な費用 0・作図の座標) と本物の欠陥の
+                           #   両方を含み、どちらかは読まないと決まらない。数は機械が、
+                           #   判断は散文が持つ。2026-09-08 まで件数は手で書かれ誰も検算せず、
+                           #   母集団が 26 ファイル (実測 106) と 4 倍ずれていた
+npm run verify:all         # typecheck + all of the above + eslint (36 ゲート)
                            #   **`npm test` は含まない。** CI は両方走らせるので、
                            #   push 前は `npm test && npm run verify:all` の両方を回すこと
                            #   (verify:all だけを見て「全 green」と言うと CI で落ちる)
 npm run mutate             # Stryker mutation testing (target: 100%); mutate:triage / mutate:next help
 npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+NotebookLM) → verify → work queue
+npm run knowledge:md       # docs/ACADEMIC_KNOWLEDGE.md の概念表を academicKnowledge.ts から再生成
+                           #   (表は生成物 — 手で行を書かない。vault:check が「再生成 == committed」を検証)
                            #   (weekly CI: knowledge-auto.yml; consume queue per docs/KNOWLEDGE_AUTOPILOT.md)
 ```
 
 These are plain Node scripts in `scripts/` — there is no AST parser dependency; they grep marker
 comments and source. `verify:arch` will fail if you change architecture without updating
 `docs/ARCHITECTURE.md`. CI (`.github/workflows/ci.yml`) runs a single consolidated job on push to
-`main` and PRs to `main` (one `npm ci`, then typecheck + **all 34 `verify:all` gates**, vitest +
+`main` and PRs to `main` (one `npm ci`, then typecheck + **all 36 `verify:all` gates**, vitest +
 coverage, and `build:web` asserting `dist/standalone.html` is generated and non-trivial) — collapsed
 from 3 jobs
 to 1 to minimize GitHub Actions minutes on the free tier. **`lint:docs` enforces that every gate in
@@ -123,6 +160,10 @@ to 1 to minimize GitHub Actions minutes on the free tier. **`lint:docs` enforces
 existing but guarding nothing, which is exactly what happened to `lint:citations`,
 `lint:knowledge-refs` and `verify:knowledge` (the provenance gate) until 2026-07-30.
 `.github/workflows/release.yml` builds Mac/Win/Linux installers on `v*` tags;
+`dependency-audit.yml` runs **weekly** (Mon 07:00 JST) — `npm audit` (全体 / prod) +
+`audit:floors` を突き合わせ、要対応を常設 Issue 1 つに集める。**PR の門は狭いまま**
+(`--omit=dev --audit-level=high`) で、狭くした外側 (dev の勧告・床の古び) を週次が受け持つ。
+予定実行なので誰の PR も赤くしない;
 `mutation.yml` runs Stryker (weekly + on pushes to `main` that touch `stryker.config.json`,
 `vitest.config.ts`, `src/main/clients/**` or `src/main/oauth.ts`). `e2e` / `e2e:lite` / `perf` / `smoke:app` **are** wired into `.github/workflows/e2e.yml`, but it does **not run by
 default** (Actions 分の節約): trigger it from the Actions tab (`workflow_dispatch`) or by putting the
@@ -147,7 +188,8 @@ Three TypeScript build contexts, kept separate via `tsconfig` project references
   `contextBridge.exposeInMainWorld`. The bridge type is re-declared globally in
   `src/shared/bridge.d.ts` so the renderer calls it without imports.
 - **`src/renderer/`** — React app. `App.tsx` renders the category-grouped sidebar from `SERVICES`
-  (`services.ts`). The renderer never sees raw tokens — it only calls
+  (`services.ts`) and mounts the active page inside `components/PageErrorBoundary.tsx` (a render
+  error stays inside that page's frame; the sidebar keeps working). The renderer never sees raw tokens — it only calls
   `serviceHub.setToken / clearToken / listConfigured / fetchSnapshot / invoke / openExternal`.
 
 ### The single source of truth for services

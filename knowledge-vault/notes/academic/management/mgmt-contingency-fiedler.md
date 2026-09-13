@@ -26,7 +26,7 @@ aliases:
 フレッド・フィードラー ／ ジョセフ・ガルシア ／ ロバート・ハウス ／ ゲイリー・ユークル
 
 ## 出典
-- [Fiedler, F.E. (1967) A Theory of Leadership Effectiveness — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/263587) `学術`
+- [Fiedler, F.E. (1967) A Theory of Leadership Effectiveness — McGraw-Hill (WorldCat)](https://www.worldcat.org/oclc/263587) `リファレンス`
 - [Wikipedia: Fiedler contingency model — LPC scale, situational favorableness, task/relationship orientation](https://en.wikipedia.org/wiki/Fiedler_contingency_model) `リファレンス`
 
 ## 関連概念

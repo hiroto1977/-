@@ -7,12 +7,15 @@ import { serviceIdFromHash, hashForService } from './hashRoute';
 import { ManualDataSection } from './components/ManualDataSection';
 import { pushRecent, toggleFavorite, keepKnown, RECENTS_MAX } from './recents';
 import { LockScreen } from './security/LockScreen';
+import { isBrowserBuild } from './runtimeMode';
 import { getVault } from './security/vault';
 import { startAutoLock } from './security/autoLock';
-import { lockWorkspace } from './security/lockWorkspace';
+import { lockWorkspace, startLockRelay, subscribeWorkspaceLocked } from './security/lockWorkspace';
 import { usePlan } from './plan/usePlan';
 import { VoiceCommandBar } from './components/VoiceCommandBar';
 import { ChatbotWidget } from './components/ChatbotWidget';
+import { PageErrorBoundary } from './components/PageErrorBoundary';
+import { DeviceStoreFailureBanner } from './components/DeviceStoreFailureBanner';
 import {
   PLAN_ORDER,
   PLANS,
@@ -25,14 +28,8 @@ import {
 // True when the renderer is loaded in a plain browser (no Electron preload).
 // The Electron preload sets serviceHub via contextBridge — if `getVersion`
 // returns the web shim's '0.1.0-web', we're in the browser.
-async function detectBrowserMode(): Promise<boolean> {
-  try {
-    const v = await window.serviceHub.getVersion();
-    return v === '0.1.0-web';
-  } catch {
-    return false;
-  }
-}
+/** 設定画面と同じ判定 (`runtimeMode.ts` · パス 137) —— 片方だけ写すとデスクトップ版に保管庫の操作が出る。 */
+const detectBrowserMode = isBrowserBuild;
 
 const COLLAPSED_BY_DEFAULT: ReadonlySet<ServiceCategory> = new Set<ServiceCategory>([
   'tools',
@@ -136,14 +133,37 @@ export function App() {
     };
   }, []);
 
+  /*
+   * 施錠されたら**必ず**ロック画面へ戻す。
+   *
+   * `vaultUnlocked` はマウント時に 1 度だけ読むので、購読が無いと
+   * 「鍵は落ちたのに画面は解錠のまま」が残る —— 2026-09-06 実測で、
+   * 設定ページの「Vault を今すぐロック」がまさにそれだった (ページ局所の
+   * 状態を立てるだけで、ロック画面は出ず、他のページへ移れば見た目は解錠)。
+   *
+   * 解錠状態に**依らず**登録する (`vaultUnlocked` を依存に入れない) ——
+   * 施錠済みのタブが他のタブからの要求を受け取っても害はなく、
+   * 逆に「登録される前に施錠が来る」窓を作らない。
+   * Electron ではロック画面を使わないので購読も中継もしない。
+   */
+  useEffect(() => {
+    if (!browserMode) return undefined;
+    const unsubscribe = subscribeWorkspaceLocked(() => setVaultUnlocked(false));
+    const stopRelay = startLockRelay();
+    return () => {
+      unsubscribe();
+      stopRelay();
+    };
+  }, [browserMode]);
+
   // Start auto-lock when entering unlocked state (browser mode only).
   useEffect(() => {
     if (!browserMode || !vaultUnlocked) return undefined;
-    const handle = startAutoLock({
-      // 鍵を落とすのと画面を施錠表示にするのは `lockWorkspace` の中で 1 つ。
-      // 並べて書くと鍵を落とす側だけ消えても全検査が緑のまま通る (実測)。
-      onLock: () => lockWorkspace(() => setVaultUnlocked(false)),
-    });
+    // 鍵を落とすのと画面を施錠表示にするのは `lockWorkspace` の中で 1 つ。
+    // 並べて書くと鍵を落とす側だけ消えても全検査が緑のまま通る (実測)。
+    // 自動施錠は**この文脈だけ**を施錠する —— hidden は「同じアプリの別の
+    // タブへ移った」時でもあるので、配ると使用中のタブを施錠してしまう。
+    const handle = startAutoLock({ onLock: lockWorkspace });
     return () => handle.dispose();
   }, [browserMode, vaultUnlocked]);
 
@@ -254,7 +274,13 @@ export function App() {
     return <div style={{ padding: 24, color: 'var(--text-mute)' }}>読み込み中…</div>;
   }
   if (browserMode && !vaultUnlocked) {
-    return <LockScreen onUnlocked={() => setVaultUnlocked(true)} />;
+    // ロック画面はアプリへの唯一の入口 —— ここが描画で投げると真っ白のまま何もできない。
+    // 画面の境界と同じ物で包む (「ホームへ戻る」は無い: 解錠前に戻る先が無い)。
+    return (
+      <PageErrorBoundary label="ロック画面">
+        <LockScreen onUnlocked={() => setVaultUnlocked(true)} />
+      </PageErrorBoundary>
+    );
   }
 
   const active = SERVICES.find((s) => s.id === activeId)!;
@@ -453,8 +479,16 @@ export function App() {
           </span>
         </header>
         <section className="content">
+          {/*
+            端末が業務レコードの読み書きを断ったことは、**どの画面でも同じ打ち手**に
+            なるので 1 か所で出す。画面の境界の外に置く —— 中だと画面が落ちたときに
+            報せも消える。
+          */}
+          <DeviceStoreFailureBanner />
           {activeUnlocked ? (
-            <>
+            // 画面の描画エラーはこの枠に閉じる (境界が無いと React はツリー全体を外し、サイドバーごと白くなる)。
+            // key で画面ごとに張り直す —— 別の画面へ移れば新しい境界。
+            <PageErrorBoundary key={active.id} label={active.label} onGoHome={() => selectService('home')}>
               <PageComponent />
               {/*
                 手入力欄は**ここ 1 か所**に置く。画面ごとに貼って回ると必ず
@@ -462,7 +496,7 @@ export function App() {
                 置き換えの一覧を持たない画面では「足す」側だけが出る。
               */}
               <ManualDataSection scope={active.id} />
-            </>
+            </PageErrorBoundary>
           ) : (
             <UpgradeNotice
               requiredPlan={requiredPlan}

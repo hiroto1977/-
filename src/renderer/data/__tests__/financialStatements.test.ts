@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
+  statementEstimateNotes,
   buildIncomeStatement, buildBalanceSheet, buildCashflowStatement,
   buildVariableCostingStatement, buildComprehensiveIncome, buildEquityChangeStatement, sumFinancialInputs,
   buildQuarterlyStatement, buildNotesStatement, buildSupplementarySchedule, buildAccountBreakdown,
 } from '../financialStatements';
-import { deriveBusinessFinancials } from '../businessFinancials';
+import { deriveBusinessFinancials, shortTermDebtPortion, shortTermDebtShare } from '../businessFinancials';
 import type { FinancialInputs } from '../financialRatios';
 
 const F: FinancialInputs = {
@@ -55,9 +56,9 @@ describe('buildBalanceSheet', () => {
   });
   it('splits debt into short/long term and other liabilities (exact)', () => {
     const { liabilitiesEquity } = buildBalanceSheet(F);
-    expect(amt(liabilitiesEquity, '短期借入金')).toBe(750); // 流動負債2500 × 0.3
+    expect(amt(liabilitiesEquity, '短期借入金（流動負債の30%と仮定）')).toBe(750); // 流動負債2500 × 0.3
     expect(amt(liabilitiesEquity, '（その他流動負債）')).toBe(250); // 2500 − 仕入1500 − 750
-    expect(amt(liabilitiesEquity, '長期借入金')).toBe(3_250); // 有利子4000 − 短期750
+    expect(amt(liabilitiesEquity, '長期借入金（有利子負債 − 短期借入金）')).toBe(3_250); // 有利子4000 − 短期750
     expect(amt(liabilitiesEquity, '（その他固定負債）')).toBe(250); // 固定3500 − 長期3250
     expect(amt(liabilitiesEquity, '負債合計')).toBe(6_000); // 2500 + 3500
   });
@@ -144,8 +145,8 @@ describe('buildNotesStatement', () => {
 describe('buildSupplementarySchedule', () => {
   it('breaks debt into short/long term summing to interest-bearing debt', () => {
     const s = buildSupplementarySchedule(F);
-    const short = amt(s, '短期借入金')!; // 2500 * 0.3 = 750
-    const long = amt(s, '長期借入金')!; // 4000 - 750 = 3250
+    const short = amt(s, '短期借入金（流動負債の30%と仮定）')!; // 2500 * 0.3 = 750
+    const long = amt(s, '長期借入金（有利子負債 − 短期借入金）')!; // 4000 - 750 = 3250
     expect(short).toBe(750);
     expect(long).toBe(3_250);
     expect(amt(s, '有利子負債 合計')).toBe(4_000);
@@ -159,7 +160,7 @@ describe('buildAccountBreakdown', () => {
     expect(amt(b, '現預金（概算）')).toBe(2_000); // 5000 - 2000 - 1000
     expect(amt(b, '売掛金 期末残高')).toBe(2_000);
     expect(amt(b, '買掛金 期末残高')).toBe(1_500);
-    expect(amt(b, '短期借入金')).toBe(750);
+    expect(amt(b, '短期借入金（流動負債の30%と仮定）')).toBe(750);
   });
 });
 
@@ -180,7 +181,7 @@ describe('golden: exact statement structures (kills label/flag/amount mutants)',
   it('buildBalanceSheet 資産の部 / 負債・純資産の部', () => {
     const bs = buildBalanceSheet(F);
     expect(JSON.stringify(bs.assets)).toBe('[{"label":"流動資産","amount":5000,"emphasis":true},{"label":"現預金","amount":2000,"indent":1},{"label":"売上債権","amount":2000,"indent":1},{"label":"棚卸資産","amount":1000,"indent":1},{"label":"固定資産","amount":5000,"emphasis":true},{"label":"資産合計","amount":10000,"emphasis":true}]');
-    expect(JSON.stringify(bs.liabilitiesEquity)).toBe('[{"label":"流動負債","amount":2500,"emphasis":true},{"label":"仕入債務","amount":1500,"indent":1},{"label":"短期借入金","amount":750,"indent":1},{"label":"（その他流動負債）","amount":250,"indent":1},{"label":"固定負債","amount":3500,"emphasis":true},{"label":"長期借入金","amount":3250,"indent":1},{"label":"（その他固定負債）","amount":250,"indent":1},{"label":"負債合計","amount":6000,"emphasis":true},{"label":"純資産（自己資本）","amount":4000,"emphasis":true},{"label":"負債・純資産合計","amount":10000,"emphasis":true}]');
+    expect(JSON.stringify(bs.liabilitiesEquity)).toBe('[{"label":"流動負債","amount":2500,"emphasis":true},{"label":"仕入債務","amount":1500,"indent":1},{"label":"短期借入金（流動負債の30%と仮定）","amount":750,"indent":1},{"label":"（その他流動負債）","amount":250,"indent":1},{"label":"固定負債","amount":3500,"emphasis":true},{"label":"長期借入金（有利子負債 − 短期借入金）","amount":3250,"indent":1},{"label":"（その他固定負債）","amount":250,"indent":1},{"label":"負債合計","amount":6000,"emphasis":true},{"label":"純資産（自己資本）","amount":4000,"emphasis":true},{"label":"負債・純資産合計","amount":10000,"emphasis":true}]');
   });
   it('buildCashflowStatement', () => {
     expect(JSON.stringify(buildCashflowStatement(F))).toBe('[{"label":"営業活動によるキャッシュフロー","amount":1100,"emphasis":true},{"label":"当期純利益","amount":800,"indent":1},{"label":"減価償却費","amount":300,"indent":1},{"label":"投資活動によるキャッシュフロー","amount":-300,"emphasis":true},{"label":"（維持投資 ≈ 減価償却費 と仮定）","amount":null,"indent":1},{"label":"財務活動によるキャッシュフロー","amount":0,"emphasis":true},{"label":"（借入増減データ無し → 概算0）","amount":null,"indent":1},{"label":"フリーキャッシュフロー（営業+投資）","amount":800,"emphasis":true}]');
@@ -198,10 +199,10 @@ describe('golden: exact statement structures (kills label/flag/amount mutants)',
     expect(JSON.stringify(buildNotesStatement(F))).toBe('[{"label":"1. 重要な会計方針に係る事項","amount":null,"emphasis":true},{"label":"固定資産の減価償却の方法","amount":null,"display":"定額法（概算）","indent":1},{"label":"棚卸資産の評価基準・方法","amount":null,"display":"原価法","indent":1},{"label":"消費税等の会計処理","amount":null,"display":"税抜方式","indent":1},{"label":"2. 貸借対照表に関する注記","amount":null,"emphasis":true},{"label":"有利子負債の額","amount":4000,"indent":1},{"label":"減価償却累計額（概算）","amount":900,"indent":1},{"label":"3. 損益計算書に関する注記","amount":null,"emphasis":true},{"label":"販管費に含まれる人件費","amount":3000,"indent":1},{"label":"4. 注記","amount":null,"emphasis":true},{"label":"本注記は概算値・テンプレートであり、財務助言ではありません。","amount":null,"indent":1}]');
   });
   it('buildSupplementarySchedule', () => {
-    expect(JSON.stringify(buildSupplementarySchedule(F))).toBe('[{"label":"① 有形固定資産及び減価償却累計額の明細","amount":null,"emphasis":true},{"label":"有形固定資産（期末残高）","amount":5000,"indent":1},{"label":"当期減価償却費","amount":300,"indent":1},{"label":"減価償却累計額（概算）","amount":900,"indent":1},{"label":"② 借入金等明細","amount":null,"emphasis":true},{"label":"短期借入金","amount":750,"indent":1},{"label":"長期借入金","amount":3250,"indent":1},{"label":"有利子負債 合計","amount":4000,"indent":1},{"label":"③ 引当金の明細","amount":null,"emphasis":true},{"label":"引当金（データ無しのため 0 と仮定）","amount":0,"indent":1}]');
+    expect(JSON.stringify(buildSupplementarySchedule(F))).toBe('[{"label":"① 有形固定資産及び減価償却累計額の明細","amount":null,"emphasis":true},{"label":"有形固定資産（期末残高）","amount":5000,"indent":1},{"label":"当期減価償却費","amount":300,"indent":1},{"label":"減価償却累計額（概算）","amount":900,"indent":1},{"label":"② 借入金等明細","amount":null,"emphasis":true},{"label":"短期借入金（流動負債の30%と仮定）","amount":750,"indent":1},{"label":"長期借入金（有利子負債 − 短期借入金）","amount":3250,"indent":1},{"label":"有利子負債 合計","amount":4000,"indent":1},{"label":"③ 引当金の明細","amount":null,"emphasis":true},{"label":"引当金（データ無しのため 0 と仮定）","amount":0,"indent":1}]');
   });
   it('buildAccountBreakdown', () => {
-    expect(JSON.stringify(buildAccountBreakdown(F))).toBe('[{"label":"現預金及び預貯金の内訳","amount":null,"emphasis":true},{"label":"現預金（概算）","amount":2000,"indent":1},{"label":"売掛金（売上債権）の内訳","amount":null,"emphasis":true},{"label":"売掛金 期末残高","amount":2000,"indent":1},{"label":"棚卸資産の内訳","amount":null,"emphasis":true},{"label":"商品・製品・原材料 等","amount":1000,"indent":1},{"label":"買掛金（仕入債務）の内訳","amount":null,"emphasis":true},{"label":"買掛金 期末残高","amount":1500,"indent":1},{"label":"借入金の内訳","amount":null,"emphasis":true},{"label":"短期借入金","amount":750,"indent":1},{"label":"長期借入金","amount":3250,"indent":1}]');
+    expect(JSON.stringify(buildAccountBreakdown(F))).toBe('[{"label":"現預金及び預貯金の内訳","amount":null,"emphasis":true},{"label":"現預金（概算）","amount":2000,"indent":1},{"label":"売掛金（売上債権）の内訳","amount":null,"emphasis":true},{"label":"売掛金 期末残高","amount":2000,"indent":1},{"label":"棚卸資産の内訳","amount":null,"emphasis":true},{"label":"商品・製品・原材料 等","amount":1000,"indent":1},{"label":"買掛金（仕入債務）の内訳","amount":null,"emphasis":true},{"label":"買掛金 期末残高","amount":1500,"indent":1},{"label":"借入金の内訳","amount":null,"emphasis":true},{"label":"短期借入金（流動負債の30%と仮定）","amount":750,"indent":1},{"label":"長期借入金（有利子負債 − 短期借入金）","amount":3250,"indent":1}]');
   });
   it('buildQuarterlyStatement (4ヶ月→2四半期)', () => {
     const q = buildQuarterlyStatement([{ revenue: 100, profit: 10 }, { revenue: 100, profit: 10 }, { revenue: 100, profit: 10 }, { revenue: 200, profit: 20 }]);
@@ -267,5 +268,114 @@ describe('financialStatements — mutation edge cases', () => {
     const bs = buildBalanceSheet(F);
     expect(bs.assets).toHaveLength(6);
     expect(bs.liabilitiesEquity).toHaveLength(10);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 借入金の切り分け —— **同じ画面から続けて書き出す 3 書類が同じ数を出すか**
+// ---------------------------------------------------------------------------
+/**
+ * 2026-09-07 の実測: 「短期借入金 = 流動負債 × 0.3」が
+ * `businessFinancials.ts` と `financialStatements.ts` に**別々のリテラルで 4 回**
+ * 書かれており、片方を動かすと 附属明細書の「有利子負債 合計」と
+ * 個別注記表の「有利子負債の額」が黙って食い違うところだった。
+ * さらに元の式は短期側に上限が無く、買掛金が厚く借入が薄い会社では
+ * 実際に食い違った (下の ★ 2 本目)。
+ */
+describe('有利子負債の切り分け (貸借対照表 / 附属明細書 / 勘定科目内訳明細書)', () => {
+  const ST = `短期借入金（流動負債の${shortTermDebtShare() * 100}%と仮定）`;
+  const LT = '長期借入金（有利子負債 − 短期借入金）';
+
+  it('★ 附属明細書の「有利子負債 合計」は 個別注記表の「有利子負債の額」と一致する', () => {
+    // 概算の入力を広く振る (売上・利益率・原価の組み合わせ)。
+    for (const revenue of [0, 1, 250_000, 1_000_000, 80_000_000]) {
+      for (const profitMargin of [-30, 0, 7, 20, 60]) {
+        const f = deriveBusinessFinancials({
+          revenue,
+          variableCost: Math.round(revenue * 0.6),
+          fixedCost: Math.round(revenue * 0.25),
+          profit: Math.round((revenue * profitMargin) / 100),
+          profitMargin,
+        });
+        const suppl = amt(buildSupplementarySchedule(f), '有利子負債 合計');
+        const notes = amt(buildNotesStatement(f), '有利子負債の額');
+        expect(suppl, `revenue=${revenue} margin=${profitMargin}`).toBe(notes);
+        expect(suppl).toBe(f.interestBearingDebt);
+      }
+    }
+  });
+
+  it('★ 有利子負債より短期借入相当が大きい会社でも、合計は有利子負債を超えない', () => {
+    // 買掛金が厚く借入が薄い形 (流動負債 10,000 に対し有利子負債 1,000)。
+    // 上限が無いと 短期 3,000 + 長期 0 = 3,000 を「有利子負債 合計」として刷り、
+    // 個別注記表の 1,000 と食い違う。
+    const thin: FinancialInputs = { ...F, currentLiabilities: 10_000, interestBearingDebt: 1_000 };
+    expect(shortTermDebtPortion(thin.currentLiabilities)).toBeGreaterThan(thin.interestBearingDebt);
+    const suppl = buildSupplementarySchedule(thin);
+    expect(amt(suppl, ST)).toBe(1_000);
+    expect(amt(suppl, LT)).toBe(0);
+    expect(amt(suppl, '有利子負債 合計')).toBe(1_000);
+    expect(amt(buildNotesStatement(thin), '有利子負債の額')).toBe(1_000);
+    // 対照: 上限に当たらない普通の会社では、割合どおり切り出す。
+    expect(amt(buildSupplementarySchedule(F), ST)).toBe(750);
+  });
+
+  it('★ 3 書類が同じ短期・長期の額を出す', () => {
+    const bs = buildBalanceSheet(F).liabilitiesEquity;
+    const suppl = buildSupplementarySchedule(F);
+    const brk = buildAccountBreakdown(F);
+    for (const label of [ST, LT]) {
+      expect(amt(bs, label), label).toBe(amt(suppl, label));
+      expect(amt(brk, label), label).toBe(amt(suppl, label));
+    }
+    expect(amt(bs, ST)).toBe(750);
+  });
+
+  it('★ 行の見出しが割合を名乗り、その割合は計算と同じ出所から来る', () => {
+    const labels = buildSupplementarySchedule(F).map((l) => l.label);
+    // 標本: 「短期借入金」と素で名乗る行は無い (実測の額ではなく置き値だと分かる)。
+    expect(labels).toContain(ST);
+    expect(labels).not.toContain('短期借入金');
+    expect(labels).not.toContain('長期借入金');
+    // 割合の数字を文字列に写していない: 台帳を動かせば見出しも動く。
+    expect(ST).toContain(`${shortTermDebtShare() * 100}%`);
+  });
+});
+
+/**
+ * 断り書きの**中身**を綴りで留める。
+ *
+ * 2026-09-07 の変異検査で自分の穴が出た: 画面と CSV の検査はどちらも
+ * `expect(出力).toContain(statementEstimateNotes()[i])` と**同じ出所を両辺に置いて**
+ * いたので、文が空文字になっても `toContain('')` が真になり通ってしまう
+ * (`financialStatements.ts:51-53` の StringLiteral 変異体 3 件が生存)。
+ * 「同じ出所から読んでいる」ことの検査 (画面と CSV の一致) はそのまま要るが、
+ * **中身が在ることは綴りで別に留める**。
+ */
+describe('statementEstimateNotes — 断り書きの中身', () => {
+  const notes = statementEstimateNotes();
+
+  it('★ 2 文あり、どちらも空でない', () => {
+    expect(notes).toHaveLength(2);
+    for (const n of notes) expect(n.length).toBeGreaterThan(40);
+  });
+
+  it('★ 1 文目は「どの表がどう概算か」を名乗る', () => {
+    expect(notes[0]).toContain('諸表・指標・チャートは同じ概算財務データに連動');
+    expect(notes[0]).toContain('CFは簡易間接法');
+    expect(notes[0]).toContain('包括利益のOCI・株主資本変動の配当はデータ無しのため0/概算');
+    expect(notes[0]).toContain('四半期は月次履歴を3ヶ月集計');
+    expect(notes[0]).toContain('注記/附属明細/勘定科目内訳はテンプレート+概算値');
+    expect(notes[0]).toContain('連結は内部取引消去なしの単純合算');
+  });
+
+  it('★ 2 文目は「BS/CF はどこから作ったか」と「助言ではない」を名乗る', () => {
+    expect(notes[1]).toContain('事業別の貸借対照表データが無いため');
+    expect(notes[1]).toContain('売上・収益性から概算生成しています');
+    expect(notes[1]).toContain('概算であり財務助言ではありません');
+  });
+
+  it('どちらも ※ で始まる (画面でも CSV でも注記だと分かる)', () => {
+    for (const n of notes) expect(n.startsWith('※ ')).toBe(true);
   });
 });

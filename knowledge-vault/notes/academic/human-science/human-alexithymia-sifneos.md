@@ -3,37 +3,36 @@ collection: academic
 id: human-alexithymia-sifneos
 category: "human-science"
 category_ja: "人間科学"
-title: "アレキシサイミア（感情失認）（シフネオス）"
-as_of: "2026-06-26"
-source_count: 4
+title: "アレキシサイミア（失感情症・シフネオス）——自分の感情を識別し言葉にすることが難しく、身体感覚と区別できず、外向きの思考に傾く特性"
+as_of: "2026-09"
+source_count: 2
 authoritative: true
 tags:
   - collection/academic
   - academic/human-science
   - knowledge/verified
 aliases:
-  - "アレキシサイミア（感情失認）（シフネオス）"
+  - "アレキシサイミア（失感情症・シフネオス）——自分の感情を識別し言葉にすることが難しく、身体感覚と区別できず、外向きの思考に傾く特性"
 ---
 
-# アレキシサイミア（感情失認）（シフネオス）
+# アレキシサイミア（失感情症・シフネオス）——自分の感情を識別し言葉にすることが難しく、身体感覚と区別できず、外向きの思考に傾く特性
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 人間科学 ・ asOf: 2026-06-26 ・ 出典: 4件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 人間科学 ・ asOf: 2026-09 ・ 出典: 2件（うち権威ある出典 ✓）
 
 ## 概要
-アレキシサイミア（alexithymia; 感情失認）は、ピーター・シフネオス（1973）が提唱した、①感情状態の識別・言語化の困難、②身体感覚と感情の区別の困難、③想像力の乏しさ・外向き思考（外部指向的思考: externally-oriented thinking）——を特徴とするパーソナリティ特性である。「アレキシサイミア（alexithymia）」はギリシャ語でa（なし）＋lexis（言葉）＋thymos（感情）を意味する造語で、心身症患者に多く観察されると報告した。テイラー他（1985）の「多倫多アレキシサイミア尺度（Toronto Alexithymia Scale; TAS-20）」は国際的に最も広く使用される測定ツールであり、20項目の自己報告尺度として確立されている。アレキシサイミアは自閉スペクトラム症（ASD）・PTSD・うつ病・摂食障害・物質依存と高い併存率を示し、感情調節障害の根底にある共通メカニズムとして研究されている。神経科学研究では前頭葉—辺縁系回路の機能的非効率性（reduced connectivity in the anterior insula and ACC）との関連が示唆されている。
+アレキシサイミア（alexithymia、失感情症）は、精神科医ピーター・シフネオスがギリシャ語の「a（欠如）・lexis（言葉）・thymos（感情）」から1972年に造語し、1973年の論文（Psychotherapy and Psychosomatics）で心身症患者に多く見られることを報告したパーソナリティ特性である。特徴は、自分の感情状態を識別し言語化することの困難、身体感覚と感情の区別の困難、空想や想像の乏しさ、そして内面より外的な事柄に向かう外向的思考の四つで、感情処理の様式として理解される。グレアム・テイラー、マイケル・バグビー、ジェームズ・パーカーらが開発した20項目のトロント・アレキシサイミア尺度（TAS-20）が国際的に最も広く使われる自己報告尺度で、一般人口のおよそ1割が高い値を示すとされる。身体化障害・過敏性腸症候群などの心身症、摂食障害、PTSD、うつ病、物質依存との併存率が高く、自閉スペクトラム症との重複も大きいことから、感情調節困難の根底にある共通の機構として研究されている。神経科学的には島皮質や前帯状皮質を含む感情と認知の統合回路の機能変化、身体内部感覚（内受容感覚）の鈍さとの関連が検討され、治療には感情焦点化療法、身体志向の心理療法、マインドフルネス介入、感情表現ライティングなどが用いられる。限界としては、特性か状態かの区別、自己報告尺度が「自分の感情が分からない人の自己報告」に依存する矛盾、文化差が指摘される。中小企業には、ストレスを言葉にできない従業員が不調を身体症状として訴えることがあると知り、産業医や相談窓口につなぐ導線を用意し、感情の表現を求めるより行動や体調の変化に注意を払うという含意がある。
 
 ## 提唱者・初出
-ピーター・シフネオス ／ グレアム・テイラー ／ ジョン・バグビー ／ ジョルジオ・ネムイア
+ピーター・シフネオス（1972 造語／1973 心身症患者の有病率報告）／グレアム・テイラー＆マイケル・バグビー＆ジェームズ・パーカー（TAS-20 尺度）
 
 ## 出典
-- [Sifneos, P. E. (1973) The Prevalence of "Alexithymic" Characteristics in Psychosomatic Patients — Psychotherapy and Psychosomatics, 22(2–6), 255–262（アレキシサイミア原典）](https://doi.org/10.1159/000286529) `学術`
-- [Taylor, G. J., Bagby, R. M. & Parker, J. D. (1991) The Alexithymia Construct: A Potential Paradigm for Psychosomatic Medicine — Psychosomatics, 32(2), 153–164（TAS尺度と理論体系化）](https://doi.org/10.1037/0022-3514.70.3.525) `学術`
-- [Bird, G. & Cook, R. (2013) Mixed Emotions: The Contribution of Alexithymia to the Emotional Symptoms of Autism — Translational Psychiatry, 3(7), e285（ASDとアレキシサイミアの関係）](https://doi.org/10.1016/j.concog.2010.11.001) `学術`
-- [Wikipedia: Alexithymia — Sifneos, TAS-20, emotional regulation, ASD, psychosomatic](https://en.wikipedia.org/wiki/Alexithymia) `リファレンス`
+- [Sifneos, P. E. (1973) The Prevalence of 'Alexithymic' Characteristics in Psychosomatic Patients — Psychotherapy and Psychosomatics 22(2–6), 255–262（概念の初期報告）](https://doi.org/10.1159/000286529) `学術`
+- [Wikipedia: Alexithymia — Sifneos, TAS-20, interoception, comorbidity with ASD and psychosomatic disorders](https://en.wikipedia.org/wiki/Alexithymia) `リファレンス`
 
 ## 関連概念
-- [[human-alexithymia-emotional-awareness|アレキシシミアと感情認識障害——心身医学・感情神経科学の視点]] — 語彙が近い
-- [[human-alexithymia-emotional-regulation|アレキシサイミアと感情調節障害——感情の言語化困難・身体化・心身症との関連]] — 語彙が近い
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（アイゼンマン＝パーカー＝ヴァン・アルスタイン）——隣接するプラットフォーム市場へ自社機能とのバンドルで参入し、既存のネットワーク効果を武器に転用して相手の利用者基盤を奪う競争戦略]] — 同じ思想家
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

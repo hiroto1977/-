@@ -3,43 +3,44 @@ collection: academic
 id: mgmt-strategic-choice-child
 category: "management"
 category_ja: "経営学"
-title: "戦略的選択論——環境決定論に抗する意思決定者の主体的選択"
-as_of: "2026-06-26"
-source_count: 2
+title: "戦略的選択論（チャイルド）——組織構造は環境に一義的に決まるのではなく、支配的連合の政治的な選択を介して形づくられる"
+as_of: "2026-09"
+source_count: 3
 authoritative: true
 tags:
   - collection/academic
   - academic/management
   - knowledge/verified
 aliases:
-  - "戦略的選択論——環境決定論に抗する意思決定者の主体的選択"
+  - "戦略的選択論（チャイルド）——組織構造は環境に一義的に決まるのではなく、支配的連合の政治的な選択を介して形づくられる"
 ---
 
-# 戦略的選択論——環境決定論に抗する意思決定者の主体的選択
+# 戦略的選択論（チャイルド）——組織構造は環境に一義的に決まるのではなく、支配的連合の政治的な選択を介して形づくられる
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06-26 ・ 出典: 2件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-09 ・ 出典: 3件（うち権威ある出典 ✓）
 
 ## 概要
-戦略的選択論（strategic choice）は、ジョン・チャイルドが1972年の論文「組織構造・環境・業績——戦略的選択の役割」で提唱した組織論の視座で、当時支配的であった決定論的なコンティンジェンシー理論への批判として展開された。1960年代のコンティンジェンシー理論は、組織構造が環境、技術、規模といった客観的な状況要因によってほぼ一義的に決定されると考え、有効な組織はこれらの状況に機械的に適合した構造を持つと論じた。これに対しチャイルドは、組織を取り巻く状況が構造を直接決めるのではなく、その間に組織の意思決定者——彼が「支配的連合（dominant coalition）」と呼ぶ、組織内で権力を握る集団——の能動的な選択が介在すると主張した。意思決定者は、環境を一義的に与えられたものとして受け取るのではなく、自らの知覚・価値観・利害を通じて環境を解釈し、その解釈に基づいて戦略・構造・技術を選択する。さらに彼らは、どの市場や環境で事業を営むかという環境そのものの選択や、環境への働きかけによる環境の改変さえも行いうる。チャイルドは、組織が満たすべき業績基準には通常「ゆとり（slack）」があり、最高水準でなくても許容されるため、意思決定者には選択の自由度が残されていると論じた。すなわち、組織構造は環境への受動的適応の産物ではなく、権力を持つ主体の政治的な選択の帰結である。戦略的選択論の意義は、組織論に行為主体性（agency）と政治・権力の視点を再び持ち込んだ点にある。状況が組織を一方的に形づくるという構造決定論に対し、組織のリーダーが状況の制約の中で主体的に選び取る余地を強調し、戦略経営論や組織の権力分析へと連なる重要な理論的転回をもたらした。
+戦略的選択論（strategic choice）は、ジョン・チャイルドが1972年の論文（Sociology 6巻1号）で提唱した組織論の視座で、組織構造が環境・技術・規模といった状況要因にほぼ一義的に決まるとする当時のコンティンジェンシー理論への批判として展開された。チャイルドは、状況が構造を直接決めるのではなく、その間に組織内で権力を握る「支配的連合（dominant coalition）」の能動的な選択が介在すると主張した。意思決定者は環境を与えられたものとして受け取るのではなく、自らの知覚・価値観・利害を通じて解釈し、その解釈に基づいて戦略・構造・技術を選び、どの市場や環境で事業を営むかという環境そのものの選択や、環境への働きかけによる改変さえ行いうる。組織が満たすべき業績基準には通常ゆとり（スラック）があり最高水準でなくても許容されるため、選択の自由度が残る。サイアートとマーチの行動理論の連合概念を組織構造論に組み込み、行為主体性（エージェンシー）と政治・権力の視点を組織論に取り戻した点に意義があり、チャイルド（1997）は行為・構造・環境の相互作用を統合する枠組みとして現代的意義を再確認した。批判として、選択の余地がどの程度あるかは産業や規模で大きく異なり、支配的連合の内部の対立や制度的圧力の扱いが弱いこと、環境決定論との対立が経験的に決着しにくいことがある。中小企業には、業種や規模を理由に「構造はこうするしかない」と考える前に、誰が決めているか（支配的連合）と、どの市場・取引先を選ぶかという環境の選択自体が経営判断であることが含意となる。
 
 ## 提唱者・初出
-ジョン・チャイルド ／ トム・バーンズ ／ デレク・プフ ／ カール・ワイク
+ジョン・チャイルド（1972 提唱／1997 回顧）／リチャード・サイアート＆ジェームズ・マーチ（支配的連合の源流）／対比: トム・バーンズ＆ジョージ・ストーカー、コンティンジェンシー理論
 
 ## 出典
-- [Child, J. (1972) Organizational Structure, Environment and Performance: The Role of Strategic Choice — Sociology 6(1)](https://doi.org/10.1177/003803857200600101) `学術`
-- [Wikipedia: Strategic choice — Child, dominant coalition, agency, critique of contingency determinism](https://en.wikipedia.org/wiki/Strategic_choice_theory) `リファレンス`
+- [Child, J. (1972) Organizational Structure, Environment and Performance: The Role of Strategic Choice — Sociology 6(1)（原典）](https://doi.org/10.1177/003803857200600101) `学術`
+- [Child, J. (1997) Strategic Choice in the Analysis of Action, Structure, Organizations and Environment: Retrospect and Prospect — Organization Studies 18(1)](https://doi.org/10.1177/017084069701800104) `学術`
+- [Wikipedia: Strategic choice theory — Child、支配的連合、コンティンジェンシー理論批判](https://en.wikipedia.org/wiki/Strategic_choice_theory) `リファレンス`
 
 ## 関連概念
-- [[mgmt-loosely-coupled-systems|緩やかに結合したシステム（疎結合）]] — 同じ思想家
-- [[mgmt-managerial-cognition-daft|経営者認知とエナクトメント（ダフト＆ウィック）]] — 同じ思想家
+- [[mgmt-organizational-slack|組織スラック]] — 同じ思想家
+- [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
+- [[mgmt-behavioral-decision-theory-march|行動的意思決定理論——限定合理性下の組織的選択プロセス]] — 同じ思想家
+- [[mgmt-organizational-slack-bourgeois|組織スラック理論——余剰資源の緩衝機能と戦略的活用]] — 同じ思想家
+- [[mgmt-slack-resources-bourgeois|組織スラック論——余剰資源の緩衝・革新・政治的機能]] — 同じ思想家
 - [[mgmt-mechanistic-organic-burns-stalker|機械的組織と有機的組織——環境の安定性に適合する二つの管理システム]] — 同じ思想家
-- [[mgmt-requisite-variety-ashby|必要多様性の法則——組織の制御能力と環境複雑性の対応原理]] — 同じ思想家
-- [[human-error-management-theory-frese|エラー管理理論（フレゼ）]] — 同じ思想家
 - [[mgmt-aston-studies-organization|アストン研究——組織構造の多次元的・実証的測定]] — 同じ思想家
-- [[mgmt-cognitive-map-strategic-decision|認知地図——戦略的意思決定における因果信念の可視化]] — 同じ思想家
 - [[mgmt-contingency-theory-lawrence-lorsch|コンティンジェンシー理論——ローレンス＆ローシュの環境・組織適合と「最適解はない」命題]] — 同じ思想家
-- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同じ思想家
-- [[mgmt-enacted-sensemaking-weick|イナクトメントとセンスメイキング——行為による環境の構成と意味の遡及的創出]] — 同じ思想家
+- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]] — 同じ思想家
+- [[mgmt-mintzberg-organizational-configurations|ミンツバーグの組織構造の五類型——調整様式に基づく組織形態の類型]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

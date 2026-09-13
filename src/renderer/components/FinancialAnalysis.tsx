@@ -17,7 +17,18 @@ import {
   EXEMPTION_THRESHOLD,
   SIMPLIFIED_ELIGIBILITY_THRESHOLD,
 } from '../../shared/taxConsumptionBusiness';
-import { TWENTY_PERCENT_RATE, type SimplifiedBusinessType, type ConsumptionTaxMethod } from '../../shared/taxConsumption';
+import {
+  THIRTY_PERCENT_RATE,
+  TWENTY_PERCENT_MEASURE_END,
+  TWENTY_PERCENT_RATE,
+  thirtyPercentMeasureStatus,
+  thirtyPercentMeasureYearsLabel,
+  twentyPercentMeasureStatus,
+  type SimplifiedBusinessType,
+  type ConsumptionTaxMethod,
+  type TaxpayerKind,
+} from '../../shared/taxConsumption';
+import { formatDate } from '../../shared/bankFormat';
 import { deriveBusinessFinancials, type MonthlyBusinessKpi } from '../data/businessFinancials';
 import { AxonometricCharts } from './AxonometricCharts';
 import { computeFinancialRatios, radarAxes, type FinancialRatios } from '../data/financialRatios';
@@ -27,7 +38,7 @@ import { ratiosToCsv, statementToCsv } from '../data/financialCsv';
 import { analyzeMarginTrend, type MarginTrend } from '../data/financialTrend';
 import { buildFinancialReportMarkdown } from '../data/financialReport';
 import { consolidationScope, consolidationLabel } from '../data/consolidation';
-import { buildIncomeStatement, buildBalanceSheet, buildCashflowStatement, buildVariableCostingStatement, buildComprehensiveIncome, buildEquityChangeStatement, buildQuarterlyStatement, buildNotesStatement, buildSupplementarySchedule, buildAccountBreakdown, sumFinancialInputs, type StatementLine } from '../data/financialStatements';
+import { buildIncomeStatement, buildBalanceSheet, buildCashflowStatement, buildVariableCostingStatement, buildComprehensiveIncome, buildEquityChangeStatement, buildQuarterlyStatement, buildNotesStatement, buildSupplementarySchedule, buildAccountBreakdown, statementEstimateNotes, sumFinancialInputs, type StatementLine } from '../data/financialStatements';
 import { localIsoDate } from '../../shared/localDate';
 
 export interface FinancialUnit {
@@ -66,7 +77,21 @@ function RadarChart({ axes }: { axes: ReturnType<typeof radarAxes> }) {
     const rr = (score / 100) * radius;
     return { x: cx + Math.cos(theta) * rr, y: cy + Math.sin(theta) * rr };
   };
-  const poly = axes.map((a, i) => point(i, a.score)).map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  /**
+   * **算定できた軸だけで多角形を描く。**
+   *
+   * `score` が `null` の軸を 0 として置くと、頂点が**中心に落ちて**
+   * 「最悪の水準」として読める幾何になる (パス 59 の「0 が座標に入ると
+   * 主張ではなく幾何になる」/ パス 65 の「欠けた頂点を通る多角形を描かない」)。
+   * 仕入が無い事業では棚卸資産回転率と CCC が算定不能なので、
+   * 2026-09-08 まで**その 2 頂点が必ず中心に落ちていた。**
+   */
+  const measured = axes.map((a, i) => ({ a, i })).filter((x) => x.a.score !== null);
+  const poly = measured
+    .map((x) => point(x.i, x.a.score as number))
+    .map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`)
+    .join(' ');
+  const unscoredKeys = new Set(axes.filter((a) => a.score === null).map((a) => a.key));
   // 軸ラベルは半径の 113% 位置に置き、左右上下に十分な余白 (PAD) を取った viewBox に
   // 収めることで、長いラベル (固定長期適合率 / 売上債権回転率 等) が端で見切れないようにする。
   const PAD_X = 96;
@@ -83,12 +108,15 @@ function RadarChart({ axes }: { axes: ReturnType<typeof radarAxes> }) {
         return (
           <g key={a.key}>
             <line x1={cx} y1={cy} x2={outer.x} y2={outer.y} stroke="#2a2f3a" />
-            <text x={lp.x} y={lp.y} fontSize={9} fill="#94a3b8" textAnchor={anchor} dominantBaseline="middle">{a.label}</text>
+            {/* 未評価の軸はラベルを暗くし、末尾に印を付ける (頂点が無い理由を図の中で示す)。 */}
+            <text x={lp.x} y={lp.y} fontSize={9} fill={unscoredKeys.has(a.key) ? '#64748b' : '#94a3b8'} textAnchor={anchor} dominantBaseline="middle">
+              {unscoredKeys.has(a.key) ? `${a.label}（未評価）` : a.label}
+            </text>
           </g>
         );
       })}
       <polygon points={poly} fill="rgba(91,141,239,0.20)" stroke="#5b8def" strokeWidth={2} />
-      {axes.map((a, i) => { const p = point(i, a.score); return <circle key={a.key} cx={p.x} cy={p.y} r={2.5} fill="#5b8def" />; })}
+      {measured.map((x) => { const p = point(x.i, x.a.score as number); return <circle key={x.a.key} cx={p.x} cy={p.y} r={2.5} fill="#5b8def" />; })}
     </svg>
   );
 }
@@ -146,19 +174,49 @@ function PieChart({ slices }: { slices: { label: string; value: number; color: s
 }
 
 // --- 棒 (1指標の事業間比較) --------------------------------------------
-function BarChart({ rows, unit }: { rows: { label: string; value: number | null }[]; unit: string }) {
-  const vals = rows.map((r) => r.value ?? 0);
-  const max = Math.max(1, ...vals.map((v) => Math.abs(v)));
+/**
+ * 1 指標の事業間比較 (横棒)。**符号を長さに畳まない。**
+ *
+ * 2026-09-08 まで `w = Math.abs(v) / max` で棒を引いていたので、
+ * **営業利益率 −50% の事業が +12.5% の事業より長い棒を得ていた**
+ * (実測: A 社 +12.5% → 25% / **B 社 −50% → 100%**)。比較の図で
+ * 「最も悪い事業が最も長い」形である。しかも色は `PALETTE[i]` = **並び順**なので
+ * 符号を伝えず、右端の数字だけが本当のことを言っていた
+ * (パス 59「0 は座標に入ると主張ではなく幾何になる」の同族・2026-09-08 · パス 93)。
+ *
+ * ここは **0 を基準線に置き、正は右・負は左**へ伸ばす。負は危険色にして、
+ * 図だけを見ても向きが分かるようにする (`Stat` と同じ `#ef4444`)。
+ *
+ * **算定不能 (null) は棒を描かない。** ただし実測 0% も長さ 0 なので、
+ * 図の上でこの 2 つは区別が付かない —— 区別は右端の数字 (`fmtRatio` が「—」) と
+ * 行の `title` が持つ。図に無い情報を図が持っているふりはしない。
+ */
+export function BarChart({ rows, unit }: { rows: { label: string; value: number | null }[]; unit: string }) {
+  // 算定できた値だけで尺度を決める (null を 0 として混ぜない)。
+  const known = rows.map((r) => r.value).filter((v): v is number => v != null);
+  const lo = Math.min(0, ...known);
+  const hi = Math.max(0, ...known);
+  const span = hi - lo || 1; // 全部 0 のときの 0 除算を避ける
+  const zeroPct = ((0 - lo) / span) * 100;
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       {rows.map((r, i) => {
-        const v = r.value ?? 0;
-        const w = (Math.abs(v) / max) * 100;
+        const v = r.value;
+        // 負は基準線から左へ、正は基準線から右へ。null は描かない。
+        const left = v == null ? 0 : ((Math.min(v, 0) - lo) / span) * 100;
+        const width = v == null ? 0 : (Math.abs(v) / span) * 100;
+        const color = v != null && v < 0 ? '#ef4444' : PALETTE[i % PALETTE.length];
         return (
           <div key={r.label} data-bar-row={r.label} style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1.2fr) 2fr 64px', alignItems: 'center', gap: 8, fontSize: 11 }}>
-            <span title={r.label} style={{ color: 'var(--text-mute)', overflowWrap: 'anywhere', lineHeight: 1.25 }}>{r.label}</span>
+            <span title={v == null ? `${r.label}（算定不能）` : r.label} style={{ color: 'var(--text-mute)', overflowWrap: 'anywhere', lineHeight: 1.25 }}>{r.label}</span>
             <div style={{ background: 'var(--bg)', borderRadius: 3, height: 14, position: 'relative' }}>
-              <div style={{ width: `${w}%`, height: '100%', background: PALETTE[i % PALETTE.length], borderRadius: 3 }} />
+              {/* 0 の基準線。負の値が 1 つも無ければ左端に重なるので出さない。 */}
+              {lo < 0 && (
+                <div data-bar-zero="" style={{ position: 'absolute', left: `${zeroPct}%`, top: 0, bottom: 0, width: 1, background: 'var(--border)' }} />
+              )}
+              {v != null && (
+                <div data-bar-fill={r.label} style={{ position: 'absolute', left: `${left}%`, width: `${width}%`, height: '100%', background: color, borderRadius: 3 }} />
+              )}
             </div>
             <span style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{fmtRatio(r.value, unit)}</span>
           </div>
@@ -207,6 +265,32 @@ const cardStyle: CSSProperties = {
 };
 
 // --- 財務三表 (PL/BS/CF) ------------------------------------------------
+
+/** 諸表タブの識別子。 */
+type StatementTab = 'pl' | 'bs' | 'cf' | 'var' | 'ci' | 'soce' | 'quarter' | 'notes' | 'suppl' | 'breakdown';
+
+/**
+ * 諸表タブの見出し。**画面のボタンと書き出す CSV の「対象」が同じ物を読む** ——
+ * 2 か所に書くと、書き出したファイルが画面と違う書類名を名乗る形になる。
+ * 関数にしてあるのは module 直下の const が変異検査の届かない静的な値になるため。
+ */
+function statementTabs(): readonly (readonly [StatementTab, string])[] {
+  return [
+    ['pl', '損益計算書'], ['bs', '貸借対照表'], ['cf', 'キャッシュフロー計算書'],
+    ['var', '変動損益計算書'], ['ci', '包括利益計算書'], ['soce', '株主資本等変動計算書'],
+    ['quarter', '四半期財務諸表'], ['notes', '個別注記表'], ['suppl', '附属明細書'],
+    ['breakdown', '勘定科目内訳明細書'],
+  ];
+}
+
+/** タブ 1 つの見出し。`statementTabs()` は全域なので必ず見つかる。 */
+function statementTabLabel(tab: StatementTab): string {
+  const hit = statementTabs().find(([k]) => k === tab);
+  // 見つからない道は型で塞がれているが、`find` の型は undefined を含む。
+  // Stryker disable next-line ConditionalExpression: StatementTab は statementTabs() の全域なので実行時は常に真 (型検査のために残す)
+  return hit ? hit[1] : tab;
+}
+
 function StatementTable({ lines }: { lines: readonly StatementLine[] }) {
   return (
     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
@@ -239,6 +323,14 @@ const CT_METHOD_LABEL: Record<ConsumptionTaxMethod, string> = {
   standard: '本則課税',
   simplified: '簡易課税',
   'twenty-percent': '2割特例',
+  'thirty-percent': '3割特例',
+};
+
+/** 事業形態の選択肢 (2割特例の期限の帯と 3割特例の対象が区分で決まる)。 */
+const TAXPAYER_KIND_LABEL: Record<TaxpayerKind, string> = {
+  unknown: '未選択',
+  'sole-proprietor': '個人事業者',
+  corporation: '法人',
 };
 
 /**
@@ -307,21 +399,67 @@ function CorporateTaxCard({
   const [ctSalesStr, setCtSalesStr] = useState('');
   const [ctPurchasesStr, setCtPurchasesStr] = useState('');
   const [ctBizType, setCtBizType] = useState<SimplifiedBusinessType>('service');
+  // 事業形態 —— 2割特例の期限の帯 (個人は暦年で言い切れる) と 3割特例の対象 (個人だけ) が決まる。
+  // 既定は「未選択」: 分からないまま 3割特例を勧めない (パス 141)。
+  const [ctKind, setCtKind] = useState<TaxpayerKind>('unknown');
 
   const ctSalesParsed = ctSalesStr.trim() !== '' ? parseFloat(ctSalesStr.replace(/,/g, '')) : undefined;
   const ctPurchasesParsed = ctPurchasesStr.trim() !== '' ? parseFloat(ctPurchasesStr.replace(/,/g, '')) : undefined;
   const ctSales = ctSalesParsed !== undefined && isFinite(ctSalesParsed) ? Math.max(0, ctSalesParsed) : Math.max(0, revenue);
   const ctPurchases = ctPurchasesParsed !== undefined && isFinite(ctPurchasesParsed) ? Math.max(0, ctPurchasesParsed) : Math.max(0, taxablePurchases);
 
+  const ctExempt = isTaxExempt(ctSales, businessConsumption?.exemptionThreshold);
+  const ctSimplifiedOk = canUseSimplified(ctSales, businessConsumption?.simplifiedEligibilityThreshold);
+  /*
+   * 2 割特例は「免税だった事業者がインボイス登録で課税になった」場合の経過措置。
+   * 登録の有無はアプリから見えないが、**免税の水準を超える売上なら元から免税では
+   * ない**ので対象になりえない。免税判定と同じ代理指標 (この画面が入力した課税
+   * 売上高) で外す —— 画面の注記も同じ代理で「基準期間（前々事業年度）も同水準なら」
+   * と書いている。
+   *
+   * **期限つきの措置でもある。** `twentyPercentMeasureStatus()` は課税期間の規則で
+   * 3 値に落とす。この card は課税期間を入力に持たないので、**言い切れる `ended`
+   * でだけ**候補から外し、言い切れない帯は条件を欄に書いて選ばせる (下の caption)。
+   */
+  const ctMeasure = twentyPercentMeasureStatus(new Date(), TWENTY_PERCENT_MEASURE_END, ctKind);
+  const ctTwentyPercentOk = ctExempt && ctMeasure !== 'ended';
+  /** 期限の文面は定数から作る (書き写すと 2 か所になる)。「令和8年9月30日」。 */
+  const measureEndLabel = formatDate(TWENTY_PERCENT_MEASURE_END, { era: 'wareki' });
+  /** 個人事業者の最後の年分 (暦年)。「令和8年分」。 */
+  const measureYearLabel = thirtyPercentMeasureYearsLabel(TWENTY_PERCENT_MEASURE_END, TWENTY_PERCENT_MEASURE_END);
+  const measureNote =
+    ctMeasure === 'ended'
+      ? ctKind === 'sole-proprietor'
+        ? ` · 個人事業者は${measureYearLabel}で終了（後継は 3割特例）`
+        : ` · 適用期限（${measureEndLabel}）が過ぎています`
+      : ctKind === 'sole-proprietor'
+        ? ` · 個人事業者は${measureYearLabel}まで（暦年）`
+        : ` · ${measureEndLabel}を含む課税期間まで`;
+  // 3割特例 (2割特例の後継・個人事業者の令和 9 年分/10 年分)。言い切れるときだけ候補に入れる。
+  const ctThirty = thirtyPercentMeasureStatus(new Date(), ctKind);
+  const ctThirtyPercentOk = ctExempt && ctKind === 'sole-proprietor' && ctThirty === 'active';
+  const thirtyYears = thirtyPercentMeasureYearsLabel();
+  const thirtyNote =
+    ctThirty === 'not-applicable'
+      ? ' · 法人は対象外（後継措置なし）'
+      : ctKind === 'unknown'
+        ? ` · 個人事業者の${thirtyYears}のみ（事業形態を選ぶと候補に入ります）`
+        : ctThirty === 'upcoming'
+          ? ` · ${thirtyYears}から（まだ対象年分ではありません）`
+          : ctThirty === 'active'
+            ? ` · ${thirtyYears}の対象年分です`
+            : ` · ${thirtyYears}で終了しました`;
+  // 選べないと宣言した方式で「最有利」を決めない (それが 2026-09-06 の実測の穴)。
   const ct = compareBusinessTaxMethods(
     [{ type: ctBizType, sales: { standard: ctSales, reduced: 0 } }],
     { standard: ctPurchases, reduced: 0 },
     businessConsumption,
+    { simplified: ctSimplifiedOk, twentyPercent: ctTwentyPercentOk, thirtyPercent: ctThirtyPercentOk },
   );
-  const ctExempt = isTaxExempt(ctSales, businessConsumption?.exemptionThreshold);
-  const ctSimplifiedOk = canUseSimplified(ctSales, businessConsumption?.simplifiedEligibilityThreshold);
   const simplifiedLimit = businessConsumption?.simplifiedEligibilityThreshold ?? SIMPLIFIED_ELIGIBILITY_THRESHOLD;
+  const exemptionLimit = businessConsumption?.exemptionThreshold ?? EXEMPTION_THRESHOLD;
   const twentyPct = (businessConsumption?.twentyPercentRate ?? TWENTY_PERCENT_RATE) * 100;
+  const thirtyPct = (businessConsumption?.thirtyPercentRate ?? THIRTY_PERCENT_RATE) * 100;
   // 本則が還付見込み (負値) のときは合計に 0 として算入し、還付は注記で伝える。
   const ctBestPayable = Math.max(0, ct.bestAmount);
   const totalTaxBurden = breakdown.totalTax + (ctExempt ? 0 : ctBestPayable);
@@ -406,7 +544,11 @@ function CorporateTaxCard({
         <div style={{ background: 'var(--bg)', borderRadius: 8, padding: '10px 14px' }}>
           <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 4 }}>実効税率（概算）</div>
           <div style={{ fontSize: 17, fontWeight: 700 }}>
-            {isLoss ? '—' : `${(breakdown.effectiveRate * 100).toFixed(1)}%`}
+            {/* **関門は値そのもので書く。** `isLoss` は税引前利益を見るが、
+                この率が割るのは**控除後の課税所得**なので、繰越欠損で控除しきった期は
+                関門が開いたまま 0.0% が出ていた (経緯は `shared/taxCorporate.ts` の
+                `effectiveRate`)。 */}
+            {breakdown.effectiveRate === null ? '—' : `${(breakdown.effectiveRate * 100).toFixed(1)}%`}
           </div>
         </div>
         <div style={{ background: 'var(--bg)', borderRadius: 8, padding: '10px 14px' }}>
@@ -436,7 +578,7 @@ function CorporateTaxCard({
 
       {/* --- 消費税の概算 (納付見込み) --- */}
       <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>🧾 消費税の概算（納付見込み・本則 / 簡易 / 2割特例）</div>
+        <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>🧾 消費税の概算（納付見込み・本則 / 簡易 / 2割特例 / 3割特例）</div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(180px, 100%), 1fr))', gap: 8, marginBottom: 12, padding: '10px 12px', background: 'var(--bg)', borderRadius: 8, border: '1px solid var(--border)' }}>
           <div>
@@ -481,6 +623,20 @@ function CorporateTaxCard({
               ))}
             </select>
           </div>
+          <div>
+            <label style={labelStyle} htmlFor="ct-kind">事業形態（2割特例の期限・3割特例の対象）</label>
+            <select
+              id="ct-kind"
+              value={ctKind}
+              onChange={(e) => setCtKind(e.target.value as TaxpayerKind)}
+              aria-label="事業形態"
+              style={{ ...inputStyle, height: 30 }}
+            >
+              {(Object.keys(TAXPAYER_KIND_LABEL) as TaxpayerKind[]).map((k) => (
+                <option key={k} value={k}>{TAXPAYER_KIND_LABEL[k]}</option>
+              ))}
+            </select>
+          </div>
           <div style={{ display: 'flex', alignItems: 'flex-end' }}>
             <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.5 }}>
               空欄 = 既定（売上高と、費用から給与・償却・利息を除いた概算仕入）。
@@ -490,7 +646,7 @@ function CorporateTaxCard({
 
         {ctExempt && (
           <div style={{ fontSize: 12, color: '#43c3b8', marginBottom: 10 }}>
-            課税売上高が {yen.format(EXEMPTION_THRESHOLD)} 以下 — 基準期間（前々事業年度）も同水準なら<strong>免税事業者（納付不要）の見込み</strong>です。
+            課税売上高が {yen.format(exemptionLimit)} 以下 — 基準期間（前々事業年度）も同水準なら<strong>免税事業者（納付不要）の見込み</strong>です。
             インボイス（適格請求書発行事業者）登録済みの場合は課税事業者として納付が必要で、2割特例の対象になりえます。
           </div>
         )}
@@ -499,7 +655,18 @@ function CorporateTaxCard({
           {([
             ['standard', ct.standard, ct.standard < 0 ? '仕入超過 → 還付見込み' : '売上税額 − 仕入税額'],
             ['simplified', ct.simplified, `みなし仕入率 ${(ct.appliedDeemedRate * 100).toFixed(0)}%${ctSimplifiedOk ? '' : ` · 基準期間${yen.format(simplifiedLimit)}超は選択不可`}`],
-            ['twenty-percent', ct.twentyPercent, `売上税額 × ${Number(twentyPct.toPrecision(12))}%（インボイス登録の小規模事業者）`],
+            [
+              'twenty-percent',
+              ct.twentyPercent,
+              `売上税額 × ${Number(twentyPct.toPrecision(12))}%（インボイス登録の小規模事業者）` +
+                `${ctExempt ? '' : ` · 課税売上高${yen.format(exemptionLimit)}超は対象外`}${measureNote}`,
+            ],
+            [
+              'thirty-percent',
+              ct.thirtyPercent,
+              `売上税額 × ${Number(thirtyPct.toPrecision(12))}%（個人事業者・${thirtyYears}）` +
+                `${ctExempt ? '' : ` · 課税売上高${yen.format(exemptionLimit)}超は対象外`}${thirtyNote}`,
+            ],
           ] as const).map(([method, amount, sub]) => (
             <div
               key={method}
@@ -529,8 +696,9 @@ function CorporateTaxCard({
 
         <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
           ※ 消費税は「預かった税 − 支払った税」を納付する仕組みのため、税引後利益の計算には含めていません（税抜経理を前提）。
-          簡易課税は基準期間の課税売上高 {yen.format(SIMPLIFIED_ELIGIBILITY_THRESHOLD)} 以下＋事前届出で選択可。
-          2割特例はインボイス登録で免税から課税になった事業者の経過措置（令和8年9月30日を含む課税期間まで）。
+          簡易課税は基準期間の課税売上高 {yen.format(simplifiedLimit)} 以下＋事前届出で選択可。
+          2割特例はインボイス登録で免税から課税になった事業者の経過措置（{measureEndLabel}を含む課税期間まで）。
+          その後、個人事業者は{thirtyYears}に限り 3割特例（納付税額 = 売上税額 × {Number(thirtyPct.toPrecision(12))}%・令和8年度税制改正）を選べます。法人に後継の措置はありません。
           軽減税率 8% の売上・仕入は未考慮。
           <strong>本則課税は課税仕入れの消費税を全額引ける前提</strong>です（課税売上割合 95% 以上かつ課税売上高 5億円以下のとき）。
           住宅家賃・利子などの非課税売上があると全額は引けず、実際の納付はこれより多くなります。按分（個別対応方式・一括比例配分方式）は
@@ -564,7 +732,7 @@ function TrendBadge({ trend }: { trend: MarginTrend }) {
 }
 
 function DiagnosisCard({ diagnosis, label, trend, onExportReport, healthBands }: { diagnosis: ReturnType<typeof diagnoseFinancials>; label: string; trend: MarginTrend; onExportReport: () => void; healthBands?: HealthBands }) {
-  const { overallScore, grade, categories, strengths, weaknesses } = diagnosis;
+  const { overallScore, grade, categories, strengths, weaknesses, unscored } = diagnosis;
   return (
     <div style={cardStyle}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
@@ -578,15 +746,25 @@ function DiagnosisCard({ diagnosis, label, trend, onExportReport, healthBands }:
       </div>
       <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-          <span style={{ fontSize: 40, fontWeight: 800, color: GRADE_COLOR[grade], lineHeight: 1 }}>{grade}</span>
-          <span style={{ fontSize: 13, color: 'var(--text-mute)' }}>総合 {overallScore}<span style={{ fontSize: 11 }}>/100</span></span>
+          {/* **1 軸も算定できなければ格付けしない。** 未入力から D を作らない。 */}
+          <span style={{ fontSize: 40, fontWeight: 800, color: grade === null ? 'var(--text-mute)' : GRADE_COLOR[grade], lineHeight: 1 }}>
+            {grade ?? '—'}
+          </span>
+          <span style={{ fontSize: 13, color: 'var(--text-mute)' }}>
+            {overallScore === null ? '総合 未評価' : <>総合 {overallScore}<span style={{ fontSize: 11 }}>/100</span></>}
+          </span>
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           {categories.map((c) => (
             <div key={c.category} style={{ minWidth: 96 }}>
-              <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 2 }}>{c.category} {c.score}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 2 }}>
+                {c.category} {c.score === null ? '未評価' : c.score}
+              </div>
               <div style={{ background: 'var(--bg)', borderRadius: 3, height: 8 }}>
-                <div style={{ width: `${c.score}%`, height: '100%', background: LEVEL_COLOR[levelOf(c.score, healthBands)], borderRadius: 3 }} />
+                {/* 算定できた軸が 0 件のカテゴリは帯を引かない (幅 0% の帯は「最悪」に見える)。 */}
+                {c.score !== null && (
+                  <div style={{ width: `${c.score}%`, height: '100%', background: LEVEL_COLOR[levelOf(c.score, healthBands)], borderRadius: 3 }} />
+                )}
               </div>
             </div>
           ))}
@@ -608,8 +786,28 @@ function DiagnosisCard({ diagnosis, label, trend, onExportReport, healthBands }:
           ))}
         </div>
       </div>
+      {/*
+        **算定できなかった軸を、弱みとは別に名前で出す。**
+
+        2026-09-08 まで未評価の軸は 0 点として `weaknesses` に混ざり、
+        仕入が無い事業に「棚卸資産回転率が低め。在庫の滞留に注意。」と
+        名指ししていた。**算定不能は弱みではない** —— 分けて示し、
+        平均から外したことも述べる (数字が変わった理由が読めるように)。
+      */}
+      {unscored.length > 0 && (
+        <div
+          data-unscored-axes
+          role="note"
+          style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 10, lineHeight: 1.7, border: '1px solid var(--border)', borderRadius: 6, padding: '6px 8px' }}
+        >
+          ◻️ <strong>未評価の {unscored.length} 軸</strong>（{unscored.map((u) => u.label).join('・')}）は
+          分母となる科目が 0 のため算定できていません。
+          <strong>総合スコア・カテゴリ平均・強み／要改善のいずれからも除いています</strong>
+          （0 点として数えると、入力していない軸が格付けを決めてしまいます）。
+        </div>
+      )}
       <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8 }}>
-        ※ スコアはレーダー（15指標の健全度0-100）の平均・カテゴリ平均。コメントは一般情報であり財務助言ではありません。
+        ※ スコアはレーダー（15指標の健全度0-100）の平均・カテゴリ平均（<strong>算定できた軸のみ</strong>）。コメントは一般情報であり財務助言ではありません。
       </div>
     </div>
   );
@@ -637,7 +835,7 @@ export function FinancialAnalysis({
 }) {
   const [selectedId, setSelectedId] = useState(units[0]?.id ?? '');
   const [barKey, setBarKey] = useState<keyof FinancialRatios>('operatingMarginPct');
-  const [stmtTab, setStmtTab] = useState<'pl' | 'bs' | 'cf' | 'var' | 'ci' | 'soce' | 'quarter' | 'notes' | 'suppl' | 'breakdown'>('pl');
+  const [stmtTab, setStmtTab] = useState<StatementTab>('pl');
   const [consolidated, setConsolidated] = useState(false);
 
   const perUnit = useMemo(
@@ -701,7 +899,15 @@ export function FinancialAnalysis({
   }
   const downloadCsv = (csv: string, name: string) => downloadBlob('﻿' + csv, 'text/csv;charset=utf-8', name);
   function onExportCsv() {
-    downloadCsv(ratiosToCsv(perUnit.map((p) => ({ label: p.unit.label, ratios: p.ratios }))), `financial-ratios-${localIsoDate()}.csv`);
+    // 出所は**中に**書く。ファイル名は改名や転送で消えるが、行は残る。
+    const samples = perUnit.filter((p) => p.unit.sample === true).length;
+    downloadCsv(
+      ratiosToCsv(perUnit.map((p) => ({ label: p.unit.label, ratios: p.ratios })), {
+        scope: `全事業 ${perUnit.length} 件（うちサンプル ${samples} 件）`,
+        notes: statementEstimateNotes(),
+      }),
+      `financial-ratios-${localIsoDate()}.csv`,
+    );
   }
   function onExportReport() {
     const md = buildFinancialReportMarkdown({ label: selected!.unit.label, ratios: selected!.ratios, diagnosis, trend, ordinaryProfit: selected!.fin.ordinaryProfit, corporateTaxRates });
@@ -725,7 +931,10 @@ export function FinancialAnalysis({
   function onExportStatement() {
     // 中身がサンプルの合算なら、ファイル名にもそう書く。手元に残った CSV は文脈を失う。
     const name = consolidated ? (scope.isSample ? 'consolidated-sample' : 'consolidated-own') : selected!.unit.id;
-    downloadCsv(statementToCsv(currentStatementLines()), `statement-${stmtTab}-${name}-${localIsoDate()}.csv`);
+    downloadCsv(
+      statementToCsv(currentStatementLines(), { scope: `${stmtLabel}・${statementTabLabel(stmtTab)}`, notes: statementEstimateNotes() }),
+      `statement-${stmtTab}-${name}-${localIsoDate()}.csv`,
+    );
   }
 
   return (
@@ -797,7 +1006,7 @@ export function FinancialAnalysis({
       <div style={cardStyle}>
         <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 10, flexWrap: 'wrap' }}>
           <div style={{ fontSize: 13, fontWeight: 700, marginRight: 6 }}>📑 財務諸表（{stmtLabel}・年次概算）</div>
-          {([['pl', '損益計算書'], ['bs', '貸借対照表'], ['cf', 'キャッシュフロー計算書'], ['var', '変動損益計算書'], ['ci', '包括利益計算書'], ['soce', '株主資本等変動計算書'], ['quarter', '四半期財務諸表'], ['notes', '個別注記表'], ['suppl', '附属明細書'], ['breakdown', '勘定科目内訳明細書']] as const).map(([k, label]) => (
+          {statementTabs().map(([k, label]) => (
             <button
               key={k}
               onClick={() => setStmtTab(k)}
@@ -835,13 +1044,29 @@ export function FinancialAnalysis({
         {stmtTab === 'notes' && <StatementTable lines={buildNotesStatement(stmtFin)} />}
         {stmtTab === 'suppl' && <StatementTable lines={buildSupplementarySchedule(stmtFin)} />}
         {stmtTab === 'breakdown' && <StatementTable lines={buildAccountBreakdown(stmtFin)} />}
+        {/* 断り書きは書き出す CSV と**同じ出所**から刷る (別々に持つと片方が腐る)。 */}
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8 }}>
-          ※ 諸表・指標・チャートは同じ概算財務データに連動。CFは簡易間接法（営業=純利益+減価償却・投資/財務は概算）。包括利益のOCI・株主資本変動の配当はデータ無しのため0/概算。四半期は月次履歴を3ヶ月集計、注記/附属明細/勘定科目内訳はテンプレート+概算値。連結は内部取引消去なしの単純合算。
+          {statementEstimateNotes()[0]}
         </div>
       </div>
 
       <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>
-        ※ 事業別の貸借対照表データが無いため、各事業の BS / CF は売上・収益性から概算生成しています（自己資本比率は収益性で変動）。概算であり財務助言ではありません。
+        {statementEstimateNotes()[1]}
+      </div>
+      {/*
+        運転資本の 3 軸は**置き方の性質**であって事業の性質ではない。
+        `deriveBusinessFinancials` が売上債権 = 月商 ×1.5・棚卸 = 月次原価 ×1・
+        仕入債務 = 月次原価 ×1.2 と置くので、比は約分されて事業に依らず一定になる
+        (実測 2026-09-07: 高収益SaaS / 薄利小売 / 赤字製造 / 零細 のどれでも
+         売上債権回転率 8 倍・棚卸資産回転率 12 倍・CCC 39.5 日)。
+        **どの事業でも同じ値が出るのだから、事業を見比べる材料にはならない。**
+        黙って並べると「3 軸が揃っている」ことを実測の一致として読まれるので明記する。
+      */}
+      <div style={{ fontSize: 11, color: '#f59e0b', marginTop: 4 }}>
+        ※ 運転資本の 3 指標（売上債権回転率・棚卸資産回転率・CCC）は、概算の置き方
+        （売上債権 = 月商 ×1.5／棚卸 = 月次原価 ×1／仕入債務 = 月次原価 ×1.2）から
+        <strong>どの事業でも同じ値（8 倍・12 倍・39.5 日）になります</strong>。
+        事業間の比較には使えません（総合スコアにはこの 3 軸も含まれています）。
       </div>
     </div>
   );

@@ -33,7 +33,6 @@ Floyd H. Allport ／ Daniel Katz ／ Hubert J. O'Gorman ／ Deborah A. Prentice 
 ## 関連概念
 - [[bizlaw-oppression-remedy|少数株主抑圧救済（オプレッション・レメディ）]] — 同じ思想家
 - [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 同じ思想家
-- [[mgmt-paradox-of-success|成功のパラドクス]] — 同じ思想家
 - [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 - [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同分野の近傍
 

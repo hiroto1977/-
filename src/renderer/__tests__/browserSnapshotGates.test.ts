@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { readdirSync } from 'node:fs';
+import { readOriginalDirEntries, readOriginalSource } from '../../shared/__tests__/originalSource';
 
 /*
  * **UI を閉じる旗は、ブラウザ版でも開けなければならない。**
@@ -32,9 +31,9 @@ import { readdirSync } from 'node:fs';
  */
 
 const RENDERER = join(__dirname, '..');
-const SNAPSHOT_SRC = readFileSync(join(RENDERER, 'data/snapshot.ts'), 'utf8');
-const WEB_SHIM_SRC = readFileSync(join(RENDERER, 'web-shim.ts'), 'utf8');
-const LIVE_READ_SRC = readFileSync(join(RENDERER, 'network/liveRead.ts'), 'utf8');
+const SNAPSHOT_SRC = readOriginalSource(join(RENDERER, 'data/snapshot.ts'));
+const WEB_SHIM_SRC = readOriginalSource(join(RENDERER, 'web-shim.ts'));
+const LIVE_READ_SRC = readOriginalSource(join(RENDERER, 'network/liveRead.ts'));
 
 /**
  * どの画面も読んでいない旗。**読まれない旗は門にならない**ので、
@@ -63,12 +62,32 @@ function servicesWithConfigFlag(src: string): string[] {
   return [...new Set(out)];
 }
 
-/** `web-shim.ts` の `fetchSnapshot` が明示の枝を持つサービス id。 */
-function shimBranches(src: string): string[] {
+/**
+ * `web-shim.ts` の `fetchSnapshot` が明示の枝を持つサービス id。
+ *
+ * ## 2026-09-12 (パス 165) に踏んだ形 —— 窓が固定長だった
+ *
+ * ここは `from + 4000` 文字を読んでいた。`security` の枝に注記を 7 行足したところ
+ * `serviceId === 'security'` が**オフセット 4028** に移り、窓の外に出た。
+ * 守っている性質は何も壊れていないのに、**走査が見えなくなっただけで門が鳴った** ——
+ * 「誤った理由で落ちる関門は、無いより悪い」。
+ *
+ * 窓を広げるだけでは直らない (8000 文字にすると隣の `invoke` の枝まで拾い、
+ * 「ブラウザ版で更新できる」の判定が緩む)。**`fetchSnapshot` の実際の範囲**を取る:
+ * 橋のメソッドは字下げ 2 で並ぶので、次の同じ深さのメソッドまでが本体である。
+ */
+function fetchSnapshotBody(src: string): string {
   const from = src.indexOf('fetchSnapshot: async');
   expect(from, 'fetchSnapshot が web-shim に見つからない — 走査が壊れている').toBeGreaterThan(0);
-  const body = src.slice(from, from + 4000);
-  return [...body.matchAll(/serviceId === '([a-z0-9-]+)'/g)].map((m) => m[1]!);
+  // 次の「字下げ 2 のメソッド」= この本体の終わり。見つからなければ末尾まで。
+  const nextMethod = /^ {2}[A-Za-z][A-Za-z0-9]*: /gm;
+  nextMethod.lastIndex = from + 'fetchSnapshot: async'.length;
+  const next = nextMethod.exec(src);
+  return src.slice(from, next === null ? src.length : next.index);
+}
+
+function shimBranches(src: string): string[] {
+  return [...fetchSnapshotBody(src).matchAll(/serviceId === '([a-z0-9-]+)'/g)].map((m) => m[1]!);
 }
 
 /** `LIVE_READERS` の鍵。 */
@@ -87,6 +106,21 @@ describe('UI を閉じる旗は、ブラウザ版でも開けること', () => {
     expect(flagged.length).toBeGreaterThan(0);
     expect(flagged).toContain('security');
     expect(flagged).toContain('emotions');
+  });
+
+  /**
+   * **走査の範囲そのものを検査する** (パス 165)。固定長の窓は、無関係な編集で
+   * 黙って見えなくなる / 隣の関数まで拾う。両側から留める。
+   */
+  it('★ 走査の範囲が fetchSnapshot の本体と一致する (短すぎず・長すぎず)', () => {
+    const body = fetchSnapshotBody(WEB_SHIM_SRC);
+    // 短すぎない: 最後の枝 (security) まで入っている。
+    expect(body).toContain("serviceId === 'security'");
+    // 長すぎない: 隣の invoke の本体は入っていない。
+    expect(body).not.toContain('invoke: async');
+    // 固定長 4000 では届かなかったことを標本として残す (2026-09-12 実測)。
+    expect(WEB_SHIM_SRC.slice(WEB_SHIM_SRC.indexOf('fetchSnapshot: async')).indexOf("serviceId === 'security'"))
+      .toBeGreaterThan(4000);
   });
 
   it('★ 旗を持つサービスは、ブラウザ版で更新できるか、どの画面も読んでいない', () => {
@@ -108,11 +142,11 @@ describe('UI を閉じる旗は、ブラウザ版でも開けること', () => {
   it('★ 「どの画面も読んでいない」が本当である', () => {
     const files: string[] = [];
     const walk = (dir: string) => {
-      for (const ent of readdirSync(dir, { withFileTypes: true })) {
+      for (const ent of readOriginalDirEntries(dir)) {
         if (ent.name === '__tests__') continue;
         const full = join(dir, ent.name);
         if (ent.isDirectory()) walk(full);
-        else if (/\.tsx?$/.test(ent.name)) files.push(readFileSync(full, 'utf8'));
+        else if (/\.tsx?$/.test(ent.name)) files.push(readOriginalSource(full));
       }
     };
     walk(RENDERER);

@@ -90,6 +90,23 @@ function roundNullable(v: number | null, r: (n: number) => number): number | nul
   return v == null ? null : r(v);
 }
 
+/**
+ * **総資産回転率 (倍) —— この 1 か所だけが持つ。**
+ *
+ * `computeFinancialRatios` のデュポン分解と、経営スコアカードの効率性軸が
+ * 同じ数字を使う。2026-09-07 まで**別々に書かれていて**、`OverviewPage.tsx` の
+ * 中に `Math.round((revenue / totalAssets) * 100) / 100` が直に在った。
+ * 画面の中の算術は変異検査の対象外 (`mutate` に `.tsx` は 1 件も無い) なので、
+ * ずれても誰も気付けない位置だった。
+ *
+ * **算定不能は「総資産 0」のときだけ。** 売上 0 は算定不能ではなく **0 倍**で、
+ * それが最も悪い値である。ここを `revenue > 0` で切ると、スコアカードは
+ * 「最悪の場合だけ採点しない」形になる (実際そうなっていた)。
+ */
+export function assetTurnoverRatio(revenue: number, totalAssets: number): number | null {
+  return roundNullable(ratio(revenue, totalAssets), round2);
+}
+
 /** すべての指標を算出する。純粋。 */
 export function computeFinancialRatios(f: FinancialInputs): FinancialRatios {
   const ebitda = f.operatingProfit + f.depreciation;
@@ -156,7 +173,7 @@ export function computeFinancialRatios(f: FinancialInputs): FinancialRatios {
       round2,
     ),
     dupontNetMarginPct: roundNullable(pct(f.netProfit, f.revenue), round1),
-    dupontAssetTurnover: roundNullable(ratio(f.revenue, f.totalAssets), round2),
+    dupontAssetTurnover: assetTurnoverRatio(f.revenue, f.totalAssets),
     dupontEquityMultiplier: roundNullable(ratio(f.totalAssets, f.equity), round2),
   } as FinancialRatios;
 }
@@ -170,13 +187,35 @@ export interface RadarAxis {
   readonly label: string;
   readonly unit: string;
   readonly raw: number | null;
-  /** 0-100。null (算定不能) は 0 とみなす。 */
-  readonly score: number;
+  /**
+   * 0-100。**算定不能 (`raw === null`) なら `score` も `null` (未評価)。**
+   *
+   * 2026-09-08 まで「null は 0 とみなす」と書いて 0 を返していた。0 点は
+   * レーダーの**中心に頂点を落とし**、`diagnoseFinancials` の平均・カテゴリ・
+   * 要改善のすべてに混ざる。実測 (production 経路 `deriveBusinessFinancials`):
+   *
+   * | 入力 | null 軸 | 総合 | 要改善に名指しされた軸 |
+   * | --- | --- | --- | --- |
+   * | 物販 (変動費あり) | 0/15 | 86 S | 実測された 3 軸 (正しい) |
+   * | **サービス業 (変動費 0)** | 2/15 | 78 A | **棚卸資産回転率(0) · CCC(0)** |
+   * | **創業前 (売上 0)** | **12/15** | **7 D** | 全部が未入力の軸 |
+   *
+   * 仕入が無い事業 (士業・コンサル・サービス業) に
+   * **「棚卸資産回転率が低め。在庫の滞留に注意。」**と言っていた ——
+   * **在庫を持たない事業に、在庫の滞留を警告していた。**
+   *
+   * パス 55 が team radar で直したのと同じ形。パス 39 は**この同じ
+   * 財務健全度 grade** の「定数軸による希釈」を直したが、null 軸は残っていた。
+   */
+  readonly score: number | null;
 }
 
-/** 線形スコア: raw が good で 100、bad で 0。範囲外はクランプ。 */
-function linScore(raw: number | null, bad: number, good: number): number {
-  if (raw == null) return 0;
+/**
+ * 線形スコア: raw が good で 100、bad で 0。範囲外はクランプ。
+ * **算定不能は `null`** —— 0 点という評価を作らない。
+ */
+function linScore(raw: number | null, bad: number, good: number): number | null {
+  if (raw == null) return null;
   const t = (raw - bad) / (good - bad);
   return Math.max(0, Math.min(100, Math.round(t * 100)));
 }
@@ -190,7 +229,7 @@ export function axisBand(key: RadarAxisKey, bands: RadarBands): AxisBand {
   return b.good === b.bad ? RADAR_AXIS_BANDS[key] : b;
 }
 
-function axisScore(raw: number | null, key: RadarAxisKey, bands: RadarBands): number {
+function axisScore(raw: number | null, key: RadarAxisKey, bands: RadarBands): number | null {
   const b = axisBand(key, bands);
   return linScore(raw, b.bad, b.good);
 }

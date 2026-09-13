@@ -36,11 +36,11 @@ aliases:
 - [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]] — 同じ思想家
 - [[econ-policy-ineffectiveness|政策無効命題]] — 同じ思想家
 - [[econ-sticky-information|粘着情報モデル]] — 同じ思想家
-- [[econ-fiscal-dominance-sargent|財政支配と物価水準の財政理論——政府債務が金融政策を拘束するメカニズム]] — 同じ思想家
 - [[econ-goodharts-law-lucas-critique|グッドハートの法則とルーカス批判——政策目標化された統計的関係の崩壊]] — 同じ思想家
 - [[econ-hyperinflation-cagan|カガンのハイパーインフレーション・モデル——貨幣需要と期待が織りなす物価爆発]] — 同じ思想家
 - [[econ-hysteresis-blanchard|履歴効果（ヒステリシス）——景気循環が潜在産出量に与える永続的影響]] — 同じ思想家
 - [[econ-hysteresis-unemployment|失業のヒステリシス（Hysteresis in Unemployment）]] — 同じ思想家
+- [[econ-new-keynesian|ニュー・ケインジアン経済学]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,12 +33,14 @@ aliases:
 
 ## 関連概念
 - [[econ-oligopoly-cournot|寡占とクールノー競争（oligopoly / Cournot competition）]] — 語彙が近い
-- [[econ-trust-game|信頼ゲーム（投資ゲーム）]] — 語彙が近い
 - [[econ-oligopoly-cournot-bertrand|複占・寡占市場の均衡理論——クールノー均衡とベルトラン均衡の対比]] — 同じ思想家
 - [[econ-mental-accounting|メンタル・アカウンティング（心の会計）]] — 出典を共有
 - [[mgmt-emergent-strategy|創発戦略]] — 出典を共有
-- [[econ-rational-addiction|合理的依存]] — 同分野の近傍
 - [[econ-zero-sum-game|ゼロサムゲーム（ミニマックス定理）]] — 同分野の近傍
+- [[econ-rational-addiction|合理的依存]] — 同分野の近傍
+- [[econ-kreps-scheinkman-capacity-precommitment-cournot|クレプス＝シャインクマンの生産能力事前コミットメント・モデル——価格競争でもクールノー的寡占均衡へ至る二段階ゲーム]] — 同分野の近傍
+- [[econ-herfindahl-hirschman-index|ハーフィンダール・ハーシュマン指数（HHI）]] — 同分野の近傍
+- [[econ-principal-agent-problem|プリンシパル＝エージェント理論：委任関係における利益相反と情報非対称性が生む代理費用の経済学的分析]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

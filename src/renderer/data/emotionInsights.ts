@@ -43,6 +43,15 @@ export interface EmotionProfile {
   readonly dominantEmotion: string | null;
   /** 感情の偏り (positive 割合 − negative 割合, −1..1)。 */
   readonly sentimentBalance: number;
+  /**
+   * テキスト分析の件数。**`sentimentBalance` の分母**。
+   *
+   * `sentimentBalance === 0` だけでは「解析が 1 件も無い」と
+   * 「ちょうど中立 (positive と negative が同数)」を**区別できない**。
+   * `count` は `moods.length` なので、この 2 つの分母は別々に要る
+   * (気分だけ記録した人・本文解析だけした人が居るため)。
+   */
+  readonly analysisCount: number;
   /** ノートから抽出した頻出トリガー語 (上位)。 */
   readonly topTriggers: readonly string[];
 }
@@ -184,6 +193,7 @@ export function analyzeProfile(
     lowStreak: trailingLowStreak(scores, t.lowScore),
     dominantEmotion: dominantEmotionOf(analyses),
     sentimentBalance: sentimentBalanceOf(analyses),
+    analysisCount: analyses.length,
     topTriggers: extractTriggers(moods.map((m) => m.note), t.triggerMinCount),
   };
 }

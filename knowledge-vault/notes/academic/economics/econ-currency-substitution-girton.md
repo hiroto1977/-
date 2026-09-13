@@ -32,15 +32,15 @@ aliases:
 
 ## 関連概念
 - [[econ-hot-money-flows-calvo|ホットマネー・フローと急停止——新興国資本移動の不安定性]] — 同じ思想家
-- [[econ-time-inconsistency-calvo|時間非整合性とカルヴォ型価格設定——粘着価格のミクロ的基礎とニューケインジアン・フィリップス曲線]] — 同じ思想家
 - [[econ-swan-diagram-internal-external|スワン・ダイアグラム——支出転換・支出増減政策の図式的分析]] — 出典を共有
+- [[econ-task-based-automation-acemoglu-restrepo|アセモグル＝レストレポのタスクベース自動化モデル——置換効果・生産性効果・復元効果の綱引き]] — 出典を共有
 - [[human-theory-of-mind|心の理論]] — 出典を共有
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 出典を共有
 - [[infosoc-repair-work|修繕の労働（Repair Work）]] — 出典を共有
 - [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
+- [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — 出典を共有
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — 出典を共有
 - [[infosoc-hashtag-activism|ハッシュタグ・アクティビズム]] — 出典を共有
-- [[infosoc-protocol-politics-galloway|プロトコル政治論：分散化後の制御様式]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

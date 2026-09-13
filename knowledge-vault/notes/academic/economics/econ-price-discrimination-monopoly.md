@@ -39,7 +39,7 @@ aliases:
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 同じ思想家
 - [[mgmt-dynamic-delegation|公式的権限と実質的権限（Formal and Real Authority）]] — 同じ思想家
 - [[bizlaw-competition-law-market-definition|競争法における市場画定とHHI集中度分析の法的枠組み]] — 同じ思想家
-- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同じ思想家
+- [[econ-braess-paradox|ブライスのパラドックス——道路を増やすと渋滞が悪化する逆説]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

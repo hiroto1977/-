@@ -55,6 +55,8 @@ const STUBS = {
   'secrets:set': () => undefined,
   'secrets:clear': () => undefined,
   'secrets:protection': () => ({ encrypted: true, plainCount: 0, file: 'smoke' }),
+  // smoke は消さない (allDeleted: false なら main も再起動しない形)。橋の契約検査が「main の全チャンネルに stub」を求める。
+  'app:eraseAll': () => ({ kind: 'desktop', files: {}, renderer: 'deleted', allDeleted: false }),
   'fetch:snapshot': (_e, id) => ({
     ok: false,
     code: 'not_configured',

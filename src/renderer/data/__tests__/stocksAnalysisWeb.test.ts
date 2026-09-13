@@ -186,7 +186,11 @@ describe('backtest (paper trading)', () => {
     expect(r.finalEquity).toBe(10_000);
     expect(r.totalReturnPct).toBe(0);
     expect(r.maxDrawdownPct).toBe(0);
-    expect(r.winRate).toBe(0);
+    // **決済が 1 件も無いので勝率は算定できない (null)。**
+    // 0 は「決済した取引が在り、どれも勝てなかった」の意味なので、ここには
+    // 当てはまらない。`totalReturnPct` / `maxDrawdownPct` の 0 は**正しい**
+    // —— 現金のまま持てば本当に 0% で、値下がりもしない (2026-09-08 · パス 92)。
+    expect(r.winRate).toBeNull();
     expect(r.tradeCount).toBe(0);
   });
   it('an always-buy strategy on a rising series trades and stays finite', () => {
@@ -254,8 +258,10 @@ describe('compareStrategies', () => {
     for (const r of res.rows) {
       expect(Number.isFinite(r.finalEquity)).toBe(true);
       expect(Number.isFinite(r.totalReturnPct)).toBe(true);
-      expect(r.winRate).toBeGreaterThanOrEqual(0);
-      expect(r.winRate).toBeLessThanOrEqual(1);
+      // 決済済みが 0 件なら null (算定不能)、数が出ているなら 0..1。
+      // **`if` で包まない** —— 全行 null のとき 1 度も走らない空の検査になる。
+      // どの行にも必ず当たる形で書く (2026-09-08 · パス 92)。
+      expect(r.winRate === null || (r.winRate >= 0 && r.winRate <= 1)).toBe(true);
       expect(r.tradeCount).toBeGreaterThanOrEqual(0);
     }
   });
@@ -270,6 +276,7 @@ describe('compareStrategies', () => {
     expect(cmp.bestByReturn).toBeNull(); // 全戦略 ≤0% → null
     const sma = cmp.rows.find((r) => r.strategy === 'sma-crossover')!;
     expect(sma.tradeCount).toBe(0); // クロス無 → 取引なし
+    expect(sma.winRate).toBeNull(); // 取引が無いので勝率は算定不能 (0% ではない)
     const macd = cmp.rows.find((r) => r.strategy === 'macd-signal')!;
     expect(macd.tradeCount).toBe(6);
     expect(macd.winRate).toBeCloseTo(1 / 3, 4);
@@ -364,6 +371,8 @@ describe('dashboard render', () => {
     recommendations: [{ symbol: 'AAPL', rank: 1, rationale: 'strong trend', riskFactors: ['volatility'] }],
     disclaimer: ADVISOR_DISCLAIMER,
     notForRealMoney: true,
+    universeConsidered: [],
+    universeOmitted: 0,
   };
   // NOTE: compareStrategies は describe ボディではなく各 it 内で呼ぶ (collection 時に
   // 評価すると、指標/戦略/backtest を壊す mutant がここで例外を投げて collection 全体が
@@ -552,6 +561,8 @@ describe('dashboard render (golden exact output, mutation hardening)', () => {
       recommendations: [{ symbol: 'AAPL', rank: 1, rationale: 'strong trend', riskFactors: ['volatility', 'liquidity'] }],
       disclaimer: 'DISC',
       notForRealMoney: true as const,
+      universeConsidered: ['AAPL'],
+      universeOmitted: 0,
     },
     generatedAt: '2026-01-31T00:00:00.000Z',
   };
@@ -644,7 +655,10 @@ describe('backtest (mutation hardening — averaging, win/loss, valuation)', () 
     const r = backtest(mkc([...Array(51).fill(100), 100, 100, 100]), buyAt(51), 10_000);
     expect(r.finalEquity).toBe(10_000); // cash 9000 + 10 shares * 100
     expect(r.tradeCount).toBe(1);
-    expect(r.winRate).toBe(0);
+    // **建てたまま決済していない = 勝率は算定できない。** ここが最も悪い形だった:
+    // 画面には「1 取引」と出るので、「0 取引」という手掛かりすら無いまま
+    // 「勝率 0%」が並ぶ (2026-09-08 · パス 92)。
+    expect(r.winRate).toBeNull();
     expect(r.maxDrawdownPct).toBe(0);
   });
   it('counts a sell at exactly the buy price as a loss (win check is strict >)', () => {
@@ -746,6 +760,8 @@ describe('dashboard html — 複数 advisor 推奨 (join 区切りの golden)', 
           { symbol: 'MSFT', rank: 2, rationale: 'r2', riskFactors: ['y'] },
         ],
         disclaimer: 'D', notForRealMoney: true,
+        universeConsidered: [],
+        universeOmitted: 0,
       },
     });
     expect(html).toBe("<!doctype html><html lang=\"ja\"><head><meta charset=\"utf-8\"><title>Stocks ダッシュボード</title></head><body style=\"font-family:sans-serif;padding:24px;background:#0f1117;color:#e6e8ec\"><h1>Stocks ダッシュボード (ブラウザ版・モックデータ)</h1><p>生成: now</p><h2>ウォッチリスト</h2><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><th>シンボル</th><th>名称</th><th>終値</th><th>前日比</th></tr><tr><td colspan=\"4\">(登録銘柄なし)</td></tr></table><h2>アドバイザー</h2><ol><li><b>AAPL</b> — r1 <i>(リスク: x)</i></li><li><b>MSFT</b> — r2 <i>(リスク: y)</i></li></ol><p style=\"color:#fbbf24\">D</p><p style=\"margin-top:24px;color:#8a93a6;font-size:12px\">本機能は教育目的の参考情報であり、投資助言ではありません。過去パフォーマンスは将来のリターンを保証しません。実際の売買判断はご自身の責任で行ってください。</p></body></html>");
@@ -1070,6 +1086,8 @@ describe('renderDashboardMarkdown — 埋め込みが構造を乗っ取れない
         ],
         disclaimer: '<style>body{display:none}</style>',
         notForRealMoney: true as const,
+        universeConsidered: [],
+        universeOmitted: 0,
       },
       generatedAt: 'x',
     });
@@ -1086,6 +1104,8 @@ describe('renderDashboardMarkdown — 埋め込みが構造を乗っ取れない
         ],
         disclaimer: 'd\n本文',
         notForRealMoney: true as const,
+        universeConsidered: [],
+        universeOmitted: 0,
       },
       generatedAt: 'x',
     });

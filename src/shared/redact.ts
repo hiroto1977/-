@@ -72,6 +72,8 @@ function hideValue(name: string, sep: string, scheme?: string): string {
   return scheme === undefined ? `${name}${sep}[REDACTED]` : `${name}${sep}${scheme} [REDACTED]`;
 }
 
+import { clampToCeiling } from './inputCeiling';
+
 export function redactSecrets(input: string): string {
   return (
     input
@@ -213,12 +215,22 @@ export const REDACT_SCAN_LIMIT = 8192;
  * **`redactSecrets(body.slice(n))` と書かないこと。** 理由は
  * `REDACT_SCAN_LIMIT` の説明にある。`lint:forbidden` が再発を落とす。
  */
-export function redactForMessage(input: string, maxLength: number): string {
-  return redactSecrets(input.slice(0, REDACT_SCAN_LIMIT)).slice(0, maxLength);
+export function redactForMessage(input: string, maxChars: number): string {
+  /*
+   * **どちらの切り方も文字の境界で行う** (2026-09-13 · パス 196)。
+   * ここは `.slice()` を 2 回使っていた —— UTF-16 のコード単位で切るので、
+   * 境界がサロゲート対の真ん中に落ちると**孤立サロゲートが残る**。
+   * この関数は両ビルドの**すべてのエラー 1 行が通る唯一の漏斗**なので、
+   * 残った孤立サロゲートは画面 (DOM) と IPC と `JSON.stringify` へそのまま行き、
+   * UTF-8 を往復した所で `\uFFFD` に化ける。エラー文には利用者が貼った値
+   * (ファイル名・URL・作物名) が載りうるので、絵文字も JIS 2004 の漢字も来る。
+   * 上限そのものは変えていない (2000 字 / 走査 8192 字) —— 切り方だけを直した。
+   */
+  return clampToCeiling(redactSecrets(clampToCeiling(input, REDACT_SCAN_LIMIT)), maxChars);
 }
 
-/** 利用者へ見せるエラー 1 行の上限。ここを超える説明は画面でも読めない。 */
-export const ERROR_MESSAGE_MAX_LENGTH = 2000;
+/** 利用者へ見せるエラー 1 行の上限 (**文字**)。ここを超える説明は画面でも読めない。 */
+export const ERROR_MESSAGE_MAX_CHARS = 2000;
 
 /**
  * 例外を「利用者へ見せてよい 1 行」にする。**伏字を通した後**を返す。
@@ -237,5 +249,5 @@ export const ERROR_MESSAGE_MAX_LENGTH = 2000;
  * 伏字は冪等なので、既に伏せてある文字列を通しても形は変わらない。
  */
 export function safeErrorMessage(err: unknown): string {
-  return redactForMessage(err instanceof Error ? err.message : String(err), ERROR_MESSAGE_MAX_LENGTH);
+  return redactForMessage(err instanceof Error ? err.message : String(err), ERROR_MESSAGE_MAX_CHARS);
 }

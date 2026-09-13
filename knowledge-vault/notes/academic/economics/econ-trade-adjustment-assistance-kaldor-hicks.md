@@ -37,7 +37,7 @@ aliases:
 - [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
 - [[econ-backwardation-contango|バックワーデーションとコンタンゴ（Backwardation & Contango）]] — 同じ思想家
 - [[econ-backwash-spread-myrdal|逆流効果と波及効果——ミュルダールの循環的累積的因果関係論]] — 同じ思想家
-- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——補償可能性に基づく潜在的パレート改善]] — 同じ思想家
+- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——勝者が敗者を補償してなお余剰が残るなら改善とみなす潜在的パレート改善で、費用便益分析の理論的基礎]] — 同じ思想家
 - [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]] — 同じ思想家
 - [[econ-globalization-backlash-rodrik-trilemma|グローバリゼーションのトリレンマ——ロドリックの超グローバル化・民主主義・国家主権の不可能三角形]] — 同じ思想家
 - [[econ-is-lm|IS-LMモデル]] — 同じ思想家

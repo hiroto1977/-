@@ -2,7 +2,7 @@
 title: "アダム・グリーンフィールド"
 type: thinker
 person_key: "グリーンフィールド|ア"
-concept_count: 4
+concept_count: 3
 tags:
   - person
   - index
@@ -10,10 +10,9 @@ tags:
 
 # アダム・グリーンフィールド
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **4 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（4件）
-- [[infosoc-ambient-computing-ubicomp-weiser|ユビキタスコンピューティングとアンビエント情報環境——マーク・ワイザーの「消えるコンピュータ」ビジョン]] — マーク・ワイザーが1991年のScientificAmerican論文で提示した「ユビキタスコンピューティング（ubi…
+## 学術概念（3件）
 - [[infosoc-smart-city-critique-greenfield|スマートシティ批判——技術的ソリューショニズムと都市ガバナンス]] — アダム・グリーンフィールドが2013年に展開したスマートシティ批判は、IBM・Cisco・Siemens等のテクノロジ…
 - [[infosoc-smart-city-governance-kitchin|スマートシティ・ガバナンス——データ駆動型都市管理の批判的検討]] — ロブ・キッチンは2014年の著作『データ革命（TheDataRevolution）』および一連の論文において，「スマー…
 - [[infosoc-smart-city-urban-informatics|スマートシティと都市情報学の批判的・社会技術的分析]] — スマートシティ（smartcity）とは、ICT・センサネットワーク・ビッグデータ・AIを都市インフラに統合して資源効…

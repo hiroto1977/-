@@ -93,3 +93,19 @@ export function canRemoveMember(targetRole: Role, ownerCount: number): boolean {
   if (targetRole === 'owner' && ownerCount <= 1) return false;
   return true;
 }
+
+/**
+ * Guard for changing someone's role: the last owner can never be demoted.
+ *
+ * 削除の側 (`canRemoveMember`) だけがこの不変条件を守っていた (2026-09-06 実測)。
+ * 役割の `<select>` は全員に 3 つの選択肢を出し、`onChangeRole` は素で `edit` を
+ * 呼ぶので、**オーナーが 1 人の組織でその 1 人を「メンバー」にすると
+ * オーナーが 0 人**になる。そうなると削除の守り自体が効かなくなる
+ * (`canRemoveMember(*, 0)` は誰でも削除できると答える) し、`canAssignRole` は
+ * 「自分より下の役割しか与えられない」規則なので**オーナーを作り直す道が無い**
+ * (owner より上の役割は存在しない)。同じ不変条件は同じ強さで守る。
+ */
+export function canChangeRole(currentRole: Role, nextRole: Role, ownerCount: number): boolean {
+  if (currentRole === 'owner' && nextRole !== 'owner' && ownerCount <= 1) return false;
+  return true;
+}

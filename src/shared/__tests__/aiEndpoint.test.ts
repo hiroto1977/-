@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  MAX_AI_BASE_URL_LENGTH,
+  MAX_AI_BASE_URL_CHARS,
   describeAiEndpointFailure,
   isLoopbackHostname,
   normalizeAiBaseUrl,
@@ -111,15 +111,29 @@ describe('normalizeAiBaseUrl', () => {
   });
 
   it('長すぎるものは too-long', () => {
-    const long = 'https://a.example.com/' + 'x'.repeat(MAX_AI_BASE_URL_LENGTH);
+    const long = 'https://a.example.com/' + 'x'.repeat(MAX_AI_BASE_URL_CHARS);
     expect(reasonOf(long)).toBe('too-long');
-    expect(long.length).toBeGreaterThan(MAX_AI_BASE_URL_LENGTH);
+    expect(long.length).toBeGreaterThan(MAX_AI_BASE_URL_CHARS);
   });
 
   it('ちょうど上限は通す（境界）', () => {
     const head = 'https://a.example.com/';
-    const exact = head + 'x'.repeat(MAX_AI_BASE_URL_LENGTH - head.length);
-    expect(exact.length).toBe(MAX_AI_BASE_URL_LENGTH);
+    const exact = head + 'x'.repeat(MAX_AI_BASE_URL_CHARS - head.length);
+    expect(exact.length).toBe(MAX_AI_BASE_URL_CHARS);
+    expect(reasonOf(exact)).toBe('ok');
+  });
+
+  /*
+   * **天井は「字」で数える** (2026-09-13 · パス 196)。断りは「2048 **文字**まで」と
+   * 言うのに判定は `.length` だった。ASCII の標本では一致するので、
+   * 単位を留めるのはこの検査だけである。
+   */
+  it('★ 非 BMP を含む URL は字で数える', () => {
+    const head = 'https://a.example.com/';
+    const path = '\u{1F600}'.repeat(MAX_AI_BASE_URL_CHARS - head.length);
+    const exact = head + path;
+    expect([...exact].length).toBe(MAX_AI_BASE_URL_CHARS);
+    expect(exact.length).toBeGreaterThan(MAX_AI_BASE_URL_CHARS);
     expect(reasonOf(exact)).toBe('ok');
   });
 
@@ -195,7 +209,7 @@ describe('describeAiEndpointFailure', () => {
   });
 
   it('長さ上限の文言に実際の上限値が入る', () => {
-    expect(describeAiEndpointFailure('too-long')).toContain(String(MAX_AI_BASE_URL_LENGTH));
+    expect(describeAiEndpointFailure('too-long')).toContain(String(MAX_AI_BASE_URL_CHARS));
   });
 
   it('平文の文言は「なぜ駄目か」を含む', () => {

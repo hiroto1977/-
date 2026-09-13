@@ -26,12 +26,12 @@ aliases:
 ロバート・プロクター ／ ロンダ・シービンガー ／ ナオミ・オレスケス ／ デヴィッド・マイケルズ
 
 ## 出典
-- [Proctor, R. N. & Schiebinger, L. (eds.) (2008) Agnotology: The Making and Unmaking of Ignorance — Stanford University Press](https://www.worldcat.org/oclc/166384062) `学術`
+- [Proctor, R. N. & Schiebinger, L. (eds.) (2008) Agnotology: The Making and Unmaking of Ignorance — Stanford University Press](https://www.worldcat.org/oclc/166384062) `リファレンス`
 - [Wikipedia: Agnotology — culturally induced ignorance, manufactured doubt, tobacco, undone science](https://en.wikipedia.org/wiki/Agnotology) `リファレンス`
 
 ## 関連概念
-- [[infosoc-post-truth-society|ポスト真実社会——感情と信念が事実を凌駕する情報環境の社会学]] — 同分野の近傍
-- [[infosoc-status-conferral|地位付与機能]] — 同分野の近傍
+- [[infosoc-dark-patterns|ダークパターン（ブリグナル）——利用者を欺き・操作して本来しない行動へ誘導する UI 設計の類型と、その規制]] — 同分野の近傍
+- [[infosoc-enshittification|エンシティフィケーション（Enshittification）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

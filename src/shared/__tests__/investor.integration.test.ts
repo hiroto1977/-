@@ -23,7 +23,11 @@ describe('investor portfolio end-to-end', () => {
     const lev = calcRealEstateLeverage(y.annualNetIncome, 10_000_000, 1_500_000, y.netYieldPct, 2.0);
     // 返済後CF = 年間純収益 − 返済額
     expect(lev.annualCashflow).toBe(y.annualNetIncome - 1_500_000);
-    // CCR・イールドギャップは有限の数値
+    // CCR・イールドギャップは**算定できている** (null でない有限の数値)。
+    // `Number.isFinite` だけだと null も false になるので、null と NaN を
+    // 区別できない —— 「算定できた」を先に言う。
+    expect(lev.cashOnCashReturnPct).not.toBeNull();
+    expect(lev.yieldGapPct).not.toBeNull();
     expect(Number.isFinite(lev.cashOnCashReturnPct)).toBe(true);
     expect(Number.isFinite(lev.yieldGapPct)).toBe(true);
   });
@@ -31,7 +35,7 @@ describe('investor portfolio end-to-end', () => {
   it('positive yield gap means leverage helps (CF after debt service stays positive at a modest rate)', () => {
     const y = calcRealEstateYield(200_000, 40_000_000, 1, 400_000); // higher net yield
     const lev = calcRealEstateLeverage(y.annualNetIncome, 8_000_000, 1_000_000, y.netYieldPct, 1.5);
-    if (lev.yieldGapPct > 0) {
+    if (lev.yieldGapPct !== null && lev.yieldGapPct > 0) {
       expect(lev.annualCashflow).toBeGreaterThan(0);
     }
   });

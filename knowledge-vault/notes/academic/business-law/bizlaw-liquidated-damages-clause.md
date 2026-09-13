@@ -37,6 +37,7 @@ aliases:
 - [[bizlaw-bailment|寄託（ベイルメント）——所有権を移さず占有のみを移転する財産の委託関係]] — 同じ思想家
 - [[bizlaw-consideration-doctrine|約因の法理——約束が拘束力を持つために要する交換的対価]] — 同じ思想家
 - [[bizlaw-conversion-tort|動産侵奪（コンバージョン）——所有権を否定する重大な干渉の不法行為]] — 同じ思想家
+- [[bizlaw-lucy-v-zehmer-objective-theory-of-contract|ルーシー対ゼーマー事件と契約成立の客観説——内心でなく言葉と行為の外形で合意を判断する原則]] — 同じ思想家
 - [[bizlaw-negligence-per-se|法定過失（Negligence Per Se）]] — 同じ思想家
 - [[bizlaw-vicarious-liability|代位責任（使用者責任）——被用者の不法行為について使用者が負う責任]] — 同じ思想家
 - [[bizlaw-penalty-clause-liquidated-damages|違約金条項と損害賠償額の予定——ペナルティ法理による司法的統制]] — 同分野の近傍

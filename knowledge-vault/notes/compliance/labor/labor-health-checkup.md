@@ -37,6 +37,7 @@ aliases:
 - [[labor-contract-period-cap|有期労働契約の契約期間の上限（労働基準法14条）]] — 同分野の近傍
 - [[labor-chemical-substance-autonomous-management|化学物質の自律的な管理への移行（2024年4月 規制強化）]] — 同分野の近傍
 - [[labor-stress-check|ストレスチェック制度（労働安全衛生法）]] — 同分野の近傍
+- [[labor-heatstroke-prevention-mandatory|職場における熱中症対策の義務化（改正労働安全衛生規則・2025年6月1日施行）]] — 同分野の近傍
 - [[labor-high-cost-medical|高額療養費制度（公的医療保険）]] — 同分野の近傍
 
 ## 関連

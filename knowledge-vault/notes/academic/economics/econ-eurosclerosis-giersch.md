@@ -35,12 +35,12 @@ aliases:
 - [[econ-hysteresis|ヒステリシス（履歴効果）]] — 同じ思想家
 - [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]] — 同じ思想家
 - [[econ-insider-outsider|インサイダー・アウトサイダー理論]] — 同じ思想家
+- [[econ-bartik-shift-share-instrument|バーティック操作変数（シフトシェア操作変数）——全国産業成長率と地域産業構成の積で地域労働需要ショックを予測する識別戦略]] — 同じ思想家
+- [[econ-blanchard-quah-long-run-restrictions|ブランシャール＝クアの長期制約による構造VAR識別——需要ショックと供給ショックの分解]] — 同じ思想家
 - [[econ-fiscal-multiplier-auerbach-gorodnichenko|財政乗数——景気局面依存性とアウアーバッハ＝ゴロドニチェンコの状態依存推定]] — 同じ思想家
 - [[econ-fiscal-multiplier-crowding-out-debate|財政乗数とクラウディングアウト論争——IS-LMモデルから実証的な乗数推定への展開]] — 同じ思想家
 - [[econ-fiscal-multiplier-keynes|財政乗数とケインズ乗数効果の経済政策論]] — 同じ思想家
 - [[econ-fiscal-policy-automatic-stabilizers|財政政策と自動安定化装置——ビルトイン・スタビライザーとケインズ的裁量的財政出動]] — 同じ思想家
-- [[econ-hysteresis-blanchard|履歴効果（ヒステリシス）——景気循環が潜在産出量に与える永続的影響]] — 同じ思想家
-- [[econ-hysteresis-unemployment|失業のヒステリシス（Hysteresis in Unemployment）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

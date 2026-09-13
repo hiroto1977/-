@@ -153,13 +153,41 @@ describe('setToken — 保存時の暗号化', () => {
     expect(mode).toBe(0o600);
   });
 
-  it('上書き時は直前の内容を .prev へ退避する (途中で落ちても失わない)', async () => {
+  it('★ 控えは最後に書けた内容 —— 入れ替えたトークンは控えに残らない (パス 134)', async () => {
     const { setToken } = await import('../secrets');
     await setToken('github', 'first');
     await setToken('github', 'second');
 
     const prev = JSON.parse(await fs.readFile(`${storePath()}.prev`, 'utf8')) as Record<string, string>;
-    expect(prev.github).toBe(encrypted('first'));
+    // 2026-09-09 まで控えは 'first' だった (直前の内容)。
+    expect(prev.github).toBe(encrypted('second'));
+    expect(JSON.stringify(prev)).not.toContain(encrypted('first'));
+  });
+
+  it('★ 消したトークンは控えにも残らず、本体が壊れても復活しない', async () => {
+    const err = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { setToken, clearToken, getToken, listConfiguredServices } = await import('../secrets');
+    await setToken('github', 'ghp_gone');
+    await setToken('slack', 'xoxb_keep');
+    await clearToken('github');
+
+    const prev = JSON.parse(await fs.readFile(`${storePath()}.prev`, 'utf8')) as Record<string, string>;
+    expect(Object.keys(prev)).toEqual(['slack']);
+
+    // 本体が壊れて控えから復旧しても、消した物は戻らない (2026-09-09 まではここで 'ghp_gone' が復活した)。
+    await fs.writeFile(storePath(), '{ this is not json', 'utf8');
+    expect(await getToken('github')).toBeNull();
+    expect(await listConfiguredServices()).toEqual(['slack']);
+    expect(String(err.mock.calls[0]![0])).toContain('.prev');
+  });
+
+  it('★ 本体を手で消しても、消したトークンは戻らない (残るのは最後に書けた内容)', async () => {
+    const { setToken, clearToken, getToken, listConfiguredServices } = await import('../secrets');
+    await setToken('github', 'ghp_gone');
+    await clearToken('github');
+    await fs.rm(storePath());
+    expect(await getToken('github')).toBeNull();
+    expect(await listConfiguredServices()).toEqual([]);
   });
 });
 
@@ -289,7 +317,7 @@ describe('plain: 値の繰り上げ暗号化', () => {
 // ---------------------------------------------------------------------------
 
 describe('壊れた保存ファイルへの備え', () => {
-  it('上限を超えた保存ファイルは読まずに空として扱う', async () => {
+  it('上限を超えた保存ファイルは読まずに断る (一覧は投げる)', async () => {
     const err = vi.spyOn(console, 'error').mockImplementation(() => {});
     const fat: Record<string, string> = {};
     for (let i = 0; i < 1200; i++) fat[`svc${i}`] = 'x'.repeat(1000);
@@ -297,7 +325,9 @@ describe('壊れた保存ファイルへの備え', () => {
     expect((await fs.stat(storePath())).size).toBeGreaterThan(1024 * 1024);
 
     const { listConfiguredServices } = await import('../secrets');
-    expect(await listConfiguredServices()).toEqual([]);
+    // 読めなかったのだから「1 件も無い」とは言わない (2026-09-06 に方針を変えた。
+    // 空を返すと画面が全サービスに「トークン未設定」を出し、利用者は鍵を打ち直す)。
+    await expect(listConfiguredServices()).rejects.toThrow(/保管ファイルを読めませんでした/);
     expect(String(err.mock.calls[0]![0])).toContain('refusing to load');
   });
 
@@ -319,7 +349,7 @@ describe('壊れた保存ファイルへの備え', () => {
     await fs.writeFile(storePath(), json, 'utf8');
 
     const { listConfiguredServices } = await import('../secrets');
-    expect(await listConfiguredServices()).toEqual([]);
+    await expect(listConfiguredServices()).rejects.toThrow(/保管ファイルを読めませんでした/);
   });
 
   it('保存ファイルがまだ無いだけなら、壊れているとは言わない', async () => {
@@ -341,32 +371,32 @@ describe('壊れた保存ファイルへの備え', () => {
     expect(String(err.mock.calls[0]![0])).toContain('.prev');
   });
 
-  it('主ファイルも .prev も壊れていれば空として扱う (投げ返さない)', async () => {
+  it('主ファイルも .prev も壊れていれば、一覧は「読めない」と投げる', async () => {
     const err = vi.spyOn(console, 'error').mockImplementation(() => {});
     await fs.writeFile(storePath(), '{ broken', 'utf8');
     await fs.writeFile(`${storePath()}.prev`, 'also broken', 'utf8');
 
     const { listConfiguredServices } = await import('../secrets');
-    expect(await listConfiguredServices()).toEqual([]);
+    await expect(listConfiguredServices()).rejects.toThrow(/保管ファイルを読めませんでした/);
     expect(String(err.mock.calls[0]![0])).toContain('no usable backup');
   });
 
-  it('JSON が配列なら空として扱う (キーが数字の store にしない)', async () => {
+  it('JSON が配列なら読めないとして断る (キーが数字の store にしない)', async () => {
     const err = vi.spyOn(console, 'error').mockImplementation(() => {});
     await fs.writeFile(storePath(), JSON.stringify(['a', 'b']), 'utf8');
     const { listConfiguredServices } = await import('../secrets');
-    expect(await listConfiguredServices()).toEqual([]);
+    await expect(listConfiguredServices()).rejects.toThrow(/保管ファイルを読めませんでした/);
     expect(err).toHaveBeenCalled();
   });
 
-  it('JSON の素の値 (null / 文字列 / 数値) は空として扱う', async () => {
+  it('JSON の素の値 (null / 文字列 / 数値) は読めないとして断る', async () => {
     // `"hello"` を素通しすると `Object.entries` が一文字ずつのキーを作り、
     // `{0:'h',1:'e',…}` という架空の store が生まれる。`null` は投げる。
     const err = vi.spyOn(console, 'error').mockImplementation(() => {});
     const { listConfiguredServices } = await import('../secrets');
     for (const body of ['null', '"hello"', '42', 'true']) {
       await fs.writeFile(storePath(), body, 'utf8');
-      expect(await listConfiguredServices()).toEqual([]);
+      await expect(listConfiguredServices(), body).rejects.toThrow(/保管ファイルを読めませんでした/);
     }
     expect(err).toHaveBeenCalled();
   });

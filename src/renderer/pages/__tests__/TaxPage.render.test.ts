@@ -15,6 +15,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { TaxPage } from '../TaxPage';
+import { SME_MEASURE_END } from '../../../shared/depreciation';
 
 beforeAll(() => {
   // render 中は触れないが、念のため window.serviceHub を最小スタブしておく。
@@ -130,5 +131,25 @@ describe('TaxPage ⑩-3 本則課税の仕入控除税額', () => {
 
   it('一括比例配分方式の 2 年継続適用の縛りを明示する', () => {
     expect(renderTax()).toContain('2 年間は継続適用');
+  });
+});
+
+describe('TaxPage 節税制度カタログ — 期限つきの制度は適用期限を刷る (パス 140)', () => {
+  it('★ 既定 (個人事業主) の一覧で、少額減価償却資産の特例の行に適用期限 (SME_MEASURE_END) と 40 万円未満が出る', () => {
+    const html = renderTax();
+    const row = html.split('<tr>').find((r) => r.includes('少額減価償却資産の特例'));
+    expect(row).toBeDefined();
+    expect(row).toContain(`適用期限 ${SME_MEASURE_END}`);
+    expect(row).toContain('40万円未満');
+    expect(row).toContain('2026-04-01 以後の取得');
+  });
+
+  it('期限の無い制度 (青色申告) の行には期限が付かない (標本: 期限つきの行には付く)', () => {
+    const html = renderTax();
+    const dated = html.split('<tr>').find((r) => r.includes('少額減価償却資産の特例'));
+    const undated = html.split('<tr>').find((r) => r.includes('青色申告 (65万円特別控除)'));
+    expect(dated).toContain('適用期限');
+    expect(undated).toBeDefined();
+    expect(undated).not.toContain('適用期限');
   });
 });

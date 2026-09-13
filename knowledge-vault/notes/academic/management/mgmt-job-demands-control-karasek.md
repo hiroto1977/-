@@ -38,7 +38,7 @@ aliases:
 - [[mgmt-illegitimate-tasks-semmer|不当な課業——役割や自尊心にそぐわない仕事がストレスを生む]] — 同じ思想家
 - [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — 同じ思想家
 - [[mgmt-psychological-detachment-sonnentag|心理的距離——仕事から心理的に離れて回復する]] — 同じ思想家
-- [[mgmt-managerial-discretion-hambrick|経営者裁量論（ハンブリック & フィンケルシュタイン）]] — 同分野の近傍
+- [[mgmt-transient-advantage|一時的競争優位（トランジェント・アドバンテージ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -33,7 +33,6 @@ Marcus H. Miller ／ Paul A. Weller ／ Raghuram G. Rajan
 
 ## 関連概念
 - [[econ-washington-consensus|ワシントン・コンセンサス]] — 出典を共有
-- [[econ-minsky-moment|ミンスキー・モーメント（金融不安定性仮説）]] — 同分野の近傍
 - [[econ-greenspan-put|グリーンスパン・プット]] — 同分野の近傍
 - [[econ-fallacy-composition-samuelson|合成の誤謬——個別的合理性と集合的帰結の乖離]] — 同分野の近傍
 

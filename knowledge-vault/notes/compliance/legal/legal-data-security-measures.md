@@ -37,8 +37,8 @@ aliases:
 - [[legal-optout-provision|オプトアウトによる個人データの第三者提供（個人情報保護法27条2項）]] — 語彙が近い
 - [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]] — 語彙が近い
 - [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 語彙が近い
-- [[legal-purpose-limitation|個人情報の利用目的の特定・通知・目的外利用制限]] — 語彙が近い
 - [[legal-keihyo-management|景品表示法上の表示等の管理上の措置義務（26条）]] — 語彙が近い
+- [[legal-purpose-limitation|個人情報の利用目的の特定・通知・目的外利用制限]] — 語彙が近い
 - [[legal-my-number|マイナンバー（特定個人情報）の取扱い（番号法）]] — 語彙が近い
 - [[bizlaw-anonymized-info|匿名加工情報・仮名加工情報（個人情報保護法）]] — 出典を共有
 

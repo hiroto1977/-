@@ -1,4 +1,12 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
+import {
+  GITHUB_ISSUE_FIELDS,
+  GITHUB_LABELS,
+  checkWriteFields,
+  checkWriteLabels,
+  describeWriteFieldFailure,
+} from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
 
 interface GithubUser {
   login: string;
@@ -161,10 +169,21 @@ interface CreateIssueResponse {
   state: string;
 }
 
-async function createIssue(ctx: ActionContext): Promise<{ number: number; url: string; title: string }> {
+async function createIssue(ctx: ActionContext): Promise<ActionData<'github/create-issue'>> {
+  // 欄の型と長さは共有の台帳で断る (パス 110)。`labels` は届いた JSON をそのまま
+  // 転送していたので、件数と 1 件の長さにも天井を置く。
+  const bad = checkWriteFields(ctx.payload, GITHUB_ISSUE_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
   const { owner, repo, title, body, labels } = ctx.payload as unknown as CreateIssuePayload;
-  if (!owner || !repo || !title) {
-    throw new Error('owner, repo, title are required');
+  const badLabels = checkWriteLabels(labels);
+  if (badLabels !== null) {
+    throw new Error(
+      describeWriteFieldFailure({
+        field: 'labels',
+        problem: badLabels,
+        rule: GITHUB_LABELS,
+      }),
+    );
   }
   const res = await jsonFetch<CreateIssueResponse>(
     `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues`,

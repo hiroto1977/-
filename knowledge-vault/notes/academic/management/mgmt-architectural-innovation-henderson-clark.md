@@ -39,7 +39,7 @@ aliases:
 - [[mgmt-second-curve-handy|セカンド・カーブ——衰退する前に次の成長曲線を始める]] — 同じ思想家
 - [[mgmt-strategic-momentum-miller|戦略的モメンタム——成功パターンの固定化が組織衰退を招くメカニズム]] — 同じ思想家
 - [[mgmt-product-architecture|製品アーキテクチャ（モジュラー/インテグラル）]] — 同分野の近傍
-- [[mgmt-profiting-from-innovation|技術革新からの利益専有（PFIフレームワーク）]] — 同分野の近傍
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

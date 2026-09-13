@@ -2,6 +2,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DEFAULT_HTTP_TIMEOUT_MS, MAX_HTTP_RESPONSE_BYTES } from '../../shared/httpLimits';
 import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
 
 vi.mock('../security/vault', () => ({
   getVault: () => ({
@@ -124,7 +125,7 @@ describe('ブラウザ版の外向き通信には打ち切りが付く', () => {
   });
 
   it('打ち切りの値は main と同じものを使う (2 つの版で別の数字を持たない)', async () => {
-    const src = (await import('node:fs')).readFileSync('src/renderer/web-shim.ts', 'utf8');
+    const src = readOriginalSource('src/renderer/web-shim.ts');
     expect(src, '通常の上限を字面で書いている').toContain('DEFAULT_HTTP_TIMEOUT_MS');
     expect(src, 'LLM の上限を字面で書いている').toContain('AI_CHAT_TIMEOUT_MS');
     // 値そのものが分かれていないこと。

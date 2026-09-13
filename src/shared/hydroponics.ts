@@ -338,8 +338,16 @@ export interface HydroponicsEconomics {
   readonly electricityYenPerYear: number;
   /** 月次の損益（経営サマリーへ載せる形）。 */
   readonly monthly: MonthlyPnl;
-  /** 出荷 1 株あたりの総原価 (円)。売れた株が背負う費用。 */
-  readonly costPerShippedPlantYen: number;
+  /**
+   * 出荷 1 株あたりの総原価 (円)。売れた株が背負う費用。
+   *
+   * **出荷が 0 なら `null`** —— 背負う株が無いのだから 1 株あたりは**存在しない**。
+   * 2026-09-08 まで 0 に倒しており、**費用は出ているのに「1 株あたり原価 0 円」**を
+   * 刷っていた (同じ試算で電気代は年 1,825 万円出ている)。この値は
+   * `bankSubmission.ts` の「出荷 1 株当たり原価」として**金融機関等提出用の書面に載る**。
+   * 規準は**すぐ下の `breakEvenPlantsPerMonth`** に在った (分母が 0 以下なら null)。
+   */
+  readonly costPerShippedPlantYen: number | null;
   /** 1 株あたり限界利益 (円) = 単価 − 株あたり変動費。 */
   readonly contributionPerPlantYen: number;
   /**
@@ -412,8 +420,9 @@ export function estimateEconomics(
       depreciation,
       laborCost,
     },
+    // 出荷 0 は「1 株あたり 0 円」ではなく**算定しない** (背負う株が無い)。
     costPerShippedPlantYen:
-      shippedPlantsPerMonth > 0 ? round2((cogs + fixedPerMonth) / shippedPlantsPerMonth) : 0,
+      shippedPlantsPerMonth > 0 ? round2((cogs + fixedPerMonth) / shippedPlantsPerMonth) : null,
     contributionPerPlantYen: round2(contributionPerPlantYen),
     breakEvenPlantsPerMonth,
     shippedPlantsPerMonth: Math.floor(shippedPlantsPerMonth),
@@ -508,8 +517,14 @@ export const DEFAULT_LOW_POTASSIUM_PARAMS: LowPotassiumParams = {
 
 /** 低カリウム栽培の入力。**成分は実測値でしか受け取らない。** */
 export interface LowPotassiumInput {
-  /** 培養液を K 抜きへ切り替えるのは収穫前の何日か。 */
-  readonly switchDaysBeforeHarvest: number;
+  /**
+   * 培養液を K 抜きへ切り替えるのは収穫前の何日か。**未設定は `null`。**
+   *
+   * 0 を「未設定」の代わりに使わない —— 0 は「収穫当日に切り替える」という
+   * 具体的な指示であり、しかもフォーム自身が `allowZero: false` で拒否する値
+   * である (`OverviewPage.tsx` の欄の定義)。
+   */
+  readonly switchDaysBeforeHarvest: number | null;
   /**
    * 出荷ロットの**実測**カリウム (mg/100g)。
    * モデルの推定値を入れてはならない — 腎臓病の方の食事に直結する。
@@ -521,18 +536,43 @@ export interface LowPotassiumInput {
   readonly referencePotassiumMgPer100g?: number;
 }
 
-/** 低カリウム栽培の評価。 */
+/**
+ * 低カリウム栽培の評価。
+ *
+ * **未測定の欄は `null` で返す。数値に倒さない。** (2026-09-08)
+ *
+ * 2026-09-08 まで、未測定のカリウムは `potassiumMgPer100g: 0` に倒され、
+ * そこから `reductionPct` が **100** (「通常品比 100% 減」) として出ていた ——
+ * 腎臓病の方に向けた欄で、**もっとも都合の良い主張**である。
+ * 同じ値の `saltEquivalentGPer100g` は同じ「未測定」に対して `null` を返しており、
+ * **1 つの値が「測っていない」を 2 通りに答えていた**。
+ * 画面はこの節を丸ごと `measured` で囲っているので実害は出ていなかったが、
+ * この節の数値は健康に直結するので、**間違った読み方が型として作れない**形にする
+ * (`servingGramsWithinLimit` のように、後から欄を 1 つ読む呼び手が現れる)。
+ */
 export interface LowPotassiumAssessment {
-  /** 実測カリウム (mg/100g)。 */
-  readonly potassiumMgPer100g: number;
+  /** 実測カリウム (mg/100g)。**未測定なら null** (0 mg の野菜は無い)。 */
+  readonly potassiumMgPer100g: number | null;
   /** 比較した通常品の値 (mg/100g)。 */
   readonly referenceMgPer100g: number;
-  /** 通常品比の削減率 (%)。増えていれば負になる。 */
-  readonly reductionPct: number;
+  /**
+   * 通常品比の削減率 (%)。増えていれば負になる。
+   * **未測定なら null** —— 0 と比べた「100% 減」を作らない。
+   */
+  readonly reductionPct: number | null;
   /** 実測ナトリウムから出した食塩相当量 (g/100g)。未測定なら null。 */
   readonly saltEquivalentGPer100g: number | null;
-  /** 切替期間が目安の範囲 (既定 7〜10 日) に収まっているか。 */
-  readonly switchWindowOk: boolean;
+  /**
+   * 切替期間が目安の範囲 (既定 7〜10 日) に収まっているか。
+   * **切替日が未設定なら `null`** —— 「入力していない」を「範囲外」と報告しない。
+   *
+   * 2026-09-09 まで `boolean` で、未設定 (0) は `false` になっていた ——
+   * カリウムをきちんと実測している人でも、この欄を埋めていないだけで
+   * **「切替時期が目安の範囲外」という琥珀色の警告**が出ていた。
+   * 同じ return の `potassiumMgPer100g` と `reductionPct` は既に
+   * 「測っていない」を `null` で表していたので、**この欄だけが倒れていた。**
+   */
+  readonly switchWindowOk: boolean | null;
   /**
    * 出荷判断に使える状態か。**実測カリウムが正の有限値であることが条件**で、
    * 0 や未測定を「カリウムが無い」と読み替えない。
@@ -552,21 +592,30 @@ export function assessLowPotassium(
 ): LowPotassiumAssessment {
   const k = input.measuredPotassiumMgPer100g;
   const measured = Number.isFinite(k) && k > 0;
-  const potassiumMgPer100g = measured ? k : 0;
+  // **未測定は null。** 0 に倒すと下の削減率が 100% (「カリウムが無い」) になる。
+  const potassiumMgPer100g = measured ? k : null;
   const reference = nonNeg(input.referencePotassiumMgPer100g ?? p.referencePotassiumMgPer100g);
   const na = input.measuredSodiumMgPer100g;
-  const days = input.switchDaysBeforeHarvest;
+  const rawDays = input.switchDaysBeforeHarvest;
+  // 未設定・非有限・0 以下は「入力されていない」。フォームの `allowZero: false`
+  // と同じ判定にする (画面が受け付けない値を、計算だけが受け取らないように)。
+  const days = typeof rawDays === 'number' && Number.isFinite(rawDays) && rawDays > 0 ? rawDays : null;
   return {
     potassiumMgPer100g,
     referenceMgPer100g: reference,
+    // 比べる相手が無い (基準値 0 以下) ときも算定不能 —— 以前は 0 を返していたが、
+    // 「削減なし」と「比べられない」は別のことなので数値に倒さない。
     reductionPct:
-      reference > 0 ? round1(((reference - potassiumMgPer100g) / reference) * 100) : 0,
+      potassiumMgPer100g !== null && reference > 0
+        ? round1(((reference - potassiumMgPer100g) / reference) * 100)
+        : null,
     // `na !== undefined` の前置きは要らない — Number.isFinite は値を変換せず
     // 照合するので undefined も NaN も false になる。
     saltEquivalentGPer100g: Number.isFinite(na)
       ? round2((nonNeg(na as number) * nonNeg(p.saltEquivalentFactor)) / 1000)
       : null,
-    switchWindowOk: days >= p.switchDaysMin && days <= p.switchDaysMax,
+    // **未設定は「範囲外」ではない。** 偽の警告は、本物の警告を薄める。
+    switchWindowOk: days === null ? null : days >= p.switchDaysMin && days <= p.switchDaysMax,
     measured,
   };
 }
@@ -591,9 +640,14 @@ export function servingGramsWithinLimit(
 ): number | null {
   const limit = limits[stage];
   if (limit === null) return null;
-  if (!assessment.measured) return null;
+  // **実測値そのもので判定する。** `measured` と
+  // `potassiumMgPer100g !== null` は構成上つねに同値 (`assessLowPotassium` が
+  // 同じ条件で両方を決める。不変条件は `hydroponics.test.ts` が留めている) だが、
+  // 型が narrowing できるのは値の側なので、値を見る。
+  const k = assessment.potassiumMgPer100g;
+  if (k === null) return null;
   const share = Math.min(100, Math.max(0, Number.isFinite(sharePct) ? sharePct : 0));
   const allowedMg = (limit * share) / 100;
   // mg/100g なので 100 を掛けて g に直す。
-  return Math.floor((allowedMg / assessment.potassiumMgPer100g) * 100);
+  return Math.floor((allowedMg / k) * 100);
 }

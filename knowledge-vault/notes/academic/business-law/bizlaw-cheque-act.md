@@ -35,6 +35,7 @@ aliases:
 - [[bizlaw-standard-terms|定型約款（民法548条の2）]] — 出典を共有
 - [[bizlaw-bills-act|手形法]] — 同分野の近傍
 - [[bizlaw-insurance-act|保険法]] — 同分野の近傍
+- [[bizlaw-electronically-recorded-claims|電子記録債権（電子記録債権法）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

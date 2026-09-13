@@ -12,36 +12,137 @@
 // ordering. Decorative error messages, default fallbacks, IDB error
 // strings are not differentiable.
 import { isSafeFilename } from '../../shared/safeFilename';
+import { parseTimestamp } from '../../shared/isoDate';
 
 const DB_NAME = 'business-hub-library';
 const DB_VERSION = 1;
 const STORE = 'items';
-const MAX_ITEMS = 100;
-const MAX_BYTES = 50 * 1024 * 1024;
+/**
+ * 保存の上限。**外へ出す** —— サイドバーの説明が「50 MB / 100 件」と名乗るので、
+ * `sidebarNumberClaims.test.ts` がこの定数と突き合わせる (パス 163)。
+ * 数を 2 か所に書くと必ず食い違う。
+ */
+export const MAX_ITEMS = 100;
+export const MAX_BYTES = 50 * 1024 * 1024;
 
-export interface LibraryItem {
-  readonly id: string;
-  readonly filename: string;
-  readonly mime: string;
-  readonly serviceId: string;
-  readonly createdAt: number;
-  readonly size: number;
+/**
+ * 中身つきの 1 件。**`LibraryItemMeta` に `blob` が付いただけ** にしてある
+ * (2026-09-13 · パス 193)。以前は `createdAt: number` / `size: number` を
+ * 非 null で宣言していたが、**保存されている値は読めないことがある** ——
+ * メタ側はパス 188 でそれを `number | null` として認めたのに、こちらは
+ * 「必ず読める」と名乗っていた。型が中身より強い主張をしていた。
+ *
+ * 大きさを確かに知りたい所は `blob.size` を読む (控えの `size` は書いた時の
+ * 申告で、中身とずれうる)。
+ */
+export interface LibraryItem extends LibraryItemMeta {
   readonly blob: Blob;
 }
+
+/**
+ * `get()` の結果。**「無い」と「壊れている」を混ぜない** (2026-09-13 · パス 193)。
+ *
+ * 打ち手が違う —— 無いなら諦める、壊れているなら**その行を消す**。
+ * 画面の `readItem` は既にこの語彙を持っていた (`'unreadable'` = 保管層の失敗) が、
+ * `get()` が `req.result as LibraryItem` と**無検査でキャスト**していたので、
+ * 壊れた控えは「見つかった」として返っていた。
+ */
+export type LibraryRead =
+  | { readonly kind: 'found'; readonly item: LibraryItem }
+  | { readonly kind: 'missing' }
+  | { readonly kind: 'corrupt'; readonly meta: LibraryItemMeta };
 
 export interface LibraryItemMeta {
   readonly id: string;
   readonly filename: string;
   readonly mime: string;
   readonly serviceId: string;
-  readonly createdAt: number;
-  readonly size: number;
+  /**
+   * 保存時刻 (epoch ms)。**`null` = 保存されている値が読めない**
+   * (2026-09-12 · パス 188)。`list()` は `cur.value as LibraryItem` と
+   * 無検査でキャストしていたので、壊れた・手で直された控えの `NaN` が
+   * そのまま画面へ届き `NaN/NaN/NaN NaN:NaN` と刷られていた。
+   */
+  readonly createdAt: number | null;
+  /**
+   * バイト数。**`null` = 読めない**。
+   *
+   * ここが一番重い: `enforceLimits()` は `all.reduce((a, it) => a + it.size, 0)` で
+   * 合計を作り `total > MAX_BYTES` で古いものから消すので、**1 件でも `NaN` が
+   * 混ざると合計が `NaN` になり、`NaN > MAX_BYTES` は必ず false** ——
+   * **50 MB の上限が黙って効かなくなる** (件数の上限だけが残る)。
+   */
+  readonly size: number | null;
+}
+
+/** 読めない数値 (NaN / ±Infinity / 負 / 数値でない) を `null` に落とす。 */
+function readableNonNeg(v: unknown): number | null {
+  return typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : null;
+}
+
+/**
+ * 読める保存時刻 (epoch ms) だけを通す。
+ *
+ * **数値だけを受ける** —— `parseTimestamp` は文字列も読むが、この欄は
+ * `monotonicNow()` が書く数値で、型も `number | null` である
+ * (文字列を通すと型と中身が食い違う。検査が最初にそれを捕まえた)。
+ * `Number.isFinite` は `parseTimestamp` の中にも在るが**同じ文に書く** ——
+ * 読む人にも `finiteShapeGuards` の走査にも、範囲を見ていることが見える
+ * (パス 98 の規則)。範囲 (`MAX_TIMESTAMP_MS`) は `parseTimestamp` が持つ。
+ */
+function readableTimestamp(v: unknown): number | null {
+  if (typeof v !== 'number' || !Number.isFinite(v)) return null;
+  return parseTimestamp(v) === null ? null : v;
+}
+
+/**
+ * 保存されている控え 1 件を、読める形にして返す (2026-09-12 · パス 188)。
+ *
+ * **行そのものは落とさない** —— `id` が読めれば「消す」「取り出す」はできるので、
+ * 落とすと壊れた控えが UI から触れなくなる (パス 136 の教訓: 保存した物は
+ * 必ず消せる道が要る)。読めない欄だけを `null` にし、画面がそう言う。
+ * `id` が読めない控えだけは何もできないので `null` を返して飛ばす。
+ */
+export function metaFromStored(v: unknown): LibraryItemMeta | null {
+  if (typeof v !== 'object' || v === null) return null;
+  const r = v as Record<string, unknown>;
+  if (typeof r.id !== 'string' || r.id === '') return null;
+  return {
+    id: r.id,
+    filename: typeof r.filename === 'string' ? r.filename : '(名前が読めません)',
+    mime: typeof r.mime === 'string' ? r.mime : 'application/octet-stream',
+    serviceId: typeof r.serviceId === 'string' ? r.serviceId : 'unknown',
+    createdAt: readableTimestamp(r.createdAt),
+    size: readableNonNeg(r.size),
+  };
+}
+
+/**
+ * 保存されている控え 1 件を、**中身まで確かめて**返す (2026-09-13 · パス 193)。
+ *
+ * `list()` はパス 188 で無検査のキャストをやめたが、**`get()` はそのままだった**
+ * —— 1 か所しか直していない形 (パス 66 の家系)。実測 (jsdom): メタが読めて
+ * `blob` が Blob でない控えは行として普通に並び、「ダウンロード」を押すと
+ * `URL.createObjectURL` が TypeError を投げ、**画面は何も変わらない**
+ * (async の onClick なので拒否は未処理のまま消える)。隣の「開く」は
+ * `blobToDataUrl` を `.catch` で包んでいたので「プレビューを生成できませんでした」
+ * と言えていた —— 同じ画面の双子で、片方だけが守られていた。
+ *
+ * **大きさは `blob.size` を採る** —— 控えの `size` は書いた時の申告で、
+ * 中身とずれうる (`previewBlocker` の上限判定はずれない方を見るべき)。
+ */
+export function itemFromStored(v: unknown): LibraryItem | null {
+  const meta = metaFromStored(v);
+  if (meta === null) return null;
+  const blob = (v as { blob?: unknown }).blob;
+  if (!(blob instanceof Blob)) return null;
+  return { ...meta, size: blob.size, blob };
 }
 
 export interface Library {
   put(serviceId: string, filename: string, mime: string, blob: Blob): Promise<LibraryItemMeta>;
   list(): Promise<readonly LibraryItemMeta[]>;
-  get(id: string): Promise<LibraryItem | null>;
+  get(id: string): Promise<LibraryRead>;
   remove(id: string): Promise<void>;
   clear(): Promise<void>;
   totalBytes(): Promise<number>;
@@ -70,6 +171,20 @@ function openDb(): Promise<IDBDatabase> {
     // 「DB を開けないときは待ち続けない」の検査で固定している。
     // Stryker disable next-line LogicalOperator,StringLiteral: 失敗の中身では分岐しない
     req.onerror = () => reject(req.error ?? new Error('library open failed'));
+  });
+}
+
+/**
+ * この保管層の DB を丸ごと消す (ハードリセット · 2026-09-09 · パス 136)。`vault.wipeAndReset` と同じ約束 ——
+ * **必ず解決し、何が起きたかを返す**。他のタブが接続を掴んでいれば `blocked` (消えていない)。
+ * 画面は保管庫の内部を触らない (`lint:forbidden`) ので、消すのもここ。呼ぶのは `security/eraseAll.ts`。
+ */
+export function deleteLibraryDatabase(): Promise<'deleted' | 'blocked' | 'failed'> {
+  return new Promise((resolve) => {
+    const req = indexedDB.deleteDatabase(DB_NAME);
+    req.onsuccess = () => resolve('deleted');
+    req.onerror = () => resolve('failed');
+    req.onblocked = () => resolve('blocked');
   });
 }
 
@@ -158,6 +273,16 @@ class IndexedDBLibrary implements Library {
     };
   }
 
+  /**
+   * 新しい順の一覧。
+   *
+   * **`createdAt` の索引だけでは足りない** (2026-09-12 · パス 188) ——
+   * `NaN` は IndexedDB の有効なキーではないので、保存時刻が読めない控えは
+   * **索引に載らず `list()` から丸ごと見えない**。見えないと 一覧にも出ず・
+   * 「削除」も押せず・容量の集計にも入らないのに**場所は占める** ——
+   * 消せない物を作らないという規則 (パス 136) に反する。
+   * 索引を走ってから、**本体も走って索引が拾えなかった控えを後ろに足す**。
+   */
   async list(): Promise<readonly LibraryItemMeta[]> {
     const db = await openDb();
     const out: LibraryItemMeta[] = [];
@@ -167,15 +292,9 @@ class IndexedDBLibrary implements Library {
       req.onsuccess = () => {
         const cur = req.result;
         if (cur) {
-          const v = cur.value as LibraryItem;
-          out.push({
-            id: v.id,
-            filename: v.filename,
-            mime: v.mime,
-            serviceId: v.serviceId,
-            createdAt: v.createdAt,
-            size: v.size,
-          });
+          // **無検査のキャストをやめた** (パス 188)。id が読めない控えだけ飛ばす。
+          const meta = metaFromStored(cur.value);
+          if (meta !== null) out.push(meta);
           cur.continue();
         } else {
           resolve();
@@ -184,25 +303,60 @@ class IndexedDBLibrary implements Library {
       // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IDB の失敗イベントは決定的に起こせない
       req.onerror = () => reject(req.error ?? new Error('cursor failed'));
     });
+    // **索引が拾えなかった控えを後ろに足す** (パス 188)。`createdAt` が
+    // `NaN` の控えは索引に載らないので、本体を走らないと一生見えない。
+    const seen = new Set(out.map((m) => m.id));
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).openCursor();
+      req.onsuccess = () => {
+        const cur = req.result;
+        if (cur) {
+          const meta = metaFromStored(cur.value);
+          if (meta !== null && !seen.has(meta.id)) out.push(meta);
+          cur.continue();
+        } else {
+          resolve();
+        }
+      };
+      // IDB の失敗イベントは決定的に起こせない (fake-indexeddb も本物も、
+      // 読み取り専用のカーソルを外から失敗させる口を持たない) ので、この
+      // 経路は測れない。`同上` ではなく理由を書く —— 走査は後方参照を
+      // 「理由なし」として数える (パス 25 の規則・パス 188 で鳴った)。
+      // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: 失敗イベントを決定的に起こせない
+      req.onerror = () => reject(req.error ?? new Error('sweep failed'));
+    });
     db.close();
     return out;
   }
 
-  async get(id: string): Promise<LibraryItem | null> {
-    // 文字列でない id は後段の IDB 取得でも見つからず null になるため、
-    // 前置きだけを変異させても結果は変わらない (空文字も同じ)。
+  async get(id: string): Promise<LibraryRead> {
+    // 文字列でない id は後段の IDB 取得でも見つからないため、前置きだけを
+    // 変異させても結果は変わらない (空文字も同じ)。
     // Stryker disable next-line ConditionalExpression: 後段の取得と重なる (観測不能)
-    if (typeof id !== 'string' || id.length === 0) return null;
+    if (typeof id !== 'string' || id.length === 0) return { kind: 'missing' };
     const db = await openDb();
-    const item = await new Promise<LibraryItem | undefined>((resolve, reject) => {
+    const stored = await new Promise<unknown>((resolve, reject) => {
       const tx = db.transaction(STORE, 'readonly');
       const req = tx.objectStore(STORE).get(id);
-      req.onsuccess = () => resolve(req.result as LibraryItem | undefined);
+      // **無検査のキャストをやめた** (パス 193)。`list()` は パス 188 で
+      // 直していたが、こちらは `as LibraryItem` のままだった。
+      req.onsuccess = () => resolve(req.result);
       // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: 同上
       req.onerror = () => reject(req.error ?? new Error('get failed'));
     });
     db.close();
-    return item ?? null;
+    // ここで `undefined` / `null` を別に見ないのは意図的 —— どちらも
+    // `metaFromStored` が null を返し (`typeof` が 'object' でない / null を弾く)、
+    // 下の最後の行で `{ kind: 'missing' }` になる。**前置きで書くと同じ
+    // 結論を 2 通りに導くことになる** —— 変異検査から見れば殺せない枝である
+    // (IDB は keyPath を持つので素の null を値として戻さないし、不在は undefined)。
+    const item = itemFromStored(stored);
+    if (item !== null) return { kind: 'found', item };
+    // 中身が取り出せない控え。**行は残す** —— 消す道が要る (パス 136)。
+    // `id` すら読めなければ名指しもできないので、そのときだけ「無い」と同じ扱い。
+    const meta = metaFromStored(stored);
+    return meta === null ? { kind: 'missing' } : { kind: 'corrupt', meta };
   }
 
   async remove(id: string): Promise<void> {
@@ -223,15 +377,24 @@ class IndexedDBLibrary implements Library {
     db.close();
   }
 
+  /**
+   * **読める** バイト数の合計 (パス 188)。読めない控え (`size === null`) は
+   * 足さない —— 足すと `NaN` になり、合計そのものが意味を失う。
+   * 「いくつ読めなかったか」は `list()` の結果から呼び出し側が数える
+   * (画面はそれを注記に刷る)。
+   */
   async totalBytes(): Promise<number> {
     const items = await this.list();
-    return items.reduce((acc, it) => acc + it.size, 0);
+    return items.reduce((acc, it) => acc + (it.size ?? 0), 0);
   }
 
   /** 上限超過時に古いものから削除。put() の後で呼ぶ。 */
   private async enforceLimits(): Promise<void> {
     const all = await this.list(); // sorted newest-first
-    let total = all.reduce((acc, it) => acc + it.size, 0);
+    // 読めない size は 0 として数える (パス 188)。**足すと合計が NaN になり
+    // `NaN > MAX_BYTES` が必ず false = 上限が丸ごと効かなくなる。** 0 として
+    // 数えると上限は「測れた分について」効く —— 件数の上限も併せて掛かる。
+    let total = all.reduce((acc, it) => acc + (it.size ?? 0), 0);
     let count = all.length;
     // Iterate from oldest (end of array) and remove until under both limits.
     // `i >= 0` の下限には届かない — put() が 1 件あたり MAX_BYTES 以下しか
@@ -242,7 +405,7 @@ class IndexedDBLibrary implements Library {
     for (let i = all.length - 1; i >= 0 && (count > MAX_ITEMS || total > MAX_BYTES); i--) {
       const it = all[i]!;
       await this.remove(it.id);
-      total -= it.size;
+      total -= it.size ?? 0;
       count -= 1;
     }
   }

@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[human-cannon-bard-emotion|キャノン＝バード説——情動経験と身体反応が視床を起点に並行して生じる]] — 同じ思想家
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
+- [[mgmt-high-reliability-organizations|高信頼性組織（High Reliability Organizations / HRO）]] — 同分野の近傍
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
 
 ## 関連

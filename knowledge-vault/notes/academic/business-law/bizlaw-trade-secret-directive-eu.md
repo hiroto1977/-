@@ -34,7 +34,6 @@ EU営業秘密指令（Directive 2016/943）は、加盟国間で不統一であ
 - [[bizlaw-trade-secret-protection-trips|営業秘密保護法——不正競争防止と国際的調和の法的枠組み]] — 語彙が近い
 - [[bizlaw-trade-secret-protection-utsa|営業秘密保護法制——不正競争防止法とUTSAによる企業秘密の法的保護]] — 同じ思想家
 - [[bizlaw-intellectual-property-trademark|商標法と知的財産保護の法律理論——ブランド価値と識別性基準]] — 同じ思想家
-- [[bizlaw-unfair-competition-trade-secret|不正競争防止と営業秘密保護の比較法制]] — 同分野の近傍
 - [[bizlaw-trade-secret-misappropriation-dtsa|営業秘密不正流用と連邦防衛営業秘密法——DTSAによる統一的民事救済の確立]] — 同分野の近傍
 
 ## 関連

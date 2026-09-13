@@ -37,8 +37,8 @@ prefecture
 - [J-Net21 地域課題解決型創業支援補助金（栃木県）](https://j-net21.smrj.go.jp/snavi/articles/152319) `公的`
 
 ## 関連概念
-- [[subsidy-aomori|あおもり起業支援事業費補助金（青森県）]] — 語彙が近い
 - [[subsidy-fukushima|福島県中小企業等生産性向上推進事業補助金（福島県）]] — 語彙が近い
+- [[subsidy-aomori|あおもり起業支援事業費補助金（青森県）]] — 語彙が近い
 - [[subsidy-hyogo|起業家支援事業助成金（兵庫県）]] — 語彙が近い
 - [[subsidy-shimane|地域課題解決型しまね起業支援事業費補助金（島根県）]] — 語彙が近い
 - [[subsidy-gunma|ぐんまクロススタート補助金（群馬県・旧 起業支援金）]] — 語彙が近い

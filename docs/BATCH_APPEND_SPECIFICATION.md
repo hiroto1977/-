@@ -142,18 +142,15 @@ First Name ／ Second Name ／ Third Name
 // Stryker restore all
 ```
 
-#### 2. `docs/ACADEMIC_KNOWLEDGE.md`
-**概念の要約表**
+#### 2. `docs/ACADEMIC_KNOWLEDGE.md` （自動生成）
+**概念の要約表** — 2026-09-05 から **手で行を書かない**。
 
-**操作**:
-1. ファイル末尾から2行目の「出典 URL は...」を探す
-2. その直前に6行の表データを挿入
-3. 形式: `| 分野 | 概念 | 提唱者・初出 |`
-
-**例行**:
-```markdown
-| 経済学 | 貸付可能資金理論（ネオクラシカル利子率理論） | Knut Wicksell ／ Dennis Robertson ／ Bertil Ohlin |
-```
+**コマンド**: `npm run knowledge:md`（`scripts/build-academic-md.cjs`）
+- `VERIFIED_CONCEPTS` の追加順に `| 分野 | 概念 | 提唱者・初出 |` を再生成し、
+  `<!-- academic-table:begin -->` … `<!-- academic-table:end -->` の間だけを置き換える
+- 提唱者・初出は `keyFigures` の先頭 3 件（（…）内の ／ は区切らない）
+- `vault:check`（`verify:all` / CI）が「再生成した表 == committed」を検証するので、ts を更新したら
+  必ず走らせる。手で書いた行は次の再生成で消える（手書き時代の表は本体と 942 行／909 項目ずれていた）
 
 #### 3. `knowledge-vault/` （自動生成）
 **コマンド**: `npm run vault:build`
@@ -269,12 +266,10 @@ tail -3 src/renderer/data/academicKnowledge.ts
 // Stryker restore all
 ```
 
-#### 4.5.2 docs/ACADEMIC_KNOWLEDGE.md への追記
+#### 4.5.2 docs/ACADEMIC_KNOWLEDGE.md の再生成
 
-```markdown
-| 経済学 | 逆選択理論（レモンの市場） | George A. Akerlof ／ A. Michael Spence ／ Joseph E. Stiglitz |
-| 経営学 | 限定合理性 | Herbert A. Simon ／ James G. March ／ Daniel Kahneman |
-...
+```bash
+npm run knowledge:md          # 表を本体から再生成（手で行を書かない。vault:check が検証）
 ```
 
 ### 4.6 ステップ5: 品質ゲート実行

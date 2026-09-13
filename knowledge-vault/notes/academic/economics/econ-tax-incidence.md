@@ -37,7 +37,7 @@ aliases:
 - [[human-hyperbolic-discounting|双曲割引]] — 出典を共有
 - [[econ-menu-costs|メニューコスト]] — 出典を共有
 - [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 出典を共有
-- [[mgmt-team-effectiveness-hackman|ハックマンのチーム有効性モデル（5つの促進条件）]] — 出典を共有
+- [[mgmt-team-effectiveness-hackman|チーム有効性モデル（ハックマン）——IPO／IMOI 枠組みの上に、真のチーム・魅力的な方向性・イネーブリング構造・支援的文脈・専門的コーチングの五条件を置く]] — 出典を共有
 - [[econ-tit-for-tat|繰り返し囚人のジレンマとしっぺ返し戦略]] — 出典を共有
 - [[econ-pareto-efficiency|パレート効率性（パレート最適）]] — 同分野の近傍
 

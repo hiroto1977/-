@@ -128,6 +128,10 @@ export function WelfareSchemeCard() {
   const { normal, scheme, diff, deductions } = result;
   const yen = (n: number) => jpy(Math.round(n));
   const hasExtraDeduction = deductions.total.incomeTax > 0 || deductions.total.residentTax > 0;
+  // 目標手元残りに両筋書きが届いたか。届いていなければ**この表は「同じ手元残りでの
+  // 比較」ではない** —— 額面の逆算が探索上限に張り付いた結果を並べているだけになる
+  // (パス 103)。差額を制度の効果として読ませないために、表より前に出す。
+  const reachedTarget = normal.reachedTarget && scheme.reachedTarget;
 
   const rows: { label: string; a: number; b: number; hi?: boolean }[] = [
     { label: '額面基本給', a: normal.gross, b: scheme.gross },
@@ -158,6 +162,27 @@ export function WelfareSchemeCard() {
         カフェテリアポイント（いずれも非課税の現物/役務支給）を詰めて基本給を下げる設計。本人・会社
         双方の社会保険料と税が下がり、従業員は同じ手元残り + 現物価値、会社は総コスト減になります。
       </p>
+
+      {!reachedTarget && (
+        <p
+          role="alert"
+          style={{
+            fontSize: 12,
+            lineHeight: 1.6,
+            margin: '0 0 12px',
+            padding: '8px 10px',
+            borderRadius: 6,
+            border: '1px solid var(--warn, #d97706)',
+            color: 'var(--warn, #d97706)',
+          }}
+        >
+          ⚠ 目標の手元残りが本試算モデルの範囲を超えています（額面の上限に張り付きました）。
+          {normal.reachedTarget ? '' : `① これまで の手元残りは ${yen(normal.freeCash)} 止まりです。`}
+          {scheme.reachedTarget ? '' : `② 新制度 の手元残りは ${yen(scheme.freeCash)} 止まりです。`}
+          下表は「同じ手元残りでの比較」になっていないため、差額を制度の効果として読まないでください。
+          目標額を下げてお試しください。
+        </p>
+      )}
 
       {/* 入力 */}
       <div

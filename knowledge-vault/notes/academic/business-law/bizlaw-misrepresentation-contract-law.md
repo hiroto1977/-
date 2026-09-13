@@ -26,7 +26,7 @@ aliases:
 エドウィン・ペール ／ ギュンター・トレーテル ／ ジョン・カータライト ／ アンドリュー・バロウズ
 
 ## 出典
-- [Peel, E. (2015) Misrepresentation and Non-Disclosure — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397](https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405) `学術`
+- [Peel, E. (2015) Misrepresentation and Non-Disclosure — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397](https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405) `リファレンス`
 - [UK Misrepresentation Act 1967 — statutory remedies for pre-contractual misstatements](https://www.legislation.gov.uk/ukpga/1967/7) `公的`
 - [Wikipedia: Misrepresentation — false statement and contractual remedies overview](https://en.wikipedia.org/wiki/Misrepresentation) `リファレンス`
 

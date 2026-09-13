@@ -26,7 +26,7 @@ aliases:
 インダーミット・ギル ／ ホミ・カラス ／ バリー・アイケングリーン ／ ダニ・ロドリック
 
 ## 出典
-- [Gill, I. & Kharas, H. (2007) An East Asian Renaissance: Ideas for Economic Growth — World Bank](https://www.worldcat.org/oclc/77520482) `学術`
+- [Gill, I. & Kharas, H. (2007) An East Asian Renaissance: Ideas for Economic Growth — World Bank](https://www.worldcat.org/oclc/77520482) `リファレンス`
 - [Wikipedia: Middle income trap — growth slowdown, innovation, convergence, development](https://en.wikipedia.org/wiki/Middle_income_trap) `リファレンス`
 
 ## 関連概念

@@ -378,6 +378,9 @@ const FORBIDDEN_PATTERNS = [
         // 生成物の実行 ID (YYYYMMDD) の刻印。利用者に見せる日付ではなく、
         // 走るのは UTC の CI。TS の helper を .cjs から import できない。
         'scripts/orchestrate.cjs',
+        // 週次の依存監査の実行日の刻印。走るのは UTC の CI (毎週日曜 22:00 UTC) で、
+        // 利用者の画面には出ない。報告の文面も「(UTC)」と明記する。同上の import 制約。
+        'scripts/dependency-audit-report.cjs',
       ].includes(rel),
   },
   {
@@ -579,8 +582,16 @@ const FORBIDDEN_PATTERNS = [
     // そのまま残る。2026-08-21 の実測では、閉じ引用符が切り口の外側に
     // 落ちる位置で 60 文字のトークンが**全部**残った (断片ではない)。
     // 正しい順序は shared/redact.ts の `redactForMessage` が 1 つだけ持つ。
+    //
+    // **切り方の綴りは 2 つある** (2026-09-13 · パス 196)。パス 196 で
+    // `redactForMessage` の内側を `input.slice(…)` から
+    // `clampToCeiling(input, …)` (文字境界で切る) に替えたところ、
+    // この規則が**その行を見なくなった** —— 意味は同じ「切ってから伏せる」
+    // なのに、綴りが変わったので当たらない。台帳の例外が「効いていない」と
+    // 鳴ったので気付けた (パス 25 の無言 pragma と同じ形を、自分で作りかけた)。
+    // 規則は**切る意味**を追う: `.slice(` と `clampToCeiling(` の両方を見る。
     name: 'redactSecrets(x.slice(…)) — 切ってから伏せている',
-    pattern: /redactSecrets\s*\(\s*[^)]*\.slice\s*\(/,
+    pattern: /redactSecrets\s*\(\s*[^)]*(?:\.slice\s*\(|clampToCeiling\s*\()/,
     allowFile: (rel) => !rel.startsWith('src/') || rel === 'src/shared/redact.ts',
     codeOnly: true,
     rationale:
@@ -655,8 +666,8 @@ const FORBIDDEN_PATTERNS = [
     // and the two modules that *define* the deny-list: the Ollama client
     // (ALLOWED_ENDPOINTS) and src/shared/ollama.ts (OLLAMA_READ_PATHS —
     // the allowlist both processes share). Both enumerate these paths in
-    // order to refuse them, and UNPATCHED_OOB_NOTICE must name them for the
-    // user-facing warning to mean anything. Listed as exact paths, not a
+    // order to refuse them, and the advisory ledger notice (advisoryLedgerNotice /
+    // OLLAMA_ADVISORIES) must name them for the user-facing warning to mean anything. Listed as exact paths, not a
     // prefix, so a new file under src/shared/ is still checked.
     allowFile: (rel) =>
       rel === 'src/main/clients/ollama.ts' ||
@@ -725,6 +736,28 @@ const FORBIDDEN_PATTERNS = [
       + ' 値を変えたいなら表を直すこと (差し替え可能にする変更は、資格情報の宛先を'
       + ' 外部に委ねる変更と同義)',
   },
+  /*
+   * 秘密を prompt で受けない (2026-09-09 · パス 131)。
+   *
+   * ブラウザの prompt は入力を**平文で映す** (マスクが無い) ので、合言葉・トークンの
+   * 入口には使えない。加えて Electron の renderer は prompt を実装しない
+   * (null を返し console に "prompt() is and will not be supported" と出す) ——
+   * つまりデスクトップ版ではその道が必ず「入力されなかった」に落ちる。
+   * 復元の合言葉が 2026-09-09 までこの形だった (`components/BackupPanel.tsx` ——
+   * 隣にマスクされた欄が在るのに、空なら prompt で訊いていた)。受けるなら
+   * `type="password"` の欄で。`prompt` の直後に `(` が続く形だけを当てる
+   * (性質名 `prompt:` / 変数 `prompt` / `buildPrompt(` は当てない)。
+   */
+  {
+    name: 'prompt() で入力を受ける (平文で映る・Electron は未実装)',
+    pattern: /\b(?:window|globalThis|self)\.prompt\(|(?<![\w.$])prompt\(/,
+    codeOnly: true,
+    rationale:
+      'prompt() はマスクの無い平文の入力で、合言葉やトークンを受ける口にできない。'
+      + ' Electron の renderer は prompt() を実装しておらず null を返すので、'
+      + ' デスクトップ版ではその経路が必ず失敗する。type="password" の欄で受けること'
+      + ' (components/BackupPanel.tsx の合言葉欄がその形)',
+  },
 ];
 
 /**
@@ -779,6 +812,16 @@ const KNOWN_SUPPRESSIONS = [
   // 立ち上げ、8 秒生きているかと致命的な出力の有無を見る。起動そのものを
   // 確かめるのが目的なので、プロセスを作らずには成り立たない。
   'child_process exec/spawn :: scripts/smoke-app.cjs :: 1',
+  // セキュリティの床を測り直す道具 (`npm run audit:floors`)。床ちょうどの版だけを持つ
+  // **使い捨ての依存関係**を一時ディレクトリに作り、`npm install --package-lock-only` と
+  // `npm audit --json` を子プロセスで走らせる。npm の解決と勧告データベースを使うのが目的
+  // なので、プロセスを作らずには成り立たない。渡す引数は台帳 (`SECURITY_FLOORS`) の
+  // パッケージ名と版だけで、シェルを経由しない (`execFileSync`)。
+  'child_process exec/spawn :: scripts/audit-floors.cjs :: 1',
+  // 週次の依存監査。`npm audit --json` を全体と --omit=dev の 2 回走らせて
+  // 突き合わせる。npm の勧告データベースを使うのが目的なので、
+  // プロセスを作らずには成り立たない。引数は固定 (シェルを経由しない execFileSync)。
+  'child_process exec/spawn :: scripts/dependency-audit-report.cjs :: 1',
   'child_process exec/spawn :: scripts/knowledge-autopilot.cjs :: 1',
   'child_process exec/spawn :: scripts/lint-repo-size.cjs :: 1',
   'child_process exec/spawn :: scripts/lint-shell.cjs :: 1',
@@ -790,10 +833,17 @@ const KNOWN_SUPPRESSIONS = [
   // 生成物の実行 ID (YYYYMMDD) の刻印。利用者に見せる日付ではなく、走るのは UTC の CI。
   // TS の helper (`localIsoDate`) を .cjs から import できない (2026-09-02)。
   '今日を UTC で取る (new Date().toISOString().slice(0, 10)) :: scripts/orchestrate.cjs :: 1',
+  // 週次の依存監査の**実行日の刻印**。走るのは UTC の CI (毎週日曜 22:00 UTC) で、
+  // 利用者の画面には出ない。報告の文面も「(UTC)」と明記する。
+  // TS の helper (`localIsoDate`) を .cjs から import できないのは orchestrate.cjs と同じ。
+  '今日を UTC で取る (new Date().toISOString().slice(0, 10)) :: scripts/dependency-audit-report.cjs :: 1',
   'Ollama write-side endpoints in network code :: scripts/ollama-cli.cjs :: 1',
   'Ollama write-side endpoints in network code :: src/main/clients/ollama.ts :: 3',
   'Ollama write-side endpoints in network code :: src/renderer/pages/OllamaPage.tsx :: 2',
-  'Ollama write-side endpoints in network code :: src/shared/ollama.ts :: 3',
+  // 2026-09-09 (パス 139): 3 → 8。脆弱性の台帳 OLLAMA_ADVISORIES の要約 5 行が「呼ばない口」の名前を
+  // 事実として書く (Probllama = /api/pull、CVE-2024-39719/39721 と CVE-2026-7482 = /api/create、
+  // CVE-2024-39722 = /api/push)。呼び出しではなく台帳の文言。
+  'Ollama write-side endpoints in network code :: src/shared/ollama.ts :: 8',
   // CSS の url() を組み立ててよい唯一の場所。`safeCssUrl` の本体で、
   // スキーム検証 (`safeImageSrc`) を通した値だけを引用して包む。
   // ここを例外にしないと関門自身が自分の規則に引っかかる。
@@ -812,15 +862,24 @@ const KNOWN_SUPPRESSIONS = [
   // 外から確かめる。アプリの層を通しては見えない (通せば復号された値が返る) ので、
   // 生のまま舐めるのがこの検査の目的そのものである。
   '保管領域 (IndexedDB) の内部を直接触っている :: scripts/e2e/core.cjs :: 13',
-  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/data/store.ts :: 27',
-  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/fs/fsa.ts :: 7',
-  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/library/library.ts :: 11',
+  // 2026-09-09 (パス 136): 各保管層が自分の DB を消す (deleteRecordDatabase / deleteLibraryDatabase /
+  // deletePreferencesDatabase — ハードリセットの在庫 security/eraseAll.ts が呼ぶ)。27→28 / 7→8 / 11→12。
+  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/data/store.ts :: 28',
+  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/fs/fsa.ts :: 8',
+  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/library/library.ts :: 14',
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/network/proxy.ts :: 6',
-  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/security/vault.ts :: 13',
+  // 2026-09-07: 13 → 12。届かない後追い診断 (`indexedDB.databases()` で
+  // 削除を再確認していた) を消したので、直接触る箇所が 1 つ減った。
+  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/security/vault.ts :: 12',
   'CSS の url() へ生の値を差し込んでいる :: src/shared/imageUrlGate.ts :: 1',
   'hand-rolled RFC 2822 header line :: src/main/clients/gmail.ts :: 2',
   'hand-rolled RFC 2822 header line :: src/renderer/data/saasWriteWeb.ts :: 2',
   'hardcoded Claude model id :: src/shared/ai/providers.ts :: 2',
+  // `build-academic-md.cjs` は docs/ACADEMIC_KNOWLEDGE.md の概念表を生成する素の CJS で、
+  // TS の `escapeMarkdownInline` を読めないため同じ 4 置換の写しを持つ。写しが共有実装と
+  // ずれていないことは `src/shared/__tests__/academicMdTable.test.ts` が同じ標本を
+  // 両方に通して留める (規則に掛かるのは `|` と `<` の 2 行)。
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/build-academic-md.cjs :: 2',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/build-landing.cjs :: 5',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-asset-chart.cjs :: 5',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/gen-econ-history-chart.cjs :: 5',
@@ -844,6 +903,104 @@ const KNOWN_SUPPRESSIONS = [
   'window.open :: src/renderer/web-shim.ts :: 1',
   '食事補助の非課税限度額を地の文に書いている (3,500 円は改正前の値) :: src/shared/welfareScheme.ts :: 2',
 ];
+
+/**
+ * **走査する場所と、そこに必ず在るはずの本数。**
+ *
+ * ## なぜ本数を書くのか (2026-09-07 実測)
+ *
+ * この検査には錨が 1 つあった —— `KNOWN_SUPPRESSIONS` の双方向照合である。
+ * 走査が死んで例外の一致が消えれば「台帳にあるのに効いていない」で鳴る。
+ * 実測で確かめた: `src` の走査を落とすと 20 件、`scripts` でも、
+ * `orchestration` でも鳴る。
+ *
+ * **ところが錨は「例外が在る場所」にしか無い。** 同じ実測で、
+ * `assets` の走査を落とすと **exit 0 のまま**だった (532 → 531 と 1 本減るだけ)。
+ * その 1 本は `assets/sw.js` —— **出荷される Service Worker**、つまり
+ * 単一 HTML の外側で全てのタブに常駐する唯一のスクリプトである。
+ * この根を足したのは 2026-08-22 で、理由は下のコメントに書いてある通り
+ * 「丸ごと見えていなかった」から。その直しに錨が無く、**同じ形で黙って
+ * 元に戻れる**状態だった。
+ *
+ * 実測の内訳 (2026-09-07): src 452 / scripts 76 / build 0 /
+ * orchestration 3 / assets 1 = 532。
+ */
+const SCAN_ROOTS = [
+  { dir: 'src', min: 350 },
+  { dir: 'scripts', min: 50 },
+  {
+    dir: 'build',
+    min: 0,
+    // 走査対象の拡張子は **今日 0 件** (electron-builder のアイコン png/svg だけ)。
+    // 根を消さないのは、ここに置かれるのが `afterSign` などの**ビルドフック**で、
+    // 置かれた日に見られていないと困る側だから。0 を明記して「床が無い」と
+    // 「床が 0」を区別する。
+    why: 'アイコンだけ。ビルドフックが置かれた日に見るための根',
+  },
+  { dir: 'orchestration', min: 2 },
+  { dir: 'assets', min: 1 },
+];
+
+/**
+ * **名前で在ることを確かめるファイル。**
+ *
+ * 本数の床だけでは「1 本」が別の 1 本に置き換わっても気付けない。出荷される
+ * Service Worker は `assets/` にただ 1 つなので、名前で留める。
+ */
+const MUST_SCAN = ['assets/sw.js'];
+
+/**
+ * 実物の木を走査して根ごとの本数を返す (自己検査の標本用)。
+ * 本体と同じ `walk` を通すので、除外規則を変えたらこちらも一緒に動く。
+ */
+function realRootCounts() {
+  const counts = {};
+  for (const root of SCAN_ROOTS) {
+    let n = 0;
+    walk(path.join(REPO_ROOT, root.dir), () => {
+      n += 1;
+    });
+    counts[root.dir] = n;
+  }
+  return counts;
+}
+
+/** 実物の木で走査される相対パスの集合 (自己検査の標本用)。 */
+function realVisited() {
+  const seen = new Set();
+  for (const root of SCAN_ROOTS) {
+    walk(path.join(REPO_ROOT, root.dir), (_full, rel) => {
+      seen.add(rel);
+    });
+  }
+  return seen;
+}
+
+/** 床を割った根を返す。`counts` は根の名前 → 走査した本数。 */
+function rootShortfalls(counts, roots = SCAN_ROOTS) {
+  const out = [];
+  for (const root of roots) {
+    const got = counts[root.dir] ?? 0;
+    if (got < root.min) {
+      out.push(
+        `${root.dir}/ の走査が ${got} 件でした (下限 ${root.min})。` +
+          ' 走査が的を外すと違反 0 件で緑になります — 除外規則か根の綴りを確かめてください',
+      );
+    }
+  }
+  return out;
+}
+
+/** 走査されなかった `MUST_SCAN` を返す。`visited` は走査した相対パスの集合。 */
+function missingMustScan(visited, must = MUST_SCAN) {
+  return must
+    .filter((rel) => !visited.has(rel))
+    .map(
+      (rel) =>
+        `${rel} が走査されていません。出荷する物が検査の外に出ると、` +
+        '違反はそのまま出荷されます (名前が変わったなら MUST_SCAN も直してください)',
+    );
+}
 
 function walk(dir, hit) {
   let entries;
@@ -1032,6 +1189,13 @@ function selfTest() {
     ['陰性対照: 素の fetch はこの規則では鳴らない', '  await fetch(url, init);', 0],
     ['陰性対照: JSX の <img> は通す (safeImageSrc を通る正しい形)', '  <img src={thumbSrc} alt="" />', 0],
     ['陰性対照: 名前が注釈に出るだけなら鳴らない', '  // sendBeacon や new WebSocket は使わない', 0],
+    ['window.prompt( を弾く (平文の入力・Electron 未実装)', "const pw = window.prompt('合言葉を入力');", 1],
+    ['裸の prompt( も弾く', "const pw = prompt('合言葉') || '';", 1],
+    ['globalThis.prompt( も弾く', "globalThis.prompt('x');", 1],
+    ['AI の buildPrompt( / systemPrompt( は当てない', 'const p = buildPrompt(text); const q = systemPrompt(x);', 0],
+    ['性質名の prompt: は当てない', 'const body = { prompt: text, model };', 0],
+    ['変数の prompt (呼び出しでない) は当てない', 'const prompt = draft.trim(); send(prompt);', 0],
+    ['注釈の中の言及は当てない', '  // prompt() は Electron に無い', 0],
   ];
 
   /*
@@ -1051,6 +1215,44 @@ function selfTest() {
     ['件数を無視する鍵なら見逃していた (対照)', [`${K}`], [`${K}`], 0, 0],
   ];
   let bad = 0;
+
+  // ── 走査の生存: 根ごとの床と、名前で留めるファイル ──
+  {
+    const ROOTS = [
+      { dir: 'a', min: 2 },
+      { dir: 'b', min: 0, why: '今日は 0 件' },
+    ];
+    const rootCases = [
+      ['床どおりなら鳴らない', { a: 2, b: 0 }, ROOTS, 0],
+      ['多くても鳴らない', { a: 99, b: 5 }, ROOTS, 0],
+      ['★ 床を割ると鳴る', { a: 1, b: 0 }, ROOTS, 1],
+      ['★ 根が消えて 0 件でも鳴る (走査の死)', {}, ROOTS, 1],
+      ['床 0 の根は 0 でも鳴らない (「床が無い」と区別する)', { a: 2 }, ROOTS, 0],
+      ['★ 実物の根はすべて床を満たす (標本)', null, undefined, 0],
+    ];
+    for (const [label, counts, roots, expected] of rootCases) {
+      const got =
+        counts === null ? rootShortfalls(realRootCounts()).length : rootShortfalls(counts, roots).length;
+      const ok = got === expected;
+      if (!ok) bad += 1;
+      console.log(`  ${ok ? '✓' : '✗'} 走査の床: ${label}: ${got} 件 (期待 ${expected})`);
+    }
+    const mustCases = [
+      ['走査されていれば鳴らない', new Set(['x/y.js']), ['x/y.js'], 0],
+      ['★ 走査されていなければ鳴る', new Set(['x/other.js']), ['x/y.js'], 1],
+      ['★ 何も走査していなければ鳴る', new Set(), ['x/y.js'], 1],
+      ['複数ならその数だけ鳴る', new Set(), ['x/y.js', 'x/z.js'], 2],
+      ['★ 実物の sw.js は走査されている (標本)', null, undefined, 0],
+    ];
+    for (const [label, visitedSet, must, expected] of mustCases) {
+      const got =
+        visitedSet === null ? missingMustScan(realVisited()).length : missingMustScan(visitedSet, must).length;
+      const ok = got === expected;
+      if (!ok) bad += 1;
+      console.log(`  ${ok ? '✓' : '✗'} 名指しの走査: ${label}: ${got} 件 (期待 ${expected})`);
+    }
+  }
+
   for (const [label, actual, known, wantAdded, wantGone] of ledgerCases) {
     const r = diffSuppressions(new Set(actual), known);
     const ok = r.added.length === wantAdded && r.gone.length === wantGone;
@@ -1165,18 +1367,22 @@ function main() {
   const suppressions = new Set();
   let filesScanned = 0;
 
-  walk(path.join(REPO_ROOT, 'src'), scan);
-  walk(path.join(REPO_ROOT, 'scripts'), scan);
-  walk(path.join(REPO_ROOT, 'build'), scan);
-  // 2026-08-22 に足した。`src` / `scripts` / `build` だけを見ていたので、
+  // 根は `SCAN_ROOTS` が持つ (本数の床つき)。`orchestration` と `assets` は
+  // 2026-08-22 に足した —— `src` / `scripts` / `build` だけを見ていたので、
   // **出荷される Service Worker (assets/sw.js) と orchestration/*.cjs が
   // 丸ごと見えていなかった**。実際 orchestration に不変条件 #9 違反
   // (new Function) が 1 件あり、誰にも見られないまま残っていた。
-  walk(path.join(REPO_ROOT, 'orchestration'), scan);
-  walk(path.join(REPO_ROOT, 'assets'), scan);
+  const perRoot = {};
+  const visited = new Set();
+  for (const root of SCAN_ROOTS) {
+    const before = filesScanned;
+    walk(path.join(REPO_ROOT, root.dir), scan);
+    perRoot[root.dir] = filesScanned - before;
+  }
 
   function scan(full, rel) {
     filesScanned++;
+    visited.add(rel);
     let text;
     try {
       text = fs.readFileSync(full, 'utf8');
@@ -1187,8 +1393,14 @@ function main() {
   }
 
   console.log(
-    `Scanned ${filesScanned} runtime source files against ${FORBIDDEN_PATTERNS.length} forbidden patterns`,
+    `Scanned ${filesScanned} runtime source files against ${FORBIDDEN_PATTERNS.length} forbidden patterns` +
+      ` (${SCAN_ROOTS.map((r) => `${r.dir} ${perRoot[r.dir] ?? 0}`).join(' / ')})`,
   );
+  const dead = [...rootShortfalls(perRoot), ...missingMustScan(visited)];
+  if (dead.length > 0) {
+    console.error(`\n❌ 走査が的を外しています (${dead.length} 件):\n`);
+    for (const x of dead) console.error(`  ${x}`);
+  }
   const { added, gone } = diffSuppressions(suppressions, KNOWN_SUPPRESSIONS);
   if (added.length > 0) {
     console.error(`\n❌ 台帳に無い例外が ${added.length} 件効いています (新しい穴):\n`);
@@ -1200,7 +1412,7 @@ function main() {
     for (const x of gone) console.error(`  ${x}`);
     console.error('\n  規則が当たらなくなっています。KNOWN_SUPPRESSIONS から削除してください。');
   }
-  if (violations.length === 0 && added.length === 0 && gone.length === 0) {
+  if (violations.length === 0 && added.length === 0 && gone.length === 0 && dead.length === 0) {
     console.log(`✅ no forbidden patterns found (例外 ${suppressions.size} 件はすべて台帳どおり)`);
     return 0;
   }
@@ -1233,6 +1445,19 @@ function main() {
  * **別のファイルに在り、`npm test` で走り、変異検査の対象でもある。**
  * 規則表を空にすれば、そちらが鳴る。
  */
-module.exports = { FORBIDDEN_PATTERNS, KNOWN_SUPPRESSIONS, isCommentLine, EXCLUDE_PATTERNS, scanText };
+module.exports = {
+  FORBIDDEN_PATTERNS,
+  KNOWN_SUPPRESSIONS,
+  isCommentLine,
+  EXCLUDE_PATTERNS,
+  scanText,
+  // 走査の生存 —— 外側の証人 (`forbiddenPatternWitness.test.ts`) が読む。
+  SCAN_ROOTS,
+  MUST_SCAN,
+  rootShortfalls,
+  missingMustScan,
+  realRootCounts,
+  realVisited,
+};
 
 if (require.main === module) process.exit(main());

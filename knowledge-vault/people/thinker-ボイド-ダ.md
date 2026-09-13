@@ -2,7 +2,7 @@
 title: "ダナ・ボイド"
 type: thinker
 person_key: "ボイド|ダ"
-concept_count: 10
+concept_count: 9
 tags:
   - person
   - index
@@ -10,12 +10,11 @@ tags:
 
 # ダナ・ボイド
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **10 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **9 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（10件）
+## 学術概念（9件）
 - [[infosoc-big-data-analytics-boyd-crawford|ビッグデータと批判的データ研究——ボイド＆クロフォードの「六つの挑発」]] — ビッグデータ（bigdata）は，Volume（量）・Velocity（速度）・Variety（多様性）——いわゆる3…
-- [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — コンテキストの崩壊（contextcollapse）とは、ソーシャルメディア上で、本来は別々の文脈（友人・家族・同僚・…
-- [[infosoc-context-collapse-marwick|コンテクスト崩壊——ソーシャルメディアにおける聴衆の平坦化と自己提示のジレンマ]] — コンテクスト崩壊（contextcollapse）は、アリス・マーウィックとダナ・ボイドが2011年に体系化した概念で…
+- [[infosoc-context-collapse|コンテキストの崩壊（マーウィック＆ボイド）——ソーシャルメディアで別々の聴衆が一つの場に折り重なり、相手ごとの自己呈示の使い分けが崩れる]] — コンテキストの崩壊（contextcollapse）とは、ソーシャルメディア上で、本来は別々の文脈（友人・家族・同僚・…
 - [[infosoc-critical-data-studies-kitchin-dalton|批判的データ研究——データの政治性と知識生産の権力構造]] — 批判的データ研究（CriticalDataStudies,CDS）は、ビッグデータ時代においてデータが中立的・客観的な…
 - [[infosoc-digital-natives-prensky|デジタルネイティブ——デジタル環境で育った世代をめぐる概念とその批判]] — デジタルネイティブ（digitalnatives）は、マーク・プレンスキーが2001年の論文「デジタルネイティブ、デジ…
 - [[infosoc-imagined-audience-litt|想像された観衆——不可視の受け手を思い描いて自己呈示を調整する]] — 想像された観衆（imaginedaudience）は、エデン・リットが2012年の論文「コンコン、誰ですか？——想像さ…

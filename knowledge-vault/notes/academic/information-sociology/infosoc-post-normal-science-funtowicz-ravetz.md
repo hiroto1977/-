@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[infosoc-co-production-jasanoff|共産出——科学的知識と社会秩序はともに生み出される]] — 同じ思想家
 - [[infosoc-mode-2-knowledge-gibbons|モード2知識生産——応用の文脈で生まれる学際的な知]] — 同じ思想家
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+- [[infosoc-collingridge-dilemma|コリングリッジのジレンマ（技術制御の二重拘束）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

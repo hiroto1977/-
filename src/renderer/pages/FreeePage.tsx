@@ -1,6 +1,8 @@
 import { SNAPSHOT } from '../data/snapshot';
+import { summarizeAccounting } from '../data/accounting';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { dealIntakeNote } from '../../shared/freeeIntake';
 
 // freee 会計連携。取引 (deals) から月次の営業キャッシュフローを取得し、
 // 棒グラフで表示する。月次CFは資金調達レーダー (funding) の accountingCashflow
@@ -62,7 +64,13 @@ export function FreeePage() {
   );
   const live = data as FreeeSnapshot;
   const hasData = live.monthly.length > 0;
-  const totalNet = live.monthly.reduce((s, m) => s + m.net, 0);
+  // 営業CF の合計は `summarizeAccounting` の 1 か所から読む (経営サマリーの
+  // ランウェイ・キャッシュ予測が見ているのと同じ数字)。以前はここで別に数えていた。
+  const totalNet = summarizeAccounting(live.monthly)?.totalNet ?? 0;
+  // 取り込みで落ちた取引 (取引日が読めない・金額が数でない・金額が負) を述べる。
+  // 文面は `shared/freeeIntake.ts` —— 銀行提出用書面 §6 と資金繰り表の注記が
+  // **同じ事実**を述べるため (パス 153)。
+  const intakeNote = dealIntakeNote(live.intake);
 
   return (
     <div>
@@ -87,6 +95,25 @@ export function FreeePage() {
         ※ 読み取り専用です。仕訳の登録・更新は行いません。OAuth 連携には freee アプリ登録と
         環境変数 <code>FREEE_OAUTH_CLIENT_ID</code> の設定が必要です。
       </div>
+
+      {intakeNote !== null && (
+        <div
+          data-freee-intake-note
+          role="status"
+          style={{
+            fontSize: 12,
+            lineHeight: 1.6,
+            marginBottom: 16,
+            padding: '8px 12px',
+            borderRadius: 6,
+            border: '1px solid #fbbf24',
+            background: 'rgba(251, 191, 36, 0.08)',
+            color: '#fbbf24',
+          }}
+        >
+          ⚠ {intakeNote}
+        </div>
+      )}
 
       <Section title="サマリー">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(180px, 100%), 1fr))', gap: 12 }}>

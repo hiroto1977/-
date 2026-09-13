@@ -33,7 +33,6 @@ aliases:
 
 ## 関連概念
 - [[mgmt-triple-bottom-line-elkington|トリプルボトムラインとCSR測定——エルキントンによる経済・環境・社会の三重成果会計]] — 語彙が近い
-- [[mgmt-institutional-entrepreneurship-dimaggio|制度的起業家精神（ディマジオ）]] — 同分野の近傍
 - [[mgmt-trust-integrative-model|組織的信頼統合モデル（メイヤー＝デイビス＝シューアマンの信頼モデル）]] — 同分野の近傍
 
 ## 関連

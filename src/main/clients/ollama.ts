@@ -16,6 +16,7 @@
  *     local Ollama is older than MIN_SAFE_VERSION.
  */
 
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import {
   FetchError,
   redactForMessage,
@@ -29,17 +30,19 @@ import {
   MAX_OLLAMA_PROMPT_CHARS,
   MAX_OLLAMA_SYSTEM_CHARS,
   MIN_SAFE_VERSION,
-  UNPATCHED_OOB_NOTICE,
   adviseFromBody,
+  buildWarnings,
   compareVersions,
   isSafeModelName,
   isVersionSafe,
   type OllamaSnapshot,
 } from '../../shared/ollama';
+import { capAssistantReply, inputTooLongMessage } from '../../shared/assistantLimits';
+import type { ActionData } from '../../shared/actionData';
 import { isOverCap, readBodyWithCap } from '../../shared/httpLimits';
 
 // 既存の import 元 (このモジュール) を維持するため再 export する。
-export { MIN_SAFE_VERSION, UNPATCHED_OOB_NOTICE, compareVersions, isSafeModelName, isVersionSafe };
+export { MIN_SAFE_VERSION, compareVersions, isSafeModelName, isVersionSafe };
 export type { OllamaSnapshot };
 
 const OLLAMA_BASE = 'http://127.0.0.1:11434';
@@ -172,14 +175,10 @@ export async function fetchOllamaSnapshot(ctx: FetchContext): Promise<OllamaSnap
   }
 
   const versionSafe = isVersionSafe(version);
-  if (running && !versionSafe) {
-    warnings.push(
-      `Ollama ${version} is older than the minimum safe version ${MIN_SAFE_VERSION}. Known CVEs apply. See docs/OLLAMA_SECURITY.md.`,
-    );
-  }
   if (running) {
-    // Persistent until upstream ships a patch — see UNPATCHED_OOB_NOTICE.
-    warnings.push(UNPATCHED_OOB_NOTICE);
+    // 文面は両ビルドで 1 つ (shared の buildWarnings): 当てはまる CVE の名指し + 日付つきの台帳の注意。
+    // 2026-09-09 までここは独自の英文と「未パッチ」の固定文だった (パス 139)。
+    warnings.push(...buildWarnings(version));
   }
 
   const models: OllamaSnapshot['models'] = [];
@@ -242,11 +241,12 @@ interface OllamaChatResponse {
   total_duration?: number;
 }
 
-async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: number }> {
+async function chat(ctx: ActionContext): Promise<ActionData<'ollama/chat'>> {
   const { model, prompt, system } = ctx.payload as unknown as ChatPayload;
   if (!model || !prompt) throw new Error('model and prompt are required');
   if (!isSafeModelName(model)) {
-    throw new FetchError(`unsafe model name: ${String(model).slice(0, 32)}`, 0, 'ollama');
+    // 断りに載せる名前も文字の境界で切る (パス 196)。
+    throw new FetchError(`unsafe model name: ${clampToCeiling(String(model), 32)}`, 0, 'ollama');
   }
   // Reject null bytes in user-controlled strings — classic foothold for
   // upstream parser bugs (including the unpatched engine-file OOB read).
@@ -265,9 +265,20 @@ async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: nu
     throw new FetchError('null byte in chat input rejected', 0, 'ollama');
   }
 
+  // 天井超えは**切らずに断る** (パス 114)。それまで `slice(0, MAX_…)` で黙って切っており、
+  // 貼った長文の末尾 (質問はたいてい末尾に在る) が届かないまま答えが返っていた。
+  // アシスタント (`assistant.ts`) はパス 112 で同じ形を断つと決めている —— 端末内の
+  // モデルでも形は同じで、文面は同じ関数 (`inputTooLongMessage`) が持つ。
+  if (countChars(systemStr) > MAX_OLLAMA_SYSTEM_CHARS) {
+    throw new Error(inputTooLongMessage('システムプロンプト', MAX_OLLAMA_SYSTEM_CHARS));
+  }
+  if (countChars(promptStr) > MAX_OLLAMA_PROMPT_CHARS) {
+    throw new Error(inputTooLongMessage('プロンプト', MAX_OLLAMA_PROMPT_CHARS));
+  }
+
   const messages: OllamaChatMessage[] = [];
-  if (system) messages.push({ role: 'system', content: systemStr.slice(0, MAX_OLLAMA_SYSTEM_CHARS) });
-  messages.push({ role: 'user', content: promptStr.slice(0, MAX_OLLAMA_PROMPT_CHARS) });
+  if (system) messages.push({ role: 'system', content: systemStr });
+  messages.push({ role: 'user', content: promptStr });
 
   const f = ctx.fetch ?? fetch;
   return withTimeout(
@@ -348,7 +359,9 @@ async function chat(ctx: ActionContext): Promise<{ reply: string; durationMs: nu
   }
 
   return {
-    reply: parsed.message?.content ?? '',
+    // 応答の天井 (パス 113)。byte の天井 (10 MiB) は「画面に出す量」としては論外 ——
+    // アシスタントと同じ 10 万字で打ち切り、切ったことを本文に残す。
+    reply: capAssistantReply(parsed.message?.content ?? ''),
     durationMs: Math.round((parsed.total_duration ?? 0) / 1_000_000),
   };
     },

@@ -1,5 +1,28 @@
-import { MAX_ADVISOR_QUESTION_CHARS, checkAdvisorQuestion } from '../../shared/advisorQuestionLimits';
+import { isoDateFromTimestamp } from '../../shared/isoDate';
+import { countChars } from '../../shared/inputCeiling';
+import {
+  watchlistPrices,
+  paperAccountExportNote,
+  paperAccountView,
+  pnlColor,
+  pnlLabel,
+  pnlSubLabel,
+  portfolioEquity,
+  tradeCountSubLabel,
+} from '../../shared/paperAccount';
+import {
+  MAX_ADVISOR_QUESTION_CHARS,
+  MAX_ADVISOR_UNIVERSE_SYMBOLS,
+  MAX_TICKER_CHARS,
+  checkAdvisorQuestion,
+} from '../../shared/advisorQuestionLimits';
+import {
+  MAX_ADVISOR_RECOMMENDATIONS,
+  MAX_STOCK_ADVISOR_RATIONALE_CHARS,
+  MAX_STOCK_ADVISOR_RISK_CHARS,
+} from '../../shared/advisorResponseLimits';
 import { seededNoise } from '../../shared/seededNoise';
+import { ratioPctOrDash } from '../../shared/num';
 import { escapeXml, escapeMarkdownInline, escapeMarkdownText } from '../../shared/escape';
 import type { FetchContext, ActionContext, ActionMap } from './types';
 import { limitedFetch, readCapped, redactForMessage } from './types';
@@ -9,6 +32,28 @@ import os from 'node:os';
 import path from 'node:path';
 import { isSafeExportPath, writeExportFile } from './exportPaths';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
+import type { ActionData, ExportFileResult } from '../../shared/actionData';
+import type {
+  AdvisorRecommendation,
+  AdvisorResponse,
+  BacktestSummary,
+  RegisterResult,
+  StrategyComparisonResult,
+  StrategyComparisonRow,
+  UnregisterResult,
+} from '../../shared/stocksTypes';
+
+// 構造化された戻り値の形は shared/stocksTypes.ts が 1 つだけ持つ (パス 117 —— それまで
+// ここ・ブラウザ版・画面の 3 か所に写しが在った)。検査はこのモジュールから読むので再輸出する。
+export type {
+  AdvisorRecommendation,
+  AdvisorResponse,
+  BacktestSummary,
+  RegisterResult,
+  StrategyComparisonResult,
+  StrategyComparisonRow,
+  UnregisterResult,
+} from '../../shared/stocksTypes';
 
 /**
  * Stocks analytics + paper trading.
@@ -94,13 +139,10 @@ export const DEFAULT_RISK_PARAMS: RiskParams = {
   takeProfitPct: 0.15,
 };
 
-/** Aggregate result of running `backtest`. */
-export interface BacktestResult {
-  readonly finalEquity: number;
-  readonly totalReturnPct: number;
-  readonly maxDrawdownPct: number;
-  readonly winRate: number; // 0..1
-  readonly tradeCount: number;
+/** Aggregate result of running `backtest`. 要約 5 欄は共有 (`shared/stocksTypes.ts` の
+ *  `BacktestSummary`) —— 台帳 (`stocks/backtest`) が約束するのはそこまでで、取引の一覧と
+ *  資産曲線はデスクトップ版だけの上位集合 (パス 117)。 */
+export interface BacktestResult extends BacktestSummary {
   readonly trades: readonly PaperTrade[];
   /** Per-bar portfolio equity (cash + held position value). Length =
    *  candles.length − 50 (the loop starts at i=50 because SMA50 needs
@@ -504,27 +546,18 @@ export function applySignal(
 }
 
 /** ウォッチリストの最終値を「銘柄 → 値段」の表にする。時価評価は
- *  `portfolioEquity` だけが持つ規則なので、画面側はこの表を作って渡す。 */
-export function watchlistPrices(
-  watchlist: readonly WatchlistItem[],
-): Readonly<Record<string, number>> {
-  const prices: Record<string, number> = {};
-  for (const w of watchlist) prices[w.symbol] = w.latestClose;
-  return prices;
-}
+ *  `portfolioEquity` だけが持つ規則なので、画面側はこの表を作って渡す。
+ *  **規則は `shared/paperAccount.ts` に在る** (パス 189) —— 画面も同じ物を読む。 */
+export { watchlistPrices } from '../../shared/paperAccount';
 
-/** Total portfolio value at the given snapshot of prices (cash + held shares). */
-export function portfolioEquity(
-  port: PaperPortfolio,
-  prices: Readonly<Record<string, number>>,
-): number {
-  let equity = port.cash;
-  for (const [ticker, pos] of Object.entries(port.positions)) {
-    const price = prices[ticker];
-    if (price != null) equity += pos.shares * price;
-  }
-  return equity;
-}
+/** Total portfolio value at the given snapshot of prices (cash + held shares).
+ *
+ *  **規則は `shared/paperAccount.ts` が 1 つだけ持つ** (パス 189) —— 2026-08 に
+ *  「時価評価は `portfolioEquity` に 1 つだけ置く」と書いたのに、画面
+ *  (`StocksPage.tsx`) はその後も自分で書いた 4 つ目の写しを使っていた。
+ *  main のものは renderer から輸入できない (`lint:imports`) ので、規則を
+ *  shared へ移し、ここは再輸出する —— 呼び出し側 (`backtest` / 書き出し) は変えない。 */
+export { portfolioEquity } from '../../shared/paperAccount';
 
 // --- Backtest ------------------------------------------------------------
 
@@ -652,9 +685,10 @@ export function backtest(
     // catch both directions).
     // Stryker disable next-line ArithmeticOperator
     maxDrawdownPct: maxDrawdown * 100,
-    // completed > 0 ? wins / completed : 0 — the `0` fallback fires
-    // when no trades pair up; tested separately by the no-trade case.
-    winRate: completed > 0 ? wins / completed : 0,
+    // **決済が 1 件も無いなら勝率は算定できない (null)。**
+    // 0 は「決済した取引が在り、どれも勝てなかった」という意味なので、
+    // 1 度も取引していない戦略に付けると最悪値として読める (2026-09-08 · パス 92)。
+    winRate: completed > 0 ? wins / completed : null,
     tradeCount: port.history.length,
     trades: port.history,
     equityCurve,
@@ -739,7 +773,7 @@ export function createMockStocksDataSource(): StocksDataSource {
         // (low ≤ open/close ≤ high) hold under any monotonic scaling.
         // Stryker disable ArithmeticOperator
         out.push({
-          date: new Date(startMs + i * DAY_MS).toISOString().slice(0, 10),
+          date: isoDateFromTimestamp(startMs + i * DAY_MS) ?? '',
           open: Math.round(c.open * 100) / 100,
           high: Math.round(c.high * 100) / 100,
           low: Math.round(c.low * 100) / 100,
@@ -833,14 +867,14 @@ export function isSafeSymbol(value: unknown): value is string {
   // string would pass otherwise), but the cap is pinned by the
   // 'A.repeat(17) → false' test elsewhere.
   // Stryker disable next-line ConditionalExpression
-  if (value.length === 0 || value.length > 16) return false;
+  if (value.length === 0 || countChars(value) > MAX_TICKER_CHARS) return false;
   return /^[A-Za-z0-9.\-^]+$/.test(value);
 }
 
 export async function registerTickerImpl(
   ctx: ActionContext,
   deps: StateDeps = {},
-): Promise<{ symbol: string; added: boolean; watchlist: readonly string[]; message: string }> {
+): Promise<RegisterResult> {
   const { symbol } = ctx.payload as RegisterTickerPayload;
   if (!isSafeSymbol(symbol)) {
     throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
@@ -860,14 +894,14 @@ export async function registerTickerImpl(
 }
 
 // Stryker disable next-line BlockStatement
-async function registerTicker(ctx: ActionContext) {
+async function registerTicker(ctx: ActionContext): Promise<ActionData<'stocks/register-ticker'>> {
   return registerTickerImpl(ctx);
 }
 
 export async function unregisterTickerImpl(
   ctx: ActionContext,
   deps: StateDeps = {},
-): Promise<{ symbol: string; removed: boolean; watchlist: readonly string[]; message: string }> {
+): Promise<UnregisterResult> {
   const { symbol } = ctx.payload as RegisterTickerPayload;
   if (!isSafeSymbol(symbol)) {
     throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
@@ -887,11 +921,11 @@ export async function unregisterTickerImpl(
 }
 
 // Stryker disable next-line BlockStatement
-async function unregisterTicker(ctx: ActionContext) {
+async function unregisterTicker(ctx: ActionContext): Promise<ActionData<'stocks/unregister-ticker'>> {
   return unregisterTickerImpl(ctx);
 }
 
-async function runBacktest(ctx: ActionContext): Promise<BacktestResult> {
+async function runBacktest(ctx: ActionContext): Promise<ActionData<'stocks/backtest'>> {
   const { symbol, strategy: strategyKey, initialCash } = ctx.payload as BacktestPayload;
   if (!isSafeSymbol(symbol)) throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
   // ConditionalExpression `false` mutants on these validation branches
@@ -915,23 +949,7 @@ async function runBacktest(ctx: ActionContext): Promise<BacktestResult> {
 
 // --- Strategy comparison --------------------------------------------------
 
-/** One row in a strategy-comparison result. */
-export interface StrategyComparisonRow {
-  readonly strategy: string;
-  readonly finalEquity: number;
-  readonly totalReturnPct: number;
-  readonly maxDrawdownPct: number;
-  readonly winRate: number;
-  readonly tradeCount: number;
-}
-
-export interface StrategyComparisonResult {
-  readonly symbol: string;
-  readonly initialCash: number;
-  readonly rows: readonly StrategyComparisonRow[];
-  /** Strategy with the highest totalReturnPct; null if all tied at 0. */
-  readonly bestByReturn: string | null;
-}
+// `StrategyComparisonRow` / `StrategyComparisonResult` は shared/stocksTypes.ts (パス 117)。
 
 interface CompareStrategiesPayload {
   symbol?: unknown;
@@ -989,7 +1007,7 @@ export async function compareStrategiesImpl(
   return { symbol, initialCash, rows, bestByReturn };
 }
 
-async function compareStrategies(ctx: ActionContext): Promise<StrategyComparisonResult> {
+async function compareStrategies(ctx: ActionContext): Promise<ActionData<'stocks/compare-strategies'>> {
   return compareStrategiesImpl(ctx);
 }
 
@@ -1012,22 +1030,8 @@ export interface TickerAnalysis {
   readonly rsiSignal: 'oversold' | 'neutral' | 'overbought';
 }
 
-/** One recommendation from the LLM. The shape is enforced by JSON-schema
- *  validation; if Anthropic returns anything else the call throws. */
-export interface AdvisorRecommendation {
-  readonly symbol: string;
-  readonly rank: number; // 1 = top
-  readonly rationale: string;
-  readonly riskFactors: readonly string[];
-}
-
-export interface AdvisorResponse {
-  readonly recommendations: readonly AdvisorRecommendation[];
-  readonly disclaimer: string;
-  /** Always true. Pinned in the type so a caller can't mistake this
-   *  output for a real-money execution authorization. */
-  readonly notForRealMoney: true;
-}
+// `AdvisorRecommendation` / `AdvisorResponse` は shared/stocksTypes.ts (パス 117)。形は JSON の
+// 検証 (`validateAdvisorJson`) が保証し、`universeConsidered` は答えと一緒に運ぶ (パス 105)。
 
 /** Fixed disclaimer prepended to every advisor response. Visible in UI. */
 export const ADVISOR_DISCLAIMER =
@@ -1157,8 +1161,8 @@ export function validateAdvisorJson(
   if (obj.recommendations.length === 0) {
     throw new Error('advisor response has zero recommendations');
   }
-  if (obj.recommendations.length > 5) {
-    throw new Error('advisor response exceeds 5 recommendations');
+  if (obj.recommendations.length > MAX_ADVISOR_RECOMMENDATIONS) {
+    throw new Error(`advisor response exceeds ${MAX_ADVISOR_RECOMMENDATIONS} recommendations`);
   }
   // Each `if (... || ...)` guard below is exhaustively tested via
   // dedicated negative tests on validateAdvisorJson (null entry,
@@ -1181,16 +1185,16 @@ export function validateAdvisorJson(
     if (typeof rec.rationale !== 'string' || rec.rationale.length === 0) {
       throw new Error('recommendation has empty rationale');
     }
-    if (rec.rationale.length > 400) {
-      throw new Error('recommendation rationale exceeds 400 chars');
+    if (countChars(rec.rationale) > MAX_STOCK_ADVISOR_RATIONALE_CHARS) {
+      throw new Error(`recommendation rationale exceeds ${MAX_STOCK_ADVISOR_RATIONALE_CHARS} chars`);
     }
     if (!Array.isArray(rec.riskFactors) || rec.riskFactors.length === 0) {
       throw new Error('recommendation has no riskFactors');
     }
     const riskFactors: string[] = [];
     for (const rf of rec.riskFactors) {
-      if (typeof rf !== 'string' || rf.length === 0 || rf.length > 200) {
-        throw new Error('riskFactor entry is not a 1-200 char string');
+      if (typeof rf !== 'string' || rf.length === 0 || countChars(rf) > MAX_STOCK_ADVISOR_RISK_CHARS) {
+        throw new Error(`riskFactor entry is not a 1-${MAX_STOCK_ADVISOR_RISK_CHARS} char string`);
       }
       riskFactors.push(rf);
     }
@@ -1231,7 +1235,7 @@ interface AnthropicMessagesResponse {
   stop_reason?: string;
 }
 
-async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
+async function askAdvisor(ctx: ActionContext): Promise<ActionData<'stocks/advise'>> {
   const { question, universe } = ctx.payload as AdvisorPayload;
   // Each input-validation branch is exhaustively tested (empty, oversize,
   // control-char). ConditionalExpression `false` would skip the throw;
@@ -1263,8 +1267,12 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
   if (universeList.length === 0) {
     throw new Error('universe is empty');
   }
-  if (universeList.length > 25) {
-    throw new Error('universe exceeds 25 symbols');
+  // 上限は shared に 1 つ (パス 105 — ブラウザ側は同じ数で黙って切っていた)。
+  // ここは IPC の信頼境界なので、**収めるのではなく断る** —— 画面は送る前に
+  // `capAdvisorUniverse` で収めて件数を述べるので、ここへ来るのは配線の誤りか
+  // 乗っ取られたレンダラーだけである。
+  if (universeList.length > MAX_ADVISOR_UNIVERSE_SYMBOLS) {
+    throw new Error(`universe exceeds ${MAX_ADVISOR_UNIVERSE_SYMBOLS} symbols`);
   }
   const allowedSet = new Set(universeList);
 
@@ -1358,6 +1366,9 @@ async function askAdvisor(ctx: ActionContext): Promise<AdvisorResponse> {
     recommendations,
     disclaimer: ADVISOR_DISCLAIMER,
     notForRealMoney: true,
+    universeConsidered: universeList,
+    // ここは上限超えを throw で断るので、返る時点で外した分は無い。
+    universeOmitted: 0,
   };
 }
 
@@ -1423,9 +1434,9 @@ export function renderDashboardHtml(input: DashboardInput): string {
   // 時価評価は `portfolioEquity` に 1 つだけ置く。ここと Markdown 側と
   // バックテストで同じ式を 3 つ持っていたが、値段の取り違えは画面に
   // 出ないので、写し間違えても気付けない形だった。
-  const equity = portfolioEquity(port, watchlistPrices(snapshot.watchlist));
-  const pnl = equity - port.initialCash;
-  const pnlPct = port.initialCash > 0 ? (pnl / port.initialCash) * 100 : 0;
+  // 損益は **取引が 0 件なら算定できない** (パス 189)。組は shared が作る。
+  const acct = paperAccountView(port, watchlistPrices(snapshot.watchlist));
+  const equity = acct.equity;
 
   const watchlistRows = snapshot.watchlist
     .map((w) => {
@@ -1499,7 +1510,7 @@ export function renderDashboardHtml(input: DashboardInput): string {
   <td class="num">${escapeXml(YEN_FMT.format(r.finalEquity))}</td>
   <td class="num" style="color:${r.totalReturnPct >= 0 ? '#22c55e' : '#ef4444'}">${r.totalReturnPct >= 0 ? '+' : ''}${r.totalReturnPct.toFixed(2)}%</td>
   <td class="num">${r.maxDrawdownPct.toFixed(2)}%</td>
-  <td class="num">${(r.winRate * 100).toFixed(0)}%</td>
+  <td class="num">${ratioPctOrDash(r.winRate)}</td>
   <td class="num">${r.tradeCount}</td>
 </tr>`;
       })
@@ -1547,10 +1558,11 @@ footer { margin-top: 32px; color: #64748b; font-size: 11px; }
   <div class="tiles">
     <div class="tile"><div class="label">現在資産</div><div class="value">${escapeXml(YEN_FMT.format(equity))}</div></div>
     <div class="tile"><div class="label">現金残高</div><div class="value">${escapeXml(YEN_FMT.format(port.cash))}</div></div>
-    <div class="tile"><div class="label">損益</div><div class="value" style="color:${pnl >= 0 ? '#22c55e' : '#ef4444'}">${pnl >= 0 ? '+' : ''}${escapeXml(YEN_FMT.format(pnl))}</div><div class="sub">${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(2)}%</div></div>
+    <div class="tile"><div class="label">損益</div><div class="value" style="color:${pnlColor(acct)}">${escapeXml(pnlLabel(acct, (n) => YEN_FMT.format(n)))}</div><div class="sub">${escapeXml(pnlSubLabel(acct))}</div></div>
     <div class="tile"><div class="label">初期入金</div><div class="value">${escapeXml(YEN_FMT.format(port.initialCash))}</div></div>
-    <div class="tile"><div class="label">取引履歴</div><div class="value">${port.history.length}</div><div class="sub">paper trades</div></div>
+    <div class="tile"><div class="label">取引履歴</div><div class="value">${acct.tradeCount}</div><div class="sub">${escapeXml(tradeCountSubLabel(acct))}</div></div>
   </div>
+  <p class="mute">${escapeXml(paperAccountExportNote(acct))}</p>
 </section>
 
 <section>
@@ -1756,12 +1768,9 @@ export function defaultDashboardMdPath(): string {
 export function renderDashboardMarkdown(input: DashboardInput): string {
   const { snapshot, advisorResult, strategyComparison, generatedAt } = input;
 
-  const equity = portfolioEquity(snapshot.portfolio, watchlistPrices(snapshot.watchlist));
-  const pnl = equity - snapshot.portfolio.initialCash;
-  const pnlPct =
-    snapshot.portfolio.initialCash > 0
-      ? (pnl / snapshot.portfolio.initialCash) * 100
-      : 0;
+  // 画面と書き出し HTML と同じ組を読む (パス 189)。
+  const acct = paperAccountView(snapshot.portfolio, watchlistPrices(snapshot.watchlist));
+  const equity = acct.equity;
 
   const watchlistTable =
     snapshot.watchlist.length === 0
@@ -1808,7 +1817,7 @@ export function renderDashboardMarkdown(input: DashboardInput): string {
           // Stryker disable next-line ConditionalExpression
           const isBest = r.strategy === strategyComparison.bestByReturn;
           const label = isBest ? `**${escapeMarkdownInline(r.strategy)} (最良)**` : escapeMarkdownInline(r.strategy);
-          return `| ${label} | ${YEN_FMT.format(r.finalEquity)} | ${sign}${r.totalReturnPct.toFixed(2)}% | ${r.maxDrawdownPct.toFixed(2)}% | ${(r.winRate * 100).toFixed(0)}% | ${r.tradeCount} |`;
+          return `| ${label} | ${YEN_FMT.format(r.finalEquity)} | ${sign}${r.totalReturnPct.toFixed(2)}% | ${r.maxDrawdownPct.toFixed(2)}% | ${ratioPctOrDash(r.winRate)} | ${r.tradeCount} |`;
         }),
       ].join('\n')
     : '';
@@ -1828,12 +1837,12 @@ export function renderDashboardMarkdown(input: DashboardInput): string {
     '|---|---:|',
     `| 現在資産 | ${YEN_FMT.format(equity)} |`,
     `| 現金残高 | ${YEN_FMT.format(snapshot.portfolio.cash)} |`,
-    // P&L sign pinned via positive (+￥10,000) / boundary (+￥0) /
-    // negative (-￥10,000 / -￥25,000) / position-tracked (-25.00%) tests.
-    // Stryker disable next-line ConditionalExpression,EqualityOperator
-    `| 損益 | ${pnl >= 0 ? '+' : ''}${YEN_FMT.format(pnl)} (${pnl >= 0 ? '+' : ''}${pnlPct.toFixed(2)}%) |`,
+    // 符号と「—」の出し方は `shared/paperAccount.ts` が 1 か所で持つ (パス 189)。
+    `| 損益 | ${pnlLabel(acct, (n) => YEN_FMT.format(n))} (${pnlSubLabel(acct)}) |`,
     `| 初期入金 | ${YEN_FMT.format(snapshot.portfolio.initialCash)} |`,
-    `| 取引履歴 | ${snapshot.portfolio.history.length} 取引 |`,
+    `| 取引履歴 | ${acct.tradeCount} 取引 |`,
+    '',
+    paperAccountExportNote(acct),
     '',
     `## ウォッチリスト (${snapshot.watchlist.length} 銘柄)`,
     '',
@@ -1857,11 +1866,7 @@ interface ExportPayload {
   strategyComparison?: unknown;
 }
 
-export interface ExportDashboardResult {
-  readonly path: string;
-  readonly bytes: number;
-  readonly generatedAt: string;
-}
+// 書き出しの結果の形は台帳 `shared/actionData.ts` の `ExportFileResult` (パス 116)。
 
 /** Optional dependency-injection seam for tests. */
 export interface ExportDeps {
@@ -1912,7 +1917,7 @@ function isStrategyComparison(v: unknown): v is StrategyComparisonResult {
   const r = v as Record<string, unknown>;
   return (
     typeof r['symbol'] === 'string' &&
-    typeof r['initialCash'] === 'number' &&
+    Number.isFinite(r['initialCash']) &&
     Array.isArray(r['rows'])
   );
 }
@@ -1948,7 +1953,7 @@ function isSafeFilePathWithExt(filePath: string, home: string, ext: string): boo
 export async function exportDashboardImpl(
   ctx: ActionContext,
   deps: ExportDeps = {},
-): Promise<ExportDashboardResult> {
+): Promise<ExportFileResult> {
   const { path: customPath, advisorResult, strategyComparison } = ctx.payload as ExportPayload;
   const home = os.homedir();
   const filePath =
@@ -1983,7 +1988,7 @@ export async function exportDashboardImpl(
 // test seam, which our tests intentionally avoid (it would touch the
 // real user filesystem).
 // Stryker disable next-line BlockStatement
-async function exportDashboard(ctx: ActionContext): Promise<ExportDashboardResult> {
+async function exportDashboard(ctx: ActionContext): Promise<ActionData<'stocks/export-dashboard'>> {
   return exportDashboardImpl(ctx);
 }
 
@@ -1996,7 +2001,7 @@ async function exportDashboard(ctx: ActionContext): Promise<ExportDashboardResul
 export async function exportDashboardMdImpl(
   ctx: ActionContext,
   deps: ExportDeps = {},
-): Promise<ExportDashboardResult> {
+): Promise<ExportFileResult> {
   const { path: customPath, advisorResult, strategyComparison } = ctx.payload as ExportPayload;
   const home = os.homedir();
   const filePath =
@@ -2024,7 +2029,7 @@ export async function exportDashboardMdImpl(
 // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction
 
 // Stryker disable next-line BlockStatement
-async function exportDashboardMd(ctx: ActionContext): Promise<ExportDashboardResult> {
+async function exportDashboardMd(ctx: ActionContext): Promise<ActionData<'stocks/export-dashboard-md'>> {
   return exportDashboardMdImpl(ctx);
 }
 

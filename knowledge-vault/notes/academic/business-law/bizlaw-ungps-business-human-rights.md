@@ -35,7 +35,7 @@ aliases:
 - [[bizlaw-international-human-rights-due-diligence|国際人権デューデリジェンス（UNGPs）の法的義務化と企業責任]] — 同じ思想家
 - [[econ-inclusive-institutions|包摂的制度と収奪的制度]] — 出典を共有
 - [[bizlaw-corporate-groups-konzernrecht|企業集団規制とコンツェルン法（ドイツ株式法）]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,12 +34,12 @@ aliases:
 - [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]] — 同じ思想家
 - [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 同じ思想家
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 同じ思想家
-- [[econ-ces-production|CES生産関数]] — 同じ思想家
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 同じ思想家
 - [[econ-discrimination-becker|差別の経済学——「差別への嗜好」と競争による差別の侵食]] — 同じ思想家
 - [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家
-- [[econ-elasticity-substitution-allen-uzawa|代替の弾力性——アレン＝ウザワの生産要素間代替可能性の測定]] — 同じ思想家
-- [[econ-elasticity-substitution-ces-arrow|CES生産関数と代替の弾力性——アロー等のマクロ生産技術の一般化]] — 同じ思想家
+- [[econ-elasticity-of-substitution-ces|代替の弾力性と CES 生産関数——要素比率が相対価格にどれだけ反応するかを一つの数 σ で表し、コブ＝ダグラスとレオンチェフを特殊ケースに含む]] — 同じ思想家
+- [[econ-general-equilibrium-walras|ワルラスの一般均衡理論]] — 同じ思想家
+- [[econ-harsanyi-utilitarianism|ハルサニの功利主義（集計定理）——不偏な観察者と期待効用の和]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

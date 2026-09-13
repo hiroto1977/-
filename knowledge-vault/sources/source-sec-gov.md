@@ -2,7 +2,7 @@
 title: "sec.gov"
 type: source-domain
 host: "sec.gov"
-cite_count: 11
+cite_count: 12
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # sec.gov
 
-> [!info] 出典ドメイン索引 ・ 引用 **11 件**（公的 11）
+> [!info] 出典ドメイン索引 ・ 引用 **12 件**（公的 12）
 
 ## このドメインを出典とする項目
 
@@ -18,6 +18,7 @@ tags:
 - [[bizlaw-claw-back-executive-comp|役員報酬の返還請求権（クローバック）]] — SEC(2023)FinalRule:ListingStandardsforRecoveryofErroneouslyAwardedCom…
 - [[bizlaw-howey-investment-contract|投資契約の判定基準（ハウィー・テスト／Howey test）——「他人の努力から利益を期待する共同事業への金銭出資」を有価証券とみなす経済的実質基準]] — U.S.SecuritiesandExchangeCommission,StrategicHubforInnovationandFinan…
 - [[bizlaw-insider-trading-regulation|インサイダー取引規制と情報開示義務——金融商品取引法の内部者取引禁止と市場の公正性]] — SECInsiderTrading—U.S.SecuritiesandExchangeCommission
+- [[bizlaw-regulation-d-private-placement|レギュレーションD——「自ら身を守れる」投資家を前提に登録義務を免除する私募のセーフハーバー]] — SECPressRelease2020-191,"SECModernizestheAccreditedInvestorDefinition…
 - [[bizlaw-say-on-pay|セイ・オン・ペイ（Say on Pay）— 役員報酬に関する株主諮問的投票制度]] — U.S.SecuritiesandExchangeCommission(2011)FinalRule:ShareholderApprova…
 - [[bizlaw-securities-class-action-litigation|証券集団訴訟と投資家保護——米国Rule 10b-5訴訟・日本の金融商品取引法と情報開示責任]] — SEC(2023)TenThingsAboutSecuritiesLaw
 - [[bizlaw-securities-regulation|証券規制法：強制開示制度・市場詐欺理論・インサイダー取引規制とSECによる投資家保護の法的枠組み]] — SEC2024—WhatWeDo:MissionandRegulatoryFramework,U.S.SecuritiesandExcha…

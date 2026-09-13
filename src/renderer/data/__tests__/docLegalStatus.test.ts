@@ -13,7 +13,7 @@ import {
 } from '../docLegalStatus';
 
 /** STUDIO_TEMPLATES に無い別コレクション。仕分けの対象からは外さない。 */
-const OTHER_COLLECTIONS = ['teikan-kk', 'teikan-gk', 'shugyo', 'kessan'] as const;
+const OTHER_COLLECTIONS = ['teikan-kk', 'teikan-gk', 'shugyo', 'kessan', 'kessan-pl', 'kessan-bs', 'kessan-equity', 'kessan-notes'] as const;
 
 describe('仕分けの網羅', () => {
   it('全書式が仕分けされている（足して忘れたら落ちる）', () => {
@@ -139,7 +139,7 @@ describe('2 分にすると誤りになるものを条件付きにしている',
 
 describe('明らかに法定のもの / 明らかに任意のもの', () => {
   it('株主名簿・議事録・定款・計算書類は法定', () => {
-    for (const id of ['kabunushi-meibo', 'sokai', 'torishimari', 'rinji-sokai', 'teikan-kk', 'teikan-gk', 'kessan']) {
+    for (const id of ['kabunushi-meibo', 'sokai', 'torishimari', 'rinji-sokai', 'teikan-kk', 'teikan-gk', 'kessan', 'kessan-pl', 'kessan-bs', 'kessan-equity', 'kessan-notes']) {
       expect(legalStatusOf(id).status, id).toBe('mandatory');
     }
   });

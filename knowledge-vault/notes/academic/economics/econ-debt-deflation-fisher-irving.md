@@ -36,11 +36,11 @@ aliases:
 - [[econ-savings-glut|世界的貯蓄過剰（グローバル・セービング・グラット）]] — 同じ思想家
 - [[econ-kiyotaki-moore-credit-cycles|清滝＝ムーア・モデル——担保制約が衝撃を増幅し信用循環を生む]] — 同じ思想家
 - [[econ-debt-deflation-fisher|負債デフレーション理論——過剰債務と物価下落の悪循環メカニズム]] — 同じ思想家
-- [[econ-financial-accelerator-bernanke|金融加速度メカニズム——信用市場の摩擦が実体経済の変動を増幅する]] — 同じ思想家
+- [[econ-financial-accelerator-bernanke-gertler|金融加速度効果（バーナンキ＝ガートラー＝ギルクリスト）——借り手の純資産と外部資金プレミアムの相互作用が景気のショックを増幅する]] — 同じ思想家
 - [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
 - [[econ-time-preference|時間選好]] — 同じ思想家
-- [[econ-credit-channel|信用経路（クレジット・チャネル）]] — 同じ思想家
-- [[econ-financial-accelerator|金融加速度効果（フィナンシャル・アクセラレータ）]] — 同じ思想家
+- [[econ-diamond-dybvig-bank-run|ダイアモンド＝ディビッグの銀行取付モデル——流動性変換という銀行の本質的機能そのものが自己実現的な取付の脆弱性を生む]] — 同じ思想家
+- [[econ-loanable-funds|貸付資金説（可貸資金市場）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

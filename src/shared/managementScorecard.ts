@@ -42,21 +42,55 @@ export interface CategoryScore {
   readonly components: ReadonlyArray<{ readonly label: string; readonly score: number }>;
 }
 
+/** 総合判定の 4 段階。**「判定しない」は `null` で表す** (この union には入れない)。 */
+export type ScorecardVerdict = 'poor' | 'caution' | 'good' | 'excellent';
+
 /** 総合評価の表示名 (画面と提出用の書面で同じ言葉を使う)。 */
-export const VERDICT_LABEL: Readonly<Record<ManagementScorecard['verdict'], string>> = {
+export const VERDICT_LABEL: Readonly<Record<ScorecardVerdict, string>> = {
   poor: '要改善',
   caution: '注意',
   good: '良好',
   excellent: '優良',
 };
 
+/**
+ * 未算定 (`verdict === null`) を表す表示語。
+ * **画面・金融機関等提出用の書面・経営レポートで同じ言葉を使う。**
+ */
+export const VERDICT_UNSCORED_LABEL = '未算定';
+
+/**
+ * 判定の表示名。**`null` (未算定) も同じ関数で扱う。**
+ *
+ * `VERDICT_LABEL[v]` を直に引くと呼ぶ側が `null` の分岐を写すことになり、
+ * 4 か所で言葉が揺れる (実際にこの 4 か所が `VERDICT_LABEL[scorecard.verdict]`
+ * を直に引いていた)。**言葉を決める場所は 1 つ。**
+ */
+export function verdictLabel(v: ScorecardVerdict | null): string {
+  return v === null ? VERDICT_UNSCORED_LABEL : VERDICT_LABEL[v];
+}
+
 /** 総合スコアカード。 */
 export interface ManagementScorecard {
   readonly categories: readonly CategoryScore[];
-  /** 総合経営スコア (0..100)。算定可能なカテゴリの平均。 */
-  readonly overallScore: number;
-  /** 判定 (要改善 / 注意 / 良好 / 優良)。 */
-  readonly verdict: 'poor' | 'caution' | 'good' | 'excellent';
+  /**
+   * 総合経営スコア (0..100)。算定可能なカテゴリの平均。
+   * **採点できたカテゴリが 1 つも無ければ `null` (未算定)。**
+   *
+   * 2026-09-08 まで `0` に倒していた。0 は `verdict` を通って
+   * **「要改善」**になり、`bankSubmission.ts` の**金融機関等提出用の書面**へ
+   * 「総合スコア 0／100 ／ 評価 要改善」として印字され、
+   * `managementReport.ts` の**役員会・銀行・税理士向けレポート**にも載った ——
+   * **何も測っていないことを、落第点として相手に渡していた。**
+   *
+   * 規準は**このファイルの下の方**に在った —— `weightedOverallScore` は
+   * 同じ条件 (有効カテゴリ 0) で `score: null` / `verdict: null` を返す、と
+   * doc に明記してある。**1 つのファイルの中に正しい形と倒れる形が
+   * 両方在った** (パス 60 の双子と同じ)。
+   */
+  readonly overallScore: number | null;
+  /** 判定 (要改善 / 注意 / 良好 / 優良)。**未算定なら `null`。** */
+  readonly verdict: ScorecardVerdict | null;
   /** 改善のヒント (低スコアのカテゴリ)。 */
   readonly alerts: readonly string[];
 }
@@ -116,11 +150,15 @@ export function buildManagementScorecard(m: ManagementMetricsInput): ManagementS
   ];
 
   const scored = categories.filter((c) => c.score !== null) as Array<CategoryScore & { score: number }>;
+  // **採点できたカテゴリが 0 件なら「0 点」ではなく未算定。**
+  // 0 に倒すと `verdict` が 'poor' (要改善) になり、その判定が書面で相手へ渡る。
   const overallScore = scored.length > 0
     ? Math.round(scored.reduce((s, c) => s + c.score, 0) / scored.length)
-    : 0;
-  const verdict: ManagementScorecard['verdict'] =
-    overallScore >= 80 ? 'excellent' : overallScore >= 60 ? 'good' : overallScore >= 40 ? 'caution' : 'poor';
+    : null;
+  const verdict: ScorecardVerdict | null =
+    overallScore === null
+      ? null
+      : overallScore >= 80 ? 'excellent' : overallScore >= 60 ? 'good' : overallScore >= 40 ? 'caution' : 'poor';
 
   const alerts: string[] = [];
   for (const c of scored) {
@@ -147,7 +185,7 @@ export interface WeightedOverall {
   /** 加重平均した総合スコア (0..100)。算定可能なカテゴリが無い場合は null。 */
   readonly score: number | null;
   /** 判定 (overallScore と同じ 80/60/40 境界)。score が null の場合は null。 */
-  readonly verdict: ManagementScorecard['verdict'] | null;
+  readonly verdict: ScorecardVerdict | null;
   /** 実際に採点へ寄与したカテゴリ (score が非 null かつ重み>0)。 */
   readonly contributing: readonly ScorecardCategory[];
   /** 重みの合計 (有効カテゴリ分のみ)。0 のとき score は null。 */
@@ -186,7 +224,7 @@ export function weightedOverallScore(
     return { score: null, verdict: null, contributing, weightSum: 0 };
   }
   const score = Math.round(acc / weightSum);
-  const verdict: ManagementScorecard['verdict'] =
+  const verdict: ScorecardVerdict =
     score >= 80 ? 'excellent' : score >= 60 ? 'good' : score >= 40 ? 'caution' : 'poor';
   return { score, verdict, contributing, weightSum };
 }

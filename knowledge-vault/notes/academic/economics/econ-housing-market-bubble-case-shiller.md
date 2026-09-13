@@ -38,9 +38,9 @@ aliases:
 - [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
 - [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]] — 同じ思想家
 - [[econ-efficient-market-hypothesis-fama|効率的市場仮説とファーマの資産価格形成論]] — 同じ思想家
+- [[econ-generalized-method-of-moments-hansen|一般化モーメント法（GMM）——モーメント条件のみから分布を仮定せず母数を推定するハンセンの一般理論]] — 同じ思想家
 - [[econ-speculative-bubbles-kindleberger|投機的バブルの解剖——キンドルバーガーのマニア＝パニック＝崩壊モデル]] — 同じ思想家
 - [[bizlaw-auto-liability-act|自動車損害賠償保障法（自賠法）]] — 出典を共有
-- [[bizlaw-building-standards|建築基準法]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

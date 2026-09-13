@@ -30,12 +30,10 @@ Shoshana Zuboff ／ Frank Pasquale ／ Paul Resnick ／ Jean Tirole ／ Nick Srn
 - [Pasquale, F. (2015). The Black Box Society: The Secret Algorithms That Control Money and Information. Harvard University Press.](https://doi.org/10.2307/j.ctt1287kz5) `学術`
 - [Resnick, P., Kuwabara, K., Zeckhauser, R., & Friedman, E. (2000). Reputation systems. Communications of the ACM, 43(12), 45-48.](https://doi.org/10.1145/355019.355026) `学術`
 - [Tirole, J. (2014). Market failures and public policy. Nobel Prize Lecture / American Economic Review, 104(6), 1609-1652.](https://doi.org/10.1257/aer.104.6.1609) `学術`
-- [Srnicek, N. (2017). Platform Capitalism. Polity Press.（Polity, 2017, ISBN 978-1-5095-0487-9）](https://search.worldcat.org/title/Platform-capitalism/oclc/974841289) `学術`
+- [Srnicek, N. (2017). Platform Capitalism. Polity Press.（Polity, 2017, ISBN 978-1-5095-0487-9）](https://search.worldcat.org/title/Platform-capitalism/oclc/974841289) `リファレンス`
 
 ## 関連概念
-- [[infosoc-behavioral-surplus-zuboff|行動余剰と監視資本主義（ズボフ）]] — 語彙が近い
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家
-- [[infosoc-algorithmic-curation-theory|アルゴリズムキュレーション理論]] — 同じ思想家
 - [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — 同じ思想家
 - [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 同じ思想家
 - [[infosoc-digital-sovereignty-theory|デジタル主権論]] — 同じ思想家
@@ -43,6 +41,8 @@ Shoshana Zuboff ／ Frank Pasquale ／ Paul Resnick ／ Jean Tirole ／ Nick Srn
 - [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 出典を共有
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 出典を共有
 - [[econ-condorcet-paradox-cycling|コンドルセのパラドックス——多数決における選好の循環と社会的選択の不安定性]] — 出典を共有
+- [[econ-cost-benefit-analysis-kaldor-hicks|カルドア＝ヒックス基準——勝者が敗者を補償してなお余剰が残るなら改善とみなす潜在的パレート改善で、費用便益分析の理論的基礎]] — 出典を共有
+- [[econ-kaldor-verdoorn-law|カルドア＝ヴェルドーン法則（第二カルドア法則）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

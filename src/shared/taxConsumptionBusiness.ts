@@ -12,6 +12,9 @@
  * - **2割特例**はインボイス登録により免税事業者から課税事業者になった小規模事業者向けの
  *   経過措置 (令和5年10月1日〜令和8年9月30日を含む課税期間)。売上税額の 8 割を控除し
  *   2 割を納付する。適用可否・期間は呼び出し側 / 申告で確認すること。
+ * - **3割特例**は 2割特例の後継 (令和 8 年度税制改正)。**個人事業者に限り**令和 9 年分・令和 10 年分の
+ *   納付税額を売上税額の 3 割とする。法人に後継措置は無いので、区分が分かるときだけ候補に入れる
+ *   (`MethodAvailability.thirtyPercent` は省略時 **false**)。
  * - 基準期間 (前々年/前々事業年度) の課税売上高が 1,000 万円以下なら原則として免税事業者。
  *
  * 申告・納税は税理士 / 国税庁・e-Tax で確定してください。
@@ -24,6 +27,7 @@ import {
 } from './taxCalc';
 import {
   DEEMED_PURCHASE_RATES,
+  THIRTY_PERCENT_RATE,
   TWENTY_PERCENT_RATE,
   type AmountByRate,
   type SimplifiedBusinessType,
@@ -115,6 +119,8 @@ export const DEFAULT_CONSUMPTION_RATES: ConsumptionRates = {
 export interface BusinessConsumptionParams {
   readonly rates: ConsumptionRates;
   readonly twentyPercentRate: number;
+  /** 3割特例の納付割合 (個人事業者の令和 9 年分・令和 10 年分)。 */
+  readonly thirtyPercentRate: number;
   readonly exemptionThreshold: number;
   readonly simplifiedEligibilityThreshold: number;
   readonly fullCreditRatioThreshold: number;
@@ -124,6 +130,7 @@ export interface BusinessConsumptionParams {
 export const DEFAULT_BUSINESS_CONSUMPTION_PARAMS: BusinessConsumptionParams = {
   rates: DEFAULT_CONSUMPTION_RATES,
   twentyPercentRate: TWENTY_PERCENT_RATE,
+  thirtyPercentRate: THIRTY_PERCENT_RATE,
   exemptionThreshold: EXEMPTION_THRESHOLD,
   simplifiedEligibilityThreshold: SIMPLIFIED_ELIGIBILITY_THRESHOLD,
   fullCreditRatioThreshold: FULL_CREDIT_RATIO_THRESHOLD,
@@ -398,6 +405,17 @@ export function calcTwentyPercentTax(
   return yenOr0(taxOf(sales, p.rates) * p.twentyPercentRate);
 }
 
+/**
+ * 3割特例による納付消費税額を概算する (個人事業者の令和 9 年分・令和 10 年分)。
+ *   納付税額 = 売上に係る消費税額 × 30%
+ */
+export function calcThirtyPercentTax(
+  sales: AmountByRate,
+  p: BusinessConsumptionParams = DEFAULT_BUSINESS_CONSUMPTION_PARAMS,
+): number {
+  return yenOr0(taxOf(sales, p.rates) * p.thirtyPercentRate);
+}
+
 // --- 免税 / 簡易課税の適用判定 ------------------------------------------
 
 /**
@@ -426,6 +444,8 @@ export interface BusinessTaxComparison {
   readonly simplified: number;
   /** 2割特例の納付税額。 */
   readonly twentyPercent: number;
+  /** 3割特例の納付税額 (参考として常に出す。候補に入るかは `MethodAvailability.thirtyPercent`)。 */
+  readonly thirtyPercent: number;
   /** 適用した加重平均みなし仕入率 (簡易課税)。 */
   readonly appliedDeemedRate: number;
   /** 納付額が最も少ない方式。 */
@@ -435,17 +455,43 @@ export interface BusinessTaxComparison {
 }
 
 /**
- * 本則・簡易・2割特例の納付税額を比較し、最も納付が少ない方式を返す。
- * 同値の場合は本則 → 簡易 → 2割特例 の順 (本則を優先) で確定する
+ * どの方式が**選べるか**。3 方式のうち 2 つは条件付きなので、
+ * 「いちばん安い方式」を選ぶ前にここで外す。
+ *
+ * なぜ要るか (2026-09-06 実測): 画面は簡易課税の欄に
+ * 「基準期間 5,000 万円超は選択不可」と**自分で書いておきながら**、
+ * その欄に「· 最有利」の札を付け、税負担合計まで
+ * 「消費税は最有利方式（簡易課税）で合算」と言っていた ——
+ * **選べないと宣言した方式で合計を出していた**。同じ card の中で矛盾する。
+ *
+ * 省略時は両方 true (従来どおり全方式から選ぶ)。
+ */
+export interface MethodAvailability {
+  /** 簡易課税 (基準期間の課税売上高 5,000 万円以下 + 事前届出)。 */
+  readonly simplified?: boolean;
+  /** 2 割特例 (インボイス登録で免税から課税になった事業者の経過措置)。 */
+  readonly twentyPercent?: boolean;
+  /**
+   * 3割特例 (個人事業者の令和 9 年分・令和 10 年分)。**省略時は false** —— 他の 2 つと逆で、
+   * 対象が区分と年分で決まるので、言い切れるとき (個人事業者かつ対象年分) だけ true にする。
+   */
+  readonly thirtyPercent?: boolean;
+}
+
+/**
+ * 本則・簡易・2割特例 (・3割特例) の納付税額を比較し、最も納付が少ない方式を返す。
+ * 同値の場合は本則 → 簡易 → 2割特例 → 3割特例 の順 (本則を優先) で確定する
  * (`<` は厳密比較; `<=` ではない)。
  *
  * @param segments 事業区分ごとの課税売上 (税率別・税抜)
  * @param purchases 本則課税で控除する課税仕入 (税率別・税抜) の合計
+ * @param available 選べる方式 (条件を満たさない方式は最有利の候補から外す)
  */
 export function compareBusinessTaxMethods(
   segments: readonly BusinessSegment[],
   purchases: AmountByRate,
   p: BusinessConsumptionParams = DEFAULT_BUSINESS_CONSUMPTION_PARAMS,
+  available: MethodAvailability = {},
 ): BusinessTaxComparison {
   const totalSales: AmountByRate = segments.reduce<AmountByRate>(
     (acc, seg) => ({
@@ -458,17 +504,24 @@ export function compareBusinessTaxMethods(
   const standard = calcStandardTax(totalSales, purchases, p.rates);
   const simplified = calcSimplifiedTax(segments, p.rates);
   const twentyPercent = calcTwentyPercentTax(totalSales, p);
+  const thirtyPercent = calcThirtyPercentTax(totalSales, p);
   const appliedDeemedRate = weightedDeemedRate(segments, p.rates);
 
+  // 本則課税はいつでも選べる (届出も期限も無い) ので、比較の土台に置く。
   let best: ConsumptionTaxMethod = 'standard';
   let bestAmount = standard;
-  if (simplified < bestAmount) {
+  if (available.simplified !== false && simplified < bestAmount) {
     best = 'simplified';
     bestAmount = simplified;
   }
-  if (twentyPercent < bestAmount) {
+  if (available.twentyPercent !== false && twentyPercent < bestAmount) {
     best = 'twenty-percent';
     bestAmount = twentyPercent;
   }
-  return { standard, simplified, twentyPercent, appliedDeemedRate, best, bestAmount };
+  // 3割特例は言い切れるとき (個人事業者かつ対象年分 = 呼ぶ側が true にしたとき) だけ候補に入る。
+  if (available.thirtyPercent === true && thirtyPercent < bestAmount) {
+    best = 'thirty-percent';
+    bestAmount = thirtyPercent;
+  }
+  return { standard, simplified, twentyPercent, thirtyPercent, appliedDeemedRate, best, bestAmount };
 }

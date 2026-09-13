@@ -7,7 +7,7 @@
  * main プロセスの ShopifyOrderSummary を直接 import すると process 境界
  * (lint:imports) に触れるため、renderer 側で必要最小限の入力型を再定義する。
  */
-import { parseSalesEntry, type SalesEntry } from './sales';
+import { parseSalesEntry, shopifyOrderNote, type SalesEntry } from './sales';
 import { localIsoDate } from '../../shared/localDate';
 
 /** Shopify 注文の最小入力。`total` は "¥12,000" のような表示文字列でも、
@@ -47,6 +47,7 @@ export function orderToSalesEntry(
     channel: 'shopify',
     amount,
     orders: order.orders ?? 1,
-    note: order.name ? `Shopify ${order.name}` : 'Shopify',
+    // メモの形は `sales.ts` が 1 か所で持つ (読む側 `salesOrderRef` と同じ形 —— パス 126)。
+    note: shopifyOrderNote(order.name),
   });
 }

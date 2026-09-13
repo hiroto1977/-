@@ -1,4 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+// `../../oauth` は `shell` を electron から読む。単体テストは Electron 本体 (バイナリ) 無しで走る
+// (ci.yml は取得を止めている) ので、実物を読むと `Electron failed to install correctly` で落ちる。
+// 2026-09-05 の対照 (electron を読めなくして全件実行) で、property.test.ts と並んでここが落ちた。
+vi.mock('electron', () => ({ shell: { openExternal: vi.fn() } }));
 import { ACTIONS as SECURITY } from '../security';
 import { ACTIONS as M365 } from '../microsoft-365';
 import { ACTIONS as BUSINESS } from '../business';

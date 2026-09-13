@@ -8,6 +8,7 @@ import {
   canAssignRole,
   seatsRemaining,
   canAddMember,
+  canChangeRole,
   canRemoveMember,
 } from '../team';
 
@@ -103,5 +104,50 @@ describe('canRemoveMember', () => {
   it('allows removing non-owners regardless', () => {
     expect(canRemoveMember('admin', 1)).toBe(true);
     expect(canRemoveMember('member', 1)).toBe(true);
+  });
+});
+
+// 削除の側だけが「オーナーは 1 人以上」を守っていた (2026-09-06 実測)。役割の
+// `<select>` は全員に 3 つの選択肢を出し、`onChangeRole` は素で `edit` を呼ぶので、
+// オーナー 1 人の組織でその 1 人を「メンバー」にすると**オーナーが 0 人**になる。
+// そうなると削除の守り自体が効かなくなり (`canRemoveMember(*, 0)` は true)、
+// `canAssignRole` は「自分より下の役割しか与えられない」規則なのでオーナーを
+// 作り直す道も無い。同じ不変条件は同じ強さで守る。
+describe('canChangeRole', () => {
+  it('最後のオーナーは降格できない', () => {
+    expect(canChangeRole('owner', 'member', 1)).toBe(false);
+    expect(canChangeRole('owner', 'admin', 1)).toBe(false);
+  });
+
+  it('オーナーが 2 人以上なら降格できる', () => {
+    expect(canChangeRole('owner', 'member', 2)).toBe(true);
+    expect(canChangeRole('owner', 'admin', 3)).toBe(true);
+  });
+
+  it('オーナーのままなら 1 人でも通す (同じ値を選び直しただけ)', () => {
+    expect(canChangeRole('owner', 'owner', 1)).toBe(true);
+  });
+
+  it('オーナー以外の変更は数に関係なく通す (昇格を妨げない)', () => {
+    expect(canChangeRole('member', 'owner', 0)).toBe(true);
+    expect(canChangeRole('member', 'admin', 1)).toBe(true);
+    expect(canChangeRole('admin', 'member', 1)).toBe(true);
+  });
+
+  it('0 人 (既に壊れている状態) からオーナーを立て直せる', () => {
+    // 守りが入る前に 0 人になった端末でも、昇格の道は閉じない。
+    expect(canChangeRole('member', 'owner', 0)).toBe(true);
+    expect(canChangeRole('admin', 'owner', 0)).toBe(true);
+  });
+
+  it('削除の守りと同じ境目を使う (1 人までは断る・2 人から通す)', () => {
+    for (const n of [0, 1]) {
+      expect(canChangeRole('owner', 'member', n), `owners=${n}`).toBe(false);
+      expect(canRemoveMember('owner', n), `owners=${n}`).toBe(false);
+    }
+    for (const n of [2, 5]) {
+      expect(canChangeRole('owner', 'member', n), `owners=${n}`).toBe(true);
+      expect(canRemoveMember('owner', n), `owners=${n}`).toBe(true);
+    }
   });
 });

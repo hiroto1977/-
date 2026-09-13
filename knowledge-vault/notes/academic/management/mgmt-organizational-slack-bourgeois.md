@@ -35,11 +35,11 @@ aliases:
 - [[mgmt-organizational-slack|組織スラック]] — 同じ思想家
 - [[econ-behavioral-theory-firm-cyert|企業の行動理論と組織的意思決定の政治経済モデル（サイアート＝マーチ）]] — 同じ思想家
 - [[mgmt-behavioral-decision-theory-march|行動的意思決定理論——限定合理性下の組織的選択プロセス]] — 同じ思想家
-- [[mgmt-organizational-ambidexterity|組織的両利き経営（Organizational Ambidexterity）]] — 同じ思想家
-- [[mgmt-absorptive-capacity-zahra|吸収能力の再概念化：動的能力としての知識統合]] — 同じ思想家
-- [[mgmt-ambidexterity-tushman|組織的両利きの経営（タッシュマン＆オライリー）]] — 同じ思想家
-- [[mgmt-ambidextrous-organization|両利き経営（Ambidextrous Organization）]] — 同じ思想家
-- [[mgmt-ambidextrous-organization-exploration-exploitation|両利きの経営——タッシュマンの探索と活用のバランスと構造的分化・文脈的両利き]] — 同じ思想家
+- [[mgmt-competency-trap|コンピテンシー・トラップと成功の罠（レヴィット＝マーチ／レヴィンタール＝マーチ）——過去の成功への習熟が学習を深化に偏らせ、より優れた選択肢への転換を妨げる]] — 同じ思想家
+- [[mgmt-strategic-choice-child|戦略的選択論（チャイルド）——組織構造は環境に一義的に決まるのではなく、支配的連合の政治的な選択を介して形づくられる]] — 同じ思想家
+- [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]] — 同じ思想家
+- [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる]] — 同じ思想家
+- [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]] — 同じ思想家
 - [[mgmt-nk-fitness-landscape|NK適応度地形モデル——戦略の「険しい山」と局所最適]] — 同じ思想家
 
 ## 関連

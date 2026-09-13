@@ -30,9 +30,10 @@ aliases:
 - [NobelPrize.org — Clive W. J. Granger, Prize in Economic Sciences 2003](https://www.nobelprize.org/prizes/economic-sciences/2003/granger/facts/) `リファレンス`
 
 ## 関連概念
+- [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]] — 同じ思想家
 - [[econ-volatility-clustering-engle|ボラティリティ・クラスタリングとARCH——時間変動するリスクのモデル化]] — 同じ思想家
 - [[econ-export-led-growth-model|輸出主導型成長モデル]] — 同分野の近傍
-- [[econ-business-cycles|景気循環とその諸波動]] — 同分野の近傍
+- [[econ-barzel-measurement-cost-property-rights|財産権の測定費用理論（バーゼルのメジャーメント・コスト・アプローチ）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

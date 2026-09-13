@@ -9,6 +9,7 @@
  *
  * 免責: 生成される書類は一般的テンプレートであり法的助言ではない。
  */
+import { invoiceTransitionScheduleLabel } from '../../shared/invoiceTransition';
 
 export interface DocField {
   readonly k: string;
@@ -20,6 +21,17 @@ export interface DocField {
   /** 空欄のまま交付すると書類として成立しない項目。事前チェックが警告する。 */
   readonly req?: true;
 }
+
+/**
+ * 見積書・注文書・注文請書・納品書の「品目N 税率区分」の選択肢。
+ *
+ * **適格請求書 (`i{N}kind`) の 8 択とは意図的に違う。** これらの書式には
+ * 任意税率 A / B の率を入れる欄 (`rateA` / `rateB`) が無いので、選べるようにすると
+ * **率 0% で黙って計算する**ことになる (画面には「任意税率A」と出るのに税額は 0)。
+ * 「（使わない）」も無い —— 行を落とすのは品目と金額が両方空のときで、
+ * 同じことを 2 通りで指示できるようにしない。
+ */
+const ITEM_TAX_KIND_OPTIONS = ['標準税率', '軽減税率', '免税（輸出取引等）', '非課税', '不課税（対象外）'] as const;
 
 /** 汎用の差込表（36協定・精算書・株主名簿など、定型の表を持つ書式で使う）。 */
 export interface DocTable {
@@ -279,10 +291,13 @@ export const STUDIO_TEMPLATES: readonly StudioDoc[] = [
       { k: 'payterm', label: '支払条件', ph: '納品月の翌月末日 銀行振込' },
       { k: 'item1', req: true, label: '品目1', ph: 'Web サイト制作一式' },
       { k: 'amount1', req: true, label: '金額1（税抜）', ph: '500,000', num: true },
+      { k: 'item1kind', label: '品目1 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item2', label: '品目2', ph: '保守（月額×3か月）' },
       { k: 'amount2', label: '金額2（税抜）', ph: '90,000', num: true },
+      { k: 'item2kind', label: '品目2 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item3', label: '品目3', ph: '' },
       { k: 'amount3', label: '金額3（税抜）', ph: '', num: true },
+      { k: 'item3kind', label: '品目3 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
     ],
     body: [
       { center: '御　見　積　書' },
@@ -312,10 +327,13 @@ export const STUDIO_TEMPLATES: readonly StudioDoc[] = [
       { k: 'date', req: true, label: '発注日', ph: '2026年7月19日' },
       { k: 'item1', req: true, label: '品目1（給付の内容）', ph: 'バナー画像デザイン 10点' },
       { k: 'amount1', req: true, label: '金額1（税抜）', ph: '100,000', num: true },
+      { k: 'item1kind', label: '品目1 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item2', label: '品目2', ph: '' },
       { k: 'amount2', label: '金額2（税抜）', ph: '', num: true },
+      { k: 'item2kind', label: '品目2 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item3', label: '品目3', ph: '' },
       { k: 'amount3', label: '金額3（税抜）', ph: '', num: true },
+      { k: 'item3kind', label: '品目3 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'due', label: '納期（給付を受領する期日）', ph: '2026年8月10日' },
       { k: 'place', label: '納入場所（受領場所）', ph: '当社本社／データ納品はメール' },
       { k: 'inspect', label: '検査完了期日', ph: '受領後10日以内' },
@@ -395,7 +413,7 @@ export const STUDIO_TEMPLATES: readonly StudioDoc[] = [
       '品目ごとに税率区分を選ぶと、同じ区分の品目が自動でまとめられ、区分ごとの小計・適用税率・消費税額が表に出ます。区分は 標準税率 / 軽減税率 / 任意税率A・B（0〜50% を自分で指定）/ 免税（輸出取引等）/ 非課税 / 不課税 の 7 つです。',
       '0% と非課税・不課税は消費税額が 0 になる点だけが同じで意味は異なります。免税（輸出取引等）は課税資産の譲渡等にあたるため税率0%の区分として記載し、非課税（土地の譲渡・貸付け等）と不課税（給与・寄附金等）は課税対象外として別に集計します。',
       '消費税額の端数処理は「一の適格請求書につき税率ごとに1回」で、明細行ごとに端数処理して積み上げる方式は認められません。方法（切捨て・切上げ・四捨五入）はフォームで選べます。行ごとに処理した場合との差額があるときは書面に注記されます。',
-      '免税事業者等からの課税仕入れの経過措置は令和8年度改正で見直され、控除割合は 2026年9月30日まで80% → 70%（〜2028年9月）→50%（〜2030年9月）→30%（〜2031年9月）と段階縮小します（判定は請求書の発行日ではなく課税仕入れの時期・同一先からの仕入れは年1億円まで）。',
+      `免税事業者等からの課税仕入れの経過措置は令和8年度改正で見直され、控除割合は ${invoiceTransitionScheduleLabel()} と段階縮小します（判定は請求書の発行日ではなく課税仕入れの時期・同一先からの仕入れは年1億円まで）。`,
       '発行したインボイスの写しと受領したインボイスは保存義務（電子取引データは電子帳簿保存法によりデータのまま保存）。',
     ],
   },
@@ -995,10 +1013,13 @@ export const STUDIO_TEMPLATES: readonly StudioDoc[] = [
       { k: 'payterm', label: '支払条件', ph: '検収完了月の翌月末日 銀行振込' },
       { k: 'item1', req: true, label: '品目1', ph: 'バナー画像デザイン 10点' },
       { k: 'amount1', req: true, label: '金額1（税抜）', ph: '100,000', num: true },
+      { k: 'item1kind', label: '品目1 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item2', label: '品目2', ph: '' },
       { k: 'amount2', label: '金額2（税抜）', ph: '', num: true },
+      { k: 'item2kind', label: '品目2 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item3', label: '品目3', ph: '' },
       { k: 'amount3', label: '金額3（税抜）', ph: '', num: true },
+      { k: 'item3kind', label: '品目3 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
     ],
     body: [
       { center: '注　文　請　書' },
@@ -1037,10 +1058,13 @@ export const STUDIO_TEMPLATES: readonly StudioDoc[] = [
       { k: 'place', label: '納入場所', ph: '御社 本社受付' },
       { k: 'item1', req: true, label: '品目1', ph: 'バナー画像デザイン 10点' },
       { k: 'amount1', req: true, label: '金額1（税抜）', ph: '100,000', num: true },
+      { k: 'item1kind', label: '品目1 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item2', label: '品目2', ph: '' },
       { k: 'amount2', label: '金額2（税抜）', ph: '', num: true },
+      { k: 'item2kind', label: '品目2 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
       { k: 'item3', label: '品目3', ph: '' },
       { k: 'amount3', label: '金額3（税抜）', ph: '', num: true },
+      { k: 'item3kind', label: '品目3 税率区分', options: ITEM_TAX_KIND_OPTIONS, def: '標準税率' },
     ],
     body: [
       { center: '納　品　書' },
@@ -1907,7 +1931,7 @@ export const STUDIO_TEMPLATES: readonly StudioDoc[] = [
     ],
     note: [
       '適格請求書（インボイス）の保存がない課税仕入れは、原則として仕入税額控除ができません。ただし、3万円未満の公共交通機関による旅客の運送（公共交通機関特例）、従業員等に支給する出張旅費・宿泊費・日当（出張旅費等特例）などは、一定の事項を記載した帳簿のみの保存で控除が認められます。',
-      '2023年10月から2029年9月までは、免税事業者等からの課税仕入れについて仕入税額相当額の一定割合（当初80%、以降50%）を控除できる経過措置があります。適用には区分経理と帳簿への記載が必要です。',
+      `免税事業者等からの課税仕入れは、仕入税額相当額の一定割合を控除できる経過措置の対象です（${invoiceTransitionScheduleLabel()}）。適用には区分経理と帳簿への記載が必要です。`,
       'メールや Web からダウンロードした領収書等は電子取引に当たり、電子帳簿保存法により電子データのまま保存する必要があります。紙で受領した領収書をスキャナ保存する場合は、解像度等の要件と検索機能の確保が必要です。',
       '3万円以上の交際費・会議費については、参加者の氏名・人数・目的の記録を残してください。',
     ],

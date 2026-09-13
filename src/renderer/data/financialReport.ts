@@ -68,8 +68,13 @@ export interface FinancialReportInput {
 }
 
 /** パーセント (実効税率) を小数1桁で整形。0.2549 → '25.5%'。 */
-function fmtRate(rate: number): string {
-  return `${(rate * 100).toFixed(1)}%`;
+/**
+ * 税率。**算定不能 (`null`) は「—」** —— `0.0%` は「税率が 0 である」という主張で、
+ * 均等割だけが課される期にそれを刷ると同じ表の「法人税等合計」と両立しない
+ * (経緯は `shared/taxCorporate.ts` の `effectiveRate`)。
+ */
+function fmtRate(rate: number | null): string {
+  return rate === null ? '—' : `${(rate * 100).toFixed(1)}%`;
 }
 
 /**
@@ -97,6 +102,13 @@ function appendCorporateTaxSection(lines: string[], ordinaryProfit: number, rate
   lines.push(`| 法定実効税率(参考) | ${fmtRate(b.statutoryEffectiveRate)} |`);
   lines.push(`| 税引後利益 | ${yen(b.afterTaxProfit)} 円 |`);
   lines.push('');
+  // **なぜ実効税率が空欄なのかを述べる。** 条件は**値そのもの** (`=== null`) で書く ——
+  // `ordinaryProfit <= 0` と書き写すと、この率が割る「控除後の課税所得」とは
+  // 別の量で規則を再導出することになり、境目で食い違う (画面がそうなっていた)。
+  if (b.effectiveRate === null) {
+    lines.push('> 控除後の課税所得が 0 のため、実効税率は算定していません。');
+    lines.push('');
+  }
   if (ordinaryProfit <= 0) {
     lines.push(`> 欠損(税引前利益が0以下)のため、法人住民税の均等割(${yen(b.residentTax)} 円)のみが課されます。税引後利益 = 税引前利益 − 均等割。`);
   } else {
@@ -121,12 +133,29 @@ export function buildFinancialReportMarkdown(input: FinancialReportInput): strin
   lines.push('');
   lines.push(`作成日: ${date}`);
   lines.push('');
-  lines.push(`## 総合評価: ${diagnosis.grade} （総合スコア ${diagnosis.overallScore} / 100）`);
+  // **`${null}` は型検査を素通りして文字列 "null" を刷る。**
+  // `grade` / `overallScore` / `c.score` は算定できた軸が 0 件のとき `null` になるので、
+  // ここで明示的に分ける (2026-09-08 に実際にこの経路で "null" を刷りかけた)。
+  lines.push(
+    diagnosis.overallScore === null || diagnosis.grade === null
+      ? '## 総合評価: 未評価 （算定できた指標がありません）'
+      : `## 総合評価: ${diagnosis.grade} （総合スコア ${diagnosis.overallScore} / 100）`,
+  );
   lines.push('');
   lines.push('| カテゴリ | スコア |');
   lines.push('| --- | ---: |');
-  for (const c of diagnosis.categories) lines.push(`| ${c.category} | ${c.score} |`);
+  for (const c of diagnosis.categories) {
+    lines.push(`| ${c.category} | ${c.score === null ? '未評価' : c.score} |`);
+  }
   lines.push('');
+  // 除いた軸を書面の中で述べる (画面の帯と同じ趣旨 —— 数字が変わった理由が読めるように)。
+  if (diagnosis.unscored.length > 0) {
+    lines.push(
+      `**未評価の ${diagnosis.unscored.length} 軸:** ${diagnosis.unscored.map((u) => u.label).join('・')}` +
+        '（分母となる科目が 0 のため算定できず、総合スコア・カテゴリ平均・強み／要改善から除いています）',
+    );
+    lines.push('');
+  }
   const delta = trend.deltaPct == null ? '—' : `${trend.deltaPct > 0 ? '+' : ''}${trend.deltaPct}pt`;
   lines.push(`**営業利益率トレンド:** ${TREND_TEXT[trend.direction]}（履歴 ${delta}）`);
   lines.push('');

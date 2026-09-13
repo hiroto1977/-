@@ -1,3 +1,4 @@
+import { clampToCeiling, countChars } from './inputCeiling';
 /**
  * アシスタントの入出力の上限 —— **両ビルドで 1 つだけ持つ。**
  *
@@ -76,3 +77,58 @@ export const MAX_ASSISTANT_REPLY_CHARS = 100_000;
 /** 切り詰めたことを黙らせない。画面には必ずこの一行が付く。 */
 export const ASSISTANT_REPLY_TRUNCATED_NOTICE =
   '\n\n…（応答が長すぎたため、ここで打ち切りました）';
+
+// ---------------------------------------------------------------------------
+// 最新の発話 —— 切らずに断る (2026-09-09 · パス 112)
+// ---------------------------------------------------------------------------
+
+/**
+ * **いま送ろうとしている発話は、切らずに断る。**
+ *
+ * `sanitizeMessages` (main) / `sanitizeAssistantTurns` (ブラウザ版) は会話履歴を窓に
+ * 収めるため、1 発話を `MAX_ASSISTANT_CONTENT_CHARS` で**黙って切る**。既に交わした
+ * 履歴を窓に収めるのは設計だが、**最新の発話** (利用者がいま書いた物・マイクで話した物)
+ * まで黙って切ると、利用者は全文が届いたと思い、AI は途中で切れた質問に答える。
+ *
+ * このファイルの下にある応答側の規則 —— 「切り詰めたことを黙らせない」
+ * (`ASSISTANT_REPLY_TRUNCATED_NOTICE`) —— を送る側にも当てる: 最新の発話が天井を
+ * 超えていたら切らずに断り、画面は `maxLength` で同じ天井を持つ (数は写さない)。
+ * 2026-09-09 まで画面に天井は無く、8,001 字目からは黙って消えていた。
+ *
+ * 履歴の判定と分けるのは、応答 (`MAX_ASSISTANT_REPLY_CHARS` = 10 万字) を次の往復で
+ * 履歴として送るときに、断ると会話そのものが止まるから —— そちらは窓のまま。
+ */
+export function latestTurnTooLong(raw: unknown): boolean {
+  if (!Array.isArray(raw) || raw.length === 0) return false;
+  const last: unknown = raw[raw.length - 1];
+  if (last === null || typeof last !== 'object') return false;
+  const content = (last as { content?: unknown }).content;
+  // `sanitize*` と同じく前後の空白は数えない (同じ発話を片方が通し片方が断らないように)。
+  return typeof content === 'string' && countChars(content.trim()) > MAX_ASSISTANT_CONTENT_CHARS;
+}
+
+/**
+ * 断りの文面。両ビルドと skills と ollama が同じ 1 つを読む (`label` は「入力」「プロンプト」
+ * 「システムプロンプト」)。天井は既定でアシスタントの物 —— **端末内の Ollama は別の天井**
+ * (`MAX_OLLAMA_PROMPT_CHARS` / `MAX_OLLAMA_SYSTEM_CHARS`) を渡す (2026-09-09 · パス 114)。
+ * 文面を家系ごとに書くと、数を写す道が家系の数だけ開く。
+ */
+export function inputTooLongMessage(label: string, max: number = MAX_ASSISTANT_CONTENT_CHARS): string {
+  return `${label}が長すぎます (${max} 字以内)`;
+}
+
+/**
+ * **応答の天井を 1 か所で掛ける** (2026-09-09 · パス 113)。
+ *
+ * 上の `MAX_ASSISTANT_REPLY_CHARS` は `shared/ai/chat.ts` (`runAiChat`) だけが読んでいた ——
+ * 「両ビルドと chat / chatAll が必ず通る唯一の場所」だから。だが AI の応答が画面へ出る経路は
+ * それだけではなかった: `skills/run-skill` は Anthropic の本文を 10 MiB (byte の天井) まで
+ * `<pre>` へ、`ollama/chat` は端末内モデルの本文を 10 MiB (main) / 2 MiB (ブラウザ版) まで
+ * チャットボットの吹き出しへ、そのまま渡していた。**同じ画面で、同じ症状 (固まる) が、
+ * 別の入口から起きる。** 判断は 1 つなので関数にして、3 経路が同じ物を読む。
+ */
+export function capAssistantReply(text: string): string {
+  return countChars(text) > MAX_ASSISTANT_REPLY_CHARS
+    ? clampToCeiling(text, MAX_ASSISTANT_REPLY_CHARS) + ASSISTANT_REPLY_TRUNCATED_NOTICE
+    : text;
+}

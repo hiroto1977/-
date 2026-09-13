@@ -32,7 +32,7 @@ Janis A. Cannon-Bowers ／ Eduardo Salas ／ Richard Klimoski
 - [Sage Encyclopedia of Group Processes — Shared Mental Models](https://sk.sagepub.com/ency/edvol/processes/chpt/shared-mental-models) `リファレンス`
 
 ## 関連概念
-- [[mgmt-team-mental-models-theory|チーム・メンタルモデル理論]] — 同じ思想家
+- [[mgmt-team-mental-models-theory|チーム・メンタルモデル理論]] — 語彙が近い
 - [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
 - [[econ-becker-crime|犯罪の経済学]] — 出典を共有
 - [[human-microaggression|マイクロアグレッション]] — 出典を共有
@@ -41,7 +41,7 @@ Janis A. Cannon-Bowers ／ Eduardo Salas ／ Richard Klimoski
 - [[infosoc-banal-nationalism|バナール・ナショナリズム]] — 出典を共有
 - [[infosoc-limited-effects|限定効果論]] — 出典を共有
 - [[infosoc-two-step-flow|コミュニケーションの二段階の流れ仮説（two-step flow）]] — 出典を共有
-- [[mgmt-idiosyncrasy-credit|特異性クレジット理論]] — 出典を共有
+- [[mgmt-simmelian-ties-krackhardt|ジンメリアン・タイ（クラックハート）——三者関係に埋め込まれた「超強力で粘着的」な紐帯]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

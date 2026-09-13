@@ -2,7 +2,7 @@
 title: "simonandschuster.com"
 type: source-domain
 host: "simonandschuster.com"
-cite_count: 2
+cite_count: 1
 tags:
   - source-domain
   - index
@@ -10,11 +10,10 @@ tags:
 
 # simonandschuster.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **2 件**（リファレンス 2）
+> [!info] 出典ドメイン索引 ・ 引用 **1 件**（リファレンス 1）
 
 ## このドメインを出典とする項目
 
-- [[human-positive-psychology-broaden-build|ポジティブ心理学と拡張形成理論：ポジティブ感情が思考・行動レパートリーを広げ持続的個人資源を構築するメカニズム]] — Seligman2011—Flourish:AVisionaryNewUnderstandingofHappinessandWell-be…
 - [[mgmt-radical-transparency-dalio|ラジカル・トランスパレンシー（ダリオ）]] — Dalio,R.(2017)Principles:Life&Work—Simon&Schuster（ラジカル・トランスパレンシーの原典）
 
 ## 関連

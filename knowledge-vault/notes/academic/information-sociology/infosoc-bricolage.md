@@ -31,11 +31,9 @@ aliases:
 
 ## 関連概念
 - [[infosoc-gift-economy-mauss|贈与論——贈与交換を律する与え・受け・返す三つの義務と全体的社会的事実]] — 同じ思想家
-- [[mgmt-bricolage-entrepreneurial|アントレプレナーシップ・ブリコラージュ：資源制約下における「手元にあるもの」での価値創造]] — 同じ思想家
-- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナーシップのブリコラージュ——手持ち資源の創造的再結合]] — 同じ思想家
-- [[mgmt-bricolage-organizational-baker|組織的ブリコラージュ（ベイカー）]] — 同じ思想家
-- [[infosoc-cultural-imperialism|文化帝国主義（メディア帝国主義）]] — 同分野の近傍
+- [[mgmt-bricolage-entrepreneurship-baker|アントレプレナー的ブリコラージュ（ベイカー＝ネルソン）——手元にある資源の組み合わせを新しい問題や機会に当てはめて「無から有」を生む資源構築]] — 同じ思想家
 - [[infosoc-spreadability-jenkins|スプレッダビリティ——参加型文化におけるメディアコンテンツの拡散メカニズム]] — 同分野の近傍
+- [[infosoc-cultural-imperialism|文化帝国主義（メディア帝国主義）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

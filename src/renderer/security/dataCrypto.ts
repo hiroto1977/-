@@ -10,6 +10,8 @@
  * AES-GCM provides authentication: a wrong passphrase or any tampering with
  * salt/iv/ciphertext fails decryption (throws) rather than returning garbage.
  */
+import { webCryptoUnavailableReason } from './webCrypto';
+
 
 import {
   AES_GCM_IV_BYTES,
@@ -141,6 +143,13 @@ function decodeBase64Field(b64: string, field: string): Uint8Array {
 }
 
 async function deriveKey(password: string, salt: Uint8Array, iterations: number): Promise<CryptoKey> {
+  /*
+   * `vault.ts` の同名関数と同じ理由でここも守る (パス 171)。この経路を通るのは
+   * バックアップの暗号化・レコードの封緘・クラウド退避で、どれも失敗の `message`
+   * をそのまま画面へ出す。**内部 API の名前ではなく打てる手を言う。**
+   */
+  const missing = webCryptoUnavailableReason();
+  if (missing !== null) throw new Error(missing);
   const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, [
     'deriveKey',
   ]);
@@ -159,7 +168,8 @@ export function isEncryptedBundle(v: unknown): v is EncryptedBundle {
   return (
     b.v === 1 &&
     b.kdf === KDF &&
-    typeof b.iterations === 'number' &&
+    // 反復回数が非有限だと `deriveBits` が投げる。ここで断る (パス 98)。
+    Number.isFinite(b.iterations) &&
     typeof b.salt === 'string' &&
     typeof b.iv === 'string' &&
     typeof b.ct === 'string'

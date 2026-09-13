@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   MAX_SCHEDULE_YEARS,
   isSchedulableLife,
@@ -13,8 +13,13 @@ import {
   compareMethods,
   lumpSum3YearSchedule,
   smeImmediateDeduction,
+  smeMeasureWindow,
   SME_UNIT_LIMIT,
+  SME_UNIT_LIMIT_BEFORE_STEP,
+  SME_UNIT_LIMIT_STEP_DATE,
   SME_ANNUAL_CAP,
+  SME_EMPLOYEE_CAP,
+  SME_MEASURE_END,
 } from '../depreciation';
 
 describe('straightLineAnnual', () => {
@@ -92,18 +97,73 @@ describe('decliningBalanceSchedule (200% declining balance)', () => {
   });
 });
 
-describe('classifySmallAsset', () => {
-  it('classifies by acquisition-cost thresholds', () => {
-    expect(classifySmallAsset(90_000)).toBe('immediate');
-    expect(classifySmallAsset(150_000)).toBe('lump-3year');
-    expect(classifySmallAsset(250_000)).toBe('sme-special');
-    expect(classifySmallAsset(300_000)).toBe('normal');
-    expect(classifySmallAsset(500_000)).toBe('normal');
+describe('classifySmallAsset (取得日つき)', () => {
+  const ON = '2026-06-01'; // 令和 8 年度改正の後の取得
+
+  it('classifies by acquisition-cost thresholds (2026-04-01 以後の取得は 40 万円未満まで特例)', () => {
+    expect(classifySmallAsset(90_000, ON)).toBe('immediate');
+    expect(classifySmallAsset(150_000, ON)).toBe('lump-3year');
+    expect(classifySmallAsset(250_000, ON)).toBe('sme-special');
+    expect(classifySmallAsset(350_000, ON)).toBe('sme-special');
+    expect(classifySmallAsset(400_000, ON)).toBe('normal');
+    expect(classifySmallAsset(500_000, ON)).toBe('normal');
   });
 
-  it('treats the boundaries exclusively (10万/20万/30万)', () => {
-    expect(classifySmallAsset(100_000)).toBe('lump-3year');
-    expect(classifySmallAsset(200_000)).toBe('sme-special');
+  it('treats the boundaries exclusively (10万/20万/上限)', () => {
+    expect(classifySmallAsset(100_000, ON)).toBe('lump-3year');
+    expect(classifySmallAsset(200_000, ON)).toBe('sme-special');
+    expect(classifySmallAsset(399_999, ON)).toBe('sme-special');
+    expect(classifySmallAsset(299_999, '2026-03-31')).toBe('sme-special');
+    expect(classifySmallAsset(300_000, '2026-03-31')).toBe('normal');
+  });
+
+  it('★ 同じ 35 万円の資産が、取得日 2026-03-31 では通常償却・2026-04-01 では特例 (令和 8 年度改正の段差)', () => {
+    expect(classifySmallAsset(350_000, '2026-03-31')).toBe('normal');
+    expect(classifySmallAsset(350_000, '2026-04-01')).toBe('sme-special');
+  });
+
+  it('★ 適用期限 2029-03-31 の翌日に取得した資産には特例が無い (通常償却)', () => {
+    expect(classifySmallAsset(250_000, '2029-03-31')).toBe('sme-special');
+    expect(classifySmallAsset(250_000, '2029-04-01')).toBe('normal');
+  });
+
+  it('取得日が読めなければ、特例の判定が要る帯は null (10 万・20 万未満の帯は日付に依らない)', () => {
+    for (const bad of ['', 'abc', '2026-02-30', '2026/04/01', '2026-4-1']) {
+      expect(classifySmallAsset(250_000, bad), bad).toBeNull();
+      expect(classifySmallAsset(500_000, bad), bad).toBeNull();
+      expect(classifySmallAsset(90_000, bad), bad).toBe('immediate');
+      expect(classifySmallAsset(150_000, bad), bad).toBe('lump-3year');
+    }
+  });
+});
+
+describe('smeMeasureWindow (取得日 → 特例の上限と期限)', () => {
+  it('★ 2026-03-31 までは 30 万円、2026-04-01 以後は 40 万円 (期限 2029-03-31)', () => {
+    expect(smeMeasureWindow('2026-03-31')).toEqual({ status: 'applies', unitLimit: 300_000, until: '2029-03-31' });
+    expect(smeMeasureWindow('2026-04-01')).toEqual({ status: 'applies', unitLimit: 400_000, until: '2029-03-31' });
+    expect(smeMeasureWindow('2029-03-31')).toEqual({ status: 'applies', unitLimit: 400_000, until: '2029-03-31' });
+    expect(smeMeasureWindow('2020-01-01')).toEqual({ status: 'applies', unitLimit: 300_000, until: '2029-03-31' });
+  });
+
+  it('期限の翌日は measure-ended', () => {
+    expect(smeMeasureWindow('2029-04-01')).toEqual({ status: 'measure-ended', unitLimit: null, endedOn: '2029-03-31' });
+    expect(smeMeasureWindow('2035-12-31').status).toBe('measure-ended');
+  });
+
+  it('暦に無い日・別の綴りは unreadable-date', () => {
+    for (const bad of ['2026-02-30', '2026/04/01', '20260401', '', 'today', '2026-04']) {
+      expect(smeMeasureWindow(bad), bad).toEqual({ status: 'unreadable-date', unitLimit: null });
+    }
+  });
+
+  it('★ 定数は令和 8 年度税制改正の値 — 40 万円 / 30 万円 (改正前) / 300 万円 / 400 人 / 2026-04-01 / 2029-03-31', () => {
+    expect(SME_UNIT_LIMIT).toBe(400_000);
+    expect(SME_UNIT_LIMIT_BEFORE_STEP).toBe(300_000);
+    expect(SME_ANNUAL_CAP).toBe(3_000_000);
+    expect(SME_EMPLOYEE_CAP).toBe(400);
+    expect(SME_UNIT_LIMIT_STEP_DATE).toBe('2026-04-01');
+    expect(SME_MEASURE_END).toBe('2029-03-31');
+    expect(SME_MEASURE_END > SME_UNIT_LIMIT_STEP_DATE).toBe(true);
   });
 });
 
@@ -415,92 +475,146 @@ describe('lumpSum3YearSchedule (一括償却資産, 20万円未満 → 3年均�
 });
 
 describe('smeImmediateDeduction (中小企業者等の少額減価償却資産の特例)', () => {
+  const ON = '2026-06-01'; // 令和 8 年度改正の後の取得
+
   it('exposes the statutory limits', () => {
-    expect(SME_UNIT_LIMIT).toBe(300_000);
+    expect(SME_UNIT_LIMIT).toBe(400_000);
     expect(SME_ANNUAL_CAP).toBe(3_000_000);
   });
 
-  it('immediately deducts the full cost when under 30万円 and within the annual cap', () => {
-    expect(smeImmediateDeduction(250_000)).toEqual({
+  it('immediately deducts the full cost when under the unit limit and within the annual cap', () => {
+    expect(smeImmediateDeduction(250_000, ON)).toEqual({
       eligible: true,
       deductible: 250_000,
       cumulativeAfter: 250_000,
       excludedOverCap: 0,
+      unitLimit: 400_000,
+      status: 'applied',
     });
   });
 
-  it('is not eligible at or above the 30万円 unit limit', () => {
-    expect(smeImmediateDeduction(300_000)).toEqual({
+  it('★ 35 万円の資産: 2026-04-01 以後の取得は対象、2026-03-31 までの取得は上限 (30 万円) 超え', () => {
+    expect(smeImmediateDeduction(350_000, '2026-04-01').status).toBe('applied');
+    expect(smeImmediateDeduction(350_000, '2026-03-31')).toEqual({
       eligible: false,
       deductible: 0,
       cumulativeAfter: 0,
       excludedOverCap: 0,
+      unitLimit: 300_000,
+      status: 'over-unit-limit',
     });
-    expect(smeImmediateDeduction(500_000).eligible).toBe(false);
+  });
+
+  it('is not eligible at or above the unit limit (40 万円)', () => {
+    expect(smeImmediateDeduction(400_000, ON)).toEqual({
+      eligible: false,
+      deductible: 0,
+      cumulativeAfter: 0,
+      excludedOverCap: 0,
+      unitLimit: 400_000,
+      status: 'over-unit-limit',
+    });
+    expect(smeImmediateDeduction(399_999, ON).eligible).toBe(true);
+    expect(smeImmediateDeduction(500_000, ON).eligible).toBe(false);
+  });
+
+  it('★ 期限 (2029-03-31) の後の取得は measure-ended (上限も無い)', () => {
+    expect(smeImmediateDeduction(250_000, '2029-03-31').status).toBe('applied');
+    expect(smeImmediateDeduction(250_000, '2029-04-01')).toEqual({
+      eligible: false,
+      deductible: 0,
+      cumulativeAfter: 0,
+      excludedOverCap: 0,
+      unitLimit: null,
+      status: 'measure-ended',
+    });
+  });
+
+  it('取得日が読めなければ unreadable-date (累計はそのまま返す)', () => {
+    expect(smeImmediateDeduction(250_000, '2026-02-30', 100_000)).toEqual({
+      eligible: false,
+      deductible: 0,
+      cumulativeAfter: 100_000,
+      excludedOverCap: 0,
+      unitLimit: null,
+      status: 'unreadable-date',
+    });
   });
 
   it('accumulates against a prior total', () => {
-    expect(smeImmediateDeduction(250_000, 1_000_000)).toEqual({
+    expect(smeImmediateDeduction(250_000, ON, 1_000_000)).toEqual({
       eligible: true,
       deductible: 250_000,
       cumulativeAfter: 1_250_000,
       excludedOverCap: 0,
+      unitLimit: 400_000,
+      status: 'applied',
     });
   });
 
   it('partially deducts up to the 300万円 annual cap, excluding the overage', () => {
     // 既に 2,900,000 使用、290,000 の資産 → 残枠 100,000 のみ即時、190,000 は超過。
-    expect(smeImmediateDeduction(290_000, 2_900_000)).toEqual({
+    expect(smeImmediateDeduction(290_000, ON, 2_900_000)).toEqual({
       eligible: true,
       deductible: 100_000,
       cumulativeAfter: 3_000_000,
       excludedOverCap: 190_000,
+      unitLimit: 400_000,
+      status: 'applied',
     });
   });
 
   it('deducts exactly to the cap when the asset fills the remaining room', () => {
     // 残枠ぴったり 200,000。
-    expect(smeImmediateDeduction(200_000, 2_800_000)).toEqual({
+    expect(smeImmediateDeduction(200_000, ON, 2_800_000)).toEqual({
       eligible: true,
       deductible: 200_000,
       cumulativeAfter: 3_000_000,
       excludedOverCap: 0,
+      unitLimit: 400_000,
+      status: 'applied',
     });
   });
 
   it('is not eligible once the annual cap is already reached', () => {
     // 残枠 0 (= 3,000,000 到達) → 全額が excludedOverCap。
-    expect(smeImmediateDeduction(100_000, 3_000_000)).toEqual({
+    expect(smeImmediateDeduction(100_000, ON, 3_000_000)).toEqual({
       eligible: false,
       deductible: 0,
       cumulativeAfter: 3_000_000,
       excludedOverCap: 100_000,
+      unitLimit: 400_000,
+      status: 'cap-exhausted',
     });
     // 上限を超えて記録されていた場合 (remainingCap < 0) も同様。
-    expect(smeImmediateDeduction(100_000, 3_100_000)).toEqual({
+    expect(smeImmediateDeduction(100_000, ON, 3_100_000)).toEqual({
       eligible: false,
       deductible: 0,
       cumulativeAfter: 3_100_000,
       excludedOverCap: 100_000,
+      unitLimit: 400_000,
+      status: 'cap-exhausted',
     });
   });
 
   it('treats negative / non-finite prior as 0', () => {
-    expect(smeImmediateDeduction(250_000, -500_000).cumulativeAfter).toBe(250_000);
-    expect(smeImmediateDeduction(250_000, NaN).cumulativeAfter).toBe(250_000);
-    expect(smeImmediateDeduction(250_000, Infinity).cumulativeAfter).toBe(250_000);
+    expect(smeImmediateDeduction(250_000, ON, -500_000).cumulativeAfter).toBe(250_000);
+    expect(smeImmediateDeduction(250_000, ON, NaN).cumulativeAfter).toBe(250_000);
+    expect(smeImmediateDeduction(250_000, ON, Infinity).cumulativeAfter).toBe(250_000);
   });
 
-  it('is not eligible for non-positive / non-finite cost', () => {
-    expect(smeImmediateDeduction(0)).toEqual({
+  it('is not eligible for non-positive / non-finite cost (取得日が読めても invalid-cost)', () => {
+    expect(smeImmediateDeduction(0, ON)).toEqual({
       eligible: false,
       deductible: 0,
       cumulativeAfter: 0,
       excludedOverCap: 0,
+      unitLimit: 400_000,
+      status: 'invalid-cost',
     });
-    expect(smeImmediateDeduction(-100).eligible).toBe(false);
-    expect(smeImmediateDeduction(Infinity).eligible).toBe(false);
-    expect(smeImmediateDeduction(NaN).eligible).toBe(false);
+    expect(smeImmediateDeduction(-100, ON).status).toBe('invalid-cost');
+    expect(smeImmediateDeduction(Infinity, ON).status).toBe('invalid-cost');
+    expect(smeImmediateDeduction(NaN, ON).status).toBe('invalid-cost');
   });
 });
 
@@ -575,5 +689,20 @@ describe('isSchedulableLife', () => {
     for (const v of [0, -1, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
       expect(isSchedulableLife(v), String(v)).toBe(false);
     }
+  });
+});
+
+describe('★ module レベルの定数は読み直して測る (import 時に評価済みの const は、変異体の切替の前に読まれた値が残る)', () => {
+  it('日付・上限・円未満の丸めは読み直しても同じ', async () => {
+    vi.resetModules();
+    const fresh = await import('../depreciation');
+    expect(fresh.SME_UNIT_LIMIT_STEP_DATE).toBe('2026-04-01');
+    expect(fresh.SME_MEASURE_END).toBe('2029-03-31');
+    expect(fresh.SME_UNIT_LIMIT).toBe(400_000);
+    expect(fresh.SME_UNIT_LIMIT_BEFORE_STEP).toBe(300_000);
+    expect(fresh.smeMeasureWindow('2026-03-31')).toEqual({ status: 'applies', unitLimit: 300_000, until: '2029-03-31' });
+    expect(fresh.smeMeasureWindow('2029-04-01').status).toBe('measure-ended');
+    // 円未満の丸め (yen) も module レベルの const —— 読み直した側で 1 度使う。
+    expect(fresh.straightLineAnnual(1_000_000, 3)).toBe(333_333);
   });
 });

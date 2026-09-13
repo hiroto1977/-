@@ -3,7 +3,11 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
 import { localIsoDate } from '../../shared/localDate';
+import { CANVA_FOLDER_FIELDS } from '../../shared/writeFieldLimits';
+import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -29,6 +33,9 @@ export function CanvaPage() {
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
   const [parentFolderId, setParentFolderId] = useState('');
+  /* 貼り付けを黙って切らない (パス 172 → **全欄へ** パス 183)。天井は台帳から読む。 */
+  const nameOver = charsOverCeiling(name, CANVA_FOLDER_FIELDS.name.max);
+  const parentFolderIdOver = charsOverCeiling(parentFolderId, CANVA_FOLDER_FIELDS.parentFolderId.max);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string }>();
 
@@ -36,7 +43,7 @@ export function CanvaPage() {
     if (!window.serviceHub) return;
     setSubmitting(true);
     setResult(undefined);
-    const res = await window.serviceHub.invoke<{ id: string; name: string }>(
+    const res = await window.serviceHub.invoke<ActionData<'canva/create-folder'>>(
       'canva',
       'create-folder',
       {
@@ -114,8 +121,14 @@ export function CanvaPage() {
               onChange={(e) => setParentFolderId(e.target.value)}
               style={inputStyle}
             />
+            <CeilingNotice label="フォルダ名" value={name} max={CANVA_FOLDER_FIELDS.name.max} />
+            <CeilingNotice label="親フォルダ ID" value={parentFolderId} max={CANVA_FOLDER_FIELDS.parentFolderId.max} />
             <div style={{ display: 'flex', gap: 8 }}>
-              <button className="primary" onClick={create} disabled={submitting || !name.trim()}>
+              <button
+                className="primary"
+                onClick={create}
+                disabled={submitting || !name.trim() || nameOver > 0 || parentFolderIdOver > 0}
+              >
                 {submitting ? '作成中…' : '作成'}
               </button>
               {result?.kind === 'ok' ? (

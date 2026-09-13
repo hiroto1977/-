@@ -31,7 +31,6 @@ aliases:
 - [中小機構 J-Net21 特別償却または税額控除](https://j-net21.smrj.go.jp/accounts/tax_benefits/20140330_23.html) `メディア`
 
 ## 関連概念
-- [[tax-small-amount-depreciation|中小企業者等の少額減価償却資産の特例]] — 語彙が近い
 - [[tax-sme-investment-credit|中小企業投資促進税制]] — 語彙が近い
 - [[legal-prescription|債権の消滅時効（改正民法・5年/10年ルール）]] — 出典を共有
 - [[subsidy-work-style-reform-support|働き方改革推進支援助成金]] — 出典を共有
@@ -41,6 +40,7 @@ aliases:
 - [[legal-pseudonymized-info|仮名加工情報（個人情報保護法）]] — 出典を共有
 - [[subsidy-niigata-city|創業サポート事業補助金（新潟市）]] — 出典を共有
 - [[subsidy-overseas-expansion|新輸出大国コンソーシアム（中小企業の海外展開支援）]] — 出典を共有
+- [[subsidy-patent-fee-reduction|特許料等の減免制度]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

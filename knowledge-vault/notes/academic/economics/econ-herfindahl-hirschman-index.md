@@ -36,7 +36,7 @@ aliases:
 - [[bizlaw-merger-control-herfindahl-hirschman|企業結合審査とHHI——ハーフィンダール＝ハーシュマン指数と競争法上の市場集中度評価]] — 出典を共有
 - [[bizlaw-lien-priority-rule|担保権優先順位の法則]] — 出典を共有
 - [[econ-oligopoly-cournot|寡占とクールノー競争（oligopoly / Cournot competition）]] — 同分野の近傍
-- [[econ-natural-monopoly|自然独占（natural monopoly）]] — 同分野の近傍
+- [[econ-stackelberg-competition|シュタッケルベルク競争（先導者・追随者モデル）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

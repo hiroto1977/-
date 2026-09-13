@@ -34,9 +34,8 @@ aliases:
 ## 関連概念
 - [[infosoc-moral-panic-cohen|モラル・パニック——メディアが増幅する社会的逸脱への集合的過剰反応]] — 同じ思想家
 - [[infosoc-total-institution-goffman|全制的施設——隔離された生活世界と自己の剥奪・再社会化]] — 同じ思想家
-- [[infosoc-algorithmic-imaginaries-bucher|アルゴリズムの想像力——利用者によるアルゴリズム認知と日常的対応]] — 同分野の近傍
-- [[infosoc-algorithmic-amplification-gillespie|アルゴリズム的増幅と文化的仲介（ギレスピー）]] — 同分野の近傍
-- [[infosoc-technostress-tarafdar|テクノストレス——ICT利用がもたらす心理的負荷と組織的対応]] — 同分野の近傍
+- [[infosoc-algorithmic-curation-theory|アルゴリズム的キュレーションと増幅（ギレスピー）——プラットフォームのランキング・推薦・フィルタリングは中立の配管ではなく、価値と権力を埋め込んだ文化的仲介として情報環境を形づくる]] — 同分野の近傍
+- [[infosoc-technostress-theory|テクノストレス（ブロード／タラフダー＝ラグ＝ネイサン）——ICT の利用が過負荷・侵入・複雑性・不安・不確実性の五要因を通じて役割ストレスと生産性の低下を生む]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -27,18 +27,19 @@ aliases:
 
 ## 出典
 - [Solow, R. (1957) Technical Change and the Aggregate Production Function — REStat](https://doi.org/10.2307/1926047) `学術`
-- [Jorgenson, D. & Griliches, Z. (1967) The Explanation of Productivity Change — REStat](https://doi.org/10.1086/258177) `学術`
+- [Jorgenson, D. W. & Griliches, Z. (1967) The Explanation of Productivity Change — Review of Economic Studies 34(3), 249–283（旧ラベルは REStat と誤記し DOI も JPE のものだったため差し替え）](https://academic.oup.com/restud/article-abstract/34/3/249/1533121) `学術`
 - [Wikipedia: Solow residual — ソロー残差の概要](https://en.wikipedia.org/wiki/Solow_residual) `リファレンス`
 
 ## 関連概念
 - [[econ-solow-residual|ソロー残差（Solow Residual / 全要素生産性）]] — 語彙が近い
-- [[econ-solow-growth-model|ソロー成長モデル]] — 語彙が近い
 - [[econ-capital-deepening|資本深化：労働者一人当たり資本蓄積と経済成長]] — 同じ思想家
 - [[econ-growth-accounting-solow-residual|成長会計とソロー残差——全要素生産性（TFP）と技術進歩の計測]] — 同じ思想家
 - [[econ-inada-conditions|稲田条件——新古典派成長モデルの安定性を保証する生産関数の仮定]] — 同じ思想家
+- [[econ-solow-growth-model|ソロー成長モデル]] — 同じ思想家
 - [[econ-user-cost-of-capital|資本の使用者費用]] — 同じ思想家
 - [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同じ思想家
-- [[econ-ces-production|CES生産関数]] — 同じ思想家
+- [[econ-capital-controversy|ケンブリッジ資本論争（ロビンソン／スラッファ対サミュエルソン）——異質な資本財を一つの量に集計できるかをめぐり、再スイッチングと資本逆行が新古典派の限界生産力理論に根本的な疑義を投じた]] — 同じ思想家
+- [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

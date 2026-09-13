@@ -4,7 +4,9 @@ import { Section, StatusBar } from './StatusBar';
 import { Stat } from './Stat';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from './tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
+import { fireReported } from '../data/deviceStoreFailure';
 import type { ServiceId } from '../../shared/serviceId';
 import type { ShigyoSnapshot, ShigyoConsultationStatus } from '../../shared/shigyoTypes';
 import { jpy } from '../../shared/formatters';
@@ -19,6 +21,7 @@ import {
   contactToForm,
   type ShigyoContactEntry,
   type ShigyoConsultationEntry,
+  shigyoDemoMixNote,
 } from '../data/shigyoDirectory';
 
 const EMPTY_CONTACT_FORM = { name: '', firm: '', phone: '', email: '' };
@@ -93,6 +96,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
   const [editingContactId, setEditingContactId] = useState<string | null>(null);
   const [consultForm, setConsultForm] = useState(EMPTY_CONSULTATION_FORM);
   const [consultError, setConsultError] = useState<string>();
+  const submit = useSubmitGuard();
 
   /** デモ (snapshot) 行 + ユーザー行の結合。 */
   const contacts = useMemo(
@@ -103,6 +107,14 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
         .map((r) => ({ ...r.data, rowId: r.id, user: true as const })),
     ],
     [data.contacts, contactsCol.records, serviceId],
+  );
+  /**
+   * 見出しの「連携 N 名 · 顧問料 ¥X/月」に見本が混ざっていることの断り
+   * (パス 187)。文面は `data/shigyoDirectory.ts` が 1 か所で持つ。
+   */
+  const mixNote = useMemo(
+    () => shigyoDemoMixNote(data.contacts.length, contacts.length - data.contacts.length, jpy(monthlyFee)),
+    [data.contacts.length, contacts.length, monthlyFee],
   );
 
   const recentConsultations = useMemo(() => {
@@ -160,6 +172,17 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
         onRefresh={refresh}
         who={<>{label} · 連携 {contacts.length} 名 · 顧問料 {jpy(monthlyFee)}/月</>}
       />
+
+      {/* **見出しの数と金額の出所**を最初に言う (一覧の行だけが「デモ」と印を持っていた · パス 187)。 */}
+      {mixNote !== null && (
+        <div
+          data-shigyo-demo-mix
+          role="alert"
+          style={{ margin: '0 0 12px', fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.7 }}
+        >
+          ⚠ {mixNote}
+        </div>
+      )}
 
       {disclaimer != null && (
         <div
@@ -360,7 +383,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
               />
             </label>
           ))}
-          <button type="button" onClick={onSaveContact}>
+          <button type="button" onClick={() => void submit.run(onSaveContact)} disabled={submit.busy}>
             {editingContactId !== null ? '保存' : `＋ ${label}を追加`}
           </button>
           {editingContactId !== null && (
@@ -413,7 +436,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                         <button type="button" onClick={() => onStartEditContact(c.rowId, c)} style={{ fontSize: 11 }}>
                           編集
                         </button>
-                        <button type="button" onClick={() => contactsCol.remove(c.rowId)} style={{ fontSize: 11, color: '#f87171' }}>
+                        <button type="button" onClick={() => fireReported(contactsCol.remove(c.rowId))} style={{ fontSize: 11, color: '#f87171' }}>
                           削除
                         </button>
                       </span>
@@ -464,7 +487,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
               {CONSULTATION_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
           </label>
-          <button type="button" onClick={onAddConsultation}>＋ 相談を記録</button>
+          <button type="button" onClick={() => void submit.run(onAddConsultation)} disabled={submit.busy}>＋ 相談を記録</button>
         </div>
         {consultError && <div style={{ color: '#f87171', fontSize: 12, marginBottom: 8 }}>{consultError}</div>}
         {recentConsultations.length === 0 ? (
@@ -489,7 +512,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                       <select
                         value={c.status}
                         aria-label="相談ステータスを変更"
-                        onChange={(e) => consultationsCol.edit(c.rowId, { status: e.target.value as ShigyoConsultationStatus })}
+                        onChange={(e) => fireReported(consultationsCol.edit(c.rowId, { status: e.target.value as ShigyoConsultationStatus }))}
                         style={{ ...inputStyle, width: 110, color: STATUS_COLOR[c.status] ?? 'var(--text)', fontWeight: 600 }}
                       >
                         {CONSULTATION_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
@@ -505,7 +528,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                   </td>
                   <td style={tdStyle}>
                     {c.user && (
-                      <button type="button" onClick={() => consultationsCol.remove(c.rowId)} style={{ fontSize: 11, color: '#f87171' }}>
+                      <button type="button" onClick={() => fireReported(consultationsCol.remove(c.rowId))} style={{ fontSize: 11, color: '#f87171' }}>
                         削除
                       </button>
                     )}

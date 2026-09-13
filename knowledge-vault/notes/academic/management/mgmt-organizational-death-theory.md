@@ -33,9 +33,7 @@ Arthur L. Stinchcombe ／ John H. Freeman ／ Glenn R. Carroll ／ Michael T. Ha
 - [Carroll & Hannan (2000) The Demography of Corporations and Industries. Princeton University Press](https://books.google.com/books/about/The_Demography_of_Corporations_and_Indus.html?id=YodoS1i8gN0C) `リファレンス`
 
 ## 関連概念
-- [[mgmt-population-ecology-organization|組織の個体群生態学]] — 同じ思想家
 - [[mgmt-structural-inertia-theory|構造的慣性理論]] — 同じ思想家
-- [[mgmt-organizational-ecology|組織エコロジー（Organizational Ecology）]] — 同じ思想家
 - [[mgmt-category-theory-markets|市場カテゴリー理論]] — 同じ思想家
 - [[mgmt-organizational-imprinting|組織的刻印（Organizational Imprinting）]] — 同じ思想家
 - [[human-appraisal-theory-of-emotion|感情の評価理論]] — 出典を共有
@@ -43,6 +41,8 @@ Arthur L. Stinchcombe ／ John H. Freeman ／ Glenn R. Carroll ／ Michael T. Ha
 - [[human-motor-theory-speech-liberman|音声知覚の運動説（モーター理論／Motor Theory of Speech Perception）——聞き手は音響ではなく話し手の調音ジェスチャーを知覚する]] — 出典を共有
 - [[human-role-conflict|役割葛藤（役割理論）]] — 出典を共有
 - [[human-stereotype-content-model|ステレオタイプ内容モデル（SCM）]] — 出典を共有
+- [[infosoc-side-model|SIDEモデル（脱個人化の社会的アイデンティティ効果）]] — 出典を共有
+- [[mgmt-core-self-evaluations-judge|中核的自己評価——自尊心・一般的自己効力感・統制の所在・情緒安定性を束ねる高次特性]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

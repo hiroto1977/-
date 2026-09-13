@@ -35,6 +35,7 @@ aliases:
 - [[econ-atkinson-stiglitz-theorem|アトキンソン＝スティグリッツの定理——最適な所得税があれば物品税はいらない]] — 同じ思想家
 - [[econ-golden-rule-saving-phelps|貯蓄の黄金律——定常状態における消費最大化の最適貯蓄率]] — 同じ思想家
 - [[econ-hosios-condition|ホシオス条件——サーチ市場が効率的になる分配のルール]] — 同じ思想家
+- [[econ-optimal-income-taxation-mirrlees|最適所得税理論（マーリーズ）——政府が個人の能力を観察できない情報制約の下で、再分配と効率の二律背反を最小化する税率構造を導く]] — 同じ思想家
 - [[econ-ramsey-optimal-taxation|ラムゼイの最適課税理論——効率的税制設計と超過負担最小化の原理]] — 同じ思想家
 - [[econ-factor-price-equalization|要素価格均等化定理]] — 出典を共有
 - [[econ-double-marginalization|二重マージン（二重限界化）]] — 同分野の近傍

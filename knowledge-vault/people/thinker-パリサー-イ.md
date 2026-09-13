@@ -2,7 +2,7 @@
 title: "イーライ・パリサー"
 type: thinker
 person_key: "パリサー|イ"
-concept_count: 4
+concept_count: 5
 tags:
   - person
   - index
@@ -10,9 +10,10 @@ tags:
 
 # イーライ・パリサー
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **4 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **5 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（4件）
+## 学術概念（5件）
+- [[infosoc-algorithmic-curation-theory|アルゴリズム的キュレーションと増幅（ギレスピー）——プラットフォームのランキング・推薦・フィルタリングは中立の配管ではなく、価値と権力を埋め込んだ文化的仲介として情報環境を形づくる]] — アルゴリズム的キュレーション（algorithmiccuration）は、プラットフォームが自動化されたアルゴリズムで…
 - [[infosoc-algorithmic-personalization-critique|アルゴリズム的パーソナライゼーションと認知的閉鎖の社会学]] — アルゴリズム的パーソナライゼーションとは、プラットフォームが利用者の過去の行動・好み・属性に基づいてコンテンツを選別・…
 - [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — サイバー・バルカン化（cyber-balkanization）は、マーシャル・ヴァン・アルスタインとエリック・ブリニョ…
 - [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — フィルターバブル（filterbubble）は活動家イーライ・パリサーが2011年の著書『TheFilterBubbl…

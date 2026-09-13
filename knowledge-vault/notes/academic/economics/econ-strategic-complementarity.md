@@ -35,8 +35,8 @@ aliases:
 - [[econ-lock-in-switching-costs|ロックインとスイッチングコスト——乗り換え費用が生む顧客の囲い込み]] — 同じ思想家
 - [[human-emotion-regulation-gross-reappraisal|感情調節理論——グロスの認知的再評価・抑圧・状況選択のプロセスモデル]] — 同じ思想家
 - [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
-- [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 同分野の近傍
 - [[econ-real-business-cycle-theory|実物景気循環理論]] — 同分野の近傍
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -10,6 +10,7 @@ import {
   type FetchContext,
 } from './types';
 import { buildRfc2822 } from './gmail';
+import type { ActionData } from '../../shared/actionData';
 
 /**
  * Shopify — 連携先 + サービス間連携アクション。
@@ -149,7 +150,7 @@ interface SlackPostResponse {
 
 /** Shopify → Slack: post an order notification to a channel.
  *  payload: `{ order, token (Slack bot token), channel }`. */
-async function syncToSlack(ctx: ActionContext): Promise<{ service: 'slack'; ts: string; channel: string }> {
+async function syncToSlack(ctx: ActionContext): Promise<ActionData<'shopify/sync-to-slack'>> {
   const order = assertOrder(ctx.payload);
   const { token, channel } = ctx.payload as { token?: string; channel?: string };
   if (!token || !channel) throw new Error('token (Slack) and channel are required');
@@ -169,7 +170,7 @@ async function syncToSlack(ctx: ActionContext): Promise<{ service: 'slack'; ts: 
 
 /** Shopify → Discord: deliver an order notification via an incoming webhook.
  *  payload: `{ order, webhookUrl }`. */
-async function syncToDiscord(ctx: ActionContext): Promise<{ service: 'discord'; delivered: true }> {
+async function syncToDiscord(ctx: ActionContext): Promise<ActionData<'shopify/sync-to-discord'>> {
   const order = assertOrder(ctx.payload);
   const { webhookUrl } = ctx.payload as { webhookUrl?: string };
   if (!webhookUrl) throw new Error('webhookUrl is required');
@@ -201,7 +202,7 @@ interface LinePushResponse {
 
 /** Shopify → LINE: push an order notification to a user/group.
  *  payload: `{ order, token (LINE channel access token), to }`. */
-async function syncToLine(ctx: ActionContext): Promise<{ service: 'line'; delivered: true }> {
+async function syncToLine(ctx: ActionContext): Promise<ActionData<'shopify/sync-to-line'>> {
   const order = assertOrder(ctx.payload);
   const { token, to } = ctx.payload as { token?: string; to?: string };
   if (!token || !to) throw new Error('token (LINE) and to are required');
@@ -224,7 +225,7 @@ interface GmailDraftResponse {
 
 /** Shopify → Gmail: create a draft order-confirmation email to the customer.
  *  payload: `{ order, token (Gmail OAuth access token) }`. */
-async function syncToGmail(ctx: ActionContext): Promise<{ service: 'gmail'; draftId: string }> {
+async function syncToGmail(ctx: ActionContext): Promise<ActionData<'shopify/sync-to-gmail'>> {
   const order = assertOrder(ctx.payload);
   const { token } = ctx.payload as { token?: string };
   if (!token) throw new Error('token (Gmail) is required');
@@ -266,7 +267,7 @@ interface NotionPageResponse {
 
 /** Shopify → Notion: append the order as a row in an order-log database.
  *  payload: `{ order, token (Notion integration token), databaseId }`. */
-async function syncToNotion(ctx: ActionContext): Promise<{ service: 'notion'; pageId: string; url: string }> {
+async function syncToNotion(ctx: ActionContext): Promise<ActionData<'shopify/sync-to-notion'>> {
   const order = assertOrder(ctx.payload);
   const { token, databaseId } = ctx.payload as { token?: string; databaseId?: string };
   if (!token || !databaseId) throw new Error('token (Notion) and databaseId are required');
@@ -300,7 +301,7 @@ interface SalesforceCreateResponse {
 
 /** Shopify → Salesforce: create a CRM Contact for the customer.
  *  payload: `{ order, token (Salesforce access token), instanceUrl }`. */
-async function syncToSalesforce(ctx: ActionContext): Promise<{ service: 'salesforce'; contactId: string }> {
+async function syncToSalesforce(ctx: ActionContext): Promise<ActionData<'shopify/sync-to-salesforce'>> {
   const order = assertOrder(ctx.payload);
   const { token, instanceUrl } = ctx.payload as { token?: string; instanceUrl?: string };
   if (!token || !instanceUrl) throw new Error('token (Salesforce) and instanceUrl are required');
@@ -350,7 +351,7 @@ interface StripeCustomerResponse {
 
 /** Shopify → Stripe: record the customer for payment reconciliation.
  *  payload: `{ order, token (Stripe secret key) }`. */
-async function syncToStripe(ctx: ActionContext): Promise<{ service: 'stripe'; customerId: string }> {
+async function syncToStripe(ctx: ActionContext): Promise<ActionData<'shopify/sync-to-stripe'>> {
   const order = assertOrder(ctx.payload);
   const { token } = ctx.payload as { token?: string };
   if (!token) throw new Error('token (Stripe) is required');

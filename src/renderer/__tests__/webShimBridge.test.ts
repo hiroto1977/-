@@ -98,7 +98,7 @@ describe('デスクトップ版との約束', () => {
     const shim = Object.keys(await loadShim()).sort();
     const preload = Object.keys(await loadPreload()).sort();
     expect(shim).toEqual(preload);
-    expect(shim).toHaveLength(13);
+    expect(shim).toHaveLength(14);
   });
 });
 

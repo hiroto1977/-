@@ -159,6 +159,17 @@ export interface RangeReport {
   readonly overallDetectionRate: number;
   /** 通算の誤検知数 (無害を脅威と誤判定: 0 が必須目標)。 */
   readonly falsePositives: number;
+  /**
+   * 実際に評価した無害ケースの数 (ラウンド合計)。**`falsePositives: 0` の意味を決める。**
+   *
+   * 「誤検知 0 件」は緑で「目標達成」として出るが、**無害ケースを 1 件も
+   * 評価していなければ、それは達成ではなく未測定**である。
+   * 件数を公開して、画面が「0 件だから緑」を主張できないようにする
+   * (パス 68 で `chartSelfCheck` の `allPassed` に置いた床と同じ規則)。
+   */
+  readonly benignChecked: number;
+  /** 実際に評価した攻撃ケースの数 (ラウンド合計 = `totalAttacks`)。 */
+  readonly attacksChecked: number;
   /** 真陽性/偽陽性に基づく適合率 (precision)。 */
   readonly precision: number;
   /** 取りこぼし (改善候補・発生順)。 */
@@ -213,6 +224,10 @@ export function runSecurityRange(
     rounds,
     overallDetectionRate: totalAttacks > 0 ? round3(truePositives / totalAttacks) : 0,
     falsePositives,
+    // **何件評価したかを公開する。** 「誤検知 0」が達成なのか未測定なのかは、
+    // 0 という数字だけでは区別できない (パス 68 と同じ「空振り合格」)。
+    benignChecked: benignCases.length * evasions.length,
+    attacksChecked: totalAttacks,
     precision: truePositives + falsePositives > 0 ? round3(truePositives / (truePositives + falsePositives)) : 0,
     findings,
   };

@@ -31,16 +31,16 @@ aliases:
 - [Wikipedia: Bolsa Família — 条件付き現金給付プログラムの展開](https://en.wikipedia.org/wiki/Bolsa_Fam%C3%ADlia) `リファレンス`
 
 ## 関連概念
-- [[econ-poverty-trap|貧困の罠（ポバティ・トラップ）：自己強化的貧困メカニズムと複数均衡モデルによる開発経済学的分析]] — 同じ思想家
 - [[econ-rct-development|開発経済学におけるランダム化比較試験（RCT in Development Economics）]] — 同じ思想家
 - [[econ-behavioral-development-economics-banerjee|行動開発経済学——バネルジー＆デュフロのRCTによる貧困の罠と政策介入の評価]] — 同じ思想家
-- [[econ-poverty-trap-multiple-equilibria|貧困の罠と複数均衡理論——開発経済学の構造的困窮分析]] — 同じ思想家
+- [[econ-poverty-trap|貧困の罠——低所得が貯蓄と投資を妨げて貧困を自己強化的に再生産する複数均衡と、その存在をめぐる実証]] — 同じ思想家
 - [[econ-global-value-chain|グローバル・バリューチェーン（GVC）]] — 出典を共有
+- [[econ-income-distribution-gini-lorenz|所得分配とジニ係数・ローレンツ曲線——不平等計測の理論と政策含意]] — 出典を共有
 - [[econ-microfinance|マイクロファイナンス]] — 出典を共有
 - [[econ-sovereign-debt-restructuring|ソブリン債務危機と債務再編——IMFプログラムと国際倒産制度の欠如]] — 出典を共有
-- [[econ-income-distribution-gini-lorenz|所得分配とジニ係数・ローレンツ曲線——不平等計測の理論と政策含意]] — 出典を共有
 - [[eh-1944|1944年（昭和19年）]] — 出典を共有
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

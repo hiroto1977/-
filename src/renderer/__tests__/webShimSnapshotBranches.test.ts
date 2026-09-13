@@ -1,0 +1,264 @@
+/** @vitest-environment jsdom */
+/**
+ * **ブラウザ版の `fetchSnapshot` —— 画面が見る値が、保存した物を反映するか。**
+ *
+ * `web-shim.ts` の `fetchSnapshot` はサービスごとに分岐して「その端末で観測できる形」を
+ * 組む。ここが `not_implemented` に落ちると、**保存の口は成功するのに画面は同梱の
+ * サンプルを見続ける**という壊れ方になる。実際に 2 回起きていて、コードに記録が残っている:
+ *
+ *   talent   (2026-08-28) 入力しても診断が変わらない —— e2e が見つけた
+ *   security (2026-08-25) 鍵を保存できるのにボタンは永久に押せない
+ *                         「指示どおりにやったのに、何も変わらない」
+ *
+ * それでも実測 (2026-09-06 の変異検査) では、この分岐の並びに **未到達の変異体が 50 件超**
+ * 残っていた —— どのテストも `fetchSnapshot` を通っていない。同じ壊れ方が戻ったときに
+ * 鳴るように、**保存 → スナップショットの往復**を分岐ごとに留める。
+ */
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+/** 金庫の中身をテストごとに差し替える。 */
+const tokens = new Map<string, string>();
+
+vi.mock('../security/vault', () => ({
+  getVault: () => ({
+    getToken: async (id: string) => tokens.get(id) ?? null,
+    setToken: async () => {},
+    clearToken: async () => {},
+    listServices: async () => [...tokens.keys()],
+    status: async () => 'unlocked',
+  }),
+}));
+vi.mock('../library/library', () => ({ getLibrary: () => ({ put: async () => {}, list: async () => [] }) }));
+vi.mock('../network/proxy', () => ({
+  getProxyConfig: async () => null,
+  // 読み出しの新しい入口 (「未設定」と「読めない」を分ける)。既定は「読めた・未設定」。
+  inspectStoredProxyConfig: async () => ({ config: null, rejected: null, unreadable: null }),
+  fetchViaProxy: async () => new Response('{}', { status: 200 }),
+  PROXY_REQUIRED_SERVICES: new Set<string>(),
+}));
+vi.mock('electron', () => ({
+  contextBridge: { exposeInMainWorld: () => {} },
+  ipcRenderer: { invoke: () => Promise.resolve() },
+}));
+
+type Result = { ok: boolean; code?: string; message?: string; data?: Record<string, unknown> };
+type Hub = {
+  fetchSnapshot: (s?: string) => Promise<Result>;
+  invoke: (s: string, a: string, p: Record<string, unknown>) => Promise<Result>;
+};
+
+async function loadHub(): Promise<Hub> {
+  vi.resetModules();
+  delete (window as unknown as { serviceHub?: unknown }).serviceHub;
+  await import('../web-shim');
+  return (window as unknown as { serviceHub: Hub }).serviceHub;
+}
+
+const originalFetch = globalThis.fetch;
+
+beforeEach(() => {
+  localStorage.clear();
+  tokens.clear();
+  // ollama のプローブは実際に接続を試すので、既定は「繋がらない」にする。
+  globalThis.fetch = (async () => {
+    throw new Error('offline');
+  }) as typeof fetch;
+});
+afterEach(() => {
+  globalThis.fetch = originalFetch;
+});
+
+describe('talent — 保存した申告が診断に出る', () => {
+  it('★ 保存した状態がスナップショットに反映される (2026-08-28 の回帰)', async () => {
+    const hub = await loadHub();
+    const saved = await hub.invoke('talent', 'save-state', {
+      reports: [{ department: '営業', diseases: ['imprint'] }],
+      initiatives: [{ name: '週次の棚卸し', probability: 40 }],
+      members: [{ id: 'm1', name: '山田', step: 1, yearsInStep: 2 }],
+      updatedAt: '2026-09-06',
+    });
+    expect(saved.ok, saved.message).toBe(true);
+
+    const snap = await hub.fetchSnapshot('talent');
+    expect(snap.ok, snap.message).toBe(true);
+    // 保存した部署名が診断の側に出る (同梱の空スナップショットではない)
+    expect(JSON.stringify(snap.data)).toContain('営業');
+    expect(snap.data?.stored).toBe('saved');
+    expect(snap.data?.storedNote).toBeNull();
+  });
+
+  it('保存が無い端末でも ok を返す (空の診断・stored=none)', async () => {
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('talent');
+    expect(snap.ok).toBe(true);
+    expect(snap.data?.stored).toBe('none');
+    expect(snap.data?.storedNote).toBeNull();
+  });
+
+  it('★ 壊れた保存値は空を返しつつ「読めなかった」と言う (パス 121 までは黙って空で続けた)', async () => {
+    localStorage.setItem('servicehub.talent.state.v1', '{壊れた');
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('talent');
+    expect(snap.ok).toBe(true);
+    expect(snap.data?.stored).toBe('unreadable');
+    expect(String(snap.data?.storedNote)).toContain('保存した人材育成の状態を読めませんでした (JSON として読めません)');
+  });
+
+  it('★ 読み込みで落とした項目は saved のまま件数を言う (古い版・手で直した JSON)', async () => {
+    localStorage.setItem(
+      'servicehub.talent.state.v1',
+      JSON.stringify({ reports: [], initiatives: [], members: [{ id: 'm1', name: '山田', step: 1, yearsInStep: 61 }], updatedAt: '' }),
+    );
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('talent');
+    expect(snap.ok).toBe(true);
+    expect(snap.data?.stored).toBe('saved');
+    expect(String(snap.data?.storedNote)).toContain('メンバー 1 件 (上限 500 件) は読み込みで落としました');
+  });
+});
+
+describe('teamradar — 保存したメンバーがスナップショットに出る (パス 118)', () => {
+  const member = (id: string, name: string) => ({ id, name, scores: [1, 2, 3, 4, 5], notes: { 0: '付箋' } });
+
+  it('★ 保存した状態がスナップショットに反映される (talent の 2026-08-28 と同じ形の回帰)', async () => {
+    const hub = await loadHub();
+    const saved = await hub.invoke('teamradar', 'save-state', {
+      department: '開発部',
+      evaluatedAt: '2026-09-09',
+      members: [member('sato', '佐藤')],
+    });
+    expect(saved.ok, saved.message).toBe(true);
+    // 返るのは判定を通した後の状態 (台帳の型どおり)。
+    expect(saved.data).toEqual({ department: '開発部', evaluatedAt: '2026-09-09', members: [member('sato', '佐藤')] });
+    const snap = await hub.fetchSnapshot('teamradar');
+    expect(snap.ok, snap.message).toBe(true);
+    expect(snap.data?.department).toBe('開発部');
+    expect((snap.data?.members as { name: string }[]).map((m) => m.name)).toEqual(['佐藤']);
+    // 保存した物は利用者の物 —— 「同梱データ」を名乗らない (パス 120 までは常に isMock: true)。
+    expect(snap.data?.isMock).toBe(false);
+    expect(snap.data?.stored).toBe('saved');
+    expect(snap.data?.storedNote).toBeNull();
+  });
+
+  it('保存が無い端末は見本 (3 人の営業部) を返し、ok で終わる', async () => {
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('teamradar');
+    expect(snap.ok).toBe(true);
+    expect(snap.data?.department).toBe('営業部');
+    expect((snap.data?.members as unknown[]).length).toBe(3);
+    expect(snap.data?.isMock).toBe(true);
+    expect(snap.data?.stored).toBe('none');
+  });
+
+  it('★ 壊れた保存値は見本を返しつつ「読めなかった」と言う (パス 120 までは黙って見本に化けた)', async () => {
+    localStorage.setItem('teamradar.state', '{壊れた');
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('teamradar');
+    expect(snap.ok).toBe(true);
+    expect((snap.data?.members as unknown[]).length).toBe(3);
+    expect(snap.data?.isMock).toBe(true);
+    expect(snap.data?.stored).toBe('unreadable');
+    expect(String(snap.data?.storedNote)).toContain('保存したチームの状態を読めませんでした (JSON として読めません)');
+  });
+
+  it('★ 判定を通らない保存は断り、鍵に書かない (パス 118 まで素通しだった)', async () => {
+    const hub = await loadHub();
+    const bad = await hub.invoke('teamradar', 'save-state', {
+      department: '開発部',
+      evaluatedAt: '2026-09-09',
+      members: [{ id: 'sato', name: '佐藤', scores: [1, 2, 3] }],
+    });
+    expect(bad.ok).toBe(false);
+    expect(bad.message).toMatch(/array of length 5/);
+    expect(localStorage.getItem('teamradar.state')).toBeNull();
+    const noDept = await hub.invoke('teamradar', 'save-state', { evaluatedAt: '2026-09-09', members: [] });
+    expect(noDept.ok).toBe(false);
+    expect(noDept.message).toMatch(/department/);
+  });
+});
+
+describe('security — 鍵を入れたら門が開く', () => {
+  it('★ 鍵を保存すると keysConfigured が立つ (2026-08-25 の回帰)', async () => {
+    tokens.set('security', JSON.stringify({ hibp: 'hibp-key', vt: 'vt-key' }));
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('security');
+    expect(snap.ok, snap.message).toBe(true);
+    expect(snap.data?.keysConfigured).toEqual({ hibp: true, vt: true });
+  });
+
+  it('鍵が無ければ両方 false (同梱スナップショットのまま)', async () => {
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('security');
+    expect(snap.data?.keysConfigured).toEqual({ hibp: false, vt: false });
+  });
+
+  it('片方だけの鍵は片方だけ立つ', async () => {
+    tokens.set('security', JSON.stringify({ vt: 'vt-key' }));
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('security');
+    expect(snap.data?.keysConfigured).toEqual({ hibp: false, vt: true });
+  });
+
+  it('端末固有の検出 (Norton) は同梱の値のまま —— ブラウザからは見えないので嘘をつかない', async () => {
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('security');
+    const norton = snap.data?.norton as { installed?: unknown } | undefined;
+    expect(norton?.installed).toBe(false);
+  });
+});
+
+describe('emotions — 鍵の有無だけを名乗る', () => {
+  it('★ 鍵があれば keyConfigured が立つ', async () => {
+    tokens.set('emotions', 'sk-ant-test');
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('emotions');
+    expect(snap.ok, snap.message).toBe(true);
+    expect(snap.data?.keyConfigured).toBe(true);
+  });
+
+  it('鍵が無ければ立たない', async () => {
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('emotions');
+    expect(snap.data?.keyConfigured).toBe(false);
+  });
+});
+
+describe('stocks — 登録した銘柄が出る', () => {
+  it('★ ウォッチリストに登録した銘柄がスナップショットに現れる', async () => {
+    const hub = await loadHub();
+    const reg = await hub.invoke('stocks', 'register-ticker', { symbol: 'AAPL' });
+    expect(reg.ok, reg.message).toBe(true);
+    const snap = await hub.fetchSnapshot('stocks');
+    expect(snap.ok, snap.message).toBe(true);
+    expect(JSON.stringify(snap.data)).toContain('AAPL');
+  });
+});
+
+describe('ollama — 繋がらないことは認証の問題ではない', () => {
+  it('★ 失敗の code は ollama_ で始まる (not_configured にしない)', async () => {
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('ollama');
+    expect(snap.ok).toBe(false);
+    expect(snap.code).toMatch(/^ollama_/);
+    // `not_configured` だと useServiceData が「認証の問題」に分類してしまう
+    expect(snap.code).not.toBe('not_configured');
+    expect(typeof snap.message).toBe('string');
+  });
+});
+
+describe('分岐が無いサービス', () => {
+  it('ブラウザ版で読めないサービスは not_implemented と言う (黙って空を返さない)', async () => {
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('uber-eats');
+    expect(snap.ok).toBe(false);
+    expect(snap.code).toBe('not_implemented');
+    expect(snap.message).toContain('snapshot');
+  });
+
+  it('serviceId 無しでも投げずに答える', async () => {
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot();
+    expect(snap.ok).toBe(false);
+    expect(snap.code).toBe('not_implemented');
+  });
+});

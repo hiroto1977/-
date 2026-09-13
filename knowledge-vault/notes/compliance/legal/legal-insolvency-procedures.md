@@ -31,6 +31,7 @@ aliases:
 - [法務省 破産法等の見直しに関する要綱](https://www.moj.go.jp/shingi1/shingi_030910-1-1.html) `公的`
 
 ## 関連概念
+- [[bizlaw-bankruptcy|破産法]] — 語彙が近い
 - [[bizlaw-civil-preservation|民事保全法]] — 出典を共有
 - [[bizlaw-civil-procedure|民事訴訟法]] — 出典を共有
 - [[bizlaw-civil-rehabilitation|民事再生（民事再生法）]] — 出典を共有
@@ -40,7 +41,6 @@ aliases:
 - [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]] — 出典を共有
 - [[bizlaw-hoteijichijoken|法定地上権（民法388条）]] — 出典を共有
 - [[bizlaw-labor-tribunal|労働審判法（労働審判制度）]] — 出典を共有
-- [[bizlaw-lay-judge-act|裁判員法（裁判員の参加する刑事裁判に関する法律）]] — 出典を共有
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

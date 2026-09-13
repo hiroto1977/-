@@ -34,13 +34,13 @@ aliases:
 - [[human-choice-overload-iyengar|選択過負荷——過剰な選択肢が意思決定を麻痺させるパラドックス]] — 語彙が近い
 - [[infosoc-hostile-media-effect|敵対的メディア認知]] — 同じ思想家
 - [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 同じ思想家
-- [[infosoc-information-overload-toffler|情報過負荷（トフラー）と認知的過飽和]] — 同じ思想家
 - [[infosoc-media-priming|メディア・プライミング（政治的プライミング）]] — 同じ思想家
 - [[infosoc-political-polarization|政治的分極化]] — 同じ思想家
 - [[infosoc-third-wave|第三の波（トフラー）]] — 同じ思想家
+- [[infosoc-information-overload-eppler-mengis|情報過負荷（トフラー／エプラー＝メンギス）——処理能力を超える情報が意思決定の質を下げる現象と、その原因を個人・情報・課題・組織・技術の五要因に整理する枠組み]] — 同じ思想家
 - [[human-belief-perseverance|信念の保続（信念固執）]] — 同じ思想家
-- [[human-affective-forecasting-wilson|情動予測バイアス（ウィルソン＆ギルバート）]] — 同じ思想家
 - [[human-belief-perseverance-anderson|信念固着——反証情報に直面しても維持される初期信念の頑強性]] — 同じ思想家
+- [[human-self-determination-intrinsic|自己決定理論における内発的動機づけ——自律性・有能感・関係性の基本的心理欲求]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

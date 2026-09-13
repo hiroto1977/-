@@ -33,7 +33,7 @@ aliases:
 ## 関連概念
 - [[legal-subcontract-act|委託事業者の義務・禁止行為（中小受託取引適正化法〔取適法〕・旧下請法）]] — 分野横断
 - [[bizlaw-abuse-superior-position|優越的地位の濫用（独占禁止法）]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

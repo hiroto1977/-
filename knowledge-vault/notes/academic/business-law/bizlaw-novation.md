@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[bizlaw-assumption-of-debt|債務引受（民法470条）]] — 語彙が近い
-- [[bizlaw-pledge|質権（民法342条）]] — 同分野の近傍
+- [[bizlaw-whistleblower-protection-legislation|公益通報者保護制度——内部告発の法的保護とコーポレート・ガバナンス]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,13 +34,13 @@ aliases:
 - [[econ-welfare-theorems|厚生経済学の基本定理]] — 同じ思想家
 - [[econ-grossman-stiglitz|グロスマン＝スティグリッツのパラドックス]] — 同じ思想家
 - [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同じ思想家
-- [[econ-screening|スクリーニング（選別理論）]] — 同じ思想家
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する]] — 同じ思想家
 - [[econ-experience-curve-henderson|経験曲線——累積生産量の倍増ごとに単位費用が一定率で低下する]] — 同じ思想家
 - [[econ-greenwald-stiglitz-theorem|グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）]] — 同じ思想家
 - [[econ-learning-by-doing|学習効果（ラーニング・バイ・ドゥーイング）]] — 同じ思想家
-- [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]] — 同じ思想家
 - [[econ-shapiro-stiglitz|シャピロ=スティグリッツの効率賃金モデル（怠業モデル）]] — 同じ思想家
 - [[econ-welfare-economics|厚生経済学：社会的厚生と資源配分効率性の理論的分析]] — 同じ思想家
+- [[econ-atkinson-stiglitz-theorem|アトキンソン＝スティグリッツの定理——最適な所得税があれば物品税はいらない]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

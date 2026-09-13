@@ -73,6 +73,7 @@ import { fetchAssistantSnapshot, ACTIONS as ASSISTANT_ACTIONS } from './assistan
 import { fetchDocstudioSnapshot, ACTIONS as DOCSTUDIO_ACTIONS } from './docstudio';
 import { fetchCursorSnapshot, ACTIONS as CURSOR_ACTIONS } from './cursor';
 import { fetchTalentSnapshot, ACTIONS as TALENT_ACTIONS } from './talent';
+import { fetchHydroponicsSnapshot } from './hydroponics';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import { SERVICE_IDS, type ServiceId } from '../../shared/serviceId';
@@ -155,6 +156,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   docstudio: fetchDocstudioSnapshot,
   cursor: fetchCursorSnapshot,
   talent: fetchTalentSnapshot,
+  hydroponics: fetchHydroponicsSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -224,6 +226,8 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'demae-can',
   'real-estate',
   'mutual-funds',
+  // 水耕栽培の運転管理: 台帳は shared に在り、記録は renderer の record store。認証・通信なし。
+  'hydroponics',
   'charts',
   'quality',
   'storage',

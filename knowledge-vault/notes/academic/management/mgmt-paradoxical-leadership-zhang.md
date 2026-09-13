@@ -31,9 +31,10 @@ aliases:
 
 ## 関連概念
 - [[econ-noise-trader|ノイズトレーダー]] — 同じ思想家
-- [[mgmt-paradox-theory-smith-lewis|パラドックス理論——組織における矛盾の同時追求と動態的均衡]] — 同じ思想家
+- [[mgmt-ambidexterity-tushman|両利きの経営（組織的両利き）——既存事業の深化と新規事業の探索を同時に追求する能力を、構造的分離・文脈・リーダーシップで実現する]] — 同じ思想家
+- [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ（ローシング）——開放的行動と閉鎖的行動を状況に応じて切り替え、探索と深化をチームの中で両立させる]] — 同じ思想家
+- [[mgmt-paradox-theory-smith-lewis|組織パラドックス理論（ルイス／スミス＝ルイス）——相互に矛盾しつつ相互依存する要求を排除せず受容し、動態的均衡として管理する]] — 同じ思想家
 - [[human-mirror-self-recognition|鏡像自己認知（Mirror Self-Recognition）]] — 同じ思想家
-- [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]] — 同じ思想家
 - [[mgmt-ambiculturalism-chen|両面文化主義——東西の対立を超える競争と協調の統合的経営思想]] — 同分野の近傍
 - [[mgmt-humble-leadership-owens|謙虚なリーダーシップ——自己認識・他者尊重・学習志向による影響過程]] — 同分野の近傍
 

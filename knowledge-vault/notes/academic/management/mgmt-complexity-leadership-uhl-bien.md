@@ -36,7 +36,7 @@ aliases:
 - [[mgmt-strategic-consensus-bourgeois|戦略的コンセンサスとトップ・マネジメント・チーム（ブルジョワ）]] — 同じ思想家
 - [[mgmt-time-pacing-eisenhardt|タイム・ペーシング戦略とリズム的製品開発（アイゼンハート）]] — 同じ思想家
 - [[mgmt-strategic-narratives-humphreys|戦略的ナラティブ（ハンフリーズ＆ブラウン）]] — 同分野の近傍
-- [[mgmt-relational-leadership|関係性リーダーシップ理論]] — 同分野の近傍
+- [[mgmt-enabling-coercive-bureaucracy|イネーブリング官僚制——規則・公式化は「量」ではなく「型」で支援的にも強制的にもなる]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -26,7 +26,7 @@ aliases:
 ジョン・メイナード・ケインズ ／ ジョン・ヒックス ／ ジェームズ・トービン ／ デニス・ロバートソン
 
 ## 出典
-- [Keynes, J.M. (1936) The General Theory of Employment, Interest and Money — Macmillan (WorldCat)](https://www.worldcat.org/oclc/180851) `学術`
+- [Keynes, J.M. (1936) The General Theory of Employment, Interest and Money — Macmillan (WorldCat)](https://www.worldcat.org/oclc/180851) `リファレンス`
 - [Wikipedia: Liquidity preference — Keynes, transactions/precautionary/speculative motives, interest rate](https://en.wikipedia.org/wiki/Liquidity_preference) `リファレンス`
 
 ## 関連概念

@@ -35,9 +35,7 @@ aliases:
 - [[econ-strategic-complementarity|戦略的補完性]] — 同じ思想家
 - [[human-emotional-granularity-barrett|感情粒度と構成主義的感情論（バレット）]] — 同じ思想家
 - [[human-interpersonal-emotion-regulation|対人感情調節と感情の社会的共有・コ・レギュレーション理論]] — 同じ思想家
-- [[human-emotion-appraisal-lazarus|感情の評価理論と一次・二次評価プロセス（ラザルス）]] — 同分野の近傍
 - [[human-dialectical-behavior-therapy-linehan|弁証法的行動療法——リネハンのDBTと境界性パーソナリティ障害の治療革新]] — 同分野の近傍
-- [[human-executive-function-baddeley|実行機能と作動記憶——バッデレーのマルチコンポーネントモデルと認知制御]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -3,67 +3,66 @@ import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
+import { charsOverCeiling, clampToCeiling, clampedCeilingNote } from '../../shared/inputCeiling';
 import { buildTeamEmotionRadar, teamEmotionSummary, type MemberEmotion } from '../data/teamEmotionRadar';
-import { buildTeamCare, type CarePriority } from '../data/memberCare';
+import {
+  SCORE_MAX as MEMBER_SCORE_MAX,
+  SCORE_MIN as MEMBER_SCORE_MIN,
+  buildTeamCare,
+  isEvaluatedScore,
+  unevaluatedAxesNote,
+  type CarePriority,
+} from '../data/memberCare';
+import { sanitizeRadarDraft, type RadarDraft, type TeamMember } from '../data/teamRadarDraft';
+import { readLocalJson, writeLocalJson, type LocalReadResult, type LocalWriteResult } from '../data/localWrite';
+import { exportWarning } from '../data/exportOutcome';
+import type { ActionData } from '../../shared/actionData';
+// スナップショットの形は shared が 1 つだけ持つ (パス 120 までは画面が写しを持っていた —— パス 62 / 116 の形)。
+import {
+  MAX_AXIS_LABEL_CHARS,
+  MAX_CHART_TITLE_CHARS,
+  MAX_DEPARTMENT_CHARS,
+  MAX_EVALUATED_AT_CHARS,
+  MAX_MEMBER_NAME_CHARS,
+  MAX_MEMBER_NOTE_CHARS,
+  type TeamRadarSnapshot,
+} from '../../shared/teamRadarState';
+import { DESKTOP_PATHS, exportDestinationNote } from '../../shared/buildDestinations';
+import { useBuildKind } from '../hooks/useBuildKind';
+import { omittedRadarNote, planRadarPlot } from '../../shared/radarPlot';
 
-interface TeamMember {
-  id: string;
-  name: string;
-  scores: number[];
-  notes?: Record<number, string>;
-}
-
-/** snapshot 由来の読み取り専用メンバー (state に入る前の初期値の型)。
- *  state 側は structuredClone で mutable な TeamMember[] にコピーする。 */
-interface ReadonlyTeamMember {
-  readonly id: string;
-  readonly name: string;
-  readonly scores: readonly number[];
-  readonly notes?: Readonly<Record<number, string>>;
-}
-
-interface TeamRadarSnapshot {
-  readonly department: string;
-  readonly evaluatedAt: string;
-  readonly axes: readonly string[];
-  readonly members: readonly ReadonlyTeamMember[];
-  readonly fetchedAt: string;
-  readonly isMock: boolean;
-}
 
 const AXES_FALLBACK = ['営業力', '顧客対応力', 'プレゼン力', '交渉力', '顧客管理力'];
 const TITLE_FALLBACK = '営業チーム強み・弱みシート';
-const SCORE_MAX = 5;
+// 評点の上限は `data/memberCare.ts` の 1 か所が持つ (同じ数を写さない —— 写すと
+// 「平均が評価済みと見なす範囲」と「入力の上限」が別々に動く)。
+const SCORE_MAX = MEMBER_SCORE_MAX;
 
 /** 名前編集の下書き (タイトル・軸名・メンバー等) を localStorage に保持する。
  *  ブラウザ standalone では保存アクションが使えない環境もあるため、
  *  リロードしても編集した名前が消えないようにするのが目的。 */
 const DRAFT_KEY = 'servicehub.teamradar.draft.v1';
 
-interface RadarDraft {
-  title?: string;
-  axes?: string[];
-  department?: string;
-  evaluatedAt?: string;
-  members?: TeamMember[];
+/**
+ * 下書きを読む。**「保存領域が読めなかった」を「下書きが無い」に畳まない** (パス 160)。
+ *
+ * 2026-09-12 まで `catch { return {} }` で、Web Storage を拒む端末では
+ * 編集した氏名・軸名が戻らず、**同梱の見本のチームが出て**「リロードしても消えない」
+ * という前提だけが残った。下の `saveDraft` の注記が「打ち込ませておいて消えるのが
+ * 最悪」と書いている、その 6 行上に在った —— パス 74 は書き込み側だけを直した。
+ * 形の検査 (`sanitizeRadarDraft`) はそのまま通す。
+ */
+function loadDraft(): LocalReadResult<RadarDraft> {
+  return readLocalJson(DRAFT_KEY, sanitizeRadarDraft);
 }
 
-function loadDraft(): RadarDraft {
-  try {
-    const raw = localStorage.getItem(DRAFT_KEY);
-    const parsed: unknown = raw ? JSON.parse(raw) : null;
-    return parsed && typeof parsed === 'object' ? (parsed as RadarDraft) : {};
-  } catch {
-    return {};
-  }
-}
-
-function saveDraft(draft: RadarDraft): void {
-  try {
-    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
-  } catch {
-    /* private mode / quota — 永続化は best-effort */
-  }
+/**
+ * 下書きを保存する。**失敗を黙って捨てない** —— 「リロードしても消えない」前提で
+ * 打ち込ませておいて消えるのが最悪なので、書けなかったら画面に出す
+ * (2026-09-06。理由の分類は `data/localWrite.ts`)。
+ */
+function saveDraft(draft: RadarDraft): LocalWriteResult {
+  return writeLocalJson(DRAFT_KEY, draft);
 }
 const PALETTE = [
   { stroke: '#5b8def', fill: 'rgba(91, 141, 239, 0.18)' },
@@ -89,13 +88,24 @@ function axisPoint(
   return { x: cx + Math.cos(theta) * r, y: cy + Math.sin(theta) * r };
 }
 
+/**
+ * レーダーに描けるメンバー。**軸の値は `null` を取りうる** (感情レーダーは
+ * 記録が無い軸を `null` で返す)。才能レーダー側は常に数なので、
+ * `TeamMember` はそのまま代入できる (`number[]` は `(number | null)[]` に入る)。
+ */
+interface PlottableMember {
+  readonly id: string;
+  readonly name: string;
+  readonly scores: readonly (number | null)[];
+}
+
 function RadarChart({
   axes,
   members,
   size = 520,
 }: {
   axes: readonly string[];
-  members: TeamMember[];
+  members: readonly PlottableMember[];
   size?: number;
 }) {
   const cx = size / 2;
@@ -149,18 +159,30 @@ function RadarChart({
           </g>
         );
       })}
-      {members.map((m, idx) => {
+      {planRadarPlot(axes, members).drawable.map((m, idx) => {
         const c = PALETTE[idx % PALETTE.length]!;
-        const pts: string[] = [];
-        for (let i = 0; i < axes.length; i++) {
-          const p = axisPoint(cx, cy, radius, i, axes.length, m.scores[i] ?? 0);
-          pts.push(p.x.toFixed(1) + ',' + p.y.toFixed(1));
-        }
+        /*
+         * **値の無い軸が 1 つでもあれば、その人の多角形は描かない。**
+         * `?? 0` を当てると欠けた頂点が中心に落ち、「その軸が最低」という
+         * 幾何になる (パス 59: 0 は座標に入ると主張ではなく幾何になる)。
+         * 閉じた多角形は全軸に頂点を要求するので、部分的に描くこともできない
+         * —— 描かずに、誰の何が欠けているかを図の外で名指しする。
+         *
+         * **判断は `shared/radarPlot.ts` の 1 つ** (パス 190)。ここで `null` だけを
+         * 見ていた間、**未評価の `0` は中心に描かれていた** —— 同じ画面の評点の欄が
+         * `isEvaluatedScore` を見て「—」と刷っているその横で。図が呼ぶ側に依らず
+         * 守るため、`planRadarPlot` はこの中で呼ぶ (呼ぶ側の渡し方を信じない)。
+         */
+        const vals = m.scores;
+        const pts = vals.map((v, i) => {
+          const p = axisPoint(cx, cy, radius, i, axes.length, v);
+          return p.x.toFixed(1) + ',' + p.y.toFixed(1);
+        });
         return (
           <g key={m.id}>
             <polygon points={pts.join(' ')} fill={c.fill} stroke={c.stroke} strokeWidth={2} />
-            {axes.map((_, i) => {
-              const p = axisPoint(cx, cy, radius, i, axes.length, m.scores[i] ?? 0);
+            {vals.map((v, i) => {
+              const p = axisPoint(cx, cy, radius, i, axes.length, v);
               return <circle key={i} cx={p.x} cy={p.y} r={3} fill={c.stroke} />;
             })}
           </g>
@@ -187,14 +209,19 @@ function uniqueId(name: string, existing: string[]): string {
 }
 
 export function TeamRadarPage() {
-  const { data, source, status, errorMessage, refresh } = useServiceData<TeamRadarSnapshot>(
+  /** どの実行形態か (パス 161)。分かるまでは null —— 実行形態に依る文を出さない。 */
+  const buildKind = useBuildKind();
+  const { data, source, payloadIsMock, status, errorMessage, refresh } = useServiceData<TeamRadarSnapshot>(
     'teamradar',
     SNAPSHOT.teamradar,
   );
 
   // 初回マウント時に localStorage の下書きを優先して復元する
   // (チャート名・軸名・メンバー名を「任意で変更して残せる」ようにするため)。
-  const draft = useRef(loadDraft());
+  const restored = useRef(loadDraft());
+  const draft = useRef(restored.current.value);
+  /** 保存領域を読めなかった理由 (`null` なら読めている)。「消えない」の前提と対にする。 */
+  const draftUnreadable = restored.current.message;
   const [title, setTitle] = useState(draft.current.title ?? TITLE_FALLBACK);
   const [department, setDepartment] = useState(draft.current.department ?? data.department);
   const [evaluatedAt, setEvaluatedAt] = useState(draft.current.evaluatedAt ?? data.evaluatedAt);
@@ -207,7 +234,7 @@ export function TeamRadarPage() {
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
   const [exportBusy, setExportBusy] = useState(false);
   const [exportMsg, setExportMsg] = useState<string | null>(null);
-  const [lastExport, setLastExport] = useState<{ path: string; bytes: number } | null>(null);
+  const [lastExport, setLastExport] = useState<{ path: string; bytes: number; warning?: string } | null>(null);
   // 感情ウェルビーイング連携: メンバーごとの「今日の気分」(1-5)。
   const [moods, setMoods] = useState<Record<string, number>>({});
 
@@ -215,7 +242,14 @@ export function TeamRadarPage() {
     const memberEmotions: MemberEmotion[] = members.map((m) => ({
       id: m.id,
       name: m.name,
-      moods: [{ score: moods[m.id] ?? 3, note: '' }],
+      // **記録していない人に中立の 3 を代入しない。** 2026-09-09 まで
+      // `moods[m.id] ?? 3` で、気分を入れていないメンバーが「3 と記録した人」と
+      // 区別できない形で平均に入っていた —— 中立を測定値として出す形
+      // (パス 64 と同型)。記録が無ければ**空で渡す**と、値の層が軸ごとに
+      // `null` を返し、図から外して名指しで断る。
+      moods: moods[m.id] === undefined ? [] : [{ score: moods[m.id]!, note: '' }],
+      // 本文解析はこの画面からは渡していない (前向きの軸は入力が無いので
+      // `buildTeamEmotionRadar` が軸ごと落とす)。
       analyses: [],
     }));
     return buildTeamEmotionRadar(memberEmotions);
@@ -247,6 +281,10 @@ export function TeamRadarPage() {
     draft.current.axes && draft.current.axes.length === baseAxes.length ? draft.current.axes : baseAxes,
   );
 
+  /** 才能レーダーで描ける人・描けない人 (凡例と注記が読む)。判断は shared の 1 つ。 */
+  const skillPlan = useMemo(() => planRadarPlot(axes, members), [axes, members]);
+  const skillPlanNote = useMemo(() => omittedRadarNote(skillPlan), [skillPlan]);
+
   function updateAxis(axisIdx: number, name: string) {
     setAxes((prev) => {
       const next = [...prev];
@@ -256,9 +294,19 @@ export function TeamRadarPage() {
   }
 
   // 名前まわりの編集は自動で localStorage に保存 (リロードしても消えない)。
+  /** 保存できなかった理由 (undefined なら保存できている)。 */
+  const [saveError, setSaveError] = useState<string>();
   useEffect(() => {
-    saveDraft({ title, axes, department, evaluatedAt, members });
-  }, [title, axes, department, evaluatedAt, members]);
+    /*
+     * **読めていない下書きを書き戻さない** (パス 160)。読めなければ画面は
+     * 見本のチームから始まるので、そのまま保存すると**保存済みの下書きを
+     * 見本で上書きする**。読みを断った localStorage は書きも断るので、
+     * 止めても失う物は無い。
+     */
+    if (draftUnreadable !== null) return;
+    const r = saveDraft({ title, axes, department, evaluatedAt, members });
+    setSaveError(r.ok ? undefined : r.message);
+  }, [title, axes, department, evaluatedAt, members, draftUnreadable]);
 
   // 評価 × ケア支援: スキルスコア + 気分から 1on1 支援レポートを組み立てる。
   const teamCare = useMemo(
@@ -268,7 +316,10 @@ export function TeamRadarPage() {
           id: m.id,
           name: m.name,
           scores: m.scores,
-          moods: [{ score: moods[m.id] ?? 3, note: '' }],
+          // **記録が無い人の気分を発明しない。** パス 65 は感情レーダー側の
+          // 同じ `?? 3` を直したが**ここを取りこぼした** —— しかもこちらは
+          // 「誰に声をかけるか」を決める面で、より重い。
+          moods: moods[m.id] === undefined ? [] : [{ score: moods[m.id]!, note: '' }],
           analyses: [],
         })),
         axes,
@@ -296,13 +347,30 @@ export function TeamRadarPage() {
     });
   }
 
+  /** 直前の付箋コメントで天井を超えて落ちた字数 (どの欄かも覚える)。 */
+  const [noteOver, setNoteOver] = useState<{ member: number; axis: number; over: number } | null>(null);
+
   function updateNote(memberIdx: number, axisIdx: number, text: string) {
+    /*
+     * **天井は台帳から読み、落とした分は言う** (2026-09-12 · パス 174)。
+     *
+     * ここは `text.slice(0, 200)` と**数を写して**いた —— 同じファイルが
+     * `MAX_MEMBER_NOTE_CHARS` を import して `maxLength` と placeholder に使っている
+     * のに。定数を動かすと欄は新しい長さを受け取るのに、state は 200 字へ黙って切る。
+     *
+     * `maxLength` も外した。付いていると**貼り付けをブラウザが先に切る**ので、
+     * 切れたことが React まで届かず「落とした分を言う」ことが原理的にできない
+     * (パス 167 が業務メモで決めた形。`ServiceActionPanel` も `maxLength` を持たない)。
+     */
+    const over = charsOverCeiling(text, MAX_MEMBER_NOTE_CHARS);
+    setNoteOver(over === 0 ? null : { member: memberIdx, axis: axisIdx, over });
     setMembers((prev) => {
       const next = [...prev];
       const m = { ...next[memberIdx]! };
       const notes = { ...(m.notes ?? {}) };
       if (text.length === 0) delete notes[axisIdx];
-      else notes[axisIdx] = text.slice(0, 200);
+      // 文字境界で切る (パス 195 —— `slice` はサロゲート対を割る)。
+      else notes[axisIdx] = clampToCeiling(text, MAX_MEMBER_NOTE_CHARS);
       m.notes = notes;
       next[memberIdx] = m;
       return next;
@@ -323,10 +391,13 @@ export function TeamRadarPage() {
     setSaveBusy(true);
     setSaveMsg(null);
     try {
-      const r = await window.serviceHub.invoke('teamradar', 'save-state', {
+      // **軸名も保存する** (パス 190) —— それまで軸名はブラウザの下書きにしか残らず、
+      // デスクトップの保存にも書き出す SVG にも 1 文字も届いていなかった。
+      const r = await window.serviceHub.invoke<ActionData<'teamradar/save-state'>>('teamradar', 'save-state', {
         department,
         evaluatedAt,
         members,
+        axes,
       });
       if (r.ok) {
         setSaveMsg('保存しました');
@@ -346,13 +417,25 @@ export function TeamRadarPage() {
     setExportMsg(null);
     setLastExport(null);
     try {
-      const r = await window.serviceHub.invoke<{ path: string; bytes: number }>(
+      /*
+       * **画面が見ている図をそのまま送る** (パス 190)。
+       *
+       * 2026-09-12 まで送っていたのは `title` だけで、デスクトップ版は本体を
+       * 保存済み状態から読んでいた —— 1 枚の SVG がタイトル行に編集後の部署・
+       * 評価時点を、ヘッダ行に保存済みの部署・評価時点を載せ、まだ保存していなければ
+       * 同梱の見本 3 人が書き出された。ブラウザ版は画面の SVG をそのまま出すので
+       * 正しく、**デスクトップ版だけが食い違っていた**。
+       */
+      const r = await window.serviceHub.invoke<ActionData<'teamradar/export-svg'>>(
         'teamradar',
         'export-svg',
-        { title: `${title}｜${department} (${evaluatedAt})` },
+        {
+          title: `${title}｜${department} (${evaluatedAt})`,
+          chart: { department, evaluatedAt, members, axes },
+        },
       );
       if (r.ok) {
-        setLastExport({ path: r.data.path, bytes: r.data.bytes });
+        setLastExport({ path: r.data.path, bytes: r.data.bytes, warning: exportWarning(r.data) });
       } else {
         setExportMsg('エクスポート失敗: ' + r.message);
       }
@@ -369,11 +452,18 @@ export function TeamRadarPage() {
         who={`チームレーダーチャート · ${title}`}
         serviceId="teamradar"
         source={source}
+        payloadIsMock={payloadIsMock}
         status={status}
         errorMessage={errorMessage}
         isConfigured
         onRefresh={refresh}
       />
+      {/* 保存先が読めなかったときだけ出る (パス 120)。見本に化けたことを黙らない。 */}
+      {data.storedNote !== null && (
+        <div role="status" style={{ padding: '8px 12px', background: 'rgba(251, 191, 36, 0.08)', border: '1px solid #fbbf24', borderRadius: 6, fontSize: 12, color: '#fbbf24', lineHeight: 1.5 }}>
+          ⚠ {data.storedNote}
+        </div>
+      )}
 
       <div
         style={{
@@ -386,19 +476,50 @@ export function TeamRadarPage() {
           lineHeight: 1.5,
         }}
       >
-        <strong>Canva 連動:</strong> 「SVG を保存」ボタンで{' '}
-        <code>~/.local/business-hub/data/team-radar.svg</code>{' '}
-        に書き出されます。Canva のキャンバスに直接ドラッグ&ドロップして取り込めるベクター画像です。
+        {/* 実行形態で書き出し先が違う (パス 161)。文面は shared/buildDestinations.ts。 */}
+        <strong>Canva 連動:</strong> 「SVG を保存」ボタンで書き出します。
+        {buildKind !== null && (
+          <span data-export-destination>
+            {' '}{exportDestinationNote(buildKind, DESKTOP_PATHS.teamRadarSvg)}
+          </span>
+        )}{' '}
+        Canva のキャンバスに直接ドラッグ&ドロップして取り込めるベクター画像です。
       </div>
 
-      <Section title="メタ情報 / 名前の変更" count={3 + axes.length}>
+      <Section
+        title={
+          draftUnreadable !== null
+            ? 'メタ情報 / 名前の変更（⚠ 保存した下書きを読み出せていません）'
+            : 'メタ情報 / 名前の変更'
+        }
+        count={3 + axes.length}
+      >
+        {/* 読めていないことを先に言う (見本の氏名が出ている理由がこれである・パス 160)。 */}
+        {draftUnreadable !== null && (
+          <div
+            role="alert"
+            data-draft-unreadable
+            style={{ fontSize: 12, color: '#fbbf24', border: '1px solid #fbbf24', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
+          >
+            ⚠ {draftUnreadable}下に出ているのは同梱の見本で、この画面の編集はこの端末には残りません。
+          </div>
+        )}
+        {saveError && (
+          <div
+        role="alert"
+        data-save-error
+        style={{ fontSize: 12, color: '#f87171', border: '1px solid #f87171', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
+          >
+        ⚠ {saveError}
+          </div>
+        )}
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: 'var(--text-mute)' }}>
             チャート名
             <input
               type="text"
               value={title}
-              maxLength={64}
+              maxLength={MAX_CHART_TITLE_CHARS}
               onChange={(e) => setTitle(e.target.value)}
               aria-label="チャート名"
               placeholder={TITLE_FALLBACK}
@@ -418,7 +539,7 @@ export function TeamRadarPage() {
             <input
               type="text"
               value={department}
-              maxLength={64}
+              maxLength={MAX_DEPARTMENT_CHARS}
               onChange={(e) => setDepartment(e.target.value)}
               style={{
                 padding: '6px 10px',
@@ -436,7 +557,7 @@ export function TeamRadarPage() {
             <input
               type="text"
               value={evaluatedAt}
-              maxLength={32}
+              maxLength={MAX_EVALUATED_AT_CHARS}
               onChange={(e) => setEvaluatedAt(e.target.value)}
               placeholder="2035-04-15"
               style={{
@@ -461,7 +582,7 @@ export function TeamRadarPage() {
                 key={ai}
                 type="text"
                 value={axis}
-                maxLength={24}
+                maxLength={MAX_AXIS_LABEL_CHARS}
                 onChange={(e) => updateAxis(ai, e.target.value)}
                 aria-label={`軸${ai + 1} の名前`}
                 style={{
@@ -505,8 +626,20 @@ export function TeamRadarPage() {
         <Section title="レーダーチャート プレビュー" count={members.length}>
           <div style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 10, padding: 16, maxWidth: '100%' }}>
             <RadarChart axes={axes} members={members} size={520} />
+            {/* **図から消えた人を名指しする** (パス 190)。評点の欄は「—」と出すのに、
+                図だけが未評価の 0 を中心に描いていた。凡例も描いた人だけにする ——
+                色の丸が在るのに多角形が無い、が起きないように。 */}
+            {skillPlanNote !== null && (
+              <div
+                data-skill-radar-omitted
+                role="alert"
+                style={{ fontSize: 11, color: '#f59e0b', marginTop: 8, lineHeight: 1.6 }}
+              >
+                ⚠ {skillPlanNote}
+              </div>
+            )}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 8 }}>
-              {members.map((m, idx) => {
+              {skillPlan.drawable.map((m, idx) => {
                 const c = PALETTE[idx % PALETTE.length]!;
                 return (
                   <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text)' }}>
@@ -527,6 +660,30 @@ export function TeamRadarPage() {
               （<code>emotionInsights</code>）由来で、声かけが必要そうなメンバーを抽出します。
             </p>
             <RadarChart axes={emotionRadar.axes} members={emotionRadarMembers} size={520} />
+            {/* **図から消えた人を名指しする。** 描かないだけだと「その人は
+                いない」か「調子が悪い」かを読み分けられない。理由の出どころは
+                `buildTeamEmotionRadar` の `missingData` 1 本 (画面で再導出しない)。 */}
+            {emotionRadar.missingData.length > 0 && (
+              <div
+                data-emotion-missing
+                role="alert"
+                style={{
+                  fontSize: 11,
+                  color: 'var(--text-mute)',
+                  lineHeight: 1.6,
+                  border: '1px solid var(--border)',
+                  borderRadius: 6,
+                  padding: '6px 10px',
+                  marginTop: 8,
+                }}
+              >
+                記録がまだ無いため、次のメンバーはレーダーに描いていません（低い評価ではありません）:{' '}
+                {emotionRadar.missingData
+                  .map((m) => `${m.name}（${m.axes.join('・')}）`)
+                  .join('、')}
+                。気分の記録が増えると自動で描かれます。
+              </div>
+            )}
             <p style={{ fontSize: 13, marginTop: 10 }}>{teamEmotionSummary(emotionRadar)}</p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
@@ -542,9 +699,13 @@ export function TeamRadarPage() {
                       aria-label={`${m.name} の気分 ${s}`}
                       style={{
                         minWidth: 30,
-                        background: (moods[m.id] ?? 3) === s ? 'var(--accent)' : 'transparent',
-                        color: (moods[m.id] ?? 3) === s ? '#fff' : 'var(--text)',
-                        borderColor: (moods[m.id] ?? 3) === s ? 'var(--accent)' : 'var(--border)',
+                        // **選んでいない物を選択済みに見せない。** 2026-09-09 まで
+                        // `(moods[m.id] ?? 3) === s` で、未選択のときボタン「3」が
+                        // 光っていた —— 読み手は「3 が選ばれている」と思って通り過ぎ、
+                        // **記録が無いこと自体が画面から消えていた**。
+                        background: moods[m.id] === s ? 'var(--accent)' : 'transparent',
+                        color: moods[m.id] === s ? '#fff' : 'var(--text)',
+                        borderColor: moods[m.id] === s ? 'var(--accent)' : 'var(--border)',
                       }}
                     >
                       {s}
@@ -580,6 +741,8 @@ export function TeamRadarPage() {
                 const badge: Record<CarePriority, { label: string; color: string }> = {
                   high: { label: 'ケア優先', color: '#ef4444' },
                   medium: { label: '見守り', color: '#d97706' },
+                  // **記録が無い人を緑の「安定」に混ぜない。** 灰色で「記録待ち」。
+                  unknown: { label: '記録待ち', color: '#94a3b8' },
                   none: { label: '安定', color: '#22c55e' },
                 };
                 const b = badge[r.priority];
@@ -599,12 +762,21 @@ export function TeamRadarPage() {
                         {b.label}
                       </span>
                       <span style={{ fontSize: 12, color: 'var(--text-mute)' }}>
-                        スキル {r.skill.average}/5 ({r.skill.level}) · {r.emotionNote}
+                        スキル {r.skill.average === null ? '—' : `${r.skill.average}/5 (${r.skill.level})`} · {r.emotionNote}
                       </span>
                     </div>
                     <div style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 4 }}>
-                      強み: {r.skill.strength.axis} ({r.skill.strength.score}) ／ 伸びしろ: {r.skill.growth.axis} ({r.skill.growth.score})
+                      {r.skill.strength === null || r.skill.growth === null
+                        ? '強み・伸びしろ: —（評価が入っていません）'
+                        : `強み: ${r.skill.strength.axis} (${r.skill.strength.score}) ／ 伸びしろ: ${r.skill.growth.axis} (${r.skill.growth.score})`}
                     </div>
+                    {/* **未評価の軸が在るなら述べる** —— 平均の分母が軸数と違う理由は
+                        数字からは読めない (文面は `data/memberCare.ts` が 1 か所で持つ)。 */}
+                    {unevaluatedAxesNote(r.skill) !== null && (
+                      <div data-unevaluated-axes role="alert" style={{ fontSize: 11, color: '#f59e0b', marginTop: 4, lineHeight: 1.6 }}>
+                        ⚠ {unevaluatedAxesNote(r.skill)}
+                      </div>
+                    )}
                     <div style={{ fontSize: 13, marginTop: 6 }}>🗣 {r.oneOnOneFocus}</div>
                   </div>
                 );
@@ -638,7 +810,7 @@ export function TeamRadarPage() {
                     <input
                       type="text"
                       value={m.name}
-                      maxLength={64}
+                      maxLength={MAX_MEMBER_NAME_CHARS}
                       onChange={(e) => updateName(idx, e.target.value)}
                       style={{
                         flex: 1,
@@ -672,15 +844,18 @@ export function TeamRadarPage() {
                         <input
                           key={`s-${ai}`}
                           type="range"
-                          min={1}
-                          max={5}
+                          min={MEMBER_SCORE_MIN}
+                          max={SCORE_MAX}
                           step={1}
-                          value={m.scores[ai] ?? 3}
+                          // 未評価は range の中間を掴ませる (input は値を持たないと動かない)。
+                          // **表示は下の欄で「—」と出す** —— 同じ欠測を「3」と刷ると
+                          // 平均が数える値 (未評価) と画面が見せる値が食い違う。
+                          value={isEvaluatedScore(m.scores[ai]) ? m.scores[ai] : 3}
                           onChange={(e) => updateScore(idx, ai, Number.parseInt(e.target.value, 10))}
                           style={{ width: '100%' }}
                         />
                         <div key={`v-${ai}`} style={{ textAlign: 'right', color: 'var(--text)', fontVariantNumeric: 'tabular-nums' }}>
-                          {m.scores[ai] ?? 3}
+                          {isEvaluatedScore(m.scores[ai]) ? m.scores[ai] : '—'}
                         </div>
                       </>
                     ))}
@@ -696,9 +871,8 @@ export function TeamRadarPage() {
                           <input
                             type="text"
                             value={m.notes?.[ai] ?? ''}
-                            maxLength={200}
                             onChange={(e) => updateNote(idx, ai, e.target.value)}
-                            placeholder="特徴・課題を 200 字以内"
+                            placeholder={`特徴・課題を ${MAX_MEMBER_NOTE_CHARS} 字以内`}
                             style={{
                               flex: 1,
                               padding: '3px 6px',
@@ -709,6 +883,11 @@ export function TeamRadarPage() {
                               fontSize: 11,
                             }}
                           />
+                          {noteOver !== null && noteOver.member === idx && noteOver.axis === ai ? (
+                            <span data-note-clamped style={{ color: 'var(--danger)', fontSize: 10, lineHeight: 1.4 }}>
+                              ⚠ {clampedCeilingNote('付箋コメント', noteOver.over, MAX_MEMBER_NOTE_CHARS)}
+                            </span>
+                          ) : null}
                         </div>
                       ))}
                     </div>
@@ -787,6 +966,7 @@ export function TeamRadarPage() {
               bytes={lastExport.bytes}
               openLabel="Canva を開く"
               openUrl="https://www.canva.com/"
+              warning={lastExport.warning}
             />
           </div>
         )}

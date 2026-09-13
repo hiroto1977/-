@@ -3,8 +3,8 @@ collection: academic
 id: mgmt-workplace-deviance-robinson
 category: "management"
 category_ja: "経営学"
-title: "職場逸脱行動——組織規範に反する自発的行為の分類と規定要因"
-as_of: "2026-06-26"
+title: "職場逸脱行動（ロビンソン＝ベネット）——組織の規範に反し組織や成員の福利を脅かす自発的行為を対象と深刻度の二軸で四類型に分け、不公正や契約違反への反応として捉える"
+as_of: "2026-09"
 source_count: 3
 authoritative: true
 tags:
@@ -12,35 +12,27 @@ tags:
   - academic/management
   - knowledge/verified
 aliases:
-  - "職場逸脱行動——組織規範に反する自発的行為の分類と規定要因"
+  - "職場逸脱行動（ロビンソン＝ベネット）——組織の規範に反し組織や成員の福利を脅かす自発的行為を対象と深刻度の二軸で四類型に分け、不公正や契約違反への反応として捉える"
 ---
 
-# 職場逸脱行動——組織規範に反する自発的行為の分類と規定要因
+# 職場逸脱行動（ロビンソン＝ベネット）——組織の規範に反し組織や成員の福利を脅かす自発的行為を対象と深刻度の二軸で四類型に分け、不公正や契約違反への反応として捉える
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06-26 ・ 出典: 3件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-09 ・ 出典: 3件（うち権威ある出典 ✓）
 
 ## 概要
-サンドラ・ロビンソンとレベッカ・ベネットが1995年に体系化した職場逸脱行動（workplace deviance）は、組織の重要な規範に違反し、組織またはそのメンバーの福利を脅かす自発的な行動として定義される。彼女らは逸脱行動を対象（組織向け vs 個人向け）と深刻度（軽微 vs 重大）の二次元で分類する類型論を提唱した。「生産逸脱」（軽微・組織向け）には遅刻・怠業・意図的な低品質業務が、「財産逸脱」（重大・組織向け）には窃盗・横領・器物損壊が、「政治的逸脱」（軽微・個人向け）にはゴシップ・えこひいき・責任転嫁が、「個人攻撃」（重大・個人向け）にはハラスメント・暴力・いじめが含まれる。規定要因として組織的公正認知（特に手続的公正と相互作用的公正の欠如）、心理的契約違反、低い職務満足、否定的感情傾向が実証されている。ロビンソンとベネットはさらに逸脱行動の測定尺度を開発し、この研究領域の実証的基盤を確立した。
+職場逸脱行動（workplace deviance）とは、組織の重要な規範に違反し、組織またはそのメンバーの福利を脅かす自発的な行動で、サンドラ・ロビンソンとレベッカ・ベネットが1995年に体系化した。二人は従業員の知覚を多次元尺度法で分析し、対象（組織向け／個人向け）と深刻度（軽微／重大）の二軸から帰納的に四類型を導いた。生産逸脱（軽微・組織向け）には遅刻・怠業・意図的な低品質業務、財産逸脱（重大・組織向け）には窃盗・横領・器物損壊、政治的逸脱（軽微・個人向け）にはゴシップ・えこひいき・責任転嫁、個人攻撃（重大・個人向け）にはハラスメント・暴力・いじめが含まれる。ベネットとロビンソン（2000）は組織的逸脱と対人的逸脱の二因子測定尺度を開発し、以後の実証研究の標準となった。先行要因としては組織的公正の欠如（特に手続的公正と相互作用的公正）、心理的契約違反、低い職務満足、否定的感情傾向、職務ストレス、監視の弱さが繰り返し確認され、逸脱は「壊れた個人」の問題ではなく組織条件への反応として生じるという含意が、公正な手続や上司の対人的取り扱いといった管理施策に接続する。反生産的職務行動（CWB）・非礼（incivility）・攻撃との統合と区別、規範を破る内部告発や革新を含む建設的逸脱への拡張が近年の論点である。批判として、自己報告に依存して実際の行動より知覚を測っていること、四類型の境界が文化や職種で揺れることがある。中小企業には、小さな不正や怠業を個人の資質で片付けず、評価の手続と上司の接し方という自社側の条件をまず点検することが含意となる。
 
 ## 提唱者・初出
-サンドラ・ロビンソン ／ レベッカ・ベネット ／ ジェラルド・グリーンバーグ ／ ポール・スペクター
+サンドラ・L・ロビンソン＆レベッカ・J・ベネット（1995 類型論／2000 測定尺度）
 
 ## 出典
-- [Robinson, S.L. & Bennett, R.J. (1995) A Typology of Deviant Workplace Behaviors — Academy of Management Journal 38(2)](https://doi.org/10.2307/256989) `学術`
-- [Wikipedia: Workplace Deviance — Robinson & Bennett taxonomy of deviant behavior](https://en.wikipedia.org/wiki/Workplace_deviance) `リファレンス`
-- [Bennett, R.J. & Robinson, S.L. (2000) Development of a Measure of Workplace Deviance — JAP 85(3)](https://doi.org/10.1037/0021-9010.85.3.349) `学術`
+- [Robinson, S. L. & Bennett, R. J. (1995) A Typology of Deviant Workplace Behaviors: A Multidimensional Scaling Study — Academy of Management Journal 38(2)](https://doi.org/10.2307/256989) `学術`
+- [Bennett, R. J. & Robinson, S. L. (2000) Development of a Measure of Workplace Deviance — Journal of Applied Psychology 85(3)](https://doi.org/10.1037/0021-9010.85.3.349) `学術`
+- [Wikipedia: Workplace deviance — ロビンソン＝ベネットの四類型](https://en.wikipedia.org/wiki/Workplace_deviance) `リファレンス`
 
 ## 関連概念
-- [[human-mortality-salience-worldview|死の顕著性と世界観防衛（恐怖管理理論）]] — 同じ思想家
-- [[human-psychological-contract-rousseau|心理的契約理論——ルソーの暗黙的雇用関係と契約違反の帰結]] — 同じ思想家
-- [[human-terror-management|存在脅威管理理論（恐怖管理理論）]] — 同じ思想家
-- [[human-terror-management-greenberg|恐怖管理理論（グリーンバーグ＆ピジシンスキー）]] — 同じ思想家
-- [[human-terror-management-theory-becker|テラー管理理論——ベッカーの死の否定とグリーンバーグらの死の顕現化実験]] — 同じ思想家
-- [[mgmt-equity-theory-adams|公平理論——投入と報酬の比率の社会的比較が動機づけを左右する]] — 同じ思想家
-- [[mgmt-illegitimate-tasks-semmer|不当な課業——役割や自尊心にそぐわない仕事がストレスを生む]] — 同じ思想家
-- [[mgmt-organizational-justice-greenberg|組織的公正——分配・手続き・相互作用の三次元からなる職場の公正知覚]] — 同じ思想家
-- [[mgmt-psychological-contract-rousseau|心理的契約とその違反——暗黙の雇用期待と組織コミットメントの動態]] — 同じ思想家
-- [[mgmt-workplace-deviance-theory|職場逸脱行動理論]] — 同分野の近傍
+- [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,11 +32,14 @@ aliases:
 ## 関連概念
 - [[econ-regret-theory-loomes-sugden|後悔理論——選ばなかった選択肢との比較が選択を左右する]] — 語彙が近い
 - [[econ-rank-dependent-utility-quiggin|順位依存効用——累積確率を歪めてリスク態度を表す]] — 同じ思想家
-- [[econ-present-bias|現在バイアス：先延ばし行動と自己制御の行動経済学的分析]] — 同じ思想家
-- [[econ-durable-goods-monopoly|耐久財独占とコースの推測——独占者が自らの将来の値下げと競争する]] — 同じ思想家
-- [[econ-temptation-self-control-gul-pesendorfer|誘惑と自制の選好——選択肢の集合そのものを評価する]] — 同じ思想家
-- [[econ-x-inefficiency-leibenstein|X非効率——競争圧力の欠如が生む費用最小化からの組織的乖離]] — 同分野の近傍
-- [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 同分野の近傍
+- [[human-base-rate-fallacy|基準率の無視]] — 同じ思想家
+- [[human-conjunction-fallacy|連言錯誤]] — 同じ思想家
+- [[human-framing-effect|フレーミング効果（framing effect）]] — 同じ思想家
+- [[human-loss-aversion|損失回避]] — 同じ思想家
+- [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 同じ思想家
+- [[bizlaw-anchoring-litigation|法的判断におけるアンカリング効果：数値情報による判断の歪み]] — 同じ思想家
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[econ-nudge-theory|ナッジ理論（nudge theory）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

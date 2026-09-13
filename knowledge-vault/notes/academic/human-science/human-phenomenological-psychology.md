@@ -34,7 +34,7 @@ Edmund Husserl ／ Amedeo Giorgi ／ Max van Manen ／ Clark Moustakas ／ Mauri
 
 ## 関連概念
 - [[human-phenomenological-psychology-husserl-merleau-ponty|現象学的心理学——フッサールとメルロ＝ポンティの生きられた経験の探究]] — 語彙が近い
-- [[human-narrative-therapy-white-epston|ナラティブ療法——ホワイトとエプストンの「問題の外在化」とオルタナティブ・ストーリー]] — 同分野の近傍
+- [[human-community-psychology-rappaport-empowerment|コミュニティ心理学——ラパポートのエンパワーメント理論と社会変革]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

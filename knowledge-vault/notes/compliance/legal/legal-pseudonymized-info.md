@@ -32,8 +32,8 @@ aliases:
 
 ## 関連概念
 - [[legal-anonymized-info|匿名加工情報（個人情報保護法）]] — 語彙が近い
-- [[bizlaw-appi|個人情報保護法（個人情報の保護に関する法律）]] — 語彙が近い
 - [[legal-related-personal-info|個人関連情報の第三者提供の制限（個人情報保護法31条）]] — 語彙が近い
+- [[bizlaw-appi|個人情報保護法（個人情報の保護に関する法律）]] — 語彙が近い
 - [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 語彙が近い
 - [[bizlaw-anonymized-info|匿名加工情報・仮名加工情報（個人情報保護法）]] — 分野横断
 - [[bizlaw-pipa-optout-third-party|個人情報保護法のオプトアウト第三者提供]] — 出典を共有

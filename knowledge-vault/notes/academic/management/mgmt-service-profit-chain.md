@@ -35,8 +35,9 @@ aliases:
 - [[mgmt-innovators-dilemma|イノベーションのジレンマ（破壊的イノベーション）]] — 出典を共有
 - [[mgmt-subscription-model|サブスクリプション・モデル]] — 出典を共有
 - [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 出典を共有
-- [[mgmt-high-performance-work-systems-huselid|高業績労働システム——ヒューセリッドの人的資源管理バンドルと企業業績]] — 同分野の近傍
-- [[mgmt-theory-z|セオリーZ]] — 同分野の近傍
+- [[mgmt-brand-equity|ブランド・エクイティ]] — 同分野の近傍
+- [[mgmt-ceo-succession-planning|CEOサクセッション・プランニング（後継者計画）]] — 同分野の近傍
+- [[mgmt-net-promoter-score|ネット・プロモーター・スコア（NPS）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

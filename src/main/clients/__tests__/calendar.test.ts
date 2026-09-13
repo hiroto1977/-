@@ -243,7 +243,7 @@ describe('ACTIONS["create-event"]', () => {
         fetch: fetchMock,
         payload: { summary: 'x', start: '2026-06-01T10:00:00Z' /* no end */ },
       }),
-    ).rejects.toThrow('summary, start, end are required');
+    ).rejects.toThrow('end は必須です');
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -255,7 +255,7 @@ describe('ACTIONS["create-event"]', () => {
         fetch: fetchMock,
         payload: { start: '2026-06-01T10:00:00Z', end: '2026-06-01T11:00:00Z' },
       }),
-    ).rejects.toThrow('summary, start, end are required');
+    ).rejects.toThrow('summary は必須です');
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -267,7 +267,7 @@ describe('ACTIONS["create-event"]', () => {
         fetch: fetchMock,
         payload: { summary: 'x', end: '2026-06-01T11:00:00Z' },
       }),
-    ).rejects.toThrow('summary, start, end are required');
+    ).rejects.toThrow('start は必須です');
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

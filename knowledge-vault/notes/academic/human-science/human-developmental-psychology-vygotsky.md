@@ -39,6 +39,7 @@ aliases:
 - [[tax-donation-deduction|法人の寄附金の損金算入限度]] — 出典を共有
 - [[legal-work-for-hire|職務著作（法人著作・著作権法15条）]] — 出典を共有
 - [[subsidy-highschool-tuition|高等学校等就学支援金]] — 出典を共有
+- [[human-self-regulated-learning|自己調整学習（Self-Regulated Learning）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

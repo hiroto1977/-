@@ -189,11 +189,26 @@ describe('buildFinancialReportMarkdown', () => {
     expect(mdLoss).toContain('| 税引前利益(経常利益) | -200,000 円 |');
     expect(mdLoss).toContain('| 法人税 | 0 円 |');
     expect(mdLoss).toContain('| 法人税等合計 | 70,000 円 |');
-    expect(mdLoss).toContain('| 実効税率 | 0.0% |');
+    // **「法人税等合計 70,000 円」と「実効税率 0.0%」は両立しない。**
+    // 2026-09-08 までこの見本が `0.0%` を仕様として固定していた。
+    expect(mdLoss).toContain('| 実効税率 | — |');
+    expect(mdLoss).not.toContain('| 実効税率 | 0.0% |');
     expect(mdLoss).toContain('| 税引後利益 | -270,000 円 |');
     expect(mdLoss).toContain(`> 欠損(税引前利益が0以下)のため、法人住民税の均等割(${b.residentTax.toLocaleString('ja-JP')} 円)のみが課されます。税引後利益 = 税引前利益 − 均等割。`);
+    // **「—」の理由を述べる。** 空欄だけを刷ると、読む側は「税が無い」とも
+    // 「まだ入れていない」とも読める。
+    expect(mdLoss).toContain('> 控除後の課税所得が 0 のため、実効税率は算定していません。');
     // 黒字側の区分注記は出ない (分岐が排他であること)。
     expect(mdLoss).not.toContain('区分:');
+  });
+
+  it('★ 対照: 課税所得が残る期は率を刷り、空欄の理由は述べない', () => {
+    const mdProfit = buildFinancialReportMarkdown({
+      label: 'Z', ratios, diagnosis, trend, generatedAt: new Date(2026, 5, 2, 12), ordinaryProfit: 5_000_000,
+    });
+    expect(mdProfit).toMatch(/\| 実効税率 \| \d+\.\d% \|/);
+    expect(mdProfit).not.toContain('| 実効税率 | — |');
+    expect(mdProfit).not.toContain('実効税率は算定していません');
   });
 
   it('ordinaryProfit=0 も欠損扱い (<=0 の境界: > ではなく >=)', () => {
@@ -241,5 +256,68 @@ describe('buildFinancialReportMarkdown', () => {
     const flat = buildFinancialReportMarkdown({ label: 'X', ratios, diagnosis: strong, trend: analyzeMarginTrend([{ revenue: 100, profit: 10 }]), generatedAt: D });
     expect(flat).toContain('**営業利益率トレンド:** 横ばい（履歴 —）');
     expect(flat).toContain('- 大きな弱みは検出されませんでした。');
+  });
+});
+
+/**
+ * **レポートに文字列 "null" を刷らない (2026-09-08)。**
+ *
+ * パス 74 で `overallScore` / `grade` / `CategoryScore.score` を
+ * `number | null` にしたとき、この 3 つは**テンプレートリテラルへ直に
+ * 埋め込まれていた** (`## 総合評価: ${diagnosis.grade} （総合スコア
+ * ${diagnosis.overallScore} / 100）`)。
+ *
+ * **`${null}` は型検査を素通りして "null" を刷る** —— `tsc` は 1 つも
+ * 文句を言わなかった。実測すると:
+ *
+ * ```
+ * ## 総合評価: null （総合スコア null / 100）
+ * | 安全性 | null |
+ * ```
+ *
+ * 利用者がダウンロードする診断レポートに "null" が並ぶ状態を、
+ * **自分の直しが作りかけた。** 型では見えないので検査で留める。
+ */
+describe('buildFinancialReportMarkdown — 未評価 (null) の刷り方', () => {
+  const { ratios, trend } = fixture();
+  /** 1 軸も算定できない診断 (全軸 raw=null)。 */
+  const allUnscored = diagnoseFinancials([
+    { key: 'ccc', label: 'CCC', unit: '日', raw: null, score: null },
+    { key: 'roe', label: 'ROE', unit: '%', raw: null, score: null },
+  ]);
+  const md = () =>
+    buildFinancialReportMarkdown({ label: 'Z事業', ratios, diagnosis: allUnscored, trend, generatedAt: new Date(2026, 5, 2, 12) });
+
+  it('★ 文字列 "null" を 1 つも含まない', () => {
+    const out = md();
+    // **不在の主張には標本を添える** —— 下の対照で「この綴りが実際に出る形」を示す。
+    expect(out).not.toContain('null');
+  });
+
+  it('★ 対照: 直す前の書き方なら "null" が出る (上の検査が空でない証拠)', () => {
+    // 旧い実装と同じ埋め込みを手で作り、`${null}` が "null" を刷ることを見せる。
+    const asOldCode = `## 総合評価: ${allUnscored.grade} （総合スコア ${allUnscored.overallScore} / 100）`;
+    expect(asOldCode).toBe('## 総合評価: null （総合スコア null / 100）');
+    expect(asOldCode).toContain('null');
+  });
+
+  it('★ 総合評価とカテゴリ行を「未評価」と書く', () => {
+    const out = md();
+    expect(out).toContain('## 総合評価: 未評価 （算定できた指標がありません）');
+    expect(out).toContain('| 安全性 | 未評価 |');
+  });
+
+  it('★ 除いた軸を書面の中で述べる (数字が変わった理由が読める)', () => {
+    const out = md();
+    expect(out).toContain('**未評価の 2 軸:** CCC・ROE');
+    expect(out).toContain('総合スコア・カテゴリ平均・強み／要改善から除いています');
+  });
+
+  it('★ 対照: 算定できる診断では従来どおり数と格付けを書く', () => {
+    const { diagnosis } = fixture();
+    const out = buildFinancialReportMarkdown({ label: 'EC事業', ratios, diagnosis, trend, generatedAt: new Date(2026, 5, 2, 12) });
+    expect(out).toMatch(/## 総合評価: [SABCD] （総合スコア \d+ \/ 100）/);
+    expect(out).not.toContain('未評価');
+    expect(out).not.toContain('null');
   });
 });

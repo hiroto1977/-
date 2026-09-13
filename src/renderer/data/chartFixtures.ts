@@ -156,7 +156,9 @@ export const CHART_DATASETS: readonly ChartDataset[] = [
   {
     id: 'edge',
     label: '境界値 (検証用)',
-    description: '空・単一点・全値同一・負値のみ・合計 0 を集めた退化ケース。図が壊れず「データなし」を出せるかを確かめる。',
+    description:
+      '単一点・全値同一・負値のみの系列と、無視される 0 / 負の内訳。'
+      + '図が壊れないことを確かめる（「データなし」そのものは次の『データなし (退化)』が出す）。',
     unit: '—',
     xLabels: ['a', 'b', 'c', 'd'],
     line: [
@@ -175,11 +177,48 @@ export const CHART_DATASETS: readonly ChartDataset[] = [
       { label: '値が足りない', values: [80] },
     ],
   },
+  /*
+   * **「データなし」を画面で出せる唯一のデータセット。** (2026-09-12 · パス 150)
+   *
+   * `components/Charts.tsx` の 3 つの `EmptyChart` (空の図を出さずに理由を書く枝) は
+   * 2026-09-12 まで **1 度も描かれたことがなかった** —— 上の 4 つはどれも
+   * 描ける値を持っており、この画面からその枝へ行く道が無かった。
+   * `edge` の説明は「「データなし」を出せるかを確かめる」と書いていたが、
+   * **実際には出していなかった** (実測。だから説明も直した)。
+   *
+   * 3 種それぞれの入口を 1 つずつ持たせてある:
+   *   折れ線 → 描ける値が 1 つも無い系列 / 円 → 正の値が 1 つも無い内訳 /
+   *   レーダー → 軸が 3 本に足りない
+   */
+  {
+    id: 'nodata',
+    label: 'データなし (退化)',
+    description:
+      '3 種すべてが「データなし」を出す入力。値の無い系列・正の値が 1 つも無い内訳・'
+      + '軸が 2 本しかないレーダー。空の図ではなく理由が出ることを確かめられる。',
+    unit: '—',
+    xLabels: [],
+    line: [{ label: '値の無い系列', values: [] }],
+    pie: [
+      { label: 'ゼロ', value: 0 },
+      { label: '負の値', value: -5 },
+    ],
+    radarAxes: ['軸1', '軸2'],
+    radar: [{ label: '軸が足りない', values: [1, 2] }],
+  },
 ];
 
-/** id からデータセットを引く。未知の id なら null。 */
-export function findDataset(id: string): ChartDataset | null {
-  return CHART_DATASETS.find((d) => d.id === id) ?? null;
+/**
+ * id からデータセットを引く。未知の id なら null。
+ *
+ * `datasets` は既定で同梱の見本。画面が 0 件の枝を刷れるよう引数で受ける
+ * (パス 150 —— `ChartsPage` の `datasets` prop から渡ってくる)。
+ */
+export function findDataset(
+  id: string,
+  datasets: readonly ChartDataset[] = CHART_DATASETS,
+): ChartDataset | null {
+  return datasets.find((d) => d.id === id) ?? null;
 }
 
 /**

@@ -41,7 +41,7 @@ aliases:
 - [[bizlaw-cross-border-merger-eu|越境合併と株式会社指令（EU）]] — 同じ思想家
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同じ思想家
 - [[bizlaw-golden-share-state-ownership|黄金株（特別議決権株）と国家所有権保護の比較法]] — 同じ思想家
-- [[bizlaw-statutory-audit-corporate-governance|法定監査と企業統治における監査委員会の機能]] — 同じ思想家
+- [[bizlaw-procd-v-zeidenberg-shrinkwrap-clickwrap|プロCD対ザイデンバーグ事件——包装を開けた・クリックしたことで成立するライセンス契約の拘束力を認めた米連邦控訴審判例]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

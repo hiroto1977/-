@@ -3,7 +3,14 @@
  *
  * UI から切り離して単体テスト可能にするため、金額入力の正規化と
  * メモのサニタイズをここに集約する (PR #4 R2-2 / NIT)。
+ *
+ * 上限の既定値は `shared/recordEntryLimits.ts` の `MAX_RECORD_NOTE_CHARS` を
+ * **読む** (2026-09-12 · パス 167)。それまで `maxLen = 2000` と字面で持っており、
+ * 4 つの main handler とブラウザ版が定数を読んでいるのに、**画面側の 2 か所
+ * (ここと `ServiceActionPanel.tsx` の `maxLength`) だけが写し**だった。
  */
+import { clampToCeiling } from '../../shared/inputCeiling';
+import { MAX_RECORD_NOTE_CHARS } from '../../shared/recordEntryLimits';
 
 /** 全角英数記号 (U+FF01–U+FF5E) → 半角 (U+0021–U+007E) へ変換。 */
 function toHalfWidth(input: string): string {
@@ -56,13 +63,19 @@ function isStrippableControlChar(code: number): boolean {
  * React は描画時に自動エスケープするため表示 XSS は無いが、
  * - NULL / 制御文字 (タブ・改行を除く C0/C1) は永続化前に除去
  * - 前後の空白を trim
- * - 上限長 (既定 2000) で切り詰め
+ * - 上限長 (既定は `MAX_RECORD_NOTE_CHARS`) で切り詰め
  * しておくことで、後段 (Phase 6 の IndexedDB / 外部送信) での不正データを防ぐ。
+ *
+ * **切り詰めは最後の砦であって、画面の振る舞いではない。** 画面
+ * (`ServiceActionPanel`) は天井を超えた入力を黙って落とさず、超えた字数を述べる
+ * (パス 167)。ここまで来るのは、制御文字を抜いてもまだ天井を超えている入力だけ。
  */
-export function sanitizeNote(raw: string, maxLen = 2000): string {
+export function sanitizeNote(raw: string, maxLen = MAX_RECORD_NOTE_CHARS): string {
   let stripped = '';
   for (const ch of raw) {
     if (!isStrippableControlChar(ch.charCodeAt(0))) stripped += ch;
   }
-  return stripped.trim().slice(0, maxLen);
+  // **切るのは文字境界で。** `slice` はコード単位で切るのでサロゲート対を割り、
+  // 孤立サロゲート (`isWellFormed()` が false) を保存側へ渡していた (パス 195)。
+  return clampToCeiling(stripped.trim(), maxLen);
 }

@@ -36,6 +36,7 @@ aliases:
 - [[mgmt-career-anchor|キャリア・アンカー（シャイン）]] — 出典を共有
 - [[mgmt-organizational-entropy|組織エントロピー]] — 出典を共有
 - [[infosoc-information-ecology-theory|情報生態学理論]] — 出典を共有
+- [[mgmt-bridges-transition-model-ending-neutral-zone-beginning|ブリッジズのトランジション・モデル——「終わり」「ニュートラルゾーン」「新たな始まり」の3段階で変化への心理的移行を捉える枠組み]] — 出典を共有
 - [[infosoc-deep-mediatization|深層メディアタイゼーション（Deep Mediatization）]] — 同分野の近傍
 - [[infosoc-digital-sovereignty-floridi|デジタル主権——国家・市民のデータ統制権とテクノロジー地政学]] — 同分野の近傍
 

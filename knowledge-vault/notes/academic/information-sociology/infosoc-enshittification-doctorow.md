@@ -35,13 +35,13 @@ aliases:
 - [[bizlaw-antitrust-digital-platforms|デジタルプラットフォームと独占禁止法——市場支配力の現代的定義と規制]] — 同じ思想家
 - [[bizlaw-competition-law-digital-markets|デジタル市場競争法と市場支配的地位の濫用規制]] — 同じ思想家
 - [[infosoc-platform-capitalism|プラットフォーム資本主義]] — 同じ思想家
+- [[infosoc-platform-governance-tarleton|プラットフォームの政治学（ギレスピー）——「プラットフォーム」という語の多義性が中立で開かれた場のイメージを作り、選別・推薦・削除という編集的介入と私的統治を見えなくする]] — 同じ思想家
 - [[infosoc-platform-power|プラットフォーム権力とデジタル支配（デジタル・ドミナンス）]] — 同じ思想家
 - [[bizlaw-antitrust-competition-law|独占禁止法・競争法：シャーマン法の消費者厚生基準からネオ・ブランダイズ派アプローチまでの競争政策の展開]] — 同じ思想家
 - [[bizlaw-competition-law|競争法・独占禁止法：市場支配力の規制と反トラスト法の経済学的分析]] — 同じ思想家
 - [[infosoc-platform-workers-gig-rights|ギグワーカーの権利とプラットフォーム労働——雇用分類の争点と情報社会の新しい労働関係]] — 同じ思想家
 - [[bizlaw-anti-monopoly-digital-platforms|デジタルプラットフォームの独占禁止規制——ゲートキーパー規制とデジタル市場競争法の展開]] — 同じ思想家
 - [[econ-fiscal-multiplier-keynesian-analysis|財政乗数——政府支出と減税の国民所得波及効果]] — 同じ思想家
-- [[econ-keynesian-multiplier-fiscal|ケインズ乗数と財政政策の波及効果——有効需要管理の理論的基盤]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

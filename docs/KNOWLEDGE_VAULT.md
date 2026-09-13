@@ -77,6 +77,9 @@ src/renderer/data/*Knowledge.ts                ← 単一の真実源（確証�
 - `npm run vault:check`（= `verify:all` / CI に組込み）が本体データから再生成して `knowledge-vault/` と
   突合し、差分があれば失敗する。`*Knowledge.ts` を更新したら `npm run vault:build` で再生成すること。
 - 生成は完全に決定論的（wall-clock を含めない）。
+- `vault:check` は `docs/ACADEMIC_KNOWLEDGE.md` の概念表（`npm run knowledge:md` が `academicKnowledge.ts` から
+  マーカー間に生成）の同期も検証する。2026-09-05 まで手で追記していた表は本体と 942 行／909 項目ずれていた —
+  「本体だけが真実源」は、表を生成物にして初めて成り立つ。
 - `vault:build` / `vault:check` は **ノート id の全域重複を検出すると停止**する。重複は
   `node scripts/dedupe-knowledge.cjs --apply` で統合する。
 
@@ -91,7 +94,8 @@ src/renderer/data/*Knowledge.ts                ← 単一の真実源（確証�
 
 ```bash
 npm run vault:build                              # knowledge-vault/ を再生成
-npm run vault:check                              # 本体データとの同期を検証（CI）
+npm run vault:check                              # 本体データとの同期を検証（CI。概念表 docs/ACADEMIC_KNOWLEDGE.md も）
+npm run knowledge:md                             # docs/ACADEMIC_KNOWLEDGE.md の概念表を再生成
 npm run orchestrate:context                      # 役員→コレクション/区分の対応一覧
 npm run orchestrate:context -- --role chro       # CHRO への知識ブリーフ（全コレクション横断）
 npm run orchestrate:context -- --collection compliance --category labor --limit 20

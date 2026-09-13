@@ -8,16 +8,20 @@ import { GuardedNumber } from '../components/GuardedNumber';
 import { readNumberOr0 } from '../data/inputGuards';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
-import { Stat } from '../components/Stat';
+import { Stat, positiveIfKnown } from '../components/Stat';
 import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import {
   HOLDINGS_COLLECTION,
+  normalizeHolding,
   parseHoldingEntry,
   holdingToForm,
   computeFundPortfolio,
+  fundCostPrincipalNote,
+  fundDemoMixNote,
   type HoldingEntry,
 } from '../data/investments';
 import { jpy } from '../../shared/formatters';
@@ -25,7 +29,7 @@ import {
   calcCompoundingFutureValue,
   calcTotalReturn,
   calcRealCost,
-  calcStdDev,
+  ytdReturnRisk,
   calcDcaSimulation,
 } from '../../shared/mutualFundsMetrics';
 import {
@@ -38,6 +42,9 @@ import {
   goalProjection,
 } from '../../shared/savingsPlanning';
 import { convertToJpy, fxGainLoss, ttRates, roundTripCost } from '../../shared/fxCurrency';
+import { useParameters } from '../data/parameterOverrides';
+import { advisorThresholds } from '../../shared/parameters';
+import type { MutualFundsAdviceInput } from '../../shared/serviceAdvisor';
 
 const simInputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -64,15 +71,23 @@ export function MutualFundsPage() {
   const [fundError, setFundError] = useState<string>();
   /** 編集中のユーザー銘柄 id (null = 新規追加モード)。 */
   const [editingFundId, setEditingFundId] = useState<string | null>(null);
+  const submit = useSubmitGuard();
 
   /** デモ (snapshot) 行 + ユーザー行の結合リスト (追加行は「追加」チップ)。 */
   const holdings = useMemo(
     () => [
-      ...data.holdings.map((h) => ({ ...h, rowId: h.code, user: false as const, valuationMode: undefined })),
+      ...data.holdings.map((h) => ({
+        ...normalizeHolding(h),
+        rowId: h.code,
+        user: false as const,
+        valuationMode: undefined,
+        userTag: undefined,
+      })),
+      // 欄の無い控え (古い版・手で直した JSON) も読める形に整えてから使う。
+      // 補いは `normalizeHolding` の 1 か所だけ —— 画面側に `??` を散らすと、
+      // 実際に起きたように 1 つ (valuationMode) だけ補われて残りが漏れる。
       ...userHoldings.map((r) => ({
-        ...r.data,
-        // 旧データ (valuationMode なし) は auto 扱い。
-        valuationMode: r.data.valuationMode ?? ('auto' as const),
+        ...normalizeHolding(r.data),
         userTag: '追加',
         rowId: r.id,
         user: true as const,
@@ -82,14 +97,14 @@ export function MutualFundsPage() {
   );
 
   // ポートフォリオ集計は結合リストから再計算 (追加ゼロなら snapshot と同値)。
+  // 取得額が未入力の銘柄は原価・損益・損益率に入れず、数だけ注記に出す (パス 123)。
   const computedPortfolio = useMemo(
     () =>
       computeFundPortfolio(
-        holdings,
+        holdings.map((h) => ({ valuation: h.valuation, acquisitionCost: h.acquisitionCost, demo: !h.user })),
         data.portfolio.totalCostBasis,
-        userHoldings.map((r) => r.data.acquisitionCost),
       ),
-    [holdings, data.portfolio.totalCostBasis, userHoldings],
+    [holdings, data.portfolio.totalCostBasis],
   );
   // 手入力の上書きを重ねる。入力欄は App が全画面共通で描くので、ここは
   // 読んで適用するだけ。
@@ -101,6 +116,11 @@ export function MutualFundsPage() {
         .overview,
     [computedPortfolio, manualRecords],
   );
+  /**
+   * 合計に見本が混ざっていることの断り (自分の分の数字つき · パス 187)。
+   * 文面は `data/investments.ts` が 1 か所で持つ (不動産側と同じ理由)。
+   */
+  const mixNote = useMemo(() => fundDemoMixNote(portfolio, jpy), [portfolio]);
 
   async function onSaveHolding() {
     try {
@@ -140,6 +160,22 @@ export function MutualFundsPage() {
   );
 
   // 貯蓄計画: 目標達成積立額・72の法則・緊急予備資金。
+  // 予備資金の月数は判断の要る参考値 (会社員 3〜6 / 自営 6〜12 か月) なので、
+  // 台帳 `savings.emergencyFundMonths` から読んで引数で渡す (画面に写さない)。
+  const { values: params } = useParameters();
+  // 改善提案の元になる数字 —— 画面が刷っている物をそのまま渡す (パス 119)。
+  // 評価損益率は取得額が分かる銘柄が在るときだけ (無ければ null = 「未算定」として渡す —— 0% とは言わない)。
+  const advisorT = useMemo(() => advisorThresholds(params), [params]);
+  const adviseInput = useMemo<MutualFundsAdviceInput>(
+    () => ({
+      holdings: holdings.map((h) => ({ name: h.name, valuation: h.valuation, ytdReturnPct: h.ytdReturnPct, demo: !h.user })),
+      totalValuation: portfolio.totalValuation,
+      unrealizedGainPct: portfolio.unrealizedGainPct,
+      thresholds: advisorT,
+    }),
+    [holdings, portfolio, advisorT],
+  );
+  const efMonths = params['savings.emergencyFundMonths'];
   const [goalTarget, setGoalTarget] = useState('10000000');
   const [goalRate, setGoalRate] = useState('3');
   const [goalYears, setGoalYears] = useState('10');
@@ -149,7 +185,10 @@ export function MutualFundsPage() {
     [goalTarget, goalRate, goalYears],
   );
   const doubleYears = useMemo(() => yearsToDouble(readNumberOr0(goalRate)), [goalRate]);
-  const emergency = useMemo(() => emergencyFund(readNumberOr0(monthlyExpense), 6), [monthlyExpense]);
+  const emergency = useMemo(
+    () => emergencyFund(readNumberOr0(monthlyExpense), efMonths),
+    [monthlyExpense, efMonths],
+  );
 
   // 追加: 現行積立での目標達成見込み・インフレ調整後の実質価値・実質利回り・予備資金充足率。
   const [currentMonthly, setCurrentMonthly] = useState('30000');
@@ -168,8 +207,8 @@ export function MutualFundsPage() {
     [goalRate, inflationRate],
   );
   const efCoverage = useMemo(
-    () => emergencyFundCoverage(readNumberOr0(cashOnHand), readNumberOr0(monthlyExpense), 6),
-    [cashOnHand, monthlyExpense],
+    () => emergencyFundCoverage(readNumberOr0(cashOnHand), readNumberOr0(monthlyExpense), efMonths),
+    [cashOnHand, monthlyExpense, efMonths],
   );
 
   // トータルリターン (分配金再投資ベース) と保有銘柄リターンのリスク (標準偏差)。
@@ -179,10 +218,12 @@ export function MutualFundsPage() {
     [recentDividends],
   );
   const totalReturn = useMemo(
-    () => calcTotalReturn(portfolio.totalCostBasis, portfolio.totalValuation, totalDividends, readNumberOr0(holdYears)),
-    [portfolio.totalCostBasis, portfolio.totalValuation, totalDividends, holdYears],
+    // 終値は取得額が分かる銘柄の評価額 —— 元本 (取得原価) と同じ集合で見る (パス 123)。
+    () => calcTotalReturn(portfolio.totalCostBasis, portfolio.costMeasuredValuation, totalDividends, readNumberOr0(holdYears)),
+    [portfolio.totalCostBasis, portfolio.costMeasuredValuation, totalDividends, holdYears],
   );
-  const risk = useMemo(() => calcStdDev(holdings.map((h) => h.ytdReturnPct)), [holdings]);
+  // 年初来リターンは**入力された銘柄だけ**で取る —— 未入力 (null) は 0% ではない (パス 122)。
+  const risk = useMemo(() => ytdReturnRisk(holdings.map((h) => h.ytdReturnPct)), [holdings]);
 
   // 実質コスト (信託報酬 + 隠れコスト) と複利での蝕み効果。
   const [costExpense, setCostExpense] = useState('1.0');
@@ -191,6 +232,25 @@ export function MutualFundsPage() {
   const realCost = useMemo(
     () => calcRealCost(portfolio.totalValuation, readNumberOr0(costExpense), readNumberOr0(costHidden), readNumberOr0(costGross), readNumberOr0(holdYears)),
     [portfolio.totalValuation, costExpense, costHidden, costGross, holdYears],
+  );
+  /*
+   * **同じコストを、見本を除いた元本でも出す** (パス 187)。
+   *
+   * 上の `realCost` は `totalValuation` を元本とするので、同梱の見本 4 銘柄
+   * (¥8,240,140) が入っている人には、既定の入力で「5 年で ¥594,505 が
+   * 蝕まれる」と出る —— 自分の 10 万だけなら ¥7,128 で、**83 倍**の額を
+   * 自分の負担として読む。合計の側は消さず (見本の一覧と釣り合う)、
+   * 自分の分を並べて言う。
+   */
+  const userRealCost = useMemo(
+    () =>
+      calcRealCost(portfolio.userOnly.totalValuation, readNumberOr0(costExpense), readNumberOr0(costHidden), readNumberOr0(costGross), readNumberOr0(holdYears)),
+    [portfolio.userOnly.totalValuation, costExpense, costHidden, costGross, holdYears],
+  );
+  /** 元本に見本が入っていることの断り (文面は `data/investments.ts`)。 */
+  const costPrincipalNote = useMemo(
+    () => fundCostPrincipalNote(portfolio, jpy, readNumberOr0(holdYears), userRealCost.annualCostYen, userRealCost.cumulativeCostYen),
+    [portfolio, holdYears, userRealCost],
   );
 
   // ドルコスト平均法シミュレーション (価格系列はカンマ区切り入力)。
@@ -239,8 +299,28 @@ export function MutualFundsPage() {
           <Stat label="評価額" value={jpy(portfolio.totalValuation)} />
           <Stat label="取得原価" value={jpy(portfolio.totalCostBasis)} />
           <Stat label="評価損益" value={jpy(portfolio.unrealizedGain)} positive={portfolio.unrealizedGain >= 0} />
-          <Stat label="評価損益率" value={`${portfolio.unrealizedGainPct.toFixed(1)}%`} positive={portfolio.unrealizedGainPct >= 0} />
+          <Stat
+            label="評価損益率"
+            value={portfolio.unrealizedGainPct === null ? '—' : `${portfolio.unrealizedGainPct.toFixed(1)}%`}
+            positive={positiveIfKnown(portfolio.unrealizedGainPct)}
+          />
         </div>
+        {/* **合計の中身**を先に言う (見本が混ざっているか・自分の分はいくらか · パス 187)。 */}
+        {mixNote !== null && (
+          <div
+            data-fund-demo-mix
+            role="alert"
+            style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: -8, marginBottom: 12, lineHeight: 1.7 }}
+          >
+            ⚠ {mixNote}
+          </div>
+        )}
+        {/* 取得額が未入力の銘柄は原価・損益・損益率に入れない (パス 123 までは評価額と同額 = 損益 0 として数え、損益率を薄めていた)。 */}
+        {portfolio.costUnmeasured.count > 0 && (
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: -8, marginBottom: 12, lineHeight: 1.6 }}>
+            ※ 取得額未入力 {portfolio.costUnmeasured.count} 銘柄 (評価額 {jpy(portfolio.costUnmeasured.valuation)}) は取得原価・評価損益・評価損益率・トータルリターンに含めていません (評価額には含めています)。取得額を入力すると含まれます。
+          </div>
+        )}
       </Section>
 
       <Section title="トータルリターン・リスク (分配金再投資ベース・概算)">
@@ -251,18 +331,18 @@ export function MutualFundsPage() {
           <Stat
             label="トータルリターン"
             value={totalReturn.totalReturnPct === null ? '—' : `${totalReturn.totalReturnPct}%`}
-            positive={(totalReturn.totalReturnPct ?? 0) >= 0}
+            positive={positiveIfKnown(totalReturn.totalReturnPct)}
           />
           <Stat
             label="年率換算 (CAGR)"
             value={totalReturn.cagrPct === null ? '—' : `${totalReturn.cagrPct}%`}
-            positive={(totalReturn.cagrPct ?? 0) >= 0}
+            positive={positiveIfKnown(totalReturn.cagrPct)}
           />
           <Stat label="累計分配金" value={jpy(totalDividends)} />
-          <Stat label="リスク (銘柄YTDの標準偏差)" value={risk === null ? '—' : `${risk}%`} />
+          <Stat label="リスク (銘柄YTDの標準偏差)" value={risk.stdDevPct === null ? '—' : `${risk.stdDevPct}%`} />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
-          ※ 分配金は再投資された前提で元本に対する総合収益として概算。リスクは保有銘柄のYTDリターンの母標準偏差です。概算であり投資助言ではありません。
+          ※ 分配金は再投資された前提で元本に対する総合収益として概算。リスクは年初来リターンが入力された {risk.measured} 銘柄の母標準偏差です{risk.unmeasured > 0 ? ` (未入力 ${risk.unmeasured} 銘柄は除外)` : ''}{risk.measured === 0 ? ' —— 入力された銘柄が無いので算定しません' : ''}。概算であり投資助言ではありません。
         </div>
       </Section>
 
@@ -280,6 +360,13 @@ export function MutualFundsPage() {
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
           ※ 評価額 {jpy(portfolio.totalValuation)} を元本としコストがリターンを複利で蝕む効果を概算。隠れコストは売買委託手数料等の目安です。概算であり投資助言ではありません。
         </div>
+        {/* 元本に見本が入っているなら、自分の分の額も言う (でないと 83 倍の負担を自分の物として読む · パス 187)。
+            文面は `data/investments.ts` が 1 か所で持つ。 */}
+        {costPrincipalNote !== null && (
+          <div data-fund-cost-user-only role="alert" style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 4, lineHeight: 1.6 }}>
+            ⚠ {costPrincipalNote}
+          </div>
+        )}
       </Section>
 
       <Section title="ドルコスト平均法シミュレーション (概算)">
@@ -338,15 +425,15 @@ export function MutualFundsPage() {
           </label>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             取得額 (任意・円)
-            <input type="text" inputMode="numeric" value={fundForm.acquisitionCost} placeholder="空欄=損益0"
+            <input type="text" inputMode="numeric" value={fundForm.acquisitionCost} placeholder="空欄=未入力 (損益は算定しない)"
               onChange={(e) => setFundForm((f) => ({ ...f, acquisitionCost: e.target.value }))} style={simInputStyle} />
           </label>
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             YTD % (任意)
-            <input type="text" inputMode="decimal" value={fundForm.ytdReturnPct} placeholder="0"
+            <input type="text" inputMode="decimal" value={fundForm.ytdReturnPct} placeholder="空欄=未入力"
               onChange={(e) => setFundForm((f) => ({ ...f, ytdReturnPct: e.target.value }))} style={simInputStyle} />
           </label>
-          <button type="button" onClick={onSaveHolding}>
+          <button type="button" onClick={() => void submit.run(onSaveHolding)} disabled={submit.busy}>
             {editingFundId !== null ? '保存 (自動反映)' : '＋ 銘柄を追加'}
           </button>
           {editingFundId !== null && (
@@ -398,8 +485,12 @@ export function MutualFundsPage() {
                     </span>
                   )}
                 </td>
-                <td style={{ ...tdNum, color: h.ytdReturnPct >= 0 ? '#22c55e' : '#ef4444' }}>
-                  {h.ytdReturnPct >= 0 ? '+' : ''}{h.ytdReturnPct.toFixed(1)}%
+                {/* 未入力 (null) は「—」で色を付けない。「+0.0%」(緑) と刷ると測った 0% と見分けが付かない (パス 122)。 */}
+                <td
+                  style={{ ...tdNum, color: h.ytdReturnPct === null ? 'var(--text-mute)' : h.ytdReturnPct >= 0 ? '#22c55e' : '#ef4444' }}
+                  title={h.ytdReturnPct === null ? '年初来リターンは未入力です (0% ではありません)' : undefined}
+                >
+                  {h.ytdReturnPct === null ? '—' : `${h.ytdReturnPct >= 0 ? '+' : ''}${h.ytdReturnPct.toFixed(1)}%`}
                 </td>
                 <td style={tdStyle}>
                   {h.user && (
@@ -419,7 +510,7 @@ export function MutualFundsPage() {
         </table>
       </Section>
 
-      <ServiceActionPanel serviceId="mutual-funds" serviceLabel="投資信託" />
+      <ServiceActionPanel serviceId="mutual-funds" serviceLabel="投資信託" adviseInput={adviseInput} />
 
       <Section title="直近の分配金" count={recentDividends.length}>
         {recentDividends.length === 0 ? (
@@ -455,7 +546,13 @@ export function MutualFundsPage() {
         <div className="stat-grid">
           <Stat label="将来評価額" value={jpy(sim.futureValue)} positive />
           <Stat label="累計拠出額" value={jpy(sim.totalContributed)} />
-          <Stat label={`運用益 (${sim.gainPct.toFixed(1)}%)`} value={jpy(sim.totalGain)} positive={sim.totalGain >= 0} />
+          {/* 拠出額 0 なら増加率は算定不能。**同じ画面の為替の損益率が既に「—」を
+              刷っている** (下の「損益率」)。同じ画面で答え方を 2 通りにしない。 */}
+          <Stat
+            label={sim.gainPct === null ? '運用益 (—)' : `運用益 (${sim.gainPct.toFixed(1)}%)`}
+            value={jpy(sim.totalGain)}
+            positive={sim.totalGain >= 0}
+          />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
           ※ 毎月末積立・年率一定を仮定した複利の概算です。実際の運用成績は変動し元本割れの可能性があります。投資助言ではありません。
@@ -475,7 +572,7 @@ export function MutualFundsPage() {
         <div className="stat-grid">
           <Stat label="目標達成に必要な毎月積立額" value={jpy(requiredMonthly)} />
           <Stat label="72の法則 (資産倍増)" value={doubleYears === null ? '—' : `約 ${doubleYears} 年`} />
-          <Stat label="緊急予備資金 (生活費6か月)" value={jpy(emergency)} />
+          <Stat label={`緊急予備資金 (生活費${efMonths}か月)`} value={jpy(emergency)} />
         </div>
         <div className="stat-grid" style={{ marginTop: 12 }}>
           <Stat
@@ -485,14 +582,25 @@ export function MutualFundsPage() {
           <Stat label="必要な追加積立 (毎月)" value={jpy(projection.additionalMonthly)} />
           <Stat label="目標額のインフレ調整後 実質価値" value={jpy(realTarget)} />
           <Stat label="実質利回り (インフレ調整後)" value={realRate === null ? '—' : `${realRate}%`} />
-          <Stat label="予備資金 充足率" value={`${efCoverage.coveragePct}%`} />
+          {/* **目標が定まらなければ「—」。** 隣の「まかなえる月数」は同じ条件で
+              既に「—」を出しており、片方だけが 100% と断定していた (パス 90)。 */}
+          <Stat
+            label="予備資金 充足率"
+            value={efCoverage.coveragePct === null ? '—' : `${efCoverage.coveragePct}%`}
+          />
           <Stat
             label="現預金でまかなえる月数"
             value={efCoverage.monthsCovered === null ? '—' : `約 ${efCoverage.monthsCovered} か月`}
           />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
-          ※ 毎月末積立・年率一定を仮定した概算です。実質価値は (1+インフレ率)^年数 で割り引いた購買力、実質利回りはフィッシャー式 (1+名目)/(1+インフレ)−1。緊急予備資金は生活費の6か月分（会社員3〜6・自営6〜12か月が目安）。投資助言ではありません。
+          {efCoverage.coveragePct === null && (
+            <>
+              毎月の生活費を入力すると予備資金の充足率を算定します（未入力のため「—」）。
+              <br />
+            </>
+          )}
+          ※ 毎月末積立・年率一定を仮定した概算です。実質価値は (1+インフレ率)^年数 で割り引いた購買力、実質利回りはフィッシャー式 (1+名目)/(1+インフレ)−1。緊急予備資金は生活費の{efMonths}か月分（会社員3〜6・自営6〜12か月が目安。設定の「数値パラメータ」で変えられます）。投資助言ではありません。
         </div>
       </Section>
 
@@ -505,7 +613,7 @@ export function MutualFundsPage() {
         <div className="stat-grid">
           <Stat label="現在の円換算額" value={jpy(fxJpy)} />
           <Stat label="為替損益" value={jpy(fxPnl.gain)} positive={fxPnl.gain >= 0} />
-          <Stat label="損益率" value={fxPnl.gainPct === null ? '—' : `${fxPnl.gainPct}%`} positive={(fxPnl.gainPct ?? 0) >= 0} />
+          <Stat label="損益率" value={fxPnl.gainPct === null ? '—' : `${fxPnl.gainPct}%`} positive={positiveIfKnown(fxPnl.gainPct)} />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
           ※ 為替変動による円ベースの損益のみの概算で、手数料・スプレッド・税は含みません。投資助言ではありません。

@@ -35,7 +35,7 @@ aliases:
 - [[human-possible-selves-markus|可能自己理論——なりたい自己・なりうる自己の動機づけ機能]] — 同じ思想家
 - [[human-self-discrepancy-higgins|自己不一致理論——現実自己と自己指針の乖離が異なる感情を生む]] — 同じ思想家
 - [[mgmt-organizational-virtuousness|組織的美徳性理論（キャメロン）]] — 同分野の近傍
-- [[mgmt-work-engagement|ワーク・エンゲージメント]] — 同分野の近傍
+- [[mgmt-marketing-mix-4p|マーケティング・ミックス（4P）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

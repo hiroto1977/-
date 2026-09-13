@@ -14,8 +14,8 @@ tags:
 
 ## 学術概念（3件）
 - [[econ-fiscal-dominance|財政支配（Fiscal Dominance）]] — 財政支配（FiscalDominance）とは、政府の財政政策が金融政策に優越し、中央銀行の物価安定目標の達成が財政赤…
-- [[econ-fiscal-dominance-sargent|財政支配と物価水準の財政理論——政府債務が金融政策を拘束するメカニズム]] — 財政支配（FiscalDominance）とは、政府の財政赤字が中央銀行の金融政策運営を実質的に制約し、物価安定目標の…
 - [[econ-policy-ineffectiveness|政策無効命題]] — トマス・サージェントとニール・ウォレスが1975/76年に提示した、新しい古典派マクロ経済学の命題。
+- [[econ-sargent-wallace-unpleasant-arithmetic|サージェント＝ウォレスの不愉快なマネタリスト算術——財政が支配的なら、金融引き締めは将来の貨幣化を通じてかえってインフレを高める]] — 不愉快なマネタリスト算術（unpleasantmonetaristarithmetic）は、トーマス・サージェントとニ…
 
 ## 関連
 - 索引: [[人物索引]]

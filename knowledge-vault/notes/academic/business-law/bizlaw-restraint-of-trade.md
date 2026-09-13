@@ -33,10 +33,10 @@ aliases:
 - [Wikipedia: Restraint of trade — Nordenfelt, reasonableness between parties and public interest](https://en.wikipedia.org/wiki/Restraint_of_trade) `リファレンス`
 
 ## 関連概念
-- [[bizlaw-covenant-not-to-compete|競業避止契約——営業秘密・顧客関係の保護と職業選択の自由の調整]] — 語彙が近い
 - [[bizlaw-caveat-emptor|買主注意の原則——売買における危険の買主負担とその現代的後退]] — 同じ思想家
 - [[bizlaw-covenant-running-with-land|土地に伴う約款——後続の所有者を拘束する土地に関する約束]] — 同じ思想家
 - [[bizlaw-estoppel|禁反言（エストッペル）——先行の言動と矛盾する主張を信頼保護のため封じる法理]] — 同じ思想家
+- [[bizlaw-exculpatory-clause|免責条項の法理：契約上の責任制限・免除とその規制]] — 出典を共有
 - [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 出典を共有
 - [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]] — 出典を共有
 - [[bizlaw-quasi-contract-unjust-enrichment|不当利得（準契約・不当利得返還請求）]] — 出典を共有

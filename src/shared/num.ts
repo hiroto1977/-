@@ -59,3 +59,19 @@ export function assertNonNegativeFinite(value: number, label: string): void {
     throw new Error(`${label} must be a finite number >= 0 (got ${value})`);
   }
 }
+
+/**
+ * 割合 (0..1) を「％」で刷る。**算定不能 (null / undefined) は「—」。**
+ *
+ * `0%` は「測った結果が 0」であり、「そもそも測っていない」とは別物である。
+ * 両方を `0` で表すと、画面と書き出しは**最悪値**として読める形になる ——
+ * 勝率 0% は「決済した取引が在り、どれも勝てなかった」という意味になる。
+ *
+ * デスクトップ (`main/clients/stocks.ts`) とブラウザ版
+ * (`renderer/data/stocksAnalysisWeb.ts`) の**両方**が同じ表を刷るので、
+ * 綴りをここに 1 つ置く (この本の冒頭が言うとおり、1 行の私的ヘルパは
+ * コピーの数だけ食い違う)。
+ */
+export function ratioPctOrDash(n: number | null | undefined, digits = 0): string {
+  return n == null ? '—' : `${(n * 100).toFixed(digits)}%`;
+}

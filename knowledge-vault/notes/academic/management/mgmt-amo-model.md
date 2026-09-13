@@ -32,8 +32,8 @@ AMOモデル（AMOフレームワーク）は人的資源管理における業�
 - [Wikipedia: High-performance work systems — AMO モデルと HPWS の接続](https://en.wikipedia.org/wiki/High-performance_work_systems) `リファレンス`
 
 ## 関連概念
-- [[mgmt-strategic-hrm|戦略的人的資源管理（SHRM）]] — 語彙が近い
 - [[mgmt-high-performance-work-systems|高業績ワークシステム]] — 語彙が近い
+- [[mgmt-strategic-hrm|戦略的人的資源管理（SHRM）]] — 語彙が近い
 - [[mgmt-evidence-based-management|証拠に基づく経営（エビデンスに基づく経営）]] — 同じ思想家
 - [[mgmt-resource-dependence|資源依存理論]] — 同じ思想家
 - [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]] — 同じ思想家

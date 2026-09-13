@@ -32,9 +32,9 @@ aliases:
 
 ## 関連概念
 - [[tax-invoice-input-credit|インボイス制度と仕入税額控除の要件]] — 語彙が近い
-- [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 語彙が近い
 - [[tax-consumption-taxpayer|消費税の納税義務者の判定]] — 語彙が近い
 - [[tax-invoice-20percent-special|インボイス「2割特例」（小規模事業者の税額控除に関する経過措置）]] — 語彙が近い
+- [[tax-invoice|インボイス制度（適格請求書等保存方式）]] — 語彙が近い
 - [[tax-input-credit-method|消費税の仕入税額控除（個別対応方式・一括比例配分方式）]] — 語彙が近い
 - [[labor-childcare-shorttime-benefit|育児時短就業給付金（2025年4月1日施行）]] — 出典を共有
 - [[legal-financial-statements-disclosure|株式会社の計算書類の公告（決算公告）義務]] — 出典を共有

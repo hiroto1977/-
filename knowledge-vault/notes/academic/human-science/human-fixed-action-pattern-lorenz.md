@@ -26,7 +26,7 @@ aliases:
 コンラート・ローレンツ ／ ニコ・ティンバーゲン ／ カール・フォン・フリッシュ ／ ウィリアム・ソープ
 
 ## 出典
-- [Tinbergen, N. (1951) The Study of Instinct — Oxford University Press (WorldCat)](https://www.worldcat.org/oclc/657072) `学術`
+- [Tinbergen, N. (1951) The Study of Instinct — Oxford University Press (WorldCat)](https://www.worldcat.org/oclc/657072) `リファレンス`
 - [Wikipedia: Fixed action pattern — Lorenz, Tinbergen, sign stimulus, innate releasing mechanism, supranormal stimulus](https://en.wikipedia.org/wiki/Fixed_action_pattern) `リファレンス`
 
 ## 関連概念

@@ -2,7 +2,7 @@
 title: "ダニエル・ウェグナー"
 type: thinker
 person_key: "ウェグナー|ダ"
-concept_count: 4
+concept_count: 3
 tags:
   - person
   - index
@@ -10,13 +10,12 @@ tags:
 
 # ダニエル・ウェグナー
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **4 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（4件）
+## 学術概念（3件）
 - [[human-ironic-process-wegner|皮肉過程理論——思考抑制がかえって抑制対象を意識に侵入させる逆説]] — 皮肉過程理論（ironicprocesstheory）は、ダニエル・ウェグナーが1987年の「白熊実験」を経て1994…
-- [[human-transactive-memory|トランザクティブ・メモリー・システム：集団における分散型記憶と知識共有の理論]] — トランザクティブ・メモリー・システム（TMS）は、社会心理学者ダニエル・ウェグナーが1987年に提唱した、集団の成員が…
 - [[infosoc-digital-amnesia-google-effect|デジタル健忘症（グーグル効果）]] — デジタル健忘症（digitalamnesia）／グーグル効果（Googleeffect）は、スパロウ・リウ・ウェグナー…
-- [[mgmt-transactive-memory-wegner|トランザクティブ記憶システム（ウェグナー）]] — トランザクティブ記憶システム（transactivememorysystem;TMS）は、ダニエル・ウェグナー（198…
+- [[mgmt-transactive-memory-wegner|トランザクティブ・メモリー・システム（ウェグナー）——「誰が何を知っているか」の共有メタ知識により、集団が記憶と知識を分業し統合する仕組み]] — トランザクティブ・メモリー・システム（TMS）とは、集団の成員が「誰が何を知っているか」についての共有認識（知識のディ…
 
 ## 関連
 - 索引: [[人物索引]]

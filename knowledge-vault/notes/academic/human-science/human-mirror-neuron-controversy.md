@@ -34,6 +34,7 @@ aliases:
 - [[human-embodied-simulation-rizzolatti|身体的シミュレーションと鏡像ニューロン（リゾラッティ）]] — 語彙が近い
 - [[human-embodied-simulation|身体化されたシミュレーション理論と鏡像ニューロン系：他者理解・共感・社会的認知の神経基盤]] — 同じ思想家
 - [[human-chameleon-effect-chartrand|カメレオン効果（シャートランド＆バーク）]] — 同じ思想家
+- [[human-mirror-neuron-system|ミラーニューロン・システム（リゾラッティ／ガレーゼ）——行為の実行時と観察時の双方で発火するニューロン群が行為理解・模倣・共感の神経基盤とされる仮説と、その証拠をめぐる論争]] — 同じ思想家
 - [[human-psychosocial-development-erikson|心理社会的発達理論——エリクソンの八段階モデルとアイデンティティ形成]] — 出典を共有
 - [[human-narrative-therapy|ナラティブ・セラピー]] — 出典を共有
 - [[infosoc-platform-economics|プラットフォーム経済学・二面市場理論：デジタル市場の仲介構造と価格戦略]] — 出典を共有

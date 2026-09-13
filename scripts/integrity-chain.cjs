@@ -43,6 +43,12 @@ const PROTECTED = [
   'scripts/integrity-chain.cjs',
   'src/renderer/security/vault.ts',
   'src/renderer/security/dataCrypto.ts',
+  // 2026-09-12 (パス 171): `vault.ts` / `dataCrypto.ts` の鍵導出が最初に触る所を
+  // 守るために入れた。**実行時の判断を持つ** —— `crypto.subtle` が在るかを決め、
+  // 無いときに画面へ出す文を持つ。ここを書き換えて「在る」と答えさせると、
+  // 鍵導出は素の TypeError に戻り、利用者は内部 API の名前だけを見る。
+  // 除外の基準は「型だけに見えるか」ではなく「実行時に残るか」なので保護対象。
+  'src/renderer/security/webCrypto.ts',
   'src/renderer/security/autoLock.ts',
   'src/renderer/security/mnemonic.ts',
   'src/renderer/security/webauthn.ts',
@@ -63,6 +69,14 @@ const PROTECTED = [
   // BYO プロキシの SSRF 関門。ブラウザ版では**全サービスのトークン**が
   // ここを通って利用者指定の Worker へ出るので、絞りが緩むと宛先を選ばれる。
   'src/renderer/network/proxy.ts',
+  // 2026-09-12 (パス 191) に足した。上の `proxy.ts` の**三つ子の 3 人目** ——
+  // 週次 CI (`knowledge-auto.yml --links=400`) が出典 URL の生死を確かめるとき、
+  // 第三者の `302 Location:` で runner の網の内側へ向けられる経路を塞ぐ関門。
+  // `proxy.ts` は保護されているのにこちらは守られておらず、**冒頭が
+  // `--self-test` を名乗るのに実装が無く**、126 文のうち 18 文が一度も
+  // 実行されていなかった (名前の規則も `proxy.ts` とずれていた)。
+  // 同じ判断を持つ者のうち 1 人だけ鍵が無い、という形だった。
+  'scripts/public-host-guard.cjs',
   // レンダラーが渡してくる書き出し先を検査する唯一の関門。business /
   // stocks / templates / teamradar の書き出しは全部ここを通る。ここが
   // ゆるむと、乗っ取られたレンダラーがホーム配下へ任意のファイルを
@@ -254,6 +268,10 @@ const PROTECTED = [
   // 一時ファイルの置き場と `.prev` の扱いを決めるので、ここが変われば
   // 平文や旧世代が予期しない場所に残りうる。
   'src/main/atomicWrite.ts',
+  // ハードリセット (2026-09-09 · パス 137): main のファイル (トークン・状態ファイル・控え・残骸) を消す手順と、
+  // 両ビルドの報告の型・文面。消す先が黙って変わらないこと。
+  'src/main/eraseAll.ts',
+  'src/shared/eraseReport.ts',
   // IPC 境界で資格情報の文字列を検査する唯一の場所 (main.ts が読む)。
   // 制御文字・長さ・空を落としているので、緩めば折り返しごと保存される。
   'src/shared/tokenInput.ts',
@@ -287,8 +305,24 @@ const PROTECTED = [
   'src/shared/atlassianSite.ts',            // テナント名の検証 (送り先が変わる)
   'src/shared/scanTarget.ts',               // 走査先の検証
   'src/shared/escape.ts',                   // 出口のエスケープ
+  // 2026-09-13 (パス 195) に足した。**ここも保護の閉包が教えてくれた。**
+  // 入力の天井を「文字」で数え・文字境界で切る唯一の場所にしたので、
+  // `vault.ts` (トークンの天井)・`pkce.ts` (認可コードの天井)・`localWrite.ts`
+  // (保存失敗の理由の切り詰め) が読むようになり、`chain:verify` が
+  // 「保護対象が保護されていない物を読んでいる」と鳴らした。黙って
+  // `countChars` を `length` へ戻されると、**述べる数と守る数がずれ**、
+  // 天井の半分で断る / 孤立サロゲートを保存側へ渡す状態に戻る。
+  'src/shared/inputCeiling.ts',             // 天井を数える・切る唯一の場所 (単位は「字」)
   'src/renderer/oauth/pkce.ts',             // ブラウザ版 PKCE
   'src/renderer/oauth/pkceSession.ts',      // PKCE の一時秘密の置き場と消し方
+  // 2026-09-06 に足した。**保護の閉包が教えてくれた。** `pkceSession.ts` が
+  // 保存の失敗の種別を文面へ写すため `localWrite.ts` を読むようにしたところ、
+  // `chain:verify` が「保護対象が保護されていない物を読んでいる」と鳴らした。
+  // ここは localStorage 書き込みの**唯一の入口**で、容量超過 / 保存禁止 /
+  // その他の切り分けと利用者へ出す文面を持つ —— 黙って書き換えられると、
+  // 端末が保存を断っていることが**画面から消える** (2026-09-06 のパスで直した
+  // 「押しても何も出ない」がそのまま戻る)。import は 0 件なので閉包は閉じる。
+  'src/renderer/data/localWrite.ts',        // localStorage 書き込みの唯一の入口と失敗の文面
   'src/renderer/fs/fsa.ts',                 // File System Access の書き出し口
   'src/renderer/network/liveRead.ts',       // ライブ取得の経路選択
   'src/renderer/data/assistantMarkdown.ts', // モデル応答を解析して画面へ出す唯一の場所
@@ -306,6 +340,13 @@ const PROTECTED = [
  * 残り続ける。
  */
 const DEP_EXCLUSIONS = {
+  // ハードリセット (main/eraseAll.ts · パス 137) が読むのは**置き場所の関数**だけ (storePath / defaultStatePath /
+  // defaultDashboardPath)。置き場所が変われば消す先も同じに変わる (在庫は綴りを写さない)。中身の変更で消す対象は
+  // 変わらない。名前は `main/__tests__/eraseAll.test.ts` (6 つ) と封緘の台帳 `atRestPolicy.test.ts` が留める。
+  'src/main/clients/emotions.ts': 'ハードリセットが読むのは置き場所の関数 storePath だけ (上の注記)。',
+  'src/main/clients/talent.ts': 'ハードリセットが読むのは置き場所の関数 defaultStatePath だけ (上の注記)。',
+  'src/main/clients/teamradar.ts': 'ハードリセットが読むのは置き場所の関数 defaultStatePath だけ (上の注記)。',
+  'src/main/clients/stocks.ts': 'ハードリセットが読むのは置き場所の関数 defaultStatePath / defaultDashboardPath だけ (上の注記)。',
   'src/shared/serviceId.ts':
     'サービスを 1 つ足すたびに変わる (現在 74)。かつ、この一覧自体は関門ではない — '
     + '未知の id を弾いているのは SERVICE_ID_SET を使う isServiceId で、'
@@ -329,6 +370,10 @@ const DEP_EXCLUSIONS = {
     'AI へ送る量の上限の定数のみ (判断は呼び出し側が持ち、両方とも保護対象)。',
   'src/shared/advisorTypes.ts':
     '実行時に残らない型定義のみ (interface 1 つ)。書き換えても生成 JS が変わらない。',
+  // 2026-09-09 (パス 116): assistant.ts の閉包で出てきた。action の戻り値の形の台帳 —— 
+  // interface と type だけで、`import type` でしか読まれない。advisorTypes.ts と同じ基準 (実行時に残らない)。
+  'src/shared/actionData.ts':
+    '実行時に残らない型定義のみ (action の戻り値の形の台帳)。書き換えても生成 JS が変わらない。',
   // 2026-08-25: 保護対象へ入れようとして、**ここに既に在ることに気付いた**
   // (閉包検査が「二重管理」で鳴った)。過去の判断を尊重して除外のままにするが、
   // 理由の書きぶりは実態に寄せる —— このファイルは版の比較だけでなく、

@@ -31,16 +31,16 @@ aliases:
 - [Englich, B., Mussweiler, T. & Strack, F. 2006. Playing Dice With Criminal Sentences. Personality and Social Psychology Bulletin, 32(2), 188-200.](https://journals.sagepub.com/doi/10.1177/0146167205282152) `学術`
 
 ## 関連概念
-- [[human-anchoring|アンカリング効果（係留と調整）]] — 同じ思想家
 - [[human-framing-effect|フレーミング効果（framing effect）]] — 同じ思想家
 - [[human-prospect-theory|プロスペクト理論（行動経済学）]] — 同じ思想家
 - [[econ-behavioral-economics-kahneman-thaler|行動経済学——カーネマンとセイラーのヒューリスティクス・バイアス・ナッジ理論]] — 同じ思想家
 - [[econ-endowment-effect-kahneman-thaler|授かり効果——カーネマンとセイラーの所有バイアスと損失回避の経済的含意]] — 同じ思想家
-- [[human-anchoring-adjustment-tversky|アンカリングと調整——初期値への不十分な修正による判断バイアス]] — 同じ思想家
-- [[human-focusing-illusion|フォーカシング・イリュージョン（焦点化の錯覚）]] — 同じ思想家
-- [[human-flash-lag|フラッシュラグ効果（Flash-Lag Effect）]] — 出典を共有
-- [[human-phoneme-restoration|音素修復効果（Phonemic Restoration Effect／Warren 1970）——雑音で消された音を脳が補って「聞こえた」と感じる、トップダウンの知覚]] — 出典を共有
-- [[human-trolley-problem|トロッコ問題]] — 出典を共有
+- [[human-base-rate-fallacy|基準率の無視]] — 同じ思想家
+- [[human-conjunction-fallacy|連言錯誤]] — 同じ思想家
+- [[human-loss-aversion|損失回避]] — 同じ思想家
+- [[econ-behavioral-biases-heuristics|行動経済学における認知バイアスとヒューリスティクス：カーネマンとトヴェルスキーの研究]] — 同じ思想家
+- [[econ-behavioral-finance|行動ファイナンス]] — 同じ思想家
+- [[econ-behavioral-nudge-thaler|ナッジと行動経済学的介入設計（セイラー・サンスタイン）]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

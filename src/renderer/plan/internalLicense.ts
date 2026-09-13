@@ -99,16 +99,48 @@ export function readInternalLicense(): InternalLicense | null {
   }
 }
 
-/** ライセンスが有効か (＝全機能無償が使えるか)。
- *  自社商品ビルド (SELF_PRODUCT_ALL_ACCESS) では招待コード無しでも常に有効。 */
-export function hasInternalLicense(): boolean {
-  // SELF_PRODUCT_ALL_ACCESS は現ビルドで const true。よって常に true を返し、有償配布パス
-  // (L下の readInternalLicense 判定) は到達不能。フラグを false にしたときのみ生きるため、
-  // この分岐と次行の変異は現ビルドでは equivalent / 到達不能。
-  // Stryker disable next-line ConditionalExpression
-  if (SELF_PRODUCT_ALL_ACCESS) return true;
+/**
+ * **なぜ**全機能が開いているか (2026-09-12 · パス 158)。
+ *
+ * - `build` … 自社商品ビルド (`SELF_PRODUCT_ALL_ACCESS`)。招待コードは要らない。
+ * - `invite` … 保存済みの招待コードが検証を通った。
+ * - `none`  … 開いていない (有償配布に切り替えたときだけ現れる)。
+ *
+ * **「開いているか」だけでは足りない。** `hasInternalLicense()` は `build` と
+ * `invite` を同じ `true` に畳むので、画面は `build` のときにも「解除して Free に
+ * 戻す」という**効かない操作**を出していた —— 解除は保存を消すだけで、
+ * `SELF_PRODUCT_ALL_ACCESS` による開放は続く (`usePlan.test.ts` が
+ * 「revokeInvite 後も internalUnlocked=true のまま」として**既に固定していた**)。
+ * 論理は分かっていて、画面だけが知らなかった。
+ */
+export type AllAccessSource = 'build' | 'invite' | 'none';
+
+export function allAccessSource(
+  /**
+   * **Test seam。** `SELF_PRODUCT_ALL_ACCESS` はビルド定数なので、既定のままでは
+   * 有償配布側の枝を**一度も走らせられない** (`vi.doMock` で export を差し替えても、
+   * この関数が読むのはモジュール内の束縛なので変わらない —— パス 158 で実測)。
+   * 引数で渡せるようにして、`false` の枝を**実物の論理で**測る
+   * (`exchangeGoogleCode` の `fetchImpl` と同じ形)。
+   */
+  allAccess: boolean = SELF_PRODUCT_ALL_ACCESS,
+): AllAccessSource {
+  if (allAccess) return 'build';
   // Stryker disable next-line ConditionalExpression,EqualityOperator
-  return readInternalLicense() !== null;
+  return readInternalLicense() !== null ? 'invite' : 'none';
+}
+
+/**
+ * 解除 (Free に戻す) が**実際に効くか**。`build` では効かない ——
+ * 効かない操作をボタンとして出さないために、画面はこれを見る。
+ */
+export function canRevokeAllAccess(allAccess: boolean = SELF_PRODUCT_ALL_ACCESS): boolean {
+  return allAccessSource(allAccess) === 'invite';
+}
+
+/** ライセンスが有効か (＝全機能無償が使えるか)。理由から導く (判断を 2 つ持たない)。 */
+export function hasInternalLicense(allAccess: boolean = SELF_PRODUCT_ALL_ACCESS): boolean {
+  return allAccessSource(allAccess) !== 'none';
 }
 
 /**
@@ -131,11 +163,19 @@ export function activateInternalLicense(code: string, holder = ''): boolean {
   return true;
 }
 
-/** ライセンスを解除する (このデバイスを Free に戻す)。 */
-export function deactivateInternalLicense(): void {
+/**
+ * ライセンスを解除する。**効いたかどうかを返す** (パス 158)。
+ *
+ * 自社商品ビルドでは `false` —— 保存を消しても `SELF_PRODUCT_ALL_ACCESS` が
+ * 開放を続けるので、「Free に戻した」と言えない。**何もしないで false を返す**
+ * のではなく保存は消す (入れた記録を残さない方が筋が通る) が、**呼び出し側に
+ * 「戻っていない」ことを必ず伝える**。
+ */
+export function deactivateInternalLicense(allAccess: boolean = SELF_PRODUCT_ALL_ACCESS): boolean {
   try {
     localStorage.removeItem(LS_KEY);
   } catch {
-    // best effort
+    // best effort — 保存が消せなくても、下の判定は現物を読み直す。
   }
+  return allAccessSource(allAccess) === 'none';
 }

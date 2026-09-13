@@ -37,7 +37,7 @@ aliases:
 - [[mgmt-customer-journey|カスタマージャーニー]] — 出典を共有
 - [[mgmt-innovators-dilemma|イノベーションのジレンマ（破壊的イノベーション）]] — 出典を共有
 - [[mgmt-value-chain|バリューチェーン（価値連鎖）]] — 出典を共有
-- [[mgmt-holacracy|ホラクラシー]] — 同分野の近傍
+- [[mgmt-agile-kanban|かんばん方式とアジャイル・カンバン]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -34,12 +34,12 @@ aliases:
 - [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 同じ思想家
 - [[bizlaw-derivative-action-shareholder|株主代表訴訟（代表訴訟制度）]] — 同じ思想家
 - [[bizlaw-nominee-director-conflicts|ノミニー取締役と利益相反]] — 同じ思想家
+- [[bizlaw-procd-v-zeidenberg-shrinkwrap-clickwrap|プロCD対ザイデンバーグ事件——包装を開けた・クリックしたことで成立するライセンス契約の拘束力を認めた米連邦控訴審判例]] — 同じ思想家
 - [[bizlaw-veil-piercing-corporate-liability|法人格否認の法理と株主責任（コーポレート・ベール）]] — 同じ思想家
 - [[econ-free-cash-flow-jensen|フリーキャッシュフロー仮説——余剰現金をめぐる経営者と株主の利害対立]] — 同じ思想家
 - [[bizlaw-antitrust-merger-remedies|M&A競争法上の救済措置——構造的・行動的救済と市場競争維持のための条件付き承認]] — 出典を共有
 - [[bizlaw-antitrust-tying-bundling|抱き合わせ販売と競争法——シャーマン法・EU競争法における市場閉鎖効果と排他的慣行]] — 出典を共有
 - [[infosoc-platform-workers-gig-rights|ギグワーカーの権利とプラットフォーム労働——雇用分類の争点と情報社会の新しい労働関係]] — 出典を共有
-- [[bizlaw-environmental-law-polluter-pays|環境法と汚染者負担原則——OECDガイドラインから炭素税・ETS・環境賠償法制への展開]] — 出典を共有
 - [[infosoc-smart-city-governance|スマートシティのガバナンス]] — 出典を共有
 
 ## 関連

@@ -30,9 +30,8 @@ aliases:
 - [法務省 — 民法（債権関係）改正に関する説明（条件・期限を含む民法総則の規律）](https://www.moj.go.jp/MINJI/minji06_001070000.html) `公的`
 
 ## 関連概念
+- [[bizlaw-fraudulent-rescission|詐害行為取消権（民法424条）]] — 同分野の近傍
 - [[bizlaw-general-incorporated-associations|一般社団・財団法人法]] — 同分野の近傍
-- [[bizlaw-condition-precedent|停止条件（先行条件）——履行義務の発生を将来の事実にかからしめる契約条件]] — 同分野の近傍
-- [[bizlaw-broadcast-act|放送法]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -39,7 +39,7 @@ aliases:
 - [[econ-mental-accounting|メンタル・アカウンティング（心の会計）]] — 同じ思想家
 - [[econ-myopic-loss-aversion-benartzi-thaler|近視眼的損失回避——頻繁な評価と損失回避が株式プレミアムを生む]] — 同じ思想家
 - [[econ-rank-dependent-utility-quiggin|順位依存効用——累積確率を歪めてリスク態度を表す]] — 同じ思想家
-- [[human-compromise-effect|妥協効果（極端回避性）]] — 同じ思想家
+- [[human-anchoring-adjustment-tversky|アンカリングと調整（係留と調整）——最初に示された数値が基準点となり、そこからの修正が不十分なまま判断が偏るヒューリスティック]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

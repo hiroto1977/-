@@ -39,8 +39,8 @@ aliases:
 - [[mgmt-institutional-entrepreneurship-dimaggio|制度的起業家精神（ディマジオ）]] — 同じ思想家
 - [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — 出典を共有
 - [[econ-becker-crime|犯罪の経済学]] — 出典を共有
+- [[mgmt-cage-distance-framework-ghemawat|CAGEディスタンス・フレームワーク——文化・制度・地理・経済の4つの距離で海外市場の遠さを測るゲマワットの枠組み]] — 同分野の近傍
 - [[mgmt-double-jeopardy-law|ダブル・ジョパディの法則（Double Jeopardy Law／Ehrenberg 1990）——市場シェアの小さいブランドは買い手が少なく、しかもその買い手の忠誠度も低い]] — 同分野の近傍
-- [[mgmt-contextual-ambidexterity|コンテクスチュアル・アンビデクストリティ（文脈的両利き経営）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -35,12 +35,12 @@ Thomas H. Davenport ／ Laurence Prusak ／ Bonnie A. Nardi ／ Vicki L. O'Day
 ## 関連概念
 - [[infosoc-attention-economy-theory|アテンション・エコノミー理論]] — 同じ思想家
 - [[infosoc-social-bots|ソーシャルボット]] — 出典を共有
-- [[infosoc-internet-of-things-weiser-ubicomp|IoTとユビキタスコンピューティング——ワイザーの「コンピュータは消える」とスマートデバイス社会]] — 出典を共有
 - [[infosoc-technological-frames|テクノロジカル・フレーム（Technological Frames）]] — 出典を共有
 - [[econ-coordination-game|コーディネーションゲーム（協調ゲーム）]] — 出典を共有
 - [[econ-solow-paradox|ソロー・パラドックス（IT生産性パラドックス）]] — 出典を共有
-- [[infosoc-dataveillance|データヴェイランス（データ監視）]] — 出典を共有
+- [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]] — 出典を共有
 - [[infosoc-digital-materiality|デジタル・マテリアリティ]] — 出典を共有
+- [[infosoc-eliza-effect-weizenbaum|ワイゼンバウムのイライザとイライザ効果——単純な模式応答に理解と親密さを読み込む錯覚]] — 出典を共有
 - [[infosoc-media-ecology|メディア・エコロジー（メディア生態学）]] — 出典を共有
 - [[infosoc-participation-inequality|参加格差（90-9-1の法則）]] — 出典を共有
 

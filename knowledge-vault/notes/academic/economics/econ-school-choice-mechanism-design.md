@@ -31,8 +31,8 @@ Abdulkadiroğlu, Atila （2003 School Choice: A Mechanism Design Approach）／S
 - [Wikipedia — School-choice mechanism (Boston mechanism, deferred acceptance, strategy-proofness)](https://en.wikipedia.org/wiki/School-choice_mechanism) `リファレンス`
 
 ## 関連概念
+- [[econ-market-design-roth|マーケット・デザインとマッチング理論（ロス＆シャプレー）]] — 同分野の近傍
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
-- [[econ-absorption-approach-balance-payments|アブソープション・アプローチ——所得と総支出の差として捉える国際収支]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

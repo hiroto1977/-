@@ -40,8 +40,8 @@ Judy Wajcman ／ Donna Haraway ／ Cynthia Cockburn ／ Anne Balsamo ／ Rosi Br
 - [[mgmt-entrepreneurial-ecosystems|アントレプレナーシップ・エコシステム：起業家・投資家・大学・政府の共進化]] — 出典を共有
 - [[mgmt-resource-orchestration-theory|資源オーケストレーション理論]] — 出典を共有
 - [[infosoc-attention-ecology|注意のエコロジー（Ecology of Attention）]] — 出典を共有
+- [[infosoc-data-as-capital-sadowski|資本としてのデータ——データ収集の駆動力を資本蓄積の論理として説明するサドウスキーの理論]] — 出典を共有
 - [[infosoc-digital-labor-scholz-platform-cooperativism|デジタル・レイバーとプラットフォーム協同組合主義——ショルツの労働者所有型プラットフォーム構想]] — 出典を共有
-- [[infosoc-media-agenda-setting|メディアのアジェンダ設定理論：マスメディアが公衆の争点顕出性と属性認識を形成するプロセスに関する理論的枠組み]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

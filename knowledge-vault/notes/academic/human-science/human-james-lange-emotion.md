@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: James–Lange theory — James, Lange, bodily reaction precedes emotion, Cannon-Bard critique](https://en.wikipedia.org/wiki/James%E2%80%93Lange_theory) `リファレンス`
 
 ## 関連概念
-- [[human-cannon-bard-emotion|キャノン＝バード説——情動経験と身体反応が視床を起点に並行して生じる]] — 同じ思想家
+- [[human-cannon-bard-emotion|キャノン＝バード説——情動経験と身体反応が視床を起点に並行して生じる]] — 語彙が近い
 - [[human-somatic-marker-hypothesis|ソマティック・マーカー仮説（Somatic Marker Hypothesis）]] — 同じ思想家
 - [[econ-neuroeconomics|神経経済学：脳科学と経済的意思決定の融合領域]] — 同じ思想家
 - [[human-ideomotor|観念運動効果（Ideomotor Effect）]] — 同じ思想家

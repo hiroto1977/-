@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Section, StatusBar } from '../components/StatusBar';
-import { getLibrary, type LibraryItemMeta } from '../library/library';
+import { getLibrary, type LibraryItem, type LibraryItemMeta } from '../library/library';
+import { reportDeviceStoreFailure } from '../data/deviceStoreFailure';
+import { parseTimestamp } from '../../shared/isoDate';
 import {
   MAX_TEXT_PREVIEW_CHARS,
   previewBlocker,
@@ -14,14 +16,31 @@ const SERVICE_ICONS: Record<string, string> = {
   business: '💼',
 };
 
-function formatBytes(n: number): string {
+/**
+ * バイト数を読める字に。**`null` = 保存されている値が読めない**
+ * (2026-09-12 · パス 188)。以前は `number` を取り、`NaN` が来ると
+ * `NaN < 1024` も `NaN < 1024*1024` も false なので**最後の枝へ落ちて
+ * 「NaN MB」** と刷っていた (見出しの合計も 1 件混ざれば「NaN MB」)。
+ */
+function formatBytes(n: number | null): string {
+  if (n === null) return 'サイズ不明';
   if (n < 1024) return `${n} B`;
   if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
   return `${(n / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-function formatDate(ts: number): string {
-  const d = new Date(ts);
+/**
+ * 保存時刻を読める字に。**読めなければ「時刻不明」** (2026-09-12 · パス 188)。
+ *
+ * 以前は `new Date(ts)` の部品 (`getFullYear` …) をそのまま刷っていたので、
+ * `NaN` / `1e20` / `Infinity` はどれも **`NaN/NaN/NaN NaN:NaN`** になった。
+ * パス 185 は同じ家系を `toLocaleString` の側で直したが、**走査が
+ * `toLocale…` の形だけを見ていたのでこの形は外に在った**。範囲の判定は
+ * `shared/isoDate.ts` の `parseTimestamp` が 1 か所で持つ。
+ */
+function formatDate(ts: number | null): string {
+  const d = parseTimestamp(ts);
+  if (d === null) return '時刻不明';
   return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 
@@ -32,34 +51,111 @@ export function LibraryPage() {
   const [filter, setFilter] = useState<string>('all');
   const [shown, setShown] = useState<ShownPreview | null>(null);
 
+  /**
+   * 一覧を読み直す。**読めなかったら報せて、前回読めた一覧を残す。**
+   *
+   * ここは投げっぱなしだった (`useEffect(() => { refresh(); }, [])`)。
+   * `indexedDB` が開けない端末では `items` が `[]` のままになり、
+   * 見出しは「ライブラリ · 0 件 / 0 B」と出る —— **書き出した書類が
+   * 1 つも無いのと区別が付かない**。空に見える理由を画面が言えるようにする
+   * (業務レコード側と同じ判断。`data/deviceStoreFailure.ts`)。
+   */
   async function refresh() {
-    const lib = getLibrary();
-    const list = await lib.list();
+    let list: readonly LibraryItemMeta[];
+    try {
+      list = await getLibrary().list();
+    } catch (err) {
+      reportDeviceStoreFailure('files', 'read', 'library', err);
+      return;
+    }
     setItems(list);
-    setTotalBytes(list.reduce((acc, it) => acc + it.size, 0));
+    // **読める size だけ足す** (パス 188)。足せない控えは数えて注記に出す ——
+    // 混ぜると合計が NaN になり、見出しが「NaN MB」になる。
+    setTotalBytes(list.reduce((acc, it) => acc + (it.size ?? 0), 0));
   }
 
   useEffect(() => {
     refresh();
   }, []);
 
+  /**
+   * 1 件を読む。**3 つの「読めない」を混ぜない** —— 打ち手が全部違う。
+   *
+   * | 返り値 | 何が起きたか | 利用者の打ち手 |
+   * | --- | --- | --- |
+   * | `LibraryItem` | 読めた | — |
+   * | `null` | その控えが無い (削除済み) | 諦める |
+   * | `'unreadable'` | **保管層が開けない** (容量・権限) | 容量を空ける・別の窓で開く |
+   * | `{ corrupt: meta }` | **控えは在るが中身が取り出せない** | **その行を削除する** |
+   *
+   * 最後の 1 つは 2026-09-13 (パス 193) に足した。それまで `get()` が
+   * `as LibraryItem` と無検査でキャストしていたので、壊れた控えは「読めた」と
+   * して返り、「ダウンロード」は `URL.createObjectURL` の TypeError で
+   * **画面を何も変えずに終わって**いた。
+   */
+  type Read = LibraryItem | null | 'unreadable' | { readonly corrupt: LibraryItemMeta };
+
+  async function readItem(id: string): Promise<Read> {
+    let r;
+    try {
+      r = await getLibrary().get(id);
+    } catch (err) {
+      reportDeviceStoreFailure('files', 'read', 'library', err);
+      return 'unreadable';
+    }
+    if (r.kind === 'found') return r.item;
+    if (r.kind === 'missing') return null;
+    return { corrupt: r.meta };
+  }
+
+  /** 壊れた控えのときに画面が言う 1 文 (ダウンロードとプレビューで同じ)。 */
+  function corruptMessage(meta: LibraryItemMeta): string {
+    return `「${meta.filename}」の中身が取り出せません (控えが壊れています)。この行を削除してください。`;
+  }
+
   const visible = filter === 'all' ? items : items.filter((i) => i.serviceId === filter);
+  /**
+   * **合計から外した控えの数** (パス 188)。`size` が読めない控えは合計に
+   * 足せないので、**足さなかったことを言う** —— 黙って外すと見出しの合計が
+   * 実際より小さく見え、上限 (50 MB) の話と食い違う。
+   * `createdAt` の側は行ごとに「時刻不明」と出るので数だけで足りる。
+   */
+  const unreadableSizes = items.filter((i) => i.size === null).length;
+  const unreadableDates = items.filter((i) => i.createdAt === null).length;
   const services = Array.from(new Set(items.map((i) => i.serviceId)));
 
   async function download(id: string) {
-    const item = await getLibrary().get(id);
-    if (!item) {
+    const item = await readItem(id);
+    if (item === 'unreadable') return; // 報せは画面上端に出ている
+    if (item === null) {
       setMsg('ファイルが見つかりません (削除済みの可能性)');
       return;
     }
-    const url = URL.createObjectURL(item.blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = item.filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    if ('corrupt' in item) {
+      setMsg(corruptMessage(item.corrupt));
+      return;
+    }
+    // **ここは投げっぱなしだった** (パス 193)。`URL.createObjectURL` は
+    // Blob でない値に TypeError を投げ、この関数は async の onClick から
+    // 呼ばれるので拒否は未処理のまま消え、**画面は何も変わらなかった**。
+    // 隣の `preview` は同じ危険を `.catch` で受けて文を出していた。
+    let url: string | null = null;
+    try {
+      url = URL.createObjectURL(item.blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = item.filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setMsg(null);
+    } catch {
+      if (url !== null) URL.revokeObjectURL(url);
+      setMsg('ダウンロードを開始できませんでした (ブラウザが拒否した可能性)');
+      return;
+    }
+    const created = url;
+    setTimeout(() => URL.revokeObjectURL(created), 1000);
   }
 
   /**
@@ -72,12 +168,19 @@ export function LibraryPage() {
    * いたため、この経路は元から無反応だった。詳細は `library/preview.ts`。
    */
   async function preview(id: string) {
-    const item = await getLibrary().get(id);
-    if (!item) {
+    const item = await readItem(id);
+    if (item === 'unreadable') return; // 報せは画面上端に出ている
+    if (item === null) {
       setMsg('ファイルが見つかりません (削除済みの可能性)');
       return;
     }
-    const blocked = previewBlocker(item.mime, item.size);
+    if ('corrupt' in item) {
+      setMsg(corruptMessage(item.corrupt));
+      return;
+    }
+    // **上限は控えの申告ではなく中身の大きさで見る** (パス 193) ——
+    // `size` は書いた時の値で、中身とずれうる。
+    const blocked = previewBlocker(item.mime, item.blob.size);
     if (blocked !== null) {
       setMsg(blocked);
       return;
@@ -108,7 +211,13 @@ export function LibraryPage() {
 
   async function remove(id: string) {
     if (!confirm('このファイルを削除しますか?')) return;
-    await getLibrary().remove(id);
+    try {
+      await getLibrary().remove(id);
+    } catch (err) {
+      // 消せていないので「削除しました」とは言わない。行はそのまま残る。
+      reportDeviceStoreFailure('files', 'delete', 'library', err);
+      return;
+    }
     setShown(null);
     await refresh();
     setMsg('削除しました');
@@ -116,7 +225,12 @@ export function LibraryPage() {
 
   async function removeAll() {
     if (!confirm('ライブラリの全ファイルを削除しますか? この操作は元に戻せません。')) return;
-    await getLibrary().clear();
+    try {
+      await getLibrary().clear();
+    } catch (err) {
+      reportDeviceStoreFailure('files', 'delete', 'library', err);
+      return;
+    }
     setShown(null);
     await refresh();
     setMsg('全て削除しました');
@@ -125,7 +239,7 @@ export function LibraryPage() {
   return (
     <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 20 }}>
       <StatusBar
-        who={`ライブラリ · ${items.length} 件 / ${formatBytes(totalBytes)}`}
+        who={`ライブラリ · ${items.length} 件 / ${formatBytes(totalBytes)}${unreadableSizes > 0 ? ` (サイズが読めない ${unreadableSizes} 件は合計に含めていません)` : ''}`}
         serviceId="library"
         source="snapshot"
         status="idle"
@@ -198,6 +312,22 @@ export function LibraryPage() {
       ) : (
         <>
           <Section title="一覧" count={visible.length}>
+            {/* **読めなかった欄を言う** (パス 188)。控えそのものは残す —— 取り出しも
+                削除もできる形にしておかないと、壊れた控えが UI から触れなくなる。 */}
+            {(unreadableSizes > 0 || unreadableDates > 0) && (
+              <div
+                data-library-unreadable
+                role="alert"
+                style={{ fontSize: 12, lineHeight: 1.7, color: 'var(--text-mute)', marginBottom: 12 }}
+              >
+                {unreadableSizes > 0 && (
+                  <div>⚠ サイズが読めない {unreadableSizes} 件は合計 (と保存容量の上限の判定) に含めていません。ファイル自体は「開く」「保存」「削除」できます。</div>
+                )}
+                {unreadableDates > 0 && (
+                  <div>⚠ 保存時刻が読めない {unreadableDates} 件は「時刻不明」と表示しています (並び順は保存された値のままです)。</div>
+                )}
+              </div>
+            )}
             <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
               <button
                 type="button"
@@ -269,11 +399,17 @@ export function LibraryPage() {
                     <button type="button" data-library-open={it.id} onClick={() => preview(it.id)} style={actionBtn('accent')}>
                       開く
                     </button>
-                    <button type="button" onClick={() => download(it.id)} style={actionBtn()}>
+                    <button
+                      type="button"
+                      data-library-download={it.id}
+                      onClick={() => download(it.id)}
+                      style={actionBtn()}
+                    >
                       ダウンロード
                     </button>
                     <button
                       type="button"
+                      data-library-delete={it.id}
                       onClick={() => remove(it.id)}
                       style={{ ...actionBtn(), color: '#ef4444' }}
                     >

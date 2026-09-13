@@ -30,8 +30,9 @@ aliases:
 - [Wikipedia: Digital health — EHR, wearables, AI bias, algorithmic discrimination, data governance](https://en.wikipedia.org/wiki/Digital_health) `リファレンス`
 
 ## 関連概念
-- [[infosoc-datafication-van-dijck|データ化（ダタフィケーション）と社会的実践（ヴァン・ダイク）]] — 同分野の近傍
+- [[infosoc-e-government-digital-public|電子政府とデジタル公共サービスの情報社会分析——利便性・参加・監視の緊張]] — 同分野の近傍
 - [[infosoc-cultural-lag|カルチュラル・ラグ（文化遅滞）]] — 同分野の近傍
+- [[infosoc-new-jim-code-benjamin|ニュー・ジム・コード——中立を装う新技術が旧時代の人種的不平等を再生産する仕組み]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

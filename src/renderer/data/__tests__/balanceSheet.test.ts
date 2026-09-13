@@ -1,10 +1,16 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   parseBalanceSheet,
   computeBalanceSheetMetrics,
   computeBalanceSheetInsights,
   BALANCE_SHEET_COLLECTION,
   type BalanceSheet,
+  normalizeBalanceSheet,
+  balanceSheetOrNull,
+  balanceSheetAsOfKey,
+  compareBalanceSheetRecords,
+  currentBalanceSheet,
+  balanceSheetChoiceNote,
 } from '../balanceSheet';
 
 const VALID = { currentAssets: 100, currentLiabilities: 100, fixedAssets: 0, fixedLiabilities: 0, netIncome: 0 };
@@ -16,6 +22,15 @@ describe('parseBalanceSheet — validation messages & boundaries', () => {
 
   it('defaults asOf to "" when not a string', () => {
     expect(parseBalanceSheet({ ...VALID, asOf: 123 }).asOf).toBe('');
+  });
+
+  it('★ 基準日は暦に在る YYYY-MM-DD / YYYY-MM だけ (空は許す) —— パス 115 までは何も見なかった', () => {
+    expect(parseBalanceSheet({ ...VALID, asOf: '' }).asOf).toBe('');
+    expect(parseBalanceSheet({ ...VALID, asOf: '2026-03' }).asOf).toBe('2026-03');
+    expect(parseBalanceSheet({ ...VALID, asOf: '2026-03-31' }).asOf).toBe('2026-03-31');
+    for (const bad of ['2026/3/31', '2026-02-30', '2026-13', '20260331', 'x2026-03-31']) {
+      expect(() => parseBalanceSheet({ ...VALID, asOf: bad }), bad).toThrow('基準日は暦に在る日付');
+    }
   });
 
   it('rejects each negative figure with the exact field label', () => {
@@ -87,12 +102,37 @@ describe('parseBalanceSheet', () => {
     expect(() => parseBalanceSheet({ ...REQUIRED, currentLiabilities: 100, accountsPayable: 200 })).toThrow(/仕入債務/);
   });
 
-  it('treats a blank net income and blank optional items as zero', () => {
+  it('treats a blank net income as zero but leaves blank optional items undefined', () => {
+    // 当期純利益は**必須**の欄なので空欄 = 0 のまま (損失も 0 も意味が定まる)。
+    // 内数の任意欄は「入れていない」を保つ —— 0 に倒すと CCC 0 日が出る (下の対照)。
     const bs = parseBalanceSheet({ ...REQUIRED, netIncome: '' });
     expect(bs.netIncome).toBe(0);
+    expect(bs.inventory).toBeUndefined();
+    expect(bs.accountsReceivable).toBeUndefined();
+    expect(bs.accountsPayable).toBeUndefined();
+    expect(bs.cash).toBeUndefined();
+  });
+
+  it('★ 対照: 0 と入力すれば 0 が残る (未入力と実測の 0 を取り違えない)', () => {
+    const bs = parseBalanceSheet({ ...REQUIRED, inventory: 0, accountsReceivable: '0', accountsPayable: 0, cash: 0 });
     expect(bs.inventory).toBe(0);
     expect(bs.accountsReceivable).toBe(0);
     expect(bs.accountsPayable).toBe(0);
+    expect(bs.cash).toBe(0);
+  });
+
+  it('空白だけの入力も未入力として扱う (Number("  ")===0 に任せない)', () => {
+    const bs = parseBalanceSheet({ ...REQUIRED, inventory: '  ', accountsReceivable: '\t', cash: '' });
+    expect(bs.inventory).toBeUndefined();
+    expect(bs.accountsReceivable).toBeUndefined();
+    expect(bs.cash).toBeUndefined();
+  });
+
+  it('内数の上限照合は未入力を飛ばす (空欄で「流動資産を超える」と言わない)', () => {
+    // 流動資産 0 の控えでも、内数が未入力なら通る。実測の 0 も通る。1 は落ちる。
+    expect(() => parseBalanceSheet({ ...REQUIRED, currentAssets: 0, currentLiabilities: 0 })).not.toThrow();
+    expect(() => parseBalanceSheet({ ...REQUIRED, currentAssets: 0, currentLiabilities: 0, inventory: 0, accountsPayable: 0 })).not.toThrow();
+    expect(() => parseBalanceSheet({ ...REQUIRED, currentAssets: 0, inventory: 1 })).toThrow('棚卸資産は流動資産以下で入力してください');
   });
 });
 
@@ -185,9 +225,11 @@ function mkBS(over: Partial<BalanceSheet>): BalanceSheet {
 describe('parseBalanceSheet — interest-bearing debt (round 74)', () => {
   const BASE = { currentAssets: 100, fixedAssets: 0, currentLiabilities: 60, fixedLiabilities: 40, netIncome: 0 };
 
-  it('defaults interest-bearing debt to 0 when omitted or blank', () => {
-    expect(parseBalanceSheet(BASE).interestBearingDebt).toBe(0);
-    expect(parseBalanceSheet({ ...BASE, interestBearingDebt: '' }).interestBearingDebt).toBe(0);
+  it('leaves interest-bearing debt undefined when omitted or blank (0 = 無借金と実測した控えと分ける)', () => {
+    expect(parseBalanceSheet(BASE).interestBearingDebt).toBeUndefined();
+    expect(parseBalanceSheet({ ...BASE, interestBearingDebt: '' }).interestBearingDebt).toBeUndefined();
+    // ★ 対照: 0 と入力すれば 0 が残る。
+    expect(parseBalanceSheet({ ...BASE, interestBearingDebt: 0 }).interestBearingDebt).toBe(0);
   });
 
   it('rejects a negative interest-bearing debt with the exact label', () => {
@@ -309,14 +351,53 @@ describe('computeBalanceSheetInsights — debt structure', () => {
     expect(neg.debtToEquityPct).toBeNull(); // netAssets -200
   });
 
-  it('treats missing interest-bearing debt (undefined) as 0', () => {
+  /*
+   * **2026-09-10 に方針を変えた。** ここは以前 `treats missing interest-bearing debt
+   * (undefined) as 0` という名前で、**未入力を 0 に倒す**ことを期待値として固定していた。
+   * その形だと有利子負債の入力欄が無い利用者 (= 全員だった) に必ず
+   * 「有利子負債比率 0%・ネットデット = −現預金 (実質無借金)・実質債務超過の懸念なし」
+   * という**都合の良い答え**が出る。既知のずれを期待値として書かない、が repo の規則。
+   */
+  it('★ 有利子負債が未入力なら、借入に依る欄は算定しない (0 に倒さない)', () => {
     const bs: BalanceSheet = {
-      asOf: '', currentAssets: 100, inventory: 0, accountsReceivable: 0, fixedAssets: 0,
+      asOf: '', currentAssets: 100, cash: 40, inventory: 0, accountsReceivable: 0, fixedAssets: 0,
       currentLiabilities: 50, accountsPayable: 0, fixedLiabilities: 0, netIncome: 0,
     };
     const i = computeBalanceSheetInsights(bs);
-    expect(i.interestBearingDebtRatioPct).toBe(0); // 0/100
-    expect(i.netDebt).toBe(0); // 0 - 0
+    expect(i.interestBearingDebtRatioPct).toBeNull();
+    expect(i.netDebt).toBeNull();
+    expect(i.netCashPositive).toBeNull();
+    expect(i.substantiveInsolvencyRisk).toBeNull();
+    expect(i.interestBearingDebtUnentered).toBe(true);
+    expect(i.cashUnentered).toBe(false);
+  });
+
+  it('★ 現預金が未入力ならネットデットは算定しない (比率は有利子負債だけで決まるので出る)', () => {
+    const bs: BalanceSheet = {
+      asOf: '', currentAssets: 100, inventory: 0, accountsReceivable: 0, fixedAssets: 0,
+      currentLiabilities: 50, accountsPayable: 0, fixedLiabilities: 0,
+      interestBearingDebt: 20, netIncome: 0,
+    };
+    const i = computeBalanceSheetInsights(bs);
+    expect(i.netDebt).toBeNull();
+    expect(i.netCashPositive).toBeNull();
+    expect(i.substantiveInsolvencyRisk).toBeNull();
+    expect(i.interestBearingDebtRatioPct).toBe(20); // 20 / 100
+    expect(i.cashUnentered).toBe(true);
+  });
+
+  it('★ 0 と入力したときは「借入なし」として算定する (0 と未入力は別の事実)', () => {
+    const bs: BalanceSheet = {
+      asOf: '', currentAssets: 100, cash: 40, inventory: 0, accountsReceivable: 0, fixedAssets: 0,
+      currentLiabilities: 50, accountsPayable: 0, fixedLiabilities: 0,
+      interestBearingDebt: 0, netIncome: 0,
+    };
+    const i = computeBalanceSheetInsights(bs);
+    expect(i.interestBearingDebtRatioPct).toBe(0); // 0 / 100
+    expect(i.netDebt).toBe(-40); // 0 - 40
+    expect(i.netCashPositive).toBe(true);
+    expect(i.substantiveInsolvencyRisk).toBe(false);
+    expect(i.interestBearingDebtUnentered).toBe(false);
   });
 });
 
@@ -462,5 +543,198 @@ describe('computeBalanceSheetInsights — substantive insolvency risk', () => {
     // netDebt 100 - 500 = -400 → not > netAssets → no risk
     expect(i.netDebt).toBe(-400);
     expect(i.substantiveInsolvencyRisk).toBe(false);
+  });
+});
+
+// --- 保存された 1 件を読む境界 -------------------------------------------
+//
+// 復元の形の検査は `inventory` / `accountsReceivable` / `accountsPayable` も
+// **任意**にしている (前方互換)。以前は型が必須と言っていたので、欄の無い控えが
+// 復元を通ると足し算が NaN になり、行き先は経営サマリーのタイルと**金融機関等へ
+// 出す書面** —— NaN の純資産が印刷された。
+//
+// 2026-09-07 に型を復元の形へ合わせ、**未入力は `undefined` のまま残す**ように
+// した (0 に倒すと「入れていない」と「0 と実測した」が混ざる)。NaN は各指標が
+// `undefined` を算定不能として扱うことで防ぐ —— 合計に混ぜない、が下の検査。
+describe('normalizeBalanceSheet / balanceSheetOrNull', () => {
+  const core = { asOf: '2026-03-31', currentAssets: 5_000_000, fixedAssets: 3_000_000,
+    currentLiabilities: 2_000_000, fixedLiabilities: 1_000_000, netIncome: 500_000 };
+
+  it('内数の欄が無い控えは「無い」まま残り、合計は有限のまま (NaN にしない)', () => {
+    const bs = normalizeBalanceSheet(core);
+    expect(bs.inventory).toBeUndefined();
+    expect(bs.accountsReceivable).toBeUndefined();
+    expect(bs.accountsPayable).toBeUndefined();
+    const m = computeBalanceSheetMetrics(bs);
+    for (const [k, v] of Object.entries(m)) {
+      if (typeof v === 'number') expect(Number.isFinite(v), k).toBe(true);
+    }
+    expect(m.netAssets).toBe(5_000_000);
+  });
+
+  it('対照: 揃った控えは 1 つも書き換えない', () => {
+    const full = { ...core, cash: 1_000_000, inventory: 400_000, accountsReceivable: 900_000,
+      accountsPayable: 700_000, interestBearingDebt: 2_500_000 };
+    expect(normalizeBalanceSheet(full)).toEqual(full);
+  });
+
+  it('任意の欄 (現預金・有利子負債) は無いまま残す (0 を作らない)', () => {
+    const bs = normalizeBalanceSheet(core);
+    expect(bs.cash).toBeUndefined();
+    expect(bs.interestBearingDebt).toBeUndefined();
+  });
+
+  it('必須の欄は数でない値・非有限値を 0 に倒し、任意の欄は「無い」に倒す', () => {
+    const bs = normalizeBalanceSheet({ ...core, inventory: '400000', currentAssets: Number.NaN,
+      netIncome: Number.POSITIVE_INFINITY, cash: 'たくさん', asOf: 42 });
+    // 内数は任意なので、文字列で入っていた控えは「無い」として読む (0 を作らない)。
+    expect(bs.inventory).toBeUndefined();
+    expect(bs.currentAssets).toBe(0);
+    expect(bs.netIncome).toBe(0);
+    expect(bs.cash).toBeUndefined();
+    expect(bs.asOf).toBe('');
+  });
+
+  it('任意の欄が NaN / ±∞ の控えも「無い」として扱う (数であるだけでは通さない)', () => {
+    // 変異検査が拾った穴: `typeof v === 'number' && Number.isFinite(v)` の `&&` を
+    // `||` にしても、上の「文字列の金額」だけでは差が出ない —— NaN は typeof が
+    // number なので、`||` だと NaN がそのまま残ってランウェイの計算に流れる。
+    for (const bad of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+      const bs = normalizeBalanceSheet({ ...core, cash: bad, interestBearingDebt: bad });
+      expect(bs.cash).toBeUndefined();
+      expect(bs.interestBearingDebt).toBeUndefined();
+    }
+  });
+
+  it('未入力 (null / undefined) は null のまま —— ゼロの貸借対照表を作らない', () => {
+    expect(balanceSheetOrNull(null)).toBeNull();
+    expect(balanceSheetOrNull(undefined)).toBeNull();
+    expect(balanceSheetOrNull(core)?.currentAssets).toBe(5_000_000);
+  });
+
+  it('物でない引数も落ちずに空の形になる', () => {
+    for (const raw of [42, 'x', [] as unknown]) {
+      const bs = normalizeBalanceSheet(raw);
+      expect(bs.currentAssets).toBe(0);
+      expect(Number.isFinite(computeBalanceSheetMetrics(bs).netAssets)).toBe(true);
+    }
+  });
+});
+
+/**
+ * **未入力の棚卸資産は、当座比率と流動性段階を緩めない。** (2026-09-07)
+ *
+ * 当座比率 = (流動資産 − 棚卸資産) ÷ 流動負債 は、流動比率より**厳しい**指標である。
+ * 棚卸資産を 0 に倒すと分子が流動資産そのものになり、当座比率が流動比率と同じ値を
+ * 名乗る —— 厳しいはずの指標が緩い側の数字になる。流動性段階も同じ形で最良の
+ * `strong` に寄る。どちらも空欄で保存した控えでは**必ず**そうなっていた。
+ */
+describe('未入力の棚卸資産 — 当座比率と流動性段階', () => {
+  const CORE = { asOf: '', currentAssets: 200, fixedAssets: 0, currentLiabilities: 100,
+    fixedLiabilities: 0, netIncome: 0 } as const;
+
+  it('棚卸資産が未入力なら当座比率は null (流動比率は出る)', () => {
+    const m = computeBalanceSheetMetrics(CORE);
+    expect(m.currentRatioPct).toBe(200);
+    expect(m.quickRatioPct).toBeNull();
+  });
+
+  it('★ 対照: 棚卸資産 0 と実測した控えでは当座比率 = 流動比率 200% になる', () => {
+    // 0 に倒す実装だと上の検査もこの値を返す —— 見分けが付かないことがまさに欠陥だった。
+    const m = computeBalanceSheetMetrics({ ...CORE, inventory: 0 });
+    expect(m.quickRatioPct).toBe(200);
+  });
+
+  it('棚卸資産が未入力なら strong は主張せず sound に留める', () => {
+    expect(computeBalanceSheetInsights(CORE).liquidityStage).toBe('sound');
+    // ★ 対照: 0 と実測すれば当座資産 = 流動資産なので strong。
+    expect(computeBalanceSheetInsights({ ...CORE, inventory: 0 }).liquidityStage).toBe('strong');
+  });
+
+  it('都合の悪い判定 (tight) は棚卸資産が未入力でも落とさない', () => {
+    // 流動比率 99% は棚卸資産に依らず判る。判るものは黙らせない。
+    const i = computeBalanceSheetInsights({ ...CORE, currentAssets: 99 });
+    expect(i.liquidityStage).toBe('tight');
+  });
+});
+
+/**
+ * **定数表そのものを変異検査の射程に入れる (読み直して測る)。** (2026-09-07)
+ *
+ * module 直下の `const` は**読み込みのときに 1 度だけ**評価されるので、Stryker が
+ * 実行時に切り替える仕組みは届かない —— 覆われていても「生存」と報告される
+ * (`stryker.config.json` の `_commentIgnoreStatic`)。殺し方は**テスト側で読み直す**
+ * こと: `vi.resetModules()` + 動的 `import()` なら変異体が有効な状態で評価される。
+ *
+ * ここで留めるのは、画面と**金融機関等へ出す書面**が刷る文字そのものである。
+ */
+describe('読み直して測る — collection 名と比率ヘルパー', () => {
+  it('collection 名は読み直しても "balance-sheet"', async () => {
+    vi.resetModules();
+    const m = await import('../balanceSheet');
+    expect(m.BALANCE_SHEET_COLLECTION).toBe('balance-sheet');
+  });
+
+  it('読み直しても比率が数で出る (module 直下の pct が空にすり替わっていない)', async () => {
+    vi.resetModules();
+    const m = await import('../balanceSheet');
+    const metrics = m.computeBalanceSheetMetrics({
+      asOf: '2026-03-31', currentAssets: 6000, inventory: 2000, accountsReceivable: 1500,
+      fixedAssets: 4000, currentLiabilities: 3000, accountsPayable: 1000,
+      fixedLiabilities: 2000, netIncome: 1000,
+    });
+    expect(metrics.equityRatioPct).toBe(50);
+    expect(metrics.currentRatioPct).toBe(200);
+    expect(metrics.quickRatioPct).toBe(133.3);
+    expect(metrics.roaPct).toBe(10);
+    // 分母 0 は null (三項の両側を読み直しでも通す)。
+    expect(m.computeBalanceSheetMetrics({
+      asOf: '', currentAssets: 0, inventory: 0, accountsReceivable: 0, fixedAssets: 0,
+      currentLiabilities: 0, accountsPayable: 0, fixedLiabilities: 0, netIncome: 0,
+    }).currentRatioPct).toBeNull();
+  });
+});
+
+describe('どの貸借対照表を「現在」と呼ぶか (パス 127)', () => {
+  const rec = (id: string, createdAt: number, asOf: unknown) => ({ id, createdAt, data: { asOf } });
+
+  it('balanceSheetAsOfKey は前後の空白を落とし、文字列でなければ空 (基準日なし)', () => {
+    expect(balanceSheetAsOfKey(' 2026-03-31 ')).toBe('2026-03-31');
+    expect(balanceSheetAsOfKey('')).toBe('');
+    expect(balanceSheetAsOfKey(undefined)).toBe('');
+    expect(balanceSheetAsOfKey(20260331)).toBe('');
+  });
+
+  it('★ currentBalanceSheet は基準日の新しい控えを選ぶ —— 後から入力した古い基準日ではない', () => {
+    const newerAsOfEnteredFirst = rec('a', 100, '2026-03-31');
+    const olderAsOfEnteredLater = rec('b', 200, '2025-03-31');
+    expect(currentBalanceSheet([newerAsOfEnteredFirst, olderAsOfEnteredLater])?.id).toBe('a');
+    expect(currentBalanceSheet([olderAsOfEnteredLater, newerAsOfEnteredFirst])?.id).toBe('a');
+  });
+
+  it('同じ基準日なら後に入力した方・基準日なしは最下位・月だけの基準日も並ぶ・空なら null', () => {
+    expect(currentBalanceSheet([rec('a', 100, '2026-03-31'), rec('b', 200, '2026-03-31')])?.id).toBe('b');
+    expect(currentBalanceSheet([rec('a', 100, ''), rec('b', 50, '2020-01-31'), rec('c', 300, '')])?.id).toBe('b');
+    expect(currentBalanceSheet([rec('a', 100, ''), rec('b', 300, '')])?.id).toBe('b');
+    expect(currentBalanceSheet([rec('a', 100, '2026-03'), rec('b', 50, '2026-02-28')])?.id).toBe('a');
+    expect(currentBalanceSheet([])).toBeNull();
+  });
+
+  it('compareBalanceSheetRecords は「現在」を先頭にする順 (sort にそのまま渡せる)', () => {
+    const rows = [rec('old', 400, '2024-03-31'), rec('none', 500, ''), rec('new', 100, '2026-03-31'), rec('mid', 200, '2025-03-31')];
+    expect([...rows].sort(compareBalanceSheetRecords).map((r) => r.id)).toEqual(['new', 'mid', 'old', 'none']);
+  });
+
+  it('★ balanceSheetChoiceNote は、最後に入力した控えと違う控えを使うときだけ、両方の基準日を名指しして言う', () => {
+    const a = rec('a', 100, '2026-03-31');
+    const b = rec('b', 200, '2025-03-31');
+    expect(balanceSheetChoiceNote([a, b], a)).toBe(
+      '最後に入力した貸借対照表（基準日 2025-03-31）より新しい基準日の控え（基準日 2026-03-31）があるので、そちらを「現在」として経営サマリー・書面・計算書類に使っています。古い方を消すか、基準日を直してください。',
+    );
+    expect(balanceSheetChoiceNote([a, rec('c', 300, '')], a)).toContain('（基準日なし）より新しい基準日の控え（基準日 2026-03-31）');
+    // 対照: 最後に入力した控えを使っている・控えが無い
+    expect(balanceSheetChoiceNote([b, a], currentBalanceSheet([b, a]))).not.toBeNull();
+    expect(balanceSheetChoiceNote([rec('x', 100, '2025-03-31'), rec('y', 200, '2026-03-31')], rec('y', 200, '2026-03-31'))).toBeNull();
+    expect(balanceSheetChoiceNote([], null)).toBeNull();
   });
 });

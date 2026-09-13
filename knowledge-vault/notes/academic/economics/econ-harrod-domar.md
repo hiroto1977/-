@@ -34,6 +34,7 @@ aliases:
 ## 関連概念
 - [[econ-harrod-neutral-technical-change|ハロッド中立的技術進歩——均衡成長と両立する労働増大型の技術進歩]] — 同分野の近傍
 - [[econ-accelerator-principle|加速度原理（投資の加速度原理）]] — 同分野の近傍
+- [[econ-elasticity-of-substitution-ces|代替の弾力性と CES 生産関数——要素比率が相対価格にどれだけ反応するかを一つの数 σ で表し、コブ＝ダグラスとレオンチェフを特殊ケースに含む]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

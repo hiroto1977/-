@@ -1,8 +1,8 @@
 /** @vitest-environment jsdom */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { readFileSync } from 'node:fs';
 import { SERVICE_IDS } from '../../shared/serviceId';
 import { join } from 'node:path';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
 
 /*
  * ブラウザ版の**資格情報の出口**。`runProxyBearer` は、プロキシ経由で書き込む
@@ -55,6 +55,8 @@ vi.mock('../library/library', () => ({
 }));
 vi.mock('../network/proxy', () => ({
   getProxyConfig: async () => proxyConfig,
+  // 読み出しの新しい入口 (「未設定」と「読めない」を分ける)。ここでは常に「読めた」。
+  inspectStoredProxyConfig: async () => ({ config: proxyConfig, rejected: null, unreadable: null }),
   fetchViaProxy: async (url: string, init: RequestInit) => {
     transportCalls.push({ url, init });
     return new Response('{}', { status: 200 });
@@ -339,7 +341,7 @@ describe('API キーの送り先とヘッダ', () => {
   const TARGET_RE = /(?<!function\s)\btimedFetchAi\([\s\S]{0,300}?'(https?:\/\/[^']+)'/g;
 
   it('★ 鍵を載せて直接叩く送り先は 1 つだけ (計装後の源でも数えられる形で)', () => {
-    const src = readFileSync(join(__dirname, '..', 'web-shim.ts'), 'utf8')
+    const src = readOriginalSource(join(__dirname, '..', 'web-shim.ts'))
       .replace(/\/\*[\s\S]*?\*\//g, '')
       .replace(/^\s*\/\/.*$/gm, '');
 
@@ -859,7 +861,7 @@ describe('デスクトップ版だけの操作は、ブラウザ版では実行�
  * (6 つ目の危険な口が生えても何も言わない)。そこで**総当たり**で固定する。
  *
  * 75 サービス × 42 行動名を全部 `invoke` して、`action_not_found` 以外を
- * 返した組を集める。それがブラウザ版の実際の面である。**38 組ちょうど。**
+ * 返した組を集める。それがブラウザ版の実際の面である。**42 組ちょうど** (2026-09-09 · パス 119 で advise ×4 が増えた)。
  *
  * ## 語彙の限界を書いておく
  *
@@ -883,29 +885,29 @@ const PROBE_ACTIONS: readonly string[] = [
   'sync-to-stripe', 'unregister-ticker',
 ];
 
-/** ブラウザ版が実際に処理する組 (2026-09-01 実測)。**増減したら鳴る。** */
+/** ブラウザ版が実際に処理する組 (2026-09-01 実測・2026-09-09 パス 119 で advise ×4)。**増減したら鳴る。** */
 const BROWSER_SURFACE: readonly string[] = [
   'assistant/chat', 'assistant/chatAll', 'assistant/providers',
   'atlassian/create-issue',
   'business/advise', 'business/export-dashboard', 'business/export-dashboard-md',
   'calendar/create-event', 'canva/create-folder',
   'cloudflare/create-dns-record', 'cloudflare/purge-cache',
-  'demae-can/record-entry', 'drive/create-folder',
+  'demae-can/advise', 'demae-can/record-entry', 'drive/create-folder',
   'emotions/analyze-text', 'emotions/clear-history', 'emotions/log-mood',
   'github/create-issue', 'gmail/create-draft',
-  'mutual-funds/record-entry', 'notion/create-page', 'ollama/chat',
-  'real-estate/record-entry',
+  'mutual-funds/advise', 'mutual-funds/record-entry', 'notion/create-page', 'ollama/chat',
+  'real-estate/advise', 'real-estate/record-entry',
   'security/check-email-breach', 'security/scan-url',
   'slack/send-message',
   'stocks/advise', 'stocks/compare-strategies', 'stocks/export-dashboard',
   'stocks/export-dashboard-md', 'stocks/register-ticker', 'stocks/unregister-ticker',
   'talent/judge-leader', 'talent/save-state',
   'teamradar/export-svg', 'teamradar/save-state',
-  'templates/export-template', 'uber-eats/record-entry', 'wordpress/create-post-draft',
+  'templates/export-template', 'uber-eats/advise', 'uber-eats/record-entry', 'wordpress/create-post-draft',
 ];
 
 describe('ブラウザ版の面は、この組ちょうど (総当たりで固定)', () => {
-  it('処理される (service, action) は 38 組ちょうど', async () => {
+  it('処理される (service, action) は 42 組ちょうど', async () => {
     stored = null; // 鍵の有無に依らず「処理されるか」だけを見る
     const hub = await loadShim();
     const handled: string[] = [];

@@ -36,12 +36,7 @@ John Sweller ／ Harold Pashler ／ Daniel Kahneman
 - [[econ-endowment-effect-loss-aversion|保有効果と損失回避]] — 同じ思想家
 - [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 同じ思想家
 - [[mgmt-strategic-reference-point-theory|戦略的参照点理論]] — 同じ思想家
-- [[bizlaw-administrative-law|行政法：公権力の行使に対する法的統制と行政救済の理論体系]] — 出典を共有
-- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
-- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 出典を共有
-- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 出典を共有
-- [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 出典を共有
-- [[econ-giffen-good-theory|ギッフェン財理論]] — 出典を共有
+- [[human-socioemotional-selectivity|社会情動的選択性理論（Socioemotional Selectivity Theory）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

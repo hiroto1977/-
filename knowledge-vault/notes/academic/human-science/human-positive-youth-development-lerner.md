@@ -30,8 +30,8 @@ aliases:
 - [Wikipedia: Positive youth development — developmental framework](https://en.wikipedia.org/wiki/Positive_youth_development) `リファレンス`
 
 ## 関連概念
-- [[human-learned-helplessness-seligman-abramson|学習性無力感——セリグマンとエイブラムソンの統制不可能性体験と抑うつの帰属理論]] — 同分野の近傍
 - [[human-emotional-labor|感情労働（ホックシールド）]] — 同分野の近傍
+- [[human-rubber-hand-illusion|ラバーハンド錯覚（ゴムの手錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

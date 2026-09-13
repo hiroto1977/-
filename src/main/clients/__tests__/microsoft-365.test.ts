@@ -177,7 +177,7 @@ describe('ACTIONS["send-mail"]', () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['send-mail']!({ token: 't', fetch: fetchMock, payload: { subject: 'S' } }),
-    ).rejects.toThrow(/to, subject are required/);
+    ).rejects.toThrow(/^to は必須です$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -185,7 +185,7 @@ describe('ACTIONS["send-mail"]', () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['send-mail']!({ token: 't', fetch: fetchMock, payload: { to: 'a@b.com' } }),
-    ).rejects.toThrow(/required/);
+    ).rejects.toThrow(/^subject は必須です$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
@@ -252,7 +252,7 @@ describe('ACTIONS["create-event"]', () => {
         fetch: fetchMock,
         payload: { subject: 'S', start: '2026-07-01T10:00:00' },
       }),
-    ).rejects.toThrow(/subject, start, end are required/);
+    ).rejects.toThrow(/^end は必須です$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -264,7 +264,7 @@ describe('ACTIONS["create-event"]', () => {
         fetch: fetchMock,
         payload: { start: '2026-07-01T10:00:00', end: '2026-07-01T11:00:00' },
       }),
-    ).rejects.toThrow(/required/);
+    ).rejects.toThrow(/^subject は必須です$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });

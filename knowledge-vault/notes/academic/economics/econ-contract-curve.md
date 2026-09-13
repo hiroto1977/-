@@ -36,11 +36,11 @@ aliases:
 - [[econ-debreu-scarf-core|ドブルー＝スカーフの定理——コアの競争均衡への収束]] — 同じ思想家
 - [[econ-edgeworth-box|エッジワース・ボックス]] — 同じ思想家
 - [[econ-edgeworth-box-exchange-efficiency|エッジワース・ボックスと契約曲線——純粋交換経済における効率的配分の幾何学]] — 同じ思想家
+- [[econ-edgeworth-price-cycles-maskin-tirole|エッジワース価格サイクル——マスキン＝ティロールの動学的価格競争と小売ガソリン価格の鋸歯状変動]] — 同じ思想家
 - [[econ-oligopoly-cournot-bertrand|複占・寡占市場の均衡理論——クールノー均衡とベルトラン均衡の対比]] — 同じ思想家
 - [[econ-income-substitution-effect|所得効果と代替効果]] — 出典を共有
 - [[econ-peak-load-pricing|ピーク・ロード・プライシング（時間帯別料金）]] — 出典を共有
 - [[econ-rybczynski|リブチンスキー定理]] — 出典を共有
-- [[econ-two-part-tariff|二部料金制（two-part tariff）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

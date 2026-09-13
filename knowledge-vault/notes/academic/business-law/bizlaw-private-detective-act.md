@@ -36,7 +36,7 @@ aliases:
 - [[legal-secondhand-dealer|古物営業法と古物商許可]] — 出典を共有
 - [[legal-unauthorized-access|不正アクセス禁止法]] — 出典を共有
 - [[bizlaw-trade-secret-misappropriation|営業秘密の不正取得（トレード・シークレット法）]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -30,7 +30,7 @@ aliases:
 - [Wikipedia: Romance of leadership — attribution, follower-centric, social construction](https://en.wikipedia.org/wiki/Romance_of_leadership) `リファレンス`
 
 ## 関連概念
-- [[mgmt-broaden-and-build-theory|拡張形成理論——ポジティブ感情が思考と行動のレパートリーを拡張するメカニズム]] — 同分野の近傍
+- [[mgmt-double-loop-learning-argyris|シングルループ学習とダブルループ学習——前提を問い直す組織学習]] — 同分野の近傍
 - [[mgmt-shared-leadership-pearce|シェアード・リーダーシップ——チーム成員間で分有され交替する影響過程]] — 同分野の近傍
 
 ## 関連

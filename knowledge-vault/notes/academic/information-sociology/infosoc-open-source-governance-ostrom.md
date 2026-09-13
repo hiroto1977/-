@@ -32,14 +32,14 @@ aliases:
 ## 関連概念
 - [[econ-tragedy-of-commons|共有地の悲劇（コモンズの悲劇）]] — 同じ思想家
 - [[infosoc-digital-commons-benkler|デジタル・コモンズとコモンズ・ベースド・ピア・プロダクション——ベンクラーの協働的知識生産]] — 同じ思想家
-- [[econ-public-goods-samuelson-free-rider|公共財とフリーライダー問題——サミュエルソンの非競合性・非排除性と政府供給の根拠]] — 同じ思想家
 - [[econ-commons-tragedy-hardin|コモンズの悲劇とオストロムの集合行為論]] — 同じ思想家
 - [[econ-commons-tragedy-hardin-ostrom|共有地の悲劇とオストロムの制度分析——コモンズ管理のガバナンス設計]] — 同じ思想家
-- [[econ-public-goods-samuelson|公共財の理論——サミュエルソンの非競合性・非排除性と市場の失敗]] — 同じ思想家
+- [[econ-public-goods-samuelson|公共財（サミュエルソン）——非競合性と非排除性を持つ財はフリーライダー問題により市場で過少供給され、政府供給や集合的解決の根拠になる]] — 同じ思想家
 - [[infosoc-copyleft-free-software|コピーレフトとフリーソフトウェア運動（ストールマン）]] — 同じ思想家
 - [[infosoc-digital-commons|デジタル・コモンズ（Digital Commons）]] — 同じ思想家
 - [[infosoc-hacker-culture-levy|ハッカー文化とハッカー倫理（レヴィ）]] — 同じ思想家
 - [[infosoc-information-commons-hess-ostrom|情報コモンズ——ヘスとオストロムの知識共有資源論とデジタル囲い込みへの抵抗]] — 同じ思想家
+- [[infosoc-open-source-movement-history|オープンソース運動の歴史と知識コモンズの思想的系譜]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

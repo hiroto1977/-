@@ -26,7 +26,7 @@ aliases:
 リカルド・ハウスマン ／ ダニ・ロドリック ／ アンドレス・ベラスコ ／ ジョン・ウィリアムソン
 
 ## 出典
-- [Hausmann, R., Rodrik, D. & Velasco, A. (2008) Growth diagnostics — in The Washington Consensus Reconsidered](https://www.worldcat.org/oclc/181368015) `学術`
+- [Hausmann, R., Rodrik, D. & Velasco, A. (2008) Growth diagnostics — in The Washington Consensus Reconsidered](https://www.worldcat.org/oclc/181368015) `リファレンス`
 - [Wikipedia: Growth diagnostics — binding constraints, decision tree, development policy](https://en.wikipedia.org/wiki/Growth_diagnostics) `リファレンス`
 
 ## 関連概念

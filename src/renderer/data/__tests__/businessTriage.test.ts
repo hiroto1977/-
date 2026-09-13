@@ -32,11 +32,19 @@ describe('仕分けの網羅', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('対象は 52 書式 + 定款2 + 就業規則 + 決算書', () => {
+  it('対象は 52 書式 + 定款2 + 就業規則 + 決算書 (4点まとめて + 1点ずつ 4)', () => {
     expect(STUDIO_TEMPLATES).toHaveLength(52);
-    expect(EXTRA_DOC_IDS).toHaveLength(4);
+    expect(EXTRA_DOC_IDS).toHaveLength(8);
+    // 1 点ずつの計算書類 4 つは `kessan` の行を共有するので、行は増えない。
     expect(TRIAGE_ROWS).toHaveLength(56);
-    expect(expectedDocIds()).toHaveLength(56);
+    expect(expectedDocIds()).toHaveLength(60);
+  });
+
+  it('計算書類を 1 点ずつ開いても仕分けは 4 点と同じ行', () => {
+    for (const id of ['kessan-pl', 'kessan-bs', 'kessan-equity', 'kessan-notes']) {
+      expect(triageFor(id), id).toBe(triageFor('kessan'));
+    }
+    expect(triageFor('kessan-')).toBeNull();
   });
 });
 
@@ -63,6 +71,47 @@ describe('仕分けの中身', () => {
     expect(PROFESSIONAL_MAP['sme-consultant'].exclusive).toContain('独占業務なし');
   });
 
+  /*
+   * **上の検査は診断士を名指ししている。** 今日 `scope: 'exclusive'` の職務を
+   * 1 つも持たない士業は診断士だけなので**偶然覆えている**が、規則は
+   * 「独占業務を持たない士業は exclusiveTo に現れない」であって
+   * 「診断士は現れない」ではない。名簿から導く (2026-09-06)。
+   *
+   * さらに **散文と構造が食い違いうる**: 各士業は `exclusive` の一行要約 (散文) と
+   * `duties[].scope` (機械可読) の 2 つで独占を語る。片方だけ直せば、
+   * 「独占業務なし」と書いてある士業の職務一覧に「独占」の職務が並ぶ ——
+   * **誰が業として行えるかについて、2 つの画面が違うことを言う**。
+   * 資格の独占は無資格者の業務が違法になりうる話なので、表示の齟齬で済まない。
+   */
+  const exclusiveDutyCount = (id: (typeof PROFESSIONAL_IDS)[number]): number =>
+    PROFESSIONAL_MAP[id].duties.filter((d) => d.scope === 'exclusive').length;
+
+  it('★ 独占業務を持たない士業は、どの書式の exclusiveTo にも現れない (名簿から導く)', () => {
+    const noExclusive = PROFESSIONAL_IDS.filter((id) => exclusiveDutyCount(id) === 0);
+    // 走査が死んで空にならないこと (今日は診断士 1 人)。
+    expect(noExclusive.length).toBeGreaterThanOrEqual(1);
+    const offenders = TRIAGE_ROWS.flatMap((r) =>
+      r.exclusiveTo.filter((id) => noExclusive.includes(id)).map((id) => `${r.doc}: ${id}`),
+    );
+    expect(offenders).toEqual([]);
+  });
+
+  it('★ 「独占業務なし」の散文と、職務の scope が一致する (両方向)', () => {
+    for (const id of PROFESSIONAL_IDS) {
+      const saysNone = PROFESSIONAL_MAP[id].exclusive.includes('独占業務なし');
+      const hasNone = exclusiveDutyCount(id) === 0;
+      expect(saysNone, `${id}: 散文は「独占業務なし」だが scope: 'exclusive' の職務がある`).toBe(hasNone);
+    }
+  });
+
+  it('対照: 独占を持つ士業は散文でも独占を語り、職務にも exclusive がある', () => {
+    const withExclusive = PROFESSIONAL_IDS.filter((id) => exclusiveDutyCount(id) > 0);
+    expect(withExclusive.length).toBeGreaterThanOrEqual(7); // 診断士以外の 7 士業
+    for (const id of withExclusive) {
+      expect(PROFESSIONAL_MAP[id].exclusive, id).not.toContain('独占業務なし');
+    }
+  });
+
   it('exclusiveTo と consult が同じ士業で重複しない', () => {
     for (const r of TRIAGE_ROWS) {
       const dup = r.exclusiveTo.filter((id) => r.consult.includes(id));
@@ -70,13 +119,35 @@ describe('仕分けの中身', () => {
     }
   });
 
+  /**
+   * 言い切りの禁止語。**綴りが 1 つ違えば黙る規則**なので、下の標本で
+   * 「実際にその文面へ当たる」ことを確かめる (`CLAUDE.md`: 不在を主張する
+   * 検査には標本を添える)。ここで止めたいのは、事案で変わることを
+   * 断定して読む人の判断を奪う書き方である。
+   */
+  const ASSERTIVE_WORDS = /必ず違法|絶対に/;
+
   it('caseByCase は断定せず、事案で変わる事実だけを書く', () => {
     for (const r of TRIAGE_ROWS) {
       if (!r.caseByCase) continue;
       expect(r.caseByCase.length, r.doc).toBeGreaterThan(30);
-      // 「必ず違法」「絶対に不可」のような言い切りを caseByCase に置かない
-      expect(r.caseByCase, r.doc).not.toMatch(/必ず違法|絶対に/);
+      expect(r.caseByCase, r.doc).not.toMatch(ASSERTIVE_WORDS);
     }
+  });
+
+  it('★ 標本: 言い切りの禁止語は、当たるべき文面に当たる (空の検査になっていない)', () => {
+    expect('他人のために業として作ると必ず違法になります').toMatch(ASSERTIVE_WORDS);
+    expect('絶対に自社では作れません').toMatch(ASSERTIVE_WORDS);
+    // 対照: 事案で変わると書いてある文には当たらない。
+    expect('報酬を得て業として行う場合は独占に触れうるため、事前に確認してください').not.toMatch(ASSERTIVE_WORDS);
+  });
+
+  it('この規則が拾えない言い回しを明記しておく (過信しないため)', () => {
+    // 「必ず不可」「一切認められない」などは同義だが**この規則では拾えない**。
+    // 語を増やすより、caseByCase を書くときに人が読むほうが確実なので、
+    // 拾えない例を検査に残して読み手に伝える (2026-09-06)。
+    expect('必ず不可です').not.toMatch(ASSERTIVE_WORDS);
+    expect('一切認められません').not.toMatch(ASSERTIVE_WORDS);
   });
 
   it('ownUse は 2 値のいずれか', () => {

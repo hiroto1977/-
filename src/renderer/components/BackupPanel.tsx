@@ -1,14 +1,21 @@
 import { useRef, useState } from 'react';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { getRecordStore } from '../data/store';
 import {
   BACKUP_EXCLUSIONS,
   serializeBackup,
   serializeEncryptedBackup,
-  parseBackup,
+  parseBackupFile,
+  planRestore,
+  replaceRestoreConfirmMessage,
+  restoreResultMessage,
+  plaintextExposure,
+  plaintextBackupConfirmMessage,
   isEncryptedBackup,
 } from '../data/backup';
 import { isEncryptionEnabled } from '../data/recordEncryption';
 import { localIsoDate } from '../../shared/localDate';
+import { MAX_BACKUP_IMPORT_BYTES, readImportText } from '../data/importFile';
 
 /**
  * Backup / restore the entire local record store (sales, KPI actuals, team
@@ -16,9 +23,14 @@ import { localIsoDate } from '../../shared/localDate';
  * recovery. Optionally passphrase-encrypted (AES-GCM) for confidentiality;
  * always SHA-256 integrity-checked. Lives in Settings.
  */
+/** 暗号化バックアップを、合言葉の欄が空のまま選んだときの断り (e2e と検査が同じ文を読む)。 */
+export const ENCRYPTED_RESTORE_NEEDS_FIELD =
+  '暗号化バックアップです。上の「暗号化パスワード」欄に合言葉を入力してから、もう一度ファイルを選んでください（合言葉はマスクされた欄でしか受け取りません）';
+
 export function BackupPanel() {
   const [msg, setMsg] = useState<string>();
   const [err, setErr] = useState<string>();
+  const submit = useSubmitGuard();
   const [replace, setReplace] = useState(false);
   const [passphrase, setPassphrase] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
@@ -29,6 +41,14 @@ export function BackupPanel() {
     try {
       const records = await getRecordStore().exportAll();
       const encrypted = passphrase.length > 0;
+      // 平文なら、何が入るかを言ってから書く (パス 130)。個人情報の記録が無ければ確認しない。
+      if (!encrypted) {
+        const notice = plaintextBackupConfirmMessage(plaintextExposure(records));
+        if (notice !== null && !window.confirm(notice)) {
+          setMsg('書き出しをやめました（上の欄に合言葉を入れると暗号化して書き出せます）');
+          return;
+        }
+      }
       const text = encrypted
         ? await serializeEncryptedBackup(records, passphrase)
         : await serializeBackup(records);
@@ -40,7 +60,7 @@ export function BackupPanel() {
       a.download = `service-hub-backup-${localIsoDate()}${suffix}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      setMsg(`${records.length} 件のレコードをバックアップしました${encrypted ? '（暗号化済み）' : ''}`);
+      setMsg(`${records.length} 件のレコードをバックアップしました${encrypted ? '（暗号化済み）' : '（平文）'}`);
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'バックアップに失敗しました');
     }
@@ -49,32 +69,37 @@ export function BackupPanel() {
   async function onRestore(file: File) {
     setErr(undefined);
     setMsg(undefined);
-    // 置換復元は既存データを全消去するため、誤操作によるデータ消失を防ぐ確認を挟む。
-    if (replace && !window.confirm('既存の業務データを全て削除してから復元します。よろしいですか？')) {
-      if (fileRef.current) fileRef.current.value = '';
-      return;
-    }
     try {
-      const text = await file.text();
+      // 読む前に大きさで断る (`data/importFile.ts`)。読んでからでは落ちるのが先。
+      const text = await readImportText(file, MAX_BACKUP_IMPORT_BYTES, 'バックアップファイル');
       let pw: string | undefined;
       if (isEncryptedBackup(text)) {
-        // 暗号化バックアップ: パスフレーズ欄、無ければプロンプトで取得。
-        pw = passphrase || window.prompt('暗号化バックアップのパスワードを入力してください') || '';
-        if (!pw) {
-          setErr('パスワードが入力されませんでした');
+        // 暗号化バックアップ: 合言葉は**マスクされた欄**でしか受けない (パス 131)。
+        // 2026-09-09 まで、欄が空なら prompt で訊いていた —— prompt は入力を平文で映し、
+        // Electron の renderer には無い (null を返す) ので、デスクトップ版ではその道が
+        // 必ず「入力されなかった」に落ちていた。`lint:forbidden` が prompt を禁止する。
+        if (passphrase.length === 0) {
+          setErr(ENCRYPTED_RESTORE_NEEDS_FIELD);
           if (fileRef.current) fileRef.current.value = '';
           return;
         }
+        pw = passphrase;
       }
-      const records = await parseBackup(text, pw);
-      const n = await getRecordStore().importAll(records, { replace });
+      const parsed = await parseBackupFile(text, pw);
+      // 何が足され・上書きされ・残り・消えるかを**書く前に**数える (パス 129)。
+      // 封筒 (id / updatedAt) は封緘済みでも平文なので exportAll で読める。
+      const store = getRecordStore();
+      const plan = planRestore(await store.exportAll(), parsed.records, replace ? 'replace' : 'merge', parsed.exportedAt);
+      // 置換は元に戻せない。確認は「何件消えるか」を言う —— 一文だけの確認は何も言っていないのと同じ。
+      // (2026-09-09 まで確認は読む**前**にあった —— 何も知らない時点の確認だった。)
+      if (plan.mode === 'replace' && !window.confirm(replaceRestoreConfirmMessage(plan))) {
+        if (fileRef.current) fileRef.current.value = '';
+        return;
+      }
+      const n = await store.importAll(plan.toImport, { replace });
       // importAll は形式の合わないレコードを黙って捨てる。捨てた件数を言わないと
       // 「100 件のファイルを入れたのに 60 件と出た」理由が利用者に分からない。
-      const dropped = records.length - n;
-      const droppedNote = dropped > 0 ? `${dropped} 件は形式が不正なため取り込みませんでした。` : '';
-      setMsg(
-        `${n} 件のレコードを復元しました${replace ? '（既存データは置換）' : '（マージ）'}。${droppedNote}再読み込みで反映されます。`,
-      );
+      setMsg(restoreResultMessage(plan, n, plan.toImport.length - n));
     } catch (e) {
       setErr(e instanceof Error ? e.message : '復元に失敗しました');
     }
@@ -97,8 +122,10 @@ export function BackupPanel() {
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 8 }}>
         <input
           type="password"
+          autoComplete="new-password"
+          data-backup-passphrase
           value={passphrase}
-          placeholder="暗号化パスワード（任意）"
+          placeholder="暗号化パスワード（任意・12 文字以上）"
           onChange={(e) => setPassphrase(e.target.value)}
           style={{
             background: 'var(--bg)',
@@ -158,23 +185,24 @@ export function BackupPanel() {
             この端末での災害復旧のためだけなら、このままで問題ありません。
           </p>
         )}
-        <button type="button" onClick={onBackup}>バックアップを書き出す</button>
+        <button type="button" onClick={() => void submit.run(onBackup)} disabled={submit.busy}>バックアップを書き出す</button>
         <label style={{ fontSize: 13, cursor: 'pointer', color: 'var(--accent)' }}>
           バックアップから復元
           <input
             ref={fileRef}
             type="file"
+            data-backup-restore
             accept=".json,application/json"
             style={{ display: 'none' }}
             onChange={(e) => {
               const file = e.target.files?.[0];
-              if (file) onRestore(file);
+              if (file) void submit.run(() => onRestore(file));
             }}
           />
         </label>
         <label style={{ fontSize: 12, color: 'var(--text-mute)', display: 'flex', alignItems: 'center', gap: 4 }}>
-          <input type="checkbox" checked={replace} onChange={(e) => setReplace(e.target.checked)} />
-          既存データを置換（チェック無しはマージ）
+          <input type="checkbox" data-backup-replace checked={replace} onChange={(e) => setReplace(e.target.checked)} />
+          既存データを置換（チェック無しはマージ = id ごとに新しい方を残す）
         </label>
       </div>
       {msg && <div style={{ fontSize: 11, color: '#22c55e', marginTop: 6 }}>{msg}</div>}

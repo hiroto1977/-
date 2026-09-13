@@ -2,7 +2,7 @@
 title: "fsa.go.jp"
 type: source-domain
 host: "fsa.go.jp"
-cite_count: 46
+cite_count: 47
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # fsa.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **46 件**（公的 46）
+> [!info] 出典ドメイン索引 ・ 引用 **47 件**（公的 47）
 
 ## このドメインを出典とする項目
 
@@ -45,6 +45,7 @@ tags:
 - [[bizlaw-toushiho|出資法]] — 金融庁—出資法上限金利29.2%→20%・利息制限法上限・グレーゾーン金利
 - [[bizlaw-trust-act|信託法]] — 金融庁—信託法改正に伴う信託業法の改正の概要について
 - [[econ-agency-theory-jensen-meckling|エージェンシー理論——ジェンセン＆メックリングの所有・経営分離問題とインセンティブ設計]] — 金融庁コーポレートガバナンス改革の進捗—金融庁
+- [[econ-relationship-lending-petersen-rajan-berger-udell|リレーションシップ・レンディング（関係型融資）——長期関係で蓄積した「ソフト情報」が中小企業の資金調達力を高める仕組み]] — 金融庁「地域密着型金融（リレーションシップバンキング）の機能強化」（2003年3月公表、中小・地域金融機関向け「リレーションシップバンキン…
 - [[legal-anti-money-laundering-act|犯罪収益移転防止法（特定事業者の取引時確認・記録保存・疑わしい取引の届出義務）]] — 金融庁疑わしい取引の届出手続き
 - [[legal-crypto-asset|暗号資産交換業の登録制（資金決済法）]] — 金融庁暗号資産関連事業を行うみなさまへ
 - [[legal-financial-services-intermediary|金融サービス仲介業（金融サービス提供法）]] — 金融庁金融サービス仲介業者向け監督指針

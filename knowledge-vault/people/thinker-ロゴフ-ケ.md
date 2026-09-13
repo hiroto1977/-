@@ -2,7 +2,7 @@
 title: "ケネス・ロゴフ"
 type: thinker
 person_key: "ロゴフ|ケ"
-concept_count: 12
+concept_count: 13
 tags:
   - person
   - index
@@ -10,9 +10,9 @@ tags:
 
 # ケネス・ロゴフ
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **12 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **13 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（12件）
+## 学術概念（13件）
 - [[econ-central-bank-independence-rogoff|中央銀行の独立性——ロゴフの保守的中央銀行論とインフレ目標政策]] — ケネス・ロゴフは1985年の論文「TheOptimalDegreeofCommitmenttoanIntermedia…
 - [[econ-exchange-rate-disconnect-meese-rogoff|為替レート・ディスコネクト・パズル——ファンダメンタルズと為替レートの断絶]] — 為替レート・ディスコネクト・パズル（exchangeratedisconnectpuzzle）は、ミースとロゴフが19…
 - [[econ-new-open-economy-macro-obstfeld|新しい開放経済マクロ経済学——ミクロ的基礎と名目硬直性の統合]] — 新しい開放経済マクロ経済学（NewOpenEconomyMacroeconomics,NOEM）は、オブストフェルドと…
@@ -25,6 +25,7 @@ tags:
 - [[econ-sovereign-debt-crisis-reinhart|国家債務危機とデフォルト履歴（ラインハート＆ロゴフ）]] — ラインハート＆ロゴフ（2009）の『ThisTimeIsDifferent:EightCenturiesofFinan…
 - [[econ-sovereign-debt-crisis-reinhart-rogoff|国家債務危機——ラインハートとロゴフの「今回は違う」と財政持続可能性の実証分析]] — ラインハートとロゴフの著作「今回は違う：800年の金融的愚かさ」（2009年）は，66カ国・800年に及ぶ債務危機・イ…
 - [[econ-sovereign-debt-restructuring|ソブリン債務危機と債務再編——IMFプログラムと国際倒産制度の欠如]] — ソブリン債務危機（SovereignDebtCrisis）とは、国家が対外・対内債務の返済不能に陥るリスクを指し、19…
+- [[econ-time-inconsistency-kydland-prescott|時間的非整合性（キドランド＝プレスコット）——事前に最適だった政策を事後に覆す誘因が信頼性を損ない、ルールへのコミットメントと中央銀行の独立性を正当化する]] — 時間的非整合性（timeinconsistency）は、フィン・キドランドとエドワード・プレスコットが1977年の論文…
 
 ## 関連
 - 索引: [[人物索引]]

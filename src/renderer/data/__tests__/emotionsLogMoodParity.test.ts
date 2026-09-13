@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { mkdtempSync, readFileSync } from 'node:fs';
+import { mkdtempSync } from 'node:fs';
 import { join } from 'node:path';
 import { MAX_ANALYSES, MAX_MOODS } from '../../../shared/emotionsLimits';
 import { tmpdir } from 'node:os';
@@ -9,10 +9,17 @@ const EMOTIONS_UD = mkdtempSync(`${tmpdir()}/emotions-parity-`);
 
 vi.mock('electron', () => ({
   app: { getPath: () => EMOTIONS_UD, getVersion: () => '1.0.0', isPackaged: false },
+  // main 側の log-mood は保存先を OS のキーチェーンで封緘する (main/atRest.ts・パス 132)。可逆な代役で足りる。
+  safeStorage: {
+    isEncryptionAvailable: () => true,
+    encryptString: (v: string) => Buffer.from(`enc:${v}`, 'utf8'),
+    decryptString: (b: Buffer) => b.toString('utf8').replace(/^enc:/, ''),
+  },
 }));
 
 import { MAX_MOOD_NOTE_CHARS } from '../../../shared/emotionsLimits';
 import { logMood as logMoodWeb, loadStore, EMOTIONS_STORE_KEY } from '../emotionsWeb';
+import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 
 /*
  * **`log-mood` の note の上限を、注記ではなく振る舞いで留める。**
@@ -135,7 +142,7 @@ describe('保持件数の上限は共有の 1 つ', () => {
   });
 
   it.each(SRC)('%s が自前で宣言していない', (_label, path) => {
-    const code = readFileSync(path, 'utf8')
+    const code = readOriginalSource(path)
       .replace(/\/\*[\s\S]*?\*\//g, '')
       .replace(/^\s*\/\/.*$/gm, '');
     expect(code, 'MAX_MOODS を自前で宣言しています').not.toMatch(/const\s+MAX_MOODS\s*=/);

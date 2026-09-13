@@ -26,7 +26,7 @@ aliases:
 シーラ・ジャサノフ ／ ブライアン・ウィン ／ ハリー・コリンズ ／ スティーヴン・ヒルガートナー
 
 ## 出典
-- [Jasanoff, S. (2005) Designs on Nature: Science and Democracy in Europe and the United States — Princeton University Press](https://www.worldcat.org/oclc/57010936) `学術`
+- [Jasanoff, S. (2005) Designs on Nature: Science and Democracy in Europe and the United States — Princeton University Press](https://www.worldcat.org/oclc/57010936) `リファレンス`
 - [Wikipedia: Civic epistemology — public knowledge, political culture, Jasanoff, co-production](https://en.wikipedia.org/wiki/Civic_epistemology) `リファレンス`
 
 ## 関連概念

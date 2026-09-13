@@ -35,12 +35,20 @@ import {
   type ActionMap,
   type FetchContext,
 } from './types';
+import type { ActionData } from '../../shared/actionData';
+import type { NortonDetection } from '../../shared/nortonDetection';
 
 interface NortonStatus {
   installed: boolean;
   installPath: string;
   platform: string;
   details: string;
+  /**
+   * 「見た結果」と「見られなかった」を分ける (パス 165)。`installed` の真偽だけでは
+   * 「探して無かった」と「探せない」が同じ札になり、**ウイルス対策の有無について
+   * 見ていない端末に警告を出す**。文面と色は `shared/nortonDetection.ts` が持つ。
+   */
+  detection: NortonDetection;
 }
 
 export interface SecuritySnapshot {
@@ -143,6 +151,7 @@ export async function detectNorton(
       installPath: found,
       platform,
       details: `${path.basename(found)} を検出`,
+      detection: 'found',
     };
   }
   return {
@@ -150,6 +159,9 @@ export async function detectNorton(
     installPath: '',
     platform,
     details: nortonNotFoundDetails(platform),
+    // 候補のパスが 1 本も無い OS (linux) は「探して無かった」ではなく「製品が無い」。
+    // 判定は `NORTON_PATHS_BY_PLATFORM` の実物から導く (OS 名を写さない)。
+    detection: candidates.length === 0 ? 'unsupported' : 'absent',
   };
 }
 
@@ -186,7 +198,7 @@ interface HibpBreach {
 
 async function checkEmailBreach(
   ctx: ActionContext,
-): Promise<{ email: string; breaches: { name: string; title: string; date: string; pwnCount: number; dataClasses: string[] }[] }> {
+): Promise<ActionData<'security/check-email-breach'>> {
   // **前後の空白を落とす。** ブラウザ版 (`saasWriteWeb.checkEmailBreach`) は
   // 元から `.trim()` していて、こちらだけ生のまま送っていた (2026-08-22)。
   // 貼り付けで空白が付いた住所をそのまま問い合わせると HIBP は 404 を返し、
@@ -293,7 +305,7 @@ const SCAN_URL_MESSAGES: Record<ScanUrlFailure, string> = {
 
 async function scanUrl(
   ctx: ActionContext,
-): Promise<{ url: string; positives: number; total: number; reportUrl: string }> {
+): Promise<ActionData<'security/scan-url'>> {
   const { url: rawUrl } = ctx.payload as unknown as ScanUrlPayload;
   // payload は renderer から来る任意の値。ここは**第三者へ送る**入口なので、
   // 送ってよい形かを先に確かめる (`src/shared/scanTarget.ts`)。

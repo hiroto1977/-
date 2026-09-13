@@ -21,11 +21,126 @@
  *     mixed content でも弾かれるうえ、プロンプトが平文で流れる)。
  *   - **読み取り 3 エンドポイントのみ**。/api/pull・/api/create・/api/push・
  *     /api/copy・/api/delete・/api/blobs は呼ばない — これらが上記 CVE の攻撃
- *     ベクトルであり、未パッチ OOB read の入口でもある。
- *   - バージョンが MIN_SAFE_VERSION 未満なら「脆弱」として UI に出す。
+ *     ベクトルであり、GGUF 経由の脆弱性 (CVE-2026-7482 ほか) の入口でもある。
+ *   - 台帳 (`OLLAMA_ADVISORIES`) のうち検出した版に当てはまる項目を名指しし、
+ *     MIN_SAFE_VERSION (= 台帳の修正版の最大) 未満なら「脆弱」として UI に出す。
  */
 
-export const MIN_SAFE_VERSION = '0.1.46';
+/**
+ * **既知の Ollama 脆弱性の台帳 —— 日付つき。** (2026-09-09 · パス 139)
+ *
+ * 2026-05-12 から 2026-09-09 まで、この app は毎スナップショットに
+ * 「Ollama 本体に**未パッチ**の out-of-bounds read が公表されています」と刷り、
+ * 「既知の脆弱性が修正された 0.1.46 以上」を安全の床にしていた。どちらにも日付が
+ * 無く、誰も再確認しなかった。実測 (2026-09-09):
+ *
+ *   - その OOB read は CVE-2026-7482 (GHSA-x8qc-fggm-mpqg・2026-05-04 公表) で、
+ *     修正 (PR #14406) は **2026-02-25 に merge され 0.17.1 に入っていた** ——
+ *     注意書きを書いた 2026-05-12 の時点で既に「未パッチ」ではなかった。
+ *   - 0.1.46 は 2024 年の CVE 5 件の床。0.17.1 未満の版 (例 0.16.x) にも
+ *     「既知の脆弱性が修正された版」と言い、CVSS 8.8 の CVE-2026-7482 が
+ *     当てはまることを黙っていた。
+ *
+ * 日付の無い安全の主張は、正しかった日から黙って嘘になる (税率の門
+ * `lint:rate-freshness` が 2026-08 に見つけたのと同じ形)。だから台帳は
+ * **照合した日** (`OLLAMA_ADVISORIES_VERIFIED_ON`) と**再照合の期限**
+ * (`OLLAMA_ADVISORIES_REVIEW_BY` —— `lint:rate-freshness` が期限を見る) を持ち、
+ * 画面の文面はその日付を刷る。`MIN_SAFE_VERSION` は台帳の修正版の最大で、
+ * `ollamaAdvisories.test.ts` が一致を留める (手で 2 か所に書かない)。
+ *
+ * この環境から届いた一次情報は GitHub (advisory database / PR / releases) だけ。
+ * CERT VU#518910・NVD・OSV は取得できなかったので、届いた物だけを出典に書く。
+ * 2024 年の 5 件は 2026-05-12 の監査 (docs/OLLAMA_SECURITY.md) で確認した値。
+ */
+import { clampToCeiling } from './inputCeiling';
+
+export interface OllamaAdvisory {
+  readonly id: string;
+  /** 1 文の要約 (画面に出る)。 */
+  readonly summary: string;
+  /** この版以上で修正。公表されていなければ null (画面は「修正版未公表」と言う)。 */
+  readonly fixedIn: string | null;
+  readonly severity: 'critical' | 'high' | 'medium' | 'low';
+  /** 出典 (この環境から取得できた物、または 2026-05-12 の監査で確認した物)。 */
+  readonly source: string;
+}
+
+/** 台帳を最後に照合した日。 */
+export const OLLAMA_ADVISORIES_VERIFIED_ON = '2026-09-09';
+/** この日までに再照合する (`lint:rate-freshness` が 60 日前から警告し、過ぎたら落とす)。 */
+export const OLLAMA_ADVISORIES_REVIEW_BY = '2027-03-09';
+
+// 要約の文言は事実の写しなので変異検査の対象にしない (id / fixedIn / severity / source は
+// ollamaAdvisories.test.ts が 1 件ずつ・形で留める)。
+export const OLLAMA_ADVISORIES: readonly OllamaAdvisory[] = [
+  {
+    id: 'CVE-2024-37032',
+    // Stryker disable next-line StringLiteral: 台帳の文言 (事実の写し)
+    summary: 'Probllama: /api/pull のパストラバーサル → 任意ファイル上書き → RCE',
+    fixedIn: '0.1.34',
+    severity: 'critical',
+    source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-37032',
+  },
+  {
+    id: 'CVE-2024-39719',
+    // Stryker disable next-line StringLiteral: 台帳の文言 (事実の写し)
+    summary: '/api/create 経由のファイル存在情報の漏洩',
+    fixedIn: '0.1.46',
+    severity: 'medium',
+    source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-39719',
+  },
+  {
+    id: 'CVE-2024-39720',
+    // Stryker disable next-line StringLiteral: 台帳の文言 (事実の写し)
+    summary: '不正な GGUF での範囲外読み取り → DoS',
+    fixedIn: '0.1.46',
+    severity: 'medium',
+    source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-39720',
+  },
+  {
+    id: 'CVE-2024-39721',
+    // Stryker disable next-line StringLiteral: 台帳の文言 (事実の写し)
+    summary: '/api/create に /dev/random を与える DoS',
+    fixedIn: '0.1.46',
+    severity: 'medium',
+    source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-39721',
+  },
+  {
+    id: 'CVE-2024-39722',
+    // Stryker disable next-line StringLiteral: 台帳の文言 (事実の写し)
+    summary: '/api/push 経由のファイルシステム情報の漏洩',
+    fixedIn: '0.1.46',
+    severity: 'medium',
+    source: 'https://nvd.nist.gov/vuln/detail/CVE-2024-39722',
+  },
+  {
+    id: 'CVE-2025-66960',
+    // Stryker disable next-line StringLiteral: 台帳の文言 (事実の写し)
+    summary: 'GGUF v1 の文字列長で panic (readGGUFV1String) → DoS (0.12.10 で報告・修正版は未公表)',
+    fixedIn: null,
+    severity: 'high',
+    source: 'https://github.com/advisories/GHSA-jr3x-q8gx-4gw3',
+  },
+  {
+    id: 'CVE-2026-7482',
+    // Stryker disable next-line StringLiteral: 台帳の文言 (事実の写し)
+    summary: 'GGUF 読み込み時のヒープ範囲外読み取り (/api/create に細工した GGUF) → プロセスメモリ (鍵・会話) の漏洩',
+    fixedIn: '0.17.1',
+    severity: 'high',
+    source: 'https://github.com/advisories/GHSA-x8qc-fggm-mpqg',
+  },
+  {
+    id: 'CVE-2026-86289',
+    // Stryker disable next-line StringLiteral: 台帳の文言 (事実の写し)
+    summary: 'GGUF の文字列長の整数オーバーフロー (readGGUFV1String)',
+    fixedIn: '0.31.2',
+    severity: 'low',
+    source: 'https://github.com/advisories/GHSA-c2q9-58w2-gjg4',
+  },
+];
+
+/** 台帳の修正版の最大 —— これ未満の版には既知の脆弱性が少なくとも 1 つ当てはまる。 */
+export const MIN_SAFE_VERSION = '0.31.2';
 export const DEFAULT_OLLAMA_PORT = 11434;
 
 /**
@@ -65,6 +180,18 @@ const LOOPBACK_HOSTS = new Set(['127.0.0.1', 'localhost', '[::1]', '::1']);
  */
 export const MAX_OLLAMA_SYSTEM_CHARS = 8_192;
 export const MAX_OLLAMA_PROMPT_CHARS = 32_768;
+
+/**
+ * `ollama/chat` が返す形 —— **両ビルドと画面が同じ型を読む** (2026-09-09 · パス 113)。
+ * それまでチャットボットは `{ response?, message? }` と**手で写した型**で読んでおり、
+ * 実物 (`reply`) と食い違っていた —— Ollama の答えは 1 度も画面に出ていなかった
+ * (パス 62 と同じ形: 手写しの型がずれても `tsc` は黙る)。
+ */
+export interface OllamaChatResult {
+  /** モデルの返答本文 (`capAssistantReply` で天井つき)。 */
+  readonly reply: string;
+  readonly durationMs: number;
+}
 
 export const OLLAMA_READ_PATHS = ['/api/version', '/api/tags', '/api/chat'] as const;
 export type OllamaReadPath = (typeof OLLAMA_READ_PATHS)[number];
@@ -269,13 +396,50 @@ export function isVersionSafe(version: string): boolean {
   // Stryker restore BlockStatement,BooleanLiteral
 }
 
-/** 未パッチ OOB read についての運用上の注意 (毎スナップショットに載せる)。 */
-export const UNPATCHED_OOB_NOTICE =
-  'Ollama 本体に未パッチの out-of-bounds read (モデル/エンジンファイルパーサ) ' +
-  'が公表されています。本アプリは /api/pull・/api/create・/api/push を呼ばない ' +
-  '設計でこの攻撃ベクトルを遮断していますが、CLI からモデルを取得する場合は ' +
-  '必ず Ollama 公式 library など検証済みソースのみを使用してください。詳細は ' +
-  'docs/OLLAMA_SECURITY.md を参照。';
+/** 台帳のうち、この版に当てはまる項目 (修正版が公表され、その版未満)。版が不明なら空。 */
+export function applicableAdvisories(
+  version: string,
+  ledger: readonly OllamaAdvisory[] = OLLAMA_ADVISORIES,
+): OllamaAdvisory[] {
+  if (!version || typeof version !== 'string') return [];
+  return ledger.filter((a) => a.fixedIn !== null && compareVersions(version, a.fixedIn) < 0);
+}
+
+/** 修正版が公表されていない項目 (版に関係なく注意として出す)。 */
+export function unfixedAdvisories(
+  ledger: readonly OllamaAdvisory[] = OLLAMA_ADVISORIES,
+): OllamaAdvisory[] {
+  return ledger.filter((a) => a.fixedIn === null);
+}
+
+/** 再照合の期限 (その日の終わり・UTC) を過ぎたか。 */
+export function advisoriesOverdue(now: Date, reviewBy: string = OLLAMA_ADVISORIES_REVIEW_BY): boolean {
+  return now.getTime() > Date.parse(`${reviewBy}T23:59:59Z`);
+}
+
+/**
+ * 台帳の日付つきの注意 (毎スナップショットに載せる)。
+ *
+ * 2026-09-09 までここは「未パッチの out-of-bounds read が公表されています」という
+ * 日付の無い固定文で、その OOB read は書いた時点で既に修正済みだった (上の注記)。
+ * 文面は**いつの事実か**と**いつまでに見直すか**を必ず持つ。
+ */
+export function advisoryLedgerNotice(
+  now: Date = new Date(),
+  ledger: readonly OllamaAdvisory[] = OLLAMA_ADVISORIES,
+): string {
+  const unfixed = unfixedAdvisories(ledger);
+  return (
+    `Ollama の既知の脆弱性 ${ledger.length} 件の台帳は ${OLLAMA_ADVISORIES_VERIFIED_ON} 時点 ` +
+    `(再照合期限 ${OLLAMA_ADVISORIES_REVIEW_BY})。` +
+    (advisoriesOverdue(now) ? ' ⚠ 再照合期限を過ぎており、新しい脆弱性が台帳に無い可能性があります。' : '') +
+    (unfixed.length > 0
+      ? ` 修正版が未公表の項目 ${unfixed.length} 件 (${unfixed.map((a) => a.id).join(', ')})。`
+      : '') +
+    ' 本アプリは /api/pull・/api/create・/api/push を呼ばず、モデルファイル (GGUF) 経由の攻撃面を持ち込みません。' +
+    'CLI でモデルを取得する場合は検証済みソースのみを使用してください。詳細は docs/OLLAMA_SECURITY.md。'
+  );
+}
 
 /** /api/tags の 1 件を UI 用に正規化した形。 */
 export interface OllamaModelInfo {
@@ -340,7 +504,14 @@ export function normalizeModels(raw: unknown): OllamaModelInfo[] {
  * 取り違えずに案内できるかが、使えるか使えないかの分かれ目になる。
  */
 
-/** エラー文の表示上限。異常に長い本文をそのままログ・UI へ流さないための上限。 */
+/**
+ * エラー文の表示上限 (**文字**)。異常に長い本文をそのままログ・UI へ流さないための上限。
+ *
+ * 切るのは `clampToCeiling` —— **文字の境界で切る** (2026-09-13 · パス 196)。
+ * ここは `.slice()` だったので、300 番目がサロゲート対の真ん中に落ちると
+ * 孤立サロゲートが UI へ出る (Ollama の本文は端末内のモデル名・ファイル名を含み、
+ * 絵文字も JIS 2004 の漢字も来る)。
+ */
 const MAX_ERROR_DETAIL = 300;
 
 /** エラー封筒 `{"error": "…"}` から本文を取り出す。取れなければ空文字。 */
@@ -348,16 +519,16 @@ export function extractOllamaError(json: unknown, text = ''): string {
   const err = (json as { error?: unknown } | null)?.error;
   // 空判定は要らない — 空白だけの本文は trim すると '' になり、下へ落として
   // も最後は '' を返すので、書いても結果が変わらない分岐になる。
-  if (typeof err === 'string') return err.trim().slice(0, MAX_ERROR_DETAIL);
+  if (typeof err === 'string') return clampToCeiling(err.trim(), MAX_ERROR_DETAIL);
   // 稀に {"error": {"message": "…"}} の入れ子で返す経路もある。
   const nested = (err as { message?: unknown } | null)?.message;
-  if (typeof nested === 'string') return nested.trim().slice(0, MAX_ERROR_DETAIL);
+  if (typeof nested === 'string') return clampToCeiling(nested.trim(), MAX_ERROR_DETAIL);
   // JSON として読めたのに error が無いなら、本文を出しても情報がない。
   if (json !== null && json !== undefined) return '';
   // JSON ですらない本文 (Ollama が素の "Forbidden" を返す経路など) は短く返す。
   // Stryker disable next-line StringLiteral: text 省略時の '' は「空を返す」で、
   // 番人の値を入れても呼び出し側は同じ「詳細なし」として扱う。
-  return (text ?? '').trim().slice(0, MAX_ERROR_DETAIL);
+  return clampToCeiling((text ?? '').trim(), MAX_ERROR_DETAIL);
 }
 
 export type OllamaErrorKind =
@@ -515,13 +686,24 @@ export function adviseFromBody(
   return describeOllamaError(status, extractOllamaError(parsed, body), ctx);
 }
 
-/** バージョンから警告リストを組み立てる (UI 表示順を固定するため純関数化)。 */
-export function buildWarnings(version: string): string[] {
-  const warnings: string[] = [UNPATCHED_OOB_NOTICE];
-  if (version !== '' && !isVersionSafe(version)) {
+/**
+ * バージョンから警告リストを組み立てる (UI 表示順を固定するため純関数化)。
+ * **両ビルドで 1 つ** —— main も browser もこれを呼ぶ (2026-09-09 まで main は独自の英文
+ * + 「未パッチ」の固定文を持っていた)。当てはまる項目は **名指し**する (「既知の脆弱性が
+ * 修正された X 未満」と丸めない —— どの CVE がその版に当てはまるかを利用者が読める)。
+ */
+export function buildWarnings(
+  version: string,
+  now: Date = new Date(),
+  ledger: readonly OllamaAdvisory[] = OLLAMA_ADVISORIES,
+): string[] {
+  const warnings: string[] = [advisoryLedgerNotice(now, ledger)];
+  const applicable = applicableAdvisories(version, ledger);
+  if (applicable.length > 0) {
     warnings.unshift(
-      `検出された Ollama ${version} は既知の脆弱性が修正された ${MIN_SAFE_VERSION} 未満です。` +
-        'ただちに更新してください (Probllama / CVE-2024-37032 ほか)。',
+      `検出された Ollama ${version} には既知の脆弱性 ${applicable.length} 件が当てはまります: ` +
+        applicable.map((a) => `${a.id} (${a.summary}・${a.fixedIn} で修正)`).join(' / ') +
+        `。${MIN_SAFE_VERSION} 以上へ更新してください。`,
     );
   }
   return warnings;

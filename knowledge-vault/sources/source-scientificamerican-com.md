@@ -2,7 +2,7 @@
 title: "scientificamerican.com"
 type: source-domain
 host: "scientificamerican.com"
-cite_count: 3
+cite_count: 4
 tags:
   - source-domain
   - index
@@ -10,13 +10,14 @@ tags:
 
 # scientificamerican.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **3 件**（メディア 3）
+> [!info] 出典ドメイン索引 ・ 引用 **4 件**（メディア 4）
 
 ## このドメインを出典とする項目
 
 - [[econ-peak-oil|ピークオイル（Peak Oil）とハバート曲線]] — Campbell&Laherrère(1998)TheEndofCheapOil—ScientificAmerican278(3),pp.…
 - [[human-dunbars-number|ダンバー数（社会脳仮説）]] — ScientificAmerican:SocialNetworkSizeLinkedtoBrainSize（社会脳仮説の解説）
-- [[human-mirror-neuron-theory|ミラーニューロン理論]] — Ramachandran&Oberman(2007)—BrokenMirrors:ATheoryofAutism,ScientificAm…
+- [[human-mirror-neuron-system|ミラーニューロン・システム（リゾラッティ／ガレーゼ）——行為の実行時と観察時の双方で発火するニューロン群が行為理解・模倣・共感の神経基盤とされる仮説と、その証拠をめぐる論争]] — Ramachandran,V.S.&Oberman,L.M.(2007)BrokenMirrors:ATheoryofAutism—Sci…
+- [[infosoc-chinese-room-argument-searle|サールの中国語の部屋（Chinese Room Argument）——構文操作は意味理解を保証しないとする「強いAI」批判]] — Searle,J.R.(1990).IstheBrain'sMindaComputerProgram?ScientificAmerican…
 
 ## 関連
 - 索引: [[出典ドメイン索引]]

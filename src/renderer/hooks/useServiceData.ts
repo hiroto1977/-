@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FetchResult, ServiceId } from '../../preload/preload';
 import { isRefreshable, originOf, type DataOrigin } from '../../shared/dataOrigin';
+import { reportDeviceStoreFailure } from '../data/deviceStoreFailure';
 
 export type Source = 'snapshot' | 'live';
 export type Status = 'idle' | 'loading' | 'error';
@@ -11,11 +12,34 @@ export interface ServiceState<T> {
   /** この画面の数字がどこから来るか (`shared/dataOrigin.ts` の宣言)。 */
   origin: DataOrigin;
   source: Source;
+  /**
+   * **取ってきた中身が同梱データを名乗っているか** (`isMock: true`)。
+   *
+   * `main/clients/` の 11 モジュールは、実 API を差し込む前の値を返すときに
+   * この印を立てる。画面が読まないと「更新」を押した人には取得できたように
+   * 見える (バッジが緑になる)。台帳と検査は
+   * `src/renderer/__tests__/mockPayloadPolicy.test.ts`。
+   */
+  payloadIsMock: boolean;
   status: Status;
   errorMessage?: string;
   errorKind?: ErrorKind;
   refresh: () => void;
   isConfigured: boolean;
+}
+
+/**
+ * 中身が自分を同梱データだと名乗っているか。
+ *
+ * 型は `T` なので構造で見るしかない。`isMock` が真の値でも `true` 以外
+ * (文字列の 'true' など) は名乗りとして扱わない —— 名乗りは `main/clients` が
+ * 立てる真偽値だけである。
+ */
+function declaresMock(value: unknown): boolean {
+  // `typeof value === 'object'` は要らない —— 数・文字列に `.isMock` は無いので
+  // undefined になり、`=== true` で落ちる。置くと「関数が isMock を持つ場合」
+  // でしか差が出ない等価な分岐が増えるだけだった (JSON の中身に関数は来ない)。
+  return (value as { isMock?: unknown } | null | undefined)?.isMock === true;
 }
 
 function classifyError(message: string): ErrorKind {
@@ -38,12 +62,31 @@ export function useServiceData<T>(
 ): ServiceState<T> {
   const [data, setData] = useState<T>(snapshot);
   const [source, setSource] = useState<Source>('snapshot');
+  const [payloadIsMock, setPayloadIsMock] = useState(false);
   const [status, setStatus] = useState<Status>('idle');
   const [errorMessage, setErrorMessage] = useState<string>();
   const [errorKind, setErrorKind] = useState<ErrorKind>();
   const [isConfigured, setIsConfigured] = useState(false);
   // Guard against duplicate auto-refresh in React.StrictMode (double-invoke).
   const autoRefreshFired = useRef(false);
+  /**
+   * 取得の世代。**遅れて返った古い応答で画面を上書きしないため**に置く。
+   *
+   * 2026-09-06 実測: `refresh()` は重なりうる。更新ボタンは
+   * `status === 'loading'` で無効になるが、**書き込みの操作は無効にならない** ——
+   * 気分の記録・銘柄の登録・人材の保存・Team Radar の保存・Microsoft 365 は
+   * 成功後に `refresh()` を呼ぶ (実測 5 画面 7 か所)。だから
+   * 「更新を押す (遅い) → 記録する (速い・成功後に再取得)」の順で、
+   * **後から返った古い応答が新しい内容を消す**。しかも `source='live'` /
+   * `status='idle'` のままなので、画面には**取得できた顔で古い数字**が出る
+   * (「記録しました」の文言だけが残り、一覧にはその記録が無い)。
+   *
+   * 数えるのではなく**札を持たせる**: 取得のたびに新しい物 (identity) を置き、
+   * 返ってきたときに自分の札がまだ最新かを見る。数の増減で書くと「+1 でも −1 でも
+   * 同じに動く」等価な変異が残るだけで、守っている物 (最新だけが書き換える) は
+   * 札のほうが素直に表せる。
+   */
+  const latest = useRef<object>({});
   const origin = originOf(serviceId);
 
   const refresh = useCallback(async () => {
@@ -51,6 +94,8 @@ export function useServiceData<T>(
     // 取得先が無いサービス (`sample`) は呼ばない。呼ぶと stub の空データで
     // 画面を上書きし、しかも source='live' になって「取得できた」と嘘をつく。
     if (!isRefreshable(originOf(serviceId))) return;
+    const mine = {};
+    latest.current = mine;
     setStatus('loading');
     setErrorMessage(undefined);
     setErrorKind(undefined);
@@ -63,15 +108,21 @@ export function useServiceData<T>(
     try {
       result = await window.serviceHub.fetchSnapshot<T>(serviceId);
     } catch (e) {
+      // 新しい取得が始まっているなら、この失敗は**もう誰の失敗でもない**。
+      // 拾うと、成功した新しい取得の上に赤いバッジが出る。
+      if (mine !== latest.current) return;
       setStatus('error');
       const message = e instanceof Error ? e.message : String(e);
       setErrorMessage(message);
       setErrorKind(classifyError(message));
       return;
     }
+    // ここから下は画面を書き換える。古い取得の応答は捨てる。
+    if (mine !== latest.current) return;
     if (result.ok) {
       setData(result.data);
       setSource('live');
+      setPayloadIsMock(declaresMock(result.data));
       setStatus('idle');
     } else {
       setStatus('error');
@@ -110,7 +161,7 @@ export function useServiceData<T>(
         autoRefreshFired.current = true;
         refresh();
       }
-    })().catch(() => {
+    })().catch((err: unknown) => {
       /*
        * IPC が **reject** した場合の受け皿。同じファイルの `refresh` には
        * 受け皿があるのに (「約束の外で throw されると…」のコメント)、
@@ -125,7 +176,20 @@ export function useServiceData<T>(
        * 取れなかったときは「未設定」として扱う —— 上の `?? []` と同じ意図で、
        * 初期状態と同じ。ここで画面にエラーを出すと、橋がまだ無いだけの
        * 起動直後にも赤が出る。
+       *
+       * **ただし黙ってはいない (2026-09-06)。** 「未設定」の札は 75 画面が
+       * 同じ形で出しているので消せないが、**橋が答えを返せなかった**のなら
+       * その理由は 1 か所で言える —— `deviceStoreFailure` の `settings` は
+       * まさに「『未設定』と出ていても、設定が消えたとは限りません」と書いてある。
+       *
+       * **橋がまだ無いだけのときは、ここに来ない。** `window.serviceHub?.…` は
+       * 橋が無ければ短絡して `?? []` に落ちるので、この受け皿に入るのは
+       * **橋が答えを返せなかったとき**だけである。だから番人は置かない ——
+       * 置いても入力が作れず (`if` を true 固定にしても差が出ない)、
+       * 測れない分岐が 1 つ増えるだけだった (2026-09-06 の変異検査で実測)。
+       * 「起動直後に赤を出さない」という上のコメントの懸念は、短絡が守っている。
        */
+      reportDeviceStoreFailure('settings', 'read', 'credentials', err);
       setIsConfigured(false);
     });
     /* Stryker disable all */
@@ -135,5 +199,5 @@ export function useServiceData<T>(
     /* Stryker restore all */
   }, [serviceId, refresh, options.autoFetch]);
 
-  return { data, origin, source, status, errorMessage, errorKind, refresh, isConfigured };
+  return { data, origin, source, payloadIsMock, status, errorMessage, errorKind, refresh, isConfigured };
 }

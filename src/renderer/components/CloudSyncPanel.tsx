@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { parseTimestamp } from '../../shared/isoDate';
 import {
   shouldSync,
   INITIAL_SYNC_STATE,
@@ -56,13 +57,16 @@ const PHASE_LABEL: Record<SyncState['phase'], string> = {
   error: 'エラー',
 };
 
+/**
+ * 最終同期の時刻。**`try` は Invalid Date を捕まえない** (パス 185) ——
+ * `new Date(1e20)` は例外を投げず、`toLocaleString` が英語で `Invalid Date` を
+ * 返すだけなので、`catch` はこの場合に一度も走らない。読めるかは値で判定する。
+ */
 function fmtTime(ms: number | null): string {
   if (ms === null) return '未同期';
-  try {
-    return new Date(ms).toLocaleString();
-  } catch {
-    return '不明';
-  }
+  const d = parseTimestamp(ms);
+  if (d === null) return '時刻不明';
+  return d.toLocaleString();
 }
 
 export function CloudSyncPanel() {

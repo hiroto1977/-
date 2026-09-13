@@ -37,6 +37,7 @@
 // 2 か所に書かない**。
 export type { SourceStrength } from './provenance';
 export { SOURCE_STRENGTH_ORDER, atLeastAsStrong, isSourceStrength } from './provenance';
+import { clampToCeiling } from './inputCeiling';
 import type { SourceStrength } from './provenance';
 
 export interface OrganDisease {
@@ -286,6 +287,12 @@ export interface LeaderFitness {
   readonly checked: number;
 }
 
+/** `talent/judge-leader` の答え —— main・ブラウザ版・画面が同じ型を読む (パス 117)。 */
+export interface JudgeResult {
+  readonly fitness: LeaderFitness;
+  readonly candidate: string;
+}
+
 /**
  * 登用の可否。**1 つでも該当したら不可**。
  *
@@ -294,6 +301,16 @@ export interface LeaderFitness {
  * 据えない」——をそのまま実装している。能力の高い該当者ほど組織への
  * マイナスは大きくなるので、閾値を設けると制度の意味が消える。
  */
+/**
+ * 登用判定に添える候補者名の天井 (2026-09-12 · パス 174)。
+ *
+ * **両ビルドが 64 を別々に写していた** —— `main/clients/talent.ts` の
+ * `name.slice(0, 64)` と `web-shim.ts` の `p.candidate.slice(0, 64)`。
+ * 片方だけ動かすと、同じ操作がデスクトップとブラウザで別の長さを返す
+ * (パス 62 / 116 で直した「2 つの実装が同じ判断を別々に持つ」形)。
+ */
+export const MAX_LEADER_CANDIDATE_CHARS = 64;
+
 export function judgeLeaderFitness(flagged: readonly string[]): LeaderFitness {
   // 未知の id を here で弾く必要は無い —— `hits` は **`LEADER_DISQUALIFIERS` を
   // 回して作る**ので、知らない id が `seen` に入っても二度と読まれない。
@@ -483,6 +500,51 @@ export const EMPTY_TALENT_STATE: TalentState = {
 export const TALENT_STORAGE_KEY = 'servicehub.talent.state.v1';
 
 /** どこから来た値でも、判定へ渡す前にこれを通す。 */
+/**
+ * **保存で落ちた項目を利用者に言うための文面。** (2026-09-08 · パス 89)
+ *
+ * `sanitizeTalentState` は上限で切り (`slice`)、形の合わない要素を落とす
+ * (`filter`)。`saveTalentState` は書く前に同じ sanitizer を通すので、
+ * **不適合な項目は保存時に黙って消えていた** —— 画面は `ok` を見て
+ * 「保存しました」と出し、読み直しでその項目が一覧から消える。
+ *
+ * 到達する経路の実例: 滞留年数の入力は `<input type="number" max={60}>` だが
+ * HTML の `max` は助言的で (form submit でもない) **61 と打てば state に入る**。
+ * `isValidLadderMember` は `years > 60` を弾くので、保存するとその人が落ちる。
+ *
+ * パス 74 で「保存の失敗を黙って捨てる」を直したが、こちらは
+ * **成功と言いながら一部を捨てている**形だった。`save-state` は sanitize 後の
+ * 状態を返すので、送った件数と返った件数を比べれば言える —— **channel は既に在った。**
+ *
+ * 落ちた理由は件数だけでは 2 通り (形が合わない / 上限超過) を見分けられないので、
+ * **両方を挙げて上限の実数を添える**。数を丸めて黙るより、利用者が確かめられる形にする。
+ *
+ * @param sent 画面が送った件数
+ * @param kept 保存後に返ってきた件数
+ * @returns 落ちた物が無ければ `null`
+ */
+export function describeDroppedEntries(
+  sent: { readonly reports: number; readonly initiatives: number; readonly members: number },
+  kept: { readonly reports: number; readonly initiatives: number; readonly members: number },
+): string | null {
+  const rows = droppedRows(sent, kept);
+  if (rows.length === 0) return null;
+  const parts = rows.map((r) => `${r.label} ${r.dropped} 件 (上限 ${r.cap} 件)`);
+  return `${parts.join(' / ')} は保存されませんでした。入力の形式が合わないか、上限を超えています。`;
+}
+
+/** 送った件数と残った件数の差 (保存側と読み込み側が同じ数え方をする)。 */
+function droppedRows(
+  sent: { readonly reports: number; readonly initiatives: number; readonly members: number },
+  kept: { readonly reports: number; readonly initiatives: number; readonly members: number },
+): readonly { readonly label: string; readonly dropped: number; readonly cap: number }[] {
+  return [
+    { label: '部署の申告', dropped: sent.reports - kept.reports, cap: MAX_DEPT_REPORTS },
+    { label: '施策', dropped: sent.initiatives - kept.initiatives, cap: MAX_INITIATIVES },
+    { label: 'メンバー', dropped: sent.members - kept.members, cap: MAX_LADDER_MEMBERS },
+  ].filter((r) => r.dropped > 0);
+}
+
 export function sanitizeTalentState(raw: unknown): TalentState {
   if (raw === null || typeof raw !== 'object') return EMPTY_TALENT_STATE;
   const o = raw as Record<string, unknown>;
@@ -493,7 +555,8 @@ export function sanitizeTalentState(raw: unknown): TalentState {
     members: Array.isArray(o['members'])
       ? o['members'].slice(0, MAX_LADDER_MEMBERS).filter(isValidLadderMember)
       : [],
-    updatedAt: typeof updatedAt === 'string' ? updatedAt.slice(0, 32) : '',
+    // 保存値は何でも入りうる (古い版・手で直した JSON)。文字の境界で切る (パス 196)。
+    updatedAt: typeof updatedAt === 'string' ? clampToCeiling(updatedAt, 32) : '',
   };
 }
 
@@ -514,10 +577,109 @@ export interface TalentSnapshot {
   readonly updatedAt: string;
   readonly disqualifiersSource: SourceStrength;
   readonly stepsSource: SourceStrength;
+  /** 保存先から何が読めたか (パス 121)。画面の注記が読む。 */
+  readonly stored: 'saved' | 'none' | 'unreadable';
+  /** 読めなかった / 読み込みで落とした項目の 1 行 (無ければ null)。 */
+  readonly storedNote: string | null;
+}
+
+/**
+ * 保存先から読んだ結果 —— **「保存した」「まだ無い」「読めなかった」を混ぜない** (2026-09-09 · パス 121。
+ * チームレーダーのパス 120 と同じ形)。
+ *
+ * main の `loadTalentState` は「初回起動と壊れたファイルを区別しても画面ですることが同じなので、分けない」と
+ * 注記して空を返していた。**同じではない** —— 壊れたファイルのときは利用者の申告・施策・メンバーが消えており、
+ * 次に「保存」を押せば空で上書きされる。何も言わなければ、消えたことに気付けない。
+ * `saved` でも、形の合わない項目を読むときに落としていれば `dropped` に件数の文が入る
+ * (パス 89 は保存側だけ言っていた —— 古い版や手で直した JSON を**読む**ときは黙って落ちていた)。
+ */
+export type StoredTalent =
+  | { readonly kind: 'saved'; readonly state: TalentState; readonly dropped: string | null }
+  | { readonly kind: 'none' }
+  | { readonly kind: 'unreadable'; readonly reason: string };
+
+/** 読み込みで落とした項目の文面 (保存側の {@link describeDroppedEntries} と対)。 */
+export function describeUnreadEntries(
+  sent: { readonly reports: number; readonly initiatives: number; readonly members: number },
+  kept: { readonly reports: number; readonly initiatives: number; readonly members: number },
+): string | null {
+  const rows = droppedRows(sent, kept);
+  if (rows.length === 0) return null;
+  const parts = rows.map((r) => `${r.label} ${r.dropped} 件 (上限 ${r.cap} 件)`);
+  return `${parts.join(' / ')} は読み込みで落としました (形式が合わないか、上限を超えています)。このまま保存すると、これらは失われます。`;
+}
+
+const LIST_FIELDS = ['reports', 'initiatives', 'members'] as const;
+
+/**
+ * 保存された文字列 (無ければ null) を読む —— **両ビルドの読み込みが同じ 1 つを通す。**
+ *
+ * JSON でない・オブジェクトでない・一覧の欄が在るのに配列でない物は理由つきで「読めなかった」
+ * (欄が**無い**のは古い版なので空として読む)。読めた物は `sanitizeTalentState` を通し、
+ * 落ちた件数を {@link describeUnreadEntries} で言う。
+ */
+export function readStoredTalent(raw: string | null): StoredTalent {
+  if (raw === null) return { kind: 'none' };
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw) as unknown;
+  } catch {
+    return { kind: 'unreadable', reason: 'JSON として読めません' };
+  }
+  if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    return { kind: 'unreadable', reason: 'オブジェクトではありません' };
+  }
+  const o = parsed as Record<string, unknown>;
+  for (const field of LIST_FIELDS) {
+    if (o[field] !== undefined && !Array.isArray(o[field])) {
+      return { kind: 'unreadable', reason: `${field} が配列ではありません` };
+    }
+  }
+  const state = sanitizeTalentState(o);
+  const count = (field: (typeof LIST_FIELDS)[number]): number => {
+    const v = o[field];
+    return Array.isArray(v) ? v.length : 0;
+  };
+  const dropped = describeUnreadEntries(
+    { reports: count('reports'), initiatives: count('initiatives'), members: count('members') },
+    { reports: state.reports.length, initiatives: state.initiatives.length, members: state.members.length },
+  );
+  return { kind: 'saved', state, dropped };
+}
+
+/** 読めなかったときに画面が刷る 1 行 (両ビルドで同じ文)。 */
+export function unreadableTalentNote(reason: string): string {
+  return `保存した人材育成の状態を読めませんでした (${reason})。空の状態を表示しています。このまま保存すると空で上書きされ、元の保存値は戻りません。`;
+}
+
+/** 画面に渡す由来 (どこから読めたか + 注記)。 */
+export interface TalentProvenance {
+  readonly stored: 'saved' | 'none' | 'unreadable';
+  readonly storedNote: string | null;
+}
+
+/** 状態を直に渡すときの由来 (保存した物として扱う)。 */
+export const SAVED_PROVENANCE: TalentProvenance = { stored: 'saved', storedNote: null };
+
+/** 読んだ結果を、判定に渡す状態と画面に渡す由来に分ける —— main の fetcher とブラウザ版の枝が同じ物を通す。 */
+export function talentProvenance(stored: StoredTalent): { readonly state: TalentState; readonly provenance: TalentProvenance } {
+  switch (stored.kind) {
+    case 'saved':
+      return { state: stored.state, provenance: { stored: 'saved', storedNote: stored.dropped } };
+    case 'none':
+      return { state: EMPTY_TALENT_STATE, provenance: { stored: 'none', storedNote: null } };
+    case 'unreadable':
+      return { state: EMPTY_TALENT_STATE, provenance: { stored: 'unreadable', storedNote: unreadableTalentNote(stored.reason) } };
+    // Stryker disable next-line all: 網羅性検査の到達不能 default (型で 3 つを処理済み)。
+    default: {
+      const exhaustive: never = stored;
+      return exhaustive;
+    }
+  }
 }
 
 /** 保存された状態から画面が出す物を組む。**判定はここでしか走らない。** */
-export function buildTalentSnapshot(state: TalentState): TalentSnapshot {
+export function buildTalentSnapshot(state: TalentState, provenance: TalentProvenance = SAVED_PROVENANCE): TalentSnapshot {
   return {
     diseases: ORGAN_DISEASES,
     steps: SKILL_STEPS,
@@ -530,5 +692,7 @@ export function buildTalentSnapshot(state: TalentState): TalentSnapshot {
     updatedAt: state.updatedAt,
     disqualifiersSource: LEADER_DISQUALIFIERS_SOURCE,
     stepsSource: SKILL_STEPS_SOURCE,
+    stored: provenance.stored,
+    storedNote: provenance.storedNote,
   };
 }

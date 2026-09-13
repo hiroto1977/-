@@ -32,12 +32,8 @@ Ghatak, Maitreesh （2000）Screening by the Company You Keep: Joint Liability L
 
 ## 関連概念
 - [[econ-credit-rationing-stiglitz-weiss|スティグリッツ＝ワイス信用割当モデル]] — 同じ思想家
-- [[econ-adverse-selection-akerlof|逆選択理論（レモンの市場）]] — 同じ思想家
-- [[econ-lemons-problem-akerlof|レモン市場]] — 同じ思想家
-- [[econ-signaling-screening-spence|シグナリング理論とスクリーニング理論（情報の非対称性と市場シグナル）]] — 同じ思想家
 - [[econ-henry-george-theorem|ヘンリー・ジョージ定理（Henry George Theorem）]] — 同じ思想家
 - [[econ-nutrition-efficiency-wage|栄養効率賃金理論（nutrition-based efficiency wage theory／ダスグプタ＝レイ）——貧困農村では高賃金が栄養を通じて生産性を高め、市場清算を上回る賃金と非自発的失業を均衡として生む]] — 同じ思想家
-- [[econ-optimal-taxation-theory|最適課税理論]] — 同じ思想家
 - [[infosoc-information-asymmetry-in-digital-markets|デジタル市場の情報非対称性]] — 同じ思想家
 - [[econ-real-bills-doctrine|真正手形主義（リアルビルズ・ドクトリン）]] — 同分野の近傍
 - [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍

@@ -32,6 +32,7 @@ aliases:
 ## 関連概念
 - [[econ-chain-store-paradox-selten|チェーンストアの逆説——評判による参入阻止と後ろ向き帰納の衝突]] — 同じ思想家
 - [[econ-nash-bargaining|ナッシュ交渉解]] — 同じ思想家
+- [[econ-reputation-effects-kreps-wilson-milgrom-roberts|不完備情報下の評判効果——わずかなタイプの不確実性が参入阻止と協調を合理化する]] — 同じ思想家
 - [[econ-game-theory-cooperative|協力ゲーム理論：連合形成と公平な利得配分の数理的枠組み]] — 同じ思想家
 - [[econ-affiliated-values-milgrom-weber|連関価値とリンケージ原理——オークション形式の収入を分かつもの]] — 同じ思想家
 - [[econ-auction-theory-vickrey-milgrom|オークション理論——入札メカニズムの設計と収入同値定理]] — 同じ思想家
@@ -39,7 +40,6 @@ aliases:
 - [[econ-braess-paradox|ブライスのパラドックス——道路を増やすと渋滞が悪化する逆説]] — 同じ思想家
 - [[econ-kalai-smorodinsky|カライ＝スモロディンスキー解——単調性にもとづく交渉の解]] — 同じ思想家
 - [[econ-winner-curse-auction|勝者の呪い——共通価値オークションで落札者が過大評価し損をする逆説]] — 同じ思想家
-- [[econ-zeuthen-bargaining|ツォイテンの交渉モデル——衝突を賭ける覚悟が譲歩を決める]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

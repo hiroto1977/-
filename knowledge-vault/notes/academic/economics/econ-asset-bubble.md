@@ -38,7 +38,6 @@ aliases:
 - [[econ-rational-bubble|合理的バブル]] — 出典を共有
 - [[econ-behavioral-finance|行動ファイナンス]] — 同分野の近傍
 - [[econ-keynesian-beauty-contest|ケインズの美人投票]] — 同分野の近傍
-- [[econ-fear-of-floating|変動相場回避（フィア・オブ・フローティング）]] — 同分野の近傍
 - [[econ-sovereign-debt-crisis-reinhart|国家債務危機とデフォルト履歴（ラインハート＆ロゴフ）]] — 同分野の近傍
 
 ## 関連

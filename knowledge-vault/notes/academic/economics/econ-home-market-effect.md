@@ -32,7 +32,6 @@ Paul Krugman（クルーグマン, 1980） ／ Elhanan Helpman（ヘルプマン
 
 ## 関連概念
 - [[econ-balance-of-payments-crisis-model|国際収支危機モデル]] — 同じ思想家
-- [[econ-new-new-trade-theory-melitz|「新」新貿易理論（メリッツ・モデル）]] — 同じ思想家
 - [[econ-welfare-economics-bergson-samuelson|厚生経済学の基本定理——バーグソン＝サミュエルソン社会厚生関数とパレート効率性]] — 同分野の近傍
 - [[econ-cobb-douglas|コブ＝ダグラス生産関数]] — 同分野の近傍
 

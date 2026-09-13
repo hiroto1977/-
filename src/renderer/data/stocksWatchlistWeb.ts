@@ -15,7 +15,14 @@
  * ブラウザ専用依存を持たない) なので単体テストできる。
  */
 
+import { countChars } from '../../shared/inputCeiling';
 import { round2 } from '../../shared/num';
+import { isoDateFromTimestamp, parseTimestamp } from '../../shared/isoDate';
+import { MAX_TICKER_CHARS } from '../../shared/advisorQuestionLimits';
+import type { RegisterResult, UnregisterResult } from '../../shared/stocksTypes';
+
+// 戻り値の形は shared/stocksTypes.ts が 1 つだけ持つ (パス 117)。
+export type { RegisterResult, UnregisterResult } from '../../shared/stocksTypes';
 
 export const STOCKS_WATCHLIST_KEY = 'stocks.watchlist';
 
@@ -25,7 +32,7 @@ export function isSafeSymbol(value: unknown): value is string {
   if (typeof value !== 'string') return false;
   // 空文字は下の regex (`+` で 1 文字以上を要求) が弾くため、length===0 の明示判定は
   // 冗長 (equivalent mutant 排除のため上限のみ残す)。
-  if (value.length > 16) return false;
+  if (countChars(value) > MAX_TICKER_CHARS) return false;
   return /^[A-Za-z0-9.\-^]+$/.test(value);
 }
 
@@ -104,21 +111,7 @@ function saveWatchlistSymbols(list: readonly string[]): void {
   localStorage.setItem(STOCKS_WATCHLIST_KEY, JSON.stringify(list));
 }
 
-// --- 登録 / 解除 (Electron 版アクションと同じ戻り値の形) ------------------
-
-export interface RegisterResult {
-  symbol: string;
-  added: boolean;
-  watchlist: readonly string[];
-  message: string;
-}
-
-export interface UnregisterResult {
-  symbol: string;
-  removed: boolean;
-  watchlist: readonly string[];
-  message: string;
-}
+// --- 登録 / 解除 (Electron 版アクションと同じ戻り値の形 —— 型は shared/stocksTypes.ts) ----
 
 /** 銘柄を登録する。無効なシンボルは throw (web-shim 側で action_failed に変換)。 */
 export function registerSymbol(symbol: unknown): RegisterResult {
@@ -191,10 +184,14 @@ function mulberry32(seed: number): () => number {
   };
 }
 
-/** `daysAgo` 日前の YYYY-MM-DD (UTC ベース、`now` を注入可能でテスト可能)。 */
+/**
+ * `daysAgo` 日前の YYYY-MM-DD (UTC ベース、`now` を注入可能でテスト可能)。
+ *
+ * **`toISOString()` は範囲外で投げる**ので共有の判定を通す (パス 188)。
+ * 今日 `now` に来るのは `Date.now()` だけなので到達はしない —— 床である。
+ */
 function isoDaysAgo(daysAgo: number, now: number): string {
-  const d = new Date(now - daysAgo * 24 * 60 * 60 * 1000);
-  return d.toISOString().slice(0, 10);
+  return isoDateFromTimestamp(now - daysAgo * 24 * 60 * 60 * 1000) ?? '';
 }
 
 /** シンボルに対する決定論的なモック・ローソク足 (ランダムウォーク)。
@@ -268,7 +265,7 @@ export function buildStocksSnapshot(now: number = Date.now()): WebStocksSnapshot
       positions: {},
       history: [],
     },
-    fetchedAt: new Date(now).toISOString(),
+    fetchedAt: parseTimestamp(now)?.toISOString() ?? '',
     isMock: true,
   };
 }

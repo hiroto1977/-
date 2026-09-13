@@ -34,6 +34,7 @@ aliases:
 - [[mgmt-triple-bottom-line|トリプルボトムライン（TBL）]] — 語彙が近い
 - [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]] — 同分野の近傍
 - [[mgmt-strategic-momentum-miller|戦略的モメンタム——成功パターンの固定化が組織衰退を招くメカニズム]] — 同分野の近傍
+- [[mgmt-csr|企業の社会的責任（CSR）]] — 同分野の近傍
 - [[mgmt-intellectual-capital-edvinsson|知的資本（エドビンソン＆マローン）]] — 同分野の近傍
 - [[mgmt-business-model-canvas-osterwalder|ビジネスモデル・キャンバス——オスターワルダーの9構成要素フレームワーク]] — 同分野の近傍
 

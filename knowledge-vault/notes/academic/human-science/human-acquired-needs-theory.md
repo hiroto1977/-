@@ -34,7 +34,7 @@ David Clarence McClelland ／ John William Atkinson ／ David Grayson Winter
 
 ## 関連概念
 - [[human-achievement-motivation|達成動機理論（マクレランドの3欲求）]] — 語彙が近い
-- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-componential-theory-creativity-amabile|創造性の構成要素理論（アマビル）——領域スキル・創造的思考・内発的動機づけと社会環境が交わって生まれる創造性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

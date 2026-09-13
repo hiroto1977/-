@@ -31,6 +31,7 @@ Langdon Winner／Evgeny Morozov／Richard Barbrook／Andy Cameron／Fred Turner
 - [Turner (2006) From Counterculture to Cyberculture, University of Chicago Press](https://press.uchicago.edu/ucp/books/book/chicago/F/bo3773600.html) `学術`
 
 ## 関連概念
+- [[infosoc-techno-solutionism-morozov|テクノ・ソリューショニズム（モロゾフ）]] — 語彙が近い
 - [[infosoc-techno-feudalism-theory|テクノ封建主義論]] — 同じ思想家
 - [[infosoc-cognitive-surplus|認知的余剰（Cognitive Surplus）]] — 同じ思想家
 - [[infosoc-slacktivism|スラックティビズム]] — 同じ思想家
@@ -40,7 +41,6 @@ Langdon Winner／Evgeny Morozov／Richard Barbrook／Andy Cameron／Fred Turner
 - [[human-embodied-cognition-lakoff|身体化認知（レイコフ＆ジョンソン）]] — 出典を共有
 - [[infosoc-collective-memory|集合的記憶]] — 出典を共有
 - [[infosoc-posthumanism-hayles|ポストヒューマニズム（ヘイルズ）]] — 出典を共有
-- [[infosoc-sociotechnical-imaginaries|社会技術的想像論（ソシオテクニカル・イマジナリーズ）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

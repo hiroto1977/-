@@ -15,8 +15,12 @@ export type HealthLevel = 'good' | 'warn' | 'bad';
 
 export interface CategoryScore {
   readonly category: string;
-  readonly score: number; // 0-100 (カテゴリ内軸の平均)
+  /** 0-100 (カテゴリ内の**算定できた**軸の平均)。1 軸も算定できなければ `null`。 */
+  readonly score: number | null;
+  /** このカテゴリに属する軸 (算定できたかどうかに関わらず全部)。 */
   readonly axisKeys: readonly string[];
+  /** うち算定できた軸の数 (`score` の分母)。 */
+  readonly scoredCount: number;
 }
 
 export interface AxisComment {
@@ -28,11 +32,28 @@ export interface AxisComment {
 }
 
 export interface FinancialDiagnosis {
-  readonly overallScore: number; // 0-100 (全15軸の平均)
-  readonly grade: HealthGrade;
+  /**
+   * 0-100 (**算定できた軸だけ**の平均)。1 軸も算定できなければ `null`。
+   *
+   * 2026-09-08 まで算定不能な軸を 0 点として混ぜていた。実測 (production 経路):
+   * サービス業 (変動費 0) は 2 軸が未評価で 78 A、創業前 (売上 0) は
+   * **12/15 軸が未評価で 7 点 D** —— **入力していない軸が格付けを決めていた。**
+   */
+  readonly overallScore: number | null;
+  /** 総合格付け。`overallScore` が `null` なら `null` (格付けしない)。 */
+  readonly grade: HealthGrade | null;
   readonly categories: readonly CategoryScore[];
   readonly strengths: readonly AxisComment[]; // スコア上位 (good)
   readonly weaknesses: readonly AxisComment[]; // スコア下位 (要改善)
+  /**
+   * **算定できなかった軸 (未評価)。**
+   *
+   * `strengths` / `weaknesses` には**入れない** —— 算定不能は「弱み」ではない。
+   * 2026-09-08 まで 0 点として `weaknesses` に混ざり、仕入が無い事業に
+   * 「棚卸資産回転率が低め。**在庫の滞留に注意。**」と名指ししていた。
+   * 画面はこの一覧を「未評価」として別に出す。
+   */
+  readonly unscored: readonly { readonly key: string; readonly label: string }[];
 }
 
 /** 軸キー → カテゴリ (安全性 / 収益性 / 効率性)。 */
@@ -85,16 +106,37 @@ function commentOf(axis: { key: string; label: string }, level: HealthLevel): st
   return IMPROVE_HINT[axis.key] ?? `${axis.label}の水準に注意。`;
 }
 
-const mean = (xs: number[]) => (xs.length === 0 ? 0 : Math.round(xs.reduce((a, b) => a + b, 0) / xs.length));
+/**
+ * 平均。**空なら `null`** —— 「1 件も無い」を 0 点として出さない。
+ * (2026-09-08 まで `0` を返しており、その 0 が格付けまで通っていた。)
+ */
+const mean = (xs: readonly number[]): number | null =>
+  xs.length === 0 ? null : Math.round(xs.reduce((a, b) => a + b, 0) / xs.length);
+
+/** 算定できた軸だけを取り出す (`score` が数である軸)。 */
+function scored(axes: readonly RadarAxis[]): { key: string; label: string; score: number }[] {
+  const out: { key: string; label: string; score: number }[] = [];
+  for (const a of axes) if (a.score !== null) out.push({ key: a.key, label: a.label, score: a.score });
+  return out;
+}
 
 /** レーダー軸 (0-100) から総合診断を作る。純粋。`bands` は評価と格付けの下限 (台帳の値・省略時は既定)。 */
 export function diagnoseFinancials(axes: readonly RadarAxis[], bands: HealthBands = DEFAULT_HEALTH_BANDS): FinancialDiagnosis {
-  const overallScore = mean(axes.map((a) => a.score));
+  // **算定できた軸だけで評価する。** 算定不能を 0 点として混ぜると、
+  // 入力していない軸が格付けと「要改善」を決めてしまう。
+  const measured = scored(axes);
+  const overallScore = mean(measured.map((a) => a.score));
   const categories: CategoryScore[] = CATEGORY_ORDER.map((cat) => {
     const inCat = axes.filter((a) => CATEGORY_OF[a.key] === cat);
-    return { category: cat, score: mean(inCat.map((a) => a.score)), axisKeys: inCat.map((a) => a.key) };
+    const inCatScored = scored(inCat);
+    return {
+      category: cat,
+      score: mean(inCatScored.map((a) => a.score)),
+      axisKeys: inCat.map((a) => a.key),
+      scoredCount: inCatScored.length,
+    };
   });
-  const comments: AxisComment[] = axes.map((a) => {
+  const comments: AxisComment[] = measured.map((a) => {
     const level = levelOf(a.score, bands);
     return { key: a.key, label: a.label, score: a.score, level, comment: commentOf(a, level) };
   });
@@ -104,5 +146,13 @@ export function diagnoseFinancials(axes: readonly RadarAxis[], bands: HealthBand
     .filter((c) => c.level !== 'good')
     .sort((x, y) => x.score - y.score)
     .slice(0, 3);
-  return { overallScore, grade: gradeOf(overallScore, bands), categories, strengths, weaknesses };
+  const unscored = axes.filter((a) => a.score === null).map((a) => ({ key: a.key, label: a.label }));
+  return {
+    overallScore,
+    grade: overallScore === null ? null : gradeOf(overallScore, bands),
+    categories,
+    strengths,
+    weaknesses,
+    unscored,
+  };
 }

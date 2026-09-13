@@ -261,6 +261,47 @@ describe('detectNorton', () => {
     expect(result.details).toMatch(/見つかりませんでした/);
   });
 
+  /**
+   * **「探して無かった」と「製品が無い OS」を分ける** (パス 165)。
+   *
+   * この 3 本は**対照が鳴らなかったから足した**: 画面側を直した後に
+   * `detection: candidates.length === 0 ? 'unsupported' : 'absent'` を
+   * `'absent'` 固定へ戻しても、main のどの検査も落ちなかった ——
+   * つまり分類そのものを誰も測っていなかった。
+   * **鳴らない対照は「合格」ではなく、その検査についての報せである。**
+   */
+  it('★ 候補パスが 1 本も無い OS は unsupported (探していないので absent ではない)', async () => {
+    const probe = vi.fn(async (_p: string) => ({ isDirectory: () => false }));
+    const result = await detectNorton('linux', probe);
+    expect(result.detection).toBe('unsupported');
+    // 探していないことを、probe が呼ばれていないことで裏から確かめる。
+    expect(probe).not.toHaveBeenCalled();
+  });
+
+  it('★ 候補パスが在って見つからなければ absent (探して無かった)', async () => {
+    const probe = vi.fn(async () => ({ isDirectory: () => false }));
+    for (const platform of ['win32', 'darwin'] as NodeJS.Platform[]) {
+      const result = await detectNorton(platform, probe);
+      expect(result.detection, platform).toBe('absent');
+    }
+    expect(probe).toHaveBeenCalled();
+  });
+
+  it('★ 見つかれば found', async () => {
+    const probe = vi.fn(async (p: string) => ({
+      isDirectory: () => p === '/Applications/Norton 360.app',
+    }));
+    const result = await detectNorton('darwin', probe);
+    expect(result.detection).toBe('found');
+  });
+
+  it('★ 未知の OS も unsupported (候補が空なので探していない)', async () => {
+    const probe = vi.fn(async (_p: string) => ({ isDirectory: () => false }));
+    const result = await detectNorton('aix' as NodeJS.Platform, probe);
+    expect(result.detection).toBe('unsupported');
+    expect(probe).not.toHaveBeenCalled();
+  });
+
   it('truncates HIBP error body to 200 chars (already-killed regression test)', async () => {
     // Pinned here for any future code shuffle that loses the slice.
     const longBody = 'X'.repeat(500);

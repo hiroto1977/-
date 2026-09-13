@@ -32,14 +32,14 @@ aliases:
 ## 関連概念
 - [[econ-tax-smoothing|課税平準化（タックス・スムージング）]] — 同じ思想家
 - [[econ-barro-growth|バロー成長回帰（Barro Growth Regression）]] — 同じ思想家
-- [[econ-central-bank-independence-kydland|中央銀行の独立性と時間非一貫性問題——キドランド＝プレスコットの規則対裁量論]] — 同じ思想家
 - [[econ-ricardian-equivalence|リカードの等価定理（リカード=バローの中立命題）]] — 同じ思想家
-- [[econ-time-inconsistency-kydland-prescott|時間的非整合性——最適計画の事後的破棄とルール対裁量の問題]] — 同じ思想家
+- [[econ-time-inconsistency-kydland-prescott|時間的非整合性（キドランド＝プレスコット）——事前に最適だった政策を事後に覆す誘因が信頼性を損ない、ルールへのコミットメントと中央銀行の独立性を正当化する]] — 同じ思想家
 - [[econ-deaton-paradox|ディートンのパラドックス（消費の過剰平滑性）]] — 同じ思想家
 - [[econ-becker-quantity-quality|子どもの数と質のトレードオフ（ベッカー）——なぜ豊かになると出生率が下がるのか]] — 同じ思想家
 - [[econ-campbell-shiller-decomposition|キャンベル＝シラー分解——株価の変動は配当か割引率か]] — 同じ思想家
 - [[econ-central-bank-independence-rogoff|中央銀行の独立性——ロゴフの保守的中央銀行論とインフレ目標政策]] — 同じ思想家
 - [[econ-consumption-smoothing-permanent-income|消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み]] — 同じ思想家
+- [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

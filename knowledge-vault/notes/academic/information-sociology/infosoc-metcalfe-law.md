@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Wikipedia「Metcalfe’s law」: n²/三角数 n(n−1)/2、Metcalfe由来、Gilder1993命名](https://en.wikipedia.org/wiki/Metcalfe%27s_law) `リファレンス`
 - [Encyclopedia.com「Metcalfe’s Law」（百科事典級リファレンス、独立第二情報源）](https://www.encyclopedia.com/economics/encyclopedias-almanacs-transcripts-and-maps/metcalfes-law) `リファレンス`
-- [Briscoe, Odlyzko & Tilly「Metcalfe’s Law is Wrong」IEEE Spectrum 43(7):34–39, 2006（n log n提案・学会刊行物）](https://spectrum.ieee.org/metcalfes-law-is-wrong) `学術`
+- [Briscoe, Odlyzko & Tilly「Metcalfe’s Law is Wrong」IEEE Spectrum 43(7):34–39, 2006（n log n提案・学会刊行物）](https://spectrum.ieee.org/metcalfes-law-is-wrong) `メディア`
 - [University of Minnesota Experts（Odlyzko所属大学による同論文の書誌）](https://experts.umn.edu/en/publications/metcalfes-law-is-wrong/) `学術`
 
 ## 関連概念

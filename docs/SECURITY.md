@@ -78,9 +78,9 @@ GitHub Issues / PR ベースで運用。
 
 | 攻撃 | 緩和 |
 |---|---|
-| 既知 CVE のあるパッケージ | `npm audit --omit=dev` で **production 0 件** を維持。dev deps の CVE は run-time に影響しないため許容 |
+| 既知 CVE のあるパッケージ | `npm audit --omit=dev` で **production 0 件** を維持 (CI の段)。dev deps の CVE は出荷物に入らないので件数は落とさないが、**自分で押さえた版 (セキュリティの床) は `lint:deps` の台帳が守る** —— 宣言が消える・指定が緩む・lockfile が下回るのいずれでも落ちる。床がまだ十分かは `npm run audit:floors` (勧告データベースに出る・定期点検) |
 | 不審な新規依存追加 | PR ごとの diff レビュー、`package-lock.json` 同梱 |
-| build chain の改ざん | `electron-builder` を pin (`^25.1.8`) |
+| build chain の改ざん | `electron-builder` を pin (`^26.15.3`)、取得元は registry のみ・integrity 必須 (`lint:deps`) |
 
 ## ネットワーク呼び出しの全リスト
 

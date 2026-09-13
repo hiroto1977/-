@@ -26,13 +26,13 @@ aliases:
 ウォルター・リップマン ／ エドワード・バーネイズ ／ ハロルド・ラスウェル ／ マックスウェル・マコームズ
 
 ## 出典
-- [Lippmann, W. (1922) Public Opinion — Harcourt Brace; pseudo-environment, stereotypes (WorldCat)](https://www.worldcat.org/oclc/1297149) `学術`
+- [Lippmann, W. (1922) Public Opinion — Harcourt Brace; pseudo-environment, stereotypes (WorldCat)](https://www.worldcat.org/oclc/1297149) `リファレンス`
 - [Wikipedia: Public Opinion (Lippmann) — pseudo-environment, pictures in our heads, stereotypes](https://en.wikipedia.org/wiki/Public_Opinion_(book)) `リファレンス`
 
 ## 関連概念
 - [[infosoc-lippmann-pseudo-environment|擬似環境とステレオタイプ（リップマン『世論』）]] — 語彙が近い
-- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 同じ思想家
 - [[infosoc-attribute-agenda-setting|第二レベルの議題設定（属性アジェンダ設定）]] — 同じ思想家
+- [[infosoc-media-agenda-setting|アジェンダ設定理論（マコームズ＆ショー）——メディアは「何を考えるか」ではなく「何について考えるか」を方向づけ、争点と属性の顕出性を公衆に転写する]] — 同じ思想家
 - [[infosoc-propaganda-model-herman-chomsky|プロパガンダ・モデル——五つのフィルターによる合意の製造]] — 同じ思想家
 - [[infosoc-knowledge-gap-tichenor|知識ギャップ仮説——マスメディアの情報流入が社会階層間の知識格差を拡大する]] — 同分野の近傍
 - [[infosoc-remediation-bolter-grusin|リメディエーション——新しいメディアが旧来のメディアを再媒介し作り変える]] — 同分野の近傍

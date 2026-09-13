@@ -36,6 +36,7 @@ aliases:
 - [[econ-leontief-paradox-trade|レオンチェフ・パラドックス——要素賦存理論への実証的挑戦]] — 同じ思想家
 - [[econ-natural-monopoly-subadditivity|自然独占と費用劣加法性——単一企業の生産が最も低費用となる市場]] — 同じ思想家
 - [[econ-comparative-advantage|比較優位（リカードの比較生産費説）]] — 同分野の近傍
+- [[econ-porter-hypothesis|ポーター仮説——適切な環境規制がイノベーションを通じて競争力を高める]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

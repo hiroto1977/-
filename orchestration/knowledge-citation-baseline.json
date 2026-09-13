@@ -1,6 +1,11 @@
 {
   "description": "lint-citations.cjs が検出した『同一 DOI が複数の出版年で引かれている』既知の矛盾。導入時点で残っていた分をここに列挙し、ゲートはこれ以外の新規矛盾で落ちる。一次資料で確認して直したら、この配列から**必ず削除する** — 実際には矛盾していない DOI がこの配列に残っている場合もゲートが落ちるため、台帳は放置できない設計。",
   "howToFix": "WebSearch で複数の独立した書誌データベースが一致する DOI を確定し、誤っている側の出典を差し替える。推測で書き換えないこと。確定できない場合はここに残す (誤った出典を『直したことにする』より、既知の負債として見えている方が安全)。",
+  "labelRule": "2026-09-05 追加: 同じ DOI を引くラベル同士が著者姓もタイトル語も共有しない (= 別々の著作として引かれている) 場合も lint-citations.cjs が落とす。年が同じだと上の年照合は黙るので、その抜けを塞ぐ規則。初回走査 (多重引用 135 件) で 4 件を検出: Peteraf 1993 に Levinthal & March 1993 の SMJ DOI (コーパス内で Peteraf 1993 に付いている 10.1002/smj.4250140303 へ差替え)、Weick et al. 2005 に Hackman & Wageman 2005 の AMR DOI (コーパス内の Organization Science DOI 10.1287/orsc.1050.0133 へ差替え)、Nardi 2010 の書籍に Gillespie 2010 の New Media & Society DOI (確定できる識別子が無いので出典を外した)、そして下の knownLabelConflicts の 1 件。",
+  "knownLabelConflicts": [
+    "10.1016/s1573-4404(84)01006-4"
+  ],
+  "knownLabelConflictsNote": "10.1016/S1573-4404(84)01006-4 (Handbook of International Economics vol. 1, 1984) を Jones & Neary「The Positive Theory of International Trade」(econ-transfer-problem-keynes / econ-metzler-paradox-tariff) と Deardorff「Testing Trade Theories and Predicting Trade Flows」(econ-vanek-chain-factor-content) の両方が引いている。同じ巻の別章なので少なくとも一方は誤り。章 PII の実体は doi.org / Elsevier が egress で遮断されていて確かめられない (2026-09-05)。確かめ方: https://doi.org/10.1016/S1573-4404(84)01006-4 を開いて章タイトルを見る → 合わない側の出典を差し替える (もう一方の章の PII を推測で書かない) → この配列から外す。",
   "method": "**DOI 接尾辞そのものを完全一致検索する**。検索エンジンの要約が主張する書誌ではなく、索引が返すページ実体 (出版社の DOI URL・章ページ群・書誌 DB のレコード) を証拠とする。書誌 API は egress で遮断されている (api.crossref.org / api.openalex.org / doi.org / Cambridge Core / archive.org はいずれも 403) ため WebSearch のみが使える。**順序が重要**: まず DOI の実体を確定し、そのうえで各主張者を個別に照合する。同一 DOI に複数の年がぶつかっているとき『候補のどれかが正しい』保証はない — 実測すると全主張者が誤りのケースが 5 件あった。",
   "verifiedExamples": "2026-07-28 のパス4では 13 件を確定・修正した。うち 9 件は DOI が別論文を指しており (例: 10.2307/2392586 は Bourgeois 1981 ではなく ASQ 23(4) 1978 の無題書評)、2 件は書籍に他誌論文の DOI が付いていた。2026-07-30 に**残り 18 件すべて**を照合し、knownConflicts を 0 件にした (下記 resolved2026_07_30)。",
   "resolved2026_07_30": {

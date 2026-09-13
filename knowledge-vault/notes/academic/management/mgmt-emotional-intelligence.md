@@ -28,18 +28,18 @@ aliases:
 ## 出典
 - [Salovey & Mayer (1990) "Emotional Intelligence", Imagination, Cognition and Personality（査読誌・原著論文）](https://journals.sagepub.com/doi/10.2190/DUGG-P24E-52WK-6CDG) `学術`
 - [Frontiers in Psychology (2019) 感情知性の測定法に関する批判的レビュー](https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2019.01116/full) `学術`
-- [Noba Project: Emotional Intelligence（能力モデル・4枝の解説）](https://nobaproject.com/modules/emotional-intelligence) `リファレンス`
+- [Noba Project: Emotional Intelligence（能力モデル・4枝の解説）](https://nobaproject.com/modules/emotional-intelligence) `学術`
 
 ## 関連概念
-- [[human-emotional-intelligence|情動知能（EQ）]] — 語彙が近い
+- [[human-emotional-intelligence|情動知能（EQ）]] — 分野横断
 - [[mgmt-political-skill-ferris|政治的スキル——他者を理解し操られている感じを与えずに影響する力]] — 同じ思想家
 - [[econ-supplier-induced-demand|供給者誘発需要——医師は自らの需要を生み出すのか]] — 出典を共有
 - [[human-compromise-effect|妥協効果（極端回避性）]] — 出典を共有
 - [[human-epigenetics|エピジェネティクス（Epigenetics）]] — 出典を共有
 - [[human-statistical-learning|統計的学習（Statistical Learning）]] — 出典を共有
 - [[infosoc-information-overload|情報過多（情報オーバーロード）]] — 出典を共有
-- [[infosoc-knowledge-management-nonaka-takeuchi|知識創造理論——野中と竹内のSECIモデルと暗黙知・形式知の変換プロセス]] — 出典を共有
 - [[mgmt-knowledge-hiding-behavior|知識隠蔽行動理論]] — 出典を共有
+- [[econ-trust-game|信頼ゲーム（投資ゲーム）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

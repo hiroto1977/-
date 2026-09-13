@@ -13,6 +13,7 @@
  * 音声コマンドの能力テーブル) ため、将来のサービス・組織の拡張に自動連動する。
  */
 import { navigateTo } from '../navigate';
+import { arrayOf, chatMessages, isRecord } from '../data/persistedShape';
 import { classifyActionResult } from '../data/actionOutcome';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES } from '../services';
@@ -21,6 +22,15 @@ import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
 import { CAPABILITIES } from './VoiceCommandBar';
 import { isExecutableIntent, type VoiceIntent } from '../data/voiceCommand';
 import { org as registryOrg, teams as registryTeams } from '../../../orchestration/registry.json';
+import { writeLocalJson, type LocalWriteResult } from '../data/localWrite';
+import {
+  voiceWriteRefusal,
+  voiceWriteRefusalMessage,
+} from '../../shared/voiceWriteRequirements';
+import { MAX_OLLAMA_PROMPT_CHARS } from '../../shared/ollama';
+import { CeilingNotice } from './CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
+import type { ActionData } from '../../shared/actionData';
 
 /** チャット履歴 1 件。 */
 interface ChatMessage {
@@ -42,12 +52,19 @@ const CHAT_CONTEXT = {
   capabilities: CAPABILITIES,
 };
 
+/** 保存された要望 1 件の形。text と at が文字列でなければ書き出しで落ちる。 */
+interface FeatureRequest {
+  readonly text: string;
+  readonly at: string;
+}
+const isFeatureRequest = (v: unknown): v is FeatureRequest => isRecord(v) && typeof v.text === 'string' && typeof v.at === 'string';
+
 function loadHistory(): ChatMessage[] {
   try {
     const raw = localStorage.getItem(HISTORY_KEY);
     if (!raw) return [];
-    const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as ChatMessage[]).slice(-HISTORY_MAX) : [];
+    // 保存値は型が守らない —— role / text の形が合う要素だけ (null が 1 つ混じると描画で落ちる)。
+    return chatMessages<ChatMessage>(JSON.parse(raw), ['user', 'bot'], HISTORY_MAX);
   } catch {
     return [];
   }
@@ -61,25 +78,36 @@ function saveHistory(messages: ChatMessage[]): void {
   }
 }
 
-function recordRequest(text: string): void {
+/**
+ * 要望を記録する。**成否を返す。**
+ *
+ * 返事は「最高戦略責任者 (CSO) 配下のバックログ候補として記録します」と言い切る。
+ * 2026-09-06 まで、ここは `catch {}` で失敗を捨てていた —— 容量超過や
+ * プライベートモードでは**記録しないまま「記録します」と答えていた**。
+ * すぐ上の `runIntent` には「`persisted: false` を見ずに『実行しました』と
+ * 言うな」(2026-08 監査) と書いてあるのに、同じ理屈がこちらには掛かっていなかった。
+ *
+ * 読み出しが壊れているときは空から積み直す —— その保存値はもう誰にも読めないので、
+ * 残しても取り出せず、残せば以後どの要望も記録できなくなる。
+ */
+function recordRequest(text: string): LocalWriteResult {
+  let list: FeatureRequest[] = [];
   try {
     const raw = localStorage.getItem(REQUESTS_KEY);
-    const parsed: unknown = raw ? JSON.parse(raw) : [];
-    const list = Array.isArray(parsed) ? (parsed as { text: string; at: string }[]) : [];
-    list.push({ text, at: new Date().toISOString() });
-    localStorage.setItem(REQUESTS_KEY, JSON.stringify(list));
+    list = arrayOf(raw ? JSON.parse(raw) : [], isFeatureRequest);
   } catch {
-    // 記録失敗は無視。
+    list = [];
   }
+  list.push({ text, at: new Date().toISOString() });
+  return writeLocalJson(REQUESTS_KEY, list);
 }
 
 /** 記録済み要望を Markdown でダウンロードする (オーケストレーション backlog 連携用)。 */
 function downloadRequests(): void {
-  let list: { text: string; at: string }[] = [];
+  let list: FeatureRequest[] = [];
   try {
     const raw = localStorage.getItem(REQUESTS_KEY);
-    const parsed: unknown = raw ? JSON.parse(raw) : [];
-    if (Array.isArray(parsed)) list = parsed as { text: string; at: string }[];
+    list = arrayOf(raw ? JSON.parse(raw) : [], isFeatureRequest);
   } catch {
     list = [];
   }
@@ -109,17 +137,13 @@ async function tryOllama(prompt: string): Promise<string | null> {
     }
   })();
   try {
-    const res = await window.serviceHub.invoke<{ response?: string; message?: string }>(
-      'ollama',
-      'chat',
-      { model, prompt },
-    );
-    if (res.ok) {
-      const data = res.data;
-      const text = data.response ?? data.message ?? '';
-      return text || null;
-    }
-    return null;
+    // 戻り値の型は台帳 (`ollama/chat` = 共有の `OllamaChatResult`) を読む (パス 113 / 117)。それまで
+    // `{ response?, message? }` と手で写しており、実物の `reply` を 1 度も読めていなかった —— Ollama の
+    // 答えは常に空として捨てられ、定型の「解釈できません」だけが出ていた。
+    const res = await window.serviceHub.invoke<ActionData<'ollama/chat'>>('ollama', 'chat', { model, prompt });
+    if (!res.ok) return null;
+    const text = res.data.reply.trim();
+    return text.length > 0 ? text : null;
   } catch {
     return null;
   }
@@ -161,6 +185,8 @@ export function ChatbotWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>(() => loadHistory());
   const [input, setInput] = useState('');
+  /* 貼り付けを黙って切らない (パス 175)。解釈できない入力は端末内のモデルへ回る (`tryOllama`)。 */
+  const inputOver = charsOverCeiling(input, MAX_OLLAMA_PROMPT_CHARS);
   const [busy, setBusy] = useState(false);
   const [pendingIntent, setPendingIntent] = useState<VoiceIntent | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
@@ -222,8 +248,12 @@ export function ChatbotWidget() {
 
     const reply: ChatReply = replyTo(text, CHAT_CONTEXT);
 
+    // 記録できなかったら、**その返事に足す** (別の場所に出すと、言い切った文と
+    // 離れてしまう)。返事の文面は `data/chatbot.ts` が持つので、ここでは足すだけ。
+    let storeNote = '';
     if (reply.kind === 'request') {
-      recordRequest(text);
+      const stored = recordRequest(text);
+      if (!stored.ok) storeNote = `\n\n⚠ ただし、この端末に記録できませんでした。${stored.message}`;
     }
 
     // 解釈不能のときだけ、Ollama 接続環境なら自由質問として LLM へ。
@@ -237,9 +267,25 @@ export function ChatbotWidget() {
       }
     }
 
-    append({ role: 'bot', text: reply.text, routedThrough: reply.routedThrough });
+    append({ role: 'bot', text: reply.text + storeNote, routedThrough: reply.routedThrough });
 
     if (reply.kind === 'action' && reply.intent) {
+      // **起こり得ないことに承認を求めない** (パス 109)。書き込み操作の必須項目は
+      // `intent.params` から来るが、解析器はそれを設定しない —— 2026-09-09 まで
+      // 「⚠ 書き込み操作のため、実行前に確認してください」と言って承認を取り、
+      // invoke は毎回「channel and text are required」で落ちていた。
+      // 判断は `shared/voiceWriteRequirements.ts` が 1 か所で持つ (音声も同じ物を読む)。
+      const refusal = voiceWriteRefusal(reply.intent.serviceId, reply.intent.action, reply.intent.params);
+      if (refusal !== null) {
+        const label = SERVICES.find((sv) => sv.id === reply.intent?.serviceId)?.label
+          ?? reply.intent.serviceId ?? '（サービス未特定）';
+        append({
+          role: 'bot',
+          text: `⚠ ${voiceWriteRefusalMessage(label, reply.intent.action ?? '', refusal)}`,
+        });
+        if (reply.navigateTo) navigateTo(reply.navigateTo);
+        return;
+      }
       if (reply.needsConfirmation) {
         setPendingIntent(reply.intent);
       } else {
@@ -355,6 +401,7 @@ export function ChatbotWidget() {
             ))}
           </div>
 
+          <CeilingNotice label="入力" value={input} max={MAX_OLLAMA_PROMPT_CHARS} />
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -377,7 +424,7 @@ export function ChatbotWidget() {
                 fontSize: 13,
               }}
             />
-            <button type="submit" className="primary" disabled={busy || !input.trim()}>
+            <button type="submit" className="primary" disabled={busy || !input.trim() || inputOver > 0}>
               送信
             </button>
           </form>

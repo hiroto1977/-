@@ -2,7 +2,7 @@
 title: "strategy-business.com"
 type: source-domain
 host: "strategy-business.com"
-cite_count: 3
+cite_count: 2
 tags:
   - source-domain
   - index
@@ -10,12 +10,11 @@ tags:
 
 # strategy-business.com
 
-> [!info] 出典ドメイン索引 ・ 引用 **3 件**（メディア 2 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **2 件**（メディア 1 ・ リファレンス 1）
 
 ## このドメインを出典とする項目
 
 - [[mgmt-bop|BOP（ベース・オブ・ザ・ピラミッド）]] — Prahalad&Hart(2002),"TheFortuneattheBottomofthePyramid,"strategy+busi…
-- [[mgmt-dynamic-capabilities|ダイナミック・ケイパビリティ]] — TheDynamicCapabilitiesofDavidTeece—strategy+business（ティース本人へのインタビュー）
 - [[mgmt-transient-advantage|一時的競争優位（トランジェント・アドバンテージ）]] — strategy+business:RitaGuntherMcGrathontheEndofCompetitiveAdvantage(li…
 
 ## 関連

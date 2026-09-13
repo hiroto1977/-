@@ -32,7 +32,7 @@ aliases:
 ## 関連概念
 - [[mgmt-organizational-justice-greenberg|組織的公正——分配・手続き・相互作用の三次元からなる職場の公正知覚]] — 語彙が近い
 - [[econ-hedonic-pricing-rosen|ヘドニック価格法（ローゼンの差別化財モデル）]] — 同分野の近傍
-- [[econ-public-choice-theory-buchanan|公共選択論と政治的市場の経済学——ブキャナンの自己利益政府モデル]] — 同分野の近傍
+- [[econ-public-choice-buchanan-tullock|公共選択論（ブキャナン＝タロック）——政治家・官僚・有権者も自己利益を追う合理的個人として政治的意思決定を経済学の方法で分析する]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

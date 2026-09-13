@@ -1,4 +1,5 @@
 import { useMemo, useState, useSyncExternalStore } from 'react';
+import { nortonBadgeLabel, nortonBadgeTone, nortonDetailsLine } from '../../shared/nortonDetection';
 import { describeScanUrlRisk } from '../../shared/scanTarget';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -18,6 +19,7 @@ import {
 import { buildDbSecurityReport } from '../../shared/dbSecurityPosture';
 import { currentDbSecurityInputs } from '../data/dbPosture';
 import { isAutoLockActive, subscribeAutoLockActive } from '../security/autoLock';
+import type { ActionData } from '../../shared/actionData';
 
 const GRADE_COLOR: Record<string, string> = {
   A: '#22c55e',
@@ -54,17 +56,7 @@ const inputStyle: React.CSSProperties = {
   flex: 1,
 };
 
-interface BreachResult {
-  email: string;
-  breaches: { name: string; title: string; date: string; pwnCount: number; dataClasses: string[] }[];
-}
-
-interface ScanResult {
-  url: string;
-  positives: number;
-  total: number;
-  reportUrl: string;
-}
+// 戻り値の形は台帳 `shared/actionData.ts` から読む (パス 116) —— 2026-09-09 まで 2 つとも手で写していた。
 
 export function SecurityPage() {
   const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
@@ -107,7 +99,7 @@ export function SecurityPage() {
   const [showBreach, setShowBreach] = useState(false);
   const [email, setEmail] = useState('');
   const [breachBusy, setBreachBusy] = useState(false);
-  const [breachResult, setBreachResult] = useState<BreachResult | null>(null);
+  const [breachResult, setBreachResult] = useState<ActionData<'security/check-email-breach'> | null>(null);
   const [breachError, setBreachError] = useState<string>();
 
   const checkBreach = async () => {
@@ -115,7 +107,7 @@ export function SecurityPage() {
     setBreachBusy(true);
     setBreachError(undefined);
     setBreachResult(null);
-    const res = await window.serviceHub.invoke<BreachResult>('security', 'check-email-breach', {
+    const res = await window.serviceHub.invoke<ActionData<'security/check-email-breach'>>('security', 'check-email-breach', {
       email: email.trim(),
     });
     setBreachBusy(false);
@@ -127,7 +119,7 @@ export function SecurityPage() {
   const [showScan, setShowScan] = useState(false);
   const [urlInput, setUrlInput] = useState('');
   const [scanBusy, setScanBusy] = useState(false);
-  const [scanResult, setScanResult] = useState<ScanResult | null>(null);
+  const [scanResult, setScanResult] = useState<ActionData<'security/scan-url'> | null>(null);
 
   // パスワード強度チェッカー (ローカル評価・送信しない)。
   const [pwInput, setPwInput] = useState('');
@@ -145,7 +137,7 @@ export function SecurityPage() {
     setScanBusy(true);
     setScanError(undefined);
     setScanResult(null);
-    const res = await window.serviceHub.invoke<ScanResult>('security', 'scan-url', {
+    const res = await window.serviceHub.invoke<ActionData<'security/scan-url'>>('security', 'scan-url', {
       url: urlInput.trim(),
     });
     setScanBusy(false);
@@ -180,11 +172,16 @@ export function SecurityPage() {
       <Section title="Norton 360">
         <div className="card" style={{ gap: 6 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span className={norton.installed ? 'badge ok' : 'badge warn'}>
-              {norton.installed ? 'Installed' : 'Not detected'}
+            {/*
+              「探して無かった」と「探せない」を分けて描く (パス 165)。
+              警告色は absent だけ —— 見ていない端末について警告を出さない。
+              文面と色は shared/nortonDetection.ts が 1 か所で持つ。
+            */}
+            <span className={`badge ${nortonBadgeTone(norton.detection)}`} data-norton-badge={norton.detection}>
+              {nortonBadgeLabel(norton.detection)}
             </span>
-            <span style={{ fontSize: 13 }}>
-              {norton.platform} · {norton.details}
+            <span style={{ fontSize: 13 }} data-norton-details>
+              {nortonDetailsLine(norton.detection, norton.platform, norton.details)}
             </span>
           </div>
           {norton.installPath ? (
@@ -398,6 +395,7 @@ export function SecurityPage() {
         </div>
         <input
           type="password"
+          autoComplete="off"
           placeholder="パスワードを入力して強度を確認"
           value={pwInput}
           onChange={(e) => setPwInput(e.target.value)}
@@ -569,8 +567,21 @@ export function SecurityPage() {
           </div>
           <div style={statCardStyle}>
             <div style={statLabelStyle}>誤検知 (無害を脅威と判定)</div>
-            <div style={{ ...statValueStyle, color: range.falsePositives === 0 ? '#22c55e' : '#ef4444' }}>
-              {range.falsePositives} 件
+            {/* **無害ケースを 1 件も評価していないなら緑にしない。**
+                「誤検知 0 件」は目標達成の印だが、測っていなければ達成ではない
+                (パス 68 で自己検査に置いた床と同じ規則)。 */}
+            <div
+              style={{
+                ...statValueStyle,
+                color:
+                  range.benignChecked === 0
+                    ? 'var(--text-mute)'
+                    : range.falsePositives === 0
+                      ? '#22c55e'
+                      : '#ef4444',
+              }}
+            >
+              {range.benignChecked === 0 ? '未測定' : `${range.falsePositives} 件`}
             </div>
           </div>
           <div style={statCardStyle}>

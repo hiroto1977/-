@@ -24,7 +24,7 @@
  */
 
 import { floorHundred } from './num';
-import { TWENTY_PERCENT_RATE } from './taxConsumption';
+import { THIRTY_PERCENT_RATE, TWENTY_PERCENT_RATE } from './taxConsumption';
 
 /** 現行法における消費税（国税）の割合。標準10% = 国税7.8% + 地方2.2%。 */
 export const NATIONAL_SHARE = 0.78;
@@ -32,11 +32,30 @@ export const NATIONAL_SHARE = 0.78;
 export const LOCAL_RATIO = 22 / 78;
 
 /**
+ * 国税分の割合の下限。**この値で割るので 0 は許せない。**
+ *
+ * `localRatioOf` は地方消費税の比を `(1 − 割合) ÷ 割合` で作る。割合が 0 なら
+ * 商は Infinity になり、`calcAnnualTax` の `local` / `total` を通って
+ * 税ページに「¥Infinity」が出る (`jpy()` は非有限値を弾かない)。
+ * 台帳 `consumptionSchedule.nationalShare` の下限はこの定数を参照する ——
+ * 下限が 0 になった日に画面が壊れる、という関係をコードに残すため。
+ * 割合そのものは法律の区分 (7.8 / 10) で、下限は算術上の制約である。
+ */
+export const MIN_NATIONAL_SHARE = 0.01;
+
+/**
  * 国税分の割合から地方消費税の比 (既定 22/78) を作る。百万分率の整数比で割るので、
  * 既定の 0.78 では `22 / 78` と同じ double になる (1 − 0.78 の丸め誤差を持ち込まない)。
+ *
+ * 割合は `[MIN_NATIONAL_SHARE, 1]` に丸める (非有限値は下限扱い)。台帳の検査が
+ * 範囲外を落とすので通常は素通りするが、**割る値の守りを呼ばれる側にも置く** ——
+ * 台帳の下限を 1 行下げるだけで画面に ∞ が出る形にはしない。
  */
 export function localRatioOf(nationalShare: number): number {
-  const ppm = Math.round(nationalShare * 1_000_000);
+  const share = Number.isFinite(nationalShare)
+    ? Math.min(1, Math.max(MIN_NATIONAL_SHARE, nationalShare))
+    : MIN_NATIONAL_SHARE;
+  const ppm = Math.round(share * 1_000_000);
   return (1_000_000 - ppm) / ppm;
 }
 
@@ -51,6 +70,8 @@ export interface ScheduleParams {
   readonly nationalShare: number;
   /** 2 割特例で納める割合 (売上税額 × 20%)。 */
   readonly twentyPercentRate: number;
+  /** 3 割特例で納める割合 (売上税額 × 30%・個人事業者の令和 9 年分/10 年分)。 */
+  readonly thirtyPercentRate: number;
   /** これ以下なら中間申告なし。 */
   readonly interimTier1: number;
   /** これ以下なら年 1 回。 */
@@ -62,6 +83,7 @@ export interface ScheduleParams {
 export const DEFAULT_SCHEDULE_PARAMS: ScheduleParams = {
   nationalShare: NATIONAL_SHARE,
   twentyPercentRate: TWENTY_PERCENT_RATE,
+  thirtyPercentRate: THIRTY_PERCENT_RATE,
   interimTier1: INTERIM_TIER1,
   interimTier2: INTERIM_TIER2,
   interimTier3: INTERIM_TIER3,
@@ -71,7 +93,7 @@ export const DEFAULT_SCHEDULE_PARAMS: ScheduleParams = {
 export const MAX_RATE = 0.5;
 
 export type FilerKind = 'individual' | 'corporate';
-export type TaxMethod = 'standard' | 'simplified' | 'twenty-percent';
+export type TaxMethod = 'standard' | 'simplified' | 'twenty-percent' | 'thirty-percent';
 
 /** 還付額の端数処理: 1円未満切捨て。ただし 1円未満の正値は 1円とする。 */
 export function roundRefund(n: number): number {
@@ -274,6 +296,8 @@ export function calcAnnualTax(input: ScheduleInput, rate: number, p: SchedulePar
     deductibleNational = salesTaxNational * Math.min(Math.max(input.deemedPurchaseRate, 0), 1);
   } else if (input.method === 'twenty-percent') {
     deductibleNational = salesTaxNational * (1 - p.twentyPercentRate);
+  } else if (input.method === 'thirty-percent') {
+    deductibleNational = salesTaxNational * (1 - p.thirtyPercentRate);
   } else {
     deductibleNational = purchases * r * p.nationalShare;
   }
@@ -474,6 +498,8 @@ export function breakEvenRate(input: ScheduleInput, p: ScheduleParams = DEFAULT_
     base = sales * (1 - Math.min(Math.max(input.deemedPurchaseRate, 0), 1));
   } else if (input.method === 'twenty-percent') {
     base = sales * p.twentyPercentRate;
+  } else if (input.method === 'thirty-percent') {
+    base = sales * p.thirtyPercentRate;
   } else {
     base = sales - Math.max(0, input.taxablePurchases);
   }

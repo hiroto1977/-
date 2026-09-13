@@ -26,7 +26,7 @@ aliases:
 リタ・ガンター・マグレイス（Rita Gunther McGrath, 2013）／マイケル・ポーター（対比）／リチャード・ダベニ（関連）
 
 ## 出典
-- [Rita Gunther McGrath, "Transient Advantage," Harvard Business Review, June 2013](https://hbr.org/2013/06/transient-advantage) `学術`
+- [Rita Gunther McGrath, "Transient Advantage," Harvard Business Review, June 2013](https://hbr.org/2013/06/transient-advantage) `メディア`
 - [Rita McGrath — The End of Competitive Advantage (HBR Press, 2013)](https://www.ritamcgrath.com/book/the-end-of-competitive-advantage/) `リファレンス`
 - [strategy+business: Rita Gunther McGrath on the End of Competitive Advantage (lifecycle stages)](https://www.strategy-business.com/article/00239) `メディア`
 
@@ -34,13 +34,13 @@ aliases:
 - [[mgmt-hypercompetition|ハイパーコンペティション]] — 同じ思想家
 - [[econ-porter-hypothesis|ポーター仮説——適切な環境規制がイノベーションを通じて競争力を高める]] — 同じ思想家
 - [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同じ思想家
-- [[mgmt-corporate-social-responsibility-csr|企業の社会的責任（CSR）とステークホルダー資本主義の経営論]] — 同じ思想家
 - [[mgmt-diamond-model-porter|ポーターのダイヤモンドモデル——国の競争優位を生む四つの決定要因]] — 同じ思想家
 - [[mgmt-discovery-driven-planning|発見志向計画法（ディスカバリー・ドリブン・プランニング）]] — 同じ思想家
 - [[mgmt-generic-strategies-porter|ポーターの基本戦略——コスト・リーダーシップ・差別化・集中]] — 同じ思想家
+- [[mgmt-organizational-decline-weitzel|組織衰退（ウェイツェル＝ヨンソンの五段階モデル）——盲目・不作為・誤った行動・危機・解体と進み、段階が進むほど反転が難しくなる衰退の動態]] — 同じ思想家
 - [[mgmt-playing-to-win-lafley-martin|プレイング・トゥ・ウィン——五つの選択からなる戦略のカスケード]] — 同じ思想家
 - [[mgmt-portfolio-matrix-bcg-growth-share|BCGポートフォリオマトリクス——市場成長率と相対シェアによる事業資源配分フレームワーク]] — 同じ思想家
-- [[mgmt-stakeholder-integration-freeman|ステークホルダー統合戦略（フリーマン）]] — 同じ思想家
+- [[mgmt-strategic-group-theory|戦略グループ（ハント／ケイブス＆ポーター）——同一産業内で似た戦略をとる企業群を単位に、移動障壁がグループ間の収益差を持続させる]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

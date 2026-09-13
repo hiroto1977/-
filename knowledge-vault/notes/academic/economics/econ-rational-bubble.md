@@ -31,6 +31,7 @@ aliases:
 - [Federal Reserve Bank of Chicago, Economic Perspectives — Why Bubbles Occur (Blanchard-Watson, Tirole)](https://www.chicagofed.org/publications/economic-perspectives/2025/3) `公的`
 
 ## 関連概念
+- [[econ-blanchard-quah-long-run-restrictions|ブランシャール＝クアの長期制約による構造VAR識別——需要ショックと供給ショックの分解]] — 同じ思想家
 - [[econ-hysteresis|ヒステリシス（履歴効果）]] — 同じ思想家
 - [[econ-hysteresis-macroeconomics|マクロ経済学的ヒステリシス（Macroeconomic Hysteresis）]] — 同じ思想家
 - [[econ-eurosclerosis-giersch|ユーロスクレローシス——欧州経済の構造的硬直性と高失業の持続]] — 同じ思想家
@@ -40,7 +41,6 @@ aliases:
 - [[econ-fiscal-policy-automatic-stabilizers|財政政策と自動安定化装置——ビルトイン・スタビライザーとケインズ的裁量的財政出動]] — 同じ思想家
 - [[econ-hysteresis-blanchard|履歴効果（ヒステリシス）——景気循環が潜在産出量に与える永続的影響]] — 同じ思想家
 - [[econ-hysteresis-unemployment|失業のヒステリシス（Hysteresis in Unemployment）]] — 同じ思想家
-- [[econ-new-keynesian|ニュー・ケインジアン経済学]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

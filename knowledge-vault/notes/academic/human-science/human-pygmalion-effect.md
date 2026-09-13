@@ -26,7 +26,7 @@ aliases:
 ロバート・ローゼンタール & レノア・ジェイコブソン（1968『Pygmalion in the Classroom』）／批判: Thorndike(1968)・Snow(1969)
 
 ## 出典
-- [EBSCO Research Starters — Pygmalion effect (Rosenthal effect)](https://www.ebsco.com/research-starters/education/pygmalion-effect-rosenthal-effect) `学術`
+- [EBSCO Research Starters — Pygmalion effect (Rosenthal effect)](https://www.ebsco.com/research-starters/education/pygmalion-effect-rosenthal-effect) `リファレンス`
 - [Wikipedia — Pygmalion in the Classroom（1968研究と方法論批判）](https://en.wikipedia.org/wiki/Pygmalion_in_the_Classroom) `リファレンス`
 - [Educational Research and Evaluation (2018) — Expectation effects: Pygmalion（査読・効果と限界）](https://www.tandfonline.com/doi/abs/10.1080/13803611.2018.1548817) `学術`
 

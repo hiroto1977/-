@@ -39,7 +39,7 @@ aliases:
 - [[econ-rational-addiction|合理的依存]] — 同じ思想家
 - [[bizlaw-economic-analysis-of-law|法の経済分析（Economic Analysis of Law）：ポズナーの法と経済学派]] — 同じ思想家
 - [[econ-bandwagon-snob|バンドワゴン効果・スノッブ効果]] — 同じ思想家
-- [[econ-central-bank-independence-kydland|中央銀行の独立性と時間非一貫性問題——キドランド＝プレスコットの規則対裁量論]] — 同じ思想家
+- [[econ-convergence-hypothesis|収束仮説——資本の収穫逓減が貧しい経済の追い上げを駆動する]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -39,7 +39,7 @@ aliases:
 - [[econ-nucleolus-schmeidler|仁（ニュークレオラス）——最も不満な連合の不満を最小にする配分]] — 同じ思想家
 - [[econ-repugnant-markets-roth|忌避される市場——道徳が市場に課す制約]] — 同じ思想家
 - [[econ-shapley-folkman-lemma|シャプリー＝フォルクマンの補題——多数の和は近似的に凸になる]] — 同じ思想家
-- [[econ-menu-costs|メニューコスト]] — 同分野の近傍
+- [[infosoc-differential-privacy-dwork|差分プライバシー——個人1件の有無が出力をほぼ変えないことを数式で保証するプライバシーの数理的定義]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

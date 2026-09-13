@@ -6,24 +6,30 @@ import {
 } from '../data/manualData';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
-import { Stat } from '../components/Stat';
+import { Stat, positiveIfKnown } from '../components/Stat';
 import { ServiceActionPanel } from '../components/ServiceActionPanel';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import {
   PROPERTIES_COLLECTION,
+  normalizeProperty,
   PROPERTY_TYPES,
   parsePropertyEntry,
   propertyToForm,
   computeRealEstatePortfolio,
+  demoMixNote,
+  occupiedWithoutRentNote,
+  yieldScopeNote,
   type PropertyEntry,
 } from '../data/investments';
 import { jpy } from '../../shared/formatters';
 import { GuardedNumber } from '../components/GuardedNumber';
-import { readNumberOr0, type NumSpec } from '../data/inputGuards';
+import { readNumberOr0, readNumberOrNull, type NumSpec } from '../data/inputGuards';
 import { useParameters } from '../data/parameterOverrides';
-import { dscrThresholds, effluentStandards, zoningRules } from '../../shared/parameters';
+import { advisorThresholds, dscrThresholds, effluentStandards, zoningRules } from '../../shared/parameters';
+import type { RealEstateAdviceInput } from '../../shared/serviceAdvisor';
 import {
   calcRealEstateYield,
   calcRealEstateLeverage,
@@ -32,6 +38,8 @@ import {
   calcBreakEvenOccupancyPct,
   calcNpv,
   calcIrr,
+  fullLeverageNote,
+  missingPriceNote,
 } from '../../shared/realEstateMetrics';
 import { MAX_SCHEDULE_YEARS, isSchedulableLife, straightLineAnnual } from '../../shared/depreciation';
 import {
@@ -44,7 +52,7 @@ import {
   planSetbackTradeoff,
   SHADOW_HEIGHT_THRESHOLD_M,
 } from '../../shared/zoningPlanner';
-import { buildSchematicFloors } from '../../shared/buildingIso';
+import { buildSchematic } from '../../shared/buildingIso';
 
 /** しきい値の表示: 1 → 1.0、1.2 → 1.2、1.25 → 1.25 (末尾の 0 を 1 つだけ落とす)。 */
 function fmtDscr(x: number): string {
@@ -73,8 +81,25 @@ const reInputStyle: React.CSSProperties = {
 // 読み取りは inputGuards に統一。警告 (GuardedNumber) と計算が同じ関数を使うので、
 // 「警告は出ないのに 0 で計算されていた」が起きない。
 const reNum = readNumberOr0;
+/** `allowZero` を持たない欄 (0 は fatal) はこちらで読む —— 空欄と 0 は別。 */
+const reNumOrNull = readNumberOrNull;
 
 const jpyM = (n: number) => `¥${(n / 1_000_000).toFixed(1)}M`;
+/**
+ * 比率。**算定不能 (null) は「—」** —— `0.0%` は「その比率が 0 である」という
+ * 主張であり、「割れない」とは別のこと (経緯は `data/investments.ts` の
+ * `portfolioYield`)。
+ */
+const pct1OrDash = (n: number | null, digits = 1) => (n === null ? '—' : `${n.toFixed(digits)}%`);
+/**
+ * L 表記。**算定不能 (null) は「—」** —— 未入力から「0 L」という測定値を作らない。
+ * (RO 回収率を空にすると「年間節水量 0 L」= 循環設備が何も回収していない、に見えた。)
+ */
+const litersOrDash = (n: number | null) => (n === null ? '—' : `${Math.round(n).toLocaleString()} L`);
+/** 長さ・面積。**算定不能 (null) は「—」** —— `0 m` / `0 ㎡` は「そこには何も建てられない」
+ *  という都市計画上の主張で、寸法を知らないまま述べられない。 */
+const metresOrDash = (n: number | null) => (n === null ? '—' : `${n.toLocaleString()} m`);
+const sqmOrDash = (n: number | null) => (n === null ? '—' : `${n.toLocaleString()} ㎡`);
 
 /** 敷地プランナーの用途地域プリセット (指定値は土地ごとに異なるため編集可)。 */
 const ZONE_PRESETS = [
@@ -106,24 +131,39 @@ export function RealEstatePage() {
   const [propError, setPropError] = useState<string>();
   /** 編集中のユーザー物件 id (null = 新規追加モード)。 */
   const [editingPropId, setEditingPropId] = useState<string | null>(null);
+  const submit = useSubmitGuard();
 
   /** デモ (snapshot) 行 + ユーザー行の結合リスト。 */
   const properties = useMemo(
     () => [
       ...data.properties.map((p) => ({ ...p, rowId: p.id, user: false as const })),
-      ...userProps.map((r) => ({ ...r.data, rowId: r.id, user: true as const })),
+      // 欄の無い控えも 0 と読んでから使う (`normalizeProperty` の 1 か所だけで補う)。
+      ...userProps.map((r) => ({ ...normalizeProperty(r.data), rowId: r.id, user: true as const })),
     ],
     [data.properties, userProps],
   );
 
-  // ポートフォリオ集計は結合リストから再計算する (追加ゼロなら snapshot と同値)。
+  /*
+   * ポートフォリオ集計は結合リストから再計算する (追加ゼロなら snapshot と同値)。
+   *
+   * **`demo` を渡す** (パス 187) —— 合計は見本を含むが、見本を除いた側も
+   * 一緒に返させて画面が並べる。渡さないと「自分の物件 1 件 (家賃 9 万・
+   * 経費 3 万・返済 5.5 万) の人に 家賃収入 ¥913,000・キャッシュフロー
+   * +¥248,000」と出す —— 自分の分は ¥90,000 と +¥5,000 である。
+   */
   const computedPortfolio = useMemo(
-    () => computeRealEstatePortfolio(properties, monthlyCashflow.operatingExpenses, monthlyCashflow.mortgagePayment),
+    () =>
+      computeRealEstatePortfolio(
+        properties.map((p) => ({ ...p, demo: !p.user })),
+        monthlyCashflow.operatingExpenses,
+        monthlyCashflow.mortgagePayment,
+      ),
     [properties, monthlyCashflow.operatingExpenses, monthlyCashflow.mortgagePayment],
   );
   // 手入力の上書きを重ねる。入力欄は App が全画面共通で描くので、ここは
   // 読んで適用するだけ。
   const manualOverrides = useCollection<ManualOverrideEntry>(MANUAL_OVERRIDES_COLLECTION);
+
   const manualRecords = manualOverrides.records;
   const portfolio = useMemo(
     () =>
@@ -131,6 +171,12 @@ export function RealEstatePage() {
         .overview,
     [computedPortfolio, manualRecords],
   );
+  // 平均の分母から外した物件・家賃が読めない入居中の物件を述べる 2 文
+  // (文面は `data/investments.ts` が 1 か所で持つ)。
+  const yieldNote = useMemo(() => yieldScopeNote(portfolio), [portfolio]);
+  const rentNote = useMemo(() => occupiedWithoutRentNote(portfolio), [portfolio]);
+  /** 合計に見本が混ざっていることの断り (自分の分の数字つき · パス 187)。 */
+  const mixNote = useMemo(() => demoMixNote(portfolio, jpy), [portfolio]);
 
   async function onSaveProperty() {
     try {
@@ -173,6 +219,10 @@ export function RealEstatePage() {
     const lev = calcRealEstateLeverage(y.annualNetIncome, reNum(reEquityStr), reNum(reDebtStr), y.netYieldPct, reNum(reLoanRateStr));
     return { y, lev };
   }, [reRentStr, rePriceStr, reExpenseStr, reEquityStr, reDebtStr, reLoanRateStr]);
+  // 出せなかった理由は**値を作った所**が持つ (画面が条件を書き写すと、値と関門で
+  // 別々に規則を持つことになる —— パス 57 で当たった形)。
+  const priceNote = useMemo(() => missingPriceNote(leverage.y), [leverage.y]);
+  const leverageNote = useMemo(() => fullLeverageNote(leverage.lev), [leverage.lev]);
 
   // 精緻化指標 (NOI 利回り・DSCR・損益分岐入居率) — レバレッジ試算の入力を再利用。
   const [reOccStr, setReOccStr] = useState('95'); // 想定入居率 (%)
@@ -181,6 +231,26 @@ export function RealEstatePage() {
   const dscrT = useMemo(() => dscrThresholds(params), [params]);
   const zRules = useMemo(() => zoningRules(params), [params]);
   const effStd = useMemo(() => effluentStandards(params), [params]);
+  // 改善提案の元になる数字 —— **画面が刷っている物をそのまま渡す** (提案が言う数字と
+  // タイル・表の数字を一致させる。パス 119 までは payload を読まない固定文だった)。
+  // 表面利回りは表と同じ `calcRealEstateYield` の値 (取得価格が読めない行は null = 「—」)。
+  const advisorT = useMemo(() => advisorThresholds(params), [params]);
+  const adviseInput = useMemo<RealEstateAdviceInput>(
+    () => ({
+      properties: properties.map((p) => ({
+        name: p.name,
+        occupied: p.occupied,
+        monthlyRent: p.monthlyRent,
+        grossYieldPct: calcRealEstateYield(p.monthlyRent, p.purchasePrice, p.occupied ? 1 : 0).grossYieldPct,
+        demo: !p.user,
+      })),
+      netCashflow: portfolio.netCashflow,
+      portfolioYieldPct: portfolio.portfolioYield,
+      occupancyRate: portfolio.occupancyRate,
+      thresholds: advisorT,
+    }),
+    [properties, portfolio, advisorT],
+  );
   const refined = useMemo(() => {
     const annualGrossRent = reNum(reRentStr) * 12;
     const occ = Math.min(1, Math.max(0, reNum(reOccStr) / 100));
@@ -272,8 +342,10 @@ export function RealEstatePage() {
       ...(zpShadowArea === 'unknown' ? {} : { designatedArea: zpShadowArea === 'yes' }),
     });
     const tradeoff = planSetbackTradeoff({
-      siteDepthM: reNum(zpSiteDepthStr),
-      siteWidthM: reNum(zpSiteWidthStr),
+      // 欄は `kind: 'length'` (= `allowZero` 無し) なので 0 は受け付けない値。
+      // `reNum` で 0 に倒すと、空欄が「建てられる面積 0 ㎡」という判定になる。
+      siteDepthM: reNumOrNull(zpSiteDepthStr),
+      siteWidthM: reNumOrNull(zpSiteWidthStr),
       rearSetbackM: reNum(zpRearStr),
       sideSetbackTotalM: reNum(zpSideStr),
       maxFootprint: site.maxFootprint,
@@ -283,12 +355,20 @@ export function RealEstatePage() {
     }, zRules);
     // 立体プレビューは「実際に建てられる寸法」で組む。トレードオフが建蔽率で
     // 頭打ちなら、幅はそのままで奥行を建蔽率上限に合わせて詰める。
+    // 寸法が未入力 (null) なら**描かない** —— 0×0 の箱を描いて
+    // 「間口 0 m × 奥行 0 m で…の概形」と説明するのは、未入力から作った図である。
     const isoWidth = tradeoff.buildableWidthM;
     const isoDepth =
-      isoWidth > 0 ? Math.min(tradeoff.buildableDepthM, tradeoff.footprint / isoWidth) : 0;
-    const schematic = buildSchematicFloors({
-      widthM: isoWidth,
-      depthM: isoDepth,
+      isoWidth === null || tradeoff.buildableDepthM === null || tradeoff.footprint === null
+        ? null
+        : isoWidth > 0
+          ? Math.min(tradeoff.buildableDepthM, tradeoff.footprint / isoWidth)
+          : 0;
+    const schematic = buildSchematic({
+      // 未入力は 0 として渡す (`buildSchematic` は 0 以下で階を作らない)。
+      // 描画そのものは下の関門で止めるので、この 0 は画面に出ない。
+      widthM: isoWidth ?? 0,
+      depthM: isoDepth ?? 0,
       workshopSqm: factory.workshopArea,
       groundOtherSqm: factory.groundFloorOther,
       upperFloorsSqm: factory.upperFloorsArea,
@@ -380,10 +460,24 @@ export function RealEstatePage() {
       <Section title="ポートフォリオ KPI" count={4}>
         <div className="stat-grid" style={{ marginBottom: 16 }}>
           <Stat label="月次キャッシュフロー" value={jpy(portfolio.netCashflow)} positive={portfolio.netCashflow >= 0} />
-          <Stat label="ポートフォリオ利回り" value={`${portfolio.portfolioYield.toFixed(1)}%`} />
-          <Stat label="入居率" value={`${(portfolio.occupancyRate * 100).toFixed(0)}%`} />
+          <Stat label="ポートフォリオ利回り" value={pct1OrDash(portfolio.portfolioYield)} />
+          <Stat label="入居率" value={pct1OrDash(portfolio.occupancyRate === null ? null : portfolio.occupancyRate * 100, 0)} />
           <Stat label="月次家賃収入 (実績)" value={jpy(portfolio.grossRent)} />
         </div>
+        {/* **なぜ件数が合わないか**を述べる。文面は `data/investments.ts` が 1 か所で持つ
+            (数字だけ直しても、読み手には物件数と平均の分母の違いが読めない)。 */}
+        {(yieldNote !== null || rentNote !== null || mixNote !== null) && (
+          <div
+            data-portfolio-scope
+            role="alert"
+            style={{ fontSize: 12, lineHeight: 1.7, color: 'var(--text-mute)', marginBottom: 12 }}
+          >
+            {/* **合計の中身**を先に言う (見本が混ざっているか・自分の分はいくらか)。 */}
+            {mixNote !== null && <div data-portfolio-demo-mix>⚠ {mixNote}</div>}
+            {yieldNote !== null && <div>⚠ {yieldNote}</div>}
+            {rentNote !== null && <div>⚠ {rentNote}</div>}
+          </div>
+        )}
       </Section>
 
       <Section title={editingPropId !== null ? `物件を編集中 — ${propForm.name || '(無題)'}` : '物件を追加 (任意・この端末に保存)'}>
@@ -419,7 +513,7 @@ export function RealEstatePage() {
               onChange={(e) => setPropForm((f) => ({ ...f, occupied: e.target.checked }))} />
             入居中
           </label>
-          <button type="button" onClick={onSaveProperty}>
+          <button type="button" onClick={() => void submit.run(onSaveProperty)} disabled={submit.busy}>
             {editingPropId !== null ? '保存 (自動反映)' : '＋ 物件を追加'}
           </button>
           {editingPropId !== null && (
@@ -461,8 +555,10 @@ export function RealEstatePage() {
                 <td style={tdStyle}>{p.type}</td>
                 <td style={tdNum}>{jpy(p.monthlyRent)}</td>
                 <td style={tdNum}>{jpyM(p.purchasePrice)}</td>
-                <td style={tdNum}>{y.grossYieldPct.toFixed(1)}%</td>
-                <td style={tdNum}>{y.netYieldPct.toFixed(1)}%</td>
+                {/* 価格が読めない行は「—」。パス 54 は平均だけを直して**行を残していた** ——
+                    平均が測れた物件だけで出るなら、行も測れなかったことを言う。 */}
+                <td style={tdNum}>{pct1OrDash(y.grossYieldPct)}</td>
+                <td style={tdNum}>{pct1OrDash(y.netYieldPct)}</td>
                 <td style={tdStyle}>
                   <span style={{ color: p.occupied ? '#22c55e' : '#ef4444', fontWeight: 600 }}>
                     {p.occupied ? '● 入居中' : '○ 空室'}
@@ -487,7 +583,7 @@ export function RealEstatePage() {
         </table>
       </Section>
 
-      <ServiceActionPanel serviceId="real-estate" serviceLabel="不動産投資" />
+      <ServiceActionPanel serviceId="real-estate" serviceLabel="不動産投資" adviseInput={adviseInput} />
 
       <Section title="月次キャッシュフロー内訳" count={4}>
         <table style={tableStyle}>
@@ -527,11 +623,28 @@ export function RealEstatePage() {
           ))}
         </div>
         <div className="stat-grid">
-          <Stat label="実質利回り" value={`${leverage.y.netYieldPct}%`} />
+          <Stat label="実質利回り" value={pct1OrDash(leverage.y.netYieldPct, 2)} />
           <Stat label="返済後CF (年)" value={jpy(leverage.lev.annualCashflow)} positive={leverage.lev.annualCashflow >= 0} />
-          <Stat label="CCR (自己資金回収率)" value={`${leverage.lev.cashOnCashReturnPct}%`} />
-          <Stat label="イールドギャップ" value={`${leverage.lev.yieldGapPct}%`} positive={leverage.lev.yieldGapPct >= 0} />
+          <Stat label="CCR (自己資金回収率)" value={pct1OrDash(leverage.lev.cashOnCashReturnPct, 2)} />
+          {/* **算定不能から判定を作らない。** `positive` は色 (緑/赤) を決めるので、
+              null に `?? 0` を当てると「ちょうど 0 = 正レバレッジ」と塗ってしまう。
+              出せないときは色を付けない (undefined を渡す)。 */}
+          <Stat
+            label="イールドギャップ"
+            value={pct1OrDash(leverage.lev.yieldGapPct, 2)}
+            positive={positiveIfKnown(leverage.lev.yieldGapPct)}
+          />
         </div>
+        {(leverageNote !== null || priceNote !== null) && (
+          <div
+            data-leverage-scope
+            role="alert"
+            style={{ marginTop: 10, padding: '8px 12px', background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 6, fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.7 }}
+          >
+            {priceNote !== null && <div>⚠ {priceNote}</div>}
+            {leverageNote !== null && <div>⚠ {leverageNote}</div>}
+          </div>
+        )}
       </Section>
 
       <Section title="精緻化指標 (NOI 利回り・DSCR・損益分岐入居率)">
@@ -573,8 +686,8 @@ export function RealEstatePage() {
           ))}
         </div>
         <div className="stat-grid">
-          <Stat label={`NPV (${dcf.years}年・割引後)`} value={dcf.npv === null ? '—' : jpy(dcf.npv)} positive={(dcf.npv ?? 0) >= 0} />
-          <Stat label="IRR (年率概算)" value={dcf.irr === null ? '—' : `${(dcf.irr * 100).toFixed(2)}%`} positive={(dcf.irr ?? 0) >= 0} />
+          <Stat label={`NPV (${dcf.years}年・割引後)`} value={dcf.npv === null ? '—' : jpy(dcf.npv)} positive={positiveIfKnown(dcf.npv)} />
+          <Stat label="IRR (年率概算)" value={dcf.irr === null ? '—' : `${(dcf.irr * 100).toFixed(2)}%`} positive={positiveIfKnown(dcf.irr)} />
           <Stat label="返済後CF (年・前提)" value={jpy(leverage.lev.annualCashflow)} positive={leverage.lev.annualCashflow >= 0} />
         </div>
       </Section>
@@ -699,24 +812,78 @@ export function RealEstatePage() {
         </div>
         <div className="stat-grid" style={{ marginBottom: 10 }}>
           <Stat label="斜線を通す最小後退" value={`${zoning.tradeoff.requiredSetbackM.toLocaleString()} m`} />
-          <Stat label="建てられる奥行" value={`${zoning.tradeoff.buildableDepthM.toLocaleString()} m`} />
-          <Stat label="建てられる間口" value={`${zoning.tradeoff.buildableWidthM.toLocaleString()} m`} />
+          <Stat label="建てられる奥行" value={metresOrDash(zoning.tradeoff.buildableDepthM)} />
+          <Stat label="建てられる間口" value={metresOrDash(zoning.tradeoff.buildableWidthM)} />
+          {/* **ラベルも主張である。** 「寸法で決まる」は寸法が拘束条件だと述べる文なので、
+              寸法が未入力のときは何が縛っているかを名指ししない。 */}
           <Stat
-            label={zoning.tradeoff.limitedBy === 'coverage' ? '建築面積 (建ぺい率で頭打ち)' : '建築面積 (寸法で決まる)'}
-            value={`${zoning.tradeoff.footprint.toLocaleString()} ㎡`}
+            label={
+              zoning.tradeoff.limitedBy === null
+                ? '建築面積'
+                : zoning.tradeoff.limitedBy === 'coverage'
+                  ? '建築面積 (建ぺい率で頭打ち)'
+                  : '建築面積 (寸法で決まる)'
+            }
+            value={sqmOrDash(zoning.tradeoff.footprint)}
           />
         </div>
+        {/* **未入力から「建てられない敷地」を作らない。** 欄は `kind: 'length'` なので
+            0 は受け付けない値であり、空欄は「まだ分からない」である。 */}
+        {zoning.tradeoff.footprint === null && (
+          <div data-site-dimensions-unset style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 10 }}>
+            敷地の{zoning.tradeoff.buildableDepthM === null && zoning.tradeoff.buildableWidthM === null
+              ? '奥行と間口'
+              : zoning.tradeoff.buildableDepthM === null
+                ? '奥行'
+                : '間口'}が未入力のため、建てられる寸法と建築面積は算定していません（測量図の値を入力してください）。
+            斜線を通す最小後退 {zoning.tradeoff.requiredSetbackM} m は道路幅員・用途区分・計画高さだけで決まるので、寸法に依らず有効です。
+          </div>
+        )}
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 14 }}>
           高さを下げると必要な後退が減り、その分だけ奥行を使えます。建ぺい率の上限に当たるまでは、高さを削るほど建築面積が増えます。
         </div>
 
         <div style={{ fontSize: 12, fontWeight: 700, margin: '10px 0 8px' }}>🧊 立体プレビュー (分解アイソメ)</div>
-        <BuildingIso
-          widthM={zoning.isoWidth}
-          depthM={zoning.isoDepth}
-          floors={zoning.schematic}
-          caption={`模式図です。間口 ${zoning.isoWidth.toLocaleString()} m × 奥行 ${zoning.isoDepth.toLocaleString()} m で、作業場を 1 階に敷き、残る延べ床を上階へ積んだ場合の概形。作業場を上階に置くと 150 ㎡ の合計制限を超えるため、緑は 1 階にしか出ません。`}
-        />
+        {/* 寸法が未入力なら**描かない**。0×0 の箱と「間口 0 m × 奥行 0 m で…の概形」は、
+            未入力から作った図であって「建てられない」の図ではない。 */}
+        {zoning.isoWidth === null || zoning.isoDepth === null ? (
+          <div data-iso-unset style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 14 }}>
+            敷地の奥行と間口が未入力のため、立体プレビューは描いていません（寸法を入力すると概形が出ます）。
+          </div>
+        ) : (
+          <>
+            {/* **図が延べ床を全部載せられなかったら言う。** この図の主題は
+                「上階に何層積むことになるか」なので、層を落とすことは主題を
+                落とすこと (パス 104)。数字は図の値から出す — 写さない。 */}
+            {zoning.schematic.unplacedSqm > 0 && (
+              <div
+                role="alert"
+                data-iso-truncated
+                style={{
+                  fontSize: 12,
+                  lineHeight: 1.6,
+                  marginBottom: 10,
+                  padding: '8px 10px',
+                  borderRadius: 6,
+                  border: '1px solid var(--warn, #d97706)',
+                  color: 'var(--warn, #d97706)',
+                }}
+              >
+                ⚠ この延べ床には <b>{zoning.schematic.floorsNeeded.toLocaleString()} 階</b>{' '}
+                必要ですが、立体プレビューは <b>{zoning.schematic.floors.length.toLocaleString()} 階</b>{' '}
+                までしか描けません。<b>{zoning.schematic.unplacedSqm.toLocaleString()} ㎡</b>{' '}
+                が図に含まれていないため、<b>図の高さと床面積を実際の計画として読まないでください</b>
+                （下の「2階以上に回せる面積」が正しい数字です）。
+              </div>
+            )}
+            <BuildingIso
+              widthM={zoning.isoWidth}
+              depthM={zoning.isoDepth}
+              floors={zoning.schematic.floors}
+              caption={`模式図です。間口 ${zoning.isoWidth.toLocaleString()} m × 奥行 ${zoning.isoDepth.toLocaleString()} m で、作業場を 1 階に敷き、残る延べ床を上階へ積んだ場合の概形。作業場を上階に置くと 150 ㎡ の合計制限を超えるため、緑は 1 階にしか出ません。`}
+            />
+          </>
+        )}
 
         <div style={{ fontSize: 12, fontWeight: 700, margin: '4px 0 8px' }}>🌱 工場プラン (作業場 + 直売・カフェ併設)</div>
         <div className="field-grid" style={{ marginBottom: 12 }}>
@@ -791,28 +958,44 @@ export function RealEstatePage() {
 
         <div style={{ fontSize: 12, fontWeight: 700, margin: '4px 0 8px' }}>💧 水収支 (1 バッチ)</div>
         <div className="stat-grid" style={{ marginBottom: 8 }}>
-          <Stat label="再利用する透過水" value={`${water.balance.permeatePerBatchL.toLocaleString()} L`} />
-          <Stat label="排出する濃縮廃液" value={`${water.balance.concentratePerBatchL.toLocaleString()} L`} />
-          <Stat label="補給する新水" value={`${water.balance.freshMakeupPerBatchL.toLocaleString()} L`} />
+          <Stat label="再利用する透過水" value={litersOrDash(water.balance.permeatePerBatchL)} />
+          <Stat label="排出する濃縮廃液" value={litersOrDash(water.balance.concentratePerBatchL)} />
+          <Stat label="補給する新水" value={litersOrDash(water.balance.freshMakeupPerBatchL)} />
           <Stat
             label="濃縮倍率"
             value={water.balance.concentrationFactor === null ? '∞ (排出口なし)' : `${water.balance.concentrationFactor}倍`}
           />
         </div>
         <div className="stat-grid" style={{ marginBottom: 8 }}>
-          <Stat label="実際の水回収率" value={`${water.balance.recoveryPct}%`} />
-          <Stat label="年間節水量" value={`${Math.round(water.balance.annualWaterSavedL).toLocaleString()} L`} />
-          <Stat label="年間排出量" value={`${Math.round(water.balance.annualDischargeL).toLocaleString()} L`} />
-          <Stat label="透過水の EC 持ち越し" value={`${water.balance.permeateEcCarryoverPct}%`} />
+          {/* **`${null}` は型検査を素通りして "null%" を刷る。** この 2 つは
+              テンプレートリテラルだったので `tsc` は何も言わなかった —— 明示的に分ける。 */}
+          <Stat label="実際の水回収率" value={pct1OrDash(water.balance.recoveryPct)} />
+          <Stat label="年間節水量" value={litersOrDash(water.balance.annualWaterSavedL)} />
+          <Stat label="年間排出量" value={litersOrDash(water.balance.annualDischargeL)} />
+          <Stat label="透過水の EC 持ち越し" value={pct1OrDash(water.balance.permeateEcCarryoverPct)} />
         </div>
-        {water.balance.recoveryPct >= 100 && (
+        {/* **未入力を「回収率が足りない」ことにしない。** 欄は `min: 1, max: 99` なので
+            0 は画面が受け付けない値であり、空欄は「まだ分からない」である。 */}
+        {water.balance.recoveryPct === null && (
+          <div data-recovery-unset style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 8 }}>
+            RO 回収率が未入力のため、水収支 (透過水・濃縮廃液・節水量・排出量) は算定していません（膜の仕様値を入力してください）。
+          </div>
+        )}
+        {water.balance.recoveryPct !== null && water.balance.recoveryPct >= 100 && (
           <div style={{ fontSize: 12, color: '#f87171', marginBottom: 8 }}>
             回収率 100% は物質収支上成立しません — 排出をゼロにすると塩類が無限に蓄積します。ブリード (濃縮廃液の排出) が塩類の唯一の出口です。
           </div>
         )}
-        {water.balance.accumulationRisk && (
+        {water.balance.accumulationRisk === true && (
           <div style={{ fontSize: 12, color: 'var(--warning)', marginBottom: 8 }}>
             ⚠ RO 塩除去率が 90% 未満です — 透過水に 10% 超の塩が残り、閉ループで特定イオンが蓄積しやすくなります。
+          </div>
+        )}
+        {/* **未入力を警告にしない。** 欄の定義は `min: 1` なので 0 は画面が
+            受け付けない値であり、「除去率が低い」ではなく「まだ分からない」。 */}
+        {water.balance.accumulationRisk === null && (
+          <div data-rejection-unset style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 8 }}>
+            RO 塩除去率が未入力のため、塩類蓄積の判定はしていません（膜の仕様値を入力してください）。
           </div>
         )}
 
@@ -855,18 +1038,29 @@ export function RealEstatePage() {
 
         <div style={{ fontSize: 12, fontWeight: 700, margin: '10px 0 8px' }}>⚖️ 濃縮廃液の排出</div>
         <div className="stat-grid" style={{ marginBottom: 8 }}>
-          <Stat label="年間 窒素排出" value={`${water.effluent.annualNitrogenKg} kg`} />
-          <Stat label="年間 りん排出" value={`${water.effluent.annualPhosphorusKg} kg`} />
-          <Stat label="1日あたり排出" value={`${water.effluent.dailyDischargeM3} m³`} />
+          {/* **`${null}` は "null kg" を刷る。** ここも template literal なので
+              `tsc` は最後まで何も言わなかった —— 明示的に分ける。 */}
+          <Stat label="年間 窒素排出" value={water.effluent.annualNitrogenKg === null ? '—' : `${water.effluent.annualNitrogenKg} kg`} />
+          <Stat label="年間 りん排出" value={water.effluent.annualPhosphorusKg === null ? '—' : `${water.effluent.annualPhosphorusKg} kg`} />
+          <Stat label="1日あたり排出" value={water.effluent.dailyDischargeM3 === null ? '—' : `${water.effluent.dailyDischargeM3} m³`} />
+          {/* 地下水基準比は濃度だけで決まるので、排出量が不明でも算定できる。 */}
           <Stat label="地下水基準比 (硝酸性N)" value={`${water.effluent.nitrateVsGroundwaterFactor}倍`} />
         </div>
+        {/* **法規制の当てはまりを「当てはまらない」に倒さない。**
+            `wpclNpApplicable === null` は「排出量が分からないので判定していない」。
+            falsy なので黙って消えるが、黙ると「対象外」と読まれる。 */}
+        {water.effluent.wpclNpApplicable === null && (
+          <div data-wpcl-undetermined style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 8 }}>
+            年間排出量が算定できていないため、水質汚濁防止法の窒素・りん規制の対象かは判定していません（RO 回収率を入力してください）。
+          </div>
+        )}
         {water.effluent.recommendReuse && (
           <div style={{ fontSize: 12, color: 'var(--warning)', marginBottom: 8 }}>
             ⚠ 濃縮廃液の窒素・りんが一律排水基準を超えています。この液は硝酸・カリ・りん酸が濃縮された<strong>液肥そのもの</strong>なので、
             放流せず<strong>露地・土耕へ希釈施用</strong>するのが技術的にも法的にも安全です (捨てれば産業廃棄物・地下水の硝酸汚染の問題になります)。
           </div>
         )}
-        {water.effluent.wpclNpApplicable && (
+        {water.effluent.wpclNpApplicable === true && (
           <div style={{ fontSize: 12, color: '#f87171', marginBottom: 8 }}>
             排出水量が {effStd.npApplicabilityM3PerDay} m³/日以上のため、水質汚濁防止法の窒素・りん規制の対象になりえます。届出と処理設備が必要です。
           </div>

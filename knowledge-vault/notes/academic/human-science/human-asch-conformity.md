@@ -28,7 +28,7 @@ aliases:
 ## 出典
 - [Encyclopaedia Britannica — Solomon Asch](https://www.britannica.com/biography/Solomon-Asch) `リファレンス`
 - [Encyclopaedia Britannica — Conformity（同調と実験設計）](https://www.britannica.com/topic/conformity) `リファレンス`
-- [EBSCO Research Starters — Asch conformity experiments](https://www.ebsco.com/research-starters/history/asch-conformity-experiments) `学術`
+- [EBSCO Research Starters — Asch conformity experiments](https://www.ebsco.com/research-starters/history/asch-conformity-experiments) `リファレンス`
 
 ## 関連概念
 - [[human-autokinetic-effect|自動運動効果——暗闇の光点が動いて見える現象と社会規範の形成]] — 同じ思想家
@@ -36,7 +36,7 @@ aliases:
 - [[infosoc-spiral-of-silence-noelle-neumann|沈黙の螺旋——孤立の恐れが少数意見を沈黙させ多数意見を増幅する]] — 同じ思想家
 - [[mgmt-abilene-paradox-harvey|アビリーンのパラドックス（ハーヴェイ）——「合意」のマネジメントの失敗]] — 同じ思想家
 - [[human-overconfidence|自信過剰（過信バイアス）]] — 同分野の近傍
-- [[human-loss-aversion|損失回避]] — 同分野の近傍
+- [[human-pratfall-effect|失態効果（プラットフォール効果）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

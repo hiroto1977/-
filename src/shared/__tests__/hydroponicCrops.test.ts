@@ -332,6 +332,28 @@ describe('parseCropNumber — 入力欄の文字列', () => {
     expect(parseCropNumber('   ')).toBeNaN();
     expect(parseCropNumber('abc')).toBeNaN();
   });
+
+  it('★ 数字の間に区切りが入った値は読まない (2026-09-06 まで別の数として通っていた)', () => {
+    // pH 1.2 と打ったつもりの '1,2' が 12 になり、範囲 (0〜14) を通っていた。
+    expect(parseCropNumber('1,2')).toBeNaN();
+    // 株数 (整数の欄) では 2.4 の指摘が出ずに 24 になっていた。
+    expect(parseCropNumber('2,4')).toBeNaN();
+    expect(parseCropNumber('1,5')).toBeNaN();
+    expect(parseCropNumber('1 2')).toBeNaN();
+  });
+
+  it('★ 16 進・指数は読まない (画面の入力欄と同じ方針)', () => {
+    expect(parseCropNumber('0x10')).toBeNaN(); // 旧: 16
+    expect(parseCropNumber('1e3')).toBeNaN(); // 旧: 1000
+    expect(parseCropNumber('Infinity')).toBeNaN(); // 旧: Infinity
+  });
+
+  it('単位の付いた値は飾りとして落とす (画面と同じ)', () => {
+    expect(parseCropNumber('5日')).toBe(5);
+    expect(parseCropNumber('1,000㎡')).toBe(1000);
+    // 単位語は解釈しない
+    expect(parseCropNumber('1万')).toBeNaN();
+  });
 });
 
 describe('addCrop', () => {

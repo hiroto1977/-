@@ -11,13 +11,18 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement, type ComponentType } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
+import { navigateTo } from '../../navigate';
 import { TeamPage } from '../TeamPage';
 import { RealEstatePage } from '../RealEstatePage';
 import { TaxPage } from '../TaxPage';
 import { EmotionsPage } from '../EmotionsPage';
+import { DocstudioPage } from '../DocstudioPage';
+import { MutualFundsPage } from '../MutualFundsPage';
 import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { PARAMETER_OVERRIDES_COLLECTION } from '../../data/parameterOverrides';
+import { KPI_ACTUALS_COLLECTION } from '../../data/kpiActuals';
+import { BALANCE_SHEET_COLLECTION } from '../../data/balanceSheet';
 import {
   HYDROPONICS_COLLECTION,
   HYDROPONICS_DEFAULTS,
@@ -33,6 +38,8 @@ import { calcCapitalGainsTax, DEFAULT_CAPITAL_GAINS_PARAMS } from '../../../shar
 import { compareBusinessTaxMethods, DEFAULT_BUSINESS_CONSUMPTION_PARAMS } from '../../../shared/taxConsumptionBusiness';
 import { jpy } from '../../../shared/formatters';
 import type { ParameterOverrides } from '../../../shared/parameters';
+import { adviseService } from '../../../shared/serviceAdvisor';
+import { isRecordEntryServiceId } from '../../../shared/recordEntryLimits';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -108,8 +115,15 @@ async function typeIntoLabeled(labelText: string, value: string): Promise<void> 
 /** ラベル → 値 の 2 段の枠 (Stat / Tile / stat) を読む。 */
 function statValue(label: string): string {
   // 値の枠は要素を子に持たない — 見出しだけ同じ注記の div (<strong> を含む) を掴まないため。
+  // ラベルは枠の**最初の節点**でもある (Stat は <div><div>ラベル</div><div>値</div></div>)。
+  // 前に文字がある枠は掴まない —— 「✅ 最も納付が少ない方式: <strong>2割特例</strong>」の枠は
+  // 2026-09-10 (パス 141) に 3割特例の行が増えて注記が 2 番目の子になり、Stat と同じ形になった。
   const tile = Array.from(container.querySelectorAll('div')).find(
-    (d) => d.firstElementChild?.textContent === label && d.children.length >= 2 && d.children[1]!.children.length === 0,
+    (d) =>
+      d.firstElementChild?.textContent === label &&
+      d.firstChild === d.firstElementChild &&
+      d.children.length >= 2 &&
+      d.children[1]!.children.length === 0,
   );
   if (!tile) throw new Error(`stat "${label}" not found`);
   return tile.children[1]!.textContent ?? '';
@@ -248,6 +262,77 @@ describe('不動産 — DSCR の判定しきい値', () => {
   });
 });
 
+// --- 改善提案 (不動産投資 / 投資信託の業務操作パネル) ------------------------------
+
+/**
+ * 画面の「改善提案」ボタンは `serviceHub.invoke(id, 'advise', <画面の集計>)` を呼ぶ。
+ * ここでは invoke を**ブラウザ版の枝と同じ関数** (`shared/serviceAdvisor.ts` の
+ * `adviseService`) へ流し、画面が組んだ payload (しきい値を含む) がそのまま提案の
+ * 文言に効くことを見る。既定の描画を対照に置く。
+ */
+const FAILING_INVOKE = () => Promise.resolve({ ok: false, code: 'x', message: 'x' });
+type Hub = { invoke: (svc: string, act: string, payload: Record<string, unknown>) => Promise<unknown> };
+const hub = (): Hub => (globalThis as unknown as { serviceHub: Hub }).serviceHub;
+
+async function clickButton(label: string): Promise<void> {
+  const button = Array.from(container.querySelectorAll('button')).find((b) => b.textContent?.includes(label));
+  if (!button) throw new Error(`button "${label}" not found`);
+  await act(async () => {
+    button.click();
+  });
+  await settle();
+}
+
+describe('改善提案 — 台帳のしきい値が、画面が渡す payload を通って提案の文言に効く', () => {
+  beforeEach(() => {
+    hub().invoke = (svc, act, payload) => {
+      if (act === 'advise' && isRecordEntryServiceId(svc)) {
+        const r = adviseService(svc, payload);
+        return Promise.resolve(r.ok ? { ok: true, data: r.data } : { ok: false, code: 'action_failed', message: r.message });
+      }
+      return FAILING_INVOKE();
+    };
+  });
+  afterEach(() => {
+    hub().invoke = FAILING_INVOKE;
+  });
+
+  it('対照: 不動産の既定は差 1.0 pt で、渋谷 (4.8% / 平均 6.2%) を低利回りと名指しする', async () => {
+    await mount(RealEstatePage);
+    await clickButton('改善提案');
+    expect(text()).toContain('根拠: 4 物件 (同梱の見本 4 件を含む)・月次 CF ¥243,000・平均表面利回り 6.2%・入居率 75%');
+    expect(text()).toContain('低利回り物件の見直し: 渋谷区マンション 1LDK');
+    expect(text()).toContain('(差のしきい値 1.0 pt)');
+    expect(text()).not.toContain('提案の取得に失敗');
+  });
+
+  it('差を 3 pt に上げれば同じ画面が「ばらつきは小さい」と言い、文言もその値を言う', async () => {
+    await seed({ 'advisor.yieldGapPt': 3 });
+    await mount(RealEstatePage);
+    await clickButton('改善提案');
+    expect(text()).toContain('利回りのばらつきは小さい');
+    expect(text()).toContain('しきい値 3.0 pt 未満');
+    expect(text()).not.toContain('低利回り物件の見直し');
+  });
+
+  it('対照: 投資信託の既定は 50% で、S&P500 (39.3%) は集中ではない', async () => {
+    await mount(MutualFundsPage);
+    await clickButton('改善提案');
+    expect(text()).toContain('根拠: 4 銘柄 (同梱の見本 4 件を含む)・評価額 ¥8,240,140・評価損益率 14.8%');
+    expect(text()).toContain('分散の状況');
+    expect(text()).toContain('(しきい値 50.0% 未満)');
+  });
+
+  it('比率を 30% に下げれば同じ画面が「集中リスク」と言い、文言もその値を言う', async () => {
+    await seed({ 'advisor.concentrationShare': 0.3 });
+    await mount(MutualFundsPage);
+    await clickButton('改善提案');
+    expect(text()).toContain('集中リスク: eMAXIS Slim 米国株式 (S&P500)');
+    expect(text()).toContain('(しきい値 30.0%)');
+    expect(text()).not.toContain('分散の状況');
+  });
+});
+
 // --- 税 (消費税率) -------------------------------------------------------------
 
 describe('税 — 消費税率', () => {
@@ -368,13 +453,15 @@ describe('税 — 消費税率', () => {
     expect(statValue('印紙税額')).toBe(jpy(5_000));
   });
 
-  it('事業者の消費税: 税率・2 割特例の割合・境目の上書きが ⑩ の 3 方式と文言に出る', async () => {
+  it('事業者の消費税: 税率・2 割特例・3 割特例の割合・境目の上書きが ⑩ の 4 方式と文言に出る', async () => {
     await mount(TaxPage);
     const control = compareBusinessTaxMethods(
       [{ type: 'service', sales: { standard: 8_000_000, reduced: 0 } }],
       { standard: 3_000_000, reduced: 0 },
     );
     expect(statValue('2割特例')).toBe(jpy(control.twentyPercent));
+    expect(statValue('3割特例')).toBe(jpy(control.thirtyPercent));
+    expect(text()).toContain('納付税額 = 売上税額 × 30%');
     expect(text()).toContain('簡易課税は基準期間の課税売上¥50,000,000以下');
     expect(text()).toContain('課税売上が¥10,000,000以下です');
     await unmount();
@@ -382,6 +469,7 @@ describe('税 — 消費税率', () => {
     await seed({
       'tax.consumptionStandardRate': 0.12,
       'consumptionBusiness.twentyPercentRate': 0.3,
+      'consumptionBusiness.thirtyPercentRate': 0.45,
       'consumptionBusiness.exemptionThreshold': 20_000_000,
       'consumptionBusiness.simplifiedEligibilityThreshold': 60_000_000,
     });
@@ -390,6 +478,7 @@ describe('税 — 消費税率', () => {
       ...DEFAULT_BUSINESS_CONSUMPTION_PARAMS,
       rates: { standard: 0.12, reduced: 0.08 },
       twentyPercentRate: 0.3,
+      thirtyPercentRate: 0.45,
       exemptionThreshold: 20_000_000,
       simplifiedEligibilityThreshold: 60_000_000,
     };
@@ -400,9 +489,39 @@ describe('税 — 消費税率', () => {
     );
     expect(seeded.twentyPercent).not.toBe(control.twentyPercent);
     expect(statValue('2割特例')).toBe(jpy(seeded.twentyPercent));
+    // 3 割特例の割合 (パス 141) も同じ項から届く —— 額と、⑩ の説明文の「売上税額 × 45%」。
+    expect(seeded.thirtyPercent).not.toBe(control.thirtyPercent);
+    expect(statValue('3割特例')).toBe(jpy(seeded.thirtyPercent));
+    expect(text()).toContain('納付税額 = 売上税額 × 45%');
+    expect(text()).not.toContain('納付税額 = 売上税額 × 30%');
     expect(statValue('本則課税')).toBe(jpy(seeded.standard));
     expect(text()).toContain('簡易課税は基準期間の課税売上¥60,000,000以下');
     expect(text()).toContain('課税売上が¥20,000,000以下です');
+  });
+
+  /**
+   * ⑩-3 の全額控除の要件は**台帳に載っているのに、ここで留められていなかった**。
+   * 2026-09-06 の実測では、判定 (`canDeductFully`) は上書きされた値で行いながら、
+   * 説明文と ⚠ 警告は**モジュールの既定定数を刷っていた** —— 割合の境目を 90% に
+   * した利用者に、90% で発火した警告が「割合 95% 未満」と言う状態。
+   */
+  it('消費税 (事業者): 全額控除の要件の上書きが ⑩-3 の文言と判定の両方に出る', async () => {
+    await mount(TaxPage);
+    expect(text()).toContain('課税売上割合 95% 以上');
+    expect(text()).toContain('課税売上高 ¥500,000,000 以下');
+    await unmount();
+
+    await seed({
+      'consumptionBusiness.fullCreditRatioThreshold': 0.6,
+      'consumptionBusiness.fullCreditSalesThreshold': 300_000_000,
+    });
+    await mount(TaxPage);
+    expect(text()).toContain('課税売上割合 60% 以上');
+    expect(text()).toContain('課税売上高 ¥300,000,000 以下');
+    // 既定の入力 (課税 800 万 + 免税 0 / 非課税 200 万) の割合は 80% —— 既定の 95% では
+    // 満たさないが、60% に緩めると**満たす**。文言だけでなく判定も動く。
+    expect(text()).toContain('全額控除の要件を満たします');
+    expect(text()).not.toContain('全額控除の要件を満たしません');
   });
 
   it('年金・一時所得・ふるさと納税・貿易: 上書きが計算と文言に出る', async () => {
@@ -627,5 +746,130 @@ describe('感情ログ — 台帳のしきい値が見立ての文言に効く',
     expect(text()).toContain('傾向 横ばい →');
     expect(text()).not.toContain('連続して低調');
     expect(text()).not.toContain('よく出る言葉');
+  });
+});
+
+// --- 貯蓄・資産形成 -------------------------------------------------------
+//
+// 緊急予備資金の月数は「会社員 3〜6 / 自営 6〜12 か月」と幅のある参考値で、
+// この画面 (投資信託) の**目標額と充足率の分母**になる。2026-09-06 まで 6 が
+// 4 か所 (関数の既定値 2・呼び出し 2) にリテラルで散っており、自営業者向けの
+// 目安 (6〜12) に合わせる手段が無かった。
+describe('savings.emergencyFundMonths — 緊急予備資金の月数', () => {
+  // 生活費 300,000 円 / 手元現金 900,000 円 は画面の初期値。
+  it('対照: 既定は生活費 6 か月分 (充足率 50%)', async () => {
+    await mount(MutualFundsPage);
+    expect(statValue('緊急予備資金 (生活費6か月)')).toBe(jpy(1_800_000));
+    expect(statValue('予備資金 充足率')).toBe('50%');
+    expect(text()).toContain('生活費の6か月分');
+  });
+
+  it('12 か月に上書きすると目標額・充足率・文言が動く', async () => {
+    await seed({ 'savings.emergencyFundMonths': 12 });
+    await mount(MutualFundsPage);
+    expect(statValue('緊急予備資金 (生活費12か月)')).toBe(jpy(3_600_000));
+    expect(statValue('予備資金 充足率')).toBe('25%');
+    expect(text()).toContain('生活費の12か月分');
+  });
+});
+
+// --- 相手に渡す書面の消費税率 (書類スタジオ) ------------------------------------
+
+/*
+ * **台帳で税率を変えたら、相手に渡す書面の税率も変わること。** (2026-09-07)
+ *
+ * `tax.consumptionStandardRate` は `kind: 'law'` の上書きできる項目 —— 法改正の日に
+ * 変えるための欄である。ところが 2026-09-07 まで、上書きに従うのは税ページだけで、
+ * 書類スタジオの書面は**別の 2 通り**で税を出していた:
+ *
+ *   - 見積書 / 発注書 / 注文請書 / 納品書 … 画面の中の `subtotal * 0.1` と
+ *     「消費税（10%）」の直書き (同じページの請求書とは別の計算・別の端数処理)
+ *   - 請求書 / 支払通知書 … `invoiceTax.ts` の既定率 (台帳の受け口が無かった)
+ *
+ * つまり率を 12% にしても、**相手に渡す紙だけが 10% のまま**だった。
+ */
+describe('書類スタジオの書面 — 台帳の消費税率が紙に効く', () => {
+  /** 書式を開いて金額 1 を入れる。 */
+  async function openMitsumori(amount: string): Promise<void> {
+    navigateTo('docstudio', { doc: 'mitsumori' });
+    await mount(DocstudioPage);
+    await typeIntoLabeled('金額1（税抜）', amount);
+  }
+
+  it('対照: 既定では 10% で刷り、50 万円に 5 万円', async () => {
+    await openMitsumori('500000');
+    expect(text()).toContain('消費税（10%）');
+    expect(text()).toContain('50,000 円');
+    await unmount();
+  });
+
+  it('★ 上書きすると書面の率も税額も動く', async () => {
+    await seed({ 'tax.consumptionStandardRate': 0.12 });
+    await openMitsumori('500000');
+    expect(text()).toContain('消費税（12%）');
+    expect(text()).toContain('60,000 円');
+    expect(text()).not.toContain('消費税（10%）');
+    await unmount();
+  });
+
+  it('★ 適格請求書 (別の表) も同じ台帳に従う', async () => {
+    await seed({ 'tax.consumptionStandardRate': 0.12 });
+    navigateTo('docstudio', { doc: 'invoice' });
+    await mount(DocstudioPage);
+    await typeIntoLabeled('品目1 品名', 'Web サイト保守');
+    await typeIntoLabeled('品目1 単価（税抜・円）', '500000');
+    expect(text()).toContain('12%');
+    expect(text()).toContain('60,000');
+    await unmount();
+  });
+});
+
+// --- 経営サマリー (貸借対照表の古さ) ------------------------------------------
+
+/**
+ * 基準日が実績よりどれだけ古ければ「別の期」と見なすか。台帳の値が**所見に効く**。
+ * 経緯は `src/shared/balanceSheetFreshness.ts` (7 年古い貸借対照表でも
+ * 2026-09-07 まで所見が 1 件も出なかった)。
+ */
+async function seedOverviewWithBs(asOf: string): Promise<void> {
+  const store = getRecordStore();
+  for (const period of ['2026-06', '2026-07', '2026-08']) {
+    await store.insert(KPI_ACTUALS_COLLECTION, {
+      period, unit: '全社', revenue: 4_000_000, cogs: 1_600_000, advertising: 0, sga: 1_200_000, depreciation: 0,
+    });
+  }
+  await store.insert(BALANCE_SHEET_COLLECTION, {
+    asOf, currentAssets: 6_000_000, cash: 3_000_000, inventory: 1_000_000, accountsReceivable: 2_000_000,
+    fixedAssets: 4_000_000, currentLiabilities: 2_000_000, accountsPayable: 1_500_000,
+    fixedLiabilities: 3_000_000, netIncome: 600_000,
+  });
+}
+
+describe('経営サマリー — 貸借対照表を「別の期」と見なす古さ', () => {
+  it('対照: 既定 (12 か月) では 13 か月古い基準日が所見に出る', async () => {
+    await seedOverviewWithBs('2025-07-31'); // 対象期間の最終月 2026-08 より 13 か月古い
+    await mount(OverviewPage);
+    expect(text()).toContain('13 か月古く');
+    expect(text()).toContain('総資産回転率');
+  });
+
+  it('対照: 既定では 12 か月ちょうどは所見に出ない', async () => {
+    await seedOverviewWithBs('2025-08-31'); // ちょうど 12 か月
+    await mount(OverviewPage);
+    expect(text()).not.toContain('か月古く');
+  });
+
+  it('★ しきい値を 6 か月へ下げると、同じ 12 か月が所見に出る (上書きが効く)', async () => {
+    await seed({ 'overview.balanceSheetStaleAfterMonths': 6 });
+    await seedOverviewWithBs('2025-08-31');
+    await mount(OverviewPage);
+    expect(text()).toContain('12 か月古く');
+  });
+
+  it('★ しきい値を 24 か月へ上げると、13 か月古い基準日は所見に出ない', async () => {
+    await seed({ 'overview.balanceSheetStaleAfterMonths': 24 });
+    await seedOverviewWithBs('2025-07-31');
+    await mount(OverviewPage);
+    expect(text()).not.toContain('か月古く');
   });
 });

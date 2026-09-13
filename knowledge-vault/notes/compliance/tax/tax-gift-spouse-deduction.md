@@ -34,7 +34,6 @@ aliases:
 - [[tax-spouse-deduction|配偶者控除・配偶者特別控除]] — 語彙が近い
 - [[tax-disability-deduction|所得税の障害者控除]] — 同分野の近傍
 - [[tax-small-residential-land|小規模宅地等についての相続税の課税価格の計算の特例]] — 同分野の近傍
-- [[tax-business-succession|法人版事業承継税制（特例措置）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

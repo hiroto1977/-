@@ -34,6 +34,7 @@ aliases:
 
 ## 関連概念
 - [[econ-greenfield-effect-multinational|グリーンフィールド投資効果——海外直接投資の参入形態と成長]] — 語彙が近い
+- [[econ-melitz-heterogeneous-firms-trade|メリッツ・モデル（「新」新貿易理論）——企業の生産性の異質性を導入し、貿易自由化が企業の選別と資源再配分を通じて産業の生産性を高めることを示す]] — 同じ思想家
 - [[bizlaw-international-investment-bit|国際投資法とBIT（二国間投資協定）の投資家保護基準]] — 出典を共有
 - [[bizlaw-full-protection-and-security|十分な保護及び安全（Full Protection and Security）]] — 出典を共有
 - [[econ-flying-geese|雁行形態論]] — 出典を共有

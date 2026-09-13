@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { MAX_SCAN_URL_LENGTH, SECRET_PARAM_NAMES, describeScanUrlRisk, validateScanUrl, looksInternalHostname } from '../scanTarget';
+import { MAX_SCAN_URL_CHARS, SECRET_PARAM_NAMES, describeScanUrlRisk, validateScanUrl, looksInternalHostname } from '../scanTarget';
 
 describe('validateScanUrl', () => {
   it('http / https を通す', () => {
@@ -31,10 +31,24 @@ describe('validateScanUrl', () => {
 
   it('長さの上限で断る (境界も見る)', () => {
     const base = 'https://example.com/';
-    const atLimit = base + 'a'.repeat(MAX_SCAN_URL_LENGTH - base.length);
-    expect(atLimit).toHaveLength(MAX_SCAN_URL_LENGTH);
+    const atLimit = base + 'a'.repeat(MAX_SCAN_URL_CHARS - base.length);
+    expect(atLimit).toHaveLength(MAX_SCAN_URL_CHARS);
     expect(validateScanUrl(atLimit).ok).toBe(true);
     expect(validateScanUrl(atLimit + 'a')).toEqual({ ok: false, reason: 'too-long' });
+  });
+
+  /*
+   * **天井は「字」で数える** (2026-09-13 · パス 196)。この断りは単位を名乗らないが
+   * (「url が長すぎます」)、同じ名前の規則 (`_CHARS` は文字) に揃える ——
+   * 揃えておかないと、名前で単位を判断する census がここを見落とす。
+   */
+  it('★ 非 BMP を含む URL は字で数える', () => {
+    const base = 'https://example.com/';
+    const atLimit = base + '\u{1F600}'.repeat(MAX_SCAN_URL_CHARS - base.length);
+    expect([...atLimit].length).toBe(MAX_SCAN_URL_CHARS);
+    expect(atLimit.length).toBeGreaterThan(MAX_SCAN_URL_CHARS);
+    expect(validateScanUrl(atLimit).ok).toBe(true);
+    expect(validateScanUrl(atLimit + '\u{1F600}')).toEqual({ ok: false, reason: 'too-long' });
   });
 });
 

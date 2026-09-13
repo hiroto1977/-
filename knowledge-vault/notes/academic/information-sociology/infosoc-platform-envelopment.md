@@ -3,43 +3,45 @@ collection: academic
 id: infosoc-platform-envelopment
 category: "information-sociology"
 category_ja: "情報社会学"
-title: "プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）"
-as_of: "2026-06"
-source_count: 2
+title: "プラットフォーム・エンベロープメント（アイゼンマン＝パーカー＝ヴァン・アルスタイン）——隣接するプラットフォーム市場へ自社機能とのバンドルで参入し、既存のネットワーク効果を武器に転用して相手の利用者基盤を奪う競争戦略"
+as_of: "2026-09"
+source_count: 4
 authoritative: true
 tags:
   - collection/academic
   - academic/information-sociology
   - knowledge/verified
 aliases:
-  - "プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）"
+  - "プラットフォーム・エンベロープメント（アイゼンマン＝パーカー＝ヴァン・アルスタイン）——隣接するプラットフォーム市場へ自社機能とのバンドルで参入し、既存のネットワーク効果を武器に転用して相手の利用者基盤を奪う競争戦略"
 ---
 
-# プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）
+# プラットフォーム・エンベロープメント（アイゼンマン＝パーカー＝ヴァン・アルスタイン）——隣接するプラットフォーム市場へ自社機能とのバンドルで参入し、既存のネットワーク効果を武器に転用して相手の利用者基盤を奪う競争戦略
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-06 ・ 出典: 2件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-09 ・ 出典: 4件（うち権威ある出典 ✓）
 
 ## 概要
-プラットフォーム・エンベロープメント（platform envelopment）とは、あるプラットフォーム市場のプロバイダーが隣接する別のプラットフォーム市場へ参入し、自社機能と標的プラットフォームの機能を束ねた「マルチプラットフォーム・バンドル」を提供することで、既存プレイヤーのユーザーへのアクセスを遮断して市場シェアを奪取する競争戦略である。トーマス・アイゼンマン（ハーバード・ビジネス・スクール）、ジェフリー・パーカー（ダートマス大学）、マーシャル・ヴァン・アルスタイン（ボストン大学）の共著論文（Strategic Management Journal, 2011）で体系化された。エンベロープメントの特徴は、シュンペーター的イノベーションに依存せず、既存ネットワーク効果を「武器として転用」する点にある。攻撃類型は①補完的プラットフォーム（機能的に補完し合うペア）、②弱い代替プラットフォーム（部分的に重複）、③機能的に無関係なプラットフォームへの参入に分類される。侵食される側は、かつてのネットワーク効果が自社を守る「堀」にならず、攻撃者の参入後に集客力を失う。実例として、Microsoftのメディアプレイヤー・ブラウザ同梱、AppleのiPhoneへのPodcast統合、GoogleのAndroidによるナビゲーション統合などが挙げられる。規制上はバンドリングの反競争性の評価が争点となる。
+プラットフォーム・エンベロープメント（platform envelopment）とは、あるプラットフォーム市場の事業者が隣接する別のプラットフォーム市場へ参入し、自社機能と標的の機能を束ねたマルチプラットフォーム・バンドルを提供して、既存事業者の利用者へのアクセスを遮断し市場シェアを奪う競争戦略で、トーマス・アイゼンマン、ジェフリー・パーカー、マーシャル・ヴァン・アルスタインが2011年の論文で体系化した。シュンペーター的な革新に依存せず、共有された利用者基盤、補完的・代替的機能の結合、バンドル価格の三つの経路で参入費用を下げ、既存のネットワーク効果を武器として転用する点に特徴があり、標的との関係により補完的プラットフォーム、弱い代替プラットフォーム、機能的に無関係なプラットフォームへの三類型に分けられる。実例として Microsoft の Windows へのメディアプレイヤー同梱、Apple の iOS への FaceTime 統合、Google の Android への地図のバンドルが分析され、防衛策としてニッチへの特化、API 公開によるエコシステム拡大、新市場への転換が論じられる。規制上はバンドリングの反競争性の評価が争点で、EU デジタル市場法（2022）のゲートキーパー義務は包囲戦略への立法的対応と位置づけられる。批判として、包囲と正当な範囲の経済の区別が事後的にしかつかないことがある。中小企業には、自社のサービスが大手プラットフォームの「次の同梱機能」になりうるかを常に点検し、乗り換え費用と専門性で守るか、大手の上で補完者として生きるかを早めに決めることが含意となる。
 
 ## 提唱者・初出
-トーマス・アイゼンマン（Thomas Eisenmann、ハーバード・ビジネス・スクール）、ジェフリー・パーカー（Geoffrey Parker、ダートマス大学）、マーシャル・ヴァン・アルスタイン（Marshall W. Van Alstyne、ボストン大学）／初出: Eisenmann, Parker & Van Alstyne (2011) "Platform Envelopment," Strategic Management Journal, Vol. 32, pp. 1270–1285
+トーマス・アイゼンマン（2011 提唱）／ジェフリー・パーカー＆マーシャル・ヴァン・アルスタイン（2011 共著）
 
 ## 出典
-- [Strategic Management Journal — Platform Envelopment（Eisenmann, Parker & Van Alstyne、2011、Vol. 32、pp. 1270–1285）](https://sms.onlinelibrary.wiley.com/doi/abs/10.1002/smj.935) `学術`
-- [Harvard Business School Faculty Research — Platform Envelopment（Thomas Eisenmann）](https://www.hbs.edu/faculty/Pages/item.aspx?num=38631) `学術`
+- [Eisenmann, T., Parker, G. & Van Alstyne, M. (2011) Platform Envelopment — Strategic Management Journal 32(12)](https://doi.org/10.1002/smj.935) `学術`
+- [Harvard Business School Faculty Research — Platform Envelopment（Eisenmann, Parker & Van Alstyne）](https://www.hbs.edu/faculty/Pages/item.aspx?num=38631) `学術`
+- [Regulation (EU) 2022/1925 — Digital Markets Act（ゲートキーパー義務・抱き合わせの制限）](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R1925) `公的`
+- [Wikipedia: Platform envelopment — Eisenmann、バンドリング、ゲートキーパー、DMA](https://en.wikipedia.org/wiki/Platform_envelopment) `リファレンス`
 
 ## 関連概念
-- [[infosoc-platform-envelopment-eisenmann|プラットフォーム包囲戦略（アイゼンマン）]] — 語彙が近い
+- [[human-alexithymia-sifneos|アレキシサイミア（失感情症・シフネオス）——自分の感情を識別し言葉にすることが難しく、身体感覚と区別できず、外向きの思考に傾く特性]] — 同じ思想家
+- [[infosoc-cyber-balkanization-sunstein|サイバー・バルカン化——インターネットにおける同質的集団の分断と思想的隔離]] — 同じ思想家
+- [[infosoc-platform-economics|プラットフォーム経済学・二面市場理論：デジタル市場の仲介構造と価格戦略]] — 同じ思想家
 - [[mgmt-activity-based-costing|活動基準原価計算（ABC）]] — 出典を共有
-- [[mgmt-attention-based-view|注意ベース理論（アテンション・ベースト・ビュー）]] — 出典を共有
-- [[mgmt-behavioral-agency-model|行動エージェンシー・モデル——損失回避が経営者のリスクテイクを規定する]] — 出典を共有
 - [[mgmt-behavioral-theory-of-firm-search|企業行動理論における問題探索（プロブレミスティック・サーチ）]] — 出典を共有
-- [[mgmt-competitive-dynamics-theory|競争ダイナミクス理論]] — 出典を共有
 - [[mgmt-congruence-model-nadler-tushman|ナドラー＝タッシュマンのコングルエンス・モデル（Congruence Model／1980）——組織の有効性は四つの構成要素の「適合」で決まる]] — 出典を共有
-- [[mgmt-demand-side-strategy|需要サイド戦略論]] — 出典を共有
 - [[mgmt-family-business-governance-gersick|ファミリービジネスの三円モデル（ガーシック）]] — 出典を共有
-- [[mgmt-multimarket-contact-mutual-forbearance|多市場接触と相互自制の理論（マルチマーケット・コンペティション）]] — 出典を共有
+- [[mgmt-generic-strategies|ポーターの3つの基本戦略（generic strategies）]] — 出典を共有
+- [[mgmt-imprinting-theory|組織インプリンティング理論（Imprinting Theory）]] — 出典を共有
+- [[mgmt-institutional-void|制度的空白（Institutional Voids）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

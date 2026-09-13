@@ -26,7 +26,7 @@ aliases:
 サイモン・シネック ／ ピーター・ドラッカー ／ ダニエル・ピンク ／ ジム・コリンズ
 
 ## 出典
-- [Sinek, S. (2009) Start With Why: How Great Leaders Inspire Everyone to Take Action — Portfolio](https://www.worldcat.org/oclc/932969809) `学術`
+- [Sinek, S. (2009) Start With Why: How Great Leaders Inspire Everyone to Take Action — Portfolio](https://www.worldcat.org/oclc/932969809) `リファレンス`
 - [Wikipedia: Simon Sinek — Golden Circle, Start With Why, purpose-driven leadership](https://en.wikipedia.org/wiki/Simon_Sinek) `リファレンス`
 
 ## 関連概念

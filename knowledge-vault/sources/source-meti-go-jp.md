@@ -2,7 +2,7 @@
 title: "meti.go.jp"
 type: source-domain
 host: "meti.go.jp"
-cite_count: 66
+cite_count: 67
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # meti.go.jp
 
-> [!info] 出典ドメイン索引 ・ 引用 **66 件**（公的 66）
+> [!info] 出典ドメイン索引 ・ 引用 **67 件**（公的 67）
 
 ## このドメインを出典とする項目
 
@@ -28,6 +28,7 @@ tags:
 - [[bizlaw-installment-sales-act|割賦販売法]] — 経済産業省「割賦販売法（後払分野）に基づく監督の基本方針」（支払可能見込額調査・信用購入あっせん）
 - [[bizlaw-intellectual-property-trade-secret|営業秘密と知的財産保護——不正競争防止法の秘密管理性要件と情報漏洩対策]] — 経済産業省営業秘密保護の概要—不正競争防止法ガイドライン
 - [[bizlaw-poison-pill|ポイズンピル（Poison Pill ／ライツプラン）]] — 経済産業省・法務省買収防衛策に関する指針（2005年）
+- [[bizlaw-procd-v-zeidenberg-shrinkwrap-clickwrap|プロCD対ザイデンバーグ事件——包装を開けた・クリックしたことで成立するライセンス契約の拘束力を認めた米連邦控訴審判例]] — 経済産業省「電子商取引及び情報財取引等に関する準則」（令和4年4月）—日本におけるシュリンクラップ契約・クリックオン契約の成立要件の整理
 - [[bizlaw-pse-act|電気用品安全法（PSE法）]] — 経済産業省「電気用品安全法の概要」
 - [[bizlaw-trade-secret|営業秘密（不正競争防止法2条6項）]] — 経済産業省「営業秘密～営業秘密を守り活用する～」
 - [[bizlaw-trade-secret|営業秘密（不正競争防止法2条6項）]] — 経済産業省「逐条解説不正競争防止法」

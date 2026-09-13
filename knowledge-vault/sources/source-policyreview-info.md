@@ -2,7 +2,7 @@
 title: "policyreview.info"
 type: source-domain
 host: "policyreview.info"
-cite_count: 8
+cite_count: 7
 tags:
   - source-domain
   - index
@@ -10,7 +10,7 @@ tags:
 
 # policyreview.info
 
-> [!info] 出典ドメイン索引 ・ 引用 **8 件**（学術 7 ・ リファレンス 1）
+> [!info] 出典ドメイン索引 ・ 引用 **7 件**（学術 7）
 
 ## このドメインを出典とする項目
 
@@ -18,7 +18,6 @@ tags:
 - [[infosoc-algorithmic-governance-theory|アルゴリズム・ガバナンス理論]] — Katzenbach&Ulbricht—AlgorithmicGovernance,InternetPolicyReview(2019)
 - [[infosoc-cypherpunk-movement|サイファーパンク運動]] — Cryptographicimaginariesandthenetworkedpublic—InternetPolicyReview
 - [[infosoc-cypherpunk-movement|サイファーパンク運動]] — Cypherpunk—InternetPolicyReview(glossary)
-- [[infosoc-datafication|データ化（データ化現象）]] — InternetPolicyReview—conceptentry"Datafication"
 - [[infosoc-digital-commons-governance|デジタル・コモンズのガバナンス]] — InternetPolicyReview—Digitalcommons(peer-reviewedconceptarticle)
 - [[infosoc-filter-bubble|フィルターバブルとエコーチェンバー]] — InternetPolicyReview—Filterbubble（概念定義）
 - [[infosoc-platformization|プラットフォーム化（Platformization）]] — Poell,Nieborg&vanDijck(2019)Platformisation—InternetPolicyReview8(4)

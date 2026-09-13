@@ -36,7 +36,9 @@ aliases:
 - [[infosoc-platform-economics|プラットフォーム経済学・二面市場理論：デジタル市場の仲介構造と価格戦略]] — 出典を共有
 - [[human-narrative-psychology|ナラティブ心理学：物語を通じたアイデンティティと意味構築の理論]] — 出典を共有
 - [[infosoc-smart-city|スマートシティ論：ICT・IoT・データ分析による都市ガバナンスの変容]] — 出典を共有
+- [[human-constructive-developmental-kegan|構成的発達理論——意味構成の段階的変容と主体-客体均衡]] — 同分野の近傍
 - [[human-childhood-amnesia|幼児期健忘（Childhood Amnesia）]] — 同分野の近傍
+- [[human-mirror-neuron-system|ミラーニューロン・システム（リゾラッティ／ガレーゼ）——行為の実行時と観察時の双方で発火するニューロン群が行為理解・模倣・共感の神経基盤とされる仮説と、その証拠をめぐる論争]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

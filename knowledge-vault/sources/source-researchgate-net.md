@@ -2,7 +2,7 @@
 title: "researchgate.net"
 type: source-domain
 host: "researchgate.net"
-cite_count: 50
+cite_count: 48
 tags:
   - source-domain
   - index
@@ -10,20 +10,21 @@ tags:
 
 # researchgate.net
 
-> [!info] 出典ドメイン索引 ・ 引用 **50 件**（学術 43 ・ リファレンス 7）
+> [!info] 出典ドメイン索引 ・ 引用 **48 件**（学術 43 ・ リファレンス 5）
 
 ## このドメインを出典とする項目
 
 - [[bizlaw-clean-hands-doctrine|クリーンハンズ法理（不正行為の抗弁）]] — BeyondChafee:AProcess-BasedTheoryofUncleanHands
 - [[econ-backwash-spread-effects-myrdal|ミュルダールの逆流・波及効果]] — Myrdal'sTheoryofCumulativeCausation—ResearchGate
-- [[econ-ces-production|CES生産関数]] — TheOriginsoftheCESProductionFunction（Arrow-Chenery-Minhas-Solow1961の出…
 - [[econ-eaton-lipsey-local-clustering|イートン＝リプシーの局所的集塊の原理（Eaton-Lipsey's Principle of Local Clustering）]] — ResearchGaterecordofEaton&Lipsey(1975)—fullpapermetadataandabstract,p…
 - [[econ-juglar-cycle|ジュグラー・サイクル（Juglar Cycle）]] — LeGrand&Hagemann—BusinessCyclesinJuglarandSchumpeter—ResearchGate
 - [[econ-user-cost-of-capital|資本の使用者費用]] — Jorgenson,"CapitalTheoryandInvestmentBehavior,"AmericanEconomicReview…
 - [[human-action-observation-mismatch|アクション・オブザベーション・ミスマッチ（Action-Observation Mismatch）]] — Bosbachetal.(2005)Full-TextPDF—ResearchGate
 - [[human-autobiographical-memory|自伝的記憶（Autobiographical Memory）]] — Conway&Pleydell-Pearce(2000)TheConstructionofAutobiographicalMemories…
 - [[human-cognitive-appraisal|認知的評価理論（感情）]] — AppraisalTheoryofEmotion（学術レビュー：アーノルド1960／一次・二次評価）
+- [[human-componential-theory-creativity-amabile|創造性の構成要素理論（アマビル）——領域スキル・創造的思考・内発的動機づけと社会環境が交わって生まれる創造性]] — Eisenberger,R.,&Cameron,J.(1996).DetrimentalEffectsofReward:Realityor…
 - [[human-epistemic-curiosity|認識論的好奇心と情報探索の動機づけ理論]] — Loewenstein1994ThePsychologyofCuriosity:AReviewandReinterpretation,Ps…
+- [[human-identity-status-paradigm-marcia|マーシャの自我同一性地位——探求と関与の有無で青年期のアイデンティティ形成を4つの地位に分ける]] — Marcia,J.E.(1980).IdentityinAdolescence.InJ.Adelson(Ed.),HandbookofAd…
 - [[human-ideomotor|観念運動効果（Ideomotor Effect）]] — Stock&Stock(2004)AShortHistoryofIdeo-MotorAction—ResearchGate
 - [[human-implicit-association-test-greenwald|潜在的連合テスト（IAT）]] — Greenwald,Nosek&Banaji(2003)UnderstandingandUsingtheIAT:I.AnImprovedS…
 - [[human-prosodic-bootstrapping|韻律的ブートストラッピング（Prosodic Bootstrapping）]] — Christopheetal.(1997)ReflectionsonPhonologicalBootstrapping—Language&…
@@ -31,18 +32,15 @@ tags:
 - [[infosoc-algorithmic-gatekeeping|アルゴリズム的ゲートキーピング（Algorithmic Gatekeeping）]] — Just&Latzer(2017)Full-Text—ResearchGate
 - [[infosoc-communicative-capitalism|コミュニカティブ・キャピタリズム（Communicative Capitalism）]] — Dean(2005)CommunicativeCapitalism—ResearchGate
 - [[infosoc-counterpublic|対抗的公共圏（カウンターパブリック）]] — MichaelWarner,"PublicsandCounterpublics"(2002)
-- [[infosoc-data-double|データ・ダブル／監視的アサンブラージュ（Data Double / Surveillant Assemblage）]] — Haggerty&Ericson(2000)—ResearchGate
 - [[infosoc-information-disorder|情報障害（Information Disorder）]] — Wardle&Derakhshan(2017)InformationDisorder—CouncilofEurope/ResearchGa…
 - [[infosoc-infrastructure-studies|インフラストラクチャー研究（Infrastructure Studies）]] — Star&Ruhleder(1996)—ResearchGate
 - [[infosoc-network-gatekeeping|ネットワーク・ゲートキーピング理論（Network Gatekeeping Theory）]] — Barzilai-Nahon(2008)NetworkGatekeepingFramework—ResearchGate
 - [[infosoc-phenomenological-technology|技術の現象学]] — Human-DataRelationsandtheLifeworld-DonIhdephenomenologicalframework
-- [[infosoc-platform-imaginaries|プラットフォームの政治学（Politics of Platforms）]] — Gillespie(2010)—ResearchGate
 - [[mgmt-aaker-brand-identity|アーカーのブランド・アイデンティティ]] — AnApplicationofDavidA.Aaker'sBrandIdentityPlanningModel（査読付ケーススタディ）
-- [[mgmt-absorptive-capacity-theory|吸収能力理論]] — ResearchGate—Cohen&Levinthal(1990)fulltext&citations
-- [[mgmt-absorptive-capacity-theory|吸収能力理論]] — ResearchGate—Zahra&George(2002)fulltext&citations
 - [[mgmt-adaptive-performance-griffin|適応的パフォーマンス（グリフィン・ニール・パーカー）]] — Pulakos,E.D.,Arad,S.,Donovan,M.A.,&Plamondon,K.E.(2000)Adaptabilityin…
 - [[mgmt-affective-events-theory|感情イベント理論（AET）]] — Weiss&Cropanzano(1996)AffectiveEventsTheory—ResearchGate
 - [[mgmt-amo-model|AMOモデル（能力・動機づけ・機会）]] — Appelbaum,Bailey,Berg&Kalleberg(2000)ManufacturingAdvantage(CornellUn…
+- [[mgmt-burke-litwin-causal-model-organizational-change|バーク＝リトウィン・モデル——外部環境から個人業績までを12要因の因果連鎖で結ぶ組織診断モデル]] — HermannSpangenberg&CallieTheron(2013)"AcriticalreviewoftheBurke-Litwi…
 - [[mgmt-career-construction-theory-savickas|キャリア構築理論（サビカス理論）]] — ResearchGate—Savickas(2013)Careerconstructiontheoryandpractice
 - [[mgmt-collective-efficacy-bandura|集合的効力感理論]] — Feltzetal.—DevelopmentandPreliminaryValidationoftheCollectiveEfficacy…
 - [[mgmt-competing-values|競合価値フレームワーク（CVF）]] — AReviewofStudyontheCompetingValuesFramework（2軸・4象限と因子分析的起源の学術レビュー）

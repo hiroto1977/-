@@ -32,8 +32,8 @@ aliases:
 - [Wikipedia: Group cohesiveness — definitions, measurement (GEQ), performance links, and groupthink risks](https://en.wikipedia.org/wiki/Group_cohesiveness) `リファレンス`
 
 ## 関連概念
-- [[mgmt-absorptive-capacity-realization|吸収能力の実現化モデル：潜在的能力と実現的能力]] — 同分野の近傍
 - [[mgmt-toxic-leadership-whicker|トキシック・リーダーシップ（ウィッカー）]] — 同分野の近傍
+- [[mgmt-institutional-logic-friedland|制度的ロジック（フリードランド＆アルフォード）]] — 同分野の近傍
 - [[mgmt-action-centred-leadership-adair|アクション・センタード・リーダーシップ——課題・チーム・個人の三つの輪]] — 同分野の近傍
 
 ## 関連

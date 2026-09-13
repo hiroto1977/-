@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../../shared/emotionsLimits';
+import { calendarDateMessage } from '../../../shared/isoDate';
 import { extractJson, normalizeAnalysis } from '../emotions';
 
 describe('extractJson', () => {
@@ -92,7 +93,19 @@ import { afterEach, beforeEach } from 'vitest';
 
  
 let tmpDir: string;
+/** OS のキーチェーンの有無・復号の失敗を検査ごとに切り替える (secretsProtection.test と同じ形)。 */
+let encryptionAvailable = true;
+let decryptThrows = false;
 vi.mock('electron', () => ({
+  safeStorage: {
+    isEncryptionAvailable: () => encryptionAvailable,
+    // 可逆な代役: `plain:` の枝を通っていないことを証明できれば足りる。
+    encryptString: (v: string) => Buffer.from(`enc:${v}`, 'utf8'),
+    decryptString: (b: Buffer) => {
+      if (decryptThrows) throw new Error('Error while decrypting the ciphertext provided to safeStorage');
+      return b.toString('utf8').replace(/^enc:/, '');
+    },
+  },
   app: {
     // tmpDir is mutated per test, so read it lazily.
     // 記録は userData に置く約束なので、別の名前を訊かれたら別の場所を
@@ -107,8 +120,30 @@ const { ACTIONS, fetchEmotionsSnapshot } = await import('../emotions');
 
 const STORE_FILE = 'service-hub-emotions.json';
 const storeFile = (): string => path.join(tmpDir, STORE_FILE);
-const readStored = async (): Promise<{ moods: unknown[]; analyses: unknown[] }> =>
-  JSON.parse(await fs.readFile(storeFile(), 'utf8'));
+/** 保存要素の形は両ビルドで検査される (`shared/emotionsShape.ts`) ので、詰め物も本物の形で作る。 */
+function analysisFixture(id: string) {
+  return {
+    id,
+    timestamp: 1_700_000_000_000,
+    excerpt: 'x',
+    scores: { joy: 0, sadness: 0, anger: 0, fear: 0, surprise: 0, disgust: 0 },
+    sentiment: 'neutral' as const,
+    dominant: 'joy',
+  };
+}
+
+/** 封緘したファイルを検査側で開く (代役の形: base64 の中が `enc:` + 平文、または `plain:` + base64)。 */
+function decodeStored(raw: string): { moods: unknown[]; analyses: unknown[] } {
+  const envelope = JSON.parse(raw) as { v?: unknown; sealed?: unknown };
+  // 2026-09-09 までの平文 (封筒でない) はそのまま返す —— 移行前の標本を読む検査のため。
+  // ★「書いたファイルに平文が残らない」は raw を直に見るので、ここで緩めても弱まらない。
+  if (typeof envelope.sealed !== 'string') return envelope as unknown as { moods: unknown[]; analyses: unknown[] };
+  const inner = envelope.sealed.startsWith('plain:')
+    ? Buffer.from(envelope.sealed.slice('plain:'.length), 'base64').toString('utf8')
+    : Buffer.from(envelope.sealed, 'base64').toString('utf8').replace(/^enc:/, '');
+  return JSON.parse(inner) as { moods: unknown[]; analyses: unknown[] };
+}
+const readStored = async (): Promise<{ moods: unknown[]; analyses: unknown[] }> => decodeStored(await fs.readFile(storeFile(), 'utf8'));
 const seed = async (store: unknown): Promise<void> => {
   await fs.writeFile(storeFile(), JSON.stringify(store));
 };
@@ -131,7 +166,7 @@ describe('ACTIONS["log-mood"]', () => {
 
     expect(result).toEqual({ date: '2026-05-01', score: 4 });
     const raw = await fs.readFile(path.join(tmpDir, 'service-hub-emotions.json'), 'utf8');
-    const stored = JSON.parse(raw);
+    const stored = decodeStored(raw);
     expect(stored.moods).toHaveLength(1);
     expect(stored.moods[0]).toMatchObject({ date: '2026-05-01', score: 4, note: 'ok' });
   });
@@ -149,9 +184,9 @@ describe('ACTIONS["log-mood"]', () => {
   it('replaces same-date entry rather than appending', async () => {
     await ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 3 } });
     await ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 5 } });
-    const stored = JSON.parse(await fs.readFile(path.join(tmpDir, 'service-hub-emotions.json'), 'utf8'));
+    const stored = decodeStored(await fs.readFile(path.join(tmpDir, 'service-hub-emotions.json'), 'utf8'));
     expect(stored.moods).toHaveLength(1);
-    expect(stored.moods[0].score).toBe(5);
+    expect((stored.moods[0] as { score: number }).score).toBe(5);
   });
 });
 
@@ -230,7 +265,7 @@ describe('ACTIONS["clear-history"]', () => {
       payload: {},
     })) as { moods: number; analyses: number };
     expect(before.moods).toBe(1);
-    const stored = JSON.parse(await fs.readFile(path.join(tmpDir, 'service-hub-emotions.json'), 'utf8'));
+    const stored = decodeStored(await fs.readFile(path.join(tmpDir, 'service-hub-emotions.json'), 'utf8'));
     expect(stored.moods).toEqual([]);
   });
 
@@ -241,7 +276,7 @@ describe('ACTIONS["clear-history"]', () => {
       fetch: vi.fn<typeof fetch>(),
       payload: { kind: 'analyses' },
     });
-    const stored = JSON.parse(await fs.readFile(path.join(tmpDir, 'service-hub-emotions.json'), 'utf8'));
+    const stored = decodeStored(await fs.readFile(path.join(tmpDir, 'service-hub-emotions.json'), 'utf8'));
     expect(stored.moods).toHaveLength(1); // moods untouched
   });
 });
@@ -299,12 +334,13 @@ describe('fetchEmotionsSnapshot', () => {
   });
 
   it('気分は直近 30 日ぶん、解析は新しい 10 件だけ返す', async () => {
+    // 40 日ぶんの**暦に在る**日付 (1 月 32 日以降は 2026-09-09 (パス 115) から読めない)。
     const moods = Array.from({ length: 40 }, (_, i) => ({
-      date: `2026-01-${String(i + 1).padStart(2, '0')}`,
+      date: new Date(Date.UTC(2026, 0, 1 + i)).toISOString().slice(0, 10),
       score: 3,
       note: `m${i}`,
     }));
-    const analyses = Array.from({ length: 15 }, (_, i) => ({ id: `a${i}` }));
+    const analyses = Array.from({ length: 15 }, (_, i) => analysisFixture(`a${i}`));
     await seed({ moods, analyses });
 
     const snap = await fetchEmotionsSnapshot({ token: '' });
@@ -351,17 +387,24 @@ describe('ACTIONS["log-mood"] — 日付と点数', () => {
     expect(result.date).toBe('2026-05-03');
   });
 
-  it('日付の形が違えば今日として扱う', async () => {
+  it('★ 日付の形が違えば断る —— 今日に倒さない (パス 115。それまでは黙って今日の記録に化けていた)', async () => {
+    for (const bad of ['not-a-date', 'xx2026-05-01', '2026-05-01junk', '2026-5-1', '2026-02-30', '2026-13-01', 20260501]) {
+      await expect(
+        ACTIONS['log-mood']!({ token: '', fetch: noFetch(), payload: { date: bad, score: 4 } }),
+        String(bad),
+      ).rejects.toThrow(calendarDateMessage('date'));
+    }
+  });
+
+  it('null の日付は省略と同じ (今日)', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(2026, 4, 3, 12, 0, 0));
-    for (const bad of ['not-a-date', 'xx2026-05-01', '2026-05-01junk', '2026-5-1']) {
-      const r = (await ACTIONS['log-mood']!({
-        token: '',
-        fetch: noFetch(),
-        payload: { date: bad, score: 4 },
-      })) as { date: string };
-      expect(r.date).toBe('2026-05-03');
-    }
+    const r = (await ACTIONS['log-mood']!({
+      token: '',
+      fetch: noFetch(),
+      payload: { date: null, score: 4 },
+    })) as { date: string };
+    expect(r.date).toBe('2026-05-03');
   });
 
   it('点数の境界 — 1 と 5 は通し、0 と 6 と数値でないものは拒む', async () => {
@@ -403,8 +446,9 @@ describe('ACTIONS["log-mood"] — 日付と点数', () => {
   });
 
   it('365 日を超えたら古いほうから捨てる', async () => {
+    // 366 日ぶんの暦に在る日付 (2025-01-01 〜 2026-01-01)。辞書順 = 時系列順。
     const moods = Array.from({ length: 366 }, (_, i) => ({
-      date: `2025-01-01T${String(i).padStart(4, '0')}`,
+      date: new Date(Date.UTC(2025, 0, 1 + i)).toISOString().slice(0, 10),
       score: 3,
       note: `old${i}`,
     }));
@@ -639,7 +683,7 @@ describe('ACTIONS["analyze-text"] — 送り先と中身', () => {
   });
 
   it('50 件を超えたら古い解析から捨てる', async () => {
-    const analyses = Array.from({ length: 50 }, (_, i) => ({ id: `old${i}` }));
+    const analyses = Array.from({ length: 50 }, (_, i) => analysisFixture(`old${i}`));
     await seed({ moods: [], analyses });
 
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(anthropicOk(okBody));
@@ -664,7 +708,7 @@ describe('ACTIONS["clear-history"] — 何が消えて何が残るか', () => {
     tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'emotions-clear-'));
     await seed({
       moods: [{ date: '2026-05-01', score: 3, note: 'm' }],
-      analyses: [{ id: 'a1' }, { id: 'a2' }],
+      analyses: [analysisFixture('a1'), analysisFixture('a2')],
     });
   });
   afterEach(async () => {
@@ -745,21 +789,16 @@ describe('壊れた記録の扱い', () => {
     expect(snap.analyses).toEqual([]);
   });
 
-  it('日付が文字列に化ける値でも今日として扱う', async () => {
-    // `toString` が正しい形を返すオブジェクトは、正規表現には通るが
-    // 文字列ではない。先に typeof を見ていないと保存に紛れ込む。
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 4, 3, 12, 0, 0));
-    try {
-      const r = (await ACTIONS['log-mood']!({
+  it('日付が文字列に化ける値は断る (今日に倒さない —— パス 115)', async () => {
+    // `toString` が正しい形を返すオブジェクトは、`String()` を通す判定なら通るが
+    // 文字列ではない。型を見る行が効いていること。
+    await expect(
+      ACTIONS['log-mood']!({
         token: '',
         fetch: noFetch(),
         payload: { date: { toString: () => '2026-05-01' }, score: 3 },
-      })) as { date: string };
-      expect(r.date).toBe('2026-05-03');
-    } finally {
-      vi.useRealTimers();
-    }
+      }),
+    ).rejects.toThrow(calendarDateMessage('date'));
   });
 });
 
@@ -898,5 +937,190 @@ describe('解析の指示文 —— 読み直して問う', () => {
     expect(body.system).toContain('valid JSON');
     expect(body.system).toContain('"sentiment"');
     expect(body.system.length).toBeGreaterThan(100);
+  });
+});
+
+/*
+ * 要素の形はブラウザ版と同じ規則で確かめる (`shared/emotionsShape.ts`)。2026-09-05 まで
+ * `as Partial<EmotionsStore>` で要素を信じていて、null が 1 つ混じると `m.date` で落ちた。
+ * 方針もブラウザ版と同じ: 読み出しは残りを返し、書き込みは断り (上書きで消えるため)、「履歴を消去」は通す。
+ */
+describe('保存要素の形 (ブラウザ版と同じ規則)', () => {
+  const GOOD = { date: '2026-01-01', score: 4, note: '大事なメモ' };
+  // 前の describe が消した tmpDir に `seed` が書けていたのは、直前のテストの書き込み
+  // (`atomicWriteFile` が mkdir する) が偶然ディレクトリを作り直していたから。順序に頼らない。
+  beforeEach(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'emotions-shape-'));
+  });
+  afterEach(async () => {
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+  const anthropicOk = () =>
+    new Response(
+      JSON.stringify({ content: [{ type: 'text', text: JSON.stringify({ scores: { joy: 0.8 }, sentiment: 'positive', dominant: 'joy' }) }] }),
+      { status: 200, headers: { 'content-type': 'application/json' } },
+    );
+  const analyze = (fetchMock: ReturnType<typeof vi.fn<typeof fetch>>) =>
+    ACTIONS['analyze-text']!({ token: 'sk-ant-x', fetch: fetchMock, payload: { text: '今日は最高だった', source: 'journal' } });
+
+  it('★ 形の違う要素が混じった保存先: 読み出しは残りを返す', async () => {
+    await seed({ moods: [GOOD, null, { date: 5 }, { date: '2026-01-02', score: '3', note: '' }], analyses: [analysisFixture('a1'), 'junk'] });
+    const snap = await fetchEmotionsSnapshot({ token: '' });
+    expect(snap.moods).toEqual([GOOD]);
+    expect(snap.analyses.map((a) => a.id)).toEqual(['a1']);
+  });
+
+  it('★ そのとき log-mood は断り、保存先は書き換えない', async () => {
+    await seed({ moods: [GOOD, null], analyses: [] });
+    const before = await readStored();
+    await expect(ACTIONS['log-mood']!({ token: '', payload: { date: '2026-02-02', score: 3, note: 'new' } })).rejects.toThrow(/記録を中止/);
+    expect(await readStored()).toEqual(before);
+  });
+
+  it('★ 欄が在るのに配列でない (moods: "x") も同じ扱い', async () => {
+    await seed({ moods: 'x', analyses: [] });
+    expect((await fetchEmotionsSnapshot({ token: '' })).moods).toEqual([]);
+    await expect(ACTIONS['log-mood']!({ token: '', payload: { date: '2026-02-02', score: 3, note: 'new' } })).rejects.toThrow(/記録を中止/);
+  });
+
+  it('対照: 欄が無いだけの古い形は読めた扱いで、普通に書ける', async () => {
+    await seed({ moods: [GOOD] });
+    expect(await fetchEmotionsSnapshot({ token: '' })).toMatchObject({ moods: [GOOD], analyses: [] });
+    await ACTIONS['log-mood']!({ token: '', payload: { date: '2026-02-02', score: 3, note: 'new' } });
+    expect((await readStored()).moods).toHaveLength(2);
+  });
+
+  it('対照: 「履歴を消去」は壊れていても通る (抜け出す道)', async () => {
+    await seed({ moods: [null], analyses: ['junk'] });
+    await expect(ACTIONS['clear-history']!({ token: '', payload: { kind: 'all' } })).resolves.toEqual({ moods: 0, analyses: 0 });
+    expect(await readStored()).toEqual({ moods: [], analyses: [] });
+  });
+
+  it('★ 解析側だけが壊れていても log-mood は断る (両方の欄を見る)', async () => {
+    await seed({ moods: [GOOD], analyses: ['junk'] });
+    const before = await readStored();
+    await expect(ACTIONS['log-mood']!({ token: '', payload: { date: '2026-02-02', score: 3, note: 'new' } })).rejects.toThrow(/記録を中止/);
+    expect(await readStored()).toEqual(before);
+  });
+
+  it('★ analyze-text: 保存できない保存先なら**送る前に**断る (本文も API 呼び出しも外へ出ない)', async () => {
+    await seed({ moods: [null], analyses: [] });
+    const before = await readStored();
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(anthropicOk());
+    await expect(analyze(fetchMock)).rejects.toThrow(/記録を中止/);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(await readStored()).toEqual(before);
+  });
+
+  it('★ analyze-text: 送っている間に保存先が壊れたら、返事は捨てて保存先は書き換えない', async () => {
+    await seed({ moods: [GOOD], analyses: [] });
+    const brokenMidFlight = { moods: [GOOD, null], analyses: [] };
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation(async () => {
+      await seed(brokenMidFlight); // 応答が返る前に別の書き手が壊した
+      return anthropicOk();
+    });
+    await expect(analyze(fetchMock)).rejects.toThrow(/記録を中止/);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(await readStored()).toEqual(brokenMidFlight);
+  });
+
+  it('対照: 合う保存先なら analyze-text は 1 回送って保存する (上 2 本が「何をしても通る」ものでない根拠)', async () => {
+    await seed({ moods: [GOOD], analyses: [] });
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(anthropicOk());
+    const entry = (await analyze(fetchMock)) as { dominant: string };
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(entry.dominant).toBe('joy');
+    const stored = await readStored();
+    expect(stored.moods).toEqual([GOOD]);
+    expect(stored.analyses).toHaveLength(1);
+  });
+
+  it.each([
+    ['null', 'null'],
+    ['配列', '[]'],
+    ['数値', '42'],
+  ])('オブジェクトでない JSON (%s) は欄が無い古い形と同じ: 空として読み、普通に書ける', async (_label, raw) => {
+    await fs.writeFile(storeFile(), raw);
+    expect(await fetchEmotionsSnapshot({ token: '' })).toMatchObject({ moods: [], analyses: [] });
+    await ACTIONS['log-mood']!({ token: '', payload: { date: '2026-02-02', score: 3, note: 'new' } });
+    expect((await readStored()).moods).toHaveLength(1);
+  });
+
+  it('★ 読み出しでも ENOENT 以外の失敗 (EISDIR) を「まだ無い」にしない', async () => {
+    // 同名のディレクトリを置くと readFile は EISDIR で失敗する。log-mood 側の同じ検査は
+    // 書き込み (rename がディレクトリに当たる) でも落ちるので、読み出しの握り潰しを測れない。
+    await fs.mkdir(storeFile());
+    await expect(fetchEmotionsSnapshot({ token: '' })).rejects.toThrow(/EISDIR/);
+  });
+});
+
+describe('保存先の封緘 — 感情ログは secrets.json と同じ約束で書く (パス 132)', () => {
+  const mood = (note: string) => ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 4, note } });
+
+  beforeEach(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'emotions-seal-'));
+    encryptionAvailable = true;
+    decryptThrows = false;
+  });
+  afterEach(async () => {
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+
+  it('★ 書いたファイルに平文が残らない (メモも欄名も) —— 封筒 { v: 2, sealed } で置く', async () => {
+    await mood('secret-note-9f2a');
+    const raw = await fs.readFile(storeFile(), 'utf8');
+    expect(raw).not.toContain('secret-note-9f2a');
+    expect(raw).not.toContain('"moods"');
+    const envelope = JSON.parse(raw) as { v: unknown; sealed: unknown };
+    expect(envelope.v).toBe(2);
+    expect(typeof envelope.sealed).toBe('string');
+    expect((envelope.sealed as string).startsWith('plain:')).toBe(false);
+    expect((await readStored()).moods).toHaveLength(1);
+  });
+
+  it('2026-09-09 までの平文ファイルはそのまま読め、次の書き込みで封緘される (移行)', async () => {
+    await seed({ moods: [{ date: '2026-04-01', score: 2, note: 'legacy' }], analyses: [] });
+    const snap = await fetchEmotionsSnapshot({ token: '', fetch: noFetch() });
+    expect(snap.moods).toEqual([{ date: '2026-04-01', score: 2, note: 'legacy' }]);
+    await mood('after');
+    const raw = await fs.readFile(storeFile(), 'utf8');
+    expect(raw).not.toContain('legacy');
+    expect((await readStored()).moods).toHaveLength(2);
+  });
+
+  it('対照: キーチェーンが無い環境は plain: (難読化) で往復する —— 封緘は名乗らない', async () => {
+    encryptionAvailable = false;
+    await mood('no-keychain');
+    const raw = await fs.readFile(storeFile(), 'utf8');
+    const envelope = JSON.parse(raw) as { sealed: string };
+    expect(envelope.sealed.startsWith('plain:')).toBe(true);
+    expect(raw).not.toContain('no-keychain');
+    const snap = await fetchEmotionsSnapshot({ token: '', fetch: noFetch() });
+    expect(snap.moods[0]).toMatchObject({ note: 'no-keychain' });
+  });
+
+  it('壊れた封緘 (復号が投げる / 中身が JSON でない) は理由つきで断り、記録は上書きしない', async () => {
+    await seed({ v: 2, sealed: Buffer.from('enc:not json at all', 'utf8').toString('base64') });
+    await expect(fetchEmotionsSnapshot({ token: '', fetch: noFetch() })).rejects.toThrow('復号できません');
+    await expect(mood('x')).rejects.toThrow('復号できません');
+    expect(JSON.parse(await fs.readFile(storeFile(), 'utf8'))).toMatchObject({ v: 2 });
+    decryptThrows = true;
+    await seed({ v: 2, sealed: Buffer.from('enc:{"moods":[],"analyses":[]}', 'utf8').toString('base64') });
+    await expect(fetchEmotionsSnapshot({ token: '', fetch: noFetch() })).rejects.toThrow('復号できません');
+  });
+
+  it('封緘済みのファイルをキーチェーンの無い環境で開くと、その理由を言う', async () => {
+    await mood('sealed-with-keychain');
+    encryptionAvailable = false;
+    await expect(fetchEmotionsSnapshot({ token: '', fetch: noFetch() })).rejects.toThrow('キーチェーンが使えないため読めません');
+  });
+
+  it('「履歴を消去」は読めないファイルでも通り、空の封緘に置き換える (唯一の出口を塞がない)', async () => {
+    await seed({ v: 2, sealed: Buffer.from('enc:not json at all', 'utf8').toString('base64') });
+    const before = await ACTIONS['clear-history']!({ token: '', fetch: noFetch(), payload: { kind: 'all' } });
+    expect(before).toEqual({ moods: 0, analyses: 0 });
+    expect(await readStored()).toEqual({ moods: [], analyses: [] });
+    const snap = await fetchEmotionsSnapshot({ token: '', fetch: noFetch() });
+    expect(snap.moods).toEqual([]);
   });
 });

@@ -17,6 +17,8 @@
  * 一緒くたにしない。
  */
 
+import { CONSUMPTION_TAX_REDUCED, CONSUMPTION_TAX_STANDARD } from './taxCalc';
+
 /** 品目に割り当てる税率区分。 */
 export type TaxKind =
   | 'standard' // 標準税率
@@ -39,9 +41,17 @@ export interface TaxKindMeta {
   readonly order: number;
 }
 
+/**
+ * 区分の定義。
+ *
+ * **標準・軽減の既定率は `taxCalc.ts` の法定値をそのまま参照する** (2026-09-07)。
+ * 以前はここに `0.1` / `0.08` と書き写してあり、同じ法定値が
+ * `taxCalc.ts` の定数・台帳 `parameters.ts` の既定・ここ、の 3 か所に在った。
+ * 数を写すと、法改正の日に**どれか 1 つが残る**。
+ */
 export const TAX_KINDS: Record<TaxKind, TaxKindMeta> = {
-  standard: { label: '標準税率', defaultRate: 0.1, isReduced: false, taxable: true, order: 1 },
-  reduced: { label: '軽減税率', defaultRate: 0.08, isReduced: true, taxable: true, order: 2 },
+  standard: { label: '標準税率', defaultRate: CONSUMPTION_TAX_STANDARD, isReduced: false, taxable: true, order: 1 },
+  reduced: { label: '軽減税率', defaultRate: CONSUMPTION_TAX_REDUCED, isReduced: true, taxable: true, order: 2 },
   customA: { label: '任意税率A', defaultRate: null, isReduced: false, taxable: true, order: 3 },
   customB: { label: '任意税率B', defaultRate: null, isReduced: false, taxable: true, order: 4 },
   exportExempt: { label: '免税（輸出取引等）', defaultRate: 0, isReduced: false, taxable: true, order: 5 },
@@ -119,6 +129,15 @@ export interface GroupOptions {
   readonly customRateA?: number;
   /** 任意税率 B の値（0..0.5）。 */
   readonly customRateB?: number;
+  /**
+   * 標準税率（0..0.5）。**画面が台帳 `tax.consumptionStandardRate` の値を渡す。**
+   *
+   * 省略時は法定値。2026-09-07 まで受け口が無く、台帳で税率を上書きしても
+   * 書面だけが 10% のまま計算・表示していた（設定できるのに効かない項目）。
+   */
+  readonly standardRate?: number;
+  /** 軽減税率（0..0.5）。同上（台帳 `tax.consumptionReducedRate`）。 */
+  readonly reducedRate?: number;
   readonly rounding?: RoundingMode;
 }
 
@@ -127,6 +146,9 @@ export function resolveRate(kind: TaxKind, opts: GroupOptions = {}): number | nu
   const clamp = (n: number) => Math.min(MAX_ITEM_RATE, Math.max(0, n));
   if (kind === 'customA') return clamp(opts.customRateA ?? 0);
   if (kind === 'customB') return clamp(opts.customRateB ?? 0);
+  // 標準・軽減は台帳の上書きを受ける (省略時は法定値)。
+  if (kind === 'standard') return clamp(opts.standardRate ?? CONSUMPTION_TAX_STANDARD);
+  if (kind === 'reduced') return clamp(opts.reducedRate ?? CONSUMPTION_TAX_REDUCED);
   const meta = TAX_KINDS[kind];
   return meta.defaultRate === null ? null : clamp(meta.defaultRate);
 }

@@ -34,8 +34,8 @@ aliases:
 - [[bizlaw-tag-along-drag-along|タグアロング・ドラッグアロング条項]] — 同じ思想家
 - [[bizlaw-cross-listing-global-securities|クロス上場と証券規制の国際的調和（SEC・IOSCO体制）]] — 同じ思想家
 - [[human-ecopsychology-roszak-nature-wellbeing|エコサイコロジーと自然体験——ロザックの「地球の声」論と人間-自然の心理的相互作用]] — 同じ思想家
-- [[human-depletion-ego-model-critique|自我消耗モデルの再検討——意志力の限界資源仮説とその論争]] — 同分野の近傍
 - [[human-occupational-science-yerxa-clark|作業科学——人間の作業的存在としての健康と参加の学際的探究]] — 同分野の近傍
+- [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -26,7 +26,7 @@ aliases:
 チャールズ・ハンディ ／ ジョン・アトキンソン ／ トム・ピーターズ ／ ピーター・ドラッカー
 
 ## 出典
-- [Handy, C. (1989) The Age of Unreason — Harvard Business School Press](https://www.worldcat.org/oclc/20012068) `学術`
+- [Handy, C. (1989) The Age of Unreason — Harvard Business School Press](https://www.worldcat.org/oclc/20012068) `リファレンス`
 - [Wikipedia: Charles Handy — shamrock organization, portfolio worker, flexible firm](https://en.wikipedia.org/wiki/Charles_Handy) `リファレンス`
 
 ## 関連概念

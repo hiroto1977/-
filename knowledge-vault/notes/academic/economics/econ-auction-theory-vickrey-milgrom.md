@@ -40,7 +40,7 @@ aliases:
 - [[econ-revelation-principle|顕示原理（メカニズムデザイン）]] — 同じ思想家
 - [[econ-vickrey-clarke-groves|VCGメカニズム——真の評価額の表明を最適戦略とする効率的資源配分]] — 同じ思想家
 - [[econ-winner-curse-auction|勝者の呪い——共通価値オークションで落札者が過大評価し損をする逆説]] — 同じ思想家
-- [[econ-comparative-institutional-analysis|比較制度分析（青木昌彦）]] — 同じ思想家
+- [[econ-reputation-effects-kreps-wilson-milgrom-roberts|不完備情報下の評判効果——わずかなタイプの不確実性が参入阻止と協調を合理化する]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

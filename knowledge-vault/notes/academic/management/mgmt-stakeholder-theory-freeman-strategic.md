@@ -3,43 +3,46 @@ collection: academic
 id: mgmt-stakeholder-theory-freeman-strategic
 category: "management"
 category_ja: "経営学"
-title: "ステークホルダー理論——フリーマンの戦略的管理と全ステークホルダー利害調整"
-as_of: "2026-06-26"
-source_count: 2
+title: "ステークホルダー理論（フリーマン）——企業の目的を株主利益に限定せず、目的達成に影響を与え影響を受けるすべての集団の利害を戦略に組み込む規範的・道具的・記述的理論"
+as_of: "2026-09"
+source_count: 5
 authoritative: true
 tags:
   - collection/academic
   - academic/management
   - knowledge/verified
 aliases:
-  - "ステークホルダー理論——フリーマンの戦略的管理と全ステークホルダー利害調整"
+  - "ステークホルダー理論（フリーマン）——企業の目的を株主利益に限定せず、目的達成に影響を与え影響を受けるすべての集団の利害を戦略に組み込む規範的・道具的・記述的理論"
 ---
 
-# ステークホルダー理論——フリーマンの戦略的管理と全ステークホルダー利害調整
+# ステークホルダー理論（フリーマン）——企業の目的を株主利益に限定せず、目的達成に影響を与え影響を受けるすべての集団の利害を戦略に組み込む規範的・道具的・記述的理論
 
-> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-06-26 ・ 出典: 2件（うち権威ある出典 ✓）
+> [!info] コレクション: [[学術概念]] ・ 区分: 経営学 ・ asOf: 2026-09 ・ 出典: 5件（うち権威ある出典 ✓）
 
 ## 概要
-ステークホルダー理論（stakeholder theory）は，R・エドワード・フリーマンが著作『戦略的管理：ステークホルダーアプローチ』（1984年）で提唱した，企業の目的を株主利益最大化に限定せず，従業員・顧客・供給者・コミュニティ・政府などすべてのステークホルダーの利害を考慮した管理を行うべきとする規範的・道具的理論である。道具的観点では，ステークホルダー管理が長期的な企業業績・レピュテーション・持続的競争優位に貢献することが実証研究で支持される。規範的観点では，ステークホルダーはカント的義務論的理由から尊重されるべきとする倫理的基盤も持つ。2019年のBusiness Roundtable声明（米国主要企業CEO181社が「株主第一主義」から「ステークホルダー資本主義」への転換を宣言）はステークホルダー理論の実践的影響力を示した。ESG投資・SDGs経営・コーポレートガバナンス改革の理論的基盤としても機能している。
+ステークホルダー理論（stakeholder theory）は、R・エドワード・フリーマンが1984年の著書『Strategic Management: A Stakeholder Approach』で体系化した理論で、ステークホルダーを「組織の目的達成に影響を与え、または影響を受ける集団・個人」と定義し、企業の目的を株主利益の最大化に限定せず、従業員・顧客・供給者・地域社会・政府など全ステークホルダーの利害を考慮して調整する経営を説く。ミルトン・フリードマン（1970）の「企業の社会的責任は利益を増やすことだ」という株主第一主義への対抗軸であり、トーマス・ドナルドソンとリー・プレストン（1995）は理論を、企業が実際にどう振る舞うかの記述的側面、ステークホルダー管理が業績に何をもたらすかの道具的側面、企業は何をすべきかの規範的側面の三層に整理した。道具的には、ステークホルダー管理が長期の業績・評判・持続的競争優位に寄与することが実証研究で支持され、規範的にはカント的な義務論や公正の観点からステークホルダーは手段ではなく目的として尊重されるべきだとする。2019年のビジネス・ラウンドテーブル声明とダボス・マニフェストで注目が高まり、ESG 投資や CSRD 開示と接続して制度化が進む。批判として、誰がステークホルダーかの境界が広すぎて実務指針を欠くこと（顕出性理論が補う）、複数の利害を調整する原理が曖昧で経営者の裁量を広げること、掲げるだけで行動が伴わない「ウォッシュ」がある。中小企業には、従業員・取引先・金融機関・地域といった少数の顔の見える相手との関係そのものが事業の基盤であり、誰の利害をどう調整しているかを明示することが信用と採用に直結することが含意となる。
 
 ## 提唱者・初出
-R・エドワード・フリーマン ／ ジョン・ドナルドソン ／ アンドリュー・ウィックス ／ ジョン・ロールズ
+R・エドワード・フリーマン（1984 提唱）／トーマス・ドナルドソン＆リー・プレストン（1995 記述・道具・規範の三層）／対比: ミルトン・フリードマン（1970 株主第一主義）／ハワード・ボーウェン（1953 CSR の嚆矢）
 
 ## 出典
-- [Freeman, R.E. (1984) Strategic Management: A Stakeholder Approach — Cambridge UP](https://doi.org/10.1017/CBO9780511815768) `学術`
-- [Wikipedia: Stakeholder theory — corporate purpose and ethics](https://en.wikipedia.org/wiki/Stakeholder_theory) `リファレンス`
+- [Freeman, R. E. (1984) Strategic Management: A Stakeholder Approach — Cambridge University Press（2010 年再刊、原典）](https://doi.org/10.1017/CBO9781139192675) `学術`
+- [Donaldson, T. & Preston, L. E. (1995) The Stakeholder Theory of the Corporation: Concepts, Evidence, and Implications — Academy of Management Review 20(1)](https://doi.org/10.2307/258887) `学術`
+- [Business Roundtable (2019) Statement on the Purpose of a Corporation（ステークホルダー資本主義への転換宣言）](https://www.businessroundtable.org/business-roundtable-redefines-the-purpose-of-a-corporation-to-promote-an-economy-that-serves-all-americans) `リファレンス`
+- [Wikipedia: Stakeholder theory — Freeman、Donaldson & Preston の三層、批判](https://en.wikipedia.org/wiki/Stakeholder_theory) `リファレンス`
+- [Wikipedia: Corporate social responsibility — Bowen 1953、Friedman 1970、ESG・CSRD との関係](https://en.wikipedia.org/wiki/Corporate_social_responsibility) `リファレンス`
 
 ## 関連概念
-- [[mgmt-stakeholder-integration-freeman|ステークホルダー統合戦略（フリーマン）]] — 語彙が近い
-- [[econ-rawls-justice|ロールズの正義論（公正としての正義）]] — 同じ思想家
-- [[econ-harsanyi-utilitarianism|ハルサニの功利主義（集計定理）——不偏な観察者と期待効用の和]] — 同じ思想家
-- [[econ-rawls-difference-principle-social-justice|ロールズの格差原理と正義論——「無知のヴェール」から導く社会的不平等の倫理的許容条件]] — 同じ思想家
-- [[infosoc-deliberative-democracy|熟議民主主義]] — 同じ思想家
-- [[mgmt-corporate-governance-stewardship|コーポレートガバナンスとスチュワードシップ理論——エージェンシー論との対比]] — 同じ思想家
+- [[mgmt-csr|企業の社会的責任（CSR）]] — 同じ思想家
+- [[econ-friedman-rule|フリードマン・ルール（最適貨幣量）]] — 同じ思想家
+- [[econ-helicopter-money|ヘリコプターマネー]] — 同じ思想家
+- [[econ-natural-rate-unemployment|自然失業率（NAIRU）]] — 同じ思想家
 - [[mgmt-corporate-purpose-stakeholder|企業目的論とステークホルダー資本主義]] — 同じ思想家
 - [[mgmt-corporate-social-responsibility-carroll|CSR四層ピラミッド（キャロル）]] — 同じ思想家
-- [[mgmt-corporate-social-responsibility-csr|企業の社会的責任（CSR）とステークホルダー資本主義の経営論]] — 同じ思想家
-- [[mgmt-stakeholder-mapping-power-interest|ステークホルダー・マッピングと利害権力分析——戦略的ステークホルダー管理の実践論]] — 同じ思想家
+- [[econ-expectations-augmented-phillips|期待修正フィリップス曲線——インフレ期待と失業のトレードオフの動態分析]] — 同じ思想家
+- [[econ-phillips-curve-inflation-unemployment|フィリップス曲線——インフレ率と失業率のトレードオフと期待修正型の展開]] — 同じ思想家
+- [[econ-universal-basic-income|ユニバーサル・ベーシックインカム（UBI）]] — 同じ思想家
+- [[econ-helicopter-money-overt-monetary-financing|ヘリコプターマネーと財政・金融政策の統合——ミルトン・フリードマンからバーナンキまでの政策論争]] — 同じ思想家
 
 ## 関連
 - コレクション: [[学術概念]]

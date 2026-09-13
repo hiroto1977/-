@@ -31,8 +31,8 @@ aliases:
 - [UK Design Council — Framework for Innovation (2019)](https://www.designcouncil.org.uk/resources/framework-for-innovation/) `リファレンス`
 
 ## 関連概念
-- [[mgmt-competitive-parity-resource|競争均衡と資源ベースの優位の侵食（バーニー）]] — 同分野の近傍
 - [[mgmt-service-blueprint|サービス・ブループリント]] — 同分野の近傍
+- [[mgmt-lean-startup-ries-build-measure-learn|リーンスタートアップ——リースの構築・計測・学習サイクルとMVP・ピボット戦略]] — 同分野の近傍
 - [[mgmt-six-sigma|シックス・シグマ]] — 同分野の近傍
 
 ## 関連

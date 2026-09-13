@@ -35,12 +35,12 @@ aliases:
 - [[mgmt-boundaryspanning-roles|バウンダリースパニング役割：組織と環境を結ぶ境界連結機能・ゲートキーパー・役割葛藤の組織論的体系]] — 同じ思想家
 - [[mgmt-creative-destruction-schumpeter-org|創造的破壊と組織革新——シュンペーター的競争の経営学的展開]] — 同じ思想家
 - [[mgmt-second-curve-handy|セカンド・カーブ——衰退する前に次の成長曲線を始める]] — 同じ思想家
-- [[mgmt-ambidextrous-leadership|両利きのリーダーシップとパラドックス・マインドセット（タシュマン）]] — 同じ思想家
-- [[mgmt-ambidextrous-leadership-rosing|両利きのリーダーシップ——探索と活用の動的切替え]] — 同じ思想家
 - [[mgmt-architectural-innovation-henderson-clark|アーキテクチュラル・イノベーション——構成要素のつなぎ方を変える革新]] — 同じ思想家
 - [[mgmt-core-rigidities-leonard-barton|コア・ケイパビリティとコア・リジディティ（レナード＝バートン）——強みが硬直性へ転じる逆説]] — 同じ思想家
 - [[mgmt-jobs-to-be-done|ジョブ理論（片付けるべき用事）]] — 同じ思想家
 - [[mgmt-jobs-to-be-done-christensen|片付けるべき仕事（ジョブ理論）——顧客が製品を「雇う」目的を分析する]] — 同じ思想家
+- [[mgmt-strategic-momentum-miller|戦略的モメンタム——成功パターンの固定化が組織衰退を招くメカニズム]] — 同じ思想家
+- [[mgmt-product-life-cycle|プロダクト・ライフサイクル（製品ライフサイクル）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

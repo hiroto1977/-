@@ -33,14 +33,8 @@ aliases:
 ## 関連概念
 - [[bizlaw-administrative-litigation|行政事件訴訟法]] — 語彙が近い
 - [[bizlaw-choice-of-law|準拠法——複数の法域に関わる紛争にいずれの法を適用するか]] — 同じ思想家
-- [[bizlaw-kelsen-pure-theory-of-law|純粋法学（Pure Theory of Law）：ケルゼンの根本規範と法段階論]] — 出典を共有
-- [[econ-capital-controversy|ケンブリッジ資本論争：資本の集計と新古典派成長理論の基礎]] — 出典を共有
-- [[econ-corridor-of-stability-leijonhufvud|安定性の回廊——レイヨンフーヴッドのマクロ経済不均衡分析]] — 出典を共有
-- [[econ-endogenous-money-supply-moore|内生的貨幣供給論——ポストケインズ派の信用創造メカニズムと中央銀行の受動的役割]] — 出典を共有
-- [[econ-giffen-good-theory|ギッフェン財理論]] — 出典を共有
-- [[econ-ricardian-vice|リカーディアン・ヴァイス（リカードの悪弊）]] — 出典を共有
-- [[econ-trade-gravity-model|貿易の重力モデル――経済規模と距離が二国間貿易量を規定するメカニズムとその応用]] — 出典を共有
-- [[human-cognitive-load-dual-task|認知負荷理論と二重課題パラダイム]] — 出典を共有
+- [[bizlaw-administrative-appeal|行政不服審査（審査請求）]] — 同分野の近傍
+- [[bizlaw-donatio-mortis-causa|死因贈与（ドナティオ・モルティス・カウサ）——死を見越した条件付きの贈与]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -4,6 +4,10 @@ import { createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { act } from 'react-dom/test-utils';
 import { useServiceData, type ServiceState, type ErrorKind } from '../useServiceData';
+import {
+  _resetDeviceStoreFailureForTests,
+  currentDeviceStoreFailure,
+} from '../../data/deviceStoreFailure';
 import type { FetchResult, ServiceId } from '../../../preload/preload';
 
 // React 18 の act() 警告を抑止。
@@ -71,7 +75,10 @@ const errHub = (code: 'not_configured' | 'fetch_failed' | 'not_implemented', mes
   fetchSnapshot: async () => ({ ok: false, code, message }) as FetchResult<unknown>,
 });
 
-beforeEach(() => setHub(undefined));
+beforeEach(() => {
+  setHub(undefined);
+  _resetDeviceStoreFailureForTests();
+});
 
 describe('useServiceData — initial state', () => {
   it('starts from the snapshot, idle, not configured', async () => {
@@ -109,6 +116,53 @@ describe('useServiceData — initial state', () => {
     expect(h.ref.current.status).toBe('idle');
     expect(h.ref.current.source).toBe('snapshot');
     expect(h.ref.current.data).toEqual({ v: 1 });
+    h.unmount();
+  });
+
+  /*
+   * **「未設定」の札は 75 画面が同じ形で出すので消せない。だから理由を 1 か所で言う。**
+   *
+   * 資格情報の一覧が取れないと `isConfigured` は false になり、画面は
+   * 「トークン未設定」を出す。保管ファイルが読めないだけのときにそれを出すと、
+   * 利用者は鍵を貼り直そうとする —— なので橋が**答えを返せなかった**ことを
+   * `deviceStoreFailure` の `settings` へ写す (文面は「『未設定』と出ていても、
+   * 設定が消えたとは限りません」)。
+   *
+   * **橋がまだ無いだけのときは報せない** —— 起動直後に赤を出さないための区別で、
+   * 元のコメントが言っていた懸念をそのまま守る。
+   */
+  it('★ 一覧が取れなかったら、理由を経路へ写す (画面上端の報せになる)', async () => {
+    setHub({
+      listConfigured: async () => { throw new Error('IPC broke'); },
+      fetchSnapshot: async () => ({ ok: true, data: { v: 2 } }) as FetchResult<unknown>,
+    });
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    const f = currentDeviceStoreFailure();
+    expect(f?.store).toBe('settings');
+    expect(f?.op).toBe('read');
+    expect(f?.where).toBe('credentials');
+    expect(f?.message).toContain('「未設定」と出ていても、設定が消えたとは限りません');
+    h.unmount();
+  });
+
+  it('対照: 橋がまだ無いだけなら報せない (起動直後に赤を出さない)', async () => {
+    setHub(undefined);
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    expect(h.ref.current.isConfigured).toBe(false);
+    expect(currentDeviceStoreFailure(), '橋の不在を「読めない」と報せている').toBeNull();
+    h.unmount();
+  });
+
+  it('対照: 一覧が取れれば何も報せない', async () => {
+    setHub({
+      listConfigured: async () => ['github'],
+      fetchSnapshot: async () => ({ ok: true, data: { v: 2 } }) as FetchResult<unknown>,
+    });
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    expect(currentDeviceStoreFailure()).toBeNull();
     h.unmount();
   });
 
@@ -565,5 +619,158 @@ describe('useServiceData — autoFetch', () => {
     await h.mount();
     expect(calls()).toBe(0);
     h.unmount();
+  });
+});
+
+// --- 重なった取得 ---------------------------------------------------------
+//
+// 更新ボタンは `status === 'loading'` で無効になるが、**書き込みの操作は
+// 無効にならない**。気分の記録・銘柄の登録・人材の保存・Team Radar の保存・
+// Microsoft 365 は成功後に `refresh()` を呼ぶので (実測 5 画面 7 か所)、
+// 「更新を押す (遅い) → 記録する (速い・成功後に再取得)」で取得が重なる。
+// 世代の番人が無いと**後から返った古い応答が新しい内容を消し**、しかも
+// `source='live'` / `status='idle'` のままなので、画面は取得できた顔で古い数字を出す。
+describe('取得が重なったとき', () => {
+  type Payload = { readonly label: string };
+
+  /** 応答を手で解決できる hub。`resolvers[i]` が i 回目の取得。 */
+  function deferredHub(): { hub: Hub; resolvers: ((r: FetchResult<Payload>) => void)[] } {
+    const resolvers: ((r: FetchResult<Payload>) => void)[] = [];
+    return {
+      resolvers,
+      hub: {
+        listConfigured: async () => [],
+        fetchSnapshot: () =>
+          new Promise<FetchResult<unknown>>((resolve) => {
+            resolvers.push(resolve as (r: FetchResult<Payload>) => void);
+          }),
+      },
+    };
+  }
+
+  it('★ 遅れて返った古い応答は、新しい応答の内容を上書きしない', async () => {
+    const { hub, resolvers } = deferredHub();
+    setHub(hub);
+    const h = setup<Payload>('emotions', { label: '同梱' });
+    await h.mount();
+
+    void h.ref.current.refresh(); // 1 回目 (遅い)
+    void h.ref.current.refresh(); // 2 回目 (速い)
+    await flush(2);
+    expect(resolvers).toHaveLength(2);
+
+    resolvers[1]!({ ok: true, data: { label: '新しい' } });
+    await flush();
+    expect(h.ref.current.data).toEqual({ label: '新しい' });
+
+    resolvers[0]!({ ok: true, data: { label: '古い' } });
+    await flush();
+    expect(h.ref.current.data, '古い応答が後から画面を戻してはいけない').toEqual({ label: '新しい' });
+    expect(h.ref.current.status).toBe('idle');
+    h.unmount();
+  });
+
+  it('★ 遅れて返った古い失敗は、成功した新しい取得を赤くしない', async () => {
+    const { hub, resolvers } = deferredHub();
+    setHub(hub);
+    const h = setup<Payload>('emotions', { label: '同梱' });
+    await h.mount();
+
+    void h.ref.current.refresh(); // 1 回目 (遅い・失敗する)
+    void h.ref.current.refresh(); // 2 回目 (速い・成功する)
+    await flush(2);
+
+    resolvers[1]!({ ok: true, data: { label: '新しい' } });
+    await flush();
+    resolvers[0]!({ ok: false, code: 'fetch_failed', message: '繋がりません' });
+    await flush();
+
+    expect(h.ref.current.status, '成功の上に古い失敗を載せない').toBe('idle');
+    expect(h.ref.current.errorMessage).toBeUndefined();
+    expect(h.ref.current.data).toEqual({ label: '新しい' });
+    h.unmount();
+  });
+
+  it('★ 遅れて投げた古い取得も、成功した新しい取得を赤くしない (橋が throw した場合)', async () => {
+    // 橋が **reject** する道 (約束の外で throw する main を踏んだ実例がある) にも
+    // 同じ番人が要る。ここを通さないと、成功の上に古い例外の赤が乗る。
+    const rejecters: ((e: Error) => void)[] = [];
+    setHub({
+      listConfigured: async () => [],
+      fetchSnapshot: () =>
+        new Promise<FetchResult<unknown>>((resolve, reject) => {
+          rejecters.push(reject);
+          // 2 回目はすぐ成功させる (1 回目だけを後で投げる)。
+          if (rejecters.length === 2) resolve({ ok: true, data: { label: '新しい' } });
+        }),
+    });
+    const h = setup<Payload>('emotions', { label: '同梱' });
+    await h.mount();
+
+    void h.ref.current.refresh(); // 1 回目 (後で投げる)
+    void h.ref.current.refresh(); // 2 回目 (すぐ成功)
+    await flush();
+    expect(h.ref.current.data).toEqual({ label: '新しい' });
+
+    rejecters[0]!(new Error('fetch failed'));
+    await flush();
+    expect(h.ref.current.status, '成功の上に古い例外を載せない').toBe('idle');
+    expect(h.ref.current.errorMessage).toBeUndefined();
+    h.unmount();
+  });
+
+  it('対照: 重なっていなければ 1 回目の応答はそのまま反映される', async () => {
+    const { hub, resolvers } = deferredHub();
+    setHub(hub);
+    const h = setup<Payload>('emotions', { label: '同梱' });
+    await h.mount();
+
+    void h.ref.current.refresh();
+    await flush(2);
+    resolvers[0]!({ ok: true, data: { label: '1 回目' } });
+    await flush();
+    expect(h.ref.current.data).toEqual({ label: '1 回目' });
+    expect(h.ref.current.source).toBe('live');
+    h.unmount();
+  });
+});
+
+// --- 中身の「同梱データです」の名乗り -------------------------------------
+//
+// `payloadIsMock` は `main/clients` が立てる **真偽値の `isMock` だけ**を名乗りと
+// 認める (文字列の 'true' も、欄が無い物も、物でない中身も名乗りではない)。
+// StatusBar がこの値で「同梱データ」の札を出すので、緩めると緑の「ローカル」に戻る。
+describe('payloadIsMock — 名乗りの読み方', () => {
+  async function fetched(data: unknown): Promise<boolean> {
+    setHub({ listConfigured: async () => [], fetchSnapshot: async () => ({ ok: true, data }) });
+    const h = setup<unknown>('emotions', { label: '同梱' });
+    await h.mount();
+    await h.refresh();
+    const flag = h.ref.current.payloadIsMock;
+    h.unmount();
+    return flag;
+  }
+
+  it('取得前は名乗っていない (同梱を見ている段では false)', async () => {
+    setHub({ listConfigured: async () => [], fetchSnapshot: async () => ({ ok: true, data: { isMock: true } }) });
+    const h = setup<unknown>('emotions', { label: '同梱' });
+    await h.mount();
+    expect(h.ref.current.payloadIsMock, 'まだ取得していない段で名乗ってはいけない').toBe(false);
+    h.unmount();
+  });
+
+  it('★ isMock が真偽値の true のときだけ名乗りと認める', async () => {
+    expect(await fetched({ isMock: true })).toBe(true);
+    expect(await fetched({ isMock: 'true' })).toBe(false);
+    expect(await fetched({ isMock: 1 })).toBe(false);
+    expect(await fetched({ isMock: false })).toBe(false);
+  });
+
+  it('欄が無い / 物でない中身は名乗りではない', async () => {
+    expect(await fetched({})).toBe(false);
+    expect(await fetched({ items: [] })).toBe(false);
+    expect(await fetched(null)).toBe(false);
+    expect(await fetched(42)).toBe(false);
+    expect(await fetched('isMock')).toBe(false);
   });
 });

@@ -32,9 +32,9 @@ aliases:
 - [Antoinette Rouvroy & Thomas Berns, “Algorithmic governmentality and prospects of emancipation,” Réseaux (2013)](https://shs.cairn.info/article/E_RES_177_0163?lang=en) `学術`
 
 ## 関連概念
-- [[infosoc-algorithmic-governance-danaher|アルゴリズミック・ガバナンス——ダナハーの自動化された意思決定と民主的正統性]] — 語彙が近い
 - [[infosoc-web2|Web 2.0]] — 同じ思想家
 - [[human-cryptomnesia-unconscious-plagiarism|クリプトムネジア——無意識的剽窃と記憶帰属エラーのメカニズム]] — 同じ思想家
+- [[infosoc-algorithmic-governance-danaher|アルゴリズミック・ガバナンス——ダナハーの自動化された意思決定と民主的正統性]] — 同じ思想家
 - [[human-embodied-cognition-theory|身体化された認知]] — 出典を共有
 - [[infosoc-knowledge-society|知識社会（ナレッジ・ソサエティ）]] — 出典を共有
 - [[infosoc-technological-drama|テクノロジカル・ドラマ（技術の政治的闘争論）]] — 出典を共有

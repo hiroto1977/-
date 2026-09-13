@@ -35,7 +35,7 @@ Nora A. Draper ／ Joseph Turow ／ Ari Ezra Waldman
 - [[infosoc-surveillance-realism|監視リアリズム（Surveillance Realism）]] — 語彙が近い
 - [[infosoc-californian-ideology|カリフォルニアン・イデオロギー]] — 出典を共有
 - [[infosoc-mass-self-communication|マス・セルフ・コミュニケーション]] — 出典を共有
-- [[infosoc-digital-inequality|デジタル格差・デジタル不平等：情報技術へのアクセスと活用における社会的不均衡]] — 同分野の近傍
+- [[infosoc-liquid-modernity|リキッド・モダニティ（液状化する近代）]] — 同分野の近傍
 - [[infosoc-lateral-surveillance|水平監視（Lateral Surveillance／Andrejevic 2005）——人々が同等者どうしで監視し合う、責任の個人化が生む相互監視]] — 同分野の近傍
 
 ## 関連

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { printDocument } from '../data/printDocument';
 import { localIsoDate } from '../../shared/localDate';
 import { SNAPSHOT } from '../data/snapshot';
@@ -34,9 +34,11 @@ import { navigateTo, takeNavigationIntent } from '../navigate';
 import { useCollection } from '../data/useCollection';
 import { latestRecord } from '../data/latestRecord';
 import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../data/kpiActuals';
-import { BALANCE_SHEET_COLLECTION, type BalanceSheet } from '../data/balanceSheet';
+import { BALANCE_SHEET_COLLECTION, balanceSheetOrNull, currentBalanceSheet, type BalanceSheet } from '../data/balanceSheet';
 import { BANK_SUBMISSION_COLLECTION, settingsFromRecord, type BankSubmissionSettings } from '../data/bankSubmission';
 import { buildKessanImport } from '../data/kessanImport';
+import { KESSAN_SHEETS, docIdOfSheet, fieldsForSheet, inheritedNote, isKessanSheet, sheetDef, sheetOfDoc, type KessanSheet } from '../data/kessanSheets';
+import { sanitizeDocstudioStore, type DocstudioCollection, type StoreShape, type TeikanType, type Values } from '../data/docstudioStore';
 import { buildBusinessPlanImport, buildCashPlanImport, type ImportPreview } from '../data/docImports';
 import { tableStyle, thStyle, tdStyle, tdNum } from '../components/tableStyles';
 import {
@@ -88,6 +90,7 @@ import {
 } from '../data/statementEquity';
 import type { ProfessionalId } from '../data/professionalMap';
 import { readNumber } from '../data/inputGuards';
+import { useParameters } from '../data/parameterOverrides';
 import {
   MAX_ITEM_RATE,
   ROUNDING_LABEL,
@@ -99,6 +102,7 @@ import {
   type TaxKind,
   type TaxLine,
 } from '../../shared/invoiceTax';
+import { readLocalJson, writeLocalJson, type LocalReadResult, type LocalWriteResult } from '../data/localWrite';
 
 /**
  * 書類スタジオ — これまで単体 HTML として配布していた 3 ツール
@@ -109,35 +113,39 @@ import {
  * （styles.css の body.ds-printing ルール）。
  */
 
-type Collection = 'studio' | 'teikan' | 'shugyo' | 'kessan';
-type Values = Record<string, string>;
-
-interface StoreShape {
-  studio?: Record<string, Values>;
-  teikan?: { kk?: Values; gk?: Values };
-  shugyo?: Values;
-  kessan?: Values;
-  /** 最近使った書式 id（新しい順）。書式が増えたので探す手間を減らす。 */
-  recent?: string[];
-}
-
+/** 書類の群れ。union は保存の検査と共有する (`data/docstudioStore.ts`)。 */
+type Collection = DocstudioCollection;
 const LS_KEY = 'servicehub.docstudio.v1';
 
-function loadStore(): StoreShape {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    const parsed: unknown = raw ? JSON.parse(raw) : null;
-    return parsed && typeof parsed === 'object' ? (parsed as StoreShape) : {};
-  } catch {
-    return {};
-  }
+/**
+ * 差込値を読む。**「保存領域が読めなかった」を「保存が無い」に畳まない** (パス 160)。
+ *
+ * 2026-09-12 まで `catch { return {} }` で、プライベートウィンドウや Web Storage を
+ * 拒む端末ではフォームが空で開き、**見出しは「入力は端末内に自動保存」と言い続けた**。
+ * 下の `saveStore` の注記が「画面が嘘をつく」と書いている、その 4 行上に在った
+ * —— パス 74 は書き込み側だけを直していた。形の検査 (`sanitizeDocstudioStore`) は
+ * そのまま通す (壊れた保存値は既存の裁定どおり「無し」に倒す)。
+ */
+function loadStore(): LocalReadResult<StoreShape> {
+  return readLocalJson(LS_KEY, sanitizeDocstudioStore);
 }
-function saveStore(s: StoreShape): void {
-  try {
-    localStorage.setItem(LS_KEY, JSON.stringify(s));
-  } catch {
-    /* private mode / quota — best-effort */
-  }
+/**
+ * 差込値を保存する。**失敗を黙って捨てない** —— この画面は「入力は端末内に自動保存」と
+ * 書いてあるので、容量超過やプライベートモードで書けないまま打ち続けさせると画面が嘘をつく
+ * (2026-09-06。`data/localWrite.ts` に理由の分類がある)。呼び出し側が結果を画面に出す。
+ */
+function saveStore(s: StoreShape): LocalWriteResult {
+  return writeLocalJson(LS_KEY, s);
+}
+
+/**
+ * 差込フォームの見出し。**読めていない / 書けていない / どちらも通っている**の 3 通りを
+ * 1 か所で言い分ける (パス 160)。「自動保存」と名乗れるのは 3 つ目だけである。
+ */
+export function docstudioFormTitle(readError: string | null, saveError: string | undefined): string {
+  if (readError !== null) return '差込フォーム（⚠ 保存した入力を読み出せていません）';
+  if (saveError !== undefined) return '差込フォーム（⚠ 端末に保存できていません）';
+  return '差込フォーム（入力は端末内に自動保存）';
 }
 
 const fmt = (n: number) => n.toLocaleString('ja-JP');
@@ -165,33 +173,111 @@ function Fill({ text, fields, values }: { text: string; fields: readonly DocFiel
   return <>{parts}</>;
 }
 
-/** 経営書類の明細表（品目1..3・税10%集計）。 */
+/**
+ * 台帳 (`parameters.ts`) の消費税率を読む。**書面の税額はここだけから来る。**
+ *
+ * 2026-09-07 まで、書面の税率は 3 通りに分かれていた ——
+ * 見積書・発注書・注文請書・納品書は画面の中の `subtotal * 0.1` と
+ * 「消費税（10%）」の直書き、請求書・支払通知書は `invoiceTax.ts` の既定率、
+ * そして税ページだけが台帳の上書きに従っていた。法定値は `kind: 'law'` の
+ * 上書き可能な項目 (法改正の日に変えるための欄) なので、**上書きしても
+ * 相手に渡す書面だけが古い率で刷られる**状態だった。
+ */
+function useTaxRates(): { readonly standardRate: number; readonly reducedRate: number } {
+  const { values: params } = useParameters();
+  return {
+    standardRate: params['tax.consumptionStandardRate'],
+    reducedRate: params['tax.consumptionReducedRate'],
+  };
+}
+
+/**
+ * 経営書類の明細表（品目1..3）。
+ *
+ * 税額は請求書と**同じ計算器** (`groupByTaxKind`) を通す。以前はここだけ
+ * `Math.floor(subtotal * 0.1)` を持っており、同じページの適格請求書とは
+ * 別の計算・別の端数処理・別の税率だった (同じ取引の見積書と請求書で
+ * 税額が食い違いうる形)。
+ *
+ * **2026-09-10: 品目ごとの税率区分の欄を足した。** それまでは全行を標準税率として
+ * 扱っており、飲食料品を扱う事業者は**軽減税率の品目を見積れなかった** ——
+ * 請求書では選べるのに見積書では選べないので、同じ取引の見積と請求で税額が違う。
+ * 区分は 5 択 (`ITEM_TAX_KIND_OPTIONS`) で、適格請求書の 8 択とは意図的に違う
+ * (理由はそちらの注記)。仕分けと端数処理は請求書と**同じ `groupByTaxKind`** を通す。
+ *
+ * **見た目は区分が 1 つのときだけ従来どおり**にしてある —— 大半の見積は単一税率で、
+ * そこに区分ごとの内訳を足すと読みにくくなるだけだからである。2 区分以上のときは
+ * 区分ごとの小計と消費税額を出す (軽減税率対象は ※ で示す・請求書と同じ約束)。
+ */
 function ItemsTable({ values }: { values: Values }) {
+  const { standardRate, reducedRate } = useTaxRates();
   const rows = [1, 2, 3]
-    .map((i) => ({ item: values[`item${i}`] ?? '', amount: readNumber(values[`amount${i}`]) }))
+    .map((i) => ({
+      item: values[`item${i}`] ?? '',
+      amount: readNumber(values[`amount${i}`]),
+      kind: itemKind(values[`item${i}kind`] ?? ''),
+    }))
     .filter((r) => r.item || r.amount !== null);
-  const subtotal = rows.reduce((s, r) => s + (r.amount ?? 0), 0);
-  const tax = Math.floor(subtotal * 0.1);
+  const totals = groupByTaxKind(
+    rows.map((r) => ({ name: r.item, qty: 1, unitPrice: r.amount ?? 0, kind: r.kind })),
+    { standardRate, reducedRate, rounding: 'floor' },
+  );
+  const subtotal = totals.taxableSubtotal + totals.nonTaxableSubtotal;
+  const tax = totals.totalTax;
+  const taxed = totals.groups.filter((g) => g.taxable && g.rate !== null);
+  const many = totals.groups.length > 1;
+  // 区分が 1 つのときは従来どおりの 1 行 (「消費税（10%）」)。品目が 1 つも無いときは
+  // 台帳の標準税率を出す —— 空欄の書面でも「何%で計算するか」は読めるほうがよい。
+  const soleLabel = taxed[0] === undefined ? `${Number((standardRate * 100).toFixed(2))}%` : rateLabel(taxed[0]);
   return (
-    <table className="ds-table">
-      <thead>
-        <tr><th>品目</th><th>金額（税抜）</th></tr>
-      </thead>
-      <tbody>
-        {rows.length === 0 ? (
-          <tr><td>（フォームで品目と金額を入力してください）</td><td className="ds-num">—</td></tr>
-        ) : (
-          rows.map((r, i) => (
-            <tr key={i}><td>{r.item || '—'}</td><td className="ds-num">{r.amount !== null ? `${fmt(r.amount)} 円` : '—'}</td></tr>
-          ))
-        )}
-      </tbody>
-      <tfoot>
-        <tr><td>小計（税抜）</td><td className="ds-num">{fmt(subtotal)} 円</td></tr>
-        <tr><td>消費税（10%）</td><td className="ds-num">{fmt(tax)} 円</td></tr>
-        <tr className="ds-total"><td>合計（税込）</td><td className="ds-num">{fmt(subtotal + tax)} 円</td></tr>
-      </tfoot>
-    </table>
+    <div data-items>
+      <table className="ds-table">
+        <thead>
+          <tr><th>品目</th>{many && <th>税率</th>}<th>金額（税抜）</th></tr>
+        </thead>
+        <tbody>
+          {rows.length === 0 ? (
+            <tr><td colSpan={many ? 2 : 1}>（フォームで品目と金額を入力してください）</td><td className="ds-num">—</td></tr>
+          ) : (
+            totals.groups.flatMap((g) =>
+              g.lines.map((l, i) => (
+                <tr key={`${g.kind}-${i}`} data-item-kind={g.kind}>
+                  <td>{(l.name || '—') + (g.isReduced ? ' ※' : '')}</td>
+                  {many && <td>{g.taxable ? rateLabel(g) : g.label}</td>}
+                  <td className="ds-num">{fmt(lineAmount(l))} 円</td>
+                </tr>
+              )),
+            )
+          )}
+        </tbody>
+        <tfoot>
+          {many &&
+            totals.groups.map((g) => (
+              <tr key={g.kind} data-group={g.kind}>
+                <td colSpan={2}>{g.label}{g.taxable && g.rate !== null ? ` ${rateLabel(g)} 対象 計（税抜）` : ' 計'}</td>
+                <td className="ds-num">{fmt(g.subtotal)} 円</td>
+              </tr>
+            ))}
+          <tr><td colSpan={many ? 2 : 1}>小計（税抜）</td><td className="ds-num">{fmt(subtotal)} 円</td></tr>
+          {many ? (
+            taxed.map((g) => (
+              <tr key={`tax-${g.kind}`} data-group-tax={g.kind}>
+                <td colSpan={2}>{g.label} 消費税（{rateLabel(g)}）</td>
+                <td className="ds-num">{fmt(g.tax)} 円</td>
+              </tr>
+            ))
+          ) : (
+            <tr><td>消費税（{soleLabel}）</td><td className="ds-num">{fmt(tax)} 円</td></tr>
+          )}
+          <tr className="ds-total"><td colSpan={many ? 2 : 1}>合計（税込）</td><td className="ds-num">{fmt(subtotal + tax)} 円</td></tr>
+        </tfoot>
+      </table>
+      {totals.hasReduced && (
+        <p className="ds-p">
+          ※ は軽減税率（{rateLabel(totals.groups.find((g) => g.isReduced) ?? totals.groups[0]!)}）の対象品目です。
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -223,6 +309,20 @@ const KIND_BY_LABEL: Record<string, TaxKind> = {
   '非課税': 'nonTaxable',
   '不課税（対象外）': 'outOfScope',
 };
+/**
+ * 見積書などの「品目N 税率区分」の選択肢 → 税率区分。
+ *
+ * **読めない値は標準税率へ倒す。** `values` は保存された書類レコード (JSON) なので、
+ * 古い版で作った書類には `item{N}kind` がそもそも無いし、手で直した JSON には
+ * 選択肢の外の値も入りうる。倒し先を標準税率にするのは、この 4 書式が
+ * **2026-09-10 まで全行を標準税率として扱っていた**ため —— 既存の書類を開き直した
+ * ときに税額が変わらない。素の添字だと `'constructor'` 等がプロトタイプ側の値を
+ * 返すので `Object.hasOwn` で確かめる (`readTaxLines` と同じ守り)。
+ */
+function itemKind(label: string): TaxKind {
+  return Object.hasOwn(KIND_BY_LABEL, label) ? (KIND_BY_LABEL[label] ?? 'standard') : 'standard';
+}
+
 const ROUNDING_BY_LABEL: Record<string, RoundingMode> = {
   '切捨て': 'floor',
   '切上げ': 'ceil',
@@ -254,6 +354,7 @@ function readTaxLines(values: Values, max = 6): TaxLine[] {
  * （行ごとに端数処理して積み上げる方式は認められない・消費税法57条の4）。
  */
 function TaxItemsTable({ values }: { values: Values }) {
+  const { standardRate, reducedRate } = useTaxRates();
   const lines = readTaxLines(values);
   const pct = (k: string) => {
     const v = readNumber(values[k] ?? '');
@@ -262,6 +363,9 @@ function TaxItemsTable({ values }: { values: Values }) {
   const totals = groupByTaxKind(lines, {
     customRateA: pct('rateA'),
     customRateB: pct('rateB'),
+    // 標準・軽減は台帳から (書面が古い率で刷られないように)。
+    standardRate,
+    reducedRate,
     rounding: ROUNDING_BY_LABEL[values['rounding'] ?? ''] ?? 'floor',
   });
   const delta = perLineRoundingDelta(totals);
@@ -307,7 +411,12 @@ function TaxItemsTable({ values }: { values: Values }) {
           </tr>
         </tfoot>
       </table>
-      {totals.hasReduced && <p className="ds-p">※ は軽減税率（8%）の対象品目です。</p>}
+      {totals.hasReduced && (
+        <p className="ds-p">
+          ※ は軽減税率（
+          {rateLabel(totals.groups.find((g) => g.isReduced) ?? totals.groups[0]!)}）の対象品目です。
+        </p>
+      )}
       <p className="ds-p" style={{ fontSize: 11 }}>
         消費税額は税率ごとに1回だけ{ROUNDING_LABEL[totals.rounding]}で計算しています
         {delta !== 0 && `（行ごとに${ROUNDING_LABEL[totals.rounding]}して積み上げる方法は認められません。その方法との差は ${fmt(Math.abs(delta))} 円です）`}。
@@ -609,39 +718,50 @@ function NotesSheet({ sections }: { sections: readonly NoteSection[] }) {
  * 当期末残高は貸借対照表から取る。4 枚を別々に組むと連結が切れて、貸借だけ合っているのに
  * 利益が反映されていない書面が出来上がる。
  */
-function KessanSheets({ values, fields }: { values: Values; fields: readonly DocField[] }) {
+function KessanSheets({ values, fields, sheet }: { values: Values; fields: readonly DocField[]; sheet: KessanSheet }) {
+  // 1 点ずつ出すときも値は同じ 1 つの科目残高から組む（連結を切らない）。
+  const show = (id: Exclude<KessanSheet, 'all'>) => sheet === 'all' || sheet === id;
   const inc = incomeTotals(values);
   const opt = kessanOptions(values);
   const bs = buildBalanceRows(values, opt, inc.netIncome);
   return (
-    <div data-kessan-sheets>
+    <div data-kessan-sheets={sheet}>
+      {show('pl') && (<>
       <div className="ds-title"><Fill text="{{company}} 損益計算書" fields={fields} values={values} /></div>
       <div className="ds-right">
         <Fill text="自 {{fyStart}}　至 {{fyEnd}}" fields={fields} values={values} />
       </div>
       <StatementTable title="損益計算書" rows={buildIncomeRows(values)} />
+      </>)}
 
-      <div className="ds-title" style={{ marginTop: 24 }}>
+      {show('bs') && (<>
+      <div className="ds-title" style={{ marginTop: sheet === 'bs' ? 0 : 24 }}>
         <Fill text="{{company}} 貸借対照表" fields={fields} values={values} />
       </div>
       <div className="ds-right"><Fill text="{{fyEnd}} 現在" fields={fields} values={values} /></div>
       <StatementTable title="資産の部" rows={bs.assets} />
       <StatementTable title="負債・純資産の部" rows={bs.liabilitiesEquity} />
+      </>)}
 
-      <div className="ds-title" style={{ marginTop: 24 }}>
+      {show('equity') && (<>
+      <div className="ds-title" style={{ marginTop: sheet === 'equity' ? 0 : 24 }}>
         <Fill text="{{company}} 株主資本等変動計算書" fields={fields} values={values} />
       </div>
       <div className="ds-right">
         <Fill text="自 {{fyStart}}　至 {{fyEnd}}" fields={fields} values={values} />
       </div>
       <EquityTable rows={buildEquityRows(values, opt, inc.netIncome)} />
+      </>)}
 
-      <div className="ds-title" style={{ marginTop: 24 }}>
+      {show('notes') && (<>
+      <div className="ds-title" style={{ marginTop: sheet === 'notes' ? 0 : 24 }}>
         <Fill text="{{company}} 個別注記表" fields={fields} values={values} />
       </div>
       <div className="ds-right"><Fill text="{{fyEnd}} 現在" fields={fields} values={values} /></div>
       <NotesSheet sections={buildNoteSections(values, opt, inc.netIncome)} />
+      </>)}
 
+      {show('bs') && (<>
       <div className="ds-title" style={{ marginTop: 24 }}>決算公告（貸借対照表の要旨）</div>
       <div className="ds-right">
         <Fill text="{{company}}　{{fyEnd}} 現在" fields={fields} values={values} />
@@ -651,6 +771,7 @@ function KessanSheets({ values, fields }: { values: Values; fields: readonly Doc
         定時株主総会の終結後、遅滞なく公告してください。官報・日刊新聞紙を公告方法とする会社はこの要旨で足ります（会社法440条1項・2項）。
         <strong>電子公告を公告方法としている場合は要旨では足りず、貸借対照表の全文が必要です。</strong>
       </div>
+      </>)}
     </div>
   );
 }
@@ -1023,14 +1144,13 @@ function StatementTable({ title, rows }: { title: string; rows: readonly Stateme
  * 交付前チェックと役割は同じだが、見るものが違う。こちらは貸借の一致と
  * 二表の連結という、合計欄を眺めていても気づけない失敗を挙げる。
  */
-function KessanCheckPanel({ values }: { values: Values }) {
-  const opt = kessanOptions(values);
-  const netIncome = incomeTotals(values).netIncome;
-  // 貸借対照表側と株主資本等変動計算書側を 1 枚のパネルに集約する。
-  // 別々に出すと片方を閉じたまま印刷され、指摘が読まれない。
-  const issues = [...checkStatements(values, opt), ...checkEquity(values, opt, netIncome)]
-    .slice()
-    .sort(byIssueLevel);
+/**
+ * 計算書類の検算パネル。**指摘は呼び出し側から受ける** ——
+ * 印刷ボタンの隣に出す件数と、ここに並べる指摘が同じ物であるために
+ * (2026-09-06 まで別々で、ボタンの側は `collection === 'studio'` の指摘しか
+ * 数えていなかったので、**貸借が一致していない計算書類でもボタンの隣は無言**だった)。
+ */
+function KessanCheckPanel({ issues }: { issues: readonly DocIssue[] }) {
   const { fatal, warn } = countByLevel(issues);
   return (
     <div
@@ -1162,11 +1282,50 @@ function GuideBox({ title, steps, notes }: { title: string; steps?: readonly (re
   );
 }
 
-const COLLECTIONS: { id: Collection; label: string }[] = [
-  { id: 'studio', label: `🗂 経営書類（${STUDIO_TEMPLATES.length}種）` },
-  { id: 'teikan', label: '📜 電子定款' },
-  { id: 'shugyo', label: '📖 就業規則' },
-  { id: 'kessan', label: '📊 計算書類（4点）' },
+/**
+ * 書類一覧のボタン 1 つ。
+ *
+ * 計算書類は**4 点それぞれを独立した書類として並べる** (利用者の依頼・2026-09-06)。
+ * それまでは一覧に「📊 計算書類（4点）」の 1 つだけが在り、4 点は開いた先の
+ * タブで切り替える形だった —— 一覧を見ただけでは**4 点が 1 つの書類に
+ * まとめられている**ように見えていた。会社法435条2項の計算書類は 4 点それぞれが
+ * 別の書類なので、一覧もそう見えるべきである。
+ *
+ * **値の入れ物は 1 つのまま。** 一覧を分けたのは「どの書面を見せるか」だけで、
+ * 損益計算書の当期純利益 → 貸借対照表の繰越利益剰余金 → 株主資本等変動計算書の
+ * 当期変動額、という連結は切っていない (`kessanSheets.ts` の冒頭参照)。
+ */
+interface CollectionTab {
+  /** ボタンの識別子 (`data-collection`)。計算書類は書面ごとに別の id を持つ。 */
+  readonly id: string;
+  /** 実際に切り替えるコレクション。計算書類の 5 つはすべて `kessan`。 */
+  readonly collection: Collection;
+  /** 計算書類のときだけ。押すとこの書面に切り替わる。 */
+  readonly sheet?: KessanSheet;
+  readonly label: string;
+}
+
+const KESSAN_ICON: Record<KessanSheet, string> = {
+  all: '📚',
+  pl: '📈',
+  bs: '⚖',
+  equity: '📊',
+  notes: '📝',
+};
+
+const COLLECTIONS: readonly CollectionTab[] = [
+  { id: 'studio', collection: 'studio', label: `🗂 経営書類（${STUDIO_TEMPLATES.length}種）` },
+  { id: 'teikan', collection: 'teikan', label: '📜 電子定款' },
+  { id: 'shugyo', collection: 'shugyo', label: '📖 就業規則' },
+  // 並び順は `KESSAN_SHEETS` から導く (順序を 2 か所に書かない)。
+  ...KESSAN_SHEETS.filter((sh) => sh.id !== 'all').map((sh) => ({
+    id: sh.docId,
+    collection: 'kessan' as const,
+    sheet: sh.id,
+    label: `${KESSAN_ICON[sh.id]} ${sh.title}`,
+  })),
+  // 「まとめて」は決算公告の要旨つきで 4 点を 1 枚に出す従来の出力。最後に置く。
+  { id: 'kessan', collection: 'kessan', sheet: 'all', label: '📚 計算書類（4点まとめて）' },
 ];
 
 /**
@@ -1199,12 +1358,12 @@ const KESSAN_STEPS: readonly (readonly [string, string])[] = [
   ['① 残高を入れる', '試算表（決算整理後）の科目残高を、区分ごとに正の値で入力します。期末商品棚卸高・減価償却累計額・貸倒引当金は控除項目なので、そのまま正の値で入れれば自動で差し引きます。'],
   ['② 当期の変動を入れる', '繰越利益剰余金の期首残高、剰余金の配当、利益準備金への積立、新株発行による増加額を入れます。期首残高は入力しません。期末残高から当期変動額を引いて逆算するので、内訳と食い違う期首を書けないようになっています。'],
   ['③ 貸借の一致を確認', '資産合計と負債・純資産合計が一致しているかを自動で検算します。差額が当期純利益と一致した場合は、繰越利益剰余金の期首残高に当期純利益を二重に足している可能性が高いです。'],
-  ['④ 印刷 / PDF 保存', '「印刷 / PDF 保存」で計算書類4点（損益計算書・貸借対照表・株主資本等変動計算書・個別注記表）をまとめて出力します。'],
+  ['④ 書類を選んで印刷 / PDF 保存', '上の書類一覧で損益計算書・貸借対照表・株主資本等変動計算書・個別注記表のどれか（または「計算書類（4点まとめて）」）を選び、「印刷 / PDF 保存」でその書類だけを出力します。1 点ずつ扱っても値の入れ物は 1 つなので、当期純利益と純資産の連結は切れません。'],
   ['⑤ 承認と公告', '定時株主総会の承認を受けたうえで、貸借対照表（大会社は損益計算書も）を公告してください。作成した計算書類は10年間の保存義務があります。'],
 ];
 
 const KESSAN_NOTES: readonly string[] = [
-  '計算書類は貸借対照表・損益計算書・株主資本等変動計算書・個別注記表の4点で、作成した時から10年間の保存義務があります（会社法435条2項・4項）。この画面は4点すべてを同じ科目残高から組み立てます。',
+  '計算書類は貸借対照表・損益計算書・株主資本等変動計算書・個別注記表の4点で、作成した時から10年間の保存義務があります（会社法435条2項・4項）。4点は書類一覧でそれぞれ独立した書類として並び、1 点ずつ記載・出力できます。4点すべては同じ科目残高から組み立てるので（値の入れ物は 1 つのまま）、当期純利益と純資産の連結は切れません。',
   '株主資本等変動計算書の当期末残高は、貸借対照表の純資産の部と一致します。期首残高は入力させず期末から逆算するので、二表がずれることはありません。',
   '剰余金の配当をするときは、配当により減少する剰余金の10分の1を資本準備金または利益準備金として計上する必要があります（会社法445条4項）。ただし準備金の合計が資本金の4分の1に達している場合を除きます。',
   '定時株主総会の終結後は遅滞なく貸借対照表（大会社は損益計算書も）の公告が必要です（会社法440条1項）。'
@@ -1295,14 +1454,58 @@ function OverviewImportPanel({
 
 export function DocstudioPage() {
   const { source, status, errorMessage, refresh } = useServiceData('docstudio', SNAPSHOT.docstudio);
-  const [store, setStore] = useState<StoreShape>(() => loadStore());
-  const [collection, setCollection] = useState<Collection>('studio');
+  /*
+   * **読むのは 1 回だけ。** 2026-09-12 まで `loadStore()` をマウント時に 3 回
+   * 呼んでいた (差込値・群れ・会社形態)。同じ鍵を 3 度読む理由が無く、
+   * 読めなかった理由も 3 通りに散る (パス 160)。
+   */
+  const [restored] = useState(loadStore);
+  /** 保存領域を読めなかった理由 (`null` なら読めている)。「自動保存」の主張と対にする。 */
+  const readError = restored.message;
+  const [store, setStore] = useState<StoreShape>(restored.value);
+  /**
+   * 開いている書類の群れ。**保存値から復元する** —— 計算書類 4 点が一覧の独立した
+   * エントリになったので、群れを覚えないと「開き直しても同じ書面から続く」が
+   * 成り立たない (`docstudioStore.ts` の `collection` の注記)。
+   */
+  const [collection, setCollectionState] = useState<Collection>(
+    restored.value.collection ?? 'studio',
+  );
+  const setCollection = useCallback((next: Collection) => {
+    setCollectionState(next);
+    setStore((prev) => ({ ...prev, collection: next }));
+  }, []);
   const [docId, setDocId] = useState<string>(STUDIO_TEMPLATES[0]!.id);
-  const [teikanType, setTeikanType] = useState<'kk' | 'gk'>('kk');
+  /** 電子定款の会社形態。**保存値から復元する** —— `collection` と対で覚えないと、
+   *  合同会社を書いていても開き直すと株式会社に戻る (`docstudioStore.ts` の注記)。 */
+  const [teikanType, setTeikanTypeState] = useState<TeikanType>(
+    restored.value.teikanType ?? 'kk',
+  );
+  const setTeikanType = useCallback((next: TeikanType) => {
+    setTeikanTypeState(next);
+    setStore((prev) => ({ ...prev, teikanType: next }));
+  }, []);
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState<string>('すべて');
 
-  useEffect(() => saveStore(store), [store]);
+  /** 保存できなかった理由 (undefined なら保存できている)。画面の「自動保存」の主張と対にする。 */
+  const [saveError, setSaveError] = useState<string>();
+  useEffect(() => {
+    /*
+     * **読めていない store を書き戻さない** (パス 160)。`store` は読めなければ
+     * `{}` から始まるので、そのまま保存すると**他の書類の差込値まで消す**。
+     * 読みを断った localStorage は書きも断るので、止めても失う物は無い。
+     */
+    if (readError !== null) return;
+    const r = saveStore(store);
+    setSaveError(r.ok ? undefined : r.message);
+  }, [store, readError]);
+  /** 計算書類で見ている書面。store に持たせるので、開き直しても同じ書面から続けられる。 */
+  // 保存値は型が守らない（古い版・手で直した JSON）。知らない値は「まとめて」に倒し、画面を壊さない。
+  const kessanSheet: KessanSheet = isKessanSheet(store.kessanSheet) ? store.kessanSheet : 'all';
+  function setKessanSheet(sheet: KessanSheet) {
+    setStore((prev) => ({ ...prev, kessanSheet: sheet }));
+  }
 
   // 経営サマリー → 計算書類。KPI 実績・貸借対照表・提出者情報は record store に
   // あり、書類スタジオの入力は localStorage にある。ここで読んで写す (押すまで書かない)。
@@ -1313,7 +1516,7 @@ export function DocstudioPage() {
     () =>
       buildKessanImport({
         kpiActuals: kpiCol.records.map((r) => r.data),
-        balanceSheet: latestRecord(bsCol.records)?.data ?? null,
+        balanceSheet: balanceSheetOrNull(currentBalanceSheet(bsCol.records)?.data),
         profile: settingsFromRecord(latestRecord(submissionCol.records)?.data).profile,
         existing: store.kessan ?? {},
       }),
@@ -1329,11 +1532,13 @@ export function DocstudioPage() {
     () =>
       buildCashPlanImport({
         accounting: freeeData.monthly,
-        balanceSheet: latestRecord(bsCol.records)?.data ?? null,
+        // 月次の素性も渡す —— 落ちた取引が在れば取り込み注記が言う (パス 153)。
+        accountingIntake: freeeData.intake,
+        balanceSheet: balanceSheetOrNull(currentBalanceSheet(bsCol.records)?.data),
         profile: submissionProfile,
         existing: store.studio?.['shikin-guri'] ?? {},
       }),
-    [freeeData.monthly, bsCol.records, submissionProfile, store.studio],
+    [freeeData.monthly, freeeData.intake, bsCol.records, submissionProfile, store.studio],
   );
   const businessPlanImport = useMemo(
     () =>
@@ -1362,8 +1567,10 @@ export function DocstudioPage() {
 
   /** 書類 id から画面の状態へ (士業のページや経営サマリーからの遷移)。知らない id は何もしない。 */
   function openDoc(doc: string) {
-    if (doc === 'kessan') {
+    const sheet = sheetOfDoc(doc);
+    if (sheet !== null) {
       setCollection('kessan');
+      setKessanSheet(sheet);
     } else if (doc === 'shugyo') {
       setCollection('shugyo');
     } else if (doc === 'teikan-kk' || doc === 'teikan-gk') {
@@ -1438,6 +1645,8 @@ export function DocstudioPage() {
 
   // 書面の描画・チェック・入力欄はすべてこの値を見る（既定値のズレを作らない）。
   const filled = useMemo(() => withDefaults(fields, values), [fields, values]);
+  // 計算書類は書面ごとに入力欄を絞る。書面と検算は 4 点分の値で組むので `fields` はそのまま。
+  const inputFields: readonly DocField[] = collection === 'kessan' ? fieldsForSheet(kessanSheet, KESSAN_FIELDS) : fields;
 
   const val = (k: string) => values[k] ?? '';
   const teikanChapters = useMemo(
@@ -1485,11 +1694,24 @@ export function DocstudioPage() {
   /** 絞り込み前の全書式の内訳（ボタンに件数を出すため）。 */
   const legalCounts = useMemo(() => countByStatus(STUDIO_TEMPLATES.map((d) => d.id)), []);
   const recent = useMemo(
-    () => (store.recent ?? []).map((id) => STUDIO_TEMPLATES.find((d) => d.id === id)).filter((d): d is StudioDoc => !!d),
+    // 保存値は型が守らない: 配列でなければ無視し、配列でも文字列だけを見る (`.map` が無い値で画面を落とさない)
+    () => (Array.isArray(store.recent) ? store.recent : []).filter((id): id is string => typeof id === 'string').map((id) => STUDIO_TEMPLATES.find((d) => d.id === id)).filter((d): d is StudioDoc => !!d),
     [store.recent],
   );
 
   const issues = useMemo(() => (collection === 'studio' ? checkDoc(studioDoc, filled) : []), [collection, studioDoc, filled]);
+  /**
+   * 計算書類の検算。**印刷ボタンの隣に出す件数と同じ物**を使うために、
+   * パネルの中ではなくここで組む (パネルは受け取って並べるだけ)。
+   */
+  const kessanIssues = useMemo(() => {
+    if (collection !== 'kessan') return [];
+    const opt = kessanOptions(filled);
+    const netIncome = incomeTotals(filled).netIncome;
+    // 貸借対照表側と株主資本等変動計算書側を 1 枚に集約する
+    // (別々に出すと片方を閉じたまま印刷され、指摘が読まれない)。
+    return [...checkStatements(filled, opt), ...checkEquity(filled, opt, netIncome)].slice().sort(byIssueLevel);
+  }, [collection, filled]);
   const flagged = useMemo(() => {
     const out: Record<string, DocIssue['level']> = {};
     for (const it of issues) {
@@ -1499,7 +1721,10 @@ export function DocstudioPage() {
     return out;
   }, [issues]);
   const blanks = collection === 'studio' ? countBlank(studioDoc, filled) : 0;
-  const fatalCount = issues.filter((i) => i.level === 'fatal').length;
+  // **書式の指摘と計算書類の検算を両方数える。** 2026-09-06 まで studio だけを
+  // 見ていたので、貸借が一致していない計算書類でも「印刷 / PDF 保存」の隣は
+  // 無言だった —— 検算パネルは下にあり、畳んだまま印刷されうる。
+  const fatalCount = [...issues, ...kessanIssues].filter((i) => i.level === 'fatal').length;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -1515,13 +1740,29 @@ export function DocstudioPage() {
         />
 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
+          {/*
+            **一覧のボタンに `data-doc-id` は付けない。** あれは「法的地位のバッジを
+            必ず持つ書式の行」の目印で、実機 e2e が `[data-doc-id]` の数とバッジの数の
+            一致を見ている (`scripts/e2e/core.cjs` の legal 節)。一覧のボタンは常に
+            画面に在るので、書式として数えられると invariant が崩れる —— 2026-09-06 に
+            実際に崩して e2e が止めた。書類 id が要るときは `docIdOfSheet(c.sheet)`。
+          */}
           {COLLECTIONS.map((c) => (
             <button
               key={c.id}
               type="button"
               data-collection={c.id}
-              onClick={() => setCollection(c.id)}
-              className={collection === c.id ? 'primary' : ''}
+              data-kessan-sheet={c.sheet}
+              onClick={() => {
+                setCollection(c.collection);
+                // 書面を持つエントリは、開くと同時にその書面へ合わせる。
+                if (c.sheet !== undefined) setKessanSheet(c.sheet);
+              }}
+              className={
+                collection === c.collection && (c.sheet === undefined || kessanSheet === c.sheet)
+                  ? 'primary'
+                  : ''
+              }
               style={{ fontSize: 13, padding: '9px 14px' }}
             >
               {c.label}
@@ -1532,7 +1773,7 @@ export function DocstudioPage() {
               data-fatal-badge
               style={{ marginLeft: 'auto', alignSelf: 'center', fontSize: 12, fontWeight: 700, color: LEVEL_COLOR.fatal }}
             >
-              ⛔ このままでは無効になる指摘 {fatalCount} 件
+              ⛔ {collection === 'kessan' ? '検算の合わない指摘' : 'このままでは無効になる指摘'} {fatalCount} 件
             </span>
           )}
           <button
@@ -1672,6 +1913,21 @@ export function DocstudioPage() {
             </Section>
           )}
 
+          {/*
+            書面の切り替えは**上の書類一覧**に移した (4 点がそれぞれ独立した書類として
+            並ぶ)。同じ状態を動かすボタンを 2 か所に置くと、どちらが効いているのか
+            分からなくなるので、ここに残すのは「いま見ている書面が何か」の説明だけ。
+          */}
+          {collection === 'kessan' && (
+            <Section title={`この書面について — ${sheetDef(kessanSheet).title}`}>
+              <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.6 }}>
+                {sheetDef(kessanSheet).note}
+                {inheritedNote(kessanSheet) !== null && (
+                  <div data-kessan-inherited style={{ marginTop: 4 }}>※ {inheritedNote(kessanSheet)}</div>
+                )}
+              </div>
+            </Section>
+          )}
           {collection === 'kessan' && (
             <OverviewImportPanel
               intro="経営サマリーの KPI 実績・貸借対照表・提出者情報を計算書類の科目残高に写します。出所の無い科目 (資本金・役員報酬・地代家賃など) は今の値のまま残します。内訳の無い額は「その他」の科目に置き、置いた理由を下に出します。"
@@ -1701,18 +1957,40 @@ export function DocstudioPage() {
             docId={
               collection === 'teikan' ? `teikan-${teikanType}`
                 : collection === 'shugyo' ? 'shugyo'
-                  : collection === 'kessan' ? 'kessan'
+                  : collection === 'kessan' ? docIdOfSheet(kessanSheet)
                     : docId
             }
           />
 
-          <Section title="差込フォーム（入力は端末内に自動保存）" count={fields.length}>
+          <Section
+            title={docstudioFormTitle(readError, saveError)}
+            count={inputFields.length}
+          >
+            {/* 読めていないことを先に言う (空のフォームの理由がこれである・パス 160)。 */}
+            {readError !== null && (
+              <div
+                role="alert"
+                data-store-unreadable
+                style={{ fontSize: 12, color: '#fbbf24', border: '1px solid #fbbf24', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
+              >
+                ⚠ {readError}この画面の入力は、この端末には残りません。
+              </div>
+            )}
+            {saveError && (
+              <div
+                role="alert"
+                data-save-error
+                style={{ fontSize: 12, color: '#f87171', border: '1px solid #f87171', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.6 }}
+              >
+                ⚠ {saveError}
+              </div>
+            )}
             {collection === 'studio' && (
               <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8 }}>
                 ＊ は空欄のまま交付すると書類として成立しない項目。未入力 {blanks} / {fields.length} 件。
               </div>
             )}
-            <FieldInputs fields={fields} values={filled} onChange={setValue} flagged={flagged} />
+            <FieldInputs fields={inputFields} values={filled} onChange={setValue} flagged={flagged} />
             {collection === 'studio' && docId === 'kabunushi-meibo' && (
               <ShareholderInputs values={values} onPatch={setValues} onChange={setValue} />
             )}
@@ -1733,7 +2011,7 @@ export function DocstudioPage() {
           )}
 
           {collection === 'studio' && <CheckPanel issues={issues} />}
-          {collection === 'kessan' && <KessanCheckPanel values={filled} />}
+          {collection === 'kessan' && <KessanCheckPanel issues={kessanIssues} />}
           <TriagePanel
             doc={
               collection === 'teikan' ? `teikan-${teikanType}`
@@ -1785,7 +2063,7 @@ export function DocstudioPage() {
                 <Chapters chapters={SHUGYO_CHAPTERS} fields={fields} values={values} />
               </>
             )}
-            {collection === 'kessan' && <KessanSheets values={filled} fields={fields} />}
+            {collection === 'kessan' && <KessanSheets values={filled} fields={fields} sheet={kessanSheet} />}
             <div className="ds-disclaimer">{DOC_DISCLAIMER}</div>
           </div>
         </div>

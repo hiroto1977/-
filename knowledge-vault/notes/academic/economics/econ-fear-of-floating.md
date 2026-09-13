@@ -36,7 +36,7 @@ aliases:
 - [[econ-financial-repression-mckinnon-shaw|金融抑圧と金融深化——マッキノン＝ショウ仮説と発展途上国の金融自由化]] — 同じ思想家
 - [[econ-hot-money-flows-calvo|ホットマネー・フローと急停止——新興国資本移動の不安定性]] — 同じ思想家
 - [[econ-original-sin-eichengreen|原罪仮説——新興国の自国通貨建て対外借入の構造的不能]] — 同じ思想家
-- [[econ-price-stickiness-calvo|カルボ型価格設定——確率的な価格改定が生む名目硬直性とニューケインジアン曲線]] — 同じ思想家
+- [[econ-price-stickiness-calvo|カルボ型価格設定（カルボ）——各企業が毎期一定の確率でしか価格を改定できないという仮定が、名目硬直性とニューケインジアン・フィリップス曲線を導く]] — 同じ思想家
 - [[econ-sovereign-debt-crisis-reinhart|国家債務危機とデフォルト履歴（ラインハート＆ロゴフ）]] — 同じ思想家
 - [[econ-sovereign-debt-crisis-reinhart-rogoff|国家債務危機——ラインハートとロゴフの「今回は違う」と財政持続可能性の実証分析]] — 同じ思想家
 - [[econ-sovereign-debt-restructuring|ソブリン債務危機と債務再編——IMFプログラムと国際倒産制度の欠如]] — 同じ思想家

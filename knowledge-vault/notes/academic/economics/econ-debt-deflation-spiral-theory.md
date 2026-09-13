@@ -36,13 +36,13 @@ Irving Fisher ／ Ben S. Bernanke ／ Hyman P. Minsky
 - [[econ-debt-deflation-theory|債務デフレ理論]] — 同じ思想家
 - [[econ-credit-cycle-theory|信用循環理論]] — 同じ思想家
 - [[econ-brainard-attenuation-principle|ブレイナードの減衰原理（Brainard attenuation principle／保守主義原理）——乗数が不確かなら政策は控えめに]] — 同じ思想家
-- [[econ-credit-channel-monetary-transmission|金融政策伝達の信用チャネル]] — 同じ思想家
-- [[econ-credit-channel-theory|信用チャネル理論]] — 同じ思想家
 - [[econ-financialization|金融化——経済の金融部門支配]] — 同じ思想家
 - [[econ-saving-glut-hypothesis|過剰貯蓄仮説]] — 同じ思想家
 - [[econ-debt-deflation|負債デフレ（債務デフレ理論）]] — 出典を共有
 - [[econ-baron-myerson-optimal-regulation|バロン＝マイヤーソンの最適規制理論（Baron-Myerson Optimal Regulation）]] — 出典を共有
+- [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]] — 出典を共有
 - [[econ-debt-deflation-fisher-irving|債務デフレーション論——フィッシャーの過剰債務螺旋と大恐慌の金融的説明]] — 出典を共有
+- [[econ-macroprudential-policy|マクロプルーデンス政策]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

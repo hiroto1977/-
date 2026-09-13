@@ -31,8 +31,9 @@ aliases:
 
 ## 関連概念
 - [[econ-granger-causality|グレンジャー因果性]] — 同じ思想家
+- [[econ-cointegration-error-correction-engle-granger|共和分と誤差修正モデル——非定常系列の長期均衡を捉えるエングル＝グレンジャーの表現定理]] — 同じ思想家
 - [[econ-smooth-ambiguity-klibanoff|スムーズ曖昧性モデル——曖昧性への態度を信念から分離する]] — 同分野の近傍
-- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同分野の近傍
+- [[econ-eaton-lipsey-local-clustering|イートン＝リプシーの局所的集塊の原理（Eaton-Lipsey's Principle of Local Clustering）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -35,9 +35,9 @@ aliases:
 - [[human-mental-health-continuum-keyes|精神的健康の連続体モデル（キーズ）]] — 同じ思想家
 - [[mgmt-issue-selling-dutton|課題の売り込み（ダットン＆アシュフォード）]] — 同じ思想家
 - [[mgmt-job-crafting-wrzesniewski|ジョブ・クラフティング（ウルズニエフスキー）]] — 同じ思想家
+- [[mgmt-organizational-decline-weitzel|組織衰退（ウェイツェル＝ヨンソンの五段階モデル）——盲目・不作為・誤った行動・危機・解体と進み、段階が進むほど反転が難しくなる衰退の動態]] — 同じ思想家
 - [[mgmt-organizational-identity-albert|組織アイデンティティ理論（アルバート＆ウェッテン）]] — 同じ思想家
 - [[mgmt-prosocial-motivation-grant|向社会的動機付けと他者指向的動機の組織行動論（グラント）]] — 同じ思想家
-- [[mgmt-psychological-ownership-pierce|心理的所有権理論（ピアース＆コストバ）]] — 同じ思想家
 - [[mgmt-strategic-issue-diagnosis|戦略的争点の診断（Strategic Issue Diagnosis）]] — 同じ思想家
 - [[mgmt-strategic-issue-diagnosis-dutton|戦略的イシュー診断——経営者の注意配分と問題カテゴリー化の認知プロセス]] — 同じ思想家
 

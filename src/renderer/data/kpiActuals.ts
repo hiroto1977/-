@@ -10,6 +10,8 @@
  * (enforced by `lint:imports`); both derive from docs/ARCHITECTURE.md §3.
  */
 
+import { isCalendarMonth } from '../../shared/isoDate';
+
 export const KPI_ACTUALS_COLLECTION = 'kpi-actuals';
 
 /** One month of raw business figures (JPY). */
@@ -39,23 +41,55 @@ export interface KpiMetrics {
   variableCost: number;
   fixedCost: number;
   contribution: number;
-  contributionRatio: number;
+  /**
+   * 限界利益率 (%) = (売上 − 変動費) ÷ 売上。**売上 0 なら null = 算定不能。**
+   * 0 に倒すと「変動費が売上をすべて食っている」という主張になり、
+   * 同じ入力から同じ比率を出す `financialStatements.ts` (null → 「—」) と
+   * 食い違う。姉妹欄 `safetyMargin` と同じ答え方。
+   */
+  contributionRatio: number | null;
   bep: number;
   bepRatio: number;
-  safetyMargin: number;
+  /**
+   * 安全余裕率 (%)。**負になりうる** (損益分岐点を下回っている)。
+   * `null` は算定不能 —— 限界利益が 0 以下で損益分岐点が存在しない。
+   * 経緯と理由は `src/main/clients/kpi.ts` の同名の欄 (両ビルドで同じ規則)。
+   */
+  safetyMargin: number | null;
   operatingProfit: number;
 }
 
-/** `YYYY-MM`, months 01-12. */
+/** `YYYY-MM`, months 01-12 (判定は `shared/isoDate.ts` の 1 か所 —— パス 115)。 */
 export function isValidPeriod(s: unknown): s is string {
-  // 非文字列は下の regex.exec でも一致せず false になるため、この早期 return の
-  // ConditionalExpression は equivalent (型述語のため文は残す)。
-  // Stryker disable next-line ConditionalExpression
-  if (typeof s !== 'string') return false;
-  const m = /^(\d{4})-(\d{2})$/.exec(s);
-  if (!m) return false;
-  const month = Number(m[2]);
-  return month >= 1 && month <= 12;
+  return isCalendarMonth(s);
+}
+
+/**
+ * 期の一覧が覆う**窓** —— 最初の期・最後の期・**月の異なり数**。
+ *
+ * 「この数字は何か月分か」を述べる所すべてが同じ答えを使うための 1 か所。
+ * 読める期 (`isValidPeriod`) が 1 件も無ければ `null` —— 期間を測れないことと
+ * 「0 か月」は別なので 0 に倒さない。
+ *
+ * **月数は必ず添える**: 範囲だけでは事業年度の端の 2 か月しか無い控えを
+ * 「ちょうど 1 年」と読めてしまう (`bankSubmission.ts` の `periodScopeNote` の経緯)。
+ */
+export interface PeriodWindow {
+  readonly from: string;
+  readonly to: string;
+  readonly months: number;
+}
+
+/** 期の一覧から窓を取る。読めない期は無視。同じ月の複数行は 1 か月。 */
+export function periodWindow(periods: readonly string[]): PeriodWindow | null {
+  const valid = periods.filter(isValidPeriod).sort();
+  if (valid.length === 0) return null;
+  return { from: valid[0]!, to: valid[valid.length - 1]!, months: new Set(valid).size };
+}
+
+/** 窓を画面・レポート向けの 1 語にする (`2026-04〜2026-06・3 か月`)。 */
+export function formatPeriodWindow(w: PeriodWindow): string {
+  return `${w.from}〜${w.to}・${w.months} か月`;
 }
 
 /** Validate + coerce a partial input into a clean KpiActual, or throw with a
@@ -168,7 +202,8 @@ export interface MonthlyTrendRow {
   readonly revenue: number;
   readonly operatingProfit: number;
   /** 営業利益率 (%)。売上 0 なら 0。 */
-  readonly operatingMarginPct: number;
+  /** 営業利益率 (%)。**その月の売上が 0 なら null = 算定不能** (0 に倒さない)。 */
+  readonly operatingMarginPct: number | null;
   /** 前期比の売上成長率 (%)。先頭期や前期売上 0 なら null。 */
   readonly revenueGrowthPct: number | null;
 }
@@ -201,7 +236,7 @@ export function monthlyTrendSeries(actuals: readonly KpiActual[]): MonthlyTrendR
       period,
       revenue: f.revenue,
       operatingProfit: m.operatingProfit,
-      operatingMarginPct: f.revenue > 0 ? Math.round((m.operatingProfit / f.revenue) * 1000) / 10 : 0,
+      operatingMarginPct: f.revenue > 0 ? Math.round((m.operatingProfit / f.revenue) * 1000) / 10 : null,
       revenueGrowthPct,
     });
     prevRevenue = f.revenue;
@@ -304,6 +339,27 @@ export function computeLaborMetrics(
     laborToRevenuePct: pct(laborCost, f.revenue),
     laborPerCapita: members > 0 ? Math.round(laborCost / members) : null,
   };
+}
+
+/**
+ * 売上高を分母にする比率がまとめて空欄になる理由の一文。
+ *
+ * 売上 0 のとき `pctOfRevenue` 由来の 6 欄と `contributionRatio` / `safetyMargin`
+ * はすべて `null` (算定不能) になる。**空欄の理由を書かないと入力漏れと区別できない**
+ * ので、金融機関等提出用の書面 §1 と経営レポートの損益節が**同じ文**を出す
+ * (同じ数字を刷る面が 2 つあるなら断り書きも 2 つ要る — パス 50 の教訓)。
+ */
+export function zeroRevenueRatioNote(): string {
+  return '対象期間の売上高が 0 のため、売上高を分母とする比率（売上総利益率・営業利益率・EBITDA マージン・売上原価率・広告宣伝費率・販売費及び一般管理費率・限界利益率・安全余裕率）は算定していません。';
+}
+
+/**
+ * 一人当たりの金額がまとめて空欄になる理由の一文 (従業員が 1 名も登録されていない)。
+ * 分母が 0 なので `revenuePerCapita` / `operatingProfitPerCapita` /
+ * `labor.laborPerCapita` はすべて `null`。
+ */
+export function zeroMembersPerCapitaNote(): string {
+  return '従業員が 1 名も登録されていないため、一人当たりの金額は算定していません。メンバーを登録すると算定します。';
 }
 
 /**
@@ -415,17 +471,54 @@ export function computeRevenueLandingForecast(
 
 /** Pure break-even / KPI computation. Mirrors `computeKpi` in
  *  src/main/clients/kpi.ts (see module header). */
+/**
+ * 描画に渡せる損益分岐点売上高。**存在しない期は `null`。**
+ *
+ * `bep` の「無い」の印は `Infinity` である (限界利益が 0 以下 = **どんな売上でも
+ * 固定費を回収できない**)。タイルは `safeYen` が「∞」と刷り、安全余裕率は
+ * `pctOrDash` が「—」と刷る。ところが **2026-09-08 まで KPI 画面の 2 つのグラフが
+ * これを `0` に倒していた**:
+ *
+ * | 面 | 「損益分岐点が無い」の表し方 |
+ * | --- | --- |
+ * | タイル (BEP) | `∞` |
+ * | タイル (安全余裕率) | `—` |
+ * | BEP 交点図 | マーカーを**出さない** (正しい) |
+ * | **時系列グラフ** | **0** —— BEP 線を軸の一番下に引く |
+ * | **事業別 棒グラフ** | **0** —— 高さ 0 の棒 |
+ *
+ * 0 は座標に入ると主張ではなく**幾何**になる。軸の底に引かれた BEP 線は
+ * 「損益分岐点 0 円 = どんな売上でも黒字」と読め、**真実の正反対**である。
+ * しかも 0 は y 軸の最大値の計算にも入るので縮尺まで動かす。
+ *
+ * **座標を作る側には `null` を渡して、点を打たせない。**
+ */
+export function finiteBep(bep: number): number | null {
+  return Number.isFinite(bep) ? bep : null;
+}
+
+/**
+ * 損益分岐点が存在しない期が在るときの断り書き (無ければ `null`)。
+ *
+ * **線が途切れている理由を述べる。** 途切れだけを見せると「データが無い期」と
+ * 読まれるが、実際は「**その期はどんな売上でも赤字**」という最も重い状態である。
+ */
+export function noBreakEvenNote(missing: number, total: number): string | null {
+  if (missing <= 0) return null;
+  return `${total} 期のうち ${missing} 期は限界利益が 0 以下のため、損益分岐点が存在しません（どれだけ売っても固定費を回収できない状態）。その期はグラフに点を打っていません。`;
+}
+
 export function computeKpiMetrics(f: KpiFundamentals): KpiMetrics {
   const variableCost = f.cogs + f.advertising;
   const fixedCost = f.sga + f.depreciation;
   const contribution = f.revenue - variableCost;
-  const contributionRatio = f.revenue > 0 ? (contribution / f.revenue) * 100 : 0;
+  const contributionRatio = f.revenue > 0 ? (contribution / f.revenue) * 100 : null;
   const bep = contribution > 0 ? (fixedCost / contribution) * f.revenue : Infinity;
   // revenue===0 のとき bep は必ず Infinity (contribution<=0) で、Infinity/0*100 も
   // Infinity になるため三項の両枝が同値 → revenue>0 判定の変異は equivalent。
   // Stryker disable next-line ConditionalExpression,EqualityOperator
   const bepRatio = f.revenue > 0 ? (bep / f.revenue) * 100 : Infinity;
-  const safetyMargin = Number.isFinite(bepRatio) ? Math.max(0, 100 - bepRatio) : 0;
+  const safetyMargin = Number.isFinite(bepRatio) ? 100 - bepRatio : null;
   const operatingProfit = contribution - fixedCost;
   return {
     variableCost,
@@ -437,4 +530,70 @@ export function computeKpiMetrics(f: KpiFundamentals): KpiMetrics {
     safetyMargin,
     operatingProfit,
   };
+}
+
+// --- 同じ期・事業の重複 (パス 124) ----------------------------------------------
+
+/**
+ * **実績・予算は (期間, 事業) が 1 件の単位。** 同じ組を 2 件持つと `summarizeFundamentals` /
+ * `groupRevenueByPeriod` / `monthlyTrendSeries` が**合算**し、訂正のつもりの入れ直しが
+ * 「旧 + 新」の売上高になって経営サマリー・経営スコアカード・着地見込み・金融機関等提出用の
+ * 書面 §1 まで届く (実績に「編集」は無く、訂正は × で消してから入れ直す)。
+ *
+ * 鍵は期と事業名 (前後の空白を落とす) をそのまま結ぶ。大文字小文字や全角半角は**別物**のまま
+ * (「EC」と「ec」を同じとは言わない —— 同じかどうかは利用者の判断で、機械は完全一致しか見ない)。
+ * 期は `isValidPeriod` の 7 文字なので区切りは要らないが、読めるように `|` を挟む。
+ */
+export function actualKey(a: Pick<KpiActual, 'period' | 'unit'>): string {
+  return `${a.period}|${a.unit.trim()}`;
+}
+
+/** 同じ (期間, 事業) が既に在るか。画面が追加を断る判断。 */
+export function hasSamePeriodUnit(existing: readonly KpiActual[], candidate: Pick<KpiActual, 'period' | 'unit'>): boolean {
+  const key = actualKey(candidate);
+  return existing.some((a) => actualKey(a) === key);
+}
+
+/** 同じ (期間, 事業) が 2 件以上ある組。 */
+export interface DuplicateActualGroup {
+  readonly period: string;
+  readonly unit: string;
+  /** その組の件数 (2 以上)。 */
+  readonly count: number;
+}
+
+/** 既に在る重複 (件数 2 以上の組) を期・事業の昇順で返す。無ければ空。 */
+export function findDuplicateActuals(actuals: readonly KpiActual[]): DuplicateActualGroup[] {
+  const groups = new Map<string, DuplicateActualGroup>();
+  for (const a of actuals) {
+    const key = actualKey(a);
+    const g = groups.get(key);
+    groups.set(key, g ? { ...g, count: g.count + 1 } : { period: a.period, unit: a.unit.trim(), count: 1 });
+  }
+  return [...groups.values()]
+    .filter((g) => g.count >= 2)
+    .sort((x, y) => x.period.localeCompare(y.period) || x.unit.localeCompare(y.unit));
+}
+
+/** 「実績」「予算」—— 断りと警告の文に入る種別。 */
+export type ActualKind = '実績' | '予算';
+
+/** 同じ (期間, 事業) の追加を断るときの文。訂正の道 (× で消してから) を言う。 */
+export function duplicateActualMessage(kind: ActualKind, c: Pick<KpiActual, 'period' | 'unit'>): string {
+  return `${c.period} の「${c.unit.trim()}」の${kind}は既に入力されています。訂正するときは一覧の × で消してから入れ直してください（同じ期・事業を 2 件入れると合算されます）。`;
+}
+
+const listGroups = (groups: readonly DuplicateActualGroup[]): string =>
+  groups.map((g) => `${g.period} ${g.unit} ×${g.count}`).join('、');
+
+/** 一覧の上の警告 (既に重複が在るとき)。無ければ null。 */
+export function duplicateActualsNote(kind: ActualKind, groups: readonly DuplicateActualGroup[]): string | null {
+  if (groups.length === 0) return null;
+  return `同じ期・事業の${kind}が ${groups.length} 組重複しており、合算されています（${listGroups(groups)}）。一覧の × で余分な行を消してください。`;
+}
+
+/** 書面 §1 と経営レポートの但し書き (**相手に渡る面**)。無ければ null。 */
+export function duplicateActualsSheetNote(groups: readonly DuplicateActualGroup[]): string | null {
+  if (groups.length === 0) return null;
+  return `KPI 実績に同じ期・事業の重複が ${groups.length} 組あり（${listGroups(groups)}）、本表の金額はその合算値です。`;
 }

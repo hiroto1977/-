@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[tax-wage-increase-credit|賃上げ促進税制]] — 語彙が近い
-- [[tax-sme-investment-credit|中小企業投資促進税制]] — 語彙が近い
+- [[tax-sme-investment-credit|中小企業投資促進税制]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[法務・税務・労務]]

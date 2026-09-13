@@ -37,8 +37,8 @@ aliases:
 - [[infosoc-eu-ai-act|EU AI規制法（AI Act）]] — 出典を共有
 - [[eh-2015|2015年（平成27年）]] — 出典を共有
 - [[infosoc-digital-markets-act|デジタル市場法（DMA）]] — 出典を共有
+- [[infosoc-post-normal-science-funtowicz-ravetz|ポストノーマル科学——不確実性と利害が高い問題における科学]] — 同分野の近傍
 - [[infosoc-risk-society|リスク社会（ベック）]] — 同分野の近傍
-- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

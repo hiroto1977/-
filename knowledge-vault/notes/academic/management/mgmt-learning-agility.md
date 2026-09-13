@@ -32,8 +32,8 @@ Michael M. Lombardo ／ Robert W. Eichinger ／ W. Warner Burke
 - [次世代リーダーに求められる能力 ラーニングアジリティとは — 株式会社ビジネスコンサルタント](https://www.bcon.jp/%E3%82%B3%E3%83%A9%E3%83%A0/%E3%82%B3%E3%83%A9%E3%83%A0%E4%B8%80%E8%A6%A7/next-generation-leader_learning_agility/) `リファレンス`
 
 ## 関連概念
-- [[agile-development|アジャイルソフトウェア開発]] — 同分野の近傍
 - [[mgmt-360-feedback|360度フィードバック（多面評価）]] — 同分野の近傍
+- [[mgmt-3c-model-ohmae|大前の3Cモデル——顧客・自社・競合の戦略的三角形]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -178,6 +178,22 @@ describe('数値パラメータの設定画面', () => {
     expect(await stored()).toEqual([]);
   });
 
+  it('★ 数字の間に区切りが入った値は保存できない (2026-09-06 まで別の数として通っていた)', async () => {
+    // 台帳の値は画面全体の計算に効く。'3,00' は旧実装では 300 と読めていたので、
+    // 「入れたつもりの数」と「保存された数」が黙って食い違う経路だった。
+    await type(DAYS, '3,00');
+    expect(q.alertIn('hydroponics.daysPerYear')).toBe('数値で入力してください');
+    expect(q.input(DAYS).getAttribute('aria-invalid')).toBe('true');
+    expect(q.button(`${DAYS} を保存`).disabled).toBe(true);
+
+    // 対照: 3 桁区切りが正しい値は読める (桁区切り自体を拒んだのではない)
+    await type(DAYS, '300');
+    expect(q.alertIn('hydroponics.daysPerYear')).toBe('');
+    expect(q.input(DAYS).getAttribute('aria-invalid')).toBe('false');
+    expect(q.button(`${DAYS} を保存`).disabled).toBe(false);
+    expect(await stored()).toEqual([]);
+  });
+
   it('既定に戻すと保存から消え、入力欄も既定の表示へ戻る', async () => {
     await type(DAYS, '300');
     await click(q.button(`${DAYS} を保存`));

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   isOfficial,
   distinctSourceCount,
@@ -6,6 +6,7 @@ import {
   verifyClaim,
   isConfirmed,
   filterConfirmed,
+  unverifiedSupportResources,
   type EvidenceSource,
   type SourcedClaim,
 } from '../sourceVerification';
@@ -116,9 +117,138 @@ describe('VERIFIED_SUPPORT_RESOURCES (knowledge base invariant)', () => {
 
   it('matches the resources actually shipped in SUPPORT_RESOURCES (label+detail)', () => {
     // 検証済みデータが、実際に提示する窓口 (緊急時を除く) と一致することを固定。
+    // **この向きだけでは足りない** —— 出荷側に手打ちの窓口が増えても鳴らない。
+    // 逆向きは下の describe が見る。
     const shipped = new Set(SUPPORT_RESOURCES.map((r) => `${r.label}|${r.detail}`));
     for (const c of VERIFIED_SUPPORT_RESOURCES) {
       expect(shipped.has(`${c.value.label}|${c.value.detail}`)).toBe(true);
     }
+  });
+});
+
+/**
+ * **出荷する側から照合する** (2026-09-06)。
+ *
+ * 上の検査は「確証済みの各件が出荷一覧に在るか」だけを見ており、
+ * 危機応答で見せる `SUPPORT_RESOURCES` に**出典の無い窓口を 1 行足しても
+ * 全部緑のまま**だった。番号が古ければ、いま最も助けが要る人が
+ * 誰にも繋がらない電話を掛ける。向きを足す。
+ */
+describe('unverifiedSupportResources — 出荷する窓口は確証済みか', () => {
+  const src = (label: string): EvidenceSource => ({ url: `https://example.go.jp/${label}`, type: 'government', label });
+  const claim = (label: string, detail: string, sources: readonly EvidenceSource[]) => ({ value: { label, detail }, sources });
+  const verified = [
+    claim('確証済み窓口', '0120-000-000（24時間）', [src('a'), { url: 'https://op.example/b', type: 'operator', label: 'b' }]),
+  ];
+
+  it('実物: 出荷している窓口はすべて規則に適合する', () => {
+    expect(unverifiedSupportResources(SUPPORT_RESOURCES, VERIFIED_SUPPORT_RESOURCES)).toEqual([]);
+  });
+
+  it('★ 出典の無い窓口を足すと鳴る (これが前は鳴らなかった)', () => {
+    const problems = unverifiedSupportResources(
+      [{ kind: 'hotline', label: '手打ちの窓口', detail: '0120-999-999（24時間）' }],
+      verified,
+    );
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toContain('手打ちの窓口');
+  });
+
+  it('★ 受付時間だけ書き換えても鳴る (再確証なしの変更)', () => {
+    const problems = unverifiedSupportResources(
+      [{ kind: 'hotline', label: '確証済み窓口', detail: '0120-000-000（10:00〜22:00）' }],
+      verified,
+    );
+    expect(problems).toHaveLength(1);
+  });
+
+  it('★ 出典が方針を満たさない窓口は鳴る (独立 1 件だけ)', () => {
+    const weak = [claim('弱い窓口', '0120-111-111（24時間）', [src('only')])];
+    const problems = unverifiedSupportResources([{ kind: 'hotline', label: '弱い窓口', detail: '0120-111-111（24時間）' }], weak);
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toContain('出典が方針を満たしません');
+  });
+
+  it('★ 未確証の窓口を kind emergency に隠せない (自前のダイヤルイン番号)', () => {
+    const problems = unverifiedSupportResources(
+      [{ kind: 'emergency', label: '緊急風', detail: '119 のほか 0120-888-888 へ' }],
+      verified,
+    );
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toContain('ダイヤルイン');
+  });
+
+  /**
+   * ダイヤルイン番号らしさの**境目**を留める。ここを緩い標本だけで書くと、
+   * 先頭・末尾の 1 文字や桁数のしきい値を書き換えた版と区別が付かない
+   * (変異検査で 5 件生き残って気づいた)。
+   */
+  it('★ 番号が文面の先頭にあっても掴む', () => {
+    const problems = unverifiedSupportResources([{ kind: 'emergency', label: '緊急風', detail: '0120888888 と 119 へ' }], verified);
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toContain('ダイヤルイン');
+  });
+
+  it('★ 番号が文面の末尾にあっても掴む', () => {
+    const problems = unverifiedSupportResources([{ kind: 'emergency', label: '緊急風', detail: '119 のほか 0120-888-888' }], verified);
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toContain('ダイヤルイン');
+  });
+
+  it('★ 区切りを除いた桁数で見る — 8 桁は番号扱いしない (区切りで長く見えるだけ)', () => {
+    expect(unverifiedSupportResources([{ kind: 'emergency', label: '緊急時', detail: '119 と 12-34-56-7' }], verified)).toEqual([]);
+  });
+
+  it('★ 9 桁からは番号扱い (しきい値の境目)', () => {
+    const problems = unverifiedSupportResources([{ kind: 'emergency', label: '緊急風', detail: '119 と 012345678' }], verified);
+    expect(problems).toHaveLength(1);
+  });
+
+  it('★ kind emergency が 119 / 110 を案内していなければ鳴る', () => {
+    const problems = unverifiedSupportResources([{ kind: 'emergency', label: '緊急時', detail: 'すぐ助けを呼んで' }], verified);
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toContain('119');
+  });
+
+  it('対照: 確証済みの窓口と 119/110 の案内は通る', () => {
+    expect(
+      unverifiedSupportResources(
+        [
+          { kind: 'hotline', label: '確証済み窓口', detail: '0120-000-000（24時間）' },
+          { kind: 'emergency', label: '緊急時', detail: '生命の危険が迫っているときは 119（救急）/ 110（警察）へ' },
+        ],
+        verified,
+      ),
+    ).toEqual([]);
+  });
+
+  it('対照: 全角の番号でも同じに読む (NFKC)', () => {
+    const problems = unverifiedSupportResources(
+      [{ kind: 'emergency', label: '緊急時', detail: '１１９（救急）へ' }],
+      verified,
+    );
+    expect(problems).toEqual([]);
+  });
+
+  it('空の一覧は問題なし (規則が空振りしていないことは上の標本が示す)', () => {
+    expect(unverifiedSupportResources([], verified)).toEqual([]);
+  });
+});
+
+/**
+ * 方針と公的種別の表は module 直下にあるので、先頭で import した値を見るだけでは
+ * Stryker の static 変異体 (表を空にする / requireOfficial を false にする) を殺せない
+ * (`stryker.config.json` の `_commentIgnoreStatic`)。読み直して確かめる。
+ */
+describe('方針の定数を読み直しても同じ (static 変異体の検査)', () => {
+  it('★ 既定方針は 独立 2 件以上 + 公的 1 件以上 で、公的種別は国と自治体', async () => {
+    vi.resetModules();
+    const fresh = await import('../sourceVerification');
+    expect(fresh.DEFAULT_POLICY).toEqual({ minSources: 2, requireOfficial: true });
+    expect(fresh.isOfficial('government')).toBe(true);
+    expect(fresh.isOfficial('municipality')).toBe(true);
+    expect(fresh.isOfficial('operator')).toBe(false);
+    expect(fresh.isOfficial('media')).toBe(false);
+    expect(fresh.isOfficial('other')).toBe(false);
   });
 });

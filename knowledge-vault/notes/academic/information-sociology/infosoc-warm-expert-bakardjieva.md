@@ -31,7 +31,7 @@ aliases:
 - [Martínez, C. & Olsson, T. (2022) The warm expert — a warm teacher? Learning about digital media in intergenerational interaction — Convergence 28(6)](https://doi.org/10.1177/13548565211070409) `学術`
 
 ## 関連概念
-- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（包囲型プラットフォーム競争）]] — 同分野の近傍
+- [[infosoc-platform-envelopment|プラットフォーム・エンベロープメント（アイゼンマン＝パーカー＝ヴァン・アルスタイン）——隣接するプラットフォーム市場へ自社機能とのバンドルで参入し、既存のネットワーク効果を武器に転用して相手の利用者基盤を奪う競争戦略]] — 同分野の近傍
 - [[infosoc-time-space-distanciation-giddens|時空間の遠隔化——社会関係が局所的文脈から引き離され広域に伸張する]] — 同分野の近傍
 
 ## 関連

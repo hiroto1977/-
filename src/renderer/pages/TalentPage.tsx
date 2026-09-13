@@ -3,6 +3,8 @@ import { localIsoDate } from '../../shared/localDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { describeDroppedEntries, type LeaderFitness, type TalentSnapshot } from '../../shared/talent';
+import type { ActionData } from '../../shared/actionData';
 import type { SourceStrength } from '../../shared/provenance';
 
 /**
@@ -20,28 +22,12 @@ import type { SourceStrength } from '../../shared/provenance';
 
 // 語彙は `src/shared/provenance.ts` が持つ。ここで書き写すと、段が増えた日に
 // 画面だけ古い union を持つ (2026-08-29 に実際そうなっていた)。
+// 同じ理由で **snapshot の形もここには写さない** —— 2026-09-09 (パス 121) まで
+// この画面は `TalentSnapshot` を手で写していて、shared に `stored` / `storedNote`
+// を足した日に**画面だけ古い形**を持ち、注記の欄が型に無かった (チームレーダーの
+// パス 120 と同じ形)。下の 3 つは**下書き (useState) の形**で、shared の readonly
+// 行を編集できる写しにするために置く。
 
-interface OrganDisease {
-  readonly id: string;
-  readonly name: string;
-  readonly summary: string;
-  readonly source: SourceStrength;
-}
-interface SkillStep {
-  readonly step: number;
-  readonly name: string;
-  readonly detail: string;
-}
-interface Disqualifier {
-  readonly id: string;
-  readonly text: string;
-}
-interface DiseaseTally {
-  readonly id: string;
-  readonly name: string;
-  readonly departments: readonly string[];
-  readonly systemic: boolean;
-}
 interface LadderMember {
   id: string;
   name: string;
@@ -55,33 +41,6 @@ interface DeptReport {
 interface Initiative {
   name: string;
   probability: number;
-}
-interface TalentSnapshot {
-  readonly diseases: readonly OrganDisease[];
-  readonly steps: readonly SkillStep[];
-  readonly disqualifiers: readonly Disqualifier[];
-  readonly diagnosis: {
-    readonly tallies: readonly DiseaseTally[];
-    readonly systemic: readonly string[];
-    readonly reportedDepartments: number;
-  };
-  readonly achievement: {
-    readonly total: number;
-    readonly shortfall: number;
-    readonly ok: boolean;
-    readonly counted: number;
-  };
-  readonly ladder: {
-    readonly members: readonly Readonly<LadderMember>[];
-    readonly stalled: readonly Readonly<LadderMember>[];
-    readonly byStep: Readonly<Record<number, number>>;
-  };
-  readonly initiatives: readonly Readonly<Initiative>[];
-  readonly reports: readonly Readonly<DeptReport>[];
-  readonly updatedAt: string;
-  /** 表ごとの出典の強さ。病は項ごと、10ヶ条と STEP は表まるごと 1 つ。 */
-  readonly disqualifiersSource: SourceStrength;
-  readonly stepsSource: SourceStrength;
 }
 
 /**
@@ -125,31 +84,49 @@ export function TalentPage(): React.JSX.Element {
   // 診断票も 10ヶ条も STEP も全部消えた (2026-08-28 実測)。
   const { data, source, status, errorMessage, refresh } = useServiceData(
     'talent',
-    SNAPSHOT.talent as unknown as TalentSnapshot,
+    // **二重キャストにしない。** `as unknown as` は型検査を恒久的に黙らせるので、
+    // `TalentSnapshot` と同梱データがずれても気づけない。単一キャストなら
+    // 重なりが無くなった時点で `tsc` が落ちる (2026-09-08 に単一で通ることを実測)。
+    SNAPSHOT.talent as TalentSnapshot,
     { autoFetch: true },
   );
-  const snap = data as unknown as TalentSnapshot;
+  const snap = data as TalentSnapshot;
 
   const { diseases, steps, disqualifiers } = snap;
 
   // --- 登用判定 (その場で計算せず、main の判定へ投げる) ---
   const [flagged, setFlagged] = useState<readonly string[]>([]);
-  const [verdict, setVerdict] = useState<{ eligible: boolean; hits: Disqualifier[] } | null>(null);
+  const [verdict, setVerdict] = useState<LeaderFitness | null>(null);
   const [judging, setJudging] = useState(false);
+  /**
+   * 判定できなかった理由 (パス 176)。**押しても何も起きない形にしない** ——
+   * 2026-09-12 まで `if (res.ok) setVerdict(…)` に else が無く、失敗すると
+   * 「判定中…」から元に戻るだけで画面は何も変わらなかった。利用者には
+   * 「押せていない」と見えるので押し直す (パス 169 で直したのと同じ形)。
+   */
+  const [judgeError, setJudgeError] = useState<string>();
 
   const toggleFlag = (id: string): void => {
     setVerdict(null);
+    setJudgeError(undefined);
     setFlagged((prev) => (prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]));
   };
 
   const judge = async (): Promise<void> => {
     setJudging(true);
+    setJudgeError(undefined);
     try {
-      const res = await window.serviceHub.invoke('talent', 'judge-leader', { flagged });
+      // 戻り値の形は台帳を読む (パス 117 —— それまで `res.data as { fitness: … }` と手で写していた)。
+      const res = await window.serviceHub.invoke<ActionData<'talent/judge-leader'>>('talent', 'judge-leader', { flagged });
       if (res.ok) {
-        const d = res.data as { fitness: { eligible: boolean; hits: Disqualifier[] } };
-        setVerdict(d.fitness);
+        setVerdict(res.data.fitness);
+        return;
       }
+      // 失敗を黙って捨てない (パス 176)。判定は shared の純粋関数だが、通るのは IPC なので
+      // 施錠・未登録・main の例外で落ちうる —— そのとき「押せていない」と読まれない形にする。
+      setJudgeError(res.message);
+    } catch (e) {
+      setJudgeError(e instanceof Error ? e.message : String(e));
     } finally {
       setJudging(false);
     }
@@ -188,14 +165,23 @@ export function TalentPage(): React.JSX.Element {
     setSaving(true);
     setSaveMsg(null);
     try {
-      const r = await window.serviceHub.invoke('talent', 'save-state', {
+      const r = await window.serviceHub.invoke<ActionData<'talent/save-state'>>('talent', 'save-state', {
         reports,
         initiatives,
         members,
         updatedAt: localIsoDate(),
       });
       if (r.ok) {
-        setSaveMsg('保存しました');
+        // **「保存しました」だけでは足りない。** sanitizer は上限で切り、形の合わない
+        // 要素を落とすので、成功のまま**一部が消える**ことが在る (経緯は
+        // `shared/talent.ts` の `describeDroppedEntries`)。返ってくるのは
+        // sanitize 後の状態なので、送った件数と比べて落ちた分を言う。
+        const saved = r.data;
+        const dropped = describeDroppedEntries(
+          { reports: reports.length, initiatives: initiatives.length, members: members.length },
+          { reports: saved.reports.length, initiatives: saved.initiatives.length, members: saved.members.length },
+        );
+        setSaveMsg(dropped === null ? '保存しました' : `保存しました — ただし ${dropped}`);
         refresh();
       } else {
         setSaveMsg(`保存できませんでした: ${r.message}`);
@@ -226,6 +212,12 @@ export function TalentPage(): React.JSX.Element {
         errorMessage={errorMessage}
         onRefresh={refresh}
       />
+      {/* 保存先が読めなかった / 読み込みで項目を落としたときだけ出る (パス 121)。黙って空にしない。 */}
+      {snap.storedNote !== null && (
+        <div role="status" style={{ margin: '8px 0', padding: '8px 12px', background: 'rgba(251, 191, 36, 0.08)', border: '1px solid #fbbf24', borderRadius: 6, fontSize: 12, color: '#fbbf24', lineHeight: 1.5 }}>
+          ⚠ {snap.storedNote}
+        </div>
+      )}
 
       <Section title="診断 — 5つの企業組織病">
         <p style={{ color: '#8a93a6', fontSize: 13, marginTop: 0 }}>
@@ -421,6 +413,15 @@ export function TalentPage(): React.JSX.Element {
         <button type="button" onClick={() => void judge()} disabled={judging} style={{ marginTop: 12 }}>
           {judging ? '判定中…' : '登用可否を判定'}
         </button>
+        {judgeError !== undefined && (
+          <p
+            data-judge-error
+            role="alert"
+            style={{ marginTop: 12, fontSize: 13, color: '#9C4A3C' }}
+          >
+            ⚠ 判定できませんでした: {judgeError}
+          </p>
+        )}
         {verdict !== null && (
           <p style={{ marginTop: 12, fontSize: 14, color: verdict.eligible ? '#0E5C6B' : '#9C4A3C' }}>
             {verdict.eligible

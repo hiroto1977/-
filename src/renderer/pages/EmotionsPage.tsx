@@ -1,14 +1,20 @@
 import { useMemo, useState } from 'react';
 import { localIsoDate } from '../../shared/localDate';
+import { parseTimestamp } from '../../shared/isoDate';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
-import { analyzeProfile } from '../data/emotionInsights';
+import { analyzeProfile, type EmotionProfile } from '../data/emotionInsights';
+import { AiEgressNotice } from '../components/AiEgressNotice';
+import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import { useParameters } from '../data/parameterOverrides';
 import { emotionThresholds } from '../../shared/parameters';
-import type { EmotionThresholds } from '../../shared/emotionThresholds';
 import { counsel } from '../data/counseling';
 import { SELF_CARE_LIBRARY } from '../data/selfCareLibrary';
+import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
+import { charsOverCeiling, clampToCeiling, clampedCeilingNote } from '../../shared/inputCeiling';
+import { CeilingNotice } from '../components/CeilingNotice';
+import type { ActionData } from '../../shared/actionData';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -36,14 +42,8 @@ interface MoodLog {
   note: string;
 }
 
-interface Analysis {
-  id: string;
-  timestamp: number;
-  excerpt: string;
-  scores: Record<string, number>;
-  sentiment: 'positive' | 'neutral' | 'negative';
-  dominant: string;
-}
+/** 分析 1 件の形は台帳 (`emotions/analyze-text` = `shared/emotionsShape.ts` の `AnalysisEntryShape`) を読む (パス 117)。 */
+type Analysis = ActionData<'emotions/analyze-text'>;
 
 function MoodTrend({ moods }: { moods: MoodLog[] }) {
   // Simple 30-day sparkline. Days with no entry are gaps.
@@ -128,15 +128,17 @@ function ScoreBar({ name, score }: { name: string; score: number }) {
 }
 
 /** 寄り添いカウンセリング — 縦断プロファイル + 危機検知つきの共感応答。 */
-function CounselingCard({ moods, analyses, draftNote, draftScore, thresholds }: {
+function CounselingCard({ moods, analyses, draftNote, draftScore, profile }: {
   moods: readonly MoodLog[];
   analyses: readonly Analysis[];
   draftNote: string;
   draftScore: number;
-  /** 見立てのしきい値 (台帳の値)。 */
-  thresholds: EmotionThresholds;
+  /**
+   * 縦断的な見立て。**画面で 1 度だけ作って配る** (平均を 2 か所で別々に出さない)。
+   * しきい値は作る側 (`EmotionsPage`) が渡すので、ここでは受け取らない。
+   */
+  profile: EmotionProfile;
 }) {
-  const profile = useMemo(() => analyzeProfile(moods, analyses, thresholds), [moods, analyses, thresholds]);
   // 応答の対象: 入力中のメモがあればそれ、なければ最新の気分メモ。
   const latestMood = moods[moods.length - 1];
   const note = draftNote.trim() || latestMood?.note || '';
@@ -219,10 +221,16 @@ export function EmotionsPage() {
   const { moods, analyses, keyConfigured } = data;
   const { values: params } = useParameters();
   const thresholds = useMemo(() => emotionThresholds(params), [params]);
+  // 縦断的な見立て (件数・平均・傾向) は 1 か所で作る。以前は StatusBar の
+  // 「平均 x.x/5」だけが画面の中で別に平均を出しており、同じ量に 2 つの出所が
+  // 在った (`analyzeProfile` は変異検査の対象、画面の中の算術は対象外)。
+  const profile = useMemo(() => analyzeProfile(moods, analyses, thresholds), [moods, analyses, thresholds]);
 
   // --- mood log
   const [moodScore, setMoodScore] = useState<number>(3);
   const [moodNote, setMoodNote] = useState('');
+  /** 直前の入力が天井を超えていた字数 (0 なら超えていない。パス 168)。 */
+  const [moodNoteOverflow, setMoodNoteOverflow] = useState(0);
   const [moodBusy, setMoodBusy] = useState(false);
   const [moodMsg, setMoodMsg] = useState<string>();
 
@@ -230,7 +238,7 @@ export function EmotionsPage() {
     if (!window.serviceHub) return;
     setMoodBusy(true);
     setMoodMsg(undefined);
-    const res = await window.serviceHub.invoke<{ date: string; score: number }>(
+    const res = await window.serviceHub.invoke<ActionData<'emotions/log-mood'>>(
       'emotions',
       'log-mood',
       { score: moodScore, note: moodNote.trim() },
@@ -239,6 +247,7 @@ export function EmotionsPage() {
     if (res.ok) {
       setMoodMsg(`記録: ${res.data.date} → ${res.data.score}/5`);
       setMoodNote('');
+      setMoodNoteOverflow(0);
       refresh();
     } else {
       setMoodMsg(res.message);
@@ -249,12 +258,14 @@ export function EmotionsPage() {
   const [text, setText] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
   const [analyzeErr, setAnalyzeErr] = useState<string>();
+  /** 天井を何字超えているか (0 なら送れる)。**切らずに断るため**に持つ (パス 168)。 */
+  const textOver = charsOverCeiling(text, MAX_ANALYZE_TEXT_CHARS);
 
   const analyze = async () => {
     if (!window.serviceHub) return;
     setAnalyzing(true);
     setAnalyzeErr(undefined);
-    const res = await window.serviceHub.invoke<Analysis>('emotions', 'analyze-text', {
+    const res = await window.serviceHub.invoke<ActionData<'emotions/analyze-text'>>('emotions', 'analyze-text', {
       text: text.trim(),
     });
     setAnalyzing(false);
@@ -265,11 +276,6 @@ export function EmotionsPage() {
       setAnalyzeErr(res.message);
     }
   };
-
-  const avgMood = useMemo(() => {
-    if (moods.length === 0) return null;
-    return moods.reduce((s, m) => s + m.score, 0) / moods.length;
-  }, [moods]);
 
   return (
     <div>
@@ -284,7 +290,9 @@ export function EmotionsPage() {
         who={
           <>
             気分ログ {moods.length} 件
-            {avgMood !== null ? ` · 平均 ${avgMood.toFixed(1)}/5` : ''} ·
+            {/* 平均は `analyzeProfile` の 1 か所から読む (同じ画面の縦断的な見立てと
+                同じ数字)。以前はここだけ画面の中で別に平均を出していた。 */}
+            {profile.count > 0 ? ` · 平均 ${profile.averageScore.toFixed(1)}/5` : ''} ·
             分析履歴 {analyses.length} 件
             {!keyConfigured ? (
               <span style={{ color: 'var(--warning)', marginLeft: 8, fontSize: 12 }}>
@@ -321,9 +329,25 @@ export function EmotionsPage() {
           <input
             placeholder="メモ (任意) — 何があった？ どう感じた？"
             value={moodNote}
-            onChange={(e) => setMoodNote(e.target.value)}
+            onChange={(e) => {
+              // `maxLength` に任せない —— ブラウザが黙って落とすので、落ちた事実を
+              // 画面が知れない (パス 167 で業務メモに入れたのと同じ形)。
+              const raw = e.target.value;
+              setMoodNoteOverflow(charsOverCeiling(raw, MAX_MOOD_NOTE_CHARS));
+              // 文字境界で切る (パス 195 —— `slice` はサロゲート対を割る)。
+              setMoodNote(clampToCeiling(raw, MAX_MOOD_NOTE_CHARS));
+            }}
             style={inputStyle}
           />
+          {moodNoteOverflow > 0 && (
+            <div
+              data-mood-note-overflow={moodNoteOverflow}
+              role="alert"
+              style={{ fontSize: 11, color: '#fbbf24', lineHeight: 1.6 }}
+            >
+              ⚠ {clampedCeilingNote('気分のメモ', moodNoteOverflow, MAX_MOOD_NOTE_CHARS)}
+            </div>
+          )}
           <div style={{ display: 'flex', gap: 8 }}>
             <button className="primary" onClick={logMood} disabled={moodBusy}>
               {moodBusy ? '保存中…' : '記録'}
@@ -337,7 +361,13 @@ export function EmotionsPage() {
         </div>
       </Section>
 
-      <CounselingCard moods={moods} analyses={analyses} draftNote={moodNote} draftScore={moodScore} thresholds={thresholds} />
+      <CounselingCard
+        moods={moods}
+        analyses={analyses}
+        draftNote={moodNote}
+        draftScore={moodScore}
+        profile={profile}
+      />
 
       {moods.length > 0 ? (
         <Section title="過去 30 日のトレンド">
@@ -352,7 +382,27 @@ export function EmotionsPage() {
       ) : null}
 
       <Section title="テキスト感情分析 (Anthropic API)">
+        {/* **何が外へ出るかを書く。** 下の placeholder は「メール本文、自分の日記、
+            誰かのメッセージ」と、**最も秘めた内容と第三者の文面**を明示的に誘って
+            いるのに、2026-09-09 (パス 106) までこの画面には端末を出ることを述べる文が
+            1 つも無かった。ティッカー記号を断っている画面 (StocksPage) が在り、
+            日記を断っていない画面が在った。`mayIncludeOthers` で同意の 1 行を足す。 */}
+        <AiEgressNotice
+          subject={{
+            what: '入力したテキスト本文',
+            recipients: remoteOnly(AI_EGRESS_RECIPIENT_ANTHROPIC),
+            mayIncludeOthers: true,
+          }}
+        />
         <div className="card" style={{ gap: 10 }}>
+          {/**
+            * **切らない。** `maxLength` に任せると、5,000 字を超える貼り付け
+            * (メール本文・日記はふつうに超える) は黙って先頭だけが残り、
+            * **途中で切れた文に対する分析が、全文に対する分析として返る** ——
+            * 結果は正しく見えるので利用者には見分けられない。
+            * 天井を超えているあいだは送らず、いくら超えているかを述べる
+            * (パス 168。パス 112 が「最新の発話は切らずに断る」と決めた向き)。
+            */}
           <textarea
             placeholder="分析したいテキストを貼り付け — メール本文、自分の日記、誰かのメッセージなど"
             value={text}
@@ -360,11 +410,14 @@ export function EmotionsPage() {
             rows={4}
             style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
           />
+          {/* 節は共有の部品が持つ (パス 175 —— ここが手書きだったので、
+                「超過を述べているか」を走査で当てられなかった)。 */}
+          <CeilingNotice label="分析するテキスト" value={text} max={MAX_ANALYZE_TEXT_CHARS} />
           <div style={{ display: 'flex', gap: 8 }}>
             <button
               className="primary"
               onClick={analyze}
-              disabled={analyzing || !text.trim() || !keyConfigured}
+              disabled={analyzing || !text.trim() || !keyConfigured || textOver > 0}
             >
               {analyzing ? '分析中…' : '分析'}
             </button>
@@ -388,7 +441,7 @@ export function EmotionsPage() {
             <div key={a.id} className="card" style={{ gap: 8, marginBottom: 8 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
                 <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-                  {new Date(a.timestamp).toLocaleString('ja-JP')} · 主感情:{' '}
+                  {parseTimestamp(a.timestamp)?.toLocaleString('ja-JP') ?? '時刻不明'} · 主感情:{' '}
                   <strong style={{ color: EMOTION_LABELS[a.dominant]?.color ?? 'var(--text)' }}>
                     {EMOTION_LABELS[a.dominant]?.ja ?? a.dominant}
                   </strong>{' '}

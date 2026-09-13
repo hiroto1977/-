@@ -27,7 +27,7 @@ aliases:
 
 ## 出典
 - [Cavendish Square v El Makdessi [2015] UKSC 67 — penalty clause modern test](https://www.bailii.org/uk/cases/UKSC/2015/67.html) `公的`
-- [Peel, E. (2015) Remedies for Breach — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397](https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405) `学術`
+- [Peel, E. (2015) Remedies for Breach — Treitel on the Law of Contract, 14th ed., Sweet & Maxwell, ISBN 9780414037397](https://search.worldcat.org/title/Treitel-on-the-Law-of-contract/oclc/910717405) `リファレンス`
 - [Wikipedia: Penalty clause — liquidated damages and judicial control overview](https://en.wikipedia.org/wiki/Penalty_clause) `リファレンス`
 
 ## 関連概念
@@ -38,9 +38,9 @@ aliases:
 - [[bizlaw-estoppel-by-representation|表示による禁反言——信頼の保護と矛盾行為の禁止]] — 同じ思想家
 - [[bizlaw-misrepresentation-contract-law|不実表示法理——契約締結前の虚偽表示に対する救済体系]] — 同じ思想家
 - [[bizlaw-waiver-doctrine-contract|権利放棄の法理——契約上の権利の意図的不行使と法的効果]] — 同じ思想家
+- [[bizlaw-exculpatory-clause|免責条項の法理：契約上の責任制限・免除とその規制]] — 出典を共有
 - [[bizlaw-hedley-byrne-negligent-misstatement|過失による不実表示と純粋経済損失——ヘドリー・バーン対ヘラー事件（Hedley Byrne v Heller 1964）]] — 出典を共有
 - [[bizlaw-rule-in-claytons-case|クレイトン事件の準則（Rule in Clayton's Case／Devaynes v Noble）——混合口座の追及で引き出しを入金順に充当する先入先出の推定]] — 出典を共有
-- [[bizlaw-liquidated-damages-clause|損害賠償額の予定条項（清算損害賠償条項）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

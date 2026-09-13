@@ -34,10 +34,8 @@ aliases:
 - [[econ-consumption-smoothing-permanent-income|消費の平滑化——恒常所得仮説とライフサイクル仮説の統合的枠組み]] — 語彙が近い
 - [[econ-allingham-sandmo-tax-evasion|アリンガム＝サンドモ・モデル（脱税の経済分析）——過少申告という賭けと税務コンプライアンス]] — 同じ思想家
 - [[econ-leland-pyle-signaling|リーランド＝パイルのシグナリング——経営者の出資比率が質を伝える]] — 同じ思想家
-- [[econ-welfare-theorems|厚生経済学の基本定理]] — 同分野の近傍
+- [[econ-paradox-of-thrift|倹約のパラドックス]] — 同分野の近傍
 - [[econ-peltzman-effect-risk-compensation|ペルツマン効果（リスク補償仮説）——安全規制が誘発する危険行動による便益の相殺]] — 同分野の近傍
-- [[econ-general-equilibrium-walras|ワルラスの一般均衡理論]] — 同分野の近傍
-- [[econ-rotten-kid-theorem|腐った子定理]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

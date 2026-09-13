@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readOriginalSource } from '../shared/__tests__/originalSource';
 import path from 'node:path';
+import { RECORD_ENTRY_SERVICE_IDS } from '../shared/recordEntryLimits';
 
 /*
  * **ブラウザ版が、デスクトップ版の許可表に無い操作を実行できてはいけない。**
@@ -27,7 +28,7 @@ import path from 'node:path';
  */
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
-const read = (rel: string): string => readFileSync(path.join(REPO_ROOT, rel), 'utf8');
+const read = (rel: string): string => readOriginalSource(path.join(REPO_ROOT, rel));
 
 /** コメントを落とす (説明文の中の例を数えないため)。 */
 function stripComments(text: string): string {
@@ -72,6 +73,37 @@ function desktopServiceModules(): Map<string, string> {
   return out;
 }
 
+/**
+ * `ACTIONS` の初期化子が `Object.fromEntries(...)` で**組み立て**ているか。
+ *
+ * ## 2026-09-12 (パス 166) に直した形 —— 固定長の窓が条件だった
+ *
+ * ここは `text.slice(at, at + 200).includes('Object.fromEntries')` だった。
+ * 実測すると shopify の `Object.fromEntries` は `export const ACTIONS` から **+34**
+ * —— **窓 200 に対し余裕は 166 文字**しかなく、注記を 3 行足せば越える。
+ * 越えたときこれは**落ちずに別の枝へ行く** (字面の表として読もうとして鍵が 0 件になり、
+ * `KNOWN_EMPTY` との突き合わせで「shopify に action が無い」と**誤った理由で**鳴る)。
+ *
+ * パス 165 で `browserSnapshotGates` の窓 4000 を 28 文字で踏み抜いたのと同じ形。
+ * **窓ではなく構造で決める**: 初期化子の頭は
+ *
+ * ```
+ *   字面の表   export const ACTIONS: ActionMap = {        ← 最初の `{` が表の開き
+ *   組み立て   export const ACTIONS: ActionMap = Object.fromEntries(…);
+ * ```
+ *
+ * なので「`at` から最初の `{` か `;` まで」に `Object.fromEntries` が在るかで決まる。
+ * 文字数に依らないので、注記を何行足しても倒れない (下の対照で確かめる)。
+ */
+export function actionsIsComputed(text: string): boolean {
+  const at = text.indexOf('export const ACTIONS');
+  if (at < 0) return false;
+  const brace = text.indexOf('{', at);
+  const semi = text.indexOf(';', at);
+  const end = Math.min(brace < 0 ? text.length : brace, semi < 0 ? text.length : semi);
+  return text.slice(at, end).includes('Object.fromEntries');
+}
+
 /** ACTIONS マップから鍵を取る。3 通りの書き方すべて。 */
 function actionKeysOf(file: string): string[] {
   const text = read(`src/main/clients/${file}.ts`);
@@ -79,7 +111,7 @@ function actionKeysOf(file: string): string[] {
   if (at < 0) return [];
   // shopify は `Object.fromEntries(CONNECTORS.map(…))` で組み立てる。
   // 字面の表が無いので、その元になる CONNECTORS の action 欄から取る。
-  if (text.slice(at, at + 200).includes('Object.fromEntries')) {
+  if (actionsIsComputed(text)) {
     const arr = text.slice(text.indexOf('export const CONNECTORS'));
     return [...stripComments(arr).matchAll(/\baction:\s*'([^']+)'/g)].map((m) => m[1]!);
   }
@@ -113,12 +145,19 @@ function invokeBody(): string {
   return stripComments(braceBlock(shim, shim.indexOf('  invoke: async <T>')));
 }
 
-/** `record-entry` を集合で受ける分岐の対象サービス。 */
-function recordEntryServices(): string[] {
-  const shim = read('src/renderer/web-shim.ts');
-  const decl = shim.slice(shim.indexOf('RECORD_ENTRY_SERVICES ='));
-  const set = decl.slice(0, decl.indexOf(']'));
-  return [...set.matchAll(/'([a-z0-9-]+)'/g)].map((m) => m[1]!);
+/**
+ * `record-entry` / `advise` を集合で受ける分岐の対象サービス。
+ *
+ * 2026-09-09 (パス 117) までブラウザ版は `RECORD_ENTRY_SERVICES = new Set([…])` を自前で持ち、
+ * ここはその字面を読んでいた。いまは shared の `RECORD_ENTRY_SERVICE_IDS` を `isRecordEntryServiceId`
+ * で読むので、**分岐がその関数で振り分けている**ことを字面で確かめた上で、集合は shared から取る
+ * (集合を 2 度書かない)。分岐の形が変われば [] になり、その action が「拾えていない action」として鳴る。
+ * パス 119 で `advise` も同じ形の分岐になった (4 サービスの提案を shared の 1 関数が組む)。
+ */
+function sharedSetServices(body: string, action: 'record-entry' | 'advise'): string[] {
+  return new RegExp(`action\\s*===\\s*'${action}'\\s*&&\\s*isRecordEntryServiceId\\(serviceId\\)`).test(body)
+    ? [...RECORD_ENTRY_SERVICE_IDS]
+    : [];
 }
 
 function browserPairs(body: string): Set<string> {
@@ -132,9 +171,62 @@ function browserPairs(body: string): Set<string> {
   for (const m of body.matchAll(/serviceId\s*===\s*'([^']+)'\s*&&\s*\(([^)]*action\s*===[^)]*)\)/g)) {
     for (const a of m[2]!.matchAll(/action\s*===\s*'([^']+)'/g)) out.add(`${m[1]}/${a[1]}`);
   }
-  for (const svc of recordEntryServices()) out.add(`${svc}/record-entry`);
+  for (const action of ['record-entry', 'advise'] as const) {
+    for (const svc of sharedSetServices(body, action)) out.add(`${svc}/${action}`);
+  }
   return out;
 }
+
+/**
+ * **判定が文字数に依らないこと** (2026-09-12 · パス 166)。
+ *
+ * 旧実装 (窓 200) は注記を 3 行足せば静かに逆へ倒れた。ここは**合成した文面**に
+ * 当てて、どちらの書き方も・注記が何行在っても正しく分かれることを留める。
+ */
+describe('ACTIONS の書き方の判定 (パス 166)', () => {
+  const LITERAL = "export const ACTIONS: ActionMap = {\n  'create-issue': createIssue,\n};\n";
+  const COMPUTED = 'export const ACTIONS: ActionMap = Object.fromEntries(CONNECTORS.map((c) => [c.action, c.run]));\n';
+
+  it('字面の表は組み立てではない', () => {
+    expect(actionsIsComputed(LITERAL)).toBe(false);
+  });
+
+  it('Object.fromEntries は組み立て', () => {
+    expect(actionsIsComputed(COMPUTED)).toBe(true);
+  });
+
+  it('★ 注記を 300 文字挟んでも倒れない (固定長の窓では倒れた)', () => {
+    const note = `// ${'あ'.repeat(300)}\n`;
+    expect(actionsIsComputed(note + COMPUTED)).toBe(true);
+    expect(actionsIsComputed(note + LITERAL)).toBe(false);
+    // 宣言と初期化子の**間**に挟んでも同じ (ここが旧実装の踏み抜き点だった)。
+    const between = `export const ACTIONS: ActionMap =\n  ${note}  Object.fromEntries(CONNECTORS.map((c) => [c.action, c.run]));\n`;
+    expect(actionsIsComputed(between)).toBe(true);
+  });
+
+  it('★ 対照: 固定長 200 の窓なら、間に注記を挟むと逆へ倒れていた', () => {
+    // 旧実装を再現して、**直した理由が実在した**ことを標本で示す。
+    const oldRule = (text: string): boolean => {
+      const at = text.indexOf('export const ACTIONS');
+      return at >= 0 && text.slice(at, at + 200).includes('Object.fromEntries');
+    };
+    const note = `// ${'あ'.repeat(300)}\n`;
+    const between = `export const ACTIONS: ActionMap =\n  ${note}  Object.fromEntries(CONNECTORS.map((c) => [c.action, c.run]));\n`;
+    expect(oldRule(between)).toBe(false); // 旧実装は見失う
+    expect(actionsIsComputed(between)).toBe(true); // 今の実装は見る
+  });
+
+  it('ACTIONS が無い文面は組み立てではない', () => {
+    expect(actionsIsComputed('const x = 1;\n')).toBe(false);
+  });
+
+  it('★ 実物: 組み立てで書いているのは shopify だけ (母集団を数える)', () => {
+    const computed = [...desktopServiceModules().values()]
+      .filter((file, i, arr) => arr.indexOf(file) === i)
+      .filter((file) => actionsIsComputed(read(`src/main/clients/${file}.ts`)));
+    expect(computed).toEqual(['shopify']);
+  });
+});
 
 describe('二つの版で、実行できる書き込み操作の面が食い違わない', () => {
   const body = invokeBody();

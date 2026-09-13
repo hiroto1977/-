@@ -33,13 +33,13 @@ aliases:
 ## 関連概念
 - [[econ-financial-repression|金融抑圧]] — 語彙が近い
 - [[econ-dixit-stiglitz|ディキシット＝スティグリッツ・モデル（独占的競争）]] — 同じ思想家
-- [[econ-screening|スクリーニング（選別理論）]] — 同じ思想家
+- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場（アカロフ）——取引前の情報の非対称性で質の悪い財や高リスクの相手ばかりが市場に残り、市場が縮小・崩壊する]] — 同じ思想家
 - [[econ-fear-of-floating|変動相場回避（フィア・オブ・フローティング）]] — 同じ思想家
 - [[econ-greenwald-stiglitz-theorem|グリーンウォルド＝スティグリッツの定理（Greenwald-Stiglitz Theorem）]] — 同じ思想家
 - [[econ-grossman-stiglitz|グロスマン＝スティグリッツのパラドックス]] — 同じ思想家
-- [[econ-rothschild-stiglitz|ロスチャイルド＝スティグリッツ・モデル（保険市場の選別）]] — 同じ思想家
 - [[econ-shapiro-stiglitz|シャピロ=スティグリッツの効率賃金モデル（怠業モデル）]] — 同じ思想家
-- [[econ-adverse-selection-akerlof-lemons|逆選択とレモン市場——アカロフの情報非対称性理論と市場崩壊メカニズム]] — 同じ思想家
+- [[econ-atkinson-stiglitz-theorem|アトキンソン＝スティグリッツの定理——最適な所得税があれば物品税はいらない]] — 同じ思想家
+- [[econ-capital-levy-debate|資本課徴金論争——戦後債務処理のための一回的資産課税]] — 同じ思想家
 - [[econ-mundell-optimal-currency-area|最適通貨圏理論——マンデルの要素移動性と通貨統合の経済的条件]] — 同じ思想家
 
 ## 関連

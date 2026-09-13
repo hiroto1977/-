@@ -18,20 +18,21 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 75 | `src/shared/serviceId.ts:9-43` |
-| IPC ハンドラ数 | 13 | `src/main/main.ts:111-296` |
-| client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
+| サービス数 | 76 | `src/shared/serviceId.ts:9-43` |
+| IPC ハンドラ数 | 14 | `src/main/main.ts:111-296` |
+| client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
-| 外部接続先ホスト | 14 + ローカル 1 + ユーザー指定 (AI 互換 API) | §4.3 |
-| ユニットテスト | **10634** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
+| ユニットテスト | **13644** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
 | Stryker break threshold | **99.8%** (CI fails below。生存 0 / 未到達 0 で到達済み。対象ファイル数と閾値の実数は §5.5) | `stryker.config.json` |
-| `npm audit` (prod) | 0 vulnerabilities (CI が `--omit=dev --audit-level=high` で毎回確認。dev 依存と moderate 以下は落とさない — 理由は `ci.yml` の注記) | `package-lock.json` |
-| 陰性対照つきゲート | 29 / 34 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
-| 不変条件 (CI で fail-on-violation) | 15 | §8.1 |
-| `file:line` 参照数 | 422 | 自己検証 |
+| `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
+| 陰性対照つきゲート | 31 / 36 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
+| 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
+| `file:line` 参照数 | 601 | 自己検証 |
+| 図の中の `file:line` 参照数 | 27 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
 
@@ -50,7 +51,7 @@ flowchart LR
       BRIDGE[window.serviceHub<br/>8 methods, typed]
     end
     subgraph MN["Main (Node, full privileges)"]
-      IPC[ipcMain.handle × 13]
+      IPC[ipcMain.handle × 14]
       CLIENTS[68 clients<br/>fetcher + ActionMap]
       SEC[secrets.ts<br/>safeStorage + 1MB cap]
       OA[oauth.ts<br/>PKCE + loopback]
@@ -102,7 +103,7 @@ flowchart LR
 
 1. Renderer は **Node API を直接呼ばない**。`window.serviceHub` 経由のみ。
 2. Renderer に **raw token は届かない**。`secrets:list` は ID のみ返す。
-3. 外部接続は **main プロセスからのみ**。renderer の CSP `connect-src 'self'` で遮断。
+3. 外部接続は **main プロセスからのみ** (デスクトップ版。ブラウザ版は renderer が §3.3 と同じ宛先へ直接つなぐ)。renderer の CSP `connect-src 'self'` で遮断。
 4. **すべてのエラー** は `safeErrorMessage()` → `redactSecrets()` を経由してマスク。
 5. 任意のシステム呼び出しは **allowlist + isServiceId 検証** を必ず通る。
 
@@ -193,7 +194,7 @@ form-action 'none';
 
 `localhost:5173` は dev mode Vite HMR 専用。production renderer の外向き HTTP は **ゼロ**。
 
-### 1.4 IPC 契約 (13 チャンネル —— `ipcMain.handle` の全部。`verify:arch` が漏れを落とす)
+### 1.4 IPC 契約 (14 チャンネル —— `ipcMain.handle` の全部。`verify:arch` が漏れを落とす)
 
 `src/preload/preload.ts:6-16` で型定義、`src/main/main.ts:99-224` で実装:
 
@@ -205,6 +206,7 @@ form-action 'none';
 | `app:openPath` | `filePath: string` | `OsOpResult` | 同上。**OS の「開く」動詞**を使うので Windows では関連付け次第で実行される | `shell.openPath` の失敗文字列を返す |
 | `app:checkUpdate` | — | `UpdateVerdict` | 送り先は定数。応答は `parseLatestRelease` が形と案内先ホストまで確かめる | 失敗はすべて `unknown` へ寄せる |
 | `secrets:protection` | — | `StorageProtection` | (出力のみ) 保存先・暗号化の有無・平文の件数を返す。**トークンそのものは返さない** | — |
+| `app:eraseAll` | — | `DesktopEraseReport` | (出力のみ) トークン・状態ファイル (控え・残骸) と renderer の保存領域を消し、ファイルごとの結果を返す。**全部消えた時だけ**再起動する (パス 137) | — |
 | `secrets:set` | `(serviceId, token)` | `void` | `isServiceId` + token 長さ `(0, 65536]` | — |
 | `secrets:clear` | `serviceId` | `void` | `isServiceId` | — |
 | `secrets:list` | — | `ServiceId[]` | (出力のみ) | — |
@@ -278,9 +280,9 @@ stateDiagram-v2
   Auth --> [*]: StatusBar が再認証 UI 表示
 ```
 
-`classifyError()` (`useServiceData.ts:21-27`) が message の HTTP code / phrase からエラー種別を
+`classifyError()` (`useServiceData.ts:45-51`) が message の HTTP code / phrase からエラー種別を
 4 値 (`auth / rate_limit / network / unknown`) に分類し、UI が auth 時に再認証 CTA を出す。
-`autoRefreshFired` ref (`useServiceData.ts:46`) が React.StrictMode の二重 effect から
+`autoRefreshFired` ref (`useServiceData.ts:68`) が React.StrictMode の二重 effect から
 保護する。
 
 #### 取得元の宣言 (`src/shared/dataOrigin.ts`) — 2026-08 監査で入れた 5 軸目
@@ -403,7 +405,7 @@ if (trimmed.length === 0 || trimmed.length > 65536) return;
 **上限を超える貼り付けは保存されないまま「保存した」ように見え**、次の取得で
 認証エラーが出ても原因が画面に出ない。
 
-- `checkTokenInput()` が受理可否と**理由**を返す。上限 (`TOKEN_MAX_LENGTH`) の
+- `checkTokenInput()` が受理可否と**理由**を返す。上限 (`MAX_TOKEN_INPUT_CHARS`) の
   定義もここ 1 つ — main と renderer に書き写すとずれる。
 - `secrets:set` は `TokenSaveResult` (`invalid_service` / `invalid_token` /
   `write_failed`) を返す。`secrets.ts` の書き込み失敗も握り潰さない。
@@ -490,10 +492,51 @@ error に倒すとファイル名と「開く」ボタンごと消え、出来�
 1 行 pragma」。uuid の組み立てを添字アクセスから `Array.from` の走査へ変えるだけで
 到達しない `?? 0` が 2 つ消えた。最終的に **242 変異体・100%** (真の 100%)。
 
-`lint:mutation-scope` は **範囲**で線を引く — `next-line` は常に可、
+`lint:mutation-scope` は **範囲**で線を引く — `next-line` は**理由を並記してあれば**可、
 範囲指定は restore まで 30 行以内なら可、それを超える / restore が無いものは
 台帳 `KNOWN_BROAD` にある分だけ可。台帳は**双方向**で、増えても減っても落ちる
-(直したら台帳も直す)。自己検査 12 通りを毎回走らせる。
+(直したら台帳も直す)。自己検査は毎回走り、件数を実行時に印字する
+(数を文書側にも書くと、育った日に片方だけ腐る)。
+
+#### 無言の pragma —— 契約は「理由を並記」だった (2026-09-07)
+
+すぐ上の規則は**範囲だけ**を見ていた。`next-line` を「常に可」と読むと、
+**理由を書かない 1 行の pragma は無制限に増やせる**。実測すると `mutate`
+271 ファイル中 127 ファイルに **661 個**の pragma が在り、うち **93 個は理由が
+どこにも書かれていない** (27 個は `all` —— その行の変異体を全種類まとめて消す)。
+範囲の規則が捕まえるのは 30 行超の 1 件だけで、残り 660 個は規則の外だった。
+
+対照を回して確かめた: `src/shared/num.ts` の `yen()` に
+`// Stryker disable next-line all` を 1 行入れると、`lint:mutation-scope` /
+`lint:forbidden` / `verify:arch` / `lint:docs` が**4 つとも緑**を返した。
+つまり「赤い変異検査を緑にする最短手順は、無言の pragma を 1 行足すこと」で、
+変異検査は生存した変異体を数えるが**消された変異体は数えない**。
+
+`checkBarePragmas` が理由を要求する。判定するのは「理由が良いか」ではなく
+「**黙って消していないか**」だけ: 同じ行の `: <理由>` / 直前の説明文 /
+同じ mutator の pragma が直前 6 行以内に在ってそちらに理由が有る、の 3 つ。
+残る 93 個は `PRAGMA_BARE` に実測値で置き、双方向にした (増えても減っても落ちる)。
+総数には床 (400) を置いてある —— 形を取り違えて 0 件になると
+「理由の無い pragma は無い」で緑になるため。
+
+**消化を始めて分かったこと (2026-09-07・93 → 86)**: この 93 個の多くは module
+レベルの定数・表の上に載っていて、「静的だから構造的に殺せない」ように見える。
+**それは違う。** 壁の 2 か所で外して実測すると 6 個が生存したが、値そのものは
+**既に検査が字面で持っていた** —— `src/renderer/security/__tests__/autoLock.test.ts` は操作イベント 4 種を
+literal で並べており、`src/renderer/security/__tests__/vault.test.ts` は派生接頭辞を手で書いている。生きていた
+理由は「テストが無い」ではなく「**変異体が届いていない**」で、module レベルの
+`const` は import の時点で評価済みなので Stryker の実行時の切替が効かない。
+`stryker.config.json` の `_commentIgnoreStatic` に手順が書いてある通り
+`vi.resetModules()` + 動的 `import()` で読み直す検査を足したら 6 個とも落ち、
+pragma は 2 つ消えた (`src/renderer/security/vault.ts` 3 → 2 / `src/renderer/security/autoLock.ts` 1 → 0)。
+**静的な定数の上の無言 pragma を見たら、理由を書きに行く前にまず読み直して測る。**
+なお 5 個は規則側の見落としだった —— `src/renderer/network/proxy.ts` などは pragma の**直後**に
+段落で理由を書く形で、`barePragmasOf` が直前しか見ていなかった (直後 1 行も
+理由と認める規則を足した)。残りは **86 個 / 33 ファイル**。
+
+内訳で多いのは静的なスナップショット表を持つ main のクライアント
+(`src/main/clients/stocks.ts` 8 / `src/main/clients/business.ts` 6 / 出前館・投資信託・不動産・Uber Eats 各 5) で、
+上と同じ形の可能性が高い。
 
 残債は **36 ファイル / 46 箇所 / 5,189 行** で、`security/`・`network/`・`oauth/` に
 集中している (`src/renderer/security/vault.ts` 610 行 /
@@ -1473,6 +1516,39 @@ E2E の陰性対照で**自分の書き方の誤り**を 1 つ潰した。「(�
   見積りで、設定の変更履歴は**計画の改訂**であって月次の実績ではない。
 - 未入力なら並べない (経営サマリーに勝手なサンプルを混ぜない)。
 
+#### 見積りと運転管理は別の層 (`src/shared/hydroponicsControl.ts`・2026-09-13 パス 194)
+
+上の `src/shared/hydroponics.ts` は**見積り**の層である —— 「この設備と単価なら
+年にいくらか」を出す。**今日この槽をどうするか**を答える物は無かった。
+利用者の求めは「水耕栽培に必要な情報を集め自動管理出来る仕様」なので、
+**運転管理**の層を別に置いた (混ぜると、日々の測定が経営の試算を書き換える)。
+
+- **測る物の台帳** — `READING_FIELDS` は 8 項目 (EC / pH / 根圏温度 / 気温 /
+  湿度 / CO₂ / 溶存酸素 / 液位)。単位・妥当範囲・目標域は `READING_FIELD_SPECS`
+  が 1 か所で持ち、EC と pH の妥当範囲は**品目別の参考値** (`HYDROPONIC_CROP_BOUNDS`)
+  から導く —— 数字を写さない。
+- **5 つの状態** — `FieldStatus` は `ok` / `low` / `high` / `unmeasured` /
+  `unreadable`。**未測定は緑にしないし、赤にもしない** (パス 51・67・74 と同じ規則)。
+  `assessReading().allOk` は未測定と読めない値が 0 件のときだけ真になる。
+- **目標域の根拠の強さを明示する** — `TARGET_BASIS` は全項目 `'reference'`
+  (目安)。法定値でも検証済みでもないので、画面がそう述べる。
+- **出せない量は出さない** — `DoseAdvice` の `{ kind: 'cannot', missing, how }`
+  は足りない欄の名前と埋め方を返す。pH は**目標 pH までの酸の量を出さない** ——
+  緩衝曲線が要るので水量だけでは定まらない。代わりにアルカリ度の中和当量
+  (`MG_CACO3_PER_MEQ = 50.04`) と手順を返す。
+- **日程は実績から数える** — `batchSchedule` は定植の実績が在ればそこから収穫日を
+  数え (`harvestCountedFrom`)、無ければ播種日から数える。工程を飛ばさない
+  (育苗中のロットに「収穫する」は出さない)。
+- **組み立ては 1 か所** — `buildHydroponicsSnapshot()` を主プロセスの fetcher
+  (`src/main/clients/hydroponics.ts`)・ブラウザ版の `web-shim.ts`・静的
+  `SNAPSHOT` の**3 つが同じ関数を呼ぶ**。ブラウザ版に枝を足し忘れて台帳が空に
+  なる形 (パス 118) を e2e が実測で拾ったので、置き場所を 1 つに寄せた。
+- **保存は端末内** — 測定・ロット・設定は record store の 3 collection
+  (`src/renderer/data/hydroponicsLog.ts`)。fetcher は**利用者のデータを返さない**。
+
+仕様は `docs/HYDROPONICS.md` —— **今は無いこと** (機器制御・センサ取り込み・
+収量予測・N/P/K の個別測定) も同じ文書が並べる。
+
 #### 連結は出所を混ぜない (`src/renderer/data/consolidation.ts`)
 
 上の変更で `units` に**利用者の実績と同梱サンプルが同居**するようになった。
@@ -1559,7 +1635,7 @@ sequenceDiagram
   M->>M: getValidToken(svc)
   M-->>B: {ok:false, code:'not_configured'} if null
   M->>A: action({token, payload, fetch})
-  Note over A: per-action input validation:<br/>gmail: isSafeHeaderValue(to)<br/>skills: isSafeSkillName(name)<br/>ollama: isSafeModelName + \0 reject
+  Note over A: per-action input validation:<br/>gmail: isSafeHeaderValue(to)<br/>skills: isSafeSkillName(name)<br/>ollama: isSafeModelName + \0 reject + 天井超えは断る
   A->>API: HTTPS POST
   API-->>A: JSON
   A-->>M: result data
@@ -1673,6 +1749,7 @@ union を参照する。
 | `emotions` | Emotions | Bearer (Anthropic) | ✅ | | `log-mood`, `analyze-text` |
 | `ollama` | Ollama (local) | none | ✅ | | `chat` |
 | `kpi` | KPI / BEP (local mock) | none | ✅ | | (read-only — Phase 6 で API 接続) |
+| `hydroponics` | 水耕栽培 — 運転管理 (測定の判定 / 今日やること / 栽培ロットの日程) | none | ✅ | | (read-only — fetcher は「何を測るか」の台帳だけを返す。測定・ロット・設定は端末内の record store。組み立ては `src/shared/hydroponicsControl.ts` に 1 つ) |
 | `stocks` | Stocks (local mock) | Bearer (Anthropic, advisor のみ) | ✅ | | `register-ticker`, `unregister-ticker`, `backtest`, `compare-strategies`, `advise`, `export-dashboard`, `export-dashboard-md` (永続化済み、Phase 7 で broker 接続) |
 | `business` | 事業ダッシュボード (10 categories) | none | ✅ | | `advise`, `export-dashboard`, `export-dashboard-md` (EC / dropship / OEM/ODM / blog / blog-affiliate / PPC-affiliate / video-production / video-upload / video-distribution / sns-ops, Phase 6 で 実 API 接続) |
 | `funding` | 資金調達レーダー — 補助金/助成金/融資/公庫/給付金/CF を会計・株式連携で可視化 (レーダー/折れ線/円/棒) | none (local mock) | ✅ | | (read-only — 集計は src/shared/funding.ts の純粋関数。Phase 6 で会計/公庫 API 接続) |
@@ -1681,7 +1758,7 @@ union を参照する。
 | `talent` | 人材育成 (組織病の診断 / 登用判定 / 達成確率100%キープ / 育成ロードマップ) | none | ✅ | | `save-state`, `judge-leader` (判定は `src/shared/talent.ts` — main とブラウザ版が同じ関数を読む) |
 | `templates` | Canva 連動テンプレートギャラリー (8 種) | none | ✅ | | `export-template` (プレゼン / 名刺 / SNS / チラシ / 証明書 / 請求書 / 履歴書、SVG 出力) |
 | `library` | アプリ内ライブラリ (IndexedDB) | none | ✅ | | (read-only — ブラウザ版で全エクスポート結果を保管) |
-| `settings` | 設定 (API キー管理 + Vault + **数値パラメータ**) | none | ✅ | | (read-only — Vault で全 token を AES-GCM-256 で暗号化。数値パラメータは `components/ParametersPanel.tsx` — 台帳 `src/shared/parameters.ts` の 145 件〔法定値 / 参考値 / しきい値 / 前提〕を機能ごとに並べ、上書きは `parameter-overrides` collection の **1 レコード**を書き換える〔`data/parameterOverrides.ts`〕。下の「数値パラメータ」節) |
+| `settings` | 設定 (API キー管理 + Vault + **数値パラメータ**) | none | ✅ | | (read-only — Vault で全 token を AES-GCM-256 で暗号化。数値パラメータは `components/ParametersPanel.tsx` — 台帳 `src/shared/parameters.ts` の 146 件〔法定値 / 参考値 / しきい値 / 前提〕を機能ごとに並べ、上書きは `parameter-overrides` collection の **1 レコード**を書き換える〔`data/parameterOverrides.ts`〕。下の「数値パラメータ」節) |
 | `uber-eats` | Uber Eats (フードデリバリー、snapshot のみ) | Bearer (Eats Merchants API、未配線) | ✅ | | (read-only — 店舗別売上 / 注文数 / 評価 / 人気メニュー) |
 | `demae-can` | 出前館 (フードデリバリー、snapshot のみ) | Bearer (公開 API 無し、scrape 想定) | ✅ | | (read-only — 進行中注文 / 月次サマリ / 人気エリア) |
 | `real-estate` | 不動産投資 (snapshot + 物件の任意追加 = record store) | Bearer (将来 REIT/楽待) | ✅ | | (ローカル編集 — 保有物件の追加/削除 / 月次キャッシュフロー / 利回り / 入居率。数値入力は `data/inputGuards.ts` + `components/GuardedNumber.tsx` で検査し、読み取れない入力が黙って 0 になるのを防ぐ) |
@@ -1720,7 +1797,7 @@ union を参照する。
 | `sales` | 売上集計 — EC チャネル横断 (実データ・ローカル保存) | 認証不要 (record store) | ✅ | | (read/write — record store collection `sales-entries`) |
 | `team` | チーム管理 — メンバー/権限 (実データ・ローカル保存) + 給与計算 (通勤手当の非課税限度・賞与の源泉徴収) | 認証不要 (record store) | ✅ | | (read/write — collection `team-members`; RBAC は `src/shared/team.ts`。給与計算は `src/shared/payroll.ts`、入力欄は `components/GuardedNumber.tsx` を通す〔以前は `Number(x) \|\| 0` で全角や「50万」を黙って 0 にし、「源泉徴収税額 ¥0」と出していた。距離は `NumKind` の `km`〕) |
 | `youtube` | YouTube Data API v3 実連携 | API キー (`{apiKey,channelId}`) | | | (read-only — チャンネル統計 / 最近の動画) |
-| `overview` | 経営サマリー — 売上/KPI/チーム/プラン横断集約 (実データ) + 45 項目の手入力上書き (`data/overviewOverrides.ts`) + 水耕栽培の試算 | 認証不要 (record store) | ✅ | | (read — `data/overview.ts` で純粋集約。水耕栽培は `src/shared/hydroponics.ts` — 栽培条件〔品目別の育苗/定植後日数・養液 EC/pH・1株重量・パネル穴数〕→ 生産量〔床面積×段数×有効率 → 株密度 → 年回転数 → 出荷株数〕→ 月次損益 の 3 段。**電力は歩留まり前の生産量で計算する** — 照明も空調もその株が売り物になるかと無関係に動くので、歩留まりが落ちると売上だけ減って電気代は減らない。電気代は販管費に入れる〔変動費に入れると限界利益が実態より大きく出て損益分岐点を低く見せる〕。入力は `data/hydroponicsSetup.ts` の利用者レコードのみで、参考値は入力欄の初期値としてだけ使う〔サンプルを経営数値に混ぜない〕)。**品目は固定の一覧ではない** — `src/shared/hydroponicCrops.ts` が追加 / 削除 / 参考値へ戻す を純粋関数で持ち、画面は一覧を `hydroponics-crops` collection に 1 レコードで保存する〔設定レコードとは別 — 品目を足すたびに設定の履歴が増えないように〕。守る不変条件は 3 つ: 一覧は空にならない〔最後の 1 件は消せず、壊れた保存は参考値の 5 品目へ戻る〕・id は機械が振る `custom-<n>`〔空き番号の最小〕・数値は**桁誤りを止める幅**で断る〔定植後日数 0 は 0 除算、pH 99〕— 値の正しさは見ない〔利用者の実測が最も正しい〕。断るときは投げずに理由コードと文言を返す (`CropListChange`)。設備・費用・実測値の入力欄は `components/GuardedNumber.tsx` を通す〔読み取り `readNumberOr0` と警告 `guardNumber` が同じ関数 — 以前は `Number()` で読めない値を黙って 0 にし、全角の「１００」で床面積 0 の試算が自信ありげに出ていた。0 を断るのは試算が意味を失う欄だけ〔床面積・段数・割合・単価〕、実測値は 0 = 未測定 が仕様なので通す。単位語を正しく言うため `NumKind` に `days` / `energy` / `mgPer100g` を足した〕。「最新の 1 件を採用する」collection は `data/latestRecord.ts` が createdAt で選ぶ — `RecordStore.list` は**新しい順**なので `records[records.length - 1]` は**最古**であり、経営サマリーの水耕栽培・貸借対照表・ハイライトしきい値と KPI ページの BS の 4 か所がそれを「最新」と読んでいた〔2 回目の保存から画面が動かなかった。2026-09-02 に品目一覧を同じ書き方で足そうとして発見〕。**低カリウム栽培**〔腎臓病の方向け〕は同モジュールの第 4 節 — 収穫前 7〜10 日に培養液の硝酸カリウムを同濃度の硝酸ナトリウムへ置換し、カリウムを抜いた分をナトリウムで補って浸透圧と EC を保つ〔ALIC 野菜情報〕。**成分は実測値でしか受け取らない** — `assessLowPotassium` は実測カリウムが正の有限値のときだけ `measured: true` を返し、0 や未測定を「カリウムが無い」と読み替えない。`servingGramsWithinLimit` は CKD 病期別の 1 日上限〔G3b 2,000mg / G4〜G5 1,500mg・日本腎臓学会〕から食べられる g 数を出すが、制限のない病期と未測定では null を返す〔上限が無いことを数字で塗り潰さない〕。**金融機関等提出用の書面** (2026-09-04) — 「金融機関等提出用の書式で表示」で経営サマリーの各項目を決算書と同じ読み方に揃えて A4 縦の紙にする。`src/shared/bankFormat.ts` が書式の純粋関数〔千円 / 円 / 百万円・単位未満切捨て / 四捨五入・負数は △ / ▲ / -・比率は小数第 1 位・和暦 / 西暦・算定不能は「―」〕、`src/renderer/data/bankSubmission.ts` が経営サマリーの値を「項目 / 数値 / 算式・備考」の表へ組む〔**計算はしない** — `src/renderer/data/overview.ts` / `src/shared/managementScorecard.ts` / `src/renderer/data/cashflowDebtService.ts` の値をそのまま書式に通すので画面と書面で数字が食い違わない。出せない値は「―」で**行を残す** — 項目ごと消えると未入力か未算定かが読めない〕、`src/renderer/components/BankSubmissionSheet.tsx` が紙と操作〔書式の選択・提出者情報・印刷〕。印刷は `src/renderer/data/printDocument.ts` — `body.ds-printing` で UI を隠す入口を書類スタジオと共有する。書式と提出者情報〔商号・代表者・所在地・決算期〕は `bank-submission-settings` collection に 1 レコードで保存し最新を採用〔`latestRecord`〕。壊れた保存は既定の書式と空の提出者情報へ倒れ、書面は必ず出る。**書類スタジオ・士業との連携** (2026-09-04) — 先頭の「書類スタジオで計算書類を作る」は `src/renderer/navigate.ts` の intent〔`doc: kessan` + `action: import-overview`〕付きで書類スタジオへ遷移し、取り込みパネルを開く。「税理士に相談」「公認会計士に相談」は士業のページへ。士業のページから `action: bank-sheet` で来ると mount 直後に提出用の書面を開く |
+| `overview` | 経営サマリー — 売上/KPI/チーム/プラン横断集約 (実データ) + 45 項目の手入力上書き (`data/overviewOverrides.ts`) + 水耕栽培の試算 | 認証不要 (record store) | ✅ | | (read — `data/overview.ts` で純粋集約。水耕栽培は `src/shared/hydroponics.ts` — 栽培条件〔品目別の育苗/定植後日数・養液 EC/pH・1株重量・パネル穴数〕→ 生産量〔床面積×段数×有効率 → 株密度 → 年回転数 → 出荷株数〕→ 月次損益 の 3 段。**電力は歩留まり前の生産量で計算する** — 照明も空調もその株が売り物になるかと無関係に動くので、歩留まりが落ちると売上だけ減って電気代は減らない。電気代は販管費に入れる〔変動費に入れると限界利益が実態より大きく出て損益分岐点を低く見せる〕。入力は `data/hydroponicsSetup.ts` の利用者レコードのみで、参考値は入力欄の初期値としてだけ使う〔サンプルを経営数値に混ぜない〕)。**品目は固定の一覧ではない** — `src/shared/hydroponicCrops.ts` が追加 / 削除 / 参考値へ戻す を純粋関数で持ち、画面は一覧を `hydroponics-crops` collection に 1 レコードで保存する〔設定レコードとは別 — 品目を足すたびに設定の履歴が増えないように〕。守る不変条件は 3 つ: 一覧は空にならない〔最後の 1 件は消せず、壊れた保存は参考値の 5 品目へ戻る〕・id は機械が振る `custom-<n>`〔空き番号の最小〕・数値は**桁誤りを止める幅**で断る〔定植後日数 0 は 0 除算、pH 99〕— 値の正しさは見ない〔利用者の実測が最も正しい〕。断るときは投げずに理由コードと文言を返す (`CropListChange`)。設備・費用・実測値の入力欄は `components/GuardedNumber.tsx` を通す〔読み取り `readNumberOr0` と警告 `guardNumber` が同じ関数 — 以前は `Number()` で読めない値を黙って 0 にし、全角の「１００」で床面積 0 の試算が自信ありげに出ていた。0 を断るのは試算が意味を失う欄だけ〔床面積・段数・割合・単価〕、実測値は 0 = 未測定 が仕様なので通す。単位語を正しく言うため `NumKind` に `days` / `energy` / `mgPer100g` を足した〕。「最新の 1 件を採用する」collection は `data/latestRecord.ts` が createdAt で選ぶ — `RecordStore.list` は**新しい順**なので `records[records.length - 1]` は**最古**であり、経営サマリーの水耕栽培・貸借対照表・ハイライトしきい値と KPI ページの BS の 4 か所がそれを「最新」と読んでいた〔2 回目の保存から画面が動かなかった。2026-09-02 に品目一覧を同じ書き方で足そうとして発見〕。**低カリウム栽培**〔腎臓病の方向け〕は同モジュールの第 4 節 — 収穫前 7〜10 日に培養液の硝酸カリウムを同濃度の硝酸ナトリウムへ置換し、カリウムを抜いた分をナトリウムで補って浸透圧と EC を保つ〔ALIC 野菜情報〕。**成分は実測値でしか受け取らない** — `assessLowPotassium` は実測カリウムが正の有限値のときだけ `measured: true` を返し、0 や未測定を「カリウムが無い」と読み替えない。`servingGramsWithinLimit` は CKD 病期別の 1 日上限〔G3b 2,000mg / G4〜G5 1,500mg・日本腎臓学会〕から食べられる g 数を出すが、制限のない病期と未測定では null を返す〔上限が無いことを数字で塗り潰さない〕。**金融機関等提出用の書面** (2026-09-04) — 「金融機関等提出用の書式で表示」で経営サマリーの各項目を決算書と同じ読み方に揃えて A4 縦の紙にする。`src/shared/bankFormat.ts` が書式の純粋関数〔千円 / 円 / 百万円・単位未満切捨て / 四捨五入・負数は △ / ▲ / -・比率は小数第 1 位・和暦 / 西暦・算定不能は「―」〕、`src/renderer/data/bankSubmission.ts` が経営サマリーの値を「項目 / 数値 / 算式・備考」の表へ組む〔**計算はしない** — `src/renderer/data/overview.ts` / `src/shared/managementScorecard.ts` / `src/renderer/data/cashflowDebtService.ts` の値をそのまま書式に通すので画面と書面で数字が食い違わない。出せない値は「―」で**行を残す** — 項目ごと消えると未入力か未算定かが読めない〕。ただし**印刷した行同士の式は、印刷した数字で成り立たせる** — 「純資産」は円から丸めるのではなく**表示単位へ丸めた総資産 − 負債合計**で出す〔各行を円から別々に丸めていた 2026-09-06 まで、貸借対照表の値を 40 通り振ると **21 通り**で「純資産 = 総資産 − 負債合計」が印刷した数字ではずれた。式を備考に書いておきながら数字が合わない書面は金融機関に出せない。`src/shared/bankFormat.ts` の `formatScaled` が表示単位の整数を書式化する口で、`formatAmount` は「円 → 丸め → formatScaled」で通る。現金化サイクル (CCC) は `src/renderer/data/workingCapital.ts` が回転日数を先に小数 1 桁へ丸め、その**丸めた値の和**で作るので元から合っている (実測 3,000 通りで食い違い 0)〕、`src/renderer/components/BankSubmissionSheet.tsx` が紙と操作〔書式の選択・提出者情報・印刷〕。印刷は `src/renderer/data/printDocument.ts` — `body.ds-printing` で UI を隠す入口を書類スタジオと共有する。書式と提出者情報〔商号・代表者・所在地・決算期〕は `bank-submission-settings` collection に 1 レコードで保存し最新を採用〔`latestRecord`〕。壊れた保存は既定の書式と空の提出者情報へ倒れ、書面は必ず出る。**書類スタジオ・士業との連携** (2026-09-04) — 先頭の「書類スタジオで計算書類を作る」は `src/renderer/navigate.ts` の intent〔`doc: kessan` + `action: import-overview`〕付きで書類スタジオへ遷移し、取り込みパネルを開く。「税理士に相談」「公認会計士に相談」は士業のページへ。士業のページから `action: bank-sheet` で来ると mount 直後に提出用の書面を開く。**経営スコアカードの入力の組み替えは `src/renderer/data/overviewScorecard.ts`** (2026-09-07 に画面から出した) —— `mutate` に `.tsx` は 1 件も無いので、画面の中に書いた算術と条件は変異検査の対象外になる。実際 1 件ずれていた: 総資産回転率を `revenue > 0` で切っており、**分母は総資産なので売上 0 でも 0 倍と定まる**のに 「算定不能」として軸を落としていた。`buildManagementScorecard` は `undefined` の軸を採点対象から外すので、貸借対照表が在って売上 0 の会社は効率性の総資産回転率を**採点されず**、**売上が 0 → 1 円に増えると効率性の点数が下がる** (0 点の軸が現れるため)。「効率性が低水準」の警告も出なかった。同じ画面の財務指標 (`dupontAssetTurnover`) は総資産 0 のときだけ算定不能としており、**2 つの実装が「算定不能」の定義で食い違っていた**。算術は `src/renderer/data/financialRatios.ts` の `assetTurnoverRatio` の 1 か所に寄せ (デュポン分解もこれを呼ぶ)、算定不能は「貸借対照表なし / 総資産 0」だけにした。分母が売上の 3 指標 (営業利益率・粗利率・限界利益率) は 0 除算で本当に定まらないので、売上 0 で落とすのが正しい —— **「売上 0 なら全部落とす」ではなく、分母が何かで決まる。** 変異検査 100% (24)・`null → undefined` の畳み込み 2 か所も検査で留めた (`null` が漏れると `band()` が NaN を返す)。**同じ軸に 2 つ目の欠陥があった** (2026-09-07) —— 総資産回転率は**流れ ÷ 溜まり**なので分子を年に揃えないと比率の意味が定まらないのに、分子が `overview.kpi.revenue` (= 入力済みの全期の合計) だった。実測 (月商 100 万・総資産 500 万・毎月同じ実績): 1 か月 0.2 倍/効率性 7 → 3 か月 0.6 倍/20 → 6 か月 1.2 倍/65 → 12 か月 2.4 倍/88 で、**同じ経営で効率性が 7 → 88**・総合の格付けも good → excellent へ動いた (軸の帯 0→1.5 倍は年商前提)。年換算は `computeRevenueLandingForecast` の `runRateForecast` (実績 ÷ 経過月 × 12・最新年) が既に持っており、上の実測ではどの月数でも 1,200 万 —— **正しい数字が同じ `overview` の中に在るのに、回転率だけが素の合計を見ていた**。分子をこれに替え、年換算の基礎が無ければ算定不能とする (素の合計へ倒すと同じ欠陥が黙って戻る)。算定不能の 3 条件は `turnoverAxis` が 1 か所で持つ。なお ROA / ROE は同じ形に見えて健全 —— 分子の当期純利益を**貸借対照表のレコード自身**から取るので両辺の期が揃う。**流れ ÷ 溜まりの比率は、両辺の期を揃えてから作る** **刷った算式が刷った数字を出さない行が、もう 1 つ在った —— 安全余裕率** (2026-09-07) —— `src/renderer/data/kpiActuals.ts` / `src/main/clients/kpi.ts` は安全余裕率を `Math.max(0, 100 - bepRatio)` で**下から止めて**いた。分母は売上なので損益分岐点を下回れば真値は負になるのに、**0.0% と表示していた**。実測 (売上 1,000・変動費 400): 損益分岐点ちょうど → 比率 100%・表示 0.0%、固定費 900 → 比率 150%・表示 **0.0%** (真値 −50%・営業利益 −300)、固定費 1,800 → 比率 300%・表示 **0.0%** (真値 −200%・営業利益 −1,200)、限界利益 ≤ 0 → 比率 ∞・表示 **0.0%** (算定不能)。`KpiPage` は「損益分岐点 (BEP) / 比率 150.0%」の札の**隣**に「安全余裕率 0.0%」を出すので、**同じ画面の 2 つの数字が両立しない** (100 − 150 ≠ 0)。金融機関等提出用の書面はさらに算式 「(売上高 − 損益分岐点売上高) ÷ 売上高」を数字の隣に刷るので、パス 81 の「純資産」と同じ形の欠陥が 2 行目に在った —— しかも `src/renderer/data/__tests__/bankSubmissionText.test.ts` の**全文の見本自身**が 「損益分岐点売上高 15,953 / 安全余裕率 0.0%」と刷っており、誰も気付いていなかった。直し方: 負の値をそのまま返し、**損益分岐点が存在しない (限界利益 ≤ 0) ときだけ `null` = 算定不能**とする。0 に倒すと「損益分岐点上に居る」という最も安全な読みで最悪の会社を見せることになる (パス 28 と同じ形)。`safetyMargin: number | null` にしたので型検査が消費側 8 か所を列挙した —— 画面 2 つは「―」、書面は既存の空欄 (`kp`)、スコアカードは `?? undefined` で軸を落とす、経営ハイライトは **所見そのものを分けた** (負 → critical「売上高が損益分岐点売上高を下回っています」/ 算定不能 → critical「限界利益が 0 以下で…損益分岐点が存在しません」/ 0〜10 → 従来の warning)。直す前は損益分岐点を 200% 割っている会社にも「**売上減少に弱い**状態です」(warning) と出ていた —— 弱いのではなく既に割っている。**下から止めた数字は、最悪の場合を最良の顔で見せる。** **書面は、宣言した決算期と合算した期間の関係を述べる** (2026-09-07) —— ヘッダは 決算期 (提出者情報で**利用者が打つ**) と 対象期間 (KPI 実績の期から機械が出す) を並べて刷り、§1 は「対象期間の累計」を刷るが、両者を突き合わせる物が無く `OverviewPage` は `kpiRecords` の**全期**を渡していた。実測 (決算期 2026-03・KPI 実績 2025-01〜2026-08 の 20 か月): 対象期間 令和7年1月〜令和8年8月・§1 売上高 **20,000 千円**・断り書き **無し** —— 事業年度 (2025-04〜2026-03) は 12,000 千円なので**決算期の名前の下に 67% 過大な金額**が並んでいた。**道具も規則も既に在った** —— `src/renderer/data/kessanImport.ts` の `fiscalYearWindow` は決算期から事業年度の 12 か月を出し、計算書類の取り込みと `src/renderer/data/docImports.ts` の差込は**これで切り出し、切り出せないときは注記する**。つまり**注記が在るのは金融機関へ出さない方だけ**で、同じ資料から作る 2 つの書面が食い違っていた。**切り出さずに述べる** —— 期中の試算表 (決算期は来年 3 月・対象期間は 4〜8 月) は正当な使い方なので事業年度で切り落とすとそれが壊れる。金額は動かさず `periodScopeNote(fiscalYearEnd, periods, format)` が §1 の断り書きで関係を述べる (ちょうど 12 か月 → 無言 / 事業年度の中 → 「期中です。通年の金額ではありません」/ 外へはみ出す → 「12 か月とは一致しません」/ 決算期未設定 → 入れ方を案内)。**月数も数える** —— 最初と最後の月だけで判定すると事業年度の端の 2 か月で「ちょうど 1 年」に読めた。`fiscalYearWindow` は**写さずに読む** (kessanImport からこちらへの辺は `import type` だけなので実行時の循環にならない)。なお `src/renderer/data/__tests__/bankSubmissionText.test.ts` の見本自身が決算期 2026-03 の下に「2026-04 の 1 か月」を無言で刷っており、**基準文書が無言の食い違いを固定していた** (安全余裕率と同じ形で 2 例目)。 **貸借対照表の基準日がどの計算にも入っていなかった** (2026-09-07) —— `asOf` は保存・表示・印刷はされていたが `src/renderer/data/overview.ts` が一度も読んでいなかった。実測 (KPI を 2026-01〜2026-08 に固定し基準日だけ振る): 2026-08-31 / 2024-03-31 / **2019-03-31** のどれでも総資産回転率 80 点・CCC 34.3 日・自己資本比率 50%・総合 76 (good)・基準日に触れる所見 0 件 —— **7 年古い貸借対照表が当月のものと 1 バイトも変わらない出力になる**。効くのは**溜まり ÷ 流れ**の指標 3 つ (総資産回転率 = 総資産 ÷ 年換算売上 / CCC の DSO・DIO = 売掛金・棚卸資産 ÷ 売上・売上原価 / 資金ランウェイ = 現預金 ÷ 月次の純流出) —— 両辺が別の期に属していれば出てくる数字はどの期のものでもない。これはこの表の上の規則「流れ ÷ 溜まりの比率は、両辺の期を揃えてから作る」の**未履行分**で、パス 28 は分子の長さ (年換算) を揃えたが**日付**は揃えていなかった (ROA / ROE は当期純利益を貸借対照表のレコード自身から取るので免れている)。**測って述べる。数字は捨てない** —— `src/shared/balanceSheetFreshness.ts` (新設・純粋) が隔たりを測り、`buildBusinessOverview` が `overview.balanceSheetFreshness` を 1 か所で作る (実績の最新期は `isValidPeriod` を読み**期の綴りを写さない**)。`src/renderer/data/managementHighlights.ts` は 財政状態 に warning を出し**どの比率が別の期を見ているかまで言う**、書面は §4 と §5 に断り書きを出す。しきい値は計算に使う前提なので `src/shared/parameters.ts` の台帳へ (`overview.balanceSheetStaleAfterMonths`・既定 12 か月 = 1 事業年度)。`shared` に置いたのは台帳が既定値を写さずに参照するため (`shared` は `shared` しか import できない)。**測れないときに「新しい」と言わない** —— 基準日か実績が読めなければ `monthsBehind` は `null` で所見も断り書きも出さない。なお**隔たりが大きいとき混ざる 3 軸をスコアカードから落とすかどうかは変えていない** (格付けが動く仕様の選択・`docs/REMAINING_WORK.md`)。 **空欄のまま保存した貸借対照表が「最良の運転資金」を報告していた** (2026-09-07) —— `src/renderer/data/balanceSheet.ts` の `parseBalanceSheet` は内数の任意欄を `const opt = (v) => (v == null ? 0 : v)` で 0 に潰し、`normalizeBalanceSheet` も `inventory` / `accountsReceivable` / `accountsPayable` を 0 に倒していた。`KpiPage` の入力欄の既定は `''` なので**空欄で保存するのが既定の道**である。実測 (KPI 2026-06〜08・月商 400 万・原価 200 万): 4 欄を空欄で保存 / 欄そのものが無い古い控え / 本当に 0 の現金商売 の**3 通りがすべて同じ答え** —— DSO 0 日・DIO 0 日・DPO 0 日・**CCC 0 日**・運転資本 0 円 (埋めた控えは 60.8 / 60.8 / 68.4 / 53.2 日・187.5 万)。CCC 0 日は「即日回収・即日支払で資金が 1 日も寝ていない」最良の状態で、`managementHighlights` は good「仕入の支払より先に回収できています」を出し、スコアカードの効率性にも満点近くで加点され、**金融機関等へ出す書面の §5 にも印刷**されていた。当座比率も同じ形で緩む —— 棚卸資産 0 なら当座比率 = 流動比率 になり、**より厳しいはずの指標が緩い側の数字を名乗る** (流動性段階も `strong` に寄る)。**0 を算定不能にしてはいけない** —— 現金商売の DSO 0 日は正しく有用な数字である。区別するのは値ではなく**欄が埋まっているか**なので、直し方は入力と読み取りの境界で `undefined` を保つこと: 型は復元の形 (`data/collectionShapes.ts` は元から 5 欄すべて任意) へ合わせ、`optNonNeg` が `''` と空白だけの入力も未入力として通し (`Number('')===0` に任せない)、内数の上限照合 (`atMost`) は未入力を飛ばす。読む側はそれぞれ算定不能を選ぶ —— `computeCashConversionCycle` は欄ごとに `null` を返し (以前ここに在った「DIO と DPO は同じ `cogs` なので常に同時に null」という前提の Stryker pragma は**溜まりの有無が欄ごとになった時点で成り立たない**ので外した)、`quickRatioPct` は棚卸資産が未入力なら `null`、`classifyLiquidityStage` は `strong` を主張しないが **`tight` は落とさない** (都合の悪い判定は棚卸資産に依らず判る)。**そして「なぜ出せないか」を欄の名前で述べる** —— `CashConversionCycle.missingStocks` が未入力の欄名を持ち、経営サマリーの運転資金の節・経営ハイライトの warning・書面 §5 の但し書きが同じ一覧を出す (「—」だけを出すと利用者は「自社に運転資金の負担が無い」と読む)。計算書類の取り込み (`data/kessanImport.ts`) だけは**貸借を合わせないと書類が出せない**ので 0 で積むが、既に在った現預金の作法に倣い4 欄それぞれを注記に残す (「貸借対照表に売上債権が無いので売掛金は 0 とした。」)。**未入力を都合の良い値へ畳むと、最も助けが要る利用者に最も良い顔を見せる。** |
 | `coconala` | ココナラ スキルマーケット (snapshot のみ) | 公開 API なし | ✅ | | (read-only — 出品/受注/評価) |
 | `tiktok` | TikTok — SNS / 動画運用サマリー (snapshot のみ) | 公開 API なし (将来 OAuth) | ✅ | | (read-only — 投稿/広告/フォロワー) |
 | `tax` | 税務試算 — 所得税/住民税/消費税/手取りの概算 + 節税案内 + 公式ツール導線 | 認証不要 (ローカル計算) | ✅ | | (read-only — 納付/申告は公式ツールで手動。42 の数値入力を `data/inputGuards.ts` の `guardAll` でまとめて検査し、読み取れない欄を `GuardSummary` で試算値の手前に表示。⑩-3 本則課税の仕入控除税額は `src/shared/taxConsumptionBusiness.ts` — `calcStandardTax` は課税仕入れの税額を**全額控除できる**前提の式で、成り立つのは課税売上割合 95% 以上かつ課税売上高 5億円以下のときだけ。住宅家賃・利子等の非課税売上があると按分が要り、按分せずに全額を引くと**納付が過少に出る**。`taxableSalesRatio`〔免税売上は分子・分母の両方に入る〕・`canDeductFully`・`itemizedInputCredit`〔個別対応方式 = 課税売上対応分 + 共通対応分 × 割合〕・`proportionalInputCredit`〔一括比例配分方式 = 仕入税額 × 割合・2 年継続適用〕・`calcStandardTaxDetailed`・`compareInputCreditMethods`〔控除が多い方が有利・同額なら縛りの無い個別対応〕。⑩-2 消費税の納付/還付スケジュールは `src/shared/taxConsumptionSchedule.ts` — 税率 0〜50% の掃引・国税/地方の区分と端数処理・中間申告の回数と期限・確定申告額と還付の入金目安。⑫ 貿易の税は `src/shared/tradeTax.ts` — 輸入は CIF 1,000円未満切捨て→関税100円未満切捨て→消費税の課税標準に関税を含める法定順序、少額免税〔1万円以下・革製品等の除外・2028年4月廃止予定〕と個人使用60%特例、輸出は日本に輸出関税なし〔消費税法7条の免税〕＋仕向国の関税と付加価値税〔CIF/FOB 基準の切替・DDP/DAP の負担者〕) |
@@ -1731,7 +1808,7 @@ union を参照する。
 | `docker` | Docker — コンテナ/イメージ・脆弱性スキャン・GHCR 連携で開発基盤を可視化 | none | ✅ | | (read-only — 実データは renderer の SNAPSHOT.docker。実 Engine は socket で読む Phase 6) |
 | `assistant` | AI アシスタント — マルチエージェント AI ハブ。Claude / ChatGPT / Gemini / Ollama / OpenAI 互換 API を `src/shared/ai/providers.ts` のプロバイダレジストリで呼び分け | JSON マルチプロバイダ資格情報 (`src/shared/ai/credentials.ts`。生キーは Anthropic 後方互換) | ✅ | | `chat` + `providers` (RAG 文脈は renderer の `data/assistantContext.ts` で構築 — IDF 重み + 膠着語降格 + フレーズボーナス + 近似タイトル代表化。表/成果物は `data/assistantMarkdown.ts` で描画。未設定時は `data/chatbot.ts` の決定論エンジンへフォールバックし、解釈不能時のみ確証済みナレッジ直答 `buildOfflineKnowledgeAnswer` を先に試す) |
 | `village` | AIの村 — AI オーケストレーション組織 143 体をどうぶつの森風の全画面シーンに村人として可視化。タスク実行を常時アニメーションで表示し、画面に話しかけて対話 (音声) | none | ✅ | | (read-only — `orchestration/registry.json` から `data/villageData` が純導出。ルーティングは `data/chatOrg.routeTopicScored`、返答は `data/chatbot.replyTo`＋AI 設定時は `assistant/chat`。音声は `voice/speechAdapter`＋`voice/ttsAdapter`) |
-| `docstudio` | 書類スタジオ — 経営書類 52 書式 (契約9/経理8/人事10/組織7/規程4/社内5/通知4/事業計画5)＋電子定款 (株式/合同)＋就業規則 (10章47条)＋計算書類4点 (PL/BS/株主資本等変動計算書/個別注記表)＋決算公告 を入力→交付前チェック→事業仕分け→印刷/PDF。検証済みコンプラ知識を注記に反映 | none | ✅ | | `list-collections` (read-only — テンプレートは renderer の `data/docStudioData.ts` 単一ソース。交付前チェックは `data/docStudioChecks.ts` の純関数 `checkDoc`〔fatal/warn/info〕。適格請求書/仕入明細書の明細は `src/shared/invoiceTax.ts` — 品目ごとに税率区分（標準/軽減/任意A・B 0〜50%/免税/非課税/不課税）を割り当てて自動仕分けし、**端数処理は区分ごとに1回**〔消費税法57条の4〕。計算書類は `data/statementAccounts.ts`（標準科目 56 件の残高から段階利益・貸借対照表・決算公告の要旨を積み上げ、貸借差額と当期純利益→繰越利益剰余金の連結を検算）と `data/statementEquity.ts`（株主資本等変動計算書と個別注記表。期首残高は入力させず期末から逆算するので二表がずれない。会社法445条2項・3項の資本準備金上限、同4項の準備金積立不足を検算）の 2 本。資金繰り表は `data/cashPlan.ts` — 前月繰越を入力させず連鎖させ、資金ショート月を名指し。「自社でやるか士業に頼むか」は `data/businessTriage.ts` の 56 件。入力は localStorage 保存・印刷は `src/renderer/data/printDocument.ts`〔`body.ds-printing`〕。**経営サマリーからの取り込み** (2026-09-04) — 計算書類のタブに「経営サマリーから取り込む」パネル。`src/renderer/data/kessanImport.ts` が KPI 実績・貸借対照表・提出者情報を 56 科目の入力欄へ写す〔事業年度は提出者情報の決算期で 12 か月を切り出し、無ければ全期間を合算して注記。内訳の無い額は「その他」の科目に置いて理由を注記し〔売上原価 → 当期商品仕入高、人件費以外の販管費 → 雑費、固定資産 → その他の固定資産、有利子負債は固定負債に収まる分を長期借入金〕、資本金・役員報酬など出所の無い科目は触らない。唯一の逆算は繰越利益剰余金 (期首) で、資産合計 − 負債 − 資本金等 − 当期純利益 + 配当 + 積立 を置いて貸借を合わせる。法人税等は KPI の営業利益と貸借対照表の当期純利益の差が正のときだけ〕。取り込む前に「入力欄 / 値 / 出所」と注記・取り込めない物を全部見せ、押すまで localStorage には書かない。**他の画面からの遷移の指示** は `src/renderer/navigate.ts` の intent〔`doc` / `action`〕を mount 時に 1 度だけ受け取る〔書式 id・`kessan`・`teikan-kk` / `teikan-gk`・`shugyo` を開く、`import-overview` で計算書類のタブへ〕。事業仕分けパネルの各士業名は、その士業のページへのボタンになった。**資金繰り表・事業計画書にも同じパネル** (2026-09-04, `src/renderer/data/docImports.ts`): 資金繰り表は会計連携 (freee) の直近 12 か月の収入を売上入金・支出をその他経費に置き、貸借対照表の現預金を期首残高に〔借入の行は出所が無いので触らない〕。事業計画書は会社名・代表者・作成日と、直近の事業年度の実績を 1 年目の売上高・経常利益に置く〔2・3 年目は数字を作らない〕。指示の `query` は経営書類のタブで書式検索に入る〔士業のページの「やり取り中の書類」から〕) |
+| `docstudio` | 書類スタジオ — 経営書類 52 書式 (契約9/経理8/人事10/組織7/規程4/社内5/通知4/事業計画5)＋電子定款 (株式/合同)＋就業規則 (10章47条)＋計算書類4点 (PL/BS/株主資本等変動計算書/個別注記表。**書類一覧でそれぞれ独立した書類**＋「4点まとめて」、値は1つ)＋決算公告 を入力→交付前チェック→事業仕分け→印刷/PDF。検証済みコンプラ知識を注記に反映 | none | ✅ | | `list-collections` (read-only — テンプレートは renderer の `data/docStudioData.ts` 単一ソース。交付前チェックは `data/docStudioChecks.ts` の純関数 `checkDoc`〔fatal/warn/info〕。適格請求書/仕入明細書の明細は `src/shared/invoiceTax.ts` — 品目ごとに税率区分（標準/軽減/任意A・B 0〜50%/免税/非課税/不課税）を割り当てて自動仕分けし、**端数処理は区分ごとに1回**〔消費税法57条の4〕。**税率は台帳から来る** (2026-09-07) —— `GroupOptions` が `standardRate` / `reducedRate` を受け、画面が `useParameters()` の `tax.consumptionStandardRate` / `tax.consumptionReducedRate` を渡す。以前は受け口が無く、法定値 (`kind: 'law'`・法改正の日に変えるための欄) を上書きしても**相手に渡す書面だけが 10% のまま**だった〔上書きに従うのは税ページだけ〕。見積書・発注書・注文請書・納品書の明細表も同じ計算器を通す —— 以前は画面の中に `Math.floor(subtotal * 0.1)` と「消費税（10%）」の直書きを持ち、端数処理も税率も請求書と別で、**同じ取引の見積書と請求書で税額が食い違いうる**形だった〔ただしこの 4 書式には品目ごとの税率区分の欄が無いので全行を標準税率として扱う。軽減税率の品目を見積れないことは残る — `docs/REMAINING_WORK.md`〕。`TAX_KINDS` の既定率は `src/shared/taxCalc.ts` の定数を参照する〔写さない — 同じ法定値が 3 か所に在った〕。計算書類は `data/statementAccounts.ts`（標準科目 56 件の残高から段階利益・貸借対照表・決算公告の要旨を積み上げ、貸借差額と当期純利益→繰越利益剰余金の連結を検算）と `data/statementEquity.ts`（株主資本等変動計算書と個別注記表。期首残高は入力させず期末から逆算するので二表がずれない。会社法445条2項・3項の資本準備金上限、同4項の準備金積立不足を検算）の 2 本。資金繰り表は `data/cashPlan.ts` — 前月繰越を入力させず連鎖させ、資金ショート月を名指し。「自社でやるか士業に頼むか」は `data/businessTriage.ts` の 56 件。入力は localStorage 保存・印刷は `src/renderer/data/printDocument.ts`〔`body.ds-printing`〕。**経営サマリーからの取り込み** (2026-09-04) — 計算書類のタブに「経営サマリーから取り込む」パネル。`src/renderer/data/kessanImport.ts` が KPI 実績・貸借対照表・提出者情報を 56 科目の入力欄へ写す〔事業年度は提出者情報の決算期で 12 か月を切り出し、無ければ全期間を合算して注記。内訳の無い額は「その他」の科目に置いて理由を注記し〔売上原価 → 当期商品仕入高、人件費以外の販管費 → 雑費、固定資産 → その他の固定資産、有利子負債は固定負債に収まる分を長期借入金〕、資本金・役員報酬など出所の無い科目は触らない。唯一の逆算は繰越利益剰余金 (期首) で、資産合計 − 負債 − 資本金等 − 当期純利益 + 配当 + 積立 を置いて貸借を合わせる。法人税等は KPI の営業利益と貸借対照表の当期純利益の差が正のときだけ〕。取り込む前に「入力欄 / 値 / 出所」と注記・取り込めない物を全部見せ、押すまで localStorage には書かない。**他の画面からの遷移の指示** は `src/renderer/navigate.ts` の intent〔`doc` / `action`〕を mount 時に 1 度だけ受け取る〔書式 id・`kessan`・`teikan-kk` / `teikan-gk`・`shugyo` を開く、`import-overview` で計算書類のタブへ〕。事業仕分けパネルの各士業名は、その士業のページへのボタンになった。**資金繰り表・事業計画書にも同じパネル** (2026-09-04, `src/renderer/data/docImports.ts`): 資金繰り表は会計連携 (freee) の直近 12 か月の収入を売上入金・支出をその他経費に置き、貸借対照表の現預金を期首残高に〔借入の行は出所が無いので触らない〕。事業計画書は会社名・代表者・作成日と、直近の事業年度の実績を 1 年目の売上高・経常利益に置く〔2・3 年目は数字を作らない〕。指示の `query` は経営書類のタブで書式検索に入る〔士業のページの「やり取り中の書類」から〕。**計算書類 4 点は書類一覧の独立したエントリ** (2026-09-06・依頼「4点をそれぞれ別々の書類に分けて表示される仕様にして」) — それまでは一覧に「計算書類（4点）」の 1 つだけが在り 4 点は開いた先のタブだったので、**一覧を見た限りでは 1 つにまとめられて見えていた**。会社法435条2項の 4 点はそれぞれ別の書類なので一覧もそう並べる〔並び順は `KESSAN_SHEETS` から導き、順序を 2 か所に書かない。「まとめて」は決算公告の要旨つきで 1 枚に出す従来の出力として最後に残す〕。押した書類がそのまま開く〔札の通りに動かす〕ので、**書類の群れも `collection` として保存する** — `kessanSheet` だけを保存していると開き直しに戻れず、`data/docstudioStore.ts` 自身が書いている「開き直しても同じ書面から続けられる」が嘘になる〔保存値は `isDocstudioCollection` で読むたびに検査。会社法形態 `teikanType` は保存対象外で、その範囲は `docs/REMAINING_WORK.md` に記録〕。書類の中に在った重複するタブ行は削除し、残したのは「いま見ている書面の説明」だけ〔同じ状態を動かすボタンを 2 か所に置かない〕) |
 
 - **LOCAL** = `LOCAL_SERVICES` set (`src/main/clients/index.ts:201-272`)。トークン未設定でも snapshot OK。
 - **OAuth** = `OAUTH_CONFIGS` 登録あり (`src/main/oauth.ts:103-255`)。各プロバイダの `*_OAUTH_CLIENT_ID` 環境変数で有効化。Notion / Canva / WordPress.com / Atlassian は**機密クライアント**なので `*_OAUTH_CLIENT_SECRET` も必須 (未設定なら `isOAuthSupported()` が false を返し、押しても 401 にしかならない ボタンを出さない)。Slack だけは PKCE 対応の公開クライアントで secret 不要。
@@ -1740,68 +1817,76 @@ union を参照する。
 
 | Service | Action | Payload | 検証 / clamp | 出典 |
 |---|---|---|---|---|
-| github | `create-issue` | `{ owner, repo, title, body?, labels? }` | URL part は `encodeURIComponent`。labels は配列でそのまま body へ | `github.ts:143-176` |
-| wordpress | `create-post-draft` | `{ siteId, title, content?, status? }` | siteId は `encodeURIComponent`。**`status` で publish も指定できる** (既定は draft) | `wordpress.ts:67-109` |
-| atlassian | `create-issue` | `{ projectKey, summary, description?, issueType? }` | site URL https only + *.atlassian.net allowlist | `atlassian.ts:131-193` |
-| notion | `create-page` | `{ parentPageId, title, body? }` | (形式検証なし — API 4xx で対処) | `notion.ts:72-121` |
-| drive | `create-folder` | `{ name, parentId? }` | (none, Google API 側で検証) | `drive.ts:50-92` |
-| calendar | `create-event` | `{ summary, start, end, description?, location?, timeZone? }` | (none, RFC3339 は API 側。timeZone 既定は Asia/Tokyo) | `calendar.ts:66-124` |
-| gmail | `create-draft` | `{ to, subject, body? }` | **`isSafeHeaderValue(to)`** で CR/LF/NUL reject | `gmail.ts:60-129` |
-| slack | `send-message` | `{ channel, text }` | (none) | `slack.ts:81-117` |
-| canva | `create-folder` | `{ name, parentFolderId? }` | (none) | `canva.ts:79-115` |
-| skills | `run-skill` | `{ name, prompt }` | **`isSafeSkillName(name)`** + path containment。**`model` / `maxTokens` は payload から受けない** (2026-08-23 — 有料 API のパラメータをレンダラーに握らせない。定数 `SKILLS_MAX_TOKENS`) | `skills.ts:171-268` |
+| github | `create-issue` | `{ owner, repo, title, body?, labels? }` | **共有台帳 `GITHUB_ISSUE_FIELDS` + `GITHUB_LABELS` (`checkWriteFields` / `checkWriteLabels`) で型・長さ・件数を reject**。URL part は `encodeURIComponent` | `github.ts:154-201` |
+| wordpress | `create-post-draft` | `{ siteId, title, content?, status? }` | **共有台帳 `WORDPRESS_POST_FIELDS`** (型・長さ。**`status` は台帳の一覧 (draft / publish / pending / private) 以外を reject** —— publish も指定できる。既定は draft)。siteId は `encodeURIComponent` | `wordpress.ts:69-117` |
+| atlassian | `create-issue` | `{ projectKey, summary, description?, issueType? }` | **共有台帳 `ATLASSIAN_ISSUE_FIELDS`** (型・長さ) + site URL https only + *.atlassian.net allowlist | `atlassian.ts:134-199` |
+| notion | `create-page` | `{ parentPageId, title, body? }` | **共有台帳 `NOTION_PAGE_FIELDS`** (型・長さ。それ以上の形式検証なし — API 4xx で対処) | `notion.ts:72-126` |
+| drive | `create-folder` | `{ name, parentId? }` | **共有台帳 `DRIVE_FOLDER_FIELDS`** (型・長さ。それ以上は Google API 側で検証) | `drive.ts:49-96` |
+| calendar | `create-event` | `{ summary, start, end, description?, location?, timeZone? }` | **共有台帳 `CALENDAR_EVENT_FIELDS`** (型・長さ。RFC3339 は API 側。timeZone 既定は Asia/Tokyo) | `calendar.ts:69-132` |
+| gmail | `create-draft` | `{ to, subject, body? }` | **共有台帳 `GMAIL_DRAFT_FIELDS` (`checkWriteFields`) で型・長さ・CR/LF を reject** + `isSafeHeaderValue(to)` (二重の備え) | `gmail.ts:61-146` |
+| slack | `send-message` | `{ channel, text }` | **共有台帳 `SLACK_MESSAGE_FIELDS`** (型・長さ) | `slack.ts:84-126` |
+| canva | `create-folder` | `{ name, parentFolderId? }` | **共有台帳 `CANVA_FOLDER_FIELDS`** (型・長さ) | `canva.ts:81-122` |
+| skills | `run-skill` | `{ id, prompt }` | **`isSafeSkillName(id)`** + path containment。**`id` は一覧が出した `SkillEntry.id` (フォルダ名・ファイル名) で、画面に出ている題 (`label` = frontmatter の `name:`) ではない** —— パス 179 までここが題を受け取っており、題と実体が違うスキルは実行できない / **別のスキルの定義が送られる**。**`prompt` は `MAX_ASSISTANT_CONTENT_CHARS` 超を断る** (パス 112 まで天井なし)。**応答は `capAssistantReply` で 10 万字に打ち切り注記を残す** (パス 113 まで byte の天井だけ)。**`model` / `maxTokens` は payload から受けない** (2026-08-23 — 有料 API のパラメータをレンダラーに握らせない。定数 `SKILLS_MAX_TOKENS`) | `skills.ts:205-420` |
 | security | `check-email-breach` | `{ email }` | `encodeURIComponent(email)` | `security.ts:187-338` |
 | security | `scan-url` | `{ url }` | **`validateScanUrl(url)`** (http/https のみ・長さ上限) → base64url(url) → VT id | `security.ts:290-338` |
-| cloudflare | `create-dns-record` | `{ zoneId, type, name, content, ttl?, proxied? }` | zoneId encodeURIComponent。type は型では 5 種の union だが**実行時には検査していない** (API 側で 4xx) | `cloudflare.ts:127-207` |
-| cloudflare | `purge-cache` | `{ zoneId, files?, purgeEverything? }` | zoneId encodeURIComponent。**`purgeEverything` はゾーン全体のキャッシュを落とす** —— 破壊的な既定値なので payload に載ることを明記する | `cloudflare.ts:172-208` |
+| cloudflare | `create-dns-record` | `{ zoneId, type, name, content, ttl?, proxied? }` | **共有台帳 `CLOUDFLARE_DNS_FIELDS`** (型・長さ・**type は台帳の一覧 (A / AAAA / CNAME / TXT / MX) 以外を reject**・ttl は 1 以上の整数・proxied は真偽値)。zoneId encodeURIComponent | `cloudflare.ts:132-220` |
+| cloudflare | `purge-cache` | `{ zoneId, files?, purgeEverything? }` | **共有台帳 `CLOUDFLARE_PURGE_FIELDS`** (files は文字列の配列で件数と 1 件の長さに天井・purgeEverything は真偽値)。zoneId encodeURIComponent。**`purgeEverything` はゾーン全体のキャッシュを落とす** —— 破壊的な既定値なので payload に載ることを明記する | `cloudflare.ts:180-220` |
 | emotions | `log-mood` | `{ date?, score, note? }` | score は 1..5 の数値・date は YYYY-MM-DD 形式・**note は `MAX_MOOD_NOTE_CHARS` (2000) 上限** | `emotions.ts:121-290` |
-| emotions | `analyze-text` | `{ text, source? }` | **text は `MAX_ANALYZE_TEXT_CHARS` (5000) 上限** + extractJson | `emotions.ts:220-290` |
-| ollama | `chat` | `{ model, prompt, system? }` | **`isSafeModelName(model)`** + `\0` reject + 32KB/8KB clamp | `ollama.ts:211-294` |
-| microsoft-365 | `send-mail` | `{ to, subject, body? }` | to/subject 必須 + Graph message envelope | `microsoft-365.ts:131-169` |
-| microsoft-365 | `create-event` | `{ subject, start, end, location? }` | subject/start/end 必須 + Tokyo TZ | `microsoft-365.ts:199-221` |
-| assistant | `chat` | `{ messages, system, model, provider }` | sanitizeMessages が role を user/assistant に限定し最後は user 必須。system は MAX_SYSTEM で切る。**maxTokens は payload から受けない** (ASSISTANT_MAX_TOKENS)。**model / provider は利用者が選ぶ設計**なので許可リストは掛けない —— provider は設定済み資格情報にしか解決せず、model が URL に入る Gemini 経路だけ encodeURIComponent で包む (shared/ai/providers.ts) | `assistant.ts:242-246` |
-| assistant | `chatAll` | `{ messages, system, model, provider }` | chat と同じ検証。設定済みプロバイダ全部へ同時に投げ、失敗も per-provider に畳んで返す | `assistant.ts:242-246` |
-| assistant | `providers` | (payload なし) | ctx.payload を読まない。資格情報の設定状況だけ返す | `assistant.ts:242-246` |
-| business | `advise` | `{ question, categories }` | **model / maxTokens は payload から受けない** (定数)。有料 API 呼び出しには 2 分の締切と本文上限 | `business.ts:1142-1146` |
-| business | `export-dashboard` | `{ path, advisorResult }` | path は書き出し関門 (clients/exportPaths.ts) を通る | `business.ts:1142-1146` |
-| business | `export-dashboard-md` | `{ path, advisorResult }` | 同上 (Markdown 版) | `business.ts:1142-1146` |
-| stocks | `register-ticker` | `{ symbol }` | **isSafeSymbol(symbol)** —— 英数と . - ^ のみ・空文字拒否 | `stocks.ts:2031-2039` |
-| stocks | `unregister-ticker` | `{ symbol }` | 同上 (RegisterTickerPayload を共用) | `stocks.ts:2031-2039` |
-| stocks | `backtest` | `{ symbol, strategy, initialCash }` | isSafeSymbol + strategy は登録済み戦略名のみ + initialCash は有限の正数 | `stocks.ts:2031-2039` |
-| stocks | `compare-strategies` | `{ symbol, initialCash }` | 同上 (全戦略を同じ足で回す) | `stocks.ts:2031-2039` |
-| stocks | `advise` | `{ question, universe }` | **model / maxTokens は payload から受けない** (定数)。universe 既定は MOCK_TICKERS | `stocks.ts:2031-2039` |
-| stocks | `export-dashboard` | `{ path, advisorResult, strategyComparison }` | path は書き出し関門を通る | `stocks.ts:2031-2039` |
-| stocks | `export-dashboard-md` | `{ path, advisorResult, strategyComparison }` | 同上 (Markdown 版) | `stocks.ts:2031-2039` |
-| templates | `export-template` | `{ templateId, params, path }` | templateId は目録の id のみ、params は既定値へ clamp、path は書き出し関門 | `templates.ts:506-508` |
-| teamradar | `save-state` | `{ department, evaluatedAt, members }` | members は形と件数を検証してから 0600 で保存 | `teamradar.ts:594-597` |
-| teamradar | `export-svg` | `{ path, title }` | path は書き出し関門。図の文字列は escapeXml を通してから書く | `teamradar.ts:594-597` |
-| talent | `save-state` | (payload 全体を sanitize) | src/shared/talent.ts の入力検査 (sanitize) が申告・施策・ロードマップを型と上限で選り分ける。main とブラウザ版で同じ関数を通す | `talent.ts:158-161` |
-| talent | `judge-leader` | `{ flagged, candidate }` | flagged は失格条項の id 以外を落とし、candidate は 64 字で切る | `talent.ts:158-161` |
-| emotions | `clear-history` | `{ kind }` | kind は moods / analyses / all / 未指定 のみ意味を持つ (未指定は気分だけ) | `emotions.ts:325-329` |
+| emotions | `analyze-text` | `{ text, source? }` | **text は `MAX_ANALYZE_TEXT_CHARS` (5000) 上限** + extractJson | `emotions.ts:250-320` |
+| ollama | `chat` | `{ model, prompt, system? }` | **`isSafeModelName(model)`** + `\0` reject + prompt 32,768 / system 8,192 字の天井 (**超えは切らずに断る** —— パス 114 まで黙って切っていた。文面は `inputTooLongMessage`)。**応答は `capAssistantReply` で 10 万字に打ち切り** (パス 113 まで 10 MiB まで素通し)。戻り値の形は台帳 `ActionData<'ollama/chat'>` (中身は shared/ollama.ts の OllamaChatResult。両ビルドと OllamaPage・チャットボットが同じ型を読む —— 台帳は登録済み action の全域: パス 117) | `ollama.ts:247-371` |
+| microsoft-365 | `send-mail` | `{ to, subject, body? }` | **共有台帳 `MS365_MAIL_FIELDS`** (型・長さ) + Graph message envelope | `microsoft-365.ts:146-189` |
+| microsoft-365 | `create-event` | `{ subject, start, end, location? }` | **共有台帳 `MS365_EVENT_FIELDS`** (型・長さ) + Tokyo TZ | `microsoft-365.ts:190-233` |
+| assistant | `chat` | `{ messages, system, model, provider }` | **最新の発話が 1 発話の天井を超えていれば切らずに断る (`latestTurnTooLong` · パス 112。履歴は窓)**。sanitizeMessages が role を user/assistant に限定し最後は user 必須。system は MAX_SYSTEM で切る。**maxTokens は payload から受けない** (ASSISTANT_MAX_TOKENS)。**model / provider は利用者が選ぶ設計**なので許可リストは掛けない —— provider は設定済み資格情報にしか解決せず、model が URL に入る Gemini 経路だけ encodeURIComponent で包む (shared/ai/providers.ts) | `assistant.ts:134-256` |
+| assistant | `chatAll` | `{ messages, system, model, provider }` | chat と同じ検証 (最新の発話の天井を含む)。設定済みプロバイダ全部へ同時に投げ、失敗も per-provider に畳んで返す | `assistant.ts:134-256` |
+| assistant | `providers` | (payload なし) | ctx.payload を読まない。資格情報の設定状況だけ返す | `assistant.ts:180-183` |
+| business | `advise` | `{ question, categories }` | **model / maxTokens は payload から受けない** (定数)。有料 API 呼び出しには 2 分の締切と本文上限 | `business.ts:1126-1130` |
+| business | `export-dashboard` | `{ path, advisorResult }` | path は書き出し関門 (clients/exportPaths.ts) を通る | `business.ts:1126-1130` |
+| business | `export-dashboard-md` | `{ path, advisorResult }` | 同上 (Markdown 版) | `business.ts:1126-1130` |
+| stocks | `register-ticker` | `{ symbol }` | **isSafeSymbol(symbol)** —— 英数と . - ^ のみ・空文字拒否 | `stocks.ts:2035-2043` |
+| stocks | `unregister-ticker` | `{ symbol }` | 同上 (RegisterTickerPayload を共用) | `stocks.ts:2035-2043` |
+| stocks | `backtest` | `{ symbol, strategy, initialCash }` | isSafeSymbol + strategy は登録済み戦略名のみ + initialCash は有限の正数 | `stocks.ts:2035-2043` |
+| stocks | `compare-strategies` | `{ symbol, initialCash }` | 同上 (全戦略を同じ足で回す) | `stocks.ts:2035-2043` |
+| stocks | `advise` | `{ question, universe }` | **model / maxTokens は payload から受けない** (定数)。universe 既定は MOCK_TICKERS。**応答の欄の天井は `advisorResponseLimits.ts` の株式用の定数** (パス 113 まで main / ブラウザ版に 5 / 400 / 200 が字面で) | `stocks.ts:2035-2043` |
+| stocks | `export-dashboard` | `{ path, advisorResult, strategyComparison }` | path は書き出し関門を通る | `stocks.ts:2035-2043` |
+| stocks | `export-dashboard-md` | `{ path, advisorResult, strategyComparison }` | 同上 (Markdown 版) | `stocks.ts:2035-2043` |
+| templates | `export-template` | `{ templateId, params, path }` | templateId は目録の id のみ、params は既定値へ clamp、path は書き出し関門 | `templates.ts:344-349` |
+| teamradar | `save-state` | `{ department, evaluatedAt, members, axes }` | members は形と件数を検証してから 0600 で保存。**axes はパス 190 で足した** —— それまで画面で付け直した軸名はブラウザの下書きにしか残らず、保存にも書き出しにも届かなかった (省略可: 既存の保存値をそのまま読む) | `teamradar.ts:466-468` |
+| teamradar | `export-svg` | `{ path, title, chart }` | path は書き出し関門。図の文字列は escapeXml を通してから書く。**chart はパス 190 で足した画面の図** (validateTeamRadarState が通す形) —— それまで title だけを受け、本体は保存済み状態から読んでいたので、1 枚の SVG が 2 つの部署・2 つの評価時点を名乗った。省略時だけ保存済みへ落ちる | `teamradar.ts:466-468` |
+| talent | `save-state` | (payload 全体を sanitize) | src/shared/talent.ts の入力検査 (sanitize) が申告・施策・ロードマップを型と上限で選り分ける。main とブラウザ版で同じ関数を通す | `talent.ts:186-189` |
+| talent | `judge-leader` | `{ flagged, candidate }` | flagged は失格条項の id 以外を落とし、candidate は 64 字で切る | `talent.ts:186-189` |
+| emotions | `clear-history` | `{ kind }` | kind は moods / analyses / all / 未指定 のみ意味を持つ (未指定は気分だけ) | `emotions.ts:372-386` |
 | docstudio | `list-collections` | (payload なし) | ctx.payload を読まない (同梱の書式目録を返すだけ) | `docstudio.ts:34-36` |
-| real-estate | `record-entry` | `{ note, amount }` | note は文字列必須・amount は任意の数値。**保存はしない** (persisted: false) | `real-estate.ts:103-106` |
-| real-estate | `advise` | (payload なし) | payload を読まない stub。定型の助言と免責を返す | `real-estate.ts:103-106` |
-| mutual-funds | `record-entry` | `{ note, amount }` | 同上 | `mutual-funds.ts:106-109` |
-| mutual-funds | `advise` | (payload なし) | 同上 (stub) | `mutual-funds.ts:106-109` |
-| uber-eats | `record-entry` | `{ note, amount }` | 同上 | `uber-eats.ts:113-116` |
-| uber-eats | `advise` | (payload なし) | 同上 (stub) | `uber-eats.ts:113-116` |
-| demae-can | `record-entry` | `{ note, amount }` | 同上 | `demae-can.ts:104-107` |
-| demae-can | `advise` | (payload なし) | 同上 (stub) | `demae-can.ts:104-107` |
-| shopify | `sync-to-slack` | order + token + channel | 送り先は定数 (slack.com)。token は Bearer として載る。必須欄は CONNECTORS の requiredFields が持つ | `shopify.ts:398-406` |
-| shopify | `sync-to-discord` | order + webhookUrl | **送り先が payload 由来**。https かつ hostname が discord.com のものだけ通す | `shopify.ts:398-406` |
-| shopify | `sync-to-line` | order + token + to | 送り先は定数 (api.line.me)。to は宛先 ID | `shopify.ts:398-406` |
-| shopify | `sync-to-gmail` | order + token | 送り先は定数。order.email が無ければ断る | `shopify.ts:398-406` |
-| shopify | `sync-to-notion` | order + token + databaseId | 送り先は定数 (api.notion.com) | `shopify.ts:398-406` |
-| shopify | `sync-to-salesforce` | order + token + instanceUrl | **送り先が payload 由来**。https かつ salesforce.com / *.salesforce.com のみ (2026-08-23 まで https しか見ておらず、トークンと顧客情報が任意のホストへ届いた) | `shopify.ts:398-406` |
-| shopify | `sync-to-stripe` | order + token | 送り先は定数 (api.stripe.com) | `shopify.ts:398-406` |
+| real-estate | `record-entry` | `{ note, amount }` | note は文字列必須・amount は任意の数値。**保存はしない** (persisted: false) | `real-estate.ts:87-90` |
+| real-estate | `advise` | 画面の集計 (RealEstateAdviceInput: 物件の行・月次 CF・平均利回り・入居率・しきい値) | shared/serviceAdvisor.ts の規則で提案を組む (パス 119)。読めない payload は断る。ブラウザ版の枝も同じ関数・同じ文面 | `real-estate.ts:87-90` |
+| mutual-funds | `record-entry` | `{ note, amount }` | 同上 | `mutual-funds.ts:90-93` |
+| mutual-funds | `advise` | 画面の集計 (MutualFundsAdviceInput: 銘柄の行・評価額・評価損益率・しきい値) | 同上 (規則) | `mutual-funds.ts:90-93` |
+| uber-eats | `record-entry` | `{ note, amount }` | 同上 | `uber-eats.ts:94-97` |
+| uber-eats | `advise` | 画面の集計 (UberEatsAdviceInput: 店舗・人気メニュー・平均評価) | 同上 (規則。画面が無いので今は呼ぶ物が無い) | `uber-eats.ts:94-97` |
+| demae-can | `record-entry` | `{ note, amount }` | 同上 | `demae-can.ts:89-92` |
+| demae-can | `advise` | 画面の集計 (DemaeCanAdviceInput: 月次件数・キャンセル率・地域別・配達中) | 同上 | `demae-can.ts:89-92` |
+| shopify | `sync-to-slack` | order + token + channel | 送り先は定数 (slack.com)。token は Bearer として載る。必須欄は CONNECTORS の requiredFields が持つ | `shopify.ts:399-407` |
+| shopify | `sync-to-discord` | order + webhookUrl | **送り先が payload 由来**。https かつ hostname が discord.com のものだけ通す | `shopify.ts:399-407` |
+| shopify | `sync-to-line` | order + token + to | 送り先は定数 (api.line.me)。to は宛先 ID | `shopify.ts:399-407` |
+| shopify | `sync-to-gmail` | order + token | 送り先は定数。order.email が無ければ断る | `shopify.ts:399-407` |
+| shopify | `sync-to-notion` | order + token + databaseId | 送り先は定数 (api.notion.com) | `shopify.ts:399-407` |
+| shopify | `sync-to-salesforce` | order + token + instanceUrl | **送り先が payload 由来**。https かつ salesforce.com / *.salesforce.com のみ (2026-08-23 まで https しか見ておらず、トークンと顧客情報が任意のホストへ届いた) | `shopify.ts:399-407` |
+| shopify | `sync-to-stripe` | order + token | 送り先は定数 (api.stripe.com) | `shopify.ts:399-407` |
 
-### 3.3 ネットワーク egress マトリクス (26 ホスト + ユーザー指定)
+### 3.3 ネットワーク egress マトリクス (30 ホスト + ユーザー指定)
 
-外部接続は **main プロセスからのみ**。下記以外のホストへの接続は存在しない。
+デスクトップ版の外部接続は **main プロセスからのみ** (renderer は CSP `connect-src 'self'`)。ブラウザ版は同じ宛先へ
+renderer が直接つなぐ (`src/renderer/data/saasWriteWeb.ts` / `src/shared/api/` の各クライアント / `src/renderer/network/ollamaWeb.ts` /
+`src/renderer/oauth/pkce.ts` / `src/renderer/web-shim.ts`。CORS を許可しない相手 —— Notion / Atlassian / Cloudflare / Cursor —— は
+利用者のプロキシ経由)。下記以外のホストへの接続は存在しない —— `verify:arch` が `src` 全体の字面と照合する
+(`src/main` は全部、`src/shared` / `src/renderer` は送信文脈のもの。2026-09-09 までは `src/main` だけで、ブラウザ版が
+走査の外だった —— パス 138)。宛先が**利用者の設定で決まる**通信 (AI 互換 API・Ollama の接続先・BYO プロキシ・Atlassian サイト・
+Salesforce・Discord webhook) は、どう絞っているかを `lint:network-targets` の台帳 (`scripts/lint-network-targets.cjs` の
+`REVIEWED`) が 1 件ずつ持つ。
 
 | Service | Host | Method + Path | Auth | 出典 |
 |---|---|---|---|---|
 | github | `api.github.com` | `GET /user`, `GET /search/issues`, `GET /repos/{owner}/{repo}/pulls/{n}`, `POST /repos/{owner}/{repo}/issues` | Bearer | `github.ts:74-164` |
+| app (更新の確認・両ビルド) | `api.github.com` | `GET /repos/hiroto1977/-/releases/latest` (利用者が押した時だけ。応答は形と案内先ホストまで確かめる —— §1.4 の app:checkUpdate) | none | `main.ts:231-238`, `src/renderer/web-shim.ts:1088-1095` |
 | wordpress | `public-api.wordpress.com` | `GET /rest/v1.1/me/sites`, `POST /rest/v1.1/sites/{id}/posts/new` | Bearer | `wordpress.ts:46-89` |
 | atlassian | `*.atlassian.net` (https only) | `GET /rest/api/3/project/search`, `POST /rest/api/3/issue` | Basic | `atlassian.ts:62-148` |
 | notion | `api.notion.com` | `POST /v1/search`, `POST /v1/pages` | Bearer | `notion.ts:43-98` |
@@ -1810,10 +1895,10 @@ union を参照する。
 | gmail | `gmail.googleapis.com` | `GET /messages`, `GET /messages/{id}`, `POST /drafts` | Bearer | `gmail.ts:29-113` |
 | slack | `slack.com` | `GET /api/conversations.list`, `team.info`, `POST /chat.postMessage` | Bearer | `slack.ts:53-98` |
 | canva | `api.canva.com` | `GET /rest/v1/designs`, `brand-kits`, `POST /folders` | Bearer | `canva.ts:43-96` |
-| security (HIBP) | `haveibeenpwned.com` | `GET /api/v3/breachedaccount/{email}` | `hibp-api-key` | `security.ts:201` |
+| security (HIBP) | `haveibeenpwned.com` | `GET /api/v3/breachedaccount/{email}` | `hibp-api-key` | `security.ts:227` |
 | security (VT) | `www.virustotal.com` | `POST /api/v3/urls`, `GET /api/v3/urls/{id}` | `x-apikey` | `security.ts:290-321` |
 | cloudflare | `api.cloudflare.com` | `GET /client/v4/user`, `/zones` | Bearer | `cloudflare.ts:23-114` |
-| skills, emotions | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `skills.ts:309`, `emotions.ts:209` |
+| skills, emotions | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `skills.ts:398`, `emotions.ts:209` |
 | assistant (AI ハブ・anthropic) | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `src/shared/ai/providers.ts:150-186` |
 | assistant (AI ハブ・openai) | `api.openai.com` | `POST /v1/chat/completions` | Bearer | `src/shared/ai/providers.ts:149-172` |
 | assistant (AI ハブ・gemini) | `generativelanguage.googleapis.com` | `POST /v1beta/models/{model}:generateContent` | `x-goog-api-key` | `src/shared/ai/providers.ts:213-253` |
@@ -1824,6 +1909,7 @@ union を参照する。
 | microsoft-365 | `graph.microsoft.com` | `GET /v1.0/me`, `POST /v1.0/me/sendMail`, `POST /v1.0/me/events` | Bearer | `microsoft-365.ts:21` |
 | freee | `api.freee.co.jp` | `GET /api/1/companies`, `GET /api/1/deals` | Bearer | `freee.ts:21` |
 | base | `api.thebase.in` | `GET /1/items` | Bearer | `base.ts:34` |
+| cursor (両ビルド。ブラウザ版はプロキシ経由 —— api.cursor.com はブラウザ発の CORS を許可しない) | `api.cursor.com` | `GET /teams/members`, `POST /teams/daily-usage-data`, `POST /teams/spend` | Bearer (Admin API キー) | `src/shared/api/cursor.ts:252-262` |
 | shopify→discord | `discord.com` | `POST` webhook (payload 由来。https + hostname 完全一致で絞る) | webhook URL | `shopify.ts:172-194` |
 | shopify→line | `api.line.me` | `POST /v2/bot/message/push` | Bearer | `shopify.ts:205-215` |
 | shopify→stripe | `api.stripe.com` | `POST /v1/customers` | Bearer | `shopify.ts:354-366` |
@@ -1887,9 +1973,9 @@ graph TB
 |---|---|---|
 | **プロトタイプ汚染** | `serviceId="__proto__"` | `isServiceId` (`serviceId.ts:93`) + `Object.hasOwn` (`main.ts:135,171,174,207`) |
 | **任意 URL の Ollama 接続** | renderer が他ホスト指定 | `OLLAMA_BASE` (`ollama.ts:44`) + `ALLOWED_ENDPOINTS` (`ollama.ts:61-66`) |
-| **モデル file OOB read (未パッチ)** | 悪意 GGUF ロード | 危険な書き込み endpoint 全 reject + 警告 (`UNPATCHED_OOB_NOTICE`, `ollama.ts:51-57`) |
-| **Skill name path traversal** | `name="../etc/passwd"` | `isSafeSkillName` (`skills.ts:283`) + realpath による封じ込め (読み出し `skills.ts:231-236` / **列挙 `skills.ts:106-131`**) |
-| **RFC 2822 ヘッダ injection** | `to="x@y\r\nBcc: z"` | `isSafeHeaderValue` (`gmail.ts:85-88`) + throw in `buildRfc2822` (`gmail.ts:91-104`) |
+| **モデル file (GGUF) 経由の脆弱性** (CVE-2026-7482 ほか・台帳は shared/ollama.ts の OLLAMA_ADVISORIES) | 悪意 GGUF ロード | 危険な書き込み endpoint 全 reject + 日付つきの台帳の注意と当てはまる CVE の名指し (`buildWarnings`, `ollama.ts:177-181`) |
+| **Skill id path traversal** | `id="../etc/passwd"` | `isSafeSkillName` (`skills.ts:367`) + realpath による封じ込め (読み出し `skills.ts:347-352` / **列挙 `skills.ts:151-189`**)。**鍵は一覧が出した `SkillEntry.id` で、frontmatter の `name:` は鍵にしない** (パス 179) |
+| **RFC 2822 ヘッダ injection** | `to="x@y\r\nBcc: z"` | `isSafeHeaderValue` (`gmail.ts:94-97`) + throw in `buildRfc2822` (`gmail.ts:91-104`) |
 | **token 漏洩 (error body echo)** | API が Authorization 反射 | `safeErrorMessage` (`main.ts:18-20`) + `redactSecrets` (`src/shared/redact.ts`) + 200B 切り詰め |
 | **token 漏洩 (プロキシがヘッダを JSON で返す)** | 利用者の BYO Worker が `{"headers":{"authorization":"Bearer …"}}` を返す | `redactSecrets` を**ヘッダ名起点**にした (線上の `名前: 値` と JSON の `"名前":"値"` の両方)。旧規則はコロン直結のみを見ており、この形が素通りしていた (2026-08-20 実測) |
 | **Renderer XSS** | (理論) | CSP + React auto-escape + `dangerouslySetInnerHTML` 0 件 |
@@ -1904,10 +1990,13 @@ graph TB
 |---|---|---|---|
 | **CVE-2024-37032** (Probllama) | `/api/pull` でパストラバーサル → RCE | ≥ 0.1.34 | `/api/pull` を呼ばない + `ALLOWED_ENDPOINTS` で reject |
 | **CVE-2024-39719** | `/api/create` でファイル存在情報漏洩 | ≥ 0.1.46 | `/api/create` を呼ばない |
-| **CVE-2024-39720** | 不正 GGUF → OOB read (DoS) | ≥ 0.1.46 | version < 0.1.46 で警告バッジ + アップロード面を絶つ |
+| **CVE-2024-39720** | 不正 GGUF → OOB read (DoS) | ≥ 0.1.46 | 台帳の修正版未満なら名指しで警告 + アップロード面を絶つ |
 | **CVE-2024-39721** | `/api/create` に `/dev/random` で DoS | ≥ 0.1.46 | `/api/create` を呼ばない |
 | **CVE-2024-39722** | `/api/push` でファイル情報漏洩 | ≥ 0.1.46 | `/api/push` を呼ばない |
-| **未パッチ OOB read** (model/engine file parser) | malformed GGUF で heap OOB → 情報漏洩 / RCE | **公式パッチ未公開** | `UNPATCHED_OOB_NOTICE` を毎 snapshot 表示 + 危険 endpoint 全 reject + `\0` reject |
+| **CVE-2025-66960** | GGUF v1 の文字列長で panic (`readGGUFV1String`) → DoS | **修正版未公表** (2026-09-09 時点) | 台帳の注意が「修正版未公表 1 件」と名指し + アップロード面を絶つ |
+| **CVE-2026-7482** (Bleeding Llama) | `/api/create` に細工した GGUF → heap OOB read → プロセスメモリの漏洩 | ≥ 0.17.1 (2026-02-25) | 2026-05-12〜2026-09-09 は「未パッチ」の固定文で刷っていた (パス 139 で台帳へ)。危険 endpoint 全 reject + `\0` reject |
+| **CVE-2026-86289** | GGUF の文字列長の整数オーバーフロー | ≥ 0.31.2 | 台帳の床 (`MIN_SAFE_VERSION` = 修正版の最大) |
+| **台帳の期限** | 日付の無い安全の主張は黙って古くなる | — | `OLLAMA_ADVISORIES_VERIFIED_ON` / `_REVIEW_BY` を `lint:rate-freshness` が見る (60 日前から警告・過ぎたら落とす)。床と照合日は `lint:docs` が OLLAMA_SECURITY.md と照合 |
 
 ```mermaid
 flowchart TB
@@ -1950,6 +2039,7 @@ flowchart TB
 | `oauth.ts:authorize` | clientId 未設定 | `throw Error('OAuth client ID is not configured')` | `{ok:false, code:'authorize_failed'}` |
 | `ollama.ts:withTimeout` | URL not in `ALLOWED_ENDPOINTS` | `throw FetchError` | フェッチャ全体が fail |
 | `ollama.ts:chat` | unsafe model name | `throw FetchError('unsafe model name: ...')` (32-char truncated) | form 上のエラー |
+| `ollama.ts:chat` | prompt / system が天井超 (32,768 / 8,192 字) | `throw Error(inputTooLongMessage(...))` —— **送る前**に断る (パス 114 まで `slice` で黙って切っていた) | 同上 |
 | `ollama.ts:chat` | response > 10 MB | `throw FetchError('response exceeded ...')` | 同上 |
 | `clients/types.ts:limitedFetch` | 時間内に応答しない (既定 30 秒 / LLM は 120 秒) | `throw FetchError('<serviceId> が時間内に応答しませんでした', 0)` | 画面が「読込中…」で固まらない |
 | `clients/types.ts:limitedFetch` | `Content-Length` が上限超 (10MiB) | `throw FetchError('... response too large')` —— **本文を読む前** | 同上 |
@@ -1964,7 +2054,7 @@ flowchart TB
    関門の外に居り、実測で `sk-ant-...` が逐語で renderer まで届いた
    (`src/main/__tests__/rendererBoundMessages.test.ts` が実測で留める)
 2. `code` フィールドは discriminated-union として **UI 分岐の唯一の正解** (`message` は人間向けのみ)
-3. `safeStorage` の plain-base64 fallback / Ollama の未パッチ OOB read 警告など、**ユーザの操作を要しない警告** は warnings[] 配列で渡し、UI が permanent banner として表示
+3. `safeStorage` の plain-base64 fallback / Ollama の脆弱性台帳の注意 (日付つき) など、**ユーザの操作を要しない警告** は warnings[] 配列で渡し、UI が permanent banner として表示
 
 ## 5. 品質パイプライン
 
@@ -2138,7 +2228,20 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **260 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **286 ファイル**。
+2026-09-12 (パス 178) に `src/shared/inputCeiling.ts` を足した —— パス 167 / 168 / 172 / 174 / 175 が
+「切ったのか、送らなかったのか」の言い分けをこの 3 関数に寄せた結果、**実装 18 モジュール・
+呼び出し 23 か所 (画面の断り書きは 16 個) と検査 6 本が同じ判断を読む**ようになったのに、
+測っていなかった (2026-09-12 実測。数え方は `docs/REMAINING_WORK.md` のパス 178 の節が
+コマンドごと持つ —— **ここもそこも機械が検算していない手書きの数**である)。
+載せる前に変異体 12 個を 1 つずつ手で当てて全部死ぬことを見た
+(部分 Stryker の許可が無いので、実測は週次 `mutation.yml` が初めて出す)。
+2026-09-12 (パス 181) に `src/shared/atlassianLinks.ts` を足した —— Atlassian のリンクの形と
+`encodeURIComponent` の判断を **3 か所 (main / ブラウザ版 / 画面) が読む**ようになったので、
+同じ理由で測る。変異体 5 個を手で当てて全部死ぬことを見た。
+**その過程で自分の道具に欠陥を見つけた**: 変異を当てる script が vitest の出力から
+「Tests N failed」を読む形だったため、**構文として壊れた変異 (`no tests` で止まる) を
+「0 件失敗 = 生存」と読んだ**。0 件失敗と「検査が 1 本も走っていない」は別である。
 
 #### 点数の定義 (分母に何を入れないか)
 
@@ -2259,25 +2362,25 @@ classDiagram
 
   class SecretsStore~secrets.ts~ {
     +setToken(id, token) : secrets.ts:73
-    +getToken(id) : secrets.ts:79
-    +clearToken(id) : secrets.ts:86
-    +listConfiguredServices() : secrets.ts:92
-    +setOAuthTokens(id, ts) : secrets.ts:113
-    +getOAuthTokens(id) : secrets.ts:117
-    +getValidToken(id) : secrets.ts:223 ~auto-refresh~
+    +getToken(id) : secrets.ts:279
+    +clearToken(id) : secrets.ts:284
+    +listConfiguredServices() : secrets.ts:306
+    +setOAuthTokens(id, ts) : secrets.ts:391
+    +getOAuthTokens(id) : secrets.ts:395
+    +getValidToken(id) : secrets.ts:424 ~auto-refresh~
   }
 
   class OAuthHelper~oauth.ts~ {
     +OAUTH_CONFIGS : oauth.ts:54
-    +isOAuthSupported(id) : oauth.ts:87
-    +generatePkce() : oauth.ts:98
-    +buildAuthorizeUrl() : oauth.ts:104
-    +buildTokenExchangeBody() : oauth.ts:123
-    +buildRefreshBody() : oauth.ts:138
-    +tokenResponseToSet() : oauth.ts:146
+    +isOAuthSupported(id) : oauth.ts:293
+    +generatePkce() : oauth.ts:311
+    +buildAuthorizeUrl() : oauth.ts:317
+    +buildTokenExchangeBody() : oauth.ts:351
+    +buildRefreshBody() : oauth.ts:366
+    +tokenResponseToSet() : oauth.ts:402
     +authorize(config) : oauth.ts:258 ~loopback HTTP~
-    +refresh(config, tokens) : oauth.ts:290
-    -listenForCallback(state) : oauth.ts:173 ~Host pin~
+    +refresh(config, tokens) : oauth.ts:763
+    -listenForCallback(state) : oauth.ts:531 ~Host pin~
   }
 
   class ServiceIdGuard~shared/serviceId.ts~ {
@@ -2299,24 +2402,26 @@ classDiagram
     +ACTIONS : ActionMap
   }
 
+  %% 版と名前の 3 判定は shared/ollama.ts に在り、clients/ollama.ts は再 export だけ
+  %% (2026-09-12 パス 180 —— 図は clients の行番号を指していた)。
   class OllamaGuards~clients/ollama.ts~ {
     +ALLOWED_ENDPOINTS : Set : ollama.ts:61
-    +isAllowedEndpoint(url) : ollama.ts:48
-    +isSafeModelName(name) : ollama.ts:55
-    +compareVersions(a, b) : ollama.ts:63
-    +isVersionSafe(v) : ollama.ts:86
-    +UNPATCHED_OOB_NOTICE : ollama.ts:51
-    -withTimeout(f, url, init) : ollama.ts:142
+    +isAllowedEndpoint(url) : ollama.ts:70
+    +isSafeModelName(name) : src/shared/ollama.ts:339
+    +compareVersions(a, b) : src/shared/ollama.ts:354
+    +isVersionSafe(v) : src/shared/ollama.ts:383
+    +buildWarnings() : shared/ollama.ts (台帳 OLLAMA_ADVISORIES)
+    -withTimeout(f, url, init) : ollama.ts:101
   }
 
   class SkillsGuards~clients/skills.ts~ {
-    +isSafeSkillName(name) : skills.ts:204
-    -readSkillBody(name) : skills.ts:124 ~containment check~
+    +isSafeSkillName(id) : skills.ts:367
+    -readSkillBody(id) : skills.ts:314 ~containment check~
   }
 
   class GmailGuards~clients/gmail.ts~ {
-    +isSafeHeaderValue(v) : gmail.ts:85
-    +buildRfc2822(to, sub, body) : gmail.ts:91 ~refuses CRLF~
+    +isSafeHeaderValue(v) : gmail.ts:94
+    +buildRfc2822(to, sub, body) : gmail.ts:100 ~refuses CRLF~
   }
 
   IpcHandlers ..> ServiceIdGuard
@@ -2334,7 +2439,7 @@ classDiagram
 
 ## 8. 不変条件と自己検証
 
-### 8.1 不変条件 15 個 (PR で違反したら fail)
+### 8.1 不変条件 16 個 (PR で違反したら fail)
 
 | # | 不変条件 | 回帰テスト / 検証箇所 |
 |---|---|---|
@@ -2344,7 +2449,7 @@ classDiagram
 | 4 | Error message は `safeErrorMessage()` / `redactSecrets()` 経由 | property fuzz 600 試行 (`src/main/__tests__/property.test.ts`) |
 | 5 | 外部 URL を OS へ渡す扉は 2 つ (`app:openExternal` と新窓ハンドラ)、**どちらも同じ関門**を通る — http(s) 限定 | `EXTERNAL_URL_SCHEMES` `src/shared/externalUrlGate.ts:50` + `src/shared/__tests__/externalUrlGate.test.ts` 37 件 (扉の数を数える検査を含む) |
 | 6 | fetcher / action の URL path 動的部分は `encodeURIComponent` | **`lint:url-encoding`** (2026-08-22 新設。それまで機械検証は無く、各クライアントの個別テストだけだった) + `github.test.ts`, `wordpress.test.ts`, ... |
-| 7 | Ollama は `127.0.0.1:11434` 以外には接続しない | `ollama.test.ts` `only ever hits 127.0.0.1:11434` |
+| 7 | Ollama ページのクライアント (main の ollama.ts) は `127.0.0.1:11434` 以外には接続しない (AI ハブの Ollama プロバイダは利用者の設定で決まる —— §3.3 の行と `lint:network-targets` の台帳) | `ollama.test.ts` `only ever hits 127.0.0.1:11434` |
 | 8 | Ollama は `/api/pull|create|push|copy|delete|blobs|upload` を呼ばない | `ollama.test.ts` `isAllowedEndpoint` + property fuzz 700 試行 |
 | 9 | `dangerouslySetInnerHTML` / `eval` / `new Function` 禁止 | `lint:forbidden` (24 パターン・自己検査つき)。§8.2 には最初から書いてあったのに、この欄だけ手作業の grep audit のままだった |
 | 10 | Skill name は path traversal を含まない | `skills.test.ts` + property fuzz 500 試行 |
@@ -2417,10 +2522,825 @@ allowlist のパスだけを受ける — 任意のパスを書けると `__prot
 入力欄には「手入力」と印が付くのに画面の数字が変わらないという、いちばん
 分かりにくい壊れ方をする (2026-08 に実測)。
 
+**断られた読み書きは、入口が 1 本の経路へ写す** (`data/deviceStoreFailure.ts`)。
+対象は**同じ端末の同じ容量を分け合う 3 つの保管庫**で、文面の主語だけが変わる ——
+`records` (業務レコード) / `files` (書き出した書類の実体 = `library/library.ts`) /
+`settings` (端末ごとの設定 = `network/proxy.ts` のプロキシ設定と `fs/fsa.ts` のフォルダ handle)。
+`useCollection` の `add` / `addMany` / `edit` / `remove` は失敗を `save` / `delete` として
+報せてから投げ直し、`reload` は `read` として報せる (こちらは**投げない** —— マウント
+effect と他 instance からの通知は戻り値を受け取らないので、投げても誰も気付けない)。
+`pages/LibraryPage.tsx` は一覧・1 件・削除・全件削除の 4 か所を `files` として報せる。
+画面側は `components/DeviceStoreFailureBanner.tsx` が内容領域の先頭で最後の 1 件を出す。
+
+**資格情報の一覧も同じだった** (2026-09-06)。main の `listConfiguredServices` は
+`readStore()` が返す `{}` の鍵を数えており、ブラウザ版の `listConfigured` は
+`catch { return []; }` だった —— どちらも**読めなかったことを「1 件も登録されていない」と
+名乗る**。画面は 76 サービスすべてに「トークン未設定」を出すので、利用者の自然な次の手は
+**API キーの再入力**で、それは `setToken` が (正しく) 断るので徒労に終わる。
+`readStoredToken` は既に `absent` / `undecryptable` を分けていたが、**保管ファイルが
+読めない場合は `absent` に化けていた** —— `readStore` の `{}` に鍵が無いためである。
+今は `store-unreadable` を名乗り、`fetch:snapshot` / `action:invoke` はその理由を出す
+(「トークン未設定」は `absent` のときだけ)。一覧は両ビルドとも投げ、`useServiceData` が
+`settings` として経路へ写す (橋がまだ無いだけのときは `?.` が短絡するのでここへ来ない)。
+
+**設定の 2 つは「未設定」と「確認できない」を分ける** (2026-09-06)。`network/proxy.ts` の
+`readStoredProxyConfig` と `fs/fsa.ts` の `loadFolderHandle` はどちらも
+`catch { return null; }` で開けないことを飲み込んでおり、その `null` が
+(a) 設定画面の**「未設定」の札**、(b) ブラウザ版の**「設定で URL を登録してください」**、
+(c) `fs/folderMirror.ts` の `off` (警告を出さない側) になっていた ——
+**登録した本人に登録し直させ、共有シークレットを打ち直させた末に同じ所で失敗する**。
+`folderMirror` は「読めないのは `off` ではなく `failed`」と決めて書いてあったが、
+**差を消していたのは 1 つ下の層**なので、その分岐には決して入らなかった。
+今は両方が投げ、`inspectStoredProxyConfig` が `unreadable` を返し、
+設定画面は `確認できません` の札と理由を出す (`data-proxy-unreadable` /
+`data-fsa-unreadable`)。`getProxyConfig` も飲み込まない ——
+「未設定でも構わない」呼び出し側がその場で `.catch()` を書く。
+
+**保管庫そのものが最後の 1 つだった** (2026-09-06)。ブラウザ版 `security/vault.ts` の
+`status()` は `openDb()` の失敗と meta の読取失敗を**どちらも飲み込んで `uninitialized`**
+を返しており、`LockScreen` はそれを見て「ようこそ — はじめての利用です」の画面
+(新しいマスターパスワードを作る画面) を出していた。**トークンを預けている本人に
+「はじめての利用」と告げる**ので、まず「消えた」と読める。しかもその画面は行き止まりで、
+「作る」を押しても `initialize()` は同じ `openDb()` で転ぶか、meta が読めれば
+「既に初期化されています」で断る (上書きはしない —— `initialize()` が自分で meta を
+読み直すため)。今は `VaultStatus` に `unreadable` を足し、`status()` は開けない場合と
+読めない場合の両方でそれを返す。`LockScreen` は**パスワード欄を出さない**専用の画面
+(`data-vault-unreadable`) で、直せる 2 つの原因 (プライベートウィンドウ・保存領域が一杯) と
+「もう一度確認」だけを出す。文面は `VAULT_UNREADABLE_TEXT` に置き、画面側の試験は
+`importOriginal` で**本物を読み直す** (綴りを写すと、変えたときに鳴らない検査になる) ——
+**ただしそれだけでは文面の中身を誰も見ていない**。定数と表示が同時に変わるので、どの断片を
+削っても通る同語反復になっており、変異検査が 5 本の生存として鳴らした。約束は 5 つ
+(確認できなかったこと・「はじめて」に見えることの訂正・原因 2 つ・押すボタンの名前) なので
+5 つに分けて `src/renderer/security/__tests__/vault.test.ts` で個別に留め、順序の対照を 1 本置いた。
+
+**媒体そのものを断られる場合は、また別だった** (2026-09-06)。ここまでの直しは
+「開いたが読めない」を扱ってきたが、`localStorage` / `sessionStorage` は
+**触れることが投げる** —— サイトデータをブロックしたオリジンで Chrome は
+`SecurityError: Access is denied for this document.` を返し、プライベートモードでも
+同じ形になる。`data/localWrite.ts` の冒頭は「書き込み禁止」を 3 つの現実の理由の
+1 つとして数えているのに、**読みと消しの側は誰も見ていなかった** (実測: 読み 21 か所の
+うち 3 か所が `try` の外)。踏んだ形は 3 つとも別である:
+
+- `oauth/pkceSession.ts` の `clearPkceSession()` は 4 連の生の `removeItem`。2 つ目で
+  投げると残りが残る —— **このファイルの不変条件が「作れなくする」と宣言している
+  「3 つ消して 1 つ残る」形**で、残るのは `code_verifier` (RFC 7636 の秘密)。しかも
+  呼び出しは `SettingsPage` の `finally` に在るので、投げると本当の失敗 (state 不一致
+  = CSRF の疑い) を投げ替え、後続の `setBusy(false)` も飛ばして「交換中…」で固まる。
+  今は**鍵ごとに受けて投げず**、消せなかった鍵名を返す。画面は `sweep()` の 1 か所で
+  受けて `data-pkce-leftover` の札を出す (`sessionStorage` はタブ単位なので、打ち手は
+  「このタブを閉じる」)。`savePkceSession` は置けた分を消してから投げ、`start()` が
+  文面を出す —— `onClick={start}` は async なので、投げたままだと拒否が宙に浮き
+  **画面には何も出ない** (押しても認可 URL が現れないだけ) だった。
+- `data/recordEncryption.ts` の `loadMeta()` は `getItem` が `try` の上に在り、
+  `isEncryptionEnabled()` が投げていた。それは `components/BackupPanel.tsx` の
+  **描画中**に呼ばれるので、保存領域が怪しい端末に限って**控えを取り出す画面が
+  消える** —— いちばん要るときに使えない。今は degraded に数えて `null` を返すので
+  画面は生き、`assertMetaWritable()` が上書きを断って salt を守る。`clearMeta()` も
+  素だった —— そこは**全レコードを平文に戻した後**なので、消せないまま黙って成功を
+  返すと「暗号化が有効」と表示しながら平文を保存する。両方の事実を文面にして投げる。
+- `data/emotionsWeb.ts` の `loadStore()` も同じ形で、拒否が degraded にならず生で
+  抜けていた —— つまりこの端末では上書きを断る `loadStoreForWrite()` も、送信前の門
+  `assertStoreWritable()` も働かなかった。
+
+`src/renderer/__tests__/storageReadPolicy.test.ts` が「`getItem` / `removeItem` は
+同じ関数の中で失敗を受ける」を走査で留める (書き込み側の
+`src/renderer/__tests__/storageWritePolicy.test.ts` と対になる)。
+判定は波括弧の入れ子で `try` の内側かを見るので、**素の呼び出し・`try` の中・
+`catch` の中**の 3 標本で判定そのものを確かめてから使う。
+
+**取得元の札は、失敗した瞬間に消えていた** (2026-09-06)。`components/StatusBar.tsx` の
+バッジは**枠が 1 つ**で、`status === 'error'` のときは「認証エラー」/「レート制限」/
+「エラー」に差し替わる。つまり `src/shared/dataOrigin.ts` の `describeOrigin` が返す
+取得元の宣言 —— 未取得の remote なら「サンプル（未連携）」—— が**押し出される**。
+ところが画面の下では `SNAPSHOT[id]` の同梱データがそのまま並んでいるので、
+トークンを保存して「更新」を押し 401 が返った人に見えるのは**数字の入った
+ダッシュボードと `401 Bad credentials` の 1 行だけ**になる。`describeOrigin` の注記が
+「『スナップショット』は実データを写したものと読める」「同梱の作り物 (架空の 3 人) が
+実在の同僚と受け取られた」と書いているその危険が、**エラーのときだけ札の無い状態で
+再現していた**。今は `staleDataNote(origin, source, failed)` が別枠の 1 行を返す
+(`data-stale-note`) —— 未取得なら「同梱のサンプルです（まだあなたのデータでは
+ありません）」、取得済みなら「前回取得できた内容です（今回の更新は反映されて
+いません）」。文面は `dataOrigin.ts` に置く (取得元の言い回しを 2 か所へ散らさない)。
+`loading` では出さない (すぐ決まる) し、取得しない画面にも出さない
+(`data-sample-note` が常設で同梱データだと書いている)。
+
+**取ってきた中身が作り物のときも、同じ嘘が付いていた** (2026-09-06)。
+`main/clients/` の 11 モジュールは、実 API を差し込む前の値を返すときに
+`isMock: true` を立てる。ところが**画面がそれを読まないと緑のバッジが付く** ——
+`describeOrigin` の `tone: 'ok'` は「実際に取ってきた」時の色だと決めているのに、
+`live` になっているだけで中身は同梱値である。いちばん重かったのが `funding`:
+`fetchFundingSnapshot` は `MOCK_ITEMS` / `MOCK_ACCOUNTING` と固定の期首残高
+300 万円から、補助金・融資の一覧・キャッシュランウェイ・債務償還年数・
+**特定収入割合 (消費税の計算に関わる)** を組み立てて返し、「更新」を押すと
+緑の「ローカル」が付いた。画面の既存の注記は「概算であり保証しない」で、
+*その数字が自分のものではない*ことは言っていない。
+実測で名乗る 11 件のうち画面が何か言っていたのは 3 件 (stocks / business / kpi) だけ。
+今は `useServiceData` が取得した中身の名乗りを `payloadIsMock` として持ち、
+`describeOrigin(origin, source, payloadIsMock)` が緑をやめて「同梱データ」を返す
+(図表を持つ残り 2 画面 funding / teamradar が渡す)。未取得のときは名乗りを見ない ——
+そちらは既に「サンプル（未連携）」と言い切っており、差し替えると弱くなる。
+`src/renderer/__tests__/mockPayloadPolicy.test.ts` が台帳を双方向に検査し、
+`badge` / `notice` と登録した画面に実際の配線が在ることまで見る
+(数字を出すのに `no-figures` と登録する腐り方を別途 1 本で塞ぐ)。
+
+実測 (2026-09-06): 書き込みを呼ぶ 15 か所のうち 12 か所が拒否された Promise を捨てて
+いた (`void add()` / `onClick={async () => { await onSave(...) }}`)。容量超過・プライベート
+モード・別タブの versionchange で断られると**行は増えず、文言も出ない** —— 打ち込んだ値
+だけが残るので「押せていない」ように見える。読みの側はさらに静かで、`indexedDB` が
+開けない端末では**全コレクションが空**になり、「まだ何も入力していない」画面と区別が
+付かなかった (利用者から見れば業務データが消えたのと同じ)。読めなかった回は
+**今持っている records を残す** —— 空へ置き換えると、報せより先に「消えた」が目に入る。
+
+ライブラリ側も同じ形だった (2026-09-06 実測): `LibraryPage.refresh()` は
+`useEffect(() => { refresh(); }, [])` で投げっぱなしなので、`indexedDB` が開けない端末では
+見出しが「ライブラリ · 0 件 / 0 B」となり**書き出した書類が 1 つも無いのと区別が付かない**。
+1 件を読む側では「消えている」(＝諦める) と「読めない」(＝容量を空ける / 通常の
+ウィンドウで開く) を**混ぜない** —— 打ち手が違うので、`readItem` が `'unreadable'` を
+返して呼び出し側は「見つかりません」を出さない。
+
+15 か所へ同じ try/catch を配らないのは `ManualDataSection` を 1 か所に置いたのと同じ
+理由 (配ると必ずどれか 1 つが漏れる)。押しただけの場所は `fireReported()` を通す ——
+`void p` だと拒否が宙に浮き、画面には何も出ないまま `unhandledrejection` になる。
+`__tests__/deviceStoreWritePolicy.test.ts` が「書き込みは台帳の場所からしか行わない」と
+「`void` で捨てていない」を双方向に検査し、認めた例外には理由を要求する
+(localStorage 側の `__tests__/storageWritePolicy.test.ts` と同じ形)。走査は
+**2 つの保管庫の両方**に当たっていることを標本で確かめる (片方だけ拾う走査では通らない)。
+
+#### 一つの数字に、出所は一つ (`src/shared/__tests__/rateDefaultPolicy.test.ts`)
+
+CLAUDE.md の作法の後半 ——「**既定値はモジュールの定数をそのまま参照する
+(数字を写さない)**」—— が破れている場所を 2 件見つけた (2026-09-06)。
+
+1 件目は**法定値の写し**。`src/shared/funding.ts` の `summarize()` が
+`consumptionTaxRate = 0.1` を持っていた。この `0.1` は消費税法の標準税率で、
+出所は `src/shared/taxCalc.ts` の `CONSUMPTION_TAX_STANDARD` 1 つだけであり、
+台帳 `tax.consumptionStandardRate` (`kind: 'law'`) の既定値もその定数を参照して
+いる。ところが funding 側はリテラルで持ち、しかも**唯一の呼び出し元
+(`src/main/clients/funding.ts` の `summarize(items)`) は率を渡していない**ので、
+実際に使われるのは台帳と繋がっていない側だった。法が変わった日に、税ページと
+資金調達ページが同じ法定値について違うことを言う。既定値を定数参照に変え、
+`src/main/clients/__tests__/funding.test.ts` が `vi.doMock` で `taxCalc` の定数を
+0.2 に差し替えて**消費税相当が追随する**ことを見る (字面走査ではなく値の比較なので、
+リテラルへ戻すと落ちる)。
+
+2 件目は**参考値の 4 重の写し**。緊急予備資金の月数 6 が
+`src/shared/savingsPlanning.ts` の既定値 2 か所と
+`src/renderer/pages/MutualFundsPage.tsx` の呼び出し 2 か所に散っていた。
+6 は暦の定義ではなく**判断の要る目安** (会社員 3〜6 / 自営 6〜12 か月) で、
+この画面は自営業者が見るのに長い側へ寄せる手段が無かった。
+`EMERGENCY_FUND_MONTHS_DEFAULT` を唯一の出所にし、台帳へ
+`savings.emergencyFundMonths` (`kind: 'reference'`) として登録して画面は
+`useParameters()` で読む。配線は
+`src/renderer/pages/__tests__/parameterWiring.test.ts` が対照つきで留める
+(12 か月に上書きすると目標額 1,800,000 → 3,600,000・充足率 50% → 25%・
+文言が動く。読まない形へ戻すと落ちる)。
+
+再発を止めるゲートは「**引数の既定値の位置に居る素の数値リテラル**」を数える。
+`src/shared` と `src/renderer/data` を走査し、名前が率・割合・しきい値・期間を
+思わせる引数の既定値が素の数字なら、台帳 (ファイル + 引数名 + 値 + 個数) に
+理由つきで載っていなければ落ちる。実測 23 か所を登録済み。
+「台帳の定数と同じ値のリテラルを禁じる」形は**採れなかった** —— `kind: 'law'` の
+既定値 91 件を実測すると 0.5 / 10 / 12 / 80 は容積率のボーナス率や地下水の
+硝酸性窒素 (mg/L)、道路幅員 (m) と偶然一致し、偽陽性だらけになる。値の一致では
+なく「素の数字が既定値の位置に増えたら人が理由を書く」に振った。
+
+注記の中の字面 (`funding.ts` の JSDoc「無利息 (rate=0) は単純に P/n」) を拾って
+しまったので、行頭が `*` / `//` の行は除いている。この除外が走査を殺していない
+ことは標本 4 本 (拾う形 / 定数参照 / 代入文 / 注記) で確かめる。
+
+なお資金調達ページの図表 (税引後の折れ線・純資金繰り・ランウェイ・シナリオ) は
+主プロセス側で既定の実効税率 30% で算出されており、**設定の実効税率には追随しない**。
+これは `fetchSnapshot` にパラメータを流す口が無いためで、同ページのデータは
+`isMock: true` の同梱データなので実害は「見本の数字」に留まる。手当ては
+docs/REMAINING_WORK.md に残した。
+
+#### 割る値の下限は、割る側にも置く (`src/shared/taxConsumptionSchedule.ts`)
+
+同じ日の続きで「画面に `¥NaN` / `¥Infinity` が出る道」を探した。`jpy()`
+(`src/shared/formatters.ts`) は `toLocaleString` に素で渡すので**非有限値を弾かない**
+—— 画面の 201 か所がこれを呼び、`Number.isFinite` を持つページは 3 つだけ。
+
+走査は総当たりで行った: `src/shared` と `src/renderer/data` の 216 モジュールの
+export 関数を 0・`[]`・`{}` で呼び (成功した呼び出し 2,621 件)、返り値の中の
+非有限値を数える。ヒット 259 件のうち引数がすべて `number` 宣言の物は
+**1 つだけ**だった —— `localRatioOf(0)` が `Infinity` を返す。ほかの 258 件は
+型の外の呼び出し (オブジェクトを取る関数に 0 を渡した) で、TypeScript が止める。
+
+`localRatioOf` は地方消費税の比を `(1 − 割合) ÷ 割合` で作る。割合 0 なら
+`calcAnnualTax` の `local` / `total` を通って税ページに `¥Infinity` が出る。
+守っていたのは台帳 `consumptionSchedule.nationalShare` の `min: 0.01` という
+**リテラル 1 個**で、なぜ 0.01 なのかはどこにも書かれていなかった (下限を 1 行
+下げれば画面が壊れる)。`MIN_NATIONAL_SHARE` を定数にして台帳の `min` がそれを
+参照し、割る側でも `[MIN_NATIONAL_SHARE, 1]` に丸める (非有限値は下限扱い)。
+守りが 2 つ独立に在ることは対照で確かめた —— 丸めを外すと「0・負値・非有限値でも
+有限」が落ち、台帳の下限を 0 にすると「下限がこの定数」だけが落ちて**年税額の
+非有限値の走査は通ったまま** (丸めが効いている)。
+
+その走査は台帳の値を端 (min / max / 既定) に振って `calcAnnualTax` と
+`planInterim` の全欄を見る形で残した。`jpy()` 側に「非有限なら ―」を入れるのは
+**やめた** —— 実際に届く道が 1 つも無い今それを入れると、次に生まれた NaN が
+画面から消えて開発時に見えなくなる (この方針は docs/REMAINING_WORK.md に記録)。
+
+#### 形の検査が「任意」と言う欄を、型は「必須」と言っていた (読み取りの境界に補いを 1 つ)
+
+復元の形の検査 (`src/renderer/data/collectionShapes.ts`) は意図して**緩い** ——
+「必須は中核の欄だけ・任意は在るなら型を見る (前方互換。落とし過ぎは復元の欠落 =
+別の事故)」と自分で書いてある。ところが**レコードの型はその欄を必須と宣言していた**
+ので、欄の無い控え (古い版・手で直した JSON・別の道具が書いた控え) が復元を通ると
+型が嘘になる。TypeScript は実行時には居ないので、行き着くのは画面である
+(2026-09-06 実測・3 か所):
+
+| 収集 | 形は任意 / 型は必須 | 起きること |
+|---|---|---|
+| `mutualfund-holdings` | `ytdReturnPct` | 一覧の `h.ytdReturnPct.toFixed(1)` が **TypeError**。投資信託の画面が `PageErrorBoundary` の枠になり、**その画面が保有銘柄の一覧なので利用者は消せない**。形は正しいので設定の「形式の合わないレコード」点検にも出ない |
+| `mutualfund-holdings` | `acquisitionCost` / `code` / `valuationMode` | 取得原価の合計が NaN → 「¥NaN」。`valuationMode` だけは画面側に `?? 'auto'` が在った (**1 つだけ補われていて残りが漏れていた**) |
+| `balance-sheet` | `inventory` / `accountsReceivable` / `accountsPayable` | `computeBalanceSheetMetrics` の足し算が NaN → 経営サマリーのタイルと**金融機関等へ出す書面に NaN が印刷される**。書面は「上記のとおり相違ありません。」と代表者印を添えて出す物なので、いちばん出てはいけない場所 |
+| `realestate-properties` | `monthlyExpenses` / `monthlyLoan` | 年間キャッシュフローの引き算が NaN → 不動産ページの「¥NaN」 |
+
+直し方は**読む所を 1 つにする** —— 使う場所ごとに `??` を置くと必ずどれか 1 つが
+漏れる (`valuationMode` だけ補われていたのがまさにそれ)。既定値は型の注記と入力側の
+約束をそのまま使う: `normalizeHolding` (取得額が無ければ評価額 = 損益 0、評価モードは
+auto、年初来は 0)、`normalizeBalanceSheet` + `balanceSheetOrNull` (内数は 0。
+**未入力 `null` は `null` のまま** —— ゼロの貸借対照表に化けさせると画面が「―」ではなく
+0 円を断言する)、`normalizeProperty` (経費・返済は 0)。数でない値・非有限値も既定へ倒す。
+
+**形の検査は緩いままにした。** 厳しくすると古い控えの復元でレコードが黙って消える
+(それは別の事故)。緩い入口 + 読む所の補い、が今の形である。
+
+対照は 3 本とも実物で取った: 旧の読み方に戻すと、投資信託は
+`Cannot read properties of undefined (reading 'toFixed')` で画面が枠になり、
+**金融機関等提出用の書面には NaN が印刷される** (`src/renderer/pages/__tests__/overviewBankSheet.test.ts` の
+★ が落ち、揃った控えの対照は通ったまま)。変異検査で 1 か所**自分の検査の穴**も出た
+—— 任意の欄の `typeof v === 'number' && Number.isFinite(v)` は、文字列だけを
+標本にすると `&&`→`||` の差が出ない (NaN は typeof が number)。NaN と ±∞ の標本を足した。
+
+まだ残っているのは `hydroponics-setup` の経済の欄 (歩留まり・単価・電力原単位ほか)。
+ここは既定値が**参考値であって実績ではない**と自分で書いてあるので、欠けた欄を
+既定で埋めると「その人の数字」として参考値が印刷されうる。0 で埋めるのも過小に
+断言する。扱いは docs/REMAINING_WORK.md に選択肢を残した (低カリウムの**実測**欄は
+型でも任意なので、この穴には入っていない)。
+
+#### 同梱の形と取ってきた形 (`src/main/clients/__tests__/snapshotShapeParity.test.ts`)
+
+CLAUDE.md は「fetcher は `SNAPSHOT[id]` と**同じ形**を返す」と約束しているが、
+**文章だけで誰も測っていなかった** (2026-09-06)。画面は
+`useServiceData(id, SNAPSHOT[id])` でまず同梱を描き、取得できたら差し替えるので、
+欄が食い違うと**片方の道でだけ** `undefined` を読む —— 同梱にしか無い欄は
+**取得できた瞬間に**空欄や `¥NaN` になり (最も気づきにくい壊れ方)、取得にしか無い欄は
+未連携のあいだずっと出ない。
+
+資格情報の要らない `LOCAL_SERVICES` は fetcher をその場で呼べるので、**50 件すべて**
+同梱と突き合わせた。実測は**全件一致** —— これは直す検査ではなく「崩れたら気づく」検査。
+`village` だけ同梱を持たない (registry.json から renderer 側で組む画面で
+`useServiceData` を通らない) ので、理由つきの台帳に 1 件だけ載せて双方向に検査する。
+
+**最初に書いた版は上端の鍵だけを比べていて、対照が鳴らなかった** ——
+同梱から `summary.consumptionTaxEstimate` を消しても `summary` という鍵は残るので
+差にならない。入れ子を歩く形に直したら、その場で 2 件を報告した。どちらも
+**偽陽性**だったが、境界の決め方を教えてくれた: (1) `funding.diversification` は
+同梱が `null as {…}` (「まだ無い」を表す普通の値・画面が真偽で守っている)、
+(2) `talent.ladder.byStep` は**中身で鍵が決まる表**で同梱は空。よって
+`null` / `undefined` の欄と、片方が空の配列・空の物は**比べない** ——
+分からないことを鳴らすと、台帳が「鳴って当たり前」になって守らなくなる。
+
+対照は 2 本とも入れ子で取った: 同梱から 1 欄消すと `取得だけ=[summary.consumptionTaxEstimate]`、
+fetcher に 1 欄足すと `取得だけ=[extraFieldForControl]` で落ちる。標本は 6 本
+(欄の増減・入れ子・空配列・空の物・null・物と非物)。
+
+**ブラウザ版にも同じ物差しを当てた** (`src/renderer/__tests__/webShimSnapshotParity.test.ts`)。
+`web-shim.ts` は別実装で **4 サービスだけ**自前に合成する
+(stocks / emotions / talent / security) ので、ここがずれると
+公開しているブラウザ版 (github.io の app.html) **でだけ**画面が壊れる。実測は 4 件とも一致。
+残りは `not_implemented` で画面が同梱を見続けるか、`liveRead` 経由で **shared の
+実装**を通る (`LIVE_READERS` は今 cursor 1 件・main と同じ
+`fetchCursorSnapshotWith` を呼ぶので形はずれようがない)。物差しは
+`src/shared/__tests__/shapeDiff.ts` に 1 つだけ置く —— 2 つ持つと片方だけ緩くなる。
+対照はブラウザ版の合成に 1 欄足すと `合成だけ=[controlOnlyField]` で落ちる。
+
+**この物差しが拾えない形も標本にしてある**: 片方の物の中身が**全部**消えた場合は
+空の物 (Map 相当) と区別できないので鳴らない。最初に書いた標本がまさにその形で、
+**自分の標本が落ちて**気づいた —— 「全部見ている」と思い込まないよう、
+拾える形と拾えない形の両方を検査に残した。
+
+#### 重なった取得 —— 後から返った古い応答が新しい内容を消していた
+
+`useServiceData` の `refresh()` には**順序の番人が無かった** (2026-09-06)。更新ボタンは
+`status === 'loading'` で無効になるが、**書き込みの操作は無効にならない** ——
+気分の記録・銘柄の登録・人材の保存・Team Radar の保存・Microsoft 365 は成功後に
+`refresh()` を呼ぶ (実測 5 画面 7 か所)。だから
+
+1. 「更新」を押す → 取得 A が始まる (遅い)
+2. その間に記録する → 書き込みは成功し、その直後の取得 B が**先に**返る (画面に反映)
+3. A が後から返り、`setData(A)` で**さっき記録した物が消える**
+
+しかも `source='live'` / `status='idle'` のままなので、画面は**取得できた顔で古い数字**を
+出す (「記録しました」の文言だけが残り、一覧にその記録が無い)。
+
+直しは**札 (identity)** で行う: 取得のたびに新しい物を `useRef` に置き、返ってきた
+ときに自分の札がまだ最新かを見て、古ければ**何も書かずに返る**。数の増減で書くと
+「+1 でも −1 でも同じに動く」等価な変異が残るだけで、守っている物 (最新だけが
+書き換える) は札のほうが素直に表せる。失敗の側にも同じ番人を置く ——
+遅れて返った古い失敗を拾うと、**成功した新しい取得の上に赤いバッジ**が乗る
+(橋が reject する道にも同じ番人が要る。約束の外で throw する main を踏んだ実例がある)。
+
+対照 3 本: 番人を外すと「古い応答が画面を戻さない」「古い失敗が赤くしない」
+「古い例外が赤くしない」が落ち、重ならない場合の対照は通ったまま。
+
+**同じ番人を `useCollection.reload()` にも置いた。** こちらの読みが重なる理由は 3 つ
+(書いた本人が await する分・`notifyCollection` で他 instance に飛ぶ分・マウント
+effect の分) で、`list()` は IndexedDB の読みだけでは終わらず**1 件ずつ復号してから**
+返る (`recordEncryption` を有効にした端末)。読みの要求順は IndexedDB が守っても、
+**復号にかかる時間は件数で変わる**ので返る順は要求順とは限らない —— 先に始まった
+大きい読みが後から返ると、書いた直後の一覧が**書く前の姿に戻る** (記録は残っている
+のに画面から消える)。対照は `list()` を手で解決できる store に差し替えて返る順を
+逆にし、番人を外すと `expected [ '記録するまえ' ] to deeply equal [ '記録したあと' ]`
+で落ちることを見た。`src/renderer/data/useCollection.ts` は変異検査 100% (54)。
+
+一方で**書き込み側の順序は既に守られていた**: `store.update` / `remove` は id ごとの
+鎖 (`serialize`) に載り、書く直前に存在を再確認する (2026-08 の
+`importAll({replace:true})` との競合の直しがそのまま効いている)。
+`SettingsPage` の資格情報スロットの `refresh()` は `busy` でボタンを止めた上で
+`await` するので、残る隙はマウント直後の 1 回だけ —— 影響は「登録済み」の札が
+1 描画分古いことなので、据え置いた (docs/REMAINING_WORK.md に記録)。
+併せて `declaresMock` を簡素化した —— `typeof value === 'object'` は数・文字列に
+`.isMock` が無いので要らず、置くと「関数が isMock を持つ場合」でしか差が出ない
+等価な分岐だった。変異検査は `src/renderer/hooks/useServiceData.ts` が
+**81.32% (生存 17) → 100% (82 変異体)**。
+
+#### 同じ不変条件を、片方の入口だけが守っていた (最後のオーナー)
+
+`src/shared/team.ts` の `canRemoveMember` は「組織にはオーナーが 1 人以上必要」を
+守り、`TeamPage` の × ボタンも無効になって「最後のオーナーは削除できません。」と
+言う。ところが**役割の `<select>` には守りが無かった** (2026-09-06 実測) ——
+全員に 3 つの選択肢が出て、`onChangeRole` は素で `edit(id, { role })` を呼ぶだけ。
+オーナーが 1 人の組織でその 1 人を「メンバー」にすると**オーナーが 0 人**になる。
+
+0 人になると何が起きるかが厄介で、**削除の守り自体が外れる** ——
+`canRemoveMember(*, 0)` は「誰でも削除できる」と答えるので、最後の 1 人まで
+消せるようになる。さらに `canAssignRole` は「自分より下の役割しか与えられない」
+規則なので (owner より上は無い)、その規則を UI に配線した将来の版では
+**オーナーを作り直す道が無い**。
+
+直しは同じ強さの述語を 1 つ増やして両方の入口で使う:
+`canChangeRole(currentRole, nextRole, ownerCount)` は、オーナーが 1 人のときの
+降格だけを断る (昇格・オーナーのまま・オーナー以外の変更は通す。既に 0 人に
+なっている端末から立て直す道も閉じない)。`TeamPage` は断りの文言を出し、
+**選べない選択肢は `<option disabled>` にする** (押してから断られるより早い)。
+
+対照は実物の record store に 1 人だけオーナーを入れて `<select>` を動かす形で
+取った: 守りを外すと「断りの文言が出る」と「選択肢が無効になっている」が落ち、
+オーナー 2 人の対照と「メンバーをオーナーへ上げられる」対照は通ったまま。
+
+#### 選べないと宣言した方式で「最有利」を決めていた (消費税の 3 方式)
+
+税の概算 card は消費税を 3 方式 (本則 / 簡易 / 2 割特例) で並べ、いちばん安い物に
+「· 最有利」の札を付け、税負担合計もその方式で合算する。ところが 3 方式のうち
+**2 つは条件付き**である —— 簡易課税は基準期間の課税売上高 5,000 万円以下 + 事前届出、
+2 割特例はインボイス登録で免税から課税になった事業者の経過措置。
+
+2026-09-06 の実測では、card は簡易課税の欄に
+「基準期間 5,000 万円超は選択不可」と**自分で書きながら**その欄に「· 最有利」を付け、
+合計まで「消費税は最有利方式（簡易課税）で合算」と言っていた ——
+**同じ枠の中で矛盾**していた。`canUseSimplified` は注記のためだけに呼ばれ、
+**金額を選ぶ側には渡っていなかった** (今日の「同じ不変条件を片方の入口だけが守る」
+と同じ形)。しかも 2 割特例には可否の判定すら無く、課税売上高 6,000 万円の事業者に
+「最有利: 2 割特例」と出せた (元から免税ではないので対象になりえない)。
+
+直しは `compareBusinessTaxMethods` に `MethodAvailability` を渡せるようにして、
+**選べる方式の中からだけ**最安を採る (3 方式の金額そのものは今までどおり全部返す ——
+画面は 3 つ並べて見せるので)。本則課税は届出も期限も無いので常に土台。画面側は
+自分の注記と同じ判定を渡す: 簡易は `canUseSimplified(課税売上高)`、2 割特例は
+`isTaxExempt(課税売上高)` —— 登録の有無は見えないが、**免税の水準を超える売上なら
+元から免税ではない**ので、免税判定と同じ代理指標で外せる (画面の注記も
+「基準期間（前々事業年度）も同水準なら」と同じ代理で書いている)。
+
+検査は card の**入力欄を実際に打って**場面を作る。最初は props からの導出で
+書いたが、仕入が売上と同額になって本則が常に最安になり、**どの場面でも通る空の
+検査**だった (対照が 1 本も落ちなかったので気づいた)。対照は 3 本落ちる:
+6,000 万円で「2 割特例」が最有利に戻り、3,000 万円でも「簡易課税」ではなく
+2 割特例が選ばれる。免税水準 (800 万円) と「仕入が多く本則が最安」の 2 本は
+どちらの版でも通る (場面が可否に依らないので)。
+
+#### 期限つきの税制特例に、期限を見る仕組みが無かった (2026-09-06・残り 24 日)
+
+上の直しは**売上高**の軸だけを塞いだ。2 割特例にはもう 1 つ軸がある ——
+**ある日を境に使えなくなる**。`TWENTY_PERCENT_MEASURE_END = '2026-09-30'`
+(src/shared/taxConsumption.ts) は 2026-08-23 に「機械が読める形に置くだけ」で入り、
+注記も「この定数は計算を変えない。期限を過ぎたときに何をするかは税務上の判断」と
+書いていた。`lint:rate-freshness` が 180 日前から警告する仕組みだけがあり、
+**判定に使っている場所は 1 つも無かった**。実測で残り 24 日。
+
+`twentyPercentMeasureStatus(today)` (src/shared/taxConsumption.ts) を足した。
+**3 値である** —— 適用対象は「期限までの日の属する**課税期間**」なので、
+今日の日付だけでは決まらない。3 月決算法人の課税期間 2026-04-01〜2027-03-31 は
+2026-09-30 を含むので、期限を過ぎた 2026-10-01 でも**対象である**。
+
+- `active` … 今日が期限内。今日を含む課税期間は必ず期限内の日を含む
+- `period-dependent` … 期限は過ぎたが、含む**かもしれない**
+- `ended` … 今日を含むどの課税期間も含み**えない**
+
+`ended` の境目は「期限 + 1年 - 1日」。課税期間は 1 年を超えないので
+(法人税法 13 条: 会計期間が 1 年を超えるときは 1 年ごとに区分／個人は暦年。
+課税期間の特例は短くするだけ)、今日 T を含む課税期間の開始日は必ず
+`T - 1年 + 1日` 以降にある。実測 2026-09-30 の期限なら **2027-09-30 から `ended`**。
+
+**言い切れる `ended` でだけ**候補から外す (`data/eligibility.ts` の 3 値判定と
+同じ理由 —— 分からないものを言い切ると、使える人の見積りから選択肢が消える)。
+`period-dependent` の帯は選ばせたまま、欄に「令和8年9月30日を含む課税期間まで」と
+条件を書く。日付の比較は `localIsoDate` の**利用者の暦日**で行う (`toISOString()` の
+UTC 日付だと日本の 0〜9 時に前日として判定する)。文字列は `YYYY-MM-DD` の辞書順で
+比べ、0 詰めするので桁が揃う。
+
+**同じ穴が 2 か所にあった。** 上の直しでは経営分析の card しか見ておらず、
+税務ページ ⑩ (src/renderer/pages/TaxPage.tsx) は**可否をどこでも見ていなかった** ——
+すぐ上の説明文が「簡易課税は基準期間の課税売上5,000万円以下」と書いているのに、
+その水準を超えても簡易課税を「✅ 最も納付が少ない方式」と出す。両方に
+`MethodAvailability` を渡し、⑩ には**外した方式とその理由**を出す
+(理由の文面は判定と同じ値から作るので、片方だけ直ることがない)。
+
+画面に書き写されていた日付も定数から作るようにした ——
+経営分析の「令和8年9月30日を含む課税期間まで」と、税務ページの「令和8年分まで」
+(こちらは**法人には不正確**でもあった)。和暦の組み立ては `bankFormat.ts` の
+`formatDate` 1 か所に置き、`era` だけを受けるよう引数の型を狭めた
+(`Pick<BankFormat, 'era'>`) —— 書面の外から和暦ラベルが要るときに
+`BankFormat` を丸ごと組ませないため。同じ節で見つけた**別の書き写し** 2 件も
+直した: 免税・簡易課税の境目を注記が固定値で出しており、設定で上書きすると
+**注記と計算が別の数字を言う**状態だった (`exemptionLimit` / `simplifiedLimit` へ)。
+
+対照は 2 本とも狙った所だけ落ちる: 期限の判定を外すと「期限のあとは選ばない」が、
+⑩ の可否を渡さないのを戻すと「期限を過ぎた時計」と「境目を超える売上」が落ちる。
+変異検査は `taxConsumption.ts` が **0.00% (2 件 未到達) → 100% (39 件)**。
+自分の標本が 2 度先に落ちて助かった: (1) 期限の文字列を読めるか確かめる前に
+`t <= end` の比較を置いていたので、'いつか' のような値が期限として通っていた
+('い' は '2' より大きい)、(2) 0 詰めを外す変異体は境目のすぐ隣の日
+(2027-09-10) でしか見えない。自作の ISO 日付の読み取りは
+`bankFormat.parseIsoDate` へ寄せた —— 日の検査が月の検査に包含されて**殺せない
+変異体**になっていたため (2 桁の日がどう外れても繰り上がりで月が変わる)。
+
+#### 経過措置の割合は表 1 つから (2026-09-10・パス 142)
+
+免税事業者等 (適格請求書発行事業者でない者) からの課税仕入れは、経過措置として仕入税額相当額の
+一定割合を控除できる。その割合は年月で段階的に縮小する —— `src/shared/invoiceTransition.ts` の
+`INVOICE_TRANSITION_STAGES` が**唯一の出所**で、段は `{ from, to, rate }` を持ち、
+`invoiceTransitionStageOn` / `invoiceTransitionRateOn` が今日の段を引く (措置の外と読めない時計は
+**null**。「0%」と混ぜない)。文面 (`invoiceTransitionScheduleLabel` /
+`invoiceTransitionCurrentLabel`) も表から組み、書類スタジオの注記と税務ページ ⑩-3 はそれを差し込む。
+
+2026-09-10 まではこの日程が**6 か所に手で書かれ、2 か所が令和 8 年度改正の前のまま**だった
+(知識台帳の 2 項目が同じ期間について 70% と 50% を言っていた)。散文の一致は
+`src/renderer/data/__tests__/invoiceTransitionConsistency.test.ts` が見る —— 割合が**段の順に**現れること・
+改正前の終わり (2029 年 9 月) を残していないこと・`免税事業者等` を書くファイルが台帳のとおりであること
+(母集団の走査)。期限 `INVOICE_TRANSITION_END` は `lint:rate-freshness` の台帳に在る。
+
+**この割合は計算に入っていない。** 本則課税の概算は課税仕入れの消費税を全額控除できる前提なので、
+画面はその旨を断る (区別して計算するには仕入れの入力を分ける必要がある)。
+
+#### 2割特例の後継 —— 3割特例と納税者の区分 (2026-09-10・パス 141)
+
+上の `twentyPercentMeasureStatus` は**法人の**帯である。個人事業者の課税期間は暦年なので
+「期限の属する課税期間」は令和 8 年分 (2026 年) と言い切れる —— 期限の翌日から
+1 年の period-dependent の帯は要らない。`TaxpayerKind` ('sole-proprietor' / 'corporation' /
+'unknown' —— 分からないときは unknown) を足し、個人事業者なら期限の年の末日まで `active`・
+翌年から `ended`。
+
+令和 8 年度税制改正で 2割特例の後継が決まった: **個人事業者に限り**令和 9 年分・
+令和 10 年分の納付税額を売上税額の 3 割とする「3割特例」(法人に後継は無い)。
+`thirtyPercentMeasureStatus(today, kind)` (src/shared/taxConsumption.ts) は
+`not-applicable` (法人) / `upcoming` / `active` / `ended` の 4 値で、読めない時計・日付は
+`upcoming` に倒す (使えると言い切らない)。比較 (`compareBusinessTaxMethods`) の
+`MethodAvailability.thirtyPercent` は**省略時 false** —— 他の 2 つと逆で、対象が区分と
+年分で決まるので、呼ぶ側が言い切れるとき (個人事業者かつ対象年分) だけ true にする。
+経営分析のカードは事業形態を「未選択」から選ばせ (未選択では額だけ出して候補に入れない)、
+税務ページ ⑩ は節税制度カタログと共有する個人事業主 / 法人の切替を読む。
+
+`lint:rate-freshness` の 2割特例の行には**猶予の帯** (`graceDays: 364`) を足した ——
+期限の翌日から 1 年は判定の period-dependent の帯と同じ理由で落とさずに警告し、
+帯を過ぎたら落とす。門と判定が同じ理由で同じ日に動く。後継の定数
+`THIRTY_PERCENT_MEASURE_END` (2028-12-31) は台帳に載せ、パス 140 の母集団の走査が
+台帳に無ければ落とす。
+
+#### 同じ事実に 4 つの数字が並んでいた —— 要約の数を誰も見ていなかった (2026-09-07)
+
+`verify:arch` は 18 個の live metric を実測と突き合わせていた。ところが**この表の
+数値行 15 件のうち 2 件は、その 18 件に入っていなかった** —— 気付いたのは
+「検証している metric の一覧」と「表の行」を並べて引き算したからである。
+
+**(A) 外部接続先ホスト。** 同じ事実に 4 つの数字が在った:
+
+```
+  この表           14 + ローカル 1   出典に「§4.3」と書いてある
+  §3.3 の見出し     26 ホスト
+  ゲートの実測      29 documented    (src/main の字面 28 件と照合)
+```
+
+しかも **出典が違う節を指していた** —— §4.3 は Ollama の CVE 対応表で、
+egress マトリクスは §3.3 である。ゲートが見ていたのは
+「`src/main` の字面 ⊆ 表」の**包含だけ**で、要約の数は誰も見ていない。
+§3.3 は「**下記以外のホストへの接続は存在しない**」という絶対の否定を置く節なので、
+その規模を表す数が静かにずれるのは具合が悪い。
+
+**(B) 不変条件の数。** 表は `| 1 |` から `| 16 |` まで番号を振っているのに、
+§8.1 の見出しは「不変条件 **15** 個」、この表も **15** だった。#16 を足した人が
+どちらの数も直していない。数そのものが「CI が何件を強制しているか」の主張である。
+
+metric を 4 つ足した (§3.3 の見出し / この表のホスト数 / §8.1 の見出し / この表の
+不変条件数)。**数を出す解析は 1 つに寄せた** —— `documentedEgressHosts()` を
+egress の照合と指標の両方が使う。数え方を 2 つ持てば、必ずどちらかが古くなる
+(それが今日の 4 つの数字の正体だった)。
+
+対照は 2 本とも**実物に対して**取った: §8.1 に 17 行目を足すと 2 つの metric が
+`16 → 17` で鳴り、§3.3 に宛先を 1 行足すと `29 → 30` で鳴る。
+
+**1 本目の対照は空振りし、それは私の対照が間違っていた** —— §3.3 の Host は
+**2 列目**なので、1 列目に偽ホストを書いた最初の対照では数が動かなかった。
+**鳴らない対照は「合格」ではなく、まず対照自身を疑う**。
+
+#### 変異検査の点数は総合しか見ておらず、死んだ 1 ファイルが見えなかった (2026-09-07)
+
+`docs/QUALITY.md` は変異検査の点数の**正典**で、他の文書はこれと突き合わされる。
+鮮度の検査 (`scripts/cross-doc-consistency.cjs` の `checkMutationScoreFresh`) は
+「doc の点数が `stryker.config.json` の `thresholds.break` を下回っていないか」を見る。
+
+**ところが読んでいるのは「Mutation score (total / covered)」の総合 1 行だけだった。**
+同じ文書はファイルごとの表も持ち、そこは誰も見ていない。実測すると **246 行のうち
+1 行が 0.00%** で (`src/shared/taxConsumption.ts`)、246 ファイルの総合はこの 1 件では
+動かないので**総合は緑のまま**だった。気付いたのは表を数値で並べ替えたからで、
+見た目 (245 行が 100.00) では隠れる。
+
+**危ないのは、0.00 が 2 つの別物を区別できないこと**:
+
+ - `mutate` に載せたのに**どの検査も覆っていない**モジュール
+   —— 変異検査が存在する理由そのもの
+ - モジュール直下の定数しか持たず、full run では静的変異体が「未到達」に落ちる
+   だけのファイル (`stryker.config.json` の注記にある既知の形)
+
+どちらも `0.00 | 0 殺 | 0 生存 | N 未到達` と出る。**前者を後者に見せかけて出荷できる。**
+
+`checkPerFileMutationScores` を足した —— 閾値を下回る行は
+`PER_FILE_BELOW_THRESHOLD` に理由つきで載っていなければ落ちる。台帳は**逆向きにも**
+照合する: 直ったのに残っている行と、表から消えた行も落とす (「直ったのに台帳に残る」は、
+次に本当に死んだファイルが来たときの目隠しになる)。表の行数に下限も置いた
+(実測 246・下限 200) —— 表の形が変わって 0 件になったときに「問題なし」と読ませない。
+
+今日の 1 件は**後者かつ既に古い**ものだった。subset 実行で実測すると
+`src/shared/taxConsumption.ts` は **100.00% (39 殺・生存 0・未到達 0)** —— パス 10 で
+判定関数と検査が入っている。台帳にはその実測値を理由として書き、次の週次実行で行が
+更新されることを記した。**「今日はたまたま無害」は仕組みではない。**
+
+self-test 11 件 (実在した形 / 台帳が在れば鳴らない / 理由が短い / **直ったのに残る** /
+**表から消えた** / 全部 100 なら鳴らない / 行が少なければ鳴る / 閾値と設定と doc の
+読めない組み合わせ 4 件)。対照は**実物**で取った —— 台帳を空にすると、実際の
+`docs/QUALITY.md` に対してファイル名つきで鳴る。
+
+**self-test が私の重複報告を教えてくれた**: 最初は理由の字数を前向き・逆向きの両方で
+見ており、短い理由 1 件で 2 件報告していた。同じ問題を 2 度言う検査は、件数を
+期待値にできない。字数は前向きだけで見る形に畳んだ。
+
+#### 「復旧不可な形で消去されます」は、消えなくても同じ顔をしていた (2026-09-07)
+
+`src/renderer/security/vault.ts` の `wipeAndReset` は **`onsuccess` / `onerror` /
+`onblocked` のどれでも `resolve()`** していた。解決させるのは正しい判断で、注記も
+理由を書いている (投げると UI がハングして、消せない端末で操作不能になる)。
+
+**ところが呼ぶ側 2 か所は、解決したことを「消えた」と読んで無条件に
+`window.location.reload()` していた。** 他のタブが IndexedDB の接続を掴んでいると
+削除は `onblocked` に落ちて**何も消えない**ので、
+
+ - 画面の約束「保管中の全トークン・暗号化メタデータ・現在のリカバリーキーが
+   **復旧不可**な形で消去されます」に反して**データは残る**
+ - 「実行後は…**最初のセットアップ画面**に戻ります」と書いてあるのに、保管庫は
+   まだ初期化済みなので戻るのは**ロック解除の画面**
+ - 唯一の報せは `console.warn` で**利用者には見えない**。しかも「500ms 後に
+   `indexedDB.databases()` で本当に消えたか見る」後追い診断は、直後の
+   `reload()` で**タイマーごと消えていた** —— 原理的に誰にも届かない診断だった
+
+ロック画面側の「完全初期化」(`src/renderer/security/LockScreen.tsx`) が特に悪い。
+押すのは**パスワードもリカバリーキーも失って閉じ出された本人**で、何も消えずに
+同じロック画面へ戻れば「ボタンが壊れている」としか見えない。
+
+解決を保ったまま**結果を返す** (`WipeOutcome = 'deleted' | 'blocked' | 'failed'`) 形に
+変え、呼ぶ側は「消えた時だけ再読込する」と書けるようにした。文面は
+`describeWipeOutcome()` の 1 か所で作る (呼ぶ側が 2 つあり、同じ結果に違う説明を
+出す理由が無い —— 打ち手はどちらも「他のタブを閉じて、もう一度」)。届かない
+後追い診断は消した。
+
+**消す前に他のタブへ施錠を配る** (`announceLockToOtherTabs()`)。理由は 2 つで、
+(1) 他のタブが書き込み中でなくなるので `onblocked` を踏みにくい、(2) 消した後に新しい
+保管庫を作ると、生きた鍵を持ったままのタブが**新しい保管庫では読めない暗号文**を書ける。
+
+**ここで `lockEverywhere()` を使うと直しが台無しになる** —— 購読している `App` が
+押したタブを即座にロック画面へ差し替えるので、**設定ページが unmount して結果を
+報せられない**。消せなかった理由が、まさにそれが要る場面で誰にも届かなくなる。
+実測で一度そう書いてしまい、`VaultControls` だけを描く検査では**見えなかった** ——
+`App` を丸ごと動かす検査を足して留めた (検査の harness が実物より狭いと、直した
+つもりの穴がそのまま残る)。
+
+**配るだけにするには、送受で同じ 1 本の `BroadcastChannel` を使う。**
+実 Chromium で 2 つを測った (`file://`):
+
+```
+  送った channel 自身が受け取ったもの        → []        (受け取らない)
+  同じ文書の別の channel が受け取ったもの    → ["lock"]  (受け取る)
+```
+
+つまり送信ごとに新しい channel を作ると、**このタブの中継が自分の合図を拾って自分を
+施錠する** —— jsdom だけの癖ではなく、実ブラウザでもそうなる。1 本に固定すれば
+除外は上段の仕様が保証する (「道は 1 本だけ作る」を検査で留めた)。
+
+消す側のタブの鍵は `wipeAndReset` が落とすが、**消えた時だけ**落とす —— 消せなかった
+なら何も変わっていないので半分だけ適用せず、利用者は他のタブを閉じてもう一度押せる
+(落としてしまうと「解錠のまま鍵は死んでいる」という、直前のパスで直したのと同じ
+食い違いを作る)。
+
+`onblocked` / `onerror` は fake-indexeddb では起こせないので、`deleteDatabase` を
+差し替えて**その枝だけ**を通す —— これで以前 `Stryker disable all` を掛けていた
+多タブの枝が測れるようになった。対照 3 本 (設定ページの分岐を外す / ロック画面の
+分岐を外す / どの枝も `'deleted'` を返す) は、それぞれ狙った検査だけを落とす。
+
+**私の検査自身も対照に落とされた**: 最初は消せなかった証拠を
+`toContain('他のタブ')` で見ていたが、**すぐ上の施錠の札**にも
+「同じ保管庫を開いている他のタブも施錠します」と書いてあるので、文言が 1 つも
+出ていなくても通る空の検査だった。`'failed'` の側で
+`not.toContain('他のタブ')` が落ちて気づいた ——
+**同じ画面の中に似た語が在るときは、その文面だけが持つ句で見る。**
+
+#### 「今すぐロック」は、アプリも他のタブも施錠していなかった (2026-09-06)
+
+`src/renderer/security/lockWorkspace.ts` は 2026-08-23 に作った施錠の門である ——
+鍵を落とす行と画面を施錠表示にする行が並んでいると、前者だけ消えても全検査が
+緑のまま通る (実測) ので、両方を 1 つの名前の中へ入れた。
+
+**ところが、利用者が実際に押す施錠はその門を通っていなかった。** 設定ページの
+「Vault を今すぐロック」は、門が消したはずの形をそのまま持っていた ——
+`getVault().lock()` を直に呼び、見た目は **そのページの局所状態**を立てるだけ。
+実測した中身は 3 段で悪い:
+
+1. **門の迂回。** production で鍵を落としているのは、門の外ではここ **1 か所だけ**
+   だった。門は在るのに一番目立つ施錠がそこを通らず、しかも誰も「全ての施錠経路が
+   門を通ること」を測っていなかった (= 名簿を作る物が名簿に載っていない形)。
+2. **アプリは施錠されない。** `src/renderer/App.tsx` の解錠状態はマウント時に 1 度
+   だけ読むので、**ロック画面は出ない**。サイドバーで他のページへ移れば見た目は
+   解錠のまま、資格情報の読み出しだけが落ちる —— しかも `getToken` は例外を飲むので
+   **「トークン未設定」と区別が付かない** (`src/renderer/security/vault.ts` の
+   `requireKey` の注記にある通り)。画面が言う「再度使うにはマスターパスワード入力が
+   必要です」は誰も要求しない。ロック画面が出るのは、そのあと自動施錠が落ちる
+   hidden 5 分 / 放置 15 分の後だった (偶然そう見えていた)。
+3. **他のタブに届かない。** 鍵は JS 文脈ごとに持つので、同じ保管庫を開いた別のタブは
+   **生きた鍵を持ったまま**残る。画面の文面は「**席を離れる前に**押すと…即座に
+   遮断します」で、席を離れた直後がまさに空白になる。
+
+直し方は**見た目を呼び出し側の仕事から外す**こと。`onLocked` を引数で受けている限り
+「局所状態を立てるだけのコールバック」を渡せてしまう (2 がそれ) ので、通知を
+**購読**にした —— 画面へ知らせるのは `App` が 1 度だけ登録する購読の仕事で、施錠を
+起こす側は「施錠する」以外を書けない。迂回そのものは型では止められないため、
+**名簿を測る検査**を置いた (`src/renderer/security/__tests__/lockPathCensus.test.ts`) ——
+production で鍵を落とせるのは門だけ。標本つきなので、許可外のファイルに同じ行が
+有れば鳴る。
+
+明示的な施錠と自動施錠は**別にした**: 自動施錠はこの文脈だけを施錠する
+(タブが hidden になるのは「同じアプリの別のタブへ移った」時でもあるので、配ると
+**利用者が今使っているタブを施錠してしまう**)。利用者が押した施錠は意図が
+「アプリを閉じる」なので、同じ保管庫を開いた全てのタブへ配る。
+
+配る道は `BroadcastChannel`。**実測 (実 Chromium)**: `file://` の 2 文書間でも届き、
+送った文書自身には返らない (輪にならない)。`postMessage` の直後に `close()` しても
+相手には届く。無い環境では黙って諦める —— そのタブは自分の自動施錠で落ちる。
+受け手は受けても**配り直さない** (配らなければ輪はそもそも起こり得ない)。
+
+**実機 2 枚のタブで確かめた** (`crossTabLock` suite): 同じ保管庫をタブ A・B で
+別々に解錠し、A で「🔒 ロックする」を押すと **A も B もロック画面へ差し替わる**。
+陰性対照は本物 —— 配る行を外して作り直すと、A は施錠され **B だけが解錠のまま
+残って落ちる** (これが直す前の姿である)。単体側は 13 本 + App を丸ごと動かす 4 本で、
+配る / 配らないの別、受けても配り直さないこと、道を閉じること、
+`BroadcastChannel` が無い環境でも施錠が成立することを留める。
+`src/renderer/security/lockWorkspace.ts` は変異検査 **100%**。
+
+#### 同じ id への書き換えの鎖は、タブをまたいでいなかった (2026-09-06)
+
+`store.update` は「読む → 復号 → 混ぜる → 暗号化 → 書く」で、暗号化が非同期なので
+読みと書きが**別のトランザクション**になる。2026-08-23 の実測では、その隙に別の
+書き換えが挟まると **lost update** (`{a:2}` と `{b:3}` を同時に投げると `a` が消える) と
+**消したはずの record の復活** が起き、しかも**どちらも呼んだ側には成功として返る**。
+これは id ごとの鎖 (`perId`) で直してある。
+
+**ただし鎖はメモリの Map で、この JS 文脈の中だけの物である。** ブラウザ版は
+単一の HTML を開くだけなので**2 枚目のタブは普通に開かれ**、別タブは別の鎖を持つ。
+つまり上の 2 つの失敗が、同じ形でそのまま戻る (デスクトップ版は窓が 1 つなので
+実質はブラウザ版の話)。
+
+`serialize` の中身を **Web Locks (`navigator.locks`)** で囲んだ ——
+錠の名前は `servicehub.record.<id>` で、オリジン単位なのでタブをまたぐ。
+無い環境 (jsdom の検査・拒まれる場合) では鎖だけで進む: 単一タブの保証は
+変わらないので**壊れるより遅れるほうを選ぶ**。
+
+**失敗の切り分けが要る。** `locks.request(name, cb)` は **cb の失敗もそのまま
+reject する**ので、素朴に catch して `run()` を呼び直すと**書き換えが 2 回走る**
+(1 回目は錠の中で実際に書いている)。`entered` の旗で「錠が取れたか」と
+「操作が失敗したか」を分け、後者は再実行しない。**この取り違えは、データ損失を
+直す変更がデータ破損を作る**形なので、対照で確かめてある (旗を外すと
+「2 回書かない」の検査だけが落ちる)。
+
+実機のタブ 2 枚は**ここでは試していない** (jsdom に錠も窓も無い)。確かめたのは
+錠の名前・二重実行しないこと・錠が無い/壊れている環境での退避の 3 点で、
+`src/renderer/data/store.ts` は変異検査 **99.65%** (残る 1 件は module 直下の
+`DB_NAME`。週次の全実行では未到達として扱われる既知の形)。
+
+#### 危機時に見せる窓口の照合が、片方向だった (2026-09-06)
+
+`src/renderer/data/counselorKnowledge.ts` は「テストで**全窓口が確証済み**を不変条件化する」と
+書いていた。実際の検査 (`src/renderer/data/__tests__/sourceVerification.test.ts`) が
+見ていたのは
+
+> 確証済みの各件が、出荷する一覧に**在る**か
+
+だけである。**危ないのは逆向き**で、危機応答で人に見せる `SUPPORT_RESOURCES`
+(`src/renderer/data/counseling.ts`) に手打ちの窓口を 1 行足すと、**出典が 1 件も
+無くても検査は全部緑のまま**通った。番号が古ければ、いま最も助けが要る人が
+誰にも繋がらない電話を掛ける。自殺予防のダイヤルなので、影響は「表示の誤り」で
+済まない。
+
+`SupportResource` に `kind` を足し (`hotline` / `emergency`)、
+`unverifiedSupportResources()` (`src/renderer/data/sourceVerification.ts`) が
+**出荷する側から**照合する:
+
+- `kind: 'hotline'` … `VERIFIED_SUPPORT_RESOURCES` に同じ `label|detail` が在り、
+  `verifyClaim` が `confirmed` (独立 2 出典・うち公的 1) を返すこと。
+  `detail` まで鍵にするので、**受付時間だけ書き換えた再確証なしの変更も鳴る**
+- `kind: 'emergency'` … 119 / 110 を必ず含み、**自前のダイヤルイン番号を持てない**
+  (未確証の窓口を `emergency` に隠せないようにする)
+
+種別を欄にしたのは、**足す人の手元で規則が見える**ようにするため —— 窓口を
+足す = `kind: 'hotline'` を書く = 出典が要る、が型から辿れる。
+
+対照が決定的だった: 出典の無い窓口を 1 行足すと、**新しい検査だけが落ち、
+以前からある片方向の検査は通り続ける** (24 passed / 1 failed)。守っていたつもりの
+向きでは何も守れていなかったことが、そのまま見える。
+
+番号の判定の境目も標本で留めた —— 先頭・末尾に置いた番号、区切りを除いた桁数
+(8 桁は番号扱いしない・9 桁から番号扱い)。最初は緩い標本しか無く、変異検査で
+5 件生き残って気づいた。`src/renderer/data/sourceVerification.ts` は **100% (80 変異体・無視 0)**
+—— 以前は 28 殺・**5 件が未到達の static** だったので、方針の定数
+(`DEFAULT_POLICY` / 公的種別) も読み直しで殺した。
+
+#### lint:parameter-prose (`scripts/lint-parameter-prose.cjs`) —— 画面が刷る数字の出所
+
+`src/shared/parameters.ts` の台帳に載せた値は利用者が上書きできる。計算は
+`useParameters()` の有効値を受け取るが、**説明文や警告文がモジュールの既定定数を
+直接刷っている**と、上書きした瞬間に**画面が自分の計算と違う数字を名乗る**。
+台帳の設計注記が禁じている「設定できるのに効かない」の**裏返し**で、
+こちらは効いているのに画面が古い数字で説明する。
+
+2026-09-06 の 1 日で 5 件出た。最悪だったのは税務ページ ⑩-3 で、全額控除の要件
+(課税売上割合 95% 以上・課税売上高 5 億円以下) を 3 か所で固定値から刷りながら、
+判定 `canDeductFully` は上書きされた値で行っていた —— 割合の境目を 90% にした
+利用者には、**90% で発火した ⚠ 警告が「割合 95% 未満」と嘘を言う**。
+残る 2 件は経営分析の消費税 card の免税・簡易課税の境目 (同じ段落の中)。
+
+**文言を直すだけでは次に足す人が同じ穴に落ちる**ので、使用そのものを台帳にした。
+`parameters.ts` が import している定数 (実測 **111 個**) を renderer の
+**251 ファイル**で走査し、直接使用を数える。既定への倒し込み —— `?? 定数`・
+`|| 定数`・既定引数 `x: T = 定数`・「上書きされているか」を見る `=== 定数` ——
+は規則の外 (いずれも**既定そのものについての式**なので嘘をつく形にならない)。
+それ以外の直接使用は `ALLOWED` に理由つきで登録する (現在 1 件: 退化した帯の
+三項による倒し込み)。走査が死んだら落ちる床を定数 90・ファイル 200 に置いた。
+
+**三項は許さない。** `cond ? 定数 : x` は倒し込みだが、JSX の
+`{cond ? 定数 : other}` と字面が同じで**刷るのと見分けが付かない**。同じ理由で
+**1 行に定数が 2 回出たら許さない** —— `effective === 定数 ? '既定' : 定数` のように
+許される形の隣で刷る抜け道を塞ぐ (行単位の検査なので、ここを見ないと 1 つ目の
+形だけで行全体が通る)。self-test は 16 例 (★ 標本 6・対照 10)。
+
+台帳に載っているのに**配線が留められていなかった**項目も同時に埋めた ——
+`fullCreditRatioThreshold` / `fullCreditSalesThreshold` は
+`src/renderer/pages/__tests__/parameterWiring.test.ts` に場面が無かった。60% に緩めると文言も判定も動く
+(既定の入力は割合 80% なので、95% では満たさず 60% では満たす) ことを留めた。
+
 #### lint:forbidden (`scripts/lint-forbidden-patterns.cjs`)
 
-ランタイムソース **≥ 400 ファイル**を **36 個の禁止パターン** で scan し、
+ランタイムソース **≥ 400 ファイル**を **37 個の禁止パターン** で scan し、
 1 件でも検出すれば fail。
+
+**走査の生存 (2026-09-07)。** 「1 件でも検出すれば fail」は、走査が的に当たって
+いる限りの話である。この検査の錨は `KNOWN_SUPPRESSIONS` の双方向照合で、走査が
+死んで例外の一致が消えれば鳴る —— 実測で `src` / `scripts` / `orchestration` の
+どれを落としても鳴った。**ところが錨は「例外が在る場所」にしか無い。** `assets`
+の根を落とすと **exit 0 のまま**で、そこに在る 1 本は `assets/sw.js`、つまり
+**出荷される Service Worker** (単一 HTML の外で全タブに常駐する唯一のスクリプト)。
+この根は 2026-08-22 に「丸ごと見えていなかった」から足したもので、その直しには
+錨が無く、同じ形で黙って元へ戻れた。
+
+区別が要る 3 つ: ファイルの**改竄**と**消失/改名**は `chain:verify` が鳴らす
+(`assets/sw.js` は保護対象・どちらも実測で確認)。鳴らなかったのは
+**ゲートが見るのをやめた**場合 —— 根を消す / 除外規則を広げる ——
+だけである。そこに `SCAN_ROOTS` (根ごとの本数の床) と `MUST_SCAN`
+(名前で在ることを確かめる出荷物) を置いた。実測 src 452 / scripts 76 /
+build 0 / orchestration 3 / assets 1 = 532。`build` の床は 0 で、理由を
+添えてある (アイコンだけ。ビルドフックが置かれた日に見るための根) ——
+**「床が無い」と「床が 0」を区別する。** 床と名指しはゲート自身の中に在るので、
+外側の証人 `src/shared/__tests__/forbiddenPatternWitness.test.ts` が
+「出荷物が名指しに入っている / 実物の走査がそこへ届いている / 実物の根が床を
+満たす」を別の紙から見る (対照 2 本: 名指しを空にすると 2 件・`assets` の床を
+0 にすると 1 件落ちる)。
 
 規則の一覧はここに写さず `FORBIDDEN_PATTERNS` (scripts/lint-forbidden-patterns.cjs)
 を唯一の出典とする —— **以前はここに 13 個を書き写していて、実体が 26 個に
@@ -2467,6 +3387,419 @@ Claude のモデル ID の直書き / 表への所属判定に `in` を使う形
 **黙らせずに消えた** — 共有側でアンカー・桁数・文字クラスの変異体を全て殺せている
 (`escape.ts` 28 mutants / 100%)。
 
+**そして 2026-09-12 (パス 184) に、同じ 3 つのファイルで「本体」が同じ形をして
+いたことが分かった。** 色の判定を 1 つにしたとき、**その色を埋める SVG の
+組み立てそのものは 3 写しのまま残されていた** —— `templates.ts` の 8 つの
+renderer、`web-templates.ts` の 8 つの `if` 枝、`TemplatesPage.tsx` の
+`renderPreview` (自ら「Mirror of the backend renderers」と名乗っていた)。
+実測すると **8 テンプレートすべてで、どの 2 つも一致しなかった**:
+
+| | プレビュー | ブラウザ版の書き出し | デスクトップ版の書き出し |
+| --- | --- | --- | --- |
+| `<?xml … ?>` | ない | ある | ある |
+| `role="img"` / `aria-label` | **ない** | **ない** | ある |
+| `font-family` | **ない** | **ない** | ある (明朝 / ゴシック) |
+| 長さ (プレゼン表紙) | 763 | 732 | 986 |
+
+害は 3 つ。(1) 名刺・証明書・履歴書の見出しはデスクトップ版だけ**明朝**なので、
+**プレビューで詰めた字面が書き出すと別の書体で組まれる** (字幅が違えば折り返しも
+変わる)。(2) **代替テキストが付くのはデスクトップ版だけ** —— 同じテンプレートでも
+ブラウザ版で書き出した SVG は読み上げできない。(3) 画面が「これが出ます」と
+見せている物が、どちらのビルドでも出ない。
+
+`src/shared/__tests__/templateCatalogParity.test.ts` は「**同じ id で同じ成果物を
+出すはず**の表」と書いて id・寸法・既定値を突き合わせており、そこは完全に
+一致していた。**成果物そのものを比べる者が居なかった。**
+
+組み立ては `src/shared/templateSvg.ts` の 1 つに畳み、いちばん豊かな
+デスクトップ版へ寄せた (他の 2 つは代替テキストと書体を失っていただけである)。
+字数の上限も `TEMPLATE_FIELD_LIMITS` の 1 か所にして、画面の入力欄と
+`validateParams` の両方が読む —— 画面は 80 / 120 / 48 / 400 を字面で持っており、
+`templates.ts` の欄ごとの JSDoc は「40 字以内 / 80 字以内 / 200 字以内 /
+24 字以内」と**実装の半分以下**を説明していた。留めるのは 3 本:
+
+- `src/shared/__tests__/templateSvgAgreement.test.ts` — **実画面を描いて** `<img>` の
+  data URL を復号し、両ビルドの書き出しと文字単位で比べる (25 検査)。
+  「一致」だけでは貧しい側へ寄せても通るので、**寄せた方向** (代替テキスト・
+  書体・証明書と履歴書の明朝) も直接留める
+- `src/shared/__tests__/templateRendererCensus.test.ts` — 4 つ目の写しが生まれたら
+  落ちる母集団の走査 (`<svg xmlns` かつテンプレート id 2 つ以上。
+  パス 184 の前 3 件 / 後 1 件)
+- 引数の入口は**畳まない** —— `validateParams` (IPC 境界・throw) と
+  `normalizeTemplateParams` (既定値へ落とす) の差は意図的で、
+  `src/shared/__tests__/templateParamsParity.test.ts` が理由つきで留めている
+
+移設に伴い Stryker の `ArithmeticOperator` の帯 (座標計算の算術だけ測らない
+139 行) も共有側へ移り、`lint:mutation-scope` の `KNOWN_BROAD` の行も移した
+(台帳は双方向なので、移し忘れれば落ちる)。
+
+**時刻を刷る所も同じ形だった** (2026-09-12 · パス 185)。保存値・取得値から
+`Date` を作って刷る所は **7 か所**あり、**読めない値を断っていたのは 1 か所だけ**
+(`src/renderer/data/backup.ts` の `backupExportedAt` —— パス 129 が
+`Number.isFinite(Date.parse(v))` で書いた)。残り 6 か所は素の
+`new Date(x).toLocale…()` を通す。これは例外を投げず、**英語で `Invalid Date` を
+返す**ので、日本語の画面に本物の時刻と並んで出る。
+
+`components/CloudSyncPanel.tsx` には `try`/`catch` が在ったが、**この場合に
+catch は一度も走らない** (`new Date(1e20)` は投げない) —— 守っている向きが
+違う形である (パス 12)。
+
+数字の時刻にはパス 98 が `Number.isFinite` を足していたが、**`Date` の範囲を
+見ていなかった**: `1e20` は有限で、しかも `new Date(1e20)` は Invalid Date。
+`1e20` は**有効な JSON** なのでバックアップから持ち込める。境界は
+`src/shared/isoDate.ts` の `MAX_TIMESTAMP_MS` (ちょうどまで有効・1 超えると無効)。
+
+判定を `src/shared/isoDate.ts` の `parseTimestamp` 1 つにし (`YYYY-MM-DD` の綴りを
+読む `parseIsoDate` と同じファイル —— **日付を読むのは 1 ファイル**)、7 か所
+すべてが通る。`src/shared/__tests__/timestampPrintCensus.test.ts` が
+`new Date(<引数>)` の値を `toLocale…` へ渡す形を原文の走査で禁じる。
+
+**この走査は対照が広げさせた**: 最初の規則は直に繋いだ形
+(`new Date(x).toLocale…`) だけを見ており、`CalendarPage` が直す前に書いていた
+2 段の形 (`const d = new Date(x);` → `d.toLocaleString(…)`) を**見逃していた**
+—— つまりこのパスを始めた当の欠陥に当たらない規則だった。対照 C1 で元の形へ
+戻したときに鳴らなかったので気付いた (パス 183 の対照 C3 と同じ形)。
+
+同じパスで `CalendarPage` の**終了 ≤ 開始**も画面で断るようにした。Google は
+この組を 400 で拒むので「押せば必ず失敗する」操作で、画面には API の英語の
+文面だけが出ていた (パス 109 の家系)。
+
+**断り書きの数字そのものがずれていた例** (2026-09-12 · パス 186)。`AssistantPage` の
+egress の断り (パス 106 / 107 が置いた「何が外へ出るか」) は「直近 16 **往復**までの
+会話」と書いていたが、送るのは `history.slice(-TURN_WINDOW)` ——
+**平らな発話の列の末尾 16 発話**で、往復 (利用者 + AI の 1 組) に直すと約 8 往復。
+**送る量を 2 倍に述べていた。**
+
+`pages/__tests__/aiEgressDisclosed.test.ts` には**この文を読む検査が既に在った** ——
+「会話と書いてあるか」「数字を字面で写していないか」までは見ており、
+**単位は見ていなかった**。正しい文を見て、違うことを訊いていた (パス 12 の家系)。
+いまは単位 (`${TURN_WINDOW} 発話`) をそこで留め、**実際に送る件数**は
+`pages/__tests__/assistantContextWindow.test.ts` が画面を描いて `invoke` の
+payload を数える (数字と文面だけ合わせても「口はあるが繋がっていない」になる)。
+
+`what:` は**1 つのテンプレートリテラル**で書く —— 走査の `whatOf` は `what:` の
+最初のリテラルだけを読むので、`+` で連結すると文の後半が検査の外に出る
+(直している途中で一度そうしてしまい、`往復` を見る検査が鳴って気付いた)。
+
+**パス 185 の走査は、暦の部品を読む形を見ていなかった** (2026-09-12 · パス 188)。
+パス 185 は `new Date(x)` → `toLocale…` を禁じたが、`Date` から読み出す口は他にも在り、
+**`toISOString` は「返す」のではなく「投げる」**:
+
+| 読み口 | 読めない `Date` での振る舞い |
+| --- | --- |
+| `toLocaleString` ほか | 英語で `Invalid Date` を返す (刷られる) |
+| `getFullYear` / `getHours` ほか | `NaN` を返す (`NaN/NaN/NaN NaN:NaN` と刷られる) |
+| **`toISOString`** | **`RangeError: Invalid time value` を投げる** |
+
+実測 7 か所のうち、**到達するのは 2 つ**だった (残り 5 つは自前の時計か定数 ——
+床として通しただけで欠陥ではない):
+
+- `src/shared/api/cursor.ts` の `toIsoDate` は `normalizeUsage` が `api.cursor.com` の
+  JSON の `date` をそのまま渡す所で、`Number.isFinite` だけを見ていた。**`1e20` は
+  有限で有効な JSON**なので、**1 行の日付が読めないだけで取得そのものが失敗する**。
+- `src/renderer/pages/LibraryPage.tsx` の `formatDate` は `NaN/NaN/NaN NaN:NaN` を刷り、
+  `formatBytes` は `NaN MB` を刷っていた (見出しの合計も 1 件混ざれば `NaN MB`)。
+
+**ライブラリの読み口には、表示より重い欠陥が 2 つ在った。**
+`list()` は `cur.value as LibraryItem` と**無検査でキャスト**していた:
+
+1. **`size: NaN` は 50 MB の上限を丸ごと無効にする。** `enforceLimits()` は
+   `all.reduce((a, it) => a + it.size, 0)` で合計を作り `total > MAX_BYTES` で古い物を
+   消すが、**`NaN > MAX_BYTES` は必ず false** —— 件数の上限だけが残る。
+2. **`createdAt: NaN` の控えは `list()` から丸ごと見えない。** `NaN` は IndexedDB の
+   有効なキーではないので `index('createdAt')` の走査に載らず、一覧に出ず・「削除」も
+   押せず・容量の集計にも入らないのに場所は占める (パス 136 の「消せない物を作らない」)。
+
+`metaFromStored` が読めない欄を `null` にし (行は落とさない —— `id` が在れば消せる)、
+`list()` は索引の後に**本体も走って索引が拾えなかった控えを足す**。画面は
+「時刻不明」「サイズ不明」と言い、合計から外した件数を `[data-library-unreadable]` に刷る。
+
+**そして走査そのものが壊れていた。** パス 185 の `rawDatePrints` はコメントと文字列を
+**並べた `replace`** で落としており、**行コメントの規則が文字列の中の `https://…` にも
+当たる**。`'https://api.cursor.com/…'` は `'https:` になって**閉じない引用符**が残り、
+その引用符が次の引用符と対にされて**間の本物のコードが消える**。実測で、
+`cursor.ts` を元の形へ戻した対照が**鳴らなかった** —— 走査はそのファイルの後半を
+見ていなかった。状態を持つ `stripNonCode` に替え、その壊れ方を標本で留めた
+(`src/shared/__tests__/timestampPrintCensus.test.ts`)。
+
+**「今」の写しは免除する** —— 引数が同じファイルで `new Date()` (引数なし) を受けた
+識別子なら、それは必ず有効な `Date` である (`EmotionsPage` の 30 日スパークライン)。
+台帳の免除ではなく**判定**で外し、両方向に標本を添えた。
+
+**「合計しか出さない」も同じ形だった** (2026-09-12 · パス 187)。不動産投資 /
+投資信託 / 士業の 3 画面は、同梱の見本 (snapshot) の行と利用者が登録した行を
+**1 本のリストにまとめて集計**する (追加ゼロでも画面が空にならない設計)。
+一覧の行には「デモ」の印が付くのに、**タイル・見出し・試算には付かない**。実測:
+
+| | 合計 (見本を含む) | 自分の分 |
+| --- | ---: | ---: |
+| 不動産 家賃収入 (月) | ¥913,000 | ¥90,000 |
+| 不動産 月次キャッシュフロー | +¥248,000 | +¥5,000 |
+| 投信 評価額 | ¥8,340,140 | ¥100,000 |
+| 投信 評価損益率 | +14.6% | +5.3% |
+| 投信 実質コスト 5 年累計 | ¥594,505 | ¥7,128 |
+| 士業 連携 | 2 名 | 1 名 (顧問料は見本の値) |
+
+最後の 2 行が一番効く。「実質コスト」の節は `totalValuation` を**元本として**
+コストを複利で積むので、自分の 10 万に対し **83 倍**の負担を刷っていた。
+士業の見出しの「顧問料」は snapshot の値で、この画面は連携先ごとの顧問料を
+持たない —— 自分の税理士を登録しても ¥33,000 は見本の額である。
+
+**規準は同じファイルに在った**: `computeFundPortfolio` は 2026-09-09 (パス 123)
+から銘柄ごとに `demo` を受けているのに、隣の `computeRealEstatePortfolio` は
+受けていなかった。いまは両方が `demoCount` / `userCount` / `userOnly` を返し、
+文面は 4 つの純関数が 1 か所で持つ (`demoMixNote` / `fundDemoMixNote` /
+`fundCostPrincipalNote` in `src/renderer/data/investments.ts`,
+`shigyoDemoMixNote` in `src/renderer/data/shigyoDirectory.ts`)。
+
+**見本の基準費用は自分の側に入れない。** snapshot の運営費用 ¥380,000 と返済
+¥200,000 を自分の分に足すと、同じ人の手残りが +¥5,000 → **−¥575,000** (符号が
+逆) になる。`src/renderer/data/__tests__/demoMixNote.test.ts` がこの対照を持つ。
+
+母集団は走査で数える (`src/renderer/__tests__/demoMixDisclosureCensus.test.ts`)
+—— 見本の行の目印 `user: false as const` を持つ画面はすべて `data-…-demo-mix` の
+断りを要求される。**粒度はファイル単位**で、ShigyoConsole のように 2 本の
+リストを混ぜる画面では「1 本について述べていれば通る」——
+どのリストで何を述べるかは画面のテストが持つ。
+
+**「1 度も起きていないこと」を「±0 という成績」として刷る面も在った**
+(2026-09-12 · パス 189)。株式の「ペーパー口座」の 5 タイル ——
+現在資産 / 現金残高 / **損益** / 初期入金 / 取引履歴 —— は、画面と
+書き出す HTML と書き出す Markdown の **3 面**で同じ組を刷る。実測
+(`fetchStocksSnapshotImpl` に既定の差し替え口):
+
+```
+  watchlist   7203.T:hold 9984.T:hold 6758.T:hold AAPL:hold MSFT:hold
+  positions   {}          history 0 entries
+  cash        1000000     initialCash 1000000     equity 1000000
+  pnl         0           pnlPct 0
+```
+
+3 面が揃って「**損益 +￥0 (+0.00%)**」を**緑で**刷る —— 1 度も約定していない
+口座について。0 は偶然ではなく、理由が 3 つ重なっている:
+
+| # | 理由 | 帰結 |
+| --- | --- | --- |
+| 1 | 取得のたびに `createPaperPortfolio(1_000_000)` から組み直す | 「取引履歴 N」は蓄積した記録ではない (2 度取っても 0) |
+| 2 | `applySignal` は `last.close` で買い、評価も同じ `latestClose` | 買いが起きても `equity === initialCash`、**損益は構造上 ±0** |
+| 3 | `SMA_CROSSOVER_STRATEGY` は最終足の**交差**だけを見る | 同梱のモック系列は滑らかなので 1 度も出ない |
+
+3 の母集団は閉じている —— `createMockStocksDataSource` の種は
+`(symbol.charCodeAt(0) || 1) * 1000` で**先頭 1 文字しか効かない**ので、
+`isSafeSymbol` が通す 39 文字が全部である。実測 **39/39 が hold**
+(`src/main/clients/__tests__/paperAccountReality.test.ts` が総当たりで留める)。
+だから「買い」の絞り込みは**必ず**空になり、「取引履歴」の節
+(`history.length > 0` の枝) は 1 度も描かれない。
+
+ブラウザ版はさらに単純で、`buildStocksSnapshot` が
+`{ cash: 1_000_000, initialCash: 1_000_000, positions: {}, history: [] }` という
+**固定のリテラル**を返す (ペーパートレードを一切行わない)。それでも帯は
+「過去データでの分析・シグナル生成・**ペーパートレードのみ稼働中**」と
+名乗っていた —— パス 161 が直した「実行形態に依る文を無条件に刷る」形の再発。
+
+規則は `src/shared/paperAccount.ts` に 1 つ置いた (`paperAccountView` は
+取引 0 件なら `pnl` / `pnlPct` を `null` にし、`pnlLabel` / `pnlSubLabel` /
+`pnlColor` が「—」「取引 0 件 — 損益は算定できません」「中立色」を返す;
+`paperAccountNote` / `simulationScopeNote` が実行形態ごとの文を持ち、
+`paperAccountExportNote` が同じことを書き出しに載せる —— 断りが画面にだけ
+在って渡す物に乗らない形はパス 41 で 1 度直している)。
+
+**時価評価の写しは 2 つ残っていた。** `src/main/clients/stocks.ts` は 2026-08 に
+「時価評価は `portfolioEquity` に 1 つだけ置く。…値段の取り違えは画面に出ないので、
+写し間違えても気付けない形だった」と**書いた**のに、実測ではその宣言の外に
+`src/renderer/pages/StocksPage.tsx` の `useMemo` と
+`src/renderer/data/stocksAnalysisWeb.ts` の私用 `portfolioEquity` が在った。
+**散文の宣言は鍵にならない** —— `portfolioEquity` / `watchlistPrices` を shared へ
+移して main とブラウザ版は再輸出で読み、
+`src/shared/__tests__/paperEquityOneRule.test.ts` が「保有 × 値段を累算器へ
+足し込む形」(`+= x.shares *`) が所有者の外に現れたら鳴る走査を持つ
+(1 取引の現金の動き `const cost = shares * price` は別の量なので当たらない)。
+
+**鳴らなかった対照を 1 つ記録する。** `if (price != null) equity += pos.shares * price`
+を `equity += pos.shares * (price ?? 0)` に替えても何も落ちない —— `+= 0` は
+足さないのと同じで、**等価な変異**だった。鳴る対照は
+`price ?? pos.avgCost` (値段が分からない玉を取得原価で埋め、「持っていないお金」を
+資産に載せる) で、これは 4 本落ちる。
+
+**既存の検査 8 本が私の変更で落ちた**のも記録に値する。どれも雛形が
+`history: []` のまま「+￥0」「+10.00%」「緑」を期待しており、
+**検査の側が「1 度も約定していない口座の損益」を正解として留めていた**。
+金額と色の検査は約定が在る口座に当てるべきもので、雛形に取引 1 件を足して
+そのまま通る (期待値は変えていない)。
+
+**渡す物が画面の図と別だった面も在った** (2026-09-12 · パス 190)。
+チームレーダーの「SVG を保存 (Canva 用)」は、画面が `title` **だけ**を送り、
+デスクトップ版は本体を**保存済み状態**から読んでいた。実測:
+
+```
+  svg title   編集したタイトル｜編集した部署 (2026-09-12)   ← 画面が送った値
+  svg header  部署: 保存した部署 · 評価時点: 2026-01-01     ← 保存済み状態
+  svg axes    営業力 | 顧客対応力 | プレゼン力 | …          ← 常に CANONICAL_AXES
+```
+
+1 枚のファイルが**2 つの部署・2 つの評価時点**を名乗り、まだ保存していなければ
+同梱の見本 3 人が書き出される。画面は何も言わない。しかも `TeamRadarState` に
+`axes` の欄が無かったので、**画面で付け直した軸名は保存にも書き出しにも 1 文字も
+届かない** (下書き = localStorage にしか残らない)。パス 118 の「口はあるが
+繋がっていない」の再発である。
+
+3 つ目は幾何だった。`renderTeamRadarSvg` は `m.scores[i] ?? 0` を 2 か所で使い、
+評点の無い軸の頂点が**中心そのもの**に落ちる (実測 720×720 で `360.0,370.0` = cx, cy)。
+画面の `RadarChart` は 2026-09-09 (パス 65/66) からその幾何を拒んでいたのに、
+**渡す物の側だけ**が古い形だった (パス 41 の「断りが画面にだけ乗る」+ パス 66 の
+「1 か所しか直していない」)。
+
+**ブラウザ版は既に正しかった** —— `web-shim.ts` は `tryGrabSvgFromPage()` で
+画面の SVG をそのまま出す。**デスクトップ版だけが 2 つ目の実装で外れていた。**
+
+**欠測はもう 1 つの形で画面にも残っていた。** `RadarChart` が見ていたのは
+`null` / `undefined` だけで、**未評価の `0` は中心に描かれていた** ——
+同じ画面の評点の欄が `isEvaluatedScore` を見て「—」と刷っているその横で。
+0 が入る道は下書きで、`sanitizeRadarDraft` の `finiteOrZero` が数でない値
+(古い版・手で直した localStorage) を 0 に倒す (評点の入力は 1-5 の range なので
+画面からは書けない)。
+
+直した形:
+
+| 置いた物 | 役目 |
+| --- | --- |
+| `src/shared/radarPlot.ts` | `isPlottableScore` (欠測の判定 1 つ) / `planRadarPlot` (誰を描くか) / `omittedRadarNote` (誰の何が欠けたか) / `axisName` |
+| `src/shared/teamRadarState.ts` | `TeamRadarState.axes` (省略可 —— 既存の保存値をそのまま読む) と `validateTeamRadarState` の判定 |
+| `src/main/clients/teamradar.ts` | `export-svg` の payload に `chart` (画面の図)、`save-state` に `axes`。SVG は描かなかった人を**図の中に**書く |
+| `src/renderer/data/memberCare.ts` | `isEvaluatedScore` が `isPlottableScore` へ委譲 (写しを持たない) |
+| `src/renderer/pages/TeamRadarPage.tsx` | 図・凡例・注記が同じ計画を読む。書き出しと保存に軸名を送る |
+
+**`verify:arch` の payload 台帳が私の直しの穴を教えた** —— `SaveStatePayload` に
+`axes` の欄が無い間、画面が送った軸名は `saveTeamRadarStateImpl` の分解で
+**黙って落ちていた**。同じパスの中に同じ形が残っていた。
+
+**「`--self-test` と書いてある」ことと、「`--self-test` が在る」ことは別だった**
+(2026-09-12 · パス 191)。`scripts/public-host-guard.cjs` は週次 CI
+(`knowledge-auto.yml --links=400`) が出典 URL の生死を確かめるときに、第三者の
+`302 Location:` で runner の網の内側へ向けられる経路を塞ぐ関門である。その冒頭は
+こう書いていた:
+
+```
+ * 使い方:
+ *   node scripts/public-host-guard.cjs --self-test
+```
+
+**`selfTest` は存在しなかった。** 関数も CLI の分岐も無く、引数を何にしても
+黙って exit 0 を返す。書いてあるとおりに叩いた人は「関門は無事」と読む。
+
+この形は 2026-08-25 の census を**すり抜けていた**。あのとき self-test を持つ
+`scripts/*.cjs` 28 本を 1 本ずつ壊して終了コードを測ったが、数えたのは
+**実装している物**だったので、名乗るだけのこれは母集団に入らなかった。
+起動経路を数え直した実測 (npm / workflow / **vitest** の 3 経路):
+
+```
+  --self-test を名乗る script      38 本
+    実装していて、走っている       37   ← 前回「2 本が孤児」と書いたのは私の
+                                        計測が vitest を経路に数えていなかった誤り
+    名乗るだけで実装が無い          1   ← public-host-guard.cjs
+```
+
+**走っていなかった分だけ、測られていなかった。** 行カバレッジで 126 文のうち
+**18 文が一度も実行されていない**。中身は関門の要そのものである:
+
+| 走っていなかった判定 | 何を塞ぐか |
+| --- | --- |
+| `parsed.username !== ''` | 資格情報を URL に載せた出典 (`https://u:pw@host/`) |
+| `64:ff9b::/96` の埋め込み IPv4 | NAT64 経由の IMDS (`[64:ff9b::169.254.169.254]`) |
+| `2002::/16` の埋め込み IPv4 | 6to4 経由の IMDS |
+| `::a.b.c.d` (IPv4-compatible) | 同上 |
+| `resolvesToPublicHost` の早期 return 全部 | 解決できない名前 → deny・答えが空 → deny・リテラルは解決しない |
+| `expandV6` の境界 6 つ | ゾーン ID・`::` が 2 つ・hex でない群・8 群の完全形・埋める余地が無い形 |
+
+**振る舞いはどれも正しかった** —— 34 形を手で当てて確かめた。無かったのは、
+それを留めておく物である。
+
+**そして、留めていなかった側でずれていた。** この判断は 3 実装ある
+(`src/renderer/network/proxy.ts` = client / `docs/PROXY_EXAMPLE.md` = Worker / この関門 = CI) が、
+`src/renderer/network/__tests__/proxyWorkerParity.test.ts` の比較は**リテラル (IP) の標本に限る**と明記して
+**名前を比較の外に置いていた** —— 「名前は解決してから判定するから」。
+その理由は正しいが、**解決を待たずに落とす名前**が両側に在る (loopback を指す
+名前。hosts の書き換えと検索ドメインの補完で揺れるので、揺れる物を唯一の守りに
+しないため)。そこが比較の外だった。名前 21 形を当てると **11 形で答えが違い、
+ずれは両方向**だった:
+
+```
+  CI 側だけが通していた : localhost. / LOCALHOST. / ip6-localhost / ip6-loopback
+                          ← 末尾ドットの迂回は 2026-07 の監査が client 側で
+                            見つけて直したもので、CI 側には来ていなかった
+  client だけが通していた: foo.localhost / foo.localhost.
+                          ← RFC 6761 §6.3 は `localhost.` 直下の**すべて**を
+                            loopback と定める。完全一致しか見ていなかった
+```
+
+つまり**両方が相手の穴を持っていた**。client 側は 2026-07 の監査と 2026-08 の
+変異検査を通った、このリポジトリで最も固い部類のファイルである —— それでも
+「比較の外に置いた区域」では 2 形を通していた。
+
+直した形:
+
+| 置いた物 | 役目 |
+| --- | --- |
+| `scripts/public-host-guard.cjs` の `selfTest` | 65 件の対照 (塞ぐ 31 / 通す 9 + URL 13 + 解決 12)。CLI の受け口と `module.exports` も付けた |
+| 同 `LOOPBACK_NAMES` / `trimDots` | loopback の別名 3 つと、先頭・末尾ドットの正規化 (client と同じ規則) |
+| `src/renderer/network/proxy.ts` の loopback 名の枝 | `*.localhost` を足した (RFC 6761 §6.3) |
+| `src/shared/__tests__/gateSelfTests.test.ts` | 「名乗ったなら叩くと走る」「実装が在るなら誰かが走らせる」の両方向 census + 関門の self-test を CI の中で実行 |
+| `src/renderer/network/__tests__/proxyWorkerParity.test.ts` の名前の節 | 名前を受け取る 2 実装を同じ標本へ。**設計で分かれる組は「違うこと」を留める** (client は先回り・CI は解決後に見る) |
+| `scripts/integrity-chain.cjs` の `PROTECTED` | 関門を保護対象へ (`src/renderer/network/proxy.ts` の三つ子の 3 人目だけ鍵が無かった)。ブロック #176 |
+
+**census を作りながら 3 度自分で踏んだ** —— (1) 起動経路に vitest を数えず
+「孤児 2 本」と誤った。(2) 名乗りを `/--self-test/` だけで見たので、**他の
+ファイルについて書いた注記**が名乗りとして当たった (`integrity-chain.cjs`)。
+(3) 起動経路を「テストが名前に触れている」で数えたので、散文で名前を挙げている
+だけのファイル (census 自身) が経路として数えられた。どれも**緩い判定が
+「走っている」を作ってしまう**形で、規則を実際の書き方へ当てる標本
+(`advertises` / `DISPATCHES` / `DEFINES` の 2 形ずつ) を同じ検査に添えて留めた。
+判定は「関数が在るか」ではなく**引数の受け口が在るか**にした —— 欠陥は
+「関数が無い」ではなく「叩いても何も起きない」だったから。
+
+**母集団を「仕組み」で引くと、同じ危険が別の経路で外に落ちる** (2026-09-13 · パス 192)。
+`ServiceActionPanel` (不動産投資 / 投資信託に載る「業務操作」) には独立した操作が
+2 つ在る —— 業務メモの記録 (`record-entry`) と改善提案 (`advise`)。この 2 つが
+**1 つの `phase` と 1 つの `result`** を共有していた。jsdom で実物の画面を押して測った:
+
+```
+  [1] メモを記録            → 「⚠ メモを受け付けました」が出る
+  [2] 続けて改善提案を押す   → ★ 記録の確認が消える (提案に置き換わる)
+  [3] 提案の後にもう一度記録 → ★ 提案が消える (確認に置き換わる)
+
+  [4] メモを記録 (飛行中)    → 記録ボタンは「送信中…」で disabled (正しい)
+  [5] その間に改善提案を押す  → ★ 記録ボタンが「メモを記録」に戻り disabled=false
+  [6] もう一度押す          → ★ 同じメモで record-entry が 2 回飛ぶ
+```
+
+[2]/[3] は**どちらも成功しているのに片方しか残らない**。記録の確認が消えた後、
+メモが受け付けられたことを示す物は画面に何も無い。[5]/[6] は
+**隣のボタンが自分の関門を外す**形である。
+
+パス 124 が 22 か所に入れた `useSubmitGuard` はここに来ていなかった。理由は
+母集団の引き方で、`src/renderer/__tests__/submitGuardCensus.test.ts` は **`useCollection` /
+`getRecordStore` を使うファイル**、つまり *record store に触るか*で線を引いていた。
+このパネルは業務メモを `serviceHub.invoke(id, 'record-entry', …)` で送る ——
+**記録する物は同じ**なのに経路が違うので、線の外側に落ちていた。
+パス 191 の「実装している物だけを数えた census が、名乗るだけの物を見落とした」と
+同じ形である。
+
+直した形:
+
+| 置いた物 | 役目 |
+| --- | --- |
+| `src/renderer/components/serviceActionMachine.ts` | 枠を 2 つ (`record` / `advice`)。`error` を `record/error` と `advise/error` に割る (1 つでは入れる枠が決まらない) |
+| `src/renderer/components/ServiceActionPanel.tsx` | `useSubmitGuard` を操作ごとに 1 つ。結果は枠ごとに刷る (`data-record-feedback` / `data-record-error` / `data-advise-error`) |
+| `src/renderer/__tests__/submitGuardCensus.test.ts` | 母集団を**危険**で引き直す —— record store に触るか、`record-entry` を `invoke` するか |
+
+**押している間の守りは `useSubmitGuard` が持つ** —— reducer の state は次の描画まで
+古い値なので、同じ tick の 2 度押しを止められない (`useSubmitGuard` は ref で見る)。
+枠ごとの discriminated union は残したので、**1 つの操作の中では**今も不整合が起きない
+(提案の失敗と古い提案は同じ枠なので両立しない)。
+
+外部サービスへ書く入口 (GitHub の issue / Slack / Gmail / DNS) は**今も規則の外**
+——書かれる先が相手方で、二重投稿は相手側に見える。パス 124 の「残る物」のまま。
+
 **暗号パラメータ**も同じ形だった。AES-GCM の IV 長と PBKDF2 の強度が
 `src/renderer/security/vault.ts` / `src/renderer/security/dataCrypto.ts` /
 `src/renderer/data/cloudBackup.ts` の 3 モジュールに書き写され、同期は
@@ -2492,6 +3825,21 @@ Claude のモデル ID の直書き / 表への所属判定に `in` を使う形
 1 つにすると片方の意図が壊れる。ゲートは等値比較 (`=== 0x7f`) だけを見て
 範囲比較は通すことで、この 2 つを区別している（**ゲートを足した直後に
 これを誤検出し、畳まない判断をした**）。
+
+**数字の読み取り**も 1 本ではなかった。画面の入力欄は
+`src/renderer/data/inputGuards.ts` の `readNumber` を通すのに、
+`src/shared/hydroponicCrops.ts` の `parseCropNumber` は `Number(カンマを外した文字列)`、
+`src/renderer/data/investments.ts` の `toAmount` は `Number(カンマと空白を外した文字列)`、
+`src/renderer/data/businessUnits.ts` はまた別の写しで、**同じ文字列が場所によって
+別の数**になっていた。`1,2` は画面では読めず品目では 12 (pH 1.2 と打った値が pH 12 として
+範囲 0〜14 を通る)、家賃は**画面が ⛔ を出しながら 15 円が保存され**、全角の「１２００」は
+逆に画面が読めて保存が断っていた。読み取りを `src/shared/readNumeric.ts` に寄せ、
+4 つの口をそこへ通した (69 mutants / 100%)。同時に飾り (通貨記号・単位・桁区切り) を
+落とす**位置**を決めた —— 位置を見ずに落としていた 2026-09-06 までは `100m2` が 1002、
+`0.5m3` が 0.53、`2024年12月31日` が 20241231 と読め、**値が返るので指摘も出なかった**
+(このモジュールが潰したはずの「黙って間違った数で計算する」が、0 ではなく別の数の形で
+残っていた)。`src/renderer/__tests__/numberReadingParity.test.ts` が口ごとに読みの一致を
+見るので、また 2 本目が生えたときに鳴る。
 
 `body.slice(` の検査は、連携先の**エラー応答本文をそのままエラー文字列へ**
 入れている箇所を捕まえる。この文字列は画面に出て不具合報告にも貼られるため、
@@ -2679,11 +4027,11 @@ NOPAT / ROIC。この 2 指標は計算していたのに表に無かったの�
 特別法人事業税率、大法人の資本金の境目、繰越欠損金の控除限度) を `calcCorporateTax(income, profile, r)` で
 受け、内部の各計算へ末尾引数で流す。事業税系の限界率 (`STATUTORY_BUSINESS_RATE_TIER*`) は率から組む
 (既定では定数と同じ値、検査で固定)。`taxConsumptionBusiness.ts` は `BusinessConsumptionParams` (税率 2 つ +
-2 割特例の割合、免税 / 簡易課税の境目、全額控除の 2 要件) を `compareBusinessTaxMethods` /
+2 割特例・3 割特例の割合、免税 / 簡易課税の境目、全額控除の 2 要件) を `compareBusinessTaxMethods` /
 `calcStandardTaxDetailed` / `compareInputCreditMethods` / `isTaxExempt` / `canUseSimplified` で受ける — 税率は
 「税」の消費税率 (`tax.consumptionStandardRate` / `ReducedRate`) を**共有**する。配線先は財務分析の法人税
 カードと消費税カード (`FinancialAnalysis` の props → `CorporateTaxCard`、Markdown レポートにも同じ率)、
-税ページ ⑩ (3 方式の比較・免税の注記・簡易課税の境目・仕入税額控除の方式比較)。
+税ページ ⑩ (4 方式の比較・免税の注記・簡易課税の境目・仕入税額控除の方式比較)。
 
 配線先 (wave 2d-2 — 年金・一時所得・ふるさと納税・貿易): `taxPublicPension.ts` は最低額 2 つを
 `PensionDeductionParams` で、`taxCasual.ts` は特別控除の上限を末尾引数で、`taxFurusato.ts` は自己負担額と
@@ -2713,7 +4061,7 @@ NOPAT / ROIC。この 2 指標は計算していたのに表に無かったの�
 強み / 要改善・帯の色) と Markdown の診断レポート。
 
 配線先 (wave 2f — 消費税の申告・納付・配当・感情ログ): `taxConsumptionSchedule.ts` は `ScheduleParams` (国税分の割合、
-2 割特例の割合 (「消費税 (事業者)」の項を共有)、中間申告の回数の境目 3 つ) を `calcAnnualTax` / `interimCount` /
+2 割特例・3 割特例の割合 (「消費税 (事業者)」の項を共有)、中間申告の回数の境目 3 つ) を `calcAnnualTax` / `interimCount` /
 `interimBandLabel` / `planInterim` / `sweepRates` / `breakEvenRate` / `buildSchedule` の末尾引数で受ける。地方消費税の比
 (22/78) は `localRatioOf(share)` が百万分率の整数比で組む (既定で `22 / 78` と同じ double — 1 − 0.78 の丸め誤差を
 持ち込まない)。区分の文言 (「48万円超 400万円以下 — 年1回」) も境目から出す。`taxDividend.ts` は `DividendParams`
@@ -2779,7 +4127,7 @@ export interface TokenSet {
 |---|---|
 | `docs/SECURITY.md` | 脅威モデル A1-A7 |
 | `docs/SECURITY_AUDIT.md` | 監査ログ (P0-P3 findings + defense-in-depth) |
-| `docs/OLLAMA_SECURITY.md` | Ollama CVE + 未パッチ OOB read 対策 |
+| `docs/OLLAMA_SECURITY.md` | Ollama CVE の台帳 (日付つき・再照合期限) と防御 |
 | `docs/OAUTH_SETUP.md` | GOOGLE_OAUTH_CLIENT_ID 設定 |
 | `docs/EMOTIONS_SETUP.md` | Anthropic API key 設定 |
 | `docs/SECURITY_SETUP.md` | HIBP / VirusTotal キー設定 |

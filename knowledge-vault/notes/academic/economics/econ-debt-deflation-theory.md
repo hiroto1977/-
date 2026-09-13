@@ -36,12 +36,11 @@ Irving Fisher ／ Hyman Philip Minsky ／ Ben Shalom Bernanke
 - [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 同じ思想家
 - [[econ-credit-cycle-theory|信用循環理論]] — 同じ思想家
 - [[econ-brainard-attenuation-principle|ブレイナードの減衰原理（Brainard attenuation principle／保守主義原理）——乗数が不確かなら政策は控えめに]] — 同じ思想家
-- [[econ-credit-channel-monetary-transmission|金融政策伝達の信用チャネル]] — 同じ思想家
-- [[econ-credit-channel-theory|信用チャネル理論]] — 同じ思想家
 - [[econ-financialization|金融化——経済の金融部門支配]] — 同じ思想家
 - [[econ-saving-glut-hypothesis|過剰貯蓄仮説]] — 同じ思想家
 - [[econ-endogenous-money|内生的貨幣供給理論（Endogenous Money Theory）]] — 出典を共有
 - [[econ-minsky-moment|ミンスキー・モーメント（金融不安定性仮説）]] — 出典を共有
+- [[econ-gordon-growth-model|配当割引モデル（ゴードン成長モデル）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

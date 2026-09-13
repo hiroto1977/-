@@ -38,7 +38,7 @@ Stephen Williamson ／ John H. Cochrane ／ Stephanie Schmitt-Grohé ／ Martín
 - [[econ-money-creation|信用創造と貨幣乗数]] — 出典を共有
 - [[econ-opportunity-cost|機会費用（opportunity cost）]] — 出典を共有
 - [[econ-paradox-of-thrift|倹約のパラドックス]] — 出典を共有
-- [[econ-taylor-rule|テイラールール]] — 出典を共有
+- [[econ-taylor-rule|テイラー・ルール——政策金利をインフレ率と産出ギャップに反応させる金融政策の指針と、中央銀行行動のベンチマーク]] — 出典を共有
 - [[econ-deaton-paradox|ディートンのパラドックス（消費の過剰平滑性）]] — 同分野の近傍
 - [[econ-envelope-theorem-milgrom-segal|包絡線定理——最適化問題のパラメータ感応度と経済学的応用]] — 同分野の近傍
 

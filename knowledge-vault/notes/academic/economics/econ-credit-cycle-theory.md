@@ -33,16 +33,16 @@ Nobuhiro Kiyotaki ／ John H. Moore ／ Hyman P. Minsky ／ Ben S. Bernanke ／ 
 - [Kiyotaki & Moore "Credit Cycles" Journal of Political Economy 105(2), 1997 — SSRN](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3914) `学術`
 
 ## 関連概念
-- [[econ-credit-channel-theory|信用チャネル理論]] — 同じ思想家
 - [[econ-debt-deflation-spiral-theory|債務デフレ・スパイラル理論]] — 同じ思想家
 - [[econ-debt-deflation-theory|債務デフレ理論]] — 同じ思想家
-- [[econ-credit-channel-monetary-transmission|金融政策伝達の信用チャネル]] — 同じ思想家
 - [[econ-financialization|金融化——経済の金融部門支配]] — 同じ思想家
 - [[econ-saving-glut-hypothesis|過剰貯蓄仮説]] — 同じ思想家
 - [[econ-brainard-attenuation-principle|ブレイナードの減衰原理（Brainard attenuation principle／保守主義原理）——乗数が不確かなら政策は控えめに]] — 同じ思想家
 - [[econ-debt-deflation-fisher-irving|債務デフレーション論——フィッシャーの過剰債務螺旋と大恐慌の金融的説明]] — 出典を共有
 - [[econ-forward-premium-puzzle|フォワード・プレミアム・パズル]] — 出典を共有
 - [[econ-macroprudential-policy|マクロプルーデンス政策]] — 出典を共有
+- [[econ-regulatory-arbitrage|規制裁定：企業による規制差異の利用と市場効率性]] — 出典を共有
+- [[econ-sterilized-intervention|不胎化介入（外国為替市場介入）]] — 出典を共有
 
 ## 関連
 - コレクション: [[学術概念]]

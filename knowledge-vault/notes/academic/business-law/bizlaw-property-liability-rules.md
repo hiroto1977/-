@@ -30,8 +30,8 @@ aliases:
 - [International Center for Law & Economics — Property Rules, Liability Rules, and Inalienability（解説）](https://laweconcenter.org/resources/property-rules-liability-rules-and-inalienability-one-view-of-the-cathedral-by-guido-calabresi-a-douglas-melamed/) `学術`
 
 ## 関連概念
-- [[bizlaw-product-liability-strict|製造物責任（PL法）の厳格責任法理と欠陥類型]] — 同分野の近傍
 - [[bizlaw-property-transfer|物権変動と対抗要件（民法177条）]] — 同分野の近傍
+- [[bizlaw-product-liability-strict|製造物責任（PL法）の厳格責任法理と欠陥類型]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

@@ -32,8 +32,8 @@ aliases:
 - [Wikipedia: Sándor Ferenczi — trauma theory, confusion of tongues, dissociation, relational psychoanalysis](https://en.wikipedia.org/wiki/S%C3%A1ndor_Ferenczi) `リファレンス`
 
 ## 関連概念
-- [[human-spacing-effect-ebbinghaus|分散効果——学習を時間的に分散させると記憶が長く定着する]] — 同分野の近傍
 - [[human-above-average-effect|平均以上効果（優越の錯覚）]] — 同分野の近傍
+- [[human-acceptance-commitment-therapy|アクセプタンス＆コミットメント療法（ACT）と心理的柔軟性]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

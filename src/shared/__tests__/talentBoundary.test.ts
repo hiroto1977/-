@@ -10,6 +10,7 @@ import {
   sanitizeInitiatives,
   sanitizeReports,
   sanitizeTalentState,
+  describeDroppedEntries,
 } from '../talent';
 
 /**
@@ -530,5 +531,66 @@ describe('talent —— 不足は下限で切る', () => {
     expect(g.total).toBe(120);
     expect(g.shortfall).toBe(0);
     expect(g.ok).toBe(true);
+  });
+});
+
+
+/**
+ * **「保存しました」と言いながら一部を捨てない。** (2026-09-08 · パス 89)
+ *
+ * `sanitizeTalentState` は上限で切り (`slice`)、形の合わない要素を落とす
+ * (`filter`)。`saveTalentState` は書く前に同じ sanitizer を通すので、
+ * 不適合な項目は**保存時に消える**。画面は `ok` だけを見て「保存しました」と出し、
+ * 読み直しでその項目が一覧から消えていた。
+ *
+ * 到達する実例: 滞留年数の入力は `<input type="number" max={60}>` だが HTML の
+ * `max` は助言的で (form submit でもない) **61 と打てば state に入る**。
+ * `isValidLadderMember` が `years > 60` を弾くので、保存でその人が落ちる。
+ *
+ * パス 74 は「保存の失敗を黙って捨てる」を直した。こちらは**成功と言いながら
+ * 一部を捨てている**形。
+ */
+describe('describeDroppedEntries — 落ちた項目を言う', () => {
+  const none = { reports: 3, initiatives: 2, members: 5 };
+
+  it('落ちた物が無ければ null (余計な断りを出さない)', () => {
+    expect(describeDroppedEntries(none, none)).toBeNull();
+  });
+
+  it('★ メンバーが落ちたら件数と上限を言う', () => {
+    const msg = describeDroppedEntries(none, { ...none, members: 4 });
+    expect(msg).not.toBeNull();
+    expect(msg).toContain('メンバー 1 件');
+    expect(msg).toContain(`上限 ${MAX_LADDER_MEMBERS} 件`);
+    // 理由は件数だけでは 2 通りを見分けられないので、両方を挙げる。
+    expect(msg).toContain('形式が合わない');
+    expect(msg).toContain('上限を超えています');
+  });
+
+  it('★ 3 種類が同時に落ちたら 3 つとも言う (1 つで満足しない)', () => {
+    const msg = describeDroppedEntries(none, { reports: 1, initiatives: 0, members: 2 });
+    expect(msg).toContain('部署の申告 2 件');
+    expect(msg).toContain('施策 2 件');
+    expect(msg).toContain('メンバー 3 件');
+  });
+
+  it('★ 落ちていない種類は挙げない', () => {
+    const msg = describeDroppedEntries(none, { ...none, members: 4 });
+    expect(msg).not.toContain('部署の申告');
+    expect(msg).not.toContain('施策');
+  });
+
+  /** 保存の経路で本当に落ちることの標本 (不在の検査に標本を添える)。 */
+  it('★ 滞留年数 61 年のメンバーは sanitize で落ちる (画面から打てる値)', () => {
+    const ok = { id: 'm1', name: '甲', step: 1, yearsInStep: 60 };
+    const tooLong = { id: 'm2', name: '乙', step: 1, yearsInStep: 61 };
+    const kept = sanitizeTalentState({ members: [ok, tooLong], reports: [], initiatives: [], updatedAt: '' });
+    expect(kept.members).toHaveLength(1);
+    expect(kept.members[0]?.id).toBe('m1');
+    // その 1 件を画面が言えること
+    expect(describeDroppedEntries(
+      { reports: 0, initiatives: 0, members: 2 },
+      { reports: 0, initiatives: 0, members: kept.members.length },
+    )).toContain('メンバー 1 件');
   });
 });

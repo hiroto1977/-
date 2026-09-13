@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { describe, expect, it, beforeEach, vi } from 'vitest';
+import { afterEach, describe, expect, it, beforeEach, vi } from 'vitest';
 import 'fake-indexeddb/auto';
 import { getRecordStore, _resetRecordStoreForTests } from '../store';
 import { IDENTITY_CIPHER, isSealedData, type RecordCipher } from '../recordCipher';
@@ -426,5 +426,95 @@ describe('封緘したままのバックアップは他の端末で開けない 
     await store2.importAll(backup, { replace: true });
     const list = await store2.list<{ memo: string }>('sales');
     expect(list.map((r) => r.data.memo)).toEqual(['MIGRATE-ME']);
+  });
+});
+
+
+/*
+ * ## 保存領域そのものへ触れられない端末 (2026-09-06)
+ *
+ * `loadMeta()` は `getItem` を `try` の**上**で呼んでいたので、サイトデータを
+ * ブロックしたオリジン (Chrome の `SecurityError`) では `isEncryptionEnabled()` が
+ * 投げていた。それは `components/BackupPanel.tsx` の描画中に呼ばれるので、
+ * **控えを取り出す画面が消える** (画面の側からは
+ * `pages/__tests__/storageRefusedScreens.test.ts` が測っている)。
+ *
+ * ここで測るのは「投げないこと」と、**投げない代わりに degraded に数えること** ——
+ * `null` を「まだ有効化されていない」と読んで上書きすると salt が失われる。
+ */
+describe('保存領域へ触れられない端末', () => {
+  function refuse(op: 'getItem' | 'removeItem', name = 'SecurityError'): void {
+    const real = globalThis.localStorage;
+    const boom = (): never => {
+      const e = new Error('Access is denied for this document.');
+      e.name = name;
+      throw e;
+    };
+    vi.stubGlobal('localStorage', {
+      getItem: op === 'getItem' ? boom : (k: string) => real.getItem(k),
+      setItem: (k: string, v: string) => real.setItem(k, v),
+      removeItem: op === 'removeItem' ? boom : (k: string) => real.removeItem(k),
+      clear: () => real.clear(),
+      key: (i: number) => real.key(i),
+      get length(): number {
+        return real.length;
+      },
+    });
+  }
+
+  /*
+   * **後片付けは `afterEach` に置く。** 各 it の末尾に書くと、守りを外す対照で
+   * ★ が投げて後片付けに届かず、断る `localStorage` が次の it へ漏れる ——
+   * 対照が独立でなくなり「守りを外すと ★ だけが落ちる」を示せない
+   * (2026-09-06 実測: 対照まで一緒に落ちた)。
+   */
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('★ isEncryptionEnabled() は投げない (描画中に呼ばれるので落とせない)', () => {
+    refuse('getItem');
+    expect(() => isEncryptionEnabled()).not.toThrow();
+    expect(isEncryptionEnabled()).toBe(false);
+  });
+
+  it('★ 読めない端末では有効化を断る (salt を上書きさせない)', async () => {
+    refuse('getItem');
+    // 門 (`isEncryptionEnabled()`) は false を返すので通ってしまう。
+    // **degraded を見ている `assertMetaWritable()` が止める。**
+    await expect(enableEncryption('passphrase-1234')).rejects.toThrow(/読めませんでした/);
+  });
+
+  /*
+   * 文面は 3 つのことを言う必要がある。**1 つだけ検査すると残りは何を書いても
+   * 通る** (変異検査が断片ごとの生存として鳴らした。ボールトの文面で踏んだのと
+   * 同じ形なので、ここでは最初から分けて留める)。
+   */
+  it('★ 解除の最後で消せなかったら、平文に戻したことまで言う', async () => {
+    await enableEncryption('passphrase-1234');
+    expect(isEncryptionEnabled()).toBe(true);
+    refuse('removeItem');
+    // レコードの復号は終わっているので、黙って true を返すと画面は
+    // 「暗号化が有効」と言いながら平文を保存する。
+    const err = await disableEncryption('passphrase-1234').then(
+      () => null,
+      (e: unknown) => (e instanceof Error ? e.message : String(e)),
+    );
+    expect(err, '成功として返してはいけない').not.toBeNull();
+    // ① 何が起きたか (レコードは平文に戻っている)
+    expect(err).toContain('レコードは平文に戻しましたが、暗号化設定をこの端末から消せませんでした');
+    // ② 例外の種別が文面に入る (原因の切り分けに要る)
+    expect(err).toContain('SecurityError');
+    // ③ 画面の表示が現実と食い違っていることを名指しする
+    expect(err).toContain('画面はまだ「暗号化が有効」と表示します。');
+    // ④ 次にやること
+    expect(err).toContain('もう一度「暗号化を解除」を実行してください。');
+  });
+
+  it('対照: 触れる端末では有効化も解除も通る', async () => {
+    await enableEncryption('passphrase-1234');
+    expect(isEncryptionEnabled()).toBe(true);
+    await expect(disableEncryption('passphrase-1234')).resolves.toBe(true);
+    expect(isEncryptionEnabled()).toBe(false);
   });
 });

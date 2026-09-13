@@ -2,7 +2,7 @@
 title: "ジョン・サール"
 type: thinker
 person_key: "サール|ジ"
-concept_count: 2
+concept_count: 3
 tags:
   - person
   - index
@@ -10,9 +10,10 @@ tags:
 
 # ジョン・サール
 
-> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
 
-## 学術概念（2件）
+## 学術概念（3件）
+- [[infosoc-chinese-room-argument-searle|サールの中国語の部屋（Chinese Room Argument）——構文操作は意味理解を保証しないとする「強いAI」批判]] — 哲学者ジョン・サール（JohnSearle）が論文「Minds,Brains,andPrograms」（Behavio…
 - [[infosoc-cooperative-principle-grice|協調の原理（グライス）——会話の格率と含意]] — 協調の原理（cooperativeprinciple）は、言語哲学者ポール・グライスが1975年の論考「論理と会話」で…
 - [[infosoc-speech-act-theory|言語行為論]] — 言語行為論（SpeechActTheory）は、J・L・オースティンが1955年のウィリアム・ジェイムズ講義で提唱し、…
 

@@ -39,7 +39,7 @@ aliases:
 - [[econ-yardstick-competition-shleifer|ヤードスティック競争——他社の費用を基準とする規制が費用削減を誘発する]] — 同じ思想家
 - [[mgmt-managerial-entrenchment|経営者の塹壕化（マネジリアル・エントレンチメント／managerial entrenchment）——経営者が自らを交代困難にして規律を逃れる現象]] — 同じ思想家
 - [[bizlaw-corporate-governance-code|コーポレートガバナンス・コード]] — 同分野の近傍
-- [[antimonopoly-surcharge|課徴金制度（独占禁止法）]] — 同分野の近傍
+- [[bizlaw-abuse-of-dominant-position-eu|EU競争法における支配的地位の濫用（第102条）]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

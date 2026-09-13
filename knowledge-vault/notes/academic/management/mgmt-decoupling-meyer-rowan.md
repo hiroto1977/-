@@ -38,7 +38,6 @@ aliases:
 - [[mgmt-institutional-entrepreneurship-dimaggio|制度的起業家精神（ディマジオ）]] — 同じ思想家
 - [[mgmt-organizational-commitment-meyer-allen|組織コミットメント三成分モデル——情緒的・存続的・規範的な結びつき]] — 同じ思想家
 - [[mgmt-boundary-spanning-roles-aldrich|境界連結役割——アルドリッチの組織間関係論と環境スキャン・資源獲得の橋渡し機能]] — 同分野の近傍
-- [[mgmt-organizational-hypocrisy-theory|組織的偽善理論]] — 同分野の近傍
 
 ## 関連
 - コレクション: [[学術概念]]

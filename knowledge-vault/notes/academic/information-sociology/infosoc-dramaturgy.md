@@ -32,7 +32,7 @@ aliases:
 
 ## 関連概念
 - [[infosoc-self-presentation|自己呈示とドラマトゥルギー（ゴッフマン）]] — 語彙が近い
-- [[infosoc-context-collapse|コンテキストの崩壊（文脈崩壊）]] — 同じ思想家
+- [[infosoc-context-collapse|コンテキストの崩壊（マーウィック＆ボイド）——ソーシャルメディアで別々の聴衆が一つの場に折り重なり、相手ごとの自己呈示の使い分けが崩れる]] — 同じ思想家
 - [[infosoc-framing-entman|フレーミング理論——現実の特定側面の選択と顕在化による意味の方向づけ]] — 同じ思想家
 - [[infosoc-goffman-stigma|スティグマ論（ゴッフマン）]] — 同じ思想家
 - [[infosoc-looking-glass-self-cooley|鏡に映った自己——他者の眼差しの想像を通じて形成される社会的自己]] — 同じ思想家

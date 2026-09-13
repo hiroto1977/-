@@ -30,8 +30,8 @@ aliases:
 - [Montgomery College, Introduction to Communication Inquiry & Theory — Agenda Setting Theory (first/second level, substantive & affective dimensions)](https://pressbooks.montgomerycollege.edu/commtheory/chapter/chapter-15-agenda-setting-theory/) `リファレンス`
 
 ## 関連概念
-- [[infosoc-agenda-setting|議題設定理論（アジェンダ・セッティング）]] — 同じ思想家
 - [[econ-financial-repression|金融抑圧]] — 同じ思想家
+- [[infosoc-media-agenda-setting|アジェンダ設定理論（マコームズ＆ショー）——メディアは「何を考えるか」ではなく「何について考えるか」を方向づけ、争点と属性の顕出性を公衆に転写する]] — 同じ思想家
 - [[infosoc-public-opinion-lippmann|リップマンの世論論——擬似環境とステレオタイプが現実認識を媒介する]] — 同じ思想家
 - [[infosoc-symbolic-interactionism|象徴的相互作用論（symbolic interactionism）]] — 出典を共有
 - [[infosoc-digital-divide-second-level-hargittai|第二レベルのデジタルデバイド——アクセスからスキル格差へ]] — 同分野の近傍

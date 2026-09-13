@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Section } from '../components/StatusBar';
+import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import { usePlan } from '../plan/usePlan';
 import { getPlan, hasFeature, requiredPlanForFeature, PLANS } from '../../shared/plan';
@@ -7,11 +8,21 @@ import {
   ROLE_ORDER,
   ROLE_LABEL,
   canAddMember,
+  canChangeRole,
   canRemoveMember,
   seatsRemaining,
   type Role,
 } from '../../shared/team';
-import { MEMBERS_COLLECTION, parseMember, countOwners, type Member } from '../data/members';
+import {
+  MEMBERS_COLLECTION,
+  parseMember,
+  countOwners,
+  duplicateMemberMessage,
+  duplicateMembersNote,
+  findDuplicateMembers,
+  sameEmailMember,
+  type Member,
+} from '../data/members';
 import { publicTransportCommute, carCommuteNonTaxableLimit, bonusWithholdingTax } from '../../shared/payroll';
 import { useParameters } from '../data/parameterOverrides';
 import { jpy } from '../../shared/formatters';
@@ -99,12 +110,15 @@ export function TeamPage() {
   const { records, add, edit, remove } = useCollection<Member>(MEMBERS_COLLECTION);
   const [form, setForm] = useState(EMPTY);
   const [error, setError] = useState<string>();
+  const submit = useSubmitGuard();
 
   const members = useMemo(() => records.map((r) => r.data), [records]);
   const planDef = getPlan(plan);
   const usage = { used: records.length, limit: planDef.maxSeats };
   const remaining = seatsRemaining(usage);
   const owners = countOwners(members);
+  // 同じメールアドレスの重複 (既に在る分)。一覧の上で「2 度数えられている」と言う (パス 125)。
+  const duplicateNote = useMemo(() => duplicateMembersNote(findDuplicateMembers(members)), [members]);
 
   const teamFeatureEnabled = hasFeature(plan, 'team-seats');
   const requiredPlan = requiredPlanForFeature('team-seats');
@@ -112,6 +126,12 @@ export function TeamPage() {
   async function onAdd() {
     try {
       const parsed = parseMember(form);
+      // 同じメールアドレスは 1 人 —— 2 度招待するとシートを 2 つ使い、一人当たりの金額が薄まる (パス 125)。
+      const dup = sameEmailMember(members, parsed);
+      if (dup !== null) {
+        setError(duplicateMemberMessage(dup));
+        return;
+      }
       if (!canAddMember(usage)) {
         setError(`シート上限 (${planDef.maxSeats}) に達しています。プランをアップグレードしてください。`);
         return;
@@ -124,7 +144,14 @@ export function TeamPage() {
     }
   }
 
-  async function onChangeRole(id: string, role: Role) {
+  async function onChangeRole(id: string, current: Role, role: Role) {
+    // 最後のオーナーを降格させると、オーナーが 0 人になって削除の守りごと外れる
+    // (`canRemoveMember(*, 0)` は誰でも削除できると答える)。削除と同じ強さで断る。
+    if (!canChangeRole(current, role, owners)) {
+      setError('最後のオーナーは降格できません（オーナーが 0 人になります）。');
+      return;
+    }
+    setError(undefined);
     await edit(id, { role });
   }
 
@@ -187,7 +214,7 @@ export function TeamPage() {
               <option key={r} value={r}>{ROLE_LABEL[r]}</option>
             ))}
           </select>
-          <button type="button" onClick={onAdd} disabled={!canAddMember(usage)}>
+          <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy || !canAddMember(usage)}>
             招待
           </button>
           <span style={{ fontSize: 12, color: 'var(--text-mute)' }}>
@@ -198,6 +225,11 @@ export function TeamPage() {
       </Section>
 
       <Section title="メンバー" count={records.length}>
+        {duplicateNote !== null && (
+          <p role="alert" style={{ color: '#f59e0b', fontSize: 12, marginBottom: 8, lineHeight: 1.6 }}>
+            {duplicateNote}
+          </p>
+        )}
         {records.length === 0 ? (
           <p style={{ color: 'var(--text-mute)', fontSize: 13 }}>
             まだメンバーがいません。最初のオーナーを招待してください。
@@ -220,19 +252,26 @@ export function TeamPage() {
                   <td style={{ padding: '4px 8px' }}>
                     <select
                       value={r.data.role}
-                      onChange={(e) => onChangeRole(r.id, e.target.value as Role)}
+                      onChange={(e) => onChangeRole(r.id, r.data.role, e.target.value as Role)}
                       style={{ ...inputStyle, width: 110 }}
                     >
                       {ROLE_ORDER.map((role) => (
-                        <option key={role} value={role}>{ROLE_LABEL[role]}</option>
+                        <option
+                          key={role}
+                          value={role}
+                          // 選べない理由を選択肢の側で見せる (押してから断られるより早い)。
+                          disabled={!canChangeRole(r.data.role, role, owners)}
+                        >
+                          {ROLE_LABEL[role]}
+                        </option>
                       ))}
                     </select>
                   </td>
                   <td style={{ padding: '4px 8px' }}>
                     <button
                       type="button"
-                      onClick={() => onRemove(r.id, r.data.role)}
-                      disabled={!canRemoveMember(r.data.role, owners)}
+                      onClick={() => void submit.run(() => onRemove(r.id, r.data.role))}
+                      disabled={submit.busy || !canRemoveMember(r.data.role, owners)}
                       aria-label="削除"
                     >
                       ×
