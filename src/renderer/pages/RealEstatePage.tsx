@@ -17,6 +17,7 @@ import {
   normalizeProperty,
   PROPERTY_TYPES,
   parsePropertyEntry,
+  PROPERTY_FORM_SPECS,
   propertyToForm,
   computeRealEstatePortfolio,
   demoMixNote,
@@ -787,13 +788,13 @@ export function RealEstatePage() {
               {PROPERTY_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
             </select>
           </label>
-          <GuardedNumber spec={{ label: '家賃 (月・円)', kind: 'money' }} value={propForm.monthlyRent} placeholder="100000"
+          <GuardedNumber spec={PROPERTY_FORM_SPECS.monthlyRent} value={propForm.monthlyRent} placeholder="100000"
             onChange={(v) => setPropForm((f) => ({ ...f, monthlyRent: v }))} />
-          <GuardedNumber spec={{ label: '取得価格 (円)', kind: 'money', allowZero: false }} value={propForm.purchasePrice} placeholder="12000000"
+          <GuardedNumber spec={PROPERTY_FORM_SPECS.purchasePrice} value={propForm.purchasePrice} placeholder="12000000"
             onChange={(v) => setPropForm((f) => ({ ...f, purchasePrice: v }))} />
-          <GuardedNumber spec={{ label: '月次経費 (任意)', kind: 'money', allowEmpty: true, allowZero: true }} value={propForm.monthlyExpenses} placeholder="0"
+          <GuardedNumber spec={PROPERTY_FORM_SPECS.monthlyExpenses} value={propForm.monthlyExpenses} placeholder="0"
             onChange={(v) => setPropForm((f) => ({ ...f, monthlyExpenses: v }))} />
-          <GuardedNumber spec={{ label: '月次返済 (任意)', kind: 'money', allowEmpty: true, allowZero: true }} value={propForm.monthlyLoan} placeholder="0"
+          <GuardedNumber spec={PROPERTY_FORM_SPECS.monthlyLoan} value={propForm.monthlyLoan} placeholder="0"
             onChange={(v) => setPropForm((f) => ({ ...f, monthlyLoan: v }))} />
           <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6, paddingBottom: 6 }}>
             <input type="checkbox" checked={propForm.occupied}

@@ -16,6 +16,7 @@
  */
 
 import { readNumeric } from '../../shared/readNumeric';
+import type { NumSpec } from './inputGuards';
 
 export const PROPERTIES_COLLECTION = 'realestate-properties';
 export const HOLDINGS_COLLECTION = 'mutualfund-holdings';
@@ -105,6 +106,25 @@ function numberFrom(v: unknown): number {
 function readTypedAmount(text: string): number {
   return text.trim() === '' ? 0 : (readNumeric(text) ?? Number.NaN);
 }
+
+/**
+ * **物件フォームの入力欄の性質。** 宣言を**書き手 (`parsePropertyEntry`) の隣に置く** ——
+ * 画面の ⛔ と保存の断りが食い違うと、**画面が赤で断っている値が保存される** (パス 214 で
+ * 経営サマリー側の同じ形を直した)。ここで一致していることは
+ * `__tests__/guardVsWriter.test.ts` が総当たりで留めている。
+ *
+ * 実測 2026-09-13 (パス 215): 4 欄 × 15 通りの入力で食い違い **0 件** ——
+ * `toAmount` が負・非有限・読めない値を落とし、取得価格は `<= 0` も落とすので、
+ * `guardNumber` が `fatal` を返す入力はすべて保存前に断られている。
+ * この検査は**将来のずれ**のためにある (たとえば天井 `sane` を宣言に足すと、
+ * 画面は ⛔ にするが `toAmount` は通してしまう)。
+ */
+export const PROPERTY_FORM_SPECS = {
+  monthlyRent: { label: '家賃 (月・円)', kind: 'money' },
+  purchasePrice: { label: '取得価格 (円)', kind: 'money', allowZero: false },
+  monthlyExpenses: { label: '月次経費 (任意)', kind: 'money', allowEmpty: true, allowZero: true },
+  monthlyLoan: { label: '月次返済 (任意)', kind: 'money', allowEmpty: true, allowZero: true },
+} as const satisfies Record<string, NumSpec>;
 
 export function parsePropertyEntry(input: {
   name?: unknown;
