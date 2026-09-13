@@ -103,6 +103,57 @@ export function roundRefund(n: number): number {
   return Math.max(1, Math.floor(n));
 }
 
+/**
+ * 課税期間として扱える年の範囲。**画面の宣言 (`min` / `max`) と同じ数の唯一の出所。**
+ *
+ * 2026-09-13 (パス 199) まで、この範囲は `TaxPage` の `GuardedNumber` の
+ * `min: 2000, max: 2100` にしか無く、`csInput` は
+ * `Math.round(num(csEndYear)) || 2026` で**素通りさせていた**。`guardNumber` は
+ * ⛔ (fatal) を出すが、**期限の日付は作られて刷られる**。実測 (画面の式をそのまま写して):
+ *
+ * | 打った文字列 | 刷られた確定申告期限 |
+ * | --- | --- |
+ * | `26` (2026 の打ち間違い) | **`1926-05-31`** |
+ * | `1` | `1901-05-31` |
+ * | `50` | `1950-05-31` |
+ * | `99` | `1999-05-31` |
+ * | `275760` | **`+275760-05`** (`YYYY-MM-DD` ですらない) |
+ *
+ * **2 桁で打つのは自然な打ち間違い**で、出てくるのは「明らかに変な値」ではなく
+ * **もっともらしい日付**である。しかも申告期限は利用者が行動する日付で、
+ * 外すと加算税・延滞税が付く。`Date.UTC` は年 0〜99 を 1900 年代に写す
+ * (ECMA-262 の `MakeDay` 経由・実測) ので、この写し替えは黙って起きる。
+ *
+ * 下限 2000 / 上限 2100 は「この試算が扱う制度の範囲」——消費税の税率・経過措置・
+ * 2割特例 / 3割特例はいずれも 2000 年以降の制度で、2100 年より先の規定は無い。
+ */
+export const MIN_FISCAL_YEAR = 2000;
+/** 課税期間として扱える年の上限 ({@link MIN_FISCAL_YEAR} の対)。 */
+export const MAX_FISCAL_YEAR = 2100;
+
+/**
+ * その課税期間から日付を作れるか (年が {@link MIN_FISCAL_YEAR}〜{@link MAX_FISCAL_YEAR}・
+ * 月が 1〜12 の整数)。
+ *
+ * **黙って丸めない**のが要点 —— 丸めると「26 年 3 月決算の申告期限」を
+ * 「2026 年 3 月決算の申告期限」として答えることになり、合っているように見えて
+ * 根拠が違う。範囲外は日付を出さず、呼び出し側が理由を述べる
+ * (`depreciation.ts` の `isSchedulableLife` と同じ契約)。
+ */
+export function isRepresentableFiscalPeriod(input: {
+  readonly fiscalEndYear: number;
+  readonly fiscalEndMonth: number;
+}): boolean {
+  return (
+    Number.isInteger(input.fiscalEndYear)
+    && input.fiscalEndYear >= MIN_FISCAL_YEAR
+    && input.fiscalEndYear <= MAX_FISCAL_YEAR
+    && Number.isInteger(input.fiscalEndMonth)
+    && input.fiscalEndMonth >= 1
+    && input.fiscalEndMonth <= 12
+  );
+}
+
 export interface ScheduleInput {
   readonly filer: FilerKind;
   /** 課税期間の末日の月 (1-12)。個人は 12。 */
@@ -175,8 +226,11 @@ export interface InterimPlan {
 
 /** 確定申告時に実際に動く金額。 */
 export interface FinalSettlement {
-  /** 確定申告・納付の期限。 */
-  readonly due: string;
+  /**
+   * 確定申告・納付の期限。**課税期間が範囲外なら `null`** (算定不能) ——
+   * もっともらしい誤った日付を刷らないため (2026-09-13 · パス 199)。
+   */
+  readonly due: string | null;
   /** 年税額（国税＋地方）。 */
   readonly annualTotal: number;
   /** 中間納付の合計。 */
@@ -365,6 +419,13 @@ export function planInterim(input: ScheduleInput, p: ScheduleParams = DEFAULT_SC
   const start = periodStart(input);
   const payments: InterimPayment[] = [];
 
+  // **課税期間から日付を作れないなら 1 件も作らない。** 中間申告の回数は
+  // 前期の税額だけで決まる (だから `count` / `band` は返す) が、納付期限は
+  // 課税期間から数えるので、範囲外の年から作った日付はもっともらしい嘘になる。
+  if (!isRepresentableFiscalPeriod(input)) {
+    return { count, priorNationalTax: prior, band: interimBandLabel(count, p), payments: [], total: 0, totalNational: 0 };
+  }
+
   if (count === 1) {
     const national = floorHundred((prior * 6) / 12);
     const local = floorHundred(national * localRatio);
@@ -416,8 +477,12 @@ export function planInterim(input: ScheduleInput, p: ScheduleParams = DEFAULT_SC
 
 // --- 確定申告 -----------------------------------------------------------
 
-/** 確定申告・納付の期限。 */
-export function finalDueDate(input: ScheduleInput): string {
+/**
+ * 確定申告・納付の期限。**課税期間から日付を作れないときは `null`**
+ * (範囲は {@link isRepresentableFiscalPeriod})。
+ */
+export function finalDueDate(input: ScheduleInput): string | null {
+  if (!isRepresentableFiscalPeriod(input)) return null;
   if (input.filer === 'individual') {
     return iso(nextBusinessDay(new Date(Date.UTC(input.fiscalEndYear + 1, 2, 31))));
   }
@@ -434,7 +499,10 @@ export function settle(input: ScheduleInput, annual: AnnualTax, interim: Interim
   const kind: FinalSettlement['kind'] = amount > 0 ? 'payment' : amount < 0 ? 'refund' : 'none';
 
   let refundWindow: FinalSettlement['refundWindow'];
-  if (kind === 'refund') {
+  // **期限が出ていなければ入金時期も出さない。** `due` は課税期間が範囲外だと
+  // `null` になる (パス 199)。`${due}` をそのまま日付にすると `"nullT00:00:00Z"`
+  // = Invalid Date になり、「入金は Invalid Date 頃」という文が出る。
+  if (kind === 'refund' && due !== null) {
     const base = new Date(`${due}T00:00:00Z`);
     refundWindow = input.eTax
       ? {

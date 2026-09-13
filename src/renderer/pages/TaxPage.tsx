@@ -6,7 +6,7 @@ import { invoiceTransitionCurrentLabel, invoiceTransitionScheduleLabel } from '.
 import { tableStyle, thStyle, tdStyle } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { RealtimeTicker, type RealtimeRow } from '../components/RealtimeTicker';
-import { jpy } from '../../shared/formatters';
+import { DASH, jpy } from '../../shared/formatters';
 import { localIsoDate } from '../../shared/localDate';
 import { parseAmountInput } from '../components/serviceActionUtils';
 import { GuardSummary, GuardedNumber } from '../components/GuardedNumber';
@@ -15,6 +15,9 @@ import {
   buildSchedule,
   type ScheduleInput,
   type TaxMethod,
+  MIN_FISCAL_YEAR,
+  MAX_FISCAL_YEAR,
+  isRepresentableFiscalPeriod,
 } from '../../shared/taxConsumptionSchedule';
 import {
   VAT_REFERENCE,
@@ -506,8 +509,14 @@ export function TaxPage() {
   const csInput = useMemo<ScheduleInput>(
     () => ({
       filer: csFiler,
-      fiscalEndMonth: csFiler === 'individual' ? 12 : Math.min(12, Math.max(1, Math.round(num(csEndMonth)) || 12)),
-      fiscalEndYear: Math.round(num(csEndYear)) || 2026,
+      // **黙って丸めない・黙って既定に倒さない** (2026-09-13 · パス 199)。
+      // 以前は月を `Math.min(12, Math.max(1, …))` で丸め (99 → 12)、年は
+      // `|| 2026` で 0 を既定に倒しつつ **`26` や `1` はそのまま通していた** ——
+      // その結果 `1926-05-31` のような**もっともらしい誤った申告期限**が出ていた。
+      // いまは打った値をそのまま渡し、`isRepresentableFiscalPeriod` が範囲外を
+      // 断り、下の注記が理由を述べる。
+      fiscalEndMonth: csFiler === 'individual' ? 12 : Math.round(num(csEndMonth)),
+      fiscalEndYear: Math.round(num(csEndYear)),
       extendedDeadline: csFiler === 'corporate' && csExtended,
       method: csMethod,
       taxableSales: num(ctSalesStr) + num(ctReducedSalesStr),
@@ -1562,6 +1571,19 @@ export function TaxPage() {
           <GuardedNumber spec={{ label: '税率 (%) 直接入力', kind: 'percent', allowZero: true, max: MAX_RATE * 100 }} value={csRateStr} onChange={setCsRateStr} width={130} />
         </div>
 
+        {/* **期限を出せないなら、その理由をその場で言う** (パス 199)。欄の ⛔ は
+            「2000〜2100 で入力してください」と言うが、期限の欄が空いている理由は
+            別に述べる必要がある。 */}
+        {!isRepresentableFiscalPeriod(csInput) && (
+          <div
+            data-cs-period-unrepresentable
+            style={{ border: '1px solid #e5484d', borderRadius: 8, padding: '8px 12px', marginBottom: 12, fontSize: 12, color: '#e5484d', lineHeight: 1.6 }}
+          >
+            <strong>申告期限・中間納付の日程は算定していません</strong> —— 課税期間の終了年は{' '}
+            {MIN_FISCAL_YEAR}〜{MAX_FISCAL_YEAR} の西暦 4 桁、決算月は 1〜12 で入力してください
+            （<strong>2 桁で入力すると 100 年ずれた期限が出る</strong>ため、丸めずに断っています）。
+          </div>
+        )}
         <div
           data-cs-verdict
           data-kind={schedule.settlement.kind}
@@ -1584,13 +1606,13 @@ export function TaxPage() {
             中間納付 {schedule.interim.count === 0 ? 'なし' : `${schedule.interim.count} 回 合計 ${jpy(schedule.interim.total)}`}
           </div>
           <div style={{ fontWeight: 700 }}>
-            {schedule.settlement.kind === 'payment' && <>確定申告で <strong>{jpy(schedule.settlement.amount)} を納付</strong>（期限 {schedule.settlement.due}）</>}
+            {schedule.settlement.kind === 'payment' && <>確定申告で <strong>{jpy(schedule.settlement.amount)} を納付</strong>（期限 {schedule.settlement.due ?? DASH}）</>}
             {schedule.settlement.kind === 'refund' && (
               <span style={{ color: '#3ec98a' }}>
-                確定申告で <strong>{jpy(Math.abs(schedule.settlement.amount))} が還付</strong>（申告期限 {schedule.settlement.due}）
+                確定申告で <strong>{jpy(Math.abs(schedule.settlement.amount))} が還付</strong>（申告期限 {schedule.settlement.due ?? DASH}）
               </span>
             )}
-            {schedule.settlement.kind === 'none' && <>確定申告での納付・還付は発生しません（期限 {schedule.settlement.due}）</>}
+            {schedule.settlement.kind === 'none' && <>確定申告での納付・還付は発生しません（期限 {schedule.settlement.due ?? DASH}）</>}
           </div>
           {schedule.settlement.refundWindow && (
             <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>
