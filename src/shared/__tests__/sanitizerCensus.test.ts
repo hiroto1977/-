@@ -54,17 +54,30 @@
  * のような形では「s が仮引数である」ことを導けない (パス 200 の
  * `timestampPrintCensus` と同じ限界)。
  *
- * 走査後に残る裸の `Math.max(0, 参照)` は **27 件**で、うち **10 件**が
- * アローの仮引数と名前が一致する。中身を見た限りいずれも
+ * **パス 202 で判定を関数本体へ広げた。** それまでは「同じ行で有限を見ているか」
+ * しか判定しておらず、数行上で確かめてから下で使う形を偽陽性として挙げていた
+ * (`freee.ts:111` はパス 153 の `Number.isFinite(d.amount)` が 6 行上・
+ * `depreciation.ts:229` は 2 行上)。
  *
- * - 同じ関数の**数行上**で有限を見ている (`freee.ts:111` はパス 153 の
- *   `Number.isFinite(d.amount)` が 6 行上に在る —— 同じ行しか見ない走査の**偽陽性側の取り逃し**)
- * - すでに消毒済みの値から導いた局所値 (`taxDeductions` / `taxCalc` / `invoiceTax` ほか)
- * - 作図の座標 (`charts.ts` の `t`・`KpiPage` の棒の高さ)・同梱の静的表 (`villageData`)
+ * 広げた後の実測 (2026-09-13):
  *
- * のいずれかだが、**「構造上あり得ない」ことを示したわけではなく、目で見て
- * 分類しただけである。** アローを見られる走査にするか、境界で消毒する形
- * (`saneFundamentals` のような) へ寄せるかは次のパスの仕事。
+ * | | 件数 |
+ * | --- | ---: |
+ * | 裸の `Math.max(0, 参照)` (コメント除く) | 49 |
+ * | うち関数本体でも有限を確かめていない | 31 |
+ * | **そのうち仮引数** | **0** |
+ * | アローの仮引数 (走査が見られない) | 7 |
+ * | `const` / `let` で束縛済みの局所値 | 23 |
+ *
+ * **仮引数の残りは 0 件。** 残る 31 件はアローの仮引数 7 件
+ * (`FinancialAnalysis` の円グラフ ×2・`villageData`・`BusinessPage`・`KpiPage`・
+ * `invoiceTax`) と局所値 23 件で、いずれも消毒済みの値から導いた物・作図の座標・
+ * 同梱の静的表だが、**「構造上あり得ない」ことを示したわけではなく分類しただけ**
+ * である。アローを見られる走査にするか、境界で消毒する形 (`saneFundamentals` の
+ * ような) へ寄せるかは次のパスの仕事。
+ *
+ * **走査を直したら、その走査で出した数も測り直す** —— パス 201 の散文は
+ * 「27 件 / うちアロー 10 件」と書いており、どちらも外れていた。
  */
 
 import path from 'node:path';
@@ -136,21 +149,68 @@ export function splitArgs(src: string, from: number): { readonly parts: readonly
 
 /** 識別子 / ドット連結のみ (演算子を含まない) か。 */
 const BARE = /^[A-Za-z_$][\w$]*(?:\??\.[A-Za-z_$][\w$]*)*$/;
-/** 同じ行で有限を見ているか。 */
-const SAME_LINE_GUARD = /Number\.isFinite|isFiniteNumber|\bisFinite\(|nonNeg\(|finiteOr/;
 
-/** `idx` を含む関数の仮引数名。直前の `function NAME(` から採る。 */
-export function enclosingParams(src: string, idx: number): ReadonlySet<string> {
+/**
+ * `name` の有限性を `body` の中で確かめているか。
+ *
+ * **同じ行ではなく関数本体を見る。** パス 201 の初版は同じ行だけを見ており、
+ * 数行上で `!Number.isFinite(x)` を確かめてから下で `Math.max(0, x)` と書く形
+ * (`freee.ts` の取引金額・`depreciation.ts` の月数) を**偽陽性として挙げていた**。
+ * 名前を指定して探すので「別の欄を確かめている」では通らない。
+ */
+export function establishesFinite(body: string, name: string): boolean {
+  const n = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(
+    `(?:Number\\.isFinite\\(\\s*${n}\\b|isFiniteNumber\\(\\s*${n}\\b`
+    + `|nonNeg\\(\\s*${n}\\b|finiteOr\\w*\\(\\s*${n}\\b)`,
+  ).test(body);
+}
+
+/** `openParen` の位置から関数本体 (`{ … }`) を切り出す。 */
+export function functionBody(src: string, openParen: number): string {
+  let i = openParen;
+  let depth = 0;
+  for (; i < src.length; i++) {
+    const c = src[i];
+    if (c === '(') depth++;
+    else if (c === ')') {
+      depth--;
+      if (depth === 0) {
+        i++;
+        break;
+      }
+    }
+  }
+  while (i < src.length && src[i] !== '{') i++;
+  const start = i;
+  depth = 0;
+  for (; i < src.length; i++) {
+    const c = src[i];
+    if (c === '{') depth++;
+    else if (c === '}') {
+      depth--;
+      if (depth === 0) {
+        i++;
+        break;
+      }
+    }
+  }
+  return src.slice(start, i);
+}
+
+/** `idx` を含む関数の仮引数名と本体。直前の `function NAME(` から採る。 */
+export function enclosingFunction(src: string, idx: number): { readonly params: ReadonlySet<string>; readonly body: string } {
   const heads = [...src.slice(0, idx).matchAll(/(?:export\s+)?function\s+[A-Za-z_$][\w$]*\s*\(/g)];
   const head = heads[heads.length - 1];
-  if (head === undefined) return new Set<string>();
-  const { parts } = splitArgs(src, head.index + head[0].length);
+  if (head === undefined) return { params: new Set<string>(), body: '' };
+  const open = head.index + head[0].length - 1;
+  const { parts } = splitArgs(src, open + 1);
   const names = new Set<string>();
   for (const p of parts) {
     const id = p.replace(/^readonly\s+/, '').match(/^([A-Za-z_$][\w$]*)/);
     if (id?.[1] !== undefined) names.add(id[1]);
   }
-  return names;
+  return { params: names, body: functionBody(src, open) };
 }
 
 export interface BareMaxHit {
@@ -159,23 +219,52 @@ export interface BareMaxHit {
   readonly arg: string;
 }
 
-/** 素の `Math.max(0, 仮引数)` を数える。 */
+/** 素の `Math.max(0, 仮引数)` を数える (床の側)。 */
 export function findBareMaxSanitizers(source: string, file: string): readonly BareMaxHit[] {
+  return findBareClamps(source, file, /Math\.max\(\s*0\s*,/g, (parts) => (parts.length === 1 ? (parts[0] ?? '') : null));
+}
+
+/**
+ * 素の `Math.min(<リテラル/定数>, 仮引数)` を数える (天井の側)。
+ *
+ * **第 1 引数がリテラルか全部大文字の定数のときだけ見る。** そうでない
+ * `Math.min(<計算した値>, r.<上限>)` は**裸の参照のほうが上限**で、
+ * その上限は `parameters.ts` の台帳が `Number.isFinite` と min/max の両方で
+ * 検証している (`parameterIssue` → `sanitizeParameterOverrides` →
+ * `resolveParameters`)。台帳経由の上限は非有限になり得ないので、
+ * 免除を並べるのではなく**規則の側で見ない**ことにしてある (パス 202 で実測)。
+ */
+export function findBareMinSanitizers(source: string, file: string): readonly BareMaxHit[] {
+  const CAP = /^(?:\d[\d_]*(?:\.\d+)?|[A-Z][A-Z0-9_]*)$/;
+  return findBareClamps(source, file, /Math\.min\(/g, (parts) => {
+    if (parts.length !== 2) return null;
+    if (!CAP.test(parts[0] ?? '')) return null;
+    return parts[1] ?? '';
+  });
+}
+
+/** 床と天井で共有する走査。`pick` が「消毒される値」を選ぶ。 */
+function findBareClamps(
+  source: string,
+  file: string,
+  re: RegExp,
+  pick: (parts: readonly string[]) => string | null,
+): readonly BareMaxHit[] {
   const hits: BareMaxHit[] = [];
   const lines = source.split('\n');
-  const re = /Math\.max\(\s*0\s*,/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(source)) !== null) {
     const { parts } = splitArgs(source, m.index + m[0].length);
-    if (parts.length !== 1) continue; // Math.max(0, a, b) は床ではなく最大値
-    const arg = parts[0] ?? '';
+    const arg = pick(parts);
+    if (arg === null) continue;
     if (!BARE.test(arg)) continue; // 式の床 (a - b) は上流の責務
     const line = source.slice(0, m.index).split('\n').length;
     const text = lines[line - 1] ?? '';
     if (/^\s*(\/\/|\*|\/\*)/.test(text)) continue; // 散文の中の引用
-    if (SAME_LINE_GUARD.test(text)) continue; // 同じ行で有限を見ている
+    const { params, body } = enclosingFunction(source, m.index);
     const root = (arg.split(/\??\./)[0] ?? '');
-    if (!enclosingParams(source, m.index).has(root)) continue; // 局所値は対象外
+    if (!params.has(root)) continue; // 局所値は対象外
+    if (establishesFinite(body, arg)) continue; // 同じ関数で有限を確かめている
     hits.push({ file, line, arg });
   }
   return hits;
@@ -201,6 +290,19 @@ describe('消毒の綴りは 1 つ (Math.max(0, NaN) は NaN)', () => {
       for (const h of findBareMaxSanitizers(readOriginalSource(f), rel)) {
         if (BARE_MAX_ALLOWED[`${rel}:${h.arg}`] !== undefined) continue;
         found.push(`${rel}:${h.line}  Math.max(0, ${h.arg}) → nonNeg(${h.arg})`);
+      }
+    }
+    expect(found).toEqual([]);
+  });
+
+  it('★ 実物: 仮引数を素の Math.min(<定数>, …) で天井に当てる箇所は台帳の外に無い', () => {
+    const found: string[] = [];
+    for (const f of files) {
+      const rel = path.relative(REPO_ROOT, f);
+      if (rel === CANONICAL) continue;
+      for (const h of findBareMinSanitizers(readOriginalSource(f), rel)) {
+        if (BARE_MAX_ALLOWED[`${rel}:${h.arg}`] !== undefined) continue;
+        found.push(`${rel}:${h.line}  Math.min(…, ${h.arg}) の ${h.arg} が有限か誰も見ていない`);
       }
     }
     expect(found).toEqual([]);
@@ -257,6 +359,41 @@ describe('消毒の綴りは 1 つ (Math.max(0, NaN) は NaN)', () => {
   it('対照: 3 引数の Math.max は床ではないので検出されない', () => {
     const sample = 'export function f(a: number, b: number): number {\n  return Math.max(0, a, b);\n}';
     expect(findBareMaxSanitizers(sample, 'sample.ts')).toEqual([]);
+  });
+
+  it('対照: 数行上で有限を確かめていれば検出されない (同じ行だけ見ない)', () => {
+    const sample = [
+      'export function f(months: number): number {',
+      '  if (!Number.isFinite(months) || months <= 0) return 0;',
+      '  const capped = Math.min(12, months);',
+      '  return capped;',
+      '}',
+    ].join('\n');
+    expect(findBareMinSanitizers(sample, 'sample.ts')).toEqual([]);
+    expect(findBareMaxSanitizers(sample.replace('Math.min(12, months)', 'Math.max(0, months)'), 'sample.ts')).toEqual([]);
+  });
+
+  it('対照: **別の欄**の有限を確かめても、その欄は検出される (名前で照合する)', () => {
+    const sample = [
+      'export function f(a: number, b: number): number {',
+      '  if (!Number.isFinite(a)) return 0;',
+      '  return Math.max(0, b);',
+      '}',
+    ].join('\n');
+    expect(findBareMaxSanitizers(sample, 'sample.ts').map((h) => h.arg)).toEqual(['b']);
+  });
+
+  it('対照: Math.min の天井が定数なら、消毒されない値は検出される', () => {
+    const sample = 'export function f(months: number): number {\n  return Math.min(12, months);\n}';
+    expect(findBareMinSanitizers(sample, 'sample.ts').map((h) => h.arg)).toEqual(['months']);
+    const withConst = 'export function f(m: number): number {\n  return Math.min(MAX_MONTHS, m);\n}';
+    expect(findBareMinSanitizers(withConst, 'sample.ts').map((h) => h.arg)).toEqual(['m']);
+  });
+
+  it('対照: Math.min の第 1 引数が計算した値なら見ない (裸の参照は上限の側)', () => {
+    // `Math.min(<計算した値>, r.<上限>)` —— 上限は台帳が有限を保証している
+    const sample = 'export function f(bonus: number, r: R): number {\n  return Math.min(bonus * 2, r.cap);\n}';
+    expect(findBareMinSanitizers(sample, 'sample.ts')).toEqual([]);
   });
 
   it('対照: 局所 nonNeg の定義は 2 つの綴りとも検出される', () => {

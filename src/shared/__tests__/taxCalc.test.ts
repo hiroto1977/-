@@ -590,6 +590,40 @@ describe('calcResidentAdjustmentCredit (住民税の調整控除)', () => {
     expect(calcResidentAdjustmentCredit(3_000_000, 0)).toBe(0);
   });
 
+  /**
+   * パス 202: **比較だけの関門は NaN を通す。**
+   *
+   * 下の枝は `if (income <= 0 || diff <= 0) return 0;` で「測れるか」を決めて
+   * いるが、`NaN <= 0` も `NaN > 0` も **false** なので、直す前は非有限が
+   * どちらの枝も通らず **NaN を控除額として返していた** (実測)。
+   * 規準は `depreciation.ts` の `proratedDepreciation` —— あちらは
+   * `!Number.isFinite(...)` を明示的に見て 0 を返す。
+   *
+   * 入口を `nonNeg` に通したので、非有限は 0 に倒れ、**既に在る `<= 0` の
+   * 枝がそのまま正しく鳴る**。
+   */
+  it('★ 非有限の入力は 0 に倒れる (比較だけの関門は NaN を通していた)', () => {
+    expect(calcResidentAdjustmentCredit(Number.NaN, 50_000)).toBe(0);
+    expect(calcResidentAdjustmentCredit(1_500_000, Number.NaN)).toBe(0);
+    expect(calcResidentAdjustmentCredit(Number.NaN, Number.NaN)).toBe(0);
+    expect(calcResidentAdjustmentCredit(Number.POSITIVE_INFINITY, 50_000)).toBe(0);
+    expect(calcResidentAdjustmentCredit(1_500_000, Number.POSITIVE_INFINITY)).toBe(0);
+    expect(calcResidentAdjustmentCredit(Number.NEGATIVE_INFINITY, 50_000)).toBe(0);
+  });
+
+  it('★ 負の入力も 0 に倒れる (「税額を増やす控除」を作らない)', () => {
+    expect(calcResidentAdjustmentCredit(-1, 50_000)).toBe(0);
+    expect(calcResidentAdjustmentCredit(1_500_000, -1)).toBe(0);
+  });
+
+  it('対照: 直った後も有限な値の答えは変わっていない', () => {
+    // 入口の消毒は有限・非負の入力を素通りさせるだけなので、既存の答えは動かない
+    expect(calcResidentAdjustmentCredit(1_500_000, 50_000)).toBe(2_500);
+    expect(calcResidentAdjustmentCredit(30_000, 50_000)).toBe(1_500);
+    expect(calcResidentAdjustmentCredit(2_100_000, 250_000)).toBe(7_500);
+    expect(calcResidentAdjustmentCredit(25_000_001, 50_000)).toBe(0);
+  });
+
   it('income ≤ 200万: min(diff, income) × 5%', () => {
     // diff 50,000, income 1,000,000 → min(50,000, 1,000,000)=50,000 ×5% = 2,500
     expect(calcResidentAdjustmentCredit(1_000_000, 50_000)).toBe(2_500);

@@ -232,15 +232,25 @@ export function calcResidentAdjustmentCredit(
   residentTaxableIncome: number,
   humanDeductionDiff: number,
 ): number {
+  // **入口で消毒してから比較する。** 下の関門は比較だけで「測れるか」を
+  // 決めているが、`NaN <= 0` も `NaN > 0` も false なので、非有限が来ると
+  // **どちらの枝も通らず NaN が結果に乗る** (パス 202 で実測:
+  // `calcResidentAdjustmentCredit(NaN, 50_000)` が NaN を返していた)。
+  // 規準は `depreciation.ts` の `proratedDepreciation` —— あちらは
+  // `!Number.isFinite(...)` を明示的に見て 0 を返す。ここは `nonNeg` で
+  // 0 に倒し、**既に書かれている `<= 0` の枝をそのまま正しく鳴らす**
+  // (パス 201 と同じ方針 —— 関門を足すのではなく、関門に値を届ける)。
+  const income = nonNeg(residentTaxableIncome);
+  const diff = nonNeg(humanDeductionDiff);
   // 負の入力で「税額を増やす控除」を返さないための入口 (検査あり)。
   // `<= 0` → `< 0` は 0 のとき下の式でも 0 になるので観測できない。
   // Stryker disable next-line EqualityOperator: 0 での結果が同じ (実測)
-  if (residentTaxableIncome <= 0 || humanDeductionDiff <= 0) return 0;
-  if (residentTaxableIncome > 25_000_000) return 0;
-  if (residentTaxableIncome <= 2_000_000) {
-    return yen(Math.min(humanDeductionDiff, residentTaxableIncome) * 0.05);
+  if (income <= 0 || diff <= 0) return 0;
+  if (income > 25_000_000) return 0;
+  if (income <= 2_000_000) {
+    return yen(Math.min(diff, income) * 0.05);
   }
-  const adjusted = humanDeductionDiff - (residentTaxableIncome - 2_000_000);
+  const adjusted = diff - (income - 2_000_000);
   return yen(Math.max(2_500, adjusted * 0.05));
 }
 
