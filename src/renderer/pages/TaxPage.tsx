@@ -27,7 +27,8 @@ import {
   lookupVat,
   type CustomsBasis,
 } from '../../shared/tradeTax';
-import { guardAll, readNumber } from '../data/inputGuards';
+import { guardAll, readNumber, refusalLabels, refusedFields, type NumSpec } from '../data/inputGuards';
+import { RefusedFieldsNote } from '../components/RefusedFieldsNote';
 import { useParameters } from '../data/parameterOverrides';
 import {
   acquisitionParams,
@@ -147,6 +148,50 @@ const inputStyle: React.CSSProperties = {
   fontSize: 13,
   width: 160,
 };
+
+/**
+ * **貿易の「金額」の欄** (パス 212 で JSX のリテラルから引き上げた)。
+ *
+ * パス 208 が閉じたのは**率**で、金額はまだ `nonNeg` の契約どおり 0 に倒れていた。
+ * ⛔ は出ているのに**何を計算したかを言わない** —— 実測 (−9999 を入れた時):
+ *
+ * | 欄 | 出ていた物 |
+ * | --- | --- |
+ * | 商品代金 (輸入) | `課税価格 ¥535,000 → **¥35,000**`・そこから関税・消費税・地方消費税・税の合計・通関原価まで全部 |
+ * | 国際運賃 (輸入) | `課税価格 → ¥505,000` |
+ * | 保険料 (輸入) | `課税価格 → ¥530,000` |
+ * | 商品代金 (輸出) | `仕向国の課税価格 ¥1,090,000 → **¥90,000**`・仕向国の関税・付加価値税・税の合計・買手の負担 |
+ * | 国際運賃 / 保険料 (輸出) | 同じ連鎖 |
+ *
+ * **税額は減る側なので申告者に不利には働かないが、税関に出す数字が変わる。**
+ * 課税価格は CIF (商品代金＋運賃＋保険料) の和なので、**1 つでも ⛔ なら
+ * 課税価格そのものが測れない** —— パス 208 が「課税価格は率に依らないので
+ * 出し続ける」と決めたのは**率**の話で、金額では逆になる。
+ */
+const TRADE_SPECS = {
+  imGoods: { label: '商品代金 (輸入・円)', kind: 'money', allowZero: false },
+  imFreight: { label: '国際運賃 (輸入・円)', kind: 'money', allowZero: true },
+  imInsurance: { label: '保険料 (輸入・円)', kind: 'money', allowZero: true },
+  imExcise: { label: '個別消費税 (酒税・たばこ税等・円)', kind: 'money', allowZero: true },
+  exGoods: { label: '商品代金 (輸出・円)', kind: 'money', allowZero: false },
+  exFreight: { label: '国際運賃 (輸出・円)', kind: 'money', allowZero: true },
+  exInsurance: { label: '保険料 (輸出・円)', kind: 'money', allowZero: true },
+} as const satisfies Record<string, NumSpec>;
+
+/**
+ * **どの段がどの欄を読むか。**
+ *
+ * 輸入は課税価格から下が 1 本の鎖なので節ごと。個別消費税は消費税の課税標準に
+ * 入るので同じ段に含める (既定 0 なので ⛔ にしても動かないが、**依存は依存**)。
+ *
+ * 輸出は「日本の輸出関税 ¥0 / 消費税（輸出免税）¥0」だけ別 —— これは入力に依らない
+ * **事実の記述**なので、金額が ⛔ でも消さない (消すと「日本も輸出関税を課すかも
+ * しれない」と読める)。
+ */
+const TRADE_READS = {
+  importChain: ['imGoods', 'imFreight', 'imInsurance', 'imExcise'],
+  exportDest: ['exGoods', 'exFreight', 'exInsurance'],
+} as const satisfies Record<string, readonly (keyof typeof TRADE_SPECS)[]>;
 
 export function TaxPage() {
   const { source, status, errorMessage, refresh, isConfigured } = useServiceData('tax', SNAPSHOT.tax);
@@ -574,6 +619,21 @@ export function TaxPage() {
   const [exVatStr, setExVatStr] = useState('20');
   const [exVatIncludesDuty, setExVatIncludesDuty] = useState(true);
   const [exBearer, setExBearer] = useState<'seller' | 'buyer'>('buyer');
+
+  /** **貿易の段ごとの ⛔ の欄** (パス 212)。率はパス 208 が値の側で閉じている。 */
+  const tradeRefusedBy = useMemo(() => {
+    const refused = refusedFields(TRADE_SPECS, {
+      imGoods: imGoodsStr, imFreight: imFreightStr, imInsurance: imInsuranceStr, imExcise: imExciseStr,
+      exGoods: exGoodsStr, exFreight: exFreightStr, exInsurance: exInsuranceStr,
+    });
+    return {
+      importChain: refusalLabels(TRADE_SPECS, refused, TRADE_READS.importChain),
+      exportDest: refusalLabels(TRADE_SPECS, refused, TRADE_READS.exportDest),
+    };
+  }, [
+    imGoodsStr, imFreightStr, imInsuranceStr, imExciseStr,
+    exGoodsStr, exFreightStr, exInsuranceStr,
+  ]);
 
   const exportTax = useMemo(
     () =>
@@ -1962,11 +2022,11 @@ export function TaxPage() {
             関税が消費税の課税標準に入るため、関税が高いほど消費税も増えます。
           </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
-            <GuardedNumber spec={{ label: '商品代金 (輸入・円)', kind: 'money', allowZero: false }} value={imGoodsStr} onChange={setImGoodsStr} width={150} />
-            <GuardedNumber spec={{ label: '国際運賃 (輸入・円)', kind: 'money', allowZero: true }} value={imFreightStr} onChange={setImFreightStr} width={130} />
-            <GuardedNumber spec={{ label: '保険料 (輸入・円)', kind: 'money', allowZero: true }} value={imInsuranceStr} onChange={setImInsuranceStr} width={130} />
+            <GuardedNumber spec={TRADE_SPECS.imGoods} value={imGoodsStr} onChange={setImGoodsStr} width={150} />
+            <GuardedNumber spec={TRADE_SPECS.imFreight} value={imFreightStr} onChange={setImFreightStr} width={130} />
+            <GuardedNumber spec={TRADE_SPECS.imInsurance} value={imInsuranceStr} onChange={setImInsuranceStr} width={130} />
             <GuardedNumber spec={{ label: '関税率 (%)', kind: 'percent', allowZero: true, max: 100 }} value={imDutyStr} onChange={setImDutyStr} width={110} />
-            <GuardedNumber spec={{ label: '個別消費税 (酒税・たばこ税等・円)', kind: 'money', allowZero: true }} value={imExciseStr} onChange={setImExciseStr} width={190} />
+            <GuardedNumber spec={TRADE_SPECS.imExcise} value={imExciseStr} onChange={setImExciseStr} width={190} />
             <label style={{ fontSize: 12, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4, paddingBottom: 6 }}>
               <input type="checkbox" checked={imReduced} onChange={(e) => setImReduced(e.target.checked)} />
               軽減税率の対象 (飲食料品等)
@@ -1981,6 +2041,13 @@ export function TaxPage() {
             </label>
           </div>
 
+          {/* **金額が ⛔ なら課税価格そのものが測れない** (CIF の和なので・パス 212)。
+              率が ⛔ のときに課税価格を出し続けるのはパス 208 の判断で、そちらは
+              `importTax` の欄ごとの `null` が担う —— ここは節ごと断る。 */}
+          {tradeRefusedBy.importChain.length > 0 ? (
+            <RefusedFieldsNote labels={tradeRefusedBy.importChain} />
+          ) : (
+          <>
           <div className="stat-grid" data-import-stats data-exempted={String(importTax.exempted)}>
             {/* **課税価格は関税率に依らないので出し続ける** (パス 208)。
                 率が ⛔ のときに消えるのは関税から下だけ —— 理由は
@@ -1996,6 +2063,8 @@ export function TaxPage() {
           {importTax.notes.map((n, i) => (
             <div key={i} style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6, lineHeight: 1.6 }}>・{n}</div>
           ))}
+          </>
+          )}
         </div>
 
         {/* (b) 輸出 */}
@@ -2008,9 +2077,9 @@ export function TaxPage() {
             日本以外から輸出する場合に備え、輸出税の税率も入力できます。
           </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12, alignItems: 'flex-end' }}>
-            <GuardedNumber spec={{ label: '商品代金 (輸出・円)', kind: 'money', allowZero: false }} value={exGoodsStr} onChange={setExGoodsStr} width={150} />
-            <GuardedNumber spec={{ label: '国際運賃 (輸出・円)', kind: 'money', allowZero: true }} value={exFreightStr} onChange={setExFreightStr} width={130} />
-            <GuardedNumber spec={{ label: '保険料 (輸出・円)', kind: 'money', allowZero: true }} value={exInsuranceStr} onChange={setExInsuranceStr} width={130} />
+            <GuardedNumber spec={TRADE_SPECS.exGoods} value={exGoodsStr} onChange={setExGoodsStr} width={150} />
+            <GuardedNumber spec={TRADE_SPECS.exFreight} value={exFreightStr} onChange={setExFreightStr} width={130} />
+            <GuardedNumber spec={TRADE_SPECS.exInsurance} value={exInsuranceStr} onChange={setExInsuranceStr} width={130} />
             <GuardedNumber spec={{ label: '輸出税率 (%・日本は0)', kind: 'percent', allowZero: true, max: 100 }} value={exExportDutyStr} onChange={setExExportDutyStr} width={150} />
             <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
               仕向国 (参考税率を差し込む)
@@ -2045,9 +2114,18 @@ export function TaxPage() {
             </label>
           </div>
 
-          <div className="stat-grid" data-export-stats>
+          {/* **入力に依らない事実は断らない** (パス 212) —— 日本が輸出に関税を課さない
+              ことと輸出免税は、金額が ⛔ でも真である。消すと「日本も課すかもしれない」
+              と読めてしまう。 */}
+          <div className="stat-grid" data-export-japan>
             <Stat label="日本の輸出関税" value={jpy(0)} />
             <Stat label="日本の消費税（輸出免税）" value={jpy(0)} />
+          </div>
+          {tradeRefusedBy.exportDest.length > 0 ? (
+            <RefusedFieldsNote labels={tradeRefusedBy.exportDest} />
+          ) : (
+          <>
+          <div className="stat-grid" data-export-stats>
             {/* 3 つの率のうち断られた物に応じて、そこから下だけが「—」になる
                 (パス 208)。**仕向国の課税価格は率に依らないので出し続ける。**
                 `Math.round` は `null` を 0 にしてしまうので、丸める前に分ける。 */}
@@ -2064,6 +2142,8 @@ export function TaxPage() {
           {exportTax.notes.map((n, i) => (
             <div key={i} style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6, lineHeight: 1.6 }}>・{n}</div>
           ))}
+          </>
+          )}
           {lookupVat(exCountry)?.note && (
             <div style={{ fontSize: 11, color: '#fbbf24', marginTop: 8, lineHeight: 1.6 }}>・{lookupVat(exCountry)!.note}</div>
           )}

@@ -88,9 +88,17 @@ async function typeField(label: string, value: string): Promise<HTMLInputElement
 /** 貿易の節のタイルだけを「ラベル → 値」で読む。 */
 function tradeTiles(): Map<string, string> {
   const m = new Map<string, string>();
-  for (const sel of ['[data-import-stats]', '[data-export-stats]']) {
+  // `[data-export-japan]` はパス 212 で切り出した段 —— 「日本の輸出関税 ¥0 /
+  // 消費税（輸出免税）¥0」は**入力に依らない事実**なので、金額が ⛔ でも消さない。
+  // 3 つすべてを読まないと「消えたのか、別の段に移ったのか」が分からない。
+  // **段が無いこと自体が意味を持つ** —— 金額が ⛔ のときは grid が断りに
+  // 差し替わるので (パス 212)、「見つからなければ投げる」だと断りを検査できない。
+  // ただし**全部無いのは本当の壊れ**なので、1 つも見つからなければ落とす。
+  let found = 0;
+  for (const sel of ['[data-import-stats]', '[data-export-japan]', '[data-export-stats]']) {
     const grid = container.querySelector(sel);
-    if (grid === null) throw new Error(`grid not found: ${sel}`);
+    if (grid === null) continue;
+    found += 1;
     for (const card of Array.from(grid.children)) {
       const kids = Array.from(card.children);
       const label = (kids[0]?.textContent ?? '').replace(/\s+/g, ' ').trim();
@@ -98,6 +106,7 @@ function tradeTiles(): Map<string, string> {
       if (label !== '') m.set(label, value);
     }
   }
+  if (found === 0) throw new Error('貿易のタイルが 1 つも見つからない (選択子が古い?)');
   return m;
 }
 
@@ -182,6 +191,61 @@ describe('貿易にかかる税 — ⛔ の税率から税額を作らない (�
     expect(t.get('仕向国の税 合計')).toBe('—');
     expect(t.get('買手の負担')).toBe('—');
     expect(text()).toContain('仕向国の付加価値税');
+  });
+
+  // --- パス 212: 率ではなく**金額**が ⛔ のとき ---
+  //
+  // パス 208 は「課税価格は率に依らないので出し続ける」と決めた。**金額では逆**で、
+  // 課税価格は CIF (商品代金＋運賃＋保険料) の和なので、1 つでも ⛔ なら
+  // 課税価格そのものが測れない。0 に倒れると**税関に出す数字が変わる**。
+
+  it('★ 商品代金 (輸入) がマイナスなら「課税価格 ¥35,000」を作らない', async () => {
+    await mountPage();
+    const input = await typeField('商品代金 (輸入・円)', '-9999');
+    expect(input.getAttribute('data-guard')).toBe('fatal');
+    const t = tradeTiles();
+    // 課税価格から下すべてが消える (率のときと違い、課税価格も残さない)。
+    for (const label of [
+      '課税価格 (1,000円未満切捨て)', '関税 (100円未満切捨て)', '消費税の課税標準',
+      '消費税 (国税)', '地方消費税', '税の合計', '通関までの原価',
+    ]) {
+      expect(t.get(label), label).toBeUndefined();
+    }
+    expect(text()).toContain('商品代金 (輸入・円)が入力できる範囲の外');
+    // **0 に倒れた課税価格 (¥35,000 = 運賃 30,000 + 保険料 5,000) が出ていない。**
+    for (const v of t.values()) expect(v).not.toBe('¥35,000');
+    // 輸出の節は別の欄なので残る。
+    expect(t.get('仕向国の課税価格')).toBe('¥1,090,000');
+  });
+
+  it('★ 国際運賃 (輸入) がマイナスでも、輸入の節だけを断る', async () => {
+    await mountPage();
+    await typeField('国際運賃 (輸入・円)', '-9999');
+    const t = tradeTiles();
+    expect(t.get('課税価格 (1,000円未満切捨て)')).toBeUndefined();
+    // 運賃を 0 として再計算した ¥505,000 が出ていない。
+    for (const v of t.values()) expect(v).not.toBe('¥505,000');
+    expect(text()).toContain('国際運賃 (輸入・円)');
+    expect(t.get('買手の負担')).toBe('¥283,400');
+  });
+
+  it('★ 商品代金 (輸出) がマイナスなら仕向国側を断るが、日本の事実は残す', async () => {
+    await mountPage();
+    await typeField('商品代金 (輸出・円)', '-9999');
+    const t = tradeTiles();
+    for (const label of [
+      '仕向国の課税価格', '仕向国の関税', '仕向国の付加価値税', '仕向国の税 合計', '買手の負担',
+    ]) {
+      expect(t.get(label), label).toBeUndefined();
+    }
+    for (const v of t.values()) expect(v).not.toBe('¥90,000');
+    expect(text()).toContain('商品代金 (輸出・円)');
+    // **入力に依らない事実は断らない** —— 日本が輸出に関税を課さないことと
+    // 輸出免税は金額が ⛔ でも真である (消すと「日本も課すかも」と読める)。
+    expect(t.get('日本の輸出関税')).toBe('¥0');
+    expect(t.get('日本の消費税（輸出免税）')).toBe('¥0');
+    // 輸入の節は別の欄なので残る。
+    expect(t.get('課税価格 (1,000円未満切捨て)')).toBe('¥535,000');
   });
 
   it('★ 仕向国の関税率が上限超過なら、関税・付加価値税・負担を出さない (課税価格は残す)', async () => {
