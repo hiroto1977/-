@@ -26,7 +26,7 @@ import {
 } from '../data/investments';
 import { jpy } from '../../shared/formatters';
 import { GuardedNumber } from '../components/GuardedNumber';
-import { readNumberOr0, readNumberOrNull, type NumSpec } from '../data/inputGuards';
+import { guardNumber, readNumberOr0, readNumberOrNull, type NumSpec } from '../data/inputGuards';
 import { useParameters } from '../data/parameterOverrides';
 import { advisorThresholds, dscrThresholds, effluentStandards, zoningRules } from '../../shared/parameters';
 import type { RealEstateAdviceInput } from '../../shared/serviceAdvisor';
@@ -68,6 +68,119 @@ import {
   EFFLUENT_TN_DAILY_AVG_MG_L,
   EFFLUENT_TP_DAILY_AVG_MG_L,
 } from '../../shared/waterCyclePlanner';
+
+/**
+ * 都市計画プランナーの入力欄の仕様。**JSX と関門が同じ宣言を読む** (パス 206)。
+ *
+ * 以前はこの仕様が JSX の中にリテラルで散っており、`guardNumber` は
+ * `level: 'fatal'` の赤い文面を出すのに、**計算側にはその判定が届いていなかった**
+ * —— `RealEstatePage` には `guardAll` の呼び出しが 1 件も無く、
+ * `reNum(zpHeightStr)` が断られた値をそのまま読んで道路斜線・日影規制・
+ * 後退のトレードオフの判定を作っていた (実測・パス 206)。
+ * 上限の文面は「0 m として計算されています」と違って**何を計算したかを言わない**
+ * ので、利用者は ⛔ と一緒にその値で作られた都市計画上の判定を読むことになる。
+ *
+ * **同じファイルのパス 77 が同じ形を直している** —— 「空欄の敷地寸法から
+ * 『この敷地には 0 ㎡しか建てられない』という判定を作る」。その関門
+ * (`reNumOrNull` +「未入力なら描かない」) は今も在り、コメントに
+ * 「未入力から作った図である」と書かれている。**未入力を断るのに、宣言した
+ * 上限を超えた値は断っていなかった。**
+ *
+ * ## 上限の性質 (パス 206 で欄ごとに確かめた)
+ *
+ * | 欄 | 上限 | 性質 |
+ * | --- | --- | --- |
+ * | 建ぺい率 | 100% | **定義上の上限** (建築面積 ÷ 敷地面積) |
+ * | 容積率 | 1300% | もっともらしさ (商業地域の指定容積率の最大) |
+ * | 前面道路幅員 / 後退 | 100 m | もっともらしさ |
+ * | 側面の後退 合計 | 200 m | もっともらしさ |
+ * | 計画する最高高さ / 日影規制の対象高さ | 300 m | もっともらしさ |
+ * | 敷地の奥行 / 間口 | 2000 m | もっともらしさ |
+ *
+ * **どれも「計算に使う法定値」ではない**ので `parameters.ts` の台帳には載せない
+ * (CLAUDE.md: 安全上限は台帳に載せない)。置き場所はここ 1 か所。
+ */
+const ZONING_SPECS = {
+  site: { label: '敷地面積 (㎡)', kind: 'area' },
+  coverage: { label: '建ぺい率 (%)', kind: 'percent', min: 1, max: 100 },
+  // `sane` を天井に合わせて**桁の問い合わせを消している**。`percent` の既定は
+  // `sane: 100` なので、容積率は 100% を超えるだけで「桁を間違えていないか確認して
+  // ください」と言われていた —— プリセット 3 つ (200 / 400 / 200%) とページの初期値が
+  // すべてこれに当たり、**画面は自分が入れた既定値に⚠️を付けて開いていた** (実測・パス 206)。
+  // 容積率に「通るが疑わしい」帯は無い: 1〜1300% はどれも都市計画の指定値で、
+  // それを超えるものは上の `max` が ⛔ で断る。
+  far: { label: '容積率 (%)', kind: 'percent', min: 1, max: 1300, sane: 1300 },
+  road: { label: '前面道路幅員 (m)', kind: 'length', max: 100 },
+  height: { label: '計画する最高高さ (m)', kind: 'length', max: 300 },
+  setback: { label: '道路境界からの後退 (m)', kind: 'length', allowZero: true, max: 100 },
+  shadowThreshold: { label: '日影規制の対象高さ (m)', kind: 'length', max: 300 },
+  siteDepth: { label: '敷地の奥行 (m)', kind: 'length', max: 2000 },
+  siteWidth: { label: '敷地の間口 (m)', kind: 'length', max: 2000 },
+  rear: { label: '背面の後退 (m)', kind: 'length', allowZero: true, max: 100 },
+  side: { label: '側面の後退 合計 (m)', kind: 'length', allowZero: true, max: 200 },
+} as const satisfies Record<string, NumSpec>;
+
+export type ZoningField = keyof typeof ZONING_SPECS;
+
+const ZONING_FIELDS = Object.keys(ZONING_SPECS) as readonly ZoningField[];
+
+/**
+ * 判定の段ごとに「どの欄を読んでいるか」。**この表と `useMemo` の引数が対応する。**
+ *
+ * ⛔ が 1 つ在るからといって画面全体を黙らせるのは、**読んでいない欄のせいで
+ * 正しい判定を消す**ことになる (間口が範囲外でも `適用建ぺい率` は正しい)。
+ * 逆に、読んでいる欄が ⛔ なのに判定を出すのが今回の欠陥そのもの。
+ * だから対応は表に書いて 1 か所で持ち、段をまたぐ依存は**合成で書く** ——
+ * トレードオフは敷地の段の `maxFootprint` を受け取るので、敷地の欄も読んでいる。
+ */
+const ZONING_READS_SITE = ['site', 'coverage', 'far', 'road'] as const;
+const ZONING_READS_HEIGHT = ['road', 'setback', 'height', 'shadowThreshold'] as const;
+const ZONING_READS_TRADEOFF = [
+  ...ZONING_READS_SITE, 'height', 'rear', 'side', 'siteDepth', 'siteWidth',
+] as const;
+export const ZONING_READS = {
+  site: ZONING_READS_SITE,
+  height: ZONING_READS_HEIGHT,
+  tradeoff: ZONING_READS_TRADEOFF,
+  // 工場プランは敷地の段の `maxTotalFloor` を配るだけ。立体プレビューは
+  // トレードオフの寸法と工場プランの面積の両方で組む (= 両方の和集合)。
+  factory: ZONING_READS_SITE,
+  iso: ZONING_READS_TRADEOFF,
+} as const satisfies Record<string, readonly ZoningField[]>;
+
+/** 画面が ⛔ (`level: 'fatal'`) を出している欄の一覧。空欄は `warn` なのでここには入らない。 */
+export function refusedZoningFields(values: Readonly<Record<ZoningField, string>>): readonly ZoningField[] {
+  return ZONING_FIELDS.filter((k) => guardNumber(values[k], ZONING_SPECS[k])?.level === 'fatal');
+}
+
+/** その段が読んでいる欄のうち ⛔ の物の**表示名** (宣言から採る — 文字列を写さない)。 */
+export function zoningRefusalLabels(
+  refused: readonly ZoningField[],
+  reads: readonly ZoningField[],
+): readonly string[] {
+  return reads.filter((k) => refused.includes(k)).map((k) => ZONING_SPECS[k].label);
+}
+
+/** ⛔ の欄が在るときに判定の代わりに出す文 (欄の名前を必ず名指しする)。 */
+export function zoningRefusalNote(refused: readonly string[]): string | null {
+  if (refused.length === 0) return null;
+  return `${refused.join('・')}が入力できる範囲の外なので、この判定は算定していません（赤い欄を範囲内に直すと判定が出ます）。`;
+}
+
+/** 判定の代わりに出す断り。`labels` が空なら何も描かない (呼び手が分岐しなくていい)。 */
+function ZoningRefusal({ labels }: { labels: readonly string[] }): React.ReactElement | null {
+  const note = zoningRefusalNote(labels);
+  if (note === null) return null;
+  return (
+    <div
+      role="alert"
+      data-zoning-refused
+      style={{ fontSize: 12, lineHeight: 1.6, color: '#f87171', marginBottom: 12 }}
+    >
+      {note}
+    </div>
+  );
+}
 
 const reInputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -373,9 +486,27 @@ export function RealEstatePage() {
       groundOtherSqm: factory.groundFloorOther,
       upperFloorsSqm: factory.upperFloorsArea,
     });
+    // **画面が ⛔ で断っている値から都市計画上の判定を作らない** (パス 206)。
+    // 判定そのものは上で計算してある (途中で return すると段ごとの断りが書けない)。
+    // 下の画面が段ごとに `refused` を見て、数字の代わりに理由を出す ——
+    // パス 77 が同じファイルで「未入力から『0 ㎡しか建てられない』を作らない」と
+    // 決めたのと同じ形。**断る単位は段** で、読んでいない欄では黙らせない。
+    const refusedFields = refusedZoningFields({
+      site: zpSiteStr, coverage: zpCovStr, far: zpFarStr, road: zpRoadStr,
+      height: zpHeightStr, setback: zpSetbackStr, shadowThreshold: zpShadowThresholdStr,
+      siteDepth: zpSiteDepthStr, siteWidth: zpSiteWidthStr, rear: zpRearStr, side: zpSideStr,
+    });
+    const refused = {
+      site: zoningRefusalLabels(refusedFields, ZONING_READS.site),
+      height: zoningRefusalLabels(refusedFields, ZONING_READS.height),
+      tradeoff: zoningRefusalLabels(refusedFields, ZONING_READS.tradeoff),
+      factory: zoningRefusalLabels(refusedFields, ZONING_READS.factory),
+      iso: zoningRefusalLabels(refusedFields, ZONING_READS.iso),
+    };
     return {
       site, factory, slope, shadow, tradeoff, schematic,
       isoWidth, isoDepth,
+      refused,
       capUnlimited: zpCapStr.trim() === '',
     };
   }, [
@@ -729,10 +860,10 @@ export function RealEstatePage() {
             </select>
           </label>
           {([
-            [{ label: '敷地面積 (㎡)', kind: 'area' }, zpSiteStr, setZpSiteStr],
-            [{ label: '建ぺい率 (%)', kind: 'percent', min: 1, max: 100 }, zpCovStr, setZpCovStr],
-            [{ label: '容積率 (%)', kind: 'percent', min: 1, max: 1300 }, zpFarStr, setZpFarStr],
-            [{ label: '前面道路幅員 (m)', kind: 'length', max: 100 }, zpRoadStr, setZpRoadStr],
+            [ZONING_SPECS.site, zpSiteStr, setZpSiteStr],
+            [ZONING_SPECS.coverage, zpCovStr, setZpCovStr],
+            [ZONING_SPECS.far, zpFarStr, setZpFarStr],
+            [ZONING_SPECS.road, zpRoadStr, setZpRoadStr],
           ] as const satisfies readonly (readonly [NumSpec, string, (v: string) => void])[]).map(([spec, val, setter]) => (
             <GuardedNumber key={spec.label} spec={spec} value={val} onChange={setter} width={110} />
           ))}
@@ -752,26 +883,32 @@ export function RealEstatePage() {
             防火地域内の耐火建築物
           </label>
         </div>
-        <div className="stat-grid" style={{ marginBottom: 14 }}>
-          <Stat label="適用建ぺい率" value={`${zoning.site.effectiveCoveragePct}%`} />
-          <Stat label="建築面積の上限" value={`${zoning.site.maxFootprint.toLocaleString()} ㎡`} />
-          <Stat
-            label={zoning.site.roadLimitedFarPct !== null && zoning.site.roadLimitedFarPct < reNum(zpFarStr) ? '実効容積率 (道路幅員で制限)' : '実効容積率'}
-            value={`${zoning.site.effectiveFarPct}%`}
-          />
-          <Stat label="延べ床面積の上限" value={`${zoning.site.maxTotalFloor.toLocaleString()} ㎡`} />
-        </div>
-        {zoning.site.floorsToUseAll !== null && zoning.site.floorsToUseAll > 1 && (
-          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12 }}>
-            延べ床上限を使い切るには約 {zoning.site.floorsToUseAll} フロア相当の計画になります。
-          </div>
+        {zoning.refused.site.length > 0 ? (
+          <ZoningRefusal labels={zoning.refused.site} />
+        ) : (
+          <>
+            <div className="stat-grid" style={{ marginBottom: 14 }}>
+              <Stat label="適用建ぺい率" value={`${zoning.site.effectiveCoveragePct}%`} />
+              <Stat label="建築面積の上限" value={`${zoning.site.maxFootprint.toLocaleString()} ㎡`} />
+              <Stat
+                label={zoning.site.roadLimitedFarPct !== null && zoning.site.roadLimitedFarPct < reNum(zpFarStr) ? '実効容積率 (道路幅員で制限)' : '実効容積率'}
+                value={`${zoning.site.effectiveFarPct}%`}
+              />
+              <Stat label="延べ床面積の上限" value={`${zoning.site.maxTotalFloor.toLocaleString()} ㎡`} />
+            </div>
+            {zoning.site.floorsToUseAll !== null && zoning.site.floorsToUseAll > 1 && (
+              <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 12 }}>
+                延べ床上限を使い切るには約 {zoning.site.floorsToUseAll} フロア相当の計画になります。
+              </div>
+            )}
+          </>
         )}
 
         <div style={{ fontSize: 12, fontWeight: 700, margin: '4px 0 8px' }}>📐 高さ制限 (道路斜線・日影規制)</div>
         <div className="field-grid" style={{ marginBottom: 12 }}>
-          <GuardedNumber spec={{ label: '計画する最高高さ (m)', kind: 'length', max: 300 }} value={zpHeightStr} onChange={setZpHeightStr} width={130} />
-          <GuardedNumber spec={{ label: '道路境界からの後退 (m)', kind: 'length', allowZero: true, max: 100 }} value={zpSetbackStr} onChange={setZpSetbackStr} width={130} />
-          <GuardedNumber spec={{ label: '日影規制の対象高さ (m)', kind: 'length', max: 300 }} value={zpShadowThresholdStr} onChange={setZpShadowThresholdStr} width={130} />
+          <GuardedNumber spec={ZONING_SPECS.height} value={zpHeightStr} onChange={setZpHeightStr} width={130} />
+          <GuardedNumber spec={ZONING_SPECS.setback} value={zpSetbackStr} onChange={setZpSetbackStr} width={130} />
+          <GuardedNumber spec={ZONING_SPECS.shadowThreshold} value={zpShadowThresholdStr} onChange={setZpShadowThresholdStr} width={130} />
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             日影規制の対象区域か (条例指定)
             <select value={zpShadowArea} onChange={(e) => setZpShadowArea(e.target.value as 'unknown' | 'yes' | 'no')} style={{ ...reInputStyle, width: 180 }}>
@@ -781,35 +918,45 @@ export function RealEstatePage() {
             </select>
           </label>
         </div>
-        <div className="stat-grid" style={{ marginBottom: 10 }}>
-          <Stat label="道路斜線の高さ限度" value={`${zoning.slope.limitM.toLocaleString()} m`} />
-          <Stat label={zoning.slope.ok ? '余裕' : '超過'} value={`${Math.abs(zoning.slope.marginM).toLocaleString()} m`} />
-          <Stat label="この高さに必要な最小後退" value={`${zoning.slope.minSetbackM.toLocaleString()} m`} />
-          <Stat label="日影規制を避けられる上限" value={`${zoning.shadow.maxHeightToAvoidM.toLocaleString()} m`} />
-        </div>
-        {!zoning.slope.ok && (
-          <div style={{ fontSize: 12, color: '#f87171', marginBottom: 10 }}>
-            道路斜線を超えています — 後退を {zoning.slope.minSetbackM} m 以上取るか、高さを {zoning.slope.limitM} m 以下に抑える必要があります。
-          </div>
-        )}
-        {zoning.shadow.regulated === null && zoning.shadow.exceedsThreshold && (
-          <div style={{ fontSize: 12, color: '#fbbf24', marginBottom: 10 }}>
-            計画高さが {zoning.shadow.thresholdM} m を超えています。日影規制の対象区域かどうかは<strong>自治体の条例指定</strong>なのでここでは判定できません
-            — 建築指導課に照会してください。対象だった場合は最高高さを {zoning.shadow.maxHeightToAvoidM} m 以下に抑えると対象から外れます。
-          </div>
-        )}
-        {zoning.shadow.regulated === true && (
-          <div style={{ fontSize: 12, color: '#f87171', marginBottom: 10 }}>
-            日影規制の対象です — 最高高さを {zoning.shadow.maxHeightToAvoidM} m 以下にすると対象から外れます (現在 {Math.abs(zoning.shadow.headroomM)} m 超過)。
-          </div>
+        {zoning.refused.height.length > 0 ? (
+          <ZoningRefusal labels={zoning.refused.height} />
+        ) : (
+          <>
+            <div className="stat-grid" style={{ marginBottom: 10 }}>
+              <Stat label="道路斜線の高さ限度" value={`${zoning.slope.limitM.toLocaleString()} m`} />
+              <Stat label={zoning.slope.ok ? '余裕' : '超過'} value={`${Math.abs(zoning.slope.marginM).toLocaleString()} m`} />
+              <Stat label="この高さに必要な最小後退" value={`${zoning.slope.minSetbackM.toLocaleString()} m`} />
+              <Stat label="日影規制を避けられる上限" value={`${zoning.shadow.maxHeightToAvoidM.toLocaleString()} m`} />
+            </div>
+            {!zoning.slope.ok && (
+              <div style={{ fontSize: 12, color: '#f87171', marginBottom: 10 }}>
+                道路斜線を超えています — 後退を {zoning.slope.minSetbackM} m 以上取るか、高さを {zoning.slope.limitM} m 以下に抑える必要があります。
+              </div>
+            )}
+            {zoning.shadow.regulated === null && zoning.shadow.exceedsThreshold && (
+              <div style={{ fontSize: 12, color: '#fbbf24', marginBottom: 10 }}>
+                計画高さが {zoning.shadow.thresholdM} m を超えています。日影規制の対象区域かどうかは<strong>自治体の条例指定</strong>なのでここでは判定できません
+                — 建築指導課に照会してください。対象だった場合は最高高さを {zoning.shadow.maxHeightToAvoidM} m 以下に抑えると対象から外れます。
+              </div>
+            )}
+            {zoning.shadow.regulated === true && (
+              <div style={{ fontSize: 12, color: '#f87171', marginBottom: 10 }}>
+                日影規制の対象です — 最高高さを {zoning.shadow.maxHeightToAvoidM} m 以下にすると対象から外れます (現在 {Math.abs(zoning.shadow.headroomM)} m 超過)。
+              </div>
+            )}
+          </>
         )}
         <div style={{ fontSize: 12, fontWeight: 700, margin: '10px 0 8px' }}>↔️ 後退と建築面積のトレードオフ</div>
         <div className="field-grid" style={{ marginBottom: 12 }}>
-          <GuardedNumber spec={{ label: '敷地の奥行 (m)', kind: 'length', max: 2000 }} value={zpSiteDepthStr} onChange={setZpSiteDepthStr} width={120} />
-          <GuardedNumber spec={{ label: '敷地の間口 (m)', kind: 'length', max: 2000 }} value={zpSiteWidthStr} onChange={setZpSiteWidthStr} width={120} />
-          <GuardedNumber spec={{ label: '背面の後退 (m)', kind: 'length', allowZero: true, max: 100 }} value={zpRearStr} onChange={setZpRearStr} width={120} />
-          <GuardedNumber spec={{ label: '側面の後退 合計 (m)', kind: 'length', allowZero: true, max: 200 }} value={zpSideStr} onChange={setZpSideStr} width={120} />
+          <GuardedNumber spec={ZONING_SPECS.siteDepth} value={zpSiteDepthStr} onChange={setZpSiteDepthStr} width={120} />
+          <GuardedNumber spec={ZONING_SPECS.siteWidth} value={zpSiteWidthStr} onChange={setZpSiteWidthStr} width={120} />
+          <GuardedNumber spec={ZONING_SPECS.rear} value={zpRearStr} onChange={setZpRearStr} width={120} />
+          <GuardedNumber spec={ZONING_SPECS.side} value={zpSideStr} onChange={setZpSideStr} width={120} />
         </div>
+        {zoning.refused.tradeoff.length > 0 ? (
+          <ZoningRefusal labels={zoning.refused.tradeoff} />
+        ) : (
+          <>
         <div className="stat-grid" style={{ marginBottom: 10 }}>
           <Stat label="斜線を通す最小後退" value={`${zoning.tradeoff.requiredSetbackM.toLocaleString()} m`} />
           <Stat label="建てられる奥行" value={metresOrDash(zoning.tradeoff.buildableDepthM)} />
@@ -839,6 +986,8 @@ export function RealEstatePage() {
             斜線を通す最小後退 {zoning.tradeoff.requiredSetbackM} m は道路幅員・用途区分・計画高さだけで決まるので、寸法に依らず有効です。
           </div>
         )}
+          </>
+        )}
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 14 }}>
           高さを下げると必要な後退が減り、その分だけ奥行を使えます。建ぺい率の上限に当たるまでは、高さを削るほど建築面積が増えます。
         </div>
@@ -846,7 +995,9 @@ export function RealEstatePage() {
         <div style={{ fontSize: 12, fontWeight: 700, margin: '10px 0 8px' }}>🧊 立体プレビュー (分解アイソメ)</div>
         {/* 寸法が未入力なら**描かない**。0×0 の箱と「間口 0 m × 奥行 0 m で…の概形」は、
             未入力から作った図であって「建てられない」の図ではない。 */}
-        {zoning.isoWidth === null || zoning.isoDepth === null ? (
+        {zoning.refused.iso.length > 0 ? (
+          <ZoningRefusal labels={zoning.refused.iso} />
+        ) : zoning.isoWidth === null || zoning.isoDepth === null ? (
           <div data-iso-unset style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 14 }}>
             敷地の奥行と間口が未入力のため、立体プレビューは描いていません（寸法を入力すると概形が出ます）。
           </div>
@@ -896,20 +1047,26 @@ export function RealEstatePage() {
             <input type="text" inputMode="numeric" value={zpWorkshopStr} onChange={(e) => setZpWorkshopStr(e.target.value)} style={{ ...reInputStyle, width: 170 }} />
           </label>
         </div>
-        {zoning.factory.overCap && (
-          <div style={{ fontSize: 12, color: '#f87171', marginBottom: 10 }}>
-            希望の作業場面積が法定上限を超えています — この用途地域では建てられないため、面積の縮小か準工業地域などの立地見直しが必要です。
-          </div>
+        {zoning.refused.factory.length > 0 ? (
+          <ZoningRefusal labels={zoning.refused.factory} />
+        ) : (
+          <>
+            {zoning.factory.overCap && (
+              <div style={{ fontSize: 12, color: '#f87171', marginBottom: 10 }}>
+                希望の作業場面積が法定上限を超えています — この用途地域では建てられないため、面積の縮小か準工業地域などの立地見直しが必要です。
+              </div>
+            )}
+            <div className="stat-grid" style={{ marginBottom: 10 }}>
+              <Stat label="作業場 (栽培室等)" value={`${zoning.factory.workshopArea.toLocaleString()} ㎡`} />
+              <Stat label="1階の残り (直売・カフェ・事務)" value={`${zoning.factory.groundFloorOther.toLocaleString()} ㎡`} />
+              <Stat label="2階以上に回せる面積" value={`${zoning.factory.upperFloorsArea.toLocaleString()} ㎡`} />
+              <Stat
+                label="作業場の延べ床比率"
+                value={zoning.factory.workshopSharePct === null ? '—' : `${zoning.factory.workshopSharePct}%`}
+              />
+            </div>
+          </>
         )}
-        <div className="stat-grid" style={{ marginBottom: 10 }}>
-          <Stat label="作業場 (栽培室等)" value={`${zoning.factory.workshopArea.toLocaleString()} ㎡`} />
-          <Stat label="1階の残り (直売・カフェ・事務)" value={`${zoning.factory.groundFloorOther.toLocaleString()} ㎡`} />
-          <Stat label="2階以上に回せる面積" value={`${zoning.factory.upperFloorsArea.toLocaleString()} ㎡`} />
-          <Stat
-            label="作業場の延べ床比率"
-            value={zoning.factory.workshopSharePct === null ? '—' : `${zoning.factory.workshopSharePct}%`}
-          />
-        </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.7 }}>
           ※ 近隣商業地域・商業地域では、原動機を使用する工場は<strong>作業場の床面積合計 150 ㎡以下</strong>に制限されます
           (建築基準法48条・別表第二(り)項1号・(ぬ)項2号。日刊新聞印刷所・300㎡以下の自動車修理工場は例外)。
