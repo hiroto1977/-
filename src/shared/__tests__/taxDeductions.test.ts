@@ -24,6 +24,7 @@ import {
   clampIdecoContribution,
   clampSmallBizMutualAid,
   IDECO_ANNUAL_CAPS,
+  IDECO_ANNUAL_CAP_MAX,
   SMALL_BIZ_MUTUAL_ANNUAL_CAP,
   SELF_MEDICATION_THRESHOLD,
   SELF_MEDICATION_CAP,
@@ -419,9 +420,47 @@ describe('calcAllDeductions — iDeCo / 小規模企業共済の上限統合', (
     expect(d.smallBizMutualAid.incomeTax).toBe(816_000 + 840_000);
   });
 
-  it('does not cap iDeCo when the occupation is unspecified (backward compatible)', () => {
-    const d = calcAllDeductions({ totalIncome: 5_000_000, idecoContribution: 300_000 });
-    expect(d.smallBizMutualAid.incomeTax).toBe(300_000);
+  it('区分が未選択でも、どの区分でも超えられない最大値で倒す (パス 217)', () => {
+    // **この検査の題は 2026-09-13 まで「does not cap iDeCo when the occupation is
+    // unspecified (backward compatible)」だった** —— 上限が無いことを仕様として
+    // 留めていた。標本 (30 万) が上限の内側だったので、直しても落ちない。
+    // 古い検査は仕様ではなく、その時点の記録である。
+    const under = calcAllDeductions({ totalIncome: 5_000_000, idecoContribution: 300_000 });
+    expect(under.smallBizMutualAid.incomeTax).toBe(300_000);
+    const over = calcAllDeductions({ totalIncome: 5_000_000, idecoContribution: 9_999_999_999 });
+    expect(over.smallBizMutualAid.incomeTax).toBe(IDECO_ANNUAL_CAP_MAX);
+    expect(IDECO_ANNUAL_CAP_MAX).toBe(816_000);
+  });
+
+  it('未選択の天井は区分の最大値であって最小値ではない (公務員 14.4 万に倒さない)', () => {
+    // **最小値に倒すのは「別の間違った答え」** —— 区分が分からないだけで
+    // 自営業の正当な 81.6 万を 14.4 万に削ることになる (パス 209 の教訓)。
+    expect(IDECO_ANNUAL_CAP_MAX).toBeGreaterThan(Math.min(...Object.values(IDECO_ANNUAL_CAPS)));
+    const d = calcAllDeductions({ totalIncome: 5_000_000, idecoContribution: 816_000 });
+    expect(d.smallBizMutualAid.incomeTax).toBe(816_000);
+  });
+
+  it('未選択の天井は台帳の最大値と同じ値である (写しではない)', () => {
+    expect(IDECO_ANNUAL_CAP_MAX).toBe(Math.max(...Object.values(IDECO_ANNUAL_CAPS)));
+  });
+
+  it('区分ごとの上限を超える拠出は、その区分の上限で倒れる (未選択の天井まで伸びない)', () => {
+    for (const [occ, cap] of Object.entries(IDECO_ANNUAL_CAPS)) {
+      const d = calcAllDeductions({
+        totalIncome: 5_000_000,
+        idecoContribution: 9_999_999_999,
+        idecoOccupation: occ as keyof typeof IDECO_ANNUAL_CAPS,
+      });
+      expect(d.smallBizMutualAid.incomeTax).toBe(cap);
+    }
+  });
+
+  it('非有限の拠出は 0 に倒れる (上限を掛ける前に消毒する)', () => {
+    // `Math.min(NaN, cap)` は NaN (パス 202)。`nonNeg` を通していることを留める。
+    for (const bad of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+      const d = calcAllDeductions({ totalIncome: 5_000_000, idecoContribution: bad });
+      expect(d.smallBizMutualAid.incomeTax).toBe(0);
+    }
   });
 });
 

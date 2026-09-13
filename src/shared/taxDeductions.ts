@@ -432,6 +432,21 @@ export const IDECO_ANNUAL_CAPS: Record<IdecoOccupation, number> = {
   'dependent-spouse': 276_000, // 月2.3万
 };
 
+/**
+ * **職業区分が分からないときの iDeCo の上限** —— どの区分でも超えられない最大値
+ * (自営業 = 第1号被保険者の年 81.6 万)。
+ *
+ * パス 217 まで、区分が未選択のときは `Math.max(0, 拠出額)` だけで**上限が無かった**。
+ * 実測: `iDeCo 拠出 (年) = 9,999,999,999` で `所得税 ¥147,535 → ¥0`・
+ * `住民税 ¥305,500 → ¥5,000` —— **控除が全額効いて「税を払わなくてよい」**と出ていた。
+ *
+ * **区分ごとの最小値 (公務員 14.4 万) に倒すのは誤り**: 区分が分からないだけで
+ * 正当な拠出を削ることになり、「別の間違った答え」を作る (パス 209 の教訓)。
+ * 最大値なら「どの区分でもこれを超える拠出は制度上あり得ない」という**真の言明**に
+ * なるので、そこで止める。
+ */
+export const IDECO_ANNUAL_CAP_MAX = Math.max(...Object.values(IDECO_ANNUAL_CAPS));
+
 /** 小規模企業共済の年間拠出限度額 (月7万 × 12, 円)。 */
 export const SMALL_BIZ_MUTUAL_ANNUAL_CAP = 840_000;
 
@@ -826,9 +841,11 @@ export function calcAllDeductions(
   // 小規模企業共済 (年84万上限) + iDeCo (職業区分別上限) の合算。
   const smallBizCapped = clampSmallBizMutualAid(input.smallBizMutualAid ?? 0, p.smallBizMutualAnnualCap);
   const idecoRaw = input.idecoContribution ?? 0;
+  // 区分が未選択でも**上限は掛ける** (パス 217)。`Math.max(0, …)` だけだと上限が無く、
+  // 巨大な拠出がそのまま控除になって税額が 0 になっていた。
   const idecoCapped = input.idecoOccupation
     ? clampIdecoContribution(idecoRaw, input.idecoOccupation)
-    : Math.max(0, idecoRaw);
+    : Math.min(nonNeg(idecoRaw), IDECO_ANNUAL_CAP_MAX);
   const smallBizTotal = smallBizCapped + idecoCapped;
   const smallBiz = smallBizTotal > 0
     ? { incomeTax: yen(smallBizTotal), residentTax: yen(smallBizTotal) }

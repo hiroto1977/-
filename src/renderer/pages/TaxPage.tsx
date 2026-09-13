@@ -69,6 +69,8 @@ import {
 } from '../../shared/taxCalc';
 import {
   calcAllDeductions,
+  IDECO_ANNUAL_CAPS,
+  IDECO_ANNUAL_CAP_MAX,
   type DependentKind,
   type DeductionInput,
   type IdecoOccupation,
@@ -806,8 +808,17 @@ export function TaxPage() {
       [bonusCountStr, { label: '賞与の回数', kind: 'count', allowEmpty: true, allowZero: true, max: 12 }],
       [dGrossStr, { label: '給与収入 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [dSocialStr, { label: '社会保険料 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
-      [dIdecoStr, { label: 'iDeCo 掛金 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
-      [dSmallBizStr, { label: '小規模企業共済 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
+      // **法定の拠出上限を関門にする** (パス 217)。それまで天井が無く、巨大な拠出が
+      // そのまま控除になって `所得税 ¥147,535 → ¥0` が出ていた。区分を選べば
+      // その区分の上限、未選択なら**どの区分でも超えられない最大値**で見る。
+      [dIdecoStr, {
+        label: 'iDeCo 掛金 (円)', kind: 'money', allowEmpty: true, allowZero: true,
+        max: idecoOccupation === '' ? IDECO_ANNUAL_CAP_MAX : IDECO_ANNUAL_CAPS[idecoOccupation],
+      }],
+      [dSmallBizStr, {
+        label: '小規模企業共済 (円)', kind: 'money', allowEmpty: true, allowZero: true,
+        max: dedParams.smallBizMutualAnnualCap,
+      }],
       [dLifeStr, { label: '生命保険料 (新制度・円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [dLifeOldStr, { label: '生命保険料 (旧制度・円)', kind: 'money', allowEmpty: true, allowZero: true }],
       [dQuakeStr, { label: '地震保険料 (円)', kind: 'money', allowEmpty: true, allowZero: true }],
@@ -855,6 +866,9 @@ export function TaxPage() {
     dGrossStr,
     dSocialStr,
     dIdecoStr,
+    // iDeCo の上限は加入区分で変わる (パス 217)。区分を deps に入れないと、
+    // 区分を切り替えても関門が古い上限のまま残る。
+    idecoOccupation,
     dSmallBizStr,
     dLifeStr,
     dLifeOldStr,
@@ -894,6 +908,9 @@ export function TaxPage() {
     stampAmountStr,
     costAssessedStr,
     costContractStr,
+    // 小規模企業共済の上限は台帳 (`parameters.ts`) から来るので、上書きされたら
+    // 関門も動く必要がある。
+    dedParams,
   ]);
   return (
     <div>
@@ -1043,7 +1060,9 @@ export function TaxPage() {
           <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             iDeCo 職業区分 (拠出上限)
             <select value={idecoOccupation} onChange={(e) => setIdecoOccupation(e.target.value as IdecoOccupation | '')} style={{ ...inputStyle, width: '100%' }}>
-              <option value="">未指定 (上限なし)</option>
+              {/* **「上限なし」は誤りだった** (パス 217)。区分が未選択でも、どの区分でも
+                  超えられない最大値 (自営業 = 第1号被保険者) で倒して試算する。 */}
+              <option value="">未指定 (上限 {jpy(IDECO_ANNUAL_CAP_MAX)} で試算)</option>
               <option value="self-employed">自営業 (月6.8万)</option>
               <option value="employee-no-pension">会社員・企業年金なし (月2.3万)</option>
               <option value="employee-with-dc">会社員・企業型DC (月2.0万)</option>
