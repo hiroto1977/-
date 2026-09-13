@@ -17,6 +17,7 @@
 // 消費税の標準税率は税計算モジュールの定数が唯一の出所 (台帳
 // `tax.consumptionStandardRate` の既定値もこれを参照している)。ここで
 // リテラルを書き写すと、法定値が 2 か所に分かれて片方だけ古くなる。
+import { nonNeg } from './num';
 import { CONSUMPTION_TAX_STANDARD } from './taxCalc';
 
 // --- 資金調達の種別 ----------------------------------------------------
@@ -418,13 +419,6 @@ export interface FundingSummary {
   readonly count: number;
 }
 
-/** 0 円ガード付きの加算 (負値は 0 とみなす)。 */
-function nonNeg(n: number): number {
-  // Math.max(0, n) は `n > 0 ? n : 0` と同値で、n===0 で値が一致する `>`↔`>=` の
-  // equivalent mutant を構造的に排除する。
-  return Math.max(0, n);
-}
-
 /** 案件が確定 (入金済み or 採択済み) か。 */
 function isSecured(status: FundingStatus): boolean {
   return status === 'received' || status === 'approved';
@@ -557,7 +551,7 @@ export const DEFAULT_EFFECTIVE_TAX_RATE = 0.3;
 function clampRate(rate: number): number {
   // Math.min(1, Math.max(0, rate)) は `rate > 0 ? Math.min(1, rate) : 0` と同値で、
   // rate===0 で一致する `>`↔`>=` の equivalent mutant を排除する。
-  return Math.min(1, Math.max(0, rate));
+  return Math.min(1, nonNeg(rate));
 }
 
 /** 年月文字列 (YYYY-MM) に nMonths を足した年月を返す。 */

@@ -106,7 +106,7 @@ export function parseBalanceSheet(input: {
   netIncome?: unknown;
 }): BalanceSheet {
   // Number(number)===number なので typeof 分岐は不要 (簡約して equivalent mutant を排除)。
-  const nonNeg = (v: unknown, label: string): number => {
+  const requireNonNegative = (v: unknown, label: string): number => {
     const n = Number(v);
     if (!Number.isFinite(n) || n < 0) throw new Error(`${label}は 0 以上の数値で入力してください`);
     return n;
@@ -133,7 +133,7 @@ export function parseBalanceSheet(input: {
   const optNonNeg = (v: unknown, label: string): number | undefined => {
     if (v == null) return undefined;
     if (typeof v === 'string' && v.trim() === '') return undefined;
-    return nonNeg(v, label);
+    return requireNonNegative(v, label);
   };
   /**
    * 内数が親項目を超えていないか。未入力 (undefined) は照合しない。
@@ -146,13 +146,13 @@ export function parseBalanceSheet(input: {
     // Stryker disable next-line ConditionalExpression: undefined > n は常に false なので実行時は等価 (型検査のために残す)
     if (v !== undefined && v > limit) throw new Error(message);
   };
-  const currentAssets = nonNeg(input.currentAssets, '流動資産');
+  const currentAssets = requireNonNegative(input.currentAssets, '流動資産');
   const cash = optNonNeg(input.cash, '現預金');
   const inventory = optNonNeg(input.inventory, '棚卸資産');
   const accountsReceivable = optNonNeg(input.accountsReceivable, '売上債権');
-  const currentLiabilities = nonNeg(input.currentLiabilities, '流動負債');
+  const currentLiabilities = requireNonNegative(input.currentLiabilities, '流動負債');
   const accountsPayable = optNonNeg(input.accountsPayable, '仕入債務');
-  const fixedLiabilities = nonNeg(input.fixedLiabilities, '固定負債');
+  const fixedLiabilities = requireNonNegative(input.fixedLiabilities, '固定負債');
   const interestBearingDebt = optNonNeg(input.interestBearingDebt, '有利子負債');
   atMost(cash, currentAssets, '現預金は流動資産以下で入力してください');
   atMost(inventory, currentAssets, '棚卸資産は流動資産以下で入力してください');
@@ -169,7 +169,7 @@ export function parseBalanceSheet(input: {
     cash,
     inventory,
     accountsReceivable,
-    fixedAssets: nonNeg(input.fixedAssets, '固定資産'),
+    fixedAssets: requireNonNegative(input.fixedAssets, '固定資産'),
     currentLiabilities,
     accountsPayable,
     fixedLiabilities,

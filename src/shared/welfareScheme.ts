@@ -1,3 +1,4 @@
+import { nonNeg } from './num';
 import {
   calcSalaryIncomeDeduction,
   calcBasicDeduction,
@@ -106,7 +107,7 @@ function calcSpouseDeductionFor(input: WelfareSchemeInput, withCare: boolean): D
   const selfIncome = Math.max(0, annualGross - calcSalaryIncomeDeduction(annualGross, taxYear));
   return calcSpouseDeduction(
     selfIncome,
-    Math.max(0, input.spouseIncome),
+    nonNeg(input.spouseIncome),
     input.spouseElderly ?? false,
     taxYear,
   );
@@ -144,7 +145,7 @@ export function monthlyCompensation(
   extraDeductions: DeductionPair = ZERO_DEDUCTION,
   taxYear = new Date().getFullYear(),
 ): MonthlyCompensation {
-  const gross = Math.max(0, grossMonthly);
+  const gross = nonNeg(grossMonthly);
   if (gross === 0) {
     return {
       gross: 0,

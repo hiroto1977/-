@@ -1,3 +1,4 @@
+import { nonNeg } from './num';
 /**
  * 家計・貯蓄計画 (savings planning) — 概算試算。
  *
@@ -119,8 +120,8 @@ export function emergencyFund(
   monthlyExpense: number,
   months: number = EMERGENCY_FUND_MONTHS_DEFAULT,
 ): number {
-  const e = Math.max(0, monthlyExpense);
-  const m = Math.max(0, months);
+  const e = nonNeg(monthlyExpense);
+  const m = nonNeg(months);
   return yen(e * m);
 }
 
@@ -165,8 +166,8 @@ export function futureValueWithFrequency(
   // 負の積立額・年数は 0 にクランプ。これ以降 pmt>=0・yrs>=0 が保証され、
   // 年数 0 (= periods/n が 0) のときは各計算経路がそのまま 0 を返すため、
   // 追加の <=0 早期 return ガードは冗長 (equivalent) として置かない。
-  const pmt = Math.max(0, monthlyContribution);
-  const yrs = Math.max(0, years);
+  const pmt = nonNeg(monthlyContribution);
+  const yrs = nonNeg(years);
 
   if (frequency === 'annual') {
     const annual = annualRatePct / 100;

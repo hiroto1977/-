@@ -22,7 +22,7 @@
  *   7. 税引後利益   = 課税所得 − 法人税等合計
  */
 
-import { yen } from './num';
+import { yen, nonNeg } from './num';
 
 // --- 年度定数 (令和6年度 / 2024) ----------------------------------------
 // 根拠: 法人税法66条 (中小法人の軽減税率 15% / 本則 23.2%)、
@@ -217,7 +217,7 @@ export function resolveCorporatePerCapita(
   employees = 0,
   r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): number {
-  const c = Math.max(0, capital);
+  const c = nonNeg(capital);
   const many = employees > r.perCapitaEmployeeThreshold;
   // 上位区分から走査し、最初に「下限以上」(c >= 下限) を満たした区分を採用する。
   // これにより資本金区分の境界と最上位区分の頭打ちを同時に満たす。最下位区分
@@ -302,8 +302,8 @@ export function applyLossCarryforward(
   small: boolean,
   r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): LossCarryforwardResult {
-  const baseIncome = Math.max(0, income);
-  const availableLoss = Math.max(0, loss);
+  const baseIncome = nonNeg(income);
+  const availableLoss = nonNeg(loss);
   const limit = small ? baseIncome : baseIncome * r.largeCorpLossDeductionRatio;
   const deductedLoss = Math.min(availableLoss, limit);
   return {
@@ -329,7 +329,7 @@ export function calcCorporateIncomeTax(
   small: boolean,
   r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): number {
-  const income = Math.max(0, taxableIncome);
+  const income = nonNeg(taxableIncome);
   // Stryker disable next-line ConditionalExpression: income=0 の早期returnを外しても、各項が 0×率=0 を返すため等価。
   if (income === 0) return 0;
   if (!small) {
@@ -349,7 +349,7 @@ export function calcLocalCorporateTax(
   corporateIncomeTax: number,
   r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): number {
-  return yen(Math.max(0, corporateIncomeTax) * r.localCorpTaxRate);
+  return yen(nonNeg(corporateIncomeTax) * r.localCorpTaxRate);
 }
 
 /**
@@ -365,8 +365,8 @@ export function calcResidentCorporateTax(
   perCapitaLevy: number = DEFAULT_PER_CAPITA_LEVY,
   r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): number {
-  const corporateTaxPortion = yen(Math.max(0, corporateIncomeTax) * r.residentCorpTaxRate);
-  return corporateTaxPortion + Math.max(0, perCapitaLevy);
+  const corporateTaxPortion = yen(nonNeg(corporateIncomeTax) * r.residentCorpTaxRate);
+  return corporateTaxPortion + nonNeg(perCapitaLevy);
 }
 
 /**
@@ -384,7 +384,7 @@ export function calcBusinessTaxIncomePortion(
   taxableIncome: number,
   r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): number {
-  const income = Math.max(0, taxableIncome);
+  const income = nonNeg(taxableIncome);
   // Stryker disable next-line ConditionalExpression: income=0 の早期returnを外しても、各 tier が 0×率=0 を返すため等価。
   if (income === 0) return 0;
   const tier1 = Math.min(income, r.businessTaxTier1Limit);
@@ -409,7 +409,7 @@ export function calcSpecialBusinessTax(
   businessTaxIncomePortion: number,
   r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): number {
-  return yen(Math.max(0, businessTaxIncomePortion) * r.specialBusinessTaxRate);
+  return yen(nonNeg(businessTaxIncomePortion) * r.specialBusinessTaxRate);
 }
 
 // --- 法定実効税率 (round 60) --------------------------------------------
@@ -473,7 +473,7 @@ export function selectStatutoryRates(
   small: boolean,
   r: CorporateTaxRates = DEFAULT_CORPORATE_TAX_RATES,
 ): StatutoryRateInputs {
-  const income = Math.max(0, taxableIncome);
+  const income = nonNeg(taxableIncome);
   const corporateRate =
     small && income <= r.reducedThreshold
       ? r.reducedRate
@@ -603,7 +603,7 @@ export function calcCorporateTax(
   const small = isSmallBusiness(profile, r);
   const perCapitaLevy = Math.max(0, resolvePerCapitaLevy(profile, r));
 
-  const income = Math.max(0, taxableIncome);
+  const income = nonNeg(taxableIncome);
   const loss = applyLossCarryforward(income, profile.carryforwardLoss ?? 0, small, r);
   const incomeAfterLoss = loss.taxableIncome;
 

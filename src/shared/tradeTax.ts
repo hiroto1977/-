@@ -29,6 +29,8 @@
  * 財務省 諸外国における付加価値税の概要（2026年1月現在）。
  */
 
+import { nonNeg } from './num';
+
 /** 消費税（国税）の税率。標準 7.8% / 軽減 6.24%。 */
 export const JP_NATIONAL_STANDARD = 0.078;
 export const JP_NATIONAL_REDUCED = 0.0624;
@@ -60,8 +62,6 @@ export type CustomsBasis = 'CIF' | 'FOB';
 
 const floor1000 = (n: number) => Math.floor(n / 1000) * 1000;
 const floor100 = (n: number) => Math.floor(n / 100) * 100;
-// n > 0 / n >= 0 は n === 0 で同値になり変異を区別できないため、比較ごと Math.max に寄せる。
-const nonNeg = (n: number) => (Number.isFinite(n) ? Math.max(0, n) : 0);
 
 export interface ImportInput {
   /** 商品代金（円）。個人使用のときは海外小売価格。 */
@@ -141,7 +141,7 @@ export function calcJapanImport(input: ImportInput, p: ImportParams = DEFAULT_IM
     notes.push('課税価格の合計額が1万円以下のため、関税と消費税が免除されます（酒税・たばこ税等の個別消費税は免除されません）。この免税は2028年4月1日から一部廃止される予定です。');
   }
 
-  const duty = exempted ? 0 : floor100(customsValue * Math.max(0, input.dutyRate));
+  const duty = exempted ? 0 : floor100(customsValue * nonNeg(input.dutyRate));
   const consumptionBase = exempted ? 0 : floor1000(customsValue + duty + otherExcise);
   const rate = input.reducedRate ? p.nationalReduced : p.nationalStandard;
   const nationalTax = exempted ? 0 : floor100(consumptionBase * rate);
@@ -236,10 +236,10 @@ export function calcExport(input: ExportInput): ExportResult {
     notes.push('課税価格を CIF（国際運賃・保険料を含む）で計算しています。EU をはじめ多くの国はこの基準です。');
   }
 
-  const destDuty = destCustomsValue * Math.max(0, input.destDutyRate);
+  const destDuty = destCustomsValue * nonNeg(input.destDutyRate);
   const vatIncludesDuty = input.vatIncludesDuty ?? true;
   const destVatBase = vatIncludesDuty ? destCustomsValue + destDuty : destCustomsValue;
-  const destVat = destVatBase * Math.max(0, input.destVatRate);
+  const destVat = destVatBase * nonNeg(input.destVatRate);
   const destTotalTax = destDuty + destVat;
 
   const bearer = input.bearer ?? 'buyer';

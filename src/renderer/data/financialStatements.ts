@@ -8,6 +8,7 @@
  * 簡易間接法 (当期純利益 + 減価償却) の営業CF概算で、投資/財務CF は未モデル。
  */
 
+import { nonNeg } from '../../shared/num';
 import type { FinancialInputs } from './financialRatios';
 import { shortTermDebtPortion, shortTermDebtShare } from './businessFinancials';
 
@@ -207,7 +208,7 @@ export function buildComprehensiveIncome(f: FinancialInputs): StatementLine[] {
 
 // --- 株主資本等変動計算書 -----------------------------------------------
 export function buildEquityChangeStatement(f: FinancialInputs, dividendRate = 0): StatementLine[] {
-  const dividend = r0(Math.max(0, f.netProfit) * dividendRate);
+  const dividend = r0(nonNeg(f.netProfit) * dividendRate);
   const ending = f.equity; // 期末純資産
   const beginning = ending - f.netProfit + dividend; // 期首純資産 (逆算)
   return [

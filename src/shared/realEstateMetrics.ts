@@ -9,7 +9,7 @@
  *   実質利回り = (年間賃料×入居率 − 年間経費) ÷ (物件価格 + 取得費) × 100
  */
 
-import { round2 } from './num';
+import { round2, nonNeg } from './num';
 
 export interface RealEstateYield {
   /**
@@ -45,11 +45,11 @@ export function calcRealEstateYield(
   annualExpense = 0,
   acquisitionCost = 0,
 ): RealEstateYield {
-  const rent = Math.max(0, monthlyRent);
-  const price = Math.max(0, purchasePrice);
-  const occ = Math.min(1, Math.max(0, occupancyRate));
-  const expense = Math.max(0, annualExpense);
-  const acqCost = Math.max(0, acquisitionCost);
+  const rent = nonNeg(monthlyRent);
+  const price = nonNeg(purchasePrice);
+  const occ = Math.min(1, nonNeg(occupancyRate));
+  const expense = nonNeg(annualExpense);
+  const acqCost = nonNeg(acquisitionCost);
 
   const annualGrossRent = rent * 12;
   const annualNetIncome = Math.round(annualGrossRent * occ - expense);
@@ -119,8 +119,8 @@ export function calcRealEstateLeverage(
   netYieldPct: number | null,
   loanRatePct: number,
 ): RealEstateLeverage {
-  const debtService = Math.max(0, annualDebtService);
-  const equity = Math.max(0, ownEquity);
+  const debtService = nonNeg(annualDebtService);
+  const equity = nonNeg(ownEquity);
   const annualCashflow = Math.round(annualNetIncome - debtService);
   const cashOnCashReturnPct = equity > 0 ? round2((annualCashflow / equity) * 100) : null;
   const yieldGapPct = netYieldPct === null ? null : round2(netYieldPct - loanRatePct);
@@ -197,11 +197,11 @@ export function calcNoiYield(
   purchasePrice: number,
   purchaseCost = 0,
 ): RealEstateNoiYield {
-  const gross = Math.max(0, annualGrossRent);
-  const occ = Math.min(1, Math.max(0, occupancyRate));
-  const opex = Math.max(0, annualOperatingExpense);
-  const price = Math.max(0, purchasePrice);
-  const cost = Math.max(0, purchaseCost);
+  const gross = nonNeg(annualGrossRent);
+  const occ = Math.min(1, nonNeg(occupancyRate));
+  const opex = nonNeg(annualOperatingExpense);
+  const price = nonNeg(purchasePrice);
+  const cost = nonNeg(purchaseCost);
 
   const vacancyLoss = Math.round(gross * (1 - occ));
   const noi = Math.round(gross - vacancyLoss - opex);
@@ -291,12 +291,12 @@ export function calcBreakEvenOccupancyPct(
   annualDebtService: number,
   annualGrossRent: number,
 ): number | null {
-  const gross = Math.max(0, annualGrossRent);
+  const gross = nonNeg(annualGrossRent);
   if (gross <= 0) {
     return null;
   }
-  const opex = Math.max(0, annualOperatingExpense);
-  const debt = Math.max(0, annualDebtService);
+  const opex = nonNeg(annualOperatingExpense);
+  const debt = nonNeg(annualDebtService);
   return round2(((opex + debt) / gross) * 100);
 }
 

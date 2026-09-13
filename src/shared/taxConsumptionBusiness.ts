@@ -20,7 +20,7 @@
  * 申告・納税は税理士 / 国税庁・e-Tax で確定してください。
  */
 
-import { yen } from './num';
+import { nonNeg, yen } from './num';
 import {
   CONSUMPTION_TAX_STANDARD,
   CONSUMPTION_TAX_REDUCED,
@@ -59,17 +59,9 @@ function yenOr0(n: number): number {
   return Number.isFinite(n) ? yen(n) : 0;
 }
 
-/** 非有限・負の金額を 0 に丸める。 */
-function nonNegativeFinite(n: number): number {
-  // Stryker disable next-line EqualityOperator: `> 0` ⇔ `>= 0` は等価変異。
-  // n === 0 のとき両分岐とも 0 を返す (then 分岐は n=0、else 分岐は定数 0)。
-  // 後段は常に金額 × 税率 or 加算で使われ、0 の寄与は皆無のため観測不能。
-  return Number.isFinite(n) && n > 0 ? n : 0;
-}
-
 /** 税率別の税抜金額から消費税額 (標準10% + 軽減8%) を求める。 */
 function taxOf(a: AmountByRate, rates: ConsumptionRates): number {
-  return nonNegativeFinite(a.standard) * rates.standard + nonNegativeFinite(a.reduced) * rates.reduced;
+  return nonNeg(a.standard) * rates.standard + nonNeg(a.reduced) * rates.reduced;
 }
 
 // --- 本則課税 (軽減税率混在) ---------------------------------------------
@@ -169,7 +161,7 @@ function totalPurchaseTax(p: PurchaseByUse, rates: ConsumptionRates): number {
  */
 function clampRatio(r: number): number {
   if (!Number.isFinite(r)) return 0;
-  return Math.min(1, Math.max(0, r));
+  return Math.min(1, nonNeg(r));
 }
 
 /**
@@ -184,8 +176,8 @@ function clampRatio(r: number): number {
  * 課税期間の扱いは実務で分かれるので、その期は税理士に確認すること。
  */
 export function taxableSalesRatio(taxableAndExportSales: number, exemptSales: number): number {
-  const taxable = nonNegativeFinite(taxableAndExportSales);
-  const total = taxable + nonNegativeFinite(exemptSales);
+  const taxable = nonNeg(taxableAndExportSales);
+  const total = taxable + nonNeg(exemptSales);
   if (total <= 0) return 0;
   return taxable / total;
 }
@@ -202,7 +194,7 @@ export function canDeductFully(
 ): boolean {
   return (
     taxableSalesRatio(taxableAndExportSales, exemptSales) >= p.fullCreditRatioThreshold &&
-    nonNegativeFinite(taxableAndExportSales) <= p.fullCreditSalesThreshold
+    nonNeg(taxableAndExportSales) <= p.fullCreditSalesThreshold
   );
 }
 
@@ -285,10 +277,10 @@ export function calcStandardTaxDetailed(
   const salesTax = taxOf(input.taxableSales, p.rates);
   const inputTaxTotal = totalPurchaseTax(input.purchases, p.rates);
   const taxableAndExport =
-    nonNegativeFinite(input.taxableSales.standard) +
-    nonNegativeFinite(input.taxableSales.reduced) +
-    nonNegativeFinite(input.exportSales ?? 0);
-  const exemptSales = nonNegativeFinite(input.exemptSales ?? 0);
+    nonNeg(input.taxableSales.standard) +
+    nonNeg(input.taxableSales.reduced) +
+    nonNeg(input.exportSales ?? 0);
+  const exemptSales = nonNeg(input.exemptSales ?? 0);
   const ratio = taxableSalesRatio(taxableAndExport, exemptSales);
   const fullyDeductible = canDeductFully(taxableAndExport, exemptSales, p);
 
@@ -424,7 +416,7 @@ export function calcThirtyPercentTax(
  * 非有限・負は 0 とみなす (= 免税)。
  */
 export function isTaxExempt(baseTaxableSales: number, threshold = EXEMPTION_THRESHOLD): boolean {
-  return nonNegativeFinite(baseTaxableSales) <= threshold;
+  return nonNeg(baseTaxableSales) <= threshold;
 }
 
 /**
@@ -432,7 +424,7 @@ export function isTaxExempt(baseTaxableSales: number, threshold = EXEMPTION_THRE
  *   課税売上高 5,000万円以下 → 選択可 (true)
  */
 export function canUseSimplified(baseTaxableSales: number, threshold = SIMPLIFIED_ELIGIBILITY_THRESHOLD): boolean {
-  return nonNegativeFinite(baseTaxableSales) <= threshold;
+  return nonNeg(baseTaxableSales) <= threshold;
 }
 
 // --- 3方式の有利判定 ----------------------------------------------------
@@ -495,8 +487,8 @@ export function compareBusinessTaxMethods(
 ): BusinessTaxComparison {
   const totalSales: AmountByRate = segments.reduce<AmountByRate>(
     (acc, seg) => ({
-      standard: acc.standard + nonNegativeFinite(seg.sales.standard),
-      reduced: acc.reduced + nonNegativeFinite(seg.sales.reduced),
+      standard: acc.standard + nonNeg(seg.sales.standard),
+      reduced: acc.reduced + nonNeg(seg.sales.reduced),
     }),
     { standard: 0, reduced: 0 },
   );

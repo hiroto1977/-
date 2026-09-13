@@ -6,7 +6,7 @@
  * 元本割れの可能性があります。過去の実績は将来を保証しません。
  */
 
-import { round2, yen } from './num';
+import { round2, yen, nonNeg } from './num';
 import { isPlannableYears } from './savingsPlanning';
 
 /**
@@ -67,8 +67,8 @@ export function calcCompoundingFutureValue(
   if (!isPlannableYears(years)) {
     return { futureValue: null, totalContributed: null, totalGain: null, gainPct: null };
   }
-  const pmt = Math.max(0, monthlyContribution);
-  const yrs = Math.max(0, years);
+  const pmt = nonNeg(monthlyContribution);
+  const yrs = nonNeg(years);
   const n = Math.round(yrs * 12);
   // n=0 または pmt=0 のときは totalContributed=0・fvRaw=0・gainPct=0 と計算経路でも
   // すべて 0 に畳まれるため、早期 return ガードは冗長 (equivalent) として置かない。

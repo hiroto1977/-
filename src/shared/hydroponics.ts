@@ -247,7 +247,7 @@ export const DEFAULT_PRODUCTION_PARAMS: ProductionParams = {
 /** 割合を 0..1 に収める。分岐で書くと 0 が両枝で同値になり観測できない。 */
 function clampRatio(r: number): number {
   if (!Number.isFinite(r)) return 0;
-  return Math.min(1, Math.max(0, r));
+  return Math.min(1, nonNeg(r));
 }
 
 /**

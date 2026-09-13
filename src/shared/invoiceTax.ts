@@ -17,6 +17,7 @@
  * 一緒くたにしない。
  */
 
+import { nonNeg } from './num';
 import { CONSUMPTION_TAX_REDUCED, CONSUMPTION_TAX_STANDARD } from './taxCalc';
 
 /** 品目に割り当てる税率区分。 */
@@ -87,8 +88,8 @@ export interface TaxLine {
 
 /** 行の税抜金額。負の数量・単価は 0 として扱う。 */
 export function lineAmount(line: TaxLine): number {
-  const q = Math.max(0, line.qty);
-  const p = Math.max(0, line.unitPrice);
+  const q = nonNeg(line.qty);
+  const p = nonNeg(line.unitPrice);
   return q * p;
 }
 

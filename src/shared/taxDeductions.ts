@@ -10,7 +10,7 @@
  * 所得税と住民税で控除額が異なるものは両方を返す。
  */
 
-import { yen } from './num';
+import { yen, nonNeg } from './num';
 import { calcBasicDeduction, calcResidentBasicDeduction } from './taxCalc';
 
 /** 円未満を四捨五入。 */
@@ -372,7 +372,7 @@ export function calcSelfMedicationDeduction(
   threshold = SELF_MEDICATION_THRESHOLD,
   cap = SELF_MEDICATION_CAP,
 ): DeductionPair {
-  const paid = Math.max(0, switchOtcPaid);
+  const paid = nonNeg(switchOtcPaid);
   const deduction = Math.min(cap, Math.max(0, paid - threshold));
   return { incomeTax: deduction, residentTax: deduction };
 }
@@ -415,12 +415,12 @@ export const SMALL_BIZ_MUTUAL_ANNUAL_CAP = 840_000;
 
 /** iDeCo 拠出額を職業区分別の年間上限でクランプする (負値は0)。 */
 export function clampIdecoContribution(amount: number, occupation: IdecoOccupation): number {
-  return Math.min(Math.max(0, amount), IDECO_ANNUAL_CAPS[occupation]);
+  return Math.min(nonNeg(amount), IDECO_ANNUAL_CAPS[occupation]);
 }
 
 /** 小規模企業共済掛金を年間上限 (84万) でクランプする (負値は0)。 */
 export function clampSmallBizMutualAid(amount: number, cap = SMALL_BIZ_MUTUAL_ANNUAL_CAP): number {
-  return Math.min(Math.max(0, amount), cap);
+  return Math.min(nonNeg(amount), cap);
 }
 
 // --- 寄附金控除 (ふるさと納税ベースの所得税分) ---------------------------
@@ -624,10 +624,10 @@ export function calcCasualtyLossDeduction(
   if (supplied.some((v) => v !== undefined && !Number.isFinite(v))) {
     return { incomeTax: 0, residentTax: 0 };
   }
-  const loss = Math.max(0, input.lossAmount);
+  const loss = nonNeg(input.lossAmount);
   const disaster = Math.max(0, input.disasterRelatedSpending ?? 0);
   const reimbursed = Math.max(0, input.reimbursed ?? 0);
-  const income = Math.max(0, input.totalIncome);
+  const income = nonNeg(input.totalIncome);
 
   // 差引損失額 (補填額控除後, 下限0)。
   const netLoss = Math.max(0, loss + disaster - reimbursed);

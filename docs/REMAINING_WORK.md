@@ -13918,7 +13918,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **107 ファイル / 281 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **107 ファイル / 279 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -13938,7 +13938,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/pages/TaxPage.tsx` | 5 |
 | `src/shared/buildingIso.ts` | 5 |
 | `src/shared/savingsPlanning.ts` | 5 |
-| `src/shared/tradeTax.ts` | 5 |
 | `src/main/clients/funding.ts` | 4 |
 | `src/renderer/components/FinancialAnalysis.tsx` | 4 |
 | `src/renderer/data/connectionStatus.ts` | 4 |
@@ -13948,8 +13947,8 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/depreciation.ts` | 4 |
 | `src/shared/hydroponics.ts` | 4 |
 | `src/shared/ollama.ts` | 4 |
-| `src/shared/taxConsumptionBusiness.ts` | 4 |
 | `src/shared/taxSocialInsurance.ts` | 4 |
+| `src/shared/tradeTax.ts` | 4 |
 | `src/shared/waterCyclePlanner.ts` | 4 |
 | `src/main/clients/kpi.ts` | 3 |
 | `src/main/clients/youtube.ts` | 3 |
@@ -13960,6 +13959,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/invoiceTax.ts` | 3 |
 | `src/shared/payroll.ts` | 3 |
 | `src/shared/securityRange.ts` | 3 |
+| `src/shared/taxConsumptionBusiness.ts` | 3 |
 | `src/main/clients/ollama.ts` | 2 |
 | `src/renderer/App.tsx` | 2 |
 | `src/renderer/components/AxonometricCharts.tsx` | 2 |
@@ -26097,6 +26097,140 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 
 この 5 つは**欠陥ではなく範囲**だが、画面と仕様書の両方が明示する
 (黙っていると「自動管理」という名前が実態より広く読まれる)。
+
+## パス 201 (2026-09-13) — **`Math.max(0, x)` は消毒ではない (`Math.max(0, NaN)` は `NaN`)。同じ名前の消毒が 3 つ在り、1 つだけ有限を見ていなかった**
+
+パス 198〜200 は「宣言した天井を計算側が強制していない」家系だった。その続きで
+`tradeTax.ts` を読んでいて、**同じファイルの中で消毒が 2 通り**になっているのに気付いた ——
+金額は `nonNeg` (有限を見る) を通り、**税率は素の `Math.max(0, …)`** を通る。
+
+### 測った事実
+
+`Math.max` は消毒ではない:
+
+| 式 | 結果 |
+| --- | --- |
+| `Math.max(0, NaN)` | **`NaN`** |
+| `Math.min(1, NaN)` | **`NaN`** |
+| `Math.max(0, Infinity)` | `Infinity` |
+| `Math.max(0, -Infinity)` | `0` ← **負の無限だけ落ちるので「動いて見える」** |
+
+そして NaN は**比較のどちら側にも落ちない**:
+
+| 式 | 結果 |
+| --- | --- |
+| `NaN <= 0` | `false` |
+| `NaN > 0` | `false` |
+| `NaN === 0` | `false` |
+
+**この 2 つが噛み合うと、関門を 2 つ通り抜ける。** リポジトリは「算定できない」を
+`if (x <= 0) return { …: null }` で表しており (パス 52 / 54 / 84 / 90 / 91 / 122 で
+確立した `null` の道)、`x` が NaN だと**その枝も通らない**。つまり
+「算定不能」でもなく「算定できた」でもない**第 3 の状態**が、`null` ではなく
+NaN として画面まで出る。
+
+実測 (直す前 → 直した後):
+
+| 呼び出し | 直す前 | 直した後 |
+| --- | --- | --- |
+| `calcRealEstateYield(monthlyRent=10万, purchasePrice=NaN)` | `grossYieldPct: NaN` ← **パス 54 の `null` の道を素通り** | `grossYieldPct: null` |
+| `calcJapanImport({… dutyRate: NaN})` | `duty / 消費税 / 通関原価 すべて NaN` | すべて有限 |
+| `calcExport({… destVatRate: NaN})` | `destVat / destTotalTax / buyerBurden が NaN` | すべて有限 |
+| `breakEvenQuantity(f, avgUnitPrice=NaN)` | `unitContribution: NaN, breakEvenQuantity: Infinity` | すべて 0 |
+| `breakEvenQuantity(f{revenue:NaN}, 1000)` | 「単位限界利益 1,000円 / 損益分岐点数量 1個」と**もっともらしく**答え、数量だけ NaN | 売上 0 として一貫 |
+| `simulatePriceChange(f{revenue:NaN}, 0)` | 売上・限界利益・営業利益すべて NaN (「売上が無い」枝を通らない) | すべて有限 |
+
+### 母集団 (走査で数えた)
+
+`Math.max(0, …)` は **317 箇所**。そのうち:
+
+| 区分 | 件数 | 扱い |
+| --- | ---: | --- |
+| 式の床 (`Math.max(0, a - b)` など) | 147 | **対象外** —— 差の床であって消毒ではない。有限性は上流の責務 |
+| 裸の参照 (消毒の疑い) | 170 | |
+| └ 同じ行で有限を見ている | 23 | すでに正しい |
+| └ 見ていない | 139 | |
+| &nbsp;&nbsp;&nbsp;└ **仮引数をそのまま消毒 (front door)** | **111** | **直した** |
+| &nbsp;&nbsp;&nbsp;└ 局所値・その他 | 28 | 上流で消毒済みなので対象外 |
+
+### 消毒の綴りが 5 通りに割れていた
+
+| 場所 | 実装 | 有限を見る |
+| --- | --- | :-: |
+| `src/shared/num.ts:42` `nonNeg` | `Number.isFinite(n) ? Math.max(0, n) : 0` | ✅ **正典** |
+| `src/shared/tradeTax.ts:64` `nonNeg` | 同じ式の**写し** | ✅ |
+| **`src/shared/funding.ts:422` `nonNeg`** | **`Math.max(0, n)` だけ** | ❌ **同じ名前で中身が違う** |
+| `src/shared/taxConsumptionBusiness.ts:63` `nonNegativeFinite` | `Number.isFinite(n) && n > 0 ? n : 0` | ✅ (4 つ目の綴り) |
+| `src/renderer/data/balanceSheet.ts:109` `nonNeg` | **投げる** (消毒ではなく検証) | — 契約が違う |
+
+`funding.ts` の `nonNeg` は 15 箇所から呼ばれており、**名前が同じなので読み手は
+有限を見ていると思う。** パス 87 で `shared/num.ts` の `nonNeg` に有限判定を
+入れたとき、同名の双子には届いていなかった。
+
+### 直した形
+
+1. **消毒は `shared/num.ts` の `nonNeg` 1 つだけ。** 写し 2 つと 4 つ目の綴りを消し、
+   `balanceSheet.ts` の「断る」検証子は `requireNonNegative` に改名した
+   (同じ名前で契約が違うのは取り違える)。
+2. **front door の 110 箇所を `nonNeg` に寄せた** (23 ファイル)。
+   入口で NaN を 0 に倒せば、**既に書かれている `<= 0` の枝がそのまま正しく鳴る** ——
+   関門を新しく足すのではなく、既存の関門に値を届ける形にした。
+3. `kpi.ts` は**欄ごとでは直らなかった。** 4 つの関数が `f.revenue` を
+   「消毒した写し」と「素のまま」の 2 通りで読んでおり、関門は素のほうを見ていた。
+   境界で 1 度だけ消毒する `saneFundamentals(f)` を入れ、5 欄すべてを通した。
+   `computeKpi` の Stryker 注記が既に「with non-negative costs, contribution > 0
+   implies revenue > 0」という不変条件を**前提にしていた** —— そこで前提を事実にした。
+4. 新しい関門 `src/shared/__tests__/sanitizerCensus.test.ts` (13 件) が
+   「仮引数を素の `Math.max(0, …)` で消毒し直さない」「`nonNeg` の定義は
+   `shared/num.ts` だけ」を走査で留める。台帳 2 つは**空で出発する**。
+
+### 正直な注記
+
+★ **110 箇所で NaN が通り抜けていたのに、振る舞いを留めていた検査は 1 本も無かった。**
+110 箇所を書き換えて `npm test` を回したとき、**落ちたのは 0 件**である
+(落ちた 2 件は 0 倒し census が「`? … : 0` の母集団が 281 → 279 に減った」と
+言ったもので、これは正しい検知)。消毒を通した先の挙動が変わったのに何も鳴らない
+= **その経路の非有限入力を誰も測っていなかった**ということ。母集団を数えるまで
+「守られている」と読めていた。
+
+★ **私が blunt な一括置換で自分の直しを壊し、実測が捕まえた。**
+`saneFundamentals` を書いた直後、本体に残る二重消毒を消すために
+`nonNeg(f.revenue)` → `f.revenue` を**全体置換**した。それが
+**書いたばかりの helper 自身の行**にも当たり、`revenue` だけ消毒されない
+helper になっていた。型検査も lint も通る。**probe を回して初めて分かった** ——
+差分を読んでも気付かなかったと思う。
+
+★ 対照 3 件はすべて鳴った (F1 `funding.ts` の非有限を見ない局所 `nonNeg` を戻す →
+走査 2 本が落ちる / F2 `realEstateMetrics` の `nonNeg(purchasePrice)` を素の
+`Math.max` に戻す → 走査が落ち、**`grossYieldPct: NaN` が実測で戻る** /
+F3 `kpi.ts` の境界の消毒を外す → NaN の連鎖が戻る)。復帰後 13/13 green。
+
+★ **到達可能性は限定的である。** 鍵盤からの道は閉じている
+(`readNumeric` が非有限を `null` にし、`readNumberOr0` が 0 に倒す)。
+保存からの道も閉じている (`collectionShapes` の `num` は `Number.isFinite`・パス 98)。
+残る入口は **形を確かめない外部 JSON** (`jsonFetch` は `JSON.parse(...) as T`) と
+**計算の中間値** (`0/0`・`Infinity - Infinity`)。`freee.ts` は 2026 年のパス 153 で
+そこを閉じ、コメントに**この罠を書き残していた** —— つまりリポジトリは罠を
+3 度書き留めておいて、母集団を 1 度も数えなかった。
+
+### 次に見るところ
+
+- **この走査はアロー関数の仮引数を見られない** (AST が無いのでスコープを導けない ——
+  パス 200 の `timestampPrintCensus` と同じ限界)。走査後に残る裸の
+  `Math.max(0, 参照)` は **27 件**で、うち **10 件**がアローの仮引数と名前が一致する。
+  目で見た限り「数行上で有限を見ている」(`freee.ts:111` はパス 153 の判定が 6 行上)・
+  「消毒済みの値から導いた局所値」・「作図の座標・静的表」のいずれかだが、
+  **構造上あり得ないことを示したわけではなく、分類しただけである。**
+  アローを見られる走査にするか、`saneFundamentals` のような境界の消毒に寄せるか。
+- `Math.min(cap, x)` を**天井**の消毒として使っている箇所 (今回は床だけを数えた)。
+  `Math.min(1, NaN)` も NaN なので同じ形が在り得る。
+- 式の床 147 件のうち、`a` `b` が非有限になり得るもの。今回は「上流の責務」として
+  外したが、**その上流が誰かは数えていない**。
+- `parseIsoDate` の年に範囲が無い (`\d{4}` = 0000〜9999)。パス 200 で算術は正した
+  が、「`0026-03-31` を業務の日付として受けてよいか」は方針の判断。
+- `GuardedNumber` の `max` 宣言のうち、計算側の関門を確かめたのは年 3 欄だけ
+  (パス 198/199)。不動産の寸法 4 件・貿易の税率 4 件は**今回 `nonNeg` は通したが、
+  宣言した上限そのものの強制は未確認**。
 
 ## パス 200 (2026-09-13) — **`Date.UTC` に変数の年を渡すと、0〜99 が 1900 年代へ黙って写る**
 

@@ -9,7 +9,7 @@
  * UI から切り離して単体テスト可能にするため、計算はすべてここに集約する。
  */
 
-import { yen } from './num';
+import { yen, nonNeg } from './num';
 import {
   SME_ANNUAL_CAP,
   SME_MEASURE_END,
@@ -260,7 +260,7 @@ export function residentTaxExemption(
   totalIncome: number,
   dependentCount: number,
 ): { readonly perCapitaExempt: boolean; readonly incomeLevyExempt: boolean } {
-  const persons = 1 + Math.max(0, dependentCount);
+  const persons = 1 + nonNeg(dependentCount);
   const hasDependents = dependentCount > 0;
   // 均等割の非課税限度額。
   const perCapitaLimit = hasDependents ? 350_000 * persons + 310_000 : 450_000;
@@ -375,7 +375,7 @@ export function calcBasicDeduction(
   totalIncome: number,
   taxYear = new Date().getFullYear(),
 ): number {
-  const income = Math.max(0, totalIncome);
+  const income = nonNeg(totalIncome);
   // 2,350 万円超の逓減は全年分で共通 (改正されていない)。
   if (income > 23_500_000) {
     if (income <= 24_000_000) return 480_000;

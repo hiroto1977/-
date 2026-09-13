@@ -1,3 +1,4 @@
+import { nonNeg } from '../../shared/num';
 import { seededNoise } from '../../shared/seededNoise';
 import type { FetchContext } from './types';
 
@@ -27,6 +28,32 @@ export interface Fundamentals {
   advertising: number; // 広告費 (treated as variable)
   sga: number; // 販管費 (treated as fixed)
   depreciation: number; // 減価償却
+}
+
+/**
+ * Fundamentals の 5 欄を境界で 1 度だけ消毒する (非有限・負値 → 0)。
+ *
+ * **なぜ欄ごとでなく入口でやるか。** この下の 4 関数は `f.revenue > 0` /
+ * `f.revenue <= 0` を「算定できるか」の判定に使っている。`NaN > 0` も
+ * `NaN <= 0` も **どちらも false** なので、NaN が来ると
+ * 「算定不能」の枝も「算定できる」の枝も通らず、**関門を素通りして
+ * NaN が結果に乗る** (パス 201 で実測)。欄ごとに `Math.max(0, …)` を
+ * 掛けても直らない —— `Math.max(0, NaN)` は NaN だからである。
+ *
+ * 入口で 0 に倒せば、既に書かれている `<= 0` の枝がそのまま正しく鳴る。
+ *
+ * 非負に倒すのは {@link computeKpi} の中の Stryker 注記が既に
+ * 「with non-negative costs, contribution > 0 implies revenue > 0」という
+ * 不変条件を**前提にしていた**ため —— ここで前提を事実にする。
+ */
+function saneFundamentals(f: Fundamentals): Fundamentals {
+  return {
+    revenue: nonNeg(f.revenue),
+    cogs: nonNeg(f.cogs),
+    advertising: nonNeg(f.advertising),
+    sga: nonNeg(f.sga),
+    depreciation: nonNeg(f.depreciation),
+  };
 }
 
 /** Per-business-unit metadata + current-period fundamentals + history. */
@@ -107,7 +134,8 @@ export interface Kpi {
 
 /** Pure KPI computation. The 8-indicator formula is documented in
  *  docs/ARCHITECTURE.md §3 (BEP / KPI service). */
-export function computeKpi(f: Fundamentals): Kpi {
+export function computeKpi(raw: Fundamentals): Kpi {
+  const f = saneFundamentals(raw);
   const variableCost = f.cogs + f.advertising;
   const fixedCost = f.sga + f.depreciation;
   const contribution = f.revenue - variableCost;
@@ -160,7 +188,8 @@ export function computeKpi(f: Fundamentals): Kpi {
  * @param f 現状の fundamentals
  * @param targetOperatingProfit 目標営業利益 (円)
  */
-export function requiredRevenueForTargetProfit(f: Fundamentals, targetOperatingProfit: number): number {
+export function requiredRevenueForTargetProfit(raw: Fundamentals, targetOperatingProfit: number): number {
+  const f = saneFundamentals(raw);
   const variableCost = f.cogs + f.advertising;
   const fixedCost = f.sga + f.depreciation;
   const contribution = f.revenue - variableCost;
@@ -198,14 +227,15 @@ export interface BreakEvenQuantity {
  * @param f 現状の fundamentals
  * @param avgUnitPrice 平均販売単価 (円)。0 以下なら全 0。
  */
-export function breakEvenQuantity(f: Fundamentals, avgUnitPrice: number): BreakEvenQuantity {
-  const price = Math.max(0, avgUnitPrice);
+export function breakEvenQuantity(raw: Fundamentals, avgUnitPrice: number): BreakEvenQuantity {
+  const f = saneFundamentals(raw);
+  const price = nonNeg(avgUnitPrice);
   const variableCost = f.cogs + f.advertising;
   const fixedCost = f.sga + f.depreciation;
   if (price <= 0) {
     return { unitContribution: 0, breakEvenQuantity: 0, currentQuantity: 0, safeQuantity: 0 };
   }
-  const currentQuantity = Math.round(Math.max(0, f.revenue) / price);
+  const currentQuantity = Math.round(f.revenue / price);
   const unitVariable = currentQuantity > 0 ? variableCost / currentQuantity : 0;
   const unitContribution = Math.max(0, price - unitVariable);
   // Equivalent mutants on `unitContribution > 0`:
@@ -244,11 +274,12 @@ export interface PriceSimulation {
  * @param f 現状の fundamentals
  * @param priceChangeRatio 価格変更率 (例: -0.1 = 10%値下げ)。-1 未満は -1 にクランプ。
  */
-export function simulatePriceChange(f: Fundamentals, priceChangeRatio: number): PriceSimulation {
+export function simulatePriceChange(raw: Fundamentals, priceChangeRatio: number): PriceSimulation {
+  const f = saneFundamentals(raw);
   const ratio = Math.max(-1, priceChangeRatio);
   const variableCost = f.cogs + f.advertising;
   const fixedCost = f.sga + f.depreciation;
-  const currentOp = Math.max(0, f.revenue) - variableCost - fixedCost;
+  const currentOp = f.revenue - variableCost - fixedCost;
 
   if (f.revenue <= 0) {
     return {

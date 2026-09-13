@@ -23,7 +23,7 @@
  *   提出期限 / No.6371 端数計算、国税通則法119条、e-Tax 還付金処理状況確認。
  */
 
-import { floorHundred } from './num';
+import { floorHundred, nonNeg } from './num';
 import { utcMsFromParts } from './isoDate';
 import { THIRTY_PERCENT_RATE, TWENTY_PERCENT_RATE } from './taxConsumption';
 
@@ -345,8 +345,8 @@ function periodStart(input: ScheduleInput): { year: number; month: number } {
  */
 export function calcAnnualTax(input: ScheduleInput, rate: number, p: ScheduleParams = DEFAULT_SCHEDULE_PARAMS): AnnualTax {
   const r = Math.min(Math.max(rate, 0), MAX_RATE);
-  const sales = Math.max(0, input.taxableSales);
-  const purchases = Math.max(0, input.taxablePurchases);
+  const sales = nonNeg(input.taxableSales);
+  const purchases = nonNeg(input.taxablePurchases);
   const localRatio = localRatioOf(p.nationalShare);
 
   const salesTaxNational = sales * r * p.nationalShare;
@@ -391,7 +391,7 @@ export function calcAnnualTax(input: ScheduleInput, rate: number, p: SchedulePar
 
 /** 前課税期間の確定消費税額（国税分）から中間申告の回数を判定する。境目は `p` (既定 48 万 / 400 万 / 4,800 万)。 */
 export function interimCount(priorNationalTax: number, p: ScheduleParams = DEFAULT_SCHEDULE_PARAMS): 0 | 1 | 3 | 11 {
-  const t = Math.max(0, priorNationalTax);
+  const t = nonNeg(priorNationalTax);
   if (t <= p.interimTier1) return 0;
   if (t <= p.interimTier2) return 1;
   if (t <= p.interimTier3) return 3;
@@ -418,7 +418,7 @@ export function interimBandLabel(count: 0 | 1 | 3 | 11, p: ScheduleParams = DEFA
  * 100円未満切捨てしたもの。地方消費税はその 22/78。
  */
 export function planInterim(input: ScheduleInput, p: ScheduleParams = DEFAULT_SCHEDULE_PARAMS): InterimPlan {
-  const prior = Math.max(0, input.priorNationalTax);
+  const prior = nonNeg(input.priorNationalTax);
   const count = interimCount(prior, p);
   const localRatio = localRatioOf(p.nationalShare);
   const start = periodStart(input);
@@ -565,7 +565,7 @@ export function breakEvenRate(input: ScheduleInput, p: ScheduleParams = DEFAULT_
   const interim = planInterim(input, p);
   if (interim.total <= 0) return null;
 
-  const sales = Math.max(0, input.taxableSales);
+  const sales = nonNeg(input.taxableSales);
   let base: number;
   if (input.method === 'simplified') {
     base = sales * (1 - Math.min(Math.max(input.deemedPurchaseRate, 0), 1));
@@ -574,7 +574,7 @@ export function breakEvenRate(input: ScheduleInput, p: ScheduleParams = DEFAULT_
   } else if (input.method === 'thirty-percent') {
     base = sales * p.thirtyPercentRate;
   } else {
-    base = sales - Math.max(0, input.taxablePurchases);
+    base = sales - nonNeg(input.taxablePurchases);
   }
   // Stryker disable next-line EqualityOperator: <= を < にしても base===0 では
   // 除算が Infinity になり、直後の `r > MAX_RATE` で null になるため結果は同じ（等価変異）。

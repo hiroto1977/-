@@ -12,6 +12,7 @@
  * 国税庁・日本年金機構でご確認ください。
  */
 
+import { nonNeg } from './num';
 import {
   resolvePensionStandardMonthly,
   resolveHealthStandardMonthly,
@@ -47,8 +48,8 @@ export function publicTransportCommute(
   monthly: number,
   cap: number = COMMUTE_PUBLIC_TRANSPORT_CAP,
 ): { nonTaxable: number; taxable: number } {
-  const amt = Math.max(0, monthly);
-  const nonTaxable = Math.min(amt, Math.max(0, cap));
+  const amt = nonNeg(monthly);
+  const nonTaxable = Math.min(amt, nonNeg(cap));
   return { nonTaxable, taxable: amt - nonTaxable };
 }
 
@@ -98,7 +99,7 @@ const BONUS_RATE_TABLE_DEP0: ReadonlyArray<{ readonly min: number; readonly rate
 
 /** 賞与の源泉徴収税率 (%, 扶養 0 人)。前月給与 (社保控除後) の階層で決まる。 */
 export function bonusWithholdingRatePctDep0(prevMonthSalaryAfterSI: number): number {
-  const v = Math.max(0, prevMonthSalaryAfterSI);
+  const v = nonNeg(prevMonthSalaryAfterSI);
   let rate = 0;
   for (const row of BONUS_RATE_TABLE_DEP0) {
     if (v >= row.min) rate = row.rate;
@@ -126,8 +127,8 @@ export function bonusWithholdingTax(input: {
   socialInsurance: number;
   prevMonthSalaryAfterSI: number;
 }): BonusWithholding {
-  const bonus = Math.max(0, input.bonus);
-  const si = Math.max(0, input.socialInsurance);
+  const bonus = nonNeg(input.bonus);
+  const si = nonNeg(input.socialInsurance);
   const taxableBonus = Math.max(0, bonus - si);
   const ratePct = bonusWithholdingRatePctDep0(input.prevMonthSalaryAfterSI);
   const tax = Math.floor((taxableBonus * ratePct) / 100);
@@ -194,13 +195,13 @@ export function estimateMonthlyWithholding(
   monthlyGross: number,
   monthlySocialInsurance: number,
 ): number {
-  const gross = Math.max(0, monthlyGross);
+  const gross = nonNeg(monthlyGross);
   // gross===0 では計算経路 (annualGross=0→課税所得0→所得税0→月割0) も 0 を返すため、
   // `<=0`→`<0` (EqualityOperator) とガード削除 (ConditionalExpression) は結果が
   // 同値 (等価変異)。早期 return は無報酬月の高速パスとして残す。
   // Stryker disable next-line ConditionalExpression,EqualityOperator
   if (gross <= 0) return 0;
-  const si = Math.max(0, monthlySocialInsurance);
+  const si = nonNeg(monthlySocialInsurance);
   const annualGross = gross * 12;
   const annualSI = si * 12;
   // 給与所得 = 額面年収 − 給与所得控除。
@@ -263,7 +264,7 @@ export function calcMonthlyNetSalary(
   monthlyGross: number,
   opts: { withCare?: boolean; residentTaxMonthly?: number } = {},
 ): MonthlyNetSalary {
-  const gross = Math.max(0, monthlyGross);
+  const gross = nonNeg(monthlyGross);
   const withCare = opts.withCare ?? false;
   // 住民税は負・非有限を 0 に丸める (任意控除)。
   const residentTax = sanitizeResidentTax(opts.residentTaxMonthly);
@@ -337,7 +338,7 @@ export function calcBonusNet(
   // gross===0 (賞与なし) でも下の計算経路がすべて 0 を返す (標準賞与額0・各料率
   // ×0・課税対象0)。源泉率は前月給与で決まり賞与0でも参照できる。早期 return は
   // 計算経路と完全に等価なため設けない (等価変異の発生を避ける)。
-  const gross = Math.max(0, bonus);
+  const gross = nonNeg(bonus);
   const withCare = opts.withCare ?? false;
   const standardBonus = resolveStandardBonus(gross);
   const healthRate = HEALTH_RATE + (withCare ? CARE_RATE : 0);
@@ -426,7 +427,7 @@ export function calcEmployerCost(
   monthlyGross: number,
   opts: { withCare?: boolean } = {},
 ): EmployerCost {
-  const gross = Math.max(0, monthlyGross);
+  const gross = nonNeg(monthlyGross);
   const withCare = opts.withCare ?? false;
   if (gross <= 0) {
     return {

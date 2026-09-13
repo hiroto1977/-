@@ -12,7 +12,7 @@
  * 上限を反映します。実額は給与明細・日本年金機構で確認すること。
  */
 
-import { yen } from './num';
+import { yen, nonNeg } from './num';
 
 // --- 標準報酬月額の等級表 (令和6年度・協会けんぽ全国共通) ----------------
 //
@@ -210,7 +210,7 @@ export function resolveStandardMonthly(
   remuneration: number,
   grades: readonly RemunerationGrade[],
 ): number {
-  const r = Math.max(0, remuneration);
+  const r = nonNeg(remuneration);
   // 上位等級から走査し、最初に「下限以上」を満たした等級を採用する。
   // これにより上限等級での頭打ちと境界 (以上〜未満) を同時に満たす。
   // 最下位等級 (index 0, lowerBound===0) は r>=0 で必ず一致するため、ループは
@@ -240,7 +240,7 @@ export function resolveHealthStandardMonthly(remuneration: number): number {
 
 /** 賞与額を標準賞与額に丸める (1,000円未満切捨て、負は0)。 */
 export function resolveStandardBonus(bonus: number): number {
-  const b = Math.max(0, bonus);
+  const b = nonNeg(bonus);
   return Math.floor(b / 1_000) * 1_000;
 }
 
@@ -309,8 +309,8 @@ export function calcSocialInsuranceWithBonus(
   withCare = false,
   r: SocialInsuranceRates = DEFAULT_SOCIAL_INSURANCE_RATES,
 ): SocialInsuranceBreakdown {
-  const monthly = Math.max(0, monthlyRemuneration);
-  const bonus = Math.max(0, bonusPerPayment);
+  const monthly = nonNeg(monthlyRemuneration);
+  const bonus = nonNeg(bonusPerPayment);
   const bonusCount = Math.max(0, Math.floor(bonusPaymentsPerYear));
   const healthRate = r.healthRate + (withCare ? r.careRate : 0);
 
