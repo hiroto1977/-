@@ -193,6 +193,47 @@ export function guardAll(entries: readonly (readonly [string | undefined | null,
   return [...out].sort(byIssueLevel);
 }
 
+/**
+ * **⛔ (`level: 'fatal'`) の欄を、宣言の集合から数える。** (パス 206 で敷地用に作り、
+ * パス 209 で試算の段・投資信託にも使うので guard の側へ移した)
+ *
+ * 空欄は `warn` なのでここには入らない —— 「未入力」と「範囲外」は打ち手が違う
+ * (「未入力です。0 円 として計算されています」の家系を壊さない)。
+ */
+export function refusedFields<K extends string>(
+  specs: Readonly<Record<K, NumSpec>>,
+  values: Readonly<Record<K, string>>,
+): readonly K[] {
+  // `Object.keys` は `string[]` を返すので、総称の `K` へは 1 段挟まないと通らない
+  // (`K` が `string` の部分型に具体化されうるため tsc が狭めを拒む)。鍵は `specs`
+  // そのものから採っているので、この主張は宣言と同じ集合である。
+  const keys = Object.keys(specs) as unknown as readonly K[];
+  return keys.filter((k) => guardNumber(values[k], specs[k])?.level === 'fatal');
+}
+
+/**
+ * その段が読んでいる欄のうち ⛔ の物の**表示名**。
+ *
+ * 名前は**宣言から採る** —— 画面が文字列を写すと、欄の名前を直したときに断りの
+ * 文面だけが古くなる (パス 101 で当たった形)。
+ */
+export function refusalLabels<K extends string>(
+  specs: Readonly<Record<K, NumSpec>>,
+  refused: readonly K[],
+  reads: readonly K[],
+): readonly string[] {
+  return reads.filter((k) => refused.includes(k)).map((k) => specs[k].label);
+}
+
+/**
+ * ⛔ の欄が在るときに判定の代わりに出す文 (欄の名前を必ず名指しする)。
+ * 空なら `null` —— 呼び手が「出すかどうか」を分岐しなくていい。
+ */
+export function refusalNote(labels: readonly string[]): string | null {
+  if (labels.length === 0) return null;
+  return `${labels.join('・')}が入力できる範囲の外なので、この判定は算定していません（赤い欄を範囲内に直すと判定が出ます）。`;
+}
+
 /** 画面のバッジ表示用の件数。 */
 export function guardCounts(issues: readonly GuardIssue[]): { fatal: number; warn: number } {
   return {

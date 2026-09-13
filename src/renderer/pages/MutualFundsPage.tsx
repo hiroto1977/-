@@ -5,7 +5,7 @@ import {
   type ManualOverrideEntry,
 } from '../data/manualData';
 import { GuardedNumber } from '../components/GuardedNumber';
-import { readNumberOr0 } from '../data/inputGuards';
+import { refusalLabels, refusedFields, readNumberOr0, type NumSpec } from '../data/inputGuards';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { Stat, positiveIfKnown } from '../components/Stat';
@@ -25,6 +25,7 @@ import {
   type HoldingEntry,
 } from '../data/investments';
 import { DASH, jpy, jpyOrDash } from '../../shared/formatters';
+import { RefusedFieldsNote } from '../components/RefusedFieldsNote';
 import {
   calcCompoundingFutureValue,
   calcTotalReturn,
@@ -75,6 +76,36 @@ const EMPTY_HOLDING_FORM = { code: '', name: '', units: '', navPerUnit: '', valu
  * **理由は欄のすぐ下の `GuardedNumber` の ⛔ と、節の脚注が述べる。**
  */
 // `jpyOrDash` は `shared/formatters.ts` に 1 つ置いてある (パス 208 で TaxPage と共有した)。
+
+/**
+ * **負値が ⛔ になる欄のうち、判定を作っていた 3 つ** (パス 209)。
+ *
+ * パス 207 で閉じたのは `max`（上限）の家系。`guardNumber` が `fatal` を返す
+ * もう一つの道 **`negativeIsFatal`** は誰も読んでいなかった。実測（−9999）:
+ *
+ * | 欄 | 出ていた物 |
+ * | --- | --- |
+ * | ★ 目標額 (円) | `現行積立での到達見込み ¥4,183,440 (不足 ¥5,816,560)` → **`¥4,183,440 (達成)`** |
+ * | ★ 取得時レート | `為替損益 ¥200,000 → **¥1,500,000**`（150 万円の利益） |
+ * | 現在レート | `損益率 15.4% → **-7791.5%**` |
+ *
+ * **この画面のほかの ⛔ 欄は 0 に倒れる**（毎月の積立額・積立年数・達成年数・
+ * 毎月の生活費・現在の積立額・手元資金・外貨額・為替手数料）。`nonNeg` の契約どおりで
+ * 「負は無意味なので 0」なので defect ではない —— 実測で確かめた上で触っていない。
+ * 上の 3 つは**負値がそのまま流れて判定を作る**ので、段ごとに断る。
+ */
+const MF_REFUSAL_SPECS = {
+  goalTarget: { label: '目標額 (円)', kind: 'money', allowZero: false },
+  fxAcqRate: { label: '取得時レート', kind: 'ratio', allowZero: false, sane: 10_000 },
+  fxCurRate: { label: '現在レート', kind: 'ratio', allowZero: false, sane: 10_000 },
+} as const satisfies Record<string, NumSpec>;
+
+/** 貯蓄計画の段は目標額を読む。為替の段は 2 つのレートを読む。 */
+const MF_READS = {
+  goal: ['goalTarget'],
+  fx: ['fxAcqRate', 'fxCurRate'],
+} as const satisfies Record<string, readonly (keyof typeof MF_REFUSAL_SPECS)[]>;
+
 
 export function MutualFundsPage() {
   const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
@@ -311,6 +342,17 @@ export function MutualFundsPage() {
 
   // TT スプレッド・往復両替コスト (現在レートを TTM=仲値とみなす)。
   const [fxFee, setFxFee] = useState('0.5');
+
+  /** 負値が ⛔ になり、かつ判定を作っていた欄 (パス 209)。 */
+  const mfRefusedBy = useMemo(() => {
+    const refused = refusedFields(MF_REFUSAL_SPECS, {
+      goalTarget, fxAcqRate, fxCurRate,
+    });
+    return {
+      goal: refusalLabels(MF_REFUSAL_SPECS, refused, MF_READS.goal),
+      fx: refusalLabels(MF_REFUSAL_SPECS, refused, MF_READS.fx),
+    };
+  }, [goalTarget, fxAcqRate, fxCurRate]);
   const fxTt = useMemo(
     () => ttRates(readNumberOr0(fxCurRate), readNumberOr0(fxFee)),
     [fxCurRate, fxFee],
@@ -646,7 +688,7 @@ export function MutualFundsPage() {
 
       <Section title="貯蓄計画 (目標達成・緊急予備資金・概算)">
         <div className="field-grid" style={{ marginBottom: 12 }}>
-          <GuardedNumber spec={{ label: '目標額 (円)', kind: 'money', allowZero: false }} value={goalTarget} onChange={setGoalTarget} width={120} />
+          <GuardedNumber spec={MF_REFUSAL_SPECS.goalTarget} value={goalTarget} onChange={setGoalTarget} width={120} />
           <GuardedNumber spec={{ label: '想定年率 (%)', kind: 'percent', allowZero: true, max: 100 }} value={goalRate} onChange={setGoalRate} width={120} />
           <GuardedNumber spec={{ label: '達成年数', kind: 'years', allowZero: false, max: MAX_PLAN_YEARS }} value={goalYears} onChange={setGoalYears} width={120} />
           <GuardedNumber spec={{ label: '毎月の生活費 (円)', kind: 'money', allowZero: false }} value={monthlyExpense} onChange={setMonthlyExpense} width={120} />
@@ -654,6 +696,10 @@ export function MutualFundsPage() {
           <GuardedNumber spec={{ label: '想定インフレ率 (%)', kind: 'percent', allowZero: true, max: 100 }} value={inflationRate} onChange={setInflationRate} width={120} />
           <GuardedNumber spec={{ label: '手元資金 (円)', kind: 'money', allowZero: true }} value={cashOnHand} onChange={setCashOnHand} width={120} />
         </div>
+        {mfRefusedBy.goal.length > 0 ? (
+          <RefusedFieldsNote labels={mfRefusedBy.goal} />
+        ) : (
+          <>
         <div className="stat-grid">
           <Stat label="目標達成に必要な毎月積立額" value={jpyOrDash(requiredMonthly)} />
           <Stat label="72の法則 (資産倍増)" value={doubleYears === null ? '—' : `約 ${doubleYears} 年`} />
@@ -682,6 +728,8 @@ export function MutualFundsPage() {
             value={efCoverage.monthsCovered === null ? '—' : `約 ${efCoverage.monthsCovered} か月`}
           />
         </div>
+          </>
+        )}
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
           {!isPlannableYears(readNumberOr0(goalYears)) && (
             <>
@@ -713,9 +761,13 @@ export function MutualFundsPage() {
       <Section title="外貨換算・為替損益 (概算)">
         <div className="field-grid" style={{ marginBottom: 12 }}>
           <GuardedNumber spec={{ label: '外貨額', kind: 'ratio', allowZero: false, sane: 1e9 }} value={fxAmount} onChange={setFxAmount} width={120} />
-          <GuardedNumber spec={{ label: '取得時レート', kind: 'ratio', allowZero: false, sane: 10000 }} value={fxAcqRate} onChange={setFxAcqRate} width={120} />
-          <GuardedNumber spec={{ label: '現在レート', kind: 'ratio', allowZero: false, sane: 10000 }} value={fxCurRate} onChange={setFxCurRate} width={120} />
+          <GuardedNumber spec={MF_REFUSAL_SPECS.fxAcqRate} value={fxAcqRate} onChange={setFxAcqRate} width={120} />
+          <GuardedNumber spec={MF_REFUSAL_SPECS.fxCurRate} value={fxCurRate} onChange={setFxCurRate} width={120} />
         </div>
+        {mfRefusedBy.fx.length > 0 ? (
+          <RefusedFieldsNote labels={mfRefusedBy.fx} />
+        ) : (
+          <>
         <div className="stat-grid">
           <Stat label="現在の円換算額" value={jpy(fxJpy)} />
           <Stat label="為替損益" value={jpy(fxPnl.gain)} positive={fxPnl.gain >= 0} />
@@ -736,6 +788,8 @@ export function MutualFundsPage() {
           <Stat label="往復コスト率" value={fxRoundTrip && fxRoundTrip.costPct !== null ? `${fxRoundTrip.costPct}%` : '—'} positive={false} />
           <Stat label="売り戻し後の円" value={fxRoundTrip ? jpy(fxRoundTrip.endJpy) : '—'} />
         </div>
+          </>
+        )}
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
           ※ 現在レートを TTM(仲値) とみなし、TTS=TTM+手数料 / TTB=TTM−手数料 で算出。往復コストは円→外貨→円の即時往復で失うスプレッド損の概算です。投資助言ではありません。
         </div>

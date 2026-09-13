@@ -89,8 +89,10 @@ async function typeField(label: string, value: string): Promise<HTMLInputElement
   return input;
 }
 
+// パス 209 で部品を `components/RefusedFieldsNote.tsx` に移したので、印は
+// `data-refused-fields` になった (敷地と試算の段が同じ部品を使う)。
 const refusals = (): readonly string[] =>
-  Array.from(container.querySelectorAll('[data-zoning-refused]')).map((el) =>
+  Array.from(container.querySelectorAll('[data-refused-fields]')).map((el) =>
     (el.textContent ?? '').replace(/\s+/g, ' '),
   );
 

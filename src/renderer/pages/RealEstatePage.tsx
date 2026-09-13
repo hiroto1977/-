@@ -24,9 +24,9 @@ import {
   yieldScopeNote,
   type PropertyEntry,
 } from '../data/investments';
-import { jpy } from '../../shared/formatters';
+import { DASH, jpy } from '../../shared/formatters';
 import { GuardedNumber } from '../components/GuardedNumber';
-import { guardNumber, readNumberOr0, readNumberOrNull, type NumSpec } from '../data/inputGuards';
+import { refusalLabels, refusalNote, refusedFields, readNumberOr0, readNumberOrNull, type NumSpec } from '../data/inputGuards';
 import { useParameters } from '../data/parameterOverrides';
 import { advisorThresholds, dscrThresholds, effluentStandards, zoningRules } from '../../shared/parameters';
 import type { RealEstateAdviceInput } from '../../shared/serviceAdvisor';
@@ -41,7 +41,7 @@ import {
   fullLeverageNote,
   missingPriceNote,
 } from '../../shared/realEstateMetrics';
-import { MAX_SCHEDULE_YEARS, isSchedulableLife, straightLineAnnual } from '../../shared/depreciation';
+import { isSchedulableLife, straightLineAnnual } from '../../shared/depreciation';
 import {
   planSite,
   planFactory,
@@ -59,6 +59,7 @@ function fmtDscr(x: number): string {
   return x.toFixed(2).replace(/0$/, '');
 }
 import { BuildingIso } from '../components/BuildingIso';
+import { RefusedFieldsNote } from '../components/RefusedFieldsNote';
 import {
   planWaterBalance,
   planRoSizing,
@@ -122,14 +123,28 @@ const ZONING_SPECS = {
 
 export type ZoningField = keyof typeof ZONING_SPECS;
 
-const ZONING_FIELDS = Object.keys(ZONING_SPECS) as readonly ZoningField[];
+/** 画面が ⛔ を出している敷地の欄の一覧。 */
+export function refusedZoningFields(values: Readonly<Record<ZoningField, string>>): readonly ZoningField[] {
+  return refusedFields(ZONING_SPECS, values);
+}
+
+/** 敷地の段が読んでいる欄のうち ⛔ の物の表示名。 */
+export function zoningRefusalLabels(
+  refused: readonly ZoningField[],
+  reads: readonly ZoningField[],
+): readonly string[] {
+  return refusalLabels(ZONING_SPECS, refused, reads);
+}
+
+/** 敷地の断りの文面 (`refusalNote` の別名 —— 文面は 1 か所で持つ)。 */
+export const zoningRefusalNote = refusalNote;
 
 /**
  * 判定の段ごとに「どの欄を読んでいるか」。**この表と `useMemo` の引数が対応する。**
  *
  * ⛔ が 1 つ在るからといって画面全体を黙らせるのは、**読んでいない欄のせいで
  * 正しい判定を消す**ことになる (間口が範囲外でも `適用建ぺい率` は正しい)。
- * 逆に、読んでいる欄が ⛔ なのに判定を出すのが今回の欠陥そのもの。
+ * 逆に、読んでいる欄が ⛔ なのに判定を出すのが欠陥そのもの。
  * だから対応は表に書いて 1 か所で持ち、段をまたぐ依存は**合成で書く** ——
  * トレードオフは敷地の段の `maxFootprint` を受け取るので、敷地の欄も読んでいる。
  */
@@ -148,39 +163,68 @@ export const ZONING_READS = {
   iso: ZONING_READS_TRADEOFF,
 } as const satisfies Record<string, readonly ZoningField[]>;
 
-/** 画面が ⛔ (`level: 'fatal'`) を出している欄の一覧。空欄は `warn` なのでここには入らない。 */
-export function refusedZoningFields(values: Readonly<Record<ZoningField, string>>): readonly ZoningField[] {
-  return ZONING_FIELDS.filter((k) => guardNumber(values[k], ZONING_SPECS[k])?.level === 'fatal');
-}
+/**
+ * 試算の段の入力欄の仕様。**JSX と関門が同じ宣言を読む** (パス 209)。
+ *
+ * パス 206 は敷地プランナーの `max`（上限）超過を断ったが、`guardNumber` が
+ * `fatal` を返すもう一つの道 **`negativeIsFatal`** —— 「マイナスの値（−9999）は
+ * 指定できません」—— は誰も読んでいなかった。`percent` 以外のすべての kind が
+ * 既定で負値を `fatal` にするので、試算の欄はほぼ全部この道を持つ。
+ *
+ * 実測（直す前・−9999 を入れた時）。**★ は「より good な方向」へ動く** ——
+ * これが一番危ない: 明らかに変な値ではなく**より安心させる答え**が出る。
+ *
+ * | 欄 | 出ていた物 |
+ * | --- | --- |
+ * | ★ 年間経費 | `実質利回り 3.37% → **4.80%**`・**`DSCR 0.88 → 1.28`**（危険水域から目安超えへ）・`損益分岐入居率 104% → 74.4%`・`返済後CF −84,000 → +516,000` |
+ * | ★ 年間返済額 | `返済後CF −84,000 → **+1,416,000**`・`CCR −0.84% → 14.16%`・`IRR 12.84% → 22.62%` |
+ * | ★ 保有年数 | `IRR 12.84% → **249.16%**` |
+ * | 月額賃料 | `NOI ¥-600,000`・**`DSCR -0.40`**・`CCR -21.00%` |
+ * | 物件価格 / 自己資金 / 売却ネット手取り | 一部が `—`、一部が符号反転（`NPV ¥12.9M → ¥-10.6M`） |
+ * | 耐用年数 | `年間減価償却費 ¥0`（後述） |
+ *
+ * **`nonNeg` を足すだけでは足りない** —— 0 に倒すと「経費 0 円の物件」「返済 0 円の
+ * 借入」という**別の判定**になる（パス 205 の「天井を床にした」の裏返し）。
+ * だからパス 206 と同じ形を採る: **段ごとに ⛔ の欄を名指しして算定しない。**
+ *
+ * `ローン金利(%)` / `想定入居率 (%)` / `割引率(%)` は `percent` なので
+ * `negativeIsFatal: false`（負の金利・負の入居率は ⛔ にならない）。上限超過だけが
+ * この 3 欄の ⛔ で、それも同じ関門が受ける。
+ */
+const RE_SPECS = {
+  rent: { label: '月額賃料', kind: 'money' },
+  price: { label: '物件価格', kind: 'money', allowZero: false },
+  expense: { label: '年間経費', kind: 'money', allowZero: true },
+  equity: { label: '自己資金', kind: 'money', allowZero: true },
+  debt: { label: '年間返済額', kind: 'money', allowZero: true },
+  loanRate: { label: 'ローン金利(%)', kind: 'percent', allowZero: true, max: 30 },
+  occupancy: { label: '想定入居率 (%)', kind: 'percent', min: 1, max: 100 },
+  discount: { label: '割引率(%)', kind: 'percent', allowZero: true, max: 30 },
+  holdYears: { label: '保有年数', kind: 'years', allowZero: false, max: 50 },
+  saleNet: { label: '売却ネット手取り', kind: 'money', allowZero: true },
+  bldgCost: { label: '建物取得価額 (円)', kind: 'money', allowZero: false },
+  bldgLife: { label: '耐用年数 (年)', kind: 'years', min: 1, max: 100 },
+} as const satisfies Record<string, NumSpec>;
 
-/** その段が読んでいる欄のうち ⛔ の物の**表示名** (宣言から採る — 文字列を写さない)。 */
-export function zoningRefusalLabels(
-  refused: readonly ZoningField[],
-  reads: readonly ZoningField[],
-): readonly string[] {
-  return reads.filter((k) => refused.includes(k)).map((k) => ZONING_SPECS[k].label);
-}
+export type ReField = keyof typeof RE_SPECS;
 
-/** ⛔ の欄が在るときに判定の代わりに出す文 (欄の名前を必ず名指しする)。 */
-export function zoningRefusalNote(refused: readonly string[]): string | null {
-  if (refused.length === 0) return null;
-  return `${refused.join('・')}が入力できる範囲の外なので、この判定は算定していません（赤い欄を範囲内に直すと判定が出ます）。`;
-}
-
-/** 判定の代わりに出す断り。`labels` が空なら何も描かない (呼び手が分岐しなくていい)。 */
-function ZoningRefusal({ labels }: { labels: readonly string[] }): React.ReactElement | null {
-  const note = zoningRefusalNote(labels);
-  if (note === null) return null;
-  return (
-    <div
-      role="alert"
-      data-zoning-refused
-      style={{ fontSize: 12, lineHeight: 1.6, color: '#f87171', marginBottom: 12 }}
-    >
-      {note}
-    </div>
-  );
-}
+/**
+ * 試算の段ごとに「どの欄を読んでいるか」。**`useMemo` の引数と対応する。**
+ *
+ * 段をまたぐ依存は**合成で書く** —— 精緻化指標はレバレッジ試算と同じ入力を
+ * 読み直し、NPV/IRR はレバレッジ試算の `annualCashflow` を受け取る。
+ * 減価償却は独立なので、ほかの欄が ⛔ でも黙らせない（パス 206 と同じ約束）。
+ */
+const RE_READS_LEVERAGE = ['rent', 'price', 'expense', 'equity', 'debt', 'loanRate'] as const;
+const RE_READS_REFINED = ['rent', 'price', 'expense', 'debt', 'occupancy'] as const;
+const RE_READS_DCF = [...RE_READS_LEVERAGE, 'discount', 'holdYears', 'saleNet'] as const;
+const RE_READS_DEPRECIATION = ['bldgCost', 'bldgLife'] as const;
+export const RE_READS = {
+  leverage: RE_READS_LEVERAGE,
+  refined: RE_READS_REFINED,
+  dcf: RE_READS_DCF,
+  depreciation: RE_READS_DEPRECIATION,
+} as const satisfies Record<string, readonly ReField[]>;
 
 const reInputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -491,17 +535,17 @@ export function RealEstatePage() {
     // 下の画面が段ごとに `refused` を見て、数字の代わりに理由を出す ——
     // パス 77 が同じファイルで「未入力から『0 ㎡しか建てられない』を作らない」と
     // 決めたのと同じ形。**断る単位は段** で、読んでいない欄では黙らせない。
-    const refusedFields = refusedZoningFields({
+    const zoningRefused = refusedZoningFields({
       site: zpSiteStr, coverage: zpCovStr, far: zpFarStr, road: zpRoadStr,
       height: zpHeightStr, setback: zpSetbackStr, shadowThreshold: zpShadowThresholdStr,
       siteDepth: zpSiteDepthStr, siteWidth: zpSiteWidthStr, rear: zpRearStr, side: zpSideStr,
     });
     const refused = {
-      site: zoningRefusalLabels(refusedFields, ZONING_READS.site),
-      height: zoningRefusalLabels(refusedFields, ZONING_READS.height),
-      tradeoff: zoningRefusalLabels(refusedFields, ZONING_READS.tradeoff),
-      factory: zoningRefusalLabels(refusedFields, ZONING_READS.factory),
-      iso: zoningRefusalLabels(refusedFields, ZONING_READS.iso),
+      site: zoningRefusalLabels(zoningRefused, ZONING_READS.site),
+      height: zoningRefusalLabels(zoningRefused, ZONING_READS.height),
+      tradeoff: zoningRefusalLabels(zoningRefused, ZONING_READS.tradeoff),
+      factory: zoningRefusalLabels(zoningRefused, ZONING_READS.factory),
+      iso: zoningRefusalLabels(zoningRefused, ZONING_READS.iso),
     };
     return {
       site, factory, slope, shadow, tradeoff, schematic,
@@ -575,6 +619,34 @@ export function RealEstatePage() {
       years: isSchedulableLife(life) ? life : null,
     };
   }, [bldgCostStr, bldgLifeStr]);
+
+  /**
+   * **試算の段ごとの ⛔ の欄** (パス 209)。判定そのものは上で計算してあるが、
+   * 下の画面は段ごとに「この判定は算定していません」と欄の名前を出す ——
+   * 敷地プランナー (パス 206) と同じ形・同じ部品を使う。
+   */
+  const reRefused = useMemo(
+    () =>
+      refusedFields(RE_SPECS, {
+        rent: reRentStr, price: rePriceStr, expense: reExpenseStr, equity: reEquityStr,
+        debt: reDebtStr, loanRate: reLoanRateStr, occupancy: reOccStr,
+        discount: npvDiscountStr, holdYears: npvYearsStr, saleNet: npvSaleStr,
+        bldgCost: bldgCostStr, bldgLife: bldgLifeStr,
+      }),
+    [
+      reRentStr, rePriceStr, reExpenseStr, reEquityStr, reDebtStr, reLoanRateStr, reOccStr,
+      npvDiscountStr, npvYearsStr, npvSaleStr, bldgCostStr, bldgLifeStr,
+    ],
+  );
+  const reRefusedBy = useMemo(
+    () => ({
+      leverage: refusalLabels(RE_SPECS, reRefused, RE_READS.leverage),
+      refined: refusalLabels(RE_SPECS, reRefused, RE_READS.refined),
+      dcf: refusalLabels(RE_SPECS, reRefused, RE_READS.dcf),
+      depreciation: refusalLabels(RE_SPECS, reRefused, RE_READS.depreciation),
+    }),
+    [reRefused],
+  );
 
   return (
     <div>
@@ -743,16 +815,20 @@ export function RealEstatePage() {
         </div>
         <div className="field-grid" style={{ marginBottom: 12 }}>
           {([
-            [{ label: '月額賃料', kind: 'money' }, reRentStr, setReRentStr],
-            [{ label: '物件価格', kind: 'money', allowZero: false }, rePriceStr, setRePriceStr],
-            [{ label: '年間経費', kind: 'money', allowZero: true }, reExpenseStr, setReExpenseStr],
-            [{ label: '自己資金', kind: 'money', allowZero: true }, reEquityStr, setReEquityStr],
-            [{ label: '年間返済額', kind: 'money', allowZero: true }, reDebtStr, setReDebtStr],
-            [{ label: 'ローン金利(%)', kind: 'percent', allowZero: true, max: 30 }, reLoanRateStr, setReLoanRateStr],
+            [RE_SPECS.rent, reRentStr, setReRentStr],
+            [RE_SPECS.price, rePriceStr, setRePriceStr],
+            [RE_SPECS.expense, reExpenseStr, setReExpenseStr],
+            [RE_SPECS.equity, reEquityStr, setReEquityStr],
+            [RE_SPECS.debt, reDebtStr, setReDebtStr],
+            [RE_SPECS.loanRate, reLoanRateStr, setReLoanRateStr],
           ] as const satisfies readonly (readonly [NumSpec, string, (v: string) => void])[]).map(([spec, val, setter]) => (
             <GuardedNumber key={spec.label} spec={spec} value={val} onChange={setter} />
           ))}
         </div>
+        {reRefusedBy.leverage.length > 0 ? (
+          <RefusedFieldsNote labels={reRefusedBy.leverage} />
+        ) : (
+          <>
         <div className="stat-grid">
           <Stat label="実質利回り" value={pct1OrDash(leverage.y.netYieldPct, 2)} />
           <Stat label="返済後CF (年)" value={jpy(leverage.lev.annualCashflow)} positive={leverage.lev.annualCashflow >= 0} />
@@ -776,6 +852,8 @@ export function RealEstatePage() {
             {leverageNote !== null && <div>⚠ {leverageNote}</div>}
           </div>
         )}
+          </>
+        )}
       </Section>
 
       <Section title="精緻化指標 (NOI 利回り・DSCR・損益分岐入居率)">
@@ -786,8 +864,11 @@ export function RealEstatePage() {
           <strong>※ 概算であり投資助言ではありません。</strong>
         </div>
         <div className="field-grid" style={{ marginBottom: 12 }}>
-          <GuardedNumber spec={{ label: '想定入居率 (%)', kind: 'percent', min: 1, max: 100 }} value={reOccStr} onChange={setReOccStr} />
+          <GuardedNumber spec={RE_SPECS.occupancy} value={reOccStr} onChange={setReOccStr} />
         </div>
+        {reRefusedBy.refined.length > 0 ? (
+          <RefusedFieldsNote labels={reRefusedBy.refined} />
+        ) : (
         <div className="stat-grid">
           <Stat label="NOI (年)" value={jpy(refined.noiY.noi)} positive={refined.noiY.noi >= 0} />
           <Stat label="NOI 利回り" value={refined.noiY.noiYieldPct === null ? '—' : `${refined.noiY.noiYieldPct}%`} />
@@ -798,6 +879,7 @@ export function RealEstatePage() {
           />
           <Stat label="損益分岐入居率" value={refined.ber === null ? '—' : `${refined.ber}%`} />
         </div>
+        )}
       </Section>
 
       <Section title="NPV / IRR (割引キャッシュフロー試算)">
@@ -809,18 +891,22 @@ export function RealEstatePage() {
         </div>
         <div className="field-grid" style={{ marginBottom: 12 }}>
           {([
-            [{ label: '割引率(%)', kind: 'percent', allowZero: true, max: 30 }, npvDiscountStr, setNpvDiscountStr],
-            [{ label: '保有年数', kind: 'years', allowZero: false, max: 50 }, npvYearsStr, setNpvYearsStr],
-            [{ label: '売却ネット手取り', kind: 'money', allowZero: true }, npvSaleStr, setNpvSaleStr],
+            [RE_SPECS.discount, npvDiscountStr, setNpvDiscountStr],
+            [RE_SPECS.holdYears, npvYearsStr, setNpvYearsStr],
+            [RE_SPECS.saleNet, npvSaleStr, setNpvSaleStr],
           ] as const satisfies readonly (readonly [NumSpec, string, (v: string) => void])[]).map(([spec, val, setter]) => (
             <GuardedNumber key={spec.label} spec={spec} value={val} onChange={setter} />
           ))}
         </div>
+        {reRefusedBy.dcf.length > 0 ? (
+          <RefusedFieldsNote labels={reRefusedBy.dcf} />
+        ) : (
         <div className="stat-grid">
           <Stat label={`NPV (${dcf.years}年・割引後)`} value={dcf.npv === null ? '—' : jpy(dcf.npv)} positive={positiveIfKnown(dcf.npv)} />
           <Stat label="IRR (年率概算)" value={dcf.irr === null ? '—' : `${(dcf.irr * 100).toFixed(2)}%`} positive={positiveIfKnown(dcf.irr)} />
           <Stat label="返済後CF (年・前提)" value={jpy(leverage.lev.annualCashflow)} positive={leverage.lev.annualCashflow >= 0} />
         </div>
+        )}
       </Section>
 
       <Section title="建物の減価償却 (定額法・概算)">
@@ -829,20 +915,19 @@ export function RealEstatePage() {
           減価償却費は会計上の費用で節税に寄与しますが、<strong>※ 概算であり税務助言ではありません。</strong>
         </div>
         <div className="field-grid" style={{ marginBottom: 12 }}>
-          <GuardedNumber spec={{ label: '建物取得価額 (円)', kind: 'money', allowZero: false }} value={bldgCostStr} onChange={setBldgCostStr} />
-          <GuardedNumber spec={{ label: '耐用年数 (年)', kind: 'years', min: 1, max: 100 }} value={bldgLifeStr} onChange={setBldgLifeStr} />
+          <GuardedNumber spec={RE_SPECS.bldgCost} value={bldgCostStr} onChange={setBldgCostStr} />
+          <GuardedNumber spec={RE_SPECS.bldgLife} value={bldgLifeStr} onChange={setBldgLifeStr} />
         </div>
+        {reRefusedBy.depreciation.length > 0 ? (
+          <RefusedFieldsNote labels={reRefusedBy.depreciation} />
+        ) : (
         <div className="stat-grid">
           <Stat label="年間減価償却費 (定額法)" value={jpy(depreciation.annual)} />
-          <Stat
-            label="償却年数"
-            value={
-              depreciation.years === null
-                ? `1〜${MAX_SCHEDULE_YEARS} 年で入力してください`
-                : `${depreciation.years} 年`
-            }
-          />
+          {/* **数を刷る枠に案内文を入れない** (パス 209)。`Stat` の値は「測った数」の
+              置き場で、直し方は欄の ⛔ が既に述べている。算定できないなら「—」。 */}
+          <Stat label="償却年数" value={depreciation.years === null ? DASH : `${depreciation.years} 年`} />
         </div>
+        )}
       </Section>
 
       <Section title="敷地プランナー — 建てられる規模と工場150㎡プラン (概算)">
@@ -884,7 +969,7 @@ export function RealEstatePage() {
           </label>
         </div>
         {zoning.refused.site.length > 0 ? (
-          <ZoningRefusal labels={zoning.refused.site} />
+          <RefusedFieldsNote labels={zoning.refused.site} />
         ) : (
           <>
             <div className="stat-grid" style={{ marginBottom: 14 }}>
@@ -919,7 +1004,7 @@ export function RealEstatePage() {
           </label>
         </div>
         {zoning.refused.height.length > 0 ? (
-          <ZoningRefusal labels={zoning.refused.height} />
+          <RefusedFieldsNote labels={zoning.refused.height} />
         ) : (
           <>
             <div className="stat-grid" style={{ marginBottom: 10 }}>
@@ -954,7 +1039,7 @@ export function RealEstatePage() {
           <GuardedNumber spec={ZONING_SPECS.side} value={zpSideStr} onChange={setZpSideStr} width={120} />
         </div>
         {zoning.refused.tradeoff.length > 0 ? (
-          <ZoningRefusal labels={zoning.refused.tradeoff} />
+          <RefusedFieldsNote labels={zoning.refused.tradeoff} />
         ) : (
           <>
         <div className="stat-grid" style={{ marginBottom: 10 }}>
@@ -996,7 +1081,7 @@ export function RealEstatePage() {
         {/* 寸法が未入力なら**描かない**。0×0 の箱と「間口 0 m × 奥行 0 m で…の概形」は、
             未入力から作った図であって「建てられない」の図ではない。 */}
         {zoning.refused.iso.length > 0 ? (
-          <ZoningRefusal labels={zoning.refused.iso} />
+          <RefusedFieldsNote labels={zoning.refused.iso} />
         ) : zoning.isoWidth === null || zoning.isoDepth === null ? (
           <div data-iso-unset style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 14 }}>
             敷地の奥行と間口が未入力のため、立体プレビューは描いていません（寸法を入力すると概形が出ます）。
@@ -1048,7 +1133,7 @@ export function RealEstatePage() {
           </label>
         </div>
         {zoning.refused.factory.length > 0 ? (
-          <ZoningRefusal labels={zoning.refused.factory} />
+          <RefusedFieldsNote labels={zoning.refused.factory} />
         ) : (
           <>
             {zoning.factory.overCap && (
