@@ -100,10 +100,17 @@ export function straightLineSchedule(rawCost: number, rawLife: number): Deprecia
  * 均等償却額を下回った年から均等償却へ切替える (改定償却率の近似)。
  */
 export function decliningBalanceSchedule(
-  acquisitionCost: number,
-  usefulLife: number,
-  multiplier = 2,
+  rawCost: number,
+  rawLife: number,
+  rawMultiplier = 2,
 ): DepreciationYear[] {
+  // `straightLineSchedule` (パス 203) と同じ形。消毒しないと
+  // `decliningBalanceSchedule(NaN, 10)` も `(1e6, 10, NaN)` も
+  // **10 年ぶんすべて NaN の償却表**を返す (`usefulLife` が非有限のときだけは
+  // ループ条件で空になる)。定率法の倍率も同じ経路を通るので一緒に消毒する。
+  const acquisitionCost = nonNeg(rawCost);
+  const usefulLife = nonNeg(rawLife);
+  const multiplier = nonNeg(rawMultiplier);
   // usefulLife <= 0 はループ条件で空配列になるため冗長。acquisitionCost のみ判定。
   if (acquisitionCost <= 0) return [];
   // 定額法と同じ上限。理由は MAX_SCHEDULE_YEARS 参照。

@@ -11,7 +11,7 @@
  */
 
 import { yen, nonNeg } from './num';
-import { calcBasicDeduction, calcResidentBasicDeduction } from './taxCalc';
+import { calcBasicDeduction, calcResidentBasicDeduction, resolveTaxYear } from './taxCalc';
 
 /** 円未満を四捨五入。 */
 
@@ -66,7 +66,8 @@ export interface DeductionPair {
  * - 国税庁 令和7年度税制改正による所得税の基礎控除の見直し等について
  *   https://www.nta.go.jp/users/gensen/2025kiso/index.htm
  */
-export function spouseIncomeLimitYen(taxYear: number): number {
+export function spouseIncomeLimitYen(rawTaxYear: number): number {
+  const taxYear = resolveTaxYear(rawTaxYear);
   if (taxYear >= 2026) return 620_000; // 令和8年分以後
   if (taxYear === 2025) return 580_000; // 令和7年分
   return 480_000; // 令和6年分以前
@@ -240,8 +241,27 @@ export function calcDependentDeductionWithIncome(
 //     各区分 所得税上限5万・住民税上限3.5万、合計上限は所得税10万・住民税7万。
 //   新旧の両方がある区分は、(新のみ / 旧のみ / 新+旧で4万・2.8万上限) の最大を採る。
 
-/** 新制度・生命保険料控除 1 区分の控除額を計算する。 */
-function lifeInsuranceNew(premium: number): DeductionPair {
+/**
+ * 新制度・生命保険料控除 1 区分の控除額を計算する。
+ *
+ * **読めない保険料を上限へ倒さない。** 比較だけの段は `NaN` をどの枝にも
+ * 落とさないので、消毒前は最後の `else` (= その区分の**上限**) が選ばれていた。
+ * 実測 (パス 204):
+ *
+ * | 入力 | 消毒前 | 消毒後 |
+ * | --- | --- | --- |
+ * | `{general: NaN}` | `{40,000, 28,000}` (新制度 1 区分の上限) | `{0, 0}` |
+ * | `{general/medical/pension すべて NaN}` | **`{120,000, 70,000}`** | `{0, 0}` |
+ * | `{generalOld: NaN}` | `{50,000, 35,000}` (旧制度の上限) | `{0, 0}` |
+ *
+ * 3 区分すべてが NaN のときの `{120,000, 70,000}` は、**実際に各区分 8 万円の
+ * 保険料を払った人の満額と完全に同じ**なので、答えから区別できない。
+ * 控除を最大化する向き = 税額を小さく見せる向きに倒れていた (パス 86 と同じ形)。
+ * 隣の `calcEarthquakeInsuranceDeduction` は同じ入力で `{0, 0}` を返す
+ * (パス 203 で消毒済み) —— **規準は同じファイルの 70 行下に在った。**
+ */
+function lifeInsuranceNew(rawPremium: number): DeductionPair {
+  const premium = nonNeg(rawPremium);
   // Stryker disable EqualityOperator: 各ブラケット境界は連続で <= と < が同値 (等価変異)。
   // Stryker disable next-line ConditionalExpression: premium<=0 の早期returnは計算経路でも {0,0} で同値。
   if (premium <= 0) return { incomeTax: 0, residentTax: 0 };
@@ -261,8 +281,9 @@ function lifeInsuranceNew(premium: number): DeductionPair {
   return { incomeTax: it, residentTax: rt };
 }
 
-/** 旧制度・生命保険料控除 1 区分の控除額を計算する。 */
-function lifeInsuranceOld(premium: number): DeductionPair {
+/** 旧制度・生命保険料控除 1 区分の控除額を計算する (消毒の理由は `lifeInsuranceNew` 参照)。 */
+function lifeInsuranceOld(rawPremium: number): DeductionPair {
+  const premium = nonNeg(rawPremium);
   // Stryker disable EqualityOperator: 各ブラケット境界は連続で <= と < が同値 (等価変異)。
   // Stryker disable next-line ConditionalExpression: premium<=0 の早期returnは計算経路でも {0,0} で同値。
   if (premium <= 0) return { incomeTax: 0, residentTax: 0 };

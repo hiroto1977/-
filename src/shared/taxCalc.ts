@@ -133,6 +133,28 @@ export interface ResidentPerCapitaBreakdown {
 }
 
 /**
+ * 課税年度を 1 か所で解決する。**非有限な年分は現在の年へ倒す。**
+ *
+ * 年分で切り替わる法定の表 (給与所得控除の下限 65 万・基礎控除の段・均等割の
+ * 内訳・配偶者控除の所得上限) はどれも `taxYear >= N` の比較で枝を選ぶ。
+ * `NaN` はどの比較でも false になるので、**関数ごとに別々の版が選ばれる** ——
+ * 実測 (2026 年に測定):
+ *
+ * | 入口 | `taxYear = NaN` のとき選ばれた版 |
+ * | --- | --- |
+ * | `residentPerCapitaBreakdown` | **総額 4,000 円** (2013 年度以前。復興特別も森林環境税も無い) |
+ * | `spouseIncomeLimitYen` | 480,000 円 (令和 6 年分以前) |
+ * | `calcSalaryIncomeDeduction` | 550,000 円 (改正前) |
+ * | `calcBasicDeduction` | **令和 8 年分 (最新)** —— 上の 3 つと逆向き |
+ *
+ * つまり 1 回の試算の中で**新旧の表が混ざる**。倒す先を年分の既定 (現在の年) に
+ * 揃えることで、少なくとも「1 つの申告は 1 つの年分で計算される」を保つ。
+ */
+export function resolveTaxYear(taxYear: number): number {
+  return Number.isFinite(taxYear) ? taxYear : new Date().getFullYear();
+}
+
+/**
  * 住民税均等割 (+森林環境税) の内訳を年度別に分解する。
  *
  * 2014-2023年度: 基礎4,000 + 復興特別1,000 = 5,000円。
@@ -142,7 +164,8 @@ export interface ResidentPerCapitaBreakdown {
  *
  * @param taxYear 課税年度 (例: 2024)
  */
-export function residentPerCapitaBreakdown(taxYear: number): ResidentPerCapitaBreakdown {
+export function residentPerCapitaBreakdown(rawTaxYear: number): ResidentPerCapitaBreakdown {
+  const taxYear = resolveTaxYear(rawTaxYear);
   const forestTax = taxYear >= 2024 ? FOREST_ENVIRONMENT_TAX : 0;
   // 復興特別の均等割上乗せは 2014-2023 年度に限る。
   const reconstruction = taxYear >= 2014 && taxYear <= 2023 ? 1_000 : 0;
@@ -330,9 +353,11 @@ export const SALARY_DEDUCTION_MIN_65_FROM_YEAR = 2025;
 // いる)。定数を打ち間違えると不連続になり、そちらが落ちる。
 // Stryker disable EqualityOperator
 export function calcSalaryIncomeDeduction(
-  grossAnnual: number,
-  taxYear = new Date().getFullYear(),
+  rawGrossAnnual: number,
+  rawTaxYear = new Date().getFullYear(),
 ): number {
+  const grossAnnual = nonNeg(rawGrossAnnual);
+  const taxYear = resolveTaxYear(rawTaxYear);
   if (grossAnnual <= 0) return 0;
   if (taxYear >= SALARY_DEDUCTION_MIN_65_FROM_YEAR) {
     if (grossAnnual <= 1_900_000) return 650_000;
@@ -391,9 +416,10 @@ export const RESIDENT_BASIC_DEDUCTION = 430_000;
  */
 export function calcBasicDeduction(
   totalIncome: number,
-  taxYear = new Date().getFullYear(),
+  rawTaxYear = new Date().getFullYear(),
 ): number {
   const income = nonNeg(totalIncome);
+  const taxYear = resolveTaxYear(rawTaxYear);
   // 2,350 万円超の逓減は全年分で共通 (改正されていない)。
   if (income > 23_500_000) {
     if (income <= 24_000_000) return 480_000;
@@ -483,10 +509,12 @@ export interface NetSalary {
  * 高めに出る点に注意。
  */
 export function calcNetSalary(
-  grossAnnual: number,
-  taxYear = new Date().getFullYear(),
+  rawGrossAnnual: number,
+  rawTaxYear = new Date().getFullYear(),
   p: NetSalaryParams = DEFAULT_NET_SALARY_PARAMS,
 ): NetSalary {
+  const grossAnnual = nonNeg(rawGrossAnnual);
+  const taxYear = resolveTaxYear(rawTaxYear);
   // `<= 0` → `< 0` は等価寄り (0 の挙動差は下流テストで pin 済み)。境界の
   // 等価ミュータントを抑制。
   if (grossAnnual <= 0) {
@@ -501,7 +529,11 @@ export function calcNetSalary(
     };
   }
   const socialInsurance = yen(grossAnnual * p.socialInsuranceRate);
-  const salaryDeduction = calcSalaryIncomeDeduction(grossAnnual);
+  // **年分を渡す。** 渡さないと給与所得控除だけが「現在の年」の表で計算され、
+  // 基礎控除は引数の年分で計算される —— 1 回の手取り試算の中で表が 2 つの
+  // 年分に割れていた (実測: `calcNetSalary(1,500,000, 2023)` は 2026 年分の
+  // 給与所得控除 650,000 円と令和 6 年分以前の基礎控除 480,000 円を混ぜていた)。
+  const salaryDeduction = calcSalaryIncomeDeduction(grossAnnual, taxYear);
   // 給与所得 (= 合計所得金額の近似)。社会保険料控除は所得控除なので、課税所得は
   // 給与所得から社保・基礎控除を引いて求める。
   const employmentIncome = Math.max(0, grossAnnual - salaryDeduction);
@@ -576,15 +608,24 @@ export interface FullSalaryResult {
  * の両建てで反映。社会保険料を概算で使う `calcNetSalary` とは別系統。
  */
 export function calcSalaryWithDeductions(
-  grossAnnual: number,
-  deductionIncomeTax: number,
-  deductionResidentTax: number,
-  donation = 0,
-  humanDeductionDiff = 0,
-  dependentCount = 0,
-  taxYear = new Date().getFullYear(),
+  rawGrossAnnual: number,
+  rawDeductionIncomeTax: number,
+  rawDeductionResidentTax: number,
+  rawDonation = 0,
+  rawHumanDeductionDiff = 0,
+  rawDependentCount = 0,
+  rawTaxYear = new Date().getFullYear(),
   p: SalaryTaxParams = DEFAULT_SALARY_TAX_PARAMS,
 ): FullSalaryResult {
+  // 6 つの数値の位置すべてを入口で消毒する。実測ではどの位置に非有限を入れても
+  // 内訳のどれかが NaN で返っていた (`totalDeductionIncomeTax` / `furusatoResidentCredit` ほか)。
+  const grossAnnual = nonNeg(rawGrossAnnual);
+  const deductionIncomeTax = nonNeg(rawDeductionIncomeTax);
+  const deductionResidentTax = nonNeg(rawDeductionResidentTax);
+  const donation = nonNeg(rawDonation);
+  const humanDeductionDiff = nonNeg(rawHumanDeductionDiff);
+  const dependentCount = nonNeg(rawDependentCount);
+  const taxYear = resolveTaxYear(rawTaxYear);
   const perCapitaLevy = resolvePerCapita(p.resident);
   if (grossAnnual <= 0) {
     return {

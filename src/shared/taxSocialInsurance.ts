@@ -270,6 +270,10 @@ export function calcSocialInsurance(
   withCare = false,
   r: SocialInsuranceRates = DEFAULT_SOCIAL_INSURANCE_RATES,
 ): SocialInsuranceBreakdown {
+  // 非有限な年収は 0 に倒してから既存の `<= 0` の枝へ届ける。消毒が無いと
+  // 実測で `{pension: 96,624, health: 34,800, employment: NaN, total: NaN}` ——
+  // **等級表の最下位等級から出たもっともらしい保険料 2 つと NaN が混ざる**。
+  grossAnnual = nonNeg(grossAnnual);
   // grossAnnual===0 では計算経路 (monthly=0) でも全保険料が 0 にならない
   // (標準報酬月額は最下位等級 58,000/88,000 で底打ちされる) ため、0/負は
   // ここで明示的に 0 を返す。境界は「0以下なら無職=保険料なし」とみなす。

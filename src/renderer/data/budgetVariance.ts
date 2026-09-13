@@ -14,6 +14,8 @@
  * 以後 `computeBudgetVariance` は突合できた期だけを合算し、対象外の期を
  * `BudgetPeriodAlignment` で返す (画面と書面が「何か月分の比較か」を述べる)。
  */
+import { finiteOr0 } from '../../shared/num';
+
 import {
   computeKpiMetrics,
   summarizeFundamentals,
@@ -122,7 +124,15 @@ export function budgetScopeSentence(a: BudgetPeriodAlignment): string | null {
   return `予算と実績の両方が在る ${a.comparedPeriods.length} か月分の比較です (${un})。`;
 }
 
-function line(budget: number, actual: number): VarianceLine {
+function line(rawBudget: number, rawActual: number): VarianceLine {
+  // 予算・実績を入口で消毒する。消毒前は `line(NaN, 1_000_000)` が
+  // **`budget: NaN` をそのまま返し**、画面と書面が予算額として NaN を刷った
+  // (達成率だけは `budget > 0` が false で null になっていたので、
+  // 「予算 NaN・達成率 —」という読めない組が並んでいた)。
+  // **`nonNeg` は使えない** —— `line` は売上だけでなく**営業利益**にも使われ
+  // (`line(budgetOp, actualOp)`)、営業損失は負が正しい答えである。符号を残す。
+  const budget = finiteOr0(rawBudget);
+  const actual = finiteOr0(rawActual);
   return {
     budget,
     actual,

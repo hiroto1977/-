@@ -81,7 +81,11 @@ export function countChars(value: string): number {
  * 「1 文字も入らない」に倒す (入力中の画面を落とさない)。
  */
 export function clampToCeiling(value: string, max: number): string {
-  if (max <= 0) return '';
+  // **測れない天井は「余地なし」に倒す。** `max` が非有限だと `n >= max` が
+  // 常に false になり、実測では `clampToCeiling('abcdef', NaN)` が
+  // **文字列をそのまま (切らずに) 返していた** —— つまり天井が黙って外れる。
+  // 天井の役目は外へ出す量を抑えることなので、読めないときに通してはいけない。
+  if (!Number.isFinite(max) || max <= 0) return '';
   let out = '';
   let n = 0;
   for (const ch of value) {

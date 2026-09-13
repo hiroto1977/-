@@ -129,6 +129,9 @@ export function contactToForm(c: ShigyoContactEntry): {
  * @param feeLabel 月次顧問料の表示文字列 (呼び側が `jpy` で整形して渡す)
  */
 export function shigyoDemoMixNote(demoCount: number, userCount: number, feeLabel: string): string | null {
+  // **文に NaN を埋めない。** 走査は関門に出てくる `demoCount` / `userCount` を
+  // 挙げたが、実測ではどちらが非有限でも「連携 NaN 名」という文章が出ていた。
+  if (!Number.isFinite(demoCount) || !Number.isFinite(userCount)) return null;
   if (demoCount === 0) return null;
   if (userCount === 0) {
     return `表示中の連携先 ${demoCount} 名と月次顧問料 ${feeLabel} は同梱の見本です（自分の連携先はまだ登録されていません）。`;

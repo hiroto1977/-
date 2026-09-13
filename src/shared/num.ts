@@ -60,6 +60,26 @@ export function finiteOrNull(n: number): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+/**
+ * **符号を残して**非有限だけを 0 に倒す (2026-09-13 · パス 204)。
+ *
+ * `nonNeg` は負値も 0 にするので、**負でありうる量**には使えない ——
+ * 経常利益 (欠損)・予実差異の営業利益・NOI は負が正しい答えである。
+ * パス 204 で私は `appendCorporateTaxSection` と `budgetVariance.line` に
+ * `nonNeg` を入れてしまい、**欠損 −200,000 円を 0 円として刷る**ようにした
+ * (既存の検査が落ちて教えてくれた)。消毒の選び方は「その量は負を取りうるか」で
+ * 決まる:
+ *
+ * | 量 | 使う物 |
+ * | --- | --- |
+ * | 金額・税額・年数・件数 (負は無意味) | `nonNeg` |
+ * | 利益・差異・収益 (負が正しい答え) | `finiteOr0` |
+ * | 「算定不能」の道が在る | `finiteOrNull` → `null` |
+ */
+export function finiteOr0(n: number): number {
+  return Number.isFinite(n) ? n : 0;
+}
+
 /** 100円未満を切り捨てる（国税の端数処理・自動車税の月割など）。 */
 export function floorHundred(n: number): number {
   return Math.floor(n / 100) * 100;

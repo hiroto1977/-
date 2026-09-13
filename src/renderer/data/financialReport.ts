@@ -11,6 +11,7 @@ import type { FinancialDiagnosis } from './financialDiagnosis';
 import type { MarginTrend } from './financialTrend';
 import { calcCorporateTax, type CorporateTaxRates } from '../../shared/taxCorporate';
 import { localIsoDate } from '../../shared/localDate';
+import { finiteOr0 } from '../../shared/num';
 
 /** レポートに載せる指標の表示定義 (15指標 + 金額系2)。 */
 const ROWS: { readonly key: keyof FinancialRatios; readonly label: string; readonly unit: string; readonly money?: boolean }[] = [
@@ -85,7 +86,15 @@ function fmtRate(rate: number | null): string {
  * 税引前利益が 0 以下 (欠損) のときは法人住民税の均等割のみが課され、
  * 税引後利益 = 税引前利益 − 均等割 となる旨を注記する。
  */
-function appendCorporateTaxSection(lines: string[], ordinaryProfit: number, rates?: CorporateTaxRates): void {
+function appendCorporateTaxSection(lines: string[], rawOrdinaryProfit: number, rates?: CorporateTaxRates): void {
+  // **この節は税理士・金融機関に渡るレポートに刷られる。** 経常利益が非有限だと
+  // `ordinaryProfit <= 0` の枝 (欠損の但し書き) も通らず、表の各行が NaN 円に
+  // なり得る。入口で 1 度だけ消毒し、既に書かれている欠損の枝へ届ける。
+  //
+  // **`nonNeg` は使えない** —— 経常利益は負を取りうる (欠損) 量で、負を 0 に
+  // すると「欠損 −200,000 円」が「0 円」として刷られる。初版で私は `nonNeg` を
+  // 入れ、`financialReport.test.ts` が落ちて教えてくれた。符号を残す `finiteOr0`。
+  const ordinaryProfit = finiteOr0(rawOrdinaryProfit);
   const b = calcCorporateTax(ordinaryProfit, {}, rates);
   lines.push('## 法人税等(概算)');
   lines.push('');

@@ -9,7 +9,7 @@
  *   実質利回り = (年間賃料×入居率 − 年間経費) ÷ (物件価格 + 取得費) × 100
  */
 
-import { round2, nonNeg } from './num';
+import { round2, nonNeg, finiteOrNull } from './num';
 
 export interface RealEstateYield {
   /**
@@ -251,7 +251,7 @@ export const DEFAULT_DSCR_THRESHOLDS: DscrThresholds = {
  * DSCR が 1.0 未満は NOI で返済を賄えない危険水域。金融機関は 1.2〜1.3 以上を
  * 求めることが多い。
  *
- * @param noi 営業純収益 (円)。負値も可 (band は danger になる)。
+ * @param noi 営業純収益 (円)。負値も可 (band は danger になる)。**測れなければ null**。
  * @param annualDebtService 年間元利返済額 (円)。0 以下なら dscr/band は null。
  */
 export function calcDscr(
@@ -259,7 +259,15 @@ export function calcDscr(
   annualDebtService: number,
   t: DscrThresholds = DEFAULT_DSCR_THRESHOLDS,
 ): RealEstateDscr {
-  if (!(annualDebtService > 0)) {
+  // 返済額側は `!(x > 0)` の形なので NaN も落ちる。**NOI 側には関門が無く**、
+  // 実測では `calcDscr(NaN, 1_000_000)` が `{dscr: NaN, band: 'healthy'}` を
+  // 返していた —— `NaN < t.danger` も `NaN < t.caution` も false なので、
+  // 判定が**最後の枝 (healthy = 安全)** まで滑り落ちる。測れない収益を
+  // 「返済余力あり」と読ませないため、入口で断る。
+  // 返済額側の `!(x > 0)` は NaN を落とすが `+Infinity` は落とさない ——
+  // `1e6 / Infinity` = 0 で `{dscr: 0, band: 'danger'}` になっていた
+  // (測れない返済額から「返済余力なし」という判定が出る)。両側に有限を要求する。
+  if (finiteOrNull(noi) === null || finiteOrNull(annualDebtService) === null || !(annualDebtService > 0)) {
     return { dscr: null, band: null };
   }
   const dscr = Math.round((noi / annualDebtService) * 100) / 100;

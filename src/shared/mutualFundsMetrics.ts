@@ -6,7 +6,7 @@
  * 元本割れの可能性があります。過去の実績は将来を保証しません。
  */
 
-import { round2, yen, nonNeg } from './num';
+import { round2, yen, nonNeg, finiteOrNull } from './num';
 import { isPlannableYears } from './savingsPlanning';
 
 /**
@@ -117,7 +117,14 @@ export function calcSharpeRatio(
   annualVolatilityPct: number,
   riskFreeRatePct = 0.5,
 ): number | null {
-  if (annualVolatilityPct <= 0) return null;
+  // 契約が `number | null` なので、測れない入力は **null** (「算定不能」) に倒す。
+  // 実測では 3 つの位置のどれに非有限を入れても NaN のシャープレシオが返っていた。
+  if (
+    finiteOrNull(annualReturnPct) === null
+    || finiteOrNull(annualVolatilityPct) === null
+    || finiteOrNull(riskFreeRatePct) === null
+    || annualVolatilityPct <= 0
+  ) return null;
   const sr = (annualReturnPct - riskFreeRatePct) / annualVolatilityPct;
   return Math.round(sr * 100) / 100;
 }

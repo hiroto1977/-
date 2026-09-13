@@ -13918,7 +13918,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (npm run lint:zero-fold で再生成) -->
-合計 **107 ファイル / 279 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **107 ファイル / 280 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -13977,6 +13977,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/pages/FundingPage.tsx` | 2 |
 | `src/renderer/pages/KpiPage.tsx` | 2 |
 | `src/shared/connectors/connectorRegistry.ts` | 2 |
+| `src/shared/num.ts` | 2 |
 | `src/shared/talent.ts` | 2 |
 | `src/shared/taxCalc.ts` | 2 |
 | `src/shared/taxCorporate.ts` | 2 |
@@ -14021,7 +14022,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/httpLimits.ts` | 1 |
 | `src/shared/hydroponicsControl.ts` | 1 |
 | `src/shared/managementScorecard.ts` | 1 |
-| `src/shared/num.ts` | 1 |
 | `src/shared/passwordStrength.ts` | 1 |
 | `src/shared/taxCapitalGains.ts` | 1 |
 | `src/shared/taxCasual.ts` | 1 |
@@ -26097,6 +26097,151 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 
 この 5 つは**欠陥ではなく範囲**だが、画面と仕様書の両方が明示する
 (黙っていると「自動管理」という名前が実態より広く読まれる)。
+
+## パス 204 (2026-09-13) — **「読めない値から最も都合のよい答え」が 4 件。台帳を双方向にし、否定形の関門も足りないと分かった**
+
+パス 203 は「機械的に呼べなかった 32 件は次のパスで手で組んで測る」と書いた。測った。
+
+### 直した向きが 4 件とも「最も都合のよい側」だった
+
+| 入口 | 直す前 | 何を言っていたか | 直した後 |
+| --- | --- | --- | --- |
+| `humanizeCrackTime(NaN)` | **「事実上解読不能」** | 突破時間が測れないのに**破られないと断言** | 「判定できません」 |
+| `calcDscr(NaN, 1e6)` | `{dscr: NaN, band: **'healthy'**}` | 測れない NOI から**銀行に渡る「返済余力あり」** | `{null, null}` |
+| `furusatoOneStopEligibility(NaN, false)` | **`eligible: true`** | 件数が読めないのに**確定申告は不要** | `eligible: false` + 理由 |
+| `calcLifeInsuranceDeduction({3 区分すべて NaN})` | **`{120,000, 70,000}`** | 各区分 8 万円**払った人と同じ満額** | `{0, 0}` |
+
+`humanizeCrackTime` は `seconds < 1` → `< 60` → … と比較で段を降りるので、
+`NaN` はどの段にも落ちず**最後の行**に着く。その最後の行が「事実上解読不能」だった。
+`calcDscr` は `dscr < t.danger` も `dscr < t.caution` も false で**最後の else**、
+つまり `'healthy'`。`furusatoOneStopEligibility` は 2 つの `if` を抜けて
+**最後の `return { eligible: true }`**。生命保険料控除は速算表の最後の `else`
+(= その区分の上限)。**比較で段を降りる形は、NaN を必ず最後の行へ運ぶ。**
+そして最後の行はたいてい「最も良い / 最も安全 / 上限」である。
+
+`calcLifeInsuranceDeduction` の隣 (同じファイルの 70 行下) の
+`calcEarthquakeInsuranceDeduction` は同じ入力で `{0, 0}` を返す ——
+パス 203 で消毒したばかりだった。**規準は毎回、隣に在る。**
+
+### ★ 否定形 `!(x > 0)` も非有限の片側しか落とさない (私の見立ての訂正)
+
+この節の初版で私は免除の理由として「`!(x > 0)` の否定形なら NaN も落ちるので
+台帳に載せなくてよい」と書いた。台帳に足して測った**直後に**落ちた:
+
+    roundUpYearsOfService(Infinity) → Infinity   （勤続年数が Infinity 年）
+    calcDscr(1e6, Infinity)         → {dscr: 0, band: 'danger'}
+
+`NaN > 0` は false だが **`Infinity > 0` は true** なので、否定形の関門は
+`+Infinity` を通す。しかも `roundUpYearsOfService` の関門には
+**「`!(>0)` で 0・負値・NaN を一括ガード」とコメントで書かれていた** ——
+パス 203 の `calcBaseIncomeTax` と同じ形 (前提を書いたコメントが、
+その前提が成り立つ範囲を書いていない)。
+
+    | 綴り | NaN | +Infinity |
+    | --- | :-: | :-: |
+    | `if (x <= 0)` | ❌ 通す | ❌ 通す |
+    | `if (!(x > 0))` | ✅ 落とす | ❌ **通す** |
+    | `nonNeg(x)` / `finiteOrNull(x)` | ✅ | ✅ |
+
+**正典は `nonNeg` / `finiteOrNull` の 2 つだけである。**
+
+### 年分が黙って別の版の表を選ぶ (別の家系)
+
+`taxYear` は `taxYear >= N` の比較で法定の表を選ぶので、`NaN` だと
+**関数ごとに別々の年分が選ばれる**。2026 年に実測:
+
+| 入口 | `taxYear = NaN` で選ばれた版 |
+| --- | --- |
+| `residentPerCapitaBreakdown` | **総額 4,000 円** (2013 年度以前。復興特別も森林環境税も無い) |
+| `spouseIncomeLimitYen` | 480,000 円 (令和 6 年分以前) |
+| `calcSalaryIncomeDeduction` | 550,000 円 (改正前) |
+| `calcBasicDeduction` | **令和 8 年分 (最新)** —— 上の 3 つと逆向き |
+
+1 回の試算の中で**新旧の表が混ざる**。`resolveTaxYear` を 1 つ置いて
+既定 (現在の年) へ倒し、6 か所を通した。
+
+**そしてその過程で、非有限とは無関係の欠陥が 1 件出た** ——
+`calcNetSalary(gross, taxYear)` は基礎控除には `taxYear` を渡すのに
+**給与所得控除には渡していなかった**。実測:
+
+    calcNetSalary(1,500,000, 2023)
+      給与所得控除 = 650,000 (2026 年分の表)   ← 引数の年分を無視
+      基礎控除     = 480,000 (令和 6 年分以前) ← 引数の年分に従う
+
+1 回の手取り試算が 2 つの年分の表で計算されていた。年分を渡すよう直した。
+
+### 直した箇所 (18 ファイル)
+
+| 契約 | 倒す先 | 直した入口 |
+| --- | --- | --- |
+| 金額・税額・年数 | `nonNeg` → 0 | `calcRetirementTax` / `retirementDeduction` / `roundUpYearsOfService` / `calcSocialInsurance` / `calcMonthlySocialInsurance` / `calcNetSalary` / `calcSalaryIncomeDeduction` / `calcSalaryWithDeductions` (6 位置) / `decliningBalanceSchedule` / `amortizationSchedule` / `estimateCrackSeconds` / `lifeInsuranceNew` / `lifeInsuranceOld` |
+| **負を取りうる量** | **`finiteOr0`** (符号を残す) | `appendCorporateTaxSection` (欠損) / `budgetVariance.line` (営業損失) |
+| 算定不能の道が在る | `finiteOrNull` → `null` | `calcSharpeRatio` / `requiredMonthlyContribution` / `calcDscr` (両側) |
+| 文 | 出さない | `restoreResultMessage` / `shigyoDemoMixNote` / `furusatoOneStopEligibility` / `humanizeCrackTime` |
+| 天井 | `''` (余地なし) | `clampToCeiling` |
+| 年分 | `resolveTaxYear` | 上の 6 か所 |
+
+### ★ ここでも自分の直しを既存の検査に捕まえられた
+
+`appendCorporateTaxSection` と `budgetVariance.line` に `nonNeg` を入れたが、
+**どちらも負を取りうる量**だった —— 経常利益は欠損で負、予実差異の `line` は
+営業利益にも使われる。`financialReport.test.ts` が
+`| 税引前利益(経常利益) | -200,000 円 |` を期待して落ち、**欠損 −200,000 円を
+0 円として刷るようになっていた**ことを教えてくれた。符号を残す `finiteOr0` を
+`shared/num.ts` に足し、選び方を表で書いた:
+
+    | 量 | 使う物 |
+    | --- | --- |
+    | 金額・税額・年数・件数 (負は無意味) | nonNeg |
+    | 利益・差異・収益 (負が正しい答え) | finiteOr0 |
+    | 「算定不能」の道が在る | finiteOrNull → null |
+
+**消毒は 1 種類ではない。「その量は負を取りうるか」で選ぶ。**
+
+### 台帳を双方向にした (16 という数を手で選ばない)
+
+パス 203 の台帳 16 件は手で選んでいた。`findComparisonOnlyGuards` を
+`nonFiniteEntryPoints.test.ts` に足し、**走査が挙げた export 関数はすべて
+台帳か免除台帳のどちらかに在ること**をゲートにした (パス 117 の
+「母集団の総当たりをゲートにする」と同じ形)。台帳は 16 → **43 入口**。
+免除は 16 件で、理由は 4 種類だけ (定数からしか来ない / 型が拒む /
+宣言された `@throws` / 上流の漏斗)。免除の**死んだ行**も鳴る。
+
+`assertNonNegativeFinite` で投げる入口 (7 モジュール・24 か所の方針) は
+`refusesByThrow` として認めるが、**文面が渡した値を名指しすること**を要求する ——
+パス 203 の `bracket!.rate` の `Cannot read properties of undefined` はこれを通らない。
+
+### 対照 (11 件すべて鳴った。1 件は「鳴らなかった」ので作り直した)
+
+| | 何を壊したか | 戻ったもの |
+| --- | --- | --- |
+| I1 | `humanizeCrackTime` の断り | 「事実上解読不能」 |
+| I2 | `calcDscr` の NOI 側 | `{dscr: NaN, band: 'healthy'}` |
+| I3 | ふるさと納税の断り | 文に NaN・`eligible: true` |
+| I4 | 生命保険料控除の消毒 | `{120,000, 70,000}` |
+| I5 | `resolveTaxYear` | 均等割 4,000 円 (2013 年度以前) |
+| I6 | `calcNetSalary` の年分渡し | 給与所得控除 650,000 / 基礎控除 480,000 の混在 |
+| I7 | `roundUpYearsOfService` の `nonNeg` | `Infinity` 年 |
+| I8 | `clampToCeiling` の有限判定 | 切らずにそのまま返す |
+| I9 | `restoreResultMessage` の守り | 「NaN 件のレコードを復元しました」 |
+| J1 | 台帳から `calcSocialInsurance` を外す | 双方向の突き合わせが鳴る |
+| J2 | 比較だけの関門を持つ export 関数を新設 | 走査が挙げる |
+
+★ **I8 は 1 度目に鳴らなかった。** `sed` の置換が当たっておらず、
+**何も壊していないのに「対照が通った」と読める状態**だった。
+`grep` で行を確かめて気付き、`python` で置換し直したら鳴った。
+**対照は「壊したことを確かめてから」走らせる** —— 壊れていない対照は
+合格ではなく、何の報せでもない。
+
+### 次に見るところ
+
+- パス 202 の残り: アロー関数の仮引数 7 件・式の床 147 件の上流。
+- `positiveIfKnown(NaN)` → `false` / `isOverCounted(NaN, n)` → `false` /
+  `confidenceLabel(NaN)` → `'低'` は**免除にしたが、どれも「控えめな側」に
+  倒れているだけで「測れない」とは言っていない**。boolean の契約に
+  「測れない」を足すかは設計の判断で、測ってからでよい。
+- `parseIsoDate` の年の範囲 (`\d{4}` = 0000〜9999)。欄ごとの方針は未決。
+- `GuardedNumber` の `max`: 不動産の寸法 4 件・貿易の税率 4 件は計算側を未確認。
 
 ## パス 203 (2026-09-13) — **パス 202 の「分母のほとんどは無害だろう」は外れていた。機械的に呼べる 14 件のうち 14 件が非有限を返すか投げた**
 

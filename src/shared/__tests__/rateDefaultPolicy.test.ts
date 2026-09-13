@@ -91,7 +91,7 @@ interface Entry {
  */
 const LEDGER: readonly Entry[] = [
   {
-    file: 'src/shared/funding.ts', param: 'gracePeriodMonths', value: 0, count: 1,
+    file: 'src/shared/funding.ts', param: 'rawGracePeriodMonths', value: 0, count: 1,
     why: '元金据置は「無し」が既定。0 は中立値 (据置ゼロ) で、どこかの定数の写しではない。',
   },
   {

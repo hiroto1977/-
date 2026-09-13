@@ -350,12 +350,16 @@ export function replaceRestoreConfirmMessage(plan: RestorePlan): string {
  * (`importSizeGuard.test.ts` がこの形を留めている)。`dropped` は importAll が形で捨てた件数。
  */
 export function restoreResultMessage(plan: RestorePlan, imported: number, dropped: number): string {
-  const droppedNote = dropped > 0 ? `${dropped} 件は形式が不正なため取り込みませんでした。` : '';
+  // **件数が読めなければ数字を出さない。** 実測では `imported` が非有限のとき
+  // 「**NaN 件**のレコードを復元しました」という報告になっていた (走査は関門に
+  // 出てくる `dropped` しか挙げず、文に埋まる `imported` は挙げなかった側)。
+  const importedLabel = Number.isFinite(imported) ? `${imported} 件` : '不明な件数';
+  const droppedNote = Number.isFinite(dropped) && dropped > 0 ? `${dropped} 件は形式が不正なため取り込みませんでした。` : '';
   const detail =
     plan.mode === 'replace'
       ? `既存データは置換。消えた ${plan.lost} 件 = バックアップに無い ${plan.localOnly} 件 + この端末の方が新しかった ${plan.newerLocal} 件`
       : `マージ: 追加 ${plan.added}・更新 ${plan.overwritten}・この端末の方が新しい ${plan.newerLocal} 件はそのまま`;
-  return `${imported} 件のレコードを復元しました（${detail}）。${droppedNote}再読み込みで反映されます。`;
+  return `${importedLabel}のレコードを復元しました（${detail}）。${droppedNote}再読み込みで反映されます。`;
 }
 
 /**

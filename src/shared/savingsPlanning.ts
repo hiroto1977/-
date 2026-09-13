@@ -83,7 +83,12 @@ export function requiredMonthlyContribution(
 ): number | null {
   // 上限を超えた年数は算定不能 (`null`)。**0 を返すと「積み立てなくてよい」**
   // という最も安心させる向きの断定になる (実測: 99,999,999 年 → `¥0`)。
-  if (!isPlannableYears(years)) return null;
+  // 目標額・年率も同じ契約で扱う (パス 204 の実測: どちらが非有限でも NaN が返っていた)。
+  if (
+    !isPlannableYears(years)
+    || finiteOrNull(targetFutureValue) === null
+    || finiteOrNull(annualRatePct) === null
+  ) return null;
   // years <= 0 は下の n <= 0 (= round(years*12)) で捕捉されるため、ここでは
   // targetFutureValue のみ判定する。targetFutureValue===0 は計算経路でも 0 に
   // なり <= → < は equivalent のため EqualityOperator を無効化。

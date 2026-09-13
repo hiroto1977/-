@@ -163,6 +163,8 @@ export function calcMonthlySocialInsurance(
   monthlyRemuneration: number,
   withCare = false,
 ): MonthlySocialInsurance {
+  // 非有限も同じ扱い (等級表の底打ちから出た保険料と NaN が混ざるのを防ぐ)。
+  monthlyRemuneration = nonNeg(monthlyRemuneration);
   // 0 / 負の報酬は等級表の底打ち (最下位等級) を持ち込まず 0 を返す。
   if (monthlyRemuneration <= 0) {
     return { pension: 0, health: 0, employment: 0, total: 0 };

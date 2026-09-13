@@ -620,11 +620,11 @@ export interface AmortizationEntry {
  *     未払利息を毎月元本に加算し、据置終了後は膨らんだ元本を `months` 回で返済する。
  */
 export function amortizationSchedule(
-  principal: number,
-  annualRate: number,
-  months: number,
+  rawPrincipal: number,
+  rawAnnualRate: number,
+  rawMonths: number,
   startMonth: string,
-  gracePeriodMonths = 0,
+  rawGracePeriodMonths = 0,
   // 既定値を別文字列にしても `method === 'equal-principal'` 判定では非 equal-principal=
   // equal-payment 挙動で同一のため equivalent。
   // Stryker disable next-line StringLiteral
@@ -634,6 +634,13 @@ export function amortizationSchedule(
   // Stryker disable next-line StringLiteral
   graceInterestHandling: GraceInterestHandling = 'simple',
 ): AmortizationEntry[] {
+  // 入口で 1 度だけ消毒する。実測では `amortizationSchedule(NaN, 0.02, 12, …)` と
+  // `(1e7, NaN, 12, …)` が **12 か月ぶんすべて NaN の返済予定表**を返していた
+  // (`months` が非有限のときだけは空ループで [] になっていた)。
+  const principal = nonNeg(rawPrincipal);
+  const annualRate = nonNeg(rawAnnualRate);
+  const months = nonNeg(rawMonths);
+  const gracePeriodMonths = nonNeg(rawGracePeriodMonths);
   // months<=0→<0 は months=0 が空ループで [] を返すため等価。ConditionalExpression(false) は
   // principal=0 で零詰めスケジュールを生み amort(0,…) テストで撃墜可 (手動確認済) だが、内部
   // 呼出しが多く Stryker perTest が直接テストを帰属できない盲点。

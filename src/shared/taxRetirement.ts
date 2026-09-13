@@ -20,7 +20,7 @@
  *   住民税        = 退職所得 × 10% (分離課税・調整控除なし)
  */
 
-import { yen } from './num';
+import { yen, nonNeg } from './num';
 import { calcBaseIncomeTax, RECONSTRUCTION_SURTAX_RATE, RESIDENT_TAX_RATE } from './taxCalc';
 
 /**
@@ -32,9 +32,14 @@ import { calcBaseIncomeTax, RECONSTRUCTION_SURTAX_RATE, RESIDENT_TAX_RATE } from
  * @returns 控除計算に用いる整数年 (1年未満切り上げ、最低0)
  */
 export function roundUpYearsOfService(rawYears: number): number {
-  // Stryker disable next-line EqualityOperator,ConditionalExpression: !(>0) で 0・負値・NaN を一括ガード。
-  if (!(rawYears > 0)) return 0;
-  return Math.ceil(rawYears);
+  // **否定形 `!(x > 0)` は NaN を落とすが `+Infinity` は落とさない。**
+  // `Infinity > 0` は true なので関門を通り、`Math.ceil(Infinity)` = `Infinity`
+  // がそのまま勤続年数として返っていた (パス 204 の実測 —— この関門は
+  // 「NaN も一括ガード」と**コメントに書かれていた**が、非有限の片側だけだった)。
+  const years = nonNeg(rawYears);
+  // Stryker disable next-line EqualityOperator,ConditionalExpression: !(>0) で 0・負値を一括ガード。
+  if (!(years > 0)) return 0;
+  return Math.ceil(years);
 }
 
 /** 課税退職所得計算のオプション。 */
@@ -63,7 +68,10 @@ export interface RetirementIncomeOptions {
  * @param disability 障害者になったことに基因する退職か (控除 +100万)
  */
 export function retirementDeduction(yearsOfService: number, disability = false): number {
-  const years = Math.max(0, Math.floor(yearsOfService));
+  // `Math.max(0, Math.floor(NaN))` は **NaN** —— パス 201 が「計算した値」として
+  // 分類だけして残した形。NaN のまま下の段を通ると `years === 0` も `years <= 20`
+  // も false で、`8,000,000 + 700,000 * (NaN - 20)` = NaN の控除額になる。
+  const years = Math.floor(nonNeg(yearsOfService));
   let base: number;
   // Stryker disable EqualityOperator: years<=20 の境界は years=20 で else枝(8,000,000)と連続=等価変異。
   if (years === 0) {
@@ -91,6 +99,8 @@ export function calcRetirementTaxableIncome(
   yearsOfService: number,
   opts: RetirementIncomeOptions = {},
 ): number {
+  severance = nonNeg(severance);
+  yearsOfService = nonNeg(yearsOfService);
   const deduction = retirementDeduction(yearsOfService, opts.disability ?? false);
   const afterDeduction = Math.max(0, severance - deduction);
   // Stryker disable next-line ConditionalExpression: 早期returnを外しても afterDeduction=0 は yen(0/2)=0 で同値。
@@ -136,6 +146,10 @@ export function calcRetirementTax(
   yearsOfService: number,
   opts: RetirementIncomeOptions = {},
 ): RetirementTaxResult {
+  // 退職金・勤続年数を入口で消毒する。比較だけの関門は NaN をどちらの枝にも
+  // 落とさないので、実測では課税退職所得・住民税・手取りが NaN で返っていた。
+  severance = nonNeg(severance);
+  yearsOfService = nonNeg(yearsOfService);
   // Stryker disable next-line all: severance<=0 の早期returnは、計算経路でも同じゼロ群を返すため等価。
   if (severance <= 0) {
     return { deduction: retirementDeduction(yearsOfService, opts.disability ?? false), taxableIncome: 0, incomeTax: 0, residentTax: 0, takeHome: 0 };
