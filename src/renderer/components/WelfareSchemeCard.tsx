@@ -125,7 +125,7 @@ export function WelfareSchemeCard() {
     spouseElderly,
   ]);
 
-  const { normal, scheme, diff, deductions } = result;
+  const { normal, scheme, diff, deductions, mealSubsidy } = result;
   const yen = (n: number) => jpy(Math.round(n));
   const hasExtraDeduction = deductions.total.incomeTax > 0 || deductions.total.residentTax > 0;
   // 目標手元残りに両筋書きが届いたか。届いていなければ**この表は「同じ手元残りでの
@@ -159,8 +159,9 @@ export function WelfareSchemeCard() {
     <Section title="給与デザイン / 福利厚生スキーム試算">
       <p style={{ fontSize: 12, color: 'var(--text-mute)', margin: '0 0 12px', lineHeight: 1.6 }}>
         「生活費を払った後の手元残り」を同額に保ったまま、社宅・食事補助・育児補助・自社 EC
-        カフェテリアポイント（いずれも非課税の現物/役務支給）を詰めて基本給を下げる設計。本人・会社
-        双方の社会保険料と税が下がり、従業員は同じ手元残り + 現物価値、会社は総コスト減になります。
+        カフェテリアポイント（<strong>非課税の要件を満たす限りにおいて</strong>非課税の現物/役務
+        支給）を詰めて基本給を下げる設計。本人・会社双方の社会保険料と税が下がり、従業員は同じ
+        手元残り + 現物価値、会社は総コスト減になります。
       </p>
 
       {!reachedTarget && (
@@ -181,6 +182,34 @@ export function WelfareSchemeCard() {
           {scheme.reachedTarget ? '' : `② 新制度 の手元残りは ${yen(scheme.freeCash)} 止まりです。`}
           下表は「同じ手元残りでの比較」になっていないため、差額を制度の効果として読まないでください。
           目標額を下げてお試しください。
+        </p>
+      )}
+
+      {/*
+        **食事補助の非課税要件は機械で判定できる** (パス 219)。定数は 2026-08-21 に
+        出典つきで置かれたが、読んでいたのは規程ひな形と下の免責文 (散文) だけで、
+        計算は会社負担の全額を非課税として扱っていた。要件を外れていれば、下表の
+        「税と社保が下がる」は成り立たない前提で組まれている。
+      */}
+      {!mealSubsidy.taxFree && (
+        <p
+          role="alert"
+          data-meal-subsidy-alert
+          style={{
+            fontSize: 12,
+            lineHeight: 1.6,
+            margin: '0 0 12px',
+            padding: '8px 10px',
+            borderRadius: 6,
+            border: '1px solid var(--danger, #ef4444)',
+            color: 'var(--danger, #ef4444)',
+          }}
+        >
+          ⛔ 食事補助が<strong>非課税の要件を満たしていません</strong>。
+          {mealSubsidy.reasons.map((r) => `${r}。`).join('')}
+          外れた分は本来<strong>給与として課税されます</strong>が、下表は会社負担の全額を
+          非課税として計算しているため、「税と社保が下がる」効果はこの設計では成り立ちません。
+          会社負担を下げるか、本人負担を増やしてお試しください。
         </p>
       )}
 

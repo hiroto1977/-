@@ -72,6 +72,62 @@ export const NIGHT_MEAL_CASH_TAX_FREE_LIMIT_YEN = 650;
 /** 食事補助が非課税となるための本人負担の割合 (改正されていない)。 */
 export const MEAL_SUBSIDY_SELF_PAY_RATIO = 0.5;
 
+/** 食事補助の非課税要件の判定。`taxFree` が false なら `reasons` に外れた要件が入る。 */
+export interface MealSubsidyVerdict {
+  readonly taxFree: boolean;
+  readonly reasons: readonly string[];
+}
+
+/**
+ * **食事補助が非課税の要件を満たしているか**を、入力から機械的に判定する (パス 219)。
+ *
+ * `MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN` と `MEAL_SUBSIDY_SELF_PAY_RATIO` は
+ * 2026-08-21 に出典つきで定数へ寄せられたが、**どの計算も読んでいなかった** ——
+ * 読んでいたのは規程ひな形と画面の免責文 (散文) だけで、`MEAL_SUBSIDY_SELF_PAY_RATIO`
+ * には消費者が 1 つも無かった。`designWelfareScheme` は会社負担の全額を
+ * 非課税の現物支給 (`inKindValue`) として扱うので、**要件を外れた設計でも
+ * 「非課税で税と社保が下がる」と表示できた** —— 実測: 食事 20,000 円で
+ * 会社負担 9,999,999,999 円 → `従業員の実質手元残り 200,000 → 10,000,269,999`、
+ * 断りは 0 件。免責文は「充足は税理士・社労士にご確認ください」と述べていた ——
+ * **機械で判定できることを人に投げていた** (パス 10 / 11 と同じ形)。
+ *
+ * 非課税の要件は**2 つとも**満たす必要がある (`MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN` の
+ * docblock に出典)。片方だけでは足りないので、`reasons` は両方を独立に見る。
+ *
+ * **これは判定であって、税額の再計算ではない。** 要件を外れた会社負担は本来
+ * 給与課税されるが、そこまで反映するとスキーム側の逆算ごと組み替えになる ——
+ * まず「外れている」と言えるようにする (`docs/REMAINING_WORK.md` のパス 219 に
+ * 積み残しとして書いた)。
+ */
+export function mealSubsidyVerdict(
+  mealTotal: number,
+  mealCompanyShare: number,
+  limitYen: number = MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN,
+  selfPayRatio: number = MEAL_SUBSIDY_SELF_PAY_RATIO,
+): MealSubsidyVerdict {
+  const total = nonNeg(mealTotal);
+  const company = nonNeg(mealCompanyShare);
+  const limit = nonNeg(limitYen);
+  const ratio = nonNeg(selfPayRatio);
+  const self = total - company;
+  const reasons: string[] = [];
+  // 要件 1: 従業員から徴収する対価が食事の価額の 50% 以上。
+  if (self < total * ratio) {
+    reasons.push(
+      `本人負担が食事の価額の ${Math.round(ratio * 100)}% 未満です`
+      + `（価額 ${total.toLocaleString('ja-JP')} 円 / 本人負担 ${self.toLocaleString('ja-JP')} 円）`,
+    );
+  }
+  // 要件 2: 会社負担が月 `limit` 円以下。
+  if (company > limit) {
+    reasons.push(
+      `会社負担が月 ${limit.toLocaleString('ja-JP')} 円を超えています`
+      + `（${company.toLocaleString('ja-JP')} 円）`,
+    );
+  }
+  return { taxFree: reasons.length === 0, reasons };
+}
+
 const floorYen = (n: number) => Math.floor(n);
 
 /**
@@ -395,6 +451,11 @@ export interface WelfareSchemeResult {
     readonly employeeRealValue: number;
     readonly companyTotalCost: number;
   };
+  /**
+   * 食事補助の非課税要件の判定 (パス 219)。`taxFree` が false のとき、
+   * `scheme` の数字は**成り立たない前提**で組まれている (会社負担が給与課税される)。
+   */
+  readonly mealSubsidy: MealSubsidyVerdict;
   /** 両シナリオに適用した追加所得控除の内訳 (扶養控除・青色申告特別控除)。 */
   readonly deductions: {
     /** 扶養控除 (所得税分 / 住民税分)。 */
@@ -497,6 +558,7 @@ export function designWelfareScheme(input: WelfareSchemeInput): WelfareSchemeRes
       employeeRealValue: scheme.employeeRealValue - normal.employeeRealValue,
       companyTotalCost: scheme.companyTotalCost - normal.companyTotalCost,
     },
+    mealSubsidy: mealSubsidyVerdict(input.mealTotal, input.mealCompanyShare),
     deductions: {
       dependent: dependentDeduction,
       blue: blueDeduction,
