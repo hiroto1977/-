@@ -12,7 +12,7 @@
  * | 台帳の id → モジュールの既定定数 | `shared/__tests__/parameters.test.ts` の全域マップ (147 件) |
  * | 台帳の id → 取り出し口の出力 | 同上 (上書きが正しい欄へ届く) |
  * | 取り出し口の欄 → 計算 | **誰も見ていなかった** ← ここ |
- * | 取り出し口 → 画面 | `pages/__tests__/parameterWiring.test.ts` (147 件中 **90 件**を名指し) |
+ * | 取り出し口 → 画面 | `pages/__tests__/parameterWiring.test.ts` (件数は下の census が**測る**) |
  *
  * 3 段目が空くと「台帳に載っていて、上書きも保存できて、取り出し口も値を返すのに、
  * 計算が**その欄を読んでいない**」という項目が黙って作れる。設定画面には出るので、
@@ -27,9 +27,15 @@
  * - 欄の消費は `.欄名` の綴りで見るので、**同名の別物**に当たれば見逃す
  *   (`.standardRate` など一般的な名前)。取りこぼす側に倒れるだけで、誤って鳴りはしない。
  * - 「読まれている」は「計算に効いている」より弱い。**画面まで動くこと**は
- *   `pages/__tests__/parameterWiring.test.ts` が対照つきで留めており、
- *   2026-09-07 時点で台帳 147 件中 **90 件**を名指ししている (残り 57 件は
- *   束ごと渡す取り出し口の側でしか留まっていない。`docs/REMAINING_WORK.md`)。
+ *   `pages/__tests__/parameterWiring.test.ts` が対照つきで留めている。
+ *   **その件数は下の census (パス 220) が実測する** —— ここに数を書かない。
+ *
+ *   2026-09-07 に書いた「台帳 147 件中 **90 件**」は**手書きで、腐った**:
+ *   2026-09-13 の実測は **台帳 150 / 名指し 93**。どちらも 3 件ずれており、
+ *   「残り 57 件」が合っていたのは**偶然** (150−93 も 147−90 も 57)。
+ *   パス 145 で塞いだ「手書きの数にゲートが無い」を、私が別の場所で作っていた。
+ *   **腐るのは数そのものではなく、日付の無い数である** —— 今の数は機械が持ち、
+ *   散文は日付つきの観測としてだけ数に触れる。
  */
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -62,6 +68,18 @@ export function extractAccessors(source: string): { name: string; ids: string[];
  * 「誰も読まない」と誤って挙げた (2026-09-07)。呼び名は画面ごとに違うので、
  * 「識別子 + ['文字列']」の形を拾い、台帳に在る id だけを残す。
  */
+/**
+ * **`parameterWiring.test.ts` が「上書きすると画面が動く」を留めている台帳の id。**
+ *
+ * 規則は「`seed({ 'id': 値 })` の**鍵として**現れる id」 —— 散文やコメントに
+ * 名前が出るだけの id は数えない (パス 220)。**ゆるい一致 (`'id'` がどこかに在る)
+ * との差は 2026-09-13 の実測で 0 件**だったが、意味が違うので厳しい側を採る。
+ */
+export function extractWiringSeededIds(wiringSource: string, ledgerIds: readonly string[]): string[] {
+  return ledgerIds.filter((id) =>
+    new RegExp(`'${id.replace(/\./g, '\\.')}'\\s*:`).test(wiringSource));
+}
+
 export function extractDirectReads(source: string, ledger: ReadonlySet<string>): string[] {
   return [...source.matchAll(/\b[A-Za-z_$][\w$]*\[\s*'([^']+)'\s*\]/g)]
     .map((m) => m[1]!)
@@ -105,6 +123,46 @@ describe('走査が生きている (床)', () => {
     expect(OUTSIDE_PARAMETERS.length).toBeGreaterThanOrEqual(300);
     // 計器が書き換えた写しを掴んでいない (書き換わると `stryMutAct_…(` が出る)。
     expect(PARAMETERS_SOURCE).toContain('export function corporateTaxRates(v: ParameterValues)');
+  });
+});
+
+/*
+ * **画面まで動くことを留めている件数は、散文ではなく実測で持つ** (パス 220)。
+ *
+ * このファイルの docblock は 2026-09-07 から「台帳 147 件中 **90 件**」と述べ、
+ * `docs/REMAINING_WORK.md` と `docs/SESSION_HANDOFF.md` も同じ数を写していた。
+ * **2026-09-13 の実測は 台帳 150 / 名指し 93** —— どちらも 3 件ずれていた。
+ * 「残り 57 件」だけが合っていたのは**偶然** (150−93 も 147−90 も 57)。
+ * パス 145 で塞いだ「手書きの数にゲートが無い」を、私が別の場所で作っていた。
+ *
+ * ここに置くのは**床**で、`verify:arch` の metric が散文の側を留める
+ * (数は 1 か所 = `docs/REMAINING_WORK.md` にだけ書き、機械が突き合わせる)。
+ */
+const WIRING_TS = path.join(REPO_ROOT, 'src/renderer/pages/__tests__/parameterWiring.test.ts');
+const WIRING_SEEDED = extractWiringSeededIds(readOriginalSource(WIRING_TS), LEDGER_IDS);
+
+describe('画面まで動くことを留めている件数 (床・パス 220)', () => {
+  it('★ 実測できている (走査が死んでいない)', () => {
+    // 実測 93 / 150。床は「規則が死んだら鳴る」ためのもので、増える分には触らない。
+    expect(WIRING_SEEDED.length).toBeGreaterThanOrEqual(93);
+    expect(WIRING_SEEDED.length).toBeLessThanOrEqual(LEDGER_IDS.length);
+  });
+
+  it('★ 名指しされていない id は、名前で数えられる (次に閉じる分母)', () => {
+    const missing = LEDGER_IDS.filter((id) => !WIRING_SEEDED.includes(id));
+    // **これは分母であって欠陥の一覧ではない** —— 束ごと渡す取り出し口の側で
+    // 留まっている項目も入る (パス 42 の仕分け)。数は機械が、判断は散文が持つ。
+    expect(missing.length).toBe(LEDGER_IDS.length - WIRING_SEEDED.length);
+    expect(missing.length).toBeLessThanOrEqual(57); // 減る分には触らない (ラチェット)
+  });
+
+  it('★ 標本: 鍵として現れる id だけを数える (散文の名前は数えない)', () => {
+    const ledger = ['demo.seeded', 'demo.mentioned', 'demo.absent'];
+    const sample = [
+      "await seed({ 'demo.seeded': 1 });",
+      "// 'demo.mentioned' は散文にだけ出る",
+    ].join('\n');
+    expect(extractWiringSeededIds(sample, ledger)).toEqual(['demo.seeded']);
   });
 });
 
