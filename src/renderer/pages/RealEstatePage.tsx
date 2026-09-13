@@ -226,6 +226,66 @@ export const RE_READS = {
   depreciation: RE_READS_DEPRECIATION,
 } as const satisfies Record<string, readonly ReField[]>;
 
+/**
+ * **水循環プランナーの入力欄** (パス 210 で JSX のリテラルから引き上げた)。
+ *
+ * ここは `GuardedNumber` を 10 欄に使いながら、⛔ (`level: 'fatal'`) を 1 度も
+ * 読んでいなかった —— パス 209 は `RE_SPECS` / `ZONING_SPECS` という**自分の書いた
+ * 表**から欄を数えたので、この節ごと母集団から落ちていた (パス 85 / 95 / 107 と
+ * 同じ誤り —— 母集団は走査で採る)。`input[data-guard]` を総当たりして初めて出た:
+ *
+ * | 欄 | 出ていた物 |
+ * | --- | --- |
+ * | 濃縮液の全窒素 = −9999 | **`地下水基準比 (硝酸性N) 40倍 → 0倍`** ——「環境基準の 0 倍」= 完全に清浄 |
+ * | RO 回収率 = −9999 / 上限超 | **`濃縮倍率 4倍 → ∞ (排出口なし)`**・`実際の水回収率 75% → 100%` |
+ * | RO 塩除去率 = 上限超 | `透過水の EC 持ち越し 10.0% → 0.0%` —— 塩が 1 つも抜けてこない |
+ * | 交換周期 = 上限超 | `連続止水日数 13.7 日 → 9,999,999,998.7 日` (約 2,700 万年) |
+ * | 曝気タンク容量 = −9999 | `曝気タンク HRT 504 h → 0 h`・上限超で 359,999,999,964 h |
+ * | 循環量 / 硝化する N 濃度 / 全りん = −9999 | 節水量・排出量・窒素・りん・アルカリ度・酸素要求量が**すべて 0** |
+ *
+ * **これは「より good な方向」の家系で、しかも環境規制の判定である** ——
+ * 「年間 窒素排出 0 kg」「地下水基準比 0 倍」は、放流の可否を考える人に
+ * 「問題なし」と読ませる。この節は**未入力**は丁寧に扱っていた
+ * (`data-recovery-unset` / `data-rejection-unset` / `data-wpcl-undetermined`・
+ * パス 76 / 153) が、**範囲外**は素通りしていた。
+ *
+ * 天井はどれも計算に使う法定値ではない (`max: 365` は暦・`max: 99` は物質収支上
+ * 100% が成立しないこと・`max: 24` は 1 日) ので `parameters.ts` には載せない
+ * (CLAUDE.md の規約・パス 206 と同じ判断)。
+ */
+const WC_SPECS = {
+  vol: { label: '循環量 (L)', kind: 'ratio', allowZero: false, sane: 1e6 },
+  cycle: { label: '交換周期 (日)', kind: 'count', allowZero: false, max: 365 },
+  recovery: { label: 'RO 回収率 (%)', kind: 'percent', min: 1, max: 99 },
+  rejection: { label: 'RO 塩除去率 (%)', kind: 'percent', min: 1, max: 100 },
+  window: { label: 'RO 処理目標 (h)', kind: 'count', allowZero: false, max: 24 },
+  roCap: { label: 'RO 機の日産 (L/日・空欄可)', kind: 'ratio', allowEmpty: true, allowZero: true, sane: 1e6 },
+  tank: { label: '曝気タンク容量 (L)', kind: 'ratio', allowZero: false, sane: 1e6 },
+  n: { label: '硝化する N 濃度 (mg/L)', kind: 'ppm', allowZero: true },
+  concN: { label: '濃縮液の全窒素 (mg/L)', kind: 'ppm', allowZero: true },
+  concP: { label: '濃縮液の全りん (mg/L)', kind: 'ppm', allowZero: true },
+} as const satisfies Record<string, NumSpec>;
+
+type WcField = keyof typeof WC_SPECS;
+
+/**
+ * **どの段がどの欄を読むか** (パス 206 の `ZONING_READS` / パス 209 の `RE_READS` と同じ形)。
+ *
+ * 段をまたぐ依存は合成で書く —— 排出量の 3 タイルは濃度だけでなく
+ * `balance.annualDischargeL` を通すので、水収支の欄も読んでいる。
+ * 逆に**地下水基準比は濃度だけで決まる** (画面のコメントが以前からそう述べている)
+ * ので、回収率が ⛔ でもこのタイルは出し続ける —— ⛔ 1 件で節全体を黙らせない。
+ */
+const WC_READS_BALANCE = ['vol', 'cycle', 'recovery', 'rejection'] as const;
+export const WC_READS = {
+  balance: WC_READS_BALANCE,
+  ro: ['vol', 'window', 'cycle', 'roCap'] as const,
+  // 硝化 (n, vol) と曝気 (tank, vol, cycle) は 1 つの grid に並ぶので和を採る。
+  nitriAeration: ['n', 'vol', 'tank', 'cycle'] as const,
+  effluentDischarge: [...WC_READS_BALANCE, 'concN', 'concP'] as const,
+  effluentConcentration: ['concN'] as const,
+} as const satisfies Record<string, readonly WcField[]>;
+
 const reInputStyle: React.CSSProperties = {
   background: 'var(--bg)',
   border: '1px solid var(--border)',
@@ -603,6 +663,30 @@ export function RealEstatePage() {
     wcVolStr, wcCycleStr, wcRecoveryStr, wcRejectionStr, wcWindowStr, wcRoCapStr,
     wcTankStr, wcNStr, wcConcNStr, wcConcPStr, wcToPublic, effStd,
   ]);
+
+  /** **水循環プランナーの段ごとの ⛔ の欄** (パス 210)。 */
+  const wcRefused = useMemo(
+    () =>
+      refusedFields(WC_SPECS, {
+        vol: wcVolStr, cycle: wcCycleStr, recovery: wcRecoveryStr, rejection: wcRejectionStr,
+        window: wcWindowStr, roCap: wcRoCapStr, tank: wcTankStr, n: wcNStr,
+        concN: wcConcNStr, concP: wcConcPStr,
+      }),
+    [
+      wcVolStr, wcCycleStr, wcRecoveryStr, wcRejectionStr, wcWindowStr, wcRoCapStr,
+      wcTankStr, wcNStr, wcConcNStr, wcConcPStr,
+    ],
+  );
+  const wcRefusedBy = useMemo(
+    () => ({
+      balance: refusalLabels(WC_SPECS, wcRefused, WC_READS.balance),
+      ro: refusalLabels(WC_SPECS, wcRefused, WC_READS.ro),
+      nitriAeration: refusalLabels(WC_SPECS, wcRefused, WC_READS.nitriAeration),
+      effluentDischarge: refusalLabels(WC_SPECS, wcRefused, WC_READS.effluentDischarge),
+      effluentConcentration: refusalLabels(WC_SPECS, wcRefused, WC_READS.effluentConcentration),
+    }),
+    [wcRefused],
+  );
 
   // 建物の減価償却 (定額法) — 取得後の建物は定額法。RC造の法定耐用年数は 47 年。
   const [bldgCostStr, setBldgCostStr] = useState('25000000');
@@ -1179,16 +1263,16 @@ export function RealEstatePage() {
         </div>
         <div className="field-grid" style={{ marginBottom: 12 }}>
           {([
-            [{ label: '循環量 (L)', kind: 'ratio', allowZero: false, sane: 1e6 }, wcVolStr, setWcVolStr],
-            [{ label: '交換周期 (日)', kind: 'count', allowZero: false, max: 365 }, wcCycleStr, setWcCycleStr],
-            [{ label: 'RO 回収率 (%)', kind: 'percent', min: 1, max: 99 }, wcRecoveryStr, setWcRecoveryStr],
-            [{ label: 'RO 塩除去率 (%)', kind: 'percent', min: 1, max: 100 }, wcRejectionStr, setWcRejectionStr],
-            [{ label: 'RO 処理目標 (h)', kind: 'count', allowZero: false, max: 24 }, wcWindowStr, setWcWindowStr],
-            [{ label: 'RO 機の日産 (L/日・空欄可)', kind: 'ratio', allowEmpty: true, allowZero: true, sane: 1e6 }, wcRoCapStr, setWcRoCapStr],
-            [{ label: '曝気タンク容量 (L)', kind: 'ratio', allowZero: false, sane: 1e6 }, wcTankStr, setWcTankStr],
-            [{ label: '硝化する N 濃度 (mg/L)', kind: 'ppm', allowZero: true }, wcNStr, setWcNStr],
-            [{ label: '濃縮液の全窒素 (mg/L)', kind: 'ppm', allowZero: true }, wcConcNStr, setWcConcNStr],
-            [{ label: '濃縮液の全りん (mg/L)', kind: 'ppm', allowZero: true }, wcConcPStr, setWcConcPStr],
+            [WC_SPECS.vol, wcVolStr, setWcVolStr],
+            [WC_SPECS.cycle, wcCycleStr, setWcCycleStr],
+            [WC_SPECS.recovery, wcRecoveryStr, setWcRecoveryStr],
+            [WC_SPECS.rejection, wcRejectionStr, setWcRejectionStr],
+            [WC_SPECS.window, wcWindowStr, setWcWindowStr],
+            [WC_SPECS.roCap, wcRoCapStr, setWcRoCapStr],
+            [WC_SPECS.tank, wcTankStr, setWcTankStr],
+            [WC_SPECS.n, wcNStr, setWcNStr],
+            [WC_SPECS.concN, wcConcNStr, setWcConcNStr],
+            [WC_SPECS.concP, wcConcPStr, setWcConcPStr],
           ] as const satisfies readonly (readonly [NumSpec, string, (v: string) => void])[]).map(([spec, val, setter]) => (
             <GuardedNumber key={spec.label} spec={spec} value={val} onChange={setter} width={130} />
           ))}
@@ -1199,6 +1283,10 @@ export function RealEstatePage() {
         </div>
 
         <div style={{ fontSize: 12, fontWeight: 700, margin: '4px 0 8px' }}>💧 水収支 (1 バッチ)</div>
+        {wcRefusedBy.balance.length > 0 ? (
+          <RefusedFieldsNote labels={wcRefusedBy.balance} />
+        ) : (
+          <>
         <div className="stat-grid" style={{ marginBottom: 8 }}>
           <Stat label="再利用する透過水" value={litersOrDash(water.balance.permeatePerBatchL)} />
           <Stat label="排出する濃縮廃液" value={litersOrDash(water.balance.concentratePerBatchL)} />
@@ -1240,8 +1328,14 @@ export function RealEstatePage() {
             RO 塩除去率が未入力のため、塩類蓄積の判定はしていません（膜の仕様値を入力してください）。
           </div>
         )}
+          </>
+        )}
 
         <div style={{ fontSize: 12, fontWeight: 700, margin: '10px 0 8px' }}>🔧 RO 稼働率と膜の保護</div>
+        {wcRefusedBy.ro.length > 0 ? (
+          <RefusedFieldsNote labels={wcRefusedBy.ro} />
+        ) : (
+          <>
         <div className="stat-grid" style={{ marginBottom: 8 }}>
           <Stat label="必要な RO 能力" value={`${Math.round(water.ro.requiredCapacityLPerDay).toLocaleString()} L/日`} />
           <Stat label="実処理時間" value={water.ro.actualProcessingHours === null ? '—' : `${water.ro.actualProcessingHours} h`} />
@@ -1259,8 +1353,14 @@ export function RealEstatePage() {
             <strong>日々少量を入れ替える連続循環</strong>に変えるか、停止中の<strong>自動フラッシュ</strong>を制御に入れてください。
           </div>
         )}
+          </>
+        )}
 
         <div style={{ fontSize: 12, fontWeight: 700, margin: '10px 0 8px' }}>🧪 硝化・アルカリ度・曝気</div>
+        {wcRefusedBy.nitriAeration.length > 0 ? (
+          <RefusedFieldsNote labels={wcRefusedBy.nitriAeration} />
+        ) : (
+          <>
         <div className="stat-grid" style={{ marginBottom: 8 }}>
           <Stat label="硝化する窒素" value={`${water.nitri.nitrogenLoadG} g`} />
           <Stat label="消費アルカリ度" value={`${water.nitri.alkalinityConsumedGCaCO3} g (CaCO₃)`} />
@@ -1277,32 +1377,48 @@ export function RealEstatePage() {
             </span>
           )}
         </div>
+          </>
+        )}
 
         <div style={{ fontSize: 12, fontWeight: 700, margin: '10px 0 8px' }}>⚖️ 濃縮廃液の排出</div>
+        {/* **排出「量」と排出「濃度」は依存が違うので、断りも分ける** (パス 210)。
+            排出量の 3 タイルは `balance.annualDischargeL` を通すので水収支の欄も読むが、
+            地下水基準比は濃度だけで決まる (下のコメントが以前からそう述べている) ——
+            ⛔ 1 件で節全体を黙らせない。 */}
+        {wcRefusedBy.effluentDischarge.length > 0 ? (
+          <RefusedFieldsNote labels={wcRefusedBy.effluentDischarge} />
+        ) : (
         <div className="stat-grid" style={{ marginBottom: 8 }}>
           {/* **`${null}` は "null kg" を刷る。** ここも template literal なので
               `tsc` は最後まで何も言わなかった —— 明示的に分ける。 */}
           <Stat label="年間 窒素排出" value={water.effluent.annualNitrogenKg === null ? '—' : `${water.effluent.annualNitrogenKg} kg`} />
           <Stat label="年間 りん排出" value={water.effluent.annualPhosphorusKg === null ? '—' : `${water.effluent.annualPhosphorusKg} kg`} />
           <Stat label="1日あたり排出" value={water.effluent.dailyDischargeM3 === null ? '—' : `${water.effluent.dailyDischargeM3} m³`} />
+        </div>
+        )}
+        {wcRefusedBy.effluentConcentration.length > 0 ? (
+          <RefusedFieldsNote labels={wcRefusedBy.effluentConcentration} />
+        ) : (
+        <div className="stat-grid" style={{ marginBottom: 8 }}>
           {/* 地下水基準比は濃度だけで決まるので、排出量が不明でも算定できる。 */}
           <Stat label="地下水基準比 (硝酸性N)" value={`${water.effluent.nitrateVsGroundwaterFactor}倍`} />
         </div>
+        )}
         {/* **法規制の当てはまりを「当てはまらない」に倒さない。**
             `wpclNpApplicable === null` は「排出量が分からないので判定していない」。
             falsy なので黙って消えるが、黙ると「対象外」と読まれる。 */}
-        {water.effluent.wpclNpApplicable === null && (
+        {wcRefusedBy.effluentDischarge.length === 0 && water.effluent.wpclNpApplicable === null && (
           <div data-wpcl-undetermined style={{ fontSize: 12, color: 'var(--text-mute)', marginBottom: 8 }}>
             年間排出量が算定できていないため、水質汚濁防止法の窒素・りん規制の対象かは判定していません（RO 回収率を入力してください）。
           </div>
         )}
-        {water.effluent.recommendReuse && (
+        {wcRefusedBy.effluentDischarge.length === 0 && water.effluent.recommendReuse && (
           <div style={{ fontSize: 12, color: 'var(--warning)', marginBottom: 8 }}>
             ⚠ 濃縮廃液の窒素・りんが一律排水基準を超えています。この液は硝酸・カリ・りん酸が濃縮された<strong>液肥そのもの</strong>なので、
             放流せず<strong>露地・土耕へ希釈施用</strong>するのが技術的にも法的にも安全です (捨てれば産業廃棄物・地下水の硝酸汚染の問題になります)。
           </div>
         )}
-        {water.effluent.wpclNpApplicable === true && (
+        {wcRefusedBy.effluentDischarge.length === 0 && water.effluent.wpclNpApplicable === true && (
           <div style={{ fontSize: 12, color: '#f87171', marginBottom: 8 }}>
             排出水量が {effStd.npApplicabilityM3PerDay} m³/日以上のため、水質汚濁防止法の窒素・りん規制の対象になりえます。届出と処理設備が必要です。
           </div>
