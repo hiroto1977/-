@@ -103,7 +103,7 @@ import {
 import { getVault } from './security/vault';
 import { eraseEverything } from './security/eraseAll';
 import type { EraseAllReport } from '../shared/eraseReport';
-import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_LENGTH } from '../shared/redact';
+import { redactForMessage, safeErrorMessage, ERROR_MESSAGE_MAX_CHARS } from '../shared/redact';
 import {
   withBodyDeadline,
   DEFAULT_HTTP_TIMEOUT_MS,
@@ -415,7 +415,7 @@ function timedFetchAi(url: string, init: RequestInit): Promise<Response> {
 }
 
 function err<T = never>(code: string, message: string): ActionResult<T> {
-  return { ok: false, code, message: redactForMessage(message, ERROR_MESSAGE_MAX_LENGTH) };
+  return { ok: false, code, message: redactForMessage(message, ERROR_MESSAGE_MAX_CHARS) };
 }
 
 interface ExportTemplatePayload {

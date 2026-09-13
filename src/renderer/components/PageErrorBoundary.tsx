@@ -1,3 +1,4 @@
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 /**
@@ -23,11 +24,24 @@ interface State {
   readonly message: string | null;
 }
 
+/** 画面の枠に出す一文の上限 (**文字**)。これ以上はスタックの断片で読めない。 */
+export const MAX_RENDER_ERROR_CHARS = 160;
+
 /** 例外から利用者向けの短い文を作る。Error 以外 (文字列や undefined) も落とさず受ける。 */
 export function describeRenderError(error: unknown): string {
   const raw = error instanceof Error ? error.message : typeof error === 'string' ? error : '';
   const text = raw.replace(/\s+/g, ' ').trim();
-  return text.length === 0 ? '原因不明のエラー' : text.length > 160 ? `${text.slice(0, 160)}…` : text;
+  /*
+   * **切るのは文字の境界で** (2026-09-13 · パス 196)。`text.slice(0, 160)` は
+   * UTF-16 のコード単位で切るので、160 番目がサロゲート対の真ん中に落ちると
+   * 孤立サロゲートが残り、画面に `\uFFFD` が出る。ここは**画面が落ちたときに
+   * 出る最後の一文**なので、そこで更に文字化けさせない。
+   * 長さの判定も字で行う (刷る所と数える所の単位を揃える)。
+   */
+  const length = countChars(text);
+  return length === 0 ? '原因不明のエラー' : length > MAX_RENDER_ERROR_CHARS
+    ? `${clampToCeiling(text, MAX_RENDER_ERROR_CHARS)}…`
+    : text;
 }
 
 export class PageErrorBoundary extends Component<Props, State> {

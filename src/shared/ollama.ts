@@ -52,6 +52,8 @@
  * CERT VU#518910・NVD・OSV は取得できなかったので、届いた物だけを出典に書く。
  * 2024 年の 5 件は 2026-05-12 の監査 (docs/OLLAMA_SECURITY.md) で確認した値。
  */
+import { clampToCeiling } from './inputCeiling';
+
 export interface OllamaAdvisory {
   readonly id: string;
   /** 1 文の要約 (画面に出る)。 */
@@ -502,7 +504,14 @@ export function normalizeModels(raw: unknown): OllamaModelInfo[] {
  * 取り違えずに案内できるかが、使えるか使えないかの分かれ目になる。
  */
 
-/** エラー文の表示上限。異常に長い本文をそのままログ・UI へ流さないための上限。 */
+/**
+ * エラー文の表示上限 (**文字**)。異常に長い本文をそのままログ・UI へ流さないための上限。
+ *
+ * 切るのは `clampToCeiling` —— **文字の境界で切る** (2026-09-13 · パス 196)。
+ * ここは `.slice()` だったので、300 番目がサロゲート対の真ん中に落ちると
+ * 孤立サロゲートが UI へ出る (Ollama の本文は端末内のモデル名・ファイル名を含み、
+ * 絵文字も JIS 2004 の漢字も来る)。
+ */
 const MAX_ERROR_DETAIL = 300;
 
 /** エラー封筒 `{"error": "…"}` から本文を取り出す。取れなければ空文字。 */
@@ -510,16 +519,16 @@ export function extractOllamaError(json: unknown, text = ''): string {
   const err = (json as { error?: unknown } | null)?.error;
   // 空判定は要らない — 空白だけの本文は trim すると '' になり、下へ落として
   // も最後は '' を返すので、書いても結果が変わらない分岐になる。
-  if (typeof err === 'string') return err.trim().slice(0, MAX_ERROR_DETAIL);
+  if (typeof err === 'string') return clampToCeiling(err.trim(), MAX_ERROR_DETAIL);
   // 稀に {"error": {"message": "…"}} の入れ子で返す経路もある。
   const nested = (err as { message?: unknown } | null)?.message;
-  if (typeof nested === 'string') return nested.trim().slice(0, MAX_ERROR_DETAIL);
+  if (typeof nested === 'string') return clampToCeiling(nested.trim(), MAX_ERROR_DETAIL);
   // JSON として読めたのに error が無いなら、本文を出しても情報がない。
   if (json !== null && json !== undefined) return '';
   // JSON ですらない本文 (Ollama が素の "Forbidden" を返す経路など) は短く返す。
   // Stryker disable next-line StringLiteral: text 省略時の '' は「空を返す」で、
   // 番人の値を入れても呼び出し側は同じ「詳細なし」として扱う。
-  return (text ?? '').trim().slice(0, MAX_ERROR_DETAIL);
+  return clampToCeiling((text ?? '').trim(), MAX_ERROR_DETAIL);
 }
 
 export type OllamaErrorKind =

@@ -22,6 +22,7 @@
  * キーで同じ共有レイヤ経由の呼び出しを行う。
  */
 
+import { clampToCeiling } from '../../shared/inputCeiling';
 import type { ActionContext, ActionMap, FetchContext } from './types';
 import {
   MAX_ASSISTANT_CONTENT_CHARS,
@@ -112,7 +113,9 @@ export function sanitizeMessages(raw: unknown): ChatTurn[] {
     const c = (item as { content?: unknown }).content;
     if (r !== 'user' && r !== 'assistant') continue;
     if (typeof c !== 'string') continue;
-    const content = c.trim().slice(0, MAX_CONTENT);
+    // 窓に収めるのも**文字の境界で** (パス 196) —— `.slice()` は対を割り、
+    // 壊れた文字列が有料 API へ送られる。
+    const content = clampToCeiling(c.trim(), MAX_CONTENT);
     if (content.length === 0) continue;
     out.push({ role: r, content });
   }

@@ -401,7 +401,7 @@ describe('secrets:set / secrets:clear — サービス id の検査', () => {
     const r = (await invoke('secrets:set', 'github', 'ghp_valid_token_value')) as {
       message: string;
     };
-    // 上限は `ERROR_MESSAGE_MAX_LENGTH` (2000)。数字を写経せず「入力より短い」
+    // 上限は `ERROR_MESSAGE_MAX_CHARS` (2000)。数字を写経せず「入力より短い」
     // ことと「上限以内」の両方を見る。
     expect(r.message.length).toBeLessThan(5000);
     expect(r.message.length).toBeLessThanOrEqual(2000);

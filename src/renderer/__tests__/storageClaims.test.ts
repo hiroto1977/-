@@ -373,7 +373,7 @@ describe('BYO プロキシ — 共有秘密を省いたときの説明', () => {
   const SETTINGS = readOriginalSource(path.join(REPO_ROOT, 'src/renderer/pages/SettingsPage.tsx'));
 
   it('入力欄がある (前提)', () => {
-    expect(SETTINGS).toMatch(/MAX_PROXY_SECRET_LENGTH/);
+    expect(SETTINGS).toMatch(/MAX_PROXY_SECRET_CHARS/);
   });
 
   it('「任意・空欄可」とだけ言って終わっていない', () => {

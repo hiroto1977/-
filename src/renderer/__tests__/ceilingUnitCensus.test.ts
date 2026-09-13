@@ -26,10 +26,27 @@
  *
  * ## 例外の扱い
  *
- * **例外は無い。** `_CHARS` と名乗る定数はすべて人が読み書きする文字列に掛かり、
- * どれも文字で数えるのが正しい (バイト数や符号単位が要る天井は `_BYTES` /
- * `_ITEMS` など別の名前を持つ)。例外が要る日が来たら、この走査が落ちるので
- * **理由つきで台帳を作ることになる** —— 黙って混ざる道は無い。
+ * `_CHARS` と名乗る定数はすべて人が読み書きする文字列に掛かり、どれも文字で
+ * 数えるのが正しい。**例外は無い。**
+ *
+ * ## パス 195 でここに書いた主張は誤りだった (2026-09-13 · パス 196)
+ *
+ * 前日ここには「バイト数や符号単位が要る天井は `_BYTES` / `_ITEMS` など別の名前を
+ * 持つ」と書いた。**`_LENGTH` を数えていなかった。** 実測すると `MAX_*_LENGTH` /
+ * `*_MAX_LENGTH` が 8 つ在り、そのうち 6 つは**人が貼る文字列の天井で、断りの文面が
+ * 「N 文字まで」と言いながら `.length` で数えていた** ——
+ * `MAX_PROXY_URL_LENGTH` (1024)・`MAX_PROXY_SECRET_LENGTH` (256)・
+ * `MAX_AI_BASE_URL_LENGTH` (2048)・`MAX_SCAN_URL_LENGTH` (2048)・
+ * `TOKEN_MAX_LENGTH` (65536)・`PROFILE_MAX_LENGTH` (100)。
+ * `tokenInput.ts` は更に `${value.length} 文字` と**刷って**いたので、絵文字の
+ * 資格情報では実際の倍の数を見せていた。
+ *
+ * パス 195 の走査は名前で単位を判断するので、**`_CHARS` でない天井はすべて
+ * 走査の外に在った。** 6 つを `_CHARS` へ改名し `countChars` に替えたので、
+ * 走査が自動で覆う (新しい規則を足さずに済む)。
+ *
+ * 残る 2 つは**符号単位のままが正しい** —— OS が符号単位/バイトで上限を持つので、
+ * 文字で数えると OS の上限を超える値を通してしまう (下の `UNIT_LEDGER`)。
  *
  * ## この走査が見えない所 (対照で実測した死角)
  *
@@ -85,14 +102,29 @@ const WRONG: readonly (readonly [RegExp, string])[] = [
 /** 正しい形 (走査が死んでいないことの床に使う)。 */
 const RIGHT = /\b(?:countChars|clampToCeiling|charsOverCeiling)\s*\(/;
 
+/**
+ * **符号単位で数えるのが正しい天井** (2026-09-13 · パス 196)。
+ *
+ * `_LENGTH` という名前は単位を言わないので、**この 2 つだけ**に許す。
+ * どちらも OS の制約に当てる関門で、上限の単位は符号単位かバイトである ——
+ * 文字で数えると 256 個の絵文字 (= 512 符号単位) のファイル名が通り、
+ * **OS の上限を超えた名前を作りに行く**。人へ出す文面も持たないので
+ * 「N 文字」と言って裏切ることもない。
+ */
+const UNIT_LEDGER: Readonly<Record<string, string>> = {
+  MAX_FILENAME_LENGTH: 'ファイル名の上限は OS 側が符号単位/バイトで持つ (NTFS 255 UTF-16 単位 / ext4 255 バイト)',
+  MAX_SHELL_PATH_LENGTH: 'パスの上限は OS 側が符号単位/バイトで持つ (shell へ渡す前の関門)',
+};
+
 interface Hit {
   readonly where: string;
   readonly why: string;
   readonly line: string;
 }
 
-function scan(): { wrong: Hit[]; right: number; filesWithChars: number } {
+function scan(): { wrong: Hit[]; right: number; filesWithChars: number; lengthNames: Hit[] } {
   const wrong: Hit[] = [];
+  const lengthNames: Hit[] = [];
   let right = 0;
   let filesWithChars = 0;
   for (const f of sourceFiles(SRC)) {
@@ -107,13 +139,18 @@ function scan(): { wrong: Hit[]; right: number; filesWithChars: number } {
         }
       }
       if (RIGHT.test(line)) right++;
+      // **単位を言わない名前**を宣言している所を集める (台帳と突き合わせる)。
+      const decl = /export const ((?:MAX_[A-Z0-9_]*|[A-Z0-9_]+_MAX)_(?:LENGTH|LEN))\b/.exec(line);
+      if (decl !== null) {
+        lengthNames.push({ where: `${path.relative(SRC, f)}:${i + 1}`, why: decl[1]!, line: line.trim() });
+      }
     });
   }
-  return { wrong, right, filesWithChars };
+  return { wrong, right, filesWithChars, lengthNames };
 }
 
 describe('天井の単位 — `MAX_*_CHARS` は文字で数え、文字で切る', () => {
-  const { wrong, right, filesWithChars } = scan();
+  const { wrong, right, filesWithChars, lengthNames } = scan();
 
   it('走査が実物に届いている (空撃ちでない)', () => {
     // `_CHARS` を使うファイルが十分ある / 正しい呼び出しも十分ある。
@@ -128,6 +165,21 @@ describe('天井の単位 — `MAX_*_CHARS` は文字で数え、文字で切る
       wrong,
       `天井の単位が「字」でない箇所があります (countChars / clampToCeiling を使ってください):\n${report}`,
     ).toEqual([]);
+  });
+
+  it('★ 単位を言わない名前 (`_LENGTH`) は台帳の 2 つだけ', () => {
+    // 名前で単位を判断する走査にとって、`_LENGTH` は**読めない名前**である。
+    // 人が貼る文字列の天井なら `_CHARS` と名乗り `countChars` で数える;
+    // OS の制約に当てる 2 つだけ、理由つきで符号単位を許す。
+    const unexpected = lengthNames.filter((h) => !(h.why in UNIT_LEDGER));
+    const report = unexpected.map((h) => `  ${h.where}  ${h.why}\n    ${h.line}`).join('\n');
+    expect(
+      unexpected,
+      '単位を言わない天井の名前があります。文字で数えるなら `_CHARS` へ改名し'
+        + ` countChars を使ってください (符号単位が正しいなら UNIT_LEDGER に理由を書く):\n${report}`,
+    ).toEqual([]);
+    // 台帳の側も死んでいないこと —— 2 つとも実在する。
+    expect(new Set(lengthNames.map((h) => h.why))).toEqual(new Set(Object.keys(UNIT_LEDGER)));
   });
 
   it('★ 対照: 走査は取り違えた形を拾う (綴り違いで黙っていない)', () => {

@@ -7,7 +7,7 @@ import {
   BANK_SUBMISSION_COLLECTION,
   DEFAULT_SUBMISSION_SETTINGS,
   EMPTY_PROFILE,
-  PROFILE_MAX_LENGTH,
+  PROFILE_MAX_CHARS,
   buildBankSubmissionSheet,
   periodScopeNote,
   parseSubmissionProfile,
@@ -566,10 +566,24 @@ describe('parseSubmissionProfile / settingsFromRecord', () => {
     const controlChar = String.fromCharCode(1);
     expect(parseSubmissionProfile({ companyName: 12 })).toEqual({ ok: false, reason: '商号は文字で入力してください' });
     expect(parseSubmissionProfile({ representative: `a${controlChar}b` })).toEqual({ ok: false, reason: '代表者に制御文字が含まれています' });
-    expect(parseSubmissionProfile({ address: 'あ'.repeat(PROFILE_MAX_LENGTH + 1) })).toEqual({
-      ok: false, reason: `所在地は ${PROFILE_MAX_LENGTH} 文字以内で入力してください`,
+    expect(parseSubmissionProfile({ address: 'あ'.repeat(PROFILE_MAX_CHARS + 1) })).toEqual({
+      ok: false, reason: `所在地は ${PROFILE_MAX_CHARS} 文字以内で入力してください`,
     });
-    expect(parseSubmissionProfile({ address: 'あ'.repeat(PROFILE_MAX_LENGTH) }).ok).toBe(true);
+    expect(parseSubmissionProfile({ address: 'あ'.repeat(PROFILE_MAX_CHARS) }).ok).toBe(true);
+    /*
+     * **商号の「100 文字以内」は字である** (2026-09-13 · パス 196)。
+     * 判定は `.length` (UTF-16 コード単位) だったので、JIS 2004 の漢字
+     * (𠮷 U+20BB7 — 実在の商号に使われる「つちよし」) を含む商号は
+     * **天井の半分**で断られていた。上の 'あ' は BMP なので両者が一致し、
+     * 既存の境界検査では単位の違いが出ない。
+     */
+    const tsuchiyoshi = '\u{20BB7}';
+    expect([...tsuchiyoshi].length).toBe(1);
+    expect(tsuchiyoshi.length).toBe(2);
+    expect(parseSubmissionProfile({ companyName: tsuchiyoshi.repeat(PROFILE_MAX_CHARS) }).ok).toBe(true);
+    expect(parseSubmissionProfile({ companyName: tsuchiyoshi.repeat(PROFILE_MAX_CHARS + 1) })).toEqual({
+      ok: false, reason: `商号は ${PROFILE_MAX_CHARS} 文字以内で入力してください`,
+    });
     expect(parseSubmissionProfile({ fiscalYearEnd: '2026/03' })).toEqual({ ok: false, reason: '決算期は 2026-03 のように「年-月」で入力してください' });
     expect(parseSubmissionProfile({ fiscalYearEnd: '2026-13' }).ok).toBe(false);
     expect(parseSubmissionProfile({ fiscalYearEnd: null }).ok).toBe(true);

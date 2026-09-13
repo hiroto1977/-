@@ -12,6 +12,8 @@ import { usePlan } from '../plan/usePlan';
 import { getPlan } from '../../shared/plan';
 import { issueInviteCode } from '../plan/internalLicense';
 import { getVault, MAX_TOKEN_CHARS, MIN_PASSWORD_LENGTH } from '../security/vault';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
 import { describeEraseReport, eraseScopeSummary } from '../security/eraseAll';
 import { describeDesktopEraseReport, desktopEraseScopeSummary } from '../../shared/eraseReport';
 import { isBrowserBuild } from '../runtimeMode';
@@ -23,8 +25,8 @@ import type { ServiceId } from '../../shared/serviceId';
 import { inspectStoredProxyConfig, setProxyConfig, type ProxyConfig } from '../network/proxy';
 import { deviceStoreFailureMessage, reportDeviceStoreFailure } from '../data/deviceStoreFailure';
 import {
-  MAX_PROXY_SECRET_LENGTH,
-  MAX_PROXY_URL_LENGTH,
+  MAX_PROXY_SECRET_CHARS,
+  MAX_PROXY_URL_CHARS,
   describeProxyEndpointFailure,
   type ProxyEndpointFailure,
 } from '../../shared/proxyEndpoint';
@@ -161,6 +163,19 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
   const [err, setErr] = useState<string | null>(null);
   /** 一覧が読めなかった理由。**「未設定」と混ぜない** (パス 159)。 */
   const [unreadable, setUnreadable] = useState<string | null>(null);
+  /*
+   * **貼ったトークンを黙って切らない** (2026-09-13 · パス 196)。
+   *
+   * この欄は `maxLength={MAX_TOKEN_CHARS}` を持っていた。実機 chromium で測ると
+   * `maxlength` は (a) **コード単位で**数え、(b) 超えた**貼り付けを黙って切り**、
+   * (c) プログラムで入れた値は素通りさせる (`validity.tooLong === false`) ——
+   * つまり関門ではなく、ただの無言の切り落としである。トークンは人が別の画面から
+   * 貼る値なので、末尾が落ちれば**壊れた資格情報が保存され**、失敗はあとで
+   * 「認証できません」として出る —— 原因を指していない断りになる。
+   * `setToken` 側の断り (`countChars(token) > MAX_TOKEN_CHARS`) はここが先に切る
+   * 限り**永久に届かない**ので、切るのをやめて断りを見せる (パス 172 と同じ向き)。
+   */
+  const valueOver = charsOverCeiling(value, MAX_TOKEN_CHARS);
 
   /*
    * **「読めなかった」を「未設定」に畳まない。**
@@ -286,35 +301,37 @@ export function CredentialRow({ slot, onChange }: { slot: CredentialSlot; onChan
       </div>
 
       {editing ? (
-        <div style={{ display: 'flex', gap: 6 }}>
-          <input
-            type="password"
-            autoComplete="off"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !busy) save();
-            }}
-            placeholder={slot.placeholder}
-            maxLength={MAX_TOKEN_CHARS}
-            autoFocus
-            style={{
-              flex: 1,
-              padding: '6px 10px',
-              background: 'var(--bg)',
-              border: '1px solid var(--border)',
-              borderRadius: 4,
-              color: 'var(--text)',
-              fontSize: 12,
-              fontFamily: 'monospace',
-            }}
-          />
-          <button type="button" onClick={save} disabled={busy} style={btn('accent', busy)}>
-            {busy ? '保存中…' : '保存'}
-          </button>
-          <button type="button" onClick={() => { setEditing(false); setValue(''); setErr(null); }} style={btn()}>
-            キャンセル
-          </button>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <input
+              type="password"
+              autoComplete="off"
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !busy && valueOver === 0) save();
+              }}
+              placeholder={slot.placeholder}
+              autoFocus
+              style={{
+                flex: 1,
+                padding: '6px 10px',
+                background: 'var(--bg)',
+                border: '1px solid var(--border)',
+                borderRadius: 4,
+                color: 'var(--text)',
+                fontSize: 12,
+                fontFamily: 'monospace',
+              }}
+            />
+            <button type="button" onClick={save} disabled={busy || valueOver > 0} style={btn('accent', busy || valueOver > 0)}>
+              {busy ? '保存中…' : '保存'}
+            </button>
+            <button type="button" onClick={() => { setEditing(false); setValue(''); setErr(null); }} style={btn()}>
+              キャンセル
+            </button>
+          </div>
+          <CeilingNotice label="トークン" value={value} max={MAX_TOKEN_CHARS} />
         </div>
       ) : (
         <div style={{ display: 'flex', gap: 6 }}>
@@ -1498,7 +1515,7 @@ export function ProxySection() {
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="https://my-worker.example.com/proxy"
-            maxLength={MAX_PROXY_URL_LENGTH}
+            maxLength={MAX_PROXY_URL_CHARS}
             style={pwInput}
           />
           <input
@@ -1507,7 +1524,7 @@ export function ProxySection() {
             value={secret}
             onChange={(e) => setSecret(e.target.value)}
             placeholder="共有秘密 (空欄にすると誰でも中継できます)"
-            maxLength={MAX_PROXY_SECRET_LENGTH}
+            maxLength={MAX_PROXY_SECRET_CHARS}
             style={pwInput}
           />
           {/*

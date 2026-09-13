@@ -582,8 +582,16 @@ const FORBIDDEN_PATTERNS = [
     // そのまま残る。2026-08-21 の実測では、閉じ引用符が切り口の外側に
     // 落ちる位置で 60 文字のトークンが**全部**残った (断片ではない)。
     // 正しい順序は shared/redact.ts の `redactForMessage` が 1 つだけ持つ。
+    //
+    // **切り方の綴りは 2 つある** (2026-09-13 · パス 196)。パス 196 で
+    // `redactForMessage` の内側を `input.slice(…)` から
+    // `clampToCeiling(input, …)` (文字境界で切る) に替えたところ、
+    // この規則が**その行を見なくなった** —— 意味は同じ「切ってから伏せる」
+    // なのに、綴りが変わったので当たらない。台帳の例外が「効いていない」と
+    // 鳴ったので気付けた (パス 25 の無言 pragma と同じ形を、自分で作りかけた)。
+    // 規則は**切る意味**を追う: `.slice(` と `clampToCeiling(` の両方を見る。
     name: 'redactSecrets(x.slice(…)) — 切ってから伏せている',
-    pattern: /redactSecrets\s*\(\s*[^)]*\.slice\s*\(/,
+    pattern: /redactSecrets\s*\(\s*[^)]*(?:\.slice\s*\(|clampToCeiling\s*\()/,
     allowFile: (rel) => !rel.startsWith('src/') || rel === 'src/shared/redact.ts',
     codeOnly: true,
     rationale:

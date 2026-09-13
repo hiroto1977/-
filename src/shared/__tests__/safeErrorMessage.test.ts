@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { safeErrorMessage, ERROR_MESSAGE_MAX_LENGTH, redactSecrets } from '../redact';
+import { safeErrorMessage, ERROR_MESSAGE_MAX_CHARS, REDACT_SCAN_LIMIT, redactForMessage, redactSecrets } from '../redact';
 
 /*
  * `safeErrorMessage` — 例外を「利用者へ見せてよい 1 行」にする規則。
@@ -46,13 +46,59 @@ describe('safeErrorMessage', () => {
   });
 
   it('長すぎるメッセージは上限で切る', () => {
-    const out = safeErrorMessage(new Error('あ'.repeat(ERROR_MESSAGE_MAX_LENGTH + 500)));
-    expect(out).toHaveLength(ERROR_MESSAGE_MAX_LENGTH);
+    const out = safeErrorMessage(new Error('あ'.repeat(ERROR_MESSAGE_MAX_CHARS + 500)));
+    expect(out).toHaveLength(ERROR_MESSAGE_MAX_CHARS);
   });
 
   it('上限ちょうどは切らない', () => {
-    const out = safeErrorMessage(new Error('あ'.repeat(ERROR_MESSAGE_MAX_LENGTH)));
-    expect(out).toHaveLength(ERROR_MESSAGE_MAX_LENGTH);
+    const out = safeErrorMessage(new Error('あ'.repeat(ERROR_MESSAGE_MAX_CHARS)));
+    expect(out).toHaveLength(ERROR_MESSAGE_MAX_CHARS);
+  });
+
+  /*
+   * **切る所は文字の境界** (2026-09-13 · パス 196)。
+   * 上の 2 本は 'あ' (BMP・1 コード単位) なので、コード単位で切っても文字で
+   * 切っても同じ結果になる —— **単位の違いが出ない標本**である。
+   * この関数は両ビルドのすべてのエラー 1 行が通る漏斗なので、境界が
+   * サロゲート対の真ん中に落ちると孤立サロゲートが画面と IPC へ出る。
+   */
+  function hasLoneSurrogate(str: string): boolean {
+    for (let i = 0; i < str.length; i++) {
+      const c = str.charCodeAt(i);
+      if (c >= 0xd800 && c <= 0xdbff) {
+        const next = i + 1 < str.length ? str.charCodeAt(i + 1) : -1;
+        if (next < 0xdc00 || next > 0xdfff) return true;
+        i++;
+      } else if (c >= 0xdc00 && c <= 0xdfff) return true;
+    }
+    return false;
+  }
+
+  it('★ 絵文字が境界に来ても文字を割らない (孤立サロゲートを残さない)', () => {
+    // 'a' を 1999 個 + 絵文字 → コード単位で切ると 2000 番目で対が割れる。
+    const msg = 'a'.repeat(ERROR_MESSAGE_MAX_CHARS - 1) + '\u{1F600}' + 'b'.repeat(50);
+    const out = safeErrorMessage(new Error(msg));
+    expect(hasLoneSurrogate(out)).toBe(false);
+    // 天井は「字」なので、絵文字 1 つを含めて 2000 字ちょうど。
+    expect([...out]).toHaveLength(ERROR_MESSAGE_MAX_CHARS);
+    expect(out.endsWith('\u{1F600}')).toBe(true);
+    // 対照の対照 —— 壊れた文字列は UTF-8 を往復すると `\uFFFD` に化ける。
+    expect(Buffer.from(out, 'utf8').toString('utf8')).toBe(out);
+  });
+
+  it('★ 走査の上限 (REDACT_SCAN_LIMIT) の側でも文字を割らない', () => {
+    /*
+     * 8192 番目の境界。**`safeErrorMessage` 経由では測れない** ——
+     * 外側の 2000 字で切るので、8192 で割れた対はそこまで残らない。
+     * 最初はそう書いて**対照が鳴らなかった** (鳴らない対照は「合格」ではない)。
+     * 天井を走査上限より広く渡して、内側の切り口を束縛する側にする。
+     */
+    const msg = 'a'.repeat(REDACT_SCAN_LIMIT - 1) + '\u{1F600}' + 'b'.repeat(10);
+    const out = redactForMessage(msg, 100_000);
+    expect(hasLoneSurrogate(out)).toBe(false);
+    // 走査上限で切れているので、絵文字までの 8192 字。
+    expect([...out]).toHaveLength(REDACT_SCAN_LIMIT);
+    expect(out.endsWith('\u{1F600}')).toBe(true);
   });
 
   it('伏字は冪等 — 既に伏せてある文字列を通しても形が変わらない', () => {

@@ -15,6 +15,7 @@
  * この監査で繰り返し出た形なので。
  */
 
+import { countChars } from './inputCeiling';
 export type ScanUrlFailure = 'empty' | 'too-long' | 'not-a-url' | 'not-web';
 
 export type ScanUrlResult =
@@ -22,7 +23,7 @@ export type ScanUrlResult =
   | { readonly ok: false; readonly reason: ScanUrlFailure };
 
 /** VirusTotal の URL 長の実務上の上限に合わせた保守的な値。 */
-export const MAX_SCAN_URL_LENGTH = 2048;
+export const MAX_SCAN_URL_CHARS = 2048;
 
 /**
  * 投入してよい形か検証する。
@@ -35,7 +36,7 @@ export function validateScanUrl(raw: unknown): ScanUrlResult {
   if (typeof raw !== 'string') return { ok: false, reason: 'empty' };
   const url = raw.trim();
   if (url === '') return { ok: false, reason: 'empty' };
-  if (url.length > MAX_SCAN_URL_LENGTH) return { ok: false, reason: 'too-long' };
+  if (countChars(url) > MAX_SCAN_URL_CHARS) return { ok: false, reason: 'too-long' };
   let parsed: URL;
   try {
     parsed = new URL(url);

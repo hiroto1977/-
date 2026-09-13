@@ -11,6 +11,7 @@
  * 「項目があって空欄」を読むので、項目ごと消えると未入力か未算定かが
  * 分からなくなる。
  */
+import { countChars } from '../../shared/inputCeiling';
 import { hasControlChar } from '../../shared/controlChars';
 import { isCalendarMonth } from '../../shared/isoDate';
 // `fiscalYearWindow` は決算期から事業年度の 12 か月を出す唯一の実装 (計算書類の
@@ -51,7 +52,7 @@ import type { CashflowDebtService } from './cashflowDebtService';
 export const BANK_SUBMISSION_COLLECTION = 'bank-submission-settings';
 
 /** 提出者情報の各欄の上限 (文字)。 */
-export const PROFILE_MAX_LENGTH = 100;
+export const PROFILE_MAX_CHARS = 100;
 
 export interface SubmissionProfile {
   readonly companyName: string;
@@ -96,8 +97,8 @@ export function parseSubmissionProfile(input: {
     if (typeof v !== 'string') return { ok: false, reason: `${PROFILE_LABEL[key]}は文字で入力してください` };
     const t = v.trim();
     if (hasControlChar(t)) return { ok: false, reason: `${PROFILE_LABEL[key]}に制御文字が含まれています` };
-    if (t.length > PROFILE_MAX_LENGTH) {
-      return { ok: false, reason: `${PROFILE_LABEL[key]}は ${PROFILE_MAX_LENGTH} 文字以内で入力してください` };
+    if (countChars(t) > PROFILE_MAX_CHARS) {
+      return { ok: false, reason: `${PROFILE_LABEL[key]}は ${PROFILE_MAX_CHARS} 文字以内で入力してください` };
     }
     out[key] = t;
   }

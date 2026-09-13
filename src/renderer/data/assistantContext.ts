@@ -19,6 +19,7 @@
  *   5. 出典ラベルの注入 — 回答が出典に言及できるよう、本文へ第一出典を付す。
  */
 
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import { VERIFIED_CONCEPTS } from './academicKnowledge';
 import { VERIFIED_COMPLIANCE } from './complianceKnowledge';
 import { VERIFIED_SUBSIDIES } from './subsidyKnowledge';
@@ -50,7 +51,8 @@ const META_CAP = 160;
 const SOURCE_LABEL_CAP = 80;
 
 function cap(text: string, n: number): string {
-  return text.length > n ? text.slice(0, n) + '…' : text;
+  // 文脈を縮めるのも**文字の境界で** (パス 196) —— この文字列は有料 API へ送る。
+  return countChars(text) > n ? clampToCeiling(text, n) + '…' : text;
 }
 
 /** すべての確証済みデータを共通スキーマへ写像する (モジュール読込時に 1 度)。 */

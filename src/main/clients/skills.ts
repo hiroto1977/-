@@ -1,5 +1,5 @@
 import { promises as fs } from 'node:fs';
-import { countChars } from '../../shared/inputCeiling';
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import os from 'node:os';
 import path from 'node:path';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
@@ -314,7 +314,8 @@ interface AnthropicMessagesResponse {
 
 async function readSkillBody(id: string): Promise<string> {
   if (!isSafeSkillName(id)) {
-    const safe = String(id as unknown).slice(0, 32);
+    // 断りに載せる id も文字の境界で切る (パス 196)。
+    const safe = clampToCeiling(String(id as unknown), 32);
     throw new Error(`skill "${safe}" has an unsafe name`);
   }
   const base = path.join(os.homedir(), '.claude', 'skills');

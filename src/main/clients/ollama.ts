@@ -16,7 +16,7 @@
  *     local Ollama is older than MIN_SAFE_VERSION.
  */
 
-import { countChars } from '../../shared/inputCeiling';
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import {
   FetchError,
   redactForMessage,
@@ -245,7 +245,8 @@ async function chat(ctx: ActionContext): Promise<ActionData<'ollama/chat'>> {
   const { model, prompt, system } = ctx.payload as unknown as ChatPayload;
   if (!model || !prompt) throw new Error('model and prompt are required');
   if (!isSafeModelName(model)) {
-    throw new FetchError(`unsafe model name: ${String(model).slice(0, 32)}`, 0, 'ollama');
+    // 断りに載せる名前も文字の境界で切る (パス 196)。
+    throw new FetchError(`unsafe model name: ${clampToCeiling(String(model), 32)}`, 0, 'ollama');
   }
   // Reject null bytes in user-controlled strings — classic foothold for
   // upstream parser bugs (including the unpatched engine-file OOB read).

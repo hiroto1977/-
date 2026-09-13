@@ -23,7 +23,7 @@
  * 扱われるため、https ページからでも mixed content ブロックはされない (CORS だけが壁)。
  */
 
-import { countChars } from '../../shared/inputCeiling';
+import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import {
   DEFAULT_OLLAMA_PORT,
   DEFAULT_SETUP_MODEL,
@@ -458,7 +458,8 @@ export async function chatOllama(
   if (!isSafeModelName(model)) {
     // isSafeModelName は unknown を受ける型ガードなので、否定側では never に
     // 狭まる。表示は明示的に文字列化する。
-    return { ok: false, kind: 'bad-model', message: `モデル名が不正です: ${String(model).slice(0, 32)}` };
+    // 断りに載せる名前も文字の境界で切る (パス 196)。
+    return { ok: false, kind: 'bad-model', message: `モデル名が不正です: ${clampToCeiling(String(model), 32)}` };
   }
   if (prompt === '') {
     return { ok: false, kind: 'empty-prompt', message: 'プロンプトを入力してください。' };

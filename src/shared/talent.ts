@@ -37,6 +37,7 @@
 // 2 か所に書かない**。
 export type { SourceStrength } from './provenance';
 export { SOURCE_STRENGTH_ORDER, atLeastAsStrong, isSourceStrength } from './provenance';
+import { clampToCeiling } from './inputCeiling';
 import type { SourceStrength } from './provenance';
 
 export interface OrganDisease {
@@ -554,7 +555,8 @@ export function sanitizeTalentState(raw: unknown): TalentState {
     members: Array.isArray(o['members'])
       ? o['members'].slice(0, MAX_LADDER_MEMBERS).filter(isValidLadderMember)
       : [],
-    updatedAt: typeof updatedAt === 'string' ? updatedAt.slice(0, 32) : '',
+    // 保存値は何でも入りうる (古い版・手で直した JSON)。文字の境界で切る (パス 196)。
+    updatedAt: typeof updatedAt === 'string' ? clampToCeiling(updatedAt, 32) : '',
   };
 }
 

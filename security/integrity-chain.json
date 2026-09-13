@@ -1522,6 +1522,14 @@
       "leafCount": 71,
       "note": "update inputCeiling.ts",
       "hash": "df0135fbbcecf63056df967ecc0d3f1066a1ec7e896143dc981ed490909f60c2"
+    },
+    {
+      "index": 181,
+      "prevHash": "df0135fbbcecf63056df967ecc0d3f1066a1ec7e896143dc981ed490909f60c2",
+      "merkleRoot": "9df0a01dbedd16f2703f42b9136dc56885e4b2b221a01aa5e63cea69b321fa2e",
+      "leafCount": 71,
+      "note": "update assistant.ts,aiEndpoint.ts,ollama.ts,proxyEndpoint.ts,redact.ts,scanTarget.ts",
+      "hash": "593ba511b74d9924ada139e000ddd32e83649735ac9868d6a57b0fdd545daa47"
     }
   ],
   "tipManifest": {
@@ -1549,7 +1557,7 @@
     "scripts/smoke-app.cjs": "3308303649279f4ca49640e00f61f2451fea881e506005c51a97c3cbca2bd827",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
     "src/main/atomicWrite.ts": "b1840895edf0bf5394fa36a64352b28cf852ca1a2b02e246dd6d6c82c457db44",
-    "src/main/clients/assistant.ts": "e004df9dcd353fb647d371f71354120fbe50aae4b630b2cc2f86843055b10a7f",
+    "src/main/clients/assistant.ts": "f83b61b4bbfe6fa92636cc5cf7c1e1823095dc41a0a46712f26853cd5bc4e186",
     "src/main/clients/exportPaths.ts": "bcf8712b41e9ee1682472ca1a67a067d0ed7d1d6a96b8f4e3c9ec6fe69d22419",
     "src/main/clients/types.ts": "17566fb0225201500a996d5c47926cc8fc0426d2f1b54f603dc973d021656134",
     "src/main/eraseAll.ts": "0a2d290568268081bd20c8c5dba84b087fa115d7bd1ae06a605b05dcf5329b4f",
@@ -1579,7 +1587,7 @@
     "src/shared/ai/chat.ts": "fb4b09c9d607b67d10f45cd6801db72ca74b5293d94f446975ce35c7af8a9524",
     "src/shared/ai/credentials.ts": "69603ba457c124794e3e2c38f75eb35bc487e9766eab2d03bd53d035c885d85a",
     "src/shared/ai/providers.ts": "31e4637844d479c5c6b8c43bdd24e9196c2924e0d3e9b467141cbfb73d335e5b",
-    "src/shared/aiEndpoint.ts": "03c50a6cb3c2b777f128edd5fc0f752745ba21d4440404cf80b14fe704517438",
+    "src/shared/aiEndpoint.ts": "22bd8125c9eb82b4a15a14c7fa895e5404bac50515a6a5ebd55e82a9c42afe28",
     "src/shared/atlassianSite.ts": "5810fde838f479ba095ec4dad9774020ee87c6e980bf7bff4a3c61bb2c4c0b90",
     "src/shared/controlChars.ts": "cf6992b1d0cc2795de1cc1ed605ad51ca375b56d8426cc5622a219658e5724e7",
     "src/shared/cryptoParams.ts": "fd68954c1be30280b89ba4e99e270515b44a7b27ff199f8efd891d20876e21c7",
@@ -1589,12 +1597,12 @@
     "src/shared/httpLimits.ts": "9e980f75cba0e5a29051e648f77fa9cca0728425a987b72bacf49d18fd08df2c",
     "src/shared/imageUrlGate.ts": "c7b928e51fdbac71b154f9d0f97aa51a341eb8db3203105292cf47f79eda6760",
     "src/shared/inputCeiling.ts": "26075ddcbb45bd6995789b91e20682dfc9fa7268e2e9dce0119801541333071e",
-    "src/shared/ollama.ts": "898135860cabd5596bc10bb16dfd19a9f0222aec1e4a9f565ae7a954e106632a",
-    "src/shared/proxyEndpoint.ts": "1bb5bf73ca41bd73770a16531740ae0738e1cacdb21945c517adefe9aa4091c7",
-    "src/shared/redact.ts": "b4e8d450e5952f756ad6849a7b6965734572dda56e9f6d0c0e746da479a6a3ea",
+    "src/shared/ollama.ts": "076921ac85941fcbcd709e2c198eb26b5fa4b677fce7728408180f9111945f2a",
+    "src/shared/proxyEndpoint.ts": "2157128494994adea9e6edb6e2af40518f69ff879c328ef3a0c9b9e8d9d0b340",
+    "src/shared/redact.ts": "cc54d3b9631e084c8e51ccdf752d061eb434063cdebd4e989661c170d0850b1f",
     "src/shared/safeFilename.ts": "6c054facd96b064715f9e50ebeada09645486d5c599a3058f1b253a73ba7ff57",
-    "src/shared/scanTarget.ts": "6876e63b0a0feff527d9cea3066736eb7b7c4a2143cffe855b49de1d19993299",
-    "src/shared/tokenInput.ts": "f6d58a447a515abb4ddddb3b68d96aeed6a543cffd76a200e22c9077452b35be",
+    "src/shared/scanTarget.ts": "354916a61ce7cc7711931754c916ec813bd32be3b88de6908414a3ad2d9e6ded",
+    "src/shared/tokenInput.ts": "3cef9d2911096174dbfa300d583f26bd61a7b7c45c1a83a432f18998b6c1b75b",
     "src/shared/vaultToken.ts": "11996538381f1fcbae40f85dc385a4d34d864706c6b3f2adf8589dd9998198b7"
   }
 }
