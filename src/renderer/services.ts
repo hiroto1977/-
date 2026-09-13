@@ -71,6 +71,7 @@ import { DocstudioPage } from './pages/DocstudioPage';
 import { CursorPage } from './pages/CursorPage';
 import { ChartsPage } from './pages/ChartsPage';
 import { TalentPage } from './pages/TalentPage';
+import { HydroponicsPage } from './pages/HydroponicsPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -696,6 +697,14 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'JI',
     description: '組織病の診断・登用判定・達成確率100%キープ・育成ロードマップ',
     page: TalentPage,
+    category: 'tools',
+  },
+  {
+    id: 'hydroponics',
+    label: '水耕栽培',
+    icon: 'HP',
+    description: '毎日の測定 (EC / pH / 温度 / 湿度 / CO₂ / 溶存酸素 / 液位) → 判定 → 今日やること。播種・定植・収穫・養液交換の日程も自動で出す',
+    page: HydroponicsPage,
     category: 'tools',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE

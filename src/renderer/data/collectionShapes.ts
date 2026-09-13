@@ -25,6 +25,7 @@ import { CONSULTATION_STATUSES } from './shigyoDirectory';
 import { METRIC_UNITS } from './overviewOverrides';
 import { ROLE_ORDER } from '../../shared/team';
 import { isCalendarDate, isCalendarDateOrMonth } from '../../shared/isoDate';
+import { BATCH_STATE_LABELS } from '../../shared/hydroponicsControl';
 
 type Rec = Record<string, unknown>;
 type Check = (v: unknown) => boolean;
@@ -63,6 +64,9 @@ const numRec: Check = (v) => rec(v) && Object.values(v as Rec).every((n) => num(
 const calendarDate: Check = (v) => isCalendarDate(v);
 /** 未入力 ('') か、暦に在る `YYYY-MM-DD` / `YYYY-MM`。 */
 const blankOrCalendar: Check = (v) => v === '' || isCalendarDateOrMonth(v);
+
+/** ロットの状態の一覧。**ラベルの台帳から導く** —— 状態を 2 か所に書かない。 */
+const BATCH_STATES: readonly string[] = Object.keys(BATCH_STATE_LABELS);
 
 /** collection の中身の形 —— 判定関数に、挙げた欄の名前を添える (個人情報の欄の走査に使う · パス 130)。 */
 export interface CollectionShape {
@@ -169,6 +173,54 @@ export const COLLECTION_SHAPES: Readonly<Record<string, CollectionShape>> = {
   }),
   // 品目の 1 件ずつは読む側 (`sanitizeCropList`) が落とす。ここは配列であることだけ。
   'hydroponics-crops': shape({ crops: opt(arr) }),
+  /*
+   * 運転管理 (2026-09-13 ・ パス 194)。
+   *
+   * - 測定: `at` は**暦に在る日**。`values` の中身は読む側
+   *   (`readingFromStored`) が項目ごとに見る —— ここは入れ物の形だけ。
+   *   **測っていない項目は `null` で書く**ので `values` は `rec`。
+   * - ロット: 日付の 3 欄は**未定なら `null`** を値として書くので
+   *   `orNull(calendarDate)` (パス 122 / 123 と同じ使い方)。状態は列挙値。
+   * - 設定: 設備の 4 欄は**未入力を `null` で持つ** —— 既定を入れると
+   *   「量を出せる」に化けるので、`orNull(num)` で受ける。
+   */
+  'hydroponics-readings': shape({
+    at: calendarDate,
+    values: rec,
+    batchId: orNull(str),
+    note: opt(str),
+  }),
+  'hydroponics-batches': shape({
+    id: str,
+    cropId: str,
+    sowDate: calendarDate,
+    panels: num,
+    state: oneOf(() => BATCH_STATES),
+    transplantedDate: orNull(calendarDate),
+    harvestedDate: orNull(calendarDate),
+    solutionChangedDate: orNull(calendarDate),
+    note: opt(str),
+  }),
+  'hydroponics-control': shape({
+    waterTempLowC: num,
+    waterTempHighC: num,
+    airTempLowC: num,
+    airTempHighC: num,
+    humidityLowPct: num,
+    humidityHighPct: num,
+    co2LowPpm: num,
+    co2HighPpm: num,
+    dissolvedOxygenLowMgL: num,
+    waterLevelLowPct: num,
+    tankLiters: orNull(num),
+    stockEcRisePerMlPerL: orNull(num),
+    alkalinityMgCaCO3PerL: orNull(num),
+    acidNormality: orNull(num),
+    residualAlkalinityMgCaCO3PerL: num,
+    solutionChangeIntervalDays: num,
+    readingStaleDays: num,
+    harvestNoticeDays: num,
+  }),
   // 読む側 (`parseHighlightSettings`) が欄ごとに既定へ倒す。在るなら数値。
   'highlight-settings': shape({
     declineWarnStreak: opt(num),

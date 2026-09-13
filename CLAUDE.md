@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Service Hub — a Japanese-facing business dashboard exposing **75 services** through a unified,
+Service Hub — a Japanese-facing business dashboard exposing **76 services** through a unified,
 category-grouped sidebar (おすすめ / 士業連携 / 分析・ツール / 外部サービス連携). **Not every service has a sidebar
 entry of its own**: `uber-eats` and `demae-can` are consumed inside the Business Dashboard instead
 (`BusinessPage.tsx` reads their snapshots directly). That split is a reasoned, bidirectional ledger in
@@ -28,7 +28,7 @@ with a verified 事業仕分け duty map (`professionalMap.ts`) and a local-firs
 **Two runtime targets ship from the same codebase:**
 1. **Electron desktop app** (`npm run dev` / `npm run build`) — full OS integration, 3-process model.
 2. **Browser standalone** (`npm run build:web` → `dist/standalone.html`) — a single self-contained HTML
-   file (実測 11.23 MiB full / 3.04 MiB `build:web:lite` mobile variant — 2026-09-13 パス 193 後の計測: 11,781,114 B / 3,193,860 B (パス 192 後は 11,780,315 B / 3,193,061 B・パス 191 後は 11,780,034 B / 3,192,780 B・パス 190 後は 11,779,996 B / 3,192,742 B)。天井は CI が両方に掛けている: 16 MB / 4 MB、85% で警告。パス 189 後は 11,778,832 B / 3,191,576 B・パス 188 後は 11,776,126 B / 3,188,874 B・パス 187 後は 11,774,564 B / 3,187,312 B・パス 186 後は 11,771,487 B / 3,184,235 B・パス 185 後は 11,771,393 B / 3,184,141 B・パス 184 後は 11,770,727 B / 3,183,475 B (パス 183 から**両方が 5,168 B 減った** —— テンプレートの SVG の組み立てが 3 写しから 1 つになった分)・パス 183 後は 11,775,895 B / 3,188,643 B・パス 182 後は 11,774,254 B / 3,187,002 B・パス 181 後は 11,765,766 B / 3,178,512 B・前日 2026-09-11 は 11,752,227 B / 3,164,973 B。LITE は 85% の警告線 3.4 MB (CI は 3,400,000 B で見る) まで残り約 207 KB) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
+   file (実測 11.28 MiB full / 3.09 MiB `build:web:lite` mobile variant — 2026-09-13 パス 194 後の計測: 11,823,337 B / 3,236,083 B (**水耕栽培の運転管理 1 サービス分で 両方 +42,223 B** —— 共有の判定・調製・日程と画面 1 枚ぶん。学術コーパスに依らないので LITE も同じだけ増える)・パス 193 後は 11,781,114 B / 3,193,860 B・パス 192 後は 11,780,315 B / 3,193,061 B・パス 191 後は 11,780,034 B / 3,192,780 B・パス 190 後は 11,779,996 B / 3,192,742 B)。天井は CI が両方に掛けている: 16 MB / 4 MB、85% で警告。パス 189 後は 11,778,832 B / 3,191,576 B・パス 188 後は 11,776,126 B / 3,188,874 B・パス 187 後は 11,774,564 B / 3,187,312 B・パス 186 後は 11,771,487 B / 3,184,235 B・パス 185 後は 11,771,393 B / 3,184,141 B・パス 184 後は 11,770,727 B / 3,183,475 B (パス 183 から**両方が 5,168 B 減った** —— テンプレートの SVG の組み立てが 3 写しから 1 つになった分)・パス 183 後は 11,775,895 B / 3,188,643 B・パス 182 後は 11,774,254 B / 3,187,002 B・パス 181 後は 11,765,766 B / 3,178,512 B・前日 2026-09-11 は 11,752,227 B / 3,164,973 B。LITE は 85% の警告線 3.4 MB (CI は 3,400,000 B で見る) まで残り約 160 KB) that runs in any browser with no Node/Electron. See `docs/BROWSER_REDESIGN.md`.
 
 Each service page starts from a static snapshot in `src/renderer/data/snapshot.ts` and can swap to a
 live REST fetch. The `useServiceData(serviceId, snapshot)` hook returns `data`, `source`

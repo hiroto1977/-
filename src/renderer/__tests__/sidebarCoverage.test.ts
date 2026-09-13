@@ -99,7 +99,9 @@ describe('サイドバーは SERVICE_IDS を覆う', () => {
    * CLAUDE.md は最初に読まれる説明で、2026-09-12 まで
    * 「exposing **75 services** through a unified, category-grouped sidebar」
    * と書いていた —— **サイドバーに出るのは 73 で、2 つは出ない。**
-   * 数 (75) は `lint:docs` が `SERVICE_IDS` と突き合わせているが、
+   * (2026-09-13 に水耕栽培が入って **76 / サイドバー 74** になった。
+   * この文は当時の記録で、下の判定が今の数を見ている)。
+   * 数は `lint:docs` が `SERVICE_IDS` と突き合わせているが、
    * **「サイドバー経由で」という主張の側には何も無かった**。
    *
    * ここで散文に台帳の id を名指しさせ、その名指しを走査する。
@@ -108,7 +110,7 @@ describe('サイドバーは SERVICE_IDS を覆う', () => {
   it('★ CLAUDE.md の散文が台帳の例外を 1 つずつ名指ししている', () => {
     const claudeMd = readOriginalSource(path.resolve(__dirname, '../../../CLAUDE.md'));
     // 走査が実物に当たっていること (空のファイルで通らない)。
-    expect(claudeMd).toContain('exposing **75 services**');
+    expect(claudeMd).toContain('exposing **76 services**');
     expect(claudeMd, 'サイドバーに出ない物が在るという断りが消えた').toContain(
       'Not every service has a sidebar',
     );
@@ -118,7 +120,7 @@ describe('サイドバーは SERVICE_IDS を覆う', () => {
 
   it('★ 対照: 走査は名指しの欠落を拾う (綴り違いで黙っていない)', () => {
     // 標本 —— 台帳に在る id が散文から抜けた形。
-    const sample = 'exposing **75 services** ... Not every service has a sidebar entry: `uber-eats` only.';
+    const sample = 'exposing **76 services** ... Not every service has a sidebar entry: `uber-eats` only.';
     const unnamed = Object.keys(SIDEBAR_LESS).filter((id) => !sample.includes(`\`${id}\``));
     expect(unnamed).toEqual(['demae-can']);
   });

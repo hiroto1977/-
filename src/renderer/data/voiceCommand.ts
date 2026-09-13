@@ -151,6 +151,7 @@ const SERVICE_ALIASES: Readonly<Record<ServiceId, readonly string[]>> = {
   business: ['事業ダッシュボード', '事業だっしゅぼーど', 'じぎょうだっしゅぼーど', 'びじねすだっしゅぼーど', 'だっしゅぼーど', '事業', 'じぎょう'],
   teamradar: ['チームレーダー', 'ちーむれーだー', 'teamradar', 'れーだー'],
   talent: ['じんざいいくせい', '人材育成', 'いくせい', 'そしきびょう', 'とうよう', 'ろーどまっぷ'],
+  hydroponics: ['すいこうさいばい', '水耕栽培', '水耕', 'ようえき', '養液', 'ようえきかんり', 'ec', 'ph', 'ざっしょく', '植物工場', 'hydroponics'],
   templates: ['テンプレート', 'てんぷれーと', 'templates', '雛形', 'ひながた', 'template'],
   library: ['ライブラリ', 'らいぶらり', 'library', '資料', 'しりょう'],
   settings: ['設定', 'せってい', 'settings', 'こんふぃぐ', 'setting'],

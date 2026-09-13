@@ -18,12 +18,12 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 75 | `src/shared/serviceId.ts:9-43` |
+| サービス数 | 76 | `src/shared/serviceId.ts:9-43` |
 | IPC ハンドラ数 | 14 | `src/main/main.ts:111-296` |
-| client モジュール (fetcher + actions) | 75 | `src/main/clients/index.ts:44-83` |
+| client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **13498** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **13617** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` |
@@ -31,7 +31,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 4 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 31 / 36 (残る 5 件は外部ツール 2 (`typecheck` / eslint) と、知識コーパス系 3。後者 3 つは 2026-08-25 に実物へ違反を植えて鳴ることを確認済み —— `lint:repo-size` だけは実データで失敗経路が一度も走らず、守りを外しても ✅ を返していたので陰性対照を付けた) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 594 | 自己検証 |
+| `file:line` 参照数 | 601 | 自己検証 |
 | 図の中の `file:line` 参照数 | 27 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -1516,6 +1516,39 @@ E2E の陰性対照で**自分の書き方の誤り**を 1 つ潰した。「(�
   見積りで、設定の変更履歴は**計画の改訂**であって月次の実績ではない。
 - 未入力なら並べない (経営サマリーに勝手なサンプルを混ぜない)。
 
+#### 見積りと運転管理は別の層 (`src/shared/hydroponicsControl.ts`・2026-09-13 パス 194)
+
+上の `src/shared/hydroponics.ts` は**見積り**の層である —— 「この設備と単価なら
+年にいくらか」を出す。**今日この槽をどうするか**を答える物は無かった。
+利用者の求めは「水耕栽培に必要な情報を集め自動管理出来る仕様」なので、
+**運転管理**の層を別に置いた (混ぜると、日々の測定が経営の試算を書き換える)。
+
+- **測る物の台帳** — `READING_FIELDS` は 8 項目 (EC / pH / 根圏温度 / 気温 /
+  湿度 / CO₂ / 溶存酸素 / 液位)。単位・妥当範囲・目標域は `READING_FIELD_SPECS`
+  が 1 か所で持ち、EC と pH の妥当範囲は**品目別の参考値** (`HYDROPONIC_CROP_BOUNDS`)
+  から導く —— 数字を写さない。
+- **5 つの状態** — `FieldStatus` は `ok` / `low` / `high` / `unmeasured` /
+  `unreadable`。**未測定は緑にしないし、赤にもしない** (パス 51・67・74 と同じ規則)。
+  `assessReading().allOk` は未測定と読めない値が 0 件のときだけ真になる。
+- **目標域の根拠の強さを明示する** — `TARGET_BASIS` は全項目 `'reference'`
+  (目安)。法定値でも検証済みでもないので、画面がそう述べる。
+- **出せない量は出さない** — `DoseAdvice` の `{ kind: 'cannot', missing, how }`
+  は足りない欄の名前と埋め方を返す。pH は**目標 pH までの酸の量を出さない** ——
+  緩衝曲線が要るので水量だけでは定まらない。代わりにアルカリ度の中和当量
+  (`MG_CACO3_PER_MEQ = 50.04`) と手順を返す。
+- **日程は実績から数える** — `batchSchedule` は定植の実績が在ればそこから収穫日を
+  数え (`harvestCountedFrom`)、無ければ播種日から数える。工程を飛ばさない
+  (育苗中のロットに「収穫する」は出さない)。
+- **組み立ては 1 か所** — `buildHydroponicsSnapshot()` を主プロセスの fetcher
+  (`src/main/clients/hydroponics.ts`)・ブラウザ版の `web-shim.ts`・静的
+  `SNAPSHOT` の**3 つが同じ関数を呼ぶ**。ブラウザ版に枝を足し忘れて台帳が空に
+  なる形 (パス 118) を e2e が実測で拾ったので、置き場所を 1 つに寄せた。
+- **保存は端末内** — 測定・ロット・設定は record store の 3 collection
+  (`src/renderer/data/hydroponicsLog.ts`)。fetcher は**利用者のデータを返さない**。
+
+仕様は `docs/HYDROPONICS.md` —— **今は無いこと** (機器制御・センサ取り込み・
+収量予測・N/P/K の個別測定) も同じ文書が並べる。
+
 #### 連結は出所を混ぜない (`src/renderer/data/consolidation.ts`)
 
 上の変更で `units` に**利用者の実績と同梱サンプルが同居**するようになった。
@@ -1716,6 +1749,7 @@ union を参照する。
 | `emotions` | Emotions | Bearer (Anthropic) | ✅ | | `log-mood`, `analyze-text` |
 | `ollama` | Ollama (local) | none | ✅ | | `chat` |
 | `kpi` | KPI / BEP (local mock) | none | ✅ | | (read-only — Phase 6 で API 接続) |
+| `hydroponics` | 水耕栽培 — 運転管理 (測定の判定 / 今日やること / 栽培ロットの日程) | none | ✅ | | (read-only — fetcher は「何を測るか」の台帳だけを返す。測定・ロット・設定は端末内の record store。組み立ては `src/shared/hydroponicsControl.ts` に 1 つ) |
 | `stocks` | Stocks (local mock) | Bearer (Anthropic, advisor のみ) | ✅ | | `register-ticker`, `unregister-ticker`, `backtest`, `compare-strategies`, `advise`, `export-dashboard`, `export-dashboard-md` (永続化済み、Phase 7 で broker 接続) |
 | `business` | 事業ダッシュボード (10 categories) | none | ✅ | | `advise`, `export-dashboard`, `export-dashboard-md` (EC / dropship / OEM/ODM / blog / blog-affiliate / PPC-affiliate / video-production / video-upload / video-distribution / sns-ops, Phase 6 で 実 API 接続) |
 | `funding` | 資金調達レーダー — 補助金/助成金/融資/公庫/給付金/CF を会計・株式連携で可視化 (レーダー/折れ線/円/棒) | none (local mock) | ✅ | | (read-only — 集計は src/shared/funding.ts の純粋関数。Phase 6 で会計/公庫 API 接続) |
@@ -2501,7 +2535,7 @@ effect と他 instance からの通知は戻り値を受け取らないので、
 **資格情報の一覧も同じだった** (2026-09-06)。main の `listConfiguredServices` は
 `readStore()` が返す `{}` の鍵を数えており、ブラウザ版の `listConfigured` は
 `catch { return []; }` だった —— どちらも**読めなかったことを「1 件も登録されていない」と
-名乗る**。画面は 75 サービスすべてに「トークン未設定」を出すので、利用者の自然な次の手は
+名乗る**。画面は 76 サービスすべてに「トークン未設定」を出すので、利用者の自然な次の手は
 **API キーの再入力**で、それは `setToken` が (正しく) 断るので徒労に終わる。
 `readStoredToken` は既に `absent` / `undecryptable` を分けていたが、**保管ファイルが
 読めない場合は `absent` に化けていた** —— `readStore` の `{}` に鍵が無いためである。

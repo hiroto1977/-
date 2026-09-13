@@ -134,3 +134,37 @@ export function isoDateFromTimestamp(v: unknown): string | null {
    */
   return d.toISOString().split('T')[0]!;
 }
+
+/**
+ * **`YYYY-MM-DD` に日数を足す。読めない日付は `null`** (2026-09-13 · パス 194)。
+ *
+ * 暦を読む実装はこのファイルに 1 つだけ置く (パス 115 の教訓 —— 同じ判定が
+ * 7 通りに割れていた)。`Date.UTC` で足すので夏時間の影響を受けない
+ * (日付だけを扱うので時刻帯は無関係)。
+ *
+ * `n` は整数のみ。小数・NaN・±Infinity は `null` —— 「0.5 日後」は
+ * 日付として意味を持たず、黙って切り捨てると呼び側の誤りが隠れる。
+ */
+export function addIsoDays(iso: unknown, n: number): string | null {
+  const p = parseIsoDate(iso);
+  if (p === null || p.day === null) return null;
+  if (!Number.isInteger(n)) return null;
+  // **`isoDateFromTimestamp` を通す** —— 表せる範囲の判定と `split('T')` の
+  // 切り方をここで写すと、同じ処理が 2 通りになる (パス 188 が 3 か所の写しを
+  // 1 つにまとめた場所である。`timestampPrintCensus` が写しを掴む)。
+  return isoDateFromTimestamp(Date.UTC(p.year, p.month - 1, p.day) + n * 86_400_000);
+}
+
+/**
+ * **2 つの `YYYY-MM-DD` の日数差 (to − from)。どちらかが読めなければ `null`。**
+ *
+ * `null` と `0` を混ぜない —— 「同じ日」と「日付が読めない」は打ち手が違う
+ * (前者は今日の作業、後者は入力の直し)。
+ */
+export function isoDaysBetween(from: unknown, to: unknown): number | null {
+  const a = parseIsoDate(from);
+  const b = parseIsoDate(to);
+  if (a === null || a.day === null || b === null || b.day === null) return null;
+  const ms = Date.UTC(b.year, b.month - 1, b.day) - Date.UTC(a.year, a.month - 1, a.day);
+  return Math.round(ms / 86_400_000);
+}

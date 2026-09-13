@@ -14,6 +14,7 @@ import {
 import { NO_SECURED_FUNDING_NOTE } from '../../shared/funding';
 import { MIN_SAFE_VERSION } from '../../shared/ollama';
 import { NO_DEAL_INTAKE } from '../../shared/freeeIntake';
+import { buildHydroponicsSnapshot } from '../../shared/hydroponicsControl';
 
 /**
  * 見本の画像は **インライン (`data:`) にする**。
@@ -1171,6 +1172,18 @@ export const SNAPSHOT = {
     stored: 'none' as 'saved' | 'none' | 'unreadable',
     storedNote: null as string | null,
   },
+
+  /**
+   * 水耕栽培の運転管理。**利用者のデータでなく「何を測るか」の台帳**で、
+   * 見本ではない —— **`shared/hydroponicsControl.ts` から組む**。
+   *
+   * ここを型だけの空の入れ物にしていたとき、**初回描画の台帳が空の表**に
+   * なった (`useServiceData` はまず snapshot を返すので、「更新」を押すまで
+   * 何も出ない)。e2e が実測で拾った —— パス 118 の「口はあるが繋がっていない」。
+   *
+   * 測定・ロット・設定は record store (端末内) に在り、**ここには入らない**。
+   */
+  hydroponics: buildHydroponicsSnapshot(),
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 

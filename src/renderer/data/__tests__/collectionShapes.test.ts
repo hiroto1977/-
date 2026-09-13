@@ -125,6 +125,63 @@ const SAMPLES: Readonly<Record<string, Sample>> = {
     ],
   },
   'hydroponics-crops': { good: { crops: [] }, required: [], optional: ['crops'] },
+  // 運転管理 (2026-09-13 ・ パス 194)。
+  'hydroponics-readings': {
+    good: { at: '2026-09-13', values: { ec: 1.0, ph: 6.0, co2Ppm: null }, batchId: 'b1', note: 'n' },
+    required: ['at', 'values', 'batchId'],
+    optional: ['note'],
+  },
+  'hydroponics-batches': {
+    good: {
+      id: 'b1',
+      cropId: 'leaf-lettuce',
+      sowDate: '2026-09-01',
+      panels: 10,
+      state: 'nursery',
+      transplantedDate: null,
+      harvestedDate: null,
+      solutionChangedDate: null,
+      note: '',
+    },
+    required: [
+      'id', 'cropId', 'sowDate', 'panels', 'state',
+      // `orNull(calendarDate)` なので **null は通るが undefined は落ちる** —— 必須の側。
+      'transplantedDate', 'harvestedDate', 'solutionChangedDate',
+    ],
+    optional: ['note'],
+    enumOut: [['state', 'sprouting']],
+  },
+  'hydroponics-control': {
+    good: {
+      waterTempLowC: 18,
+      waterTempHighC: 22,
+      airTempLowC: 18,
+      airTempHighC: 25,
+      humidityLowPct: 60,
+      humidityHighPct: 80,
+      co2LowPpm: 400,
+      co2HighPpm: 1500,
+      dissolvedOxygenLowMgL: 5,
+      waterLevelLowPct: 60,
+      tankLiters: null,
+      stockEcRisePerMlPerL: null,
+      alkalinityMgCaCO3PerL: null,
+      acidNormality: null,
+      residualAlkalinityMgCaCO3PerL: 30,
+      solutionChangeIntervalDays: 14,
+      readingStaleDays: 3,
+      harvestNoticeDays: 3,
+    },
+    required: [
+      'waterTempLowC', 'waterTempHighC', 'airTempLowC', 'airTempHighC', 'humidityLowPct',
+      'humidityHighPct', 'co2LowPpm', 'co2HighPpm', 'dissolvedOxygenLowMgL', 'waterLevelLowPct',
+      'residualAlkalinityMgCaCO3PerL', 'solutionChangeIntervalDays', 'readingStaleDays', 'harvestNoticeDays',
+      // 設備の 4 欄は `orNull(num)` —— **未入力 (null) は通るが、欄そのものが
+      // 無い控えは落とす** (「入力していない」と「古い版の控え」を混ぜない)。
+      'tankLiters', 'stockEcRisePerMlPerL', 'alkalinityMgCaCO3PerL', 'acidNormality',
+    ],
+    optional: [],
+  },
   'highlight-settings': {
     good: { declineWarnStreak: 2, declineCriticalStreak: 3, laborShareWarnPct: 60, singleChannelWarnPct: 60 },
     required: [],
@@ -155,8 +212,8 @@ const without = (rec: Record<string, unknown>, key: string): Record<string, unkn
 };
 
 describe('collection ごとの中身の形', () => {
-  it('標本は 20 collection ぶんある (空振りでない)', () => {
-    expect(Object.keys(SAMPLES).length).toBeGreaterThanOrEqual(20);
+  it('標本は 23 collection ぶんある (空振りでない)', () => {
+    expect(Object.keys(SAMPLES).length).toBeGreaterThanOrEqual(23);
     expect(Object.keys(COLLECTION_SHAPES).sort()).toEqual(Object.keys(SAMPLES).sort());
   });
 
@@ -228,6 +285,20 @@ describe('collection ごとの中身の形', () => {
       expect(hasCollectionShape('balance-sheet', { ...bs, asOf: bad }), `asOf ${bad}`).toBe(false);
       expect(hasCollectionShape('business-units', { ...unit, startedOn: bad }), `startedOn ${bad}`).toBe(false);
     }
+    // 運転管理 (パス 194)。測定日と播種日は日まで必要 (月だけは不可)。
+    const reading = SAMPLES['hydroponics-readings']!.good;
+    const batch = SAMPLES['hydroponics-batches']!.good;
+    for (const bad of ['2026-02-30', '2026-13-01', '2026-09', '2026/09/13', '']) {
+      expect(hasCollectionShape('hydroponics-readings', { ...reading, at: bad }), `at ${bad}`).toBe(false);
+      expect(hasCollectionShape('hydroponics-batches', { ...batch, sowDate: bad }), `sowDate ${bad}`).toBe(false);
+      // 定植日は **null (まだ) か、暦に在る日** —— 読めない綻りは落とす。
+      expect(
+        hasCollectionShape('hydroponics-batches', { ...batch, transplantedDate: bad }),
+        `transplantedDate ${bad}`,
+      ).toBe(false);
+    }
+    expect(hasCollectionShape('hydroponics-batches', { ...batch, transplantedDate: null })).toBe(true);
+    expect(hasCollectionShape('hydroponics-batches', { ...batch, transplantedDate: '2026-09-25' })).toBe(true);
   });
 
   it('parameter-overrides.values は値が全部数値のときだけ通る', () => {

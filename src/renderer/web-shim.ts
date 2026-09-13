@@ -60,6 +60,7 @@ import {
   checkAdvisorQuestion,
 } from '../shared/advisorQuestionLimits';
 import { MAX_ADVISOR_ACTION_ITEMS, MAX_ADVISOR_ITEM_CHARS, MAX_ADVISOR_RATIONALE_CHARS, MAX_ADVISOR_RECOMMENDATIONS, MAX_ADVISOR_RISK_FACTORS } from '../shared/advisorResponseLimits';
+import { buildHydroponicsSnapshot } from '../shared/hydroponicsControl';
 import { MAX_ANALYZE_TEXT_CHARS } from '../shared/emotionsLimits';
 import {
   MAX_RECORD_NOTE_CHARS,
@@ -1203,6 +1204,23 @@ const shim = {
     // (Electron 版の state.json 由来フェッチと同じ操作感: 「更新」/登録で反映)
     if (serviceId === 'stocks') {
       return ok(buildStocksSnapshot()) as ActionResult<T>;
+    }
+    /*
+     * 水耕栽培の運転管理 (2026-09-13 ・ パス 194)。
+     *
+     * 返すのは「何を測るか」の台帳だけで、**デスクトップ版と同じ関数**を呼ぶ
+     * (`shared/hydroponicsControl.ts` の `buildHydroponicsSnapshot`)。
+     *
+     * ここが無いまま `not_implemented` へ落ちると、画面の「測定項目の台帳」が
+     * **空の表**になる (落とし先の `SNAPSHOT.hydroponics` は型だけで中身が無い)。
+     * パス 118 / 120 / 121 と同じ「口はあるが繋がっていない」形で、
+     * **e2e が実測で拾った** (台帳 8 行を期待した検査が 0 行で落ちた)。
+     *
+     * 測定・ロット・設定は record store (IndexedDB) に在り、画面が直接読むので
+     * ここには入れない (デスクトップ版も同じ)。
+     */
+    if (serviceId === 'hydroponics') {
+      return ok(buildHydroponicsSnapshot()) as ActionResult<T>;
     }
     // ollama はブラウザ版でも **実際にローカルへ接続する**。Ollama は既定で
     // CORS ヘッダを返さないため、失敗時は「未起動」と「OLLAMA_ORIGINS 未設定」を

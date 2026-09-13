@@ -1,11 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  calendarDateMessage,
-  isCalendarDate,
-  isCalendarDateOrMonth,
-  isCalendarMonth,
-  parseIsoDate,
-} from '../isoDate';
+import { addIsoDays, calendarDateMessage, isCalendarDate, isCalendarDateOrMonth, isCalendarMonth, isoDaysBetween, parseIsoDate } from '../isoDate';
 
 /*
  * **日付の綴りと暦の判定は 1 か所 (`shared/isoDate.ts`)。** (2026-09-09 · パス 115)
@@ -92,5 +86,62 @@ describe('isCalendarDate / isCalendarMonth / isCalendarDateOrMonth', () => {
   it('断りの文面は欄の名前を受け、綴りを言う', () => {
     expect(calendarDateMessage('相談日')).toBe('相談日 は暦に在る日付 (YYYY-MM-DD) で入力してください');
     expect(calendarDateMessage('date')).toContain('YYYY-MM-DD');
+  });
+});
+
+// --- 日数の足し算と差 (2026-09-13 · パス 194) ------------------------------
+//
+// 水耕栽培の運転管理が工程 (播種 → 定植 → 収穫 → 養液交換) を数えるために足した。
+// **暦を読む実装はこのファイルに 1 つだけ** (パス 115 の教訓)。
+
+describe('addIsoDays', () => {
+  it('足す・引く・0', () => {
+    expect(addIsoDays('2026-09-01', 24)).toBe('2026-09-25');
+    expect(addIsoDays('2026-09-25', 10)).toBe('2026-10-05');
+    expect(addIsoDays('2026-10-05', -7)).toBe('2026-09-28');
+    expect(addIsoDays('2026-09-13', 0)).toBe('2026-09-13');
+  });
+
+  it('月末・年末・閏年をまたぐ', () => {
+    expect(addIsoDays('2026-01-31', 1)).toBe('2026-02-01');
+    expect(addIsoDays('2026-12-31', 1)).toBe('2027-01-01');
+    // 2028 は閏年。
+    expect(addIsoDays('2028-02-28', 1)).toBe('2028-02-29');
+    expect(addIsoDays('2026-02-28', 1)).toBe('2026-03-01');
+    expect(addIsoDays('2026-03-01', -1)).toBe('2026-02-28');
+  });
+
+  it('★ 暦に無い日・月だけの綴り・文字列でない値は null', () => {
+    expect(addIsoDays('2026-02-30', 1)).toBeNull();
+    expect(addIsoDays('2026-13-01', 1)).toBeNull();
+    expect(addIsoDays('2026-09', 1)).toBeNull();
+    expect(addIsoDays(null, 1)).toBeNull();
+    expect(addIsoDays(20260913, 1)).toBeNull();
+  });
+
+  it('★ 整数でない日数は null (0.5 日後は日付にならない)', () => {
+    expect(addIsoDays('2026-09-13', 1.5)).toBeNull();
+    expect(addIsoDays('2026-09-13', Number.NaN)).toBeNull();
+    expect(addIsoDays('2026-09-13', Number.POSITIVE_INFINITY)).toBeNull();
+  });
+
+  it('★ 表せる範囲を超えたら null (投げない)', () => {
+    expect(addIsoDays('2026-09-13', 1e12)).toBeNull();
+    expect(addIsoDays('2026-09-13', -1e12)).toBeNull();
+  });
+});
+
+describe('isoDaysBetween', () => {
+  it('差を日数で返す (to − from)', () => {
+    expect(isoDaysBetween('2026-09-01', '2026-09-25')).toBe(24);
+    expect(isoDaysBetween('2026-09-25', '2026-09-01')).toBe(-24);
+    expect(isoDaysBetween('2026-09-13', '2026-09-13')).toBe(0);
+    expect(isoDaysBetween('2026-12-31', '2027-01-01')).toBe(1);
+  });
+
+  it('★ 読めない日付は null —— 「同じ日」(0) と混ぜない', () => {
+    expect(isoDaysBetween('2026-02-30', '2026-09-13')).toBeNull();
+    expect(isoDaysBetween('2026-09-13', '2026-09')).toBeNull();
+    expect(isoDaysBetween(undefined, '2026-09-13')).toBeNull();
   });
 });

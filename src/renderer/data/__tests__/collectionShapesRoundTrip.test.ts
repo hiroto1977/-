@@ -21,6 +21,7 @@ import { parseCustomMetric } from '../overviewOverrides';
 import { parseHighlightSettings } from '../highlightSettings';
 import { HYDROPONICS_DEFAULTS } from '../hydroponicsSetup';
 import { DEFAULT_CROP_LIST } from '../../../shared/hydroponicCrops';
+import { parseBatch, parseControlRecord, parseReading } from '../hydroponicsLog';
 
 /** IndexedDB / バックアップと同じ往復 (structured clone は NaN を残すが、バックアップ JSON は null にする)。 */
 const viaJson = (v: unknown): Record<string, unknown> => JSON.parse(JSON.stringify(v)) as Record<string, unknown>;
@@ -113,6 +114,23 @@ describe('書く側の出力 → collectionShapes (往復)', () => {
     expect(hasCollectionShape('hydroponics-setup', viaJson(HYDROPONICS_DEFAULTS))).toBe(true);
     expect(hasCollectionShape('hydroponics-setup', viaJson({ ...HYDROPONICS_DEFAULTS, lowPotassium: true, switchDaysBeforeHarvest: 7, measuredPotassiumMgPer100g: 120, measuredSodiumMgPer100g: 10 }))).toBe(true);
     expect(hasCollectionShape('hydroponics-crops', viaJson({ crops: DEFAULT_CROP_LIST }))).toBe(true);
+  });
+
+  it('hydroponics-readings / -batches / -control: 書く側の parse (パス 194)', () => {
+    // 測定 —— **空欄は null (未測定)**。形の判定が null を落とせば、その控えごと消える。
+    const reading = parseReading({ at: '2026-09-13', values: { ec: '1.2', ph: '' } });
+    expect(reading.values.ph).toBeNull();
+    expect(hasCollectionShape('hydroponics-readings', viaJson(reading))).toBe(true);
+    expect(hasCollectionShape('hydroponics-readings', viaJson(parseReading({ at: '2026-09-13', values: { ec: '1.2' }, batchId: 'b1', note: 'n' })))).toBe(true);
+    // ロット —— 日付の 3 欄は未定なら null。
+    const batch = parseBatch({ id: 'b1', cropId: 'leaf-lettuce', sowDate: '2026-09-01', panels: '10', state: 'nursery' });
+    expect(batch.transplantedDate).toBeNull();
+    expect(hasCollectionShape('hydroponics-batches', viaJson(batch))).toBe(true);
+    // 設定 —— **設備の 4 欄は未入力の null**。
+    const control = parseControlRecord({});
+    expect(control.tankLiters).toBeNull();
+    expect(hasCollectionShape('hydroponics-control', viaJson(control))).toBe(true);
+    expect(hasCollectionShape('hydroponics-control', viaJson(parseControlRecord({ tankLiters: '1000', stockEcRisePerMlPerL: '0.002', alkalinityMgCaCO3PerL: '80', acidNormality: '1' })))).toBe(true);
   });
 
   it('parameter-overrides / connector-output: 書く側の literal', () => {

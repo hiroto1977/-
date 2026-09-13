@@ -3141,6 +3141,192 @@ async function aiCeilingSuite(browser) {
   await ctx.close();
 }
 
+/**
+ * 水耕栽培の運転管理 (2026-09-13 · パス 194)。
+ *
+ * **測定を記録 → 判定 → 今日やること** が実ブラウザで繋がっていることを押して確かめる。
+ * 単体検査は純粋関数を留めているが、「入力欄 → 保存 → 判定 → 作業リスト」が
+ * **配線されている**ことは組み上げないと分からない (「口はあるが繋がっていない」を
+ * 作らないため)。
+ */
+async function hydroponicsSuite(browser) {
+  console.log('\n=== hydroponics (水耕栽培の運転管理: 測定 → 判定 → 今日やること) ===');
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1100 } });
+  const page = await ctx.newPage();
+  const errs = [];
+  collectErrors(page, errs);
+
+  await page.goto(FILE + '#/hydroponics', { waitUntil: 'domcontentloaded' });
+  await setupVault(page);
+  await page.waitForSelector('text=今日やること', { timeout: 30000 });
+  const body = async () => (await page.locator('body').textContent()) ?? '';
+
+  // 1. 何も記録していない状態は「全部正常」ではなく「まだ分からない」と言う。
+  let t = await body();
+  ok(
+    (await page.locator('[data-hydroponics-no-readings]').count()) === 1,
+    'hydroponics: ★ 記録が無いとき「まだ分からない」と言う (緑にしない)',
+  );
+  ok(t.includes('測定を記録する'), 'hydroponics: 記録が無いとき「測定を記録する」が作業に出る');
+  ok(!t.includes('今日やることはありません'), 'hydroponics: ★ 未測定を「やることなし」と言わない');
+
+  // 2. 根拠の断り (目標域は目安) が出ている。
+  ok(
+    (await page.locator('[data-hydroponics-basis]').count()) === 1,
+    'hydroponics: 目標域が目安であることを断る',
+  );
+
+  // 3. 台帳が取得できている (fetcher → 画面)。
+  ok(
+    (await page.locator('[data-hydroponics-ledger]').count()) === 8,
+    'hydroponics: 測定項目の台帳 8 行が fetcher から届く',
+  );
+
+  /*
+   * 3b. **「更新」がブラウザ版でも返る** —— web-shim の `fetchSnapshot` に枝が
+   * 無ければ `err('not_implemented', …)` になる (パス 118 の形)。押して確かめる。
+   *
+   * **ここは 2026-09-13 のパス 194 で書き直した。** 元は
+   * `!t.includes('not_implemented') && !t.includes('未対応')` だったが、
+   * 画面に出るのは**エラーコードではなく文面** ('ブラウザ版では live fetch を
+   * 行いません。…') なので、**枝を消しても通る空の検査**だった (実測: 枝を
+   * 消してビルドし直しても 23 件すべて緑)。CLAUDE.md の
+   * 「不在を主張する検査には標本を添える / 肯定形で書けるほうが安全」。
+   *
+   * 肯定形で書く —— 取得に成功すると `StatusBar` のバッジは
+   * `describeOrigin('local', 'live')` の **緑の「ローカル」**になる。
+   * 失敗すると同じ 1 枠が**「エラー」**に変わる (バッジは 1 枠しか無い)。
+   * だから「緑のローカルが在る」は、枝が無ければ必ず鳴る。
+   */
+  await page.getByRole('button', { name: '更新' }).first().click();
+  await page.waitForFunction(
+    () => !document.body.textContent.includes('更新中…'),
+    undefined,
+    { timeout: 20000 },
+  );
+  t = await body();
+  ok(
+    (await page.locator('.badge.ok', { hasText: 'ローカル' }).count()) >= 1,
+    'hydroponics: ★ 更新後のバッジが緑の「ローカル」(web-shim に枝が在る)',
+  );
+  ok(
+    !t.includes('ブラウザ版では live fetch を行いません'),
+    'hydroponics: ★ 「ブラウザ版では live fetch を行いません」が出ていない (実際の文面で見る)',
+  );
+  ok(
+    (await page.locator('[data-hydroponics-ledger]').count()) === 8,
+    'hydroponics: ★ 更新後も台帳は 8 行 (同じ関数を通っている)',
+  );
+
+  // 4. **範囲外の EC を記録する** → 判定が「低い」になり、作業に「上げる」が出る。
+  await page.locator('[data-hydroponics-input="ec"]').fill('0.4');
+  await page.locator('[data-hydroponics-input="ph"]').fill('6.0');
+  await page.locator('[data-hydroponics-save="reading"]').click();
+  await page.waitForSelector('[data-hydroponics-ok="reading"]', { timeout: 20000 });
+  await page.waitForSelector('[data-hydroponics-task="adjust:ec"]', { timeout: 20000 });
+  t = await body();
+  ok(true, 'hydroponics: ★ 測定を記録すると判定と作業が出る (配線されている)');
+  ok(t.includes('養液 ECを上げる'), 'hydroponics: EC が下限未満なら「上げる」');
+  // **量は出せない** (タンク容量も原液の上昇率も未入力)。足りない物を名指しする。
+  //
+  // **作業行そのものを見る** —— 「量は出せません」は設定の節の**説明文**にも
+  // 出てくるので、body 全体を見ると (今日の付け方がどうであれ)常に真になる。
+  const ecRow = async () =>
+    (await page.locator('[data-hydroponics-task="adjust:ec"]').textContent()) ?? '';
+  let row0 = await ecRow();
+  ok(row0.includes('量は出せません'), 'hydroponics: ★ 設備が未入力なら量を出さない');
+  ok(row0.includes('養液タンクの容量'), 'hydroponics: ★ 足りない物を名指しする');
+
+  // 5. **測っていない項目は「未測定」で、緑にならない。**
+  const unmeasured = await page.locator('[data-hydroponics-field="co2Ppm"]').textContent();
+  ok(
+    (unmeasured ?? '').includes('未測定'),
+    `hydroponics: ★ 空欄の項目は「未測定」(適正ではない) — 実際 "${String(unmeasured).replace(/\s+/g, ' ').slice(0, 60)}"`,
+  );
+  ok(
+    (await page.locator('[data-hydroponics-task="measure:co2Ppm"]').count()) === 1,
+    'hydroponics: ★ 未測定の項目は作業リストに出る (画面から消えない)',
+  );
+
+  // 6. **読めない値は保存する前に断る。**
+  await page.locator('[data-hydroponics-input="ph"]').fill('99');
+  await page.locator('[data-hydroponics-save="reading"]').click();
+  await page.waitForSelector('[data-hydroponics-error="reading"]', { timeout: 20000 });
+  const err = await page.locator('[data-hydroponics-error="reading"]').textContent();
+  ok((err ?? '').includes('範囲'), `hydroponics: ★ pH 99 を断る — 実際 "${String(err).slice(0, 50)}"`);
+
+  // 7. **設備を入れると量が出る** (断りが消え、mL が出る)。
+  await page.locator('[data-hydroponics-edit-control]').click();
+  await page.waitForSelector('[data-hydroponics-control-input="tankLiters"]', { timeout: 15000 });
+  await page.locator('[data-hydroponics-control-input="tankLiters"]').fill('1000');
+  await page.locator('[data-hydroponics-control-input="stockEcRisePerMlPerL"]').fill('0.01');
+  await page.locator('[data-hydroponics-save="control"]').click();
+  await page.waitForSelector('[data-hydroponics-ok="control"]', { timeout: 20000 });
+  await page.waitForFunction(
+    () => {
+      const el = document.querySelector('[data-hydroponics-task="adjust:ec"]');
+      return el !== null && (el.textContent ?? '').includes('原液を約');
+    },
+    undefined,
+    { timeout: 20000 },
+  );
+  row0 = await ecRow();
+  ok(row0.includes('原液を約'), 'hydroponics: ★ 設備を入れると原液の mL が出る (設定が判定に届く)');
+  ok(
+    !row0.includes('量は出せません'),
+    'hydroponics: ★ 断りが消える (同じ行で両方言わない)',
+  );
+
+  // 8. **ロットを足すと工程の日程が出る** (播種 → 定植 → 収穫)。
+  await page.locator('[data-hydroponics-input="batch-id"]').fill('E2Eロット');
+  await page.locator('[data-hydroponics-input="batch-panels"]').fill('10');
+  await page.locator('[data-hydroponics-input="batch-sow"]').fill('2026-01-05');
+  await page.locator('[data-hydroponics-save="batch"]').click();
+  await page.waitForSelector('[data-hydroponics-batch="E2Eロット"]', { timeout: 20000 });
+  const row = await page.locator('[data-hydroponics-batch="E2Eロット"]').textContent();
+  // リーフレタス: 育苗 24 日 → 2026-01-29、定植後 10 日 → 2026-02-08。
+  ok(
+    (row ?? '').includes('2026-01-29') && (row ?? '').includes('2026-02-08'),
+    `hydroponics: ★ 播種日から定植・収穫の予定が出る — 実際 "${String(row).replace(/\s+/g, ' ').slice(0, 90)}"`,
+  );
+  t = await body();
+  // 状態は「育苗中」なので、過ぎているのは**定植予定日** (2026-01-29)。
+  // 収穮の作業は「定植済み」のロットにしか出ない —— 工程を飛ばさないことを留める。
+  ok(
+    (await page.locator('[data-hydroponics-task="batch:E2Eロット:transplant"]').count()) === 1,
+    'hydroponics: ★ 予定を過ぎた育苗中のロットは「定植する」が出る',
+  );
+  ok(
+    (await page.locator('[data-hydroponics-task="batch:E2Eロット:solution-change"]').count()) === 1,
+    'hydroponics: ★ 周期を過ぎた養液交換も作業に出る',
+  );
+  ok(
+    !t.includes('収穫する'),
+    'hydroponics: ★ 育苗中のロットに「収穫する」と言わない (工程を飛ばさない)',
+  );
+
+  // 9. **同じロット名は断る** (重複を黙って作らない)。
+  await page.locator('[data-hydroponics-input="batch-id"]').fill('E2Eロット');
+  await page.locator('[data-hydroponics-input="batch-panels"]').fill('5');
+  await page.locator('[data-hydroponics-save="batch"]').click();
+  await page.waitForSelector('[data-hydroponics-error="batch"]', { timeout: 20000 });
+  ok(true, 'hydroponics: ★ 同じロット名を断る');
+
+  // 10. 後片付け —— 削除できる (保存した物は消せる道が要る)。
+  await page.locator('[data-hydroponics-remove-batch="E2Eロット"]').click();
+  await page.waitForFunction(
+    () => document.querySelectorAll('[data-hydroponics-batch]').length === 0,
+    undefined,
+    { timeout: 20000 },
+  );
+  ok(true, 'hydroponics: ★ ロットを削除できる');
+
+  const realErrs = errs.filter((e) => !/favicon|Autofocus/.test(e));
+  ok(realErrs.length === 0, `hydroponics: コンソールエラー 0 件 (${realErrs.length})`);
+  if (realErrs.length) console.log(realErrs.join('\n'));
+  await ctx.close();
+}
+
 async function parameterSuite(browser) {
   console.log('\n=== parameters (数値パラメータ: 設定 → 別画面へ反映 → 既定に戻す) ===');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
@@ -3290,7 +3476,7 @@ async function hardResetSuite(browser) {
   const SUITES = [
     'desktop', 'manualData', 'dataOrigin', 'credential', 'businessComparison', 'kessanTax', 'frameGuard', 'noBeacon',
     'vaultPassword', 'credentialEgress', 'proxyEnvelope', 'cspEnforced', 'vaultOpacity', 'crossTabLock', 'storageDurability', 'hardReset',
-    'securityPosture', 'thirdPartyDisclosure', 'realtime', 'phone', 'talent', 'teamRadar', 'demoMix', 'paperAccount', 'serviceAdvice', 'parameters', 'writeCeiling', 'aiCeiling', 'tablet',
+    'securityPosture', 'thirdPartyDisclosure', 'realtime', 'phone', 'talent', 'teamRadar', 'demoMix', 'paperAccount', 'serviceAdvice', 'hydroponics', 'parameters', 'writeCeiling', 'aiCeiling', 'tablet',
   ];
   const unknown = only.filter((n) => !SUITES.includes(n));
   if (unknown.length > 0) {
@@ -3328,6 +3514,7 @@ async function hardResetSuite(browser) {
   if (run('demoMix')) await demoMixSuite(browser);
   if (run('paperAccount')) await paperAccountSuite(browser);
   if (run('serviceAdvice')) await serviceAdviceSuite(browser);
+  if (run('hydroponics')) await hydroponicsSuite(browser);
   if (run('parameters')) await parameterSuite(browser);
   if (run('writeCeiling')) await writeCeilingSuite(browser);
   if (run('aiCeiling')) await aiCeilingSuite(browser);
