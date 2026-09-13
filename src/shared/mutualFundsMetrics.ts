@@ -7,7 +7,7 @@
  */
 
 import { round2, yen, nonNeg, finiteOrNull } from './num';
-import { isPlannableYears } from './savingsPlanning';
+import { isPlannableRate, isPlannableYears } from './savingsPlanning';
 
 /**
  * 保有年数を測れる上限。**画面の宣言と同じ数の唯一の出所** (保有年数 欄の `max`)。
@@ -26,6 +26,35 @@ export const MAX_HOLDING_YEARS = 100;
 /** 保有年数を測れるか (上限は {@link MAX_HOLDING_YEARS})。 */
 export function isMeasurableHoldingYears(years: number): boolean {
   return Number.isFinite(years) && years <= MAX_HOLDING_YEARS;
+}
+
+/**
+ * **信託報酬・隠れコストの上限 (年率 %)。** (2026-09-13 · パス 207)
+ *
+ * `MutualFundsPage` の `信託報酬 (%)` / `隠れコスト (%)` は `max: 20` を宣言して
+ * ⛔ の赤枠を出すのに、`calcRealCost` はその値を読んでいた。実測 (直す前・
+ * 999,999,999% を入れた時):
+ *
+ * | タイル | 出ていた物 |
+ * | --- | --- |
+ * | 実質コスト率 (年率) | **`999999999.2%`** |
+ * | 年間コスト概算 | **`¥82,401,399,934,079`** (82 兆円) |
+ * | N年累計の蝕み効果 | **`¥8.24 × 10^41`** |
+ *
+ * 20% は投資信託の運用管理費用として実在の最大側 (国内公募投信の上限帯) で、
+ * これを超える入力は打ち間違いである。**黙って 20 に丸めない**: `null` を返し、
+ * 画面が「—」と理由を出す (`MAX_HOLDING_YEARS` / `MAX_PLAN_YEARS` と同じ約束)。
+ */
+export const MAX_COST_RATE_PCT = 20;
+
+/**
+ * コスト率を測れるか (上限は {@link MAX_COST_RATE_PCT})。
+ *
+ * **下限は見ない** —— 0% は「コストが無い」という正しい答えで、負値は
+ * `calcRealCost` が 0 にクランプする既存の契約のままにしてある。
+ */
+export function isMeasurableCostRate(pct: number): boolean {
+  return Number.isFinite(pct) && pct <= MAX_COST_RATE_PCT;
 }
 
 export interface CompoundingSimulation {
@@ -64,7 +93,10 @@ export function calcCompoundingFutureValue(
   // 上限を超えた年数は算定不能。**`Math.pow(1 + r, n)` が `Infinity` になり、
   // 画面が「将来評価額 ¥∞ / 運用益率 Infinity%」を刷っていた** (パス 198)。
   // 積立年数の天井は `savingsPlanning` が 1 つ持つ (画面の `max` と同じ出所)。
-  if (!isPlannableYears(years)) {
+  // **年率の天井も同じ関門** (パス 207)。実測: 999,999,999% で
+  // `将来評価額 ¥1.06 × 10^163`。`Infinity` ではないので `¥∞` の関門 (パス 198) を
+  // すり抜けていた —— **有限だがもっともらしくない数**は、無限より見つけにくい。
+  if (!isPlannableYears(years) || !isPlannableRate(annualReturnPct)) {
     return { futureValue: null, totalContributed: null, totalGain: null, gainPct: null };
   }
   const pmt = nonNeg(monthlyContribution);
@@ -172,8 +204,16 @@ export function calcTotalReturn(
   const totalReturnPct = round2(totalReturn * 100);
 
   // CAGR は finalValue<=0 (元本全損超) では実数解を持たないため null。
+  //
+  // **保有年数の天井もここで見る** (パス 207)。パス 198 は同じ年数を読む
+  // `calcRealCost` に `isMeasurableHoldingYears` を入れたが、**2 人いる読み手の
+  // 片方しか直していなかった** (パス 66 と同じ形)。実測: 保有年数 999,999,999 年で
+  // `Math.pow(1.1506, 1/1e9) - 1` ≈ 1.4e-10 が `round2` で **`0%`** に落ち、
+  // +15% のポートフォリオが「年率換算 0%」= 横ばい (しかも赤) として刷られていた。
+  // 10^163 のような明らかに変な値ではなく**普通の答えの見た目**をしているので、
+  // 読む側に気づく手がかりが無い。
   let cagrPct: number | null = null;
-  if (isFiniteNumber(years) && years > 0 && finalValue > 0) {
+  if (isMeasurableHoldingYears(years) && isFiniteNumber(years) && years > 0 && finalValue > 0) {
     const cagr = Math.pow(finalValue / principal, 1 / years) - 1;
     cagrPct = round2(cagr * 100);
   }
@@ -181,14 +221,22 @@ export function calcTotalReturn(
 }
 
 export interface RealCost {
-  /** 実質コスト率 (年率, %)。 */
-  readonly annualCostPct: number;
-  /** 1年あたりの概算コスト額 (円)。 */
-  readonly annualCostYen: number;
+  /**
+   * 実質コスト率 (年率, %)。
+   * **コスト率の欄が {@link MAX_COST_RATE_PCT} を超えると `null`** (算定不能・パス 207)。
+   */
+  readonly annualCostPct: number | null;
+  /**
+   * 1年あたりの概算コスト額 (円)。
+   * コスト率が範囲外なら `null` (同上)。
+   */
+  readonly annualCostYen: number | null;
   /**
    * 期間累計の概算コスト額 (複利でリターンを蝕む効果込み, 円)。
    * **保有年数が {@link MAX_HOLDING_YEARS} を超えると `null`** (算定不能) ——
    * `Infinity - Infinity = NaN` が `¥NaN` として刷られていた (パス 198)。
+   * **想定年率が {@link MAX_PLAN_RATE_PCT} を超えるときも `null`** (パス 207) ——
+   * 年率だけが範囲外のとき `¥4.9 × 10^33` を刷っていた。
    */
   readonly cumulativeCostYen: number | null;
 }
@@ -220,6 +268,13 @@ export function calcRealCost(
   const gross = isFiniteNumber(grossReturnPct) ? grossReturnPct : 0;
   const yrs = isFiniteNumber(years) ? Math.max(0, years) : 0;
 
+  // **コスト率が範囲外なら年率のコストそのものが測れない** (パス 207) ——
+  // 画面が ⛔ で断っている率を足して「実質コスト率 999999999.2%」と刷っていた。
+  // 3 欄すべてを `null` にするのはここだけ (= 率が読めなければ何も出ない)。
+  if (!isMeasurableCostRate(expenseRatioPct) || !isMeasurableCostRate(hiddenCostPct)) {
+    return { annualCostPct: null, annualCostYen: null, cumulativeCostYen: null };
+  }
+
   const annualCostPct = round2(expense + hidden);
   const annualCostYen = yen(amount * (annualCostPct / 100));
 
@@ -227,7 +282,8 @@ export function calcRealCost(
   // **年率のコストは年数と無関係に測れる** ので `annualCostPct` / `annualCostYen`
   // は返し続ける。算定不能なのは累計の蝕み効果だけ —— 1 つの範囲外の欄で
   // 測れている隣の数字まで隠さない。
-  if (!isMeasurableHoldingYears(years)) {
+  // 想定年率 (`grossReturnPct`) は累計の蝕み効果**だけ**が読むので、同じ扱い。
+  if (!isMeasurableHoldingYears(years) || !isPlannableRate(grossReturnPct)) {
     return { annualCostPct, annualCostYen, cumulativeCostYen: null };
   }
   const grossRate = gross / 100;

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { measured } from './measured';
 import {
+  MAX_PLAN_RATE_PCT,
   requiredMonthlyContribution,
   yearsToDouble,
   emergencyFund,
@@ -149,13 +150,18 @@ describe('inflationAdjustedValue', () => {
    * このリポジトリが 3 度直してきた 0 倒し (パス 52 / 85 / 91) と同じ形だった。
    * 金額・率が非有限のときの `0` はそのまま (年数だけが天井を持つ量である)。
    */
-  it('金額・率が非有限なら 0、年数が非有限なら null (算定不能)', () => {
+  it('金額が非有限なら 0、年数・インフレ率が範囲外なら null (算定不能)', () => {
     expect(inflationAdjustedValue(Number.NaN, 2, 10)).toBe(0);
-    expect(inflationAdjustedValue(1_000_000, Number.NaN, 10)).toBe(0);
     expect(inflationAdjustedValue(1_000_000, 2, Number.POSITIVE_INFINITY)).toBeNull();
     expect(inflationAdjustedValue(1_000_000, 2, Number.NaN)).toBeNull();
-    // 対照: 範囲内の年数なら値が出る (この検査が何でも通る形でないこと)
+    // **インフレ率の側も `null`** (2026-09-13 · パス 207)。以前は `0` を返しており、
+    // 「実質価値はゼロ」という**別の断定**になっていた (`isPlannableRate` が
+    // 非有限と上限超過の両方を落とす)。
+    expect(inflationAdjustedValue(1_000_000, Number.NaN, 10)).toBeNull();
+    expect(inflationAdjustedValue(1_000_000, 999_999_999, 10)).toBeNull();
+    // 対照: 範囲内の年数・率なら値が出る (この検査が何でも通る形でないこと)
     expect(inflationAdjustedValue(1_000_000, 2, 10)).toBe(820_348);
+    expect(inflationAdjustedValue(1_000_000, MAX_PLAN_RATE_PCT, 1)).toBe(500_000);
   });
 });
 

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { measured } from './measured';
 import {
+  MAX_COST_RATE_PCT,
+  MAX_HOLDING_YEARS,
   calcCompoundingFutureValue,
   calcSharpeRatio,
   calcTotalReturn,
@@ -210,13 +212,49 @@ describe('calcRealCost', () => {
    * 無かった」と読める値で、**保有年数が読めていないこととは別のこと**である。
    * 年率側の 2 欄は年数に依らないので `0` のまま。
    */
-  it('金額・率が非有限なら年率側は 0、年数が非有限なら累計は null', () => {
+  it('コスト率が範囲外なら 3 欄すべて null (算定不能)', () => {
+    // **以前は年率側が `0` だった** —— 「コストは無い」という最も安心させる向きの
+    // 断定である (2026-09-13 · パス 207)。`isMeasurableCostRate` が非有限と
+    // 上限超過の両方を落とす。
     const r = calcRealCost(NaN, NaN, NaN, NaN, NaN);
-    expect(r.annualCostPct).toBe(0);
-    expect(r.annualCostYen).toBe(0);
+    expect(r.annualCostPct).toBeNull();
+    expect(r.annualCostYen).toBeNull();
     expect(r.cumulativeCostYen).toBeNull();
-    // 対照: 年数が範囲内なら累計が出る
-    expect(calcRealCost(1_000_000, 1, 0, 5, 10).cumulativeCostYen).not.toBeNull();
+    const over = calcRealCost(1_000_000, 999_999_999, 0, 5, 10);
+    expect(over.annualCostPct).toBeNull();
+    expect(over.annualCostYen).toBeNull();
+    expect(over.cumulativeCostYen).toBeNull();
+    // 隠れコストの側だけが範囲外でも同じ (2 欄が同じ上限を持つ)。
+    expect(calcRealCost(1_000_000, 1, 999_999_999, 5, 10).annualCostPct).toBeNull();
+    // 年数だけが範囲外なら、年率のコストは残り累計だけが null。
+    const yearsOnly = calcRealCost(1_000_000, 1, 0, 5, 999_999_999);
+    expect(yearsOnly.annualCostPct).toBe(1);
+    expect(yearsOnly.cumulativeCostYen).toBeNull();
+    // 想定年率だけが範囲外でも同じ (累計の蝕み効果だけが年率を読む)。
+    const rateOnly = calcRealCost(1_000_000, 1, 0, 999_999_999, 10);
+    expect(rateOnly.annualCostPct).toBe(1);
+    expect(rateOnly.cumulativeCostYen).toBeNull();
+    // 対照: すべて範囲内なら 3 欄とも出る
+    const ok = calcRealCost(1_000_000, 1, 0, 5, 10);
+    expect(ok.annualCostPct).toBe(1);
+    expect(ok.annualCostYen).toBe(10_000);
+    expect(ok.cumulativeCostYen).not.toBeNull();
+    // 上限ちょうどは通る (境界)。
+    expect(calcRealCost(1_000_000, MAX_COST_RATE_PCT, 0, 5, 10).annualCostPct).toBe(MAX_COST_RATE_PCT);
+  });
+
+  it('★ 保有年数が範囲外なら CAGR は null (0% と刷らない · パス 207)', () => {
+    // 実測 (直す前): `Math.pow(1.1506, 1/1e9) - 1` ≈ 1.4e-10 が `round2` で **0** に
+    // 落ち、+15% のポートフォリオが「年率換算 0%」= 横ばい (赤) になっていた。
+    const over = calcTotalReturn(1_000_000, 1_150_600, 0, 999_999_999);
+    expect(over.cagrPct).toBeNull();
+    // トータルリターンは年数に依らないので残る。
+    expect(over.totalReturnPct).toBe(15.06);
+    // 対照: 範囲内の年数なら CAGR が出る (0 でない)
+    const ok = calcTotalReturn(1_000_000, 1_150_600, 0, 5);
+    expect(ok.cagrPct).toBe(2.85);
+    // 上限ちょうどは通る (境界)。
+    expect(calcTotalReturn(1_000_000, 1_150_600, 0, MAX_HOLDING_YEARS).cagrPct).not.toBeNull();
   });
 });
 

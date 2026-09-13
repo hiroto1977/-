@@ -67,6 +67,45 @@ export function isPlannableYears(years: number): boolean {
 }
 
 /**
+ * **想定年率・インフレ率の上限 (%)。年数の上限の兄弟である。** (2026-09-13 · パス 207)
+ *
+ * パス 198 は年数の天井を入れたが、**同じ画面の「率」の欄には何も無かった** ——
+ * `MutualFundsPage` の `想定年率 (%)` / `想定インフレ率 (%)` は `max: 100` を宣言して
+ * ⛔ (`level: 'fatal'`) の赤枠を出すのに、計算はその値を読んでいた。実測 (直す前・
+ * 999,999,999% を入れた時):
+ *
+ * | タイル | 出ていた物 |
+ * | --- | --- |
+ * | 将来評価額 | **`¥1.06 × 10^163`** |
+ * | 現行積立での到達見込み | `¥1.06 × 10^98` **(達成)** |
+ * | 目標達成に必要な毎月積立額 | **`¥0`** (= 「積み立てなくてよい」) |
+ * | 72の法則 (資産倍増) | **約 0 年** |
+ * | 実質利回り (インフレ調整後) | `980392153.92%` / インフレ側は **`-100%`** |
+ *
+ * **`¥0` と `約 0 年` と `-100%` のほうが危ない** —— 10^163 は明らかに変だと分かるが、
+ * `¥0` は「積み立てなくてよい」という**普通の答えの見た目**をしている。
+ *
+ * 上限は 100% —— 資産形成の想定年率として実在の最大側で、これを超える入力は
+ * 打ち間違いである (`GuardedNumber` の宣言と同じ数字をここが持ち、画面が読む)。
+ * **黙って 100 に丸めない**: 丸めると「999,999,999% の計画が 100% で成り立つ」と
+ * いう別の誤りになるので、`null` (算定不能) を返し画面が「—」と理由を出す
+ * (`MAX_PLAN_YEARS` と同じ約束)。
+ */
+export const MAX_PLAN_RATE_PCT = 100;
+
+/**
+ * 計画に使える年率か (上限は {@link MAX_PLAN_RATE_PCT})。
+ *
+ * **下限は見ない** —— 0%・負の年率は各関数の既存の契約のままにしてある
+ * (`0% で積み立てたら元本のまま` は**正しい答え**で、算定不能ではない。
+ * 負の年率も「目減りする想定」として意味を持つ)。`isPlannableYears` と同じで、
+ * この述語が見るのは**上限だけ**である。
+ */
+export function isPlannableRate(annualRatePct: number): boolean {
+  return Number.isFinite(annualRatePct) && annualRatePct <= MAX_PLAN_RATE_PCT;
+}
+
+/**
  * 目標額に到達するために必要な毎月積立額 (年金終価の逆算)。
  *
  * FV = PMT × ((1 + r)^n − 1) / r  を PMT について解く。r≈0 のときは PMT = FV / n。
@@ -84,10 +123,12 @@ export function requiredMonthlyContribution(
   // 上限を超えた年数は算定不能 (`null`)。**0 を返すと「積み立てなくてよい」**
   // という最も安心させる向きの断定になる (実測: 99,999,999 年 → `¥0`)。
   // 目標額・年率も同じ契約で扱う (パス 204 の実測: どちらが非有限でも NaN が返っていた)。
+  // 年率の上限も同じ契約 (パス 207) —— 範囲外の年率から `¥0` を返すと
+  // 「積み立てなくてよい」という最も安心させる向きの断定になる。
   if (
     !isPlannableYears(years)
+    || !isPlannableRate(annualRatePct)
     || finiteOrNull(targetFutureValue) === null
-    || finiteOrNull(annualRatePct) === null
   ) return null;
   // years <= 0 は下の n <= 0 (= round(years*12)) で捕捉されるため、ここでは
   // targetFutureValue のみ判定する。targetFutureValue===0 は計算経路でも 0 に
@@ -113,8 +154,9 @@ export function requiredMonthlyContribution(
  * 年率が 0 以下なら null (倍増しない / 算定不能)。
  */
 export function yearsToDouble(annualRatePct: number): number | null {
-  // 非有限は「0 年で倍になる」ではなく「算定不能」。
-  if (finiteOrNull(annualRatePct) === null) return null;
+  // 非有限は「0 年で倍になる」ではなく「算定不能」。上限超過も同じ
+  // (実測: 999,999,999% → **約 0 年**で倍になる・パス 207)。
+  if (!isPlannableRate(annualRatePct)) return null;
   if (annualRatePct <= 0) return null;
   return Math.round((72 / annualRatePct) * 10) / 10;
 }
@@ -170,6 +212,8 @@ export function futureValueWithFrequency(
   // 上限を超えた年数は算定不能 (`null`)。`annual` の枝は年数を反復回数にするので、
   // ここは**答えの正しさと描画スレッドの両方**の関門である (実測 1 億年 = 243 ms)。
   if (!isPlannableYears(years)) return null;
+  // 年率の上限も同じ関門 (パス 207。実測: 999,999,999% → `¥1.06 × 10^163`)。
+  if (!isPlannableRate(annualRatePct)) return null;
   // 負の積立額・年数は 0 にクランプ。これ以降 pmt>=0・yrs>=0 が保証され、
   // 年数 0 (= periods/n が 0) のときは各計算経路がそのまま 0 を返すため、
   // 追加の <=0 早期 return ガードは冗長 (equivalent) として置かない。
@@ -217,6 +261,9 @@ export function inflationAdjustedValue(
   // 上限を超えた年数は算定不能 (`null`)。`0` を返すと「実質価値はゼロ」という
   // **別の断定**になる (実測: 99,999,999 年 → `¥0`)。
   if (!isPlannableYears(years)) return null;
+  // インフレ率の上限も同じ契約 (パス 207)。`0` を返すと「実質価値はゼロ」という
+  // **別の断定**になる。
+  if (!isPlannableRate(annualInflationPct)) return null;
   if (!Number.isFinite(nominalAmount) || !Number.isFinite(annualInflationPct) || !Number.isFinite(years)) {
     return 0;
   }
@@ -242,7 +289,10 @@ export function realRateOfReturn(
   nominalRatePct: number,
   annualInflationPct: number,
 ): number | null {
-  if (!Number.isFinite(nominalRatePct) || !Number.isFinite(annualInflationPct)) return null;
+  // **両方の率に上限を当てる** (パス 207)。実測では名目側が範囲外だと
+  // `980392153.92%`、インフレ側が範囲外だと **`-100%`** (= 「実質で全部失う」) を
+  // 刷っていた —— どちらも算定不能である。
+  if (!isPlannableRate(nominalRatePct) || !isPlannableRate(annualInflationPct)) return null;
   const nominal = nominalRatePct / 100;
   const inflation = annualInflationPct / 100;
   if (1 + inflation <= 0) return null;

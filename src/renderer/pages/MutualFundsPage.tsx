@@ -31,7 +31,9 @@ import {
   calcRealCost,
   ytdReturnRisk,
   calcDcaSimulation,
+  MAX_COST_RATE_PCT,
   MAX_HOLDING_YEARS,
+  isMeasurableCostRate,
   isMeasurableHoldingYears,
 } from '../../shared/mutualFundsMetrics';
 import {
@@ -42,7 +44,9 @@ import {
   realRateOfReturn,
   emergencyFundCoverage,
   goalProjection,
+  MAX_PLAN_RATE_PCT,
   MAX_PLAN_YEARS,
+  isPlannableRate,
   isPlannableYears,
 } from '../../shared/savingsPlanning';
 import { convertToJpy, fxGainLoss, ttRates, roundTripCost } from '../../shared/fxCurrency';
@@ -266,6 +270,26 @@ export function MutualFundsPage() {
     () => fundCostPrincipalNote(portfolio, jpy, readNumberOr0(holdYears), userRealCost.annualCostYen, userRealCost.cumulativeCostYen),
     [portfolio, holdYears, userRealCost],
   );
+  /**
+   * **⛔ (`level: 'fatal'`) の率の欄を名指しするための一覧** (パス 207)。
+   *
+   * 断りの文面は「どの欄か」を言わないと直せない —— 実質コストは 2 欄・
+   * 貯蓄計画は 2 欄が同じ上限を持つので、「率が範囲外です」だけでは
+   * どちらを直すのか分からない。ラベルは欄の宣言と同じ文字列を使う
+   * (写さない・パス 101 の教訓)。
+   */
+  const refusedCostRates = useMemo(() => {
+    const out: string[] = [];
+    if (!isMeasurableCostRate(readNumberOr0(costExpense))) out.push('信託報酬 (%)');
+    if (!isMeasurableCostRate(readNumberOr0(costHidden))) out.push('隠れコスト (%)');
+    return out;
+  }, [costExpense, costHidden]);
+  const refusedGoalRates = useMemo(() => {
+    const out: string[] = [];
+    if (!isPlannableRate(readNumberOr0(goalRate))) out.push('想定年率 (%)');
+    if (!isPlannableRate(readNumberOr0(inflationRate))) out.push('想定インフレ率 (%)');
+    return out;
+  }, [goalRate, inflationRate]);
 
   // ドルコスト平均法シミュレーション (価格系列はカンマ区切り入力)。
   const [dcaMonthly, setDcaMonthly] = useState('30000');
@@ -356,6 +380,15 @@ export function MutualFundsPage() {
           <Stat label="リスク (銘柄YTDの標準偏差)" value={risk.stdDevPct === null ? '—' : `${risk.stdDevPct}%`} />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
+          {/* **⛔ の保有年数から年率換算を作らない** (パス 207)。パス 198 は同じ年数を
+              読む実質コストの節だけを直しており、ここは `0%` (= 横ばい・赤) を刷っていた。 */}
+          {!isMeasurableHoldingYears(readNumberOr0(holdYears)) && (
+            <>
+              <strong>年率換算 (CAGR) は算定していません</strong> —— 保有年数は {MAX_HOLDING_YEARS} 年以下で
+              入力してください（トータルリターンは年数に依らないのでそのまま出しています）。
+              <br />
+            </>
+          )}
           ※ 分配金は再投資された前提で元本に対する総合収益として概算。リスクは年初来リターンが入力された {risk.measured} 銘柄の母標準偏差です{risk.unmeasured > 0 ? ` (未入力 ${risk.unmeasured} 銘柄は除外)` : ''}{risk.measured === 0 ? ' —— 入力された銘柄が無いので算定しません' : ''}。概算であり投資助言ではありません。
         </div>
       </Section>
@@ -367,14 +400,30 @@ export function MutualFundsPage() {
           <GuardedNumber spec={{ label: '想定年率 (%)', kind: 'percent', allowZero: true, max: 100 }} value={costGross} onChange={setCostGross} width={120} />
         </div>
         <div className="stat-grid">
-          <Stat label="実質コスト率 (年率)" value={`${realCost.annualCostPct}%`} />
-          <Stat label="年間コスト概算" value={jpy(realCost.annualCostYen)} />
+          <Stat label="実質コスト率 (年率)" value={realCost.annualCostPct === null ? DASH : `${realCost.annualCostPct}%`} />
+          <Stat label="年間コスト概算" value={jpyOrDash(realCost.annualCostYen)} />
           <Stat label={`${holdYears}年累計の蝕み効果`} value={jpyOrDash(realCost.cumulativeCostYen)} />
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.6 }}>
           {/* **「—」の理由をその場で言う。** 欄の ⛔ は「何年以下か」を言うが、
               タイルが空いている理由は別に述べる必要がある (パス 198)。 */}
-          {!isMeasurableHoldingYears(readNumberOr0(holdYears)) && (
+          {/* コスト率が範囲外なら年率のコストそのものが測れない (パス 207)。
+              ⛔ の欄を名指しする —— 2 欄あるので「どちらが」を言わないと直せない。 */}
+          {refusedCostRates.length > 0 && (
+            <>
+              <strong>この節は算定していません</strong> —— {refusedCostRates.join('・')}は {MAX_COST_RATE_PCT}% 以下で
+              入力してください（範囲外の率から実質コストとは答えません）。
+              <br />
+            </>
+          )}
+          {refusedCostRates.length === 0 && !isPlannableRate(readNumberOr0(costGross)) && (
+            <>
+              <strong>累計の蝕み効果は算定していません</strong> —— 想定年率は {MAX_PLAN_RATE_PCT}% 以下で入力してください
+              （年率のコストは想定リターンに依らないのでそのまま出しています）。
+              <br />
+            </>
+          )}
+          {refusedCostRates.length === 0 && !isMeasurableHoldingYears(readNumberOr0(holdYears)) && (
             <>
               <strong>累計の蝕み効果は算定していません</strong> —— 保有年数は {MAX_HOLDING_YEARS} 年以下で入力してください
               （年率のコストは年数に依らないのでそのまま出しています）。
@@ -584,6 +633,13 @@ export function MutualFundsPage() {
               <br />
             </>
           )}
+          {isPlannableYears(readNumberOr0(simYears)) && !isPlannableRate(readNumberOr0(simRate)) && (
+            <>
+              <strong>この節は算定していません</strong> —— 想定年率は {MAX_PLAN_RATE_PCT}% 以下で入力してください
+              （パス 207 まで、範囲外の年率から将来評価額 ¥1.06 × 10<sup>163</sup> を刷っていました）。
+              <br />
+            </>
+          )}
           ※ 毎月末積立・年率一定を仮定した複利の概算です。実際の運用成績は変動し元本割れの可能性があります。投資助言ではありません。
         </div>
       </Section>
@@ -631,6 +687,16 @@ export function MutualFundsPage() {
             <>
               <strong>到達見込み・必要積立額・実質価値は算定していません</strong> —— 達成年数は {MAX_PLAN_YEARS} 年以下で
               入力してください（範囲外の年数から「達成」とは答えません）。
+              <br />
+            </>
+          )}
+          {/* 率の側も同じ (パス 207)。**⛔ の年率から「必要な毎月積立額 ¥0」= 積み立てなくてよい、
+              ⛔ のインフレ率から「実質利回り -100%」を作っていた。** 欄を名指しする。 */}
+          {refusedGoalRates.length > 0 && (
+            <>
+              <strong>到達見込み・必要積立額・72の法則・実質価値・実質利回りは算定していません</strong> ——{' '}
+              {refusedGoalRates.join('・')}は {MAX_PLAN_RATE_PCT}% 以下で入力してください
+              （範囲外の率から「達成」や「積立 ¥0」とは答えません）。
               <br />
             </>
           )}

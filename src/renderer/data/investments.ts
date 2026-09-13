@@ -730,10 +730,15 @@ export function fundCostPrincipalNote(
   p: FundPortfolio,
   yen: (n: number) => string,
   years: number,
-  userAnnualCostYen: number,
+  /**
+   * 見本を除いた元本での 1 年あたりコスト。**コスト率の欄が範囲外なら `null`**
+   * (`calcRealCost` が算定しない・2026-09-13 · パス 207)。
+   */
+  userAnnualCostYen: number | null,
   /**
    * 見本を除いた元本での期間累計コスト。**保有年数が範囲外なら `null`**
    * (`calcRealCost` が算定しない・2026-09-13 · パス 198)。
+   * 想定年率が範囲外のときも `null` (パス 207)。
    */
   userCumulativeCostYen: number | null,
 ): string | null {
@@ -741,9 +746,19 @@ export function fundCostPrincipalNote(
   // **算定できなかった数字を文に混ぜない。** 以前は `number` を受けていたので
   // `NaN` がそのまま `¥NaN` として断り書きの中に入っていた —— 断り書き自体が
   // 壊れた数字を運ぶ形になる。累計が出ていないときは年間コストだけを述べる。
+  //
+  // **年間コストも出ていないなら、断り書きは金額を 1 つも持たない** (パス 207)。
+  // コスト率の欄が ⛔ のときは元本の話しかできないので、そこだけを述べる。
+  if (userAnnualCostYen === null) {
+    return (
+      `この元本には同梱の見本 ${p.demoCount} 銘柄が含まれています。` +
+      `見本を除く元本は ${yen(p.userOnly.totalValuation)} です` +
+      `（コスト率の欄が範囲外のため、見本を除いた負担額は算定していません）。`
+    );
+  }
   const cumulative =
     userCumulativeCostYen === null
-      ? `${years}年累計は保有年数が範囲外のため算定していません。`
+      ? `${years}年累計は保有年数または想定年率が範囲外のため算定していません。`
       : `${years}年累計 ${yen(userCumulativeCostYen)} です。`;
   return (
     `この元本には同梱の見本 ${p.demoCount} 銘柄が含まれています。` +
