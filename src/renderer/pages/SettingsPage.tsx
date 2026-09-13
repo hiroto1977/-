@@ -13,7 +13,7 @@ import { getPlan } from '../../shared/plan';
 import { issueInviteCode } from '../plan/internalLicense';
 import { getVault, MAX_TOKEN_CHARS, MIN_PASSWORD_LENGTH } from '../security/vault';
 import { CeilingNotice } from '../components/CeilingNotice';
-import { charsOverCeiling } from '../../shared/inputCeiling';
+import { charsOverCeiling, refusedCeilingNote } from '../../shared/inputCeiling';
 import { describeEraseReport, eraseScopeSummary } from '../security/eraseAll';
 import { describeDesktopEraseReport, desktopEraseScopeSummary } from '../../shared/eraseReport';
 import { isBrowserBuild } from '../runtimeMode';
@@ -52,9 +52,9 @@ import {
   CALLBACK_PASTE_PLACEHOLDER,
   describeCallbackPasteFailure,
   LOOPBACK_REDIRECT_URI,
-  MAX_CALLBACK_PASTE_CHARS,
-  MAX_OAUTH_CLIENT_ID_CHARS,
-  MAX_OAUTH_REDIRECT_URI_CHARS,
+  OAUTH_FIELD_CHARS,
+  OAUTH_FIELD_LABEL,
+  oauthFieldTooLong,
   redirectBlockedReason,
 } from '../oauth/callbackPaste';
 import { clearPkceSession, readPkceSession, savePkceSession } from '../oauth/pkceSession';
@@ -1510,23 +1510,29 @@ export function ProxySection() {
 
       {editing ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {/*
+            **`maxLength` は持たない** (2026-09-13 · パス 197)。貼った Worker URL の
+            末尾が黙って落ちると、要求は**別のホストへ** (Authorization ヘッダを
+            載せたまま) 飛ぶ。天井は `normalizeProxyEndpoint` / `isValidProxySecret`
+            が断るので、画面は切らずに述べる。
+          */}
           <input
             type="text"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="https://my-worker.example.com/proxy"
-            maxLength={MAX_PROXY_URL_CHARS}
             style={pwInput}
           />
+          <CeilingNotice label="proxy URL" value={url} max={MAX_PROXY_URL_CHARS} />
           <input
             type="password"
             autoComplete="off"
             value={secret}
             onChange={(e) => setSecret(e.target.value)}
             placeholder="共有秘密 (空欄にすると誰でも中継できます)"
-            maxLength={MAX_PROXY_SECRET_CHARS}
             style={pwInput}
           />
+          <CeilingNotice label="共有秘密" value={secret} max={MAX_PROXY_SECRET_CHARS} />
           {/*
             「任意・空欄可」とだけ書いてあると、省いても何も起きないように読める。
             省くと Worker は URL を知っている誰からでも要求を受ける (docs/
@@ -1540,7 +1546,14 @@ export function ProxySection() {
             資格情報は渡りませんが、帯域と割り当ては消費されます)。
           </div>
           <div style={{ display: 'flex', gap: 6 }}>
-            <button type="button" onClick={save} style={btn('accent')}>保存</button>
+            <button
+              type="button"
+              onClick={save}
+              disabled={charsOverCeiling(url, MAX_PROXY_URL_CHARS) > 0 || charsOverCeiling(secret, MAX_PROXY_SECRET_CHARS) > 0}
+              style={btn('accent', charsOverCeiling(url, MAX_PROXY_URL_CHARS) > 0 || charsOverCeiling(secret, MAX_PROXY_SECRET_CHARS) > 0)}
+            >
+              保存
+            </button>
             <button type="button" onClick={() => { setEditing(false); refresh(); }} style={btn()}>キャンセル</button>
           </div>
         </div>
@@ -1772,6 +1785,23 @@ export function GoogleOAuthSection() {
       setErr('Google OAuth Client ID を入力してください');
       return;
     }
+    /*
+     * **天井を超えていたら、開く前に断る** (2026-09-13 · パス 197)。
+     *
+     * 2026-09-13 まで、この 2 欄の天井は入力欄の `maxLength` だけが持っていた ——
+     * それは**関門ではない** (実機 chromium: `el.value` への代入は素通りし
+     * `validity.tooLong` も false)。超えた貼り付けを黙って切るだけなので、
+     * 切られた client ID で認可を始めると Google は `invalid_client` を返し、
+     * 切られたリダイレクト URI は Console の登録と一致せず
+     * `redirect_uri_mismatch` になる —— どちらも原因を指していない断りである。
+     * 判定と文面は `oauth/callbackPaste.ts` が 1 つ持つ。
+     */
+    for (const [field, value] of [['clientId', clientId], ['redirectUri', redirectUri]] as const) {
+      if (oauthFieldTooLong(field, value)) {
+        setErr(refusedCeilingNote(OAUTH_FIELD_LABEL[field], value, OAUTH_FIELD_CHARS[field]));
+        return;
+      }
+    }
     // **完了できない形なら、開く前に断る。** Google まで往復してから
     // 「その形式では完了できません」と言うのでは、利用者は認可を 1 度
     // 済ませた後に行き止まりに着く (パス 157)。
@@ -1835,6 +1865,17 @@ export function GoogleOAuthSection() {
     setMsg(null);
     if (code.length === 0) {
       setErr('ブラウザのアドレスバーに出た URL 全体 (code= と state= を含む) を貼り付けてください');
+      return;
+    }
+    /*
+     * **貼った URL の天井も、ここが持つ** (2026-09-13 · パス 197)。
+     * パス 167 は数を 2048 → 4096 に広げたが、黙って切る仕掛け (`maxLength`) は
+     * 残していた —— 4096 を超えると末尾から `state` と `scope` が落ち、
+     * 下の `describeCallbackPasteFailure` が「state がありません。URL 全体を
+     * 貼り付けてください」と言う。利用者は既に全体を貼っているので直せない。
+     */
+    if (oauthFieldTooLong('callbackPaste', code)) {
+      setErr(refusedCeilingNote(OAUTH_FIELD_LABEL.callbackPaste, code, OAUTH_FIELD_CHARS.callbackPaste));
       return;
     }
     const session = readPkceSession();
@@ -1913,22 +1954,27 @@ export function GoogleOAuthSection() {
 
       {!authUrl && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {/*
+            **`maxLength` は持たない** (パス 197)。ブラウザは超えた貼り付けを
+            黙って切るので、切られた値で認可が始まる。天井は `start()` が
+            断り、超過は下の `CeilingNotice` が述べる。
+          */}
           <input
             type="text"
             value={clientId}
             onChange={(e) => setClientId(e.target.value)}
             placeholder="xxx.apps.googleusercontent.com"
-            maxLength={MAX_OAUTH_CLIENT_ID_CHARS}
             style={pwInput}
           />
+          <CeilingNotice label={OAUTH_FIELD_LABEL.clientId} value={clientId} max={OAUTH_FIELD_CHARS.clientId} />
           <input
             type="text"
             value={redirectUri}
             onChange={(e) => setRedirectUri(e.target.value)}
             placeholder={LOOPBACK_REDIRECT_URI}
-            maxLength={MAX_OAUTH_REDIRECT_URI_CHARS}
             style={pwInput}
           />
+          <CeilingNotice label={OAUTH_FIELD_LABEL.redirectUri} value={redirectUri} max={OAUTH_FIELD_CHARS.redirectUri} />
           {/* 完了できない形なら、押す前に理由を出す (パス 157)。 */}
           {redirectBlockedReason(redirectUri) !== null && (
             <div data-redirect-unusable style={{ fontSize: 11, color: '#fbbf24', lineHeight: 1.6 }}>
@@ -1974,8 +2020,12 @@ export function GoogleOAuthSection() {
             value={code}
             onChange={(e) => setCode(e.target.value)}
             placeholder={CALLBACK_PASTE_PLACEHOLDER}
-            maxLength={MAX_CALLBACK_PASTE_CHARS}
             style={pwInput}
+          />
+          <CeilingNotice
+            label={OAUTH_FIELD_LABEL.callbackPaste}
+            value={code}
+            max={OAUTH_FIELD_CHARS.callbackPaste}
           />
           <div style={{ display: 'flex', gap: 6 }}>
             <button type="button" onClick={complete} disabled={busy} style={btn('accent', busy)}>

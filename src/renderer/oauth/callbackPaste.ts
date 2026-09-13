@@ -55,6 +55,7 @@
  * (`main.ts` を保護対象に足した 2026-08-22 の理由 ——「関門を呼ぶ側が
  * 迂回口になっていた」—— はここには当たらない。)
  */
+import { countChars } from '../../shared/inputCeiling';
 import { callbackParams } from './pkce';
 
 /** 既定のリダイレクト URI。アドレスバーに `code` と `state` が出る形。 */
@@ -122,16 +123,69 @@ export function redirectBlockedReason(uri: string): string | null {
  * 天井を code の天井より広く取る (下の検査が `> MAX_AUTH_CODE_CHARS` を留める)。
  * 判定する量が違うなら、天井も別の名前で持つ ——
  * パス 57「関門が値と別の量で規則を再導出していた」と同じ向き。
+ *
+ * **パス 167 はこの数を 2048 → 4096 に広げただけで、黙って切る仕掛けは
+ * 残していた** (2026-09-13 · パス 197 で気付いた)。`maxLength` は関門ではない
+ * ので、4096 を超える URL では**同じ欠陥が同じ症状で再発する** ——
+ * 末尾から `state` と `scope` が落ち、`describeCallbackPasteFailure` は
+ * 「state がありません。URL 全体を貼り付けてください」と言う。利用者は
+ * 既に URL 全体を貼っているので、この案内では直せない。
  */
 export const MAX_CALLBACK_PASTE_CHARS = 4096;
 
 /**
  * Google Cloud Console の client ID と、登録したリダイレクト URI の入力欄の天井。
- * どちらも人が Console から写す短い値で、検証側に写しは無い (画面だけが持つ)。
- * `URL` の実装上限より十分手前で、貼り間違いを早く止める。
+ * どちらも人が Console から写す短い値で、`URL` の実装上限より十分手前で
+ * 貼り間違いを早く止める。
+ *
+ * ## 2026-09-13 (パス 197) まで、この天井は**存在していなかった**
+ *
+ * ここには「検証側に写しは無い (**画面だけが持つ**)」と書いてあった。それは
+ * 事実だったが、**画面が持っていたのは `maxLength` 属性**である。実機 chromium で
+ * 測ると `maxLength` は関門ではない —— プログラムで入れた超過値は素通りし
+ * `validity.tooLong` も `false` を返す。超えた**貼り付けを黙って切る**だけの
+ * 仕掛けで、つまりこの 2 つ (と下の `MAX_CALLBACK_PASTE_CHARS`) は
+ * **宣言され、文書に書かれ、どこからも強制されていなかった**。
+ *
+ * 害は「長すぎる値が通る」ことではなく**末尾が黙って落ちること**である ——
+ * 切られた client ID で認可を始めると Google は `invalid_client` を返し、
+ * 切られたリダイレクト URI は Console の登録と一致しなくなって
+ * `redirect_uri_mismatch` になる。どちらも**原因を指していない断り**で、
+ * 利用者は正しく貼ったつもりのまま行き詰まる。
+ *
+ * 直した形: 下の {@link oauthFieldTooLong} が天井を持ち、画面は切らずに断る
+ * (`CeilingNotice` + ボタンの disabled)。パス 172 が外へ書く欄で決めた向きと同じ。
  */
 export const MAX_OAUTH_CLIENT_ID_CHARS = 256;
 export const MAX_OAUTH_REDIRECT_URI_CHARS = 256;
+
+/** 天井を持つ 3 欄。**画面と検証が同じ台帳を読む** (数を写さない)。 */
+export const OAUTH_FIELD_CHARS = {
+  clientId: MAX_OAUTH_CLIENT_ID_CHARS,
+  redirectUri: MAX_OAUTH_REDIRECT_URI_CHARS,
+  callbackPaste: MAX_CALLBACK_PASTE_CHARS,
+} as const;
+
+/** 天井を持つ欄の名前。 */
+export type OAuthField = keyof typeof OAUTH_FIELD_CHARS;
+
+/** 画面に出す欄の呼び方 (断りの文面が使う。画面が言い換えない)。 */
+export const OAUTH_FIELD_LABEL: Readonly<Record<OAuthField, string>> = {
+  clientId: 'Client ID',
+  redirectUri: 'リダイレクト URI',
+  callbackPaste: '貼り付けた URL',
+};
+
+/**
+ * **天井を超えていたら断る** (2026-09-13 · パス 197)。
+ *
+ * 超過していれば `true`。数えるのは**文字**で、画面の `CeilingNotice` が使う
+ * `charsOverCeiling` と同じ `shared/inputCeiling.ts` の 1 つを読む ——
+ * 画面が「あと N 字」と言い、検証が別の単位で断る形を作らない (パス 195/196)。
+ */
+export function oauthFieldTooLong(field: OAuthField, value: string): boolean {
+  return countChars(value) > OAUTH_FIELD_CHARS[field];
+}
 
 /** 貼る欄の placeholder。**求める物そのものを見せる** (code だけを求めない)。 */
 export const CALLBACK_PASTE_PLACEHOLDER = 'http://localhost/?code=4/0Ab…&state=… ← アドレスバーの URL 全体';

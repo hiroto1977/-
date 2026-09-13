@@ -55,6 +55,12 @@
 
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
 import {
+  normalizeTemplateParams,
+  TEMPLATE_FIELD_LABEL,
+  TEMPLATE_FIELD_LIMITS,
+  tooLongTemplateFields,
+} from '../shared/templateSvg';
+import {
   MAX_ADVISOR_QUESTION_CHARS,
   capAdvisorUniverse,
   checkAdvisorQuestion,
@@ -62,7 +68,7 @@ import {
 import { MAX_ADVISOR_ACTION_ITEMS, MAX_ADVISOR_ITEM_CHARS, MAX_ADVISOR_RATIONALE_CHARS, MAX_ADVISOR_RECOMMENDATIONS, MAX_ADVISOR_RISK_FACTORS } from '../shared/advisorResponseLimits';
 import { buildHydroponicsSnapshot } from '../shared/hydroponicsControl';
 import { MAX_ANALYZE_TEXT_CHARS } from '../shared/emotionsLimits';
-import { clampToCeiling, countChars } from '../shared/inputCeiling';
+import { clampToCeiling, countChars, refusedCeilingNote } from '../shared/inputCeiling';
 import {
   MAX_RECORD_NOTE_CHARS,
   isRecordEntryServiceId,
@@ -1368,6 +1374,29 @@ const shim = {
       const id = p.templateId;
       const def = TEMPLATE_CATALOG_FOR_WEB.find((t) => t.id === id);
       if (!def) return err('action_failed', `unknown template id: ${String(id)}`);
+      /*
+       * **欄の天井を書き出す前に見る** (2026-09-13 · パス 197)。
+       *
+       * `normalizeTemplateParams` は「緩い側の入口」として長さを見ない設計で、
+       * `TEMPLATE_FIELD_LIMITS` を読むのは main の `validateParams` と
+       * **画面の `maxLength` 属性**だけだった。`maxLength` は関門ではないので
+       * (実機 chromium で実測)、ブラウザ版には天井が**無かった** ——
+       * デスクトップ版だけが断る非対称で、同じ操作が版によって別の結果になる。
+       * 判定は `shared/templateSvg.ts` の 1 つを読む (数も単位も写さない)。
+       */
+      const normalized = normalizeTemplateParams(
+        (p.params as Record<string, string> | undefined) ?? {},
+        def.defaults,
+      );
+      const overLong = tooLongTemplateFields(normalized);
+      if (overLong.length > 0) {
+        return err(
+          'action_failed',
+          overLong
+            .map((k) => refusedCeilingNote(TEMPLATE_FIELD_LABEL[k], normalized[k], TEMPLATE_FIELD_LIMITS[k]))
+            .join(' '),
+        );
+      }
       let svg: string;
       try {
         svg = renderTemplateForWeb(def, (p.params as Record<string, string> | undefined) ?? {});

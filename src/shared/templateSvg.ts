@@ -1,3 +1,4 @@
+import { countChars } from './inputCeiling';
 import { wrapLines } from './textWrap';
 import { escapeXml, safeColor } from './escape';
 
@@ -104,6 +105,44 @@ export const TEMPLATE_FIELD_LIMITS = {
 
 /** 上限を持つ欄の名前。 */
 export type TemplateTextField = keyof typeof TEMPLATE_FIELD_LIMITS;
+
+/** 画面に出す欄の呼び方 (断りの文面が使う。画面が言い換えない)。 */
+export const TEMPLATE_FIELD_LABEL: Readonly<Record<TemplateTextField, string>> = {
+  title: 'タイトル',
+  subtitle: '副題 / リード',
+  body: '本文 / 補足',
+  brandText: 'ブランド名',
+};
+
+/**
+ * **天井を超えている欄の名前を返す** (2026-09-13 · パス 197)。
+ *
+ * ## 2026-09-13 まで、ブラウザ版にこの天井は掛かっていなかった
+ *
+ * 上の `TEMPLATE_FIELD_LIMITS` を読んでいたのは 2 か所だけだった:
+ * `main/clients/templates.ts` の `validateParams` (`v.length` で見て throw) と、
+ * **画面の `maxLength` 属性**。ブラウザ版が通る `normalizeTemplateParams` は
+ * 「緩い側の入口」として長さを見ない設計 (そのファイルの注記のとおり) なので、
+ * 天井を掛けていたのは `maxLength` **だけ**である —— そして実機 chromium で
+ * 測ると `maxLength` は関門ではない (プログラムで入れた値は素通りし、
+ * `validity.tooLong` も false)。**宣言され、画面に数として出て、
+ * ブラウザ版では誰も強制していなかった。**
+ *
+ * 数えるのは**文字** —— `main` 側は `v.length` (UTF-16 コード単位) で見ながら
+ * 断りは `exceeds N chars` と言っていた。80 字のタイトルは絵文字なら 40 個で
+ * 満杯になる (パス 195/196 と同じ形。天井が `FIELD_LIMITS[k]` という別名に
+ * 渡っていたので census の名前の規則から見えなかった)。
+ *
+ * 返すのは**超えた欄の名前の配列** —— 1 つ目で止めると、2 つ超えている人は
+ * 2 回直すことになる。
+ */
+export function tooLongTemplateFields(params: TemplateSvgParams): TemplateTextField[] {
+  const over: TemplateTextField[] = [];
+  for (const k of ['title', 'subtitle', 'body', 'brandText'] as const) {
+    if (countChars(params[k]) > TEMPLATE_FIELD_LIMITS[k]) over.push(k);
+  }
+  return over;
+}
 
 // --- 個々のテンプレート -------------------------------------------------
 //

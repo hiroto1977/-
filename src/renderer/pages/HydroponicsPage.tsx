@@ -1,3 +1,5 @@
+import { CeilingNotice } from '../components/CeilingNotice';
+import { charsOverCeiling } from '../../shared/inputCeiling';
 import { useMemo, useState } from 'react';
 import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
@@ -631,11 +633,17 @@ export function HydroponicsPage() {
             <input
               type="text"
               value={batchForm.id}
-              maxLength={MAX_BATCH_ID_CHARS}
               onChange={(e) => setBatchForm((f) => ({ ...f, id: e.target.value }))}
               data-hydroponics-input="batch-id"
               style={{ marginLeft: 6 }}
             />
+            {/*
+              **`maxLength` は持たない** (2026-09-13 · パス 197)。ブラウザは超えた
+              貼り付けを黙って切るので、切られたロット名がそのまま保存される。
+              天井は `hydroponicsLog.ts` の `parseBatch` が断り、超過は
+              `CeilingNotice` が述べる。
+            */}
+            <CeilingNotice label="ロット名" value={batchForm.id} max={MAX_BATCH_ID_CHARS} />
           </label>
           <label style={{ fontSize: 12 }}>
             品目
@@ -712,7 +720,7 @@ export function HydroponicsPage() {
         <button
           type="button"
           data-hydroponics-save="batch"
-          disabled={batchGuard.busy}
+          disabled={batchGuard.busy || charsOverCeiling(batchForm.id, MAX_BATCH_ID_CHARS) > 0}
           onClick={() => void batchGuard.run(saveBatch)}
           style={{ marginTop: 10 }}
         >

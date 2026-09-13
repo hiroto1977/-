@@ -4,6 +4,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { ExportActions } from '../components/ExportActions';
 import { useServiceData } from '../hooks/useServiceData';
 import { charsOverCeiling, clampToCeiling, clampedCeilingNote } from '../../shared/inputCeiling';
+import { CeilingNotice } from '../components/CeilingNotice';
 import { buildTeamEmotionRadar, teamEmotionSummary, type MemberEmotion } from '../data/teamEmotionRadar';
 import {
   SCORE_MAX as MEMBER_SCORE_MAX,
@@ -280,6 +281,18 @@ export function TeamRadarPage() {
   const [axes, setAxes] = useState<string[]>(() =>
     draft.current.axes && draft.current.axes.length === baseAxes.length ? draft.current.axes : baseAxes,
   );
+  /**
+   * **天井を超えた欄が 1 つでもあれば保存させない** (2026-09-13 · パス 197)。
+   * 以前は `maxLength` が打ち止めていたので、ここに関門は無かった ——
+   * そして `maxLength` は関門ではないので (実機 chromium で実測)、
+   * 切られた値が保存へ流れていた。
+   */
+  const fieldsOverCeiling =
+    charsOverCeiling(title, MAX_CHART_TITLE_CHARS) > 0
+    || charsOverCeiling(department, MAX_DEPARTMENT_CHARS) > 0
+    || charsOverCeiling(evaluatedAt, MAX_EVALUATED_AT_CHARS) > 0
+    || axes.some((a) => charsOverCeiling(a, MAX_AXIS_LABEL_CHARS) > 0)
+    || members.some((m) => charsOverCeiling(m.name, MAX_MEMBER_NAME_CHARS) > 0);
 
   /** 才能レーダーで描ける人・描けない人 (凡例と注記が読む)。判断は shared の 1 つ。 */
   const skillPlan = useMemo(() => planRadarPlot(axes, members), [axes, members]);
@@ -519,7 +532,6 @@ export function TeamRadarPage() {
             <input
               type="text"
               value={title}
-              maxLength={MAX_CHART_TITLE_CHARS}
               onChange={(e) => setTitle(e.target.value)}
               aria-label="チャート名"
               placeholder={TITLE_FALLBACK}
@@ -533,13 +545,19 @@ export function TeamRadarPage() {
                 width: 260,
               }}
             />
+            {/*
+              **`maxLength` は持たない** (2026-09-13 · パス 197)。同じファイルの
+              メモ欄は パス 174 で既に外してあり (貼り付けをブラウザが先に切るので)、
+              残る 5 欄だけが属性のままだった。天井は `teamRadarState.ts` が断り、
+              超過は `CeilingNotice` が述べる。
+            */}
+            <CeilingNotice label="チャート名" value={title} max={MAX_CHART_TITLE_CHARS} />
           </label>
           <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: 'var(--text-mute)' }}>
             部署
             <input
               type="text"
               value={department}
-              maxLength={MAX_DEPARTMENT_CHARS}
               onChange={(e) => setDepartment(e.target.value)}
               style={{
                 padding: '6px 10px',
@@ -551,13 +569,13 @@ export function TeamRadarPage() {
                 width: 200,
               }}
             />
+            <CeilingNotice label="部署" value={department} max={MAX_DEPARTMENT_CHARS} />
           </label>
           <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: 'var(--text-mute)' }}>
             評価時点
             <input
               type="text"
               value={evaluatedAt}
-              maxLength={MAX_EVALUATED_AT_CHARS}
               onChange={(e) => setEvaluatedAt(e.target.value)}
               placeholder="2035-04-15"
               style={{
@@ -570,6 +588,7 @@ export function TeamRadarPage() {
                 width: 160,
               }}
             />
+            <CeilingNotice label="評価時点" value={evaluatedAt} max={MAX_EVALUATED_AT_CHARS} />
           </label>
         </div>
         <div style={{ marginTop: 12 }}>
@@ -578,11 +597,10 @@ export function TeamRadarPage() {
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {axes.map((axis, ai) => (
+              <span key={ai} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <input
-                key={ai}
                 type="text"
                 value={axis}
-                maxLength={MAX_AXIS_LABEL_CHARS}
                 onChange={(e) => updateAxis(ai, e.target.value)}
                 aria-label={`軸${ai + 1} の名前`}
                 style={{
@@ -595,6 +613,8 @@ export function TeamRadarPage() {
                   width: 140,
                 }}
               />
+              <CeilingNotice label={`軸${ai + 1} の名前`} value={axis} max={MAX_AXIS_LABEL_CHARS} />
+              </span>
             ))}
             <button
               type="button"
@@ -810,7 +830,6 @@ export function TeamRadarPage() {
                     <input
                       type="text"
                       value={m.name}
-                      maxLength={MAX_MEMBER_NAME_CHARS}
                       onChange={(e) => updateName(idx, e.target.value)}
                       style={{
                         flex: 1,
@@ -822,6 +841,7 @@ export function TeamRadarPage() {
                         fontSize: 13,
                       }}
                     />
+                    <CeilingNotice label={`メンバー ${idx + 1} の名前`} value={m.name} max={MAX_MEMBER_NAME_CHARS} />
                     <button
                       onClick={() => removeMember(idx)}
                       style={{
@@ -919,7 +939,7 @@ export function TeamRadarPage() {
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
           <button
             onClick={saveAll}
-            disabled={saveBusy}
+            disabled={saveBusy || fieldsOverCeiling}
             style={{
               padding: '6px 14px',
               background: saveBusy ? 'var(--bg-elev)' : 'var(--accent)',

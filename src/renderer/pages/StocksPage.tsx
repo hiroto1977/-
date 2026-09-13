@@ -203,6 +203,13 @@ export function StocksPage() {
 
   // --- Watchlist register / unregister state ----------------------------
   const [registerSymbol, setRegisterSymbol] = useState('');
+  /*
+   * **`maxLength` は持たない** (2026-09-13 · パス 197)。ブラウザは超えた
+   * 貼り付けを黙って切るので、切られた銘柄コードがそのまま登録に飛ぶ ——
+   * `stocks.ts` / `stocksWatchlistWeb.ts` の断りは、画面が先に切る限り
+   * 永久に届かなかった (この画面の 346 行あたりの注記が既にそう書いている)。
+   */
+  const registerOver = charsOverCeiling(registerSymbol, MAX_TICKER_CHARS);
   const [registerBusy, setRegisterBusy] = useState(false);
   const [registerError, setRegisterError] = useState<string | null>(null);
   const [registerMessage, setRegisterMessage] = useState<string | null>(null);
@@ -243,6 +250,8 @@ export function StocksPage() {
   // パス 117 から台帳) —— 写しを残していたら `winRate: number` のままで、
   // `(null * 100).toFixed(0)` が **"0"** を刷り、直したはずの欠陥がそのまま残っていた (2026-09-08 · パス 92)。
   const [compareSymbol, setCompareSymbol] = useState('AAPL');
+  /** 戦略比較の銘柄コードも同じ (パス 197)。 */
+  const compareOver = charsOverCeiling(compareSymbol, MAX_TICKER_CHARS);
   const [compareBusy, setCompareBusy] = useState(false);
   const [compareError, setCompareError] = useState<string | null>(null);
   const [compareResult, setCompareResult] = useState<ActionData<'stocks/compare-strategies'> | null>(null);
@@ -458,7 +467,6 @@ export function StocksPage() {
             value={registerSymbol}
             onChange={(e) => setRegisterSymbol(e.target.value)}
             placeholder="銘柄コード (例: AAPL / 7203.T / ^N225)"
-            maxLength={MAX_TICKER_CHARS}
             style={{
               flex: 1,
               padding: '8px 12px',
@@ -469,12 +477,12 @@ export function StocksPage() {
               fontSize: 13,
             }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !registerBusy) registerOrUnregister('register-ticker');
+              if (e.key === 'Enter' && !registerBusy && registerOver === 0) registerOrUnregister('register-ticker');
             }}
           />
           <button
             onClick={() => registerOrUnregister('register-ticker')}
-            disabled={registerBusy}
+            disabled={registerBusy || registerOver > 0}
             style={{
               padding: '8px 16px',
               background: registerBusy ? 'var(--bg-elev)' : 'var(--accent)',
@@ -503,6 +511,7 @@ export function StocksPage() {
             解除
           </button>
         </div>
+        <CeilingNotice label="銘柄コード" value={registerSymbol} max={MAX_TICKER_CHARS} />
         {registerError && (
           <div
             style={{
@@ -852,7 +861,6 @@ export function StocksPage() {
             value={compareSymbol}
             onChange={(e) => setCompareSymbol(e.target.value)}
             placeholder="銘柄コード (例: AAPL / 7203.T)"
-            maxLength={MAX_TICKER_CHARS}
             style={{
               flex: 1,
               padding: '8px 12px',
@@ -863,12 +871,12 @@ export function StocksPage() {
               fontSize: 13,
             }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !compareBusy) runCompare();
+              if (e.key === 'Enter' && !compareBusy && compareOver === 0) runCompare();
             }}
           />
           <button
             onClick={runCompare}
-            disabled={compareBusy}
+            disabled={compareBusy || compareOver > 0}
             style={{
               padding: '8px 16px',
               background: compareBusy ? 'var(--bg-elev)' : 'var(--accent)',
@@ -882,6 +890,7 @@ export function StocksPage() {
             {compareBusy ? '計算中…' : '3 戦略を比較'}
           </button>
         </div>
+        <CeilingNotice label="銘柄コード (戦略比較)" value={compareSymbol} max={MAX_TICKER_CHARS} />
         {compareError && (
           <div
             style={{

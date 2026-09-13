@@ -26098,6 +26098,117 @@ ok(!t.includes('not_implemented') && !t.includes('未対応'), '… (web-shim �
 この 5 つは**欠陥ではなく範囲**だが、画面と仕様書の両方が明示する
 (黙っていると「自動管理」という名前が実態より広く読まれる)。
 
+## パス 197 (2026-09-13) — **`maxLength` は関門ではない。その天井を画面だけが持っていた**
+
+### 実機 chromium で測った `maxLength` の挙動
+
+| 入力 | 天井 | 結果 | 孤立サロゲート |
+| --- | --- | --- | --- |
+| 😀😀😀 を貼る | 5 | `😀😀` (4 コード単位 / 2 字) | **無し** |
+| abcd を打った後 😀 | 5 | `abcd` (絵文字は丸ごと拒否・理由は出ない) | 無し |
+| abcdefgh を打つ | 5 | `abcde` | 無し |
+| `el.value = '😀'.repeat(6)` | 5 | 12 単位すべて残る・`validity.tooLong === false` | 無し |
+
+1. **数えるのはコード単位** —— 「5 字」の欄が絵文字 2 つで満杯。
+2. **文字は壊さない** —— chromium はコードポイントの境界で止める。パス 195 で JS 側から
+   消した孤立サロゲートがブラウザ側から入り直す道は**無い** (事前に疑った害で、
+   実測して**外れた**)。
+3. **超えた貼り付けを黙って切る** —— 3 つ貼って 2 つ。画面に何も出ない。
+4. **1 単位だけ余ると絵文字が打てない** —— 理由は何も出ない。
+5. **関門ではない** —— プログラムで入れた超過値は素通りし `validity.tooLong` も `false`。
+   「画面が止めるから検証は要らない」は成り立たず、逆に**画面が先に切るので実装側の
+   断りへ永久に届かない**。
+
+### だから何が起きていたか —— 天井が 4 つ、実質存在しなかった
+
+`maxLength` を外す前に、欄ごとに submit 側の断りが在るかを 1 件ずつ確かめた。
+**4 つの天井は、画面の `maxLength` 以外に持ち手が居なかった**:
+
+| 天井 | 値 | 持ち手 | 起きること |
+| --- | --- | --- | --- |
+| `MAX_OAUTH_CLIENT_ID_CHARS` | 256 | 画面の `maxLength` のみ | 切られた client ID で認可 → Google が `invalid_client`。**原因を指していない断り** |
+| `MAX_OAUTH_REDIRECT_URI_CHARS` | 256 | 同上 | 切られた URI は Console の登録と一致せず `redirect_uri_mismatch` |
+| `MAX_CALLBACK_PASTE_CHARS` | 4096 | 同上 | 末尾から `state` と `scope` が落ち、断りは「state がありません。URL 全体を貼り付けてください」—— 利用者は既に全体を貼っている |
+| `TEMPLATE_FIELD_LIMITS` (4 欄) | 80/120/400/48 | main は `v.length` で断る・**ブラウザ版は誰も見ない** | 超過した本文がそのまま SVG に入る (版によって結果が違う) |
+
+**定数の doc コメント自身が証拠を書いていた** —— `MAX_OAUTH_CLIENT_ID_CHARS` の注記は
+「検証側に写しは無い (**画面だけが持つ**)」。それは事実で、画面が持っていたのは
+`maxLength` だった。`TEMPLATE_FIELD_LIMITS` も同じで、読んでいたのは main の
+`validateParams` と画面の属性だけ —— ブラウザ版が通る `normalizeTemplateParams` は
+「緩い側の入口」として長さを見ない設計 (そのファイルの注記どおり)。
+
+**パス 167 はこの形に半分だけ触っていた** —— 貼る欄の天井を 2048 → 4096 に広げたが、
+黙って切る仕掛けは残した。数を広げても、4096 を超えれば**同じ欠陥が同じ症状で再発する**。
+
+### 単位のずれも 2 つ見つかった (census の死角の 7・8 例目)
+
+- `main/clients/templates.ts` の `validateParams` は `v.length` (コード単位) で見ながら
+  断りは `exceeds N chars`。天井が `FIELD_LIMITS[k]` という**局所の別名**に渡っていたので、
+  名前で単位を判断する census (パス 195) の外に在った。80 字のタイトルは絵文字 40 個で満杯。
+- `TemplatesPage` は `{params[key].length}/{max}` と**コード単位の数を字数として刷って**いた。
+  絵文字なら「80/80」と出た時点で実際は 40 字。
+
+### 直した物
+
+- **足りない関門を足した** (無い欄は先に断りを作る):
+  `oauthFieldTooLong` / `OAUTH_FIELD_CHARS` / `OAUTH_FIELD_LABEL` (`callbackPaste.ts`) を
+  `start()` と `complete()` が読む・`tooLongTemplateFields` (`templateSvg.ts`) を main の
+  `validateParams` とブラウザ版の `export-template` が読む。どれも `countChars` = 字。
+- **`maxLength` を 16 欄から外した** (SettingsPage 6 / TeamRadarPage 5 / TemplatesPage 2 /
+  StocksPage 2 / HydroponicsPage 1)。既存 38 欄と同じ形へ: `charsOverCeiling` →
+  `CeilingNotice` → ボタンを `disabled`。
+- `TemplatesPage` の字数表示を `countChars` に。
+- **走査を足した** (`renderer/__tests__/maxLengthCensus.test.ts` · 5 件): `maxLength` は
+  `STRUCTURAL_LENGTH` 台帳の 1 件だけ。台帳の側も死んでいないこと (許した欄が実在する・
+  理由が空でない) と、**足した関門に呼び手が居ること**を両方向で見る。
+
+### 例外は 1 つだけ
+
+`TemplatesPage` の色欄 `maxLength={7}` —— `#RRGGBB` は**構造上ちょうど 7 字**で、
+「切られると別の色になる」のではなく「7 字でない物は色ではない」。下流に本物の関門が
+在る (`isHexColor` (main) / `safeColor` (ブラウザ版))。理由つきで台帳に載せた。
+
+### 既存の検査 4 本が `maxLength` を正しい振る舞いとして留めていた
+
+パス 196 の `preview.test.ts` と同じ形が、今度は 4 本:
+
+| 検査 | 何を固定していたか | どう直したか |
+| --- | --- | --- |
+| `templateSvgAgreement`「入力欄の maxLength が台帳の値と一致する」 | **黙って切る仕掛けが在ること** | 「4 つの文字欄に maxLength が**無い**」へ反転 (台帳が画面に届くことは隣の「(n/上限)」の検査が持つ) |
+| `inputCapLiterals`「走査が死んでいない (maxLength そのものは在る)」 | 母集団の床 `>= 8` | 母集団は意図して **1** になったので `toBe(1)` へ。**床はもう走査の生死を測れない** (0 と 1 の区別しか付かない) ので、生死は標本の対照が持ち、規則は新しい census が持つ |
+| 同「同じ天井を読む所がすべて名前で読んでいる」 | 画面が `MAX_CALLBACK_PASTE_CHARS` を import すること | 台帳オブジェクト `OAUTH_FIELD_CHARS` へ |
+| 同「チャート名の天井は画面と書き出しで一致する」 | `maxLength={MAX_CHART_TITLE_CHARS}` の綴り | 「定数が画面に届いている」+「`maxLength` に戻っていない」へ |
+
+`inputCapLiterals` の床は**正しく鳴った** —— パス 183 でも同じように鳴っており、
+床は 2 度仕事をした。
+
+### 対照 (回した 6 件すべて鳴った)
+
+| # | 守り | 壊し方 | 結果 |
+| --- | --- | --- | --- |
+| F1 | 新しい `maxLength` を止める走査 | StocksPage に `maxLength` を戻す | **鳴る** (2 件) |
+| F2 | ブラウザ版のテンプレート天井 | `tooLongTemplateFields` を空配列に | **鳴る** |
+| F3 | テンプレート天井の単位 | `countChars` → `.length` | **鳴る** |
+| F4 | OAuth 3 欄の天井 | `oauthFieldTooLong` を `false` に | **鳴る** (2 件) |
+| F5 | 関門の呼び手 | `start` / `complete` の呼びを `if (false)` に | **鳴る** |
+| F6 | (パス 196 から継続) census の名前規則 | — | 既に鳴ることを確認済み |
+
+### 検証
+
+`npm test` 15,948 件 / 693 ファイル・`verify:all` exit 0 (36 ゲート)・
+`build:web` 11,825,177 B / `build:web:lite` 3,237,923 B (両方 +1,797 B)・chain tip #181。
+**実機 3 種 (`e2e` / `e2e:lite` / `perf`) は回していない** —— この 2 パスで renderer を
+広く触っている (SettingsPage / TemplatesPage / TeamRadarPage / StocksPage /
+HydroponicsPage / PageErrorBoundary / preview) ので、**次に必ず回す**。
+
+### 残した物 — 次に見る所
+
+- **実機 3 種**。パス 196 と 197 の renderer 変更が未検証。
+- `GoogleOAuthSection` を**描いて押す**検査が無い (保管庫・`pkceSession`・`serviceHub` の
+  代役が要る)。今は関門の呼び手を**字面で**留めており、判定の正しさは単体検査が持つ。
+  行カバレッジで見ると `ShigyoConsole.tsx` 55.00% / `CanvaPage.tsx` 55.56% /
+  `HomePage.tsx` 60.00% / `SecurityPage.tsx` 62.12% が次に低い出荷コード。
+
 ## パス 196 (2026-09-13) — **名前が単位を言わない天井は、走査の外に在った**
 
 ### 何を見たか

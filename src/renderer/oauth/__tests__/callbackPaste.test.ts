@@ -15,8 +15,11 @@ import {
   describeCallbackPasteFailure,
   redirectBlockedReason,
   redirectKind,
+  OAUTH_FIELD_CHARS,
+  OAUTH_FIELD_LABEL,
+  oauthFieldTooLong,
 } from '../callbackPaste';
-import { parseGoogleCallback } from '../pkce';
+import { MAX_AUTH_CODE_CHARS, parseGoogleCallback } from '../pkce';
 
 describe('redirectKind', () => {
   it('http(s) は callback (アドレスバーに state が出る)', () => {
@@ -173,5 +176,40 @@ describe('describeCallbackPasteFailure', () => {
     // 走査が空振りしていない標本 (両側が現れている)。
     expect(samples.some((s) => parseGoogleCallback(s) !== null)).toBe(true);
     expect(samples.some((s) => parseGoogleCallback(s) === null)).toBe(true);
+  });
+});
+
+describe('oauthFieldTooLong — 天井を持つのは画面の maxLength だけだった (パス 197)', () => {
+  /*
+   * 2026-09-13 まで、この 3 欄の天井は入力欄の `maxLength` 属性だけが持っていた
+   * (定数の doc 自身が「検証側に写しは無い (画面だけが持つ)」と書いていた)。
+   * 実機 chromium で測ると `maxLength` は関門ではない —— プログラムで入れた
+   * 超過値は素通りし `validity.tooLong` も false。**つまり天井は実質存在しなかった。**
+   */
+  it('★ 天井ちょうどは通り、1 字超えたら断る (3 欄すべて)', () => {
+    for (const field of ['clientId', 'redirectUri', 'callbackPaste'] as const) {
+      const max = OAUTH_FIELD_CHARS[field];
+      expect(oauthFieldTooLong(field, 'a'.repeat(max))).toBe(false);
+      expect(oauthFieldTooLong(field, 'a'.repeat(max + 1))).toBe(true);
+    }
+  });
+
+  it('★ 数えるのは「字」 (絵文字は天井いっぱいまで入る)', () => {
+    const max = OAUTH_FIELD_CHARS.clientId;
+    const atLimit = '\u{1F600}'.repeat(max);
+    expect(atLimit.length).toBe(max * 2);            // コード単位では 2 倍
+    expect(oauthFieldTooLong('clientId', atLimit)).toBe(false);
+    expect(oauthFieldTooLong('clientId', atLimit + '\u{1F600}')).toBe(true);
+  });
+
+  it('★ 貼る欄の天井は認可コードの天井より広い (量が違うから名前も別)', () => {
+    // `pkce.ts` の MAX_AUTH_CODE_CHARS は code 1 本、こちらは URL 全体。
+    expect(OAUTH_FIELD_CHARS.callbackPaste).toBeGreaterThan(MAX_AUTH_CODE_CHARS);
+  });
+
+  it('★ 3 欄すべてに画面向けの呼び方が在る (断りが欄名を写さない)', () => {
+    for (const field of ['clientId', 'redirectUri', 'callbackPaste'] as const) {
+      expect(OAUTH_FIELD_LABEL[field].length).toBeGreaterThan(0);
+    }
   });
 });

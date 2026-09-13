@@ -1,3 +1,4 @@
+import { countChars } from '../../shared/inputCeiling';
 import { wrapLines } from '../../shared/textWrap';
 import {
   TEMPLATE_FIELD_LIMITS,
@@ -217,7 +218,15 @@ export function validateParams(
   for (const k of ['title', 'subtitle', 'body', 'brandText'] as const) {
     const v = o[k];
     if (typeof v === 'string') {
-      if (v.length > FIELD_LIMITS[k]) {
+      /*
+       * **数えるのは「字」** (2026-09-13 · パス 197)。ここは `v.length`
+       * (UTF-16 コード単位) で見ながら、断りは `exceeds N chars` と言っていた
+       * —— 80 字のタイトルは絵文字なら 40 個で満杯になる。天井が
+       * `FIELD_LIMITS[k]` という別名に渡っていたので、名前で単位を判断する
+       * census (パス 195) の外に在った。判定は `shared/templateSvg.ts` の
+       * `tooLongTemplateFields` が 1 つ持ち、ブラウザ版も同じ物を読む。
+       */
+      if (countChars(v) > FIELD_LIMITS[k]) {
         throw new Error(`${k} exceeds ${FIELD_LIMITS[k]} chars`);
       }
       if (/[\0]/.test(v)) {

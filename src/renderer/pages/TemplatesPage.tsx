@@ -1,5 +1,8 @@
 import { isHexColor } from '../../shared/escape';
+import { CeilingNotice } from '../components/CeilingNotice';
+import { countChars, charsOverCeiling } from '../../shared/inputCeiling';
 import {
+  TEMPLATE_FIELD_LABEL,
   TEMPLATE_FIELD_LIMITS,
   normalizeTemplateParams,
   renderTemplateSvg,
@@ -53,6 +56,9 @@ export function TemplatesPage() {
   );
 
   const [params, setParams] = useState<TemplateParams>(() => ({ ...selected.defaults }));
+  /** どれか 1 欄でも天井を超えているか (書き出しの関門・パス 197)。 */
+  const fieldsOver = (['title', 'subtitle', 'body', 'brandText'] as const)
+    .some((k) => charsOverCeiling(params[k], TEMPLATE_FIELD_LIMITS[k]) > 0);
   useEffect(() => {
     setParams({ ...selected.defaults });
   }, [selected]);
@@ -272,11 +278,19 @@ export function TemplatesPage() {
               const max = TEMPLATE_FIELD_LIMITS[key];
               return (
               <label key={key} style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: 'var(--text-mute)' }}>
-                {label} <span style={{ fontSize: 10 }}>({params[key].length}/{max})</span>
+                {/*
+                  **数えるのは「字」・`maxLength` は持たない** (2026-09-13 · パス 197)。
+                  ここは `params[key].length` (UTF-16 コード単位) を字数として刷り、
+                  同じ数を `maxLength` に渡していた。絵文字なら「80/80」と出た時点で
+                  実際は 40 字しか入っていない。そして `maxLength` は関門ではなく
+                  (実機 chromium で実測)、超えた貼り付けを黙って切るだけなので、
+                  ブラウザ版には天井が無かった。天井は書き出し時に断り
+                  (`tooLongTemplateFields`)、超過は下の `CeilingNotice` が述べる。
+                */}
+                {label} <span style={{ fontSize: 10 }}>({countChars(params[key])}/{max})</span>
                 {kind === 'textarea' ? (
                   <textarea
                     value={params[key]}
-                    maxLength={max}
                     onChange={(e) => update(key, e.target.value)}
                     rows={4}
                     style={{
@@ -294,7 +308,6 @@ export function TemplatesPage() {
                   <input
                     type="text"
                     value={params[key]}
-                    maxLength={max}
                     onChange={(e) => update(key, e.target.value)}
                     style={{
                       padding: '6px 10px',
@@ -306,6 +319,7 @@ export function TemplatesPage() {
                     }}
                   />
                 )}
+                <CeilingNotice label={TEMPLATE_FIELD_LABEL[key]} value={params[key]} max={max} />
               </label>
               );
             })}
@@ -346,16 +360,21 @@ export function TemplatesPage() {
 
       <Section title="エクスポート" count={0}>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+          {/*
+            **天井を超えていたら押せない** (パス 197)。以前は `maxLength` が
+            打ち止めていたので、ここに関門は無かった —— ブラウザ版では
+            超過した値がそのまま SVG に入っていた。
+          */}
           <button
             onClick={exportSvg}
-            disabled={busy}
+            disabled={busy || fieldsOver}
             style={{
               padding: '6px 14px',
-              background: busy ? 'var(--bg-elev)' : 'var(--accent)',
+              background: busy || fieldsOver ? 'var(--bg-elev)' : 'var(--accent)',
               border: '1px solid var(--border)',
               borderRadius: 6,
               color: 'var(--text)',
-              cursor: busy ? 'wait' : 'pointer',
+              cursor: busy ? 'wait' : fieldsOver ? 'not-allowed' : 'pointer',
               fontSize: 12,
             }}
           >

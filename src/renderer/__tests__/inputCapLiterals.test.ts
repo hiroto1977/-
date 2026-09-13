@@ -155,15 +155,23 @@ describe('入力欄の天井は名前で持つ (パス 167)', () => {
     }
   });
 
-  it('走査が死んでいない (maxLength そのものは在る)', () => {
+  it('母集団は意図して 1 件だけ (構造で決まる長さ)', () => {
     /*
-     * 2026-09-12 実測 **16 件**。同日の朝は 59 件で床は 25 だったが、パス 183 が
-     * 台帳 (writeFieldLimits.ts) の欄 24 個から `maxLength` を外した
-     * (切らずに断る形へ) ので、床のほうが実測を上回って**この検査が鳴った** ——
-     * 床は正しく働いた。残る 16 件は台帳の外の欄 (トークン・ティッカー・
-     * 軸ラベルなど) で、こちらは切っても外へ出ない。床は実測の半分に置き直す。
+     * 履歴: 2026-09-12 の朝 59 件 → パス 183 が台帳の欄 24 個から外して 16 件
+     * (床 25 が実測を上回って**この検査が鳴った** —— 床は正しく働いた) →
+     * **パス 197 (2026-09-13) で 1 件**。
+     *
+     * 実機 chromium で測ると `maxLength` は関門ではない —— 超えた貼り付けを
+     * 黙って切るだけで、`el.value` への代入は素通りし `validity.tooLong` も
+     * false。だから人が打つ・貼る欄からは全部外した。残るのは色欄の
+     * `maxLength={7}` だけで、`#RRGGBB` は**構造上ちょうど 7 字**である。
+     *
+     * **床はもう「走査が生きている」証拠にならない** (母集団が 1 なので、
+     * 走査が壊れていても 0 と 1 の区別しか付かない)。走査の生死は下の
+     * 「★ 対照: 規則は字面の書き方に当たり…」が標本で持ち、母集団の側の規則は
+     * `renderer/__tests__/maxLengthCensus.test.ts` が台帳つきで持つ。
      */
-    expect(findSites(ANY_RE).length).toBeGreaterThanOrEqual(8);
+    expect(findSites(ANY_RE).length).toBe(1);
   });
 
   /**
@@ -231,7 +239,12 @@ describe('画面と検証が同じ天井を読む (パス 167)', () => {
       files: ['src/renderer/pages/SettingsPage.tsx', 'src/renderer/security/vault.ts'],
     },
     {
-      name: 'MAX_CALLBACK_PASTE_CHARS',
+      /*
+       * パス 197: 画面は 3 欄ぶんの天井を**台帳オブジェクト** `OAUTH_FIELD_CHARS`
+       * から読む (定数を 1 つずつ import するより、欄の名前と対で持つほうが
+       * 断りの文面と揃う)。定数そのものは `callbackPaste.ts` 側に在る。
+       */
+      name: 'OAUTH_FIELD_CHARS',
       files: ['src/renderer/pages/SettingsPage.tsx', 'src/renderer/oauth/callbackPaste.ts'],
     },
   ];
@@ -248,7 +261,15 @@ describe('画面と検証が同じ天井を読む (パス 167)', () => {
     // 画面だけが狭いと「打ち込めない題名を、別の入口は受ける」ことになる。
     const page = read('src/renderer/pages/TeamRadarPage.tsx');
     const main = read('src/main/clients/teamradar.ts');
-    expect(page).toContain('maxLength={MAX_CHART_TITLE_CHARS}');
+    /*
+     * パス 197 まで `maxLength={MAX_CHART_TITLE_CHARS}` を字面で要求していた ——
+     * 台帳を 1 つにする目的は正しいが、**仕掛けとして `maxLength` を固定していた**。
+     * 今は `CeilingNotice max={MAX_CHART_TITLE_CHARS}` + 保存ボタンの disabled が
+     * 同じ定数を読む。要求するのは**定数が画面に届いていること**にする
+     * (どの仕掛けで使うかは画面の自由。字面の数に戻ったら下の 2 行が鳴る)。
+     */
+    expect(page).toContain('MAX_CHART_TITLE_CHARS');
+    expect(page, '画面に maxLength が戻っている').not.toContain('maxLength={MAX_CHART_TITLE_CHARS}');
     // パス 195: 天井の単位を「字」に揃えたので `countChars(title)` を通る。
     expect(main).toContain('countChars(title) <= MAX_CHART_TITLE_CHARS');
     // 字面が戻っていないこと (対照: この 2 つの綴りが実際に在ったので、当たる規則である)。

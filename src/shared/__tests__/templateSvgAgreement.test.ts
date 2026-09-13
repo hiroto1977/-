@@ -212,19 +212,39 @@ describe('字数の上限 — 台帳 1 つを画面と境界の両方が読む (
    * 台帳を動かすと画面が動くことを、対照つきで留める (CLAUDE.md の
    * 「登録した値は必ず配線し、上書きすると画面が動くを対照つきで留める」)。
    */
-  it('★ 入力欄の maxLength が台帳の値と一致する (4 欄)', async () => {
+  /*
+   * **この検査は 2026-09-13 (パス 197) に向きを変えた。**
+   *
+   * 元は「入力欄の `maxLength` が台帳の値と一致する」を要求していた ——
+   * 台帳を 1 つにする目的 (パス 184) は正しいが、**仕掛けとして `maxLength` を
+   * 固定していた**。実機 chromium で測ると `maxLength` は関門ではない:
+   * 超えた貼り付けを黙って切るだけで、`el.value` への代入は素通りし
+   * `validity.tooLong` も false。つまりこの検査は**「黙って切る仕掛けが在ること」を
+   * 正しい振る舞いとして留めて**いた (パス 196 で `preview.test.ts` に見つけた形の双子)。
+   *
+   * 台帳が画面に届いていることは下の「(n/上限)」の検査が持つ。ここは
+   * **`maxLength` が無いこと**を要求する —— 4 欄のうち 1 つでも属性が戻れば、
+   * その欄はまた黙って切り始める。色欄の `maxLength={7}` は構造で決まる長さなので
+   * 別扱い (理由は `renderer/__tests__/maxLengthCensus.test.ts` の台帳)。
+   */
+  it('★ 4 つの文字欄に maxLength が無い (黙って切る仕掛けを置かない)', async () => {
     await previewOf(TEMPLATE_CATALOG[0]!.label);
-    const caps = [...container.querySelectorAll('input, textarea')]
+    const caps = [...container.querySelectorAll('input[type="text"], textarea')]
       .map((el) => el.getAttribute('maxLength'))
       .filter((v): v is string => v !== null)
       .map(Number);
+    // 残るのは色欄の 7 だけ (`#RRGGBB` は構造上ちょうど 7 字)。
+    for (const cap of caps) {
+      expect(cap, `文字欄に maxLength=${cap} が戻っている`).toBe(7);
+    }
+    // 台帳の値が属性として残っていないこと (戻すと必ずここに現れる)。
     for (const want of [
       TEMPLATE_FIELD_LIMITS.title,
       TEMPLATE_FIELD_LIMITS.subtitle,
       TEMPLATE_FIELD_LIMITS.brandText,
       TEMPLATE_FIELD_LIMITS.body,
     ]) {
-      expect(caps, `台帳の ${want} を読んでいる欄が無い`).toContain(want);
+      expect(caps, `台帳の ${want} が maxLength として戻っている`).not.toContain(want);
     }
   });
 
